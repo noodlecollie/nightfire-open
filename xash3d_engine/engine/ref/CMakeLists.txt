@@ -1,2 +1,3 @@
-# NFTODO: Support OpenGL renderers
-add_subdirectory(soft)
+if(NF_SOFTWARE_RENDERER_ENABLED)
+	add_subdirectory(soft)
+endif()

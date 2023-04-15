@@ -6,6 +6,7 @@ project(Nightfire-Open LANGUAGES C CXX)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 option(NF_DEDICATED_SERVER "Build dedicated server (no client-specific code)" OFF)
+option(NF_SOFTWARE_RENDERER_ENABLED "Enables support for software rendering if building client" ON)
 
 include(project_definitions)
 

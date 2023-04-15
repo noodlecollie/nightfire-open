@@ -46,6 +46,15 @@ target_link_libraries(${TARGETNAME_LIB_REF_SOFT} PRIVATE
 	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">:m>
 )
 
+target_compile_definitions(${TARGETNAME_LIB_REF_SOFT} PUBLIC
+	XASH_REF_SOFT_ENABLED=1
+)
+
+# If this renderer is enabled, add it as an engine dependency
+target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
+	${TARGETNAME_LIB_REF_SOFT}
+)
+
 install(TARGETS ${TARGETNAME_LIB_REF_SOFT}
 	ARCHIVE DESTINATION ${INSTALL_ROOT}
 	LIBRARY DESTINATION ${INSTALL_ROOT}
