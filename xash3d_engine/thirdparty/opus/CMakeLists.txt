@@ -9,4 +9,7 @@ if(NOT MSVC)
 add_compile_options("-O3")
 endif()
 
+set(OLD_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(opus EXCLUDE_FROM_ALL)
+set(BUILD_SHARED_LIBS ${OLD_BUILD_SHARED_LIBS})

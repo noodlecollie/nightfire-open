@@ -262,6 +262,7 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	DBGHELP=$<BOOL:${WIN32}>
 	PSAPI_VERSION=$<BOOL:${WIN32}>
 	$<$<BOOL:${SDL2_FOUND}>:XASH_SDL=2>
+	XASH_REF_SOFT_ENABLED=1 # NFTODO: Swap this out when OpenGL renderer is chosen - dould use public defs for ref library?
 )
 
 # NFTODO: Renderers must register their defines here!
