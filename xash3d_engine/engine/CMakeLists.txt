@@ -19,7 +19,6 @@ if(CLIENT_SUPPORT)
 	find_package(SDL2 REQUIRED)
 endif()
 
-# NFTODO: Generator expressions
 set(ENGINE_SOURCES
 	common/imagelib/imagelib.h
 	common/imagelib/img_bmp.h
@@ -244,17 +243,17 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PUBLIC
 )
 
 target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
-	$<$<BOOL:${SDL2_FOUND}>:SDL2::SDL2>
+	$<$<BOOL:${CLIENT_SUPPORT}>:SDL2::SDL2>
 	$<$<BOOL:${CLIENT_SUPPORT}>:Opus::opus>
 	${TARGETNAME_LIB_PUBLIC}
 )
 
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	XASH_DEDICATED=$<BOOL:${NF_DEDICATED_SERVER}>
-	#XASH_ENGINE_TESTS=0 # NFTODO: Predicate on tests build option
-	#XASH_STATIC_LIBS=0 # NFTODO: Predicate on static libs build option
+	#XASH_ENGINE_TESTS=0 # NFTODO: Predicate on tests build option (not present if disabled)
+	#XASH_STATIC_LIBS=0 # NFTODO: Predicate on static libs build option (not present if disabled)
 	#XASH_CUSTOM_SWAP=0 # Don't need to support this
-	#SINGLE_BINARY=0 # NFTODO: Predicate on single binary build option
+	#SINGLE_BINARY=0 # NFTODO: Predicate on single binary build option (not present if disabled)
 	#XASH_NO_ASYNC_NS_RESOLVE=0 # Don't need to support this
 	$<$<OR:$<BOOL:${NF_DEDICATED_SERVER}>,0>:XASH_USE_SELECT=1> # NFTODO: Include USE_SELECT build option here
 	SUPPORT_BSP2_FORMAT=0 # Don't need to support this
@@ -266,28 +265,24 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 )
 
 # NFTODO: Renderers must register their defines here!
+target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
+	# Windows
+	$<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:USER32>
+	$<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:SHELL32>
+	$<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:GDI32>
+	$<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:ADVAPI32>
+	$<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:DBGHELP>
+	$<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:PSAPI>
+	$<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:WS2_32>
 
-if(WIN32)
-	target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
-		USER32
-		SHELL32
-		GDI32
-		ADVAPI32
-		DBGHELP
-		PSAPI
-		WS2_32
-	)
-else()
-	target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
-		m
-		rt
-		pthread
-		asound
+	# Linux
+	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">:m>
+	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">:rt>
+	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">:pthread>
+	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">:asound>
 
-		# NFTODO: This should be removed if built in static configuration
-		dl
-	)
-endif()
+	$<$<AND:$<STREQUAL:${TARGET_PLATFORM},"LINUX">,$<STREQUAL:${LIB_MODE},"SHARED">>:dl>
+)
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_ENGINE})
 
@@ -298,6 +293,10 @@ target_include_directories(${TARGETNAME_LIB_ENGINE} PRIVATE
 )
 
 # NFTODO: Enable tests
+
+if(CLIENT_SUPPORT)
+	add_subdirectory(ref)
+endif()
 
 install(TARGETS ${TARGETNAME_LIB_ENGINE}
 	ARCHIVE DESTINATION ${INSTALL_ROOT}

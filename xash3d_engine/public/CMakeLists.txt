@@ -15,8 +15,12 @@ add_library(${TARGETNAME_LIB_PUBLIC} STATIC
 	xash3d_mathlib.c
 )
 
-target_link_libraries(${TARGETNAME_LIB_PUBLIC} PUBLIC
+target_link_libraries(${TARGETNAME_LIB_PUBLIC}
+	PUBLIC
 	${TARGETNAME_INCLUDES_SDK}
+
+	PRIVATE
+	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">: m >
 )
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_PUBLIC})

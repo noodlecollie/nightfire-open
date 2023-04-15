@@ -20,16 +20,11 @@ target_link_libraries(${TARGETNAME_LIB_FILESYSTEM_STDIO} PUBLIC
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_PUBLIC})
 
-if(WIN32)
-	target_compile_options(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
-		"/GR-"
-	)
-else()
-	target_compile_options(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
-		"-fno-rtti"
-		"-fno-exceptions"
-	)
-endif()
+target_compile_options(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
+	$<$<STREQUAL:${HOST_COMPILER},"MSVC">: /GR- >
+	$<$<NOT:$<STREQUAL:${HOST_COMPILER},"MSVC">>: -fno-rtti >
+	$<$<NOT:$<STREQUAL:${HOST_COMPILER},"MSVC">>: -fno-exceptions >
+)
 
 # NFTODO: Enable tests
 

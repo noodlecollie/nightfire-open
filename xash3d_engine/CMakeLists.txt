@@ -1,3 +1,12 @@
+############################################################
+#       Common header sets used by multiple targets        #
+############################################################
+
+# NFTODO: These should really be managed more cleanly.
+# Targets should not be reaching into the headers of other
+# targets if they do not link against them. Decouple these
+# when possible.
+
 add_library(${TARGETNAME_INCLUDES_SDK} INTERFACE)
 
 target_include_directories(${TARGETNAME_INCLUDES_SDK} INTERFACE
@@ -30,7 +39,3 @@ add_subdirectory(public)
 add_subdirectory(filesystem)
 add_subdirectory(engine)
 add_subdirectory(game_launch)
-
-if(NOT NF_DEDICATED_SERVER)
-	add_subdirectory(ref)
-endif()

@@ -1,8 +1,8 @@
 function(set_common_library_compiler_settings targetname)
-	if(NOT WIN32)
+	if(HOST_PLATFORM STREQUAL "LINUX")
 		target_compile_options(${targetname} PRIVATE
 			-fvisibility=hidden
-			$<$<BOOL:${BUILD_SHARED_LIBS}>:-fPIC>
+			$<$<STREQUAL:${LIB_MODE},"SHARED">: -fPIC >
 		)
 
 		target_link_options(${targetname} PRIVATE
