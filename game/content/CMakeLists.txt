@@ -1,0 +1,1 @@
+install(DIRECTORY afterburner DESTINATION ${INSTALL_ROOT})

@@ -26,3 +26,4 @@ if(LIB_MODE STREQUAL "STATIC")
 endif()
 
 add_subdirectory(xash3d_engine)
+add_subdirectory(game)
