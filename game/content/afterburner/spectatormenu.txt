@@ -1,0 +1,54 @@
+// Command Menu definition
+// 
+// Basic Format:
+//		"<Bound Key>" "<Button Text>" "<Command sent to server>"
+//
+// 
+//
+//
+// Buttons can also open up submenus, as follows:
+// {
+// 	"Some More Options",
+//	{
+//		...
+//	}
+// }
+//
+//
+// Buttons preceded with "CUSTOM" are handled in special ways. They can only be moved
+// around or deleted.
+//
+//
+// Limitations:
+//		Maximum of 50 menus.
+//		Maximum of 100 buttons per menu.
+
+//--------------------------------------------------------
+// Everything below here is editable
+
+"5" "#Valve_Close" 	"spec_menu 0"
+
+"4" "#Valve_Help"	"spec_help"
+
+"3" "#Valve_Settings"
+{	
+	TOGGLE 	"4" "#Valve_Chat_Messages"	"hud_saytext"
+	
+	TOGGLE	"3" "#Valve_Show_Status"	"spec_drawstatus"
+	
+	TOGGLE	"2" "#Valve_View_Cone"		"spec_drawcone"
+	
+	TOGGLE	"1" "#Valve_Player_Names"	"spec_drawnames"
+}
+
+TOGGLE	"2" "#Valve_Auto_Director"	"spec_autodirector"
+"1" "#Valve_Show_Score"	"togglescores"
+
+// Here are the rest of the buttons and submenus
+// You can change these safely if you want.
+
+
+
+
+
+

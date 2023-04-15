@@ -1,0 +1,94 @@
+///////////////////// TEXT FILE DESCRIPTION /////////////////////
+// 640x480 text scheme file
+//
+// Resolutions:
+// 	320
+//	400
+//	512
+//	640
+//	800
+//	1024
+//	1152
+//	1280
+//	1600
+//
+
+// SchemeName defines a new scheme
+SchemeName = "Basic Text"
+
+// FontName is the string name of the font the scheme uses
+FontName   = "Arial"
+
+// FontSize defines the height of the font (the rest is derived from that)
+FontSize   = 17
+
+// FontWeight thickens the font (700 is bold, 1400 very bold)
+FontWeight = 0
+
+// foreground colors (RGBA, A=0 being fully transparent, A=255 fully solid)
+FgColor          = "255 170 0 255"
+FgColorArmed     = "255 255 255 255"
+FgColorMousedown = "255 255 255 255"
+
+// background colors (note that these always default to "0 0 0 0")
+BgColor          = "0 0 0 0"
+BgColorArmed     = "0 0 0 0"
+BgColorMousedown = "0 0 0 0"
+
+///////////////////// TFC FONTS /////////////////////
+
+
+// DEFAULT BUTTON TEXT
+SchemeName = "Primary Button Text"
+FontName = "Arial"
+FontSize = 16
+FgColor = "255 170 0 255"
+BgColor = "0 0 0 141"
+FgColorArmed = "255 255 255 255"
+BgColorArmed = "255 170 0 67"
+
+// COMMAND MENU TEXT
+SchemeName = "CommandMenu Text"
+FontName = "Arial"
+FontSize = 14
+
+// SCOREBOARD TEXT
+SchemeName = "Scoreboard Text"
+FontName = "Arial"
+FontSize = 12
+FontWeight = 0
+
+// SCOREBOARD TITLE TEXT (team names, team scores)
+SchemeName = "Scoreboard Title Text"
+FontName = "Arial"
+FontSize = 18
+FontWeight = 700
+
+// SCOREBOARD SMALL TEXT (headers, player #)
+SchemeName = "Scoreboard Small Text"
+FontName = "Arial"
+FontSize = 11
+FontWeight = 0
+
+// TITLE FONT in TFC selection menus
+SchemeName = "Title Font"
+FontName = "Arial"
+FontSize = 23
+FgColor = "255 170 0 255"
+
+// CLASSDESC, MAPDESC, MOTD text windows
+SchemeName = "Briefing Text"
+FontName = "Arial"
+FontSize = 14
+FontWeight = 0
+FgColor = "255 170 0 255"
+
+// Team info text (list of players, etc)
+// fgColor is automatically set to the teams color
+SchemeName = "Team Info Text"
+FontName = "Arial"
+FontSize = 14
+FontWeight = 0
+
+
+

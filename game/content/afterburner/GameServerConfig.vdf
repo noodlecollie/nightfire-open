@@ -1,0 +1,43 @@
+"GameServerConfig"
+{
+	"mp_timelimit"
+	{
+		"name"	"Time limit"
+		"type"	"string"
+	}
+	"mp_fraglimit"
+	{
+		"name" "Frag limit"
+		"type" "string"
+	}
+	"mp_friendlyfire"
+	{
+		"name" "Friendly fire"
+		"type" "enumeration"
+		"list"
+		{
+			"0" "Disabled"
+			"1"	"Enabled"
+		}
+	}
+	"sv_allowupload"
+	{
+		"name" "Allow upload"
+		"type" "enumeration"
+		"list"
+		{
+			"0" "Disabled"
+			"1"	"Enabled"
+		}
+	}
+	"sv_voiceenable"
+	{
+		"name" "Voice communication"
+		"type" "enumeration"
+		"list"
+		{
+			"0" "Disabled"
+			"1"	"Enabled"
+		}
+	}
+}

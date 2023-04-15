@@ -1,0 +1,17 @@
+[
+	{
+		"name": "mi6_stealth",
+		"playerName": "MI6 Stealth",
+		"skin": "mp_mi6_stealth"
+	},
+	{
+		"name": "mi6_suit",
+		"playerName": "MI6 Suit",
+		"skin": "mp_mi6_suit"
+	},
+	{
+		"name": "mi6_tux",
+		"playerName": "MI6 Tux",
+		"skin": "mp_mi6_tux"
+	}
+]

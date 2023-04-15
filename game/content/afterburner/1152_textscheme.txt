@@ -1,0 +1,60 @@
+//1152x864 text scheme file
+
+// DEFAULT BUTTON TEXT
+SchemeName = "Primary Button Text"
+FontName = "Arial"
+FontSize = 25
+FgColor = "255 170 0 255"
+BgColor = "0 0 0 141"
+FgColorArmed = "255 255 255 255"
+BgColorArmed = "255 170 0 67"
+
+// COMMAND MENU TEXT
+SchemeName = "CommandMenu Text"
+FontName = "Arial"
+FontSize = 23
+FgColor = "255 170 0 255"
+BgColor = "0 0 0 141"
+FgColorArmed = "255 255 255 255"
+BgColorArmed = "255 170 0 67"
+
+// SCOREBOARD TEXT
+SchemeName = "Scoreboard Text"
+FontName = "Arial"
+FontSize = 21
+FontWeight = 0
+
+// SCOREBOARD TITLE TEXT (team names, team scores)
+SchemeName = "Scoreboard Title Text"
+FontName = "Arial"
+FontSize = 32
+FontWeight = 700
+
+// SCOREBOARD SMALL TEXT (headers, player #)
+SchemeName = "Scoreboard Small Text"
+FontName = "Arial"
+FontSize = 16
+FontWeight = 0
+
+// TITLE FONT in TFC selection menus
+SchemeName = "Title Font"
+FontName = "Arial Narrow Bold"
+FontSize = 36
+FgColor = "255 170 0 255"
+
+// CLASSDESC, MAPDESC, MOTD text windows
+SchemeName = "Briefing Text"
+FontName = "Arial"
+FontSize = 21
+FontWeight = 0
+FgColor = "255 170 0 255"
+
+// Team info text (list of players, etc)
+// fgColor is automatically set to the teams color
+SchemeName = "Team Info Text"
+FontName = "Arial"
+FontSize = 21
+FontWeight = 0
+
+
+

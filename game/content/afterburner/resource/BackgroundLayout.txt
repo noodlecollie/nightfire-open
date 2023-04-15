@@ -1,0 +1,46 @@
+resolution	1920 1200
+
+resource/background/800_1_a_loading.tga		scaled		0		0
+resource/background/800_1_b_loading.tga		scaled		256		0
+resource/background/800_1_c_loading.tga		scaled		512		0
+resource/background/800_1_d_loading.tga		scaled		768		0
+resource/background/800_1_e_loading.tga		scaled		1024	0
+resource/background/800_1_f_loading.tga		scaled		1280	0
+resource/background/800_1_g_loading.tga		scaled		1536	0
+resource/background/800_1_h_loading.tga		scaled		1792	0
+
+resource/background/800_2_a_loading.tga		scaled		0		256
+resource/background/800_2_b_loading.tga		scaled		256		256
+resource/background/800_2_c_loading.tga		scaled		512		256
+resource/background/800_2_d_loading.tga		scaled		768		256
+resource/background/800_2_e_loading.tga		scaled		1024	256
+resource/background/800_2_f_loading.tga		scaled		1280	256
+resource/background/800_2_g_loading.tga		scaled		1536	256
+resource/background/800_2_h_loading.tga		scaled		1792	256
+
+resource/background/800_3_a_loading.tga		scaled		0		512
+resource/background/800_3_b_loading.tga		scaled		256		512
+resource/background/800_3_c_loading.tga		scaled		512		512
+resource/background/800_3_d_loading.tga		scaled		768		512
+resource/background/800_3_e_loading.tga		scaled		1024	512
+resource/background/800_3_f_loading.tga		scaled		1280	512
+resource/background/800_3_g_loading.tga		scaled		1536	512
+resource/background/800_3_h_loading.tga		scaled		1792	512
+
+resource/background/800_4_a_loading.tga		scaled		0		768
+resource/background/800_4_b_loading.tga		scaled		256		768
+resource/background/800_4_c_loading.tga		scaled		512		768
+resource/background/800_4_d_loading.tga		scaled		768		768
+resource/background/800_4_e_loading.tga		scaled		1024	768
+resource/background/800_4_f_loading.tga		scaled		1280	768
+resource/background/800_4_g_loading.tga		scaled		1536	768
+resource/background/800_4_h_loading.tga		scaled		1792	768
+
+resource/background/800_5_a_loading.tga		scaled		0		1024
+resource/background/800_5_b_loading.tga		scaled		256		1024
+resource/background/800_5_c_loading.tga		scaled		512		1024
+resource/background/800_5_d_loading.tga		scaled		768		1024
+resource/background/800_5_e_loading.tga		scaled		1024	1024
+resource/background/800_5_f_loading.tga		scaled		1280	1024
+resource/background/800_5_g_loading.tga		scaled		1536	1024
+resource/background/800_5_h_loading.tga		scaled		1792	1024
