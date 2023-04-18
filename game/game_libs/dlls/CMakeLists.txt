@@ -192,150 +192,201 @@ set(SOURCES_GAME_MENU_SHARED
 	../game_menu_shared/rapidjson_helpers/rapidjson_helpers.cpp
 )
 
-set(SOURCES_CLIENT
-	customGeometry/baseGeometryCollection.h
-	customGeometry/baseGeometryCollection.cpp
-	customGeometry/geometryCollectionManager.h
-	customGeometry/geometryCollectionManager.cpp
-	customGeometry/geometryRenderer.h
-	customGeometry/geometryRenderer.cpp
-	customGeometry/geometryStatics.h
-	customGeometry/geometryStatics.cpp
-	customGeometry/logger_client.h
-	customGeometry/logger_client.cpp
-	customGeometry/messageReader.h
-	customGeometry/messageReader.cpp
-	events/debugging/hitscanweapondebugging.h
-	events/debugging/hitscanweapondebugging.cpp
-	events/baseweaponeventplayer.h
-	events/baseweaponeventplayer.cpp
-	events/eventCommands.h
-	events/eventCommands.cpp
-	events/hitscanweaponeventplayer.h
-	events/hitscanweaponeventplayer.cpp
-	events/meleeweaponeventplayer.h
-	events/meleeweaponeventplayer.cpp
-	events/projectileweaponeventplayer.h
-	events/projectileweaponeventplayer.cpp
-	gameplay/crosshairCvars.h
-	gameplay/crosshairCvars.cpp
-	hl/hl_baseentity.cpp
-	hl/hl_events.cpp
-	hl/hl_objects.cpp
-	hl/hl_weapons.cpp
-	messages/baseMessageReader.h
-	messages/baseMessageReader.cpp
-	projectInterface_client/fileLoaders_client.h
-	projectInterface_client/fileLoaders_client.cpp
-	projectInterface_client/logInterface_client.h
-	projectInterface_client/logInterface_client.cpp
-	projectInterface_client/projectInterface_client.h
-	projectInterface_client/projectInterface_client.cpp
-	projectInterface_client/rng_client.h
-	projectInterface_client/rng_client.cpp
-	sound/ClientSoundInstance.h
-	sound/ClientSoundInstance.cpp
-	ui/core/uiVec2.h
-	ui/crosshair/crosshairBase.h
-	ui/crosshair/crosshairParameters.h
-	ui/crosshair/crosshairParameters.cpp
-	ui/crosshair/spreadVisualiser.h
-	ui/crosshair/spreadVisualiser.cpp
-	ui/drawable/BaseUIDrawable.h
-	ui/screenOverlays/BaseScreenOverlay.h
-	ui/screenOverlays/BaseScreenOverlay.cpp
-	ui/screenOverlays/DebugCommands.h
-	ui/screenOverlays/DebugCommands.cpp
-	ui/screenOverlays/messageReader.h
-	ui/screenOverlays/messageReader.cpp
-	ui/screenOverlays/ScreenOverlayContainer.h
-	ui/screenOverlays/ScreenOverlayContainer.cpp
-	ui/screenOverlays/SniperScopeOverlay.h
-	ui/screenOverlays/SniperScopeOverlay.cpp
-	ammo_secondary.cpp
-	ammo.h
-	ammo.cpp
-	ammohistory.h
-	ammohistory.cpp
-	battery.cpp
-	camera.h
-	cdll_int.cpp
-	cl_dll.h
-	cl_util.h
-	com_weapons.h
-	com_weapons.cpp
-	death.cpp
-	demo.h
-	demo.cpp
-	entity.cpp
-	ev_common.cpp
-	ev_hldm.h
-	ev_hldm.cpp
-	events.cpp
-	eventscripts.h
-	flashlight.cpp
-	GameStudioModelRenderer.h
-	GameStudioModelRenderer.cpp
-	geiger.cpp
-	health.cpp
-	hud_crosshair.h
-	hud_crosshair.cpp
-	hud_iface.h
-	hud_msg.cpp
-	hud_redraw.cpp
-	hud_spectator.h
-	hud_spectator.cpp
-	hud_update.cpp
-	hud.h
-	hud.cpp
-	in_camera.cpp
-	in_defs.h
-	input_goldsource.cpp
-	input_mouse.h
-	input_mouse.cpp
-	input_xash3d.cpp
-	input.cpp
-	kbutton.h
-	menu.cpp
-	message.cpp
-	MOTD.cpp
-	overview.h
-	overview.cpp
-	parsemsg.h
-	parsemsg.cpp
-	saytext.cpp
-	scoreboard.cpp
-	status_icons.cpp
-	statusbar.cpp
-	studio_util.h
-	studio_util.cpp
-	StudioModelRenderer.h
-	StudioModelRenderer.cpp
-	text_message.cpp
-	tf_defs.h
-	train.cpp
-	tri.cpp
-	util.cpp
-	view.h
-	view.cpp
+set(SOURCES_SERVER
+	bots/input/botuserinputsimulator.h
+	bots/input/botuserinputsimulator.cpp
+	bots/itemattributes/botweaponattributes.h
+	bots/bot_ai.cpp
+	bots/bot_commands.h
+	bots/bot_commands.cpp
+	bots/bot_cvars.h
+	bots/bot_cvars.cpp
+	bots/bot_fightstyle.cpp
+	bots/bot_memory.cpp
+	bots/bot_misc.h
+	bots/bot_misc.cpp
+	bots/bot_move.cpp
+	bots/bot_nav.cpp
+	bots/bot_stats.cpp
+	bots/bot.h
+	bots/botfactory.h
+	bots/botfactory.cpp
+	bots/botgamerulesinterface.h
+	bots/botgamerulesinterface.cpp
+	bots/botregister.h
+	bots/botregister.cpp
+	customGeometry/commands.h
+	customGeometry/commands.cpp
+	customGeometry/messageWriter.h
+	customGeometry/messageWriter.cpp
+	gameplay/gameplayCvars.h
+	gameplay/gameplayCvars.cpp
+	gameplay/gameplaySystems.h
+	gameplay/gameplaySystems.cpp
+	gameplay/gameplaySystemsBase.h
+	gameplay/gameplaySystemsBase.cpp
+	gameplay/gameplaySystemsMultiplayer.h
+	gameplay/gameplaySystemsMultiplayer.cpp
+	gameplay/gameplaySystemsSingleplayer.h
+	gameplay/gameplaySystemsSingleplayer.cpp
+	gameplay/gamerules.cpp
+	gameplay/spawnpointlist.h
+	gameplay/spawnpointlist.cpp
+	gameplay/spawnpointmanager.h
+	gameplay/spawnpointmanager.cpp
+	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.h
+	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.cpp
+	hitbox_debugging/hitbox_commands.h
+	hitbox_debugging/hitbox_commands.cpp
+	hitbox_debugging/hitbox_debugData.h
+	hitbox_debugging/hitbox_debugData.cpp
+	hitbox_debugging/hitbox_messageConstructor.h
+	hitbox_debugging/hitbox_messageConstructor.cpp
+	messages/baseMessageWriter.h
+	messages/baseMessageWriter.cpp
+	messages/messageRegistrationHelper.h
+	projectInterface_server/fileLoaders_server.h
+	projectInterface_server/fileLoaders_server.cpp
+	projectInterface_server/logInterface_server.h
+	projectInterface_server/logInterface_server.cpp
+	projectInterface_server/projectInterface_server.h
+	projectInterface_server/projectInterface_server.cpp
+	projectInterface_server/rng_server.h
+	projectInterface_server/rng_server.cpp
+	screenOverlays/messageWriter.h
+	screenOverlays/messageWriter.cpp
+	sound/ServerSoundInstance.h
+	sound/ServerSoundInstance.cpp
+	utils/mp_utils.h
+	utils/mp_utils.cpp
+	utils/utils.cpp
+	weapondebugevents/weapondebugevent_base.h
+	weapondebugevents/weapondebugevent_base.cpp
+	weapondebugevents/weapondebugevent_hitscanfire.h
+	weapondebugevents/weapondebugevent_hitscanfire.cpp
+	weapondebugevents/weapondebugeventsource.h
+	weapondebugevents/weapondebugeventsource.cpp
+	activitymap.h
+	aflock.cpp
+	agrunt.cpp
+	airtank.cpp
+	animating.cpp
+	animation.h
+	animation.cpp
+	apache.cpp
+	barnacle.cpp
+	barney.cpp
+	bigmomma.cpp
+	bloater.cpp
+	bmodels.cpp
+	bullsquid.cpp
+	buttons.cpp
+	cbase.cpp
+	client.h
+	client.cpp
+	combat.cpp
+	controller.cpp
+	decals.h
+	defaultai.h
+	defaultai.cpp
+	doors.h
+	doors.cpp
+	effects.cpp
+	explode.h
+	explode.cpp
+	flyingmonster.h
+	flyingmonster.cpp
+	func_break.h
+	func_break.cpp
+	func_tank.cpp
+	game.cpp
+	gargantua.cpp
+	genericmonster.cpp
+	ggrenade.cpp
+	globals.cpp
+	gman.cpp
+	h_ai.cpp
+	h_battery.cpp
+	h_cine.cpp
+	h_cycler.cpp
+	h_export.cpp
+	hassassin.cpp
+	headcrab.cpp
+	healthkit.cpp
+	hgrunt.cpp
+	hornet.cpp
+	houndeye.cpp
+	ichthyosaur.cpp
+	islave.cpp
+	items.h
+	items.cpp
+	leech.cpp
+	lights.cpp
+	maprules.h
+	maprules.cpp
+	monstermaker.cpp
+	monsters.cpp
+	monsterstate.cpp
+	mortar.cpp
+	multiplay_gamerules.cpp
+	nihilanth.cpp
+	nodes_compat.h
+	nodes.cpp
+	observer.cpp
+	osprey.cpp
+	pathcorner.cpp
+	plane.h
+	plane.cpp
+	plats.cpp
+	player.cpp
+	playermonster.cpp
+	prop_playercorpse.h
+	prop_playercorpse.cpp
+	rat.cpp
+	roach.cpp
+	schedule.cpp
+	scientist.cpp
+	scripted.h
+	scripted.cpp
+	singleplay_gamerules.cpp
+	skill.cpp
+	sound.cpp
+	soundent.cpp
+	spectator.h
+	spectator.cpp
+	squad.h
+	squadmonster.h
+	squadmonster.cpp
+	subs.cpp
+	talkmonster.h
+	talkmonster.cpp
+	teamplay_gamerules.h
+	teamplay_gamerules.cpp
+	tempmonster.cpp
+	tentacle.cpp
+	trains.h
+	triggers.cpp
+	turret.cpp
+	weapons.cpp
+	world.cpp
+	xen.cpp
+	zombie.cpp
 )
 
-add_library(${TARGETNAME_LIB_CLIENT} SHARED
+add_library(${TARGETNAME_LIB_SERVER} SHARED
 	${SOURCES_PM_SHARED}
 	${SOURCES_GAME_SHARED}
-	${SOURCES_CLIENT}
-	${SOURCES_GAME_MENU_SHARED}
+	${SOURCES_SERVER}
 )
 
-target_link_libraries(${TARGETNAME_LIB_CLIENT} PRIVATE
+target_link_libraries(${TARGETNAME_LIB_SERVER} PRIVATE
 	${TARGETNAME_LIB_MINIUTL}
-	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:USER32>
 )
 
 # Since this library is looked up entirely at runtime,
 # it is not depended upon by anything else in this repo,
 # so all include paths are private.
-target_include_directories(${TARGETNAME_LIB_CLIENT} PRIVATE
+target_include_directories(${TARGETNAME_LIB_SERVER} PRIVATE
 	.
 	../common
 	../engine
@@ -349,14 +400,19 @@ target_include_directories(${TARGETNAME_LIB_CLIENT} PRIVATE
 	../game_shared/gameplay
 	../game_menu_shared
 	../miniutl
-	../utils/false_vgui/include
-	hl
-	events
-	projectInterface_client
+	bots
+	bots/profiles
+	bots/itemattributes
+	bots/input
+	projectInterface_server
+	gameplay
+	utils
 )
 
-target_compile_definitions(${TARGETNAME_LIB_CLIENT} PRIVATE
-	CLIENT_DLL=1
+target_compile_definitions(${TARGETNAME_LIB_SERVER} PRIVATE
+	GAME_LIBRARIES=1
+	NO_VOICEGAMEMGR=1 # NFTODO: This would require game_shared/voice_gamemgr.cpp
+	CLIENT_WEAPONS=1 # NFTODO: Make this a build switch
 
 	# Windows
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:_WIN32=1>
@@ -372,15 +428,15 @@ target_compile_definitions(${TARGETNAME_LIB_CLIENT} PRIVATE
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_vsnprintf=vsnprintf>
 )
 
-target_compile_options(${TARGETNAME_LIB_CLIENT} PRIVATE
+target_compile_options(${TARGETNAME_LIB_SERVER} PRIVATE
 	$<$<NOT:$<STREQUAL:${HOST_COMPILER},"MSVC">>:-fno-exceptions>
 
 	# This is used for networking entity properties
 	$<$<NOT:$<STREQUAL:${HOST_COMPILER},"MSVC">>:-Wno-invalid-offsetof>
 )
 
-install(TARGETS ${TARGETNAME_LIB_CLIENT}
-	ARCHIVE DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/cl_dll"
-	LIBRARY DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/cl_dll"
-	RUNTIME DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/cl_dll"
+install(TARGETS ${TARGETNAME_LIB_SERVER}
+	ARCHIVE DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/dlls"
+	LIBRARY DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/dlls"
+	RUNTIME DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/dlls"
 )

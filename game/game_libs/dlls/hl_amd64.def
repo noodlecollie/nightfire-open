@@ -1,5 +1,0 @@
-LIBRARY hl_amd64
-EXPORTS
-	GiveFnptrsToDll			@1
-SECTIONS
-	.data READ WRITE
