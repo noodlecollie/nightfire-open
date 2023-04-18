@@ -43,7 +43,7 @@ target_link_libraries(${TARGETNAME_LIB_REF_SOFT} PRIVATE
 	${TARGETNAME_LIB_PUBLIC}
 
 	# Linux
-	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">:m>
+	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:m>
 )
 
 target_compile_definitions(${TARGETNAME_LIB_REF_SOFT} PUBLIC

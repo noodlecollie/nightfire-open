@@ -7,7 +7,7 @@
 # but also to avoid having to stack $<$<NOT:$<BOOL:${VAR}>>:...>
 # if you want to invert a variable.
 # Eg. if you want to set an option only for Windows, use:
-#   $<$<STREQUAL:${TARGET_PLATFORM},"WINDOWS">:my_windows_option>
+#   $<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:my_windows_option>
 
 if(WIN32)
 	set(TARGET_PLATFORM "WINDOWS")
@@ -43,6 +43,7 @@ endif()
 ############################################################
 
 set(INSTALL_ROOT nightfire-open)
+set(GAME_FOLDER_NAME afterburner)
 
 set(TARGETNAME_INCLUDES_SDK sdk_includes)
 set(TARGETNAME_INCLUDES_FILESYSTEM filesystem_includes)
@@ -54,5 +55,7 @@ set(TARGETNAME_LIB_REF_SOFT ref_soft)
 set(TARGETNAME_LIB_REF_OPENGL ref_gl)
 set(TARGETNAME_LIB_ENGINE xash)
 set(TARGETNAME_LIB_MINIUTL miniutl)
+set(TARGETNAME_LIB_CLIENT client)
+set(TARGETNAME_LIB_SERVER server)
 
 set(TARGETNAME_EXE_GAME_LAUNCHER bond)

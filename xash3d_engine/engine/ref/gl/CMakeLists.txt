@@ -46,7 +46,7 @@ target_link_libraries(${TARGETNAME_LIB_REF_OPENGL} PRIVATE
 	OpenGL::GL
 
 	# Linux
-	$<$<STREQUAL:${TARGET_PLATFORM},"LINUX">:m>
+	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:m>
 )
 
 target_compile_definitions(${TARGETNAME_LIB_REF_OPENGL} PUBLIC
