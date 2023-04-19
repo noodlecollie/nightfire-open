@@ -16,6 +16,12 @@ if(WIN32)
 		USER32
 		SHELL32
 	)
+
+	target_link_options(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
+		# Use WinMain() instead of main()
+		/ENTRY:WinMainCRTStartup
+		/SUBSYSTEM:WINDOWS
+	)
 else()
 	target_link_libraries(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
 		dl

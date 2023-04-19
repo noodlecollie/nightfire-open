@@ -127,6 +127,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/weapon_silent.cpp
 	../game_shared/weapons/weaponslots.h
 	../game_shared/weapons/weaponslots.cpp
+	../game_shared/studio_utils_shared.h
+	../game_shared/studio_utils_shared.cpp
 
 	# NFTODO: Other game_shared files in the root of the directory
 	# (apart from voice_gamemgr.cpp) don't appear to be used.
@@ -377,6 +379,7 @@ add_library(${TARGETNAME_LIB_SERVER} SHARED
 	${SOURCES_PM_SHARED}
 	${SOURCES_GAME_SHARED}
 	${SOURCES_SERVER}
+	${SOURCES_GAME_MENU_SHARED}
 )
 
 target_link_libraries(${TARGETNAME_LIB_SERVER} PRIVATE
@@ -429,10 +432,10 @@ target_compile_definitions(${TARGETNAME_LIB_SERVER} PRIVATE
 )
 
 target_compile_options(${TARGETNAME_LIB_SERVER} PRIVATE
-	$<$<NOT:$<STREQUAL:${HOST_COMPILER},"MSVC">>:-fno-exceptions>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-exceptions>
 
 	# This is used for networking entity properties
-	$<$<NOT:$<STREQUAL:${HOST_COMPILER},"MSVC">>:-Wno-invalid-offsetof>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-invalid-offsetof>
 )
 
 install(TARGETS ${TARGETNAME_LIB_SERVER}

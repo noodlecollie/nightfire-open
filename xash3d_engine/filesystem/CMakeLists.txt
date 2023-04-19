@@ -20,6 +20,10 @@ target_link_libraries(${TARGETNAME_LIB_FILESYSTEM_STDIO} PUBLIC
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_FILESYSTEM_STDIO})
 
+target_compile_definitions(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
+	"ALLOCA_H=<${ALLOCA_HEADER}>"
+)
+
 target_compile_options(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
 	$<$<STREQUAL:"${HOST_COMPILER}","MSVC">:/GR->
 	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-rtti>

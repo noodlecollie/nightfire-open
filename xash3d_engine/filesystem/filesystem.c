@@ -1,6 +1,9 @@
 /*
 filesystem.c - game filesystem based on DP fs
+Copyright (C) 2003-2006 Mathieu Olivier
+Copyright (C) 2000-2007 DarkPlaces contributors
 Copyright (C) 2007 Uncle Mike
+Copyright (C) 2015-2023 Xash3D FWGS contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,9 +33,6 @@ GNU General Public License for more details.
 #endif
 #include <stdio.h>
 #include <stdarg.h>
-#if XASH_LINUX
-#include <sys/inotify.h>
-#endif
 #include "port.h"
 #include "const.h"
 #include "crtlib.h"
@@ -2103,7 +2103,7 @@ FS_UnGetc
 Put a character back into the read buffer (only supports one character!)
 ====================
 */
-int FS_UnGetc( file_t *file, byte c )
+int FS_UnGetc( file_t *file, char c )
 {
 	// If there's already a character waiting to be read
 	if( file->ungetc != EOF )
@@ -2120,7 +2120,7 @@ FS_Gets
 Same as fgets
 ====================
 */
-int FS_Gets( file_t *file, byte *string, size_t bufsize )
+int FS_Gets( file_t *file, char *string, size_t bufsize )
 {
 	int	c, end = 0;
 
@@ -2142,7 +2142,7 @@ int FS_Gets( file_t *file, byte *string, size_t bufsize )
 		c = FS_Getc( file );
 
 		if( c != '\n' )
-			FS_UnGetc( file, (byte)c );
+			FS_UnGetc( file, c );
 	}
 
 	return c;

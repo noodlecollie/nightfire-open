@@ -1,6 +1,9 @@
 /*
 filesystem.h - engine FS
+Copyright (C) 2003-2006 Mathieu Olivier
+Copyright (C) 2000-2007 DarkPlaces contributors
 Copyright (C) 2007 Uncle Mike
+Copyright (C) 2015-2023 Xash3D FWGS contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -141,8 +144,8 @@ fs_offset_t FS_Tell( file_t *file );
 qboolean FS_Eof( file_t *file );
 int FS_Flush( file_t *file );
 int FS_Close( file_t *file );
-int FS_Gets( file_t *file, byte *string, size_t bufsize );
-int FS_UnGetc( file_t *file, byte c );
+int FS_Gets( file_t *file, char *string, size_t bufsize );
+int FS_UnGetc( file_t *file, char c );
 int FS_Getc( file_t *file );
 int FS_VPrintf( file_t *file, const char *format, va_list ap );
 int FS_Printf( file_t *file, const char *format, ... ) _format( 2 );
