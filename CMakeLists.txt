@@ -31,15 +31,23 @@ if(LIB_MODE STREQUAL "STATIC")
 	message(FATAL_ERROR "NFTODO: Support static engine compilation")
 endif()
 
+# Thanks to the Opus scripts for demonstrating how alloca
+# detection is actually supposed to work.
+include(CheckIncludeFile)
 include(CheckSymbolExists)
-check_symbol_exists(alloca "stdlib.h;cstdlib" ALLOCA_EXISTS)
 
-if(ALLOCA_EXISTS)
-	message(STATUS "Using alloca.h")
+check_include_file(alloca.h ALLOCA_H_EXISTS)
+
+if(ALLOCA_H_EXISTS)
 	set(ALLOCA_HEADER "alloca.h")
+	check_symbol_exists(alloca "alloca.h" USE_ALLOCA_SUPPORTED)
 else()
-message(STATUS "Using malloc.h instead of alloca.h, as `alloca` was not found")
 	set(ALLOCA_HEADER "malloc.h")
+	check_symbol_exists(alloca "malloc.h" USE_ALLOCA_SUPPORTED)
+endif()
+
+if(NOT USE_ALLOCA_SUPPORTED)
+	message(FATAL_ERROR "Could not determine alloca support in either alloca.h or malloc.h")
 endif()
 
 add_subdirectory(xash3d_engine)
