@@ -23,7 +23,7 @@ max_edicts	900
 max_tempents	500
 max_beams		128
 max_particles	4096
-url_info    "https://github.com/x6herbius/afterburner-game"
+url_info    "https://github.com/x6herbius/nightfire-open"
 
 // Change this when we add singleplayer stuff
 gamemode "multiplayer_only"

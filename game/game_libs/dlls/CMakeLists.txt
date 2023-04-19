@@ -382,6 +382,11 @@ add_library(${TARGETNAME_LIB_SERVER} SHARED
 	${SOURCES_GAME_MENU_SHARED}
 )
 
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+# NFTODO: Make this contingent on whether we're building in 32-bit or 64-bit mode
+set_target_properties(${TARGETNAME_LIB_SERVER} PROPERTIES LIBRARY_OUTPUT_NAME "server_amd64")
+
 target_link_libraries(${TARGETNAME_LIB_SERVER} PRIVATE
 	${TARGETNAME_LIB_MINIUTL}
 )
