@@ -23,8 +23,6 @@ GNU General Public License for more details.
 #include "VFileSystem009.h"
 #include "common/com_strings.h"
 
-#include "alloca.h"
-
 #if __cplusplus < 201103L
 #define override
 #define nullptr NULL

@@ -6,7 +6,17 @@ set(OPUS_INSTALL_CMAKE_CONFIG_MODULE OFF CACHE BOOL "" FORCE)
 # A slow speed warning message is printed if Opus is compiled without optimisations.
 # We never want this, so just force -O3 here for GCC.
 if(NOT MSVC)
-add_compile_options("-O3")
+	add_compile_options("-O3")
+endif()
+
+# On MSVC there is some warning spam about "macro expansion producing 'defined' has undefined behavior".
+# I'm not sure where this comes from and haven't been able to work it out.
+# It seems to be produced by the use of the _CRT_INTERNAL_NONSTDC_NAMES macro.
+# The closest issue I've been able to find in the wild is https://stackoverflow.com/q/65402366
+# which seems to imply that CMake may be at fault, but I don't know how or why.
+# For now, we just disable this warning for Opus.
+if(MSVC)
+	add_compile_options("/wd5105")
 endif()
 
 set(OLD_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
