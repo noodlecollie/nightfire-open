@@ -249,7 +249,7 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
 )
 
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
-	XASH_DEDICATED=$<BOOL:${NF_DEDICATED_SERVER}>
+	$<$<BOOL:${NF_DEDICATED_SERVER}>:XASH_DEDICATED=1>
 	#XASH_ENGINE_TESTS=0 # NFTODO: Predicate on tests build option (not present if disabled)
 	#XASH_STATIC_LIBS=0 # NFTODO: Predicate on static libs build option (not present if disabled)
 	#XASH_CUSTOM_SWAP=0 # Don't need to support this
