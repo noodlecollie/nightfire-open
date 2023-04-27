@@ -375,22 +375,25 @@ set(SOURCES_SERVER
 	zombie.cpp
 )
 
+if(TARGET_IS_64BIT)
+	set(DEF_FILE server_amd64.def)
+else()
+	set(DEF_FILE server.def)
+endif()
+
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(TARGET_IS_64BIT)
+	set(CMAKE_SHARED_LIBRARY_SUFFIX "_amd64${CMAKE_SHARED_LIBRARY_SUFFIX}")
+endif()
+
 add_library(${TARGETNAME_LIB_SERVER} SHARED
 	${SOURCES_PM_SHARED}
 	${SOURCES_GAME_SHARED}
 	${SOURCES_SERVER}
 	${SOURCES_GAME_MENU_SHARED}
+	${DEF_FILE}
 )
-
-# NFTODO: Make this contingent on whether we're building in 32-bit or 64-bit mode
-set(CMAKE_SHARED_LIBRARY_PREFIX "")
-set(CMAKE_SHARED_LIBRARY_SUFFIX "_amd64${CMAKE_SHARED_LIBRARY_SUFFIX}")
-
-# NFTODO: Make this contingent on whether we're building in 32-bit or 64-bit mode
-# set_target_properties(${TARGETNAME_LIB_SERVER} PROPERTIES
-# 	PREFIX ""
-# 	SUFFIX "_amd64${CMAKE_SHARED_LIBRARY_SUFFIX}"
-# )
 
 target_link_libraries(${TARGETNAME_LIB_SERVER} PRIVATE
 	${TARGETNAME_LIB_MINIUTL}

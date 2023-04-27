@@ -257,7 +257,7 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	#XASH_NO_ASYNC_NS_RESOLVE=0 # Don't need to support this
 	$<$<OR:$<BOOL:${NF_DEDICATED_SERVER}>,0>:XASH_USE_SELECT=1> # NFTODO: Include USE_SELECT build option here
 	#SUPPORT_BSP2_FORMAT=0 # NFTODO: Don't need to support this, but if it's defined then BSP loading screws up as struct layout is different! Needs to be fixed
-	XASH_64BIT=1 # NFTODO: Predicate this on 32-bit vs 64-bit build option
+	$<$<BOOL:${TARGET_IS_64BIT}>:XASH_64BIT=1>
 	AFTERBURNER_ENGINE=1 # NFTODO: Rename this to NIGHTFIRE_OPEN_ENGINE
 	DBGHELP=$<BOOL:${WIN32}>
 	PSAPI_VERSION=$<BOOL:${WIN32}>

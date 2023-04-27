@@ -38,6 +38,12 @@ else()
 	set(HOST_COMPILER "UNKNOWN")
 endif()
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+	set(TARGET_IS_64BIT YES)
+else()
+	set(TARGET_IS_64BIT NO)
+endif()
+
 ############################################################
 #                Canonical names and paths                 #
 ############################################################

@@ -322,9 +322,11 @@ set(SOURCES_CLIENT
 	view.cpp
 )
 
-# NFTODO: Make this contingent on whether we're building in 32-bit or 64-bit mode
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
-set(CMAKE_SHARED_LIBRARY_SUFFIX "_amd64${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+if(TARGET_IS_64BIT)
+	set(CMAKE_SHARED_LIBRARY_SUFFIX "_amd64${CMAKE_SHARED_LIBRARY_SUFFIX}")
+endif()
 
 add_library(${TARGETNAME_LIB_CLIENT} SHARED
 	${SOURCES_PM_SHARED}
@@ -332,12 +334,6 @@ add_library(${TARGETNAME_LIB_CLIENT} SHARED
 	${SOURCES_CLIENT}
 	${SOURCES_GAME_MENU_SHARED}
 )
-
-# NFTODO: Make this contingent on whether we're building in 32-bit or 64-bit mode
-# set_target_properties(${TARGETNAME_LIB_CLIENT} PROPERTIES
-# 	PREFIX ""
-# 	SUFFIX "_amd64${CMAKE_SHARED_LIBRARY_SUFFIX}"
-# )
 
 target_link_libraries(${TARGETNAME_LIB_CLIENT} PRIVATE
 	${TARGETNAME_LIB_MINIUTL}
