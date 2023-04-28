@@ -50,6 +50,7 @@ endif()
 
 set(INSTALL_ROOT nightfire-open)
 set(GAME_FOLDER_NAME afterburner)
+set(GAME_EXECUTABLE bond)
 
 set(TARGETNAME_INCLUDES_SDK sdk_includes)
 set(TARGETNAME_INCLUDES_FILESYSTEM filesystem_includes)
@@ -65,4 +66,4 @@ set(TARGETNAME_LIB_CLIENT client)
 set(TARGETNAME_LIB_SERVER server)
 set(TARGETNAME_LIB_UI menu)
 
-set(TARGETNAME_EXE_GAME_LAUNCHER bond)
+set(TARGETNAME_EXE_GAME_LAUNCHER game_laungh)

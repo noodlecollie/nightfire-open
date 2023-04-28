@@ -13,9 +13,14 @@ project(Nightfire-Open LANGUAGES C CXX)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 option(NF_DEDICATED_SERVER "Build dedicated server (no client-specific code)" OFF)
+option(NF_SINGLE_ENGINE_BINARY "Build engine as single binary" OFF)
 option(NF_SOFTWARE_RENDERER_ENABLED "Enables support for software rendering if building client" ON)
 option(NF_OPENGL_RENDERER_ENABLED "Enables support for OpenGL rendering if building client" ON)
 option(NF_OPENGL_STATIC_LINK "If OpenGL rendering is enabled, links statically against the OpenGL libraries" OFF)
+
+if(NF_DEDICATED_SERVER)
+	set(NF_SINGLE_ENGINE_BINARY ON)
+endif()
 
 include(project_definitions)
 

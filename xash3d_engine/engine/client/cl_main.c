@@ -3898,7 +3898,7 @@ void CL_Shutdown( void )
 	cls.initialized = false;
 
 	// for client-side VGUI support we use other order
-	if( !GI->internal_vgui_support )
+	if( GI && !GI->internal_vgui_support )
 		VGui_Shutdown();
 
 	FS_Delete( "demoheader.tmp" ); // remove tmp file

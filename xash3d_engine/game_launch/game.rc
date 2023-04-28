@@ -13,13 +13,13 @@
 #define VER_FILETYPE		VFT_DLL
 #define VER_FILESUBTYPE		VFT2_UNKNOWN
 
-#define VER_COMPANYNAME_STR	"Afterburner Development Team"
-#define VER_LEGALCOPYRIGHT_STR	"Afterburner Development Team"
-#define VER_PRODUCTNAME_STR	"Afterburner"
+#define VER_COMPANYNAME_STR	"Nightfire Open Development Team"
+#define VER_LEGALCOPYRIGHT_STR	"Nightfire Open Development Team"
+#define VER_PRODUCTNAME_STR	"Nightfire Open"
 
 #define VER_ANSICP
 
-#define VER_FILEDESCRIPTION_STR		"Afterburner"
+#define VER_FILEDESCRIPTION_STR		"Nightfire Open"
 #define VER_ORIGINALFILENAME_STR	"bond.exe"
 #define VER_INTERNALNAME_STR		"bond"
 

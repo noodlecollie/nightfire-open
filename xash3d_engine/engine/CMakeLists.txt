@@ -1,6 +1,5 @@
 # NFTODO: This is currently set up using the following assumptions
 # while we don't have all the options migrated yet:
-# - Shared library (no SINGLE_BINARY)
 # - C linkage (no is_cxx_link)
 # - No ENGINE_TESTS
 # - Only Windows or Linux supported
@@ -233,9 +232,23 @@ if(SDL2_FOUND)
 	)
 endif()
 
-add_library(${TARGETNAME_LIB_ENGINE}
-	${ENGINE_SOURCES}
-)
+if(NF_SINGLE_ENGINE_BINARY)
+	add_executable(${TARGETNAME_LIB_ENGINE}
+		${ENGINE_SOURCES}
+	)
+
+	set_target_properties(${TARGETNAME_LIB_ENGINE} PROPERTIES OUTPUT_NAME ${GAME_EXECUTABLE})
+
+	target_link_options(${TARGETNAME_LIB_ENGINE} PRIVATE
+		# Use WinMain() instead of main()
+		$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:/ENTRY:WinMainCRTStartup>
+		$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:/SUBSYSTEM:WINDOWS>
+	)
+else()
+	add_library(${TARGETNAME_LIB_ENGINE}
+		${ENGINE_SOURCES}
+	)
+endif()
 
 target_link_libraries(${TARGETNAME_LIB_ENGINE} PUBLIC
 	${TARGETNAME_INCLUDES_ENGINE}
@@ -253,7 +266,8 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	#XASH_ENGINE_TESTS=0 # NFTODO: Predicate on tests build option (not present if disabled)
 	#XASH_STATIC_LIBS=0 # NFTODO: Predicate on static libs build option (not present if disabled)
 	#XASH_CUSTOM_SWAP=0 # Don't need to support this
-	#SINGLE_BINARY=0 # NFTODO: Predicate on single binary build option (not present if disabled)
+	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
+	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="afterburner">
 	#XASH_NO_ASYNC_NS_RESOLVE=0 # Don't need to support this
 	$<$<OR:$<BOOL:${NF_DEDICATED_SERVER}>,0>:XASH_USE_SELECT=1> # NFTODO: Include USE_SELECT build option here
 	#SUPPORT_BSP2_FORMAT=0 # NFTODO: Don't need to support this, but if it's defined then BSP loading screws up as struct layout is different! Needs to be fixed

@@ -24,14 +24,13 @@ GNU General Public License for more details.
 #if XASH_EMSCRIPTEN
 #include <emscripten.h>
 #elif XASH_WIN32
-extern "C"
-{
+#include <shellapi.h>
+
 // Enable NVIDIA High Performance Graphics while using Integrated Graphics.
 __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 
 // Enable AMD High Performance Graphics while using Integrated Graphics.
 __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-}
 #endif
 
 #define E_GAME	"XASH3D_GAME" // default env dir to start from
@@ -104,9 +103,11 @@ int main( int argc, char **argv )
 int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int nShow)
 {
 	LPWSTR* lpArgv;
+	LPWSTR cmdLineW;
 	int ret, i;
 
-	lpArgv = CommandLineToArgvW( GetCommandLineW(), &szArgc );
+	cmdLineW = GetCommandLineW();
+	lpArgv = CommandLineToArgvW( cmdLineW, &szArgc );
 	szArgv = ( char** )malloc( (szArgc + 1) * sizeof( char* ));
 
 	for( i = 0; i < szArgc; ++i )

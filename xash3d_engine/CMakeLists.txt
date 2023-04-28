@@ -38,4 +38,7 @@ add_subdirectory(thirdparty)
 add_subdirectory(public)
 add_subdirectory(filesystem)
 add_subdirectory(engine)
-add_subdirectory(game_launch)
+
+if(NOT NF_SINGLE_ENGINE_BINARY)
+	add_subdirectory(game_launch)
+endif()

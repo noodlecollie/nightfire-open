@@ -1,10 +1,13 @@
 add_executable(${TARGETNAME_EXE_GAME_LAUNCHER}
 	game.cpp
-	$<$<BOOL:${WIN32}>:game.rc>
+	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:game.rc>
 )
+
+set_target_properties(${TARGETNAME_EXE_GAME_LAUNCHER} PROPERTIES OUTPUT_NAME ${GAME_EXECUTABLE})
 
 target_compile_definitions(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
 	XASH_DISABLE_MENU_CHANGEGAME=0 # NFTODO: Predicate on DISABLE_MENU_CHANGEGAME build option
+	XASH_GAMEDIR="afterburner"
 )
 
 target_link_libraries(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
