@@ -1,3 +1,6 @@
-add_subdirectory(cl_dlls)
 add_subdirectory(dlls)
-add_subdirectory(ui)
+
+if(NOT NF_DEDICATED_SERVER)
+	add_subdirectory(cl_dlls)
+	add_subdirectory(ui)
+endif()

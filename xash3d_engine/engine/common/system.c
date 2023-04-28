@@ -419,8 +419,10 @@ void Sys_Error( const char *error, ... )
 	char	text[MAX_PRINT_MSG];
 
 	// enable cursor before debugger call
+#if !XASH_DEDICATED
 	if( !Host_IsDedicated( ))
 		Platform_SetCursorType( dc_arrow );
+#endif
 
 	if( host.status == HOST_ERR_FATAL )
 		return; // don't multiple executes

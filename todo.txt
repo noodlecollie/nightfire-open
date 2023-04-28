@@ -10,6 +10,7 @@ All points in sources/scripts which reference tasks in this file are tagged with
   * NF_OPENGL_STATIC_LINK
   * XASH_STATIC_LIBS
   * XASH_DISABLE_MENU_CHANGEGAME
+  * USE_SELECT
 * Enable all tests
 * Establish clang-format file
 * Turn up warnings as high as we feasibly can, and fix any issues

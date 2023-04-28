@@ -14,6 +14,13 @@ else()
 	set(CLIENT_SUPPORT YES)
 endif()
 
+# NFTODO: Predicate on USE_SELECT option as well
+if(NF_DEDICATED_SERVER AND NOT TARGET_PLATFORM STREQUAL "WINDOWS")
+	set(ENABLE_USE_SELECT YES)
+else()
+	set(ENABLE_USE_SELECT NO)
+endif()
+
 if(CLIENT_SUPPORT)
 	find_package(SDL2 REQUIRED)
 endif()
@@ -269,7 +276,7 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="afterburner">
 	#XASH_NO_ASYNC_NS_RESOLVE=0 # Don't need to support this
-	$<$<OR:$<BOOL:${NF_DEDICATED_SERVER}>,0>:XASH_USE_SELECT=1> # NFTODO: Include USE_SELECT build option here
+	$<$<BOOL:${ENABLE_USE_SELECT}>:XASH_USE_SELECT=1>
 	#SUPPORT_BSP2_FORMAT=0 # NFTODO: Don't need to support this, but if it's defined then BSP loading screws up as struct layout is different! Needs to be fixed
 	$<$<BOOL:${TARGET_IS_64BIT}>:XASH_64BIT=1>
 	AFTERBURNER_ENGINE=1 # NFTODO: Rename this to NIGHTFIRE_OPEN_ENGINE
