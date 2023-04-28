@@ -1,7 +1,6 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
 * Add all configuration options from original wscript (sort 32-bit vs. 64-bit builds first)
-  * SINGLE_BINARY
   * CLIENT_WEAPONS
   * LOW_MEMORY
   * ENGINE_TESTS
