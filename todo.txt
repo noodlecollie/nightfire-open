@@ -1,7 +1,7 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
 * Add all configuration options from original wscript (sort 32-bit vs. 64-bit builds first)
-  * LOW_MEMORY
+  * XASH_BUILD_COMMIT
   * ENGINE_TESTS
   * XASH_CUSTOM_SWAP
   * FBDEV_SW

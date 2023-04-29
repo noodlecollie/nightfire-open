@@ -206,7 +206,9 @@ target_compile_definitions(${TARGETNAME_LIB_UI} PRIVATE
 	MAINUI_USE_CUSTOM_FONT_RENDER=1
 
 	# NFTODO: Enable freetype2 and fontconfig for Linux, then
-	# we can use MAINUI_USE_FREETYPE=1 for Linux here too
+	# we can use MAINUI_USE_FREETYPE=1 for Linux here too.
+	# Only enable if not using STB libraries and not building
+	# with LOW_MEMORY.
 	$<$<NOT:$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">>:MAINUI_USE_STB=1->
 )
 

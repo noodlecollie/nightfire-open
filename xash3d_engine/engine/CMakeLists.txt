@@ -275,6 +275,7 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="afterburner">
 	$<$<BOOL:${ENABLE_USE_SELECT}>:XASH_USE_SELECT=1>
+	$<$<BOOL:${NF_LOW_MEMORY_SUPPORT}>:XASH_LOW_MEMORY=1>
 	#SUPPORT_BSP2_FORMAT=0 # NFTODO: Don't need to support this, but if it's defined then BSP loading screws up as struct layout is different! Needs to be fixed
 	$<$<BOOL:${TARGET_IS_64BIT}>:XASH_64BIT=1>
 	AFTERBURNER_ENGINE=1 # NFTODO: Rename this to NIGHTFIRE_OPEN_ENGINE
