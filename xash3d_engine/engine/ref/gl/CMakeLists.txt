@@ -1,6 +1,8 @@
 include(compiler_settings)
 
-find_package(OpenGL REQUIRED)
+if(NF_OPENGL_STATIC_LINK)
+	find_library(HAS_SYSTEM_GL GL REQUIRED)
+endif()
 
 add_library(${TARGETNAME_LIB_REF_OPENGL} SHARED
 	gl_alias.c
@@ -43,7 +45,8 @@ target_include_directories(${TARGETNAME_LIB_REF_OPENGL} PUBLIC
 target_link_libraries(${TARGETNAME_LIB_REF_OPENGL} PRIVATE
 	${TARGETNAME_INCLUDES_ENGINE}
 	${TARGETNAME_LIB_PUBLIC}
-	OpenGL::GL
+	$<$<BOOL:${NF_OPENGL_STATIC_LINK}>:GL>
+
 
 	# Linux
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:m>
