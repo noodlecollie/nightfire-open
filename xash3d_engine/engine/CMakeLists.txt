@@ -207,7 +207,7 @@ if(CLIENT_SUPPORT)
 	)
 endif()
 
-if(WIN32)
+if(TARGET_PLATFORM STREQUAL "WINDOWS")
 	list(APPEND ENGINE_SOURCES
 		platform/win32/con_win.c
 		platform/win32/lib_custom_win.c
@@ -271,11 +271,9 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:XASH_DEDICATED=1>
 	#XASH_ENGINE_TESTS=0 # NFTODO: Predicate on tests build option (not present if disabled)
-	#XASH_STATIC_LIBS=0 # NFTODO: Predicate on static libs build option (not present if disabled)
 	#XASH_CUSTOM_SWAP=0 # Don't need to support this
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="afterburner">
-	#XASH_NO_ASYNC_NS_RESOLVE=0 # Don't need to support this
 	$<$<BOOL:${ENABLE_USE_SELECT}>:XASH_USE_SELECT=1>
 	#SUPPORT_BSP2_FORMAT=0 # NFTODO: Don't need to support this, but if it's defined then BSP loading screws up as struct layout is different! Needs to be fixed
 	$<$<BOOL:${TARGET_IS_64BIT}>:XASH_64BIT=1>
