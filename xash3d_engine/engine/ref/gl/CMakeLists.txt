@@ -1,7 +1,11 @@
 include(compiler_settings)
 
 if(NF_OPENGL_STATIC_LINK)
-	find_library(HAS_SYSTEM_GL GL REQUIRED)
+	if(TARGET_PLATFORM STREQUAL "LINUX")
+		find_library(SYSTEM_GL GL REQUIRED)
+	else()
+		message(FATAL_ERROR "Static OpenGL linking is only supported on Linux")
+	endif()
 endif()
 
 add_library(${TARGETNAME_LIB_REF_OPENGL} SHARED
