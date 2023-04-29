@@ -428,7 +428,7 @@ target_include_directories(${TARGETNAME_LIB_SERVER} PRIVATE
 target_compile_definitions(${TARGETNAME_LIB_SERVER} PRIVATE
 	GAME_LIBRARIES=1
 	NO_VOICEGAMEMGR=1 # NFTODO: This would require game_shared/voice_gamemgr.cpp
-	CLIENT_WEAPONS=1 # NFTODO: Make this a build switch
+	$<$<BOOL:${NF_CLIENT_WEAPON_PREDICTION}>:CLIENT_WEAPONS=1>
 
 	# Windows
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:_WIN32=1>

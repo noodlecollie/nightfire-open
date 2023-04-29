@@ -17,6 +17,7 @@ option(NF_SINGLE_ENGINE_BINARY "Build engine as single binary" OFF)
 option(NF_SOFTWARE_RENDERER_ENABLED "Enables support for software rendering if building client" ON)
 option(NF_OPENGL_RENDERER_ENABLED "Enables support for OpenGL rendering if building client" ON)
 option(NF_OPENGL_STATIC_LINK "If OpenGL rendering is enabled, links statically against the OpenGL libraries" OFF)
+option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client" ON)
 
 if(NF_DEDICATED_SERVER)
 	set(NF_SINGLE_ENGINE_BINARY ON)
