@@ -21,12 +21,6 @@ else()
 	set(HOST_PLATFORM "LINUX")
 endif()
 
-if(BUILD_SHARED_LIBS)
-	set(LIB_MODE "SHARED")
-else()
-	set(LIB_MODE "STATIC")
-endif()
-
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 	set(HOST_COMPILER "CLANG")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

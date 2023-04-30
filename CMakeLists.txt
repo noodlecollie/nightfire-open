@@ -34,9 +34,18 @@ set(CMAKE_C_STANDARD_REQUIRED YES)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE YES)
 
-if(LIB_MODE STREQUAL "STATIC")
-	# NFTODO: Support this
-	message(FATAL_ERROR "NFTODO: Support static engine compilation")
+set(VCS_COMMIT_ID "notset")
+
+find_package(Git QUIET)
+
+if(Git_FOUND)
+	execute_process(
+		COMMAND "${GIT_EXECUTABLE}" rev-parse --short HEAD
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+		OUTPUT_VARIABLE VCS_COMMIT_ID
+		ERROR_QUIET
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
 endif()
 
 # Thanks to the Opus scripts for demonstrating how alloca
