@@ -270,7 +270,7 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
 
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:XASH_DEDICATED=1>
-	#XASH_ENGINE_TESTS=0 # NFTODO: Predicate on tests build option (not present if disabled)
+	$<$<BOOL:${NF_ENGINE_TESTS}>:XASH_ENGINE_TESTS=1>
 	#XASH_CUSTOM_SWAP=0 # Don't need to support this
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="afterburner">
