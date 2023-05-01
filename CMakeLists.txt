@@ -28,6 +28,10 @@ endif()
 
 include(project_definitions)
 
+if(NF_ENABLE_CUSTOM_SWAP AND TARGET_PLATFORM STREQUAL "WINDOWS")
+	message(FATAL_ERROR "Custom swap is not supported on Windows builds")
+endif()
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
