@@ -20,16 +20,26 @@ option(NF_OPENGL_RENDERER_ENABLED "Enables support for OpenGL rendering if build
 option(NF_OPENGL_STATIC_LINK "If OpenGL rendering is enabled, links statically against the OpenGL libraries" OFF)
 option(NF_ENABLE_TESTS "Enables test code in targets" OFF)
 option(NF_ENABLE_CUSTOM_SWAP "Enables custom memory swap code for specialist devices with no swap functionality" OFF)
+option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled for dedicated server builds)" OFF)
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client" ON)
-
-if(NF_DEDICATED_SERVER)
-	set(NF_SINGLE_ENGINE_BINARY ON)
-endif()
 
 include(project_definitions)
 
 if(NF_ENABLE_CUSTOM_SWAP AND TARGET_PLATFORM STREQUAL "WINDOWS")
 	message(FATAL_ERROR "Custom swap is not supported on Windows builds")
+endif()
+
+if(NF_ENABLE_STDIN_INPUT AND TARGET_PLATFORM STREQUAL "WINDOWS")
+	message(WARNING "Using stdin is not supported on Windows builds, ignoring NF_ENABLE_STDIN_INPUT")
+	set(NF_ENABLE_STDIN_INPUT OFF)
+endif()
+
+if(NF_DEDICATED_SERVER)
+	set(NF_SINGLE_ENGINE_BINARY ON)
+
+	if(NOT TARGET_PLATFORM STREQUAL "WINDOWS")
+		set(NF_ENABLE_STDIN_INPUT ON)
+	endif()
 endif()
 
 set(CMAKE_CXX_STANDARD 11)

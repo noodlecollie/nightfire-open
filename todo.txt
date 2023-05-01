@@ -1,9 +1,5 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
-* Add all configuration options from original wscript (sort 32-bit vs. 64-bit builds first)
-  * FBDEV_SW
-  * XASH_DISABLE_MENU_CHANGEGAME
-  * USE_SELECT
 * Establish clang-format file
 * Turn up warnings as high as we feasibly can, and fix any issues
   * Also add settings to control how pedantic warnings should be, warnings as errors, etc.

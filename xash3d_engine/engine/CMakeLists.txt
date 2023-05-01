@@ -1,24 +1,9 @@
-# NFTODO: This is currently set up using the following assumptions
-# while we don't have all the options migrated yet:
-# - C linkage (no is_cxx_link)
-# - No ENGINE_TESTS
-# - Only Windows or Linux supported
-# - No XASH_CUSTOM_SWAP
-# - No FBDEV_SW
-
 include(compiler_settings)
 
 if(NF_DEDICATED_SERVER)
 	set(CLIENT_SUPPORT NO)
 else()
 	set(CLIENT_SUPPORT YES)
-endif()
-
-# NFTODO: Predicate on USE_SELECT option as well
-if(NF_DEDICATED_SERVER AND NOT TARGET_PLATFORM STREQUAL "WINDOWS")
-	set(ENABLE_USE_SELECT YES)
-else()
-	set(ENABLE_USE_SELECT NO)
 endif()
 
 if(CLIENT_SUPPORT)
@@ -281,7 +266,7 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	$<$<BOOL:${NF_ENABLE_CUSTOM_SWAP}>:XASH_CUSTOM_SWAP=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="afterburner">
-	$<$<BOOL:${ENABLE_USE_SELECT}>:XASH_USE_SELECT=1>
+	$<$<BOOL:${NF_ENABLE_STDIN_INPUT}>:XASH_USE_SELECT=1>
 	$<$<BOOL:${NF_LOW_MEMORY_SUPPORT}>:XASH_LOW_MEMORY=1>
 	#SUPPORT_BSP2_FORMAT=0 # NFTODO: Don't need to support this, but if it's defined then BSP loading screws up as struct layout is different! Needs to be fixed
 	$<$<BOOL:${TARGET_IS_64BIT}>:XASH_64BIT=1>
