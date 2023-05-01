@@ -5,7 +5,6 @@ All points in sources/scripts which reference tasks in this file are tagged with
   * FBDEV_SW
   * XASH_DISABLE_MENU_CHANGEGAME
   * USE_SELECT
-* Enable all tests
 * Establish clang-format file
 * Turn up warnings as high as we feasibly can, and fix any issues
   * Also add settings to control how pedantic warnings should be, warnings as errors, etc.

@@ -30,7 +30,15 @@ target_compile_options(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
 	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-exceptions>
 )
 
-# NFTODO: Enable tests
+if(NF_ENABLE_TESTS)
+	add_executable(${TARGETNAME_LIB_FILESYSTEM_TESTS}
+		tests/caseinsensitive.c
+	)
+
+	target_link_libraries(${TARGETNAME_LIB_FILESYSTEM_TESTS} PRIVATE
+		${TARGETNAME_LIB_FILESYSTEM_STDIO}
+	)
+endif()
 
 install(TARGETS ${TARGETNAME_LIB_FILESYSTEM_STDIO}
 	ARCHIVE DESTINATION ${INSTALL_ROOT}

@@ -27,7 +27,7 @@ static bool LoadFilesystem()
 {
 	int temp = -1;
 
-	g_hModule = LoadLibrary( "filesystem_stdio." OS_LIB_EXT );
+	g_hModule = LoadLibrary( OS_LIB_PREFIX "filesystem_stdio." OS_LIB_EXT );
 	if( !g_hModule )
 		return false;
 
