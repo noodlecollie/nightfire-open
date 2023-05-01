@@ -207,6 +207,13 @@ if(CLIENT_SUPPORT)
 	)
 endif()
 
+if(NF_ENABLE_CUSTOM_SWAP)
+	list(APPEND ENGINE_SOURCES
+		platform/misc/kmalloc.c
+		platform/misc/sbrk.c
+	)
+endif()
+
 if(TARGET_PLATFORM STREQUAL "WINDOWS")
 	list(APPEND ENGINE_SOURCES
 		platform/win32/con_win.c
@@ -271,7 +278,7 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:XASH_DEDICATED=1>
 	$<$<BOOL:${NF_ENABLE_TESTS}>:XASH_ENGINE_TESTS=1>
-	#XASH_CUSTOM_SWAP=0 # Don't need to support this
+	$<$<BOOL:${NF_ENABLE_CUSTOM_SWAP}>:XASH_CUSTOM_SWAP=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="afterburner">
 	$<$<BOOL:${ENABLE_USE_SELECT}>:XASH_USE_SELECT=1>

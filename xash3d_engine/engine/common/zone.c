@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #define MEMHEADER_SENTINEL2	0xDFU
 
 #ifdef XASH_CUSTOM_SWAP
-#include "platform/swap/swap.h"
+#include "platform/misc/swap.h"
 #define Q_malloc SWAP_Malloc
 #define Q_free SWAP_Free
 #else
@@ -232,7 +232,7 @@ poolhandle_t _Mem_AllocPool( const char *name, const char *filename, int filelin
 	Q_strncpy( pool->name, name, sizeof( pool->name ));
 	pool->next = poolchain;
 	poolchain = pool;
-	
+
 #if XASH_64BIT
 	pool->idx = ++lastidx;
 	return pool->idx;

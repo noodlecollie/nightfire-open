@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include <signal.h>
 #define _GNU_SOURCE
 #include <dlfcn.h>
-#include "platform/swap/swap.h"
+#include "platform/misc/swap.h"
 #include "string.h"
 
 #ifndef XASH_DEFAULT_SWAP_PATH
@@ -104,5 +104,3 @@ void *SWAP_Sbrk(size_t size)
 		return res;
 	}
 }
-
-

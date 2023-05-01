@@ -19,6 +19,7 @@ option(NF_SOFTWARE_RENDERER_ENABLED "Enables support for software rendering if b
 option(NF_OPENGL_RENDERER_ENABLED "Enables support for OpenGL rendering if building client" ON)
 option(NF_OPENGL_STATIC_LINK "If OpenGL rendering is enabled, links statically against the OpenGL libraries" OFF)
 option(NF_ENABLE_TESTS "Enables test code in targets" OFF)
+option(NF_ENABLE_CUSTOM_SWAP "Enables custom memory swap code for specialist devices with no swap functionality" OFF)
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client" ON)
 
 if(NF_DEDICATED_SERVER)
