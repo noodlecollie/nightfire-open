@@ -17,29 +17,29 @@ GNU General Public License for more details.
 #include "mod_local.h"
 #include "xash3d_mathlib.h"
 #include "world.h"
-#include "eiface.h" // offsetof
+#include "eiface.h"  // offsetof
 
-#define MAX_CLIPNODE_DEPTH		256	// should never exceeds
+#define MAX_CLIPNODE_DEPTH 256  // should never exceeds
 
-#define list_entry( ptr, type, member ) \
-	((type *)((char *)(ptr) - (size_t)(&((type *)0)->member)))
+#define list_entry(ptr, type, member) ((type*)((char*)(ptr) - (size_t)(&((type*)0)->member)))
 
 // iterate over each entry in the list
-#define list_for_each_entry( pos, head, member )			\
-	for( pos = list_entry( (head)->next, winding_t, member );	\
-	     &pos->member != (head);				\
-	     pos = list_entry( pos->member.next, winding_t, member ))
+#define list_for_each_entry(pos, head, member) \
+	for ( pos = list_entry((head)->next, winding_t, member); &pos->member != (head); \
+		  pos = list_entry(pos->member.next, winding_t, member) )
 
 // iterate over the list, safe for removal of entries
-#define list_for_each_entry_safe( pos, n, head, member )		\
-	for( pos = list_entry( (head)->next, winding_t, member ),	\
-	     n = list_entry( pos->member.next, winding_t, member );	\
-	     &pos->member != (head);				\
-	     pos = n, n = list_entry( n->member.next, winding_t, member ))
+#define list_for_each_entry_safe(pos, n, head, member) \
+	for ( pos = list_entry((head)->next, winding_t, member), n = list_entry(pos->member.next, winding_t, member); \
+		  &pos->member != (head); \
+		  pos = n, n = list_entry(n->member.next, winding_t, member) )
 
-#define LIST_HEAD_INIT( name ) { &(name), &(name) }
+#define LIST_HEAD_INIT(name) \
+	{ \
+		&(name), &(name) \
+	}
 
-_inline void list_add__( hullnode_t *new, hullnode_t *prev, hullnode_t *next )
+_inline void list_add__(hullnode_t* new, hullnode_t* prev, hullnode_t* next)
 {
 	next->prev = new;
 	new->next = next;
@@ -48,57 +48,57 @@ _inline void list_add__( hullnode_t *new, hullnode_t *prev, hullnode_t *next )
 }
 
 // add the new entry after the give list entry
-_inline void list_add( hullnode_t *newobj, hullnode_t *head )
+_inline void list_add(hullnode_t* newobj, hullnode_t* head)
 {
-	list_add__( newobj, head, head->next );
+	list_add__(newobj, head, head->next);
 }
 
 // add the new entry before the given list entry (list is circular)
-_inline void list_add_tail( hullnode_t *newobj, hullnode_t *head )
+_inline void list_add_tail(hullnode_t* newobj, hullnode_t* head)
 {
-	list_add__( newobj, head->prev, head );
+	list_add__(newobj, head->prev, head);
 }
 
-_inline void list_del( hullnode_t *entry )
+_inline void list_del(hullnode_t* entry)
 {
 	entry->next->prev = entry->prev;
 	entry->prev->next = entry->next;
 }
 
-static winding_t * winding_alloc( uint numpoints )
+static winding_t* winding_alloc(uint numpoints)
 {
-	return (winding_t *)malloc( offsetof( winding_t, p[numpoints] ) );
+	return (winding_t*)malloc(offsetof(winding_t, p[numpoints]));
 }
 
-static void free_winding( winding_t *w )
+static void free_winding(winding_t* w)
 {
 	// simple sentinel by Carmack
-	if( *(unsigned *)w == 0xDEADC0DE )
-		Host_Error( "free_winding: freed a freed winding\n" );
-	*(unsigned *)w = 0xDEADC0DE;
-	free( w );
+	if ( *(unsigned*)w == 0xDEADC0DE )
+		Host_Error("free_winding: freed a freed winding\n");
+	*(unsigned*)w = 0xDEADC0DE;
+	free(w);
 }
 
-static winding_t *winding_copy( winding_t *w )
+static winding_t* winding_copy(winding_t* w)
 {
-	winding_t	*neww;
+	winding_t* neww;
 
-	neww = winding_alloc( w->numpoints );
-	memcpy( neww, w, offsetof( winding_t, p[w->numpoints] ) );
+	neww = winding_alloc(w->numpoints);
+	memcpy(neww, w, offsetof(winding_t, p[w->numpoints]));
 
 	return neww;
 }
 
-static void winding_reverse( winding_t *w )
+static void winding_reverse(winding_t* w)
 {
-	vec3_t	point;
-	int	i;
+	vec3_t point;
+	int i;
 
-	for( i = 0; i < w->numpoints / 2; i++ )
+	for ( i = 0; i < w->numpoints / 2; i++ )
 	{
-		VectorCopy( w->p[i], point );
-		VectorCopy( w->p[w->numpoints - i - 1], w->p[i] );
-		VectorCopy( point, w->p[w->numpoints - i - 1] );
+		VectorCopy(w->p[i], point);
+		VectorCopy(w->p[w->numpoints - i - 1], w->p[i]);
+		VectorCopy(point, w->p[w->numpoints - i - 1]);
 	}
 }
 
@@ -108,11 +108,11 @@ static void winding_reverse( winding_t *w )
  * Takes an over-allocated winding and allocates a new winding with just the
  * required number of points. The input winding is freed.
  */
-static winding_t *winding_shrink( winding_t *w )
+static winding_t* winding_shrink(winding_t* w)
 {
-	winding_t	*neww = winding_alloc( w->numpoints );
-	memcpy( neww, w, offsetof( winding_t, p[w->numpoints] ));
-	free_winding( w );
+	winding_t* neww = winding_alloc(w->numpoints);
+	memcpy(neww, w, offsetof(winding_t, p[w->numpoints]));
+	free_winding(w);
 
 	return neww;
 }
@@ -122,64 +122,64 @@ static winding_t *winding_shrink( winding_t *w )
 winding_for_plane
 ====================
 */
-static winding_t *winding_for_plane( const mplane_t *p )
+static winding_t* winding_for_plane(const mplane_t* p)
 {
-	vec3_t	org, vright, vup;
-	int	i, axis;
-	vec_t	max, v;
-	winding_t	*w;
+	vec3_t org, vright, vup;
+	int i, axis;
+	vec_t max, v;
+	winding_t* w;
 
 	// find the major axis
 	max = -BOGUS_RANGE;
 	axis = -1;
 
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
-		v = fabs( p->normal[i] );
-		if( v > max )
+		v = fabs(p->normal[i]);
+		if ( v > max )
 		{
 			axis = i;
 			max = v;
 		}
 	}
 
-	VectorClear( vup );
-	switch( axis )
+	VectorClear(vup);
+	switch ( axis )
 	{
-	case 0:
-	case 1:
-		vup[2] = 1;
-		break;
-	case 2:
-		vup[0] = 1;
-		break;
-	default:
-		Host_Error( "BaseWindingForPlane: no axis found\n" );
-		return NULL;
+		case 0:
+		case 1:
+			vup[2] = 1;
+			break;
+		case 2:
+			vup[0] = 1;
+			break;
+		default:
+			Host_Error("BaseWindingForPlane: no axis found\n");
+			return NULL;
 	}
 
-	v = DotProduct( vup, p->normal );
-	VectorMA( vup, -v, p->normal, vup );
-	VectorNormalize( vup );
-	VectorScale( p->normal, p->dist, org );
-	CrossProduct( vup, p->normal, vright );
-	VectorScale( vup, BOGUS_RANGE, vup );
-	VectorScale( vright, BOGUS_RANGE, vright );
+	v = DotProduct(vup, p->normal);
+	VectorMA(vup, -v, p->normal, vup);
+	VectorNormalize(vup);
+	VectorScale(p->normal, p->dist, org);
+	CrossProduct(vup, p->normal, vright);
+	VectorScale(vup, BOGUS_RANGE, vup);
+	VectorScale(vright, BOGUS_RANGE, vright);
 
 	// project a really big axis aligned box onto the plane
-	w = winding_alloc( 4 );
-	memset( w->p, 0, sizeof( vec3_t ) * 4 );
+	w = winding_alloc(4);
+	memset(w->p, 0, sizeof(vec3_t) * 4);
 	w->numpoints = 4;
 	w->plane = p;
 
-	VectorSubtract( org, vright, w->p[0] );
-	VectorAdd( w->p[0], vup, w->p[0] );
-	VectorAdd( org, vright, w->p[1] );
-	VectorAdd( w->p[1], vup, w->p[1] );
-	VectorAdd( org, vright, w->p[2] );
-	VectorSubtract( w->p[2], vup, w->p[2] );
-	VectorSubtract( org, vright, w->p[3] );
-	VectorSubtract( w->p[3], vup, w->p[3] );
+	VectorSubtract(org, vright, w->p[0]);
+	VectorAdd(w->p[0], vup, w->p[0]);
+	VectorAdd(org, vright, w->p[1]);
+	VectorAdd(w->p[1], vup, w->p[1]);
+	VectorAdd(org, vright, w->p[2]);
+	VectorSubtract(w->p[2], vup, w->p[2]);
+	VectorSubtract(org, vright, w->p[3]);
+	VectorSubtract(w->p[3], vup, w->p[3]);
 
 	return w;
 }
@@ -190,56 +190,59 @@ static winding_t *winding_for_plane( const mplane_t *p )
  *  (winding_clip, winding_split)
  * ===========================
  */
-static void CalcSides( const winding_t *in, const mplane_t *split, int *sides, vec_t *dists, int counts[3], vec_t epsilon )
+static void
+CalcSides(const winding_t* in, const mplane_t* split, int* sides, vec_t* dists, int counts[3], vec_t epsilon)
 {
-	const vec_t	*p;
-	int		i;
+	const vec_t* p;
+	int i;
 
 	counts[0] = counts[1] = counts[2] = 0;
 
-	switch( split->type )
+	switch ( split->type )
 	{
-	case PLANE_X:
-	case PLANE_Y:
-	case PLANE_Z:
-		p = in->p[0] + split->type;
-		for( i = 0; i < in->numpoints; i++, p += 3 )
-		{
-			const vec_t dot = *p - split->dist;
+		case PLANE_X:
+		case PLANE_Y:
+		case PLANE_Z:
+			p = in->p[0] + split->type;
+			for ( i = 0; i < in->numpoints; i++, p += 3 )
+			{
+				const vec_t dot = *p - split->dist;
 
-			dists[i] = dot;
-			if( dot > epsilon )
-				sides[i] = SIDE_FRONT;
-			else if( dot < -epsilon )
-				sides[i] = SIDE_BACK;
-			else sides[i] = SIDE_ON;
-			counts[sides[i]]++;
-		}
-		break;
-	default:
-		p = in->p[0];
-		for( i = 0; i < in->numpoints; i++, p += 3 )
-		{
-			const vec_t dot = DotProduct( split->normal, p ) - split->dist;
+				dists[i] = dot;
+				if ( dot > epsilon )
+					sides[i] = SIDE_FRONT;
+				else if ( dot < -epsilon )
+					sides[i] = SIDE_BACK;
+				else
+					sides[i] = SIDE_ON;
+				counts[sides[i]]++;
+			}
+			break;
+		default:
+			p = in->p[0];
+			for ( i = 0; i < in->numpoints; i++, p += 3 )
+			{
+				const vec_t dot = DotProduct(split->normal, p) - split->dist;
 
-			dists[i] = dot;
-			if( dot > epsilon )
-				sides[i] = SIDE_FRONT;
-			else if( dot < -epsilon )
-				sides[i] = SIDE_BACK;
-			else sides[i] = SIDE_ON;
-			counts[sides[i]]++;
-		}
-		break;
+				dists[i] = dot;
+				if ( dot > epsilon )
+					sides[i] = SIDE_FRONT;
+				else if ( dot < -epsilon )
+					sides[i] = SIDE_BACK;
+				else
+					sides[i] = SIDE_ON;
+				counts[sides[i]]++;
+			}
+			break;
 	}
 
 	sides[i] = sides[0];
 	dists[i] = dists[0];
 }
 
-static void PushToPlaneAxis( vec_t *v, const mplane_t *p )
+static void PushToPlaneAxis(vec_t* v, const mplane_t* p)
 {
-	const int	t = p->type % 3;
+	const int t = p->type % 3;
 
 	v[t] = (p->dist - p->normal[(t + 1) % 3] * v[(t + 1) % 3] - p->normal[(t + 2) % 3] * v[(t + 2) % 3]) / p->normal[t];
 }
@@ -254,63 +257,63 @@ If keepon is true, an exactly on-plane winding will be saved, otherwise
   it will be clipped away.
 ==================
 */
-static winding_t *winding_clip( winding_t *in, const mplane_t *split, qboolean keepon, int side, vec_t epsilon )
+static winding_t* winding_clip(winding_t* in, const mplane_t* split, qboolean keepon, int side, vec_t epsilon)
 {
-	vec_t	*dists;
-	int	*sides;
-	int	counts[3];
-	vec_t	dot;
-	int	i, j;
-	winding_t *neww;
-	vec_t	*p1, *p2, *mid;
-	int	maxpts;
+	vec_t* dists;
+	int* sides;
+	int counts[3];
+	vec_t dot;
+	int i, j;
+	winding_t* neww;
+	vec_t *p1, *p2, *mid;
+	int maxpts;
 
-	dists = (vec_t *)malloc(( in->numpoints + 1 ) * sizeof( vec_t ));
-	sides = (int *)malloc(( in->numpoints + 1 ) * sizeof( int ));
-	CalcSides( in, split, sides, dists, counts, epsilon );
+	dists = (vec_t*)malloc((in->numpoints + 1) * sizeof(vec_t));
+	sides = (int*)malloc((in->numpoints + 1) * sizeof(int));
+	CalcSides(in, split, sides, dists, counts, epsilon);
 
-	if( keepon && !counts[SIDE_FRONT] && !counts[SIDE_BACK] )
+	if ( keepon && !counts[SIDE_FRONT] && !counts[SIDE_BACK] )
 	{
 		neww = in;
 		goto out_free;
 	}
 
-	if( !counts[side] )
+	if ( !counts[side] )
 	{
-		free_winding( in );
+		free_winding(in);
 		neww = NULL;
 		goto out_free;
 	}
 
-	if( !counts[side ^ 1] )
+	if ( !counts[side ^ 1] )
 	{
 		neww = in;
 		goto out_free;
 	}
 
 	maxpts = in->numpoints + 4;
-	neww = winding_alloc( maxpts );
+	neww = winding_alloc(maxpts);
 	neww->numpoints = 0;
 	neww->plane = in->plane;
 
-	for( i = 0; i < in->numpoints; i++ )
+	for ( i = 0; i < in->numpoints; i++ )
 	{
 		p1 = in->p[i];
 
-		if( sides[i] == SIDE_ON )
+		if ( sides[i] == SIDE_ON )
 		{
-			VectorCopy( p1, neww->p[neww->numpoints] );
+			VectorCopy(p1, neww->p[neww->numpoints]);
 			neww->numpoints++;
 			continue;
 		}
 
-		if( sides[i] == side )
+		if ( sides[i] == side )
 		{
-			VectorCopy( p1, neww->p[neww->numpoints] );
+			VectorCopy(p1, neww->p[neww->numpoints]);
 			neww->numpoints++;
 		}
 
-		if( sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i] )
+		if ( sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i] )
 			continue;
 
 		// generate a split point
@@ -318,32 +321,33 @@ static winding_t *winding_clip( winding_t *in, const mplane_t *split, qboolean k
 		mid = neww->p[neww->numpoints++];
 
 		dot = dists[i] / (dists[i] - dists[i + 1]);
-		for( j = 0; j < 3; j++ )
+		for ( j = 0; j < 3; j++ )
 		{
 			// avoid round off error when possible
-			if( in->plane->normal[j] == 1.0f )
+			if ( in->plane->normal[j] == 1.0f )
 				mid[j] = in->plane->dist;
-			else if( in->plane->normal[j] == -1.0f )
+			else if ( in->plane->normal[j] == -1.0f )
 				mid[j] = -in->plane->dist;
-			else if( split->normal[j] == 1.0f )
+			else if ( split->normal[j] == 1.0f )
 				mid[j] = split->dist;
-			else if( split->normal[j] == -1.0f )
+			else if ( split->normal[j] == -1.0f )
 				mid[j] = -split->dist;
-			else mid[j] = p1[j] + dot * (p2[j] - p1[j]);
+			else
+				mid[j] = p1[j] + dot * (p2[j] - p1[j]);
 		}
 
-		if( in->plane->type < 3 )
-			PushToPlaneAxis( mid, in->plane );
+		if ( in->plane->type < 3 )
+			PushToPlaneAxis(mid, in->plane);
 	}
 
 	// free the original winding
-	free_winding( in );
+	free_winding(in);
 
 	// Shrink the winding back to just what it needs...
 	neww = winding_shrink(neww);
 out_free:
-	free( dists );
-	free( sides );
+	free(dists);
+	free(sides);
 
 	return neww;
 }
@@ -358,37 +362,37 @@ returned winding will be the input winding.  If on both sides, two
 new windings will be created.
 ==================
 */
-static void winding_split( winding_t *in, const mplane_t *split, winding_t **pfront, winding_t **pback )
+static void winding_split(winding_t* in, const mplane_t* split, winding_t** pfront, winding_t** pback)
 {
-	vec_t	*dists;
-	int	*sides;
-	int	counts[3];
-	vec_t	dot;
-	int	i, j;
-	winding_t	*front, *back;
-	vec_t	*p1, *p2, *mid;
-	int	maxpts;
+	vec_t* dists;
+	int* sides;
+	int counts[3];
+	vec_t dot;
+	int i, j;
+	winding_t *front, *back;
+	vec_t *p1, *p2, *mid;
+	int maxpts;
 
-	dists = (vec_t *)malloc(( in->numpoints + 1 ) * sizeof( vec_t ));
-	sides = (int *)malloc(( in->numpoints + 1 ) * sizeof( int ));
-	CalcSides(in, split, sides, dists, counts, 0.04f );
+	dists = (vec_t*)malloc((in->numpoints + 1) * sizeof(vec_t));
+	sides = (int*)malloc((in->numpoints + 1) * sizeof(int));
+	CalcSides(in, split, sides, dists, counts, 0.04f);
 
-	if( !counts[0] && !counts[1] )
+	if ( !counts[0] && !counts[1] )
 	{
 		// winding on the split plane - return copies on both sides
-		*pfront = winding_copy( in );
-		*pback = winding_copy( in );
+		*pfront = winding_copy(in);
+		*pback = winding_copy(in);
 		goto out_free;
 	}
 
-	if( !counts[0] )
+	if ( !counts[0] )
 	{
 		*pfront = NULL;
 		*pback = in;
 		goto out_free;
 	}
 
-	if( !counts[1] )
+	if ( !counts[1] )
 	{
 		*pfront = in;
 		*pback = NULL;
@@ -396,38 +400,38 @@ static void winding_split( winding_t *in, const mplane_t *split, winding_t **pfr
 	}
 
 	maxpts = in->numpoints + 4;
-	front = winding_alloc( maxpts );
+	front = winding_alloc(maxpts);
 	front->numpoints = 0;
 	front->plane = in->plane;
-	back = winding_alloc( maxpts );
+	back = winding_alloc(maxpts);
 	back->numpoints = 0;
 	back->plane = in->plane;
 
-	for( i = 0; i < in->numpoints; i++ )
+	for ( i = 0; i < in->numpoints; i++ )
 	{
 		p1 = in->p[i];
 
-		if( sides[i] == SIDE_ON )
+		if ( sides[i] == SIDE_ON )
 		{
-			VectorCopy( p1, front->p[front->numpoints] );
-			VectorCopy( p1, back->p[back->numpoints] );
+			VectorCopy(p1, front->p[front->numpoints]);
+			VectorCopy(p1, back->p[back->numpoints]);
 			front->numpoints++;
 			back->numpoints++;
 			continue;
 		}
 
-		if( sides[i] == SIDE_FRONT )
+		if ( sides[i] == SIDE_FRONT )
 		{
-			VectorCopy( p1, front->p[front->numpoints] );
+			VectorCopy(p1, front->p[front->numpoints]);
 			front->numpoints++;
 		}
-		else if( sides[i] == SIDE_BACK )
+		else if ( sides[i] == SIDE_BACK )
 		{
-			VectorCopy( p1, back->p[back->numpoints] );
+			VectorCopy(p1, back->p[back->numpoints]);
 			back->numpoints++;
 		}
 
-		if( sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i] )
+		if ( sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i] )
 			continue;
 
 		// generate a split point
@@ -435,31 +439,32 @@ static void winding_split( winding_t *in, const mplane_t *split, winding_t **pfr
 		mid = front->p[front->numpoints++];
 
 		dot = dists[i] / (dists[i] - dists[i + 1]);
-		for( j = 0; j < 3; j++ )
+		for ( j = 0; j < 3; j++ )
 		{
 			// avoid round off error when possible
-			if( in->plane->normal[j] == 1.0f )
+			if ( in->plane->normal[j] == 1.0f )
 				mid[j] = in->plane->dist;
-			else if( in->plane->normal[j] == -1.0f )
+			else if ( in->plane->normal[j] == -1.0f )
 				mid[j] = -in->plane->dist;
-			else if( split->normal[j] == 1.0f )
+			else if ( split->normal[j] == 1.0f )
 				mid[j] = split->dist;
-			else if( split->normal[j] == -1.0f )
+			else if ( split->normal[j] == -1.0f )
 				mid[j] = -split->dist;
-			else mid[j] = p1[j] + dot * (p2[j] - p1[j]);
+			else
+				mid[j] = p1[j] + dot * (p2[j] - p1[j]);
 		}
 
-		if( in->plane->type < 3 )
-			PushToPlaneAxis( mid, in->plane );
-		VectorCopy( mid, back->p[back->numpoints] );
+		if ( in->plane->type < 3 )
+			PushToPlaneAxis(mid, in->plane);
+		VectorCopy(mid, back->p[back->numpoints]);
 		back->numpoints++;
 	}
 
-	*pfront = winding_shrink( front );
-	*pback = winding_shrink( back );
+	*pfront = winding_shrink(front);
+	*pback = winding_shrink(back);
 out_free:
-	free( dists );
-	free( sides );
+	free(dists);
+	free(sides);
 }
 
 /* ------------------------------------------------------------------------- */
@@ -468,120 +473,122 @@ out_free:
  * This is a stack of the clipnodes we have traversed
  * "sides" indicates which side we went down each time
  */
-static mclipnode_t	*node_stack[MAX_CLIPNODE_DEPTH];
-static int	side_stack[MAX_CLIPNODE_DEPTH];
-static uint	node_stack_depth;
+static mclipnode_t* node_stack[MAX_CLIPNODE_DEPTH];
+static int side_stack[MAX_CLIPNODE_DEPTH];
+static uint node_stack_depth;
 
-static void push_node( mclipnode_t *node, int side )
+static void push_node(mclipnode_t* node, int side)
 {
-	if( node_stack_depth == MAX_CLIPNODE_DEPTH )
-		Host_Error( "node stack overflow\n" );
+	if ( node_stack_depth == MAX_CLIPNODE_DEPTH )
+		Host_Error("node stack overflow\n");
 
 	node_stack[node_stack_depth] = node;
 	side_stack[node_stack_depth] = side;
 	node_stack_depth++;
 }
 
-static void pop_node( void )
+static void pop_node(void)
 {
-	if( !node_stack_depth )
-		Host_Error( "node stack underflow\n" );
+	if ( !node_stack_depth )
+		Host_Error("node stack underflow\n");
 	node_stack_depth--;
 }
 
-static void free_hull_polys( hullnode_t *hull_polys )
+static void free_hull_polys(hullnode_t* hull_polys)
 {
-	winding_t	*w, *next;
+	winding_t *w, *next;
 
-	list_for_each_entry_safe( w, next, hull_polys, chain )
+	list_for_each_entry_safe(w, next, hull_polys, chain)
 	{
-		list_del( &w->chain );
-		free_winding( w );
+		list_del(&w->chain);
+		free_winding(w);
 	}
 }
 
-static void hull_windings_r( hull_t *hull, mclipnode_t *node, hullnode_t *polys, hull_model_t *model );
+static void hull_windings_r(hull_t* hull, mclipnode_t* node, hullnode_t* polys, hull_model_t* model);
 
-static void do_hull_recursion( hull_t *hull, mclipnode_t *node, int side, hullnode_t *polys, hull_model_t *model )
+static void do_hull_recursion(hull_t* hull, mclipnode_t* node, int side, hullnode_t* polys, hull_model_t* model)
 {
-	winding_t	*w, *next;
+	winding_t *w, *next;
 
-	if( node->children[side] >= 0 )
+	if ( node->children[side] >= 0 )
 	{
-		mclipnode_t *child = hull->clipnodes + node->children[side];
-		push_node( node, side );
-		hull_windings_r( hull, child, polys, model );
+		mclipnode_t* child = hull->clipnodes + node->children[side];
+		push_node(node, side);
+		hull_windings_r(hull, child, polys, model);
 		pop_node();
 	}
 	else
 	{
-		switch( node->children[side] )
+		switch ( node->children[side] )
 		{
-		case CONTENTS_EMPTY:
-		case CONTENTS_WATER:
-		case CONTENTS_SLIME:
-		case CONTENTS_LAVA:
-			list_for_each_entry_safe( w, next, polys, chain )
-			{
-				list_del( &w->chain );
-				list_add( &w->chain, &model->polys );
-			}
-			break;
-		case CONTENTS_SOLID:
-		case CONTENTS_SKY:
-			// throw away polys...
-			list_for_each_entry_safe( w, next, polys, chain )
-			{
-				if( w->pair )
-					w->pair->pair = NULL;
-				list_del( &w->chain );
-				free_winding( w );
-				model->num_polys--;
-			}
-			break;
-		default:
-			Host_Error( "bad contents: %i\n", node->children[side] );
-			break;
+			case CONTENTS_EMPTY:
+			case CONTENTS_WATER:
+			case CONTENTS_SLIME:
+			case CONTENTS_LAVA:
+				list_for_each_entry_safe(w, next, polys, chain)
+				{
+					list_del(&w->chain);
+					list_add(&w->chain, &model->polys);
+				}
+				break;
+			case CONTENTS_SOLID:
+			case CONTENTS_SKY:
+				// throw away polys...
+				list_for_each_entry_safe(w, next, polys, chain)
+				{
+					if ( w->pair )
+						w->pair->pair = NULL;
+					list_del(&w->chain);
+					free_winding(w);
+					model->num_polys--;
+				}
+				break;
+			default:
+				Host_Error("bad contents: %i\n", node->children[side]);
+				break;
 		}
 	}
 }
 
-static void hull_windings_r( hull_t *hull, mclipnode_t *node, hullnode_t *polys, hull_model_t *model )
+static void hull_windings_r(hull_t* hull, mclipnode_t* node, hullnode_t* polys, hull_model_t* model)
 {
-	mplane_t		*plane = hull->planes + node->planenum;
-	hullnode_t	frontlist = LIST_HEAD_INIT( frontlist );
-	hullnode_t	backlist = LIST_HEAD_INIT( backlist );
-	winding_t		*w, *next, *front, *back;
-	int	i;
+	mplane_t* plane = hull->planes + node->planenum;
+	hullnode_t frontlist = LIST_HEAD_INIT(frontlist);
+	hullnode_t backlist = LIST_HEAD_INIT(backlist);
+	winding_t *w, *next, *front, *back;
+	int i;
 
-	list_for_each_entry_safe( w, next, polys, chain )
+	list_for_each_entry_safe(w, next, polys, chain)
 	{
 		// PARANIOA - PAIR CHECK
-		ASSERT( !w->pair || w->pair->pair == w );
+		ASSERT(!w->pair || w->pair->pair == w);
 
-		list_del( &w->chain );
-		winding_split( w, plane, &front, &back );
-		if( front ) list_add( &front->chain, &frontlist );
-		if( back ) list_add( &back->chain, &backlist );
+		list_del(&w->chain);
+		winding_split(w, plane, &front, &back);
+		if ( front )
+			list_add(&front->chain, &frontlist);
+		if ( back )
+			list_add(&back->chain, &backlist);
 
-		if( front && back )
+		if ( front && back )
 		{
-			if( w->pair )
+			if ( w->pair )
 			{
 				// split the paired poly, preserve pairing
-				winding_t	*front2, *back2;
+				winding_t *front2, *back2;
 
-				winding_split( w->pair, plane, &front2, &back2 );
+				winding_split(w->pair, plane, &front2, &back2);
 
 				front2->pair = front;
 				front->pair = front2;
 				back2->pair = back;
 				back->pair = back2;
 
-				list_add( &front2->chain, &w->pair->chain );
-				list_add( &back2->chain, &w->pair->chain );
-				list_del( &w->pair->chain );
-				free_winding( w->pair );
+				list_add(&front2->chain, &w->pair->chain);
+				list_add(&back2->chain, &w->pair->chain);
+				list_del(&w->pair->chain);
+				free_winding(w->pair);
 				model->num_polys++;
 			}
 			else
@@ -591,125 +598,125 @@ static void hull_windings_r( hull_t *hull, mclipnode_t *node, hullnode_t *polys,
 			}
 
 			model->num_polys++;
-			free_winding( w );
+			free_winding(w);
 		}
 	}
 
 	w = winding_for_plane(plane);
 
-	for( i = 0; w && i < node_stack_depth; i++ )
+	for ( i = 0; w && i < node_stack_depth; i++ )
 	{
-		mplane_t *p = hull->planes + node_stack[i]->planenum;
-		w = winding_clip( w, p, false, side_stack[i], 0.00001 );
+		mplane_t* p = hull->planes + node_stack[i]->planenum;
+		w = winding_clip(w, p, false, side_stack[i], 0.00001);
 	}
 
-	if( w )
+	if ( w )
 	{
-		winding_t *tmp = winding_copy( w );
-		winding_reverse( tmp );
+		winding_t* tmp = winding_copy(w);
+		winding_reverse(tmp);
 
 		w->pair = tmp;
 		tmp->pair = w;
 
-		list_add( &w->chain, &frontlist );
-		list_add( &tmp->chain, &backlist );
+		list_add(&w->chain, &frontlist);
+		list_add(&tmp->chain, &backlist);
 
 		// PARANIOA - PAIR CHECK
-		ASSERT( !w->pair || w->pair->pair == w );
+		ASSERT(!w->pair || w->pair->pair == w);
 		model->num_polys += 2;
 	}
 	else
 	{
-		Con_Printf( S_WARN "new winding was clipped away!\n" );
+		Con_Printf(S_WARN "new winding was clipped away!\n");
 	}
 
-	do_hull_recursion( hull, node, 0, &frontlist, model );
-	do_hull_recursion( hull, node, 1, &backlist, model );
+	do_hull_recursion(hull, node, 0, &frontlist, model);
+	do_hull_recursion(hull, node, 1, &backlist, model);
 }
 
-static void remove_paired_polys( hull_model_t *model )
+static void remove_paired_polys(hull_model_t* model)
 {
-	winding_t	*w, *next;
+	winding_t *w, *next;
 
-	list_for_each_entry_safe( w, next, &model->polys, chain )
+	list_for_each_entry_safe(w, next, &model->polys, chain)
 	{
-		if( w->pair )
+		if ( w->pair )
 		{
-			list_del( &w->chain );
-			free_winding( w );
+			list_del(&w->chain);
+			free_winding(w);
 			model->num_polys--;
 		}
 	}
 }
 
-static void make_hull_windings( hull_t *hull, hull_model_t *model )
+static void make_hull_windings(hull_t* hull, hull_model_t* model)
 {
-	hullnode_t head = LIST_HEAD_INIT( head );
+	hullnode_t head = LIST_HEAD_INIT(head);
 
-	Con_Reportf( "%i clipnodes...\n", hull->lastclipnode - hull->firstclipnode );
+	Con_Reportf("%i clipnodes...\n", hull->lastclipnode - hull->firstclipnode);
 
 	node_stack_depth = 0;
 	model->num_polys = 0;
 
-	if( hull->planes != NULL )
+	if ( hull->planes != NULL )
 	{
-		hull_windings_r( hull, hull->clipnodes + hull->firstclipnode, &head, model );
-		remove_paired_polys( model );
+		hull_windings_r(hull, hull->clipnodes + hull->firstclipnode, &head, model);
+		remove_paired_polys(model);
 	}
-	Con_Reportf( "%i hull polys\n", model->num_polys );
+	Con_Reportf("%i hull polys\n", model->num_polys);
 }
 
-void Mod_InitDebugHulls( void )
+void Mod_InitDebugHulls(void)
 {
-	int	i;
+	int i;
 
-	world.hull_models = Mem_Calloc( loadmodel->mempool, sizeof( hull_model_t ) * loadmodel->numsubmodels );
+	world.hull_models = Mem_Calloc(loadmodel->mempool, sizeof(hull_model_t) * loadmodel->numsubmodels);
 	world.num_hull_models = loadmodel->numsubmodels;
 
 	// initialize list
-	for( i = 0; i < world.num_hull_models; i++ )
+	for ( i = 0; i < world.num_hull_models; i++ )
 	{
-		hullnode_t *poly = &world.hull_models[i].polys;
+		hullnode_t* poly = &world.hull_models[i].polys;
 		poly->next = poly;
 		poly->prev = poly;
 	}
 }
 
-void Mod_CreatePolygonsForHull( int hullnum )
+void Mod_CreatePolygonsForHull(int hullnum)
 {
-	model_t	*mod = cl.worldmodel;
-	double	start, end;
-	char	name[8];
-	int	i;
+	model_t* mod = cl.worldmodel;
+	double start, end;
+	char name[8];
+	int i;
 
-	if( hullnum < 1 || hullnum > 3 )
+	if ( hullnum < 1 || hullnum > 3 )
 		return;
 
-	Con_Printf( "generating polygons for hull %u...\n", hullnum );
+	Con_Printf("generating polygons for hull %u...\n", hullnum);
 	start = Sys_DoubleTime();
 
 	// rebuild hulls list
-	for( i = 0; i < world.num_hull_models; i++ )
+	for ( i = 0; i < world.num_hull_models; i++ )
 	{
-		hull_model_t *model = &world.hull_models[i];
-		free_hull_polys( &model->polys );
-		make_hull_windings( &mod->hulls[hullnum], model );
-		Q_snprintf( name, sizeof( name ), "*%i", i + 1 );
-		mod = Mod_FindName( name, false );
+		hull_model_t* model = &world.hull_models[i];
+		free_hull_polys(&model->polys);
+		make_hull_windings(&mod->hulls[hullnum], model);
+		Q_snprintf(name, sizeof(name), "*%i", i + 1);
+		mod = Mod_FindName(name, false);
 	}
 	end = Sys_DoubleTime();
-	Con_Printf( "build time %.3f secs\n", end - start );
+	Con_Printf("build time %.3f secs\n", end - start);
 }
 
-void Mod_ReleaseHullPolygons( void )
+void Mod_ReleaseHullPolygons(void)
 {
-	int	i;
+	int i;
 
 	// release ploygons
-	for( i = 0; i < world.num_hull_models; i++ )
+	for ( i = 0; i < world.num_hull_models; i++ )
 	{
-		hull_model_t *model = &world.hull_models[i];
-		free_hull_polys( &model->polys );
+		hull_model_t* model = &world.hull_models[i];
+		free_hull_polys(&model->polys);
 	}
 	world.num_hull_models = 0;
 }

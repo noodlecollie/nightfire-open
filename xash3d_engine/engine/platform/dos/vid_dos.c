@@ -34,26 +34,26 @@ Android_SwapBuffers
 Update screen. Use native EGL if possible
 ========================
 */
-void GL_SwapBuffers( void )
+void GL_SwapBuffers(void)
 {
 }
 
-static void DOS_GetScreenRes( int *x, int *y )
+static void DOS_GetScreenRes(int* x, int* y)
 {
 	*x = 320;
 	*y = 200;
 }
 
-qboolean  R_Init_Video( const int type )
+qboolean R_Init_Video(const int type)
 {
 	qboolean retval;
 
 	VID_StartupGamma();
 
-	if( type != REF_SOFTWARE )
-		return false; /// glide???
+	if ( type != REF_SOFTWARE )
+		return false;  /// glide???
 
-	if( !(retval = VID_SetMode()) )
+	if ( !(retval = VID_SetMode()) )
 	{
 		return retval;
 	}
@@ -63,39 +63,38 @@ qboolean  R_Init_Video( const int type )
 	return true;
 }
 
-void R_Free_Video( void )
+void R_Free_Video(void)
 {
 	// restore text mode
 	union REGS regs;
 	regs.w.ax = 3;
-	int386(0x10,&regs,&regs);
+	int386(0x10, &regs, &regs);
 
 	ref.dllFuncs.GL_ClearExtensions();
 }
 
-
-qboolean VID_SetMode( void )
+qboolean VID_SetMode(void)
 {
-	R_ChangeDisplaySettings( 0, 0, false ); // width and height are ignored anyway
+	R_ChangeDisplaySettings(0, 0, false);  // width and height are ignored anyway
 
 	return true;
 }
 
-rserr_t   R_ChangeDisplaySettings( int width, int height, qboolean fullscreen )
+rserr_t R_ChangeDisplaySettings(int width, int height, qboolean fullscreen)
 {
 	int render_w, render_h;
 	uint rotate = vid_rotate->value;
 
-	DOS_GetScreenRes( &width, &height );
+	DOS_GetScreenRes(&width, &height);
 
 	render_w = width;
 	render_h = height;
 
-	Con_Reportf( "R_ChangeDisplaySettings: forced resolution to %dx%d)\n", width, height );
+	Con_Reportf("R_ChangeDisplaySettings: forced resolution to %dx%d)\n", width, height);
 
-	if( ref.dllFuncs.R_SetDisplayTransform( rotate, 0, 0, vid_scale->value, vid_scale->value ) )
+	if ( ref.dllFuncs.R_SetDisplayTransform(rotate, 0, 0, vid_scale->value, vid_scale->value) )
 	{
-		if( rotate & 1 )
+		if ( rotate & 1 )
 		{
 			int swap = render_w;
 
@@ -108,52 +107,52 @@ rserr_t   R_ChangeDisplaySettings( int width, int height, qboolean fullscreen )
 	}
 	else
 	{
-		Con_Printf( S_WARN "failed to setup screen transform\n" );
+		Con_Printf(S_WARN "failed to setup screen transform\n");
 	}
-	R_SaveVideoMode( width, height, render_w, render_h );
+	R_SaveVideoMode(width, height, render_w, render_h);
 
 	return rserr_ok;
 }
 
-int GL_SetAttribute( int attr, int val )
+int GL_SetAttribute(int attr, int val)
 {
 	return 0;
 }
 
-int GL_GetAttribute( int attr, int *val )
+int GL_GetAttribute(int attr, int* val)
 {
 	return 0;
 }
 
-int R_MaxVideoModes( void )
+int R_MaxVideoModes(void)
 {
 	return 0;
 }
 
-vidmode_t* R_GetVideoMode( int num )
+vidmode_t* R_GetVideoMode(int num)
 {
 	return NULL;
 }
 
-void* GL_GetProcAddress( const char *name ) // RenderAPI requirement
+void* GL_GetProcAddress(const char* name)  // RenderAPI requirement
 {
 	return NULL;
 }
 
 static qboolean vsync;
 
-void GL_UpdateSwapInterval( void )
+void GL_UpdateSwapInterval(void)
 {
 	// disable VSync while level is loading
-	if( cls.state < ca_active )
+	if ( cls.state < ca_active )
 	{
 		// setup vsync here
 		vsync = false;
-		SetBits( gl_vsync->flags, FCVAR_CHANGED );
+		SetBits(gl_vsync->flags, FCVAR_CHANGED);
 	}
-	else if( FBitSet( gl_vsync->flags, FCVAR_CHANGED ))
+	else if ( FBitSet(gl_vsync->flags, FCVAR_CHANGED) )
 	{
-		ClearBits( gl_vsync->flags, FCVAR_CHANGED );
+		ClearBits(gl_vsync->flags, FCVAR_CHANGED);
 		vsync = true;
 	}
 }
@@ -168,120 +167,118 @@ VESA structures
 
 typedef struct RealPointer
 {
-	short			Segment;	//The real mode segment (offset is 0).
-	short			Selector;	//In protected mode, you need to chuck this dude into a segment register and use an offset 0.
+	short Segment;  // The real mode segment (offset is 0).
+	short Selector;  // In protected mode, you need to chuck this dude into a segment register and use an offset 0.
 } RealPointer;
 
 typedef struct VesaInfo
 {
-	char		Signature[4];
-	short		Version;
-	short		OEMNameOffset;
-	short		OEMNameSegment;			//Pointer to OEM name?
-	char		Capabilities[4];
-	short		SupportedModesOffset;
-	short		SupportedModesSegment;		//Pointer to list of supported VESA and OEM modes (terminated with 0xffff).
-	char		Reserved[238];
+	char Signature[4];
+	short Version;
+	short OEMNameOffset;
+	short OEMNameSegment;  // Pointer to OEM name?
+	char Capabilities[4];
+	short SupportedModesOffset;
+	short SupportedModesSegment;  // Pointer to list of supported VESA and OEM modes (terminated with 0xffff).
+	char Reserved[238];
 } VesaInfo;
 
 typedef struct VesaModeData
 {
-	short		ModeAttributes;
-	char		WindowAAttributes;
-	char		WindowBAttributes;
-	short		WindowGranularity;
-	short		WindowSize;
-	short		StartSegmentWindowA;
-	short		StartSegmentWindowB;
-	void		(*WindowPositioningFunction)(int page);
-	short		BytesPerScanLine;
+	short ModeAttributes;
+	char WindowAAttributes;
+	char WindowBAttributes;
+	short WindowGranularity;
+	short WindowSize;
+	short StartSegmentWindowA;
+	short StartSegmentWindowB;
+	void (*WindowPositioningFunction)(int page);
+	short BytesPerScanLine;
 
-	//Remainder of this structure is optional for VESA modes in v1.0/1.1, needed for OEM modes.
+	// Remainder of this structure is optional for VESA modes in v1.0/1.1, needed for OEM modes.
 
-	short		PixelWidth;
-	short		PixelHeight;
-	char		CharacterCellPixelWidth;
-	char		CharacterCellPixelHeight;
-	char		NumberOfMemoryPlanes;
-	char		BitsPerPixel;
-	char		NumberOfBanks;
-	char		MemoryModelType;
-	char		SizeOfBank;
-	char		NumberOfImagePages;
-	char		Reserved1;
+	short PixelWidth;
+	short PixelHeight;
+	char CharacterCellPixelWidth;
+	char CharacterCellPixelHeight;
+	char NumberOfMemoryPlanes;
+	char BitsPerPixel;
+	char NumberOfBanks;
+	char MemoryModelType;
+	char SizeOfBank;
+	char NumberOfImagePages;
+	char Reserved1;
 
-	//VBE v1.2+
+	// VBE v1.2+
 
-	char		RedMaskSize;
-	char		RedFieldPosition;
-	char		GreenMaskSize;
-	char		GreenFieldPosition;
-	char		BlueMaskSize;
-	char		BlueFieldPosition;
-	char		ReservedMaskSize;
-	char		ReservedFieldPosition;
-	char		DirectColourModeInfo;
-	char		Reserved2[216];
+	char RedMaskSize;
+	char RedFieldPosition;
+	char GreenMaskSize;
+	char GreenFieldPosition;
+	char BlueMaskSize;
+	char BlueFieldPosition;
+	char ReservedMaskSize;
+	char ReservedFieldPosition;
+	char DirectColourModeInfo;
+	char Reserved2[216];
 } VesaModeData;
 
 typedef struct RMREGS
 {
-	int		edi;
-	int		esi;
-	int		ebp;
-	int		reserved;
-	int		ebx;
-	int		edx;
-	int		ecx;
-	int		eax;
-	short		flags;
-	short		es,ds,fs,gs,ip,cs,sp,ss;
+	int edi;
+	int esi;
+	int ebp;
+	int reserved;
+	int ebx;
+	int edx;
+	int ecx;
+	int eax;
+	short flags;
+	short es, ds, fs, gs, ip, cs, sp, ss;
 } RMREGS;
 
-static VesaInfo	far	*vesa_info		= NULL;
-static VesaModeData	far	*vesa_mode_data		= NULL;
-static int			vesa_granularity;
-static int			vesa_page;
-static int			vesa_width;
-static int			vesa_height;
-static int			vesa_bits_per_pixel;
+static VesaInfo far* vesa_info = NULL;
+static VesaModeData far* vesa_mode_data = NULL;
+static int vesa_granularity;
+static int vesa_page;
+static int vesa_width;
+static int vesa_height;
+static int vesa_bits_per_pixel;
 
-static RealPointer				vesa_info_rp;
-static RealPointer				vesa_mode_data_rp;
+static RealPointer vesa_info_rp;
+static RealPointer vesa_mode_data_rp;
 
-
-static void far *allocate_dos_memory( RealPointer * rp,int bytes_to_allocate )
+static void far* allocate_dos_memory(RealPointer* rp, int bytes_to_allocate)
 {
-	void	far	*ptr	= NULL;
-	union	REGS		regs;
+	void far* ptr = NULL;
+	union REGS regs;
 
-	bytes_to_allocate = ((bytes_to_allocate + 15) & 0xfffffff0);	//Round up to nearest paragraph.
-	memset(&regs,0,sizeof(regs));
+	bytes_to_allocate = ((bytes_to_allocate + 15) & 0xfffffff0);  // Round up to nearest paragraph.
+	memset(&regs, 0, sizeof(regs));
 	regs.w.ax = 0x100;
-	regs.w.bx = (short)(bytes_to_allocate >> 4);		//Allocate dos memory in pages, so convert bytes to pages.
-	int386(0x31,&regs,&regs);
-	if(regs.x.cflag == 0)
-	{	//Everything OK.
+	regs.w.bx = (short)(bytes_to_allocate >> 4);  // Allocate dos memory in pages, so convert bytes to pages.
+	int386(0x31, &regs, &regs);
+	if ( regs.x.cflag == 0 )
+	{  // Everything OK.
 		rp->Segment = regs.w.ax;
 		rp->Selector = regs.w.dx;
-		ptr = MK_FP(regs.w.dx,0);
+		ptr = MK_FP(regs.w.dx, 0);
 	}
-	return(ptr);
+	return (ptr);
 }
 
 /****************************************************************************/
 /* Free an area of DOS memory.												*/
 /****************************************************************************/
 
-static void free_dos_memory( RealPointer * rp )
+static void free_dos_memory(RealPointer* rp)
 {
-	union	REGS		regs;
+	union REGS regs;
 
 	regs.w.ax = 0x101;
 	regs.w.dx = rp->Selector;
-	int386(0x31,&regs,&regs);
+	int386(0x31, &regs, &regs);
 }
-
 
 /****************************************************************************/
 /* Get information about the VESA driver.					*/
@@ -293,41 +290,42 @@ static void free_dos_memory( RealPointer * rp )
 /*										*/
 /****************************************************************************/
 
-static int vesa_get_info( void )
+static int vesa_get_info(void)
 {
-    union		REGS	regs;
-    struct		SREGS	sregs;
-    RMREGS	rmregs;
-    int ok = 0;
+	union REGS regs;
+	struct SREGS sregs;
+	RMREGS rmregs;
+	int ok = 0;
 
-    if((vesa_info = (VesaInfo far *)allocate_dos_memory(&vesa_info_rp,sizeof(VesaInfo))) != NULL)
-    {
-	memset(&rmregs,0,sizeof(rmregs));
-	memset(&regs,0,sizeof(regs));
-	memset(&sregs,0,sizeof(sregs));
-	segread(&sregs);
-	rmregs.eax = 0x4f00;
-	rmregs.es = vesa_info_rp.Segment;
-	rmregs.ds = vesa_info_rp.Segment;
-	regs.x.eax = 0x300;
-	regs.x.ebx = 0x10;
-	regs.x.ecx = 0;
-	sregs.es = FP_SEG(&rmregs);
-	regs.x.edi = FP_OFF(&rmregs);
-	int386x(0x31,&regs,&regs,&sregs);	//Get vesa info.
+	if ( (vesa_info = (VesaInfo far*)allocate_dos_memory(&vesa_info_rp, sizeof(VesaInfo))) != NULL )
+	{
+		memset(&rmregs, 0, sizeof(rmregs));
+		memset(&regs, 0, sizeof(regs));
+		memset(&sregs, 0, sizeof(sregs));
+		segread(&sregs);
+		rmregs.eax = 0x4f00;
+		rmregs.es = vesa_info_rp.Segment;
+		rmregs.ds = vesa_info_rp.Segment;
+		regs.x.eax = 0x300;
+		regs.x.ebx = 0x10;
+		regs.x.ecx = 0;
+		sregs.es = FP_SEG(&rmregs);
+		regs.x.edi = FP_OFF(&rmregs);
+		int386x(0x31, &regs, &regs, &sregs);  // Get vesa info.
 
-	if(rmregs.eax == 0x4f) ok=1;
-    }
-    return(ok);
+		if ( rmregs.eax == 0x4f )
+			ok = 1;
+	}
+	return (ok);
 }
 
 /****************************************************************************/
 /* Free the information allocated with vesa_get_info()						*/
 /****************************************************************************/
 
-static int vesa_free_info( void )
+static int vesa_free_info(void)
 {
-	free_dos_memory( &vesa_info_rp );
+	free_dos_memory(&vesa_info_rp);
 }
 
 /****************************************************************************/
@@ -345,41 +343,40 @@ static int vesa_free_info( void )
 /*																			*/
 /****************************************************************************/
 
-static int vesa_get_mode_info( short vmode )
+static int vesa_get_mode_info(short vmode)
 {
-	union	REGS	regs;
-	struct	SREGS	sregs;
-	RMREGS			rmregs;
-	int ok=0;
+	union REGS regs;
+	struct SREGS sregs;
+	RMREGS rmregs;
+	int ok = 0;
 
-	if((vesa_mode_data = (VesaModeData far *)allocate_dos_memory(&vesa_mode_data_rp,sizeof(VesaModeData))) != NULL)
+	if ( (vesa_mode_data = (VesaModeData far*)allocate_dos_memory(&vesa_mode_data_rp, sizeof(VesaModeData))) != NULL )
 	{
-		memset(&rmregs,0,sizeof(rmregs));
+		memset(&rmregs, 0, sizeof(rmregs));
 		rmregs.es = vesa_mode_data_rp.Segment;
 		rmregs.ds = vesa_mode_data_rp.Segment;
 		rmregs.edi = 0;
 		rmregs.eax = 0x4f01;
 		rmregs.ecx = vmode;
-		memset(&regs,0,sizeof(regs));
-		memset(&sregs,0,sizeof(sregs));
+		memset(&regs, 0, sizeof(regs));
+		memset(&sregs, 0, sizeof(sregs));
 		segread(&sregs);
 		regs.x.eax = 0x300;
 		regs.x.ebx = 0x10;
 		regs.x.edi = (int)&rmregs;
-		int386x(0x31,&regs,&regs,&sregs);
-		if(regs.h.al == 0)
+		int386x(0x31, &regs, &regs, &sregs);
+		if ( regs.h.al == 0 )
 		{
+			// cache a few important items in protected mode memory area.
 
-			//cache a few important items in protected mode memory area.
-
-			vesa_granularity	= vesa_mode_data->WindowGranularity;
-			vesa_width			= vesa_mode_data->PixelWidth;
-			vesa_height			= vesa_mode_data->PixelHeight;
-			vesa_bits_per_pixel	= vesa_mode_data->BitsPerPixel;
+			vesa_granularity = vesa_mode_data->WindowGranularity;
+			vesa_width = vesa_mode_data->PixelWidth;
+			vesa_height = vesa_mode_data->PixelHeight;
+			vesa_bits_per_pixel = vesa_mode_data->BitsPerPixel;
 			ok = 1;
 		}
 	}
-	return(ok);
+	return (ok);
 }
 
 /****************************************************************************/
@@ -390,21 +387,21 @@ static int vesa_get_mode_info( short vmode )
 /*																			*/
 /****************************************************************************/
 
-static void vesa_set_page( int vpage )
+static void vesa_set_page(int vpage)
 {
-	union	REGS	regs;
+	union REGS regs;
 
 	vesa_page = vpage;
 	regs.w.ax = 0x4f05;
 	regs.w.bx = 0;
 	regs.w.cx = 0;
 	regs.w.dx = (short)(vpage == 0 ? 0 : (short)((vpage * 64) / vesa_granularity));
-	int386(0x10,&regs,&regs);
+	int386(0x10, &regs, &regs);
 	regs.w.ax = 0x4f05;
 	regs.w.bx = 1;
 	regs.w.cx = 0;
 	regs.w.dx = (short)(vpage == 0 ? 0 : (short)((vpage * 64) / vesa_granularity));
-	int386(0x10,&regs,&regs);
+	int386(0x10, &regs, &regs);
 }
 
 /****************************************************************************/
@@ -420,94 +417,94 @@ static void vesa_set_page( int vpage )
 /*																			*/
 /****************************************************************************/
 
-int vesa_set_mode( short vmode )
+int vesa_set_mode(short vmode)
 {
-	union	REGS	regs;
-	int ok=0;
+	union REGS regs;
+	int ok = 0;
 
-	memset(&regs,0,sizeof(regs));
+	memset(&regs, 0, sizeof(regs));
 	regs.w.ax = 0x4f02;
 	regs.w.bx = vmode;
-	int386(0x10,&regs,&regs);
-	if(regs.w.ax == 0x004f)
+	int386(0x10, &regs, &regs);
+	if ( regs.w.ax == 0x004f )
 	{
 		vesa_get_mode_info(vmode);
-		vesa_set_page(0);			//Probably not needed, but here for completeness.
+		vesa_set_page(0);  // Probably not needed, but here for completeness.
 		ok = 1;
 	}
-	return(ok);
+	return (ok);
 }
 
 /****************************************************************************/
 /* Free the info previously allocated with vesa_get_info()					*/
 /****************************************************************************/
 
-void vesa_free_mode_info( void )
+void vesa_free_mode_info(void)
 {
 	free_dos_memory(&vesa_mode_data_rp);
 }
 
-void init_13h( void )
+void init_13h(void)
 {
 	int r, g, b;
-	union	REGS	regs;
+	union REGS regs;
 
 	// set 13h vga mode
-	memset(&regs,0,sizeof(regs));
+	memset(&regs, 0, sizeof(regs));
 	regs.w.ax = 0x13;
-	int386(0x10,&regs,&regs);
+	int386(0x10, &regs, &regs);
 
 	// set 332 palette
 	outp(0x3c8, 0);
-	for (r=0; r<8; r++)
-		for (b=0; b<4; b++)
-			for (g=0; g<8; g++)
+	for ( r = 0; r < 8; r++ )
+		for ( b = 0; b < 4; b++ )
+			for ( g = 0; g < 8; g++ )
 			{
-				outp(0x3c9, (b<<4)+8);
-				outp(0x3c9, (g<<3)+4);
-				outp(0x3c9, (r<<3)+4);
+				outp(0x3c9, (b << 4) + 8);
+				outp(0x3c9, (g << 3) + 4);
+				outp(0x3c9, (r << 3) + 4);
 			}
 }
 
-
-
 void waitvbl()
 {
-    while (!(inp (0x3da) & 8)) {}
-    while (inp (0x3da) & 8) {}
+	while ( !(inp(0x3da) & 8) )
+	{
+	}
+	while ( inp(0x3da) & 8 )
+	{
+	}
 }
 
+static byte* fb;
 
-static byte *fb;
-
-void *SW_LockBuffer( void )
+void* SW_LockBuffer(void)
 {
 	return fb;
 }
 
-void SW_UnlockBuffer( void )
+void SW_UnlockBuffer(void)
 {
-
-	int left = 320*200*2;
+	int left = 320 * 200 * 2;
 	int done = 0;
 	int vpage = 0;
 
-	if( vsync )
+	if ( vsync )
 		waitvbl();
 
 	// no separate fb
-	if( fb == 0xa0000 )
-	    return;
+	if ( fb == 0xa0000 )
+		return;
 
-	while( left )
+	while ( left )
 	{
 		int flip = left;
 
-		if( flip > 65536 )
+		if ( flip > 65536 )
 			flip = 65536;
 
 		vesa_set_page(vpage);
-		memcpy((void *)0xa0000, fb+done, flip);
+		memcpy((void*)0xa0000, fb + done, flip);
 
 		done += flip;
 		left -= flip;
@@ -517,7 +514,7 @@ void SW_UnlockBuffer( void )
 
 #define FB_BF_TO_MASK(x) (((1 << x.length) - 1) << (x.offset))
 
-qboolean SW_CreateBuffer( int width, int height, uint *stride, uint *bpp, uint *r, uint *g, uint *b )
+qboolean SW_CreateBuffer(int width, int height, uint* stride, uint* bpp, uint* r, uint* g, uint* b)
 {
 	int i;
 
@@ -525,9 +522,9 @@ qboolean SW_CreateBuffer( int width, int height, uint *stride, uint *bpp, uint *
 
 	vesa_get_info();
 
-	if( !Sys_CheckParm("-novesa") && vesa_set_mode( 0x10E ) )
+	if ( !Sys_CheckParm("-novesa") && vesa_set_mode(0x10E) )
 	{
-		fb = malloc( 320*200*2 );
+		fb = malloc(320 * 200 * 2);
 		*bpp = 2;
 		*b = 31;
 		*g = 63 << 5;

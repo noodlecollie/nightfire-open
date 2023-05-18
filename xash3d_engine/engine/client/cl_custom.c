@@ -17,83 +17,84 @@ GNU General Public License for more details.
 #include "client.h"
 #include "net_encode.h"
 
-qboolean CL_CheckFile( sizebuf_t *msg, resource_t *pResource )
+qboolean CL_CheckFile(sizebuf_t* msg, resource_t* pResource)
 {
-	char	filepath[MAX_QPATH];
+	char filepath[MAX_QPATH];
 
-	switch( pResource->type )
+	switch ( pResource->type )
 	{
-	case t_sound:
-	case t_model:
-		// built-in resources not needs to be downloaded
-		if( pResource->szFileName[0] == '*' )
-			return true;
-		break;
+		case t_sound:
+		case t_model:
+			// built-in resources not needs to be downloaded
+			if ( pResource->szFileName[0] == '*' )
+				return true;
+			break;
 	}
 
 	// resource was missed on server
-	if( pResource->nDownloadSize == -1 )
+	if ( pResource->nDownloadSize == -1 )
 	{
-		ClearBits( pResource->ucFlags, RES_FATALIFMISSING );
+		ClearBits(pResource->ucFlags, RES_FATALIFMISSING);
 		return true;
 	}
 
-	if( pResource->type == t_sound )
-		Q_snprintf( filepath, sizeof( filepath ), DEFAULT_SOUNDPATH "%s", pResource->szFileName );
-	else Q_strncpy( filepath, pResource->szFileName, sizeof( filepath ));
+	if ( pResource->type == t_sound )
+		Q_snprintf(filepath, sizeof(filepath), DEFAULT_SOUNDPATH "%s", pResource->szFileName);
+	else
+		Q_strncpy(filepath, pResource->szFileName, sizeof(filepath));
 
-	if( !COM_IsSafeFileToDownload( filepath ))
+	if ( !COM_IsSafeFileToDownload(filepath) )
 	{
-		Con_Reportf( "refusing to download %s\n", filepath );
+		Con_Reportf("refusing to download %s\n", filepath);
 		return true;
 	}
 
-	if( !cl_allow_download.value )
+	if ( !cl_allow_download.value )
 	{
-		Con_Reportf( "Download refused, cl_allow_download is 0\n" );
+		Con_Reportf("Download refused, cl_allow_download is 0\n");
 		return true;
 	}
 
-	if( cls.state == ca_active && !cl_download_ingame.value )
+	if ( cls.state == ca_active && !cl_download_ingame.value )
 	{
-		Con_Reportf( "In-game download refused...\n" );
+		Con_Reportf("In-game download refused...\n");
 		return true;
 	}
 
 	// don't request downloads from local client it's silly
-	if( Host_IsLocalClient() || FS_FileExists( filepath, false ))
+	if ( Host_IsLocalClient() || FS_FileExists(filepath, false) )
 		return true;
 
-	if( cls.demoplayback )
+	if ( cls.demoplayback )
 	{
-		Con_Reportf( S_WARN "file %s missing during demo playback.\n", filepath );
+		Con_Reportf(S_WARN "file %s missing during demo playback.\n", filepath);
 		return true;
 	}
 
-	if( cl.downloadUrl[0] )
+	if ( cl.downloadUrl[0] )
 	{
-		HTTP_AddDownload( filepath, pResource->nDownloadSize, true );
+		HTTP_AddDownload(filepath, pResource->nDownloadSize, true);
 		host.downloadcount++;
 		return false;
 	}
 
-	MSG_BeginClientCmd( msg, clc_stringcmd );
-	MSG_WriteStringf( msg, "dlfile %s", filepath );
+	MSG_BeginClientCmd(msg, clc_stringcmd);
+	MSG_WriteStringf(msg, "dlfile %s", filepath);
 	host.downloadcount++;
 
 	return false;
 }
 
-void CL_AddToResourceList( resource_t *pResource, resource_t *pList )
+void CL_AddToResourceList(resource_t* pResource, resource_t* pList)
 {
-	if( pResource->pPrev != NULL || pResource->pNext != NULL )
+	if ( pResource->pPrev != NULL || pResource->pNext != NULL )
 	{
-		Con_Reportf( S_ERROR "Resource already linked\n" );
+		Con_Reportf(S_ERROR "Resource already linked\n");
 		return;
 	}
 
-	if( pList->pPrev == NULL || pList->pNext == NULL )
-		Host_Error( "Resource list corrupted.\n" );
+	if ( pList->pPrev == NULL || pList->pNext == NULL )
+		Host_Error("Resource list corrupted.\n");
 
 	pResource->pPrev = pList->pPrev;
 	pResource->pNext = pList;
@@ -101,13 +102,13 @@ void CL_AddToResourceList( resource_t *pResource, resource_t *pList )
 	pList->pPrev = pResource;
 }
 
-void CL_RemoveFromResourceList( resource_t *pResource )
+void CL_RemoveFromResourceList(resource_t* pResource)
 {
-	if( pResource->pPrev == NULL || pResource->pNext == NULL )
-		Host_Error( "mislinked resource in CL_RemoveFromResourceList\n" );
+	if ( pResource->pPrev == NULL || pResource->pNext == NULL )
+		Host_Error("mislinked resource in CL_RemoveFromResourceList\n");
 
-	if( pResource->pNext == pResource || pResource->pPrev == pResource )
-		Host_Error( "attempt to free last entry in list.\n" );
+	if ( pResource->pNext == pResource || pResource->pPrev == pResource )
+		Host_Error("attempt to free last entry in list.\n");
 
 	pResource->pPrev->pNext = pResource->pNext;
 	pResource->pNext->pPrev = pResource->pPrev;
@@ -115,36 +116,36 @@ void CL_RemoveFromResourceList( resource_t *pResource )
 	pResource->pNext = NULL;
 }
 
-void CL_MoveToOnHandList( resource_t *pResource )
+void CL_MoveToOnHandList(resource_t* pResource)
 {
-	if( !pResource )
+	if ( !pResource )
 	{
-		Con_Reportf( "Null resource passed to CL_MoveToOnHandList\n" );
+		Con_Reportf("Null resource passed to CL_MoveToOnHandList\n");
 		return;
 	}
 
-	CL_RemoveFromResourceList( pResource );
-	CL_AddToResourceList( pResource, &cl.resourcesonhand );
+	CL_RemoveFromResourceList(pResource);
+	CL_AddToResourceList(pResource, &cl.resourcesonhand);
 }
 
-void CL_ClearResourceList( resource_t *pList )
+void CL_ClearResourceList(resource_t* pList)
 {
-	resource_t	*p, *n;
+	resource_t *p, *n;
 
-	for( p = pList->pNext; p != pList && p; p = n )
+	for ( p = pList->pNext; p != pList && p; p = n )
 	{
 		n = p->pNext;
 
-		CL_RemoveFromResourceList( p );
-		Mem_Free( p );
+		CL_RemoveFromResourceList(p);
+		Mem_Free(p);
 	}
 
 	pList->pPrev = pList;
 	pList->pNext = pList;
 }
 
-void CL_ClearResourceLists( void )
+void CL_ClearResourceLists(void)
 {
-	CL_ClearResourceList( &cl.resourcesneeded );
-	CL_ClearResourceList( &cl.resourcesonhand );
+	CL_ClearResourceList(&cl.resourcesneeded);
+	CL_ClearResourceList(&cl.resourcesonhand);
 }

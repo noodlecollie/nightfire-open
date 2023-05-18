@@ -20,9 +20,9 @@ GNU General Public License for more details.
 #include "server.h"
 #include "platform/apple/ios_lib.h"
 
-static void *IOS_LoadLibraryInternal( const char *dllname )
+static void* IOS_LoadLibraryInternal(const char* dllname)
 {
-	void *pHandle;
+	void* pHandle;
 	string errorstring = "";
 	char path[MAX_SYSPATH];
 
@@ -31,41 +31,41 @@ static void *IOS_LoadLibraryInternal( const char *dllname )
 	// Useful for debug to prevent rebuilding app on every library update
 	// NOTE: Apple polices forbids loading code from shared places
 #ifdef ENABLE_FRAMEWORK_SIDELOAD
-	Q_snprintf( path, MAX_SYSPATH, "%s.framework/lib", dllname );
-	if( pHandle = dlopen( path, RTLD_LAZY ) )
+	Q_snprintf(path, MAX_SYSPATH, "%s.framework/lib", dllname);
+	if ( pHandle = dlopen(path, RTLD_LAZY) )
 		return pHandle;
-	Q_snprintf( errorstring, MAX_STRING, dlerror() );
+	Q_snprintf(errorstring, MAX_STRING, dlerror());
 #endif
 
 #ifdef DLOPEN_FRAMEWORKS
 	// load frameworks as it should be located in Xcode builds
-	Q_snprintf( path, MAX_SYSPATH, "%s%s.framework/lib", SDL_GetBasePath(), dllname );
+	Q_snprintf(path, MAX_SYSPATH, "%s%s.framework/lib", SDL_GetBasePath(), dllname);
 #else
 	// load libraries from app root to allow re-signing ipa with custom utilities
-	Q_snprintf( path, MAX_SYSPATH, "%s%s", SDL_GetBasePath(), dllname );
+	Q_snprintf(path, MAX_SYSPATH, "%s%s", SDL_GetBasePath(), dllname);
 #endif
-	pHandle = dlopen( path, RTLD_LAZY );
-	if( !pHandle )
+	pHandle = dlopen(path, RTLD_LAZY);
+	if ( !pHandle )
 	{
 		COM_PushLibraryError(errorstring);
 		COM_PushLibraryError(dlerror());
 	}
 	return pHandle;
 }
-extern char *g_szLibrarySuffix;
-static void *IOS_LoadLibrary( const char *dllname )
+extern char* g_szLibrarySuffix;
+static void* IOS_LoadLibrary(const char* dllname)
 {
-
 	string name;
-	char *postfix = g_szLibrarySuffix;
-	char *pHandle;
+	char* postfix = g_szLibrarySuffix;
+	char* pHandle;
 
-	if( !postfix ) postfix = GI->gamefolder;
+	if ( !postfix )
+		postfix = GI->gamefolder;
 
-	Q_snprintf( name, MAX_STRING, "%s_%s", dllname, postfix );
-	pHandle = IOS_LoadLibraryInternal( name );
-	if( pHandle )
+	Q_snprintf(name, MAX_STRING, "%s_%s", dllname, postfix);
+	pHandle = IOS_LoadLibraryInternal(name);
+	if ( pHandle )
 		return pHandle;
-	return IOS_LoadLibraryInternal( dllname );
+	return IOS_LoadLibraryInternal(dllname);
 }
-#endif // TARGET_OS_IPHONE
+#endif  // TARGET_OS_IPHONE

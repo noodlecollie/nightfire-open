@@ -16,26 +16,26 @@ GNU General Public License for more details.
 #pragma once
 #ifndef KEYWRAPPER_H
 #define KEYWRAPPER_H
-#ifdef  XASH_SDL
+#ifdef XASH_SDL
 
 #include "platform/platform.h"
 
 // window management
-void VID_RestoreScreenResolution( void );
-qboolean  VID_CreateWindow( int width, int height, qboolean fullscreen );
-void      VID_DestroyWindow( void );
-void GL_InitExtensions( void );
-qboolean GL_DeleteContext( void );
-void VID_SaveWindowSize( int width, int height );
+void VID_RestoreScreenResolution(void);
+qboolean VID_CreateWindow(int width, int height, qboolean fullscreen);
+void VID_DestroyWindow(void);
+void GL_InitExtensions(void);
+qboolean GL_DeleteContext(void);
+void VID_SaveWindowSize(int width, int height);
 
 // joystick events
-extern SDL_Joystick *g_joy;
+extern SDL_Joystick* g_joy;
 
 //
 // in_sdl.c
 //
-void SDLash_InitCursors( void );
-void SDLash_FreeCursors( void );
+void SDLash_InitCursors(void);
+void SDLash_FreeCursors(void);
 
-#endif // XASH_SDL
-#endif // KEYWRAPPER_H
+#endif  // XASH_SDL
+#endif  // KEYWRAPPER_H

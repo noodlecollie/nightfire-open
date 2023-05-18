@@ -2,10 +2,7 @@
 #include "textureproperties.h"
 
 #define LIST_ITEM(enum, str) str,
-static const char* const SurfacePropertyStrings[SurfaceProp__Count] =
-{
-	SURFACEPROP_ENTRY_LIST
-};
+static const char* const SurfacePropertyStrings[SurfaceProp__Count] = {SURFACEPROP_ENTRY_LIST};
 #undef LIST_ITEM
 
 // Linear, but the number of surface types is low anyway so it *shouldn't* matter.
@@ -42,7 +39,7 @@ qboolean TextureProperties_Parse(texture_t* texture, const char* key, const char
 		return false;
 	}
 
-	if ( Q_strcmp( key, TEXTURE_PROPERTY_SURFACEPROP ) == 0 )
+	if ( Q_strcmp(key, TEXTURE_PROPERTY_SURFACEPROP) == 0 )
 	{
 		return ParseSurfaceProperty(texture, value);
 	}

@@ -28,12 +28,12 @@ GNU General Public License for more details.
 #include "string.h"
 
 #ifndef XASH_DEFAULT_SWAP_PATH
-#define XASH_DEFAULT_SWAP_PATH  "/tmp/xash3d-swap"
+#define XASH_DEFAULT_SWAP_PATH "/tmp/xash3d-swap"
 #endif
 #define PAGE_SIZE 4096
 static struct sbrk_state_s
 {
-	void *top;
+	void* top;
 	int fd;
 	size_t size;
 	size_t prealloc;
@@ -42,63 +42,64 @@ static struct sbrk_state_s
 
 static void SWAP_Initialize(void)
 {
-	char *path;
-	char *prealloc = getenv("SWAP_SIZE");
+	char* path;
+	char* prealloc = getenv("SWAP_SIZE");
 	int fd;
 
-	if( s.top )
+	if ( s.top )
 		return;
 
 	path = getenv("SWAP_PATH");
-	if( !path )
+	if ( !path )
 		path = XASH_DEFAULT_SWAP_PATH;
-	fd = open( path, O_CREAT|O_RDWR, 0600 );
+	fd = open(path, O_CREAT | O_RDWR, 0600);
 
-	if( prealloc ) s.prealloc = atoi(prealloc);
-	else s.prealloc = 128*1024*1024;
+	if ( prealloc )
+		s.prealloc = atoi(prealloc);
+	else
+		s.prealloc = 128 * 1024 * 1024;
 	s.prealloc &= ~(PAGE_SIZE - 1);
 
 	s.fd = fd;
-	ftruncate( fd, s.prealloc );
-	s.top = mmap( 0, s.prealloc, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0 );
+	ftruncate(fd, s.prealloc);
+	s.top = mmap(0, s.prealloc, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
 	// space will be freed on exit
-	//unlink(path);
+	// unlink(path);
 }
 
-void *SWAP_Sbrk(size_t size)
+void* SWAP_Sbrk(size_t size)
 {
 	char buf[64];
 	SWAP_Initialize();
 
-	if( size == 0 )
+	if ( size == 0 )
 		return s.top;
-	else if( size > 0 )
+	else if ( size > 0 )
 	{
-		void *res;
+		void* res;
 
-		//write(1, buf, snprintf(buf, 32, "allocating %d\n", size) );
+		// write(1, buf, snprintf(buf, 32, "allocating %d\n", size) );
 		res = s.top;
 		s.size += size;
 		s.top = res + size;
-		if( s.size + size > s.prealloc )
+		if ( s.size + size > s.prealloc )
 			return (void*)-1;
 
-		memset( res, 0, size );
+		memset(res, 0, size);
 		return res;
-
 	}
 	else
 	{
-		void *res = s.top;
+		void* res = s.top;
 
-		if( -size > s.size )
+		if ( -size > s.size )
 			res = (void*)-1;
 		else
 		{
 			s.top += size;
 			s.size += size;
-			//write(1, buf, snprintf(buf, 32, "freed %d\n", -size) );
+			// write(1, buf, snprintf(buf, 32, "freed %d\n", -size) );
 		}
 
 		return res;

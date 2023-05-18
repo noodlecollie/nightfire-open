@@ -30,10 +30,16 @@ static size_t currentIndentSize = 0;
 #define FMT_SIZE_T "%u"
 #endif
 
-#define ARRCOUNT(_arr, _type) (sizeof(_arr)/sizeof(_type))
+#define ARRCOUNT(_arr, _type) (sizeof(_arr) / sizeof(_type))
 #define WRITEL(_msg) FS_Printf(outFile, "%s" _msg "\n", currentIndent)
 #define WRITELF(_msg, ...) FS_Printf(outFile, "%s" _msg "\n", currentIndent, __VA_ARGS__)
-#define CHECK_FLAG(_val, _flag, _func) { if ( (_val) & (_flag) ){ _func; } }
+#define CHECK_FLAG(_val, _flag, _func) \
+	{ \
+		if ( (_val) & (_flag) ) \
+		{ \
+			_func; \
+		} \
+	}
 
 #define FMT_VEC3 "(%f %f %f)"
 #define ARG_VEC3(_vec) (_vec)[0], (_vec)[1], (_vec)[2]
@@ -49,8 +55,7 @@ static size_t currentIndentSize = 0;
 
 #define FMT_ENUM "%s (%d)"
 #define ARG_ENUM(_strings, _index) \
-	(_index) >= 0 && (_index) < (ARRCOUNT(_strings, char*)) ? (_strings)[(_index)] : "INVALID INDEX", \
-	(_index)
+	(_index) >= 0 && (_index) < (ARRCOUNT(_strings, char*)) ? (_strings)[(_index)] : "INVALID INDEX", (_index)
 
 #define FMT_BOUNDS FMT_VEC3 " - " FMT_VEC3
 #define ARG_BOUNDS(_min, _max) ARG_VEC3(_min), ARG_VEC3(_max)
@@ -61,59 +66,21 @@ static size_t currentIndentSize = 0;
 
 #define FMT_HEX_INT "0x%08X"
 
-static const char* const String_modtype_t[] =
-{
-	"Invalid",
-	"Brush",
-	"Sprite",
-	"Alias",
-	"Studio"
-};
+static const char* const String_modtype_t[] = {"Invalid", "Brush", "Sprite", "Alias", "Studio"};
 
-static const char* const String_planeType[] =
-{
+static const char* const String_planeType[] = {
 	"Normal along X",
 	"Normal along Y",
 	"Normal along Z",
 	"Normal closest to X",
 	"Normal closest to Y",
-	"Normal closest to Z"
-};
+	"Normal closest to Z"};
 
-static const char* const String_surfaceFlags[] =
-{
-	"NoCull",
-	"PlaneBack",
-	"DrawSky",
-	"WaterCSG",
-	"DrawTurb",
-	"DrawTiled",
-	"Conveyor",
-	"Underwater",
-	"Transparent",
-	"Unknown9",
-	"Unknown10",
-	"Unknown11",
-	"Unknown12",
-	"Unknown13",
-	"Unknown14",
-	"Unknown15",
-	"Unknown16",
-	"Unknown17",
-	"Unknown18",
-	"Unknown19",
-	"Unknown20",
-	"Unknown21",
-	"Unknown22",
-	"Unknown23",
-	"Unknown24",
-	"Unknown25",
-	"Unknown26",
-	"Unknown27",
-	"Unknown28",
-	"Unknown29",
-	"Unknown30",
-	"Reflect",
+static const char* const String_surfaceFlags[] = {
+	"NoCull",      "PlaneBack", "DrawSky",   "WaterCSG",  "DrawTurb",  "DrawTiled", "Conveyor",  "Underwater",
+	"Transparent", "Unknown9",  "Unknown10", "Unknown11", "Unknown12", "Unknown13", "Unknown14", "Unknown15",
+	"Unknown16",   "Unknown17", "Unknown18", "Unknown19", "Unknown20", "Unknown21", "Unknown22", "Unknown23",
+	"Unknown24",   "Unknown25", "Unknown26", "Unknown27", "Unknown28", "Unknown29", "Unknown30", "Reflect",
 };
 
 typedef enum
@@ -132,7 +99,7 @@ typedef enum
 
 static inline size_t IntegerTypeSize(IntegerType_t type)
 {
-	switch (type & (0x000000FF & ~TypeIsSigned))
+	switch ( type & (0x000000FF & ~TypeIsSigned) )
 	{
 		case UnsignedChar:
 		{
@@ -183,7 +150,7 @@ static const char* ArrayString_Int(const void* base, IntegerType_t type, size_t 
 
 	typeSize = IntegerTypeSize(type);
 
-	if (typeSize < 1)
+	if ( typeSize < 1 )
 	{
 		return NULL;
 	}
@@ -193,15 +160,18 @@ static const char* ArrayString_Int(const void* base, IntegerType_t type, size_t 
 	bufferIndex = 0;
 
 	// For convenience:
-#define LOCAL_PRINT(...) { bufferIndex += Q_snprintf(&buffer[bufferIndex], bufferLength - bufferIndex - 1, __VA_ARGS__); }
+#define LOCAL_PRINT(...) \
+	{ \
+		bufferIndex += Q_snprintf(&buffer[bufferIndex], bufferLength - bufferIndex - 1, __VA_ARGS__); \
+	}
 
 	LOCAL_PRINT("[");
 
-	for (item = 0; item < count && bufferIndex < bufferLength - 1; ++item)
+	for ( item = 0; item < count && bufferIndex < bufferLength - 1; ++item )
 	{
 		const unsigned char* offset = charBase + (item * typeSize);
 
-		switch (type & (0x000000FF & ~TypeIsSigned))
+		switch ( type & (0x000000FF & ~TypeIsSigned) )
 		{
 			case UnsignedChar:
 			{
@@ -246,13 +216,13 @@ static const char* FlagsString(unsigned int inFlags, const char* const* flagStri
 
 	buffer[0] = '\0';
 
-	for (flag = 0; flag < numFlags; ++flag)
+	for ( flag = 0; flag < numFlags; ++flag )
 	{
 		int flagMask = 1 << flag;
 
-		if (inFlags & flagMask)
+		if ( inFlags & flagMask )
 		{
-			if (charsWritten > 0)
+			if ( charsWritten > 0 )
 			{
 				charsWritten += Q_strncat(buffer, " | ", bufferLength - charsWritten - 1);
 			}
@@ -267,23 +237,22 @@ static const char* FlagsString(unsigned int inFlags, const char* const* flagStri
 
 inline static const char* TextureNameForSurface(const msurface_t* surface)
 {
-	return (surface && surface->texinfo && surface->texinfo->texture)
-		? surface->texinfo->texture->name
-		: "NULL";
+	return (surface && surface->texinfo && surface->texinfo->texture) ? surface->texinfo->texture->name : "NULL";
 }
 
-typedef void(*ItemPrintFunc)(int, const void*, const model_t*);
+typedef void (*ItemPrintFunc)(int, const void*, const model_t*);
 
-static inline void PrintItems(const model_t* model, const void* items, const int count, const size_t itemSize, ItemPrintFunc printFunc)
+static inline void
+PrintItems(const model_t* model, const void* items, const int count, const size_t itemSize, ItemPrintFunc printFunc)
 {
 	int index;
 
-	if (!printFunc || !items || count < 1 || itemSize < 1)
+	if ( !printFunc || !items || count < 1 || itemSize < 1 )
 	{
 		return;
 	}
 
-	for (index = 0; index < count; ++index)
+	for ( index = 0; index < count; ++index )
 	{
 		const void* itemPtr = (const void*)((unsigned char*)items + (index * itemSize));
 		WRITELF("[%d] {0x%p}", index, itemPtr);
@@ -299,7 +268,7 @@ static inline void ResetIndent(void)
 
 static void IncrementIndent(void)
 {
-	if (currentIndentSize >= MAX_INDENT)
+	if ( currentIndentSize >= MAX_INDENT )
 	{
 		return;
 	}
@@ -310,7 +279,7 @@ static void IncrementIndent(void)
 
 static void DecrementIndent(void)
 {
-	if (currentIndentSize == 0)
+	if ( currentIndentSize == 0 )
 	{
 		return;
 	}
@@ -319,14 +288,15 @@ static void DecrementIndent(void)
 	--currentIndentSize;
 }
 
-static void DumpModelItems(const model_t* model,
-						   const char* itemName,
-						   const void* items,
-						   const int count,
-						   const size_t itemSize,
-						   ItemPrintFunc printFunc)
+static void DumpModelItems(
+	const model_t* model,
+	const char* itemName,
+	const void* items,
+	const int count,
+	const size_t itemSize,
+	ItemPrintFunc printFunc)
 {
-	if (!model || !printFunc || !itemName || !items || count < 1 || itemSize < 1)
+	if ( !model || !printFunc || !itemName || !items || count < 1 || itemSize < 1 )
 	{
 		WRITELF("DumpModelItems: NULL for '%s'", itemName);
 		return;
@@ -342,7 +312,7 @@ static void DumpModelItems(const model_t* model,
 
 static void DumpGeneralModelData(const model_t* model)
 {
-	if (!model)
+	if ( !model )
 	{
 		WRITEL("DumpGeneralModelData: NULL");
 		return;
@@ -355,7 +325,7 @@ static void DumpGeneralModelData(const model_t* model)
 	WRITELF("Valid mempool: %s", BoolString((qboolean)model->mempool));
 	WRITELF("Flags: " FMT_HEX_INT, model->flags);
 	WRITELF("Bounds: " FMT_BOUNDS, ARG_BOUNDS(model->mins, model->maxs));
-WRITELF("Radius: %f", model->radius);
+	WRITELF("Radius: %f", model->radius);
 	WRITELF("First model surface: %d", model->firstmodelsurface);
 	WRITELF("Num model surfaces: %d", model->nummodelsurfaces);
 	WRITEL("");
@@ -365,7 +335,7 @@ static void DumpPlane(int index, const void* data, const model_t* model)
 {
 	const mplane_t* plane;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpPlane: NULL");
 		return;
@@ -386,7 +356,7 @@ static void DumpLeaf(int index, const void* data, const model_t* model)
 {
 	const mleaf_t* leaf;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpLeaf: NULL");
 		return;
@@ -397,15 +367,21 @@ static void DumpLeaf(int index, const void* data, const model_t* model)
 	WRITELF("Contents: %d", leaf->contents);
 	WRITELF("Bounds: " FMT_BOUNDS, ARG_BOUNDS_CONSEC(leaf->minmaxs));
 	WRITELF("Parent node: " FMT_POINTER_INDEX, ARG_POINTER_INDEX(leaf->parent, model->nodes, sizeof(mnode_t)));
-	WRITELF("Ambient sound level: %s", ArrayString_Int(leaf->ambient_sound_level, UnsignedChar, ARRCOUNT(leaf->ambient_sound_level, byte)));
+	WRITELF(
+		"Ambient sound level: %s",
+		ArrayString_Int(leaf->ambient_sound_level, UnsignedChar, ARRCOUNT(leaf->ambient_sound_level, byte)));
 
 	// Might want to expand pointers into actual data at some point.
-	WRITELF("Compressed vis offset: " FMT_POINTER_INDEX, ARG_POINTER_INDEX(leaf->compressed_vis, model->visdata, sizeof(byte)));
+	WRITELF(
+		"Compressed vis offset: " FMT_POINTER_INDEX,
+		ARG_POINTER_INDEX(leaf->compressed_vis, model->visdata, sizeof(byte)));
 
 	// TODO: Output properly.
 	WRITELF("Efrags: %p", leaf->efrags);
 
-	WRITELF("First marksurface: " FMT_POINTER_INDEX, ARG_POINTER_INDEX(leaf->firstmarksurface, model->marksurfaces, sizeof(msurface_t*)));
+	WRITELF(
+		"First marksurface: " FMT_POINTER_INDEX,
+		ARG_POINTER_INDEX(leaf->firstmarksurface, model->marksurfaces, sizeof(msurface_t*)));
 	WRITELF("Num marksurfaces: %d", leaf->nummarksurfaces);
 	WRITEL("");
 }
@@ -414,7 +390,7 @@ static void DumpVertices(const model_t* model)
 {
 	int vertexIndex;
 
-	if (!model)
+	if ( !model )
 	{
 		WRITEL("DumpVertices: NULL");
 		return;
@@ -424,7 +400,7 @@ static void DumpVertices(const model_t* model)
 	WRITEL("");
 
 	IncrementIndent();
-	for (vertexIndex = 0; vertexIndex < model->numvertexes; ++vertexIndex)
+	for ( vertexIndex = 0; vertexIndex < model->numvertexes; ++vertexIndex )
 	{
 		WRITELF("[%d]: " FMT_VEC3, vertexIndex, ARG_VEC3(model->vertexes[vertexIndex].position));
 	}
@@ -437,7 +413,7 @@ static void DumpEdges(const model_t* model)
 {
 	int edgeIndex;
 
-	if (!model)
+	if ( !model )
 	{
 		WRITEL("DumpEdges: NULL");
 		return;
@@ -447,7 +423,7 @@ static void DumpEdges(const model_t* model)
 	WRITEL("");
 
 	IncrementIndent();
-	for (edgeIndex = 0; edgeIndex < model->numedges; ++edgeIndex)
+	for ( edgeIndex = 0; edgeIndex < model->numedges; ++edgeIndex )
 	{
 		medge_t* edge = &model->edges[edgeIndex];
 		WRITELF("[%d]: %u -> %u", edgeIndex, edge->v[0], edge->v[1]);
@@ -463,7 +439,7 @@ static void DumpNode(int index, const void* data, const model_t* model)
 	int child;
 	unsigned short surfaceIndex;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpNode: NULL");
 		return;
@@ -474,24 +450,29 @@ static void DumpNode(int index, const void* data, const model_t* model)
 	WRITELF("Contents: %d", node->contents);
 	WRITELF("Bounds: " FMT_BOUNDS, ARG_BOUNDS_CONSEC(node->minmaxs));
 	WRITELF("Parent node: " FMT_POINTER_INDEX, ARG_POINTER_INDEX(node->parent, model->nodes, sizeof(mnode_t)));
-	WRITELF("Plane: " FMT_POINTER_INDEX " " FMT_PLANE, ARG_POINTER_INDEX(node->plane, model->planes, sizeof(mplane_t)), ARG_PLANE(node->plane));
+	WRITELF(
+		"Plane: " FMT_POINTER_INDEX " " FMT_PLANE,
+		ARG_POINTER_INDEX(node->plane, model->planes, sizeof(mplane_t)),
+		ARG_PLANE(node->plane));
 
-	for (child = 0; child < 2; ++child)
+	for ( child = 0; child < 2; ++child )
 	{
 		mnode_t* childPointer = node->children[child];
 
-		if (!childPointer)
+		if ( !childPointer )
 		{
 			WRITELF("Child %d: NULL", child);
 			continue;
 		}
 
-		WRITELF("Child %d: %s " FMT_POINTER_INDEX,
-		child,
-		childPointer->contents == 0 ? "Node" : "Leaf",
-		ARG_POINTER_INDEX(childPointer,
-						  childPointer->contents == 0 ? (const void*)model->nodes : (const void*)model->leafs,
-						  childPointer->contents == 0 ? sizeof(mnode_t) : sizeof(mleaf_t)));
+		WRITELF(
+			"Child %d: %s " FMT_POINTER_INDEX,
+			child,
+			childPointer->contents == 0 ? "Node" : "Leaf",
+			ARG_POINTER_INDEX(
+				childPointer,
+				childPointer->contents == 0 ? (const void*)model->nodes : (const void*)model->leafs,
+				childPointer->contents == 0 ? sizeof(mnode_t) : sizeof(mleaf_t)));
 	}
 
 	WRITELF("First surface: %u", node->firstsurface);
@@ -502,12 +483,11 @@ static void DumpNode(int index, const void* data, const model_t* model)
 	{
 		msurface_t* surface = &model->surfaces[surfaceIndex];
 
-		WRITELF("Surface %u: plane " FMT_PLANE " texture: %s",
-				surfaceIndex,
-				ARG_PLANE(surface->plane),
-				(surface->texinfo && surface->texinfo->texture)
-					? surface->texinfo->texture->name
-					: "NONE");
+		WRITELF(
+			"Surface %u: plane " FMT_PLANE " texture: %s",
+			surfaceIndex,
+			ARG_PLANE(surface->plane),
+			(surface->texinfo && surface->texinfo->texture) ? surface->texinfo->texture->name : "NONE");
 	}
 	DecrementIndent();
 
@@ -518,7 +498,7 @@ static void DumpTexInfo(int index, const void* data, const model_t* model)
 {
 	const mtexinfo_t* texInfo;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpTexInfo: NULL");
 		return;
@@ -537,7 +517,7 @@ static void DumpSurface(int index, const void* data, const model_t* model)
 {
 	const msurface_t* surface;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpSurface: NULL");
 		return;
@@ -545,26 +525,35 @@ static void DumpSurface(int index, const void* data, const model_t* model)
 
 	surface = (const msurface_t*)data;
 
-	WRITELF("Plane: " FMT_POINTER_INDEX " " FMT_PLANE, ARG_POINTER_INDEX(surface->plane, model->planes, sizeof(mplane_t)), ARG_PLANE(surface->plane));
+	WRITELF(
+		"Plane: " FMT_POINTER_INDEX " " FMT_PLANE,
+		ARG_POINTER_INDEX(surface->plane, model->planes, sizeof(mplane_t)),
+		ARG_PLANE(surface->plane));
 
-	WRITELF("Flags: " FMT_HEX_INT " %s",
-			surface->flags,
-			FlagsString((unsigned int)surface->flags,
-						String_surfaceFlags,
-						ARRCOUNT(String_surfaceFlags, char*)));
+	WRITELF(
+		"Flags: " FMT_HEX_INT " %s",
+		surface->flags,
+		FlagsString((unsigned int)surface->flags, String_surfaceFlags, ARRCOUNT(String_surfaceFlags, char*)));
 
 	WRITELF("First surfedge: %d", surface->firstedge);
 	WRITELF("Num surfedges: %d", surface->numedges);
 	WRITELF("Texture mins: " FMT_VEC2_SHORT, ARG_VEC2_SHORT(surface->texturemins));
 	WRITELF("Extents: " FMT_VEC2_SHORT, ARG_VEC2_SHORT(surface->extents));
 	WRITELF("GL lightmap co-ords: (%d %d)", surface->light_s, surface->light_t);
-	WRITELF("Texture chain: " FMT_POINTER_INDEX, ARG_POINTER_INDEX(surface->texturechain, model->surfaces, sizeof(msurface_t)));
-	WRITELF("Texinfo: " FMT_POINTER_INDEX " %s", ARG_POINTER_INDEX(surface->texinfo, model->texinfo, sizeof(mtexinfo_t)), TextureNameForSurface(surface));
+	WRITELF(
+		"Texture chain: " FMT_POINTER_INDEX,
+		ARG_POINTER_INDEX(surface->texturechain, model->surfaces, sizeof(msurface_t)));
+	WRITELF(
+		"Texinfo: " FMT_POINTER_INDEX " %s",
+		ARG_POINTER_INDEX(surface->texinfo, model->texinfo, sizeof(mtexinfo_t)),
+		TextureNameForSurface(surface));
 	WRITELF("Dlight frame: %d", surface->dlightframe);
 	WRITELF("Dlight bits: " FMT_HEX_INT, surface->dlightbits);
 	WRITELF("Lightmap texture num: %d", surface->lightmaptexturenum);
 	WRITELF("Lightmap styles: %s", ArrayString_Int(surface->styles, UnsignedChar, ARRCOUNT(surface->styles, byte)));
-	WRITELF("Cached light: %s", ArrayString_Int(surface->cached_light, SignedInt, ARRCOUNT(surface->cached_light, int)));
+	WRITELF(
+		"Cached light: %s",
+		ArrayString_Int(surface->cached_light, SignedInt, ARRCOUNT(surface->cached_light, int)));
 	WRITEL("");
 }
 
@@ -572,7 +561,7 @@ static void DumpSurfEdges(const model_t* model)
 {
 	int surfEdgeIndex;
 
-	if (!model)
+	if ( !model )
 	{
 		WRITEL("DumpSurfEdges: NULL");
 		return;
@@ -582,22 +571,23 @@ static void DumpSurfEdges(const model_t* model)
 	WRITEL("");
 
 	IncrementIndent();
-	for (surfEdgeIndex = 0; surfEdgeIndex < model->numsurfedges; ++surfEdgeIndex)
+	for ( surfEdgeIndex = 0; surfEdgeIndex < model->numsurfedges; ++surfEdgeIndex )
 	{
 		int surfEdge = model->surfedges[surfEdgeIndex];
 		qboolean reverse = surfEdge < 0;
 
-		if (reverse)
+		if ( reverse )
 		{
 			surfEdge = -1 - surfEdge;
 		}
 
-		WRITELF("[%d] %s%d: %d -> %d",
-				surfEdgeIndex,
-				reverse ? "~" : "",
-				surfEdge,
-				model->edges[surfEdge].v[reverse ? 1 : 0],
-				model->edges[surfEdge].v[reverse ? 0 : 1]);
+		WRITELF(
+			"[%d] %s%d: %d -> %d",
+			surfEdgeIndex,
+			reverse ? "~" : "",
+			surfEdge,
+			model->edges[surfEdge].v[reverse ? 1 : 0],
+			model->edges[surfEdge].v[reverse ? 0 : 1]);
 	}
 	DecrementIndent();
 
@@ -608,7 +598,7 @@ static void DumpClipNode(int index, const void* data, const model_t* model)
 {
 	const dclipnode_t* clipNode;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpClipNode: NULL");
 		return;
@@ -626,7 +616,7 @@ static void DumpMarkSurfaces(const model_t* model)
 {
 	int markSurfaceIndex;
 
-	if (!model)
+	if ( !model )
 	{
 		WRITEL("DumpMarkSurfaces: NULL");
 		return;
@@ -636,12 +626,12 @@ static void DumpMarkSurfaces(const model_t* model)
 	WRITEL("");
 
 	IncrementIndent();
-	for (markSurfaceIndex = 0; markSurfaceIndex < model->nummarksurfaces; ++markSurfaceIndex)
+	for ( markSurfaceIndex = 0; markSurfaceIndex < model->nummarksurfaces; ++markSurfaceIndex )
 	{
-		WRITELF("[%d]: "
-				FMT_POINTER_INDEX,
-				markSurfaceIndex,
-				ARG_POINTER_INDEX(model->marksurfaces[markSurfaceIndex], model->surfaces, sizeof(msurface_t)));
+		WRITELF(
+			"[%d]: " FMT_POINTER_INDEX,
+			markSurfaceIndex,
+			ARG_POINTER_INDEX(model->marksurfaces[markSurfaceIndex], model->surfaces, sizeof(msurface_t)));
 	}
 	DecrementIndent();
 
@@ -652,7 +642,7 @@ static void DumpHull(int index, const void* data, const model_t* model)
 {
 	const hull_t* hull;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpHull: NULL");
 		return;
@@ -673,14 +663,14 @@ static void DumpTexture(int index, const void* data, const model_t* model)
 	const texture_t** textureRef;
 	const texture_t* texture;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpTexture: NULL data");
 		return;
 	}
 
 	textureRef = (const texture_t**)data;
-	if (!*textureRef)
+	if ( !*textureRef )
 	{
 		WRITEL("DumpTexture: NULL texture ref");
 		return;
@@ -705,7 +695,7 @@ static void DumpSubmodel(int index, const void* data, const model_t* model)
 {
 	const dmodel_t* submodel;
 
-	if (!data)
+	if ( !data )
 	{
 		WRITEL("DumpSubmodel: NULL");
 		return;
@@ -724,7 +714,7 @@ static void DumpSubmodel(int index, const void* data, const model_t* model)
 
 static void DumpVisibilityData(const model_t* model)
 {
-	static const char hexChars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	static const char hexChars[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 	size_t totalLeaves = (size_t)model->numleafs + 1;
 	const byte* visData = model->visdata;
@@ -778,7 +768,7 @@ static void DumpVisibilityData(const model_t* model)
 
 static void DumpAllModelData(const model_t* model, unsigned int flags)
 {
-	if (!model)
+	if ( !model )
 	{
 		WRITEL("DumpAllModelData: NULL");
 		return;
@@ -788,30 +778,54 @@ static void DumpAllModelData(const model_t* model, unsigned int flags)
 
 	IncrementIndent();
 
-	CHECK_FLAG(flags, Flag_ModelPlanes, DumpModelItems(model, "planes", model->planes, model->numplanes, sizeof(mplane_t), &DumpPlane));
-	CHECK_FLAG(flags, Flag_ModelNodes, DumpModelItems(model, "nodes", model->nodes, model->numnodes, sizeof(mnode_t), &DumpNode));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelPlanes,
+		DumpModelItems(model, "planes", model->planes, model->numplanes, sizeof(mplane_t), &DumpPlane));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelNodes,
+		DumpModelItems(model, "nodes", model->nodes, model->numnodes, sizeof(mnode_t), &DumpNode));
 
 	// +1 leaves because leaf 0 isn't included in the count.
-	CHECK_FLAG(flags, Flag_ModelGeneral, DumpModelItems(model, "leaves", model->leafs, model->numleafs + 1, sizeof(mleaf_t), &DumpLeaf));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelGeneral,
+		DumpModelItems(model, "leaves", model->leafs, model->numleafs + 1, sizeof(mleaf_t), &DumpLeaf));
 
 	CHECK_FLAG(flags, Flag_ModelVertices, DumpVertices(model));
 	CHECK_FLAG(flags, Flag_ModelEdges, DumpEdges(model));
 	CHECK_FLAG(flags, Flag_ModelEdges, DumpSurfEdges(model));
 	CHECK_FLAG(flags, Flag_ModelMarkSurfaces, DumpMarkSurfaces(model));
 
-	CHECK_FLAG(flags, Flag_ModelTexInfos, DumpModelItems(model, "texinfos", model->texinfo, model->numtexinfo, sizeof(mtexinfo_t), &DumpTexInfo));
-	CHECK_FLAG(flags, Flag_ModelSurfaces, DumpModelItems(model, "surfaces", model->surfaces, model->numsurfaces, sizeof(msurface_t), &DumpSurface));
-	CHECK_FLAG(flags, Flag_ModelClipNodes, DumpModelItems(model, "clip nodes", model->clipnodes, model->numclipnodes, sizeof(dclipnode_t), &DumpClipNode));
-	CHECK_FLAG(flags, Flag_ModelHulls, DumpModelItems(model, "hulls", model->hulls, ARRCOUNT(model->hulls, hull_t), sizeof(hull_t), &DumpHull));
-	CHECK_FLAG(flags, Flag_ModelTextures, DumpModelItems(model, "textures", model->textures, model->numtextures, sizeof(texture_t*), &DumpTexture));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelTexInfos,
+		DumpModelItems(model, "texinfos", model->texinfo, model->numtexinfo, sizeof(mtexinfo_t), &DumpTexInfo));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelSurfaces,
+		DumpModelItems(model, "surfaces", model->surfaces, model->numsurfaces, sizeof(msurface_t), &DumpSurface));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelClipNodes,
+		DumpModelItems(model, "clip nodes", model->clipnodes, model->numclipnodes, sizeof(dclipnode_t), &DumpClipNode));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelHulls,
+		DumpModelItems(model, "hulls", model->hulls, ARRCOUNT(model->hulls, hull_t), sizeof(hull_t), &DumpHull));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelTextures,
+		DumpModelItems(model, "textures", model->textures, model->numtextures, sizeof(texture_t*), &DumpTexture));
 
-	if (flags & Flag_ModelOther)
+	if ( flags & Flag_ModelOther )
 	{
 		DumpVisibilityData(model);
 		WRITELF("Light data: %p", model->lightdata);
 	}
 
-	if (flags & Flag_ModelEntities)
+	if ( flags & Flag_ModelEntities )
 	{
 		WRITEL("Entities:");
 		IncrementIndent();
@@ -819,20 +833,23 @@ static void DumpAllModelData(const model_t* model, unsigned int flags)
 		DecrementIndent();
 	}
 
-	CHECK_FLAG(flags, Flag_ModelSubModels, DumpModelItems(model, "submodels", model->submodels, model->numsubmodels, sizeof(dmodel_t), &DumpSubmodel));
+	CHECK_FLAG(
+		flags,
+		Flag_ModelSubModels,
+		DumpModelItems(model, "submodels", model->submodels, model->numsubmodels, sizeof(dmodel_t), &DumpSubmodel));
 
 	DecrementIndent();
 }
 
 void DumpModelData(const char* fileName, const model_t* model, unsigned int flags)
 {
-	if (!fileName || !model)
+	if ( !fileName || !model )
 	{
 		return;
 	}
 
 	outFile = FS_Open(fileName, "w", true);
-	if (!outFile)
+	if ( !outFile )
 	{
 		Msg("Unable to open file '%s' to dump data for model '%s'.\n", fileName, model->name);
 		return;
@@ -916,7 +933,7 @@ void DumpFaceAsWavefrontObj(const char* fileName, const model_t* model, const ms
 	}
 
 	file = FS_Open(fileName, "w", true);
-	if (!file)
+	if ( !file )
 	{
 		Msg("Unable to open file '%s' to dump surface data.\n", fileName);
 		return;
@@ -964,9 +981,9 @@ static void WriteBoundsToFile(file_t* file, const void* item, qboolean isLeaf, s
 
 	for ( corner = 0; corner < 8; ++corner )
 	{
-		size_t x = corner % 2;			// 0 1 0 1 0 1 0 1
-		size_t y = (corner % 4) / 2;	// 0 0 1 1 0 0 1 1
-		size_t z = corner / 4;			// 0 0 0 0 1 1 1 1
+		size_t x = corner % 2;  // 0 1 0 1 0 1 0 1
+		size_t y = (corner % 4) / 2;  // 0 0 1 1 0 0 1 1
+		size_t z = corner / 4;  // 0 0 0 0 1 1 1 1
 		FS_Printf(file, "v %f %f %f\n", bounds[x * 3], bounds[(y * 3) + 1], bounds[(z * 3) + 2]);
 	}
 
@@ -1005,7 +1022,7 @@ void DumpLeafBoundsAsWavefrontObj(const char* fileName, const model_t* model, co
 	leafIndex = (uint32_t)(leaf - model->leafs);
 
 	file = FS_Open(fileName, "w", true);
-	if (!file)
+	if ( !file )
 	{
 		Msg("Unable to open file '%s' to dump surface data.\n", fileName);
 		return;

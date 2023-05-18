@@ -13,9 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 //#include <stdint.h>
-void *SWAP_Sbrk( size_t size );
-void *SWAP_Malloc( size_t size );
-void *SWAP_Calloc( size_t nelem, size_t size );
-void SWAP_Free( void *cp );
-void *SWAP_Realloc( void *cp, size_t size );
-size_t SWAP_MallocUsableSize( void * cp );
+void* SWAP_Sbrk(size_t size);
+void* SWAP_Malloc(size_t size);
+void* SWAP_Calloc(size_t nelem, size_t size);
+void SWAP_Free(void* cp);
+void* SWAP_Realloc(void* cp, size_t size);
+size_t SWAP_MallocUsableSize(void* cp);

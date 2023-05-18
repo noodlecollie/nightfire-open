@@ -18,11 +18,11 @@ GNU General Public License for more details.
 
 typedef struct master_s
 {
-	struct master_s *next;
-	qboolean sent; // TODO: get rid of this internal state
+	struct master_s* next;
+	qboolean sent;  // TODO: get rid of this internal state
 	qboolean save;
 	string address;
-	netadr_t adr; // temporary, rewritten after each send
+	netadr_t adr;  // temporary, rewritten after each send
 
 	uint heartbeat_challenge;
 	double last_heartbeat;
@@ -30,29 +30,29 @@ typedef struct master_s
 
 static struct masterlist_s
 {
-	master_t *list;
+	master_t* list;
 	qboolean modified;
 } ml;
 
-static CVAR_DEFINE_AUTO( sv_verbose_heartbeats, "0", 0, "print every heartbeat to console" );
+static CVAR_DEFINE_AUTO(sv_verbose_heartbeats, "0", 0, "print every heartbeat to console");
 
-#define HEARTBEAT_SECONDS	((sv_nat.value > 0.0f) ? 60.0f : 300.0f)  	// 1 or 5 minutes
+#define HEARTBEAT_SECONDS ((sv_nat.value > 0.0f) ? 60.0f : 300.0f)  // 1 or 5 minutes
 
 /*
 ========================
 NET_GetMasterHostByName
 ========================
 */
-static net_gai_state_t NET_GetMasterHostByName( master_t *m )
+static net_gai_state_t NET_GetMasterHostByName(master_t* m)
 {
-	net_gai_state_t res = NET_StringToAdrNB( m->address, &m->adr );
+	net_gai_state_t res = NET_StringToAdrNB(m->address, &m->adr);
 
-	if( res == NET_EAI_OK )
+	if ( res == NET_EAI_OK )
 		return res;
 
 	m->adr.type = NA_UNUSED;
-	if( res == NET_EAI_NONAME )
-		Con_Reportf( "Can't resolve adr: %s\n", m->address );
+	if ( res == NET_EAI_NONAME )
+		Con_Reportf("Can't resolve adr: %s\n", m->address);
 
 	return res;
 }
@@ -65,36 +65,36 @@ Send request to all masterservers list
 return true if would block
 ========================
 */
-qboolean NET_SendToMasters( netsrc_t sock, size_t len, const void *data )
+qboolean NET_SendToMasters(netsrc_t sock, size_t len, const void* data)
 {
-	master_t *list;
+	master_t* list;
 	qboolean wait = false;
 
-	for( list = ml.list; list; list = list->next )
+	for ( list = ml.list; list; list = list->next )
 	{
-		if( list->sent )
+		if ( list->sent )
 			continue;
 
-		switch( NET_GetMasterHostByName( list ))
+		switch ( NET_GetMasterHostByName(list) )
 		{
-		case NET_EAI_AGAIN:
-			list->sent = false;
-			wait = true;
-			break;
-		case NET_EAI_NONAME:
-			list->sent = true;
-			break;
-		case NET_EAI_OK:
-			list->sent = true;
-			NET_SendPacket( sock, len, data, list->adr );
-			break;
+			case NET_EAI_AGAIN:
+				list->sent = false;
+				wait = true;
+				break;
+			case NET_EAI_NONAME:
+				list->sent = true;
+				break;
+			case NET_EAI_OK:
+				list->sent = true;
+				NET_SendPacket(sock, len, data, list->adr);
+				break;
 		}
 	}
 
-	if( !wait )
+	if ( !wait )
 	{
 		// reset sent state
-		for( list = ml.list; list; list = list->next )
+		for ( list = ml.list; list; list = list->next )
 			list->sent = false;
 	}
 
@@ -107,23 +107,26 @@ NET_AnnounceToMaster
 
 ========================
 */
-static void NET_AnnounceToMaster( master_t *m )
+static void NET_AnnounceToMaster(master_t* m)
 {
 	sizebuf_t msg;
 	char buf[16];
 
-	m->heartbeat_challenge = COM_RandomLong( 0, INT_MAX );
+	m->heartbeat_challenge = COM_RandomLong(0, INT_MAX);
 
-	MSG_Init( &msg, "Master Join", buf, sizeof( buf ));
-	MSG_WriteBytes( &msg, "q\xFF", 2 );
-	MSG_WriteDword( &msg, m->heartbeat_challenge );
+	MSG_Init(&msg, "Master Join", buf, sizeof(buf));
+	MSG_WriteBytes(&msg, "q\xFF", 2);
+	MSG_WriteDword(&msg, m->heartbeat_challenge);
 
-	NET_SendPacket( NS_SERVER, MSG_GetNumBytesWritten( &msg ), MSG_GetBuf( &msg ), m->adr );
+	NET_SendPacket(NS_SERVER, MSG_GetNumBytesWritten(&msg), MSG_GetBuf(&msg), m->adr);
 
-	if( sv_verbose_heartbeats.value )
+	if ( sv_verbose_heartbeats.value )
 	{
-		Con_Printf( S_NOTE "sent heartbeat to %s (%s, 0x%x)\n",
-			m->address, NET_AdrToString( m->adr ), m->heartbeat_challenge );
+		Con_Printf(
+			S_NOTE "sent heartbeat to %s (%s, 0x%x)\n",
+			m->address,
+			NET_AdrToString(m->adr),
+			m->heartbeat_challenge);
 	}
 }
 
@@ -133,11 +136,11 @@ NET_AnnounceToMaster
 
 ========================
 */
-void NET_MasterClear( void )
+void NET_MasterClear(void)
 {
-	master_t *m;
+	master_t* m;
 
-	for( m = ml.list; m; m = m->next )
+	for ( m = ml.list; m; m = m->next )
 		m->last_heartbeat = MAX_HEARTBEAT;
 }
 
@@ -147,33 +150,33 @@ NET_MasterHeartbeat
 
 ========================
 */
-void NET_MasterHeartbeat( void )
+void NET_MasterHeartbeat(void)
 {
-	master_t *m;
+	master_t* m;
 
-	if(( !public_server.value && !sv_nat.value ) || svs.maxclients == 1 )
-		return; // only public servers send heartbeats
+	if ( (!public_server.value && !sv_nat.value) || svs.maxclients == 1 )
+		return;  // only public servers send heartbeats
 
-	for( m = ml.list; m; m = m->next )
+	for ( m = ml.list; m; m = m->next )
 	{
-		if( host.realtime - m->last_heartbeat < HEARTBEAT_SECONDS )
+		if ( host.realtime - m->last_heartbeat < HEARTBEAT_SECONDS )
 			continue;
 
-		switch( NET_GetMasterHostByName( m ))
+		switch ( NET_GetMasterHostByName(m) )
 		{
-		case NET_EAI_AGAIN:
-			m->last_heartbeat = MAX_HEARTBEAT; // retry on next frame
-			if( sv_verbose_heartbeats.value )
-				Con_Printf( S_NOTE "delay heartbeat to next frame until %s resolves\n", m->address );
+			case NET_EAI_AGAIN:
+				m->last_heartbeat = MAX_HEARTBEAT;  // retry on next frame
+				if ( sv_verbose_heartbeats.value )
+					Con_Printf(S_NOTE "delay heartbeat to next frame until %s resolves\n", m->address);
 
-			break;
-		case NET_EAI_NONAME:
-			m->last_heartbeat = host.realtime; // try to resolve again on next heartbeat
-			break;
-		case NET_EAI_OK:
-			m->last_heartbeat = host.realtime;
-			NET_AnnounceToMaster( m );
-			break;
+				break;
+			case NET_EAI_NONAME:
+				m->last_heartbeat = host.realtime;  // try to resolve again on next heartbeat
+				break;
+			case NET_EAI_OK:
+				m->last_heartbeat = host.realtime;
+				NET_AnnounceToMaster(m);
+				break;
 		}
 	}
 }
@@ -186,12 +189,12 @@ Informs all masters that this server is going down
 (ignored by master servers in current implementation)
 =================
 */
-void NET_MasterShutdown( void )
+void NET_MasterShutdown(void)
 {
-	NET_Config( true, false ); // allow remote
-	while( NET_SendToMasters( NS_SERVER, 2, "\x62\x0A" ));
+	NET_Config(true, false);  // allow remote
+	while ( NET_SendToMasters(NS_SERVER, 2, "\x62\x0A") )
+		;
 }
-
 
 /*
 ========================
@@ -199,32 +202,31 @@ NET_GetMasterFromAdr
 
 ========================
 */
-static master_t *NET_GetMasterFromAdr( netadr_t adr )
+static master_t* NET_GetMasterFromAdr(netadr_t adr)
 {
-	master_t *master;
+	master_t* master;
 
-	for( master = ml.list; master; master = master->next )
+	for ( master = ml.list; master; master = master->next )
 	{
-		if( NET_CompareAdr( adr, master->adr ))
+		if ( NET_CompareAdr(adr, master->adr) )
 			return master;
 	}
 
 	return NULL;
 }
 
-
 /*
 ========================
 NET_GetMaster
 ========================
 */
-qboolean NET_GetMaster( netadr_t from, uint *challenge, double *last_heartbeat )
+qboolean NET_GetMaster(netadr_t from, uint* challenge, double* last_heartbeat)
 {
-	master_t *m;
+	master_t* m;
 
-	m = NET_GetMasterFromAdr( from );
+	m = NET_GetMasterFromAdr(from);
 
-	if( m )
+	if ( m )
 	{
 		*challenge = m->heartbeat_challenge;
 		*last_heartbeat = m->last_heartbeat;
@@ -239,9 +241,9 @@ NET_IsMasterAdr
 
 ========================
 */
-qboolean NET_IsMasterAdr( netadr_t adr )
+qboolean NET_IsMasterAdr(netadr_t adr)
 {
-	return NET_GetMasterFromAdr( adr ) != NULL;
+	return NET_GetMasterFromAdr(adr) != NULL;
 }
 
 /*
@@ -251,40 +253,40 @@ NET_AddMaster
 Add master to the list
 ========================
 */
-static void NET_AddMaster( const char *addr, qboolean save )
+static void NET_AddMaster(const char* addr, qboolean save)
 {
 	master_t *master, *last;
 
-	for( last = ml.list; last && last->next; last = last->next )
+	for ( last = ml.list; last && last->next; last = last->next )
 	{
-		if( !Q_strcmp( last->address, addr ) ) // already exists
+		if ( !Q_strcmp(last->address, addr) )  // already exists
 			return;
 	}
 
-	master = Mem_Malloc( host.mempool, sizeof( master_t ) );
-	Q_strncpy( master->address, addr, MAX_STRING );
+	master = Mem_Malloc(host.mempool, sizeof(master_t));
+	Q_strncpy(master->address, addr, MAX_STRING);
 	master->sent = false;
 	master->save = save;
 	master->next = NULL;
 	master->adr.type = NA_UNUSED;
 
 	// link in
-	if( last )
+	if ( last )
 		last->next = master;
 	else
 		ml.list = master;
 }
 
-static void NET_AddMaster_f( void )
+static void NET_AddMaster_f(void)
 {
-	if( Cmd_Argc() != 2 )
+	if ( Cmd_Argc() != 2 )
 	{
-		Msg( S_USAGE "addmaster <address>\n");
+		Msg(S_USAGE "addmaster <address>\n");
 		return;
 	}
 
-	NET_AddMaster( Cmd_Argv( 1 ), true ); // save them into config
-	ml.modified = true; // save config
+	NET_AddMaster(Cmd_Argv(1), true);  // save them into config
+	ml.modified = true;  // save config
 }
 
 /*
@@ -294,13 +296,13 @@ NET_ClearMasters
 Clear master list
 ========================
 */
-static void NET_ClearMasters_f( void )
+static void NET_ClearMasters_f(void)
 {
-	while( ml.list )
+	while ( ml.list )
 	{
-		master_t *prev = ml.list;
+		master_t* prev = ml.list;
 		ml.list = ml.list->next;
-		Mem_Free( prev );
+		Mem_Free(prev);
 	}
 }
 
@@ -311,20 +313,20 @@ NET_ListMasters_f
 Display current master linked list
 ========================
 */
-static void NET_ListMasters_f( void )
+static void NET_ListMasters_f(void)
 {
-	master_t *list;
+	master_t* list;
 	int i;
 
-	Msg( "Master servers\n=============\n" );
+	Msg("Master servers\n=============\n");
 
-
-	for( i = 1, list = ml.list; list; i++, list = list->next )
+	for ( i = 1, list = ml.list; list; i++, list = list->next )
 	{
-		Msg( "%d\t%s", i, list->address );
-		if( list->adr.type != NA_UNUSED )
-			Msg( "\t%s\n", NET_AdrToString( list->adr ));
-		else Msg( "\n" );
+		Msg("%d\t%s", i, list->address);
+		if ( list->adr.type != NA_UNUSED )
+			Msg("\t%s\n", NET_AdrToString(list->adr));
+		else
+			Msg("\n");
 	}
 }
 
@@ -335,34 +337,34 @@ NET_LoadMasters
 Load master server list from xashcomm.lst
 ========================
 */
-static void NET_LoadMasters( void )
+static void NET_LoadMasters(void)
 {
-	byte *afile;
-	char *pfile;
+	byte* afile;
+	char* pfile;
 	char token[MAX_TOKEN];
 
-	afile = FS_LoadFile( "xashcomm.lst", NULL, true );
+	afile = FS_LoadFile("xashcomm.lst", NULL, true);
 
-	if( !afile ) // file doesn't exist yet
+	if ( !afile )  // file doesn't exist yet
 	{
-		Con_Reportf( "Cannot load xashcomm.lst\n" );
+		Con_Reportf("Cannot load xashcomm.lst\n");
 		return;
 	}
 
 	pfile = (char*)afile;
 
 	// format: master <addr>\n
-	while( ( pfile = COM_ParseFile( pfile, token, sizeof( token ) ) ) )
+	while ( (pfile = COM_ParseFile(pfile, token, sizeof(token))) )
 	{
-		if( !Q_strcmp( token, "master" ) ) // load addr
+		if ( !Q_strcmp(token, "master") )  // load addr
 		{
-			pfile = COM_ParseFile( pfile, token, sizeof( token ) );
+			pfile = COM_ParseFile(pfile, token, sizeof(token));
 
-			NET_AddMaster( token, true );
+			NET_AddMaster(token, true);
 		}
 	}
 
-	Mem_Free( afile );
+	Mem_Free(afile);
 
 	ml.modified = false;
 }
@@ -374,32 +376,32 @@ NET_SaveMasters
 Save master server list to xashcomm.lst, except for default
 ========================
 */
-void NET_SaveMasters( void )
+void NET_SaveMasters(void)
 {
-	file_t *f;
-	master_t *m;
+	file_t* f;
+	master_t* m;
 
-	if( !ml.modified )
+	if ( !ml.modified )
 	{
-		Con_Reportf( "Master server list not changed\n" );
+		Con_Reportf("Master server list not changed\n");
 		return;
 	}
 
-	f = FS_Open( "xashcomm.lst", "w", true );
+	f = FS_Open("xashcomm.lst", "w", true);
 
-	if( !f )
+	if ( !f )
 	{
-		Con_Reportf( S_ERROR  "Couldn't write xashcomm.lst\n" );
+		Con_Reportf(S_ERROR "Couldn't write xashcomm.lst\n");
 		return;
 	}
 
-	for( m = ml.list; m; m = m->next )
+	for ( m = ml.list; m; m = m->next )
 	{
-		if( m->save )
-			FS_Printf( f, "master %s\n", m->address );
+		if ( m->save )
+			FS_Printf(f, "master %s\n", m->address);
 	}
 
-	FS_Close( f );
+	FS_Close(f);
 }
 
 /*
@@ -409,15 +411,15 @@ NET_InitMasters
 Initialize master server list
 ========================
 */
-void NET_InitMasters( void )
+void NET_InitMasters(void)
 {
-	Cmd_AddRestrictedCommand( "addmaster", NET_AddMaster_f, "add address to masterserver list" );
-	Cmd_AddRestrictedCommand( "clearmasters", NET_ClearMasters_f, "clear masterserver list" );
-	Cmd_AddCommand( "listmasters", NET_ListMasters_f, "list masterservers" );
+	Cmd_AddRestrictedCommand("addmaster", NET_AddMaster_f, "add address to masterserver list");
+	Cmd_AddRestrictedCommand("clearmasters", NET_ClearMasters_f, "clear masterserver list");
+	Cmd_AddCommand("listmasters", NET_ListMasters_f, "list masterservers");
 
-	Cvar_RegisterVariable( &sv_verbose_heartbeats );
+	Cvar_RegisterVariable(&sv_verbose_heartbeats);
 
 	// keep main master always there
-	NET_AddMaster( MASTERSERVER_ADR, false );
-	NET_LoadMasters( );
+	NET_AddMaster(MASTERSERVER_ADR, false);
+	NET_LoadMasters();
 }

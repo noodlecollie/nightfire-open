@@ -18,12 +18,12 @@ GNU General Public License for more details.
 
 typedef struct
 {
-	char		pattern[256];
-	float		map[256];
-	int		length;
-	float		value;
-	qboolean		interp;		// allow to interpolate this lightstyle
-	float		time;		// local time is gurantee what new style begins from the start, not mid or end of the sequence
+	char pattern[256];
+	float map[256];
+	int length;
+	float value;
+	qboolean interp;  // allow to interpolate this lightstyle
+	float time;  // local time is gurantee what new style begins from the start, not mid or end of the sequence
 } lightstyle_t;
 
-#endif//LIGHTSTYLE_H
+#endif  // LIGHTSTYLE_H

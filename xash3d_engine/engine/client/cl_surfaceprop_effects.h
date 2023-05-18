@@ -7,4 +7,4 @@ typedef enum _SurfaceProp SurfaceProp;
 // For now, we just need this;
 qboolean R_SurfaceImpactCreatesSparks(SurfaceProp surfaceProp);
 
-#endif // CL_SURFACEPROP_EFFECTS_H
+#endif  // CL_SURFACEPROP_EFFECTS_H

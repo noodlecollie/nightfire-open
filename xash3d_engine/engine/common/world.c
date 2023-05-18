@@ -21,8 +21,7 @@ GNU General Public License for more details.
 #include "studio.h"
 
 // just for debug
-const char *et_name[] =
-{
+const char* et_name[] = {
 	"normal",
 	"player",
 	"tempentity",
@@ -44,7 +43,7 @@ ClearLink
 ClearLink is used for new headnodes
 ===============
 */
-void ClearLink( link_t *l )
+void ClearLink(link_t* l)
 {
 	l->prev = l->next = l;
 }
@@ -56,7 +55,7 @@ RemoveLink
 remove link from chain
 ===============
 */
-void RemoveLink( link_t *l )
+void RemoveLink(link_t* l)
 {
 	l->next->prev = l->prev;
 	l->prev->next = l->next;
@@ -69,7 +68,7 @@ InsertLinkBefore
 kept trigger and solid entities seperate
 ===============
 */
-void InsertLinkBefore( link_t *l, link_t *before )
+void InsertLinkBefore(link_t* l, link_t* before)
 {
 	l->next = before;
 	l->prev = before->prev;
@@ -82,13 +81,13 @@ void InsertLinkBefore( link_t *l, link_t *before )
 World_MoveBounds
 ==================
 */
-void World_MoveBounds( const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, vec3_t boxmins, vec3_t boxmaxs )
+void World_MoveBounds(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, vec3_t boxmins, vec3_t boxmaxs)
 {
-	int	i;
+	int i;
 
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
-		if( end[i] > start[i] )
+		if ( end[i] > start[i] )
 		{
 			boxmins[i] = start[i] + mins[i] - 1.0f;
 			boxmaxs[i] = end[i] + maxs[i] + 1.0f;
@@ -101,18 +100,19 @@ void World_MoveBounds( const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_
 	}
 }
 
-trace_t World_CombineTraces( trace_t *cliptrace, trace_t *trace, edict_t *touch )
+trace_t World_CombineTraces(trace_t* cliptrace, trace_t* trace, edict_t* touch)
 {
-	if( trace->allsolid || trace->startsolid || trace->fraction < cliptrace->fraction )
+	if ( trace->allsolid || trace->startsolid || trace->fraction < cliptrace->fraction )
 	{
 		trace->ent = touch;
 
-		if( cliptrace->startsolid )
+		if ( cliptrace->startsolid )
 		{
 			*cliptrace = *trace;
 			cliptrace->startsolid = true;
 		}
-		else *cliptrace = *trace;
+		else
+			*cliptrace = *trace;
 	}
 
 	return *cliptrace;
@@ -123,43 +123,50 @@ trace_t World_CombineTraces( trace_t *cliptrace, trace_t *trace, edict_t *touch 
 World_TransformAABB
 ==================
 */
-void World_TransformAABB( matrix4x4 transform, const vec3_t mins, const vec3_t maxs, vec3_t outmins, vec3_t outmaxs )
+void World_TransformAABB(matrix4x4 transform, const vec3_t mins, const vec3_t maxs, vec3_t outmins, vec3_t outmaxs)
 {
-	vec3_t	p1, p2;
-	matrix4x4	itransform;
-	int	i;
+	vec3_t p1, p2;
+	matrix4x4 itransform;
+	int i;
 
-	if( !outmins || !outmaxs ) return;
+	if ( !outmins || !outmaxs )
+		return;
 
-	Matrix4x4_Invert_Simple( itransform, transform );
-	ClearBounds( outmins, outmaxs );
+	Matrix4x4_Invert_Simple(itransform, transform);
+	ClearBounds(outmins, outmaxs);
 
 	// compute a full bounding box
-	for( i = 0; i < 8; i++ )
+	for ( i = 0; i < 8; i++ )
 	{
-		p1[0] = ( i & 1 ) ? mins[0] : maxs[0];
-		p1[1] = ( i & 2 ) ? mins[1] : maxs[1];
-		p1[2] = ( i & 4 ) ? mins[2] : maxs[2];
+		p1[0] = (i & 1) ? mins[0] : maxs[0];
+		p1[1] = (i & 2) ? mins[1] : maxs[1];
+		p1[2] = (i & 4) ? mins[2] : maxs[2];
 
-		p2[0] = DotProduct( p1, itransform[0] );
-		p2[1] = DotProduct( p1, itransform[1] );
-		p2[2] = DotProduct( p1, itransform[2] );
+		p2[0] = DotProduct(p1, itransform[0]);
+		p2[1] = DotProduct(p1, itransform[1]);
+		p2[2] = DotProduct(p1, itransform[2]);
 
-		if( p2[0] < outmins[0] ) outmins[0] = p2[0];
-		if( p2[0] > outmaxs[0] ) outmaxs[0] = p2[0];
-		if( p2[1] < outmins[1] ) outmins[1] = p2[1];
-		if( p2[1] > outmaxs[1] ) outmaxs[1] = p2[1];
-		if( p2[2] < outmins[2] ) outmins[2] = p2[2];
-		if( p2[2] > outmaxs[2] ) outmaxs[2] = p2[2];
+		if ( p2[0] < outmins[0] )
+			outmins[0] = p2[0];
+		if ( p2[0] > outmaxs[0] )
+			outmaxs[0] = p2[0];
+		if ( p2[1] < outmins[1] )
+			outmins[1] = p2[1];
+		if ( p2[1] > outmaxs[1] )
+			outmaxs[1] = p2[1];
+		if ( p2[2] < outmins[2] )
+			outmins[2] = p2[2];
+		if ( p2[2] > outmaxs[2] )
+			outmaxs[2] = p2[2];
 	}
 
 	// sanity check
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
-		if( outmins[i] > outmaxs[i] )
+		if ( outmins[i] > outmaxs[i] )
 		{
-			VectorClear( outmins );
-			VectorClear( outmaxs );
+			VectorClear(outmins);
+			VectorClear(outmaxs);
 			return;
 		}
 	}
@@ -172,23 +179,37 @@ RankForContents
 Used for determine contents priority
 ==================
 */
-int RankForContents( int contents )
+int RankForContents(int contents)
 {
-	switch( contents )
+	switch ( contents )
 	{
-	case CONTENTS_EMPTY:	return 0;
-	case CONTENTS_WATER:	return 1;
-	case CONTENTS_TRANSLUCENT:	return 2;
-	case CONTENTS_CURRENT_0:	return 3;
-	case CONTENTS_CURRENT_90:	return 4;
-	case CONTENTS_CURRENT_180:	return 5;
-	case CONTENTS_CURRENT_270:	return 6;
-	case CONTENTS_CURRENT_UP:	return 7;
-	case CONTENTS_CURRENT_DOWN:	return 8;
-	case CONTENTS_SLIME:	return 9;
-	case CONTENTS_LAVA:		return 10;
-	case CONTENTS_SKY:		return 11;
-	case CONTENTS_SOLID:	return 12;
-	default:			return 13; // any user contents has more priority than default
+		case CONTENTS_EMPTY:
+			return 0;
+		case CONTENTS_WATER:
+			return 1;
+		case CONTENTS_TRANSLUCENT:
+			return 2;
+		case CONTENTS_CURRENT_0:
+			return 3;
+		case CONTENTS_CURRENT_90:
+			return 4;
+		case CONTENTS_CURRENT_180:
+			return 5;
+		case CONTENTS_CURRENT_270:
+			return 6;
+		case CONTENTS_CURRENT_UP:
+			return 7;
+		case CONTENTS_CURRENT_DOWN:
+			return 8;
+		case CONTENTS_SLIME:
+			return 9;
+		case CONTENTS_LAVA:
+			return 10;
+		case CONTENTS_SKY:
+			return 11;
+		case CONTENTS_SOLID:
+			return 12;
+		default:
+			return 13;  // any user contents has more priority than default
 	}
 }

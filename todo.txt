@@ -1,6 +1,6 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
-* Establish clang-format file
+* Run clang-tidy to insert closing braces where required
 * Turn up warnings as high as we feasibly can, and fix any issues
   * Also add settings to control how pedantic warnings should be, warnings as errors, etc.
 * Change game content folder from afterburner to nf-open

@@ -17,39 +17,40 @@ GNU General Public License for more details.
 #define LIBMPG_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 // error codes
-#define MP3_ERR		-1
-#define MP3_OK		0
-#define MP3_NEED_MORE	1
+#define MP3_ERR -1
+#define MP3_OK 0
+#define MP3_NEED_MORE 1
 
-#define OUTBUF_SIZE		8192	// don't change!
+#define OUTBUF_SIZE 8192  // don't change!
 
 typedef struct
 {
-	int	rate;		// num samples per second (e.g. 11025 - 11 khz)
-	int	channels;		// num channels (1 - mono, 2 - stereo)
-	int	playtime;		// stream size in milliseconds
+	int rate;  // num samples per second (e.g. 11025 - 11 khz)
+	int channels;  // num channels (1 - mono, 2 - stereo)
+	int playtime;  // stream size in milliseconds
 } wavinfo_t;
 
 // custom stdio
-typedef long (*pfread)( void *handle, void *buf, size_t count );
-typedef long (*pfseek)( void *handle, long offset, int whence );
+typedef long (*pfread)(void* handle, void* buf, size_t count);
+typedef long (*pfseek)(void* handle, long offset, int whence);
 
-extern void *create_decoder( int *error );
-extern int feed_mpeg_header( void *mpg, const byte *data, long bufsize, long streamsize, wavinfo_t *sc );
-extern int feed_mpeg_stream( void *mpg, const byte *data, long bufsize, byte *outbuf, size_t *outsize );
-extern int open_mpeg_stream( void *mpg, void *file, pfread f_read, pfseek f_seek, wavinfo_t *sc );
-extern int read_mpeg_stream(void *mpg, byte *outbuf, size_t *outsize  );
-extern int get_stream_pos( void *mpg );
-extern int set_stream_pos( void *mpg, int curpos );
-extern void close_decoder( void *mpg );
-const char *get_error( void *mpeg );
+extern void* create_decoder(int* error);
+extern int feed_mpeg_header(void* mpg, const byte* data, long bufsize, long streamsize, wavinfo_t* sc);
+extern int feed_mpeg_stream(void* mpg, const byte* data, long bufsize, byte* outbuf, size_t* outsize);
+extern int open_mpeg_stream(void* mpg, void* file, pfread f_read, pfseek f_seek, wavinfo_t* sc);
+extern int read_mpeg_stream(void* mpg, byte* outbuf, size_t* outsize);
+extern int get_stream_pos(void* mpg);
+extern int set_stream_pos(void* mpg, int curpos);
+extern void close_decoder(void* mpg);
+const char* get_error(void* mpeg);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif//LIBMPG_H
+#endif  // LIBMPG_H

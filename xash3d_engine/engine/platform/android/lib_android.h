@@ -17,11 +17,11 @@ GNU General Public License for more details.
 #ifndef ANDROID_LIB_H
 #define ANDROID_LIB_H
 
-#define Platform_POSIX_LoadLibrary( x ) ANDROID_LoadLibrary(( x ))
-#define Platform_POSIX_GetProcAddress( x, y ) ANDROID_GetProcAddress(( x ), ( y ))
+#define Platform_POSIX_LoadLibrary(x) ANDROID_LoadLibrary((x))
+#define Platform_POSIX_GetProcAddress(x, y) ANDROID_GetProcAddress((x), (y))
 
-void *ANDROID_LoadLibrary( const char *dllname );
-void *ANDROID_GetProcAddress( void *hInstance, const char *name );
+void* ANDROID_LoadLibrary(const char* dllname);
+void* ANDROID_GetProcAddress(void* hInstance, const char* name);
 
-#endif // ANDROID_LIB_H
-#endif // XASH_ANDROID
+#endif  // ANDROID_LIB_H
+#endif  // XASH_ANDROID

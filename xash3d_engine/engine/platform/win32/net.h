@@ -20,4 +20,4 @@ typedef int WSAsize_t;
 
 #define HAVE_GETADDRINFO
 
-#endif // NET_H
+#endif  // NET_H

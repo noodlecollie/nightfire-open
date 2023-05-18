@@ -23,31 +23,31 @@ CL_PlayVideo_f
 movie <moviename>
 ====================
 */
-void CL_PlayVideo_f( void )
+void CL_PlayVideo_f(void)
 {
-	string	path;
+	string path;
 
-	if( Cmd_Argc() != 2 && Cmd_Argc() != 3 )
+	if ( Cmd_Argc() != 2 && Cmd_Argc() != 3 )
 	{
-		Con_Printf( S_USAGE "movie <moviename> [full]\n" );
+		Con_Printf(S_USAGE "movie <moviename> [full]\n");
 		return;
 	}
 
-	if( cls.state == ca_active )
+	if ( cls.state == ca_active )
 	{
-		Con_Printf( "Can't play movie while connected to a server.\nPlease disconnect first.\n" );
+		Con_Printf("Can't play movie while connected to a server.\nPlease disconnect first.\n");
 		return;
 	}
 
-	switch( Cmd_Argc( ))
+	switch ( Cmd_Argc() )
 	{
-	case 2:	// simple user version
-		Q_snprintf( path, sizeof( path ), "media/%s.avi", Cmd_Argv( 1 ));
-		SCR_PlayCinematic( path );
-		break;
-	case 3:	// sequenced cinematics used this
-		SCR_PlayCinematic( Cmd_Argv( 1 ));
-		break;
+		case 2:  // simple user version
+			Q_snprintf(path, sizeof(path), "media/%s.avi", Cmd_Argv(1));
+			SCR_PlayCinematic(path);
+			break;
+		case 3:  // sequenced cinematics used this
+			SCR_PlayCinematic(Cmd_Argv(1));
+			break;
 	}
 }
 
@@ -58,86 +58,93 @@ CL_PlayCDTrack_f
 Emulate audio-cd system
 ===============
 */
-void CL_PlayCDTrack_f( void )
+void CL_PlayCDTrack_f(void)
 {
-	const char	*command;
-	const char	*pszTrack;
-	static int	track = 0;
-	static qboolean	paused = false;
-	static qboolean	looped = false;
-	static qboolean	enabled = true;
+	const char* command;
+	const char* pszTrack;
+	static int track = 0;
+	static qboolean paused = false;
+	static qboolean looped = false;
+	static qboolean enabled = true;
 
-	if( Cmd_Argc() < 2 ) return;
-	command = Cmd_Argv( 1 );
-	pszTrack = Cmd_Argv( 2 );
+	if ( Cmd_Argc() < 2 )
+		return;
+	command = Cmd_Argv(1);
+	pszTrack = Cmd_Argv(2);
 
-	if( !enabled && Q_stricmp( command, "on" ))
-		return; // CD-player is disabled
+	if ( !enabled && Q_stricmp(command, "on") )
+		return;  // CD-player is disabled
 
-	if( !Q_stricmp( command, "play" ))
+	if ( !Q_stricmp(command, "play") )
 	{
-		if( Q_isdigit( pszTrack ))
+		if ( Q_isdigit(pszTrack) )
 		{
-			track = bound( 1, Q_atoi( Cmd_Argv( 2 )), MAX_CDTRACKS );
-			S_StartBackgroundTrack( clgame.cdtracks[track-1], NULL, 0, false );
+			track = bound(1, Q_atoi(Cmd_Argv(2)), MAX_CDTRACKS);
+			S_StartBackgroundTrack(clgame.cdtracks[track - 1], NULL, 0, false);
 		}
-		else S_StartBackgroundTrack( pszTrack, NULL, 0, true );
+		else
+			S_StartBackgroundTrack(pszTrack, NULL, 0, true);
 		paused = false;
 		looped = false;
 	}
-	else if( !Q_stricmp( command, "loop" ))
+	else if ( !Q_stricmp(command, "loop") )
 	{
-		if( Q_isdigit( pszTrack ))
+		if ( Q_isdigit(pszTrack) )
 		{
-			track = bound( 1, Q_atoi( Cmd_Argv( 2 )), MAX_CDTRACKS );
-			S_StartBackgroundTrack( clgame.cdtracks[track-1], clgame.cdtracks[track-1], 0, false );
+			track = bound(1, Q_atoi(Cmd_Argv(2)), MAX_CDTRACKS);
+			S_StartBackgroundTrack(clgame.cdtracks[track - 1], clgame.cdtracks[track - 1], 0, false);
 		}
-		else S_StartBackgroundTrack( pszTrack, pszTrack, 0, true );
+		else
+			S_StartBackgroundTrack(pszTrack, pszTrack, 0, true);
 		paused = false;
 		looped = true;
 	}
-	else if( !Q_stricmp( command, "pause" ))
+	else if ( !Q_stricmp(command, "pause") )
 	{
-		S_StreamSetPause( true );
+		S_StreamSetPause(true);
 		paused = true;
 	}
-	else if( !Q_stricmp( command, "resume" ))
+	else if ( !Q_stricmp(command, "resume") )
 	{
-		S_StreamSetPause( false );
+		S_StreamSetPause(false);
 		paused = false;
 	}
-	else if( !Q_stricmp( command, "stop" ))
+	else if ( !Q_stricmp(command, "stop") )
 	{
 		S_StopBackgroundTrack();
 		paused = false;
 		looped = false;
 		track = 0;
 	}
-	else if( !Q_stricmp( command, "on" ))
+	else if ( !Q_stricmp(command, "on") )
 	{
 		enabled = true;
 	}
-	else if( !Q_stricmp( command, "off" ))
+	else if ( !Q_stricmp(command, "off") )
 	{
 		enabled = false;
 	}
-	else if( !Q_stricmp( command, "info" ))
+	else if ( !Q_stricmp(command, "info") )
 	{
-		int	i, maxTrack;
+		int i, maxTrack;
 
-		for( maxTrack = i = 0; i < MAX_CDTRACKS; i++ )
-			if( COM_CheckStringEmpty( clgame.cdtracks[i] ) ) maxTrack++;
+		for ( maxTrack = i = 0; i < MAX_CDTRACKS; i++ )
+			if ( COM_CheckStringEmpty(clgame.cdtracks[i]) )
+				maxTrack++;
 
-		Con_Printf( "%u tracks\n", maxTrack );
-		if( track )
+		Con_Printf("%u tracks\n", maxTrack);
+		if ( track )
 		{
-			if( paused ) Con_Printf( "Paused %s track %u\n", looped ? "looping" : "playing", track );
-			else Con_Printf( "Currently %s track %u\n", looped ? "looping" : "playing", track );
+			if ( paused )
+				Con_Printf("Paused %s track %u\n", looped ? "looping" : "playing", track);
+			else
+				Con_Printf("Currently %s track %u\n", looped ? "looping" : "playing", track);
 		}
-		Con_Printf( "Volume is %f\n", Cvar_VariableValue( "MP3Volume" ));
+		Con_Printf("Volume is %f\n", Cvar_VariableValue("MP3Volume"));
 		return;
 	}
-	else Con_Printf( "%s: unknown command %s\n", Cmd_Argv( 0 ), command );
+	else
+		Con_Printf("%s: unknown command %s\n", Cmd_Argv(0), command);
 }
 
 /*
@@ -145,15 +152,15 @@ void CL_PlayCDTrack_f( void )
 CL_ScreenshotGetName
 ==================
 */
-qboolean CL_ScreenshotGetName( int lastnum, char *filename )
+qboolean CL_ScreenshotGetName(int lastnum, char* filename)
 {
-	if( lastnum < 0 || lastnum > 9999 )
+	if ( lastnum < 0 || lastnum > 9999 )
 	{
-		Con_Printf( S_ERROR "unable to write screenshot\n" );
+		Con_Printf(S_ERROR "unable to write screenshot\n");
 		return false;
 	}
 
-	Q_sprintf( filename, "scrshots/%s_shot%04d.png", clgame.mapname, lastnum );
+	Q_sprintf(filename, "scrshots/%s_shot%04d.png", clgame.mapname, lastnum);
 
 	return true;
 }
@@ -163,16 +170,16 @@ qboolean CL_ScreenshotGetName( int lastnum, char *filename )
 CL_SnapshotGetName
 ==================
 */
-qboolean CL_SnapshotGetName( int lastnum, char *filename )
+qboolean CL_SnapshotGetName(int lastnum, char* filename)
 {
-	if( lastnum < 0 || lastnum > 9999 )
+	if ( lastnum < 0 || lastnum > 9999 )
 	{
-		Con_Printf( S_ERROR "unable to write snapshot\n" );
-		FS_AllowDirectPaths( false );
+		Con_Printf(S_ERROR "unable to write snapshot\n");
+		FS_AllowDirectPaths(false);
 		return false;
 	}
 
-	Q_sprintf( filename, "../%s_%04d.png", clgame.mapname, lastnum );
+	Q_sprintf(filename, "../%s_%04d.png", clgame.mapname, lastnum);
 
 	return true;
 }
@@ -191,34 +198,34 @@ CL_ScreenShot_f
 normal screenshot
 ==================
 */
-void CL_ScreenShot_f( void )
+void CL_ScreenShot_f(void)
 {
-	int	i;
-	string	checkname;
+	int i;
+	string checkname;
 
-	if( CL_IsDevOverviewMode() == 1 )
+	if ( CL_IsDevOverviewMode() == 1 )
 	{
 		// special case for write overview image and script file
-		Q_snprintf( cls.shotname, sizeof( cls.shotname ), "overviews/%s.bmp", clgame.mapname );
-		cls.scrshot_action = scrshot_mapshot; // build new frame for mapshot
+		Q_snprintf(cls.shotname, sizeof(cls.shotname), "overviews/%s.bmp", clgame.mapname);
+		cls.scrshot_action = scrshot_mapshot;  // build new frame for mapshot
 	}
 	else
 	{
 		// scan for a free filename
-		for( i = 0; i < 9999; i++ )
+		for ( i = 0; i < 9999; i++ )
 		{
-			if( !CL_ScreenshotGetName( i, checkname ))
-				return;	// no namespace
+			if ( !CL_ScreenshotGetName(i, checkname) )
+				return;  // no namespace
 
-			if( !FS_FileExists( checkname, false ))
+			if ( !FS_FileExists(checkname, false) )
 				break;
 		}
 
-		Q_strncpy( cls.shotname, checkname, sizeof( cls.shotname ));
-		cls.scrshot_action = scrshot_normal; // build new frame for screenshot
+		Q_strncpy(cls.shotname, checkname, sizeof(cls.shotname));
+		cls.scrshot_action = scrshot_normal;  // build new frame for screenshot
 	}
 
-	cls.envshot_vieworg = NULL; // no custom view
+	cls.envshot_vieworg = NULL;  // no custom view
 	cls.envshot_viewsize = 0;
 }
 
@@ -229,37 +236,37 @@ CL_SnapShot_f
 save screenshots into root dir
 ==================
 */
-void CL_SnapShot_f( void )
+void CL_SnapShot_f(void)
 {
-	int	i;
-	string	checkname;
+	int i;
+	string checkname;
 
-	if( CL_IsDevOverviewMode() == 1 )
+	if ( CL_IsDevOverviewMode() == 1 )
 	{
 		// special case for write overview image and script file
-		Q_snprintf( cls.shotname, sizeof( cls.shotname ), "overviews/%s.bmp", clgame.mapname );
-		cls.scrshot_action = scrshot_mapshot; // build new frame for mapshot
+		Q_snprintf(cls.shotname, sizeof(cls.shotname), "overviews/%s.bmp", clgame.mapname);
+		cls.scrshot_action = scrshot_mapshot;  // build new frame for mapshot
 	}
 	else
 	{
-		FS_AllowDirectPaths( true );
+		FS_AllowDirectPaths(true);
 
 		// scan for a free filename
-		for( i = 0; i < 9999; i++ )
+		for ( i = 0; i < 9999; i++ )
 		{
-			if( !CL_SnapshotGetName( i, checkname ))
-				return;	// no namespace
+			if ( !CL_SnapshotGetName(i, checkname) )
+				return;  // no namespace
 
-			if( !FS_FileExists( checkname, false ))
+			if ( !FS_FileExists(checkname, false) )
 				break;
 		}
 
-		FS_AllowDirectPaths( false );
-		Q_strncpy( cls.shotname, checkname, sizeof( cls.shotname ));
-		cls.scrshot_action = scrshot_snapshot; // build new frame for screenshot
+		FS_AllowDirectPaths(false);
+		Q_strncpy(cls.shotname, checkname, sizeof(cls.shotname));
+		cls.scrshot_action = scrshot_snapshot;  // build new frame for screenshot
 	}
 
-	cls.envshot_vieworg = NULL; // no custom view
+	cls.envshot_vieworg = NULL;  // no custom view
 	cls.envshot_viewsize = 0;
 }
 
@@ -270,17 +277,17 @@ CL_EnvShot_f
 cubemap view
 ==================
 */
-void CL_EnvShot_f( void )
+void CL_EnvShot_f(void)
 {
-	if( Cmd_Argc() < 2 )
+	if ( Cmd_Argc() < 2 )
 	{
-		Con_Printf( S_USAGE "envshot <shotname>\n" );
+		Con_Printf(S_USAGE "envshot <shotname>\n");
 		return;
 	}
 
-	Q_sprintf( cls.shotname, "gfx/env/%s", Cmd_Argv( 1 ));
-	cls.scrshot_action = scrshot_envshot;	// build new frame for envshot
-	cls.envshot_vieworg = NULL; // no custom view
+	Q_sprintf(cls.shotname, "gfx/env/%s", Cmd_Argv(1));
+	cls.scrshot_action = scrshot_envshot;  // build new frame for envshot
+	cls.envshot_vieworg = NULL;  // no custom view
 	cls.envshot_viewsize = 0;
 }
 
@@ -291,17 +298,17 @@ CL_SkyShot_f
 skybox view
 ==================
 */
-void CL_SkyShot_f( void )
+void CL_SkyShot_f(void)
 {
-	if( Cmd_Argc() < 2 )
+	if ( Cmd_Argc() < 2 )
 	{
-		Con_Printf( S_USAGE "skyshot <shotname>\n" );
+		Con_Printf(S_USAGE "skyshot <shotname>\n");
 		return;
 	}
 
-	Q_sprintf( cls.shotname, "gfx/env/%s", Cmd_Argv( 1 ));
-	cls.scrshot_action = scrshot_skyshot;	// build new frame for skyshot
-	cls.envshot_vieworg = NULL; // no custom view
+	Q_sprintf(cls.shotname, "gfx/env/%s", Cmd_Argv(1));
+	cls.scrshot_action = scrshot_skyshot;  // build new frame for skyshot
+	cls.envshot_vieworg = NULL;  // no custom view
 	cls.envshot_viewsize = 0;
 }
 
@@ -312,37 +319,39 @@ CL_LevelShot_f
 splash logo while map is loading
 ==================
 */
-void CL_LevelShot_f( void )
+void CL_LevelShot_f(void)
 {
-	size_t	ft1, ft2;
-	string	filename;
+	size_t ft1, ft2;
+	string filename;
 
-	if( cls.scrshot_request != scrshot_plaque ) return;
+	if ( cls.scrshot_request != scrshot_plaque )
+		return;
 	cls.scrshot_request = scrshot_inactive;
 
 	// check for exist
-	if( cls.demoplayback && ( cls.demonum != -1 ))
+	if ( cls.demoplayback && (cls.demonum != -1) )
 	{
-		Q_sprintf( cls.shotname, "levelshots/%s_%s.bmp", cls.demoname, refState.wideScreen ? "16x9" : "4x3" );
-		Q_snprintf( filename, sizeof( filename ), "%s.dem", cls.demoname );
+		Q_sprintf(cls.shotname, "levelshots/%s_%s.bmp", cls.demoname, refState.wideScreen ? "16x9" : "4x3");
+		Q_snprintf(filename, sizeof(filename), "%s.dem", cls.demoname);
 
 		// make sure what levelshot is newer than demo
-		ft1 = FS_FileTime( filename, false );
-		ft2 = FS_FileTime( cls.shotname, true );
+		ft1 = FS_FileTime(filename, false);
+		ft2 = FS_FileTime(cls.shotname, true);
 	}
 	else
 	{
-		Q_sprintf( cls.shotname, "levelshots/%s_%s.bmp", clgame.mapname, refState.wideScreen ? "16x9" : "4x3" );
+		Q_sprintf(cls.shotname, "levelshots/%s_%s.bmp", clgame.mapname, refState.wideScreen ? "16x9" : "4x3");
 
 		// make sure what levelshot is newer than bsp
-		ft1 = FS_FileTime( cl.worldmodel->name, false );
-		ft2 = FS_FileTime( cls.shotname, true );
+		ft1 = FS_FileTime(cl.worldmodel->name, false);
+		ft2 = FS_FileTime(cls.shotname, true);
 	}
 
 	// missing levelshot or level never than levelshot
-	if( ft2 == -1 || ft1 > ft2 )
-		cls.scrshot_action = scrshot_plaque;	// build new frame for levelshot
-	else cls.scrshot_action = scrshot_inactive;	// disable - not needs
+	if ( ft2 == -1 || ft1 > ft2 )
+		cls.scrshot_action = scrshot_plaque;  // build new frame for levelshot
+	else
+		cls.scrshot_action = scrshot_inactive;  // disable - not needs
 }
 
 /*
@@ -352,16 +361,16 @@ CL_SaveShot_f
 mini-pic in loadgame menu
 ==================
 */
-void CL_SaveShot_f( void )
+void CL_SaveShot_f(void)
 {
-	if( Cmd_Argc() < 2 )
+	if ( Cmd_Argc() < 2 )
 	{
-		Con_Printf( S_USAGE "saveshot <savename>\n" );
+		Con_Printf(S_USAGE "saveshot <savename>\n");
 		return;
 	}
 
-	Q_sprintf( cls.shotname, DEFAULT_SAVE_DIRECTORY "%s.bmp", Cmd_Argv( 1 ));
-	cls.scrshot_action = scrshot_savegame;	// build new frame for saveshot
+	Q_sprintf(cls.shotname, DEFAULT_SAVE_DIRECTORY "%s.bmp", Cmd_Argv(1));
+	cls.scrshot_action = scrshot_savegame;  // build new frame for saveshot
 }
 
 /*
@@ -370,22 +379,22 @@ CL_DeleteDemo_f
 
 ==============
 */
-void CL_DeleteDemo_f( void )
+void CL_DeleteDemo_f(void)
 {
-	if( Cmd_Argc() != 2 )
+	if ( Cmd_Argc() != 2 )
 	{
-		Con_Printf( S_USAGE "killdemo <name>\n" );
+		Con_Printf(S_USAGE "killdemo <name>\n");
 		return;
 	}
 
-	if( cls.demorecording && !Q_stricmp( cls.demoname, Cmd_Argv( 1 )))
+	if ( cls.demorecording && !Q_stricmp(cls.demoname, Cmd_Argv(1)) )
 	{
-		Con_Printf( "Can't delete %s - recording\n", Cmd_Argv( 1 ));
+		Con_Printf("Can't delete %s - recording\n", Cmd_Argv(1));
 		return;
 	}
 
 	// delete demo
-	FS_Delete( va( "%s.dem", Cmd_Argv( 1 )));
+	FS_Delete(va("%s.dem", Cmd_Argv(1)));
 }
 
 /*
@@ -395,15 +404,15 @@ CL_SetSky_f
 Set a specified skybox (only for local clients)
 =================
 */
-void CL_SetSky_f( void )
+void CL_SetSky_f(void)
 {
-	if( Cmd_Argc() < 2 )
+	if ( Cmd_Argc() < 2 )
 	{
-		Con_Printf( S_USAGE "skyname <skybox>\n" );
+		Con_Printf(S_USAGE "skyname <skybox>\n");
 		return;
 	}
 
-	ref.dllFuncs.R_SetupSky( Cmd_Argv( 1 ));
+	ref.dllFuncs.R_SetupSky(Cmd_Argv(1));
 }
 
 /*
@@ -413,10 +422,10 @@ SCR_Viewpos_f
 viewpos (level-designer helper)
 =============
 */
-void SCR_Viewpos_f( void )
+void SCR_Viewpos_f(void)
 {
-	Con_Printf( "org ( %g %g %g )\n", refState.vieworg[0], refState.vieworg[1], refState.vieworg[2] );
-	Con_Printf( "ang ( %g %g %g )\n", refState.viewangles[0], refState.viewangles[1], refState.viewangles[2] );
+	Con_Printf("org ( %g %g %g )\n", refState.vieworg[0], refState.vieworg[1], refState.vieworg[2]);
+	Con_Printf("ang ( %g %g %g )\n", refState.viewangles[0], refState.viewangles[1], refState.viewangles[2]);
 }
 
 /*
@@ -425,25 +434,27 @@ CL_WavePlayLen_f
 
 =============
 */
-void CL_WavePlayLen_f( void )
+void CL_WavePlayLen_f(void)
 {
-	const char *name;
+	const char* name;
 	uint msecs;
 
-	if( Cmd_Argc() != 2 )
+	if ( Cmd_Argc() != 2 )
 	{
-		Con_Printf( "waveplaylen <wave file name>: returns approximate number of milliseconds a wave file will take to play.\n" );
+		Con_Printf(
+			"waveplaylen <wave file name>: returns approximate number of milliseconds a wave file will take to "
+			"play.\n");
 		return;
 	}
 
-	name = Cmd_Argv( 1 );
-	msecs = Sound_GetApproxWavePlayLen( name );
+	name = Cmd_Argv(1);
+	msecs = Sound_GetApproxWavePlayLen(name);
 
-	if( msecs == 0 )
+	if ( msecs == 0 )
 	{
-		Con_Printf( "Unable to read %s, file may be missing or incorrectly formatted.\n", name );
+		Con_Printf("Unable to read %s, file may be missing or incorrectly formatted.\n", name);
 		return;
 	}
 
-	Con_Printf( "Play time is approximately %dms\n", msecs );
+	Con_Printf("Play time is approximately %dms\n", msecs);
 }

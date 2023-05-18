@@ -21,13 +21,13 @@ GNU General Public License for more details.
 #include "filesystem.h"
 
 extern fs_api_t g_fsapi;
-extern fs_globals_t *FI;
+extern fs_globals_t* FI;
 
-#define GI           FI->GameInfo
+#define GI FI->GameInfo
 #define FS_Gamedir() GI->gamefolder
-#define FS_Title()   GI->title
+#define FS_Title() GI->title
 
-#define FS_InitStdio     (*g_fsapi.InitStdio)
+#define FS_InitStdio (*g_fsapi.InitStdio)
 #define FS_ShutdownStdio (*g_fsapi.ShutdownStdio)
 
 // search path utils
@@ -79,5 +79,4 @@ extern fs_globals_t *FI;
 #define FS_SysFileExists (*g_fsapi.SysFileExists)
 #define FS_GetDiskPath (*g_fsapi.GetDiskPath)
 
-
-#endif // FSCALLBACK_H
+#endif  // FSCALLBACK_H

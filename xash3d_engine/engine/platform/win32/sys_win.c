@@ -19,77 +19,83 @@ GNU General Public License for more details.
 #include <shellapi.h>
 
 #if XASH_TIMER == TIMER_WIN32
-double Platform_DoubleTime( void )
+double Platform_DoubleTime(void)
 {
-	static LARGE_INTEGER	g_PerformanceFrequency;
-	static LARGE_INTEGER	g_ClockStart;
-	LARGE_INTEGER		CurrentTime;
+	static LARGE_INTEGER g_PerformanceFrequency;
+	static LARGE_INTEGER g_ClockStart;
+	LARGE_INTEGER CurrentTime;
 
-	if( !g_PerformanceFrequency.QuadPart )
+	if ( !g_PerformanceFrequency.QuadPart )
 	{
-		QueryPerformanceFrequency( &g_PerformanceFrequency );
-		QueryPerformanceCounter( &g_ClockStart );
+		QueryPerformanceFrequency(&g_PerformanceFrequency);
+		QueryPerformanceCounter(&g_ClockStart);
 	}
-	QueryPerformanceCounter( &CurrentTime );
+	QueryPerformanceCounter(&CurrentTime);
 
-	return (double)( CurrentTime.QuadPart - g_ClockStart.QuadPart ) / (double)( g_PerformanceFrequency.QuadPart );
+	return (double)(CurrentTime.QuadPart - g_ClockStart.QuadPart) / (double)(g_PerformanceFrequency.QuadPart);
 }
 
-void Platform_Sleep( int msec )
+void Platform_Sleep(int msec)
 {
-	Sleep( msec );
+	Sleep(msec);
 }
-#endif // XASH_TIMER == TIMER_WIN32
+#endif  // XASH_TIMER == TIMER_WIN32
 
-qboolean Sys_DebuggerPresent( void )
+qboolean Sys_DebuggerPresent(void)
 {
 	return IsDebuggerPresent();
 }
 
-void Platform_ShellExecute( const char *path, const char *parms )
+void Platform_ShellExecute(const char* path, const char* parms)
 {
-	if( !Q_strcmp( path, GENERIC_UPDATE_PAGE ) || !Q_strcmp( path, PLATFORM_UPDATE_PAGE ))
+	if ( !Q_strcmp(path, GENERIC_UPDATE_PAGE) || !Q_strcmp(path, PLATFORM_UPDATE_PAGE) )
 		path = DEFAULT_UPDATE_PAGE;
 
-	ShellExecute( NULL, "open", path, parms, NULL, SW_SHOW );
+	ShellExecute(NULL, "open", path, parms, NULL, SW_SHOW);
 }
 
-void Platform_UpdateStatusLine( void )
+void Platform_UpdateStatusLine(void)
 {
 	int clientsCount, botsCountUnused;
 	char szStatus[128];
 	static double lastTime;
 
-	if( host.type != HOST_DEDICATED )
+	if ( host.type != HOST_DEDICATED )
 		return;
 
 	// update only every 1/2 seconds
-	if(( sv.time - lastTime ) < 0.5f )
+	if ( (sv.time - lastTime) < 0.5f )
 		return;
 
-	SV_GetPlayerCount( &clientsCount, &botsCountUnused );
-	Q_snprintf( szStatus, sizeof( szStatus ) - 1, "%.1f fps %2i/%2i on %16s", 1.f / sv.frametime, clientsCount, svs.maxclients, host.game.levelName );
+	SV_GetPlayerCount(&clientsCount, &botsCountUnused);
+	Q_snprintf(
+		szStatus,
+		sizeof(szStatus) - 1,
+		"%.1f fps %2i/%2i on %16s",
+		1.f / sv.frametime,
+		clientsCount,
+		svs.maxclients,
+		host.game.levelName);
 #ifdef XASH_WIN32
-	Wcon_SetStatus( szStatus );
+	Wcon_SetStatus(szStatus);
 #endif
 	lastTime = sv.time;
 }
 
 #if XASH_MESSAGEBOX == MSGBOX_WIN32
-void Platform_MessageBox( const char *title, const char *message, qboolean parentMainWindow )
+void Platform_MessageBox(const char* title, const char* message, qboolean parentMainWindow)
 {
-	MessageBox( parentMainWindow ? host.hWnd : NULL, message, title, MB_OK|MB_SETFOREGROUND|MB_ICONSTOP );
+	MessageBox(parentMainWindow ? host.hWnd : NULL, message, title, MB_OK | MB_SETFOREGROUND | MB_ICONSTOP);
 }
-#endif // XASH_MESSAGEBOX == MSGBOX_WIN32
+#endif  // XASH_MESSAGEBOX == MSGBOX_WIN32
 
 #ifndef XASH_SDL
 
-void Platform_Init( void )
+void Platform_Init(void)
 {
-	Wcon_CreateConsole(); // system console used by dedicated server or show fatal errors
-
+	Wcon_CreateConsole();  // system console used by dedicated server or show fatal errors
 }
-void Platform_Shutdown( void )
+void Platform_Shutdown(void)
 {
 	Wcon_DestroyConsole();
 }

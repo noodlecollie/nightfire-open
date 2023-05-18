@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "entity_types.h"
 #include "studio.h"
-#include "world.h" // BOX_ON_PLANE_SIDE
+#include "world.h"  // BOX_ON_PLANE_SIDE
 #include "client.h"
 #include "xash3d_mathlib.h"
 
@@ -28,39 +28,39 @@ GNU General Public License for more details.
 ===============================================================================
 */
 
-static efrag_t	**lastlink;
-static mnode_t	*r_pefragtopnode;
-static vec3_t	r_emins, r_emaxs;
-static cl_entity_t	*r_addent;
+static efrag_t** lastlink;
+static mnode_t* r_pefragtopnode;
+static vec3_t r_emins, r_emaxs;
+static cl_entity_t* r_addent;
 
 /*
 ===================
 R_SplitEntityOnNode
 ===================
 */
-static void R_SplitEntityOnNode( mnode_t *node )
+static void R_SplitEntityOnNode(mnode_t* node)
 {
-	efrag_t	*ef;
-	mleaf_t	*leaf;
-	int	sides;
+	efrag_t* ef;
+	mleaf_t* leaf;
+	int sides;
 
-	if( node->contents == CONTENTS_SOLID )
+	if ( node->contents == CONTENTS_SOLID )
 		return;
 
 	// add an efrag if the node is a leaf
-	if( node->contents < 0 )
+	if ( node->contents < 0 )
 	{
-		if( !r_pefragtopnode )
+		if ( !r_pefragtopnode )
 			r_pefragtopnode = node;
 
-		leaf = (mleaf_t *)node;
+		leaf = (mleaf_t*)node;
 
 		// grab an efrag off the free list
 		ef = clgame.free_efrags;
-		if( !ef )
+		if ( !ef )
 		{
-			Con_Printf( S_ERROR "too many efrags!\n" );
-			return; // no free fragments...
+			Con_Printf(S_ERROR "too many efrags!\n");
+			return;  // no free fragments...
 		}
 
 		clgame.free_efrags = ef->entnext;
@@ -79,18 +79,21 @@ static void R_SplitEntityOnNode( mnode_t *node )
 	}
 
 	// NODE_MIXED
-	sides = BOX_ON_PLANE_SIDE( r_emins, r_emaxs, node->plane );
+	sides = BOX_ON_PLANE_SIDE(r_emins, r_emaxs, node->plane);
 
-	if( sides == 3 )
+	if ( sides == 3 )
 	{
 		// split on this plane
 		// if this is the first splitter of this bmodel, remember it
-		if( !r_pefragtopnode ) r_pefragtopnode = node;
+		if ( !r_pefragtopnode )
+			r_pefragtopnode = node;
 	}
 
 	// recurse down the contacted sides
-	if( sides & 1 ) R_SplitEntityOnNode( node->children[0] );
-	if( sides & 2 ) R_SplitEntityOnNode( node->children[1] );
+	if ( sides & 1 )
+		R_SplitEntityOnNode(node->children[0]);
+	if ( sides & 2 )
+		R_SplitEntityOnNode(node->children[1]);
 }
 
 /*
@@ -98,13 +101,13 @@ static void R_SplitEntityOnNode( mnode_t *node )
 R_AddEfrags
 ===========
 */
-void R_AddEfrags( cl_entity_t *ent )
+void R_AddEfrags(cl_entity_t* ent)
 {
-	matrix3x4	transform;
-	vec3_t	outmins, outmaxs;
-	int	i;
+	matrix3x4 transform;
+	vec3_t outmins, outmaxs;
+	int i;
 
-	if( !ent->model )
+	if ( !ent->model )
 		return;
 
 	r_addent = ent;
@@ -112,16 +115,16 @@ void R_AddEfrags( cl_entity_t *ent )
 	r_pefragtopnode = NULL;
 
 	// handle entity rotation for right bbox expanding
-	Matrix3x4_CreateFromEntity( transform, ent->angles, vec3_origin, 1.0f );
-	Matrix3x4_TransformAABB( transform, ent->model->mins, ent->model->maxs, outmins, outmaxs );
+	Matrix3x4_CreateFromEntity(transform, ent->angles, vec3_origin, 1.0f);
+	Matrix3x4_TransformAABB(transform, ent->model->mins, ent->model->maxs, outmins, outmaxs);
 
-	for( i = 0; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
 		r_emins[i] = ent->origin[i] + outmins[i];
 		r_emaxs[i] = ent->origin[i] + outmaxs[i];
 	}
 
-	R_SplitEntityOnNode( cl.worldmodel->nodes );
+	R_SplitEntityOnNode(cl.worldmodel->nodes);
 	ent->topnode = r_pefragtopnode;
 }
 
@@ -131,37 +134,37 @@ R_StoreEfrags
 
 ================
 */
-void R_StoreEfrags( efrag_t **ppefrag, int framecount )
+void R_StoreEfrags(efrag_t** ppefrag, int framecount)
 {
-	cl_entity_t	*pent;
-	model_t		*clmodel;
-	efrag_t		*pefrag;
+	cl_entity_t* pent;
+	model_t* clmodel;
+	efrag_t* pefrag;
 
-	while(( pefrag = *ppefrag ) != NULL )
+	while ( (pefrag = *ppefrag) != NULL )
 	{
 		pent = pefrag->entity;
 		clmodel = pent->model;
 
-		switch( clmodel->type )
+		switch ( clmodel->type )
 		{
-		case mod_alias:
-		case mod_brush:
-		case mod_studio:
-		case mod_sprite:
-			if( pent->visframe != framecount )
-			{
-				if( CL_AddVisibleEntity( pent, ET_FRAGMENTED ))
+			case mod_alias:
+			case mod_brush:
+			case mod_studio:
+			case mod_sprite:
+				if ( pent->visframe != framecount )
 				{
-					// mark that we've recorded this entity for this frame
-					pent->curstate.messagenum = cl.parsecount;
-					pent->visframe = framecount;
+					if ( CL_AddVisibleEntity(pent, ET_FRAGMENTED) )
+					{
+						// mark that we've recorded this entity for this frame
+						pent->curstate.messagenum = cl.parsecount;
+						pent->visframe = framecount;
+					}
 				}
-			}
 
-			ppefrag = &pefrag->leafnext;
-			break;
-		default:
-			break;
+				ppefrag = &pefrag->leafnext;
+				break;
+			default:
+				break;
 		}
 	}
 }

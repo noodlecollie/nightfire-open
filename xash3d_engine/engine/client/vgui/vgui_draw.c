@@ -23,14 +23,14 @@ GNU General Public License for more details.
 #include "input.h"
 #include "platform/platform.h"
 
-CVAR_DEFINE_AUTO( vgui_utf8, "0", FCVAR_ARCHIVE, "enable utf-8 support for vgui text" );
+CVAR_DEFINE_AUTO(vgui_utf8, "0", FCVAR_ARCHIVE, "enable utf-8 support for vgui text");
 
-static void GAME_EXPORT *VGUI_EngineMalloc( size_t size );
-static void GAME_EXPORT VGUI_GetMousePos( int *, int * );
-static void GAME_EXPORT VGUI_CursorSelect( VGUI_DefaultCursor );
-static byte GAME_EXPORT VGUI_GetColor( int, int );
-static int GAME_EXPORT VGUI_UtfProcessChar( int in );
-static qboolean GAME_EXPORT VGUI_IsInGame( void );
+static void GAME_EXPORT* VGUI_EngineMalloc(size_t size);
+static void GAME_EXPORT VGUI_GetMousePos(int*, int*);
+static void GAME_EXPORT VGUI_CursorSelect(VGUI_DefaultCursor);
+static byte GAME_EXPORT VGUI_GetColor(int, int);
+static int GAME_EXPORT VGUI_UtfProcessChar(int in);
+static qboolean GAME_EXPORT VGUI_IsInGame(void);
 
 static struct
 {
@@ -41,24 +41,23 @@ static struct
 	HINSTANCE hInstance;
 
 	enum VGUI_KeyCode virtualKeyTrans[256];
-} vgui =
-{
+} vgui = {
 	false,
 	{
-		false, // Not initialized yet
-		NULL, // VGUI_DrawInit,
-		NULL, // VGUI_DrawShutdown,
-		NULL, // VGUI_SetupDrawingText,
-		NULL, // VGUI_SetupDrawingRect,
-		NULL, // VGUI_SetupDrawingImage,
-		NULL, // VGUI_BindTexture,
-		NULL, // VGUI_EnableTexture,
-		NULL, // VGUI_CreateTexture,
-		NULL, // VGUI_UploadTexture,
-		NULL, // VGUI_UploadTextureBlock,
-		NULL, // VGUI_DrawQuad,
-		NULL, // VGUI_GetTextureSizes,
-		NULL, // VGUI_GenerateTexture,
+		false,  // Not initialized yet
+		NULL,  // VGUI_DrawInit,
+		NULL,  // VGUI_DrawShutdown,
+		NULL,  // VGUI_SetupDrawingText,
+		NULL,  // VGUI_SetupDrawingRect,
+		NULL,  // VGUI_SetupDrawingImage,
+		NULL,  // VGUI_BindTexture,
+		NULL,  // VGUI_EnableTexture,
+		NULL,  // VGUI_CreateTexture,
+		NULL,  // VGUI_UploadTexture,
+		NULL,  // VGUI_UploadTextureBlock,
+		NULL,  // VGUI_DrawQuad,
+		NULL,  // VGUI_GetTextureSizes,
+		NULL,  // VGUI_GenerateTexture,
 		VGUI_EngineMalloc,
 		VGUI_CursorSelect,
 		VGUI_GetColor,
@@ -70,54 +69,53 @@ static struct
 		Platform_SetClipboardText,
 		Platform_GetKeyModifiers,
 	},
-	-1
-};
+	-1};
 
-static void GAME_EXPORT *VGUI_EngineMalloc( size_t size )
+static void GAME_EXPORT* VGUI_EngineMalloc(size_t size)
 {
-	return Z_Malloc( size );
+	return Z_Malloc(size);
 }
 
-static qboolean GAME_EXPORT VGUI_IsInGame( void )
+static qboolean GAME_EXPORT VGUI_IsInGame(void)
 {
 	return cls.state == ca_active && cls.key_dest == key_game;
 }
 
-static void GAME_EXPORT VGUI_GetMousePos( int *_x, int *_y )
+static void GAME_EXPORT VGUI_GetMousePos(int* _x, int* _y)
 {
 	float xscale = (float)refState.width / (float)clgame.scrInfo.iWidth;
 	float yscale = (float)refState.height / (float)clgame.scrInfo.iHeight;
 	int x, y;
 
-	Platform_GetMousePos( &x, &y );
+	Platform_GetMousePos(&x, &y);
 	*_x = x / xscale;
 	*_y = y / yscale;
 }
 
-static void GAME_EXPORT VGUI_CursorSelect( VGUI_DefaultCursor cursor )
+static void GAME_EXPORT VGUI_CursorSelect(VGUI_DefaultCursor cursor)
 {
-	if( vgui.cursor != cursor )
-		Platform_SetCursorType( cursor );
+	if ( vgui.cursor != cursor )
+		Platform_SetCursorType(cursor);
 }
 
-static byte GAME_EXPORT VGUI_GetColor( int i, int j )
+static byte GAME_EXPORT VGUI_GetColor(int i, int j)
 {
 	return g_color_table[i][j];
 }
 
-static int GAME_EXPORT VGUI_UtfProcessChar( int in )
+static int GAME_EXPORT VGUI_UtfProcessChar(int in)
 {
-	if( vgui_utf8.value )
-		return Con_UtfProcessCharForce( in );
+	if ( vgui_utf8.value )
+		return Con_UtfProcessCharForce(in);
 	return in;
 }
 
-qboolean VGui_IsActive( void )
+qboolean VGui_IsActive(void)
 {
 	return vgui.initialized;
 }
 
-static void VGui_FillAPIFromRef( vguiapi_t *to, const ref_interface_t *from )
+static void VGui_FillAPIFromRef(vguiapi_t* to, const ref_interface_t* from)
 {
 	to->DrawInit = from->VGUI_DrawInit;
 	to->DrawShutdown = from->VGUI_DrawShutdown;
@@ -134,60 +132,63 @@ static void VGui_FillAPIFromRef( vguiapi_t *to, const ref_interface_t *from )
 	to->GenerateTexture = from->VGUI_GenerateTexture;
 }
 
-void VGui_RegisterCvars( void )
+void VGui_RegisterCvars(void)
 {
-	Cvar_RegisterVariable( &vgui_utf8 );
+	Cvar_RegisterVariable(&vgui_utf8);
 }
 
-qboolean VGui_LoadProgs( HINSTANCE hInstance )
+qboolean VGui_LoadProgs(HINSTANCE hInstance)
 {
-	void (*F)( vguiapi_t* );
+	void (*F)(vguiapi_t*);
 	qboolean client = hInstance != NULL;
 
 	// not loading interface from client.dll, load vgui_support.dll instead
-	if( !client )
+	if ( !client )
 	{
 		string vguiloader, vguilib;
 
 		// HACKHACK: try to load path from custom path
 		// to support having different versions of VGUI
-		if( Sys_GetParmFromCmdLine( "-vguilib", vguilib ) && !COM_LoadLibrary( vguilib, false, false ))
+		if ( Sys_GetParmFromCmdLine("-vguilib", vguilib) && !COM_LoadLibrary(vguilib, false, false) )
 		{
-			Con_Reportf( S_WARN "VGUI preloading failed. Default library will be used! Reason: %s", COM_GetLibraryError());
+			Con_Reportf(
+				S_WARN "VGUI preloading failed. Default library will be used! Reason: %s",
+				COM_GetLibraryError());
 		}
 
-		if( !Sys_GetParmFromCmdLine( "-vguiloader", vguiloader ))
+		if ( !Sys_GetParmFromCmdLine("-vguiloader", vguiloader) )
 		{
-			Q_strncpy( vguiloader, VGUI_SUPPORT_DLL, sizeof( vguiloader ));
+			Q_strncpy(vguiloader, VGUI_SUPPORT_DLL, sizeof(vguiloader));
 		}
 
-		hInstance = vgui.hInstance = COM_LoadLibrary( vguiloader, false, false );
+		hInstance = vgui.hInstance = COM_LoadLibrary(vguiloader, false, false);
 
-		if( !vgui.hInstance )
+		if ( !vgui.hInstance )
 		{
-			if( FS_FileExists( vguiloader, false ))
-				Con_Reportf( S_ERROR "Failed to load vgui_support library: %s\n", COM_GetLibraryError() );
-			else Con_Reportf( "vgui_support: not found\n" );
+			if ( FS_FileExists(vguiloader, false) )
+				Con_Reportf(S_ERROR "Failed to load vgui_support library: %s\n", COM_GetLibraryError());
+			else
+				Con_Reportf("vgui_support: not found\n");
 
 			return false;
 		}
 	}
 
 	// try legacy API first
-	F = COM_GetProcAddress( hInstance, client ? "InitVGUISupportAPI" : "InitAPI" );
+	F = COM_GetProcAddress(hInstance, client ? "InitVGUISupportAPI" : "InitAPI");
 
-	if( F )
+	if ( F )
 	{
-		VGui_FillAPIFromRef( &vgui.dllFuncs, &ref.dllFuncs );
-		F( &vgui.dllFuncs );
+		VGui_FillAPIFromRef(&vgui.dllFuncs, &ref.dllFuncs);
+		F(&vgui.dllFuncs);
 
 		vgui.initialized = vgui.dllFuncs.initialized = true;
-		Con_Reportf( "vgui_support: initialized legacy API in %s module\n", client ? "client" : "support" );
+		Con_Reportf("vgui_support: initialized legacy API in %s module\n", client ? "client" : "support");
 
 		return true;
 	}
 
-	Con_Reportf( S_ERROR "Failed to find VGUI support API entry point in %s module\n", client ? "client" : "support" );
+	Con_Reportf(S_ERROR "Failed to find VGUI support API entry point in %s module\n", client ? "client" : "support");
 	return false;
 }
 
@@ -197,26 +198,30 @@ VGui_Startup
 
 ================
 */
-void VGui_Startup( int width, int height )
+void VGui_Startup(int width, int height)
 {
 	// vgui not initialized from both support and client modules, skip
-	if( !vgui.initialized )
+	if ( !vgui.initialized )
 		return;
 
-	height = Q_max( 480, height );
+	height = Q_max(480, height);
 
-	if( width <= 640 ) width = 640;
-	else if( width <= 800 ) width = 800;
-	else if( width <= 1024 ) width = 1024;
-	else if( width <= 1152 ) width = 1152;
-	else if( width <= 1280 ) width = 1280;
-	else if( width <= 1600 ) width = 1600;
+	if ( width <= 640 )
+		width = 640;
+	else if ( width <= 800 )
+		width = 800;
+	else if ( width <= 1024 )
+		width = 1024;
+	else if ( width <= 1152 )
+		width = 1152;
+	else if ( width <= 1280 )
+		width = 1280;
+	else if ( width <= 1600 )
+		width = 1600;
 
-	if( vgui.dllFuncs.Startup )
-		vgui.dllFuncs.Startup( width, height );
+	if ( vgui.dllFuncs.Startup )
+		vgui.dllFuncs.Startup(width, height);
 }
-
-
 
 /*
 ================
@@ -225,29 +230,29 @@ VGui_Shutdown
 Unload vgui_support library and call VGui_Shutdown
 ================
 */
-void VGui_Shutdown( void )
+void VGui_Shutdown(void)
 {
-	if( vgui.dllFuncs.Shutdown )
+	if ( vgui.dllFuncs.Shutdown )
 		vgui.dllFuncs.Shutdown();
 
-	if( vgui.hInstance )
-		COM_FreeLibrary( vgui.hInstance );
+	if ( vgui.hInstance )
+		COM_FreeLibrary(vgui.hInstance);
 
 	vgui.hInstance = NULL;
 	vgui.initialized = false;
 }
 
-
-static void VGUI_InitKeyTranslationTable( void )
+static void VGUI_InitKeyTranslationTable(void)
 {
 	static qboolean initialized = false;
 
-	if( initialized ) return;
+	if ( initialized )
+		return;
 
 	initialized = true;
 
 	// set virtual key translation table
-	memset( vgui.virtualKeyTrans, -1, sizeof( vgui.virtualKeyTrans ) );
+	memset(vgui.virtualKeyTrans, -1, sizeof(vgui.virtualKeyTrans));
 
 	// TODO: engine keys are not enough here!
 	// make crossplatform way to pass SDL keys here
@@ -300,9 +305,9 @@ static void VGUI_InitKeyTranslationTable( void )
 	vgui.virtualKeyTrans[K_KP_5 + 3] = KEY_PAD_8;
 	vgui.virtualKeyTrans[K_KP_5 + 4] = KEY_PAD_9;
 	vgui.virtualKeyTrans[K_KP_SLASH] = KEY_PAD_DIVIDE;
-	vgui.virtualKeyTrans['*']        = KEY_PAD_MULTIPLY;
+	vgui.virtualKeyTrans['*'] = KEY_PAD_MULTIPLY;
 	vgui.virtualKeyTrans[K_KP_MINUS] = KEY_PAD_MINUS;
-	vgui.virtualKeyTrans[K_KP_PLUS]  = KEY_PAD_PLUS;
+	vgui.virtualKeyTrans[K_KP_PLUS] = KEY_PAD_PLUS;
 	vgui.virtualKeyTrans[K_KP_ENTER] = KEY_PAD_ENTER;
 	vgui.virtualKeyTrans[K_KP_NUMLOCK] = KEY_NUMLOCK;
 	vgui.virtualKeyTrans['['] = KEY_LBRACKET;
@@ -321,7 +326,7 @@ static void VGUI_InitKeyTranslationTable( void )
 	vgui.virtualKeyTrans[K_SPACE] = KEY_SPACE;
 	vgui.virtualKeyTrans[K_CAPSLOCK] = KEY_CAPSLOCK;
 	vgui.virtualKeyTrans[K_BACKSPACE] = KEY_BACKSPACE;
-	vgui.virtualKeyTrans[K_ESCAPE]	= KEY_ESCAPE;
+	vgui.virtualKeyTrans[K_ESCAPE] = KEY_ESCAPE;
 	vgui.virtualKeyTrans[K_INS] = KEY_INSERT;
 	vgui.virtualKeyTrans[K_DEL] = KEY_DELETE;
 	vgui.virtualKeyTrans[K_HOME] = KEY_HOME;
@@ -329,9 +334,9 @@ static void VGUI_InitKeyTranslationTable( void )
 	vgui.virtualKeyTrans[K_PGUP] = KEY_PAGEUP;
 	vgui.virtualKeyTrans[K_PGDN] = KEY_PAGEDOWN;
 	vgui.virtualKeyTrans[K_PAUSE] = KEY_BREAK;
-	vgui.virtualKeyTrans[K_SHIFT] = KEY_LSHIFT;	// SHIFT -> left SHIFT
-	vgui.virtualKeyTrans[K_ALT] = KEY_LALT;		// ALT -> left ALT
-	vgui.virtualKeyTrans[K_CTRL] = KEY_LCONTROL;	// CTRL -> left CTRL
+	vgui.virtualKeyTrans[K_SHIFT] = KEY_LSHIFT;  // SHIFT -> left SHIFT
+	vgui.virtualKeyTrans[K_ALT] = KEY_LALT;  // ALT -> left ALT
+	vgui.virtualKeyTrans[K_CTRL] = KEY_LCONTROL;  // CTRL -> left CTRL
 	vgui.virtualKeyTrans[K_WIN] = KEY_LWIN;
 	vgui.virtualKeyTrans[K_UPARROW] = KEY_UP;
 	vgui.virtualKeyTrans[K_LEFTARROW] = KEY_LEFT;
@@ -351,99 +356,106 @@ static void VGUI_InitKeyTranslationTable( void )
 	vgui.virtualKeyTrans[K_F12] = KEY_F12;
 }
 
-static enum VGUI_KeyCode VGUI_MapKey( int keyCode )
+static enum VGUI_KeyCode VGUI_MapKey(int keyCode)
 {
 	VGUI_InitKeyTranslationTable();
 
-	if( keyCode >= 0 && keyCode < ARRAYSIZE( vgui.virtualKeyTrans ))
+	if ( keyCode >= 0 && keyCode < ARRAYSIZE(vgui.virtualKeyTrans) )
 		return vgui.virtualKeyTrans[keyCode];
 
-	return (enum VGUI_KeyCode)-1;
+	return (enum VGUI_KeyCode) - 1;
 }
 
-void VGui_MouseEvent( int key, int clicks )
+void VGui_MouseEvent(int key, int clicks)
 {
 	enum VGUI_MouseAction mact;
-	enum VGUI_MouseCode   code;
+	enum VGUI_MouseCode code;
 
-	if( !vgui.dllFuncs.Mouse )
+	if ( !vgui.dllFuncs.Mouse )
 		return;
 
-	switch( key )
+	switch ( key )
 	{
-	case K_MOUSE1: code = MOUSE_LEFT; break;
-	case K_MOUSE2: code = MOUSE_RIGHT; break;
-	case K_MOUSE3: code = MOUSE_MIDDLE; break;
-	default: return;
+		case K_MOUSE1:
+			code = MOUSE_LEFT;
+			break;
+		case K_MOUSE2:
+			code = MOUSE_RIGHT;
+			break;
+		case K_MOUSE3:
+			code = MOUSE_MIDDLE;
+			break;
+		default:
+			return;
 	}
 
-	if( clicks >= 2 )
+	if ( clicks >= 2 )
 		mact = MA_DOUBLE;
-	else if( clicks == 1 )
+	else if ( clicks == 1 )
 		mact = MA_PRESSED;
 	else
 		mact = MA_RELEASED;
 
-	vgui.dllFuncs.Mouse( mact, code );
+	vgui.dllFuncs.Mouse(mact, code);
 }
 
-void VGui_MWheelEvent( int y )
+void VGui_MWheelEvent(int y)
 {
-	if( !vgui.dllFuncs.Mouse )
+	if ( !vgui.dllFuncs.Mouse )
 		return;
 
-	vgui.dllFuncs.Mouse( MA_WHEEL, y );
+	vgui.dllFuncs.Mouse(MA_WHEEL, y);
 }
 
-void VGui_KeyEvent( int key, int down )
+void VGui_KeyEvent(int key, int down)
 {
 	enum VGUI_KeyCode code;
 
-	if( !vgui.dllFuncs.Key )
+	if ( !vgui.dllFuncs.Key )
 		return;
 
-	if(( code = VGUI_MapKey( key )) < 0 )
+	if ( (code = VGUI_MapKey(key)) < 0 )
 		return;
 
-	if( down )
+	if ( down )
 	{
-		vgui.dllFuncs.Key( KA_PRESSED, code );
-		vgui.dllFuncs.Key( KA_TYPED, code );
+		vgui.dllFuncs.Key(KA_PRESSED, code);
+		vgui.dllFuncs.Key(KA_TYPED, code);
 	}
-	else vgui.dllFuncs.Key( KA_RELEASED, code );
+	else
+		vgui.dllFuncs.Key(KA_RELEASED, code);
 }
 
-void VGui_MouseMove( int x, int y )
+void VGui_MouseMove(int x, int y)
 {
-	if( vgui.dllFuncs.MouseMove )
+	if ( vgui.dllFuncs.MouseMove )
 	{
 		float xscale = (float)refState.width / (float)clgame.scrInfo.iWidth;
 		float yscale = (float)refState.height / (float)clgame.scrInfo.iHeight;
-		vgui.dllFuncs.MouseMove( x / xscale, y / yscale );
+		vgui.dllFuncs.MouseMove(x / xscale, y / yscale);
 	}
 }
 
-void VGui_Paint( void )
+void VGui_Paint(void)
 {
-	if( vgui.dllFuncs.Paint )
+	if ( vgui.dllFuncs.Paint )
 		vgui.dllFuncs.Paint();
 }
 
-void VGui_UpdateInternalCursorState( VGUI_DefaultCursor cursorType )
+void VGui_UpdateInternalCursorState(VGUI_DefaultCursor cursorType)
 {
 	vgui.cursor = cursorType;
 }
 
-void *GAME_EXPORT VGui_GetPanel( void )
+void* GAME_EXPORT VGui_GetPanel(void)
 {
-	if( vgui.dllFuncs.GetPanel )
+	if ( vgui.dllFuncs.GetPanel )
 		return vgui.dllFuncs.GetPanel();
 	return NULL;
 }
 
-void VGui_ReportTextInput( const char *text )
+void VGui_ReportTextInput(const char* text)
 {
-	if( vgui.dllFuncs.TextInput )
-		vgui.dllFuncs.TextInput( text );
+	if ( vgui.dllFuncs.TextInput )
+		vgui.dllFuncs.TextInput(text);
 }
-

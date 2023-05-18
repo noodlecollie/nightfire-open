@@ -13,15 +13,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-
 #ifndef XASH_DEDICATED
 #include "common.h"
 #if XASH_SOUND == SOUND_NULL
 
 #include "sound.h"
 
-#define SAMPLE_16BIT_SHIFT		1
-#define SECONDARY_BUFFER_SIZE		0x10000
+#define SAMPLE_16BIT_SHIFT 1
+#define SECONDARY_BUFFER_SIZE 0x10000
 
 /*
 =======================================================================
@@ -30,12 +29,11 @@ so it can unlock and free the data block after it has been played.
 =======================================================================
 */
 
-dma_t			dma;
+dma_t dma;
 
-void S_Activate( qboolean active )
+void S_Activate(qboolean active)
 {
 }
-
 
 /*
 ==================
@@ -45,9 +43,9 @@ Try to find a sound device to mix for.
 Returns false if nothing is found.
 ==================
 */
-qboolean SNDDMA_Init( void )
+qboolean SNDDMA_Init(void)
 {
-	Msg( "Audio is not enabled\n" );
+	Msg("Audio is not enabled\n");
 	return false;
 }
 
@@ -58,9 +56,8 @@ SNDDMA_BeginPainting
 Makes sure dma.buffer is valid
 ===============
 */
-void SNDDMA_BeginPainting( void )
+void SNDDMA_BeginPainting(void)
 {
-
 }
 
 /*
@@ -71,9 +68,8 @@ Send sound to device if buffer isn't really the dma buffer
 Also unlocks the dsound buffer
 ===============
 */
-void SNDDMA_Submit( void )
+void SNDDMA_Submit(void)
 {
-
 }
 
 /*
@@ -83,35 +79,35 @@ SNDDMA_Shutdown
 Reset the sound device for exiting
 ===============
 */
-void SNDDMA_Shutdown( void )
+void SNDDMA_Shutdown(void)
 {
 	Con_Printf("Shutting down audio.\n");
 	dma.initialized = false;
 
-	if (dma.buffer) {
-		 Z_Free(dma.buffer);
-		 dma.buffer = NULL;
+	if ( dma.buffer )
+	{
+		Z_Free(dma.buffer);
+		dma.buffer = NULL;
 	}
 }
 
-qboolean VoiceCapture_Init( void )
+qboolean VoiceCapture_Init(void)
 {
 	return false;
 }
 
-qboolean VoiceCapture_Activate( qboolean activate )
+qboolean VoiceCapture_Activate(qboolean activate)
 {
 	return false;
 }
 
-qboolean VoiceCapture_Lock( qboolean lock )
+qboolean VoiceCapture_Lock(qboolean lock)
 {
 	return false;
 }
 
-void VoiceCapture_Shutdown( void )
+void VoiceCapture_Shutdown(void)
 {
-
 }
 
 #endif

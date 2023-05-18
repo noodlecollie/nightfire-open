@@ -1,17 +1,17 @@
 /***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*
-*	This product contains software technology licensed from Id
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
+ *
+ *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+ *
+ *	This product contains software technology licensed from Id
+ *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
+ *	All Rights Reserved.
+ *
+ *   Use, distribution, and modification of this source code and/or resulting
+ *   object code is restricted to non-commercial enhancements to products from
+ *   Valve LLC.  All other use, distribution, or modification is prohibited
+ *   without written permission from Valve LLC.
+ *
+ ****/
 
 #ifndef NETADR_H
 #define NETADR_H
@@ -28,7 +28,7 @@ typedef enum
 	NA_IPX,
 	NA_BROADCAST_IPX,
 	NA_IP6,
-	NA_MULTICAST_IP6, // all nodes multicast
+	NA_MULTICAST_IP6,  // all nodes multicast
 } netadrtype_t;
 
 // Original structure:
@@ -40,7 +40,7 @@ typedef enum
 // 	unsigned short	port;
 // } netadr_t;
 
-#pragma pack( push, 1 )
+#pragma pack(push, 1)
 typedef struct netadr_s
 {
 	union
@@ -50,10 +50,10 @@ typedef struct netadr_s
 			uint32_t type;
 			union
 			{
-				uint8_t   ip[4];
-				uint32_t  ip4;
+				uint8_t ip[4];
+				uint32_t ip4;
 			};
-			uint8_t  ipx[10];
+			uint8_t ipx[10];
 		};
 		struct
 		{
@@ -69,8 +69,8 @@ typedef struct netadr_s
 	};
 	uint16_t port;
 } netadr_t;
-#pragma pack( pop )
+#pragma pack(pop)
 
-STATIC_ASSERT( sizeof( netadr_t ) == 20, "invalid netadr_t size" );
+STATIC_ASSERT(sizeof(netadr_t) == 20, "invalid netadr_t size");
 
-#endif//NETADR_H
+#endif  // NETADR_H

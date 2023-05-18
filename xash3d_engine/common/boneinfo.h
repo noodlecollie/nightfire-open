@@ -18,8 +18,8 @@ GNU General Public License for more details.
 
 typedef struct
 {
-	vec3_t	angles;
-	vec3_t	origin;
+	vec3_t angles;
+	vec3_t origin;
 } boneinfo_t;
 
-#endif//BONEINFO_H
+#endif  // BONEINFO_H

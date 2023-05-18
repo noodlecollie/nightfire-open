@@ -9,8 +9,8 @@
 extern struct jnimethods_s
 {
 	jclass actcls;
-	JavaVM *vm;
-	JNIEnv *env;
+	JavaVM* vm;
+	JNIEnv* env;
 	jmethodID enableTextInput;
 	jmethodID vibrate;
 	jmethodID messageBox;
@@ -32,7 +32,6 @@ extern struct jnimethods_s
 	int width, height;
 } jni;
 
-
 extern struct jnimouse_s
 {
 	float x, y;
@@ -41,6 +40,6 @@ extern struct jnimouse_s
 //
 // vid_android.c
 //
-void Android_UpdateSurface( qboolean active );
+void Android_UpdateSurface(qboolean active);
 
-#endif // ANDROID_PRIV_H
+#endif  // ANDROID_PRIV_H

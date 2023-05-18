@@ -31,17 +31,14 @@ typedef enum base_command_type
 
 typedef void base_command_t;
 
+void BaseCmd_Init(void);
+base_command_t* BaseCmd_Find(base_command_type_e type, const char* name);
+void BaseCmd_FindAll(const char* name, base_command_t** cmd, base_command_t** alias, base_command_t** cvar);
+void BaseCmd_Insert(base_command_type_e type, base_command_t* basecmd, const char* name);
+void BaseCmd_Remove(base_command_type_e type, const char* name);
+void BaseCmd_Stats_f(void);  // to be registered later
+void BaseCmd_Test_f(void);  // to be registered later
 
+#endif  // XASH_HASHED_VARS
 
-void BaseCmd_Init( void );
-base_command_t *BaseCmd_Find( base_command_type_e type, const char *name );
-void BaseCmd_FindAll( const char *name,
-	base_command_t **cmd, base_command_t **alias, base_command_t **cvar );
-void BaseCmd_Insert ( base_command_type_e type, base_command_t *basecmd, const char *name );
-void BaseCmd_Remove ( base_command_type_e type, const char *name );
-void BaseCmd_Stats_f( void ); // to be registered later
-void BaseCmd_Test_f( void ); // to be registered later
-
-#endif // XASH_HASHED_VARS
-
-#endif // BASE_CMD_H
+#endif  // BASE_CMD_H

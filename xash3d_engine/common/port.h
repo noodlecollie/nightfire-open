@@ -20,71 +20,71 @@ GNU General Public License for more details.
 #include "build.h"
 
 #if !XASH_WIN32
-	#if XASH_APPLE
-		#include <sys/syslimits.h>
-		#define OS_LIB_EXT "dylib"
-		#define OPEN_COMMAND "open"
-	#else
-		#define OS_LIB_EXT "so"
-		#define OPEN_COMMAND "xdg-open"
-	#endif
-	#define OS_LIB_PREFIX "lib"
-	#define VGUI_SUPPORT_DLL "libvgui_support." OS_LIB_EXT
+#if XASH_APPLE
+#include <sys/syslimits.h>
+#define OS_LIB_EXT "dylib"
+#define OPEN_COMMAND "open"
+#else
+#define OS_LIB_EXT "so"
+#define OPEN_COMMAND "xdg-open"
+#endif
+#define OS_LIB_PREFIX "lib"
+#define VGUI_SUPPORT_DLL "libvgui_support." OS_LIB_EXT
 
-	// Windows-specific
-	#define __cdecl
-	#define __stdcall
-	#define _inline	static inline
-	#define FORCEINLINE inline __attribute__((always_inline))
+// Windows-specific
+#define __cdecl
+#define __stdcall
+#define _inline static inline
+#define FORCEINLINE inline __attribute__((always_inline))
 
-	#if XASH_POSIX
-		#include <unistd.h>
-		#if XASH_NSWITCH
-			#define SOLDER_LIBDL_COMPAT
-			#include <solder.h>
-		#elif XASH_PSVITA
-			#define VRTLD_LIBDL_COMPAT
-			#include <vrtld.h>
-			#define O_BINARY 0
-		#else
-			#include <dlfcn.h>
-			#define HAVE_DUP
-			#define O_BINARY 0
-		#endif
-		#define O_TEXT 0
-		#define _mkdir( x ) mkdir( x, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH )
-	#endif
+#if XASH_POSIX
+#include <unistd.h>
+#if XASH_NSWITCH
+#define SOLDER_LIBDL_COMPAT
+#include <solder.h>
+#elif XASH_PSVITA
+#define VRTLD_LIBDL_COMPAT
+#include <vrtld.h>
+#define O_BINARY 0
+#else
+#include <dlfcn.h>
+#define HAVE_DUP
+#define O_BINARY 0
+#endif
+#define O_TEXT 0
+#define _mkdir(x) mkdir(x, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
+#endif
 
-	typedef void* HANDLE;
-	typedef void* HINSTANCE;
+typedef void* HANDLE;
+typedef void* HINSTANCE;
 
-	typedef struct tagPOINT
-	{
-		int x, y;
-	} POINT;
-#else // WIN32
-	#ifdef __MINGW32__
-		#define _inline static inline
-		#define FORCEINLINE inline __attribute__((always_inline))
-	#else
-		#define FORCEINLINE __forceinline
-	#endif
+typedef struct tagPOINT
+{
+	int x, y;
+} POINT;
+#else  // WIN32
+#ifdef __MINGW32__
+#define _inline static inline
+#define FORCEINLINE inline __attribute__((always_inline))
+#else
+#define FORCEINLINE __forceinline
+#endif
 
-	#define open _open
-	#define read _read
-	#define alloca _alloca
+#define open _open
+#define read _read
+#define alloca _alloca
 
-	#define HSPRITE WINAPI_HSPRITE
-		#define WIN32_LEAN_AND_MEAN
-		#include <winsock2.h>
-		#include <windows.h>
-	#undef HSPRITE
+#define HSPRITE WINAPI_HSPRITE
+#define WIN32_LEAN_AND_MEAN
+#include <winsock2.h>
+#include <windows.h>
+#undef HSPRITE
 
-	#define OS_LIB_PREFIX ""
-	#define OS_LIB_EXT "dll"
-	#define VGUI_SUPPORT_DLL "../vgui_support." OS_LIB_EXT
-	#define HAVE_DUP
-#endif //WIN32
+#define OS_LIB_PREFIX ""
+#define OS_LIB_EXT "dll"
+#define VGUI_SUPPORT_DLL "../vgui_support." OS_LIB_EXT
+#define HAVE_DUP
+#endif  // WIN32
 
 #ifndef XASH_LOW_MEMORY
 #define XASH_LOW_MEMORY 0
@@ -98,4 +98,4 @@ GNU General Public License for more details.
 #include <SDL.h>
 #endif
 
-#endif // PORT_H
+#endif  // PORT_H

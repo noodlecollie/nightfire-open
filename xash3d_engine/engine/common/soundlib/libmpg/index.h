@@ -18,28 +18,28 @@ GNU General Public License for more details.
 
 typedef struct frame_index_s
 {
-	mpg_off_t	*data;	// actual data, the frame positions
-	mpg_off_t	step;	// advancement in frame number per index point
-	mpg_off_t	next;	// frame offset supposed to come next into the index
-	size_t	size;	// total number of possible entries
-	size_t	fill;	// number of used entries
-	size_t	grow_size;// if > 0: index allowed to grow on need with these steps, instead of lowering resolution
+	mpg_off_t* data;  // actual data, the frame positions
+	mpg_off_t step;  // advancement in frame number per index point
+	mpg_off_t next;  // frame offset supposed to come next into the index
+	size_t size;  // total number of possible entries
+	size_t fill;  // number of used entries
+	size_t grow_size;  // if > 0: index allowed to grow on need with these steps, instead of lowering resolution
 } frame_index_t;
 
 // the condition for a framenum to be appended to the index.
-#define FI_NEXT( fi, framenum )	((fi).size && framenum == (fi).next)
+#define FI_NEXT(fi, framenum) ((fi).size && framenum == (fi).next)
 
 // initialize stuff, set things to zero and NULL...
-void fi_init( frame_index_t *fi );
+void fi_init(frame_index_t* fi);
 // deallocate/zero things.
-void fi_exit( frame_index_t *fi );
+void fi_exit(frame_index_t* fi);
 // prepare a given size, preserving current fill, if possible.
-int fi_resize( frame_index_t *fi, size_t newsize );
+int fi_resize(frame_index_t* fi, size_t newsize);
 // append a frame position, reducing index density if needed.
-void fi_add( frame_index_t *fi, mpg_off_t pos );
+void fi_add(frame_index_t* fi, mpg_off_t pos);
 // replace the frame index
-int fi_set( frame_index_t *fi, mpg_off_t *offsets, mpg_off_t step, size_t fill );
+int fi_set(frame_index_t* fi, mpg_off_t* offsets, mpg_off_t step, size_t fill);
 // empty the index (setting fill=0 and step=1), but keep current size.
-void fi_reset( frame_index_t *fi );
+void fi_reset(frame_index_t* fi);
 
-#endif//INDEX_H
+#endif  // INDEX_H

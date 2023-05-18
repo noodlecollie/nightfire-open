@@ -44,8 +44,7 @@ typedef enum
 	DumpModelAllDataFlags = ~0
 } DumpModelDataFlag_t;
 
-static const char* DumpModelDataFlagStrings[] =
-{
+static const char* DumpModelDataFlagStrings[] = {
 	"general",
 	"planes",
 	"nodes",
@@ -61,12 +60,11 @@ static const char* DumpModelDataFlagStrings[] =
 	"textures",
 	"entities",
 	"submodels",
-	"other"
-};
+	"other"};
 
 // Not re-entrant!!
 void DumpModelData(const char* fileName, const model_t* model, unsigned int flags);
 void DumpFaceAsWavefrontObj(const char* fileName, const model_t* model, const msurface_t* surface);
 void DumpLeafBoundsAsWavefrontObj(const char* fileName, const model_t* model, const mleaf_t* leaf, qboolean nodeBounds);
 
-#endif // MODEL_DUMP_H
+#endif  // MODEL_DUMP_H

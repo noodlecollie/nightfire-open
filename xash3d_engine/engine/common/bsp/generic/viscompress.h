@@ -23,8 +23,10 @@ GNU General Public License for more details.
 
 // Functions return false if a truncation occurred, or the operation was generally unsuccessful.
 
-qboolean VisCompress(const byte* inUncompressed, size_t inSize, byte* outCompressed, size_t outMaxSize, size_t* outSize);
-qboolean VisDecompress(const byte* inCompressed, size_t inSize, byte* outUncompressed, size_t outMaxSize, size_t* outSize);
+qboolean
+VisCompress(const byte* inUncompressed, size_t inSize, byte* outCompressed, size_t outMaxSize, size_t* outSize);
+qboolean
+VisDecompress(const byte* inCompressed, size_t inSize, byte* outUncompressed, size_t outMaxSize, size_t* outSize);
 
 // For when the input size is unknown (as is the case in a model_t).
 // The number of uncompressed bytes is known, given the number of leaves that there are.
@@ -32,7 +34,19 @@ qboolean VisDecompress(const byte* inCompressed, size_t inSize, byte* outUncompr
 qboolean VisDecompressToKnownSize(const byte* inCompressed, byte* outUncompressed, size_t outMaxSize);
 
 // inSize must be a multiple of rowSize.
-qboolean VisCompressAllByRow(const byte* inUncompressed, size_t inSize, size_t rowSize, byte* outCompressed, size_t outMaxSize, size_t* outSize);
-qboolean VisDecompressAllByRow(const byte* inUncompressed, size_t inSize, size_t rowSize, byte* outCompressed, size_t outMaxSize, size_t* outSize);
+qboolean VisCompressAllByRow(
+	const byte* inUncompressed,
+	size_t inSize,
+	size_t rowSize,
+	byte* outCompressed,
+	size_t outMaxSize,
+	size_t* outSize);
+qboolean VisDecompressAllByRow(
+	const byte* inUncompressed,
+	size_t inSize,
+	size_t rowSize,
+	byte* outCompressed,
+	size_t outMaxSize,
+	size_t* outSize);
 
 size_t VisUncompressedRowBytesRequired(size_t numLeaves);

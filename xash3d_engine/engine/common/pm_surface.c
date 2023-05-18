@@ -19,13 +19,13 @@ GNU General Public License for more details.
 #include "ref_common.h"
 
 #undef FRAC_EPSILON
-#define FRAC_EPSILON	(1.0f / 32.0f)
+#define FRAC_EPSILON (1.0f / 32.0f)
 
 typedef struct
 {
-	float		fraction;
-	int		contents;
-	msurface_t	*surface;
+	float fraction;
+	int contents;
+	msurface_t* surface;
 } linetrace_t;
 
 /*
@@ -35,10 +35,11 @@ fix_coord
 converts the reletive tex coords to absolute
 ==============
 */
-static uint fix_coord( vec_t in, uint width )
+static uint fix_coord(vec_t in, uint width)
 {
-	if( in > 0 ) return (uint)in % width;
-	return width - ((uint)fabs( in ) % width);
+	if ( in > 0 )
+		return (uint)in % width;
+	return width - ((uint)fabs(in) % width);
 }
 
 /*
@@ -48,54 +49,57 @@ SampleMiptex
 fence texture testing
 =============
 */
-int PM_SampleMiptex( const msurface_t *surf, const vec3_t point )
+int PM_SampleMiptex(const msurface_t* surf, const vec3_t point)
 {
-	mextrasurf_t	*info = surf->info;
-	mfacebevel_t	*fb = info->bevel;
-	int		contents;
-	vec_t		ds, dt;
-	int		x, y;
-	mtexinfo_t	*tx;
-	texture_t		*mt;
+	mextrasurf_t* info = surf->info;
+	mfacebevel_t* fb = info->bevel;
+	int contents;
+	vec_t ds, dt;
+	int x, y;
+	mtexinfo_t* tx;
+	texture_t* mt;
 
 	// fill the default contents
-	if( fb ) contents = fb->contents;
-	else contents = CONTENTS_SOLID;
+	if ( fb )
+		contents = fb->contents;
+	else
+		contents = CONTENTS_SOLID;
 
-	if( !surf->texinfo || !surf->texinfo->texture )
+	if ( !surf->texinfo || !surf->texinfo->texture )
 		return contents;
 
 	tx = surf->texinfo;
 	mt = tx->texture;
 
-	if( mt->name[0] != '{' )
+	if ( mt->name[0] != '{' )
 		return contents;
 
-	// TODO: this won't work under dedicated
-	// should we bring up imagelib and keep original buffers?
+		// TODO: this won't work under dedicated
+		// should we bring up imagelib and keep original buffers?
 #if !XASH_DEDICATED
-	if( !Host_IsDedicated() )
+	if ( !Host_IsDedicated() )
 	{
-		const byte		*data;
+		const byte* data;
 
-		data = ref.dllFuncs.R_GetTextureOriginalBuffer( mt->gl_texturenum );
+		data = ref.dllFuncs.R_GetTextureOriginalBuffer(mt->gl_texturenum);
 
-		if( !data ) return contents; // original doesn't kept
+		if ( !data )
+			return contents;  // original doesn't kept
 
-		ds = DotProduct( point, tx->vecs[0] ) + tx->vecs[0][3];
-		dt = DotProduct( point, tx->vecs[1] ) + tx->vecs[1][3];
+		ds = DotProduct(point, tx->vecs[0]) + tx->vecs[0][3];
+		dt = DotProduct(point, tx->vecs[1]) + tx->vecs[1][3];
 
 		// convert ST to real pixels position
-		x = fix_coord( ds, mt->width - 1 );
-		y = fix_coord( dt, mt->height - 1 );
+		x = fix_coord(ds, mt->width - 1);
+		y = fix_coord(dt, mt->height - 1);
 
-		ASSERT( x >= 0 && y >= 0 );
+		ASSERT(x >= 0 && y >= 0);
 
-		if( data[(mt->width * y) + x] == 255 )
+		if ( data[(mt->width * y) + x] == 255 )
 			return CONTENTS_EMPTY;
 		return CONTENTS_SOLID;
 	}
-#endif // !XASH_DEDICATED
+#endif  // !XASH_DEDICATED
 
 	return contents;
 }
@@ -106,73 +110,74 @@ PM_RecursiveSurfCheck
 
 ==================
 */
-msurface_t *PM_RecursiveSurfCheck( model_t *mod, mnode_t *node, vec3_t p1, vec3_t p2 )
+msurface_t* PM_RecursiveSurfCheck(model_t* mod, mnode_t* node, vec3_t p1, vec3_t p2)
 {
-	float		t1, t2, frac;
-	int		i, side;
-	msurface_t	*surf;
-	vec3_t		mid;
+	float t1, t2, frac;
+	int i, side;
+	msurface_t* surf;
+	vec3_t mid;
 loc0:
-	if( node->contents < 0 )
+	if ( node->contents < 0 )
 		return NULL;
 
-	t1 = PlaneDiff( p1, node->plane );
-	t2 = PlaneDiff( p2, node->plane );
+	t1 = PlaneDiff(p1, node->plane);
+	t2 = PlaneDiff(p2, node->plane);
 
-	if( t1 >= -FRAC_EPSILON && t2 >= -FRAC_EPSILON )
+	if ( t1 >= -FRAC_EPSILON && t2 >= -FRAC_EPSILON )
 	{
 		node = node->children[0];
 		goto loc0;
 	}
 
-	if( t1 < FRAC_EPSILON && t2 < FRAC_EPSILON )
+	if ( t1 < FRAC_EPSILON && t2 < FRAC_EPSILON )
 	{
 		node = node->children[1];
 		goto loc0;
 	}
 
 	side = (t1 < 0.0f);
-	frac = t1 / ( t1 - t2 );
-	frac = bound( 0.0f, frac, 1.0f );
+	frac = t1 / (t1 - t2);
+	frac = bound(0.0f, frac, 1.0f);
 
-	VectorLerp( p1, frac, p2, mid );
+	VectorLerp(p1, frac, p2, mid);
 
-	if(( surf = PM_RecursiveSurfCheck( mod, node->children[side], p1, mid )) != NULL )
+	if ( (surf = PM_RecursiveSurfCheck(mod, node->children[side], p1, mid)) != NULL )
 		return surf;
 
 	// walk through real faces
-	for( i = 0; i < node->numsurfaces; i++ )
+	for ( i = 0; i < node->numsurfaces; i++ )
 	{
-		msurface_t	*surf = &mod->surfaces[node->firstsurface + i];
-		mextrasurf_t	*info = surf->info;
-		mfacebevel_t	*fb = info->bevel;
-		int		j, contents;
-		vec3_t		delta;
+		msurface_t* surf = &mod->surfaces[node->firstsurface + i];
+		mextrasurf_t* info = surf->info;
+		mfacebevel_t* fb = info->bevel;
+		int j, contents;
+		vec3_t delta;
 
-		if( !fb ) continue;	// ???
+		if ( !fb )
+			continue;  // ???
 
-		VectorSubtract( mid, fb->origin, delta );
-		if( DotProduct( delta, delta ) >= fb->radius )
-			continue;	// no intersection
+		VectorSubtract(mid, fb->origin, delta);
+		if ( DotProduct(delta, delta) >= fb->radius )
+			continue;  // no intersection
 
-		for( j = 0; j < fb->numedges; j++ )
+		for ( j = 0; j < fb->numedges; j++ )
 		{
-			if( PlaneDiff( mid, &fb->edges[j] ) > FRAC_EPSILON )
-				break; // outside the bounds
+			if ( PlaneDiff(mid, &fb->edges[j]) > FRAC_EPSILON )
+				break;  // outside the bounds
 		}
 
-		if( j != fb->numedges )
-			continue; // we are outside the bounds of the facet
+		if ( j != fb->numedges )
+			continue;  // we are outside the bounds of the facet
 
 		// hit the surface
-		contents = PM_SampleMiptex( surf, mid );
+		contents = PM_SampleMiptex(surf, mid);
 
-		if( contents != CONTENTS_EMPTY )
+		if ( contents != CONTENTS_EMPTY )
 			return surf;
-		return NULL; // through the fence
+		return NULL;  // through the fence
 	}
 
-	return PM_RecursiveSurfCheck( mod, node->children[side^1], mid, p2 );
+	return PM_RecursiveSurfCheck(mod, node->children[side ^ 1], mid, p2);
 }
 
 /*
@@ -183,35 +188,35 @@ find the face where the traceline hit
 assume physentity is valid
 ==================
 */
-msurface_t *PM_TraceSurface( physent_t *pe, const float* start, const float* end )
+msurface_t* PM_TraceSurface(physent_t* pe, const float* start, const float* end)
 {
-	matrix4x4		matrix;
-	model_t		*bmodel;
-	hull_t		*hull;
-	vec3_t		start_l, end_l;
-	vec3_t		offset;
+	matrix4x4 matrix;
+	model_t* bmodel;
+	hull_t* hull;
+	vec3_t start_l, end_l;
+	vec3_t offset;
 
 	bmodel = pe->model;
 
-	if( !bmodel || bmodel->type != mod_brush )
+	if ( !bmodel || bmodel->type != mod_brush )
 		return NULL;
 
 	hull = &pe->model->hulls[0];
-	VectorSubtract( hull->clip_mins, vec3_origin, offset );
-	VectorAdd( offset, pe->origin, offset );
+	VectorSubtract(hull->clip_mins, vec3_origin, offset);
+	VectorAdd(offset, pe->origin, offset);
 
-	VectorSubtract( start, offset, start_l );
-	VectorSubtract( end, offset, end_l );
+	VectorSubtract(start, offset, start_l);
+	VectorSubtract(end, offset, end_l);
 
 	// rotate start and end into the models frame of reference
-	if( !VectorIsNull( pe->angles ))
+	if ( !VectorIsNull(pe->angles) )
 	{
-		Matrix4x4_CreateFromEntity( matrix, pe->angles, offset, 1.0f );
-		Matrix4x4_VectorITransform( matrix, start, start_l );
-		Matrix4x4_VectorITransform( matrix, end, end_l );
+		Matrix4x4_CreateFromEntity(matrix, pe->angles, offset, 1.0f);
+		Matrix4x4_VectorITransform(matrix, start, start_l);
+		Matrix4x4_VectorITransform(matrix, end, end_l);
 	}
 
-	return PM_RecursiveSurfCheck( bmodel, &bmodel->nodes[hull->firstclipnode], start_l, end_l );
+	return PM_RecursiveSurfCheck(bmodel, &bmodel->nodes[hull->firstclipnode], start_l, end_l);
 }
 
 /*
@@ -222,11 +227,11 @@ find the face where the traceline hit
 assume physentity is valid
 ==================
 */
-texture_t* PM_TraceTexturePhysEnt( physent_t *pe, const float* start, const float* end )
+texture_t* PM_TraceTexturePhysEnt(physent_t* pe, const float* start, const float* end)
 {
-	msurface_t	*surf = PM_TraceSurface( pe, start, end );
+	msurface_t* surf = PM_TraceSurface(pe, start, end);
 
-	if( !surf || !surf->texinfo )
+	if ( !surf || !surf->texinfo )
 	{
 		return NULL;
 	}
@@ -241,34 +246,41 @@ PM_TestLine_r
 optimized trace for light gathering
 ==================
 */
-int PM_TestLine_r( model_t *mod, mnode_t *node, vec_t p1f, vec_t p2f, const vec3_t start, const vec3_t stop, linetrace_t *trace )
+int PM_TestLine_r(
+	model_t* mod,
+	mnode_t* node,
+	vec_t p1f,
+	vec_t p2f,
+	const vec3_t start,
+	const vec3_t stop,
+	linetrace_t* trace)
 {
-	float	front, back;
-	float	frac, midf;
-	int	i, r, side;
-	vec3_t	mid;
+	float front, back;
+	float frac, midf;
+	int i, r, side;
+	vec3_t mid;
 loc0:
-	if( node->contents < 0 )
+	if ( node->contents < 0 )
 	{
 		// water, slime or lava interpret as empty
-		if( node->contents == CONTENTS_SOLID )
+		if ( node->contents == CONTENTS_SOLID )
 			return CONTENTS_SOLID;
-		if( node->contents == CONTENTS_SKY )
+		if ( node->contents == CONTENTS_SKY )
 			return CONTENTS_SKY;
 		trace->fraction = 1.0f;
 		return CONTENTS_EMPTY;
 	}
 
-	front = PlaneDiff( start, node->plane );
-	back = PlaneDiff( stop, node->plane );
+	front = PlaneDiff(start, node->plane);
+	back = PlaneDiff(stop, node->plane);
 
-	if( front >= -FRAC_EPSILON && back >= -FRAC_EPSILON )
+	if ( front >= -FRAC_EPSILON && back >= -FRAC_EPSILON )
 	{
 		node = node->children[0];
 		goto loc0;
 	}
 
-	if( front < FRAC_EPSILON && back < FRAC_EPSILON )
+	if ( front < FRAC_EPSILON && back < FRAC_EPSILON )
 	{
 		node = node->children[1];
 		goto loc0;
@@ -276,115 +288,117 @@ loc0:
 
 	side = (front < 0);
 	frac = front / (front - back);
-	frac = bound( 0.0f, frac, 1.0f );
+	frac = bound(0.0f, frac, 1.0f);
 
-	VectorLerp( start, frac, stop, mid );
-	midf = p1f + ( p2f - p1f ) * frac;
+	VectorLerp(start, frac, stop, mid);
+	midf = p1f + (p2f - p1f) * frac;
 
-	r = PM_TestLine_r( mod, node->children[side], p1f, midf, start, mid, trace );
+	r = PM_TestLine_r(mod, node->children[side], p1f, midf, start, mid, trace);
 
-	if( r != CONTENTS_EMPTY )
+	if ( r != CONTENTS_EMPTY )
 	{
-		if( trace->surface == NULL )
+		if ( trace->surface == NULL )
 			trace->fraction = midf;
 		trace->contents = r;
 		return r;
 	}
 
 	// walk through real faces
-	for( i = 0; i < node->numsurfaces; i++ )
+	for ( i = 0; i < node->numsurfaces; i++ )
 	{
-		msurface_t	*surf = &mod->surfaces[node->firstsurface + i];
-		mextrasurf_t	*info = surf->info;
-		mfacebevel_t	*fb = info->bevel;
-		int		j, contents;
-		vec3_t		delta;
+		msurface_t* surf = &mod->surfaces[node->firstsurface + i];
+		mextrasurf_t* info = surf->info;
+		mfacebevel_t* fb = info->bevel;
+		int j, contents;
+		vec3_t delta;
 
-		if( !fb ) continue;
+		if ( !fb )
+			continue;
 
-		VectorSubtract( mid, fb->origin, delta );
-		if( DotProduct( delta, delta ) >= fb->radius )
-			continue;	// no intersection
+		VectorSubtract(mid, fb->origin, delta);
+		if ( DotProduct(delta, delta) >= fb->radius )
+			continue;  // no intersection
 
-		for( j = 0; j < fb->numedges; j++ )
+		for ( j = 0; j < fb->numedges; j++ )
 		{
-			if( PlaneDiff( mid, &fb->edges[j] ) > FRAC_EPSILON )
-				break; // outside the bounds
+			if ( PlaneDiff(mid, &fb->edges[j]) > FRAC_EPSILON )
+				break;  // outside the bounds
 		}
 
-		if( j != fb->numedges )
-			continue; // we are outside the bounds of the facet
+		if ( j != fb->numedges )
+			continue;  // we are outside the bounds of the facet
 
 		// hit the surface
-		contents = PM_SampleMiptex( surf, mid );
+		contents = PM_SampleMiptex(surf, mid);
 
 		// fill the trace and out
 		trace->contents = contents;
 		trace->fraction = midf;
 
-		if( contents != CONTENTS_EMPTY )
+		if ( contents != CONTENTS_EMPTY )
 			trace->surface = surf;
 
 		return contents;
 	}
 
-	return PM_TestLine_r( mod, node->children[!side], midf, p2f, mid, stop, trace );
+	return PM_TestLine_r(mod, node->children[!side], midf, p2f, mid, stop, trace);
 }
 
-int PM_TestLineExt( playermove_t *pmove, physent_t *ents, int numents, const vec3_t start, const vec3_t end, int flags )
+int PM_TestLineExt(playermove_t* pmove, physent_t* ents, int numents, const vec3_t start, const vec3_t end, int flags)
 {
-	linetrace_t	trace, trace_bbox;
-	matrix4x4		matrix;
-	hull_t		*hull = NULL;
-	vec3_t		offset, start_l, end_l;
-	qboolean		rotated;
-	physent_t		*pe;
-	int		i;
+	linetrace_t trace, trace_bbox;
+	matrix4x4 matrix;
+	hull_t* hull = NULL;
+	vec3_t offset, start_l, end_l;
+	qboolean rotated;
+	physent_t* pe;
+	int i;
 
 	trace.contents = CONTENTS_EMPTY;
 	trace.fraction = 1.0f;
 	trace.surface = NULL;
 
-	for( i = 0; i < numents; i++ )
+	for ( i = 0; i < numents; i++ )
 	{
 		pe = &ents[i];
 
-		if( i != 0 && FBitSet( flags, PM_WORLD_ONLY ))
+		if ( i != 0 && FBitSet(flags, PM_WORLD_ONLY) )
 			break;
 
-		if( !pe->model || pe->model->type != mod_brush || pe->solid != SOLID_BSP )
+		if ( !pe->model || pe->model->type != mod_brush || pe->solid != SOLID_BSP )
 			continue;
 
-		if( FBitSet( flags, PM_GLASS_IGNORE ) && pe->rendermode != kRenderNormal )
+		if ( FBitSet(flags, PM_GLASS_IGNORE) && pe->rendermode != kRenderNormal )
 			continue;
 
 		hull = &pe->model->hulls[0];
 
-		hull = PM_HullForBsp( pe, pmove, offset );
+		hull = PM_HullForBsp(pe, pmove, offset);
 
-		if( pe->solid == SOLID_BSP && !VectorIsNull( pe->angles ))
+		if ( pe->solid == SOLID_BSP && !VectorIsNull(pe->angles) )
 			rotated = true;
-		else rotated = false;
+		else
+			rotated = false;
 
-		if( rotated )
+		if ( rotated )
 		{
-			Matrix4x4_CreateFromEntity( matrix, pe->angles, offset, 1.0f );
-			Matrix4x4_VectorITransform( matrix, start, start_l );
-			Matrix4x4_VectorITransform( matrix, end, end_l );
+			Matrix4x4_CreateFromEntity(matrix, pe->angles, offset, 1.0f);
+			Matrix4x4_VectorITransform(matrix, start, start_l);
+			Matrix4x4_VectorITransform(matrix, end, end_l);
 		}
 		else
 		{
-			VectorSubtract( start, pe->origin, start_l );
-			VectorSubtract( end, pe->origin, end_l );
+			VectorSubtract(start, pe->origin, start_l);
+			VectorSubtract(end, pe->origin, end_l);
 		}
 
 		trace_bbox.contents = CONTENTS_EMPTY;
 		trace_bbox.fraction = 1.0f;
 		trace_bbox.surface = NULL;
 
-		PM_TestLine_r( pe->model, &pe->model->nodes[hull->firstclipnode], 0.0f, 1.0f, start_l, end_l, &trace_bbox );
+		PM_TestLine_r(pe->model, &pe->model->nodes[hull->firstclipnode], 0.0f, 1.0f, start_l, end_l, &trace_bbox);
 
-		if( trace_bbox.contents != CONTENTS_EMPTY || trace_bbox.fraction < trace.fraction )
+		if ( trace_bbox.contents != CONTENTS_EMPTY || trace_bbox.fraction < trace.fraction )
 		{
 			trace = trace_bbox;
 		}

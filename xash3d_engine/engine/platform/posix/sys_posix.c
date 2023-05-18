@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include <unistd.h> // fork
+#include <unistd.h>  // fork
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -21,153 +21,154 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #include "menu_int.h"
 
-static qboolean Sys_FindExecutable( const char *baseName, char *buf, size_t size )
+static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 {
-	char *envPath;
-	char *part;
+	char* envPath;
+	char* part;
 	size_t length;
 	size_t baseNameLength;
 	size_t needTrailingSlash;
 
-	if( !baseName || !baseName[0] )
+	if ( !baseName || !baseName[0] )
 		return false;
 
-	envPath = getenv( "PATH" );
-	if( !COM_CheckString( envPath ) )
+	envPath = getenv("PATH");
+	if ( !COM_CheckString(envPath) )
 		return false;
 
-	baseNameLength = Q_strlen( baseName );
-	while( *envPath )
+	baseNameLength = Q_strlen(baseName);
+	while ( *envPath )
 	{
-		part = Q_strchr( envPath, ':' );
-		if( part )
+		part = Q_strchr(envPath, ':');
+		if ( part )
 			length = part - envPath;
 		else
-			length = Q_strlen( envPath );
+			length = Q_strlen(envPath);
 
-		if( length > 0 )
+		if ( length > 0 )
 		{
-			needTrailingSlash = ( envPath[length - 1] == '/' ) ? 0 : 1;
-			if( length + baseNameLength + needTrailingSlash < size )
+			needTrailingSlash = (envPath[length - 1] == '/') ? 0 : 1;
+			if ( length + baseNameLength + needTrailingSlash < size )
 			{
-				Q_strncpy( buf, envPath, length + 1 );
-				if( needTrailingSlash )
-					Q_strcpy( buf + length, "/" );
-				Q_strcpy( buf + length + needTrailingSlash, baseName );
+				Q_strncpy(buf, envPath, length + 1);
+				if ( needTrailingSlash )
+					Q_strcpy(buf + length, "/");
+				Q_strcpy(buf + length + needTrailingSlash, baseName);
 				buf[length + needTrailingSlash + baseNameLength] = '\0';
-				if( access( buf, X_OK ) == 0 )
+				if ( access(buf, X_OK) == 0 )
 					return true;
 			}
 		}
 
 		envPath += length;
-		if( *envPath == ':' )
+		if ( *envPath == ':' )
 			envPath++;
 	}
 	return false;
 }
 
 #if !XASH_ANDROID && !XASH_NSWITCH && !XASH_PSVITA
-void Platform_ShellExecute( const char *path, const char *parms )
+void Platform_ShellExecute(const char* path, const char* parms)
 {
 	char xdgOpen[128];
 
-	if( !Q_strcmp( path, GENERIC_UPDATE_PAGE ) || !Q_strcmp( path, PLATFORM_UPDATE_PAGE ))
+	if ( !Q_strcmp(path, GENERIC_UPDATE_PAGE) || !Q_strcmp(path, PLATFORM_UPDATE_PAGE) )
 		path = DEFAULT_UPDATE_PAGE;
 
-	if( Sys_FindExecutable( OPEN_COMMAND, xdgOpen, sizeof( xdgOpen ) ) )
+	if ( Sys_FindExecutable(OPEN_COMMAND, xdgOpen, sizeof(xdgOpen)) )
 	{
-		const char *argv[] = { xdgOpen, path, NULL };
-		pid_t id = fork( );
-		if( id == 0 )
+		const char* argv[] = {xdgOpen, path, NULL};
+		pid_t id = fork();
+		if ( id == 0 )
 		{
-			execv( xdgOpen, (char **)argv );
-			fprintf( stderr, "error opening %s %s", xdgOpen, path );
-			_exit( 1 );
+			execv(xdgOpen, (char**)argv);
+			fprintf(stderr, "error opening %s %s", xdgOpen, path);
+			_exit(1);
 		}
 	}
 	else
 	{
-		Con_Reportf( S_WARN "Could not find "OPEN_COMMAND" utility\n" );
+		Con_Reportf(S_WARN "Could not find " OPEN_COMMAND " utility\n");
 	}
 }
-#endif // XASH_ANDROID
+#endif  // XASH_ANDROID
 
-void Posix_Daemonize( void )
+void Posix_Daemonize(void)
 {
 	// to be accessed later
-	if( ( host.daemonized = Sys_CheckParm( "-daemonize" ) ) )
+	if ( (host.daemonized = Sys_CheckParm("-daemonize")) )
 	{
 #if XASH_POSIX && defined(_POSIX_VERSION) && !defined(XASH_MOBILE_PLATFORM)
 		pid_t daemon;
 
 		daemon = fork();
 
-		if( daemon < 0 )
+		if ( daemon < 0 )
 		{
-			Host_Error( "fork() failed: %s\n", strerror( errno ) );
+			Host_Error("fork() failed: %s\n", strerror(errno));
 		}
 
-		if( daemon > 0 )
+		if ( daemon > 0 )
 		{
 			// parent
-			Con_Reportf( "Child pid: %i\n", daemon );
-			exit( 0 );
+			Con_Reportf("Child pid: %i\n", daemon);
+			exit(0);
 		}
 		else
 		{
 			// don't be closed by parent
-			if( setsid() < 0 )
+			if ( setsid() < 0 )
 			{
-				Host_Error( "setsid() failed: %s\n", strerror( errno ) );
+				Host_Error("setsid() failed: %s\n", strerror(errno));
 			}
 
 			// set permissions
-			umask( 0 );
+			umask(0);
 
 			// engine will still use stdin/stdout,
 			// so just redirect them to /dev/null
-			close( STDIN_FILENO );
-			close( STDOUT_FILENO );
-			close( STDERR_FILENO );
-			open("/dev/null", O_RDONLY); // becomes stdin
-			open("/dev/null", O_RDWR); // stdout
-			open("/dev/null", O_RDWR); // stderr
+			close(STDIN_FILENO);
+			close(STDOUT_FILENO);
+			close(STDERR_FILENO);
+			open("/dev/null", O_RDONLY);  // becomes stdin
+			open("/dev/null", O_RDWR);  // stdout
+			open("/dev/null", O_RDWR);  // stderr
 
 			// fallthrough
 		}
 #elif defined(XASH_MOBILE_PLATFORM)
-		Sys_Error( "Can't run in background on mobile platforms!" );
+		Sys_Error("Can't run in background on mobile platforms!");
 #else
-		Sys_Error( "Daemonize not supported on this platform!" );
+		Sys_Error("Daemonize not supported on this platform!");
 #endif
 	}
-
 }
 
 #if !XASH_SDL && !XASH_ANDROID
 
-void Platform_Init( void )
+void Platform_Init(void)
 {
 	Posix_Daemonize();
 }
-void Platform_Shutdown( void ) {}
+void Platform_Shutdown(void)
+{
+}
 #endif
 
 #if XASH_TIMER == TIMER_POSIX
-double Platform_DoubleTime( void )
+double Platform_DoubleTime(void)
 {
 	struct timespec ts;
 #if XASH_IRIX
-	clock_gettime( CLOCK_SGI_CYCLE, &ts );
-#else	
-	clock_gettime( CLOCK_MONOTONIC, &ts );
+	clock_gettime(CLOCK_SGI_CYCLE, &ts);
+#else
+	clock_gettime(CLOCK_MONOTONIC, &ts);
 #endif
-	return (double) ts.tv_sec + (double) ts.tv_nsec/1000000000.0;
+	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
 }
 
-void Platform_Sleep( int msec )
+void Platform_Sleep(int msec)
 {
-	usleep( msec * 1000 );
+	usleep(msec * 1000);
 }
-#endif // XASH_TIMER == TIMER_POSIX
+#endif  // XASH_TIMER == TIMER_POSIX

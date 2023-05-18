@@ -24,16 +24,16 @@ GNU General Public License for more details.
  * intention to change this interface, so on a practical level, the code
  * below is safe to use on IRIX.
  *
- * 
+ *
  *
  * The following code has been reproduced from the manpage.
- */ 
+ */
 
 #include "dladdr.h"
 
-int dladdr(void *address, Dl_info* dl)
+int dladdr(void* address, Dl_info* dl)
 {
-	void *v;
+	void* v;
 	v = _rld_new_interface(_RLD_DLADDR, address, dl);
 	return (int)v;
 }

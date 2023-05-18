@@ -18,97 +18,141 @@ GNU General Public License for more details.
 
 typedef struct cldll_func_src_s
 {
-	int	(*pfnInitialize)( cl_enginefunc_t *pEnginefuncs, int iVersion );
-	void	(*pfnInit)( void );
-	int	(*pfnVidInit)( void );
-	int	(*pfnRedraw)( float flTime, int intermission );
-	int	(*pfnUpdateClientData)( client_data_t *cdata, float flTime );
-	void	(*pfnReset)( void );
-	void	(*pfnPlayerMove)( struct playermove_s *ppmove, int server );
-	void	(*pfnPlayerMoveInit)( struct playermove_s *ppmove );
-	char	(*pfnPlayerMoveTexture)( char *name );
-	void	(*IN_ActivateMouse)( void );
-	void	(*IN_DeactivateMouse)( void );
-	void	(*IN_MouseEvent)( int mstate );
-	void	(*IN_ClearStates)( void );
-	void	(*IN_Accumulate)( void );
-	void	(*CL_CreateMove)( float frametime, struct usercmd_s *cmd, int active );
-	int	(*CL_IsThirdPerson)( void );
-	void	(*CL_CameraOffset)( float *ofs );	// unused
-	void	*(*KB_Find)( const char *name );
-	void	(*CAM_Think)( void );		// camera stuff
-	void	(*pfnCalcRefdef)( ref_params_t *pparams );
-	int	(*pfnAddEntity)( int type, cl_entity_t *ent, const char *modelname );
-	void	(*pfnCreateEntities)( void );
-	void	(*pfnDrawNormalTriangles)( void );
-	void	(*pfnDrawTransparentTriangles)( void );
-	void	(*pfnStudioEvent)( const struct mstudioevent_s *event, const cl_entity_t *entity );
-	void	(*pfnPostRunCmd)( struct local_state_s *from, struct local_state_s *to, usercmd_t *cmd, int runfuncs, double time, unsigned int random_seed );
-	void	(*pfnShutdown)( void );
-	void	(*pfnTxferLocalOverrides)( entity_state_t *state, const clientdata_t *client );
-	void	(*pfnProcessPlayerState)( entity_state_t *dst, const entity_state_t *src );
-	void	(*pfnTxferPredictionData)( entity_state_t *ps, const entity_state_t *pps, clientdata_t *pcd, const clientdata_t *ppcd, weapon_data_t *wd, const weapon_data_t *pwd );
-	void	(*pfnDemo_ReadBuffer)( int size, byte *buffer );
-	int	(*pfnConnectionlessPacket)( const struct netadr_s *net_from, const char *args, char *buffer, int *size );
-	int	(*pfnGetHullBounds)( int hullnumber, float *mins, float *maxs );
-	void	(*pfnFrame)( double time );
-	int	(*pfnKey_Event)( int eventcode, int keynum, const char *pszCurrentBinding );
+	int (*pfnInitialize)(cl_enginefunc_t* pEnginefuncs, int iVersion);
+	void (*pfnInit)(void);
+	int (*pfnVidInit)(void);
+	int (*pfnRedraw)(float flTime, int intermission);
+	int (*pfnUpdateClientData)(client_data_t* cdata, float flTime);
+	void (*pfnReset)(void);
+	void (*pfnPlayerMove)(struct playermove_s* ppmove, int server);
+	void (*pfnPlayerMoveInit)(struct playermove_s* ppmove);
+	char (*pfnPlayerMoveTexture)(char* name);
+	void (*IN_ActivateMouse)(void);
+	void (*IN_DeactivateMouse)(void);
+	void (*IN_MouseEvent)(int mstate);
+	void (*IN_ClearStates)(void);
+	void (*IN_Accumulate)(void);
+	void (*CL_CreateMove)(float frametime, struct usercmd_s* cmd, int active);
+	int (*CL_IsThirdPerson)(void);
+	void (*CL_CameraOffset)(float* ofs);  // unused
+	void* (*KB_Find)(const char* name);
+	void (*CAM_Think)(void);  // camera stuff
+	void (*pfnCalcRefdef)(ref_params_t* pparams);
+	int (*pfnAddEntity)(int type, cl_entity_t* ent, const char* modelname);
+	void (*pfnCreateEntities)(void);
+	void (*pfnDrawNormalTriangles)(void);
+	void (*pfnDrawTransparentTriangles)(void);
+	void (*pfnStudioEvent)(const struct mstudioevent_s* event, const cl_entity_t* entity);
+	void (*pfnPostRunCmd)(
+		struct local_state_s* from,
+		struct local_state_s* to,
+		usercmd_t* cmd,
+		int runfuncs,
+		double time,
+		unsigned int random_seed);
+	void (*pfnShutdown)(void);
+	void (*pfnTxferLocalOverrides)(entity_state_t* state, const clientdata_t* client);
+	void (*pfnProcessPlayerState)(entity_state_t* dst, const entity_state_t* src);
+	void (*pfnTxferPredictionData)(
+		entity_state_t* ps,
+		const entity_state_t* pps,
+		clientdata_t* pcd,
+		const clientdata_t* ppcd,
+		weapon_data_t* wd,
+		const weapon_data_t* pwd);
+	void (*pfnDemo_ReadBuffer)(int size, byte* buffer);
+	int (*pfnConnectionlessPacket)(const struct netadr_s* net_from, const char* args, char* buffer, int* size);
+	int (*pfnGetHullBounds)(int hullnumber, float* mins, float* maxs);
+	void (*pfnFrame)(double time);
+	int (*pfnKey_Event)(int eventcode, int keynum, const char* pszCurrentBinding);
 	// NOODLECOLLIE: Removed extra function pointer at the end of this that is currently unused, to eliminate warnings.
-	void	(*pfnTempEntUpdate)( double frametime, double client_time, double cl_gravity, struct tempent_s **ppTempEntFree, struct tempent_s **ppTempEntActive, int ( *Callback_AddVisibleEntity )( cl_entity_t *pEntity )/*, void ( *Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp )*/);
-	cl_entity_t *(*pfnGetUserEntity)( int index );
-	void	(*pfnVoiceStatus)( int entindex, qboolean bTalking );
-	void	(*pfnDirectorMessage)( int iSize, void *pbuf );
-	int	(*pfnGetStudioModelInterface)( int version, struct r_studio_interface_s **ppinterface, struct engine_studio_api_s *pstudio );
-	void	(*pfnChatInputPosition)( int *x, int *y );
-	int	(*pfnGetPlayerTeam)( int iPlayer );
-	void	*(*pfnClientFactory)( void );
+	void (*pfnTempEntUpdate)(
+		double frametime,
+		double client_time,
+		double cl_gravity,
+		struct tempent_s** ppTempEntFree,
+		struct tempent_s** ppTempEntActive,
+		int (*Callback_AddVisibleEntity)(
+			cl_entity_t* pEntity) /*, void ( *Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp )*/);
+	cl_entity_t* (*pfnGetUserEntity)(int index);
+	void (*pfnVoiceStatus)(int entindex, qboolean bTalking);
+	void (*pfnDirectorMessage)(int iSize, void* pbuf);
+	int (*pfnGetStudioModelInterface)(
+		int version,
+		struct r_studio_interface_s** ppinterface,
+		struct engine_studio_api_s* pstudio);
+	void (*pfnChatInputPosition)(int* x, int* y);
+	int (*pfnGetPlayerTeam)(int iPlayer);
+	void* (*pfnClientFactory)(void);
 } cldll_func_src_t;
 
 typedef struct cldll_func_dst_s
 {
-	void	(*pfnInitialize)( cl_enginefunc_t **pEnginefuncs, int *iVersion );
-	void	(*pfnInit)( void );
-	void	(*pfnVidInit)( void );
-	void	(*pfnRedraw)( float *flTime, int *intermission );
-	void	(*pfnUpdateClientData)( client_data_t **cdata, float *flTime );
-	void	(*pfnReset)( void );
-	void	(*pfnPlayerMove)( struct playermove_s **ppmove, int *server );
-	void	(*pfnPlayerMoveInit)( struct playermove_s **ppmove );
-	void	(*pfnPlayerMoveTexture)( char **name );
-	void	(*IN_ActivateMouse)( void );
-	void	(*IN_DeactivateMouse)( void );
-	void	(*IN_MouseEvent)( int *mstate );
-	void	(*IN_ClearStates)( void );
-	void	(*IN_Accumulate)( void );
-	void	(*CL_CreateMove)( float *frametime, struct usercmd_s **cmd, int *active );
-	void	(*CL_IsThirdPerson)( void );
-	void	(*CL_CameraOffset)( float **ofs );
-	void	(*KB_Find)( const char **name );
-	void	(*CAM_Think)( void );
-	void	(*pfnCalcRefdef)( ref_params_t **pparams );
-	void	(*pfnAddEntity)( int *type, cl_entity_t **ent, const char **modelname );
-	void	(*pfnCreateEntities)( void );
-	void	(*pfnDrawNormalTriangles)( void );
-	void	(*pfnDrawTransparentTriangles)( void );
-	void	(*pfnStudioEvent)( const struct mstudioevent_s **event, const cl_entity_t **entity );
-	void	(*pfnPostRunCmd)( struct local_state_s **from, struct local_state_s **to, usercmd_t **cmd, int *runfuncs, double *time, unsigned int *random_seed );
-	void	(*pfnShutdown)( void );
-	void	(*pfnTxferLocalOverrides)( entity_state_t **state, const clientdata_t **client );
-	void	(*pfnProcessPlayerState)( entity_state_t **dst, const entity_state_t **src );
-	void	(*pfnTxferPredictionData)( entity_state_t **ps, const entity_state_t **pps, clientdata_t **pcd, const clientdata_t **ppcd, weapon_data_t **wd, const weapon_data_t **pwd );
-	void	(*pfnDemo_ReadBuffer)( int *size, byte **buffer );
-	void	(*pfnConnectionlessPacket)( const struct netadr_s **net_from, const char **args, char **buffer, int **size );
-	void	(*pfnGetHullBounds)( int *hullnumber, float **mins, float **maxs );
-	void	(*pfnFrame)( double *time );
-	void	(*pfnKey_Event)( int *eventcode, int *keynum, const char **pszCurrentBinding );
+	void (*pfnInitialize)(cl_enginefunc_t** pEnginefuncs, int* iVersion);
+	void (*pfnInit)(void);
+	void (*pfnVidInit)(void);
+	void (*pfnRedraw)(float* flTime, int* intermission);
+	void (*pfnUpdateClientData)(client_data_t** cdata, float* flTime);
+	void (*pfnReset)(void);
+	void (*pfnPlayerMove)(struct playermove_s** ppmove, int* server);
+	void (*pfnPlayerMoveInit)(struct playermove_s** ppmove);
+	void (*pfnPlayerMoveTexture)(char** name);
+	void (*IN_ActivateMouse)(void);
+	void (*IN_DeactivateMouse)(void);
+	void (*IN_MouseEvent)(int* mstate);
+	void (*IN_ClearStates)(void);
+	void (*IN_Accumulate)(void);
+	void (*CL_CreateMove)(float* frametime, struct usercmd_s** cmd, int* active);
+	void (*CL_IsThirdPerson)(void);
+	void (*CL_CameraOffset)(float** ofs);
+	void (*KB_Find)(const char** name);
+	void (*CAM_Think)(void);
+	void (*pfnCalcRefdef)(ref_params_t** pparams);
+	void (*pfnAddEntity)(int* type, cl_entity_t** ent, const char** modelname);
+	void (*pfnCreateEntities)(void);
+	void (*pfnDrawNormalTriangles)(void);
+	void (*pfnDrawTransparentTriangles)(void);
+	void (*pfnStudioEvent)(const struct mstudioevent_s** event, const cl_entity_t** entity);
+	void (*pfnPostRunCmd)(
+		struct local_state_s** from,
+		struct local_state_s** to,
+		usercmd_t** cmd,
+		int* runfuncs,
+		double* time,
+		unsigned int* random_seed);
+	void (*pfnShutdown)(void);
+	void (*pfnTxferLocalOverrides)(entity_state_t** state, const clientdata_t** client);
+	void (*pfnProcessPlayerState)(entity_state_t** dst, const entity_state_t** src);
+	void (*pfnTxferPredictionData)(
+		entity_state_t** ps,
+		const entity_state_t** pps,
+		clientdata_t** pcd,
+		const clientdata_t** ppcd,
+		weapon_data_t** wd,
+		const weapon_data_t** pwd);
+	void (*pfnDemo_ReadBuffer)(int* size, byte** buffer);
+	void (*pfnConnectionlessPacket)(const struct netadr_s** net_from, const char** args, char** buffer, int** size);
+	void (*pfnGetHullBounds)(int* hullnumber, float** mins, float** maxs);
+	void (*pfnFrame)(double* time);
+	void (*pfnKey_Event)(int* eventcode, int* keynum, const char** pszCurrentBinding);
 	// NOODLECOLLIE: Removed extra function pointer at the end of this that is currently unused, to eliminate warnings.
-	void	(*pfnTempEntUpdate)( double *frametime, double *client_time, double *cl_gravity, struct tempent_s ***ppTempEntFree, struct tempent_s ***ppTempEntActive, int ( **Callback_AddVisibleEntity )( cl_entity_t *pEntity )/*, void ( **Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp )*/);
-	void	(*pfnGetUserEntity)( int *index );
-	void	(*pfnVoiceStatus)( int *entindex, qboolean *bTalking );
-	void	(*pfnDirectorMessage)( int *iSize, void **pbuf );
-	void	(*pfnGetStudioModelInterface)( int *version, struct r_studio_interface_s ***ppinterface, struct engine_studio_api_s **pstudio );
-	void	(*pfnChatInputPosition)( int **x, int **y );
-	void	(*pfnGetPlayerTeam)( int *iPlayer );
+	void (*pfnTempEntUpdate)(
+		double* frametime,
+		double* client_time,
+		double* cl_gravity,
+		struct tempent_s*** ppTempEntFree,
+		struct tempent_s*** ppTempEntActive,
+		int (**Callback_AddVisibleEntity)(
+			cl_entity_t* pEntity) /*, void ( **Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp )*/);
+	void (*pfnGetUserEntity)(int* index);
+	void (*pfnVoiceStatus)(int* entindex, qboolean* bTalking);
+	void (*pfnDirectorMessage)(int* iSize, void** pbuf);
+	void (*pfnGetStudioModelInterface)(
+		int* version,
+		struct r_studio_interface_s*** ppinterface,
+		struct engine_studio_api_s** pstudio);
+	void (*pfnChatInputPosition)(int** x, int** y);
+	void (*pfnGetPlayerTeam)(int* iPlayer);
 } cldll_func_dst_t;
 
 struct cl_enginefunc_dst_s;
@@ -118,250 +162,271 @@ struct engdata_s;
 
 typedef struct modfuncs_s
 {
-	void	(*m_pfnLoadMod)( char *pchModule );
-	void	(*m_pfnCloseMod)( void );
-	int	(*m_pfnNCall)( int ijump, int cnArg, ... );
-	void	(*m_pfnGetClDstAddrs)( cldll_func_dst_t *pcldstAddrs );
-	void	(*m_pfnGetEngDstAddrs)( struct cl_enginefunc_dst_s *pengdstAddrs );
-	void	(*m_pfnModuleLoaded)( void );
-	void	(*m_pfnProcessOutgoingNet)( struct netchan_s *pchan, struct sizebuf_s *psizebuf );
-	qboolean	(*m_pfnProcessIncomingNet)( struct netchan_s *pchan, struct sizebuf_s *psizebuf );
-	void	(*m_pfnTextureLoad)( char *pszName, int dxWidth, int dyHeight, char *pbData );
-	void	(*m_pfnModelLoad)( struct model_s *pmodel, void *pvBuf );
-	void	(*m_pfnFrameBegin)( void );
-	void	(*m_pfnFrameRender1)( void );
-	void	(*m_pfnFrameRender2)( void );
-	void	(*m_pfnSetModSHelpers)( struct modshelpers_s *pmodshelpers );
-	void	(*m_pfnSetModCHelpers)( struct modchelpers_s *pmodchelpers );
-	void	(*m_pfnSetEngData)( struct engdata_s *pengdata );
-	int	m_nVersion;
-	void	(*m_pfnConnectClient)( int iPlayer );
-	void	(*m_pfnRecordIP)( unsigned int pnIP );
-	void	(*m_pfnPlayerStatus)( unsigned char *pbData, int cbData );
-	void	(*m_pfnSetEngineVersion)( int nVersion );
-	int	m_nVoid2;
-	int	m_nVoid3;
-	int	m_nVoid4;
-	int	m_nVoid5;
-	int	m_nVoid6;
-	int	m_nVoid7;
-	int	m_nVoid8;
-	int	m_nVoid9;
+	void (*m_pfnLoadMod)(char* pchModule);
+	void (*m_pfnCloseMod)(void);
+	int (*m_pfnNCall)(int ijump, int cnArg, ...);
+	void (*m_pfnGetClDstAddrs)(cldll_func_dst_t* pcldstAddrs);
+	void (*m_pfnGetEngDstAddrs)(struct cl_enginefunc_dst_s* pengdstAddrs);
+	void (*m_pfnModuleLoaded)(void);
+	void (*m_pfnProcessOutgoingNet)(struct netchan_s* pchan, struct sizebuf_s* psizebuf);
+	qboolean (*m_pfnProcessIncomingNet)(struct netchan_s* pchan, struct sizebuf_s* psizebuf);
+	void (*m_pfnTextureLoad)(char* pszName, int dxWidth, int dyHeight, char* pbData);
+	void (*m_pfnModelLoad)(struct model_s* pmodel, void* pvBuf);
+	void (*m_pfnFrameBegin)(void);
+	void (*m_pfnFrameRender1)(void);
+	void (*m_pfnFrameRender2)(void);
+	void (*m_pfnSetModSHelpers)(struct modshelpers_s* pmodshelpers);
+	void (*m_pfnSetModCHelpers)(struct modchelpers_s* pmodchelpers);
+	void (*m_pfnSetEngData)(struct engdata_s* pengdata);
+	int m_nVersion;
+	void (*m_pfnConnectClient)(int iPlayer);
+	void (*m_pfnRecordIP)(unsigned int pnIP);
+	void (*m_pfnPlayerStatus)(unsigned char* pbData, int cbData);
+	void (*m_pfnSetEngineVersion)(int nVersion);
+	int m_nVoid2;
+	int m_nVoid3;
+	int m_nVoid4;
+	int m_nVoid5;
+	int m_nVoid6;
+	int m_nVoid7;
+	int m_nVoid8;
+	int m_nVoid9;
 } modfuncs_t;
 
-static void DstInitialize( cl_enginefunc_t **pEnginefuncs, int *iVersion )
+static void DstInitialize(cl_enginefunc_t** pEnginefuncs, int* iVersion)
 {
-    // stub
+	// stub
 }
 
-static void DstInit( void )
+static void DstInit(void)
 {
-    // stub
+	// stub
 }
 
-static void DstVidInit( void )
+static void DstVidInit(void)
 {
-    // stub
+	// stub
 }
 
-static void DstRedraw( float *flTime, int *intermission )
+static void DstRedraw(float* flTime, int* intermission)
 {
-    // stub
+	// stub
 }
 
-static void DstUpdateClientData( client_data_t **cdata, float *flTime )
+static void DstUpdateClientData(client_data_t** cdata, float* flTime)
 {
-    // stub
+	// stub
 }
 
-static void DstReset( void )
+static void DstReset(void)
 {
-    // stub
+	// stub
 }
 
-static void DstPlayerMove( struct playermove_s **ppmove, int *server )
+static void DstPlayerMove(struct playermove_s** ppmove, int* server)
 {
-    // stub
+	// stub
 }
 
-static void DstPlayerMoveInit( struct playermove_s **ppmove )
+static void DstPlayerMoveInit(struct playermove_s** ppmove)
 {
-    // stub
+	// stub
 }
 
-static void DstPlayerMoveTexture( char **name )
+static void DstPlayerMoveTexture(char** name)
 {
-    // stub
+	// stub
 }
 
-static void DstIN_ActivateMouse( void )
+static void DstIN_ActivateMouse(void)
 {
-    // stub
+	// stub
 }
 
-static void DstIN_DeactivateMouse( void )
+static void DstIN_DeactivateMouse(void)
 {
-    // stub
+	// stub
 }
 
-static void DstIN_MouseEvent( int *mstate )
+static void DstIN_MouseEvent(int* mstate)
 {
-    // stub
+	// stub
 }
 
-static void DstIN_ClearStates( void )
+static void DstIN_ClearStates(void)
 {
-    // stub
+	// stub
 }
 
-static void DstIN_Accumulate( void )
+static void DstIN_Accumulate(void)
 {
-    // stub
+	// stub
 }
 
-static void DstCL_CreateMove( float *frametime, struct usercmd_s **cmd, int *active )
+static void DstCL_CreateMove(float* frametime, struct usercmd_s** cmd, int* active)
 {
-    // stub
+	// stub
 }
 
-static void DstCL_IsThirdPerson( void )
+static void DstCL_IsThirdPerson(void)
 {
-    // stub
+	// stub
 }
 
-static void DstCL_CameraOffset( float **ofs )
+static void DstCL_CameraOffset(float** ofs)
 {
-    // stub
+	// stub
 }
 
-static void DstKB_Find( const char **name )
+static void DstKB_Find(const char** name)
 {
-    // stub
+	// stub
 }
 
-static void DstCAM_Think( void )
+static void DstCAM_Think(void)
 {
-    // stub
+	// stub
 }
 
-static void DstCalcRefdef( ref_params_t **pparams )
+static void DstCalcRefdef(ref_params_t** pparams)
 {
-    // stub
+	// stub
 }
 
-static void DstAddEntity( int *type, cl_entity_t **ent, const char **modelname )
+static void DstAddEntity(int* type, cl_entity_t** ent, const char** modelname)
 {
-    // stub
+	// stub
 }
 
-static void DstCreateEntities( void )
+static void DstCreateEntities(void)
 {
-    // stub
+	// stub
 }
 
-static void DstDrawNormalTriangles( void )
+static void DstDrawNormalTriangles(void)
 {
-    // stub
+	// stub
 }
 
-static void DstDrawTransparentTriangles( void )
+static void DstDrawTransparentTriangles(void)
 {
-    // stub
+	// stub
 }
 
-static void DstStudioEvent( const struct mstudioevent_s **event, const cl_entity_t **entity )
+static void DstStudioEvent(const struct mstudioevent_s** event, const cl_entity_t** entity)
 {
-    // stub
+	// stub
 }
 
-static void DstPostRunCmd( struct local_state_s **from, struct local_state_s **to, usercmd_t **cmd, int *runfuncs, double *time, unsigned int *random_seed )
+static void DstPostRunCmd(
+	struct local_state_s** from,
+	struct local_state_s** to,
+	usercmd_t** cmd,
+	int* runfuncs,
+	double* time,
+	unsigned int* random_seed)
 {
-    // stub
+	// stub
 }
 
-static void DstShutdown( void )
+static void DstShutdown(void)
 {
-    // stub
+	// stub
 }
 
-static void DstTxferLocalOverrides( entity_state_t **state, const clientdata_t **client )
+static void DstTxferLocalOverrides(entity_state_t** state, const clientdata_t** client)
 {
-    // stub
+	// stub
 }
 
-static void DstProcessPlayerState( entity_state_t **dst, const entity_state_t **src )
+static void DstProcessPlayerState(entity_state_t** dst, const entity_state_t** src)
 {
-    // stub
+	// stub
 }
 
-static void DstTxferPredictionData( entity_state_t **ps, const entity_state_t **pps, clientdata_t **pcd, const clientdata_t **ppcd, weapon_data_t **wd, const weapon_data_t **pwd )
+static void DstTxferPredictionData(
+	entity_state_t** ps,
+	const entity_state_t** pps,
+	clientdata_t** pcd,
+	const clientdata_t** ppcd,
+	weapon_data_t** wd,
+	const weapon_data_t** pwd)
 {
-    // stub
+	// stub
 }
 
-static void DstDemo_ReadBuffer( int *size, byte **buffer )
+static void DstDemo_ReadBuffer(int* size, byte** buffer)
 {
-    // stub
+	// stub
 }
 
-static void DstConnectionlessPacket( const struct netadr_s **net_from, const char **args, char **buffer, int **size )
+static void DstConnectionlessPacket(const struct netadr_s** net_from, const char** args, char** buffer, int** size)
 {
-    // stub
+	// stub
 }
 
-static void DstGetHullBounds( int *hullnumber, float **mins, float **maxs )
+static void DstGetHullBounds(int* hullnumber, float** mins, float** maxs)
 {
-    // stub
+	// stub
 }
 
-static void DstFrame( double *time )
+static void DstFrame(double* time)
 {
-    // stub
+	// stub
 }
 
-static void DstKey_Event( int *eventcode, int *keynum, const char **pszCurrentBinding )
+static void DstKey_Event(int* eventcode, int* keynum, const char** pszCurrentBinding)
 {
-    // stub
+	// stub
 }
 
 // NOODLECOLLIE: Removed extra function pointer at the end of this that is currently unused, to eliminate warnings.
-static void DstTempEntUpdate( double *frametime, double *client_time, double *cl_gravity, struct tempent_s ***ppTempEntFree, struct tempent_s ***ppTempEntActive, int ( **Callback_AddVisibleEntity )( cl_entity_t *pEntity )/*, void ( **Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp )*/ )
+static void DstTempEntUpdate(
+	double* frametime,
+	double* client_time,
+	double* cl_gravity,
+	struct tempent_s*** ppTempEntFree,
+	struct tempent_s*** ppTempEntActive,
+	int (**Callback_AddVisibleEntity)(
+		cl_entity_t* pEntity) /*, void ( **Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp )*/)
 {
-    // stub
+	// stub
 }
 
-static void DstGetUserEntity( int *index )
+static void DstGetUserEntity(int* index)
 {
-    // stub
+	// stub
 }
 
-static void DstVoiceStatus( int *entindex, qboolean *bTalking )
+static void DstVoiceStatus(int* entindex, qboolean* bTalking)
 {
-    // stub
+	// stub
 }
 
-static void DstDirectorMessage( int *iSize, void **pbuf )
+static void DstDirectorMessage(int* iSize, void** pbuf)
 {
-    // stub
+	// stub
 }
 
-static void DstGetStudioModelInterface( int *version, struct r_studio_interface_s ***ppinterface, struct engine_studio_api_s **pstudio )
+static void DstGetStudioModelInterface(
+	int* version,
+	struct r_studio_interface_s*** ppinterface,
+	struct engine_studio_api_s** pstudio)
 {
-    // stub
+	// stub
 }
 
-static void DstChatInputPosition( int **x, int **y )
+static void DstChatInputPosition(int** x, int** y)
 {
-    // stub
+	// stub
 }
 
-static void DstGetPlayerTeam( int *iPlayer )
+static void DstGetPlayerTeam(int* iPlayer)
 {
-    // stub
+	// stub
 }
 
-static cldll_func_dst_t cldllFuncDst =
-{
+static cldll_func_dst_t cldllFuncDst = {
 	DstInitialize,
 	DstInit,
 	DstVidInit,
@@ -406,20 +471,15 @@ static cldll_func_dst_t cldllFuncDst =
 	DstGetPlayerTeam,
 };
 
-void CL_GetSecuredClientAPI( CL_EXPORT_FUNCS F )
+void CL_GetSecuredClientAPI(CL_EXPORT_FUNCS F)
 {
-	modfuncs_t modFuncs = { 0 };
+	modfuncs_t modFuncs = {0};
 
 	// secured client dlls need these
-	cldll_func_src_t cldllFuncSrc =
-	{
-		(void *)&modFuncs,
-		NULL,
-		(void *)&cldllFuncDst
-	};
+	cldll_func_src_t cldllFuncSrc = {(void*)&modFuncs, NULL, (void*)&cldllFuncDst};
 
 	// trying to fill interface now
-	F( &cldllFuncSrc );
+	F(&cldllFuncSrc);
 
 	// map exports to xash's cldll_func_t
 	clgame.dllFuncs.pfnInitialize = cldllFuncSrc.pfnInitialize;

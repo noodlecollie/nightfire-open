@@ -11,4 +11,4 @@
 
 qboolean TextureProperties_Parse(texture_t* texture, const char* key, const char* value);
 
-#endif // TEXTURE_PROPERTIES_H
+#endif  // TEXTURE_PROPERTIES_H

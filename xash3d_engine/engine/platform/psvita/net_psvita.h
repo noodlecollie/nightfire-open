@@ -22,7 +22,7 @@ GNU General Public License for more details.
 /* we're missing IPv6 support; define some trash */
 
 #ifndef IN6_IS_ADDR_V4MAPPED
-#define IN6_IS_ADDR_V4MAPPED( p ) ( 0 )
+#define IN6_IS_ADDR_V4MAPPED(p) (0)
 #endif
 
 #ifndef IPPROTO_IPV6
@@ -43,15 +43,15 @@ GNU General Public License for more details.
 
 /* ioctlsocket() is only used to set non-blocking on sockets */
 
-static inline int ioctl_psvita( int fd, int req, unsigned int *arg )
+static inline int ioctl_psvita(int fd, int req, unsigned int* arg)
 {
 	if ( req == FIONBIO )
 	{
-		return setsockopt( fd, SOL_SOCKET, SO_NONBLOCK, arg, sizeof( *arg ) );
+		return setsockopt(fd, SOL_SOCKET, SO_NONBLOCK, arg, sizeof(*arg));
 	}
 	return -ENOSYS;
 }
 
 #define ioctlsocket ioctl_psvita
 
-#endif // NET_PSVITA_H
+#endif  // NET_PSVITA_H

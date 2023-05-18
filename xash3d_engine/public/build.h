@@ -92,54 +92,54 @@ Then you can use another oneliner to query all variables:
 //
 //================================================================
 #if defined _WIN32
-	#define XASH_WIN32 1
+#define XASH_WIN32 1
 #elif defined __EMSCRIPTEN__
-	#define XASH_EMSCRIPTEN 1
+#define XASH_EMSCRIPTEN 1
 #elif defined __WATCOMC__ && defined __DOS__
-	#define XASH_DOS4GW 1
-#else // POSIX compatible
-	#define XASH_POSIX 1
-	#if defined __linux__
-		#if defined __ANDROID__
-			#define XASH_ANDROID 1
-		#else
-			#include <features.h>
-			// if our system libc has features.h header
-			// try to detect it to not confuse other libcs with built with glibc game libraries
-			#if !defined __GLIBC__
-				#define XASH_LINUX_UNKNOWN 1
-			#endif
-		#endif
-		#define XASH_LINUX 1
-	#elif defined __FreeBSD__
-		#define XASH_FREEBSD 1
-	#elif defined __NetBSD__
-		#define XASH_NETBSD 1
-	#elif defined __OpenBSD__
-		#define XASH_OPENBSD 1
-	#elif defined __HAIKU__
-		#define XASH_HAIKU 1
-	#elif defined __serenity__
-		#define XASH_SERENITY 1
-	#elif defined __sgi
-		#define XASH_IRIX 1
-	#elif defined __APPLE__
-		#include <TargetConditionals.h>
-		#define XASH_APPLE 1
-		#if TARGET_OS_IOS
-			#define XASH_IOS 1
-		#endif // TARGET_OS_IOS
-	#elif defined __SWITCH__
-		#define XASH_NSWITCH 1
-	#elif defined __vita__
-		#define XASH_PSVITA 1
-	#else
-		#error
-	#endif
+#define XASH_DOS4GW 1
+#else  // POSIX compatible
+#define XASH_POSIX 1
+#if defined __linux__
+#if defined __ANDROID__
+#define XASH_ANDROID 1
+#else
+#include <features.h>
+// if our system libc has features.h header
+// try to detect it to not confuse other libcs with built with glibc game libraries
+#if !defined __GLIBC__
+#define XASH_LINUX_UNKNOWN 1
+#endif
+#endif
+#define XASH_LINUX 1
+#elif defined __FreeBSD__
+#define XASH_FREEBSD 1
+#elif defined __NetBSD__
+#define XASH_NETBSD 1
+#elif defined __OpenBSD__
+#define XASH_OPENBSD 1
+#elif defined __HAIKU__
+#define XASH_HAIKU 1
+#elif defined __serenity__
+#define XASH_SERENITY 1
+#elif defined __sgi
+#define XASH_IRIX 1
+#elif defined __APPLE__
+#include <TargetConditionals.h>
+#define XASH_APPLE 1
+#if TARGET_OS_IOS
+#define XASH_IOS 1
+#endif  // TARGET_OS_IOS
+#elif defined __SWITCH__
+#define XASH_NSWITCH 1
+#elif defined __vita__
+#define XASH_PSVITA 1
+#else
+#error
+#endif
 #endif
 
 #if XASH_ANDROID || defined XASH_IOS || defined XASH_NSWITCH || defined XASH_PSVITA
-	#define XASH_MOBILE_PLATFORM 1
+#define XASH_MOBILE_PLATFORM 1
 #endif
 
 //================================================================
@@ -149,25 +149,26 @@ Then you can use another oneliner to query all variables:
 //================================================================
 
 #if !defined XASH_ENDIANNESS
-	#if defined XASH_WIN32 || __LITTLE_ENDIAN__
-		//!!! Probably all WinNT installations runs in little endian
-		#define XASH_LITTLE_ENDIAN 1
-	#elif __BIG_ENDIAN__
-		#define XASH_BIG_ENDIAN 1
-	#elif defined __BYTE_ORDER__ && defined __ORDER_BIG_ENDIAN__ && defined __ORDER_LITTLE_ENDIAN__ // some compilers define this
-		#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-			#define XASH_BIG_ENDIAN 1
-		#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-			#define XASH_LITTLE_ENDIAN 1
-		#endif
-	#else
-		#include <sys/param.h>
-		#if __BYTE_ORDER == __BIG_ENDIAN
-			#define XASH_BIG_ENDIAN 1
-		#elif __BYTE_ORDER == __LITTLE_ENDIAN
-			#define XASH_LITTLE_ENDIAN 1
-		#endif
-	#endif // !XASH_WIN32
+#if defined XASH_WIN32 || __LITTLE_ENDIAN__
+//!!! Probably all WinNT installations runs in little endian
+#define XASH_LITTLE_ENDIAN 1
+#elif __BIG_ENDIAN__
+#define XASH_BIG_ENDIAN 1
+#elif defined __BYTE_ORDER__ && defined __ORDER_BIG_ENDIAN__ && \
+	defined __ORDER_LITTLE_ENDIAN__  // some compilers define this
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#define XASH_BIG_ENDIAN 1
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define XASH_LITTLE_ENDIAN 1
+#endif
+#else
+#include <sys/param.h>
+#if __BYTE_ORDER == __BIG_ENDIAN
+#define XASH_BIG_ENDIAN 1
+#elif __BYTE_ORDER == __LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN 1
+#endif
+#endif  // !XASH_WIN32
 #endif
 
 //================================================================
@@ -176,75 +177,75 @@ Then you can use another oneliner to query all variables:
 //
 //================================================================
 #if defined __x86_64__ || defined _M_X64
-	#define XASH_64BIT 1
-	#define XASH_AMD64 1
+#define XASH_64BIT 1
+#define XASH_AMD64 1
 #elif defined __i386__ || defined _X86_ || defined _M_IX86
-	#define XASH_X86 1
+#define XASH_X86 1
 #elif defined __aarch64__ || defined _M_ARM64
-	#define XASH_64BIT 1
-	#define XASH_ARM   8
+#define XASH_64BIT 1
+#define XASH_ARM 8
 #elif defined __mips__
-	#define XASH_MIPS 1
+#define XASH_MIPS 1
 #elif defined __EMSCRIPTEN__
-	#define XASH_JS 1
+#define XASH_JS 1
 #elif defined __e2k__
-	#define XASH_64BIT 1
-	#define XASH_E2K 1
-#elif defined _M_ARM // msvc
-	#define XASH_ARM 7
-	#define XASH_ARM_HARDFP 1
+#define XASH_64BIT 1
+#define XASH_E2K 1
+#elif defined _M_ARM  // msvc
+#define XASH_ARM 7
+#define XASH_ARM_HARDFP 1
 #elif defined __arm__
-	#if __ARM_ARCH == 8 || __ARM_ARCH_8__
-		#define XASH_ARM 8
-	#elif __ARM_ARCH == 7 || __ARM_ARCH_7__
-		#define XASH_ARM 7
-	#elif __ARM_ARCH == 6 || __ARM_ARCH_6__ || __ARM_ARCH_6J__
-		#define XASH_ARM 6
-	#elif __ARM_ARCH == 5 || __ARM_ARCH_5__
-		#define XASH_ARM 5
-	#elif __ARM_ARCH == 4 || __ARM_ARCH_4__
-		#define XASH_ARM 4
-	#else
-		#error "Unknown ARM"
-	#endif
-
-	#if defined __SOFTFP__ || __ARM_PCS_VFP == 0
-		#define XASH_ARM_SOFTFP 1
-	#else // __SOFTFP__
-		#define XASH_ARM_HARDFP 1
-	#endif // __SOFTFP__
-#elif defined __riscv
-	#define XASH_RISCV 1
-
-	#if __riscv_xlen == 64
-		#define XASH_64BIT 1
-	#elif __riscv_xlen != 32
-		#error "Unknown RISC-V ABI"
-	#endif
-
-	#if defined __riscv_float_abi_soft
-		#define XASH_RISCV_SOFTFP 1
-	#elif defined __riscv_float_abi_single
-		#define XASH_RISCV_SINGLEFP 1
-	#elif defined __riscv_float_abi_double
-		#define XASH_RISCV_DOUBLEFP 1
-	#else
-		#error "Unknown RISC-V float ABI"
-	#endif
+#if __ARM_ARCH == 8 || __ARM_ARCH_8__
+#define XASH_ARM 8
+#elif __ARM_ARCH == 7 || __ARM_ARCH_7__
+#define XASH_ARM 7
+#elif __ARM_ARCH == 6 || __ARM_ARCH_6__ || __ARM_ARCH_6J__
+#define XASH_ARM 6
+#elif __ARM_ARCH == 5 || __ARM_ARCH_5__
+#define XASH_ARM 5
+#elif __ARM_ARCH == 4 || __ARM_ARCH_4__
+#define XASH_ARM 4
 #else
-	#error "Place your architecture name here! If this is a mistake, try to fix conditions above and report a bug"
+#error "Unknown ARM"
+#endif
+
+#if defined __SOFTFP__ || __ARM_PCS_VFP == 0
+#define XASH_ARM_SOFTFP 1
+#else  // __SOFTFP__
+#define XASH_ARM_HARDFP 1
+#endif  // __SOFTFP__
+#elif defined __riscv
+#define XASH_RISCV 1
+
+#if __riscv_xlen == 64
+#define XASH_64BIT 1
+#elif __riscv_xlen != 32
+#error "Unknown RISC-V ABI"
+#endif
+
+#if defined __riscv_float_abi_soft
+#define XASH_RISCV_SOFTFP 1
+#elif defined __riscv_float_abi_single
+#define XASH_RISCV_SINGLEFP 1
+#elif defined __riscv_float_abi_double
+#define XASH_RISCV_DOUBLEFP 1
+#else
+#error "Unknown RISC-V float ABI"
+#endif
+#else
+#error "Place your architecture name here! If this is a mistake, try to fix conditions above and report a bug"
 #endif
 
 #if XASH_ARM == 8
-	#define XASH_ARMv8 1
+#define XASH_ARMv8 1
 #elif XASH_ARM == 7
-	#define XASH_ARMv7 1
+#define XASH_ARMv7 1
 #elif XASH_ARM == 6
-	#define XASH_ARMv6 1
+#define XASH_ARMv6 1
 #elif XASH_ARM == 5
-	#define XASH_ARMv5 1
+#define XASH_ARMv5 1
 #elif XASH_ARM == 4
-	#define XASH_ARMv4 1
+#define XASH_ARMv4 1
 #endif
 
-#endif // BUILD_H
+#endif  // BUILD_H

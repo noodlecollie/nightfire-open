@@ -17,77 +17,77 @@ GNU General Public License for more details.
 #include "index.h"
 
 // the next expected frame offset, one step ahead.
-static mpg_off_t fi_next( frame_index_t *fi )
+static mpg_off_t fi_next(frame_index_t* fi)
 {
-	return (mpg_off_t)fi->fill*fi->step;
+	return (mpg_off_t)fi->fill * fi->step;
 }
 
 // shrink down the used index to the half.
 // be careful with size = 1 ... there's no shrinking possible there.
-static void fi_shrink( frame_index_t *fi )
+static void fi_shrink(frame_index_t* fi)
 {
-	if( fi->fill < 2 )
+	if ( fi->fill < 2 )
 	{
-		return; // won't shrink below 1.
+		return;  // won't shrink below 1.
 	}
 	else
 	{
-		size_t	c;
+		size_t c;
 
 		// double the step, half the fill. Should work as well for fill%2 = 1
 		fi->step *= 2;
 		fi->fill /= 2;
 
 		// move the data down.
-		for( c = 0; c < fi->fill; ++c )
-			fi->data[c] = fi->data[2*c];
+		for ( c = 0; c < fi->fill; ++c )
+			fi->data[c] = fi->data[2 * c];
 	}
 
-	fi->next = fi_next( fi );
+	fi->next = fi_next(fi);
 }
 
-void fi_init( frame_index_t *fi )
+void fi_init(frame_index_t* fi)
 {
 	fi->data = NULL;
 	fi->step = 1;
 	fi->fill = 0;
 	fi->size = 0;
 	fi->grow_size = 0;
-	fi->next = fi_next( fi );
+	fi->next = fi_next(fi);
 }
 
-void fi_exit( frame_index_t *fi )
+void fi_exit(frame_index_t* fi)
 {
-	if( fi->size && fi->data != NULL )
-		free( fi->data );
+	if ( fi->size && fi->data != NULL )
+		free(fi->data);
 
-	fi_init( fi ); // be prepared for further fun, still.
+	fi_init(fi);  // be prepared for further fun, still.
 }
 
-int fi_resize( frame_index_t *fi, size_t newsize )
+int fi_resize(frame_index_t* fi, size_t newsize)
 {
-	mpg_off_t	*newdata = NULL;
+	mpg_off_t* newdata = NULL;
 
-	if( newsize == fi->size )
+	if ( newsize == fi->size )
 		return 0;
 
-	if( newsize > 0 && newsize < fi->size )
+	if ( newsize > 0 && newsize < fi->size )
 	{
 		// when we reduce buffer size a bit, shrink stuff.
-		while( fi->fill > newsize )
-			fi_shrink( fi );
+		while ( fi->fill > newsize )
+			fi_shrink(fi);
 	}
 
-	newdata = realloc( fi->data, newsize * sizeof( mpg_off_t ));
-	if( newsize == 0 || newdata != NULL )
+	newdata = realloc(fi->data, newsize * sizeof(mpg_off_t));
+	if ( newsize == 0 || newdata != NULL )
 	{
 		fi->data = newdata;
 		fi->size = newsize;
 
-		if( fi->fill > fi->size )
+		if ( fi->fill > fi->size )
 			fi->fill = fi->size;
 
-		fi->next = fi_next( fi );
+		fi->next = fi_next(fi);
 
 		return 0;
 	}
@@ -97,43 +97,43 @@ int fi_resize( frame_index_t *fi, size_t newsize )
 	}
 }
 
-void fi_add( frame_index_t *fi, mpg_off_t pos )
+void fi_add(frame_index_t* fi, mpg_off_t pos)
 {
-	if( fi->fill == fi->size )
+	if ( fi->fill == fi->size )
 	{
-		mpg_off_t	framenum = fi->fill*fi->step;
+		mpg_off_t framenum = fi->fill * fi->step;
 
 		// index is full, we need to shrink... or grow.
 		// store the current frame number to check later if we still want it.
 
 		// if we want not / cannot grow, we shrink.
-		if( !( fi->grow_size && fi_resize( fi, fi->size+fi->grow_size ) == 0 ))
-			fi_shrink( fi );
+		if ( !(fi->grow_size && fi_resize(fi, fi->size + fi->grow_size) == 0) )
+			fi_shrink(fi);
 
 		// now check if we still want to add this frame (could be that not, because of changed step).
-		if( fi->next != framenum )
+		if ( fi->next != framenum )
 			return;
 	}
 
 	// when we are here, we want that frame.
-	if( fi->fill < fi->size ) // safeguard for size = 1, or just generally
+	if ( fi->fill < fi->size )  // safeguard for size = 1, or just generally
 	{
 		fi->data[fi->fill] = pos;
 		fi->fill++;
-		fi->next = fi_next( fi );
+		fi->next = fi_next(fi);
 	}
 }
 
-int fi_set( frame_index_t *fi, mpg_off_t *offsets, mpg_off_t step, size_t fill )
+int fi_set(frame_index_t* fi, mpg_off_t* offsets, mpg_off_t step, size_t fill)
 {
-	if( fi_resize( fi, fill ) == -1 )
+	if ( fi_resize(fi, fill) == -1 )
 		return -1;
 
 	fi->step = step;
 
-	if( offsets != NULL )
+	if ( offsets != NULL )
 	{
-		memcpy( fi->data, offsets, fill * sizeof( mpg_off_t ));
+		memcpy(fi->data, offsets, fill * sizeof(mpg_off_t));
 		fi->fill = fill;
 	}
 	else
@@ -142,14 +142,14 @@ int fi_set( frame_index_t *fi, mpg_off_t *offsets, mpg_off_t step, size_t fill )
 		fi->fill = 0;
 	}
 
-	fi->next = fi_next( fi );
+	fi->next = fi_next(fi);
 
 	return 0;
 }
 
-void fi_reset( frame_index_t *fi )
+void fi_reset(frame_index_t* fi)
 {
 	fi->fill = 0;
 	fi->step = 1;
-	fi->next = fi_next( fi );
+	fi->next = fi_next(fi);
 }

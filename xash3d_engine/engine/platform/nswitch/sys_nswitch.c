@@ -30,96 +30,110 @@ static int nxlink_sock = -1;
 
 // this is required by some std::filesystem crap in libstdc++
 // we don't have it defined in our libc
-long pathconf( const char *path, int name ) { return -1; }
+long pathconf(const char* path, int name)
+{
+	return -1;
+}
 
 // part of libunwind; required by any dynamic lib that uses C++ exceptions
-extern void *_Unwind_Resume;
+extern void* _Unwind_Resume;
 
 // these are macros in our libc, so we need to wrap them
-static int tolower_fn( int c ) { return tolower( c ); }
-static int toupper_fn( int c ) { return toupper( c ); }
-static int isalnum_fn( int c ) { return isalnum( c ); }
-static int isalpha_fn( int c ) { return isalpha( c ); }
-
-static const solder_export_t aux_exports[] =
+static int tolower_fn(int c)
 {
-	SOLDER_EXPORT( "tolower", tolower_fn ),
-	SOLDER_EXPORT( "toupper", toupper_fn ),
-	SOLDER_EXPORT( "isalnum", isalnum_fn ),
-	SOLDER_EXPORT( "isalpha", isalpha_fn ),
-	SOLDER_EXPORT_SYMBOL( mkdir ),
-	SOLDER_EXPORT_SYMBOL( remove ),
-	SOLDER_EXPORT_SYMBOL( rename ),
-	SOLDER_EXPORT_SYMBOL( pathconf ),
-	SOLDER_EXPORT_SYMBOL( fsync ),
-	SOLDER_EXPORT_SYMBOL( strchrnul ),
-	SOLDER_EXPORT_SYMBOL( stpcpy ),
-	SOLDER_EXPORT_SYMBOL( _Unwind_Resume ),
+	return tolower(c);
+}
+static int toupper_fn(int c)
+{
+	return toupper(c);
+}
+static int isalnum_fn(int c)
+{
+	return isalnum(c);
+}
+static int isalpha_fn(int c)
+{
+	return isalpha(c);
+}
+
+static const solder_export_t aux_exports[] = {
+	SOLDER_EXPORT("tolower", tolower_fn),
+	SOLDER_EXPORT("toupper", toupper_fn),
+	SOLDER_EXPORT("isalnum", isalnum_fn),
+	SOLDER_EXPORT("isalpha", isalpha_fn),
+	SOLDER_EXPORT_SYMBOL(mkdir),
+	SOLDER_EXPORT_SYMBOL(remove),
+	SOLDER_EXPORT_SYMBOL(rename),
+	SOLDER_EXPORT_SYMBOL(pathconf),
+	SOLDER_EXPORT_SYMBOL(fsync),
+	SOLDER_EXPORT_SYMBOL(strchrnul),
+	SOLDER_EXPORT_SYMBOL(stpcpy),
+	SOLDER_EXPORT_SYMBOL(_Unwind_Resume),
 };
 
-const solder_export_t *__solder_aux_exports = aux_exports;
-const size_t __solder_num_aux_exports = sizeof( aux_exports ) / sizeof( *aux_exports );
+const solder_export_t* __solder_aux_exports = aux_exports;
+const size_t __solder_num_aux_exports = sizeof(aux_exports) / sizeof(*aux_exports);
 
 /* end of export crap */
 
-void Platform_ShellExecute( const char *path, const char *parms )
+void Platform_ShellExecute(const char* path, const char* parms)
 {
-	Con_Reportf( S_WARN "Tried to shell execute ;%s; -- not supported\n", path );
+	Con_Reportf(S_WARN "Tried to shell execute ;%s; -- not supported\n", path);
 }
 
 #if XASH_MESSAGEBOX == MSGBOX_NSWITCH
-void Platform_MessageBox( const char *title, const char *message, qboolean unused )
+void Platform_MessageBox(const char* title, const char* message, qboolean unused)
 {
 	// TODO: maybe figure out how to show an actual messagebox or an on-screen console
 	//       without murdering the renderer
 	// assume this is a fatal error
-	FILE *f = fopen( "fatal.log", "w" );
+	FILE* f = fopen("fatal.log", "w");
 	if ( f )
 	{
-		fprintf( f, "%s:\n%s\n", title, message );
-		fclose( f );
+		fprintf(f, "%s:\n%s\n", title, message);
+		fclose(f);
 	}
 	// dump to nxlink as well
-	fprintf( stderr, "%s:\n%s\n", title, message );
+	fprintf(stderr, "%s:\n%s\n", title, message);
 }
-#endif // XASH_MESSAGEBOX == MSGBOX_NSWITCH
+#endif  // XASH_MESSAGEBOX == MSGBOX_NSWITCH
 
 // this gets executed before main(), do not delete
-void userAppInit( void )
+void userAppInit(void)
 {
-	socketInitializeDefault( );
+	socketInitializeDefault();
 #ifdef NSWITCH_DEBUG
-	nxlink_sock = nxlinkStdio( );
+	nxlink_sock = nxlinkStdio();
 #endif
-	if ( solder_init( 0 ) < 0 )
+	if ( solder_init(0) < 0 )
 	{
-		fprintf( stderr, "solder_init() failed: %s\n", solder_dlerror() );
-		fflush( stderr );
-		exit( 1 );
+		fprintf(stderr, "solder_init() failed: %s\n", solder_dlerror());
+		fflush(stderr);
+		exit(1);
 	}
 }
 
 // this gets executed on exit(), do not delete
-void userAppExit( void )
+void userAppExit(void)
 {
-	solder_quit( );
+	solder_quit();
 	if ( nxlink_sock >= 0 )
 	{
-		close( nxlink_sock );
+		close(nxlink_sock);
 		nxlink_sock = -1;
 	}
-	socketExit( );
+	socketExit();
 }
 
-void NSwitch_Init( void )
+void NSwitch_Init(void)
 {
-	printf( "NSwitch_Init\n" );
+	printf("NSwitch_Init\n");
 }
 
-void NSwitch_Shutdown( void )
+void NSwitch_Shutdown(void)
 {
-	printf( "NSwitch_Shutdown\n" );
+	printf("NSwitch_Shutdown\n");
 	// force deinit everything SDL-related to avoid issues with changing games
-	if ( SDL_WasInit( 0 ) )
-		SDL_Quit( );
+	if ( SDL_WasInit(0) )
+		SDL_Quit();
 }

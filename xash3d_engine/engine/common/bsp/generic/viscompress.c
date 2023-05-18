@@ -1,20 +1,21 @@
 #include "viscompress.h"
 
-static qboolean ProcessRows(const qboolean compress,
-							const byte* inUncompressed,
-							size_t inSize,
-							size_t rowSize,
-							byte* outCompressed,
-							size_t outMaxSize,
-							size_t* outSize)
+static qboolean ProcessRows(
+	const qboolean compress,
+	const byte* inUncompressed,
+	size_t inSize,
+	size_t rowSize,
+	byte* outCompressed,
+	size_t outMaxSize,
+	size_t* outSize)
 {
 	int baseIndex;
 	size_t accumulatedSize = 0;
 	qboolean success = false;
 
-	if (!inUncompressed || inSize < 1 || !outCompressed || outMaxSize < 1 || inSize % rowSize != 0)
+	if ( !inUncompressed || inSize < 1 || !outCompressed || outMaxSize < 1 || inSize % rowSize != 0 )
 	{
-		if (outSize)
+		if ( outSize )
 		{
 			*outSize = 0;
 		}
@@ -22,7 +23,7 @@ static qboolean ProcessRows(const qboolean compress,
 		return false;
 	}
 
-	for (baseIndex = 0; baseIndex < inSize && success; baseIndex += rowSize)
+	for ( baseIndex = 0; baseIndex < inSize && success; baseIndex += rowSize )
 	{
 		const byte* inRow = inUncompressed + baseIndex;
 		size_t outRowSize = 0;
@@ -34,7 +35,7 @@ static qboolean ProcessRows(const qboolean compress,
 		accumulatedSize += outRowSize;
 	}
 
-	if (outSize)
+	if ( outSize )
 	{
 		*outSize = accumulatedSize;
 	}
@@ -48,9 +49,9 @@ qboolean VisCompress(const byte* inUncompressed, size_t inSize, byte* outCompres
 	size_t outIndex = 0;
 	qboolean truncated = false;
 
-	if (!inUncompressed || inSize < 1 || !outCompressed || outMaxSize < 1)
+	if ( !inUncompressed || inSize < 1 || !outCompressed || outMaxSize < 1 )
 	{
-		if (outSize)
+		if ( outSize )
 		{
 			*outSize = 0;
 		}
@@ -58,30 +59,29 @@ qboolean VisCompress(const byte* inUncompressed, size_t inSize, byte* outCompres
 		return false;
 	}
 
-	for (inIndex = 0;
-		 inIndex < inSize && outIndex < outMaxSize;
-		 ++inIndex, truncated = outIndex >= outMaxSize && inIndex < inSize)
+	for ( inIndex = 0; inIndex < inSize && outIndex < outMaxSize;
+		  ++inIndex, truncated = outIndex >= outMaxSize && inIndex < inSize )
 	{
 		byte run;
 		byte inValue = inUncompressed[inIndex];
 		outCompressed[outIndex++] = inValue;
 
-		if (outIndex >= outMaxSize)
+		if ( outIndex >= outMaxSize )
 		{
 			// Continue instead of breaking, so the truncation bool is set.
 			continue;
 		}
 
-		if (inValue)
+		if ( inValue )
 		{
 			// Not a zero, continue to the next byte.
 			continue;
 		}
 
 		// The byte was zero. RLE the run of zeroes.
-		for (run = 1; run < 255 && inIndex + run < inSize; ++run)
+		for ( run = 1; run < 255 && inIndex + run < inSize; ++run )
 		{
-			if (inUncompressed[inIndex + run])
+			if ( inUncompressed[inIndex + run] )
 			{
 				break;
 			}
@@ -93,7 +93,7 @@ qboolean VisCompress(const byte* inUncompressed, size_t inSize, byte* outCompres
 		inIndex += run - 1;
 	}
 
-	if (outSize)
+	if ( outSize )
 	{
 		*outSize = outIndex;
 	}
@@ -101,15 +101,16 @@ qboolean VisCompress(const byte* inUncompressed, size_t inSize, byte* outCompres
 	return !truncated;
 }
 
-qboolean VisDecompress(const byte* inCompressed, size_t inSize, byte* outUncompressed, size_t outMaxSize, size_t* outSize)
+qboolean
+VisDecompress(const byte* inCompressed, size_t inSize, byte* outUncompressed, size_t outMaxSize, size_t* outSize)
 {
 	size_t inIndex;
 	size_t outIndex = 0;
 	qboolean truncated = false;
 
-	if (!inCompressed || inSize < 1 || !outUncompressed || outMaxSize < 1)
+	if ( !inCompressed || inSize < 1 || !outUncompressed || outMaxSize < 1 )
 	{
-		if (outSize)
+		if ( outSize )
 		{
 			*outSize = 0;
 		}
@@ -117,26 +118,25 @@ qboolean VisDecompress(const byte* inCompressed, size_t inSize, byte* outUncompr
 		return false;
 	}
 
-	for (inIndex = 0;
-		 inIndex < inSize && outIndex < outMaxSize;
-		 ++inIndex, truncated = outIndex >= outMaxSize && inIndex < inSize)
+	for ( inIndex = 0; inIndex < inSize && outIndex < outMaxSize;
+		  ++inIndex, truncated = outIndex >= outMaxSize && inIndex < inSize )
 	{
 		byte inByte = inCompressed[inIndex];
 		byte run;
-		if (inByte)
+		if ( inByte )
 		{
 			outUncompressed[outIndex++] = inByte;
 			continue;
 		}
 
 		// When a zero is encountered, the next byte specifies the length of the run.
-		for (run = inCompressed[++inIndex]; run > 0 && outIndex < outMaxSize; --run)
+		for ( run = inCompressed[++inIndex]; run > 0 && outIndex < outMaxSize; --run )
 		{
 			outUncompressed[outIndex++] = 0;
 		}
 	}
 
-	if (outSize)
+	if ( outSize )
 	{
 		*outSize = outIndex;
 	}
@@ -149,23 +149,23 @@ qboolean VisDecompressToKnownSize(const byte* inCompressed, byte* outUncompresse
 	size_t inIndex;
 	size_t outIndex = 0;
 
-	if (!inCompressed || !outUncompressed || outMaxSize < 1)
+	if ( !inCompressed || !outUncompressed || outMaxSize < 1 )
 	{
 		return false;
 	}
 
-	for (inIndex = 0; outIndex < outMaxSize; ++inIndex)
+	for ( inIndex = 0; outIndex < outMaxSize; ++inIndex )
 	{
 		byte inByte = inCompressed[inIndex];
 		byte run;
-		if (inByte)
+		if ( inByte )
 		{
 			outUncompressed[outIndex++] = inByte;
 			continue;
 		}
 
 		// When a zero is encountered, the next byte specifies the length of the run.
-		for (run = inCompressed[++inIndex]; run > 0 && outIndex < outMaxSize; --run)
+		for ( run = inCompressed[++inIndex]; run > 0 && outIndex < outMaxSize; --run )
 		{
 			outUncompressed[outIndex++] = 0;
 		}
@@ -174,12 +174,24 @@ qboolean VisDecompressToKnownSize(const byte* inCompressed, byte* outUncompresse
 	return true;
 }
 
-qboolean VisCompressAllByRow(const byte* inUncompressed, size_t inSize, size_t rowSize, byte* outCompressed, size_t outMaxSize, size_t* outSize)
+qboolean VisCompressAllByRow(
+	const byte* inUncompressed,
+	size_t inSize,
+	size_t rowSize,
+	byte* outCompressed,
+	size_t outMaxSize,
+	size_t* outSize)
 {
 	return ProcessRows(true, inUncompressed, inSize, rowSize, outCompressed, outMaxSize, outSize);
 }
 
-qboolean VisDecompressAllByRow(const byte* inUncompressed, size_t inSize, size_t rowSize, byte* outCompressed, size_t outMaxSize, size_t* outSize)
+qboolean VisDecompressAllByRow(
+	const byte* inUncompressed,
+	size_t inSize,
+	size_t rowSize,
+	byte* outCompressed,
+	size_t outMaxSize,
+	size_t* outSize)
 {
 	return ProcessRows(false, inUncompressed, inSize, rowSize, outCompressed, outMaxSize, outSize);
 }

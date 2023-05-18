@@ -17,8 +17,8 @@ GNU General Public License for more details.
 #include <winnt.h>
 #include <psapi.h>
 
-#define CALCULATE_ADDRESS( base, offset ) ( ( size_t )( base ) + ( size_t )( offset ) )
+#define CALCULATE_ADDRESS(base, offset) ((size_t)(base) + (size_t)(offset))
 
-FARPROC MemoryGetProcAddress( void *module, const char *name );
-void MemoryFreeLibrary( void *hInstance );
-void *MemoryLoadLibrary( const char *name );
+FARPROC MemoryGetProcAddress(void* module, const char* name);
+void MemoryFreeLibrary(void* hInstance);
+void* MemoryLoadLibrary(const char* name);
