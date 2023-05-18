@@ -171,7 +171,7 @@ const char* CIchthyosaur::pDieSounds[] = {
 };
 
 #define EMIT_ICKY_SOUND(chan, array) \
-	EMIT_SOUND_DYN(ENT(pev), chan, array[RANDOM_LONG(0, ARRAYSIZE(array) - 1)], 1.0, 0.6, 0, RANDOM_LONG(95, 105));
+	EMIT_SOUND_DYN(ENT(pev), chan, array[RANDOM_LONG(0, XASH_ARRAY_SIZE(array) - 1)], 1.0, 0.6, 0, RANDOM_LONG(95, 105));
 
 void CIchthyosaur::IdleSound(void)
 {
@@ -224,7 +224,7 @@ static Task_t tlSwimAround[] = {
 
 static Schedule_t slSwimAround[] = {
 	{tlSwimAround,
-	 ARRAYSIZE(tlSwimAround),
+	 XASH_ARRAY_SIZE(tlSwimAround),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_SEE_ENEMY | bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND,
 	 bits_SOUND_PLAYER | bits_SOUND_COMBAT,
 	 "SwimAround"},
@@ -237,7 +237,7 @@ static Task_t tlSwimAgitated[] = {
 };
 
 static Schedule_t slSwimAgitated[] = {
-	{tlSwimAgitated, ARRAYSIZE(tlSwimAgitated), 0, 0, "SwimAgitated"},
+	{tlSwimAgitated, XASH_ARRAY_SIZE(tlSwimAgitated), 0, 0, "SwimAgitated"},
 };
 
 static Task_t tlCircleEnemy[] = {
@@ -247,7 +247,7 @@ static Task_t tlCircleEnemy[] = {
 
 static Schedule_t slCircleEnemy[] = {
 	{tlCircleEnemy,
-	 ARRAYSIZE(tlCircleEnemy),
+	 XASH_ARRAY_SIZE(tlCircleEnemy),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_CAN_MELEE_ATTACK1 |
 		 bits_COND_CAN_RANGE_ATTACK1,
 	 0,
@@ -262,7 +262,7 @@ Task_t tlTwitchDie[] = {
 };
 
 Schedule_t slTwitchDie[] = {
-	{tlTwitchDie, ARRAYSIZE(tlTwitchDie), 0, 0, "Die"},
+	{tlTwitchDie, XASH_ARRAY_SIZE(tlTwitchDie), 0, 0, "Die"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CIchthyosaur) {

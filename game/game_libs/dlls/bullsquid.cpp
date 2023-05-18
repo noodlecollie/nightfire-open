@@ -389,7 +389,7 @@ BOOL CBullsquid::FValidateHintType(short sHint)
 		HINT_WORLD_HUMAN_BLOOD,
 	};
 
-	for ( i = 0; i < ARRAYSIZE(sSquidHints); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(sSquidHints); i++ )
 	{
 		if ( sSquidHints[i] == sHint )
 		{
@@ -804,7 +804,7 @@ Task_t tlSquidRangeAttack1[] = {
 
 Schedule_t slSquidRangeAttack1[] = {
 	{tlSquidRangeAttack1,
-	 ARRAYSIZE(tlSquidRangeAttack1),
+	 XASH_ARRAY_SIZE(tlSquidRangeAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_HEAVY_DAMAGE | bits_COND_ENEMY_OCCLUDED |
 		 bits_COND_NO_AMMO_LOADED,
 	 0,
@@ -821,7 +821,7 @@ Task_t tlSquidChaseEnemy1[] = {
 
 Schedule_t slSquidChaseEnemy[] = {
 	{tlSquidChaseEnemy1,
-	 ARRAYSIZE(tlSquidChaseEnemy1),
+	 XASH_ARRAY_SIZE(tlSquidChaseEnemy1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_SMELL_FOOD | bits_COND_CAN_RANGE_ATTACK1 |
 		 bits_COND_CAN_MELEE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK2 | bits_COND_TASK_FAILED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER | bits_SOUND_MEAT,
@@ -835,7 +835,7 @@ Task_t tlSquidHurtHop[] = {
 	{TASK_FACE_ENEMY, (float)0},  // in case squid didn't turn all the way in the air.
 };
 
-Schedule_t slSquidHurtHop[] = {{tlSquidHurtHop, ARRAYSIZE(tlSquidHurtHop), 0, 0, "SquidHurtHop"}};
+Schedule_t slSquidHurtHop[] = {{tlSquidHurtHop, XASH_ARRAY_SIZE(tlSquidHurtHop), 0, 0, "SquidHurtHop"}};
 
 Task_t tlSquidSeeCrab[] = {
 	{TASK_STOP_MOVING, (float)0},
@@ -845,7 +845,7 @@ Task_t tlSquidSeeCrab[] = {
 };
 
 Schedule_t slSquidSeeCrab[] = {
-	{tlSquidSeeCrab, ARRAYSIZE(tlSquidSeeCrab), bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE, 0, "SquidSeeCrab"}};
+	{tlSquidSeeCrab, XASH_ARRAY_SIZE(tlSquidSeeCrab), bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE, 0, "SquidSeeCrab"}};
 
 // squid walks to something tasty and eats it.
 Task_t tlSquidEat[] = {
@@ -867,7 +867,7 @@ Task_t tlSquidEat[] = {
 
 Schedule_t slSquidEat[] = {
 	{tlSquidEat,
-	 ARRAYSIZE(tlSquidEat),
+	 XASH_ARRAY_SIZE(tlSquidEat),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_NEW_ENEMY,
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.
@@ -896,7 +896,7 @@ Task_t tlSquidSniffAndEat[] = {
 
 Schedule_t slSquidSniffAndEat[] = {
 	{tlSquidSniffAndEat,
-	 ARRAYSIZE(tlSquidSniffAndEat),
+	 XASH_ARRAY_SIZE(tlSquidSniffAndEat),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_NEW_ENEMY,
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.
@@ -921,7 +921,7 @@ Task_t tlSquidWallow[] = {
 
 Schedule_t slSquidWallow[] = {
 	{tlSquidWallow,
-	 ARRAYSIZE(tlSquidWallow),
+	 XASH_ARRAY_SIZE(tlSquidWallow),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_NEW_ENEMY,
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.

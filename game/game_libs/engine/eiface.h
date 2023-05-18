@@ -438,13 +438,15 @@ typedef enum _fieldtypes
 	FIELD_TYPECOUNT  // MUST BE LAST
 } FIELDTYPE;
 
-#if !defined(offsetof) && !defined(GNUC)
-#define offsetof(s, m) (size_t) & (((s*)0)->m)
+#if !defined(XASH_OFFSETOF) && !defined(GNUC)
+#define XASH_OFFSETOF(s, m) (size_t) & (((s*)0)->m)
+#else
+#define XASH_OFFSETOF(s, m) XASH_OFFSETOF((s), (m))
 #endif
 
 #define _FIELD(type, name, fieldtype, count, flags) \
 	{ \
-		fieldtype, #name, offsetof(type, name), count, flags \
+		fieldtype, #name, XASH_OFFSETOF(type, name), count, flags \
 	}
 #define DEFINE_FIELD(type, name, fieldtype) _FIELD(type, name, fieldtype, 1, 0)
 #define DEFINE_ARRAY(type, name, fieldtype, count) _FIELD(type, name, fieldtype, count, 0)
@@ -466,9 +468,7 @@ typedef struct
 	short flags;
 } TYPEDESCRIPTION;
 
-#ifndef ARRAYSIZE
-#define ARRAYSIZE(p) (sizeof(p) / sizeof(p[0]))
-#endif
+#define XASH_ARRAY_SIZE(p) (sizeof(p) / sizeof(p[0]))
 
 typedef struct
 {

@@ -383,7 +383,7 @@ Task_t tlGargFlame[] = {
 };
 
 Schedule_t slGargFlame[] = {
-	{tlGargFlame, ARRAYSIZE(tlGargFlame), 0, 0, "GargFlame"},
+	{tlGargFlame, XASH_ARRAY_SIZE(tlGargFlame), 0, 0, "GargFlame"},
 };
 
 // primary melee attack
@@ -394,7 +394,7 @@ Task_t tlGargSwipe[] = {
 };
 
 Schedule_t slGargSwipe[] = {
-	{tlGargSwipe, ARRAYSIZE(tlGargSwipe), bits_COND_CAN_MELEE_ATTACK2, 0, "GargSwipe"},
+	{tlGargSwipe, XASH_ARRAY_SIZE(tlGargSwipe), bits_COND_CAN_MELEE_ATTACK2, 0, "GargSwipe"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CGargantua) {
@@ -442,7 +442,7 @@ void CGargantua::StompAttack(void)
 	EMIT_SOUND_DYN(
 		edict(),
 		CHAN_WEAPON,
-		pStompSounds[RANDOM_LONG(0, ARRAYSIZE(pStompSounds) - 1)],
+		pStompSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pStompSounds) - 1)],
 		1.0,
 		ATTN_GARG,
 		0,
@@ -764,34 +764,34 @@ void CGargantua::Precache()
 	gGargGibModel = PRECACHE_MODEL(GARG_GIB_MODEL);
 	PRECACHE_SOUND(GARG_STOMP_BUZZ_SOUND);
 
-	for ( i = 0; i < ARRAYSIZE(pAttackHitSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackHitSounds); i++ )
 		PRECACHE_SOUND(pAttackHitSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pBeamAttackSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pBeamAttackSounds); i++ )
 		PRECACHE_SOUND(pBeamAttackSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pAttackMissSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackMissSounds); i++ )
 		PRECACHE_SOUND(pAttackMissSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pFootSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pFootSounds); i++ )
 		PRECACHE_SOUND(pFootSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pIdleSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pIdleSounds); i++ )
 		PRECACHE_SOUND(pIdleSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pAlertSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pAlertSounds); i++ )
 		PRECACHE_SOUND(pAlertSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pPainSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pPainSounds); i++ )
 		PRECACHE_SOUND(pPainSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pAttackSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackSounds); i++ )
 		PRECACHE_SOUND(pAttackSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pStompSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pStompSounds); i++ )
 		PRECACHE_SOUND(pStompSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pBreatheSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pBreatheSounds); i++ )
 		PRECACHE_SOUND(pBreatheSounds[i]);
 }
 
@@ -831,7 +831,7 @@ void CGargantua::TraceAttack(
 			EMIT_SOUND_DYN(
 				ENT(pev),
 				CHAN_VOICE,
-				pPainSounds[RANDOM_LONG(0, ARRAYSIZE(pPainSounds) - 1)],
+				pPainSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pPainSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -982,7 +982,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					edict(),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, ARRAYSIZE(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -992,7 +992,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					edict(),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, ARRAYSIZE(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -1008,7 +1008,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 			EMIT_SOUND_DYN(
 				edict(),
 				CHAN_BODY,
-				pFootSounds[RANDOM_LONG(0, ARRAYSIZE(pFootSounds) - 1)],
+				pFootSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pFootSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -1022,7 +1022,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 			EMIT_SOUND_DYN(
 				edict(),
 				CHAN_VOICE,
-				pBreatheSounds[RANDOM_LONG(0, ARRAYSIZE(pBreatheSounds) - 1)],
+				pBreatheSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pBreatheSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -1105,7 +1105,7 @@ void CGargantua::StartTask(Task_t* pTask)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_VOICE,
-					pAttackSounds[RANDOM_LONG(0, ARRAYSIZE(pAttackSounds) - 1)],
+					pAttackSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackSounds) - 1)],
 					1.0,
 					ATTN_GARG,
 					0,

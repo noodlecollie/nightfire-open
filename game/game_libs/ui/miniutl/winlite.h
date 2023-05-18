@@ -10,7 +10,7 @@
 //
 // Prevent tons of unused windows definitions
 //
-#undef ARRAYSIZE
+#undef ARRAY_SIZE
 #ifndef _WIN32_WINNT
 #if !defined(_SERVER)
 #define _WIN32_WINNT 0x0501  // XP
@@ -67,8 +67,8 @@
 #undef MoveFile
 #undef END_INTERFACE
 #ifndef ALLOW_ARRAYSIZE  // use this is you are writing code that doesn't consume tier0
-#undef ARRAYSIZE
-#define ARRAYSIZE Dont_Use_ARRAYSIZE_Use_V_ARRAYSIZE
+#undef ARRAY_SIZE
+#define ARRAY_SIZE Dont_Use_ARRAYSIZE_Use_V_ARRAYSIZE
 #endif
 #undef min
 #undef max

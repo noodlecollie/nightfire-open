@@ -233,7 +233,7 @@ void CISlave::PainSound(void)
 		EMIT_SOUND_DYN(
 			ENT(pev),
 			CHAN_WEAPON,
-			pPainSounds[RANDOM_LONG(0, ARRAYSIZE(pPainSounds) - 1)],
+			pPainSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pPainSounds) - 1)],
 			1.0,
 			ATTN_NORM,
 			0,
@@ -249,7 +249,7 @@ void CISlave::DeathSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_WEAPON,
-		pDeathSounds[RANDOM_LONG(0, ARRAYSIZE(pDeathSounds) - 1)],
+		pDeathSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pDeathSounds) - 1)],
 		1.0,
 		ATTN_NORM,
 		0,
@@ -324,7 +324,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, ARRAYSIZE(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -336,7 +336,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, ARRAYSIZE(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -357,7 +357,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, ARRAYSIZE(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -368,7 +368,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, ARRAYSIZE(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -584,16 +584,16 @@ void CISlave::Precache()
 	PRECACHE_SOUND("headcrab/hc_headbite.wav");
 	PRECACHE_SOUND("weapons/cbar_miss1.wav");
 
-	for ( i = 0; i < ARRAYSIZE(pAttackHitSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackHitSounds); i++ )
 		PRECACHE_SOUND(pAttackHitSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pAttackMissSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackMissSounds); i++ )
 		PRECACHE_SOUND(pAttackMissSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pPainSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pPainSounds); i++ )
 		PRECACHE_SOUND(pPainSounds[i]);
 
-	for ( i = 0; i < ARRAYSIZE(pDeathSounds); i++ )
+	for ( i = 0; i < XASH_ARRAY_SIZE(pDeathSounds); i++ )
 		PRECACHE_SOUND(pDeathSounds[i]);
 
 	UTIL_PrecacheOther("test_effect");
@@ -646,7 +646,7 @@ Task_t tlSlaveAttack1[] = {
 
 Schedule_t slSlaveAttack1[] = {
 	{tlSlaveAttack1,
-	 ARRAYSIZE(tlSlaveAttack1),
+	 XASH_ARRAY_SIZE(tlSlaveAttack1),
 	 bits_COND_CAN_MELEE_ATTACK1 | bits_COND_HEAR_SOUND | bits_COND_HEAVY_DAMAGE,
 
 	 bits_SOUND_DANGER,

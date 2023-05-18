@@ -72,7 +72,7 @@ Task_t tlIdleResponse[] = {
 
 Schedule_t slIdleResponse[] = {
 	{tlIdleResponse,
-	 ARRAYSIZE(tlIdleResponse),
+	 XASH_ARRAY_SIZE(tlIdleResponse),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "Idle Response"},
@@ -89,7 +89,7 @@ Task_t tlIdleSpeak[] = {
 
 Schedule_t slIdleSpeak[] = {
 	{tlIdleSpeak,
-	 ARRAYSIZE(tlIdleSpeak),
+	 XASH_ARRAY_SIZE(tlIdleSpeak),
 	 bits_COND_NEW_ENEMY | bits_COND_CLIENT_PUSH | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "Idle Speak"},
@@ -104,7 +104,7 @@ Task_t tlIdleSpeakWait[] = {
 
 Schedule_t slIdleSpeakWait[] = {
 	{tlIdleSpeakWait,
-	 ARRAYSIZE(tlIdleSpeakWait),
+	 XASH_ARRAY_SIZE(tlIdleSpeakWait),
 	 bits_COND_NEW_ENEMY | bits_COND_CLIENT_PUSH | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "Idle Speak Wait"},
@@ -128,7 +128,7 @@ Task_t tlIdleHello[] = {
 
 Schedule_t slIdleHello[] = {
 	{tlIdleHello,
-	 ARRAYSIZE(tlIdleHello),
+	 XASH_ARRAY_SIZE(tlIdleHello),
 	 bits_COND_NEW_ENEMY | bits_COND_CLIENT_PUSH | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_HEAR_SOUND | bits_COND_PROVOKED,
 	 bits_SOUND_COMBAT,
@@ -142,7 +142,7 @@ Task_t tlIdleStopShooting[] = {
 
 Schedule_t slIdleStopShooting[] = {
 	{tlIdleStopShooting,
-	 ARRAYSIZE(tlIdleStopShooting),
+	 XASH_ARRAY_SIZE(tlIdleStopShooting),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 0,
 	 "Idle Stop Shooting"},
@@ -158,7 +158,7 @@ Task_t tlMoveAway[] = {
 };
 
 Schedule_t slMoveAway[] = {
-	{tlMoveAway, ARRAYSIZE(tlMoveAway), 0, 0, "MoveAway"},
+	{tlMoveAway, XASH_ARRAY_SIZE(tlMoveAway), 0, 0, "MoveAway"},
 };
 
 Task_t tlMoveAwayFail[] = {
@@ -167,7 +167,7 @@ Task_t tlMoveAwayFail[] = {
 };
 
 Schedule_t slMoveAwayFail[] = {
-	{tlMoveAwayFail, ARRAYSIZE(tlMoveAwayFail), 0, 0, "MoveAwayFail"},
+	{tlMoveAwayFail, XASH_ARRAY_SIZE(tlMoveAwayFail), 0, 0, "MoveAwayFail"},
 };
 
 Task_t tlMoveAwayFollow[] = {
@@ -180,7 +180,7 @@ Task_t tlMoveAwayFollow[] = {
 };
 
 Schedule_t slMoveAwayFollow[] = {
-	{tlMoveAwayFollow, ARRAYSIZE(tlMoveAwayFollow), 0, 0, "MoveAwayFollow"},
+	{tlMoveAwayFollow, XASH_ARRAY_SIZE(tlMoveAwayFollow), 0, 0, "MoveAwayFollow"},
 };
 
 Task_t tlTlkIdleWatchClient[] = {
@@ -202,7 +202,7 @@ Task_t tlTlkIdleWatchClientStare[] = {
 
 Schedule_t slTlkIdleWatchClient[] = {
 	{tlTlkIdleWatchClient,
-	 ARRAYSIZE(tlTlkIdleWatchClient),
+	 XASH_ARRAY_SIZE(tlTlkIdleWatchClient),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND | bits_COND_SMELL |
 		 bits_COND_CLIENT_PUSH | bits_COND_CLIENT_UNSEEN | bits_COND_PROVOKED,
 	 bits_SOUND_COMBAT |  // sound flags - change these, and you'll break the talking code.
@@ -213,7 +213,7 @@ Schedule_t slTlkIdleWatchClient[] = {
 	 "TlkIdleWatchClient"},
 
 	{tlTlkIdleWatchClientStare,
-	 ARRAYSIZE(tlTlkIdleWatchClientStare),
+	 XASH_ARRAY_SIZE(tlTlkIdleWatchClientStare),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND | bits_COND_SMELL |
 		 bits_COND_CLIENT_PUSH | bits_COND_CLIENT_UNSEEN | bits_COND_PROVOKED,
 	 bits_SOUND_COMBAT |  // sound flags - change these, and you'll break the talking code.
@@ -233,7 +233,7 @@ Task_t tlTlkIdleEyecontact[] = {
 
 Schedule_t slTlkIdleEyecontact[] = {
 	{tlTlkIdleEyecontact,
-	 ARRAYSIZE(tlTlkIdleEyecontact),
+	 XASH_ARRAY_SIZE(tlTlkIdleEyecontact),
 	 bits_COND_NEW_ENEMY | bits_COND_CLIENT_PUSH | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "TlkIdleEyecontact"},

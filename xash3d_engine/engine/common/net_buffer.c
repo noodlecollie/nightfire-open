@@ -119,7 +119,7 @@ void MSG_InitExt(sizebuf_t* sb, const char* pDebugName, void* pData, int nBytes,
 void MSG_StartWriting(sizebuf_t* sb, void* pData, int nBytes, int iStartBit, int nBits)
 {
 	// make sure it's dword aligned and padded.
-	Assert(((dword)pData & 3) == 0);
+	Assert(((size_t)pData & 3) == 0);
 
 	sb->pDebugName = "Unnamed";
 	sb->pData = (byte*)pData;

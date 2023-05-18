@@ -2833,7 +2833,7 @@ int CBasePlayer::Save(CSave& save)
 	if ( !CBaseMonster::Save(save) )
 		return 0;
 
-	return save.WriteFields("PLAYER", this, m_playerSaveData, ARRAYSIZE(m_playerSaveData));
+	return save.WriteFields("PLAYER", this, m_playerSaveData, XASH_ARRAY_SIZE(m_playerSaveData));
 }
 
 //
@@ -2848,7 +2848,7 @@ int CBasePlayer::Restore(CRestore& restore)
 	if ( !CBaseMonster::Restore(restore) )
 		return 0;
 
-	int status = restore.ReadFields("PLAYER", this, m_playerSaveData, ARRAYSIZE(m_playerSaveData));
+	int status = restore.ReadFields("PLAYER", this, m_playerSaveData, XASH_ARRAY_SIZE(m_playerSaveData));
 
 	SAVERESTOREDATA* pSaveData = (SAVERESTOREDATA*)gpGlobals->pSaveData;
 	// landmark isn't present.
