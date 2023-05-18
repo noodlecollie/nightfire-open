@@ -11,7 +11,7 @@
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_p99, CWeaponP99)
-LINK_ENTITY_TO_CLASS(weapon_pp9, CWeaponP99)	// NF devs called it "PP9" for some reason.
+LINK_ENTITY_TO_CLASS(weapon_pp9, CWeaponP99)  // NF devs called it "PP9" for some reason.
 
 #ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known weapons to this one.
@@ -19,11 +19,11 @@ LINK_ENTITY_TO_CLASS(weapon_kowloon, CWeaponP99)
 LINK_ENTITY_TO_CLASS(weapon_mp9, CWeaponP99)
 #endif
 
-CWeaponP99::CWeaponP99()
-	: CGenericHitscanWeapon(),
-	  m_pAttackUnsilenced(nullptr),
-	  m_pAttackSilenced(nullptr),
-	  m_bSilenced(false)
+CWeaponP99::CWeaponP99() :
+	CGenericHitscanWeapon(),
+	m_pAttackUnsilenced(nullptr),
+	m_pAttackSilenced(nullptr),
+	m_bSilenced(false)
 {
 	m_pAttackSilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_SILENCED);
 	m_pAttackUnsilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_UNSILENCED);
@@ -80,10 +80,7 @@ bool CWeaponP99::WritePredictionData(weapon_data_t* to)
 }
 
 #ifndef CLIENT_DLL
-TYPEDESCRIPTION	CWeaponP99::m_SaveData[] =
-{
-	DEFINE_FIELD(CWeaponP99, m_bSilenced, FIELD_BOOLEAN)
-};
+TYPEDESCRIPTION CWeaponP99::m_SaveData[] = {DEFINE_FIELD(CWeaponP99, m_bSilenced, FIELD_BOOLEAN)};
 
 IMPLEMENT_SAVERESTORE(CWeaponP99, CGenericHitscanWeapon)
 
@@ -107,12 +104,13 @@ namespace WeaponAtts
 	{
 		return ::StaticWeaponAttributes;
 	}
-}
+}  // namespace WeaponAtts
 
 class CAmmoP99 : public CGenericAmmo
 {
 public:
-	CAmmoP99() : CGenericAmmo("models/weapon_p99/w_ammo_p99.mdl", Ammo_P99)
+	CAmmoP99() :
+		CGenericAmmo("models/weapon_p99/w_ammo_p99.mdl", Ammo_P99)
 	{
 	}
 };

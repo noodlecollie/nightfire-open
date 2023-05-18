@@ -15,7 +15,8 @@ bool CGenericProjectileWeapon::InvokeWithAttackMode(WeaponAttackType type, const
 		return false;
 	}
 
-	const WeaponAtts::WAProjectileAttack* projectileAttack = static_cast<const WeaponAtts::WAProjectileAttack*>(attackMode);
+	const WeaponAtts::WAProjectileAttack* projectileAttack =
+		static_cast<const WeaponAtts::WAProjectileAttack*>(attackMode);
 
 	if ( projectileAttack->AttackRate <= 0.0f )
 	{

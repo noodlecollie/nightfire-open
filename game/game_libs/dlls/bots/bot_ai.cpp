@@ -48,37 +48,37 @@ extern DLL_GLOBAL BOOL g_fGameOver;
 // Constructor/Destructor
 ///////////////////////////////////////////////////////////////////////////////
 
-CBaseBot::CBaseBot():
-	bCalledAimThisFrame( FALSE ),
-	DesiredVelocity( Vector(0,0,0) ),
+CBaseBot::CBaseBot() :
+	bCalledAimThisFrame(FALSE),
+	DesiredVelocity(Vector(0, 0, 0)),
 	FightStyle(),
-	bGoUpOnLadder( TRUE ),
-	LookAtBiasVec( Vector(0,0,0) ),
-	LookAtVec( Vector(0,0,0) ),
+	bGoUpOnLadder(TRUE),
+	LookAtBiasVec(Vector(0, 0, 0)),
+	LookAtVec(Vector(0, 0, 0)),
 	Memory(),
-	MovedDistance( 0.0 ),
-	MoveForward( 0.0 ),
-	MoveStrafe( 0.0 ),
-	MoveVertical( 0.0 ),
-	MSec( 0.0 ),
-	MSecCounter( 0 ),
-	//Vacindak:  Memory Leak Fix
-	//pEnemy( NULL ),
-	//pGoal( NULL ),
-	//End Memory Leak Fix
-	RoamDirection( UNKNOWN ),
+	MovedDistance(0.0),
+	MoveForward(0.0),
+	MoveStrafe(0.0),
+	MoveVertical(0.0),
+	MSec(0.0),
+	MSecCounter(0),
+	// Vacindak:  Memory Leak Fix
+	// pEnemy( NULL ),
+	// pGoal( NULL ),
+	// End Memory Leak Fix
+	RoamDirection(UNKNOWN),
 	Stats(),
-	TimeGoalCheck( gpGlobals->time ),
-	TimeGoalCheckDelay( 0.3 ),
-	TimeMSecCheck( gpGlobals->time ),
-	fNextThink( gpGlobals->time ),
-	TurningDirection( NONE ),
-	bWantToBeInCombat( FALSE ),
+	TimeGoalCheck(gpGlobals->time),
+	TimeGoalCheckDelay(0.3),
+	TimeMSecCheck(gpGlobals->time),
+	fNextThink(gpGlobals->time),
+	TurningDirection(NONE),
+	bWantToBeInCombat(FALSE),
 	bFiredWeapon(false)
 {
-	pEnemy = (CBaseEntity *)NULL;
-	pGoal = (CBaseEntity *)NULL;
-	FightStyle.SetOwner( this );
+	pEnemy = (CBaseEntity*)NULL;
+	pGoal = (CBaseEntity*)NULL;
+	FightStyle.SetOwner(this);
 }
 
 CBaseBot::~CBaseBot()
@@ -90,13 +90,11 @@ CBaseBot::~CBaseBot()
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: This is a bit ugly, could probably be refactored.
-void CBaseBot::ActionOpenFire( void )
+void CBaseBot::ActionOpenFire(void)
 {
 	bool releasedButtonsThisFrame = false;
 
-	if ( !m_pActiveItem ||
-		 !m_pActiveItem->CanDeploy() ||
-		 FightStyle.GetNextEvaluationTime() <= gpGlobals->time )
+	if ( !m_pActiveItem || !m_pActiveItem->CanDeploy() || FightStyle.GetNextEvaluationTime() <= gpGlobals->time )
 	{
 		ActionChooseWeapon();
 		bFiredWeapon = false;
@@ -109,7 +107,7 @@ void CBaseBot::ActionOpenFire( void )
 		return;
 	}
 
-	CBasePlayerWeapon *pActiveWeapon = (CBasePlayerWeapon*)m_pActiveItem;
+	CBasePlayerWeapon* pActiveWeapon = (CBasePlayerWeapon*)m_pActiveItem;
 
 	if ( pActiveWeapon->m_iClip <= 0 && pActiveWeapon->iMaxClip() != WEAPON_NOCLIP )
 	{
@@ -139,7 +137,8 @@ void CBaseBot::ActionOpenFire( void )
 		}
 		else
 		{
-			if ( (pActiveWeapon->iMaxClip() == WEAPON_NOCLIP || pActiveWeapon->m_iClip > 0) && !(lastButtons & IN_ATTACK) )
+			if ( (pActiveWeapon->iMaxClip() == WEAPON_NOCLIP || pActiveWeapon->m_iClip > 0) &&
+				 !(lastButtons & IN_ATTACK) )
 			{
 				if ( FightStyle.GetHoldDownAttack() )
 				{
@@ -160,25 +159,25 @@ void CBaseBot::ActionOpenFire( void )
 // ActionChooseGoal - sets pGoal by searching through m_pLink's list
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ActionChooseGoal( void )
+void CBaseBot::ActionChooseGoal(void)
 {
-	float		BestPickupDesire = 0;
-	float		DistanceToEntity;
-	float		PickupDesire; // [0,100]
-	CBaseEntity	*pNextEnt = m_pLink;
+	float BestPickupDesire = 0;
+	float DistanceToEntity;
+	float PickupDesire;  // [0,100]
+	CBaseEntity* pNextEnt = m_pLink;
 
-	while ( pNextEnt != NULL ) // pNextEnt is already NULL if we don't want a new pGoal this frame
+	while ( pNextEnt != NULL )  // pNextEnt is already NULL if we don't want a new pGoal this frame
 	{
 		PickupDesire = 0.0;
 
 		if ( !CheckHasPowerfulWeapon() )
 		{
-			if ( !(pNextEnt->pev->effects & EF_NODRAW) && CheckVisible( pNextEnt ) )
+			if ( !(pNextEnt->pev->effects & EF_NODRAW) && CheckVisible(pNextEnt) )
 			{
 				PickupDesire = 100;
 			}
 		}
-		else if ( !(pNextEnt->pev->effects & EF_NODRAW) && CheckVisible( pNextEnt ) )
+		else if ( !(pNextEnt->pev->effects & EF_NODRAW) && CheckVisible(pNextEnt) )
 		{
 			// TODO: This is a bit horrible. We really need something to be set on CBaseEntity that can
 			// help us identify the type of the item, eg. an interface we can query.
@@ -203,34 +202,34 @@ void CBaseBot::ActionChooseGoal( void )
 				// TODO: This is very basic. Could we make it better?
 				PickupDesire = 80;
 			}
-			else if ( FClassnameIs( pNextEnt->pev, "item_health" ) )
+			else if ( FClassnameIs(pNextEnt->pev, "item_health") )
 			{
-				PickupDesire = 100.0 - pev->health; // we want health proportional to how much we need
+				PickupDesire = 100.0 - pev->health;  // we want health proportional to how much we need
 			}
-			else if ( FClassnameIs( pNextEnt->pev, "item_battery" ) )
+			else if ( FClassnameIs(pNextEnt->pev, "item_battery") )
 			{
-				PickupDesire = MAX_NORMAL_BATTERY - pev->armorvalue; // we want armour proportional to how much we need
+				PickupDesire = MAX_NORMAL_BATTERY - pev->armorvalue;  // we want armour proportional to how much we need
 			}
-			else if ( strncmp( "item_", STRING(pNextEnt->pev->classname), 5 ) == 0 )
+			else if ( strncmp("item_", STRING(pNextEnt->pev->classname), 5) == 0 )
 			{
 				PickupDesire = 80;
 			}
 		}
 
-		if ( PickupDesire > 0 ) // desire this at all?
+		if ( PickupDesire > 0 )  // desire this at all?
 		{
-			DistanceToEntity = ( pNextEnt->pev->origin - pev->origin ).Length();
+			DistanceToEntity = (pNextEnt->pev->origin - pev->origin).Length();
 
 			float diff = SEARCH_DISTANCE - DistanceToEntity;
 
-			//Scott: fix.  Using diff * diff results in bots possibly wanting things
-			//       that are far away.  now using diff*diff*diff
-			PickupDesire *= (diff * diff * diff); // want things more the closer they are
+			// Scott: fix.  Using diff * diff results in bots possibly wanting things
+			//        that are far away.  now using diff*diff*diff
+			PickupDesire *= (diff * diff * diff);  // want things more the closer they are
 
-			if ( PickupDesire > BestPickupDesire ) // is this the most desirable item so far?
+			if ( PickupDesire > BestPickupDesire )  // is this the most desirable item so far?
 			{
 				BestPickupDesire = PickupDesire;
-				SetGoal( pNextEnt );
+				SetGoal(pNextEnt);
 			}
 		}
 
@@ -242,10 +241,10 @@ void CBaseBot::ActionChooseGoal( void )
 // ActionChooseWeapon
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ActionChooseWeapon( void )
+void CBaseBot::ActionChooseWeapon(void)
 {
 	CGenericWeapon* pBestWeapon = NULL;
-	int BestWeaponDesire = 0; // no weapon lower than -1 can be autoswitched to
+	int BestWeaponDesire = 0;  // no weapon lower than -1 can be autoswitched to
 
 	if ( m_pActiveItem == NULL || !m_pActiveItem->CanHolster() )
 	{
@@ -260,7 +259,7 @@ void CBaseBot::ActionChooseWeapon( void )
 		DistanceToEnemy = (currentEnemy->pev->origin - pev->origin).Length();
 	}
 
-	for ( int i = 0 ; i < MAX_ITEM_TYPES ; i++ )
+	for ( int i = 0; i < MAX_ITEM_TYPES; i++ )
 	{
 		for ( CBasePlayerItem* weapon = m_rgpPlayerItems[i]; weapon; weapon = weapon->m_pNext )
 		{
@@ -282,7 +281,7 @@ void CBaseBot::ActionChooseWeapon( void )
 			// and yet maintains preferencial weapon bias.
 			float CheckWeaponDesire = genericWeapon->Bot_CalcDesireToUse(*this, *currentEnemy, DistanceToEnemy);
 			CheckWeaponDesire *= (Stats.GetTraitWeaponPreference(genericWeapon->WeaponAttributes().Core.Id) / 100.0f);
-			CheckWeaponDesire *= RANDOM_FLOAT(0,1);
+			CheckWeaponDesire *= RANDOM_FLOAT(0, 1);
 
 			if ( CheckWeaponDesire > BestWeaponDesire )
 			{
@@ -315,65 +314,57 @@ void CBaseBot::ActionChooseWeapon( void )
 // ActionLook - reacts to immediate threats, and set m_pLink as head of item list
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ActionLook( int SearchDistance )
+void CBaseBot::ActionLook(int SearchDistance)
 {
 	// section one: handle client entitites
 
-	float	DistanceToEntity;
-	float	NearestEnemyDistance = DISTANCE_MAX;
+	float DistanceToEntity;
+	float NearestEnemyDistance = DISTANCE_MAX;
 
-	//Vacindak: changed "!GetEnemy" to "GetEnemy == NULL"
-	if ( GetEnemy() == NULL
-		|| ( ( gpGlobals->time - Memory.GetEnemyLastSeenTime() )
-			> (3.*Stats.GetTraitAggression()/100.) ) )
+	// Vacindak: changed "!GetEnemy" to "GetEnemy == NULL"
+	if ( GetEnemy() == NULL ||
+		 ((gpGlobals->time - Memory.GetEnemyLastSeenTime()) > (3. * Stats.GetTraitAggression() / 100.)) )
 	{
-		for ( int i = 1; i <= gpGlobals->maxClients; i++)
+		for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 		{
-			CBaseEntity *pPlayerEntity = UTIL_PlayerByIndex( i );
-			CBasePlayer *pPlayer = (CBasePlayer *)pPlayerEntity;
+			CBaseEntity* pPlayerEntity = UTIL_PlayerByIndex(i);
+			CBasePlayer* pPlayer = (CBasePlayer*)pPlayerEntity;
 
-			if ( pPlayer // UTIL_PlayerByIndex can return NULL
-				&& pPlayer != this
-				&& pPlayer->IsAlive()
-				&& CheckVisible( pPlayer )
-				&& FInViewCone( pPlayer ) // Scott: must be in sight cone
-				// the next set of logic uses cvars
-				&& (bot_dontshoot.value == 0) // can shoot
-				&& (!pPlayer->IsNetClient() || (bot_observer.value == 0)) //bot or not observer mode
-				)
+			if ( pPlayer  // UTIL_PlayerByIndex can return NULL
+				 && pPlayer != this && pPlayer->IsAlive() && CheckVisible(pPlayer) &&
+				 FInViewCone(pPlayer)  // Scott: must be in sight cone
+				 // the next set of logic uses cvars
+				 && (bot_dontshoot.value == 0)  // can shoot
+				 && (!pPlayer->IsNetClient() || (bot_observer.value == 0))  // bot or not observer mode
+			)
 			{
-				if ( g_pGameRules->PlayerRelationship( this, pPlayer ) == GR_NOTTEAMMATE
-					&& CheckNotice( pPlayer )
-					)
+				if ( g_pGameRules->PlayerRelationship(this, pPlayer) == GR_NOTTEAMMATE && CheckNotice(pPlayer) )
 				{
-					DistanceToEntity = ( pPlayer->pev->origin - pev->origin ).Length();
+					DistanceToEntity = (pPlayer->pev->origin - pev->origin).Length();
 
 					if ( DistanceToEntity < NearestEnemyDistance )
 					{
 						NearestEnemyDistance = DistanceToEntity;
-						SetEnemy( pPlayer );
+						SetEnemy(pPlayer);
 					}
 				}
-				else if ( !pPlayer->IsFakeClient()
-						&& g_pGameRules->PlayerRelationship( this, pPlayer ) != GR_NOTTEAMMATE
-						)
+				else if (
+					!pPlayer->IsFakeClient() && g_pGameRules->PlayerRelationship(this, pPlayer) != GR_NOTTEAMMATE )
 				{
-					DistanceToEntity = ( pPlayer->pev->origin - pev->origin ).Length();
+					DistanceToEntity = (pPlayer->pev->origin - pev->origin).Length();
 
 					if ( DistanceToEntity < GROUPING_DISTANCE )
 					{
-						SteerSafeGroupFollow( pPlayer );
+						SteerSafeGroupFollow(pPlayer);
 					}
 					else
 					{
-						SteerSafePursue( pPlayer, STEER_GROUP_ASSEMBLE );
+						SteerSafePursue(pPlayer, STEER_GROUP_ASSEMBLE);
 					}
 				}
-				else if ( pPlayer->IsFakeClient()
-						&& g_pGameRules->PlayerRelationship( this, pPlayer ) != GR_NOTTEAMMATE
-						)
+				else if ( pPlayer->IsFakeClient() && g_pGameRules->PlayerRelationship(this, pPlayer) != GR_NOTTEAMMATE )
 				{
-					DistanceToEntity = ( pPlayer->pev->origin - pev->origin ).Length();
+					DistanceToEntity = (pPlayer->pev->origin - pev->origin).Length();
 
 					if ( DistanceToEntity < GROUPING_DISTANCE )
 					{
@@ -381,7 +372,7 @@ void CBaseBot::ActionLook( int SearchDistance )
 					}
 					else
 					{
-						SteerSafePursue( pPlayer, STEER_GROUP_ASSEMBLE );
+						SteerSafePursue(pPlayer, STEER_GROUP_ASSEMBLE);
 					}
 				}
 			}
@@ -389,22 +380,22 @@ void CBaseBot::ActionLook( int SearchDistance )
 
 		if ( GetEnemy() != NULL )
 		{
-//			ActionSpeak("I've found an enemy.");
+			//			ActionSpeak("I've found an enemy.");
 
-//			ActionChooseWeapon();
+			//			ActionChooseWeapon();
 
-			SetLookAtBiasVec( Vector( RANDOM_FLOAT(-1,1), RANDOM_FLOAT(-1,1), RANDOM_FLOAT(-1,1) ) );
+			SetLookAtBiasVec(Vector(RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1)));
 
-			Memory.EnemySighted( GetEnemy() );
+			Memory.EnemySighted(GetEnemy());
 		}
 	}
 
 	// section two: sets m_pLink as head of a linked list containing all possible pGoal ents
 
 	m_pLink = NULL;
-	CBaseEntity	*pNextEnt = NULL; // the current visible entity that we're dealing with
-	CBaseEntity *pList[100];
-	Vector delta = Vector( SearchDistance, SearchDistance, SearchDistance );
+	CBaseEntity* pNextEnt = NULL;  // the current visible entity that we're dealing with
+	CBaseEntity* pList[100];
+	Vector delta = Vector(SearchDistance, SearchDistance, SearchDistance);
 	BOOL CheckGoalThisFrame = FALSE;
 	BOOL NoGoalAtStartOfFrame = FALSE;
 
@@ -416,74 +407,71 @@ void CBaseBot::ActionLook( int SearchDistance )
 	if ( gpGlobals->time > GetTimeGoalCheck() )
 	{
 		CheckGoalThisFrame = TRUE;
-		SetTimeGoalCheck( gpGlobals->time + GetTimeGoalCheckDelay() );
+		SetTimeGoalCheck(gpGlobals->time + GetTimeGoalCheckDelay());
 	}
 
-	int count = UTIL_EntitiesInBox( pList, 100, pev->origin - delta, pev->origin + delta, 0 );
+	int count = UTIL_EntitiesInBox(pList, 100, pev->origin - delta, pev->origin + delta, 0);
 	for ( int i = 0; i < count; i++ )
 	{
 		pNextEnt = pList[i];
 
-		if ( pNextEnt && pNextEnt != this && CheckVisible( pNextEnt ) )
+		if ( pNextEnt && pNextEnt != this && CheckVisible(pNextEnt) )
 		{
-			if ( CheckNotice( pNextEnt ) )
+			if ( CheckNotice(pNextEnt) )
 			{
-				DistanceToEntity = ( pNextEnt->pev->origin - pev->origin ).Length();
+				DistanceToEntity = (pNextEnt->pev->origin - pev->origin).Length();
 
-				if (	FClassnameIs( pNextEnt->pev, "monster_satchel" )	||
-						FClassnameIs( pNextEnt->pev, "monster_snark" )		||
-						FClassnameIs( pNextEnt->pev, "hornet" )				||
-						FClassnameIs( pNextEnt->pev, "rpg_rocket" )			||
-						FClassnameIs( pNextEnt->pev, "grenade" )
-					)
+				if ( FClassnameIs(pNextEnt->pev, "monster_satchel") || FClassnameIs(pNextEnt->pev, "monster_snark") ||
+					 FClassnameIs(pNextEnt->pev, "hornet") || FClassnameIs(pNextEnt->pev, "rpg_rocket") ||
+					 FClassnameIs(pNextEnt->pev, "grenade") )
 				{
-					SteerSafeEvade( pNextEnt );
+					SteerSafeEvade(pNextEnt);
 				}
-				else if ( FClassnameIs( pNextEnt->pev, "laser_spot" ) ) // rpg laser spot
+				else if ( FClassnameIs(pNextEnt->pev, "laser_spot") )  // rpg laser spot
 				{
-					SteerSafeFlee( pNextEnt );
+					SteerSafeFlee(pNextEnt);
 				}
-				else if ( FClassnameIs( pNextEnt->pev, "beam" ) ) // tripmine beam
+				else if ( FClassnameIs(pNextEnt->pev, "beam") )  // tripmine beam
 				{
-					CBeam *pBeam = (CBeam *)pNextEnt;
+					CBeam* pBeam = (CBeam*)pNextEnt;
 					Vector BeamStart = pBeam->GetStartPos();
 					if ( (BeamStart - pev->origin).Length() < 375 )
 					{
-						SteerSafeFlee( BeamStart ); // run away from the tripmine if within range
+						SteerSafeFlee(BeamStart);  // run away from the tripmine if within range
 					}
 				}
-				else if ( FClassnameIs( pNextEnt->pev, "monster_tripmine" ) )
+				else if ( FClassnameIs(pNextEnt->pev, "monster_tripmine") )
 				{
-					if ( DistanceToEntity > 375 ) // safe to shoot tripmine?
+					if ( DistanceToEntity > 375 )  // safe to shoot tripmine?
 					{
 						if ( GetEnemy() != NULL )
 						{
 							if ( (pNextEnt->pev->origin - GetEnemy()->pev->origin).Length() < 375 )
 							{
-								AimAtEntity( pNextEnt );
+								AimAtEntity(pNextEnt);
 							}
 						}
 						else
 						{
-							AimAtEntity( pNextEnt );
+							AimAtEntity(pNextEnt);
 						}
 					}
 					else
 					{
-						SteerSafeFlee( pNextEnt );
+						SteerSafeFlee(pNextEnt);
 					}
 				}
-				else if ( FClassnameIs( pNextEnt->pev, "func_button" ) ) // hit any button within range
+				else if ( FClassnameIs(pNextEnt->pev, "func_button") )  // hit any button within range
 				{
-					if ( DistanceToEntity < 64 ) // 64 is the usual maximum range of a use command
+					if ( DistanceToEntity < 64 )  // 64 is the usual maximum range of a use command
 					{
 						pev->button |= IN_USE;
 					}
 				}
 				else if ( NoGoalAtStartOfFrame && CheckGoalThisFrame )
 				{
-					pNextEnt->m_pLink = m_pLink; // linked list: link new list head to previous list head
-					m_pLink = pNextEnt; // linked list: link rho-bot to list head
+					pNextEnt->m_pLink = m_pLink;  // linked list: link new list head to previous list head
+					m_pLink = pNextEnt;  // linked list: link rho-bot to list head
 				}
 			}
 		}
@@ -494,14 +482,12 @@ void CBaseBot::ActionLook( int SearchDistance )
 // ActionReload
 ///////////////////////////////////////////////////////////////////////////////
 
-BOOL CBaseBot::ActionReload( void )
+BOOL CBaseBot::ActionReload(void)
 {
-	CBasePlayerWeapon *pActiveWeapon = (CBasePlayerWeapon *)m_pActiveItem;
+	CBasePlayerWeapon* pActiveWeapon = (CBasePlayerWeapon*)m_pActiveItem;
 
-	if ( pActiveWeapon->pszAmmo1()
-		&& pActiveWeapon->iMaxClip() != WEAPON_NOCLIP
-		&& pActiveWeapon->m_iClip != pActiveWeapon->iMaxClip()
-		)
+	if ( pActiveWeapon->pszAmmo1() && pActiveWeapon->iMaxClip() != WEAPON_NOCLIP &&
+		 pActiveWeapon->m_iClip != pActiveWeapon->iMaxClip() )
 	{
 		pev->button |= IN_RELOAD;
 		return TRUE;
@@ -516,11 +502,11 @@ BOOL CBaseBot::ActionReload( void )
 // ActionSpeak
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ActionSpeak( const char *pText )
+void CBaseBot::ActionSpeak(const char* pText)
 {
 	char buffer[256];
-	sprintf( buffer, "%s: %s\n", STRING(pev->netname), pText );
-	UTIL_SayTextAll( buffer, this );
+	sprintf(buffer, "%s: %s\n", STRING(pev->netname), pText);
+	UTIL_SayTextAll(buffer, this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -537,19 +523,27 @@ BOOL CBaseBot::CheckBotKick()
 	}
 
 	// if the bot is dead, randomly press fire to respawn...
-	if ((pev->health < 1) || (pev->deadflag != DEAD_NO))
+	if ( (pev->health < 1) || (pev->deadflag != DEAD_NO) )
 	{
 		HandleTime();
 		ThinkDead();
 
 		pev->button = 0;  // make sure no buttons are pressed
 
-		if (RANDOM_LONG(1, 100) > 50)
+		if ( RANDOM_LONG(1, 100) > 50 )
 		{
 			pev->button = IN_ATTACK;
 		}
 
-		g_engfuncs.pfnRunPlayerMove( edict(), pev->v_angle, GetMoveForward(), GetMoveStrafe(), GetMoveVertical(), pev->button, 0, GetMSec() );
+		g_engfuncs.pfnRunPlayerMove(
+			edict(),
+			pev->v_angle,
+			GetMoveForward(),
+			GetMoveStrafe(),
+			GetMoveVertical(),
+			pev->button,
+			0,
+			GetMSec());
 		return TRUE;
 	}
 
@@ -563,21 +557,21 @@ BOOL CBaseBot::CheckBotKick()
 
 float CBaseBot::GetBotThinkDelay()
 {
-	return (0.001 + 0.005*(100 - Stats.GetTraitReflexes()));
+	return (0.001 + 0.005 * (100 - Stats.GetTraitReflexes()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // BotThink() - the main loop
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::BotThink( void )
+void CBaseBot::BotThink(void)
 {
-	if (CheckBotKick())
+	if ( CheckBotKick() )
 	{
 		return;  // Exit if bot has been kicked or is dead
 	}
 
-	if (fNextThink < gpGlobals->time)
+	if ( fNextThink < gpGlobals->time )
 	{
 		ThinkStart();
 
@@ -606,7 +600,7 @@ void CBaseBot::BotThink( void )
 
 		HandleMovement();
 
-		Memory.EndFrameUpdate( this );
+		Memory.EndFrameUpdate(this);
 
 		fNextThink = gpGlobals->time + GetBotThinkDelay();
 	}
@@ -620,19 +614,26 @@ void CBaseBot::BotThink( void )
 	Input.Think();
 	pev->button |= Input.GetButtons();
 
-	g_engfuncs.pfnRunPlayerMove( edict(), pev->v_angle, GetMoveForward(), GetMoveStrafe(), GetMoveVertical(), pev->button, 0, GetMSec() );
-
+	g_engfuncs.pfnRunPlayerMove(
+		edict(),
+		pev->v_angle,
+		GetMoveForward(),
+		GetMoveStrafe(),
+		GetMoveVertical(),
+		pev->button,
+		0,
+		GetMSec());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // CheckHasPowerfulWeapon
 ///////////////////////////////////////////////////////////////////////////////
 
-BOOL CBaseBot::CheckHasPowerfulWeapon( void )
+BOOL CBaseBot::CheckHasPowerfulWeapon(void)
 {
-	for ( int i = 2; i < 4; i++ ) // have weapon from groups 3 or 4?
+	for ( int i = 2; i < 4; i++ )  // have weapon from groups 3 or 4?
 	{
-		if ( m_rgpPlayerItems[ i ] )
+		if ( m_rgpPlayerItems[i] )
 		{
 			return TRUE;
 		}
@@ -645,59 +646,63 @@ BOOL CBaseBot::CheckHasPowerfulWeapon( void )
 // CheckNotice
 ///////////////////////////////////////////////////////////////////////////////
 
-//26-Aug-2001: Scott: totally rewritten
+// 26-Aug-2001: Scott: totally rewritten
 
-BOOL CBaseBot::CheckNotice( CBaseEntity *pEntity )
+BOOL CBaseBot::CheckNotice(CBaseEntity* pEntity)
 {
-	if ( FInViewCone( pEntity ) )
+	if ( FInViewCone(pEntity) )
 	{
 		float visibility_helper = 0.;
 
-	    if (FVisible(pEntity->pev->origin)) visibility_helper+=0.3;
-	    if (FVisible(pEntity->Center())) visibility_helper+=0.4;
-	    if (FVisible(pEntity->EyePosition())) visibility_helper+=0.3;
+		if ( FVisible(pEntity->pev->origin) )
+			visibility_helper += 0.3;
+		if ( FVisible(pEntity->Center()) )
+			visibility_helper += 0.4;
+		if ( FVisible(pEntity->EyePosition()) )
+			visibility_helper += 0.3;
 
-		if (visibility_helper == 0.0) return FALSE; // bot can't see entity
+		if ( visibility_helper == 0.0 )
+			return FALSE;  // bot can't see entity
 
-		float perceptTweak = 1. - Stats.GetTraitPerception()/100.; // [1.,0]
+		float perceptTweak = 1. - Stats.GetTraitPerception() / 100.;  // [1.,0]
 
-		if (perceptTweak == 0.0) return TRUE; // bot has perfect perception
+		if ( perceptTweak == 0.0 )
+			return TRUE;  // bot has perfect perception
 
 		Vector NoticeVector = pEntity->Center() - EyePosition();
 
-		float distance_helper = NoticeVector.Length(); // raw distance
+		float distance_helper = NoticeVector.Length();  // raw distance
 
-		if ( distance_helper > DISTANCE_MAX ) // just in case
+		if ( distance_helper > DISTANCE_MAX )  // just in case
 		{
 			distance_helper = DISTANCE_MAX;
 		}
 
-		if ( distance_helper < 32 ) // below this is negligible
+		if ( distance_helper < 32 )  // below this is negligible
 		{
 			distance_helper = 32;
 		}
 
-		distance_helper =  DISTANCE_MAX / (16 * distance_helper) ; // [1/16, 16]
+		distance_helper = DISTANCE_MAX / (16 * distance_helper);  // [1/16, 16]
 
-		distance_helper *= distance_helper; // [1/256, 256]
+		distance_helper *= distance_helper;  // [1/256, 256]
 
-		float velocity_helper = (pEntity->pev->velocity.Length())/CVAR_GET_FLOAT("sv_maxspeed"); // velocity ratio
+		float velocity_helper = (pEntity->pev->velocity.Length()) / CVAR_GET_FLOAT("sv_maxspeed");  // velocity ratio
 
-		velocity_helper = (velocity_helper*(2.*velocity_helper+1.)+1.) ; // [1, 4]
+		velocity_helper = (velocity_helper * (2. * velocity_helper + 1.) + 1.);  // [1, 4]
 
 		float angle_helper = 1.0;
 
-		if (NoticeVector.Length() > 128.)
+		if ( NoticeVector.Length() > 128. )
 		{
+			UTIL_MakeVectors(pev->v_angle);
 
-			UTIL_MakeVectors( pev->v_angle );
-
-			angle_helper = DotProduct(gpGlobals->v_forward.Normalize(),
-				NoticeVector.Normalize() );  // cosine of view angle to entity angle [0, 1]
+			angle_helper = DotProduct(
+				gpGlobals->v_forward.Normalize(),
+				NoticeVector.Normalize());  // cosine of view angle to entity angle [0, 1]
 		}
 
-		float notice_threshold = visibility_helper * distance_helper
-			* velocity_helper * angle_helper;
+		float notice_threshold = visibility_helper * distance_helper * velocity_helper * angle_helper;
 
 		if ( notice_threshold > perceptTweak )
 		{
@@ -712,46 +717,47 @@ BOOL CBaseBot::CheckNotice( CBaseEntity *pEntity )
 // CheckVisible
 ///////////////////////////////////////////////////////////////////////////////
 
-BOOL CBaseBot::CheckVisible( CBaseEntity *pEntity )
+BOOL CBaseBot::CheckVisible(CBaseEntity* pEntity)
 {
-	if ( !pEntity || pEntity == this || !(pEntity->pev) ) //
+	if ( !pEntity || pEntity == this || !(pEntity->pev) )  //
 	{
-		return FALSE; // intuition dictates this should return TRUE for this, but our Validate functions will fix things if this returns FALSE
+		return FALSE;  // intuition dictates this should return TRUE for this, but our Validate functions will fix
+					   // things if this returns FALSE
 	}
 
-	return FVisible( pEntity );
+	return FVisible(pEntity);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // HandleTime - from Rich Whitehouse's Advanced Bot Frame
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::HandleTime( void )
+void CBaseBot::HandleTime(void)
 {
 	if ( GetTimeMSecCheck() <= gpGlobals->time )
 	{
-		SetTimeMSecCheck( gpGlobals->time + 0.5 );  // Scott:  was + 1
+		SetTimeMSecCheck(gpGlobals->time + 0.5);  // Scott:  was + 1
 
 		if ( GetMSecCounter() > 0 )
 		{
-			SetMSec( 450 / GetMSecCounter() ); // Scott:  was 1000
+			SetMSec(450 / GetMSecCounter());  // Scott:  was 1000
 		}
 
-		SetMSecCounter( 0 );
+		SetMSecCounter(0);
 	}
 	else
 	{
-		SetMSecCounter( GetMSecCounter() + 1 );
+		SetMSecCounter(GetMSecCounter() + 1);
 	}
 
-	if ( GetMSec() < 1 ) // was 10
+	if ( GetMSec() < 1 )  // was 10
 	{
-		SetMSec( 1 );
+		SetMSec(1);
 	}
 
-	if ( GetMSec() > 100 ) // was 75
+	if ( GetMSec() > 100 )  // was 75
 	{
-		SetMSec( 100 );
+		SetMSec(100);
 	}
 }
 
@@ -759,68 +765,70 @@ void CBaseBot::HandleTime( void )
 // ThinkDead
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ThinkDead( void )
+void CBaseBot::ThinkDead(void)
 {
-	SetDesiredVelocity( Vector(0,0,0) );
-	SetGoUpOnLadder( TRUE );
-	SetLookAtVec( Vector(0,0,0) );
-	SetMovedDistance( 0.0 );
-	SetMoveForward( 0.0 );
-	SetMoveStrafe( 0.0 );
-	SetMoveVertical( 0.0 );
-	SetEnemy( NULL );
-	SetGoal( NULL );
-	SetRoamDirection( UNKNOWN );
-	SetTimeGoalCheck( gpGlobals->time );
-	SetTurningDirection( NONE );
-	SetWantToBeInCombat( FALSE );
-//	pev->velocity = Vector(0,0,0);
-//	pev->avelocity = Vector(0,0,0);
-//	pev->speed = 0;
+	SetDesiredVelocity(Vector(0, 0, 0));
+	SetGoUpOnLadder(TRUE);
+	SetLookAtVec(Vector(0, 0, 0));
+	SetMovedDistance(0.0);
+	SetMoveForward(0.0);
+	SetMoveStrafe(0.0);
+	SetMoveVertical(0.0);
+	SetEnemy(NULL);
+	SetGoal(NULL);
+	SetRoamDirection(UNKNOWN);
+	SetTimeGoalCheck(gpGlobals->time);
+	SetTurningDirection(NONE);
+	SetWantToBeInCombat(FALSE);
+	//	pev->velocity = Vector(0,0,0);
+	//	pev->avelocity = Vector(0,0,0);
+	//	pev->speed = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ThinkMood
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ThinkMood( void )
+void CBaseBot::ThinkMood(void)
 {
-	CBasePlayerWeapon *pActiveWeapon = dynamic_cast<CBasePlayerWeapon*>(m_pActiveItem);
+	CBasePlayerWeapon* pActiveWeapon = dynamic_cast<CBasePlayerWeapon*>(m_pActiveItem);
 
 	if ( !pActiveWeapon || pActiveWeapon->m_fInReload )
 	{
-		SetWantToBeInCombat( FALSE );
+		SetWantToBeInCombat(FALSE);
 		return;
 	}
 
-	if (CheckHasPowerfulWeapon())
+	if ( CheckHasPowerfulWeapon() )
 	{
-		SetWantToBeInCombat( TRUE );
+		SetWantToBeInCombat(TRUE);
 	}
 	else if ( GetEnemy() != NULL )
 	{
-		//Vacindak: Messy, but i did this late at night and errors about with the single line alternative for some reason
-		CBaseEntity *pEnemy = GetEnemy();
-		CBasePlayer *pEnemyPlayer = (CBasePlayer *)pEnemy;
+		// Vacindak: Messy, but i did this late at night and errors about with the single line alternative for some
+		// reason
+		CBaseEntity* pEnemy = GetEnemy();
+		CBasePlayer* pEnemyPlayer = (CBasePlayer*)pEnemy;
 
-		if ( (pev->health + pev->armorvalue) + (Stats.GetTraitAggression() - 50) > (pEnemyPlayer->pev->health + pEnemyPlayer->pev->armorvalue) )
+		if ( (pev->health + pev->armorvalue) + (Stats.GetTraitAggression() - 50) >
+			 (pEnemyPlayer->pev->health + pEnemyPlayer->pev->armorvalue) )
 		{
-			SetWantToBeInCombat( TRUE );
+			SetWantToBeInCombat(TRUE);
 		}
 		else
 		{
-			SetWantToBeInCombat( FALSE );
+			SetWantToBeInCombat(FALSE);
 		}
 	}
 	else
 	{
 		if ( ((pev->health + pev->armorvalue) > (140 - Stats.GetTraitAggression())) && CheckHasPowerfulWeapon() )
 		{
-			SetWantToBeInCombat( TRUE );
+			SetWantToBeInCombat(TRUE);
 		}
 		else
 		{
-			SetWantToBeInCombat( FALSE );
+			SetWantToBeInCombat(FALSE);
 		}
 	}
 }
@@ -829,55 +837,52 @@ void CBaseBot::ThinkMood( void )
 // ThinkStart
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ThinkStart( void )
+void CBaseBot::ThinkStart(void)
 {
 	HandleTime();
 
-	SetCalledAimThisFrame( FALSE );
+	SetCalledAimThisFrame(FALSE);
 
-	SetSteerCallCounter( 0 );
+	SetSteerCallCounter(0);
 
-	SetSteerCallPrecedence( STEER_WANDER );
+	SetSteerCallPrecedence(STEER_WANDER);
 
 	pev->button = 0;
 
-	SetMovedDistance( ( Memory.GetPrevOrigin() - pev->origin ).Length() );
+	SetMovedDistance((Memory.GetPrevOrigin() - pev->origin).Length());
 
-//26-Aug-2001: Scott: fix marking location, included marking favorable
+	// 26-Aug-2001: Scott: fix marking location, included marking favorable
 	if ( IsAlive() && GetSteerCallPrecedence() != STEER_WANDER )
 	{
 		// Mark location favorable if bot not wandering
-		WorldGraph.MarkLocationFavorable( pev->origin );
+		WorldGraph.MarkLocationFavorable(pev->origin);
 	}
 	if ( GetMovedDistance() <= 1.0 && GetDesiredVelocity().Length2D() > 0.0 )
 	{
 		// Mark the location the bot was trying to go to as unfavorable
 
 		Vector start = pev->origin;
-		UTIL_MakeVectors( pev->v_angle );
-		Vector moveDir  = (gpGlobals->v_forward*GetMoveForward()
-						+  gpGlobals->v_right*GetMoveStrafe() ).Normalize();
-		float scaleFactor = NAV_GRIDBOX_SIZE /
-			(fabs(moveDir.x) > fabs(moveDir.y) ? fabs(moveDir.x) : fabs(moveDir.y));
+		UTIL_MakeVectors(pev->v_angle);
+		Vector moveDir = (gpGlobals->v_forward * GetMoveForward() + gpGlobals->v_right * GetMoveStrafe()).Normalize();
+		float scaleFactor = NAV_GRIDBOX_SIZE / (fabs(moveDir.x) > fabs(moveDir.y) ? fabs(moveDir.x) : fabs(moveDir.y));
 		Vector dest = start + moveDir * scaleFactor;
-		WorldGraph.MarkLocationUnfavorable( dest );
+		WorldGraph.MarkLocationUnfavorable(dest);
 	}
-//26-Aug-2001: end
-
+	// 26-Aug-2001: end
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ThinkSteering
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ThinkSteering( void )
+void CBaseBot::ThinkSteering(void)
 {
 	const bool canJump = bot_dontmove.value == 0.0f;
 
-	//Vacindak: changed "GetEnemy()" to "GetEnemy() != NULL"
+	// Vacindak: changed "GetEnemy()" to "GetEnemy() != NULL"
 	if ( GetEnemy() != NULL && GetEnemy()->IsAlive() )
 	{
-		if ( CheckVisible( GetEnemy() ) )
+		if ( CheckVisible(GetEnemy()) )
 		{
 			AimAtEnemy();
 
@@ -886,13 +891,13 @@ void CBaseBot::ThinkSteering( void )
 				ActionOpenFire();
 			}
 
-			Memory.EnemyInSight( GetEnemy() );
+			Memory.EnemyInSight(GetEnemy());
 		}
 		else
 		{
-			if ( Memory.GetEnemyInSight() != FALSE ) // i.e. this is the first time through
+			if ( Memory.GetEnemyInSight() != FALSE )  // i.e. this is the first time through
 			{
-				if ( !ActionReload() ) // change weapons if we're not going to reload
+				if ( !ActionReload() )  // change weapons if we're not going to reload
 				{
 					ActionChooseWeapon();
 				}
@@ -905,47 +910,47 @@ void CBaseBot::ThinkSteering( void )
 		{
 			if ( GetWantToBeInCombat() )
 			{
-				if ( canJump && RANDOM_FLOAT(1,4000) < Stats.GetTraitJumpPropensity() )
-				{ // jump a lil bit during a duel
+				if ( canJump && RANDOM_FLOAT(1, 4000) < Stats.GetTraitJumpPropensity() )
+				{  // jump a lil bit during a duel
 					pev->button |= IN_JUMP;
 				}
 
 				if ( Memory.GetEnemyInSight() )
 				{
-					SteerSafePursue( GetEnemy() );
+					SteerSafePursue(GetEnemy());
 				}
 				else
 				{
-					SteerSafeSeek( Memory.GetEnemyLastSeenPosition(), STEER_WANT_ENEMY );
+					SteerSafeSeek(Memory.GetEnemyLastSeenPosition(), STEER_WANT_ENEMY);
 				}
 			}
 			else
 			{
-				if ( canJump && RANDOM_FLOAT(1,2000) < Stats.GetTraitJumpPropensity() )
-				{ // jump a bit more if you don't want to be in combat
+				if ( canJump && RANDOM_FLOAT(1, 2000) < Stats.GetTraitJumpPropensity() )
+				{  // jump a bit more if you don't want to be in combat
 					pev->button |= IN_JUMP;
 				}
 
 				if ( Memory.GetEnemyInSight() )
 				{
-					SteerSafeEvade( GetEnemy() );
+					SteerSafeEvade(GetEnemy());
 				}
 				else
 				{
-					SteerSafeFlee( Memory.GetEnemyLastSeenPosition() );
+					SteerSafeFlee(Memory.GetEnemyLastSeenPosition());
 				}
 			}
 		}
 		else
 		{
-			if ( canJump && RANDOM_FLOAT(1,1000) < Stats.GetTraitJumpPropensity() )
-			{ // jump a lot if you don't have a decent weapon
+			if ( canJump && RANDOM_FLOAT(1, 1000) < Stats.GetTraitJumpPropensity() )
+			{  // jump a lot if you don't have a decent weapon
 				pev->button |= IN_JUMP;
 			}
 
 			if ( GetGoal() )
 			{
-				SteerSafeSeek( GetGoal() );
+				SteerSafeSeek(GetGoal());
 			}
 			else
 			{
@@ -959,7 +964,7 @@ void CBaseBot::ThinkSteering( void )
 
 		if ( GetGoal() )
 		{
-			SteerSafeSeek( GetGoal() );
+			SteerSafeSeek(GetGoal());
 		}
 		else
 		{
@@ -972,22 +977,20 @@ void CBaseBot::ThinkSteering( void )
 // ThinkValidateEnemy
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ThinkValidateEnemy( void )
+void CBaseBot::ThinkValidateEnemy(void)
 {
-	//Vacindak: changed "GetEnemy()" to "GetEnemy() != NULL"
-	if ( GetEnemy() != NULL && CheckVisible( GetEnemy() ) && FInViewCone( GetEnemy() ) )
+	// Vacindak: changed "GetEnemy()" to "GetEnemy() != NULL"
+	if ( GetEnemy() != NULL && CheckVisible(GetEnemy()) && FInViewCone(GetEnemy()) )
 	{
-		Memory.EnemyInSight( GetEnemy() );
+		Memory.EnemyInSight(GetEnemy());
 	}
 
-	//Vacindak: changed "!GetEnemy()" to "GetEnemy() == NULL"
-	if ( GetEnemy() == NULL
-		|| GetEnemy()->pev->deadflag != DEAD_NO
-		|| ( gpGlobals->time - Memory.GetEnemyLastSeenTime() ) > (10 + ((Stats.GetTraitAggression() - 50) / 10))
-		)
+	// Vacindak: changed "!GetEnemy()" to "GetEnemy() == NULL"
+	if ( GetEnemy() == NULL || GetEnemy()->pev->deadflag != DEAD_NO ||
+		 (gpGlobals->time - Memory.GetEnemyLastSeenTime()) > (10 + ((Stats.GetTraitAggression() - 50) / 10)) )
 	{
-//		ActionSpeak("I'm giving up on my current target.");
-		SetEnemy( NULL );
+		//		ActionSpeak("I'm giving up on my current target.");
+		SetEnemy(NULL);
 	}
 }
 
@@ -995,12 +998,12 @@ void CBaseBot::ThinkValidateEnemy( void )
 // ThinkValidateGoal
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBot::ThinkValidateGoal( void )
-{ // TODO: eventually rather than check visibility we should should check to make sure there's still a valid path
-	//Vacindak: changed "!GetGoal()" to "GetGoal() == NULL"
-	if ( GetGoal() == NULL || !CheckVisible( GetGoal() ) || ( GetGoal()->pev->effects & EF_NODRAW ) )
+void CBaseBot::ThinkValidateGoal(void)
+{  // TODO: eventually rather than check visibility we should should check to make sure there's still a valid path
+	// Vacindak: changed "!GetGoal()" to "GetGoal() == NULL"
+	if ( GetGoal() == NULL || !CheckVisible(GetGoal()) || (GetGoal()->pev->effects & EF_NODRAW) )
 	{
-		SetGoal( NULL );
-//		ActionSpeak( "Giving up on goal." );
+		SetGoal(NULL);
+		//		ActionSpeak( "Giving up on goal." );
 	}
 }

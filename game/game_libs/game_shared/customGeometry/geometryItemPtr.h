@@ -9,4 +9,4 @@ namespace CustomGeometry
 	// because of other includes. I hate you, Half Life devs.
 	class CGeometryItem;
 	typedef std::shared_ptr<CGeometryItem> GeometryItemPtr_t;
-}
+}  // namespace CustomGeometry

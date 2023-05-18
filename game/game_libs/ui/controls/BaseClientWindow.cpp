@@ -15,26 +15,24 @@ GNU General Public License for more details.
 #include "BaseMenu.h"
 #include "BaseClientWindow.h"
 
-CMenuBaseClientWindow::CMenuBaseClientWindow( const  char *name ) :
-	BaseClass( name, &uiStatic.client )
+CMenuBaseClientWindow::CMenuBaseClientWindow(const char* name) :
+	BaseClass(name, &uiStatic.client)
 {
 }
 
-bool CMenuBaseClientWindow::KeyDown( int key )
+bool CMenuBaseClientWindow::KeyDown(int key)
 {
 	// copy engine behaviour
-	if( UI::Key::IsEscape( key ))
+	if ( UI::Key::IsEscape(key) )
 	{
-		EngFuncs::KEY_SetDest( KEY_GAME ); // set engine states before "escape"
-		EngFuncs::ClientCmd( FALSE, "escape\n" );
+		EngFuncs::KEY_SetDest(KEY_GAME);  // set engine states before "escape"
+		EngFuncs::ClientCmd(FALSE, "escape\n");
 		return true;
 	}
-	else if( UI::Key::IsConsole( key ))
+	else if ( UI::Key::IsConsole(key) )
 	{
-		EngFuncs::KEY_SetDest( KEY_CONSOLE );
+		EngFuncs::KEY_SetDest(KEY_CONSOLE);
 	}
 
-	return BaseClass::KeyDown( key );
+	return BaseClass::KeyDown(key);
 }
-
-

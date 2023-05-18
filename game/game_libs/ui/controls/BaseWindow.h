@@ -24,7 +24,7 @@ class CMenuBaseWindow : public CMenuItemsHolder
 {
 public:
 	typedef CMenuItemsHolder BaseClass;
-	CMenuBaseWindow( const char *name = "Unnamed Window", CWindowStack *pStack = &uiStatic.menu );
+	CMenuBaseWindow(const char* name = "Unnamed Window", CWindowStack* pStack = &uiStatic.menu);
 
 	// Overloaded functions
 	// Window visibility is switched through window stack
@@ -32,17 +32,17 @@ public:
 	void Show() override;
 	bool IsVisible() const override;
 
-	bool KeyUp( int key ) override;
-	bool KeyDown( int key ) override;
+	bool KeyUp(int key) override;
+	bool KeyDown(int key) override;
 	void Draw() override;
 
-	bool KeyValueData(const char *key, const char *data) override;
+	bool KeyValueData(const char* key, const char* data) override;
 
 	enum EAnimation
 	{
 		ANIM_NO = 0,  // no animation
-		ANIM_CLOSING, // window closing animation
-		ANIM_OPENING, // window showing animation
+		ANIM_CLOSING,  // window closing animation
+		ANIM_OPENING,  // window showing animation
 	};
 
 	// Override this method to draw custom animations
@@ -53,37 +53,45 @@ public:
 	virtual bool DrawAnimation();
 
 	// Check current window is a root
-	virtual bool IsRoot() const { return false; }
+	virtual bool IsRoot() const
+	{
+		return false;
+	}
 
 	// Hide current window and save changes
 	virtual void SaveAndPopMenu();
 
-	bool IsWindow() override { return true; }
+	bool IsWindow() override
+	{
+		return true;
+	}
 
-	void EnableTransition( EAnimation type );
-	void DisableTransition() { eTransitionType = ANIM_NO; }
+	void EnableTransition(EAnimation type);
+	void DisableTransition()
+	{
+		eTransitionType = ANIM_NO;
+	}
 
 	bool IsMaximized() const
 	{
-		if( !FBitSet( iFlags, QMF_HIDDEN ) && // minimized
-		    m_scPos == Point( 0, 0 ) &&
-		    isrange( gpGlobals->scrWidth - 1, m_scSize.w, gpGlobals->scrWidth + 1 ) &&
-		    isrange( gpGlobals->scrHeight - 1, m_scSize.h, gpGlobals->scrHeight + 1 ))
+		if ( !FBitSet(iFlags, QMF_HIDDEN) &&  // minimized
+			 m_scPos == Point(0, 0) && isrange(gpGlobals->scrWidth - 1, m_scSize.w, gpGlobals->scrWidth + 1) &&
+			 isrange(gpGlobals->scrHeight - 1, m_scSize.h, gpGlobals->scrHeight + 1) )
 			return true;
 		return false;
 	}
 
 	// set parent of window
-	void Link( CMenuItemsHolder *h )
+	void Link(CMenuItemsHolder* h)
 	{
 		m_pParent = h;
 	}
 
 	bool bAllowDrag;
-	EAnimation eTransitionType; // valid only when in transition
+	EAnimation eTransitionType;  // valid only when in transition
 	CMenuBackgroundBitmap background;
 
-	const CWindowStack *WindowStack() const
+	const CWindowStack* WindowStack() const
 	{
 		return m_pStack;
 	}
@@ -91,18 +99,22 @@ public:
 protected:
 	int m_iTransitionStartTime;
 
-	CWindowStack *m_pStack;
+	CWindowStack* m_pStack;
+
 private:
-	CMenuBaseWindow(); // remove
+	CMenuBaseWindow();  // remove
 
-	friend void UI_DrawMouseCursor( void ); // HACKHACK: Cursor should be set by menu item
-	friend void UI_UpdateMenu( float flTime );
+	friend void UI_DrawMouseCursor(void);  // HACKHACK: Cursor should be set by menu item
+	friend void UI_UpdateMenu(float flTime);
 
-	bool IsAbsolutePositioned( void ) const override { return true; }
-	void DragDrop( int down );
+	bool IsAbsolutePositioned(void) const override
+	{
+		return true;
+	}
+	void DragDrop(int down);
 
 	bool m_bHolding;
 	Point m_bHoldOffset;
 };
 
-#endif // BASEWINDOW_H
+#endif  // BASEWINDOW_H

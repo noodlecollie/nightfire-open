@@ -16,23 +16,24 @@ GNU General Public License for more details.
 #include "PicButton.h"
 
 // menu banners used fiexed rectangle (virtual screenspace at 640x480)
-#define UI_BANNER_POSX		72
-#define UI_BANNER_POSY		72
-#define UI_BANNER_WIDTH		736
-#define UI_BANNER_HEIGHT		128
+#define UI_BANNER_POSX 72
+#define UI_BANNER_POSY 72
+#define UI_BANNER_WIDTH 736
+#define UI_BANNER_HEIGHT 128
 
-CMenuFramework::CMenuFramework( const char *name ) : BaseClass( name )
+CMenuFramework::CMenuFramework(const char* name) :
+	BaseClass(name)
 {
-	memset( m_apBtns, 0, sizeof( m_apBtns ) );
+	memset(m_apBtns, 0, sizeof(m_apBtns));
 	m_iBtnsNum = 0;
 	bannerAnimDirection = ANIM_NO;
 }
 
 CMenuFramework::~CMenuFramework()
 {
-	for( int i = 0; i < m_iBtnsNum; i++ )
+	for ( int i = 0; i < m_iBtnsNum; i++ )
 	{
-		RemoveItem( *( m_apBtns[i] ) );
+		RemoveItem(*(m_apBtns[i]));
 		delete m_apBtns[i];
 		m_apBtns[i] = NULL;
 	}
@@ -46,17 +47,18 @@ void CMenuFramework::Show()
 void CMenuFramework::Draw()
 {
 	static int statusFadeTime;
-	static CMenuBaseItem *lastItem;
-	CMenuBaseItem *item;
-	const char *statusText;
+	static CMenuBaseItem* lastItem;
+	CMenuBaseItem* item;
+	const char* statusText;
 
 	BaseClass::Draw();
 
 	item = ItemAtCursor();
 	// a1ba: maybe this should be somewhere else?
-	if( item != lastItem )
+	if ( item != lastItem )
 	{
-		if( item ) item->m_iLastFocusTime = uiStatic.realTime;
+		if ( item )
+			item->m_iLastFocusTime = uiStatic.realTime;
 		statusFadeTime = uiStatic.realTime;
 
 		lastItem = item;
@@ -64,20 +66,21 @@ void CMenuFramework::Draw()
 
 	// todo: move to framework?
 	// draw status text
-	if( item && item == lastItem && ( ( statusText = item->szStatusText ) != NULL ) )
+	if ( item && item == lastItem && ((statusText = item->szStatusText) != NULL) )
 	{
-		float alpha = bound( 0, ((( uiStatic.realTime - statusFadeTime ) - 100 ) * 0.01f ), 1 );
+		float alpha = bound(0, (((uiStatic.realTime - statusFadeTime) - 100) * 0.01f), 1);
 		int r, g, b, x, len;
 
-		EngFuncs::ConsoleStringLen( statusText, &len, NULL );
+		EngFuncs::ConsoleStringLen(statusText, &len, NULL);
 
-		UnpackRGB( r, g, b, uiColorHelp );
-		EngFuncs::DrawSetTextColor( r, g, b, alpha * 255 );
-		x = ( ScreenWidth - len ) * 0.5f; // centering
+		UnpackRGB(r, g, b, uiColorHelp);
+		EngFuncs::DrawSetTextColor(r, g, b, alpha * 255);
+		x = (ScreenWidth - len) * 0.5f;  // centering
 
-		EngFuncs::DrawConsoleString( x, uiStatic.yOffset + 720 * uiStatic.scaleY, statusText );
+		EngFuncs::DrawConsoleString(x, uiStatic.yOffset + 720 * uiStatic.scaleY, statusText);
 	}
-	else statusFadeTime = uiStatic.realTime;
+	else
+		statusFadeTime = uiStatic.realTime;
 }
 
 void CMenuFramework::Hide()
@@ -103,75 +106,85 @@ void CMenuFramework::VidInit()
 	BaseClass::VidInit();
 }
 
-CMenuPicButton * CMenuFramework::AddButton(const char *szName, const char *szStatus, EDefaultBtns buttonPicId, CEventCallback onReleased, int iFlags)
+CMenuPicButton* CMenuFramework::AddButton(
+	const char* szName,
+	const char* szStatus,
+	EDefaultBtns buttonPicId,
+	CEventCallback onReleased,
+	int iFlags)
 {
-	if( m_iBtnsNum >= MAX_FRAMEWORK_PICBUTTONS )
+	if ( m_iBtnsNum >= MAX_FRAMEWORK_PICBUTTONS )
 	{
-		Host_Error( "Too many pic buttons in framework!" );
+		Host_Error("Too many pic buttons in framework!");
 		return NULL;
 	}
 
-	CMenuPicButton *btn = new CMenuPicButton();
+	CMenuPicButton* btn = new CMenuPicButton();
 
-	btn->SetNameAndStatus( szName, szStatus );
-	btn->SetPicture( buttonPicId );
+	btn->SetNameAndStatus(szName, szStatus);
+	btn->SetPicture(buttonPicId);
 	btn->iFlags |= iFlags;
 	btn->onReleased = onReleased;
-	btn->SetCoord( 72, 230 + m_iBtnsNum * 50 );
-	AddItem( btn );
+	btn->SetCoord(72, 230 + m_iBtnsNum * 50);
+	AddItem(btn);
 
 	m_apBtns[m_iBtnsNum++] = btn;
 
 	return btn;
 }
 
-CMenuPicButton * CMenuFramework::AddButton(const char *szName, const char *szStatus, const char *szButtonPath, CEventCallback onReleased, int iFlags)
+CMenuPicButton* CMenuFramework::AddButton(
+	const char* szName,
+	const char* szStatus,
+	const char* szButtonPath,
+	CEventCallback onReleased,
+	int iFlags)
 {
-	if( m_iBtnsNum >= MAX_FRAMEWORK_PICBUTTONS )
+	if ( m_iBtnsNum >= MAX_FRAMEWORK_PICBUTTONS )
 	{
-		Host_Error( "Too many pic buttons in framework!" );
+		Host_Error("Too many pic buttons in framework!");
 		return NULL;
 	}
 
-	CMenuPicButton *btn = new CMenuPicButton();
+	CMenuPicButton* btn = new CMenuPicButton();
 
-	btn->SetNameAndStatus( szName, szStatus );
-	btn->SetPicture( szButtonPath );
+	btn->SetNameAndStatus(szName, szStatus);
+	btn->SetPicture(szButtonPath);
 	btn->iFlags |= iFlags;
 	btn->onReleased = onReleased;
-	btn->SetCoord( 72, 230 + m_iBtnsNum * 50 );
-	AddItem( btn );
+	btn->SetCoord(72, 230 + m_iBtnsNum * 50);
+	AddItem(btn);
 
 	m_apBtns[m_iBtnsNum++] = btn;
 
 	return btn;
 }
 
-bool CMenuFramework::KeyDown( int key )
+bool CMenuFramework::KeyDown(int key)
 {
-	bool b = BaseClass::KeyDown( key );
+	bool b = BaseClass::KeyDown(key);
 
-	if( UI::Key::IsEscape( key ))
+	if ( UI::Key::IsEscape(key) )
 	{
-		const CMenuBaseWindow *newWindow = WindowStack()->Current();
+		const CMenuBaseWindow* newWindow = WindowStack()->Current();
 
-		if( newWindow != nullptr && newWindow != this && newWindow->IsRoot() )
+		if ( newWindow != nullptr && newWindow != this && newWindow->IsRoot() )
 		{
-			PrepareBannerAnimation( ANIM_CLOSING, nullptr );
+			PrepareBannerAnimation(ANIM_CLOSING, nullptr);
 		}
 	}
 
 	return b;
 }
 
-void CMenuFramework::PrepareBannerAnimation( EAnimation direction, CMenuPicButton *initiator )
+void CMenuFramework::PrepareBannerAnimation(EAnimation direction, CMenuPicButton* initiator)
 {
 	// banner is not present, ignore
-	if( banner.Parent() != this )
+	if ( banner.Parent() != this )
 		return;
 
 	bannerAnimDirection = direction;
-	if( initiator )
+	if ( initiator )
 	{
 		bannerRects[0].pt = initiator->GetRenderPosition();
 		bannerRects[0].sz = initiator->GetRenderSize();
@@ -185,22 +198,22 @@ void CMenuFramework::PrepareBannerAnimation( EAnimation direction, CMenuPicButto
 
 bool CMenuFramework::DrawAnimation()
 {
-	bool b = CMenuBaseWindow::DrawAnimation( );
+	bool b = CMenuBaseWindow::DrawAnimation();
 
-	if( bannerAnimDirection != ANIM_NO )
+	if ( bannerAnimDirection != ANIM_NO )
 	{
 		float frac;
 
-		if( bannerAnimDirection == ANIM_OPENING )
-			frac = ( uiStatic.realTime - m_iTransitionStartTime ) / TTT_PERIOD;
+		if ( bannerAnimDirection == ANIM_OPENING )
+			frac = (uiStatic.realTime - m_iTransitionStartTime) / TTT_PERIOD;
 		else
-			frac = 1.0f - ( uiStatic.realTime - m_iTransitionStartTime ) / TTT_PERIOD;
-		Rect r = Rect::Lerp( bannerRects[0], bannerRects[1], frac );
+			frac = 1.0f - (uiStatic.realTime - m_iTransitionStartTime) / TTT_PERIOD;
+		Rect r = Rect::Lerp(bannerRects[0], bannerRects[1], frac);
 
-		banner.Draw( r.pt, r.sz );
+		banner.Draw(r.pt, r.sz);
 	}
 
-	if( b )
+	if ( b )
 		bannerAnimDirection = ANIM_NO;
 
 	return b;
@@ -208,38 +221,45 @@ bool CMenuFramework::DrawAnimation()
 
 CMenuFramework::CMenuBannerBitmap::CMenuBannerBitmap()
 {
-	SetRect( UI_BANNER_POSX, UI_BANNER_POSY, UI_BANNER_WIDTH, UI_BANNER_HEIGHT );
+	SetRect(UI_BANNER_POSX, UI_BANNER_POSY, UI_BANNER_WIDTH, UI_BANNER_HEIGHT);
 }
 
-void CMenuFramework::CMenuBannerBitmap::SetPicture(const char *pic)
+void CMenuFramework::CMenuBannerBitmap::SetPicture(const char* pic)
 {
-	image.Load( pic );
+	image.Load(pic);
 }
 
-void CMenuFramework::CMenuBannerBitmap::Draw( Point pt, Size sz )
+void CMenuFramework::CMenuBannerBitmap::Draw(Point pt, Size sz)
 {
-	if( image.IsValid() )
+	if ( image.IsValid() )
 	{
-		UI_DrawPic( pt, sz, uiColorWhite, image, QM_DRAWADDITIVE );
+		UI_DrawPic(pt, sz, uiColorWhite, image, QM_DRAWADDITIVE);
 	}
 	else
 	{
-		UI_DrawString( uiStatic.hHeavyBlur, pt,
+		UI_DrawString(
+			uiStatic.hHeavyBlur,
+			pt,
 			sz,
 			szName,
-			uiPromptTextColor, m_scChSize,
-			QM_LEFT, ETF_ADDITIVE | ETF_NOSIZELIMIT | ETF_FORCECOL );
+			uiPromptTextColor,
+			m_scChSize,
+			QM_LEFT,
+			ETF_ADDITIVE | ETF_NOSIZELIMIT | ETF_FORCECOL);
 
-		UI_DrawString( uiStatic.hLightBlur, pt,
+		UI_DrawString(
+			uiStatic.hLightBlur,
+			pt,
 			sz,
 			szName,
-			uiPromptTextColor, m_scChSize,
-			QM_LEFT, ETF_ADDITIVE | ETF_NOSIZELIMIT | ETF_FORCECOL );
+			uiPromptTextColor,
+			m_scChSize,
+			QM_LEFT,
+			ETF_ADDITIVE | ETF_NOSIZELIMIT | ETF_FORCECOL);
 	}
 }
 
 void CMenuFramework::CMenuBannerBitmap::Draw()
 {
-	Draw( m_scPos, m_scSize );
+	Draw(m_scPos, m_scSize);
 }
-

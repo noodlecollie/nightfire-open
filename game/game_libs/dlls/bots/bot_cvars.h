@@ -10,13 +10,13 @@ extern cvar_t bot_skill;
 extern cvar_t bot_jump;
 extern cvar_t bot_chat;
 
-//cvars for debugging
-extern cvar_t bot_dontshoot; // does not shoot at humans or bots
-extern cvar_t bot_observer; // does not shoot at humans
+// cvars for debugging
+extern cvar_t bot_dontshoot;  // does not shoot at humans or bots
+extern cvar_t bot_observer;  // does not shoot at humans
 extern cvar_t bot_dontmove;
 
 extern cvar_t bot_profile_file;
 
 void Bot_RegisterCVars(void);
 
-#endif // BOT_CVARS_H
+#endif  // BOT_CVARS_H

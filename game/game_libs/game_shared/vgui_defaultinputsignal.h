@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -11,9 +11,7 @@
 #pragma once
 #endif
 
-
 #include "vgui_inputsignal.h"
-
 
 namespace vgui
 {
@@ -21,19 +19,40 @@ namespace vgui
 	class CDefaultInputSignal : public vgui::InputSignal
 	{
 	public:
-		virtual void cursorMoved(int x,int y,Panel* panel)				{}
-		virtual void cursorEntered(Panel* panel)						{}
-		virtual void cursorExited(Panel* panel)							{}
-		virtual void mousePressed(MouseCode code,Panel* panel)			{}
-		virtual void mouseDoublePressed(MouseCode code,Panel* panel)	{}
-		virtual void mouseReleased(MouseCode code,Panel* panel)			{}
-		virtual void mouseWheeled(int delta,Panel* panel)				{}
-		virtual void keyPressed(KeyCode code,Panel* panel)				{}
-		virtual void keyTyped(KeyCode code,Panel* panel)				{}
-		virtual void keyReleased(KeyCode code,Panel* panel)				{}
-		virtual void keyFocusTicked(Panel* panel)						{}
+		virtual void cursorMoved(int x, int y, Panel* panel)
+		{
+		}
+		virtual void cursorEntered(Panel* panel)
+		{
+		}
+		virtual void cursorExited(Panel* panel)
+		{
+		}
+		virtual void mousePressed(MouseCode code, Panel* panel)
+		{
+		}
+		virtual void mouseDoublePressed(MouseCode code, Panel* panel)
+		{
+		}
+		virtual void mouseReleased(MouseCode code, Panel* panel)
+		{
+		}
+		virtual void mouseWheeled(int delta, Panel* panel)
+		{
+		}
+		virtual void keyPressed(KeyCode code, Panel* panel)
+		{
+		}
+		virtual void keyTyped(KeyCode code, Panel* panel)
+		{
+		}
+		virtual void keyReleased(KeyCode code, Panel* panel)
+		{
+		}
+		virtual void keyFocusTicked(Panel* panel)
+		{
+		}
 	};
-}
+}  // namespace vgui
 
-
-#endif // VGUI_DEFAULTINPUTSIGNAL_H
+#endif  // VGUI_DEFAULTINPUTSIGNAL_H

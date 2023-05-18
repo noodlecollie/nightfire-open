@@ -16,4 +16,4 @@ namespace CustomGeometry
 	{
 		return CLogger_Client::StaticInstance();
 	}
-}
+}  // namespace CustomGeometry

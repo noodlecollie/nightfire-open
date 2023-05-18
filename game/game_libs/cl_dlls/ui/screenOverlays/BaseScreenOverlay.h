@@ -20,4 +20,4 @@ namespace ScreenOverlays
 		// Intended for drawing contents that have been constructed in VidInit.
 		virtual void Draw(float time);
 	};
-}
+}  // namespace ScreenOverlays

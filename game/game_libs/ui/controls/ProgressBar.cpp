@@ -17,7 +17,8 @@ GNU General Public License for more details.
 #include "BaseMenu.h"
 #include "ProgressBar.h"
 
-CMenuProgressBar::CMenuProgressBar() : BaseClass()
+CMenuProgressBar::CMenuProgressBar() :
+	BaseClass()
 {
 	m_flMin = 0.0f;
 	m_flMax = 100.0f;
@@ -25,7 +26,7 @@ CMenuProgressBar::CMenuProgressBar() : BaseClass()
 	m_szCvarName = NULL;
 }
 
-void CMenuProgressBar::LinkCvar( const char *cvName, float flMin, float flMax )
+void CMenuProgressBar::LinkCvar(const char* cvName, float flMin, float flMax)
 {
 	m_szCvarName = cvName;
 
@@ -33,22 +34,24 @@ void CMenuProgressBar::LinkCvar( const char *cvName, float flMin, float flMax )
 	m_flMin = flMin;
 }
 
-void CMenuProgressBar::SetValue( float flValue )
+void CMenuProgressBar::SetValue(float flValue)
 {
-	if( flValue > 1.0f ) flValue = 1;
-	if( flValue < 0.0f ) flValue = 0;
+	if ( flValue > 1.0f )
+		flValue = 1;
+	if ( flValue < 0.0f )
+		flValue = 0;
 	m_flValue = flValue;
 	m_szCvarName = NULL;
 }
 
-void CMenuProgressBar::Draw( void )
+void CMenuProgressBar::Draw(void)
 {
 	float flProgress;
 
-	if( m_szCvarName )
+	if ( m_szCvarName )
 	{
-		flProgress = bound( m_flMin, EngFuncs::GetCvarFloat( m_szCvarName ), m_flMax );
-		flProgress = ( flProgress - m_flMin ) / ( m_flMax - m_flMin );
+		flProgress = bound(m_flMin, EngFuncs::GetCvarFloat(m_szCvarName), m_flMax);
+		flProgress = (flProgress - m_flMin) / (m_flMax - m_flMin);
 	}
 	else
 	{
@@ -56,10 +59,10 @@ void CMenuProgressBar::Draw( void )
 	}
 
 	// draw the background
-	UI_FillRect( m_scPos, m_scSize, uiInputBgColor );
+	UI_FillRect(m_scPos, m_scSize, uiInputBgColor);
 
-	UI_FillRect( m_scPos.x, m_scPos.y, m_scSize.w * flProgress, m_scSize.h, colorBase );
+	UI_FillRect(m_scPos.x, m_scPos.y, m_scSize.w * flProgress, m_scSize.h, colorBase);
 
 	// draw the rectangle
-	UI_DrawRectangle( m_scPos, m_scSize, uiInputFgColor );
+	UI_DrawRectangle(m_scPos, m_scSize, uiInputFgColor);
 }

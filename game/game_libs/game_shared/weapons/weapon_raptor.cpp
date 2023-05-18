@@ -46,13 +46,13 @@ namespace WeaponAtts
 	{
 		return ::StaticWeaponAttributes;
 	}
-}
+}  // namespace WeaponAtts
 
 class CAmmoRaptor : public CGenericAmmo
 {
 public:
-	CAmmoRaptor()
-		: CGenericAmmo("models/weapon_raptor/w_ammo_raptor.mdl", Ammo_Raptor)
+	CAmmoRaptor() :
+		CGenericAmmo("models/weapon_raptor/w_ammo_raptor.mdl", Ammo_Raptor)
 	{
 	}
 };

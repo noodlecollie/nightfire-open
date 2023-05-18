@@ -21,7 +21,7 @@ namespace
 	static constexpr float SHELLEJECT_FWD_SCALE = 20;
 	static constexpr float SHELLEJECT_RIGHT_SCALE = -12;
 	static constexpr float SHELLEJECT_UP_SCALE = 4;
-}
+}  // namespace
 
 void BaseWeaponEventPlayer::LoadEventScript(const CUtlString& path)
 {
@@ -34,8 +34,7 @@ void BaseWeaponEventPlayer::LoadEventScript(const CUtlString& path)
 
 	if ( !document.IsObject() )
 	{
-		ALERT(at_error, "BaseWeaponEventPlayer: Weapon script %s root is not an object.\n",
-			  path.String());
+		ALERT(at_error, "BaseWeaponEventPlayer: Weapon script %s root is not an object.\n", path.String());
 
 		return;
 	}
@@ -43,8 +42,9 @@ void BaseWeaponEventPlayer::LoadEventScript(const CUtlString& path)
 	ParseEventScript(document);
 }
 
-void BaseWeaponEventPlayer::PlayEvent(const event_args_t* eventArgs,
-				   					  const WeaponAtts::WABaseAttack::AttackModeSignature* signature)
+void BaseWeaponEventPlayer::PlayEvent(
+	const event_args_t* eventArgs,
+	const WeaponAtts::WABaseAttack::AttackModeSignature* signature)
 {
 	m_pEventArgs = eventArgs;
 	m_pSignature = signature;
@@ -98,9 +98,8 @@ bool BaseWeaponEventPlayer::Initialise()
 
 void BaseWeaponEventPlayer::AnimateViewModel()
 {
-	const WeightedValueList<int>* animList = m_bWeaponIsEmpty
-		? &m_pAttackMode->ViewModelAnimList_AttackEmpty
-		: &m_pAttackMode->ViewModelAnimList_Attack;
+	const WeightedValueList<int>* animList =
+		m_bWeaponIsEmpty ? &m_pAttackMode->ViewModelAnimList_AttackEmpty : &m_pAttackMode->ViewModelAnimList_Attack;
 
 	if ( m_bWeaponIsEmpty && animList->Count() < 1 )
 	{
@@ -137,19 +136,25 @@ void BaseWeaponEventPlayer::EjectShellFromViewModel(int shellIndex, ShellType sh
 	vec3_t ShellOrigin;
 
 	// TODO: This is an awful function call. Refactor?
-	EV_GetDefaultShellInfo(m_pEventArgs,
-						   m_vecEntOrigin,
-						   m_vecEntVelocity,
-						   ShellVelocity,
-						   ShellOrigin,
-						   m_vecFwd,
-						   m_vecRight,
-						   m_vecUp,
-						   SHELLEJECT_FWD_SCALE,
-						   SHELLEJECT_RIGHT_SCALE,
-						   SHELLEJECT_UP_SCALE);
+	EV_GetDefaultShellInfo(
+		m_pEventArgs,
+		m_vecEntOrigin,
+		m_vecEntVelocity,
+		ShellVelocity,
+		ShellOrigin,
+		m_vecFwd,
+		m_vecRight,
+		m_vecUp,
+		SHELLEJECT_FWD_SCALE,
+		SHELLEJECT_RIGHT_SCALE,
+		SHELLEJECT_UP_SCALE);
 
-	EV_EjectBrass(ShellOrigin, ShellVelocity, m_vecEntAngles[YAW], shellIndex, shellType == ShellType::Shotgun ? TE_BOUNCE_SHOTSHELL : TE_BOUNCE_SHELL);
+	EV_EjectBrass(
+		ShellOrigin,
+		ShellVelocity,
+		m_vecEntAngles[YAW],
+		shellIndex,
+		shellType == ShellType::Shotgun ? TE_BOUNCE_SHOTSHELL : TE_BOUNCE_SHELL);
 }
 
 void BaseWeaponEventPlayer::PlayFireSound()
@@ -175,12 +180,5 @@ void BaseWeaponEventPlayer::PlayFireSound()
 
 	const char* const soundName = soundNames.ItemByProbabilisticValue(gEngfuncs.pfnRandomFloat(0.0f, 1.0f));
 
-	gEngfuncs.pEventAPI->EV_PlaySound(m_iEntIndex,
-									  m_vecEntOrigin,
-									  CHAN_WEAPON,
-									  soundName,
-									  volume,
-									  ATTN_NORM,
-									  0,
-									  pitch);
+	gEngfuncs.pEventAPI->EV_PlaySound(m_iEntIndex, m_vecEntOrigin, CHAN_WEAPON, soundName, volume, ATTN_NORM, 0, pitch);
 }

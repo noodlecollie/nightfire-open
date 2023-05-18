@@ -25,7 +25,8 @@ enum class FootstepSoundId
 	Count
 };
 
-class CFootstepSoundResources : public CBaseResourceCollection<FootstepSoundId, static_cast<size_t>(FootstepSoundId::Count)>
+class CFootstepSoundResources :
+	public CBaseResourceCollection<FootstepSoundId, static_cast<size_t>(FootstepSoundId::Count)>
 {
 public:
 	enum class Foot

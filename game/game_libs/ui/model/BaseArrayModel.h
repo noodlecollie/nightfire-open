@@ -8,7 +8,7 @@ class CMenuBaseArrayModel : public CMenuBaseModel
 {
 public:
 	// every array model must implement these methods
-	virtual const char *GetText( int line ) = 0;
+	virtual const char* GetText(int line) = 0;
 
 	// final methods
 	int GetColumns() const final override
@@ -16,10 +16,10 @@ public:
 		return 1;
 	}
 
-	const char *GetCellText( int line, int ) final override
+	const char* GetCellText(int line, int) final override
 	{
-		return GetText( line );
+		return GetText(line);
 	}
 };
 
-#endif // BASE_ARRAY_MODEL_H
+#endif  // BASE_ARRAY_MODEL_H

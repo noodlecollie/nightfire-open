@@ -31,26 +31,50 @@ enum ECellType
 class CMenuBaseModel
 {
 public:
-	virtual ~CMenuBaseModel()  { }
+	virtual ~CMenuBaseModel()
+	{
+	}
 
 	// every model must implement these methods
 	virtual void Update() = 0;
 	virtual int GetColumns() const = 0;
 	virtual int GetRows() const = 0;
-	virtual const char *GetCellText( int line, int column ) = 0;
+	virtual const char* GetCellText(int line, int column) = 0;
 
 	// customization
-	virtual void OnDeleteEntry( int line ) { }
-	virtual void OnActivateEntry( int line ) { }
-	virtual unsigned int GetAlignmentForColumn( int column ) const { return QM_LEFT; }
-	virtual ECellType GetCellType( int line, int column ) { return CELL_TEXT; }
-	virtual bool GetLineColor( int line, unsigned int &fillColor, bool &force ) const { return false; }
-	virtual bool GetCellColors( int line, int column, unsigned int &textColor, bool &force ) const { return false; }
-	virtual bool IsCellTextWrapped( int line, int column ) { return true; }
+	virtual void OnDeleteEntry(int line)
+	{
+	}
+	virtual void OnActivateEntry(int line)
+	{
+	}
+	virtual unsigned int GetAlignmentForColumn(int column) const
+	{
+		return QM_LEFT;
+	}
+	virtual ECellType GetCellType(int line, int column)
+	{
+		return CELL_TEXT;
+	}
+	virtual bool GetLineColor(int line, unsigned int& fillColor, bool& force) const
+	{
+		return false;
+	}
+	virtual bool GetCellColors(int line, int column, unsigned int& textColor, bool& force) const
+	{
+		return false;
+	}
+	virtual bool IsCellTextWrapped(int line, int column)
+	{
+		return true;
+	}
 	// virtual CMenuBaseItem *GetCellItem( int line, int column ) { return NULL; }
 
 	// sorting
-	virtual bool Sort( int column, bool ascend ) { return false; } // false means no sorting support for column
+	virtual bool Sort(int column, bool ascend)
+	{
+		return false;
+	}  // false means no sorting support for column
 };
 
-#endif // BASE_MODEL_H
+#endif  // BASE_MODEL_H

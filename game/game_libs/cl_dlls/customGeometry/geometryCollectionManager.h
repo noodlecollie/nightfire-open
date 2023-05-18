@@ -28,4 +28,4 @@ namespace CustomGeometry
 
 		CollectionEntry m_Entries[CATEGORY_COUNT];
 	};
-}
+}  // namespace CustomGeometry

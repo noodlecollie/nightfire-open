@@ -5,7 +5,9 @@
 class CGameplaySystemsMultiplayer : public CGameplaySystemsBase
 {
 public:
-	virtual ~CGameplaySystemsMultiplayer() {}
+	virtual ~CGameplaySystemsMultiplayer()
+	{
+	}
 
 	virtual bool IsMultiplayer() const override;
 

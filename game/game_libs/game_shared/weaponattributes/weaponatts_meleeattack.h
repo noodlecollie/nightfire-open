@@ -10,7 +10,7 @@ namespace WeaponAtts
 	{
 		typedef WASkillRecord::SkillDataEntryPtr SkillDataEntryPtr;
 
-		float Reach = 32.0f;		// Defaults to crowbar's reach
+		float Reach = 32.0f;  // Defaults to crowbar's reach
 		SkillDataEntryPtr BaseDamagePerHit = nullptr;
 		bool DecalOnImpact = true;
 
@@ -39,4 +39,4 @@ namespace WeaponAtts
 			}
 		}
 	};
-}
+}  // namespace WeaponAtts

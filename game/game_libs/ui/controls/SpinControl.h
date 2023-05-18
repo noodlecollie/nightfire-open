@@ -27,28 +27,34 @@ public:
 
 	CMenuSpinControl();
 
-	void VidInit( void ) override;
-	bool KeyUp( int key ) override;
-	bool KeyDown( int key ) override;
-	void Draw( void ) override;
+	void VidInit(void) override;
+	bool KeyUp(int key) override;
+	bool KeyDown(int key) override;
+	void Draw(void) override;
 	void UpdateEditable() override;
 
-	void Setup( CMenuBaseArrayModel *model );
-	void Setup( float minValue, float maxValue, float range );
+	void Setup(CMenuBaseArrayModel* model);
+	void Setup(float minValue, float maxValue, float range);
 
-	void SetDisplayPrecision( short precision );
+	void SetDisplayPrecision(short precision);
 
-	void SetCurrentValue( const char *stringValue );
-	void SetCurrentValue( float curValue );
+	void SetCurrentValue(const char* stringValue);
+	void SetCurrentValue(float curValue);
 
-	float GetCurrentValue( ) { return m_flCurValue; }
-	const char *GetCurrentString( ) { return m_pModel ? m_pModel->GetText( (int)m_flCurValue ) : NULL; }
+	float GetCurrentValue()
+	{
+		return m_flCurValue;
+	}
+	const char* GetCurrentString()
+	{
+		return m_pModel ? m_pModel->GetText((int)m_flCurValue) : NULL;
+	}
 
-	void ForceDisplayString( const char *display );
+	void ForceDisplayString(const char* display);
 
 private:
-	const char *MoveLeft();
-	const char *MoveRight();
+	const char* MoveLeft();
+	const char* MoveRight();
 	void Display();
 
 	CImage m_szBackground;
@@ -56,15 +62,15 @@ private:
 	CImage m_szRightArrow;
 	CImage m_szLeftArrowFocus;
 	CImage m_szRightArrowFocus;
-	float  m_flMinValue;
-	float  m_flMaxValue;
-	float  m_flCurValue;
-	float  m_flRange;
+	float m_flMinValue;
+	float m_flMaxValue;
+	float m_flCurValue;
+	float m_flRange;
 
-	CMenuBaseArrayModel *m_pModel;
+	CMenuBaseArrayModel* m_pModel;
 	short m_iFloatPrecision;
 
 	char m_szDisplay[CS_SIZE];
 };
 
-#endif // MENU_SPINCONTROL_H
+#endif  // MENU_SPINCONTROL_H

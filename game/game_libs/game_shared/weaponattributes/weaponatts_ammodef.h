@@ -18,4 +18,4 @@ namespace WeaponAtts
 			ASSERTSZ_Q(PrimaryAmmoOnFirstPickup >= 0, "Amount of primary ammo on pickup must be positive.");
 		}
 	};
-}
+}  // namespace WeaponAtts

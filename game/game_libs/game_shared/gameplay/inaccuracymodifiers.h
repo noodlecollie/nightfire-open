@@ -15,4 +15,4 @@ namespace InaccuracyModifiers
 
 	bool IsInaccuracyDebuggingEnabled();
 	bool GetInaccuracyValuesFromDebugCvars(WeaponAtts::AccuracyParameters& params);
-}
+}  // namespace InaccuracyModifiers

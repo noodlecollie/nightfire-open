@@ -23,13 +23,13 @@ GNU General Public License for more details.
 FT_Library CFreeTypeFont::m_Library;
 
 /* round a 26.6 pixel coordinate to the nearest larger integer */
-#define PIXEL(x) ((((x)+63) & -64)>>6)
+#define PIXEL(x) ((((x) + 63) & -64) >> 6)
 
-
-CFreeTypeFont::CFreeTypeFont() : CBaseFont(),
-	face(), m_szRealFontFile()
+CFreeTypeFont::CFreeTypeFont() :
+	CBaseFont(),
+	face(),
+	m_szRealFontFile()
 {
-
 }
 
 CFreeTypeFont::~CFreeTypeFont()
@@ -56,12 +56,14 @@ static FcPattern* FontMatch(const char* type, ...)
 
 	FcPattern* pattern = FcPatternCreate();
 
-	for (;;) {
+	for ( ;; )
+	{
 		// FcType is promoted to int when passed through ...
 		fcvalue.type = static_cast<FcType>(va_arg(ap, int));
-		switch (fcvalue.type) {
+		switch ( fcvalue.type )
+		{
 			case FcTypeString:
-				fcvalue.u.s = va_arg(ap, const FcChar8 *);
+				fcvalue.u.s = va_arg(ap, const FcChar8*);
 				break;
 			case FcTypeInteger:
 				fcvalue.u.i = va_arg(ap, int);
@@ -71,8 +73,8 @@ static FcPattern* FontMatch(const char* type, ...)
 		}
 		FcPatternAdd(pattern, type, fcvalue, FcFalse);
 
-		type = va_arg(ap, const char *);
-		if (!type)
+		type = va_arg(ap, const char*);
+		if ( !type )
 			break;
 	};
 	va_end(ap);
@@ -87,44 +89,66 @@ static FcPattern* FontMatch(const char* type, ...)
 	return match;
 }
 
-bool CFreeTypeFont::FindFontDataFile( const char *name, int tall, int weight, int flags, char *dataFile, int dataFileChars )
+bool CFreeTypeFont::FindFontDataFile(
+	const char* name,
+	int tall,
+	int weight,
+	int flags,
+	char* dataFile,
+	int dataFileChars)
 {
 	int nFcWeight = weight / 5;
-	FcPattern *pattern;
-	FcChar8 *filename;
+	FcPattern* pattern;
+	FcChar8* filename;
 
 	bool bRet;
 
-	if( !FcInit() )
+	if ( !FcInit() )
 		return false;
 
 	int slant = FC_SLANT_ROMAN;
-	if( flags & ( FONT_ITALIC ))
+	if ( flags & (FONT_ITALIC) )
 		slant = FC_SLANT_ITALIC;
 
 	pattern = FontMatch(
-		FC_FAMILY, FcTypeString,  name,
-		FC_WEIGHT, FcTypeInteger, nFcWeight,
-		FC_SLANT,  FcTypeInteger, slant,
-		NULL );
+		FC_FAMILY,
+		FcTypeString,
+		name,
+		FC_WEIGHT,
+		FcTypeInteger,
+		nFcWeight,
+		FC_SLANT,
+		FcTypeInteger,
+		slant,
+		NULL);
 
-	if( !pattern )
+	if ( !pattern )
 		return false;
 
-	if( !FcPatternGetString( pattern, "file", 0, &filename ) )
+	if ( !FcPatternGetString(pattern, "file", 0, &filename) )
 	{
 		bRet = true;
-		Q_strncpy( dataFile, (char*)filename, dataFileChars );
+		Q_strncpy(dataFile, (char*)filename, dataFileChars);
 	}
-	else bRet = false;
+	else
+		bRet = false;
 
-	FcPatternDestroy( pattern );
+	FcPatternDestroy(pattern);
 	return bRet;
 }
 
-bool CFreeTypeFont::Create(const char *name, int tall, int weight, int blur, float brighten, int outlineSize, int scanlineOffset, float scanlineScale, int flags)
+bool CFreeTypeFont::Create(
+	const char* name,
+	int tall,
+	int weight,
+	int blur,
+	float brighten,
+	int outlineSize,
+	int scanlineOffset,
+	float scanlineScale,
+	int flags)
 {
-	Q_strncpy( m_szName, name, sizeof( m_szName ) );
+	Q_strncpy(m_szName, name, sizeof(m_szName));
 	m_iTall = tall;
 	m_iWeight = weight;
 	m_iFlags = flags;
@@ -137,39 +161,39 @@ bool CFreeTypeFont::Create(const char *name, int tall, int weight, int blur, flo
 	m_iScanlineOffset = scanlineOffset;
 	m_fScanlineScale = scanlineScale;
 
-	if( !FindFontDataFile( name, tall, weight, flags, m_szRealFontFile, sizeof( m_szRealFontFile ) ) )
+	if ( !FindFontDataFile(name, tall, weight, flags, m_szRealFontFile, sizeof(m_szRealFontFile)) )
 	{
-		Con_Printf( "Unable to find font named %s\n", name );
+		Con_Printf("Unable to find font named %s\n", name);
 		m_szName[0] = 0;
 		return false;
 	}
 
-	if( FT_New_Face( m_Library, m_szRealFontFile, 0, &face ))
+	if ( FT_New_Face(m_Library, m_szRealFontFile, 0, &face) )
 	{
 		return false;
 	}
 
-	FT_Set_Pixel_Sizes( face, 0, tall );
-	m_iAscent = PIXEL(face->size->metrics.ascender );
-	m_iHeight = PIXEL( face->size->metrics.height );
-	m_iMaxCharWidth = PIXEL(face->size->metrics.max_advance );
+	FT_Set_Pixel_Sizes(face, 0, tall);
+	m_iAscent = PIXEL(face->size->metrics.ascender);
+	m_iHeight = PIXEL(face->size->metrics.height);
+	m_iMaxCharWidth = PIXEL(face->size->metrics.max_advance);
 
 	return true;
 }
 
-void CFreeTypeFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char *rgba, Size &drawSize )
+void CFreeTypeFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Size& drawSize)
 {
-	FT_UInt idx = FT_Get_Char_Index( face, ch );
+	FT_UInt idx = FT_Get_Char_Index(face, ch);
 	FT_Error error;
 	FT_GlyphSlot slot;
 	byte *buf, *dst;
 	int a, b, c;
 
-	GetCharABCWidths( ch, a, b, c );
+	GetCharABCWidths(ch, a, b, c);
 
-	if( ( error = FT_Load_Glyph( face, idx, FT_LOAD_RENDER | FT_LOAD_TARGET_NORMAL ) ) )
+	if ( (error = FT_Load_Glyph(face, idx, FT_LOAD_RENDER | FT_LOAD_TARGET_NORMAL)) )
 	{
-		Con_Printf( "Error in FT_Load_Glyph: %x\n", error );
+		Con_Printf("Error in FT_Load_Glyph: %x\n", error);
 		return;
 	}
 
@@ -183,34 +207,34 @@ void CFreeTypeFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char *rgba, 
 
 	// set where we start copying from
 	int ystart = 0;
-	if( pushDown < 0 )
+	if ( pushDown < 0 )
 		ystart = -pushDown;
 
 	int xstart = 0;
-	if( pushLeft < 0 )
+	if ( pushLeft < 0 )
 		xstart = -pushLeft;
 
 	int yend = slot->bitmap.rows;
-	if( pushDown + yend > sz.h )
-		yend += sz.h - ( pushDown + yend );
+	if ( pushDown + yend > sz.h )
+		yend += sz.h - (pushDown + yend);
 
 	int xend = slot->bitmap.width;
-	if( pushLeft + xend > sz.w )
-		xend += sz.w - ( pushLeft + xend );
+	if ( pushLeft + xend > sz.w )
+		xend += sz.w - (pushLeft + xend);
 
-	buf = &slot->bitmap.buffer[ ystart * slot->bitmap.width ];
-	dst = rgba + 4 * sz.w * ( ystart + pushDown );
+	buf = &slot->bitmap.buffer[ystart * slot->bitmap.width];
+	dst = rgba + 4 * sz.w * (ystart + pushDown);
 
 	// iterate through copying the generated dib into the texture
-	for (int j = ystart; j < yend; j++, dst += 4 * sz.w, buf += slot->bitmap.width )
+	for ( int j = ystart; j < yend; j++, dst += 4 * sz.w, buf += slot->bitmap.width )
 	{
-		uint32_t *xdst = (uint32_t*)(dst + 4 * ( m_iBlur + m_iOutlineSize ));
-		for (int i = xstart; i < xend; i++, xdst++)
+		uint32_t* xdst = (uint32_t*)(dst + 4 * (m_iBlur + m_iOutlineSize));
+		for ( int i = xstart; i < xend; i++, xdst++ )
 		{
-			if( buf[i] > 0 )
+			if ( buf[i] > 0 )
 			{
 				// paint white and alpha
-				*xdst = PackRGBA( 0xFF, 0xFF, 0xFF, buf[i] );
+				*xdst = PackRGBA(0xFF, 0xFF, 0xFF, buf[i]);
 			}
 			else
 			{
@@ -223,15 +247,15 @@ void CFreeTypeFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char *rgba, 
 	drawSize.w = xend - xstart + m_iBlur * 2 + m_iOutlineSize * 2;
 	drawSize.h = yend - ystart + m_iBlur * 2 + m_iOutlineSize * 2;
 
-	ApplyBlur( sz, rgba );
-	ApplyOutline( Point( xstart, ystart ), sz, rgba );
-	ApplyScanline( sz, rgba );
-	ApplyStrikeout( sz, rgba );
+	ApplyBlur(sz, rgba);
+	ApplyOutline(Point(xstart, ystart), sz, rgba);
+	ApplyScanline(sz, rgba);
+	ApplyStrikeout(sz, rgba);
 }
 
-void CFreeTypeFont::GetCharABCWidthsNoCache(int ch, int &a, int &b, int &c)
+void CFreeTypeFont::GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c)
 {
-	if( FT_Load_Char( face, ch, FT_LOAD_DEFAULT ) )
+	if ( FT_Load_Char(face, ch, FT_LOAD_DEFAULT) )
 	{
 		a = 0;
 		b = PIXEL(face->bbox.xMax);
@@ -241,15 +265,13 @@ void CFreeTypeFont::GetCharABCWidthsNoCache(int ch, int &a, int &b, int &c)
 	{
 		a = PIXEL(face->glyph->metrics.horiBearingX);
 		b = PIXEL(face->glyph->metrics.width);
-		c = PIXEL(face->glyph->metrics.horiAdvance -
-			 face->glyph->metrics.horiBearingX -
-			 face->glyph->metrics.width);
+		c = PIXEL(face->glyph->metrics.horiAdvance - face->glyph->metrics.horiBearingX - face->glyph->metrics.width);
 	}
 }
 
 bool CFreeTypeFont::HasChar(int ch) const
 {
-	return FT_Get_Char_Index( face, ch ) != 0;
+	return FT_Get_Char_Index(face, ch) != 0;
 }
 
-#endif // WIN32 && MAINUI_USE_FREETYPE
+#endif  // WIN32 && MAINUI_USE_FREETYPE

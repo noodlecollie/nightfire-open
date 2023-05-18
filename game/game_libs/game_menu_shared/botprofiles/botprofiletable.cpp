@@ -18,7 +18,7 @@ CBotProfileTable::ProfileData& CBotProfileTable::CreateProfile(const CUtlString&
 	ProfileData& data = m_Table.Element(index);
 	data.profileName = name;
 
-return data;
+	return data;
 }
 
 CBotProfileTable::ProfileData* CBotProfileTable::GetProfile(const CUtlString& name)

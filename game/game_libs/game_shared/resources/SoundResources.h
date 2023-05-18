@@ -19,4 +19,4 @@ namespace SoundResources
 	extern CMaterialBreakSoundResources BreakSounds;
 
 	void PrecacheAll();
-}
+}  // namespace SoundResources

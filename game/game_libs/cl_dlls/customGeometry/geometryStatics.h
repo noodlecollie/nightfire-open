@@ -9,4 +9,4 @@ namespace CustomGeometry
 	void RenderAllGeometry();
 	void RenderAdHocGeometry(const GeometryItemPtr_t& item);
 	void ClearAllGeometry();
-}
+}  // namespace CustomGeometry

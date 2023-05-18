@@ -59,14 +59,15 @@ namespace
 		return Vector(p.x, p.y, 0);
 	}
 
-	static inline void AddPointsToGeometryItem(const CustomGeometry::GeometryItemPtr_t& item, const UIVec2* array, size_t length)
+	static inline void
+	AddPointsToGeometryItem(const CustomGeometry::GeometryItemPtr_t& item, const UIVec2* array, size_t length)
 	{
 		for ( uint32_t index = 0; index < length; ++index )
 		{
 			item->AddPoint(P2V(array[index]));
 		}
 	}
-}
+}  // namespace
 
 namespace ScreenOverlays
 {
@@ -86,7 +87,8 @@ namespace ScreenOverlays
 		SCREENINFO screenInfo;
 		memset(&screenInfo, 0, sizeof(screenInfo));
 
-		// This API is really weird, dude. We should write something that just return the screen dimensions as integers...
+		// This API is really weird, dude. We should write something that just return the screen dimensions as
+		// integers...
 		screenInfo.iSize = sizeof(screenInfo);
 
 		gEngfuncs.pfnGetScreenInfo(&screenInfo);
@@ -95,7 +97,7 @@ namespace ScreenOverlays
 		m_ScreenDim.y = screenInfo.iHeight;
 
 		// We take away 1 so that the screen centre matches what the engine crosshair sprites actually use.
-		m_ScreenHalfDim = (m_ScreenDim / 2) - UIVec2(1,1);
+		m_ScreenHalfDim = (m_ScreenDim / 2) - UIVec2(1, 1);
 
 		CalculateScopeSpriteParameters();
 		ConstructGeometry();
@@ -140,7 +142,7 @@ namespace ScreenOverlays
 
 		// Points are added in the correct order for a triangle strip that surrounds the scope sprite.
 		// The strip begins at the top left and alternates between outer and inner points, proceeding anticlockwise.
-		points[0] = UIVec2(0,0);
+		points[0] = UIVec2(0, 0);
 		points[2] = UIVec2(0, m_ScreenDim.y);
 		points[4] = m_ScreenDim;
 		points[6] = UIVec2(m_ScreenDim.x, 0);
@@ -212,33 +214,50 @@ namespace ScreenOverlays
 	void CSniperScopeOverlay::ConstructCrosshair()
 	{
 		// Vertical line
-		m_CrosshairItems->AddTriangleQuad(Vector(m_ScreenHalfDim.x, 0, 0),
-										Vector(m_ScreenHalfDim.x, m_ScreenDim.y, 0),
-										Vector(m_ScreenHalfDim.x + CROSSHAIR_WIDTH, m_ScreenDim.y, 0),
-										Vector(m_ScreenHalfDim.x + CROSSHAIR_WIDTH, 0, 0));
+		m_CrosshairItems->AddTriangleQuad(
+			Vector(m_ScreenHalfDim.x, 0, 0),
+			Vector(m_ScreenHalfDim.x, m_ScreenDim.y, 0),
+			Vector(m_ScreenHalfDim.x + CROSSHAIR_WIDTH, m_ScreenDim.y, 0),
+			Vector(m_ScreenHalfDim.x + CROSSHAIR_WIDTH, 0, 0));
 
 		// Horizontal line
-		m_CrosshairItems->AddTriangleQuad(Vector(0, m_ScreenHalfDim.y, 0),
-										Vector(0, m_ScreenHalfDim.y + CROSSHAIR_WIDTH, 0),
-										Vector(m_ScreenDim.x, m_ScreenHalfDim.y + CROSSHAIR_WIDTH, 0),
-										Vector(m_ScreenDim.x, m_ScreenHalfDim.y, 0));
+		m_CrosshairItems->AddTriangleQuad(
+			Vector(0, m_ScreenHalfDim.y, 0),
+			Vector(0, m_ScreenHalfDim.y + CROSSHAIR_WIDTH, 0),
+			Vector(m_ScreenDim.x, m_ScreenHalfDim.y + CROSSHAIR_WIDTH, 0),
+			Vector(m_ScreenDim.x, m_ScreenHalfDim.y, 0));
 	}
 
 	void CSniperScopeOverlay::ConstructExtraBars()
 	{
-		const size_t displacementFromCentre = static_cast<size_t>(EXTRABAR_DISPLACEMENT_FACTOR * (static_cast<float>(m_ScopeImageDim.x) / 2.0f));
+		const size_t displacementFromCentre =
+			static_cast<size_t>(EXTRABAR_DISPLACEMENT_FACTOR * (static_cast<float>(m_ScopeImageDim.x) / 2.0f));
 
 		// Left bar
-		m_CrosshairItems->AddTriangleQuad(Vector(m_ScreenHalfDim.x - displacementFromCentre - EXTRABAR_WIDTH, m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2), 0),
-										Vector(m_ScreenHalfDim.x - displacementFromCentre - EXTRABAR_WIDTH, m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2), 0),
-										Vector(m_ScreenHalfDim.x - displacementFromCentre, m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2), 0),
-										Vector(m_ScreenHalfDim.x - displacementFromCentre, m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2), 0));
+		m_CrosshairItems->AddTriangleQuad(
+			Vector(
+				m_ScreenHalfDim.x - displacementFromCentre - EXTRABAR_WIDTH,
+				m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2),
+				0),
+			Vector(
+				m_ScreenHalfDim.x - displacementFromCentre - EXTRABAR_WIDTH,
+				m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2),
+				0),
+			Vector(m_ScreenHalfDim.x - displacementFromCentre, m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2), 0),
+			Vector(m_ScreenHalfDim.x - displacementFromCentre, m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2), 0));
 
 		// Right bar
-		m_CrosshairItems->AddTriangleQuad(Vector(m_ScreenHalfDim.x + displacementFromCentre, m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2), 0),
-										Vector(m_ScreenHalfDim.x + displacementFromCentre, m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2), 0),
-										Vector(m_ScreenHalfDim.x + displacementFromCentre + EXTRABAR_WIDTH, m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2), 0),
-										Vector(m_ScreenHalfDim.x + displacementFromCentre + EXTRABAR_WIDTH, m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2), 0));
+		m_CrosshairItems->AddTriangleQuad(
+			Vector(m_ScreenHalfDim.x + displacementFromCentre, m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2), 0),
+			Vector(m_ScreenHalfDim.x + displacementFromCentre, m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2), 0),
+			Vector(
+				m_ScreenHalfDim.x + displacementFromCentre + EXTRABAR_WIDTH,
+				m_ScreenHalfDim.y + (EXTRABAR_HEIGHT / 2),
+				0),
+			Vector(
+				m_ScreenHalfDim.x + displacementFromCentre + EXTRABAR_WIDTH,
+				m_ScreenHalfDim.y - (EXTRABAR_HEIGHT / 2),
+				0));
 	}
 
 	void CSniperScopeOverlay::ConstructSpikes()
@@ -337,4 +356,4 @@ namespace ScreenOverlays
 
 		return item;
 	}
-}
+}  // namespace ScreenOverlays

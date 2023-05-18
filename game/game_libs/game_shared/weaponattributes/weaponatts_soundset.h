@@ -19,4 +19,4 @@ namespace WeaponAtts
 		// Names are expected to be compile-time constant!
 		WeightedValueList<const char*> SoundNames;
 	};
-}
+}  // namespace WeaponAtts

@@ -12,8 +12,8 @@
 
 LINK_ENTITY_TO_CLASS(weapon_silent, CWeaponSilent)
 
-CWeaponSilent::CWeaponSilent()
-	: CGenericHitscanWeapon()
+CWeaponSilent::CWeaponSilent() :
+	CGenericHitscanWeapon()
 {
 	SetPrimaryAttackModeFromAttributes(ATTACKMODE_NORMAL);
 }
@@ -41,4 +41,4 @@ namespace WeaponAtts
 	{
 		return ::StaticWeaponAttributes;
 	}
-}
+}  // namespace WeaponAtts

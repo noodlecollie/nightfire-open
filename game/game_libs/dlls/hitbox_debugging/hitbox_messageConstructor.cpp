@@ -22,12 +22,13 @@ namespace
 		return false;
 	}
 
-	static inline bool HitboxWasHit(const CWeaponDebugEvent_HitscanFire& event, const edict_t* edict, uint32_t hitboxIndex)
+	static inline bool
+	HitboxWasHit(const CWeaponDebugEvent_HitscanFire& event, const edict_t* edict, uint32_t hitboxIndex)
 	{
 		int hitGroup = g_engfuncs.pfnGetHitboxHitGroup(edict, hitboxIndex);
 		return hitGroup >= 0 && HitGroupWasHit(event, hitGroup);
 	}
-}
+}  // namespace
 
 CHitboxMessageConstructor::CHitboxMessageConstructor(CBasePlayer* attacker, CBaseAnimating* target) :
 	m_Attacker(attacker),
@@ -64,10 +65,9 @@ void CHitboxMessageConstructor::SendHitscanGeometry(const CWeaponDebugEvent_Hits
 	{
 		const CWeaponDebugEvent_HitscanFire::Trace* trace = event.GetTrace(traceIndex);
 
-		if ( trace->traceResult.flFraction < 1.0f &&
-				trace->traceResult.pHit &&
-				GetClassPtrFromEdict<CBasePlayer>(trace->traceResult.pHit) &&
-				trace->traceResult.iHitgroup < m_HitboxCount )
+		if ( trace->traceResult.flFraction < 1.0f && trace->traceResult.pHit &&
+			 GetClassPtrFromEdict<CBasePlayer>(trace->traceResult.pHit) &&
+			 trace->traceResult.iHitgroup < m_HitboxCount )
 		{
 			hitTraceLines->AddLine(trace->begin, trace->traceResult.vecEndPos);
 		}

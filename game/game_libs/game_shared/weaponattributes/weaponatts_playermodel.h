@@ -10,4 +10,4 @@ namespace WeaponAtts
 		const char* WorldModelName = nullptr;
 		const char* PlayerAnimExtension = nullptr;
 	};
-}
+}  // namespace WeaponAtts

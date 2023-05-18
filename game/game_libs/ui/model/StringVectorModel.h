@@ -6,26 +6,25 @@
 #include "utlvector.h"
 #include "utlstring.h"
 
-class CStringVectorModel :
-		public CMenuBaseArrayModel,
-		public CUtlVector<CUtlString>
+class CStringVectorModel : public CMenuBaseArrayModel, public CUtlVector<CUtlString>
 {
 public:
-	CStringVectorModel( int growSize = 0, int initSize = 0 ) :
-		CUtlVector<CUtlString>( growSize, initSize )
+	CStringVectorModel(int growSize = 0, int initSize = 0) :
+		CUtlVector<CUtlString>(growSize, initSize)
 	{
-
 	}
 
 	// no need to update
-	void Update() override {}
-
-	const char *GetText( int line ) final override
+	void Update() override
 	{
-		if( line < 0 )
+	}
+
+	const char* GetText(int line) final override
+	{
+		if ( line < 0 )
 			return NULL;
 
-		return Element( line ).String();
+		return Element(line).String();
 	}
 
 	int GetRows() const final override
@@ -33,4 +32,4 @@ public:
 		return Count();
 	}
 };
-#endif // STRINGVECTORMODEL_H
+#endif  // STRINGVECTORMODEL_H

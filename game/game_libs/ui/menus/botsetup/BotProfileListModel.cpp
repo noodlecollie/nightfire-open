@@ -69,9 +69,7 @@ void CBotProfileListModel::InitialiseProfileTable()
 
 	m_IndexToProfileName.EnsureCapacity(m_ProfileTable.Count());
 
-	for ( CBotProfileTable::ConstIterator it = m_ProfileTable.CBegin();
-		  it != m_ProfileTable.CEnd();
-		  ++it )
+	for ( CBotProfileTable::ConstIterator it = m_ProfileTable.CBegin(); it != m_ProfileTable.CEnd(); ++it )
 	{
 		assert(m_IndexToProfileName.Count() < m_ProfileTable.Count());
 

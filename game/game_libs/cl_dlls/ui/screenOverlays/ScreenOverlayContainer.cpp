@@ -19,7 +19,10 @@ namespace ScreenOverlays
 		else
 		{
 			ILogInterface& log = IProjectInterface::ProjectInterfaceImpl()->LogInterface();
-			log.LogF(ILogInterface::Level::Error, "Failed to parse screen overlay message. Error: %s\n", reader.ErrorString().Get());
+			log.LogF(
+				ILogInterface::Level::Error,
+				"Failed to parse screen overlay message. Error: %s\n",
+				reader.ErrorString().Get());
 		}
 
 		return 1;
@@ -46,10 +49,11 @@ namespace ScreenOverlays
 
 	void CScreenOverlayContainer::VidInit()
 	{
-		ForEachValidOverlay([](ScreenOverlays::OverlayId id, CBaseScreenOverlay* overlay)
-		{
-			overlay->VidInit();
-		});
+		ForEachValidOverlay(
+			[](ScreenOverlays::OverlayId id, CBaseScreenOverlay* overlay)
+			{
+				overlay->VidInit();
+			});
 	}
 
 	void CScreenOverlayContainer::DrawCurrentOverlay(float time)
@@ -97,9 +101,8 @@ namespace ScreenOverlays
 	{
 		using namespace ScreenOverlays;
 
-		for ( OverlayId id = static_cast<OverlayId>(Overlay_None + 1);
-			id < Overlay__Count;
-			id = static_cast<OverlayId>(id + 1) )
+		for ( OverlayId id = static_cast<OverlayId>(Overlay_None + 1); id < Overlay__Count;
+			  id = static_cast<OverlayId>(id + 1) )
 		{
 			if ( m_FactoryFunctions[id] )
 			{
@@ -107,4 +110,4 @@ namespace ScreenOverlays
 			}
 		}
 	}
-}
+}  // namespace ScreenOverlays

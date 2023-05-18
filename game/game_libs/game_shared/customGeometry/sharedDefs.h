@@ -20,8 +20,7 @@ namespace CustomGeometry
 #define LIST_ITEM(value, name) value,
 	enum class Category
 	{
-		CATEGORY_LIST
-		CategoryCount
+		CATEGORY_LIST CategoryCount
 	};
 #undef LIST_ITEM
 
@@ -31,10 +30,10 @@ namespace CustomGeometry
 	// Values must fit in a uint8_t;
 	enum class DrawType
 	{
-		None = 0,	// For clearing previously drawn geometry.
+		None = 0,  // For clearing previously drawn geometry.
 		Lines,
 		TriangleFan,
 		TriangleStrip,
 		Triangles
 	};
-}
+}  // namespace CustomGeometry

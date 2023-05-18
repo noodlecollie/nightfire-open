@@ -120,7 +120,8 @@ const WeaponAtts::AccuracyParameters* CCrosshairParameters::WeaponAccuracyParams
 		return nullptr;
 	}
 
-	std::shared_ptr<WeaponAtts::WAAmmoBasedAttack> ammoBasedAttack = std::dynamic_pointer_cast<WeaponAtts::WAAmmoBasedAttack>(baseAttackMode);
+	std::shared_ptr<WeaponAtts::WAAmmoBasedAttack> ammoBasedAttack =
+		std::dynamic_pointer_cast<WeaponAtts::WAAmmoBasedAttack>(baseAttackMode);
 
 	// I know this is technically returning a raw pointer from shared pointer contents,
 	// but the shared object's lifetime is static so it's OK.
@@ -144,7 +145,8 @@ const WeaponAtts::CrosshairParameters* CCrosshairParameters::CrosshairParamsForA
 		return nullptr;
 	}
 
-	std::shared_ptr<WeaponAtts::WAAmmoBasedAttack> ammoBasedAttack = std::dynamic_pointer_cast<WeaponAtts::WAAmmoBasedAttack>(baseAttackMode);
+	std::shared_ptr<WeaponAtts::WAAmmoBasedAttack> ammoBasedAttack =
+		std::dynamic_pointer_cast<WeaponAtts::WAAmmoBasedAttack>(baseAttackMode);
 
 	// I know this is technically returning a raw pointer from shared pointer contents,
 	// but the shared object's lifetime is static so it's OK.

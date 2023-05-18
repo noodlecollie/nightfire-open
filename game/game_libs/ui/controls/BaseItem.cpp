@@ -22,10 +22,10 @@ CMenuBaseItem::CMenuBaseItem
 
 CMenuBaseItem::CMenuBaseItem()
 {
-	SetNameAndStatus( "", NULL );
-	SetCharSize( QM_DEFAULTFONT );
-	SetCoord( 0, 0 );
-	SetSize( 0, 0 );
+	SetNameAndStatus("", NULL);
+	SetCharSize(QM_DEFAULTFONT);
+	SetCoord(0, 0);
+	SetSize(0, 0);
 
 	iFlags = 0;
 
@@ -46,9 +46,9 @@ CMenuBaseItem::CMenuBaseItem()
 
 CMenuBaseItem::~CMenuBaseItem()
 {
-	if( m_bAllocName )
+	if ( m_bAllocName )
 	{
-		delete[] (char*)szName;
+		delete[](char*) szName;
 	}
 }
 
@@ -62,9 +62,9 @@ void CMenuBaseItem::VidInit()
 	CalcPosition();
 	CalcSizes();
 
-	colorBase.SetDefault( uiPromptTextColor );
-	colorFocus.SetDefault( uiPromptFocusColor );
-	colorStroke.SetDefault( uiInputFgColor );
+	colorBase.SetDefault(uiPromptTextColor);
+	colorFocus.SetDefault(uiPromptFocusColor);
+	colorStroke.SetDefault(uiInputFgColor);
 }
 
 void CMenuBaseItem::Reload()
@@ -82,99 +82,109 @@ void CMenuBaseItem::Think()
 	;
 }
 
-void CMenuBaseItem::Char( int key )
+void CMenuBaseItem::Char(int key)
 {
 	;
 }
 
-bool CMenuBaseItem::KeyUp( int key )
+bool CMenuBaseItem::KeyUp(int key)
 {
 	return false;
 }
 
-bool CMenuBaseItem::KeyDown( int key )
+bool CMenuBaseItem::KeyDown(int key)
 {
 	return false;
 }
 
-void CMenuBaseItem::SetCharSize( EFontSizes fs )
+void CMenuBaseItem::SetCharSize(EFontSizes fs)
 {
-	font = fs + 1; // It's guaranteed that handles will match font sizes
+	font = fs + 1;  // It's guaranteed that handles will match font sizes
 
-	switch( fs )
+	switch ( fs )
 	{
-	case QM_DEFAULTFONT:
-	case QM_BOLDFONT:
-		charSize = UI_MED_CHAR_HEIGHT;
-		break;
-	case QM_SMALLFONT:
-		charSize = UI_SMALL_CHAR_HEIGHT;
-		break;
-	case QM_BIGFONT:
-		charSize = UI_BIG_CHAR_HEIGHT;
-		break;
+		case QM_DEFAULTFONT:
+		case QM_BOLDFONT:
+			charSize = UI_MED_CHAR_HEIGHT;
+			break;
+		case QM_SMALLFONT:
+			charSize = UI_SMALL_CHAR_HEIGHT;
+			break;
+		case QM_BIGFONT:
+			charSize = UI_BIG_CHAR_HEIGHT;
+			break;
 	}
 }
 
-void CMenuBaseItem::_Event( int ev )
+void CMenuBaseItem::_Event(int ev)
 {
 	CEventCallback callback;
 
-	switch( ev )
+	switch ( ev )
 	{
-	case QM_CHANGED:   callback = onChanged; break;
-	case QM_PRESSED:
-		callback = onPressed;
-		m_bPressed = true;
-		break;
-	case QM_GOTFOCUS:  callback = onGotFocus; break;
-	case QM_LOSTFOCUS: callback = onLostFocus; break;
-	case QM_RELEASED:
-		if( (bool)onReleasedClActive && CL_IsActive( ))
-			callback = onReleasedClActive;
-		else callback = onReleased;
-		m_bPressed = false;
-		break;
+		case QM_CHANGED:
+			callback = onChanged;
+			break;
+		case QM_PRESSED:
+			callback = onPressed;
+			m_bPressed = true;
+			break;
+		case QM_GOTFOCUS:
+			callback = onGotFocus;
+			break;
+		case QM_LOSTFOCUS:
+			callback = onLostFocus;
+			break;
+		case QM_RELEASED:
+			if ( (bool)onReleasedClActive && CL_IsActive() )
+				callback = onReleasedClActive;
+			else
+				callback = onReleased;
+			m_bPressed = false;
+			break;
 	}
 
-	if( callback ) callback( this );
+	if ( callback )
+		callback(this);
 }
 
 bool CMenuBaseItem::IsCurrentSelected() const
 {
-	if( m_pParent )
+	if ( m_pParent )
 		return this == m_pParent->ItemAtCursor();
 	return false;
 }
 
 void CMenuBaseItem::CalcPosition()
 {
-	if( iFlags & QMF_DISABLESCAILING )
+	if ( iFlags & QMF_DISABLESCAILING )
 		m_scPos = pos;
 	else
 		m_scPos = pos.Scale();
 
-	if( m_scPos.x < 0 )
+	if ( m_scPos.x < 0 )
 	{
 		int pos;
-		if( m_pParent && !IsAbsolutePositioned() )
+		if ( m_pParent && !IsAbsolutePositioned() )
 			pos = m_pParent->GetRenderSize().w;
-		else pos = ScreenWidth;
+		else
+			pos = ScreenWidth;
 
 		m_scPos.x = pos + m_scPos.x;
 	}
 
-	if( m_scPos.y < 0 )
+	if ( m_scPos.y < 0 )
 	{
 		int pos;
-		if( m_pParent && !IsAbsolutePositioned() )
+		if ( m_pParent && !IsAbsolutePositioned() )
 			pos = m_pParent->GetRenderSize().h;
-		else pos = ScreenHeight;
+		else
+			pos = ScreenHeight;
 
 		m_scPos.y = pos + m_scPos.y;
 	}
 
-	if( !IsAbsolutePositioned() && m_pParent )
+	if ( !IsAbsolutePositioned() && m_pParent )
 	{
 		Point offset = m_pParent->GetPositionOffset();
 		m_scPos += offset;
@@ -184,7 +194,7 @@ void CMenuBaseItem::CalcPosition()
 void CMenuBaseItem::CalcSizes()
 {
 	m_scChSize = charSize;
-	if( iFlags & QMF_DISABLESCAILING )
+	if ( iFlags & QMF_DISABLESCAILING )
 	{
 		m_scSize = size;
 	}
@@ -194,86 +204,88 @@ void CMenuBaseItem::CalcSizes()
 		m_scChSize *= uiStatic.scaleY;
 	}
 
-	if( m_scSize.w < 0 )
+	if ( m_scSize.w < 0 )
 	{
 		int size;
-		if( m_pParent && !IsAbsolutePositioned() )
+		if ( m_pParent && !IsAbsolutePositioned() )
 			size = m_pParent->GetRenderSize().w;
-		else size = ScreenWidth;
+		else
+			size = ScreenWidth;
 
 		m_scSize.w = size + m_scSize.w - m_scPos.x;
 	}
 
-	if( m_scSize.h < 0 )
+	if ( m_scSize.h < 0 )
 	{
 		int size;
-		if( m_pParent && !IsAbsolutePositioned() )
+		if ( m_pParent && !IsAbsolutePositioned() )
 			size = m_pParent->GetRenderSize().h;
-		else size = ScreenHeight;
+		else
+			size = ScreenHeight;
 
 		m_scSize.h = size + m_scSize.h - m_scPos.y;
 	}
 }
 
 // we need to remap position, because resource files are keep screen at 640x480, but we in 1024x768
-#define REMAP_RATIO ( 1.6f )
+#define REMAP_RATIO (1.6f)
 
-bool CMenuBaseItem::KeyValueData(const char *key, const char *data)
+bool CMenuBaseItem::KeyValueData(const char* key, const char* data)
 {
-	if( !strcmp( key, "xpos" ))
+	if ( !strcmp(key, "xpos") )
 	{
 		int coord;
-		if( data[0] == 'c' ) // center
+		if ( data[0] == 'c' )  // center
 		{
 			data++;
 
-			coord = 320 + atoi( data );
+			coord = 320 + atoi(data);
 		}
 		else
 		{
-			coord = atoi( data );
-			if( coord  < 0 )
+			coord = atoi(data);
+			if ( coord < 0 )
 				coord += 640;
 		}
 		pos.x = coord * REMAP_RATIO;
 	}
-	else if( !strcmp( key, "ypos" ) )
+	else if ( !strcmp(key, "ypos") )
 	{
 		int coord;
-		if( data[0] == 'c' ) // center
+		if ( data[0] == 'c' )  // center
 		{
 			data++;
 
-			coord = 240 + atoi( data );
+			coord = 240 + atoi(data);
 		}
 		else
 		{
-			coord = atoi( data );
-			if( coord  < 0 )
+			coord = atoi(data);
+			if ( coord < 0 )
 				coord += 480;
 		}
 		pos.y = coord * REMAP_RATIO;
 	}
-	else if( !strcmp( key, "wide" ) )
+	else if ( !strcmp(key, "wide") )
 	{
-		size.w = atoi( data ) * REMAP_RATIO;
+		size.w = atoi(data) * REMAP_RATIO;
 	}
-	else if( !strcmp( key, "tall" ) )
+	else if ( !strcmp(key, "tall") )
 	{
-		size.h = atoi( data ) * REMAP_RATIO;
+		size.h = atoi(data) * REMAP_RATIO;
 	}
-	else if( !strcmp( key, "visible" ) )
+	else if ( !strcmp(key, "visible") )
 	{
-		SetVisibility( (bool) atoi( data ) );
+		SetVisibility((bool)atoi(data));
 	}
-	else if( !strcmp( key, "enabled" ) )
+	else if ( !strcmp(key, "enabled") )
 	{
-		bool enabled = (bool) atoi( data );
+		bool enabled = (bool)atoi(data);
 
-		SetInactive( !enabled );
-		SetGrayed( !enabled );
+		SetInactive(!enabled);
+		SetGrayed(!enabled);
 	}
-	else if( !strcmp( key, "labelText" ) )
+	else if ( !strcmp(key, "labelText") )
 	{
 		/*if( *data == '#')
 		{
@@ -283,29 +295,30 @@ bool CMenuBaseItem::KeyValueData(const char *key, const char *data)
 				m_bAllocName = true;
 			}
 		}
-		else*/ m_bAllocName = true;
+		else*/
+		m_bAllocName = true;
 
-		if( m_bAllocName )
+		if ( m_bAllocName )
 		{
-			char *name = new char[strlen( data ) + 1];
-			strcpy( name, data );
+			char* name = new char[strlen(data) + 1];
+			strcpy(name, data);
 
 			szName = name;
 		}
 	}
-	else if( !strcmp( key, "textAlignment" ) )
+	else if ( !strcmp(key, "textAlignment") )
 	{
-		if( !strcmp( data, "west" ) )
+		if ( !strcmp(data, "west") )
 		{
 			eTextAlignment = QM_LEFT;
 		}
-		else if( !strcmp( data, "east" ) )
+		else if ( !strcmp(data, "east") )
 		{
 			eTextAlignment = QM_RIGHT;
 		}
 		else
 		{
-			Con_DPrintf( "KeyValueData: unknown textAlignment %s\n", data );
+			Con_DPrintf("KeyValueData: unknown textAlignment %s\n", data);
 		}
 	}
 	/*else if( !strcmp( key, "command" ) )

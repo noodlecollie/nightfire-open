@@ -22,7 +22,6 @@ private:
 class FileSystemOps
 {
 public:
-	static void ListDirectory(const CUtlString& directoryPath,
-							  CUtlVector<DirectoryEntry>& outList,
-							  bool gameDirOnly = true);
+	static void
+	ListDirectory(const CUtlString& directoryPath, CUtlVector<DirectoryEntry>& outList, bool gameDirOnly = true);
 };

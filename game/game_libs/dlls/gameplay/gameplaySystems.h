@@ -19,4 +19,4 @@ namespace GameplaySystems
 	CGameplaySystemsBase* GetBase();
 	CGameplaySystemsSingleplayer* GetSingleplayer();
 	CGameplaySystemsMultiplayer* GetMultiplayer();
-}
+}  // namespace GameplaySystems

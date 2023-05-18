@@ -18,19 +18,19 @@ struct UIVec2
 		*this = other;
 	}
 
-	inline UIVec2& operator =(const UIVec2& other) = default;
+	inline UIVec2& operator=(const UIVec2& other) = default;
 
-	inline bool operator ==(const UIVec2& other) const
+	inline bool operator==(const UIVec2& other) const
 	{
 		return x == other.x && y == other.y;
 	}
 
-	inline bool operator !=(const UIVec2& other) const
+	inline bool operator!=(const UIVec2& other) const
 	{
 		return !(*this == other);
 	}
 
-	inline int& operator [](size_t index)
+	inline int& operator[](size_t index)
 	{
 		if ( index < NUM_COMPONENTS )
 		{
@@ -45,7 +45,7 @@ struct UIVec2
 		}
 	}
 
-	inline const int& operator [](size_t index) const
+	inline const int& operator[](size_t index) const
 	{
 		if ( index < NUM_COMPONENTS )
 		{
@@ -60,50 +60,50 @@ struct UIVec2
 		}
 	}
 
-	inline UIVec2 operator +(const UIVec2& other) const
+	inline UIVec2 operator+(const UIVec2& other) const
 	{
 		return UIVec2(x + other.x, y + other.y);
 	}
 
-	inline UIVec2& operator +=(const UIVec2& other)
+	inline UIVec2& operator+=(const UIVec2& other)
 	{
 		x += other.x;
 		y += other.y;
 		return *this;
 	}
 
-	inline UIVec2 operator -(const UIVec2& other) const
+	inline UIVec2 operator-(const UIVec2& other) const
 	{
 		return UIVec2(x - other.x, y - other.y);
 	}
 
-	inline UIVec2& operator -=(const UIVec2& other)
+	inline UIVec2& operator-=(const UIVec2& other)
 	{
 		x -= other.x;
 		y -= other.y;
 		return *this;
 	}
 
-	inline UIVec2 operator *(float factor) const
+	inline UIVec2 operator*(float factor) const
 	{
 		return UIVec2(static_cast<float>(x) * factor, static_cast<float>(y) * factor);
 	}
 
-	inline UIVec2& operator *=(float factor)
+	inline UIVec2& operator*=(float factor)
 	{
 		x = static_cast<int>(static_cast<float>(x) * factor);
 		y = static_cast<int>(static_cast<float>(y) * factor);
 		return *this;
 	}
 
-	inline UIVec2 operator /(float divisor) const
+	inline UIVec2 operator/(float divisor) const
 	{
 		ASSERT(divisor != 0);
 
 		return UIVec2(static_cast<float>(x) / divisor, static_cast<float>(y) / divisor);
 	}
 
-	inline UIVec2& operator /=(float divisor)
+	inline UIVec2& operator/=(float divisor)
 	{
 		ASSERT(divisor != 0);
 

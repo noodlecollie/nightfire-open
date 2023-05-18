@@ -59,4 +59,4 @@ namespace CustomGeometry
 		CUtlVector<uint8_t> m_Indices;
 		float m_Scale = 1.0f;
 	};
-}
+}  // namespace CustomGeometry

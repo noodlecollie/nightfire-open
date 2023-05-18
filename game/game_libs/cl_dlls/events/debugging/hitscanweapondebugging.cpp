@@ -14,7 +14,7 @@ namespace
 		CGeometryCollectionManager& manager = CGeometryCollectionManager::StaticInstance();
 		return manager.CollectionForCategory(Category::HitscanEvents);
 	}
-}
+}  // namespace
 
 namespace HitscanWeaponDebugging
 {
@@ -67,4 +67,4 @@ namespace HitscanWeaponDebugging
 
 		CurrentBatch.reset();
 	}
-}
+}  // namespace HitscanWeaponDebugging

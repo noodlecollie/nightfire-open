@@ -22,7 +22,9 @@ namespace WeaponAtts
 	class WABasePredictionWeaponHelper
 	{
 	public:
-		virtual ~WABasePredictionWeaponHelper() {}
+		virtual ~WABasePredictionWeaponHelper()
+		{
+		}
 
 		virtual CBasePlayerWeapon* GetWeapon() const = 0;
 	};
@@ -31,7 +33,9 @@ namespace WeaponAtts
 	class WAPredictionWeaponHelper : public WABasePredictionWeaponHelper
 	{
 	public:
-		virtual ~WAPredictionWeaponHelper() {}
+		virtual ~WAPredictionWeaponHelper()
+		{
+		}
 
 		virtual CBasePlayerWeapon* GetWeapon() const override
 		{
@@ -51,7 +55,10 @@ namespace WeaponAtts
 		inline void SetUpPrediction()
 		{
 			// Called later, when weapon prediction is set up.
-			m_FactoryFunc = [](){ return new WAPredictionWeaponHelper<T>(); };
+			m_FactoryFunc = []()
+			{
+				return new WAPredictionWeaponHelper<T>();
+			};
 		}
 
 		inline CBasePlayerWeapon* GetWeapon() const
@@ -81,4 +88,4 @@ namespace WeaponAtts
 		FactoryFunc m_FactoryFunc;
 		mutable std::unique_ptr<WABasePredictionWeaponHelper> m_WeaponHelper;
 	};
-}
+}  // namespace WeaponAtts

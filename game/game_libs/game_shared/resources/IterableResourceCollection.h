@@ -50,14 +50,14 @@ public:
 		}
 
 		// Prefix
-		inline Iterator& operator ++()
+		inline Iterator& operator++()
 		{
 			FindNextValidItem();
 			return *this;
 		}
 
 		// Postfix
-		inline Iterator operator ++(int)
+		inline Iterator operator++(int)
 		{
 			Iterator next(*this);
 			++(*this);

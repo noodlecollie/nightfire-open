@@ -1,7 +1,6 @@
 #include "WeaponSoundResources.h"
 
-static constexpr const char* const BulletRicochetSounds[] =
-{
+static constexpr const char* const BulletRicochetSounds[] = {
 	"weapons/ric1.wav",
 	"weapons/ric2.wav",
 	"weapons/ric3.wav",
@@ -9,8 +8,7 @@ static constexpr const char* const BulletRicochetSounds[] =
 	"weapons/ric5.wav",
 };
 
-static constexpr const char* const ExplosionSounds[] =
-{
+static constexpr const char* const ExplosionSounds[] = {
 	"weapons/explosion1.wav",
 	"weapons/explosion2.wav",
 	"weapons/explosion3.wav",

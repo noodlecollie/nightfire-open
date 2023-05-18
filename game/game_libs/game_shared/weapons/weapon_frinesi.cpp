@@ -32,10 +32,10 @@ LINK_ENTITY_TO_CLASS(weapon_commando, CWeaponFrinesi)
 LINK_ENTITY_TO_CLASS(weapon_minigun, CWeaponFrinesi)
 #endif
 
-CWeaponFrinesi::CWeaponFrinesi()
-	: CGenericHitscanWeapon(),
-	  m_flNextPumpSoundTime(0.0f),
-	  m_flNextReloadSoundTime(0.0f)
+CWeaponFrinesi::CWeaponFrinesi() :
+	CGenericHitscanWeapon(),
+	m_flNextPumpSoundTime(0.0f),
+	m_flNextReloadSoundTime(0.0f)
 {
 	m_pAutoAttackMode = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_AUTO);
 	m_pPumpAttackMode = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_PUMP);
@@ -50,7 +50,9 @@ void CWeaponFrinesi::Precache()
 	PRECACHE_SOUND(FRINESI_COCK_SOUND);
 }
 
-bool CWeaponFrinesi::InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode)
+bool CWeaponFrinesi::InvokeWithAttackMode(
+	const CGenericWeapon::WeaponAttackType type,
+	const WeaponAtts::WABaseAttack* attackMode)
 {
 	if ( FlagReloadInterrupt() )
 	{
@@ -60,7 +62,8 @@ bool CWeaponFrinesi::InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType
 	// We set the primary attack mode based on the type.
 	// This allows us to continue to use weapon inaccuracy properly,
 	// as this only acts on the primary attack.
-	const WeaponAtts::WABaseAttack* overrideMode = type == WeaponAttackType::Secondary ? m_pPumpAttackMode : m_pAutoAttackMode;
+	const WeaponAtts::WABaseAttack* overrideMode =
+		type == WeaponAttackType::Secondary ? m_pPumpAttackMode : m_pAutoAttackMode;
 	SetPrimaryAttackMode(overrideMode);
 
 	const bool invokeResult = CGenericHitscanWeapon::InvokeWithAttackMode(WeaponAttackType::Primary, overrideMode);
@@ -116,7 +119,7 @@ bool CWeaponFrinesi::FlagReloadInterrupt()
 
 int CWeaponFrinesi::HandleSpecialReload(int currentState)
 {
-	switch (currentState & RELOAD_MASK)
+	switch ( currentState & RELOAD_MASK )
 	{
 		case RELOAD_IDLE:
 		{
@@ -138,14 +141,13 @@ int CWeaponFrinesi::HandleSpecialReload(int currentState)
 		case RELOAD_LOAD_SHELL:
 		{
 			// If we haven't finished whatever animation is currently playing, don't change state.
-			if( m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
+			if ( m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
 			{
 				return NextReloadState(currentState, RELOAD_LOAD_SHELL);
 			}
 
 			if ( ((currentState & RELOAD_FLAG_INTERRUPTED) && (currentState & RELOAD_FLAG_LOADED_ONCE)) ||
-				 m_iClip >= WeaponAttributes().Ammo.MaxClip ||
-				 m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] < 1 )
+				 m_iClip >= WeaponAttributes().Ammo.MaxClip || m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] < 1 )
 			{
 				// Reloading has finished. Do a pump and delay any further activity until it's finished.
 				m_flNextReloadSoundTime = 0.0f;
@@ -184,13 +186,14 @@ int CWeaponFrinesi::HandleSpecialReload(int currentState)
 
 void CWeaponFrinesi::PlayPumpSound()
 {
-	EMIT_SOUND_DYN(ENT(m_pPlayer->pev),
-					   CHAN_ITEM,
-					   FRINESI_COCK_SOUND,
-					   0.9f,
-					   ATTN_NORM,
-					   0,
-					   UTIL_SharedRandomLong(m_pPlayer->random_seed, 98, 101));
+	EMIT_SOUND_DYN(
+		ENT(m_pPlayer->pev),
+		CHAN_ITEM,
+		FRINESI_COCK_SOUND,
+		0.9f,
+		ATTN_NORM,
+		0,
+		UTIL_SharedRandomLong(m_pPlayer->random_seed, 98, 101));
 }
 
 bool CWeaponFrinesi::ReadPredictionData(const weapon_data_t* from)
@@ -223,11 +226,9 @@ const WeaponAtts::WACollection& CWeaponFrinesi::WeaponAttributes() const
 }
 
 #ifndef CLIENT_DLL
-TYPEDESCRIPTION	CWeaponFrinesi::m_SaveData[] =
-{
+TYPEDESCRIPTION CWeaponFrinesi::m_SaveData[] = {
 	DEFINE_FIELD(CWeaponFrinesi, m_flNextPumpSoundTime, FIELD_FLOAT),
-	DEFINE_FIELD(CWeaponFrinesi, m_flNextReloadSoundTime, FIELD_FLOAT)
-};
+	DEFINE_FIELD(CWeaponFrinesi, m_flNextReloadSoundTime, FIELD_FLOAT)};
 
 IMPLEMENT_SAVERESTORE(CWeaponFrinesi, CGenericHitscanWeapon)
 
@@ -255,7 +256,10 @@ void CWeaponFrinesi::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
 	}
 
 	fightStyle.RandomizeSecondaryFire(chanceOfSecondaryFire);
-	fightStyle.SetNextShootTime(fightStyle.GetSecondaryFire() ? m_flNextSecondaryAttack : m_flNextPrimaryAttack, 0.0f, 1.0f);
+	fightStyle.SetNextShootTime(
+		fightStyle.GetSecondaryFire() ? m_flNextSecondaryAttack : m_flNextPrimaryAttack,
+		0.0f,
+		1.0f);
 }
 #endif
 
@@ -266,19 +270,19 @@ namespace WeaponAtts
 	{
 		return ::StaticWeaponAttributes;
 	}
-}
+}  // namespace WeaponAtts
 
 class CAmmoFrinesi : public CGenericAmmo
 {
 public:
-	CAmmoFrinesi()
-		: CGenericAmmo("models/weapon_frinesi/w_ammo_shotgun.mdl", Ammo_Frinesi)
+	CAmmoFrinesi() :
+		CGenericAmmo("models/weapon_frinesi/w_ammo_shotgun.mdl", Ammo_Frinesi)
 	{
 	}
 };
 
 LINK_ENTITY_TO_CLASS(ammo_frinesi, CAmmoFrinesi)
-LINK_ENTITY_TO_CLASS(ammo_shotgun, CAmmoFrinesi)	// For Nightfire compatibility
+LINK_ENTITY_TO_CLASS(ammo_shotgun, CAmmoFrinesi)  // For Nightfire compatibility
 
 #ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known ammo to this one.

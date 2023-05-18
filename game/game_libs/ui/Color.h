@@ -20,47 +20,74 @@ GNU General Public License for more details.
 class CColor
 {
 public:
-	CColor( ) : rgba( 0 ), init( false ),
-		a(3,rgba), r(2,rgba), g(1,rgba), b(0,rgba) { }
-	CColor( unsigned int rgba_ ) : rgba( rgba_ ), init( false ),
-		a(3,rgba), r(2,rgba), g(1,rgba), b(0,rgba) { }
-
-	inline unsigned int operator =( unsigned int color )
+	CColor() :
+		rgba(0),
+		init(false),
+		a(3, rgba),
+		r(2, rgba),
+		g(1, rgba),
+		b(0, rgba)
 	{
-		Set( color );
+	}
+	CColor(unsigned int rgba_) :
+		rgba(rgba_),
+		init(false),
+		a(3, rgba),
+		r(2, rgba),
+		g(1, rgba),
+		b(0, rgba)
+	{
+	}
+
+	inline unsigned int operator=(unsigned int color)
+	{
+		Set(color);
 		return color;
 	}
 
-	inline operator unsigned int() { return rgba; }
+	inline operator unsigned int()
+	{
+		return rgba;
+	}
 
-	inline void Set( unsigned int color )
+	inline void Set(unsigned int color)
 	{
 		rgba = color;
 		init = true;
 	}
 
-	inline void SetDefault( unsigned int color )
+	inline void SetDefault(unsigned int color)
 	{
-		if( !IsOk() ) Set( color );
+		if ( !IsOk() )
+			Set(color);
 	}
 
 	// get rid of this someday
-	inline bool IsOk() { return init; }
+	inline bool IsOk()
+	{
+		return init;
+	}
 
 	unsigned int rgba;
+
 private:
 	class ColorWrap
 	{
 	private:
 		const byte _byte;
-		unsigned int & _rgba;
+		unsigned int& _rgba;
 
-		ColorWrap(int bytenum, unsigned int &rgba): _byte(bytenum), _rgba(rgba) {}
+		ColorWrap(int bytenum, unsigned int& rgba) :
+			_byte(bytenum),
+			_rgba(rgba)
+		{
+		}
+
 	public:
-		inline unsigned int operator =(unsigned int value) const
+		inline unsigned int operator=(unsigned int value) const
 		{
 			value &= 0xff;
-			_rgba = (_rgba & ~(0xff << (_byte*8)) ) | ( value << (_byte*8) );
+			_rgba = (_rgba & ~(0xff << (_byte * 8))) | (value << (_byte * 8));
 			return value;
 		}
 		inline operator unsigned int() const
@@ -70,8 +97,9 @@ private:
 		friend class CColor;
 	};
 	bool init;
+
 public:
-		const ColorWrap r,g,b,a;
+	const ColorWrap r, g, b, a;
 };
 
-#endif // COLOR_H
+#endif  // COLOR_H

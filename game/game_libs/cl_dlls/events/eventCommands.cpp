@@ -16,7 +16,11 @@ namespace EventCommands
 
 	static inline void PrintStatus(const char* eventType, bool state)
 	{
-		Log().LogF(ILogInterface::Level::Message, "%s event debugging is %s.\n", eventType, state ? "enabled" : "disabled");
+		Log().LogF(
+			ILogInterface::Level::Message,
+			"%s event debugging is %s.\n",
+			eventType,
+			state ? "enabled" : "disabled");
 	}
 
 	static bool CheatsEnabled(bool logIfNotEnabled = false)
@@ -87,4 +91,4 @@ namespace EventCommands
 	{
 		return DebugEventHitscan && CheatsEnabled();
 	}
-}
+}  // namespace EventCommands

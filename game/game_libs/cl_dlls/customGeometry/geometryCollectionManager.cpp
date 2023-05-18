@@ -55,4 +55,4 @@ namespace CustomGeometry
 
 		return m_Entries[static_cast<uint32_t>(category)].collection.get();
 	}
-}
+}  // namespace CustomGeometry

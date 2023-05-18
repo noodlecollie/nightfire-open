@@ -36,4 +36,4 @@ namespace CustomGeometry
 		Vector m_vecMin;
 		Vector m_vecMax;
 	};
-}
+}  // namespace CustomGeometry

@@ -1,6 +1,6 @@
 //========= Copyright 1996-2005, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Header: $
 // $NoKeywords: $
@@ -11,91 +11,152 @@
 
 #include "utlmemory.h"
 
-
 //-----------------------------------------------------------------------------
 // Tool to generate a default compare function for any type that implements
 // operator<, including all simple types
 //-----------------------------------------------------------------------------
 
-template <typename T >
+template<typename T>
 class CDefOps
 {
 public:
-	static bool LessFunc( const T &lhs, const T &rhs )	{ return ( lhs < rhs );	}
-	static bool LessFuncCtx( const T &lhs, const T &rhs, void *pCtx )	{ return LessFunc( lhs, rhs );	}
+	static bool LessFunc(const T& lhs, const T& rhs)
+	{
+		return (lhs < rhs);
+	}
+	static bool LessFuncCtx(const T& lhs, const T& rhs, void* pCtx)
+	{
+		return LessFunc(lhs, rhs);
+	}
 };
 
-#define DefLessFunc( type ) CDefOps<type>::LessFunc
-#define DefLessFuncCtx( type ) CDefOps<type>::LessFuncCtx
+#define DefLessFunc(type) CDefOps<type>::LessFunc
+#define DefLessFuncCtx(type) CDefOps<type>::LessFuncCtx
 
-template <typename T>
+template<typename T>
 class CDefLess
 {
 public:
-	CDefLess() {}
-	CDefLess( int i ) {}
-	inline bool operator()( const T &lhs, const T &rhs ) const { return ( lhs < rhs );	}
-	inline bool operator!() const { return false; }
+	CDefLess()
+	{
+	}
+	CDefLess(int i)
+	{
+	}
+	inline bool operator()(const T& lhs, const T& rhs) const
+	{
+		return (lhs < rhs);
+	}
+	inline bool operator!() const
+	{
+		return false;
+	}
 };
 
-template <typename T>
+template<typename T>
 class CDefLessReverse
 {
 public:
-	CDefLessReverse() {}
-	CDefLessReverse( int i ) {}
-	inline bool operator()( const T &lhs, const T &rhs ) const { return (lhs > rhs); }
-	inline bool operator!() const { return false; }
+	CDefLessReverse()
+	{
+	}
+	CDefLessReverse(int i)
+	{
+	}
+	inline bool operator()(const T& lhs, const T& rhs) const
+	{
+		return (lhs > rhs);
+	}
+	inline bool operator!() const
+	{
+		return false;
+	}
 };
 
-template <typename T>
+template<typename T>
 class CDefLessPtr
 {
 public:
 	typedef T* PointerType_t;
-	CDefLessPtr() {}
-	CDefLessPtr( int i ) {}
-	inline bool operator()( const PointerType_t &lhs, const PointerType_t &rhs ) const { return ( *lhs < *rhs ); }
-	inline bool operator!() const { return false; }
+	CDefLessPtr()
+	{
+	}
+	CDefLessPtr(int i)
+	{
+	}
+	inline bool operator()(const PointerType_t& lhs, const PointerType_t& rhs) const
+	{
+		return (*lhs < *rhs);
+	}
+	inline bool operator!() const
+	{
+		return false;
+	}
 };
 
-typedef const char * PConstChar_t;
+typedef const char* PConstChar_t;
 
 class CDefCaselessStringLess
 {
 public:
-	CDefCaselessStringLess() {}
-	CDefCaselessStringLess( int i ) {}
-	inline bool operator()( const PConstChar_t &lhs, const PConstChar_t &rhs ) const { return ( V_stricmp(lhs, rhs) < 0 ); }
-	inline bool operator!() const { return false; }
+	CDefCaselessStringLess()
+	{
+	}
+	CDefCaselessStringLess(int i)
+	{
+	}
+	inline bool operator()(const PConstChar_t& lhs, const PConstChar_t& rhs) const
+	{
+		return (V_stricmp(lhs, rhs) < 0);
+	}
+	inline bool operator!() const
+	{
+		return false;
+	}
 };
 
 class CDefStringLess
 {
 public:
-	CDefStringLess() {}
-	CDefStringLess( int i ) {}
-	inline bool operator()( const PConstChar_t &lhs, const PConstChar_t &rhs ) const { return ( V_strcmp(lhs, rhs) < 0 ); }
-	inline bool operator!() const { return false; }
+	CDefStringLess()
+	{
+	}
+	CDefStringLess(int i)
+	{
+	}
+	inline bool operator()(const PConstChar_t& lhs, const PConstChar_t& rhs) const
+	{
+		return (V_strcmp(lhs, rhs) < 0);
+	}
+	inline bool operator!() const
+	{
+		return false;
+	}
 };
 
 #define INVALID_RBTREE_IDX ((I)~0)
 
 //-------------------------------------
 
-inline bool StringLessThan( const char * const &lhs, const char * const &rhs)			{ return ( V_strcmp(lhs, rhs) < 0 );  }
-inline bool CaselessStringLessThan( const char * const &lhs, const char * const &rhs )	{ return ( V_stricmp(lhs, rhs) < 0 ); }
+inline bool StringLessThan(const char* const& lhs, const char* const& rhs)
+{
+	return (V_strcmp(lhs, rhs) < 0);
+}
+inline bool CaselessStringLessThan(const char* const& lhs, const char* const& rhs)
+{
+	return (V_stricmp(lhs, rhs) < 0);
+}
 
 // Same as CaselessStringLessThan, but it ignores differences in / and \.
-inline bool CaselessStringLessThanIgnoreSlashes( const char * const &lhs, const char * const &rhs )	
-{ 
-	const char *pa = lhs;
-	const char *pb = rhs;
+inline bool CaselessStringLessThanIgnoreSlashes(const char* const& lhs, const char* const& rhs)
+{
+	const char* pa = lhs;
+	const char* pb = rhs;
 	while ( *pa && *pb )
 	{
 		char a = *pa;
 		char b = *pb;
-		
+
 		// Check for dir slashes.
 		if ( a == '/' || a == '\\' )
 		{
@@ -106,10 +167,10 @@ inline bool CaselessStringLessThanIgnoreSlashes( const char * const &lhs, const 
 		{
 			if ( a >= 'a' && a <= 'z' )
 				a = 'A' + (a - 'a');
-			
+
 			if ( b >= 'a' && b <= 'z' )
 				b = 'A' + (b - 'a');
-				
+
 			if ( a > b )
 				return false;
 			else if ( a < b )
@@ -118,12 +179,12 @@ inline bool CaselessStringLessThanIgnoreSlashes( const char * const &lhs, const 
 		++pa;
 		++pb;
 	}
-	
+
 	// Filenames also must be the same length.
 	if ( *pa != *pb )
 	{
 		// If pa shorter than pb then it's "less"
-		return ( !*pa );
+		return (!*pa);
 	}
 
 	return false;
@@ -131,39 +192,55 @@ inline bool CaselessStringLessThanIgnoreSlashes( const char * const &lhs, const 
 
 //-------------------------------------
 // inline these two templates to stop multiple definitions of the same code
-template <> inline bool CDefOps<const char *>::LessFunc( const char * const &lhs, const char * const &rhs )	{ return StringLessThan( lhs, rhs ); }
-template <> inline bool CDefOps<char *>::LessFunc( char * const &lhs, char * const &rhs )						{ return StringLessThan( lhs, rhs ); }
+template<>
+inline bool CDefOps<const char*>::LessFunc(const char* const& lhs, const char* const& rhs)
+{
+	return StringLessThan(lhs, rhs);
+}
+template<>
+inline bool CDefOps<char*>::LessFunc(char* const& lhs, char* const& rhs)
+{
+	return StringLessThan(lhs, rhs);
+}
 
 //-------------------------------------
 
-#if (defined( _MSC_VER ) && _MSC_VER < 1600) || __cplusplus < 2011L
-#define MAP_INDEX_TYPE( mapName ) int
+#if ( defined(_MSC_VER) && _MSC_VER < 1600 ) || __cplusplus < 2011L
+#define MAP_INDEX_TYPE(mapName) int
 #else
-#define MAP_INDEX_TYPE( mapName ) \
-	decltype( (mapName).MaxElement() )
+#define MAP_INDEX_TYPE(mapName) decltype((mapName).MaxElement())
 #endif
 
-
-#define FOR_EACH_RBTREE( treeName, iteratorName ) \
-	for ( MAP_INDEX_TYPE(treeName) iteratorName = (treeName).FirstInorder(); iteratorName != (treeName).InvalidIndex(); iteratorName = (treeName).NextInorder( iteratorName ) )
+#define FOR_EACH_RBTREE(treeName, iteratorName) \
+	for ( MAP_INDEX_TYPE(treeName) iteratorName = (treeName).FirstInorder(); \
+		  iteratorName != (treeName).InvalidIndex(); \
+		  iteratorName = (treeName).NextInorder(iteratorName) )
 
 // faster iteration, but in an unspecified order
-#define FOR_EACH_RBTREE_FAST( treeName, iteratorName ) \
-	for ( MAP_INDEX_TYPE(treeName) iteratorName = 0; iteratorName < (treeName).MaxElement(); ++iteratorName ) if ( !(treeName).IsValidIndex( iteratorName ) ) continue; else
+#define FOR_EACH_RBTREE_FAST(treeName, iteratorName) \
+	for ( MAP_INDEX_TYPE(treeName) iteratorName = 0; iteratorName < (treeName).MaxElement(); ++iteratorName ) \
+		if ( !(treeName).IsValidIndex(iteratorName) ) \
+			continue; \
+		else
 
-
-template <typename RBTREE_T>
-void SetDefLessFunc( RBTREE_T &RBTree )
+template<typename RBTREE_T>
+void SetDefLessFunc(RBTREE_T& RBTree)
 {
 #ifdef _MSC_VER
-	RBTree.SetLessFunc( DefLessFunc( RBTREE_T::KeyType_t ) );
+	RBTree.SetLessFunc(DefLessFunc(RBTREE_T::KeyType_t));
 #else
-        RBTree.SetLessFunc( DefLessFunc( typename RBTREE_T::KeyType_t ) );
+	RBTree.SetLessFunc(DefLessFunc(typename RBTREE_T::KeyType_t));
 #endif
 }
 
 // inline implementation of a function usable by CDefLess to compare two parameters in-order
-#define DECLARE_INLINE_OPERATOR_LESS_2( T, p1, p2 ) bool operator<( const T &rhs ) const { if ( p1 != rhs.p1 ) return p1 < rhs.p1; return p2 < rhs.p2; }
+#define DECLARE_INLINE_OPERATOR_LESS_2(T, p1, p2) \
+	bool operator<(const T& rhs) const \
+	{ \
+		if ( p1 != rhs.p1 ) \
+			return p1 < rhs.p1; \
+		return p2 < rhs.p2; \
+	}
 
 // For use with FindClosest
 // Move these to a common area if anyone else ever uses them
@@ -176,42 +253,83 @@ enum CompareOperands_t
 	k_ELessThanOrEqualTo = k_ELessThan | k_EEqual,
 };
 
-template <class I>
+template<class I>
 class CDefRBTreeBalanceListener
 {
 public:
-	void OnRotateLeft( I node, I rightNode ) {}
-	void OnRotateRight( I node, I leftNode ) {}
-	void OnLinkToParent( I node ) {}
-	void OnPreUnlink( I node ) {}
-	void OnRelinkSuccessor( I node ) {}
+	void OnRotateLeft(I node, I rightNode)
+	{
+	}
+	void OnRotateRight(I node, I leftNode)
+	{
+	}
+	void OnLinkToParent(I node)
+	{
+	}
+	void OnPreUnlink(I node)
+	{
+	}
+	void OnRelinkSuccessor(I node)
+	{
+	}
 };
 
-template <class T, class I>
+template<class T, class I>
 class CRBTreeBalanceListener
 {
 public:
-	CRBTreeBalanceListener() : m_pTarget( NULL ) { }
-	CRBTreeBalanceListener( T *pTarget ) : m_pTarget( pTarget ) { }
-	void OnRotateLeft( I node, I rightNode ) { if ( !m_pTarget ) return; m_pTarget->OnRotateLeft( node, rightNode); }
-	void OnRotateRight( I node, I leftNode ) { if ( !m_pTarget ) return; m_pTarget->OnRotateRight( node, leftNode); }
-	void OnLinkToParent( I node ) { if ( !m_pTarget ) return; m_pTarget->OnLinkToParent( node ); }
-	void OnPreUnlink( I node ) { if ( !m_pTarget ) return; m_pTarget->OnPreUnlink( node ); }
-	void OnRelinkSuccessor( I node ) { if ( !m_pTarget ) return; m_pTarget->OnRelinkSuccessor( node ); }
+	CRBTreeBalanceListener() :
+		m_pTarget(NULL)
+	{
+	}
+	CRBTreeBalanceListener(T* pTarget) :
+		m_pTarget(pTarget)
+	{
+	}
+	void OnRotateLeft(I node, I rightNode)
+	{
+		if ( !m_pTarget )
+			return;
+		m_pTarget->OnRotateLeft(node, rightNode);
+	}
+	void OnRotateRight(I node, I leftNode)
+	{
+		if ( !m_pTarget )
+			return;
+		m_pTarget->OnRotateRight(node, leftNode);
+	}
+	void OnLinkToParent(I node)
+	{
+		if ( !m_pTarget )
+			return;
+		m_pTarget->OnLinkToParent(node);
+	}
+	void OnPreUnlink(I node)
+	{
+		if ( !m_pTarget )
+			return;
+		m_pTarget->OnPreUnlink(node);
+	}
+	void OnRelinkSuccessor(I node)
+	{
+		if ( !m_pTarget )
+			return;
+		m_pTarget->OnRelinkSuccessor(node);
+	}
 
 private:
-	T *m_pTarget;
+	T* m_pTarget;
 };
 
 namespace CUtlRBTreeInternal
 {
-	template< class I >
+	template<class I>
 	struct Links_t
 	{
-		I  m_Left;
-		I  m_Right;
-		I  m_Parent;
-		I  m_Tag;
+		I m_Left;
+		I m_Right;
+		I m_Parent;
+		I m_Tag;
 	};
 
 	enum NodeColor_t
@@ -219,106 +337,112 @@ namespace CUtlRBTreeInternal
 		RED = 0,
 		BLACK
 	};
-}
+}  // namespace CUtlRBTreeInternal
 
-template < class I, class E >
+template<class I, class E>
 class CUtlRBTreeBase
 {
 public:
-
 	CUtlRBTreeBase();
 
 	// Num elements
 	unsigned int Count() const;
-	
+
 	// Max "size" of the vector
-	I  MaxElement() const;
+	I MaxElement() const;
 
 	// Gets the root
-	I  Root() const;
+	I Root() const;
 
 	// Tests if root or leaf
-	bool  IsRoot( I i ) const;
+	bool IsRoot(I i) const;
 
 	// Invalid index
-	static I InvalidIndex() { return INVALID_RBTREE_IDX; }
+	static I InvalidIndex()
+	{
+		return INVALID_RBTREE_IDX;
+	}
 
 	// First pre-order
-	I  FirstPreorder() const;
-	I  PrevPreorder( I i ) const;
+	I FirstPreorder() const;
+	I PrevPreorder(I i) const;
 
 protected:
-
 	// used in Links as the return value for InvalidIndex()
 	CUtlRBTreeInternal::Links_t<I> m_Sentinel;
 
 	// Checks if a node is valid and in the tree
-	bool  _IsValidIndex( I i, size_t unNodeSize, void *pMemBase ) const;
+	bool _IsValidIndex(I i, size_t unNodeSize, void* pMemBase) const;
 
 	// Gets at the links
-	CUtlRBTreeInternal::Links_t<I> const	&_Links( I i, size_t unNodeSize, void *pMemBase ) const;
-	CUtlRBTreeInternal::Links_t<I>			&_Links( I i, size_t unNodeSize, void *pMemBase );      
+	CUtlRBTreeInternal::Links_t<I> const& _Links(I i, size_t unNodeSize, void* pMemBase) const;
+	CUtlRBTreeInternal::Links_t<I>& _Links(I i, size_t unNodeSize, void* pMemBase);
 
-	// Gets the children                               
-	I  _Parent( I i, size_t unNodeSize, void *pMemBase ) const;
-	I  _LeftChild( I i, size_t unNodeSize, void *pMemBase ) const;
-	I  _RightChild( I i, size_t unNodeSize, void *pMemBase ) const;
+	// Gets the children
+	I _Parent(I i, size_t unNodeSize, void* pMemBase) const;
+	I _LeftChild(I i, size_t unNodeSize, void* pMemBase) const;
+	I _RightChild(I i, size_t unNodeSize, void* pMemBase) const;
 
 	// Sets the children
-	void  _SetParent( I i, I parent, size_t unNodeSize, void *pMemBase );
-	void  _SetLeftChild( I i, I child, size_t unNodeSize, void *pMemBase );
-	void  _SetRightChild( I i, I child, size_t unNodeSize, void *pMemBase );
+	void _SetParent(I i, I parent, size_t unNodeSize, void* pMemBase);
+	void _SetLeftChild(I i, I child, size_t unNodeSize, void* pMemBase);
+	void _SetRightChild(I i, I child, size_t unNodeSize, void* pMemBase);
 
-	bool _IsRed( I i, size_t unNodeSize, void *pMemBase ) const; 
-	bool _IsBlack( I i, size_t unNodeSize, void *pMemBase ) const;
+	bool _IsRed(I i, size_t unNodeSize, void* pMemBase) const;
+	bool _IsBlack(I i, size_t unNodeSize, void* pMemBase) const;
 
 	// Tests if a node is a left or right child
-	bool  _IsLeftChild( I i, size_t unNodeSize, void *pMemBase ) const;
-	bool  _IsRightChild( I i, size_t unNodeSize, void *pMemBase ) const;
+	bool _IsLeftChild(I i, size_t unNodeSize, void* pMemBase) const;
+	bool _IsRightChild(I i, size_t unNodeSize, void* pMemBase) const;
 
 	// Sets/gets node color
-	CUtlRBTreeInternal::NodeColor_t _Color( I i, size_t unNodeSize, void *pMemBase ) const;
-	void        _SetColor( I i, CUtlRBTreeInternal::NodeColor_t c, size_t unNodeSize, void *pMemBase );
+	CUtlRBTreeInternal::NodeColor_t _Color(I i, size_t unNodeSize, void* pMemBase) const;
+	void _SetColor(I i, CUtlRBTreeInternal::NodeColor_t c, size_t unNodeSize, void* pMemBase);
 
-	void _RotateLeft(I i, size_t unNodeSize, void *pMemBase);
-	void _RotateRight(I i, size_t unNodeSize, void *pMemBase);
-	void _InsertRebalance(I i, size_t unNodeSize, void *pMemBase);
-	void _RemoveRebalance(I i, size_t unNodeSize, void *pMemBase);
+	void _RotateLeft(I i, size_t unNodeSize, void* pMemBase);
+	void _RotateRight(I i, size_t unNodeSize, void* pMemBase);
+	void _InsertRebalance(I i, size_t unNodeSize, void* pMemBase);
+	void _RemoveRebalance(I i, size_t unNodeSize, void* pMemBase);
 
-	void _Unlink( I elem, size_t unNodeSize, void *pMemBase );
+	void _Unlink(I elem, size_t unNodeSize, void* pMemBase);
 
 	// Sets the children
-	void  _LinkToParent( I i, I parent, bool isLeft, size_t unNodeSize, void *pMemBase );
+	void _LinkToParent(I i, I parent, bool isLeft, size_t unNodeSize, void* pMemBase);
 
 	// Checks if the tree as a whole is valid
-	bool  _IsValid( size_t unNodeSize, void *pMemBase ) const;
+	bool _IsValid(size_t unNodeSize, void* pMemBase) const;
 
-	I  _FirstInorder(size_t unNodeSize, void *pMemBase) const;
-	I  _NextInorder( I i, size_t unNodeSize, void *pMemBase ) const;
-	I  _PrevInorder( I i, size_t unNodeSize, void *pMemBase ) const;
-	I  _LastInorder(size_t unNodeSize, void *pMemBase) const;
+	I _FirstInorder(size_t unNodeSize, void* pMemBase) const;
+	I _NextInorder(I i, size_t unNodeSize, void* pMemBase) const;
+	I _PrevInorder(I i, size_t unNodeSize, void* pMemBase) const;
+	I _LastInorder(size_t unNodeSize, void* pMemBase) const;
 
-	I  _NextPreorder( I i, size_t unNodeSize, void *pMemBase ) const;
-	I  _LastPreorder(size_t unNodeSize, void *pMemBase) const;
+	I _NextPreorder(I i, size_t unNodeSize, void* pMemBase) const;
+	I _LastPreorder(size_t unNodeSize, void* pMemBase) const;
 
-	I  _FirstPostorder(size_t unNodeSize, void *pMemBase) const;
-	I  _NextPostorder( I i, size_t unNodeSize, void *pMemBase ) const;
+	I _FirstPostorder(size_t unNodeSize, void* pMemBase) const;
+	I _NextPostorder(I i, size_t unNodeSize, void* pMemBase) const;
 
-	int _Depth( I node, size_t unNodeSize, void *pMemBase ) const;
+	int _Depth(I node, size_t unNodeSize, void* pMemBase) const;
 
 	struct EmptyBaseOpt_t : E
 	{
-		EmptyBaseOpt_t() {}
-		EmptyBaseOpt_t( E init ) : E( init ) {}
+		EmptyBaseOpt_t()
+		{
+		}
+		EmptyBaseOpt_t(E init) :
+			E(init)
+		{
+		}
 
-		void*   m_pElements;
+		void* m_pElements;
 	};
 	EmptyBaseOpt_t m_data;
 
-	inline void ResetDbgInfo( void *pMemBase )
+	inline void ResetDbgInfo(void* pMemBase)
 	{
 		m_data.m_pElements = pMemBase;
-	}	
+	}
 
 	I m_Root;
 	I m_NumElements;
@@ -330,8 +454,8 @@ protected:
 // A red-black binary search tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I = int, typename L = bool (*)( const T &, const T & ), class E = CDefRBTreeBalanceListener< I > > 
-class CUtlRBTree : public CUtlRBTreeBase< I, E >
+template<class T, class I = int, typename L = bool (*)(const T&, const T&), class E = CDefRBTreeBalanceListener<I>>
+class CUtlRBTree : public CUtlRBTreeBase<I, E>
 {
 public:
 	typedef T KeyType_t;
@@ -348,205 +472,273 @@ public:
 	// Left at growSize = 0, the memory will first allocate 1 element and double in size
 	// at each increment.
 	// LessFunc_t is required, but may be set after the constructor using SetLessFunc() below
-	CUtlRBTree( int growSize = 0, int initSize = 0, const LessFunc_t &lessfunc = 0 );
-	CUtlRBTree( const LessFunc_t &lessfunc );
-	CUtlRBTree( const BalanceListener_t &eventListener);
+	CUtlRBTree(int growSize = 0, int initSize = 0, const LessFunc_t& lessfunc = 0);
+	CUtlRBTree(const LessFunc_t& lessfunc);
+	CUtlRBTree(const BalanceListener_t& eventListener);
 	~CUtlRBTree();
-	
+
 	unsigned int NumAllocated() const;
 
 	// gets particular elements
-	T&			Element( I i );
-	T const		&Element( I i ) const;
-	T&			operator[]( I i );
-	T const		&operator[]( I i ) const;
-	T&			ElementByLinearIndex( IndexType_t i );
-	const T&	ElementByLinearIndex( IndexType_t i ) const;
+	T& Element(I i);
+	T const& Element(I i) const;
+	T& operator[](I i);
+	T const& operator[](I i) const;
+	T& ElementByLinearIndex(IndexType_t i);
+	const T& ElementByLinearIndex(IndexType_t i) const;
 
-	CUtlRBTree<T, I, L, E>& operator=( const CUtlRBTree<T, I, L, E> &other );
-	
-	// Gets the children                               
-	I  Parent( I i ) const;
-	I  LeftChild( I i ) const;
-	I  RightChild( I i ) const;
-	
+	CUtlRBTree<T, I, L, E>& operator=(const CUtlRBTree<T, I, L, E>& other);
+
+	// Gets the children
+	I Parent(I i) const;
+	I LeftChild(I i) const;
+	I RightChild(I i) const;
+
 	// Tests if a node is a left or right child
-	bool  IsLeftChild( I i ) const;
-	bool  IsRightChild( I i ) const;
-	
+	bool IsLeftChild(I i) const;
+	bool IsRightChild(I i) const;
+
 	// Tests if root or leaf
-	bool  IsLeaf( I i ) const;
-	
+	bool IsLeaf(I i) const;
+
 	// Checks if a node is valid and in the tree
-	bool  IsValidIndex( I i ) const;
+	bool IsValidIndex(I i) const;
 
 	// Checks if a index is of range 0 to Count()-1
-	bool  IsValidLinearIndex( I i ) const;
+	bool IsValidLinearIndex(I i) const;
 
 	// Checks if the tree as a whole is valid
-	bool  IsValid() const;
-	
+	bool IsValid() const;
+
 	// returns the tree depth (not a very fast operation)
-	int   Depth( I node ) const;
-	int   Depth() const;
-	
+	int Depth(I node) const;
+	int Depth() const;
+
 	// Sets the less func
-	void SetLessFunc( const LessFunc_t &func );
-	
+	void SetLessFunc(const LessFunc_t& func);
+
 	// Allocation method
-	I  NewNode( bool bConstructElement );
+	I NewNode(bool bConstructElement);
 
 	// Insert method (inserts in order)
-	I  Insert( T const &insert, bool bInsertDuplicates = true );
-	void Insert( const T *pArray, int nItems, bool bInsertDuplicates = true );
-	
+	I Insert(T const& insert, bool bInsertDuplicates = true);
+	void Insert(const T* pArray, int nItems, bool bInsertDuplicates = true);
+
 	// Insert with not found interface to match source engine branches
-	I InsertIfNotFound(T const &insert);
-	
+	I InsertIfNotFound(T const& insert);
+
 	// FindOrInsert method (returns existing index, or inserts if not found)
-	I  FindOrInsert( T const &insert );
+	I FindOrInsert(T const& insert);
 
 	// Find method
-	I  Find( T const &search ) const;
+	I Find(T const& search) const;
 
 	// FindFirst method ( finds first inorder if there are duplicates )
-	I  FindFirst( T const &search ) const;
+	I FindFirst(T const& search) const;
 
 	// First element >= key
-	I  FindClosest( T const &search, CompareOperands_t eFindCriteria ) const;
-	
+	I FindClosest(T const& search, CompareOperands_t eFindCriteria) const;
+
 	// Remove methods
-	void     RemoveAt( I i );
-	bool     Remove( T const &remove );
-	void     RemoveAll();
-	void	 Purge();
+	void RemoveAt(I i);
+	bool Remove(T const& remove);
+	void RemoveAll();
+	void Purge();
 
-	bool HasElement( T const &search ) const;
-			
+	bool HasElement(T const& search) const;
+
 	// Allocation, deletion
-	void  FreeNode( I i );
-	
-	// Iteration
-	I  FirstInorder() const;
-	I  NextInorder( I i ) const;
-	I  PrevInorder( I i ) const;
-	I  LastInorder() const;
-	
-	I  NextPreorder( I i ) const;
-	I  LastPreorder() const;
-	
-	I  FirstPostorder() const;
-	I  NextPostorder( I i ) const;
+	void FreeNode(I i);
 
-	// If you change the search key, this can be used to reinsert the 
+	// Iteration
+	I FirstInorder() const;
+	I NextInorder(I i) const;
+	I PrevInorder(I i) const;
+	I LastInorder() const;
+
+	I NextPreorder(I i) const;
+	I LastPreorder() const;
+
+	I FirstPostorder() const;
+	I NextPostorder(I i) const;
+
+	// If you change the search key, this can be used to reinsert the
 	// element into the tree.
-	void	Reinsert( I elem );
+	void Reinsert(I elem);
 
 	// swap in place
-	void Swap( CUtlRBTree< T, I, L, E > &that );
+	void Swap(CUtlRBTree<T, I, L, E>& that);
 
 	// If you build a container on top of RBTree you need this - otherwise you shouldnt use
 	// Insertion, removal
-	I  InsertAt( I parent, bool leftchild, bool bConstructElement );
-	
+	I InsertAt(I parent, bool leftchild, bool bConstructElement);
+
 	// If you build a container on top of RBTree you need this - otherwise you shouldnt use
 	// Inserts a node into the tree, doesn't copy the data in.
-	void FindInsertionPosition( T const &insert, bool bCheckForDuplicates, I &parent, bool &leftchild, bool &isDuplicate );
+	void
+	FindInsertionPosition(T const& insert, bool bCheckForDuplicates, I& parent, bool& leftchild, bool& isDuplicate);
 
 	// Makes sure we have enough memory allocated to store a requested # of elements
-	void EnsureCapacity( int num );
+	void EnsureCapacity(int num);
 
-	int CubAllocated() { return m_Elements.CubAllocated(); }
+	int CubAllocated()
+	{
+		return m_Elements.CubAllocated();
+	}
 
-	I IteratorNext( I i ) const { return NextInorder( i ); }
-	I IteratorPrev( I i ) const { return i == INVALID_RBTREE_IDX ? LastInorder() : PrevInorder( i ); }
+	I IteratorNext(I i) const
+	{
+		return NextInorder(i);
+	}
+	I IteratorPrev(I i) const
+	{
+		return i == INVALID_RBTREE_IDX ? LastInorder() : PrevInorder(i);
+	}
 
-	struct ProxyTypeIterateUnordered // "this" pointer is reinterpret_cast from CUtlRBTree!
+	struct ProxyTypeIterateUnordered  // "this" pointer is reinterpret_cast from CUtlRBTree!
 	{
 		typedef T ElemType_t;
 		typedef I IndexType_t;
-		T &Element( I i ) { return reinterpret_cast<CUtlRBTree*>(this)->Element( i ); }
-		const T &Element( I i ) const { return reinterpret_cast<const CUtlRBTree*>(this)->Element( i ); }
-		I IteratorNext( I i ) const
+		T& Element(I i)
+		{
+			return reinterpret_cast<CUtlRBTree*>(this)->Element(i);
+		}
+		const T& Element(I i) const
+		{
+			return reinterpret_cast<const CUtlRBTree*>(this)->Element(i);
+		}
+		I IteratorNext(I i) const
 		{
 			const CUtlRBTree* pTree = reinterpret_cast<const CUtlRBTree*>(this);
 			while ( ++i < pTree->MaxElement() )
 			{
-				if ( pTree->IsValidIndex( i ) )
+				if ( pTree->IsValidIndex(i) )
 					return i;
 			}
 			return INVALID_RBTREE_IDX;
 		}
 	};
-	ProxyTypeIterateUnordered &IterateUnordered() { return *reinterpret_cast<ProxyTypeIterateUnordered*>(this); }
-	const ProxyTypeIterateUnordered &IterateUnordered() const { return *reinterpret_cast<const ProxyTypeIterateUnordered*>(this); }
+	ProxyTypeIterateUnordered& IterateUnordered()
+	{
+		return *reinterpret_cast<ProxyTypeIterateUnordered*>(this);
+	}
+	const ProxyTypeIterateUnordered& IterateUnordered() const
+	{
+		return *reinterpret_cast<const ProxyTypeIterateUnordered*>(this);
+	}
 
-	static bool BDiffRBTrees( const CUtlRBTree<T, I, L, E> &rbTreeBase, const CUtlRBTree<T, I, L, E> &rbTreeCompare, CUtlRBTree<T, I, L, E> *prbTreeAdditions = NULL, CUtlRBTree<T, I, L, E> *prbTreeDeletions = NULL );
+	static bool BDiffRBTrees(
+		const CUtlRBTree<T, I, L, E>& rbTreeBase,
+		const CUtlRBTree<T, I, L, E>& rbTreeCompare,
+		CUtlRBTree<T, I, L, E>* prbTreeAdditions = NULL,
+		CUtlRBTree<T, I, L, E>* prbTreeDeletions = NULL);
 
 #ifdef DBGFLAG_VALIDATE
-	void Validate( CValidator &validator, const char *pchName );
-#endif // DBGFLAG_VALIDATE
+	void Validate(CValidator& validator, const char* pchName);
+#endif  // DBGFLAG_VALIDATE
 
 protected:
-	
-  	struct Node_t : public CUtlRBTreeInternal::Links_t<I>
+	struct Node_t : public CUtlRBTreeInternal::Links_t<I>
 	{
-		T  m_Data;
+		T m_Data;
 	};
 
 	//
-	// Inline functions that just pass straight into base, but with extra params.  
+	// Inline functions that just pass straight into base, but with extra params.
 	//
-	// This is done so the bulk of the code can be in the base class, but interfaces to 
+	// This is done so the bulk of the code can be in the base class, but interfaces to
 	// these within child class code can be sane.
 	//
 
-	inline CUtlRBTreeInternal::Links_t<I> const	&Links( I i ) const { return _Links( i, sizeof(Node_t), (void*)m_Elements.Base() ); }
-	inline CUtlRBTreeInternal::Links_t<I>		&Links( I i ){ return this->_Links( i, sizeof(Node_t), (void*)m_Elements.Base() ); }   
+	inline CUtlRBTreeInternal::Links_t<I> const& Links(I i) const
+	{
+		return _Links(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline CUtlRBTreeInternal::Links_t<I>& Links(I i)
+	{
+		return this->_Links(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
 
-	inline void  SetParent( I i, I parent ) { _SetParent( i, parent, sizeof(Node_t), (void*)m_Elements.Base() ); } 
-	inline void  SetLeftChild( I i, I child  ) { this->_SetLeftChild( i, child, sizeof(Node_t), (void*)m_Elements.Base() ); } 
-	inline void  SetRightChild( I i, I child  ) { this->_SetRightChild( i, child, sizeof(Node_t), (void*)m_Elements.Base() ); } 
-	
+	inline void SetParent(I i, I parent)
+	{
+		_SetParent(i, parent, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline void SetLeftChild(I i, I child)
+	{
+		this->_SetLeftChild(i, child, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline void SetRightChild(I i, I child)
+	{
+		this->_SetRightChild(i, child, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+
 	// Checks if a link is red or black
-	inline bool IsRed( I i ) const { return _IsRed( i, sizeof(Node_t), (void*)m_Elements.Base() ); } 
-	inline bool IsBlack( I i ) const { return _IsBlack( i, sizeof(Node_t), (void*)m_Elements.Base() ); } 
+	inline bool IsRed(I i) const
+	{
+		return _IsRed(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline bool IsBlack(I i) const
+	{
+		return _IsBlack(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
 
 	// Sets/gets node color
-	inline CUtlRBTreeInternal::NodeColor_t Color( I i ) const { return _Color( i, sizeof(Node_t), (void*)m_Elements.Base() ); }
-	inline void        SetColor( I i, CUtlRBTreeInternal::NodeColor_t c ) { return _SetColor( i, c, sizeof(Node_t), (void*)m_Elements.Base() ); }
+	inline CUtlRBTreeInternal::NodeColor_t Color(I i) const
+	{
+		return _Color(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline void SetColor(I i, CUtlRBTreeInternal::NodeColor_t c)
+	{
+		return _SetColor(i, c, sizeof(Node_t), (void*)m_Elements.Base());
+	}
 
 	// operations required to preserve tree balance
-	inline void RotateLeft(I i) { _RotateLeft( i, sizeof(Node_t), (void*)m_Elements.Base() ); }
-	inline void RotateRight(I i) { _RotateRight( i, sizeof(Node_t), (void*)m_Elements.Base() ); }
-	inline void InsertRebalance(I i) { _InsertRebalance( i, sizeof(Node_t), (void*)m_Elements.Base() ); }
-	inline void RemoveRebalance(I i) { _RemoveRebalance( i, sizeof(Node_t), (void*)m_Elements.Base() ); }
+	inline void RotateLeft(I i)
+	{
+		_RotateLeft(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline void RotateRight(I i)
+	{
+		_RotateRight(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline void InsertRebalance(I i)
+	{
+		_InsertRebalance(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
+	inline void RemoveRebalance(I i)
+	{
+		_RemoveRebalance(i, sizeof(Node_t), (void*)m_Elements.Base());
+	}
 
-	inline void	Unlink( I elem ) { this->_Unlink( elem, sizeof(Node_t), (void*)m_Elements.Base() ); }
+	inline void Unlink(I elem)
+	{
+		this->_Unlink(elem, sizeof(Node_t), (void*)m_Elements.Base());
+	}
 
 	// Sets the children
-	inline void  LinkToParent( I i, I parent, bool isLeft ) { this->_LinkToParent( i, parent, isLeft, sizeof(Node_t), (void*)m_Elements.Base() ); }
-
+	inline void LinkToParent(I i, I parent, bool isLeft)
+	{
+		this->_LinkToParent(i, parent, isLeft, sizeof(Node_t), (void*)m_Elements.Base());
+	}
 
 	// copy constructors not allowed
-	CUtlRBTree( CUtlRBTree<T, I, L, E> const &tree );
-	
+	CUtlRBTree(CUtlRBTree<T, I, L, E> const& tree);
+
 	// Remove and add back an element in the tree.
-	void	Link( I elem );
+	void Link(I elem);
 
 	// Used for sorting.
 	LessFunc_t m_LessFunc;
-	
-	CUtlMemory<Node_t> m_Elements;		    
-};
 
+	CUtlMemory<Node_t> m_Elements;
+};
 
 //-----------------------------------------------------------------------------
 // constructor, destructor
 //-----------------------------------------------------------------------------
 
-template< class I, class E >
-CUtlRBTreeBase< I, E >::CUtlRBTreeBase()
+template<class I, class E>
+CUtlRBTreeBase<I, E>::CUtlRBTreeBase()
 {
 	m_Root = INVALID_RBTREE_IDX;
 	m_NumElements = 0;
@@ -557,35 +749,35 @@ CUtlRBTreeBase< I, E >::CUtlRBTreeBase()
 	m_Sentinel.m_Tag = CUtlRBTreeInternal::BLACK;
 }
 
-template <class T, class I, typename L, class E>
-inline CUtlRBTree<T, I, L, E>::CUtlRBTree( int growSize, int initSize, const LessFunc_t &lessfunc ) : 
-	CUtlRBTreeBase< I, E >(),
-	m_LessFunc( lessfunc ),
-	m_Elements( growSize, initSize )
+template<class T, class I, typename L, class E>
+inline CUtlRBTree<T, I, L, E>::CUtlRBTree(int growSize, int initSize, const LessFunc_t& lessfunc) :
+	CUtlRBTreeBase<I, E>(),
+	m_LessFunc(lessfunc),
+	m_Elements(growSize, initSize)
 {
-	this->ResetDbgInfo( m_Elements.Base() );
+	this->ResetDbgInfo(m_Elements.Base());
 }
 
-template <class T, class I, typename L, class E>
-inline CUtlRBTree<T, I, L, E>::CUtlRBTree( const LessFunc_t &lessfunc ) : 
-	CUtlRBTreeBase< I, E >(),
-	m_Elements( 0, 0 ), 
-	m_LessFunc( lessfunc )
+template<class T, class I, typename L, class E>
+inline CUtlRBTree<T, I, L, E>::CUtlRBTree(const LessFunc_t& lessfunc) :
+	CUtlRBTreeBase<I, E>(),
+	m_Elements(0, 0),
+	m_LessFunc(lessfunc)
 {
-	this->ResetDbgInfo( m_Elements.Base() );
+	this->ResetDbgInfo(m_Elements.Base());
 }
 
-template <class T, class I, typename L, class E>
-inline CUtlRBTree<T, I, L, E>::CUtlRBTree( const BalanceListener_t &eventListener) :
-	CUtlRBTreeBase< I, E >(),
-	m_Elements( 0, 0 ), 
-	m_LessFunc( NULL )
+template<class T, class I, typename L, class E>
+inline CUtlRBTree<T, I, L, E>::CUtlRBTree(const BalanceListener_t& eventListener) :
+	CUtlRBTreeBase<I, E>(),
+	m_Elements(0, 0),
+	m_LessFunc(NULL)
 {
-	CUtlRBTreeBase< I, E>::m_data = eventListener;
-	this->ResetDbgInfo( m_Elements.Base() );
+	CUtlRBTreeBase<I, E>::m_data = eventListener;
+	this->ResetDbgInfo(m_Elements.Base());
 }
 
-template <class T, class I, typename L, class E> 
+template<class T, class I, typename L, class E>
 inline CUtlRBTree<T, I, L, E>::~CUtlRBTree()
 {
 	RemoveAll();
@@ -595,38 +787,40 @@ inline CUtlRBTree<T, I, L, E>::~CUtlRBTree()
 // gets particular elements
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-inline T &CUtlRBTree<T, I, L, E>::Element( I i )        
-{ 
-	return m_Elements[i].m_Data; 
+template<class T, class I, typename L, class E>
+inline T& CUtlRBTree<T, I, L, E>::Element(I i)
+{
+	return m_Elements[i].m_Data;
 }
 
-template <class T, class I, typename L, class E>
-inline T const &CUtlRBTree<T, I, L, E>::Element( I i ) const  
-{ 
-	return m_Elements[i].m_Data; 
+template<class T, class I, typename L, class E>
+inline T const& CUtlRBTree<T, I, L, E>::Element(I i) const
+{
+	return m_Elements[i].m_Data;
 }
 
-template <class T, class I, typename L, class E>
-inline T &CUtlRBTree<T, I, L, E>::operator[]( I i )        
-{ 
-	return Element(i); 
+template<class T, class I, typename L, class E>
+inline T& CUtlRBTree<T, I, L, E>::operator[](I i)
+{
+	return Element(i);
 }
 
-template <class T, class I, typename L, class E>
-inline T const &CUtlRBTree<T, I, L, E>::operator[]( I i ) const  
-{ 
-	return Element(i); 
+template<class T, class I, typename L, class E>
+inline T const& CUtlRBTree<T, I, L, E>::operator[](I i) const
+{
+	return Element(i);
 }
 
-template <class T, class I, typename L, class E>
-inline T &CUtlRBTree<T, I, L, E>::ElementByLinearIndex( IndexType_t i )
+template<class T, class I, typename L, class E>
+inline T& CUtlRBTree<T, I, L, E>::ElementByLinearIndex(IndexType_t i)
 {
 	IndexType_t cElementsSeen = 0;
 	IndexType_t iterator = 0;
-	for ( ; iterator < CUtlRBTree<T,I,L,E>::MaxElement(); ++iterator )
+	for ( ; iterator < CUtlRBTree<T, I, L, E>::MaxElement(); ++iterator )
 	{
-		if ( !IsValidIndex( iterator ) ) continue; else
+		if ( !IsValidIndex(iterator) )
+			continue;
+		else
 		{
 			if ( cElementsSeen++ == i )
 				break;
@@ -635,14 +829,16 @@ inline T &CUtlRBTree<T, I, L, E>::ElementByLinearIndex( IndexType_t i )
 	return m_Elements[iterator].m_Data;
 }
 
-template <class T, class I, typename L, class E>
-inline const T &CUtlRBTree<T, I, L, E>::ElementByLinearIndex( IndexType_t i ) const
+template<class T, class I, typename L, class E>
+inline const T& CUtlRBTree<T, I, L, E>::ElementByLinearIndex(IndexType_t i) const
 {
 	IndexType_t cElementsSeen = 0;
 	IndexType_t iterator = 0;
-	for ( ; iterator < CUtlRBTree<T,I,L,E>::MaxElement(); ++iterator )
+	for ( ; iterator < CUtlRBTree<T, I, L, E>::MaxElement(); ++iterator )
 	{
-		if ( !IsValidIndex( iterator ) ) continue; else
+		if ( !IsValidIndex(iterator) )
+			continue;
+		else
 		{
 			if ( cElementsSeen == i )
 				break;
@@ -652,26 +848,24 @@ inline const T &CUtlRBTree<T, I, L, E>::ElementByLinearIndex( IndexType_t i ) co
 	return m_Elements[iterator].m_Data;
 }
 
-
-template <class T, class I, typename L, class E>
-inline bool CUtlRBTree<T, I, L, E>::IsValidLinearIndex( IndexType_t i ) const
+template<class T, class I, typename L, class E>
+inline bool CUtlRBTree<T, I, L, E>::IsValidLinearIndex(IndexType_t i) const
 {
-	return i >= 0 && i < (IndexType_t)CUtlRBTree<T,I,L,E>::Count();
+	return i >= 0 && i < (IndexType_t)CUtlRBTree<T, I, L, E>::Count();
 }
 
-
-template <class T, class I, typename L, class E>
-inline CUtlRBTree<T, I, L, E>& CUtlRBTree<T, I, L, E>::operator=( const CUtlRBTree<T, I, L, E> &other )
+template<class T, class I, typename L, class E>
+inline CUtlRBTree<T, I, L, E>& CUtlRBTree<T, I, L, E>::operator=(const CUtlRBTree<T, I, L, E>& other)
 {
 	RemoveAll();
-	EnsureCapacity( other.Count() );
+	EnsureCapacity(other.Count());
 	m_LessFunc = other.m_LessFunc;
 
 	for ( I i = 0; i < other.MaxElement(); ++i )
 	{
-		if ( !other.IsValidIndex( i ) )
+		if ( !other.IsValidIndex(i) )
 			continue;
-		Insert( other[i] );
+		Insert(other[i]);
 	}
 
 	return *this;
@@ -687,29 +881,29 @@ inline CUtlRBTree<T, I, L, E>& CUtlRBTree<T, I, L, E>::operator=( const CUtlRBTr
 // Gets the root
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline	I  CUtlRBTreeBase< I, E >::Root() const             
-{ 
-	return m_Root; 
+template<class I, class E>
+inline I CUtlRBTreeBase<I, E>::Root() const
+{
+	return m_Root;
 }
-	
+
 //-----------------------------------------------------------------------------
 // Num elements
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline	unsigned int CUtlRBTreeBase< I, E >::Count() const          
-{ 
-	return (unsigned int)m_NumElements; 
+template<class I, class E>
+inline unsigned int CUtlRBTreeBase<I, E>::Count() const
+{
+	return (unsigned int)m_NumElements;
 }
 
 //-----------------------------------------------------------------------------
 // Num elements allocated
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-inline	unsigned int CUtlRBTree<T, I, L, E>::NumAllocated() const          
-{ 
+template<class T, class I, typename L, class E>
+inline unsigned int CUtlRBTree<T, I, L, E>::NumAllocated() const
+{
 	return (unsigned int)m_Elements.NumAllocated();
 }
 
@@ -717,102 +911,95 @@ inline	unsigned int CUtlRBTree<T, I, L, E>::NumAllocated() const
 // Max "size" of the vector
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline	I  CUtlRBTreeBase< I, E >::MaxElement() const       
-{ 
-	return (I)m_TotalElements; 
+template<class I, class E>
+inline I CUtlRBTreeBase<I, E>::MaxElement() const
+{
+	return (I)m_TotalElements;
 }
-	
 
 //-----------------------------------------------------------------------------
-// Gets the children                               
+// Gets the children
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-inline	I CUtlRBTree<T, I, L, E>::Parent( I i ) const      
-{ 
-	return CUtlRBTreeBase< I, E >::_Parent( i, sizeof( Node_t ), (void *)m_Elements.Base() );
+template<class T, class I, typename L, class E>
+inline I CUtlRBTree<T, I, L, E>::Parent(I i) const
+{
+	return CUtlRBTreeBase<I, E>::_Parent(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E >
-inline	I CUtlRBTreeBase< I, E >::_Parent( I i, size_t unNodeSize, void *pMemBase ) const      
-{ 
-	return _Links(i, unNodeSize, pMemBase ).m_Parent; 
+template<class I, class E>
+inline I CUtlRBTreeBase<I, E>::_Parent(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return _Links(i, unNodeSize, pMemBase).m_Parent;
 }
 
-
-template <class T, class I, typename L, class E>
-inline	I CUtlRBTree<T, I, L, E>::LeftChild( I i ) const   
-{ 
-	return CUtlRBTreeBase< I, E >::_LeftChild( i, sizeof( Node_t ), (void *)m_Elements.Base() );
+template<class T, class I, typename L, class E>
+inline I CUtlRBTree<T, I, L, E>::LeftChild(I i) const
+{
+	return CUtlRBTreeBase<I, E>::_LeftChild(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E >
-inline	I CUtlRBTreeBase< I, E >::_LeftChild( I i, size_t unNodeSize, void *pMemBase ) const      
-{ 
-	return _Links(i, unNodeSize, pMemBase ).m_Left; 
+template<class I, class E>
+inline I CUtlRBTreeBase<I, E>::_LeftChild(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return _Links(i, unNodeSize, pMemBase).m_Left;
 }
 
-
-template <class T, class I, typename L, class E>
-inline	I CUtlRBTree<T, I, L, E>::RightChild( I i ) const  
-{ 
-	return CUtlRBTreeBase< I, E >::_RightChild( i, sizeof( Node_t ), (void *)m_Elements.Base() );
+template<class T, class I, typename L, class E>
+inline I CUtlRBTree<T, I, L, E>::RightChild(I i) const
+{
+	return CUtlRBTreeBase<I, E>::_RightChild(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E >
-inline	I CUtlRBTreeBase< I, E >::_RightChild( I i, size_t unNodeSize, void *pMemBase ) const      
-{ 
-	return _Links(i, unNodeSize, pMemBase ).m_Right; 
+template<class I, class E>
+inline I CUtlRBTreeBase<I, E>::_RightChild(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return _Links(i, unNodeSize, pMemBase).m_Right;
 }
-	
+
 //-----------------------------------------------------------------------------
 // Tests if a node is a left or right child
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-inline	bool CUtlRBTree<T, I, L, E>::IsLeftChild( I i ) const 
-{ 
-	return _IsLeftChild( i, sizeof( Node_t ), (void*)m_Elements.Base() );
+template<class T, class I, typename L, class E>
+inline bool CUtlRBTree<T, I, L, E>::IsLeftChild(I i) const
+{
+	return _IsLeftChild(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E >
-inline	bool CUtlRBTreeBase< I, E >::_IsLeftChild( I i, size_t unNodeSize, void *pMemBase ) const 
-{ 
-	return _LeftChild(_Parent(i, unNodeSize, pMemBase), unNodeSize, pMemBase ) == i; 
+template<class I, class E>
+inline bool CUtlRBTreeBase<I, E>::_IsLeftChild(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return _LeftChild(_Parent(i, unNodeSize, pMemBase), unNodeSize, pMemBase) == i;
 }
 
-
-
-template <class T, class I, typename L, class E>
-inline	bool CUtlRBTree<T, I, L, E>::IsRightChild( I i ) const
-{ 
-	return _IsRightChild( i, sizeof( Node_t ), (void*)m_Elements.Base() );
+template<class T, class I, typename L, class E>
+inline bool CUtlRBTree<T, I, L, E>::IsRightChild(I i) const
+{
+	return _IsRightChild(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E >
-inline	bool CUtlRBTreeBase< I, E >::_IsRightChild( I i, size_t unNodeSize, void *pMemBase ) const 
-{ 
-	return _RightChild(_Parent(i, unNodeSize, pMemBase), unNodeSize, pMemBase ) == i; 
+template<class I, class E>
+inline bool CUtlRBTreeBase<I, E>::_IsRightChild(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return _RightChild(_Parent(i, unNodeSize, pMemBase), unNodeSize, pMemBase) == i;
 }
-	
 
 //-----------------------------------------------------------------------------
 // Tests if root or leaf
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline	bool CUtlRBTreeBase< I, E >::IsRoot( I i ) const     
-{ 
-	return i == m_Root; 
+template<class I, class E>
+inline bool CUtlRBTreeBase<I, E>::IsRoot(I i) const
+{
+	return i == m_Root;
 }
 
-template <class T, class I, typename L, class E>
-inline	bool CUtlRBTree<T, I, L, E>::IsLeaf( I i ) const     
-{ 
-	return (LeftChild(i) == INVALID_RBTREE_IDX ) && (RightChild(i) == INVALID_RBTREE_IDX ); 
+template<class T, class I, typename L, class E>
+inline bool CUtlRBTree<T, I, L, E>::IsLeaf(I i) const
+{
+	return (LeftChild(i) == INVALID_RBTREE_IDX) && (RightChild(i) == INVALID_RBTREE_IDX);
 }
-	
 
 //-----------------------------------------------------------------------------
 // Checks if a node is valid and in the tree
@@ -821,250 +1008,247 @@ inline	bool CUtlRBTree<T, I, L, E>::IsLeaf( I i ) const
 // like overkill
 //-----------------------------------------------------------------------------
 
-template < class T, class I, typename L, class E>
-inline	bool CUtlRBTree< T, I, L, E>::IsValidIndex( I i ) const 
-{ 
-	return this->_IsValidIndex( i, sizeof( Node_t ), (void*)m_Elements.Base() );
+template<class T, class I, typename L, class E>
+inline bool CUtlRBTree<T, I, L, E>::IsValidIndex(I i) const
+{
+	return this->_IsValidIndex(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E>
-inline	bool CUtlRBTreeBase< I, E>::_IsValidIndex( I i, size_t unNodeSize, void *pMemBase ) const 
-{ 
+template<class I, class E>
+inline bool CUtlRBTreeBase<I, E>::_IsValidIndex(I i, size_t unNodeSize, void* pMemBase) const
+{
 	// gcc correctly notices that in many places we instantiate the template
 	// with an unsigned index type, and the i < 0 check is never true
-#if defined (GNUC) || defined( COMPILER_SNC )
-	if ( i == INVALID_RBTREE_IDX || i >= MaxElement() ) // its outside the bounds of the base container
+#if defined(GNUC) || defined(COMPILER_SNC)
+	if ( i == INVALID_RBTREE_IDX || i >= MaxElement() )  // its outside the bounds of the base container
 #else
-	if ( i < 0 || i >= MaxElement() ) // its outside the bounds of the base container
+	if ( i < 0 || i >= MaxElement() )  // its outside the bounds of the base container
 #endif
 	{
 		return false;
 	}
-	return _LeftChild(i, unNodeSize, pMemBase) != i; 
+	return _LeftChild(i, unNodeSize, pMemBase) != i;
 }
 
-	
 //-----------------------------------------------------------------------------
 // returns the tree depth (not a very fast operation)
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-inline int CUtlRBTree<T, I, L, E>::Depth() const           
-{ 
-	return Depth(CUtlRBTreeBase< I, E >::Root()); 
+template<class T, class I, typename L, class E>
+inline int CUtlRBTree<T, I, L, E>::Depth() const
+{
+	return Depth(CUtlRBTreeBase<I, E>::Root());
 }
 
 //-----------------------------------------------------------------------------
 // Sets the children
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline void  CUtlRBTreeBase< I, E >::_SetParent( I i, I parent, size_t unSizeOfNode, void *pMemBase )       
-{ 
-	_Links( i, unSizeOfNode, pMemBase ).m_Parent = parent; 
+template<class I, class E>
+inline void CUtlRBTreeBase<I, E>::_SetParent(I i, I parent, size_t unSizeOfNode, void* pMemBase)
+{
+	_Links(i, unSizeOfNode, pMemBase).m_Parent = parent;
 }
 
-
-template < class I, class E >
-inline void  CUtlRBTreeBase< I, E >::_SetLeftChild( I i, I child, size_t unSizeOfNode, void *pMemBase )       
-{ 
-	_Links( i, unSizeOfNode, pMemBase ).m_Left = child; 
+template<class I, class E>
+inline void CUtlRBTreeBase<I, E>::_SetLeftChild(I i, I child, size_t unSizeOfNode, void* pMemBase)
+{
+	_Links(i, unSizeOfNode, pMemBase).m_Left = child;
 }
 
-template < class I, class E >
-inline void  CUtlRBTreeBase< I, E >::_SetRightChild( I i, I child, size_t unSizeOfNode, void *pMemBase )       
-{ 
-	_Links( i, unSizeOfNode, pMemBase ).m_Right = child; 
+template<class I, class E>
+inline void CUtlRBTreeBase<I, E>::_SetRightChild(I i, I child, size_t unSizeOfNode, void* pMemBase)
+{
+	_Links(i, unSizeOfNode, pMemBase).m_Right = child;
 }
 
 //-----------------------------------------------------------------------------
 // Gets at the links
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline typename CUtlRBTreeInternal::Links_t<I> const &CUtlRBTreeBase< I, E >::_Links( I i, size_t unNodeSize, void *pMemBase ) const 
+template<class I, class E>
+inline typename CUtlRBTreeInternal::Links_t<I> const&
+CUtlRBTreeBase<I, E>::_Links(I i, size_t unNodeSize, void* pMemBase) const
 {
-	return (i != INVALID_RBTREE_IDX ) ? *(CUtlRBTreeInternal::Links_t<I> *)( (uint8*)pMemBase + (unNodeSize*i) ) : m_Sentinel;
+	return (i != INVALID_RBTREE_IDX) ? *(CUtlRBTreeInternal::Links_t<I>*)((uint8*)pMemBase + (unNodeSize * i))
+									 : m_Sentinel;
 }
 
-template < class I, class E >
-inline typename CUtlRBTreeInternal::Links_t<I> &CUtlRBTreeBase< I, E >::_Links( I i, size_t unNodeSize, void *pMemBase )       
-{ 
-	DbgAssert(i != INVALID_RBTREE_IDX ); 
-	return *(CUtlRBTreeInternal::Links_t<I> *)( (uint8*)pMemBase + (unNodeSize*i) );
+template<class I, class E>
+inline typename CUtlRBTreeInternal::Links_t<I>& CUtlRBTreeBase<I, E>::_Links(I i, size_t unNodeSize, void* pMemBase)
+{
+	DbgAssert(i != INVALID_RBTREE_IDX);
+	return *(CUtlRBTreeInternal::Links_t<I>*)((uint8*)pMemBase + (unNodeSize * i));
 }
 
 //-----------------------------------------------------------------------------
 // Checks if a link is red or black
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline bool CUtlRBTreeBase< I, E >::_IsRed( I i, size_t unNodeSize, void *pMemBase ) const                
-{ 
-	return (_Links(i, unNodeSize, pMemBase).m_Tag == CUtlRBTreeInternal::RED); 
+template<class I, class E>
+inline bool CUtlRBTreeBase<I, E>::_IsRed(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return (_Links(i, unNodeSize, pMemBase).m_Tag == CUtlRBTreeInternal::RED);
 }
 
-template < class I, class E >
-inline bool CUtlRBTreeBase< I, E >::_IsBlack( I i, size_t unNodeSize, void *pMemBase ) const             
-{ 
-	return (_Links(i, unNodeSize, pMemBase).m_Tag == CUtlRBTreeInternal::BLACK); 
+template<class I, class E>
+inline bool CUtlRBTreeBase<I, E>::_IsBlack(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return (_Links(i, unNodeSize, pMemBase).m_Tag == CUtlRBTreeInternal::BLACK);
 }
-
 
 //-----------------------------------------------------------------------------
 // Sets/gets node color
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline CUtlRBTreeInternal::NodeColor_t CUtlRBTreeBase< I, E >::_Color( I i, size_t unNodeSize, void *pMemBase ) const            
-{ 
-	return (CUtlRBTreeInternal::NodeColor_t)_Links( i, unNodeSize, pMemBase ).m_Tag; 
+template<class I, class E>
+inline CUtlRBTreeInternal::NodeColor_t CUtlRBTreeBase<I, E>::_Color(I i, size_t unNodeSize, void* pMemBase) const
+{
+	return (CUtlRBTreeInternal::NodeColor_t)_Links(i, unNodeSize, pMemBase).m_Tag;
 }
 
-template < class I, class E >
-inline void CUtlRBTreeBase< I, E >::_SetColor( I i, CUtlRBTreeInternal::NodeColor_t c, size_t unNodeSize, void *pMemBase ) 
-{ 
-	_Links( i, unNodeSize, pMemBase ).m_Tag = (I)c; 
+template<class I, class E>
+inline void CUtlRBTreeBase<I, E>::_SetColor(I i, CUtlRBTreeInternal::NodeColor_t c, size_t unNodeSize, void* pMemBase)
+{
+	_Links(i, unNodeSize, pMemBase).m_Tag = (I)c;
 }
 
 //-----------------------------------------------------------------------------
 // Allocates/ deallocates nodes
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-I  CUtlRBTree<T, I, L, E>::NewNode( bool bConstructElement )
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::NewNode(bool bConstructElement)
 {
 	I newElem;
-	
+
 	// Nothing in the free list; add.
-	if (CUtlRBTreeBase< I, E >::m_FirstFree == INVALID_RBTREE_IDX )
+	if ( CUtlRBTreeBase<I, E>::m_FirstFree == INVALID_RBTREE_IDX )
 	{
-		if (m_Elements.NumAllocated() == CUtlRBTreeBase< I, E >::m_TotalElements)
+		if ( m_Elements.NumAllocated() == CUtlRBTreeBase<I, E>::m_TotalElements )
 			m_Elements.Grow();
-		newElem = CUtlRBTreeBase< I, E >::m_TotalElements++;
+		newElem = CUtlRBTreeBase<I, E>::m_TotalElements++;
 	}
 	else
 	{
-		newElem = CUtlRBTreeBase< I, E >::m_FirstFree;
-		CUtlRBTreeBase< I, E >::m_FirstFree = RightChild(CUtlRBTreeBase< I, E >::m_FirstFree);
+		newElem = CUtlRBTreeBase<I, E>::m_FirstFree;
+		CUtlRBTreeBase<I, E>::m_FirstFree = RightChild(CUtlRBTreeBase<I, E>::m_FirstFree);
 	}
-	
+
 #ifdef _DEBUG
 	// reset links to invalid....
-	CUtlRBTreeInternal::Links_t<I> &node = Links(newElem);
+	CUtlRBTreeInternal::Links_t<I>& node = Links(newElem);
 	node.m_Left = node.m_Right = node.m_Parent = INVALID_RBTREE_IDX;
 #endif
-	
+
 	if ( bConstructElement )
-		Construct( &Element(newElem) );
-	this->ResetDbgInfo( m_Elements.Base() );
-	
+		Construct(&Element(newElem));
+	this->ResetDbgInfo(m_Elements.Base());
+
 	return newElem;
 }
 
-template <class T, class I, typename L, class E>
-void  CUtlRBTree<T, I, L, E>::FreeNode( I i )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::FreeNode(I i)
 {
-	DbgAssert( IsValidIndex(i) && (i != INVALID_RBTREE_IDX) );
-	Destruct( &Element(i) );
-	SetLeftChild( i, i ); // indicates it's in not in the tree
-	SetRightChild( i, CUtlRBTreeBase< I, E >::m_FirstFree );
-	CUtlRBTreeBase< I, E >::m_FirstFree = i;
+	DbgAssert(IsValidIndex(i) && (i != INVALID_RBTREE_IDX));
+	Destruct(&Element(i));
+	SetLeftChild(i, i);  // indicates it's in not in the tree
+	SetRightChild(i, CUtlRBTreeBase<I, E>::m_FirstFree);
+	CUtlRBTreeBase<I, E>::m_FirstFree = i;
 }
-
 
 //-----------------------------------------------------------------------------
 // Rotates node i to the left
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-void CUtlRBTreeBase< I, E >::_RotateLeft(I elem, size_t unNodeSize, void *pMemBase ) 
+template<class I, class E>
+void CUtlRBTreeBase<I, E>::_RotateLeft(I elem, size_t unNodeSize, void* pMemBase)
 {
-	I rightchild = _RightChild(elem, unNodeSize, pMemBase );
-	_SetRightChild( elem, _LeftChild(rightchild, unNodeSize, pMemBase), unNodeSize, pMemBase );
-	if (_LeftChild(rightchild, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
-		_SetParent( _LeftChild(rightchild, unNodeSize, pMemBase), elem, unNodeSize, pMemBase );
+	I rightchild = _RightChild(elem, unNodeSize, pMemBase);
+	_SetRightChild(elem, _LeftChild(rightchild, unNodeSize, pMemBase), unNodeSize, pMemBase);
+	if ( _LeftChild(rightchild, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
+		_SetParent(_LeftChild(rightchild, unNodeSize, pMemBase), elem, unNodeSize, pMemBase);
 
-	if (rightchild != INVALID_RBTREE_IDX )
-		_SetParent( rightchild, _Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase );
-	if (!IsRoot(elem))
+	if ( rightchild != INVALID_RBTREE_IDX )
+		_SetParent(rightchild, _Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase);
+	if ( !IsRoot(elem) )
 	{
-		if (_IsLeftChild(elem, unNodeSize, pMemBase))
-			_SetLeftChild( _Parent(elem, unNodeSize, pMemBase), rightchild, unNodeSize, pMemBase );
+		if ( _IsLeftChild(elem, unNodeSize, pMemBase) )
+			_SetLeftChild(_Parent(elem, unNodeSize, pMemBase), rightchild, unNodeSize, pMemBase);
 		else
-			_SetRightChild( _Parent(elem, unNodeSize, pMemBase), rightchild, unNodeSize, pMemBase );
+			_SetRightChild(_Parent(elem, unNodeSize, pMemBase), rightchild, unNodeSize, pMemBase);
 	}
 	else
 		m_Root = rightchild;
 
-	_SetLeftChild( rightchild, elem, unNodeSize, pMemBase );
-	if (elem != INVALID_RBTREE_IDX )
-		_SetParent( elem, rightchild, unNodeSize, pMemBase );
+	_SetLeftChild(rightchild, elem, unNodeSize, pMemBase);
+	if ( elem != INVALID_RBTREE_IDX )
+		_SetParent(elem, rightchild, unNodeSize, pMemBase);
 
-	m_data.OnRotateLeft( elem, rightchild );
+	m_data.OnRotateLeft(elem, rightchild);
 }
-
 
 //-----------------------------------------------------------------------------
 // Rotates node i to the right
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-void CUtlRBTreeBase< I, E >::_RotateRight(I elem, size_t unNodeSize, void *pMemBase ) 
+template<class I, class E>
+void CUtlRBTreeBase<I, E>::_RotateRight(I elem, size_t unNodeSize, void* pMemBase)
 {
 	I leftchild = _LeftChild(elem, unNodeSize, pMemBase);
-	_SetLeftChild( elem, _RightChild(leftchild, unNodeSize, pMemBase), unNodeSize, pMemBase );
-	if (_RightChild(leftchild, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
-		_SetParent( _RightChild(leftchild, unNodeSize, pMemBase), elem, unNodeSize, pMemBase );
+	_SetLeftChild(elem, _RightChild(leftchild, unNodeSize, pMemBase), unNodeSize, pMemBase);
+	if ( _RightChild(leftchild, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
+		_SetParent(_RightChild(leftchild, unNodeSize, pMemBase), elem, unNodeSize, pMemBase);
 
-	if (leftchild != INVALID_RBTREE_IDX )
-		_SetParent( leftchild, _Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase );
-	if (!IsRoot(elem))
+	if ( leftchild != INVALID_RBTREE_IDX )
+		_SetParent(leftchild, _Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase);
+	if ( !IsRoot(elem) )
 	{
-		if (_IsRightChild(elem, unNodeSize, pMemBase))
-			_SetRightChild( _Parent(elem, unNodeSize, pMemBase), leftchild, unNodeSize, pMemBase );
+		if ( _IsRightChild(elem, unNodeSize, pMemBase) )
+			_SetRightChild(_Parent(elem, unNodeSize, pMemBase), leftchild, unNodeSize, pMemBase);
 		else
-			_SetLeftChild( _Parent(elem, unNodeSize, pMemBase), leftchild, unNodeSize, pMemBase );
+			_SetLeftChild(_Parent(elem, unNodeSize, pMemBase), leftchild, unNodeSize, pMemBase);
 	}
 	else
 		m_Root = leftchild;
 
-	_SetRightChild( leftchild, elem, unNodeSize, pMemBase );
-	if (elem != INVALID_RBTREE_IDX )
-		_SetParent( elem, leftchild, unNodeSize, pMemBase );
+	_SetRightChild(leftchild, elem, unNodeSize, pMemBase);
+	if ( elem != INVALID_RBTREE_IDX )
+		_SetParent(elem, leftchild, unNodeSize, pMemBase);
 
-	m_data.OnRotateRight( elem, leftchild );
+	m_data.OnRotateRight(elem, leftchild);
 }
-
 
 //-----------------------------------------------------------------------------
 // Rebalances the tree after an insertion
 //-----------------------------------------------------------------------------
 
-template < class I, class E >
-inline void CUtlRBTreeBase< I, E >::_InsertRebalance(I elem, size_t unNodeSize, void *pMemBase)
+template<class I, class E>
+inline void CUtlRBTreeBase<I, E>::_InsertRebalance(I elem, size_t unNodeSize, void* pMemBase)
 {
-	while ( !IsRoot(elem) && (_Color(_Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase) == CUtlRBTreeInternal::RED) )
+	while ( !IsRoot(elem) &&
+			(_Color(_Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase) == CUtlRBTreeInternal::RED) )
 	{
 		I parent = _Parent(elem, unNodeSize, pMemBase);
 		I grandparent = _Parent(parent, unNodeSize, pMemBase);
 
 		/* we have a violation */
-		if (_IsLeftChild(parent, unNodeSize, pMemBase))
+		if ( _IsLeftChild(parent, unNodeSize, pMemBase) )
 		{
 			I uncle = _RightChild(grandparent, unNodeSize, pMemBase);
-			if (_IsRed(uncle, unNodeSize, pMemBase)) 
+			if ( _IsRed(uncle, unNodeSize, pMemBase) )
 			{
 				/* uncle is RED */
 				_SetColor(parent, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 				_SetColor(uncle, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 				_SetColor(grandparent, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 				elem = grandparent;
-			} 
-			else 
+			}
+			else
 			{
 				/* uncle is BLACK */
-				if (_IsRightChild(elem, unNodeSize, pMemBase))
+				if ( _IsRightChild(elem, unNodeSize, pMemBase) )
 				{
 					/* make x a left child, will change parent and grandparent */
 					elem = parent;
@@ -1077,23 +1261,23 @@ inline void CUtlRBTreeBase< I, E >::_InsertRebalance(I elem, size_t unNodeSize, 
 				_SetColor(grandparent, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 				_RotateRight(grandparent, unNodeSize, pMemBase);
 			}
-		} 
-		else 
+		}
+		else
 		{
 			/* mirror image of above code */
 			I uncle = _LeftChild(grandparent, unNodeSize, pMemBase);
-			if (_IsRed(uncle, unNodeSize, pMemBase)) 
+			if ( _IsRed(uncle, unNodeSize, pMemBase) )
 			{
 				/* uncle is RED */
 				_SetColor(parent, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 				_SetColor(uncle, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 				_SetColor(grandparent, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 				elem = grandparent;
-			} 
-			else 
+			}
+			else
 			{
 				/* uncle is BLACK */
-				if (_IsLeftChild(elem, unNodeSize, pMemBase))
+				if ( _IsLeftChild(elem, unNodeSize, pMemBase) )
 				{
 					/* make x a right child, will change parent and grandparent */
 					elem = parent;
@@ -1108,154 +1292,163 @@ inline void CUtlRBTreeBase< I, E >::_InsertRebalance(I elem, size_t unNodeSize, 
 			}
 		}
 	}
-	_SetColor( m_Root, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase );
+	_SetColor(m_Root, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 }
-
 
 //-----------------------------------------------------------------------------
 // Insert a node into the tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-I CUtlRBTree<T, I, L, E>::InsertAt( I parent, bool leftchild, bool bConstructElement )
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::InsertAt(I parent, bool leftchild, bool bConstructElement)
 {
-	I i = NewNode( bConstructElement );
-	LinkToParent( i, parent, leftchild );
-	++CUtlRBTreeBase< I, E >::m_NumElements;
+	I i = NewNode(bConstructElement);
+	LinkToParent(i, parent, leftchild);
+	++CUtlRBTreeBase<I, E>::m_NumElements;
 	return i;
 }
 
-template < class I, class E >
-void CUtlRBTreeBase<I, E>::_LinkToParent( I i, I parent, bool isLeft, size_t unNodeSize, void *pMemBase )
+template<class I, class E>
+void CUtlRBTreeBase<I, E>::_LinkToParent(I i, I parent, bool isLeft, size_t unNodeSize, void* pMemBase)
 {
-	CUtlRBTreeInternal::Links_t<I> &elem = _Links(i, unNodeSize, pMemBase );
+	CUtlRBTreeInternal::Links_t<I>& elem = _Links(i, unNodeSize, pMemBase);
 	elem.m_Parent = parent;
 	elem.m_Left = elem.m_Right = INVALID_RBTREE_IDX;
 	elem.m_Tag = CUtlRBTreeInternal::RED;
-	
+
 	/* insert node in tree */
-	if (parent != INVALID_RBTREE_IDX) 
+	if ( parent != INVALID_RBTREE_IDX )
 	{
-		if (isLeft)
+		if ( isLeft )
 			_Links(parent, unNodeSize, pMemBase).m_Left = i;
 		else
 			_Links(parent, unNodeSize, pMemBase).m_Right = i;
-	} 
-	else 
+	}
+	else
 	{
 		m_Root = i;
 	}
-	m_data.OnLinkToParent( i );
-	
-	_InsertRebalance(i, unNodeSize, pMemBase );	
+	m_data.OnLinkToParent(i);
 
-	DbgAssert(_IsValid( unNodeSize, pMemBase ));
+	_InsertRebalance(i, unNodeSize, pMemBase);
+
+	DbgAssert(_IsValid(unNodeSize, pMemBase));
 }
 
 //-----------------------------------------------------------------------------
 // Rebalance the tree after a deletion
 //-----------------------------------------------------------------------------
 
-template <class I, class E>
-void CUtlRBTreeBase< I, E>::_RemoveRebalance(I elem, size_t unNodeSize, void *pMemBase ) 
+template<class I, class E>
+void CUtlRBTreeBase<I, E>::_RemoveRebalance(I elem, size_t unNodeSize, void* pMemBase)
 {
-	while (elem != m_Root && _IsBlack(elem, unNodeSize, pMemBase)) 
+	while ( elem != m_Root && _IsBlack(elem, unNodeSize, pMemBase) )
 	{
 		I parent = _Parent(elem, unNodeSize, pMemBase);
-		
+
 		// If elem is the left child of the parent
-		if (elem == _LeftChild(parent, unNodeSize, pMemBase)) 
+		if ( elem == _LeftChild(parent, unNodeSize, pMemBase) )
 		{
 			// Get our sibling
 			I sibling = _RightChild(parent, unNodeSize, pMemBase);
-			if (_IsRed(sibling, unNodeSize, pMemBase)) 
-            {
+			if ( _IsRed(sibling, unNodeSize, pMemBase) )
+			{
 				_SetColor(sibling, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 				_SetColor(parent, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 				_RotateLeft(parent, unNodeSize, pMemBase);
-				
+
 				// We may have a new parent now
 				parent = _Parent(elem, unNodeSize, pMemBase);
 				sibling = _RightChild(parent, unNodeSize, pMemBase);
-            }
-			if ( (_IsBlack(_LeftChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) && (_IsBlack(_RightChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) ) 
-            {
-				if (sibling != INVALID_RBTREE_IDX)
+			}
+			if ( (_IsBlack(_LeftChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) &&
+				 (_IsBlack(_RightChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) )
+			{
+				if ( sibling != INVALID_RBTREE_IDX )
 					_SetColor(sibling, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 				elem = parent;
-            }
+			}
 			else
-            {
-				if (_IsBlack(_RightChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase))
+			{
+				if ( _IsBlack(_RightChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase) )
 				{
-					_SetColor(_LeftChild(sibling, unNodeSize, pMemBase), CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
+					_SetColor(
+						_LeftChild(sibling, unNodeSize, pMemBase),
+						CUtlRBTreeInternal::BLACK,
+						unNodeSize,
+						pMemBase);
 					_SetColor(sibling, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 					_RotateRight(sibling, unNodeSize, pMemBase);
-					
+
 					// rotation may have changed this
 					parent = _Parent(elem, unNodeSize, pMemBase);
 					sibling = _RightChild(parent, unNodeSize, pMemBase);
 				}
-				_SetColor( sibling, _Color(parent, unNodeSize, pMemBase), unNodeSize, pMemBase );
-				_SetColor( parent, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase );
-				_SetColor( _RightChild(sibling, unNodeSize, pMemBase), CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase );
-				_RotateLeft( parent, unNodeSize, pMemBase );
+				_SetColor(sibling, _Color(parent, unNodeSize, pMemBase), unNodeSize, pMemBase);
+				_SetColor(parent, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
+				_SetColor(_RightChild(sibling, unNodeSize, pMemBase), CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
+				_RotateLeft(parent, unNodeSize, pMemBase);
 				elem = m_Root;
-            }
+			}
 		}
-		else 
+		else
 		{
 			// Elem is the right child of the parent
 			I sibling = _LeftChild(parent, unNodeSize, pMemBase);
-			if (_IsRed(sibling, unNodeSize, pMemBase)) 
-            {
+			if ( _IsRed(sibling, unNodeSize, pMemBase) )
+			{
 				_SetColor(sibling, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 				_SetColor(parent, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 				_RotateRight(parent, unNodeSize, pMemBase);
-				
+
 				// We may have a new parent now
 				parent = _Parent(elem, unNodeSize, pMemBase);
 				sibling = _LeftChild(parent, unNodeSize, pMemBase);
-            }
-			if ( (_IsBlack(_RightChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) && (_IsBlack(_LeftChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) )
-            {
-				if (sibling != INVALID_RBTREE_IDX) 
-					_SetColor( sibling, CUtlRBTreeInternal::RED, unNodeSize, pMemBase );
+			}
+			if ( (_IsBlack(_RightChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) &&
+				 (_IsBlack(_LeftChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase)) )
+			{
+				if ( sibling != INVALID_RBTREE_IDX )
+					_SetColor(sibling, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
 				elem = parent;
-            } 
-			else 
-            {
-				if (_IsBlack(_LeftChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase))
+			}
+			else
+			{
+				if ( _IsBlack(_LeftChild(sibling, unNodeSize, pMemBase), unNodeSize, pMemBase) )
 				{
-					_SetColor( _RightChild(sibling, unNodeSize, pMemBase), CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase );
-					_SetColor( sibling, CUtlRBTreeInternal::RED, unNodeSize, pMemBase );
-					_RotateLeft( sibling, unNodeSize, pMemBase );
-					
+					_SetColor(
+						_RightChild(sibling, unNodeSize, pMemBase),
+						CUtlRBTreeInternal::BLACK,
+						unNodeSize,
+						pMemBase);
+					_SetColor(sibling, CUtlRBTreeInternal::RED, unNodeSize, pMemBase);
+					_RotateLeft(sibling, unNodeSize, pMemBase);
+
 					// rotation may have changed this
 					parent = _Parent(elem, unNodeSize, pMemBase);
 					sibling = _LeftChild(parent, unNodeSize, pMemBase);
 				}
-				_SetColor( sibling, _Color(parent, unNodeSize, pMemBase), unNodeSize, pMemBase );
-				_SetColor( parent, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase );
-				_SetColor( _LeftChild(sibling, unNodeSize, pMemBase), CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase );
-				_RotateRight( parent, unNodeSize, pMemBase );
+				_SetColor(sibling, _Color(parent, unNodeSize, pMemBase), unNodeSize, pMemBase);
+				_SetColor(parent, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
+				_SetColor(_LeftChild(sibling, unNodeSize, pMemBase), CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
+				_RotateRight(parent, unNodeSize, pMemBase);
 				elem = m_Root;
-            }
+			}
 		}
 	}
-	_SetColor( elem, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase );
+	_SetColor(elem, CUtlRBTreeInternal::BLACK, unNodeSize, pMemBase);
 }
 
-template < class I, class E>
-void CUtlRBTreeBase<I, E>::_Unlink( I elem, size_t unNodeSize, void *pMemBase )
+template<class I, class E>
+void CUtlRBTreeBase<I, E>::_Unlink(I elem, size_t unNodeSize, void* pMemBase)
 {
-	Assert( _IsValidIndex( elem, unNodeSize, pMemBase ) );
-	if ( _IsValidIndex( elem, unNodeSize, pMemBase ) )
+	Assert(_IsValidIndex(elem, unNodeSize, pMemBase));
+	if ( _IsValidIndex(elem, unNodeSize, pMemBase) )
 	{
 		I x, y;
-		
-		if ((_LeftChild(elem, unNodeSize, pMemBase) == INVALID_RBTREE_IDX) || 
-			(_RightChild(elem, unNodeSize, pMemBase) == INVALID_RBTREE_IDX))
+
+		if ( (_LeftChild(elem, unNodeSize, pMemBase) == INVALID_RBTREE_IDX) ||
+			 (_RightChild(elem, unNodeSize, pMemBase) == INVALID_RBTREE_IDX) )
 		{
 			/* y has a NIL node as a child */
 			y = elem;
@@ -1264,10 +1457,10 @@ void CUtlRBTreeBase<I, E>::_Unlink( I elem, size_t unNodeSize, void *pMemBase )
 		{
 			/* find tree successor with a NIL node as a child */
 			y = _RightChild(elem, unNodeSize, pMemBase);
-			while (_LeftChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+			while ( _LeftChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 			{
-				Assert( _IsValidIndex( y, unNodeSize, pMemBase ) );
-				if ( !_IsValidIndex( y, unNodeSize, pMemBase ) )
+				Assert(_IsValidIndex(y, unNodeSize, pMemBase));
+				if ( !_IsValidIndex(y, unNodeSize, pMemBase) )
 					return;
 
 				y = _LeftChild(y, unNodeSize, pMemBase);
@@ -1275,62 +1468,62 @@ void CUtlRBTreeBase<I, E>::_Unlink( I elem, size_t unNodeSize, void *pMemBase )
 		}
 
 		// Need to notify any listeners that we are going to unlink this node
-		m_data.OnPreUnlink( y );
-		
+		m_data.OnPreUnlink(y);
+
 		/* x is y's only child */
-		if (_LeftChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+		if ( _LeftChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 			x = _LeftChild(y, unNodeSize, pMemBase);
 		else
 			x = _RightChild(y, unNodeSize, pMemBase);
-		
+
 		/* remove y from the parent chain */
-		if (x != INVALID_RBTREE_IDX)
-			_SetParent( x, _Parent(y, unNodeSize, pMemBase), unNodeSize, pMemBase );
-		if (!IsRoot(y))
+		if ( x != INVALID_RBTREE_IDX )
+			_SetParent(x, _Parent(y, unNodeSize, pMemBase), unNodeSize, pMemBase);
+		if ( !IsRoot(y) )
 		{
-			if (_IsLeftChild(y, unNodeSize, pMemBase))
-				_SetLeftChild( _Parent(y, unNodeSize, pMemBase), x, unNodeSize, pMemBase );
+			if ( _IsLeftChild(y, unNodeSize, pMemBase) )
+				_SetLeftChild(_Parent(y, unNodeSize, pMemBase), x, unNodeSize, pMemBase);
 			else
-				_SetRightChild( _Parent(y, unNodeSize, pMemBase), x, unNodeSize, pMemBase );
+				_SetRightChild(_Parent(y, unNodeSize, pMemBase), x, unNodeSize, pMemBase);
 		}
 		else
 			m_Root = x;
-		
+
 		// need to store this off now, we'll be resetting y's color
 		CUtlRBTreeInternal::NodeColor_t ycolor = _Color(y, unNodeSize, pMemBase);
-		if (y != elem)
+		if ( y != elem )
 		{
 			// Standard implementations copy the data around, we cannot here.
 			// Hook in y to link to the same stuff elem used to.
-			_SetParent( y, _Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase );
-			_SetRightChild( y, _RightChild(elem, unNodeSize, pMemBase), unNodeSize, pMemBase );
-			_SetLeftChild( y, _LeftChild(elem, unNodeSize, pMemBase), unNodeSize, pMemBase );
-			
-			if (!IsRoot(elem))
-				if (_IsLeftChild(elem, unNodeSize, pMemBase))
-					_SetLeftChild( _Parent(elem, unNodeSize, pMemBase), y, unNodeSize, pMemBase );
-				else
-					_SetRightChild( _Parent(elem, unNodeSize, pMemBase), y, unNodeSize, pMemBase );
-				else
-					m_Root = y;
-				
-				if (_LeftChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
-					_SetParent( _LeftChild(y, unNodeSize, pMemBase), y, unNodeSize, pMemBase );
-				if (_RightChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
-					_SetParent( _RightChild(y, unNodeSize, pMemBase), y, unNodeSize, pMemBase );
-				
-				_SetColor( y, _Color(elem, unNodeSize, pMemBase), unNodeSize, pMemBase );
+			_SetParent(y, _Parent(elem, unNodeSize, pMemBase), unNodeSize, pMemBase);
+			_SetRightChild(y, _RightChild(elem, unNodeSize, pMemBase), unNodeSize, pMemBase);
+			_SetLeftChild(y, _LeftChild(elem, unNodeSize, pMemBase), unNodeSize, pMemBase);
 
-			m_data.OnRelinkSuccessor( y );
+			if ( !IsRoot(elem) )
+				if ( _IsLeftChild(elem, unNodeSize, pMemBase) )
+					_SetLeftChild(_Parent(elem, unNodeSize, pMemBase), y, unNodeSize, pMemBase);
+				else
+					_SetRightChild(_Parent(elem, unNodeSize, pMemBase), y, unNodeSize, pMemBase);
+			else
+				m_Root = y;
+
+			if ( _LeftChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
+				_SetParent(_LeftChild(y, unNodeSize, pMemBase), y, unNodeSize, pMemBase);
+			if ( _RightChild(y, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
+				_SetParent(_RightChild(y, unNodeSize, pMemBase), y, unNodeSize, pMemBase);
+
+			_SetColor(y, _Color(elem, unNodeSize, pMemBase), unNodeSize, pMemBase);
+
+			m_data.OnRelinkSuccessor(y);
 		}
-		
-		if ((x != INVALID_RBTREE_IDX) && (ycolor == CUtlRBTreeInternal::BLACK))
+
+		if ( (x != INVALID_RBTREE_IDX) && (ycolor == CUtlRBTreeInternal::BLACK) )
 			_RemoveRebalance(x, unNodeSize, pMemBase);
 	}
 }
 
-template <class T, class I, typename L, class E>
-void CUtlRBTree<T, I, L, E>::Link( I elem )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::Link(I elem)
 {
 	if ( elem != INVALID_RBTREE_IDX )
 	{
@@ -1338,9 +1531,9 @@ void CUtlRBTree<T, I, L, E>::Link( I elem )
 		bool leftchild;
 		bool duplicate;
 
-		FindInsertionPosition( Element( elem ), false,  parent, leftchild, duplicate );
+		FindInsertionPosition(Element(elem), false, parent, leftchild, duplicate);
 
-		LinkToParent( elem, parent, leftchild );
+		LinkToParent(elem, parent, leftchild);
 	}
 }
 
@@ -1348,28 +1541,28 @@ void CUtlRBTree<T, I, L, E>::Link( I elem )
 // Delete a node from the tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-void CUtlRBTree<T, I, L, E>::RemoveAt(I elem) 
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::RemoveAt(I elem)
 {
-	Assert( IsValidIndex( elem ) );
-	if ( IsValidIndex( elem ) )
+	Assert(IsValidIndex(elem));
+	if ( IsValidIndex(elem) )
 	{
-		Unlink( elem );
+		Unlink(elem);
 
 		FreeNode(elem);
-		--CUtlRBTreeBase< I, E >::m_NumElements;
+		--CUtlRBTreeBase<I, E>::m_NumElements;
 	}
 }
-
 
 //-----------------------------------------------------------------------------
 // remove a node in the tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E> bool CUtlRBTree<T, I, L, E>::Remove( T const &search )
+template<class T, class I, typename L, class E>
+bool CUtlRBTree<T, I, L, E>::Remove(T const& search)
 {
-	I node = Find( search );
-	if (node != INVALID_RBTREE_IDX)
+	I node = Find(search);
+	if ( node != INVALID_RBTREE_IDX )
 	{
 		RemoveAt(node);
 		return true;
@@ -1377,12 +1570,11 @@ template <class T, class I, typename L, class E> bool CUtlRBTree<T, I, L, E>::Re
 	return false;
 }
 
-
 //-----------------------------------------------------------------------------
 // Removes all nodes from the tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
+template<class T, class I, typename L, class E>
 void CUtlRBTree<T, I, L, E>::RemoveAll()
 {
 	// Just iterate through the whole list and add to free list
@@ -1390,150 +1582,149 @@ void CUtlRBTree<T, I, L, E>::RemoveAll()
 	// also, do it so the free list is pointing to stuff in order
 	// to get better cache coherence when re-adding stuff to this tree.
 	I prev = INVALID_RBTREE_IDX;
-	for (int i = (int)CUtlRBTreeBase< I, E >::m_TotalElements; --i >= 0; )
+	for ( int i = (int)CUtlRBTreeBase<I, E>::m_TotalElements; --i >= 0; )
 	{
 		I idx = (I)i;
-		if (IsValidIndex(idx))
-			Destruct( &Element(idx) );
-		SetRightChild( idx, prev );
-		SetLeftChild( idx, idx );
+		if ( IsValidIndex(idx) )
+			Destruct(&Element(idx));
+		SetRightChild(idx, prev);
+		SetLeftChild(idx, idx);
 		prev = idx;
 	}
-	CUtlRBTreeBase< I, E >::m_FirstFree = CUtlRBTreeBase< I, E >::m_TotalElements ? (I)0 : INVALID_RBTREE_IDX;
-	CUtlRBTreeBase< I, E >::m_Root = INVALID_RBTREE_IDX;
-	CUtlRBTreeBase< I, E >::m_NumElements = 0;
+	CUtlRBTreeBase<I, E>::m_FirstFree = CUtlRBTreeBase<I, E>::m_TotalElements ? (I)0 : INVALID_RBTREE_IDX;
+	CUtlRBTreeBase<I, E>::m_Root = INVALID_RBTREE_IDX;
+	CUtlRBTreeBase<I, E>::m_NumElements = 0;
 }
-
 
 //-----------------------------------------------------------------------------
 // purge
 //-----------------------------------------------------------------------------
-template <class T, class I, typename L, class E>
+template<class T, class I, typename L, class E>
 void CUtlRBTree<T, I, L, E>::Purge()
 {
 	RemoveAll();
-	CUtlRBTreeBase< I, E >::m_FirstFree = INVALID_RBTREE_IDX;
-	CUtlRBTreeBase< I, E >::m_TotalElements = 0;
+	CUtlRBTreeBase<I, E>::m_FirstFree = INVALID_RBTREE_IDX;
+	CUtlRBTreeBase<I, E>::m_TotalElements = 0;
 	m_Elements.Purge();
-	this->ResetDbgInfo( m_Elements.Base() );
+	this->ResetDbgInfo(m_Elements.Base());
 }
 
 //-----------------------------------------------------------------------------
 // iteration
 //-----------------------------------------------------------------------------
-template <class T, class I, typename L, class E>
+template<class T, class I, typename L, class E>
 inline I CUtlRBTree<T, I, L, E>::FirstInorder() const
 {
-	return CUtlRBTreeBase<I,E>::_FirstInorder( sizeof( Node_t ), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_FirstInorder(sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template <class I, class E>
-I CUtlRBTreeBase<I, E>::_FirstInorder( size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_FirstInorder(size_t unNodeSize, void* pMemBase) const
 {
 	I i = m_Root;
-	while (_LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+	while ( _LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 		i = _LeftChild(i, unNodeSize, pMemBase);
 	return i;
 }
 
-
-template <class T, class I, typename L, class E>
-inline I CUtlRBTree<T, I, L, E>::NextInorder( I i ) const
+template<class T, class I, typename L, class E>
+inline I CUtlRBTree<T, I, L, E>::NextInorder(I i) const
 {
-	return CUtlRBTreeBase<I,E>::_NextInorder( i, sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_NextInorder(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template <class I, class E>
-I CUtlRBTreeBase<I, E>::_NextInorder( I i, size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_NextInorder(I i, size_t unNodeSize, void* pMemBase) const
 {
-	DbgAssert(_IsValidIndex(i, unNodeSize, pMemBase ));
-	
-	if (_RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+	DbgAssert(_IsValidIndex(i, unNodeSize, pMemBase));
+
+	if ( _RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 	{
 		i = _RightChild(i, unNodeSize, pMemBase);
-		while (_LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+		while ( _LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 			i = _LeftChild(i, unNodeSize, pMemBase);
 		return i;
 	}
-	
+
 	I parent = _Parent(i, unNodeSize, pMemBase);
-	while (_IsRightChild(i, unNodeSize, pMemBase))
+	while ( _IsRightChild(i, unNodeSize, pMemBase) )
 	{
 		i = parent;
-		if (i == INVALID_RBTREE_IDX) break;
+		if ( i == INVALID_RBTREE_IDX )
+			break;
 		parent = _Parent(i, unNodeSize, pMemBase);
 	}
 	return parent;
 }
 
-template <class T, class I, typename L, class E>
-inline I CUtlRBTree<T, I, L, E>::PrevInorder( I i ) const
+template<class T, class I, typename L, class E>
+inline I CUtlRBTree<T, I, L, E>::PrevInorder(I i) const
 {
-	return CUtlRBTreeBase<I,E>::_PrevInorder( i, sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_PrevInorder(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-
-template <class I, class E>
-I CUtlRBTreeBase<I, E>::_PrevInorder( I i, size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_PrevInorder(I i, size_t unNodeSize, void* pMemBase) const
 {
 	DbgAssert(_IsValidIndex(i, unNodeSize, pMemBase));
-	
-	if (_LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+
+	if ( _LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 	{
 		i = _LeftChild(i, unNodeSize, pMemBase);
-		while (_RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+		while ( _RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 			i = _RightChild(i, unNodeSize, pMemBase);
 		return i;
 	}
-	
+
 	I parent = _Parent(i, unNodeSize, pMemBase);
-	while (_IsLeftChild(i, unNodeSize, pMemBase))
+	while ( _IsLeftChild(i, unNodeSize, pMemBase) )
 	{
 		i = parent;
-		if (i == INVALID_RBTREE_IDX) break;
+		if ( i == INVALID_RBTREE_IDX )
+			break;
 		parent = _Parent(i, unNodeSize, pMemBase);
 	}
 	return parent;
 }
 
-template <class T, class I, typename L, class E>
+template<class T, class I, typename L, class E>
 inline I CUtlRBTree<T, I, L, E>::LastInorder() const
 {
-	return CUtlRBTreeBase<I,E>::_LastInorder( sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_LastInorder(sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template <class I, class E>
-I CUtlRBTreeBase<I, E>::_LastInorder( size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_LastInorder(size_t unNodeSize, void* pMemBase) const
 {
 	I i = m_Root;
-	while (_RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+	while ( _RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 		i = _RightChild(i, unNodeSize, pMemBase);
 	return i;
 }
 
-template <class I, class E>
-I CUtlRBTreeBase< I, E >::FirstPreorder() const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::FirstPreorder() const
 {
 	return m_Root;
 }
 
-template <class T, class I, typename L, class E>
-inline I CUtlRBTree<T, I, L, E>::NextPreorder( I i ) const
+template<class T, class I, typename L, class E>
+inline I CUtlRBTree<T, I, L, E>::NextPreorder(I i) const
 {
-	return CUtlRBTreeBase<I,E>::_NextPreorder( i, sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_NextPreorder(i, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template <class I, class E>
-I CUtlRBTreeBase<I, E>::_NextPreorder( I i, size_t unNodeSize, void *pMemBase  ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_NextPreorder(I i, size_t unNodeSize, void* pMemBase) const
 {
-	if (_LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+	if ( _LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 		return _LeftChild(i, unNodeSize, pMemBase);
-	
-	if (_RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+
+	if ( _RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 		return _RightChild(i, unNodeSize, pMemBase);
-	
+
 	I parent = _Parent(i, unNodeSize, pMemBase);
-	while( parent != INVALID_RBTREE_IDX)
+	while ( parent != INVALID_RBTREE_IDX )
 	{
 		if ( _IsLeftChild(i, unNodeSize, pMemBase) && (_RightChild(parent) != INVALID_RBTREE_IDX) )
 			return _RightChild(parent, unNodeSize, pMemBase);
@@ -1543,29 +1734,29 @@ I CUtlRBTreeBase<I, E>::_NextPreorder( I i, size_t unNodeSize, void *pMemBase  )
 	return INVALID_RBTREE_IDX;
 }
 
-template <class I, class E>
-I CUtlRBTreeBase<I, E>::PrevPreorder( I i ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::PrevPreorder(I i) const
 {
 	Assert(0);  // not implemented yet
 	return INVALID_RBTREE_IDX;
 }
 
-template <class T, class I, typename L, class E>
+template<class T, class I, typename L, class E>
 inline I CUtlRBTree<T, I, L, E>::LastPreorder() const
 {
-	return CUtlRBTreeBase<I,E>::_LastPreorder( sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_LastPreorder(sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E >
-I CUtlRBTreeBase<I, E>::_LastPreorder( size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_LastPreorder(size_t unNodeSize, void* pMemBase) const
 {
 	I i = m_Root;
-	for (;;)
+	for ( ;; )
 	{
-		while (_RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+		while ( _RightChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 			i = _RightChild(i, unNodeSize, pMemBase);
-		
-		if (_LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX)
+
+		if ( _LeftChild(i, unNodeSize, pMemBase) != INVALID_RBTREE_IDX )
 			i = _LeftChild(i, unNodeSize, pMemBase);
 		else
 			break;
@@ -1573,19 +1764,19 @@ I CUtlRBTreeBase<I, E>::_LastPreorder( size_t unNodeSize, void *pMemBase ) const
 	return i;
 }
 
-template <class T, class I, typename L, class E>
+template<class T, class I, typename L, class E>
 inline I CUtlRBTree<T, I, L, E>::FirstPostorder() const
 {
-	return CUtlRBTreeBase<I,E>::_FirstPostorder( sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_FirstPostorder(sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template < class I, class E>
-I CUtlRBTreeBase<I, E>::_FirstPostorder(size_t unNodeSize, void *pMemBase) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_FirstPostorder(size_t unNodeSize, void* pMemBase) const
 {
 	I i = m_Root;
-	while (!_IsLeaf(i, unNodeSize, pMemBase))
+	while ( !_IsLeaf(i, unNodeSize, pMemBase) )
 	{
-		if (_LeftChild(i, unNodeSize, pMemBase))
+		if ( _LeftChild(i, unNodeSize, pMemBase) )
 			i = _LeftChild(i, unNodeSize, pMemBase);
 		else
 			i = _RightChild(i, unNodeSize, pMemBase);
@@ -1593,30 +1784,29 @@ I CUtlRBTreeBase<I, E>::_FirstPostorder(size_t unNodeSize, void *pMemBase) const
 	return i;
 }
 
-template <class T, class I, typename L, class E>
-inline I CUtlRBTree<T, I, L, E>::NextPostorder( I i ) const
+template<class T, class I, typename L, class E>
+inline I CUtlRBTree<T, I, L, E>::NextPostorder(I i) const
 {
-	return CUtlRBTreeBase<I,E>::_NextPostorder( sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_NextPostorder(sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template <class I, class E>
-I CUtlRBTreeBase<I, E>::_NextPostorder( I i, size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+I CUtlRBTreeBase<I, E>::_NextPostorder(I i, size_t unNodeSize, void* pMemBase) const
 {
-
 	I parent = _Parent(i, unNodeSize, pMemBase);
-	if (parent == INVALID_RBTREE_IDX)
+	if ( parent == INVALID_RBTREE_IDX )
 		return INVALID_RBTREE_IDX;
-	
-	if (_IsRightChild(i, unNodeSize, pMemBase))
+
+	if ( _IsRightChild(i, unNodeSize, pMemBase) )
 		return parent;
-	
-	if (_RightChild(parent, unNodeSize, pMemBase) == INVALID_RBTREE_IDX)
+
+	if ( _RightChild(parent, unNodeSize, pMemBase) == INVALID_RBTREE_IDX )
 		return parent;
-	
+
 	i = _RightChild(parent, unNodeSize, pMemBase);
-	while (!_IsLeaf(i, unNodeSize, pMemBase))
+	while ( !_IsLeaf(i, unNodeSize, pMemBase) )
 	{
-		if (_LeftChild(i, unNodeSize, pMemBase))
+		if ( _LeftChild(i, unNodeSize, pMemBase) )
 			i = _LeftChild(i, unNodeSize, pMemBase);
 		else
 			i = _RightChild(i, unNodeSize, pMemBase);
@@ -1624,127 +1814,123 @@ I CUtlRBTreeBase<I, E>::_NextPostorder( I i, size_t unNodeSize, void *pMemBase )
 	return i;
 }
 
-
-template <class T, class I, typename L, class E>
-void CUtlRBTree<T, I, L, E>::Reinsert( I elem )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::Reinsert(I elem)
 {
-	Unlink( elem );
-	Link( elem );
+	Unlink(elem);
+	Link(elem);
 }
-
 
 //-----------------------------------------------------------------------------
 // returns the tree depth (not a very fast operation)
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
-inline int CUtlRBTree<T, I, L, E>::Depth( I node ) const
+template<class T, class I, typename L, class E>
+inline int CUtlRBTree<T, I, L, E>::Depth(I node) const
 {
-	return CUtlRBTreeBase<I,E>::_Depth( node, sizeof( Node_t ), (void*)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_Depth(node, sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template <class I, class E>
-int CUtlRBTreeBase<I, E>::_Depth( I node, size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+int CUtlRBTreeBase<I, E>::_Depth(I node, size_t unNodeSize, void* pMemBase) const
 {
-	if (node == INVALID_RBTREE_IDX)
+	if ( node == INVALID_RBTREE_IDX )
 		return 0;
-	
-	int depthright = _Depth( _RightChild(node, unNodeSize, pMemBase), unNodeSize, pMemBase );
-	int depthleft = _Depth( _LeftChild(node, unNodeSize, pMemBase), unNodeSize, pMemBase );
-	return ( Max(depthright, depthleft) + 1 );
-}
 
+	int depthright = _Depth(_RightChild(node, unNodeSize, pMemBase), unNodeSize, pMemBase);
+	int depthleft = _Depth(_LeftChild(node, unNodeSize, pMemBase), unNodeSize, pMemBase);
+	return (Max(depthright, depthleft) + 1);
+}
 
 //-----------------------------------------------------------------------------
 // Makes sure the tree is valid after every operation
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>
+template<class T, class I, typename L, class E>
 inline bool CUtlRBTree<T, I, L, E>::IsValid() const
 {
-	return CUtlRBTreeBase<I, E>::_IsValid( sizeof( Node_t), (void *)m_Elements.Base() );
+	return CUtlRBTreeBase<I, E>::_IsValid(sizeof(Node_t), (void*)m_Elements.Base());
 }
 
-template <class I, class E>
-bool CUtlRBTreeBase<I, E>::_IsValid( size_t unNodeSize, void *pMemBase ) const
+template<class I, class E>
+bool CUtlRBTreeBase<I, E>::_IsValid(size_t unNodeSize, void* pMemBase) const
 {
 	if ( !Count() )
 		return true;
-	
-	if ((Root() >= MaxElement()) || ( _Parent( Root(), unNodeSize, pMemBase ) != INVALID_RBTREE_IDX )) 
+
+	if ( (Root() >= MaxElement()) || (_Parent(Root(), unNodeSize, pMemBase) != INVALID_RBTREE_IDX) )
 		goto InvalidTree;
-	
+
 #ifdef UTLTREE_PARANOID
-	
+
 	// First check to see that mNumEntries matches reality.
 	// count items on the free list
 	int numFree = 0;
 	int curr = m_FirstFree;
-	while (curr != INVALID_RBTREE_IDX)
+	while ( curr != INVALID_RBTREE_IDX )
 	{
 		++numFree;
 		curr = _RightChild(curr, unNodeSize, pMemBase);
 		if ( (curr > MaxElement()) && (curr != INVALID_RBTREE_IDX) )
 			goto InvalidTree;
 	}
-	if (MaxElement() - numFree != Count())
+	if ( MaxElement() - numFree != Count() )
 		goto InvalidTree;
-	
-	// iterate over all elements, looking for validity 
+
+	// iterate over all elements, looking for validity
 	// based on the self pointers
 	int numFree2 = 0;
-	for (curr = 0; curr < MaxElement(); ++curr)
+	for ( curr = 0; curr < MaxElement(); ++curr )
 	{
-		if (!IsValidIndex(curr))
+		if ( !IsValidIndex(curr) )
 			++numFree2;
 		else
 		{
 			int right = _RightChild(curr, unNodeSize, pMemBase);
 			int left = _LeftChild(curr, unNodeSize, pMemBase);
-			if ((right == left) && (right != INVALID_RBTREE_IDX) )
+			if ( (right == left) && (right != INVALID_RBTREE_IDX) )
 				goto InvalidTree;
-			
-			if (right != INVALID_RBTREE_IDX)
-            {
-				if (!_IsValidIndex(right, unNodeSize, pMemBase)) 
+
+			if ( right != INVALID_RBTREE_IDX )
+			{
+				if ( !_IsValidIndex(right, unNodeSize, pMemBase) )
 					goto InvalidTree;
-				if (_Parent(right, unNodeSize, pMemBase) != curr) 
+				if ( _Parent(right, unNodeSize, pMemBase) != curr )
 					goto InvalidTree;
-				if (_IsRed(curr, unNodeSize, pMemBase) && _IsRed(right, unNodeSize, pMemBase)) 
+				if ( _IsRed(curr, unNodeSize, pMemBase) && _IsRed(right, unNodeSize, pMemBase) )
 					goto InvalidTree;
-            }
-			
-			if (left != INVALID_RBTREE_IDX)
-            {
-				if (!_IsValidIndex(left, unNodeSize, pMemBase)) 
+			}
+
+			if ( left != INVALID_RBTREE_IDX )
+			{
+				if ( !_IsValidIndex(left, unNodeSize, pMemBase) )
 					goto InvalidTree;
-				if (_Parent(left, unNodeSize, pMemBase) != curr) 
+				if ( _Parent(left, unNodeSize, pMemBase) != curr )
 					goto InvalidTree;
-				if (_IsRed(curr, unNodeSize, pMemBase) && _IsRed(left, unNodeSize, pMemBase)) 
+				if ( _IsRed(curr, unNodeSize, pMemBase) && _IsRed(left, unNodeSize, pMemBase) )
 					goto InvalidTree;
-            }
+			}
 		}
 	}
-	if (numFree2 != numFree)
+	if ( numFree2 != numFree )
 		goto InvalidTree;
-	
-#endif // UTLTREE_PARANOID
-	
+
+#endif  // UTLTREE_PARANOID
+
 	return true;
-	
+
 InvalidTree:
 	return false;
 }
-
 
 //-----------------------------------------------------------------------------
 // Sets the less func
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E>  
-void CUtlRBTree<T, I, L, E>::SetLessFunc( const typename CUtlRBTree<T, I, L, E>::LessFunc_t &func )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::SetLessFunc(const typename CUtlRBTree<T, I, L, E>::LessFunc_t& func)
 {
-	if (!m_LessFunc)
+	if ( !m_LessFunc )
 		m_LessFunc = func;
 	else
 	{
@@ -1753,68 +1939,78 @@ void CUtlRBTree<T, I, L, E>::SetLessFunc( const typename CUtlRBTree<T, I, L, E>:
 	}
 }
 
-
 //-----------------------------------------------------------------------------
 // inserts a node into the tree
 //-----------------------------------------------------------------------------
 
 // Inserts a node into the tree, doesn't copy the data in.
-template <class T, class I, typename L, class E> 
-void CUtlRBTree<T, I, L, E>::FindInsertionPosition( T const &insert, bool bCheckForDuplicates, I &parent, bool &leftchild, bool &isDuplicate )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::FindInsertionPosition(
+	T const& insert,
+	bool bCheckForDuplicates,
+	I& parent,
+	bool& leftchild,
+	bool& isDuplicate)
 {
-	Assert( m_LessFunc );
-	
+	Assert(m_LessFunc);
+
 	/* find where node belongs */
-	I current = CUtlRBTreeBase< I, E >::m_Root;
+	I current = CUtlRBTreeBase<I, E>::m_Root;
 	parent = INVALID_RBTREE_IDX;
 	leftchild = false;
 	isDuplicate = false;
-	while (current != INVALID_RBTREE_IDX) 
+	while ( current != INVALID_RBTREE_IDX )
 	{
 		parent = current;
-		if ( m_LessFunc( insert, Element(current) ) )
+		if ( m_LessFunc(insert, Element(current)) )
 		{
-			leftchild = true; current = LeftChild(current);
+			leftchild = true;
+			current = LeftChild(current);
 		}
-		else if ( bCheckForDuplicates && !m_LessFunc( Element(current), insert ) )
-		{	
-			// we know that insert >= current, and current >= insert, 
+		else if ( bCheckForDuplicates && !m_LessFunc(Element(current), insert) )
+		{
+			// we know that insert >= current, and current >= insert,
 			// hence insert == current - this item is already in the tree
-			leftchild = false; isDuplicate = true; current = INVALID_RBTREE_IDX;
+			leftchild = false;
+			isDuplicate = true;
+			current = INVALID_RBTREE_IDX;
 		}
 		else
 		{
-			leftchild = false; current = RightChild(current);
+			leftchild = false;
+			current = RightChild(current);
 		}
 	}
 }
 
-template <class T, class I, typename L, class E> 
-I CUtlRBTree<T, I, L, E>::Insert( T const &insert, bool bInsertDuplicates )
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::Insert(T const& insert, bool bInsertDuplicates)
 {
 	// use copy constructor to copy it in
 	I parent;
 	bool leftchild;
 	bool isDuplicate;
 	// note that the bCheckForDuplicates arg to FindInsertionPosition is !bInsertDuplicates
-	FindInsertionPosition( insert, !bInsertDuplicates, parent, leftchild, isDuplicate );
+	FindInsertionPosition(insert, !bInsertDuplicates, parent, leftchild, isDuplicate);
 	if ( !isDuplicate || bInsertDuplicates )
 	{
-		I newNode = InsertAt( parent, leftchild, false );  // don't construct the element as we are about to overwrite it in the copy construct
-		CopyConstruct( &Element( newNode ), insert );
+		I newNode = InsertAt(
+			parent,
+			leftchild,
+			false);  // don't construct the element as we are about to overwrite it in the copy construct
+		CopyConstruct(&Element(newNode), insert);
 		return newNode;
 	}
 	else
 	{
 		// update the node in place
-		Element( parent ) = insert;
+		Element(parent) = insert;
 		return parent;
 	}
 }
 
-
-template <class T, class I, typename L, class E>
-I CUtlRBTree<T, I, L, E>::InsertIfNotFound(T const &insert)
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::InsertIfNotFound(T const& insert)
 {
 	// use copy constructor to copy it in
 	I parent;
@@ -1824,7 +2020,10 @@ I CUtlRBTree<T, I, L, E>::InsertIfNotFound(T const &insert)
 	FindInsertionPosition(insert, true /*bCheckForDuplicates*/, parent, leftchild, isDuplicate);
 	if ( !isDuplicate )
 	{
-		I newNode = InsertAt(parent, leftchild, false);  // don't construct the element as we are about to overwrite it in the copy construct
+		I newNode = InsertAt(
+			parent,
+			leftchild,
+			false);  // don't construct the element as we are about to overwrite it in the copy construct
 		CopyConstruct(&Element(newNode), insert);
 		return newNode;
 	}
@@ -1834,29 +2033,30 @@ I CUtlRBTree<T, I, L, E>::InsertIfNotFound(T const &insert)
 	}
 }
 
-
-template <class T, class I, typename L, class E> 
-void CUtlRBTree<T, I, L, E>::Insert( const T *pArray, int nItems, bool bInsertDuplicates )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::Insert(const T* pArray, int nItems, bool bInsertDuplicates)
 {
 	while ( nItems-- )
 	{
-		Insert( *pArray++, bInsertDuplicates );
+		Insert(*pArray++, bInsertDuplicates);
 	}
 }
 
-
-template <class T, class I, typename L, class E> 
-I CUtlRBTree<T, I, L, E>::FindOrInsert( T const &insert )
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::FindOrInsert(T const& insert)
 {
 	// use copy constructor to copy it in
 	I parent;
 	bool leftchild;
 	bool isDuplicate;
-	FindInsertionPosition( insert, true /*bCheckForDuplicates*/, parent, leftchild, isDuplicate );
+	FindInsertionPosition(insert, true /*bCheckForDuplicates*/, parent, leftchild, isDuplicate);
 	if ( !isDuplicate )
 	{
-		I newNode = InsertAt( parent, leftchild, false );  // don't construct the element as we are about to overwrite it in the copy construct
-		CopyConstruct( &Element( newNode ), insert );
+		I newNode = InsertAt(
+			parent,
+			leftchild,
+			false);  // don't construct the element as we are about to overwrite it in the copy construct
+		CopyConstruct(&Element(newNode), insert);
 		return newNode;
 	}
 	else
@@ -1870,52 +2070,50 @@ I CUtlRBTree<T, I, L, E>::FindOrInsert( T const &insert )
 // returns true if the node exists in the tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E> 
-bool CUtlRBTree<T, I, L, E>::HasElement( T const &search ) const
+template<class T, class I, typename L, class E>
+bool CUtlRBTree<T, I, L, E>::HasElement(T const& search) const
 {
-	return Find( search ) != INVALID_RBTREE_IDX;
+	return Find(search) != INVALID_RBTREE_IDX;
 }
-
 
 //-----------------------------------------------------------------------------
 // finds a node in the tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E> 
-I CUtlRBTree<T, I, L, E>::Find( T const &search ) const
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::Find(T const& search) const
 {
-	Assert( m_LessFunc );
-	
-	I current = CUtlRBTreeBase< I, E >::m_Root;
-	while (current != INVALID_RBTREE_IDX) 
+	Assert(m_LessFunc);
+
+	I current = CUtlRBTreeBase<I, E>::m_Root;
+	while ( current != INVALID_RBTREE_IDX )
 	{
-		if (m_LessFunc( search, Element(current) ))
+		if ( m_LessFunc(search, Element(current)) )
 			current = LeftChild(current);
-		else if (m_LessFunc( Element(current), search ))
+		else if ( m_LessFunc(Element(current), search) )
 			current = RightChild(current);
-		else 
+		else
 			break;
 	}
 	return current;
 }
 
-
 //-----------------------------------------------------------------------------
 // finds a the first node (inorder) with this key in the tree
 //-----------------------------------------------------------------------------
 
-template <class T, class I, typename L, class E> 
-I CUtlRBTree<T, I, L, E>::FindFirst( T const &search ) const
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::FindFirst(T const& search) const
 {
-	Assert( m_LessFunc );
-	
-	I current = CUtlRBTreeBase< I, E >::m_Root;
-	I best =INVALID_RBTREE_IDX;
-	while (current != INVALID_RBTREE_IDX) 
+	Assert(m_LessFunc);
+
+	I current = CUtlRBTreeBase<I, E>::m_Root;
+	I best = INVALID_RBTREE_IDX;
+	while ( current != INVALID_RBTREE_IDX )
 	{
-		if (m_LessFunc( search, Element(current) ))
+		if ( m_LessFunc(search, Element(current)) )
 			current = LeftChild(current);
-		else if (m_LessFunc( Element(current), search ))
+		else if ( m_LessFunc(Element(current), search) )
 			current = RightChild(current);
 		else
 		{
@@ -1926,52 +2124,50 @@ I CUtlRBTree<T, I, L, E>::FindFirst( T const &search ) const
 	return best;
 }
 
-
 //-----------------------------------------------------------------------------
 // swap in place
 //-----------------------------------------------------------------------------
-template <class T, class I, typename L, class E> 
-void CUtlRBTree<T, I, L, E>::Swap( CUtlRBTree< T, I, L, E > &that )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::Swap(CUtlRBTree<T, I, L, E>& that)
 {
-	m_Elements.Swap( that.m_Elements );
-	SWAP( m_LessFunc, that.m_LessFunc );
-	SWAP( CUtlRBTreeBase< I, E >::m_Root, that.m_Root );
-	SWAP( CUtlRBTreeBase< I, E >::m_NumElements, that.m_NumElements );
-	SWAP( CUtlRBTreeBase< I, E >::m_FirstFree, that.m_FirstFree );
-	SWAP( CUtlRBTreeBase< I, E >::m_TotalElements, that.m_TotalElements );
-	SWAP( CUtlRBTreeBase< I, E >::m_data, that.m_data );
+	m_Elements.Swap(that.m_Elements);
+	SWAP(m_LessFunc, that.m_LessFunc);
+	SWAP(CUtlRBTreeBase<I, E>::m_Root, that.m_Root);
+	SWAP(CUtlRBTreeBase<I, E>::m_NumElements, that.m_NumElements);
+	SWAP(CUtlRBTreeBase<I, E>::m_FirstFree, that.m_FirstFree);
+	SWAP(CUtlRBTreeBase<I, E>::m_TotalElements, that.m_TotalElements);
+	SWAP(CUtlRBTreeBase<I, E>::m_data, that.m_data);
 }
-
 
 //-----------------------------------------------------------------------------
 // finds the closest node to the key supplied
 //-----------------------------------------------------------------------------
-template <class T, class I, typename L, class E> 
-I CUtlRBTree<T, I, L, E>::FindClosest( T const &search, CompareOperands_t eFindCriteria ) const
+template<class T, class I, typename L, class E>
+I CUtlRBTree<T, I, L, E>::FindClosest(T const& search, CompareOperands_t eFindCriteria) const
 {
-	Assert( m_LessFunc );
-	Assert( (eFindCriteria & ( k_EGreaterThan | k_ELessThan )) ^ ( k_EGreaterThan | k_ELessThan ) );
+	Assert(m_LessFunc);
+	Assert((eFindCriteria & (k_EGreaterThan | k_ELessThan)) ^ (k_EGreaterThan | k_ELessThan));
 
-	I current = CUtlRBTreeBase< I, E >::m_Root;
+	I current = CUtlRBTreeBase<I, E>::m_Root;
 	I best = INVALID_RBTREE_IDX;
 
-	while (current != INVALID_RBTREE_IDX) 
+	while ( current != INVALID_RBTREE_IDX )
 	{
-		if (m_LessFunc( search, Element(current) ))
+		if ( m_LessFunc(search, Element(current)) )
 		{
 			// current node is > key
 			if ( eFindCriteria & k_EGreaterThan )
 				best = current;
 			current = LeftChild(current);
 		}
-		else if (m_LessFunc( Element(current), search ))
+		else if ( m_LessFunc(Element(current), search) )
 		{
 			// current node is < key
 			if ( eFindCriteria & k_ELessThan )
 				best = current;
 			current = RightChild(current);
 		}
-		else 
+		else
 		{
 			// exact match
 			if ( eFindCriteria & k_EEqual )
@@ -1995,75 +2191,78 @@ I CUtlRBTree<T, I, L, E>::FindClosest( T const &search, CompareOperands_t eFindC
 //-----------------------------------------------------------------------------
 // Makes sure we have enough memory allocated to store a requested # of elements
 //-----------------------------------------------------------------------------
-template <class T, class I, typename L, class E> 
-void CUtlRBTree<T, I, L, E>::EnsureCapacity( int num )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::EnsureCapacity(int num)
 {
 	m_Elements.EnsureCapacity(num);
-	this->ResetDbgInfo( m_Elements.Base() );
+	this->ResetDbgInfo(m_Elements.Base());
 }
-
-
 
 //-----------------------------------------------------------------------------
 // Purpose: Utility function for diffing RBTrees
 //-----------------------------------------------------------------------------
-template <class T, class I, typename L, class E>
-bool CUtlRBTree<T, I, L, E>::BDiffRBTrees( const CUtlRBTree<T, I, L, E> &rbTreeBase, const CUtlRBTree<T, I, L, E> &rbTreeCompare, CUtlRBTree<T, I, L, E> *prbTreeAdditions /* = NULL */, CUtlRBTree<T, I, L, E> *prbTreeDeletions /* = NULL */ )
+template<class T, class I, typename L, class E>
+bool CUtlRBTree<T, I, L, E>::BDiffRBTrees(
+	const CUtlRBTree<T, I, L, E>& rbTreeBase,
+	const CUtlRBTree<T, I, L, E>& rbTreeCompare,
+	CUtlRBTree<T, I, L, E>* prbTreeAdditions /* = NULL */,
+	CUtlRBTree<T, I, L, E>* prbTreeDeletions /* = NULL */)
 {
 	I iBase = rbTreeBase.FirstInorder();
 	I iCompare = rbTreeCompare.FirstInorder();
 
 	bool bDiffer = false;
-	bool bStopOnFirstDifference = ( !prbTreeAdditions && !prbTreeDeletions );
+	bool bStopOnFirstDifference = (!prbTreeAdditions && !prbTreeDeletions);
 
 #if __GNUC__ <= 4
 	const LessFunc_t lessFunc = rbTreeBase.m_LessFunc;
 #else
 	const CUtlRBTree<T, I, L, E>::LessFunc_t lessFunc = rbTreeBase.m_LessFunc;
 #endif
-	Assert( lessFunc );
+	Assert(lessFunc);
 
 	// can we do this the easy way?
 	if ( bStopOnFirstDifference && rbTreeBase.Count() != rbTreeCompare.Count() )
 		return true;
 
 	if ( prbTreeAdditions && !prbTreeAdditions->m_LessFunc )
-		prbTreeAdditions->SetLessFunc( lessFunc );
+		prbTreeAdditions->SetLessFunc(lessFunc);
 	if ( prbTreeDeletions && !prbTreeDeletions->m_LessFunc )
-		prbTreeDeletions->SetLessFunc( lessFunc );
+		prbTreeDeletions->SetLessFunc(lessFunc);
 
-	while( rbTreeBase.IsValidIndex( iBase ) || rbTreeCompare.IsValidIndex( iCompare ) || ( bStopOnFirstDifference && bDiffer ) )
+	while ( rbTreeBase.IsValidIndex(iBase) || rbTreeCompare.IsValidIndex(iCompare) ||
+			(bStopOnFirstDifference && bDiffer) )
 	{
-		const T *pValBase = NULL;
-		const T *pValCompare = NULL;
-		if ( rbTreeBase.IsValidIndex( iBase ) )
+		const T* pValBase = NULL;
+		const T* pValCompare = NULL;
+		if ( rbTreeBase.IsValidIndex(iBase) )
 		{
 			pValBase = &(rbTreeBase[iBase]);
 		}
-		if ( rbTreeCompare.IsValidIndex( iCompare ) )
+		if ( rbTreeCompare.IsValidIndex(iCompare) )
 		{
 			pValCompare = &(rbTreeCompare[iCompare]);
 		}
 
-		if ( pValCompare && ( !pValBase || lessFunc( *pValCompare, *pValBase ) ) )
+		if ( pValCompare && (!pValBase || lessFunc(*pValCompare, *pValBase)) )
 		{
 			if ( prbTreeAdditions )
-				prbTreeAdditions->Insert( *pValCompare );
+				prbTreeAdditions->Insert(*pValCompare);
 			bDiffer = true;
-			iCompare = rbTreeCompare.NextInorder( iCompare );
+			iCompare = rbTreeCompare.NextInorder(iCompare);
 		}
-		else if ( pValBase && ( !pValCompare || lessFunc( *pValBase, *pValCompare ) ) )
+		else if ( pValBase && (!pValCompare || lessFunc(*pValBase, *pValCompare)) )
 		{
 			if ( prbTreeDeletions )
-				prbTreeDeletions->Insert( *pValBase );
+				prbTreeDeletions->Insert(*pValBase);
 			bDiffer = true;
-			iBase = rbTreeBase.NextInorder( iBase );
+			iBase = rbTreeBase.NextInorder(iBase);
 		}
 		else
 		{
 			// we got values for both, advance both
-			iBase = rbTreeBase.NextInorder( iBase );
-			iCompare = rbTreeCompare.NextInorder( iCompare );
+			iBase = rbTreeBase.NextInorder(iBase);
+			iCompare = rbTreeCompare.NextInorder(iCompare);
 		}
 	}
 
@@ -2074,20 +2273,19 @@ bool CUtlRBTree<T, I, L, E>::BDiffRBTrees( const CUtlRBTree<T, I, L, E> &rbTreeB
 // Data and memory validation
 //-----------------------------------------------------------------------------
 #ifdef DBGFLAG_VALIDATE
-template <class T, class I, typename L, class E> 
-void CUtlRBTree<T, I, L, E>::Validate( CValidator &validator, const char *pchName )
+template<class T, class I, typename L, class E>
+void CUtlRBTree<T, I, L, E>::Validate(CValidator& validator, const char* pchName)
 {
 #ifdef _WIN32
-	validator.Push( typeid(*this).raw_name(), this, pchName );
+	validator.Push(typeid(*this).raw_name(), this, pchName);
 #else
-	validator.Push( typeid(*this).name(), this, pchName );
+	validator.Push(typeid(*this).name(), this, pchName);
 #endif
 
-	m_Elements.Validate( validator, "m_Elements" );
+	m_Elements.Validate(validator, "m_Elements");
 
 	validator.Pop();
 }
-#endif // DBGFLAG_VALIDATE
+#endif  // DBGFLAG_VALIDATE
 
-
-#endif // UTLRBTREE_H
+#endif  // UTLRBTREE_H

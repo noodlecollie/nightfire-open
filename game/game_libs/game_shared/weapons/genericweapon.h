@@ -24,8 +24,8 @@ public:
 	virtual ~CGenericWeapon();
 	virtual void Spawn() override;
 	virtual void Precache() override;
-	virtual int GetItemInfo(ItemInfo *p) override;
-	virtual int AddToPlayer(CBasePlayer *pPlayer) override;
+	virtual int GetItemInfo(ItemInfo* p) override;
+	virtual int AddToPlayer(CBasePlayer* pPlayer) override;
 	virtual BOOL Deploy() override;
 	virtual void PrimaryAttack() override;
 	virtual void SecondaryAttack() override;
@@ -50,8 +50,8 @@ public:
 	// make bot weapon profiles local to bot code?
 	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const = 0;
 	virtual void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const = 0;
-	virtual int Save(CSave &save) override;
-	virtual int Restore(CRestore &restore) override;
+	virtual int Save(CSave& save) override;
+	virtual int Restore(CRestore& restore) override;
 	static TYPEDESCRIPTION m_SaveData[];
 #endif
 
@@ -222,7 +222,8 @@ private:
 
 // Specialisation for base class, which does not need a dynamic_cast.
 template<>
-inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetAttackModeFromAttributes<WeaponAtts::WABaseAttack>(uint32_t index) const
+inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetAttackModeFromAttributes<WeaponAtts::WABaseAttack>(
+	uint32_t index) const
 {
 	const WeaponAtts::WACollection& atts = WeaponAttributes();
 	ASSERT(index < atts.AttackModes.Count());
@@ -255,11 +256,11 @@ public:
 		SF_DontDrop = (1 << 0)
 	};
 
-	CGenericAmmo(const char* modelName, const CAmmoDef& ammoDef, const char* pickupSoundName = NULL)
-		: CBasePlayerAmmo(),
-		  m_szModelName(modelName),
-		  m_AmmoDef(ammoDef),
-		  m_szPickupSoundName(pickupSoundName)
+	CGenericAmmo(const char* modelName, const CAmmoDef& ammoDef, const char* pickupSoundName = NULL) :
+		CBasePlayerAmmo(),
+		m_szModelName(modelName),
+		m_AmmoDef(ammoDef),
+		m_szPickupSoundName(pickupSoundName)
 	{
 		ASSERT(m_szModelName);
 	}
@@ -282,9 +283,9 @@ public:
 		PRECACHE_SOUND(m_szPickupSoundName ? m_szPickupSoundName : DEFAULT_PICKUP_SOUND);
 	}
 
-	BOOL AddAmmo(CBaseEntity *pOther)
+	BOOL AddAmmo(CBaseEntity* pOther)
 	{
-		if( pOther->GiveAmmo(m_AmmoDef.AmmoBoxGive, m_AmmoDef.AmmoName, m_AmmoDef.MaxCarry) != -1 )
+		if ( pOther->GiveAmmo(m_AmmoDef.AmmoBoxGive, m_AmmoDef.AmmoName, m_AmmoDef.MaxCarry) != -1 )
 		{
 			EMIT_SOUND(ENT(pev), CHAN_ITEM, DEFAULT_PICKUP_SOUND, 1, ATTN_NORM);
 			return TRUE;

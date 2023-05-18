@@ -22,12 +22,13 @@ enum class SurfaceDecalId
 	Count
 };
 
-class CSurfaceDecalResources : public CBaseResourceCollection<SurfaceDecalId, static_cast<size_t>(SurfaceDecalId::Count)>
+class CSurfaceDecalResources :
+	public CBaseResourceCollection<SurfaceDecalId, static_cast<size_t>(SurfaceDecalId::Count)>
 {
 public:
 	struct Attributes
 	{
-		float scale = 1.0f;	// Higher = smaller
+		float scale = 1.0f;  // Higher = smaller
 	};
 
 	CSurfaceDecalResources();

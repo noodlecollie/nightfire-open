@@ -30,42 +30,43 @@ enum SilentWeaponAttackMode_e
 // Rounds per second:
 static constexpr float SILENTWEAPON_FIRE_RATE = 6.0f;
 
-static const WeaponAtts::WACollection StaticWeaponAttributes([](WeaponAtts::WACollection& obj)
-{
-	using namespace WeaponAtts;
+static const WeaponAtts::WACollection StaticWeaponAttributes(
+	[](WeaponAtts::WACollection& obj)
+	{
+		using namespace WeaponAtts;
 
-	WACore& core = obj.Core;
-	core.Classname = "weapon_silent";
-	core.Id = WeaponId_e::WeaponSilent;
-	core.SwitchWeight = WeaponPref_Debug;
+		WACore& core = obj.Core;
+		core.Classname = "weapon_silent";
+		core.Id = WeaponId_e::WeaponSilent;
+		core.SwitchWeight = WeaponPref_Debug;
 
-	WAViewModel& vm = obj.ViewModel;
-	vm.ModelName = "models/weapon_p99/v_p99.mdl";
-	vm.Anim_Draw = SW_DRAW;
-	vm.AnimList_Idle << SW_IDLE1 << SW_IDLE2 << SW_IDLE3;
-	vm.AnimList_Reload << SW_RELOAD_NOT_EMPTY;
+		WAViewModel& vm = obj.ViewModel;
+		vm.ModelName = "models/weapon_p99/v_p99.mdl";
+		vm.Anim_Draw = SW_DRAW;
+		vm.AnimList_Idle << SW_IDLE1 << SW_IDLE2 << SW_IDLE3;
+		vm.AnimList_Reload << SW_RELOAD_NOT_EMPTY;
 
-	WAPlayerModel& pm = obj.PlayerModel;
-	pm.PlayerModelName = "models/weapon_p99/p_p99.mdl";
-	pm.WorldModelName = "models/weapon_p99/w_p99.mdl";
-	pm.PlayerAnimExtension = "onehanded";
+		WAPlayerModel& pm = obj.PlayerModel;
+		pm.PlayerModelName = "models/weapon_p99/p_p99.mdl";
+		pm.WorldModelName = "models/weapon_p99/w_p99.mdl";
+		pm.PlayerAnimExtension = "onehanded";
 
-	obj.Prediction.SetUpPrediction<CWeaponSilent>();
+		obj.Prediction.SetUpPrediction<CWeaponSilent>();
 
-	WAHitscanAttack* priAttack = new WAHitscanAttack();
-	obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
+		WAHitscanAttack* priAttack = new WAHitscanAttack();
+		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
 
-	priAttack->EventScript = "events/weapon_silent/fire.sc";
-	priAttack->FunctionsUnderwater = true;
-	priAttack->IsContinuous = false;
-	priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::None;
-	priAttack->Accuracy.RestSpread = Vector2D(0.0f, 0.0f);
-	priAttack->Accuracy.RunSpread = Vector2D(0.0f, 0.0f);
-	priAttack->AttackRate = SILENTWEAPON_FIRE_RATE;
-	priAttack->AutoAim = AUTOAIM_10DEGREES;
-	priAttack->Volume = QUIET_GUN_VOLUME;
-	priAttack->MuzzleFlashBrightness = NORMAL_GUN_FLASH;
-	priAttack->ViewPunchY = -2.0f;
+		priAttack->EventScript = "events/weapon_silent/fire.sc";
+		priAttack->FunctionsUnderwater = true;
+		priAttack->IsContinuous = false;
+		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::None;
+		priAttack->Accuracy.RestSpread = Vector2D(0.0f, 0.0f);
+		priAttack->Accuracy.RunSpread = Vector2D(0.0f, 0.0f);
+		priAttack->AttackRate = SILENTWEAPON_FIRE_RATE;
+		priAttack->AutoAim = AUTOAIM_10DEGREES;
+		priAttack->Volume = QUIET_GUN_VOLUME;
+		priAttack->MuzzleFlashBrightness = NORMAL_GUN_FLASH;
+		priAttack->ViewPunchY = -2.0f;
 
-	priAttack->ViewModelAnimList_Attack << SW_SHOOT;
-});
+		priAttack->ViewModelAnimList_Attack << SW_SHOOT;
+	});

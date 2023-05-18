@@ -32,9 +32,8 @@
 #define LIST_ITEM(enum, name) enum,
 typedef enum _SurfaceProp
 {
-	SURFACEPROP_ENTRY_LIST
-	SurfaceProp__Count
+	SURFACEPROP_ENTRY_LIST SurfaceProp__Count
 } SurfaceProp;
 #undef LIST_ITEM
 
-#endif // SURFACEPROPS_H
+#endif  // SURFACEPROPS_H

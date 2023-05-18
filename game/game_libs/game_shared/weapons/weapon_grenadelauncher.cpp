@@ -13,7 +13,7 @@
 
 // Grenade attributes
 static constexpr const char* GRENADELAUNCHER_GRENADE_MODEL = "models/weapon_grenadelauncher/w_grenade_projectile.mdl";
-static const Vector GRENADELAUNCHER_HALF_BBOX = Vector(4,4,4);
+static const Vector GRENADELAUNCHER_HALF_BBOX = Vector(4, 4, 4);
 static constexpr float GRENADELAUNCHER_GRENADE_FRICTION = 0.95;
 static constexpr float GRENADELAUNCHER_GRENADE_SPRITE_SCALE = 60;
 
@@ -112,9 +112,10 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponAtts::WAProjectileAtta
 	grenade->SetFuseTime(isPrimaryAttack ? -1 : grenadelauncher_fuse_time.value);
 }
 
-CWeaponGrenadeLauncher_Grenade* CWeaponGrenadeLauncher::CreateGrenade(entvars_t *pevOwner, const Vector& location, const Vector& launchDir)
+CWeaponGrenadeLauncher_Grenade*
+CWeaponGrenadeLauncher::CreateGrenade(entvars_t* pevOwner, const Vector& location, const Vector& launchDir)
 {
-	CWeaponGrenadeLauncher_Grenade *pGrenade = GetClassPtr<CWeaponGrenadeLauncher_Grenade>(NULL);
+	CWeaponGrenadeLauncher_Grenade* pGrenade = GetClassPtr<CWeaponGrenadeLauncher_Grenade>(NULL);
 	pGrenade->Spawn();
 
 	UTIL_SetOrigin(pGrenade->pev, location);
@@ -207,7 +208,7 @@ void CWeaponGrenadeLauncher_Grenade::SetFuseTime(float fuseTime)
 	pev->dmgtime = gpGlobals->time + fuseTime;
 	pev->nextthink = gpGlobals->time + 0.1;
 
-	if( fuseTime < 0.1 )
+	if ( fuseTime < 0.1 )
 	{
 		pev->nextthink = gpGlobals->time;
 		pev->velocity = Vector(0, 0, 0);
@@ -222,13 +223,13 @@ namespace WeaponAtts
 	{
 		return ::StaticWeaponAttributes;
 	}
-}
+}  // namespace WeaponAtts
 
 class CAmmoGrenadeLauncher : public CGenericAmmo
 {
 public:
-	CAmmoGrenadeLauncher()
-		: CGenericAmmo("models/weapon_grenadelauncher/w_ammo_grenadelauncher.mdl", Ammo_GrenadeLauncher)
+	CAmmoGrenadeLauncher() :
+		CGenericAmmo("models/weapon_grenadelauncher/w_ammo_grenadelauncher.mdl", Ammo_GrenadeLauncher)
 	{
 	}
 };

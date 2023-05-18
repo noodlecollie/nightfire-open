@@ -9,14 +9,12 @@ namespace
 	{
 		return GetClassPtrFromEdict<CBaseEntity>(INDEXENT(0));
 	}
-}
+}  // namespace
 
-const char* const CSpawnPointManager::SpawnPointClassNames[SP__Count] =
-{
+const char* const CSpawnPointManager::SpawnPointClassNames[SP__Count] = {
 	"info_player_start",
 	"info_player_deathmatch",
-	"info_player_coop"
-};
+	"info_player_coop"};
 
 void CSpawnPointManager::Initialise()
 {
@@ -137,8 +135,7 @@ CBaseEntity* CSpawnPointManager::GetNextValidDeathmatchSpawnPoint(CBasePlayer* p
 	// can't find any better ones.
 	CBaseEntity* spawnPointNearDeathSite = nullptr;
 
-	for ( CBaseEntity* spawnPoint = list.GetNextSpawnPoint();
-		  list.NextSpawnPointIndex() != startIndex;
+	for ( CBaseEntity* spawnPoint = list.GetNextSpawnPoint(); list.NextSpawnPointIndex() != startIndex;
 		  spawnPoint = list.GetNextSpawnPoint() )
 	{
 		if ( !SpawnPointValid(spawnPoint, player, flags) )
@@ -181,7 +178,8 @@ bool CSpawnPointManager::SpawnPointValid(CBaseEntity* spawnPoint, CBasePlayer* p
 
 	if ( !(flags & Flag_IgnoreNearbyPlayers) )
 	{
-		for ( CBaseEntity* entInSphere = UTIL_FindEntityInSphere(nullptr, spawnPoint->pev->origin, SPAWN_POINT_CLEAR_RADIUS);
+		for ( CBaseEntity* entInSphere =
+				  UTIL_FindEntityInSphere(nullptr, spawnPoint->pev->origin, SPAWN_POINT_CLEAR_RADIUS);
 			  !FNullEnt(entInSphere);
 			  entInSphere = UTIL_FindEntityInSphere(entInSphere, spawnPoint->pev->origin, SPAWN_POINT_CLEAR_RADIUS) )
 		{
@@ -201,7 +199,7 @@ void CSpawnPointManager::KillPlayersAtPoint(const vec3_t& origin, CBasePlayer* p
 		  !FNullEnt(entInSphere);
 		  entInSphere = UTIL_FindEntityInSphere(entInSphere, origin, SPAWN_POINT_CLEAR_RADIUS) )
 	{
-		if( entInSphere->IsPlayer() )
+		if ( entInSphere->IsPlayer() )
 		{
 			CBasePlayer* otherPlayer = static_cast<CBasePlayer*>(entInSphere);
 

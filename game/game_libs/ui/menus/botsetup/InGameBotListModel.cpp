@@ -36,7 +36,7 @@ bool CInGameBotListModel::AddEntry(const CUtlString& profileName, const CUtlStri
 		return false;
 	}
 
-	m_BotList.AddToTail({ profileName, playerName });
+	m_BotList.AddToTail({profileName, playerName});
 	return true;
 }
 

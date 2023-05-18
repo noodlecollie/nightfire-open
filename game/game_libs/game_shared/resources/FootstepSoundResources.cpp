@@ -2,132 +2,115 @@
 #include "standard_includes.h"
 #include "projectInterface/IProjectInterface.h"
 
-static constexpr const char* const FootstepsCarpet[] =
-{
+static constexpr const char* const FootstepsCarpet[] = {
 	"footsteps/step_carpet1.wav",
 	"footsteps/step_carpet2.wav",
 	"footsteps/step_carpet3.wav",
 	"footsteps/step_carpet4.wav",
 };
 
-static constexpr const char* const FootstepsConcreteClean[] =
-{
+static constexpr const char* const FootstepsConcreteClean[] = {
 	"footsteps/step_conc_clean1.wav",
 	"footsteps/step_conc_clean2.wav",
 	"footsteps/step_conc_clean3.wav",
 	"footsteps/step_conc_clean4.wav",
 };
 
-static constexpr const char* const FootstepsConcreteGrit[] =
-{
+static constexpr const char* const FootstepsConcreteGrit[] = {
 	"footsteps/step_conc_grit1.wav",
 	"footsteps/step_conc_grit2.wav",
 	"footsteps/step_conc_grit3.wav",
 	"footsteps/step_conc_grit4.wav",
 };
 
-static constexpr const char* const FootstepsDirt[] =
-{
+static constexpr const char* const FootstepsDirt[] = {
 	"footsteps/step_dirt1.wav",
 	"footsteps/step_dirt2.wav",
 	"footsteps/step_dirt3.wav",
 	"footsteps/step_dirt4.wav",
 };
 
-static constexpr const char* const FootstepsGrass[] =
-{
+static constexpr const char* const FootstepsGrass[] = {
 	"footsteps/step_grass1.wav",
 	"footsteps/step_grass2.wav",
 	"footsteps/step_grass3.wav",
 	"footsteps/step_grass4.wav",
 };
 
-static constexpr const char* const FootstepsIce[] =
-{
+static constexpr const char* const FootstepsIce[] = {
 	"footsteps/step_ice1.wav",
 	"footsteps/step_ice2.wav",
 	"footsteps/step_ice3.wav",
 };
 
-static constexpr const char* const FootstepsLadder[] =
-{
+static constexpr const char* const FootstepsLadder[] = {
 	"footsteps/step_ladder1.wav",
 	"footsteps/step_ladder2.wav",
 	"footsteps/step_ladder3.wav",
 	"footsteps/step_ladder4.wav",
 };
 
-static constexpr const char* const FootstepsMetal[] =
-{
+static constexpr const char* const FootstepsMetal[] = {
 	"footsteps/step_metal1.wav",
 	"footsteps/step_metal2.wav",
 	"footsteps/step_metal3.wav",
 	"footsteps/step_metal4.wav",
 };
 
-static constexpr const char* const FootstepsSnow[] =
-{
+static constexpr const char* const FootstepsSnow[] = {
 	"footsteps/step_snow1.wav",
 	"footsteps/step_snow2.wav",
 };
 
-static constexpr const char* const FootstepsVentDuct[] =
-{
+static constexpr const char* const FootstepsVentDuct[] = {
 	"footsteps/step_ventduct1.wav",
 	"footsteps/step_ventduct2.wav",
 	"footsteps/step_ventduct3.wav",
 };
 
-static constexpr const char* const FootstepsWoodClean[] =
-{
+static constexpr const char* const FootstepsWoodClean[] = {
 	"footsteps/step_wood_clean1.wav",
 	"footsteps/step_wood_clean2.wav",
 	"footsteps/step_wood_clean3.wav",
 	"footsteps/step_wood_clean4.wav",
 };
 
-static constexpr const char* const FootstepsWoodGrit[] =
-{
+static constexpr const char* const FootstepsWoodGrit[] = {
 	"footsteps/step_wood_grit1.wav",
 	"footsteps/step_wood_grit2.wav",
 	"footsteps/step_wood_grit3.wav",
 	"footsteps/step_wood_grit4.wav",
 };
 
-static constexpr const char* const FootstepsGlass[] =
-{
+static constexpr const char* const FootstepsGlass[] = {
 	"footsteps/step_glass1.wav",
 	"footsteps/step_glass2.wav",
 	"footsteps/step_glass3.wav",
 	"footsteps/step_glass4.wav",
 };
 
-static constexpr const char* const FootstepsMetalGrate[] =
-{
+static constexpr const char* const FootstepsMetalGrate[] = {
 	"footsteps/step_metalgrate1.wav",
 	"footsteps/step_metalgrate2.wav",
 	"footsteps/step_metalgrate3.wav",
 	"footsteps/step_metalgrate4.wav",
 };
 
-static constexpr const char* const FootstepsWater[] =
-{
+static constexpr const char* const FootstepsWater[] = {
 	"footsteps/step_water1.wav",
 	"footsteps/step_water2.wav",
 	"footsteps/step_water3.wav",
 	"footsteps/step_water4.wav",
 };
 
-static constexpr const char* const FootstepsWaterWade[] =
-{
+static constexpr const char* const FootstepsWaterWade[] = {
 	"footsteps/step_waterwade1.wav",
 	"footsteps/step_waterwade2.wav",
 	"footsteps/step_waterwade3.wav",
 	"footsteps/step_waterwade4.wav",
 };
 
-static constexpr const char* const FootstepsSwim[] =
-{
+static constexpr const char* const FootstepsSwim[] = {
 	"footsteps/step_swim1.wav",
 	"footsteps/step_swim2.wav",
 	"footsteps/step_swim3.wav",

@@ -168,4 +168,4 @@ namespace BotCommands
 			}
 		}
 	}
-}
+}  // namespace BotCommands

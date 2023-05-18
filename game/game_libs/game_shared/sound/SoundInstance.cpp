@@ -100,7 +100,6 @@ void CSoundInstance::SetFlags(uint32_t flags)
 	m_iFlags = flags;
 }
 
-
 int32_t CSoundInstance::MinPitch() const
 {
 	return m_iPitchMin;

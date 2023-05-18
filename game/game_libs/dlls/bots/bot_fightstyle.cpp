@@ -40,11 +40,11 @@
 // Constructors/Destructors
 ///////////////////////////////////////////////////////////////////////////////
 
-CBaseBotFightStyle::CBaseBotFightStyle():
-AimAt( AIM_BODY ),
-bHoldDownAttack( FALSE ),
-bSecondaryFire( FALSE ),
-fNextShootTime ( gpGlobals->time )
+CBaseBotFightStyle::CBaseBotFightStyle() :
+	AimAt(AIM_BODY),
+	bHoldDownAttack(FALSE),
+	bSecondaryFire(FALSE),
+	fNextShootTime(gpGlobals->time)
 {
 }
 
@@ -58,28 +58,28 @@ CBaseBotFightStyle::~CBaseBotFightStyle()
 
 void CBaseBotFightStyle::DispatchWeaponUse(CGenericWeapon& weapon)
 {
-	SetHoldDownAttack(FALSE); // unless the particular weapon sets this TRUE we want it false
+	SetHoldDownAttack(FALSE);  // unless the particular weapon sets this TRUE we want it false
 	weapon.Bot_SetFightStyle(*this);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // RandomizeAimAtHead
 ///////////////////////////////////////////////////////////////////////////////
-//Scott: now modified by bot accuracy.
-//The better the shot, the more likely a head shot
+// Scott: now modified by bot accuracy.
+// The better the shot, the more likely a head shot
 
-void CBaseBotFightStyle::RandomizeAimAtHead( const int AimAtHeadPropensity )
+void CBaseBotFightStyle::RandomizeAimAtHead(const int AimAtHeadPropensity)
 {
 	int BotAccuracy = pOwner->Stats.GetTraitAccuracy();
-	int ModifiedAim = (AimAtHeadPropensity*BotAccuracy)/100;
+	int ModifiedAim = (AimAtHeadPropensity * BotAccuracy) / 100;
 
-	if ( ( RANDOM_LONG(0,100) < ModifiedAim ) || ( BotAccuracy >= 99 ) )
+	if ( (RANDOM_LONG(0, 100) < ModifiedAim) || (BotAccuracy >= 99) )
 	{
-		SetAimAt( AIM_HEAD );
+		SetAimAt(AIM_HEAD);
 	}
 	else
 	{
-		SetAimAt( AIM_BODY );
+		SetAimAt(AIM_BODY);
 	}
 }
 
@@ -87,9 +87,9 @@ void CBaseBotFightStyle::RandomizeAimAtHead( const int AimAtHeadPropensity )
 // RandomizeSecondaryFire
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBotFightStyle::RandomizeSecondaryFire( const int SecondaryFirePropensity )
+void CBaseBotFightStyle::RandomizeSecondaryFire(const int SecondaryFirePropensity)
 {
-	SetSecondaryFire(SecondaryFirePropensity > 99 || RANDOM_LONG(0,100) < SecondaryFirePropensity);
+	SetSecondaryFire(SecondaryFirePropensity > 99 || RANDOM_LONG(0, 100) < SecondaryFirePropensity);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,29 +97,28 @@ void CBaseBotFightStyle::RandomizeSecondaryFire( const int SecondaryFirePropensi
 //    The delay parameters are based on Botman's HPB bot
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBotFightStyle::SetNextShootTime(const float nextAllowedShootTime,
-										  const float extraWaitMin,
-										  const float extraWaitMax)
+void CBaseBotFightStyle::SetNextShootTime(
+	const float nextAllowedShootTime,
+	const float extraWaitMin,
+	const float extraWaitMax)
 {
-	float delayFactor = 1.0f - (pOwner->Stats.GetTraitReflexes()/100.0f);
+	float delayFactor = 1.0f - (pOwner->Stats.GetTraitReflexes() / 100.0f);
 
-	fNextShootTime = nextAllowedShootTime +
-		(RANDOM_FLOAT(extraWaitMin, extraWaitMax) * delayFactor);
+	fNextShootTime = nextAllowedShootTime + (RANDOM_FLOAT(extraWaitMin, extraWaitMax) * delayFactor);
 
 	fNextEvaluationTime = fNextShootTime > gpGlobals->time ? fNextShootTime : gpGlobals->time;
 
-	if (GetHoldDownAttack()) // for continuous firing, stop every two seconds
+	if ( GetHoldDownAttack() )  // for continuous firing, stop every two seconds
 	{
 		fNextEvaluationTime += 2.0f;
 	}
-	else // Stop shooting 0.1+GetBotThinkDelay seconds after the first shot
+	else  // Stop shooting 0.1+GetBotThinkDelay seconds after the first shot
 	{
 		fNextEvaluationTime += 0.1f + pOwner->GetBotThinkDelay();
 	}
-
 }
 
-void CBaseBotFightStyle::UseWeaponDefault( void )
+void CBaseBotFightStyle::UseWeaponDefault(void)
 {
 	SetSecondaryFire(FALSE);
 	RandomizeAimAtHead(50);

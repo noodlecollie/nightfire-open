@@ -34,21 +34,21 @@ public:
 	void VidInit();
 
 	void DeleteAllFonts();
-	void DeleteFont( HFont hFont );
+	void DeleteFont(HFont hFont);
 
-	HFont GetFontByName( const char *name );
-	void  GetCharABCWide( HFont font, int ch, int &a, int &b, int &c );
-	int   GetFontTall( HFont font );
-	int   GetFontAscent( HFont font );
-	bool  GetFontUnderlined( HFont font );
+	HFont GetFontByName(const char* name);
+	void GetCharABCWide(HFont font, int ch, int& a, int& b, int& c);
+	int GetFontTall(HFont font);
+	int GetFontAscent(HFont font);
+	bool GetFontUnderlined(HFont font);
 
-	int   GetCharacterWidthScaled(HFont font, int ch, int charH );
+	int GetCharacterWidthScaled(HFont font, int ch, int charH);
 
-	void  GetTextSize( HFont font, const char *text, int *wide, int *tall = NULL, int size = -1 );
+	void GetTextSize(HFont font, const char* text, int* wide, int* tall = NULL, int size = -1);
 
 	// simplified version, counts only newlines
-	int   GetTextHeight( HFont font, const char *text, int size = -1 );
-	int   GetTextHeightExt( HFont font, const char *text, int height, int visibleWidth, int size = -1 );
+	int GetTextHeight(HFont font, const char* text, int size = -1);
+	int GetTextHeightExt(HFont font, const char* text, int height, int visibleWidth, int size = -1);
 
 	/*
 	 * Determine how text should be cut, to fit in "visibleWidth"
@@ -57,21 +57,29 @@ public:
 	 * If reverse is set, return value will indicate starting index, because ending index is always at string index
 	 * If reverse is NOT set, return value will indicate ending index, because starting index is always at 0
 	 */
-	int	  CutText(HFont fontHandle, const char *text, int height, int visibleSize, bool reverse, bool stopAtWhitespace = false, int *width = NULL, bool *remaining = NULL );
+	int CutText(
+		HFont fontHandle,
+		const char* text,
+		int height,
+		int visibleSize,
+		bool reverse,
+		bool stopAtWhitespace = false,
+		int* width = NULL,
+		bool* remaining = NULL);
 
-	int GetTextWideScaled( HFont font, const char *text, const int height, int size = -1 );
+	int GetTextWideScaled(HFont font, const char* text, const int height, int size = -1);
 
-	int DrawCharacter( HFont font, int ch, Point pt, int charH, const unsigned int color, bool forceAdditive = false );
+	int DrawCharacter(HFont font, int ch, Point pt, int charH, const unsigned int color, bool forceAdditive = false);
 
-	void DebugDraw( HFont font );
-	CBaseFont *GetIFontFromHandle( HFont font );
+	void DebugDraw(HFont font);
+	CBaseFont* GetIFontFromHandle(HFont font);
 
-	int GetEllipsisWide( HFont font ); // cached wide of "..."
+	int GetEllipsisWide(HFont font);  // cached wide of "..."
 private:
-	int  GetCharacterWidth( HFont font, int ch );
-	int  GetTextWide( HFont font, const char *text, int size = -1 );
+	int GetCharacterWidth(HFont font, int ch);
+	int GetTextWide(HFont font, const char* text, int size = -1);
 
-	void UploadTextureForFont(CBaseFont *font );
+	void UploadTextureForFont(CBaseFont* font);
 
 	CUtlVector<CBaseFont*> m_Fonts;
 
@@ -80,7 +88,7 @@ private:
 
 // lazy to fix code everywhere
 #ifndef CLIENT_DLL
-extern CFontManager *g_FontMgr;
+extern CFontManager* g_FontMgr;
 #endif
 
-#endif // FONTMANAGER_H
+#endif  // FONTMANAGER_H

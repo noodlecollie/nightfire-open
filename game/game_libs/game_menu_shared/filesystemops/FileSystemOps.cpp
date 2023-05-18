@@ -21,9 +21,10 @@ CUtlString DirectoryEntry::EntryName() const
 	return m_EntryName;
 }
 
-void FileSystemOps::ListDirectory(const CUtlString& directoryPath,
-								  CUtlVector<DirectoryEntry>& outList,
-								  bool gameDirOnly)
+void FileSystemOps::ListDirectory(
+	const CUtlString& directoryPath,
+	CUtlVector<DirectoryEntry>& outList,
+	bool gameDirOnly)
 {
 	outList.Purge();
 

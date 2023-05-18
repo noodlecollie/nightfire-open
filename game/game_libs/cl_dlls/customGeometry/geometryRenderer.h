@@ -24,4 +24,4 @@ namespace CustomGeometry
 		HSPRITE m_ColourSprite = 0;
 		float m_Scale = 1.0f;
 	};
-}
+}  // namespace CustomGeometry

@@ -63,4 +63,4 @@ namespace CustomGeometry
 	{
 		g_engfuncs.pfnAddServerCommand("debug_snapshot_player_bounds", &SnapshotPlayerBounds);
 	}
-}
+}  // namespace CustomGeometry

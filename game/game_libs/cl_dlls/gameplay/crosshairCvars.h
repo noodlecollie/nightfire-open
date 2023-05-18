@@ -12,4 +12,4 @@ namespace CrosshairCvars
 	float RadiusMax();
 	float BarLengthMin();
 	float BarLengthMax();
-}
+}  // namespace CrosshairCvars

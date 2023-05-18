@@ -47,7 +47,9 @@ void CGenericHitscanWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& a
 	}
 }
 
-bool CGenericHitscanWeapon::InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode)
+bool CGenericHitscanWeapon::InvokeWithAttackMode(
+	const CGenericWeapon::WeaponAttackType type,
+	const WeaponAtts::WABaseAttack* attackMode)
 {
 	if ( !attackMode || attackMode->Classify() != WeaponAtts::WABaseAttack::Classification::Hitscan )
 	{
@@ -69,7 +71,7 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(const CGenericWeapon::WeaponAtt
 
 	DecrementAmmo(hitscanAttack, 1);
 
-	m_pPlayer->pev->effects = (int)( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
+	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
@@ -80,7 +82,7 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(const CGenericWeapon::WeaponAtt
 	Vector vecSrc = m_pPlayer->GetGunPosition();
 	Vector vecAiming;
 
-	if( hitscanAttack->AutoAim > 0.0f )
+	if ( hitscanAttack->AutoAim > 0.0f )
 	{
 		vecAiming = m_pPlayer->GetAutoaimVector(hitscanAttack->AutoAim);
 	}
@@ -97,14 +99,8 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(const CGenericWeapon::WeaponAtt
 		using namespace EventConstructor;
 		CEventConstructor event;
 
-		event
-			<< Flags(DefaultEventFlags())
-			<< Invoker(m_pPlayer->edict())
-			<< EventIndex(eventID)
-			<< IntParam1(m_pPlayer->random_seed)
-			<< BoolParam1(m_iClip == 0)
-			<< FloatParam1(GetInaccuracy())
-			;
+		event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict()) << EventIndex(eventID)
+			  << IntParam1(m_pPlayer->random_seed) << BoolParam1(m_iClip == 0) << FloatParam1(GetInaccuracy());
 
 		event.Send();
 	}
@@ -121,9 +117,10 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(const CGenericWeapon::WeaponAtt
 	return true;
 }
 
-Vector CGenericHitscanWeapon::FireBulletsPlayer(const WeaponAtts::WAHitscanAttack& hitscanAttack,
-												const Vector& vecSrc,
-										 		const Vector& vecDirShooting)
+Vector CGenericHitscanWeapon::FireBulletsPlayer(
+	const WeaponAtts::WAHitscanAttack& hitscanAttack,
+	const Vector& vecSrc,
+	const Vector& vecDirShooting)
 {
 #ifdef CLIENT_DLL
 	// The client doesn't actually do any bullet simulation, we just make sure that
@@ -152,7 +149,7 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer(const WeaponAtts::WAHitscanAttac
 	gMultiDamage.type = DMG_BULLET | DMG_NEVERGIB;
 
 	const uint32_t numShots = hitscanAttack.BulletsPerShot;
-	for( uint32_t shot = 0; shot < numShots; shot++ )
+	for ( uint32_t shot = 0; shot < numShots; shot++ )
 	{
 		float damagePerShot = 0.0f;
 		const WeaponAtts::WASkillRecord::SkillDataEntryPtr dmgPtr = hitscanAttack.BaseDamagePerShot;
@@ -170,9 +167,9 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer(const WeaponAtts::WAHitscanAttac
 		Debug_HitscanBulletFired(vecSrc, tr);
 
 		// do damage, paint decals
-		if( tr.flFraction != 1.0 )
+		if ( tr.flFraction != 1.0 )
 		{
-			CBaseEntity *pEntity = CBaseEntity::Instance(tr.pHit);
+			CBaseEntity* pEntity = CBaseEntity::Instance(tr.pHit);
 
 			pEntity->TraceAttack(pevAttacker, damagePerShot, vecDir, &tr, DMG_BULLET);
 			TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, BULLET_GENERIC);

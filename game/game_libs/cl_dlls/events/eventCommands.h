@@ -5,4 +5,4 @@ namespace EventCommands
 	void Initialise();
 
 	bool HitscanEventDebuggingEnabled();
-}
+}  // namespace EventCommands

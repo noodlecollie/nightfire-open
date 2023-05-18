@@ -20,4 +20,4 @@ enum WeaponPreferenceWeight
 	// Most preferable
 };
 
-#endif // WEAPON_PREF_WEIGHTS_H
+#endif  // WEAPON_PREF_WEIGHTS_H

@@ -46,4 +46,4 @@ namespace Messages
 		Vector m_vecOrigin;
 		const float* m_pMsgOrigin = nullptr;
 	};
-}
+}  // namespace Messages

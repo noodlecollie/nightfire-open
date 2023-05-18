@@ -1,6 +1,6 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -15,10 +15,10 @@
 #include "com_model.h"
 #include "studio_util.h"
 
-#pragma warning(disable: 4244)
+#pragma warning(disable : 4244)
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CHudOverview::Init()
 {
@@ -34,18 +34,18 @@ int CHudOverview::Init()
 //-----------------------------------------------------------------------------
 int CHudOverview::VidInit()
 {
-	m_hsprPlayer = gEngfuncs.pfnSPR_Load( "sprites/ring.spr" );
-	m_hsprViewcone = gEngfuncs.pfnSPR_Load( "sprites/camera.spr" );
+	m_hsprPlayer = gEngfuncs.pfnSPR_Load("sprites/ring.spr");
+	m_hsprViewcone = gEngfuncs.pfnSPR_Load("sprites/camera.spr");
 
 	return 1;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flTime - 
-//			intermission - 
+// Purpose:
+// Input  : flTime -
+//			intermission -
 //-----------------------------------------------------------------------------
-int CHudOverview::Draw( float flTime )
+int CHudOverview::Draw(float flTime)
 {
 #if 0
 	// only draw in overview mode
@@ -155,7 +155,7 @@ int CHudOverview::Draw( float flTime )
 //-----------------------------------------------------------------------------
 void CHudOverview::InitHUDData()
 {
-	//this block would force the spectator view to be on
-	//gEngfuncs.Overview_SetDrawOverview( 1 );
-	//gEngfuncs.Overview_SetDrawInset( 0 );
+	// this block would force the spectator view to be on
+	// gEngfuncs.Overview_SetDrawOverview( 1 );
+	// gEngfuncs.Overview_SetDrawInset( 0 );
 }

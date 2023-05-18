@@ -17,4 +17,4 @@ namespace ScreenOverlays
 	private:
 		OverlayId m_OverlayId = ScreenOverlays::OverlayId::Overlay_None;
 	};
-}
+}  // namespace ScreenOverlays

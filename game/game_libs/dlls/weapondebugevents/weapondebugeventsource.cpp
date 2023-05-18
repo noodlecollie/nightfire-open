@@ -1,7 +1,10 @@
 #include "weapondebugeventsource.h"
 #include "weapondebugevent_hitscanfire.h"
 
-bool CWeaponDebugEventSource::RegisterCallback(const CUtlString& id, CWeaponDebugEvent_Base::EventType eventType, const EventCallback& callback)
+bool CWeaponDebugEventSource::RegisterCallback(
+	const CUtlString& id,
+	CWeaponDebugEvent_Base::EventType eventType,
+	const EventCallback& callback)
 {
 	if ( m_CallbackPresent.Find(id) != m_CallbackPresent.InvalidIndex() )
 	{

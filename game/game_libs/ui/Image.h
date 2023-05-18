@@ -20,39 +20,47 @@ GNU General Public License for more details.
 class CImage
 {
 public:
-	CImage() : m_szPath( NULL ), m_hPic( 0 ) { }
-	CImage( HIMAGE hPic ) : m_szPath( NULL ), m_hPic( hPic ) { }
-	CImage( const char *szPath, int flags = 0 )
+	CImage() :
+		m_szPath(NULL),
+		m_hPic(0)
 	{
-		Load( szPath, flags );
 	}
-	CImage( const char *szPath, const byte *rgbdata, int size, int flags = 0 )
+	CImage(HIMAGE hPic) :
+		m_szPath(NULL),
+		m_hPic(hPic)
 	{
-		Load( szPath, rgbdata, size, flags );
+	}
+	CImage(const char* szPath, int flags = 0)
+	{
+		Load(szPath, flags);
+	}
+	CImage(const char* szPath, const byte* rgbdata, int size, int flags = 0)
+	{
+		Load(szPath, rgbdata, size, flags);
 	}
 
-	void Set( HIMAGE handle )
+	void Set(HIMAGE handle)
 	{
 		m_hPic = handle;
 		m_szPath = NULL;
 	}
 
-	void Load( const char *szPath, int flags = 0 )
+	void Load(const char* szPath, int flags = 0)
 	{
-		Set( EngFuncs::PIC_Load( szPath, flags ) );
+		Set(EngFuncs::PIC_Load(szPath, flags));
 		m_szPath = szPath;
 	}
 
-	void Load( const char *szPath, const byte *rgbdata, int size, int flags = 0 )
+	void Load(const char* szPath, const byte* rgbdata, int size, int flags = 0)
 	{
-		Set( EngFuncs::PIC_Load( szPath, rgbdata, size, flags ));
+		Set(EngFuncs::PIC_Load(szPath, rgbdata, size, flags));
 		m_szPath = szPath;
 	}
 
-	void Reset( void )
+	void Reset(void)
 	{
 		m_szPath = NULL;
-		m_hPic   = 0;
+		m_hPic = 0;
 	}
 
 	// a1ba: why there is no destructor?
@@ -62,22 +70,24 @@ public:
 	// If you still want to unload image, there is a function for you
 	void ForceUnload()
 	{
-		if( m_szPath )
-			EngFuncs::PIC_Free( m_szPath );
+		if ( m_szPath )
+			EngFuncs::PIC_Free(m_szPath);
 		m_hPic = 0;
 	}
 
-	const char * operator =( const char *path )
+	const char* operator=(const char* path)
 	{
 		// don't pass NULL to engine
-		if( path ) Load( path );
-		else Reset();
+		if ( path )
+			Load(path);
+		else
+			Reset();
 		return path;
 	}
 
-	HIMAGE operator = ( HIMAGE handle )
+	HIMAGE operator=(HIMAGE handle)
 	{
-		Set( handle );
+		Set(handle);
 		return handle;
 	}
 
@@ -86,17 +96,27 @@ public:
 		return m_hPic;
 	}
 
-	friend inline bool operator == ( CImage &a, CImage &b )
+	friend inline bool operator==(CImage& a, CImage& b)
 	{
 		return a.m_hPic == b.m_hPic;
 	}
 
-	bool IsValid()     { return m_hPic != 0; }
-	const char *Path() { return m_szPath; }
-	HIMAGE Handle()    { return m_hPic; }
+	bool IsValid()
+	{
+		return m_hPic != 0;
+	}
+	const char* Path()
+	{
+		return m_szPath;
+	}
+	HIMAGE Handle()
+	{
+		return m_hPic;
+	}
+
 private:
-	const char *m_szPath;
+	const char* m_szPath;
 	HIMAGE m_hPic;
 };
 
-#endif // IMAGE_H
+#endif  // IMAGE_H

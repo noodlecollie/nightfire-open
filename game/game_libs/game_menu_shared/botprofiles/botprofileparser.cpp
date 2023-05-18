@@ -5,15 +5,17 @@
 #include "utlstring.h"
 #include "projectInterface/IProjectInterface.h"
 
-#define LOG(level, ...) IProjectInterface::ProjectInterfaceImpl()->LogInterface().LogF(level, "BotProfileParser: " __VA_ARGS__);
+#define LOG(level, ...) \
+	IProjectInterface::ProjectInterfaceImpl()->LogInterface().LogF(level, "BotProfileParser: " __VA_ARGS__);
 
 namespace
 {
-	bool PropertyExistsOnObject(rapidjson::SizeType index,
-								const rapidjson::Value& value,
-								const char* name,
-								rapidjson::Type type,
-								bool optional = false)
+	bool PropertyExistsOnObject(
+		rapidjson::SizeType index,
+		const rapidjson::Value& value,
+		const char* name,
+		rapidjson::Type type,
+		bool optional = false)
 	{
 		if ( !value.HasMember(name) )
 		{
@@ -29,7 +31,11 @@ namespace
 		{
 			if ( !optional )
 			{
-				LOG(ILogInterface::Level::Warning, "Profile %u property '%s' was not of type '%s', skipping.\n", index, name, rapidjson::ValueTypeAsString(type));
+				LOG(ILogInterface::Level::Warning,
+					"Profile %u property '%s' was not of type '%s', skipping.\n",
+					index,
+					name,
+					rapidjson::ValueTypeAsString(type));
 			}
 
 			return false;
@@ -37,7 +43,7 @@ namespace
 
 		return true;
 	}
-}
+}  // namespace
 
 CBotProfileParser::CBotProfileParser(CBotProfileTable& table) :
 	m_Table(table)
@@ -103,7 +109,10 @@ void CBotProfileParser::ReadProfileEntry(rapidjson::SizeType index, const rapidj
 	// profile names from bot counts when using bot_add.
 	if ( name.String()[0] >= '0' && name.String()[0] <= '9' )
 	{
-		LOG(ILogInterface::Level::Warning, "Bot profile %u name '%s' began with a digit, which is not allowed.\n", index, name.String());
+		LOG(ILogInterface::Level::Warning,
+			"Bot profile %u name '%s' began with a digit, which is not allowed.\n",
+			index,
+			name.String());
 		return;
 	}
 
@@ -112,7 +121,10 @@ void CBotProfileParser::ReadProfileEntry(rapidjson::SizeType index, const rapidj
 	{
 		if ( V_isspace(name.String()[index]) )
 		{
-			LOG(ILogInterface::Level::Warning, "Bot profile %u name '%s' contains whitespace, which is not allowed.\n", index, name.String());
+			LOG(ILogInterface::Level::Warning,
+				"Bot profile %u name '%s' contains whitespace, which is not allowed.\n",
+				index,
+				name.String());
 			return;
 		}
 	}
@@ -135,7 +147,10 @@ void CBotProfileParser::ReadProfileEntry(rapidjson::SizeType index, const rapidj
 
 	if ( m_Table.ProfileExists(name) )
 	{
-		LOG(ILogInterface::Level::Warning, "Bot profile %u: another profile with the name '%s' already existed.\n", index, name.String());
+		LOG(ILogInterface::Level::Warning,
+			"Bot profile %u: another profile with the name '%s' already existed.\n",
+			index,
+			name.String());
 		return;
 	}
 

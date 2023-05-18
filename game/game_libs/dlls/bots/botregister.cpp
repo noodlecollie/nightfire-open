@@ -41,7 +41,6 @@ CUtlString CBotRegister::ProfileName(uint32_t index) const
 
 CUtlString CBotRegister::CustomName(uint32_t index) const
 {
-
 	if ( index >= m_BotList.Count() )
 	{
 		return CUtlString();

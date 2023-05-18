@@ -11,4 +11,4 @@ namespace WeaponAtts
 			return WABaseAttack::Classification::Projectile;
 		}
 	};
-}
+}  // namespace WeaponAtts

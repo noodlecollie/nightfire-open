@@ -24,39 +24,65 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct Point
 {
-	Point() { x = y = 0; }
-	Point( int x, int y ) : x(x), y(y) {}
+	Point()
+	{
+		x = y = 0;
+	}
+	Point(int x, int y) :
+		x(x),
+		y(y)
+	{
+	}
 
 	int x, y;
 	Point Scale();
-	friend Point operator +( Point &a, Point &b ) { return Point( a.x + b.x, a.y + b.y ); }
-	friend Point operator -( Point &a, Point &b ) { return Point( a.x - b.x, a.y - b.y ); }
+	friend Point operator+(Point& a, Point& b)
+	{
+		return Point(a.x + b.x, a.y + b.y);
+	}
+	friend Point operator-(Point& a, Point& b)
+	{
+		return Point(a.x - b.x, a.y - b.y);
+	}
 
-	Point& operator+=( Point &a )
+	Point& operator+=(Point& a)
 	{
 		x += a.x;
 		y += a.y;
 		return *this;
 	}
 
-	Point& operator-=( Point &a )
+	Point& operator-=(Point& a)
 	{
 		x -= a.x;
 		y -= a.y;
 		return *this;
 	}
 
-	Point operator *( float scale ) { return Point( x * scale, y * scale );	}
-	Point operator /( float scale ) { return Point( x / scale, y / scale );	}
+	Point operator*(float scale)
+	{
+		return Point(x * scale, y * scale);
+	}
+	Point operator/(float scale)
+	{
+		return Point(x / scale, y / scale);
+	}
 };
 
 struct Size
 {
-	Size() { w = h = 0; }
-	Size( int w, int h ) : w(w), h(h) {}
+	Size()
+	{
+		w = h = 0;
+	}
+	Size(int w, int h) :
+		w(w),
+		h(h)
+	{
+	}
 
 	int w, h;
 	Size Scale();
 };
 
-#endif // COORD_H
+#endif  // COORD_H

@@ -30,36 +30,34 @@ GNU General Public License for more details.
 #if defined(MY_COMPILER_SUCKS)
 // WARN: can't rely on "item" name, because it can be something like "ptr->member"
 // So we use something more valid for struct name
-#define PASTE(x,y) __##x##_##y
-#define PASTE2(x,y) PASTE(x,y)
+#define PASTE(x, y) __##x##_##y
+#define PASTE2(x, y) PASTE(x, y)
 #define EVNAME(x) PASTE2(x, __LINE__)
 
-#define SET_EVENT_MULTI( event, callback ) \
-	typedef struct                                             \
-	{                                                          \
-		static void __cb( CMenuBaseItem *pSelf, void *pExtra ) \
-		callback                                               \
-	} EVNAME( _ev ); (event) = EVNAME( _ev )::__cb
+#define SET_EVENT_MULTI(event, callback) \
+	typedef struct \
+	{ \
+		static void __cb(CMenuBaseItem* pSelf, void* pExtra) callback \
+	} EVNAME(_ev); \
+	(event) = EVNAME(_ev)::__cb
 
 #else
 
-#define SET_EVENT_MULTI( event, callback ) \
-	(event) = [](CMenuBaseItem *pSelf, void *pExtra) callback
+#define SET_EVENT_MULTI(event, callback) (event) = [](CMenuBaseItem * pSelf, void* pExtra) callback
 #endif
 
-#define SET_EVENT( event, callback ) SET_EVENT_MULTI( event, { callback; } )
+#define SET_EVENT(event, callback) SET_EVENT_MULTI(event, { callback; })
 
-#define DECLARE_NAMED_EVENT_TO_ITEM_METHOD( className, method, eventName ) \
-	static void eventName##Cb( CMenuBaseItem *pSelf, void * ) \
-	{\
-		((className *)pSelf)->method();\
+#define DECLARE_NAMED_EVENT_TO_ITEM_METHOD(className, method, eventName) \
+	static void eventName##Cb(CMenuBaseItem* pSelf, void*) \
+	{ \
+		((className*)pSelf)->method(); \
 	}
 
-#define DECLARE_EVENT_TO_ITEM_METHOD( className, method ) \
-	DECLARE_NAMED_EVENT_TO_ITEM_METHOD( className, method, method )
+#define DECLARE_EVENT_TO_ITEM_METHOD(className, method) DECLARE_NAMED_EVENT_TO_ITEM_METHOD(className, method, method)
 
 #ifdef _MSC_VER
-#pragma pointers_to_members( full_generality, virtual_inheritance )  
+#pragma pointers_to_members(full_generality, virtual_inheritance)
 #endif
 class CMenuBaseItem;
 class CMenuItemsHolder;
@@ -74,56 +72,63 @@ enum menuEvent_e
 	QM_IMRESIZED
 };
 
-typedef void (*EventCallback)( CMenuBaseItem *, void * ); // extradata
-typedef void (*VoidCallback)( void ); // no extradata
-typedef void (CMenuItemsHolder::*IHCallback)( void * ); // extradata
-typedef void (CMenuItemsHolder::*VoidIHCallback)(); // no extradata
+typedef void (*EventCallback)(CMenuBaseItem*, void*);  // extradata
+typedef void (*VoidCallback)(void);  // no extradata
+typedef void (CMenuItemsHolder::*IHCallback)(void*);  // extradata
+typedef void (CMenuItemsHolder::*VoidIHCallback)();  // no extradata
 
-#define MenuCb( a ) static_cast<IHCallback>((a))
-#define VoidCb( a ) static_cast<VoidIHCallback>((a))
+#define MenuCb(a) static_cast<IHCallback>((a))
+#define VoidCb(a) static_cast<VoidIHCallback>((a))
 
 class CEventCallback
 {
 public:
 	CEventCallback();
-	CEventCallback( EventCallback cb, void *ex = 0 );
-	CEventCallback( IHCallback cb, void *ex = 0 );
-	CEventCallback( VoidCallback cb );
-	CEventCallback( VoidIHCallback cb );
-	CEventCallback( int execute_now, const char *sz );
+	CEventCallback(EventCallback cb, void* ex = 0);
+	CEventCallback(IHCallback cb, void* ex = 0);
+	CEventCallback(VoidCallback cb);
+	CEventCallback(VoidIHCallback cb);
+	CEventCallback(int execute_now, const char* sz);
 
-	void *pExtra;
+	void* pExtra;
 
 	// convert to boolean for easy check in conditionals
 	operator bool()
 	{
-		switch( type )
+		switch ( type )
 		{
-		case CB_OLD_EXTRA: return u.cb != 0;
-		case CB_OLD_VOID:  return u.voidCb != 0;
-		case CB_IH_EXTRA:  return u.itemsHolderCb != 0;
-		case CB_IH_VOID:   return u.voidItemsHolderCb != 0;
+			case CB_OLD_EXTRA:
+				return u.cb != 0;
+			case CB_OLD_VOID:
+				return u.voidCb != 0;
+			case CB_IH_EXTRA:
+				return u.itemsHolderCb != 0;
+			case CB_IH_VOID:
+				return u.voidItemsHolderCb != 0;
 		}
 		return false;
 	}
 
-	void operator() ( CMenuBaseItem *pSelf );
+	void operator()(CMenuBaseItem* pSelf);
 
 	// ItemCallback operator =( ItemCallback cb );
-	IHCallback    operator=( IHCallback cb );
-	VoidIHCallback operator=( VoidIHCallback cb );
-	VoidCallback  operator=( VoidCallback cb );
-	EventCallback operator=( EventCallback cb );
+	IHCallback operator=(IHCallback cb);
+	VoidIHCallback operator=(VoidIHCallback cb);
+	VoidCallback operator=(VoidCallback cb);
+	EventCallback operator=(EventCallback cb);
 
 	// NULL assignment
-	size_t        operator=( size_t null );
-	void*         operator=( void *null );
+	size_t operator=(size_t null);
+	void* operator=(void* null);
 
 	void Reset();
 
-	void SetCommand( int execute_now, const char *sz );
+	void SetCommand(int execute_now, const char* sz);
 
-	static void NoopCb( CMenuBaseItem *, void * ) {}
+	static void NoopCb(CMenuBaseItem*, void*)
+	{
+	}
+
 private:
 	// matches type in union
 	enum
@@ -140,25 +145,24 @@ private:
 	{
 		EventCallback cb;
 		VoidCallback voidCb;
-		IHCallback   itemsHolderCb;
+		IHCallback itemsHolderCb;
 		VoidIHCallback voidItemsHolderCb;
 	} u;
 
 	// to find event command by name(for items holder)
-	const char *szName;
+	const char* szName;
 
-	static void CmdExecuteNextFrameCb( CMenuBaseItem *pSelf, void *pExtra )
+	static void CmdExecuteNextFrameCb(CMenuBaseItem* pSelf, void* pExtra)
 	{
-		EngFuncs::ClientCmd( FALSE, (char *)pExtra );
+		EngFuncs::ClientCmd(FALSE, (char*)pExtra);
 	}
 
-	static void CmdExecuteNowCb( CMenuBaseItem *pSelf, void *pExtra )
+	static void CmdExecuteNowCb(CMenuBaseItem* pSelf, void* pExtra)
 	{
-		EngFuncs::ClientCmd( TRUE, (char *)pExtra );
+		EngFuncs::ClientCmd(TRUE, (char*)pExtra);
 	}
 
 	friend class CMenuItemsHolder;
 };
 
-
-#endif // EVENTSYSTEM_H
+#endif  // EVENTSYSTEM_H

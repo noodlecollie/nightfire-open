@@ -6,7 +6,7 @@
 
 namespace ScreenOverlays
 {
-	#define NAME_DEBUG_SCREENOVERLAY_SET "debug_screenoverlay_set"
+#define NAME_DEBUG_SCREENOVERLAY_SET "debug_screenoverlay_set"
 
 	static void DebugScreenOverlaySet()
 	{
@@ -20,7 +20,10 @@ namespace ScreenOverlays
 
 		if ( argc < 2 )
 		{
-			gEngfuncs.Con_Printf("Usage: " NAME_DEBUG_SCREENOVERLAY_SET " <value> (Value range: %d - %d)\n", Overlay_None, Overlay__Count - 1);
+			gEngfuncs.Con_Printf(
+				"Usage: " NAME_DEBUG_SCREENOVERLAY_SET " <value> (Value range: %d - %d)\n",
+				Overlay_None,
+				Overlay__Count - 1);
 			return;
 		}
 
@@ -28,17 +31,17 @@ namespace ScreenOverlays
 
 		if ( id < Overlay_None || id >= Overlay__Count )
 		{
-			gEngfuncs.Con_Printf("Invalid overlay value %d - expected %d to %d.\n", id, Overlay_None, Overlay__Count - 1);
+			gEngfuncs
+				.Con_Printf("Invalid overlay value %d - expected %d to %d.\n", id, Overlay_None, Overlay__Count - 1);
 			return;
 		}
 
 		CScreenOverlayContainer::StaticInstance().SetCurrentOverlay(id);
 		gEngfuncs.Con_Printf("Set screen overlay to %d.\n", id);
-
 	}
 
 	void InitialiseDebugCommands()
 	{
 		gEngfuncs.pfnAddCommand(NAME_DEBUG_SCREENOVERLAY_SET, &DebugScreenOverlaySet);
 	}
-}
+}  // namespace ScreenOverlays

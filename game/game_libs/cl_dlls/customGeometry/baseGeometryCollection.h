@@ -25,4 +25,4 @@ namespace CustomGeometry
 	protected:
 		CUtlVector<GeometryItemPtr_t> m_Items;
 	};
-}
+}  // namespace CustomGeometry

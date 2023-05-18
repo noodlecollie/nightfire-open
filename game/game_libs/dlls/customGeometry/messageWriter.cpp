@@ -50,9 +50,11 @@ namespace CustomGeometry
 
 		if ( points.Count() > MAX_POINTS_PER_MSG )
 		{
-			ALERT(at_warning, "Attempted to send custom geometry message with %d points when max point count is %u.\n",
-				  points.Count(),
-				  MAX_POINTS_PER_MSG);
+			ALERT(
+				at_warning,
+				"Attempted to send custom geometry message with %d points when max point count is %u.\n",
+				points.Count(),
+				MAX_POINTS_PER_MSG);
 			return false;
 		}
 
@@ -111,4 +113,4 @@ namespace CustomGeometry
 	{
 		return geomCategory > Category::None && geomCategory < Category::CategoryCount;
 	}
-}
+}  // namespace CustomGeometry

@@ -20,10 +20,19 @@ GNU General Public License for more details.
 #include "Utils.h"
 #include "Scissor.h"
 
-CMenuSpinControl::CMenuSpinControl()  : BaseClass(), m_szBackground(),
-		m_szLeftArrow(), m_szRightArrow(), m_szLeftArrowFocus(), m_szRightArrowFocus(),
-		m_flMinValue(0), m_flMaxValue(1), m_flCurValue(0), m_flRange(0.1), m_pModel( NULL ),
-		m_iFloatPrecision(0)
+CMenuSpinControl::CMenuSpinControl() :
+	BaseClass(),
+	m_szBackground(),
+	m_szLeftArrow(),
+	m_szRightArrow(),
+	m_szLeftArrowFocus(),
+	m_szRightArrowFocus(),
+	m_flMinValue(0),
+	m_flMaxValue(1),
+	m_flCurValue(0),
+	m_flRange(0.1),
+	m_pModel(NULL),
+	m_iFloatPrecision(0)
 {
 	m_szBackground = 0;
 	m_szLeftArrow = UI_LEFTARROW;
@@ -42,31 +51,31 @@ CMenuSpinControl::CMenuSpinControl()  : BaseClass(), m_szBackground(),
 CMenuSpinControl::Init
 =================
 */
-void CMenuSpinControl::VidInit( void )
+void CMenuSpinControl::VidInit(void)
 {
-	colorBase.SetDefault( uiColorHelp );
+	colorBase.SetDefault(uiColorHelp);
 
 	BaseClass::VidInit();
 }
 
-bool CMenuSpinControl::KeyDown( int key )
+bool CMenuSpinControl::KeyDown(int key)
 {
-	const char *sound = 0;
+	const char* sound = 0;
 
-	if( UI::Key::IsLeftArrow( key ) && !FBitSet( iFlags, QMF_MOUSEONLY ))
+	if ( UI::Key::IsLeftArrow(key) && !FBitSet(iFlags, QMF_MOUSEONLY) )
 		sound = MoveLeft();
-	else if( UI::Key::IsRightArrow( key ) && !FBitSet( iFlags, QMF_MOUSEONLY ))
+	else if ( UI::Key::IsRightArrow(key) && !FBitSet(iFlags, QMF_MOUSEONLY) )
 		sound = MoveRight();
 
-	if( sound )
+	if ( sound )
 	{
-		_Event( QM_PRESSED );
-		if( sound != uiStatic.sounds[SND_BUZZ] )
+		_Event(QM_PRESSED);
+		if ( sound != uiStatic.sounds[SND_BUZZ] )
 		{
 			Display();
-			_Event( QM_CHANGED );
+			_Event(QM_CHANGED);
 		}
-		PlayLocalSound( sound );
+		PlayLocalSound(sound);
 	}
 	return sound != NULL;
 }
@@ -76,13 +85,13 @@ bool CMenuSpinControl::KeyDown( int key )
 CMenuSpinControl::Key
 =================
 */
-bool CMenuSpinControl::KeyUp( int key )
+bool CMenuSpinControl::KeyUp(int key)
 {
-	const char *sound = 0;
+	const char* sound = 0;
 	Size arrow;
 	Point left, right;
 
-	if( UI::Key::IsLeftMouse( key ) && FBitSet( iFlags, QMF_HASMOUSEFOCUS ))
+	if ( UI::Key::IsLeftMouse(key) && FBitSet(iFlags, QMF_HASMOUSEFOCUS) )
 	{
 		// calculate size and position for the arrows
 		arrow.w = m_scSize.h + UI_OUTLINE_WIDTH * 2 * uiStatic.scaleX;
@@ -94,21 +103,21 @@ bool CMenuSpinControl::KeyUp( int key )
 		right.y = m_scPos.y - UI_OUTLINE_WIDTH * uiStatic.scaleY;
 
 		// now see if either left or right arrow has focus
-		if( UI_CursorInRect( left, arrow ))
+		if ( UI_CursorInRect(left, arrow) )
 			sound = MoveLeft();
-		else if( UI_CursorInRect( right, arrow ))
+		else if ( UI_CursorInRect(right, arrow) )
 			sound = MoveRight();
 	}
 
-	if( sound )
+	if ( sound )
 	{
-		_Event( QM_RELEASED );
-		if( sound != uiStatic.sounds[SND_BUZZ] )
+		_Event(QM_RELEASED);
+		if ( sound != uiStatic.sounds[SND_BUZZ] )
 		{
 			Display();
-			_Event( QM_CHANGED );
+			_Event(QM_CHANGED);
 		}
-		PlayLocalSound( sound );
+		PlayLocalSound(sound);
 	}
 	return sound != NULL;
 }
@@ -118,31 +127,41 @@ bool CMenuSpinControl::KeyUp( int key )
 CMenuSpinControl::Draw
 =================
 */
-void CMenuSpinControl::Draw( void )
+void CMenuSpinControl::Draw(void)
 {
-	int	leftFocus, rightFocus;
+	int leftFocus, rightFocus;
 	Size arrow;
 	Point left, right;
 	Point scCenterPos;
 	Size scCenterBox;
-	uint textflags = ( iFlags & QMF_DROPSHADOW ) ? ETF_SHADOW : 0;
+	uint textflags = (iFlags & QMF_DROPSHADOW) ? ETF_SHADOW : 0;
 
-	if( szStatusText && iFlags & QMF_NOTIFY )
+	if ( szStatusText && iFlags & QMF_NOTIFY )
 	{
 		Point coord;
 
 		coord.x = m_scPos.x + m_scSize.w + 16 * uiStatic.scaleX;
 		coord.y = m_scPos.y + m_scSize.h / 2 - EngFuncs::ConsoleCharacterHeight() / 2;
 
-		int	r, g, b;
+		int r, g, b;
 
-		UnpackRGB( r, g, b, uiColorHelp );
-		EngFuncs::DrawSetTextColor( r, g, b );
-		EngFuncs::DrawConsoleString( coord, szStatusText );
+		UnpackRGB(r, g, b, uiColorHelp);
+		EngFuncs::DrawSetTextColor(r, g, b);
+		EngFuncs::DrawConsoleString(coord, szStatusText);
 	}
 
 	int textHeight = m_scPos.y - (m_scChSize * 1.5f);
-	UI_DrawString( font, m_scPos.x - UI_OUTLINE_WIDTH, textHeight, m_scSize.w + UI_OUTLINE_WIDTH * 2, m_scChSize, szName, uiColorHelp, m_scChSize, QM_LEFT, textflags | ETF_FORCECOL );
+	UI_DrawString(
+		font,
+		m_scPos.x - UI_OUTLINE_WIDTH,
+		textHeight,
+		m_scSize.w + UI_OUTLINE_WIDTH * 2,
+		m_scChSize,
+		szName,
+		uiColorHelp,
+		m_scChSize,
+		QM_LEFT,
+		textflags | ETF_FORCECOL);
 
 	// calculate size and position for the arrows
 	arrow.w = m_scSize.h + UI_OUTLINE_WIDTH * 2;
@@ -159,119 +178,132 @@ void CMenuSpinControl::Draw( void )
 	scCenterBox.w = m_scSize.w - arrow.w * 2;
 	scCenterBox.h = m_scSize.h;
 
-
-	if( m_szBackground )
+	if ( m_szBackground )
 	{
-		UI_DrawPic( scCenterPos, scCenterBox, uiColorWhite, m_szBackground );
+		UI_DrawPic(scCenterPos, scCenterBox, uiColorWhite, m_szBackground);
 	}
 	else
 	{
 		// draw the background
-		UI_FillRect( scCenterPos, scCenterBox, uiColorBlack );
+		UI_FillRect(scCenterPos, scCenterBox, uiColorBlack);
 
 		// draw the rectangle
-		UI_DrawRectangle( scCenterPos, scCenterBox, uiInputFgColor );
+		UI_DrawRectangle(scCenterPos, scCenterBox, uiInputFgColor);
 	}
 
-	if( iFlags & QMF_GRAYED )
+	if ( iFlags & QMF_GRAYED )
 	{
-		UI::Scissor::PushScissor( scCenterPos, scCenterBox );
-		UI_DrawString( font, scCenterPos, scCenterBox, m_szDisplay, uiColorDkGrey, m_scChSize, eTextAlignment, textflags | ETF_FORCECOL );
+		UI::Scissor::PushScissor(scCenterPos, scCenterBox);
+		UI_DrawString(
+			font,
+			scCenterPos,
+			scCenterBox,
+			m_szDisplay,
+			uiColorDkGrey,
+			m_scChSize,
+			eTextAlignment,
+			textflags | ETF_FORCECOL);
 		UI::Scissor::PopScissor();
-		UI_DrawPic( left, arrow, uiColorDkGrey, m_szLeftArrow );
-		UI_DrawPic( right, arrow, uiColorDkGrey, m_szRightArrow );
-		return; // grayed
+		UI_DrawPic(left, arrow, uiColorDkGrey, m_szLeftArrow);
+		UI_DrawPic(right, arrow, uiColorDkGrey, m_szRightArrow);
+		return;  // grayed
 	}
 
-	if(this != m_pParent->ItemAtCursor())
+	if ( this != m_pParent->ItemAtCursor() )
 	{
-		UI::Scissor::PushScissor( scCenterPos, scCenterBox );
-		UI_DrawString( font, scCenterPos, scCenterBox, m_szDisplay, colorBase, m_scChSize, eTextAlignment, textflags );
+		UI::Scissor::PushScissor(scCenterPos, scCenterBox);
+		UI_DrawString(font, scCenterPos, scCenterBox, m_szDisplay, colorBase, m_scChSize, eTextAlignment, textflags);
 		UI::Scissor::PopScissor();
 		UI_DrawPic(left, arrow, colorBase, m_szLeftArrow);
 		UI_DrawPic(right, arrow, colorBase, m_szRightArrow);
-		return;		// No focus
+		return;  // No focus
 	}
 
 	// see which arrow has the mouse focus
-	leftFocus = UI_CursorInRect( left, arrow );
-	rightFocus = UI_CursorInRect( right, arrow );
+	leftFocus = UI_CursorInRect(left, arrow);
+	rightFocus = UI_CursorInRect(right, arrow);
 
-	if( eFocusAnimation == QM_HIGHLIGHTIFFOCUS )
+	if ( eFocusAnimation == QM_HIGHLIGHTIFFOCUS )
 	{
-		UI::Scissor::PushScissor( scCenterPos, scCenterBox );
-		UI_DrawString( font, scCenterPos, scCenterBox, m_szDisplay, colorFocus, m_scChSize, eTextAlignment, textflags );
+		UI::Scissor::PushScissor(scCenterPos, scCenterBox);
+		UI_DrawString(font, scCenterPos, scCenterBox, m_szDisplay, colorFocus, m_scChSize, eTextAlignment, textflags);
 		UI::Scissor::PopScissor();
-		UI_DrawPic( left, arrow, colorBase, (leftFocus) ? m_szLeftArrowFocus : m_szLeftArrow );
-		UI_DrawPic( right, arrow, colorBase, (rightFocus) ? m_szRightArrowFocus : m_szRightArrow );
+		UI_DrawPic(left, arrow, colorBase, (leftFocus) ? m_szLeftArrowFocus : m_szLeftArrow);
+		UI_DrawPic(right, arrow, colorBase, (rightFocus) ? m_szRightArrowFocus : m_szRightArrow);
 	}
-	else if( eFocusAnimation == QM_PULSEIFFOCUS )
+	else if ( eFocusAnimation == QM_PULSEIFFOCUS )
 	{
-		int	color;
+		int color;
 
-		color = PackAlpha( colorBase, 255 * (0.5f + 0.5f * sin( (float)uiStatic.realTime / UI_PULSE_DIVISOR )));
+		color = PackAlpha(colorBase, 255 * (0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR)));
 
-		UI::Scissor::PushScissor( scCenterPos, scCenterBox );
-		UI_DrawString( font, scCenterPos, scCenterBox, m_szDisplay, color, m_scChSize, eTextAlignment, textflags );
+		UI::Scissor::PushScissor(scCenterPos, scCenterBox);
+		UI_DrawString(font, scCenterPos, scCenterBox, m_szDisplay, color, m_scChSize, eTextAlignment, textflags);
 		UI::Scissor::PopScissor();
-		UI_DrawPic( left, arrow, (leftFocus) ? color : (int)colorBase, (leftFocus) ? m_szLeftArrowFocus : m_szLeftArrow );
-		UI_DrawPic( right, arrow, (rightFocus) ? color : (int)colorBase, (rightFocus) ? m_szRightArrowFocus : m_szRightArrow );
+		UI_DrawPic(left, arrow, (leftFocus) ? color : (int)colorBase, (leftFocus) ? m_szLeftArrowFocus : m_szLeftArrow);
+		UI_DrawPic(
+			right,
+			arrow,
+			(rightFocus) ? color : (int)colorBase,
+			(rightFocus) ? m_szRightArrowFocus : m_szRightArrow);
 	}
 }
 
-const char *CMenuSpinControl::MoveLeft()
+const char* CMenuSpinControl::MoveLeft()
 {
-	const char *sound;
+	const char* sound;
 
-	if( m_flCurValue > m_flMinValue )
+	if ( m_flCurValue > m_flMinValue )
 	{
 		m_flCurValue -= m_flRange;
-		if( m_flCurValue < m_flMinValue )
+		if ( m_flCurValue < m_flMinValue )
 			m_flCurValue = m_flMinValue;
 		sound = uiStatic.sounds[SND_MOVE];
 	}
-	else sound = uiStatic.sounds[SND_BUZZ];
+	else
+		sound = uiStatic.sounds[SND_BUZZ];
 
 	return sound;
 }
 
-const char *CMenuSpinControl::MoveRight()
+const char* CMenuSpinControl::MoveRight()
 {
-	const char *sound;
+	const char* sound;
 
-	if( m_flCurValue < m_flMaxValue )
+	if ( m_flCurValue < m_flMaxValue )
 	{
 		m_flCurValue += m_flRange;
-		if( m_flCurValue > m_flMaxValue )
+		if ( m_flCurValue > m_flMaxValue )
 			m_flCurValue = m_flMaxValue;
 		sound = uiStatic.sounds[SND_MOVE];
 	}
-	else sound = uiStatic.sounds[SND_BUZZ];
+	else
+		sound = uiStatic.sounds[SND_BUZZ];
 
 	return sound;
 }
 
 void CMenuSpinControl::UpdateEditable()
 {
-	switch( m_eType )
+	switch ( m_eType )
 	{
-	case CVAR_STRING:
-		SetCurrentValue( CvarString() );
-		break;
-	case CVAR_VALUE:
-		SetCurrentValue( CvarValue() );
-		break;
+		case CVAR_STRING:
+			SetCurrentValue(CvarString());
+			break;
+		case CVAR_VALUE:
+			SetCurrentValue(CvarValue());
+			break;
 	}
 }
 
-void CMenuSpinControl::Setup( float minValue, float maxValue, float range )
+void CMenuSpinControl::Setup(float minValue, float maxValue, float range)
 {
 	m_flMinValue = minValue;
 	m_flMaxValue = maxValue;
 	m_flRange = range;
 }
 
-void CMenuSpinControl::Setup( CMenuBaseArrayModel *model )
+void CMenuSpinControl::Setup(CMenuBaseArrayModel* model)
 {
 	m_pModel = model;
 	m_flMinValue = 0;
@@ -279,15 +311,15 @@ void CMenuSpinControl::Setup( CMenuBaseArrayModel *model )
 	m_flRange = 1;
 }
 
-void CMenuSpinControl::SetCurrentValue( float curValue )
+void CMenuSpinControl::SetCurrentValue(float curValue)
 {
 	m_flCurValue = curValue;
 	Display();
 }
 
-void CMenuSpinControl::SetCurrentValue( const char *stringValue )
+void CMenuSpinControl::SetCurrentValue(const char* stringValue)
 {
-	ASSERT( m_pModel );
+	ASSERT(m_pModel);
 	if ( !m_pModel )
 	{
 		return;
@@ -300,9 +332,9 @@ void CMenuSpinControl::SetCurrentValue( const char *stringValue )
 
 	int i = 0;
 
-	for( ; i <= (int)m_flMaxValue; i++ )
+	for ( ; i <= (int)m_flMaxValue; i++ )
 	{
-		if( !strcmp( m_pModel->GetText( i ), stringValue ) )
+		if ( !strcmp(m_pModel->GetText(i), stringValue) )
 		{
 			m_flCurValue = i;
 			Display();
@@ -311,40 +343,44 @@ void CMenuSpinControl::SetCurrentValue( const char *stringValue )
 	}
 
 	m_flCurValue = -1;
-	SetCvarString( stringValue );
+	SetCvarString(stringValue);
 
-	Q_strncpy( m_szDisplay, stringValue, CS_SIZE );
+	Q_strncpy(m_szDisplay, stringValue, CS_SIZE);
 }
 
-void CMenuSpinControl::SetDisplayPrecision( short precision )
+void CMenuSpinControl::SetDisplayPrecision(short precision)
 {
 	m_iFloatPrecision = precision;
 }
 
 void CMenuSpinControl::Display()
 {
-	if( !m_pModel )
+	if ( !m_pModel )
 	{
-		SetCvarValue( m_flCurValue );
+		SetCvarValue(m_flCurValue);
 
-		snprintf( m_szDisplay, CS_SIZE, "%.*f", m_iFloatPrecision, m_flCurValue );
+		snprintf(m_szDisplay, CS_SIZE, "%.*f", m_iFloatPrecision, m_flCurValue);
 	}
 	else
 	{
-		ASSERT( m_flCurValue >= m_flMinValue && m_flCurValue <= m_flMaxValue );
-		const char *stringValue = m_pModel->GetText( (int)m_flCurValue );
+		ASSERT(m_flCurValue >= m_flMinValue && m_flCurValue <= m_flMaxValue);
+		const char* stringValue = m_pModel->GetText((int)m_flCurValue);
 
-		switch( m_eType )
+		switch ( m_eType )
 		{
-		case CVAR_STRING: SetCvarString( stringValue ); break;
-		case CVAR_VALUE: SetCvarValue( m_flCurValue ); break;
+			case CVAR_STRING:
+				SetCvarString(stringValue);
+				break;
+			case CVAR_VALUE:
+				SetCvarValue(m_flCurValue);
+				break;
 		}
 
-		Q_strncpy( m_szDisplay, stringValue, CS_SIZE );
+		Q_strncpy(m_szDisplay, stringValue, CS_SIZE);
 	}
 }
 
-void CMenuSpinControl::ForceDisplayString(const char *display)
+void CMenuSpinControl::ForceDisplayString(const char* display)
 {
-	Q_strncpy( m_szDisplay, display, CS_SIZE );
+	Q_strncpy(m_szDisplay, display, CS_SIZE);
 }

@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 #pragma once
-#if !defined( _WIN32 ) && !defined( FREETYPEFONT_H )
+#if !defined(_WIN32) && !defined(FREETYPEFONT_H)
 #define FREETYPEFONT_H
 
 #if defined(MAINUI_USE_CUSTOM_FONT_RENDER) && defined(MAINUI_USE_FREETYPE)
@@ -22,9 +22,9 @@ GNU General Public License for more details.
 
 extern "C"
 {
-    #include <fontconfig/fontconfig.h>
-    #include <ft2build.h>
-    #include FT_FREETYPE_H
+#include <fontconfig/fontconfig.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 }
 
 #include "utlmemory.h"
@@ -36,24 +36,29 @@ public:
 	CFreeTypeFont();
 	~CFreeTypeFont() override;
 
-	bool Create(const char *name,
-		int tall, int weight,
-		int blur, float brighten,
+	bool Create(
+		const char* name,
+		int tall,
+		int weight,
+		int blur,
+		float brighten,
 		int outlineSize,
-		int scanlineOffset, float scanlineScale,
+		int scanlineOffset,
+		float scanlineScale,
 		int flags) override;
-	void GetCharRGBA(int ch, Point pt, Size sz, unsigned char *rgba, Size &drawSize) override;
-	void GetCharABCWidthsNoCache( int ch, int &a, int &b, int &c ) override;
-	bool HasChar( int ch ) const override;
+	void GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Size& drawSize) override;
+	void GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c) override;
+	bool HasChar(int ch) const override;
+
 private:
 	FT_Face face;
 	static FT_Library m_Library;
 	char m_szRealFontFile[4096];
-	bool FindFontDataFile(const char *name, int tall, int weight, int flags, char *dataFile, int dataFileChars);
+	bool FindFontDataFile(const char* name, int tall, int weight, int flags, char* dataFile, int dataFileChars);
 
 	friend class CFontManager;
 };
 
-#endif // defined(MAINUI_USE_CUSTOM_FONT_RENDER) && defined(MAINUI_USE_FREETYPE)
+#endif  // defined(MAINUI_USE_CUSTOM_FONT_RENDER) && defined(MAINUI_USE_FREETYPE)
 
-#endif // FREETYPEFONT_H
+#endif  // FREETYPEFONT_H

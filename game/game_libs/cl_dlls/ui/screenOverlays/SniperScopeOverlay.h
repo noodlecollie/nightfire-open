@@ -43,4 +43,4 @@ namespace ScreenOverlays
 		UIVec2 m_ScopeImagePos;
 		UIVec2 m_ScopeImageDim;
 	};
-}
+}  // namespace ScreenOverlays

@@ -1,39 +1,39 @@
 /***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
+ *
+ *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+ *
+ *	This product contains software technology licensed from Id
+ *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
+ *	All Rights Reserved.
+ *
+ *   Use, distribution, and modification of this source code and/or resulting
+ *   object code is restricted to non-commercial enhancements to products from
+ *   Valve LLC.  All other use, distribution, or modification is prohibited
+ *   without written permission from Valve LLC.
+ *
+ ****/
 
 #define _NOENUMQBOOL
 
 #include <windows.h>
 
-extern "C" 
+extern "C"
 {
-	#include "cmdlib.h"
-	#include "wadlib.h"
+#include "cmdlib.h"
+#include "wadlib.h"
 }
 #include "qfont.h"
 
 #define DEFAULT_FONT "Arial"
 
-#define FONT_TAG	6  // Font's are the 6th tag after the TYP_LUMPY base ( 64 )...i.e., type == 70
+#define FONT_TAG 6  // Font's are the 6th tag after the TYP_LUMPY base ( 64 )...i.e., type == 70
 
-BOOL		bItalic = FALSE;
-BOOL		bBold   = FALSE;
-BOOL		bUnderline = FALSE;
+BOOL bItalic = FALSE;
+BOOL bBold = FALSE;
+BOOL bUnderline = FALSE;
 
-char		fontname[ 256 ];
-int			pointsize[3] = { 9, 11, 15 };
+char fontname[256];
+int pointsize[3] = {9, 11, 15};
 
 /*
 =================
@@ -42,86 +42,83 @@ zeromalloc
 Allocates and zeroes memory
 =================
 */
-void *zeromalloc( size_t size )
+void* zeromalloc(size_t size)
 {
-	unsigned char *pbuffer;
-	pbuffer = ( unsigned char * )malloc( size );
+	unsigned char* pbuffer;
+	pbuffer = (unsigned char*)malloc(size);
 	if ( !pbuffer )
 	{
-		printf( "Failed on allocation of %i bytes", size );
-		exit( -1 );
+		printf("Failed on allocation of %i bytes", size);
+		exit(-1);
 	}
 
-	memset( pbuffer, 0, size );
-	return ( void * )pbuffer;
+	memset(pbuffer, 0, size);
+	return (void*)pbuffer;
 }
 
 /*
 =================
 Draw_SetupConsolePalette
 
-Set's the palette to full brightness ( 192 ) and 
+Set's the palette to full brightness ( 192 ) and
 set's up palette entry 0 -- black
 =================
 */
-void Draw_SetupConsolePalette( unsigned char *pal )
+void Draw_SetupConsolePalette(unsigned char* pal)
 {
-	unsigned char *pPalette;
+	unsigned char* pPalette;
 	int i;
 
 	pPalette = pal;
 
-	*(short *)pPalette = 3 * 256;
-	pPalette += sizeof( short );
+	*(short*)pPalette = 3 * 256;
+	pPalette += sizeof(short);
 
 	for ( i = 0; i < 256; i++ )
 	{
-		pPalette[3 * i + 0 ] = i;
-		pPalette[3 * i + 1 ] = i;
-		pPalette[3 * i + 2 ] = i;
+		pPalette[3 * i + 0] = i;
+		pPalette[3 * i + 1] = i;
+		pPalette[3 * i + 2] = i;
 	}
 
 	// Set palette zero correctly
-	pPalette[ 0 ] = 0;
-	pPalette[ 1 ] = 0;
-	pPalette[ 2 ] = 0;
+	pPalette[0] = 0;
+	pPalette[1] = 0;
+	pPalette[2] = 0;
 }
 
-//DJXX added for debugging
+// DJXX added for debugging
 BOOL WriteDIB(LPTSTR szFile, HANDLE hDIB)
 {
-	BITMAPFILEHEADER	hdr;
-	LPBITMAPINFOHEADER	lpbi;
+	BITMAPFILEHEADER hdr;
+	LPBITMAPINFOHEADER lpbi;
 
-	if (!hDIB)
+	if ( !hDIB )
 		return FALSE;
 
-	FILE		*file;
+	FILE* file;
 	file = SafeOpenWrite(szFile);
-
 
 	lpbi = (LPBITMAPINFOHEADER)hDIB;
 
 	int nColors = 1 << lpbi->biBitCount;
 
-	// Fill in the fields of the file header 
-	hdr.bfType = ((WORD)('M' << 8) | 'B');	// is always "BM"
+	// Fill in the fields of the file header
+	hdr.bfType = ((WORD)('M' << 8) | 'B');  // is always "BM"
 	hdr.bfSize = GlobalSize(hDIB) + sizeof(hdr);
-	printf("WriteDIB. Error code = %i\n",GetLastError());
+	printf("WriteDIB. Error code = %i\n", GetLastError());
 	hdr.bfReserved1 = 0;
 	hdr.bfReserved2 = 0;
-	hdr.bfOffBits = (DWORD)(sizeof(hdr)+lpbi->biSize +
-		nColors * sizeof(RGBQUAD));
+	hdr.bfOffBits = (DWORD)(sizeof(hdr) + lpbi->biSize + nColors * sizeof(RGBQUAD));
 
-	// Write the file header 
+	// Write the file header
 	SafeWrite(file, &hdr, sizeof(hdr));
 
-	// Write the DIB header and the bits 
+	// Write the DIB header and the bits
 	SafeWrite(file, lpbi, GlobalSize(hDIB));
 	fclose(file);
 	return TRUE;
 }
-
 
 /*
 =================
@@ -130,11 +127,13 @@ CreateProportionalConsoleFont
 Renders TT font into memory dc and creates appropriate qfont_t structure
 =================
 */
-//DJXX: New version, draws chararacters closely to each other without spaces
+// DJXX: New version, draws chararacters closely to each other without spaces
 
-// YWB:  Sigh, VC 6.0's global optimizer causes weird stack fixups in release builds.  Disable the globabl optimizer for this function.
-#pragma optimize( "g", off )
-qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItalic, BOOL bUnderline, BOOL bBold, int *outsize)
+// YWB:  Sigh, VC 6.0's global optimizer causes weird stack fixups in release builds.  Disable the globabl optimizer for
+// this function.
+#pragma optimize("g", off)
+qfont_t*
+CreateProportionalConsoleFont(char* pszFont, int nPointSize, BOOL bItalic, BOOL bUnderline, BOOL bBold, int* outsize)
 {
 	HDC hdc;
 	HDC hmemDC;
@@ -147,40 +146,54 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 	int i, j;
 	int x, y;
 	int nScans;
-	unsigned char *bits;
+	unsigned char* bits;
 	BITMAPINFO tempbmi;
-	BITMAPINFO *pbmi;
-	BITMAPINFOHEADER *pbmheader;
-	unsigned char *pqdata;
-	unsigned char *pCur;
+	BITMAPINFO* pbmi;
+	BITMAPINFOHEADER* pbmheader;
+	unsigned char* pqdata;
+	unsigned char* pCur;
 	int x1, y1;
-	unsigned char *pPalette;
-	qfont_t *pqf = NULL;
+	unsigned char* pPalette;
+	qfont_t* pqf = NULL;
 	int fullsize;
 	int w = 16;
-	//int h = (128 - 32) / 16;
+	// int h = (128 - 32) / 16;
 	int h = (256 - 32) / 16;
 	int charheight = nPointSize + 5;
-	int charwidth = 16;//now used only for calculating width of wad texture
+	int charwidth = 16;  // now used only for calculating width of wad texture
 	int fontcharwidth;
 	int edge = 1;
 	RECT rcChar;
-	boolean lShadow = true;//draw shadow instead of outline
+	boolean lShadow = true;  // draw shadow instead of outline
 
 	// Create the font
-	fnt = CreateFont(-nPointSize, 0, 0, 0, bBold ? FW_HEAVY : FW_MEDIUM, bItalic, bUnderline, 0, /*ANSI_CHARSET*/DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH | FF_DONTCARE, pszFont);
+	fnt = CreateFont(
+		-nPointSize,
+		0,
+		0,
+		0,
+		bBold ? FW_HEAVY : FW_MEDIUM,
+		bItalic,
+		bUnderline,
+		0,
+		/*ANSI_CHARSET*/ DEFAULT_CHARSET,
+		OUT_TT_PRECIS,
+		CLIP_DEFAULT_PRECIS,
+		PROOF_QUALITY,
+		VARIABLE_PITCH | FF_DONTCARE,
+		pszFont);
 
 	bits = NULL;
 
-	fullsize = sizeof(qfont_t)-4 + (/*128*/256 * w * charwidth) + sizeof(short)+768 + 64;
+	fullsize = sizeof(qfont_t) - 4 + (/*128*/ 256 * w * charwidth) + sizeof(short) + 768 + 64;
 
 	// Store off final size
 	*outsize = fullsize;
 
-	pqf = (qfont_t *)zeromalloc(fullsize);
-	pqdata = (unsigned char *)pqf + sizeof(qfont_t)-4;
+	pqf = (qfont_t*)zeromalloc(fullsize);
+	pqdata = (unsigned char*)pqf + sizeof(qfont_t) - 4;
 
-	pPalette = pqdata + (/*128*/256 * w * charwidth);
+	pPalette = pqdata + (/*128*/ 256 * w * charwidth);
 
 	// Configure palette
 	Draw_SetupConsolePalette(pPalette);
@@ -190,22 +203,23 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 
 	oldfnt = (HFONT)SelectObject(hmemDC, fnt);
 
-	if (GetTextMetrics(hmemDC, &tm))
+	if ( GetTextMetrics(hmemDC, &tm) )
 	{
 		fontcharwidth = tm.tmMaxCharWidth;
-		if (fontcharwidth % 2)//hack: on odd values of fontcharwidth, bitmaps pixel check gives false triggering
+		if ( fontcharwidth % 2 )  // hack: on odd values of fontcharwidth, bitmaps pixel check gives false triggering
 			fontcharwidth++;
 	}
-	else {
+	else
+	{
 		fontcharwidth = charwidth;
 	}
 
-	if (lShadow)
-		charheight += edge;//adding 1 pixel to bottom for shadowing
+	if ( lShadow )
+		charheight += edge;  // adding 1 pixel to bottom for shadowing
 
 	rc.top = 0;
 	rc.left = 0;
-	rc.right = fontcharwidth  * w;
+	rc.right = fontcharwidth * w;
 	rc.bottom = charheight * h;
 
 	hbm = CreateBitmap(fontcharwidth * w, charheight * h, 1, 1, NULL);
@@ -218,9 +232,9 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 	FillRect(hmemDC, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
 
 	// Draw character set into memory DC
-	for (j = 0; j < h; j++)
+	for ( j = 0; j < h; j++ )
 	{
-		for (i = 0; i < w; i++)
+		for ( i = 0; i < w; i++ )
 		{
 			x = i * fontcharwidth;
 			y = j * charheight;
@@ -228,7 +242,7 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 			c = (unsigned char)(startchar + j * w + i);
 
 			// Only draw printable characters, of course
-			//if ( isprint( c ) && c <= 127 )
+			// if ( isprint( c ) && c <= 127 )
 			{
 				// Draw it.
 				rcChar.left = x + 1;
@@ -236,7 +250,7 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 				rcChar.right = x + fontcharwidth - 1;
 				rcChar.bottom = y + charheight - 1;
 
-				DrawText(hmemDC, (char *)&c, 1, &rcChar, DT_NOPREFIX | DT_LEFT);
+				DrawText(hmemDC, (char*)&c, 1, &rcChar, DT_NOPREFIX | DT_LEFT);
 			}
 		}
 	}
@@ -244,7 +258,7 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 	// Now turn the qfont into raw format
 	memset(&tempbmi, 0, sizeof(BITMAPINFO));
 
-	pbmheader = (BITMAPINFOHEADER *)&tempbmi;
+	pbmheader = (BITMAPINFOHEADER*)&tempbmi;
 
 	pbmheader->biSize = sizeof(BITMAPINFOHEADER);
 	pbmheader->biWidth = w * fontcharwidth;
@@ -257,18 +271,18 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 	nScans = GetDIBits(hmemDC, hbm, 0, h * charheight, NULL, &tempbmi, DIB_RGB_COLORS);
 
 	// Allocate space for all bits
-	pbmi = (BITMAPINFO *)zeromalloc(sizeof (BITMAPINFOHEADER)+2 * sizeof(RGBQUAD)+pbmheader->biSizeImage);
+	pbmi = (BITMAPINFO*)zeromalloc(sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + pbmheader->biSizeImage);
 
 	memcpy(pbmi, &tempbmi, sizeof(BITMAPINFO));
 
-	bits = (unsigned char *)pbmi + sizeof(BITMAPINFOHEADER)+2 * sizeof(RGBQUAD);
+	bits = (unsigned char*)pbmi + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
 
 	// Now read in bits
 	nScans = GetDIBits(hmemDC, hbm, 0, h * charheight, bits, pbmi, DIB_RGB_COLORS);
 
-	if (nScans > 0)
+	if ( nScans > 0 )
 	{
-#if 0 //for debugging
+#if 0  // for debugging
 		char sz[128];//DJXX write dib to file
 		sprintf(sz, "font_%s_%i.bmp", pszFont, nPointSize);
 		WriteDIB(sz, pbmi);
@@ -276,7 +290,7 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 		// Now convert to proper raw format
 		//
 		// Now get results from dib
-		pqf->height = /*128*/256; // Always set to 128
+		pqf->height = /*128*/ 256;  // Always set to 128
 		pqf->width = charwidth;
 		pqf->rowheight = charheight;
 		pqf->rowcount = h;
@@ -287,51 +301,55 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 
 		int k = 0, dest_x = 0, dest_y = 0;
 
-		for (j = 0; j < h; j++)
-			for (i = 0; i < w; i++)
+		for ( j = 0; j < h; j++ )
+			for ( i = 0; i < w; i++ )
 			{
 				int rightmost, leftmost, realcharwidth;
-				
+
 				x = i * fontcharwidth;
 				y = j * charheight;
 
-				//c = (char)( startchar + j * w + i ); here was memory bug
+				// c = (char)( startchar + j * w + i ); here was memory bug
 				c = (unsigned char)(startchar + j * w + i);
 
 				rightmost = 0;
 				leftmost = fontcharwidth;
 
-				//Calculate real width of the character
-				for (y1 = 0; y1 < charheight; y1++)
-					for (x1 = 0; x1 < fontcharwidth; x1++)
+				// Calculate real width of the character
+				for ( y1 = 0; y1 < charheight; y1++ )
+					for ( x1 = 0; x1 < fontcharwidth; x1++ )
 					{
 						int src_offset;
 
 						src_offset = (y + y1) * w * fontcharwidth + x + x1;
 
-						if (bits[src_offset >> 3] & (1 << (7 - src_offset & 7)))//on odd values of fontcharwidth this check gives false triggering
+						if ( bits[src_offset >> 3] & (1 << (7 - src_offset & 7)) )  // on odd values of fontcharwidth
+																					// this check gives false triggering
 						{
-							if (x1 > rightmost)
+							if ( x1 > rightmost )
 								rightmost = x1;
 
-							if (x1 < leftmost)
+							if ( x1 < leftmost )
 								leftmost = x1;
 						}
 					}
-				if (leftmost > rightmost)//empty characters
+				if ( leftmost > rightmost )  // empty characters
 				{
 					leftmost = 0;
 					rightmost = 7;
-				} else {
+				}
+				else
+				{
 					rightmost += edge;
-					if (!lShadow)
+					if ( !lShadow )
 						leftmost -= edge;
-				}					
+				}
 
 				realcharwidth = rightmost - leftmost + 1;
 				pqf->fontinfo[c].charwidth = realcharwidth;
-				
-				if (dest_x + realcharwidth >= w * charwidth)//if it not fits on current line then carry it to the next line
+
+				if ( dest_x + realcharwidth >=
+					 w * charwidth )  // if it not fits on current line then carry it to the next line
 				{
 					dest_x = 0;
 					k++;
@@ -340,12 +358,12 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 				dest_y = k * charheight;
 				pqf->fontinfo[c].startoffset = dest_y * w * charwidth + dest_x;
 
-				if (lShadow)
+				if ( lShadow )
 				{
 					int shift = edge;
-					//Draw shadow by shifting character to 1 pixel right and down 
-					for (y1 = 0; y1 < charheight; y1++)
-						for (x1 = 0; x1 < realcharwidth; x1++)
+					// Draw shadow by shifting character to 1 pixel right and down
+					for ( y1 = 0; y1 < charheight; y1++ )
+						for ( x1 = 0; x1 < realcharwidth; x1++ )
 						{
 							int src_offset, dest_offset;
 
@@ -355,19 +373,19 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 							// Dest
 							pCur = pqdata + dest_offset;
 
-							if (bits[src_offset >> 3] & (1 << (7 - src_offset & 7)))
+							if ( bits[src_offset >> 3] & (1 << (7 - src_offset & 7)) )
 							{
 								// Near Black
-								//pCur[0] = 32;
-								pCur[0] = 0;//full black so shadow remains black even it's coloured text
+								// pCur[0] = 32;
+								pCur[0] = 0;  // full black so shadow remains black even it's coloured text
 							}
 						}
 				}
 				else
 				{
 					// Put black pixels below and to the right of each pixel(outline)
-					for (y1 = edge; y1 < charheight - edge; y1++)
-						for (x1 = 0; x1 < realcharwidth; x1++)
+					for ( y1 = edge; y1 < charheight - edge; y1++ )
+						for ( x1 = 0; x1 < realcharwidth; x1++ )
 						{
 							int src_offset, dest_offset;
 
@@ -378,12 +396,13 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 							// Dest
 							pCur = pqdata + dest_offset;
 
-							for (xx0 = -edge; xx0 <= edge; xx0++)
-								for (yy0 = -edge; yy0 <= edge; yy0++)
+							for ( xx0 = -edge; xx0 <= edge; xx0++ )
+								for ( yy0 = -edge; yy0 <= edge; yy0++ )
 								{
-									src_offset = (y + y1 + yy0) * w * fontcharwidth + x + x1 + xx0 + leftmost;//adding shift
+									src_offset =
+										(y + y1 + yy0) * w * fontcharwidth + x + x1 + xx0 + leftmost;  // adding shift
 
-									if (bits[src_offset >> 3] & (1 << (7 - src_offset & 7)))
+									if ( bits[src_offset >> 3] & (1 << (7 - src_offset & 7)) )
 									{
 										// Near Black
 										pCur[0] = 32;
@@ -393,8 +412,8 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 				}
 
 				// Now copy in the actual font pixels
-				for (y1 = 0; y1 < charheight; y1++)
-					for (x1 = 0; x1 < realcharwidth; x1++)
+				for ( y1 = 0; y1 < charheight; y1++ )
+					for ( x1 = 0; x1 < realcharwidth; x1++ )
 					{
 						int src_offset, dest_offset;
 
@@ -404,7 +423,7 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 						// Dest
 						pCur = pqdata + dest_offset;
 
-						if (bits[src_offset >> 3] & (1 << (7 - src_offset & 7)))
+						if ( bits[src_offset >> 3] & (1 << (7 - src_offset & 7)) )
 						{
 							pCur[0] = 192;
 						}
@@ -426,8 +445,7 @@ qfont_t *CreateProportionalConsoleFont(char *pszFont, int nPointSize, BOOL bItal
 
 	return pqf;
 }
-#pragma optimize( "g", on )
-
+#pragma optimize("g", on)
 
 /*
 =================
@@ -436,74 +454,89 @@ CreateConsoleFont
 Renders TT font into memory dc and creates appropriate qfont_t structure
 =================
 */
-//DJXX: original version, just added drawing of locale characters and fixed memory bug.
-// YWB:  Sigh, VC 6.0's global optimizer causes weird stack fixups in release builds.  Disable the globabl optimizer for this function.
-#pragma optimize( "g", off )
-qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bUnderline, BOOL bBold, int *outsize )
+// DJXX: original version, just added drawing of locale characters and fixed memory bug.
+//  YWB:  Sigh, VC 6.0's global optimizer causes weird stack fixups in release builds.  Disable the globabl optimizer
+//  for this function.
+#pragma optimize("g", off)
+qfont_t* CreateConsoleFont(char* pszFont, int nPointSize, BOOL bItalic, BOOL bUnderline, BOOL bBold, int* outsize)
 {
 	HDC hdc;
 	HDC hmemDC;
 	HBITMAP hbm, oldbm;
-	RECT rc;	
+	RECT rc;
 	HFONT fnt, oldfnt;
 	int startchar = 32;
 	int c;
 	int i, j;
 	int x, y;
 	int nScans;
-	unsigned char *bits;
+	unsigned char* bits;
 	BITMAPINFO tempbmi;
-	BITMAPINFO *pbmi;
-	BITMAPINFOHEADER *pbmheader;
-	unsigned char *pqdata;
-	unsigned char *pCur;
+	BITMAPINFO* pbmi;
+	BITMAPINFOHEADER* pbmheader;
+	unsigned char* pqdata;
+	unsigned char* pCur;
 	int x1, y1;
-	unsigned char *pPalette;
-	qfont_t *pqf = NULL;
+	unsigned char* pPalette;
+	qfont_t* pqf = NULL;
 	int fullsize;
 	int w = 16;
-	//int h = (128-32)/16;
+	// int h = (128-32)/16;
 	int h = (256 - 32) / 16;
 	int charheight = nPointSize + 5;
 	int charwidth = 16;
 	RECT rcChar;
 
 	// Create the font
-	fnt = CreateFont( -nPointSize, 0, 0, 0, bBold ? FW_HEAVY : FW_MEDIUM, bItalic, bUnderline, 0, /*ANSI_CHARSET*/DEFAULT_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, VARIABLE_PITCH | FF_DONTCARE, pszFont );
+	fnt = CreateFont(
+		-nPointSize,
+		0,
+		0,
+		0,
+		bBold ? FW_HEAVY : FW_MEDIUM,
+		bItalic,
+		bUnderline,
+		0,
+		/*ANSI_CHARSET*/ DEFAULT_CHARSET,
+		OUT_TT_PRECIS,
+		CLIP_DEFAULT_PRECIS,
+		PROOF_QUALITY,
+		VARIABLE_PITCH | FF_DONTCARE,
+		pszFont);
 
 	bits = NULL;
 
-	fullsize = sizeof( qfont_t ) - 4 + ( /*128*/256 * w * charwidth ) + sizeof(short) + 768 + 64;
+	fullsize = sizeof(qfont_t) - 4 + (/*128*/ 256 * w * charwidth) + sizeof(short) + 768 + 64;
 
 	// Store off final size
 	*outsize = fullsize;
 
-	pqf = ( qfont_t * )zeromalloc( fullsize );
-	pqdata = (unsigned char *)pqf + sizeof( qfont_t ) - 4;
+	pqf = (qfont_t*)zeromalloc(fullsize);
+	pqdata = (unsigned char*)pqf + sizeof(qfont_t) - 4;
 
-	pPalette = pqdata + ( /*128*/256 * w * charwidth);
+	pPalette = pqdata + (/*128*/ 256 * w * charwidth);
 
 	// Configure palette
-	Draw_SetupConsolePalette( pPalette );
+	Draw_SetupConsolePalette(pPalette);
 
-	hdc		= GetDC( NULL );
-	hmemDC	= CreateCompatibleDC( hdc );
+	hdc = GetDC(NULL);
+	hmemDC = CreateCompatibleDC(hdc);
 
-	rc.top		= 0;
-	rc.left		= 0;
-	rc.right	= charwidth  * w;
-	rc.bottom	= charheight * h;
+	rc.top = 0;
+	rc.left = 0;
+	rc.right = charwidth * w;
+	rc.bottom = charheight * h;
 
-	hbm		= CreateBitmap( charwidth * w, charheight * h, 1, 1, NULL ); 
-	oldbm	= (HBITMAP)SelectObject( hmemDC, hbm );
-	oldfnt	= (HFONT)SelectObject( hmemDC, fnt );
+	hbm = CreateBitmap(charwidth * w, charheight * h, 1, 1, NULL);
+	oldbm = (HBITMAP)SelectObject(hmemDC, hbm);
+	oldfnt = (HFONT)SelectObject(hmemDC, fnt);
 
-	SetTextColor( hmemDC, 0x00ffffff );
-	SetBkMode( hmemDC, TRANSPARENT );
+	SetTextColor(hmemDC, 0x00ffffff);
+	SetBkMode(hmemDC, TRANSPARENT);
 
 	// Paint black background
-	FillRect( hmemDC, &rc, (HBRUSH)GetStockObject( BLACK_BRUSH ) );
-   
+	FillRect(hmemDC, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
+
 	// Draw character set into memory DC
 	for ( j = 0; j < h; j++ )
 	{
@@ -512,49 +545,49 @@ qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bU
 			x = i * charwidth;
 			y = j * charheight;
 
-			c = (unsigned char)( startchar + j * w + i );
+			c = (unsigned char)(startchar + j * w + i);
 
 			// Only draw printable characters, of course
-			//if ( isprint( c ) && c <= 127 )
+			// if ( isprint( c ) && c <= 127 )
 			{
 				// Draw it.
-				rcChar.left		= x + 1;
-				rcChar.top		= y + 1;
-				rcChar.right	= x + charwidth - 1;
-				rcChar.bottom	= y + charheight - 1;
-				
-				DrawText( hmemDC, (char *)&c, 1, &rcChar, DT_NOPREFIX | DT_LEFT );
+				rcChar.left = x + 1;
+				rcChar.top = y + 1;
+				rcChar.right = x + charwidth - 1;
+				rcChar.bottom = y + charheight - 1;
+
+				DrawText(hmemDC, (char*)&c, 1, &rcChar, DT_NOPREFIX | DT_LEFT);
 			}
 		}
 	}
 
 	// Now turn the qfont into raw format
-	memset( &tempbmi, 0, sizeof( BITMAPINFO ) );
-	pbmheader = ( BITMAPINFOHEADER * )&tempbmi;
+	memset(&tempbmi, 0, sizeof(BITMAPINFO));
+	pbmheader = (BITMAPINFOHEADER*)&tempbmi;
 
-	pbmheader->biSize	= sizeof( BITMAPINFOHEADER );
-	pbmheader->biWidth	= w * charwidth; 
-	pbmheader->biHeight	= -h * charheight; 
-	pbmheader->biPlanes	= 1;
+	pbmheader->biSize = sizeof(BITMAPINFOHEADER);
+	pbmheader->biWidth = w * charwidth;
+	pbmheader->biHeight = -h * charheight;
+	pbmheader->biPlanes = 1;
 	pbmheader->biBitCount = 1;
 	pbmheader->biCompression = BI_RGB;
 
 	// Find out how big the bitmap is
-	nScans = GetDIBits( hmemDC, hbm, 0, h * charheight, NULL, &tempbmi, DIB_RGB_COLORS );
+	nScans = GetDIBits(hmemDC, hbm, 0, h * charheight, NULL, &tempbmi, DIB_RGB_COLORS);
 
 	// Allocate space for all bits
-	pbmi = ( BITMAPINFO * )zeromalloc( sizeof ( BITMAPINFOHEADER ) + 2 * sizeof( RGBQUAD ) + pbmheader->biSizeImage );
+	pbmi = (BITMAPINFO*)zeromalloc(sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + pbmheader->biSizeImage);
 
-	memcpy( pbmi, &tempbmi, sizeof( BITMAPINFO ) );
+	memcpy(pbmi, &tempbmi, sizeof(BITMAPINFO));
 
-	bits = ( unsigned char * )pbmi + sizeof( BITMAPINFOHEADER ) + 2 * sizeof( RGBQUAD ); 
+	bits = (unsigned char*)pbmi + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
 
 	// Now read in bits
-	nScans = GetDIBits( hmemDC, hbm, 0, h * charheight, bits, pbmi, DIB_RGB_COLORS );
+	nScans = GetDIBits(hmemDC, hbm, 0, h * charheight, bits, pbmi, DIB_RGB_COLORS);
 
 	if ( nScans > 0 )
 	{
-#if 0 //for debugging
+#if 0  // for debugging
 		char sz[128];//DJXX write dib to file
 		sprintf(sz, "font_%s_%i.bmp", pszFont, nPointSize);
 		WriteDIB(sz, pbmi);
@@ -563,14 +596,14 @@ qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bU
 		// Now convert to proper raw format
 		//
 		// Now get results from dib
-		pqf->height = /*128*/256; // Always set to 128
+		pqf->height = /*128*/ 256;  // Always set to 128
 		pqf->width = charwidth;
 		pqf->rowheight = charheight;
 		pqf->rowcount = h;
 		pCur = pqdata;
-		
+
 		// Set everything to index 255 ( 0xff ) == transparent
-		memset( pCur, 0xFF, w * charwidth * pqf->height );
+		memset(pCur, 0xFF, w * charwidth * pqf->height);
 
 		for ( j = 0; j < h; j++ )
 		{
@@ -581,20 +614,19 @@ qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bU
 				x = i * charwidth;
 				y = j * charheight;
 
-
-				//c = (char)( startchar + j * w + i ); here was memory bug
+				// c = (char)( startchar + j * w + i ); here was memory bug
 				c = (unsigned char)(startchar + j * w + i);
 
-				pqf->fontinfo[ c ].charwidth = charwidth;
-				pqf->fontinfo[ c ].startoffset = y * w * charwidth + x;
+				pqf->fontinfo[c].charwidth = charwidth;
+				pqf->fontinfo[c].startoffset = y * w * charwidth + x;
 
 				bestwidth = 0;
 
 				// In this first pass, place the black drop shadow so characters draw ok in the engine against
 				//  most backgrounds.
 				// YWB:  FIXME, apply a box filter and enable blending?
-#if 0//DJXX: we already did that for a whole image by memset
-				// Make it all transparent for starters
+#if 0  // DJXX: we already did that for a whole image by memset
+	   //  Make it all transparent for starters
 				for ( y1 = 0; y1 < charheight; y1++ )
 				{
 					for ( x1 = 0; x1 < charwidth; x1++ )
@@ -618,7 +650,7 @@ qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bU
 
 						int xx0, yy0;
 
-						offset = ( y + y1 ) * w * charwidth + x + x1 ;
+						offset = (y + y1) * w * charwidth + x + x1;
 
 						// Dest
 						pCur = pqdata + offset;
@@ -627,9 +659,9 @@ qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bU
 						{
 							for ( yy0 = -edge; yy0 <= edge; yy0++ )
 							{
-								srcoffset = ( y + y1 + yy0 ) * w * charwidth + x + x1 + xx0;
+								srcoffset = (y + y1 + yy0) * w * charwidth + x + x1 + xx0;
 
-								if ( bits[ srcoffset >> 3 ] & ( 1 << ( 7 - srcoffset & 7 ) ) )
+								if ( bits[srcoffset >> 3] & (1 << (7 - srcoffset & 7)) )
 								{
 									// Near Black
 									pCur[0] = 32;
@@ -646,12 +678,12 @@ qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bU
 					{
 						int offset;
 
-						offset = ( y + y1 ) * w * charwidth + x + x1;
+						offset = (y + y1) * w * charwidth + x + x1;
 
 						// Dest
 						pCur = pqdata + offset;
 
-						if ( bits[ offset >> 3 ] & ( 1 << ( 7 - offset & 7 ) ) )
+						if ( bits[offset >> 3] & (1 << (7 - offset & 7)) )
 						{
 							if ( x1 > bestwidth )
 							{
@@ -707,30 +739,30 @@ qfont_t *CreateConsoleFont( char *pszFont, int nPointSize, BOOL bItalic, BOOL bU
 						bestwidth += 2;
 					}
 				}
-				
+
 				// Store off width
-				pqf->fontinfo[ c ].charwidth = bestwidth;
+				pqf->fontinfo[c].charwidth = bestwidth;
 			}
 		}
 	}
 
 	// Free memory bits
-	free ( pbmi );
+	free(pbmi);
 
-	SelectObject( hmemDC, oldfnt );
-	DeleteObject( fnt );
+	SelectObject(hmemDC, oldfnt);
+	DeleteObject(fnt);
 
-	SelectObject( hmemDC, oldbm );
+	SelectObject(hmemDC, oldbm);
 
-	DeleteObject( hbm );
+	DeleteObject(hbm);
 
-	DeleteDC( hmemDC );
-	ReleaseDC( NULL, hdc );
+	DeleteDC(hmemDC);
+	ReleaseDC(NULL, hdc);
 
 	return pqf;
 }
 
-#pragma optimize( "g", on )
+#pragma optimize("g", on)
 
 /*
 =================
@@ -740,56 +772,56 @@ main
 */
 int main(int argc, char* argv[])
 {
-	int		i;
-	DWORD	start, end;
-	char	destfile[1024];
-	char	sz[ 32 ];
-	int		outsize[ 3 ];
+	int i;
+	DWORD start, end;
+	char destfile[1024];
+	char sz[32];
+	int outsize[3];
 
-	qfont_t *fonts[ 3 ];
+	qfont_t* fonts[3];
 
-	strcpy( fontname, DEFAULT_FONT );
+	strcpy(fontname, DEFAULT_FONT);
 
-	printf("makefont.exe Version 2.0 by valve and DJXX (%s)\n", __DATE__ );
-	
-	printf ("----- Creating Console Font ----\n");
+	printf("makefont.exe Version 2.0 by valve and DJXX (%s)\n", __DATE__);
 
-	for (i=1 ; i<argc ; i++)
+	printf("----- Creating Console Font ----\n");
+
+	for ( i = 1; i < argc; i++ )
 	{
-		if (!strcmp(argv[i],"-font"))
+		if ( !strcmp(argv[i], "-font") )
 		{
-			strcpy( fontname, argv[i+1] );
+			strcpy(fontname, argv[i + 1]);
 			i++;
 		}
-		else if (!strcmp(argv[i],"-pointsizes"))
+		else if ( !strcmp(argv[i], "-pointsizes") )
 		{
 			if ( i + 3 >= argc )
 			{
-				Error( "Makefont:  Insufficient point sizes specified\n" );
+				Error("Makefont:  Insufficient point sizes specified\n");
 			}
-			pointsize[0] = atoi( argv[i+1] );
-			pointsize[1] = atoi( argv[i+2] );
-			pointsize[2] = atoi( argv[i+3] );
+			pointsize[0] = atoi(argv[i + 1]);
+			pointsize[1] = atoi(argv[i + 2]);
+			pointsize[2] = atoi(argv[i + 3]);
 			i += 3;
 		}
-		else if (!strcmp(argv[i],"-italic"))
+		else if ( !strcmp(argv[i], "-italic") )
 		{
 			bItalic = TRUE;
-			printf ( "italic set\n");
+			printf("italic set\n");
 		}
-		else if (!strcmp(argv[i],"-bold"))
+		else if ( !strcmp(argv[i], "-bold") )
 		{
 			bBold = TRUE;
-			printf ( "bold set\n");
+			printf("bold set\n");
 		}
-		else if (!strcmp(argv[i],"-underline"))
+		else if ( !strcmp(argv[i], "-underline") )
 		{
 			bUnderline = TRUE;
-			printf ( "underline set\n");
+			printf("underline set\n");
 		}
 		else if ( argv[i][0] == '-' )
 		{
-			Error ("Unknown option \"%s\"", argv[i]);
+			Error("Unknown option \"%s\"", argv[i]);
 		}
 		else
 			break;
@@ -797,49 +829,49 @@ int main(int argc, char* argv[])
 
 	if ( i != argc - 1 )
 	{
-		Error ("usage: makefont [-font \"fontname\"] [-italic] [-underline] [-bold] [-pointsizes sm med lg] outfile");
+		Error("usage: makefont [-font \"fontname\"] [-italic] [-underline] [-bold] [-pointsizes sm med lg] outfile");
 	}
 
-	printf( "Creating %i, %i, and %i point %s fonts\n", pointsize[0], pointsize[1], pointsize[2], fontname );
+	printf("Creating %i, %i, and %i point %s fonts\n", pointsize[0], pointsize[1], pointsize[2], fontname);
 
 	start = timeGetTime();
 
 	// Create the fonts
-	for ( i = 0 ; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
-		fonts[ i ] = CreateProportionalConsoleFont( fontname, pointsize[i], bItalic, bUnderline, bBold, &outsize[ i ] );
-		//fonts[i] = CreateConsoleFont(fontname, pointsize[i], bItalic, bUnderline, bBold, &outsize[i]);
+		fonts[i] = CreateProportionalConsoleFont(fontname, pointsize[i], bItalic, bUnderline, bBold, &outsize[i]);
+		// fonts[i] = CreateConsoleFont(fontname, pointsize[i], bItalic, bUnderline, bBold, &outsize[i]);
 	}
 
 	// Create wad file
-	strcpy (destfile, argv[argc - 1]);
-	StripExtension (destfile);
-	DefaultExtension (destfile, ".wad");
+	strcpy(destfile, argv[argc - 1]);
+	StripExtension(destfile);
+	DefaultExtension(destfile, ".wad");
 
-	NewWad( destfile, false );
+	NewWad(destfile, false);
 
 	// Add fonts as lumps
 	for ( i = 0; i < 3; i++ )
 	{
-		sprintf( sz, "font%i", i );
-		AddLump( sz, fonts[ i ], outsize[ i ], TYP_LUMPY + FONT_TAG, false );
+		sprintf(sz, "font%i", i);
+		AddLump(sz, fonts[i], outsize[i], TYP_LUMPY + FONT_TAG, false);
 	}
 
 	// Store results as a WAD3
 	// NOTE:  ( should be named fonts.wad in the valve\ subdirectory )
-	WriteWad( 3 );
+	WriteWad(3);
 
 	// Clean up memory
-	for ( i = 0 ; i < 3; i++ )
+	for ( i = 0; i < 3; i++ )
 	{
-		free( fonts[ i ] );
+		free(fonts[i]);
 	}
 
-	end = timeGetTime ();
+	end = timeGetTime();
 
-	printf ( "%5.5f seconds elapsed\n", (float)( end - start )/1000.0 );
-	
+	printf("%5.5f seconds elapsed\n", (float)(end - start) / 1000.0);
+
 	// Display for a second since it might not be running from command prompt
-	Sleep( 1000 );
+	Sleep(1000);
 	return 0;
 }

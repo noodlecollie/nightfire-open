@@ -37,24 +37,24 @@
 // Constructor/Destructor
 ///////////////////////////////////////////////////////////////////////////////
 
-CBaseBotMemory::CBaseBotMemory():
-EnemyFirstSeenTime( gpGlobals->time ),
-bEnemyInSight( FALSE ),
-EnemyLastSeenPosition( Vector(0,0,0) ),
-EnemyLastSeenTime( gpGlobals->time ),
-Prev1EnemyVelocity( Vector(0,0,0) ),
-Prev1LookAtVec( Vector(0,0,0) ),
-Prev1Velocity( Vector(0,0,0) ),
-Prev2EnemyVelocity( Vector(0,0,0) ),
-Prev2LookAtVec( Vector(0,0,0) ),
-Prev2Velocity( Vector(0,0,0) ),
-Prev3EnemyVelocity( Vector(0,0,0) ),
-Prev3LookAtVec( Vector(0,0,0) ),
-Prev3Velocity( Vector(0,0,0) ),
-Prev4EnemyVelocity( Vector(0,0,0) ),
-Prev4LookAtVec( Vector(0,0,0) ),
-Prev4Velocity( Vector(0,0,0) ),
-PrevOrigin( Vector(0,0,0) )
+CBaseBotMemory::CBaseBotMemory() :
+	EnemyFirstSeenTime(gpGlobals->time),
+	bEnemyInSight(FALSE),
+	EnemyLastSeenPosition(Vector(0, 0, 0)),
+	EnemyLastSeenTime(gpGlobals->time),
+	Prev1EnemyVelocity(Vector(0, 0, 0)),
+	Prev1LookAtVec(Vector(0, 0, 0)),
+	Prev1Velocity(Vector(0, 0, 0)),
+	Prev2EnemyVelocity(Vector(0, 0, 0)),
+	Prev2LookAtVec(Vector(0, 0, 0)),
+	Prev2Velocity(Vector(0, 0, 0)),
+	Prev3EnemyVelocity(Vector(0, 0, 0)),
+	Prev3LookAtVec(Vector(0, 0, 0)),
+	Prev3Velocity(Vector(0, 0, 0)),
+	Prev4EnemyVelocity(Vector(0, 0, 0)),
+	Prev4LookAtVec(Vector(0, 0, 0)),
+	Prev4Velocity(Vector(0, 0, 0)),
+	PrevOrigin(Vector(0, 0, 0))
 {
 }
 
@@ -66,61 +66,61 @@ CBaseBotMemory::~CBaseBotMemory()
 // EnemyInSight
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBotMemory::EnemyInSight( CBaseEntity *pEnemy )
+void CBaseBotMemory::EnemyInSight(CBaseEntity* pEnemy)
 {
-	SetEnemyInSight( TRUE );
-	SetEnemyLastSeenTime( gpGlobals->time );
-	SetEnemyLastSeenPosition( pEnemy->pev->origin );
+	SetEnemyInSight(TRUE);
+	SetEnemyLastSeenTime(gpGlobals->time);
+	SetEnemyLastSeenPosition(pEnemy->pev->origin);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // EnemyOutOfSight
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBotMemory::EnemyOutOfSight( void )
+void CBaseBotMemory::EnemyOutOfSight(void)
 {
-	SetEnemyInSight( FALSE );
+	SetEnemyInSight(FALSE);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // EnemySighted
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBotMemory::EnemySighted( CBaseEntity *pEnemy )
+void CBaseBotMemory::EnemySighted(CBaseEntity* pEnemy)
 {
-	EnemyInSight( pEnemy );
-	SetEnemyFirstSeenTime( gpGlobals->time );
-	SetPrev1EnemyVelocity( pEnemy->pev->velocity );
-	SetPrev2EnemyVelocity( GetPrev1EnemyVelocity() );
-	SetPrev3EnemyVelocity( GetPrev2EnemyVelocity() );
-	SetPrev4EnemyVelocity( GetPrev3EnemyVelocity() );
+	EnemyInSight(pEnemy);
+	SetEnemyFirstSeenTime(gpGlobals->time);
+	SetPrev1EnemyVelocity(pEnemy->pev->velocity);
+	SetPrev2EnemyVelocity(GetPrev1EnemyVelocity());
+	SetPrev3EnemyVelocity(GetPrev2EnemyVelocity());
+	SetPrev4EnemyVelocity(GetPrev3EnemyVelocity());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // EndFrameUpdate
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBotMemory::EndFrameUpdate( CBasePlayer *pOwner )
+void CBaseBotMemory::EndFrameUpdate(CBasePlayer* pOwner)
 {
-	CBaseBot *pBotOwner = (CBaseBot *)pOwner;
+	CBaseBot* pBotOwner = (CBaseBot*)pOwner;
 
-	SetPrevOrigin( pBotOwner->pev->origin );
+	SetPrevOrigin(pBotOwner->pev->origin);
 
-	SetPrev4LookAtVec( GetPrev3LookAtVec() );
-	SetPrev3LookAtVec( GetPrev2LookAtVec() );
-	SetPrev2LookAtVec( GetPrev1LookAtVec() );
-	SetPrev1LookAtVec( pBotOwner->GetLookAtVec() );
+	SetPrev4LookAtVec(GetPrev3LookAtVec());
+	SetPrev3LookAtVec(GetPrev2LookAtVec());
+	SetPrev2LookAtVec(GetPrev1LookAtVec());
+	SetPrev1LookAtVec(pBotOwner->GetLookAtVec());
 
-	SetPrev4Velocity( GetPrev3Velocity() );
-	SetPrev3Velocity( GetPrev2Velocity() );
-	SetPrev2Velocity( GetPrev1Velocity() );
-	SetPrev1Velocity( pBotOwner->pev->velocity );
+	SetPrev4Velocity(GetPrev3Velocity());
+	SetPrev3Velocity(GetPrev2Velocity());
+	SetPrev2Velocity(GetPrev1Velocity());
+	SetPrev1Velocity(pBotOwner->pev->velocity);
 
-	if ( pBotOwner->GetEnemy() != NULL)
+	if ( pBotOwner->GetEnemy() != NULL )
 	{
-		SetPrev4EnemyVelocity( GetPrev3EnemyVelocity() );
-		SetPrev3EnemyVelocity( GetPrev2EnemyVelocity() );
-		SetPrev2EnemyVelocity( GetPrev1EnemyVelocity() );
-		SetPrev1EnemyVelocity( pBotOwner->GetEnemy()->pev->velocity );
+		SetPrev4EnemyVelocity(GetPrev3EnemyVelocity());
+		SetPrev3EnemyVelocity(GetPrev2EnemyVelocity());
+		SetPrev2EnemyVelocity(GetPrev1EnemyVelocity());
+		SetPrev1EnemyVelocity(pBotOwner->GetEnemy()->pev->velocity);
 	}
 }

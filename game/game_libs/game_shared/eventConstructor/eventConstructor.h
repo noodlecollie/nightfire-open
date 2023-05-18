@@ -9,7 +9,7 @@ namespace EventConstructor
 	// T: Type of value that this object holds.
 	// M: Type of member variable on event struct.
 	// P: Pointer to member in struct.
-	template<typename T, typename M, M event_fire_args_t::* PTR>
+	template<typename T, typename M, M event_fire_args_t::*PTR>
 	struct ExplicitStreamItem
 	{
 		inline explicit ExplicitStreamItem(const T& inVal) :
@@ -31,7 +31,7 @@ namespace EventConstructor
 	};
 
 	// Specialisation of the above, where T and M are the same.
-	template<typename T, T event_fire_args_t::* PTR>
+	template<typename T, T event_fire_args_t::*PTR>
 	struct StreamItem : public ExplicitStreamItem<T, T, PTR>
 	{
 		inline explicit StreamItem(const T& inVal) :
@@ -46,7 +46,7 @@ namespace EventConstructor
 	};
 
 	// Specialisation for bools, which should default to true.
-	template<int event_fire_args_t::* PTR>
+	template<int event_fire_args_t::*PTR>
 	struct BoolStreamItem : public ExplicitStreamItem<bool, int, PTR>
 	{
 		inline explicit BoolStreamItem(const bool& inVal = true) :
@@ -56,7 +56,7 @@ namespace EventConstructor
 	};
 
 	// Specialisation for Vectors, which map to const float*.
-	template<const float* event_fire_args_t::* PTR>
+	template<const float* event_fire_args_t::*PTR>
 	struct VectorStreamItem : public ExplicitStreamItem<Vector, const float*, PTR>
 	{
 		inline explicit VectorStreamItem(const Vector& inVal) :
@@ -99,8 +99,8 @@ namespace EventConstructor
 		event_fire_args_t& Args();
 		const event_fire_args_t& Args() const;
 
-		template<typename T, typename M, M event_fire_args_t::* PTR>
-		inline CEventConstructor& operator <<(const ExplicitStreamItem<T, M, PTR>& item)
+		template<typename T, typename M, M event_fire_args_t::*PTR>
+		inline CEventConstructor& operator<<(const ExplicitStreamItem<T, M, PTR>& item)
 		{
 			item.Apply(m_Args);
 			return *this;
@@ -109,4 +109,4 @@ namespace EventConstructor
 	private:
 		event_fire_args_t m_Args;
 	};
-}
+}  // namespace EventConstructor

@@ -27,484 +27,484 @@ class EngFuncs
 {
 public:
 	// image handlers
-	static inline HIMAGE PIC_Load( const char *szPicName, const byte *ucRawImage, int ulRawImageSize, int flags = 0)
+	static inline HIMAGE PIC_Load(const char* szPicName, const byte* ucRawImage, int ulRawImageSize, int flags = 0)
 	{
-		return engfuncs.pfnPIC_Load( szPicName, ucRawImage, ulRawImageSize, flags );
+		return engfuncs.pfnPIC_Load(szPicName, ucRawImage, ulRawImageSize, flags);
 	}
 
-	static inline HIMAGE PIC_Load( const char *szPicName, int flags = 0)
+	static inline HIMAGE PIC_Load(const char* szPicName, int flags = 0)
 	{
-		return engfuncs.pfnPIC_Load( szPicName, 0, 0, flags );
+		return engfuncs.pfnPIC_Load(szPicName, 0, 0, flags);
 	}
 
-	static inline void PIC_Free( const char *szPicName )
+	static inline void PIC_Free(const char* szPicName)
 	{
-		engfuncs.pfnPIC_Free( szPicName );
+		engfuncs.pfnPIC_Free(szPicName);
 	}
 
-	static inline int	PIC_Width( HIMAGE hPic )
+	static inline int PIC_Width(HIMAGE hPic)
 	{
-		return engfuncs.pfnPIC_Width( hPic );
+		return engfuncs.pfnPIC_Width(hPic);
 	}
 
-	static inline int	PIC_Height( HIMAGE hPic )
+	static inline int PIC_Height(HIMAGE hPic)
 	{
-		return engfuncs.pfnPIC_Height( hPic );
+		return engfuncs.pfnPIC_Height(hPic);
 	}
 
-	static inline Size PIC_Size( HIMAGE hPic )
+	static inline Size PIC_Size(HIMAGE hPic)
 	{
-		return Size( PIC_Width( hPic ), PIC_Height( hPic ));
+		return Size(PIC_Width(hPic), PIC_Height(hPic));
 	}
-	static void PIC_Set( HIMAGE hPic, int r, int g, int b, int a = 255 );
+	static void PIC_Set(HIMAGE hPic, int r, int g, int b, int a = 255);
 
-	static inline void PIC_Draw( int x, int y, int width, int height, const wrect_t *prc = NULL )
+	static inline void PIC_Draw(int x, int y, int width, int height, const wrect_t* prc = NULL)
 	{
-		engfuncs.pfnPIC_Draw( x, y, width, height, prc );
-	}
-
-	static inline void PIC_DrawHoles( int x, int y, int width, int height, const wrect_t *prc = NULL )
-	{
-		engfuncs.pfnPIC_DrawHoles( x, y, width, height, prc );
+		engfuncs.pfnPIC_Draw(x, y, width, height, prc);
 	}
 
-	static inline void PIC_DrawTrans( int x, int y, int width, int height, const wrect_t *prc = NULL )
+	static inline void PIC_DrawHoles(int x, int y, int width, int height, const wrect_t* prc = NULL)
 	{
-		engfuncs.pfnPIC_DrawTrans( x, y, width, height, prc );
+		engfuncs.pfnPIC_DrawHoles(x, y, width, height, prc);
 	}
 
-	static inline void PIC_DrawAdditive( int x, int y, int width, int height, const wrect_t *prc = NULL )
+	static inline void PIC_DrawTrans(int x, int y, int width, int height, const wrect_t* prc = NULL)
 	{
-		engfuncs.pfnPIC_DrawAdditive( x, y, width, height, prc );
+		engfuncs.pfnPIC_DrawTrans(x, y, width, height, prc);
 	}
 
-	static inline void PIC_Draw( int x, int y, const wrect_t *prc = NULL )
+	static inline void PIC_DrawAdditive(int x, int y, int width, int height, const wrect_t* prc = NULL)
 	{
-		PIC_Draw( x, y, -1, -1, prc );
+		engfuncs.pfnPIC_DrawAdditive(x, y, width, height, prc);
 	}
 
-	static inline void PIC_DrawHoles( int x, int y, const wrect_t *prc = NULL )
+	static inline void PIC_Draw(int x, int y, const wrect_t* prc = NULL)
 	{
-		PIC_DrawHoles( x, y, -1, -1, prc );
+		PIC_Draw(x, y, -1, -1, prc);
 	}
 
-	static inline void PIC_DrawTrans( int x, int y, const wrect_t *prc = NULL )
+	static inline void PIC_DrawHoles(int x, int y, const wrect_t* prc = NULL)
 	{
-		PIC_DrawTrans( x, y, -1, -1, prc );
+		PIC_DrawHoles(x, y, -1, -1, prc);
 	}
 
-	static inline void PIC_DrawAdditive( int x, int y, const wrect_t *prc = NULL )
+	static inline void PIC_DrawTrans(int x, int y, const wrect_t* prc = NULL)
 	{
-		PIC_DrawAdditive( x, y, -1, -1, prc );
+		PIC_DrawTrans(x, y, -1, -1, prc);
 	}
 
-	static inline void PIC_Draw( Point p, Size s, const wrect_t *prc = NULL )
+	static inline void PIC_DrawAdditive(int x, int y, const wrect_t* prc = NULL)
 	{
-		PIC_Draw( p.x, p.y, s.w, s.h, prc );
+		PIC_DrawAdditive(x, y, -1, -1, prc);
 	}
 
-	static inline void PIC_DrawHoles( Point p, Size s, const wrect_t *prc = NULL )
+	static inline void PIC_Draw(Point p, Size s, const wrect_t* prc = NULL)
 	{
-		PIC_DrawHoles( p.x, p.y, s.w, s.h, prc );
+		PIC_Draw(p.x, p.y, s.w, s.h, prc);
 	}
 
-	static inline void PIC_DrawTrans( Point p, Size s, const wrect_t *prc = NULL )
+	static inline void PIC_DrawHoles(Point p, Size s, const wrect_t* prc = NULL)
 	{
-		PIC_DrawTrans( p.x, p.y, s.w, s.h, prc );
+		PIC_DrawHoles(p.x, p.y, s.w, s.h, prc);
 	}
 
-	static inline void PIC_DrawAdditive( Point p, Size s, const wrect_t *prc = NULL )
+	static inline void PIC_DrawTrans(Point p, Size s, const wrect_t* prc = NULL)
 	{
-		PIC_DrawAdditive( p.x, p.y, s.w, s.h, prc );
+		PIC_DrawTrans(p.x, p.y, s.w, s.h, prc);
 	}
 
-	static inline void PIC_Draw( Point p, const wrect_t *prc = NULL )
+	static inline void PIC_DrawAdditive(Point p, Size s, const wrect_t* prc = NULL)
 	{
-		PIC_Draw( p.x, p.y, prc );
+		PIC_DrawAdditive(p.x, p.y, s.w, s.h, prc);
 	}
 
-	static inline void PIC_DrawHoles( Point p, const wrect_t *prc = NULL )
+	static inline void PIC_Draw(Point p, const wrect_t* prc = NULL)
 	{
-		PIC_DrawHoles( p.x, p.y, prc );
+		PIC_Draw(p.x, p.y, prc);
 	}
 
-	static inline void PIC_DrawAdditive( Point p, const wrect_t *prc = NULL )
+	static inline void PIC_DrawHoles(Point p, const wrect_t* prc = NULL)
 	{
-		PIC_DrawAdditive( p.x, p.y, prc );
+		PIC_DrawHoles(p.x, p.y, prc);
 	}
 
-	static inline void PIC_DrawTrans( Point p, const wrect_t *prc = NULL )
+	static inline void PIC_DrawAdditive(Point p, const wrect_t* prc = NULL)
 	{
-		PIC_DrawTrans( p.x, p.y, prc );
+		PIC_DrawAdditive(p.x, p.y, prc);
 	}
 
-	static inline void PIC_EnableScissor( int x, int y, int width, int height )
+	static inline void PIC_DrawTrans(Point p, const wrect_t* prc = NULL)
 	{
-		engfuncs.pfnPIC_EnableScissor( x, y, width, height );
+		PIC_DrawTrans(p.x, p.y, prc);
 	}
 
-	static inline void PIC_DisableScissor( void )
+	static inline void PIC_EnableScissor(int x, int y, int width, int height)
+	{
+		engfuncs.pfnPIC_EnableScissor(x, y, width, height);
+	}
+
+	static inline void PIC_DisableScissor(void)
 	{
 		engfuncs.pfnPIC_DisableScissor();
 	}
 
 	// screen handlers
-	static void FillRGBA( int x, int y, int width, int height, int r, int g, int b, int a );
+	static void FillRGBA(int x, int y, int width, int height, int r, int g, int b, int a);
 
 	// cvar handlers
-	static inline cvar_t *CvarRegister( const char *szName, const char *szValue, int flags )
+	static inline cvar_t* CvarRegister(const char* szName, const char* szValue, int flags)
 	{
-		return engfuncs.pfnRegisterVariable( szName, szValue, flags );
+		return engfuncs.pfnRegisterVariable(szName, szValue, flags);
 	}
 
-	static inline float GetCvarFloat( const char *szName )
+	static inline float GetCvarFloat(const char* szName)
 	{
-		return engfuncs.pfnGetCvarFloat( szName );
+		return engfuncs.pfnGetCvarFloat(szName);
 	}
 
-	static inline const char *GetCvarString( const char *szName )
+	static inline const char* GetCvarString(const char* szName)
 	{
-		return engfuncs.pfnGetCvarString( szName );
+		return engfuncs.pfnGetCvarString(szName);
 	}
 
-	static inline void CvarSetString( const char *szName, const char *szValue )
+	static inline void CvarSetString(const char* szName, const char* szValue)
 	{
-		engfuncs.pfnCvarSetString( szName, szValue );
+		engfuncs.pfnCvarSetString(szName, szValue);
 	}
 
-	static inline void CvarSetValue( const char *szName, float flValue )
+	static inline void CvarSetValue(const char* szName, float flValue)
 	{
-		engfuncs.pfnCvarSetValue( szName, flValue );
+		engfuncs.pfnCvarSetValue(szName, flValue);
 	}
 
 	// command handlers
-	static inline int	Cmd_AddCommand( const char *cmd_name, void (*function)(void) )
+	static inline int Cmd_AddCommand(const char* cmd_name, void (*function)(void))
 	{
-		return engfuncs.pfnAddCommand( cmd_name, function );
+		return engfuncs.pfnAddCommand(cmd_name, function);
 	}
 
-	static inline void ClientCmd( int execute_now, const char *szCmdString )
+	static inline void ClientCmd(int execute_now, const char* szCmdString)
 	{
-		engfuncs.pfnClientCmd( execute_now, szCmdString );
+		engfuncs.pfnClientCmd(execute_now, szCmdString);
 	}
 
-	static inline void Cmd_RemoveCommand( const char *cmd_name )
+	static inline void Cmd_RemoveCommand(const char* cmd_name)
 	{
-		engfuncs.pfnDelCommand( cmd_name );
+		engfuncs.pfnDelCommand(cmd_name);
 	}
 
-	static inline int CmdArgc( void )
+	static inline int CmdArgc(void)
 	{
 		return engfuncs.pfnCmdArgc();
 	}
 
-	static inline const char *CmdArgv( int argi )
+	static inline const char* CmdArgv(int argi)
 	{
-		return engfuncs.pfnCmdArgv( argi );
+		return engfuncs.pfnCmdArgv(argi);
 	}
 
-	static inline const char *CmdArgs( void )
+	static inline const char* CmdArgs(void)
 	{
 		return engfuncs.pfnCmd_Args();
 	}
 
 	// sound handlers
-	static inline void PlayLocalSound( const char *szSound )
+	static inline void PlayLocalSound(const char* szSound)
 	{
-		engfuncs.pfnPlayLocalSound( szSound );
+		engfuncs.pfnPlayLocalSound(szSound);
 	}
 
 	// cinematic handlers
-	static void DrawLogo( const char *filename, float x, float y, float width, float height );
+	static void DrawLogo(const char* filename, float x, float y, float width, float height);
 
-	static inline void PrecacheLogo( const char *filename )
+	static inline void PrecacheLogo(const char* filename)
 	{
-		engfuncs.pfnDrawLogo( filename, 0, 0, 0, 0 );
+		engfuncs.pfnDrawLogo(filename, 0, 0, 0, 0);
 	}
 
-	static inline int	GetLogoWidth( void )
+	static inline int GetLogoWidth(void)
 	{
 		return engfuncs.pfnGetLogoWidth();
 	}
 
-	static inline int	GetLogoHeight( void )
+	static inline int GetLogoHeight(void)
 	{
 		return engfuncs.pfnGetLogoHeight();
 	}
 
-	static inline float GetLogoLength( void ) // cinematic duration in seconds
+	static inline float GetLogoLength(void)  // cinematic duration in seconds
 	{
 		return engfuncs.pfnGetLogoLength();
 	}
 
 	// text message system
-	static void DrawCharacter( int x, int y, int width, int height, int ch, int ulRGBA, HIMAGE hFont );
-	static int DrawConsoleString( int x, int y, const char *string );
-	static void DrawSetTextColor( int r, int g, int b, int alpha = 255 );
-	static void ConsoleStringLen(  const char *string, int *length, int *height );
+	static void DrawCharacter(int x, int y, int width, int height, int ch, int ulRGBA, HIMAGE hFont);
+	static int DrawConsoleString(int x, int y, const char* string);
+	static void DrawSetTextColor(int r, int g, int b, int alpha = 255);
+	static void ConsoleStringLen(const char* string, int* length, int* height);
 	static int ConsoleCharacterHeight();
 
-	static inline int DrawConsoleString( Point coord, const char *string )
+	static inline int DrawConsoleString(Point coord, const char* string)
 	{
-		return DrawConsoleString( coord.x, coord.y, string );
+		return DrawConsoleString(coord.x, coord.y, string);
 	}
 
-	static inline void SetConsoleDefaultColor( int r, int g, int b ) // color must came from colors.lst
+	static inline void SetConsoleDefaultColor(int r, int g, int b)  // color must came from colors.lst
 	{
-		engfuncs.pfnSetConsoleDefaultColor( r, g, b );
+		engfuncs.pfnSetConsoleDefaultColor(r, g, b);
 	}
 
 	// custom rendering (for playermodel preview)
-	static inline struct cl_entity_s *GetPlayerModel( void )	// for drawing playermodel previews
+	static inline struct cl_entity_s* GetPlayerModel(void)  // for drawing playermodel previews
 	{
 		return engfuncs.pfnGetPlayerModel();
 	}
 
-	static inline void SetModel( struct cl_entity_s *ed, const char *path )
+	static inline void SetModel(struct cl_entity_s* ed, const char* path)
 	{
-		engfuncs.pfnSetModel( ed, path );
+		engfuncs.pfnSetModel(ed, path);
 	}
 
-	static inline void ClearScene( void )
+	static inline void ClearScene(void)
 	{
 		engfuncs.pfnClearScene();
 	}
-	static inline void RenderScene( const struct ref_viewpass_s *fd )
+	static inline void RenderScene(const struct ref_viewpass_s* fd)
 	{
-		engfuncs.pfnRenderScene( fd );
+		engfuncs.pfnRenderScene(fd);
 	}
-	static inline int	CL_CreateVisibleEntity( int type, struct cl_entity_s *ent )
+	static inline int CL_CreateVisibleEntity(int type, struct cl_entity_s* ent)
 	{
-		return engfuncs.CL_CreateVisibleEntity( type, ent );
+		return engfuncs.CL_CreateVisibleEntity(type, ent);
 	}
 
 	// misc handlers
 	// static inline void HostError( const char *szFmt, ... );
-	static inline int	FileExists( const char *filename, int gamedironly = 0 )
+	static inline int FileExists(const char* filename, int gamedironly = 0)
 	{
-		return engfuncs.pfnFileExists( filename, gamedironly );
+		return engfuncs.pfnFileExists(filename, gamedironly);
 	}
 
-	static inline void GetGameDir( char *szGetGameDir )
+	static inline void GetGameDir(char* szGetGameDir)
 	{
-		engfuncs.pfnGetGameDir( szGetGameDir );
+		engfuncs.pfnGetGameDir(szGetGameDir);
 	}
 
 	// gameinfo handlers
-	static inline int	CreateMapsList( int iRefresh )
+	static inline int CreateMapsList(int iRefresh)
 	{
-		return engfuncs.pfnCreateMapsList( iRefresh );
+		return engfuncs.pfnCreateMapsList(iRefresh);
 	}
 
-	static inline int	ClientInGame( void )
+	static inline int ClientInGame(void)
 	{
 		return engfuncs.pfnClientInGame();
 	}
 
-	static inline void ClientJoin( const struct netadr_s adr )
+	static inline void ClientJoin(const struct netadr_s adr)
 	{
-		engfuncs.pfnClientJoin( adr );
+		engfuncs.pfnClientJoin(adr);
 	}
 
 	// parse txt files
-	static inline byte *COM_LoadFile( const char *filename, int *pLength = 0 )
+	static inline byte* COM_LoadFile(const char* filename, int* pLength = 0)
 	{
-		return engfuncs.COM_LoadFile( filename, pLength );
+		return engfuncs.COM_LoadFile(filename, pLength);
 	}
 
 	// deprecated, do not use
-	//static inline char *COM_ParseFile( char *data, char *token )
+	// static inline char *COM_ParseFile( char *data, char *token )
 	//{
 	//	return engfuncs.COM_ParseFile( data, token );
 	//}
 
-	static inline void COM_FreeFile( void *buffer )
+	static inline void COM_FreeFile(void* buffer)
 	{
-		engfuncs.COM_FreeFile( buffer );
+		engfuncs.COM_FreeFile(buffer);
 	}
 
 	// keyfuncs
-	static inline void KEY_ClearStates( void ) // call when menu open or close
+	static inline void KEY_ClearStates(void)  // call when menu open or close
 	{
 		engfuncs.pfnKeyClearStates();
 	}
 
-	static inline void KEY_SetDest( int dest )
+	static inline void KEY_SetDest(int dest)
 	{
-		engfuncs.pfnSetKeyDest( dest );
+		engfuncs.pfnSetKeyDest(dest);
 	}
 
-	static inline const char *KeynumToString( int keynum )
+	static inline const char* KeynumToString(int keynum)
 	{
-		return engfuncs.pfnKeynumToString( keynum );
+		return engfuncs.pfnKeynumToString(keynum);
 	}
 
-	static inline const char *KEY_GetBinding( int keynum )
+	static inline const char* KEY_GetBinding(int keynum)
 	{
-		return engfuncs.pfnKeyGetBinding( keynum );
+		return engfuncs.pfnKeyGetBinding(keynum);
 	}
 
-	static inline void KEY_SetBinding( int keynum, const char *binding )
+	static inline void KEY_SetBinding(int keynum, const char* binding)
 	{
-		engfuncs.pfnKeySetBinding( keynum, binding );
+		engfuncs.pfnKeySetBinding(keynum, binding);
 	}
 
-	static inline int	KEY_IsDown( int keynum )
+	static inline int KEY_IsDown(int keynum)
 	{
-		return engfuncs.pfnKeyIsDown( keynum );
+		return engfuncs.pfnKeyIsDown(keynum);
 	}
 
-	static inline int	KEY_GetOverstrike( void )
+	static inline int KEY_GetOverstrike(void)
 	{
-		return  engfuncs.pfnKeyGetOverstrikeMode();
+		return engfuncs.pfnKeyGetOverstrikeMode();
 	}
 
-	static inline void KEY_SetOverstrike( int fActive )
+	static inline void KEY_SetOverstrike(int fActive)
 	{
-		engfuncs.pfnKeySetOverstrikeMode( fActive );
+		engfuncs.pfnKeySetOverstrikeMode(fActive);
 	}
 
-	static inline void *KEY_GetState( const char *name )			// for mlook, klook etc
+	static inline void* KEY_GetState(const char* name)  // for mlook, klook etc
 	{
-		return engfuncs.pfnKeyGetState( name );
+		return engfuncs.pfnKeyGetState(name);
 	}
 
 	// engine memory manager
-	static inline void *MemAlloc( size_t cb, const char *filename, const int fileline )
+	static inline void* MemAlloc(size_t cb, const char* filename, const int fileline)
 	{
-		return engfuncs.pfnMemAlloc( cb, filename, fileline );
+		return engfuncs.pfnMemAlloc(cb, filename, fileline);
 	}
 
-	static inline void MemFree( void *mem, const char *filename, const int fileline )
+	static inline void MemFree(void* mem, const char* filename, const int fileline)
 	{
-		engfuncs.pfnMemFree( mem, filename, fileline );
+		engfuncs.pfnMemFree(mem, filename, fileline);
 	}
 
 	// collect info from engine
-	static inline int	GetGameInfo( GAMEINFO *pgameinfo )
+	static inline int GetGameInfo(GAMEINFO* pgameinfo)
 	{
-		return engfuncs.pfnGetGameInfo( pgameinfo );
+		return engfuncs.pfnGetGameInfo(pgameinfo);
 	}
 
-	static inline GAMEINFO **GetGamesList( int *numGames ) // collect info about all mods
+	static inline GAMEINFO** GetGamesList(int* numGames)  // collect info about all mods
 	{
-		return  engfuncs.pfnGetGamesList( numGames );
+		return engfuncs.pfnGetGamesList(numGames);
 	}
 
-	static inline char **GetFilesList( const char *pattern, int *numFiles, int gamedironly ) // find in files
+	static inline char** GetFilesList(const char* pattern, int* numFiles, int gamedironly)  // find in files
 	{
-		return engfuncs.pfnGetFilesList( pattern, numFiles, gamedironly );
+		return engfuncs.pfnGetFilesList(pattern, numFiles, gamedironly);
 	}
 
-	static inline int GetSaveComment( const char *savename, char *comment )
+	static inline int GetSaveComment(const char* savename, char* comment)
 	{
-		return  engfuncs.pfnGetSaveComment( savename, comment );
+		return engfuncs.pfnGetSaveComment(savename, comment);
 	}
 
-	static inline int	GetDemoComment( const char *demoname, char *comment )
+	static inline int GetDemoComment(const char* demoname, char* comment)
 	{
-		return  engfuncs.pfnGetDemoComment( demoname, comment );
+		return engfuncs.pfnGetDemoComment(demoname, comment);
 	}
 
-	static inline int	CheckGameDll( void )	// returns false if hl.dll is missed or invalid
+	static inline int CheckGameDll(void)  // returns false if hl.dll is missed or invalid
 	{
 		return engfuncs.pfnCheckGameDll();
 	}
 
-	static inline char *GetClipboardData( void )
+	static inline char* GetClipboardData(void)
 	{
-		return  engfuncs.pfnGetClipboardData();
+		return engfuncs.pfnGetClipboardData();
 	}
 
 	// engine launcher
-	static inline void ShellExecute( const char *name, const char *args, int closeEngine )
+	static inline void ShellExecute(const char* name, const char* args, int closeEngine)
 	{
-		engfuncs.pfnShellExecute( name, args, closeEngine );
+		engfuncs.pfnShellExecute(name, args, closeEngine);
 	}
 
-	static inline void WriteServerConfig( const char *name )
+	static inline void WriteServerConfig(const char* name)
 	{
-		engfuncs.pfnWriteServerConfig( name );
+		engfuncs.pfnWriteServerConfig(name);
 	}
 
-	static inline void PlayBackgroundTrack( const char *introName, const char *loopName )
+	static inline void PlayBackgroundTrack(const char* introName, const char* loopName)
 	{
-		engfuncs.pfnPlayBackgroundTrack( introName, loopName );
+		engfuncs.pfnPlayBackgroundTrack(introName, loopName);
 	}
 
-	static inline void StopBackgroundTrack( )
+	static inline void StopBackgroundTrack()
 	{
-		engfuncs.pfnPlayBackgroundTrack( NULL, NULL );
+		engfuncs.pfnPlayBackgroundTrack(NULL, NULL);
 	}
 
-	static inline void HostEndGame( const char *szFinalMessage )
+	static inline void HostEndGame(const char* szFinalMessage)
 	{
-		engfuncs.pfnHostEndGame( szFinalMessage );
+		engfuncs.pfnHostEndGame(szFinalMessage);
 	}
 
 	// menu interface is freezed at version 0.75
 	// new functions starts here
-	static inline float RandomFloat( float flLow, float flHigh )
+	static inline float RandomFloat(float flLow, float flHigh)
 	{
-		return engfuncs.pfnRandomFloat( flLow, flHigh );
+		return engfuncs.pfnRandomFloat(flLow, flHigh);
 	}
 
-	static inline int	RandomLong( int lLow, int lHigh )
+	static inline int RandomLong(int lLow, int lHigh)
 	{
-		return engfuncs.pfnRandomLong( lLow, lHigh );
+		return engfuncs.pfnRandomLong(lLow, lHigh);
 	}
 
-	static inline void SetCursor( void *hCursor ) // change cursor
+	static inline void SetCursor(void* hCursor)  // change cursor
 	{
-		engfuncs.pfnSetCursor( hCursor );
+		engfuncs.pfnSetCursor(hCursor);
 	}
 
-	static inline int	IsMapValid( const char *filename )
+	static inline int IsMapValid(const char* filename)
 	{
-		return engfuncs.pfnIsMapValid( (char*)filename );
+		return engfuncs.pfnIsMapValid((char*)filename);
 	}
 
-	static inline void ProcessImage( int texnum, float gamma, int topColor = -1, int bottomColor = -1 )
+	static inline void ProcessImage(int texnum, float gamma, int topColor = -1, int bottomColor = -1)
 	{
-		engfuncs.pfnProcessImage( texnum, gamma, topColor, bottomColor );
+		engfuncs.pfnProcessImage(texnum, gamma, topColor, bottomColor);
 	}
 
-	static inline int	CompareFileTime( char *filename1, char *filename2, int *iCompare )
+	static inline int CompareFileTime(char* filename1, char* filename2, int* iCompare)
 	{
-		return engfuncs.pfnCompareFileTime( filename1, filename2, iCompare );
+		return engfuncs.pfnCompareFileTime(filename1, filename2, iCompare);
 	}
 
-	static inline const char *GetModeString( int mode )
+	static inline const char* GetModeString(int mode)
 	{
-		return engfuncs.pfnGetModeString( mode );
+		return engfuncs.pfnGetModeString(mode);
 	}
 
-	static inline int COM_SaveFile( const char *filename, const void *buffer, int len )
+	static inline int COM_SaveFile(const char* filename, const void* buffer, int len)
 	{
-		return engfuncs.COM_SaveFile( filename, buffer, len );
+		return engfuncs.COM_SaveFile(filename, buffer, len);
 	}
 
-	static inline int DeleteFile( const char *filename )
+	static inline int DeleteFile(const char* filename)
 	{
-		return engfuncs.COM_RemoveFile( filename );
+		return engfuncs.COM_RemoveFile(filename);
 	}
 
 	static ui_enginefuncs_t engfuncs;
 	static ui_extendedfuncs_t textfuncs;
 
-	static inline void EnableTextInput( int enable )
+	static inline void EnableTextInput(int enable)
 	{
-		if( textfuncs.pfnEnableTextInput )
-			textfuncs.pfnEnableTextInput( enable );
+		if ( textfuncs.pfnEnableTextInput )
+			textfuncs.pfnEnableTextInput(enable);
 	}
 
-	static int UtfProcessChar( int ch );
-	static int UtfMoveLeft( const char *str, int pos );
-	static int UtfMoveRight( const char *str, int pos, int length );
+	static int UtfProcessChar(int ch);
+	static int UtfMoveLeft(const char* str, int pos);
+	static int UtfMoveRight(const char* str, int pos, int length);
 
-	static inline bool GetRenderers( int num, char *sz1, size_t s1, char *sz2, size_t s2 )
+	static inline bool GetRenderers(int num, char* sz1, size_t s1, char* sz2, size_t s2)
 	{
-		return textfuncs.pfnGetRenderers( num, sz1, s1, sz2, s2 ) != 0;
+		return textfuncs.pfnGetRenderers(num, sz1, s1, sz2, s2) != 0;
 	}
 
 	static inline double DoubleTime()
@@ -512,63 +512,62 @@ public:
 		return textfuncs.pfnDoubleTime();
 	}
 
-	static inline char *COM_ParseFile( char *data, char *token, const int size )
+	static inline char* COM_ParseFile(char* data, char* token, const int size)
 	{
-		return textfuncs.pfnParseFile( data, token, size, 0, nullptr );
+		return textfuncs.pfnParseFile(data, token, size, 0, nullptr);
 	}
 
-	static inline char *COM_ParseFile( char *data, char *token, const int size, int flags, int *len )
+	static inline char* COM_ParseFile(char* data, char* token, const int size, int flags, int* len)
 	{
-		return textfuncs.pfnParseFile( data, token, size, flags, len );
+		return textfuncs.pfnParseFile(data, token, size, flags, len);
 	}
 
-	static inline const char *NET_AdrToString( const netadr_t adr )
+	static inline const char* NET_AdrToString(const netadr_t adr)
 	{
-		return textfuncs.pfnAdrToString( adr );
+		return textfuncs.pfnAdrToString(adr);
 	}
 
-	static inline int NET_CompareAdr( const void *a, const void *b )
+	static inline int NET_CompareAdr(const void* a, const void* b)
 	{
-		return textfuncs.pfnCompareAdr( a, b );
+		return textfuncs.pfnCompareAdr(a, b);
 	}
 
-	static inline void ClientCmdF( bool now, const char *fmt, ... ) _format( 2 )
+	static inline void ClientCmdF(bool now, const char* fmt, ...) _format(2)
 	{
 		va_list va;
 		char buf[4096];
 
-		va_start( va, fmt );
-		vsnprintf( buf, sizeof( buf ), fmt, va );
-		va_end( va );
+		va_start(va, fmt);
+		vsnprintf(buf, sizeof(buf), fmt, va);
+		va_end(va);
 
-		ClientCmd( now, buf );
+		ClientCmd(now, buf);
 	}
 
-	static inline void CvarSetStringF( const char *cvar, const char *fmt, ... ) _format( 2 )
+	static inline void CvarSetStringF(const char* cvar, const char* fmt, ...) _format(2)
 	{
 		va_list va;
 		char buf[4096];
 
-		va_start( va, fmt );
-		vsnprintf( buf, sizeof( buf ), fmt, va );
-		va_end( va );
+		va_start(va, fmt);
+		vsnprintf(buf, sizeof(buf), fmt, va);
+		va_end(va);
 
-		CvarSetString( cvar, buf );
+		CvarSetString(cvar, buf);
 	}
 };
 
-
 // built-in memory manager
 // NOTE: not recommeded to use, because object destruction may be after engine halts
-#define MALLOC( x )		EngFuncs::MemAlloc( x, __FILE__, __LINE__ )
-#define CALLOC( x, y )	EngFuncs::MemAlloc((x) * (y), __FILE__, __LINE__ )
-#define FREE( x )		EngFuncs::MemFree( x, __FILE__, __LINE__ )
+#define MALLOC(x) EngFuncs::MemAlloc(x, __FILE__, __LINE__)
+#define CALLOC(x, y) EngFuncs::MemAlloc((x) * (y), __FILE__, __LINE__)
+#define FREE(x) EngFuncs::MemFree(x, __FILE__, __LINE__)
 
-#define CL_IsActive()	(EngFuncs::ClientInGame() && !EngFuncs::GetCvarFloat( "cl_background" ))
+#define CL_IsActive() (EngFuncs::ClientInGame() && !EngFuncs::GetCvarFloat("cl_background"))
 #define Host_Error (*EngFuncs::engfuncs.pfnHostError)
 #define Con_DPrintf (*EngFuncs::engfuncs.Con_DPrintf)
 #define Con_NPrintf (*EngFuncs::engfuncs.Con_NPrintf)
 #define Con_NXPrintf (*EngFuncs::engfuncs.Con_NXPrintf)
 #define Con_Printf (*EngFuncs::engfuncs.Con_Printf)
 
-#endif // ENGINECALLBACKS_H
+#endif  // ENGINECALLBACKS_H

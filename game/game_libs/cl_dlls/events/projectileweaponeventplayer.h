@@ -6,7 +6,9 @@
 class ProjectileWeaponEventPlayer : public BaseWeaponEventPlayer
 {
 public:
-	virtual ~ProjectileWeaponEventPlayer() {}
+	virtual ~ProjectileWeaponEventPlayer()
+	{
+	}
 
 protected:
 	virtual bool Initialise() override;

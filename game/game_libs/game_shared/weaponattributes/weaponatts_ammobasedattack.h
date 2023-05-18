@@ -86,8 +86,12 @@ namespace WeaponAtts
 		{
 			ASSERTSZ_Q(RestValue >= 0.0f && RestValue <= 1.0f, "Rest value must be in range [0 1].");
 			ASSERTSZ_Q(RunValue >= 0.0f && RunValue <= 1.0f, "Run value must be in range [0 1].");
-			ASSERTSZ_Q(AttackCoefficient >= 0.0f && AttackCoefficient <= 1.0f, "Attack coefficient must be in range [0 1].");
-			ASSERTSZ_Q(DecayCoefficient >= 0.0f && DecayCoefficient <= 1.0f, "Decay coefficient must be in range [0 1].");
+			ASSERTSZ_Q(
+				AttackCoefficient >= 0.0f && AttackCoefficient <= 1.0f,
+				"Attack coefficient must be in range [0 1].");
+			ASSERTSZ_Q(
+				DecayCoefficient >= 0.0f && DecayCoefficient <= 1.0f,
+				"Decay coefficient must be in range [0 1].");
 			ASSERTSZ_Q(RestSpread.x >= 0.0f && RestSpread.y >= 0.0f, "Rest spread cannot be negative.");
 			ASSERTSZ_Q(RunSpread.x >= 0.0f && RunSpread.y >= 0.0f, "Run spread cannot be negative.");
 		}
@@ -139,4 +143,4 @@ namespace WeaponAtts
 			Accuracy.Validate();
 		}
 	};
-}
+}  // namespace WeaponAtts

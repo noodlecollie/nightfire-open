@@ -41,4 +41,4 @@ namespace EventConstructor
 		m_Args.eventIndex = eventIndex;
 		m_Args.delay = delay;
 	}
-}
+}  // namespace EventConstructor

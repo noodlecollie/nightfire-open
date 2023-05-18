@@ -8,4 +8,4 @@ namespace HitscanWeaponDebugging
 	void BeginBatch();
 	void AddTraceToBatch(const Vector& begin, const Vector& end);
 	void EndBatch();
-};
+};  // namespace HitscanWeaponDebugging

@@ -23,13 +23,13 @@ public:
 	typedef CMenuBaseItem BaseClass;
 
 	CMenuProgressBar();
-	void Draw( void ) override;
-	void LinkCvar( const char *cvName, float flMin, float flMax );
-	void SetValue( float flValue );
+	void Draw(void) override;
+	void LinkCvar(const char* cvName, float flMin, float flMax);
+	void SetValue(float flValue);
 
 private:
 	float m_flMin, m_flMax, m_flValue;
-	const char *m_szCvarName;
+	const char* m_szCvarName;
 };
 
-#endif // CMENUPROGRESSBAR_H
+#endif  // CMENUPROGRESSBAR_H

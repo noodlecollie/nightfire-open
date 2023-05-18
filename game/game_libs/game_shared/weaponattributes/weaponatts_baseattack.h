@@ -28,7 +28,7 @@ namespace WeaponAtts
 		const char* EventScript = nullptr;
 		bool FunctionsUnderwater = false;
 		bool IsContinuous = false;
-		float AttackRate = 1.0f;	// Cycles per second
+		float AttackRate = 1.0f;  // Cycles per second
 
 		WeightedValueList<int> ViewModelAnimList_Attack;
 		WeightedValueList<int> ViewModelAnimList_AttackEmpty;
@@ -69,4 +69,4 @@ namespace WeaponAtts
 	private:
 		mutable AttackModeSignature m_Signature;
 	};
-}
+}  // namespace WeaponAtts

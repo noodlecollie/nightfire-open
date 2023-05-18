@@ -14,8 +14,6 @@ namespace ScreenOverlays
 
 	static inline OverlayId ToOverlayId(int value)
 	{
-		return (value > Overlay_None && value < Overlay__Count)
-			? static_cast<OverlayId>(value)
-			: Overlay_None;
+		return (value > Overlay_None && value < Overlay__Count) ? static_cast<OverlayId>(value) : Overlay_None;
 	}
-}
+}  // namespace ScreenOverlays

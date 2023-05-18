@@ -24,21 +24,22 @@ bool CMenuBackgroundBitmap::s_bEnableLogoMovie = false;
 Size CMenuBackgroundBitmap::s_BackgroundImageSize;
 CUtlVector<CMenuBackgroundBitmap::bimage_t> CMenuBackgroundBitmap::s_Backgrounds;
 
-CMenuBackgroundBitmap::CMenuBackgroundBitmap() : CMenuBitmap()
+CMenuBackgroundBitmap::CMenuBackgroundBitmap() :
+	CMenuBitmap()
 {
 	szPic = 0;
-	iFlags = QMF_INACTIVE|QMF_DISABLESCAILING;
+	iFlags = QMF_INACTIVE | QMF_DISABLESCAILING;
 	bForceWON = false;
 	bForceColor = false;
 }
 
 void CMenuBackgroundBitmap::VidInit()
 {
-	if( m_pParent )
+	if ( m_pParent )
 	{
 		pos.x = pos.y = 0;
 		// fill parent
-		if( m_pParent->iFlags & QMF_DISABLESCAILING )
+		if ( m_pParent->iFlags & QMF_DISABLESCAILING )
 		{
 			size = m_pParent->size;
 		}
@@ -48,40 +49,40 @@ void CMenuBackgroundBitmap::VidInit()
 		}
 	}
 
-	colorBase.SetDefault( 0xFF505050 );
+	colorBase.SetDefault(0xFF505050);
 
 	CMenuBaseItem::VidInit();
 }
 
 void CMenuBackgroundBitmap::DrawInGameBackground()
 {
-	UI_FillRect( m_scPos, m_scSize, uiColorBlack );
+	UI_FillRect(m_scPos, m_scSize, uiColorBlack);
 }
 
 void CMenuBackgroundBitmap::DrawColor()
 {
-	if( bDrawStroke )
+	if ( bDrawStroke )
 	{
-		UI_DrawRectangleExt( m_scPos, m_scSize, colorStroke, 1 );
+		UI_DrawRectangleExt(m_scPos, m_scSize, colorStroke, 1);
 	}
 
-	UI_FillRect( m_scPos, m_scSize, colorBase );
+	UI_FillRect(m_scPos, m_scSize, colorBase);
 }
 
-void CMenuBackgroundBitmap::DrawBackgroundLayout( Point p, float xScale, float yScale )
+void CMenuBackgroundBitmap::DrawBackgroundLayout(Point p, float xScale, float yScale)
 {
 	// iterate and draw all the background pieces
-	for (int i = 0; i < s_Backgrounds.Count(); i++)
+	for ( int i = 0; i < s_Backgrounds.Count(); i++ )
 	{
-		bimage_t &bimage = s_Backgrounds[i];
+		bimage_t& bimage = s_Backgrounds[i];
 
 		int dx = (int)ceil(bimage.coord.x * xScale);
 		int dy = (int)ceil(bimage.coord.y * yScale);
 		int dw = (int)ceil(bimage.size.w * xScale);
 		int dt = (int)ceil(bimage.size.h * yScale);
 
-		EngFuncs::PIC_Set( bimage.hImage, 255, 255, 255, 255 );
-		EngFuncs::PIC_Draw( p.x + dx, p.y + dy, dw, dt );
+		EngFuncs::PIC_Set(bimage.hImage, 255, 255, 255, 255);
+		EngFuncs::PIC_Draw(p.x + dx, p.y + dy, dw, dt);
 	}
 }
 
@@ -96,13 +97,13 @@ public:
 
 	~OverrideAlphaFactor()
 	{
-		if( bOverride )
-			UI_EnableAlphaFactor( flAlphaFactor );
+		if ( bOverride )
+			UI_EnableAlphaFactor(flAlphaFactor);
 	}
 
 	void Override()
 	{
-		if( uiStatic.enableAlphaFactor )
+		if ( uiStatic.enableAlphaFactor )
 		{
 			bOverride = true;
 			flAlphaFactor = uiStatic.alphaFactor;
@@ -124,47 +125,47 @@ void CMenuBackgroundBitmap::Draw()
 	// HACKHACK: Don't draw background for root windows, which goes out and in transition
 	// for window which is goes in and in transition, alpha factor should be ignored
 	OverrideAlphaFactor alphaFactor;
-	if( m_pParent && m_pParent->IsWindow() )
+	if ( m_pParent && m_pParent->IsWindow() )
 	{
-		CMenuBaseWindow *window = (CMenuBaseWindow*)m_pParent;
-		if( window->IsRoot() && window->eTransitionType )
+		CMenuBaseWindow* window = (CMenuBaseWindow*)m_pParent;
+		if ( window->IsRoot() && window->eTransitionType )
 		{
 			alphaFactor.Override();
 
-			if( window->eTransitionType == CMenuBaseWindow::ANIM_CLOSING )
+			if ( window->eTransitionType == CMenuBaseWindow::ANIM_CLOSING )
 				return;
 		}
 	}
 
-	if( bForceColor )
+	if ( bForceColor )
 	{
 		DrawColor();
 		return;
 	}
 
-	if( EngFuncs::ClientInGame() )
+	if ( EngFuncs::ClientInGame() )
 	{
-		if( EngFuncs::GetCvarFloat( "cl_background" ) )
+		if ( EngFuncs::GetCvarFloat("cl_background") )
 		{
 			return;
 		}
 
-		if( EngFuncs::GetCvarFloat( "ui_renderworld" ) )
+		if ( EngFuncs::GetCvarFloat("ui_renderworld") )
 		{
 			DrawInGameBackground();
 			return;
 		}
 	}
 
-	if( s_Backgrounds.Count() == 0 )
+	if ( s_Backgrounds.Count() == 0 )
 	{
 		DrawColor();
 		return;
 	}
 
-	if( szPic )
+	if ( szPic )
 	{
-		UI_DrawPic( m_scPos, m_scSize, uiColorWhite, szPic );
+		UI_DrawPic(m_scPos, m_scSize, uiColorWhite, szPic);
 		return;
 	}
 
@@ -193,7 +194,7 @@ void CMenuBackgroundBitmap::Draw()
 	p.x = p.y = 0;
 
 	// work out scaling factors
-	if( ScreenWidth * s_BackgroundImageSize.h > ScreenHeight * s_BackgroundImageSize.w )
+	if ( ScreenWidth * s_BackgroundImageSize.h > ScreenHeight * s_BackgroundImageSize.w )
 	{
 		xScale = ScreenWidth / s_BackgroundImageSize.w;
 		yScale = xScale;
@@ -205,99 +206,106 @@ void CMenuBackgroundBitmap::Draw()
 	}
 #endif
 
-	DrawBackgroundLayout( p, xScale, yScale );
+	DrawBackgroundLayout(p, xScale, yScale);
 }
 
-bool CMenuBackgroundBitmap::LoadBackgroundImage( bool gamedirOnly )
+bool CMenuBackgroundBitmap::LoadBackgroundImage(bool gamedirOnly)
 {
 	char *afile = NULL, *pfile;
 	char token[4096];
 
 	bool loaded = false;
 
-	s_bEnableLogoMovie = false; // no logos for Steam background
+	s_bEnableLogoMovie = false;  // no logos for Steam background
 
-	afile = (char*)EngFuncs::COM_LoadFile( "resource/BackgroundLayout.txt" );
+	afile = (char*)EngFuncs::COM_LoadFile("resource/BackgroundLayout.txt");
 
-	if( !afile ) return false;
+	if ( !afile )
+		return false;
 
 	pfile = afile;
 
-	pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
-	if( !pfile || strcmp( token, "resolution" )) // resolution at first!
+	pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
+	if ( !pfile || strcmp(token, "resolution") )  // resolution at first!
 		goto freefile;
 
-	pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
-	if( !pfile ) goto freefile;
+	pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
+	if ( !pfile )
+		goto freefile;
 
-	s_BackgroundImageSize.w = atoi( token );
+	s_BackgroundImageSize.w = atoi(token);
 
-	pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
-	if( !pfile ) goto freefile;
+	pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
+	if ( !pfile )
+		goto freefile;
 
-	s_BackgroundImageSize.h = atoi( token );
+	s_BackgroundImageSize.h = atoi(token);
 
 	// Now read all tiled background list
-	while(( pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) )))
+	while ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) )
 	{
 		bimage_t img;
 
-		if( !EngFuncs::FileExists( token, gamedirOnly ))
+		if ( !EngFuncs::FileExists(token, gamedirOnly) )
 			goto freefile;
 
-		img.hImage = EngFuncs::PIC_Load( token, PIC_NOFLIP_TGA );
+		img.hImage = EngFuncs::PIC_Load(token, PIC_NOFLIP_TGA);
 
-		if( !img.hImage ) goto freefile;
+		if ( !img.hImage )
+			goto freefile;
 
 		// ignore "scaled" attribute. What does it mean?
-		pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
-		if( !pfile ) goto freefile;
+		pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
+		if ( !pfile )
+			goto freefile;
 
-		pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
-		if( !pfile ) goto freefile;
-		img.coord.x = atoi( token );
+		pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
+		if ( !pfile )
+			goto freefile;
+		img.coord.x = atoi(token);
 
-		pfile = EngFuncs::COM_ParseFile( pfile, token, sizeof( token ) );
-		if( !pfile ) goto freefile;
-		img.coord.y = atoi( token );
+		pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
+		if ( !pfile )
+			goto freefile;
+		img.coord.y = atoi(token);
 
-		img.size.w = EngFuncs::PIC_Width( img.hImage );
-		img.size.h = EngFuncs::PIC_Height( img.hImage );
+		img.size.w = EngFuncs::PIC_Width(img.hImage);
+		img.size.h = EngFuncs::PIC_Height(img.hImage);
 
-		s_Backgrounds.AddToTail( img );
+		s_Backgrounds.AddToTail(img);
 	}
 
 	loaded = true;
 
 freefile:
-	EngFuncs::COM_FreeFile( afile );
+	EngFuncs::COM_FreeFile(afile);
 	return loaded;
 }
 
-bool CMenuBackgroundBitmap::CheckBackgroundSplash( bool gamedirOnly )
+bool CMenuBackgroundBitmap::CheckBackgroundSplash(bool gamedirOnly)
 {
 	s_bEnableLogoMovie = false;
 
-	if( EngFuncs::FileExists( ART_BACKGROUND, gamedirOnly ))
+	if ( EngFuncs::FileExists(ART_BACKGROUND, gamedirOnly) )
 	{
 		bimage_t img;
 
-		img.hImage = EngFuncs::PIC_Load( ART_BACKGROUND );
+		img.hImage = EngFuncs::PIC_Load(ART_BACKGROUND);
 
-		if( !img.hImage )
+		if ( !img.hImage )
 			return false;
 
 		img.coord.x = img.coord.y = 0;
-		img.size.w = EngFuncs::PIC_Width( img.hImage );
-		img.size.h = EngFuncs::PIC_Height( img.hImage );
+		img.size.w = EngFuncs::PIC_Width(img.hImage);
+		img.size.h = EngFuncs::PIC_Height(img.hImage);
 		s_BackgroundImageSize = img.size;
 
-		s_Backgrounds.AddToTail( img );
+		s_Backgrounds.AddToTail(img);
 
-		if( gamedirOnly )
+		if ( gamedirOnly )
 		{
 			// if we doesn't have logo.avi in gamedir we don't want to draw it
-			s_bEnableLogoMovie = EngFuncs::FileExists( "media/logo.avi", TRUE );
+			s_bEnableLogoMovie = EngFuncs::FileExists("media/logo.avi", TRUE);
 		}
 
 		return true;
@@ -308,20 +316,20 @@ bool CMenuBackgroundBitmap::CheckBackgroundSplash( bool gamedirOnly )
 
 void CMenuBackgroundBitmap::LoadBackground()
 {
-	if( s_Backgrounds.Count() != 0 || uiStatic.lowmemory )
+	if ( s_Backgrounds.Count() != 0 || uiStatic.lowmemory )
 		return;
 
 	// try to load backgrounds from mod
-	if( LoadBackgroundImage( true ) )
-		return; // at first check new gameui backgrounds
+	if ( LoadBackgroundImage(true) )
+		return;  // at first check new gameui backgrounds
 
-	if( CheckBackgroundSplash( true ) )
-		return; // then check won-style
+	if ( CheckBackgroundSplash(true) )
+		return;  // then check won-style
 
 	// try from base directory
-	if( LoadBackgroundImage( false ) )
-		return; // gameui bgs are allowed to be inherited
+	if ( LoadBackgroundImage(false) )
+		return;  // gameui bgs are allowed to be inherited
 
-	if( CheckBackgroundSplash( false ) )
+	if ( CheckBackgroundSplash(false) )
 		return;
 }

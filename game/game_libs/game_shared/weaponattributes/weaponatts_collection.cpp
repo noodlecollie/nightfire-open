@@ -46,4 +46,4 @@ namespace WeaponAtts
 			AttackModes[index]->SetSignature(Core.Id, index);
 		}
 	}
-}
+}  // namespace WeaponAtts

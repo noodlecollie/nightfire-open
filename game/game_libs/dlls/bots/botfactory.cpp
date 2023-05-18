@@ -115,10 +115,11 @@ void CBotFactory::SetBotSkin(CBaseBot* bot, const CUtlString& skin)
 
 	// Annoyingly this takes a non-const char* (can we change this one day?),
 	// but the function just uses it as const internally so it's OK to cast.
-	g_engfuncs.pfnSetClientKeyValue(bot->entindex(),
-									g_engfuncs.pfnGetInfoKeyBuffer(bot->edict()),
-									"model",
-									(char*)CUtlString(skin).String());
+	g_engfuncs.pfnSetClientKeyValue(
+		bot->entindex(),
+		g_engfuncs.pfnGetInfoKeyBuffer(bot->edict()),
+		"model",
+		(char*)CUtlString(skin).String());
 }
 
 void CBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t count)

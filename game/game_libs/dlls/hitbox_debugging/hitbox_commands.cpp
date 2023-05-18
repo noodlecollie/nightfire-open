@@ -26,7 +26,9 @@ namespace HitboxDebugging
 
 		if ( argc != 2 && argc != 3 )
 		{
-			ALERT(at_console, "Multiplayer usage: hitbox_debug_set <#attackerId|attackerName> [#targetId|targetName]\n");
+			ALERT(
+				at_console,
+				"Multiplayer usage: hitbox_debug_set <#attackerId|attackerName> [#targetId|targetName]\n");
 			ALERT(at_console, "In multiplayer, only players are supported as targets.\n");
 			ALERT(at_console, "Target can be left blank to show only weapon shot traces.\n");
 			return;
@@ -66,14 +68,18 @@ namespace HitboxDebugging
 		{
 			if ( debugData.TargetPlayer() )
 			{
-				ALERT(at_console, "Set hitbox debugging attacker '%s' and target '%s'.\n",
-					  MPUtils::PlayerNetName(debugData.AttackerPlayer()),
-					  MPUtils::PlayerNetName(debugData.TargetPlayer()));
+				ALERT(
+					at_console,
+					"Set hitbox debugging attacker '%s' and target '%s'.\n",
+					MPUtils::PlayerNetName(debugData.AttackerPlayer()),
+					MPUtils::PlayerNetName(debugData.TargetPlayer()));
 			}
 			else
 			{
-				ALERT(at_console, "Set hitbox debugging attacker '%s' with no target player.\n",
-					  MPUtils::PlayerNetName(debugData.AttackerPlayer()));
+				ALERT(
+					at_console,
+					"Set hitbox debugging attacker '%s' with no target player.\n",
+					MPUtils::PlayerNetName(debugData.AttackerPlayer()));
 			}
 		}
 		else
@@ -115,7 +121,10 @@ namespace HitboxDebugging
 
 			if ( !edict )
 			{
-				ALERT(at_error, "Could not find entity with targetname '%s'. Hitbox debugging turned off.\n", targetName);
+				ALERT(
+					at_error,
+					"Could not find entity with targetname '%s'. Hitbox debugging turned off.\n",
+					targetName);
 				return;
 			}
 
@@ -123,7 +132,10 @@ namespace HitboxDebugging
 
 			if ( !targetEntity )
 			{
-				ALERT(at_error, "Entity '%s' does not have a suported model. Hitbox debugging turned off.\n", targetName);
+				ALERT(
+					at_error,
+					"Entity '%s' does not have a suported model. Hitbox debugging turned off.\n",
+					targetName);
 				return;
 			}
 		}
@@ -178,4 +190,4 @@ namespace HitboxDebugging
 		CHitboxDebugData* debugData = GetData();
 		return debugData ? debugData->IsValid() : false;
 	}
-}
+}  // namespace HitboxDebugging

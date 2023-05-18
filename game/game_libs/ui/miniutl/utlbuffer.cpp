@@ -7,7 +7,7 @@
 //===========================================================================//
 
 #ifndef _XBOX
-#pragma warning (disable : 4514)
+#pragma warning(disable : 4514)
 #endif
 
 #include <stdio.h>
@@ -25,15 +25,14 @@
 class CUtlCStringConversion : public CUtlCharConversion
 {
 public:
-	CUtlCStringConversion( const char nEscapeChar, const char *pDelimiter, int nCount, ConversionArray_t *pArray );
+	CUtlCStringConversion(const char nEscapeChar, const char* pDelimiter, int nCount, ConversionArray_t* pArray);
 
 	// Finds a conversion for the passed-in string, returns length
-	virtual char FindConversion( const char *pString, int *pLength );
+	virtual char FindConversion(const char* pString, int* pLength);
 
 private:
 	char m_pConversion[256];
 };
-
 
 //-----------------------------------------------------------------------------
 // Character conversions for no-escape sequence strings
@@ -41,96 +40,91 @@ private:
 class CUtlNoEscConversion : public CUtlCharConversion
 {
 public:
-	CUtlNoEscConversion( const char nEscapeChar, const char *pDelimiter, int nCount, ConversionArray_t *pArray ) :
-		CUtlCharConversion( nEscapeChar, pDelimiter, nCount, pArray ) {}
+	CUtlNoEscConversion(const char nEscapeChar, const char* pDelimiter, int nCount, ConversionArray_t* pArray) :
+		CUtlCharConversion(nEscapeChar, pDelimiter, nCount, pArray)
+	{
+	}
 
 	// Finds a conversion for the passed-in string, returns length
-	virtual char FindConversion( const char *pString, int *pLength ) { *pLength = 0; return 0; }
+	virtual char FindConversion(const char* pString, int* pLength)
+	{
+		*pLength = 0;
+		return 0;
+	}
 };
-
 
 //-----------------------------------------------------------------------------
 // List of character conversions
 //-----------------------------------------------------------------------------
-BEGIN_CUSTOM_CHAR_CONVERSION( CUtlCStringConversion, s_StringCharConversion, "\"", '\\' )
-	{ '\n', "n" },
-	{ '\t', "t" },
-	{ '\v', "v" },
-	{ '\b', "b" },
-	{ '\r', "r" },
-	{ '\f', "f" },
-	{ '\a', "a" },
-	{ '\\', "\\" },
-	{ '\?', "\?" },
-	{ '\'', "\'" },
-	{ '\"', "\"" },
-END_CUSTOM_CHAR_CONVERSION( CUtlCStringConversion, s_StringCharConversion, "\"", '\\' )
+BEGIN_CUSTOM_CHAR_CONVERSION(CUtlCStringConversion, s_StringCharConversion, "\"", '\\') {'\n', "n"}, {'\t', "t"},
+	{'\v', "v"}, {'\b', "b"}, {'\r', "r"}, {'\f', "f"}, {'\a', "a"}, {'\\', "\\"}, {'\?', "\?"}, {'\'', "\'"},
+	{'\"', "\""},
+	END_CUSTOM_CHAR_CONVERSION(CUtlCStringConversion, s_StringCharConversion, "\"", '\\')
 
-CUtlCharConversion *GetCStringCharConversion()
+		CUtlCharConversion* GetCStringCharConversion()
 {
 	return &s_StringCharConversion;
 }
 
-BEGIN_CUSTOM_CHAR_CONVERSION( CUtlNoEscConversion, s_NoEscConversion, "\"", 0x7F )
-	{ 0x7F, "" },
-END_CUSTOM_CHAR_CONVERSION( CUtlNoEscConversion, s_NoEscConversion, "\"", 0x7F )
+BEGIN_CUSTOM_CHAR_CONVERSION(CUtlNoEscConversion, s_NoEscConversion, "\"", 0x7F) {0x7F, ""},
+	END_CUSTOM_CHAR_CONVERSION(CUtlNoEscConversion, s_NoEscConversion, "\"", 0x7F)
 
-CUtlCharConversion *GetNoEscCharConversion()
+		CUtlCharConversion* GetNoEscCharConversion()
 {
 	return &s_NoEscConversion;
 }
 
-
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
-CUtlCStringConversion::CUtlCStringConversion( const char nEscapeChar, const char *pDelimiter, int nCount, ConversionArray_t *pArray ) : 
-	CUtlCharConversion( nEscapeChar, pDelimiter, nCount, pArray )
+CUtlCStringConversion::CUtlCStringConversion(
+	const char nEscapeChar,
+	const char* pDelimiter,
+	int nCount,
+	ConversionArray_t* pArray) :
+	CUtlCharConversion(nEscapeChar, pDelimiter, nCount, pArray)
 {
-	memset( m_pConversion, 0x0, sizeof(m_pConversion) );
+	memset(m_pConversion, 0x0, sizeof(m_pConversion));
 	for ( int i = 0; i < nCount; ++i )
 	{
-		m_pConversion[ (unsigned char)pArray[i].m_pReplacementString[0] ] = pArray[i].m_nActualChar;
+		m_pConversion[(unsigned char)pArray[i].m_pReplacementString[0]] = pArray[i].m_nActualChar;
 	}
 }
 
 // Finds a conversion for the passed-in string, returns length
-char CUtlCStringConversion::FindConversion( const char *pString, int *pLength )
+char CUtlCStringConversion::FindConversion(const char* pString, int* pLength)
 {
-	char c = m_pConversion[ (unsigned char)pString[0] ];
+	char c = m_pConversion[(unsigned char)pString[0]];
 	*pLength = (c != '\0') ? 1 : 0;
 	return c;
 }
 
-
-
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
-CUtlCharConversion::CUtlCharConversion( char nEscapeChar, const char *pDelimiter, int nCount, ConversionArray_t *pArray )
+CUtlCharConversion::CUtlCharConversion(char nEscapeChar, const char* pDelimiter, int nCount, ConversionArray_t* pArray)
 {
 	m_nEscapeChar = nEscapeChar;
 	m_pDelimiter = pDelimiter;
 	m_nCount = nCount;
-	m_nDelimiterLength = V_strlen( pDelimiter );
+	m_nDelimiterLength = V_strlen(pDelimiter);
 	m_nMaxConversionLength = 0;
 
-	memset( m_pReplacements, 0, sizeof(m_pReplacements) );
+	memset(m_pReplacements, 0, sizeof(m_pReplacements));
 
 	for ( int i = 0; i < nCount; ++i )
 	{
 		m_pList[i] = pArray[i].m_nActualChar;
-		ConversionInfo_t &info = m_pReplacements[ (unsigned char)m_pList[i] ];
-		Assert( info.m_pReplacementString == 0 );
+		ConversionInfo_t& info = m_pReplacements[(unsigned char)m_pList[i]];
+		Assert(info.m_pReplacementString == 0);
 		info.m_pReplacementString = pArray[i].m_pReplacementString;
-		info.m_nLength = V_strlen( info.m_pReplacementString );
+		info.m_nLength = V_strlen(info.m_pReplacementString);
 		if ( info.m_nLength > m_nMaxConversionLength )
 		{
 			m_nMaxConversionLength = info.m_nLength;
 		}
 	}
 }
-
 
 //-----------------------------------------------------------------------------
 // Escape character + delimiter
@@ -140,7 +134,7 @@ char CUtlCharConversion::GetEscapeChar() const
 	return m_nEscapeChar;
 }
 
-const char *CUtlCharConversion::GetDelimiter() const
+const char* CUtlCharConversion::GetDelimiter() const
 {
 	return m_pDelimiter;
 }
@@ -150,18 +144,17 @@ int CUtlCharConversion::GetDelimiterLength() const
 	return m_nDelimiterLength;
 }
 
-
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
-const char *CUtlCharConversion::GetConversionString( char c ) const
+const char* CUtlCharConversion::GetConversionString(char c) const
 {
-	return m_pReplacements[ (unsigned char)c ].m_pReplacementString;
+	return m_pReplacements[(unsigned char)c].m_pReplacementString;
 }
 
-int CUtlCharConversion::GetConversionLength( char c ) const
+int CUtlCharConversion::GetConversionLength(char c) const
 {
-	return m_pReplacements[ (unsigned char)c ].m_nLength;
+	return m_pReplacements[(unsigned char)c].m_nLength;
 }
 
 int CUtlCharConversion::MaxConversionLength() const
@@ -169,17 +162,16 @@ int CUtlCharConversion::MaxConversionLength() const
 	return m_nMaxConversionLength;
 }
 
-
 //-----------------------------------------------------------------------------
 // Finds a conversion for the passed-in string, returns length
 //-----------------------------------------------------------------------------
-char CUtlCharConversion::FindConversion( const char *pString, int *pLength )
+char CUtlCharConversion::FindConversion(const char* pString, int* pLength)
 {
 	for ( int i = 0; i < m_nCount; ++i )
 	{
-		if ( !V_strcmp( pString, m_pReplacements[ (unsigned char)m_pList[i] ].m_pReplacementString ) )
+		if ( !V_strcmp(pString, m_pReplacements[(unsigned char)m_pList[i]].m_pReplacementString) )
 		{
-			*pLength = m_pReplacements[ (unsigned char)m_pList[i] ].m_nLength;
+			*pLength = m_pReplacements[(unsigned char)m_pList[i]].m_nLength;
 			return m_pList[i];
 		}
 	}
@@ -188,12 +180,12 @@ char CUtlCharConversion::FindConversion( const char *pString, int *pLength )
 	return '\0';
 }
 
-
 //-----------------------------------------------------------------------------
 // constructors
 //-----------------------------------------------------------------------------
-CUtlBuffer::CUtlBuffer( int growSize, int initSize, int nFlags ) : 
-	m_Memory( growSize, initSize ), m_Error(0)
+CUtlBuffer::CUtlBuffer(int growSize, int initSize, int nFlags) :
+	m_Memory(growSize, initSize),
+	m_Error(0)
 {
 	m_Get = 0;
 	m_Put = 0;
@@ -208,13 +200,14 @@ CUtlBuffer::CUtlBuffer( int growSize, int initSize, int nFlags ) :
 	{
 		m_nMaxPut = 0;
 	}
-	SetOverflowFuncs( &CUtlBuffer::GetOverflow, &CUtlBuffer::PutOverflow );
+	SetOverflowFuncs(&CUtlBuffer::GetOverflow, &CUtlBuffer::PutOverflow);
 }
 
-CUtlBuffer::CUtlBuffer( const void *pBuffer, int nSize, int nFlags ) :
-	m_Memory( (unsigned char*)pBuffer, nSize ), m_Error(0)
+CUtlBuffer::CUtlBuffer(const void* pBuffer, int nSize, int nFlags) :
+	m_Memory((unsigned char*)pBuffer, nSize),
+	m_Error(0)
 {
-	DbgAssert( nSize != 0 );
+	DbgAssert(nSize != 0);
 
 	m_Get = 0;
 	m_Put = 0;
@@ -230,32 +223,31 @@ CUtlBuffer::CUtlBuffer( const void *pBuffer, int nSize, int nFlags ) :
 		m_nMaxPut = -1;
 		AddNullTermination();
 	}
-	SetOverflowFuncs( &CUtlBuffer::GetOverflow, &CUtlBuffer::PutOverflow );
+	SetOverflowFuncs(&CUtlBuffer::GetOverflow, &CUtlBuffer::PutOverflow);
 }
 
-
 //-----------------------------------------------------------------------------
-// Modifies the buffer to be binary or text; Blows away the buffer and the CONTAINS_CRLF value. 
+// Modifies the buffer to be binary or text; Blows away the buffer and the CONTAINS_CRLF value.
 //-----------------------------------------------------------------------------
-void CUtlBuffer::SetBufferType( bool bIsText, bool bContainsCRLF )
+void CUtlBuffer::SetBufferType(bool bIsText, bool bContainsCRLF)
 {
 #ifdef _DEBUG
 	if ( IsText() )
 	{
 		if ( bIsText )
 		{
-			Assert( ContainsCRLF() == bContainsCRLF );
+			Assert(ContainsCRLF() == bContainsCRLF);
 		}
 		else
 		{
-			Assert( ContainsCRLF() );
+			Assert(ContainsCRLF());
 		}
 	}
 	else
 	{
 		if ( bIsText )
 		{
-			Assert( bContainsCRLF );
+			Assert(bContainsCRLF);
 		}
 	}
 #endif
@@ -278,13 +270,12 @@ void CUtlBuffer::SetBufferType( bool bIsText, bool bContainsCRLF )
 	}
 }
 
-
 //-----------------------------------------------------------------------------
 // Attaches the buffer to external memory....
 //-----------------------------------------------------------------------------
-void CUtlBuffer::SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, int nFlags )
+void CUtlBuffer::SetExternalBuffer(void* pMemory, int nSize, int nInitialPut, int nFlags)
 {
-	m_Memory.SetExternalBuffer( (unsigned char*)pMemory, nSize );
+	m_Memory.SetExternalBuffer((unsigned char*)pMemory, nSize);
 
 	// Reset all indices; we just changed memory
 	m_Get = 0;
@@ -296,15 +287,14 @@ void CUtlBuffer::SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, i
 	AddNullTermination();
 }
 
-
 //-----------------------------------------------------------------------------
 // Purpose: Attaches to an external buffer as read only. Will purge any existing buffer data
 //-----------------------------------------------------------------------------
-void CUtlBuffer::SetReadOnlyBuffer( void *pMemory, int nSize )
+void CUtlBuffer::SetReadOnlyBuffer(void* pMemory, int nSize)
 {
 	Purge();
 
-	m_Memory.SetExternalBuffer( pMemory, nSize );
+	m_Memory.SetExternalBuffer(pMemory, nSize);
 	m_Get = 0;
 	m_Put = nSize;
 	m_nTab = 0;
@@ -312,11 +302,10 @@ void CUtlBuffer::SetReadOnlyBuffer( void *pMemory, int nSize )
 	m_nMaxPut = nSize;
 }
 
-
 //-----------------------------------------------------------------------------
 // Makes sure we've got at least this much memory
 //-----------------------------------------------------------------------------
-void CUtlBuffer::EnsureCapacity( int num )
+void CUtlBuffer::EnsureCapacity(int num)
 {
 	// Add one extra for the null termination
 	if ( IsText() )
@@ -324,9 +313,9 @@ void CUtlBuffer::EnsureCapacity( int num )
 
 	if ( m_Memory.IsExternallyAllocated() )
 	{
-		if ( IsGrowable() && ( m_Memory.NumAllocated() < num ) )
+		if ( IsGrowable() && (m_Memory.NumAllocated() < num) )
 		{
-			m_Memory.ConvertToGrowableMemory( 0 );
+			m_Memory.ConvertToGrowableMemory(0);
 		}
 		else
 		{
@@ -334,18 +323,17 @@ void CUtlBuffer::EnsureCapacity( int num )
 		}
 	}
 
-	m_Memory.EnsureCapacity( num );
+	m_Memory.EnsureCapacity(num);
 }
-
 
 //-----------------------------------------------------------------------------
 // Base get method from which all others derive
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::Get( void* pMem, int size )
+bool CUtlBuffer::Get(void* pMem, int size)
 {
-	if ( CheckGet( size ) )
+	if ( CheckGet(size) )
 	{
-		memcpy( pMem, &m_Memory[m_Get], size );
+		memcpy(pMem, &m_Memory[m_Get], size);
 		m_Get += size;
 		return true;
 	}
@@ -355,23 +343,21 @@ bool CUtlBuffer::Get( void* pMem, int size )
 	}
 }
 
-
 //-----------------------------------------------------------------------------
-// This will get at least 1 byte and up to nSize bytes. 
+// This will get at least 1 byte and up to nSize bytes.
 // It will return the number of bytes actually read.
 //-----------------------------------------------------------------------------
-int CUtlBuffer::GetUpTo( void *pMem, int nSize )
+int CUtlBuffer::GetUpTo(void* pMem, int nSize)
 {
-	if ( CheckArbitraryPeekGet( 0, nSize ) )
+	if ( CheckArbitraryPeekGet(0, nSize) )
 	{
-		memcpy( pMem, &m_Memory[m_Get], nSize );
+		memcpy(pMem, &m_Memory[m_Get], nSize);
 		m_Get += nSize;
 		return nSize;
 	}
-	return 0;	
+	return 0;
 }
 
-	
 //-----------------------------------------------------------------------------
 // Eats whitespace
 //-----------------------------------------------------------------------------
@@ -379,16 +365,15 @@ void CUtlBuffer::EatWhiteSpace()
 {
 	if ( IsText() && IsValid() )
 	{
-		while ( CheckGet( sizeof(char) ) )
+		while ( CheckGet(sizeof(char)) )
 		{
-			if ( !isspace( *(const char*)PeekGet() ) )
+			if ( !isspace(*(const char*)PeekGet()) )
 				break;
 			m_Get += sizeof(char);
 		}
 	}
 }
 
-	
 //-----------------------------------------------------------------------------
 // Eats whitespace without causing overflows
 //-----------------------------------------------------------------------------
@@ -396,15 +381,14 @@ void CUtlBuffer::EatWhiteSpaceNoOverflow()
 {
 	if ( IsText() && IsValid() )
 	{
-		while ( CheckPeekGet( 0, sizeof(char) ) )
+		while ( CheckPeekGet(0, sizeof(char)) )
 		{
-			if ( !isspace( *(const char*)PeekGet() ) )
+			if ( !isspace(*(const char*)PeekGet()) )
 				break;
 			m_Get += sizeof(char);
 		}
 	}
 }
-
 
 //-----------------------------------------------------------------------------
 // Eats C++ style comments
@@ -414,8 +398,8 @@ bool CUtlBuffer::EatCPPComment()
 	if ( IsText() && IsValid() )
 	{
 		// If we don't have a a c++ style comment next, we're done
-		const char *pPeek = (const char *)PeekGet( 2 * sizeof(char), 0 );
-		if ( !pPeek || ( pPeek[0] != '/' ) || ( pPeek[1] != '/' ) )
+		const char* pPeek = (const char*)PeekGet(2 * sizeof(char), 0);
+		if ( !pPeek || (pPeek[0] != '/') || (pPeek[1] != '/') )
 			return false;
 
 		// Deal with c++ style comments
@@ -432,18 +416,17 @@ bool CUtlBuffer::EatCPPComment()
 	return false;
 }
 
-	
 //-----------------------------------------------------------------------------
 // Peeks how much whitespace to eat
 //-----------------------------------------------------------------------------
-int CUtlBuffer::PeekWhiteSpace( int nOffset )
+int CUtlBuffer::PeekWhiteSpace(int nOffset)
 {
 	if ( !IsText() || !IsValid() )
 		return 0;
 
-	while ( CheckPeekGet( nOffset, sizeof(char) ) )
+	while ( CheckPeekGet(nOffset, sizeof(char)) )
 	{
-		if ( !isspace( *(char*)PeekGet( nOffset ) ) )
+		if ( !isspace(*(char*)PeekGet(nOffset)) )
 			break;
 		nOffset += sizeof(char);
 	}
@@ -451,20 +434,19 @@ int CUtlBuffer::PeekWhiteSpace( int nOffset )
 	return nOffset;
 }
 
-
 //-----------------------------------------------------------------------------
 // Peek size of sting to come, check memory bound
 //-----------------------------------------------------------------------------
-int	CUtlBuffer::PeekStringLength()
+int CUtlBuffer::PeekStringLength()
 {
-	if ( !IsValid() || !CheckPeekGet( 0, sizeof(char) ) )
+	if ( !IsValid() || !CheckPeekGet(0, sizeof(char)) )
 		return 0;
 
 	// Eat preceeding whitespace
 	int nOffset = 0;
 	if ( IsText() )
 	{
-		nOffset = PeekWhiteSpace( nOffset );
+		nOffset = PeekWhiteSpace(nOffset);
 	}
 
 	int nStartingOffset = nOffset;
@@ -475,10 +457,10 @@ int	CUtlBuffer::PeekStringLength()
 
 		// CheckArbitraryPeekGet will set nPeekAmount to the remaining buffer if we hit the end
 		// NOTE: Add 1 for the terminating zero!
-		if ( !CheckArbitraryPeekGet( nOffset, nPeekAmount ) )
+		if ( !CheckArbitraryPeekGet(nOffset, nPeekAmount) )
 			return nOffset - nStartingOffset + 1;
 
-		const char *pTest = (const char *)PeekGet( nOffset );
+		const char* pTest = (const char*)PeekGet(nOffset);
 
 		if ( !IsText() )
 		{
@@ -500,27 +482,25 @@ int	CUtlBuffer::PeekStringLength()
 		}
 
 		nOffset += nPeekAmount;
-
-	} while ( true );
+	}
+	while ( true );
 }
-
 
 //-----------------------------------------------------------------------------
 // Does the next bytes of the buffer match a pattern?
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::PeekStringMatch( int nOffset, const char *pString, int nLen )
+bool CUtlBuffer::PeekStringMatch(int nOffset, const char* pString, int nLen)
 {
-	if ( !CheckPeekGet( nOffset, nLen ) )
+	if ( !CheckPeekGet(nOffset, nLen) )
 		return false;
-	return !V_strncmp( (const char*)PeekGet(nOffset), pString, nLen );
+	return !V_strncmp((const char*)PeekGet(nOffset), pString, nLen);
 }
-
 
 //-----------------------------------------------------------------------------
 // This version of PeekStringLength converts \" to \\ and " to \, etc.
 // It also reads a " at the beginning and end of the string
 //-----------------------------------------------------------------------------
-int CUtlBuffer::PeekDelimitedStringLength( CUtlCharConversion *pConv, bool bActualSize )
+int CUtlBuffer::PeekDelimitedStringLength(CUtlCharConversion* pConv, bool bActualSize)
 {
 	if ( !IsText() || !pConv )
 		return PeekStringLength();
@@ -529,42 +509,42 @@ int CUtlBuffer::PeekDelimitedStringLength( CUtlCharConversion *pConv, bool bActu
 	int nOffset = 0;
 	if ( IsText() )
 	{
-		nOffset = PeekWhiteSpace( nOffset );
+		nOffset = PeekWhiteSpace(nOffset);
 	}
 
-	if ( !PeekStringMatch( nOffset, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) )
+	if ( !PeekStringMatch(nOffset, pConv->GetDelimiter(), pConv->GetDelimiterLength()) )
 		return 0;
 
 	// Try to read ending ", but don't accept \"
 	int nActualStart = nOffset;
 	nOffset += pConv->GetDelimiterLength();
-	int nLen = 1;	// Starts at 1 for the '\0' termination
+	int nLen = 1;  // Starts at 1 for the '\0' termination
 
 	do
 	{
-		if ( PeekStringMatch( nOffset, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) )
+		if ( PeekStringMatch(nOffset, pConv->GetDelimiter(), pConv->GetDelimiterLength()) )
 			break;
 
-		if ( !CheckPeekGet( nOffset, 1 ) )
+		if ( !CheckPeekGet(nOffset, 1) )
 			break;
 
-		char c = *(const char*)PeekGet( nOffset );
+		char c = *(const char*)PeekGet(nOffset);
 		++nLen;
 		++nOffset;
 		if ( c == pConv->GetEscapeChar() )
 		{
 			int nLength = pConv->MaxConversionLength();
-			if ( !CheckArbitraryPeekGet( nOffset, nLength ) )
+			if ( !CheckArbitraryPeekGet(nOffset, nLength) )
 				break;
 
-			pConv->FindConversion( (const char*)PeekGet(nOffset), &nLength );
+			pConv->FindConversion((const char*)PeekGet(nOffset), &nLength);
 			nOffset += nLength;
 		}
-	}  while (true);
+	}
+	while ( true );
 
 	return bActualSize ? nLen : nOffset - nActualStart + pConv->GetDelimiterLength() + 1;
 }
-
 
 //-----------------------------------------------------------------------------
 // returns a pointer to the next string. works for binary buffers only
@@ -572,12 +552,12 @@ int CUtlBuffer::PeekDelimitedStringLength( CUtlCharConversion *pConv, bool bActu
 const char* CUtlBuffer::GetStringFast()
 {
 	if ( !IsValid() )
-		return NULL; // buffer invalid
+		return NULL;  // buffer invalid
 
 	if ( IsText() )
 	{
-		AssertMsg( false, "CUtlBuffer::GetStringFast: binary buffers only" );
-		return NULL; // this function doesn't work in text mode
+		AssertMsg(false, "CUtlBuffer::GetStringFast: binary buffers only");
+		return NULL;  // this function doesn't work in text mode
 	}
 
 	// Remember, this *includes* the null character
@@ -590,27 +570,27 @@ const char* CUtlBuffer::GetStringFast()
 		return NULL;
 	}
 
-	const char *pString = (const char*)Base() + TellGet();
+	const char* pString = (const char*)Base() + TellGet();
 
 	// skip string, but not terminating 0
-	SeekGet( SEEK_CURRENT, nLen - 1 );
+	SeekGet(SEEK_CURRENT, nLen - 1);
 
 	// Read the terminating NULL, make sure it's there
 	if ( GetChar() != 0 )
 	{
-		AssertMsg( false, "CUtlBuffer::GetStringFast: no string termination" );
+		AssertMsg(false, "CUtlBuffer::GetStringFast: no string termination");
 		return NULL;
 	}
-	
+
 	return pString;
 }
 
 //-----------------------------------------------------------------------------
 // Reads a null-terminated string
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::GetString( char *pString, int nMaxChars )
+bool CUtlBuffer::GetString(char* pString, int nMaxChars)
 {
-	if (!IsValid())
+	if ( !IsValid() )
 	{
 		*pString = 0;
 		return false;
@@ -635,18 +615,18 @@ bool CUtlBuffer::GetString( char *pString, int nMaxChars )
 		m_Error |= GET_OVERFLOW;
 		return false;
 	}
-	
+
 	// Strip off the terminating NULL
 	if ( nLen <= nMaxChars )
 	{
-		Get( pString, nLen - 1 );
-		pString[ nLen - 1 ] = 0;
+		Get(pString, nLen - 1);
+		pString[nLen - 1] = 0;
 	}
 	else
 	{
-		Get( pString, nMaxChars - 1 );
-		pString[ nMaxChars - 1 ] = 0;
-		SeekGet( SEEK_CURRENT, nLen - 1 - nMaxChars );
+		Get(pString, nMaxChars - 1);
+		pString[nMaxChars - 1] = 0;
+		SeekGet(SEEK_CURRENT, nLen - 1 - nMaxChars);
 		// we've had to truncate, read out but return false
 		return false;
 	}
@@ -655,21 +635,21 @@ bool CUtlBuffer::GetString( char *pString, int nMaxChars )
 	if ( !IsText() )
 	{
 		char c = GetChar();
-		VerifyEquals( c, 0 );
+		VerifyEquals(c, 0);
 	}
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-// Reads a CRLF/LF terminated string line 
+// Reads a CRLF/LF terminated string line
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::GetLine( char *pString, int nMaxChars )
+bool CUtlBuffer::GetLine(char* pString, int nMaxChars)
 {
 	*pString = 0;
 
 	if ( !IsValid() || !IsText() )
 		return false;
-	
+
 	if ( nMaxChars < 1 )
 		return false;
 
@@ -678,20 +658,20 @@ bool CUtlBuffer::GetLine( char *pString, int nMaxChars )
 
 	int nMaxPeekAmount = nMaxChars - 1;
 
-	if ( !CheckArbitraryPeekGet( 0, nMaxPeekAmount ) )
+	if ( !CheckArbitraryPeekGet(0, nMaxPeekAmount) )
 		return false;
 
-	const char *pBuffer = (const char*) PeekGet();
+	const char* pBuffer = (const char*)PeekGet();
 	int nSkipChars = 0;
 
-	while( pBuffer && ( nSkipChars < nMaxPeekAmount ) )
+	while ( pBuffer && (nSkipChars < nMaxPeekAmount) )
 	{
 		char c = *pBuffer;
 
 		nSkipChars++;
 
 		// stop on LF or end of string
-		if ( c=='\n' || c == 0 )
+		if ( c == '\n' || c == 0 )
 			break;
 
 		// copy char but skip CRs
@@ -706,7 +686,7 @@ bool CUtlBuffer::GetLine( char *pString, int nMaxChars )
 
 	*pString = 0;
 
-	SeekGet( SEEK_CURRENT, nSkipChars );
+	SeekGet(SEEK_CURRENT, nSkipChars);
 
 	return true;
 }
@@ -715,38 +695,38 @@ bool CUtlBuffer::GetLine( char *pString, int nMaxChars )
 // This version of GetString converts \ to \\ and " to \", etc.
 // It also places " at the beginning and end of the string
 //-----------------------------------------------------------------------------
-char CUtlBuffer::GetDelimitedCharInternal( CUtlCharConversion *pConv )
+char CUtlBuffer::GetDelimitedCharInternal(CUtlCharConversion* pConv)
 {
 	char c = GetChar();
 	if ( c == pConv->GetEscapeChar() )
 	{
 		int nLength = pConv->MaxConversionLength();
-		if ( !CheckArbitraryPeekGet( 0, nLength ) )
+		if ( !CheckArbitraryPeekGet(0, nLength) )
 			return '\0';
 
-		c = pConv->FindConversion( (const char *)PeekGet(), &nLength );
-		SeekGet( SEEK_CURRENT, nLength );
+		c = pConv->FindConversion((const char*)PeekGet(), &nLength);
+		SeekGet(SEEK_CURRENT, nLength);
 	}
 
 	return c;
 }
 
-char CUtlBuffer::GetDelimitedChar( CUtlCharConversion *pConv )
+char CUtlBuffer::GetDelimitedChar(CUtlCharConversion* pConv)
 {
 	if ( !IsText() || !pConv )
-		return GetChar( );
-	return GetDelimitedCharInternal( pConv );
+		return GetChar();
+	return GetDelimitedCharInternal(pConv);
 }
 
-void CUtlBuffer::GetDelimitedString( CUtlCharConversion *pConv, char *pString, int nMaxChars )
+void CUtlBuffer::GetDelimitedString(CUtlCharConversion* pConv, char* pString, int nMaxChars)
 {
 	if ( !IsText() || !pConv )
 	{
-		GetString( pString, nMaxChars );
+		GetString(pString, nMaxChars);
 		return;
 	}
 
-	if (!IsValid())
+	if ( !IsValid() )
 	{
 		*pString = 0;
 		return;
@@ -759,26 +739,25 @@ void CUtlBuffer::GetDelimitedString( CUtlCharConversion *pConv, char *pString, i
 
 	// this will fire if, for example, you're trying to use a static utlcharconversion
 	// from a static constructor which runs before the utlcharconversion is constructed
-	Assert( pConv && pConv->GetDelimiterLength() > 0 );
-
+	Assert(pConv && pConv->GetDelimiterLength() > 0);
 
 	EatWhiteSpace();
-	if ( !PeekStringMatch( 0, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) )
+	if ( !PeekStringMatch(0, pConv->GetDelimiter(), pConv->GetDelimiterLength()) )
 		return;
 
 	// Pull off the starting delimiter
-	SeekGet( SEEK_CURRENT, pConv->GetDelimiterLength() );
+	SeekGet(SEEK_CURRENT, pConv->GetDelimiterLength());
 
 	int nRead = 0;
 	while ( IsValid() )
 	{
-		if ( PeekStringMatch( 0, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) )
+		if ( PeekStringMatch(0, pConv->GetDelimiter(), pConv->GetDelimiterLength()) )
 		{
-			SeekGet( SEEK_CURRENT, pConv->GetDelimiterLength() );
+			SeekGet(SEEK_CURRENT, pConv->GetDelimiterLength());
 			break;
 		}
 
-		char c = GetDelimitedCharInternal( pConv );
+		char c = GetDelimitedCharInternal(pConv);
 
 		if ( nRead < nMaxChars )
 		{
@@ -794,11 +773,10 @@ void CUtlBuffer::GetDelimitedString( CUtlCharConversion *pConv, char *pString, i
 	pString[nRead] = '\0';
 }
 
-
 //-----------------------------------------------------------------------------
 // Checks if a get is ok
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::CheckGet( int nSize )
+bool CUtlBuffer::CheckGet(int nSize)
 {
 	if ( nSize < 0 )
 		return false;
@@ -812,9 +790,9 @@ bool CUtlBuffer::CheckGet( int nSize )
 		return false;
 	}
 
-	if ( ( m_Get < 0 ) || (	m_Memory.NumAllocated() < m_Get + nSize ) )
+	if ( (m_Get < 0) || (m_Memory.NumAllocated() < m_Get + nSize) )
 	{
-		if ( !OnGetOverflow( nSize ) )
+		if ( !OnGetOverflow(nSize) )
 		{
 			m_Error |= GET_OVERFLOW;
 			return false;
@@ -824,27 +802,25 @@ bool CUtlBuffer::CheckGet( int nSize )
 	return true;
 }
 
-
 //-----------------------------------------------------------------------------
 // Checks if a peek get is ok
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::CheckPeekGet( int nOffset, int nSize )
+bool CUtlBuffer::CheckPeekGet(int nOffset, int nSize)
 {
 	if ( m_Error & GET_OVERFLOW )
 		return false;
 
 	// Checking for peek can't set the overflow flag
-	bool bOk = CheckGet( nOffset + nSize );
+	bool bOk = CheckGet(nOffset + nSize);
 	m_Error &= ~GET_OVERFLOW;
 	return bOk;
 }
-
 
 //-----------------------------------------------------------------------------
 // Call this to peek arbitrarily long into memory. It doesn't fail unless
 // it can't read *anything* new
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::CheckArbitraryPeekGet( int nOffset, int &nIncrement )
+bool CUtlBuffer::CheckArbitraryPeekGet(int nOffset, int& nIncrement)
 {
 	if ( TellGet() + nOffset >= TellMaxPut() )
 	{
@@ -859,7 +835,7 @@ bool CUtlBuffer::CheckArbitraryPeekGet( int nOffset, int &nIncrement )
 
 	// NOTE: CheckPeekGet could modify TellMaxPut for streaming files
 	// We have to call TellMaxPut again here
-	CheckPeekGet( nOffset, nIncrement );
+	CheckPeekGet(nOffset, nIncrement);
 	int nMaxGet = TellMaxPut() - TellGet();
 	if ( nMaxGet < nIncrement )
 	{
@@ -868,36 +844,34 @@ bool CUtlBuffer::CheckArbitraryPeekGet( int nOffset, int &nIncrement )
 	return (nIncrement != 0);
 }
 
-
 //-----------------------------------------------------------------------------
 // Peek part of the butt
 //-----------------------------------------------------------------------------
-const void* CUtlBuffer::PeekGet( int nMaxSize, int nOffset )
+const void* CUtlBuffer::PeekGet(int nMaxSize, int nOffset)
 {
-	if ( !CheckPeekGet( nOffset, nMaxSize ) )
+	if ( !CheckPeekGet(nOffset, nMaxSize) )
 		return NULL;
-	return &m_Memory[ m_Get + nOffset ];
+	return &m_Memory[m_Get + nOffset];
 }
-
 
 //-----------------------------------------------------------------------------
 // Change where I'm reading
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::SeekGet( SeekType_t type, int offset )	
+bool CUtlBuffer::SeekGet(SeekType_t type, int offset)
 {
-	switch( type )
+	switch ( type )
 	{
-	case SEEK_HEAD:						 
-		m_Get = offset; 
-		break;
+		case SEEK_HEAD:
+			m_Get = offset;
+			break;
 
-	case SEEK_CURRENT:
-		m_Get += offset;
-		break;
+		case SEEK_CURRENT:
+			m_Get += offset;
+			break;
 
-	case SEEK_TAIL:
-		m_Get = m_nMaxPut - offset;
-		break;
+		case SEEK_TAIL:
+			m_Get = m_nMaxPut - offset;
+			break;
 	}
 
 	if ( m_Get > m_nMaxPut )
@@ -912,19 +886,18 @@ bool CUtlBuffer::SeekGet( SeekType_t type, int offset )
 	}
 }
 
-
 //-----------------------------------------------------------------------------
 // Parse...
 //-----------------------------------------------------------------------------
 
-#pragma warning ( disable : 4706 )
+#pragma warning(disable : 4706)
 
-int CUtlBuffer::VaScanf( const char* pFmt, va_list list )
+int CUtlBuffer::VaScanf(const char* pFmt, va_list list)
 {
-	Assert( pFmt );
+	Assert(pFmt);
 	if ( m_Error || !IsText() )
 		return 0;
-	
+
 	int numScanned = 0;
 	int nLength;
 	char c;
@@ -938,26 +911,26 @@ int CUtlBuffer::VaScanf( const char* pFmt, va_list list )
 			break;
 		}
 
-		switch (c)
+		switch ( c )
 		{
-		case ' ':
-			// eat all whitespace
-			EatWhiteSpace();
-			break;
+			case ' ':
+				// eat all whitespace
+				EatWhiteSpace();
+				break;
 
-		case '%':
+			case '%':
 			{
 				// Conversion character... try to convert baby!
 				char type = *pFmt++;
-				if (type == 0)
+				if ( type == 0 )
 					return numScanned;
 
-				switch(type)
+				switch ( type )
 				{
-				case 'c':
+					case 'c':
 					{
-						char* ch = va_arg( list, char * );
-						if ( CheckPeekGet( 0, sizeof(char) ) )
+						char* ch = va_arg(list, char*);
+						if ( CheckPeekGet(0, sizeof(char)) )
 						{
 							*ch = *(const char*)PeekGet();
 							++m_Get;
@@ -968,97 +941,97 @@ int CUtlBuffer::VaScanf( const char* pFmt, va_list list )
 							return numScanned;
 						}
 					}
-				break;
+					break;
 
-				case 'i':
-				case 'd':
+					case 'i':
+					case 'd':
 					{
-						int* i = va_arg( list, int * );
+						int* i = va_arg(list, int*);
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) )
+						if ( !CheckArbitraryPeekGet(0, nLength) )
 						{
 							*i = 0;
 							return numScanned;
 						}
 
-						*i = strtol( (char*)PeekGet(), &pEnd, 10 );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*i = strtol((char*)PeekGet(), &pEnd, 10);
+						int nBytesRead = (int)(pEnd - (char*)PeekGet());
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
 					}
 					break;
-				
-				case 'x':
+
+					case 'x':
 					{
-						int* i = va_arg( list, int * );
+						int* i = va_arg(list, int*);
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) )
+						if ( !CheckArbitraryPeekGet(0, nLength) )
 						{
 							*i = 0;
 							return numScanned;
 						}
 
-						*i = strtol( (char*)PeekGet(), &pEnd, 16 );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*i = strtol((char*)PeekGet(), &pEnd, 16);
+						int nBytesRead = (int)(pEnd - (char*)PeekGet());
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
 					}
 					break;
-					
-				case 'u':
+
+					case 'u':
 					{
-						unsigned int* u = va_arg( list, unsigned int *);
+						unsigned int* u = va_arg(list, unsigned int*);
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) )
+						if ( !CheckArbitraryPeekGet(0, nLength) )
 						{
 							*u = 0;
 							return numScanned;
 						}
 
-						*u = strtoul( (char*)PeekGet(), &pEnd, 10 );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*u = strtoul((char*)PeekGet(), &pEnd, 10);
+						int nBytesRead = (int)(pEnd - (char*)PeekGet());
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
 					}
 					break;
-					
-				case 'f':
+
+					case 'f':
 					{
-						float* f = va_arg( list, float *);
+						float* f = va_arg(list, float*);
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) )
+						if ( !CheckArbitraryPeekGet(0, nLength) )
 						{
 							*f = 0.0f;
 							return numScanned;
 						}
 
-						*f = (float)strtod( (char*)PeekGet(), &pEnd );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*f = (float)strtod((char*)PeekGet(), &pEnd);
+						int nBytesRead = (int)(pEnd - (char*)PeekGet());
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
 					}
 					break;
-					
-				case 's':
+
+					case 's':
 					{
-						char* s = va_arg( list, char * );
-						GetString( s, INT_MAX );
+						char* s = va_arg(list, char*);
+						GetString(s, INT_MAX);
 					}
 					break;
 
-				default:
+					default:
 					{
 						// unimplemented scanf type
 						Assert(0);
@@ -1070,11 +1043,11 @@ int CUtlBuffer::VaScanf( const char* pFmt, va_list list )
 			}
 			break;
 
-		default:
+			default:
 			{
 				// Here we have to match the format string character
 				// against what's in the buffer or we're done.
-				if ( !CheckPeekGet( 0, sizeof(char) ) )
+				if ( !CheckPeekGet(0, sizeof(char)) )
 					return numScanned;
 
 				if ( c != *(const char*)PeekGet() )
@@ -1087,30 +1060,29 @@ int CUtlBuffer::VaScanf( const char* pFmt, va_list list )
 	return numScanned;
 }
 
-#pragma warning ( default : 4706 )
+#pragma warning(default : 4706)
 
-int CUtlBuffer::Scanf( const char* pFmt, ... )
+int CUtlBuffer::Scanf(const char* pFmt, ...)
 {
 	va_list args;
 
-	va_start( args, pFmt );
-	int count = VaScanf( pFmt, args );
-	va_end( args );
+	va_start(args, pFmt);
+	int count = VaScanf(pFmt, args);
+	va_end(args);
 
 	return count;
 }
-
 
 //-----------------------------------------------------------------------------
 // Advance the get index until after the particular string is found
 // Do not eat whitespace before starting. Return false if it failed
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::GetToken( const char *pToken )
+bool CUtlBuffer::GetToken(const char* pToken)
 {
-	Assert( pToken );
+	Assert(pToken);
 
 	// Look for the token
-	int nLen = V_strlen( pToken );
+	int nLen = V_strlen(pToken);
 
 	int nSizeToCheck = SizeAllocated() - TellGet();
 
@@ -1125,27 +1097,26 @@ bool CUtlBuffer::GetToken( const char *pToken )
 		if ( nLen > nSizeToCheck )
 			break;
 
-		if ( !CheckPeekGet( 0, nSizeToCheck ) )
+		if ( !CheckPeekGet(0, nSizeToCheck) )
 			break;
 
-		const char *pBufStart = (const char*)PeekGet();
-		const char *pFoundEnd = V_strnistr( pBufStart, pToken, nSizeToCheck );
+		const char* pBufStart = (const char*)PeekGet();
+		const char* pFoundEnd = V_strnistr(pBufStart, pToken, nSizeToCheck);
 		if ( pFoundEnd )
 		{
 			size_t nOffset = (size_t)pFoundEnd - (size_t)pBufStart;
-			SeekGet( CUtlBuffer::SEEK_CURRENT, static_cast<int>( nOffset + nLen ) );
+			SeekGet(CUtlBuffer::SEEK_CURRENT, static_cast<int>(nOffset + nLen));
 			return true;
 		}
 
-		SeekGet( CUtlBuffer::SEEK_CURRENT, nSizeToCheck - nLen + 1);
+		SeekGet(CUtlBuffer::SEEK_CURRENT, nSizeToCheck - nLen + 1);
 		nSizeToCheck = SizeAllocated() - nLen + 1;
+	}
+	while ( true );
 
-	} while ( true );
-
-	SeekGet( CUtlBuffer::SEEK_HEAD, nGet );
+	SeekGet(CUtlBuffer::SEEK_HEAD, nGet);
 	return false;
 }
-
 
 //-----------------------------------------------------------------------------
 // (For text buffers only)
@@ -1156,7 +1127,7 @@ bool CUtlBuffer::GetToken( const char *pToken )
 // If successful, the get index is advanced and the function returns true,
 // otherwise the index is not advanced and the function returns false.
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::ParseToken( const char *pStartingDelim, const char *pEndingDelim, char* pString, int nMaxLen )
+bool CUtlBuffer::ParseToken(const char* pStartingDelim, const char* pEndingDelim, char* pString, int nMaxLen)
 {
 	int nCharsToCopy = 0;
 	int nCurrentGet = 0;
@@ -1172,17 +1143,17 @@ bool CUtlBuffer::ParseToken( const char *pStartingDelim, const char *pEndingDeli
 	}
 
 	// Ending delimiter is not
-	Assert( pEndingDelim && pEndingDelim[0] );
-	nEndingDelimLen = V_strlen( pEndingDelim );
+	Assert(pEndingDelim && pEndingDelim[0]);
+	nEndingDelimLen = V_strlen(pEndingDelim);
 
 	int nStartGet = TellGet();
-	EatWhiteSpace( );
+	EatWhiteSpace();
 	while ( *pStartingDelim )
 	{
 		char nCurrChar = *pStartingDelim++;
 		if ( !isspace(nCurrChar) )
 		{
-			if ( tolower( GetChar() ) != tolower( nCurrChar ) )
+			if ( tolower(GetChar()) != tolower(nCurrChar) )
 				goto parseFailed;
 		}
 		else
@@ -1193,11 +1164,11 @@ bool CUtlBuffer::ParseToken( const char *pStartingDelim, const char *pEndingDeli
 
 	EatWhiteSpace();
 	nTokenStart = TellGet();
-	if ( !GetToken( pEndingDelim ) )
+	if ( !GetToken(pEndingDelim) )
 		goto parseFailed;
 
 	nCurrentGet = TellGet();
-	nCharsToCopy = static_cast<int>( (nCurrentGet - nEndingDelimLen) - nTokenStart );
+	nCharsToCopy = static_cast<int>((nCurrentGet - nEndingDelimLen) - nTokenStart);
 	if ( nCharsToCopy >= nMaxLen )
 	{
 		nCharsToCopy = nMaxLen - 1;
@@ -1205,62 +1176,60 @@ bool CUtlBuffer::ParseToken( const char *pStartingDelim, const char *pEndingDeli
 
 	if ( nCharsToCopy > 0 )
 	{
-		SeekGet( CUtlBuffer::SEEK_HEAD, nTokenStart );
-		Get( pString, nCharsToCopy );
+		SeekGet(CUtlBuffer::SEEK_HEAD, nTokenStart);
+		Get(pString, nCharsToCopy);
 		if ( !IsValid() )
 			goto parseFailed;
 
 		// Eat trailing whitespace
 		for ( ; nCharsToCopy > 0; --nCharsToCopy )
 		{
-			if ( !isspace( pString[ nCharsToCopy-1 ] ) )
+			if ( !isspace(pString[nCharsToCopy - 1]) )
 				break;
 		}
 	}
-	
+
 	if ( nCharsToCopy >= 0 )
-		 pString[ nCharsToCopy ] = '\0';
+		pString[nCharsToCopy] = '\0';
 
 	// Advance the Get index
-	SeekGet( CUtlBuffer::SEEK_HEAD, nCurrentGet );
+	SeekGet(CUtlBuffer::SEEK_HEAD, nCurrentGet);
 	return nCharsToCopy > 0;
 
 parseFailed:
 	// Revert the get index
-	SeekGet( SEEK_HEAD, nStartGet );
+	SeekGet(SEEK_HEAD, nStartGet);
 	pString[0] = '\0';
 	return false;
 }
 
-
 //-----------------------------------------------------------------------------
 // Serialization
 //-----------------------------------------------------------------------------
-void CUtlBuffer::Put( const void *pMem, int size )
+void CUtlBuffer::Put(const void* pMem, int size)
 {
-	if ( size > 0 && CheckPut( size ) )
+	if ( size > 0 && CheckPut(size) )
 	{
 		if ( pMem != &m_Memory[m_Put] )
-			memcpy( &m_Memory[m_Put], pMem, size );
+			memcpy(&m_Memory[m_Put], pMem, size);
 		m_Put += size;
 
 		AddNullTermination();
 	}
 }
 
-
 //-----------------------------------------------------------------------------
 // Writes a null-terminated string
 //-----------------------------------------------------------------------------
-void CUtlBuffer::PutString( const char* pString )
+void CUtlBuffer::PutString(const char* pString)
 {
-	if (!IsText())
+	if ( !IsText() )
 	{
 		if ( pString )
 		{
 			// Not text? append a null at the end.
-			int nLen = V_strlen( pString ) + 1;
-			Put( pString, nLen * sizeof(char) );
+			int nLen = V_strlen(pString) + 1;
+			Put(pString, nLen * sizeof(char));
 			return;
 		}
 		else
@@ -1268,9 +1237,9 @@ void CUtlBuffer::PutString( const char* pString )
 			PUT_BIN_DATA(char, 0);
 		}
 	}
-	else if (pString)
+	else if ( pString )
 	{
-		int nTabCount = ( m_Flags & AUTO_TABS_DISABLED ) ? 0 : m_nTab;
+		int nTabCount = (m_Flags & AUTO_TABS_DISABLED) ? 0 : m_nTab;
 		if ( nTabCount > 0 )
 		{
 			if ( WasLastCharacterCR() )
@@ -1278,16 +1247,16 @@ void CUtlBuffer::PutString( const char* pString )
 				PutTabs();
 			}
 
-			const char* pEndl = strchr( pString, '\n' );
+			const char* pEndl = strchr(pString, '\n');
 			while ( pEndl )
 			{
 				size_t nSize = (size_t)pEndl - (size_t)pString + sizeof(char);
-				Put( pString, static_cast<int>( nSize ) );
+				Put(pString, static_cast<int>(nSize));
 				pString = pEndl + 1;
 				if ( *pString )
 				{
 					PutTabs();
-					pEndl = strchr( pString, '\n' );
+					pEndl = strchr(pString, '\n');
 				}
 				else
 				{
@@ -1295,59 +1264,58 @@ void CUtlBuffer::PutString( const char* pString )
 				}
 			}
 		}
-		size_t nLen = V_strlen( pString );
+		size_t nLen = V_strlen(pString);
 		if ( nLen )
 		{
-			Put( pString, static_cast<int>( nLen * sizeof(char) ) );
+			Put(pString, static_cast<int>(nLen * sizeof(char)));
 		}
 	}
 }
 
-
 //-----------------------------------------------------------------------------
 // This version of PutString never appends a null, normal PutString does in binary buffers
 //-----------------------------------------------------------------------------
-void CUtlBuffer::PutStringWithoutNull( const char* pString )
+void CUtlBuffer::PutStringWithoutNull(const char* pString)
 {
 	// Not text? append a null at the end.
-	int nLen = V_strlen( pString );
-	Put( pString, nLen * sizeof( char ) );
+	int nLen = V_strlen(pString);
+	Put(pString, nLen * sizeof(char));
 }
 
 //-----------------------------------------------------------------------------
 // This version of PutString converts \ to \\ and " to \", etc.
 // It also places " at the beginning and end of the string
 //-----------------------------------------------------------------------------
-inline void CUtlBuffer::PutDelimitedCharInternal( CUtlCharConversion *pConv, char c )
+inline void CUtlBuffer::PutDelimitedCharInternal(CUtlCharConversion* pConv, char c)
 {
-	int l = pConv->GetConversionLength( c );
+	int l = pConv->GetConversionLength(c);
 	if ( l == 0 )
 	{
-		PutChar( c );
+		PutChar(c);
 	}
 	else
 	{
-		PutChar( pConv->GetEscapeChar() );
-		Put( pConv->GetConversionString( c ), l );
+		PutChar(pConv->GetEscapeChar());
+		Put(pConv->GetConversionString(c), l);
 	}
 }
 
-void CUtlBuffer::PutDelimitedChar( CUtlCharConversion *pConv, char c )
+void CUtlBuffer::PutDelimitedChar(CUtlCharConversion* pConv, char c)
 {
 	if ( !IsText() || !pConv )
 	{
-		PutChar( c );
+		PutChar(c);
 		return;
 	}
 
-	PutDelimitedCharInternal( pConv, c );
+	PutDelimitedCharInternal(pConv, c);
 }
 
-void CUtlBuffer::PutDelimitedString( CUtlCharConversion *pConv, const char *pString )
+void CUtlBuffer::PutDelimitedString(CUtlCharConversion* pConv, const char* pString)
 {
 	if ( !IsText() || !pConv )
 	{
-		PutString( pString );
+		PutString(pString);
 		return;
 	}
 
@@ -1355,154 +1323,148 @@ void CUtlBuffer::PutDelimitedString( CUtlCharConversion *pConv, const char *pStr
 	{
 		PutTabs();
 	}
-	Put( pConv->GetDelimiter(), pConv->GetDelimiterLength() );
+	Put(pConv->GetDelimiter(), pConv->GetDelimiterLength());
 
-	int nLen = pString ? V_strlen( pString ) : 0;
+	int nLen = pString ? V_strlen(pString) : 0;
 	for ( int i = 0; i < nLen; ++i )
 	{
-		PutDelimitedCharInternal( pConv, pString[i] );
+		PutDelimitedCharInternal(pConv, pString[i]);
 	}
 
 	if ( WasLastCharacterCR() )
 	{
 		PutTabs();
 	}
-	Put( pConv->GetDelimiter(), pConv->GetDelimiterLength() );
+	Put(pConv->GetDelimiter(), pConv->GetDelimiterLength());
 }
 
-
-void CUtlBuffer::VaPrintf( const char* pFmt, va_list list )
+void CUtlBuffer::VaPrintf(const char* pFmt, va_list list)
 {
 	char temp[2048];
-#ifdef _DEBUG	
-	int nLen = 
+#ifdef _DEBUG
+	int nLen =
 #endif
-		V_vsnprintf( temp, sizeof( temp ), pFmt, list );
-#ifdef _DEBUG	
-	Assert( nLen < 2048 );
+		V_vsnprintf(temp, sizeof(temp), pFmt, list);
+#ifdef _DEBUG
+	Assert(nLen < 2048);
 #endif
-	PutString( temp );
+	PutString(temp);
 }
 
-void CUtlBuffer::Printf( const char* pFmt, ... )
+void CUtlBuffer::Printf(const char* pFmt, ...)
 {
 	va_list args;
 
-	va_start( args, pFmt );
-	VaPrintf( pFmt, args );
-	va_end( args );
+	va_start(args, pFmt);
+	VaPrintf(pFmt, args);
+	va_end(args);
 }
-
 
 //-----------------------------------------------------------------------------
 // Calls the overflow functions
 //-----------------------------------------------------------------------------
-void CUtlBuffer::SetOverflowFuncs( UtlBufferOverflowFunc_t getFunc, UtlBufferOverflowFunc_t putFunc )
+void CUtlBuffer::SetOverflowFuncs(UtlBufferOverflowFunc_t getFunc, UtlBufferOverflowFunc_t putFunc)
 {
 	m_GetOverflowFunc = getFunc;
 	m_PutOverflowFunc = putFunc;
 }
 
-	
 //-----------------------------------------------------------------------------
 // Calls the overflow functions
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::OnPutOverflow( int nSize )
+bool CUtlBuffer::OnPutOverflow(int nSize)
 {
-	return (this->*m_PutOverflowFunc)( nSize );
+	return (this->*m_PutOverflowFunc)(nSize);
 }
 
-bool CUtlBuffer::OnGetOverflow( int nSize )
+bool CUtlBuffer::OnGetOverflow(int nSize)
 {
-	return (this->*m_GetOverflowFunc)( nSize );
+	return (this->*m_GetOverflowFunc)(nSize);
 }
 
-	
 //-----------------------------------------------------------------------------
 // Checks if a put is ok
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::PutOverflow( int nSize )
+bool CUtlBuffer::PutOverflow(int nSize)
 {
 	if ( m_Memory.IsExternallyAllocated() )
 	{
 		if ( !IsGrowable() )
 			return false;
 
-		m_Memory.ConvertToGrowableMemory( 0 );
+		m_Memory.ConvertToGrowableMemory(0);
 	}
 
 	int nGrowDelta = (m_Put + nSize) - m_Memory.NumAllocated();
 
-	if ( nGrowDelta >  0 )
+	if ( nGrowDelta > 0 )
 	{
-		m_Memory.Grow( nGrowDelta );
+		m_Memory.Grow(nGrowDelta);
 	}
-		
+
 	return true;
 }
 
-bool CUtlBuffer::GetOverflow( int nSize )
+bool CUtlBuffer::GetOverflow(int nSize)
 {
 	return false;
 }
-	
 
 //-----------------------------------------------------------------------------
 // Checks if a put is ok
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::CheckPut( int nSize )
+bool CUtlBuffer::CheckPut(int nSize)
 {
-	Assert( nSize >= 0 );
-	if ( ( m_Error & PUT_OVERFLOW ) || IsReadOnly() || nSize < 0 )
+	Assert(nSize >= 0);
+	if ( (m_Error & PUT_OVERFLOW) || IsReadOnly() || nSize < 0 )
 		return false;
 
-	Assert( m_Put >= 0 );
+	Assert(m_Put >= 0);
 	if ( nSize <= m_Memory.NumAllocated() - m_Put )
 		return true;
 
-	if ( OnPutOverflow( nSize ) )
+	if ( OnPutOverflow(nSize) )
 		return true;
 
 	m_Error |= PUT_OVERFLOW;
 	return false;
 }
 
-void CUtlBuffer::SeekPut( SeekType_t type, int offset )	
+void CUtlBuffer::SeekPut(SeekType_t type, int offset)
 {
-	switch( type )
+	switch ( type )
 	{
-	case SEEK_HEAD:						 
-		Assert( offset >= 0 );
-		m_Put = offset;
-		break;
+		case SEEK_HEAD:
+			Assert(offset >= 0);
+			m_Put = offset;
+			break;
 
-	case SEEK_CURRENT:
-		Assert( offset >= -m_Put && offset <= INT_MAX-m_Put );
-		m_Put += offset;
-		break;
+		case SEEK_CURRENT:
+			Assert(offset >= -m_Put && offset <= INT_MAX - m_Put);
+			m_Put += offset;
+			break;
 
-	case SEEK_TAIL:
-		Assert( offset != INT_MIN && offset <= m_nMaxPut && -offset <= INT_MAX-m_nMaxPut );
-		m_Put = m_nMaxPut - offset;
-		break;
+		case SEEK_TAIL:
+			Assert(offset != INT_MIN && offset <= m_nMaxPut && -offset <= INT_MAX - m_nMaxPut);
+			m_Put = m_nMaxPut - offset;
+			break;
 	}
 
 	AddNullTermination();
 }
 
-
 //-----------------------------------------------------------------------------
 // null terminate the buffer
 //-----------------------------------------------------------------------------
-void CUtlBuffer::AddNullTermination( void )
+void CUtlBuffer::AddNullTermination(void)
 {
-	Assert( m_Put >= 0 );
+	Assert(m_Put >= 0);
 	if ( m_Put > m_nMaxPut )
 	{
-		if ( !IsReadOnly() && ((m_Error & PUT_OVERFLOW) == 0) && IsText()  )
+		if ( !IsReadOnly() && ((m_Error & PUT_OVERFLOW) == 0) && IsText() )
 		{
 			// Add null termination value
-			if ( CheckPut( 1 ) )
+			if ( CheckPut(1) )
 			{
 				m_Memory[m_Put] = 0;
 			}
@@ -1513,16 +1475,15 @@ void CUtlBuffer::AddNullTermination( void )
 			}
 		}
 		m_nMaxPut = m_Put;
-	}		
+	}
 }
-
 
 //-----------------------------------------------------------------------------
 // Converts a buffer from a CRLF buffer to a CR buffer (and back)
 // Returns false if no conversion was necessary (and outBuf is left untouched)
 // If the conversion occurs, outBuf will be cleared.
 //-----------------------------------------------------------------------------
-bool CUtlBuffer::ConvertCRLF( CUtlBuffer &outBuf )
+bool CUtlBuffer::ConvertCRLF(CUtlBuffer& outBuf)
 {
 	if ( !IsText() || !outBuf.IsText() )
 		return false;
@@ -1533,7 +1494,7 @@ bool CUtlBuffer::ConvertCRLF( CUtlBuffer &outBuf )
 	int nInCount = TellMaxPut();
 
 	outBuf.Purge();
-	outBuf.EnsureCapacity( nInCount );
+	outBuf.EnsureCapacity(nInCount);
 
 	bool bFromCRLF = ContainsCRLF();
 
@@ -1543,23 +1504,23 @@ bool CUtlBuffer::ConvertCRLF( CUtlBuffer &outBuf )
 	int nGetDelta = 0;
 	int nPutDelta = 0;
 
-	const char *pBase = (const char*)Base();
+	const char* pBase = (const char*)Base();
 	int nCurrGet = 0;
 	while ( nCurrGet < nInCount )
 	{
-		const char *pCurr = &pBase[nCurrGet];
+		const char* pCurr = &pBase[nCurrGet];
 		if ( bFromCRLF )
 		{
-			const char *pNext = V_strnistr( pCurr, "\r\n", nInCount - nCurrGet );
+			const char* pNext = V_strnistr(pCurr, "\r\n", nInCount - nCurrGet);
 			if ( !pNext )
 			{
-				outBuf.Put( pCurr, nInCount - nCurrGet );
+				outBuf.Put(pCurr, nInCount - nCurrGet);
 				break;
 			}
 
-			int nBytes = static_cast<int>( (size_t)pNext - (size_t)pCurr );
-			outBuf.Put( pCurr, nBytes );
-			outBuf.PutChar( '\n' );
+			int nBytes = static_cast<int>((size_t)pNext - (size_t)pCurr);
+			outBuf.Put(pCurr, nBytes);
+			outBuf.PutChar('\n');
 			nCurrGet += nBytes + 2;
 			if ( nGet >= nCurrGet - 1 )
 			{
@@ -1572,17 +1533,17 @@ bool CUtlBuffer::ConvertCRLF( CUtlBuffer &outBuf )
 		}
 		else
 		{
-			const char *pNext = V_strnchr( pCurr, '\n', nInCount - nCurrGet );
+			const char* pNext = V_strnchr(pCurr, '\n', nInCount - nCurrGet);
 			if ( !pNext )
 			{
-				outBuf.Put( pCurr, nInCount - nCurrGet );
+				outBuf.Put(pCurr, nInCount - nCurrGet);
 				break;
 			}
 
-			int nBytes = static_cast<int>( (size_t)pNext - (size_t)pCurr );
-			outBuf.Put( pCurr, nBytes );
-			outBuf.PutChar( '\r' );
-			outBuf.PutChar( '\n' );
+			int nBytes = static_cast<int>((size_t)pNext - (size_t)pCurr);
+			outBuf.Put(pCurr, nBytes);
+			outBuf.PutChar('\r');
+			outBuf.PutChar('\n');
 			nCurrGet += nBytes + 1;
 			if ( nGet >= nCurrGet )
 			{
@@ -1595,62 +1556,57 @@ bool CUtlBuffer::ConvertCRLF( CUtlBuffer &outBuf )
 		}
 	}
 
-	Assert(	nPut + nPutDelta <= outBuf.TellMaxPut() );
+	Assert(nPut + nPutDelta <= outBuf.TellMaxPut());
 
-	outBuf.SeekGet( SEEK_HEAD, nGet + nGetDelta ); 
-	outBuf.SeekPut( SEEK_HEAD, nPut + nPutDelta ); 
+	outBuf.SeekGet(SEEK_HEAD, nGet + nGetDelta);
+	outBuf.SeekPut(SEEK_HEAD, nPut + nPutDelta);
 
 	return true;
 }
 
-
 //-----------------------------------------------------------------------------
 // Fast swap
 //-----------------------------------------------------------------------------
-void CUtlBuffer::Swap( CUtlBuffer &buf )
+void CUtlBuffer::Swap(CUtlBuffer& buf)
 {
-	SWAP( m_Get, buf.m_Get );
-	SWAP( m_Put, buf.m_Put );
-	SWAP( m_nMaxPut, buf.m_nMaxPut );
-	SWAP( m_Error, buf.m_Error );
-	m_Memory.Swap( buf.m_Memory );
+	SWAP(m_Get, buf.m_Get);
+	SWAP(m_Put, buf.m_Put);
+	SWAP(m_nMaxPut, buf.m_nMaxPut);
+	SWAP(m_Error, buf.m_Error);
+	m_Memory.Swap(buf.m_Memory);
 }
-
 
 //-----------------------------------------------------------------------------
 // Take ownership of mem from a CUtlMemory
 //-----------------------------------------------------------------------------
-void CUtlBuffer::TakeOwnershipOfMemory( CUtlMemory<uint8> &mem )
+void CUtlBuffer::TakeOwnershipOfMemory(CUtlMemory<uint8>& mem)
 {
 	m_Get = 0;
 	m_Put = mem.Count();
 	m_nMaxPut = mem.Count();
 	m_Error = 0;
-	m_Memory.Swap( mem );
+	m_Memory.Swap(mem);
 	mem.Purge();
 }
-
 
 //-----------------------------------------------------------------------------
 // Release our memory to a CUtlMemory
 // The punCurrentPut parameter is because that information (how much of the memory
 // allocated has been written to) is lost when transferring into a CUtlMemory
 //-----------------------------------------------------------------------------
-void CUtlBuffer::ReleaseToMemory( CUtlMemory<uint8> &mem, int *punCurrentPut )
+void CUtlBuffer::ReleaseToMemory(CUtlMemory<uint8>& mem, int* punCurrentPut)
 {
 	*punCurrentPut = m_Put;
-	m_Memory.Swap( mem );
+	m_Memory.Swap(mem);
 	Purge();
 }
-
-
 
 //-----------------------------------------------------------------------------
 // memory access
 //-----------------------------------------------------------------------------
-void *CUtlBuffer::DetachAndClear()
+void* CUtlBuffer::DetachAndClear()
 {
-	void *pubData = m_Memory.Detach();
+	void* pubData = m_Memory.Detach();
 
 	m_Get = 0;
 	m_Put = 0;
@@ -1661,97 +1617,96 @@ void *CUtlBuffer::DetachAndClear()
 	return pubData;
 }
 
-
-void CUtlBuffer::PutChar( char c )
+void CUtlBuffer::PutChar(char c)
 {
 	if ( WasLastCharacterCR() )
 	{
 		PutTabs();
 	}
 
-	PUT_BIN_DATA( char, c );
+	PUT_BIN_DATA(char, c);
 }
 
-void CUtlBuffer::PutUint8( uint8 ub )
+void CUtlBuffer::PutUint8(uint8 ub)
 {
-	PUT_TYPE( uint8, ub );
+	PUT_TYPE(uint8, ub);
 }
 
-void CUtlBuffer::PutUnsignedInt64( uint64 ub )
+void CUtlBuffer::PutUnsignedInt64(uint64 ub)
 {
-	PUT_TYPE( uint64, ub );
+	PUT_TYPE(uint64, ub);
 }
 
-void CUtlBuffer::PutInt64( int64 ub )
+void CUtlBuffer::PutInt64(int64 ub)
 {
-	PUT_TYPE( int64, ub );
+	PUT_TYPE(int64, ub);
 }
 
-void CUtlBuffer::PutInt16( int16 s16 )
+void CUtlBuffer::PutInt16(int16 s16)
 {
-	PUT_TYPE( int16, s16 );
+	PUT_TYPE(int16, s16);
 }
 
-void  CUtlBuffer::PutShort( short s )
+void CUtlBuffer::PutShort(short s)
 {
-	PUT_TYPE( short, s );
+	PUT_TYPE(short, s);
 }
 
-void CUtlBuffer::PutUnsignedShort( unsigned short s )
+void CUtlBuffer::PutUnsignedShort(unsigned short s)
 {
-	PUT_TYPE( unsigned short, s );
+	PUT_TYPE(unsigned short, s);
 }
 
-void CUtlBuffer::PutInt( int i )
+void CUtlBuffer::PutInt(int i)
 {
-	PUT_TYPE( int, i );
+	PUT_TYPE(int, i);
 }
 
-void CUtlBuffer::PutUnsignedInt( unsigned int u )
+void CUtlBuffer::PutUnsignedInt(unsigned int u)
 {
-	PUT_TYPE( unsigned int, u );
+	PUT_TYPE(unsigned int, u);
 }
 
-void CUtlBuffer::PutFloat( float f )
+void CUtlBuffer::PutFloat(float f)
 {
-#if _MSC_VER == 1200 //!!!
-	if (!IsText())
+#if _MSC_VER == 1200  //!!!
+	if ( !IsText() )
 	{
 		uint32 _f = *(uint32*)&f;
-		PUT_BIN_DATA( uint32, _f );
+		PUT_BIN_DATA(uint32, _f);
 	}
 	else
 	{
-		PutString( CNumStr( f ) );
+		PutString(CNumStr(f));
 	}
 #else
-	PUT_TYPE( float, f );
+	PUT_TYPE(float, f);
 #endif
 }
 
-void CUtlBuffer::PutDouble( double d )
+void CUtlBuffer::PutDouble(double d)
 {
-#if _MSC_VER == 1200 //!!!
-	if (!IsText())
+#if _MSC_VER == 1200  //!!!
+	if ( !IsText() )
 	{
 		int64 _f = *(int64*)&d;
-		PUT_BIN_DATA( int64, _f );
+		PUT_BIN_DATA(int64, _f);
 	}
 	else
 	{
-		PutString( CNumStr( d ) );
+		PutString(CNumStr(d));
 	}
 #else
-	PUT_TYPE( double, d );
+	PUT_TYPE(double, d);
 #endif
 }
 
 char CUtlBuffer::GetChar()
 {
 	char c = 0;
-	if ( CheckGet( 1 ) ) // sets get overflow error bit on failure
+	if ( CheckGet(1) )  // sets get overflow error bit on failure
 	{
-		c = *(char*) PeekGet();
+		c = *(char*)PeekGet();
 		m_Get += 1;
 	}
 	return c;
@@ -1761,21 +1716,21 @@ uint8 CUtlBuffer::GetUint8()
 {
 	// %u Scanf writes to a 32-bit number
 	uint32 ub;
-	GET_TYPE( uint8, ub, "%u" );
+	GET_TYPE(uint8, ub, "%u");
 	return (uint8)ub;
 }
 
 uint64 CUtlBuffer::GetUnsignedInt64()
 {
 	uint64 ub;
-	GET_TYPE( uint64, ub, "%llu" );
+	GET_TYPE(uint64, ub, "%llu");
 	return ub;
 }
 
 int64 CUtlBuffer::GetInt64()
 {
 	int64 ub;
-	GET_TYPE( int64, ub, "%lld" );
+	GET_TYPE(int64, ub, "%lld");
 	return ub;
 }
 
@@ -1783,7 +1738,7 @@ int16 CUtlBuffer::GetInt16()
 {
 	// %d Scanf writes to a 32-bit number
 	int32 s16;
-	GET_TYPE( int16, s16, "%d" );
+	GET_TYPE(int16, s16, "%d");
 	return (int16)s16;
 }
 
@@ -1791,35 +1746,35 @@ short CUtlBuffer::GetShort()
 {
 	// %d Scanf writes to a 32-bit number
 	int32 s;
-	GET_TYPE( short, s, "%d" );
+	GET_TYPE(short, s, "%d");
 	return (short)s;
 }
 
 unsigned short CUtlBuffer::GetUnsignedShort()
 {
 	uint32 s;
-	GET_TYPE( unsigned short, s, "%u" );
+	GET_TYPE(unsigned short, s, "%u");
 	return (unsigned short)s;
 }
 
 int CUtlBuffer::GetInt()
 {
 	int i;
-	GET_TYPE( int, i, "%d" );
+	GET_TYPE(int, i, "%d");
 	return i;
 }
 
 int CUtlBuffer::GetIntHex()
 {
 	int i;
-	GET_TYPE( int, i, "%x" );
+	GET_TYPE(int, i, "%x");
 	return i;
 }
 
 unsigned int CUtlBuffer::GetUnsignedInt()
 {
 	unsigned int u;
-	GET_TYPE( unsigned int, u, "%u" );
+	GET_TYPE(unsigned int, u, "%u");
 	return u;
 }
 
@@ -1829,19 +1784,19 @@ float CUtlBuffer::GetFloat()
 #if _MSC_VER == 1200
 	if ( !IsText() )
 	{
-		if (CheckGet( sizeof(f) ))
+		if ( CheckGet(sizeof(f)) )
 		{
-			if ( (m_Flags & CUtlBuffer::LITTLE_ENDIAN_BUFFER ) )
+			if ( (m_Flags & CUtlBuffer::LITTLE_ENDIAN_BUFFER) )
 			{
-				f = LittleDWord( (uint32)*(float *)PeekGet() );
-			}									\
-			else if ( (m_Flags & CUtlBuffer::BIG_ENDIAN_BUFFER ) )
+				f = LittleDWord((uint32) * (float*)PeekGet());
+			}
+			else if ( (m_Flags & CUtlBuffer::BIG_ENDIAN_BUFFER) )
 			{
-				f = BigDWord( (uint32)*(float *)PeekGet() );
+				f = BigDWord((uint32) * (float*)PeekGet());
 			}
 			else
 			{
-				COPY_TYPE( float, f );
+				COPY_TYPE(float, f);
 			}
 			m_Get += sizeof(float);
 		}
@@ -1853,10 +1808,10 @@ float CUtlBuffer::GetFloat()
 	else
 	{
 		f = 0;
-		Scanf( "%f", &f );
+		Scanf("%f", &f);
 	}
 #else
-	GET_TYPE( float, f, "%f" );
+	GET_TYPE(float, f, "%f");
 #endif
 	return f;
 }
@@ -1867,19 +1822,19 @@ double CUtlBuffer::GetDouble()
 #if _MSC_VER == 1200
 	if ( !IsText() )
 	{
-		if (CheckGet( sizeof(d) ))
+		if ( CheckGet(sizeof(d)) )
 		{
-			if ( (m_Flags & CUtlBuffer::LITTLE_ENDIAN_BUFFER ) )
+			if ( (m_Flags & CUtlBuffer::LITTLE_ENDIAN_BUFFER) )
 			{
-				d = (int64)LittleQWord( (uint64)*(double *)PeekGet() );
-			}									\
-			else if ( (m_Flags & CUtlBuffer::BIG_ENDIAN_BUFFER ) )
+				d = (int64)LittleQWord((uint64) * (double*)PeekGet());
+			}
+			else if ( (m_Flags & CUtlBuffer::BIG_ENDIAN_BUFFER) )
 			{
-				d = (int64)BigQWord( (uint64)*(double *)PeekGet() );
+				d = (int64)BigQWord((uint64) * (double*)PeekGet());
 			}
 			else
 			{
-				COPY_TYPE( double, d );
+				COPY_TYPE(double, d);
 			}
 			m_Get += sizeof(double);
 		}
@@ -1891,10 +1846,10 @@ double CUtlBuffer::GetDouble()
 	else
 	{
 		d = 0;
-		Scanf( "%f", &d );
+		Scanf("%f", &d);
 	}
 #else
-	GET_TYPE( double, d, "%f" );
+	GET_TYPE(double, d, "%f");
 #endif
 	return d;
 }
@@ -1902,5 +1857,5 @@ double CUtlBuffer::GetDouble()
 // Securely erases buffer
 void CUtlBuffer::SecureZero()
 {
-	PlatformSecureZeroMemory( m_Memory.Base(), m_Memory.Count() );
+	PlatformSecureZeroMemory(m_Memory.Base(), m_Memory.Count());
 }

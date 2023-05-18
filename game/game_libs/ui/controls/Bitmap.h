@@ -26,18 +26,21 @@ public:
 
 	CMenuBitmap();
 
-	void VidInit( void ) override;
-	bool KeyUp( int key ) override;
-	bool KeyDown( int key ) override;
-	void Draw( void ) override;
-	void SetPicture( const char *pic, const char *focusPic = NULL, const char *pressPic = NULL)
+	void VidInit(void) override;
+	bool KeyUp(int key) override;
+	bool KeyDown(int key) override;
+	void Draw(void) override;
+	void SetPicture(const char* pic, const char* focusPic = NULL, const char* pressPic = NULL)
 	{
 		szPic = pic;
 		szFocusPic = focusPic;
 		szPressPic = pressPic;
 	}
 
-	void SetRenderMode( ERenderMode renderMode, ERenderMode focusRenderMode = QM_DRAWNORMAL, ERenderMode pressRenderMode = QM_DRAWNORMAL )
+	void SetRenderMode(
+		ERenderMode renderMode,
+		ERenderMode focusRenderMode = QM_DRAWNORMAL,
+		ERenderMode pressRenderMode = QM_DRAWNORMAL)
 	{
 		eRenderMode = renderMode;
 		eFocusRenderMode = focusRenderMode;
@@ -55,4 +58,4 @@ protected:
 	ERenderMode ePressRenderMode;
 };
 
-#endif // MENU_BITMAP_H
+#endif  // MENU_BITMAP_H

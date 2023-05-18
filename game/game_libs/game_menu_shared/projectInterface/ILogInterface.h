@@ -18,7 +18,9 @@ public:
 		Error
 	};
 
-	virtual ~ILogInterface() {}
+	virtual ~ILogInterface()
+	{
+	}
 
 	virtual void Log(Level level, const CUtlString& message) = 0;
 	virtual void LogF(Level level, const char* format, ...) = 0;

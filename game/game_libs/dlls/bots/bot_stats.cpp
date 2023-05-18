@@ -41,12 +41,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 CBaseBotStats::CBaseBotStats() :
-	TraitAccuracy( 75 + RANDOM_FLOAT(0,25) ),
-	TraitAggression( 10 + RANDOM_FLOAT(0,70) ),
-	TraitChatPropensity( 0 + RANDOM_FLOAT(0,60) ),
-	TraitJumpPropensity( 5 + RANDOM_FLOAT(0,94) ),
-	TraitPerception( 50 + RANDOM_FLOAT(0,50) ),
-	TraitReflexes( 30 + RANDOM_FLOAT(0,40) )
+	TraitAccuracy(75 + RANDOM_FLOAT(0, 25)),
+	TraitAggression(10 + RANDOM_FLOAT(0, 70)),
+	TraitChatPropensity(0 + RANDOM_FLOAT(0, 60)),
+	TraitJumpPropensity(5 + RANDOM_FLOAT(0, 94)),
+	TraitPerception(50 + RANDOM_FLOAT(0, 50)),
+	TraitReflexes(30 + RANDOM_FLOAT(0, 40))
 {
 	// Index 0 is no weapon.
 	for ( uint32_t index = 1; index < MAX_WEAPONS; ++index )
@@ -62,21 +62,21 @@ CBaseBotStats::~CBaseBotStats()
 ///////////////////////////////////////////////////////////////////////////////
 // FDifficultyAdjusted - tweaks a Trait to adjust for bot_skill.value
 ///////////////////////////////////////////////////////////////////////////////
-//Scott: simplified logic
+// Scott: simplified logic
 
-float CBaseBotStats::FDifficultyAdjusted( float currentTrait ) const
+float CBaseBotStats::FDifficultyAdjusted(float currentTrait) const
 {
-	float tweakedDiffLevel = (bot_skill.value / 50.0f) - 1.0f; // [-1,1]
+	float tweakedDiffLevel = (bot_skill.value / 50.0f) - 1.0f;  // [-1,1]
 
 	float adjustedTrait = currentTrait;
 
 	if ( tweakedDiffLevel < 0 )
 	{
-		adjustedTrait *= ( 1 + tweakedDiffLevel );
+		adjustedTrait *= (1 + tweakedDiffLevel);
 	}
 	else
 	{
-		adjustedTrait += ( ( 100 - adjustedTrait ) * tweakedDiffLevel );
+		adjustedTrait += ((100 - adjustedTrait) * tweakedDiffLevel);
 	}
 
 	return adjustedTrait;

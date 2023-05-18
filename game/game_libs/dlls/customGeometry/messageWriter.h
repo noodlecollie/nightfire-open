@@ -7,8 +7,9 @@
 
 namespace CustomGeometry
 {
-	class CMessageWriter : public Messages::CBaseMessageWriter,
-						   public Messages::CMessageRegistrationHelper<CMessageWriter>
+	class CMessageWriter :
+		public Messages::CBaseMessageWriter,
+		public Messages::CMessageRegistrationHelper<CMessageWriter>
 	{
 	public:
 		static constexpr const char* MESSAGE_NAME = CustomGeometry::MESSAGE_NAME;
@@ -34,4 +35,4 @@ namespace CustomGeometry
 		Category m_Category;
 		CBasePlayer* m_pTargetClient;
 	};
-}
+}  // namespace CustomGeometry

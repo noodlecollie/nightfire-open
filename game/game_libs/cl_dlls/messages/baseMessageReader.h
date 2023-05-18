@@ -22,4 +22,4 @@ namespace Messages
 		bool m_ReadSuccessfully = false;
 		CUtlString m_ErrorString;
 	};
-}
+}  // namespace Messages

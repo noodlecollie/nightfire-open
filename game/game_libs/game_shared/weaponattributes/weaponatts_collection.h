@@ -44,4 +44,4 @@ namespace WeaponAtts
 
 	template<typename T>
 	const WACollection& StaticWeaponAttributes();
-}
+}  // namespace WeaponAtts

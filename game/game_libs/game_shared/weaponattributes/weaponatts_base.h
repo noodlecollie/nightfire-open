@@ -11,4 +11,4 @@ namespace WeaponAtts
 		{
 		}
 	};
-}
+}  // namespace WeaponAtts

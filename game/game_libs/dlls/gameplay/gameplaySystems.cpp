@@ -65,4 +65,4 @@ namespace GameplaySystems
 	{
 		return dynamic_cast<CGameplaySystemsMultiplayer*>(StaticInstance.get());
 	}
-}
+}  // namespace GameplaySystems

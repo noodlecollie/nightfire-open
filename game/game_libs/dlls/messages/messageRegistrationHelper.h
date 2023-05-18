@@ -29,7 +29,7 @@ namespace Messages
 	private:
 		static int m_iStaticMessageId;
 	};
-}
+}  // namespace Messages
 
 template<typename T>
 int Messages::CMessageRegistrationHelper<T>::m_iStaticMessageId = 0;

@@ -3,7 +3,9 @@
 class CBaseUIDrawable
 {
 public:
-	virtual ~CBaseUIDrawable() {}
+	virtual ~CBaseUIDrawable()
+	{
+	}
 
 	virtual int Init()
 	{

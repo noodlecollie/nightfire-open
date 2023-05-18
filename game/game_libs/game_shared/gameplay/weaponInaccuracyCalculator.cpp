@@ -139,11 +139,12 @@ void CWeaponInaccuracyCalculator::CalculateInstantaneousInaccuracy(const WeaponA
 	}
 
 	const float maxPlayerSpeed = m_CvarMaxSpeed->value;
-	float spreadValue = ExtraMath::RemapLinear(m_Player->pev->velocity.Length2D(),
-											   0.0f,
-											   maxPlayerSpeed,
-											   params->RestValue,
-											   params->RunValue);
+	float spreadValue = ExtraMath::RemapLinear(
+		m_Player->pev->velocity.Length2D(),
+		0.0f,
+		maxPlayerSpeed,
+		params->RestValue,
+		params->RunValue);
 
 	if ( m_Player->pev->button & IN_DUCK )
 	{
@@ -221,9 +222,7 @@ void CWeaponInaccuracyCalculator::InitCvars()
 	m_CvarMaxSpeed = GetCvarByName("sv_weapon_inaccuracy_maxspeed");
 	m_CvarMaxFallSpeed = GetCvarByName("sv_weapon_inaccuracy_maxfallspeed");
 
-	m_CvarsLoaded =
-		m_CvarMaxSpeed &&
-		m_CvarMaxFallSpeed;
+	m_CvarsLoaded = m_CvarMaxSpeed && m_CvarMaxFallSpeed;
 
 	ASSERTSZ(m_CvarsLoaded, "Unable to load required cvars.");
 }

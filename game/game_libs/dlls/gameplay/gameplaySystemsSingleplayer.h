@@ -5,7 +5,9 @@
 class CGameplaySystemsSingleplayer : public CGameplaySystemsBase
 {
 public:
-	virtual ~CGameplaySystemsSingleplayer() {}
+	virtual ~CGameplaySystemsSingleplayer()
+	{
+	}
 
 	virtual bool IsMultiplayer() const override;
 

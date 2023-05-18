@@ -19,7 +19,8 @@ GNU General Public License for more details.
 #include "ItemsHolder.h"
 #include "MessageBox.h"
 
-CMenuMessageBox::CMenuMessageBox(const char *name) : BaseClass( name )
+CMenuMessageBox::CMenuMessageBox(const char* name) :
+	BaseClass(name)
 {
 	iFlags |= QMF_INACTIVE;
 }
@@ -29,16 +30,16 @@ void CMenuMessageBox::_Init()
 	background.bForceColor = true;
 	background.colorBase = uiPromptBgColor;
 
-	dlgMessage.eTextAlignment = QM_CENTER; // center
-	dlgMessage.iFlags = QMF_INACTIVE|QMF_DROPSHADOW;
-	dlgMessage.SetCoord( 0, 0 );
+	dlgMessage.eTextAlignment = QM_CENTER;  // center
+	dlgMessage.iFlags = QMF_INACTIVE | QMF_DROPSHADOW;
+	dlgMessage.SetCoord(0, 0);
 	dlgMessage.size = size;
 
-	AddItem( background );
-	AddItem( dlgMessage );
+	AddItem(background);
+	AddItem(dlgMessage);
 }
 
-void CMenuMessageBox::SetMessage( const char *sz )
+void CMenuMessageBox::SetMessage(const char* sz)
 {
 	dlgMessage.szName = sz;
 }

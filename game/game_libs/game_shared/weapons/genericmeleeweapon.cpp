@@ -6,7 +6,7 @@
 
 namespace
 {
-	void FindHullIntersection( const Vector &vecSrc, TraceResult &tr, float *mins, float *maxs, edict_t *pEntity )
+	void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, float* mins, float* maxs, edict_t* pEntity)
 	{
 		float* minmaxs[2] = {mins, maxs};
 		TraceResult tmpTrace;
@@ -14,20 +14,20 @@ namespace
 
 		float distance = 1e6f;
 
-		Vector vecHullEnd = vecSrc + ( (tr.vecEndPos - vecSrc) * 2 );
+		Vector vecHullEnd = vecSrc + ((tr.vecEndPos - vecSrc) * 2);
 		UTIL_TraceLine(vecSrc, vecHullEnd, dont_ignore_monsters, pEntity, &tmpTrace);
 
-		if( tmpTrace.flFraction < 1.0 )
+		if ( tmpTrace.flFraction < 1.0 )
 		{
 			tr = tmpTrace;
 			return;
 		}
 
-		for( int i = 0; i < 2; i++ )
+		for ( int i = 0; i < 2; i++ )
 		{
-			for( int j = 0; j < 2; j++ )
+			for ( int j = 0; j < 2; j++ )
 			{
-				for( int k = 0; k < 2; k++ )
+				for ( int k = 0; k < 2; k++ )
 				{
 					vecEnd.x = vecHullEnd.x + minmaxs[i][0];
 					vecEnd.y = vecHullEnd.y + minmaxs[j][1];
@@ -35,11 +35,11 @@ namespace
 
 					UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, pEntity, &tmpTrace);
 
-					if( tmpTrace.flFraction < 1.0 )
+					if ( tmpTrace.flFraction < 1.0 )
 					{
 						float thisDistance = (tmpTrace.vecEndPos - vecSrc).Length();
 
-						if( thisDistance < distance )
+						if ( thisDistance < distance )
 						{
 							tr = tmpTrace;
 							distance = thisDistance;
@@ -49,9 +49,10 @@ namespace
 			}
 		}
 	}
-}
+}  // namespace
 
-CGenericMeleeWeapon::CGenericMeleeWeapon() : CGenericWeapon(),
+CGenericMeleeWeapon::CGenericMeleeWeapon() :
+	CGenericWeapon(),
 	m_pCachedAttack(nullptr),
 	m_iStrikeIndex(0)
 {
@@ -101,9 +102,7 @@ bool CGenericMeleeWeapon::InvokeWithAttackMode(WeaponAttackType type, const Weap
 	m_pCachedAttack = meleeAttack;
 	m_iStrikeIndex = 0;
 
-	float strikeTime = meleeAttack->Strikes.Count() > 0
-		? meleeAttack->Strikes[m_iStrikeIndex]
-		: 0.0f;
+	float strikeTime = meleeAttack->Strikes.Count() > 0 ? meleeAttack->Strikes[m_iStrikeIndex] : 0.0f;
 
 	if ( strikeTime <= 0.0f )
 	{
@@ -197,7 +196,6 @@ void CGenericMeleeWeapon::AttackStrike()
 		SetThink(&CGenericMeleeWeapon::AttackStrike);
 		pev->nextthink = gpGlobals->time + nextStrikeTime;
 	}
-
 }
 
 bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* meleeAttack, TraceResult& tr)
@@ -205,23 +203,35 @@ bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* melee
 	UTIL_TraceLine(m_vecAttackTraceStart, m_vecAttackTraceEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
 
 #ifndef CLIENT_DLL
-	if( tr.flFraction >= 1.0f )
+	if ( tr.flFraction >= 1.0f )
 	{
 		// Line didn't hit - try more expensive hull check instead.
-		UTIL_TraceHull( m_vecAttackTraceStart, m_vecAttackTraceEnd, dont_ignore_monsters, head_hull, ENT(m_pPlayer->pev), &tr);
+		UTIL_TraceHull(
+			m_vecAttackTraceStart,
+			m_vecAttackTraceEnd,
+			dont_ignore_monsters,
+			head_hull,
+			ENT(m_pPlayer->pev),
+			&tr);
 
-		if( tr.flFraction < 1.0f )
+		if ( tr.flFraction < 1.0f )
 		{
 			// Calculate the point of intersection of the line (or hull) and the object we hit
 			// This is and approximation of the "best" intersection
-			CBaseEntity *pHit = CBaseEntity::Instance(tr.pHit);
+			CBaseEntity* pHit = CBaseEntity::Instance(tr.pHit);
 
-			if( !pHit || pHit->IsBSPModel() )
+			if ( !pHit || pHit->IsBSPModel() )
 			{
-				FindHullIntersection(m_vecAttackTraceStart, tr, VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX, m_pPlayer->edict());
+				FindHullIntersection(
+					m_vecAttackTraceStart,
+					tr,
+					VEC_DUCK_HULL_MIN,
+					VEC_DUCK_HULL_MAX,
+					m_pPlayer->edict());
 			}
 
-			m_vecContactPointOnSurface = tr.vecEndPos;	// This is the point on the actual surface (the hull could have hit space)
+			m_vecContactPointOnSurface =
+				tr.vecEndPos;  // This is the point on the actual surface (the hull could have hit space)
 		}
 	}
 #endif
@@ -242,11 +252,7 @@ void CGenericMeleeWeapon::FireEvent(const WeaponAtts::WAMeleeAttack* meleeAttack
 
 	CEventConstructor event;
 
-	event
-		<< Flags(DefaultEventFlags())
-		<< Invoker(m_pPlayer->edict())
-		<< EventIndex(eventID)
-		;
+	event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict()) << EventIndex(eventID);
 
 	event.Send();
 }

@@ -29,19 +29,19 @@ struct charRange_t
 {
 	int chMin;
 	int chMax;
-	const int *sequence;
+	const int* sequence;
 	int size;
 
 	size_t Length() const
 	{
-		if( sequence )
+		if ( sequence )
 			return size;
 		return chMax - chMin;
 	}
 
-	int Character( size_t pos )
+	int Character(size_t pos)
 	{
-		if( sequence )
+		if ( sequence )
 			return sequence[pos];
 		return chMin + pos;
 	}
@@ -51,77 +51,117 @@ class CBaseFont
 {
 public:
 	CBaseFont();
-	virtual ~CBaseFont( );
+	virtual ~CBaseFont();
 
 	virtual bool Create(
-		const char *name,
-		int tall, int weight,
-		int blur, float brighten,
+		const char* name,
+		int tall,
+		int weight,
+		int blur,
+		float brighten,
 		int outlineSize,
-		int scanlineOffset, float scanlineScale,
-		int flags ) = 0;
-	virtual void GetCharRGBA( int ch, Point pt, Size sz, byte *rgba, Size &drawSize ) = 0;
-	virtual void GetCharABCWidthsNoCache( int ch, int &a, int &b, int &c ) = 0;
-	virtual bool HasChar( int ch ) const = 0;
-	virtual void GetCharABCWidths( int ch, int &a, int &b, int &c );
-	virtual void UploadGlyphsForRanges( charRange_t *range, int rangeSize );
-	virtual int  DrawCharacter(int ch, Point pt, int charH, const unsigned int color, bool forceAdditive = false);
+		int scanlineOffset,
+		float scanlineScale,
+		int flags) = 0;
+	virtual void GetCharRGBA(int ch, Point pt, Size sz, byte* rgba, Size& drawSize) = 0;
+	virtual void GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c) = 0;
+	virtual bool HasChar(int ch) const = 0;
+	virtual void GetCharABCWidths(int ch, int& a, int& b, int& c);
+	virtual void UploadGlyphsForRanges(charRange_t* range, int rangeSize);
+	virtual int DrawCharacter(int ch, Point pt, int charH, const unsigned int color, bool forceAdditive = false);
 
-	inline int GetHeight() const       { return m_iHeight + GetEfxOffset(); }
-	inline int GetTall() const         { return m_iTall; }
-	inline const char *GetName() const { return m_szName; }
-	inline int GetAscent() const       { return m_iAscent; }
-	inline int GetMaxCharWidth() const { return m_iMaxCharWidth; }
-	inline int GetFlags() const        { return m_iFlags; }
-	inline int GetWeight() const       { return m_iWeight; }
-	inline int GetEfxOffset() const    { return m_iBlur + m_iOutlineSize; }
+	inline int GetHeight() const
+	{
+		return m_iHeight + GetEfxOffset();
+	}
+	inline int GetTall() const
+	{
+		return m_iTall;
+	}
+	inline const char* GetName() const
+	{
+		return m_szName;
+	}
+	inline int GetAscent() const
+	{
+		return m_iAscent;
+	}
+	inline int GetMaxCharWidth() const
+	{
+		return m_iMaxCharWidth;
+	}
+	inline int GetFlags() const
+	{
+		return m_iFlags;
+	}
+	inline int GetWeight() const
+	{
+		return m_iWeight;
+	}
+	inline int GetEfxOffset() const
+	{
+		return m_iBlur + m_iOutlineSize;
+	}
 
-	bool IsEqualTo( const char *name, int tall, int weight, int blur, int flags ) const;
+	bool IsEqualTo(const char* name, int tall, int weight, int blur, int flags) const;
 
 	void DebugDraw();
 
-	void GetTextureName(char *dst, size_t len) const;
+	void GetTextureName(char* dst, size_t len) const;
 
-	inline int GetEllipsisWide( ) { return m_iEllipsisWide; }
+	inline int GetEllipsisWide()
+	{
+		return m_iEllipsisWide;
+	}
 
 protected:
-	void ApplyBlur( Size rgbaSz, byte *rgba );
-	void ApplyOutline(Point pt, Size rgbaSz, byte *rgba );
-	void ApplyScanline( Size rgbaSz, byte *rgba );
-	void ApplyStrikeout( Size rgbaSz, byte *rgba );
+	void ApplyBlur(Size rgbaSz, byte* rgba);
+	void ApplyOutline(Point pt, Size rgbaSz, byte* rgba);
+	void ApplyScanline(Size rgbaSz, byte* rgba);
+	void ApplyStrikeout(Size rgbaSz, byte* rgba);
 
 	char m_szName[32];
-	int	 m_iTall, m_iWeight, m_iFlags, m_iHeight, m_iMaxCharWidth;
-	int  m_iAscent;
+	int m_iTall, m_iWeight, m_iFlags, m_iHeight, m_iMaxCharWidth;
+	int m_iAscent;
 	bool m_bAdditive;
 
 	// blurring
-	int  m_iBlur;
+	int m_iBlur;
 	float m_fBrighten;
 
 	// Scanlines
-	int  m_iScanlineOffset;
+	int m_iScanlineOffset;
 	float m_fScanlineScale;
 
 	// Outlines
-	int  m_iOutlineSize;
+	int m_iOutlineSize;
 	int m_iEllipsisWide;
 
 private:
-	bool ReadFromCache( const char *filename, charRange_t *range, size_t rangeSize );
-	void SaveToCache( const char *filename, charRange_t *range, size_t rangeSize, CBMP *bmp );
+	bool ReadFromCache(const char* filename, charRange_t* range, size_t rangeSize);
+	void SaveToCache(const char* filename, charRange_t* range, size_t rangeSize, CBMP* bmp);
 
-	void GetBlurValueForPixel(float *distribution, byte *src, Point srcPt, Size srcSz, byte *dest);
+	void GetBlurValueForPixel(float* distribution, byte* src, Point srcPt, Size srcSz, byte* dest);
 
 	struct glyph_t
 	{
-		glyph_t() : ch( 0 ), texture( 0 ), rect() { }
-		glyph_t( int ch ) : ch( ch ), texture( 0 ), rect() { }
+		glyph_t() :
+			ch(0),
+			texture(0),
+			rect()
+		{
+		}
+		glyph_t(int ch) :
+			ch(ch),
+			texture(0),
+			rect()
+		{
+		}
 		int ch;
 		HIMAGE texture;
 		wrect_t rect;
 
-		bool operator< (const glyph_t &a) const
+		bool operator<(const glyph_t& a) const
 		{
 			return ch < a.ch;
 		}
@@ -132,16 +172,15 @@ private:
 		int ch;
 		int a, b, c;
 
-		bool operator< ( const abc_t &a ) const
+		bool operator<(const abc_t& a) const
 		{
 			return ch < a.ch;
 		}
 	};
 
 	CUtlRBTree<glyph_t, int> m_glyphs;
-	CUtlRBTree<abc_t, int>   m_ABCCache;
+	CUtlRBTree<abc_t, int> m_ABCCache;
 	friend class CFontManager;
 };
 
-
-#endif // BASEFONT_H
+#endif  // BASEFONT_H

@@ -15,7 +15,8 @@ class CWeaponDebugEventSource
 public:
 	typedef std::function<void(const CWeaponDebugEvent_Base*)> EventCallback;
 
-	bool RegisterCallback(const CUtlString& id, CWeaponDebugEvent_Base::EventType eventType, const EventCallback& callback);
+	bool
+	RegisterCallback(const CUtlString& id, CWeaponDebugEvent_Base::EventType eventType, const EventCallback& callback);
 	void UnregisterCallback(const CUtlString& id);
 	bool EventHasSubscribers(CWeaponDebugEvent_Base::EventType eventType) const;
 

@@ -69,37 +69,42 @@ namespace CrosshairCvars
 
 		if ( !atts )
 		{
-			gEngfuncs.Con_Printf("Could not get attributes for current client weapon %s (%d).\n",
-								 currentWeapon->szName,
-								 currentWeapon->iId);
+			gEngfuncs.Con_Printf(
+				"Could not get attributes for current client weapon %s (%d).\n",
+				currentWeapon->szName,
+				currentWeapon->iId);
 			return;
 		}
 
 		if ( currentWeapon->iPriAttackMode >= atts->AttackModes.Count() )
 		{
-			gEngfuncs.Con_Printf("Current client weapon %s (%d) had invalid attack mode index %d.\n",
-								 currentWeapon->szName,
-								 currentWeapon->iId,
-								 currentWeapon->iPriAttackMode);
+			gEngfuncs.Con_Printf(
+				"Current client weapon %s (%d) had invalid attack mode index %d.\n",
+				currentWeapon->szName,
+				currentWeapon->iId,
+				currentWeapon->iPriAttackMode);
 			return;
 		}
 
 		const WeaponAtts::WABaseAttack* attackMode = atts->AttackModes[currentWeapon->iPriAttackMode].get();
-		const WeaponAtts::WAAmmoBasedAttack* ammoAttack = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(attackMode);
+		const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
+			dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(attackMode);
 
 		if ( !ammoAttack )
 		{
-			gEngfuncs.Con_Printf("Current client weapon %s (%d) uses an unsupported attack mode.\n",
-								 currentWeapon->szName,
-								 currentWeapon->iId);
+			gEngfuncs.Con_Printf(
+				"Current client weapon %s (%d) uses an unsupported attack mode.\n",
+				currentWeapon->szName,
+				currentWeapon->iId);
 			return;
 		}
 
 		PopulateCvars(ammoAttack->Crosshair);
 
-		gEngfuncs.Con_Printf("Convars populated from current client weapon %s (%d).\n",
-							 currentWeapon->szName,
-							 currentWeapon->iId);
+		gEngfuncs.Con_Printf(
+			"Convars populated from current client weapon %s (%d).\n",
+			currentWeapon->szName,
+			currentWeapon->iId);
 	}
 
 	static inline void AddValue(CUtlString& str, const cvar_t* cvar)
@@ -146,14 +151,8 @@ namespace CrosshairCvars
 		CvarOverrideCrosshairBarLengthMin = GetOrCreateClientCvar("cl_crosshair_ovr_bar_min", "0.04");
 		CvarOverrideCrosshairBarLengthMax = GetOrCreateClientCvar("cl_crosshair_ovr_bar_max", "0.03");
 
-		CvarsLoaded =
-			CvarCheats &&
-			CvarDebugSpread &&
-			CvarOverrideCrosshairAtts &&
-			CvarOverrideCrosshairRadiusMin &&
-			CvarOverrideCrosshairRadiusMax &&
-			CvarOverrideCrosshairBarLengthMin &&
-			CvarOverrideCrosshairBarLengthMax;
+		CvarsLoaded = CvarCheats && CvarDebugSpread && CvarOverrideCrosshairAtts && CvarOverrideCrosshairRadiusMin &&
+			CvarOverrideCrosshairRadiusMax && CvarOverrideCrosshairBarLengthMin && CvarOverrideCrosshairBarLengthMax;
 
 		ASSERTSZ(CvarsLoaded, "Unable to load crosshair debugging cvars.");
 
@@ -163,18 +162,12 @@ namespace CrosshairCvars
 
 	bool SpreadVisualisationEnabled()
 	{
-		return
-			CvarsLoaded &&
-			CvarCheats->value != 0.0f &&
-			static_cast<int>(CvarDebugSpread->value) != 0;
+		return CvarsLoaded && CvarCheats->value != 0.0f && static_cast<int>(CvarDebugSpread->value) != 0;
 	}
 
 	bool CrosshairOverrideEnabled()
 	{
-		return
-			CvarsLoaded &&
-			CvarCheats->value != 0.0f &&
-			CvarOverrideCrosshairAtts->value != 0.0f;
+		return CvarsLoaded && CvarCheats->value != 0.0f && CvarOverrideCrosshairAtts->value != 0.0f;
 	}
 
 	int AttackModeForSpreadVisualisation()
@@ -201,4 +194,4 @@ namespace CrosshairCvars
 	{
 		return CvarsLoaded ? CvarOverrideCrosshairBarLengthMax->value : 0.0f;
 	}
-}
+}  // namespace CrosshairCvars

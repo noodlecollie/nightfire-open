@@ -16,18 +16,19 @@ const int k_ncchMaxIPV6AddrStringWithoutPort = 51;
 const int k_ncchMaxIPV6AddrStringWithPort = 59;
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /// Format an IPv6 address to the canonical form according to RFC5952.
 /// The address should be 16 bytes (e.g. same as in6_addr::s6_addr).
 /// Your buffer MUST be at least k_ncchMaxIPV6AddrStringWithoutPort bytes.
-extern void IPv6IPToString( char *pszOutText, const unsigned char *ip );
+extern void IPv6IPToString(char* pszOutText, const unsigned char* ip);
 
 /// Format IPv6 IP and port to string.  This uses the recommended
 /// bracket notation, eg [1234::1]:12345.  Your buffer must be
 /// at least k_ncchMaxIPV6AddrStringWithPort bytes.
-extern void IPv6AddrToString( char *pszOutText, const unsigned char *ip, uint16_t port, uint32_t scope );
+extern void IPv6AddrToString(char* pszOutText, const unsigned char* ip, uint16_t port, uint32_t scope);
 
 /// Parse IPv6 address string.  Returns true if parsed OK.  Returns false
 /// if input cannot be parsed, or if input specifies a port but pOutPort is NULL.
@@ -47,7 +48,7 @@ extern void IPv6AddrToString( char *pszOutText, const unsigned char *ip, uint16_
 ///
 /// Address must point to a 16-byte buffer (e.g. same as in6_addr::s6_addr)
 /// Port is returned in host byte order.
-extern bool ParseIPv6Addr( const char *pszText, unsigned char *pOutIP, int *pOutPort, uint32_t *pOutScope );
+extern bool ParseIPv6Addr(const char* pszText, unsigned char* pOutIP, int* pOutPort, uint32_t* pOutScope);
 
 #ifdef __cplusplus
 }

@@ -50,7 +50,11 @@ namespace Messages
 			return false;
 		}
 
-		MESSAGE_BEGIN(m_pTargetClient ? MSG_ONE : MSG_ALL, m_iMessageId, m_pMsgOrigin, m_pTargetClient ? m_pTargetClient->pev : nullptr);
+		MESSAGE_BEGIN(
+			m_pTargetClient ? MSG_ONE : MSG_ALL,
+			m_iMessageId,
+			m_pMsgOrigin,
+			m_pTargetClient ? m_pTargetClient->pev : nullptr);
 		return true;
 	}
 
@@ -69,4 +73,4 @@ namespace Messages
 
 		return true;
 	}
-}
+}  // namespace Messages

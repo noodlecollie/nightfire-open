@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #define TA_ALT_MODE2 1
 
 // Title Transition Time period
-#define TTT_PERIOD		200.0f
+#define TTT_PERIOD 200.0f
 
 class CMenuPicButton : public CMenuBaseItem
 {
@@ -34,21 +34,22 @@ public:
 	typedef CMenuBaseItem BaseClass;
 
 	CMenuPicButton();
-	bool KeyUp( int key ) override;
-	bool KeyDown( int key ) override;
-	void Draw( void ) override;
+	bool KeyUp(int key) override;
+	bool KeyDown(int key) override;
+	void Draw(void) override;
 
-	void SetPicture( EDefaultBtns ID );
-	void SetPicture( const char *filename );
+	void SetPicture(EDefaultBtns ID);
+	void SetPicture(const char* filename);
 
 	bool bEnableTransitions;
 	bool bPulse;
+
 private:
 	bool bRollOver;
 
-	void CheckWindowChanged( void );
+	void CheckWindowChanged(void);
 
-	void DrawButton( int r, int g, int b, int a, wrect_t *rects, int state );
+	void DrawButton(int r, int g, int b, int a, wrect_t* rects, int state);
 
 	HIMAGE hPic;
 	int button_id;

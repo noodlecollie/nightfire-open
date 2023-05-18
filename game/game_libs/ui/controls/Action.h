@@ -25,13 +25,13 @@ public:
 
 	CMenuAction();
 
-	void VidInit( void ) override;
-	bool KeyUp( int key ) override;
-	bool KeyDown( int key ) override;
-	void Draw( void ) override;
+	void VidInit(void) override;
+	bool KeyUp(int key) override;
+	bool KeyDown(int key) override;
+	void Draw(void) override;
 
-	void SetBackground( const char *path, unsigned int color = uiColorWhite );
-	void SetBackground( unsigned int color, unsigned int focused = 0 );
+	void SetBackground(const char* path, unsigned int color = uiColorWhite);
+	void SetBackground(unsigned int color, unsigned int focused = 0);
 
 	bool m_bLimitBySize;
 	bool bIgnoreColorstring;
@@ -44,4 +44,4 @@ private:
 	bool forceCalcW, forceCalcY;
 };
 
-#endif // MENU_ACTION_H
+#endif  // MENU_ACTION_H

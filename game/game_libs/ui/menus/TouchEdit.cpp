@@ -28,23 +28,27 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 class CMenuTouchEdit : public CMenuFramework
 {
 public:
-	CMenuTouchEdit() : CMenuFramework( "CMenuTouchEdit" ) { }
+	CMenuTouchEdit() :
+		CMenuFramework("CMenuTouchEdit")
+	{
+	}
 
 	void Show() override;
 	void Hide() override;
 	void Draw() override;
 	bool DrawAnimation() override;
-	bool KeyDown( int key ) override;
+	bool KeyDown(int key) override;
+
 private:
 	float saveTouchEnable;
 };
 
 void CMenuTouchEdit::Show()
 {
-	saveTouchEnable = EngFuncs::GetCvarFloat( "touch_enable" );
+	saveTouchEnable = EngFuncs::GetCvarFloat("touch_enable");
 
-	EngFuncs::CvarSetValue( "touch_enable", 1 );
-	EngFuncs::CvarSetValue( "touch_in_menu", 1 );
+	EngFuncs::CvarSetValue("touch_enable", 1);
+	EngFuncs::CvarSetValue("touch_in_menu", 1);
 	EngFuncs::ClientCmd(FALSE, "touch_enableedit");
 
 	CMenuFramework::Show();
@@ -52,8 +56,8 @@ void CMenuTouchEdit::Show()
 
 void CMenuTouchEdit::Hide()
 {
-	EngFuncs::CvarSetValue( "touch_enable", saveTouchEnable );
-	EngFuncs::CvarSetValue( "touch_in_menu", 0 );
+	EngFuncs::CvarSetValue("touch_enable", saveTouchEnable);
+	EngFuncs::CvarSetValue("touch_in_menu", 0);
 	EngFuncs::ClientCmd(FALSE, "touch_disableedit");
 
 	CMenuFramework::Hide();
@@ -69,9 +73,9 @@ bool CMenuTouchEdit::DrawAnimation()
 UI_TouchEdit_DrawFunc
 =================
 */
-void CMenuTouchEdit::Draw( void )
+void CMenuTouchEdit::Draw(void)
 {
-	if( !EngFuncs::GetCvarFloat("touch_in_menu") )
+	if ( !EngFuncs::GetCvarFloat("touch_in_menu") )
 	{
 		Hide();
 		UI_TouchButtons_GetButtonList();
@@ -83,15 +87,15 @@ void CMenuTouchEdit::Draw( void )
 UI_TouchEdit_KeyFunc
 =================
 */
-bool CMenuTouchEdit::KeyDown( int key )
+bool CMenuTouchEdit::KeyDown(int key)
 {
-	if( UI::Key::IsEscape( key ) )
+	if ( UI::Key::IsEscape(key) )
 	{
 		Hide();
-		PlayLocalSound( uiStatic.sounds[SND_OUT] );
+		PlayLocalSound(uiStatic.sounds[SND_OUT]);
 		return true;
 	}
 	return false;
 }
 
-ADD_MENU( menu_touchedit, CMenuTouchEdit, UI_TouchEdit_Menu );
+ADD_MENU(menu_touchedit, CMenuTouchEdit, UI_TouchEdit_Menu);

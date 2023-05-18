@@ -20,9 +20,10 @@ namespace ScreenOverlays
 
 	void CMessageWriter::WriteMessage()
 	{
-		WriteMessageWrapper([this]()
-		{
-			WRITE_BYTE(static_cast<uint8_t>(m_Id));
-		});
+		WriteMessageWrapper(
+			[this]()
+			{
+				WRITE_BYTE(static_cast<uint8_t>(m_Id));
+			});
 	}
-}
+}  // namespace ScreenOverlays

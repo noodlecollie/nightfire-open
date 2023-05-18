@@ -20,28 +20,31 @@ GNU General Public License for more details.
 #include "utlrbtree.h"
 #include "stb_truetype.h"
 
-
 class CStbFont : public CBaseFont
 {
 public:
 	CStbFont();
 	~CStbFont();
 
-	bool Create(const char *name,
-		int tall, int weight,
-		int blur, float brighten,
+	bool Create(
+		const char* name,
+		int tall,
+		int weight,
+		int blur,
+		float brighten,
 		int outlineSize,
-		int scanlineOffset, float scanlineScale,
+		int scanlineOffset,
+		float scanlineScale,
 		int flags) override;
-	void GetCharRGBA(int ch, Point pt, Size sz, unsigned char *rgba, Size &drawSize) override;
-	void GetCharABCWidthsNoCache( int ch, int &a, int &b, int &c ) override;
-	bool HasChar( int ch ) const override;
+	void GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Size& drawSize) override;
+	void GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c) override;
+	bool HasChar(int ch) const override;
 
 private:
 	char m_szRealFontFile[4096];
-	bool FindFontDataFile(const char *name, int tall, int weight, int flags, char *dataFile, int dataFileChars);
+	bool FindFontDataFile(const char* name, int tall, int weight, int flags, char* dataFile, int dataFileChars);
 
-	byte *m_pFontData;
+	byte* m_pFontData;
 	stbtt_fontinfo m_fontInfo;
 
 	float scale;
@@ -49,4 +52,4 @@ private:
 	friend class CFontManager;
 };
 
-#endif // defined(MAINUI_USE_CUSTOM_FONT_RENDER) && defined(MAINUI_USE_FREETYPE)
+#endif  // defined(MAINUI_USE_CUSTOM_FONT_RENDER) && defined(MAINUI_USE_FREETYPE)

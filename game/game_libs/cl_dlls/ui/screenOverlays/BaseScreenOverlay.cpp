@@ -13,4 +13,4 @@ namespace ScreenOverlays
 	void CBaseScreenOverlay::Draw(float time)
 	{
 	}
-}
+}  // namespace ScreenOverlays

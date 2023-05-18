@@ -1,6 +1,6 @@
 //========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -11,9 +11,7 @@
 #pragma once
 #endif
 
-
 class CMenuPanel;
-
 
 // Returns true if the tweak dialog is currently up.
 bool IsTweakDlgOpen();
@@ -21,5 +19,4 @@ bool IsTweakDlgOpen();
 // Returns a global instance of the tweak dialog.
 CMenuPanel* GetVoiceTweakDlg();
 
-
-#endif // VOICE_VGUI_TWEAKDLG_H
+#endif  // VOICE_VGUI_TWEAKDLG_H

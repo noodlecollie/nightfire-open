@@ -6,7 +6,9 @@
 class HitscanWeaponEventPlayer : public BaseWeaponEventPlayer
 {
 public:
-	virtual ~HitscanWeaponEventPlayer() {}
+	virtual ~HitscanWeaponEventPlayer()
+	{
+	}
 
 protected:
 	virtual void EventStart() override;

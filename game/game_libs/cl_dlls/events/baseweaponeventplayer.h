@@ -11,11 +11,12 @@ class CGenericWeaponAtts_HitscanFireMechanic;
 class BaseWeaponEventPlayer
 {
 public:
-	virtual ~BaseWeaponEventPlayer() {}
+	virtual ~BaseWeaponEventPlayer()
+	{
+	}
 
 	void LoadEventScript(const CUtlString& path);
-	void PlayEvent(const event_args_t* eventArgs,
-				   const WeaponAtts::WABaseAttack::AttackModeSignature* signature);
+	void PlayEvent(const event_args_t* eventArgs, const WeaponAtts::WABaseAttack::AttackModeSignature* signature);
 
 protected:
 	virtual void EventStart() = 0;

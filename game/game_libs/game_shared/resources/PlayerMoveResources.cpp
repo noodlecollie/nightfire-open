@@ -5,7 +5,8 @@
 #include "SoundResources.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 int PMRes_GetStepSoundIdForSurface(SurfaceProp surfaceProp)
@@ -35,7 +36,9 @@ float PMRes_GetStepSoundVolumeMultiplierForSurface(SurfaceProp surfaceProp, int 
 const char* PMRes_GetStepSoundPath(int stepSoundId, int isLeftFoot)
 {
 	FootstepSoundId id = static_cast<FootstepSoundId>(stepSoundId);
-	return SoundResources::FootstepSounds.RandomFootstepSoundPath(id, isLeftFoot ? CFootstepSoundResources::Foot::Left : CFootstepSoundResources::Foot::Right);
+	return SoundResources::FootstepSounds.RandomFootstepSoundPath(
+		id,
+		isLeftFoot ? CFootstepSoundResources::Foot::Left : CFootstepSoundResources::Foot::Right);
 }
 
 #ifdef __cplusplus

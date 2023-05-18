@@ -7,9 +7,10 @@
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_fists, CWeaponFists);
-LINK_ENTITY_TO_CLASS(weapon_dukes, CWeaponFists);	// For NF compatibility
+LINK_ENTITY_TO_CLASS(weapon_dukes, CWeaponFists);  // For NF compatibility
 
-CWeaponFists::CWeaponFists() : CGenericMeleeWeapon()
+CWeaponFists::CWeaponFists() :
+	CGenericMeleeWeapon()
 {
 	m_pPunchAttack = GetAttackModeFromAttributes<WeaponAtts::WAMeleeAttack>(ATTACKMODE_PUNCH);
 	m_pPunchComboAttack = GetAttackModeFromAttributes<WeaponAtts::WAMeleeAttack>(ATTACKMODE_PUNCH_COMBO);
@@ -34,7 +35,8 @@ bool CWeaponFists::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts:
 	{
 		// Alternate between modes.
 		const WeaponAtts::WAMeleeAttack* currentMode = GetPrimaryAttackMode<WeaponAtts::WAMeleeAttack>();
-		const WeaponAtts::WAMeleeAttack* newMode = (currentMode == m_pPunchAttack ? m_pPunchComboAttack : m_pPunchAttack);
+		const WeaponAtts::WAMeleeAttack* newMode =
+			(currentMode == m_pPunchAttack ? m_pPunchComboAttack : m_pPunchAttack);
 		SetPrimaryAttackMode(newMode);
 	}
 
@@ -63,4 +65,4 @@ namespace WeaponAtts
 	{
 		return ::StaticWeaponAttributes;
 	}
-}
+}  // namespace WeaponAtts

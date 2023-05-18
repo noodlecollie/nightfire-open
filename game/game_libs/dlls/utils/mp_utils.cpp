@@ -22,7 +22,7 @@ namespace MPUtils
 		}
 	}
 
-	CBasePlayer* CBasePlayerFromIndex( int playerIndex )
+	CBasePlayer* CBasePlayerFromIndex(int playerIndex)
 	{
 		if ( playerIndex < 1 || playerIndex > gpGlobals->maxClients )
 		{
@@ -144,4 +144,4 @@ namespace MPUtils
 		const char* modelName = g_engfuncs.pfnInfoKeyValue(info, "model");
 		return CGameResources::MultiplayerModelFullPath(CUtlString(modelName));
 	}
-}
+}  // namespace MPUtils

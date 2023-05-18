@@ -8,7 +8,7 @@ namespace WeaponAtts
 {
 	struct AccuracyParameters;
 	struct CrosshairParameters;
-}
+}  // namespace WeaponAtts
 
 class CCrosshairParameters
 {

@@ -1,6 +1,7 @@
 #include "BotProfileImage.h"
 
-CBotProfileImage::CBotProfileImage() : CMenuBaseItem()
+CBotProfileImage::CBotProfileImage() :
+	CMenuBaseItem()
 {
 }
 
@@ -14,7 +15,7 @@ void CBotProfileImage::Init()
 void CBotProfileImage::Draw()
 {
 	UI_FillRect(m_scPos, m_scSize, uiPromptBgColor);
-	//UI_DrawString(font, m_scPos, m_scSize, L("Bot preview goes here"), colorBase, m_scChSize, QM_CENTER, ETF_SHADOW);
+	// UI_DrawString(font, m_scPos, m_scSize, L("Bot preview goes here"), colorBase, m_scChSize, QM_CENTER, ETF_SHADOW);
 
 	if ( m_hImage )
 	{

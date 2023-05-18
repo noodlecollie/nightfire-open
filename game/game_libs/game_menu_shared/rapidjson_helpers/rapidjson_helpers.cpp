@@ -86,10 +86,11 @@ bool LoadJsonFile(const CUtlString& path, Document& document, const char* module
 			log.AppendFormat("%s: ", moduleName);
 		}
 
-		log.AppendFormat("JSON document %s could not be parsed. Error at offset %u: %s\n",
-						 path.String(),
-						 parseResult.Offset(),
-						 rapidjson::GetParseError_En(parseResult.Code()));
+		log.AppendFormat(
+			"JSON document %s could not be parsed. Error at offset %u: %s\n",
+			path.String(),
+			parseResult.Offset(),
+			rapidjson::GetParseError_En(parseResult.Code()));
 
 		iface->LogInterface().Log(ILogInterface::Level::Error, log);
 		return false;

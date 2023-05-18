@@ -6,8 +6,9 @@
 
 namespace ScreenOverlays
 {
-	class CMessageWriter : public Messages::CBaseMessageWriter,
-						   public Messages::CMessageRegistrationHelper<CMessageWriter>
+	class CMessageWriter :
+		public Messages::CBaseMessageWriter,
+		public Messages::CMessageRegistrationHelper<CMessageWriter>
 	{
 	public:
 		static constexpr const char* MESSAGE_NAME = ScreenOverlays::MESSAGE_NAME;
@@ -23,4 +24,4 @@ namespace ScreenOverlays
 	private:
 		ScreenOverlays::OverlayId m_Id = ScreenOverlays::Overlay_None;
 	};
-}
+}  // namespace ScreenOverlays

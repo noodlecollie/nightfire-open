@@ -13,9 +13,7 @@ namespace ClientSoundInstance
 			return;
 		}
 
-		gEngfuncs.pfnPlaySoundByNameAtPitch(instance.SoundPathCStr(),
-											instance.Volume(),
-											instance.GetPitch());
+		gEngfuncs.pfnPlaySoundByNameAtPitch(instance.SoundPathCStr(), instance.Volume(), instance.GetPitch());
 	}
 
 	void PlayPositional(const CSoundInstance& instance)
@@ -25,20 +23,19 @@ namespace ClientSoundInstance
 			return;
 		}
 
-		gEngfuncs.pfnPlaySoundByNameAtLocation(instance.SoundPathCStr(),
-											   instance.Volume(),
-											   instance.Position());
+		gEngfuncs.pfnPlaySoundByNameAtLocation(instance.SoundPathCStr(), instance.Volume(), instance.Position());
 	}
 
 	void PlayEventSound(const CSoundInstance& instance, int entIndex)
 	{
-		gEngfuncs.pEventAPI->EV_PlaySound(entIndex,
-										  instance.Position(),
-										  instance.Channel(),
-										  instance.SoundPathCStr(),
-										  instance.Volume(),
-										  instance.Attenuation(),
-										  instance.Flags(),
-										  instance.GetPitch());
+		gEngfuncs.pEventAPI->EV_PlaySound(
+			entIndex,
+			instance.Position(),
+			instance.Channel(),
+			instance.SoundPathCStr(),
+			instance.Volume(),
+			instance.Attenuation(),
+			instance.Flags(),
+			instance.GetPitch());
 	}
-}
+}  // namespace ClientSoundInstance

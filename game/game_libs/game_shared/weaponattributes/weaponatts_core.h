@@ -19,4 +19,4 @@ namespace WeaponAtts
 			ASSERTSZ_Q(Id != WeaponId_e::WeaponNone, "Weapon must have a valid ID.");
 		}
 	};
-}
+}  // namespace WeaponAtts

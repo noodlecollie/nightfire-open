@@ -15,10 +15,11 @@ GNU General Public License for more details.
 #include "TabView.h"
 #include "Scissor.h"
 
-CMenuTabView::CMenuTabView() : BaseClass()
+CMenuTabView::CMenuTabView() :
+	BaseClass()
 {
 	m_bWrapCursor = true;
-	SetCharSize( QM_BOLDFONT );
+	SetCharSize(QM_BOLDFONT);
 	eTextAlignment = QM_CENTER;
 }
 
@@ -42,26 +43,26 @@ void CMenuTabView::VidInit()
 	m_szTab.h = m_scChSize * 1.5f;
 }
 
-void CMenuTabView::DrawTab(Point pt, const char *name, bool isEnd, bool isSelected, bool isHighlighted)
+void CMenuTabView::DrawTab(Point pt, const char* name, bool isEnd, bool isSelected, bool isHighlighted)
 {
 	uint textColor = uiInputTextColor;
 	uint fillColor = uiColorBlack;
-	uint textflags = ( iFlags & QMF_DROPSHADOW ) ? ETF_SHADOW : 0;
+	uint textflags = (iFlags & QMF_DROPSHADOW) ? ETF_SHADOW : 0;
 
-	if( isSelected && !isHighlighted )
+	if ( isSelected && !isHighlighted )
 	{
 		fillColor = uiInputBgColor;
 		textColor = uiInputFgColor;
 	}
-	else if( isHighlighted )
+	else if ( isHighlighted )
 	{
 		textColor = uiPromptFocusColor;
 	}
 
-	UI_FillRect( pt, m_szTab, fillColor );
-	UI_DrawString( font, pt, m_szTab, name, textColor, m_scChSize, eTextAlignment, textflags );
+	UI_FillRect(pt, m_szTab, fillColor);
+	UI_DrawString(font, pt, m_szTab, name, textColor, m_scChSize, eTextAlignment, textflags);
 
-	if( !isEnd )
+	if ( !isEnd )
 	{
 		int x = pt.x + m_szTab.w;
 		int y = pt.y - UI_OUTLINE_WIDTH;
@@ -69,42 +70,41 @@ void CMenuTabView::DrawTab(Point pt, const char *name, bool isEnd, bool isSelect
 		int h = m_szTab.h + UI_OUTLINE_WIDTH + UI_OUTLINE_WIDTH;
 
 		// draw right
-		UI_FillRect( x, y, w, h, uiColorHelp );
+		UI_FillRect(x, y, w, h, uiColorHelp);
 	}
 }
 
 void CMenuTabView::Draw()
 {
 	// draw frame first
-	UI_DrawRectangle( m_scPos, m_scSize, uiColorHelp );
+	UI_DrawRectangle(m_scPos, m_scSize, uiColorHelp);
 
 	// draw tabs
 	Point tabOffset = m_scPos;
-	FOR_EACH_VEC( m_pItems, i )
+	FOR_EACH_VEC(m_pItems, i)
 	{
-		bool isEnd = i == ( m_pItems.Count() - 1 );
-		bool isHighlighted = UI_CursorInRect( tabOffset, m_szTab );
+		bool isEnd = i == (m_pItems.Count() - 1);
+		bool isHighlighted = UI_CursorInRect(tabOffset, m_szTab);
 		bool isSelected = i == m_iCursor;
 
-		DrawTab( tabOffset, m_pItems[i]->szName, isEnd, isSelected, isHighlighted );
+		DrawTab(tabOffset, m_pItems[i]->szName, isEnd, isSelected, isHighlighted);
 		tabOffset.x += m_szTab.w;
 	}
 
-	Point contentOffset = Point( m_scPos.x, m_scPos.y + m_scChSize * 1.5f );
-	Size contentSize = Size( m_scSize.w, m_scSize.h - m_scChSize * 1.5f );
+	Point contentOffset = Point(m_scPos.x, m_scPos.y + m_scChSize * 1.5f);
+	Size contentSize = Size(m_scSize.w, m_scSize.h - m_scChSize * 1.5f);
 
 	// draw line after tab
-	UI_FillRect( contentOffset.x, contentOffset.y,
-		m_scSize.w, UI_OUTLINE_WIDTH, uiColorHelp );
+	UI_FillRect(contentOffset.x, contentOffset.y, m_scSize.w, UI_OUTLINE_WIDTH, uiColorHelp);
 
 	// fill background
-	UI_FillRect( contentOffset, contentSize, uiColorBlack );
+	UI_FillRect(contentOffset, contentSize, uiColorBlack);
 
 	// draw contents
-	if( m_iCursor >= 0 && m_iCursor < m_pItems.Count() )
+	if ( m_iCursor >= 0 && m_iCursor < m_pItems.Count() )
 	{
-		UI::Scissor::PushScissor( contentOffset, contentSize );
-			m_pItems[m_iCursor]->Draw();
+		UI::Scissor::PushScissor(contentOffset, contentSize);
+		m_pItems[m_iCursor]->Draw();
 		UI::Scissor::PopScissor();
 	}
 }

@@ -13,7 +13,8 @@ enum class MaterialBreakSoundId
 	Count
 };
 
-class CMaterialBreakSoundResources : public CBaseResourceCollection<MaterialBreakSoundId, static_cast<size_t>(MaterialBreakSoundId::Count)>
+class CMaterialBreakSoundResources :
+	public CBaseResourceCollection<MaterialBreakSoundId, static_cast<size_t>(MaterialBreakSoundId::Count)>
 {
 public:
 	CMaterialBreakSoundResources();

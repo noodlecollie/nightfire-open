@@ -41,8 +41,9 @@ bool CHitboxGeometryConstructor::AddGeometry(const CustomGeometry::GeometryItemP
 	return true;
 }
 
-void CHitboxGeometryConstructor::CreateGeometryFromPoints(const CustomGeometry::GeometryItemPtr_t& geom,
-														  const HitboxPoints& points) const
+void CHitboxGeometryConstructor::CreateGeometryFromPoints(
+	const CustomGeometry::GeometryItemPtr_t& geom,
+	const HitboxPoints& points) const
 {
 	uint8_t baseIndex = geom->GetPointCount();
 
@@ -59,9 +60,10 @@ void CHitboxGeometryConstructor::CreateGeometryFromPoints(const CustomGeometry::
 	geom->AddLineIndices(3, 7);
 }
 
-void CHitboxGeometryConstructor::CreateRectFromPoints(const CustomGeometry::GeometryItemPtr_t& geom,
-													  const HitboxPoints& points,
-													  uint32_t offset) const
+void CHitboxGeometryConstructor::CreateRectFromPoints(
+	const CustomGeometry::GeometryItemPtr_t& geom,
+	const HitboxPoints& points,
+	uint32_t offset) const
 {
 	ASSERT(HitboxPoints::NUM_ELEMENTS - offset >= 4);
 

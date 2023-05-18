@@ -7,7 +7,9 @@
 class IProjectInterface
 {
 public:
-	virtual ~IProjectInterface() {}
+	virtual ~IProjectInterface()
+	{
+	}
 
 	// Must be set by the user on initialisation, before any other functions are used.
 	static void SetProjectInterfaceImpl(IProjectInterface* iface);

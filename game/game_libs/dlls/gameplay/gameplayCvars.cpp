@@ -9,7 +9,7 @@
 
 namespace GameplayCvars
 {
-#define DEFINE_CVAR(name, value) static cvar_t name = { #name, #value };
+#define DEFINE_CVAR(name, value) static cvar_t name = {#name, #value};
 
 	// By default this is slightly lower than the max movement speed of the player,
 	// to avoid jitter at the top end of the velocity.
@@ -48,7 +48,10 @@ namespace GameplayCvars
 		CUtlString output;
 
 		output.AppendFormat("Weapon inaccuracy values:\n");
-		output.AppendFormat("  %s = %s\n", sv_weapon_debug_inac_enabled.name, sv_weapon_debug_inac_enabled.value ? "true" : "false");
+		output.AppendFormat(
+			"  %s = %s\n",
+			sv_weapon_debug_inac_enabled.name,
+			sv_weapon_debug_inac_enabled.value ? "true" : "false");
 
 		AddValue(output, sv_weapon_debug_inac_restvalue);
 		AddValue(output, sv_weapon_debug_inac_restspread);
@@ -131,15 +134,24 @@ namespace GameplayCvars
 
 		if ( attackMode >= atts.AttackModes.Count() )
 		{
-			ALERT(at_console, "Player's active weapon %s (%d) has invalid attack mode index.\n", atts.Core.Classname, atts.Core.Id);
+			ALERT(
+				at_console,
+				"Player's active weapon %s (%d) has invalid attack mode index.\n",
+				atts.Core.Classname,
+				atts.Core.Id);
 			return;
 		}
 
-		const WeaponAtts::WAAmmoBasedAttack* attack = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(atts.AttackModes[attackMode].get());
+		const WeaponAtts::WAAmmoBasedAttack* attack =
+			dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(atts.AttackModes[attackMode].get());
 
 		if ( !attack )
 		{
-			ALERT(at_console, "Player's active weapon %s (%d) has unsupported attack mode.\n", atts.Core.Classname, atts.Core.Id);
+			ALERT(
+				at_console,
+				"Player's active weapon %s (%d) has unsupported attack mode.\n",
+				atts.Core.Classname,
+				atts.Core.Id);
 			return;
 		}
 
@@ -169,4 +181,4 @@ namespace GameplayCvars
 		g_engfuncs.pfnAddServerCommand("sv_weapon_debug_inac_dump", &DumpValues);
 		g_engfuncs.pfnAddServerCommand("sv_weapon_debug_inac_populate", &PopulateCvarsFromPlayerWeapon);
 	}
-}
+}  // namespace GameplayCvars

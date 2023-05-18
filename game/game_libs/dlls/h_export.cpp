@@ -1,17 +1,17 @@
 /***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
+ *
+ *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+ *
+ *	This product contains software technology licensed from Id
+ *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
+ *	All Rights Reserved.
+ *
+ *   Use, distribution, and modification of this source code and/or resulting
+ *   object code is restricted to non-commercial enhancements to products from
+ *   Valve LLC.  All other use, distribution, or modification is prohibited
+ *   without written permission from Valve LLC.
+ *
+ ****/
 /*
 
 ===== h_export.cpp ========================================================
@@ -27,18 +27,18 @@
 
 // Holds engine functionality callbacks
 enginefuncs_t g_engfuncs;
-globalvars_t *gpGlobals;
+globalvars_t* gpGlobals;
 server_physics_api_t g_physfuncs;
 
 #ifdef _WIN32
 
 // Required DLL entry point
-BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-	if( fdwReason == DLL_PROCESS_ATTACH )
+	if ( fdwReason == DLL_PROCESS_ATTACH )
 	{
 	}
-	else if( fdwReason == DLL_PROCESS_DETACH )
+	else if ( fdwReason == DLL_PROCESS_DETACH )
 	{
 	}
 	return TRUE;
@@ -50,8 +50,8 @@ BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved )
 #define EXPORT2
 #endif
 
-extern "C" void DLLEXPORT EXPORT2 GiveFnptrsToDll( enginefuncs_t *pengfuncsFromEngine, globalvars_t *pGlobals )
+extern "C" void DLLEXPORT EXPORT2 GiveFnptrsToDll(enginefuncs_t* pengfuncsFromEngine, globalvars_t* pGlobals)
 {
-	memcpy( &g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t) );
+	memcpy(&g_engfuncs, pengfuncsFromEngine, sizeof(enginefuncs_t));
 	gpGlobals = pGlobals;
 }

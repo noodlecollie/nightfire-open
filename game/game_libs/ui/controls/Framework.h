@@ -29,7 +29,7 @@ class CMenuFramework : public CMenuBaseWindow
 public:
 	typedef CMenuBaseWindow BaseClass;
 
-	CMenuFramework( const char *name = "Unnamed Framework" );
+	CMenuFramework(const char* name = "Unnamed Framework");
 	virtual ~CMenuFramework() override;
 
 	void Show() override;
@@ -37,28 +37,39 @@ public:
 	void Init() final override;
 	void VidInit() final override;
 	void Hide() override;
-	bool IsRoot() const override { return true; }
+	bool IsRoot() const override
+	{
+		return true;
+	}
 
-	bool KeyDown( int key ) override;
+	bool KeyDown(int key) override;
 
-	CMenuPicButton *AddButton( const char *szName, const char *szStatus,
-		EDefaultBtns iButton, CEventCallback onReleased = CEventCallback(), int iFlags = 0 );
+	CMenuPicButton* AddButton(
+		const char* szName,
+		const char* szStatus,
+		EDefaultBtns iButton,
+		CEventCallback onReleased = CEventCallback(),
+		int iFlags = 0);
 
-	CMenuPicButton *AddButton( const char *szName, const char *szStatus,
-		const char *szButtonPath, CEventCallback onReleased = CEventCallback(), int iFlags = 0 );
+	CMenuPicButton* AddButton(
+		const char* szName,
+		const char* szStatus,
+		const char* szButtonPath,
+		CEventCallback onReleased = CEventCallback(),
+		int iFlags = 0);
 
 	bool DrawAnimation() override;
 
-	void PrepareBannerAnimation( EAnimation direction, CMenuPicButton *initiator );
+	void PrepareBannerAnimation(EAnimation direction, CMenuPicButton* initiator);
 
 	class CMenuBannerBitmap : public CMenuBaseItem
 	{
 	public:
 		CMenuBannerBitmap();
 		void Draw() override;
-		void SetPicture( const char *pic );
+		void SetPicture(const char* pic);
 
-		void Draw( Point pt, Size sz );
+		void Draw(Point pt, Size sz);
 
 	private:
 		CImage image;
@@ -68,8 +79,8 @@ protected:
 	EAnimation bannerAnimDirection;
 	Rect bannerRects[2];
 
-	CMenuPicButton *m_apBtns[MAX_FRAMEWORK_PICBUTTONS];
+	CMenuPicButton* m_apBtns[MAX_FRAMEWORK_PICBUTTONS];
 	int m_iBtnsNum;
 };
 
-#endif // FRAMEWORK_H
+#endif  // FRAMEWORK_H

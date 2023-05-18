@@ -22,7 +22,8 @@ enum class ShellImpactSoundId
 	Count
 };
 
-class CShellImpactSoundResources : public CBaseResourceCollection<ShellImpactSoundId, static_cast<size_t>(ShellImpactSoundId::Count)>
+class CShellImpactSoundResources :
+	public CBaseResourceCollection<ShellImpactSoundId, static_cast<size_t>(ShellImpactSoundId::Count)>
 {
 public:
 	CShellImpactSoundResources();

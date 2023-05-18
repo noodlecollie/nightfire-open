@@ -186,4 +186,4 @@ namespace CustomGeometry
 		static uint8_t dummy;
 		return i < m_Indices.Count() ? m_Indices[i] : dummy;
 	}
-}
+}  // namespace CustomGeometry

@@ -37,21 +37,33 @@ public:
 	};
 
 	// setup editable
-	void LinkCvar( const char *name, cvarType_e type );
+	void LinkCvar(const char* name, cvarType_e type);
 
 	// Getters
-	inline const char *CvarName()   const { return m_szCvarName; }
-	inline float       CvarValue()  const { return m_flValue; }
-	inline const char *CvarString() const { return m_szString; }
-	inline cvarType_e  CvarType()   const { return m_eType; }
+	inline const char* CvarName() const
+	{
+		return m_szCvarName;
+	}
+	inline float CvarValue() const
+	{
+		return m_flValue;
+	}
+	inline const char* CvarString() const
+	{
+		return m_szString;
+	}
+	inline cvarType_e CvarType() const
+	{
+		return m_eType;
+	}
 
 	// Set cvar value/string and emit an event(does not written to engine)
-	void SetCvarValue( float value );
-	void SetCvarString( const char *string );
+	void SetCvarValue(float value);
+	void SetCvarString(const char* string);
 
 	// Set last got engine cvar values
-	void SetOriginalValue( float val );
-	void SetOriginalString( const char *psz );
+	void SetOriginalValue(float val);
+	void SetOriginalString(const char* psz);
 
 	// Reset editable to last got engine values
 	void ResetCvar();
@@ -66,29 +78,29 @@ public:
 	void UpdateCvar();
 
 	CEventCallback onCvarWrite;  // called on final writing of cvar value
-	CEventCallback onCvarChange; // called on internal values changes
-	CEventCallback onCvarGet;    // called on any cvar update
+	CEventCallback onCvarChange;  // called on internal values changes
+	CEventCallback onCvarGet;  // called on any cvar update
 
 	// events library
-	DECLARE_EVENT_TO_ITEM_METHOD( CMenuEditable, WriteCvar )
-	DECLARE_EVENT_TO_ITEM_METHOD( CMenuEditable, DiscardChanges )
-	DECLARE_EVENT_TO_ITEM_METHOD( CMenuEditable, ResetCvar )
-	DECLARE_EVENT_TO_ITEM_METHOD( CMenuEditable, UpdateCvar )
+	DECLARE_EVENT_TO_ITEM_METHOD(CMenuEditable, WriteCvar)
+	DECLARE_EVENT_TO_ITEM_METHOD(CMenuEditable, DiscardChanges)
+	DECLARE_EVENT_TO_ITEM_METHOD(CMenuEditable, ResetCvar)
+	DECLARE_EVENT_TO_ITEM_METHOD(CMenuEditable, UpdateCvar)
 
 	bool bUpdateImmediately;
 
 protected:
-	const char *m_szCvarName;
-	cvarType_e  m_eType;
+	const char* m_szCvarName;
+	cvarType_e m_eType;
 
-	bool		m_bForceUpdate;
-	char		m_szString[CS_SIZE], m_szOriginalString[CS_SIZE];
-	float		m_flValue, m_flOriginalValue;
+	bool m_bForceUpdate;
+	char m_szString[CS_SIZE], m_szOriginalString[CS_SIZE];
+	float m_flValue, m_flOriginalValue;
 
 private:
 	// A possible shortcut for derived class, that support only one cvar type
 	// derived class can move it to public and implement
-	virtual void LinkCvar( const char *name );
+	virtual void LinkCvar(const char* name);
 };
 
-#endif // MENU_EDITABLE_H
+#endif  // MENU_EDITABLE_H

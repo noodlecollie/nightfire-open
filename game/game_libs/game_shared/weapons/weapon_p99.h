@@ -17,8 +17,8 @@ public:
 #ifndef CLIENT_DLL
 	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
 	virtual void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
-	virtual int Save(CSave &save) override;
-	virtual int Restore(CRestore &restore) override;
+	virtual int Save(CSave& save) override;
+	virtual int Restore(CRestore& restore) override;
 	static TYPEDESCRIPTION m_SaveData[];
 #endif
 

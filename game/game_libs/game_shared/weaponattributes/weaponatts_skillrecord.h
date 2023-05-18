@@ -9,7 +9,7 @@ namespace WeaponAtts
 {
 	struct WASkillRecord
 	{
-		typedef float skilldata_t::* SkillDataEntryPtr;
+		typedef float skilldata_t::*SkillDataEntryPtr;
 
 		WASkillRecord(const char* cvarBaseName, SkillDataEntryPtr entry);
 		WASkillRecord(const WASkillRecord& other);
@@ -25,4 +25,4 @@ namespace WeaponAtts
 		CUtlString m_NameBuffers[TOTAL_SKILL_LEVELS];
 		mutable cvar_t m_Cvars[TOTAL_SKILL_LEVELS];
 	};
-}
+}  // namespace WeaponAtts

@@ -30,35 +30,38 @@ public:
 	void VidInit() override;
 
 	void Reload() override;
-	bool KeyUp( int key ) override;
-	bool KeyDown( int key ) override;
-	void Char( int key ) override;
-	void ToggleInactive( void ) override;
-	void SetInactive( bool visible ) override;
-	void Draw( void ) override;
-	void Think( void ) override;
+	bool KeyUp(int key) override;
+	bool KeyDown(int key) override;
+	void Char(int key) override;
+	void ToggleInactive(void) override;
+	void SetInactive(bool visible) override;
+	void Draw(void) override;
+	void Think(void) override;
 
-	bool MouseMove( int x, int y ) override;
+	bool MouseMove(int x, int y) override;
 
-	bool KeyValueData(const char *key, const char *data) override;
+	bool KeyValueData(const char* key, const char* data) override;
 
 	// returns a position where actual items holder is located
 	virtual Point GetPositionOffset() const;
-	virtual bool IsWindow() { return false; }
-
-	void CursorMoved( void );
-	void SetCursor( int newCursor, bool notify = true );
-	void SetCursorToItem( CMenuBaseItem &item, bool notify = true );
-	bool AdjustCursor( int dir );
-
-	void AddItem( CMenuBaseItem &item );
-	void RemoveItem( CMenuBaseItem &item );
-	CMenuBaseItem *ItemAtCursor( void );
-	CMenuBaseItem *ItemAtCursorPrev( void );
-	CMenuBaseItem *FindItemByTag( const char *tag );
-	inline CMenuBaseItem *GetItemByIndex( int idx )
+	virtual bool IsWindow()
 	{
-		if( m_pItems.IsValidIndex( idx ))
+		return false;
+	}
+
+	void CursorMoved(void);
+	void SetCursor(int newCursor, bool notify = true);
+	void SetCursorToItem(CMenuBaseItem& item, bool notify = true);
+	bool AdjustCursor(int dir);
+
+	void AddItem(CMenuBaseItem& item);
+	void RemoveItem(CMenuBaseItem& item);
+	CMenuBaseItem* ItemAtCursor(void);
+	CMenuBaseItem* ItemAtCursorPrev(void);
+	CMenuBaseItem* FindItemByTag(const char* tag);
+	inline CMenuBaseItem* GetItemByIndex(int idx)
+	{
+		if ( m_pItems.IsValidIndex(idx) )
 			return m_pItems[idx];
 		return NULL;
 	}
@@ -66,28 +69,50 @@ public:
 	void CalcItemsPositions();
 	void CalcItemsSizes();
 
-	inline void AddItem( CMenuBaseItem *item ) { AddItem( *item ); }
-	inline int GetCursor() const { return m_iCursor; }
-	inline int GetCursorPrev() const { return m_iCursorPrev; }
-	inline int ItemCount() const { return m_pItems.Count(); }
-	inline bool WasInit() const { return m_bInit; }
+	inline void AddItem(CMenuBaseItem* item)
+	{
+		AddItem(*item);
+	}
+	inline int GetCursor() const
+	{
+		return m_iCursor;
+	}
+	inline int GetCursorPrev() const
+	{
+		return m_iCursorPrev;
+	}
+	inline int ItemCount() const
+	{
+		return m_pItems.Count();
+	}
+	inline bool WasInit() const
+	{
+		return m_bInit;
+	}
 
-	void SetResourceFilename( const char *filename ) { m_szResFile = filename; }
+	void SetResourceFilename(const char* filename)
+	{
+		m_szResFile = filename;
+	}
 
-	void RegisterNamedEvent( CEventCallback ev, const char *name );
-	CEventCallback FindEventByName( const char *name );
+	void RegisterNamedEvent(CEventCallback ev, const char* name);
+	CEventCallback FindEventByName(const char* name);
 
 protected:
-	virtual void _Init() {}
-	virtual void _VidInit() {}
+	virtual void _Init()
+	{
+	}
+	virtual void _VidInit()
+	{
+	}
 	void VidInitItems();
 
-	bool LoadRES( const char *filename );
+	bool LoadRES(const char* filename);
 
 	int m_iCursor;
 	int m_iCursorPrev;
 
-	CUtlVector<CMenuBaseItem *> m_pItems;
+	CUtlVector<CMenuBaseItem*> m_pItems;
 
 	// it's unnecessary to register here, it's only for searching events by res file
 	CUtlVector<CEventCallback> m_events;
@@ -95,10 +120,11 @@ protected:
 	bool m_bInit;
 	bool m_bWrapCursor;
 
-	const char *m_szResFile;
+	const char* m_szResFile;
+
 private:
-	bool Key( const int key, const bool down );
-	CMenuBaseItem *m_pItemAtCursorOnDown;
+	bool Key(const int key, const bool down);
+	CMenuBaseItem* m_pItemAtCursorOnDown;
 };
 
-#endif // EMBEDITEM_H
+#endif  // EMBEDITEM_H

@@ -53,4 +53,4 @@ namespace CustomGeometry
 	{
 		return m_Items.Count() < 1;
 	}
-}
+}  // namespace CustomGeometry

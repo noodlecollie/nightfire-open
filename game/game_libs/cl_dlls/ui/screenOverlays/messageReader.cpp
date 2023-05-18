@@ -30,4 +30,4 @@ namespace ScreenOverlays
 
 		m_OverlayId = OverlayId::Overlay_None;
 	}
-}
+}  // namespace ScreenOverlays

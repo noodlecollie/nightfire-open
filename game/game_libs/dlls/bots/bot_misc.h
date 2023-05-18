@@ -36,16 +36,16 @@
 // Global Vars
 ///////////////////////////////////////////////////////////////////////////////
 
-const int MAX_BOTS			= 32;
-const int MAX_BOT_SKINS		= 16;
-const int MAX_BOT_NAMES		= 37;
-const int MAX_LINE_LENGTH	= 100;
+const int MAX_BOTS = 32;
+const int MAX_BOT_SKINS = 16;
+const int MAX_BOT_NAMES = 37;
+const int MAX_LINE_LENGTH = 100;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Global Funcs
 ///////////////////////////////////////////////////////////////////////////////
 
-void nextItem(char *dest, char **line, char delimiter, char comment = '\0');
+void nextItem(char* dest, char** line, char delimiter, char comment = '\0');
 
 ///////////////////////////////////////////////////////////////////////////////
 // CBaseBotGlobals Class
@@ -54,19 +54,16 @@ void nextItem(char *dest, char **line, char delimiter, char comment = '\0');
 class CBaseBotGlobals
 {
 public:
-
-	float	AutoAdjCheckTime;
+	float AutoAdjCheckTime;
 
 	CBaseBotGlobals();
 	~CBaseBotGlobals();
 
-	void	IncreaseDifficulty( void );
-	void	DecreaseDifficulty( void );
-	void	HandleAutoAdjDifficulty( void );
-
+	void IncreaseDifficulty(void);
+	void DecreaseDifficulty(void);
+	void HandleAutoAdjDifficulty(void);
 };
 
 extern CBaseBotGlobals BotGlobals;
 
-#endif	/*RHOBOT_MISC_H*/
-
+#endif /*RHOBOT_MISC_H*/

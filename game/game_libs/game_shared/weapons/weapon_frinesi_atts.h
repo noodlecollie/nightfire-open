@@ -44,122 +44,122 @@ static constexpr float FRINESI_RELOAD_SOUND_OFFSET = 0.1f;
 static constexpr float FRINESI_PUMP_SOUND_OFFSET_WHEN_RELOADING = 0.08f;
 static constexpr float FRINESI_PUMP_SOUND_OFFSET_AFTER_FIRING = 0.45f;
 
-static constexpr CAmmoDef Ammo_Frinesi =
-{
-	"ammo_frinesi",	// ClassName
-	"ammodef_frinesi",	// AmmoName
-	125,	// MaxCarry
-	72	// AmmoBoxGive
+static constexpr CAmmoDef Ammo_Frinesi = {
+	"ammo_frinesi",  // ClassName
+	"ammodef_frinesi",  // AmmoName
+	125,  // MaxCarry
+	72  // AmmoBoxGive
 };
 
-static const WeaponAtts::WACollection StaticWeaponAttributes([](WeaponAtts::WACollection& obj)
-{
-	using namespace WeaponAtts;
+static const WeaponAtts::WACollection StaticWeaponAttributes(
+	[](WeaponAtts::WACollection& obj)
+	{
+		using namespace WeaponAtts;
 
-	WACore& core = obj.Core;
-	core.Classname = "weapon_frinesi";
-	core.Id = WeaponId_e::WeaponFrinesi;
-	core.SwitchWeight = WeaponPref_Frinesi;
+		WACore& core = obj.Core;
+		core.Classname = "weapon_frinesi";
+		core.Id = WeaponId_e::WeaponFrinesi;
+		core.SwitchWeight = WeaponPref_Frinesi;
 
-	WAAmmoDef& ammo = obj.Ammo;
-	ammo.PrimaryAmmo = &Ammo_Frinesi;
-	ammo.MaxClip = 8;
-	ammo.PrimaryAmmoOnFirstPickup = ammo.MaxClip;
+		WAAmmoDef& ammo = obj.Ammo;
+		ammo.PrimaryAmmo = &Ammo_Frinesi;
+		ammo.MaxClip = 8;
+		ammo.PrimaryAmmoOnFirstPickup = ammo.MaxClip;
 
-	WAViewModel& vm = obj.ViewModel;
-	vm.ModelName = "models/weapon_frinesi/v_frinesi.mdl";
-	vm.Anim_Draw = FRINESI_DRAW;
-	vm.AnimList_Idle << FRINESI_IDLE1 << FRINESI_IDLE2 << FRINESI_IDLE3 << FRINESI_IDLE4;
-	vm.AnimList_Reload << FRINESI_START_RELOAD;
+		WAViewModel& vm = obj.ViewModel;
+		vm.ModelName = "models/weapon_frinesi/v_frinesi.mdl";
+		vm.Anim_Draw = FRINESI_DRAW;
+		vm.AnimList_Idle << FRINESI_IDLE1 << FRINESI_IDLE2 << FRINESI_IDLE3 << FRINESI_IDLE4;
+		vm.AnimList_Reload << FRINESI_START_RELOAD;
 
-	vm.ReloadSounds.MinVolume = 0.9f;
-	vm.ReloadSounds.MaxVolume = 0.9f;
-	vm.ReloadSounds.MinPitch = 98;
-	vm.ReloadSounds.MaxPitch = 102;
-	vm.ReloadSounds.SoundNames << "weapons/weapon_frinesi/frinesi_reload1.wav"
-							   << "weapons/weapon_frinesi/frinesi_reload2.wav"
-							   << "weapons/weapon_frinesi/frinesi_reload3.wav"
-							   << "weapons/weapon_frinesi/frinesi_reload4.wav";
+		vm.ReloadSounds.MinVolume = 0.9f;
+		vm.ReloadSounds.MaxVolume = 0.9f;
+		vm.ReloadSounds.MinPitch = 98;
+		vm.ReloadSounds.MaxPitch = 102;
+		vm.ReloadSounds.SoundNames << "weapons/weapon_frinesi/frinesi_reload1.wav"
+								   << "weapons/weapon_frinesi/frinesi_reload2.wav"
+								   << "weapons/weapon_frinesi/frinesi_reload3.wav"
+								   << "weapons/weapon_frinesi/frinesi_reload4.wav";
 
-	WAPlayerModel& pm = obj.PlayerModel;
-	pm.PlayerModelName = "models/weapon_frinesi/p_frinesi.mdl";
-	pm.WorldModelName = "models/weapon_frinesi/w_frinesi.mdl";
-	pm.PlayerAnimExtension = "shotgun";
+		WAPlayerModel& pm = obj.PlayerModel;
+		pm.PlayerModelName = "models/weapon_frinesi/p_frinesi.mdl";
+		pm.WorldModelName = "models/weapon_frinesi/w_frinesi.mdl";
+		pm.PlayerAnimExtension = "shotgun";
 
-	obj.Prediction.SetUpPrediction<CWeaponFrinesi>();
+		obj.Prediction.SetUpPrediction<CWeaponFrinesi>();
 
-	obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_frinesi_auto", &skilldata_t::plrDmgFrinesiAuto));
-	obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_frinesi_pump", &skilldata_t::plrDmgFrinesiPump));
+		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_frinesi_auto", &skilldata_t::plrDmgFrinesiAuto));
+		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_frinesi_pump", &skilldata_t::plrDmgFrinesiPump));
 
-	// From Nightfire:
-	// - 6 bullets per shot in either mode
-	// - 81 damage over all 6 shots in auto mode = 13.5 per shot
-	// - 159 damage over all 6 shots in pump mode = 26.5 per shot
+		// From Nightfire:
+		// - 6 bullets per shot in either mode
+		// - 81 damage over all 6 shots in auto mode = 13.5 per shot
+		// - 159 damage over all 6 shots in pump mode = 26.5 per shot
 
-	// Auto
-	WAHitscanAttack* priAttack = new WAHitscanAttack();
-	obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
+		// Auto
+		WAHitscanAttack* priAttack = new WAHitscanAttack();
+		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
 
-	priAttack->EventScript = "events/weapon_frinesi/fire_auto.sc";
-	priAttack->FunctionsUnderwater = true;
-	priAttack->IsContinuous = false;
-	priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
-	priAttack->AttackRate = FRINESI_FIRE_RATE_AUTO;
-	priAttack->BaseDamagePerShot = &skilldata_t::plrDmgFrinesiAuto;
-	priAttack->BulletsPerShot = 6;
-	priAttack->AutoAim = AUTOAIM_10DEGREES;
-	priAttack->Volume = LOUD_GUN_VOLUME;
-	priAttack->MuzzleFlashBrightness = NORMAL_GUN_FLASH;
-	priAttack->ViewPunchY = -5.0f;
-	priAttack->ShellModelName = "models/shotgunshell.mdl";
-	priAttack->ShellModelType = ShellType::Shotgun;
-	priAttack->SpecialReload = true;
+		priAttack->EventScript = "events/weapon_frinesi/fire_auto.sc";
+		priAttack->FunctionsUnderwater = true;
+		priAttack->IsContinuous = false;
+		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
+		priAttack->AttackRate = FRINESI_FIRE_RATE_AUTO;
+		priAttack->BaseDamagePerShot = &skilldata_t::plrDmgFrinesiAuto;
+		priAttack->BulletsPerShot = 6;
+		priAttack->AutoAim = AUTOAIM_10DEGREES;
+		priAttack->Volume = LOUD_GUN_VOLUME;
+		priAttack->MuzzleFlashBrightness = NORMAL_GUN_FLASH;
+		priAttack->ViewPunchY = -5.0f;
+		priAttack->ShellModelName = "models/shotgunshell.mdl";
+		priAttack->ShellModelType = ShellType::Shotgun;
+		priAttack->SpecialReload = true;
 
-	AccuracyParameters& accuracy = priAttack->Accuracy;
-	accuracy.RestValue = 0.1;
-	accuracy.RestSpread = Vector2D(0.08f, 0.08f);
-	accuracy.RunValue = 0.5;
-	accuracy.RunSpread = Vector2D(0.15f, 0.15f);
-	accuracy.CrouchShift = -0.08f;
-	accuracy.FallShift = 0.15f;
-	accuracy.AirShift = 0.15;
-	accuracy.AttackCoefficient = 0.3f;
-	accuracy.DecayCoefficient = 0.2f;
-	accuracy.FireImpulse = 0.2f;
-	accuracy.FireImpulseCeiling = 0.6f;
-	accuracy.FireImpulseHoldTime = 0.1f;
+		AccuracyParameters& accuracy = priAttack->Accuracy;
+		accuracy.RestValue = 0.1;
+		accuracy.RestSpread = Vector2D(0.08f, 0.08f);
+		accuracy.RunValue = 0.5;
+		accuracy.RunSpread = Vector2D(0.15f, 0.15f);
+		accuracy.CrouchShift = -0.08f;
+		accuracy.FallShift = 0.15f;
+		accuracy.AirShift = 0.15;
+		accuracy.AttackCoefficient = 0.3f;
+		accuracy.DecayCoefficient = 0.2f;
+		accuracy.FireImpulse = 0.2f;
+		accuracy.FireImpulseCeiling = 0.6f;
+		accuracy.FireImpulseHoldTime = 0.1f;
 
-	CrosshairParameters& crosshair = priAttack->Crosshair;
-	crosshair.RadiusMin = 0.08f;
-	crosshair.RadiusMax = 0.15f;
-	crosshair.BarScaleMin = 0.05f;
-	crosshair.BarScaleMax = 0.04f;
+		CrosshairParameters& crosshair = priAttack->Crosshair;
+		crosshair.RadiusMin = 0.08f;
+		crosshair.RadiusMax = 0.15f;
+		crosshair.BarScaleMin = 0.05f;
+		crosshair.BarScaleMax = 0.04f;
 
-	priAttack->ViewModelAnimList_Attack << FRINESI_SHOOT;
+		priAttack->ViewModelAnimList_Attack << FRINESI_SHOOT;
 
-	priAttack->AttackSounds.MinVolume = 0.85f;
-	priAttack->AttackSounds.MaxVolume = 0.9f;
-	priAttack->AttackSounds.MinPitch = 100;
-	priAttack->AttackSounds.MaxPitch = 102;
-	priAttack->AttackSounds.SoundNames << "weapons/weapon_frinesi/frinesi_fire1.wav";
+		priAttack->AttackSounds.MinVolume = 0.85f;
+		priAttack->AttackSounds.MaxVolume = 0.9f;
+		priAttack->AttackSounds.MinPitch = 100;
+		priAttack->AttackSounds.MaxPitch = 102;
+		priAttack->AttackSounds.SoundNames << "weapons/weapon_frinesi/frinesi_fire1.wav";
 
-	// Pump
-	WAHitscanAttack* secAttack = new WAHitscanAttack();
-	obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(secAttack));
+		// Pump
+		WAHitscanAttack* secAttack = new WAHitscanAttack();
+		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(secAttack));
 
-	// Base off primary attack.
-	*secAttack = *priAttack;
-	secAttack->EventScript = "events/weapon_frinesi/fire_pump.sc";
-	secAttack->AttackRate = FRINESI_FIRE_RATE_PUMP;
-	secAttack->BaseDamagePerShot = &skilldata_t::plrDmgFrinesiPump;
-	secAttack->ViewPunchY = -10.0f;
+		// Base off primary attack.
+		*secAttack = *priAttack;
+		secAttack->EventScript = "events/weapon_frinesi/fire_pump.sc";
+		secAttack->AttackRate = FRINESI_FIRE_RATE_PUMP;
+		secAttack->BaseDamagePerShot = &skilldata_t::plrDmgFrinesiPump;
+		secAttack->ViewPunchY = -10.0f;
 
-	secAttack->Accuracy.RestSpread = Vector2D(0.1f, 0.1f);
-	secAttack->Accuracy.RunSpread = Vector2D(0.17f, 0.17f);
+		secAttack->Accuracy.RestSpread = Vector2D(0.1f, 0.1f);
+		secAttack->Accuracy.RunSpread = Vector2D(0.17f, 0.17f);
 
-	secAttack->ViewModelAnimList_Attack.Clear();
-	secAttack->ViewModelAnimList_Attack << FRINESI_SHOOT_BIG;
+		secAttack->ViewModelAnimList_Attack.Clear();
+		secAttack->ViewModelAnimList_Attack << FRINESI_SHOOT_BIG;
 
-	secAttack->AttackSounds.MinPitch = 90;
-	secAttack->AttackSounds.MaxPitch = 94;
-});
+		secAttack->AttackSounds.MinPitch = 90;
+		secAttack->AttackSounds.MaxPitch = 94;
+	});

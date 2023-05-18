@@ -32,4 +32,4 @@ namespace SoundResources
 		Precache(ShellSounds);
 		Precache(BreakSounds);
 	}
-}
+}  // namespace SoundResources

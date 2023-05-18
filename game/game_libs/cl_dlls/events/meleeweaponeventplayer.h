@@ -6,7 +6,9 @@
 class MeleeWeaponEventPlayer : public BaseWeaponEventPlayer
 {
 public:
-	virtual ~MeleeWeaponEventPlayer() {}
+	virtual ~MeleeWeaponEventPlayer()
+	{
+	}
 
 protected:
 	virtual void EventStart() override;

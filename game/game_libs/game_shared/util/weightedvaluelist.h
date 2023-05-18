@@ -20,7 +20,7 @@ public:
 	}
 
 	// Convenience for adding items with equal chance to be chosen.
-	WeightedValueList<T>& operator <<(const T& value)
+	WeightedValueList<T>& operator<<(const T& value)
 	{
 		Add(value, 1.0f, true);
 		return *this;

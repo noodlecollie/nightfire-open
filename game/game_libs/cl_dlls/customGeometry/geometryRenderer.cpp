@@ -16,7 +16,7 @@ namespace
 	{
 		gEngfuncs.pTriAPI->TexCoord2f(0.0f, 0.0f);
 	}
-}
+}  // namespace
 
 namespace CustomGeometry
 {
@@ -98,10 +98,11 @@ namespace CustomGeometry
 		// UGH. Awful HL const-incorrectness again.
 		gEngfuncs.pTriAPI->SpriteTexture(const_cast<model_s*>(colourSprite), 0);
 		gEngfuncs.pTriAPI->RenderMode(renderMode);
-		gEngfuncs.pTriAPI->Color4ub((colour & 0xFF000000) >> 24,
-									(colour & 0x00FF0000) >> 16,
-									(colour & 0x0000FF00) >> 8,
-									(colour & 0x000000FF) >> 0);
+		gEngfuncs.pTriAPI->Color4ub(
+			(colour & 0xFF000000) >> 24,
+			(colour & 0x00FF0000) >> 16,
+			(colour & 0x0000FF00) >> 8,
+			(colour & 0x000000FF) >> 0);
 	}
 
 	void CGeometryRenderer::DrawLines(const CGeometryItem& item)
@@ -253,4 +254,4 @@ namespace CustomGeometry
 
 		gEngfuncs.pTriAPI->End();
 	}
-}
+}  // namespace CustomGeometry

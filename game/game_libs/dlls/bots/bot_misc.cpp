@@ -45,8 +45,8 @@ CBaseBotGlobals BotGlobals;
 // CBaseBotGlobals Constructor/Destructor
 ///////////////////////////////////////////////////////////////////////////////
 
-CBaseBotGlobals::CBaseBotGlobals():
-AutoAdjCheckTime( 12 )
+CBaseBotGlobals::CBaseBotGlobals() :
+	AutoAdjCheckTime(12)
 {
 }
 
@@ -58,92 +58,94 @@ CBaseBotGlobals::~CBaseBotGlobals()
 // IncreaseDifficulty
 ///////////////////////////////////////////////////////////////////////////////
 
-void	CBaseBotGlobals::IncreaseDifficulty( void )
+void CBaseBotGlobals::IncreaseDifficulty(void)
 {
 	char serverCommand[128] = "bot_skill ###";
 	int botSkill = (int)(bot_skill.value);
 
 	if ( botSkill < 99 )
 	{
-		sprintf(serverCommand, "bot_skill %d\n", (botSkill+1) );
-//		CVAR_SET_FLOAT("bot_skill", ((bot_skill.value)+1));
+		sprintf(serverCommand, "bot_skill %d\n", (botSkill + 1));
+		//		CVAR_SET_FLOAT("bot_skill", ((bot_skill.value)+1));
 	}
 	else
 	{
 		sprintf(serverCommand, "bot_skill %d\n", 100);
-//		CVAR_SET_FLOAT("bot_skill", 100);
+		//		CVAR_SET_FLOAT("bot_skill", 100);
 	}
-	SERVER_COMMAND(serverCommand );
-	if (IS_DEDICATED_SERVER()) printf( "%s", serverCommand );
+	SERVER_COMMAND(serverCommand);
+	if ( IS_DEDICATED_SERVER() )
+		printf("%s", serverCommand);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // DecreaseDifficulty
 ///////////////////////////////////////////////////////////////////////////////
 
-void	CBaseBotGlobals::DecreaseDifficulty( void )
+void CBaseBotGlobals::DecreaseDifficulty(void)
 {
 	char serverCommand[128] = "bot_skill ###";
 	int botSkill = (int)(bot_skill.value);
 
 	if ( botSkill > 1 )
 	{
-		sprintf(serverCommand, "bot_skill %d\n", (botSkill-1) );
-//		CVAR_SET_FLOAT("bot_skill", (botSkill-1));
+		sprintf(serverCommand, "bot_skill %d\n", (botSkill - 1));
+		//		CVAR_SET_FLOAT("bot_skill", (botSkill-1));
 	}
 	else
 	{
 		sprintf(serverCommand, "bot_skill %d\n", 0);
-//		CVAR_SET_FLOAT("bot_skill", 0);
+		//		CVAR_SET_FLOAT("bot_skill", 0);
 	}
 	SERVER_COMMAND(serverCommand);
-	if (IS_DEDICATED_SERVER()) printf( "%s", serverCommand );
+	if ( IS_DEDICATED_SERVER() )
+		printf("%s", serverCommand);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // HandleAutoAdjDifficulty
 ///////////////////////////////////////////////////////////////////////////////
 
-void CBaseBotGlobals::HandleAutoAdjDifficulty( void )
+void CBaseBotGlobals::HandleAutoAdjDifficulty(void)
 {
-	if ( (int)(bot_skill_aa.value) != 0  ) //starbreaker - now use cvar value
+	if ( (int)(bot_skill_aa.value) != 0 )  // starbreaker - now use cvar value
 	{
 		if ( AutoAdjCheckTime < gpGlobals->time )
 		{
-			float BotFragTotal	= 1; // starting at zero so we don't divide by zero
-			float BotDeathTotal	= 1;
-			float HumanFragTotal	= 1;
-			float HumanDeathTotal	= 1;
+			float BotFragTotal = 1;  // starting at zero so we don't divide by zero
+			float BotDeathTotal = 1;
+			float HumanFragTotal = 1;
+			float HumanDeathTotal = 1;
 
 			for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 			{
-				CBasePlayer *pPlayer = MPUtils::CBasePlayerFromIndex(i);
+				CBasePlayer* pPlayer = MPUtils::CBasePlayerFromIndex(i);
 
 				if ( pPlayer )
 				{
 					if ( pPlayer->IsFakeClient() )
 					{
-						BotFragTotal	+= pPlayer->pev->frags;
-						BotDeathTotal	+= pPlayer->m_iDeaths;
+						BotFragTotal += pPlayer->pev->frags;
+						BotDeathTotal += pPlayer->m_iDeaths;
 					}
 					else if ( !pPlayer->IsFakeClient() && pPlayer->IsNetClient() )
 					{
-						HumanFragTotal	+= pPlayer->pev->frags;
-						HumanDeathTotal	+= pPlayer->m_iDeaths;
+						HumanFragTotal += pPlayer->pev->frags;
+						HumanDeathTotal += pPlayer->m_iDeaths;
 					}
 				}
 			}
 
-			if ( ( BotFragTotal / BotDeathTotal ) < ( HumanFragTotal / HumanDeathTotal ) )
+			if ( (BotFragTotal / BotDeathTotal) < (HumanFragTotal / HumanDeathTotal) )
 			{
 				IncreaseDifficulty();
 			}
-			else if ( ( BotFragTotal / BotDeathTotal ) > ( HumanFragTotal / HumanDeathTotal ) )
+			else if ( (BotFragTotal / BotDeathTotal) > (HumanFragTotal / HumanDeathTotal) )
 			{
 				DecreaseDifficulty();
 			}
 
-			AutoAdjCheckTime += 12; // AutoAdj every 12 seconds
+			AutoAdjCheckTime += 12;  // AutoAdj every 12 seconds
 		}
 	}
 }
@@ -153,46 +155,44 @@ void CBaseBotGlobals::HandleAutoAdjDifficulty( void )
 //              Scott: Adapted from botman's Bot10
 ///////////////////////////////////////////////////////////////////////////////
 
-int CBaseBot::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker,
-			float flDamage, int bitsDamageType )
+int CBaseBot::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
 {
-	CBaseEntity *pAttacker = CBaseEntity::Instance(pevAttacker);
+	CBaseEntity* pAttacker = CBaseEntity::Instance(pevAttacker);
 	int ret_damage;
 
 	// do the damage first...
-	ret_damage = CBasePlayer::TakeDamage( pevInflictor, pevAttacker, flDamage,
-	                                      bitsDamageType );
+	ret_damage = CBasePlayer::TakeDamage(pevInflictor, pevAttacker, flDamage, bitsDamageType);
 
 	// if the bot injures itself, or by a nonplayer,
 	// do not turn to attack...
-	if (pAttacker == this || !pAttacker->IsPlayer() ) return ret_damage;
+	if ( pAttacker == this || !pAttacker->IsPlayer() )
+		return ret_damage;
 
 	// if the bot doesn't have an enemy and someone is shooting at it then
 	// turn in the attacker's direction...
-	if (GetEnemy() == NULL || ( ( gpGlobals->time - Memory.GetEnemyLastSeenTime() ) > 1 ) )
+	if ( GetEnemy() == NULL || ((gpGlobals->time - Memory.GetEnemyLastSeenTime()) > 1) )
 	{
-		SetEnemy(NULL); // Make sure enemy is reset
+		SetEnemy(NULL);  // Make sure enemy is reset
 
 		// face the attacker...
-		SetLookAtVec( pAttacker->pev->origin - pev->origin );
+		SetLookAtVec(pAttacker->pev->origin - pev->origin);
 
 		// set enemy if not a teammate
-		if (pAttacker->IsAlive() &&
-			g_pGameRules->PlayerRelationship( this, pAttacker ) == GR_NOTTEAMMATE )
+		if ( pAttacker->IsAlive() && g_pGameRules->PlayerRelationship(this, pAttacker) == GR_NOTTEAMMATE )
 		{
-			SetWantToBeInCombat( TRUE );
-			SetEnemy (pAttacker);
+			SetWantToBeInCombat(TRUE);
+			SetEnemy(pAttacker);
 		}
 
-		if ( GetEnemy() != NULL)
+		if ( GetEnemy() != NULL )
 		{
-//			ActionSpeak("I've found an enemy.");
+			//			ActionSpeak("I've found an enemy.");
 
 			ActionChooseWeapon();
 
-			SetLookAtBiasVec( Vector( RANDOM_FLOAT(-1,1), RANDOM_FLOAT(-1,1), RANDOM_FLOAT(-1,1) ) );
+			SetLookAtBiasVec(Vector(RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1)));
 
-			Memory.EnemySighted( GetEnemy() );
+			Memory.EnemySighted(GetEnemy());
 		}
 	}
 

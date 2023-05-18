@@ -92,13 +92,14 @@ void CWeaponL96A1::SetZoomLevel(uint32_t level)
 
 void CWeaponL96A1::PlayZoomSound()
 {
-	EMIT_SOUND_DYN(ENT(m_pPlayer->pev),
-				   CHAN_ITEM,
-				   m_iZoomLevel > 0 ? L96A1_ZOOM_IN_SOUND : L96A1_ZOOM_OUT_SOUND,
-				   0.3f,
-				   ATTN_NORM,
-				   0,
-				   100);
+	EMIT_SOUND_DYN(
+		ENT(m_pPlayer->pev),
+		CHAN_ITEM,
+		m_iZoomLevel > 0 ? L96A1_ZOOM_IN_SOUND : L96A1_ZOOM_OUT_SOUND,
+		0.3f,
+		ATTN_NORM,
+		0,
+		100);
 }
 
 #ifndef CLIENT_DLL
@@ -122,15 +123,16 @@ namespace WeaponAtts
 	{
 		return ::StaticWeaponAttributes;
 	}
-}
+}  // namespace WeaponAtts
 
 class CAmmol96A1 : public CGenericAmmo
 {
 public:
-	CAmmol96A1() : CGenericAmmo("models/weapon_l96a1/w_ammo_l96a1.mdl", Ammo_L96A1)
+	CAmmol96A1() :
+		CGenericAmmo("models/weapon_l96a1/w_ammo_l96a1.mdl", Ammo_L96A1)
 	{
 	}
 };
 
 LINK_ENTITY_TO_CLASS(ammo_l96a1, CAmmol96A1)
-LINK_ENTITY_TO_CLASS(ammo_sniper, CAmmol96A1)	// For backwards-compatibility.
+LINK_ENTITY_TO_CLASS(ammo_sniper, CAmmol96A1)  // For backwards-compatibility.

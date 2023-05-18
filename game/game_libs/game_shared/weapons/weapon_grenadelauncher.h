@@ -22,7 +22,8 @@ protected:
 	virtual void CreateProjectile(const WeaponAtts::WAProjectileAttack& projectileAttack) override;
 
 private:
-	static CWeaponGrenadeLauncher_Grenade* CreateGrenade(entvars_t *pevOwner, const Vector& location, const Vector& launchDir);
+	static CWeaponGrenadeLauncher_Grenade*
+	CreateGrenade(entvars_t* pevOwner, const Vector& location, const Vector& launchDir);
 
 	Vector GetGrenadeLaunchAngles() const;
 #endif

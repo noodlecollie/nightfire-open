@@ -14,7 +14,9 @@ public:
 	};
 
 	CWeaponDebugEvent_HitscanFire(CGenericWeapon& weapon);
-	virtual ~CWeaponDebugEvent_HitscanFire() {}
+	virtual ~CWeaponDebugEvent_HitscanFire()
+	{
+	}
 
 	virtual CWeaponDebugEvent_Base::EventType Type() const override;
 

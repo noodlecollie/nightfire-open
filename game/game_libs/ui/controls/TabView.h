@@ -27,22 +27,22 @@ public:
 	void Draw() override;
 	Point GetPositionOffset() const override;
 
-	inline void SetTabName( int idx, const char *name )
+	inline void SetTabName(int idx, const char* name)
 	{
-		if( m_pItems.IsValidIndex( idx ))
+		if ( m_pItems.IsValidIndex(idx) )
 			m_pItems[idx]->szName = name;
 	}
 
-	inline void AddTabItem( CMenuBaseItem &item, const char *name )
+	inline void AddTabItem(CMenuBaseItem& item, const char* name)
 	{
-		AddItem( item );
-		SetTabName( m_pItems.Count() - 1, name );
+		AddItem(item);
+		SetTabName(m_pItems.Count() - 1, name);
 	}
 
 private:
-	void DrawTab(Point pt, const char *name, bool isEnd , bool isSelected, bool isHighlighted);
+	void DrawTab(Point pt, const char* name, bool isEnd, bool isSelected, bool isHighlighted);
 
 	Size m_szTab;
 };
 
-#endif // TABWIDGET_H
+#endif  // TABWIDGET_H

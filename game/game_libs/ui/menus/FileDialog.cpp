@@ -25,32 +25,38 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "StringArrayModel.h"
 #include "PicButton.h"
 
-#define ART_BANNER	  	"gfx/shell/head_touchoptions"
-#define ART_GAMMA		"gfx/shell/gamma"
+#define ART_BANNER "gfx/shell/head_touchoptions"
+#define ART_GAMMA "gfx/shell/gamma"
 
-uiFileDialogGlobal_t	uiFileDialogGlobal;
+uiFileDialogGlobal_t uiFileDialogGlobal;
 
 class CMenuFileDialog : public CMenuFramework
 {
 public:
-	CMenuFileDialog() : CMenuFramework("CMenuFileDialog") { }
+	CMenuFileDialog() :
+		CMenuFramework("CMenuFileDialog")
+	{
+	}
 
 private:
-	void _Init( void ) override;
-	void _VidInit( void ) override;
+	void _Init(void) override;
+	void _VidInit(void) override;
 	void SaveAndPopMenu() override;
 	void RejectChanges();
-	void ApplyChanges( const char *fileName );
+	void ApplyChanges(const char* fileName);
 	void UpdateExtra();
 
 	class CFileListModel : public CStringArrayModel
 	{
 	public:
-		CFileListModel() : CStringArrayModel( (const char*)filePath, 95, UI_MAXGAMES ) {}
+		CFileListModel() :
+			CStringArrayModel((const char*)filePath, 95, UI_MAXGAMES)
+		{
+		}
 		void Update() override;
 
 	private:
-		char		filePath[UI_MAXGAMES][95];
+		char filePath[UI_MAXGAMES][95];
 	} model;
 
 	CMenuTable fileList;
@@ -65,57 +71,57 @@ private:
 
 void CMenuFileDialog::CPreview::Draw()
 {
-	UI_FillRect( m_scPos.x - 2, m_scPos.y - 2,  m_scSize.w + 4, m_scSize.h + 4, 0xFFC0C0C0 );
-	UI_FillRect( m_scPos.x, m_scPos.y, m_scSize.w, m_scSize.h, 0xFF808080 );
-	EngFuncs::PIC_Set( image, 255, 255, 255, 255 );
-	EngFuncs::PIC_DrawTrans( m_scPos, m_scSize );
+	UI_FillRect(m_scPos.x - 2, m_scPos.y - 2, m_scSize.w + 4, m_scSize.h + 4, 0xFFC0C0C0);
+	UI_FillRect(m_scPos.x, m_scPos.y, m_scSize.w, m_scSize.h, 0xFF808080);
+	EngFuncs::PIC_Set(image, 255, 255, 255, 255);
+	EngFuncs::PIC_DrawTrans(m_scPos, m_scSize);
 }
 
-void CMenuFileDialog::CFileListModel::Update( void )
+void CMenuFileDialog::CFileListModel::Update(void)
 {
-	char	**filenames;
-	int	i = 0, numFiles, j, k;
+	char** filenames;
+	int i = 0, numFiles, j, k;
 
-
-	for( k = 0; k < uiFileDialogGlobal.npatterns; k++)
+	for ( k = 0; k < uiFileDialogGlobal.npatterns; k++ )
 	{
-		filenames = EngFuncs::GetFilesList( uiFileDialogGlobal.patterns[k], &numFiles, TRUE );
+		filenames = EngFuncs::GetFilesList(uiFileDialogGlobal.patterns[k], &numFiles, TRUE);
 		for ( j = 0; j < numFiles; i++, j++ )
 		{
-			if( i >= UI_MAXGAMES ) break;
-			Q_strncpy( filePath[i],filenames[j], sizeof( filePath[0] ) );
+			if ( i >= UI_MAXGAMES )
+				break;
+			Q_strncpy(filePath[i], filenames[j], sizeof(filePath[0]));
 		}
 	}
 
 	m_iCount = i;
 }
 
-void CMenuFileDialog::ApplyChanges(const char *fileName)
+void CMenuFileDialog::ApplyChanges(const char* fileName)
 {
-	Q_strncpy( uiFileDialogGlobal.result, fileName, sizeof( uiFileDialogGlobal.result ) );
+	Q_strncpy(uiFileDialogGlobal.result, fileName, sizeof(uiFileDialogGlobal.result));
 	uiFileDialogGlobal.result[255] = 0;
 	uiFileDialogGlobal.valid = false;
-	uiFileDialogGlobal.callback( fileName[0] != 0 );
+	uiFileDialogGlobal.callback(fileName[0] != 0);
 }
 
 void CMenuFileDialog::RejectChanges()
 {
-	ApplyChanges( "" );
+	ApplyChanges("");
 	Hide();
 }
 
 void CMenuFileDialog::SaveAndPopMenu()
 {
-	const char *fileName = model.GetText( fileList.GetCurrentIndex() );
-	ApplyChanges( fileName );
+	const char* fileName = model.GetText(fileList.GetCurrentIndex());
+	ApplyChanges(fileName);
 	Hide();
 }
 
 void CMenuFileDialog::UpdateExtra()
 {
-	const char *fileName = model.GetText( fileList.GetCurrentIndex() );
-	if( uiFileDialogGlobal.preview )
-		preview.image = EngFuncs::PIC_Load( fileName );
+	const char* fileName = model.GetText(fileList.GetCurrentIndex());
+	if ( uiFileDialogGlobal.preview )
+		preview.image = EngFuncs::PIC_Load(fileName);
 }
 
 /*
@@ -123,29 +129,29 @@ void CMenuFileDialog::UpdateExtra()
 UI_FileDialog_Init
 =================
 */
-void CMenuFileDialog::_Init( void )
+void CMenuFileDialog::_Init(void)
 {
 	// banner.SetPicture( ART_BANNER );
 
 	fileList.iFlags |= QMF_DROPSHADOW;
-	fileList.SetModel( &model );
-	fileList.onChanged = VoidCb( &CMenuFileDialog::UpdateExtra );
-	fileList.SetRect( 360, 230, -20, 465 );
+	fileList.SetModel(&model);
+	fileList.onChanged = VoidCb(&CMenuFileDialog::UpdateExtra);
+	fileList.SetRect(360, 230, -20, 465);
 	UpdateExtra();
 
-	preview.SetRect( 72, 380, 196, 196 );
+	preview.SetRect(72, 380, 196, 196);
 
-	AddItem( background );
+	AddItem(background);
 	// AddItem( banner );
-	AddButton( L( "Done" ), L( "Use selected file" ), PC_DONE, VoidCb( &CMenuFileDialog::SaveAndPopMenu ) );
-	AddButton( L( "GameUI_Cancel" ), L( "Cancel file selection" ), PC_CANCEL, VoidCb( &CMenuFileDialog::RejectChanges ) );
-	AddItem( preview );
-	AddItem( fileList );
+	AddButton(L("Done"), L("Use selected file"), PC_DONE, VoidCb(&CMenuFileDialog::SaveAndPopMenu));
+	AddButton(L("GameUI_Cancel"), L("Cancel file selection"), PC_CANCEL, VoidCb(&CMenuFileDialog::RejectChanges));
+	AddItem(preview);
+	AddItem(fileList);
 }
 
 void CMenuFileDialog::_VidInit()
 {
-	preview.SetVisibility( uiFileDialogGlobal.preview );
+	preview.SetVisibility(uiFileDialogGlobal.preview);
 }
 
-ADD_MENU( menu_filedialog, CMenuFileDialog, UI_FileDialog_Menu );
+ADD_MENU(menu_filedialog, CMenuFileDialog, UI_FileDialog_Menu);

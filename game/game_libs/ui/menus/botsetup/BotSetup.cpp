@@ -8,7 +8,7 @@
 
 static CUtlVector<CInGameBotListModel::ListEntry> CachedInGameBotList;
 
-class CMenuBotSetup: public CMenuFramework
+class CMenuBotSetup : public CMenuFramework
 {
 public:
 	CMenuBotSetup();
@@ -73,24 +73,26 @@ void CMenuBotSetup::_Init()
 {
 	AddItem(background);
 
-	m_BotProfileListModel.SetItemActivatedCallback([this](int index, const CBotProfileTable::ProfileData& data)
-	{
-		m_SelectedProfile = data;
+	m_BotProfileListModel.SetItemActivatedCallback(
+		[this](int index, const CBotProfileTable::ProfileData& data)
+		{
+			m_SelectedProfile = data;
 
-		UpdateUIFromSelectedProfileData();
-		UpdateButtonStates();
-	});
+			UpdateUIFromSelectedProfileData();
+			UpdateButtonStates();
+		});
 
 	m_BotProfileList.SetCharSize(QM_SMALLFONT);
 	m_BotProfileList.SetupColumn(0, L("Available"), 1.0f);
 	m_BotProfileList.SetModel(&m_BotProfileListModel);
 	AddItem(m_BotProfileList);
 
-	m_InGameBotListModel.SetItemDeleteCallback([this]()
-	{
-		m_InGameBotList.Reload();
-		UpdateButtonStates();
-	});
+	m_InGameBotListModel.SetItemDeleteCallback(
+		[this]()
+		{
+			m_InGameBotList.Reload();
+			UpdateButtonStates();
+		});
 
 	m_InGameBotList.SetCharSize(QM_SMALLFONT);
 	m_InGameBotList.SetupColumn(0, L("In Game"), 1.0f);
@@ -118,23 +120,26 @@ void CMenuBotSetup::_VidInit()
 	RecalculateDimensions();
 
 	m_BotProfileList.SetRect(LEFT_MARGIN + m_iSidePadding, LIST_TOP_OFFSET, LIST_WIDTH, -BOTTOM_EDGE_MARGIN);
-	m_InGameBotList.SetRect(LEFT_MARGIN + m_iSidePadding + LIST_WIDTH + LIST_SPACING, LIST_TOP_OFFSET, LIST_WIDTH, -BOTTOM_EDGE_MARGIN);
+	m_InGameBotList.SetRect(
+		LEFT_MARGIN + m_iSidePadding + LIST_WIDTH + LIST_SPACING,
+		LIST_TOP_OFFSET,
+		LIST_WIDTH,
+		-BOTTOM_EDGE_MARGIN);
 
 	const int profileListRightEdge = m_BotProfileList.pos.x + m_BotProfileList.size.w;
 	m_SelectedBotImage.SetCoord(profileListRightEdge + PREVIEW_LIST_LEFT_SPACING, PREVIEW_TOP_OFFSET);
 
 	const int botImageBottomEdge = m_SelectedBotImage.pos.y + m_SelectedBotImage.size.h;
-	m_SelectedBotName.SetRect(profileListRightEdge + NAME_BOX_LEFT_SPACING,
-							  botImageBottomEdge + CENTRAL_CONTROL_SPACING,
-							  NAME_BOX_WIDTH,
-							  m_SelectedBotName.size.h);
+	m_SelectedBotName.SetRect(
+		profileListRightEdge + NAME_BOX_LEFT_SPACING,
+		botImageBottomEdge + CENTRAL_CONTROL_SPACING,
+		NAME_BOX_WIDTH,
+		m_SelectedBotName.size.h);
 
 	const int botNameBottomEdge = m_SelectedBotName.pos.y + m_SelectedBotName.size.h;
-	m_AddButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 25,
-						 botNameBottomEdge + CENTRAL_CONTROL_SPACING);
+	m_AddButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 25, botNameBottomEdge + CENTRAL_CONTROL_SPACING);
 
-	m_RemoveAllButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 75,
-							   -BOTTOM_EDGE_MARGIN - 25);
+	m_RemoveAllButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 75, -BOTTOM_EDGE_MARGIN - 25);
 
 	UpdateButtonStates();
 }

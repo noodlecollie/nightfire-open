@@ -15,10 +15,10 @@ class CBotWeaponAttributes
 {
 public:
 	// Given distance to enemy, returns desire to use this weapon between 0 and 1 inclusive.
-	typedef float(*Func_DesireToUse)(CGenericWeapon&,CBaseBot&,CBaseEntity&,float);
+	typedef float (*Func_DesireToUse)(CGenericWeapon&, CBaseBot&, CBaseEntity&, float);
 
 	// Set attributes on fightStyle in order to tell the bot how to use this weapon.
-	typedef void(*Func_UseWeapon)(CGenericWeapon&,CBaseBotFightStyle&);
+	typedef void (*Func_UseWeapon)(CGenericWeapon&, CBaseBotFightStyle&);
 
 	// Convenience override - set to false to prevent a weapon from being used
 	// at all by bots. This can be useful for things that are difficult for AI
@@ -46,7 +46,8 @@ public:
 		return *this;
 	}
 
-	inline float ExecDesireToUse(CGenericWeapon& weapon, CBaseBot& owner, CBaseEntity& enemy, float distanceToEnemy) const
+	inline float ExecDesireToUse(CGenericWeapon& weapon, CBaseBot& owner, CBaseEntity& enemy, float distanceToEnemy)
+		const
 	{
 		return m_DesireToUse ? m_DesireToUse(weapon, owner, enemy, distanceToEnemy) : 0.0f;
 	}

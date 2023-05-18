@@ -2,8 +2,8 @@
 #include "standard_includes.h"
 #include "genericweapon.h"
 
-CWeaponRegistry::CWeaponRegistry()
-	: m_AttributesList{0}
+CWeaponRegistry::CWeaponRegistry() :
+	m_AttributesList {0}
 {
 }
 
@@ -56,18 +56,19 @@ const WeaponAtts::WACollection* CWeaponRegistry::GetByName(const char* name) con
 
 void CWeaponRegistry::RegisterCvars()
 {
-	ForEach([](const WeaponAtts::WACollection& atts)
-	{
-		FOR_EACH_VEC(atts.SkillRecords, index)
+	ForEach(
+		[](const WeaponAtts::WACollection& atts)
 		{
-			atts.SkillRecords[index].RegisterCvars();
-		}
+			FOR_EACH_VEC(atts.SkillRecords, index)
+			{
+				atts.SkillRecords[index].RegisterCvars();
+			}
 
-		FOR_EACH_VEC(atts.CustomCvars, index)
-		{
-			CVAR_REGISTER(atts.CustomCvars[index]);
-		}
-	});
+			FOR_EACH_VEC(atts.CustomCvars, index)
+			{
+				CVAR_REGISTER(atts.CustomCvars[index]);
+			}
+		});
 }
 
 #ifndef CLIENT_DLL

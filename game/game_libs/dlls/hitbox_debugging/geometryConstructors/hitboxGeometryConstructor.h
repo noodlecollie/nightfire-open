@@ -28,12 +28,12 @@ private:
 
 	static void HitboxFloatsToPoints(const HitboxFloats& floats, HitboxPoints& points);
 
-	void CreateGeometryFromPoints(const CustomGeometry::GeometryItemPtr_t& geom,
-								  const HitboxPoints& points) const;
+	void CreateGeometryFromPoints(const CustomGeometry::GeometryItemPtr_t& geom, const HitboxPoints& points) const;
 
-	void CreateRectFromPoints(const CustomGeometry::GeometryItemPtr_t& geom,
-							  const HitboxPoints& points,
-							  uint32_t offset) const;
+	void CreateRectFromPoints(
+		const CustomGeometry::GeometryItemPtr_t& geom,
+		const HitboxPoints& points,
+		uint32_t offset) const;
 
 	CBaseAnimating* m_pEntity = nullptr;
 	uint32_t m_iHitboxIndex = 0;

@@ -12,4 +12,4 @@ namespace CustomGeometry
 		CDebugLogger("debug_customgeometry_client")
 	{
 	}
-}
+}  // namespace CustomGeometry

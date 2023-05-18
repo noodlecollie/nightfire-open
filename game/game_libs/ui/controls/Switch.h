@@ -29,18 +29,21 @@ public:
 
 	CMenuSwitch();
 
-	bool KeyDown( int key ) override;
-	bool KeyUp( int key ) override;
+	bool KeyDown(int key) override;
+	bool KeyUp(int key) override;
 	void VidInit() override;
 	void Draw() override;
 	void UpdateEditable() override;
-	void LinkCvar( const char *name ) override
+	void LinkCvar(const char* name) override
 	{
-		CMenuEditable::LinkCvar( name, CMenuEditable::CVAR_VALUE );
+		CMenuEditable::LinkCvar(name, CMenuEditable::CVAR_VALUE);
 	}
-	void AddSwitch( const char *text );
+	void AddSwitch(const char* text);
 
-	int GetState() { return m_iState; }
+	int GetState()
+	{
+		return m_iState;
+	}
 
 	bool bMouseToggle;
 	bool bKeepToggleWidth;
@@ -53,17 +56,17 @@ public:
 
 	float fTextOffsetX;
 	float fTextOffsetY;
+
 private:
-	int IsNewStateByMouseClick( void );
+	int IsNewStateByMouseClick(void);
 	int m_iSwitches;
 	int m_iState;
 
-	const char *m_szNames[UI_MAX_MENUITEMS];
+	const char* m_szNames[UI_MAX_MENUITEMS];
 	Point m_Points[UI_MAX_MENUITEMS];
 	Size m_Sizes[UI_MAX_MENUITEMS];
 	Point m_scTextPos;
 	Size m_scTextSize;
 };
 
-
-#endif // SWITCH_H
+#endif  // SWITCH_H

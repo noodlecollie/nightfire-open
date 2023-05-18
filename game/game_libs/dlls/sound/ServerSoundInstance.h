@@ -9,4 +9,4 @@ namespace ServerSoundInstance
 	void PlayAmbient(const CSoundInstance& instance, edict_t* entity = nullptr);
 	void PlayDynamic(const CSoundInstance& instance, edict_t* entity = nullptr);
 	void StopDynamic(const CSoundInstance& instance, edict_t* entity = nullptr);
-};
+};  // namespace ServerSoundInstance

@@ -105,7 +105,7 @@ void CRadialDamageInflictor::ApplyDamage()
 	m_pWorkingAttacker = m_pAttacker ? m_pAttacker : m_pInflictor;
 	CBaseEntity* target = NULL;
 
-	while( (target = UTIL_FindEntityInSphere(target, m_vecOrigin, m_flRadius)) != NULL )
+	while ( (target = UTIL_FindEntityInSphere(target, m_vecOrigin, m_flRadius)) != NULL )
 	{
 		DamageEntityFromSphere(*target);
 	}
@@ -120,23 +120,27 @@ void CRadialDamageInflictor::DamageEntityFromSphere(CBaseEntity& target)
 		return;
 	}
 
-	if( m_iIgnoreClass != CLASS_NONE && target.Classify() == m_iIgnoreClass )
+	if ( m_iIgnoreClass != CLASS_NONE && target.Classify() == m_iIgnoreClass )
 	{
 		return;
 	}
 
 	// Blasts don't tavel into or out of water
-	if( (m_bWorkingInWater && target.pev->waterlevel == 0) ||
-		(!m_bWorkingInWater && target.pev->waterlevel == 3) )
+	if ( (m_bWorkingInWater && target.pev->waterlevel == 0) || (!m_bWorkingInWater && target.pev->waterlevel == 3) )
 	{
 		return;
 	}
 
 	m_TraceResult = TraceResult();
-	UTIL_TraceLine(m_vecOrigin, target.BodyTarget(m_vecOrigin), dont_ignore_monsters, ENT(m_pInflictor), &m_TraceResult);
+	UTIL_TraceLine(
+		m_vecOrigin,
+		target.BodyTarget(m_vecOrigin),
+		dont_ignore_monsters,
+		ENT(m_pInflictor),
+		&m_TraceResult);
 
 	// Apply damage if the entity was hit, or if they were right on the end of the line.
-	if( m_TraceResult.flFraction == 1.0f || m_TraceResult.pHit == target.edict() )
+	if ( m_TraceResult.flFraction == 1.0f || m_TraceResult.pHit == target.edict() )
 	{
 		ApplyDamageToEntity(target);
 	}
@@ -144,7 +148,7 @@ void CRadialDamageInflictor::DamageEntityFromSphere(CBaseEntity& target)
 
 void CRadialDamageInflictor::ApplyDamageToEntity(CBaseEntity& target)
 {
-	if( m_TraceResult.fStartSolid )
+	if ( m_TraceResult.fStartSolid )
 	{
 		// if we're stuck inside them, fixup the position and distance
 		m_TraceResult.vecEndPos = m_vecOrigin;
@@ -158,10 +162,15 @@ void CRadialDamageInflictor::ApplyDamageToEntity(CBaseEntity& target)
 		return;
 	}
 
-	if( m_TraceResult.flFraction != 1.0 )
+	if ( m_TraceResult.flFraction != 1.0 )
 	{
 		ClearMultiDamage();
-		target.TraceAttack(m_pInflictor, adjustedDamage, (m_TraceResult.vecEndPos - m_vecOrigin).Normalize(), &m_TraceResult, m_bitsDamageType);
+		target.TraceAttack(
+			m_pInflictor,
+			adjustedDamage,
+			(m_TraceResult.vecEndPos - m_vecOrigin).Normalize(),
+			&m_TraceResult,
+			m_bitsDamageType);
 		ApplyMultiDamage(m_pInflictor, m_pWorkingAttacker);
 	}
 	else
@@ -182,7 +191,7 @@ float CRadialDamageInflictor::GetAdjustedDamage(CBaseEntity& target, const Vecto
 		adjustedDamage *= m_flAttackerDamageMultiplier;
 	}
 
-	if( adjustedDamage < 0.0f )
+	if ( adjustedDamage < 0.0f )
 	{
 		adjustedDamage = 0.0f;
 	}

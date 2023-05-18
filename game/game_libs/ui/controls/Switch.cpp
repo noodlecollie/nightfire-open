@@ -21,12 +21,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "BaseMenu.h"
 #include "Switch.h"
 
-CMenuSwitch::CMenuSwitch( ) : BaseClass( )
+CMenuSwitch::CMenuSwitch() :
+	BaseClass()
 {
 	bMouseToggle = true;
 	bKeepToggleWidth = false;
-	SetSize( 220, 35 );
-	SetCharSize( QM_BOLDFONT );
+	SetSize(220, 35);
+	SetCharSize(QM_BOLDFONT);
 
 	// text offsets are not needed anymore,
 	// they are useless now
@@ -38,14 +39,14 @@ CMenuSwitch::CMenuSwitch( ) : BaseClass( )
 
 	m_iState = 0;
 	m_iSwitches = 0;
-	memset( m_szNames, 0, sizeof( m_szNames ));
-	memset( m_Sizes, 0, sizeof( m_Sizes ));
-	memset( m_Points, 0, sizeof( m_Points ));
+	memset(m_szNames, 0, sizeof(m_szNames));
+	memset(m_Sizes, 0, sizeof(m_Sizes));
+	memset(m_Points, 0, sizeof(m_Points));
 
 	bChangeOnPressed = false;
 }
 
-void CMenuSwitch::AddSwitch(const char *text)
+void CMenuSwitch::AddSwitch(const char* text)
 {
 	m_szNames[m_iSwitches++] = text;
 }
@@ -54,18 +55,18 @@ int CMenuSwitch::IsNewStateByMouseClick()
 {
 	int state = m_iState;
 
-	if( bMouseToggle )
+	if ( bMouseToggle )
 	{
 		state++;
 
-		if( state >= m_iSwitches )
+		if ( state >= m_iSwitches )
 			state = 0;
 	}
 	else
 	{
-		for( int i = 0; i < m_iSwitches; i++ )
+		for ( int i = 0; i < m_iSwitches; i++ )
 		{
-			if( ( UI_CursorInRect( m_Points[i], m_Sizes[i] ) && m_iState != i))
+			if ( (UI_CursorInRect(m_Points[i], m_Sizes[i]) && m_iState != i) )
 			{
 				state = i;
 			}
@@ -77,10 +78,10 @@ int CMenuSwitch::IsNewStateByMouseClick()
 
 void CMenuSwitch::VidInit()
 {
-	iSelectColor.SetDefault( uiPromptTextColor );
-	iBackgroundColor.SetDefault( uiColorBlack );
-	iFgTextColor.SetDefault( uiInputFgColor );
-	iBgTextColor.SetDefault( uiPromptTextColor );
+	iSelectColor.SetDefault(uiPromptTextColor);
+	iBackgroundColor.SetDefault(uiColorBlack);
+	iFgTextColor.SetDefault(uiInputFgColor);
+	iBgTextColor.SetDefault(uiPromptTextColor);
 
 	BaseClass::VidInit();
 
@@ -88,16 +89,17 @@ void CMenuSwitch::VidInit()
 	int sum = 0;
 	int i;
 
-	for( i = 0; i < m_iSwitches; i++ )
+	for ( i = 0; i < m_iSwitches; i++ )
 	{
-		if( m_szNames[i] != NULL && !bKeepToggleWidth )
-			sizes[i] = g_FontMgr->GetTextWideScaled( font, m_szNames[i], m_scChSize );
-		else sizes[i] = (float)m_scSize.w / (float)m_iSwitches;
+		if ( m_szNames[i] != NULL && !bKeepToggleWidth )
+			sizes[i] = g_FontMgr->GetTextWideScaled(font, m_szNames[i], m_scChSize);
+		else
+			sizes[i] = (float)m_scSize.w / (float)m_iSwitches;
 
 		sum += sizes[i];
 	}
 
-	for( i = 0; i < m_iSwitches; i++ )
+	for ( i = 0; i < m_iSwitches; i++ )
 	{
 		float frac = (float)sizes[i] / (float)sum;
 
@@ -106,106 +108,114 @@ void CMenuSwitch::VidInit()
 
 		m_Points[i] = m_scPos;
 
-		if( i != 0 )
-			m_Points[i].x = m_Points[i-1].x + m_Sizes[i-1].w;
+		if ( i != 0 )
+			m_Points[i].x = m_Points[i - 1].x + m_Sizes[i - 1].w;
 	}
 
-	m_scTextPos.x = m_scPos.x + (m_scSize.w * 1.5f );
+	m_scTextPos.x = m_scPos.x + (m_scSize.w * 1.5f);
 	m_scTextPos.y = m_scPos.y;
 
-	m_scTextSize.w = g_FontMgr->GetTextWideScaled( font, szName, m_scChSize );
+	m_scTextSize.w = g_FontMgr->GetTextWideScaled(font, szName, m_scChSize);
 	m_scTextSize.h = m_scChSize;
 }
 
-bool CMenuSwitch::KeyUp( int key )
+bool CMenuSwitch::KeyUp(int key)
 {
-	const char *sound = NULL;
+	const char* sound = NULL;
 	bool haveNewState = false;
 	int state = 0;
 
-	if( UI::Key::IsLeftMouse( key ) && FBitSet( iFlags, QMF_HASMOUSEFOCUS ))
+	if ( UI::Key::IsLeftMouse(key) && FBitSet(iFlags, QMF_HASMOUSEFOCUS) )
 	{
 		state = IsNewStateByMouseClick();
 		haveNewState = state != m_iState;
-		if( haveNewState )
+		if ( haveNewState )
 			sound = uiStatic.sounds[SND_GLOW];
 	}
-	else if( UI::Key::IsEnter( key ) && !FBitSet( iFlags, QMF_MOUSEONLY ))
+	else if ( UI::Key::IsEnter(key) && !FBitSet(iFlags, QMF_MOUSEONLY) )
 		sound = uiStatic.sounds[SND_GLOW];
 
-	if( sound )
+	if ( sound )
 	{
-		_Event( QM_RELEASED );
-		if( haveNewState && !bChangeOnPressed )
+		_Event(QM_RELEASED);
+		if ( haveNewState && !bChangeOnPressed )
 		{
 			m_iState = state;
-			SetCvarValue( m_iState );
-			_Event( QM_CHANGED );
-			PlayLocalSound( sound ); // emit sound only on changes
+			SetCvarValue(m_iState);
+			_Event(QM_CHANGED);
+			PlayLocalSound(sound);  // emit sound only on changes
 		}
 	}
 
 	return sound != NULL;
 }
 
-bool CMenuSwitch::KeyDown( int key )
+bool CMenuSwitch::KeyDown(int key)
 {
-	const char *sound = NULL;
+	const char* sound = NULL;
 	bool haveNewState = false;
 	int state = 0;
 
-	if( UI::Key::IsLeftMouse( key ) && FBitSet( iFlags, QMF_HASMOUSEFOCUS ))
+	if ( UI::Key::IsLeftMouse(key) && FBitSet(iFlags, QMF_HASMOUSEFOCUS) )
 	{
 		state = IsNewStateByMouseClick();
 		haveNewState = state != m_iState;
-		if( haveNewState )
+		if ( haveNewState )
 			sound = uiStatic.sounds[SND_GLOW];
 	}
-	else if( UI::Key::IsEnter( key ) && !FBitSet( iFlags, QMF_MOUSEONLY ))
+	else if ( UI::Key::IsEnter(key) && !FBitSet(iFlags, QMF_MOUSEONLY) )
 		sound = uiStatic.sounds[SND_GLOW];
 
-	if( sound )
+	if ( sound )
 	{
-		_Event( QM_PRESSED );
-		if( haveNewState && bChangeOnPressed )
+		_Event(QM_PRESSED);
+		if ( haveNewState && bChangeOnPressed )
 		{
 			m_iState = state;
-			SetCvarValue( m_iState );
-			_Event( QM_CHANGED );
-			PlayLocalSound( sound ); // emit sound only on changes
+			SetCvarValue(m_iState);
+			_Event(QM_CHANGED);
+			PlayLocalSound(sound);  // emit sound only on changes
 		}
 	}
 
 	return sound != NULL;
 }
 
-void CMenuSwitch::Draw( void )
+void CMenuSwitch::Draw(void)
 {
 	uint textflags = (iFlags & QMF_DROPSHADOW) ? ETF_SHADOW : 0;
 
 	uint selectColor = iSelectColor;
-	UI_DrawString( font, m_scTextPos, m_scTextSize, szName, uiColorHelp, m_scChSize, eTextAlignment, textflags | ETF_FORCECOL );
+	UI_DrawString(
+		font,
+		m_scTextPos,
+		m_scTextSize,
+		szName,
+		uiColorHelp,
+		m_scChSize,
+		eTextAlignment,
+		textflags | ETF_FORCECOL);
 
-	if( szStatusText && iFlags & QMF_NOTIFY )
+	if ( szStatusText && iFlags & QMF_NOTIFY )
 	{
 		Point coord;
 
 		coord.x = m_scPos.x + 250 * uiStatic.scaleX;
 		coord.y = m_scPos.y + m_scSize.h / 2 - EngFuncs::ConsoleCharacterHeight() / 2;
 
-		int	r, g, b;
+		int r, g, b;
 
-		UnpackRGB( r, g, b, uiColorHelp );
-		EngFuncs::DrawSetTextColor( r, g, b );
-		EngFuncs::DrawConsoleString( coord, szStatusText );
+		UnpackRGB(r, g, b, uiColorHelp);
+		EngFuncs::DrawSetTextColor(r, g, b);
+		EngFuncs::DrawConsoleString(coord, szStatusText);
 	}
 
-	if( iFlags & QMF_GRAYED )
+	if ( iFlags & QMF_GRAYED )
 	{
 		selectColor = uiColorDkGrey;
 	}
 
-	for( int i = 0; i < m_iSwitches; i++ )
+	for ( int i = 0; i < m_iSwitches; i++ )
 	{
 		Point pt = m_Points[i];
 
@@ -213,13 +223,13 @@ void CMenuSwitch::Draw( void )
 		pt.y += fTextOffsetY * uiStatic.scaleY;
 
 		// draw toggle rectangles
-		if( m_iState == i )
+		if ( m_iState == i )
 		{
 			uint tempflags = textflags;
 			tempflags |= ETF_FORCECOL;
 
-			UI_FillRect( m_Points[i], m_Sizes[i], selectColor );
-			UI_DrawString( font, pt, m_Sizes[i], m_szNames[i], iFgTextColor, m_scChSize, eTextAlignment, tempflags);
+			UI_FillRect(m_Points[i], m_Sizes[i], selectColor);
+			UI_DrawString(font, pt, m_Sizes[i], m_szNames[i], iFgTextColor, m_scChSize, eTextAlignment, tempflags);
 		}
 		else
 		{
@@ -227,23 +237,22 @@ void CMenuSwitch::Draw( void )
 			uint textColor = iBgTextColor;
 			uint tempflags = textflags;
 
-			if( UI_CursorInRect( m_Points[i], m_Sizes[i] ) && !(iFlags & (QMF_GRAYED|QMF_INACTIVE)))
+			if ( UI_CursorInRect(m_Points[i], m_Sizes[i]) && !(iFlags & (QMF_GRAYED | QMF_INACTIVE)) )
 			{
 				bgColor = colorFocus;
 				tempflags |= ETF_FORCECOL;
 			}
 
-			UI_FillRect( m_Points[i], m_Sizes[i], bgColor );
-			UI_DrawString( font, pt, m_Sizes[i], m_szNames[i],
-				textColor, m_scChSize, eTextAlignment, tempflags );
+			UI_FillRect(m_Points[i], m_Sizes[i], bgColor);
+			UI_DrawString(font, pt, m_Sizes[i], m_szNames[i], textColor, m_scChSize, eTextAlignment, tempflags);
 		}
 	}
 
 	// draw rectangle
-	UI_DrawRectangle( m_scPos, m_scSize, uiInputFgColor );
+	UI_DrawRectangle(m_scPos, m_scSize, uiInputFgColor);
 }
 
 void CMenuSwitch::UpdateEditable()
 {
-	m_iState = EngFuncs::GetCvarFloat( m_szCvarName );
+	m_iState = EngFuncs::GetCvarFloat(m_szCvarName);
 }

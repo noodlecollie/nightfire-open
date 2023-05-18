@@ -24,7 +24,7 @@ namespace
 	{
 		return 4 * bar;
 	}
-}
+}  // namespace
 
 int CHudCrosshair::Init()
 {
@@ -109,20 +109,22 @@ bool CHudCrosshair::UpdateParameters()
 	m_Params.SetWeaponInaccuracy(gHUD.m_flWeaponInaccuracy);
 	m_Params.SetWeaponAttackMode(weapon->iPriAttackMode);
 
-	float radius = ExtraMath::RemapLinear(m_Params.WeaponInaccuracy(),
-										  ammoAttack->Accuracy.RestValue,
-										  ammoAttack->Accuracy.RunValue,
-										  m_CrosshairParams->RadiusMin,
-										  m_CrosshairParams->RadiusMax,
-										  false);
+	float radius = ExtraMath::RemapLinear(
+		m_Params.WeaponInaccuracy(),
+		ammoAttack->Accuracy.RestValue,
+		ammoAttack->Accuracy.RunValue,
+		m_CrosshairParams->RadiusMin,
+		m_CrosshairParams->RadiusMax,
+		false);
 	m_Params.SetRadius(radius);
 
-	float barLength = ExtraMath::RemapLinear(m_Params.WeaponInaccuracy(),
-											 ammoAttack->Accuracy.RestValue,
-											 ammoAttack->Accuracy.RunValue,
-											 m_CrosshairParams->BarScaleMin,
-											 m_CrosshairParams->BarScaleMin,
-											 false);
+	float barLength = ExtraMath::RemapLinear(
+		m_Params.WeaponInaccuracy(),
+		ammoAttack->Accuracy.RestValue,
+		ammoAttack->Accuracy.RunValue,
+		m_CrosshairParams->BarScaleMin,
+		m_CrosshairParams->BarScaleMin,
+		false);
 	m_Params.SetBarLength(barLength);
 
 	UpdateParametersFromDebugCvars();
@@ -167,21 +169,23 @@ void CHudCrosshair::UpdateParametersFromDebugCvars()
 		return;
 	}
 
-	float radius = ExtraMath::RemapLinear(m_Params.WeaponInaccuracy(),
-										  ammoAttack->Accuracy.RestValue,
-										  ammoAttack->Accuracy.RunValue,
-										  CrosshairCvars::RadiusMin(),
-										  CrosshairCvars::RadiusMax(),
-										  false);
+	float radius = ExtraMath::RemapLinear(
+		m_Params.WeaponInaccuracy(),
+		ammoAttack->Accuracy.RestValue,
+		ammoAttack->Accuracy.RunValue,
+		CrosshairCvars::RadiusMin(),
+		CrosshairCvars::RadiusMax(),
+		false);
 
 	m_Params.SetRadius(radius);
 
-	float barLength = ExtraMath::RemapLinear(m_Params.WeaponInaccuracy(),
-											 ammoAttack->Accuracy.RestValue,
-											 ammoAttack->Accuracy.RunValue,
-											 CrosshairCvars::BarLengthMin(),
-											 CrosshairCvars::BarLengthMax(),
-											 false);
+	float barLength = ExtraMath::RemapLinear(
+		m_Params.WeaponInaccuracy(),
+		ammoAttack->Accuracy.RestValue,
+		ammoAttack->Accuracy.RunValue,
+		CrosshairCvars::BarLengthMin(),
+		CrosshairCvars::BarLengthMax(),
+		false);
 
 	m_Params.SetBarLength(barLength);
 }
@@ -205,32 +209,28 @@ void CHudCrosshair::InitialiseGeometry()
 		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y - 1, 0),
 		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y - 1, 0),
 		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y - 2, 0),
-		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y - 2, 0)
-	);
+		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y - 2, 0));
 
 	// Bottom
 	m_CrosshairGeometry->AddTriangleQuad(
 		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y + 1, 0),
 		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y + 1, 0),
 		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y + 2, 0),
-		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y + 2, 0)
-	);
+		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y + 2, 0));
 
 	// Left
 	m_CrosshairGeometry->AddTriangleQuad(
 		Vector(screenCentre.x - 1, screenCentre.y + BAR_HALF_WIDTH, 0),
 		Vector(screenCentre.x - 1, screenCentre.y - BAR_HALF_WIDTH, 0),
 		Vector(screenCentre.x - 2, screenCentre.y - BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x - 2, screenCentre.y + BAR_HALF_WIDTH, 0)
-	);
+		Vector(screenCentre.x - 2, screenCentre.y + BAR_HALF_WIDTH, 0));
 
 	// Right
 	m_CrosshairGeometry->AddTriangleQuad(
 		Vector(screenCentre.x + 1, screenCentre.y - BAR_HALF_WIDTH, 0),
 		Vector(screenCentre.x + 1, screenCentre.y + BAR_HALF_WIDTH, 0),
 		Vector(screenCentre.x + 2, screenCentre.y + BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x + 2, screenCentre.y - BAR_HALF_WIDTH, 0)
-	);
+		Vector(screenCentre.x + 2, screenCentre.y - BAR_HALF_WIDTH, 0));
 }
 
 void CHudCrosshair::UpdateGeometry()

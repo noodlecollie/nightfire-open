@@ -23,4 +23,4 @@ namespace CustomGeometry
 		Category m_GeomCategory = Category::None;
 		bool m_WasClearMessage = false;
 	};
-}
+}  // namespace CustomGeometry

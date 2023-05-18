@@ -3,7 +3,7 @@
 
 void MeleeWeaponEventPlayer::EventStart()
 {
-	if( EV_IsLocal(m_iEntIndex) )
+	if ( EV_IsLocal(m_iEntIndex) )
 	{
 		AnimateViewModel();
 	}

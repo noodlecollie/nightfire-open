@@ -21,9 +21,9 @@ class CMenuBaseClientWindow : public CMenuBaseWindow
 {
 public:
 	typedef CMenuBaseWindow BaseClass;
-	CMenuBaseClientWindow( const char *name = "BaseClientWindow" );
+	CMenuBaseClientWindow(const char* name = "BaseClientWindow");
 
-	bool KeyDown( int key ) override;
+	bool KeyDown(int key) override;
 };
 
-#endif // BASECLIENTWINDOW_H
+#endif  // BASECLIENTWINDOW_H

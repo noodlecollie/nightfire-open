@@ -8,7 +8,9 @@
 class ProjectInterface_Server : public IProjectInterface
 {
 public:
-	virtual ~ProjectInterface_Server() {}
+	virtual ~ProjectInterface_Server()
+	{
+	}
 
 	static IProjectInterface* StaticInstance();
 

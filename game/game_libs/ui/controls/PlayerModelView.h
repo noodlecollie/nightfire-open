@@ -32,14 +32,14 @@ public:
 	CMenuPlayerModelView();
 	void VidInit() override;
 	void Draw() override;
-	bool KeyDown( int key ) override;
-	bool KeyUp( int key ) override;
+	bool KeyDown(int key) override;
+	bool KeyUp(int key) override;
 	void CalcFov();
 
 	HIMAGE hPlayerImage;
 
 	ref_viewpass_t refdef;
-	cl_entity_t *ent;
+	cl_entity_t* ent;
 
 	bool bDrawAsPlayer;
 
@@ -50,9 +50,9 @@ public:
 		PMV_SHOWIMAGE
 	} eOverrideMode;
 
-
 	CColor backgroundColor;
 	CColor outlineFocusColor;
+
 private:
 	cl_entity_t ent2;
 
@@ -61,4 +61,4 @@ private:
 	int prevCursorX, prevCursorY;
 };
 
-#endif // CMENUPLAYERMODELVIEW_H
+#endif  // CMENUPLAYERMODELVIEW_H

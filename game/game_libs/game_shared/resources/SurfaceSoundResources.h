@@ -24,7 +24,8 @@ enum class SurfaceSoundId
 	Count
 };
 
-class CSurfaceSoundResources : public CBaseResourceCollection<SurfaceSoundId, static_cast<size_t>(SurfaceSoundId::Count)>
+class CSurfaceSoundResources :
+	public CBaseResourceCollection<SurfaceSoundId, static_cast<size_t>(SurfaceSoundId::Count)>
 {
 public:
 	CSurfaceSoundResources();

@@ -8,7 +8,9 @@ class CGameplaySystemsBase
 {
 public:
 	CGameplaySystemsBase();
-	virtual ~CGameplaySystemsBase() {}
+	virtual ~CGameplaySystemsBase()
+	{
+	}
 
 	virtual bool IsMultiplayer() const = 0;
 

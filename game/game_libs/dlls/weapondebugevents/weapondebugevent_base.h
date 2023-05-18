@@ -11,7 +11,9 @@ public:
 		Event_HitscanFire = 0
 	};
 
-	virtual ~CWeaponDebugEvent_Base() {}
+	virtual ~CWeaponDebugEvent_Base()
+	{
+	}
 
 	virtual EventType Type() const = 0;
 

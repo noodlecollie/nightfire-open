@@ -7,18 +7,19 @@ namespace ServerSoundInstance
 {
 	void PlayAmbient(const CSoundInstance& instance, edict_t* entity)
 	{
-		if (!instance.IsValid() )
+		if ( !instance.IsValid() )
 		{
 			return;
 		}
 
-		UTIL_EmitAmbientSound(entity ? entity : ENT(0),
-							  instance.Position(),
-							  instance.SoundPathCStr(),
-							  instance.Volume(),
-							  instance.Attenuation(),
-							  instance.Flags(),
-							  instance.GetPitch());
+		UTIL_EmitAmbientSound(
+			entity ? entity : ENT(0),
+			instance.Position(),
+			instance.SoundPathCStr(),
+			instance.Volume(),
+			instance.Attenuation(),
+			instance.Flags(),
+			instance.GetPitch());
 	}
 
 	void PlayDynamic(const CSoundInstance& instance, edict_t* entity)
@@ -28,13 +29,14 @@ namespace ServerSoundInstance
 			return;
 		}
 
-		EMIT_SOUND_DYN(entity ? entity : ENT(0),
-					   instance.Channel(),
-					   instance.SoundPathCStr(),
-					   instance.Volume(),
-					   instance.Attenuation(),
-					   instance.Flags(),
-					   instance.GetPitch());
+		EMIT_SOUND_DYN(
+			entity ? entity : ENT(0),
+			instance.Channel(),
+			instance.SoundPathCStr(),
+			instance.Volume(),
+			instance.Attenuation(),
+			instance.Flags(),
+			instance.GetPitch());
 	}
 
 	void StopDynamic(const CSoundInstance& instance, edict_t* entity)
@@ -44,8 +46,6 @@ namespace ServerSoundInstance
 			return;
 		}
 
-		STOP_SOUND(entity ? entity : ENT(0),
-				   instance.Channel(),
-				   instance.SoundPathCStr());
+		STOP_SOUND(entity ? entity : ENT(0), instance.Channel(), instance.SoundPathCStr());
 	}
-};
+};  // namespace ServerSoundInstance

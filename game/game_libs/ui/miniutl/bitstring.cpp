@@ -14,7 +14,6 @@
 // $NoKeywords: $
 //=============================================================================//
 
-
 #include <limits.h>
 
 #include <utlbuffer.h>
@@ -25,44 +24,15 @@
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 // Purpose: Calculate a mask for the last int in the array
-// Input  : numBits - 
+// Input  : numBits -
 // Output : static int
 //-----------------------------------------------------------------------------
 
-unsigned g_BitStringEndMasks[] = 
-{
-	0x00000000,
-	0xfffffffe,
-	0xfffffffc,
-	0xfffffff8,
-	0xfffffff0,
-	0xffffffe0,
-	0xffffffc0,
-	0xffffff80,
-	0xffffff00,
-	0xfffffe00,
-	0xfffffc00,
-	0xfffff800,
-	0xfffff000,
-	0xffffe000,
-	0xffffc000,
-	0xffff8000,
-	0xffff0000,
-	0xfffe0000,
-	0xfffc0000,
-	0xfff80000,
-	0xfff00000,
-	0xffe00000,
-	0xffc00000,
-	0xff800000,
-	0xff000000,
-	0xfe000000,
-	0xfc000000,
-	0xf8000000,
-	0xf0000000,
-	0xe0000000,
-	0xc0000000,
-	0x80000000,
+unsigned g_BitStringEndMasks[] = {
+	0x00000000, 0xfffffffe, 0xfffffffc, 0xfffffff8, 0xfffffff0, 0xffffffe0, 0xffffffc0, 0xffffff80,
+	0xffffff00, 0xfffffe00, 0xfffffc00, 0xfffff800, 0xfffff000, 0xffffe000, 0xffffc000, 0xffff8000,
+	0xffff0000, 0xfffe0000, 0xfffc0000, 0xfff80000, 0xfff00000, 0xffe00000, 0xffc00000, 0xff800000,
+	0xff000000, 0xfe000000, 0xfc000000, 0xf8000000, 0xf0000000, 0xe0000000, 0xc0000000, 0x80000000,
 };
 
 //-----------------------------------------------------------------------------
@@ -71,16 +41,16 @@ unsigned g_BitStringEndMasks[] =
 // Output :
 //-----------------------------------------------------------------------------
 
-void DebugPrintBitStringBits( const int *pInts, int nInts )
+void DebugPrintBitStringBits(const int* pInts, int nInts)
 {
-	for (int i=0;i<nInts;i++) 
+	for ( int i = 0; i < nInts; i++ )
 	{
-		for (int j =0; j<BITS_PER_INT;j++) 
+		for ( int j = 0; j < BITS_PER_INT; j++ )
 		{
-			Msg( "%d", (pInts[i] & (1<<j)) ? 1:0);
+			Msg("%d", (pInts[i] & (1 << j)) ? 1 : 0);
 		}
 	}
-	Msg( "\n");
+	Msg("\n");
 }
 
 //-----------------------------------------------------------------------------
@@ -88,12 +58,12 @@ void DebugPrintBitStringBits( const int *pInts, int nInts )
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void SaveBitString(const int *pInts, int nInts, CUtlBuffer& buf)
+void SaveBitString(const int* pInts, int nInts, CUtlBuffer& buf)
 {
-	buf.EnsureCapacity( buf.TellPut() + (sizeof( int )*nInts) );
-	for (int i=0;i<nInts;i++) 
+	buf.EnsureCapacity(buf.TellPut() + (sizeof(int) * nInts));
+	for ( int i = 0; i < nInts; i++ )
 	{
-		buf.PutInt( pInts[i] );
+		buf.PutInt(pInts[i]);
 	}
 }
 
@@ -103,55 +73,54 @@ void SaveBitString(const int *pInts, int nInts, CUtlBuffer& buf)
 // Output :
 //-----------------------------------------------------------------------------
 
-void LoadBitString(int *pInts, int nInts, CUtlBuffer& buf)
+void LoadBitString(int* pInts, int nInts, CUtlBuffer& buf)
 {
-	for (int i=0; i<nInts; i++) 
+	for ( int i = 0; i < nInts; i++ )
 	{
-		pInts[i] = buf.GetInt(); 
+		pInts[i] = buf.GetInt();
 	}
 }
 
-
 //-----------------------------------------------------------------------------
 
-void CVariableBitStringBase::ValidateOperand( const CVariableBitStringBase &operand ) const
+void CVariableBitStringBase::ValidateOperand(const CVariableBitStringBase& operand) const
 {
 	Assert(Size() == operand.Size());
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Resizes the bit string to a new number of bits
-// Input  : resizeNumBits - 
+// Input  : resizeNumBits -
 //-----------------------------------------------------------------------------
-void CVariableBitStringBase::Resize( int resizeNumBits )
+void CVariableBitStringBase::Resize(int resizeNumBits)
 {
-	Assert( resizeNumBits >= 0 );
+	Assert(resizeNumBits >= 0);
 
-	int newIntCount = CalcNumIntsForBits( resizeNumBits );
+	int newIntCount = CalcNumIntsForBits(resizeNumBits);
 	if ( newIntCount != GetNumInts() )
 	{
 		if ( GetInts() )
 		{
 			int oldIntCount = m_numInts;
-			ReallocInts( newIntCount );
+			ReallocInts(newIntCount);
 			m_numInts = newIntCount;
 
 			if ( resizeNumBits >= Size() )
 			{
 				GetInts()[GetNumInts() - 1] &= ~GetEndMask();
-				memset( GetInts() + oldIntCount, 0, (newIntCount - oldIntCount) * sizeof(int) );
+				memset(GetInts() + oldIntCount, 0, (newIntCount - oldIntCount) * sizeof(int));
 			}
 		}
 		else
 		{
 			// Figure out how many ints are needed
-			AllocInts( newIntCount );
+			AllocInts(newIntCount);
 			m_numInts = newIntCount;
 
 			// Initialize bitstring by clearing all bits
-			memset( GetInts(), 0, newIntCount * sizeof(int) );
+			memset(GetInts(), 0, newIntCount * sizeof(int));
 		}
-	} 
+	}
 	else if ( resizeNumBits >= Size() && GetInts() )
 		GetInts()[GetNumInts() - 1] &= ~GetEndMask();
 
@@ -161,43 +130,42 @@ void CVariableBitStringBase::Resize( int resizeNumBits )
 
 //-----------------------------------------------------------------------------
 // Purpose: Allocate the storage for the ints
-// Input  : numInts - 
+// Input  : numInts -
 //-----------------------------------------------------------------------------
-void CVariableBitStringBase::AllocInts( int numInts )
+void CVariableBitStringBase::AllocInts(int numInts)
 {
-	Assert( !m_pInt );
+	Assert(!m_pInt);
 
 	if ( numInts == 0 )
 		return;
 
 	if ( numInts == 1 )
 	{
-		m_pInt = NULL;	// we will use m_iBitStringStorage
+		m_pInt = NULL;  // we will use m_iBitStringStorage
 		return;
 	}
 
-	m_pInt = (int *)malloc( numInts * sizeof(int) );
+	m_pInt = (int*)malloc(numInts * sizeof(int));
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose: Reallocate the storage for the ints
-// Input  : numInts - 
+// Input  : numInts -
 //-----------------------------------------------------------------------------
-void CVariableBitStringBase::ReallocInts( int numInts )
+void CVariableBitStringBase::ReallocInts(int numInts)
 {
-	Assert( GetInts() );
-	if ( numInts == 0)
+	Assert(GetInts());
+	if ( numInts == 0 )
 	{
 		FreeInts();
 		return;
 	}
 
-	if ( m_numInts == 1 )	// we were using m_iBitStringStorage
+	if ( m_numInts == 1 )  // we were using m_iBitStringStorage
 	{
 		if ( numInts != 1 )
 		{
-			m_pInt = ((int *)malloc( numInts * sizeof(int) ));
+			m_pInt = ((int*)malloc(numInts * sizeof(int)));
 			*m_pInt = m_iBitStringStorage;
 		}
 
@@ -207,27 +175,25 @@ void CVariableBitStringBase::ReallocInts( int numInts )
 	if ( numInts == 1 )
 	{
 		m_iBitStringStorage = *m_pInt;
-		free( m_pInt );
+		free(m_pInt);
 		m_pInt = NULL;
 		return;
 	}
 
-	m_pInt = (int *)realloc( m_pInt,  numInts * sizeof(int) );
+	m_pInt = (int*)realloc(m_pInt, numInts * sizeof(int));
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose: Free storage allocated with AllocInts
 //-----------------------------------------------------------------------------
-void CVariableBitStringBase::FreeInts( void )
+void CVariableBitStringBase::FreeInts(void)
 {
 	if ( m_numInts > 1 )
 	{
-		free( m_pInt );
+		free(m_pInt);
 	}
 	m_pInt = NULL;
 }
-
 
 #ifdef DBGFLAG_VALIDATE
 //-----------------------------------------------------------------------------
@@ -236,15 +202,15 @@ void CVariableBitStringBase::FreeInts( void )
 // Input:	validator -		Our global validator object
 //			pchName -		Our name (typically a member var in our container)
 //-----------------------------------------------------------------------------
-void CVariableBitStringBase::Validate( CValidator &validator, const char *pchName )
+void CVariableBitStringBase::Validate(CValidator& validator, const char* pchName)
 {
-	validator.Push( "CVariableBitStringBase", this, pchName );
-    
+	validator.Push("CVariableBitStringBase", this, pchName);
+
 	if ( m_numInts > 1 )
 	{
-		validator.ClaimMemory( m_pInt );
+		validator.ClaimMemory(m_pInt);
 	}
 
 	validator.Pop();
 }
-#endif // DBGFLAG_VALIDATE
+#endif  // DBGFLAG_VALIDATE

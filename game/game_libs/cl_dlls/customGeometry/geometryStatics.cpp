@@ -31,7 +31,8 @@ namespace CustomGeometry
 
 		if ( reader.WasClearMessage() )
 		{
-			CL_LOG().LogF(ILogInterface::Level::Message,
+			CL_LOG().LogF(
+				ILogInterface::Level::Message,
 				"Received custom geometry clear message for category %s\n",
 				CustomGeometry::CategoryName(reader.GetGeometryCategory()));
 
@@ -41,7 +42,8 @@ namespace CustomGeometry
 
 		GeometryItemPtr_t item = reader.GetGeometryItem();
 
-		CL_LOG().LogF(ILogInterface::Level::Message,
+		CL_LOG().LogF(
+			ILogInterface::Level::Message,
 			"Received custom geometry for category %s (%d points, %d indices)\n",
 			CustomGeometry::CategoryName(reader.GetGeometryCategory()),
 			item->GetPoints().Count(),
@@ -61,7 +63,10 @@ namespace CustomGeometry
 		else
 		{
 			ILogInterface& log = IProjectInterface::ProjectInterfaceImpl()->LogInterface();
-			log.LogF(ILogInterface::Level::Error, "Failed to parse custom geometry message. Error: %s\n", reader.ErrorString().Get());
+			log.LogF(
+				ILogInterface::Level::Error,
+				"Failed to parse custom geometry message. Error: %s\n",
+				reader.ErrorString().Get());
 		}
 
 		return 1;
@@ -135,4 +140,4 @@ namespace CustomGeometry
 			collection->Clear();
 		}
 	}
-}
+}  // namespace CustomGeometry

@@ -115,4 +115,4 @@ namespace CustomGeometry
 		m_GeomCategory = Category::None;
 		m_WasClearMessage = false;
 	}
-}
+}  // namespace CustomGeometry

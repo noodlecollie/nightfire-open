@@ -3,7 +3,8 @@
 #include "surfaceprops.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 // These functions are a C-ified interface to the footstep resources.

@@ -16,12 +16,15 @@ public:
 
 protected:
 	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode) override;
-	virtual bool InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode) override;
+	virtual bool InvokeWithAttackMode(
+		const CGenericWeapon::WeaponAttackType type,
+		const WeaponAtts::WABaseAttack* attackMode) override;
 
 private:
-	Vector FireBulletsPlayer(const WeaponAtts::WAHitscanAttack& hitscanAttack,
-							 const Vector& vecSrc,
-							 const Vector& vecDirShooting);
+	Vector FireBulletsPlayer(
+		const WeaponAtts::WAHitscanAttack& hitscanAttack,
+		const Vector& vecSrc,
+		const Vector& vecDirShooting);
 
 // SERVER
 #ifndef CLIENT_DLL

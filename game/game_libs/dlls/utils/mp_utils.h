@@ -25,4 +25,4 @@ namespace MPUtils
 	const char* PlayerNetName(CBasePlayer* player);
 	CUtlString SanitisePlayerNetName(const CUtlString& name);
 	CUtlString PlayerModelPath(CBasePlayer* player);
-}
+}  // namespace MPUtils

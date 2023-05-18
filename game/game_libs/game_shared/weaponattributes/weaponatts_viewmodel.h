@@ -28,4 +28,4 @@ namespace WeaponAtts
 			ASSERTSZ_Q(AnimList_Idle.Count() > 0, "At least one idle animation must be specified.");
 		}
 	};
-}
+}  // namespace WeaponAtts

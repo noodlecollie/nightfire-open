@@ -25,4 +25,4 @@ namespace WeaponAtts
 			ASSERTSZ_Q(BaseDamagePerShot, "Skill entry for base damage per shot must be specified.");
 		}
 	};
-}
+}  // namespace WeaponAtts

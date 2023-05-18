@@ -18,7 +18,7 @@ namespace
 	static constexpr size_t PADDING = 40;
 	static constexpr size_t SCALE_HEIGHT = 50;
 	static constexpr size_t MARKER_WIDTH = 25;
-}
+}  // namespace
 
 void CSpreadVisualiser::Draw(const CCrosshairParameters& params)
 {
@@ -54,8 +54,12 @@ void CSpreadVisualiser::ConstructGeometry(const CCrosshairParameters& params)
 	m_Geometry->AddLine(Vector(m_ScaleMinX, m_ScaleYOffset, 0.0f), Vector(m_ScaleMaxX, m_ScaleYOffset, 0.0f));
 
 	// Caps at each end
-	m_Geometry->AddLine(Vector(m_ScaleMinX, m_ScaleYOffset - halfScaleHeight, 0), Vector(m_ScaleMinX, m_ScaleYOffset + halfScaleHeight, 0));
-	m_Geometry->AddLine(Vector(m_ScaleMaxX, m_ScaleYOffset - halfScaleHeight, 0), Vector(m_ScaleMaxX, m_ScaleYOffset + halfScaleHeight, 0));
+	m_Geometry->AddLine(
+		Vector(m_ScaleMinX, m_ScaleYOffset - halfScaleHeight, 0),
+		Vector(m_ScaleMinX, m_ScaleYOffset + halfScaleHeight, 0));
+	m_Geometry->AddLine(
+		Vector(m_ScaleMaxX, m_ScaleYOffset - halfScaleHeight, 0),
+		Vector(m_ScaleMaxX, m_ScaleYOffset + halfScaleHeight, 0));
 
 	const float inaccuracyX = ExtraMath::RemapLinear(params.WeaponInaccuracy(), 0, 1, m_ScaleMinX, m_ScaleMaxX);
 
@@ -89,7 +93,8 @@ void CSpreadVisualiser::UpdateDynamicBars(const CCrosshairParameters& params)
 
 	m_DynamicBars->ClearGeometry();
 
-	const WeaponAtts::AccuracyParameters* accuracyParams = params.WeaponAccuracyParamsForAttack(params.WeaponAttackMode());
+	const WeaponAtts::AccuracyParameters* accuracyParams =
+		params.WeaponAccuracyParamsForAttack(params.WeaponAttackMode());
 
 	if ( !accuracyParams )
 	{
@@ -100,7 +105,9 @@ void CSpreadVisualiser::UpdateDynamicBars(const CCrosshairParameters& params)
 
 	// Line representing rest inaccuracy.
 	const float restX = ExtraMath::RemapLinear(accuracyParams->RestValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
-	m_DynamicBars->AddLine(Vector(restX, m_ScaleYOffset - halfHeight, 0), Vector(restX, m_ScaleYOffset + halfHeight, 0));
+	m_DynamicBars->AddLine(
+		Vector(restX, m_ScaleYOffset - halfHeight, 0),
+		Vector(restX, m_ScaleYOffset + halfHeight, 0));
 
 	// Line representing run inaccuracy.
 	const float runX = ExtraMath::RemapLinear(accuracyParams->RunValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
@@ -122,7 +129,8 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 	}
 	else
 	{
-		const WeaponAtts::AccuracyParameters* accuracyParamsFromWeapon = params.WeaponAccuracyParamsForAttack(params.WeaponAttackMode());
+		const WeaponAtts::AccuracyParameters* accuracyParamsFromWeapon =
+			params.WeaponAccuracyParamsForAttack(params.WeaponAttackMode());
 
 		if ( accuracyParamsFromWeapon )
 		{
@@ -143,7 +151,8 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 	}
 	else
 	{
-		const WeaponAtts::CrosshairParameters* crosshairParamsFromWeapon = params.CrosshairParamsForAttack(params.WeaponAttackMode());
+		const WeaponAtts::CrosshairParameters* crosshairParamsFromWeapon =
+			params.CrosshairParamsForAttack(params.WeaponAttackMode());
 
 		if ( crosshairParamsFromWeapon )
 		{
@@ -155,9 +164,13 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 
 	text.AppendFormat("Weapon: %s (ID %u)\n", weaponName, static_cast<uint32_t>(params.WeaponID()));
 	text.AppendFormat("Current inaccuracy: %f\n", params.WeaponInaccuracy());
-	text.AppendFormat("Attributes for attack mode %u (source: %s):\n", params.WeaponAttackMode(), usingDebugParams ? "debug" : "weapon");
+	text.AppendFormat(
+		"Attributes for attack mode %u (source: %s):\n",
+		params.WeaponAttackMode(),
+		usingDebugParams ? "debug" : "weapon");
 
-	text.AppendFormat("  Spread: Rest (%f, %f), Run (%f, %f)\n",
+	text.AppendFormat(
+		"  Spread: Rest (%f, %f), Run (%f, %f)\n",
 		accuracyParams.RestSpread.x,
 		accuracyParams.RestSpread.y,
 		accuracyParams.RunSpread.x,

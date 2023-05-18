@@ -41,4 +41,4 @@ namespace Messages
 	void CBaseMessageReader::ResetInternalData()
 	{
 	}
-}
+}  // namespace Messages

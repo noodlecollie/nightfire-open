@@ -127,11 +127,13 @@ void CHitboxDebugData::SubscribeToEvents()
 
 	CWeaponDebugEventSource& evSource = CWeaponRegistry::StaticInstance().DebugEventSource();
 
-	evSource.RegisterCallback(EVENT_CALLBACK_ID, CWeaponDebugEvent_Base::EventType::Event_HitscanFire,
-	[this](const CWeaponDebugEvent_Base* event)
-	{
-		HandleHitscanFire(dynamic_cast<const CWeaponDebugEvent_HitscanFire*>(event));
-	});
+	evSource.RegisterCallback(
+		EVENT_CALLBACK_ID,
+		CWeaponDebugEvent_Base::EventType::Event_HitscanFire,
+		[this](const CWeaponDebugEvent_Base* event)
+		{
+			HandleHitscanFire(dynamic_cast<const CWeaponDebugEvent_HitscanFire*>(event));
+		});
 
 	m_Subscribed = true;
 }

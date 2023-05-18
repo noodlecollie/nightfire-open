@@ -28,7 +28,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->footstepSoundVolWalk = 0.2f;
 
 	atts = &m_Attributes[SurfaceProp_Carpet];
-	atts->hitSound = SurfaceSoundId::HitPaper; // FIXME: better sound needed
+	atts->hitSound = SurfaceSoundId::HitPaper;  // FIXME: better sound needed
 	atts->hitSoundVol = 0.5f;
 	atts->decal = SurfaceDecalId::Carpet;
 	atts->footstepSound = FootstepSoundId::Carpet;
@@ -36,7 +36,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->footstepSoundVolWalk = 0.2f;
 
 	atts = &m_Attributes[SurfaceProp_Cloth];
-	atts->hitSound = SurfaceSoundId::HitPaper; // FIXME: better sound needed
+	atts->hitSound = SurfaceSoundId::HitPaper;  // FIXME: better sound needed
 	atts->hitSoundVol = 0.5f;
 	atts->decal = SurfaceDecalId::Carpet;
 	atts->footstepSound = FootstepSoundId::Carpet;
@@ -49,7 +49,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->ricochetSoundVol = RIC_NORM;
 	atts->ricochetChance = 0.2f;
 	atts->decal = SurfaceDecalId::Metal;
-	atts->footstepSound = FootstepSoundId::Glass; // FIXME: better sound needed
+	atts->footstepSound = FootstepSoundId::Glass;  // FIXME: better sound needed
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
 
@@ -64,7 +64,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->footstepSoundVolWalk = 0.2f;
 
 	atts = &m_Attributes[SurfaceProp_Dirt];
-	atts->hitSound = SurfaceSoundId::HitSand; // FIXME: better sound needed
+	atts->hitSound = SurfaceSoundId::HitSand;  // FIXME: better sound needed
 	atts->hitSoundVol = 0.3f;
 	atts->decal = SurfaceDecalId::Dirt;
 	atts->footstepSound = FootstepSoundId::Dirt;
@@ -74,7 +74,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts = &m_Attributes[SurfaceProp_Flesh];
 	atts->hitSound = SurfaceSoundId::HitFlesh;
 	atts->hitSoundVol = 0.6f;
-	atts->footstepSound = FootstepSoundId::ConcreteClean; // FIXME: better sound needed
+	atts->footstepSound = FootstepSoundId::ConcreteClean;  // FIXME: better sound needed
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
 
@@ -99,7 +99,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->footstepSoundVolWalk = 0.2f;
 
 	atts = &m_Attributes[SurfaceProp_Grass];
-	atts->hitSound = SurfaceSoundId::HitSand; // FIXME: better sound needed
+	atts->hitSound = SurfaceSoundId::HitSand;  // FIXME: better sound needed
 	atts->hitSoundVol = 0.5f;
 	atts->decal = SurfaceDecalId::Grass;
 	atts->footstepSound = FootstepSoundId::Grass;
@@ -107,7 +107,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->footstepSoundVolWalk = 0.25f;
 
 	atts = &m_Attributes[SurfaceProp_Gravel],
-	atts->hitSound = SurfaceSoundId::HitSand; // FIXME: better sound needed
+	atts->hitSound = SurfaceSoundId::HitSand;  // FIXME: better sound needed
 	atts->hitSoundVol = 0.5f;
 	atts->decal = SurfaceDecalId::Dirt;
 	atts->footstepSound = FootstepSoundId::Dirt;
@@ -133,11 +133,10 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
 
-	atts = &m_Attributes[SurfaceProp_Paper],
-	atts->hitSound = SurfaceSoundId::HitPaper;
+	atts = &m_Attributes[SurfaceProp_Paper], atts->hitSound = SurfaceSoundId::HitPaper;
 	atts->hitSoundVol = 0.5f;
 	atts->decal = SurfaceDecalId::Plaster;
-	atts->footstepSound = FootstepSoundId::ConcreteClean; // FIXME: better sound needed
+	atts->footstepSound = FootstepSoundId::ConcreteClean;  // FIXME: better sound needed
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
 
@@ -145,7 +144,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->hitSound = SurfaceSoundId::HitPlaster;
 	atts->hitSoundVol = 0.5f;
 	atts->decal = SurfaceDecalId::Plaster;
-	atts->footstepSound = FootstepSoundId::ConcreteClean; // FIXME: better sound needed
+	atts->footstepSound = FootstepSoundId::ConcreteClean;  // FIXME: better sound needed
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
 
@@ -153,7 +152,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->hitSound = SurfaceSoundId::HitPlastic;
 	atts->hitSoundVol = 0.45f;
 	atts->decal = SurfaceDecalId::Generic;
-	atts->footstepSound = FootstepSoundId::ConcreteClean; // FIXME: better sound needed
+	atts->footstepSound = FootstepSoundId::ConcreteClean;  // FIXME: better sound needed
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
 
@@ -171,7 +170,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->hitSound = SurfaceSoundId::HitPlaster;
 	atts->hitSoundVol = 0.45f;
 	atts->decal = SurfaceDecalId::Generic;
-	atts->footstepSound = FootstepSoundId::ConcreteClean; // FIXME: better sound needed
+	atts->footstepSound = FootstepSoundId::ConcreteClean;  // FIXME: better sound needed
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
 

@@ -47,25 +47,14 @@ namespace
 		CvarDebugFireImpulseCeiling = GetCvarByName("sv_weapon_debug_inac_fireimpulseceil");
 		CvarDebugFireImpulseHoldTime = GetCvarByName("sv_weapon_debug_inac_fireimpulsehold");
 
-		CvarsLoaded =
-			CvarCheats &&
-			CvarEnableDebugging &&
-			CvarDebugRestValue &&
-			CvarDebugRestSpread &&
-			CvarDebugRunValue &&
-			CvarDebugRunSpread &&
-			CvarDebugCrouchShift &&
-			CvarDebugAirShift &&
-			CvarDebugFallShift &&
-			CvarDebugAttackCoefficient &&
-			CvarDebugDecayCoefficient &&
-			CvarDebugFireImpulse &&
-			CvarDebugFireImpulseCeiling &&
-			CvarDebugFireImpulseHoldTime;
+		CvarsLoaded = CvarCheats && CvarEnableDebugging && CvarDebugRestValue && CvarDebugRestSpread &&
+			CvarDebugRunValue && CvarDebugRunSpread && CvarDebugCrouchShift && CvarDebugAirShift &&
+			CvarDebugFallShift && CvarDebugAttackCoefficient && CvarDebugDecayCoefficient && CvarDebugFireImpulse &&
+			CvarDebugFireImpulseCeiling && CvarDebugFireImpulseHoldTime;
 
 		CvarInitWasRun = true;
 	}
-}
+}  // namespace
 
 namespace InaccuracyModifiers
 {
@@ -75,7 +64,8 @@ namespace InaccuracyModifiers
 		// Remap this to a new [0 1] value, where 0 represents rest and 1 represents running at full speed.
 		// If the original inaccuracy was outside the range [RestValue RunValue], the remapped inaccuracy will be
 		// outside the new range [0 1].
-		const float remappedInaccuracy = ExtraMath::RemapLinear(inaccuracy, params.RestValue, params.RunValue, 0.0f, 1.0f, false);
+		const float remappedInaccuracy =
+			ExtraMath::RemapLinear(inaccuracy, params.RestValue, params.RunValue, 0.0f, 1.0f, false);
 
 		// Calculate a spread vector based on the remapped inaccuracy.
 		const Vector2D spread = params.RestSpread + (remappedInaccuracy * (params.RunSpread - params.RestSpread));
@@ -114,4 +104,4 @@ namespace InaccuracyModifiers
 
 		return true;
 	}
-}
+}  // namespace InaccuracyModifiers

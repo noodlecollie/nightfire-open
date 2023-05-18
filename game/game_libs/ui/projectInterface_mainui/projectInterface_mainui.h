@@ -8,7 +8,9 @@
 class ProjectInterface_MainUI : public IProjectInterface
 {
 public:
-	virtual ~ProjectInterface_MainUI() {}
+	virtual ~ProjectInterface_MainUI()
+	{
+	}
 
 	static IProjectInterface* StaticInstance();
 

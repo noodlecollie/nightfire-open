@@ -35,7 +35,10 @@ namespace ScreenOverlays
 			volatile ScreenOverlays::OverlayId id = T::OVERLAY_ID;
 			if ( id > ScreenOverlays::Overlay_None && id < ScreenOverlays::Overlay__Count )
 			{
-				m_FactoryFunctions[id] = [](){ return static_cast<CBaseScreenOverlay*>(new T()); };
+				m_FactoryFunctions[id] = []()
+				{
+					return static_cast<CBaseScreenOverlay*>(new T());
+				};
 			}
 		}
 
@@ -44,9 +47,8 @@ namespace ScreenOverlays
 		{
 			using namespace ScreenOverlays;
 
-			for ( OverlayId id = static_cast<OverlayId>(Overlay_None + 1);
-				id < Overlay__Count;
-				id = static_cast<OverlayId>(id + 1) )
+			for ( OverlayId id = static_cast<OverlayId>(Overlay_None + 1); id < Overlay__Count;
+				  id = static_cast<OverlayId>(id + 1) )
 			{
 				CBaseScreenOverlay* overlay = GetOverlay(id);
 
@@ -68,4 +70,4 @@ namespace ScreenOverlays
 		FactoryFunc m_FactoryFunctions[ScreenOverlays::Overlay__Count];
 		ScreenOverlays::OverlayId m_CurrentOverlay = ScreenOverlays::Overlay_None;
 	};
-}
+}  // namespace ScreenOverlays
