@@ -1,5 +1,7 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
+* Replace stricmp and others with better namespaced macros
+* Use safe functions like _vsnprintf_s (remove _CRT_SECURE_NO_WARNINGS)
 * Run clang-tidy to insert closing braces where required
 * Turn up warnings as high as we feasibly can, and fix any issues
   * Also add settings to control how pedantic warnings should be, warnings as errors, etc.
