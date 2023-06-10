@@ -23,8 +23,8 @@
 // For example, mapping health kits to item_armor_vest entities, etc.
 #define AFTERBURNER_GAMEPLAY_PLACEHOLDERS
 
-//#include "weapons.h"
-//#include "items.h"
+// #include "weapons.h"
+// #include "items.h"
 class CBasePlayerItem;
 class CBasePlayer;
 class CItem;

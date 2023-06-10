@@ -77,8 +77,8 @@
 
 // edict->movetype values
 #define MOVETYPE_NONE 0  // never moves
-//#define	MOVETYPE_ANGLENOCLIP	1
-//#define	MOVETYPE_ANGLECLIP		2
+// #define	MOVETYPE_ANGLENOCLIP	1
+// #define	MOVETYPE_ANGLECLIP		2
 #define MOVETYPE_WALK 3  // Player only - moving on the ground
 #define MOVETYPE_STEP 4  // gravity, special edge handling -- monsters use this
 #define MOVETYPE_FLY 5  // No gravity, but still collides with stuff

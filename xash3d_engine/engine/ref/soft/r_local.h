@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include "enginefeatures.h"
 #include "com_strings.h"
 #include "pm_movevars.h"
-//#include "cvar.h"
+// #include "cvar.h"
 typedef struct mip_s mip_t;
 
 typedef int fixed8_t;
@@ -138,7 +138,7 @@ typedef struct vrect_s
 } vrect_t;
 
 #define COLOR_WHITE 0xFFFF
-//#define SEPARATE_BLIT
+// #define SEPARATE_BLIT
 typedef struct
 {
 	pixel_t* buffer;  // invisible buffer
@@ -590,7 +590,7 @@ void VGUI_DrawQuad(const vpoint_t* ul, const vpoint_t* lr);
 void VGUI_GetTextureSizes(int* width, int* height);
 int VGUI_GenerateTexture(void);
 
-//#include "vid_common.h"
+// #include "vid_common.h"
 
 //
 // renderer exports
@@ -760,7 +760,7 @@ DECLARE_ENGINE_SHARED_CVAR_LIST()
 // !!! if this is changed, it must be changed in asm_draw.h too !!!
 #define NEAR_CLIP 0.01f
 
-//#define MAXALIASVERTS           2000    // TODO: tune this
+// #define MAXALIASVERTS           2000    // TODO: tune this
 #define ALIAS_Z_CLIP_PLANE 4
 
 // turbulence stuff

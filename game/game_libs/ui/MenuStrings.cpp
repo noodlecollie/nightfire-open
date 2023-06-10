@@ -452,8 +452,8 @@ static void Localize_Free(void)
 		const char* first = hashed_cmds.Key(i);
 		const char* second = hashed_cmds.Element(i);
 
-		delete[](char*) first;
-		delete[](char*) second;
+		delete[] (char*)first;
+		delete[] (char*)second;
 	}
 
 	hashed_cmds.Purge();

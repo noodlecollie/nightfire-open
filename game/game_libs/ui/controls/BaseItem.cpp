@@ -48,7 +48,7 @@ CMenuBaseItem::~CMenuBaseItem()
 {
 	if ( m_bAllocName )
 	{
-		delete[](char*) szName;
+		delete[] (char*)szName;
 	}
 }
 

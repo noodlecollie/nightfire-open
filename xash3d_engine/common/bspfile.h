@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include <stdint.h>
 
-//#define SUPPORT_BSP2_FORMAT		// allow to loading Darkplaces BSP2 maps (with broke binary compatibility)
+// #define SUPPORT_BSP2_FORMAT		// allow to loading Darkplaces BSP2 maps (with broke binary compatibility)
 
 /*
 ==============================================================================

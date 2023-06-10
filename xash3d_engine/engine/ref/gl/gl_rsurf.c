@@ -1716,7 +1716,7 @@ Store index base for every surface (vbosurfdata_t) to build index arrays
 For each texture build index arrays (vbotexture_t) every frame.
 */
 // vertex attribs
-//#define NO_TEXTURE_MATRIX // need debug
+// #define NO_TEXTURE_MATRIX // need debug
 typedef struct vbovertex_s
 {
 	vec3_t pos;

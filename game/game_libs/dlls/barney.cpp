@@ -160,8 +160,8 @@ Schedule_t slIdleBaStand[] = {
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND | bits_COND_SMELL |
 		 bits_COND_PROVOKED,
 	 bits_SOUND_COMBAT |  // sound flags - change these, and you'll break the talking code.
-		 // bits_SOUND_PLAYER |
-		 // bits_SOUND_WORLD |
+						  // bits_SOUND_PLAYER |
+						  // bits_SOUND_WORLD |
 		 bits_SOUND_DANGER | bits_SOUND_MEAT |  // scents
 		 bits_SOUND_CARCASS | bits_SOUND_GARBAGE,
 	 "IdleStand"},

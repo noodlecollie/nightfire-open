@@ -1999,26 +1999,26 @@ void CBasePlayer::PreThink(void)
 // This routine will detect the initial on value of the m_bitsDamageType
 // and init the appropriate counter.  Only processes damage every second.
 
-//#define PARALYZE_DURATION		30		// number of 2 second intervals to take damage
-//#define PARALYZE_DAMAGE		0.0		// damage to take each 2 second interval
+// #define PARALYZE_DURATION		30		// number of 2 second intervals to take damage
+// #define PARALYZE_DAMAGE		0.0		// damage to take each 2 second interval
 
-//#define NERVEGAS_DURATION		16
-//#define NERVEGAS_DAMAGE		5.0
+// #define NERVEGAS_DURATION		16
+// #define NERVEGAS_DAMAGE		5.0
 
-//#define POISON_DURATION		25
-//#define POISON_DAMAGE			2.0
+// #define POISON_DURATION		25
+// #define POISON_DAMAGE			2.0
 
-//#define RADIATION_DURATION		50
-//#define RADIATION_DAMAGE		1.0
+// #define RADIATION_DURATION		50
+// #define RADIATION_DAMAGE		1.0
 
-//#define ACID_DURATION			10
-//#define ACID_DAMAGE			5.0
+// #define ACID_DURATION			10
+// #define ACID_DAMAGE			5.0
 
-//#define SLOWBURN_DURATION		2
-//#define SLOWBURN_DAMAGE		1.0
+// #define SLOWBURN_DURATION		2
+// #define SLOWBURN_DAMAGE		1.0
 
-//#define SLOWFREEZE_DURATION		1.0
-//#define SLOWFREEZE_DAMAGE		3.0
+// #define SLOWFREEZE_DURATION		1.0
+// #define SLOWFREEZE_DAMAGE		3.0
 
 void CBasePlayer::CheckTimeBasedDamage()
 {

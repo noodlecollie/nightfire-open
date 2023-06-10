@@ -3,7 +3,7 @@
 #ifndef NODES_32BIT_COMPAT
 #define NODES_32BIT_COMPAT
 
-//#include "nodes.h"
+// #include "nodes.h"
 
 #if _GRAPH_VERSION != _GRAPH_VERSION_RETAIL
 

@@ -38,7 +38,7 @@ const float GARG_ATTACKDIST = 80.0;
 
 // Garg animation events
 #define GARG_AE_SLASH_LEFT 1
-//#define GARG_AE_BEAM_ATTACK_RIGHT		2	// No longer used
+// #define GARG_AE_BEAM_ATTACK_RIGHT		2	// No longer used
 #define GARG_AE_LEFT_FOOT 3
 #define GARG_AE_RIGHT_FOOT 4
 #define GARG_AE_STOMP 5

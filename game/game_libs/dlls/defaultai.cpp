@@ -486,7 +486,13 @@ Task_t tlBarnacleVictimGrab[] = {
 	{TASK_WAIT_INDEFINITE, (float)0},  // just cycle barnacle pull anim while barnacle hoists.
 };
 
-Schedule_t slBarnacleVictimGrab[] = {{tlBarnacleVictimGrab, XASH_ARRAY_SIZE(tlBarnacleVictimGrab), 0, 0, "Barnacle Victim"}};
+Schedule_t slBarnacleVictimGrab[] = {{
+	tlBarnacleVictimGrab,
+	XASH_ARRAY_SIZE(tlBarnacleVictimGrab),
+	0,
+	0,
+	"Barnacle Victim",
+}};
 
 //=========================================================
 // BarnacleVictimChomp - barnacle has pulled the prey to its
@@ -606,9 +612,13 @@ Task_t tlTakeCoverFromBestSound[] = {
 	{TASK_TURN_LEFT, (float)179},
 };
 
-Schedule_t slTakeCoverFromBestSound[] = {
-	{tlTakeCoverFromBestSound, XASH_ARRAY_SIZE(tlTakeCoverFromBestSound), bits_COND_NEW_ENEMY, 0, "TakeCoverFromBestSound"},
-};
+Schedule_t slTakeCoverFromBestSound[] = {{
+	tlTakeCoverFromBestSound,
+	XASH_ARRAY_SIZE(tlTakeCoverFromBestSound),
+	bits_COND_NEW_ENEMY,
+	0,
+	"TakeCoverFromBestSound",
+}};
 
 //=========================================================
 // Take cover from enemy! Tries lateral cover before node

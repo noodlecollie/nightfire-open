@@ -12,7 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-//#include <stdint.h>
+// #include <stdint.h>
 void* SWAP_Sbrk(size_t size);
 void* SWAP_Malloc(size_t size);
 void* SWAP_Calloc(size_t nelem, size_t size);

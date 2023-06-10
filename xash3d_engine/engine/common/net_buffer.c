@@ -17,8 +17,8 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "net_buffer.h"
 #include "xash3d_mathlib.h"
-//#define DEBUG_NET_MESSAGES_SEND
-//#define DEBUG_NET_MESSAGES_READ
+// #define DEBUG_NET_MESSAGES_SEND
+// #define DEBUG_NET_MESSAGES_READ
 
 // precalculated bit masks for WriteUBitLong.
 // Using these tables instead of doing the calculations

@@ -34,7 +34,7 @@
 #define SF_CORNER_TELEPORT 0x002
 #define SF_CORNER_FIREONCE 0x004
 
-//#define PATH_SPARKLE_DEBUG		1	// This makes a particle effect around path_track entities for debugging
+// #define PATH_SPARKLE_DEBUG		1	// This makes a particle effect around path_track entities for debugging
 class CPathTrack : public CPointEntity
 {
 public:

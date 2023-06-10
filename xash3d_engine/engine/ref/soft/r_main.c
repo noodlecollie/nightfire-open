@@ -16,8 +16,8 @@ GNU General Public License for more details.
 #include "r_local.h"
 #include "xash3d_mathlib.h"
 #include "library.h"
-//#include "beamdef.h"
-//#include "particledef.h"
+// #include "beamdef.h"
+// #include "particledef.h"
 #include "entity_types.h"
 #include "mod_local.h"
 int r_cnumsurfs;

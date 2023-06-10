@@ -18,14 +18,14 @@
 #define WEINER_SNIPER  // autoaiming for sniper rifle
 #define FLAME_MAXWORLDNUM 20  // maximum number of flames in the world. DO NOT PUT BELOW 20.
 
-//#define MAX_WORLD_PIPEBOMBS      15             // This is divided between teams - this is the most you should have on
-//a net server
+// #define MAX_WORLD_PIPEBOMBS      15             // This is divided between teams - this is the most you should have
+// on a net server
 #define MAX_PLAYER_PIPEBOMBS 8  // maximum number of pipebombs any 1 player can have active
 #define MAX_PLAYER_AMMOBOXES 3  // maximum number of ammoboxes any 1 player can have active
 
-//#define MAX_WORLD_FLARES         9              // This is the total number of flares allowed in the world at one time
-//#define MAX_WORLD_AMMOBOXES      20             // This is divided between teams - this is the most you should have on
-//a net server
+// #define MAX_WORLD_FLARES         9              // This is the total number of flares allowed in the world at one
+// time #define MAX_WORLD_AMMOBOXES      20             // This is divided between teams - this is the most you should
+// have on a net server
 #define GR_TYPE_MIRV_NO 4  // Number of Mirvs a Mirv Grenade breaks into
 #define GR_TYPE_NAPALM_NO 8  // Number of flames napalm grenade breaks into (unused if net server)
 #define MEDIKIT_IS_BIOWEAPON  // Medikit acts as a bioweapon against enemies
@@ -48,14 +48,14 @@
 #define PLAYER_PUSH_VELOCITY 50  // Players push teammates if they're moving under this speed
 
 // Debug Options
-//#define MAP_DEBUG                     // Debug for Map code. I suggest running in a hi-res
+// #define MAP_DEBUG                     // Debug for Map code. I suggest running in a hi-res
 // mode and/or piping the output from the server to a file.
 #ifdef MAP_DEBUG
 #define MDEBUG(x) x
 #else
 #define MDEBUG(x)
 #endif
-//#define VERBOSE                       // Verbose Debugging on/off
+// #define VERBOSE                       // Verbose Debugging on/off
 
 //===========================================================================
 // OLD QUAKE Defs
@@ -284,11 +284,11 @@ enum
 #define TF_GRENADE_T 152  // Throw primed grenade
 
 // Impulses for new items
-//#define TF_SCAN				159		// Scanner Pre-Impulse
+// #define TF_SCAN				159		// Scanner Pre-Impulse
 #define TF_AUTO_SCAN 159  // Scanner On/Off
 #define TF_SCAN_ENEMY 160  // Impulses to toggle scanning of enemies
 #define TF_SCAN_FRIENDLY 161  // Impulses to toggle scanning of friendlies
-//#define TF_SCAN_10			162		// Scan using 10 enery (1 cell)
+// #define TF_SCAN_10			162		// Scan using 10 enery (1 cell)
 #define TF_SCAN_SOUND 162  // Scanner sounds on/off
 #define TF_SCAN_30 163  // Scan using 30 energy (2 cells)
 #define TF_SCAN_100 164  // Scan using 100 energy (5 cells)
@@ -531,11 +531,11 @@ enum
 #define GR_TYPE_NAIL 3
 #define GR_TYPE_MIRV 4
 #define GR_TYPE_NAPALM 5
-//#define GR_TYPE_FLARE		6
+// #define GR_TYPE_FLARE		6
 #define GR_TYPE_GAS 7
 #define GR_TYPE_EMP 8
 #define GR_TYPE_CALTROP 9
-//#define GR_TYPE_FLASH		10
+// #define GR_TYPE_FLASH		10
 
 // Defines for WeaponMode
 #define GL_NORMAL 0
@@ -1085,7 +1085,7 @@ float already_chosen_map;
 #define TFLAG_CLASS_PERSIST (1 << 0)  // Persistent Classes Bit
 #define TFLAG_CHEATCHECK (1 << 1)  // Cheatchecking Bit
 #define TFLAG_RESPAWNDELAY (1 << 2)  // RespawnDelay bit
-//#define TFLAG_UN					(1 << 3)		// NOT USED ANYMORE
+// #define TFLAG_UN					(1 << 3)		// NOT USED ANYMORE
 #define TFLAG_OLD_GRENS (1 << 3)  // Use old concussion grenade and flash grenade
 #define TFLAG_UN2 (1 << 4)  // NOT USED ANYMORE
 #define TFLAG_UN3 (1 << 5)  // NOT USED ANYMORE
@@ -1096,7 +1096,7 @@ float already_chosen_map;
 			  // In a map. Cannot be toggled by players.
 #define TFLAG_SPYINVIS (1 << 9)  // Spy invisible only
 #define TFLAG_GRAPPLE (1 << 10)  // Grapple on/off
-//#define TFLAG_FULLTEAMSCORE		(1 << 11)  	// Each Team's score is TeamScore + Frags
+// #define TFLAG_FULLTEAMSCORE		(1 << 11)  	// Each Team's score is TeamScore + Frags
 #define TFLAG_FLAGEMULATION (1 << 12)  // Flag emulation on for old TF maps
 #define TFLAG_USE_STANDARD (1 << 13)  // Use the TF War standard for Flag emulation
 

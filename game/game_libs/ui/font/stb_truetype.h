@@ -3839,8 +3839,8 @@ static void stbtt__tesselate_cubic(
 	float dy2 = y3 - y2;
 	float dx = x3 - x0;
 	float dy = y3 - y0;
-	float longlen =
-		(float)(STBTT_sqrt(dx0 * dx0 + dy0 * dy0) + STBTT_sqrt(dx1 * dx1 + dy1 * dy1) + STBTT_sqrt(dx2 * dx2 + dy2 * dy2));
+	float longlen = (float)(STBTT_sqrt(dx0 * dx0 + dy0 * dy0) + STBTT_sqrt(dx1 * dx1 + dy1 * dy1) +
+							STBTT_sqrt(dx2 * dx2 + dy2 * dy2));
 	float shortlen = (float)STBTT_sqrt(dx * dx + dy * dy);
 	float flatness_squared = longlen * longlen - shortlen * shortlen;
 

@@ -234,7 +234,7 @@ globalentity_t* CGlobalState::Find(string_t globalname)
 }
 
 // This is available all the time now on impulse 104, remove later
-//#ifdef _DEBUG
+// #ifdef _DEBUG
 void CGlobalState::DumpGlobals(void)
 {
 	static const char* estates[] = {"Off", "On", "Dead"};
@@ -248,7 +248,7 @@ void CGlobalState::DumpGlobals(void)
 		pTest = pTest->pNext;
 	}
 }
-//#endif
+// #endif
 
 void CGlobalState::EntityAdd(string_t globalname, string_t mapName, GLOBALESTATE state)
 {

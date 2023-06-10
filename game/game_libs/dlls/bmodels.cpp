@@ -699,7 +699,7 @@ void CFuncRotating::Blocked(CBaseEntity* pOther)
 {
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
 }
-//#endif
+// #endif
 class CPendulum : public CBaseEntity
 {
 public:

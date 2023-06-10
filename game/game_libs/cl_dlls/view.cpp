@@ -1624,7 +1624,7 @@ void V_Init(void)
 	cl_chasedist = gEngfuncs.pfnRegisterVariable("cl_chasedist", "112", 0);
 }
 
-//#define TRACE_TEST
+// #define TRACE_TEST
 #if defined(TRACE_TEST)
 
 extern float in_fov;

@@ -408,8 +408,8 @@ float SetBlending(void* pmodel, entvars_t* pev, int iBlender, float flValue)
 		}
 	}
 
-	int setting =
-		(int)(255 * (flValue - pseqdesc->blendstart[iBlender]) / (pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender]));
+	int setting = (int)(255 * (flValue - pseqdesc->blendstart[iBlender]) /
+						(pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender]));
 
 	if ( setting < 0 )
 		setting = 0;

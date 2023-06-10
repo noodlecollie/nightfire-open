@@ -913,8 +913,20 @@ Task_t tlHoundYell2[] = {
 };
 
 Schedule_t slHoundRangeAttack[] = {
-	{tlHoundYell1, XASH_ARRAY_SIZE(tlHoundYell1), bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE, 0, "HoundRangeAttack1"},
-	{tlHoundYell2, XASH_ARRAY_SIZE(tlHoundYell2), bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE, 0, "HoundRangeAttack2"},
+	{
+		tlHoundYell1,
+		XASH_ARRAY_SIZE(tlHoundYell1),
+		bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
+		0,
+		"HoundRangeAttack1",
+	},
+	{
+		tlHoundYell2,
+		XASH_ARRAY_SIZE(tlHoundYell2),
+		bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
+		0,
+		"HoundRangeAttack2",
+	},
 };
 
 // lie down and fall asleep

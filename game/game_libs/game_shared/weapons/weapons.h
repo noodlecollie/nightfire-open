@@ -148,7 +148,7 @@ private:
 // the maximum amount of ammo each weapon's clip can hold
 #define WEAPON_NOCLIP -1
 
-//#define CROWBAR_MAX_CLIP		WEAPON_NOCLIP
+// #define CROWBAR_MAX_CLIP		WEAPON_NOCLIP
 #define GLOCK_MAX_CLIP 17
 #define PYTHON_MAX_CLIP 6
 #define MP5_MAX_CLIP 50
@@ -396,9 +396,9 @@ public:
 	virtual int AddDuplicate(CBasePlayerItem* pItem);
 
 	virtual int ExtractAmmo(CBasePlayerWeapon* pWeapon);  //{ return TRUE; };			// Return TRUE if you can add
-														  //ammo to yourself when picked up
-	virtual int ExtractClipAmmo(CBasePlayerWeapon* pWeapon);  // { return TRUE; };			// Return TRUE if you can add
-															  // ammo to yourself when picked up
+														  // ammo to yourself when picked up
+	virtual int ExtractClipAmmo(CBasePlayerWeapon* pWeapon);  // { return TRUE; };			// Return TRUE if you can
+															  // add ammo to yourself when picked up
 
 	virtual int AddWeapon(void)
 	{

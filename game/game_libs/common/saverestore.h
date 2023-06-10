@@ -190,9 +190,9 @@ public:
 	int Restore(CRestore& restore);
 	static TYPEDESCRIPTION m_SaveData[];
 
-	//#ifdef _DEBUG
+	// #ifdef _DEBUG
 	void DumpGlobals(void);
-	//#endif
+	// #endif
 
 private:
 	globalentity_t* Find(string_t globalname);

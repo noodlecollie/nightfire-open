@@ -500,7 +500,7 @@ BOOL CHGrunt::CheckRangeAttack2(float flDot, float flDist)
 		 m_vecEnemyLKP.z > pev->absmax.z )
 	{
 		//!!!BUGBUG - we should make this check movetype and make sure it isn't FLY? Players who jump a lot are unlikely
-		//!to
+		//! to
 		// be grenaded.
 		// don't throw grenades at anything that isn't on the ground!
 		m_fThrowGrenade = FALSE;
@@ -1502,9 +1502,13 @@ Task_t tlGruntTakeCoverFromBestSound[] = {
 	{TASK_TURN_LEFT, (float)179},
 };
 
-Schedule_t slGruntTakeCoverFromBestSound[] = {
-	{tlGruntTakeCoverFromBestSound, XASH_ARRAY_SIZE(tlGruntTakeCoverFromBestSound), 0, 0, "GruntTakeCoverFromBestSound"},
-};
+Schedule_t slGruntTakeCoverFromBestSound[] = {{
+	tlGruntTakeCoverFromBestSound,
+	XASH_ARRAY_SIZE(tlGruntTakeCoverFromBestSound),
+	0,
+	0,
+	"GruntTakeCoverFromBestSound",
+}};
 
 //=========================================================
 // Grunt reload schedule
@@ -2021,7 +2025,7 @@ Schedule_t* CHGrunt::GetSchedule(void)
 				if ( HasConditions(bits_COND_CAN_RANGE_ATTACK2) && OccupySlot(bits_SLOTS_HGRUNT_GRENADE) )
 				{
 					//!!!KELLY - this grunt is about to throw or fire a grenade at the player. Great place for "fire in
-					//!the hole"  "frag out" etc
+					//! the hole"  "frag out" etc
 					if ( FOkToSpeak() )
 					{
 						SENTENCEG_PlayRndSz(ENT(pev), "HG_THROW", HGRUNT_SENTENCE_VOLUME, GRUNT_ATTN, 0, m_voicePitch);

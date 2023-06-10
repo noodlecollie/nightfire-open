@@ -844,8 +844,13 @@ Task_t tlSquidSeeCrab[] = {
 	{TASK_FACE_ENEMY, (float)0},
 };
 
-Schedule_t slSquidSeeCrab[] = {
-	{tlSquidSeeCrab, XASH_ARRAY_SIZE(tlSquidSeeCrab), bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE, 0, "SquidSeeCrab"}};
+Schedule_t slSquidSeeCrab[] = {{
+	tlSquidSeeCrab,
+	XASH_ARRAY_SIZE(tlSquidSeeCrab),
+	bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
+	0,
+	"SquidSeeCrab",
+}};
 
 // squid walks to something tasty and eats it.
 Task_t tlSquidEat[] = {

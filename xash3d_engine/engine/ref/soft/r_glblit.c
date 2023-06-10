@@ -700,8 +700,8 @@ void R_BlitScreen(void)
 	// return;
 	// byte *buf = vid.buffer;
 
-	//#pragma omp parallel for schedule(static)
-	// gEngfuncs.Con_Printf("swblit %d %d", swblit.bpp, vid.height );
+	// #pragma omp parallel for schedule(static)
+	//  gEngfuncs.Con_Printf("swblit %d %d", swblit.bpp, vid.height );
 	if ( swblit.rotate )
 	{
 		if ( swblit.bpp == 2 )

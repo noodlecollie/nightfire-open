@@ -463,7 +463,7 @@ BOOL CSquadMonster::NoFriendlyFire(void)
 	Vector v_left;
 
 	//!!!BUGBUG - to fix this, the planes must be aligned to where the monster will be firing its gun, not the direction
-	//!it is facing!!!
+	//! it is facing!!!
 	if ( m_hEnemy != 0 )
 	{
 		UTIL_MakeVectors(UTIL_VecToAngles(m_hEnemy->Center() - pev->origin));
