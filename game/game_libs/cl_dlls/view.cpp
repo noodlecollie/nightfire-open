@@ -28,6 +28,7 @@
 #include "weaponregistry.h"
 #include "weaponatts_collection.h"
 #include "miniutl.h"
+#include "PlatformLib/String.h"
 
 // Spectator Mode
 extern "C"
@@ -1353,7 +1354,7 @@ int V_FindViewModelByWeaponModel(int weaponindex)
 		}
 
 		const char* name = atts->PlayerModel.PlayerModelName;
-		if ( name && strnicmp(weaponModel->name, name, len) )
+		if ( name && PlatformLib_StrNCaseCmp(weaponModel->name, name, len) )
 		{
 			return gEngfuncs.pEventAPI->EV_FindModelIndex(atts->ViewModel.ModelName);
 		}
@@ -1363,7 +1364,7 @@ int V_FindViewModelByWeaponModel(int weaponindex)
 	int i = 0;
 	while ( modelmap[i][0] != NULL )
 	{
-		if ( !strnicmp(weaponModel->name, modelmap[i][0], len) )
+		if ( !PlatformLib_StrNCaseCmp(weaponModel->name, modelmap[i][0], len) )
 		{
 			return gEngfuncs.pEventAPI->EV_FindModelIndex(modelmap[i][1]);
 			break;

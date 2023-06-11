@@ -131,10 +131,6 @@ static inline char* Q_strstr(const char* s1, const char* s2)
 
 // libc extensions, be careful
 
-#if XASH_WIN32
-#define strncasecmp strnicmp
-#endif  // XASH_WIN32
-
 static inline int Q_stricmp(const char* s1, const char* s2)
 {
 	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrCaseCmp(s1, s2));
@@ -142,7 +138,7 @@ static inline int Q_stricmp(const char* s1, const char* s2)
 
 static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)
 {
-	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : strncasecmp(s1, s2, n));
+	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrNCaseCmp(s1, s2, n));
 }
 
 #if defined(HAVE_STRCASESTR)

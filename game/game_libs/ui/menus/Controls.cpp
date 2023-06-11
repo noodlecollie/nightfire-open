@@ -236,7 +236,7 @@ void CMenuKeysModel::Update(void)
 				const char* str = EngFuncs::KeynumToString(keys[0]);
 
 				if ( str )
-					if ( !strnicmp(str, "MOUSE", 5) )
+					if ( !PlatformLib_StrNCaseCmp(str, "MOUSE", 5) )
 						snprintf(firstKey[i], 20, "^5%s^7", str);
 					else
 						snprintf(firstKey[i], 20, "^3%s^7", str);
@@ -249,7 +249,7 @@ void CMenuKeysModel::Update(void)
 				const char* str = EngFuncs::KeynumToString(keys[1]);
 
 				if ( str )
-					if ( !strnicmp(str, "MOUSE", 5) )
+					if ( !PlatformLib_StrNCaseCmp(str, "MOUSE", 5) )
 						snprintf(secondKey[i], 20, "^5%s^7", str);
 					else
 						snprintf(secondKey[i], 20, "^3%s^7", str);
