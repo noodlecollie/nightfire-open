@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include "miniutl.h"
 
-extern float* GetClientColor(int clientIndex);
+extern const float* GetClientColor(int clientIndex);
 
 #define MAX_LINES 5
 #define MAX_CHARS_PER_LINE 256 /* it can be less than this, depending on char size */
@@ -37,7 +37,7 @@ extern float* GetClientColor(int clientIndex);
 static float SCROLL_SPEED = 5;
 
 static char g_szLineBuffer[MAX_LINES + 1][MAX_CHARS_PER_LINE];
-static float* g_pflNameColors[MAX_LINES + 1];
+static const float* g_pflNameColors[MAX_LINES + 1];
 static int g_iNameLengths[MAX_LINES + 1];
 static float flScrollTime = 0;  // the time at which the lines next scroll up
 

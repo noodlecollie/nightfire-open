@@ -38,7 +38,7 @@ extern void V_ResetChaseCam();
 extern void V_GetChasePos(int target, float* cl_angles, float* origin, float* angles);
 extern void VectorAngles(const float* forward, float* angles);
 extern "C" void NormalizeAngles(float* angles);
-extern float* GetClientColor(int clientIndex);
+extern const float* GetClientColor(int clientIndex);
 
 extern vec3_t v_origin;  // last view origin
 extern vec3_t v_angles;  // last view angle
@@ -364,7 +364,7 @@ int CHudSpectator::Draw(float flTime)
 	int lx;
 
 	char string[256];
-	float* color;
+	const float* color;
 
 	// draw only in spectator mode
 	if ( !g_iUser1 )

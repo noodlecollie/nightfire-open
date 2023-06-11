@@ -73,6 +73,11 @@ const float* GetClientColor(int clientIndex)
 	return NULL;
 }
 
+const float* GetDefaultColor()
+{
+	return g_ColorYellow;
+}
+
 int CHudDeathNotice::Init(void)
 {
 	gHUD.AddHudElem(this);

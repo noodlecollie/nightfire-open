@@ -285,7 +285,7 @@ protected:
 	int m_bReparseString;  // set to TRUE whenever the m_szStatusBar needs to be recalculated
 
 	// an array of colors...one color for each line
-	float* m_pflNameColors[MAX_STATUSBAR_LINES];
+	const float* m_pflNameColors[MAX_STATUSBAR_LINES];
 };
 
 //

@@ -33,8 +33,8 @@ DECLARE_MESSAGE(m_StatusBar, StatusValue)
 
 #define STATUSBAR_ID_LINE 1
 
-float* GetClientColor(int clientIndex);
-extern float g_ColorYellow[3];
+const float* GetClientColor(int clientIndex);
+const float* GetDefaultColor();
 
 int CHudStatusBar::Init(void)
 {
@@ -69,7 +69,7 @@ void CHudStatusBar::Reset(void)
 
 	// reset our colors for the status bar lines (yellow is default)
 	for ( i = 0; i < MAX_STATUSBAR_LINES; i++ )
-		m_pflNameColors[i] = g_ColorYellow;
+		m_pflNameColors[i] = GetDefaultColor();
 }
 
 void CHudStatusBar::ParseStatusString(int line_num)
@@ -180,7 +180,7 @@ int CHudStatusBar::Draw(float fTime)
 	{
 		for ( int i = 0; i < MAX_STATUSBAR_LINES; i++ )
 		{
-			m_pflNameColors[i] = g_ColorYellow;
+			m_pflNameColors[i] = GetDefaultColor();
 			ParseStatusString(i);
 		}
 		m_bReparseString = FALSE;
