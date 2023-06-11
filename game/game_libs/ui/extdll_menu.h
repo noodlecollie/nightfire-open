@@ -71,11 +71,9 @@ GNU General Public License for more details.
 #endif
 
 #if !defined(_WIN32) && !defined(__MINGW32__)
-#define stricmp strcasecmp
 #define strnicmp strncasecmp
 #else
 #define strnicmp _strnicmp
-#define stricmp _stricmp
 #define snprintf _snprintf
 #endif
 

@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "errno.h"
 #include <pthread.h>
 #include <sys/prctl.h>
+#include "PlatformLib/String.h"
 
 #ifndef JNICALL
 #define JNICALL  // a1ba: workaround for my IDE, where Java files are not included
@@ -759,11 +760,11 @@ void* Platform_GetNativeObject(const char* objName)
 	{
 		object = (void*)availObjects;
 	}
-	else if ( !strcasecmp(objName, "JNIEnv") )
+	else if ( !PlatformLib_StrCaseCmp(objName, "JNIEnv") )
 	{
 		object = (void*)jni.env;
 	}
-	else if ( !strcasecmp(objName, "ActivityClass") )
+	else if ( !PlatformLib_StrCaseCmp(objName, "ActivityClass") )
 	{
 		object = (void*)jni.actcls;
 	}

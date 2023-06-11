@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright ï¿½ 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
@@ -12,6 +12,7 @@
 #include "util.h"
 #include "cbase.h"
 #include "player.h"
+#include "PlatformLib/String.h"
 
 #define UPDATE_INTERVAL 0.3
 
@@ -50,7 +51,7 @@ static CBasePlayer* FindPlayerByName(const char* pTestName)
 			if ( pEnt && pEnt->IsPlayer() )
 			{
 				const char* pNetName = STRING(pEnt->pev->netname);
-				if ( stricmp(pNetName, pTestName) == 0 )
+				if ( PlatformLib_StrCaseCmp(pNetName, pTestName) == 0 )
 				{
 					return (CBasePlayer*)pEnt;
 				}
@@ -160,7 +161,7 @@ bool CVoiceGameMgr::ClientCommand(CBasePlayer* pPlayer, const char* cmd)
 		return true;
 	}
 
-	bool bBan = stricmp(cmd, "vban") == 0;
+	bool bBan = PlatformLib_StrCaseCmp(cmd, "vban") == 0;
 	if ( bBan && CMD_ARGC() >= 2 )
 	{
 		for ( int i = 1; i < CMD_ARGC(); i++ )
@@ -183,7 +184,7 @@ bool CVoiceGameMgr::ClientCommand(CBasePlayer* pPlayer, const char* cmd)
 		// UpdateMasks();
 		return true;
 	}
-	else if ( stricmp(cmd, "VModEnable") == 0 && CMD_ARGC() >= 2 )
+	else if ( PlatformLib_StrCaseCmp(cmd, "VModEnable") == 0 && CMD_ARGC() >= 2 )
 	{
 		VoiceServerDebug("CVoiceGameMgr::ClientCommand: VModEnable (%d)\n", !!atoi(CMD_ARGV(1)));
 		g_PlayerModEnable[playerClientIndex] = !!atoi(CMD_ARGV(1));

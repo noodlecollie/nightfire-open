@@ -23,6 +23,7 @@
 #include <memory.h>
 #include <math.h>
 #include <cstdlib>
+#include "PlatformLib/String.h"
 
 #include "studio_util.h"
 #include "r_studioint.h"
@@ -1064,7 +1065,7 @@ void CStudioModelRenderer::StudioMergeBones(model_t* m_pSubModel)
 	{
 		for ( j = 0; j < m_nCachedBones; j++ )
 		{
-			if ( stricmp(pbones[i].name, m_nCachedBoneNames[j]) == 0 )
+			if ( PlatformLib_StrCaseCmp(pbones[i].name, m_nCachedBoneNames[j]) == 0 )
 			{
 				MatrixCopy(m_rgCachedBoneTransform[j], (*m_pbonetransform)[i]);
 				MatrixCopy(m_rgCachedLightTransform[j], (*m_plighttransform)[i]);

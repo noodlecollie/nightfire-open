@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Field.h"
 #include "utlvector.h"
 #include "CheckBox.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER_INET "gfx/shell/head_inetgames"
 #define ART_BANNER_LAN "gfx/shell/head_lan"
@@ -83,7 +84,7 @@ struct server_t
 
 	int MapCmp(const server_t& other) const
 	{
-		return stricmp(mapname, other.mapname);
+		return PlatformLib_StrCaseCmp(mapname, other.mapname);
 	}
 
 	int ClientCmp(const server_t& other) const
@@ -429,7 +430,7 @@ void CMenuGameListModel::AddServerToList(netadr_t adr, const char* info)
 		if ( !EngFuncs::NET_CompareAdr(&servers[i].adr, &adr) )
 			return;
 
-		if ( !stricmp(servers[i].info, info) )
+		if ( !PlatformLib_StrCaseCmp(servers[i].info, info) )
 			return;
 	}
 
@@ -698,7 +699,7 @@ void CMenuServerBrowser::Show()
 
 void CMenuServerBrowser::AddServerToList(netadr_t adr, const char* info)
 {
-	if ( stricmp(gMenu.m_gameinfo.gamefolder, Info_ValueForKey(info, "gamedir")) != 0 )
+	if ( PlatformLib_StrCaseCmp(gMenu.m_gameinfo.gamefolder, Info_ValueForKey(info, "gamedir")) != 0 )
 		return;
 
 	if ( !WasInit() )

@@ -31,6 +31,7 @@
 #include "weapons.h"
 #include "gamerules.h"
 #include <cassert>
+#include "PlatformLib/String.h"
 
 float UTIL_WeaponTimeBase(void)
 {
@@ -1405,7 +1406,7 @@ BOOL UTIL_TeamsMatch(const char* pTeamName1, const char* pTeamName2)
 	// Both on a team?
 	if ( *pTeamName1 != 0 && *pTeamName2 != 0 )
 	{
-		if ( !stricmp(pTeamName1, pTeamName2) )  // Same Team?
+		if ( !PlatformLib_StrCaseCmp(pTeamName1, pTeamName2) )  // Same Team?
 			return TRUE;
 	}
 
@@ -2017,7 +2018,7 @@ void EntvarsKeyvalue(entvars_t* pev, KeyValueData* pkvd)
 	{
 		pField = &gEntvarsDescription[i];
 
-		if ( !stricmp(pField->fieldName, pkvd->szKeyName) )
+		if ( !PlatformLib_StrCaseCmp(pField->fieldName, pkvd->szKeyName) )
 		{
 			switch ( pField->fieldType )
 			{
@@ -2248,7 +2249,7 @@ int CRestore::ReadField(
 	{
 		fieldNumber = (i + startField) % fieldCount;
 		pTest = &pFields[fieldNumber];
-		if ( !stricmp(pTest->fieldName, pName) )
+		if ( !PlatformLib_StrCaseCmp(pTest->fieldName, pName) )
 		{
 			if ( !m_global || !(pTest->flags & FTYPEDESC_GLOBAL) )
 			{

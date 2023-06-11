@@ -24,6 +24,7 @@
 #include "soundent.h"
 #include "nodes.h"
 #include "scripted.h"
+#include "PlatformLib/String.h"
 
 //=========================================================
 // Fail
@@ -702,7 +703,7 @@ Schedule_t* CBaseMonster::ScheduleInList(const char* pName, Schedule_t** pList, 
 			ALERT(at_console, "Unnamed schedule!\n");
 			continue;
 		}
-		if ( stricmp(pName, pList[i]->pName) == 0 )
+		if ( PlatformLib_StrCaseCmp(pName, pList[i]->pName) == 0 )
 			return pList[i];
 	}
 	return NULL;

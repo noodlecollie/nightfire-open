@@ -28,6 +28,7 @@
 #include "demo.h"
 #include "demo_api.h"
 #include "hud_crosshair.h"
+#include "PlatformLib/String.h"
 
 cvar_t* hud_textmode;
 float g_hud_text_color[3];
@@ -500,7 +501,7 @@ int HUD_IsGame(const char* game)
 	if ( gamedir && gamedir[0] )
 	{
 		COM_FileBase(gamedir, gd);
-		if ( !stricmp(gd, game) )
+		if ( !PlatformLib_StrCaseCmp(gd, game) )
 			return 1;
 	}
 	return 0;

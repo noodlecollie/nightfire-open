@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "build.h"
 #include "xash3d_types.h"
+#include "PlatformLib/String.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -131,13 +132,12 @@ static inline char* Q_strstr(const char* s1, const char* s2)
 // libc extensions, be careful
 
 #if XASH_WIN32
-#define strcasecmp stricmp
 #define strncasecmp strnicmp
 #endif  // XASH_WIN32
 
 static inline int Q_stricmp(const char* s1, const char* s2)
 {
-	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : strcasecmp(s1, s2));
+	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrCaseCmp(s1, s2));
 }
 
 static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)

@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Field.h"
 #include "ItemsHolder.h"
 #include "Action.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER_SERVER "gfx/shell/head_advoptions"
 #define ART_BANNER_USER "gfx/shell/head_gameopts"
@@ -206,8 +207,8 @@ void CMenuScriptConfig::_Init(void)
 		CMenuEditable::cvarType_e cvarType;
 
 #if IGNORE_ALREADY_USED_CVARS
-		if ( !stricmp(var->name, "hostname") || !stricmp(var->name, "sv_password") ||
-			 !stricmp(var->name, "maxplayers") )
+		if ( !PlatformLib_StrCaseCmp(var->name, "hostname") || !PlatformLib_StrCaseCmp(var->name, "sv_password") ||
+			 !PlatformLib_StrCaseCmp(var->name, "maxplayers") )
 			continue;
 #endif
 
@@ -302,7 +303,7 @@ void CMenuScriptConfig::_Init(void)
 
 void CMenuScriptConfig::SetScriptConfig(const char* path, bool earlyInit)
 {
-	if ( m_szConfig && m_pVars && !stricmp(m_szConfig, path) )
+	if ( m_szConfig && m_pVars && !PlatformLib_StrCaseCmp(m_szConfig, path) )
 		return;  // do nothing
 
 	m_szConfig = path;

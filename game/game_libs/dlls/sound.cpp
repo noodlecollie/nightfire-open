@@ -27,6 +27,7 @@
 #include "com_model.h"
 #include "sound/ServerSoundInstance.h"
 #include "resources/SurfaceAttributes.h"
+#include "PlatformLib/String.h"
 
 static char* memfgets(byte* pMemFile, int fileSize, int& filePos, char* pBuffer, int bufferSize);
 
@@ -1387,7 +1388,7 @@ int SENTENCEG_Lookup(const char* sample, char* sentencenum)
 	// this is a sentence name; lookup sentence number
 	// and give to engine as string.
 	for ( i = 0; i < gcallsentences; i++ )
-		if ( !stricmp(gszallsentencenames[i], sample + 1) )
+		if ( !PlatformLib_StrCaseCmp(gszallsentencenames[i], sample + 1) )
 		{
 			if ( sentencenum )
 			{

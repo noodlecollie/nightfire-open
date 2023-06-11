@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "keydefs.h"
 #include "MenuStrings.h"
 #include "PlayerIntroduceDialog.h"
+#include "PlatformLib/String.h"
 
 #define ART_MINIMIZE_N "gfx/shell/min_n"
 #define ART_MINIMIZE_F "gfx/shell/min_f"
@@ -186,7 +187,7 @@ void CMenuMain::HazardCourseCb()
 
 void CMenuMain::_Init(void)
 {
-	if ( gMenu.m_gameinfo.trainmap[0] && stricmp(gMenu.m_gameinfo.trainmap, gMenu.m_gameinfo.startmap) != 0 )
+	if ( gMenu.m_gameinfo.trainmap[0] && PlatformLib_StrCaseCmp(gMenu.m_gameinfo.trainmap, gMenu.m_gameinfo.startmap) != 0 )
 		bTrainMap = true;
 	else
 		bTrainMap = false;

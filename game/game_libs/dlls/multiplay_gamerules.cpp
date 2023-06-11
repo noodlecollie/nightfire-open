@@ -22,6 +22,7 @@
 #include "player.h"
 #include "weapons.h"
 #include "gamerules.h"
+#include "PlatformLib/String.h"
 
 #include "skill.h"
 #include "game.h"
@@ -1622,7 +1623,7 @@ void CHalfLifeMultiplay::ChangeLevel(void)
 	curplayers = CountPlayers();
 
 	// Has the map cycle filename changed?
-	if ( stricmp(mapcfile, szPreviousMapCycleFile) )
+	if ( PlatformLib_StrCaseCmp(mapcfile, szPreviousMapCycleFile) )
 	{
 		strcpy(szPreviousMapCycleFile, mapcfile);
 

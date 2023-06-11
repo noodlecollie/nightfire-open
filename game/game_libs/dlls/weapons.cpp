@@ -34,6 +34,7 @@
 #include "weaponinfo.h"
 #include "weaponatts_collection.h"
 #include "resources/SoundResources.h"
+#include "PlatformLib/String.h"
 
 extern CGraph WorldGraph;
 extern int gEvilImpulse101;
@@ -242,7 +243,7 @@ void AddAmmoNameToAmmoRegistry(const char* szAmmoname)
 		if ( !CBasePlayerItem::AmmoInfoArray[i].pszName )
 			continue;
 
-		if ( stricmp(CBasePlayerItem::AmmoInfoArray[i].pszName, szAmmoname) == 0 )
+		if ( PlatformLib_StrCaseCmp(CBasePlayerItem::AmmoInfoArray[i].pszName, szAmmoname) == 0 )
 			return;  // ammo already in registry, just quite
 	}
 
@@ -1516,7 +1517,7 @@ int CWeaponBox::GiveAmmo(int iCount, const char* szName, int iMax, int* pIndex /
 
 	for ( i = 1; i < MAX_AMMO_SLOTS && !FStringNull(m_rgiszAmmo[i]); i++ )
 	{
-		if ( stricmp(szName, STRING(m_rgiszAmmo[i])) == 0 )
+		if ( PlatformLib_StrCaseCmp(szName, STRING(m_rgiszAmmo[i])) == 0 )
 		{
 			if ( pIndex )
 				*pIndex = i;

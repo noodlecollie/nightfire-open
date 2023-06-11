@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include <math.h>
 #include "Utils.h"
 #include "miniutl/utlbuffer.h"
+#include "PlatformLib/String.h"
 
 CBaseFont::CBaseFont() :
 	m_iTall(),
@@ -277,7 +278,7 @@ void CBaseFont::GetCharABCWidths(int ch, int& a, int& b, int& c)
 
 bool CBaseFont::IsEqualTo(const char* name, int tall, int weight, int blur, int flags) const
 {
-	if ( stricmp(name, m_szName) )
+	if ( PlatformLib_StrCaseCmp(name, m_szName) )
 		return false;
 
 	if ( m_iTall != tall )

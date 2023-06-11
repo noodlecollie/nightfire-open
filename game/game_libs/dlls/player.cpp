@@ -48,6 +48,7 @@
 #include "resources/SoundResources.h"
 #include "weapons/genericweapon.h"
 #include "com_strings.h"
+#include "PlatformLib/String.h"
 
 // #define DUCKFIX
 
@@ -3750,7 +3751,7 @@ int CBasePlayer::GetAmmoIndex(const char* psz)
 		if ( !CBasePlayerItem::AmmoInfoArray[i].pszName )
 			continue;
 
-		if ( stricmp(psz, CBasePlayerItem::AmmoInfoArray[i].pszName) == 0 )
+		if ( PlatformLib_StrCaseCmp(psz, CBasePlayerItem::AmmoInfoArray[i].pszName) == 0 )
 			return i;
 	}
 

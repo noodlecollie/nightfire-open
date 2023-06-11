@@ -50,6 +50,8 @@ typedef unsigned char byte;
 #include "enginecallback.h"
 #endif
 
+#include "PlatformLib/String.h"
+
 extern globalvars_t* gpGlobals;
 
 #pragma warning(disable : 4244)
@@ -162,7 +164,7 @@ int LookupSequence(void* pmodel, const char* label)
 
 	for ( int i = 0; i < pstudiohdr->numseq; i++ )
 	{
-		if ( stricmp(pseqdesc[i].label, label) == 0 )
+		if ( PlatformLib_StrCaseCmp(pseqdesc[i].label, label) == 0 )
 			return i;
 	}
 

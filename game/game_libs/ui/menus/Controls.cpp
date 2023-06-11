@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "YesNoMessageBox.h"
 #include "MessageBox.h"
 #include "Table.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_controls"
 #define MAX_KEYS 256
@@ -140,7 +141,7 @@ void CMenuControls::GetKeyBindings(const char* command, int* twoKeys)
 		if ( !b )
 			continue;
 
-		if ( !stricmp(command, b) )
+		if ( !PlatformLib_StrCaseCmp(command, b) )
 		{
 			twoKeys[count] = i;
 			count++;
@@ -198,7 +199,7 @@ void CMenuKeysModel::Update(void)
 
 	while ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) != NULL )
 	{
-		if ( !stricmp(token, "blank") )
+		if ( !PlatformLib_StrCaseCmp(token, "blank") )
 		{
 			// separator
 			pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));

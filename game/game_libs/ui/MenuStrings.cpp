@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "utlhashmap.h"
 #include "generichash.h"
 #include "unicode_strtools.h"
+#include "PlatformLib/String.h"
 
 #define EMPTY_STRINGS_1 ""
 #define EMPTY_STRINGS_2 EMPTY_STRINGS_1, EMPTY_STRINGS_1
@@ -327,7 +328,7 @@ static void Localize_AddToDictionary(const char* name, const char* lang)
 
 	pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
 
-	if ( stricmp(token, "lang") )
+	if ( PlatformLib_StrCaseCmp(token, "lang") )
 	{
 		Con_Printf("Localize_AddToDict( %s ): invalid header, got %s", filename, token);
 		goto error;
@@ -343,7 +344,7 @@ static void Localize_AddToDictionary(const char* name, const char* lang)
 
 	pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
 
-	if ( stricmp(token, "Language") )
+	if ( PlatformLib_StrCaseCmp(token, "Language") )
 	{
 		Con_Printf("Localize_AddToDict( %s ): want Language, got %s", filename, token);
 		goto error;
@@ -354,7 +355,7 @@ static void Localize_AddToDictionary(const char* name, const char* lang)
 
 	pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token));
 
-	if ( stricmp(token, "Tokens") )
+	if ( PlatformLib_StrCaseCmp(token, "Tokens") )
 	{
 		Con_Printf("Localize_AddToDict( %s ): want Tokens, got %s", filename, token);
 		goto error;

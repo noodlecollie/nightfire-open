@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "parsemsg.h"
 #include "event_api.h"
+#include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_StatusIcons, StatusIcon)
 
@@ -111,7 +112,7 @@ void CHudStatusIcons::EnableIcon(const char* pszIconName, unsigned char red, uns
 	// check to see if the sprite is in the current list
 	for ( i = 0; i < MAX_ICONSPRITES; i++ )
 	{
-		if ( !stricmp(m_IconList[i].szSpriteName, pszIconName) )
+		if ( !PlatformLib_StrCaseCmp(m_IconList[i].szSpriteName, pszIconName) )
 			break;
 	}
 
@@ -162,7 +163,7 @@ void CHudStatusIcons::DisableIcon(const char* pszIconName)
 	// find the sprite is in the current list
 	for ( int i = 0; i < MAX_ICONSPRITES; i++ )
 	{
-		if ( !stricmp(m_IconList[i].szSpriteName, pszIconName) )
+		if ( !PlatformLib_StrCaseCmp(m_IconList[i].szSpriteName, pszIconName) )
 		{
 			// clear the item from the list
 			memset(&m_IconList[i], 0, sizeof(icon_sprite_t));

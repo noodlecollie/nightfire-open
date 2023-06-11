@@ -24,6 +24,7 @@
 #include "gamerules.h"
 #include "teamplay_gamerules.h"
 #include "game.h"
+#include "PlatformLib/String.h"
 
 static char team_names[MAX_TEAMS][MAX_TEAMNAME_LENGTH];
 static int team_scores[MAX_TEAMS];
@@ -325,7 +326,7 @@ void CHalfLifeTeamplay::ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobu
 	// prevent skin/color/model changes
 	char* mdls = g_engfuncs.pfnInfoKeyValue(infobuffer, "model");
 
-	if ( !stricmp(mdls, pPlayer->m_szTeamName) )
+	if ( !PlatformLib_StrCaseCmp(mdls, pPlayer->m_szTeamName) )
 		return;
 
 	if ( defaultteam.value )
@@ -455,7 +456,7 @@ int CHalfLifeTeamplay::PlayerRelationship(CBaseEntity* pPlayer, CBaseEntity* pTa
 		return GR_NOTTEAMMATE;
 
 	if ( (*GetTeamID(pPlayer) != '\0') && (*GetTeamID(pTarget) != '\0') &&
-		 !stricmp(GetTeamID(pPlayer), GetTeamID(pTarget)) )
+		 !PlatformLib_StrCaseCmp(GetTeamID(pPlayer), GetTeamID(pTarget)) )
 	{
 		return GR_TEAMMATE;
 	}
@@ -512,7 +513,7 @@ int CHalfLifeTeamplay::GetTeamIndex(const char* pTeamName)
 		// try to find existing team
 		for ( int tm = 0; tm < num_teams; tm++ )
 		{
-			if ( !stricmp(team_names[tm], pTeamName) )
+			if ( !PlatformLib_StrCaseCmp(team_names[tm], pTeamName) )
 				return tm;
 		}
 	}

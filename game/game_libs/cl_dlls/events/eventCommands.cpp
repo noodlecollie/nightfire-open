@@ -4,6 +4,7 @@
 #include "cl_dll.h"
 #include "projectInterface/IProjectInterface.h"
 #include "debugging/hitscanweapondebugging.h"
+#include "PlatformLib/String.h"
 
 namespace EventCommands
 {
@@ -45,11 +46,11 @@ namespace EventCommands
 			return false;
 		}
 
-		if ( stricmp(input, "true") == 0 || stricmp(input, "on") == 0 )
+		if ( PlatformLib_StrCaseCmp(input, "true") == 0 || PlatformLib_StrCaseCmp(input, "on") == 0 )
 		{
 			return true;
 		}
-		else if ( stricmp(input, "false") == 0 || stricmp(input, "off") == 0 )
+		else if ( PlatformLib_StrCaseCmp(input, "false") == 0 || PlatformLib_StrCaseCmp(input, "off") == 0 )
 		{
 			return false;
 		}

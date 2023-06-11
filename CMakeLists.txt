@@ -91,5 +91,6 @@ else()
 	add_link_options(-Wl,--fatal-warnings)
 endif()
 
+add_subdirectory(platformlib)
 add_subdirectory(xash3d_engine)
 add_subdirectory(game)

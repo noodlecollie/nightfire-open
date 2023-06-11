@@ -86,7 +86,6 @@ int V_StrTrim(char* pStr);
 #define _atoi64 atoll
 #define _wtoi(arg) wcstol(arg, NULL, 10)
 #define _i64toa(num, buf, base) sprintf(buf, "%lld", num)
-#define _stricmp strcasecmp
 #define _strtoi64 strtoll
 #define _strtoui64 strtoull
 #define _vsnprintf vsnprintf

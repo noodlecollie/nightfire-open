@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Utils.h"
 #include "keydefs.h"
 #include "BtnsBMPTable.h"
+#include "PlatformLib/String.h"
 
 #if defined _WIN32
 #undef GetParent
@@ -334,7 +335,7 @@ int KEY_GetKey(const char* binding)
 		if ( !b )
 			continue;
 
-		if ( !stricmp(binding, b) )
+		if ( !PlatformLib_StrCaseCmp(binding, b) )
 			return i;
 	}
 	return -1;
@@ -613,7 +614,7 @@ bool UI::Names::CheckIsNameValid(const char* name)
 		}
 		else
 		{
-			if ( !stricmp(name, prohibitedNames[i].name) )
+			if ( !PlatformLib_StrCaseCmp(name, prohibitedNames[i].name) )
 			{
 				return false;
 			}

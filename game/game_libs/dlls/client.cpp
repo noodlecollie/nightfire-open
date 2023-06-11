@@ -44,6 +44,7 @@
 #include "gameplay/gameplaySystems.h"
 #include "resources/SoundResources.h"
 #include "com_strings.h"
+#include "PlatformLib/String.h"
 
 extern DLL_GLOBAL ULONG g_ulModelIndexPlayer;
 extern DLL_GLOBAL BOOL g_fGameOver;
@@ -349,7 +350,7 @@ void Host_Say(edict_t* pEntity, int teamonly)
 	if ( player->m_flNextChatTime > gpGlobals->time )
 		return;
 
-	if ( !stricmp(pcmd, cpSay) || !stricmp(pcmd, cpSayTeam) )
+	if ( !PlatformLib_StrCaseCmp(pcmd, cpSay) || !PlatformLib_StrCaseCmp(pcmd, cpSayTeam) )
 	{
 		if ( CMD_ARGC() >= 2 )
 		{

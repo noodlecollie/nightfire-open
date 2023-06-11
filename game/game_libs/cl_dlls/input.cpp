@@ -28,6 +28,7 @@ extern "C"
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include "PlatformLib/String.h"
 
 extern "C"
 {
@@ -224,7 +225,7 @@ struct kbutton_s DLLEXPORT* KB_Find(const char* name)
 	p = g_kbkeys;
 	while ( p )
 	{
-		if ( !stricmp(name, p->name) )
+		if ( !PlatformLib_StrCaseCmp(name, p->name) )
 			return p->pkey;
 
 		p = p->next;

@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "FontManager.h"
 #include "projectInterface/IProjectInterface.h"
 #include "projectInterface_mainui.h"
+#include "PlatformLib/String.h"
 #ifdef CS16CLIENT
 #include "Scoreboard.h"
 #endif
@@ -940,35 +941,35 @@ void UI_ApplyCustomColors(void)
 
 	while ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) != NULL )
 	{
-		if ( !stricmp(token, "HELP_COLOR") )
+		if ( !PlatformLib_StrCaseCmp(token, "HELP_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiColorHelp);
 		}
-		else if ( !stricmp(token, "PROMPT_BG_COLOR") )
+		else if ( !PlatformLib_StrCaseCmp(token, "PROMPT_BG_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiPromptBgColor);
 		}
-		else if ( !stricmp(token, "PROMPT_TEXT_COLOR") )
+		else if ( !PlatformLib_StrCaseCmp(token, "PROMPT_TEXT_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiPromptTextColor);
 		}
-		else if ( !stricmp(token, "PROMPT_FOCUS_COLOR") )
+		else if ( !PlatformLib_StrCaseCmp(token, "PROMPT_FOCUS_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiPromptFocusColor);
 		}
-		else if ( !stricmp(token, "INPUT_TEXT_COLOR") )
+		else if ( !PlatformLib_StrCaseCmp(token, "INPUT_TEXT_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiInputTextColor);
 		}
-		else if ( !stricmp(token, "INPUT_BG_COLOR") )
+		else if ( !PlatformLib_StrCaseCmp(token, "INPUT_BG_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiInputBgColor);
 		}
-		else if ( !stricmp(token, "INPUT_FG_COLOR") )
+		else if ( !PlatformLib_StrCaseCmp(token, "INPUT_FG_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiInputFgColor);
 		}
-		else if ( !stricmp(token, "CON_TEXT_COLOR") )
+		else if ( !PlatformLib_StrCaseCmp(token, "CON_TEXT_COLOR") )
 		{
 			UI_ParseColor(pfile, &uiColorConsole);
 		}

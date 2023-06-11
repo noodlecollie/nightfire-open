@@ -337,6 +337,7 @@ add_library(${TARGETNAME_LIB_CLIENT} SHARED
 
 target_link_libraries(${TARGETNAME_LIB_CLIENT} PRIVATE
 	${TARGETNAME_LIB_MINIUTL}
+	${TARGETNAME_LIB_PLATFORMLIB}
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:USER32>
 )
 
@@ -375,7 +376,6 @@ target_compile_definitions(${TARGETNAME_LIB_CLIENT} PRIVATE
 
 	# Linux
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_LINUX=1>
-	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:stricmp=strcasecmp>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:strnicmp=strncasecmp>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_snprintf=snprintf>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_vsnprintf=vsnprintf>

@@ -397,6 +397,7 @@ add_library(${TARGETNAME_LIB_SERVER} SHARED
 
 target_link_libraries(${TARGETNAME_LIB_SERVER} PRIVATE
 	${TARGETNAME_LIB_MINIUTL}
+	${TARGETNAME_LIB_PLATFORMLIB}
 )
 
 # Since this library is looked up entirely at runtime,
@@ -438,7 +439,6 @@ target_compile_definitions(${TARGETNAME_LIB_SERVER} PRIVATE
 
 	# Linux
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_LINUX=1>
-	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:stricmp=strcasecmp>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:strnicmp=strncasecmp>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_snprintf=snprintf>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_vsnprintf=vsnprintf>

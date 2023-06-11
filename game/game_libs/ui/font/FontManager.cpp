@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include "FontManager.h"
 #include "BaseMenu.h"
 #include "Utils.h"
+#include "PlatformLib/String.h"
 
 #include "BaseFontBackend.h"
 
@@ -162,7 +163,7 @@ HFont CFontManager::GetFontByName(const char* name)
 {
 	for ( int i = 0; i < m_Fonts.Count(); i++ )
 	{
-		if ( !stricmp(name, m_Fonts[i]->GetName()) )
+		if ( !PlatformLib_StrCaseCmp(name, m_Fonts[i]->GetName()) )
 			return i;
 	}
 	return -1;

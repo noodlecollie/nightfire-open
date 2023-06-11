@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "StringArrayModel.h"
 #include "StringVectorModel.h"
 #include "common/com_strings.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_customize"
 
@@ -232,7 +233,7 @@ void CMenuPlayerSetup::CLogosListModel::Update()
 		{
 			COM_FileBase(logoFileName.String(), temp);
 
-			if ( !stricmp(temp, "remapped") )
+			if ( !PlatformLib_StrCaseCmp(temp, "remapped") )
 				continue;
 
 			AddToTail(temp);
@@ -351,7 +352,7 @@ void CMenuPlayerSetup::ApplyColorToLogoPreview()
 
 	for ( size_t i = 0; i < V_ARRAYSIZE(g_LogoColors) && logoColorStr; i++ )
 	{
-		if ( !stricmp(logoColorStr, L(g_LogoColors[i].name)) )
+		if ( !PlatformLib_StrCaseCmp(logoColorStr, L(g_LogoColors[i].name)) )
 		{
 			logoImage.r = g_LogoColors[i].r;
 			logoImage.g = g_LogoColors[i].g;
@@ -426,7 +427,7 @@ void CMenuPlayerSetup::_Init(void)
 	hideModels = hideLogos = false;
 
 	// disable playermodel preview for HLRally to prevent crash
-	if ( !stricmp(gMenu.m_gameinfo.gamefolder, "hlrally") )
+	if ( !PlatformLib_StrCaseCmp(gMenu.m_gameinfo.gamefolder, "hlrally") )
 		hideModels = true;
 
 	if ( gMenu.m_gameinfo.flags & GFL_NOMODELS )

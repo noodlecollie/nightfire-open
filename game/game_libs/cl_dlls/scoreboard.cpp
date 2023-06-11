@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "miniutl.h"
+#include "PlatformLib/String.h"
 
 cvar_t* cl_scoreboard_bg;
 cvar_t* cl_showpacketloss;
@@ -206,7 +207,7 @@ int CHudScoreboard::Draw(float fTime)
 		// find what team this player is in
 		for ( j = 1; j <= m_iNumTeams; j++ )
 		{
-			if ( !stricmp(g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name) )
+			if ( !PlatformLib_StrCaseCmp(g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name) )
 				break;
 		}
 		if ( j > m_iNumTeams )  // player is not in a team, skip to the next guy
@@ -377,7 +378,7 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 		{
 			if ( g_PlayerInfoList[i].name && g_PlayerExtraInfo[i].frags >= highest_frags )
 			{
-				if ( !(team && stricmp(g_PlayerExtraInfo[i].teamname, team)) )  // make sure it is the specified team
+				if ( !(team && PlatformLib_StrCaseCmp(g_PlayerExtraInfo[i].teamname, team)) )  // make sure it is the specified team
 				{
 					extra_player_info_t* pl_info = &g_PlayerExtraInfo[i];
 					if ( pl_info->frags > highest_frags || pl_info->deaths < lowest_deaths )
@@ -567,7 +568,7 @@ int CHudScoreboard::MsgFunc_TeamInfo(const char* pszName, int iSize, void* pbuf)
 			if ( g_TeamInfo[j].name[0] == '\0' )
 				break;
 
-			if ( !stricmp(g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name) )
+			if ( !PlatformLib_StrCaseCmp(g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name) )
 				break;
 		}
 
@@ -614,7 +615,7 @@ int CHudScoreboard::MsgFunc_TeamScore(const char* pszName, int iSize, void* pbuf
 	// find the team matching the name
 	for ( i = 1; i <= m_iNumTeams; i++ )
 	{
-		if ( !stricmp(TeamName, g_TeamInfo[i].name) )
+		if ( !PlatformLib_StrCaseCmp(TeamName, g_TeamInfo[i].name) )
 			break;
 	}
 	if ( i > m_iNumTeams )

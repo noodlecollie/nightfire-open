@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Table.h"
 #include "YesNoMessageBox.h"
 #include "keydefs.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_custom"
 
@@ -101,7 +102,7 @@ void CMenuCustomGame::UpdateExtras()
 	int i = modList.GetCurrentIndex();
 
 	load->onReleased.pExtra = modListModel.modsDir[i];
-	load->SetGrayed(!stricmp(modListModel.modsDir[i], gMenu.m_gameinfo.gamefolder));
+	load->SetGrayed(!PlatformLib_StrCaseCmp(modListModel.modsDir[i], gMenu.m_gameinfo.gamefolder));
 
 	go2url->onReleased.pExtra = modListModel.modsWebSites[i];
 	go2url->SetGrayed(modListModel.modsWebSites[i][0] == 0);
@@ -190,7 +191,7 @@ void CMenuCustomGame::_Init(void)
 
 	for ( int i = 0; i < modListModel.GetRows(); i++ )
 	{
-		if ( !stricmp(modListModel.modsDir[i], gMenu.m_gameinfo.gamefolder) )
+		if ( !PlatformLib_StrCaseCmp(modListModel.modsDir[i], gMenu.m_gameinfo.gamefolder) )
 		{
 			modList.SetCurrentIndex(i);
 			if ( modList.onChanged )

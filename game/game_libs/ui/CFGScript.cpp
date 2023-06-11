@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "BaseMenu.h"
 #include "enginecallback_menu.h"
 #include "CFGScript.h"
+#include "PlatformLib/String.h"
 
 #define CVAR_USERINFO BIT(1)
 
@@ -46,7 +47,7 @@ bool CSCR_ExpectString(parserstate_t* ps, const char* pExpect, bool skip, bool e
 {
 	char* tmp = EngFuncs::COM_ParseFile(ps->buf, ps->token, sizeof(ps->token));
 
-	if ( !stricmp(ps->token, pExpect) )
+	if ( !PlatformLib_StrCaseCmp(ps->token, pExpect) )
 	{
 		ps->buf = tmp;
 		return true;
@@ -245,7 +246,7 @@ bool CSCR_ParseHeader(parserstate_t* ps)
 
 	ps->buf = EngFuncs::COM_ParseFile(ps->buf, ps->token, sizeof(ps->token));
 
-	if ( stricmp(ps->token, "INFO_OPTIONS") && stricmp(ps->token, "SERVER_OPTIONS") )
+	if ( PlatformLib_StrCaseCmp(ps->token, "INFO_OPTIONS") && PlatformLib_StrCaseCmp(ps->token, "SERVER_OPTIONS") )
 	{
 		Con_DPrintf("DESCRIPTION must be INFO_OPTIONS or SERVER_OPTIONS\n");
 		return false;
