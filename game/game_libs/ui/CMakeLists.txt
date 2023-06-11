@@ -230,6 +230,8 @@ target_link_libraries(${TARGETNAME_LIB_UI} PRIVATE
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:rt>
 )
 
+set_common_library_compiler_settings(${TARGETNAME_LIB_UI})
+
 target_include_directories(${TARGETNAME_LIB_UI} PRIVATE
 	.
 	miniutl

@@ -28,3 +28,5 @@ add_library(${TARGETNAME_LIB_MINIUTL} STATIC
 target_include_directories(${TARGETNAME_LIB_MINIUTL} PUBLIC
 	.
 )
+
+set_common_library_compiler_settings(${TARGETNAME_LIB_MINIUTL})

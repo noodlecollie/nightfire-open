@@ -40,7 +40,7 @@
 #define DLLEXPORT /* */
 #endif
 
-typedef struct texture_s texture_t;
+struct texture_s;
 
 typedef enum
 {
@@ -167,7 +167,7 @@ typedef struct enginefuncs_s
 		edict_t* pentToSkip,
 		TraceResult* ptr);
 	void (*pfnTraceModel)(const float* v1, const float* v2, int hullNumber, edict_t* pent, TraceResult* ptr);
-	texture_t* (*pfnTraceTexture)(edict_t* pTextureEntity, const float* v1, const float* v2);
+	struct texture_s* (*pfnTraceTexture)(edict_t* pTextureEntity, const float* v1, const float* v2);
 	void (*pfnTraceSphere)(
 		const float* v1,
 		const float* v2,

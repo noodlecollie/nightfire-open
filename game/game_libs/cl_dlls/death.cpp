@@ -35,8 +35,8 @@ struct DeathNoticeItem
 	int iTeamKill;
 	int iNonPlayerKill;
 	float flDisplayTime;
-	float* KillerColor;
-	float* VictimColor;
+	const float* KillerColor;
+	const float* VictimColor;
 };
 
 #define MAX_DEATHNOTICES 4
@@ -46,13 +46,13 @@ static int DEATHNOTICE_DISPLAY_TIME = 6;
 
 DeathNoticeItem rgDeathNoticeList[MAX_DEATHNOTICES + 1];
 
-float g_ColorBlue[3] = {0.6, 0.8, 1.0};
-float g_ColorRed[3] = {1.0, 0.25, 0.25};
-float g_ColorGreen[3] = {0.6, 1.0, 0.6};
-float g_ColorYellow[3] = {1.0, 0.7, 0.0};
-float g_ColorGrey[3] = {0.8, 0.8, 0.8};
+const float g_ColorBlue[3] = {0.6, 0.8, 1.0};
+const float g_ColorRed[3] = {1.0, 0.25, 0.25};
+const float g_ColorGreen[3] = {0.6, 1.0, 0.6};
+const float g_ColorYellow[3] = {1.0, 0.7, 0.0};
+const float g_ColorGrey[3] = {0.8, 0.8, 0.8};
 
-float* GetClientColor(int clientIndex)
+const float* GetClientColor(int clientIndex)
 {
 	switch ( g_PlayerExtraInfo[clientIndex].teamnumber )
 	{

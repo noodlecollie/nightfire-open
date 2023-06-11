@@ -109,7 +109,8 @@ round the hullsize to nearest 'right' value
 */
 void RoundUpHullSize(vec3_t size)
 {
-	int i, j;
+	size_t i;
+	size_t j;
 
 	for ( i = 0; i < 3; i++ )
 	{
@@ -952,7 +953,7 @@ void R_StudioCalcBonePosition(
 	float s,
 	const mstudiobone_t* pbone,
 	const mstudioanim_t* panim,
-	const float* adj,
+	const vec3_t adj,
 	vec3_t pos)
 {
 	vec3_t origin1;

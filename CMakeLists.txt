@@ -83,14 +83,6 @@ if(NOT USE_ALLOCA_SUPPORTED)
 	message(FATAL_ERROR "Could not determine alloca support in either alloca.h or malloc.h")
 endif()
 
-if(HOST_COMPILER STREQUAL "MSVC")
-	add_compile_options(/WX) # NFTODO: /W4 /WX
-	add_link_options(/WX)
-else()
-	add_compile_options(-Wall -Wextra -pedantic -Werror)
-	add_link_options(-Wl,--fatal-warnings)
-endif()
-
 add_subdirectory(platformlib)
 add_subdirectory(xash3d_engine)
 add_subdirectory(game)

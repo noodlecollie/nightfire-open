@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 add_executable(${TARGETNAME_EXE_GAME_LAUNCHER}
 	game.cpp
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:game.rc>
@@ -30,6 +32,8 @@ else()
 		dl
 	)
 endif()
+
+set_common_library_compiler_settings(${TARGETNAME_EXE_GAME_LAUNCHER})
 
 install(TARGETS ${TARGETNAME_EXE_GAME_LAUNCHER}
 	ARCHIVE DESTINATION ${INSTALL_ROOT}

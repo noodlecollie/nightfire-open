@@ -387,6 +387,8 @@ target_compile_options(${TARGETNAME_LIB_CLIENT} PRIVATE
 	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-invalid-offsetof>
 )
 
+set_common_library_compiler_settings(${TARGETNAME_LIB_CLIENT})
+
 install(TARGETS ${TARGETNAME_LIB_CLIENT}
 	RUNTIME DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/cl_dlls"
 	LIBRARY DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/cl_dlls"

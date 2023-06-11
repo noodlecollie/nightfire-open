@@ -93,7 +93,7 @@ GNU General Public License for more details.
 
 #define VectorIsNAN(v) (IS_NAN(v[0]) || IS_NAN(v[1]) || IS_NAN(v[2]))
 #define DotProduct(x, y) ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
-#define DotProductAbs(x, y) (abs((x)[0] * (y)[0]) + abs((x)[1] * (y)[1]) + abs((x)[2] * (y)[2]))
+#define DotProductAbs(x, y) (abs((int)((x)[0] * (y)[0])) + abs((int)((x)[1] * (y)[1])) + abs((int)((x)[2] * (y)[2])))
 #define DotProductFabs(x, y) (fabs((x)[0] * (y)[0]) + fabs((x)[1] * (y)[1]) + fabs((x)[2] * (y)[2]))
 #define DotProductPrecise(x, y) \
 	((double)(x)[0] * (double)(y)[0] + (double)(x)[1] * (double)(y)[1] + (double)(x)[2] * (double)(y)[2])
