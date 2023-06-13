@@ -147,7 +147,7 @@ void R_DrawStretchPicImplementation(int x, int y, int w, int h, int s1, int t1, 
 				f += fstep;
 			}
 #else
-			for ( u = 0; u < w; u++ )
+			for ( u = 0; u < (unsigned int)w; u++ )
 			{
 				pixel_t src = source[f >> 16];
 				int alpha = alpha1;
@@ -202,15 +202,34 @@ void GAME_EXPORT
 R_DrawStretchPic(float x, float y, float w, float h, float s1, float t1, float s2, float t2, int texnum)
 {
 	image_t* pic = R_GetTexture(texnum);
-	int width = pic->width, height = pic->height;
-	//	GL_Bind( XASH_TEXTURE0, texnum );
+	int width = (int)pic->width;
+	int height = (int)pic->height;
+
 	if ( s2 > 1.0f || t2 > 1.0f )
+	{
 		return;
+	}
+
 	if ( s1 < 0.0f || t1 < 0.0f )
+	{
 		return;
+	}
+
 	if ( w < 1.0f || h < 1.0f )
+	{
 		return;
-	R_DrawStretchPicImplementation(x, y, w, h, width * s1, height * t1, width * s2, height * t2, pic);
+	}
+
+	R_DrawStretchPicImplementation(
+		(int)x,
+		(int)y,
+		(int)w,
+		(int)h,
+		(int)(width * s1),
+		(int)(height * t1),
+		(int)(width * s2),
+		(int)(height * t2),
+		pic);
 }
 
 void Draw_Fill(int x, int y, int w, int h)
@@ -272,7 +291,7 @@ void Draw_Fill(int x, int y, int w, int h)
 				f += fstep;
 			}
 #else
-			for ( u = 0; u < w; u++ )
+			for ( u = 0; u < (unsigned int)w; u++ )
 			{
 				if ( alpha == 0 )
 					continue;
@@ -359,6 +378,14 @@ R_DrawStretchRaw(float x, float y, float w, float h, int cols, int rows, const b
 	byte* raw = NULL;
 	image_t* tex;
 
+	(void)x;
+	(void)y;
+	(void)w;
+	(void)h;
+	(void)cols;
+	(void)rows;
+	(void)dirty;
+
 	raw = (byte*)data;
 
 	// pglDisable( GL_BLEND );
@@ -380,10 +407,13 @@ void GAME_EXPORT R_UploadStretchRaw(int texture, int cols, int rows, int width, 
 	image_t* tex;
 	raw = (byte*)data;
 
+	(void)width;
+	(void)height;
+
 	tex = R_GetTexture(texture);
 	GL_Bind(GL_KEEP_UNIT, texture);
-	tex->width = cols;
-	tex->height = rows;
+	tex->width = (word)cols;
+	tex->height = (word)rows;
 }
 
 /*
