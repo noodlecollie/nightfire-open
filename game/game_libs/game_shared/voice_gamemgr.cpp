@@ -71,7 +71,7 @@ static void VoiceServerDebug(char const* pFmt, ...)
 		return;
 
 	va_start(marker, pFmt);
-	_vsnprintf(msg, sizeof(msg), pFmt, marker);
+	PlatformLib_VSNPrintF(msg, sizeof(msg), pFmt, marker);
 	va_end(marker);
 
 	ALERT(at_console, "%s", msg);

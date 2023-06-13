@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright ï¿½ 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include "vgui_checkbutton2.h"
 #include "vgui_loadtga.h"
+#include "PlatformLib/String.h"
 
 #define EXTRA_X 5
 
@@ -96,7 +97,7 @@ void CCheckButton2::SetText(char const* pText, ...)
 
 	va_list marker;
 	va_start(marker, pText);
-	_vsnprintf(str, sizeof(str), pText, marker);
+	PlatformLib_VSNPrintF(str, sizeof(str), pText, marker);
 	va_end(marker);
 
 	m_Label.setText(str);

@@ -88,7 +88,6 @@ int V_StrTrim(char* pStr);
 #define _i64toa(num, buf, base) sprintf(buf, "%lld", num)
 #define _strtoi64 strtoll
 #define _strtoui64 strtoull
-#define _vsnprintf vsnprintf
 #ifdef TEXT
 #undef TEXT
 #endif

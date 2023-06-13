@@ -13,6 +13,7 @@
 #include "utlstring.h"
 #include "utlvector.h"
 #include "winlite.h"
+#include "PlatformLib/String.h"
 
 //-----------------------------------------------------------------------------
 // Purpose: Helper: Find s substring
@@ -113,7 +114,7 @@ size_t CUtlString::FormatV(const char* pFormat, va_list args)
 #if defined _WIN32 || defined __WATCOMC__
 	char buf[4096];
 
-	len = _vsnprintf(buf, sizeof(buf), pFormat, args);
+	len = PlatformLib_VSNPrintF(buf, sizeof(buf), pFormat, args);
 
 	Assert(len >= 0);
 	Assert(len < sizeof(buf));
@@ -131,11 +132,11 @@ size_t CUtlString::FormatV(const char* pFormat, va_list args)
 	FreePv(m_pchString);
 	m_pchString = NULL;
 
-	len = vsnprintf(NULL, 0, pFormat, args);
+	len = PlatformLib_VSNPrintF(NULL, 0, pFormat, args);
 	if ( len > 0 )
 	{
 		m_pchString = (char*)PvAlloc(len + 1);
-		len = vsnprintf(m_pchString, len + 1, pFormat, args);
+		len = PlatformLib_VSNPrintF(m_pchString, len + 1, pFormat, args);
 	}
 
 #else
@@ -167,7 +168,7 @@ size_t CUtlString::VAppendFormat(const char* pFormat, va_list args)
 	char pstrFormatted[4096];
 
 	// format into that space, which is certainly enough
-	len = _vsnprintf(pstrFormatted, sizeof(pstrFormatted), pFormat, args);
+	len = PlatformLib_VSNPrintF(pstrFormatted, sizeof(pstrFormatted), pFormat, args);
 
 	Assert(len >= 0);
 	Assert(len < sizeof(pstrFormatted));
@@ -179,11 +180,11 @@ size_t CUtlString::VAppendFormat(const char* pFormat, va_list args)
 	// right thing (least at time of implementation) and returns the number of characters needed when you pass in a
 	// buffer that is too small
 
-	len = vsnprintf(NULL, 0, pFormat, args);
+	len = PlatformLib_VSNPrintF(NULL, 0, pFormat, args);
 	if ( len > 0 )
 	{
 		pstrFormatted = (char*)PvAlloc(len + 1);
-		len = vsnprintf(pstrFormatted, len + 1, pFormat, args);
+		len = PlatformLib_VSNPrintF(pstrFormatted, len + 1, pFormat, args);
 	}
 
 #else

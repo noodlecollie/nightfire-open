@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "PlatformLib/String.h"
 
 #if XASH_POSIX
 #define XASHLIB "libxash." OS_LIB_EXT
@@ -66,7 +67,7 @@ static void Xash_Error(const char* szFmt, ...)
 	va_list args;
 
 	va_start(args, szFmt);
-	vsnprintf(buffer, sizeof(buffer), szFmt, args);
+	PlatformLib_VSNPrintF(buffer, sizeof(buffer), szFmt, args);
 	va_end(args);
 
 #if defined(_WIN32)

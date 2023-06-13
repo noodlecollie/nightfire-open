@@ -489,11 +489,11 @@ int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list arg
 	int result;
 
 #ifndef _MSC_VER
-	result = vsnprintf(buffer, buffersize, format, args);
+	result = PlatformLib_VSNPrintF(buffer, buffersize, format, args);
 #else
 	__try
 	{
-		result = _vsnprintf(buffer, buffersize, format, args);
+		result = PlatformLib_VSNPrintF(buffer, buffersize, format, args);
 	}
 
 	// to prevent crash while output

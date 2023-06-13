@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "extdll_menu.h"
 #include "Primitive.h"
 #include "netadr.h"
+#include "PlatformLib/String.h"
 
 class EngFuncs
 {
@@ -538,7 +539,7 @@ public:
 		char buf[4096];
 
 		va_start(va, fmt);
-		vsnprintf(buf, sizeof(buf), fmt, va);
+		PlatformLib_VSNPrintF(buf, sizeof(buf), fmt, va);
 		va_end(va);
 
 		ClientCmd(now, buf);
@@ -550,7 +551,7 @@ public:
 		char buf[4096];
 
 		va_start(va, fmt);
-		vsnprintf(buf, sizeof(buf), fmt, va);
+		PlatformLib_VSNPrintF(buf, sizeof(buf), fmt, va);
 		va_end(va);
 
 		CvarSetString(cvar, buf);

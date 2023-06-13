@@ -222,16 +222,8 @@ int V_snprintf(char* pDest, size_t bufferLen, char const* pFormat, ...)
 	va_list marker;
 
 	va_start(marker, pFormat);
-	// _vsnprintf will not write a terminator if the output string uses the entire buffer you provide
-	int len = _vsnprintf(pDest, bufferLen, pFormat, marker);
+	int len = PlatformLib_VSNPrintF(pDest, bufferLen, pFormat, marker);
 	va_end(marker);
-
-	// Len < 0 represents an overflow on windows; len > buffer length on posix
-	if ( (len < 0) || ((size_t)len >= bufferLen) )
-	{
-		len = (int)(bufferLen - 1);
-	}
-	pDest[len] = 0;
 
 	return len;
 }
@@ -242,16 +234,7 @@ int V_vsnprintf(char* pDest, int bufferLen, char const* pFormat, va_list params)
 	Assert(pDest != NULL);
 	Assert(pFormat != NULL);
 
-	int len = _vsnprintf(pDest, bufferLen, pFormat, params);
-
-	// Len < 0 represents an overflow on windows; len > buffer length on posix
-	if ( (len < 0) || (len >= bufferLen) )
-	{
-		len = bufferLen - 1;
-	}
-	pDest[len] = 0;
-
-	return len;
+	return PlatformLib_VSNPrintF(pDest, bufferLen, pFormat, params);
 }
 
 int V_vsnprintfRet(char* pDest, int bufferLen, const char* pFormat, va_list params, bool* pbTruncated)
@@ -260,24 +243,25 @@ int V_vsnprintfRet(char* pDest, int bufferLen, const char* pFormat, va_list para
 	Assert(bufferLen == 0 || pDest != NULL);
 	Assert(pFormat != NULL);
 
-	bool bTruncatedUnderstudy;
-	if ( !pbTruncated )
-		pbTruncated = &bTruncatedUnderstudy;
-
-	int len = _vsnprintf(pDest, bufferLen, pFormat, params);
+	int len = PlatformLib_VSNPrintF(pDest, bufferLen, pFormat, params);
 
 	// Len < 0 represents an overflow on windows; len > buffer length on posix
 	if ( (len < 0) || (len >= bufferLen) )
 	{
-		*pbTruncated = true;
+		if ( pbTruncated )
+		{
+			*pbTruncated = true;
+		}
+
 		len = bufferLen - 1;
 	}
 	else
 	{
-		*pbTruncated = false;
+		if ( pbTruncated )
+		{
+			*pbTruncated = false;
+		}
 	}
-
-	pDest[len] = 0;
 
 	return len;
 }
