@@ -14,8 +14,8 @@
 // Grenade attributes
 static constexpr const char* GRENADELAUNCHER_GRENADE_MODEL = "models/weapon_grenadelauncher/w_grenade_projectile.mdl";
 static const Vector GRENADELAUNCHER_HALF_BBOX = Vector(4, 4, 4);
-static constexpr float GRENADELAUNCHER_GRENADE_FRICTION = 0.95;
-static constexpr float GRENADELAUNCHER_GRENADE_SPRITE_SCALE = 60;
+static constexpr float GRENADELAUNCHER_GRENADE_FRICTION = 0.95f;
+static constexpr unsigned char GRENADELAUNCHER_GRENADE_SPRITE_SCALE = 60;
 
 // Launcher attributes
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MIN = -100.0f;
@@ -49,7 +49,7 @@ void CWeaponGrenadeLauncher::Precache()
 }
 
 #ifndef CLIENT_DLL
-float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const
+float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity&, float distanceToEnemy) const
 {
 	const float explosionRadius = grenadelauncher_explosion_radius.value;
 
@@ -138,7 +138,7 @@ Vector CWeaponGrenadeLauncher::GetGrenadeLaunchAngles() const
 	// launched a little more upward; if they are looking straight up or
 	// down, we don't want any modification at all.
 	float extraPitch = -grenadelauncher_launch_pitch_adjust.value;
-	viewAngles[0] += cos(UTIL_DegreesToRadians(viewAngles[0])) * extraPitch;
+	viewAngles[0] += cosf(UTIL_DegreesToRadians(viewAngles[0])) * extraPitch;
 
 	if ( viewAngles[0] < -89.0f )
 	{
@@ -206,7 +206,7 @@ void CWeaponGrenadeLauncher_Grenade::SetFuseTime(float fuseTime)
 	SetThink(&CGrenade::TumbleThink);
 
 	pev->dmgtime = gpGlobals->time + fuseTime;
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	if ( fuseTime < 0.1 )
 	{

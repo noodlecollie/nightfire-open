@@ -31,12 +31,12 @@ GNU General Public License for more details.
 #define NUM_FIELDS(x) ((sizeof(x) / sizeof(x[0])) - 1)
 
 // helper macroses
-#define ENTS_DEF(x) #x, offsetof(entity_state_t, x), sizeof(((entity_state_t*)0)->x)
-#define UCMD_DEF(x) #x, offsetof(usercmd_t, x), sizeof(((usercmd_t*)0)->x)
-#define EVNT_DEF(x) #x, offsetof(event_args_t, x), sizeof(((event_args_t*)0)->x)
-#define PHYS_DEF(x) #x, offsetof(movevars_t, x), sizeof(((movevars_t*)0)->x)
-#define CLDT_DEF(x) #x, offsetof(clientdata_t, x), sizeof(((clientdata_t*)0)->x)
-#define WPDT_DEF(x) #x, offsetof(weapon_data_t, x), sizeof(((weapon_data_t*)0)->x)
+#define ENTS_DEF(x) #x, (int)offsetof(entity_state_t, x), (int)sizeof(((entity_state_t*)0)->x)
+#define UCMD_DEF(x) #x, (int)offsetof(usercmd_t, x), (int)sizeof(((usercmd_t*)0)->x)
+#define EVNT_DEF(x) #x, (int)offsetof(event_args_t, x), (int)sizeof(((event_args_t*)0)->x)
+#define PHYS_DEF(x) #x, (int)offsetof(movevars_t, x), (int)sizeof(((movevars_t*)0)->x)
+#define CLDT_DEF(x) #x, (int)offsetof(clientdata_t, x), (int)sizeof(((clientdata_t*)0)->x)
+#define WPDT_DEF(x) #x, (int)offsetof(weapon_data_t, x), (int)sizeof(((weapon_data_t*)0)->x)
 
 enum
 {

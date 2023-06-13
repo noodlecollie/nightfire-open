@@ -118,7 +118,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->hitSound = SurfaceSoundId::HitMetal;
 	atts->hitSoundVol = 0.5f;
 	atts->ricochetSoundVol = RIC_NORM;
-	atts->ricochetChance = 0.8;
+	atts->ricochetChance = 0.8f;
 	atts->decal = SurfaceDecalId::Metal;
 	atts->footstepSound = FootstepSoundId::Metal;
 	atts->footstepSoundVolRun = 0.5f;
@@ -128,7 +128,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->hitSound = SurfaceSoundId::HitMetalGrate;
 	atts->hitSoundVol = 0.6f;
 	atts->ricochetSoundVol = RIC_NORM;
-	atts->ricochetChance = 0.2;
+	atts->ricochetChance = 0.2f;
 	atts->footstepSound = FootstepSoundId::MetalGrate;
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;
@@ -160,7 +160,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 	atts->hitSound = SurfaceSoundId::HitConcrete;
 	atts->hitSoundVol = 0.5f;
 	atts->ricochetSoundVol = RIC_NORM;
-	atts->ricochetChance = 0.4;
+	atts->ricochetChance = 0.4f;
 	atts->decal = SurfaceDecalId::Stone;
 	atts->footstepSound = FootstepSoundId::ConcreteGrit;
 	atts->footstepSoundVolRun = 0.5f;

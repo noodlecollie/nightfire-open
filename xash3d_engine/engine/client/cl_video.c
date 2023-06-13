@@ -156,7 +156,7 @@ void SCR_RunCinematic(void)
 	}
 
 	// advances cinematic time (ignores maxfps and host_framerate settings)
-	cin_time += host.realframetime;
+	cin_time += (float)host.realframetime;
 
 	// stop the video after it finishes
 	if ( cin_time > video_duration + 0.1f )
@@ -193,7 +193,7 @@ qboolean SCR_DrawCinematic(void)
 		redraw = true;
 	}
 
-	ref.dllFuncs.R_DrawStretchRaw(0, 0, refState.width, refState.height, xres, yres, frame, redraw);
+	ref.dllFuncs.R_DrawStretchRaw(0, 0, (float)refState.width, (float)refState.height, xres, yres, frame, redraw);
 
 	return true;
 }
@@ -205,7 +205,6 @@ SCR_PlayCinematic
 */
 qboolean SCR_PlayCinematic(const char* arg)
 {
-	string path;
 	const char* fullpath;
 
 	fullpath = FS_GetDiskPath(arg, false);
@@ -300,14 +299,9 @@ SCR_FreeCinematic
 */
 void SCR_FreeCinematic(void)
 {
-	movie_state_t* cin_state;
-
 	// release videos
-	cin_state = AVI_GetState(CIN_LOGO);
-	AVI_CloseVideo(cin_state);
-
-	cin_state = AVI_GetState(CIN_MAIN);
-	AVI_CloseVideo(cin_state);
+	AVI_CloseVideo(AVI_GetState(CIN_LOGO));
+	AVI_CloseVideo(AVI_GetState(CIN_MAIN));
 
 	AVI_Shutdown();
 }

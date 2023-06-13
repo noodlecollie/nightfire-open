@@ -62,7 +62,7 @@ void CLight::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "pitch") )
 	{
-		pev->angles.x = atof(pkvd->szValue);
+		pev->angles.x = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "pattern") )
@@ -104,7 +104,7 @@ void CLight::Spawn(void)
 	}
 }
 
-void CLight::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLight::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( m_iStyle >= 32 )
 	{
@@ -155,9 +155,9 @@ void CEnvLight::KeyValue(KeyValueData* pkvd)
 		else if ( j == 4 )
 		{
 			float vf = v / 255.0f;
-			r *= vf;
-			g *= vf;
-			b *= vf;
+			r = static_cast<int>(r * vf);
+			g = static_cast<int>(g * vf);
+			b = static_cast<int>(b * vf);
 		}
 
 		// simulate qrad direct, ambient,and gamma adjustments, as well as engine scaling

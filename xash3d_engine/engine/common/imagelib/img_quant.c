@@ -465,7 +465,7 @@ rgbdata_t* Image_Quantize(rgbdata_t* pic)
 	// allocate 8-bit buffer
 	image.tempbuffer = Mem_Realloc(host.imagepool, image.tempbuffer, image.size);
 
-	initnet(pic->buffer, pic->size, 10);
+	initnet(pic->buffer, (int)pic->size, 10);
 	learn();
 	unbiasnet();
 
@@ -473,16 +473,16 @@ rgbdata_t* Image_Quantize(rgbdata_t* pic)
 
 	for ( i = 0; i < netsize; i++ )
 	{
-		pic->palette[i * 3 + 0] = network[i][0];  // red
-		pic->palette[i * 3 + 1] = network[i][1];  // green
-		pic->palette[i * 3 + 2] = network[i][2];  // blue
+		pic->palette[i * 3 + 0] = (byte)network[i][0];  // red
+		pic->palette[i * 3 + 1] = (byte)network[i][1];  // green
+		pic->palette[i * 3 + 2] = (byte)network[i][2];  // blue
 	}
 
 	inxbuild();
 
 	for ( i = 0; i < image.width * image.height; i++ )
 	{
-		image.tempbuffer[i] =
+		image.tempbuffer[i] = (byte)
 			inxsearch(pic->buffer[i * image.bpp + 0], pic->buffer[i * image.bpp + 1], pic->buffer[i * image.bpp + 2]);
 	}
 

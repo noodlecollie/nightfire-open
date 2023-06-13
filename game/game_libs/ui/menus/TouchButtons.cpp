@@ -171,10 +171,10 @@ void CMenuTouchButtons::CMenuColor::Draw()
 {
 	CMenuTouchButtons* parent = (CMenuTouchButtons*)Parent();
 
-	uint color = ((uint)parent->blue.GetCurrentValue()) | (((uint)parent->green.GetCurrentValue()) << 8) |
+	uint localColour = ((uint)parent->blue.GetCurrentValue()) | (((uint)parent->green.GetCurrentValue()) << 8) |
 		(((uint)parent->red.GetCurrentValue()) << 16) | (((uint)parent->alpha.GetCurrentValue()) << 24);
 
-	UI_FillRect(m_scPos, m_scSize, color);
+	UI_FillRect(m_scPos, m_scSize, localColour);
 }
 
 void CMenuTouchButtons::CMenuButtonPreview::Draw()
@@ -205,9 +205,9 @@ void CMenuTouchButtons::DeleteButton()
 	int i = buttonList.GetCurrentIndex();
 	if ( i > 0 )
 		buttonList.SetCurrentIndex(i - 1);
-	char command[512];
-	PlatformLib_SNPrintF(command, 512, "touch_removebutton \"%s\"\n", selectedName);
-	EngFuncs::ClientCmd(1, command);
+	char localCommand[512];
+	PlatformLib_SNPrintF(localCommand, 512, "touch_removebutton \"%s\"\n", selectedName);
+	EngFuncs::ClientCmd(1, localCommand);
 	model.Update();
 }
 
@@ -301,7 +301,7 @@ void CMenuTouchButtons::UpdateMP()
 
 void CMenuTouchButtons::SaveButton()
 {
-	char command[4096];
+	char localCommand[4096];
 	char cmd[256];
 
 	Com_EscapeCommand(cmd, this->command.GetBuffer(), 256);
@@ -309,45 +309,59 @@ void CMenuTouchButtons::SaveButton()
 	if ( name.GetBuffer()[0] )
 	{
 		PlatformLib_SNPrintF(
-			command,
-			sizeof(command),
+			localCommand,
+			sizeof(localCommand),
 			"touch_addbutton \"%s\" \"%s\" \"%s\"\n",
 			name.GetBuffer(),
 			texture.GetBuffer(),
 			cmd);
-		EngFuncs::ClientCmd(0, command);
-		PlatformLib_SNPrintF(command, sizeof(command), "touch_setflags \"%s\" %i\n", name.GetBuffer(), curflags);
-		EngFuncs::ClientCmd(0, command);
+
+		EngFuncs::ClientCmd(0, localCommand);
+
+		PlatformLib_SNPrintF(localCommand, sizeof(localCommand), "touch_setflags \"%s\" %i\n", name.GetBuffer(), curflags);
+		EngFuncs::ClientCmd(0, localCommand);
+
 		PlatformLib_SNPrintF(
-			command,
-			sizeof(command),
+			localCommand,
+			sizeof(localCommand),
 			"touch_setcolor \"%s\" %u %u %u %u\n",
 			name.GetBuffer(),
 			(uint)red.GetCurrentValue(),
 			(uint)green.GetCurrentValue(),
 			(uint)blue.GetCurrentValue(),
 			(uint)alpha.GetCurrentValue());
-		EngFuncs::ClientCmd(1, command);
+
+		EngFuncs::ClientCmd(1, localCommand);
 		name.Clear();
 	}
 	else
 	{
-		PlatformLib_SNPrintF(command, sizeof(command), "touch_settexture \"%s\" \"%s\"\n", selectedName, texture.GetBuffer());
-		EngFuncs::ClientCmd(0, command);
-		PlatformLib_SNPrintF(command, sizeof(command), "touch_setcommand \"%s\" \"%s\"\n", selectedName, cmd);
-		EngFuncs::ClientCmd(0, command);
-		PlatformLib_SNPrintF(command, sizeof(command), "touch_setflags \"%s\" %i\n", selectedName, curflags);
-		EngFuncs::ClientCmd(0, command);
 		PlatformLib_SNPrintF(
-			command,
+			localCommand,
 			sizeof(command),
+			"touch_settexture \"%s\" \"%s\"\n",
+			selectedName,
+			texture.GetBuffer());
+
+		EngFuncs::ClientCmd(0, localCommand);
+
+		PlatformLib_SNPrintF(localCommand, sizeof(localCommand), "touch_setcommand \"%s\" \"%s\"\n", selectedName, cmd);
+		EngFuncs::ClientCmd(0, localCommand);
+
+		PlatformLib_SNPrintF(localCommand, sizeof(localCommand), "touch_setflags \"%s\" %i\n", selectedName, curflags);
+		EngFuncs::ClientCmd(0, localCommand);
+
+		PlatformLib_SNPrintF(
+			localCommand,
+			sizeof(localCommand),
 			"touch_setcolor \"%s\" %u %u %u %u\n",
 			selectedName,
 			(uint)red.GetCurrentValue(),
 			(uint)green.GetCurrentValue(),
 			(uint)blue.GetCurrentValue(),
 			(uint)alpha.GetCurrentValue());
-		EngFuncs::ClientCmd(1, command);
+
+		EngFuncs::ClientCmd(1, localCommand);
 	}
 
 	model.Update();

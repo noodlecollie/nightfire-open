@@ -122,12 +122,12 @@ void CEventCallback::SetCommand(int execute_now, const char* sz)
 	pExtra = (void*)sz;
 }
 
-size_t CEventCallback::operator=(size_t null)
+size_t CEventCallback::operator=(size_t)
 {
 	Reset();
 	return 0;
 }
-void* CEventCallback::operator=(void* null)
+void* CEventCallback::operator=(void*)
 {
 	Reset();
 	return NULL;

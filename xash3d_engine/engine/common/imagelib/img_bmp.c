@@ -26,14 +26,15 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 {
 	byte *buf_p, *pixbuf;
 	rgba_t palette[256] = {0};
-	int i, columns, column, rows, row, bpp = 1;
+	uint32_t i;
+	int columns, column, rows, row, bpp = 1;
 	int cbPalBytes = 0, padSize = 0, bps = 0;
 	int reflectivity[3] = {0, 0, 0};
 	qboolean load_qfont = false;
 	bmp_t bhdr;
 	fs_offset_t estimatedSize;
 
-	if ( filesize < sizeof(bhdr) )
+	if ( (size_t)filesize < sizeof(bhdr) )
 	{
 		Con_Reportf(
 			S_ERROR "Image_LoadBMP: %s have incorrect file size %u should be greater than %u (header)\n",
@@ -66,7 +67,7 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 	}
 
 	// bogus info header check
-	if ( bhdr.fileSize != filesize )
+	if ( (fs_offset_t)bhdr.fileSize != filesize )
 	{
 		// Sweet Half-Life issues. splash.bmp have bogus filesize
 		Con_Reportf(
@@ -86,8 +87,10 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 		}
 	}
 
-	image.width = columns = bhdr.width;
-	image.height = rows = abs(bhdr.height);
+	columns = bhdr.width;
+	image.width = (word)columns;
+	rows = abs(bhdr.height);
+	image.height = (word)rows;
 
 	if ( !Image_ValidSize(name) )
 		return false;
@@ -110,13 +113,14 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 		if ( bhdr.colors == 0 )
 		{
 			bhdr.colors = 256;
-			cbPalBytes = (1 << bhdr.bitsPerPixel) * sizeof(rgba_t);
+			cbPalBytes = (size_t)(1 << bhdr.bitsPerPixel) * sizeof(rgba_t);
 		}
 		else
 			cbPalBytes = bhdr.colors * sizeof(rgba_t);
 	}
 
-	estimatedSize = (buf_p - buffer) + cbPalBytes;
+	estimatedSize = (fs_offset_t)((buf_p - buffer) + cbPalBytes);
+
 	if ( filesize < estimatedSize )
 	{
 		Con_Reportf(
@@ -133,7 +137,10 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 	if ( !Q_strncmp(name, "#logo", 5) )
 	{
 		for ( i = 0; i < bhdr.colors; i++ )
-			palette[i][3] = i;
+		{
+			palette[i][3] = (byte)i;
+		}
+
 		image.flags |= IMAGE_HAS_ALPHA;
 	}
 
@@ -193,7 +200,7 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 			break;
 	}
 
-	estimatedSize = (buf_p - buffer) + image.width * image.height * (bhdr.bitsPerPixel >> 3);
+	estimatedSize = (fs_offset_t)((buf_p - buffer) + image.width * image.height * (bhdr.bitsPerPixel >> 3));
 	if ( filesize < estimatedSize )
 	{
 		if ( image.palette )
@@ -284,7 +291,7 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 
 					if ( Image_CheckFlag(IL_KEEP_8BIT) )
 					{
-						*pixbuf++ = palIndex;
+						*pixbuf++ = (byte)palIndex;
 					}
 					else
 					{
@@ -296,8 +303,8 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 					break;
 				case 16:
 					shortPixel = *(word*)buf_p, buf_p += 2;
-					*pixbuf++ = blue = (shortPixel & (31 << 10)) >> 7;
-					*pixbuf++ = green = (shortPixel & (31 << 5)) >> 2;
+					*pixbuf++ = blue = (byte)((shortPixel & (31 << 10)) >> 7);
+					*pixbuf++ = green = (byte)((shortPixel & (31 << 5)) >> 2);
 					*pixbuf++ = red = (shortPixel & (31)) << 3;
 					*pixbuf++ = 0xff;
 					break;
@@ -338,7 +345,10 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 		buf_p += padSize;  // actual only for 4-bit bmps
 	}
 
-	VectorDivide(reflectivity, (image.width * image.height), image.fogParams);
+	image.fogParams[0] = (byte)(reflectivity[0] / (image.width * image.height));
+	image.fogParams[1] = (byte)(reflectivity[1] / (image.width * image.height));
+	image.fogParams[2] = (byte)(reflectivity[2] / (image.width * image.height));
+
 	if ( image.palette )
 		Image_GetPaletteBMP(image.palette);
 
@@ -348,10 +358,8 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 qboolean Image_SaveBMP(const char* name, rgbdata_t* pix)
 {
 	file_t* pfile = NULL;
-	size_t total_size, cur_size;
 	rgba_t rgrgbPalette[256];
 	dword cbBmpBits;
-	byte* clipbuf = NULL;
 	byte *pb, *pbBmpBits;
 	dword cbPalBytes;
 	dword biTrueWidth;
@@ -360,11 +368,15 @@ qboolean Image_SaveBMP(const char* name, rgbdata_t* pix)
 	bmp_t hdr;
 
 	if ( FS_FileExists(name, false) && !Image_CheckFlag(IL_ALLOW_OVERWRITE) )
+	{
 		return false;  // already existed
+	}
 
 	// bogus parameter check
 	if ( !pix->buffer )
+	{
 		return false;
+	}
 
 	// get image description
 	switch ( pix->type )
@@ -385,7 +397,9 @@ qboolean Image_SaveBMP(const char* name, rgbdata_t* pix)
 
 	pfile = FS_Open(name, "wb", false);
 	if ( !pfile )
+	{
 		return false;
+	}
 
 	// NOTE: align transparency column will sucessfully removed
 	// after create sprite or lump image, it's just standard requiriments
@@ -403,7 +417,7 @@ qboolean Image_SaveBMP(const char* name, rgbdata_t* pix)
 	hdr.width = biTrueWidth;
 	hdr.height = pix->height;
 	hdr.planes = 1;
-	hdr.bitsPerPixel = pixel_size * 8;
+	hdr.bitsPerPixel = (uint16_t)(pixel_size * 8);
 	hdr.compression = BI_RGB;
 	hdr.bitmapDataSize = cbBmpBits;
 	hdr.hRes = 0;
@@ -429,9 +443,13 @@ qboolean Image_SaveBMP(const char* name, rgbdata_t* pix)
 			// bmp feature - can store 32-bit palette if present
 			// some viewers e.g. fimg.exe can show alpha-chanell for it
 			if ( pix->type == PF_INDEXED_32 )
+			{
 				rgrgbPalette[i][3] = *pb++;
+			}
 			else
+			{
 				rgrgbPalette[i][3] = 0;
+			}
 		}
 
 		// write palette
@@ -460,7 +478,10 @@ qboolean Image_SaveBMP(const char* name, rgbdata_t* pix)
 			}
 
 			if ( pixel_size == 4 )  // write alpha channel
+			{
 				pbBmpBits[i * pixel_size + 3] = pb[x * pixel_size + 3];
+			}
+
 			i++;
 		}
 

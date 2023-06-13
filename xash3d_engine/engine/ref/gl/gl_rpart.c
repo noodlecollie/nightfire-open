@@ -102,7 +102,7 @@ void CL_DrawParticles(double frametime, particle_t* cl_active_particles, float p
 			p->color = bound(0, p->color, 255);
 			pColor = gEngfuncs.CL_GetPaletteColor(p->color);
 
-			alpha = 255 * (p->die - gpGlobals->time) * 16.0f;
+			alpha = (int)(255.0f * (p->die - gpGlobals->time) * 16.0f);
 			if ( alpha > 255 || p->type == pt_static )
 				alpha = 255;
 
@@ -110,7 +110,7 @@ void CL_DrawParticles(double frametime, particle_t* cl_active_particles, float p
 				gEngfuncs.LightToTexGamma(pColor->r),
 				gEngfuncs.LightToTexGamma(pColor->g),
 				gEngfuncs.LightToTexGamma(pColor->b),
-				alpha);
+				(GLubyte)alpha);
 
 			pglTexCoord2f(0.0f, 1.0f);
 			pglVertex3f(p->org[0] - right[0] + up[0], p->org[1] - right[1] + up[1], p->org[2] - right[2] + up[2]);
@@ -205,8 +205,8 @@ void CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 	pglDisable(GL_ALPHA_TEST);
 	pglDepthMask(GL_FALSE);
 
-	gravity = frametime * MOVEVARS->gravity;
-	scale = 1.0 - (frametime * 0.9);
+	gravity = (float)frametime * MOVEVARS->gravity;
+	scale = 1.0f - ((float)frametime * 0.9f);
 	if ( scale < 0.0f )
 		scale = 0.0f;
 
@@ -248,14 +248,17 @@ void CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 			VectorAdd(verts[0], delta, verts[2]);
 			VectorAdd(verts[1], delta, verts[3]);
 
-			if ( p->color > sizeof(gTracerColors) / sizeof(color24) )
+			if ( (size_t)p->color > (sizeof(gTracerColors) / sizeof(color24)) )
 			{
-				gEngfuncs.Con_Printf(S_ERROR "UserTracer with color > %d\n", sizeof(gTracerColors) / sizeof(color24));
+				gEngfuncs.Con_Printf(
+					S_ERROR "UserTracer with color > %zu\n",
+					(sizeof(gTracerColors) / sizeof(color24)));
+
 				p->color = 0;
 			}
 
 			pColor = &gTracerColors[p->color];
-			pglColor4ub(pColor->r, pColor->g, pColor->b, p->packedColor);
+			pglColor4ub(pColor->r, pColor->g, pColor->b, (GLubyte)p->packedColor);
 
 			pglBegin(GL_QUADS);
 			pglTexCoord2f(0.0f, 0.8f);
@@ -270,7 +273,7 @@ void CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 		}
 
 		// evaluate position
-		VectorMA(p->org, frametime, p->vel, p->org);
+		VectorMA(p->org, (float)frametime, p->vel, p->org);
 
 		if ( p->type == pt_grav )
 		{
@@ -278,7 +281,7 @@ void CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 			p->vel[1] *= scale;
 			p->vel[2] -= gravity;
 
-			p->packedColor = 255 * (p->die - gpGlobals->time) * 2;
+			p->packedColor = (short)(255.0f * (p->die - gpGlobals->time) * 2.0f);
 			if ( p->packedColor > 255 )
 				p->packedColor = 255;
 		}

@@ -27,7 +27,8 @@ void CWindowStack::VidInit(bool calledOnce)
 
 		if ( item )
 		{
-			int cursor, cursorPrev;
+			int cursor = 0;
+			int cursorPrev = 0;
 			bool valid = false;
 
 			// HACKHACK: Save cursor values when VidInit is called once

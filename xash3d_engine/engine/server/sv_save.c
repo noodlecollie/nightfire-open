@@ -767,6 +767,7 @@ DumpHashStrings
 debug thing
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static void DumpHashStrings(SAVERESTOREDATA* pSaveData, const char* pMessage)
 {
 	int i, count = 0;
@@ -786,6 +787,7 @@ static void DumpHashStrings(SAVERESTOREDATA* pSaveData, const char* pMessage)
 		Con_Printf("total %i actual %i\n", pSaveData->tokenCount, count);
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -813,7 +815,7 @@ static char* StoreHashTable(SAVERESTOREDATA* pSaveData)
 		}
 	}
 
-	pSaveData->tokenSize = pSaveData->pCurrentData - pTokenData;
+	pSaveData->tokenSize = (int)(pSaveData->pCurrentData - pTokenData);
 
 	return pTokenData;
 }
@@ -1175,7 +1177,7 @@ static void RestoreSound(SAVERESTOREDATA* pSaveData, soundlist_t* snd)
 			 ent,
 			 snd->channel,
 			 snd->name,
-			 snd->volume * 255,
+			 (int)(snd->volume * 255.0f),
 			 snd->attenuation,
 			 flags,
 			 snd->pitch,
@@ -1240,7 +1242,9 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 
 	// save viewentity to allow camera works after save\restore
 	if ( SV_IsValidEdict(cl->pViewEntity) && cl->pViewEntity != cl->edict )
-		header.viewentity = NUM_FOR_EDICT(cl->pViewEntity);
+	{
+		header.viewentity = (short)NUM_FOR_EDICT(cl->pViewEntity);
+	}
 
 	header.wateralpha = sv_wateralpha.value;
 	header.wateramp = sv_wateramp.value;
@@ -1528,9 +1532,9 @@ static SAVERESTOREDATA* SaveGameState(int changelevel)
 	header.time = svgame.globals->time;  // use DLL time
 	Q_strncpy(header.mapName, sv.name, sizeof(header.mapName));
 	Q_strncpy(header.skyName, sv_skyname.string, sizeof(header.skyName));
-	header.skyColor_r = sv_skycolor_r.value;
-	header.skyColor_g = sv_skycolor_g.value;
-	header.skyColor_b = sv_skycolor_b.value;
+	header.skyColor_r = (int)sv_skycolor_r.value;
+	header.skyColor_g = (int)sv_skycolor_g.value;
+	header.skyColor_b = (int)sv_skycolor_b.value;
 	header.skyVec_x = sv_skyvec_x.value;
 	header.skyVec_y = sv_skyvec_y.value;
 	header.skyVec_z = sv_skyvec_z.value;
@@ -1665,15 +1669,15 @@ static int LoadGameState(char const* level, qboolean changelevel)
 	// pause until all clients connect
 	sv.loadgame = sv.paused = true;
 
-	Cvar_SetValue("skill", header.skillLevel);
+	Cvar_SetValue("skill", (float)header.skillLevel);
 	Q_strncpy(sv.name, header.mapName, sizeof(sv.name));
 	svgame.globals->mapname = MAKE_STRING(sv.name);
 	Cvar_Set("sv_skyname", header.skyName);
 
 	// restore sky parms
-	Cvar_SetValue("sv_skycolor_r", header.skyColor_r);
-	Cvar_SetValue("sv_skycolor_g", header.skyColor_g);
-	Cvar_SetValue("sv_skycolor_b", header.skyColor_b);
+	Cvar_SetValue("sv_skycolor_r", (float)header.skyColor_r);
+	Cvar_SetValue("sv_skycolor_g", (float)header.skyColor_g);
+	Cvar_SetValue("sv_skycolor_b", (float)header.skyColor_b);
 	Cvar_SetValue("sv_skyvec_x", header.skyVec_x);
 	Cvar_SetValue("sv_skyvec_y", header.skyVec_y);
 	Cvar_SetValue("sv_skyvec_z", header.skyVec_z);
@@ -1989,7 +1993,7 @@ static void LoadAdjacentEnts(const char* pOldLevel, const char* pLandmarkName)
 			ParseSaveTables(pSaveData, &header, false);
 			EntityPatchRead(pSaveData, currentLevelData.levelList[i].mapName);
 
-			pSaveData->time = sv.time;  // - header.time;
+			pSaveData->time = (float)sv.time;  // - header.time;
 			pSaveData->fUseLandmark = true;
 			flags = movedCount = 0;
 			index = -1;
@@ -2410,7 +2414,7 @@ int GAME_EXPORT SV_GetSaveComment(const char* savename, char* comment)
 	// each field is a short (size), short (index of name), binary string of "size" bytes (data)
 	for ( i = 0; i < nNumberOfFields; i++ )
 	{
-		size_t size;
+		size_t fieldSize;
 		// Data order is:
 		// Size
 		// szName
@@ -2421,15 +2425,15 @@ int GAME_EXPORT SV_GetSaveComment(const char* savename, char* comment)
 		pFieldName = pTokenList[*(short*)pData];
 		pData += sizeof(short);
 
-		size = Q_min(nFieldSize, MAX_STRING);
+		fieldSize = Q_min(nFieldSize, MAX_STRING);
 
 		if ( !Q_stricmp(pFieldName, "comment") )
 		{
-			Q_strncpy(description, pData, size);
+			Q_strncpy(description, pData, fieldSize);
 		}
 		else if ( !Q_stricmp(pFieldName, "mapName") )
 		{
-			Q_strncpy(mapName, pData, size);
+			Q_strncpy(mapName, pData, fieldSize);
 		}
 
 		// move to start of next field.
@@ -2492,5 +2496,5 @@ int GAME_EXPORT SV_GetSaveComment(const char* savename, char* comment)
 
 void SV_InitSaveRestore(void)
 {
-	pfnSaveGameComment = COM_GetProcAddress(svgame.hInstance, "SV_SaveGameComment");
+	pfnSaveGameComment = (void(__cdecl*)(char*, int))COM_GetProcAddress(svgame.hInstance, "SV_SaveGameComment");
 }

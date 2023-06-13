@@ -120,8 +120,8 @@ Vector VecCheckToss(entvars_t* pev, const Vector& vecSpot1, Vector vecSpot2, flo
 	float distance2 = vecMidPoint.z - vecSpot2.z;
 
 	// How long will it take for the grenade to travel this distance
-	float time1 = sqrt(distance1 / (0.5 * flGravity));
-	float time2 = sqrt(distance2 / (0.5 * flGravity));
+	float time1 = sqrtf(distance1 / (0.5f * flGravity));
+	float time2 = sqrtf(distance2 / (0.5f * flGravity));
 
 	if ( time1 < 0.1 )
 	{
@@ -168,13 +168,13 @@ Vector VecCheckThrow(entvars_t* pev, const Vector& vecSpot1, Vector vecSpot2, fl
 
 	// throw at a constant time
 	float time = vecGrenadeVel.Length() / flSpeed;
-	vecGrenadeVel = vecGrenadeVel * (1.0 / time);
+	vecGrenadeVel = vecGrenadeVel * (1.0f / time);
 
 	// adjust upward toss to compensate for gravity loss
-	vecGrenadeVel.z += flGravity * time * 0.5;
+	vecGrenadeVel.z += flGravity * time * 0.5f;
 
-	Vector vecApex = vecSpot1 + (vecSpot2 - vecSpot1) * 0.5;
-	vecApex.z += 0.5 * flGravity * (time * 0.5) * (time * 0.5);
+	Vector vecApex = vecSpot1 + (vecSpot2 - vecSpot1) * 0.5f;
+	vecApex.z += 0.5f * flGravity * (time * 0.5f) * (time * 0.5f);
 
 	TraceResult tr;
 	UTIL_TraceLine(vecSpot1, vecApex, dont_ignore_monsters, ENT(pev), &tr);

@@ -378,7 +378,7 @@ HUD_Key_Event
 Return 1 to allow engine to process the key, otherwise, act on it as needed
 ============
 */
-int DLLEXPORT HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
+int DLLEXPORT HUD_Key_Event(int, int, const char*)
 {
 	return 1;
 }
@@ -682,19 +682,19 @@ float CL_KeyState(kbutton_t* key)
 	if ( impulsedown && !impulseup )
 	{
 		// pressed and held this frame?
-		val = down ? 0.5 : 0.0;
+		val = down ? 0.5f : 0.0f;
 	}
 
 	if ( impulseup && !impulsedown )
 	{
 		// released this frame?
-		val = down ? 0.0 : 0.0;
+		val = down ? 0.0f : 0.0f;
 	}
 
 	if ( !impulsedown && !impulseup )
 	{
 		// held the entire frame?
-		val = down ? 1.0 : 0.0;
+		val = down ? 1.0f : 0.0f;
 	}
 
 	if ( impulsedown && impulseup )
@@ -790,7 +790,7 @@ void DLLEXPORT CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 
 		CL_AdjustAngles(frametime, viewangles);
 
-		memset(cmd, 0, sizeof(*cmd));
+		*cmd = usercmd_s {};
 
 		gEngfuncs.SetViewAngles((float*)viewangles);
 
@@ -825,7 +825,7 @@ void DLLEXPORT CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 		if ( spd != 0.0 )
 		{
 			// scale the 3 speeds so that the total velocity is not > cl.maxspeed
-			float fmov = sqrt(
+			float fmov = sqrtf(
 				(cmd->forwardmove * cmd->forwardmove) + (cmd->sidemove * cmd->sidemove) + (cmd->upmove * cmd->upmove));
 
 			if ( fmov > spd )
@@ -841,15 +841,15 @@ void DLLEXPORT CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 		IN_Move(frametime, cmd);
 	}
 
-	cmd->impulse = in_impulse;
+	cmd->impulse = static_cast<byte>(in_impulse);
 	in_impulse = 0;
 
-	cmd->weaponselect = g_weaponselect;
+	cmd->weaponselect = static_cast<byte>(g_weaponselect);
 	g_weaponselect = 0;
 	//
 	// set button and flag bits
 	//
-	cmd->buttons = CL_ButtonBits(1);
+	cmd->buttons = static_cast<unsigned short>(CL_ButtonBits(1));
 
 	// Using joystick?
 	if ( in_joystick->value )

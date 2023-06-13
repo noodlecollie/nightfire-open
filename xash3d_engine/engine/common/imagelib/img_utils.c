@@ -316,7 +316,7 @@ void Image_SetPalette(const byte* pal, uint* d_table)
 				rgba[0] = pal[765];
 				rgba[1] = pal[766];
 				rgba[2] = pal[767];
-				rgba[3] = i;
+				rgba[3] = (byte)i;
 				d_table[i] = *(uint*)rgba;
 			}
 			break;
@@ -546,7 +546,7 @@ void Image_PaletteTranslate(byte* palSrc, int top, int bottom, int pal_size)
 
 	pal_size = bound(3, pal_size, 4);
 	for ( i = 0; i < 256; i++ )
-		src[i] = i;
+		src[i] = (byte)i;
 	memcpy(dst, src, 256);
 
 	if ( top < 128 )
@@ -1424,6 +1424,8 @@ qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float
 	qboolean result = true;
 	byte* out;
 
+	(void)reserved;
+
 	// check for buffers
 	if ( !pic || !pic->buffer )
 	{
@@ -1475,7 +1477,8 @@ qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float
 		if ( resampled )  // resampled or filled
 		{
 			Con_Reportf("Image_Resample: from[%d x %d] to [%d x %d]\n", pic->width, pic->height, w, h);
-			pic->width = w, pic->height = h;
+			pic->width = (word)w;
+			pic->height = (word)h;
 			pic->size = w * h * PFDesc[pic->type].bpp;
 			Mem_Free(pic->buffer);  // free original image buffer
 			pic->buffer = Image_Copy(pic->size);  // unzone buffer (don't touch image.tempbuffer)

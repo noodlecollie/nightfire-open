@@ -135,7 +135,7 @@ void CDecal::Spawn(void)
 	}
 }
 
-void CDecal::TriggerDecal(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CDecal::TriggerDecal(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	// this is set up as a USE function for infodecals that have targetnames, so that the
 	// decal doesn't get applied until it is fired. (usually by a scripted sequence)
@@ -157,7 +157,7 @@ void CDecal::TriggerDecal(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYP
 	MESSAGE_END();
 
 	SetThink(&CBaseEntity::SUB_Remove);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CDecal::StaticDecal(void)
@@ -559,7 +559,7 @@ void CWorld::Precache(void)
 			pEntity->SetThink(&CBaseEntity::SUB_CallUseToggle);
 			pEntity->pev->message = pev->netname;
 			pev->netname = 0;
-			pEntity->pev->nextthink = gpGlobals->time + 0.3;
+			pEntity->pev->nextthink = gpGlobals->time + 0.3f;
 			pEntity->pev->spawnflags = SF_MESSAGE_ONCE;
 		}
 	}
@@ -610,12 +610,12 @@ void CWorld::KeyValue(KeyValueData* pkvd)
 	else if ( FStrEq(pkvd->szKeyName, "WaveHeight") )
 	{
 		// Sent over net now.
-		pev->scale = atof(pkvd->szValue) * (1.0 / 8.0);
+		pev->scale = static_cast<float>(atof(pkvd->szValue)) * (1.0f / 8.0f);
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "MaxRange") )
 	{
-		pev->speed = atof(pkvd->szValue);
+		pev->speed = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "chaptertitle") )
@@ -673,7 +673,7 @@ typedef void (*LINK_ENTITY_FN)(entvars_t* pev);
 // attempt to create custom entity when default method is failed
 // 0 - attempt to create, -1 - reject to create
 //
-int DispatchCreateEntity(edict_t* pent, const char* szName)
+int DispatchCreateEntity(edict_t*, const char*)
 {
 	/*
 	#ifdef CREATE_ENTITY_TEST
@@ -754,6 +754,23 @@ static physics_interface_t gPhysicsInterface = {
 	SV_PHYSICS_INTERFACE_VERSION,
 	DispatchCreateEntity,
 	DispatchPhysicsEntity,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
 };
 
 BOOL gPhysicsInterfaceInitialized = FALSE;

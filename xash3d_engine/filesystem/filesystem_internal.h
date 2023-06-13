@@ -74,13 +74,13 @@ typedef struct searchpath_s
 	int type;
 	int flags;
 
-	union
+	union packagetype
 	{
 		dir_t* dir;
 		pack_t* pack;
 		wfile_t* wad;
 		zip_t* zip;
-	};
+	} pkg;
 
 	struct searchpath_s* next;
 

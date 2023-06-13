@@ -45,6 +45,8 @@ GNU General Public License for more details.
 
 #define RAD2DEG(x) ((double)(x) * (double)(180.0 / M_PI))
 #define DEG2RAD(x) ((double)(x) * (double)(M_PI / 180.0))
+#define RAD2DEGF(x) ((float)(x) * (float)(180.0f / M_PI_F))
+#define DEG2RADF(x) ((float)(x) * (float)(M_PI_F / 180.0f))
 
 #define NUMVERTEXNORMALS 162
 
@@ -173,7 +175,7 @@ GNU General Public License for more details.
 	 (c)[1] = (scale1) * (b1)[1] + (scale2) * (b2)[1] + (scale3) * (b3)[1], \
 	 (c)[2] = (scale1) * (b1)[2] + (scale2) * (b2)[2] + (scale3) * (b3)[2])
 #define VectorIsNull(v) ((v)[0] == 0.0f && (v)[1] == 0.0f && (v)[2] == 0.0f)
-#define MakeRGBA(out, x, y, z, w) Vector4Set(out, x, y, z, w)
+#define MakeRGBA(out, x, y, z, w) Vector4Set(out, (byte)x, (byte)y, (byte)z, (byte)w)
 #define PlaneDist(point, plane) ((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal))
 #define PlaneDiff(point, plane) \
 	(((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal)) - (plane)->dist)

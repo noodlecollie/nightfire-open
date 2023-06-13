@@ -87,8 +87,8 @@ void GAME_EXPORT VGUI_UploadTexture(int id, const char* buffer, int width, int h
 	Q_snprintf(texName, sizeof(texName), "*vgui%i", id);
 	memset(&r_image, 0, sizeof(r_image));
 
-	r_image.width = width;
-	r_image.height = height;
+	r_image.width = (word)width;
+	r_image.height = (word)height;
 	r_image.type = PF_RGBA_32;
 	r_image.size = r_image.width * r_image.height * 4;
 	r_image.flags = IMAGE_HAS_COLOR | IMAGE_HAS_ALPHA;
@@ -118,8 +118,8 @@ void GAME_EXPORT VGUI_CreateTexture(int id, int width, int height)
 	Q_snprintf(texName, sizeof(texName), "*vgui%i", id);
 	memset(&r_image, 0, sizeof(r_image));
 
-	r_image.width = width;
-	r_image.height = height;
+	r_image.width = (word)width;
+	r_image.height = (word)height;
 	r_image.type = PF_RGBA_32;
 	r_image.size = r_image.width * r_image.height * 4;
 	r_image.flags = IMAGE_HAS_ALPHA;
@@ -147,7 +147,7 @@ void GAME_EXPORT VGUI_SetupDrawingRect(int* pColor)
 	pglEnable(GL_BLEND);
 	pglDisable(GL_ALPHA_TEST);
 	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	pglColor4ub(pColor[0], pColor[1], pColor[2], 255 - pColor[3]);
+	pglColor4ub((GLubyte)pColor[0], (GLubyte)pColor[1], (GLubyte)pColor[2], (GLubyte)(255 - pColor[3]));
 }
 
 void GAME_EXPORT VGUI_SetupDrawingText(int* pColor)
@@ -157,7 +157,7 @@ void GAME_EXPORT VGUI_SetupDrawingText(int* pColor)
 	pglAlphaFunc(GL_GREATER, 0.0f);
 	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	pglColor4ub(pColor[0], pColor[1], pColor[2], 255 - pColor[3]);
+	pglColor4ub((GLubyte)pColor[0], (GLubyte)pColor[1], (GLubyte)pColor[2], (GLubyte)(255 - pColor[3]));
 }
 
 void GAME_EXPORT VGUI_SetupDrawingImage(int* pColor)
@@ -167,7 +167,7 @@ void GAME_EXPORT VGUI_SetupDrawingImage(int* pColor)
 	pglAlphaFunc(GL_GREATER, 0.0f);
 	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	pglColor4ub(pColor[0], pColor[1], pColor[2], 255 - pColor[3]);
+	pglColor4ub((GLubyte)pColor[0], (GLubyte)pColor[1], (GLubyte)pColor[2], (GLubyte)(255 - pColor[3]));
 }
 
 void GAME_EXPORT VGUI_BindTexture(int id)

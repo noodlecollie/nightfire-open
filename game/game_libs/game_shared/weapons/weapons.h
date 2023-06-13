@@ -256,7 +256,7 @@ public:
 
 	virtual int AddToPlayer(
 		CBasePlayer* pPlayer);  // return TRUE if the item you want the item added to the player inventory
-	virtual int AddDuplicate(CBasePlayerItem* pItem)
+	virtual int AddDuplicate(CBasePlayerItem*)
 	{
 		return FALSE;
 	}  // return TRUE if you want your duplicate removed from world
@@ -270,7 +270,7 @@ public:
 	CBaseEntity* Respawn(void);  // copy a weapon
 	void FallInit(void);
 	void CheckRespawn(void);
-	virtual int GetItemInfo(ItemInfo* p)
+	virtual int GetItemInfo(ItemInfo*)
 	{
 		return 0;
 	};  // returns 0 if struct not filled out
@@ -315,7 +315,7 @@ public:
 		return -1;
 	};
 
-	virtual int UpdateClientData(CBasePlayer* pPlayer)
+	virtual int UpdateClientData(CBasePlayer*)
 	{
 		return 0;
 	}
@@ -507,7 +507,7 @@ class CBasePlayerAmmo : public CBaseEntity
 public:
 	virtual void Spawn(void);
 	void EXPORT DefaultTouch(CBaseEntity* pOther);  // default weapon touch
-	virtual BOOL AddAmmo(CBaseEntity* pOther)
+	virtual BOOL AddAmmo(CBaseEntity*)
 	{
 		return TRUE;
 	};
@@ -558,18 +558,18 @@ extern MULTIDAMAGE gMultiDamage;
 
 #define WEAPON_ACTIVITY_VOLUME 64
 
-#define VECTOR_CONE_1DEGREES Vector(0.00873, 0.00873, 0.00873)
-#define VECTOR_CONE_2DEGREES Vector(0.01745, 0.01745, 0.01745)
-#define VECTOR_CONE_3DEGREES Vector(0.02618, 0.02618, 0.02618)
-#define VECTOR_CONE_4DEGREES Vector(0.03490, 0.03490, 0.03490)
-#define VECTOR_CONE_5DEGREES Vector(0.04362, 0.04362, 0.04362)
-#define VECTOR_CONE_6DEGREES Vector(0.05234, 0.05234, 0.05234)
-#define VECTOR_CONE_7DEGREES Vector(0.06105, 0.06105, 0.06105)
-#define VECTOR_CONE_8DEGREES Vector(0.06976, 0.06976, 0.06976)
-#define VECTOR_CONE_9DEGREES Vector(0.07846, 0.07846, 0.07846)
-#define VECTOR_CONE_10DEGREES Vector(0.08716, 0.08716, 0.08716)
-#define VECTOR_CONE_15DEGREES Vector(0.13053, 0.13053, 0.13053)
-#define VECTOR_CONE_20DEGREES Vector(0.17365, 0.17365, 0.17365)
+#define VECTOR_CONE_1DEGREES Vector(0.00873f, 0.00873f, 0.00873f)
+#define VECTOR_CONE_2DEGREES Vector(0.01745f, 0.01745f, 0.01745f)
+#define VECTOR_CONE_3DEGREES Vector(0.02618f, 0.02618f, 0.02618f)
+#define VECTOR_CONE_4DEGREES Vector(0.03490f, 0.03490f, 0.03490f)
+#define VECTOR_CONE_5DEGREES Vector(0.04362f, 0.04362f, 0.04362f)
+#define VECTOR_CONE_6DEGREES Vector(0.05234f, 0.05234f, 0.05234f)
+#define VECTOR_CONE_7DEGREES Vector(0.06105f, 0.06105f, 0.06105f)
+#define VECTOR_CONE_8DEGREES Vector(0.06976f, 0.06976f, 0.06976f)
+#define VECTOR_CONE_9DEGREES Vector(0.07846f, 0.07846f, 0.07846f)
+#define VECTOR_CONE_10DEGREES Vector(0.08716f, 0.08716f, 0.08716f)
+#define VECTOR_CONE_15DEGREES Vector(0.13053f, 0.13053f, 0.13053f)
+#define VECTOR_CONE_20DEGREES Vector(0.17365f, 0.17365f, 0.17365f)
 
 //=========================================================
 // CWeaponBox - a single entity that can store weapons

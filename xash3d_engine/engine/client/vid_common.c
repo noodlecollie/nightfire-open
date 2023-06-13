@@ -77,8 +77,8 @@ void R_SaveVideoMode(int w, int h, int render_w, int render_h)
 	host.window_center_x = w / 2;
 	host.window_center_y = h / 2;
 
-	Cvar_SetValue("width", w);
-	Cvar_SetValue("height", h);
+	Cvar_SetValue("width", (float)w);
+	Cvar_SetValue("height", (float)h);
 
 	// immediately drop changed state or we may trigger
 	// video subsystem to reapply settings
@@ -104,14 +104,21 @@ void R_SaveVideoMode(int w, int h, int render_w, int render_h)
 VID_GetModeString
 =================
 */
-const char* VID_GetModeString(int vid_mode)
+const char* VID_GetModeString(int index)
 {
 	vidmode_t* vidmode;
-	if ( vid_mode < 0 || vid_mode > R_MaxVideoModes() )
-		return NULL;
 
-	if ( !(vidmode = R_GetVideoMode(vid_mode)) )
+	if ( index < 0 || index > R_MaxVideoModes() )
+	{
 		return NULL;
+	}
+
+	vidmode = R_GetVideoMode(index);
+
+	if ( !vidmode )
+	{
+		return NULL;
+	}
 
 	return vidmode->desc;
 }

@@ -152,7 +152,7 @@ public:
 
 	inline void SetPoints(int points)
 	{
-		pev->frags = points;
+		pev->frags = static_cast<float>(points);
 	}
 
 private:
@@ -176,7 +176,7 @@ void CGameScore::KeyValue(KeyValueData* pkvd)
 		CRulePointEntity::KeyValue(pkvd);
 }
 
-void CGameScore::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGameScore::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -207,7 +207,7 @@ private:
 
 LINK_ENTITY_TO_CLASS(game_end, CGameEnd)
 
-void CGameEnd::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGameEnd::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -268,12 +268,12 @@ void CGameText::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "x") )
 	{
-		m_textParms.x = atof(pkvd->szValue);
+		m_textParms.x = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "y") )
 	{
-		m_textParms.y = atof(pkvd->szValue);
+		m_textParms.y = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "effect") )
@@ -285,47 +285,47 @@ void CGameText::KeyValue(KeyValueData* pkvd)
 	{
 		int color[4];
 		UTIL_StringToIntArray(color, 4, pkvd->szValue);
-		m_textParms.r1 = color[0];
-		m_textParms.g1 = color[1];
-		m_textParms.b1 = color[2];
-		m_textParms.a1 = color[3];
+		m_textParms.r1 = static_cast<byte>(color[0]);
+		m_textParms.g1 = static_cast<byte>(color[1]);
+		m_textParms.b1 = static_cast<byte>(color[2]);
+		m_textParms.a1 = static_cast<byte>(color[3]);
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "color2") )
 	{
 		int color[4];
 		UTIL_StringToIntArray(color, 4, pkvd->szValue);
-		m_textParms.r2 = color[0];
-		m_textParms.g2 = color[1];
-		m_textParms.b2 = color[2];
-		m_textParms.a2 = color[3];
+		m_textParms.r2 = static_cast<byte>(color[0]);
+		m_textParms.g2 = static_cast<byte>(color[1]);
+		m_textParms.b2 = static_cast<byte>(color[2]);
+		m_textParms.a2 = static_cast<byte>(color[3]);
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "fadein") )
 	{
-		m_textParms.fadeinTime = atof(pkvd->szValue);
+		m_textParms.fadeinTime = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "fadeout") )
 	{
-		m_textParms.fadeoutTime = atof(pkvd->szValue);
+		m_textParms.fadeoutTime = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "holdtime") )
 	{
-		m_textParms.holdTime = atof(pkvd->szValue);
+		m_textParms.holdTime = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "fxtime") )
 	{
-		m_textParms.fxTime = atof(pkvd->szValue);
+		m_textParms.fxTime = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
 		CRulePointEntity::KeyValue(pkvd);
 }
 
-void CGameText::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGameText::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -413,7 +413,7 @@ void CGameTeamMaster::KeyValue(KeyValueData* pkvd)
 		CRulePointEntity::KeyValue(pkvd);
 }
 
-void CGameTeamMaster::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGameTeamMaster::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -489,7 +489,7 @@ private:
 
 LINK_ENTITY_TO_CLASS(game_team_set, CGameTeamSet)
 
-void CGameTeamSet::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGameTeamSet::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -566,7 +566,7 @@ void CGamePlayerZone::KeyValue(KeyValueData* pkvd)
 		CRuleBrushEntity::KeyValue(pkvd);
 }
 
-void CGamePlayerZone::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGamePlayerZone::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float value)
 {
 	int playersInCount = 0;
 	int playersOutCount = 0;
@@ -613,12 +613,12 @@ void CGamePlayerZone::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYP
 
 	if ( m_iszInCount )
 	{
-		FireTargets(STRING(m_iszInCount), pActivator, this, USE_SET, playersInCount);
+		FireTargets(STRING(m_iszInCount), pActivator, this, USE_SET, static_cast<float>(playersInCount));
 	}
 
 	if ( m_iszOutCount )
 	{
-		FireTargets(STRING(m_iszOutCount), pActivator, this, USE_SET, playersOutCount);
+		FireTargets(STRING(m_iszOutCount), pActivator, this, USE_SET, static_cast<float>(playersOutCount));
 	}
 }
 
@@ -642,7 +642,7 @@ private:
 
 LINK_ENTITY_TO_CLASS(game_player_hurt, CGamePlayerHurt)
 
-void CGamePlayerHurt::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGamePlayerHurt::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -714,11 +714,11 @@ public:
 private:
 	inline void SetCountValue(int value)
 	{
-		pev->frags = value;
+		pev->frags = static_cast<float>(value);
 	}
 	inline void SetInitialValue(int value)
 	{
-		pev->dmg = value;
+		pev->dmg = static_cast<float>(value);
 	}
 };
 
@@ -731,7 +731,7 @@ void CGameCounter::Spawn(void)
 	CRulePointEntity::Spawn();
 }
 
-void CGameCounter::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGameCounter::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -785,7 +785,7 @@ private:
 
 LINK_ENTITY_TO_CLASS(game_counter_set, CGameCounterSet)
 
-void CGameCounterSet::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGameCounterSet::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;
@@ -884,7 +884,7 @@ void CGamePlayerEquip::EquipPlayer(CBaseEntity* pEntity)
 	}
 }
 
-void CGamePlayerEquip::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGamePlayerEquip::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	EquipPlayer(pActivator);
 }
@@ -936,7 +936,7 @@ const char* CGamePlayerTeam::TargetTeamName(const char* pszTargetName)
 	return NULL;
 }
 
-void CGamePlayerTeam::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGamePlayerTeam::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !CanFireForActivator(pActivator) )
 		return;

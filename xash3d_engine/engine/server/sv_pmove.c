@@ -123,7 +123,7 @@ qboolean SV_CopyEdictToPhysEnt(physent_t* pe, edict_t* ed)
 	memcpy(&pe->blending[0], &ed->v.blending[0], 2 * sizeof(byte));
 
 	pe->movetype = ed->v.movetype;
-	pe->takedamage = ed->v.takedamage;
+	pe->takedamage = (int)ed->v.takedamage;
 	pe->team = ed->v.team;
 	pe->classnumber = ed->v.playerclass;
 	pe->blooddecal = 0;  // unused in GoldSrc
@@ -352,11 +352,11 @@ static void GAME_EXPORT pfnParticle(const float* origin, int color, float life, 
 	MSG_WriteVec3Coord(&sv.reliable_datagram, origin);
 	MSG_WriteChar(&sv.reliable_datagram, 0);  // no x-vel
 	MSG_WriteChar(&sv.reliable_datagram, 0);  // no y-vel
-	v = bound(-128, (zpos * zvel) * 16.0f, 127);
+	v = (int)bound(-128.0f, (zpos * zvel) * 16.0f, 127.0f);
 	MSG_WriteChar(&sv.reliable_datagram, v);  // write z-vel
 	MSG_WriteByte(&sv.reliable_datagram, 1);
 	MSG_WriteByte(&sv.reliable_datagram, color);
-	MSG_WriteByte(&sv.reliable_datagram, bound(0, life * 8, 255));
+	MSG_WriteByte(&sv.reliable_datagram, (int)bound(0.0f, life * 8, 255.0f));
 }
 
 static int GAME_EXPORT pfnTestPlayerPosition(float* pos, pmtrace_t* ptrace)
@@ -536,14 +536,14 @@ void SV_InitClientMove(void)
 	svgame.pmove->PM_StuckTouch = pfnStuckTouch;
 	svgame.pmove->PM_PointContents = pfnPointContents;
 	svgame.pmove->PM_TruePointContents = pfnTruePointContents;
-	svgame.pmove->PM_HullPointContents = (void*)PM_HullPointContents;
+	svgame.pmove->PM_HullPointContents = PM_HullPointContents;
 	svgame.pmove->PM_PlayerTrace = pfnPlayerTrace;
 	svgame.pmove->PM_TraceLine = pfnTraceLine;
 	svgame.pmove->RandomLong = COM_RandomLong;
 	svgame.pmove->RandomFloat = COM_RandomFloat;
 	svgame.pmove->PM_GetModelType = pfnGetModelType;
 	svgame.pmove->PM_GetModelBounds = pfnGetModelBounds;
-	svgame.pmove->PM_HullForBsp = (void*)pfnHullForBsp;
+	svgame.pmove->PM_HullForBsp = pfnHullForBsp;
 	svgame.pmove->PM_TraceModel = pfnTraceModel;
 	svgame.pmove->COM_FileSize = COM_FileSize;
 	svgame.pmove->COM_LoadFile = COM_LoadFile;
@@ -600,13 +600,13 @@ static void SV_SetupPMove(playermove_t* pmove, sv_client_t* cl, usercmd_t* ucmd,
 	VectorCopy(clent->v.basevelocity, pmove->basevelocity);
 	VectorCopy(clent->v.view_ofs, pmove->view_ofs);
 	VectorCopy(clent->v.movedir, pmove->movedir);
-	pmove->flDuckTime = clent->v.flDuckTime;
+	pmove->flDuckTime = (float)clent->v.flDuckTime;
 	pmove->bInDuck = clent->v.bInDuck;
 	pmove->usehull = (clent->v.flags & FL_DUCKING) ? 1 : 0;  // reset hull
 	pmove->flTimeStepSound = clent->v.flTimeStepSound;
 	pmove->iStepLeft = clent->v.iStepLeft;
 	pmove->flFallVelocity = clent->v.flFallVelocity;
-	pmove->flSwimTime = clent->v.flSwimTime;
+	pmove->flSwimTime = (float)clent->v.flSwimTime;
 	VectorCopy(clent->v.punchangle, pmove->punchangle);
 	pmove->flNextPrimaryAttack = 0.0f;  // not used by PM_ code
 	pmove->effects = clent->v.effects;
@@ -679,8 +679,8 @@ static void SV_FinishPMove(playermove_t* pmove, sv_client_t* cl)
 	clent->v.waterlevel = pmove->waterlevel;
 	clent->v.watertype = pmove->watertype;
 	clent->v.maxspeed = pmove->clientmaxspeed;
-	clent->v.flDuckTime = pmove->flDuckTime;
-	clent->v.flSwimTime = pmove->flSwimTime;
+	clent->v.flDuckTime = (int)pmove->flDuckTime;
+	clent->v.flSwimTime = (int)pmove->flSwimTime;
 	clent->v.iStepLeft = pmove->iStepLeft;
 	clent->v.movetype = pmove->movetype;
 	clent->v.friction = pmove->friction;
@@ -802,11 +802,16 @@ void SV_SetupMoveInterpolant(sv_client_t* cl)
 		lerp_msec = 0.1f;
 
 	if ( lerp_msec < cl->cl_updaterate )
-		lerp_msec = cl->cl_updaterate;
+	{
+		lerp_msec = (float)cl->cl_updaterate;
+	}
 
-	finalpush = (host.realtime - latency - lerp_msec) + sv_unlagpush.value;
+	finalpush = ((float)host.realtime - latency - lerp_msec) + sv_unlagpush.value;
+
 	if ( finalpush > host.realtime )
-		finalpush = host.realtime;  // pushed too much ?
+	{
+		finalpush = (float)host.realtime;  // pushed too much ?
+	}
 
 	frame = frame2 = NULL;
 
@@ -863,7 +868,7 @@ void SV_SetupMoveInterpolant(sv_client_t* cl)
 		}
 		else
 		{
-			lerpFrac = (finalpush - frame->senttime) / (frame2->senttime - frame->senttime);
+			lerpFrac = (float)((finalpush - frame->senttime) / (frame2->senttime - frame->senttime));
 			lerpFrac = bound(0.0f, lerpFrac, 1.0f);
 		}
 	}
@@ -976,9 +981,9 @@ void SV_RunCmd(sv_client_t* cl, usercmd_t* ucmd, int random_seed)
 	if ( cmd.msec > 50 )
 	{
 		oldmsec = ucmd->msec;
-		cmd.msec = oldmsec / 2;
+		cmd.msec = (byte)(oldmsec / 2);
 		SV_RunCmd(cl, &cmd, random_seed);
-		cmd.msec = oldmsec / 2;
+		cmd.msec = (byte)(oldmsec / 2);
 		cmd.impulse = 0;
 		SV_RunCmd(cl, &cmd, random_seed);
 		return;
@@ -993,7 +998,7 @@ void SV_RunCmd(sv_client_t* cl, usercmd_t* ucmd, int random_seed)
 	cl->timebase += frametime;
 	cl->cmdtime += frametime;
 
-	PM_CheckMovingGround(clent, frametime);
+	PM_CheckMovingGround(clent, (float)frametime);
 
 	VectorCopy(clent->v.v_angle, svgame.pmove->oldangles);  // save oldangles
 
@@ -1016,9 +1021,9 @@ void SV_RunCmd(sv_client_t* cl, usercmd_t* ucmd, int random_seed)
 		SV_RefreshUserinfo();
 	}
 
-	svgame.globals->time = cl->timebase;
+	svgame.globals->time = (float)cl->timebase;
 	svgame.dllFuncs.pfnPlayerPreThink(clent);
-	SV_PlayerRunThink(clent, frametime, cl->timebase);
+	SV_PlayerRunThink(clent, (float)frametime, cl->timebase);
 
 	// If conveyor, or think, set basevelocity, then send to client asap too.
 	if ( !VectorIsNull(clent->v.basevelocity) )
@@ -1062,8 +1067,8 @@ void SV_RunCmd(sv_client_t* cl, usercmd_t* ucmd, int random_seed)
 	}
 
 	svgame.pmove->numtouch = 0;
-	svgame.globals->time = cl->timebase;
-	svgame.globals->frametime = frametime;
+	svgame.globals->time = (float)cl->timebase;
+	svgame.globals->frametime = (float)frametime;
 
 	// run post-think
 	svgame.dllFuncs.pfnPlayerPostThink(clent);

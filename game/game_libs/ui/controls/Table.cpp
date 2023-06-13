@@ -35,10 +35,10 @@ CMenuTable::CMenuTable() :
 	szDownArrowFocus(UI_DOWNARROWFOCUS),
 	szDownArrowPressed(UI_DOWNARROWPRESSED),
 	iTopItem(0),
+	iNumRows(0),
 	iScrollBarSliding(false),
 	iHighlight(-1),
 	iCurItem(0),
-	iNumRows(0),
 	m_iLastItemMouseChange(0),
 	m_iSortingColumn(-1),
 	m_pModel(NULL)
@@ -85,7 +85,7 @@ void CMenuTable::VidInit()
 		// set columns width
 		if ( !columns[i].flWidth )
 		{
-			SetColumnWidth(i, 1 / m_pModel->GetColumns(), false);
+			SetColumnWidth(i, 1.0f / static_cast<float>(m_pModel->GetColumns()), false);
 		}
 
 		if ( columns[i].fStaticWidth )
@@ -97,7 +97,7 @@ void CMenuTable::VidInit()
 	flFixedSumm *= uiStatic.scaleX;
 
 	// at first, determine header height
-	headerSize.h = m_scChSize * HEADER_HEIGHT_FRAC;
+	headerSize.h = static_cast<int>(m_scChSize * HEADER_HEIGHT_FRAC);
 
 	// then determine arrow position and sizes
 	if ( bShowScrollBar )
@@ -123,7 +123,7 @@ void CMenuTable::VidInit()
 	boxSize.h = m_scSize.h - headerSize.h;
 }
 
-bool CMenuTable::MouseMove(int x, int y)
+bool CMenuTable::MouseMove(int, int)
 {
 	if ( !iScrollBarSliding && FBitSet(iFlags, QMF_HASMOUSEFOCUS) )
 	{
@@ -137,12 +137,12 @@ bool CMenuTable::MouseMove(int x, int y)
 			cursorDY = 0;
 			if ( ac_y > m_scChSize / 2.0f )
 			{
-				iTopItem -= ac_y / m_scChSize - 0.5f;
+				iTopItem = static_cast<int>(iTopItem - (ac_y / m_scChSize - 0.5f));
 				ac_y = 0;
 			}
 			if ( ac_y < -m_scChSize / 2.0f )
 			{
-				iTopItem -= ac_y / m_scChSize - 0.5f;
+				iTopItem = static_cast<int>(iTopItem - (ac_y / m_scChSize - 0.5f));
 				ac_y = 0;
 			}
 		}
@@ -154,12 +154,12 @@ bool CMenuTable::MouseMove(int x, int y)
 			cursorDY = 0;
 			if ( ac_y < -step )
 			{
-				iTopItem += ac_y / step + 0.5f;
+				iTopItem = static_cast<int>(iTopItem + (ac_y / step + 0.5f));
 				ac_y = 0;
 			}
 			if ( ac_y > step )
 			{
-				iTopItem += ac_y / step + 0.5f;
+				iTopItem = static_cast<int>(iTopItem + (ac_y / step + 0.5f));
 				ac_y = 0;
 			}
 		}
@@ -331,9 +331,14 @@ bool CMenuTable::KeyUp(int key)
 				for ( i = 0; i < m_pModel->GetColumns(); i++, p.x += sz.w )
 				{
 					if ( columns[i].fStaticWidth )
-						sz.w = columns[i].flWidth * uiStatic.scaleX;
+					{
+						sz.w = static_cast<int>(columns[i].flWidth * uiStatic.scaleX);
+					}
 					else
-						sz.w = ((float)headerSize.w - flFixedSumm) * columns[i].flWidth / flDynamicSumm;
+					{
+						sz.w =
+							static_cast<int>(((float)headerSize.w - flFixedSumm) * columns[i].flWidth / flDynamicSumm);
+					}
 
 					if ( UI_CursorInRect(p, sz) )
 					{
@@ -451,7 +456,7 @@ bool CMenuTable::KeyDown(int key)
 	return sound != NULL;
 }
 
-void CMenuTable::DrawLine(Point p, const char** psz, size_t size, uint textColor, bool forceCol, uint fillColor)
+void CMenuTable::DrawLine(Point p, const char** psz, size_t lineSize, uint textColor, bool forceCol, uint fillColor)
 {
 	size_t i;
 	Size sz;
@@ -468,26 +473,34 @@ void CMenuTable::DrawLine(Point p, const char** psz, size_t size, uint textColor
 		UI_FillRect(p, sz, fillColor);
 	}
 
-	for ( i = 0; i < size; i++, p.x += sz.w )
+	for ( i = 0; i < lineSize; i++, p.x += sz.w )
 	{
 		Point pt = p;
 
 		if ( columns[i].fStaticWidth )
-			sz.w = columns[i].flWidth * uiStatic.scaleX;
+		{
+			sz.w = static_cast<int>(columns[i].flWidth * uiStatic.scaleX);
+		}
 		else
-			sz.w = ((float)headerSize.w - flFixedSumm) * columns[i].flWidth / flDynamicSumm;
+		{
+			sz.w = static_cast<int>(((float)headerSize.w - flFixedSumm) * columns[i].flWidth / flDynamicSumm);
+		}
 
 		if ( !psz[i] || !sz.w )  // headers may be null, cells too
 			continue;
 
-		if ( bAllowSorting && i == GetSortingColumn() )
+		if ( bAllowSorting && i == static_cast<size_t>(GetSortingColumn()) )
 		{
 			HIMAGE hPic;
 
 			if ( IsAscend() )
+			{
 				hPic = EngFuncs::PIC_Load(UI_ASCEND);
+			}
 			else
+			{
 				hPic = EngFuncs::PIC_Load(UI_DESCEND);
+			}
 
 			if ( hPic )
 			{
@@ -505,7 +518,15 @@ void CMenuTable::DrawLine(Point p, const char** psz, size_t size, uint textColor
 			}
 		}
 
-		UI_DrawString(font, pt, sz, psz[i], textColor, m_scChSize, m_pModel->GetAlignmentForColumn(i), textflags);
+		UI_DrawString(
+			font,
+			pt,
+			sz,
+			psz[i],
+			textColor,
+			m_scChSize,
+			m_pModel->GetAlignmentForColumn(static_cast<int>(i)),
+			textflags);
 	}
 }
 
@@ -537,9 +558,13 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 		textflags |= iFlags & QMF_DROPSHADOW ? ETF_SHADOW : 0;
 
 		if ( columns[i].fStaticWidth )
-			sz.w = columns[i].flWidth * uiStatic.scaleX;
+		{
+			sz.w = static_cast<int>(columns[i].flWidth * uiStatic.scaleX);
+		}
 		else
-			sz.w = ((float)boxSize.w - flFixedSumm) * columns[i].flWidth / flDynamicSumm;
+		{
+			sz.w = static_cast<int>(((float)boxSize.w - flFixedSumm) * columns[i].flWidth / flDynamicSumm);
+		}
 
 		const char* str = m_pModel->GetCellText(line, i);
 		const ECellType type = m_pModel->GetCellType(line, i);
@@ -674,9 +699,9 @@ void CMenuTable::Draw()
 		}
 	}
 
-	int columns = Q_min(m_pModel->GetColumns(), MAX_TABLE_COLUMNS);
+	int cols = Q_min(m_pModel->GetColumns(), MAX_TABLE_COLUMNS);
 
-	DrawLine(m_scPos, szHeaderTexts, columns, iHeaderColor, true);
+	DrawLine(m_scPos, szHeaderTexts, cols, iHeaderColor, true);
 
 	if ( !szBackground )
 	{
@@ -696,15 +721,15 @@ void CMenuTable::Draw()
 			UI_DrawRectangleExt(boxPos, boxSize, color, iStrokeWidth);
 	}
 
-	sbarPos.x = upArrow.x + arrow.w * 0.125f;
-	sbarSize.w = arrow.w * 0.75f;
+	sbarPos.x = static_cast<int>(upArrow.x + arrow.w * 0.125f);
+	sbarSize.w = static_cast<int>(arrow.w * 0.75f);
 
 	float step = Step();
 
 	if ( ((downArrow.y - upArrow.y - arrow.h) - (((m_pModel->GetRows() - 1) * m_scChSize) / 2)) < 2 )
 	{
-		sbarSize.h = (downArrow.y - upArrow.y - arrow.h) - (step * (m_pModel->GetRows() - iNumRows));
-		sbarPos.y = upArrow.y + arrow.h + (step * iTopItem);
+		sbarSize.h = static_cast<int>((downArrow.y - upArrow.y - arrow.h) - (step * (m_pModel->GetRows() - iNumRows)));
+		sbarPos.y = static_cast<int>(upArrow.y + arrow.h + (step * iTopItem));
 	}
 	else
 	{
@@ -760,7 +785,9 @@ void CMenuTable::Draw()
 			{
 				int color;
 
-				color = PackAlpha(colorBase, 255 * (0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR)));
+				color = PackAlpha(
+					colorBase,
+					static_cast<unsigned int>(255 * (0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR))));
 
 				UI_DrawPic(upArrow, arrow, (upFocus) ? color : (int)colorBase, (upFocus) ? szUpArrowFocus : szUpArrow);
 				UI_DrawPic(
@@ -792,10 +819,15 @@ void CMenuTable::Draw()
 			if ( i == iCurItem )
 			{
 				if ( eFocusAnimation == QM_HIGHLIGHTIFFOCUS )
+				{
 					color = colorFocus;
+				}
 				else if ( eFocusAnimation == QM_PULSEIFFOCUS )
-					color =
-						PackAlpha(colorBase, 255 * (0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR)));
+				{
+					color = PackAlpha(
+						colorBase,
+						static_cast<int>(255 * (0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR))));
+				}
 
 				fillColor = selColor;
 			}

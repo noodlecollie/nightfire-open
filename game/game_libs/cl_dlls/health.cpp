@@ -97,7 +97,7 @@ int CHudHealth::VidInit(void)
 	return 1;
 }
 
-int CHudHealth::MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
+int CHudHealth::MsgFunc_Health(const char*, int iSize, void* pbuf)
 {
 	// TODO: update local health data
 	BEGIN_READ(pbuf, iSize);
@@ -115,7 +115,7 @@ int CHudHealth::MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudHealth::MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
+int CHudHealth::MsgFunc_Damage(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -191,18 +191,18 @@ int CHudHealth::Draw(float flTime)
 	// Has health changed? Flash the health #
 	if ( m_fFade )
 	{
-		m_fFade -= (gHUD.m_flTimeDelta * 20);
+		m_fFade -= static_cast<float>(gHUD.m_flTimeDelta * 20);
 		if ( m_fFade <= 0 )
 		{
-			a = MIN_ALPHA;
+			a = static_cast<int>(MIN_ALPHA);
 			m_fFade = 0;
 		}
 
 		// Fade the health number back to dim
-		a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+		a = static_cast<int>(MIN_ALPHA + (m_fFade / FADE_TIME) * 128);
 	}
 	else
-		a = MIN_ALPHA;
+		a = static_cast<int>(MIN_ALPHA);
 
 	// If health is getting low, make it bright red
 	if ( m_iHealth <= 15 )
@@ -277,7 +277,7 @@ void CHudHealth::CalcDamageDirection(vec3_t vecFrom)
 		}
 		else
 		{
-			float f = fabs(side);
+			float f = fabsf(side);
 			if ( f > 0.3 )
 				m_fAttackRear = Max(m_fAttackRear, f);
 		}
@@ -289,14 +289,14 @@ void CHudHealth::CalcDamageDirection(vec3_t vecFrom)
 		}
 		else
 		{
-			float f = fabs(front);
+			float f = fabsf(front);
 			if ( f > 0.3 )
 				m_fAttackLeft = Max(m_fAttackLeft, f);
 		}
 	}
 }
 
-int CHudHealth::DrawPain(float flTime)
+int CHudHealth::DrawPain(float)
 {
 	if ( !(m_fAttackFront || m_fAttackRear || m_fAttackLeft || m_fAttackRight) )
 		return 1;
@@ -307,13 +307,13 @@ int CHudHealth::DrawPain(float flTime)
 	// TODO:  get the shift value of the health
 	a = 255;  // max brightness until then
 
-	float fFade = gHUD.m_flTimeDelta * 2;
+	float fFade = static_cast<float>(gHUD.m_flTimeDelta * 2);
 
 	// SPR_Draw top
 	if ( m_fAttackFront > 0.4 )
 	{
 		GetPainColor(r, g, b);
-		shade = a * Max(m_fAttackFront, 0.5f);
+		shade = static_cast<int>(a * Max(m_fAttackFront, 0.5f));
 		ScaleColors(r, g, b, shade);
 		SPR_Set(m_hSprite, r, g, b);
 
@@ -328,7 +328,7 @@ int CHudHealth::DrawPain(float flTime)
 	if ( m_fAttackRight > 0.4 )
 	{
 		GetPainColor(r, g, b);
-		shade = a * Max(m_fAttackRight, 0.5f);
+		shade = static_cast<int>(a * Max(m_fAttackRight, 0.5f));
 		ScaleColors(r, g, b, shade);
 		SPR_Set(m_hSprite, r, g, b);
 
@@ -343,7 +343,7 @@ int CHudHealth::DrawPain(float flTime)
 	if ( m_fAttackRear > 0.4 )
 	{
 		GetPainColor(r, g, b);
-		shade = a * Max(m_fAttackRear, 0.5f);
+		shade = static_cast<int>(a * Max(m_fAttackRear, 0.5f));
 		ScaleColors(r, g, b, shade);
 		SPR_Set(m_hSprite, r, g, b);
 
@@ -358,7 +358,7 @@ int CHudHealth::DrawPain(float flTime)
 	if ( m_fAttackLeft > 0.4 )
 	{
 		GetPainColor(r, g, b);
-		shade = a * Max(m_fAttackLeft, 0.5f);
+		shade = static_cast<int>(a * Max(m_fAttackLeft, 0.5f));
 		ScaleColors(r, g, b, shade);
 		SPR_Set(m_hSprite, r, g, b);
 

@@ -31,7 +31,7 @@ qboolean d_roverwrapped;
 int d_minmip;
 float d_scalemip[NUM_MIPS - 1];
 
-static float basemip[NUM_MIPS - 1] = {1.0, 0.5 * 0.8, 0.25 * 0.8};
+static float basemip[NUM_MIPS - 1] = {1.0f, 0.5f * 0.8f, 0.25f * 0.8f};
 
 // int	d_vrectx, d_vrecty, d_vrectright_particle, d_vrectbottom_particle;
 
@@ -199,8 +199,8 @@ void R_ViewChanged(vrect_t* vr)
 
 	RI.vrect = *vr;
 
-	horizontalFieldOfView = 2 * tan((float)RI.fov_x / 360.0f * M_PI_F);
-	verticalFieldOfView = 2 * tan((float)RI.fov_y / 360.0f * M_PI_F);
+	horizontalFieldOfView = 2 * tanf((float)RI.fov_x / 360.0f * M_PI_F);
+	verticalFieldOfView = 2 * tanf((float)RI.fov_y / 360.0f * M_PI_F);
 
 	RI.fvrectx = (float)RI.vrect.x;
 	RI.fvrectx_adj = (float)RI.vrect.x - 0.5f;
@@ -348,7 +348,7 @@ void R_SetupFrameQ(void)
 	d_roverwrapped = false;
 	d_initial_rover = sc_rover;
 
-	d_minmip = sw_mipcap->value;
+	d_minmip = (int)sw_mipcap->value;
 	if ( d_minmip > 3 )
 		d_minmip = 3;
 	else if ( d_minmip < 0 )

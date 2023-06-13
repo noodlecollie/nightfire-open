@@ -132,7 +132,7 @@ const char* CHudTextMessage::LookupString(const char* msg, int* msg_dest)
 
 void StripEndNewlineFromString(char* str)
 {
-	int s = strlen(str) - 1;
+	int s = static_cast<int>(strlen(str)) - 1;
 	if ( str[s] == '\n' || str[s] == '\r' )
 		str[s] = 0;
 }
@@ -160,7 +160,7 @@ char* ConvertCRtoNL(char* str)
 // any string that starts with the character '#' is a message name, and is used to look up the real message in
 // titles.txt the next (optional) one to four strings are parameters for that string (which can also be message names if
 // they begin with '#')
-int CHudTextMessage::MsgFunc_TextMsg(const char* pszName, int iSize, void* pbuf)
+int CHudTextMessage::MsgFunc_TextMsg(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 

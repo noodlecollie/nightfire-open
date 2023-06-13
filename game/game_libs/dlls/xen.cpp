@@ -98,12 +98,12 @@ void CXenPLight::Spawn(void)
 
 	UTIL_SetSize(pev, Vector(-80, -80, 0), Vector(80, 80, 32));
 	SetActivity(ACT_IDLE);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	pev->frame = RANDOM_FLOAT(0, 255);
 
 	m_pGlow = CSprite::SpriteCreate(
 		XEN_PLANT_GLOW_SPRITE,
-		pev->origin + Vector(0, 0, (pev->mins.z + pev->maxs.z) * 0.5),
+		pev->origin + Vector(0, 0, (pev->mins.z + pev->maxs.z) * 0.5f),
 		FALSE);
 	m_pGlow->SetTransparency(
 		kRenderGlow,
@@ -124,7 +124,7 @@ void CXenPLight::Precache(void)
 void CXenPLight::Think(void)
 {
 	StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	switch ( GetActivity() )
 	{
@@ -200,19 +200,19 @@ void CXenHair::Spawn(void)
 	if ( !(pev->spawnflags & SF_HAIR_SYNC) )
 	{
 		pev->frame = RANDOM_FLOAT(0, 255);
-		pev->framerate = RANDOM_FLOAT(0.7, 1.4);
+		pev->framerate = RANDOM_FLOAT(0.7f, 1.4f);
 	}
 	ResetSequenceInfo();
 
 	pev->solid = SOLID_NOT;
 	pev->movetype = MOVETYPE_NONE;
-	pev->nextthink = gpGlobals->time + RANDOM_FLOAT(0.1, 0.4);  // Load balance these a bit
+	pev->nextthink = gpGlobals->time + RANDOM_FLOAT(0.1f, 0.4f);  // Load balance these a bit
 }
 
 void CXenHair::Think(void)
 {
 	StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.5;
+	pev->nextthink = gpGlobals->time + 0.5f;
 }
 
 void CXenHair::Precache(void)
@@ -259,7 +259,7 @@ public:
 	void Precache(void);
 	void Touch(CBaseEntity* pOther);
 	void Think(void);
-	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+	int TakeDamage(entvars_t*, entvars_t*, float, int)
 	{
 		Attack();
 		return 0;
@@ -302,9 +302,9 @@ void CXenTree::Spawn(void)
 
 	UTIL_SetSize(pev, Vector(-30, -30, 0), Vector(30, 30, 188));
 	SetActivity(ACT_IDLE);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	pev->frame = RANDOM_FLOAT(0, 255);
-	pev->framerate = RANDOM_FLOAT(0.7, 1.4);
+	pev->framerate = RANDOM_FLOAT(0.7f, 1.4f);
 
 	Vector triggerPosition;
 	UTIL_MakeVectorsPrivate(pev->angles, triggerPosition, NULL, NULL);
@@ -346,7 +346,7 @@ void CXenTree::Attack(void)
 	if ( GetActivity() == ACT_IDLE )
 	{
 		SetActivity(ACT_MELEE_ATTACK1);
-		pev->framerate = RANDOM_FLOAT(1.0, 1.4);
+		pev->framerate = RANDOM_FLOAT(1.0f, 1.4f);
 		EMIT_SOUND_ARRAY_DYN(CHAN_WEAPON, pAttackMissSounds);
 	}
 }
@@ -393,7 +393,7 @@ void CXenTree::HandleAnimEvent(MonsterEvent_t* pEvent)
 void CXenTree::Think(void)
 {
 	float flInterval = StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	DispatchAnimEvents(flInterval);
 
 	switch ( GetActivity() )
@@ -402,7 +402,7 @@ void CXenTree::Think(void)
 			if ( m_fSequenceFinished )
 			{
 				SetActivity(ACT_IDLE);
-				pev->framerate = RANDOM_FLOAT(0.6, 1.4);
+				pev->framerate = RANDOM_FLOAT(0.6f, 1.4f);
 			}
 			break;
 		default:
@@ -425,7 +425,7 @@ public:
 	void Precache(void);
 	void Touch(CBaseEntity* pOther);
 	void Think(void);
-	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+	int TakeDamage(entvars_t*, entvars_t*, float, int)
 	{
 		Attack();
 		return 0;
@@ -543,9 +543,9 @@ void CXenSpore ::Spawn(void)
 	// SetActivity( ACT_IDLE );
 	pev->sequence = 0;
 	pev->frame = RANDOM_FLOAT(0, 255);
-	pev->framerate = RANDOM_FLOAT(0.7, 1.4);
+	pev->framerate = RANDOM_FLOAT(0.7f, 1.4f);
 	ResetSequenceInfo();
-	pev->nextthink = gpGlobals->time + RANDOM_FLOAT(0.1, 0.4);  // Load balance these a bit
+	pev->nextthink = gpGlobals->time + RANDOM_FLOAT(0.1f, 0.4f);  // Load balance these a bit
 }
 
 const char* CXenSpore::pModelNames[] = {
@@ -559,14 +559,14 @@ void CXenSpore::Precache(void)
 	PRECACHE_MODEL(pModelNames[pev->skin]);
 }
 
-void CXenSpore::Touch(CBaseEntity* pOther)
+void CXenSpore::Touch(CBaseEntity*)
 {
 }
 
 void CXenSpore::Think(void)
 {
 	StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 #if 0
 	DispatchAnimEvents( flInterval );
 

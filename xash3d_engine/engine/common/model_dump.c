@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "bsp/generic/viscompress.h"
 #include "mathlib.h"
+#include "eiface.h"
 #include <stdint.h>
 
 // For utility:
@@ -55,7 +56,7 @@ static size_t currentIndentSize = 0;
 
 #define FMT_ENUM "%s (%d)"
 #define ARG_ENUM(_strings, _index) \
-	(_index) >= 0 && (_index) < (ARRCOUNT(_strings, char*)) ? (_strings)[(_index)] : "INVALID INDEX", (_index)
+	(_index) >= 0 && (size_t)(_index) < (ARRCOUNT(_strings, char*)) ? (_strings)[(_index)] : "INVALID INDEX", (_index)
 
 #define FMT_BOUNDS FMT_VEC3 " - " FMT_VEC3
 #define ARG_BOUNDS(_min, _max) ARG_VEC3(_min), ARG_VEC3(_max)
@@ -143,7 +144,7 @@ static const char* ArrayString_Int(const void* base, IntegerType_t type, size_t 
 	static const size_t bufferLength = sizeof(buffer);
 
 	size_t bufferIndex;
-	int item;
+	size_t item;
 	const unsigned char* charBase;
 	size_t typeSize;
 	const char* formatString;
@@ -335,6 +336,9 @@ static void DumpPlane(int index, const void* data, const model_t* model)
 {
 	const mplane_t* plane;
 
+	(void)index;
+	(void)model;
+
 	if ( !data )
 	{
 		WRITEL("DumpPlane: NULL");
@@ -355,6 +359,8 @@ static void DumpPlane(int index, const void* data, const model_t* model)
 static void DumpLeaf(int index, const void* data, const model_t* model)
 {
 	const mleaf_t* leaf;
+
+	(void)index;
 
 	if ( !data )
 	{
@@ -439,6 +445,8 @@ static void DumpNode(int index, const void* data, const model_t* model)
 	int child;
 	unsigned short surfaceIndex;
 
+	(void)index;
+
 	if ( !data )
 	{
 		WRITEL("DumpNode: NULL");
@@ -498,6 +506,9 @@ static void DumpTexInfo(int index, const void* data, const model_t* model)
 {
 	const mtexinfo_t* texInfo;
 
+	(void)index;
+	(void)model;
+
 	if ( !data )
 	{
 		WRITEL("DumpTexInfo: NULL");
@@ -516,6 +527,8 @@ static void DumpTexInfo(int index, const void* data, const model_t* model)
 static void DumpSurface(int index, const void* data, const model_t* model)
 {
 	const msurface_t* surface;
+
+	(void)index;
 
 	if ( !data )
 	{
@@ -598,6 +611,9 @@ static void DumpClipNode(int index, const void* data, const model_t* model)
 {
 	const dclipnode_t* clipNode;
 
+	(void)index;
+	(void)model;
+
 	if ( !data )
 	{
 		WRITEL("DumpClipNode: NULL");
@@ -642,6 +658,9 @@ static void DumpHull(int index, const void* data, const model_t* model)
 {
 	const hull_t* hull;
 
+	(void)index;
+	(void)model;
+
 	if ( !data )
 	{
 		WRITEL("DumpHull: NULL");
@@ -662,6 +681,9 @@ static void DumpTexture(int index, const void* data, const model_t* model)
 {
 	const texture_t** textureRef;
 	const texture_t* texture;
+
+	(void)index;
+	(void)model;
 
 	if ( !data )
 	{
@@ -694,6 +716,9 @@ static void DumpTexture(int index, const void* data, const model_t* model)
 static void DumpSubmodel(int index, const void* data, const model_t* model)
 {
 	const dmodel_t* submodel;
+
+	(void)index;
+	(void)model;
 
 	if ( !data )
 	{
@@ -976,7 +1001,6 @@ static void WriteBoundsToFile(file_t* file, const void* item, qboolean isLeaf, s
 {
 	const mnode_t* parent = isLeaf ? ((const mleaf_t*)item)->parent : ((const mnode_t*)item)->parent;
 	const float* bounds = isLeaf ? ((const mleaf_t*)item)->minmaxs : ((const mnode_t*)item)->minmaxs;
-	size_t baseVertex = vertexCount ? *vertexCount : 0;
 	size_t corner;
 
 	for ( corner = 0; corner < 8; ++corner )
@@ -1006,6 +1030,30 @@ static void WriteBoundsToFile(file_t* file, const void* item, qboolean isLeaf, s
 		// We reached the root - write all lines.
 		WriteLinesForBounds(file, *vertexCount);
 	}
+}
+
+const char* DumpModelDataFlagString(size_t index)
+{
+	static const char* STRINGS[] = {
+		"general",
+		"planes",
+		"nodes",
+		"leaves",
+		"vertices",
+		"edges",
+		"surfedges",
+		"marksurfaces",
+		"texinfos",
+		"surfaces",
+		"clipnodes",
+		"hulls",
+		"textures",
+		"entities",
+		"submodels",
+		"other",
+	};
+
+	return index < ARRAYSIZE(STRINGS) ? STRINGS[index] : NULL;
 }
 
 void DumpLeafBoundsAsWavefrontObj(const char* fileName, const model_t* model, const mleaf_t* leaf, qboolean nodeBounds)

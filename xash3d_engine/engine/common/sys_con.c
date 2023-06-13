@@ -26,6 +26,8 @@ GNU General Public License for more details.
 #include <sys/time.h>
 #endif
 
+#include "PlatformLib/File.h"
+
 // do not waste precious CPU cycles on mobiles or low memory devices
 #if !XASH_WIN32 && !XASH_MOBILE_PLATFORM && !XASH_LOW_MEMORY
 #define XASH_COLORIZE_CONSOLE true
@@ -66,7 +68,7 @@ char* Sys_Input(void)
 		FD_SET(0, &rfds);  // stdin
 		while ( select(1, &rfds, NULL, NULL, &tv) > 0 )
 		{
-			if ( read(0, &line[len], 1) != 1 )
+			if ( PlatformLib_Read(0, &line[len], 1) != 1 )
 				break;
 			if ( line[len] == '\n' || len > 1022 )
 			{
@@ -80,10 +82,12 @@ char* Sys_Input(void)
 		}
 	}
 #endif
+
 #if XASH_WIN32
 	return Wcon_Input();
-#endif
+#else
 	return NULL;
+#endif
 }
 
 void Sys_DestroyConsole(void)
@@ -147,7 +151,7 @@ void Sys_InitLog(void)
 			return;
 		}
 
-		s_ld.logfileno = fileno(s_ld.logfile);
+		s_ld.logfileno = PlatformLib_FileNo(s_ld.logfile);
 
 		fprintf(s_ld.logfile, "=================================================================================\n");
 		fprintf(s_ld.logfile, "\t%s (build %i) started at %s\n", s_ld.title, Q_buildnum(), Q_timestamp(TIME_FULL));
@@ -212,16 +216,26 @@ static void Sys_WriteEscapeSequenceForColorcode(int fd, int c)
 		"\033[35m",  // COLOR_MAGENTA
 		"\033[0m",  // COLOR_WHITE
 	};
-	const char* esc = q3ToAnsi[c];
+
+	if ( c > 7 )
+	{
+		return;
+	}
 
 	if ( c == 7 )
-		write(fd, esc, 4);
+	{
+		PlatformLib_Write(fd, q3ToAnsi[c], 4);
+	}
 	else
-		write(fd, esc, 5);
+	{
+		PlatformLib_Write(fd, q3ToAnsi[c], 5);
+	}
 }
 #else
 static void Sys_WriteEscapeSequenceForColorcode(int fd, int c)
 {
+	(void)fd;
+	(void)c;
 }
 #endif
 
@@ -229,7 +243,7 @@ static void Sys_PrintLogfile(const int fd, const char* logtime, const char* msg,
 {
 	const char* p = msg;
 
-	write(fd, logtime, Q_strlen(logtime));
+	PlatformLib_Write(fd, logtime, (unsigned int)Q_strlen(logtime));
 
 	while ( p && *p )
 	{
@@ -237,32 +251,42 @@ static void Sys_PrintLogfile(const int fd, const char* logtime, const char* msg,
 
 		if ( p == NULL )
 		{
-			write(fd, msg, Q_strlen(msg));
+			PlatformLib_Write(fd, msg, (unsigned int)Q_strlen(msg));
 			break;
 		}
 		else if ( IsColorString(p) )
 		{
 			if ( p != msg )
-				write(fd, msg, p - msg);
+			{
+				PlatformLib_Write(fd, msg, (unsigned int)(p - msg));
+			}
+
 			msg = p + 2;
 
 			if ( colorize )
+			{
 				Sys_WriteEscapeSequenceForColorcode(fd, ColorIndex(p[1]));
+			}
 		}
 		else
 		{
-			write(fd, msg, p - msg + 1);
+			PlatformLib_Write(fd, msg, (unsigned int)(p - msg + 1));
 			msg = p + 1;
 		}
 	}
 
 	// flush the color
 	if ( colorize )
+	{
 		Sys_WriteEscapeSequenceForColorcode(fd, 7);
+	}
 }
 
 static void Sys_PrintStdout(const char* logtime, const char* msg)
 {
+	(void)logtime;
+	(void)msg;
+
 #if XASH_MOBILE_PLATFORM
 	static char buf[MAX_PRINT_MSG];
 

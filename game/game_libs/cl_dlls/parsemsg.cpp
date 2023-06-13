@@ -16,8 +16,9 @@
 //  parsemsg.cpp
 //
 
+#include <cstddef>
+
 typedef unsigned char byte;
-#define true 1
 
 static byte* gpBuf;
 static int giSize;
@@ -126,7 +127,8 @@ float READ_FLOAT(void)
 char* READ_STRING(void)
 {
 	static char string[2048];
-	int l, c;
+	size_t l;
+	int c;
 
 	string[0] = 0;
 
@@ -139,7 +141,7 @@ char* READ_STRING(void)
 		c = READ_BYTE();
 		if ( c == -1 || c == 0 )
 			break;
-		string[l] = c;
+		string[l] = static_cast<char>(c);
 		l++;
 	}
 	while ( l < sizeof(string) - 1 );

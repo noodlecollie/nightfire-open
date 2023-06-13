@@ -104,7 +104,9 @@ static decal_t* R_DecalAlloc(decal_t* pdecal)
 	int limit = MAX_RENDER_DECALS;
 
 	if ( r_decals->value < limit )
-		limit = r_decals->value;
+	{
+		limit = (int)r_decals->value;
+	}
 
 	if ( !limit )
 		return NULL;
@@ -180,6 +182,8 @@ void R_DecalComputeBasis(msurface_t* surf, int flags, vec3_t textureSpaceBasis[3
 		}
 		// Fall through to the standard algorithm for parallel or antiparallel
 	}
+#else
+	(void)flags;
 #endif
 	VectorNormalize2(surf->texinfo->vecs[0], textureSpaceBasis[0]);
 	VectorNormalize2(surf->texinfo->vecs[1], textureSpaceBasis[1]);
@@ -377,6 +381,8 @@ float* R_DoDecalSHClip(float* pInVerts, decal_t* pDecal, int nStartVerts, int* p
 	float* pOutVerts = g_DecalClipVerts[0];
 	int outCount;
 
+	(void)pDecal;
+
 	// clip the polygon to the decal texture space
 	outCount = SHClip(pInVerts, nStartVerts, g_DecalClipVerts2[0], LEFT_EDGE);
 	outCount = SHClip(g_DecalClipVerts2[0], outCount, g_DecalClipVerts[0], RIGHT_EDGE);
@@ -384,7 +390,9 @@ float* R_DoDecalSHClip(float* pInVerts, decal_t* pDecal, int nStartVerts, int* p
 	outCount = SHClip(g_DecalClipVerts2[0], outCount, pOutVerts, BOTTOM_EDGE);
 
 	if ( pVertCount )
+	{
 		*pVertCount = outCount;
+	}
 
 	return pOutVerts;
 }
@@ -412,13 +420,11 @@ float* R_DecalVertsClip(decal_t* pDecal, msurface_t* surf, int texture, int* pVe
 static void R_DecalVertsLight(float* v, msurface_t* surf, int vertCount)
 {
 	float s, t;
-	mtexinfo_t* tex;
 	mextrasurf_t* info = surf->info;
 	float sample_size;
 	int j;
 
-	sample_size = gEngfuncs.Mod_SampleSizeForFace(surf);
-	tex = surf->texinfo;
+	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(surf);
 
 	for ( j = 0; j < vertCount; j++, v += VERTEXSIZE )
 	{
@@ -531,12 +537,22 @@ creates mesh for decal on first rendering
 */
 glpoly_t* R_DecalCreatePoly(decalinfo_t* decalinfo, decal_t* pdecal, msurface_t* surf)
 {
+#if 0
 	int lnumverts;
 	glpoly_t* poly;
 	float* v;
 	int i;
+#endif
 
+	(void)decalinfo;
+	(void)pdecal;
+	(void)surf;
+
+	// This return was randomly here, amongst the rest of the code that I've now ifdef'd out.
+	// No idea if it's intentional or not?? Leaving it for now.
 	return NULL;
+
+#if 0
 	if ( pdecal->polys )  // already created?
 		return pdecal->polys;
 
@@ -562,6 +578,7 @@ glpoly_t* R_DecalCreatePoly(decalinfo_t* decalinfo, decal_t* pdecal, msurface_t*
 	}
 
 	return poly;
+#endif
 }
 
 // Add the decal to the surface's list of decals.
@@ -614,7 +631,7 @@ static void R_DecalCreate(decalinfo_t* decalinfo, msurface_t* surf, float x, flo
 	if ( !pdecal )
 		return;  // r_decals == 0 ???
 
-	pdecal->flags = decalinfo->m_Flags;
+	pdecal->flags = (short)decalinfo->m_Flags;
 
 	VectorCopy(decalinfo->m_Position, pdecal->position);
 
@@ -623,8 +640,8 @@ static void R_DecalCreate(decalinfo_t* decalinfo, msurface_t* surf, float x, flo
 
 	// set scaling
 	pdecal->scale = decalinfo->m_scale;
-	pdecal->entityIndex = decalinfo->m_Entity;
-	pdecal->texture = decalinfo->m_iTexture;
+	pdecal->entityIndex = (short)decalinfo->m_Entity;
+	pdecal->texture = (short)decalinfo->m_iTexture;
 
 	// check to see if the decal actually intersects the surface
 	// if not, then remove the decal
@@ -687,11 +704,11 @@ void R_DecalSurface(msurface_t* surf, decalinfo_t* decalinfo)
 	// (decalWidth * decalBasis[0], decalHeight * decalBasis[1])
 	// in texture coordinates:
 
-	w = fabs(decalinfo->m_decalWidth * DotProduct(textureU, decalinfo->m_Basis[0])) +
-		fabs(decalinfo->m_decalHeight * DotProduct(textureU, decalinfo->m_Basis[1]));
+	w = fabsf(decalinfo->m_decalWidth * DotProduct(textureU, decalinfo->m_Basis[0])) +
+		fabsf(decalinfo->m_decalHeight * DotProduct(textureU, decalinfo->m_Basis[1]));
 
-	h = fabs(decalinfo->m_decalWidth * DotProduct(textureV, decalinfo->m_Basis[0])) +
-		fabs(decalinfo->m_decalHeight * DotProduct(textureV, decalinfo->m_Basis[1]));
+	h = fabsf(decalinfo->m_decalWidth * DotProduct(textureV, decalinfo->m_Basis[0])) +
+		fabsf(decalinfo->m_decalHeight * DotProduct(textureV, decalinfo->m_Basis[1]));
 
 	// move s,t to upper left corner
 	s -= (w * 0.5f);
@@ -869,8 +886,8 @@ void GAME_EXPORT R_DecalShoot(int textureIndex, int entityIndex, int modelIndex,
 	decalInfo.m_scale = bound(MIN_DECAL_SCALE, scale, MAX_DECAL_SCALE);
 
 	// compute the decal dimensions in world space
-	decalInfo.m_decalWidth = width / decalInfo.m_scale;
-	decalInfo.m_decalHeight = height / decalInfo.m_scale;
+	decalInfo.m_decalWidth = (int)((float)width / decalInfo.m_scale);
+	decalInfo.m_decalHeight = (int)((float)height / decalInfo.m_scale);
 
 	R_DecalNode(model, &model->nodes[hull->firstclipnode], &decalInfo);
 }
@@ -1223,8 +1240,8 @@ int GAME_EXPORT R_CreateDecalList(decallist_t* pList)
 				pdecals = pdecals->pnext;
 			}
 
-			pList[total].depth = depth;
-			pList[total].flags = decal->flags;
+			pList[total].depth = (byte)depth;
+			pList[total].flags = (byte)decal->flags;
 			pList[total].scale = decal->scale;
 
 			R_DecalUnProject(decal, &pList[total]);

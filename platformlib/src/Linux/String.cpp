@@ -41,6 +41,11 @@ int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_lis
 	return returnVal;
 }
 
+char* PlatformLib_StrDup(const char* in)
+{
+	return strdup(in);
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

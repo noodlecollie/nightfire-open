@@ -106,7 +106,7 @@ float CFlyingMonster::ChangeYaw(int speed)
 			else if ( diff > 20 )
 				target = -90;
 		}
-		pev->angles.z = UTIL_Approach(target, pev->angles.z, 220.0 * gpGlobals->frametime);
+		pev->angles.z = UTIL_Approach(target, pev->angles.z, 220.0f * gpGlobals->frametime);
 	}
 	return CBaseMonster::ChangeYaw(speed);
 }
@@ -245,7 +245,7 @@ BOOL CFlyingMonster::ProbeZ(const Vector& position, const Vector& probe, float* 
 	float diff = maxProbeLength - minProbeLength;
 	while ( diff > 1.0 )
 	{
-		float midProbeLength = minProbeLength + diff / 2.0;
+		float midProbeLength = minProbeLength + diff / 2.0f;
 		Vector midProbeVec = midProbeLength * ProbeUnit;
 		if ( UTIL_PointContents(position + midProbeVec) == conPosition )
 		{

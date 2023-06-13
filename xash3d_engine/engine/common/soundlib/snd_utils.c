@@ -137,14 +137,16 @@ qboolean Sound_ResampleInternal(wavdata_t* sc, int inrate, int inwidth, int outr
 		return false;
 
 	stepscale = (double)inrate / outrate;  // this is usually 0.5, 1, or 2
-	outcount = sc->samples / stepscale;
+	outcount = (int)((double)sc->samples / stepscale);
 	sc->size = outcount * outwidth * sc->channels;
 
 	sound.tempbuffer = (byte*)Mem_Realloc(host.soundpool, sound.tempbuffer, sc->size);
 
 	sc->samples = outcount;
 	if ( sc->loopStart != -1 )
-		sc->loopStart = sc->loopStart / stepscale;
+	{
+		sc->loopStart = (int)((double)sc->loopStart / stepscale);
+	}
 
 	if ( inrate == outrate )
 	{
@@ -157,7 +159,10 @@ qboolean Sound_ResampleInternal(wavdata_t* sc, int inrate, int inwidth, int outr
 		else if ( inwidth == 2 && outwidth == 1 )  // S16 to S8
 		{
 			for ( i = 0; i < outcount * sc->channels; i++ )
-				((int8_t*)sound.tempbuffer)[i] = ((int16_t*)sc->buffer)[i] / 256;
+			{
+				((int8_t*)sound.tempbuffer)[i] = (int8_t)(((int16_t*)sc->buffer)[i] / 256);
+			}
+
 			handled = true;
 		}
 	}
@@ -212,14 +217,16 @@ qboolean Sound_ResampleInternal(wavdata_t* sc, int inrate, int inwidth, int outr
 				{
 					for ( i = 0, j = 0; i < outcount; i++, j += stepscale )
 					{
-						((int8_t*)sound.tempbuffer)[i * 2 + 0] = data[((int)j) * 2 + 0] / 256;
-						((int8_t*)sound.tempbuffer)[i * 2 + 1] = data[((int)j) * 2 + 1] / 256;
+						((int8_t*)sound.tempbuffer)[i * 2 + 0] = (int8_t)(data[((int)j) * 2 + 0] / 256);
+						((int8_t*)sound.tempbuffer)[i * 2 + 1] = (int8_t)(data[((int)j) * 2 + 1] / 256);
 					}
 				}
 				else
 				{
 					for ( i = 0, j = 0; i < outcount; i++, j += stepscale )
-						((int8_t*)sound.tempbuffer)[i] = data[(int)j] / 256;
+					{
+						((int8_t*)sound.tempbuffer)[i] = (int8_t)(data[(int)j] / 256);
+					}
 				}
 				handled = true;
 			}
@@ -236,7 +243,9 @@ qboolean Sound_ResampleInternal(wavdata_t* sc, int inrate, int inwidth, int outr
 				else
 				{
 					for ( i = 0, j = 0; i < outcount; i++, j += stepscale )
+					{
 						((int16_t*)sound.tempbuffer)[i] = data[(int)j];
+					}
 				}
 				handled = true;
 			}
@@ -258,8 +267,8 @@ qboolean Sound_ResampleInternal(wavdata_t* sc, int inrate, int inwidth, int outr
 			outwidth * 8,
 			outrate);
 
-	sc->rate = outrate;
-	sc->width = outwidth;
+	sc->rate = (word)outrate;
+	sc->width = (byte)outwidth;
 
 	return handled;
 }
@@ -267,11 +276,12 @@ qboolean Sound_ResampleInternal(wavdata_t* sc, int inrate, int inwidth, int outr
 qboolean Sound_Process(wavdata_t** wav, int rate, int width, uint flags)
 {
 	wavdata_t* snd = *wav;
-	qboolean result = true;
 
 	// check for buffers
 	if ( !snd || !snd->buffer )
+	{
 		return false;
+	}
 
 	if ( (flags & SOUND_RESAMPLE) && (width > 0 || rate > 0) )
 	{
@@ -279,11 +289,6 @@ qboolean Sound_Process(wavdata_t** wav, int rate, int width, uint flags)
 		{
 			Mem_Free(snd->buffer);  // free original image buffer
 			snd->buffer = Sound_Copy(snd->size);  // unzone buffer (don't touch image.tempbuffer)
-		}
-		else
-		{
-			// not resampled
-			result = false;
 		}
 	}
 

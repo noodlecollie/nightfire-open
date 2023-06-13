@@ -131,7 +131,7 @@ void CBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t cou
 		return;
 	}
 
-	list.EnsureCapacity(count);
+	list.EnsureCapacity(static_cast<int>(count));
 	auto rng = std::default_random_engine {(unsigned int)RANDOM_LONG(0, 1000)};
 
 	while ( static_cast<size_t>(list.Count()) < count )

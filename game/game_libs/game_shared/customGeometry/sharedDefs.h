@@ -1,12 +1,13 @@
 #pragma once
 
 #include <cstddef>
+#include <limits>
 
 namespace CustomGeometry
 {
 	static constexpr const char* MESSAGE_NAME = "DrawCustomGeometry";
-	static constexpr size_t MAX_POINTS_PER_MSG = 256;
-	static constexpr size_t MAX_INDICES_PER_MSG = 256;
+	static constexpr size_t MAX_POINTS_PER_MSG = std::numeric_limits<uint8_t>::max();
+	static constexpr size_t MAX_INDICES_PER_MSG = std::numeric_limits<uint8_t>::max();
 
 	// For grouping geometry by purpose, eg. visualising hitboxes, drawing overlays, etc.
 	// When sending a "clear" message, only the geometry from the specified category is cleared.

@@ -116,9 +116,12 @@ msurface_t* PM_RecursiveSurfCheck(model_t* mod, mnode_t* node, vec3_t p1, vec3_t
 	int i, side;
 	msurface_t* surf;
 	vec3_t mid;
+
 loc0:
 	if ( node->contents < 0 )
+	{
 		return NULL;
+	}
 
 	t1 = PlaneDiff(p1, node->plane);
 	t2 = PlaneDiff(p2, node->plane);
@@ -142,38 +145,52 @@ loc0:
 	VectorLerp(p1, frac, p2, mid);
 
 	if ( (surf = PM_RecursiveSurfCheck(mod, node->children[side], p1, mid)) != NULL )
+	{
 		return surf;
+	}
 
 	// walk through real faces
 	for ( i = 0; i < node->numsurfaces; i++ )
 	{
-		msurface_t* surf = &mod->surfaces[node->firstsurface + i];
-		mextrasurf_t* info = surf->info;
+		msurface_t* faceSurf = &mod->surfaces[node->firstsurface + i];
+		mextrasurf_t* info = faceSurf->info;
 		mfacebevel_t* fb = info->bevel;
 		int j, contents;
 		vec3_t delta;
 
 		if ( !fb )
+		{
 			continue;  // ???
+		}
 
 		VectorSubtract(mid, fb->origin, delta);
+
 		if ( DotProduct(delta, delta) >= fb->radius )
+		{
 			continue;  // no intersection
+		}
 
 		for ( j = 0; j < fb->numedges; j++ )
 		{
 			if ( PlaneDiff(mid, &fb->edges[j]) > FRAC_EPSILON )
+			{
 				break;  // outside the bounds
+			}
 		}
 
 		if ( j != fb->numedges )
+		{
 			continue;  // we are outside the bounds of the facet
+		}
 
 		// hit the surface
-		contents = PM_SampleMiptex(surf, mid);
+		contents = PM_SampleMiptex(faceSurf, mid);
 
 		if ( contents != CONTENTS_EMPTY )
-			return surf;
+		{
+			return faceSurf;
+		}
+
 		return NULL;  // through the fence
 	}
 

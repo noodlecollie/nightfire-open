@@ -342,20 +342,24 @@ static int Host_CalcSleep(void)
 	if ( Host_IsDedicated() )
 	{
 		// let the dedicated server some sleep
-		return host_sleeptime->value;
+		return (int)host_sleeptime->value;
 	}
 
 	switch ( host.status )
 	{
 		case HOST_NOFOCUS:
 			if ( SV_Active() && CL_IsInGame() )
-				return host_sleeptime->value;
-			// fallthrough
+			{
+				return (int)host_sleeptime->value;
+			}
+			// fall through
 		case HOST_SLEEP:
 			return 20;
+		default:
+			break;
 	}
 
-	return host_sleeptime->value;
+	return (int)host_sleeptime->value;
 }
 
 void Host_NewInstance(const char* name, const char* finalmsg)
@@ -448,7 +452,7 @@ void Host_Exec_f(void)
 			"spy.cfg",
 			"engineer.cfg",
 			"civilian.cfg"};
-		int i;
+		size_t i;
 		char temp[MAX_VA_STRING];
 		qboolean allow = false;
 
@@ -706,7 +710,7 @@ void Host_GetCommands(void)
 {
 	char* cmd;
 
-	while ( (cmd = Sys_Input()) )
+	for ( cmd = Sys_Input(); cmd; cmd = Sys_Input() )
 	{
 		Cbuf_AddText(cmd);
 		Cbuf_Execute();
@@ -803,9 +807,13 @@ qboolean Host_FilterTime(float time)
 
 				// don't sleep if we can't keep up with the framerate
 				if ( targetsleeptime > 0 )
-					sleeps = targetsleeptime / (sleeptime * 0.001);
+				{
+					sleeps = (int)(targetsleeptime / ((double)sleeptime * 0.001));
+				}
 				else
+				{
 					sleeps = 0;
+				}
 			}
 			else
 			{
@@ -1014,7 +1022,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	int developer = DEFAULT_DEV;
 	const char* baseDir;
 	char ticrate[16];
-	int len;
+	size_t len;
 
 	// some commands may turn engine into infinite loop,
 	// e.g. xash.exe +game xash -game xash
@@ -1140,7 +1148,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	if ( Sys_GetParmFromCmdLine("-sys_ticrate", ticrate) )
 	{
 		double fps = bound(MIN_FPS, atof(ticrate), MAX_FPS);
-		Cvar_SetValue("sys_ticrate", fps);
+		Cvar_SetValue("sys_ticrate", (float)fps);
 	}
 
 	Con_Init();  // early console running to catch all the messages
@@ -1170,10 +1178,13 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 			host.rootdir[0] = 0;
 		}
 #elif (XASH_SDL == 2) && !XASH_NSWITCH  // GetBasePath not impl'd in switch-sdl2
-		char* szBasePath;
+		char* szBasePath = SDL_GetBasePath();
 
-		if ( !(szBasePath = SDL_GetBasePath()) )
+		if ( !szBasePath )
+		{
 			Sys_Error("couldn't determine current directory: %s", SDL_GetError());
+		}
+
 		Q_strncpy(host.rootdir, szBasePath, sizeof(host.rootdir));
 		SDL_free(szBasePath);
 #else
@@ -1192,7 +1203,9 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	len = Q_strlen(host.rootdir);
 
 	if ( len && host.rootdir[len - 1] == '/' )
+	{
 		host.rootdir[len - 1] = 0;
+	}
 
 	// get readonly root. The order is: check for arg, then env.
 	// if still not got it, rodir is disabled.
@@ -1212,7 +1225,9 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	len = Q_strlen(host.rodir);
 
 	if ( len && host.rodir[len - 1] == '/' )
+	{
 		host.rodir[len - 1] = 0;
+	}
 
 	if ( !COM_CheckStringEmpty(host.rootdir) )
 	{
@@ -1223,12 +1238,15 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	FS_LoadProgs();
 
 	if ( FS_SetCurrentDirectory(host.rootdir) != 0 )
+	{
 		Con_Reportf("%s is working directory now\n", host.rootdir);
+	}
 	else
+	{
 		Sys_Error("Changing working directory to %s failed.\n", host.rootdir);
+	}
 
 	FS_Init();
-
 	Sys_InitLog();
 
 	// print bugcompatibility level here, after log was initialized
@@ -1246,16 +1264,22 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 
 #if XASH_ENGINE_TESTS
 	if ( Sys_CheckParm("-runtests") )
+	{
 		Host_RunTests(1);
+	}
 #endif
 
 	FS_LoadGameInfo(NULL);
 	Cvar_PostFSInit();
 
 	if ( FS_FileExists(va("%s.rc", SI.basedirName), false) )
+	{
 		Q_strncpy(SI.rcName, SI.basedirName, sizeof(SI.rcName));  // e.g. valve.rc
+	}
 	else
+	{
 		Q_strncpy(SI.rcName, SI.exeName, sizeof(SI.rcName));  // e.g. quake.rc
+	}
 
 	Q_strncpy(host.gamefolder, GI->gamefolder, sizeof(host.gamefolder));
 
@@ -1439,7 +1463,7 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 	while ( !host.crashed )
 	{
 		newtime = Sys_DoubleTime();
-		COM_Frame(newtime - oldtime);
+		COM_Frame((float)(newtime - oldtime));
 		oldtime = newtime;
 	}
 

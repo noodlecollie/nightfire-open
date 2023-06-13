@@ -94,12 +94,12 @@ void CSquidSpit::Spawn(void)
 
 	UTIL_SetSize(pev, Vector(0, 0, 0), Vector(0, 0, 0));
 
-	m_maxFrame = (float)MODEL_FRAMES(pev->modelindex) - 1;
+	m_maxFrame = MODEL_FRAMES(pev->modelindex) - 1;
 }
 
 void CSquidSpit::Animate(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	if ( pev->frame++ )
 	{
@@ -120,7 +120,7 @@ void CSquidSpit::Shoot(entvars_t* pevOwner, Vector vecStart, Vector vecVelocity)
 	pSpit->pev->owner = ENT(pevOwner);
 
 	pSpit->SetThink(&CSquidSpit::Animate);
-	pSpit->pev->nextthink = gpGlobals->time + 0.1;
+	pSpit->pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CSquidSpit::Touch(CBaseEntity* pOther)
@@ -129,7 +129,7 @@ void CSquidSpit::Touch(CBaseEntity* pOther)
 	int iPitch;
 
 	// splat sound
-	iPitch = RANDOM_FLOAT(90, 110);
+	iPitch = static_cast<int>(RANDOM_FLOAT(90, 110));
 
 	EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "bullchicken/bc_acid1.wav", 1, ATTN_NORM, 0, iPitch);
 
@@ -294,7 +294,7 @@ int CBullsquid::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, floa
 		{
 			flDist = (pev->origin - m_Route[m_iRouteIndex].vecLocation).Length2D();  // reusing flDist.
 
-			if ( FTriangulate(pev->origin, m_Route[m_iRouteIndex].vecLocation, flDist * 0.5, m_hEnemy, &vecApex) )
+			if ( FTriangulate(pev->origin, m_Route[m_iRouteIndex].vecLocation, flDist * 0.5f, m_hEnemy, &vecApex) )
 			{
 				InsertWaypoint(vecApex, bits_MF_TO_DETOUR | bits_MF_DONT_SIMPLIFY);
 			}
@@ -340,7 +340,7 @@ BOOL CBullsquid::CheckRangeAttack1(float flDot, float flDist)
 		else
 		{
 			// not moving, so spit again pretty soon.
-			m_flNextSpitTime = gpGlobals->time + 0.5;
+			m_flNextSpitTime = gpGlobals->time + 0.5f;
 		}
 
 		return TRUE;
@@ -495,30 +495,7 @@ void CBullsquid::AlertSound(void)
 //=========================================================
 void CBullsquid::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 0;
-
-	switch ( m_Activity )
-	{
-		case ACT_WALK:
-			ys = 90;
-			break;
-		case ACT_RUN:
-			ys = 90;
-			break;
-		case ACT_IDLE:
-			ys = 90;
-			break;
-		case ACT_RANGE_ATTACK1:
-			ys = 90;
-			break;
-		default:
-			ys = 90;
-			break;
-	}
-
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 90.0f;
 }
 
 //=========================================================
@@ -542,9 +519,9 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 			vecSpitOffset = (pev->origin + vecSpitOffset);
 			vecSpitDir = ((m_hEnemy->pev->origin + m_hEnemy->pev->view_ofs) - vecSpitOffset).Normalize();
 
-			vecSpitDir.x += RANDOM_FLOAT(-0.05, 0.05);
-			vecSpitDir.y += RANDOM_FLOAT(-0.05, 0.05);
-			vecSpitDir.z += RANDOM_FLOAT(-0.05, 0);
+			vecSpitDir.x += RANDOM_FLOAT(-0.05f, 0.05f);
+			vecSpitDir.y += RANDOM_FLOAT(-0.05f, 0.05f);
+			vecSpitDir.z += RANDOM_FLOAT(-0.05f, 0.0f);
 
 			// do stuff for this event.
 			AttackSound();
@@ -570,7 +547,7 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 		case BSQUID_AE_BITE:
 		{
 			// SOUND HERE!
-			CBaseEntity* pHurt = CheckTraceHullAttack(70, gSkillData.bullsquidDmgBite, DMG_SLASH);
+			CBaseEntity* pHurt = CheckTraceHullAttack(70, static_cast<int>(gSkillData.bullsquidDmgBite), DMG_SLASH);
 
 			if ( pHurt )
 			{
@@ -583,7 +560,8 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 		break;
 		case BSQUID_AE_TAILWHIP:
 		{
-			CBaseEntity* pHurt = CheckTraceHullAttack(70, gSkillData.bullsquidDmgWhip, DMG_CLUB | DMG_ALWAYSGIB);
+			CBaseEntity* pHurt =
+				CheckTraceHullAttack(70, static_cast<int>(gSkillData.bullsquidDmgWhip), DMG_CLUB | DMG_ALWAYSGIB);
 
 			if ( pHurt )
 			{
@@ -612,7 +590,7 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			// jump into air for 0.8 (24/30) seconds
 			// pev->velocity.z += ( 0.875 * flGravity ) * 0.5;
-			pev->velocity.z += (0.625 * flGravity) * 0.5;
+			pev->velocity.z += (0.625f * flGravity) * 0.5f;
 		}
 		break;
 		case BSQUID_AE_THROW:
@@ -625,7 +603,7 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 			if ( pHurt )
 			{
 				// croonchy bite sound
-				iPitch = RANDOM_FLOAT(90, 110);
+				iPitch = static_cast<int>(RANDOM_FLOAT(90, 110));
 				switch ( RANDOM_LONG(0, 1) )
 				{
 					case 0:
@@ -642,7 +620,7 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 				// screeshake transforms the viewmodel as well as the viewangle. No problems with seeing the ends of the
 				// viewmodels.
-				UTIL_ScreenShake(pHurt->pev->origin, 25.0, 1.5, 0.7, 2);
+				UTIL_ScreenShake(pHurt->pev->origin, 25.0f, 1.5f, 0.7f, 2);
 
 				if ( pHurt->IsPlayer() )
 				{
@@ -672,7 +650,7 @@ void CBullsquid::Spawn()
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->effects = 0;
 	pev->health = gSkillData.bullsquidHealth;
-	m_flFieldOfView = 0.2;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
+	m_flFieldOfView = 0.2f;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
 
 	m_fCanThreatDisplay = TRUE;
@@ -1150,7 +1128,7 @@ void CBullsquid::RunTask(Task_t* pTask)
 		case TASK_SQUID_HOPTURN:
 		{
 			MakeIdealYaw(m_vecEnemyLKP);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( m_fSequenceFinished )
 			{

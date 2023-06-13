@@ -26,7 +26,7 @@ int CBotProfileListModel::GetRows() const
 	return m_IndexToProfileName.Count();
 }
 
-const char* CBotProfileListModel::GetCellText(int row, int column)
+const char* CBotProfileListModel::GetCellText(int row, int)
 {
 	const CBotProfileTable::ProfileData* data = GetProfileData(row);
 	return data ? data->playerName.String() : "UNKNOWN";
@@ -67,11 +67,11 @@ void CBotProfileListModel::InitialiseProfileTable()
 		return;
 	}
 
-	m_IndexToProfileName.EnsureCapacity(m_ProfileTable.Count());
+	m_IndexToProfileName.EnsureCapacity(static_cast<int>(m_ProfileTable.Count()));
 
 	for ( CBotProfileTable::ConstIterator it = m_ProfileTable.CBegin(); it != m_ProfileTable.CEnd(); ++it )
 	{
-		assert(m_IndexToProfileName.Count() < m_ProfileTable.Count());
+		assert(static_cast<size_t>(m_IndexToProfileName.Count()) < m_ProfileTable.Count());
 
 		m_IndexToProfileName.CopyAndAddToTail(it.Key().String());
 	}

@@ -46,13 +46,19 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 	short p, a, b, c, pa, pb, pc;
 	byte *buf_p, *pixbuf, *raw, *prior, *idat_buf = NULL, *uncompressed_buffer = NULL;
 	byte *pallete = NULL, *trns = NULL;
-	uint chunk_len, trns_len, plte_len, crc32, crc32_check, oldsize = 0, newsize = 0, rowsize;
-	uint uncompressed_size, pixel_size, pixel_count, i, y, filter_type, chunk_sign, r_alpha, g_alpha, b_alpha;
+	uint crc32, crc32_check, oldsize = 0, newsize = 0, rowsize;
+	uint uncompressed_size, pixel_size, pixel_count, i, y, filter_type, chunk_sign;
+	uint r_alpha = 0;
+	uint g_alpha = 0;
+	uint b_alpha = 0;
+	uint plte_len = 0;
+	uint trns_len = 0;
+	uint chunk_len = 0;
 	qboolean has_iend_chunk = false;
 	z_stream stream = {0};
 	png_t png_hdr;
 
-	if ( filesize < sizeof(png_hdr) )
+	if ( (size_t)filesize < sizeof(png_hdr) )
 		return false;
 
 	buf_p = (byte*)buffer;
@@ -85,8 +91,11 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 	}
 
 	// convert image width and height to little endian
-	image.height = png_hdr.ihdr_chunk.height = ntohl(png_hdr.ihdr_chunk.height);
-	image.width = png_hdr.ihdr_chunk.width = ntohl(png_hdr.ihdr_chunk.width);
+	png_hdr.ihdr_chunk.height = ntohl(png_hdr.ihdr_chunk.height);
+	image.height = (word)png_hdr.ihdr_chunk.height;
+
+	png_hdr.ihdr_chunk.width = ntohl(png_hdr.ihdr_chunk.width);
+	image.width = (word)png_hdr.ihdr_chunk.width;
 
 	if ( png_hdr.ihdr_chunk.height == 0 || png_hdr.ihdr_chunk.width == 0 )
 	{
@@ -280,7 +289,7 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 			break;
 		default:
 			pixel_size = 0;  // make compiler happy
-			ASSERT(false);
+			ASSERT_FAIL("Unrecognised PNG colour type");
 			break;
 	}
 
@@ -411,18 +420,24 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 					b = prior[i];
 					c = prior[i - pixel_size];
 					p = a + b - c;
-					pa = abs(p - a);
-					pb = abs(p - b);
-					pc = abs(p - c);
+					pa = (short)abs(p - a);
+					pb = (short)abs(p - b);
+					pc = (short)abs(p - c);
 
 					pixbuf[i] = raw[i];
 
 					if ( pc < pa && pc < pb )
-						pixbuf[i] += c;
+					{
+						pixbuf[i] += (byte)c;
+					}
 					else if ( pb < pa )
-						pixbuf[i] += b;
+					{
+						pixbuf[i] += (byte)b;
+					}
 					else
-						pixbuf[i] += a;
+					{
+						pixbuf[i] += (byte)a;
+					}
 				}
 				break;
 			default:
@@ -455,14 +470,20 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 				*pixbuf++ = raw[2];
 
 				if ( trns && r_alpha == raw[0] && g_alpha == raw[1] && b_alpha == raw[2] )
+				{
 					*pixbuf++ = 0;
+				}
 				else
+				{
 					*pixbuf++ = 0xFF;
+				}
 			}
 			break;
 		case PNG_CT_GREY:
 			if ( trns )
+			{
 				r_alpha = trns[0] << 8 | trns[1];
+			}
 
 			for ( y = 0; y < pixel_count; y++, raw += pixel_size )
 			{
@@ -471,9 +492,13 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 				*pixbuf++ = raw[0];
 
 				if ( trns && r_alpha == raw[0] )
+				{
 					*pixbuf++ = 0;
+				}
 				else
+				{
 					*pixbuf++ = 0xFF;
+				}
 			}
 			break;
 		case PNG_CT_ALPHA:

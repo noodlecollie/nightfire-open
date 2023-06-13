@@ -349,10 +349,10 @@ void R_SetupFrustum(void)
 
 	if ( RP_NORMALPASS() && (ENGINE_GET_PARM(PARM_WATER_LEVEL) >= 3) && ENGINE_GET_PARM(PARM_QUAKE_COMPATIBLE) )
 	{
-		RI.fov_x =
-			atan(tan(DEG2RAD(RI.fov_x) / 2) * (0.97f + sin(gpGlobals->time * 1.5f) * 0.03f)) * 2 / (M_PI_F / 180.0f);
-		RI.fov_y =
-			atan(tan(DEG2RAD(RI.fov_y) / 2) * (1.03f - sin(gpGlobals->time * 1.5f) * 0.03f)) * 2 / (M_PI_F / 180.0f);
+		RI.fov_x = atanf(tanf(DEG2RADF(RI.fov_x) / 2.0f) * (0.97f + sinf(gpGlobals->time * 1.5f) * 0.03f)) *
+			2.0f / (M_PI_F / 180.0f);
+		RI.fov_y = atanf(tanf(DEG2RADF(RI.fov_y) / 2.0f) * (1.03f - sinf(gpGlobals->time * 1.5f) * 0.03f)) *
+			2.0f / (M_PI_F / 180.0f);
 	}
 
 	// build the transformation matrix for the given view angles
@@ -398,10 +398,10 @@ static void R_SetupProjectionMatrix(matrix4x4 m)
 	zNear = 4.0f;
 	zFar = Q_max(256.0f, RI.farClip);
 
-	yMax = zNear * tan(RI.fov_y * M_PI_F / 360.0f);
+	yMax = zNear * tanf(RI.fov_y * M_PI_F / 360.0f);
 	yMin = -yMax;
 
-	xMax = zNear * tan(RI.fov_x * M_PI_F / 360.0f);
+	xMax = zNear * tanf(RI.fov_x * M_PI_F / 360.0f);
 	xMin = -xMax;
 
 	Matrix4x4_CreateProjection(m, xMax, xMin, yMax, yMin, zNear, zFar);
@@ -553,10 +553,12 @@ void R_SetupGL(qboolean set_gl_state)
 		int x, x2, y, y2;
 
 		// set up viewport (main, playersetup)
-		x = floor(RI.viewport[0] * gpGlobals->width / gpGlobals->width);
-		x2 = ceil((RI.viewport[0] + RI.viewport[2]) * gpGlobals->width / gpGlobals->width);
-		y = floor(gpGlobals->height - RI.viewport[1] * gpGlobals->height / gpGlobals->height);
-		y2 = ceil(gpGlobals->height - (RI.viewport[1] + RI.viewport[3]) * gpGlobals->height / gpGlobals->height);
+		x = RI.viewport[0] * gpGlobals->width / gpGlobals->width;
+		x2 = (int)ceilf((float)((RI.viewport[0] + RI.viewport[2]) * gpGlobals->width) / (float)gpGlobals->width);
+		y = gpGlobals->height - RI.viewport[1] * gpGlobals->height / gpGlobals->height;
+		y2 = (int)ceilf(
+			(float)(gpGlobals->height - (RI.viewport[1] + RI.viewport[3]) * gpGlobals->height) /
+			(float)gpGlobals->height);
 
 		pglViewport(x, y2, x2 - x, y - y2);
 	}
@@ -724,7 +726,7 @@ static void R_CheckFog(void)
 		if ( RI.cached_waterlevel == 3 )
 		{
 			// in some cases waterlevel jumps from 3 to 1. Catch it
-			RI.cached_waterlevel = ENGINE_GET_PARM(PARM_WATER_LEVEL);
+			RI.cached_waterlevel = (int)ENGINE_GET_PARM(PARM_WATER_LEVEL);
 			RI.cached_contents = CONTENTS_EMPTY;
 			if ( !RI.fogCustom )
 			{
@@ -741,7 +743,7 @@ static void R_CheckFog(void)
 	else
 		cnt = RI.viewleaf->contents;
 
-	RI.cached_waterlevel = ENGINE_GET_PARM(PARM_WATER_LEVEL);
+	RI.cached_waterlevel = (int)ENGINE_GET_PARM(PARM_WATER_LEVEL);
 
 	if ( !IsLiquidContents(RI.cached_contents) && IsLiquidContents(cnt) )
 	{
@@ -841,7 +843,7 @@ R_DrawEntitiesOnList
 */
 void R_DrawEntitiesOnList(void)
 {
-	int i;
+	uint i;
 
 	tr.blend = 1.0f;
 	GL_CheckForErrors();
@@ -887,11 +889,9 @@ void R_DrawEntitiesOnList(void)
 		Assert(RI.currententity != NULL);
 		Assert(RI.currentmodel != NULL);
 
-		switch ( RI.currentmodel->type )
+		if ( RI.currentmodel->type == mod_sprite )
 		{
-			case mod_sprite:
-				R_DrawSpriteModel(RI.currententity);
-				break;
+			R_DrawSpriteModel(RI.currententity);
 		}
 	}
 
@@ -899,7 +899,7 @@ void R_DrawEntitiesOnList(void)
 
 	if ( !RI.onlyClientDraw )
 	{
-		gEngfuncs.CL_DrawEFX(tr.frametime, false);
+		gEngfuncs.CL_DrawEFX((float)tr.frametime, false);
 	}
 
 	GL_CheckForErrors();
@@ -959,7 +959,7 @@ void R_DrawEntitiesOnList(void)
 	if ( !RI.onlyClientDraw )
 	{
 		R_AllowFog(false);
-		gEngfuncs.CL_DrawEFX(tr.frametime, true);
+		gEngfuncs.CL_DrawEFX((float)tr.frametime, true);
 		R_AllowFog(true);
 	}
 
@@ -1220,16 +1220,16 @@ int CL_FxBlend(cl_entity_t* e)
 	switch ( e->curstate.renderfx )
 	{
 		case kRenderFxPulseSlowWide:
-			blend = e->curstate.renderamt + 0x40 * sin(gpGlobals->time * 2 + offset);
+			blend = (int)(e->curstate.renderamt + 0x40 * sinf(gpGlobals->time * 2 + offset));
 			break;
 		case kRenderFxPulseFastWide:
-			blend = e->curstate.renderamt + 0x40 * sin(gpGlobals->time * 8 + offset);
+			blend = (int)(e->curstate.renderamt + 0x40 * sinf(gpGlobals->time * 8 + offset));
 			break;
 		case kRenderFxPulseSlow:
-			blend = e->curstate.renderamt + 0x10 * sin(gpGlobals->time * 2 + offset);
+			blend = (int)(e->curstate.renderamt + 0x10 * sinf(gpGlobals->time * 2 + offset));
 			break;
 		case kRenderFxPulseFast:
-			blend = e->curstate.renderamt + 0x10 * sin(gpGlobals->time * 8 + offset);
+			blend = (int)(e->curstate.renderamt + 0x10 * sinf(gpGlobals->time * 8 + offset));
 			break;
 		case kRenderFxFadeSlow:
 			if ( RP_NORMALPASS() )
@@ -1272,35 +1272,35 @@ int CL_FxBlend(cl_entity_t* e)
 			blend = e->curstate.renderamt;
 			break;
 		case kRenderFxStrobeSlow:
-			blend = 20 * sin(gpGlobals->time * 4 + offset);
+			blend = (int)(20 * sinf(gpGlobals->time * 4 + offset));
 			if ( blend < 0 )
 				blend = 0;
 			else
 				blend = e->curstate.renderamt;
 			break;
 		case kRenderFxStrobeFast:
-			blend = 20 * sin(gpGlobals->time * 16 + offset);
+			blend = (int)(20 * sinf(gpGlobals->time * 16 + offset));
 			if ( blend < 0 )
 				blend = 0;
 			else
 				blend = e->curstate.renderamt;
 			break;
 		case kRenderFxStrobeFaster:
-			blend = 20 * sin(gpGlobals->time * 36 + offset);
+			blend = (int)(20 * sinf(gpGlobals->time * 36 + offset));
 			if ( blend < 0 )
 				blend = 0;
 			else
 				blend = e->curstate.renderamt;
 			break;
 		case kRenderFxFlickerSlow:
-			blend = 20 * (sin(gpGlobals->time * 2) + sin(gpGlobals->time * 17 + offset));
+			blend = (int)(20 * (sinf(gpGlobals->time * 2) + sinf(gpGlobals->time * 17 + offset)));
 			if ( blend < 0 )
 				blend = 0;
 			else
 				blend = e->curstate.renderamt;
 			break;
 		case kRenderFxFlickerFast:
-			blend = 20 * (sin(gpGlobals->time * 16) + sin(gpGlobals->time * 23 + offset));
+			blend = (int)(20 * (sinf(gpGlobals->time * 16) + sinf(gpGlobals->time * 23 + offset)));
 			if ( blend < 0 )
 				blend = 0;
 			else

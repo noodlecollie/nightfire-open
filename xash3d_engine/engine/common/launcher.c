@@ -106,6 +106,11 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int n
 	LPWSTR cmdLineW;
 	int ret, i;
 
+	(void)nShow;
+	(void)cmdLine;
+	(void)hPrevInst;
+	(void)hInst;
+
 	cmdLineW = GetCommandLineW();
 	lpArgv = CommandLineToArgvW(cmdLineW, &szArgc);
 	szArgv = (char**)malloc((szArgc + 1) * sizeof(char*));

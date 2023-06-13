@@ -149,6 +149,8 @@ void CHalfLifeTeamplay::Think(void)
 //=========================================================
 BOOL CHalfLifeTeamplay::ClientCommand(CBasePlayer* pPlayer, const char* pcmd)
 {
+	(void)pPlayer;
+
 #ifndef NO_VOICEGAMEMGR
 	if ( g_VoiceGameMgr.ClientCommand(pPlayer, pcmd) )
 		return TRUE;
@@ -575,15 +577,15 @@ const char* CHalfLifeTeamplay::TeamWithFewestPlayers(void)
 void CHalfLifeTeamplay::RecountTeams(bool bResendInfo)
 {
 	char* pName;
-	char teamlist[TEAMPLAY_TEAMLISTLENGTH];
+	char teamList[TEAMPLAY_TEAMLISTLENGTH];
 
 	// loop through all teams, recounting everything
 	num_teams = 0;
 
 	// Copy all of the teams from the teamlist
 	// make a copy because strtok is destructive
-	strcpy(teamlist, m_szTeamList);
-	pName = teamlist;
+	strcpy(teamList, m_szTeamList);
+	pName = teamList;
 	pName = strtok(pName, ";");
 	while ( pName != NULL && *pName )
 	{

@@ -260,15 +260,15 @@ void init_layer3(void)
 		bdf = bi->shortDiff + 3;
 		for ( cb = 3; cb < 13; cb++ )
 		{
-			int l = (*bdf++) >> 1;
+			int local = (*bdf++) >> 1;
 			for ( lwin = 0; lwin < 3; lwin++ )
 			{
-				*mp++ = l;
+				*mp++ = local;
 				*mp++ = i + lwin;
 				*mp++ = lwin;
 				*mp++ = cb;
 			}
-			i += 6 * l;
+			i += 6 * local;
 		}
 
 		mapend[j][0] = mp;
@@ -277,15 +277,15 @@ void init_layer3(void)
 
 		for ( i = 0, cb = 0; cb < 13; cb++ )
 		{
-			int l = (*bdf++) >> 1;
+			int local = (*bdf++) >> 1;
 			for ( lwin = 0; lwin < 3; lwin++ )
 			{
-				*mp++ = l;
+				*mp++ = local;
 				*mp++ = i + lwin;
 				*mp++ = lwin;
 				*mp++ = cb;
 			}
-			i += 6 * l;
+			i += 6 * local;
 		}
 
 		mapend[j][1] = mp;
@@ -725,7 +725,7 @@ static int III_get_scale_factors_2(mpg123_handle_t* fr, int* scf, gr_info_t* gr_
 #define BITSHIFT ((sizeof(MASK_TYPE) - 1) * 8)
 
 #define REFRESH_MASK \
-	while ( num < BITSHIFT ) \
+	while ( (size_t)num < BITSHIFT ) \
 	{ \
 		mask |= ((MASK_UTYPE)getbyte(fr)) << (BITSHIFT - num); \
 		num += 8; \
@@ -1232,7 +1232,7 @@ III_i_stereo(float xr_buf[2][SBLIMIT][SSLIMIT], int* scalefac, gr_info_t* gr_inf
 {
 	float(*xr)[SBLIMIT * SSLIMIT] = (float(*)[SBLIMIT * SSLIMIT]) xr_buf;
 	const bandInfoStruct* bi = &bandInfo[sfreq];
-	const float *tab1, *tab2;
+	const float *localtab1, *localtab2;
 	int tab;
 
 	// TODO: optimize as static
@@ -1242,8 +1242,8 @@ III_i_stereo(float xr_buf[2][SBLIMIT][SSLIMIT], int* scalefac, gr_info_t* gr_inf
 		{{pow1_1[1], pow2_1[1]}, {pow1_2[1], pow2_2[1]}}};
 
 	tab = lsf + (gr_info->scalefac_compress & lsf);
-	tab1 = tabs[tab][ms_stereo][0];
-	tab2 = tabs[tab][ms_stereo][1];
+	localtab1 = tabs[tab][ms_stereo][0];
+	localtab2 = tabs[tab][ms_stereo][1];
 
 	if ( gr_info->block_type == 2 )
 	{
@@ -1272,8 +1272,8 @@ III_i_stereo(float xr_buf[2][SBLIMIT][SSLIMIT], int* scalefac, gr_info_t* gr_inf
 
 					sb = bi->shortDiff[sfb];
 					idx = bi->shortIdx[sfb] + lwin;
-					t1 = tab1[is_p];
-					t2 = tab2[is_p];
+					t1 = localtab1[is_p];
+					t2 = localtab2[is_p];
 
 					for ( ; sb > 0; sb--, idx += 3 )
 					{
@@ -1294,8 +1294,8 @@ III_i_stereo(float xr_buf[2][SBLIMIT][SSLIMIT], int* scalefac, gr_info_t* gr_inf
 			{
 				float t1, t2;
 
-				t1 = tab1[is_p];
-				t2 = tab2[is_p];
+				t1 = localtab1[is_p];
+				t2 = localtab2[is_p];
 
 				for ( ; sb > 0; sb--, idx += 3 )
 				{
@@ -1325,8 +1325,8 @@ III_i_stereo(float xr_buf[2][SBLIMIT][SSLIMIT], int* scalefac, gr_info_t* gr_inf
 				{
 					float t1, t2;
 
-					t1 = tab1[is_p];
-					t2 = tab2[is_p];
+					t1 = localtab1[is_p];
+					t2 = localtab2[is_p];
 
 					for ( ; sb > 0; sb--, idx++ )
 					{
@@ -1360,8 +1360,8 @@ III_i_stereo(float xr_buf[2][SBLIMIT][SSLIMIT], int* scalefac, gr_info_t* gr_inf
 			{
 				float t1, t2;
 
-				t1 = tab1[is_p];
-				t2 = tab2[is_p];
+				t1 = localtab1[is_p];
+				t2 = localtab2[is_p];
 
 				for ( ; sb > 0; sb--, idx++ )
 				{
@@ -1381,7 +1381,7 @@ III_i_stereo(float xr_buf[2][SBLIMIT][SSLIMIT], int* scalefac, gr_info_t* gr_inf
 			float t1, t2;
 			int sb;
 
-			t1 = tab1[is_p], t2 = tab2[is_p];
+			t1 = localtab1[is_p], t2 = localtab2[is_p];
 
 			// copy l-band 20 to l-band 21
 			for ( sb = bi->longDiff[21]; sb > 0; sb--, idx++ )
@@ -1568,17 +1568,17 @@ int do_layer3(mpg123_handle_t* fr)
 			if ( ms_stereo )
 			{
 				uint maxb = sideinfo.ch[0].gr[gr].maxb;
-				int i;
+				int li;
 
 				if ( sideinfo.ch[1].gr[gr].maxb > maxb )
 					maxb = sideinfo.ch[1].gr[gr].maxb;
 
-				for ( i = 0; i < SSLIMIT * (int)maxb; i++ )
+				for ( li = 0; li < SSLIMIT * (int)maxb; li++ )
 				{
-					float tmp0 = ((float*)hybridIn[0])[i];
-					float tmp1 = ((float*)hybridIn[1])[i];
-					((float*)hybridIn[0])[i] = tmp0 + tmp1;
-					((float*)hybridIn[1])[i] = tmp0 - tmp1;
+					float tmp0 = ((float*)hybridIn[0])[li];
+					float tmp1 = ((float*)hybridIn[1])[li];
+					((float*)hybridIn[0])[li] = tmp0 + tmp1;
+					((float*)hybridIn[1])[li] = tmp0 - tmp1;
 				}
 			}
 

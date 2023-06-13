@@ -33,14 +33,8 @@ server_physics_api_t g_physfuncs;
 #ifdef _WIN32
 
 // Required DLL entry point
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
+BOOL WINAPI DllMain(HINSTANCE, DWORD, LPVOID)
 {
-	if ( fdwReason == DLL_PROCESS_ATTACH )
-	{
-	}
-	else if ( fdwReason == DLL_PROCESS_DETACH )
-	{
-	}
 	return TRUE;
 }
 

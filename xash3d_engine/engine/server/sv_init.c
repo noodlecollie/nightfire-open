@@ -584,7 +584,7 @@ void SV_ActivateServer(int runPhysics)
 	SV_FreeOldEntities();
 
 	// Activate the DLL server code
-	svgame.globals->time = sv.time;
+	svgame.globals->time = (float)sv.time;
 	svgame.dllFuncs.pfnServerActivate(svgame.edicts, svgame.numEntities, svs.maxclients);
 
 	SV_SetStringArrayMode(true);
@@ -595,11 +595,11 @@ void SV_ActivateServer(int runPhysics)
 	if ( runPhysics )
 	{
 		numFrames = (svs.maxclients <= 1) ? 2 : 8;
-		sv.frametime = SV_SPAWN_TIME;
+		sv.frametime = (float)SV_SPAWN_TIME;
 	}
 	else
 	{
-		sv.frametime = 0.001;
+		sv.frametime = 0.001f;
 		numFrames = 1;
 	}
 
@@ -681,7 +681,7 @@ void SV_DeactivateServer(void)
 	if ( !svs.initialized || sv.state == ss_dead )
 		return;
 
-	svgame.globals->time = sv.time;
+	svgame.globals->time = (float)sv.time;
 	svgame.dllFuncs.pfnServerDeactivate();
 	Host_SetServerState(ss_dead);
 
@@ -812,7 +812,9 @@ void SV_SetupClients(void)
 	svs.clients = Z_Realloc(svs.clients, sizeof(sv_client_t) * svs.maxclients);
 	svs.num_client_entities = svs.maxclients * SV_UPDATE_BACKUP * NUM_PACKET_ENTITIES;
 	svs.packet_entities = Z_Realloc(svs.packet_entities, sizeof(entity_state_t) * svs.num_client_entities);
-	Con_Reportf("%s alloced by server packet entities\n", Q_memprint(sizeof(entity_state_t) * svs.num_client_entities));
+	Con_Reportf(
+		"%s alloced by server packet entities\n",
+		Q_memprint((float)(sizeof(entity_state_t) * svs.num_client_entities)));
 
 	// init network stuff
 	NET_Config((svs.maxclients > 1), true);
@@ -879,10 +881,14 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 
 		while ( lumplen > 0 )
 		{
-			if ( lumplen >= sizeof(buffer) )
+			if ( (size_t)lumplen >= sizeof(buffer) )
+			{
 				num_bytes = FS_Read(f, buffer, sizeof(buffer));
+			}
 			else
+			{
 				num_bytes = FS_Read(f, buffer, lumplen);
+			}
 
 			if ( num_bytes > 0 )
 			{
@@ -892,7 +898,9 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 
 			// file unexpected end ?
 			if ( FS_Eof(f) )
+			{
 				break;
+			}
 		}
 	}
 

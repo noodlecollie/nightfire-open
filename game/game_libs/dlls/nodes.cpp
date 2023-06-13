@@ -25,6 +25,7 @@
 #include "animation.h"
 #include "doors.h"
 #include "com_strings.h"
+#include <limits>
 
 #define HULL_STEP_SIZE 16  // how far the test hull moves on each step
 #define NODE_HEIGHT 8  // how high to lift nodes off the ground after we drop them all (make stair/ramp mapping easier)
@@ -216,7 +217,7 @@ entvars_t* CGraph::LinkEntForLink(CLink* pLink, CNode* pNode)
 // Given the monster's capability, determine whether
 // or not the monster can go this way.
 //=========================================================
-int CGraph::HandleLinkEnt(int iNode, entvars_t* pevLinkEnt, int afCapMask, NODEQUERY queryType)
+int CGraph::HandleLinkEnt(int, entvars_t* pevLinkEnt, int afCapMask, NODEQUERY queryType)
 {
 	// edict_t *pentWorld;
 	CBaseEntity* pDoor;
@@ -289,8 +290,6 @@ int CGraph::HandleLinkEnt(int iNode, entvars_t* pevLinkEnt, int afCapMask, NODEQ
 		ALERT(at_aiconsole, "Unhandled Ent in Path %s\n", STRING(pevLinkEnt->classname));
 		return FALSE;
 	}
-
-	return FALSE;
 }
 
 #if 0
@@ -859,28 +858,55 @@ void CGraph::CheckNode(Vector vecOrigin, int iNode)
 			UpdateRange(
 				m_minX,
 				m_maxX,
-				CALC_RANGE(vecOrigin.x, m_RegionMin[0], m_RegionMax[0]),
+				CALC_RANGE(
+					static_cast<int>(vecOrigin.x),
+					static_cast<int>(m_RegionMin[0]),
+					static_cast<int>(m_RegionMax[0])),
 				m_pNodes[iNode].m_Region[0]);
 			UpdateRange(
 				m_minY,
 				m_maxY,
-				CALC_RANGE(vecOrigin.y, m_RegionMin[1], m_RegionMax[1]),
+				CALC_RANGE(
+					static_cast<int>(vecOrigin.y),
+					static_cast<int>(m_RegionMin[1]),
+					static_cast<int>(m_RegionMax[1])),
 				m_pNodes[iNode].m_Region[1]);
 			UpdateRange(
 				m_minZ,
 				m_maxZ,
-				CALC_RANGE(vecOrigin.z, m_RegionMin[2], m_RegionMax[2]),
+				CALC_RANGE(
+					static_cast<int>(vecOrigin.z),
+					static_cast<int>(m_RegionMin[2]),
+					static_cast<int>(m_RegionMax[2])),
 				m_pNodes[iNode].m_Region[2]);
 
 			// From maxCircle, calculate maximum bounds box. All points must be
 			// simultaneously inside all bounds of the box.
 			//
-			m_minBoxX = CALC_RANGE(vecOrigin.x - flDist, m_RegionMin[0], m_RegionMax[0]);
-			m_maxBoxX = CALC_RANGE(vecOrigin.x + flDist, m_RegionMin[0], m_RegionMax[0]);
-			m_minBoxY = CALC_RANGE(vecOrigin.y - flDist, m_RegionMin[1], m_RegionMax[1]);
-			m_maxBoxY = CALC_RANGE(vecOrigin.y + flDist, m_RegionMin[1], m_RegionMax[1]);
-			m_minBoxZ = CALC_RANGE(vecOrigin.z - flDist, m_RegionMin[2], m_RegionMax[2]);
-			m_maxBoxZ = CALC_RANGE(vecOrigin.z + flDist, m_RegionMin[2], m_RegionMax[2]);
+			m_minBoxX = CALC_RANGE(
+				static_cast<int>(vecOrigin.x - flDist),
+				static_cast<int>(m_RegionMin[0]),
+				static_cast<int>(m_RegionMax[0]));
+			m_maxBoxX = CALC_RANGE(
+				static_cast<int>(vecOrigin.x + flDist),
+				static_cast<int>(m_RegionMin[0]),
+				static_cast<int>(m_RegionMax[0]));
+			m_minBoxY = CALC_RANGE(
+				static_cast<int>(vecOrigin.y - flDist),
+				static_cast<int>(m_RegionMin[1]),
+				static_cast<int>(m_RegionMax[1]));
+			m_maxBoxY = CALC_RANGE(
+				static_cast<int>(vecOrigin.y + flDist),
+				static_cast<int>(m_RegionMin[1]),
+				static_cast<int>(m_RegionMax[1]));
+			m_minBoxZ = CALC_RANGE(
+				static_cast<int>(vecOrigin.z - flDist),
+				static_cast<int>(m_RegionMin[2]),
+				static_cast<int>(m_RegionMax[2]));
+			m_maxBoxZ = CALC_RANGE(
+				static_cast<int>(vecOrigin.z + flDist),
+				static_cast<int>(m_RegionMin[2]),
+				static_cast<int>(m_RegionMax[2]));
 		}
 	}
 }
@@ -1160,7 +1186,7 @@ int CGraph::FindNearestNode(const Vector& vecOrigin, int afNodeTypes)
 	}
 #endif
 	m_Cache[iHash].v = vecOrigin;
-	m_Cache[iHash].n = m_iNearest;
+	m_Cache[iHash].n = static_cast<short>(m_iNearest);
 	return m_iNearest;
 }
 
@@ -1551,7 +1577,7 @@ LINK_ENTITY_TO_CLASS(testhull, CTestHull)
 //=========================================================
 // CTestHull::Spawn
 //=========================================================
-void CTestHull::Spawn(entvars_t* pevMasterNode)
+void CTestHull::Spawn(entvars_t*)
 {
 	SET_MODEL(ENT(pev), PLAYER_MODEL_PATH);
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
@@ -1678,7 +1704,7 @@ void CTestHull::ShowBadNode(void)
 	UTIL_ParticleEffect(pev->origin + gpGlobals->v_right * 64, g_vecZero, 255, 25);
 	UTIL_ParticleEffect(pev->origin - gpGlobals->v_right * 64, g_vecZero, 255, 25);
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 extern BOOL gTouchDisabled;
@@ -2483,8 +2509,16 @@ int CGraph::FLoadGraph(const char* szMapName)
 		{
 			length -= sizeof(CGraph);
 			if ( length < 0 )
+			{
 				goto ShortFile;
-			memcpy(this, pMemFile, sizeof(CGraph));
+			}
+
+			// This used to be:
+			// memcpy(this, pMemFile, sizeof(CGraph));
+			// but this throws a warning as the object is non-trivial.
+			// Instead, we do this equivalent ugly thing:
+			*this = *reinterpret_cast<const CGraph*>(pMemFile);
+
 			pMemFile += sizeof(CGraph);
 
 			// Set the pointers to zero, just in case we run out of memory.
@@ -2521,8 +2555,15 @@ int CGraph::FLoadGraph(const char* szMapName)
 		//
 		length -= sizeof(CNode) * m_cNodes;
 		if ( length < 0 )
+		{
 			goto ShortFile;
-		memcpy(m_pNodes, pMemFile, sizeof(CNode) * m_cNodes);
+		}
+
+		for ( int index = 0; index < m_cNodes; ++index )
+		{
+			m_pNodes[index] = reinterpret_cast<const CNode*>(pMemFile)[index];
+		}
+
 		pMemFile += sizeof(CNode) * m_cNodes;
 
 		// Malloc for the link pool
@@ -2827,8 +2868,8 @@ void CGraph::HashInsert(int iSrcNode, int iDestNode, int iKey)
 {
 	struct tagNodePair np;
 
-	np.iSrc = iSrcNode;
-	np.iDest = iDestNode;
+	np.iSrc = static_cast<short>(iSrcNode);
+	np.iDest = static_cast<short>(iDestNode);
 	CRC32_t dwHash;
 	CRC32_INIT(&dwHash);
 	CRC32_PROCESS_BUFFER(&dwHash, &np, sizeof(np));
@@ -2842,15 +2883,15 @@ void CGraph::HashInsert(int iSrcNode, int iDestNode, int iKey)
 		if ( i >= m_nHashLinks )
 			i -= m_nHashLinks;
 	}
-	m_pHashLinks[i] = iKey;
+	m_pHashLinks[i] = static_cast<short>(iKey);
 }
 
 void CGraph::HashSearch(int iSrcNode, int iDestNode, int& iKey)
 {
 	struct tagNodePair np;
 
-	np.iSrc = iSrcNode;
-	np.iDest = iDestNode;
+	np.iSrc = static_cast<short>(iSrcNode);
+	np.iDest = static_cast<short>(iDestNode);
 	CRC32_t dwHash;
 	CRC32_INIT(&dwHash);
 	CRC32_PROCESS_BUFFER(&dwHash, &np, sizeof(np));
@@ -3072,9 +3113,10 @@ void CGraph::BuildRegionTables(void)
 	//
 	for ( i = 0; i < 3; i++ )
 	{
-		m_RegionMin[i] = 999999999.0;  // just a big number out there;
-		m_RegionMax[i] = -999999999.0;  // just a big number out there;
+		m_RegionMin[i] = std::numeric_limits<float>::max();
+		m_RegionMax[i] = std::numeric_limits<float>::min();
 	}
+
 	for ( i = 0; i < m_cNodes; i++ )
 	{
 		if ( m_pNodes[i].m_vecOrigin.x < m_RegionMin[0] )
@@ -3091,11 +3133,21 @@ void CGraph::BuildRegionTables(void)
 		if ( m_pNodes[i].m_vecOrigin.z > m_RegionMax[2] )
 			m_RegionMax[2] = m_pNodes[i].m_vecOrigin.z;
 	}
+
 	for ( i = 0; i < m_cNodes; i++ )
 	{
-		m_pNodes[i].m_Region[0] = CALC_RANGE(m_pNodes[i].m_vecOrigin.x, m_RegionMin[0], m_RegionMax[0]);
-		m_pNodes[i].m_Region[1] = CALC_RANGE(m_pNodes[i].m_vecOrigin.y, m_RegionMin[1], m_RegionMax[1]);
-		m_pNodes[i].m_Region[2] = CALC_RANGE(m_pNodes[i].m_vecOrigin.z, m_RegionMin[2], m_RegionMax[2]);
+		m_pNodes[i].m_Region[0] = static_cast<BYTE>(CALC_RANGE(
+			static_cast<int>(m_pNodes[i].m_vecOrigin.x),
+			static_cast<int>(m_RegionMin[0]),
+			static_cast<int>(m_RegionMax[0])));
+		m_pNodes[i].m_Region[1] = static_cast<BYTE>(CALC_RANGE(
+			static_cast<int>(m_pNodes[i].m_vecOrigin.y),
+			static_cast<int>(m_RegionMin[1]),
+			static_cast<int>(m_RegionMax[1])));
+		m_pNodes[i].m_Region[2] = static_cast<BYTE>(CALC_RANGE(
+			static_cast<int>(m_pNodes[i].m_vecOrigin.z),
+			static_cast<int>(m_RegionMin[2]),
+			static_cast<int>(m_RegionMax[2])));
 	}
 
 	for ( i = 0; i < 3; i++ )
@@ -3197,8 +3249,10 @@ void CGraph::BuildRegionTables(void)
 	}
 
 	// Initialize the cache.
-	//
-	memset(m_Cache, 0, sizeof(m_Cache));
+	for ( size_t index = 0; index < CACHE_SIZE; ++index )
+	{
+		m_Cache[index] = CACHE_ENTRY {};
+	}
 }
 
 void CGraph::ComputeStaticRoutingTables(void)
@@ -3260,7 +3314,7 @@ void CGraph::ComputeStaticRoutingTables(void)
 								for ( int iNode1 = iNode + 1; iNode1 < cPathSize; iNode1++ )
 								{
 									int iEnd = pMyPath[iNode1];
-									Routes[FROM_TO(iStart, iEnd)] = iNext;
+									Routes[FROM_TO(iStart, iEnd)] = static_cast<short>(iNext);
 								}
 							}
 #if 0
@@ -3283,8 +3337,8 @@ void CGraph::ComputeStaticRoutingTables(void)
 						}
 						else
 						{
-							Routes[FROM_TO(iFrom, iTo)] = iFrom;
-							Routes[FROM_TO(iTo, iFrom)] = iTo;
+							Routes[FROM_TO(iFrom, iTo)] = static_cast<short>(iFrom);
+							Routes[FROM_TO(iTo, iFrom)] = static_cast<short>(iTo);
 						}
 					}
 				}
@@ -3319,21 +3373,21 @@ void CGraph::ComputeStaticRoutingTables(void)
 								// Emit the repeat phrase.
 								//
 								CompressedSize += 2;  // (count-1, iLastNode-i)
-								*p++ = cRepeats - 1;
+								*p++ = static_cast<signed char>(cRepeats - 1);
 								int a = iLastNode - iFrom;
 								int b = iLastNode - iFrom + m_cNodes;
 								int c = iLastNode - iFrom - m_cNodes;
 								if ( -128 <= a && a <= 127 )
 								{
-									*p++ = a;
+									*p++ = static_cast<signed char>(a);
 								}
 								else if ( -128 <= b && b <= 127 )
 								{
-									*p++ = b;
+									*p++ = static_cast<signed char>(b);
 								}
 								else if ( -128 <= c && c <= 127 )
 								{
-									*p++ = c;
+									*p++ = static_cast<signed char>(c);
 								}
 								else
 								{
@@ -3379,7 +3433,7 @@ void CGraph::ComputeStaticRoutingTables(void)
 									// Emit the sequence phrase.
 									//
 									CompressedSize += 1;  // (-count)
-									*p++ = -cSequence;
+									*p++ = static_cast<signed char>(-cSequence);
 									cSequence = 0;
 
 									// Start a repeat sequence.
@@ -3410,7 +3464,7 @@ void CGraph::ComputeStaticRoutingTables(void)
 						// Emit the repeat phrase.
 						//
 						CompressedSize += 2;
-						*p++ = cRepeats - 1;
+						*p++ = static_cast<signed char>(cRepeats - 1);
 #if 0
 						iLastNode = iFrom + *pRoute;
 						if( iLastNode >= m_cNodes )
@@ -3423,15 +3477,15 @@ void CGraph::ComputeStaticRoutingTables(void)
 						int c = iLastNode - iFrom - m_cNodes;
 						if ( -128 <= a && a <= 127 )
 						{
-							*p++ = a;
+							*p++ = static_cast<signed char>(a);
 						}
 						else if ( -128 <= b && b <= 127 )
 						{
-							*p++ = b;
+							*p++ = static_cast<signed char>(b);
 						}
 						else if ( -128 <= c && c <= 127 )
 						{
-							*p++ = c;
+							*p++ = static_cast<signed char>(c);
 						}
 						else
 						{
@@ -3443,12 +3497,12 @@ void CGraph::ComputeStaticRoutingTables(void)
 						// Emit the Sequence phrase.
 						//
 						CompressedSize += 1;
-						*p++ = -cSequence;
+						*p++ = static_cast<signed char>(-cSequence);
 					}
 
 					// Go find a place to store this thing and point to it.
 					//
-					int nRoute = p - pRoute;
+					int nRoute = static_cast<int>(p - pRoute);
 					if ( m_pRouteInfo )
 					{
 						int i;
@@ -3801,9 +3855,9 @@ void CNodeViewer::DrawThink(void)
 		WRITE_BYTE(250);  // life
 		WRITE_BYTE(40);  // width
 		WRITE_BYTE(0);  // noise
-		WRITE_BYTE(m_vecColor.x);  // r, g, b
-		WRITE_BYTE(m_vecColor.y);  // r, g, b
-		WRITE_BYTE(m_vecColor.z);  // r, g, b
+		WRITE_BYTE(static_cast<int>(m_vecColor.x));  // r, g, b
+		WRITE_BYTE(static_cast<int>(m_vecColor.y));  // r, g, b
+		WRITE_BYTE(static_cast<int>(m_vecColor.z));  // r, g, b
 		WRITE_BYTE(128);  // brightness
 		WRITE_BYTE(0);  // speed
 		MESSAGE_END();

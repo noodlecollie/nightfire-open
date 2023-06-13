@@ -91,13 +91,17 @@ void CMenuInputDevices::_Init(void)
 	mouse.iFlags |= QMF_NOTIFY;
 #ifndef __ANDROID__
 	SET_EVENT_MULTI(mouse.onChanged, {
+		(void)pExtra;
 		if ( ((CMenuCheckBox*)pSelf)->bChecked )
 		{
 			static CMenuYesNoMessageBox msgbox(false);
 			msgbox.SetMessage(
 				L("If you do not have touchscreen, or joystick, you will not be able to play without mouse."
 				  "Are you sure to disable mouse?"));
-			SET_EVENT_MULTI(msgbox.onNegative, { pSelf->GetParent(CMenuInputDevices)->mouse.bChecked = false; });
+			SET_EVENT_MULTI(msgbox.onNegative, {
+				(void)pExtra;
+				pSelf->GetParent(CMenuInputDevices)->mouse.bChecked = false;
+			});
 			msgbox.Link(pSelf->GetParent(CMenuInputDevices));
 			msgbox.Show();
 		}

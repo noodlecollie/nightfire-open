@@ -135,11 +135,11 @@ void CApache::Spawn(void)
 	pev->takedamage = DAMAGE_AIM;
 	pev->health = gSkillData.apacheHealth;
 
-	m_flFieldOfView = -0.707;  // 270 degrees
+	m_flFieldOfView = -0.707f;  // 270 degrees
 
 	pev->sequence = 0;
 	ResetSequenceInfo();
-	pev->frame = RANDOM_LONG(0, 0xFF);
+	pev->frame = static_cast<float>(RANDOM_LONG(0, 0xFF));
 
 	InitBoneControllers();
 
@@ -151,7 +151,7 @@ void CApache::Spawn(void)
 	{
 		SetThink(&CApache::HuntThink);
 		SetTouch(&CApache::FlyTouch);
-		pev->nextthink = gpGlobals->time + 1.0;
+		pev->nextthink = gpGlobals->time + 1.0f;
 	}
 
 	m_iRockets = 10;
@@ -183,47 +183,47 @@ void CApache::Precache(void)
 void CApache::NullThink(void)
 {
 	StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.5;
+	pev->nextthink = gpGlobals->time + 0.5f;
 }
 
-void CApache::StartupUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CApache::StartupUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CApache::HuntThink);
 	SetTouch(&CApache::FlyTouch);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	SetUse(NULL);
 }
 
-void CApache::Killed(entvars_t* pevAttacker, int iGib)
+void CApache::Killed(entvars_t*, int)
 {
 	pev->movetype = MOVETYPE_TOSS;
-	pev->gravity = 0.3;
+	pev->gravity = 0.3f;
 
 	STOP_SOUND(ENT(pev), CHAN_STATIC, "apache/ap_rotor2.wav");
 
 	UTIL_SetSize(pev, Vector(-32, -32, -64), Vector(32, 32, 0));
 	SetThink(&CApache::DyingThink);
 	SetTouch(&CApache::CrashTouch);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	pev->health = 0;
 	pev->takedamage = DAMAGE_NO;
 
 	if ( pev->spawnflags & SF_NOWRECKAGE )
 	{
-		m_flNextRocket = gpGlobals->time + 4.0;
+		m_flNextRocket = gpGlobals->time + 4.0f;
 	}
 	else
 	{
-		m_flNextRocket = gpGlobals->time + 15.0;
+		m_flNextRocket = gpGlobals->time + 15.0f;
 	}
 }
 
 void CApache::DyingThink(void)
 {
 	StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
-	pev->avelocity = pev->avelocity * 1.02;
+	pev->avelocity = pev->avelocity * 1.02f;
 
 	// still falling?
 	if ( m_flNextRocket > gpGlobals->time )
@@ -288,12 +288,12 @@ void CApache::DyingThink(void)
 
 		// don't stop it we touch a entity
 		pev->flags &= ~FL_ONGROUND;
-		pev->nextthink = gpGlobals->time + 0.2;
+		pev->nextthink = gpGlobals->time + 0.2f;
 		return;
 	}
 	else
 	{
-		Vector vecSpot = pev->origin + (pev->mins + pev->maxs) * 0.5;
+		Vector vecSpot = pev->origin + (pev->mins + pev->maxs) * 0.5f;
 
 		/*
 		MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );
@@ -351,7 +351,7 @@ void CApache::DyingThink(void)
 		WRITE_BYTE(0);  // speed
 		MESSAGE_END();
 
-		EMIT_SOUND(ENT(pev), CHAN_STATIC, "weapons/mortarhit.wav", 1.0, 0.3);
+		EMIT_SOUND(ENT(pev), CHAN_STATIC, "weapons/mortarhit.wav", 1.0f, 0.3f);
 
 		RadiusDamage(pev->origin, pev, pev, 300, CLASS_NONE, DMG_BLAST);
 
@@ -403,7 +403,7 @@ void CApache::DyingThink(void)
 		MESSAGE_END();
 
 		SetThink(&CBaseEntity::SUB_Remove);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 }
 
@@ -438,7 +438,7 @@ void CApache::GibMonster(void)
 void CApache::HuntThink(void)
 {
 	StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	ShowDamage();
 
@@ -537,7 +537,7 @@ void CApache::HuntThink(void)
 
 		// don't fire rockets and gun on easy mode
 		if ( g_iSkillLevel == SKILL_EASY )
-			m_flNextRocket = gpGlobals->time + 10.0;
+			m_flNextRocket = gpGlobals->time + 10.0f;
 	}
 
 	UTIL_MakeAimVectors(pev->angles);
@@ -548,7 +548,7 @@ void CApache::HuntThink(void)
 	if ( (m_iRockets % 2) == 1 )
 	{
 		FireRocket();
-		m_flNextRocket = gpGlobals->time + 0.5;
+		m_flNextRocket = gpGlobals->time + 0.5f;
 		if ( m_iRockets <= 0 )
 		{
 			m_flNextRocket = gpGlobals->time + 10;
@@ -612,7 +612,7 @@ void CApache::Flight(void)
 			pev->avelocity.y -= 8;  // 9 * ( 3.0 / 2.0 );
 		}
 	}
-	pev->avelocity.y *= 0.98;
+	pev->avelocity.y *= 0.98f;
 
 	// estimate where I'll be in two seconds
 	UTIL_MakeAimVectors(pev->angles + pev->avelocity * 1 + vecAdj);
@@ -624,7 +624,7 @@ void CApache::Flight(void)
 	pev->velocity.y += gpGlobals->v_up.y * m_flForce;
 	pev->velocity.z += gpGlobals->v_up.z * m_flForce;
 	// add gravity
-	pev->velocity.z -= 38.4;  // 32ft/sec
+	pev->velocity.z -= 38.4f;  // 32ft/sec
 
 	float flSpeed = pev->velocity.Length();
 	float flDir = DotProduct(
@@ -655,12 +655,12 @@ void CApache::Flight(void)
 	}
 
 	// sideways drag
-	pev->velocity.x = pev->velocity.x * (1.0 - fabs(gpGlobals->v_right.x) * 0.05);
-	pev->velocity.y = pev->velocity.y * (1.0 - fabs(gpGlobals->v_right.y) * 0.05);
-	pev->velocity.z = pev->velocity.z * (1.0 - fabs(gpGlobals->v_right.z) * 0.05);
+	pev->velocity.x = pev->velocity.x * (1.0f - fabsf(gpGlobals->v_right.x) * 0.05f);
+	pev->velocity.y = pev->velocity.y * (1.0f - fabsf(gpGlobals->v_right.y) * 0.05f);
+	pev->velocity.z = pev->velocity.z * (1.0f - fabsf(gpGlobals->v_right.z) * 0.05f);
 
 	// general drag
-	pev->velocity = pev->velocity * 0.995;
+	pev->velocity = pev->velocity * 0.995f;
 
 	// apply power to stay correct height
 	if ( m_flForce < 80 && vecEst.z < m_posDesired.z )
@@ -704,7 +704,7 @@ void CApache::Flight(void)
 	// make rotor, engine sounds
 	if ( m_iSoundState == 0 )
 	{
-		EMIT_SOUND_DYN(ENT(pev), CHAN_STATIC, "apache/ap_rotor2.wav", 1.0, 0.3, 0, 110);
+		EMIT_SOUND_DYN(ENT(pev), CHAN_STATIC, "apache/ap_rotor2.wav", 1.0f, 0.3f, 0, 110);
 		// EMIT_SOUND_DYN( ENT( pev ), CHAN_STATIC, "apache/ap_whine1.wav", 0.5, 0.2, 0, 110 );
 
 		m_iSoundState = SND_CHANGE_PITCH;  // hack for going through level transitions
@@ -720,7 +720,7 @@ void CApache::Flight(void)
 			float pitch =
 				DotProduct(pev->velocity - pPlayer->pev->velocity, (pPlayer->pev->origin - pev->origin).Normalize());
 
-			pitch = (int)(100 + pitch / 50.0);
+			pitch = static_cast<float>((int)(100 + pitch / 50.0f));
 
 			if ( pitch > 250 )
 				pitch = 250;
@@ -729,7 +729,7 @@ void CApache::Flight(void)
 			if ( pitch == 100 )
 				pitch = 101;
 
-			float flVol = (m_flForce / 100.0) + .1;
+			float flVol = (m_flForce / 100.0f) + 0.1f;
 			if ( flVol > 1.0 )
 				flVol = 1.0;
 
@@ -737,10 +737,10 @@ void CApache::Flight(void)
 				ENT(pev),
 				CHAN_STATIC,
 				"apache/ap_rotor2.wav",
-				1.0,
-				0.3,
+				1.0f,
+				0.3f,
 				SND_CHANGE_PITCH | SND_CHANGE_VOL,
-				pitch);
+				static_cast<int>(pitch));
 		}
 		// EMIT_SOUND_DYN( ENT( pev ), CHAN_STATIC, "apache/ap_whine1.wav", flVol, 0.2, SND_CHANGE_PITCH |
 		// SND_CHANGE_VOL, pitch );
@@ -844,7 +844,7 @@ BOOL CApache::FireGun()
 	{
 #if 1
 		FireBullets(1, posGun, vecGun, VECTOR_CONE_4DEGREES, 8192, BULLET_MONSTER_12MM, 1);
-		EMIT_SOUND(ENT(pev), CHAN_WEAPON, "turret/tu_fire1.wav", 1, 0.3);
+		EMIT_SOUND(ENT(pev), CHAN_WEAPON, "turret/tu_fire1.wav", 1, 0.3f);
 #else
 		static float flNext;
 		TraceResult tr;
@@ -921,7 +921,7 @@ int CApache::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 void CApache::TraceAttack(
 	entvars_t* pevAttacker,
 	float flDamage,
-	Vector vecDir,
+	Vector,
 	const TraceResult* ptr,
 	int bitsDamageType)
 {
@@ -936,7 +936,7 @@ void CApache::TraceAttack(
 	{
 		// ALERT( at_console, "%.0f\n", flDamage );
 		AddMultiDamage(pevAttacker, this, flDamage, bitsDamageType);
-		m_iDoSmokePuff = 3 + (flDamage / 5.0);
+		m_iDoSmokePuff = static_cast<int>(3 + (flDamage / 5.0f));
 	}
 	else
 	{
@@ -988,7 +988,7 @@ void CApacheHVR::Spawn(void)
 	m_vecForward = gpGlobals->v_forward;
 	pev->gravity = 0.5;
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	pev->dmg = 150;
 }
@@ -1025,7 +1025,7 @@ void CApacheHVR::IgniteThink(void)
 
 	// set to accelerate
 	SetThink(&CApacheHVR::AccelerateThink);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CApacheHVR::AccelerateThink(void)
@@ -1048,6 +1048,6 @@ void CApacheHVR::AccelerateThink(void)
 	// re-aim
 	pev->angles = UTIL_VecToAngles(pev->velocity);
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 #endif

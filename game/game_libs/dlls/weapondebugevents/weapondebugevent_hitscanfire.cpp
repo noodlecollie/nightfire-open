@@ -18,7 +18,7 @@ void CWeaponDebugEvent_HitscanFire::AddTrace(const Vector& begin, const TraceRes
 
 const CWeaponDebugEvent_HitscanFire::Trace* CWeaponDebugEvent_HitscanFire::GetTrace(uint32_t index) const
 {
-	if ( index >= m_TraceList.Count() )
+	if ( index >= static_cast<uint32_t>(m_TraceList.Count()) )
 	{
 		return nullptr;
 	}

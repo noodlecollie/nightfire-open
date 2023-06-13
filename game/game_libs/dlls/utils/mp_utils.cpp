@@ -108,7 +108,6 @@ namespace MPUtils
 		CUtlString out;
 		out.AppendRepeat('\0', name.Length() + 1);
 
-		const char* in = name.String();
 		char* buffer = out.Access();
 		bool lastCharacterWasInvalid = false;
 

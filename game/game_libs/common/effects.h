@@ -71,10 +71,10 @@ public:
 	inline void SetTransparency(int rendermode, int r, int g, int b, int a, int fx)
 	{
 		pev->rendermode = rendermode;
-		pev->rendercolor.x = r;
-		pev->rendercolor.y = g;
-		pev->rendercolor.z = b;
-		pev->renderamt = a;
+		pev->rendercolor.x = (float)r;
+		pev->rendercolor.y = (float)g;
+		pev->rendercolor.z = (float)b;
+		pev->renderamt = (float)a;
 		pev->renderfx = fx;
 	}
 
@@ -90,14 +90,14 @@ public:
 
 	inline void SetColor(int r, int g, int b)
 	{
-		pev->rendercolor.x = r;
-		pev->rendercolor.y = g;
-		pev->rendercolor.z = b;
+		pev->rendercolor.x = (float)r;
+		pev->rendercolor.y = (float)g;
+		pev->rendercolor.z = (float)b;
 	}
 
 	inline void SetBrightness(int brightness)
 	{
-		pev->renderamt = brightness;
+		pev->renderamt = (float)brightness;
 	}
 
 	inline void AnimateAndDie(float framerate)
@@ -177,7 +177,7 @@ public:
 
 	inline void SetWidth(int width)
 	{
-		pev->scale = width;
+		pev->scale = (float)width;
 	}
 
 	inline void SetNoise(int amplitude)
@@ -187,14 +187,14 @@ public:
 
 	inline void SetColor(int r, int g, int b)
 	{
-		pev->rendercolor.x = r;
-		pev->rendercolor.y = g;
-		pev->rendercolor.z = b;
+		pev->rendercolor.x = (float)r;
+		pev->rendercolor.y = (float)g;
+		pev->rendercolor.z = (float)b;
 	}
 
 	inline void SetBrightness(int brightness)
 	{
-		pev->renderamt = brightness;
+		pev->renderamt = (float)brightness;
 	}
 
 	inline void SetFrame(float frame)
@@ -204,7 +204,7 @@ public:
 
 	inline void SetScrollRate(int speed)
 	{
-		pev->animtime = speed;
+		pev->animtime = (float)speed;
 	}
 
 	inline int GetType(void)

@@ -25,7 +25,7 @@ void CMenuScrollView::VidInit()
 	}
 	m_bDisableScrolling = (m_iMax < size.h);
 
-	m_iMax *= uiStatic.scaleX;
+	m_iMax = static_cast<int>(m_iMax * uiStatic.scaleX);
 }
 
 bool CMenuScrollView::KeyDown(int key)

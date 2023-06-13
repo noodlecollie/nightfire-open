@@ -225,9 +225,9 @@ public:
 	TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 	virtual int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	virtual void Killed(entvars_t* pevAttacker, int iGib);
-	virtual Vector BodyTarget(const Vector& posSrc)
+	virtual Vector BodyTarget(const Vector&)
 	{
-		return Center() + pev->view_ofs * RANDOM_FLOAT(0.5, 1.1);
+		return Center() + pev->view_ofs * RANDOM_FLOAT(0.5f, 1.1f);
 	};  // position to shoot at
 	virtual void StartSneaking(void)
 	{
@@ -372,10 +372,10 @@ public:
 	bool m_bSentBhopcap;  // If false, the player just joined and needs a bhopcap message.
 };
 
-#define AUTOAIM_2DEGREES 0.0348994967025
-#define AUTOAIM_5DEGREES 0.08715574274766
-#define AUTOAIM_8DEGREES 0.1391731009601
-#define AUTOAIM_10DEGREES 0.1736481776669
+#define AUTOAIM_2DEGREES 0.0348994967025f
+#define AUTOAIM_5DEGREES 0.08715574274766f
+#define AUTOAIM_8DEGREES 0.1391731009601f
+#define AUTOAIM_10DEGREES 0.1736481776669f
 
 extern int gmsgHudText;
 extern BOOL gInitHUD;

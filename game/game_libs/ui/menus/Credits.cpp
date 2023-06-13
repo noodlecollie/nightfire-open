@@ -103,7 +103,7 @@ void CMenuCredits::Draw(void)
 	// now draw the credits
 	UI_ScaleCoords(NULL, NULL, NULL, &h);
 
-	y = ScreenHeight - (((gpGlobals->time * 1000) - startTime) / speed);
+	y = static_cast<int>(ScreenHeight - (((gpGlobals->time * 1000) - startTime) / speed));
 
 	// draw the credits
 	for ( i = 0; i < numLines && credits[i]; i++, y += h )
@@ -115,14 +115,18 @@ void CMenuCredits::Draw(void)
 		if ( (y < (ScreenHeight - h) / 2) && i == numLines - 1 )
 		{
 			if ( !fadeTime )
-				fadeTime = (gpGlobals->time * 1000);
+			{
+				fadeTime = static_cast<int>(gpGlobals->time * 1000);
+			}
+
 			color = UI_FadeAlpha(fadeTime, showTime);
+
 			if ( UnpackAlpha(color) )
 				UI_DrawString(
 					uiStatic.hDefaultFont,
 					0,
-					(ScreenHeight - h) / 2,
-					ScreenWidth,
+					static_cast<int>((ScreenHeight - h) / 2),
+					static_cast<int>(ScreenWidth),
 					h,
 					credits[i],
 					color,
@@ -135,7 +139,7 @@ void CMenuCredits::Draw(void)
 				uiStatic.hDefaultFont,
 				0,
 				y,
-				ScreenWidth,
+				static_cast<int>(ScreenWidth),
 				h,
 				credits[i],
 				uiColorWhite,
@@ -155,7 +159,7 @@ void CMenuCredits::Draw(void)
 		Hide();
 }
 
-bool CMenuCredits::KeyUp(int key)
+bool CMenuCredits::KeyUp(int)
 {
 	return true;
 }
@@ -165,7 +169,7 @@ bool CMenuCredits::KeyUp(int key)
 CMenuCredits::Key
 =================
 */
-bool CMenuCredits::KeyDown(int key)
+bool CMenuCredits::KeyDown(int)
 {
 	// final credits can't be intterupted
 	if ( finalCredits )
@@ -197,7 +201,7 @@ void CMenuCredits::_Init(void)
 				memcpy(tmp, buffer, count);
 				EngFuncs::COM_FreeFile(buffer);
 				buffer = tmp;
-				strncpy(buffer + count, "\r", 1);  // add terminator
+				strncpy(buffer + count, "\r", 2);  // add terminator
 				count += 2;  // added "\r\0"
 			}
 			p = buffer;
@@ -236,8 +240,8 @@ void CMenuCredits::_Init(void)
 	}
 
 	// run credits
-	startTime = (gpGlobals->time * 1000) + 500;  // make half-seconds delay
-	showTime = bound(1000, strlen(credits[numLines - 1]) * 1000, 10000);
+	startTime = static_cast<int>((gpGlobals->time * 1000) + 500);  // make half-seconds delay
+	showTime = static_cast<int>(bound(1000, strlen(credits[numLines - 1]) * 1000, 10000));
 	fadeTime = 0;  // will be determined later
 	active = true;
 }

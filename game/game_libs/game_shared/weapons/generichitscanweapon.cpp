@@ -91,7 +91,7 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(
 		vecAiming = gpGlobals->v_forward;
 	}
 
-	Vector vecDir = FireBulletsPlayer(*hitscanAttack, vecSrc, vecAiming);
+	FireBulletsPlayer(*hitscanAttack, vecSrc, vecAiming);
 	const int eventID = GetEventIDForAttackMode(hitscanAttack);
 
 	if ( eventID >= 0 )
@@ -99,8 +99,9 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(
 		using namespace EventConstructor;
 		CEventConstructor event;
 
-		event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict()) << EventIndex(eventID)
-			  << IntParam1(m_pPlayer->random_seed) << BoolParam1(m_iClip == 0) << FloatParam1(GetInaccuracy());
+		event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict())
+			  << EventIndex(static_cast<unsigned short>(eventID)) << IntParam1(m_pPlayer->random_seed)
+			  << BoolParam1(m_iClip == 0) << FloatParam1(GetInaccuracy());
 
 		event.Send();
 	}
@@ -123,6 +124,9 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer(
 	const Vector& vecDirShooting)
 {
 #ifdef CLIENT_DLL
+	(void)vecSrc;
+	(void)vecDirShooting;
+
 	// The client doesn't actually do any bullet simulation, we just make sure that
 	// the generated random vectors match up.
 	return FireBulletsPlayer_Client(hitscanAttack);

@@ -120,7 +120,7 @@ public:
 #define NUMSTR_FAST_DIGIT(digit) \
 	{ \
 		m_nLength = 1; \
-		m_szBuf[0] = '0' + (digit); \
+		m_szBuf[0] = static_cast<char>('0' + (digit)); \
 		m_szBuf[1] = 0; \
 		return m_szBuf; \
 	}
@@ -215,12 +215,13 @@ public:
 	}
 	inline const char* SetInt64(int64 n64)
 	{
-		NUMSTR_CHECK_FAST(n64, uint64) m_nLength = V_snprintf(m_szBuf, sizeof(m_szBuf), "%lld", n64);
+		NUMSTR_CHECK_FAST(n64, uint64) m_nLength = V_snprintf(m_szBuf, sizeof(m_szBuf), "%lld", (long long int)n64);
 		return m_szBuf;
 	}
 	inline const char* SetUint64(uint64 un64)
 	{
-		NUMSTR_CHECK_FAST(un64, uint64) m_nLength = V_snprintf(m_szBuf, sizeof(m_szBuf), "%llu", un64);
+		NUMSTR_CHECK_FAST(un64, uint64)
+		m_nLength = V_snprintf(m_szBuf, sizeof(m_szBuf), "%llu", (long long unsigned int)un64);
 		return m_szBuf;
 	}
 #endif
@@ -272,7 +273,7 @@ public:
 
 	void AddQuotes()
 	{
-		Assert(m_nLength + 2 <= V_ARRAYSIZE(m_szBuf));
+		Assert((size_t)m_nLength + 2 <= V_ARRAYSIZE(m_szBuf));
 		memmove(m_szBuf + 1, m_szBuf, m_nLength);
 		m_szBuf[0] = '"';
 		m_szBuf[m_nLength + 1] = '"';

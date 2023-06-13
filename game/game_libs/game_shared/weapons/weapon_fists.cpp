@@ -44,7 +44,7 @@ bool CWeaponFists::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts:
 }
 
 #ifndef CLIENT_DLL
-float CWeaponFists::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const
+float CWeaponFists::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 }

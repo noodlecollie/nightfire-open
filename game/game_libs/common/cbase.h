@@ -208,7 +208,7 @@ public:
 	{
 		return CLASS_NONE;
 	};
-	virtual void DeathNotice(entvars_t* pevChild)
+	virtual void DeathNotice(entvars_t*)
 	{
 	}  // monster maker children use this to tell the monster maker that they have died.
 
@@ -224,7 +224,7 @@ public:
 		return DONT_BLEED;
 	}
 	virtual void TraceBleed(float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
-	virtual BOOL IsTriggered(CBaseEntity* pActivator)
+	virtual BOOL IsTriggered(CBaseEntity*)
 	{
 		return TRUE;
 	}
@@ -240,21 +240,21 @@ public:
 	{
 		return TS_AT_TOP;
 	}
-	virtual void AddPoints(int score, BOOL bAllowNegativeScore)
+	virtual void AddPoints(int, BOOL)
 	{
 	}
-	virtual void AddPointsToTeam(int score, BOOL bAllowNegativeScore)
+	virtual void AddPointsToTeam(int, BOOL)
 	{
 	}
-	virtual BOOL AddPlayerItem(CBasePlayerItem* pItem)
-	{
-		return 0;
-	}
-	virtual BOOL RemovePlayerItem(CBasePlayerItem* pItem)
+	virtual BOOL AddPlayerItem(CBasePlayerItem*)
 	{
 		return 0;
 	}
-	virtual int GiveAmmo(int iAmount, const char* szName, int iMax)
+	virtual BOOL RemovePlayerItem(CBasePlayerItem*)
+	{
+		return 0;
+	}
+	virtual int GiveAmmo(int, const char*, int)
 	{
 		return -1;
 	};
@@ -271,7 +271,7 @@ public:
 	}
 	virtual int DamageDecal(int bitsDamageType);
 	// This is ONLY used by the node graph to test movement through a door
-	virtual void SetToggleState(int state)
+	virtual void SetToggleState(int)
 	{
 	}
 	virtual void StartSneaking(void)
@@ -280,7 +280,7 @@ public:
 	virtual void StopSneaking(void)
 	{
 	}
-	virtual BOOL OnControls(entvars_t* pev)
+	virtual BOOL OnControls(entvars_t*)
 	{
 		return FALSE;
 	}
@@ -351,12 +351,12 @@ public:
 	// allow engine to allocate instance data
 	void* operator new(size_t stAllocateBlock, entvars_t* pev)
 	{
-		return (void*)ALLOC_PRIVATE(ENT(pev), stAllocateBlock);
+		return (void*)ALLOC_PRIVATE(ENT(pev), static_cast<int>(stAllocateBlock));
 	};
 
 	// don't use this.
 #if _MSC_VER >= 1200  // only build this code if MSVC++ 6.0 or higher
-	void operator delete(void* pMem, entvars_t* pev)
+	void operator delete(void*, entvars_t* pev)
 	{
 		pev->flags |= FL_KILLME;
 	};
@@ -516,7 +516,7 @@ public:
 	{
 		return pev->origin + pev->view_ofs;
 	};  // position of ears
-	virtual Vector BodyTarget(const Vector& posSrc)
+	virtual Vector BodyTarget(const Vector&)
 	{
 		return Center();
 	};  // position to shoot at
@@ -671,7 +671,7 @@ public:
 	void ResetSequenceInfo();
 	void DispatchAnimEvents(float flFutureInterval = 0.1);  // Handle events that have happend since last time called up
 															// until X seconds into the future
-	virtual void HandleAnimEvent(MonsterEvent_t* pEvent)
+	virtual void HandleAnimEvent(MonsterEvent_t*)
 	{
 		return;
 	};

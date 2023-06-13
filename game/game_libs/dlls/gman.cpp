@@ -82,16 +82,7 @@ int CGMan::Classify(void)
 //=========================================================
 void CGMan::SetYawSpeed(void)
 {
-	int ys;
-
-	switch ( m_Activity )
-	{
-		case ACT_IDLE:
-		default:
-			ys = 90;
-	}
-
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 90.0f;
 }
 
 //=========================================================
@@ -210,7 +201,7 @@ void CGMan::RunTask(Task_t* pTask)
 //=========================================================
 // Override all damage
 //=========================================================
-int CGMan::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CGMan::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 {
 	pev->health = pev->max_health / 2;  // always trigger the 50% damage aitrigger
 
@@ -229,7 +220,7 @@ int CGMan::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flD
 void CGMan::TraceAttack(
 	entvars_t* pevAttacker,
 	float flDamage,
-	Vector vecDir,
+	Vector,
 	const TraceResult* ptr,
 	int bitsDamageType)
 {

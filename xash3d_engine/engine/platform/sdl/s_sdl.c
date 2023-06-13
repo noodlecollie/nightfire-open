@@ -59,6 +59,8 @@ void SDL_SoundCallback(void* userdata, Uint8* stream, int len)
 	int pos = dma.samplepos << 1;
 	int wrapped = pos + len - size;
 
+	(void)userdata;
+
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	if ( !dma.buffer )
 		return;
@@ -132,7 +134,7 @@ qboolean SNDDMA_Init(void)
 	dma.format.speed = obtained.freq;
 	dma.format.channels = obtained.channels;
 	dma.format.width = 2;
-	samplecount = s_samplecount.value;
+	samplecount = (int)s_samplecount.value;
 	if ( !samplecount )
 		samplecount = 0x8000;
 	dma.samples = samplecount * obtained.channels;
@@ -238,14 +240,20 @@ SDL_SoundInputCallback
 */
 void SDL_SoundInputCallback(void* userdata, Uint8* stream, int len)
 {
-	int size = Q_min(len, sizeof(voice.input_buffer) - voice.input_buffer_pos);
+	size_t size;
+
+	(void)userdata;
+
+	size = Q_min((size_t)len, sizeof(voice.input_buffer) - (size_t)voice.input_buffer_pos);
 
 	// engine can't keep up, skip audio
-	if ( !size )
+	if ( size < 1 )
+	{
 		return;
+	}
 
 	memcpy(voice.input_buffer + voice.input_buffer_pos, stream, size);
-	voice.input_buffer_pos += size;
+	voice.input_buffer_pos += (fs_offset_t)size;
 }
 
 /*
@@ -266,7 +274,7 @@ qboolean VoiceCapture_Init(void)
 	wanted.freq = voice.samplerate;
 	wanted.format = AUDIO_S16LSB;
 	wanted.channels = VOICE_PCM_CHANNELS;
-	wanted.samples = voice.frame_size;
+	wanted.samples = (Uint16)voice.frame_size;
 	wanted.callback = SDL_SoundInputCallback;
 
 	in_dev = SDL_OpenAudioDevice(NULL, SDL_TRUE, &wanted, &spec, 0);

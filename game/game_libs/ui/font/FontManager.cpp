@@ -72,29 +72,35 @@ void CFontManager::VidInit(void)
 	)
 	{
 		DeleteAllFonts();
-		uiStatic.hDefaultFont = CFontBuilder(DEFAULT_MENUFONT, UI_MED_CHAR_HEIGHT * scale, DEFAULT_WEIGHT)
-									.SetHandleNum(QM_DEFAULTFONT)
-									.Create();
-		uiStatic.hSmallFont = CFontBuilder(DEFAULT_MENUFONT, UI_SMALL_CHAR_HEIGHT * scale, DEFAULT_WEIGHT)
-								  .SetHandleNum(QM_SMALLFONT)
-								  .Create();
-		uiStatic.hBigFont = CFontBuilder(DEFAULT_MENUFONT, UI_BIG_CHAR_HEIGHT * scale, DEFAULT_WEIGHT)
+		uiStatic.hDefaultFont =
+			CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), DEFAULT_WEIGHT)
+				.SetHandleNum(QM_DEFAULTFONT)
+				.Create();
+		uiStatic.hSmallFont =
+			CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_SMALL_CHAR_HEIGHT * scale), DEFAULT_WEIGHT)
+				.SetHandleNum(QM_SMALLFONT)
+				.Create();
+		uiStatic.hBigFont = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_BIG_CHAR_HEIGHT * scale), DEFAULT_WEIGHT)
 								.SetHandleNum(QM_BIGFONT)
 								.Create();
-		uiStatic.hBoldFont =
-			CFontBuilder(DEFAULT_MENUFONT, UI_MED_CHAR_HEIGHT * scale, 1000).SetHandleNum(QM_BOLDFONT).Create();
+		uiStatic.hBoldFont = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), 1000)
+								 .SetHandleNum(QM_BOLDFONT)
+								 .Create();
 
 		if ( !uiStatic.lowmemory )
 		{
-			uiStatic.hLightBlur =
-				CFontBuilder(DEFAULT_MENUFONT, UI_MED_CHAR_HEIGHT * scale, 1000).SetBlurParams(2, 1.0f).Create();
+			uiStatic.hLightBlur = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), 1000)
+									  .SetBlurParams(2, 1.0f)
+									  .Create();
 
-			uiStatic.hHeavyBlur =
-				CFontBuilder(DEFAULT_MENUFONT, UI_MED_CHAR_HEIGHT * scale, 1000).SetBlurParams(8, 1.75f).Create();
+			uiStatic.hHeavyBlur = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), 1000)
+									  .SetBlurParams(8, 1.75f)
+									  .Create();
 		}
 
-		uiStatic.hConsoleFont =
-			CFontBuilder(DEFAULT_CONFONT, UI_CONSOLE_CHAR_HEIGHT * scale, 500).SetOutlineSize().Create();
+		uiStatic.hConsoleFont = CFontBuilder(DEFAULT_CONFONT, static_cast<int>(UI_CONSOLE_CHAR_HEIGHT * scale), 500)
+									.SetOutlineSize()
+									.Create();
 		prevScale = scale;
 	}
 }
@@ -152,6 +158,8 @@ int CFontManager::GetCharacterWidth(HFont font, int ch)
 
 int CFontManager::GetCharacterWidthScaled(HFont font, int ch, int height)
 {
+	(void)height;
+
 	return GetCharacterWidth(font, ch)
 #ifdef SCALE_FONTS
 		* ((float)height / (float)GetFontTall(font))
@@ -263,6 +271,8 @@ int CFontManager::CutText(
 	int* wide,
 	bool* remaining)
 {
+	(void)height;
+
 	CBaseFont* font = GetIFontFromHandle(fontHandle);
 
 	if ( remaining )
@@ -308,7 +318,7 @@ int CFontManager::CutText(
 
 			if ( uch == ' ' )
 			{
-				whiteSpacePos = ch - text;
+				whiteSpacePos = static_cast<int>(ch - text);
 			}
 		}
 
@@ -329,7 +339,7 @@ int CFontManager::CutText(
 			*wide = _wide;
 		if ( stopAtWhitespace && whiteSpacePos )
 			return whiteSpacePos;
-		return ch - text;
+		return static_cast<int>(ch - text);
 	}
 
 	if ( _wide < visibleSize )
@@ -365,7 +375,7 @@ int CFontManager::CutText(
 
 			if ( uch == ' ' )
 			{
-				whiteSpacePos = ch - text;
+				whiteSpacePos = static_cast<int>(ch - text);
 			}
 		}
 		ch++;
@@ -379,7 +389,7 @@ int CFontManager::CutText(
 		*wide = _wide;
 	if ( stopAtWhitespace && whiteSpacePos )
 		return whiteSpacePos;
-	return ch - text;
+	return static_cast<int>(ch - text);
 }
 
 int CFontManager::GetTextWide(HFont font, const char* text, int size)
@@ -440,6 +450,8 @@ int CFontManager::GetTextHeightExt(HFont fontHandle, const char* text, int heigh
 
 int CFontManager::GetTextWideScaled(HFont font, const char* text, const int height, int size)
 {
+	(void)height;
+
 	CBaseFont* pFont = GetIFontFromHandle(font);
 	if ( pFont )
 	{

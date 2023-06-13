@@ -6,6 +6,7 @@
 
 namespace
 {
+#ifndef CLIENT_DLL
 	void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, float* mins, float* maxs, edict_t* pEntity)
 	{
 		float* minmaxs[2] = {mins, maxs};
@@ -49,6 +50,7 @@ namespace
 			}
 		}
 	}
+#endif  // CLIENT_DLL
 }  // namespace
 
 CGenericMeleeWeapon::CGenericMeleeWeapon() :
@@ -200,6 +202,8 @@ void CGenericMeleeWeapon::AttackStrike()
 
 bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* meleeAttack, TraceResult& tr)
 {
+	(void)meleeAttack;
+
 	UTIL_TraceLine(m_vecAttackTraceStart, m_vecAttackTraceEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
 
 #ifndef CLIENT_DLL
@@ -252,7 +256,8 @@ void CGenericMeleeWeapon::FireEvent(const WeaponAtts::WAMeleeAttack* meleeAttack
 
 	CEventConstructor event;
 
-	event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict()) << EventIndex(eventID);
+	event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict())
+		  << EventIndex(static_cast<unsigned short>(eventID));
 
 	event.Send();
 }

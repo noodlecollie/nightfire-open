@@ -233,6 +233,9 @@ static void BaseCmd_CheckCvars(const char* key, const char* value, const void* u
 {
 	basecmd_test_stats_t* stats = ptr;
 
+	(void)value;
+	(void)unused;
+
 	stats->lookups++;
 	if ( !BaseCmd_Find(HM_CVAR, key) )
 	{

@@ -35,7 +35,8 @@ void Info_Print(const char* s)
 {
 	char key[MAX_KV_SIZE];
 	char value[MAX_KV_SIZE];
-	int l, count;
+	int count;
+	size_t l;
 	char* o;
 
 	if ( *s == '\\' )
@@ -59,7 +60,9 @@ void Info_Print(const char* s)
 			key[20] = 0;
 		}
 		else
+		{
 			*o = 0;
+		}
 
 		Con_Printf("%s", key);
 
@@ -252,31 +255,43 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 	char* start;
 	char pkey[MAX_KV_SIZE];
 	char value[MAX_KV_SIZE];
-	int cmpsize = Q_strlen(key);
+	size_t cmpsize = Q_strlen(key);
 	int count;
 	char* o;
 
 	if ( cmpsize > (MAX_KV_SIZE - 1) )
+	{
 		cmpsize = MAX_KV_SIZE - 1;
+	}
 
 	if ( Q_strchr(key, '\\') )
+	{
 		return false;
+	}
 
 	while ( 1 )
 	{
 		start = s;
+
 		if ( *s == '\\' )
+		{
 			s++;
+		}
+
 		count = 0;
 		o = pkey;
 
 		while ( count < (MAX_KV_SIZE - 1) && *s != '\\' )
 		{
 			if ( !*s )
+			{
 				return false;
+			}
+
 			*o++ = *s++;
 			count++;
 		}
+
 		*o = 0;
 		s++;
 
@@ -286,7 +301,10 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 		while ( count < (MAX_KV_SIZE - 1) && *s != '\\' && *s )
 		{
 			if ( !*s )
+			{
 				return false;
+			}
+
 			*o++ = *s++;
 			count++;
 		}
@@ -299,7 +317,9 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 		}
 
 		if ( !*s )
+		{
 			return false;
+		}
 	}
 }
 
@@ -383,8 +403,8 @@ char* Info_FindLargestKey(char* s)
 	char key[MAX_KV_SIZE];
 	char value[MAX_KV_SIZE];
 	static char largest_key[128];
-	int largest_size = 0;
-	int l, count;
+	size_t largest_size = 0;
+	int count;
 	char* o;
 
 	*largest_key = 0;
@@ -394,7 +414,7 @@ char* Info_FindLargestKey(char* s)
 
 	while ( *s )
 	{
-		int size = 0;
+		size_t size = 0;
 
 		count = 0;
 		o = key;
@@ -405,12 +425,13 @@ char* Info_FindLargestKey(char* s)
 			count++;
 		}
 
-		l = o - key;
 		*o = 0;
-		size = Q_strlen(key);
+		size = strlen(key);
 
 		if ( !*s )
+		{
 			return largest_key;
+		}
 
 		count = 0;
 		o = value;
@@ -423,9 +444,11 @@ char* Info_FindLargestKey(char* s)
 		*o = 0;
 
 		if ( *s )
+		{
 			s++;
+		}
 
-		size += Q_strlen(value);
+		size += strlen(value);
 
 		if ( (size > largest_size) && !Info_IsKeyImportant(key) )
 		{
@@ -439,8 +462,8 @@ char* Info_FindLargestKey(char* s)
 
 qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, int maxsize)
 {
-	char new[1024], *v;
-	int c, team;
+	char newVal[1024], *v;
+	char c, team;
 
 	if ( Q_strchr(key, '\\') || Q_strchr(value, '\\') )
 	{
@@ -465,8 +488,8 @@ qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, in
 	if ( !COM_CheckString(value) )
 		return true;  // just clear variable
 
-	Q_snprintf(new, sizeof(new), "\\%s\\%s", key, value);
-	if ( Q_strlen(new) + Q_strlen(s) > maxsize )
+	Q_snprintf(newVal, sizeof(newVal), "\\%s\\%s", key, value);
+	if ( strlen(newVal) + Q_strlen(s) > (size_t)maxsize )
 	{
 		// no more room in buffer to add key/value
 		if ( Info_IsKeyImportant(key) )
@@ -479,7 +502,7 @@ qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, in
 				largekey = Info_FindLargestKey(s);
 				Info_RemoveKey(s, largekey);
 			}
-			while ( ((Q_strlen(new) + Q_strlen(s)) >= maxsize) && *largekey != 0 );
+			while ( ((strlen(newVal) + Q_strlen(s)) >= (size_t)maxsize) && *largekey != 0 );
 
 			if ( largekey[0] == 0 )
 			{
@@ -496,7 +519,7 @@ qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, in
 
 	// only copy ascii values
 	s += Q_strlen(s);
-	v = new;
+	v = newVal;
 
 	team = (Q_stricmp(key, "team") == 0) ? true : false;
 
@@ -504,10 +527,16 @@ qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, in
 	{
 		c = (byte)*v++;
 		if ( team )
+		{
 			c = Q_tolower(c);
+		}
+
 		if ( c > 13 )
+		{
 			*s++ = c;
+		}
 	}
+
 	*s = 0;
 
 	// all done

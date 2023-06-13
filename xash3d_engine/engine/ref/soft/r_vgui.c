@@ -87,8 +87,8 @@ void GAME_EXPORT VGUI_UploadTexture(int id, const char* buffer, int width, int h
 	Q_snprintf(texName, sizeof(texName), "*vgui%i", id);
 	memset(&r_image, 0, sizeof(r_image));
 
-	r_image.width = width;
-	r_image.height = height;
+	r_image.width = (word)width;
+	r_image.height = (word)height;
 	r_image.type = PF_RGBA_32;
 	r_image.size = r_image.width * r_image.height * 4;
 	r_image.flags = IMAGE_HAS_COLOR | IMAGE_HAS_ALPHA;
@@ -118,8 +118,8 @@ void GAME_EXPORT VGUI_CreateTexture(int id, int width, int height)
 	Q_snprintf(texName, sizeof(texName), "*vgui%i", id);
 	memset(&r_image, 0, sizeof(r_image));
 
-	r_image.width = width;
-	r_image.height = height;
+	r_image.width = (word)width;
+	r_image.height = (word)height;
 	r_image.type = PF_RGBA_32;
 	r_image.size = r_image.width * r_image.height * 4;
 	r_image.flags = IMAGE_HAS_ALPHA;
@@ -132,6 +132,12 @@ void GAME_EXPORT VGUI_CreateTexture(int id, int width, int height)
 void GAME_EXPORT
 VGUI_UploadTextureBlock(int id, int drawX, int drawY, const byte* rgba, int blockWidth, int blockHeight)
 {
+	(void)drawX;
+	(void)drawY;
+	(void)rgba;
+	(void)blockWidth;
+	(void)blockHeight;
+
 	if ( id <= 0 || id >= VGUI_MAX_TEXTURES || g_textures[id] == 0 || g_textures[id] == tr.whiteTexture )
 	{
 		gEngfuncs.Con_Reportf(S_ERROR "VGUI_UploadTextureBlock: bad texture %i. Ignored\n", id);
@@ -144,14 +150,17 @@ VGUI_UploadTextureBlock(int id, int drawX, int drawY, const byte* rgba, int bloc
 
 void GAME_EXPORT VGUI_SetupDrawingRect(int* pColor)
 {
+	(void)pColor;
 }
 
 void GAME_EXPORT VGUI_SetupDrawingText(int* pColor)
 {
+	(void)pColor;
 }
 
 void GAME_EXPORT VGUI_SetupDrawingImage(int* pColor)
 {
+	(void)pColor;
 }
 
 void GAME_EXPORT VGUI_BindTexture(int id)
@@ -202,6 +211,7 @@ disable texturemode for fill rectangle
 */
 void GAME_EXPORT VGUI_EnableTexture(qboolean enable)
 {
+	(void)enable;
 }
 
 /*
@@ -213,13 +223,17 @@ generic method to fill rectangle
 */
 void GAME_EXPORT VGUI_DrawQuad(const vpoint_t* ul, const vpoint_t* lr)
 {
+	(void)ul;
+	(void)lr;
+#if 0
 	int width, height;
-	float xscale, yscale;
+	float localxscale, localyscale;
 
 	gEngfuncs.CL_GetScreenInfo(&width, &height);
 
-	xscale = gpGlobals->width / (float)width;
-	yscale = gpGlobals->height / (float)height;
+	localxscale = gpGlobals->width / (float)width;
+	localyscale = gpGlobals->height / (float)height;
 
 	ASSERT(ul != NULL && lr != NULL);
+#endif
 }

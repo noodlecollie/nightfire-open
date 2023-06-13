@@ -57,8 +57,8 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void AngleVectorsTranspose(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 #define AngleIVectors AngleVectorsTranspose
 
-void AngleMatrix(const vec3_t angles, float (*matrix)[4]);
-void AngleIMatrix(const vec3_t angles, float (*matrix)[4]);
+void AngleMatrix(const vec3_t angles, float matrix[3][4]);
+void AngleIMatrix(const vec3_t angles, float matrix[3][4]);
 void VectorTransform(const vec3_t in1, float in2[3][4], vec3_t out);
 
 void NormalizeAngles(vec3_t angles);

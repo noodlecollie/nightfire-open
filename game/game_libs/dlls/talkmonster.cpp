@@ -23,6 +23,7 @@
 #include "scripted.h"
 #include "soundent.h"
 #include "animation.h"
+#include <limits>
 
 //=========================================================
 // Talking monster base class
@@ -327,7 +328,7 @@ void CTalkMonster::StartTask(Task_t* pTask)
 			break;
 		case TASK_TLK_STOPSHOOTING:
 			// tell player to stop shooting
-			PlaySentence(m_szGrp[TLK_NOSHOOT], RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_NORM);
+			PlaySentence(m_szGrp[TLK_NOSHOOT], RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_NORM);
 			TaskComplete();
 			break;
 		case TASK_CANT_FOLLOW:
@@ -428,7 +429,7 @@ void CTalkMonster::RunTask(Task_t* pTask)
 			if ( pPlayer )
 			{
 				MakeIdealYaw(pPlayer->v.origin);
-				ChangeYaw(pev->yaw_speed);
+				ChangeYaw(static_cast<int>(pev->yaw_speed));
 				IdleHeadTurn(pPlayer->v.origin);
 				if ( gpGlobals->time > m_flWaitFinished && FlYawDiff() < 10 )
 				{
@@ -518,17 +519,21 @@ void CTalkMonster::Killed(entvars_t* pevAttacker, int iGib)
 
 CBaseEntity* CTalkMonster::EnumFriends(CBaseEntity* pPrevious, int listNumber, BOOL bTrace)
 {
-	CBaseEntity* pFriend = pPrevious;
 	const char* pszFriend;
 	TraceResult tr;
 	Vector vecCheck;
 
 	pszFriend = m_szFriends[FriendNumber(listNumber)];
-	while ( (pFriend = UTIL_FindEntityByClassname(pFriend, pszFriend)) )
+
+	for ( CBaseEntity* pFriend = UTIL_FindEntityByClassname(pPrevious, pszFriend); pFriend;
+		  pFriend = UTIL_FindEntityByClassname(pFriend, pszFriend) )
 	{
 		if ( pFriend == this || !pFriend->IsAlive() )
+		{
 			// don't talk to self or dead people
 			continue;
+		}
+
 		if ( bTrace )
 		{
 			vecCheck = pFriend->pev->origin;
@@ -537,7 +542,9 @@ CBaseEntity* CTalkMonster::EnumFriends(CBaseEntity* pPrevious, int listNumber, B
 			UTIL_TraceLine(pev->origin, vecCheck, ignore_monsters, ENT(pev), &tr);
 		}
 		else
+		{
 			tr.flFraction = 1.0;
+		}
 
 		if ( tr.flFraction == 1.0 )
 		{
@@ -550,13 +557,10 @@ CBaseEntity* CTalkMonster::EnumFriends(CBaseEntity* pPrevious, int listNumber, B
 
 void CTalkMonster::AlertFriends(void)
 {
-	CBaseEntity* pFriend = NULL;
-	int i;
-
 	// for each friend in this bsp...
-	for ( i = 0; i < TLK_CFRIENDS; i++ )
+	for ( int i = 0; i < TLK_CFRIENDS; i++ )
 	{
-		while ( (pFriend = EnumFriends(pFriend, i, TRUE)) )
+		for ( CBaseEntity* pFriend = EnumFriends(nullptr, i, TRUE); pFriend; pFriend = EnumFriends(pFriend, i, TRUE) )
 		{
 			CBaseMonster* pMonster = pFriend->MyMonsterPointer();
 			if ( pMonster->IsAlive() )
@@ -570,13 +574,10 @@ void CTalkMonster::AlertFriends(void)
 
 void CTalkMonster::ShutUpFriends(void)
 {
-	CBaseEntity* pFriend = NULL;
-	int i;
-
 	// for each friend in this bsp...
-	for ( i = 0; i < TLK_CFRIENDS; i++ )
+	for ( int i = 0; i < TLK_CFRIENDS; i++ )
 	{
-		while ( (pFriend = EnumFriends(pFriend, i, TRUE)) )
+		for ( CBaseEntity* pFriend = EnumFriends(nullptr, i, TRUE); pFriend; pFriend = EnumFriends(pFriend, i, TRUE) )
 		{
 			CBaseMonster* pMonster = pFriend->MyMonsterPointer();
 			if ( pMonster )
@@ -591,24 +592,25 @@ void CTalkMonster::ShutUpFriends(void)
 // UNDONE: Check this in Restore to keep restored monsters from joining a full list of followers
 void CTalkMonster::LimitFollowers(CBaseEntity* pPlayer, int maxFollowers)
 {
-	CBaseEntity* pFriend = NULL;
-	int i, count;
-
-	count = 0;
+	int count = 0;
 
 	// for each friend in this bsp...
-	for ( i = 0; i < TLK_CFRIENDS; i++ )
+	for ( int i = 0; i < TLK_CFRIENDS; i++ )
 	{
-		while ( (pFriend = EnumFriends(pFriend, i, FALSE)) )
+		for ( CBaseEntity* pFriend = EnumFriends(nullptr, i, FALSE); pFriend; pFriend = EnumFriends(pFriend, i, FALSE) )
 		{
 			CBaseMonster* pMonster = pFriend->MyMonsterPointer();
+
 			if ( pMonster )
 			{
 				if ( pMonster->m_hTargetEnt == pPlayer )
 				{
 					count++;
+
 					if ( count > maxFollowers )
+					{
 						pMonster->StopFollowing(TRUE);
+					}
 				}
 			}
 		}
@@ -638,7 +640,7 @@ void CTalkMonster::HandleAnimEvent(MonsterEvent_t* pEvent)
 			// fall through...
 		case SCRIPT_EVENT_SENTENCE:  // Play a named sentence group
 			ShutUpFriends();
-			PlaySentence(pEvent->options, RANDOM_FLOAT(2.8, 3.4), VOL_NORM, ATTN_IDLE);
+			PlaySentence(pEvent->options, RANDOM_FLOAT(2.8f, 3.4f), VOL_NORM, ATTN_IDLE);
 			// ALERT( at_console, "script event speak\n" );
 			break;
 		default:
@@ -665,7 +667,7 @@ CBaseEntity* CTalkMonster::FindNearestFriend(BOOL fPlayer)
 {
 	CBaseEntity* pFriend = NULL;
 	CBaseEntity* pNearest = NULL;
-	float range = 10000000.0;
+	float range = std::numeric_limits<float>::max();
 	TraceResult tr;
 	Vector vecStart = pev->origin;
 	Vector vecCheck;
@@ -692,7 +694,8 @@ CBaseEntity* CTalkMonster::FindNearestFriend(BOOL fPlayer)
 			continue;
 
 		// for each friend in this bsp...
-		while ( (pFriend = UTIL_FindEntityByClassname(pFriend, pszFriend)) )
+		for ( pFriend = UTIL_FindEntityByClassname(nullptr, pszFriend); pFriend;
+			  pFriend = UTIL_FindEntityByClassname(pFriend, pszFriend) )
 		{
 			if ( pFriend == this || !pFriend->IsAlive() )
 				// don't talk to self or dead people
@@ -747,7 +750,7 @@ void CTalkMonster::Touch(CBaseEntity* pOther)
 			return;
 
 		// Heuristic for determining if the player is pushing me away
-		float speed = fabs(pOther->pev->velocity.x) + fabs(pOther->pev->velocity.y);
+		float speed = fabsf(pOther->pev->velocity.x) + fabsf(pOther->pev->velocity.y);
 		if ( speed > 50 )
 		{
 			SetConditions(bits_COND_CLIENT_PUSH);
@@ -765,7 +768,7 @@ void CTalkMonster::IdleRespond(void)
 	// int pitch = GetVoicePitch();
 
 	// play response
-	PlaySentence(m_szGrp[TLK_ANSWER], RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+	PlaySentence(m_szGrp[TLK_ANSWER], RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_IDLE);
 }
 
 int CTalkMonster::FOkToSpeak(void)
@@ -898,14 +901,14 @@ int CTalkMonster::FIdleSpeak(void)
 		szIdleGroup = m_szGrp[TLK_PIDLE];
 		szQuestionGroup = m_szGrp[TLK_PQUESTION];
 		// set global min delay for next conversation
-		duration = RANDOM_FLOAT(4.8, 5.2);
+		duration = RANDOM_FLOAT(4.8f, 5.2f);
 	}
 	else
 	{
 		szIdleGroup = m_szGrp[TLK_IDLE];
 		szQuestionGroup = m_szGrp[TLK_QUESTION];
 		// set global min delay for next conversation
-		duration = RANDOM_FLOAT(2.8, 3.2);
+		duration = RANDOM_FLOAT(2.8f, 3.2f);
 	}
 
 	// pitch = GetVoicePitch();
@@ -1020,7 +1023,7 @@ void CTalkMonster::PlaySentence(const char* pszSentence, float duration, float v
 
 	Talk(duration);
 
-	CTalkMonster::g_talkWaitTime = gpGlobals->time + duration + 2.0;
+	CTalkMonster::g_talkWaitTime = gpGlobals->time + duration + 2.0f;
 	if ( pszSentence[0] == '!' )
 		EMIT_SOUND_DYN(edict(), CHAN_VOICE, pszSentence, volume, attenuation, 0, GetVoicePitch());
 	else
@@ -1105,7 +1108,7 @@ Schedule_t* CTalkMonster::GetScheduleOfType(int Type)
 			{
 				// SENTENCEG_PlayRndSz( ENT( pev ), m_szGrp[TLK_WOUND], 1.0, ATTN_IDLE, 0, GetVoicePitch() );
 				// CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT( 2.8, 3.2 );
-				PlaySentence(m_szGrp[TLK_WOUND], RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+				PlaySentence(m_szGrp[TLK_WOUND], RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_IDLE);
 				SetBits(m_bitsSaid, bit_saidWoundLight);
 				return slIdleStand;
 			}
@@ -1114,7 +1117,7 @@ Schedule_t* CTalkMonster::GetScheduleOfType(int Type)
 			{
 				// SENTENCEG_PlayRndSz( ENT( pev ), m_szGrp[TLK_MORTAL], 1.0, ATTN_IDLE, 0, GetVoicePitch() );
 				// CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT( 2.8, 3.2 );
-				PlaySentence(m_szGrp[TLK_MORTAL], RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+				PlaySentence(m_szGrp[TLK_MORTAL], RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_IDLE);
 				SetBits(m_bitsSaid, bit_saidWoundHeavy);
 				return slIdleStand;
 			}
@@ -1204,7 +1207,7 @@ void CTalkMonster::TrySmellTalk(void)
 	// smelled something?
 	if ( !FBitSet(m_bitsSaid, bit_saidSmelled) && HasConditions(bits_COND_SMELL) )
 	{
-		PlaySentence(m_szGrp[TLK_SMELL], RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+		PlaySentence(m_szGrp[TLK_SMELL], RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_IDLE);
 		m_flLastSaidSmelled = gpGlobals->time + 60;  // don't talk about the stinky for a while.
 		SetBits(m_bitsSaid, bit_saidSmelled);
 	}
@@ -1224,7 +1227,7 @@ void CTalkMonster::StopFollowing(BOOL clearSchedule)
 	{
 		if ( !(m_afMemory & bits_MEMORY_PROVOKED) )
 		{
-			PlaySentence(m_szGrp[TLK_UNUSE], RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+			PlaySentence(m_szGrp[TLK_UNUSE], RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_IDLE);
 			m_hTalkTarget = m_hTargetEnt;
 		}
 
@@ -1247,7 +1250,7 @@ void CTalkMonster::StartFollowing(CBaseEntity* pLeader)
 		m_IdealMonsterState = MONSTERSTATE_ALERT;
 
 	m_hTargetEnt = pLeader;
-	PlaySentence(m_szGrp[TLK_USE], RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+	PlaySentence(m_szGrp[TLK_USE], RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_IDLE);
 	m_hTalkTarget = m_hTargetEnt;
 	ClearConditions(bits_COND_CLIENT_PUSH);
 	ClearSchedule();
@@ -1269,7 +1272,7 @@ BOOL CTalkMonster::CanFollow(void)
 	return !IsFollowing();
 }
 
-void CTalkMonster::FollowerUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTalkMonster::FollowerUse(CBaseEntity*, CBaseEntity* pCaller, USE_TYPE, float)
 {
 	// Don't allow use during a scripted_sentence
 	if ( m_useTime > gpGlobals->time )

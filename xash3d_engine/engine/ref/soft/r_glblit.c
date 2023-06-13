@@ -1,10 +1,17 @@
 #include "r_local.h"
 #define APIENTRY_LINKAGE static
 
-// NFTODO: This is a software renderer, why is it using OpenGL??
-// There's some funky stuff going on here, search "glblit"
-// to find out which bits are coupled together with the OpenGL renderer.
+// Not all of the OpenGL functions are used, and on higher
+// warning levels GCC complains about function pointers
+// that are declared but not used. We disable this warning here.
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
 #include "../gl/gl_export.h"
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
 
 struct swblit_s
 {
@@ -53,6 +60,7 @@ DebugCallback
 For ARB_debug_output
 ========================
 */
+#ifdef UNUSED_FUNCTIONS
 static void APIENTRY GL_DebugOutput(
 	GLuint source,
 	GLuint type,
@@ -62,6 +70,12 @@ static void APIENTRY GL_DebugOutput(
 	const GLcharARB* message,
 	GLvoid* userParam)
 {
+	(void)source;
+	(void)id;
+	(void)severity;
+	(void)length;
+	(void)userParam;
+
 	switch ( type )
 	{
 		case GL_DEBUG_TYPE_ERROR_ARB:
@@ -81,9 +95,9 @@ static void APIENTRY GL_DebugOutput(
 			break;
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 static unsigned short* glbuf;
-static int tex;
 
 #define LOAD(x) \
 	p##x = gEngfuncs.GL_GetProcAddress(#x); \
@@ -132,6 +146,14 @@ GLboolean GL_FUNCTION(glUnmapBufferOES)(GLenum target);
 #define GL_DRAW_FRAMEBUFFER 0x8CA9
 void GAME_EXPORT GL_InitExtensions(void)
 {
+	// These functions are all retrieved as plain void* by gEngfuncs.GL_GetProcAddress,
+	// and there's no real way to address this properly, so we just disable the
+	// "function/data pointer conversion in expression" warning for these.
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4152)
+#endif
+
 	LOAD(glBegin);
 	LOAD(glEnd);
 	LOAD(glTexCoord2f);
@@ -165,17 +187,30 @@ void GAME_EXPORT GL_InitExtensions(void)
 	LOAD(glGenBuffers);
 	LOAD(glDeleteBuffers);
 	LOAD(glMapBufferOES);
+
 	if ( !pglMapBufferOES )
+	{
 		pglMapBufferOES = gEngfuncs.GL_GetProcAddress("glMapBuffer");
+	}
+
 	LOAD(glUnmapBufferOES);
+
 	if ( !pglUnmapBufferOES )
+	{
 		pglUnmapBufferOES = gEngfuncs.GL_GetProcAddress("glUnmapBuffer");
+	}
+
 	LOAD(glGenFramebuffers);
 	LOAD(glBindFramebuffer);
 	LOAD(glFramebufferTexture2D);
 	LOAD(glBlitFramebuffer);
 	LOAD(glGenTextures);
 	gEngfuncs.Con_Printf("version:%s\n", pglGetString(GL_VERSION));
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #if GLDEBUG
 	if ( gpGlobals->developer )
 	{
@@ -199,6 +234,7 @@ static void* R_Lock_GL1(void)
 	return glbuf;
 }
 
+#ifdef UNUSED_FUNCTIONS
 static void R_Unlock_GL1(void)
 {
 	pglTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, vid.width, vid.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, glbuf);
@@ -218,6 +254,7 @@ static void R_Unlock_GL1(void)
 	pglEnd();
 	gEngfuncs.GL_SwapBuffers();
 }
+#endif // UNUSED_FUNCTIONS
 
 static void R_Unlock_GLES1(void)
 {
@@ -227,6 +264,7 @@ static void R_Unlock_GLES1(void)
 	gEngfuncs.GL_SwapBuffers();
 }
 
+#ifdef UNUSED_FUNCTIONS
 static qboolean R_CreateBuffer_GL1(int width, int height, uint* stride, uint* bpp, uint* r, uint* g, uint* b)
 {
 	pglViewport(0, 0, width, height);
@@ -253,6 +291,7 @@ static qboolean R_CreateBuffer_GL1(int width, int height, uint* stride, uint* bp
 
 	return true;
 }
+#endif // UNUSED_FUNCTIONS
 
 static qboolean R_CreateBuffer_GLES1(int width, int height, uint* stride, uint* bpp, uint* r, uint* g, uint* b)
 {
@@ -267,7 +306,7 @@ static qboolean R_CreateBuffer_GLES1(int width, int height, uint* stride, uint* 
 		0,
 		1,
 	};
-	int vbo;
+	GLuint vbo;
 
 	pglViewport(0, 0, width, height);
 	pglMatrixMode(GL_PROJECTION);
@@ -353,18 +392,18 @@ static void R_Unlock_GLES3(void)
 
 static qboolean R_CreateBuffer_GLES3(int width, int height, uint* stride, uint* bpp, uint* r, uint* g, uint* b)
 {
-	float data[] = {
-		// quad verts match texcoords
-		0,
-		0,
-		1,
-		0,
-		1,
-		1,
-		0,
-		1,
-	};
-	GLuint vbo, pbo, fbo, to;
+	// float data[] = {
+	// 	// quad verts match texcoords
+	// 	0,
+	// 	0,
+	// 	1,
+	// 	0,
+	// 	1,
+	// 	1,
+	// 	0,
+	// 	1,
+	// };
+	GLuint /*vbo,*/ pbo, fbo, to;
 
 	// shitty fbo does not work without texture objects :(
 	pglGenTextures(1, &to);
@@ -491,9 +530,13 @@ void R_BuildScreenMap(void)
 			minor = (r * rmult / rdiv) << rshift | (g * gmult / gdiv) << gshift | (b * bmult / bdiv) << bshift;
 
 			if ( swblit.bpp == 2 )
-				vid.screen[(i << 8) | j] = major | minor;
+			{
+				vid.screen[(i << 8) | j] = (pixel_t)(major | minor);
+			}
 			else
+			{
 				vid.screen32[(i << 8) | j] = major | minor;
+			}
 		}
 	}
 #endif
@@ -508,32 +551,41 @@ void R_BuildBlendMaps(void)
 {
 	unsigned int r1, g1, b1;
 	unsigned int r2, g2, b2;
-	unsigned int i, j;
+	unsigned int i;
 
 	FOR_EACH_COLOR(1) FOR_EACH_COLOR(2)
 	{
 		unsigned int r, g, b;
-		unsigned short index1 = r1 << (2 + 3) | g1 << 2 | b1;
-		unsigned short index2 = (r2 << (2 + 3) | g2 << 2 | b2) << 8;
-		unsigned int a;
+		unsigned short index1 = (unsigned short)(r1 << (2 + 3) | g1 << 2 | b1);
+		unsigned short index2 = (unsigned short)((r2 << (2 + 3) | g2 << 2 | b2) << 8);
 
 		r = r1 + r2;
 		g = g1 + g2;
 		b = b1 + b2;
+
 		if ( r > MASK(3) )
+		{
 			r = MASK(3);
+		}
+
 		if ( g > MASK(3) )
+		{
 			g = MASK(3);
+		}
+
 		if ( b > MASK(2) )
+		{
 			b = MASK(2);
+		}
+
 		ASSERT(!vid.addmap[index2 | index1]);
 
-		vid.addmap[index2 | index1] = r << (2 + 3) | g << 2 | b;
+		vid.addmap[index2 | index1] = (byte)(r << (2 + 3) | g << 2 | b);
 		r = r1 * r2 / MASK(3);
 		g = g1 * g2 / MASK(3);
 		b = b1 * b2 / MASK(2);
 
-		vid.modmap[index2 | index1] = r << (2 + 3) | g << 2 | b;
+		vid.modmap[index2 | index1] = (byte)(r << (2 + 3) | g << 2 | b);
 #if 0
 		for( a = 0; a < 8; a++ )
 		{
@@ -551,7 +603,7 @@ void R_BuildBlendMaps(void)
 		uint color = i << 3;
 		uint m = color >> 8;
 		uint j = color & 0xff;
-		unsigned short index1 = i;
+		unsigned short index1 = (unsigned short)i;
 
 		r1 = ((m >> (8 - 3)) << 2) & MASK(5);
 		g1 = ((m >> (8 - 3 - 3)) << 3) & MASK(6);
@@ -573,7 +625,7 @@ void R_BuildBlendMaps(void)
 			minor = MOVE_BIT(r, 1, 5) | MOVE_BIT(r, 0, 2) | MOVE_BIT(g, 2, 7) | MOVE_BIT(g, 1, 4) | MOVE_BIT(g, 0, 1) |
 				MOVE_BIT(b, 2, 6) | MOVE_BIT(b, 1, 3) | MOVE_BIT(b, 0, 0);
 
-			vid.colormap[index2 | index1] = major << 8 | (minor & 0xFF);
+			vid.colormap[index2 | index1] = (pixel_t)(major << 8 | (minor & 0xFF));
 		}
 	}
 #if 1
@@ -583,7 +635,7 @@ void R_BuildBlendMaps(void)
 		uint color = i << 6 | BIT(5) | BIT(4) | BIT(3);
 		uint m = color >> 8;
 		uint j = color & 0xff;
-		unsigned short index1 = i;
+		unsigned short index1 = (unsigned short)i;
 
 		r1 = ((m >> (8 - 3)) << 2) & MASK(5);
 		g1 = ((m >> (8 - 3 - 3)) << 3) & MASK(6);
@@ -619,7 +671,7 @@ void R_BuildBlendMaps(void)
 					MOVE_BIT(g, 0, 1) | MOVE_BIT(b, 2, 6) | MOVE_BIT(b, 1, 3) | MOVE_BIT(b, 0, 0);
 				minor = minor & ~0x3f;
 
-				vid.alphamap[k << 18 | index2 | index1] = major << 8 | (minor & 0xFF);
+				vid.alphamap[k << 18 | index2 | index1] = (pixel_t)(major << 8 | (minor & 0xFF));
 			}
 		}
 	}
@@ -714,8 +766,7 @@ void R_BlitScreen(void)
 
 				for ( u = 0; u < vid.width; u++ )
 				{
-					unsigned int s = vid.screen[vid.buffer[start + u]];
-					pbuf[d] = s;
+					pbuf[d] = (unsigned short)(vid.screen[vid.buffer[start + u]]);
 					d += swblit.stride;
 				}
 			}
@@ -748,11 +799,11 @@ void R_BlitScreen(void)
 				for ( u = 0; u < vid.width; u++ )
 				{
 					unsigned int s = vid.screen32[vid.buffer[start + u]];
-					pbuf[(d)*3] = s;
+					pbuf[(d)*3] = (byte)s;
 					s = s >> 8;
-					pbuf[(d)*3 + 1] = s;
+					pbuf[(d)*3 + 1] = (byte)s;
 					s = s >> 8;
-					pbuf[(d)*3 + 2] = s;
+					pbuf[(d)*3 + 2] = (byte)s;
 					d += swblit.stride;
 				}
 			}
@@ -770,8 +821,7 @@ void R_BlitScreen(void)
 
 				for ( u = 0; u < vid.width; u++ )
 				{
-					unsigned int s = vid.screen[vid.buffer[start + u]];
-					pbuf[dstart + u] = s;
+					pbuf[dstart + u] = (unsigned short)(vid.screen[vid.buffer[start + u]]);
 				}
 			}
 		}
@@ -802,11 +852,11 @@ void R_BlitScreen(void)
 				for ( u = 0; u < vid.width; u++ )
 				{
 					unsigned int s = vid.screen32[vid.buffer[start + u]];
-					pbuf[(dstart + u) * 3] = s;
+					pbuf[(dstart + u) * 3] = (byte)s;
 					s = s >> 8;
-					pbuf[(dstart + u) * 3 + 1] = s;
+					pbuf[(dstart + u) * 3 + 1] = (byte)s;
 					s = s >> 8;
-					pbuf[(dstart + u) * 3 + 2] = s;
+					pbuf[(dstart + u) * 3 + 2] = (byte)s;
 				}
 			}
 		}
@@ -825,9 +875,9 @@ static uint32_t Get8888PixelAt(int u, int start)
 		{
 			pixel_t color = vid.screen[vid.buffer[start + u]];
 			uint8_t c[3];
-			c[0] = ((((color >> 11) & 0x1F) * 527) + 23) >> 6;
-			c[1] = ((((color >> 5) & 0x3F) * 259) + 33) >> 6;
-			c[2] = ((((color)&0x1F) * 527) + 23) >> 6;
+			c[0] = (uint8_t)(((((color >> 11) & 0x1F) * 527) + 23) >> 6);
+			c[1] = (uint8_t)(((((color >> 5) & 0x3F) * 259) + 33) >> 6);
+			c[2] = (uint8_t)(((((color)&0x1F) * 527) + 23) >> 6);
 
 			s = c[0] << 16 | c[1] << 8 | c[2];
 			break;

@@ -239,7 +239,7 @@ void CMonsterMaker::MakeMonster(void)
 // CyclicUse - drops one monster from the monstermaker
 // each time we call this.
 //=========================================================
-void CMonsterMaker::CyclicUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMonsterMaker::CyclicUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	MakeMonster();
 }
@@ -247,7 +247,7 @@ void CMonsterMaker::CyclicUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE
 //=========================================================
 // ToggleUse - activates/deactivates the monster maker
 //=========================================================
-void CMonsterMaker::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMonsterMaker::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_fActive) )
 		return;

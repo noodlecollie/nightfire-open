@@ -61,7 +61,7 @@ void CMenuProgressBar::Draw(void)
 	// draw the background
 	UI_FillRect(m_scPos, m_scSize, uiInputBgColor);
 
-	UI_FillRect(m_scPos.x, m_scPos.y, m_scSize.w * flProgress, m_scSize.h, colorBase);
+	UI_FillRect(m_scPos.x, m_scPos.y, static_cast<int>(m_scSize.w * flProgress), m_scSize.h, colorBase);
 
 	// draw the rectangle
 	UI_DrawRectangle(m_scPos, m_scSize, uiInputFgColor);

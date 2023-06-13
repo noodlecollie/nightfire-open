@@ -25,9 +25,12 @@ target_compile_definitions(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
 )
 
 target_compile_options(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
+	# MSVC
 	$<$<STREQUAL:"${HOST_COMPILER}","MSVC">:/GR->
-	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-rtti>
-	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-exceptions>
+
+	# Not MSVC
+	$<$<AND:$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>,$<COMPILE_LANGUAGE:CXX>>:-fno-rtti>
+	$<$<AND:$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>,$<COMPILE_LANGUAGE:CXX>>:-fno-exceptions>
 )
 
 if(NF_ENABLE_TESTS)

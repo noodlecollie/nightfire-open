@@ -51,7 +51,7 @@ void LogInterface_MainUI::LogMessage(Level level, const char* message)
 	{
 		case ILogInterface::Level::Debug:
 		{
-			Con_DPrintf(message);
+			Con_DPrintf("%s", message);
 			break;
 		}
 
@@ -69,7 +69,7 @@ void LogInterface_MainUI::LogMessage(Level level, const char* message)
 
 		default:
 		{
-			Con_Printf(message);
+			Con_Printf("%s", message);
 			break;
 		}
 	}

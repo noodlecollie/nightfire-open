@@ -276,12 +276,18 @@ void BuildTris(void)
 
 		// mark the tris on the best strip as used
 		for ( j = 0; j < bestlen; j++ )
+		{
 			g_used[besttris[j]] = 1;
+		}
 
 		if ( besttype == 1 )
+		{
 			g_commands[g_numcommands++] = (bestlen + 2);
+		}
 		else
+		{
 			g_commands[g_numcommands++] = -(bestlen + 2);
+		}
 
 		for ( j = 0; j < bestlen + 2; j++ )
 		{
@@ -290,8 +296,8 @@ void BuildTris(void)
 			g_vertexorder[g_numorder++] = k;
 
 			// emit s/t coords into the commands stream
-			s = g_stverts[k].s;
-			t = g_stverts[k].t;
+			s = (float)g_stverts[k].s;
+			t = (float)g_stverts[k].t;
 
 			if ( !g_triangles[besttris[0]].facesfront && g_stverts[k].onseam )
 				s += m_pAliasHeader->skinwidth / 2;  // on back side
@@ -428,8 +434,8 @@ rgbdata_t* Mod_CreateSkinData(model_t* mod, byte* data, int width, int height)
 	int i;
 	model_t* loadmodel = gEngfuncs.Mod_GetCurrentLoadingModel();
 
-	skin.width = width;
-	skin.height = height;
+	skin.width = (word)width;
+	skin.height = (word)height;
 	skin.depth = 1;
 	skin.type = PF_INDEXED_24;
 	skin.flags = IMAGE_HAS_COLOR | IMAGE_QUAKEPAL;
@@ -457,13 +463,13 @@ rgbdata_t* Mod_CreateSkinData(model_t* mod, byte* data, int width, int height)
 	if ( mod != NULL && !Q_stricmp(name, "player") )
 	{
 		texture_t* tx = NULL;
-		int i, size;
+		int numtextures, size;
 
-		i = mod->numtextures;
-		mod->textures = (texture_t**)Mem_Realloc(mod->mempool, mod->textures, (i + 1) * sizeof(texture_t*));
+		numtextures = mod->numtextures;
+		mod->textures = (texture_t**)Mem_Realloc(mod->mempool, mod->textures, (numtextures + 1) * sizeof(texture_t*));
 		size = width * height + 768;
 		tx = Mem_Calloc(mod->mempool, sizeof(*tx) + size);
-		mod->textures[i] = tx;
+		mod->textures[numtextures] = tx;
 
 		Q_strncpy(tx->name, "DM_Skin", sizeof(tx->name));
 		tx->anim_min = SHIRT_HUE_START;  // topcolor start
@@ -503,7 +509,8 @@ void* Mod_LoadSingleSkin(daliasskintype_t* pskintype, int skinnum, int size)
 
 	m_pAliasHeader->gl_texturenum[skinnum][0] = m_pAliasHeader->gl_texturenum[skinnum][1] =
 		m_pAliasHeader->gl_texturenum[skinnum][2] = m_pAliasHeader->gl_texturenum[skinnum][3] =
-			GL_LoadTextureInternal(name, pic, 0);
+			(unsigned short)GL_LoadTextureInternal(name, pic, 0);
+
 	gEngfuncs.FS_FreeImage(pic);
 
 	if ( R_GetTexture(m_pAliasHeader->gl_texturenum[skinnum][0])->flags & TF_HAS_LUMA )
@@ -511,7 +518,8 @@ void* Mod_LoadSingleSkin(daliasskintype_t* pskintype, int skinnum, int size)
 		pic = Mod_CreateSkinData(NULL, (byte*)(pskintype + 1), m_pAliasHeader->skinwidth, m_pAliasHeader->skinheight);
 		m_pAliasHeader->fb_texturenum[skinnum][0] = m_pAliasHeader->fb_texturenum[skinnum][1] =
 			m_pAliasHeader->fb_texturenum[skinnum][2] = m_pAliasHeader->fb_texturenum[skinnum][3] =
-				GL_LoadTextureInternal(lumaname, pic, TF_MAKELUMA);
+				(unsigned short)GL_LoadTextureInternal(lumaname, pic, TF_MAKELUMA);
+
 		gEngfuncs.FS_FreeImage(pic);
 	}
 
@@ -537,14 +545,14 @@ void* Mod_LoadGroupSkin(daliasskintype_t* pskintype, int skinnum, int size)
 	{
 		Q_snprintf(name, sizeof(name), "%s_%i_%i", loadmodel->name, skinnum, i);
 		pic = Mod_CreateSkinData(loadmodel, (byte*)(pskintype), m_pAliasHeader->skinwidth, m_pAliasHeader->skinheight);
-		m_pAliasHeader->gl_texturenum[skinnum][i & 3] = GL_LoadTextureInternal(name, pic, 0);
+		m_pAliasHeader->gl_texturenum[skinnum][i & 3] = (unsigned short)GL_LoadTextureInternal(name, pic, 0);
 		gEngfuncs.FS_FreeImage(pic);
 
 		if ( R_GetTexture(m_pAliasHeader->gl_texturenum[skinnum][i & 3])->flags & TF_HAS_LUMA )
 		{
 			Q_snprintf(lumaname, sizeof(lumaname), "%s_%i_%i_luma", loadmodel->name, skinnum, i);
 			pic = Mod_CreateSkinData(NULL, (byte*)(pskintype), m_pAliasHeader->skinwidth, m_pAliasHeader->skinheight);
-			m_pAliasHeader->fb_texturenum[skinnum][i & 3] = GL_LoadTextureInternal(lumaname, pic, TF_MAKELUMA);
+			m_pAliasHeader->fb_texturenum[skinnum][i & 3] = (unsigned short)GL_LoadTextureInternal(lumaname, pic, TF_MAKELUMA);
 			gEngfuncs.FS_FreeImage(pic);
 		}
 
@@ -621,7 +629,7 @@ void Mod_CalcAliasBounds(model_t* mod)
 		}
 	}
 
-	mod->radius = sqrt(radius);
+	mod->radius = sqrtf(radius);
 }
 
 /*
@@ -842,9 +850,9 @@ void R_AliasDynamicLight(cl_entity_t* ent, alight_t* plight)
 		{
 			VectorSet(lightDir, mv->skyvec_x, mv->skyvec_y, mv->skyvec_z);
 
-			light.r = gEngfuncs.LightToTexGamma(bound(0, mv->skycolor_r, 255));
-			light.g = gEngfuncs.LightToTexGamma(bound(0, mv->skycolor_g, 255));
-			light.b = gEngfuncs.LightToTexGamma(bound(0, mv->skycolor_b, 255));
+			light.r = gEngfuncs.LightToTexGamma((byte)bound(0, mv->skycolor_r, 255));
+			light.g = gEngfuncs.LightToTexGamma((byte)bound(0, mv->skycolor_g, 255));
+			light.b = gEngfuncs.LightToTexGamma((byte)bound(0, mv->skycolor_b, 255));
 		}
 	}
 
@@ -896,12 +904,15 @@ void R_AliasDynamicLight(cl_entity_t* ent, alight_t* plight)
 		}
 	}
 
-	VectorSet(finalLight, light.r, light.g, light.b);
+	VectorSet(finalLight, (float)light.r, (float)light.g, (float)light.b);
 	ent->cvFloorColor = light;
 
-	total = Q_max(Q_max(light.r, light.g), light.b);
+	total = (float)Q_max(Q_max(light.r, light.g), light.b);
+
 	if ( total == 0.0f )
+	{
 		total = 1.0f;
+	}
 
 	// scale lightdir by light intentsity
 	VectorScale(lightDir, total, lightDir);
@@ -915,7 +926,7 @@ void R_AliasDynamicLight(cl_entity_t* ent, alight_t* plight)
 
 		VectorSubtract(origin, dl->origin, dist);
 
-		radius = VectorLength(dist);
+		radius = (float)VectorLength(dist);
 		add = dl->radius - radius;
 
 		if ( add > 0.0f )
@@ -937,8 +948,8 @@ void R_AliasDynamicLight(cl_entity_t* ent, alight_t* plight)
 
 	VectorScale(lightDir, 0.9f, lightDir);
 
-	plight->shadelight = VectorLength(lightDir);
-	plight->ambientlight = total - plight->shadelight;
+	plight->shadelight = (int)VectorLength(lightDir);
+	plight->ambientlight = (int)(total - (float)plight->shadelight);
 
 	total = Q_max(Q_max(finalLight[0], finalLight[1]), finalLight[2]);
 
@@ -971,8 +982,8 @@ void R_AliasSetupLighting(alight_t* plight)
 	if ( !m_pAliasHeader || !plight )
 		return;
 
-	g_alias.ambientlight = plight->ambientlight;
-	g_alias.shadelight = plight->shadelight;
+	g_alias.ambientlight = (float)plight->ambientlight;
+	g_alias.shadelight = (float)plight->shadelight;
 	VectorCopy(plight->plightvec, g_alias.lightvec);
 	VectorCopy(plight->color, g_alias.lightcolor);
 
@@ -1121,7 +1132,6 @@ void GL_DrawAliasShadow(aliashdr_t* paliashdr)
 	float vec_x, vec_y;
 	vec3_t av, point;
 	int* order;
-	float height;
 	int count;
 
 	if ( FBitSet(RI.currententity->curstate.effects, EF_NOSHADOW) )
@@ -1130,7 +1140,6 @@ void GL_DrawAliasShadow(aliashdr_t* paliashdr)
 	if ( glState.stencilEnabled )
 		pglEnable(GL_STENCIL_TEST);
 
-	height = g_alias.lightspot[2] + 1.0f;
 	vec_x = -g_alias.lightvec[0] * 8.0f;
 	vec_y = -g_alias.lightvec[1] * 8.0f;
 
@@ -1202,7 +1211,7 @@ void R_AliasLerpMovement(cl_entity_t* e)
 	// was increased to 1.0 s., which is 2x the max lag we are accounting for.
 	if ( g_alias.interpolate && (g_alias.time < e->curstate.animtime + 1.0f) &&
 		 (e->curstate.animtime != e->latched.prevanimtime) )
-		f = (g_alias.time - e->curstate.animtime) / (e->curstate.animtime - e->latched.prevanimtime);
+		f = ((float)g_alias.time - e->curstate.animtime) / (e->curstate.animtime - e->latched.prevanimtime);
 
 	if ( ENGINE_GET_PARM(PARM_PLAYING_DEMO) == DEMO_QUAKE1 )
 		f = f + 1.0f;
@@ -1229,7 +1238,7 @@ void R_AliasLerpMovement(cl_entity_t* e)
 
 	// NOTE: this completely over control about angles and don't broke interpolation
 	if ( FBitSet(e->model->flags, ALIAS_ROTATE) )
-		e->angles[1] = anglemod(100.0f * g_alias.time);
+		e->angles[1] = anglemod(100.0f * (float)g_alias.time);
 }
 
 /*
@@ -1245,8 +1254,8 @@ void R_SetupAliasFrame(cl_entity_t* e, aliashdr_t* paliashdr)
 	int numposes, cycle;
 	float interval;
 
-	oldframe = e->latched.prevframe;
-	newframe = e->curstate.frame;
+	oldframe = (int)e->latched.prevframe;
+	newframe = (int)e->curstate.frame;
 
 	if ( newframe < 0 )
 	{
@@ -1271,7 +1280,7 @@ void R_SetupAliasFrame(cl_entity_t* e, aliashdr_t* paliashdr)
 		cycle = (int)(g_alias.time * interval);
 		oldpose += (cycle + 0) % numposes;  // lerpframe from
 		newpose += (cycle + 1) % numposes;  // lerpframe to
-		g_alias.lerpfrac = (g_alias.time * interval);
+		g_alias.lerpfrac = ((float)g_alias.time * interval);
 		g_alias.lerpfrac -= (int)g_alias.lerpfrac;
 	}
 	else

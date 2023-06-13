@@ -108,12 +108,12 @@ const WeaponAtts::AccuracyParameters* CCrosshairParameters::WeaponAccuracyParams
 	CWeaponRegistry& registry = CWeaponRegistry::StaticInstance();
 	const WeaponAtts::WACollection* atts = registry.Get(m_WeaponID);
 
-	if ( !atts || index >= atts->AttackModes.Count() )
+	if ( !atts || index >= static_cast<size_t>(atts->AttackModes.Count()) )
 	{
 		return nullptr;
 	}
 
-	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[index];
+	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[static_cast<int>(index)];
 
 	if ( !baseAttackMode )
 	{
@@ -133,12 +133,12 @@ const WeaponAtts::CrosshairParameters* CCrosshairParameters::CrosshairParamsForA
 	CWeaponRegistry& registry = CWeaponRegistry::StaticInstance();
 	const WeaponAtts::WACollection* atts = registry.Get(m_WeaponID);
 
-	if ( !atts || index >= atts->AttackModes.Count() )
+	if ( !atts || index >= static_cast<size_t>(atts->AttackModes.Count()) )
 	{
 		return nullptr;
 	}
 
-	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[index];
+	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[static_cast<int>(index)];
 
 	if ( !baseAttackMode )
 	{

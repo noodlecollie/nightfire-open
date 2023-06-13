@@ -155,9 +155,9 @@ bool CMenuItemsHolder::MouseMove(int x, int y)
 	int i = 0;
 	// region test the active menu items
 	// go in reverse direction, so last items will be first
-	FOR_EACH_VEC_BACK(m_pItems, i)
+	FOR_EACH_VEC_BACK(m_pItems, index)
 	{
-		CMenuBaseItem* item = m_pItems[i];
+		CMenuBaseItem* item = m_pItems[index];
 
 		// just in case
 		if ( !item )
@@ -183,9 +183,9 @@ bool CMenuItemsHolder::MouseMove(int x, int y)
 			continue;
 		}
 
-		if ( m_iCursor != i )
+		if ( m_iCursor != index )
 		{
-			SetCursor(i);
+			SetCursor(index);
 			// reset two focus states, because we are changed cursor
 			if ( m_iCursorPrev != -1 )
 				ClearBits(m_pItems[m_iCursorPrev]->iFlags, QMF_HASMOUSEFOCUS | QMF_HASKEYBOARDFOCUS);

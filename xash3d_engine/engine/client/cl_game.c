@@ -246,20 +246,28 @@ static int CL_AdjustXPos(float x, int width, int totalWidth)
 
 	if ( x == -1 )
 	{
-		xPos = (refState.width - width) * 0.5f;
+		xPos = (int)((refState.width - width) * 0.5f);
 	}
 	else
 	{
 		if ( x < 0 )
-			xPos = (1.0f + x) * refState.width - totalWidth;  // Alight right
+		{
+			xPos = (int)((1.0f + x) * refState.width - totalWidth);  // Alight right
+		}
 		else  // align left
-			xPos = x * refState.width;
+		{
+			xPos = (int)(x * refState.width);
+		}
 	}
 
 	if ( xPos + width > refState.width )
+	{
 		xPos = refState.width - width;
+	}
 	else if ( xPos < 0 )
+	{
 		xPos = 0;
+	}
 
 	return xPos;
 }
@@ -277,21 +285,29 @@ static int CL_AdjustYPos(float y, int height)
 
 	if ( y == -1 )  // centered?
 	{
-		yPos = (refState.height - height) * 0.5f;
+		yPos = (int)((refState.height - height) * 0.5f);
 	}
 	else
 	{
 		// Alight bottom?
 		if ( y < 0 )
-			yPos = (1.0f + y) * refState.height - height;  // Alight bottom
+		{
+			yPos = (int)((1.0f + y) * refState.height - height);  // Alight bottom
+		}
 		else  // align top
-			yPos = y * refState.height;
+		{
+			yPos = (int)(y * refState.height);
+		}
 	}
 
 	if ( yPos + height > refState.height )
+	{
 		yPos = refState.height - height;
+	}
 	else if ( yPos < 0 )
+	{
 		yPos = 0;
+	}
 
 	return yPos;
 }
@@ -311,7 +327,7 @@ void CL_CenterPrint(const char* text, float y)
 		return;
 
 	clgame.centerPrint.totalWidth = 0;
-	clgame.centerPrint.time = cl.mtime[0];  // allow pause for centerprint
+	clgame.centerPrint.time = (float)cl.mtime[0];  // allow pause for centerprint
 	Q_strncpy(clgame.centerPrint.message, text, sizeof(clgame.centerPrint.message));
 
 	CL_DrawStringLen(
@@ -394,33 +410,44 @@ static void SPR_DrawGeneric(int frame, float x, float y, float width, float heig
 		// assume we get sizes from image
 		ref.dllFuncs.R_GetSpriteParms(&w, &h, NULL, frame, clgame.ds.pSprite);
 
-		width = w;
-		height = h;
+		width = (float)w;
+		height = (float)h;
 	}
 
 	if ( prc )
 	{
 		wrect_t rc = *prc;
 
-		// Sigh! some stupid modmakers set wrong rectangles in hud.txt
+		// Some modmakers may set wrong rectangles in hud.txt
 		if ( rc.left <= 0 || rc.left >= width )
+		{
 			rc.left = 0;
-		if ( rc.top <= 0 || rc.top >= height )
-			rc.top = 0;
-		if ( rc.right <= 0 || rc.right > width )
-			rc.right = width;
-		if ( rc.bottom <= 0 || rc.bottom > height )
-			rc.bottom = height;
+		}
 
-		s1 = rc.left;
-		t1 = rc.top;
-		s2 = rc.right;
-		t2 = rc.bottom;
+		if ( rc.top <= 0 || rc.top >= height )
+		{
+			rc.top = 0;
+		}
+
+		if ( rc.right <= 0 || rc.right > width )
+		{
+			rc.right = (int)width;
+		}
+
+		if ( rc.bottom <= 0 || rc.bottom > height )
+		{
+			rc.bottom = (int)height;
+		}
+
+		s1 = (float)rc.left;
+		t1 = (float)rc.top;
+		s2 = (float)rc.right;
+		t2 = (float)rc.bottom;
 
 		// calc user-defined rectangle
 		SPR_AdjustTexCoords(width, height, &s1, &t1, &s2, &t2);
-		width = rc.right - rc.left;
-		height = rc.bottom - rc.top;
+		width = (float)(rc.right - rc.left);
+		height = (float)(rc.bottom - rc.top);
 	}
 	else
 	{
@@ -503,8 +530,8 @@ void CL_DrawCenterPrint(void)
 		{
 			if ( x >= 0 && y >= 0 && x <= refState.width )
 				x += CL_DrawCharacter(
-					x,
-					y,
+					(float)x,
+					(float)y,
 					line[j],
 					colorDefault,
 					font,
@@ -529,16 +556,17 @@ static int V_FadeAlpha(screenfade_t* sf)
 		alpha = sf->fadealpha;
 		if ( FBitSet(sf->fadeFlags, FFADE_OUT) && sf->fadeTotalEnd > cl.time )
 		{
-			alpha += sf->fadeSpeed * (sf->fadeTotalEnd - cl.time);
+			alpha += (int)(sf->fadeSpeed * (sf->fadeTotalEnd - cl.time));
 		}
 		else
 		{
-			sf->fadeEnd = cl.time + 0.1;
+			sf->fadeEnd = (float)cl.time + 0.1f;
 		}
 	}
 	else
 	{
-		alpha = sf->fadeSpeed * (sf->fadeEnd - cl.time);
+		alpha = (int)(sf->fadeSpeed * (sf->fadeEnd - cl.time));
+
 		if ( FBitSet(sf->fadeFlags, FFADE_OUT) )
 		{
 			alpha += sf->fadealpha;
@@ -580,11 +608,20 @@ void CL_DrawScreenFade(void)
 	else
 	{
 		ref.dllFuncs.GL_SetRenderMode(kRenderTransTexture);
-		ref.dllFuncs.Color4ub(sf->fader, sf->fadeg, sf->fadeb, alpha);
+		ref.dllFuncs.Color4ub(sf->fader, sf->fadeg, sf->fadeb, (unsigned char)alpha);
 	}
 
-	ref.dllFuncs
-		.R_DrawStretchPic(0, 0, refState.width, refState.height, 0, 0, 1, 1, R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+	ref.dllFuncs.R_DrawStretchPic(
+		0,
+		0,
+		(float)refState.width,
+		(float)refState.height,
+		0,
+		0,
+		1,
+		1,
+		R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);
 }
 
@@ -638,8 +675,11 @@ Template to show hud messages
 void CL_HudMessage(const char* pMessage)
 {
 	if ( !COM_CheckString(pMessage) )
+	{
 		return;
-	CL_DispatchUserMessage("HudText", Q_strlen(pMessage), (void*)pMessage);
+	}
+
+	CL_DispatchUserMessage("HudText", (int)Q_strlen(pMessage), (void*)pMessage);
 }
 
 /*
@@ -670,14 +710,14 @@ void CL_ParseTextMessage(sizebuf_t* msg)
 	text->x = (float)(MSG_ReadShort(msg) / 8192.0f);
 	text->y = (float)(MSG_ReadShort(msg) / 8192.0f);
 	text->effect = MSG_ReadByte(msg);
-	text->r1 = MSG_ReadByte(msg);
-	text->g1 = MSG_ReadByte(msg);
-	text->b1 = MSG_ReadByte(msg);
-	text->a1 = MSG_ReadByte(msg);
-	text->r2 = MSG_ReadByte(msg);
-	text->g2 = MSG_ReadByte(msg);
-	text->b2 = MSG_ReadByte(msg);
-	text->a2 = MSG_ReadByte(msg);
+	text->r1 = (byte)MSG_ReadByte(msg);
+	text->g1 = (byte)MSG_ReadByte(msg);
+	text->b1 = (byte)MSG_ReadByte(msg);
+	text->a1 = (byte)MSG_ReadByte(msg);
+	text->r2 = (byte)MSG_ReadByte(msg);
+	text->g2 = (byte)MSG_ReadByte(msg);
+	text->b2 = (byte)MSG_ReadByte(msg);
+	text->a2 = (byte)MSG_ReadByte(msg);
 	text->fadein = (float)(MSG_ReadShort(msg) / 256.0f);
 	text->fadeout = (float)(MSG_ReadShort(msg) / 256.0f);
 	text->holdtime = (float)(MSG_ReadShort(msg) / 256.0f);
@@ -873,7 +913,7 @@ qboolean CL_Scissor(
 	{
 		*u0 += (scissor->x - *x) * dudx;
 		*width -= scissor->x - *x;
-		*x = scissor->x;
+		*x = (float)scissor->x;
 	}
 
 	if ( *x + *width > scissor->x + scissor->width )
@@ -886,7 +926,7 @@ qboolean CL_Scissor(
 	{
 		*v0 += (scissor->y - *y) * dvdy;
 		*height -= scissor->y - *y;
-		*y = scissor->y;
+		*y = (float)scissor->y;
 	}
 
 	if ( *y + *height > scissor->y + scissor->height )
@@ -966,20 +1006,20 @@ void CL_DrawCrosshair(void)
 		VectorAdd(refState.vieworg, forward, point);
 		ref.dllFuncs.WorldToScreen(point, screen);
 
-		x += (clgame.viewport[2] >> 1) * screen[0] + 0.5f;
-		y += (clgame.viewport[3] >> 1) * screen[1] + 0.5f;
+		x += (int)((clgame.viewport[2] >> 1) * screen[0] + 0.5f);
+		y += (int)((clgame.viewport[3] >> 1) * screen[1] + 0.5f);
 	}
 
 	// back to logical sizes
 	xscale = (float)clgame.scrInfo.iWidth / refState.width;
 	yscale = (float)clgame.scrInfo.iHeight / refState.height;
 
-	x *= xscale;
-	y *= yscale;
+	x *= (int)xscale;
+	y *= (int)yscale;
 
 	// move at center the screen
-	x -= 0.5f * width;
-	y -= 0.5f * height;
+	x -= (int)(0.5f * width);
+	y -= (int)(0.5f * height);
 
 	clgame.ds.pSprite = clgame.ds.pCrosshair;
 	Vector4Copy(clgame.ds.rgbaCrosshair, clgame.ds.spriteColor);
@@ -1002,8 +1042,8 @@ static void CL_DrawLoadingOrPaused(int tex)
 	R_GetTextureParms(&iWidth, &iHeight, tex);
 	x = (clgame.scrInfo.iWidth - iWidth) / 2.0f;
 	y = (clgame.scrInfo.iHeight - iHeight) / 2.0f;
-	width = iWidth;
-	height = iHeight;
+	width = (float)iWidth;
+	height = (float)iHeight;
 
 	SPR_AdjustSize(&x, &y, &width, &height);
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);
@@ -1026,7 +1066,7 @@ void CL_DrawHUD(int state)
 				CL_DrawScreenFade();
 			CL_DrawCrosshair();
 			CL_DrawCenterPrint();
-			clgame.dllFuncs.pfnRedraw(cl.time, cl.intermission);
+			clgame.dllFuncs.pfnRedraw((float)cl.time, cl.intermission);
 			if ( cl.intermission )
 				CL_DrawScreenFade();
 			break;
@@ -1034,7 +1074,7 @@ void CL_DrawHUD(int state)
 			CL_DrawScreenFade();
 			CL_DrawCrosshair();
 			CL_DrawCenterPrint();
-			clgame.dllFuncs.pfnRedraw(cl.time, cl.intermission);
+			clgame.dllFuncs.pfnRedraw((float)cl.time, cl.intermission);
 			CL_DrawLoadingOrPaused(cls.pauseIcon);
 			break;
 		case CL_LOADING:
@@ -1338,9 +1378,11 @@ HSPRITE pfnSPR_LoadExt(const char* szPicName, uint texFlags)
 	model_t* spr;
 
 	if ( (spr = CL_LoadSpriteModel(szPicName, SPR_CLIENT, texFlags)) == NULL )
+	{
 		return 0;
+	}
 
-	return (spr - clgame.sprites) + 1;  // return index
+	return (HSPRITE)((spr - clgame.sprites) + 1);  // return index
 }
 
 /*
@@ -1354,9 +1396,11 @@ HSPRITE EXPORT pfnSPR_Load(const char* szPicName)
 	model_t* spr;
 
 	if ( (spr = CL_LoadSpriteModel(szPicName, SPR_HUDSPRITE, 0)) == NULL )
+	{
 		return 0;
+	}
 
-	return (spr - clgame.sprites) + 1;  // return index
+	return (HSPRITE)((spr - clgame.sprites) + 1);  // return index
 }
 
 /*
@@ -1451,9 +1495,9 @@ static void GAME_EXPORT pfnSPR_Set(HSPRITE hPic, int r, int g, int b)
 		return;
 
 	clgame.ds.pSprite = sprite;
-	clgame.ds.spriteColor[0] = bound(0, r, 255);
-	clgame.ds.spriteColor[1] = bound(0, g, 255);
-	clgame.ds.spriteColor[2] = bound(0, b, 255);
+	clgame.ds.spriteColor[0] = (byte)bound(0, r, 255);
+	clgame.ds.spriteColor[1] = (byte)bound(0, g, 255);
+	clgame.ds.spriteColor[2] = (byte)bound(0, b, 255);
 	clgame.ds.spriteColor[3] = 255;
 }
 
@@ -1466,7 +1510,7 @@ pfnSPR_Draw
 static void GAME_EXPORT pfnSPR_Draw(int frame, int x, int y, const wrect_t* prc)
 {
 	ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
-	SPR_DrawGeneric(frame, x, y, -1, -1, prc);
+	SPR_DrawGeneric(frame, (float)x, (float)y, -1, -1, prc);
 }
 
 /*
@@ -1484,7 +1528,7 @@ static void GAME_EXPORT pfnSPR_DrawHoles(int frame, int x, int y, const wrect_t*
 	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	pglEnable(GL_BLEND);
 #endif
-	SPR_DrawGeneric(frame, x, y, -1, -1, prc);
+	SPR_DrawGeneric(frame, (float)x, (float)y, -1, -1, prc);
 
 #if 1
 	ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
@@ -1509,7 +1553,7 @@ static void GAME_EXPORT pfnSPR_DrawAdditive(int frame, int x, int y, const wrect
 	pglBlendFunc(GL_ONE, GL_ONE);
 #endif
 
-	SPR_DrawGeneric(frame, x, y, -1, -1, prc);
+	SPR_DrawGeneric(frame, (float)x, (float)y, -1, -1, prc);
 
 #if 1  // REFTODO
 	ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
@@ -1532,7 +1576,7 @@ static void GAME_EXPORT pfnSPR_DrawCustom(const sprite_draw_args_t* args)
 	pglBlendFunc(GL_ONE, GL_ONE);
 #endif
 
-	SPR_DrawGeneric(args->frame, args->x, args->y, args->width, args->height, args->prc);
+	SPR_DrawGeneric(args->frame, (float)args->x, (float)args->y, (float)args->width, (float)args->height, args->prc);
 
 #if 1  // REFTODO
 	ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
@@ -1644,7 +1688,10 @@ CL_FillRGBA
 */
 void GAME_EXPORT CL_FillRGBA(int x, int y, int w, int h, int r, int g, int b, int a)
 {
-	float _x = x, _y = y, _w = w, _h = h;
+	float _x = (float)x;
+	float _y = (float)y;
+	float _w = (float)w;
+	float _h = (float)h;
 
 	r = bound(0, r, 255);
 	g = bound(0, g, 255);
@@ -1700,8 +1747,8 @@ int GAME_EXPORT CL_GetScreenInfo(SCREENINFO* pscrinfo)
 
 	if ( scale_factor && scale_factor != 1.0f )
 	{
-		clgame.scrInfo.iWidth = (float)refState.width / scale_factor;
-		clgame.scrInfo.iHeight = (float)refState.height / scale_factor;
+		clgame.scrInfo.iWidth = (int)((float)refState.width / scale_factor);
+		clgame.scrInfo.iHeight = (int)((float)refState.height / scale_factor);
 		clgame.scrInfo.iFlags |= SCRINFO_STRETCHED;
 	}
 	else
@@ -1864,11 +1911,11 @@ static void GAME_EXPORT pfnGetPlayerInfo(int ent_num, hud_player_info_t* pinfo)
 	pinfo->thisplayer = (ent_num == cl.playernum) ? true : false;
 	pinfo->name = player->name;
 	pinfo->model = player->model;
-	pinfo->spectator = player->spectator;
-	pinfo->ping = player->ping;
-	pinfo->packetloss = player->packet_loss;
-	pinfo->topcolor = player->topcolor;
-	pinfo->bottomcolor = player->bottomcolor;
+	pinfo->spectator = (byte)player->spectator;
+	pinfo->ping = (short)player->ping;
+	pinfo->packetloss = (byte)player->packet_loss;
+	pinfo->topcolor = (short)player->topcolor;
+	pinfo->bottomcolor = (short)player->bottomcolor;
 }
 
 /*
@@ -1942,13 +1989,19 @@ returns drawed chachter width (in real screen pixels)
 */
 static int GAME_EXPORT pfnDrawCharacter(int x, int y, int number, int r, int g, int b)
 {
-	rgba_t color = {r, g, b, 255};
+	rgba_t color = {
+		(byte)r,
+		(byte)g,
+		(byte)b,
+		255,
+	};
+
 	int flags = FONT_DRAW_HUD;
 
 	if ( hud_utf8->value )
 		flags |= FONT_DRAW_UTF8;
 
-	return CL_DrawCharacter(x, y, number, color, &cls.creditsFont, flags);
+	return CL_DrawCharacter((float)x, (float)y, number, color, &cls.creditsFont, flags);
 }
 
 /*
@@ -1960,12 +2013,12 @@ drawing string like a console string
 */
 int GAME_EXPORT pfnDrawConsoleString(int x, int y, char* string)
 {
-	cl_font_t* font = Con_GetFont(con_fontsize->value);
+	cl_font_t* font = Con_GetFont((int)con_fontsize->value);
 	rgba_t color;
 	Vector4Copy(clgame.ds.textColor, color);
 	Vector4Set(clgame.ds.textColor, 255, 255, 255, 255);
 
-	return x + CL_DrawString(x, y, string, color, font, FONT_DRAW_UTF8 | FONT_DRAW_HUD);
+	return x + CL_DrawString((float)x, (float)y, string, color, font, FONT_DRAW_UTF8 | FONT_DRAW_HUD);
 }
 
 /*
@@ -1993,10 +2046,13 @@ compute string length in screen pixels
 */
 void GAME_EXPORT pfnDrawConsoleStringLen(const char* pText, int* length, int* height)
 {
-	cl_font_t* font = Con_GetFont(con_fontsize->value);
+	cl_font_t* font = Con_GetFont((int)con_fontsize->value);
 
 	if ( height )
+	{
 		*height = font->charHeight;
+	}
+
 	CL_DrawStringLen(font, pText, length, NULL, FONT_DRAW_UTF8 | FONT_DRAW_HUD);
 }
 
@@ -2010,13 +2066,19 @@ prints directly into console (can skip notify)
 static void GAME_EXPORT pfnConsolePrint(const char* string)
 {
 	if ( !COM_CheckString(string) )
+	{
 		return;
+	}
 
 	// WON GoldSrc behavior
 	if ( string[0] != 1 )
+	{
 		Con_Printf("%s", string);
+	}
 	else
+	{
 		Con_NPrintf(0, "%s", string + 1);
+	}
 }
 
 /*
@@ -2172,7 +2234,7 @@ pfnGetClientTime
 */
 static float GAME_EXPORT pfnGetClientTime(void)
 {
-	return cl.time;
+	return (float)cl.time;
 }
 
 /*
@@ -2199,7 +2261,7 @@ void GAME_EXPORT pfnCalcShake(void)
 	if ( cl.time > clgame.shake.next_shake )
 	{
 		// higher frequency means we recalc the extents more often and perturb the display again
-		clgame.shake.next_shake = cl.time + (1.0f / clgame.shake.frequency);
+		clgame.shake.next_shake = (float)cl.time + (1.0f / clgame.shake.frequency);
 
 		// compute random shake extents (the shake will settle down from this)
 		for ( i = 0; i < 3; i++ )
@@ -2208,7 +2270,7 @@ void GAME_EXPORT pfnCalcShake(void)
 	}
 
 	// ramp down amplitude over duration (fraction goes from 1 to 0 linearly with slope 1/duration)
-	fraction = (clgame.shake.time - cl.time) / clgame.shake.duration;
+	fraction = (clgame.shake.time - (float)cl.time) / clgame.shake.duration;
 
 	// ramp up frequency over duration
 	if ( fraction )
@@ -2224,7 +2286,7 @@ void GAME_EXPORT pfnCalcShake(void)
 	fraction *= fraction;
 
 	// Sine wave that slowly settles to zero
-	fraction = fraction * sin(cl.time * freq);
+	fraction = fraction * sinf((float)cl.time * freq);
 
 	// add to view origin
 	VectorScale(clgame.shake.offset, fraction, clgame.shake.applied_offset);
@@ -2233,7 +2295,7 @@ void GAME_EXPORT pfnCalcShake(void)
 	clgame.shake.applied_angle = clgame.shake.angle * fraction;
 
 	// drop amplitude a bit, less for higher frequency shakes
-	localAmp = clgame.shake.amplitude * (host.frametime / (clgame.shake.duration * clgame.shake.frequency));
+	localAmp = clgame.shake.amplitude * ((float)host.frametime / (clgame.shake.duration * clgame.shake.frequency));
 	clgame.shake.amplitude -= localAmp;
 }
 
@@ -2292,6 +2354,7 @@ pfnPrecacheEvent
 */
 static word GAME_EXPORT pfnPrecacheEvent(int type, const char* psz)
 {
+	(void)type;
 	return CL_EventIndex(psz);
 }
 
@@ -2408,7 +2471,7 @@ int GAME_EXPORT CL_FindModelIndex(const char* m)
 	{
 		// tell user about problem (but don't spam console)
 		Con_Printf(S_ERROR "Could not find index for model %s: not precached\n", filepath);
-		lasttimewarn = host.realtime + 1.0f;
+		lasttimewarn = (float)host.realtime + 1.0f;
 	}
 
 	return 0;
@@ -2811,6 +2874,8 @@ obsolete, unused
 */
 int GAME_EXPORT pfnGetTrackerIDForPlayer(int playerSlot)
 {
+	(void)playerSlot;
+
 	return 0;
 }
 
@@ -2823,6 +2888,8 @@ obsolete, unused
 */
 int GAME_EXPORT pfnGetPlayerForTrackerID(int trackerID)
 {
+	(void)trackerID;
+
 	return 0;
 }
 
@@ -2852,9 +2919,17 @@ pfnGetMousePos
 void GAME_EXPORT pfnGetMousePos(struct tagPOINT* ppt)
 {
 	if ( !ppt )
+	{
 		return;
+	}
 
-	Platform_GetMousePos(&ppt->x, &ppt->y);
+	int x = 0;
+	int y = 0;
+
+	Platform_GetMousePos(&x, &y);
+
+	ppt->x = x;
+	ppt->y = y;
 }
 
 /*
@@ -2866,6 +2941,7 @@ legacy of dinput code
 */
 void GAME_EXPORT pfnSetMouseEnable(qboolean fEnable)
 {
+	(void)fEnable;
 }
 
 /*
@@ -2876,7 +2952,7 @@ pfnGetServerTime
 */
 static float GAME_EXPORT pfnGetClientOldTime(void)
 {
-	return cl.oldtime;
+	return (float)cl.oldtime;
 }
 
 /*
@@ -2899,6 +2975,7 @@ TODO: implement
 */
 static void GAME_EXPORT pfnEnableTexSort(int enable)
 {
+	(void)enable;
 }
 
 /*
@@ -2910,6 +2987,9 @@ TODO: implement
 */
 static void GAME_EXPORT pfnSetLightmapColor(float red, float green, float blue)
 {
+	(void)red;
+	(void)green;
+	(void)blue;
 }
 
 /*
@@ -2921,6 +3001,7 @@ TODO: implement
 */
 static void GAME_EXPORT pfnSetLightmapScale(float scale)
 {
+	(void)scale;
 }
 
 /*
@@ -2932,11 +3013,14 @@ pfnSPR_DrawGeneric
 static void GAME_EXPORT
 pfnSPR_DrawGeneric(int frame, int x, int y, const wrect_t* prc, int blendsrc, int blenddst, int width, int height)
 {
+	(void)blendsrc;
+	(void)blenddst;
+
 #if 0  // REFTODO:
 	pglEnable( GL_BLEND );
 	pglBlendFunc( blendsrc, blenddst ); // g-cont. are params is valid?
 #endif
-	SPR_DrawGeneric(frame, x, y, width, height, prc);
+	SPR_DrawGeneric(frame, (float)x, (float)y, (float)width, (float)height, prc);
 }
 
 /*
@@ -2958,6 +3042,8 @@ pfnVGUI2DrawCharacter
 */
 static int GAME_EXPORT pfnVGUI2DrawCharacter(int x, int y, int number, unsigned int font)
 {
+	(void)font;
+
 	return pfnDrawCharacter(x, y, number, 255, 255, 255);
 }
 
@@ -2969,6 +3055,8 @@ pfnVGUI2DrawCharacterAdditive
 */
 static int GAME_EXPORT pfnVGUI2DrawCharacterAdditive(int x, int y, int ch, int r, int g, int b, unsigned int font)
 {
+	(void)font;
+
 	return pfnDrawCharacter(x, y, ch, r, g, b);
 }
 
@@ -2980,13 +3068,21 @@ pfnDrawString
 */
 static int GAME_EXPORT pfnDrawString(int x, int y, const char* str, int r, int g, int b)
 {
-	rgba_t color = {r, g, b, 255};
+	rgba_t color = {
+		(byte)r,
+		(byte)g,
+		(byte)b,
+		255,
+	};
+
 	int flags = FONT_DRAW_HUD | FONT_DRAW_NOLF;
 
 	if ( hud_utf8->value )
+	{
 		SetBits(flags, FONT_DRAW_UTF8);
+	}
 
-	return CL_DrawString(x, y, str, color, &cls.creditsFont, flags);
+	return CL_DrawString((float)x, (float)y, str, color, &cls.creditsFont, flags);
 }
 
 /*
@@ -2997,18 +3093,26 @@ pfnDrawStringReverse
 */
 static int GAME_EXPORT pfnDrawStringReverse(int x, int y, const char* str, int r, int g, int b)
 {
-	rgba_t color = {r, g, b, 255};
+	rgba_t color = {
+		(byte)r,
+		(byte)g,
+		(byte)b,
+		255,
+	};
+
 	int flags = FONT_DRAW_HUD | FONT_DRAW_NOLF;
 	int width;
 
 	if ( hud_utf8->value )
+	{
 		SetBits(flags, FONT_DRAW_UTF8);
+	}
 
 	CL_DrawStringLen(&cls.creditsFont, str, &width, NULL, flags);
 
 	x -= width;
 
-	return CL_DrawString(x, y, str, color, &cls.creditsFont, flags);
+	return CL_DrawString((float)x, (float)y, str, color, &cls.creditsFont, flags);
 }
 
 /*
@@ -3080,7 +3184,10 @@ pfnFillRGBABlend
 */
 void GAME_EXPORT CL_FillRGBABlend(int x, int y, int w, int h, int r, int g, int b, int a)
 {
-	float _x = x, _y = y, _w = w, _h = h;
+	float _x = (float)x;
+	float _y = (float)y;
+	float _w = (float)w;
+	float _h = (float)h;
 
 	r = bound(0, r, 255);
 	g = bound(0, g, 255);
@@ -3131,6 +3238,8 @@ TODO: implement
 */
 static void GAME_EXPORT pfnVguiWrap2_GetMouseDelta(int* x, int* y)
 {
+	(void)x;
+	(void)y;
 }
 
 /*
@@ -3170,9 +3279,17 @@ TriColor4f
 void TriColor4f(float r, float g, float b, float a)
 {
 	if ( clgame.ds.renderMode == kRenderTransAlpha )
-		ref.dllFuncs.Color4ub(r * 255.9f, g * 255.9f, b * 255.9f, a * 255.0f);
+	{
+		ref.dllFuncs.Color4ub(
+			(unsigned char)(r * 255.9f),
+			(unsigned char)(g * 255.9f),
+			(unsigned char)(b * 255.9f),
+			(unsigned char)(a * 255.0f));
+	}
 	else
+	{
 		ref.dllFuncs.Color4f(r * a, g * a, b * a, 1.0);
+	}
 
 	clgame.ds.triRGBA[0] = r;
 	clgame.ds.triRGBA[1] = g;
@@ -3228,9 +3345,9 @@ TriWorldToScreen
 convert world coordinates (x,y,z) into screen (x, y)
 =============
 */
-int TriWorldToScreen(const float* world, float* screen)
+int TriWorldToScreen(const float* inWorld, float* outScreen)
 {
-	return ref.dllFuncs.WorldToScreen(world, screen);
+	return ref.dllFuncs.WorldToScreen(inWorld, outScreen);
 }
 
 /*
@@ -3260,9 +3377,9 @@ void TriLightAtPoint(float* pos, float* value)
 
 	vLightColor = ref.dllFuncs.R_LightPoint(pos);
 
-	value[0] = vLightColor.r;
-	value[1] = vLightColor.g;
-	value[2] = vLightColor.b;
+	value[0] = (float)vLightColor.r;
+	value[1] = (float)vLightColor.g;
+	value[2] = (float)vLightColor.b;
 }
 
 /*
@@ -3273,13 +3390,17 @@ Heavy legacy of Quake...
 */
 void TriColor4fRendermode(float r, float g, float b, float a, int rendermode)
 {
+	(void)rendermode;
+
 	if ( clgame.ds.renderMode == kRenderTransAlpha )
 	{
 		clgame.ds.triRGBA[3] = a / 255.0f;
 		ref.dllFuncs.Color4f(r, g, b, a);
 	}
 	else
+	{
 		ref.dllFuncs.Color4f(r * a, g * a, b * a, 1.0f);
+	}
 }
 
 /*
@@ -3420,7 +3541,7 @@ void GAME_EXPORT NetAPI_SendRequest(
 		return;
 	}
 
-	if ( remote_address->type != NA_IPX && remote_address->type != NA_BROADCAST_IPX )
+	if ( remote_address->ip.ip4.type != NA_IPX && remote_address->ip.ip4.type != NA_BROADCAST_IPX )
 		return;  // IPX no longer support
 
 	// find a free request
@@ -3463,9 +3584,8 @@ void GAME_EXPORT NetAPI_SendRequest(
 	if ( request == NETAPI_REQUEST_SERVERLIST )
 	{
 		char fullquery[512];
-		size_t len;
 
-		len = CL_BuildMasterServerScanRequest(fullquery, sizeof(fullquery), false);
+		CL_BuildMasterServerScanRequest(fullquery, sizeof(fullquery), false);
 
 		// make sure that port is specified
 		if ( !nr->resp.remote_address.port )
@@ -3655,6 +3775,8 @@ Voice_SetControlFloat
 */
 void GAME_EXPORT Voice_SetControlFloat(VoiceTweakControl iControl, float value)
 {
+	(void)iControl;
+	(void)value;
 }
 
 /*
@@ -3665,12 +3787,14 @@ Voice_GetControlFloat
 */
 float GAME_EXPORT Voice_GetControlFloat(VoiceTweakControl iControl)
 {
+	(void)iControl;
+
 	return 1.0f;
 }
 
 static void GAME_EXPORT VGui_ViewportPaintBackground(int extents[4])
 {
-	// stub
+	(void)extents;
 }
 
 // shared between client and server
@@ -3922,9 +4046,9 @@ static cl_enginefunc_t gEngfuncs = {
 	Platform_SetMousePos,
 	pfnSetMouseEnable,
 	Cvar_GetList,
-	(void*)Cmd_GetFirstFunctionHandle,
-	(void*)Cmd_GetNextFunctionHandle,
-	(void*)Cmd_GetName,
+	Cmd_GetFirstFunctionHandle,
+	Cmd_GetNextFunctionHandle,
+	Cmd_GetName,
 	pfnGetClientOldTime,
 	pfnGetGravity,
 	CL_ModelHandle,
@@ -4051,19 +4175,26 @@ qboolean CL_LoadProgs(const char* name)
 		*func->func = NULL;
 
 	// trying to get single export
-	if ( (GetClientAPI = (void*)COM_GetProcAddress(clgame.hInstance, "GetClientAPI")) != NULL )
+	GetClientAPI = (CL_EXPORT_FUNCS)COM_GetProcAddress(clgame.hInstance, "GetClientAPI");
+
+	if ( GetClientAPI )
 	{
 		Con_Reportf("CL_LoadProgs: found single callback export\n");
 
 		// trying to fill interface now
 		GetClientAPI(&clgame.dllFuncs);
 	}
-	else if ( (GetClientAPI = (void*)COM_GetProcAddress(clgame.hInstance, "F")) != NULL )
+	else
 	{
-		Con_Reportf("CL_LoadProgs: found single callback export (secured client dlls)\n");
+		GetClientAPI = (CL_EXPORT_FUNCS)COM_GetProcAddress(clgame.hInstance, "F");
 
-		// trying to fill interface now
-		CL_GetSecuredClientAPI(GetClientAPI);
+		if ( GetClientAPI )
+		{
+			Con_Reportf("CL_LoadProgs: found single callback export (secured client dlls)\n");
+
+			// trying to fill interface now
+			CL_GetSecuredClientAPI(GetClientAPI);
+		}
 	}
 
 	if ( GetClientAPI != NULL )

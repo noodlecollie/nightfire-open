@@ -313,7 +313,7 @@ public:
 	}
 	float GetEnemyInSight()
 	{
-		return bEnemyInSight;
+		return static_cast<float>(bEnemyInSight);
 	}
 	Vector GetEnemyLastSeenPosition()
 	{

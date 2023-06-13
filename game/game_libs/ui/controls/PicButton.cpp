@@ -190,7 +190,7 @@ void CMenuPicButton::Draw()
 	{
 		Point coord;
 
-		coord.x = m_scPos.x + 290 * uiStatic.scaleX;
+		coord.x = static_cast<int>(m_scPos.x + 290 * uiStatic.scaleX);
 		coord.y = m_scPos.y + m_scSize.h / 2 - EngFuncs::ConsoleCharacterHeight() / 2;
 
 		int r, g, b;
@@ -235,7 +235,7 @@ void CMenuPicButton::Draw()
 		// pulse code.
 		if ( (state == BUTTON_NOFOCUS && bPulse) || (state == BUTTON_FOCUS && eFocusAnimation == QM_PULSEIFFOCUS) )
 		{
-			a = 255 * (0.5f + 0.5f * sin((float)uiStatic.realTime / (UI_PULSE_DIVISOR * 2)));
+			a = static_cast<int>(255.0f * (0.5f + 0.5f * sinf((float)uiStatic.realTime / (UI_PULSE_DIVISOR * 2))));
 
 			DrawButton(r, g, b, a, rects, BUTTON_FOCUS);
 			DrawButton(r, g, b, 255, rects, BUTTON_NOFOCUS);
@@ -351,7 +351,7 @@ void CMenuPicButton::Draw()
 		}
 		else if ( eFocusAnimation == QM_PULSEIFFOCUS )
 		{
-			float pulsar = 0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR);
+			float pulsar = 0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR);
 
 			UI_DrawString(
 				uiStatic.hHeavyBlur,
@@ -393,7 +393,7 @@ void CMenuPicButton::Draw()
 		}
 		else if ( eFocusAnimation == QM_PULSEIFFOCUS )
 		{
-			float pulsar = 0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR);
+			float pulsar = 0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR);
 
 			UI_DrawString(
 				font,

@@ -54,10 +54,10 @@ void SND_MoveMouth8(channel_t* ch, wavdata_t* pSource, int count)
 	if ( ch->isSentence )
 	{
 		if ( ch->currentWord )
-			pos = ch->currentWord->sample;
+			pos = (int)ch->currentWord->sample;
 	}
 	else
-		pos = ch->pMixer.sample;
+		pos = (int)ch->pMixer.sample;
 
 	count = S_GetOutputData(pSource, (void**)&pdata, pos, count, ch->use_loop);
 	if ( pdata == NULL )
@@ -67,7 +67,7 @@ void SND_MoveMouth8(channel_t* ch, wavdata_t* pSource, int count)
 	scount = pMouth->sndcount;
 	savg = 0;
 
-	while ( i < count && scount < CAVGSAMPLES )
+	while ( i < (uint)count && scount < CAVGSAMPLES )
 	{
 		data = pdata[i];
 		savg += abs(data);
@@ -81,7 +81,7 @@ void SND_MoveMouth8(channel_t* ch, wavdata_t* pSource, int count)
 
 	if ( pMouth->sndcount >= CAVGSAMPLES )
 	{
-		pMouth->mouthopen = pMouth->sndavg / CAVGSAMPLES;
+		pMouth->mouthopen = (byte)(pMouth->sndavg / CAVGSAMPLES);
 		pMouth->sndavg = 0;
 		pMouth->sndcount = 0;
 	}
@@ -105,10 +105,10 @@ void SND_MoveMouth16(channel_t* ch, wavdata_t* pSource, int count)
 	if ( ch->isSentence )
 	{
 		if ( ch->currentWord )
-			pos = ch->currentWord->sample;
+			pos = (int)ch->currentWord->sample;
 	}
 	else
-		pos = ch->pMixer.sample;
+		pos = (int)ch->pMixer.sample;
 
 	count = S_GetOutputData(pSource, (void**)&pdata, pos, count, ch->use_loop);
 	if ( pdata == NULL )
@@ -118,7 +118,7 @@ void SND_MoveMouth16(channel_t* ch, wavdata_t* pSource, int count)
 	scount = pMouth->sndcount;
 	savg = 0;
 
-	while ( i < count && scount < CAVGSAMPLES )
+	while ( i < (uint)count && scount < CAVGSAMPLES )
 	{
 		data = pdata[i];
 		data = (bound(-32767, data, 0x7ffe) >> 8);
@@ -133,7 +133,7 @@ void SND_MoveMouth16(channel_t* ch, wavdata_t* pSource, int count)
 
 	if ( pMouth->sndcount >= CAVGSAMPLES )
 	{
-		pMouth->mouthopen = pMouth->sndavg / CAVGSAMPLES;
+		pMouth->mouthopen = (byte)(pMouth->sndavg / CAVGSAMPLES);
 		pMouth->sndavg = 0;
 		pMouth->sndcount = 0;
 	}
@@ -184,7 +184,7 @@ void SND_MoveMouthRaw(rawchan_t* ch, portable_samplepair_t* pData, int count)
 	scount = pMouth->sndcount;
 	savg = 0;
 
-	while ( i < count && scount < CAVGSAMPLES )
+	while ( i < (uint)count && scount < CAVGSAMPLES )
 	{
 		data = pData[i].left;  // mono sound anyway
 		data = (bound(-32767, data, 0x7ffe) >> 8);
@@ -199,7 +199,7 @@ void SND_MoveMouthRaw(rawchan_t* ch, portable_samplepair_t* pData, int count)
 
 	if ( pMouth->sndcount >= CAVGSAMPLES )
 	{
-		pMouth->mouthopen = pMouth->sndavg / CAVGSAMPLES;
+		pMouth->mouthopen = (byte)(pMouth->sndavg / CAVGSAMPLES);
 		pMouth->sndavg = 0;
 		pMouth->sndcount = 0;
 	}

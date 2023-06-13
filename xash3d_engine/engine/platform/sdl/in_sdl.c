@@ -88,18 +88,18 @@ int Platform_GetClipboardText(char* buffer, size_t size)
 
 	if ( buffer && size > 0 )
 	{
-		textLength = Q_strncpy(buffer, sdlbuffer, size);
+		textLength = (int)Q_strncpy(buffer, sdlbuffer, size);
 	}
 	else
 	{
-		textLength = Q_strlen(sdlbuffer);
+		textLength = (int)Q_strlen(sdlbuffer);
 	}
 	SDL_free(sdlbuffer);
 	return textLength;
 #else  // SDL_VERSION_ATLEAST( 2, 0, 0 )
 	buffer[0] = 0;
-#endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
 	return 0;
+#endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
 }
 
 /*
@@ -123,8 +123,12 @@ Platform_Vibrate
 */
 void Platform_Vibrate(float time, char flags)
 {
+	(void)flags;
+
 	if ( g_joy )
-		SDL_JoystickRumble(g_joy, 0xFFFF, 0xFFFF, time * 1000.0f);
+	{
+		SDL_JoystickRumble(g_joy, 0xFFFF, 0xFFFF, (Uint32)(time * 1000.0f));
+	}
 }
 
 #if !XASH_PSVITA
@@ -224,6 +228,8 @@ static int SDLash_JoyInit_New(int numjoy)
 {
 	int count, numJoysticks, i;
 
+	(void)numjoy;
+
 	Con_Reportf("Joystick: SDL GameController API\n");
 	if ( SDL_WasInit(SDL_INIT_GAMECONTROLLER) != SDL_INIT_GAMECONTROLLER && SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) )
 	{
@@ -299,7 +305,7 @@ SDLash_FreeCursors
 void SDLash_FreeCursors(void)
 {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	int i = 0;
+	size_t i = 0;
 
 	for ( ; i < ARRAYSIZE(cursors.cursors); i++ )
 	{

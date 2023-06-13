@@ -70,11 +70,11 @@ CMenuVidOptions::UpdateConfig
 */
 void CMenuVidOptions::UpdateConfig(void)
 {
-	float val1 = RemapVal(gammaIntensity.GetCurrentValue(), 0.0, 1.0, 1.8, 3.0);
-	float val2 = RemapVal(glareReduction.GetCurrentValue(), 0.0, 1.0, 0.0, 3.0);
+	float val1 = RemapVal(gammaIntensity.GetCurrentValue(), 0.0f, 1.0f, 1.8f, 3.0f);
+	float val2 = RemapVal(glareReduction.GetCurrentValue(), 0.0f, 1.0f, 0.0f, 3.0f);
 	EngFuncs::CvarSetValue("gamma", val1);
 	EngFuncs::CvarSetValue("brightness", val2);
-	EngFuncs::ProcessImage(hTestImage, val1, val2);
+	EngFuncs::ProcessImage(hTestImage, val1, static_cast<int>(val2));
 }
 
 void CMenuVidOptions::GetConfig(void)
@@ -84,7 +84,7 @@ void CMenuVidOptions::GetConfig(void)
 
 	gammaIntensity.SetCurrentValue(RemapVal(val1, 1.8f, 3.0f, 0.0f, 1.0f));
 	glareReduction.SetCurrentValue(RemapVal(val2, 0.0f, 3.0f, 0.0f, 1.0f));
-	EngFuncs::ProcessImage(hTestImage, val1, val2);
+	EngFuncs::ProcessImage(hTestImage, val1, static_cast<int>(val2));
 
 	gammaIntensity.SetOriginalValue(val1);
 	glareReduction.SetOriginalValue(val2);
@@ -110,7 +110,7 @@ void CMenuVidOptions::CMenuVidPreview::Draw()
 {
 	int color = 0xFFFF0000;  // 255, 0, 0, 255
 	int viewport[4];
-	int viewsize, size, sb_lines;
+	int viewsize, localSize, sb_lines;
 
 #if LEGACY_VIEWSIZE
 	viewsize = EngFuncs::GetCvarFloat("viewsize");
@@ -125,10 +125,10 @@ void CMenuVidOptions::CMenuVidPreview::Draw()
 	else
 		sb_lines = 48;
 
-	size = Q_min(viewsize, 100);
+	localSize = Q_min(viewsize, 100);
 
-	viewport[2] = m_scSize.w * size / 100;
-	viewport[3] = m_scSize.h * size / 100;
+	viewport[2] = m_scSize.w * localSize / 100;
+	viewport[3] = m_scSize.h * localSize / 100;
 
 	if ( viewport[3] > m_scSize.h - sb_lines )
 		viewport[3] = m_scSize.h - sb_lines;
@@ -182,14 +182,14 @@ void CMenuVidOptions::_Init(void)
 
 	gammaIntensity.SetNameAndStatus(L("GameUI_Gamma"), L("Set gamma value"));
 	gammaIntensity.SetCoord(72, height);
-	gammaIntensity.Setup(0.0, 1.0, 0.025);
+	gammaIntensity.Setup(0.0f, 1.0f, 0.025f);
 	gammaIntensity.onChanged = VoidCb(&CMenuVidOptions::UpdateConfig);
 	gammaIntensity.onCvarGet = VoidCb(&CMenuVidOptions::GetConfig);
 	height += 60;
 
 	glareReduction.SetCoord(72, height);
 	glareReduction.SetNameAndStatus(L("GameUI_Brightness"), L("Set brightness level"));
-	glareReduction.Setup(0, 1.0, 0.025);
+	glareReduction.Setup(0.0f, 1.0f, 0.025f);
 	glareReduction.onChanged = VoidCb(&CMenuVidOptions::UpdateConfig);
 	glareReduction.onCvarGet = VoidCb(&CMenuVidOptions::GetConfig);
 	height += 60;

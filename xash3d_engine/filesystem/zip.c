@@ -28,6 +28,7 @@ GNU General Public License for more details.
 #include "crtlib.h"
 #include "common/com_strings.h"
 #include "miniz.h"
+#include "PlatformLib/File.h"
 
 #define ZIP_HEADER_LF (('K' << 8) + ('P') + (0x03 << 16) + (0x04 << 24))
 #define ZIP_HEADER_SPANNED ((0x08 << 24) + (0x07 << 16) + ('K' << 8) + 'P')
@@ -137,16 +138,17 @@ static void FS_EnsureOpenZip(zip_t* zip)
 
 	if ( fs_last_zip && (fs_last_zip->handle != -1) )
 	{
-		close(fs_last_zip->handle);
+		PlatformLib_Close(fs_last_zip->handle);
 		fs_last_zip->handle = -1;
 	}
 	fs_last_zip = zip;
 	if ( zip && (zip->handle == -1) )
-		zip->handle = open(zip->filename, O_RDONLY | O_BINARY);
+		zip->handle = PlatformLib_Open(zip->filename, O_RDONLY | O_BINARY);
 }
 #else
 static void FS_EnsureOpenZip(zip_t* zip)
 {
+	(void)zip;
 }
 #endif
 
@@ -163,7 +165,7 @@ static void FS_CloseZIP(zip_t* zip)
 	FS_EnsureOpenZip(NULL);
 
 	if ( zip->handle >= 0 )
-		close(zip->handle);
+		PlatformLib_Close(zip->handle);
 
 	Mem_Free(zip);
 }
@@ -175,7 +177,7 @@ FS_Close_ZIP
 */
 static void FS_Close_ZIP(searchpath_t* search)
 {
-	FS_CloseZIP(search->zip);
+	FS_CloseZIP(search->pkg.zip);
 }
 
 /*
@@ -205,7 +207,7 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 	zip_t* zip = (zip_t*)Mem_Calloc(fs_mempool, sizeof(*zip));
 	fs_size_t c;
 
-	zip->handle = open(zipfile, O_RDONLY | O_BINARY);
+	zip->handle = PlatformLib_Open(zipfile, O_RDONLY | O_BINARY);
 
 	if ( zip->handle < 0 )
 	{
@@ -218,7 +220,7 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 		return NULL;
 	}
 
-	length = lseek(zip->handle, 0, SEEK_END);
+	length = (fs_offset_t)PlatformLib_LSeek(zip->handle, 0, SEEK_END);
 
 	if ( length > UINT_MAX )
 	{
@@ -231,9 +233,9 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 		return NULL;
 	}
 
-	lseek(zip->handle, 0, SEEK_SET);
+	PlatformLib_LSeek(zip->handle, 0, SEEK_SET);
 
-	c = read(zip->handle, &signature, sizeof(signature));
+	c = PlatformLib_Read(zip->handle, &signature, sizeof(signature));
 
 	if ( c != sizeof(signature) || signature == ZIP_HEADER_EOCD )
 	{
@@ -258,13 +260,13 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 	}
 
 	// Find oecd
-	lseek(zip->handle, 0, SEEK_SET);
+	PlatformLib_LSeek(zip->handle, 0, SEEK_SET);
 	filepos = length;
 
 	while ( filepos > 0 )
 	{
-		lseek(zip->handle, filepos, SEEK_SET);
-		c = read(zip->handle, &signature, sizeof(signature));
+		PlatformLib_LSeek(zip->handle, filepos, SEEK_SET);
+		c = PlatformLib_Read(zip->handle, &signature, sizeof(signature));
 
 		if ( c == sizeof(signature) && signature == ZIP_HEADER_EOCD )
 			break;
@@ -283,7 +285,7 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 		return NULL;
 	}
 
-	c = read(zip->handle, &header_eocd, sizeof(header_eocd));
+	c = PlatformLib_Read(zip->handle, &header_eocd, sizeof(header_eocd));
 
 	if ( c != sizeof(header_eocd) )
 	{
@@ -297,14 +299,14 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 	}
 
 	// Move to CDF start
-	lseek(zip->handle, header_eocd.central_directory_offset, SEEK_SET);
+	PlatformLib_LSeek(zip->handle, header_eocd.central_directory_offset, SEEK_SET);
 
 	// Calc count of files in archive
 	info = (zipfile_t*)Mem_Calloc(fs_mempool, sizeof(*info) * header_eocd.total_central_directory_record);
 
 	for ( i = 0; i < header_eocd.total_central_directory_record; i++ )
 	{
-		c = read(zip->handle, &header_cdf, sizeof(header_cdf));
+		c = PlatformLib_Read(zip->handle, &header_cdf, sizeof(header_cdf));
 
 		if ( c != sizeof(header_cdf) || header_cdf.signature != ZIP_HEADER_CDF )
 		{
@@ -321,7 +323,7 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 		if ( header_cdf.uncompressed_size && header_cdf.filename_len && (header_cdf.filename_len < MAX_SYSPATH) )
 		{
 			memset(&filename_buffer, '\0', MAX_SYSPATH);
-			c = read(zip->handle, &filename_buffer, header_cdf.filename_len);
+			c = PlatformLib_Read(zip->handle, &filename_buffer, header_cdf.filename_len);
 
 			if ( c != header_cdf.filename_len )
 			{
@@ -343,13 +345,19 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 			numpackfiles++;
 		}
 		else
-			lseek(zip->handle, header_cdf.filename_len, SEEK_CUR);
+		{
+			PlatformLib_LSeek(zip->handle, header_cdf.filename_len, SEEK_CUR);
+		}
 
 		if ( header_cdf.extrafield_len )
-			lseek(zip->handle, header_cdf.extrafield_len, SEEK_CUR);
+		{
+			PlatformLib_LSeek(zip->handle, header_cdf.extrafield_len, SEEK_CUR);
+		}
 
 		if ( header_cdf.file_commentary_len )
-			lseek(zip->handle, header_cdf.file_commentary_len, SEEK_CUR);
+		{
+			PlatformLib_LSeek(zip->handle, header_cdf.file_commentary_len, SEEK_CUR);
+		}
 	}
 
 	// recalculate offsets
@@ -357,8 +365,8 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 	{
 		zip_header_t header;
 
-		lseek(zip->handle, info[i].offset, SEEK_SET);
-		c = read(zip->handle, &header, sizeof(header));
+		PlatformLib_LSeek(zip->handle, info[i].offset, SEEK_SET);
+		c = PlatformLib_Read(zip->handle, &header, sizeof(header));
 
 		if ( c != sizeof(header) )
 		{
@@ -384,7 +392,7 @@ static zip_t* FS_LoadZip(const char* zipfile, int* error)
 
 #ifdef XASH_REDUCE_FD
 	// will reopen when needed
-	close(zip->handle);
+	PlatformLib_Close(zip->handle);
 	zip->handle = -1;
 #endif
 
@@ -404,7 +412,11 @@ Open a packed file using its package file descriptor
 file_t* FS_OpenFile_ZIP(searchpath_t* search, const char* filename, const char* mode, int pack_ind)
 {
 	zipfile_t* pfile;
-	pfile = &search->zip->files[pack_ind];
+
+	(void)filename;
+	(void)mode;
+
+	pfile = &search->pkg.zip->files[pack_ind];
 
 	// compressed files handled in Zip_LoadFile
 	if ( pfile->flags != ZIP_COMPRESSION_NO_COMPRESSION )
@@ -413,7 +425,7 @@ file_t* FS_OpenFile_ZIP(searchpath_t* search, const char* filename, const char* 
 		return NULL;
 	}
 
-	return FS_OpenHandle(search->filename, search->zip->handle, pfile->offset, pfile->size);
+	return FS_OpenHandle(search->filename, search->pkg.zip->handle, pfile->offset, pfile->size);
 }
 
 /*
@@ -429,26 +441,31 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 	zipfile_t* file = NULL;
 	byte *compressed_buffer = NULL, *decompressed_buffer = NULL;
 	int zlib_result = 0;
-	dword test_crc, final_crc;
 	z_stream decompress_stream;
 	size_t c;
 
 	if ( sizeptr )
+	{
 		*sizeptr = 0;
+	}
 
 	search = FS_FindFile(path, &index, NULL, 0, gamedironly);
 
 	if ( !search || search->type != SEARCHPATH_ZIP )
+	{
 		return NULL;
+	}
 
-	file = &search->zip->files[index];
+	file = &search->pkg.zip->files[index];
 
-	FS_EnsureOpenZip(search->zip);
+	FS_EnsureOpenZip(search->pkg.zip);
 
-	if ( lseek(search->zip->handle, file->offset, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(search->pkg.zip->handle, file->offset, SEEK_SET) == -1 )
+	{
 		return NULL;
+	}
 
-	/*if( read( search->zip->handle, &header, sizeof( header ) ) < 0 )
+	/*if( PlatformLib_Read( search->pkg.zip->handle, &header, sizeof( header ) ) < 0 )
 		return NULL;
 
 	if( header.signature != ZIP_HEADER_LF )
@@ -462,8 +479,8 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 		decompressed_buffer = Mem_Malloc(fs_mempool, file->size + 1);
 		decompressed_buffer[file->size] = '\0';
 
-		c = read(search->zip->handle, decompressed_buffer, file->size);
-		if ( c != file->size )
+		c = PlatformLib_Read(search->pkg.zip->handle, decompressed_buffer, file->size);
+		if ( c != (size_t)file->size )
 		{
 			Con_Reportf(S_ERROR "Zip_LoadFile: %s size doesn't match\n", file->name);
 			return NULL;
@@ -483,19 +500,22 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 		}
 #endif
 		if ( sizeptr )
+		{
 			*sizeptr = file->size;
+		}
 
 		FS_EnsureOpenZip(NULL);
 		return decompressed_buffer;
 	}
-	else if ( file->flags == ZIP_COMPRESSION_DEFLATED )
+
+	if ( file->flags == ZIP_COMPRESSION_DEFLATED )
 	{
 		compressed_buffer = Mem_Malloc(fs_mempool, file->compressed_size + 1);
 		decompressed_buffer = Mem_Malloc(fs_mempool, file->size + 1);
 		decompressed_buffer[file->size] = '\0';
 
-		c = read(search->zip->handle, compressed_buffer, file->compressed_size);
-		if ( c != file->compressed_size )
+		c = PlatformLib_Read(search->pkg.zip->handle, compressed_buffer, file->compressed_size);
+		if ( c != (size_t)file->compressed_size )
 		{
 			Con_Reportf(S_ERROR "Zip_LoadFile: %s compressed size doesn't match\n", file->name);
 			return NULL;
@@ -540,29 +560,24 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 			}
 #endif
 			if ( sizeptr )
+			{
 				*sizeptr = file->size;
+			}
 
 			FS_EnsureOpenZip(NULL);
 			return decompressed_buffer;
 		}
-		else
-		{
-			Con_Reportf(
-				S_ERROR "Zip_LoadFile: %s : error while file decompressing. Zlib return code %d.\n",
-				file->name,
-				zlib_result);
-			Mem_Free(compressed_buffer);
-			Mem_Free(decompressed_buffer);
-			return NULL;
-		}
-	}
-	else
-	{
-		Con_Reportf(S_ERROR "Zip_LoadFile: %s : file compressed with unknown algorithm.\n", file->name);
+
+		Con_Reportf(
+			S_ERROR "Zip_LoadFile: %s : error while file decompressing. Zlib return code %d.\n",
+			file->name,
+			zlib_result);
+		Mem_Free(compressed_buffer);
+		Mem_Free(decompressed_buffer);
 		return NULL;
 	}
 
-	FS_EnsureOpenZip(NULL);
+	Con_Reportf(S_ERROR "Zip_LoadFile: %s : file compressed with unknown algorithm.\n", file->name);
 	return NULL;
 }
 
@@ -574,7 +589,8 @@ FS_FileTime_ZIP
 */
 int FS_FileTime_ZIP(searchpath_t* search, const char* filename)
 {
-	return search->zip->filetime;
+	(void)filename;
+	return (int)search->pkg.zip->filetime;
 }
 
 /*
@@ -585,7 +601,7 @@ FS_PrintInfo_ZIP
 */
 void FS_PrintInfo_ZIP(searchpath_t* search, char* dst, size_t size)
 {
-	Q_snprintf(dst, size, "%s (%i files)", search->filename, search->zip->numfiles);
+	Q_snprintf(dst, size, "%s (%i files)", search->filename, search->pkg.zip->numfiles);
 }
 
 /*
@@ -600,19 +616,19 @@ int FS_FindFile_ZIP(searchpath_t* search, const char* path, char* fixedname, siz
 
 	// look for the file (binary search)
 	left = 0;
-	right = search->zip->numfiles - 1;
+	right = search->pkg.zip->numfiles - 1;
 	while ( left <= right )
 	{
 		int diff;
 
 		middle = (left + right) / 2;
-		diff = Q_stricmp(search->zip->files[middle].name, path);
+		diff = Q_stricmp(search->pkg.zip->files[middle].name, path);
 
 		// Found it
 		if ( !diff )
 		{
 			if ( fixedname )
-				Q_strncpy(fixedname, search->zip->files[middle].name, len);
+				Q_strncpy(fixedname, search->pkg.zip->files[middle].name, len);
 			return middle;
 		}
 
@@ -638,9 +654,11 @@ void FS_Search_ZIP(searchpath_t* search, stringlist_t* list, const char* pattern
 	const char *slash, *backslash, *colon, *separator;
 	int j, i;
 
-	for ( i = 0; i < search->zip->numfiles; i++ )
+	(void)caseinsensitive;
+
+	for ( i = 0; i < search->pkg.zip->numfiles; i++ )
 	{
-		Q_strncpy(temp, search->zip->files[i].name, sizeof(temp));
+		Q_strncpy(temp, search->pkg.zip->files[i].name, sizeof(temp));
 		while ( temp[0] )
 		{
 			if ( matchpattern(temp, pattern, true) )
@@ -708,7 +726,7 @@ qboolean FS_AddZip_Fullpath(const char* zipfile, qboolean* already_loaded, int f
 
 		search = (searchpath_t*)Mem_Calloc(fs_mempool, sizeof(searchpath_t));
 		Q_strncpy(search->filename, zipfile, sizeof(search->filename));
-		search->zip = zip;
+		search->pkg.zip = zip;
 		search->type = SEARCHPATH_ZIP;
 		search->next = fs_searchpaths;
 		search->flags = flags;

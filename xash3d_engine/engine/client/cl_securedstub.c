@@ -195,127 +195,134 @@ typedef struct modfuncs_s
 
 static void DstInitialize(cl_enginefunc_t** pEnginefuncs, int* iVersion)
 {
-	// stub
+	(void)pEnginefuncs;
+	(void)iVersion;
 }
 
 static void DstInit(void)
 {
-	// stub
 }
 
 static void DstVidInit(void)
 {
-	// stub
 }
 
 static void DstRedraw(float* flTime, int* intermission)
 {
-	// stub
+	(void)flTime;
+	(void)intermission;
 }
 
 static void DstUpdateClientData(client_data_t** cdata, float* flTime)
 {
-	// stub
+	(void)cdata;
+	(void)flTime;
 }
 
 static void DstReset(void)
 {
-	// stub
+
 }
 
 static void DstPlayerMove(struct playermove_s** ppmove, int* server)
 {
-	// stub
+	(void)ppmove;
+	(void)server;
 }
 
 static void DstPlayerMoveInit(struct playermove_s** ppmove)
 {
-	// stub
+	(void)ppmove;
 }
 
 static void DstPlayerMoveTexture(char** name)
 {
-	// stub
+	(void)name;
 }
 
 static void DstIN_ActivateMouse(void)
 {
-	// stub
+
 }
 
 static void DstIN_DeactivateMouse(void)
 {
-	// stub
+
 }
 
 static void DstIN_MouseEvent(int* mstate)
 {
-	// stub
+	(void)mstate;
 }
 
 static void DstIN_ClearStates(void)
 {
-	// stub
+
 }
 
 static void DstIN_Accumulate(void)
 {
-	// stub
+
 }
 
 static void DstCL_CreateMove(float* frametime, struct usercmd_s** cmd, int* active)
 {
-	// stub
+	(void)frametime;
+	(void)cmd;
+	(void)active;
 }
 
 static void DstCL_IsThirdPerson(void)
 {
-	// stub
+
 }
 
 static void DstCL_CameraOffset(float** ofs)
 {
-	// stub
+	(void)ofs;
 }
 
 static void DstKB_Find(const char** name)
 {
-	// stub
+	(void)name;
 }
 
 static void DstCAM_Think(void)
 {
-	// stub
+
 }
 
 static void DstCalcRefdef(ref_params_t** pparams)
 {
-	// stub
+	(void)pparams;
 }
 
 static void DstAddEntity(int* type, cl_entity_t** ent, const char** modelname)
 {
-	// stub
+	(void)type;
+	(void)ent;
+	(void)modelname;
 }
 
 static void DstCreateEntities(void)
 {
-	// stub
+
 }
 
 static void DstDrawNormalTriangles(void)
 {
-	// stub
+
 }
 
 static void DstDrawTransparentTriangles(void)
 {
-	// stub
+
 }
 
 static void DstStudioEvent(const struct mstudioevent_s** event, const cl_entity_t** entity)
 {
-	// stub
+	(void)event;
+	(void)entity;
 }
 
 static void DstPostRunCmd(
@@ -326,22 +333,28 @@ static void DstPostRunCmd(
 	double* time,
 	unsigned int* random_seed)
 {
-	// stub
+	(void)from;
+	(void)to;
+	(void)cmd;
+	(void)runfuncs;
+	(void)time;
+	(void)random_seed;
 }
 
 static void DstShutdown(void)
 {
-	// stub
 }
 
 static void DstTxferLocalOverrides(entity_state_t** state, const clientdata_t** client)
 {
-	// stub
+	(void)state;
+	(void)client;
 }
 
 static void DstProcessPlayerState(entity_state_t** dst, const entity_state_t** src)
 {
-	// stub
+	(void)dst;
+	(void)src;
 }
 
 static void DstTxferPredictionData(
@@ -352,32 +365,45 @@ static void DstTxferPredictionData(
 	weapon_data_t** wd,
 	const weapon_data_t** pwd)
 {
-	// stub
+	(void)ps;
+	(void)pps;
+	(void)pcd;
+	(void)ppcd;
+	(void)wd;
+	(void)pwd;
 }
 
 static void DstDemo_ReadBuffer(int* size, byte** buffer)
 {
-	// stub
+	(void)size;
+	(void)buffer;
 }
 
-static void DstConnectionlessPacket(const struct netadr_s** net_from, const char** args, char** buffer, int** size)
+static void DstConnectionlessPacket(const struct netadr_s** net, const char** args, char** buffer, int** size)
 {
-	// stub
+	(void)net;
+	(void)args;
+	(void)buffer;
+	(void)size;
 }
 
 static void DstGetHullBounds(int* hullnumber, float** mins, float** maxs)
 {
-	// stub
+	(void)hullnumber;
+	(void)mins;
+	(void)maxs;
 }
 
 static void DstFrame(double* time)
 {
-	// stub
+	(void)time;
 }
 
 static void DstKey_Event(int* eventcode, int* keynum, const char** pszCurrentBinding)
 {
-	// stub
+	(void)eventcode;
+	(void)keynum;
+	(void)pszCurrentBinding;
 }
 
 // NOODLECOLLIE: Removed extra function pointer at the end of this that is currently unused, to eliminate warnings.
@@ -390,22 +416,29 @@ static void DstTempEntUpdate(
 	int (**Callback_AddVisibleEntity)(
 		cl_entity_t* pEntity) /*, void ( **Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp )*/)
 {
-	// stub
+	(void)frametime;
+	(void)client_time;
+	(void)cl_gravity;
+	(void)ppTempEntFree;
+	(void)ppTempEntActive;
+	(void)Callback_AddVisibleEntity;
 }
 
 static void DstGetUserEntity(int* index)
 {
-	// stub
+	(void)index;
 }
 
 static void DstVoiceStatus(int* entindex, qboolean* bTalking)
 {
-	// stub
+	(void)entindex;
+	(void)bTalking;
 }
 
 static void DstDirectorMessage(int* iSize, void** pbuf)
 {
-	// stub
+	(void)iSize;
+	(void)pbuf;
 }
 
 static void DstGetStudioModelInterface(
@@ -413,17 +446,20 @@ static void DstGetStudioModelInterface(
 	struct r_studio_interface_s*** ppinterface,
 	struct engine_studio_api_s** pstudio)
 {
-	// stub
+	(void)version;
+	(void)ppinterface;
+	(void)pstudio;
 }
 
 static void DstChatInputPosition(int** x, int** y)
 {
-	// stub
+	(void)x;
+	(void)y;
 }
 
 static void DstGetPlayerTeam(int* iPlayer)
 {
-	// stub
+	(void)iPlayer;
 }
 
 static cldll_func_dst_t cldllFuncDst = {
@@ -473,10 +509,27 @@ static cldll_func_dst_t cldllFuncDst = {
 
 void CL_GetSecuredClientAPI(CL_EXPORT_FUNCS F)
 {
-	modfuncs_t modFuncs = {0};
+	modfuncs_t modFuncs;
+
+	// NOODLECOLLIE: Not sure at all what's going on here. The functions passed in here
+	// do not match the struct's expected functions at all. I can only assume that
+	// whatever uses this struct expects certain specific functions at these locations,
+	// which are then replaced with the proper functions after initialisation.
+	// Original call is below for posterity.
 
 	// secured client dlls need these
-	cldll_func_src_t cldllFuncSrc = {(void*)&modFuncs, NULL, (void*)&cldllFuncDst};
+	// cldll_func_src_t cldllFuncSrc = {(void*)&modFuncs, NULL, (void*)&cldllFuncDst};
+
+	typedef int (*InitFuncPtr)(cl_enginefunc_t*, int);
+	typedef int (*VidInitFuncPtr)(void);
+
+	cldll_func_src_t cldllFuncSrc;
+
+	memset(&modFuncs, 0, sizeof(modFuncs));
+	memset(&cldllFuncSrc, 0, sizeof(cldllFuncSrc));
+
+	cldllFuncSrc.pfnInitialize = (InitFuncPtr)&modFuncs;
+	cldllFuncSrc.pfnVidInit = (VidInitFuncPtr)&cldllFuncDst;
 
 	// trying to fill interface now
 	F(&cldllFuncSrc);

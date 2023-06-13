@@ -42,11 +42,11 @@ public:
 	void AttackSnd(void);
 
 	// No range attacks
-	BOOL CheckRangeAttack1(float flDot, float flDist)
+	BOOL CheckRangeAttack1(float, float)
 	{
 		return FALSE;
 	}
-	BOOL CheckRangeAttack2(float flDot, float flDist)
+	BOOL CheckRangeAttack2(float, float)
 	{
 		return FALSE;
 	}
@@ -70,15 +70,7 @@ int CBloater::Classify(void)
 //=========================================================
 void CBloater::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 120;
-#if 0
-	switch( m_Activity )
-	{
-	}
-#endif
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 120.0f;
 }
 
 int CBloater::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
@@ -89,12 +81,12 @@ int CBloater::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float 
 
 void CBloater::PainSound(void)
 {
-#if 0	
+#if 0
 	int pitch = 95 + RANDOM_LONG( 0, 9 );
 
 	switch( RANDOM_LONG( 0, 5 ) )
 	{
-	case 0: 
+	case 0:
 		EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "zombie/zo_pain1.wav", 1.0, ATTN_NORM, 0, pitch );
 		break;
 	case 1:
@@ -113,9 +105,9 @@ void CBloater::AlertSound(void)
 
 	switch( RANDOM_LONG( 0, 2 ) )
 	{
-	case 0: 
+	case 0:
 		EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "zombie/zo_alert10.wav", 1.0, ATTN_NORM, 0, pitch );
-		break; 
+		break;
 	case 1:
 		EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "zombie/zo_alert20.wav", 1.0, ATTN_NORM, 0, pitch );
 		break;
@@ -133,7 +125,7 @@ void CBloater::IdleSound(void)
 
 	switch( RANDOM_LONG( 0, 2 ) )
 	{
-	case 0: 
+	case 0:
 		EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "zombie/zo_idle1.wav", 1.0, ATTN_NORM, 0, pitch );
 		break;
 	case 1:
@@ -153,7 +145,7 @@ void CBloater::AttackSnd(void)
 
 	switch( RANDOM_LONG( 0, 1 ) )
 	{
-	case 0: 
+	case 0:
 		EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "zombie/zo_attack1.wav", 1.0, ATTN_NORM, 0, pitch );
 		break;
 	case 1:

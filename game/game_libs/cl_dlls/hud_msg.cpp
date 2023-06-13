@@ -32,8 +32,9 @@ extern float g_lastFOV;  // Vit_amiN
 
 /// USER-DEFINED SERVER MESSAGE HANDLERS
 
-int CHud::MsgFunc_ResetHUD(const char* pszName, int iSize, void* pbuf)
+int CHud::MsgFunc_ResetHUD(const char*, int iSize, void*)
 {
+	(void)iSize;
 	ASSERT(iSize == 0);
 
 	// clear all hud data
@@ -61,12 +62,12 @@ int CHud::MsgFunc_ResetHUD(const char* pszName, int iSize, void* pbuf)
 
 void CAM_ToFirstPerson(void);
 
-void CHud::MsgFunc_ViewMode(const char* pszName, int iSize, void* pbuf)
+void CHud::MsgFunc_ViewMode(const char*, int, void*)
 {
 	CAM_ToFirstPerson();
 }
 
-void CHud::MsgFunc_InitHUD(const char* pszName, int iSize, void* pbuf)
+void CHud::MsgFunc_InitHUD(const char*, int, void*)
 {
 	// prepare all hud data
 	HUDLIST* pList = m_pHudList;
@@ -83,7 +84,7 @@ void CHud::MsgFunc_InitHUD(const char* pszName, int iSize, void* pbuf)
 	pFlare = NULL;  // Vit_amiN: clear egon's beam flare
 }
 
-int CHud::MsgFunc_GameMode(const char* pszName, int iSize, void* pbuf)
+int CHud::MsgFunc_GameMode(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	m_Teamplay = READ_BYTE();
@@ -91,7 +92,7 @@ int CHud::MsgFunc_GameMode(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHud::MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
+int CHud::MsgFunc_Damage(const char*, int iSize, void* pbuf)
 {
 	int armor, blood;
 	Vector from;
@@ -105,7 +106,7 @@ int CHud::MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 	for ( i = 0; i < 3; i++ )
 		from[i] = READ_COORD();
 
-	count = (blood * 0.5) + (armor * 0.5);
+	count = (blood * 0.5f) + (armor * 0.5f);
 
 	if ( count < 10 )
 		count = 10;
@@ -114,7 +115,7 @@ int CHud::MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHud::MsgFunc_Concuss(const char* pszName, int iSize, void* pbuf)
+int CHud::MsgFunc_Concuss(const char*, int iSize, void* pbuf)
 {
 	int r, g, b;
 	BEGIN_READ(pbuf, iSize);
@@ -122,7 +123,11 @@ int CHud::MsgFunc_Concuss(const char* pszName, int iSize, void* pbuf)
 	if ( m_iConcussionEffect )
 	{
 		UnpackRGB(r, g, b, RGB_YELLOWISH);  // Vit_amiN: fixed
-		this->m_StatusIcons.EnableIcon("dmg_concuss", r, g, b);
+		this->m_StatusIcons.EnableIcon(
+			"dmg_concuss",
+			static_cast<unsigned char>(r),
+			static_cast<unsigned char>(g),
+			static_cast<unsigned char>(b));
 	}
 	else
 		this->m_StatusIcons.DisableIcon("dmg_concuss");

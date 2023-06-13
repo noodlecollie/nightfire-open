@@ -149,14 +149,14 @@ namespace CustomGeometry
 			points[3] = Vector(min[0], max[1], min[2]);
 		}
 
-		uint8_t baseIndex = geom->GetPointCount();
+		size_t baseIndex = geom->GetPointCount();
 
-		for ( uint32_t index = 0; index < NUM_POINTS; ++index )
+		for ( size_t index = 0; index < NUM_POINTS; ++index )
 		{
 			geom->AddPoint(points[index]);
 		}
 
-		for ( uint32_t index = 0; index < NUM_POINTS; ++index )
+		for ( size_t index = 0; index < NUM_POINTS; ++index )
 		{
 			geom->AddLineIndices(baseIndex + index, baseIndex + ((index + 1) % NUM_POINTS));
 		}
@@ -167,7 +167,7 @@ namespace CustomGeometry
 		Vector maxPoint = m_vecMin;
 		maxPoint[validAxis] = m_vecMax[validAxis];
 
-		uint8_t baseIndex = geom->GetPointCount();
+		size_t baseIndex = geom->GetPointCount();
 
 		geom->AddPoint(m_vecMin);
 		geom->AddPoint(maxPoint);
@@ -176,7 +176,7 @@ namespace CustomGeometry
 
 	uint32_t CAABBoxConstructor::GetDegenerateAxes() const
 	{
-		static constexpr float EQUALITY_TOLERANCE = 0.01;
+		static constexpr float EQUALITY_TOLERANCE = 0.01f;
 
 		uint32_t degenerateAxes = 0;
 

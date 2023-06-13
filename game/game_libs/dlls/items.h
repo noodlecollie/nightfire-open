@@ -23,7 +23,7 @@ public:
 	CBaseEntity* Respawn(void);
 	void EXPORT ItemTouch(CBaseEntity* pOther);
 	void EXPORT Materialize(void);
-	virtual BOOL MyTouch(CBasePlayer* pPlayer)
+	virtual BOOL MyTouch(CBasePlayer*)
 	{
 		return FALSE;
 	};

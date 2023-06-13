@@ -70,10 +70,6 @@ typedef struct tagPOINT
 #define FORCEINLINE __forceinline
 #endif
 
-#define open _open
-#define read _read
-#define alloca _alloca
-
 #define HSPRITE WINAPI_HSPRITE
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>

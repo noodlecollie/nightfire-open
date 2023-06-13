@@ -45,7 +45,7 @@ void CSpreadVisualiser::ConstructGeometry(const CCrosshairParameters& params)
 
 	m_ScreenDim = params.ScreenDimensions();
 	m_ScaleMinX = PADDING;
-	m_ScaleMaxX = params.ScreenDimensions().x - PADDING;
+	m_ScaleMaxX = static_cast<float>(params.ScreenDimensions().x - PADDING);
 	m_ScaleYOffset = YOFFSET_FRAC * params.ScreenDimensions().y;
 
 	const float halfScaleHeight = static_cast<float>(SCALE_HEIGHT) / 2.0f;
@@ -75,7 +75,7 @@ void CSpreadVisualiser::UpdateInaccuracyMarker(const CCrosshairParameters& param
 	const float inaccuracyX = ExtraMath::RemapLinear(params.WeaponInaccuracy(), 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	const float halfMarkerWidth = static_cast<float>(MARKER_WIDTH) / 2.0f;
 
-	uint8_t index = m_InaccuracyMarkerBegin;
+	size_t index = m_InaccuracyMarkerBegin;
 	m_Geometry->GetPoint(index++) = Vector(inaccuracyX - halfMarkerWidth, m_ScaleYOffset - SCALE_HEIGHT, 0);
 	m_Geometry->GetPoint(index++) = Vector(inaccuracyX, m_ScaleYOffset, 0);
 	m_Geometry->GetPoint(index++) = Vector(inaccuracyX + halfMarkerWidth, m_ScaleYOffset - SCALE_HEIGHT, 0);

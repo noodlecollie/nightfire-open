@@ -31,7 +31,7 @@ CMenuSpinControl::CMenuSpinControl() :
 	m_flMinValue(0),
 	m_flMaxValue(1),
 	m_flCurValue(0),
-	m_flRange(0.1),
+	m_flRange(0.1f),
 	m_pModel(NULL),
 	m_iFloatPrecision(0)
 {
@@ -95,13 +95,13 @@ bool CMenuSpinControl::KeyUp(int key)
 	if ( UI::Key::IsLeftMouse(key) && FBitSet(iFlags, QMF_HASMOUSEFOCUS) )
 	{
 		// calculate size and position for the arrows
-		arrow.w = m_scSize.h + UI_OUTLINE_WIDTH * 2 * uiStatic.scaleX;
-		arrow.h = m_scSize.h + UI_OUTLINE_WIDTH * 2 * uiStatic.scaleY;
+		arrow.w = static_cast<int>(m_scSize.h + UI_OUTLINE_WIDTH * 2 * uiStatic.scaleX);
+		arrow.h = static_cast<int>(m_scSize.h + UI_OUTLINE_WIDTH * 2 * uiStatic.scaleY);
 
-		left.x = m_scPos.x + UI_OUTLINE_WIDTH * uiStatic.scaleX;
-		left.y = m_scPos.y - UI_OUTLINE_WIDTH * uiStatic.scaleY;
-		right.x = m_scPos.x + (m_scSize.w - arrow.w) - UI_OUTLINE_WIDTH * uiStatic.scaleX;
-		right.y = m_scPos.y - UI_OUTLINE_WIDTH * uiStatic.scaleY;
+		left.x = static_cast<int>(m_scPos.x + UI_OUTLINE_WIDTH * uiStatic.scaleX);
+		left.y = static_cast<int>(m_scPos.y - UI_OUTLINE_WIDTH * uiStatic.scaleY);
+		right.x = static_cast<int>(m_scPos.x + (m_scSize.w - arrow.w) - UI_OUTLINE_WIDTH * uiStatic.scaleX);
+		right.y = static_cast<int>(m_scPos.y - UI_OUTLINE_WIDTH * uiStatic.scaleY);
 
 		// now see if either left or right arrow has focus
 		if ( UI_CursorInRect(left, arrow) )
@@ -141,7 +141,7 @@ void CMenuSpinControl::Draw(void)
 	{
 		Point coord;
 
-		coord.x = m_scPos.x + m_scSize.w + 16 * uiStatic.scaleX;
+		coord.x = static_cast<int>(m_scPos.x + m_scSize.w + 16 * uiStatic.scaleX);
 		coord.y = m_scPos.y + m_scSize.h / 2 - EngFuncs::ConsoleCharacterHeight() / 2;
 
 		int r, g, b;
@@ -151,7 +151,8 @@ void CMenuSpinControl::Draw(void)
 		EngFuncs::DrawConsoleString(coord, szStatusText);
 	}
 
-	int textHeight = m_scPos.y - (m_scChSize * 1.5f);
+	int textHeight = static_cast<int>(m_scPos.y - (m_scChSize * 1.5f));
+
 	UI_DrawString(
 		font,
 		m_scPos.x - UI_OUTLINE_WIDTH,
@@ -236,7 +237,9 @@ void CMenuSpinControl::Draw(void)
 	{
 		int color;
 
-		color = PackAlpha(colorBase, 255 * (0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR)));
+		color = PackAlpha(
+			colorBase,
+			static_cast<unsigned int>(255 * (0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR))));
 
 		UI::Scissor::PushScissor(scCenterPos, scCenterBox);
 		UI_DrawString(font, scCenterPos, scCenterBox, m_szDisplay, color, m_scChSize, eTextAlignment, textflags);
@@ -308,7 +311,7 @@ void CMenuSpinControl::Setup(CMenuBaseArrayModel* model)
 {
 	m_pModel = model;
 	m_flMinValue = 0;
-	m_flMaxValue = model->GetRows() - 1;
+	m_flMaxValue = static_cast<float>(model->GetRows() - 1);
 	m_flRange = 1;
 }
 
@@ -337,7 +340,7 @@ void CMenuSpinControl::SetCurrentValue(const char* stringValue)
 	{
 		if ( !strcmp(m_pModel->GetText(i), stringValue) )
 		{
-			m_flCurValue = i;
+			m_flCurValue = static_cast<float>(i);
 			Display();
 			return;
 		}

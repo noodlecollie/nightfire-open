@@ -98,15 +98,23 @@ int CHudMessage::XPosition(float x, int width, int totalWidth)
 	else
 	{
 		if ( x < 0 )
-			xPos = (1.0 + x) * ScreenWidth - totalWidth;  // Alight right
+		{
+			xPos = static_cast<int>((1.0f + x) * ScreenWidth - totalWidth);  // Alight right
+		}
 		else
-			xPos = x * ScreenWidth;
+		{
+			xPos = static_cast<int>(x * ScreenWidth);
+		}
 	}
 
 	if ( xPos + width > ScreenWidth )
+	{
 		xPos = ScreenWidth - width;
+	}
 	else if ( xPos < 0 )
+	{
 		xPos = 0;
+	}
 
 	return xPos;
 }
@@ -116,20 +124,30 @@ int CHudMessage::YPosition(float y, int height)
 	int yPos;
 
 	if ( y == -1 )  // Centered?
-		yPos = (ScreenHeight - height) * 0.5;
+	{
+		yPos = (ScreenHeight - height) / 2;
+	}
 	else
 	{
 		// Alight bottom?
 		if ( y < 0 )
-			yPos = (1.0 + y) * ScreenHeight - height;  // Alight bottom
+		{
+			yPos = static_cast<int>((1.0f + y) * ScreenHeight - height);  // Alight bottom
+		}
 		else  // align top
-			yPos = y * ScreenHeight;
+		{
+			yPos = static_cast<int>(y * ScreenHeight);
+		}
 	}
 
 	if ( yPos + height > ScreenHeight )
+	{
 		yPos = ScreenHeight - height;
+	}
 	else if ( yPos < 0 )
+	{
 		yPos = 0;
+	}
 
 	return yPos;
 }
@@ -175,7 +193,7 @@ void CHudMessage::MessageScanNextChar(void)
 					destRed = m_parms.pMessage->r2;
 					destGreen = m_parms.pMessage->g2;
 					destBlue = m_parms.pMessage->b2;
-					blend = 255 - (deltaTime * (1.0 / m_parms.pMessage->fxtime) * 255.0 + 0.5);
+					blend = static_cast<int>(255.0f - (deltaTime * (1.0f / m_parms.pMessage->fxtime) * 255.0f + 0.5f));
 				}
 			}
 			break;
@@ -213,18 +231,26 @@ void CHudMessage::MessageScanStart(void)
 
 			if ( m_parms.time < m_parms.pMessage->fadein )
 			{
-				m_parms.fadeBlend =
-					((m_parms.pMessage->fadein - m_parms.time) * (1.0 / m_parms.pMessage->fadein) * 255);
+				m_parms.fadeBlend = static_cast<int>(
+					(m_parms.pMessage->fadein - m_parms.time) * (1.0f / m_parms.pMessage->fadein) * 255.0f);
 			}
 			else if ( m_parms.time > m_parms.fadeTime )
 			{
 				if ( m_parms.pMessage->fadeout > 0 )
-					m_parms.fadeBlend = (((m_parms.time - m_parms.fadeTime) / m_parms.pMessage->fadeout) * 255);
+				{
+					m_parms.fadeBlend =
+						static_cast<int>(((m_parms.time - m_parms.fadeTime) / m_parms.pMessage->fadeout) * 255.0f);
+				}
 				else
+				{
 					m_parms.fadeBlend = 255;  // Pure dest (off)
+				}
 			}
 			else
+			{
 				m_parms.fadeBlend = 0;  // Pure source (on)
+			}
+
 			m_parms.charTime = 0;
 
 			if ( m_parms.pMessage->effect == 1 && (rand() % 100) < 10 )
@@ -234,9 +260,14 @@ void CHudMessage::MessageScanStart(void)
 			m_parms.fadeTime = (m_parms.pMessage->fadein * m_parms.length) + m_parms.pMessage->holdtime;
 
 			if ( m_parms.time > m_parms.fadeTime && m_parms.pMessage->fadeout > 0 )
-				m_parms.fadeBlend = (((m_parms.time - m_parms.fadeTime) / m_parms.pMessage->fadeout) * 255);
+			{
+				m_parms.fadeBlend =
+					static_cast<int>(((m_parms.time - m_parms.fadeTime) / m_parms.pMessage->fadeout) * 255.0f);
+			}
 			else
+			{
 				m_parms.fadeBlend = 0;
+			}
 			break;
 	}
 }
@@ -343,16 +374,16 @@ int CHudMessage::Draw(float fTime)
 
 			SPR_Set(
 				gHUD.GetSprite(m_HUD_title_half),
-				brightness * m_pGameTitle->r1,
-				brightness * m_pGameTitle->g1,
-				brightness * m_pGameTitle->b1);
+				static_cast<int>(brightness * m_pGameTitle->r1),
+				static_cast<int>(brightness * m_pGameTitle->g1),
+				static_cast<int>(brightness * m_pGameTitle->b1));
 			SPR_DrawAdditive(0, x, y, &gHUD.GetSpriteRect(m_HUD_title_half));
 
 			SPR_Set(
 				gHUD.GetSprite(m_HUD_title_life),
-				brightness * m_pGameTitle->r1,
-				brightness * m_pGameTitle->g1,
-				brightness * m_pGameTitle->b1);
+				static_cast<int>(brightness * m_pGameTitle->r1),
+				static_cast<int>(brightness * m_pGameTitle->g1),
+				static_cast<int>(brightness * m_pGameTitle->b1));
 			SPR_DrawAdditive(0, x + halfWidth, y, &gHUD.GetSpriteRect(m_HUD_title_life));
 
 			drawn = 1;
@@ -366,8 +397,10 @@ int CHudMessage::Draw(float fTime)
 		{
 			pMessage = m_pMessages[i];
 			if ( m_startTime[i] > gHUD.m_flTime )
+			{
 				m_startTime[i] = gHUD.m_flTime + m_parms.time - m_startTime[i] +
-					0.2;  // Server takes 0.2 seconds to spawn, adjust for this
+					0.2f;  // Server takes 0.2 seconds to spawn, adjust for this
+			}
 		}
 	}
 
@@ -445,10 +478,10 @@ void CHudMessage::MessageAdd(const char* pName, float time)
 				g_pCustomMessage.b2 = 0;
 				g_pCustomMessage.a2 = 0;
 				g_pCustomMessage.x = -1;  // Centered
-				g_pCustomMessage.y = 0.7;
-				g_pCustomMessage.fadein = 0.01;
-				g_pCustomMessage.fadeout = 1.5;
-				g_pCustomMessage.fxtime = 0.25;
+				g_pCustomMessage.y = 0.7f;
+				g_pCustomMessage.fadein = 0.01f;
+				g_pCustomMessage.fadeout = 1.5f;
+				g_pCustomMessage.fxtime = 0.25f;
 				g_pCustomMessage.holdtime = 5;
 				g_pCustomMessage.pName = g_pCustomName;
 				strcpy(g_pCustomText, pName);
@@ -485,7 +518,7 @@ void CHudMessage::MessageAdd(const char* pName, float time)
 	}
 }
 
-int CHudMessage::MsgFunc_HudText(const char* pszName, int iSize, void* pbuf)
+int CHudMessage::MsgFunc_HudText(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -503,7 +536,7 @@ int CHudMessage::MsgFunc_HudText(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudMessage::MsgFunc_GameTitle(const char* pszName, int iSize, void* pbuf)
+int CHudMessage::MsgFunc_GameTitle(const char*, int, void*)
 {
 	m_pGameTitle = TextMessageGet("GAMETITLE");
 	if ( m_pGameTitle != NULL )

@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include <stdlib.h>
 #include <fcntl.h>
 #include "platform/platform.h"
+#include "PlatformLib/File.h"
 
 qboolean Sys_DebuggerPresent(void)
 {
@@ -24,12 +25,12 @@ qboolean Sys_DebuggerPresent(void)
 	ssize_t num_read;
 	int status_fd;
 
-	status_fd = open("/proc/self/status", O_RDONLY);
+	status_fd = PlatformLib_Open("/proc/self/status", O_RDONLY);
 	if ( status_fd == -1 )
 		return 0;
 
-	num_read = read(status_fd, buf, sizeof(buf));
-	close(status_fd);
+	num_read = PlatformLib_Read(status_fd, buf, sizeof(buf));
+	PlatformLib_Close(status_fd);
 
 	if ( num_read > 0 )
 	{

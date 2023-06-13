@@ -58,11 +58,11 @@ public:
 	static const char* pAttackMissSounds[];
 
 	// No range attacks
-	BOOL CheckRangeAttack1(float flDot, float flDist)
+	BOOL CheckRangeAttack1(float, float)
 	{
 		return FALSE;
 	}
-	BOOL CheckRangeAttack2(float flDot, float flDist)
+	BOOL CheckRangeAttack2(float, float)
 	{
 		return FALSE;
 	}
@@ -120,15 +120,7 @@ int CZombie::Classify(void)
 //=========================================================
 void CZombie::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 120;
-#if 0
-	switch ( m_Activity )
-	{
-	}
-#endif
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 120.0f;
 }
 
 int CZombie::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
@@ -140,7 +132,7 @@ int CZombie::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 		vecDir = vecDir.Normalize();
 		float flForce = DamageForce(flDamage);
 		pev->velocity = pev->velocity + vecDir * flForce;
-		flDamage *= 0.3;
+		flDamage *= 0.3f;
 	}
 
 	// HACK HACK -- until we fix this.
@@ -220,7 +212,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 		{
 			// do stuff for this event.
 			// ALERT( at_console, "Slash right!\n" );
-			CBaseEntity* pHurt = CheckTraceHullAttack(70, gSkillData.zombieDmgOneSlash, DMG_SLASH);
+			CBaseEntity* pHurt = CheckTraceHullAttack(70, static_cast<int>(gSkillData.zombieDmgOneSlash), DMG_SLASH);
 			if ( pHurt )
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
@@ -257,7 +249,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 		{
 			// do stuff for this event.
 			// ALERT( at_console, "Slash left!\n" );
-			CBaseEntity* pHurt = CheckTraceHullAttack(70, gSkillData.zombieDmgOneSlash, DMG_SLASH);
+			CBaseEntity* pHurt = CheckTraceHullAttack(70, static_cast<int>(gSkillData.zombieDmgOneSlash), DMG_SLASH);
 			if ( pHurt )
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
@@ -292,7 +284,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 		case ZOMBIE_AE_ATTACK_BOTH:
 		{
 			// do stuff for this event.
-			CBaseEntity* pHurt = CheckTraceHullAttack(70, gSkillData.zombieDmgBothSlash, DMG_SLASH);
+			CBaseEntity* pHurt = CheckTraceHullAttack(70, static_cast<int>(gSkillData.zombieDmgBothSlash), DMG_SLASH);
 			if ( pHurt )
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )

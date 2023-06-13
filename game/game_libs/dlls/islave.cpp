@@ -151,7 +151,7 @@ int CISlave::IRelationship(CBaseEntity* pTarget)
 	return CBaseMonster::IRelationship(pTarget);
 }
 
-void CISlave::CallForHelp(const char* szClassname, float flDist, EHANDLE hEnemy, Vector& vecLocation)
+void CISlave::CallForHelp(const char*, float flDist, EHANDLE hEnemy, Vector& vecLocation)
 {
 	// ALERT( at_aiconsole, "help " );
 
@@ -183,7 +183,7 @@ void CISlave::AlertSound(void)
 {
 	if ( m_hEnemy != 0 )
 	{
-		SENTENCEG_PlayRndSz(ENT(pev), "SLV_ALERT", 0.85, ATTN_NORM, 0, m_voicePitch);
+		SENTENCEG_PlayRndSz(ENT(pev), "SLV_ALERT", 0.85f, ATTN_NORM, 0, m_voicePitch);
 
 		CallForHelp("monster_alien_slave", 512, m_hEnemy, m_vecEnemyLKP);
 	}
@@ -196,7 +196,7 @@ void CISlave::IdleSound(void)
 {
 	if ( RANDOM_LONG(0, 2) == 0 )
 	{
-		SENTENCEG_PlayRndSz(ENT(pev), "SLV_IDLE", 0.85, ATTN_NORM, 0, m_voicePitch);
+		SENTENCEG_PlayRndSz(ENT(pev), "SLV_IDLE", 0.85f, ATTN_NORM, 0, m_voicePitch);
 	}
 #if 0
 	int side = RANDOM_LONG( 0, 1 ) * 2 - 1;
@@ -277,7 +277,7 @@ void CISlave::Killed(entvars_t* pevAttacker, int iGib)
 //=========================================================
 void CISlave::SetYawSpeed(void)
 {
-	int ys;
+	float ys = 90.0f;
 
 	switch ( m_Activity )
 	{
@@ -291,7 +291,6 @@ void CISlave::SetYawSpeed(void)
 			ys = 50;
 			break;
 		default:
-			ys = 90;
 			break;
 	}
 
@@ -312,7 +311,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 		case ISLAVE_AE_CLAW:
 		{
 			// SOUND HERE!
-			CBaseEntity* pHurt = CheckTraceHullAttack(70, gSkillData.slaveDmgClaw, DMG_SLASH);
+			CBaseEntity* pHurt = CheckTraceHullAttack(70, static_cast<int>(gSkillData.slaveDmgClaw), DMG_SLASH);
 			if ( pHurt )
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
@@ -346,7 +345,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 		break;
 		case ISLAVE_AE_CLAWRAKE:
 		{
-			CBaseEntity* pHurt = CheckTraceHullAttack(70, gSkillData.slaveDmgClawrake, DMG_SLASH);
+			CBaseEntity* pHurt = CheckTraceHullAttack(70, static_cast<int>(gSkillData.slaveDmgClawrake), DMG_SLASH);
 			if ( pHurt )
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
@@ -396,7 +395,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				WRITE_BYTE(255);  // r
 				WRITE_BYTE(180);  // g
 				WRITE_BYTE(96);  // b
-				WRITE_BYTE(20 / pev->framerate);  // time * 10
+				WRITE_BYTE(static_cast<int>(20 / pev->framerate));  // time * 10
 				WRITE_BYTE(0);  // decay * 0.1
 				MESSAGE_END();
 			}
@@ -490,10 +489,12 @@ BOOL CISlave::CheckRangeAttack1(float flDot, float flDist)
 //=========================================================
 // CheckRangeAttack2 - check bravery and try to resurect dead comrades
 //=========================================================
-BOOL CISlave::CheckRangeAttack2(float flDot, float flDist)
+BOOL CISlave::CheckRangeAttack2(float, float)
 {
 	return FALSE;
 
+	// Original code that was here but was unreachable:
+#if 0
 	if ( m_flNextAttack > gpGlobals->time )
 	{
 		return FALSE;
@@ -530,6 +531,7 @@ BOOL CISlave::CheckRangeAttack2(float flDot, float flDist)
 		return TRUE;
 	else
 		return FALSE;
+#endif
 }
 
 //=========================================================
@@ -747,11 +749,13 @@ void CISlave::ArmBeam(int side)
 		return;
 
 	UTIL_MakeAimVectors(pev->angles);
-	Vector vecSrc = pev->origin + gpGlobals->v_up * 36 + gpGlobals->v_right * side * 16 + gpGlobals->v_forward * 32;
+	Vector vecSrc = pev->origin + gpGlobals->v_up * 36.0f + gpGlobals->v_right * static_cast<float>(side) * 16.0f +
+		gpGlobals->v_forward * 32.0f;
 
 	for ( int i = 0; i < 3; i++ )
 	{
-		Vector vecAim = gpGlobals->v_right * side * RANDOM_FLOAT(0, 1) + gpGlobals->v_up * RANDOM_FLOAT(-1, 1);
+		Vector vecAim =
+			gpGlobals->v_right * static_cast<float>(side) * RANDOM_FLOAT(0.0f, 1.0f) + gpGlobals->v_up * RANDOM_FLOAT(-1.0f, 1.0f);
 		TraceResult tr1;
 		UTIL_TraceLine(vecSrc, vecSrc + vecAim * 512, dont_ignore_monsters, ENT(pev), &tr1);
 		if ( flDist > tr1.flFraction )
@@ -838,8 +842,8 @@ void CISlave::ZapBeam(int side)
 
 	vecSrc = pev->origin + gpGlobals->v_up * 36;
 	vecAim = ShootAtEnemy(vecSrc);
-	float deflection = 0.01;
-	vecAim = vecAim + side * gpGlobals->v_right * RANDOM_FLOAT(0, deflection) +
+	float deflection = 0.01f;
+	vecAim = vecAim + static_cast<float>(side) * gpGlobals->v_right * RANDOM_FLOAT(0.0f, deflection) +
 		gpGlobals->v_up * RANDOM_FLOAT(-deflection, deflection);
 	UTIL_TraceLine(vecSrc, vecSrc + vecAim * 1024, dont_ignore_monsters, ENT(pev), &tr);
 

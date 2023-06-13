@@ -18,6 +18,7 @@
 #include <stdarg.h>
 #include "utlstring.h"
 #include "minbase_endian.h"
+#include <type_traits>
 
 //-----------------------------------------------------------------------------
 // Description of character conversions for string output
@@ -401,6 +402,159 @@ private:
 	// Returns max amount of data written. Used internally but externally you should use put / seek
 	int TellMaxPut() const;
 
+	template<typename T, typename ENABLE = void>
+	struct SerialisationTraits
+	{
+	};
+
+	template<typename T>
+	struct SerialisationTraits<T, typename std::enable_if<sizeof(T) == sizeof(uint8), void>::type>
+	{
+		using TRANSPORT_TYPE = uint8;
+
+		static T LittleSwap(const T& val)
+		{
+			return val;
+		}
+
+		static T BigSwap(const T& val)
+		{
+			return val;
+		}
+	};
+
+	template<typename T>
+	struct SerialisationTraits<T, typename std::enable_if<sizeof(T) == sizeof(uint16), void>::type>
+	{
+		using TRANSPORT_TYPE = uint16;
+
+		static T LittleSwap(const T& val)
+		{
+			return static_cast<T>(LittleWord(static_cast<TRANSPORT_TYPE>(val)));
+		}
+
+		static T BigSwap(const T& val)
+		{
+			return static_cast<T>(BigWord(static_cast<TRANSPORT_TYPE>(val)));
+		}
+	};
+
+	template<typename T>
+	struct SerialisationTraits<T, typename std::enable_if<sizeof(T) == sizeof(uint32), void>::type>
+	{
+		using TRANSPORT_TYPE = uint32;
+
+		static T LittleSwap(const T& val)
+		{
+			return static_cast<T>(LittleDWord(static_cast<TRANSPORT_TYPE>(val)));
+		}
+
+		static T BigSwap(const T& val)
+		{
+			return static_cast<T>(BigDWord(static_cast<TRANSPORT_TYPE>(val)));
+		}
+	};
+
+	template<typename T>
+	struct SerialisationTraits<T, typename std::enable_if<sizeof(T) == sizeof(uint64), void>::type>
+	{
+		using TRANSPORT_TYPE = uint64;
+
+		static T LittleSwap(const T& val)
+		{
+			return static_cast<T>(LittleQWord(static_cast<TRANSPORT_TYPE>(val)));
+		}
+
+		static T BigSwap(const T& val)
+		{
+			return static_cast<T>(BigQWord(static_cast<TRANSPORT_TYPE>(val)));
+		}
+	};
+
+	template<typename T>
+	void GetType(T& val, const char* fmt)
+	{
+		using Conv = SerialisationTraits<T>;
+
+		if ( !IsText() )
+		{
+			if ( CheckGet(sizeof(T)) )
+			{
+				if ( (sizeof(T) > 1) && (m_Flags & CUtlBuffer::LITTLE_ENDIAN_BUFFER) )
+				{
+					val = Conv::LittleSwap(*static_cast<const T*>(PeekGet()));
+				}
+				else if ( (sizeof(T) > 1) && (m_Flags & CUtlBuffer::BIG_ENDIAN_BUFFER) )
+				{
+					val = Conv::BigSwap(*static_cast<const T*>(PeekGet()));
+				}
+				else
+				{
+					CopyType(val);
+				}
+
+				m_Get += sizeof(T);
+			}
+			else
+			{
+				val = 0;
+			}
+		}
+		else
+		{
+			val = 0;
+			Scanf(fmt, &val);
+		}
+	}
+
+	template<typename T>
+	void PutBinData(const T& val)
+	{
+		using Conv = SerialisationTraits<T>;
+
+		if ( CheckPut(sizeof(T)) )
+		{
+			if ( m_Flags & CUtlBuffer::LITTLE_ENDIAN_BUFFER )
+			{
+				*static_cast<T*>(PeekPut()) = Conv::LittleSwap(val);
+			}
+			else if ( m_Flags & CUtlBuffer::BIG_ENDIAN_BUFFER )
+			{
+				*static_cast<T*>(PeekPut()) = Conv::BigSwap(val);
+			}
+			else
+			{
+				*static_cast<T*>(PeekPut()) = val;
+			}
+
+			m_Put += sizeof(T);
+			AddNullTermination();
+		}
+	}
+
+	template<typename T>
+	void PutType(const T& val)
+	{
+		if ( !IsText() )
+		{
+			PutBinData(val);
+		}
+		else
+		{
+			PutString(CNumStr(val));
+		}
+	}
+
+	template<typename T>
+	void CopyType(T& val)
+	{
+#if defined(__arm__) || defined(__arm64__)
+		V_memcpy(&val, PeekGet(), sizeof(T));
+#else
+		val = *static_cast<const T*>(PeekGet());
+#endif
+	}
+
 	// Copy construction and assignment are not valid
 	CUtlBuffer(const CUtlBuffer& rhs);
 	const CUtlBuffer& operator=(const CUtlBuffer& rhs);
@@ -547,69 +701,6 @@ inline void* CUtlBuffer::PeekPut(int offset)
 }
 
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-// Various put methods
-//-----------------------------------------------------------------------------
-#define PUT_BIN_DATA(_type, _val) \
-	if ( CheckPut(sizeof(_type)) ) \
-	{ \
-		if ( (sizeof(_type) > 1) && (m_Flags & CUtlBuffer::LITTLE_ENDIAN_BUFFER) ) \
-		{ \
-			if ( sizeof(_type) == 2 ) \
-			{ \
-				*(_type*)PeekPut() = (_type)LittleWord((uint16)_val); \
-			} \
-			else if ( sizeof(_type) == 4 ) \
-			{ \
-				*(_type*)PeekPut() = (_type)LittleDWord((uint32)_val); \
-			} \
-			else if ( sizeof(_type) == 8 ) \
-			{ \
-				*(_type*)PeekPut() = (_type)LittleQWord((uint64)_val); \
-			} \
-			else \
-			{ \
-				Assert(!"Type not supported"); \
-			} \
-		} \
-		else if ( (sizeof(_type) > 1) && (m_Flags & CUtlBuffer::BIG_ENDIAN_BUFFER) ) \
-		{ \
-			if ( sizeof(_type) == 2 ) \
-			{ \
-				*(_type*)PeekPut() = (_type)BigWord((uint16)_val); \
-			} \
-			else if ( sizeof(_type) == 4 ) \
-			{ \
-				*(_type*)PeekPut() = (_type)BigDWord((uint32)_val); \
-			} \
-			else if ( sizeof(_type) == 8 ) \
-			{ \
-				*(_type*)PeekPut() = (_type)BigQWord((uint64)_val); \
-			} \
-			else \
-			{ \
-				Assert(!"Type not supported"); \
-			} \
-		} \
-		else \
-		{ \
-			*(_type*)PeekPut() = _val; \
-		} \
-		m_Put += sizeof(_type); \
-		AddNullTermination(); \
-	}
-
-#define PUT_TYPE(_type, _val) \
-	if ( !IsText() ) \
-	{ \
-		PUT_BIN_DATA(_type, _val); \
-	} \
-	else \
-	{ \
-		PutString(CNumStr(_val)); \
-	}
-
-//-----------------------------------------------------------------------------
 // Methods to help with pretty-printing
 //-----------------------------------------------------------------------------
 inline bool CUtlBuffer::WasLastCharacterCR()
@@ -624,7 +715,7 @@ inline void CUtlBuffer::PutTabs()
 	int nTabCount = (m_Flags & AUTO_TABS_DISABLED) ? 0 : m_nTab;
 	for ( int i = nTabCount; --i >= 0; )
 	{
-		PUT_BIN_DATA(char, '\t');
+		PutBinData<char>('\t');
 	}
 }
 

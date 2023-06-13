@@ -101,7 +101,7 @@ void CRecharge::Precache()
 	PRECACHE_SOUND("items/suitchargeok1.wav");
 }
 
-void CRecharge::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CRecharge::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	// if it's not a player, ignore
 	if ( !FClassnameIs(pActivator->pev, "player") )
@@ -119,13 +119,13 @@ void CRecharge::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useT
 	{
 		if ( m_flSoundTime <= gpGlobals->time )
 		{
-			m_flSoundTime = gpGlobals->time + 0.62;
-			EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/suitchargeno1.wav", 0.85, ATTN_NORM);
+			m_flSoundTime = gpGlobals->time + 0.62f;
+			EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/suitchargeno1.wav", 0.85f, ATTN_NORM);
 		}
 		return;
 	}
 
-	pev->nextthink = pev->ltime + 0.25;
+	pev->nextthink = pev->ltime + 0.25f;
 	SetThink(&CRecharge::Off);
 
 	// Time to recharge yet?
@@ -146,13 +146,13 @@ void CRecharge::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useT
 	if ( !m_iOn )
 	{
 		m_iOn++;
-		EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/suitchargeok1.wav", 0.85, ATTN_NORM);
-		m_flSoundTime = 0.56 + gpGlobals->time;
+		EMIT_SOUND(ENT(pev), CHAN_ITEM, "items/suitchargeok1.wav", 0.85f, ATTN_NORM);
+		m_flSoundTime = 0.56f + gpGlobals->time;
 	}
 	if ( (m_iOn == 1) && (m_flSoundTime <= gpGlobals->time) )
 	{
 		m_iOn++;
-		EMIT_SOUND(ENT(pev), CHAN_STATIC, "items/suitcharge1.wav", 0.85, ATTN_NORM);
+		EMIT_SOUND(ENT(pev), CHAN_STATIC, "items/suitcharge1.wav", 0.85f, ATTN_NORM);
 	}
 
 	// charge the player
@@ -166,7 +166,7 @@ void CRecharge::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useT
 	}
 
 	// govern the rate of charge
-	m_flNextCharge = gpGlobals->time + 0.1;
+	m_flNextCharge = gpGlobals->time + 0.1f;
 }
 
 void CRecharge::Recharge(void)

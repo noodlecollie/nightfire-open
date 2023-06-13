@@ -18,10 +18,6 @@ GNU General Public License for more details.
 
 #define BIT(n) (1U << (n))
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4244)  // float->int
-#endif
-
 template<class T>
 inline bool isrange(T min, T value, T max)
 {

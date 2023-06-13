@@ -265,37 +265,56 @@ void _Mem_FreePool(poolhandle_t* poolptr, const char* filename, int fileline)
 	mempool_t* pool;
 	mempool_t** chainaddress;
 
-	if ( *poolptr && (pool = Mem_FindPool(*poolptr)) )
+	if ( *poolptr )
 	{
-		// unlink pool from chain
-		for ( chainaddress = &poolchain; *chainaddress && *chainaddress != pool;
-			  chainaddress = &((*chainaddress)->next) )
-			;
-		if ( *chainaddress != pool )
-			Sys_Error("Mem_FreePool: pool already free (freepool at %s:%i)\n", filename, fileline);
-		if ( pool->sentinel1 != MEMHEADER_SENTINEL1 )
-			Sys_Error(
-				"Mem_FreePool: trashed pool sentinel 1 (allocpool at %s:%i, freepool at %s:%i)\n",
-				pool->filename,
-				pool->fileline,
-				filename,
-				fileline);
-		if ( pool->sentinel2 != MEMHEADER_SENTINEL1 )
-			Sys_Error(
-				"Mem_FreePool: trashed pool sentinel 2 (allocpool at %s:%i, freepool at %s:%i)\n",
-				pool->filename,
-				pool->fileline,
-				filename,
-				fileline);
-		*chainaddress = pool->next;
+		pool = Mem_FindPool(*poolptr);
 
-		// free memory owned by the pool
-		while ( pool->chain )
-			Mem_FreeBlock(pool->chain, filename, fileline);
-		// free the pool itself
-		memset(pool, 0xBF, sizeof(mempool_t));
-		Q_free(pool);
-		*poolptr = 0;
+		if ( pool )
+		{
+			// unlink pool from chain
+			for ( chainaddress = &poolchain; *chainaddress && *chainaddress != pool;
+				  chainaddress = &((*chainaddress)->next) )
+			{
+			}
+
+			if ( *chainaddress != pool )
+			{
+				Sys_Error("Mem_FreePool: pool already free (freepool at %s:%i)\n", filename, fileline);
+			}
+
+			if ( pool->sentinel1 != MEMHEADER_SENTINEL1 )
+			{
+				Sys_Error(
+					"Mem_FreePool: trashed pool sentinel 1 (allocpool at %s:%i, freepool at %s:%i)\n",
+					pool->filename,
+					pool->fileline,
+					filename,
+					fileline);
+			}
+
+			if ( pool->sentinel2 != MEMHEADER_SENTINEL1 )
+			{
+				Sys_Error(
+					"Mem_FreePool: trashed pool sentinel 2 (allocpool at %s:%i, freepool at %s:%i)\n",
+					pool->filename,
+					pool->fileline,
+					filename,
+					fileline);
+			}
+
+			*chainaddress = pool->next;
+
+			// free memory owned by the pool
+			while ( pool->chain )
+			{
+				Mem_FreeBlock(pool->chain, filename, fileline);
+			}
+
+			// free the pool itself
+			memset(pool, 0xBF, sizeof(mempool_t));
+			Q_free(pool);
+			*poolptr = 0;
+		}
 	}
 }
 
@@ -434,8 +453,8 @@ void Mem_PrintStats(void)
 		realsize += pool->realsize;
 	}
 
-	Con_Printf("^3%lu^7 memory pools, totalling: ^1%s\n", count, Q_memprint(size));
-	Con_Printf("total allocated size: ^1%s\n", Q_memprint(realsize));
+	Con_Printf("^3%lu^7 memory pools, totalling: ^1%s\n", count, Q_memprint((float)size));
+	Con_Printf("total allocated size: ^1%s\n", Q_memprint((float)realsize));
 }
 
 void Mem_PrintList(size_t minallocationsize)
@@ -459,21 +478,29 @@ void Mem_PrintList(size_t minallocationsize)
 
 			Con_Printf(
 				"%10s (%10s actual) %s (^7%c%s change)\n",
-				Q_memprint(pool->totalsize),
-				Q_memprint(pool->realsize),
+				Q_memprint((float)pool->totalsize),
+				Q_memprint((float)pool->realsize),
 				pool->name,
 				sign,
-				Q_memprint(abs(changed_size)));
+				Q_memprint((float)abs((int)changed_size)));
 		}
 		else
 		{
-			Con_Printf("%5s (%5s actual) %s\n", Q_memprint(pool->totalsize), Q_memprint(pool->realsize), pool->name);
+			Con_Printf(
+				"%5s (%5s actual) %s\n",
+				Q_memprint((float)pool->totalsize),
+				Q_memprint((float)pool->realsize),
+				pool->name);
 		}
 
 		pool->lastchecksize = pool->totalsize;
 		for ( mem = pool->chain; mem; mem = mem->next )
+		{
 			if ( mem->size >= minallocationsize )
-				Con_Printf("%10s allocated at %s:%i\n", Q_memprint(mem->size), mem->filename, mem->fileline);
+			{
+				Con_Printf("%10s allocated at %s:%i\n", Q_memprint((float)mem->size), mem->filename, mem->fileline);
+			}
+		}
 	}
 }
 

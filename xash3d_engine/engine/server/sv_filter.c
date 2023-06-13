@@ -65,16 +65,20 @@ qboolean SV_CheckID(const char* id)
 
 	for ( filter = cidfilter; filter; filter = filter->next )
 	{
-		int len1 = Q_strlen(id), len2 = Q_strlen(filter->id);
-		int len = Q_min(len1, len2);
+		size_t len1 = Q_strlen(id);
+		size_t len2 = Q_strlen(filter->id);
+		size_t len = Q_min(len1, len2);
 
 		while ( filter->endTime && host.realtime > filter->endTime )
 		{
 			char* fid = filter->id;
 			filter = filter->next;
 			SV_RemoveID(fid);
+
 			if ( !filter )
+			{
 				return false;
+			}
 		}
 
 		if ( !Q_strncmp(id, filter->id, len) )
@@ -95,7 +99,9 @@ static void SV_BanID_f(void)
 	cidfilter_t* filter;
 
 	if ( time )
-		time = host.realtime + time * 60.0f;
+	{
+		time = (float)host.realtime + time * 60.0f;
+	}
 
 	if ( !id[0] )
 	{
@@ -104,20 +110,27 @@ static void SV_BanID_f(void)
 	}
 
 	if ( !Q_strnicmp(id, "STEAM_", 6) || !Q_strnicmp(id, "VALVE_", 6) )
+	{
 		id += 6;
+	}
+
 	if ( !Q_strnicmp(id, "XASH_", 5) )
+	{
 		id += 5;
+	}
 
 	if ( svs.clients )
 	{
 		if ( id[0] == '#' )
+		{
 			cl = SV_ClientById(Q_atoi(id + 1));
+		}
 
 		if ( !cl )
 		{
 			int i;
 			sv_client_t* cl1;
-			int len = Q_strlen(id);
+			size_t len = Q_strlen(id);
 
 			for ( i = 0, cl1 = svs.clients; i < sv_maxclients->value; i++, cl1++ )
 			{
@@ -273,6 +286,7 @@ typedef struct ipfilter_s
 
 static ipfilter_t* ipfilter = NULL;
 
+#ifdef UNUSED_FUNCTIONS
 static void SV_CleanExpiredIPFilters(void)
 {
 	ipfilter_t *f, **back;
@@ -295,11 +309,10 @@ static void SV_CleanExpiredIPFilters(void)
 			back = &f->next;
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 static int SV_FilterToString(char* dest, size_t size, qboolean config, ipfilter_t* f)
 {
-	const char* strformat;
-
 	if ( config )
 	{
 		return Q_snprintf(dest, size, "addip 0 %s/%d\n", NET_AdrToString(f->adr), f->prefixlen);
@@ -314,15 +327,21 @@ static int SV_FilterToString(char* dest, size_t size, qboolean config, ipfilter_
 
 static qboolean SV_IPFilterIncludesIPFilter(ipfilter_t* a, ipfilter_t* b)
 {
-	if ( a->adr.type6 != b->adr.type6 )
+	if ( a->adr.ip.ip6.type6 != b->adr.ip.ip6.type6)
+	{
 		return false;
+	}
 
 	// can't include bigger subnet in small
 	if ( a->prefixlen < b->prefixlen )
+	{
 		return false;
+	}
 
 	if ( a->prefixlen == b->prefixlen )
+	{
 		return NET_CompareAdr(a->adr, b->adr);
+	}
 
 	return NET_CompareAdrByMask(a->adr, b->adr, b->prefixlen);
 }
@@ -369,12 +388,14 @@ qboolean SV_CheckIP(netadr_t* adr)
 
 	for ( ; entry; entry = entry->next )
 	{
-		switch ( entry->adr.type6 )
+		switch ( entry->adr.ip.ip6.type6 )
 		{
 			case NA_IP:
 			case NA_IP6:
 				if ( NET_CompareAdrByMask(*adr, entry->adr, entry->prefixlen) )
+				{
 					return true;
+				}
 				break;
 		}
 	}
@@ -424,9 +445,13 @@ static void SV_AddIP_f(void)
 		minutes = 0;
 
 	if ( minutes != 0.0f )
-		filter.endTime = host.realtime + minutes * 60;
+	{
+		filter.endTime = (float)host.realtime + minutes * 60.0f;
+	}
 	else
+	{
 		filter.endTime = 0;
+	}
 
 	if ( !NET_StringToFilterAdr(adr, &filter.adr, &filter.prefixlen) )
 	{
@@ -503,7 +528,6 @@ static void SV_RemoveIP_f(void)
 	const char* adr = Cmd_Argv(1);
 	qboolean removeAll;
 	ipfilter_t filter;
-	int i;
 
 	if ( Cmd_Argc() != 2 && Cmd_Argc() != 3 )
 	{
@@ -630,11 +654,11 @@ void Test_StringToFilterAdr(void)
 
 		if ( ret )
 		{
-			TASSERT_EQi(f1.prefixlen, ipv4tests[i].prefixlen);
-			TASSERT_EQi(f1.adr.ip[0], ipv4tests[i].a);
-			TASSERT_EQi(f1.adr.ip[1], ipv4tests[i].b);
-			TASSERT_EQi(f1.adr.ip[2], ipv4tests[i].c);
-			TASSERT_EQi(f1.adr.ip[3], ipv4tests[i].d);
+			TASSERT_EQi(f1.prefixlen, (uint)ipv4tests[i].prefixlen);
+			TASSERT_EQi(f1.adr.ip.ip4.ip.bytes[0], ipv4tests[i].a);
+			TASSERT_EQi(f1.adr.ip.ip4.ip.bytes[1], ipv4tests[i].b);
+			TASSERT_EQi(f1.adr.ip.ip4.ip.bytes[2], ipv4tests[i].c);
+			TASSERT_EQi(f1.adr.ip.ip4.ip.bytes[3], ipv4tests[i].d);
 		}
 	}
 
@@ -647,7 +671,7 @@ void Test_StringToFilterAdr(void)
 
 		if ( ret )
 		{
-			TASSERT_EQi(f1.prefixlen, ipv6tests[i].prefixlen);
+			TASSERT_EQi(f1.prefixlen, (uint)ipv6tests[i].prefixlen);
 
 			NET_NetadrToIP6Bytes((uint8_t*)x, &f1.adr);
 

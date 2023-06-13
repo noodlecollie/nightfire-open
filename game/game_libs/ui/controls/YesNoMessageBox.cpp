@@ -45,6 +45,7 @@ CMenuYesNoMessageBox::CMenuYesNoMessageBox(bool alert) :
 	yes.bEnableTransitions = no.bEnableTransitions = false;
 
 	SET_EVENT_MULTI(yes.onReleased, {
+		(void)pSelf;
 		CMenuYesNoMessageBox* msgBox = (CMenuYesNoMessageBox*)pExtra;
 
 		if ( msgBox->bAutoHide )
@@ -53,6 +54,7 @@ CMenuYesNoMessageBox::CMenuYesNoMessageBox(bool alert) :
 	});
 
 	SET_EVENT_MULTI(no.onReleased, {
+		(void)pSelf;
 		CMenuYesNoMessageBox* msgBox = (CMenuYesNoMessageBox*)pExtra;
 
 		if ( msgBox->bAutoHide )

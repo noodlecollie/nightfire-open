@@ -44,7 +44,7 @@ void PM_ParticleLine(const vec3_t start, const vec3_t end, int pcolor, float lif
 	while ( curdist <= len )
 	{
 		VectorMA(start, curdist, diff, pos);
-		CL_Particle(pos, pcolor, life, 0, zvel);
+		CL_Particle(pos, pcolor, life, 0, (int)zvel);
 		curdist += 2.0f;
 	}
 #endif  // XASH_DEDICATED

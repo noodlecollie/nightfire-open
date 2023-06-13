@@ -87,8 +87,8 @@ void UI_LoadBmpButtons()
 
 		for ( int btn = 0; btn < 3; btn++ )
 		{
-			src_pos -= btn_sz;
-			dst_pos -= btn_sz;
+			src_pos -= static_cast<int>(btn_sz);
+			dst_pos -= static_cast<int>(btn_sz);
 			memcpy(&dst[dst_pos], &src[src_pos], btn_sz);
 
 			// fix misaligned gearbox btns

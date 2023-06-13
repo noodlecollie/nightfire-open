@@ -720,13 +720,13 @@ void SV_Status_f(void)
 			Con_Printf("%7i ", SV_CalcPing(cl));
 
 		Con_Printf("%s", cl->name);
-		l = 24 - Q_strlen(cl->name);
+		l = 24 - (int)Q_strlen(cl->name);
 		for ( j = 0; j < l; j++ )
 			Con_Printf(" ");
 		Con_Printf("%g ", (host.realtime - cl->netchan.last_received));
 		s = NET_BaseAdrToString(cl->netchan.remote_address);
 		Con_Printf("%s", s);
-		l = 22 - Q_strlen(s);
+		l = 22 - (int)Q_strlen(s);
 		for ( j = 0; j < l; j++ )
 			Con_Printf(" ");
 		Con_Printf("%5i", cl->netchan.qport);
@@ -759,7 +759,7 @@ void SV_ConSay_f(void)
 
 	if ( *p == '"' )
 	{
-		text[Q_strlen(text) - 1] = 0;
+		text[strlen(text) - 1] = 0;
 	}
 
 	Log_Printf("Server say: \"%s\"\n", text);

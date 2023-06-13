@@ -46,11 +46,11 @@ static int DEATHNOTICE_DISPLAY_TIME = 6;
 
 DeathNoticeItem rgDeathNoticeList[MAX_DEATHNOTICES + 1];
 
-const float g_ColorBlue[3] = {0.6, 0.8, 1.0};
-const float g_ColorRed[3] = {1.0, 0.25, 0.25};
-const float g_ColorGreen[3] = {0.6, 1.0, 0.6};
-const float g_ColorYellow[3] = {1.0, 0.7, 0.0};
-const float g_ColorGrey[3] = {0.8, 0.8, 0.8};
+const float g_ColorBlue[3] = {0.6f, 0.8f, 1.0f};
+const float g_ColorRed[3] = {1.0f, 0.25f, 0.25f};
+const float g_ColorGreen[3] = {0.6f, 1.0f, 0.6f};
+const float g_ColorYellow[3] = {1.0f, 0.7f, 0.0f};
+const float g_ColorGrey[3] = {0.8f, 0.8f, 0.8f};
 
 const float* GetClientColor(int clientIndex)
 {
@@ -69,8 +69,6 @@ const float* GetClientColor(int clientIndex)
 		default:
 			return g_ColorGrey;
 	}
-
-	return NULL;
 }
 
 const float* GetDefaultColor()
@@ -179,7 +177,7 @@ int CHudDeathNotice::Draw(float flTime)
 }
 
 // This message handler may be better off elsewhere
-int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf)
+int CHudDeathNotice::MsgFunc_DeathMsg(const char*, int iSize, void* pbuf)
 {
 	int i;
 	m_iFlags |= HUD_ACTIVE;
@@ -265,7 +263,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char* pszName, int iSize, void* pbuf
 
 	rgDeathNoticeList[i].iId = spr;
 
-	DEATHNOTICE_DISPLAY_TIME = CL_CvarGetFloat("hud_deathnotice_time");
+	DEATHNOTICE_DISPLAY_TIME = static_cast<int>(CL_CvarGetFloat("hud_deathnotice_time"));
 	rgDeathNoticeList[i].flDisplayTime = gHUD.m_flTime + DEATHNOTICE_DISPLAY_TIME;
 
 	if ( rgDeathNoticeList[i].iNonPlayerKill )

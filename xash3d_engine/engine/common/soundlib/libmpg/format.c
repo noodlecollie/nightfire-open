@@ -78,6 +78,8 @@ void mpg123_encodings(const int** list, size_t* number)
 
 int mpg123_encsize(int encoding)
 {
+	(void)encoding;
+
 	return sizeof(short);
 }
 
@@ -255,7 +257,7 @@ int mpg123_fmt_all(mpg123_parm_t* mp)
 		for ( rate = 0; rate < MPG123_RATES + 1; ++rate )
 		{
 			for ( enc = 0; enc < MPG123_ENCODINGS; ++enc )
-				mp->audio_caps[ch][rate][enc] = good_enc(my_encodings[enc]);
+				mp->audio_caps[ch][rate][enc] = (char)good_enc(my_encodings[enc]);
 		}
 	}
 

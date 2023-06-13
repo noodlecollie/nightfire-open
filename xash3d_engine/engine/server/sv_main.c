@@ -346,7 +346,7 @@ void SV_CheckCmdTimes(void)
 			cl->connecttime = host.realtime;
 		}
 
-		diff = cl->connecttime + cl->cmdtime - host.realtime;
+		diff = (float)(cl->connecttime + cl->cmdtime - host.realtime);
 
 		if ( diff > net_clockwindow->value )
 		{
@@ -456,7 +456,7 @@ void SV_ReadPackets(void)
 
 	while ( NET_GetPacket(NS_SERVER, &net_from, net_message_buffer, &curSize) )
 	{
-		MSG_Init(&net_message, "ClientPacket", net_message_buffer, curSize);
+		MSG_Init(&net_message, "ClientPacket", net_message_buffer, (int)curSize);
 
 		// check for connectionless packet (0xffffffff) first
 		if ( MSG_GetMaxBytes(&net_message) >= 4 && *(int*)net_message.pData == -1 )
@@ -516,7 +516,7 @@ void SV_ReadPackets(void)
 				{
 					SV_ExecuteClientMessage(cl, &net_message);
 					svgame.globals->frametime = sv.frametime;
-					svgame.globals->time = sv.time;
+					svgame.globals->time = (float)sv.time;
 				}
 			}
 
@@ -525,7 +525,7 @@ void SV_ReadPackets(void)
 			{
 				if ( Netchan_CopyNormalFragments(&cl->netchan, &net_message, &curSize) )
 				{
-					MSG_Init(&net_message, "ClientPacket", net_message_buffer, curSize);
+					MSG_Init(&net_message, "ClientPacket", net_message_buffer, (int)curSize);
 
 					if ( (svs.maxclients == 1 && !host_limitlocal->value) || (cl->state != cs_spawned) )
 						SetBits(cl->flags, FCL_SEND_NET_MESSAGE);  // reply at end of frame
@@ -535,7 +535,7 @@ void SV_ReadPackets(void)
 					{
 						SV_ExecuteClientMessage(cl, &net_message);
 						svgame.globals->frametime = sv.frametime;
-						svgame.globals->time = sv.time;
+						svgame.globals->time = (float)sv.time;
 					}
 				}
 
@@ -687,7 +687,7 @@ qboolean SV_RunGameFrame(void)
 
 		while ( sv.time_residual >= fps )
 		{
-			sv.frametime = fps;
+			sv.frametime = (float)fps;
 
 			SV_Physics();
 
@@ -716,13 +716,20 @@ void Host_ServerFrame(void)
 {
 	// if server is not active, do nothing
 	if ( !svs.initialized )
+	{
 		return;
+	}
 
 	if ( sv_fps.value != 0.0f && (sv.simulating || sv.state != ss_active) )
+	{
 		sv.time_residual += host.frametime;
+	}
 
 	if ( sv_fps.value == 0.0f )
-		sv.frametime = host.frametime;
+	{
+		sv.frametime = (float)host.frametime;
+	}
+
 	svgame.globals->frametime = sv.frametime;
 
 	// check clients timewindow
@@ -742,7 +749,9 @@ void Host_ServerFrame(void)
 
 	// let everything in the world think and move
 	if ( !SV_RunGameFrame() )
+	{
 		return;
+	}
 
 	// send messages back to the clients that had packets read this frame
 	SV_SendClientMessages();
@@ -826,7 +835,7 @@ void SV_AddToMaster(netadr_t from, sizebuf_t* msg)
 	Info_SetValueForKey(s, "product", GI->gamefolder, len);  // product? Where is the difference with gamedir?
 	Info_SetValueForKey(s, "nat", sv_nat.string, len);  // Server running under NAT, use reverse connection
 
-	NET_SendPacket(NS_SERVER, Q_strlen(s), s, from);
+	NET_SendPacket(NS_SERVER, strlen(s), s, from);
 }
 
 /*

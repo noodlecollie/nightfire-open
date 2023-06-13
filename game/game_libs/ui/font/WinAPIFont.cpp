@@ -134,7 +134,7 @@ bool CWinAPIFont::Create(
 	return true;
 }
 
-void CWinAPIFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Size& drawSize)
+void CWinAPIFont::GetCharRGBA(int ch, Point, Size sz, unsigned char* rgba, Size& drawSize)
 {
 	// set us up to render into our dib
 	::SelectObject(m_hDC, m_hFont);
@@ -194,25 +194,32 @@ void CWinAPIFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Si
 				{
 					unsigned char grayscale = lpbuf[(j * wide + i)];
 
-					float r, g, b, a;
+					float red = 0.0f;
+					float green = 0.0f;
+					float blue = 0.0f;
+					float alpha = 0.0f;
+
 					if ( grayscale )
 					{
-						r = g = b = 1.0f;
-						a = (grayscale + 0) / 64.0f;
-						if ( a > 1.0f )
-							a = 1.0f;
+						red = green = blue = 1.0f;
+						alpha = (grayscale + 0) / 64.0f;
+
+						if ( alpha > 1.0f )
+						{
+							alpha = 1.0f;
+						}
 					}
 					else
 					{
-						r = g = b = 0.0f;
-						a = 0.0f;
+						red = green = blue = 0.0f;
+						alpha = 0.0f;
 					}
 
 					unsigned char* dst = &rgba[(y * sz.w + x) * 4];
-					dst[0] = (unsigned char)(r * 255.0f);
-					dst[1] = (unsigned char)(g * 255.0f);
-					dst[2] = (unsigned char)(b * 255.0f);
-					dst[3] = (unsigned char)(a * 255.0f);
+					dst[0] = (unsigned char)(red * 255.0f);
+					dst[1] = (unsigned char)(green * 255.0f);
+					dst[2] = (unsigned char)(blue * 255.0f);
+					dst[3] = (unsigned char)(alpha * 255.0f);
 				}
 			}
 		}
@@ -264,23 +271,26 @@ void CWinAPIFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Si
 					unsigned char* dst = &rgba[(i + j * sz.w) * 4];
 
 					// Don't want anything drawn for tab characters.
-					unsigned char r, g, b;
+					unsigned char red = 0;
+					unsigned char green = 0;
+					unsigned char blue = 0;
+
 					if ( ch == '\t' )
 					{
-						r = g = b = 0;
+						red = green = blue = 0;
 					}
 					else
 					{
-						r = src[0];
-						g = src[1];
-						b = src[2];
+						red = src[0];
+						green = src[1];
+						blue = src[2];
 					}
 
 					// generate alpha based on luminance conversion
-					dst[0] = r;
-					dst[1] = g;
-					dst[2] = b;
-					dst[3] = (unsigned char)((float)r * 0.34f + (float)g * 0.55f + (float)b * 0.11f);
+					dst[0] = red;
+					dst[1] = green;
+					dst[2] = blue;
+					dst[3] = (unsigned char)((float)red * 0.34f + (float)green * 0.55f + (float)blue * 0.11f);
 				}
 			}
 		}
@@ -314,7 +324,7 @@ void CWinAPIFont::GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c)
 	}
 }
 
-bool CWinAPIFont::HasChar(int ch) const
+bool CWinAPIFont::HasChar(int) const
 {
 	return true;
 }

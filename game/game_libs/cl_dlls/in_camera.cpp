@@ -28,16 +28,16 @@ extern cl_enginefunc_t gEngfuncs;
 
 //-------------------------------------------------- Constants
 
-#define CAM_DIST_DELTA 1.0
-#define CAM_ANGLE_DELTA 2.5
-#define CAM_ANGLE_SPEED 2.5
-#define CAM_MIN_DIST 30.0
-#define CAM_ANGLE_MOVE .5
-#define MAX_ANGLE_DIFF 10.0
-#define PITCH_MAX 90.0
-#define PITCH_MIN 0
-#define YAW_MAX 135.0
-#define YAW_MIN -135.0
+#define CAM_DIST_DELTA 1.0f
+#define CAM_ANGLE_DELTA 2.5f
+#define CAM_ANGLE_SPEED 2.5f
+#define CAM_MIN_DIST 30.0f
+#define CAM_ANGLE_MOVE 0.5f
+#define MAX_ANGLE_DIFF 10.0f
+#define PITCH_MAX 90.0f
+#define PITCH_MIN 0.0f
+#define YAW_MAX 135.0f
+#define YAW_MIN -135.0f
 
 enum ECAM_Command
 {
@@ -76,7 +76,7 @@ POINT cam_mouse;
 //-------------------------------------------------- Local Variables
 
 static kbutton_t cam_pitchup, cam_pitchdown, cam_yawleft, cam_yawright;
-static kbutton_t cam_in, cam_out, cam_move;
+static kbutton_t cam_in, cam_out;
 
 //-------------------------------------------------- Prototypes
 
@@ -87,7 +87,7 @@ void CAM_EndDistance(void);
 
 //-------------------------------------------------- Local Functions
 
-float MoveToward(float cur, float goal, float maxspeed)
+float MoveToward(float cur, float goal, float)
 {
 	if ( cur != goal )
 	{
@@ -102,14 +102,14 @@ float MoveToward(float cur, float goal, float maxspeed)
 		if ( cur < goal )
 		{
 			if ( cur < goal - 1.0 )
-				cur += (goal - cur) / 4.0;
+				cur += (goal - cur) / 4.0f;
 			else
 				cur = goal;
 		}
 		else
 		{
 			if ( cur > goal + 1.0 )
-				cur -= (cur - goal) / 4.0;
+				cur -= (cur - goal) / 4.0f;
 			else
 				cur = goal;
 		}
@@ -248,8 +248,8 @@ void DLLEXPORT CAM_Think(void)
 			// since we are done with the mouse
 			if ( (flSensitivity = gHUD.GetSensitivity()) != 0 )
 			{
-				cam_old_mouse_x = cam_mouse.x * flSensitivity;
-				cam_old_mouse_y = cam_mouse.y * flSensitivity;
+				cam_old_mouse_x = static_cast<int>(cam_mouse.x * flSensitivity);
+				cam_old_mouse_y = static_cast<int>(cam_mouse.y * flSensitivity);
 			}
 			else
 			{
@@ -311,8 +311,8 @@ void DLLEXPORT CAM_Think(void)
 		}
 		// set old mouse coordinates to current mouse coordinates
 		// since we are done with the mouse
-		cam_old_mouse_x = cam_mouse.x * gHUD.GetSensitivity();
-		cam_old_mouse_y = cam_mouse.y * gHUD.GetSensitivity();
+		cam_old_mouse_x = static_cast<int>(cam_mouse.x * gHUD.GetSensitivity());
+		cam_old_mouse_y = static_cast<int>(cam_mouse.y * gHUD.GetSensitivity());
 		SetCursorPos(gEngfuncs.GetWindowCenterX(), gEngfuncs.GetWindowCenterY());
 	}
 #ifdef LATER
@@ -366,7 +366,7 @@ void DLLEXPORT CAM_Think(void)
 		if ( fabs(camAngles[2] - cam_idealdist->value) < 2.0 )
 			camAngles[2] = cam_idealdist->value;
 		else
-			camAngles[2] += (cam_idealdist->value - camAngles[2]) / 4.0;
+			camAngles[2] += (cam_idealdist->value - camAngles[2]) / 4.0f;
 	}
 #ifdef LATER
 	if ( cam_contain->value )
@@ -575,8 +575,8 @@ void CAM_StartMouseMove(void)
 
 			if ( (flSensitivity = gHUD.GetSensitivity()) != 0 )
 			{
-				cam_old_mouse_x = cam_mouse.x * flSensitivity;
-				cam_old_mouse_y = cam_mouse.y * flSensitivity;
+				cam_old_mouse_x = static_cast<int>(cam_mouse.x * flSensitivity);
+				cam_old_mouse_y = static_cast<int>(cam_mouse.y * flSensitivity);
 			}
 			else
 			{
@@ -618,8 +618,8 @@ void CAM_StartDistance(void)
 			cam_mousemove = 1;
 			iMouseInUse = 1;
 			GetCursorPos(&cam_mouse);
-			cam_old_mouse_x = cam_mouse.x * gHUD.GetSensitivity();
-			cam_old_mouse_y = cam_mouse.y * gHUD.GetSensitivity();
+			cam_old_mouse_x = static_cast<int>(cam_mouse.x * gHUD.GetSensitivity());
+			cam_old_mouse_y = static_cast<int>(cam_mouse.y * gHUD.GetSensitivity());
 		}
 	}
 	// we are not in 3rd person view..therefore do not allow camera movement

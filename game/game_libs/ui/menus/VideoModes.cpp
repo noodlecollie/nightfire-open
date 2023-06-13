@@ -51,7 +51,7 @@ public:
 	{
 		return m_iNumModes;
 	}
-	const char* GetCellText(int line, int column)
+	const char* GetCellText(int line, int)
 	{
 		return m_szModes[line];
 	}
@@ -166,7 +166,7 @@ void CMenuVidModes::SetConfig()
 	if ( isVidModeChanged )
 	{
 		SetMode(currentModeIndex);
-		EngFuncs::CvarSetValue("vid_mode", currentModeIndex);
+		EngFuncs::CvarSetValue("vid_mode", static_cast<float>(currentModeIndex));
 		vidList.SetCurrentIndex(currentModeIndex + VID_MODES_POS);
 		// have changed resolution, but enable test mode only in fullscreen
 		testMode |= !windowed.bChecked;
@@ -183,10 +183,10 @@ void CMenuVidModes::SetConfig()
 
 void CMenuVidModes::ApplyChanges()
 {
-	prevMode = EngFuncs::GetCvarFloat("vid_mode");
+	prevMode = static_cast<int>(EngFuncs::GetCvarFloat("vid_mode"));
 	prevFullscreen = EngFuncs::GetCvarFloat("fullscreen");
-	prevModeX = EngFuncs::GetCvarFloat("width");
-	prevModeY = EngFuncs::GetCvarFloat("height");
+	prevModeX = static_cast<int>(EngFuncs::GetCvarFloat("width"));
+	prevModeY = static_cast<int>(EngFuncs::GetCvarFloat("height"));
 }
 
 void CMenuVidModes::RevertChanges()
@@ -248,12 +248,14 @@ void CMenuVidModes::_Init(void)
 	windowed.SetNameAndStatus(L("GameUI_Windowed"), L("GameUI_Windowed"));
 	windowed.SetCoord(360, 620);
 	SET_EVENT_MULTI(windowed.onChanged, {
+		(void)pExtra;
 		CMenuVidModes* parent = pSelf->GetParent(CMenuVidModes);
 		if ( !parent->windowed.bChecked && parent->vidList.GetCurrentIndex() < VID_AUTOMODE_POS )
 			parent->vidList.SetCurrentIndex(VID_AUTOMODE_POS);
 	});
 
 	SET_EVENT_MULTI(vidList.onChanged, {
+		(void)pExtra;
 		CMenuVidModes* parent = pSelf->GetParent(CMenuVidModes);
 		if ( !parent->windowed.bChecked && parent->vidList.GetCurrentIndex() < VID_AUTOMODE_POS )
 			parent->vidList.SetCurrentIndex(VID_AUTOMODE_POS);

@@ -33,7 +33,7 @@ typedef struct
 } player_model_t;
 
 // never gonna change, just shut up const warning
-cvar_t r_shadows = {(char*)"r_shadows", (char*)"0", 0};
+cvar_t r_shadows = {(char*)"r_shadows", (char*)"0", 0, 0.0f, NULL};
 
 static vec3_t hullcolor[8] = {
 	{1.0f, 1.0f, 1.0f},
@@ -489,7 +489,7 @@ pfnGetModelCounters
 static void pfnGetModelCounters(int** s, int** a)
 {
 	*s = &g_studio.framecount;
-	*a = &r_stats.c_studio_models_drawn;
+	*a = (int*)&r_stats.c_studio_models_drawn;
 }
 
 /*
@@ -559,7 +559,7 @@ TODO: This is duplicated between engine and game libs - really it should be comm
 void R_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitch)
 {
 	// calc up/down pointing
-	*pBlend = (*pPitch * 3.0f);
+	*pBlend = (int)(*pPitch * 3.0f);
 
 	if ( *pBlend < pseqdesc->blendstart[0] )
 	{
@@ -574,9 +574,15 @@ void R_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitch)
 	else
 	{
 		if ( pseqdesc->blendend[0] - pseqdesc->blendstart[0] < 0.1f )  // catch qc error
+		{
 			*pBlend = 127;
+		}
 		else
-			*pBlend = 255 * (*pBlend - pseqdesc->blendstart[0]) / (pseqdesc->blendend[0] - pseqdesc->blendstart[0]);
+		{
+			*pBlend =
+				(int)(255.0f * (*pBlend - pseqdesc->blendstart[0]) / (pseqdesc->blendend[0] - pseqdesc->blendstart[0]));
+		}
+
 		*pPitch = 0.0f;
 	}
 }
@@ -596,7 +602,7 @@ void R_StudioLerpMovement(cl_entity_t* e, double time, vec3_t origin, vec3_t ang
 	// was increased to 1.0 s., which is 2x the max lag we are accounting for.
 	if ( g_studio.interpolate && (time < e->curstate.animtime + 1.0f) &&
 		 (e->curstate.animtime != e->latched.prevanimtime) )
-		f = (time - e->curstate.animtime) / (e->curstate.animtime - e->latched.prevanimtime);
+		f = ((float)time - e->curstate.animtime) / (e->curstate.animtime - e->latched.prevanimtime);
 
 	// Con_Printf( "%4.2f %.2f %.2f\n", f, e->curstate.animtime, g_studio.time );
 	VectorLerp(e->latched.prevorigin, f, e->curstate.origin, origin);
@@ -691,7 +697,8 @@ float R_StudioEstimateFrame(cl_entity_t* e, mstudioseqdesc_t* pseqdesc, double t
 		if ( f < 0.0 )
 			f = 0.0;
 	}
-	return f;
+
+	return (float)f;
 }
 
 /*
@@ -706,9 +713,12 @@ float R_StudioEstimateInterpolant(cl_entity_t* e)
 
 	if ( g_studio.interpolate && (e->curstate.animtime >= e->latched.prevanimtime + 0.01f) )
 	{
-		dadt = (g_studio.time - e->curstate.animtime) / 0.1f;
+		dadt = ((float)g_studio.time - e->curstate.animtime) / 0.1f;
+
 		if ( dadt > 2.0f )
+		{
 			dadt = 2.0f;
+		}
 	}
 
 	return dadt;
@@ -749,9 +759,12 @@ void R_StudioFxTransform(cl_entity_t* ent, matrix3x4 transform)
 		{
 			float scale;
 
-			scale = 1.0f + (g_studio.time - ent->curstate.animtime) * 10.0f;
+			scale = 1.0f + ((float)g_studio.time - ent->curstate.animtime) * 10.0f;
+
 			if ( scale > 2.0f )
+			{
 				scale = 2.0f;  // don't blow up more than 200%
+			}
 
 			transform[0][1] *= scale;
 			transform[1][1] *= scale;
@@ -816,7 +829,7 @@ void R_StudioCalcBoneAdj(float dadt, float* adj, const byte* pcontroller1, const
 			case STUDIO_XR:
 			case STUDIO_YR:
 			case STUDIO_ZR:
-				adj[j] = DEG2RAD(value);
+				adj[j] = DEG2RADF(value);
 				break;
 			case STUDIO_X:
 			case STUDIO_Y:
@@ -889,7 +902,7 @@ StudioMergeBones
 
 ====================
 */
-void R_StudioMergeBones(cl_entity_t* e, model_t* m_pSubModel)
+void R_StudioMergeBones(cl_entity_t* e, model_t* submodel)
 {
 	int i, j;
 	mstudiobone_t* pbones;
@@ -907,7 +920,7 @@ void R_StudioMergeBones(cl_entity_t* e, model_t* m_pSubModel)
 
 	f = R_StudioEstimateFrame(e, pseqdesc, g_studio.time);
 
-	panim = gEngfuncs.R_StudioGetAnim(m_pStudioHeader, m_pSubModel, pseqdesc);
+	panim = gEngfuncs.R_StudioGetAnim(m_pStudioHeader, submodel, pseqdesc);
 	R_StudioCalcRotations(e, pos, q, pseqdesc, panim, f);
 	pbones = (mstudiobone_t*)((byte*)m_pStudioHeader + m_pStudioHeader->boneindex);
 
@@ -1049,7 +1062,7 @@ void R_StudioSetupBones(cl_entity_t* e)
 			}
 		}
 
-		s = 1.0f - (g_studio.time - e->latched.sequencetime) / 0.2f;
+		s = 1.0f - ((float)g_studio.time - e->latched.sequencetime) / 0.2f;
 		R_StudioSlerpBones(m_pStudioHeader->numbones, q, pos, q1b, pos1b, s);
 	}
 	else
@@ -1179,9 +1192,9 @@ void R_StudioBuildNormalTable(void)
 		}
 	}
 
-	g_studio.chrome_origin[0] = cos(r_glowshellfreq->value * g_studio.time) * 4000.0f;
-	g_studio.chrome_origin[1] = sin(r_glowshellfreq->value * g_studio.time) * 4000.0f;
-	g_studio.chrome_origin[2] = cos(r_glowshellfreq->value * g_studio.time * 0.33f) * 4000.0f;
+	g_studio.chrome_origin[0] = cosf(r_glowshellfreq->value * (float)g_studio.time) * 4000.0f;
+	g_studio.chrome_origin[1] = sinf(r_glowshellfreq->value * (float)g_studio.time) * 4000.0f;
+	g_studio.chrome_origin[2] = cosf(r_glowshellfreq->value * (float)g_studio.time * 0.33f) * 4000.0f;
 
 	if ( e->curstate.rendercolor.r || e->curstate.rendercolor.g || e->curstate.rendercolor.b )
 		TriColor4ub(e->curstate.rendercolor.r, e->curstate.rendercolor.g, e->curstate.rendercolor.b, 255);
@@ -1463,9 +1476,9 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 		{
 			VectorSet(lightDir, mv->skyvec_x, mv->skyvec_y, mv->skyvec_z);
 
-			light.r = gEngfuncs.LightToTexGamma(bound(0, mv->skycolor_r, 255));
-			light.g = gEngfuncs.LightToTexGamma(bound(0, mv->skycolor_g, 255));
-			light.b = gEngfuncs.LightToTexGamma(bound(0, mv->skycolor_b, 255));
+			light.r = gEngfuncs.LightToTexGamma((byte)bound(0, mv->skycolor_r, 255));
+			light.g = gEngfuncs.LightToTexGamma((byte)bound(0, mv->skycolor_g, 255));
+			light.b = gEngfuncs.LightToTexGamma((byte)bound(0, mv->skycolor_b, 255));
 		}
 	}
 
@@ -1517,10 +1530,10 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 		}
 	}
 
-	VectorSet(finalLight, light.r, light.g, light.b);
+	VectorSet(finalLight, (float)light.r, (float)light.g, (float)light.b);
 	ent->cvFloorColor = light;
 
-	total = Q_max(Q_max(light.r, light.g), light.b);
+	total = (float)Q_max(Q_max(light.r, light.g), light.b);
 	if ( total == 0.0f )
 		total = 1.0f;
 
@@ -1536,7 +1549,7 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 
 		VectorSubtract(ent->origin, dl->origin, dist);
 
-		radius = VectorLength(dist);
+		radius = (float)VectorLength(dist);
 		add = (dl->radius - radius);
 
 		if ( add > 0.0f )
@@ -1563,8 +1576,8 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 
 	VectorScale(lightDir, add, lightDir);
 
-	plight->shadelight = VectorLength(lightDir);
-	plight->ambientlight = total - plight->shadelight;
+	plight->shadelight = (int)VectorLength(lightDir);
+	plight->ambientlight = (int)(total - plight->shadelight);
 
 	total = Q_max(Q_max(finalLight[0], finalLight[1]), finalLight[2]);
 
@@ -1598,8 +1611,10 @@ void R_StudioEntityLight(alight_t* lightinfo)
 	float minstrength, dist2, f, r2;
 	float lstrength[MAX_LOCALLIGHTS];
 	cl_entity_t* ent = RI.currententity;
-	vec3_t mid, origin, pos;
+	vec3_t mid, origin;
 	dlight_t* el;
+
+	(void)lightinfo;
 
 	g_studio.numlocallights = 0;
 
@@ -1634,7 +1649,7 @@ void R_StudioEntityLight(alight_t* lightinfo)
 			}
 		}
 
-		VectorCopy(el->origin, pos);
+		// VectorCopy(el->origin, pos);
 		VectorSubtract(origin, el->origin, mid);
 
 		f = DotProduct(mid, mid);
@@ -1694,8 +1709,8 @@ void R_StudioSetupLighting(alight_t* plight)
 	if ( RI.currententity != NULL )
 		scale = RI.currententity->curstate.scale;
 
-	g_studio.ambientlight = plight->ambientlight;
-	g_studio.shadelight = plight->shadelight;
+	g_studio.ambientlight = (float)plight->ambientlight;
+	g_studio.shadelight = (float)plight->shadelight;
 	VectorCopy(plight->plightvec, g_studio.lightvec);
 
 	for ( i = 0; i < m_pStudioHeader->numbones; i++ )
@@ -1797,9 +1812,13 @@ void R_LightLambert(vec4_t light[MAX_LOCALLIGHTS], vec3_t normal, vec3_t color, 
 				r2 = DotProduct(light[i], light[i]);
 
 				if ( r2 > 0.0f )
-					light[i][3] = g_studio.locallightR2[i] / (r2 * sqrt(r2));
+				{
+					light[i][3] = g_studio.locallightR2[i] / (r2 * sqrtf(r2));
+				}
 				else
+				{
 					light[i][3] = 0.0001f;
+				}
 			}
 
 			localLight[0] = Q_min(g_studio.locallightcolor[i].r * r * light[i][3], 255.0f);
@@ -1813,16 +1832,16 @@ void R_LightLambert(vec4_t light[MAX_LOCALLIGHTS], vec3_t normal, vec3_t color, 
 		}
 	}
 
-	out[0] = finalLight[0] * 255;
-	out[1] = finalLight[1] * 255;
-	out[2] = finalLight[2] * 255;
+	out[0] = (byte)(finalLight[0] * 255.0f);
+	out[1] = (byte)(finalLight[1] * 255.0f);
+	out[2] = (byte)(finalLight[2] * 255.0f);
 }
 
 static void R_StudioSetColorArray(short* ptricmds, vec3_t* pstudionorms, byte* color)
 {
 	float* lv = (float*)g_studio.lightvalues[ptricmds[1]];
 
-	color[3] = tr.blend * 255;
+	color[3] = (byte)(tr.blend * 255.0f);
 	R_LightLambert(g_studio.lightpos[ptricmds[0]], pstudionorms[ptricmds[1]], lv, color);
 }
 
@@ -1888,6 +1907,11 @@ static void R_StudioSetupSkin(studiohdr_t* ptexturehdr, int index)
 		GL_Bind(XASH_TEXTURE0, tr.whiteTexture);
 	else
 		GL_Bind(XASH_TEXTURE0, ptexture[index].index);
+}
+
+static void R_StudioSetupSkinAdapter(void* ptexturehdr, int index)
+{
+	R_StudioSetupSkin((studiohdr_t*)ptexturehdr, index);
 }
 
 /*
@@ -1979,11 +2003,17 @@ Sorting opaque entities by model type
 */
 static int R_StudioMeshCompare(const void* a, const void* b)
 {
+	(void)b;
+
 	if ( FBitSet(((const sortedmesh_t*)a)->flags, STUDIO_NF_ADDITIVE) )
+	{
 		return 1;
+	}
 
 	if ( FBitSet(((const sortedmesh_t*)a)->flags, STUDIO_NF_MASKED) )
+	{
 		return -1;
+	}
 
 	return 0;
 }
@@ -1997,7 +2027,6 @@ generic path
 */
 _inline void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
 {
-	float* lv;
 	int i;
 
 	while ( (i = *(ptricmds++)) )
@@ -2031,7 +2060,6 @@ generic path
 */
 _inline void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
-	float* lv;
 	int i;
 
 	while ( (i = *(ptricmds++)) )
@@ -2112,7 +2140,7 @@ _inline int R_StudioBuildIndices(qboolean tri_strip, int vertexState)
 	// build in indices
 	if ( vertexState++ < 3 )
 	{
-		g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts;
+		g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts;
 	}
 	else if ( tri_strip )
 	{
@@ -2120,24 +2148,24 @@ _inline int R_StudioBuildIndices(qboolean tri_strip, int vertexState)
 		if ( vertexState & 1 )
 		{
 			// draw triangle [n-2 n-1 n]
-			g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts - 2;
-			g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts - 1;
-			g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts;
+			g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts - 2;
+			g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts - 1;
+			g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts;
 		}
 		else
 		{
 			// draw triangle [n-1 n-2 n]
-			g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts - 1;
-			g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts - 2;
-			g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts;
+			g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts - 1;
+			g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts - 2;
+			g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts;
 		}
 	}
 	else
 	{
 		// draw triangle fan [0 n-1 n]
-		g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts - (vertexState - 1);
-		g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts - 1;
-		g_studio.arrayelems[g_studio.numelems++] = g_studio.numverts;
+		g_studio.arrayelems[g_studio.numelems++] = (unsigned short)(g_studio.numverts - (vertexState - 1));
+		g_studio.arrayelems[g_studio.numelems++] = (unsigned short)(g_studio.numverts - 1);
+		g_studio.arrayelems[g_studio.numelems++] = (unsigned short)g_studio.numverts;
 	}
 
 	return vertexState;
@@ -2152,9 +2180,7 @@ generic path
 */
 _inline void R_StudioBuildArrayNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
 {
-	float* lv;
 	int i;
-	float alpha = tr.blend;
 
 	while ( (i = *(ptricmds++)) )
 	{
@@ -2171,7 +2197,6 @@ _inline void R_StudioBuildArrayNormalMesh(short* ptricmds, vec3_t* pstudionorms,
 		{
 			GLubyte* cl;
 			cl = g_studio.arraycolor[g_studio.numverts];
-			lv = (float*)g_studio.lightvalues[ptricmds[1]];
 
 			vertexState = R_StudioBuildIndices(tri_strip, vertexState);
 
@@ -2195,9 +2220,7 @@ generic path
 */
 _inline void R_StudioBuildArrayFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
-	float* lv;
 	int i;
-	float alpha = tr.blend;
 
 	while ( (i = *(ptricmds++)) )
 	{
@@ -2214,7 +2237,6 @@ _inline void R_StudioBuildArrayFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 		{
 			GLubyte* cl;
 			cl = g_studio.arraycolor[g_studio.numverts];
-			lv = (float*)g_studio.lightvalues[ptricmds[1]];
 
 			vertexState = R_StudioBuildIndices(tri_strip, vertexState);
 
@@ -2242,7 +2264,6 @@ _inline void R_StudioBuildArrayChromeMesh(short* ptricmds, vec3_t* pstudionorms,
 	int i, idx;
 	qboolean glowShell = (scale > 0.0f) ? true : false;
 	vec3_t vert;
-	float alpha = tr.blend;
 
 	while ( (i = *(ptricmds++)) )
 	{
@@ -2861,7 +2882,6 @@ static void R_StudioClientEvents(void)
 	// fill attachments with interpolated origin
 	if ( m_pStudioHeader->numattachments <= 0 )
 	{
-		int i = 0;
 		for ( i = 0; i < CL_ENTITY_MAX_ATTACHMENTS; ++i )
 		{
 			Matrix3x4_OriginFromMatrix(g_studio.rotationmatrix, e->attachment[i]);
@@ -2890,7 +2910,7 @@ static void R_StudioClientEvents(void)
 		return;
 
 	end = R_StudioEstimateFrame(e, pseqdesc, g_studio.time);
-	start = end - e->curstate.framerate * gpGlobals->frametime * pseqdesc->fps;
+	start = end - e->curstate.framerate * (float)gpGlobals->frametime * pseqdesc->fps;
 	pevent = (mstudioevent_t*)((byte*)m_pStudioHeader + pseqdesc->eventindex);
 
 	if ( e->latched.sequencetime == e->curstate.animtime )
@@ -2942,6 +2962,11 @@ void R_StudioSetHeader(studiohdr_t* pheader)
 {
 	m_pStudioHeader = pheader;
 	m_fDoRemap = false;
+}
+
+static void R_StudioSetHeaderAdapter(void* pheader)
+{
+	R_StudioSetHeader((studiohdr_t*)pheader);
 }
 
 /*
@@ -3033,7 +3058,7 @@ R_StudioDrawPointsShadow
 */
 static void R_StudioDrawPointsShadow(void)
 {
-	float *av, height;
+	float *av;
 	float vec_x, vec_y;
 	mstudiomesh_t* pmesh;
 	vec3_t point;
@@ -3045,7 +3070,6 @@ static void R_StudioDrawPointsShadow(void)
 	if ( glState.stencilEnabled )
 		pglEnable(GL_STENCIL_TEST);
 
-	height = g_studio.lightspot[2] + 1.0f;
 	vec_x = -g_studio.lightvec[0] * 8.0f;
 	vec_y = -g_studio.lightvec[1] * 8.0f;
 
@@ -3283,7 +3307,9 @@ void R_StudioEstimateGait(entity_state_t* pplayer)
 	vec3_t est_velocity;
 	float dt;
 
-	dt = bound(0.0f, g_studio.frametime, 1.0f);
+	(void)pplayer;
+
+	dt = (float)bound(0.0f, g_studio.frametime, 1.0f);
 
 	if ( dt == 0.0f || m_pPlayerInfo->renderframe == tr.realframecount )
 	{
@@ -3293,7 +3319,7 @@ void R_StudioEstimateGait(entity_state_t* pplayer)
 
 	VectorSubtract(RI.currententity->origin, m_pPlayerInfo->prevgaitorigin, est_velocity);
 	VectorCopy(RI.currententity->origin, m_pPlayerInfo->prevgaitorigin);
-	m_flGaitMovement = VectorLength(est_velocity);
+	m_flGaitMovement = (float)VectorLength(est_velocity);
 
 	if ( dt <= 0.0f || m_flGaitMovement / dt < 5.0f )
 	{
@@ -3307,15 +3333,25 @@ void R_StudioEstimateGait(entity_state_t* pplayer)
 		float flYawDiff = RI.currententity->angles[YAW] - m_pPlayerInfo->gaityaw;
 
 		flYawDiff = flYawDiff - (int)(flYawDiff / 360) * 360;
+
 		if ( flYawDiff > 180.0f )
+		{
 			flYawDiff -= 360.0f;
+		}
+
 		if ( flYawDiff < -180.0f )
+		{
 			flYawDiff += 360.0f;
+		}
 
 		if ( dt < 0.25f )
+		{
 			flYawDiff *= dt * 4.0f;
+		}
 		else
+		{
 			flYawDiff *= dt;
+		}
 
 		m_pPlayerInfo->gaityaw += flYawDiff;
 		m_pPlayerInfo->gaityaw = m_pPlayerInfo->gaityaw - (int)(m_pPlayerInfo->gaityaw / 360) * 360;
@@ -3324,11 +3360,17 @@ void R_StudioEstimateGait(entity_state_t* pplayer)
 	}
 	else
 	{
-		m_pPlayerInfo->gaityaw = (atan2(est_velocity[1], est_velocity[0]) * 180 / M_PI_F);
+		m_pPlayerInfo->gaityaw = (atan2f(est_velocity[1], est_velocity[0]) * 180 / M_PI_F);
+
 		if ( m_pPlayerInfo->gaityaw > 180.0f )
+		{
 			m_pPlayerInfo->gaityaw = 180.0f;
+		}
+
 		if ( m_pPlayerInfo->gaityaw < -180.0f )
+		{
 			m_pPlayerInfo->gaityaw = -180.0f;
+		}
 	}
 }
 
@@ -3345,9 +3387,11 @@ void R_StudioProcessGait(entity_state_t* pplayer)
 	float dt, flYaw;  // view direction relative to movement
 
 	if ( RI.currententity->curstate.sequence >= m_pStudioHeader->numseq )
+	{
 		RI.currententity->curstate.sequence = 0;
+	}
 
-	dt = bound(0.0f, g_studio.frametime, 1.0f);
+	dt = (float)bound(0.0f, g_studio.frametime, 1.0f);
 
 	pseqdesc =
 		(mstudioseqdesc_t*)((byte*)m_pStudioHeader + m_pStudioHeader->seqindex) + RI.currententity->curstate.sequence;
@@ -3355,7 +3399,7 @@ void R_StudioProcessGait(entity_state_t* pplayer)
 	R_StudioPlayerBlend(pseqdesc, &iBlend, &RI.currententity->angles[PITCH]);
 
 	RI.currententity->latched.prevangles[PITCH] = RI.currententity->angles[PITCH];
-	RI.currententity->curstate.blending[0] = iBlend;
+	RI.currententity->curstate.blending[0] = (byte)iBlend;
 	RI.currententity->latched.prevblending[0] = RI.currententity->curstate.blending[0];
 	RI.currententity->latched.prevseqblending[0] = RI.currententity->curstate.blending[0];
 	R_StudioEstimateGait(pplayer);
@@ -3382,10 +3426,10 @@ void R_StudioProcessGait(entity_state_t* pplayer)
 	}
 
 	// adjust torso
-	RI.currententity->curstate.controller[0] = ((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f);
-	RI.currententity->curstate.controller[1] = ((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f);
-	RI.currententity->curstate.controller[2] = ((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f);
-	RI.currententity->curstate.controller[3] = ((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f);
+	RI.currententity->curstate.controller[0] = (byte)(((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f));
+	RI.currententity->curstate.controller[1] = (byte)(((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f));
+	RI.currententity->curstate.controller[2] = (byte)(((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f));
+	RI.currententity->curstate.controller[3] = (byte)(((flYaw / 4.0f) + 30.0f) / (60.0f / 255.0f));
 	RI.currententity->latched.prevcontroller[0] = RI.currententity->curstate.controller[0];
 	RI.currententity->latched.prevcontroller[1] = RI.currententity->curstate.controller[1];
 	RI.currententity->latched.prevcontroller[2] = RI.currententity->curstate.controller[2];
@@ -3852,6 +3896,8 @@ void R_DrawViewModel(void)
 			R_StudioSetupTimings();
 			R_StudioDrawModelInternal(RI.currententity, STUDIO_RENDER);
 			break;
+		default:
+			break;
 	}
 
 	// restore depth range
@@ -3877,6 +3923,9 @@ static void R_StudioLoadTextureFromDisk(model_t* mod, studiohdr_t* phdr, mstudio
 	char fullPath[MAX_OSPATH];
 	int32_t flags = 0;
 	int32_t textureIndex = 0;
+
+	(void)mod;
+	(void)phdr;
 
 	if ( FBitSet(ptexture->flags, STUDIO_NF_NORMALMAP) )
 	{
@@ -3937,14 +3986,15 @@ static void R_StudioLoadTexture(model_t* mod, studiohdr_t* phdr, mstudiotexture_
 	// store some textures for remapping
 	if ( !Q_strnicmp(ptexture->name, "DM_Base", 7) || !Q_strnicmp(ptexture->name, "remap", 5) )
 	{
-		int i, size;
+		int i;
+		int texturesize;
 		char val[6];
 		byte* pixels;
 
 		i = mod->numtextures;
 		mod->textures = (texture_t**)Mem_Realloc(mod->mempool, mod->textures, (i + 1) * sizeof(texture_t*));
-		size = ptexture->width * ptexture->height + 768;
-		tx = Mem_Calloc(mod->mempool, sizeof(*tx) + size);
+		texturesize = ptexture->width * ptexture->height + 768;
+		tx = Mem_Calloc(mod->mempool, sizeof(*tx) + texturesize);
 		mod->textures[i] = tx;
 
 		// store ranges into anim_min, anim_max etc
@@ -3973,7 +4023,7 @@ static void R_StudioLoadTexture(model_t* mod, studiohdr_t* phdr, mstudiotexture_
 
 		// the pixels immediately follow the structures
 		pixels = (byte*)phdr + ptexture->index;
-		memcpy(tx + 1, pixels, size);
+		memcpy(tx + 1, pixels, texturesize);
 
 		ptexture->flags |= STUDIO_NF_COLORMAP;  // yes, this is colormap image
 		flags |= TF_FORCE_COLOR;
@@ -4129,13 +4179,13 @@ static engine_studio_api_t gStudioAPI = {
 	R_StudioDrawHulls,
 	R_StudioDrawAbsBBox,
 	R_StudioDrawBones,
-	(void*)R_StudioSetupSkin,
+	R_StudioSetupSkinAdapter,
 	R_StudioSetRemapColors,
 	R_StudioSetupPlayerModel,
 	R_StudioClientEvents,
 	R_StudioGetForceFaceFlags,
 	R_StudioSetForceFaceFlags,
-	(void*)R_StudioSetHeader,
+	R_StudioSetHeaderAdapter,
 	R_StudioSetRenderModel,
 	R_StudioSetupRenderer,
 	R_StudioRestoreRenderer,

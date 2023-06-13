@@ -9,7 +9,7 @@
 
 namespace GameplayCvars
 {
-#define DEFINE_CVAR(name, value) static cvar_t name = {#name, #value};
+#define DEFINE_CVAR(name, value) static cvar_t name = {#name, #value, 0, (float)value, nullptr};
 
 	// By default this is slightly lower than the max movement speed of the player,
 	// to avoid jitter at the top end of the velocity.

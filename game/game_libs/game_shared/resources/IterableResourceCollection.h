@@ -31,7 +31,7 @@ public:
 				return nullptr;
 			}
 
-			if ( m_Index >= soundList->Count() )
+			if ( m_Index >= static_cast<uint32_t>(soundList->Count()) )
 			{
 				return nullptr;
 			}
@@ -81,7 +81,7 @@ public:
 
 			// We keep trying until we encounter a list with items in,
 			// or we can no longer get any more lists.
-			while ( soundList && m_Index >= soundList->Count() )
+			while ( soundList && m_Index >= static_cast<uint32_t>(soundList->Count()) )
 			{
 				++m_Id;
 				m_Index = 0;
@@ -114,8 +114,8 @@ public:
 		}
 
 		const IIterableResourceCollection* m_Parent = nullptr;
-		uint32_t m_Id = ~0;
-		uint32_t m_Index = ~0;
+		uint32_t m_Id = static_cast<uint32_t>(~0);
+		uint32_t m_Index = static_cast<uint32_t>(~0);
 	};
 
 	inline IIterableResourceCollection(const CUtlVector<CUtlString>* list, size_t count) :

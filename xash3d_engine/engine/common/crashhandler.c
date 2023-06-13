@@ -42,12 +42,11 @@ typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 
 static int Sys_ModuleName(HANDLE process, char* name, void* address, int len)
 {
-	DWORD_PTR baseAddress = 0;
 	static HMODULE* moduleArray;
 	static unsigned int moduleCount;
 	LPBYTE moduleArrayBytes;
 	DWORD bytesRequired;
-	int i;
+	size_t i;
 
 	if ( len < 3 )
 		return 0;
@@ -74,7 +73,9 @@ static int Sys_ModuleName(HANDLE process, char* name, void* address, int len)
 
 		if ( (address > info.lpBaseOfDll) &&
 			 ((DWORD64)address < (DWORD64)info.lpBaseOfDll + (DWORD64)info.SizeOfImage) )
+		{
 			return GetModuleBaseName(process, moduleArray[i], name, len);
+		}
 	}
 	return Q_snprintf(name, len, "???");
 }
@@ -223,7 +224,7 @@ static void Sys_StackTrace(PEXCEPTION_POINTERS pInfo)
 
 static void Sys_GetProcessName(char* processName, size_t bufferSize)
 {
-	GetModuleBaseName(GetCurrentProcess(), NULL, processName, bufferSize - 1);
+	GetModuleBaseName(GetCurrentProcess(), NULL, processName, (DWORD)(bufferSize - 1));
 	COM_FileBase(processName, processName);
 }
 

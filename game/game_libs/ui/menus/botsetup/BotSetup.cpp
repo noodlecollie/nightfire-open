@@ -74,7 +74,7 @@ void CMenuBotSetup::_Init()
 	AddItem(background);
 
 	m_BotProfileListModel.SetItemActivatedCallback(
-		[this](int index, const CBotProfileTable::ProfileData& data)
+		[this](int, const CBotProfileTable::ProfileData& data)
 		{
 			m_SelectedProfile = data;
 
@@ -146,7 +146,9 @@ void CMenuBotSetup::_VidInit()
 
 void CMenuBotSetup::RecalculateDimensions()
 {
-	Size screenLogicalSize(ScreenWidth / uiStatic.scaleX, ScreenHeight / uiStatic.scaleY);
+	Size screenLogicalSize(
+		static_cast<int>(ScreenWidth / uiStatic.scaleX),
+		static_cast<int>(ScreenHeight / uiStatic.scaleY));
 
 	// Side padding is the distance between the hard left margin and the lists.
 	// This is calculated by taking the margin/lists/central area/right margin away from the total width
@@ -221,7 +223,7 @@ void CMenuBotSetup::CacheCurrentInGameBotList()
 {
 	CachedInGameBotList.Purge();
 
-	for ( uint32_t index = 0; index < m_InGameBotListModel.GetRows(); ++index )
+	for ( uint32_t index = 0; index < static_cast<uint32_t>(m_InGameBotListModel.GetRows()); ++index )
 	{
 		CachedInGameBotList.AddToTail(*m_InGameBotListModel.Entry(index));
 	}

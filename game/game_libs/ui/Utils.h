@@ -143,10 +143,10 @@ inline float InterpVal(const float from, const float to, const float frac)
 inline unsigned int InterpColor(const unsigned int from, const unsigned int to, const float frac)
 {
 	return PackRGBA(
-		InterpVal(Red(from), Red(to), frac),
-		InterpVal(Green(from), Green(to), frac),
-		InterpVal(Blue(from), Blue(to), frac),
-		InterpVal(Alpha(from), Alpha(to), frac));
+		static_cast<unsigned int>(InterpVal(static_cast<float>(Red(from)), static_cast<float>(Red(to)), frac)),
+		static_cast<unsigned int>(InterpVal(static_cast<float>(Green(from)), static_cast<float>(Green(to)), frac)),
+		static_cast<unsigned int>(InterpVal(static_cast<float>(Blue(from)), static_cast<float>(Blue(to)), frac)),
+		static_cast<unsigned int>(InterpVal(static_cast<float>(Alpha(from)), static_cast<float>(Alpha(to)), frac)));
 }
 
 inline float RemapVal(const float val, const float A, const float B, const float C, const float D)

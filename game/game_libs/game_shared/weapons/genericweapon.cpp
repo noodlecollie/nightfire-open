@@ -83,7 +83,7 @@ void CGenericWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMo
 
 	const uint32_t index = attackMode.Signature()->Index;
 
-	if ( m_AttackModeEvents.Count() < index + 1 )
+	if ( static_cast<uint32_t>(m_AttackModeEvents.Count()) < index + 1 )
 	{
 		m_AttackModeEvents.SetCount(index + 1);
 	}
@@ -435,7 +435,7 @@ void CGenericWeapon::HandleNoButtonsDown_Server()
 		// weapon isn't useable, switch.
 		if ( !(iFlags() & ITEM_FLAG_NOAUTOSWITCHEMPTY) && g_pGameRules->GetNextBestWeapon(m_pPlayer, this) )
 		{
-			m_flNextPrimaryAttack = (UseDecrement() ? 0.0 : gpGlobals->time) + 0.3;
+			m_flNextPrimaryAttack = static_cast<float>((UseDecrement() ? 0.0 : gpGlobals->time) + 0.3f);
 			return;
 		}
 	}
@@ -557,15 +557,13 @@ void CGenericWeapon::SetFireOnEmptyState(const WeaponAtts::WABaseAttack* attackM
 	}
 }
 
-int CGenericWeapon::HandleSpecialReload(int currentState)
+int CGenericWeapon::HandleSpecialReload(int)
 {
 	return 0;
 }
 
 void CGenericWeapon::WeaponIdle()
 {
-	const WeaponAtts::WACollection& Atts = WeaponAttributes();
-
 	ResetEmptySound();
 
 	if ( m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
@@ -671,6 +669,8 @@ void CGenericWeapon::SetViewModelBody(int body, bool immediate)
 			viewModel->curstate.body = body;
 		}
 	}
+#else
+	(void)immediate;
 #endif
 };
 
@@ -802,7 +802,7 @@ bool CGenericWeapon::CanReload() const
 
 int CGenericWeapon::GetEventIDForAttackMode(const WeaponAtts::WABaseAttack* attack) const
 {
-	return (attack && attack->Signature()->Index < m_AttackModeEvents.Count())
+	return (attack && attack->Signature()->Index < static_cast<uint32_t>(m_AttackModeEvents.Count()))
 		? m_AttackModeEvents[attack->Signature()->Index]
 		: -1;
 }
@@ -834,7 +834,7 @@ byte CGenericWeapon::GetPrimaryAttackModeIndex() const
 
 	for ( size_t index = 0; index < attackModeCount; ++index )
 	{
-		if ( m_pPrimaryAttackMode == atts.AttackModes[index].get() )
+		if ( m_pPrimaryAttackMode == atts.AttackModes[static_cast<int>(index)].get() )
 		{
 			// This cast is fine, since we should never exceed MAX_ATTACK_MODES.
 			return static_cast<byte>(index);
@@ -877,7 +877,7 @@ void CGenericWeapon::FindWeaponSlotInfo()
 		return;
 	}
 
-	const int id = static_cast<const int>(WeaponAttributes().Core.Id);
+	const int id = static_cast<int>(WeaponAttributes().Core.Id);
 
 	for ( int slot = 0; slot < MAX_WEAPON_SLOTS; ++slot )
 	{

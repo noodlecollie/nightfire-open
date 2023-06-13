@@ -51,11 +51,10 @@ extern DLL_GLOBAL BOOL g_fGameOver;
 CBaseBot::CBaseBot() :
 	bCalledAimThisFrame(FALSE),
 	DesiredVelocity(Vector(0, 0, 0)),
-	FightStyle(),
 	bGoUpOnLadder(TRUE),
 	LookAtBiasVec(Vector(0, 0, 0)),
 	LookAtVec(Vector(0, 0, 0)),
-	Memory(),
+	fNextThink(gpGlobals->time),
 	MovedDistance(0.0),
 	MoveForward(0.0),
 	MoveStrafe(0.0),
@@ -67,14 +66,15 @@ CBaseBot::CBaseBot() :
 	// pGoal( NULL ),
 	// End Memory Leak Fix
 	RoamDirection(UNKNOWN),
-	Stats(),
 	TimeGoalCheck(gpGlobals->time),
-	TimeGoalCheckDelay(0.3),
+	TimeGoalCheckDelay(0.3f),
 	TimeMSecCheck(gpGlobals->time),
-	fNextThink(gpGlobals->time),
 	TurningDirection(NONE),
 	bWantToBeInCombat(FALSE),
-	bFiredWeapon(false)
+	bFiredWeapon(false),
+	FightStyle(),
+	Memory(),
+	Stats()
 {
 	pEnemy = (CBaseEntity*)NULL;
 	pGoal = (CBaseEntity*)NULL;
@@ -190,7 +190,7 @@ void CBaseBot::ActionChooseGoal(void)
 				const int ammoIndex = GetAmmoIndex(genericAmmo->AmmoName());
 				if ( ammoIndex >= 0 && ammoIndex < MAX_AMMO_SLOTS && m_rgAmmo[ammoIndex] < 100 )
 				{
-					PickupDesire = 100 - m_rgAmmo[ammoIndex];
+					PickupDesire = 100.0f - m_rgAmmo[ammoIndex];
 				}
 				else
 				{
@@ -204,7 +204,7 @@ void CBaseBot::ActionChooseGoal(void)
 			}
 			else if ( FClassnameIs(pNextEnt->pev, "item_health") )
 			{
-				PickupDesire = 100.0 - pev->health;  // we want health proportional to how much we need
+				PickupDesire = 100.0f - pev->health;  // we want health proportional to how much we need
 			}
 			else if ( FClassnameIs(pNextEnt->pev, "item_battery") )
 			{
@@ -285,7 +285,7 @@ void CBaseBot::ActionChooseWeapon(void)
 
 			if ( CheckWeaponDesire > BestWeaponDesire )
 			{
-				BestWeaponDesire = CheckWeaponDesire;
+				BestWeaponDesire = static_cast<int>(CheckWeaponDesire);
 				pBestWeapon = genericWeapon;
 			}
 		}
@@ -395,7 +395,10 @@ void CBaseBot::ActionLook(int SearchDistance)
 	m_pLink = NULL;
 	CBaseEntity* pNextEnt = NULL;  // the current visible entity that we're dealing with
 	CBaseEntity* pList[100];
-	Vector delta = Vector(SearchDistance, SearchDistance, SearchDistance);
+	Vector delta = Vector(
+		static_cast<float>(SearchDistance),
+		static_cast<float>(SearchDistance),
+		static_cast<float>(SearchDistance));
 	BOOL CheckGoalThisFrame = FALSE;
 	BOOL NoGoalAtStartOfFrame = FALSE;
 
@@ -541,9 +544,9 @@ BOOL CBaseBot::CheckBotKick()
 			GetMoveForward(),
 			GetMoveStrafe(),
 			GetMoveVertical(),
-			pev->button,
+			static_cast<unsigned short>(pev->button),
 			0,
-			GetMSec());
+			static_cast<byte>(GetMSec()));
 		return TRUE;
 	}
 
@@ -557,7 +560,7 @@ BOOL CBaseBot::CheckBotKick()
 
 float CBaseBot::GetBotThinkDelay()
 {
-	return (0.001 + 0.005 * (100 - Stats.GetTraitReflexes()));
+	return (0.001f + 0.005f * (100 - Stats.GetTraitReflexes()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -620,9 +623,9 @@ void CBaseBot::BotThink(void)
 		GetMoveForward(),
 		GetMoveStrafe(),
 		GetMoveVertical(),
-		pev->button,
+		static_cast<unsigned short>(pev->button),
 		0,
-		GetMSec());
+		static_cast<byte>(GetMSec()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -655,19 +658,31 @@ BOOL CBaseBot::CheckNotice(CBaseEntity* pEntity)
 		float visibility_helper = 0.;
 
 		if ( FVisible(pEntity->pev->origin) )
-			visibility_helper += 0.3;
+		{
+			visibility_helper += 0.3f;
+		}
+
 		if ( FVisible(pEntity->Center()) )
-			visibility_helper += 0.4;
+		{
+			visibility_helper += 0.4f;
+		}
+
 		if ( FVisible(pEntity->EyePosition()) )
-			visibility_helper += 0.3;
+		{
+			visibility_helper += 0.3f;
+		}
 
 		if ( visibility_helper == 0.0 )
+		{
 			return FALSE;  // bot can't see entity
+		}
 
-		float perceptTweak = 1. - Stats.GetTraitPerception() / 100.;  // [1.,0]
+		float perceptTweak = 1.0f - Stats.GetTraitPerception() / 100.0f;  // [1.,0]
 
 		if ( perceptTweak == 0.0 )
+		{
 			return TRUE;  // bot has perfect perception
+		}
 
 		Vector NoticeVector = pEntity->Center() - EyePosition();
 
@@ -689,7 +704,7 @@ BOOL CBaseBot::CheckNotice(CBaseEntity* pEntity)
 
 		float velocity_helper = (pEntity->pev->velocity.Length()) / CVAR_GET_FLOAT("sv_maxspeed");  // velocity ratio
 
-		velocity_helper = (velocity_helper * (2. * velocity_helper + 1.) + 1.);  // [1, 4]
+		velocity_helper = (velocity_helper * (2.0f * velocity_helper + 1.0f) + 1.0f);  // [1, 4]
 
 		float angle_helper = 1.0;
 
@@ -736,11 +751,11 @@ void CBaseBot::HandleTime(void)
 {
 	if ( GetTimeMSecCheck() <= gpGlobals->time )
 	{
-		SetTimeMSecCheck(gpGlobals->time + 0.5);  // Scott:  was + 1
+		SetTimeMSecCheck(gpGlobals->time + 0.5f);  // Scott:  was + 1
 
 		if ( GetMSecCounter() > 0 )
 		{
-			SetMSec(450 / GetMSecCounter());  // Scott:  was 1000
+			SetMSec(static_cast<float>(450 / GetMSecCounter()));  // Scott:  was 1000
 		}
 
 		SetMSecCounter(0);
@@ -807,11 +822,11 @@ void CBaseBot::ThinkMood(void)
 	{
 		// Vacindak: Messy, but i did this late at night and errors about with the single line alternative for some
 		// reason
-		CBaseEntity* pEnemy = GetEnemy();
-		CBasePlayer* pEnemyPlayer = (CBasePlayer*)pEnemy;
+		CBaseEntity* enemy = GetEnemy();
+		CBasePlayer* enemyPlayer = (CBasePlayer*)enemy;
 
 		if ( (pev->health + pev->armorvalue) + (Stats.GetTraitAggression() - 50) >
-			 (pEnemyPlayer->pev->health + pEnemyPlayer->pev->armorvalue) )
+			 (enemyPlayer->pev->health + enemyPlayer->pev->armorvalue) )
 		{
 			SetWantToBeInCombat(TRUE);
 		}

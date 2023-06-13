@@ -42,6 +42,7 @@ GNU General Public License for more details.
 #include "xash3d_mathlib.h"
 #include "common/com_strings.h"
 #include "common/protocol.h"
+#include "PlatformLib/File.h"
 
 #define FILE_COPY_SIZE (1024 * 1024)
 
@@ -73,15 +74,15 @@ static void FS_EnsureOpenFile(file_t* file)
 
 	if ( fs_last_readfile && (fs_last_readfile->handle != -1) )
 	{
-		fs_last_readfile->backup_position = lseek(fs_last_readfile->handle, 0, SEEK_CUR);
-		close(fs_last_readfile->handle);
+		fs_last_readfile->backup_position = PlatformLib_LSeek(fs_last_readfile->handle, 0, SEEK_CUR);
+		PlatformLib_Close(fs_last_readfile->handle);
 		fs_last_readfile->handle = -1;
 	}
 	fs_last_readfile = file;
 	if ( file && (file->handle == -1) )
 	{
-		file->handle = open(file->backup_path, file->backup_options);
-		lseek(file->handle, file->backup_position, SEEK_SET);
+		file->handle = PlatformLib_OpenWithPermissions(file->backup_path, file->backup_options);
+		PlatformLib_LSeek(file->handle, file->backup_position, SEEK_SET);
 	}
 }
 
@@ -103,9 +104,13 @@ static void FS_BackupFileName(file_t* file, const char* path, uint options)
 #else
 static void FS_EnsureOpenFile(file_t* file)
 {
+	(void)file;
 }
 static void FS_BackupFileName(file_t* file, const char* path, uint options)
 {
+	(void)file;
+	(void)path;
+	(void)options;
 }
 #endif
 
@@ -380,7 +385,7 @@ void FS_ClearSearchPath(void)
 
 	prev = &fs_searchpaths;
 
-	while ( true )
+	for ( ;; )
 	{
 		cur = *prev;
 
@@ -943,15 +948,17 @@ static qboolean FS_CheckForQuakeGameDir(const char* gamedir, qboolean direct)
 	// if directory contain config.cfg or progs.dat it's 100% gamedir
 	// quake mods probably always archived but can missed config.cfg before first running
 	const char* files[] = {"config.cfg", "progs.dat", "pak0.pak"};
-	int i;
+	size_t i;
 
-	for ( i = 0; i < sizeof(files) / sizeof(files[0]); i++ )
+	for ( i = 0; i < sizeof(files) / sizeof(files[0]); ++i )
 	{
 		char buf[MAX_VA_STRING];
 
 		Q_snprintf(buf, sizeof(buf), "%s/%s", gamedir, files[i]);
-		if ( direct ? FS_SysFileExists(buf) : FS_FileExists(buf, false) )
+		if ( direct ? FS_SysFileExists(buf) : (qboolean)FS_FileExists(buf, false) )
+		{
 			return true;
+		}
 	}
 
 	return false;
@@ -968,14 +975,14 @@ static qboolean FS_CheckForXashGameDir(const char* gamedir, qboolean direct)
 {
 	// if directory contain gameinfo.txt or liblist.gam it's 100% gamedir
 	const char* files[] = {"gameinfo.txt", "liblist.gam"};
-	int i;
+	size_t i;
 
 	for ( i = 0; i < sizeof(files) / sizeof(files[0]); i++ )
 	{
 		char buf[MAX_SYSPATH];
 
 		Q_snprintf(buf, sizeof(buf), "%s/%s", gamedir, files[i]);
-		if ( direct ? FS_SysFileExists(buf) : FS_FileExists(buf, false) )
+		if ( direct ? FS_SysFileExists(buf) : (qboolean)FS_FileExists(buf, false) )
 			return true;
 	}
 
@@ -991,7 +998,6 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 {
 	string liblist_path, gameinfo_path;
 	string default_gameinfo_path;
-	qboolean haveUpdate = false;
 
 	Q_snprintf(default_gameinfo_path, sizeof(default_gameinfo_path), "%s/gameinfo.txt", fs_basedir);
 	Q_snprintf(gameinfo_path, sizeof(gameinfo_path), "%s/gameinfo.txt", gamedir);
@@ -1014,7 +1020,7 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 
 		if ( roLibListTime > rwGameInfoTime )
 		{
-			haveUpdate = FS_ConvertGameInfo(gamedir, gameinfo_path, liblist_ro);
+			FS_ConvertGameInfo(gamedir, gameinfo_path, liblist_ro);
 		}
 		else if ( roGameInfoTime > rwGameInfoTime )
 		{
@@ -1024,7 +1030,6 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 			if ( afile_ro )
 			{
 				Con_DPrintf("Copy rodir %s to rwdir %s\n", gameinfo_ro, gameinfo_path);
-				haveUpdate = true;
 				FS_WriteFile(gameinfo_path, afile_ro, len);
 				Mem_Free(afile_ro);
 			}
@@ -1035,7 +1040,9 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 
 	// if user change liblist.gam update the gameinfo.txt
 	if ( FS_FileTime(liblist_path, false) > FS_FileTime(gameinfo_path, false) )
+	{
 		FS_ConvertGameInfo(gamedir, gameinfo_path, liblist_path);
+	}
 
 	// force to create gameinfo for specified game if missing
 	if ( (FS_CheckForQuakeGameDir(gamedir, false) || !Q_stricmp(fs_gamedir, gamedir)) &&
@@ -1052,11 +1059,15 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 			FS_WriteGameInfo(gameinfo_path, &tmpGameInfo);
 		}
 		else
+		{
 			FS_CreateDefaultGameInfo(gameinfo_path);
+		}
 	}
 
 	if ( !GameInfo || !FS_FileExists(gameinfo_path, false) )
+	{
 		return false;  // no dest
+	}
 
 	return FS_ReadGameInfo(gameinfo_path, gamedir, GameInfo);
 }
@@ -1234,7 +1245,9 @@ search for library, assume index is valid
 static qboolean FS_FindLibrary(const char* dllname, qboolean directpath, fs_dllinfo_t* dllInfo)
 {
 	searchpath_t* search;
-	int index, start = 0, i, len;
+	int index, start = 0;
+	size_t len;
+	size_t i;
 
 	fs_ext_path = directpath;
 
@@ -1252,9 +1265,13 @@ static qboolean FS_FindLibrary(const char* dllname, qboolean directpath, fs_dlli
 	for ( i = 0; i < len; i++ )
 	{
 		if ( dllname[i + start] == '\\' )
+		{
 			dllInfo->shortPath[i] = '/';
+		}
 		else
+		{
 			dllInfo->shortPath[i] = Q_tolower(dllname[i + start]);
+		}
 	}
 	dllInfo->shortPath[i] = '\0';
 
@@ -1315,28 +1332,49 @@ static qboolean FS_FindLibrary(const char* dllname, qboolean directpath, fs_dlli
 
 poolhandle_t _Mem_AllocPool(const char* name, const char* filename, int fileline)
 {
+	(void)name;
+	(void)filename;
+	(void)fileline;
+
 	return (poolhandle_t)0xDEADC0DE;
 }
 
 void _Mem_FreePool(poolhandle_t* poolptr, const char* filename, int fileline)
 {
-	// stub
+	(void)poolptr;
+	(void)filename;
+	(void)fileline;
 }
 
 void* _Mem_Alloc(poolhandle_t poolptr, size_t size, qboolean clear, const char* filename, int fileline)
 {
+	(void)poolptr;
+	(void)filename;
+	(void)fileline;
+
 	if ( clear )
+	{
 		return calloc(1, size);
+	}
+
 	return malloc(size);
 }
 
 void* _Mem_Realloc(poolhandle_t poolptr, void* memptr, size_t size, qboolean clear, const char* filename, int fileline)
 {
+	(void)poolptr;
+	(void)clear;
+	(void)filename;
+	(void)fileline;
+
 	return realloc(memptr, size);
 }
 
 void _Mem_Free(void* data, const char* filename, int fileline)
 {
+	(void)filename;
+	(void)fileline;
+
 	free(data);
 }
 
@@ -1373,6 +1411,8 @@ FS_InitStdio(qboolean caseinsensitive, const char* rootdir, const char* basedir,
 	qboolean hasGameDir = false;
 	int i;
 	char buf[MAX_VA_STRING];
+
+	(void)caseinsensitive;
 
 	FS_InitMemory();
 #if !XASH_WIN32
@@ -1537,13 +1577,18 @@ int FS_SysFileTime(const char* filename)
 #if XASH_WIN32
 	struct _stat buf;
 	if ( _wstat(FS_PathToWideChar(filename), &buf) < 0 )
+	{
+		return -1;
+	}
 #else
 	struct stat buf;
 	if ( stat(filename, &buf) < 0 )
-#endif
+	{
 		return -1;
+	}
+#endif
 
-	return buf.st_mtime;
+	return (int)(buf.st_mtime);
 }
 
 /*
@@ -1604,7 +1649,7 @@ file_t* FS_SysOpen(const char* filepath, const char* mode)
 #if XASH_WIN32
 	file->handle = _wopen(FS_PathToWideChar(filepath), mod | opt, 0666);
 #else
-	file->handle = open(filepath, mod | opt, 0666);
+	file->handle = PlatformLib_OpenWithPermissions(filepath, mod | opt, 0666);
 #endif
 
 #if !XASH_WIN32
@@ -1618,7 +1663,7 @@ file_t* FS_SysOpen(const char* filepath, const char* mode)
 		return NULL;
 	}
 
-	file->real_length = lseek(file->handle, 0, SEEK_END);
+	file->real_length = (fs_offset_t)PlatformLib_LSeek(file->handle, 0, SEEK_END);
 
 	// uncomment do disable write
 	// if( opt & O_CREAT )
@@ -1626,9 +1671,13 @@ file_t* FS_SysOpen(const char* filepath, const char* mode)
 
 	// For files opened in append mode, we start at the end of the file
 	if ( opt & O_APPEND )
+	{
 		file->position = file->real_length;
+	}
 	else
-		lseek(file->handle, 0, SEEK_SET);
+	{
+		PlatformLib_LSeek(file->handle, 0, SEEK_SET);
+	}
 
 	return file;
 }
@@ -1638,8 +1687,8 @@ static int FS_DuplicateHandle( const char *filename, int handle, fs_offset_t pos
 #ifdef HAVE_DUP
 	return dup( handle );
 #else
-	int newhandle = open( filename, O_RDONLY|O_BINARY );
-	lseek( newhandle, pos, SEEK_SET );
+	int newhandle = PlatformLib_OpenWith( filename, O_RDONLY|O_BINARY );
+	PlatformLib_LSeek( newhandle, pos, SEEK_SET );
 	return newhandle;
 #endif
 }
@@ -1648,14 +1697,17 @@ static int FS_DuplicateHandle( const char *filename, int handle, fs_offset_t pos
 file_t* FS_OpenHandle(const char* syspath, int handle, fs_offset_t offset, fs_offset_t len)
 {
 	file_t* file = (file_t*)Mem_Calloc(fs_mempool, sizeof(file_t));
+
+	(void)syspath;
+
 #ifndef XASH_REDUCE_FD
 #ifdef HAVE_DUP
-	file->handle = dup(handle);
+	file->handle = PlatformLib_Dup(handle);
 #else
-	file->handle = open(syspath, O_RDONLY | O_BINARY);
+	file->handle = PlatformLib_Open(syspath, O_RDONLY | O_BINARY);
 #endif
 
-	if ( lseek(file->handle, offset, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(file->handle, offset, SEEK_SET) == -1 )
 	{
 		Mem_Free(file);
 		return NULL;
@@ -1883,7 +1935,7 @@ file_t* FS_Open(const char* filepath, const char* mode, qboolean gamedironly)
 		char real_path[MAX_SYSPATH];
 
 		// open the file on disk directly
-		if ( !FS_FixFileCase(fs_writepath->dir, filepath, real_path, sizeof(real_path), true) )
+		if ( !FS_FixFileCase(fs_writepath->pkg.dir, filepath, real_path, sizeof(real_path), true) )
 			return NULL;
 
 		FS_CreatePath(real_path);  // Create directories up to the file
@@ -1910,7 +1962,7 @@ int FS_Close(file_t* file)
 	FS_BackupFileName(file, NULL, 0);
 
 	if ( file->handle >= 0 )
-		if ( close(file->handle) )
+		if ( PlatformLib_Close(file->handle) )
 			return EOF;
 
 	Mem_Free(file);
@@ -1960,14 +2012,14 @@ fs_offset_t FS_Write(file_t* file, const void* data, size_t datasize)
 
 	// if necessary, seek to the exact file position we're supposed to be
 	if ( file->buff_ind != file->buff_len )
-		lseek(file->handle, file->buff_ind - file->buff_len, SEEK_CUR);
+		PlatformLib_LSeek(file->handle, file->buff_ind - file->buff_len, SEEK_CUR);
 
 	// purge cached data
 	FS_Purge(file);
 
 	// write the buffer and update the position
-	result = write(file->handle, data, (fs_offset_t)datasize);
-	file->position = lseek(file->handle, 0, SEEK_CUR);
+	result = PlatformLib_Write(file->handle, data, (fs_offset_t)datasize);
+	file->position = (fs_offset_t)PlatformLib_LSeek(file->handle, 0, SEEK_CUR);
 
 	if ( file->real_length < file->position )
 		file->real_length = file->position;
@@ -1996,7 +2048,7 @@ fs_offset_t FS_Read(file_t* file, void* buffer, size_t buffersize)
 	// Get rid of the ungetc character
 	if ( file->ungetc != EOF )
 	{
-		((char*)buffer)[0] = file->ungetc;
+		((char*)buffer)[0] = (char)file->ungetc;
 		buffersize--;
 		file->ungetc = EOF;
 		done = 1;
@@ -2029,8 +2081,8 @@ fs_offset_t FS_Read(file_t* file, void* buffer, size_t buffersize)
 	{
 		if ( count > (fs_offset_t)buffersize )
 			count = (fs_offset_t)buffersize;
-		lseek(file->handle, file->offset + file->position, SEEK_SET);
-		nb = read(file->handle, &((byte*)buffer)[done], count);
+		PlatformLib_LSeek(file->handle, file->offset + file->position, SEEK_SET);
+		nb = PlatformLib_Read(file->handle, &((byte*)buffer)[done], count);
 
 		if ( nb > 0 )
 		{
@@ -2044,8 +2096,8 @@ fs_offset_t FS_Read(file_t* file, void* buffer, size_t buffersize)
 	{
 		if ( count > (fs_offset_t)sizeof(file->buff) )
 			count = (fs_offset_t)sizeof(file->buff);
-		lseek(file->handle, file->offset + file->position, SEEK_SET);
-		nb = read(file->handle, file->buff, count);
+		PlatformLib_LSeek(file->handle, file->offset + file->position, SEEK_SET);
+		nb = PlatformLib_Read(file->handle, file->buff, count);
 
 		if ( nb > 0 )
 		{
@@ -2122,7 +2174,7 @@ int FS_VPrintf(file_t* file, const char* format, va_list ap)
 		buff_size *= 2;
 	}
 
-	len = write(file->handle, tempbuff, len);
+	len = PlatformLib_Write(file->handle, tempbuff, len);
 	Mem_Free(tempbuff);
 
 	return len;
@@ -2171,27 +2223,35 @@ Same as fgets
 */
 int FS_Gets(file_t* file, char* string, size_t bufsize)
 {
-	int c, end = 0;
+	char c;
+	size_t end = 0;
 
 	while ( 1 )
 	{
-		c = FS_Getc(file);
+		c = (char)FS_Getc(file);
 
 		if ( c == '\r' || c == '\n' || c < 0 )
+		{
 			break;
+		}
 
 		if ( end < bufsize - 1 )
+		{
 			string[end++] = c;
+		}
 	}
+
 	string[end] = 0;
 
 	// remove \n following \r
 	if ( c == '\r' )
 	{
-		c = FS_Getc(file);
+		c = (char)FS_Getc(file);
 
 		if ( c != '\n' )
+		{
 			FS_UnGetc(file, c);
+		}
 	}
 
 	return c;
@@ -2235,7 +2295,7 @@ int FS_Seek(file_t* file, fs_offset_t offset, int whence)
 	// Purge cached data
 	FS_Purge(file);
 
-	if ( lseek(file->handle, file->offset + offset, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(file->handle, file->offset + offset, SEEK_SET) == -1 )
 		return -1;
 	file->position = offset;
 
@@ -2575,11 +2635,11 @@ qboolean FS_Rename(const char* oldname, const char* newname)
 	COM_FixSlashes(newname2);
 
 	// file does not exist
-	if ( !FS_FixFileCase(fs_writepath->dir, oldname2, oldpath, sizeof(oldpath), false) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, oldname2, oldpath, sizeof(oldpath), false) )
 		return false;
 
 	// exit if overflowed
-	if ( !FS_FixFileCase(fs_writepath->dir, newname2, newpath, sizeof(newpath), true) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, newname2, newpath, sizeof(newpath), true) )
 		return false;
 
 	ret = rename(oldpath, newpath);
@@ -2617,7 +2677,7 @@ qboolean GAME_EXPORT FS_Delete(const char* path)
 	Q_strncpy(path2, path, sizeof(path2));
 	COM_FixSlashes(path2);
 
-	if ( !FS_FixFileCase(fs_writepath->dir, path2, real_path, sizeof(real_path), true) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, path2, real_path, sizeof(real_path), true) )
 		return true;
 
 	ret = remove(real_path);
@@ -2838,6 +2898,9 @@ fs_api_t g_api = {
 	FS_Delete,
 	FS_SysFileExists,
 	FS_GetDiskPath,
+
+	NULL,
+	NULL
 };
 
 int EXPORT GetFSAPI(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* engfuncs)

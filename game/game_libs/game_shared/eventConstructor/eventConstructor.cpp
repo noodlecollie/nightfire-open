@@ -38,7 +38,7 @@ namespace EventConstructor
 
 		m_Args.flags = flags;
 		m_Args.invoker = edict;
-		m_Args.eventIndex = eventIndex;
+		m_Args.eventIndex = static_cast<unsigned short>(eventIndex);
 		m_Args.delay = delay;
 	}
 }  // namespace EventConstructor

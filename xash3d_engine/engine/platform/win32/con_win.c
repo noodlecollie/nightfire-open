@@ -69,6 +69,7 @@ static WORD g_color_table[8] = {
 
 static BOOL WINAPI Wcon_HandleConsole(DWORD CtrlType)
 {
+	(void)CtrlType;
 	return TRUE;
 }
 
@@ -96,7 +97,7 @@ static void Wcon_PrintInternal(const char* msg, int length)
 			{
 				// dump accumulated text before change color
 				*pTemp = 0;  // terminate string
-				WriteFile(s_wcd.hOutput, tmpBuf, Q_strlen(tmpBuf), &cbWritten, 0);
+				WriteFile(s_wcd.hOutput, tmpBuf, (DWORD)Q_strlen(tmpBuf), &cbWritten, 0);
 				pTemp = tmpBuf;
 			}
 
@@ -112,7 +113,7 @@ static void Wcon_PrintInternal(const char* msg, int length)
 		{
 			// temp buffer is full, dump it now
 			*pTemp = 0;  // terminate string
-			WriteFile(s_wcd.hOutput, tmpBuf, Q_strlen(tmpBuf), &cbWritten, 0);
+			WriteFile(s_wcd.hOutput, tmpBuf, (DWORD)Q_strlen(tmpBuf), &cbWritten, 0);
 			pTemp = tmpBuf;
 		}
 	}
@@ -122,7 +123,7 @@ static void Wcon_PrintInternal(const char* msg, int length)
 	{
 		// dump accumulated text
 		*pTemp = 0;  // terminate string
-		WriteFile(s_wcd.hOutput, tmpBuf, Q_strlen(tmpBuf), &cbWritten, 0);
+		WriteFile(s_wcd.hOutput, tmpBuf, (DWORD)Q_strlen(tmpBuf), &cbWritten, 0);
 		pTemp = tmpBuf;
 	}
 
@@ -161,7 +162,7 @@ static void Wcon_SetInputText(const char* inputText)
 	}
 	Wcon_PrintInternal(inputText, 0);
 	Q_strncpy(s_wcd.consoleText, inputText, sizeof(s_wcd.consoleText) - 1);
-	s_wcd.consoleTextLen = Q_strlen(inputText);
+	s_wcd.consoleTextLen = (int)Q_strlen(inputText);
 	s_wcd.cursorPosition = s_wcd.consoleTextLen;
 	s_wcd.browseLine = s_wcd.inputLine;
 }
@@ -235,7 +236,7 @@ static void Wcon_EventUpArrow()
 
 	Wcon_PrintInternal(s_wcd.lineBuffer[s_wcd.browseLine], 0);
 	Q_strncpy(s_wcd.consoleText, s_wcd.lineBuffer[s_wcd.browseLine], sizeof(s_wcd.consoleText));
-	s_wcd.consoleTextLen = Q_strlen(s_wcd.lineBuffer[s_wcd.browseLine]);
+	s_wcd.consoleTextLen = (int)Q_strlen(s_wcd.lineBuffer[s_wcd.browseLine]);
 	s_wcd.cursorPosition = s_wcd.consoleTextLen;
 }
 
@@ -265,7 +266,7 @@ static void Wcon_EventDownArrow()
 	{
 		Wcon_PrintInternal(s_wcd.lineBuffer[s_wcd.browseLine], 0);
 		Q_strncpy(s_wcd.consoleText, s_wcd.lineBuffer[s_wcd.browseLine], sizeof(s_wcd.consoleText));
-		s_wcd.consoleTextLen = Q_strlen(s_wcd.lineBuffer[s_wcd.browseLine]);
+		s_wcd.consoleTextLen = (int)Q_strlen(s_wcd.lineBuffer[s_wcd.browseLine]);
 	}
 	s_wcd.cursorPosition = s_wcd.consoleTextLen;
 }
@@ -400,13 +401,12 @@ static void Wcon_UpdateStatusLine()
 
 	FillConsoleOutputCharacter(s_wcd.hOutput, ' ', 80, coord, &dwWritten);
 	FillConsoleOutputAttribute(s_wcd.hOutput, wAttrib, 80, coord, &dwWritten);
-	WriteConsoleOutputCharacter(s_wcd.hOutput, s_wcd.statusLine, Q_strlen(s_wcd.statusLine), coord, &dwWritten);
+	WriteConsoleOutputCharacter(s_wcd.hOutput, s_wcd.statusLine, (DWORD)Q_strlen(s_wcd.statusLine), coord, &dwWritten);
 }
 
 static char* Wcon_KeyEvent(int key, WCHAR character)
 {
 	int nLen;
-	char inputBuffer[1024];
 
 	switch ( key )
 	{
@@ -441,9 +441,10 @@ static char* Wcon_KeyEvent(int key, WCHAR character)
 			break;
 		default:
 			// TODO implement converting wide chars to UTF-8 and properly handling it
+			// NFTODO: Does this function even work without this conversion??
 			if ( (character >= ' ') && (character <= '~') )
 			{
-				Wcon_EventCharacter(character);
+				Wcon_EventCharacter((char)character);
 			}
 			break;
 	}
@@ -631,7 +632,7 @@ char* Wcon_Input(void)
 	if ( !s_wcd.inputEnabled )
 		return NULL;
 
-	while ( true )
+	for ( ;; )
 	{
 		if ( !GetNumberOfConsoleInputEvents(s_wcd.hInput, &eventsCount) )
 		{

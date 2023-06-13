@@ -28,20 +28,11 @@ GNU General Public License for more details.
 #endif
 #endif
 
-// shut-up compiler warnings
-#ifdef _MSC_VER
-#pragma warning(disable : 4305)  // int or float data truncation
-#pragma warning(disable : 4201)  // nameless struct/union
-#pragma warning(disable : 4514)  // unreferenced inline function removed
-#pragma warning(disable : 4100)  // unreferenced formal parameter
-#pragma warning(disable : 4244)  // conversion from 'float' to 'int', possible loss of data
-#pragma warning(disable : 4520)  // multiple default constructors specified
-#pragma warning(disable : 4996)  // This function or variable may be unsafe
 // disable c++11 on old msvc
-#if _MSC_VER < 1800 && !defined MY_COMPILER_SUCKS
-#define MY_COMPILER_SUCKS
+#if defined(_MSC_VER) && _MSC_VER < 1800 && !defined CXX11_NOT_PRESENT
+#define CXX11_NOT_PRESENT
 #endif
-#endif
+
 // Misc C-runtime library headers
 #include <assert.h>
 #include <string.h>
@@ -50,7 +41,7 @@ GNU General Public License for more details.
 #include <math.h>
 #include <ctype.h>
 
-#ifdef MY_COMPILER_SUCKS
+#ifdef CXX11_NOT_PRESENT
 // C++11 keywords
 #define final
 #define constexpr

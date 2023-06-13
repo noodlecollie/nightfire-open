@@ -77,12 +77,12 @@ const char* CShellImpactSoundResources::RandomResourcePathForImpact(ShellType sh
 	}
 }
 
-const char* CShellImpactSoundResources::DefaultShellImpact(SurfaceProp surfaceProp) const
+const char* CShellImpactSoundResources::DefaultShellImpact(SurfaceProp) const
 {
 	return RandomResourcePath(ShellImpactSoundId::BrassOnHardSurface);
 }
 
-const char* CShellImpactSoundResources::ShotgunShellImpact(SurfaceProp surfaceProp) const
+const char* CShellImpactSoundResources::ShotgunShellImpact(SurfaceProp) const
 {
 	return RandomResourcePath(ShellImpactSoundId::HollowOnHardSurface);
 }

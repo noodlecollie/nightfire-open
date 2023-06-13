@@ -283,7 +283,7 @@ void CBreakable::BreakTouch(CBaseEntity* pOther)
 	if ( FBitSet(pev->spawnflags, SF_BREAK_TOUCH) )
 	{
 		// can be broken when run into
-		flDamage = pevToucher->velocity.Length() * 0.01;
+		flDamage = pevToucher->velocity.Length() * 0.01f;
 
 		if ( flDamage >= pev->health )
 		{
@@ -307,7 +307,7 @@ void CBreakable::BreakTouch(CBaseEntity* pOther)
 		if ( m_flDelay == 0 )
 		{
 			// !!!BUGBUG - why doesn't zero delay work?
-			m_flDelay = 0.1;
+			m_flDelay = 0.1f;
 		}
 
 		pev->nextthink = pev->ltime + m_flDelay;
@@ -319,7 +319,7 @@ void CBreakable::BreakTouch(CBaseEntity* pOther)
 //
 
 // Break when triggered
-void CBreakable::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBreakable::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( IsBreakable() )
 	{
@@ -347,7 +347,7 @@ void CBreakable::TraceAttack(
 			{
 				UTIL_Sparks(ptr->vecEndPos);
 
-				float flVolume = RANDOM_FLOAT(0.7, 1.0);  // random volume range
+				float flVolume = RANDOM_FLOAT(0.7f, 1.0f);  // random volume range
 				switch ( RANDOM_LONG(0, 1) )
 				{
 					case 0:
@@ -405,7 +405,7 @@ int CBreakable::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, floa
 
 	// Boxes / glass / etc. don't take much poison damage, just the impact of the dart - consider that 10%
 	if ( bitsDamageType & DMG_POISON )
-		flDamage *= 0.1;
+		flDamage *= 0.1f;
 
 	// this global is still used for glass and other non-monster killables, along with decals.
 	g_vecAttackDir = vecTemp.Normalize();
@@ -442,7 +442,7 @@ void CBreakable::Die(void)
 	// The more negative pev->health, the louder
 	// the sound should be.
 
-	fvol = RANDOM_FLOAT(0.85, 1.0) + (fabs(pev->health) / 100.0);
+	fvol = RANDOM_FLOAT(0.85f, 1.0f) + (fabsf(pev->health) / 100.0f);
 
 	if ( fvol > 1.0 )
 	{
@@ -543,7 +543,7 @@ void CBreakable::Die(void)
 	SUB_UseTargets(NULL, USE_TOGGLE, 0);
 
 	SetThink(&CBaseEntity::SUB_Remove);
-	pev->nextthink = pev->ltime + 0.1;
+	pev->nextthink = pev->ltime + 0.1f;
 
 	if ( m_iszSpawnObject )
 	{
@@ -810,7 +810,7 @@ void CPushable::Move(CBaseEntity* pOther, int push)
 	{
 		// Only push if floating
 		if ( pev->waterlevel > 0 )
-			pev->velocity.z += pevToucher->velocity.z * 0.1;
+			pev->velocity.z += pevToucher->velocity.z * 0.1f;
 
 		return;
 	}
@@ -833,7 +833,7 @@ void CPushable::Move(CBaseEntity* pOther, int push)
 			if ( pev->waterlevel < 1 )
 				return;
 			else
-				factor = 0.1;
+				factor = 0.1f;
 		}
 		else
 			factor = 1;
@@ -844,7 +844,7 @@ void CPushable::Move(CBaseEntity* pOther, int push)
 	pev->velocity.x += pevToucher->velocity.x * factor;
 	pev->velocity.y += pevToucher->velocity.y * factor;
 
-	float length = sqrt(pev->velocity.x * pev->velocity.x + pev->velocity.y * pev->velocity.y);
+	float length = sqrtf(pev->velocity.x * pev->velocity.x + pev->velocity.y * pev->velocity.y);
 	if ( push && (length > MaxSpeed()) )
 	{
 		pev->velocity.x = (pev->velocity.x * MaxSpeed() / length);

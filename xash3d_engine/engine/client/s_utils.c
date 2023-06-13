@@ -305,7 +305,9 @@ void S_SetSampleEnd(channel_t* pChan, wavdata_t* pSource, int newEndPosition)
 
 	// past current position?  limit.
 	if ( newEndPosition < pChan->pMixer.sample )
-		newEndPosition = pChan->pMixer.sample;
+	{
+		newEndPosition = (int)pChan->pMixer.sample;
+	}
 
 	pChan->pMixer.forcedEndSample = newEndPosition;
 }

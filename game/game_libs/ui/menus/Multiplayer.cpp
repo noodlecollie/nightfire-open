@@ -97,12 +97,14 @@ void CMenuMultiplayer::_Init(void)
 	msgBox.SetNegativeButton(L("GameUI_Cancel"), PC_CANCEL);
 	msgBox.HighlightChoice(CMenuYesNoMessageBox::HIGHLIGHT_YES);
 	SET_EVENT_MULTI(msgBox.onPositive, {
+		(void)pExtra;
 		EngFuncs::CvarSetValue("cl_nopred", 0.0f);
 		EngFuncs::CvarSetValue("menu_mp_firsttime", 0.0f);
 
 		UI_PlayerIntroduceDialog_Show(pSelf->GetParent(CMenuBaseWindow));
 	});
 	SET_EVENT_MULTI(msgBox.onNegative, {
+		(void)pExtra;
 		EngFuncs::CvarSetValue("menu_mp_firsttime", 0.0f);
 
 		UI_PlayerIntroduceDialog_Show(pSelf->GetParent(CMenuBaseWindow));

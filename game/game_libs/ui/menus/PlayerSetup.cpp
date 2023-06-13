@@ -92,19 +92,19 @@ public:
 	public:
 		void Update() override;
 
-		int GetFullPath(char* buf, size_t size, int pos)
+		int GetFullPath(char* buf, size_t inSize, int inPos)
 		{
 			const char *file, *ext;
 
-			file = Element(pos).String();
-			ext = IsPng(pos) ? "png" : "bmp";
+			file = Element(inPos).String();
+			ext = IsPng(inPos) ? "png" : "bmp";
 
-			return PlatformLib_SNPrintF(buf, size, "logos/%s.%s", file, ext);
+			return PlatformLib_SNPrintF(buf, inSize, "logos/%s.%s", file, ext);
 		}
 
-		bool IsPng(int pos)
+		bool IsPng(int inPos)
 		{
-			return m_isPngs[pos];
+			return m_isPngs[inPos];
 		}
 
 	private:
@@ -169,7 +169,7 @@ UI_PlayerSetup_FindModels
 */
 void CMenuPlayerSetup::CModelListModel::Update(void)
 {
-	char name[256];
+	char modelName[256];
 	char** filenames;
 	int numFiles, i;
 
@@ -189,12 +189,18 @@ void CMenuPlayerSetup::CModelListModel::Update(void)
 	// build the model list
 	for ( i = 0; i < numFiles; i++ )
 	{
-		COM_FileBase(filenames[i], name);
-		Q_strncpy(models[m_iCount], name, sizeof(models[0]));
+		COM_FileBase(filenames[i], modelName);
+		Q_strncpy(models[m_iCount], modelName, sizeof(models[0]));
 
 		// check if the path is a valid model
-		PlatformLib_SNPrintF(name, sizeof(name), "models/player/%s/%s.mdl", models[m_iCount], models[m_iCount]);
-		if ( !EngFuncs::FileExists(name) )
+		PlatformLib_SNPrintF(
+			modelName,
+			sizeof(modelName),
+			"models/player/%s/%s.mdl",
+			models[m_iCount],
+			models[m_iCount]);
+
+		if ( !EngFuncs::FileExists(modelName) )
 			continue;
 
 		m_iCount++;
@@ -227,9 +233,9 @@ void CMenuPlayerSetup::CLogosListModel::Update()
 	{
 		CUtlString logoFileName = filenames[i];
 		char temp[256];
-		bool png;
+		bool png = logoFileName.BEndsWithCaseless(".png");
 
-		if ( (png = logoFileName.BEndsWithCaseless(".png")) || logoFileName.BEndsWithCaseless(".bmp") )
+		if ( png || logoFileName.BEndsWithCaseless(".bmp") )
 		{
 			COM_FileBase(logoFileName.String(), temp);
 
@@ -307,14 +313,14 @@ void CMenuPlayerSetup::UpdateModel()
 void CMenuPlayerSetup::UpdateLogo()
 {
 	char filename[1024];
-	int pos = logo.GetCurrentValue();
+	int position = static_cast<int>(logo.GetCurrentValue());
 
-	if ( pos < 0 )
+	if ( position < 0 )
 		return;
 
-	logosModel.GetFullPath(filename, sizeof(filename), pos);
+	logosModel.GetFullPath(filename, sizeof(filename), position);
 	logoImage.hImage = EngFuncs::PIC_Load(filename, 0);
-	if ( logosModel.IsPng(pos) )
+	if ( logosModel.IsPng(position) )
 	{
 		logoImage.r = logoImage.g = logoImage.b = -1;
 		logoColor.SetGrayed(true);
@@ -370,18 +376,18 @@ void CMenuPlayerSetup::ApplyColorToLogoPreview()
 void CMenuPlayerSetup::WriteNewLogo(void)
 {
 	char filename[1024];
-	int pos = logo.GetCurrentValue();
+	int position = static_cast<int>(logo.GetCurrentValue());
 
-	if ( pos < 0 || hideLogos )
+	if ( position < 0 || hideLogos )
 		return;
 
 	EngFuncs::DeleteFile("logos/remapped.png");
 	EngFuncs::DeleteFile("logos/remapped.bmp");
 
-	logosModel.GetFullPath(filename, sizeof(filename), pos);
+	logosModel.GetFullPath(filename, sizeof(filename), position);
 
 	// TODO: check file size and throw a messagebox if it's too big?
-	if ( logosModel.IsPng(pos) )
+	if ( logosModel.IsPng(position) )
 	{
 		int len;
 		void* afile = EngFuncs::COM_LoadFile(filename, &len);
@@ -506,6 +512,7 @@ void CMenuPlayerSetup::_Init(void)
 	CMenuPicButton* gameOpt =
 		AddButton(L("Game options"), L("Configure handness, fov and other advanced options"), PC_GAME_OPTIONS);
 	SET_EVENT_MULTI(gameOpt->onReleased, {
+		(void)pExtra;
 		((CMenuPlayerSetup*)pSelf->Parent())->SetConfig();
 		UI_AdvUserOptions_Menu();
 	});

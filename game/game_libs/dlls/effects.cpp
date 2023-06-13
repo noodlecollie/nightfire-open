@@ -78,17 +78,17 @@ void CBubbling::Spawn(void)
 	pev->solid = SOLID_NOT;  // Remove model & collisions
 	pev->renderamt = 0;  // The engine won't draw this model if this is set to 0 and blending is on
 	pev->rendermode = kRenderTransTexture;
-	int speed = fabs(pev->speed);
+	int speed = static_cast<int>(fabsf(pev->speed));
 
 	// HACKHACK!!! - Speed in rendercolor
-	pev->rendercolor.x = speed >> 8;
-	pev->rendercolor.y = speed & 255;
-	pev->rendercolor.z = (pev->speed < 0) ? 1 : 0;
+	pev->rendercolor.x = static_cast<float>(speed >> 8);
+	pev->rendercolor.y = static_cast<float>(speed & 255);
+	pev->rendercolor.z = static_cast<float>((pev->speed < 0) ? 1 : 0);
 
 	if ( !(pev->spawnflags & SF_BUBBLES_STARTOFF) )
 	{
 		SetThink(&CBubbling::FizzThink);
-		pev->nextthink = gpGlobals->time + 2.0;
+		pev->nextthink = gpGlobals->time + 2.0f;
 		m_state = 1;
 	}
 	else
@@ -100,7 +100,7 @@ void CBubbling::Precache(void)
 	m_bubbleModel = PRECACHE_MODEL("sprites/bubble.spr");  // Precache bubble sprite
 }
 
-void CBubbling::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBubbling::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( ShouldToggle(useType, m_state) )
 		m_state = !m_state;
@@ -108,7 +108,7 @@ void CBubbling::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useT
 	if ( m_state )
 	{
 		SetThink(&CBubbling::FizzThink);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 	else
 	{
@@ -131,7 +131,7 @@ void CBubbling::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "current") )
 	{
-		pev->speed = atoi(pkvd->szValue);
+		pev->speed = static_cast<float>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -148,9 +148,9 @@ void CBubbling::FizzThink(void)
 	MESSAGE_END();
 
 	if ( m_frequency > 19 )
-		pev->nextthink = gpGlobals->time + 0.5;
+		pev->nextthink = gpGlobals->time + 0.5f;
 	else
-		pev->nextthink = gpGlobals->time + 2.5 - (0.1 * m_frequency);
+		pev->nextthink = gpGlobals->time + 2.5f - (0.1f * m_frequency);
 }
 
 // --------------------------------------------------
@@ -455,7 +455,7 @@ void CLightning::Spawn(void)
 		if ( pev->dmg > 0 )
 		{
 			SetThink(&CLightning::DamageThink);
-			pev->nextthink = gpGlobals->time + 0.1;
+			pev->nextthink = gpGlobals->time + 0.1f;
 		}
 		if ( pev->targetname )
 		{
@@ -481,7 +481,7 @@ void CLightning::Spawn(void)
 		if ( FStringNull(pev->targetname) || FBitSet(pev->spawnflags, SF_BEAM_STARTON) )
 		{
 			SetThink(&CLightning::StrikeThink);
-			pev->nextthink = gpGlobals->time + 1.0;
+			pev->nextthink = gpGlobals->time + 1.0f;
 		}
 	}
 }
@@ -512,7 +512,7 @@ void CLightning::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "life") )
 	{
-		m_life = atof(pkvd->szValue);
+		m_life = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "BoltWidth") )
@@ -532,7 +532,7 @@ void CLightning::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "StrikeTime") )
 	{
-		m_restrike = atof(pkvd->szValue);
+		m_restrike = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "texture") )
@@ -547,19 +547,19 @@ void CLightning::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "Radius") )
 	{
-		m_radius = atof(pkvd->szValue);
+		m_radius = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "damage") )
 	{
-		pev->dmg = atof(pkvd->szValue);
+		pev->dmg = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
 		CBeam::KeyValue(pkvd);
 }
 
-void CLightning::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLightning::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_active) )
 		return;
@@ -582,7 +582,7 @@ void CLightning::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TY
 	}
 }
 
-void CLightning::StrikeUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLightning::StrikeUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_active) )
 		return;
@@ -595,7 +595,7 @@ void CLightning::StrikeUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TY
 	else
 	{
 		SetThink(&CLightning::StrikeThink);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 
 	if ( !FBitSet(pev->spawnflags, SF_BEAM_TOGGLE) )
@@ -744,7 +744,7 @@ void CBeam::BeamDamage(TraceResult* ptr)
 
 void CLightning::DamageThink(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	TraceResult tr;
 	UTIL_TraceLine(GetStartPos(), GetEndPos(), dont_ignore_monsters, NULL, &tr);
 	BeamDamage(&tr);
@@ -912,7 +912,7 @@ void CLightning::BeamUpdateVars(void)
 
 	SetWidth(m_boltWidth);
 	SetNoise(m_noiseAmplitude);
-	SetFrame(m_frameStart);
+	SetFrame(static_cast<float>(m_frameStart));
 	SetScrollRate(m_speed);
 	if ( pev->spawnflags & SF_BEAM_SHADEIN )
 		SetFlags(BEAM_FSHADEIN);
@@ -1006,12 +1006,12 @@ void CLaser::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "framestart") )
 	{
-		pev->frame = atoi(pkvd->szValue);
+		pev->frame = static_cast<float>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "damage") )
 	{
-		pev->dmg = atof(pkvd->szValue);
+		pev->dmg = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -1042,7 +1042,7 @@ void CLaser::TurnOn(void)
 	pev->nextthink = gpGlobals->time;
 }
 
-void CLaser::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLaser::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	int active = IsOn();
 
@@ -1079,7 +1079,7 @@ void CLaser::StrikeThink(void)
 
 	UTIL_TraceLine(pev->origin, m_firePosition, dont_ignore_monsters, NULL, &tr);
 	FireAtPoint(tr);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 class CGlow : public CPointEntity
@@ -1117,7 +1117,7 @@ void CGlow::Spawn(void)
 
 	m_maxFrame = (float)MODEL_FRAMES(pev->modelindex) - 1;
 	if ( m_maxFrame > 1.0 && pev->framerate != 0 )
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 
 	m_lastTime = gpGlobals->time;
 }
@@ -1126,14 +1126,14 @@ void CGlow::Think(void)
 {
 	Animate(pev->framerate * (gpGlobals->time - m_lastTime));
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	m_lastTime = gpGlobals->time;
 }
 
 void CGlow::Animate(float frames)
 {
 	if ( m_maxFrame > 0 )
-		pev->frame = fmod(pev->frame + frames, m_maxFrame);
+		pev->frame = fmodf(pev->frame + frames, m_maxFrame);
 }
 
 LINK_ENTITY_TO_CLASS(env_sprite, CSprite)
@@ -1208,7 +1208,7 @@ void CSprite::AnimateThink(void)
 {
 	Animate(pev->framerate * (gpGlobals->time - m_lastTime));
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	m_lastTime = gpGlobals->time;
 }
 
@@ -1245,7 +1245,7 @@ void CSprite::ExpandThink(void)
 	}
 	else
 	{
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 		m_lastTime = gpGlobals->time;
 	}
 }
@@ -1262,7 +1262,7 @@ void CSprite::Animate(float frames)
 		else
 		{
 			if ( m_maxFrame > 0 )
-				pev->frame = fmod(pev->frame, m_maxFrame);
+				pev->frame = fmodf(pev->frame, m_maxFrame);
 		}
 	}
 }
@@ -1285,7 +1285,7 @@ void CSprite::TurnOn(void)
 	pev->frame = 0;
 }
 
-void CSprite::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CSprite::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	int on = pev->effects != EF_NODRAW;
 	if ( ShouldToggle(useType, on) )
@@ -1359,17 +1359,17 @@ void CGibShooter::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "m_flVelocity") )
 	{
-		m_flGibVelocity = atof(pkvd->szValue);
+		m_flGibVelocity = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "m_flVariance") )
 	{
-		m_flVariance = atof(pkvd->szValue);
+		m_flVariance = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "m_flGibLife") )
 	{
-		m_flGibLife = atof(pkvd->szValue);
+		m_flGibLife = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -1378,7 +1378,7 @@ void CGibShooter::KeyValue(KeyValueData* pkvd)
 	}
 }
 
-void CGibShooter::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGibShooter::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CGibShooter::ShootThink);
 	pev->nextthink = gpGlobals->time;
@@ -1393,7 +1393,7 @@ void CGibShooter::Spawn(void)
 
 	if ( m_flDelay == 0 )
 	{
-		m_flDelay = 0.1;
+		m_flDelay = 0.1f;
 	}
 
 	if ( m_flGibLife == 0 )
@@ -1452,7 +1452,7 @@ void CGibShooter::ShootThink(void)
 
 		float thinkTime = pGib->pev->nextthink - gpGlobals->time;
 
-		pGib->m_lifeTime = (m_flGibLife * RANDOM_FLOAT(0.95, 1.05));  // +/- 5%
+		pGib->m_lifeTime = (m_flGibLife * RANDOM_FLOAT(0.95f, 1.05f));  // +/- 5%
 		if ( pGib->m_lifeTime < thinkTime )
 		{
 			pGib->pev->nextthink = gpGlobals->time + pGib->m_lifeTime;
@@ -1634,7 +1634,7 @@ void CTestEffect::TestThink(void)
 			m_pBeam[i]->SetBrightness((int)(255 * t));
 			// m_pBeam[i]->SetScrollRate( 20 * t );
 		}
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 	else
 	{
@@ -1649,10 +1649,10 @@ void CTestEffect::TestThink(void)
 	}
 }
 
-void CTestEffect::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTestEffect::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CTestEffect::TestThink);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	m_flStartTime = gpGlobals->time;
 }
 
@@ -1725,7 +1725,7 @@ void CBlood::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "amount") )
 	{
-		SetBloodAmount(atof(pkvd->szValue));
+		SetBloodAmount(static_cast<float>(atof(pkvd->szValue)));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -1760,7 +1760,7 @@ Vector CBlood::BloodPosition(CBaseEntity* pActivator)
 	return pev->origin;
 }
 
-void CBlood::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBlood::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( pev->spawnflags & SF_BLOOD_STREAM )
 		UTIL_BloodStream(
@@ -1863,29 +1863,29 @@ void CShake::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "amplitude") )
 	{
-		SetAmplitude(atof(pkvd->szValue));
+		SetAmplitude(static_cast<float>(atof(pkvd->szValue)));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "frequency") )
 	{
-		SetFrequency(atof(pkvd->szValue));
+		SetFrequency(static_cast<float>(atof(pkvd->szValue)));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "duration") )
 	{
-		SetDuration(atof(pkvd->szValue));
+		SetDuration(static_cast<float>(atof(pkvd->szValue)));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "radius") )
 	{
-		SetRadius(atof(pkvd->szValue));
+		SetRadius(static_cast<float>(atof(pkvd->szValue)));
 		pkvd->fHandled = TRUE;
 	}
 	else
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CShake::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CShake::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	UTIL_ScreenShake(pev->origin, Amplitude(), Frequency(), Duration(), Radius());
 }
@@ -1940,19 +1940,19 @@ void CFade::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "duration") )
 	{
-		SetDuration(atof(pkvd->szValue));
+		SetDuration(static_cast<float>(atof(pkvd->szValue)));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "holdtime") )
 	{
-		SetHoldTime(atof(pkvd->szValue));
+		SetHoldTime(static_cast<float>(atof(pkvd->szValue)));
 		pkvd->fHandled = TRUE;
 	}
 	else
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CFade::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFade::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	int fadeFlags = 0;
 
@@ -2037,7 +2037,7 @@ void CMessage::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "messagevolume") )
 	{
-		pev->scale = atof(pkvd->szValue) * 0.1;
+		pev->scale = static_cast<float>(atof(pkvd->szValue)) * 0.1f;
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "messageattenuation") )
@@ -2049,7 +2049,7 @@ void CMessage::KeyValue(KeyValueData* pkvd)
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CMessage::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMessage::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	CBaseEntity* pPlayer = NULL;
 
@@ -2095,7 +2095,7 @@ void CEnvFunnel::Precache(void)
 
 LINK_ENTITY_TO_CLASS(env_funnel, CEnvFunnel)
 
-void CEnvFunnel::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CEnvFunnel::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_LARGEFUNNEL);
@@ -2147,7 +2147,7 @@ void CEnvBeverage::Precache(void)
 
 LINK_ENTITY_TO_CLASS(env_beverage, CEnvBeverage)
 
-void CEnvBeverage::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CEnvBeverage::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( pev->frags != 0 || pev->health <= 0 )
 	{
@@ -2217,7 +2217,7 @@ void CItemSoda::Spawn(void)
 	UTIL_SetSize(pev, Vector(0, 0, 0), Vector(0, 0, 0));
 
 	SetThink(&CItemSoda::CanThink);
-	pev->nextthink = gpGlobals->time + 0.5;
+	pev->nextthink = gpGlobals->time + 0.5f;
 }
 
 void CItemSoda::CanThink(void)

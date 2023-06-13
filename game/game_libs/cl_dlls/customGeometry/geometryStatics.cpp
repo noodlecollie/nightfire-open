@@ -52,7 +52,7 @@ namespace CustomGeometry
 		collection->AddItem(item);
 	}
 
-	static int HandleCustomGeometryMessage(const char* msgName, int size, void* buffer)
+	static int HandleCustomGeometryMessage(const char*, int size, void* buffer)
 	{
 		CMessageReader reader;
 

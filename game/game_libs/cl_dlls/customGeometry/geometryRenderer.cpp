@@ -99,16 +99,16 @@ namespace CustomGeometry
 		gEngfuncs.pTriAPI->SpriteTexture(const_cast<model_s*>(colourSprite), 0);
 		gEngfuncs.pTriAPI->RenderMode(renderMode);
 		gEngfuncs.pTriAPI->Color4ub(
-			(colour & 0xFF000000) >> 24,
-			(colour & 0x00FF0000) >> 16,
-			(colour & 0x0000FF00) >> 8,
-			(colour & 0x000000FF) >> 0);
+			static_cast<unsigned char>((colour & 0xFF000000) >> 24),
+			static_cast<unsigned char>((colour & 0x00FF0000) >> 16),
+			static_cast<unsigned char>((colour & 0x0000FF00) >> 8),
+			static_cast<unsigned char>((colour & 0x000000FF) >> 0));
 	}
 
 	void CGeometryRenderer::DrawLines(const CGeometryItem& item)
 	{
 		const CUtlVector<Vector>& points = item.GetPoints();
-		const CUtlVector<uint8_t>& indices = item.GetIndices();
+		const CUtlVector<size_t>& indices = item.GetIndices();
 		const size_t halfCount = indices.Count() / 2;
 		const uint32_t colour = item.GetColour();
 		const bool scaled = !FloatIsZero(m_Scale - 1.0f);
@@ -124,8 +124,8 @@ namespace CustomGeometry
 
 		for ( uint32_t index = 0; index < halfCount; ++index )
 		{
-			uint8_t pointIndex0 = indices[2 * index];
-			uint8_t pointIndex1 = indices[(2 * index) + 1];
+			size_t pointIndex0 = indices[2 * index];
+			size_t pointIndex1 = indices[(2 * index) + 1];
 
 			ASSERTSZ(pointIndex0 < static_cast<size_t>(points.Count()), "Index was out of range.");
 			ASSERTSZ(pointIndex1 < static_cast<size_t>(points.Count()), "Index was out of range.");
@@ -133,18 +133,18 @@ namespace CustomGeometry
 			if ( scaled )
 			{
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex0] * m_Scale);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex0)] * m_Scale);
 
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex1] * m_Scale);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex1)] * m_Scale);
 			}
 			else
 			{
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex0]);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex0)]);
 
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex1]);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex1)]);
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace CustomGeometry
 	void CGeometryRenderer::DrawTriangles(const CGeometryItem& item)
 	{
 		const CUtlVector<Vector>& points = item.GetPoints();
-		const CUtlVector<uint8_t>& indices = item.GetIndices();
+		const CUtlVector<size_t>& indices = item.GetIndices();
 		const size_t thirdCount = indices.Count() / 3;
 		const uint32_t colour = item.GetColour();
 		const bool scaled = !FloatIsZero(m_Scale - 1.0f);
@@ -182,9 +182,9 @@ namespace CustomGeometry
 
 		for ( uint32_t index = 0; index < thirdCount; ++index )
 		{
-			uint8_t pointIndex0 = indices[3 * index];
-			uint8_t pointIndex1 = indices[(3 * index) + 1];
-			uint8_t pointIndex2 = indices[(3 * index) + 2];
+			size_t pointIndex0 = indices[3 * index];
+			size_t pointIndex1 = indices[(3 * index) + 1];
+			size_t pointIndex2 = indices[(3 * index) + 2];
 
 			ASSERTSZ(pointIndex0 < static_cast<size_t>(points.Count()), "Index was out of range.");
 			ASSERTSZ(pointIndex1 < static_cast<size_t>(points.Count()), "Index was out of range.");
@@ -193,24 +193,24 @@ namespace CustomGeometry
 			if ( scaled )
 			{
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex0] * m_Scale);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex0)] * m_Scale);
 
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex1] * m_Scale);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex1)] * m_Scale);
 
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex2] * m_Scale);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex2)] * m_Scale);
 			}
 			else
 			{
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex0]);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex0)]);
 
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex1]);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex1)]);
 
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex2]);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex2)]);
 			}
 		}
 
@@ -220,7 +220,7 @@ namespace CustomGeometry
 	void CGeometryRenderer::DrawTriangleChainGeneric(const CGeometryItem& item, int glDrawMode)
 	{
 		const CUtlVector<Vector>& points = item.GetPoints();
-		const CUtlVector<uint8_t>& indices = item.GetIndices();
+		const CUtlVector<size_t>& indices = item.GetIndices();
 		const size_t count = indices.Count();
 		const uint32_t colour = item.GetColour();
 		const bool scaled = !FloatIsZero(m_Scale - 1.0f);
@@ -236,19 +236,19 @@ namespace CustomGeometry
 
 		for ( uint32_t index = 0; index < count; ++index )
 		{
-			uint8_t pointIndex = indices[index];
+			size_t pointIndex = indices[index];
 
 			ASSERTSZ(pointIndex < static_cast<size_t>(points.Count()), "Index was out of range.");
 
 			if ( scaled )
 			{
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex] * m_Scale);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex)] * m_Scale);
 			}
 			else
 			{
 				DefaultTextureCoOrdinate();
-				gEngfuncs.pTriAPI->Vertex3fv(points[pointIndex]);
+				gEngfuncs.pTriAPI->Vertex3fv(points[static_cast<int>(pointIndex)]);
 			}
 		}
 

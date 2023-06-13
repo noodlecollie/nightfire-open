@@ -32,7 +32,7 @@ bool CGenericProjectileWeapon::InvokeWithAttackMode(WeaponAttackType type, const
 	m_pPlayer->m_iWeaponFlash = projectileAttack->MuzzleFlashBrightness;
 
 	m_pPlayer->m_iExtraSoundTypes = bits_SOUND_DANGER;
-	m_pPlayer->m_flStopExtraSoundTime = UTIL_WeaponTimeBase() + 0.2;
+	m_pPlayer->m_flStopExtraSoundTime = UTIL_WeaponTimeBase() + 0.2f;
 
 	DecrementAmmo(projectileAttack, 1);
 

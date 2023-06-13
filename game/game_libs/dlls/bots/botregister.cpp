@@ -10,7 +10,7 @@ CBotRegister& CBotRegister::StaticInstance()
 
 bool CBotRegister::Add(const CUtlString& profileName, const CUtlString& customName)
 {
-	if ( m_BotList.Count() >= MAX_BOT_COUNT )
+	if ( static_cast<size_t>(m_BotList.Count()) >= MAX_BOT_COUNT )
 	{
 		return false;
 	}
@@ -31,7 +31,7 @@ size_t CBotRegister::Count() const
 
 CUtlString CBotRegister::ProfileName(uint32_t index) const
 {
-	if ( index >= m_BotList.Count() )
+	if ( index >= static_cast<uint32_t>(m_BotList.Count()) )
 	{
 		return CUtlString();
 	}
@@ -41,7 +41,7 @@ CUtlString CBotRegister::ProfileName(uint32_t index) const
 
 CUtlString CBotRegister::CustomName(uint32_t index) const
 {
-	if ( index >= m_BotList.Count() )
+	if ( index >= static_cast<uint32_t>(m_BotList.Count()) )
 	{
 		return CUtlString();
 	}

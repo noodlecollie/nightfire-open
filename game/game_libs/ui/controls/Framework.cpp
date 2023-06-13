@@ -74,10 +74,10 @@ void CMenuFramework::Draw()
 		EngFuncs::ConsoleStringLen(statusText, &len, NULL);
 
 		UnpackRGB(r, g, b, uiColorHelp);
-		EngFuncs::DrawSetTextColor(r, g, b, alpha * 255);
-		x = (ScreenWidth - len) * 0.5f;  // centering
+		EngFuncs::DrawSetTextColor(r, g, b, static_cast<int>(alpha * 255));
+		x = static_cast<int>((ScreenWidth - len) * 0.5f);  // centering
 
-		EngFuncs::DrawConsoleString(x, uiStatic.yOffset + 720 * uiStatic.scaleY, statusText);
+		EngFuncs::DrawConsoleString(x, static_cast<int>(uiStatic.yOffset + 720 * uiStatic.scaleY), statusText);
 	}
 	else
 		statusFadeTime = uiStatic.realTime;
@@ -107,11 +107,11 @@ void CMenuFramework::VidInit()
 }
 
 CMenuPicButton* CMenuFramework::AddButton(
-	const char* szName,
+	const char* name,
 	const char* szStatus,
 	EDefaultBtns buttonPicId,
-	CEventCallback onReleased,
-	int iFlags)
+	CEventCallback inOnReleased,
+	int flags)
 {
 	if ( m_iBtnsNum >= MAX_FRAMEWORK_PICBUTTONS )
 	{
@@ -121,10 +121,10 @@ CMenuPicButton* CMenuFramework::AddButton(
 
 	CMenuPicButton* btn = new CMenuPicButton();
 
-	btn->SetNameAndStatus(szName, szStatus);
+	btn->SetNameAndStatus(name, szStatus);
 	btn->SetPicture(buttonPicId);
-	btn->iFlags |= iFlags;
-	btn->onReleased = onReleased;
+	btn->iFlags |= flags;
+	btn->onReleased = inOnReleased;
 	btn->SetCoord(72, 230 + m_iBtnsNum * 50);
 	AddItem(btn);
 
@@ -134,11 +134,11 @@ CMenuPicButton* CMenuFramework::AddButton(
 }
 
 CMenuPicButton* CMenuFramework::AddButton(
-	const char* szName,
+	const char* name,
 	const char* szStatus,
 	const char* szButtonPath,
-	CEventCallback onReleased,
-	int iFlags)
+	CEventCallback inOnReleased,
+	int flags)
 {
 	if ( m_iBtnsNum >= MAX_FRAMEWORK_PICBUTTONS )
 	{
@@ -148,10 +148,10 @@ CMenuPicButton* CMenuFramework::AddButton(
 
 	CMenuPicButton* btn = new CMenuPicButton();
 
-	btn->SetNameAndStatus(szName, szStatus);
+	btn->SetNameAndStatus(name, szStatus);
 	btn->SetPicture(szButtonPath);
-	btn->iFlags |= iFlags;
-	btn->onReleased = onReleased;
+	btn->iFlags |= flags;
+	btn->onReleased = inOnReleased;
 	btn->SetCoord(72, 230 + m_iBtnsNum * 50);
 	AddItem(btn);
 

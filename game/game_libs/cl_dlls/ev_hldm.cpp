@@ -63,19 +63,6 @@ void VectorAngles(const float* forward, float* angles);
 
 extern cvar_t* cl_lw;
 
-#define VECTOR_CONE_1DEGREES Vector(0.00873, 0.00873, 0.00873)
-#define VECTOR_CONE_2DEGREES Vector(0.01745, 0.01745, 0.01745)
-#define VECTOR_CONE_3DEGREES Vector(0.02618, 0.02618, 0.02618)
-#define VECTOR_CONE_4DEGREES Vector(0.03490, 0.03490, 0.03490)
-#define VECTOR_CONE_5DEGREES Vector(0.04362, 0.04362, 0.04362)
-#define VECTOR_CONE_6DEGREES Vector(0.05234, 0.05234, 0.05234)
-#define VECTOR_CONE_7DEGREES Vector(0.06105, 0.06105, 0.06105)
-#define VECTOR_CONE_8DEGREES Vector(0.06976, 0.06976, 0.06976)
-#define VECTOR_CONE_9DEGREES Vector(0.07846, 0.07846, 0.07846)
-#define VECTOR_CONE_10DEGREES Vector(0.08716, 0.08716, 0.08716)
-#define VECTOR_CONE_15DEGREES Vector(0.13053, 0.13053, 0.13053)
-#define VECTOR_CONE_20DEGREES Vector(0.17365, 0.17365, 0.17365)
-
 void EV_HLDM_Init()
 {
 	CWeaponRegistry::StaticInstance().ForEach(
@@ -86,7 +73,7 @@ void EV_HLDM_Init()
 
 			FOR_EACH_VEC(atts.AttackModes, attackModeIndex)
 			{
-				if ( attackModeIndex >= WeaponAtts::WACollection::MAX_ATTACK_MODES )
+				if ( static_cast<size_t>(attackModeIndex) >= WeaponAtts::WACollection::MAX_ATTACK_MODES )
 				{
 					break;
 				}
@@ -153,7 +140,7 @@ void EV_HandleGenericWeaponFire(event_args_t* args)
 	const WeaponAtts::WABaseAttack::AttackModeSignature* signature =
 		static_cast<const WeaponAtts::WABaseAttack::AttackModeSignature*>(args->localUserData);
 
-	const uint32_t weaponId = static_cast<const uint32_t>(signature->WeaponId);
+	const uint32_t weaponId = static_cast<uint32_t>(signature->WeaponId);
 	const uint32_t attackModeIndex = signature->Index;
 
 	if ( weaponId >= MAX_WEAPONS || attackModeIndex >= WeaponAtts::WACollection::MAX_ATTACK_MODES )
@@ -171,7 +158,7 @@ void EV_HandleGenericWeaponFire(event_args_t* args)
 	eventPlayer->PlayEvent(args, signature);
 }
 
-SurfaceProp EV_HLDM_GetSurfacePropForTexture(int idx, pmtrace_t* ptr, float* vecSrc, float* vecEnd)
+SurfaceProp EV_HLDM_GetSurfacePropForTexture(int, pmtrace_t* ptr, float* vecSrc, float* vecEnd)
 {
 	int entity = gEngfuncs.pEventAPI->EV_IndexFromTrace(ptr);
 
@@ -499,7 +486,7 @@ void EV_FireGlock1(event_args_t* args)
 		origin,
 		CHAN_WEAPON,
 		"weapons/pl_gun3.wav",
-		gEngfuncs.pfnRandomFloat(0.92, 1.0),
+		gEngfuncs.pfnRandomFloat(0.92f, 1.0f),
 		ATTN_NORM,
 		0,
 		98 + gEngfuncs.pfnRandomLong(0, 3));
@@ -565,7 +552,7 @@ void EV_FireGlock2(event_args_t* args)
 		origin,
 		CHAN_WEAPON,
 		"weapons/pl_gun3.wav",
-		gEngfuncs.pfnRandomFloat(0.92, 1.0),
+		gEngfuncs.pfnRandomFloat(0.92f, 1.0f),
 		ATTN_NORM,
 		0,
 		98 + gEngfuncs.pfnRandomLong(0, 3));
@@ -640,7 +627,7 @@ void EV_FireShotGunDouble(event_args_t* args)
 		origin,
 		CHAN_WEAPON,
 		"weapons/dbarrel1.wav",
-		gEngfuncs.pfnRandomFloat(0.98, 1.0),
+		gEngfuncs.pfnRandomFloat(0.98f, 1.0f),
 		ATTN_NORM,
 		0,
 		85 + gEngfuncs.pfnRandomLong(0, 0x1f));
@@ -661,8 +648,8 @@ void EV_FireShotGunDouble(event_args_t* args)
 			2048,
 			BULLET_PLAYER_BUCKSHOT,
 			1,
-			0.17365,
-			0.04362);
+			0.17365f,
+			0.04362f);
 	}
 	else
 	{
@@ -677,8 +664,8 @@ void EV_FireShotGunDouble(event_args_t* args)
 			2048,
 			BULLET_PLAYER_BUCKSHOT,
 			1,
-			0.08716,
-			0.08716);
+			0.08716f,
+			0.08716f);
 	}
 }
 
@@ -724,7 +711,7 @@ void EV_FireShotGunSingle(event_args_t* args)
 		origin,
 		CHAN_WEAPON,
 		"weapons/sbarrel1.wav",
-		gEngfuncs.pfnRandomFloat(0.95, 1.0),
+		gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 		ATTN_NORM,
 		0,
 		93 + gEngfuncs.pfnRandomLong(0, 0x1f));
@@ -745,8 +732,8 @@ void EV_FireShotGunSingle(event_args_t* args)
 			2048,
 			BULLET_PLAYER_BUCKSHOT,
 			1,
-			0.08716,
-			0.04362);
+			0.08716f,
+			0.04362f);
 	}
 	else
 	{
@@ -761,8 +748,8 @@ void EV_FireShotGunSingle(event_args_t* args)
 			2048,
 			BULLET_PLAYER_BUCKSHOT,
 			1,
-			0.08716,
-			0.08716);
+			0.08716f,
+			0.08716f);
 	}
 }
 //======================
@@ -959,7 +946,7 @@ void EV_FirePython(event_args_t* args)
 				origin,
 				CHAN_WEAPON,
 				"weapons/357_shot1.wav",
-				gEngfuncs.pfnRandomFloat(0.8, 0.9),
+				gEngfuncs.pfnRandomFloat(0.8f, 0.9f),
 				ATTN_NORM,
 				0,
 				PITCH_NORM);
@@ -970,7 +957,7 @@ void EV_FirePython(event_args_t* args)
 				origin,
 				CHAN_WEAPON,
 				"weapons/357_shot2.wav",
-				gEngfuncs.pfnRandomFloat(0.8, 0.9),
+				gEngfuncs.pfnRandomFloat(0.8f, 0.9f),
 				ATTN_NORM,
 				0,
 				PITCH_NORM);
@@ -1101,7 +1088,7 @@ void EV_FireGauss(event_args_t* args)
 		origin,
 		CHAN_WEAPON,
 		"weapons/gauss2.wav",
-		0.5 + flDamage * (1.0 / 400.0),
+		0.5f + flDamage * (1.0f / 400.0f),
 		ATTN_NORM,
 		0,
 		85 + gEngfuncs.pfnRandomLong(0, 0x1f));
@@ -1139,16 +1126,16 @@ void EV_FireGauss(event_args_t* args)
 				idx | 0x1000,
 				tr.endpos,
 				m_iBeam,
-				0.1,
-				m_fPrimaryFire ? 1.0 : 2.5,
+				0.1f,
+				m_fPrimaryFire ? 1.0f : 2.5f,
 				0.0,
-				m_fPrimaryFire ? 128.0 : flDamage,
+				m_fPrimaryFire ? 128.0f : flDamage,
 				0,
 				0,
 				0,
-				m_fPrimaryFire ? 255 : 255,
-				m_fPrimaryFire ? 128 : 255,
-				m_fPrimaryFire ? 0 : 255);
+				255.0f,
+				m_fPrimaryFire ? 128.0f : 255.0f,
+				m_fPrimaryFire ? 0.0f : 255.0f);
 		}
 		else
 		{
@@ -1156,16 +1143,16 @@ void EV_FireGauss(event_args_t* args)
 				vecSrc,
 				tr.endpos,
 				m_iBeam,
-				0.1,
-				m_fPrimaryFire ? 1.0 : 2.5,
+				0.1f,
+				m_fPrimaryFire ? 1.0f : 2.5f,
 				0.0,
-				m_fPrimaryFire ? 128.0 : flDamage,
+				m_fPrimaryFire ? 128.0f : flDamage,
 				0,
 				0,
 				0,
-				m_fPrimaryFire ? 255 : 255,
-				m_fPrimaryFire ? 128 : 255,
-				m_fPrimaryFire ? 0 : 255);
+				255,
+				m_fPrimaryFire ? 128.0f : 255.0f,
+				m_fPrimaryFire ? 0.0f : 255.0f);
 		}
 
 		pEntity = gEngfuncs.pEventAPI->EV_GetPhysent(tr.ent);
@@ -1186,7 +1173,7 @@ void EV_FireGauss(event_args_t* args)
 				// reflect
 				vec3_t r;
 
-				VectorMA(forward, 2.0 * n, tr.plane.normal, r);
+				VectorMA(forward, 2.0f * n, tr.plane.normal, r);
 
 				flMaxFrac = flMaxFrac - tr.fraction;
 
@@ -1198,12 +1185,12 @@ void EV_FireGauss(event_args_t* args)
 				gEngfuncs.pEfxAPI->R_TempSprite(
 					tr.endpos,
 					vec3_origin,
-					0.2,
+					0.2f,
 					m_iGlow,
 					kRenderGlow,
 					kRenderFxNoDissipation,
-					flDamage * n / 255.0,
-					flDamage * n * 0.5 * 0.1,
+					flDamage * n / 255.0f,
+					flDamage * n * 0.5f * 0.1f,
 					FTENT_FADEOUT);
 
 				vec3_t fwd;
@@ -1215,8 +1202,8 @@ void EV_FireGauss(event_args_t* args)
 					fwd,
 					m_iBalls,
 					3,
-					0.1,
-					gEngfuncs.pfnRandomFloat(10, 20) / 100.0,
+					0.1f,
+					gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 					100,
 					255,
 					100);
@@ -1224,7 +1211,7 @@ void EV_FireGauss(event_args_t* args)
 				// lose energy
 				if ( n == 0 )
 				{
-					n = 0.1;
+					n = 0.1f;
 				}
 
 				flDamage = flDamage * (1 - n);
@@ -1241,7 +1228,7 @@ void EV_FireGauss(event_args_t* args)
 					m_iGlow,
 					kRenderGlow,
 					kRenderFxNoDissipation,
-					flDamage / 255.0,
+					flDamage / 255.0f,
 					6.0,
 					FTENT_FADEOUT);
 
@@ -1295,8 +1282,8 @@ void EV_FireGauss(event_args_t* args)
 									fwd,
 									m_iBalls,
 									3,
-									0.1,
-									gEngfuncs.pfnRandomFloat(10, 20) / 100.0,
+									0.1f,
+									gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 									100,
 									255,
 									100);
@@ -1310,11 +1297,11 @@ void EV_FireGauss(event_args_t* args)
 							gEngfuncs.pEfxAPI->R_TempSprite(
 								beam_tr.endpos,
 								vec3_origin,
-								0.1,
+								0.1f,
 								m_iGlow,
 								kRenderGlow,
 								kRenderFxNoDissipation,
-								flDamage / 255.0,
+								flDamage / 255.0f,
 								6.0,
 								FTENT_FADEOUT);
 
@@ -1328,8 +1315,8 @@ void EV_FireGauss(event_args_t* args)
 									fwd,
 									m_iBalls,
 									(int)(flDamage * 0.3),
-									0.1,
-									gEngfuncs.pfnRandomFloat(10, 20) / 100.0,
+									0.1f,
+									gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 									200,
 									255,
 									40);
@@ -1354,12 +1341,12 @@ void EV_FireGauss(event_args_t* args)
 						gEngfuncs.pEfxAPI->R_TempSprite(
 							tr.endpos,
 							vec3_origin,
-							0.2,
+							0.2f,
 							m_iGlow,
 							kRenderGlow,
 							kRenderFxNoDissipation,
-							200.0 / 255.0,
-							0.3,
+							200.0f / 255.0f,
+							0.3f,
 							FTENT_FADEOUT);
 						{
 							vec3_t fwd;
@@ -1370,8 +1357,8 @@ void EV_FireGauss(event_args_t* args)
 								fwd,
 								m_iBalls,
 								8,
-								0.6,
-								gEngfuncs.pfnRandomFloat(10, 20) / 100.0,
+								0.6f,
+								gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 								100,
 								255,
 								200);
@@ -1475,7 +1462,7 @@ enum crossbow_e
 // This function is used to correct the origin and angles
 // of the bolt, so it looks like it's stuck on the wall.
 //=====================
-void EV_BoltCallback(struct tempent_s* ent, float frametime, float currenttime)
+void EV_BoltCallback(struct tempent_s* ent, float, float)
 {
 	ent->entity.origin = ent->entity.baseline.vuser1;
 	ent->entity.angles = ent->entity.baseline.vuser2;
@@ -1518,7 +1505,7 @@ void EV_FireCrossbow2(event_args_t* args)
 		origin,
 		CHAN_ITEM,
 		"weapons/xbow_reload1.wav",
-		gEngfuncs.pfnRandomFloat(0.95, 1.0),
+		gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 		ATTN_NORM,
 		0,
 		93 + gEngfuncs.pfnRandomLong(0, 0xF));
@@ -1582,7 +1569,7 @@ void EV_FireCrossbow2(event_args_t* args)
 				tr.endpos,
 				CHAN_BODY,
 				"weapons/xbow_hit1.wav",
-				gEngfuncs.pfnRandomFloat(0.95, 1.0),
+				gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 				ATTN_NORM,
 				0,
 				PITCH_NORM);
@@ -1641,7 +1628,7 @@ void EV_FireCrossbow(event_args_t* args)
 		origin,
 		CHAN_ITEM,
 		"weapons/xbow_reload1.wav",
-		gEngfuncs.pfnRandomFloat(0.95, 1.0),
+		gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 		ATTN_NORM,
 		0,
 		93 + gEngfuncs.pfnRandomLong(0, 0xF));
@@ -1674,8 +1661,8 @@ void EV_FireRpg(event_args_t* args)
 	VectorCopy(args->origin, origin);
 
 	gEngfuncs.pEventAPI
-		->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/rocketfire1.wav", 0.9, ATTN_NORM, 0, PITCH_NORM);
-	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_ITEM, "weapons/glauncher.wav", 0.7, ATTN_NORM, 0, PITCH_NORM);
+		->EV_PlaySound(idx, origin, CHAN_WEAPON, "weapons/rocketfire1.wav", 0.9f, ATTN_NORM, 0, PITCH_NORM);
+	gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_ITEM, "weapons/glauncher.wav", 0.7f, ATTN_NORM, 0, PITCH_NORM);
 
 	// Only play the weapon anims if I shot it.
 	if ( EV_IsLocal(idx) )
@@ -1733,7 +1720,7 @@ BEAM* pBeam;
 BEAM* pBeam2;
 TEMPENTITY* pFlare;  // Vit_amiN: egon's beam flare
 
-void EV_EgonFlareCallback(struct tempent_s* ent, float frametime, float currenttime)
+void EV_EgonFlareCallback(struct tempent_s* ent, float, float currenttime)
 {
 	float delta = currenttime - ent->tentOffset.z;  // time past since the last scale
 	if ( delta >= ent->tentOffset.y )
@@ -1757,9 +1744,9 @@ void EV_EgonFire(event_args_t* args)
 	if ( iStartup )
 	{
 		if ( iFireMode == FIRE_WIDE )
-			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, EGON_SOUND_STARTUP, 0.98, ATTN_NORM, 0, 125);
+			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, EGON_SOUND_STARTUP, 0.98f, ATTN_NORM, 0, 125);
 		else
-			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, EGON_SOUND_STARTUP, 0.9, ATTN_NORM, 0, 100);
+			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, EGON_SOUND_STARTUP, 0.9f, ATTN_NORM, 0, 100);
 	}
 	else
 	{
@@ -1770,9 +1757,9 @@ void EV_EgonFire(event_args_t* args)
 		gEngfuncs.pEventAPI->EV_StopSound(idx, CHAN_STATIC, EGON_SOUND_RUN);
 
 		if ( iFireMode == FIRE_WIDE )
-			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_STATIC, EGON_SOUND_RUN, 0.98, ATTN_NORM, 0, 125);
+			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_STATIC, EGON_SOUND_RUN, 0.98f, ATTN_NORM, 0, 125);
 		else
-			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_STATIC, EGON_SOUND_RUN, 0.9, ATTN_NORM, 0, 100);
+			gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_STATIC, EGON_SOUND_RUN, 0.9f, ATTN_NORM, 0, 100);
 	}
 
 	// Only play the weapon anims if I shot it.
@@ -1824,7 +1811,7 @@ void EV_EgonFire(event_args_t* args)
 
 			pBeam =
 				gEngfuncs.pEfxAPI
-					->R_BeamEntPoint(idx | 0x1000, tr.endpos, iBeamModelIndex, 99999, 3.5, 0.2, 0.7, 55, 0, 0, r, g, b);
+					->R_BeamEntPoint(idx | 0x1000, tr.endpos, iBeamModelIndex, 99999, 3.5f, 0.2f, 0.7f, 55, 0, 0, r, g, b);
 
 			if ( pBeam )
 				pBeam->flags |= (FBEAM_SINENOISE);
@@ -1835,8 +1822,8 @@ void EV_EgonFire(event_args_t* args)
 				iBeamModelIndex,
 				99999,
 				5.0,
-				0.08,
-				0.7,
+				0.08f,
+				0.7f,
 				25,
 				0,
 				0,
@@ -1875,7 +1862,7 @@ void EV_EgonStop(event_args_t* args)
 	gEngfuncs.pEventAPI->EV_StopSound(idx, CHAN_STATIC, EGON_SOUND_RUN);
 
 	if ( args->iparam1 )
-		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, EGON_SOUND_OFF, 0.98, ATTN_NORM, 0, 100);
+		gEngfuncs.pEventAPI->EV_PlaySound(idx, origin, CHAN_WEAPON, EGON_SOUND_OFF, 0.98f, ATTN_NORM, 0, 100);
 
 	if ( EV_IsLocal(idx) )
 	{
@@ -1900,9 +1887,9 @@ void EV_EgonStop(event_args_t* args)
 				if ( pFlare->tentOffset.x != 0.0f )  // true for iFireMode == FIRE_WIDE
 				{
 					pFlare->callback = &EV_EgonFlareCallback;
-					pFlare->fadeSpeed = 2.0;  // fade out will take 0.5 sec
-					pFlare->tentOffset.x = 10.0;  // scaling speed per second
-					pFlare->tentOffset.y = 0.1;  // min time between two scales
+					pFlare->fadeSpeed = 2.0f;  // fade out will take 0.5 sec
+					pFlare->tentOffset.x = 10.0f;  // scaling speed per second
+					pFlare->tentOffset.y = 0.1f;  // min time between two scales
 					pFlare->tentOffset.z = pFlare->die;  // the last callback run time
 					pFlare->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 				}
@@ -1942,7 +1929,7 @@ void EV_HornetGunFire(event_args_t* args)
 	// Only play the weapon anims if I shot it.
 	if ( EV_IsLocal(idx) )
 	{
-		V_PunchAxis(0, gEngfuncs.pfnRandomLong(0, 2));
+		V_PunchAxis(0, static_cast<float>(gEngfuncs.pfnRandomLong(0, 2)));
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(HGUN_SHOOT, 1);
 	}
 
@@ -2088,7 +2075,7 @@ void EV_TrainPitchAdjust(event_args_t* args)
 	us_params = (unsigned short)args->iparam1;
 	stop = args->bparam1;
 
-	m_flVolume = (float)(us_params & 0x003f) / 40.0;
+	m_flVolume = (float)(us_params & 0x003f) / 40.0f;
 	noise = (int)(((us_params) >> 12) & 0x0007);
 	pitch = (int)(10.0 * (float)((us_params >> 6) & 0x003f));
 
@@ -2128,7 +2115,7 @@ void EV_TrainPitchAdjust(event_args_t* args)
 	}
 }
 
-int EV_TFC_IsAllyTeam(int iTeam1, int iTeam2)
+int EV_TFC_IsAllyTeam(int, int)
 {
 	return 0;
 }

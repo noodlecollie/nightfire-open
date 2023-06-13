@@ -21,6 +21,7 @@
 #endif
 
 #include "miniutl.h"
+#include <type_traits>
 
 uint32 MurmurHash3_32(const void* key, size_t len, uint32 seed, bool bCaselessStringVariant = false);
 void MurmurHash3_128(const void* key, const int len, const uint32 seed, void* out);
@@ -80,22 +81,43 @@ inline uint32 HashInt(uint32 h)
 	return h;
 }
 
-template<typename T>
-inline uint32 HashItemAsBytes(const T& item)
+// General case:
+template<typename T, typename ENABLE = void>
+struct HashItemAsBytesFunctor
 {
-	if ( sizeof(item) == sizeof(uint32) )
+	typedef uint32 TargetType;
+	TargetType operator()(const T& item) const
+	{
+		return MurmurHash3_32(&item, sizeof(item), 1047);
+	}
+};
+
+// 32-bit int:
+template<typename T>
+struct HashItemAsBytesFunctor<T, typename std::enable_if<sizeof(T) == sizeof(uint32), void>::type>
+{
+	typedef uint32 TargetType;
+	TargetType operator()(const T& item) const
+	{
 		return HashInt(*(uint32*)&item);
+	}
+};
 
-	if ( sizeof(item) == sizeof(uint64) )
+// 64-bit int:
+template<typename T>
+struct HashItemAsBytesFunctor<T, typename std::enable_if<sizeof(T) == sizeof(uint64), void>::type>
+{
+	typedef uint32 TargetType;
+	TargetType operator()(const T& item) const
+	{
 		return HashInt64(*(uint64*)&item);
-
-	return MurmurHash3_32(&item, sizeof(item), 1047);
-}
+	}
+};
 
 template<typename T>
 inline uint32 HashItem(const T& item)
 {
-	return HashItemAsBytes(item);
+	return HashItemAsBytesFunctor<T>()(item);
 }
 
 template<typename T>
@@ -143,7 +165,7 @@ struct HashFunctorUnpaddedStructure
 	typedef uint32 TargetType;
 	TargetType operator()(const T& key) const
 	{
-		return HashItemAsBytes(key);
+		return HashItemAsBytesFunctor<T>()(key);
 	}
 };
 

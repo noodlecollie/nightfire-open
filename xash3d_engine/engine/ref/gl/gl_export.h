@@ -885,6 +885,14 @@ typedef float GLmatrix[16];
 #define GL_FUNCTION(name) (APIENTRY * p##name)
 #endif
 
+// Not all of these functions will be used used, and on higher
+// warning levels GCC will complain about variables that are
+// declared but not used. We disable this warning here.
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
+
 // helper opengl functions
 APIENTRY_LINKAGE GLenum GL_FUNCTION(glGetError)(void);
 APIENTRY_LINKAGE const GLubyte* GL_FUNCTION(glGetString)(GLenum name);
@@ -1614,6 +1622,11 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexImage2DMultisample)(
 	GLsizei height,
 	GLboolean fixedsamplelocations);
 #endif /* !XASH_GLES && !XASH_GL4ES */
+
+// Re-enable suppressed warnings
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
 
 #if defined(XASH_GL_STATIC) && !defined(REF_GL_KEEP_MANGLED_FUNCTIONS)
 #define pglGetError glGetError

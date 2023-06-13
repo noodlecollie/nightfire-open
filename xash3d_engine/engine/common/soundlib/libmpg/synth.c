@@ -184,7 +184,7 @@ int synth_1to1_mono(float* bandPtr, mpg123_handle_t* fr)
 	short samples_tmp[BLOCK];
 	short* tmp1 = samples_tmp;
 	byte* samples = fr->buffer.data;
-	int pnt = fr->buffer.fill;
+	size_t pnt = fr->buffer.fill;
 	int i, ret;
 
 	// save buffer stuff, trick samples_tmp into there, decode, restore

@@ -209,7 +209,8 @@ qboolean Cmd_GetMapList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, nummaps;
 
-	t = FS_Search(va("maps/%s*.bsp", s), true, con_gamemaps->value);
+	t = FS_Search(va("maps/%s*.bsp", s), true, (int)con_gamemaps->value);
+
 	if ( !t )
 		return false;
 
@@ -596,26 +597,37 @@ qboolean Cmd_GetKeysList(const char* s, char* completedname, int length)
 	size_t i, numkeys;
 	string keys[256];
 	string matchbuf;
-	int len;
+	size_t len;
 
 	// compare keys list with current keyword
 	len = Q_strlen(s);
 
 	for ( i = 0, numkeys = 0; i < 255; i++ )
 	{
-		const char* keyname = Key_KeynumToString(i);
+		const char* keyname = Key_KeynumToString((int)i);
 
 		if ( (*s == '*') || !Q_strnicmp(keyname, s, len) )
+		{
 			Q_strcpy(keys[numkeys++], keyname);
+		}
 	}
 
 	if ( !numkeys )
+	{
 		return false;
+	}
+
 	Q_strncpy(matchbuf, keys[0], sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( numkeys == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0; i < numkeys; i++ )
 	{
@@ -630,7 +642,9 @@ qboolean Cmd_GetKeysList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 
@@ -647,6 +661,9 @@ Con_AddCommandToList
 static void Con_AddCommandToList(const char* s, const char* unused1, const char* unused2, void* _autocompleteList)
 {
 	con_autocomplete_t* list = (con_autocomplete_t*)_autocompleteList;
+
+	(void)unused1;
+	(void)unused2;
 
 	if ( *s == '@' )
 		return;  // never show system cvars or cmds
@@ -707,7 +724,7 @@ qboolean Cmd_GetCommandsList(const char* s, char* completedname, int length)
 
 	qsort(list.cmds, list.matchCount, sizeof(char*), Con_SortCmds);
 
-	for ( i = 0; i < list.matchCount; i++ )
+	for ( i = 0; i < (size_t)list.matchCount; i++ )
 	{
 		Q_strncpy(matchbuf, list.cmds[i], sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -724,7 +741,7 @@ qboolean Cmd_GetCommandsList(const char* s, char* completedname, int length)
 		}
 	}
 
-	for ( i = 0; i < list.matchCount; i++ )
+	for ( i = 0; i < (size_t)list.matchCount; i++ )
 	{
 		if ( list.cmds[i] != NULL )
 		{
@@ -795,7 +812,7 @@ qboolean Cmd_GetGamesList(const char* s, char* completedname, int length)
 	int i, numgamedirs;
 	string gamedirs[MAX_MODS];
 	string matchbuf;
-	int len;
+	size_t len;
 
 	// stand-alone games doesn't have cmd "game"
 	if ( !Cmd_Exists("game") )
@@ -807,16 +824,27 @@ qboolean Cmd_GetGamesList(const char* s, char* completedname, int length)
 	for ( i = 0, numgamedirs = 0; i < FI->numgames; i++ )
 	{
 		if ( (*s == '*') || !Q_strnicmp(FI->games[i]->gamefolder, s, len) )
+		{
 			Q_strcpy(gamedirs[numgamedirs++], FI->games[i]->gamefolder);
+		}
 	}
 
 	if ( !numgamedirs )
+	{
 		return false;
+	}
+
 	Q_strncpy(matchbuf, gamedirs[0], MAX_STRING);
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( numgamedirs == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0; i < numgamedirs; i++ )
 	{
@@ -832,9 +860,12 @@ qboolean Cmd_GetGamesList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
+
 	return true;
 }
 
@@ -850,7 +881,7 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 	int i, numcdcommands;
 	string cdcommands[8];
 	string matchbuf;
-	int len;
+	size_t len;
 
 	const char* cd_command[] = {
 		"info",
@@ -869,16 +900,27 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 	for ( i = 0, numcdcommands = 0; i < 8; i++ )
 	{
 		if ( (*s == '*') || !Q_strnicmp(cd_command[i], s, len) )
+		{
 			Q_strcpy(cdcommands[numcdcommands++], cd_command[i]);
+		}
 	}
 
 	if ( !numcdcommands )
+	{
 		return false;
+	}
+
 	Q_strncpy(matchbuf, cdcommands[0], MAX_STRING);
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( numcdcommands == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0; i < numcdcommands; i++ )
 	{
@@ -894,7 +936,9 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 	return true;
@@ -907,7 +951,8 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	string mpfilter;
 	char* buffer;
 	string result;
-	int i, size;
+	int i;
+	size_t size;
 	search_t* t;
 	file_t* f;
 
@@ -949,12 +994,10 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 		if ( f )
 		{
 			int num_spawnpoints = 0;
-			dheader_t* header;
 			dlump_t entities;
 
 			memset(buf, 0, MAX_SYSPATH);
 			FS_Read(f, buf, MAX_SYSPATH);
-			header = (dheader_t*)buf;
 
 			// check all the lumps and some other errors
 			if ( !Mod_TestBmodelLumps(f, t->filenames[i], buf, true, &entities) )
@@ -992,7 +1035,9 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 				while ( (pfile = COM_ParseFile(pfile, token, sizeof(token))) != NULL )
 				{
 					if ( token[0] == '}' && worldspawn )
+					{
 						worldspawn = false;
+					}
 					else if ( !Q_strcmp(token, "message") && worldspawn )
 					{
 						// get the message contents
@@ -1004,14 +1049,19 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 						if ( !Q_strcmp(token, GI->mp_entity) || use_filter )
 							num_spawnpoints++;
 					}
+
 					if ( num_spawnpoints )
+					{
 						break;  // valid map
+					}
 				}
 				Mem_Free(ents);
 			}
 
 			if ( f )
+			{
 				FS_Close(f);
+			}
 
 			if ( num_spawnpoints )
 			{
@@ -1023,26 +1073,38 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	}
 
 	if ( t )
+	{
 		Mem_Free(t);  // free search result
+	}
+
 	size = Q_strlen(buffer);
 
-	if ( !size )
+	if ( size < 1 )
 	{
 		if ( buffer )
+		{
 			Mem_Free(buffer);
+		}
 
 		if ( onlyingamedir )
+		{
 			return Cmd_CheckMapsList_R(fRefresh, false);
+		}
+
 		return false;
 	}
 
 	// write generated maps.lst
-	if ( FS_WriteFile("maps.lst", buffer, size) )
+	if ( FS_WriteFile("maps.lst", buffer, (int)size) )
 	{
 		if ( buffer )
+		{
 			Mem_Free(buffer);
+		}
+
 		return true;
 	}
+
 	return false;
 }
 
@@ -1128,7 +1190,9 @@ qboolean Cmd_AutocompleteName(const char* source, int arg, char* buffer, size_t 
 	for ( list = cmd_list; list->name; list++ )
 	{
 		if ( list->arg == arg && Cmd_CheckName(list->name) )
-			return list->func(source, buffer, bufsize);
+		{
+			return list->func(source, buffer, (int)bufsize);
+		}
 	}
 
 	return false;
@@ -1141,12 +1205,19 @@ Con_PrintCmdMatches
 */
 static void Con_PrintCmdMatches(const char* s, const char* unused1, const char* m, void* unused2)
 {
+	(void)unused1;
+	(void)unused2;
+
 	if ( !Q_strnicmp(s, con.shortestMatch, Q_strlen(con.shortestMatch)) )
 	{
 		if ( COM_CheckString(m) )
+		{
 			Con_Printf("    %s ^3\"%s\"\n", s, m);
+		}
 		else
+		{
 			Con_Printf("    %s\n", s);  // variable or command without description
+		}
 	}
 }
 
@@ -1157,12 +1228,18 @@ Con_PrintCvarMatches
 */
 static void Con_PrintCvarMatches(const char* s, const char* value, const char* m, void* unused2)
 {
+	(void)unused2;
+
 	if ( !Q_strnicmp(s, con.shortestMatch, Q_strlen(con.shortestMatch)) )
 	{
 		if ( COM_CheckString(m) )
+		{
 			Con_Printf("    %s (%s)   ^3\"%s\"\n", s, value, m);
+		}
 		else
+		{
 			Con_Printf("    %s  (%s)\n", s, value);  // variable or command without description
+		}
 	}
 }
 
@@ -1280,7 +1357,7 @@ void Con_CompleteCommand(field_t* field)
 				Q_strncat(con.completionField->buffer, " ", sizeof(con.completionField->buffer));
 			}
 			Q_strncat(con.completionField->buffer, filename, sizeof(con.completionField->buffer));
-			con.completionField->cursor = Q_strlen(con.completionField->buffer);
+			con.completionField->cursor = (int)Q_strlen(con.completionField->buffer);
 		}
 
 		// don't adjusting cursor pos if we nothing found
@@ -1294,7 +1371,7 @@ void Con_CompleteCommand(field_t* field)
 			Q_strncat(con.completionField->buffer, " ", sizeof(con.completionField->buffer));
 		else
 			Con_ConcatRemaining(temp.buffer, con.completionString);
-		con.completionField->cursor = Q_strlen(con.completionField->buffer);
+		con.completionField->cursor = (int)Q_strlen(con.completionField->buffer);
 	}
 	else
 	{
@@ -1320,7 +1397,7 @@ void Con_CompleteCommand(field_t* field)
 
 		// multiple matches, complete to shortest
 		Q_strncpy(con.completionField->buffer, con.shortestMatch, sizeof(con.completionField->buffer));
-		con.completionField->cursor = Q_strlen(con.completionField->buffer);
+		con.completionField->cursor = (int)Q_strlen(con.completionField->buffer);
 		Con_ConcatRemaining(temp.buffer, con.completionString);
 
 		Con_Printf("]%s\n", con.completionField->buffer);
@@ -1398,24 +1475,38 @@ static void Cmd_WriteOpenGLCvar(const char* name, const char* string, const char
 
 static void Cmd_WriteHelp(const char* name, const char* unused, const char* desc, void* f)
 {
-	int length;
+	size_t length;
+
+	(void)unused;
 
 	if ( !COM_CheckString(desc) )
+	{
 		return;  // ignore fantom cmds
+	}
 
 	if ( name[0] == '+' || name[0] == '-' )
+	{
 		return;  // key bindings
+	}
 
 	length = 3 - (Q_strlen(name) / 10);  // Asm_Ed default tab stop is 10
 
 	if ( length == 3 )
+	{
 		FS_Printf(f, "%s\t\t\t\"%s\"\n", name, desc);
+	}
 	if ( length == 2 )
+	{
 		FS_Printf(f, "%s\t\t\"%s\"\n", name, desc);
+	}
 	if ( length == 1 )
+	{
 		FS_Printf(f, "%s\t\"%s\"\n", name, desc);
+	}
 	if ( length == 0 )
+	{
 		FS_Printf(f, "%s \"%s\"\n", name, desc);
+	}
 }
 
 void Cmd_WriteOpenGLVariables(file_t* f)

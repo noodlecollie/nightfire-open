@@ -64,7 +64,8 @@ void CBaseFont::GetTextureName(char* dst, size_t len) const
 	}
 	if ( m_iScanlineOffset )
 	{
-		int chars = PlatformLib_SNPrintF(attribs + i, sizeof(attribs) - 1 - i, "s%i%.2f", m_iScanlineOffset, m_fScanlineScale);
+		int chars =
+			PlatformLib_SNPrintF(attribs + i, sizeof(attribs) - 1 - i, "s%i%.2f", m_iScanlineOffset, m_fScanlineScale);
 		i += chars;
 	}
 	attribs[i] = 0;
@@ -245,7 +246,7 @@ void CBaseFont::GetCharABCWidths(int ch, int& a, int& b, int& c)
 	abc_t find;
 	find.ch = ch;
 
-	unsigned short i = m_ABCCache.Find(find);
+	unsigned short i = static_cast<unsigned short>(m_ABCCache.Find(find));
 	if ( i != 65535 && m_ABCCache.IsValidIndex(i) )
 	{
 		a = m_ABCCache[i].a;
@@ -362,7 +363,8 @@ void CBaseFont::ApplyBlur(Size rgbaSz, byte* rgba)
 	for ( int x = 0; x <= m_iBlur * 2; x++ )
 	{
 		int val = x - m_iBlur;
-		distribution[x] = (float)(1.0f / sqrt(2 * 3.14f * sigma2)) * pow(2.7f, -1 * (val * val) / (2 * sigma2));
+		distribution[x] = (float)(1.0f / sqrtf(2 * 3.14f * static_cast<float>(sigma2))) *
+			powf(2.7f, -1 * (val * val) / (2 * static_cast<float>(sigma2)));
 
 		// brightening factor
 		distribution[x] *= m_fBrighten;
@@ -406,7 +408,7 @@ void CBaseFont::GetBlurValueForPixel(float* distribution, byte* src, Point srcPt
 
 	// all the values are the same for fonts, just use the calculated alpha
 	dest[0] = dest[1] = dest[2] = 255;
-	dest[3] = Q_min((int)(accum + 0.5f), 255);
+	dest[3] = static_cast<byte>(Q_min((int)(accum + 0.5f), 255));
 }
 
 void CBaseFont::ApplyOutline(Point pt, Size rgbaSz, byte* rgba)
@@ -443,7 +445,7 @@ void CBaseFont::ApplyOutline(Point pt, Size rgbaSz, byte* rgba)
 						continue;
 
 					src[0] = src[1] = src[2] = 0;
-					src[3] = -1;
+					src[3] = static_cast<byte>(-1);
 				}
 			}
 		}
@@ -463,9 +465,9 @@ void CBaseFont::ApplyScanline(Size rgbaSz, byte* rgba)
 		byte* src = &rgba[(y * rgbaSz.w) * 4];
 		for ( int x = 0; x < rgbaSz.w; x++, src += 4 )
 		{
-			src[0] *= m_fScanlineScale;
-			src[1] *= m_fScanlineScale;
-			src[2] *= m_fScanlineScale;
+			src[0] = static_cast<byte>(src[0] * m_fScanlineScale);
+			src[1] = static_cast<byte>(src[1] * m_fScanlineScale);
+			src[2] = static_cast<byte>(src[2] * m_fScanlineScale);
 		}
 	}
 }
@@ -475,7 +477,7 @@ void CBaseFont::ApplyStrikeout(Size rgbaSz, byte* rgba)
 	if ( !(m_iFlags & FONT_STRIKEOUT) )
 		return;
 
-	const int y = rgbaSz.h * 0.5f;
+	const int y = static_cast<int>(rgbaSz.h * 0.5f);
 
 	byte* src = &rgba[(y * rgbaSz.w) * 4];
 
@@ -488,6 +490,8 @@ void CBaseFont::ApplyStrikeout(Size rgbaSz, byte* rgba)
 
 int CBaseFont::DrawCharacter(int ch, Point pt, int charH, const unsigned int color, bool forceAdditive)
 {
+	(void)charH;
+
 	Size charSize;
 	int a, b, c, width;
 
@@ -520,9 +524,9 @@ int CBaseFont::DrawCharacter(int ch, Point pt, int charH, const unsigned int col
 	{
 		CBaseFont::glyph_t& glyph = m_glyphs[idx];
 
-		int r, g, b, alpha;
+		int red, green, blue, alpha;
 
-		UnpackRGBA(r, g, b, alpha, color);
+		UnpackRGBA(red, green, blue, alpha, color);
 
 #ifdef SCALE_FONTS  // Scale font
 		if ( charH > 0 )
@@ -539,7 +543,7 @@ int CBaseFont::DrawCharacter(int ch, Point pt, int charH, const unsigned int col
 
 		pt.x += a;
 
-		EngFuncs::PIC_Set(glyph.texture, r, g, b, alpha);
+		EngFuncs::PIC_Set(glyph.texture, red, green, blue, alpha);
 		if ( forceAdditive )
 			EngFuncs::PIC_DrawAdditive(pt, charSize, &glyph.rect);
 		else
@@ -576,7 +580,10 @@ struct cached_font_t
 bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t rangeSize)
 {
 	char path[512];
-	int size, i, j, charsCount = 0;
+	int size;
+	uint32_t charsCount = 0;
+	size_t i;
+	size_t j;
 	byte* data;
 	cached_font_t* hdr;
 	char_data_t* ch;
@@ -597,11 +604,11 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 	}
 
 	for ( i = 0; i < rangeSize; i++ )
-		charsCount += range[i].Length();
+		charsCount += static_cast<uint32_t>(range[i].Length());
 
 	hdr = reinterpret_cast<cached_font_t*>(data);
 
-	if ( size < sizeof(cached_font_t) )
+	if ( static_cast<size_t>(size) < sizeof(cached_font_t) )
 	{
 		Con_Printf("Font cache file is too short\n");
 		EngFuncs::COM_FreeFile(data);
@@ -632,7 +639,7 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 		return false;
 	}
 
-	if ( size < sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) )
+	if ( static_cast<size_t>(size) < sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) )
 	{
 		Con_Printf("Font cache file is too short (2nd check)\n");
 		EngFuncs::COM_FreeFile(data);
@@ -648,7 +655,7 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 		return false;
 	}
 
-	if ( size != sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) + bmp->fileSize )
+	if ( static_cast<size_t>(size) != sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) + bmp->fileSize )
 	{
 		Con_Printf("Font cache file is too short or too long (3rd check)\n");
 		EngFuncs::COM_FreeFile(data);
@@ -668,14 +675,14 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 
 	for ( i = 0; i < rangeSize; i++ )
 	{
-		charsCount = range[i].Length();
+		charsCount = static_cast<uint32_t>(range[i].Length());
 
 		for ( j = 0; j < charsCount; j++ )
 		{
-			if ( ch->ch != range[i].Character(j) )
+			if ( ch->ch != static_cast<uint32_t>(range[i].Character(j)) )
 			{
 				Con_Printf(
-					"Font cache file has different character set. Expected %d, got %d",
+					"Font cache file has different character set. Expected %d, got %u",
 					range[i].Character(j),
 					ch->ch);
 				EngFuncs::COM_FreeFile(data);
@@ -712,7 +719,8 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 void CBaseFont::SaveToCache(const char* filename, charRange_t* range, size_t rangeSize, CBMP* bmp)
 {
 	char path[512];
-	int i, j;
+	size_t i;
+	size_t j;
 	uint32_t charsCount = 0;
 	byte *data, *buf_p;
 	size_t size = 0, bmpSize = bmp->GetBitmapHdr()->fileSize;
@@ -722,7 +730,7 @@ void CBaseFont::SaveToCache(const char* filename, charRange_t* range, size_t ran
 		filename++;
 
 	for ( i = 0; i < rangeSize; i++ )
-		charsCount += range[i].Length();
+		charsCount += static_cast<uint32_t>(range[i].Length());
 
 	size = sizeof(cached_font_t) + charsCount * sizeof(char_data_t) + bmpSize;
 
@@ -736,7 +744,7 @@ void CBaseFont::SaveToCache(const char* filename, charRange_t* range, size_t ran
 
 	for ( i = 0; i < rangeSize; i++ )
 	{
-		charsCount = range[i].Length();
+		charsCount = static_cast<uint32_t>(range[i].Length());
 
 		for ( j = 0; j < charsCount; j++ )
 		{
@@ -762,11 +770,11 @@ void CBaseFont::SaveToCache(const char* filename, charRange_t* range, size_t ran
 
 	memcpy(buf_p, bmp->GetBitmapHdr(), bmpSize);
 
-	if ( buf_p + bmpSize - data != size )
+	if ( static_cast<size_t>(buf_p + bmpSize - data) != size )
 		Host_Error("%s: %i: buf_p + bmpSize - data != size", __FILE__, __LINE__);
 
 	V_snprintf(path, sizeof(path), ".fontcache/%s", filename);
-	EngFuncs::COM_SaveFile(path, data, size);
+	EngFuncs::COM_SaveFile(path, data, static_cast<int>(size));
 
 	delete[] data;
 }

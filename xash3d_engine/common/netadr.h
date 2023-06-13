@@ -40,33 +40,74 @@ typedef enum
 // 	unsigned short	port;
 // } netadr_t;
 
+// Xash then converted this to:
+// typedef struct netadr_s
+// {
+// 	union
+// 	{
+// 		struct
+// 		{
+// 			uint32_t type;
+// 			union
+// 			{
+// 				uint8_t   ip[4];
+// 				uint32_t  ip4;
+// 			};
+// 			uint8_t  ipx[10];
+// 		};
+// 		struct
+// 		{
+// #if XASH_LITTLE_ENDIAN
+// 			uint16_t type6;
+// 			uint8_t ip6[16];
+// #elif XASH_BIG_ENDIAN
+// 			uint8_t ip6_0[2];
+// 			uint16_t type6;
+// 			uint8_t ip6_2[14];
+// #endif
+// 		};
+// 	};
+// 	uint16_t port;
+// } netadr_t;
+
 #pragma pack(push, 1)
+typedef union netadr_ipv4_ip_u
+{
+	uint8_t bytes[4];
+	uint32_t full;
+} netadr_ipv4_ip_u;
+
+typedef struct netadr_ipv4_s
+{
+	uint32_t type;
+	netadr_ipv4_ip_u ip;
+	uint8_t ipx[10];
+} netadr_ipv4_t;
+
+#if XASH_LITTLE_ENDIAN
+typedef struct netadr_ipv6_s
+{
+	uint16_t type6;
+	uint8_t ip6[16];
+} netadr_ipv6_t;
+#elif XASH_BIG_ENDIAN
+typedef struct netadr_ipv6_s
+{
+	uint8_t ip6_0[2];
+	uint16_t type6;
+	uint8_t ip6_2[14];
+} netadr_ipv6_t;
+#endif
+
+typedef union netadr_ip_u
+{
+	netadr_ipv4_t ip4;
+	netadr_ipv6_t ip6;
+} netadr_ip_u;
+
 typedef struct netadr_s
 {
-	union
-	{
-		struct
-		{
-			uint32_t type;
-			union
-			{
-				uint8_t ip[4];
-				uint32_t ip4;
-			};
-			uint8_t ipx[10];
-		};
-		struct
-		{
-#if XASH_LITTLE_ENDIAN
-			uint16_t type6;
-			uint8_t ip6[16];
-#elif XASH_BIG_ENDIAN
-			uint8_t ip6_0[2];
-			uint16_t type6;
-			uint8_t ip6_2[14];
-#endif
-		};
-	};
+	netadr_ip_u ip;
 	uint16_t port;
 } netadr_t;
 #pragma pack(pop)

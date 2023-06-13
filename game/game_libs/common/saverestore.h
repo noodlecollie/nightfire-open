@@ -31,7 +31,7 @@ public:
 	int EntityIndex(EOFFSET eoLookup);
 	int EntityIndex(CBaseEntity* pEntity);
 
-	int EntityFlags(int entityIndex, int flags)
+	int EntityFlags(int entityIndex, int)
 	{
 		return EntityFlagsSet(entityIndex, 0);
 	}

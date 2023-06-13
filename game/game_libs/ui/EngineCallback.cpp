@@ -20,7 +20,7 @@ GNU General Public License for more details.
 void EngFuncs::PIC_Set(HIMAGE hPic, int r, int g, int b, int a)
 {
 	if ( uiStatic.enableAlphaFactor )
-		a *= uiStatic.alphaFactor;
+		a = static_cast<int>(a * uiStatic.alphaFactor);
 
 	engfuncs.pfnPIC_Set(hPic, r, g, b, a);
 }
@@ -28,7 +28,7 @@ void EngFuncs::PIC_Set(HIMAGE hPic, int r, int g, int b, int a)
 void EngFuncs::FillRGBA(int x, int y, int width, int height, int r, int g, int b, int a)
 {
 	if ( uiStatic.enableAlphaFactor )
-		a *= uiStatic.alphaFactor;
+		a = static_cast<int>(a * uiStatic.alphaFactor);
 
 	engfuncs.pfnFillRGBA(x, y, width, height, r, g, b, a);
 }
@@ -59,8 +59,8 @@ int EngFuncs::DrawConsoleString(int x, int y, const char* string)
 	Size sz;
 	int charSz;
 
-	sz.w = ScreenWidth - pt.x;
-	sz.h = ScreenHeight - pt.y;
+	sz.w = static_cast<int>(ScreenWidth) - pt.x;
+	sz.h = static_cast<int>(ScreenHeight) - pt.y;
 
 	charSz = g_FontMgr->GetFontTall(uiStatic.hConsoleFont);
 

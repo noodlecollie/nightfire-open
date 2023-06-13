@@ -228,6 +228,7 @@ void CMenuConnectionProgress::_Init(void)
 	consoleButton.SetPicture(PC_CONSOLE);
 	consoleButton.szName = L("GameUI_Console");
 	SET_EVENT_MULTI(consoleButton.onReleased, {
+		(void)pExtra;
 		CMenuConnectionProgress* parent = (CMenuConnectionProgress*)pSelf->Parent();
 		EngFuncs::KEY_SetDest(KEY_CONSOLE);
 		parent->m_iState = STATE_CONSOLE;
@@ -433,7 +434,7 @@ void UI_ConnectionProgress_f(void)
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "stufftext") )
 	{
-		menu_connectionprogress->HandleStufftext(atof(EngFuncs::CmdArgv(2)), EngFuncs::CmdArgv(3));
+		menu_connectionprogress->HandleStufftext(static_cast<float>(atof(EngFuncs::CmdArgv(2))), EngFuncs::CmdArgv(3));
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "precache") )
 	{

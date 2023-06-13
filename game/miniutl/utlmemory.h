@@ -17,9 +17,6 @@
 #include <string.h>
 #include "miniutl.h"
 
-#pragma warning(push)
-#pragma warning(disable : 4100)  // 'identifier' : unreferenced formal parameter
-
 //-----------------------------------------------------------------------------
 
 #ifdef UTLMEMORY_TRACK
@@ -333,7 +330,5 @@ inline const T* CUtlMemory<T>::Base() const
 {
 	return (const T*)m_pMemory;
 }
-
-#pragma warning(pop)
 
 #endif  // UTLMEMORY_H

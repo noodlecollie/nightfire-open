@@ -84,9 +84,10 @@ static qboolean Sound_ParseID3Frame(const did3v2_frame_t* frame, const byte* buf
 
 		if ( buffer[0] == 0x00 || buffer[1] == 0x03 )
 		{
-			key_len = Q_strncpy(key, &buffer[1], sizeof(key));
-			value_len = frame_length - (1 + key_len + 1);
-			if ( value_len <= 0 || value_len >= sizeof(value) )
+			key_len = (int32_t)Q_strncpy(key, (const char*)(&buffer[1]), sizeof(key));
+			value_len = (int32_t)frame_length - (1 + key_len + 1);
+
+			if ( value_len <= 0 || (size_t)value_len >= sizeof(value) )
 			{
 				Con_Printf(S_ERROR "Sound_ParseID3Frame: invalid TXXX description, possibly broken file.\n");
 				return false;
@@ -100,11 +101,16 @@ static qboolean Sound_ParseID3Frame(const did3v2_frame_t* frame, const byte* buf
 		else
 		{
 			if ( buffer[0] == 0x01 || buffer[0] == 0x02 )  // UTF-16 with BOM
+			{
 				Con_Printf(S_ERROR "Sound_ParseID3Frame: UTF-16 encoding is unsupported. Use UTF-8 or ISO-8859!\n");
+			}
 			else
+			{
 				Con_Printf(
 					S_ERROR "Sound_ParseID3Frame: unknown TXXX tag encoding %d, possibly broken file.\n",
 					buffer[0]);
+			}
+
 			return false;
 		}
 	}
@@ -118,7 +124,7 @@ static qboolean Sound_ParseID3Tag(const byte* buffer, fs_offset_t filesize)
 	const byte* buffer_begin = buffer;
 	uint32_t tag_length;
 
-	if ( filesize < sizeof(*header) )
+	if ( (size_t)filesize < sizeof(*header) )
 		return false;
 
 	buffer += sizeof(*header);
@@ -193,7 +199,7 @@ static qboolean Sound_ParseID3Tag(const byte* buffer, fs_offset_t filesize)
 int EXPORT Fuzz_Sound_ParseID3Tag(const uint8_t* Data, size_t Size)
 {
 	memset(&sound, 0, sizeof(sound));
-	Sound_ParseID3Tag(Data, Size);
+	Sound_ParseID3Tag(Data, (fs_offset_t)Size);
 	return 0;
 }
 #endif
@@ -271,26 +277,37 @@ qboolean Sound_LoadMPG(const char* name, const byte* buffer, fs_offset_t filesiz
 			int bufsize;
 
 			// if there are no bytes remainig so we can decompress the new frame
-			if ( pos + FRAME_SIZE > filesize )
-				bufsize = (filesize - pos);
+			if ( pos + FRAME_SIZE > (size_t)filesize )
+			{
+				bufsize = (int)(filesize - pos);
+			}
 			else
+			{
 				bufsize = FRAME_SIZE;
+			}
+
 			pos += bufsize;
 
 			if ( feed_mpeg_stream(mpeg, data, bufsize, out, &outsize) != MP3_OK )
+			{
 				break;  // there was end of the stream
+			}
 		}
 
 		if ( bytesWrite + outsize > sound.size )
-			size = (sound.size - bytesWrite);
+		{
+			size = (int)(sound.size - bytesWrite);
+		}
 		else
-			size = outsize;
+		{
+			size = (int)outsize;
+		}
 
 		memcpy(&sound.wav[bytesWrite], out, size);
 		bytesWrite += size;
 	}
 
-	sound.samples = bytesWrite / (sound.width * sound.channels);
+	sound.samples = (uint)(bytesWrite / (sound.width * sound.channels));
 	close_decoder(mpeg);
 
 	return true;
@@ -341,7 +358,7 @@ stream_t* Stream_OpenMPG(const char* filename)
 		Con_DPrintf(S_ERROR "%s\n", get_error(mpeg));
 
 	// trying to open stream and read header
-	if ( !open_mpeg_stream(mpeg, file, (void*)FS_Read, (void*)FS_SeekEx, &sc) )
+	if ( !open_mpeg_stream(mpeg, file, FS_Read, FS_SeekEx, &sc) )
 	{
 		Con_DPrintf(S_ERROR "Stream_OpenMPG: failed to load (%s): %s\n", filename, get_error(mpeg));
 		close_decoder(mpeg);
@@ -388,10 +405,14 @@ int Stream_ReadMPG(stream_t* stream, int needBytes, void* buffer)
 		}
 
 		// check remaining size
-		if ( bytesWritten + stream->pos > needBytes )
+		if ( (size_t)bytesWritten + stream->pos > (size_t)needBytes )
+		{
 			outsize = (needBytes - bytesWritten);
+		}
 		else
-			outsize = stream->pos;
+		{
+			outsize = (int)stream->pos;
+		}
 
 		// copy raw sample to output buffer
 		data = (byte*)buffer + bytesWritten;

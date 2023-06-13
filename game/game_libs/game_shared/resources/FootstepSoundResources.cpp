@@ -175,12 +175,12 @@ const char* CFootstepSoundResources::RandomFootstepSoundPath(FootstepSoundId id,
 
 	// Choose a random index.
 	IProjectInterface* ifc = IProjectInterface::ProjectInterfaceImpl();
-	uint32_t index = ifc->RNG().GetRandomInt(0, numIndicesToSelectFrom - 1);
+	uint32_t index = ifc->RNG().GetRandomInt(0, static_cast<int32_t>(numIndicesToSelectFrom - 1));
 
 	// If we are playing a right foot sound, the index must start from 1.
 	const uint32_t offset = foot == Foot::Right ? 1 : 0;
 
-	ASSERT(offset + index < list.Count());
+	ASSERT(offset + index < static_cast<uint32_t>(list.Count()));
 
 	return list[offset + index].Get();
 }

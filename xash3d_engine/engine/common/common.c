@@ -113,14 +113,22 @@ static float fran1(void)
 void COM_SetRandomSeed(int lSeed)
 {
 	if ( lSeed )
+	{
 		idum = lSeed;
+	}
 	else
-		idum = -time(NULL);
+	{
+		idum = -(int)(time(NULL));
+	}
 
 	if ( 1000 < idum )
+	{
 		idum = -idum;
+	}
 	else if ( -1000 < idum )
+	{
 		idum -= 22261048;
+	}
 }
 
 float GAME_EXPORT COM_RandomFloat(float flLow, float flHigh)
@@ -291,7 +299,7 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 	int i, putCmdByte = 0;
 	byte* pCmdByte = NULL;
 
-	if ( input_length <= sizeof(lzss_header_t) + 8 )
+	if ( (size_t)input_length <= sizeof(lzss_header_t) + 8 )
 		return NULL;
 
 	// set LZSS header
@@ -306,7 +314,7 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 
 	while ( input_length > 0 )
 	{
-		int lookAheadLength = input_length < LZSS_LOOKAHEAD ? input_length : LZSS_LOOKAHEAD;
+		int lookAheadLength = (uint)input_length < LZSS_LOOKAHEAD ? input_length : (int)LZSS_LOOKAHEAD;
 		lzss_node_t* hash = state->hash_table[pLookAhead[0]].start;
 		int encoded_length = 0;
 
@@ -346,8 +354,8 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 		if ( encoded_length >= 3 )
 		{
 			*pCmdByte = (*pCmdByte >> 1) | 0x80;
-			*pOutput++ = ((pLookAhead - pEncodedPosition - 1) >> LZSS_LOOKSHIFT);
-			*pOutput++ = ((pLookAhead - pEncodedPosition - 1) << LZSS_LOOKSHIFT) | (encoded_length - 1);
+			*pOutput++ = (byte)((pLookAhead - pEncodedPosition - 1) >> LZSS_LOOKSHIFT);
+			*pOutput++ = (byte)(((pLookAhead - pEncodedPosition - 1) << LZSS_LOOKSHIFT) | (encoded_length - 1));
 		}
 		else
 		{
@@ -392,7 +400,9 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 	*pOutput++ = 0;
 
 	if ( pOutputSize )
-		*pOutputSize = pOutput - pStart;
+	{
+		*pOutputSize = (uint)(pOutput - pStart);
+	}
 
 	return pStart;
 }
@@ -554,6 +564,8 @@ COM_AddAppDirectoryToSearchPath
 */
 void GAME_EXPORT COM_AddAppDirectoryToSearchPath(const char* pszBaseDir, const char* appName)
 {
+	(void)appName;
+
 	FS_AddGameHierarchy(pszBaseDir, FS_NOWRITE_PATH);
 }
 
@@ -571,7 +583,9 @@ int GAME_EXPORT COM_ExpandFilename(const char* fileName, char* nameOutBuffer, in
 	char result[MAX_SYSPATH];
 
 	if ( !COM_CheckString(fileName) || !nameOutBuffer || nameOutBufferSize <= 0 )
+	{
 		return 0;
+	}
 
 	// filename examples:
 	// media\sierra.avi - D:\Xash3D\valve\media\sierra.avi
@@ -581,8 +595,10 @@ int GAME_EXPORT COM_ExpandFilename(const char* fileName, char* nameOutBuffer, in
 		Q_sprintf(result, "%s/%s", host.rootdir, path);
 
 		// check for enough room
-		if ( Q_strlen(result) > nameOutBufferSize )
+		if ( strlen(result) > (size_t)nameOutBufferSize )
+		{
 			return 0;
+		}
 
 		Q_strncpy(nameOutBuffer, result, nameOutBufferSize);
 		return 1;
@@ -600,25 +616,33 @@ and end of a string
 */
 void COM_TrimSpace(const char* source, char* dest)
 {
-	int start, end, length;
+	size_t start;
+	size_t end;
+	size_t length;
 
 	start = 0;
 	end = Q_strlen(source);
 
 	while ( source[start] && COM_IsWhiteSpace(source[start]) )
+	{
 		start++;
+	}
+
 	end--;
 
 	while ( end > 0 && COM_IsWhiteSpace(source[end]) )
+	{
 		end--;
+	}
+
 	end++;
 
 	length = end - start;
 
 	if ( length > 0 )
+	{
 		memcpy(dest, source + start, length);
-	else
-		length = 0;
+	}
 
 	// terminate the dest string
 	dest[length] = 0;
@@ -793,6 +817,8 @@ COM_LoadFile
 */
 byte* COM_LoadFile(const char* filename, int usehunk, int* pLength)
 {
+	(void)usehunk;
+
 	return COM_LoadFileForMe(filename, pLength);
 }
 
@@ -1039,7 +1065,7 @@ qboolean COM_IsSafeFileToDownload(const char* filename)
 	char lwrfilename[4096];
 	const char *first, *last;
 	const char* ext;
-	int i;
+	size_t i;
 
 	if ( !COM_CheckString(filename) )
 		return false;
@@ -1173,6 +1199,7 @@ only exists in PlayStation version
 */
 void GAME_EXPORT pfnRegisterTutorMessageShown(int mid)
 {
+	(void)mid;
 }
 
 /*
@@ -1184,6 +1211,8 @@ only exists in PlayStation version
 */
 int GAME_EXPORT pfnGetTimesTutorMessageShown(int mid)
 {
+	(void)mid;
+
 	return 0;
 }
 
@@ -1196,6 +1225,8 @@ only exists in PlayStation version
 */
 void GAME_EXPORT pfnProcessTutorMessageDecayBuffer(int* buffer, int bufferLength)
 {
+	(void)buffer;
+	(void)bufferLength;
 }
 
 /*
@@ -1207,6 +1238,8 @@ only exists in PlayStation version
 */
 void GAME_EXPORT pfnConstructTutorMessageDecayBuffer(int* buffer, int bufferLength)
 {
+	(void)buffer;
+	(void)bufferLength;
 }
 
 /*

@@ -222,8 +222,8 @@ void CL_UpdateAliasTexture(cl_entity_t* entity, unsigned short* texture, int ski
 	if ( *texture == 0 )
 	{
 		Q_snprintf(texname, sizeof(texname), "%s:remap%i_%i", entity->model->name, skinnum, entity->index);
-		skin.width = tx->width;
-		skin.height = tx->height;
+		skin.width = (word)tx->width;
+		skin.height = (word)tx->height;
 		skin.depth = skin.numMips = 1;
 		skin.size = tx->width * tx->height;
 		skin.type = PF_INDEXED_24;
@@ -232,7 +232,7 @@ void CL_UpdateAliasTexture(cl_entity_t* entity, unsigned short* texture, int ski
 		skin.buffer = (byte*)(tx + 1);
 		skin.palette = skin.buffer + skin.size;
 		pic = FS_CopyImage(&skin);  // because GL_LoadTextureInternal will freed a rgbdata_t at end
-		*texture = GL_LoadTextureInternal(texname, pic, TF_KEEP_SOURCE);
+		*texture = (unsigned short)GL_LoadTextureInternal(texname, pic, TF_KEEP_SOURCE);
 	}
 
 	// and now we can remap with internal routines
@@ -308,9 +308,9 @@ void CL_AllocRemapInfo(cl_entity_t* entity, model_t* model, int topcolor, int bo
 			return;
 		}
 
-		info->numtextures = phdr->numtextures;
-		info->topcolor = topcolor;
-		info->bottomcolor = bottomcolor;
+		info->numtextures = (short)phdr->numtextures;
+		info->topcolor = (short)topcolor;
+		info->bottomcolor = (short)bottomcolor;
 
 		src = (mstudiotexture_t*)(((byte*)phdr) + phdr->textureindex);
 		dst = info->ptexture;
@@ -346,7 +346,7 @@ void CL_AllocRemapInfo(cl_entity_t* entity, model_t* model, int topcolor, int bo
 			return;
 		}
 
-		info->numtextures = model->numtextures;
+		info->numtextures = (short)model->numtextures;
 
 		// alias remapping is easy
 		CL_UpdateRemapInfo(entity, topcolor, bottomcolor);
@@ -391,8 +391,8 @@ void CL_UpdateRemapInfo(cl_entity_t* entity, int topcolor, int bottomcolor)
 			CL_UpdateAliasTexture(entity, &info->textures[i], i, topcolor, bottomcolor);
 	}
 
-	info->topcolor = topcolor;
-	info->bottomcolor = bottomcolor;
+	info->topcolor = (short)topcolor;
+	info->bottomcolor = (short)bottomcolor;
 }
 
 /*
