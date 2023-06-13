@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "ProgressBar.h"
 #include "PicButton.h"
 #include "YesNoMessageBox.h"
+#include "PlatformLib/String.h"
 
 enum EState
 {
@@ -70,13 +71,13 @@ public:
 	{
 		if ( strstr(pszFileName, ".bsp") )
 			uiStatic.needMapListUpdate = true;
-		snprintf(
+		PlatformLib_SNPrintF(
 			sDownloadString,
 			sizeof(sDownloadString) - 1,
 			L("Downloading %s \nfrom %s"),
 			pszFileName,
 			pszServerName);
-		snprintf(sCommonString, sizeof(sCommonString) - 1, "%d of %d %s", iCurrent + 1, iTotal, comment);
+		PlatformLib_SNPrintF(sCommonString, sizeof(sCommonString) - 1, "%d of %d %s", iCurrent + 1, iTotal, comment);
 		m_iState = STATE_DOWNLOAD;
 		commonProgress.SetValue((float)iCurrent / iTotal + 0.01f / iTotal * EngFuncs::GetCvarFloat("scr_download"));
 	}
@@ -101,7 +102,7 @@ public:
 	void SetCommonText(const char* pszText)
 	{
 		Q_strncpy(sCommonString, pszText, sizeof(sCommonString));
-		// snprintf( sCommonString, sizeof( sCommonString ) - 1, "%s", pszText );
+		// PlatformLib_SNPrintF( sCommonString, sizeof( sCommonString ) - 1, "%s", pszText );
 	}
 	void SetServer(const char* pszName)
 	{
@@ -115,7 +116,7 @@ public:
 		}
 		else
 		{
-			snprintf(sTitleString, sizeof(sTitleString) - 1, "%s %s", L("GameUI_EstablishingConnection"), pszName);
+			PlatformLib_SNPrintF(sTitleString, sizeof(sTitleString) - 1, "%s %s", L("GameUI_EstablishingConnection"), pszName);
 		}
 
 		commonProgress.SetValue(0);

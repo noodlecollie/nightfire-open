@@ -207,9 +207,9 @@ void CMenuKeysModel::Update(void)
 				break;  // technically an error
 
 			if ( token[0] == '#' )
-				snprintf(name[i], sizeof(name[i]), "^6%s^7", L(token));
+				PlatformLib_SNPrintF(name[i], sizeof(name[i]), "^6%s^7", L(token));
 			else
-				snprintf(name[i], sizeof(name[i]), "^6%s^7", token);
+				PlatformLib_SNPrintF(name[i], sizeof(name[i]), "^6%s^7", token);
 
 			keysBind[i][0] = firstKey[i][0] = secondKey[i][0] = 0;
 			i++;
@@ -227,9 +227,9 @@ void CMenuKeysModel::Update(void)
 				break;  // technically an error
 
 			if ( token[0] == '#' )
-				snprintf(name[i], sizeof(name[i]), "^6%s^7", L(token));
+				PlatformLib_SNPrintF(name[i], sizeof(name[i]), "^6%s^7", L(token));
 			else
-				snprintf(name[i], sizeof(name[i]), "^6%s^7", token);
+				PlatformLib_SNPrintF(name[i], sizeof(name[i]), "^6%s^7", token);
 
 			if ( keys[0] != -1 )
 			{
@@ -237,9 +237,9 @@ void CMenuKeysModel::Update(void)
 
 				if ( str )
 					if ( !PlatformLib_StrNCaseCmp(str, "MOUSE", 5) )
-						snprintf(firstKey[i], 20, "^5%s^7", str);
+						PlatformLib_SNPrintF(firstKey[i], 20, "^5%s^7", str);
 					else
-						snprintf(firstKey[i], 20, "^3%s^7", str);
+						PlatformLib_SNPrintF(firstKey[i], 20, "^3%s^7", str);
 				else
 					firstKey[i][0] = 0;
 			}
@@ -250,9 +250,9 @@ void CMenuKeysModel::Update(void)
 
 				if ( str )
 					if ( !PlatformLib_StrNCaseCmp(str, "MOUSE", 5) )
-						snprintf(secondKey[i], 20, "^5%s^7", str);
+						PlatformLib_SNPrintF(secondKey[i], 20, "^5%s^7", str);
 					else
-						snprintf(secondKey[i], 20, "^3%s^7", str);
+						PlatformLib_SNPrintF(secondKey[i], 20, "^3%s^7", str);
 				else
 					secondKey[i][0] = 0;
 			}
@@ -308,7 +308,7 @@ void CMenuControls::ResetKeysList(void)
 			key[1] = '\0';
 		}
 
-		snprintf(cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", key, token);
+		PlatformLib_SNPrintF(cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", key, token);
 		EngFuncs::ClientCmd(TRUE, cmd);
 	}
 
@@ -333,7 +333,7 @@ bool CMenuControls::CGrabKeyMessageBox::KeyUp(int key)
 		char cmd[4096];
 
 		const char* bindName = parent->keysListModel.keysBind[parent->keysList.GetCurrentIndex()];
-		snprintf(cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", EngFuncs::KeynumToString(key), bindName);
+		PlatformLib_SNPrintF(cmd, sizeof(cmd), "bind \"%s\" \"%s\"\n", EngFuncs::KeynumToString(key), bindName);
 		EngFuncs::ClientCmd(TRUE, cmd);
 	}
 

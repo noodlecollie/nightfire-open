@@ -29,6 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "CheckBox.h"
 #include "YesNoMessageBox.h"
 #include "StringArrayModel.h"
+#include "PlatformLib/String.h"
+
 #define ART_BANNER "gfx/shell/head_touch_buttons"
 
 class CMenuTouchButtons : public CMenuFramework
@@ -204,7 +206,7 @@ void CMenuTouchButtons::DeleteButton()
 	if ( i > 0 )
 		buttonList.SetCurrentIndex(i - 1);
 	char command[512];
-	snprintf(command, 512, "touch_removebutton \"%s\"\n", selectedName);
+	PlatformLib_SNPrintF(command, 512, "touch_removebutton \"%s\"\n", selectedName);
 	EngFuncs::ClientCmd(1, command);
 	model.Update();
 }
@@ -306,7 +308,7 @@ void CMenuTouchButtons::SaveButton()
 
 	if ( name.GetBuffer()[0] )
 	{
-		snprintf(
+		PlatformLib_SNPrintF(
 			command,
 			sizeof(command),
 			"touch_addbutton \"%s\" \"%s\" \"%s\"\n",
@@ -314,9 +316,9 @@ void CMenuTouchButtons::SaveButton()
 			texture.GetBuffer(),
 			cmd);
 		EngFuncs::ClientCmd(0, command);
-		snprintf(command, sizeof(command), "touch_setflags \"%s\" %i\n", name.GetBuffer(), curflags);
+		PlatformLib_SNPrintF(command, sizeof(command), "touch_setflags \"%s\" %i\n", name.GetBuffer(), curflags);
 		EngFuncs::ClientCmd(0, command);
-		snprintf(
+		PlatformLib_SNPrintF(
 			command,
 			sizeof(command),
 			"touch_setcolor \"%s\" %u %u %u %u\n",
@@ -330,13 +332,13 @@ void CMenuTouchButtons::SaveButton()
 	}
 	else
 	{
-		snprintf(command, sizeof(command), "touch_settexture \"%s\" \"%s\"\n", selectedName, texture.GetBuffer());
+		PlatformLib_SNPrintF(command, sizeof(command), "touch_settexture \"%s\" \"%s\"\n", selectedName, texture.GetBuffer());
 		EngFuncs::ClientCmd(0, command);
-		snprintf(command, sizeof(command), "touch_setcommand \"%s\" \"%s\"\n", selectedName, cmd);
+		PlatformLib_SNPrintF(command, sizeof(command), "touch_setcommand \"%s\" \"%s\"\n", selectedName, cmd);
 		EngFuncs::ClientCmd(0, command);
-		snprintf(command, sizeof(command), "touch_setflags \"%s\" %i\n", selectedName, curflags);
+		PlatformLib_SNPrintF(command, sizeof(command), "touch_setflags \"%s\" %i\n", selectedName, curflags);
 		EngFuncs::ClientCmd(0, command);
-		snprintf(
+		PlatformLib_SNPrintF(
 			command,
 			sizeof(command),
 			"touch_setcolor \"%s\" %u %u %u %u\n",

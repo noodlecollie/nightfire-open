@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <cstdlib>
+#include "PlatformLib/String.h"
 
 #include "ammohistory.h"
 #include "miniutl.h"
@@ -101,7 +102,7 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 	pWeapon->hAmmo = 0;
 	pWeapon->hAmmo2 = 0;
 
-	snprintf(sz, sizeof(sz), "sprites/%s.txt", pWeapon->szName);
+	PlatformLib_SNPrintF(sz, sizeof(sz), "sprites/%s.txt", pWeapon->szName);
 	client_sprite_t* pList = SPR_GetList(sz, &i);
 
 	if ( !pList )

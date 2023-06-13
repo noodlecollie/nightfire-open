@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "SpinControl.h"
 #include "Utils.h"
 #include "Scissor.h"
+#include "PlatformLib/String.h"
 
 CMenuSpinControl::CMenuSpinControl() :
 	BaseClass(),
@@ -359,7 +360,7 @@ void CMenuSpinControl::Display()
 	{
 		SetCvarValue(m_flCurValue);
 
-		snprintf(m_szDisplay, CS_SIZE, "%.*f", m_iFloatPrecision, m_flCurValue);
+		PlatformLib_SNPrintF(m_szDisplay, CS_SIZE, "%.*f", m_iFloatPrecision, m_flCurValue);
 	}
 	else
 	{

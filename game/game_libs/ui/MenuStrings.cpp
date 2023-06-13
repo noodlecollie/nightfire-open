@@ -271,7 +271,7 @@ static void Localize_AddToDictionary(const char* name, const char* lang)
 	int i = 0, len;
 	bool isUtf16 = false;
 
-	snprintf(filename, sizeof(filename), "resource/%s_%s.txt", name, lang);
+	PlatformLib_SNPrintF(filename, sizeof(filename), "resource/%s_%s.txt", name, lang);
 
 	pFileBuf = reinterpret_cast<char*>(EngFuncs::COM_LoadFile(filename, &len));
 
@@ -429,7 +429,7 @@ static void Localize_Init(void)
 
 		char buf[256];
 
-		snprintf(buf, sizeof(buf), "StringsList_%i", i);
+		PlatformLib_SNPrintF(buf, sizeof(buf), "StringsList_%i", i);
 
 		Dictionary_Insert(buf, MenuStrings[i]);
 	}

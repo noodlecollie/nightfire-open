@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Bitmap.h"
 #include "PicButton.h"
 #include "Action.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_saveload"
 
@@ -47,7 +48,7 @@ UI_SaveLoad_Init
 */
 void CMenuSaveLoad::_Init(void)
 {
-	snprintf(
+	PlatformLib_SNPrintF(
 		hintText,
 		sizeof(hintText),
 		L("During play, you can quickly save your game by pressing %s.\n"

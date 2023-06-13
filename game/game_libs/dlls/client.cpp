@@ -117,7 +117,7 @@ void ClientDisconnect(edict_t* pEntity)
 
 	char text[256] = "";
 	if ( pEntity->v.netname )
-		_snprintf(text, sizeof(text), "- %s has left the game\n", STRING(pEntity->v.netname));
+		PlatformLib_SNPrintF(text, sizeof(text), "- %s has left the game\n", STRING(pEntity->v.netname));
 	MESSAGE_BEGIN(MSG_ALL, gmsgSayText, NULL);
 	WRITE_BYTE(ENTINDEX(pEntity));
 	WRITE_STRING(text);
@@ -704,7 +704,7 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 		if ( gpGlobals->maxClients > 1 )
 		{
 			char text[256];
-			_snprintf(
+			PlatformLib_SNPrintF(
 				text,
 				256,
 				"* %s changed name to %s\n",

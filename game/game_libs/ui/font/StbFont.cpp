@@ -36,6 +36,7 @@ GNU General Public License for more details.
 #endif
 
 #include "Utils.h"
+#include "PlatformLib/String.h"
 
 CStbFont::CStbFont() :
 	CBaseFont(),
@@ -89,9 +90,9 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 	}
 
 	if ( fontFileNamePost )
-		snprintf(dataFile, dataFileChars, "/system/fonts/%s-%s.ttf", fontFileName, fontFileNamePost);
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "/system/fonts/%s-%s.ttf", fontFileName, fontFileNamePost);
 	else
-		snprintf(dataFile, dataFileChars, "/system/fonts/%s.ttf", fontFileName);
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "/system/fonts/%s.ttf", fontFileName);
 
 	if ( access(dataFile, R_OK) != 0 )
 	{
@@ -104,9 +105,9 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 				fontFileNamePost = "Bold";
 
 			if ( fontFileNamePost )
-				snprintf(dataFile, dataFileChars, "/system/fonts/%s-%s.ttf", fontFileName, fontFileNamePost);
+				PlatformLib_SNPrintF(dataFile, dataFileChars, "/system/fonts/%s-%s.ttf", fontFileName, fontFileNamePost);
 			else
-				snprintf(dataFile, dataFileChars, "/system/fonts/%s.ttf", fontFileName);
+				PlatformLib_SNPrintF(dataFile, dataFileChars, "/system/fonts/%s.ttf", fontFileName);
 
 			if ( access(dataFile, R_OK) != 0 )
 			{
@@ -125,12 +126,12 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 	int len = 0;
 	FILE* fp;
 
-	len = snprintf(cmd, sizeof(cmd) - len, "fc-match -f %%{file} \"%s\"", name);
+	len = PlatformLib_SNPrintF(cmd, sizeof(cmd) - len, "fc-match -f %%{file} \"%s\"", name);
 	if ( flags & FONT_ITALIC )
-		len += snprintf(cmd + len, sizeof(cmd) - len, ":style=Italic");
+		len += PlatformLib_SNPrintF(cmd + len, sizeof(cmd) - len, ":style=Italic");
 
 	if ( weight > 500 )
-		len += snprintf(cmd + len, sizeof(cmd) - len, ":weight=%d", weight);
+		len += PlatformLib_SNPrintF(cmd + len, sizeof(cmd) - len, ":weight=%d", weight);
 
 	cmd[len] = 0;
 
@@ -187,9 +188,9 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 	}
 
 	if ( fontFileNamePost )
-		snprintf(dataFile, dataFileChars, "/Library/Fonts/%s %s.ttf", fontFileName, fontFileNamePost);
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "/Library/Fonts/%s %s.ttf", fontFileName, fontFileNamePost);
 	else
-		snprintf(dataFile, dataFileChars, "/Library/Fonts/%s.ttf", fontFileName);
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "/Library/Fonts/%s.ttf", fontFileName);
 
 	if ( access(dataFile, R_OK) != 0 )
 	{
@@ -202,9 +203,9 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 				fontFileNamePost = "Bold";
 
 			if ( fontFileNamePost )
-				snprintf(dataFile, dataFileChars, "/Library/Fonts/%s %s.ttf", fontFileName, fontFileNamePost);
+				PlatformLib_SNPrintF(dataFile, dataFileChars, "/Library/Fonts/%s %s.ttf", fontFileName, fontFileNamePost);
 			else
-				snprintf(dataFile, dataFileChars, "/Library/Fonts/%s.ttf", fontFileName);
+				PlatformLib_SNPrintF(dataFile, dataFileChars, "/Library/Fonts/%s.ttf", fontFileName);
 
 			if ( access(dataFile, R_OK) != 0 )
 			{
@@ -220,9 +221,9 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 	return true;
 #elif defined _WIN32
 	if ( !strcmp(name, "Arial") )
-		snprintf(dataFile, dataFileChars, "%s\\Fonts\\arial.ttf", getenv("WINDIR"));
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "%s\\Fonts\\arial.ttf", getenv("WINDIR"));
 	else
-		snprintf(dataFile, dataFileChars, "%s\\Fonts\\trebucbd.ttf", getenv("WINDIR"));
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "%s\\Fonts\\trebucbd.ttf", getenv("WINDIR"));
 	return true;
 #else
 	// strcpy( dataFile, "/usr/share/fonts/truetype/droid/DroidSans.ttf");

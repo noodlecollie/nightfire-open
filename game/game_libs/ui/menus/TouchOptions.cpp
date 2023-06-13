@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Field.h"
 #include "YesNoMessageBox.h"
 #include "StringArrayModel.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_touch_options"
 
@@ -204,7 +205,7 @@ void CMenuTouchOptions::Apply()
 	{
 		char command[256];
 		const char* curconfig = EngFuncs::GetCvarString("touch_config_file");
-		snprintf(command, 256, "exec \"touch_presets/%s\"\n", model.profileDesc[i]);
+		PlatformLib_SNPrintF(command, 256, "exec \"touch_presets/%s\"\n", model.profileDesc[i]);
 		EngFuncs::ClientCmd(1, command);
 
 		while ( EngFuncs::FileExists(curconfig, TRUE) )
@@ -214,7 +215,7 @@ void CMenuTouchOptions::Apply()
 
 			COM_FileBase(curconfig, filebase);
 
-			if ( snprintf(copystring, 256, "touch_profiles/%s (new).cfg", filebase) > 255 )
+			if ( PlatformLib_SNPrintF(copystring, 256, "touch_profiles/%s (new).cfg", filebase) > 255 )
 				break;
 
 			EngFuncs::CvarSetString("touch_config_file", copystring);
@@ -226,7 +227,7 @@ void CMenuTouchOptions::Apply()
 	else if ( i > model.firstProfile )
 	{
 		char command[256];
-		snprintf(command, 256, "exec \"touch_profiles/%s\"\n", model.profileDesc[i]);
+		PlatformLib_SNPrintF(command, 256, "exec \"touch_profiles/%s\"\n", model.profileDesc[i]);
 		EngFuncs::ClientCmd(1, command);
 	}
 
@@ -287,7 +288,7 @@ void CMenuTouchOptions::DeleteProfileCb()
 	if ( profiles.GetCurrentIndex() <= model.firstProfile )
 		return;
 
-	snprintf(command, 256, "touch_deleteprofile \"%s\"\n", model.profileDesc[profiles.GetCurrentIndex()]);
+	PlatformLib_SNPrintF(command, 256, "touch_deleteprofile \"%s\"\n", model.profileDesc[profiles.GetCurrentIndex()]);
 	EngFuncs::ClientCmd(TRUE, command);
 
 	model.Update();

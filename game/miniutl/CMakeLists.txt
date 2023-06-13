@@ -29,4 +29,8 @@ target_include_directories(${TARGETNAME_LIB_MINIUTL} PUBLIC
 	.
 )
 
+target_link_libraries(${TARGETNAME_LIB_MINIUTL} PRIVATE
+	${TARGETNAME_LIB_PLATFORMLIB}
+)
+
 set_common_library_compiler_settings(${TARGETNAME_LIB_MINIUTL})

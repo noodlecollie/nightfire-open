@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright ï¿½ 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "voice_banmgr.h"
+#include "PlatformLib/String.h"
 
 #define BANMGR_FILEVERSION 1
 char const* g_pBanMgrFilename = "voice_ban.dt";
@@ -38,7 +39,7 @@ bool CVoiceBanMgr::Init(char const* pGameDir)
 	Term();
 
 	char filename[512];
-	_snprintf(filename, sizeof(filename), "%s/%s", pGameDir, g_pBanMgrFilename);
+	PlatformLib_SNPrintF(filename, sizeof(filename), "%s/%s", pGameDir, g_pBanMgrFilename);
 
 	// Load in the squelch file.
 	FILE* fp = fopen(filename, "rb");
@@ -87,7 +88,7 @@ void CVoiceBanMgr::SaveState(char const* pGameDir)
 {
 	// Save the file out.
 	char filename[512];
-	_snprintf(filename, sizeof(filename), "%s/%s", pGameDir, g_pBanMgrFilename);
+	PlatformLib_SNPrintF(filename, sizeof(filename), "%s/%s", pGameDir, g_pBanMgrFilename);
 
 	FILE* fp = fopen(filename, "wb");
 	if ( fp )

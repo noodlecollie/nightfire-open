@@ -439,7 +439,6 @@ target_compile_definitions(${TARGETNAME_LIB_SERVER} PRIVATE
 
 	# Linux
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_LINUX=1>
-	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_snprintf=snprintf>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_vsnprintf=vsnprintf>
 )
 

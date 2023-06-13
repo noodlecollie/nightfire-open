@@ -2,12 +2,7 @@
 #include <string.h>
 #include "ipv6text.h"
 #include "xash3d_types.h"
-
-#ifdef _WIN32
-#ifndef snprintf
-#define snprintf _snprintf
-#endif
-#endif
+#include "PlatformLib/String.h"
 
 void IPv6IPToString(char* pszOutText, const unsigned char* ip)
 {
@@ -113,7 +108,7 @@ void IPv6AddrToString(char* pszOutText, const unsigned char* ip, uint16_t port, 
 	if ( scope )
 	{
 		// And now the scope.  Max 32-digit scope number is 10 digits
-		snprintf(p, 12, "%%%d", scope);
+		PlatformLib_SNPrintF(p, 12, "%%%d", scope);
 
 		// Find the end of the string
 		while ( *p )
@@ -121,7 +116,7 @@ void IPv6AddrToString(char* pszOutText, const unsigned char* ip, uint16_t port, 
 	}
 
 	// And now the rest.  Max 16-digit port number is 6 digits
-	snprintf(p, 8, "]:%u", (unsigned int)port);
+	PlatformLib_SNPrintF(p, 8, "]:%u", (unsigned int)port);
 }
 
 static inline int ParseIPv6Addr_HexDigitVal(char c)

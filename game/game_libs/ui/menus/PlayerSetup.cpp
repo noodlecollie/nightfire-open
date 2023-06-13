@@ -99,7 +99,7 @@ public:
 			file = Element(pos).String();
 			ext = IsPng(pos) ? "png" : "bmp";
 
-			return snprintf(buf, size, "logos/%s.%s", file, ext);
+			return PlatformLib_SNPrintF(buf, size, "logos/%s.%s", file, ext);
 		}
 
 		bool IsPng(int pos)
@@ -193,7 +193,7 @@ void CMenuPlayerSetup::CModelListModel::Update(void)
 		Q_strncpy(models[m_iCount], name, sizeof(models[0]));
 
 		// check if the path is a valid model
-		snprintf(name, sizeof(name), "models/player/%s/%s.mdl", models[m_iCount], models[m_iCount]);
+		PlatformLib_SNPrintF(name, sizeof(name), "models/player/%s/%s.mdl", models[m_iCount], models[m_iCount]);
 		if ( !EngFuncs::FileExists(name) )
 			continue;
 
@@ -283,7 +283,7 @@ void CMenuPlayerSetup::UpdateModel()
 		return;
 	}
 
-	snprintf(image, 256, "models/player/%s/%s.bmp", mdl, mdl);
+	PlatformLib_SNPrintF(image, 256, "models/player/%s/%s.bmp", mdl, mdl);
 	view.hPlayerImage = EngFuncs::PIC_Load(image, PIC_KEEP_SOURCE);
 
 	ApplyColorToImagePreview();
@@ -295,7 +295,7 @@ void CMenuPlayerSetup::UpdateModel()
 	}
 	else
 	{
-		snprintf(image, sizeof(image), "models/player/%s/%s.mdl", mdl, mdl);
+		PlatformLib_SNPrintF(image, sizeof(image), "models/player/%s/%s.mdl", mdl, mdl);
 	}
 
 	if ( view.ent )

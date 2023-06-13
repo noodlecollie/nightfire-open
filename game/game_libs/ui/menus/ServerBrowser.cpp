@@ -326,7 +326,7 @@ void server_t::UpdateData(void)
 	Q_strncpy(ipstr, EngFuncs::NET_AdrToString(adr), sizeof(ipstr));
 	numcl = atoi(Info_ValueForKey(info, "numcl"));
 	maxcl = atoi(Info_ValueForKey(info, "maxcl"));
-	snprintf(clientsstr, sizeof(clientsstr), "%d\\%d", numcl, maxcl);
+	PlatformLib_SNPrintF(clientsstr, sizeof(clientsstr), "%d\\%d", numcl, maxcl);
 	havePassword = !strcmp(Info_ValueForKey(info, "password"), "1");
 	isLegacy = !strcmp(Info_ValueForKey(info, "legacy"), "1");
 }
@@ -339,7 +339,7 @@ void server_t::SetPing(float ping)
 		ping /= 2;
 
 	this->ping = ping;
-	snprintf(pingstr, sizeof(pingstr), "%.f ms", ping * 1000);
+	PlatformLib_SNPrintF(pingstr, sizeof(pingstr), "%.f ms", ping * 1000);
 }
 
 bool CMenuGameListModel::Sort(int column, bool ascend)
@@ -476,7 +476,7 @@ void CMenuServerBrowser::Connect(server_t& server)
 
 	staticWaitingPassword = false;
 
-	snprintf(buf, sizeof(buf), "connect %s %s", EngFuncs::NET_AdrToString(server.adr), server.isLegacy ? "legacy" : "");
+	PlatformLib_SNPrintF(buf, sizeof(buf), "connect %s %s", EngFuncs::NET_AdrToString(server.adr), server.isLegacy ? "legacy" : "");
 	buf[sizeof(buf) - 1] = 0;
 
 	EngFuncs::ClientCmd(FALSE, buf);

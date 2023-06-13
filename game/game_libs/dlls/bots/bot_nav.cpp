@@ -34,6 +34,7 @@
 #include "client.h"
 #include "bot.h"
 #include "nodes.h"
+#include "PlatformLib/String.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // ActionChooseDirection
@@ -193,7 +194,7 @@ int CGraph::FLoadBotNav(const char* szMapName)
 {
 	char navFileName[128];
 
-	snprintf(navFileName, sizeof(navFileName), "rhodmc/nav/%s.nav ", szMapName);
+	PlatformLib_SNPrintF(navFileName, sizeof(navFileName), "rhodmc/nav/%s.nav ", szMapName);
 
 	ALERT(at_console, navFileName);
 

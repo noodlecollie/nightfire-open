@@ -70,11 +70,6 @@ GNU General Public License for more details.
 #define TRUE (!FALSE)
 #endif
 
-#if !defined(_WIN32) && !defined(__MINGW32__)
-#else
-#define snprintf _snprintf
-#endif
-
 typedef int (*cmpfunc)(const void* a, const void* b);
 typedef int BOOL;
 typedef int qboolean;

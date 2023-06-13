@@ -79,7 +79,7 @@ void* SWAP_Sbrk(size_t size)
 	{
 		void* res;
 
-		// write(1, buf, snprintf(buf, 32, "allocating %d\n", size) );
+		// write(1, buf, PlatformLib_SNPrintF(buf, 32, "allocating %d\n", size) );
 		res = s.top;
 		s.size += size;
 		s.top = res + size;
@@ -99,7 +99,7 @@ void* SWAP_Sbrk(size_t size)
 		{
 			s.top += size;
 			s.size += size;
-			// write(1, buf, snprintf(buf, 32, "freed %d\n", -size) );
+			// write(1, buf, PlatformLib_SNPrintF(buf, 32, "freed %d\n", -size) );
 		}
 
 		return res;

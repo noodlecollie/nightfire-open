@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "CheckBox.h"
 #include "Action.h"
 #include "YesNoMessageBox.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_vidmodes"
 
@@ -121,7 +122,7 @@ void CMenuVidModes::SetMode(int w, int h)
 {
 	// only possible on Xash3D FWGS!
 	char cmd[64];
-	snprintf(cmd, sizeof(cmd), "vid_setmode %i %i\n", w, h);
+	PlatformLib_SNPrintF(cmd, sizeof(cmd), "vid_setmode %i %i\n", w, h);
 	EngFuncs::ClientCmd(TRUE, cmd);
 }
 
@@ -132,7 +133,7 @@ void CMenuVidModes::SetMode(int mode)
 	// vid_setmode is a new command, which does not depends on
 	// static resolution list but instead uses dynamic resolution
 	// list provided by video backend
-	snprintf(cmd, sizeof(cmd), "vid_setmode %i\n", mode);
+	PlatformLib_SNPrintF(cmd, sizeof(cmd), "vid_setmode %i\n", mode);
 
 	EngFuncs::ClientCmd(TRUE, cmd);
 }
@@ -215,7 +216,7 @@ void CMenuVidModes::Draw()
 	{
 		if ( testModeTimer - gpGlobals->time > 0 )
 		{
-			snprintf(
+			PlatformLib_SNPrintF(
 				testModeMsg,
 				sizeof(testModeMsg) - 1,
 				L("Keep this resolution? %i seconds remaining"),

@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Table.h"
 #include "Action.h"
 #include "YesNoMessageBox.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER_LOAD "gfx/shell/head_load"
 #define ART_BANNER_SAVE "gfx/shell/head_save"
@@ -144,7 +145,7 @@ void CMenuSavePreview::Draw()
 	{
 		char saveshot[128];
 
-		snprintf(saveshot, sizeof(saveshot), "save/%s.bmp", szName);
+		PlatformLib_SNPrintF(saveshot, sizeof(saveshot), "save/%s.bmp", szName);
 
 		if ( EngFuncs::FileExists(saveshot) )
 			UI_DrawPic(m_scPos, m_scSize, uiColorWhite, saveshot);
@@ -243,8 +244,8 @@ void CMenuSavesListModel::Update(void)
 		}
 
 		// fill save desc
-		snprintf(m_szCells[i][0], MAX_CELLSTRING, "%s %s", time, date);
-		snprintf(m_szCells[i][1], MAX_CELLSTRING, "%s%s", type, translated_title);
+		PlatformLib_SNPrintF(m_szCells[i][0], MAX_CELLSTRING, "%s %s", time, date);
+		PlatformLib_SNPrintF(m_szCells[i][1], MAX_CELLSTRING, "%s%s", type, translated_title);
 		Q_strncpy(m_szCells[i][2], elapsedTime, MAX_CELLSTRING);
 	}
 

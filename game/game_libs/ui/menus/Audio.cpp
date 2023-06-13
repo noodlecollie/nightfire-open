@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "CheckBox.h"
 #include "SpinControl.h"
 #include "StringArrayModel.h"
+#include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_audio"
 
@@ -87,7 +88,7 @@ void CMenuAudio::VibrateChanged()
 	if ( oldVibrate != newVibrate )
 	{
 		char cmd[64];
-		snprintf(cmd, 64, "vibrate %f", newVibrate);
+		PlatformLib_SNPrintF(cmd, 64, "vibrate %f", newVibrate);
 		EngFuncs::ClientCmd(FALSE, cmd);
 		vibration.WriteCvar();
 		oldVibrate = newVibrate;

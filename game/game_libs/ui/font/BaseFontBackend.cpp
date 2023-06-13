@@ -54,17 +54,17 @@ void CBaseFont::GetTextureName(char* dst, size_t len) const
 		attribs[i++] = 'u';  // 1 parameter
 	if ( m_iBlur )
 	{
-		int chars = snprintf(attribs + i, sizeof(attribs) - 1 - i, "g%i%.2f", m_iBlur, m_fBrighten);
+		int chars = PlatformLib_SNPrintF(attribs + i, sizeof(attribs) - 1 - i, "g%i%.2f", m_iBlur, m_fBrighten);
 		i += chars;
 	}
 	if ( m_iOutlineSize )
 	{
-		int chars = snprintf(attribs + i, sizeof(attribs) - 1 - i, "o%i", m_iOutlineSize);
+		int chars = PlatformLib_SNPrintF(attribs + i, sizeof(attribs) - 1 - i, "o%i", m_iOutlineSize);
 		i += chars;
 	}
 	if ( m_iScanlineOffset )
 	{
-		int chars = snprintf(attribs + i, sizeof(attribs) - 1 - i, "s%i%.2f", m_iScanlineOffset, m_fScanlineScale);
+		int chars = PlatformLib_SNPrintF(attribs + i, sizeof(attribs) - 1 - i, "s%i%.2f", m_iScanlineOffset, m_fScanlineScale);
 		i += chars;
 	}
 	attribs[i] = 0;
@@ -72,13 +72,13 @@ void CBaseFont::GetTextureName(char* dst, size_t len) const
 	// faster loading: don't query filesystem, tell engine to skip everything and load only from buffer
 	if ( i == 0 )
 	{
-		snprintf(dst, len - 1, "#%s_%i_%i_font.bmp", GetName(), GetTall(), GetWeight());
+		PlatformLib_SNPrintF(dst, len - 1, "#%s_%i_%i_font.bmp", GetName(), GetTall(), GetWeight());
 		dst[len - 1] = 0;
 	}
 	else
 	{
 		attribs[i] = 0;
-		snprintf(dst, len - 1, "#%s_%i_%i_%s_font.bmp", GetName(), GetTall(), GetWeight(), attribs);
+		PlatformLib_SNPrintF(dst, len - 1, "#%s_%i_%i_%s_font.bmp", GetName(), GetTall(), GetWeight(), attribs);
 		dst[len - 1] = 0;
 	}
 }

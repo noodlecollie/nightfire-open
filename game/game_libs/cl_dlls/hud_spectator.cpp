@@ -855,7 +855,7 @@ bool CHudSpectator::ParseOverviewFile()
 	strncpy(levelname, m_OverviewData.map + 5, sizeof(levelname));
 	levelname[strlen(levelname) - 4] = 0;
 
-	snprintf(filename, sizeof(filename), "overviews/%s.txt", levelname);
+	PlatformLib_SNPrintF(filename, sizeof(filename), "overviews/%s.txt", levelname);
 
 	pfile = (char*)gEngfuncs.COM_LoadFile(filename, 5, NULL);
 

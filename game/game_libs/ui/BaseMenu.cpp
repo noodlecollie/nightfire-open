@@ -1031,7 +1031,7 @@ static void UI_LoadSounds(void)
 			size_t len = strlen(uiSoundOldPrefix);
 
 			if ( !strncmp(uiSounds[i], uiSoundOldPrefix, len) )
-				snprintf(uiStatic.sounds[i], sizeof(uiStatic.sounds[i]), "%s%s", uiSoundNewPrefix, uiSounds[i] + len);
+				PlatformLib_SNPrintF(uiStatic.sounds[i], sizeof(uiStatic.sounds[i]), "%s%s", uiSoundNewPrefix, uiSounds[i] + len);
 		}
 		else
 			Q_strncpy(uiStatic.sounds[i], uiSounds[i], sizeof(uiStatic.sounds[i]));
