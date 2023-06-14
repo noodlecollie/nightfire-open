@@ -243,9 +243,8 @@ static int GL_RefGetParm(int parm, int arg)
 		case PARM_SKY_SPHERE:
 			return ENGINE_GET_PARM_(parm, arg) && !tr.fCustomSkybox;
 		default:
-			return ENGINE_GET_PARM_(parm, arg);
+			return (int)ENGINE_GET_PARM_(parm, arg);
 	}
-	return 0;
 }
 
 static void R_GetDetailScaleForTexture(int texture, float* xScale, float* yScale)
@@ -290,7 +289,7 @@ static void R_SetCurrentModel(model_t* mod)
 
 static float R_GetFrameTime(void)
 {
-	return tr.frametime;
+	return (float)tr.frametime;
 }
 
 static const char* GL_TextureName(unsigned int texnum)

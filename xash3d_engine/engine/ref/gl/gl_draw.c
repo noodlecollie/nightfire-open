@@ -110,13 +110,13 @@ void R_DrawTileClear(int texnum, int x, int y, int w, int h)
 
 	pglBegin(GL_QUADS);
 	pglTexCoord2f(x / tw, y / th);
-	pglVertex2f(x, y);
+	pglVertex2f((GLfloat)x, (GLfloat)y);
 	pglTexCoord2f((x + w) / tw, y / th);
-	pglVertex2f(x + w, y);
+	pglVertex2f((GLfloat)(x + w), (GLfloat)y);
 	pglTexCoord2f((x + w) / tw, (y + h) / th);
-	pglVertex2f(x + w, y + h);
+	pglVertex2f((GLfloat)(x + w), (GLfloat)(y + h));
 	pglTexCoord2f(x / tw, (y + h) / th);
-	pglVertex2f(x, y + h);
+	pglVertex2f((GLfloat)x, (GLfloat)(y + h));
 	pglEnd();
 }
 
@@ -172,8 +172,8 @@ void R_DrawStretchRaw(float x, float y, float w, float h, int cols, int rows, co
 	else
 	{
 		tex->size = cols * rows * 4;
-		tex->width = cols;
-		tex->height = rows;
+		tex->width = (word)cols;
+		tex->height = (word)rows;
 		if ( dirty )
 		{
 			pglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, cols, rows, 0, GL_BGRA, GL_UNSIGNED_BYTE, raw);
@@ -232,8 +232,8 @@ void R_UploadStretchRaw(int texture, int cols, int rows, int width, int height, 
 
 	tex = R_GetTexture(texture);
 	GL_Bind(GL_KEEP_UNIT, texture);
-	tex->width = cols;
-	tex->height = rows;
+	tex->width = (word)cols;
+	tex->height = (word)rows;
 
 	pglTexImage2D(GL_TEXTURE_2D, 0, tex->format, cols, rows, 0, GL_BGRA, GL_UNSIGNED_BYTE, raw);
 	GL_ApplyTextureParams(tex);

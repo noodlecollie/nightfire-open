@@ -864,7 +864,7 @@ D_DrawSpans16
   FIXME: actually make this subdivide by 16 instead of 8!!!
 =============
 */
-void D_BlendSpans16(espan_t* pspan, int alpha)
+void D_BlendSpans16(espan_t* pspan, int inalpha)
 {
 	int count, spancount;
 	pixel_t *pbase, *pdest;
@@ -874,10 +874,15 @@ void D_BlendSpans16(espan_t* pspan, int alpha)
 	int izi, izistep;
 	short* pz;
 
-	if ( alpha > 7 )
-		alpha = 7;
-	if ( alpha == 0 )
+	if ( inalpha > 7 )
+	{
+		inalpha = 7;
+	}
+
+	if ( inalpha == 0 )
+	{
 		return;
+	}
 
 	sstep = 0;  // keep compiler happy
 	tstep = 0;  // ditto
@@ -999,8 +1004,11 @@ void D_BlendSpans16(espan_t* pspan, int alpha)
 
 						if ( btemp != TRANSPARENT_COLOR )
 						{
-							if ( alpha != 7 )
-								btemp = BLEND_ALPHA(alpha, btemp, *pdest);
+							if ( inalpha != 7 )
+							{
+								btemp = BLEND_ALPHA(inalpha, btemp, *pdest);
+							}
+
 							*pdest = btemp;
 						}
 						//*pz    = izi >> 16;
@@ -1040,8 +1048,11 @@ void D_BlendSpans16(espan_t* pspan, int alpha)
 
 						if ( btemp != TRANSPARENT_COLOR )
 						{
-							if ( alpha != 7 )
-								btemp = BLEND_ALPHA(alpha, btemp, *pdest);
+							if ( inalpha != 7 )
+							{
+								btemp = BLEND_ALPHA(inalpha, btemp, *pdest);
+							}
+
 							*pdest = btemp;
 						}
 						//*pz    = izi >> 16;
