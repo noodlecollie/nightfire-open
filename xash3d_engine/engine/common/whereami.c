@@ -61,14 +61,8 @@ extern "C"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#if defined(_MSC_VER)
-#pragma warning(push, 3)
-#endif
 #include <windows.h>
 #include <intrin.h>
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 #include <stdbool.h>
 
 static int WAI_PREFIX(getModulePath_)(HMODULE module, char* out, int capacity, int* dirname_length)
@@ -153,17 +147,10 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 	HMODULE module;
 	int length = -1;
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4054)
-#endif
 	if ( GetModuleHandleEx(
 			 GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
 			 (LPCTSTR)WAI_RETURN_ADDRESS(),
 			 &module) )
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 	{
 		length = WAI_PREFIX(getModulePath_)(module, out, capacity, dirname_length);
 	}

@@ -197,7 +197,7 @@ public:
 		return m_pParent;
 	}
 
-#ifndef MY_COMPILER_SUCKS
+#ifndef CXX11_NOT_PRESENT
 	template<class T>
 	T* _Parent() const
 	{

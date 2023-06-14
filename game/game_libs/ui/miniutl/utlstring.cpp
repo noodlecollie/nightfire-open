@@ -6,10 +6,6 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#ifndef _XBOX
-#pragma warning(disable : 4514)
-#endif
-
 #include "utlstring.h"
 #include "utlvector.h"
 #include "winlite.h"

@@ -27,7 +27,7 @@ GNU General Public License for more details.
 // SET_EVENT( event, callback )
 // same as MULTI, but does not require code block. Inteded for one-line events
 
-#if defined(MY_COMPILER_SUCKS)
+#if defined(CXX11_NOT_PRESENT)
 // WARN: can't rely on "item" name, because it can be something like "ptr->member"
 // So we use something more valid for struct name
 #define PASTE(x, y) __##x##_##y

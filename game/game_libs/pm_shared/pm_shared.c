@@ -53,10 +53,6 @@ extern float vJumpAngles[3];
 
 static int pm_shared_initialized = 0;
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4305)
-#endif
-
 playermove_t* pmove = NULL;
 
 // Ducking time
@@ -84,11 +80,6 @@ playermove_t* pmove = NULL;
 #define PLAYER_LONGJUMP_SPEED 350  // how fast we longjump
 
 #define PLAYER_DUCKING_MULTIPLIER 0.333
-
-// double to float warning
-#ifdef _MSC_VER
-#pragma warning(disable : 4244)
-#endif
 
 #ifndef MAX_OF
 #define MAX_OF(a, b) (((a) > (b)) ? (a) : (b))

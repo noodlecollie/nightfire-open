@@ -25,15 +25,6 @@
 #define DEBUG 1
 #endif
 
-// Silence certain warnings
-#ifdef _MSC_VER
-#pragma warning(disable : 4244)  // int or float down-conversion
-#pragma warning(disable : 4305)  // int or float data truncation
-#pragma warning(disable : 4201)  // nameless struct/union
-#pragma warning(disable : 4514)  // unreferenced inline function removed
-#pragma warning(disable : 4100)  // unreferenced formal parameter
-#endif
-
 // Prevent tons of unused windows definitions
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN

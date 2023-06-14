@@ -23,11 +23,6 @@
 
 #include <string.h>
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4244)
-#pragma warning(disable : 4305)
-#endif
-
 extern playermove_t* pmove;
 
 // Expand debugging BBOX particle hulls by this many units.

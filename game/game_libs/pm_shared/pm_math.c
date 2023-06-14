@@ -25,10 +25,6 @@
 // fall over
 #define ROLL 2
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4244)
-#endif
-
 vec3_t vec3_origin = {0, 0, 0};
 
 float anglemod(float a)

@@ -90,7 +90,7 @@
 
 #include "strtools.h"
 
-#ifdef MY_COMPILER_SUCKS
+#ifdef CXX11_NOT_PRESENT
 #define COMPILE_TIME_ASSERT(pred) typedef int UNIQUE_ID[(pred) ? 1 : -1]
 #else
 #define COMPILE_TIME_ASSERT(pred) static_assert(pred, "Compile time assert constraint is not true: " #pred)
