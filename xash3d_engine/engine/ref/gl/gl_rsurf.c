@@ -95,13 +95,13 @@ static void SubdividePolygon_r(msurface_t* warpface, int numverts, float* verts)
 	if ( numverts > (SUBDIVIDE_SIZE - 4) )
 		gEngfuncs.Host_Error("Mod_SubdividePolygon: too many vertexes on face ( %i )\n", numverts);
 
-	sample_size = gEngfuncs.Mod_SampleSizeForFace(warpface);
+	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(warpface);
 	BoundPoly(numverts, verts, mins, maxs);
 
 	for ( i = 0; i < 3; i++ )
 	{
 		m = (mins[i] + maxs[i]) * 0.5f;
-		m = SUBDIVIDE_SIZE * floor(m / SUBDIVIDE_SIZE + 0.5f);
+		m = SUBDIVIDE_SIZE * floorf(m / SUBDIVIDE_SIZE + 0.5f);
 		if ( maxs[i] - m < 8 )
 			continue;
 		if ( m - mins[i] < 8 )
@@ -220,9 +220,9 @@ void GL_SetupFogColorForSurfaces(void)
 
 	div = (r_detailtextures->value) ? 2.0f : 1.0f;
 	factor = (r_detailtextures->value) ? 3.0f : 2.0f;
-	fogColor[0] = pow(RI.fogColor[0] / div, (1.0f / factor));
-	fogColor[1] = pow(RI.fogColor[1] / div, (1.0f / factor));
-	fogColor[2] = pow(RI.fogColor[2] / div, (1.0f / factor));
+	fogColor[0] = powf(RI.fogColor[0] / div, (1.0f / factor));
+	fogColor[1] = powf(RI.fogColor[1] / div, (1.0f / factor));
+	fogColor[2] = powf(RI.fogColor[2] / div, (1.0f / factor));
 	pglFogfv(GL_FOG_COLOR, fogColor);
 }
 
@@ -297,11 +297,11 @@ void GL_BuildPolygonFromSurface(model_t* mod, msurface_t* fa)
 		Assert(glt != NULL && tex != NULL);
 
 		// update conveyor widths for keep properly speed of scrolling
-		glt->srcWidth = tex->width;
-		glt->srcHeight = tex->height;
+		glt->srcWidth = (word)tex->width;
+		glt->srcHeight = (word)tex->height;
 	}
 
-	sample_size = gEngfuncs.Mod_SampleSizeForFace(fa);
+	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(fa);
 
 	// reconstruct the polygon
 	pedges = mod->edges;
@@ -516,7 +516,7 @@ void R_AddDynamicLights(msurface_t* surf)
 	float sl, tl, sacc, tacc;
 	vec3_t impact, origin_l;
 	mextrasurf_t* info = surf->info;
-	int sample_frac = 1.0;
+	int sample_frac = 1;
 	float sample_size;
 	mtexinfo_t* tex;
 	dlight_t* dl;
@@ -526,9 +526,9 @@ void R_AddDynamicLights(msurface_t* surf)
 	if ( !R_CountSurfaceDlights(surf) )
 		return;
 
-	sample_size = gEngfuncs.Mod_SampleSizeForFace(surf);
-	smax = (info->lightextents[0] / sample_size) + 1;
-	tmax = (info->lightextents[1] / sample_size) + 1;
+	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(surf);
+	smax = (int)(info->lightextents[0] / sample_size) + 1;
+	tmax = (int)(info->lightextents[1] / sample_size) + 1;
 	tex = surf->texinfo;
 
 	if ( FBitSet(tex->flags, TEX_WORLD_LUXELS) )
@@ -556,7 +556,7 @@ void R_AddDynamicLights(msurface_t* surf)
 
 		rad = dl->radius;
 		dist = PlaneDiff(origin_l, surf->plane);
-		rad -= fabs(dist);
+		rad -= fabsf(dist);
 
 		// rad is now the highest intensity on the plane
 		minlight = dl->minlight;
@@ -579,20 +579,28 @@ void R_AddDynamicLights(msurface_t* surf)
 
 		for ( t = 0, tacc = 0; t < tmax; t++, tacc += sample_size )
 		{
-			td = (tl - tacc) * sample_frac;
+			td = (int)((tl - tacc) * (float)sample_frac);
 			if ( td < 0 )
+			{
 				td = -td;
+			}
 
 			for ( s = 0, sacc = 0; s < smax; s++, sacc += sample_size, bl += 3 )
 			{
-				sd = (sl - sacc) * sample_frac;
+				sd = (int)((sl - sacc) * (float)sample_frac);
 				if ( sd < 0 )
+				{
 					sd = -sd;
+				}
 
 				if ( sd > td )
-					dist = sd + (td >> 1);
+				{
+					dist = (float)(sd + (td >> 1));
+				}
 				else
-					dist = td + (sd >> 1);
+				{
+					dist = (float)(td + (sd >> 1));
+				}
 
 				if ( dist < minlight )
 				{
@@ -700,25 +708,27 @@ static void LM_UploadBlock(qboolean dynamic)
 	}
 	else
 	{
-		rgbdata_t r_lightmap;
+		rgbdata_t lightmap;
 		char lmName[16];
 
 		i = gl_lms.current_lightmap_texture;
 
 		// upload static lightmaps only during loading
-		memset(&r_lightmap, 0, sizeof(r_lightmap));
+		memset(&lightmap, 0, sizeof(lightmap));
 		Q_snprintf(lmName, sizeof(lmName), "*lightmap%i", i);
 
-		r_lightmap.width = BLOCK_SIZE;
-		r_lightmap.height = BLOCK_SIZE;
-		r_lightmap.type = PF_RGBA_32;
-		r_lightmap.size = r_lightmap.width * r_lightmap.height * 4;
-		r_lightmap.flags = IMAGE_HAS_COLOR;
-		r_lightmap.buffer = gl_lms.lightmap_buffer;
-		tr.lightmapTextures[i] = GL_LoadTextureInternal(lmName, &r_lightmap, TF_NOMIPMAP | TF_ATLAS_PAGE);
+		lightmap.width = (word)BLOCK_SIZE;
+		lightmap.height = (word)BLOCK_SIZE;
+		lightmap.type = PF_RGBA_32;
+		lightmap.size = lightmap.width * lightmap.height * 4;
+		lightmap.flags = IMAGE_HAS_COLOR;
+		lightmap.buffer = gl_lms.lightmap_buffer;
+		tr.lightmapTextures[i] = GL_LoadTextureInternal(lmName, &lightmap, TF_NOMIPMAP | TF_ATLAS_PAGE);
 
 		if ( ++gl_lms.current_lightmap_texture == MAX_LIGHTMAPS )
+		{
 			gEngfuncs.Host_Error("AllocBlock: full\n");
+		}
 	}
 }
 
@@ -773,9 +783,9 @@ static void R_BuildLightMap(msurface_t* surf, byte* dest, int stride, qboolean d
 	{
 		for ( s = 0; s < smax; s++ )
 		{
-			dest[0] = Q_min((bl[0] >> 7), 255);
-			dest[1] = Q_min((bl[1] >> 7), 255);
-			dest[2] = Q_min((bl[2] >> 7), 255);
+			dest[0] = (byte)Q_min((bl[0] >> 7), 255);
+			dest[1] = (byte)Q_min((bl[1] >> 7), 255);
+			dest[2] = (byte)Q_min((bl[2] >> 7), 255);
 			dest[3] = 255;
 
 			bl += 3;
@@ -822,8 +832,8 @@ void DrawGLPoly(glpoly_t* p, float xScale, float yScale)
 		}
 		texture = R_GetTexture(glState.currentTextures[glState.activeTMU]);
 
-		flRate = fabs(flConveyorSpeed) / (float)texture->srcWidth;
-		flAngle = (flConveyorSpeed >= 0) ? 180 : 0;
+		flRate = fabsf(flConveyorSpeed) / (float)texture->srcWidth;
+		flAngle = (flConveyorSpeed >= 0.0f) ? 180.0f : 0.0f;
 
 		SinCos(flAngle * (M_PI_F / 180.0f), &sy, &cy);
 		sOffset = gpGlobals->time * cy * flRate;
@@ -1506,7 +1516,7 @@ void R_SetRenderMode(cl_entity_t* e)
 				e->curstate.rendercolor.r,
 				e->curstate.rendercolor.g,
 				e->curstate.rendercolor.b,
-				e->curstate.renderamt);
+				(GLubyte)e->curstate.renderamt);
 			pglTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			pglDisable(GL_TEXTURE_2D);
 			pglEnable(GL_BLEND);
@@ -2066,10 +2076,12 @@ void R_AddDecalVBO(decal_t* pdecal, msurface_t* surf)
 {
 	int numVerts, i;
 	float* v;
-	int decalindex = pdecal - &gDecalPool[0];
+	int decalindex = (int)(pdecal - &gDecalPool[0]);
 
 	if ( !vbos.decaldata )
+	{
 		return;
+	}
 
 	v = R_DecalSetupVerts(pdecal, surf, pdecal->texture, &numVerts);
 
@@ -2081,7 +2093,9 @@ void R_AddDecalVBO(decal_t* pdecal, msurface_t* surf)
 	}
 
 	for ( i = 0; i < numVerts; i++ )
+	{
 		memcpy(&vbos.decaldata->decalarray[decalindex * DECAL_VERTS_CUT + i], v + i * VERTEXSIZE, VERTEXSIZE * 4);
+	}
 
 	pglBindBufferARB(GL_ARRAY_BUFFER_ARB, vbos.decaldata->decalvbo);
 	pglBufferSubDataARB(
@@ -2517,20 +2531,25 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 			// build index and texcoords arrays
 			vbos.dlight_tc[indexbase][0] =
 				surf->polys->verts[0][5] - (surf->light_s - info->dlight_s) * (1.0f / (float)BLOCK_SIZE);
+
 			vbos.dlight_tc[indexbase][1] =
 				surf->polys->verts[0][6] - (surf->light_t - info->dlight_t) * (1.0f / (float)BLOCK_SIZE);
+
 			vbos.dlight_tc[indexbase + 1][0] =
 				surf->polys->verts[1][5] - (surf->light_s - info->dlight_s) * (1.0f / (float)BLOCK_SIZE);
+
 			vbos.dlight_tc[indexbase + 1][1] =
 				surf->polys->verts[1][6] - (surf->light_t - info->dlight_t) * (1.0f / (float)BLOCK_SIZE);
 
 			for ( index = indexbase + 2; index < indexbase + surf->polys->numverts; index++ )
 			{
-				dlightarray[dlightindex++] = indexbase;
-				dlightarray[dlightindex++] = index - 1;
-				dlightarray[dlightindex++] = index;
+				dlightarray[dlightindex++] = (unsigned short)indexbase;
+				dlightarray[dlightindex++] = (unsigned short)(index - 1);
+				dlightarray[dlightindex++] = (unsigned short)index;
+
 				vbos.dlight_tc[index][0] = surf->polys->verts[index - indexbase][5] -
 					(surf->light_s - info->dlight_s) * (1.0f / (float)BLOCK_SIZE);
+
 				vbos.dlight_tc[index][1] = surf->polys->verts[index - indexbase][6] -
 					(surf->light_t - info->dlight_t) * (1.0f / (float)BLOCK_SIZE);
 			}
@@ -2548,7 +2567,7 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 			// if surface has decals, build decal array
 			for ( pdecal = surf->pdecals; pdecal; pdecal = pdecal->pnext )
 			{
-				int decalindex = pdecal - &gDecalPool[0];
+				int decalindex = (int)(pdecal - &gDecalPool[0]);
 				int numVerts = vbos.decaldata->decals[decalindex].numVerts;
 				int i;
 
@@ -2863,7 +2882,7 @@ void R_DrawVBO(qboolean drawlightmap, qboolean drawtextures)
 				for ( pdecal = lightmapchain->pdecals; pdecal; pdecal = pdecal->pnext )
 				{
 					gl_texture_t* glt;
-					int decalindex = pdecal - &gDecalPool[0];
+					int decalindex = (int)(pdecal - &gDecalPool[0]);
 
 					if ( !pdecal->texture )
 						continue;
@@ -3062,7 +3081,7 @@ qboolean R_AddSurfToVBO(msurface_t* surf, qboolean buildlightmap)
 	if ( CVAR_TO_BOOL(r_vbo) && vbos.surfdata[surf - WORLDMODEL->surfaces].vbotexture )
 	{
 		// find vbotexture_t assotiated with this surface
-		int idx = surf - WORLDMODEL->surfaces;
+		int idx = (int)(surf - WORLDMODEL->surfaces);
 		vbotexture_t* vbotex = vbos.surfdata[idx].vbotexture;
 		int texturenum = vbos.surfdata[idx].texturenum;
 
@@ -3094,9 +3113,9 @@ qboolean R_AddSurfToVBO(msurface_t* surf, qboolean buildlightmap)
 			// GL_TRIANGLE_FAN: 0 1 2 0 2 3 0 3 4 ...
 			for ( index = indexbase + 2; index < indexbase + surf->polys->numverts; index++ )
 			{
-				vbotex->indexarray[vbotex->curindex++] = indexbase;
-				vbotex->indexarray[vbotex->curindex++] = index - 1;
-				vbotex->indexarray[vbotex->curindex++] = index;
+				vbotex->indexarray[vbotex->curindex++] = (unsigned short)indexbase;
+				vbotex->indexarray[vbotex->curindex++] = (unsigned short)(index - 1);
+				vbotex->indexarray[vbotex->curindex++] = (unsigned short)index;
 			}
 
 			// if surface has decals, add it to decal lightmapchain
