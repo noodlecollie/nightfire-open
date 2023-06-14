@@ -991,7 +991,6 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 {
 	string liblist_path, gameinfo_path;
 	string default_gameinfo_path;
-	qboolean haveUpdate = false;
 
 	Q_snprintf(default_gameinfo_path, sizeof(default_gameinfo_path), "%s/gameinfo.txt", fs_basedir);
 	Q_snprintf(gameinfo_path, sizeof(gameinfo_path), "%s/gameinfo.txt", gamedir);
@@ -1014,7 +1013,7 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 
 		if ( roLibListTime > rwGameInfoTime )
 		{
-			haveUpdate = FS_ConvertGameInfo(gamedir, gameinfo_path, liblist_ro);
+			FS_ConvertGameInfo(gamedir, gameinfo_path, liblist_ro);
 		}
 		else if ( roGameInfoTime > rwGameInfoTime )
 		{
@@ -1024,7 +1023,6 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 			if ( afile_ro )
 			{
 				Con_DPrintf("Copy rodir %s to rwdir %s\n", gameinfo_ro, gameinfo_path);
-				haveUpdate = true;
 				FS_WriteFile(gameinfo_path, afile_ro, len);
 				Mem_Free(afile_ro);
 			}
@@ -1035,7 +1033,9 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 
 	// if user change liblist.gam update the gameinfo.txt
 	if ( FS_FileTime(liblist_path, false) > FS_FileTime(gameinfo_path, false) )
+	{
 		FS_ConvertGameInfo(gamedir, gameinfo_path, liblist_path);
+	}
 
 	// force to create gameinfo for specified game if missing
 	if ( (FS_CheckForQuakeGameDir(gamedir, false) || !Q_stricmp(fs_gamedir, gamedir)) &&
@@ -1052,11 +1052,15 @@ static qboolean FS_ParseGameInfo(const char* gamedir, gameinfo_t* GameInfo)
 			FS_WriteGameInfo(gameinfo_path, &tmpGameInfo);
 		}
 		else
+		{
 			FS_CreateDefaultGameInfo(gameinfo_path);
+		}
 	}
 
 	if ( !GameInfo || !FS_FileExists(gameinfo_path, false) )
+	{
 		return false;  // no dest
+	}
 
 	return FS_ReadGameInfo(gameinfo_path, gamedir, GameInfo);
 }

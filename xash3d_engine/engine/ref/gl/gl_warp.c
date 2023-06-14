@@ -423,7 +423,7 @@ void R_SetupSky(const char* skyboxname)
 	COM_StripExtension(loadname);
 
 	// kill the underline suffix to find them manually later
-	len = Q_strlen(loadname);
+	len = strlen(loadname);
 
 	if ( loadname[len - 1] == '_' )
 	{

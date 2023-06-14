@@ -161,6 +161,8 @@ static size_t GL_CalcImageSize(pixformat_t format, int width, int height, int de
 		case PF_ATI2:
 			size = (((width + 3) >> 2) * ((height + 3) >> 2) * 16) * depth;
 			break;
+		default:
+			break;
 	}
 
 	return size;
@@ -178,6 +180,7 @@ static size_t GL_CalcTextureSize(int width, int height, int depth)
 	return width * height * 2;
 }
 
+#ifdef UNUSED_FUNCTIONS
 static int GL_CalcMipmapCount(image_t* tex, qboolean haveBuffer)
 {
 	int width, height;
@@ -203,6 +206,7 @@ static int GL_CalcMipmapCount(image_t* tex, qboolean haveBuffer)
 
 	return mipcount + 1;
 }
+#endif
 
 /*
 ================
@@ -240,6 +244,7 @@ static void GL_SetTextureDimensions(image_t* tex, int width, int height, int dep
 GL_SetTextureTarget
 ===============
 */
+#ifdef UNUSED_FUNCTIONS
 static void GL_SetTextureTarget(image_t* tex, rgbdata_t* pic)
 {
 	Assert(pic != NULL);
@@ -252,6 +257,7 @@ static void GL_SetTextureTarget(image_t* tex, rgbdata_t* pic)
 	// correct mip count
 	pic->numMips = Q_max(1, pic->numMips);
 }
+#endif
 
 /*
 ===============
@@ -542,7 +548,7 @@ upload texture into video memory
 static qboolean GL_UploadTexture(image_t* tex, rgbdata_t* pic)
 {
 	byte *buf, *data;
-	size_t texsize, size;
+	size_t texsize;
 	uint width, height;
 	uint i, j;
 	qboolean normalMap = false;
@@ -582,7 +588,7 @@ static qboolean GL_UploadTexture(image_t* tex, rgbdata_t* pic)
 		width = Q_max(1, (tex->width >> j));
 		height = Q_max(1, (tex->height >> j));
 		texsize = GL_CalcTextureSize(width, height, tex->depth);
-		size = GL_CalcImageSize(pic->type, width, height, tex->depth);
+		GL_CalcImageSize(pic->type, width, height, tex->depth);
 		// GL_TextureImageRAW( tex, i, j, width, height, tex->depth, pic->type, data );
 		//  increase size to workaround triangle renderer bugs
 		//  it seems to assume memory readable. maybe it was pointed to WAD?

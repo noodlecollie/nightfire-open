@@ -889,11 +889,9 @@ void R_DrawEntitiesOnList(void)
 		Assert(RI.currententity != NULL);
 		Assert(RI.currentmodel != NULL);
 
-		switch ( RI.currentmodel->type )
+		if ( RI.currentmodel->type == mod_sprite )
 		{
-			case mod_sprite:
-				R_DrawSpriteModel(RI.currententity);
-				break;
+			R_DrawSpriteModel(RI.currententity);
 		}
 	}
 

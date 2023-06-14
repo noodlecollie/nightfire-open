@@ -412,6 +412,8 @@ static size_t GL_CalcImageSize(pixformat_t format, int width, int height, int de
 		case PF_ATI2:
 			size = (((width + 3) >> 2) * ((height + 3) >> 2) * 16) * depth;
 			break;
+		default:
+			break;
 	}
 
 	return size;
@@ -745,6 +747,8 @@ static void GL_SetTextureFormat(gl_texture_t* tex, pixformat_t format, int chann
 					tex->format = GL_COMPRESSED_LUMINANCE_ALPHA_3DC_ATI;
 				else
 					tex->format = GL_COMPRESSED_RED_GREEN_RGTC2_EXT;
+				break;
+			default:
 				break;
 		}
 		return;
@@ -1293,7 +1297,6 @@ static qboolean GL_UploadTexture(gl_texture_t* tex, rgbdata_t* pic)
 	size_t texsize, size;
 	uint width, height;
 	uint i, j, numSides;
-	uint offset = 0;
 	qboolean normalMap;
 	const byte* bufend;
 
@@ -1339,7 +1342,7 @@ static qboolean GL_UploadTexture(gl_texture_t* tex, rgbdata_t* pic)
 
 	buf = pic->buffer;
 	bufend = pic->buffer + pic->size;  // total image size include all the layers, cube sides, mipmaps
-	offset = (uint)GL_CalcImageSize(pic->type, pic->width, pic->height, pic->depth);
+	GL_CalcImageSize(pic->type, pic->width, pic->height, pic->depth);
 	texsize = GL_CalcTextureSize(tex->format, tex->width, tex->height, tex->depth);
 	normalMap = FBitSet(tex->flags, TF_NORMALMAP) ? true : false;
 	numSides = FBitSet(pic->flags, IMAGE_CUBEMAP) ? 6 : 1;

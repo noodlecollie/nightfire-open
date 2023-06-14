@@ -6,7 +6,7 @@ function(set_common_library_compiler_settings targetname)
 		target_compile_options(${targetname} PRIVATE
 			-fvisibility=hidden
 			# NFTODO: Apply these properly
-			# -Wall
+			-Wall
 			# -Wextra
 			# -pedantic
 			-Werror

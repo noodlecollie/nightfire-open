@@ -273,7 +273,7 @@ public:
 
 	void AddQuotes()
 	{
-		Assert(m_nLength + 2 <= V_ARRAYSIZE(m_szBuf));
+		Assert((size_t)m_nLength + 2 <= V_ARRAYSIZE(m_szBuf));
 		memmove(m_szBuf + 1, m_szBuf, m_nLength);
 		m_szBuf[0] = '"';
 		m_szBuf[m_nLength + 1] = '"';

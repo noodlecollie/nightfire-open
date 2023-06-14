@@ -413,7 +413,7 @@ static wfile_t* W_Open(const char* filename, int* error)
 		// check for '*' symbol issues (quake1)
 		k = Q_strlen(Q_strrchr(name, '*'));
 		if ( k )
-			name[Q_strlen(name) - k] = '!';
+			name[strlen(name) - k] = '!';
 
 		// check for Quake 'conchars' issues (only lmp loader really allows to read this lame pic)
 		if ( srclumps[i].type == 68 && !Q_stricmp(srclumps[i].name, "conchars") )

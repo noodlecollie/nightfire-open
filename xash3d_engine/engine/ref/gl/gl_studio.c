@@ -1611,7 +1611,7 @@ void R_StudioEntityLight(alight_t* lightinfo)
 	float minstrength, dist2, f, r2;
 	float lstrength[MAX_LOCALLIGHTS];
 	cl_entity_t* ent = RI.currententity;
-	vec3_t mid, origin, pos;
+	vec3_t mid, origin;
 	dlight_t* el;
 
 	(void)lightinfo;
@@ -1649,7 +1649,7 @@ void R_StudioEntityLight(alight_t* lightinfo)
 			}
 		}
 
-		VectorCopy(el->origin, pos);
+		// VectorCopy(el->origin, pos);
 		VectorSubtract(origin, el->origin, mid);
 
 		f = DotProduct(mid, mid);
@@ -2180,7 +2180,6 @@ generic path
 */
 _inline void R_StudioBuildArrayNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
 {
-	float* lv;
 	int i;
 
 	while ( (i = *(ptricmds++)) )
@@ -2198,7 +2197,6 @@ _inline void R_StudioBuildArrayNormalMesh(short* ptricmds, vec3_t* pstudionorms,
 		{
 			GLubyte* cl;
 			cl = g_studio.arraycolor[g_studio.numverts];
-			lv = (float*)g_studio.lightvalues[ptricmds[1]];
 
 			vertexState = R_StudioBuildIndices(tri_strip, vertexState);
 
@@ -2222,7 +2220,6 @@ generic path
 */
 _inline void R_StudioBuildArrayFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
-	float* lv;
 	int i;
 
 	while ( (i = *(ptricmds++)) )
@@ -2240,7 +2237,6 @@ _inline void R_StudioBuildArrayFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 		{
 			GLubyte* cl;
 			cl = g_studio.arraycolor[g_studio.numverts];
-			lv = (float*)g_studio.lightvalues[ptricmds[1]];
 
 			vertexState = R_StudioBuildIndices(tri_strip, vertexState);
 
@@ -3062,7 +3058,7 @@ R_StudioDrawPointsShadow
 */
 static void R_StudioDrawPointsShadow(void)
 {
-	float *av, height;
+	float *av;
 	float vec_x, vec_y;
 	mstudiomesh_t* pmesh;
 	vec3_t point;
@@ -3074,7 +3070,6 @@ static void R_StudioDrawPointsShadow(void)
 	if ( glState.stencilEnabled )
 		pglEnable(GL_STENCIL_TEST);
 
-	height = g_studio.lightspot[2] + 1.0f;
 	vec_x = -g_studio.lightvec[0] * 8.0f;
 	vec_y = -g_studio.lightvec[1] * 8.0f;
 
@@ -3900,6 +3895,8 @@ void R_DrawViewModel(void)
 		case mod_studio:
 			R_StudioSetupTimings();
 			R_StudioDrawModelInternal(RI.currententity, STUDIO_RENDER);
+			break;
+		default:
 			break;
 	}
 

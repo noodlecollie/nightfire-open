@@ -450,7 +450,7 @@ mspriteframe_t* R_GetSpriteFrame(const model_t* pModel, int frame, float yaw)
 		}
 		pspriteframe = pspritegroup->frames[i];
 	}
-	else if ( psprite->frames[frame].type == FRAME_ANGLED )
+	else if ( psprite->frames[frame].type == SPR_ANGLED )
 	{
 		int angleframe = (int)(Q_rint((RI.viewangles[1] - yaw + 45.0f) / 360 * 8) - 4) & 7;
 
@@ -496,12 +496,12 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		frame = psprite->numframes - 1;
 	}
 
-	if ( psprite->frames[frame].type == FRAME_SINGLE )
+	if ( psprite->frames[frame].type == SPR_SINGLE )
 	{
 		if ( m_fDoInterp )
 		{
 			if ( ent->latched.prevblending[0] >= psprite->numframes ||
-				 psprite->frames[ent->latched.prevblending[0]].type != FRAME_SINGLE )
+				 psprite->frames[ent->latched.prevblending[0]].type != SPR_SINGLE )
 			{
 				// this can be happens when rendering switched between single and angled frames
 				// or change model on replace delta-entity
@@ -549,7 +549,7 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		if ( curframe )
 			*curframe = psprite->frames[frame].frameptr;
 	}
-	else if ( psprite->frames[frame].type == FRAME_GROUP )
+	else if ( psprite->frames[frame].type == SPR_GROUP )
 	{
 		pspritegroup = (mspritegroup_t*)psprite->frames[frame].frameptr;
 		pintervals = pspritegroup->intervals;
@@ -585,7 +585,7 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		if ( curframe )
 			*curframe = pspritegroup->frames[i];
 	}
-	else if ( psprite->frames[frame].type == FRAME_ANGLED )
+	else if ( psprite->frames[frame].type == SPR_ANGLED )
 	{
 		// e.g. doom-style sprite monsters
 		float yaw = ent->angles[YAW];
@@ -594,7 +594,7 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		if ( m_fDoInterp )
 		{
 			if ( ent->latched.prevblending[0] >= psprite->numframes ||
-				 psprite->frames[ent->latched.prevblending[0]].type != FRAME_ANGLED )
+				 psprite->frames[ent->latched.prevblending[0]].type != SPR_ANGLED )
 			{
 				// this can be happens when rendering switched between single and angled frames
 				// or change model on replace delta-entity
@@ -844,6 +844,7 @@ static void R_DrawSpriteQuad(mspriteframe_t* frame, vec3_t org, vec3_t v_right, 
 #endif
 }
 
+#ifdef UNUSED_FUNCTIONS
 static qboolean R_SpriteHasLightmap(cl_entity_t* e, int texFormat)
 {
 	if ( !r_sprite_lighting->value )
@@ -870,6 +871,7 @@ static qboolean R_SpriteHasLightmap(cl_entity_t* e, int texFormat)
 
 	return true;
 }
+#endif
 
 /*
 =================
@@ -907,7 +909,7 @@ void R_DrawSpriteModel(cl_entity_t* e)
 	float angle, dot, sr, cr;
 	float lerp = 1.0f, ilerp, scale;
 	vec3_t v_forward, v_right, v_up;
-	vec3_t origin, color, color2;
+	vec3_t origin, color;
 
 	if ( RI.params & RP_ENVVIEW )
 		return;
@@ -990,16 +992,16 @@ void R_DrawSpriteModel(cl_entity_t* e)
 		color[2] = 1.0f;
 	}
 
-	if ( R_SpriteHasLightmap(e, psprite->texFormat) )
-	{
-		colorVec lightColor = R_LightPoint(origin);
-		// FIXME: collect light from dlights?
-		color2[0] = (float)lightColor.r * (1.0f / 255.0f);
-		color2[1] = (float)lightColor.g * (1.0f / 255.0f);
-		color2[2] = (float)lightColor.b * (1.0f / 255.0f);
-		// NOTE: sprites with 'lightmap' looks ugly when alpha func is GL_GREATER 0.0
-		//	pglAlphaFunc( GL_GREATER, 0.5f );
-	}
+	// if ( R_SpriteHasLightmap(e, psprite->texFormat) )
+	// {
+	// 	colorVec lightColor = R_LightPoint(origin);
+	// 	FIXME: collect light from dlights?
+	// 	color2[0] = (float)lightColor.r * (1.0f / 255.0f);
+	// 	color2[1] = (float)lightColor.g * (1.0f / 255.0f);
+	// 	color2[2] = (float)lightColor.b * (1.0f / 255.0f);
+	// 	// NOTE: sprites with 'lightmap' looks ugly when alpha func is GL_GREATER 0.0
+	// 	//	pglAlphaFunc( GL_GREATER, 0.5f );
+	// }
 
 	if ( R_SpriteAllowLerping(e, psprite) )
 		lerp = R_GetSpriteFrameInterpolant(e, &oldframe, &frame);

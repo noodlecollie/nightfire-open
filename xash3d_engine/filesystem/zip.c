@@ -429,24 +429,29 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 	zipfile_t* file = NULL;
 	byte *compressed_buffer = NULL, *decompressed_buffer = NULL;
 	int zlib_result = 0;
-	dword test_crc, final_crc;
 	z_stream decompress_stream;
 	size_t c;
 
 	if ( sizeptr )
+	{
 		*sizeptr = 0;
+	}
 
 	search = FS_FindFile(path, &index, NULL, 0, gamedironly);
 
 	if ( !search || search->type != SEARCHPATH_ZIP )
+	{
 		return NULL;
+	}
 
 	file = &search->zip->files[index];
 
 	FS_EnsureOpenZip(search->zip);
 
 	if ( lseek(search->zip->handle, file->offset, SEEK_SET) == -1 )
+	{
 		return NULL;
+	}
 
 	/*if( read( search->zip->handle, &header, sizeof( header ) ) < 0 )
 		return NULL;
@@ -483,7 +488,9 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 		}
 #endif
 		if ( sizeptr )
+		{
 			*sizeptr = file->size;
+		}
 
 		FS_EnsureOpenZip(NULL);
 		return decompressed_buffer;

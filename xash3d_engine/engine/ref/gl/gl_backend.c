@@ -738,7 +738,7 @@ rebuild_page:
 			pglTexParameteri(image->target, GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB);
 
 		COM_FileBase(image->name, shortname);
-		if ( Q_strlen(shortname) > 18 )
+		if ( strlen(shortname) > 18 )
 		{
 			// cutoff too long names, it looks ugly
 			shortname[16] = '.';

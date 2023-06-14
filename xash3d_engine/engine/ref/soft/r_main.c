@@ -418,6 +418,7 @@ qboolean GAME_EXPORT R_AddEntity(struct cl_entity_s* clent, int type)
 R_Clear
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static void R_Clear(int bitMask)
 {
 	(void)bitMask;
@@ -453,6 +454,7 @@ static void R_Clear(int bitMask)
 #endif
 	memset(vid.buffer, 0, vid.width * vid.height * 2);
 }
+#endif // UNUSED_FUNCTIONS
 
 //=============================================================================
 /*
@@ -750,6 +752,7 @@ using to find source waterleaf with
 watertexture to grab fog values from it
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static image_t* R_RecursiveFindWaterTexture(const mnode_t* node, const mnode_t* ignore, qboolean down)
 {
 	image_t* tex = NULL;
@@ -815,6 +818,8 @@ static image_t* R_RecursiveFindWaterTexture(const mnode_t* node, const mnode_t* 
 	// top-level node, bail out
 	return NULL;
 }
+
+#endif UNUSED_FUNCTIONS
 
 extern void R_PolysetFillSpans8(void*);
 extern void R_PolysetDrawSpansConstant8_33(void* pspanpackage);
@@ -900,11 +905,9 @@ void R_DrawEntitiesOnList(void)
 		Assert(RI.currententity != NULL);
 		Assert(RI.currentmodel != NULL);
 
-		switch ( RI.currentmodel->type )
+		if ( RI.currentmodel->type == mod_sprite )
 		{
-			case mod_sprite:
-				R_DrawSpriteModel(RI.currententity);
-				break;
+			R_DrawSpriteModel(RI.currententity);
 		}
 	}
 

@@ -418,13 +418,11 @@ float* R_DecalVertsClip(decal_t* pDecal, msurface_t* surf, int texture, int* pVe
 static void R_DecalVertsLight(float* v, msurface_t* surf, int vertCount)
 {
 	float s, t;
-	mtexinfo_t* tex;
 	mextrasurf_t* info = surf->info;
 	float sample_size;
 	int j;
 
 	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(surf);
-	tex = surf->texinfo;
 
 	for ( j = 0; j < vertCount; j++, v += VERTEXSIZE )
 	{
