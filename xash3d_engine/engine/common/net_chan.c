@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "xash3d_mathlib.h"
 #include "net_encode.h"
 #include "protocol.h"
+#include "net_byteswap.h"
 
 #define MAKE_FRAGID(id, count) (((id & 0xffff) << 16) | (count & 0xffff))
 #define FRAG_GETID(fragid) ((fragid >> 16) & 0xffff)

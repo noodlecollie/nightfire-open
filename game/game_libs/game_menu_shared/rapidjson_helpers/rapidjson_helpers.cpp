@@ -87,7 +87,7 @@ bool LoadJsonFile(const CUtlString& path, Document& document, const char* module
 		}
 
 		log.AppendFormat(
-			"JSON document %s could not be parsed. Error at offset %u: %s\n",
+			"JSON document %s could not be parsed. Error at offset %zu: %s\n",
 			path.String(),
 			parseResult.Offset(),
 			rapidjson::GetParseError_En(parseResult.Code()));

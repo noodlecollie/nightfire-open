@@ -55,7 +55,7 @@ void VGL_ShimEndFrame(void);
 #define Assert(x) ASSERT(x)
 
 #define ASSERT_INVALID(x) \
-	gEngfuncs.Host_Error("assert %s failed at %s:%i invalid value of %s encountered\n", __FILE__, __LINE__, ##x)
+	gEngfuncs.Host_Error("assert failed at %s:%i invalid value of %s encountered\n", __FILE__, __LINE__, #x)
 
 #include <stdio.h>
 

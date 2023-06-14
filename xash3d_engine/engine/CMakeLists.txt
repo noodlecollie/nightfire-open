@@ -90,6 +90,7 @@ set(ENGINE_SOURCES
 	common/mod_studio.c
 	common/net_buffer.h
 	common/net_buffer.c
+	common/net_byteswap.h
 	common/net_chan.c
 	common/netchan.h
 	common/net_encode.h

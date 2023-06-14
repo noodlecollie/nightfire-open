@@ -1705,7 +1705,12 @@ static qboolean Mod_LoadColoredLighting(dbspmodel_t* bmod)
 
 	if ( litdatasize != (bmod->lightdatasize * 3) )
 	{
-		Con_Printf(S_ERROR "%s has mismatched size (%llu should be %zu)\n", path, litdatasize, bmod->lightdatasize * 3);
+		Con_Printf(
+			S_ERROR "%s has mismatched size (%llu should be %zu)\n",
+			path,
+			(long long unsigned int)litdatasize,
+			bmod->lightdatasize * 3);
+
 		Mem_Free(in);
 		return false;
 	}
@@ -1760,7 +1765,12 @@ static void Mod_LoadDeluxemap(dbspmodel_t* bmod)
 
 	if ( deluxdatasize != bmod->lightdatasize )
 	{
-		Con_Reportf(S_ERROR "%s has mismatched size (%llu should be %zu)\n", path, deluxdatasize, bmod->lightdatasize);
+		Con_Reportf(
+			S_ERROR "%s has mismatched size (%llu should be %zu)\n",
+			path,
+			(long long unsigned int)deluxdatasize,
+			bmod->lightdatasize);
+
 		Mem_Free(in);
 		return;
 	}

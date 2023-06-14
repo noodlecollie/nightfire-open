@@ -248,9 +248,12 @@ void CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 			VectorAdd(verts[0], delta, verts[2]);
 			VectorAdd(verts[1], delta, verts[3]);
 
-			if ( p->color > sizeof(gTracerColors) / sizeof(color24) )
+			if ( p->color > (sizeof(gTracerColors) / sizeof(color24)) )
 			{
-				gEngfuncs.Con_Printf(S_ERROR "UserTracer with color > %d\n", sizeof(gTracerColors) / sizeof(color24));
+				gEngfuncs.Con_Printf(
+					S_ERROR "UserTracer with color > %zu\n",
+					(sizeof(gTracerColors) / sizeof(color24)));
+
 				p->color = 0;
 			}
 

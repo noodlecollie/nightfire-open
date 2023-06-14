@@ -213,8 +213,11 @@ target_compile_definitions(${TARGETNAME_LIB_UI} PRIVATE
 )
 
 target_compile_options(${TARGETNAME_LIB_UI} PRIVATE
+	# MSVC
 	$<$<STREQUAL:"${HOST_COMPILER}","MSVC">:/GR->
-	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-rtti>
+
+	# Not MSVC
+	$<$<AND:$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>,$<COMPILE_LANGUAGE:CXX>>:-fno-rtti>
 )
 
 target_link_libraries(${TARGETNAME_LIB_UI} PRIVATE

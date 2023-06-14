@@ -9,7 +9,7 @@ function(set_common_library_compiler_settings targetname)
 			# -Wall
 			# -Wextra
 			# -pedantic
-			# -Werror
+			-Werror
 		)
 
 		target_link_options(${targetname} PRIVATE

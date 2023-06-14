@@ -129,7 +129,7 @@ void GL_BackendEndFrame(void)
 				"%3i static entities\n%3i normal entities\n%3i server entities",
 				r_numStatics,
 				r_numEntities - r_numStatics,
-				ENGINE_GET_PARM(PARM_NUMENTITIES));
+				(int)ENGINE_GET_PARM(PARM_NUMENTITIES));
 			break;
 		case 5:
 			Q_snprintf(
