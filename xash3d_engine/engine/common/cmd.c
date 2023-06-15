@@ -560,8 +560,11 @@ Cmd_Argv
 */
 const char* Cmd_Argv(int arg)
 {
-	if ( (uint)arg >= cmd_argc )
+	if ( arg >= cmd_argc )
+	{
 		return "";
+	}
+
 	return cmd_argv[arg];
 }
 
@@ -968,7 +971,7 @@ void Cmd_Else_f(void)
 static qboolean Cmd_ShouldAllowCommand(cmd_t* cmd, qboolean isPrivileged)
 {
 	const char* prefixes[] = {"cl_", "gl_", "r_", "m_", "hud_"};
-	int i;
+	size_t i;
 
 	// always allow local commands
 	if ( isPrivileged )

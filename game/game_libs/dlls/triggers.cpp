@@ -237,7 +237,7 @@ void CTriggerRelay::Spawn(void)
 {
 }
 
-void CTriggerRelay::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTriggerRelay::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SUB_UseTargets(this, triggerType, 0);
 	if ( pev->spawnflags & SF_RELAY_FIREONCE )
@@ -482,7 +482,7 @@ void CRenderFxManager::Spawn(void)
 	pev->solid = SOLID_NOT;
 }
 
-void CRenderFxManager::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CRenderFxManager::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !FStringNull(pev->target) )
 	{
@@ -678,7 +678,7 @@ void CTriggerCDAudio::Spawn(void)
 	InitTrigger();
 }
 
-void CTriggerCDAudio::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTriggerCDAudio::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	PlayTrack();
 }
@@ -756,7 +756,7 @@ void CTargetCDAudio::Spawn(void)
 		pev->nextthink = gpGlobals->time + 1.0;
 }
 
-void CTargetCDAudio::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTargetCDAudio::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	Play();
 }
@@ -877,7 +877,7 @@ void CTriggerHurt::RadiationThink(void)
 //
 // ToggleUse - If this is the USE function for a trigger, its state will toggle every time it's fired
 //
-void CBaseTrigger::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBaseTrigger::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( pev->solid == SOLID_NOT )
 	{
@@ -1192,7 +1192,7 @@ void CBaseTrigger::MultiWaitOver(void)
 //
 // GLOBALS ASSUMED SET:  g_eoActivator
 //
-void CBaseTrigger::CounterUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBaseTrigger::CounterUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	m_cTriggersLeft--;
 	m_hActivator = pActivator;
@@ -1447,7 +1447,7 @@ edict_t* CChangeLevel::FindLandmark(const char* pLandmarkName)
 // triggered by buttons, etc.
 //
 //=========================================================
-void CChangeLevel::UseChangeLevel(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CChangeLevel::UseChangeLevel(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	ChangeLevelNow(pActivator);
 }
@@ -1986,7 +1986,7 @@ public:
 
 LINK_ENTITY_TO_CLASS(trigger_endsection, CTriggerEndSection)
 
-void CTriggerEndSection::EndSectionUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTriggerEndSection::EndSectionUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	// Only save on clients
 	if ( pActivator && !pActivator->IsNetClient() )
@@ -2114,7 +2114,7 @@ void CTriggerChangeTarget::Spawn(void)
 {
 }
 
-void CTriggerChangeTarget::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTriggerChangeTarget::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	CBaseEntity* pTarget = UTIL_FindEntityByString(NULL, "targetname", STRING(pev->target));
 
@@ -2226,7 +2226,7 @@ void CTriggerCamera::KeyValue(KeyValueData* pkvd)
 		CBaseDelay::KeyValue(pkvd);
 }
 
-void CTriggerCamera::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTriggerCamera::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_state) )
 		return;

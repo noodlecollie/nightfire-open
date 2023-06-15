@@ -84,7 +84,7 @@ qboolean Image_LoadFNT(const char* name, const byte* buffer, fs_offset_t filesiz
 	if ( image.hint == IL_HINT_Q1 )
 		return false;  // Quake1 doesn't have qfonts
 
-	if ( filesize < sizeof(font) )
+	if ( (size_t)filesize < sizeof(font) )
 		return false;
 
 	memcpy(&font, buffer, sizeof(font));
@@ -92,7 +92,7 @@ qboolean Image_LoadFNT(const char* name, const byte* buffer, fs_offset_t filesiz
 	// last sixty four bytes - what the hell ????
 	size = sizeof(qfont_t) - 4 + (font.height * font.width * QCHAR_WIDTH) + sizeof(short) + 768 + 64;
 
-	if ( size != filesize )
+	if ( size != (size_t)filesize )
 	{
 		// oldstyle font: "conchars" or "creditsfont"
 		image.width = 256;  // hardcoded
@@ -169,7 +169,7 @@ qboolean Image_LoadMDL(const char* name, const byte* buffer, fs_offset_t filesiz
 
 	if ( image.hint == IL_HINT_HL )
 	{
-		if ( filesize < (sizeof(*pin) + pixels + 768) )
+		if ( (size_t)filesize < (sizeof(*pin) + pixels + 768) )
 			return false;
 
 		if ( FBitSet(flags, STUDIO_NF_MASKED) )
@@ -273,7 +273,7 @@ qboolean Image_LoadLMP(const char* name, const byte* buffer, fs_offset_t filesiz
 	int rendermode;
 	int i, pixels;
 
-	if ( filesize < sizeof(lmp) )
+	if ( (size_t)filesize < sizeof(lmp) )
 		return false;
 
 	// valve software trick (particle palette)
@@ -305,7 +305,7 @@ qboolean Image_LoadLMP(const char* name, const byte* buffer, fs_offset_t filesiz
 
 	pixels = image.width * image.height;
 
-	if ( filesize < sizeof(lmp) + pixels )
+	if ( (size_t)filesize < sizeof(lmp) + pixels )
 		return false;
 
 	if ( !Image_ValidSize(name) )
@@ -368,7 +368,7 @@ qboolean Image_LoadMIP(const char* name, const byte* buffer, fs_offset_t filesiz
 	int i, pixels, numcolors;
 	int reflectivity[3] = {0, 0, 0};
 
-	if ( filesize < sizeof(mip) )
+	if ( (size_t)filesize < sizeof(mip) )
 		return false;
 
 	memcpy(&mip, buffer, sizeof(mip));
@@ -381,7 +381,7 @@ qboolean Image_LoadMIP(const char* name, const byte* buffer, fs_offset_t filesiz
 	memcpy(ofs, mip.offsets, sizeof(ofs));
 	pixels = image.width * image.height;
 
-	if ( image.hint != IL_HINT_Q1 && filesize >= (int)sizeof(mip) + ((pixels * 85) >> 6) + sizeof(short) + 768 )
+	if ( image.hint != IL_HINT_Q1 && (size_t)filesize >= sizeof(mip) + ((pixels * 85) >> 6) + sizeof(short) + 768 )
 	{
 		// half-life 1.0.0.1 mip version with palette
 		fin = (byte*)buffer + mip.offsets[0];

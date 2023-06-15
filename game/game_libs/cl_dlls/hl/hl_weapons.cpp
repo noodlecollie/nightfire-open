@@ -80,7 +80,7 @@ AlertMessage
 Print debug messages to console
 ======================
 */
-void AlertMessage(ALERT_TYPE atype, const char* szFmt, ...)
+void AlertMessage(ALERT_TYPE, const char* szFmt, ...)
 {
 	va_list argptr;
 	static char string[1024];
@@ -142,7 +142,7 @@ CBaseEntity::Killed
 If weapons code "kills" an entity, just set its effects to EF_NODRAW
 =====================
 */
-void CBaseEntity::Killed(entvars_t* pevAttacker, int iGib)
+void CBaseEntity::Killed(entvars_t*, int)
 {
 	pev->effects |= EF_NODRAW;
 }
@@ -237,9 +237,9 @@ CBasePlayerWeapon::DefaultDeploy
 */
 BOOL CBasePlayerWeapon::DefaultDeploy(
 	const char* szViewModel,
-	const char* szWeaponModel,
+	const char*,
 	int iAnim,
-	const char* szAnimExt,
+	const char*,
 	int body)
 {
 	if ( !CanDeploy() )
@@ -290,7 +290,7 @@ CBasePlayerWeapon::Holster
 Put away weapon
 =====================
 */
-void CBasePlayerWeapon::Holster(int skiplocal /* = 0 */)
+void CBasePlayerWeapon::Holster(int)
 {
 	m_fInReload = FALSE;  // cancel any reload in progress.
 	g_irunninggausspred = false;
@@ -320,13 +320,13 @@ Only produces random numbers to match the server ones.
 */
 Vector CBaseEntity::FireBulletsPlayer(
 	ULONG cShots,
-	Vector vecSrc,
-	Vector vecDirShooting,
+	Vector,
+	Vector,
 	Vector vecSpread,
-	float flDistance,
-	int iBulletType,
-	int iTracerFreq,
-	int iDamage,
+	float,
+	int,
+	int,
+	int,
 	entvars_t* pevAttacker,
 	int shared_rand)
 {
@@ -508,7 +508,7 @@ CBasePlayer::Killed
 
 =====================
 */
-void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib)
+void CBasePlayer::Killed(entvars_t*, int)
 {
 	// Holster weapon immediately, to allow it to cleanup
 	if ( m_pActiveItem )
@@ -539,10 +539,10 @@ Don't actually trace, but act like the trace didn't hit anything.
 =====================
 */
 void UTIL_TraceLine(
-	const Vector& vecStart,
-	const Vector& vecEnd,
-	IGNORE_MONSTERS igmon,
-	edict_t* pentIgnore,
+	const Vector&,
+	const Vector&,
+	IGNORE_MONSTERS,
+	edict_t*,
 	TraceResult* ptr)
 {
 	*ptr = TraceResult {};
@@ -560,7 +560,7 @@ void UTIL_ParticleBox(
 	CBasePlayer* player,
 	float* mins,
 	float* maxs,
-	float life,
+	float,
 	unsigned char r,
 	unsigned char g,
 	unsigned char b)
@@ -574,7 +574,7 @@ void UTIL_ParticleBox(
 		mmax[i] = player->pev->origin[i] + maxs[i];
 	}
 
-	gEngfuncs.pEfxAPI->R_ParticleBox((float*)&mmin, (float*)&mmax, 5.0, 0, 255, 0);
+	gEngfuncs.pEfxAPI->R_ParticleBox((float*)mmin, (float*)mmax, r, g, b, 0);
 }
 
 /*
@@ -626,7 +626,7 @@ For debugging, draw a line made out of particles
 =====================
 */
 void UTIL_ParticleLine(
-	CBasePlayer* player,
+	CBasePlayer*,
 	float* start,
 	float* end,
 	float life,

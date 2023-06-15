@@ -450,7 +450,7 @@ void Host_Exec_f(void)
 			"spy.cfg",
 			"engineer.cfg",
 			"civilian.cfg"};
-		int i;
+		size_t i;
 		char temp[MAX_VA_STRING];
 		qboolean allow = false;
 

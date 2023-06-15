@@ -405,7 +405,7 @@ void CPlatTrigger::Touch(CBaseEntity* pOther)
 // Used by SUB_UseTargets, when a platform is the target of a button.
 // Start bringing platform down.
 //
-void CFuncPlat::PlatUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncPlat::PlatUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( IsTogglePlat() )
 	{
@@ -670,7 +670,7 @@ void CFuncTrain::Blocked(CBaseEntity* pOther)
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
 }
 
-void CFuncTrain::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncTrain::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( pev->spawnflags & SF_TRAIN_WAIT_RETRIGGER )
 	{
@@ -1007,7 +1007,7 @@ void CFuncTrackTrain::Blocked(CBaseEntity* pOther)
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
 }
 
-void CFuncTrackTrain::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncTrackTrain::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( useType != USE_SET )
 	{
@@ -1739,13 +1739,8 @@ void CFuncTrackChange::Precache(void)
 	CFuncPlatRot::Precache();
 }
 
-// UNDONE: Filter touches before re-evaluating the train.
-void CFuncTrackChange::Touch(CBaseEntity* pOther)
+void CFuncTrackChange::Touch(CBaseEntity*)
 {
-#if 0
-	TRAIN_CODE code;
-	entvars_t *pevToucher = pOther->pev;
-#endif
 }
 
 void CFuncTrackChange::KeyValue(KeyValueData* pkvd)
@@ -1953,7 +1948,7 @@ void CFuncTrackChange::UpdateAutoTargets(int toggleState)
 		SetBits(m_trackBottom->pev->spawnflags, SF_PATH_DISABLED);
 }
 
-void CFuncTrackChange::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncTrackChange::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( m_toggle_state != TS_AT_TOP && m_toggle_state != TS_AT_BOTTOM )
 		return;
@@ -2030,7 +2025,7 @@ public:
 LINK_ENTITY_TO_CLASS(func_trackautochange, CFuncTrackAuto)
 
 // Auto track change
-void CFuncTrackAuto::UpdateAutoTargets(int toggleState)
+void CFuncTrackAuto::UpdateAutoTargets(int)
 {
 	CPathTrack *pTarget, *pNextTarget;
 
@@ -2058,7 +2053,7 @@ void CFuncTrackAuto::UpdateAutoTargets(int toggleState)
 		SetBits(pNextTarget->pev->spawnflags, SF_PATH_DISABLED);
 }
 
-void CFuncTrackAuto::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncTrackAuto::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float)
 {
 	CPathTrack* pTarget;
 
@@ -2131,7 +2126,7 @@ public:
 	}
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	void Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
-	Vector BodyTarget(const Vector& posSrc)
+	Vector BodyTarget(const Vector&)
 	{
 		return pev->origin;
 	}
@@ -2256,7 +2251,7 @@ void CGunTarget::Stop(void)
 	pev->takedamage = DAMAGE_NO;
 }
 
-int CGunTarget::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CGunTarget::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 {
 	if ( pev->health > 0 )
 	{
@@ -2272,7 +2267,7 @@ int CGunTarget::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, floa
 	return 0;
 }
 
-void CGunTarget::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGunTarget::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_on) )
 		return;

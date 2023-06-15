@@ -216,7 +216,7 @@ entvars_t* CGraph::LinkEntForLink(CLink* pLink, CNode* pNode)
 // Given the monster's capability, determine whether
 // or not the monster can go this way.
 //=========================================================
-int CGraph::HandleLinkEnt(int iNode, entvars_t* pevLinkEnt, int afCapMask, NODEQUERY queryType)
+int CGraph::HandleLinkEnt(int, entvars_t* pevLinkEnt, int afCapMask, NODEQUERY queryType)
 {
 	// edict_t *pentWorld;
 	CBaseEntity* pDoor;
@@ -1551,7 +1551,7 @@ LINK_ENTITY_TO_CLASS(testhull, CTestHull)
 //=========================================================
 // CTestHull::Spawn
 //=========================================================
-void CTestHull::Spawn(entvars_t* pevMasterNode)
+void CTestHull::Spawn(entvars_t*)
 {
 	SET_MODEL(ENT(pev), PLAYER_MODEL_PATH);
 	UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);

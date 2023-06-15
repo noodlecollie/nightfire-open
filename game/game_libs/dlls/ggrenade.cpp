@@ -45,7 +45,7 @@ CGrenade::CGrenade() :
 //
 // Grenade Explode
 //
-void CGrenade::Explode(Vector vecSrc, Vector vecAim)
+void CGrenade::Explode(Vector, Vector)
 {
 	TraceResult tr;
 	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -32), ignore_monsters, ENT(pev), &tr);
@@ -168,13 +168,13 @@ void CGrenade::Smoke(void)
 	UTIL_Remove(this);
 }
 
-void CGrenade::Killed(entvars_t* pevAttacker, int iGib)
+void CGrenade::Killed(entvars_t*, int)
 {
 	Detonate();
 }
 
 // Timed grenade, this think is called when time runs out.
-void CGrenade::DetonateUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGrenade::DetonateUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CGrenade::Detonate);
 	pev->nextthink = gpGlobals->time;

@@ -168,7 +168,7 @@ BOOL CCineAI::FCanOverrideState(void)
 //
 // CineStart
 //
-void CCineMonster::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCineMonster::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	// do I already know who I should use
 	CBaseEntity* pEntity = m_hTargetEnt;
@@ -194,11 +194,11 @@ void CCineMonster::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE u
 }
 
 // This doesn't really make sense since only MOVETYPE_PUSH get 'Blocked' events
-void CCineMonster::Blocked(CBaseEntity* pOther)
+void CCineMonster::Blocked(CBaseEntity*)
 {
 }
 
-void CCineMonster::Touch(CBaseEntity* pOther)
+void CCineMonster::Touch(CBaseEntity*)
 {
 	/*
 		ALERT( at_aiconsole, "Cine Touch\n" );
@@ -986,7 +986,7 @@ void CScriptedSentence::KeyValue(KeyValueData* pkvd)
 		CBaseToggle::KeyValue(pkvd);
 }
 
-void CScriptedSentence::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CScriptedSentence::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !m_active )
 		return;

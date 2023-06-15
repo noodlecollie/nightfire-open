@@ -291,7 +291,7 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 	int i, putCmdByte = 0;
 	byte* pCmdByte = NULL;
 
-	if ( input_length <= sizeof(lzss_header_t) + 8 )
+	if ( (size_t)input_length <= sizeof(lzss_header_t) + 8 )
 		return NULL;
 
 	// set LZSS header
@@ -306,7 +306,7 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 
 	while ( input_length > 0 )
 	{
-		int lookAheadLength = input_length < LZSS_LOOKAHEAD ? input_length : LZSS_LOOKAHEAD;
+		int lookAheadLength = (uint)input_length < LZSS_LOOKAHEAD ? input_length : (int)LZSS_LOOKAHEAD;
 		lzss_node_t* hash = state->hash_table[pLookAhead[0]].start;
 		int encoded_length = 0;
 
@@ -552,7 +552,7 @@ COM_AddAppDirectoryToSearchPath
 
 =============
 */
-void GAME_EXPORT COM_AddAppDirectoryToSearchPath(const char* pszBaseDir, const char* appName)
+void GAME_EXPORT COM_AddAppDirectoryToSearchPath(const char* pszBaseDir, const char*)
 {
 	FS_AddGameHierarchy(pszBaseDir, FS_NOWRITE_PATH);
 }
@@ -583,7 +583,7 @@ int GAME_EXPORT COM_ExpandFilename(const char* fileName, char* nameOutBuffer, in
 		Q_sprintf(result, "%s/%s", host.rootdir, path);
 
 		// check for enough room
-		if ( strlen(result) > nameOutBufferSize )
+		if ( strlen(result) > (size_t)nameOutBufferSize )
 		{
 			return 0;
 		}
@@ -795,7 +795,7 @@ COM_LoadFile
 
 =============
 */
-byte* COM_LoadFile(const char* filename, int usehunk, int* pLength)
+byte* COM_LoadFile(const char* filename, int, int* pLength)
 {
 	return COM_LoadFileForMe(filename, pLength);
 }
@@ -1043,7 +1043,7 @@ qboolean COM_IsSafeFileToDownload(const char* filename)
 	char lwrfilename[4096];
 	const char *first, *last;
 	const char* ext;
-	int i;
+	size_t i;
 
 	if ( !COM_CheckString(filename) )
 		return false;
@@ -1175,7 +1175,7 @@ pfnRegisterTutorMessageShown
 only exists in PlayStation version
 =============
 */
-void GAME_EXPORT pfnRegisterTutorMessageShown(int mid)
+void GAME_EXPORT pfnRegisterTutorMessageShown(int)
 {
 }
 
@@ -1186,7 +1186,7 @@ pfnGetTimesTutorMessageShown
 only exists in PlayStation version
 =============
 */
-int GAME_EXPORT pfnGetTimesTutorMessageShown(int mid)
+int GAME_EXPORT pfnGetTimesTutorMessageShown(int)
 {
 	return 0;
 }
@@ -1198,7 +1198,7 @@ pfnProcessTutorMessageDecayBuffer
 only exists in PlayStation version
 =============
 */
-void GAME_EXPORT pfnProcessTutorMessageDecayBuffer(int* buffer, int bufferLength)
+void GAME_EXPORT pfnProcessTutorMessageDecayBuffer(int*, int)
 {
 }
 
@@ -1209,7 +1209,7 @@ pfnConstructTutorMessageDecayBuffer
 only exists in PlayStation version
 =============
 */
-void GAME_EXPORT pfnConstructTutorMessageDecayBuffer(int* buffer, int bufferLength)
+void GAME_EXPORT pfnConstructTutorMessageDecayBuffer(int*, int)
 {
 }
 

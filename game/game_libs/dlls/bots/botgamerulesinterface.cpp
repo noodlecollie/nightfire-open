@@ -36,7 +36,7 @@ void CBotGameRulesInterface::ServerDeactivate()
 {
 }
 
-void CBotGameRulesInterface::ClientDisconnect(edict_t* entity)
+void CBotGameRulesInterface::ClientDisconnect(edict_t*)
 {
 }
 
@@ -60,7 +60,7 @@ void CBotGameRulesInterface::ClientPutInServer(edict_t* entity)
 	m_pParent->PlayerThink(bot);
 }
 
-bool CBotGameRulesInterface::ClientCommand(CBasePlayer* player, const char* command)
+bool CBotGameRulesInterface::ClientCommand(CBasePlayer*, const char*)
 {
 	return false;
 }

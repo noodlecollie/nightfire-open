@@ -111,7 +111,7 @@ public:
 	// other functions
 	void SetTurretAnim(TURRET_ANIM anim);
 	int MoveTurret(void);
-	virtual void Shoot(Vector& vecSrc, Vector& vecDirToEnemy) {};
+	virtual void Shoot(Vector&, Vector&) {};
 
 	float m_flMaxSpin;  // Max time to spin the barrel w/o a target
 	int m_iSpin;
@@ -398,7 +398,7 @@ void CBaseTurret::Initialize(void)
 		SetThink(&CBaseEntity::SUB_DoNothing);
 }
 
-void CBaseTurret::TurretUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBaseTurret::TurretUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_iOn) )
 		return;
@@ -990,7 +990,7 @@ void CBaseTurret::TurretDeath(void)
 void CBaseTurret::TraceAttack(
 	entvars_t* pevAttacker,
 	float flDamage,
-	Vector vecDir,
+	Vector,
 	const TraceResult* ptr,
 	int bitsDamageType)
 {
@@ -1013,7 +1013,7 @@ void CBaseTurret::TraceAttack(
 }
 
 // take damage. bitsDamageType indicates type of damage sustained, ie: DMG_BULLET
-int CBaseTurret::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CBaseTurret::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 {
 	if ( !pev->takedamage )
 		return 0;
@@ -1205,7 +1205,7 @@ void CSentry::Shoot(Vector& vecSrc, Vector& vecDirToEnemy)
 	pev->effects = pev->effects | EF_MUZZLEFLASH;
 }
 
-int CSentry::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CSentry::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 {
 	if ( !pev->takedamage )
 		return 0;

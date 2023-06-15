@@ -444,7 +444,7 @@ char** COM_ConvertToLocalPlatform(EFunctionMangleType to, const char* from, size
 		Q_strncat(temp, temp2, sizeof(temp));
 	}
 
-	for ( i = 0; i < ARRAYSIZE(postfix); i++ )
+	for ( i = 0; (size_t)i < ARRAYSIZE(postfix); i++ )
 	{
 		Q_snprintf(temp2, sizeof(temp2), "%s%s", temp, postfix[i]);
 		ret[i] = copystring(temp2);

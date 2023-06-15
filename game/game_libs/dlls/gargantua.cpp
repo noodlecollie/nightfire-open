@@ -894,7 +894,7 @@ void CGargantua::DeathEffect(void)
 	pSmoker->pev->nextthink = gpGlobals->time + 2.5;  // Start in 2.5 seconds
 }
 
-void CGargantua::Killed(entvars_t* pevAttacker, int iGib)
+void CGargantua::Killed(entvars_t* pevAttacker, int)
 {
 	EyeOff();
 	UTIL_Remove(m_pEyeGlow);

@@ -164,7 +164,7 @@ BOOL CBaseMonster::FShouldEat(void)
 // by Barnacle victims when the barnacle pulls their head
 // into its mouth
 //=========================================================
-void CBaseMonster::BarnacleVictimBitten(entvars_t* pevBarnacle)
+void CBaseMonster::BarnacleVictimBitten(entvars_t*)
 {
 	Schedule_t* pNewSchedule;
 
@@ -281,7 +281,7 @@ float CBaseMonster::FLSoundVolume(CSound* pSound)
 // FValidateHintType - tells use whether or not the monster cares
 // about the type of Hint Node given
 //=========================================================
-BOOL CBaseMonster::FValidateHintType(short sHint)
+BOOL CBaseMonster::FValidateHintType(short)
 {
 	return FALSE;
 }
@@ -570,7 +570,7 @@ void CBaseMonster::MonsterThink(void)
 // CBaseMonster - USE - will make a monster angry at whomever
 // activated it.
 //=========================================================
-void CBaseMonster::MonsterUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBaseMonster::MonsterUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	m_IdealMonsterState = MONSTERSTATE_ALERT;
 }
@@ -1976,7 +1976,7 @@ BOOL CBaseMonster::ShouldAdvanceRoute(float flWaypointDist)
 	return FALSE;
 }
 
-void CBaseMonster::MoveExecute(CBaseEntity* pTargetEnt, const Vector& vecDir, float flInterval)
+void CBaseMonster::MoveExecute(CBaseEntity*, const Vector&, float flInterval)
 {
 	// float flYaw = UTIL_VecToYaw( m_Route[m_iRouteIndex].vecLocation - pev->origin );// build a yaw that points to the
 	// goal. WALK_MOVE( ENT( pev ), flYaw, m_flGroundSpeed * flInterval, WALKMOVE_NORMAL );
@@ -3226,7 +3226,7 @@ BOOL CBaseMonster::FCanActiveIdle(void)
 	return FALSE;
 }
 
-void CBaseMonster::PlaySentence(const char* pszSentence, float duration, float volume, float attenuation)
+void CBaseMonster::PlaySentence(const char* pszSentence, float, float volume, float attenuation)
 {
 	if ( pszSentence && IsAlive() )
 	{
@@ -3242,8 +3242,8 @@ void CBaseMonster::PlayScriptedSentence(
 	float duration,
 	float volume,
 	float attenuation,
-	BOOL bConcurrent,
-	CBaseEntity* pListener)
+	BOOL,
+	CBaseEntity*)
 {
 	PlaySentence(pszSentence, duration, volume, attenuation);
 }

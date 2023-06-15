@@ -465,7 +465,7 @@ qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, in
 		return true;  // just clear variable
 
 	Q_snprintf(newVal, sizeof(newVal), "\\%s\\%s", key, value);
-	if ( strlen(newVal) + Q_strlen(s) > maxsize )
+	if ( strlen(newVal) + Q_strlen(s) > (size_t)maxsize )
 	{
 		// no more room in buffer to add key/value
 		if ( Info_IsKeyImportant(key) )
@@ -478,7 +478,7 @@ qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, in
 				largekey = Info_FindLargestKey(s);
 				Info_RemoveKey(s, largekey);
 			}
-			while ( ((strlen(newVal) + Q_strlen(s)) >= maxsize) && *largekey != 0 );
+			while ( ((strlen(newVal) + Q_strlen(s)) >= (size_t)maxsize) && *largekey != 0 );
 
 			if ( largekey[0] == 0 )
 			{

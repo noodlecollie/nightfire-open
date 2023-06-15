@@ -52,7 +52,7 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 	z_stream stream = {0};
 	png_t png_hdr;
 
-	if ( filesize < sizeof(png_hdr) )
+	if ( (size_t)filesize < sizeof(png_hdr) )
 		return false;
 
 	buf_p = (byte*)buffer;

@@ -201,7 +201,7 @@ void COM_Frame(float time)
 		if ( oldState == STATE_RUNFRAME )
 			break;
 
-		if ( (GameState->curstate == oldState) || (++loopCount > 8) )
+		if ( ((int)GameState->curstate == oldState) || (++loopCount > 8) )
 			Sys_Error("state infinity loop!\n");
 	}
 }

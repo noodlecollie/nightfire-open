@@ -79,7 +79,7 @@ public:
 	{
 		return MONSTERSTATE_IDLE;
 	};
-	int CanPlaySequence(BOOL fDisregardState)
+	int CanPlaySequence(BOOL)
 	{
 		return TRUE;
 	};
@@ -684,7 +684,7 @@ void CTentacle::Cycle(void)
 	}
 }
 
-void CTentacle::CommandUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTentacle::CommandUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float)
 {
 	// ALERT( at_console, "%s triggered %d\n", STRING( pev->targetname ), useType );
 	switch ( useType )
@@ -957,7 +957,7 @@ void CTentacle::HitTouch(CBaseEntity* pOther)
 	// ALERT( at_console, "%.0f : %s : %d\n", pev->angles.y, STRING( pOther->pev->classname ), tr.iHitgroup );
 }
 
-int CTentacle::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CTentacle::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 {
 	if ( flDamage > pev->health )
 	{
@@ -970,7 +970,7 @@ int CTentacle::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float
 	return 1;
 }
 
-void CTentacle::Killed(entvars_t* pevAttacker, int iGib)
+void CTentacle::Killed(entvars_t*, int)
 {
 	m_iGoalAnim = TENTACLE_ANIM_Pit_Idle;
 	return;

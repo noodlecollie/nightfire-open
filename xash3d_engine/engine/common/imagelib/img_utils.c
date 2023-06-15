@@ -1418,7 +1418,7 @@ qboolean Image_RemapInternal(rgbdata_t* pic, int topColor, int bottomColor)
 	return true;
 }
 
-qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float reserved)
+qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float)
 {
 	rgbdata_t* pic = *pix;
 	qboolean result = true;

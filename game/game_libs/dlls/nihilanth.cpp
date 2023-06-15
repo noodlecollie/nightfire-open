@@ -393,7 +393,7 @@ void CNihilanth::NullThink(void)
 	pev->nextthink = gpGlobals->time + 0.5;
 }
 
-void CNihilanth::StartupUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CNihilanth::StartupUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CNihilanth::HuntThink);
 	pev->nextthink = gpGlobals->time + 0.1;
@@ -1217,7 +1217,7 @@ void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
 	}
 }
 
-void CNihilanth::CommandUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CNihilanth::CommandUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	switch ( useType )
 	{
@@ -1255,7 +1255,7 @@ void CNihilanth::CommandUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_T
 	}
 }
 
-int CNihilanth::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CNihilanth::TakeDamage(entvars_t* pevInflictor, entvars_t*, float flDamage, int)
 {
 	if ( pevInflictor->owner == edict() )
 		return 0;
@@ -1276,7 +1276,7 @@ int CNihilanth::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, floa
 void CNihilanth::TraceAttack(
 	entvars_t* pevAttacker,
 	float flDamage,
-	Vector vecDir,
+	Vector,
 	const TraceResult* ptr,
 	int bitsDamageType)
 {
@@ -1547,7 +1547,7 @@ void CNihilanthHVR::ZapThink(void)
 	// Crawl();
 }
 
-void CNihilanthHVR::ZapTouch(CBaseEntity* pOther)
+void CNihilanthHVR::ZapTouch(CBaseEntity*)
 {
 	UTIL_EmitAmbientSound(edict(), pev->origin, "weapons/electro4.wav", 1.0, ATTN_NORM, 0, RANDOM_LONG(90, 95));
 
@@ -1826,13 +1826,13 @@ void CNihilanthHVR::Crawl(void)
 	MESSAGE_END();
 }
 
-void CNihilanthHVR::RemoveTouch(CBaseEntity* pOther)
+void CNihilanthHVR::RemoveTouch(CBaseEntity*)
 {
 	STOP_SOUND(edict(), CHAN_WEAPON, "x/x_teleattack1.wav");
 	UTIL_Remove(this);
 }
 
-void CNihilanthHVR::BounceTouch(CBaseEntity* pOther)
+void CNihilanthHVR::BounceTouch(CBaseEntity*)
 {
 	Vector vecDir = m_vecIdeal.Normalize();
 

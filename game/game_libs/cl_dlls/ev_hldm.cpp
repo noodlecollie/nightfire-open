@@ -153,7 +153,7 @@ void EV_HandleGenericWeaponFire(event_args_t* args)
 	const WeaponAtts::WABaseAttack::AttackModeSignature* signature =
 		static_cast<const WeaponAtts::WABaseAttack::AttackModeSignature*>(args->localUserData);
 
-	const uint32_t weaponId = static_cast<const uint32_t>(signature->WeaponId);
+	const uint32_t weaponId = static_cast<uint32_t>(signature->WeaponId);
 	const uint32_t attackModeIndex = signature->Index;
 
 	if ( weaponId >= MAX_WEAPONS || attackModeIndex >= WeaponAtts::WACollection::MAX_ATTACK_MODES )
@@ -171,7 +171,7 @@ void EV_HandleGenericWeaponFire(event_args_t* args)
 	eventPlayer->PlayEvent(args, signature);
 }
 
-SurfaceProp EV_HLDM_GetSurfacePropForTexture(int idx, pmtrace_t* ptr, float* vecSrc, float* vecEnd)
+SurfaceProp EV_HLDM_GetSurfacePropForTexture(int, pmtrace_t* ptr, float* vecSrc, float* vecEnd)
 {
 	int entity = gEngfuncs.pEventAPI->EV_IndexFromTrace(ptr);
 
@@ -1475,7 +1475,7 @@ enum crossbow_e
 // This function is used to correct the origin and angles
 // of the bolt, so it looks like it's stuck on the wall.
 //=====================
-void EV_BoltCallback(struct tempent_s* ent, float frametime, float currenttime)
+void EV_BoltCallback(struct tempent_s* ent, float, float)
 {
 	ent->entity.origin = ent->entity.baseline.vuser1;
 	ent->entity.angles = ent->entity.baseline.vuser2;
@@ -1733,7 +1733,7 @@ BEAM* pBeam;
 BEAM* pBeam2;
 TEMPENTITY* pFlare;  // Vit_amiN: egon's beam flare
 
-void EV_EgonFlareCallback(struct tempent_s* ent, float frametime, float currenttime)
+void EV_EgonFlareCallback(struct tempent_s* ent, float, float currenttime)
 {
 	float delta = currenttime - ent->tentOffset.z;  // time past since the last scale
 	if ( delta >= ent->tentOffset.y )
@@ -2128,7 +2128,7 @@ void EV_TrainPitchAdjust(event_args_t* args)
 	}
 }
 
-int EV_TFC_IsAllyTeam(int iTeam1, int iTeam2)
+int EV_TFC_IsAllyTeam(int, int)
 {
 	return 0;
 }

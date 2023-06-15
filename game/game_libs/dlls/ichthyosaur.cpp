@@ -293,7 +293,7 @@ int CIchthyosaur::Classify(void)
 //=========================================================
 // CheckMeleeAttack1
 //=========================================================
-BOOL CIchthyosaur::CheckMeleeAttack1(float flDot, float flDist)
+BOOL CIchthyosaur::CheckMeleeAttack1(float flDot, float)
 {
 	if ( flDot >= 0.7 && m_flEnemyTouched > gpGlobals->time - 0.2 )
 	{
@@ -312,7 +312,7 @@ void CIchthyosaur::BiteTouch(CBaseEntity* pOther)
 	}
 }
 
-void CIchthyosaur::CombatUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CIchthyosaur::CombatUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_bOnAttack) )
 		return;
@@ -749,7 +749,7 @@ float CIchthyosaur::FlPitchDiff(void)
 	return flPitchDiff;
 }
 
-float CIchthyosaur::ChangePitch(int speed)
+float CIchthyosaur::ChangePitch(int)
 {
 	if ( pev->movetype == MOVETYPE_FLY )
 	{
@@ -793,7 +793,7 @@ Activity CIchthyosaur::GetStoppedActivity(void)
 	return ACT_WALK;
 }
 
-void CIchthyosaur::MoveExecute(CBaseEntity* pTargetEnt, const Vector& vecDir, float flInterval)
+void CIchthyosaur::MoveExecute(CBaseEntity*, const Vector& vecDir, float)
 {
 	m_SaveVelocity = vecDir * m_flightSpeed;
 }

@@ -1269,7 +1269,7 @@ BOOL CTalkMonster::CanFollow(void)
 	return !IsFollowing();
 }
 
-void CTalkMonster::FollowerUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTalkMonster::FollowerUse(CBaseEntity*, CBaseEntity* pCaller, USE_TYPE, float)
 {
 	// Don't allow use during a scripted_sentence
 	if ( m_useTime > gpGlobals->time )

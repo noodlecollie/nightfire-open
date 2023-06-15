@@ -58,11 +58,11 @@ public:
 	static const char* pAttackMissSounds[];
 
 	// No range attacks
-	BOOL CheckRangeAttack1(float flDot, float flDist)
+	BOOL CheckRangeAttack1(float, float)
 	{
 		return FALSE;
 	}
-	BOOL CheckRangeAttack2(float flDot, float flDist)
+	BOOL CheckRangeAttack2(float, float)
 	{
 		return FALSE;
 	}

@@ -3044,7 +3044,7 @@ BOOL CBasePlayer::HasWeapons(void)
 	return FALSE;
 }
 
-void CBasePlayer::SelectPrevItem(int iItem)
+void CBasePlayer::SelectPrevItem(int)
 {
 }
 
@@ -4530,7 +4530,7 @@ private:
 
 LINK_ENTITY_TO_CLASS(player_weaponstrip, CStripWeapons)
 
-void CStripWeapons::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CStripWeapons::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	CBasePlayer* pPlayer = NULL;
 
@@ -4636,7 +4636,7 @@ void CRevertSaved::KeyValue(KeyValueData* pkvd)
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CRevertSaved::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CRevertSaved::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	UTIL_ScreenFadeAll(pev->rendercolor, Duration(), HoldTime(), (int)pev->renderamt, FFADE_OUT);
 	pev->nextthink = gpGlobals->time + MessageTime();

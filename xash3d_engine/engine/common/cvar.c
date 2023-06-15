@@ -66,7 +66,7 @@ Cvar_FindVar
 find the specified variable by name
 ============
 */
-convar_t* Cvar_FindVarExt(const char* var_name, int ignore_group)
+convar_t* Cvar_FindVarExt(const char* var_name, int)
 {
 	// TODO: ignore group for cvar
 #if defined(XASH_HASHED_VARS)
@@ -955,7 +955,7 @@ static void Cvar_SetGL(const char* name, const char* value)
 static qboolean Cvar_ShouldSetCvar(convar_t* v, qboolean isPrivileged)
 {
 	const char* prefixes[] = {"cl_", "gl_", "m_", "r_", "hud_"};
-	int i;
+	size_t i;
 
 	if ( isPrivileged )
 		return true;
@@ -979,7 +979,7 @@ static qboolean Cvar_ShouldSetCvar(convar_t* v, qboolean isPrivileged)
 		// TODO: implement Q_strchrnul
 		while ( cur && *cur )
 		{
-			size_t len = next ? next - cur : Q_strlen(cur);
+			size_t len = next ? (size_t)(next - cur) : Q_strlen(cur);
 
 			// found, quit
 			if ( !Q_strnicmp(cur, v->name, len) )
@@ -1278,7 +1278,7 @@ Cvar_PostFSInit
 */
 void Cvar_PostFSInit(void)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(cvar_filter_quirks); i++ )
 	{

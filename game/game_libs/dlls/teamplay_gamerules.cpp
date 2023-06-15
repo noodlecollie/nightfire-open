@@ -149,6 +149,8 @@ void CHalfLifeTeamplay::Think(void)
 //=========================================================
 BOOL CHalfLifeTeamplay::ClientCommand(CBasePlayer* pPlayer, const char* pcmd)
 {
+	(void)pPlayer;
+
 #ifndef NO_VOICEGAMEMGR
 	if ( g_VoiceGameMgr.ClientCommand(pPlayer, pcmd) )
 		return TRUE;

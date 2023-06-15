@@ -272,7 +272,7 @@ void UTIL_PrecacheOtherWeapon(const char* szClassname)
 
 	if ( pEntity )
 	{
-		ItemInfo II = {0};
+		ItemInfo II = {};
 		pEntity->Precache();
 		if ( ((CBasePlayerItem*)pEntity)->GetItemInfo(&II) )
 		{
@@ -743,7 +743,7 @@ void CBasePlayerItem::Kill(void)
 	pev->nextthink = gpGlobals->time + .1;
 }
 
-void CBasePlayerItem::Holster(int skiplocal /* = 0 */)
+void CBasePlayerItem::Holster(int)
 {
 	m_pPlayer->pev->viewmodel = 0;
 	m_pPlayer->pev->weaponmodel = 0;
@@ -1044,7 +1044,7 @@ int CBasePlayerWeapon::SecondaryAmmoIndex(void)
 	return -1;
 }
 
-void CBasePlayerWeapon::Holster(int skiplocal /* = 0 */)
+void CBasePlayerWeapon::Holster(int)
 {
 	m_fInReload = FALSE;  // cancel any reload in progress.
 	m_pPlayer->pev->viewmodel = 0;

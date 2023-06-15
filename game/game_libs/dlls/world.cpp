@@ -135,7 +135,7 @@ void CDecal::Spawn(void)
 	}
 }
 
-void CDecal::TriggerDecal(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CDecal::TriggerDecal(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	// this is set up as a USE function for infodecals that have targetnames, so that the
 	// decal doesn't get applied until it is fired. (usually by a scripted sequence)
@@ -673,7 +673,7 @@ typedef void (*LINK_ENTITY_FN)(entvars_t* pev);
 // attempt to create custom entity when default method is failed
 // 0 - attempt to create, -1 - reject to create
 //
-int DispatchCreateEntity(edict_t* pent, const char* szName)
+int DispatchCreateEntity(edict_t*, const char*)
 {
 	/*
 	#ifdef CREATE_ENTITY_TEST
@@ -754,6 +754,23 @@ static physics_interface_t gPhysicsInterface = {
 	SV_PHYSICS_INTERFACE_VERSION,
 	DispatchCreateEntity,
 	DispatchPhysicsEntity,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
 };
 
 BOOL gPhysicsInterfaceInitialized = FALSE;

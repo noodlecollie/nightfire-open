@@ -644,7 +644,7 @@ Con_AddCommandToList
 
 ===============
 */
-static void Con_AddCommandToList(const char* s, const char* unused1, const char* unused2, void* _autocompleteList)
+static void Con_AddCommandToList(const char* s, const char*, const char*, void* _autocompleteList)
 {
 	con_autocomplete_t* list = (con_autocomplete_t*)_autocompleteList;
 
@@ -707,7 +707,7 @@ qboolean Cmd_GetCommandsList(const char* s, char* completedname, int length)
 
 	qsort(list.cmds, list.matchCount, sizeof(char*), Con_SortCmds);
 
-	for ( i = 0; i < list.matchCount; i++ )
+	for ( i = 0; i < (size_t)list.matchCount; i++ )
 	{
 		Q_strncpy(matchbuf, list.cmds[i], sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -724,7 +724,7 @@ qboolean Cmd_GetCommandsList(const char* s, char* completedname, int length)
 		}
 	}
 
-	for ( i = 0; i < list.matchCount; i++ )
+	for ( i = 0; i < (size_t)list.matchCount; i++ )
 	{
 		if ( list.cmds[i] != NULL )
 		{
@@ -1156,7 +1156,7 @@ qboolean Cmd_AutocompleteName(const char* source, int arg, char* buffer, size_t 
 Con_PrintCmdMatches
 ===============
 */
-static void Con_PrintCmdMatches(const char* s, const char* unused1, const char* m, void* unused2)
+static void Con_PrintCmdMatches(const char* s, const char*, const char* m, void*)
 {
 	if ( !Q_strnicmp(s, con.shortestMatch, Q_strlen(con.shortestMatch)) )
 	{
@@ -1172,7 +1172,7 @@ static void Con_PrintCmdMatches(const char* s, const char* unused1, const char* 
 Con_PrintCvarMatches
 ===============
 */
-static void Con_PrintCvarMatches(const char* s, const char* value, const char* m, void* unused2)
+static void Con_PrintCvarMatches(const char* s, const char* value, const char* m, void*)
 {
 	if ( !Q_strnicmp(s, con.shortestMatch, Q_strlen(con.shortestMatch)) )
 	{
@@ -1413,7 +1413,7 @@ static void Cmd_WriteOpenGLCvar(const char* name, const char* string, const char
 	FS_Printf(f, "%s \"%s\"\n", name, string);
 }
 
-static void Cmd_WriteHelp(const char* name, const char* unused, const char* desc, void* f)
+static void Cmd_WriteHelp(const char* name, const char*, const char* desc, void* f)
 {
 	int length;
 

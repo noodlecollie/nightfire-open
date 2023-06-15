@@ -158,7 +158,7 @@ void CRoach::Precache()
 //=========================================================
 // Killed.
 //=========================================================
-void CRoach::Killed(entvars_t* pevAttacker, int iGib)
+void CRoach::Killed(entvars_t*, int)
 {
 	pev->solid = SOLID_NOT;
 

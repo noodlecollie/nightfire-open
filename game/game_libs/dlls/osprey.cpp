@@ -204,7 +204,7 @@ void COsprey::Precache(void)
 	m_iEngineGibs = PRECACHE_MODEL("models/osprey_enginegibs.mdl");
 }
 
-void COsprey::CommandUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void COsprey::CommandUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	pev->nextthink = gpGlobals->time + 0.1;
 }
@@ -490,7 +490,7 @@ void COsprey::Flight()
 	}
 }
 
-void COsprey::HitTouch(CBaseEntity* pOther)
+void COsprey::HitTouch(CBaseEntity*)
 {
 	pev->nextthink = gpGlobals->time + 2.0;
 }
@@ -511,7 +511,7 @@ int COsprey::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float 
 }
 */
 
-void COsprey::Killed(entvars_t* pevAttacker, int iGib)
+void COsprey::Killed(entvars_t*, int)
 {
 	pev->movetype = MOVETYPE_TOSS;
 	pev->gravity = 0.3;
@@ -761,7 +761,7 @@ void COsprey::ShowDamage(void)
 void COsprey::TraceAttack(
 	entvars_t* pevAttacker,
 	float flDamage,
-	Vector vecDir,
+	Vector,
 	const TraceResult* ptr,
 	int bitsDamageType)
 {

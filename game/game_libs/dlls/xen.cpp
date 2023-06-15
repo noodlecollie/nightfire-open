@@ -259,7 +259,7 @@ public:
 	void Precache(void);
 	void Touch(CBaseEntity* pOther);
 	void Think(void);
-	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+	int TakeDamage(entvars_t*, entvars_t*, float, int)
 	{
 		Attack();
 		return 0;
@@ -425,7 +425,7 @@ public:
 	void Precache(void);
 	void Touch(CBaseEntity* pOther);
 	void Think(void);
-	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+	int TakeDamage(entvars_t*, entvars_t*, float, int)
 	{
 		Attack();
 		return 0;
@@ -559,7 +559,7 @@ void CXenSpore::Precache(void)
 	PRECACHE_MODEL(pModelNames[pev->skin]);
 }
 
-void CXenSpore::Touch(CBaseEntity* pOther)
+void CXenSpore::Touch(CBaseEntity*)
 {
 }
 
