@@ -75,7 +75,7 @@ bool BaseWeaponEventPlayer::Initialise()
 	const WeaponId_e weaponId = static_cast<const WeaponId_e>(m_pSignature->WeaponId);
 	const WeaponAtts::WACollection* atts = CWeaponRegistry::StaticInstance().Get(weaponId);
 
-	if ( !atts || attackModeIndex >= atts->AttackModes.Count() )
+	if ( !atts || attackModeIndex >= static_cast<uint32_t>(atts->AttackModes.Count()) )
 	{
 		return false;
 	}

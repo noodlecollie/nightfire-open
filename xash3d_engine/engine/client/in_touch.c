@@ -311,7 +311,6 @@ save current touch configuration
 */
 void Touch_WriteConfig(void)
 {
-	file_t* f;
 	string newconfigfile, oldconfigfile;
 
 	if ( !touch.list_user.first )

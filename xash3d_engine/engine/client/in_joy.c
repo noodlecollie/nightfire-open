@@ -42,7 +42,6 @@ static struct joy_axis_s
 	short val;
 	short prevval;
 } joyaxis[MAX_AXES] = {0};
-static byte currentbinding;  // add posibility to remap keys, to place it in joykeys[]
 convar_t* joy_enable;
 static convar_t* joy_pitch;
 static convar_t* joy_yaw;

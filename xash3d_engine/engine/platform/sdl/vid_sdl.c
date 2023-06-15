@@ -637,7 +637,6 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 	qboolean iconLoaded = false;
 	char iconpath[MAX_STRING];
 	int xpos, ypos;
-	const char* localIcoPath;
 
 	if ( vid_highdpi->value )
 		wndFlags |= SDL_WINDOW_ALLOW_HIGHDPI;

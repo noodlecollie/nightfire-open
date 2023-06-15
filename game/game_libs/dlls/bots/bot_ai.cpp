@@ -51,11 +51,10 @@ extern DLL_GLOBAL BOOL g_fGameOver;
 CBaseBot::CBaseBot() :
 	bCalledAimThisFrame(FALSE),
 	DesiredVelocity(Vector(0, 0, 0)),
-	FightStyle(),
 	bGoUpOnLadder(TRUE),
 	LookAtBiasVec(Vector(0, 0, 0)),
 	LookAtVec(Vector(0, 0, 0)),
-	Memory(),
+	fNextThink(gpGlobals->time),
 	MovedDistance(0.0),
 	MoveForward(0.0),
 	MoveStrafe(0.0),
@@ -67,14 +66,15 @@ CBaseBot::CBaseBot() :
 	// pGoal( NULL ),
 	// End Memory Leak Fix
 	RoamDirection(UNKNOWN),
-	Stats(),
 	TimeGoalCheck(gpGlobals->time),
 	TimeGoalCheckDelay(0.3),
 	TimeMSecCheck(gpGlobals->time),
-	fNextThink(gpGlobals->time),
 	TurningDirection(NONE),
 	bWantToBeInCombat(FALSE),
-	bFiredWeapon(false)
+	bFiredWeapon(false),
+	FightStyle(),
+	Memory(),
+	Stats()
 {
 	pEnemy = (CBaseEntity*)NULL;
 	pGoal = (CBaseEntity*)NULL;

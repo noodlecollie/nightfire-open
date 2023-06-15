@@ -116,7 +116,8 @@ we set up the m_pPlayer field.
 */
 void HUD_PrepEntity(CBaseEntity* pEntity, CBasePlayer* pWeaponOwner)
 {
-	memset(&ev[num_ents], 0, sizeof(entvars_t));
+	ev[num_ents] = entvars_t {};
+
 	pEntity->pev = &ev[num_ents++];
 
 	pEntity->Precache();
@@ -544,7 +545,7 @@ void UTIL_TraceLine(
 	edict_t* pentIgnore,
 	TraceResult* ptr)
 {
-	memset(ptr, 0, sizeof(*ptr));
+	*ptr = TraceResult {};
 	ptr->flFraction = 1.0;
 }
 
@@ -752,7 +753,8 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 	int buttonsChanged;
 	CBasePlayerWeapon* pWeapon = NULL;
 	CBasePlayerWeapon* pCurrent;
-	weapon_data_t nulldata = {0}, *pfrom, *pto;
+	weapon_data_t* pfrom;
+	weapon_data_t* pto;
 	static int lasthealth;
 
 	HUD_InitClientWeapons();

@@ -503,8 +503,6 @@ void SND_Spatialize(channel_t* ch)
 {
 	vec3_t source_vec;
 	float dist, dot, gain = 1.0f;
-	qboolean looping = false;
-	wavdata_t* pSource;
 
 	// anything coming from the view entity will allways be full volume
 	if ( S_IsClient(ch->entnum) )
@@ -513,11 +511,6 @@ void SND_Spatialize(channel_t* ch)
 		ch->rightvol = ch->master_vol;
 		return;
 	}
-
-	pSource = ch->sfx->cache;
-
-	if ( ch->use_loop && pSource && pSource->loopStart != -1 )
-		looping = true;
 
 	if ( !ch->staticsound )
 	{
@@ -539,7 +532,9 @@ void SND_Spatialize(channel_t* ch)
 
 	// don't pan sounds with no attenuation
 	if ( ch->dist_mult <= 0.0f )
+	{
 		dot = 0.0f;
+	}
 
 	// fill out channel volumes for single location
 	S_SpatializeChannel(&ch->leftvol, &ch->rightvol, ch->master_vol, gain, dot, dist * ch->dist_mult);
@@ -835,7 +830,7 @@ void S_AmbientSound(const vec3_t pos, int ent, sound_t handle, float fvol, float
 	channel_t* ch;
 	wavdata_t* pSource = NULL;
 	sfx_t* sfx = NULL;
-	int vol, fvox = 0;
+	int vol;
 
 	if ( !dma.initialized )
 		return;
@@ -877,8 +872,9 @@ void S_AmbientSound(const vec3_t pos, int ent, sound_t handle, float fvol, float
 		Q_strncpy(ch->name, sfx->name, sizeof(ch->name));
 		sfx = ch->sfx;
 		if ( sfx )
+		{
 			pSource = sfx->cache;
-		fvox = 1;
+		}
 	}
 	else
 	{
@@ -1297,7 +1293,6 @@ void S_StreamAviSamples(void* Avi, int entnum, float fvol, float attn, float syn
 	int bufferSamples;
 	int fileSamples;
 	byte raw[MAX_RAW_SAMPLES];
-	float duration = 0.0f;
 	int r, fileBytes;
 	rawchan_t* ch = NULL;
 
@@ -1349,7 +1344,7 @@ void S_StreamAviSamples(void* Avi, int entnum, float fvol, float attn, float syn
 		}
 
 		// read audio stream
-		r = AVI_GetAudioChunk(Avi, raw, info->loopStart, fileBytes);
+		r = AVI_GetAudioChunk(Avi, (char*)raw, info->loopStart, fileBytes);
 		info->loopStart += r;  // advance play position
 
 		if ( r < fileBytes )
