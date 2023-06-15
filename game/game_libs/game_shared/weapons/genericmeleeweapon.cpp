@@ -202,6 +202,8 @@ void CGenericMeleeWeapon::AttackStrike()
 
 bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* meleeAttack, TraceResult& tr)
 {
+	(void)meleeAttack;
+
 	UTIL_TraceLine(m_vecAttackTraceStart, m_vecAttackTraceEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
 
 #ifndef CLIENT_DLL

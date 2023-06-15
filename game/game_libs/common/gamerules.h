@@ -112,18 +112,18 @@ public:
 														   // spawned. Paired with ClientDisconnected
 	virtual void InitHUD(CBasePlayer* pl) = 0;  // the client dll is ready for updating
 	virtual void ClientDisconnected(edict_t* pClient) = 0;  // a client just disconnected from the server
-	virtual void UpdateGameMode(CBasePlayer* pPlayer)
+	virtual void UpdateGameMode(CBasePlayer*)
 	{
 	}  // the client needs to be informed of the current game mode
 
 	// Client damage rules
 	virtual float FlPlayerFallDamage(
 		CBasePlayer* pPlayer) = 0;  // this client just hit the ground after a fall. How much damage?
-	virtual BOOL FPlayerCanTakeDamage(CBasePlayer* pPlayer, CBaseEntity* pAttacker)
+	virtual BOOL FPlayerCanTakeDamage(CBasePlayer*, CBaseEntity*)
 	{
 		return TRUE;
 	};  // can this player take damage from this attacker?
-	virtual BOOL ShouldAutoAim(CBasePlayer* pPlayer, edict_t* target)
+	virtual BOOL ShouldAutoAim(CBasePlayer*, edict_t*)
 	{
 		return TRUE;
 	}
@@ -142,11 +142,11 @@ public:
 	{
 		return TRUE;
 	};
-	virtual BOOL ClientCommand(CBasePlayer* pPlayer, const char* pcmd)
+	virtual BOOL ClientCommand(CBasePlayer*, const char*)
 	{
 		return FALSE;
 	};  // handles the user commands;  returns TRUE if command handled properly
-	virtual void ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobuffer)
+	virtual void ClientUserInfoChanged(CBasePlayer*, char*)
 	{
 	}  // the player has changed userinfo;  can change it now
 
@@ -224,28 +224,28 @@ public:
 	virtual int PlayerRelationship(
 		CBaseEntity* pPlayer,
 		CBaseEntity* pTarget) = 0;  // What is the player's relationship with this entity?
-	virtual int GetTeamIndex(const char* pTeamName)
+	virtual int GetTeamIndex(const char*)
 	{
 		return -1;
 	}
-	virtual const char* GetIndexedTeamName(int teamIndex)
+	virtual const char* GetIndexedTeamName(int)
 	{
 		return "";
 	}
-	virtual BOOL IsValidTeam(const char* pTeamName)
+	virtual BOOL IsValidTeam(const char*)
 	{
 		return TRUE;
 	}
-	virtual void ChangePlayerTeam(CBasePlayer* pPlayer, const char* pTeamName, BOOL bKill, BOOL bGib)
+	virtual void ChangePlayerTeam(CBasePlayer*, const char*, BOOL, BOOL)
 	{
 	}
-	virtual const char* SetDefaultPlayerTeam(CBasePlayer* pPlayer)
+	virtual const char* SetDefaultPlayerTeam(CBasePlayer*)
 	{
 		return "";
 	}
 
 	// Sounds
-	virtual BOOL PlayFootstepSounds(CBasePlayer* pl, float fvol)
+	virtual BOOL PlayFootstepSounds(CBasePlayer*, float)
 	{
 		return TRUE;
 	}
@@ -349,7 +349,7 @@ public:
 	virtual BOOL FAllowMonsters(void);
 
 	// Teamplay stuff
-	virtual const char* GetTeamID(CBaseEntity* pEntity)
+	virtual const char* GetTeamID(CBaseEntity*)
 	{
 		return "";
 	};
@@ -452,7 +452,7 @@ public:
 	virtual int DeadPlayerAmmo(CBasePlayer* pPlayer);
 
 	// Teamplay stuff
-	virtual const char* GetTeamID(CBaseEntity* pEntity)
+	virtual const char* GetTeamID(CBaseEntity*)
 	{
 		return "";
 	}

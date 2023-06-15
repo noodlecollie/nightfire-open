@@ -17,7 +17,7 @@ public:
 		return 0;
 	}
 
-	virtual int Draw(float time)
+	virtual int Draw(float)
 	{
 		return 0;
 	}

@@ -123,6 +123,9 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer(
 	const Vector& vecDirShooting)
 {
 #ifdef CLIENT_DLL
+	(void)vecSrc;
+	(void)vecDirShooting;
+
 	// The client doesn't actually do any bullet simulation, we just make sure that
 	// the generated random vectors match up.
 	return FireBulletsPlayer_Client(hitscanAttack);

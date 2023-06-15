@@ -56,7 +56,7 @@ void CWeaponL96A1::Reload()
 	CGenericHitscanWeapon::Reload();
 }
 
-void CWeaponL96A1::Holster(int skiplocal)
+void CWeaponL96A1::Holster(int)
 {
 	CGenericHitscanWeapon::Holster();
 	SetZoomLevel(0);

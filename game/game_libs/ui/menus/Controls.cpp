@@ -67,7 +67,7 @@ public:
 		return NULL;
 	}
 
-	bool IsCellTextWrapped(int line, int column)
+	bool IsCellTextWrapped(int line, int)
 	{
 		return IsLineUsable(line);
 	}
@@ -266,12 +266,12 @@ void CMenuKeysModel::Update(void)
 	EngFuncs::COM_FreeFile(afile);
 }
 
-void CMenuKeysModel::OnActivateEntry(int line)
+void CMenuKeysModel::OnActivateEntry(int)
 {
 	parent->EnterGrabMode();
 }
 
-void CMenuKeysModel::OnDeleteEntry(int line)
+void CMenuKeysModel::OnDeleteEntry(int)
 {
 	parent->UnbindEntry();
 }
@@ -346,7 +346,7 @@ bool CMenuControls::CGrabKeyMessageBox::KeyUp(int key)
 	return true;
 }
 
-bool CMenuControls::CGrabKeyMessageBox::KeyDown(int key)
+bool CMenuControls::CGrabKeyMessageBox::KeyDown(int)
 {
 	return true;
 }

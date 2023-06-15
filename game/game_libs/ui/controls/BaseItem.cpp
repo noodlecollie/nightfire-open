@@ -69,30 +69,26 @@ void CMenuBaseItem::VidInit()
 
 void CMenuBaseItem::Reload()
 {
-	;
 }
 
 void CMenuBaseItem::Draw()
 {
-	;
 }
 
 void CMenuBaseItem::Think()
 {
-	;
 }
 
-void CMenuBaseItem::Char(int key)
+void CMenuBaseItem::Char(int)
 {
-	;
 }
 
-bool CMenuBaseItem::KeyUp(int key)
+bool CMenuBaseItem::KeyUp(int)
 {
 	return false;
 }
 
-bool CMenuBaseItem::KeyDown(int key)
+bool CMenuBaseItem::KeyDown(int)
 {
 	return false;
 }

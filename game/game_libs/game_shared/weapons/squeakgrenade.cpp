@@ -473,7 +473,7 @@ BOOL CSqueak::Deploy()
 	return DefaultDeploy("models/v_squeak.mdl", "models/p_squeak.mdl", SQUEAK_UP, "squeak");
 }
 
-void CSqueak::Holster(int skiplocal /* = 0 */)
+void CSqueak::Holster(int)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 

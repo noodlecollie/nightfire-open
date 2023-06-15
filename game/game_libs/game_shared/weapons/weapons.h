@@ -256,7 +256,7 @@ public:
 
 	virtual int AddToPlayer(
 		CBasePlayer* pPlayer);  // return TRUE if the item you want the item added to the player inventory
-	virtual int AddDuplicate(CBasePlayerItem* pItem)
+	virtual int AddDuplicate(CBasePlayerItem*)
 	{
 		return FALSE;
 	}  // return TRUE if you want your duplicate removed from world
@@ -270,7 +270,7 @@ public:
 	CBaseEntity* Respawn(void);  // copy a weapon
 	void FallInit(void);
 	void CheckRespawn(void);
-	virtual int GetItemInfo(ItemInfo* p)
+	virtual int GetItemInfo(ItemInfo*)
 	{
 		return 0;
 	};  // returns 0 if struct not filled out
@@ -315,7 +315,7 @@ public:
 		return -1;
 	};
 
-	virtual int UpdateClientData(CBasePlayer* pPlayer)
+	virtual int UpdateClientData(CBasePlayer*)
 	{
 		return 0;
 	}
@@ -507,7 +507,7 @@ class CBasePlayerAmmo : public CBaseEntity
 public:
 	virtual void Spawn(void);
 	void EXPORT DefaultTouch(CBaseEntity* pOther);  // default weapon touch
-	virtual BOOL AddAmmo(CBaseEntity* pOther)
+	virtual BOOL AddAmmo(CBaseEntity*)
 	{
 		return TRUE;
 	};

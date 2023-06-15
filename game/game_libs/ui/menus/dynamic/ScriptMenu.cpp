@@ -301,15 +301,19 @@ void CMenuScriptConfig::_Init(void)
 	pageSelector.onChanged = VoidCb(&CMenuScriptConfig::FlipMenu);
 }
 
-void CMenuScriptConfig::SetScriptConfig(const char* path, bool earlyInit)
+void CMenuScriptConfig::SetScriptConfig(const char* path, bool)
 {
 	if ( m_szConfig && m_pVars && !PlatformLib_StrCaseCmp(m_szConfig, path) )
+	{
 		return;  // do nothing
+	}
 
 	m_szConfig = path;
 
 	if ( m_pVars )
+	{
 		CSCR_FreeList(m_pVars);
+	}
 
 	m_pVars = CSCR_LoadDefaultCVars(m_szConfig, &m_iVarsCount);
 }

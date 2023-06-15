@@ -126,25 +126,25 @@ public:
 		FS_ClearSearchPath();
 	}
 
-	void AddSearchPath(const char* path, const char* id) override
+	void AddSearchPath(const char* path, const char*) override
 	{
 		FixupPath(p, path);
 		FS_AddGameDirectory(p, FS_CUSTOM_PATH);
 	}
 
-	void AddSearchPathNoWrite(const char* path, const char* id) override
+	void AddSearchPathNoWrite(const char* path, const char*) override
 	{
 		FixupPath(p, path);
 		FS_AddGameDirectory(p, FS_NOWRITE_PATH | FS_CUSTOM_PATH);
 	}
 
-	bool RemoveSearchPath(const char* id) override
+	bool RemoveSearchPath(const char*) override
 	{
 		// TODO:
 		return true;
 	}
 
-	void RemoveFile(const char* path, const char* id) override
+	void RemoveFile(const char* path, const char*) override
 	{
 		FS_Delete(path);  // FS_Delete is aware of slashes
 	}
@@ -451,7 +451,7 @@ public:
 		return;
 	}
 
-	int SetVBuf(FileHandle_t handle, char* buf, int mode, long int size) override
+	int SetVBuf(FileHandle_t, char*, int, long int) override
 	{
 		// TODO:
 		return 0;
@@ -546,7 +546,7 @@ extern "C" void EXPORT* CreateInterface(const char* interface, int* retval)
 
 	if ( !Q_strcmp(interface, FS_API_CREATEINTERFACE_TAG) )
 	{
-		static fs_api_t copy = {0};  // return a copy, to disallow overriding
+		static fs_api_t copy = {};  // return a copy, to disallow overriding
 
 		if ( !copy.InitStdio )
 			memcpy(&copy, &g_api, sizeof(copy));

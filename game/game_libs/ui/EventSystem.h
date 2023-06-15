@@ -43,10 +43,10 @@ GNU General Public License for more details.
 
 #else
 
-#define SET_EVENT_MULTI(event, callback) (event) = [](CMenuBaseItem * pSelf, void* pExtra) callback
+#define SET_EVENT_MULTI(event, callback) (event) = [](CMenuBaseItem* pSelf, void* pExtra) callback
 #endif
 
-#define SET_EVENT(event, callback) SET_EVENT_MULTI(event, { callback; })
+#define SET_EVENT(event, callback) SET_EVENT_MULTI(event, { (void)pSelf; (void)pExtra; callback; })
 
 #define DECLARE_NAMED_EVENT_TO_ITEM_METHOD(className, method, eventName) \
 	static void eventName##Cb(CMenuBaseItem* pSelf, void*) \
@@ -152,12 +152,12 @@ private:
 	// to find event command by name(for items holder)
 	const char* szName;
 
-	static void CmdExecuteNextFrameCb(CMenuBaseItem* pSelf, void* pExtra)
+	static void CmdExecuteNextFrameCb(CMenuBaseItem*, void* pExtra)
 	{
 		EngFuncs::ClientCmd(FALSE, (char*)pExtra);
 	}
 
-	static void CmdExecuteNowCb(CMenuBaseItem* pSelf, void* pExtra)
+	static void CmdExecuteNowCb(CMenuBaseItem*, void* pExtra)
 	{
 		EngFuncs::ClientCmd(TRUE, (char*)pExtra);
 	}

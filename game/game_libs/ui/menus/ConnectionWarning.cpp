@@ -71,6 +71,7 @@ void CMenuConnectionWarning::_Init()
 	options.SetPicture(PC_ADV_OPT);
 	options.szName = L("Adv. Options");
 	SET_EVENT_MULTI(options.onReleased, {
+		(void)pExtra;
 		CMenuConnectionWarning* p = pSelf->GetParent(CMenuConnectionWarning);
 		UI_GameOptions_Menu();
 		p->done.SetGrayed(false);

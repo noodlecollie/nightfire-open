@@ -75,11 +75,11 @@ bool CBitmapFont::Create(
 	return true;
 }
 
-void CBitmapFont::GetCharRGBA(int ch, Point pt, Size sz, byte* rgba, Size& drawSize)
+void CBitmapFont::GetCharRGBA(int, Point, Size, byte*, Size&)
 {
 }
 
-void CBitmapFont::GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c)
+void CBitmapFont::GetCharABCWidthsNoCache(int, int&, int&, int&)
 {
 	// static font not uses cache
 	return;
@@ -105,7 +105,7 @@ bool CBitmapFont::HasChar(int ch) const
 	return false;
 }
 
-void CBitmapFont::UploadGlyphsForRanges(charRange_t* range, int rangeSize)
+void CBitmapFont::UploadGlyphsForRanges(charRange_t*, int)
 {
 }
 

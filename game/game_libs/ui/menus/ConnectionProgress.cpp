@@ -228,6 +228,7 @@ void CMenuConnectionProgress::_Init(void)
 	consoleButton.SetPicture(PC_CONSOLE);
 	consoleButton.szName = L("GameUI_Console");
 	SET_EVENT_MULTI(consoleButton.onReleased, {
+		(void)pExtra;
 		CMenuConnectionProgress* parent = (CMenuConnectionProgress*)pSelf->Parent();
 		EngFuncs::KEY_SetDest(KEY_CONSOLE);
 		parent->m_iState = STATE_CONSOLE;

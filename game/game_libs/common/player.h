@@ -225,7 +225,7 @@ public:
 	TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 	virtual int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	virtual void Killed(entvars_t* pevAttacker, int iGib);
-	virtual Vector BodyTarget(const Vector& posSrc)
+	virtual Vector BodyTarget(const Vector&)
 	{
 		return Center() + pev->view_ofs * RANDOM_FLOAT(0.5, 1.1);
 	};  // position to shoot at

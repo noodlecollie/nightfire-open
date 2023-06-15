@@ -272,7 +272,7 @@ void CMenuSavesListModel::Update(void)
 		parent->remove.SetGrayed(false);
 }
 
-void CMenuSavesListModel::OnDeleteEntry(int line)
+void CMenuSavesListModel::OnDeleteEntry(int)
 {
 	parent->msgBox.Show();
 }

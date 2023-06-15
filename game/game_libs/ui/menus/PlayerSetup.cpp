@@ -506,6 +506,7 @@ void CMenuPlayerSetup::_Init(void)
 	CMenuPicButton* gameOpt =
 		AddButton(L("Game options"), L("Configure handness, fov and other advanced options"), PC_GAME_OPTIONS);
 	SET_EVENT_MULTI(gameOpt->onReleased, {
+		(void)pExtra;
 		((CMenuPlayerSetup*)pSelf->Parent())->SetConfig();
 		UI_AdvUserOptions_Menu();
 	});

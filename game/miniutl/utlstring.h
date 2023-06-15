@@ -645,7 +645,7 @@ public:
 	CDefCaselessUtlStringEquals()
 	{
 	}
-	CDefCaselessUtlStringEquals(int i)
+	CDefCaselessUtlStringEquals(int)
 	{
 	}
 	inline bool operator()(const CUtlString& lhs, const CUtlString& rhs) const
@@ -663,7 +663,7 @@ public:
 	CDefCaselessUtlStringLess()
 	{
 	}
-	CDefCaselessUtlStringLess(int i)
+	CDefCaselessUtlStringLess(int)
 	{
 	}
 	inline bool operator()(const CUtlString& lhs, const CUtlString& rhs) const

@@ -123,7 +123,7 @@ void CMenuTable::VidInit()
 	boxSize.h = m_scSize.h - headerSize.h;
 }
 
-bool CMenuTable::MouseMove(int x, int y)
+bool CMenuTable::MouseMove(int, int)
 {
 	if ( !iScrollBarSliding && FBitSet(iFlags, QMF_HASMOUSEFOCUS) )
 	{

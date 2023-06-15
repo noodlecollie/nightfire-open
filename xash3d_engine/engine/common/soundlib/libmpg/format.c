@@ -78,6 +78,8 @@ void mpg123_encodings(const int** list, size_t* number)
 
 int mpg123_encsize(int encoding)
 {
+	(void)encoding;
+
 	return sizeof(short);
 }
 

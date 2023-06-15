@@ -7,7 +7,7 @@ function(set_common_library_compiler_settings targetname)
 			-fvisibility=hidden
 			# NFTODO: Apply these properly
 			-Wall
-			# -Wextra
+			-Wextra
 			# -pedantic
 			-Werror
 		)

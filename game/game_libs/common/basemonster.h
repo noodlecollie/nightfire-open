@@ -215,7 +215,7 @@ public:
 	// virtual int CanPlaySequence( void ) { return ((m_pCine == NULL) && (m_MonsterState == MONSTERSTATE_NONE ||
 	// m_MonsterState == MONSTERSTATE_IDLE || m_IdealMonsterState == MONSTERSTATE_IDLE)); }
 	virtual int CanPlaySequence(BOOL fDisregardState, int interruptLevel);
-	virtual int CanPlaySentence(BOOL fDisregardState)
+	virtual int CanPlaySentence(BOOL)
 	{
 		return IsAlive();
 	}
@@ -287,7 +287,7 @@ public:
 
 	BOOL FindLateralCover(const Vector& vecThreat, const Vector& vecViewOffset);
 	virtual BOOL FindCover(Vector vecThreat, Vector vecViewOffset, float flMinDist, float flMaxDist);
-	virtual BOOL FValidateCover(const Vector& vecCoverLocation)
+	virtual BOOL FValidateCover(const Vector&)
 	{
 		return TRUE;
 	};
@@ -386,7 +386,7 @@ public:
 	virtual void FadeMonster(void);  // Called instead of GibMonster() when gibs are disabled
 
 	Vector ShootAtEnemy(const Vector& shootOrigin);
-	virtual Vector BodyTarget(const Vector& posSrc)
+	virtual Vector BodyTarget(const Vector&)
 	{
 		return Center() * 0.75 + EyePosition() * 0.25;
 	};  // position to shoot at
@@ -431,7 +431,7 @@ public:
 		return;
 	};
 
-	virtual void StopFollowing(BOOL clearSchedule)
+	virtual void StopFollowing(BOOL)
 	{
 	}
 
@@ -446,13 +446,19 @@ public:
 	inline BOOL HasMemory(int iMemory)
 	{
 		if ( m_afMemory & iMemory )
+		{
 			return TRUE;
+		}
+
 		return FALSE;
 	}
 	inline BOOL HasAllMemories(int iMemory)
 	{
 		if ( (m_afMemory & iMemory) == iMemory )
+		{
 			return TRUE;
+		}
+
 		return FALSE;
 	}
 

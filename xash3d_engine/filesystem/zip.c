@@ -147,6 +147,7 @@ static void FS_EnsureOpenZip(zip_t* zip)
 #else
 static void FS_EnsureOpenZip(zip_t* zip)
 {
+	(void)zip;
 }
 #endif
 
@@ -404,6 +405,10 @@ Open a packed file using its package file descriptor
 file_t* FS_OpenFile_ZIP(searchpath_t* search, const char* filename, const char* mode, int pack_ind)
 {
 	zipfile_t* pfile;
+
+	(void)filename;
+	(void)mode;
+
 	pfile = &search->zip->files[pack_ind];
 
 	// compressed files handled in Zip_LoadFile
@@ -468,7 +473,7 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 		decompressed_buffer[file->size] = '\0';
 
 		c = read(search->zip->handle, decompressed_buffer, file->size);
-		if ( c != file->size )
+		if ( c != (size_t)file->size )
 		{
 			Con_Reportf(S_ERROR "Zip_LoadFile: %s size doesn't match\n", file->name);
 			return NULL;
@@ -502,7 +507,7 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 		decompressed_buffer[file->size] = '\0';
 
 		c = read(search->zip->handle, compressed_buffer, file->compressed_size);
-		if ( c != file->compressed_size )
+		if ( c != (size_t)file->compressed_size )
 		{
 			Con_Reportf(S_ERROR "Zip_LoadFile: %s compressed size doesn't match\n", file->name);
 			return NULL;
@@ -581,6 +586,7 @@ FS_FileTime_ZIP
 */
 int FS_FileTime_ZIP(searchpath_t* search, const char* filename)
 {
+	(void)filename;
 	return search->zip->filetime;
 }
 
@@ -644,6 +650,8 @@ void FS_Search_ZIP(searchpath_t* search, stringlist_t* list, const char* pattern
 	string temp;
 	const char *slash, *backslash, *colon, *separator;
 	int j, i;
+
+	(void)caseinsensitive;
 
 	for ( i = 0; i < search->zip->numfiles; i++ )
 	{

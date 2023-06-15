@@ -103,9 +103,13 @@ static void FS_BackupFileName(file_t* file, const char* path, uint options)
 #else
 static void FS_EnsureOpenFile(file_t* file)
 {
+	(void)file;
 }
 static void FS_BackupFileName(file_t* file, const char* path, uint options)
 {
+	(void)file;
+	(void)path;
+	(void)options;
 }
 #endif
 
@@ -943,15 +947,17 @@ static qboolean FS_CheckForQuakeGameDir(const char* gamedir, qboolean direct)
 	// if directory contain config.cfg or progs.dat it's 100% gamedir
 	// quake mods probably always archived but can missed config.cfg before first running
 	const char* files[] = {"config.cfg", "progs.dat", "pak0.pak"};
-	int i;
+	size_t i;
 
-	for ( i = 0; i < sizeof(files) / sizeof(files[0]); i++ )
+	for ( i = 0; i < sizeof(files) / sizeof(files[0]); ++i )
 	{
 		char buf[MAX_VA_STRING];
 
 		Q_snprintf(buf, sizeof(buf), "%s/%s", gamedir, files[i]);
-		if ( direct ? FS_SysFileExists(buf) : FS_FileExists(buf, false) )
+		if ( direct ? FS_SysFileExists(buf) : (qboolean)FS_FileExists(buf, false) )
+		{
 			return true;
+		}
 	}
 
 	return false;
@@ -968,14 +974,14 @@ static qboolean FS_CheckForXashGameDir(const char* gamedir, qboolean direct)
 {
 	// if directory contain gameinfo.txt or liblist.gam it's 100% gamedir
 	const char* files[] = {"gameinfo.txt", "liblist.gam"};
-	int i;
+	size_t i;
 
 	for ( i = 0; i < sizeof(files) / sizeof(files[0]); i++ )
 	{
 		char buf[MAX_SYSPATH];
 
 		Q_snprintf(buf, sizeof(buf), "%s/%s", gamedir, files[i]);
-		if ( direct ? FS_SysFileExists(buf) : FS_FileExists(buf, false) )
+		if ( direct ? FS_SysFileExists(buf) : (qboolean)FS_FileExists(buf, false) )
 			return true;
 	}
 
@@ -1319,28 +1325,49 @@ static qboolean FS_FindLibrary(const char* dllname, qboolean directpath, fs_dlli
 
 poolhandle_t _Mem_AllocPool(const char* name, const char* filename, int fileline)
 {
+	(void)name;
+	(void)filename;
+	(void)fileline;
+
 	return (poolhandle_t)0xDEADC0DE;
 }
 
 void _Mem_FreePool(poolhandle_t* poolptr, const char* filename, int fileline)
 {
-	// stub
+	(void)poolptr;
+	(void)filename;
+	(void)fileline;
 }
 
 void* _Mem_Alloc(poolhandle_t poolptr, size_t size, qboolean clear, const char* filename, int fileline)
 {
+	(void)poolptr;
+	(void)filename;
+	(void)fileline;
+
 	if ( clear )
+	{
 		return calloc(1, size);
+	}
+
 	return malloc(size);
 }
 
 void* _Mem_Realloc(poolhandle_t poolptr, void* memptr, size_t size, qboolean clear, const char* filename, int fileline)
 {
+	(void)poolptr;
+	(void)clear;
+	(void)filename;
+	(void)fileline;
+
 	return realloc(memptr, size);
 }
 
 void _Mem_Free(void* data, const char* filename, int fileline)
 {
+	(void)filename;
+	(void)fileline;
+
 	free(data);
 }
 
@@ -1652,6 +1679,9 @@ static int FS_DuplicateHandle( const char *filename, int handle, fs_offset_t pos
 file_t* FS_OpenHandle(const char* syspath, int handle, fs_offset_t offset, fs_offset_t len)
 {
 	file_t* file = (file_t*)Mem_Calloc(fs_mempool, sizeof(file_t));
+
+	(void)syspath;
+
 #ifndef XASH_REDUCE_FD
 #ifdef HAVE_DUP
 	file->handle = dup(handle);
@@ -2175,18 +2205,24 @@ Same as fgets
 */
 int FS_Gets(file_t* file, char* string, size_t bufsize)
 {
-	int c, end = 0;
+	int c;
+	size_t end = 0;
 
 	while ( 1 )
 	{
 		c = FS_Getc(file);
 
 		if ( c == '\r' || c == '\n' || c < 0 )
+		{
 			break;
+		}
 
 		if ( end < bufsize - 1 )
+		{
 			string[end++] = c;
+		}
 	}
+
 	string[end] = 0;
 
 	// remove \n following \r
@@ -2195,7 +2231,9 @@ int FS_Gets(file_t* file, char* string, size_t bufsize)
 		c = FS_Getc(file);
 
 		if ( c != '\n' )
+		{
 			FS_UnGetc(file, c);
+		}
 	}
 
 	return c;
@@ -2842,6 +2880,9 @@ fs_api_t g_api = {
 	FS_Delete,
 	FS_SysFileExists,
 	FS_GetDiskPath,
+
+	NULL,
+	NULL
 };
 
 int EXPORT GetFSAPI(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* engfuncs)

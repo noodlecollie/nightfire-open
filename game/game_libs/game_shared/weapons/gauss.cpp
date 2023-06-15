@@ -125,7 +125,7 @@ BOOL CGauss::Deploy()
 	return DefaultDeploy("models/v_gauss.mdl", "models/p_gauss.mdl", GAUSS_DRAW, "gauss");
 }
 
-void CGauss::Holster(int skiplocal /* = 0 */)
+void CGauss::Holster(int)
 {
 	using namespace EventConstructor;
 	CEventConstructor event;
@@ -412,8 +412,13 @@ void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 
 	pentIgnore = ENT(m_pPlayer->pev);
 #else
+	(void)vecOrigSrc;
+	(void)vecDir;
+
 	if ( m_fPrimaryFire == false )
+	{
 		g_irunninggausspred = true;
+	}
 #endif
 	// The main firing event is sent unreliably so it won't be delayed.
 

@@ -305,7 +305,7 @@ bool CStbFont::Create(
 	return true;
 }
 
-void CStbFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Size& drawSize)
+void CStbFont::GetCharRGBA(int ch, Point, Size sz, unsigned char* rgba, Size& drawSize)
 {
 	byte *buf, *dst;
 	int a, b, c;
@@ -389,7 +389,7 @@ void CStbFont::GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c)
 	c = (horiAdvance - horiBearingX - width) * scale;
 }
 
-bool CStbFont::HasChar(int ch) const
+bool CStbFont::HasChar(int) const
 {
 	return true;
 }

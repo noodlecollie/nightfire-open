@@ -148,6 +148,14 @@ public:
 	{
 		return !(*this == v);
 	}
+	inline Vector& operator =(const Vector& v)
+	{
+		x = v.x;
+		y = v.y;
+		z = v.z;
+
+		return *this;
+	}
 	inline Vector operator+(const Vector& v) const
 	{
 		return Vector(x + v.x, y + v.y, z + v.z);

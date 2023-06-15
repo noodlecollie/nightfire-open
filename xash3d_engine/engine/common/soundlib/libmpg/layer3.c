@@ -725,7 +725,7 @@ static int III_get_scale_factors_2(mpg123_handle_t* fr, int* scf, gr_info_t* gr_
 #define BITSHIFT ((sizeof(MASK_TYPE) - 1) * 8)
 
 #define REFRESH_MASK \
-	while ( num < BITSHIFT ) \
+	while ( (size_t)num < BITSHIFT ) \
 	{ \
 		mask |= ((MASK_UTYPE)getbyte(fr)) << (BITSHIFT - num); \
 		num += 8; \

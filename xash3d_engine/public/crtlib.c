@@ -311,7 +311,7 @@ void Q_atov(float* vec, const char* str, size_t siz)
 {
 	string buffer;
 	char *pstr, *pfront;
-	int j;
+	size_t j;
 
 	Q_strncpy(buffer, str, sizeof(buffer));
 	memset(vec, 0, sizeof(vec_t) * siz);
@@ -323,10 +323,15 @@ void Q_atov(float* vec, const char* str, size_t siz)
 
 		// valid separator is space
 		while ( *pstr && *pstr != ' ' )
+		{
 			pstr++;
+		}
 
 		if ( !*pstr )
+		{
 			break;
+		}
+
 		pstr++;
 		pfront = pstr;
 	}
@@ -504,7 +509,14 @@ int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list arg
 	}
 #endif
 
-	if ( result >= buffersize )
+	if ( result < 0 )
+	{
+		if ( buffer && buffersize > 0 )
+		{
+			buffer[0] = '\0';
+		}
+	}
+	else if ( (size_t)result >= buffersize )
 	{
 		buffer[buffersize - 1] = '\0';
 		return -1;
@@ -848,7 +860,9 @@ void COM_PathSlashFix(char* path)
 	len = Q_strlen(path);
 
 	if ( path[len - 1] != '\\' && path[len - 1] != '/' )
+	{
 		Q_strcpy(&path[len], "/");
+	}
 }
 
 /*
@@ -858,10 +872,14 @@ COM_Hex2Char
 */
 char COM_Hex2Char(uint8_t hex)
 {
-	if ( hex >= 0x0 && hex <= 0x9 )
+	if ( hex <= 0x9 )
+	{
 		hex += '0';
+	}
 	else if ( hex >= 0xA && hex <= 0xF )
+	{
 		hex += '7';
+	}
 
 	return (char)hex;
 }

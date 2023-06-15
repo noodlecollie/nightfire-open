@@ -26,7 +26,7 @@ int CBotProfileListModel::GetRows() const
 	return m_IndexToProfileName.Count();
 }
 
-const char* CBotProfileListModel::GetCellText(int row, int column)
+const char* CBotProfileListModel::GetCellText(int row, int)
 {
 	const CBotProfileTable::ProfileData* data = GetProfileData(row);
 	return data ? data->playerName.String() : "UNKNOWN";

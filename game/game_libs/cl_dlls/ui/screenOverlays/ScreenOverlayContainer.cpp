@@ -8,7 +8,7 @@
 
 namespace ScreenOverlays
 {
-	static int HandleScreenOverlayMessage(const char* msgName, int size, void* buffer)
+	static int HandleScreenOverlayMessage(const char*, int size, void* buffer)
 	{
 		CMessageReader reader;
 
@@ -50,7 +50,7 @@ namespace ScreenOverlays
 	void CScreenOverlayContainer::VidInit()
 	{
 		ForEachValidOverlay(
-			[](ScreenOverlays::OverlayId id, CBaseScreenOverlay* overlay)
+			[](ScreenOverlays::OverlayId, CBaseScreenOverlay* overlay)
 			{
 				overlay->VidInit();
 			});

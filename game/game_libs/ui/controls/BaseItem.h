@@ -56,7 +56,7 @@ public:
 
 	// Called every mouse movement got from engine.
 	// Should return true, if
-	virtual bool MouseMove(int x, int y)
+	virtual bool MouseMove(int, int)
 	{
 		return true;
 	}
@@ -71,9 +71,13 @@ public:
 	virtual void SetInactive(bool visible)
 	{
 		if ( visible )
+		{
 			iFlags |= QMF_INACTIVE;
+		}
 		else
+		{
 			iFlags &= ~QMF_INACTIVE;
+		}
 	}
 
 	// Cause item to be shown.

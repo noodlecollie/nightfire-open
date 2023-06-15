@@ -43,7 +43,7 @@ acess to array elem
 */
 gl_texture_t* R_GetTexture(GLenum texnum)
 {
-	ASSERT(texnum >= 0 && texnum < MAX_TEXTURES);
+	ASSERT(texnum < MAX_TEXTURES);
 	return &gl_textures[texnum];
 }
 

@@ -280,6 +280,11 @@ FS_OpenFile_WAD
 */
 file_t* FS_OpenFile_WAD(searchpath_t* search, const char* filename, const char* mode, int pack_ind)
 {
+	(void)search;
+	(void)filename;
+	(void)mode;
+	(void)pack_ind;
+
 	return NULL;
 }
 
@@ -387,11 +392,15 @@ static wfile_t* W_Open(const char* filename, int* error)
 	// NOTE: lumps table can be reallocated for O_APPEND mode
 	srclumps = (dlumpinfo_t*)Mem_Malloc(wad->mempool, lat_size);
 
-	if ( FS_Read(wad->handle, srclumps, lat_size) != lat_size )
+	if ( (size_t)FS_Read(wad->handle, srclumps, lat_size) != lat_size )
 	{
 		Con_Reportf(S_ERROR "W_ReadLumpTable: %s has corrupted lump allocation table\n", filename);
+
 		if ( error )
+		{
 			*error = WAD_LOAD_CORRUPTED;
+		}
+
 		Mem_Free(srclumps);
 		FS_CloseWAD(wad);
 		return NULL;
@@ -437,6 +446,7 @@ FS_FileTime_WAD
 */
 static int FS_FileTime_WAD(searchpath_t* search, const char* filename)
 {
+	(void)filename;
 	return search->wad->filetime;
 }
 
@@ -519,6 +529,8 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 	int j, i;
 	const char *slash, *backslash, *colon, *separator;
 	char buf[MAX_VA_STRING];
+
+	(void)caseinsensitive;
 
 	// quick reject by filetype
 	if ( type == TYP_NONE )
@@ -685,7 +697,7 @@ static byte* W_ReadLump(wfile_t* wad, dlumpinfo_t* lump, fs_offset_t* lumpsizept
 	buf = (byte*)Mem_Malloc(wad->mempool, lump->disksize);
 	size = FS_Read(wad->handle, buf, lump->disksize);
 
-	if ( size < lump->disksize )
+	if ( size < (size_t)lump->disksize )
 	{
 		Con_Reportf(S_WARN "W_ReadLump: %s is probably corrupted\n", lump->name);
 		FS_Seek(wad->handle, oldpos, SEEK_SET);

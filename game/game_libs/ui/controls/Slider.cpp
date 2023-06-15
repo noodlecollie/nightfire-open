@@ -68,7 +68,7 @@ void CMenuSlider::VidInit()
 	m_flDrawStep = (float)(m_scSize.w - m_iSliderOutlineWidth - m_scCenterBox.w) / (float)m_iNumSteps;
 }
 
-bool CMenuSlider::KeyUp(int key)
+bool CMenuSlider::KeyUp(int)
 {
 	if ( m_iKeepSlider )
 	{

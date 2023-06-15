@@ -149,10 +149,13 @@ public:
 		return servers.Count();
 	}
 
-	ECellType GetCellType(int line, int column) override
+	ECellType GetCellType(int, int column) override
 	{
 		if ( column == 0 )
+		{
 			return CELL_IMAGE_ADDITIVE;
+		}
+
 		return CELL_TEXT;
 	}
 
@@ -578,6 +581,7 @@ void CMenuServerBrowser::_Init(void)
 
 	createGame = AddButton(L("GameUI_GameMenu_CreateServer"), NULL, PC_CREATE_GAME);
 	SET_EVENT_MULTI(createGame->onReleased, {
+		(void)pExtra;
 		if ( ((CMenuServerBrowser*)pSelf->Parent())->m_bLanOnly )
 			EngFuncs::CvarSetValue("public", 0.0f);
 		else
@@ -619,6 +623,7 @@ void CMenuServerBrowser::_Init(void)
 	// bit darker
 	natOrDirect.iFgTextColor = uiInputFgColor - 0x00151515;
 	SET_EVENT_MULTI(natOrDirect.onChanged, {
+		(void)pExtra;
 		CMenuSwitch* self = (CMenuSwitch*)pSelf;
 		CMenuServerBrowser* parent = (CMenuServerBrowser*)self->Parent();
 
@@ -639,6 +644,7 @@ void CMenuServerBrowser::_Init(void)
 	password.SetRect(188, 140, 270, 32);
 
 	SET_EVENT_MULTI(askPassword.onPositive, {
+		(void)pExtra;
 		CMenuServerBrowser* parent = (CMenuServerBrowser*)pSelf->Parent();
 
 		EngFuncs::CvarSetString("password", parent->password.GetBuffer());
@@ -647,6 +653,7 @@ void CMenuServerBrowser::_Init(void)
 	});
 
 	SET_EVENT_MULTI(askPassword.onNegative, {
+		(void)pExtra;
 		CMenuServerBrowser* parent = (CMenuServerBrowser*)pSelf->Parent();
 
 		EngFuncs::CvarSetString("password", "");

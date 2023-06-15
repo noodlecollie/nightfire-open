@@ -490,22 +490,28 @@ void R_DrawSurface(void)
 	uint sample_size, sample_bits, sample_pot;
 
 	surfrowbytes = r_drawsurf.rowbytes;
-
 	sample_size = LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf);
+
 	if ( sample_size == 16 )
+	{
 		sample_bits = 4, sample_pot = sample_size;
+	}
 	else
 	{
 		sample_bits = tr.sample_bits;
 
-		if ( sample_bits == -1 )
+		if ( sample_bits == (uint)-1 )
 		{
 			sample_bits = 0;
+
 			for ( sample_pot = 1; sample_pot < sample_size; sample_pot <<= 1, sample_bits++ )
-				;
+			{
+			}
 		}
 		else
+		{
 			sample_pot = 1 << sample_bits;
+		}
 	}
 	mt = r_drawsurf.image;
 

@@ -152,6 +152,8 @@ int CFontManager::GetCharacterWidth(HFont font, int ch)
 
 int CFontManager::GetCharacterWidthScaled(HFont font, int ch, int height)
 {
+	(void)height;
+
 	return GetCharacterWidth(font, ch)
 #ifdef SCALE_FONTS
 		* ((float)height / (float)GetFontTall(font))
@@ -263,6 +265,8 @@ int CFontManager::CutText(
 	int* wide,
 	bool* remaining)
 {
+	(void)height;
+
 	CBaseFont* font = GetIFontFromHandle(fontHandle);
 
 	if ( remaining )
@@ -440,6 +444,8 @@ int CFontManager::GetTextHeightExt(HFont fontHandle, const char* text, int heigh
 
 int CFontManager::GetTextWideScaled(HFont font, const char* text, const int height, int size)
 {
+	(void)height;
+
 	CBaseFont* pFont = GetIFontFromHandle(font);
 	if ( pFont )
 	{

@@ -42,7 +42,7 @@ public:
 	}
 
 	// Finds a conversion for the passed-in string, returns length
-	virtual char FindConversion(const char* pString, int* pLength)
+	virtual char FindConversion(const char*, int* pLength)
 	{
 		*pLength = 0;
 		return 0;
@@ -1397,7 +1397,7 @@ bool CUtlBuffer::PutOverflow(int nSize)
 	return true;
 }
 
-bool CUtlBuffer::GetOverflow(int nSize)
+bool CUtlBuffer::GetOverflow(int)
 {
 	return false;
 }

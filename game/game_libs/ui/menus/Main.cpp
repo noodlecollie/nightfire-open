@@ -108,7 +108,7 @@ void CMenuMain::CMenuMainBanner::Draw()
 	EngFuncs::DrawLogo("logo.avi", 0, logoPosY, logoWidth, logoHeight);
 }
 
-void CMenuMain::QuitDialog(void* pExtra)
+void CMenuMain::QuitDialog(void*)
 {
 	if ( CL_IsActive() && EngFuncs::GetCvarFloat("host_serverstate") && EngFuncs::GetCvarFloat("maxplayers") == 1.0f )
 		dialog.SetMessage(L("StringsList_235"));
@@ -202,6 +202,8 @@ void CMenuMain::_Init(void)
 	console.iFlags |= QMF_NOTIFY;
 	console.SetPicture(PC_CONSOLE);
 	SET_EVENT_MULTI(console.onReleased, {
+		(void)pSelf;
+		(void)pExtra;
 		UI_SetActiveMenu(FALSE);
 		EngFuncs::KEY_SetDest(KEY_CONSOLE);
 	});

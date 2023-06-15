@@ -557,7 +557,7 @@ void CGenericWeapon::SetFireOnEmptyState(const WeaponAtts::WABaseAttack* attackM
 	}
 }
 
-int CGenericWeapon::HandleSpecialReload(int currentState)
+int CGenericWeapon::HandleSpecialReload(int)
 {
 	return 0;
 }
@@ -669,6 +669,8 @@ void CGenericWeapon::SetViewModelBody(int body, bool immediate)
 			viewModel->curstate.body = body;
 		}
 	}
+#else
+	(void)immediate;
 #endif
 };
 
@@ -875,7 +877,7 @@ void CGenericWeapon::FindWeaponSlotInfo()
 		return;
 	}
 
-	const int id = static_cast<const int>(WeaponAttributes().Core.Id);
+	const int id = static_cast<int>(WeaponAttributes().Core.Id);
 
 	for ( int slot = 0; slot < MAX_WEAPON_SLOTS; ++slot )
 	{

@@ -195,6 +195,9 @@ Open a packed file using its package file descriptor
 */
 static file_t* FS_OpenFile_PAK(searchpath_t* search, const char* filename, const char* mode, int pack_ind)
 {
+	(void)filename;
+	(void)mode;
+
 	dpackfile_t* pfile;
 
 	pfile = &search->pack->files[pack_ind];
@@ -252,6 +255,8 @@ static void FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* 
 	const char *slash, *backslash, *colon, *separator;
 	int j, i;
 
+	(void)caseinsensitive;
+
 	for ( i = 0; i < search->pack->numfiles; i++ )
 	{
 		Q_strncpy(temp, search->pack->files[i].name, sizeof(temp));
@@ -294,6 +299,7 @@ FS_FileTime_PAK
 */
 static int FS_FileTime_PAK(searchpath_t* search, const char* filename)
 {
+	(void)filename;
 	return search->pack->filetime;
 }
 

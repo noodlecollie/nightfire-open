@@ -155,7 +155,7 @@ void CMenuCredits::Draw(void)
 		Hide();
 }
 
-bool CMenuCredits::KeyUp(int key)
+bool CMenuCredits::KeyUp(int)
 {
 	return true;
 }
@@ -165,7 +165,7 @@ bool CMenuCredits::KeyUp(int key)
 CMenuCredits::Key
 =================
 */
-bool CMenuCredits::KeyDown(int key)
+bool CMenuCredits::KeyDown(int)
 {
 	// final credits can't be intterupted
 	if ( finalCredits )

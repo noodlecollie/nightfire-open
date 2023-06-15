@@ -78,6 +78,7 @@ void CMenuPlayerIntroduceDialog::_Init()
 {
 	onPositive = VoidCb(&CMenuPlayerIntroduceDialog::WriteOrDiscard);
 	SET_EVENT_MULTI(onNegative, {
+		(void)pExtra;
 		CMenuPlayerIntroduceDialog* self = (CMenuPlayerIntroduceDialog*)pSelf;
 		self->Hide();  // hide ourselves first
 		self->pCaller->Hide();  // hide our parent

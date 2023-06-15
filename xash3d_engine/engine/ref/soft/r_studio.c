@@ -32,7 +32,7 @@ typedef struct
 	model_t* model;
 } player_model_t;
 
-cvar_t r_shadows = {(char*)"r_shadows", (char*)"0", 0};
+cvar_t r_shadows = {(char*)"r_shadows", (char*)"0", 0, 0.0f, NULL};
 
 typedef struct sortedmesh_s
 {

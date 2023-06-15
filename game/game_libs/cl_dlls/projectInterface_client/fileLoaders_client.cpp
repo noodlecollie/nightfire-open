@@ -20,7 +20,7 @@ void FileLoader_Client::Free(uint8_t* data)
 	}
 }
 
-char** FileLoader_Client::ListDirectory(const CUtlString& directoryPath, size_t& numFiles, bool gamedirOnly)
+char** FileLoader_Client::ListDirectory(const CUtlString&, size_t&, bool)
 {
 	// We don't currently support this on the client - there is no way to list a directory.
 	// The engine API needs upating!

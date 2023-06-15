@@ -109,7 +109,7 @@ int CEgon::AddToPlayer(CBasePlayer* pPlayer)
 	return FALSE;
 }
 
-void CEgon::Holster(int skiplocal /* = 0 */)
+void CEgon::Holster(int)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 	SendWeaponAnim(EGON_HOLSTER);
@@ -406,6 +406,8 @@ void CEgon::Fire(const Vector& vecOrigSrc, const Vector& vecDir)
 
 void CEgon::UpdateEffect(const Vector& startPoint, const Vector& endPoint, float timeBlend)
 {
+	(void)startPoint;
+
 #ifndef CLIENT_DLL
 	if ( !m_pBeam )
 	{
@@ -433,6 +435,9 @@ void CEgon::UpdateEffect(const Vector& startPoint, const Vector& endPoint, float
 		m_pSprite->pev->frame = 0;
 
 	m_pNoise->SetStartPos(endPoint);
+#else
+	(void)endPoint;
+	(void)timeBlend;
 #endif
 }
 

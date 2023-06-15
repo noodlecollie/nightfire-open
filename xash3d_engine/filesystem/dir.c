@@ -399,6 +399,8 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 	int basepathlength, dirlistindex, resultlistindex;
 	char* basepath;
 
+	(void)caseinsensitive;
+
 	slash = Q_strrchr(pattern, '/');
 	backslash = Q_strrchr(pattern, '\\');
 	colon = Q_strrchr(pattern, ':');
@@ -456,6 +458,8 @@ static int FS_FileTime_DIR(searchpath_t* search, const char* filename)
 static file_t* FS_OpenFile_DIR(searchpath_t* search, const char* filename, const char* mode, int pack_ind)
 {
 	char path[MAX_SYSPATH];
+
+	(void)pack_ind;
 
 	Q_snprintf(path, sizeof(path), "%s%s", search->filename, filename);
 	return FS_SysOpen(path, mode);

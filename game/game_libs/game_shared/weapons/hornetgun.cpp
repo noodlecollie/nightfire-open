@@ -114,7 +114,7 @@ BOOL CHgun::Deploy()
 	return DefaultDeploy("models/v_hgun.mdl", "models/p_hgun.mdl", HGUN_UP, "hive");
 }
 
-void CHgun::Holster(int skiplocal /* = 0 */)
+void CHgun::Holster(int)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 	SendWeaponAnim(HGUN_DOWN);

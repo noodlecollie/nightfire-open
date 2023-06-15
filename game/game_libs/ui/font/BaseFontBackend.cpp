@@ -488,6 +488,8 @@ void CBaseFont::ApplyStrikeout(Size rgbaSz, byte* rgba)
 
 int CBaseFont::DrawCharacter(int ch, Point pt, int charH, const unsigned int color, bool forceAdditive)
 {
+	(void)charH;
+
 	Size charSize;
 	int a, b, c, width;
 

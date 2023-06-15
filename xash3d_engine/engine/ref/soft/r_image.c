@@ -38,7 +38,7 @@ acess to array elem
 */
 image_t* R_GetTexture(unsigned int texnum)
 {
-	ASSERT(texnum >= 0 && texnum < MAX_TEXTURES);
+	ASSERT(texnum < MAX_TEXTURES);
 	return &r_images[texnum];
 }
 

@@ -51,7 +51,7 @@ public:
 	{
 		return m_iNumModes;
 	}
-	const char* GetCellText(int line, int column)
+	const char* GetCellText(int line, int)
 	{
 		return m_szModes[line];
 	}
@@ -248,12 +248,14 @@ void CMenuVidModes::_Init(void)
 	windowed.SetNameAndStatus(L("GameUI_Windowed"), L("GameUI_Windowed"));
 	windowed.SetCoord(360, 620);
 	SET_EVENT_MULTI(windowed.onChanged, {
+		(void)pExtra;
 		CMenuVidModes* parent = pSelf->GetParent(CMenuVidModes);
 		if ( !parent->windowed.bChecked && parent->vidList.GetCurrentIndex() < VID_AUTOMODE_POS )
 			parent->vidList.SetCurrentIndex(VID_AUTOMODE_POS);
 	});
 
 	SET_EVENT_MULTI(vidList.onChanged, {
+		(void)pExtra;
 		CMenuVidModes* parent = pSelf->GetParent(CMenuVidModes);
 		if ( !parent->windowed.bChecked && parent->vidList.GetCurrentIndex() < VID_AUTOMODE_POS )
 			parent->vidList.SetCurrentIndex(VID_AUTOMODE_POS);

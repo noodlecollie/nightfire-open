@@ -105,7 +105,7 @@ BOOL CPython::Deploy()
 	return DefaultDeploy("models/v_357.mdl", "models/p_357.mdl", PYTHON_DRAW, "python", pev->body);
 }
 
-void CPython::Holster(int skiplocal /* = 0 */)
+void CPython::Holster(int)
 {
 	m_fInReload = FALSE;  // cancel any reload in progress.
 

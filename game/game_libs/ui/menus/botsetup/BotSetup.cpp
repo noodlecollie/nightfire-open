@@ -74,7 +74,7 @@ void CMenuBotSetup::_Init()
 	AddItem(background);
 
 	m_BotProfileListModel.SetItemActivatedCallback(
-		[this](int index, const CBotProfileTable::ProfileData& data)
+		[this](int, const CBotProfileTable::ProfileData& data)
 		{
 			m_SelectedProfile = data;
 

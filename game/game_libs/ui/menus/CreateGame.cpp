@@ -106,7 +106,7 @@ private:
 CMenuCreateGame::Begin
 =================
 */
-void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void* pExtra)
+void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 {
 	CMenuCreateGame* menu = (CMenuCreateGame*)pSelf->Parent();
 	int item = menu->mapsList.GetCurrentIndex();
@@ -281,6 +281,7 @@ void CMenuCreateGame::_Init(void)
 	maxClients.bNumbersOnly = true;
 	maxClients.szName = L("GameUI_MaxPlayers");
 	SET_EVENT_MULTI(maxClients.onChanged, {
+		(void)pExtra;
 		CMenuField* self = (CMenuField*)pSelf;
 		const char* buf = self->GetBuffer();
 		if ( buf[0] == 0 )
@@ -293,14 +294,19 @@ void CMenuCreateGame::_Init(void)
 			self->SetBuffer("32");
 	});
 	SET_EVENT_MULTI(maxClients.onCvarGet, {
+		(void)pExtra;
 		CMenuField* self = (CMenuField*)pSelf;
 		const char* buf = self->GetBuffer();
 
 		int players = atoi(buf);
 		if ( players <= 1 )
+		{
 			self->SetBuffer("16");
+		}
 		else if ( players > 32 )
+		{
 			self->SetBuffer("32");
+		}
 	});
 	maxClients.LinkCvar("maxplayers");
 

@@ -334,7 +334,7 @@ int CTripmineGrenade::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker
 	return CGrenade::TakeDamage(pevInflictor, pevAttacker, flDamage, bitsDamageType);
 }
 
-void CTripmineGrenade::Killed(entvars_t* pevAttacker, int iGib)
+void CTripmineGrenade::Killed(entvars_t* pevAttacker, int)
 {
 	pev->takedamage = DAMAGE_NO;
 
@@ -419,7 +419,7 @@ BOOL CTripmine::Deploy()
 	return DefaultDeploy("models/v_tripmine.mdl", "models/p_tripmine.mdl", TRIPMINE_DRAW, "trip");
 }
 
-void CTripmine::Holster(int skiplocal /* = 0 */)
+void CTripmine::Holster(int)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 
