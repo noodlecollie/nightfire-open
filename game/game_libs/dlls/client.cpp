@@ -1213,7 +1213,7 @@ int AddToFullPack(
 		UTIL_UnsetGroupTrace();
 	}
 
-	memset(state, 0, sizeof(*state));
+	*state = entity_state_s {};
 
 	// Assign index so we can track this entity from frame to frame and
 	//  delta from it.

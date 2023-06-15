@@ -353,6 +353,8 @@ static int Host_CalcSleep(void)
 			// fallthrough
 		case HOST_SLEEP:
 			return 20;
+		default:
+			break;
 	}
 
 	return host_sleeptime->value;

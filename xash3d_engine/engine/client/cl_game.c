@@ -3463,9 +3463,8 @@ void GAME_EXPORT NetAPI_SendRequest(
 	if ( request == NETAPI_REQUEST_SERVERLIST )
 	{
 		char fullquery[512];
-		size_t len;
 
-		len = CL_BuildMasterServerScanRequest(fullquery, sizeof(fullquery), false);
+		CL_BuildMasterServerScanRequest(fullquery, sizeof(fullquery), false);
 
 		// make sure that port is specified
 		if ( !nr->resp.remote_address.port )

@@ -100,10 +100,7 @@ FS_Init
 */
 void FS_Init(void)
 {
-	qboolean hasBaseDir = false;
-	qboolean hasGameDir = false;
 	qboolean caseinsensitive = true;
-	int i;
 	string gamedir;
 
 	Cmd_AddRestrictedCommand("fs_rescan", FS_Rescan_f, "rescan filesystem search pathes");
@@ -138,8 +135,6 @@ FS_Shutdown
 */
 void FS_Shutdown(void)
 {
-	int i;
-
 	FS_ShutdownStdio();
 
 	memset(&SI, 0, sizeof(sysinfo_t));

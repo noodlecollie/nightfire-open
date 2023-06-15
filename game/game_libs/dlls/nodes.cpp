@@ -2483,8 +2483,16 @@ int CGraph::FLoadGraph(const char* szMapName)
 		{
 			length -= sizeof(CGraph);
 			if ( length < 0 )
+			{
 				goto ShortFile;
-			memcpy(this, pMemFile, sizeof(CGraph));
+			}
+
+			// This used to be:
+			// memcpy(this, pMemFile, sizeof(CGraph));
+			// but this throws a warning as the object is non-trivial.
+			// Instead, we do this equivalent ugly thing:
+			*this = *reinterpret_cast<const CGraph*>(pMemFile);
+
 			pMemFile += sizeof(CGraph);
 
 			// Set the pointers to zero, just in case we run out of memory.
@@ -2521,8 +2529,15 @@ int CGraph::FLoadGraph(const char* szMapName)
 		//
 		length -= sizeof(CNode) * m_cNodes;
 		if ( length < 0 )
+		{
 			goto ShortFile;
-		memcpy(m_pNodes, pMemFile, sizeof(CNode) * m_cNodes);
+		}
+
+		for ( int index = 0; index < m_cNodes; ++index )
+		{
+			m_pNodes[index] = reinterpret_cast<const CNode*>(pMemFile)[index];
+		}
+
 		pMemFile += sizeof(CNode) * m_cNodes;
 
 		// Malloc for the link pool
@@ -3197,8 +3212,10 @@ void CGraph::BuildRegionTables(void)
 	}
 
 	// Initialize the cache.
-	//
-	memset(m_Cache, 0, sizeof(m_Cache));
+	for ( size_t index = 0; index < CACHE_SIZE; ++index )
+	{
+		m_Cache[index] = CACHE_ENTRY {};
+	}
 }
 
 void CGraph::ComputeStaticRoutingTables(void)

@@ -759,7 +759,7 @@ void SV_ConSay_f(void)
 
 	if ( *p == '"' )
 	{
-		text[Q_strlen(text) - 1] = 0;
+		text[strlen(text) - 1] = 0;
 	}
 
 	Log_Printf("Server say: \"%s\"\n", text);

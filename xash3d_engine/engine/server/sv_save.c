@@ -767,6 +767,7 @@ DumpHashStrings
 debug thing
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static void DumpHashStrings(SAVERESTOREDATA* pSaveData, const char* pMessage)
 {
 	int i, count = 0;
@@ -786,6 +787,7 @@ static void DumpHashStrings(SAVERESTOREDATA* pSaveData, const char* pMessage)
 		Con_Printf("total %i actual %i\n", pSaveData->tokenCount, count);
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============

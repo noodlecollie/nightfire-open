@@ -409,7 +409,7 @@ CMultiManager* CMultiManager::Clone(void)
 	CMultiManager* pMulti = GetClassPtr<CMultiManager>();
 
 	edict_t* pEdict = pMulti->pev->pContainingEntity;
-	memcpy(pMulti->pev, pev, sizeof(*pev));
+	*pMulti->pev = *pev;
 	pMulti->pev->pContainingEntity = pEdict;
 
 	pMulti->pev->spawnflags |= SF_MULTIMAN_CLONE;

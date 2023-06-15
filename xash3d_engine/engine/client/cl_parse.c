@@ -319,12 +319,12 @@ static client entity
 */
 void CL_ParseStaticEntity(sizebuf_t* msg)
 {
-	int i, newnum;
+	int i;
 	entity_state_t from, to;
 	cl_entity_t* ent;
 
 	memset(&from, 0, sizeof(from));
-	newnum = MSG_ReadUBitLong(msg, MAX_ENTITY_BITS);
+	MSG_ReadUBitLong(msg, MAX_ENTITY_BITS);
 	MSG_ReadDeltaEntity(msg, &from, &to, 0, DELTA_STATIC, cl.mtime[0]);
 
 	i = clgame.numStatics;
@@ -404,7 +404,6 @@ void CL_ParseStaticDecal(sizebuf_t* msg)
 {
 	vec3_t origin;
 	int decalIndex, entityIndex, modelIndex;
-	cl_entity_t* ent = NULL;
 	float scale;
 	int flags;
 
@@ -1389,7 +1388,7 @@ collect userinfo from all players
 */
 void CL_UpdateUserinfo(sizebuf_t* msg, qboolean legacy)
 {
-	int slot, id;
+	int slot;
 	qboolean active;
 	player_info_t* player;
 
@@ -1399,7 +1398,10 @@ void CL_UpdateUserinfo(sizebuf_t* msg, qboolean legacy)
 		Host_Error("CL_ParseServerMessage: svc_updateuserinfo >= MAX_CLIENTS\n");
 
 	if ( !legacy )
-		id = MSG_ReadLong(msg);  // unique user ID
+	{
+		MSG_ReadLong(msg);  // unique user ID
+	}
+
 	player = &cl.players[slot];
 	active = MSG_ReadOneBit(msg) ? true : false;
 
@@ -1411,16 +1413,20 @@ void CL_UpdateUserinfo(sizebuf_t* msg, qboolean legacy)
 		player->topcolor = Q_atoi(Info_ValueForKey(player->userinfo, "topcolor"));
 		player->bottomcolor = Q_atoi(Info_ValueForKey(player->userinfo, "bottomcolor"));
 		player->spectator = Q_atoi(Info_ValueForKey(player->userinfo, "*hltv"));
+
 		if ( !legacy )
+		{
 			MSG_ReadBytes(msg, player->hashedcdkey, sizeof(player->hashedcdkey));
+		}
 
 		if ( slot == cl.playernum )
+		{
 			memcpy(&gameui.playerinfo, player, sizeof(player_info_t));
+		}
 	}
 	else
 	{
 		COM_ClearCustomizationList(&player->customdata, true);
-
 		memset(player, 0, sizeof(*player));
 	}
 }
@@ -2038,7 +2044,7 @@ void CL_ParseExec(sizebuf_t* msg)
 
 		COM_FileBase(clgame.mapname, mapname);
 
-		if ( COM_CheckString(mapname) )
+		if ( COM_CheckStringEmpty(mapname) )
 			Cbuf_AddTextf("exec %s.cfg\n", mapname);
 	}
 }

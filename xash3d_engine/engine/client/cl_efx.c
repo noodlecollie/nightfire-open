@@ -413,7 +413,6 @@ void CL_KillDeadBeams(cl_entity_t* pDeadEntity)
 
 	while ( pbeam )
 	{
-		cl_entity_t* beament;
 		pnext = pbeam->next;
 
 		// link into new list.
@@ -2429,6 +2428,8 @@ void CL_ThinkParticle(double frametime, particle_t* p)
 		case pt_clientcustom:
 			if ( p->callback )
 				p->callback(p, frametime);
+			break;
+		default:
 			break;
 	}
 }

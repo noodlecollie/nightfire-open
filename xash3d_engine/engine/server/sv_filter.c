@@ -273,6 +273,7 @@ typedef struct ipfilter_s
 
 static ipfilter_t* ipfilter = NULL;
 
+#ifdef UNUSED_FUNCTIONS
 static void SV_CleanExpiredIPFilters(void)
 {
 	ipfilter_t *f, **back;
@@ -295,11 +296,10 @@ static void SV_CleanExpiredIPFilters(void)
 			back = &f->next;
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 static int SV_FilterToString(char* dest, size_t size, qboolean config, ipfilter_t* f)
 {
-	const char* strformat;
-
 	if ( config )
 	{
 		return Q_snprintf(dest, size, "addip 0 %s/%d\n", NET_AdrToString(f->adr), f->prefixlen);
@@ -503,7 +503,6 @@ static void SV_RemoveIP_f(void)
 	const char* adr = Cmd_Argv(1);
 	qboolean removeAll;
 	ipfilter_t filter;
-	int i;
 
 	if ( Cmd_Argc() != 2 && Cmd_Argc() != 3 )
 	{

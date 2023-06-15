@@ -260,8 +260,6 @@ typedef struct pitchdrift_s
 	double laststop;
 } pitchdrift_t;
 
-static pitchdrift_t pd;
-
 /*
 ===============
 V_DriftPitch

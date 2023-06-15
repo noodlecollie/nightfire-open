@@ -161,7 +161,6 @@ Con_SetColor
 */
 static void Con_SetColor(void)
 {
-	vec3_t color;
 	int r, g, b;
 	int num;
 
@@ -861,8 +860,6 @@ Con_Init
 */
 void Con_Init(void)
 {
-	int i;
-
 	if ( host.type == HOST_DEDICATED )
 		return;  // dedicated server already have console
 
@@ -936,7 +933,6 @@ void Con_Print(const char* txt)
 	static char buf[MAX_PRINT_MSG];
 	qboolean norefresh = false;
 	static int lastlength = 0;
-	static qboolean inupdate;
 	static int bufpos = 0;
 	int c, mask = 0;
 
@@ -1176,11 +1172,13 @@ void Con_ClearField(field_t* edit)
 Field_Set
 ================
 */
+#ifdef UNUSED_FUNCTIONS
 static void Field_Set(field_t* f, const char* string)
 {
 	f->scroll = 0;
 	f->cursor = Q_strncpy(f->buffer, string, MAX_STRING);
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 ================
@@ -1367,7 +1365,7 @@ Field_DrawInputLine
 */
 void Field_DrawInputLine(int x, int y, field_t* edit)
 {
-	int len, cursorChar;
+	int len;
 	int drawLen;
 	int prestep, curPos;
 	char str[MAX_SYSPATH];
@@ -1402,9 +1400,6 @@ void Field_DrawInputLine(int x, int y, field_t* edit)
 
 	memcpy(str, edit->buffer + prestep, drawLen);
 	str[drawLen] = 0;
-
-	// save char for overstrike
-	cursorChar = str[edit->cursor - prestep];
 
 	// draw it
 	CL_DrawString(x, y, str, colorDefault, con.curFont, FONT_DRAW_UTF8);
@@ -1959,10 +1954,10 @@ Draws the console with the solid background
 */
 void Con_DrawSolidConsole(int lines)
 {
-	int i, x, y;
+	int x, y;
 	float fraction;
 	int start;
-	int stringLen, width = 0, charH;
+	int stringLen, charH;
 	string curbuild;
 	byte color[4];
 
@@ -2148,6 +2143,8 @@ void Con_DrawVersion(void)
 		case scrshot_normal:
 		case scrshot_snapshot:
 			draw_version = true;
+			break;
+		default:
 			break;
 	}
 

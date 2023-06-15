@@ -949,12 +949,10 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 		if ( f )
 		{
 			int num_spawnpoints = 0;
-			dheader_t* header;
 			dlump_t entities;
 
 			memset(buf, 0, MAX_SYSPATH);
 			FS_Read(f, buf, MAX_SYSPATH);
-			header = (dheader_t*)buf;
 
 			// check all the lumps and some other errors
 			if ( !Mod_TestBmodelLumps(f, t->filenames[i], buf, true, &entities) )
@@ -992,7 +990,9 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 				while ( (pfile = COM_ParseFile(pfile, token, sizeof(token))) != NULL )
 				{
 					if ( token[0] == '}' && worldspawn )
+					{
 						worldspawn = false;
+					}
 					else if ( !Q_strcmp(token, "message") && worldspawn )
 					{
 						// get the message contents
@@ -1004,14 +1004,19 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 						if ( !Q_strcmp(token, GI->mp_entity) || use_filter )
 							num_spawnpoints++;
 					}
+
 					if ( num_spawnpoints )
+					{
 						break;  // valid map
+					}
 				}
 				Mem_Free(ents);
 			}
 
 			if ( f )
+			{
 				FS_Close(f);
+			}
 
 			if ( num_spawnpoints )
 			{
@@ -1023,16 +1028,24 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	}
 
 	if ( t )
+	{
 		Mem_Free(t);  // free search result
+	}
+
 	size = Q_strlen(buffer);
 
 	if ( !size )
 	{
 		if ( buffer )
+		{
 			Mem_Free(buffer);
+		}
 
 		if ( onlyingamedir )
+		{
 			return Cmd_CheckMapsList_R(fRefresh, false);
+		}
+
 		return false;
 	}
 
@@ -1040,9 +1053,13 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	if ( FS_WriteFile("maps.lst", buffer, size) )
 	{
 		if ( buffer )
+		{
 			Mem_Free(buffer);
+		}
+
 		return true;
 	}
+
 	return false;
 }
 

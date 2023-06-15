@@ -493,7 +493,6 @@ V_PostRender
 */
 void V_PostRender(void)
 {
-	static double oldtime;
 	qboolean draw_2d = false;
 
 	ref.dllFuncs.R_AllowFog(false);
@@ -512,6 +511,8 @@ void V_PostRender(void)
 		case scrshot_normal:
 		case scrshot_snapshot:
 			draw_2d = true;
+			break;
+		default:
 			break;
 	}
 

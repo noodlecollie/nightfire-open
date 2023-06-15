@@ -52,7 +52,7 @@ qboolean Image_CheckDXT3Alpha(dds_t* hdr, byte* fin)
 
 qboolean Image_CheckDXT5Alpha(dds_t* hdr, byte* fin)
 {
-	uint bits, bitmask;
+	uint bits;
 	byte* alphamask;
 	int x, y, i, j;
 
@@ -66,7 +66,6 @@ qboolean Image_CheckDXT5Alpha(dds_t* hdr, byte* fin)
 			alphamask = fin + 2;
 			fin += 8;
 
-			bitmask = ((uint*)fin)[1];
 			fin += 8;
 
 			// last three bytes
@@ -233,9 +232,6 @@ size_t Image_DXTCalcMipmapSize(dds_t* hdr)
 uint Image_DXTCalcSize(const char* name, dds_t* hdr, size_t filesize)
 {
 	size_t buffsize = 0;
-	int w = image.width;
-	int h = image.height;
-	int d = image.depth;
 
 	if ( hdr->dsCaps.dwCaps2 & DDS_CUBEMAP )
 	{
@@ -262,7 +258,9 @@ uint Image_DXTCalcSize(const char* name, dds_t* hdr, size_t filesize)
 	{
 		Con_DPrintf(S_WARN "Image_LoadDDS: (%s) probably corrupted (%zu should be %zu)\n", name, buffsize, filesize);
 		if ( buffsize > filesize )
+		{
 			return false;
+		}
 	}
 
 	return buffsize;

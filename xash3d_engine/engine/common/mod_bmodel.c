@@ -1328,7 +1328,6 @@ static void Mod_CalcSurfaceExtents(msurface_t* surf)
 	int bmins[2], bmaxs[2];
 	int i, j, e, sample_size;
 	mextrasurf_t* info = surf->info;
-	int facenum = surf - loadmodel->surfaces;
 	mtexinfo_t* tex;
 	mvertex_t* v;
 
@@ -1621,7 +1620,6 @@ Mod_SetupHull
 static void Mod_SetupHull(dbspmodel_t* bmod, model_t* mod, poolhandle_t mempool, int headnode, int hullnum)
 {
 	hull_t* hull = &mod->hulls[hullnum];
-	int count;
 
 	// assume no hull
 	hull->firstclipnode = hull->lastclipnode = 0;
@@ -1656,7 +1654,6 @@ static void Mod_SetupHull(dbspmodel_t* bmod, model_t* mod, poolhandle_t mempool,
 		return;  // no hull specified
 
 	CountClipNodes32_r(bmod->clipnodes_out, hull, headnode);
-	count = hull->lastclipnode;
 
 	// fit array to real count
 	hull->clipnodes = (mclipnode_t*)Mem_Malloc(mempool, sizeof(mclipnode_t) * hull->lastclipnode);
@@ -2458,8 +2455,6 @@ static void LoadTextureProperties(texture_t* out, const char* propertiesFilePath
 static void LoadPNGTexture(const dpngtexturepath_t* in, texture_t** out)
 {
 	char nameBuffer[MAX_OSPATH];
-	byte* pngData = NULL;
-	fs_offset_t pngDataSize = 0;
 
 	if ( !StringIsTerminated(in->path, sizeof(in->path)) )
 	{
@@ -3333,7 +3328,8 @@ Mod_LumpLooksLikeEntities
 static int Mod_LumpLooksLikeEntities(const char* lump, const size_t lumplen)
 {
 	// look for "classname" string
-	return Q_memmem(lump, lumplen, "\"classname\"", sizeof("\"classname\"") - 1) != NULL ? 1 : 0;
+	return Q_memmem((const byte*)lump, lumplen, (const byte*)"\"classname\"", sizeof("\"classname\"") - 1) != NULL ? 1
+																												   : 0;
 }
 
 /*
@@ -3377,10 +3373,10 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 			// only relevant for half-life maps
 			else if (
 				!Mod_LumpLooksLikeEntities(
-					mod_base + header->lumps[LUMP_ENTITIES].fileofs,
+					(const char*)(mod_base + header->lumps[LUMP_ENTITIES].fileofs),
 					header->lumps[LUMP_ENTITIES].filelen) &&
 				Mod_LumpLooksLikeEntities(
-					mod_base + header->lumps[LUMP_PLANES].fileofs,
+					(const char*)(mod_base + header->lumps[LUMP_PLANES].fileofs),
 					header->lumps[LUMP_PLANES].filelen) )
 			{
 				// blue-shift swapped lumps
@@ -3475,9 +3471,9 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 		len += ret;
 	}
 
-	if ( COM_CheckString(wadvalue) )
+	if ( COM_CheckStringEmpty(wadvalue) )
 	{
-		wadvalue[Q_strlen(wadvalue) - 2] = '\0';  // kill the last semicolon
+		wadvalue[strlen(wadvalue) - 2] = '\0';  // kill the last semicolon
 		Con_Reportf("Wad files required to run the map: \"%s\"\n", wadvalue);
 	}
 

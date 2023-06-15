@@ -216,7 +216,7 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 	int mode = MSGFILE_NAME;  // searching for a message name
 	int lineNumber, filePos, lastLinePos;
 	client_textmessage_t textMessages[MAX_MESSAGES];
-	int i, nameHeapSize, textHeapSize, messageSize, nameOffset;
+	int i, nameHeapSize, textHeapSize, messageSize;
 	int messageCount, lastNamePos;
 
 	lastNamePos = 0;
@@ -257,7 +257,7 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 			case MSGFILE_TEXT:
 				if ( IsEndOfText(trim) )
 				{
-					int length = Q_strlen(currentName);
+					int length = strlen(currentName);
 
 					// save name on name heap
 					if ( lastNamePos + length > 32768 )

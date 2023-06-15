@@ -48,7 +48,7 @@ namespace CustomGeometry
 			return false;
 		}
 
-		if ( points.Count() > MAX_POINTS_PER_MSG )
+		if ( static_cast<size_t>(points.Count()) > MAX_POINTS_PER_MSG )
 		{
 			ALERT(
 				at_warning,

@@ -267,7 +267,6 @@ SV_SetModel
 void SV_SetModel(edict_t* ent, const char* modelname)
 {
 	char name[MAX_QPATH];
-	qboolean found = false;
 	model_t* mod;
 	int i = 1;
 
@@ -297,7 +296,7 @@ void SV_SetModel(edict_t* ent, const char* modelname)
 		return;
 	}
 
-	if ( COM_CheckString(name) )
+	if ( COM_CheckStringEmpty(name) )
 	{
 		ent->v.model = MAKE_STRING(sv.model_precache[i]);
 		ent->v.modelindex = i;
@@ -312,9 +311,13 @@ void SV_SetModel(edict_t* ent, const char* modelname)
 
 	// set the model size
 	if ( mod && mod->type != mod_studio )
+	{
 		SV_SetMinMaxSize(ent, mod->mins, mod->maxs, true);
+	}
 	else
+	{
 		SV_SetMinMaxSize(ent, vec3_origin, vec3_origin, true);
+	}
 }
 
 /*
@@ -890,7 +893,6 @@ void SV_WriteEntityPatch(const char* filename)
 	int lumpofs = 0, lumplen = 0;
 	byte buf[MAX_TOKEN];  // 1 kb
 	string bspfilename;
-	dheader_t* header;
 	dlump_t entities;
 	file_t* f;
 
@@ -902,7 +904,6 @@ void SV_WriteEntityPatch(const char* filename)
 
 	memset(buf, 0, MAX_TOKEN);
 	FS_Read(f, buf, MAX_TOKEN);
-	header = (dheader_t*)buf;
 
 	// check all the lumps and some other errors
 	if ( !Mod_TestBmodelLumps(f, bspfilename, buf, true, &entities) )
@@ -942,7 +943,6 @@ static char* SV_ReadEntityScript(const char* filename, int* flags)
 	int lumpofs = 0, lumplen = 0;
 	byte buf[MAX_TOKEN];
 	char* ents = NULL;
-	dheader_t* header;
 	dlump_t entities;
 	size_t ft1, ft2;
 	file_t* f;
@@ -958,7 +958,6 @@ static char* SV_ReadEntityScript(const char* filename, int* flags)
 	SetBits(*flags, MAP_IS_EXIST);
 	memset(buf, 0, MAX_TOKEN);
 	FS_Read(f, buf, MAX_TOKEN);
-	header = (dheader_t*)buf;
 
 	// check all the lumps and some other errors
 	if ( !Mod_TestBmodelLumps(f, bspfilename, buf, (host_developer.value) ? false : true, &entities) )
@@ -1011,7 +1010,7 @@ uint SV_MapIsValid(const char* filename, const char* spawn_entity, const char* l
 	char* pfile;
 	char* ents;
 
-	ents = SV_ReadEntityScript(filename, &flags);
+	ents = SV_ReadEntityScript(filename, (int*)&flags);
 
 	if ( ents )
 	{
@@ -3013,7 +3012,7 @@ void GAME_EXPORT pfnWriteString(const char* src)
 		{
 			Con_Printf(S_ERROR "pfnWriteString: exceeds %i symbols\n", len);
 			*dst = '\0';  // string end (not included in count)
-			len = Q_strlen(string) + 1;
+			len = strlen(string) + 1;
 			break;
 		}
 	}
@@ -3092,6 +3091,8 @@ static void GAME_EXPORT pfnAlertMessage(ALERT_TYPE type, char* szFmt, ...)
 			break;
 		case at_error:
 			Con_Printf(S_ERROR "%s", buffer);
+			break;
+		default:
 			break;
 	}
 }
@@ -3326,9 +3327,9 @@ void SV_AllocStringPool(void)
 #endif
 
 	str64.pstringarray = ptr;
-	str64.pstringarraystatic = (byte*)ptr + str64.maxstringarray;
+	str64.pstringarraystatic = (char*)ptr + str64.maxstringarray;
 	str64.pstringbase = str64.poldstringbase = ptr;
-	str64.plast = (byte*)ptr + 1;
+	str64.plast = (char*)ptr + 1;
 	svgame.globals->pStringBase = ptr;
 #else
 	svgame.stringspool = Mem_AllocPool("Server Strings");

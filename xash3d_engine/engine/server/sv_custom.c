@@ -185,10 +185,14 @@ void SV_ParseConsistencyResponse(sv_client_t* cl, sizebuf_t* msg)
 		char dropmessage[256];
 
 		dropmessage[0] = 0;
+
 		if ( svgame.dllFuncs.pfnInconsistentFile(cl->edict, sv.resources[badresindex - 1].szFileName, dropmessage) )
 		{
-			if ( COM_CheckString(dropmessage) )
+			if ( COM_CheckStringEmpty(dropmessage) )
+			{
 				SV_ClientPrintf(cl, "%s", dropmessage);
+			}
+
 			SV_DropClient(cl, false);
 		}
 	}

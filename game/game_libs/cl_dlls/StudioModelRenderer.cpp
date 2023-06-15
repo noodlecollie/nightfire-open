@@ -1031,7 +1031,6 @@ void CStudioModelRenderer::StudioMergeBones(model_t* m_pSubModel)
 {
 	int i, j;
 	double f;
-	int do_hunt = true;
 
 	mstudiobone_t* pbones;
 	mstudioseqdesc_t* pseqdesc;
@@ -1198,7 +1197,10 @@ int CStudioModelRenderer::StudioDrawModel(int flags)
 		{
 			cl_entity_t* ent = gEngfuncs.GetEntityByIndex(m_pCurrentEntity->index);
 
-			memcpy(ent->attachment, m_pCurrentEntity->attachment, sizeof(ent->attachment));
+			for ( size_t index = 0; index < CL_ENTITY_MAX_ATTACHMENTS; ++index )
+			{
+				ent->attachment[index] = m_pCurrentEntity->attachment[index];
+			}
 		}
 	}
 
@@ -1492,7 +1494,10 @@ int CStudioModelRenderer::StudioDrawPlayer(int flags, entity_state_t* pplayer)
 		{
 			cl_entity_t* ent = gEngfuncs.GetEntityByIndex(m_pCurrentEntity->index);
 
-			memcpy(ent->attachment, m_pCurrentEntity->attachment, sizeof(ent->attachment));
+			for ( size_t index = 0; index < CL_ENTITY_MAX_ATTACHMENTS; ++index )
+			{
+				ent->attachment[index] = m_pCurrentEntity->attachment[index];
+			}
 		}
 	}
 

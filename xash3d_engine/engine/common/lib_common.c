@@ -43,7 +43,10 @@ void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 	char** funcs = NULL;
 	size_t numfuncs, i;
 	void* f = NULL;
+
+#if _MSC_VER
 	const char* func = NULL;
+#endif
 
 #ifdef XASH_ALLOW_SAVERESTORE_OFFSETS
 	if ( !memcmp(pName, "ofs:", 4) )
@@ -73,7 +76,9 @@ void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 	func = COM_GetPlatformNeutralName(pName);
 
 	if ( func )
+	{
 		return COM_FunctionFromName(hInstance, func);
+	}
 #endif
 
 	return COM_FunctionFromName(hInstance, pName);

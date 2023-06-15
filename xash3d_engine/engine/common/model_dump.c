@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "bsp/generic/viscompress.h"
 #include "mathlib.h"
+#include "eiface.h"
 #include <stdint.h>
 
 // For utility:
@@ -976,7 +977,6 @@ static void WriteBoundsToFile(file_t* file, const void* item, qboolean isLeaf, s
 {
 	const mnode_t* parent = isLeaf ? ((const mleaf_t*)item)->parent : ((const mnode_t*)item)->parent;
 	const float* bounds = isLeaf ? ((const mleaf_t*)item)->minmaxs : ((const mnode_t*)item)->minmaxs;
-	size_t baseVertex = vertexCount ? *vertexCount : 0;
 	size_t corner;
 
 	for ( corner = 0; corner < 8; ++corner )
@@ -1006,6 +1006,30 @@ static void WriteBoundsToFile(file_t* file, const void* item, qboolean isLeaf, s
 		// We reached the root - write all lines.
 		WriteLinesForBounds(file, *vertexCount);
 	}
+}
+
+const char* DumpModelDataFlagString(size_t index)
+{
+	static const char* STRINGS[] = {
+		"general",
+		"planes",
+		"nodes",
+		"leaves",
+		"vertices",
+		"edges",
+		"surfedges",
+		"marksurfaces",
+		"texinfos",
+		"surfaces",
+		"clipnodes",
+		"hulls",
+		"textures",
+		"entities",
+		"submodels",
+		"other",
+	};
+
+	return index < ARRAYSIZE(STRINGS) ? STRINGS[index] : NULL;
 }
 
 void DumpLeafBoundsAsWavefrontObj(const char* fileName, const model_t* model, const mleaf_t* leaf, qboolean nodeBounds)

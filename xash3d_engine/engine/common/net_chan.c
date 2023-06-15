@@ -544,7 +544,7 @@ void Netchan_OutOfBandPrint(int net_socket, netadr_t adr, const char* format, ..
 	Q_vsnprintf(string, sizeof(string) - 1, format, argptr);
 	va_end(argptr);
 
-	Netchan_OutOfBand(net_socket, adr, Q_strlen(string), (byte*)string);
+	Netchan_OutOfBand(net_socket, adr, strlen(string), (byte*)string);
 }
 
 /*
@@ -1211,7 +1211,7 @@ qboolean Netchan_CopyFileFragments(netchan_t* chan, sizebuf_t* msg)
 
 	Q_strncpy(filename, MSG_ReadString(msg), sizeof(filename));
 
-	if ( !COM_CheckString(filename) )
+	if ( !COM_CheckStringEmpty(filename) )
 	{
 		Con_Printf(S_ERROR "file fragment received with no filename\nFlushing input queue\n");
 		Netchan_FlushIncoming(chan, FRAG_FILE_STREAM);
@@ -1774,7 +1774,7 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 	int frag_offset[MAX_STREAMS] = {0, 0};
 	int frag_length[MAX_STREAMS] = {0, 0};
 	qboolean message_contains_fragments;
-	int i, qport, statId;
+	int i, statId;
 
 	if ( !CL_IsPlaybackDemo() && !NET_CompareAdr(net_from, chan->remote_address) )
 		return false;
@@ -1786,7 +1786,9 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 
 	// read the qport if we are a server
 	if ( chan->sock == NS_SERVER )
-		qport = MSG_ReadShort(msg);
+	{
+		MSG_ReadShort(msg);
+	}
 
 	reliable_message = sequence >> 31;
 	reliable_ack = sequence_ack >> 31;
@@ -1884,7 +1886,7 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 	{
 		for ( i = 0; i < MAX_STREAMS; i++ )
 		{
-			int j, inbufferid;
+			int j;
 			int intotalbuffers;
 			int oldpos, curbit;
 			int numbitstoremove;
@@ -1893,7 +1895,6 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 			if ( !frag_message[i] )
 				continue;
 
-			inbufferid = FRAG_GETID(fragid[i]);
 			intotalbuffers = FRAG_GETCOUNT(fragid[i]);
 
 			if ( fragid[i] != 0 )

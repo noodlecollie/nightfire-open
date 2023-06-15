@@ -77,12 +77,14 @@ static uint BloomFilter_Weight(bloomfilter_t value)
 	return weight;
 }
 
+#ifdef UNUSED_FUNCTIONS
 static qboolean BloomFilter_ContainsString(bloomfilter_t filter, const char* str)
 {
 	bloomfilter_t value = BloomFilter_ProcessStr(str);
 
 	return (filter & value) == value;
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============================================

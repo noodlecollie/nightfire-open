@@ -267,11 +267,12 @@ qboolean Sound_ResampleInternal(wavdata_t* sc, int inrate, int inwidth, int outr
 qboolean Sound_Process(wavdata_t** wav, int rate, int width, uint flags)
 {
 	wavdata_t* snd = *wav;
-	qboolean result = true;
 
 	// check for buffers
 	if ( !snd || !snd->buffer )
+	{
 		return false;
+	}
 
 	if ( (flags & SOUND_RESAMPLE) && (width > 0 || rate > 0) )
 	{
@@ -279,11 +280,6 @@ qboolean Sound_Process(wavdata_t** wav, int rate, int width, uint flags)
 		{
 			Mem_Free(snd->buffer);  // free original image buffer
 			snd->buffer = Sound_Copy(snd->size);  // unzone buffer (don't touch image.tempbuffer)
-		}
-		else
-		{
-			// not resampled
-			result = false;
 		}
 	}
 

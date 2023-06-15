@@ -285,7 +285,7 @@ static unsigned int GetDumpModelFlagFromString(const char* arg)
 
 	for ( index = 0; index < DumpModelDataFlagCount; ++index )
 	{
-		if ( Q_stricmp(arg, DumpModelDataFlagStrings[index]) == 0 )
+		if ( Q_stricmp(arg, DumpModelDataFlagString(index)) == 0 )
 		{
 			return 1 << index;
 		}
@@ -300,7 +300,7 @@ static void PrintAllDumpModelArgs(void)
 
 	for ( index = 0; index < DumpModelDataFlagCount; ++index )
 	{
-		Msg("%s\n", DumpModelDataFlagStrings[index]);
+		Msg("%s\n", DumpModelDataFlagString(index));
 	}
 }
 
@@ -684,7 +684,6 @@ static void CL_Debug_LeafInfo(void)
 
 static void PrintLeafPVS(const mleaf_t* leaf)
 {
-	const mnode_t* node = NULL;
 	byte* uncompressed = NULL;
 	size_t uncompressedMaxBytes = 0;
 
@@ -1201,19 +1200,26 @@ qboolean CL_ProcessShowTexturesCmds(usercmd_t* cmd)
 {
 	static int oldbuttons;
 	int changed;
-	int pressed, released;
+	int released;
 
 	if ( !gl_showtextures->value || CL_IsDevOverviewMode() )
+	{
 		return false;
+	}
 
 	changed = (oldbuttons ^ cmd->buttons);
-	pressed = changed & cmd->buttons;
 	released = changed & (~cmd->buttons);
 
 	if ( released & (IN_RIGHT | IN_MOVERIGHT) )
+	{
 		Cvar_SetValue("r_showtextures", gl_showtextures->value + 1);
+	}
+
 	if ( released & (IN_LEFT | IN_MOVELEFT) )
+	{
 		Cvar_SetValue("r_showtextures", Q_max(1, gl_showtextures->value - 1));
+	}
+
 	oldbuttons = cmd->buttons;
 
 	return true;
@@ -1498,20 +1504,19 @@ void CL_WritePacket(void)
 
 	if ( send_command )
 	{
-		int outgoing_sequence;
-
 		if ( cl_cmdrate->value > 0 )  // clamped between 10 and 100 fps
+		{
 			cls.nextcmdtime = host.realtime + bound(0.1f, (1.0f / cl_cmdrate->value), 0.01f);
+		}
 		else
+		{
 			cls.nextcmdtime = host.realtime;  // always able to send right away
+		}
 
 		if ( cls.lastoutgoingcommand == -1 )
 		{
-			outgoing_sequence = cls.netchan.outgoing_sequence;
 			cls.lastoutgoingcommand = cls.netchan.outgoing_sequence;
 		}
-		else
-			outgoing_sequence = cls.lastoutgoingcommand + 1;
 
 		// begin a client move command
 		MSG_BeginClientCmd(&buf, clc_move);
@@ -2085,7 +2090,7 @@ void CL_Rcon_f(void)
 			to.port = MSG_BigShort(PORT_SERVER);
 	}
 
-	NET_SendPacket(NS_CLIENT, Q_strlen(message) + 1, message, to);
+	NET_SendPacket(NS_CLIENT, strlen(message) + 1, message, to);
 }
 
 /*
@@ -2437,8 +2442,6 @@ all the keys and values must be ends with ^7
 */
 void CL_FixupColorStringsForInfoString(const char* in, char* out)
 {
-	qboolean hasPrefix = false;
-	qboolean endOfKeyVal = false;
 	int color = 7;
 	int count = 0;
 
@@ -2503,7 +2506,6 @@ void CL_ParseStatusMessage(netadr_t from, sizebuf_t* msg)
 {
 	static char infostring[MAX_INFO_STRING + 8];
 	char* s = MSG_ReadString(msg);
-	int i;
 	const char* magic = ": wrong version\n";
 	size_t len = Q_strlen(s), magiclen = Q_strlen(magic);
 
@@ -2692,7 +2694,6 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	const char* c;
 	char buf[MAX_SYSPATH];
 	int len = sizeof(buf);
-	int dataoffset = 0;
 	netadr_t servadr;
 
 	MSG_Clear(msg);

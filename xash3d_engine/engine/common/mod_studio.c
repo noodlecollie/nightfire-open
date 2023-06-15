@@ -691,14 +691,14 @@ StudioGetAnim
 */
 void* R_StudioGetAnim(studiohdr_t* m_pStudioHeader, model_t* m_pSubModel, mstudioseqdesc_t* pseqdesc)
 {
-	mstudioseqgroup_t* pseqgroup;
 	cache_user_t* paSequences;
 	fs_offset_t filesize;
 	byte* buf;
 
-	pseqgroup = (mstudioseqgroup_t*)((byte*)m_pStudioHeader + m_pStudioHeader->seqgroupindex) + pseqdesc->seqgroup;
 	if ( pseqdesc->seqgroup == 0 )
+	{
 		return ((byte*)m_pStudioHeader + pseqdesc->animindex);
+	}
 
 	paSequences = (cache_user_t*)m_pSubModel->submodels;
 
@@ -1011,7 +1011,6 @@ void Mod_StudioComputeBounds(void* buffer, vec3_t mins, vec3_t maxs, qboolean ig
 	studiohdr_t* pstudiohdr;
 	mstudiobodyparts_t* pbodypart;
 	mstudiomodel_t* m_pSubModel;
-	mstudioseqgroup_t* pseqgroup;
 	mstudioseqdesc_t* pseqdesc;
 	mstudiobone_t* pbones;
 	mstudioanim_t* panim;
@@ -1054,12 +1053,13 @@ void Mod_StudioComputeBounds(void* buffer, vec3_t mins, vec3_t maxs, qboolean ig
 	for ( i = 0; i < numseq; i++ )
 	{
 		pseqdesc = (mstudioseqdesc_t*)((byte*)pstudiohdr + pstudiohdr->seqindex) + i;
-		pseqgroup = (mstudioseqgroup_t*)((byte*)pstudiohdr + pstudiohdr->seqgroupindex) + pseqdesc->seqgroup;
 
-		if ( pseqdesc->seqgroup == 0 )
-			panim = (mstudioanim_t*)((byte*)pstudiohdr + pseqdesc->animindex);
-		else
+		if ( pseqdesc->seqgroup != 0 )
+		{
 			continue;
+		}
+
+		panim = (mstudioanim_t*)((byte*)pstudiohdr + pseqdesc->animindex);
 
 		for ( j = 0; j < pstudiohdr->numbones; j++ )
 		{

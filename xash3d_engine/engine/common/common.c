@@ -571,7 +571,9 @@ int GAME_EXPORT COM_ExpandFilename(const char* fileName, char* nameOutBuffer, in
 	char result[MAX_SYSPATH];
 
 	if ( !COM_CheckString(fileName) || !nameOutBuffer || nameOutBufferSize <= 0 )
+	{
 		return 0;
+	}
 
 	// filename examples:
 	// media\sierra.avi - D:\Xash3D\valve\media\sierra.avi
@@ -581,8 +583,10 @@ int GAME_EXPORT COM_ExpandFilename(const char* fileName, char* nameOutBuffer, in
 		Q_sprintf(result, "%s/%s", host.rootdir, path);
 
 		// check for enough room
-		if ( Q_strlen(result) > nameOutBufferSize )
+		if ( strlen(result) > nameOutBufferSize )
+		{
 			return 0;
+		}
 
 		Q_strncpy(nameOutBuffer, result, nameOutBufferSize);
 		return 1;

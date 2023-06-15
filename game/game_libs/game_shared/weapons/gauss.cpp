@@ -638,23 +638,33 @@ void CGauss::WeaponIdle(void)
 	}
 	else
 	{
+#ifndef CLIENT_DLL
 		int iAnim;
+#endif
 		float flRand = RANDOM_FLOAT(0, 1);
+
 		if ( flRand <= 0.5 )
 		{
+#ifndef CLIENT_DLL
 			iAnim = GAUSS_IDLE;
+#endif
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10, 15);
 		}
 		else if ( flRand <= 0.75 )
 		{
+#ifndef CLIENT_DLL
 			iAnim = GAUSS_IDLE2;
+#endif
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10, 15);
 		}
 		else
 		{
+#ifndef CLIENT_DLL
 			iAnim = GAUSS_FIDGET;
+#endif
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 3;
 		}
+
 #ifndef CLIENT_DLL
 		SendWeaponAnim(iAnim);
 #endif

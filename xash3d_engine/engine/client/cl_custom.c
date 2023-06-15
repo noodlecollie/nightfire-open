@@ -29,6 +29,8 @@ qboolean CL_CheckFile(sizebuf_t* msg, resource_t* pResource)
 			if ( pResource->szFileName[0] == '*' )
 				return true;
 			break;
+		default:
+			break;
 	}
 
 	// resource was missed on server

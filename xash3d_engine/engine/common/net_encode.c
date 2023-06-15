@@ -1062,23 +1062,31 @@ int Delta_TestBaseline(entity_state_t* from, entity_state_t* to, qboolean player
 	delta_info_t* dt = NULL;
 	delta_t* pField;
 	int i, countBits;
-	int numChanges = 0;
 
 	countBits = MAX_ENTITY_BITS + 2;
 
 	if ( to == NULL )
 	{
 		if ( from == NULL )
+		{
 			return 0;
+		}
+
 		return countBits;
 	}
 
 	if ( FBitSet(to->entityType, ENTITY_BEAM) )
+	{
 		dt = Delta_FindStruct("custom_entity_state_t");
+	}
 	else if ( player )
+	{
 		dt = Delta_FindStruct("entity_state_player_t");
+	}
 	else
+	{
 		dt = Delta_FindStruct("entity_state_t");
+	}
 
 	Assert(dt && dt->bInitialized);
 
@@ -1100,9 +1108,13 @@ int Delta_TestBaseline(entity_state_t* from, entity_state_t* to, qboolean player
 		{
 			// strings are handled difference
 			if ( FBitSet(pField->flags, DT_STRING) )
+			{
 				countBits += Q_strlen((char*)((byte*)to + pField->offset)) * 8;
+			}
 			else
+			{
 				countBits += pField->bits;
+			}
 		}
 	}
 
@@ -1250,7 +1262,7 @@ static void Delta_CopyField(delta_t* pField, void* from, void* to, double timeba
 	}
 	else if ( FBitSet(pField->flags, DT_STRING) )
 	{
-		Q_strncpy(to_field, from_field, pField->size);
+		Q_strncpy((char*)to_field, (const char*)from_field, pField->size);
 	}
 	else
 	{

@@ -826,7 +826,7 @@ void SV_AddToMaster(netadr_t from, sizebuf_t* msg)
 	Info_SetValueForKey(s, "product", GI->gamefolder, len);  // product? Where is the difference with gamedir?
 	Info_SetValueForKey(s, "nat", sv_nat.string, len);  // Server running under NAT, use reverse connection
 
-	NET_SendPacket(NS_SERVER, Q_strlen(s), s, from);
+	NET_SendPacket(NS_SERVER, strlen(s), s, from);
 }
 
 /*

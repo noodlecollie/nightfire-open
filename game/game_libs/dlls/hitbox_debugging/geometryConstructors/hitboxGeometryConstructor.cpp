@@ -45,8 +45,6 @@ void CHitboxGeometryConstructor::CreateGeometryFromPoints(
 	const CustomGeometry::GeometryItemPtr_t& geom,
 	const HitboxPoints& points) const
 {
-	uint8_t baseIndex = geom->GetPointCount();
-
 	// Bottom rect
 	CreateRectFromPoints(geom, points, 0);
 

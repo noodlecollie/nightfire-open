@@ -455,12 +455,8 @@ Activity CBaseMonster::GetDeathActivity(void)
 Activity CBaseMonster::GetSmallFlinchActivity(void)
 {
 	Activity flinchActivity;
-	BOOL fTriedDirection;
-	// float		flDot;
 
-	fTriedDirection = FALSE;
 	UTIL_MakeVectors(pev->angles);
-	// flDot = DotProduct( gpGlobals->v_forward, g_vecAttackDir * -1 );
 
 	switch ( m_LastHitGroup )
 	{
@@ -1557,7 +1553,6 @@ Vector CBaseEntity::FireBulletsPlayer(
 	entvars_t* pevAttacker,
 	int shared_rand)
 {
-	static int tracerCount;
 	TraceResult tr;
 	Vector vecRight = gpGlobals->v_right;
 	Vector vecUp = gpGlobals->v_up;

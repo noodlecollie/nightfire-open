@@ -223,7 +223,11 @@ void CMultiSource::Register(void)
 	edict_t* pentTarget = NULL;
 
 	m_iTotal = 0;
-	memset(m_rgEntities, 0, MS_MAX_TARGETS * sizeof(EHANDLE));
+
+	for ( size_t index = 0; index < MS_MAX_TARGETS; ++index )
+	{
+		m_rgEntities[index] = 0;
+	}
 
 	SetThink(&CBaseEntity::SUB_DoNothing);
 

@@ -342,7 +342,7 @@ void S_StreamSoundTrack(void)
 		}
 
 		// read audio stream
-		r = SCR_GetAudioChunk(raw, fileBytes);
+		r = SCR_GetAudioChunk((char*)raw, fileBytes);
 
 		if ( r < fileBytes )
 		{

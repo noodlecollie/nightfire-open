@@ -383,6 +383,7 @@ Sequence_ValidateNameValueString
 
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static void Sequence_ValidateNameValueString(char* token)
 {
 	char* scan;
@@ -398,6 +399,7 @@ static void Sequence_ValidateNameValueString(char* token)
 				*scan);
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -1017,6 +1019,7 @@ Sequence_CalcEntryDuration
 
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static float Sequence_CalcEntryDuration(sequenceEntry_s* entry)
 {
 	float duration;
@@ -1029,6 +1032,7 @@ static float Sequence_CalcEntryDuration(sequenceEntry_s* entry)
 
 	return duration;
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -1036,6 +1040,7 @@ Sequence_DoesEntryContainInfiniteLoop
 
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static qboolean Sequence_DoesEntryContainInfiniteLoop(sequenceEntry_s* entry)
 {
 	sequenceCommandLine_s* cmd;
@@ -1048,6 +1053,7 @@ static qboolean Sequence_DoesEntryContainInfiniteLoop(sequenceEntry_s* entry)
 
 	return false;
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============

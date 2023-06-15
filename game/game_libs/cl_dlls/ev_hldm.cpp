@@ -86,7 +86,7 @@ void EV_HLDM_Init()
 
 			FOR_EACH_VEC(atts.AttackModes, attackModeIndex)
 			{
-				if ( attackModeIndex >= WeaponAtts::WACollection::MAX_ATTACK_MODES )
+				if ( static_cast<size_t>(attackModeIndex) >= WeaponAtts::WACollection::MAX_ATTACK_MODES )
 				{
 					break;
 				}

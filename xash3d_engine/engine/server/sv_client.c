@@ -896,7 +896,7 @@ void SV_Info(netadr_t from, int protocolVersion)
 
 		// write host last so we can try to cut off too long hostnames
 		// TODO: value size limit for infostrings
-		remaining = sizeof(s) - Q_strlen(s) - sizeof("\\host\\") - 1;
+		remaining = sizeof(s) - strlen(s) - sizeof("\\host\\") - 1;
 		if ( remaining < 0 )
 		{
 			// should never happen?
@@ -1252,7 +1252,7 @@ void SV_FullClientUpdate(sv_client_t* cl, sizebuf_t* msg)
 
 		MD5Init(&ctx);
 		MD5Update(&ctx, (byte*)cl->hashedcdkey, sizeof(cl->hashedcdkey));
-		MD5Final(digest, &ctx);
+		MD5Final((byte*)digest, &ctx);
 
 		MSG_WriteBytes(msg, digest, sizeof(digest));
 	}
@@ -3088,7 +3088,6 @@ void SV_TSourceEngineQuery(netadr_t from)
 	// A2S_INFO
 	char answer[1024] = "";
 	int count, bots;
-	int index;
 	sizebuf_t buf;
 
 	SV_GetPlayerCount(&count, &bots);
