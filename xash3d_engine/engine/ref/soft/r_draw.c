@@ -383,6 +383,7 @@ R_DrawStretchRaw(float x, float y, float w, float h, int cols, int rows, const b
 	(void)h;
 	(void)cols;
 	(void)rows;
+	(void)data;
 	(void)dirty;
 
 	// pglDisable( GL_BLEND );

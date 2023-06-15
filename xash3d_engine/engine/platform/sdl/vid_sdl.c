@@ -638,6 +638,10 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 	char iconpath[MAX_STRING];
 	int xpos, ypos;
 
+#if XASH_WIN32
+	const char* localIcoPath;
+#endif
+
 	if ( vid_highdpi->value )
 		wndFlags |= SDL_WINDOW_ALLOW_HIGHDPI;
 	Q_strncpy(wndname, GI->title, sizeof(wndname));
