@@ -77,7 +77,7 @@ int ExtractBbox(void* pmodel, int sequence, float* mins, float* maxs)
 	return 1;
 }
 
-int LookupActivity(void* pmodel, entvars_t* pev, int activity)
+int LookupActivity(void* pmodel, entvars_t*, int activity)
 {
 	studiohdr_t* pstudiohdr;
 
@@ -104,7 +104,7 @@ int LookupActivity(void* pmodel, entvars_t* pev, int activity)
 	return seq;
 }
 
-int LookupActivityHeaviest(void* pmodel, entvars_t* pev, int activity)
+int LookupActivityHeaviest(void* pmodel, entvars_t*, int activity)
 {
 	studiohdr_t* pstudiohdr;
 

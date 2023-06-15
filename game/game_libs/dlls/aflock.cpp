@@ -280,7 +280,7 @@ void CFlockingFlyer::MakeSound(void)
 
 //=========================================================
 //=========================================================
-void CFlockingFlyer::Killed(entvars_t* pevAttacker, int iGib)
+void CFlockingFlyer::Killed(entvars_t*, int)
 {
 	CFlockingFlyer* pSquad;
 

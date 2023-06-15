@@ -141,7 +141,7 @@ void FWGSInput::IN_ClientLookEvent(float relyaw, float relpitch)
 }
 
 // Rotate camera and add move values to usercmd
-void FWGSInput::IN_Move(float frametime, usercmd_t* cmd)
+void FWGSInput::IN_Move(float, usercmd_t* cmd)
 {
 	Vector viewangles;
 	bool fLadder = false;

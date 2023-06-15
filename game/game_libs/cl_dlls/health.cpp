@@ -97,7 +97,7 @@ int CHudHealth::VidInit(void)
 	return 1;
 }
 
-int CHudHealth::MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
+int CHudHealth::MsgFunc_Health(const char*, int iSize, void* pbuf)
 {
 	// TODO: update local health data
 	BEGIN_READ(pbuf, iSize);
@@ -115,7 +115,7 @@ int CHudHealth::MsgFunc_Health(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudHealth::MsgFunc_Damage(const char* pszName, int iSize, void* pbuf)
+int CHudHealth::MsgFunc_Damage(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -296,7 +296,7 @@ void CHudHealth::CalcDamageDirection(vec3_t vecFrom)
 	}
 }
 
-int CHudHealth::DrawPain(float flTime)
+int CHudHealth::DrawPain(float)
 {
 	if ( !(m_fAttackFront || m_fAttackRear || m_fAttackLeft || m_fAttackRight) )
 		return 1;

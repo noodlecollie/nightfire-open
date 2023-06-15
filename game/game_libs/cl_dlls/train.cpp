@@ -44,7 +44,7 @@ int CHudTrain::VidInit(void)
 	return 1;
 }
 
-int CHudTrain::Draw(float fTime)
+int CHudTrain::Draw(float)
 {
 	if ( !m_hSprite )
 		m_hSprite = LoadSprite("sprites/%d_train.spr");
@@ -66,7 +66,7 @@ int CHudTrain::Draw(float fTime)
 	return 1;
 }
 
-int CHudTrain::MsgFunc_Train(const char* pszName, int iSize, void* pbuf)
+int CHudTrain::MsgFunc_Train(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 

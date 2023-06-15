@@ -88,7 +88,7 @@ void CEnvGlobal::Spawn(void)
 	}
 }
 
-void CEnvGlobal::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CEnvGlobal::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	GLOBALESTATE oldState = gGlobalState.EntityGetState(m_globalstate);
 	GLOBALESTATE newState;
@@ -163,7 +163,7 @@ void CMultiSource::Spawn()
 	SetThink(&CMultiSource::Register);
 }
 
-void CMultiSource::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMultiSource::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float)
 {
 	int i = 0;
 
@@ -409,7 +409,7 @@ void CBaseButton::KeyValue(KeyValueData* pkvd)
 //
 // ButtonShot
 //
-int CBaseButton::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CBaseButton::TakeDamage(entvars_t*, entvars_t* pevAttacker, float, int)
 {
 	BUTTON_CODE code = ButtonResponseToTouch();
 
@@ -646,7 +646,7 @@ void CBaseButton::ButtonSpark(void)
 //
 // Button's Use function
 //
-void CBaseButton::ButtonUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBaseButton::ButtonUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	// Ignore touches if button is moving, or pushed-in and waiting to auto-come-out.
 	// UNDONE: Should this use ButtonResponseToTouch() too?
@@ -1042,7 +1042,7 @@ void CMomentaryRotButton::PlaySound(void)
 // BUGBUG: This design causes a latentcy.  When the button is retriggered, the first impulse
 // will send the target in the wrong direction because the parameter is calculated based on the
 // current, not future position.
-void CMomentaryRotButton::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMomentaryRotButton::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	pev->ideal_yaw = CBaseToggle::AxisDelta(pev->spawnflags, pev->angles, m_start) / m_flMoveDistance;
 
@@ -1264,14 +1264,14 @@ void EXPORT CEnvSpark::SparkThink(void)
 	DoSpark(pev, pev->origin);
 }
 
-void EXPORT CEnvSpark::SparkStart(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void EXPORT CEnvSpark::SparkStart(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetUse(&CEnvSpark::SparkStop);
 	SetThink(&CEnvSpark::SparkThink);
 	pev->nextthink = gpGlobals->time + 0.1 + RANDOM_FLOAT(0, m_flDelay);
 }
 
-void EXPORT CEnvSpark::SparkStop(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void EXPORT CEnvSpark::SparkStop(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetUse(&CEnvSpark::SparkStart);
 	SetThink(NULL);
@@ -1302,7 +1302,7 @@ void CButtonTarget::Spawn(void)
 		pev->frame = 1;
 }
 
-void CButtonTarget::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CButtonTarget::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, (int)pev->frame) )
 		return;
@@ -1323,7 +1323,7 @@ int CButtonTarget::ObjectCaps(void)
 		return caps;
 }
 
-int CButtonTarget::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CButtonTarget::TakeDamage(entvars_t*, entvars_t* pevAttacker, float, int)
 {
 	Use(Instance(pevAttacker), this, USE_TOGGLE, 0);
 

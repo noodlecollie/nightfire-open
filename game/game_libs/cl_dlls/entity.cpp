@@ -590,7 +590,7 @@ void DLLEXPORT HUD_StudioEvent(const struct mstudioevent_s* event, const struct 
 }
 
 const char*
-GetShellTextureImpactSound(ShellType shellType, const Vector& begin, const Vector& end, const pmtrace_t& trace)
+GetShellTextureImpactSound(ShellType shellType, const Vector& begin, const Vector& end, const pmtrace_t&)
 {
 	texture_t* texture = gEngfuncs.pEventAPI->EV_TraceTexture(0, begin, end);
 	SurfaceProp surfaceProp = texture ? static_cast<SurfaceProp>(texture->surfaceType) : SurfaceProp_None;
@@ -1104,8 +1104,8 @@ Indices must start at 1, not zero.
 cl_entity_t DLLEXPORT* HUD_GetUserEntity(int index)
 {
 #if defined(BEAM_TEST)
-	// None by default, you would return a valic pointer if you create a client side
-	//  beam and attach it to a client side entity.
+	// None by default, you would return a valid pointer if you create a client side
+	// beam and attach it to a client side entity.
 	if ( index > 0 && index <= 1 )
 	{
 		return &beams[index];
@@ -1115,6 +1115,7 @@ cl_entity_t DLLEXPORT* HUD_GetUserEntity(int index)
 		return NULL;
 	}
 #else
+	(void)index;
 	return NULL;
 #endif
 }

@@ -60,7 +60,7 @@ void CHudMOTD::Reset(void)
 #define ROW_GAP 13
 #define ROW_RANGE_MIN 30
 #define ROW_RANGE_MAX (ScreenHeight - 100)
-int CHudMOTD::Draw(float fTime)
+int CHudMOTD::Draw(float)
 {
 	gHUD.m_iNoConsolePrint &= ~(1 << 1);
 
@@ -160,7 +160,7 @@ int CHudMOTD::Draw(float fTime)
 	return 1;
 }
 
-int CHudMOTD::MsgFunc_MOTD(const char* pszName, int iSize, void* pbuf)
+int CHudMOTD::MsgFunc_MOTD(const char*, int iSize, void* pbuf)
 {
 	if ( m_iFlags & HUD_ACTIVE )
 	{

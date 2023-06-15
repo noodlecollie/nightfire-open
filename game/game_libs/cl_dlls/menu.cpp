@@ -62,7 +62,7 @@ int CHudMenu::VidInit(void)
 	return 1;
 }
 
-int CHudMenu::Draw(float flTime)
+int CHudMenu::Draw(float)
 {
 	int i;
 
@@ -130,7 +130,7 @@ void CHudMenu::SelectMenuItem(int menu_item)
 //		byte : a boolean, TRUE if there is more string yet to be received before displaying the menu, FALSE if it's the
 // last string 		string: menu string to display
 // if this message is never received, then scores will simply be the combined totals of the players.
-int CHudMenu::MsgFunc_ShowMenu(const char* pszName, int iSize, void* pbuf)
+int CHudMenu::MsgFunc_ShowMenu(const char*, int iSize, void* pbuf)
 {
 	char* temp = NULL;
 

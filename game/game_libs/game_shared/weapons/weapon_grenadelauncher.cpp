@@ -49,7 +49,7 @@ void CWeaponGrenadeLauncher::Precache()
 }
 
 #ifndef CLIENT_DLL
-float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const
+float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity&, float distanceToEnemy) const
 {
 	const float explosionRadius = grenadelauncher_explosion_radius.value;
 

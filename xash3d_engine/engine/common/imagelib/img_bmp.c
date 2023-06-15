@@ -26,14 +26,15 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 {
 	byte *buf_p, *pixbuf;
 	rgba_t palette[256] = {0};
-	int i, columns, column, rows, row, bpp = 1;
+	uint32_t i;
+	int columns, column, rows, row, bpp = 1;
 	int cbPalBytes = 0, padSize = 0, bps = 0;
 	int reflectivity[3] = {0, 0, 0};
 	qboolean load_qfont = false;
 	bmp_t bhdr;
 	fs_offset_t estimatedSize;
 
-	if ( filesize < sizeof(bhdr) )
+	if ( (size_t)filesize < sizeof(bhdr) )
 	{
 		Con_Reportf(
 			S_ERROR "Image_LoadBMP: %s have incorrect file size %u should be greater than %u (header)\n",

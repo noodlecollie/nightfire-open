@@ -378,7 +378,7 @@ HUD_Key_Event
 Return 1 to allow engine to process the key, otherwise, act on it as needed
 ============
 */
-int DLLEXPORT HUD_Key_Event(int down, int keynum, const char* pszCurrentBinding)
+int DLLEXPORT HUD_Key_Event(int, int, const char*)
 {
 	return 1;
 }

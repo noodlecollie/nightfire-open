@@ -606,7 +606,7 @@ void CBigMomma::LayHeadcrab(void)
 	m_crabCount++;
 }
 
-void CBigMomma::DeathNotice(entvars_t* pevChild)
+void CBigMomma::DeathNotice(entvars_t*)
 {
 	if ( m_crabCount > 0 )  // Some babies may cross a transition, but we reset the count then
 		m_crabCount--;
@@ -746,13 +746,13 @@ BOOL CBigMomma::CheckMeleeAttack1(float flDot, float flDist)
 }
 
 // Lay a crab
-BOOL CBigMomma::CheckMeleeAttack2(float flDot, float flDist)
+BOOL CBigMomma::CheckMeleeAttack2(float, float)
 {
 	return CanLayCrab();
 }
 
 // Mortar launch
-BOOL CBigMomma::CheckRangeAttack1(float flDot, float flDist)
+BOOL CBigMomma::CheckRangeAttack1(float, float flDist)
 {
 	if ( flDist <= BIG_MORTARDIST && m_mortarTime < gpGlobals->time )
 	{

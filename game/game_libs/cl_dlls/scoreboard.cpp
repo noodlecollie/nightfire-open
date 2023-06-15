@@ -114,7 +114,7 @@ int SCOREBOARD_WIDTH = 320;
 #define ROW_RANGE_MIN 15
 #define ROW_RANGE_MAX (ScreenHeight - 50)
 
-int CHudScoreboard::Draw(float fTime)
+int CHudScoreboard::Draw(float)
 {
 	int i, j, can_show_packetloss = 0;
 	int FAR_RIGHT;
@@ -504,7 +504,7 @@ void CHudScoreboard::GetAllPlayersInfo(void)
 	}
 }
 
-int CHudScoreboard::MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf)
+int CHudScoreboard::MsgFunc_ScoreInfo(const char*, int iSize, void* pbuf)
 {
 	m_iFlags |= HUD_ACTIVE;
 
@@ -532,7 +532,7 @@ int CHudScoreboard::MsgFunc_ScoreInfo(const char* pszName, int iSize, void* pbuf
 // accepts two values:
 //		byte: client number
 //		string: client team name
-int CHudScoreboard::MsgFunc_TeamInfo(const char* pszName, int iSize, void* pbuf)
+int CHudScoreboard::MsgFunc_TeamInfo(const char*, int iSize, void* pbuf)
 {
 	int i, j;
 	BEGIN_READ(pbuf, iSize);
@@ -606,7 +606,7 @@ int CHudScoreboard::MsgFunc_TeamInfo(const char* pszName, int iSize, void* pbuf)
 //		short: teams kills
 //		short: teams deaths
 // if this message is never received, then scores will simply be the combined totals of the players.
-int CHudScoreboard::MsgFunc_TeamScore(const char* pszName, int iSize, void* pbuf)
+int CHudScoreboard::MsgFunc_TeamScore(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	char* TeamName = READ_STRING();

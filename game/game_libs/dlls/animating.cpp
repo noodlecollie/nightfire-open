@@ -225,7 +225,7 @@ int CBaseAnimating::FindTransition(int iEndingSequence, int iGoalSequence, int* 
 
 //=========================================================
 //=========================================================
-void CBaseAnimating::GetAutomovement(Vector& origin, Vector& angles, float flInterval)
+void CBaseAnimating::GetAutomovement(Vector&, Vector&, float)
 {
 }
 

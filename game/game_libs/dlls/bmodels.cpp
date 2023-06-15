@@ -76,7 +76,7 @@ void CFuncWall::Spawn(void)
 	pev->flags |= FL_WORLDBRUSH;
 }
 
-void CFuncWall::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncWall::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( ShouldToggle(useType, (int)(pev->frame)) )
 		pev->frame = 1 - pev->frame;
@@ -124,7 +124,7 @@ BOOL CFuncWallToggle::IsOn(void)
 	return TRUE;
 }
 
-void CFuncWallToggle::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncWallToggle::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	int status = IsOn();
 
@@ -186,7 +186,7 @@ void CFuncConveyor::UpdateSpeed(float speed)
 	pev->rendercolor.z = speedCode & 0xFF;
 }
 
-void CFuncConveyor::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncConveyor::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	pev->speed = -pev->speed;
 	UpdateSpeed(pev->speed);
@@ -250,7 +250,7 @@ class CFuncMonsterClip : public CFuncWall
 {
 public:
 	void Spawn(void);
-	void Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+	void Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	{
 	}  // Clear out func_wall's use function
 };
@@ -514,7 +514,7 @@ void CFuncRotating::HurtTouch(CBaseEntity* pOther)
 #define FANPITCHMIN 30
 #define FANPITCHMAX 100
 
-void CFuncRotating::RampPitchVol(int fUp)
+void CFuncRotating::RampPitchVol(int)
 {
 	Vector vecAVel = pev->avelocity;
 	vec_t vecCur;
@@ -639,7 +639,7 @@ void CFuncRotating::Rotate(void)
 //=========================================================
 // Rotating Use - when a rotating brush is triggered
 //=========================================================
-void CFuncRotating::RotatingUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncRotating::RotatingUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	// is this a brush that should accelerate and decelerate when turned on/off (fan)?
 	if ( FBitSet(pev->spawnflags, SF_BRUSH_ACCDCC) )
@@ -800,7 +800,7 @@ void CPendulum::Spawn(void)
 	}
 }
 
-void CPendulum::PendulumUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CPendulum::PendulumUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( pev->speed )  // Pendulum is moving, stop it and auto-return if necessary
 	{
@@ -838,7 +838,7 @@ void CPendulum::Stop(void)
 	pev->avelocity = g_vecZero;
 }
 
-void CPendulum::Blocked(CBaseEntity* pOther)
+void CPendulum::Blocked(CBaseEntity*)
 {
 	m_time = gpGlobals->time;
 }

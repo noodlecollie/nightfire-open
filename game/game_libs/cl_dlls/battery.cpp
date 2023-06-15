@@ -54,7 +54,7 @@ int CHudBattery::VidInit(void)
 	return 1;
 }
 
-int CHudBattery::MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
+int CHudBattery::MsgFunc_Battery(const char*, int iSize, void* pbuf)
 {
 	m_iFlags |= HUD_ACTIVE;
 
@@ -70,7 +70,7 @@ int CHudBattery::MsgFunc_Battery(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudBattery::Draw(float flTime)
+int CHudBattery::Draw(float)
 {
 	if ( gHUD.m_iHideHUDDisplay & HIDEHUD_HEALTH )
 		return 1;

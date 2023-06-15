@@ -70,7 +70,7 @@ int CHudFlashlight::VidInit(void)
 	return 1;
 }
 
-int CHudFlashlight::MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf)
+int CHudFlashlight::MsgFunc_FlashBat(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_BYTE();
@@ -80,7 +80,7 @@ int CHudFlashlight::MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudFlashlight::MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf)
+int CHudFlashlight::MsgFunc_Flashlight(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	m_fOn = READ_BYTE();
@@ -91,7 +91,7 @@ int CHudFlashlight::MsgFunc_Flashlight(const char* pszName, int iSize, void* pbu
 	return 1;
 }
 
-int CHudFlashlight::Draw(float flTime)
+int CHudFlashlight::Draw(float)
 {
 	static bool show = (gHUD.m_iHideHUDDisplay & (HIDEHUD_FLASHLIGHT | HIDEHUD_ALL));
 	if ( show != !(gHUD.m_iHideHUDDisplay & (HIDEHUD_FLASHLIGHT | HIDEHUD_ALL)) )

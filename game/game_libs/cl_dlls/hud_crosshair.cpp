@@ -58,7 +58,7 @@ void CHudCrosshair::Reset()
 {
 }
 
-int CHudCrosshair::Draw(float flTime)
+int CHudCrosshair::Draw(float)
 {
 	if ( gHUD.m_iHideHUDDisplay & (HIDEHUD_WEAPONS | HIDEHUD_ALL) || !m_CrosshairCvar )
 	{

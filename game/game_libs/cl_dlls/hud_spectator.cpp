@@ -357,7 +357,7 @@ int CHudSpectator::VidInit()
 // Input  : flTime -
 //			intermission -
 //-----------------------------------------------------------------------------
-int CHudSpectator::Draw(float flTime)
+int CHudSpectator::Draw(float)
 {
 	int lx;
 
@@ -1331,7 +1331,7 @@ void CHudSpectator::CheckOverviewEntities()
 	}
 }
 
-bool CHudSpectator::AddOverviewEntity(int type, struct cl_entity_s* ent, const char* modelname)
+bool CHudSpectator::AddOverviewEntity(int type, struct cl_entity_s* ent, const char*)
 {
 	HSPRITE hSprite = 0;
 	double duration = -1.0f;  // duration -1 means show it only this frame;

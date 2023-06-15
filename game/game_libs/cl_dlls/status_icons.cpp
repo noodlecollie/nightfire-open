@@ -52,7 +52,7 @@ void CHudStatusIcons::Reset(void)
 }
 
 // Draw status icons along the left-hand side of the screen
-int CHudStatusIcons::Draw(float flTime)
+int CHudStatusIcons::Draw(float)
 {
 	if ( gEngfuncs.IsSpectateOnly() )
 		return 1;
@@ -82,7 +82,7 @@ int CHudStatusIcons::Draw(float flTime)
 //		byte   : red
 //		byte   : green
 //		byte   : blue
-int CHudStatusIcons::MsgFunc_StatusIcon(const char* pszName, int iSize, void* pbuf)
+int CHudStatusIcons::MsgFunc_StatusIcon(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 

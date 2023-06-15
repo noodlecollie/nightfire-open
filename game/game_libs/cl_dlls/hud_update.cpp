@@ -29,7 +29,7 @@ extern float v_idlescale;
 float in_fov;
 extern void HUD_SetCmdBits(int bits);
 
-int CHud::UpdateClientData(client_data_t* cdata, float time)
+int CHud::UpdateClientData(client_data_t* cdata, float)
 {
 	memcpy(m_vecOrigin, cdata->origin, sizeof(vec3_t));
 	memcpy(m_vecAngles, cdata->viewangles, sizeof(vec3_t));

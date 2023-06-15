@@ -514,7 +514,7 @@ CBaseEntity* EHANDLE::operator->() const
 }
 
 // give health
-int CBaseEntity::TakeHealth(float flHealth, int bitsDamageType)
+int CBaseEntity::TakeHealth(float flHealth, int)
 {
 	if ( !pev->takedamage )
 		return 0;
@@ -533,7 +533,7 @@ int CBaseEntity::TakeHealth(float flHealth, int bitsDamageType)
 
 // inflict damage on this entity.  bitsDamageType indicates type of damage inflicted, ie: DMG_CRUSH
 
-int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int)
 {
 	Vector vecTemp;
 
@@ -583,7 +583,7 @@ int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 	return 1;
 }
 
-void CBaseEntity::Killed(entvars_t* pevAttacker, int iGib)
+void CBaseEntity::Killed(entvars_t*, int)
 {
 	pev->takedamage = DAMAGE_NO;
 	pev->deadflag = DEAD_DEAD;
@@ -757,7 +757,7 @@ int CBaseEntity::ShouldToggle(USE_TYPE useType, BOOL currentState)
 	return 1;
 }
 
-int CBaseEntity::DamageDecal(int bitsDamageType)
+int CBaseEntity::DamageDecal(int)
 {
 	if ( pev->rendermode == kRenderTransAlpha )
 		return -1;

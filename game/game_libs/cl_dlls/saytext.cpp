@@ -150,7 +150,7 @@ int CHudSayText::Draw(float flTime)
 	return 1;
 }
 
-int CHudSayText::MsgFunc_SayText(const char* pszName, int iSize, void* pbuf)
+int CHudSayText::MsgFunc_SayText(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 

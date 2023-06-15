@@ -43,7 +43,7 @@ int CHudOverview::VidInit()
 // Input  : flTime -
 //			intermission -
 //-----------------------------------------------------------------------------
-int CHudOverview::Draw(float flTime)
+int CHudOverview::Draw(float)
 {
 #if 0
 	// only draw in overview mode

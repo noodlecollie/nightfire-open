@@ -307,7 +307,7 @@ BOOL CSatchel::Deploy()
 	return TRUE;
 }
 
-void CSatchel::Holster()
+void CSatchel::Holster(int)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 

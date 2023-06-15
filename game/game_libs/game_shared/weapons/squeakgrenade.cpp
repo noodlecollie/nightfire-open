@@ -166,7 +166,7 @@ void CSqueakGrenade::Precache(void)
 	PRECACHE_SOUND("squeek/sqk_deploy1.wav");
 }
 
-void CSqueakGrenade::Killed(entvars_t* pevAttacker, int iGib)
+void CSqueakGrenade::Killed(entvars_t* pevAttacker, int)
 {
 	pev->model = iStringNull;  // make invisible
 	SetThink(&CBaseEntity::SUB_Remove);

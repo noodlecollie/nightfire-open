@@ -103,7 +103,7 @@ void CWeaponL96A1::PlayZoomSound()
 }
 
 #ifndef CLIENT_DLL
-float CWeaponL96A1::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const
+float CWeaponL96A1::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 }

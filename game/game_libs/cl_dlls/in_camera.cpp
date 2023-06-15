@@ -87,7 +87,7 @@ void CAM_EndDistance(void);
 
 //-------------------------------------------------- Local Functions
 
-float MoveToward(float cur, float goal, float maxspeed)
+float MoveToward(float cur, float goal, float)
 {
 	if ( cur != goal )
 	{

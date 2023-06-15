@@ -1200,7 +1200,7 @@ void UTIL_BloodStream(const Vector& origin, const Vector& direction, int color, 
 	MESSAGE_END();
 }
 
-void UTIL_BloodDrips(const Vector& origin, const Vector& direction, int color, int amount)
+void UTIL_BloodDrips(const Vector& origin, const Vector&, int color, int amount)
 {
 	if ( !UTIL_ShouldShowBlood(color) )
 	{
@@ -1998,7 +1998,7 @@ void CSave::WritePositionVector(const char* pname, const float* value, int count
 	}
 }
 
-void CSave::WriteFunction(const char* pname, void** data, int count)
+void CSave::WriteFunction(const char* pname, void** data, int)
 {
 	const char* functionName;
 
@@ -2224,7 +2224,7 @@ int CRestore::ReadField(
 	TYPEDESCRIPTION* pFields,
 	int fieldCount,
 	int startField,
-	int size,
+	int,
 	char* pName,
 	void* pData)
 {
@@ -2486,7 +2486,7 @@ int CRestore::ReadInt(void)
 	return tmp;
 }
 
-int CRestore::ReadNamedInt(const char* pName)
+int CRestore::ReadNamedInt(const char*)
 {
 	HEADER header;
 
@@ -2494,7 +2494,7 @@ int CRestore::ReadNamedInt(const char* pName)
 	return ((int*)header.pData)[0];
 }
 
-char* CRestore::ReadNamedString(const char* pName)
+char* CRestore::ReadNamedString(const char*)
 {
 	HEADER header;
 

@@ -48,7 +48,7 @@ int CHudGeiger::VidInit(void)
 	return 1;
 }
 
-int CHudGeiger::MsgFunc_Geiger(const char* pszName, int iSize, void* pbuf)
+int CHudGeiger::MsgFunc_Geiger(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -61,7 +61,7 @@ int CHudGeiger::MsgFunc_Geiger(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudGeiger::Draw(float flTime)
+int CHudGeiger::Draw(float)
 {
 	int pct;
 	float flvol = 0.0f;

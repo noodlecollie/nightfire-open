@@ -110,7 +110,7 @@ namespace ScreenOverlays
 		ConstructCrosshairItems();
 	}
 
-	void CSniperScopeOverlay::Draw(float time)
+	void CSniperScopeOverlay::Draw(float)
 	{
 		DrawScopeBackgroundSprite();
 		CustomGeometry::RenderAdHocGeometry(m_SurroundingBlocks);

@@ -157,7 +157,7 @@ HUD_SetMaxSpeed
 
 =====================
 */
-void HUD_SetMaxSpeed(const edict_t* ed, float speed)
+void HUD_SetMaxSpeed(const edict_t*, float)
 {
 }
 
@@ -287,26 +287,26 @@ stub functions for such things as precaching.  So we don't have to modify weapon
  is compiled into both game and client .dlls.
 ======================
 */
-int stub_PrecacheModel(const char* s)
+int stub_PrecacheModel(const char*)
 {
 	return 0;
 }
 
-int stub_PrecacheSound(const char* s)
+int stub_PrecacheSound(const char*)
 {
 	return 0;
 }
 
-unsigned short stub_PrecacheEvent(int type, const char* s)
+unsigned short stub_PrecacheEvent(int, const char*)
 {
 	return 0;
 }
 
-const char* stub_NameForFunction(void* function)
+const char* stub_NameForFunction(void*)
 {
 	return "func";
 }
 
-void stub_SetModel(edict_t* e, const char* m)
+void stub_SetModel(edict_t*, const char*)
 {
 }
