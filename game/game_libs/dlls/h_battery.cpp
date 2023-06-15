@@ -101,7 +101,7 @@ void CRecharge::Precache()
 	PRECACHE_SOUND("items/suitchargeok1.wav");
 }
 
-void CRecharge::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CRecharge::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	// if it's not a player, ignore
 	if ( !FClassnameIs(pActivator->pev, "player") )

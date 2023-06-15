@@ -437,7 +437,7 @@ void CFuncTank::ControllerPostFrame(void)
 }
 ////////////// END NEW STUFF //////////////
 
-void CFuncTank::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncTank::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( pev->spawnflags & SF_TANK_CANCONTROL )
 	{
@@ -657,7 +657,7 @@ void CFuncTank::AdjustAnglesForBarrel(Vector& angles, float distance)
 }
 
 // Fire targets and spawn sprites
-void CFuncTank::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTank::Fire(const Vector& barrelEnd, const Vector&, entvars_t*)
 {
 	if ( m_fireLast != 0 )
 	{
@@ -878,7 +878,7 @@ void CFuncTankLaser::Think(void)
 	CFuncTank::Think();
 }
 
-void CFuncTankLaser::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTankLaser::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t*)
 {
 	int i;
 	TraceResult tr;
@@ -932,7 +932,7 @@ void CFuncTankRocket::Precache(void)
 	CFuncTank::Precache();
 }
 
-void CFuncTankRocket::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTankRocket::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t*)
 {
 	int i;
 
@@ -972,7 +972,7 @@ void CFuncTankMortar::KeyValue(KeyValueData* pkvd)
 		CFuncTank::KeyValue(pkvd);
 }
 
-void CFuncTankMortar::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTankMortar::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t*)
 {
 	if ( m_fireLast != 0 )
 	{

@@ -117,7 +117,7 @@ void CFuncMortarField::Precache(void)
 }
 
 // If connected to a table, then use the table controllers, else hit where the trigger is.
-void CFuncMortarField::FieldUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncMortarField::FieldUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	Vector vecStart;
 

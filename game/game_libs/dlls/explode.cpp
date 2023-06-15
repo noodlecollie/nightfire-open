@@ -72,7 +72,7 @@ void CShower::Think(void)
 	pev->flags &= ~FL_ONGROUND;
 }
 
-void CShower::Touch(CBaseEntity* pOther)
+void CShower::Touch(CBaseEntity*)
 {
 	if ( pev->flags & FL_ONGROUND )
 		pev->velocity = pev->velocity * 0.1;
@@ -148,7 +148,7 @@ void CEnvExplosion::Spawn(void)
 	m_spriteScale = (int)flSpriteScale;
 }
 
-void CEnvExplosion::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CEnvExplosion::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	TraceResult tr;
 

@@ -565,7 +565,7 @@ void CBaseDoor::DoorTouch(CBaseEntity* pOther)
 //
 // Used by SUB_UseTargets, when a door is the target of a button.
 //
-void CBaseDoor::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBaseDoor::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	m_hActivator = pActivator;
 	// if not ready to be used, ignore "use" command.
@@ -1107,7 +1107,7 @@ void CMomentaryDoor::KeyValue(KeyValueData* pkvd)
 		CBaseToggle::KeyValue(pkvd);
 }
 
-void CMomentaryDoor::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMomentaryDoor::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( useType != USE_SET )  // Momentary buttons will pass down a float in here
 		return;

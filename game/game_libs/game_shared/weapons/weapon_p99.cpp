@@ -84,7 +84,7 @@ TYPEDESCRIPTION CWeaponP99::m_SaveData[] = {DEFINE_FIELD(CWeaponP99, m_bSilenced
 
 IMPLEMENT_SAVERESTORE(CWeaponP99, CGenericHitscanWeapon)
 
-float CWeaponP99::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const
+float CWeaponP99::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 }

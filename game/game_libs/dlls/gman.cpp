@@ -210,7 +210,7 @@ void CGMan::RunTask(Task_t* pTask)
 //=========================================================
 // Override all damage
 //=========================================================
-int CGMan::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CGMan::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 {
 	pev->health = pev->max_health / 2;  // always trigger the 50% damage aitrigger
 
@@ -229,7 +229,7 @@ int CGMan::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flD
 void CGMan::TraceAttack(
 	entvars_t* pevAttacker,
 	float flDamage,
-	Vector vecDir,
+	Vector,
 	const TraceResult* ptr,
 	int bitsDamageType)
 {

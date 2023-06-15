@@ -186,7 +186,7 @@ void CApache::NullThink(void)
 	pev->nextthink = gpGlobals->time + 0.5;
 }
 
-void CApache::StartupUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CApache::StartupUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CApache::HuntThink);
 	SetTouch(&CApache::FlyTouch);
@@ -194,7 +194,7 @@ void CApache::StartupUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE
 	SetUse(NULL);
 }
 
-void CApache::Killed(entvars_t* pevAttacker, int iGib)
+void CApache::Killed(entvars_t*, int)
 {
 	pev->movetype = MOVETYPE_TOSS;
 	pev->gravity = 0.3;
@@ -921,7 +921,7 @@ int CApache::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 void CApache::TraceAttack(
 	entvars_t* pevAttacker,
 	float flDamage,
-	Vector vecDir,
+	Vector,
 	const TraceResult* ptr,
 	int bitsDamageType)
 {

@@ -157,7 +157,7 @@ void CLegacyCineMonster ::CineSpawn(const char* szModel)
 //
 // CineStart
 //
-void CLegacyCineMonster ::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLegacyCineMonster ::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	pev->animtime = 0;  // reset the sequence
 	SetThink(&CLegacyCineMonster::CineThink);
@@ -251,7 +251,7 @@ void CCineBlood ::BloodGush(void)
 	}
 }
 
-void CCineBlood ::BloodStart(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCineBlood ::BloodStart(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CCineBlood::BloodGush);
 	pev->nextthink = gpGlobals->time;  // now!

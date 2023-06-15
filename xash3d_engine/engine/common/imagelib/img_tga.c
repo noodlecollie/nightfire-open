@@ -33,7 +33,7 @@ qboolean Image_LoadTGA(const char* name, const byte* buffer, fs_offset_t filesiz
 	qboolean compressed;
 	tga_t targa_header;
 
-	if ( filesize < sizeof(tga_t) )
+	if ( (size_t)filesize < sizeof(tga_t) )
 		return false;
 
 	buf_p = (byte*)buffer;

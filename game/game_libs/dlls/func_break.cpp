@@ -319,7 +319,7 @@ void CBreakable::BreakTouch(CBaseEntity* pOther)
 //
 
 // Break when triggered
-void CBreakable::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBreakable::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( IsBreakable() )
 	{

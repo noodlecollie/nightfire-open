@@ -21,7 +21,8 @@ qboolean Image_CheckDXT3Alpha(dds_t* hdr, byte* fin)
 {
 	word sAlpha;
 	byte* alpha;
-	int x, y, i, j;
+	uint32_t x, y;
+	int i, j;
 
 	for ( y = 0; y < hdr->dwHeight; y += 4 )
 	{
@@ -54,7 +55,8 @@ qboolean Image_CheckDXT5Alpha(dds_t* hdr, byte* fin)
 {
 	uint bits;
 	byte* alphamask;
-	int x, y, i, j;
+	uint32_t x, y;
+	int i, j;
 
 	for ( y = 0; y < hdr->dwHeight; y += 4 )
 	{
@@ -216,7 +218,8 @@ size_t Image_DXTGetLinearSize(int type, int width, int height, int depth)
 size_t Image_DXTCalcMipmapSize(dds_t* hdr)
 {
 	size_t buffsize = 0;
-	int i, width, height;
+	uint32_t i;
+	int width, height;
 
 	// now correct buffer size
 	for ( i = 0; i < Q_max(1, (hdr->dwMipMapCount)); i++ )
@@ -287,13 +290,17 @@ qboolean Image_LoadDDS(const char* name, const byte* buffer, fs_offset_t filesiz
 	int headersOffset;
 	dds_header_dxt10_t header2;
 
-	if ( filesize < sizeof(header) )
+	if ( (size_t)filesize < sizeof(header) )
+	{
 		return false;
+	}
 
 	memcpy(&header, buffer, sizeof(header));
 
 	if ( header.dwIdent != DDSHEADER )
+	{
 		return false;  // it's not a dds file, just skip it
+	}
 
 	if ( header.dwSize != sizeof(header) - sizeof(uint) )  // size of the structure (minus MagicNum)
 	{

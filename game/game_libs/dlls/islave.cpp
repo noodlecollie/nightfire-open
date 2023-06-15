@@ -151,7 +151,7 @@ int CISlave::IRelationship(CBaseEntity* pTarget)
 	return CBaseMonster::IRelationship(pTarget);
 }
 
-void CISlave::CallForHelp(const char* szClassname, float flDist, EHANDLE hEnemy, Vector& vecLocation)
+void CISlave::CallForHelp(const char*, float flDist, EHANDLE hEnemy, Vector& vecLocation)
 {
 	// ALERT( at_aiconsole, "help " );
 
@@ -490,7 +490,7 @@ BOOL CISlave::CheckRangeAttack1(float flDot, float flDist)
 //=========================================================
 // CheckRangeAttack2 - check bravery and try to resurect dead comrades
 //=========================================================
-BOOL CISlave::CheckRangeAttack2(float flDot, float flDist)
+BOOL CISlave::CheckRangeAttack2(float, float flDist)
 {
 	return FALSE;
 

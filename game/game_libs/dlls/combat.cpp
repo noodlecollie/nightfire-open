@@ -565,7 +565,7 @@ void CBaseMonster::CallGibMonster(void)
 Killed
 ============
 */
-void CBaseMonster::Killed(entvars_t* pevAttacker, int iGib)
+void CBaseMonster::Killed(entvars_t*, int iGib)
 {
 	// unsigned int	cCount = 0;
 	// BOOL		fDone = FALSE;
@@ -685,7 +685,7 @@ void CGib::WaitTillLand(void)
 //
 // Gib bounces on the ground or wall, sponges some blood down, too!
 //
-void CGib::BounceGibTouch(CBaseEntity* pOther)
+void CGib::BounceGibTouch(CBaseEntity*)
 {
 	Vector vecSpot;
 	TraceResult tr;
@@ -1548,7 +1548,7 @@ Vector CBaseEntity::FireBulletsPlayer(
 	Vector vecSpread,
 	float flDistance,
 	int iBulletType,
-	int iTracerFreq,
+	int,
 	int iDamage,
 	entvars_t* pevAttacker,
 	int shared_rand)

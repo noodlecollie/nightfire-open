@@ -24,12 +24,12 @@ const WeaponAtts::WACollection& CWeaponSilent::WeaponAttributes() const
 }
 
 #ifndef CLIENT_DLL
-float CWeaponSilent::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const
+float CWeaponSilent::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 }
 
-void CWeaponSilent::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
+void CWeaponSilent::Bot_SetFightStyle(CBaseBotFightStyle&) const
 {
 }
 #endif

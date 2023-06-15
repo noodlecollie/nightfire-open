@@ -100,7 +100,7 @@ void CBubbling::Precache(void)
 	m_bubbleModel = PRECACHE_MODEL("sprites/bubble.spr");  // Precache bubble sprite
 }
 
-void CBubbling::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBubbling::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( ShouldToggle(useType, m_state) )
 		m_state = !m_state;
@@ -559,7 +559,7 @@ void CLightning::KeyValue(KeyValueData* pkvd)
 		CBeam::KeyValue(pkvd);
 }
 
-void CLightning::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLightning::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_active) )
 		return;
@@ -582,7 +582,7 @@ void CLightning::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TY
 	}
 }
 
-void CLightning::StrikeUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLightning::StrikeUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_active) )
 		return;
@@ -1042,7 +1042,7 @@ void CLaser::TurnOn(void)
 	pev->nextthink = gpGlobals->time;
 }
 
-void CLaser::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLaser::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	int active = IsOn();
 
@@ -1285,7 +1285,7 @@ void CSprite::TurnOn(void)
 	pev->frame = 0;
 }
 
-void CSprite::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CSprite::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	int on = pev->effects != EF_NODRAW;
 	if ( ShouldToggle(useType, on) )
@@ -1378,7 +1378,7 @@ void CGibShooter::KeyValue(KeyValueData* pkvd)
 	}
 }
 
-void CGibShooter::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CGibShooter::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CGibShooter::ShootThink);
 	pev->nextthink = gpGlobals->time;
@@ -1649,7 +1649,7 @@ void CTestEffect::TestThink(void)
 	}
 }
 
-void CTestEffect::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CTestEffect::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CTestEffect::TestThink);
 	pev->nextthink = gpGlobals->time + 0.1;
@@ -1760,7 +1760,7 @@ Vector CBlood::BloodPosition(CBaseEntity* pActivator)
 	return pev->origin;
 }
 
-void CBlood::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBlood::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	if ( pev->spawnflags & SF_BLOOD_STREAM )
 		UTIL_BloodStream(
@@ -1885,7 +1885,7 @@ void CShake::KeyValue(KeyValueData* pkvd)
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CShake::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CShake::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	UTIL_ScreenShake(pev->origin, Amplitude(), Frequency(), Duration(), Radius());
 }
@@ -1952,7 +1952,7 @@ void CFade::KeyValue(KeyValueData* pkvd)
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CFade::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFade::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	int fadeFlags = 0;
 
@@ -2049,7 +2049,7 @@ void CMessage::KeyValue(KeyValueData* pkvd)
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CMessage::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMessage::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	CBaseEntity* pPlayer = NULL;
 
@@ -2095,7 +2095,7 @@ void CEnvFunnel::Precache(void)
 
 LINK_ENTITY_TO_CLASS(env_funnel, CEnvFunnel)
 
-void CEnvFunnel::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CEnvFunnel::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_LARGEFUNNEL);
@@ -2147,7 +2147,7 @@ void CEnvBeverage::Precache(void)
 
 LINK_ENTITY_TO_CLASS(env_beverage, CEnvBeverage)
 
-void CEnvBeverage::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CEnvBeverage::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( pev->frags != 0 || pev->health <= 0 )
 	{

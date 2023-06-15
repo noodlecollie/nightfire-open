@@ -173,7 +173,7 @@ void CCycler::Think(void)
 //
 // CyclerUse - starts a rotation trend
 //
-void CCycler::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCycler::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	m_animate = !m_animate;
 	if ( m_animate )
@@ -186,7 +186,7 @@ void CCycler::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useTyp
 // CyclerPain , changes sequences when shot
 //
 // void CCycler::Pain( float flDamage )
-int CCycler::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CCycler::TakeDamage(entvars_t*, entvars_t*, float, int)
 {
 	if ( m_animate )
 	{
@@ -277,13 +277,13 @@ void CCyclerSprite::Think(void)
 	m_lastTime = gpGlobals->time;
 }
 
-void CCyclerSprite::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCyclerSprite::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	m_animate = !m_animate;
 	ALERT(at_console, "Sprite: %s\n", STRING(pev->model));
 }
 
-int CCyclerSprite::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CCyclerSprite::TakeDamage(entvars_t*, entvars_t*, float, int)
 {
 	if ( m_maxFrame > 1.0 )
 	{
@@ -307,7 +307,7 @@ public:
 	{
 		return 1;
 	}
-	int GetItemInfo(ItemInfo* p)
+	int GetItemInfo(ItemInfo*)
 	{
 		return 0;
 	}
@@ -346,7 +346,7 @@ BOOL CWeaponCycler::Deploy()
 	return TRUE;
 }
 
-void CWeaponCycler::Holster(int skiplocal /* = 0 */)
+void CWeaponCycler::Holster(int)
 {
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
 }

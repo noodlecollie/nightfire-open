@@ -772,7 +772,7 @@ BOOL CController::CheckRangeAttack2(float flDot, float flDist)
 	return FALSE;
 }
 
-BOOL CController::CheckMeleeAttack1(float flDot, float flDist)
+BOOL CController::CheckMeleeAttack1(float, float)
 {
 	return FALSE;
 }
@@ -1074,7 +1074,7 @@ int CController::CheckLocalMove(const Vector& vecStart, const Vector& vecEnd, CB
 	return LOCALMOVE_VALID;
 }
 
-void CController::MoveExecute(CBaseEntity* pTargetEnt, const Vector& vecDir, float flInterval)
+void CController::MoveExecute(CBaseEntity*, const Vector& vecDir, float flInterval)
 {
 	if ( m_IdealActivity != m_movementActivity )
 		m_IdealActivity = m_movementActivity;
@@ -1268,7 +1268,7 @@ void CControllerHeadBall::Crawl(void)
 	MESSAGE_END();
 }
 
-void CControllerHeadBall::BounceTouch(CBaseEntity* pOther)
+void CControllerHeadBall::BounceTouch(CBaseEntity*)
 {
 	Vector vecDir = m_vecIdeal.Normalize();
 

@@ -476,7 +476,7 @@ BOOL CHGrunt::CheckRangeAttack1(float flDot, float flDist)
 // CheckRangeAttack2 - this checks the Grunt's grenade
 // attack.
 //=========================================================
-BOOL CHGrunt::CheckRangeAttack2(float flDot, float flDist)
+BOOL CHGrunt::CheckRangeAttack2(float, float)
 {
 	if ( !FBitSet(pev->weapons, (HGRUNT_HANDGRENADE | HGRUNT_GRENADELAUNCHER)) )
 	{
@@ -2260,7 +2260,7 @@ void CHGruntRepel::Precache(void)
 	m_iSpriteTexture = PRECACHE_MODEL("sprites/rope.spr");
 }
 
-void CHGruntRepel::RepelUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CHGruntRepel::RepelUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	TraceResult tr;
 	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -4096.0), dont_ignore_monsters, ENT(pev), &tr);

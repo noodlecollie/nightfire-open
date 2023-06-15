@@ -975,7 +975,7 @@ Sys_Error
 Engine is going to shut down, allows setting a breakpoint in game .dll to catch that occasion
 ================
 */
-void Sys_Error(const char* error_string)
+void Sys_Error(const char*)
 {
 	// Default case, do nothing.  MOD AUTHORS:  Add code ( e.g., _asm { int 3 }; here to cause a breakpoint for
 	// debugging your game .dlls
@@ -1685,7 +1685,7 @@ int GetWeaponData(struct edict_s* player, struct weapon_data_s* info)
 				gun = (CBasePlayerWeapon*)pPlayerItem->GetWeaponPtr();
 				if ( gun && gun->UseDecrement() )
 				{
-					ItemInfo II = {0};
+					ItemInfo II = {};
 					// Get The ID.
 					gun->GetItemInfo(&II);
 
@@ -1803,7 +1803,7 @@ void UpdateClientData(const struct edict_s* ent, int sendweapons, struct clientd
 				gun = (CBasePlayerWeapon*)pl->m_pActiveItem->GetWeaponPtr();
 				if ( gun && gun->UseDecrement() )
 				{
-					ItemInfo II = {0};
+					ItemInfo II = {};
 					gun->GetItemInfo(&II);
 
 					cd->m_iId = II.iId;
@@ -1833,7 +1833,7 @@ We're about to run this usercmd for the specified player.  We can set up groupin
 This is the time to examine the usercmd for anything extra.  This call happens even if think does not.
 =================
 */
-void CmdStart(const edict_t* player, const struct usercmd_s* cmd, unsigned int random_seed)
+void CmdStart(const edict_t* player, const struct usercmd_s*, unsigned int random_seed)
 {
 	entvars_t* pev = (entvars_t*)&player->v;
 	CBasePlayer* pl = (CBasePlayer*)CBasePlayer::Instance(pev);
@@ -1878,9 +1878,9 @@ the max size of the response_buffer, so you must zero it out if you choose not t
 ================================
 */
 int ConnectionlessPacket(
-	const struct netadr_s* net_from,
-	const char* args,
-	char* response_buffer,
+	const struct netadr_s*,
+	const char*,
+	char*,
 	int* response_buffer_size)
 {
 	// Parse stuff from args
@@ -1959,7 +1959,7 @@ One of the ENGINE_FORCE_UNMODIFIED files failed the consistency check for the sp
 up to 256 characters )
 ================================
 */
-int InconsistentFile(const edict_t* player, const char* filename, char* disconnect_message)
+int InconsistentFile(const edict_t*, const char* filename, char* disconnect_message)
 {
 	// Server doesn't care?
 	if ( CVAR_GET_FLOAT("mp_consistency") != 1 )

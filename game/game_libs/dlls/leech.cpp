@@ -668,7 +668,7 @@ void CLeech::SwimThink(void)
 	UpdateMotion();
 }
 
-void CLeech::Killed(entvars_t* pevAttacker, int iGib)
+void CLeech::Killed(entvars_t*, int)
 {
 	Vector vecSplatDir;
 	TraceResult tr;

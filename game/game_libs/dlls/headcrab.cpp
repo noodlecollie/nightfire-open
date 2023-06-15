@@ -165,7 +165,7 @@ Vector CHeadCrab::Center(void)
 	return Vector(pev->origin.x, pev->origin.y, pev->origin.z + 6);
 }
 
-Vector CHeadCrab::BodyTarget(const Vector& posSrc)
+Vector CHeadCrab::BodyTarget(const Vector&)
 {
 	return Center();
 }
@@ -422,6 +422,9 @@ BOOL CHeadCrab::CheckRangeAttack1(float flDot, float flDist)
 //=========================================================
 BOOL CHeadCrab::CheckRangeAttack2(float flDot, float flDist)
 {
+	(void)flDot;
+	(void)flDist;
+
 	return FALSE;
 	// BUGBUG: Why is this code here?  There is no ACT_RANGE_ATTACK2 animation.  I've disabled it for now.
 #if 0
