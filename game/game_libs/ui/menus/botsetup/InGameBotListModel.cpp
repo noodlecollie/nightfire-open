@@ -42,7 +42,7 @@ bool CInGameBotListModel::AddEntry(const CUtlString& profileName, const CUtlStri
 
 const CInGameBotListModel::ListEntry* CInGameBotListModel::Entry(uint32_t index) const
 {
-	return index < m_BotList.Count() ? &m_BotList[index] : nullptr;
+	return index < static_cast<uint32_t>(m_BotList.Count()) ? &m_BotList[index] : nullptr;
 }
 
 void CInGameBotListModel::Clear()
@@ -52,7 +52,7 @@ void CInGameBotListModel::Clear()
 
 bool CInGameBotListModel::IsFull() const
 {
-	return m_BotList.Count() >= MAX_BOTS;
+	return static_cast<size_t>(m_BotList.Count()) >= MAX_BOTS;
 }
 
 void CInGameBotListModel::OnDeleteEntry(int row)

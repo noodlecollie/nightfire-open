@@ -72,7 +72,7 @@ protected:
 		const WeaponAtts::WACollection& atts = WeaponAttributes();
 		ASSERT(index < atts.AttackModes.Count());
 
-		if ( index >= atts.AttackModes.Count() )
+		if ( index >= static_cast<uint32_t>(atts.AttackModes.Count()) )
 		{
 			return nullptr;
 		}
@@ -228,7 +228,7 @@ inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetAttackModeFromAttribut
 	const WeaponAtts::WACollection& atts = WeaponAttributes();
 	ASSERT(index < atts.AttackModes.Count());
 
-	if ( index >= atts.AttackModes.Count() )
+	if ( index >= static_cast<uint32_t>(atts.AttackModes.Count()) )
 	{
 		return nullptr;
 	}

@@ -1227,5 +1227,5 @@ void UI_Shutdown(void)
 
 	delete g_FontMgr;
 
-	memset(&uiStatic, 0, sizeof(uiStatic_t));
+	uiStatic.Clear();
 }

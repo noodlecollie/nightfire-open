@@ -288,19 +288,16 @@ CMenuField::Char
 void CMenuField::Char(int key)
 {
 	int len;
-	bool changed = false;
 
 	if ( key == 'v' - 'a' + 1 )
 	{
 		// ctrl-v is paste
 		Paste();
-		changed = true;
 	}
 	else if ( key == 'c' - 'a' + 1 )
 	{
 		// ctrl-c clears the field
 		Clear();
-		changed = true;
 	}
 
 	len = strlen(szBuffer);
@@ -325,7 +322,9 @@ void CMenuField::Char(int key)
 	else if ( bNumbersOnly )
 	{
 		if ( key < '0' || key > '9' )
+		{
 			return;
+		}
 	}
 	else if ( key < 32 )  // non-printable
 	{
@@ -333,20 +332,28 @@ void CMenuField::Char(int key)
 	}
 
 	if ( eLetterCase == QM_LOWERCASE )
+	{
 		key = tolower(key);
+	}
 	else if ( eLetterCase == QM_UPPERCASE )
+	{
 		key = toupper(key);
+	}
 
 	if ( EngFuncs::KEY_GetOverstrike() && !m_bOverrideOverstrike )
 	{
 		if ( iCursor == iMaxLength - 1 )
+		{
 			return;
+		}
 
 		// in case a character with X bytes replaced by character with Y bytes
 		// where Y < X, e.g. russian replaced by latin
 		int pos = EngFuncs::UtfMoveRight(szBuffer, iCursor, len);
 		if ( pos != iCursor + 1 )
+		{
 			memmove(szBuffer + iCursor + 1, szBuffer + pos, len - pos + 1);
+		}
 
 		// in case a character with X bytes replaced by character with Y bytes
 		// where Y > X, e.g. latin replaced by russian
@@ -355,24 +362,24 @@ void CMenuField::Char(int key)
 
 		szBuffer[iCursor] = key;
 		iCursor++;
-		changed = true;
 	}
 	else
 	{
 		// insert mode
-		if ( len == iMaxLength - 1 )
+		if ( len >= iMaxLength - 1 )
+		{
 			return;  // all full
+		}
+
 		memmove(szBuffer + iCursor + 1, szBuffer + iCursor, len + 1 - iCursor);
 		szBuffer[iCursor] = key;
 		iCursor++;
-		changed = true;
 	}
 
 	if ( iCursor > len )
 	{
 		szBuffer[iCursor] = 0;
 		iScroll = g_FontMgr->CutText(font, szBuffer, m_scChSize, iRealWidth, true);
-		changed = true;
 	}
 
 	SetCvarString(szBuffer);

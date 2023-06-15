@@ -2679,7 +2679,11 @@ private:
 		{
 			GenericValue* e = static_cast<GenericValue*>(allocator.Malloc(count * sizeof(GenericValue)));
 			SetElementsPointer(e);
-			std::memcpy(e, values, count * sizeof(GenericValue));
+
+			for ( SizeType index = 0; index < count; ++index )
+			{
+				e[index] = values[index];
+			}
 		}
 		else
 			SetElementsPointer(0);
@@ -2694,7 +2698,11 @@ private:
 		{
 			Member* m = static_cast<Member*>(allocator.Malloc(count * sizeof(Member)));
 			SetMembersPointer(m);
-			std::memcpy(m, members, count * sizeof(Member));
+
+			for ( SizeType index = 0; index < count; ++index )
+			{
+				m[index] = members[index];
+			}
 		}
 		else
 			SetMembersPointer(0);

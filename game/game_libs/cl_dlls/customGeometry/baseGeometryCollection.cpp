@@ -10,7 +10,7 @@ namespace CustomGeometry
 
 	GeometryItemPtr_t CBaseGeometryCollection::ItemAt(uint32_t index) const
 	{
-		return index < m_Items.Count() ? m_Items[index] : GeometryItemPtr_t();
+		return index < static_cast<uint32_t>(m_Items.Count()) ? m_Items[index] : GeometryItemPtr_t();
 	}
 
 	void CBaseGeometryCollection::AddItem(const GeometryItemPtr_t& item)

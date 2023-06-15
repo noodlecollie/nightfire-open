@@ -23,19 +23,19 @@ public:
 	CColor() :
 		rgba(0),
 		init(false),
-		a(3, rgba),
 		r(2, rgba),
 		g(1, rgba),
-		b(0, rgba)
+		b(0, rgba),
+		a(3, rgba)
 	{
 	}
 	CColor(unsigned int rgba_) :
 		rgba(rgba_),
 		init(false),
-		a(3, rgba),
 		r(2, rgba),
 		g(1, rgba),
-		b(0, rgba)
+		b(0, rgba),
+		a(3, rgba)
 	{
 	}
 

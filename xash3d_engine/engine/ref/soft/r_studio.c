@@ -34,17 +34,6 @@ typedef struct
 
 cvar_t r_shadows = {(char*)"r_shadows", (char*)"0", 0};
 
-static vec3_t hullcolor[8] = {
-	{1.0f, 1.0f, 1.0f},
-	{1.0f, 0.5f, 0.5f},
-	{0.5f, 1.0f, 0.5f},
-	{1.0f, 1.0f, 0.5f},
-	{0.5f, 0.5f, 1.0f},
-	{1.0f, 0.5f, 1.0f},
-	{0.5f, 1.0f, 1.0f},
-	{1.0f, 1.0f, 1.0f},
-};
-
 typedef struct sortedmesh_s
 {
 	mstudiomesh_t* mesh;
@@ -118,7 +107,6 @@ typedef struct
 // studio-related cvars
 static cvar_t* r_studio_sort_textures;
 static cvar_t* cl_righthand = NULL;
-static cvar_t* r_studio_drawelements;
 
 static r_studio_interface_t* pStudioDraw;
 static studio_draw_state_t g_studio;  // global studio state
@@ -1635,7 +1623,7 @@ void R_StudioEntityLight(alight_t* lightinfo)
 	float minstrength, dist2, f, r2;
 	float lstrength[MAX_LOCALLIGHTS];
 	cl_entity_t* ent = RI.currententity;
-	vec3_t mid, origin, pos;
+	vec3_t mid, origin;
 	dlight_t* el;
 
 	(void)lightinfo;
@@ -1673,7 +1661,6 @@ void R_StudioEntityLight(alight_t* lightinfo)
 			}
 		}
 
-		VectorCopy(el->origin, pos);
 		VectorSubtract(origin, el->origin, mid);
 
 		f = DotProduct(mid, mid);
@@ -2858,6 +2845,7 @@ R_StudioDrawPointsShadow
 
 ===============
 */
+#ifdef UNUSED_FUNCTIONS
 static void R_StudioDrawPointsShadow(void)
 {
 	float *av, height;
@@ -2914,6 +2902,7 @@ static void R_StudioDrawPointsShadow(void)
 	// if( glState.stencilEnabled )
 	// pglDisable( GL_STENCIL_TEST );
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 ===============
@@ -3674,6 +3663,8 @@ void R_DrawViewModel(void)
 		case mod_studio:
 			R_StudioSetupTimings();
 			R_StudioDrawModelInternal(RI.currententity, STUDIO_RENDER);
+			break;
+		default:
 			break;
 	}
 

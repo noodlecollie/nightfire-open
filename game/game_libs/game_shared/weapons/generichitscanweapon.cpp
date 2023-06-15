@@ -91,7 +91,7 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(
 		vecAiming = gpGlobals->v_forward;
 	}
 
-	Vector vecDir = FireBulletsPlayer(*hitscanAttack, vecSrc, vecAiming);
+	FireBulletsPlayer(*hitscanAttack, vecSrc, vecAiming);
 	const int eventID = GetEventIDForAttackMode(hitscanAttack);
 
 	if ( eventID >= 0 )

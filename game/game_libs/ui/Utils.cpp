@@ -410,29 +410,42 @@ void operator delete[]( void *ptr )
 CBMP* CBMP::LoadFile(const char* filename)
 {
 	int length = 0;
+	size_t slength = 0;
 	bmp_t* bmp = (bmp_t*)EngFuncs::COM_LoadFile(filename, &length);
+
+	slength = static_cast<size_t>(length);
 
 	// cannot load
 	if ( !bmp )
+	{
 		return NULL;
+	}
 
 	// too small for BMP
-	if ( (size_t)length < sizeof(bmp_t) )
+	if ( slength < sizeof(bmp_t) )
+	{
 		return NULL;
+	}
 
 	// not a BMP
 	if ( bmp->id[0] != 'B' || bmp->id[1] != 'M' )
+	{
 		return NULL;
+	}
 
 	// bogus data
 	if ( !bmp->width || !bmp->height )
+	{
 		return NULL;
+	}
 
 	// validate all nasty data size fields
-	if ( length < bmp->fileSize || length < bmp->bitmapDataSize || length < bmp->bitmapDataOffset ||
-		 length < bmp->bitmapHeaderSize || length < bmp->bitmapDataOffset + bmp->bitmapDataSize ||
-		 length < bmp->bitmapHeaderSize + bmp->bitmapDataSize )
+	if ( slength < bmp->fileSize || slength < bmp->bitmapDataSize || slength < bmp->bitmapDataOffset ||
+		 slength < bmp->bitmapHeaderSize || slength < bmp->bitmapDataOffset + bmp->bitmapDataSize ||
+		 slength < bmp->bitmapHeaderSize + bmp->bitmapDataSize )
+	{
 		return NULL;
+	}
 
 	// will be freed in destructor
 	CBMP* ret = new CBMP(bmp);

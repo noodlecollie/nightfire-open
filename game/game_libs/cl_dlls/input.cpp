@@ -790,7 +790,7 @@ void DLLEXPORT CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 
 		CL_AdjustAngles(frametime, viewangles);
 
-		memset(cmd, 0, sizeof(*cmd));
+		*cmd = usercmd_s {};
 
 		gEngfuncs.SetViewAngles((float*)viewangles);
 

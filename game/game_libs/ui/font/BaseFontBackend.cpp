@@ -576,7 +576,10 @@ struct cached_font_t
 bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t rangeSize)
 {
 	char path[512];
-	int size, i, j, charsCount = 0;
+	int size;
+	uint32_t charsCount = 0;
+	size_t i;
+	size_t j;
 	byte* data;
 	cached_font_t* hdr;
 	char_data_t* ch;
@@ -601,7 +604,7 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 
 	hdr = reinterpret_cast<cached_font_t*>(data);
 
-	if ( size < sizeof(cached_font_t) )
+	if ( static_cast<size_t>(size) < sizeof(cached_font_t) )
 	{
 		Con_Printf("Font cache file is too short\n");
 		EngFuncs::COM_FreeFile(data);
@@ -632,7 +635,7 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 		return false;
 	}
 
-	if ( size < sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) )
+	if ( static_cast<size_t>(size) < sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) )
 	{
 		Con_Printf("Font cache file is too short (2nd check)\n");
 		EngFuncs::COM_FreeFile(data);
@@ -648,7 +651,7 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 		return false;
 	}
 
-	if ( size != sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) + bmp->fileSize )
+	if ( static_cast<size_t>(size) != sizeof(cached_font_t) + hdr->charsCount * sizeof(char_data_t) + bmp->fileSize )
 	{
 		Con_Printf("Font cache file is too short or too long (3rd check)\n");
 		EngFuncs::COM_FreeFile(data);
@@ -672,10 +675,10 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 
 		for ( j = 0; j < charsCount; j++ )
 		{
-			if ( ch->ch != range[i].Character(j) )
+			if ( ch->ch != static_cast<uint32_t>(range[i].Character(j)) )
 			{
 				Con_Printf(
-					"Font cache file has different character set. Expected %d, got %d",
+					"Font cache file has different character set. Expected %d, got %u",
 					range[i].Character(j),
 					ch->ch);
 				EngFuncs::COM_FreeFile(data);
@@ -712,7 +715,8 @@ bool CBaseFont::ReadFromCache(const char* filename, charRange_t* range, size_t r
 void CBaseFont::SaveToCache(const char* filename, charRange_t* range, size_t rangeSize, CBMP* bmp)
 {
 	char path[512];
-	int i, j;
+	size_t i;
+	size_t j;
 	uint32_t charsCount = 0;
 	byte *data, *buf_p;
 	size_t size = 0, bmpSize = bmp->GetBitmapHdr()->fileSize;
@@ -762,7 +766,7 @@ void CBaseFont::SaveToCache(const char* filename, charRange_t* range, size_t ran
 
 	memcpy(buf_p, bmp->GetBitmapHdr(), bmpSize);
 
-	if ( buf_p + bmpSize - data != size )
+	if ( static_cast<size_t>(buf_p + bmpSize - data) != size )
 		Host_Error("%s: %i: buf_p + bmpSize - data != size", __FILE__, __LINE__);
 
 	V_snprintf(path, sizeof(path), ".fontcache/%s", filename);

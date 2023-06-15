@@ -71,7 +71,7 @@ void CBotProfileListModel::InitialiseProfileTable()
 
 	for ( CBotProfileTable::ConstIterator it = m_ProfileTable.CBegin(); it != m_ProfileTable.CEnd(); ++it )
 	{
-		assert(m_IndexToProfileName.Count() < m_ProfileTable.Count());
+		assert(static_cast<size_t>(m_IndexToProfileName.Count()) < m_ProfileTable.Count());
 
 		m_IndexToProfileName.CopyAndAddToTail(it.Key().String());
 	}

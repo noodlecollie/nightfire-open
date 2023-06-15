@@ -247,8 +247,8 @@ void CHud::Init(void)
 }
 
 CHud::CHud() :
-	m_iSpriteCount(0),
 	m_pHudList(NULL),
+	m_iSpriteCount(0),
 	m_Crosshair(new CHudCrosshair())
 {
 }

@@ -221,7 +221,7 @@ void CMenuBotSetup::CacheCurrentInGameBotList()
 {
 	CachedInGameBotList.Purge();
 
-	for ( uint32_t index = 0; index < m_InGameBotListModel.GetRows(); ++index )
+	for ( uint32_t index = 0; index < static_cast<uint32_t>(m_InGameBotListModel.GetRows()); ++index )
 	{
 		CachedInGameBotList.AddToTail(*m_InGameBotListModel.Entry(index));
 	}

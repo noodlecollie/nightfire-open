@@ -223,6 +223,9 @@ generic method to fill rectangle
 */
 void GAME_EXPORT VGUI_DrawQuad(const vpoint_t* ul, const vpoint_t* lr)
 {
+	(void)ul;
+	(void)lr;
+#if 0
 	int width, height;
 	float localxscale, localyscale;
 
@@ -232,4 +235,5 @@ void GAME_EXPORT VGUI_DrawQuad(const vpoint_t* ul, const vpoint_t* lr)
 	localyscale = gpGlobals->height / (float)height;
 
 	ASSERT(ul != NULL && lr != NULL);
+#endif
 }

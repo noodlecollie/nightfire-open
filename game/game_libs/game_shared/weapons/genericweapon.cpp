@@ -83,7 +83,7 @@ void CGenericWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMo
 
 	const uint32_t index = attackMode.Signature()->Index;
 
-	if ( m_AttackModeEvents.Count() < index + 1 )
+	if ( static_cast<uint32_t>(m_AttackModeEvents.Count()) < index + 1 )
 	{
 		m_AttackModeEvents.SetCount(index + 1);
 	}
@@ -564,8 +564,6 @@ int CGenericWeapon::HandleSpecialReload(int currentState)
 
 void CGenericWeapon::WeaponIdle()
 {
-	const WeaponAtts::WACollection& Atts = WeaponAttributes();
-
 	ResetEmptySound();
 
 	if ( m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
@@ -802,7 +800,7 @@ bool CGenericWeapon::CanReload() const
 
 int CGenericWeapon::GetEventIDForAttackMode(const WeaponAtts::WABaseAttack* attack) const
 {
-	return (attack && attack->Signature()->Index < m_AttackModeEvents.Count())
+	return (attack && attack->Signature()->Index < static_cast<uint32_t>(m_AttackModeEvents.Count()))
 		? m_AttackModeEvents[attack->Signature()->Index]
 		: -1;
 }

@@ -6,6 +6,7 @@
 
 namespace
 {
+#ifndef CLIENT_DLL
 	void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, float* mins, float* maxs, edict_t* pEntity)
 	{
 		float* minmaxs[2] = {mins, maxs};
@@ -49,6 +50,7 @@ namespace
 			}
 		}
 	}
+#endif // CLIENT_DLL
 }  // namespace
 
 CGenericMeleeWeapon::CGenericMeleeWeapon() :

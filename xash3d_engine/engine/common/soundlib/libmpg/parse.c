@@ -396,7 +396,6 @@ static int check_lame_tag(mpg123_handle_t* fr)
 	{
 		byte lame_vbr;
 		float replay_gain[2] = {0, 0};
-		float peak = 0;
 		float gain_offset = 0;  // going to be +6 for old lame that used 83dB
 		char nb[10];
 		mpg_off_t pad_in;
@@ -446,7 +445,6 @@ static int check_lame_tag(mpg123_handle_t* fr)
 		}
 
 		lame_offset += 1;  // 11 in, skipping lowpass filter value
-		peak = 0;  // until better times arrived
 		lame_offset += 4;  // 15 in
 
 		// ReplayGain values - lame only writes radio mode gain...

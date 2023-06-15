@@ -126,7 +126,7 @@ int CHudSpectator::Init()
 	m_chatEnabled = (gHUD.m_SayText.m_HUD_saytext->value != 0);
 	iJumpSpectator = 0;
 
-	memset(&m_OverviewData, 0, sizeof(m_OverviewData));
+	m_OverviewData = overviewInfo_t {};
 	memset(&m_OverviewEntities, 0, sizeof(m_OverviewEntities));
 	m_lastPrimaryObject = m_lastSecondaryObject = 0;
 
@@ -832,7 +832,7 @@ bool CHudSpectator::ParseOverviewFile()
 
 	char* pfile = NULL;
 
-	memset(&m_OverviewData, 0, sizeof(m_OverviewData));
+	m_OverviewData = overviewInfo_t {};
 
 	// fill in standrd values
 	m_OverviewData.insetWindowX = 4;  // upper left corner
@@ -1513,7 +1513,7 @@ void CHudSpectator::InitHUDData()
 	iJumpSpectator = 0;
 	g_iUser1 = g_iUser2 = 0;
 
-	memset(&m_OverviewData, 0, sizeof(m_OverviewData));
+	m_OverviewData = overviewInfo_t {};
 	memset(&m_OverviewEntities, 0, sizeof(m_OverviewEntities));
 
 	if ( gEngfuncs.IsSpectateOnly() || gEngfuncs.pDemoAPI->IsPlayingback() )

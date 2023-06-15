@@ -35,10 +35,10 @@ CMenuTable::CMenuTable() :
 	szDownArrowFocus(UI_DOWNARROWFOCUS),
 	szDownArrowPressed(UI_DOWNARROWPRESSED),
 	iTopItem(0),
+	iNumRows(0),
 	iScrollBarSliding(false),
 	iHighlight(-1),
 	iCurItem(0),
-	iNumRows(0),
 	m_iLastItemMouseChange(0),
 	m_iSortingColumn(-1),
 	m_pModel(NULL)
@@ -480,14 +480,18 @@ void CMenuTable::DrawLine(Point p, const char** psz, size_t size, uint textColor
 		if ( !psz[i] || !sz.w )  // headers may be null, cells too
 			continue;
 
-		if ( bAllowSorting && i == GetSortingColumn() )
+		if ( bAllowSorting && i == static_cast<size_t>(GetSortingColumn()) )
 		{
 			HIMAGE hPic;
 
 			if ( IsAscend() )
+			{
 				hPic = EngFuncs::PIC_Load(UI_ASCEND);
+			}
 			else
+			{
 				hPic = EngFuncs::PIC_Load(UI_DESCEND);
+			}
 
 			if ( hPic )
 			{

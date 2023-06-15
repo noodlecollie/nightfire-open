@@ -819,7 +819,7 @@ static image_t* R_RecursiveFindWaterTexture(const mnode_t* node, const mnode_t* 
 	return NULL;
 }
 
-#endif UNUSED_FUNCTIONS
+#endif // UNUSED_FUNCTIONS
 
 extern void R_PolysetFillSpans8(void*);
 extern void R_PolysetDrawSpansConstant8_33(void* pspanpackage);

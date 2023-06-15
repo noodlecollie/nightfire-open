@@ -110,9 +110,6 @@ playermove_t* pmove = NULL;
 static vec3_t rgv3tStuckTable[54];
 static int rgStuckLast[MAX_CLIENTS][2];
 
-// Texture names
-static int gcTextures = 0;
-
 int g_onladder = 0;
 
 static void PM_PlayStepSound(int stepSoundId, float volume)
@@ -1302,7 +1299,6 @@ int PM_CheckStuck(void)
 	int hitent;
 	int idx;
 	float fTime;
-	int i;
 	pmtrace_t traceresult;
 
 	static float rgStuckCheckTime[MAX_CLIENTS][2];  // Last time we did a full
@@ -1329,7 +1325,7 @@ int PM_CheckStuck(void)
 			PM_ResetStuckOffsets(pmove->player_index, pmove->server);
 			do
 			{
-				i = PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
+				PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
 
 				VectorAdd(base, offset, test);
 				if ( pmove->PM_TestPlayerPosition(test, &traceresult) == -1 )
@@ -1347,9 +1343,13 @@ int PM_CheckStuck(void)
 
 	// Only an issue on the client.
 	if ( pmove->server )
+	{
 		idx = 0;
+	}
 	else
+	{
 		idx = 1;
+	}
 
 	fTime = pmove->Sys_FloatTime();
 	// Too soon?
@@ -1361,7 +1361,7 @@ int PM_CheckStuck(void)
 
 	pmove->PM_StuckTouch(hitent, &traceresult);
 
-	i = PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
+	PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
 
 	VectorAdd(base, offset, test);
 	if ( (hitent = pmove->PM_TestPlayerPosition(test, NULL)) == -1 )

@@ -108,7 +108,7 @@ const WeaponAtts::AccuracyParameters* CCrosshairParameters::WeaponAccuracyParams
 	CWeaponRegistry& registry = CWeaponRegistry::StaticInstance();
 	const WeaponAtts::WACollection* atts = registry.Get(m_WeaponID);
 
-	if ( !atts || index >= atts->AttackModes.Count() )
+	if ( !atts || index >= static_cast<size_t>(atts->AttackModes.Count()) )
 	{
 		return nullptr;
 	}
@@ -133,7 +133,7 @@ const WeaponAtts::CrosshairParameters* CCrosshairParameters::CrosshairParamsForA
 	CWeaponRegistry& registry = CWeaponRegistry::StaticInstance();
 	const WeaponAtts::WACollection* atts = registry.Get(m_WeaponID);
 
-	if ( !atts || index >= atts->AttackModes.Count() )
+	if ( !atts || index >= static_cast<size_t>(atts->AttackModes.Count()) )
 	{
 		return nullptr;
 	}

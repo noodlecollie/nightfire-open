@@ -63,58 +63,98 @@ void CHudMOTD::Reset(void)
 int CHudMOTD::Draw(float fTime)
 {
 	gHUD.m_iNoConsolePrint &= ~(1 << 1);
+
 	if ( !m_bShow )
+	{
 		return 1;
+	}
+
 	gHUD.m_iNoConsolePrint |= 1 << 1;
+
 	// find the top of where the MOTD should be drawn,  so the whole thing is centered in the screen
 	int ypos = (ScreenHeight - LINE_HEIGHT * m_iLines) / 2;  // shift it up slightly
 	char* ch = m_szMOTD;
 	int xpos = (ScreenWidth - gHUD.m_scrinfo.charWidths['M'] * m_iMaxLength) / 2;
+
 	if ( xpos < 30 )
+	{
 		xpos = 30;
+	}
+
 	int xmax = xpos + gHUD.m_scrinfo.charWidths['M'] * m_iMaxLength;
 	int height = LINE_HEIGHT * m_iLines;
 	int ypos_r = ypos;
+
 	if ( height > ROW_RANGE_MAX )
 	{
 		ypos = ROW_RANGE_MIN + 7 + scroll;
+
 		if ( ypos > ROW_RANGE_MIN + 4 )
+		{
 			scroll -= (ypos - (ROW_RANGE_MIN + 4)) / 3.0;
+		}
+
 		if ( ypos + height < ROW_RANGE_MAX )
+		{
 			scroll += (ROW_RANGE_MAX - (ypos + height)) / 3.0;
+		}
+
 		ypos_r = ROW_RANGE_MIN;
 		height = ROW_RANGE_MAX;
 	}
-	int ymax = ypos + height;
+
 	if ( xmax > ScreenWidth - 30 )
+	{
 		xmax = ScreenWidth - 30;
+	}
+
 	gHUD.DrawDarkRectangle(xpos - 5, ypos_r - 5, xmax - xpos + 10, height + 10);
+
 	while ( *ch )
 	{
 		char* next_line;
 		int line_length = 0;  // count the length of the current line
+
 		for ( next_line = ch; *next_line != '\n' && *next_line != 0; next_line++ )
-			line_length += gHUD.m_scrinfo.charWidths[*next_line];
+		{
+			line_length += gHUD.m_scrinfo.charWidths[static_cast<int>(*next_line)];
+		}
+
 		char* top = next_line;
+
 		if ( *top == '\n' )
+		{
 			*top = 0;
+		}
 		else
+		{
 			top = NULL;
+		}
 
 		// find where to start drawing the line
 		if ( (ypos > ROW_RANGE_MIN) && (ypos + LINE_HEIGHT <= ypos_r + height) )
+		{
 			DrawUtfString(xpos, ypos, xmax, ch, 255, 180, 0);
+		}
 
 		ypos += LINE_HEIGHT;
 
 		if ( top )  // restore
+		{
 			*top = '\n';
+		}
+
 		ch = next_line;
+
 		if ( *ch == '\n' )
+		{
 			ch++;
+		}
 
 		if ( ypos > (ScreenHeight - 20) )
+		{
 			break;  // don't let it draw too low
+		}
 	}
 
 	return 1;

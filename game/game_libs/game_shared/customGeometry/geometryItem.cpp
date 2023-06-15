@@ -63,7 +63,7 @@ namespace CustomGeometry
 
 	bool CGeometryItem::AddPoint(const Vector& p0)
 	{
-		if ( m_Points.Count() + 1 > MAX_POINTS_PER_MSG )
+		if ( static_cast<size_t>(m_Points.Count()) + 1 > MAX_POINTS_PER_MSG )
 		{
 			return false;
 		}
@@ -74,7 +74,8 @@ namespace CustomGeometry
 
 	bool CGeometryItem::AddLine(const Vector& p0, const Vector& p1)
 	{
-		if ( m_Points.Count() + 2 > MAX_POINTS_PER_MSG || m_Indices.Count() + 2 > MAX_INDICES_PER_MSG )
+		if ( static_cast<size_t>(m_Points.Count()) + 2 > MAX_POINTS_PER_MSG ||
+			 static_cast<size_t>(m_Indices.Count()) + 2 > MAX_INDICES_PER_MSG )
 		{
 			return false;
 		}
@@ -92,7 +93,8 @@ namespace CustomGeometry
 
 	bool CGeometryItem::AddPointAndIndex(const Vector& p0)
 	{
-		if ( m_Points.Count() + 1 > MAX_POINTS_PER_MSG || m_Indices.Count() + 1 > MAX_INDICES_PER_MSG )
+		if ( static_cast<size_t>(m_Points.Count()) + 1 > MAX_POINTS_PER_MSG ||
+			 static_cast<size_t>(m_Indices.Count()) + 1 > MAX_INDICES_PER_MSG )
 		{
 			return false;
 		}
@@ -107,7 +109,8 @@ namespace CustomGeometry
 
 	bool CGeometryItem::AddTriangleQuad(const Vector& p0, const Vector& p1, const Vector& p2, const Vector& p3)
 	{
-		if ( m_Points.Count() + 4 > MAX_POINTS_PER_MSG || m_Indices.Count() + 6 > MAX_INDICES_PER_MSG )
+		if ( static_cast<size_t>(m_Points.Count()) + 4 > MAX_POINTS_PER_MSG ||
+			 static_cast<size_t>(m_Indices.Count()) + 6 > MAX_INDICES_PER_MSG )
 		{
 			return false;
 		}
@@ -132,7 +135,7 @@ namespace CustomGeometry
 
 	bool CGeometryItem::AddIndex(uint8_t index)
 	{
-		if ( m_Indices.Count() + 1 > MAX_INDICES_PER_MSG )
+		if ( static_cast<size_t>(m_Indices.Count()) + 1 > MAX_INDICES_PER_MSG )
 		{
 			return false;
 		}
@@ -143,7 +146,7 @@ namespace CustomGeometry
 
 	bool CGeometryItem::AddLineIndices(uint8_t i0, uint8_t i1)
 	{
-		if ( m_Indices.Count() + 2 > MAX_INDICES_PER_MSG )
+		if ( static_cast<size_t>(m_Indices.Count()) + 2 > MAX_INDICES_PER_MSG )
 		{
 			return false;
 		}

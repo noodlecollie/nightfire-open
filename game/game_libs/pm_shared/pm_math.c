@@ -103,7 +103,7 @@ void AngleVectorsTranspose(const vec3_t angles, vec3_t forward, vec3_t right, ve
 	}
 }
 
-void AngleMatrix(const vec3_t angles, float (*matrix)[4])
+void AngleMatrix(const vec3_t angles, float matrix[3][4])
 {
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
@@ -163,7 +163,7 @@ void AngleIMatrix(const vec3_t angles, float matrix[3][4])
 	matrix[2][3] = 0.0;
 }
 
-void NormalizeAngles(float* angles)
+void NormalizeAngles(vec3_t angles)
 {
 	int i;
 	// Normalize angles
@@ -189,7 +189,7 @@ FIXME:  Use Quaternions to avoid discontinuities
 Frac is 0.0 to 1.0 ( i.e., should probably be clamped, but doesn't have to be )
 ===================
 */
-void InterpolateAngles(float* start, float* end, float* output, float frac)
+void InterpolateAngles(vec3_t start, vec3_t end, vec3_t output, float frac)
 {
 	int i;
 	float ang1, ang2;

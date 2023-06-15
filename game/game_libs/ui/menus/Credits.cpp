@@ -197,7 +197,7 @@ void CMenuCredits::_Init(void)
 				memcpy(tmp, buffer, count);
 				EngFuncs::COM_FreeFile(buffer);
 				buffer = tmp;
-				strncpy(buffer + count, "\r", 1);  // add terminator
+				strncpy(buffer + count, "\r", 2);  // add terminator
 				count += 2;  // added "\r\0"
 			}
 			p = buffer;

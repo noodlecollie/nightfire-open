@@ -40,8 +40,12 @@ CMenuSwitch::CMenuSwitch() :
 	m_iState = 0;
 	m_iSwitches = 0;
 	memset(m_szNames, 0, sizeof(m_szNames));
-	memset(m_Sizes, 0, sizeof(m_Sizes));
-	memset(m_Points, 0, sizeof(m_Points));
+
+	for ( size_t index = 0; index < UI_MAX_MENUITEMS; ++index )
+	{
+		m_Sizes[index] = Size {};
+		m_Points[index] = Point {};
+	}
 
 	bChangeOnPressed = false;
 }

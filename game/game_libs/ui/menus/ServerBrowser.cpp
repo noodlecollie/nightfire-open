@@ -401,17 +401,21 @@ CMenuServerBrowser::GetGamesList
 void CMenuGameListModel::Update(void)
 {
 	int i;
-	const char* info;
 
 	// regenerate table data
 	for ( i = 0; i < servers.Count(); i++ )
+	{
 		servers[i].UpdateData();
+	}
 
 	if ( servers.Count() )
 	{
 		parent->joinGame->SetGrayed(false);
+
 		if ( m_iSortingColumn != -1 )
+		{
 			Sort(m_iSortingColumn, m_bAscend);
+		}
 	}
 }
 

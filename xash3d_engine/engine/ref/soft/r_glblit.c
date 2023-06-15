@@ -1,10 +1,17 @@
 #include "r_local.h"
 #define APIENTRY_LINKAGE static
 
-// NFTODO: This is a software renderer, why is it using OpenGL??
-// There's some funky stuff going on here, search "glblit"
-// to find out which bits are coupled together with the OpenGL renderer.
+// Not all of the OpenGL functions are used, and on higher
+// warning levels GCC complains about function pointers
+// that are declared but not used. We disable this warning here.
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#endif
 #include "../gl/gl_export.h"
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
 
 struct swblit_s
 {
@@ -53,6 +60,7 @@ DebugCallback
 For ARB_debug_output
 ========================
 */
+#ifdef UNUSED_FUNCTIONS
 static void APIENTRY GL_DebugOutput(
 	GLuint source,
 	GLuint type,
@@ -87,9 +95,9 @@ static void APIENTRY GL_DebugOutput(
 			break;
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 static unsigned short* glbuf;
-static int tex;
 
 #define LOAD(x) \
 	p##x = gEngfuncs.GL_GetProcAddress(#x); \
@@ -226,6 +234,7 @@ static void* R_Lock_GL1(void)
 	return glbuf;
 }
 
+#ifdef UNUSED_FUNCTIONS
 static void R_Unlock_GL1(void)
 {
 	pglTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, vid.width, vid.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, glbuf);
@@ -245,6 +254,7 @@ static void R_Unlock_GL1(void)
 	pglEnd();
 	gEngfuncs.GL_SwapBuffers();
 }
+#endif // UNUSED_FUNCTIONS
 
 static void R_Unlock_GLES1(void)
 {
@@ -254,6 +264,7 @@ static void R_Unlock_GLES1(void)
 	gEngfuncs.GL_SwapBuffers();
 }
 
+#ifdef UNUSED_FUNCTIONS
 static qboolean R_CreateBuffer_GL1(int width, int height, uint* stride, uint* bpp, uint* r, uint* g, uint* b)
 {
 	pglViewport(0, 0, width, height);
@@ -280,6 +291,7 @@ static qboolean R_CreateBuffer_GL1(int width, int height, uint* stride, uint* bp
 
 	return true;
 }
+#endif // UNUSED_FUNCTIONS
 
 static qboolean R_CreateBuffer_GLES1(int width, int height, uint* stride, uint* bpp, uint* r, uint* g, uint* b)
 {

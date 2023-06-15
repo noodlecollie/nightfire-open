@@ -450,7 +450,7 @@ mspriteframe_t* R_GetSpriteFrame(const model_t* pModel, int frame, float yaw)
 		}
 		pspriteframe = pspritegroup->frames[i];
 	}
-	else if ( psprite->frames[frame].type == FRAME_ANGLED )
+	else if ( psprite->frames[frame].type == SPR_ANGLED )
 	{
 		int angleframe = (int)(Q_rint((RI.viewangles[1] - yaw + 45.0f) / 360 * 8) - 4) & 7;
 
@@ -496,12 +496,12 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		frame = psprite->numframes - 1;
 	}
 
-	if ( psprite->frames[frame].type == FRAME_SINGLE )
+	if ( psprite->frames[frame].type == SPR_SINGLE )
 	{
 		if ( m_fDoInterp )
 		{
 			if ( ent->latched.prevblending[0] >= psprite->numframes ||
-				 psprite->frames[ent->latched.prevblending[0]].type != FRAME_SINGLE )
+				 psprite->frames[ent->latched.prevblending[0]].type != SPR_SINGLE )
 			{
 				// this can be happens when rendering switched between single and angled frames
 				// or change model on replace delta-entity
@@ -549,7 +549,7 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		if ( curframe )
 			*curframe = psprite->frames[frame].frameptr;
 	}
-	else if ( psprite->frames[frame].type == FRAME_GROUP )
+	else if ( psprite->frames[frame].type == SPR_GROUP )
 	{
 		pspritegroup = (mspritegroup_t*)psprite->frames[frame].frameptr;
 		pintervals = pspritegroup->intervals;
@@ -585,7 +585,7 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		if ( curframe )
 			*curframe = pspritegroup->frames[i];
 	}
-	else if ( psprite->frames[frame].type == FRAME_ANGLED )
+	else if ( psprite->frames[frame].type == SPR_ANGLED )
 	{
 		// e.g. doom-style sprite monsters
 		float yaw = ent->angles[YAW];
@@ -594,7 +594,7 @@ float R_GetSpriteFrameInterpolant(cl_entity_t* ent, mspriteframe_t** oldframe, m
 		if ( m_fDoInterp )
 		{
 			if ( ent->latched.prevblending[0] >= psprite->numframes ||
-				 psprite->frames[ent->latched.prevblending[0]].type != FRAME_ANGLED )
+				 psprite->frames[ent->latched.prevblending[0]].type != SPR_ANGLED )
 			{
 				// this can be happens when rendering switched between single and angled frames
 				// or change model on replace delta-entity
