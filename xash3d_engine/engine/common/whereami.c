@@ -8,6 +8,8 @@
 #include <whereami.h>
 #endif
 
+#include "PlatformLib/File.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -291,7 +293,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						 buffer[length - 3] == 'a' && buffer[length - 4] == '.' )
 					{
 						char *begin, *p;
-						int fd = open(path, O_RDONLY);
+						int fd = PlatformLib_Open(path, O_RDONLY);
 						if ( fd == -1 )
 						{
 							length = -1;  // retry
@@ -301,7 +303,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						begin = (char*)mmap(0, offset, PROT_READ, MAP_SHARED, fd, 0);
 						if ( begin == MAP_FAILED )
 						{
-							close(fd);
+							PlatformLib_Close(fd);
 							length = -1;  // retry
 							break;
 						}
@@ -327,7 +329,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						}
 
 						munmap(begin, offset);
-						close(fd);
+						PlatformLib_Close(fd);
 					}
 #endif
 					if ( length <= capacity )

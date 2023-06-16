@@ -35,7 +35,7 @@ void GL_FrustumInitProj(gl_frustum_t* out, float flZNear, float flZFar, float fl
 	vec3_t normal, iforward;
 
 	// horizontal fov used for left and right planes
-	SinCos((float)DEG2RAD(flFovX) * 0.5f, &xs, &xc);
+	SinCos(DEG2RADF(flFovX) * 0.5f, &xs, &xc);
 
 	// setup left plane
 	VectorMAM(xs, RI.cull_vforward, -xc, RI.cull_vright, normal);
@@ -46,7 +46,7 @@ void GL_FrustumInitProj(gl_frustum_t* out, float flZNear, float flZFar, float fl
 	GL_FrustumSetPlane(out, FRUSTUM_RIGHT, normal, DotProduct(RI.cullorigin, normal));
 
 	// vertical fov used for top and bottom planes
-	SinCos((float)DEG2RAD(flFovY) * 0.5f, &xs, &xc);
+	SinCos(DEG2RADF(flFovY) * 0.5f, &xs, &xc);
 	VectorNegate(RI.cull_vforward, iforward);
 
 	// setup bottom plane

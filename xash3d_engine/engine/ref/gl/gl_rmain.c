@@ -349,9 +349,9 @@ void R_SetupFrustum(void)
 
 	if ( RP_NORMALPASS() && (ENGINE_GET_PARM(PARM_WATER_LEVEL) >= 3) && ENGINE_GET_PARM(PARM_QUAKE_COMPATIBLE) )
 	{
-		RI.fov_x = atanf(tanf((float)DEG2RAD(RI.fov_x) / 2.0f) * (0.97f + sinf(gpGlobals->time * 1.5f) * 0.03f)) *
+		RI.fov_x = atanf(tanf(DEG2RADF(RI.fov_x) / 2.0f) * (0.97f + sinf(gpGlobals->time * 1.5f) * 0.03f)) *
 			2.0f / (M_PI_F / 180.0f);
-		RI.fov_y = atanf(tanf((float)DEG2RAD(RI.fov_y) / 2.0f) * (1.03f - sinf(gpGlobals->time * 1.5f) * 0.03f)) *
+		RI.fov_y = atanf(tanf(DEG2RADF(RI.fov_y) / 2.0f) * (1.03f - sinf(gpGlobals->time * 1.5f) * 0.03f)) *
 			2.0f / (M_PI_F / 180.0f);
 	}
 

@@ -52,7 +52,7 @@ static void SWAP_Initialize(void)
 	path = getenv("SWAP_PATH");
 	if ( !path )
 		path = XASH_DEFAULT_SWAP_PATH;
-	fd = open(path, O_CREAT | O_RDWR, 0600);
+	fd = PlatformLib_OpenWithPermissions(path, O_CREAT | O_RDWR, 0600);
 
 	if ( prealloc )
 		s.prealloc = atoi(prealloc);

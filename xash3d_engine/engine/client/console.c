@@ -1169,19 +1169,6 @@ void Con_ClearField(field_t* edit)
 
 /*
 ================
-Field_Set
-================
-*/
-#ifdef UNUSED_FUNCTIONS
-static void Field_Set(field_t* f, const char* string)
-{
-	f->scroll = 0;
-	f->cursor = Q_strncpy(f->buffer, string, MAX_STRING);
-}
-#endif // UNUSED_FUNCTIONS
-
-/*
-================
 Field_Paste
 ================
 */
@@ -2427,6 +2414,17 @@ void GAME_EXPORT Con_DefaultColor(int r, int g, int b)
 
 #if XASH_ENGINE_TESTS
 #include "tests.h"
+
+/*
+================
+Field_Set
+================
+*/
+static void Field_Set(field_t* f, const char* string)
+{
+	f->scroll = 0;
+	f->cursor = Q_strncpy(f->buffer, string, MAX_STRING);
+}
 
 static void Test_RunConHistory(void)
 {

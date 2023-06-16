@@ -119,7 +119,7 @@ void userAppExit(void)
 	solder_quit();
 	if ( nxlink_sock >= 0 )
 	{
-		close(nxlink_sock);
+		PlatformLib_Close(nxlink_sock);
 		nxlink_sock = -1;
 	}
 	socketExit();

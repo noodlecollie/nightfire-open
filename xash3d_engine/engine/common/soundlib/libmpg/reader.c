@@ -20,6 +20,8 @@ GNU General Public License for more details.
 #include <unistd.h>
 #endif
 
+#include "PlatformLib/File.h"
+
 #define READER_STREAM 0
 #define READER_FEED 1
 #define READER_BUF_STREAM 2
@@ -35,7 +37,7 @@ static buffy_t* buffy_new(size_t size, size_t minsize)
 	if ( newbuf == NULL )
 		return NULL;
 
-	newbuf->realsize = size > minsize ? size : minsize;
+	newbuf->realsize = (mpg_ssize_t)(size > minsize ? size : minsize);
 	newbuf->data = malloc(newbuf->realsize);
 
 	if ( newbuf->data == NULL )
@@ -535,7 +537,7 @@ static mpg_off_t stream_lseek(mpg123_handle_t* fr, mpg_off_t pos, int whence)
 static void stream_close(mpg123_handle_t* fr)
 {
 	if ( fr->rdat.flags & READER_FD_OPENED )
-		close(fr->rdat.filept);
+		PlatformLib_Close(fr->rdat.filept);
 
 	fr->rdat.filept = 0;
 
@@ -935,14 +937,19 @@ int open_feed(mpg123_handle_t* fr)
 
 static mpg_ssize_t read_adapter(int fd, void* buf, size_t count)
 {
-	return read(fd, buf, (unsigned int)count);
+	return PlatformLib_Read(fd, buf, (unsigned int)count);
+}
+
+static mpg_off_t lseek_adapter(int fd, mpg_off_t offset, int whence)
+{
+	return (mpg_off_t)PlatformLib_LSeek(fd, offset, whence);
 }
 
 static int default_init(mpg123_handle_t* fr)
 {
 	fr->rdat.fdread = plain_read;
 	fr->rdat.read = fr->rdat.r_read != NULL ? fr->rdat.r_read : read_adapter;
-	fr->rdat.lseek = fr->rdat.r_lseek != NULL ? fr->rdat.r_lseek : lseek;
+	fr->rdat.lseek = fr->rdat.r_lseek != NULL ? fr->rdat.r_lseek : lseek_adapter;
 	fr->rdat.filelen = get_fileinfo(fr);
 	fr->rdat.filepos = 0;
 

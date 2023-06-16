@@ -1,7 +1,18 @@
 function(set_common_library_compiler_settings targetname)
 	if(HOST_COMPILER STREQUAL "MSVC")
-		add_compile_options(/W4 /WX)
-		add_link_options(/WX)
+		target_compile_options(${targetname} PRIVATE
+			/W4
+			/WX
+		)
+
+		target_link_options(${targetname} PRIVATE
+			/WX
+		)
+
+		# NFTODO: Remove this
+		target_compile_definitions(${targetname} PRIVATE
+			_CRT_SECURE_NO_WARNINGS=1
+		)
 	else()
 		# Unfortunately, we can't apply -pedantic here without some
 		# significant changes to the codebase. When pedantic (ISO C)

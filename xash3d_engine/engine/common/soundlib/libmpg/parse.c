@@ -862,8 +862,15 @@ static int skip_junk(mpg123_handle_t* fr, ulong* newheadp, long* headcount)
 		if ( (ret = forget_head_shift(fr, &newhead, !forgetcount)) <= 0 )
 			return ret;
 
-		if ( head_check(newhead) && (ret = decode_header(fr, newhead, &freeformat_count)) )
-			break;
+		if ( head_check(newhead) )
+		{
+			ret = decode_header(fr, newhead, &freeformat_count);
+
+			if ( ret )
+			{
+				break;
+			}
+		}
 	}
 	while ( 1 );
 

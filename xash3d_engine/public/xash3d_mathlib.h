@@ -45,6 +45,8 @@ GNU General Public License for more details.
 
 #define RAD2DEG(x) ((double)(x) * (double)(180.0 / M_PI))
 #define DEG2RAD(x) ((double)(x) * (double)(M_PI / 180.0))
+#define RAD2DEGF(x) ((float)(x) * (float)(180.0f / M_PI_F))
+#define DEG2RADF(x) ((float)(x) * (float)(M_PI_F / 180.0f))
 
 #define NUMVERTEXNORMALS 162
 

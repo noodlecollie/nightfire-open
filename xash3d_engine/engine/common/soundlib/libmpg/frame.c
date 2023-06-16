@@ -503,7 +503,7 @@ mpg_off_t frame_index_find(mpg123_handle_t* fr, mpg_off_t want_frame, mpg_off_t*
 		}
 
 		// we have index position, that yields frame and byte offsets.
-		*get_frame = fi * fr->index.step;
+		*get_frame = (mpg_off_t)(fi * fr->index.step);
 		gopos = fr->index.data[fi];
 		fr->state_flags |= FRAME_ACCURATE;  // when using the frame index, we are accurate.
 	}

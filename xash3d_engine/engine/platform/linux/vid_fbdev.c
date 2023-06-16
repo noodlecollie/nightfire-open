@@ -16,6 +16,8 @@
 #include <sys/kd.h>
 #endif
 
+#include "PlatformLib/File.h"
+
 struct fb_s
 {
 	int fd, tty_fd;
@@ -58,7 +60,7 @@ qboolean R_Init_Video(const int type)
 
 	Sys_GetParmFromCmdLine("-fbdev", fbdev);
 
-	fb.fd = open(fbdev, O_RDWR);
+	fb.fd = PlatformLib_Open(fbdev, O_RDWR);
 
 	if ( fb.fd < 0 )
 	{
@@ -66,7 +68,7 @@ qboolean R_Init_Video(const int type)
 	}
 
 	if ( Sys_CheckParm("-ttygfx") )
-		fb.tty_fd = open("/dev/tty", O_RDWR);  // only need this to set graphics mode, optional
+		fb.tty_fd = PlatformLib_Open("/dev/tty", O_RDWR);  // only need this to set graphics mode, optional
 
 	ioctl(fb.fd, FBIOGET_FSCREENINFO, &fb.finfo);
 	ioctl(fb.fd, FBIOGET_VSCREENINFO, &fb.vinfo);
@@ -94,7 +96,7 @@ void R_Free_Video(void)
 	}
 	if ( fb.map )
 		munmap(fb.map, fb.finfo.smem_len);
-	close(fb.fd);
+	PlatformLib_Close(fb.fd);
 
 	fb.fd = -1;
 	fb.map = NULL;
@@ -102,7 +104,7 @@ void R_Free_Video(void)
 	if ( fb.tty_fd >= 0 )
 	{
 		ioctl(fb.tty_fd, KDSETMODE, KD_TEXT);
-		close(fb.tty_fd);
+		PlatformLib_Close(fb.tty_fd);
 		fb.tty_fd = -1;
 	}
 

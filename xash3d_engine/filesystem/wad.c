@@ -270,7 +270,7 @@ FS_Close_WAD
 */
 void FS_Close_WAD(searchpath_t* search)
 {
-	FS_CloseWAD(search->wad);
+	FS_CloseWAD(search->pkg.wad);
 }
 
 /*
@@ -414,15 +414,17 @@ static wfile_t* W_Open(const char* filename, int* error)
 	for ( i = 0; i < lumpcount; i++ )
 	{
 		char name[16];
-		int k;
+		size_t k;
 
 		// cleanup lumpname
 		Q_strnlwr(srclumps[i].name, name, sizeof(srclumps[i].name));
 
 		// check for '*' symbol issues (quake1)
 		k = Q_strlen(Q_strrchr(name, '*'));
-		if ( k )
+		if ( k > 0 )
+		{
 			name[strlen(name) - k] = '!';
+		}
 
 		// check for Quake 'conchars' issues (only lmp loader really allows to read this lame pic)
 		if ( srclumps[i].type == 68 && !Q_stricmp(srclumps[i].name, "conchars") )
@@ -447,7 +449,7 @@ FS_FileTime_WAD
 static int FS_FileTime_WAD(searchpath_t* search, const char* filename)
 {
 	(void)filename;
-	return search->wad->filetime;
+	return (int)(search->pkg.wad->filetime);
 }
 
 /*
@@ -458,7 +460,7 @@ FS_PrintInfo_WAD
 */
 static void FS_PrintInfo_WAD(searchpath_t* search, char* dst, size_t size)
 {
-	Q_snprintf(dst, size, "%s (%i files)", search->filename, search->wad->numlumps);
+	Q_snprintf(dst, size, "%s (%i files)", search->filename, search->pkg.wad->numlumps);
 }
 
 /*
@@ -502,13 +504,16 @@ static int FS_FindFile_WAD(searchpath_t* search, const char* path, char* fixedna
 	// because we using original wad names[16];
 	COM_FileBase(path, shortname);
 
-	lump = W_FindLump(search->wad, shortname, type);
+	lump = W_FindLump(search->pkg.wad, shortname, type);
 
 	if ( lump )
 	{
 		if ( fixedname )
+		{
 			Q_strncpy(fixedname, lump->name, len);
-		return lump - search->wad->lumps;
+		}
+
+		return (int)(lump - search->pkg.wad->lumps);
 	}
 
 	return -1;
@@ -556,14 +561,14 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 	if ( !anywadname && Q_stricmp(wadname, temp2) )
 		return;
 
-	for ( i = 0; i < search->wad->numlumps; i++ )
+	for ( i = 0; i < search->pkg.wad->numlumps; i++ )
 	{
 		// if type not matching, we already have no chance ...
-		if ( type != TYP_ANY && search->wad->lumps[i].type != type )
+		if ( type != TYP_ANY && search->pkg.wad->lumps[i].type != type )
 			continue;
 
 		// build the lumpname with image suffix (if present)
-		Q_strncpy(temp, search->wad->lumps[i].name, sizeof(temp));
+		Q_strncpy(temp, search->pkg.wad->lumps[i].name, sizeof(temp));
 
 		while ( temp[0] )
 		{
@@ -579,7 +584,7 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 				{
 					// build path: wadname/lumpname.ext
 					Q_snprintf(temp2, sizeof(temp2), "%s/%s", wadfolder, temp);
-					Q_snprintf(buf, sizeof(buf), ".%s", W_ExtFromType(search->wad->lumps[i].type));
+					Q_snprintf(buf, sizeof(buf), ".%s", W_ExtFromType(search->pkg.wad->lumps[i].type));
 					COM_DefaultExtension(temp2, buf);
 					stringlistappend(list, temp2);
 				}
@@ -634,7 +639,7 @@ qboolean FS_AddWad_Fullpath(const char* wadfile, qboolean* already_loaded, int f
 	{
 		search = (searchpath_t*)Mem_Calloc(fs_mempool, sizeof(searchpath_t));
 		Q_strncpy(search->filename, wadfile, sizeof(search->filename));
-		search->wad = wad;
+		search->pkg.wad = wad;
 		search->type = SEARCHPATH_WAD;
 		search->next = fs_searchpaths;
 		search->flags = flags;
@@ -690,7 +695,7 @@ static byte* W_ReadLump(wfile_t* wad, dlumpinfo_t* lump, fs_offset_t* lumpsizept
 	if ( FS_Seek(wad->handle, lump->filepos, SEEK_SET) == -1 )
 	{
 		Con_Reportf(S_ERROR "W_ReadLump: %s is corrupted\n", lump->name);
-		FS_Seek(wad->handle, oldpos, SEEK_SET);
+		FS_Seek(wad->handle, (fs_offset_t)oldpos, SEEK_SET);
 		return NULL;
 	}
 
@@ -700,14 +705,14 @@ static byte* W_ReadLump(wfile_t* wad, dlumpinfo_t* lump, fs_offset_t* lumpsizept
 	if ( size < (size_t)lump->disksize )
 	{
 		Con_Reportf(S_WARN "W_ReadLump: %s is probably corrupted\n", lump->name);
-		FS_Seek(wad->handle, oldpos, SEEK_SET);
+		FS_Seek(wad->handle, (fs_offset_t)oldpos, SEEK_SET);
 		Mem_Free(buf);
 		return NULL;
 	}
 
 	if ( lumpsizeptr )
 		*lumpsizeptr = lump->disksize;
-	FS_Seek(wad->handle, oldpos, SEEK_SET);
+	FS_Seek(wad->handle, (fs_offset_t)oldpos, SEEK_SET);
 
 	return buf;
 }
@@ -726,6 +731,6 @@ byte* FS_LoadWADFile(const char* path, fs_offset_t* lumpsizeptr, qboolean gamedi
 
 	search = FS_FindFile(path, &index, NULL, 0, gamedironly);
 	if ( search && search->type == SEARCHPATH_WAD )
-		return W_ReadLump(search->wad, &search->wad->lumps[index], lumpsizeptr);
+		return W_ReadLump(search->pkg.wad, &search->pkg.wad->lumps[index], lumpsizeptr);
 	return NULL;
 }

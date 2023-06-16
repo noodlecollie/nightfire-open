@@ -18,6 +18,9 @@ GNU General Public License for more details.
 #if !XASH_WIN32
 #include <dirent.h>
 #endif
+
+#include "PlatformLib/File.h"
+
 static char id_md5[33];
 static char id_customid[MAX_STRING];
 
@@ -166,7 +169,7 @@ static void ID_VerifyHEX_f(void)
 #if XASH_LINUX
 static qboolean ID_ProcessCPUInfo(bloomfilter_t* value)
 {
-	int cpuinfofd = open("/proc/cpuinfo", O_RDONLY);
+	int cpuinfofd = PlatformLib_Open("/proc/cpuinfo", O_RDONLY);
 	char buffer[1024], *pbuf, *pbuf2;
 	int ret;
 
@@ -176,7 +179,7 @@ static qboolean ID_ProcessCPUInfo(bloomfilter_t* value)
 	if ( (ret = read(cpuinfofd, buffer, 1023)) < 0 )
 		return false;
 
-	close(cpuinfofd);
+	PlatformLib_Close(cpuinfofd);
 
 	buffer[ret] = 0;
 
@@ -297,7 +300,7 @@ static void ID_TestCPUInfo_f(void)
 
 static qboolean ID_ProcessFile(bloomfilter_t* value, const char* path)
 {
-	int fd = open(path, O_RDONLY);
+	int fd = PlatformLib_Open(path, O_RDONLY);
 	char buffer[256];
 	int ret;
 
@@ -307,7 +310,7 @@ static qboolean ID_ProcessFile(bloomfilter_t* value, const char* path)
 	if ( (ret = read(fd, buffer, 255)) < 0 )
 		return false;
 
-	close(fd);
+	PlatformLib_Close(fd);
 
 	if ( !ret )
 		return false;

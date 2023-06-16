@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include <errno.h>
 #include "platform/platform.h"
 #include "menu_int.h"
+#include "PlatformLib/File.h"
 
 static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 {
@@ -129,12 +130,12 @@ void Posix_Daemonize(void)
 
 			// engine will still use stdin/stdout,
 			// so just redirect them to /dev/null
-			close(STDIN_FILENO);
-			close(STDOUT_FILENO);
-			close(STDERR_FILENO);
-			open("/dev/null", O_RDONLY);  // becomes stdin
-			open("/dev/null", O_RDWR);  // stdout
-			open("/dev/null", O_RDWR);  // stderr
+			PlatformLib_Close(STDIN_FILENO);
+			PlatformLib_Close(STDOUT_FILENO);
+			PlatformLib_Close(STDERR_FILENO);
+			PlatformLib_Open("/dev/null", O_RDONLY);  // becomes stdin
+			PlatformLib_Open("/dev/null", O_RDWR);  // stdout
+			PlatformLib_Open("/dev/null", O_RDWR);  // stderr
 
 			// fallthrough
 		}

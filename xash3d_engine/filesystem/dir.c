@@ -38,6 +38,7 @@ GNU General Public License for more details.
 #include "crtlib.h"
 #include "xash3d_mathlib.h"
 #include "common/com_strings.h"
+#include "PlatformLib/File.h"
 
 enum
 {
@@ -56,22 +57,24 @@ typedef struct dir_s
 static qboolean Platform_GetDirectoryCaseSensitivity(const char* dir)
 {
 #if XASH_WIN32 || XASH_PSVITA || XASH_NSWITCH
+	(void)dir;
 	return false;
 #elif XASH_LINUX && defined(FS_IOC_GETFLAGS)
 	int flags = 0;
 	int fd;
 
-	fd = open(dir, O_RDONLY | O_NONBLOCK);
+	fd = PlatformLib_Open(dir, O_RDONLY | O_NONBLOCK);
 	if ( fd < 0 )
 		return true;
 
 	if ( ioctl(fd, FS_IOC_GETFLAGS, &flags) < 0 )
 		return true;
 
-	close(fd);
+	PlatformLib_Close(fd);
 
 	return !FBitSet(flags, FS_CASEFOLD_FL);
 #else
+	(void)dir;
 	return true;
 #endif
 }
@@ -364,8 +367,8 @@ qboolean FS_FixFileCase(dir_t* dir, const char* path, char* dst, const size_t le
 
 static void FS_Close_DIR(searchpath_t* search)
 {
-	FS_FreeDirEntries(search->dir);
-	Mem_Free(search->dir);
+	FS_FreeDirEntries(search->pkg.dir);
+	Mem_Free(search->pkg.dir);
 }
 
 static void FS_PrintInfo_DIR(searchpath_t* search, char* dst, size_t size)
@@ -377,7 +380,7 @@ static int FS_FindFile_DIR(searchpath_t* search, const char* path, char* fixedna
 {
 	char netpath[MAX_SYSPATH];
 
-	if ( !FS_FixFileCase(search->dir, path, netpath, sizeof(netpath), false) )
+	if ( !FS_FixFileCase(search->pkg.dir, path, netpath, sizeof(netpath), false) )
 		return -1;
 
 	if ( FS_SysFileExists(netpath) )
@@ -408,13 +411,13 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 	separator = Q_max(slash, backslash);
 	separator = Q_max(separator, colon);
 
-	basepathlength = separator ? (separator + 1 - pattern) : 0;
+	basepathlength = (int)(separator ? (separator + 1 - pattern) : 0);
 	basepath = Mem_Calloc(fs_mempool, basepathlength + 1);
 	if ( basepathlength )
 		memcpy(basepath, pattern, basepathlength);
 	basepath[basepathlength] = '\0';
 
-	if ( !FS_FixFileCase(search->dir, basepath, netpath, sizeof(netpath), false) )
+	if ( !FS_FixFileCase(search->pkg.dir, basepath, netpath, sizeof(netpath), false) )
 	{
 		Mem_Free(basepath);
 		return;
@@ -480,9 +483,9 @@ void FS_InitDirectorySearchpath(searchpath_t* search, const char* path, int flag
 	search->pfnSearch = FS_Search_DIR;
 
 	// create cache root
-	search->dir = Mem_Malloc(fs_mempool, sizeof(dir_t));
-	Q_strncpy(search->dir->name, search->filename, sizeof(search->dir->name));
-	FS_PopulateDirEntries(search->dir, path);
+	search->pkg.dir = Mem_Malloc(fs_mempool, sizeof(dir_t));
+	Q_strncpy(search->pkg.dir->name, search->filename, sizeof(search->pkg.dir->name));
+	FS_PopulateDirEntries(search->pkg.dir, path);
 }
 
 searchpath_t* FS_AddDir_Fullpath(const char* path, qboolean* already_loaded, int flags)

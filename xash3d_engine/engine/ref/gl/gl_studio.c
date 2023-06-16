@@ -829,7 +829,7 @@ void R_StudioCalcBoneAdj(float dadt, float* adj, const byte* pcontroller1, const
 			case STUDIO_XR:
 			case STUDIO_YR:
 			case STUDIO_ZR:
-				adj[j] = (float)DEG2RAD(value);
+				adj[j] = DEG2RADF(value);
 				break;
 			case STUDIO_X:
 			case STUDIO_Y:
