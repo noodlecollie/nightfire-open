@@ -879,10 +879,14 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 
 		while ( lumplen > 0 )
 		{
-			if ( lumplen >= sizeof(buffer) )
+			if ( (size_t)lumplen >= sizeof(buffer) )
+			{
 				num_bytes = FS_Read(f, buffer, sizeof(buffer));
+			}
 			else
+			{
 				num_bytes = FS_Read(f, buffer, lumplen);
+			}
 
 			if ( num_bytes > 0 )
 			{
@@ -892,7 +896,9 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 
 			// file unexpected end ?
 			if ( FS_Eof(f) )
+			{
 				break;
+			}
 		}
 	}
 

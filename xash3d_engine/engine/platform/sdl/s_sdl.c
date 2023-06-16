@@ -240,13 +240,17 @@ SDL_SoundInputCallback
 */
 void SDL_SoundInputCallback(void* userdata, Uint8* stream, int len)
 {
-	int size = Q_min(len, sizeof(voice.input_buffer) - voice.input_buffer_pos);
+	size_t size;
 
 	(void)userdata;
 
+	size = Q_min((size_t)len, sizeof(voice.input_buffer) - (size_t)voice.input_buffer_pos);
+
 	// engine can't keep up, skip audio
-	if ( !size )
+	if ( size < 1 )
+	{
 		return;
+	}
 
 	memcpy(voice.input_buffer + voice.input_buffer_pos, stream, size);
 	voice.input_buffer_pos += size;

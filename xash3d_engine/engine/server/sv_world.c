@@ -1519,6 +1519,8 @@ trace_t SV_MoveToss(edict_t* tossent, edict_t* ignore)
 	trace_t trace;
 	int i;
 
+	(void)ignore;
+
 	VectorCopy(tossent->v.origin, original_origin);
 	VectorCopy(tossent->v.velocity, original_velocity);
 	VectorCopy(tossent->v.angles, original_angles);

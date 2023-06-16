@@ -345,7 +345,7 @@ static char* COM_GetItaniumName(const char* const in_name)
 			len = len * 10 + (*f - '0');
 
 		// sane value
-		len = Q_min(remaining, len);
+		len = Q_min((uint)remaining, len);
 
 		if ( len == 0 )
 			goto invalid_format;

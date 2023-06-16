@@ -1786,20 +1786,23 @@ CL_ParseVoiceData
 */
 void CL_ParseVoiceData(sizebuf_t* msg)
 {
-	int size, idx, frames;
+	uint size;
+	int idx, frames;
 	byte received[8192];
 
 	idx = MSG_ReadByte(msg) + 1;
 
 	frames = MSG_ReadByte(msg);
 
-	size = MSG_ReadShort(msg);
-	size = Q_min(size, sizeof(received));
+	size = (uint)MSG_ReadShort(msg);
+	size = (uint)Q_min((size_t)size, sizeof(received));
 
-	MSG_ReadBytes(msg, received, size);
+	MSG_ReadBytes(msg, received, (int)size);
 
 	if ( idx <= 0 || idx > cl.maxclients )
+	{
 		return;
+	}
 
 	// must notify through as both local player and normal client
 	if ( idx == cl.playernum + 1 )
@@ -1807,8 +1810,10 @@ void CL_ParseVoiceData(sizebuf_t* msg)
 
 	Voice_StatusAck(&voice.players_status[idx], idx);
 
-	if ( !size )
+	if ( size < 1 )
+	{
 		return;
+	}
 
 	Voice_AddIncomingData(idx, received, size, frames);
 }

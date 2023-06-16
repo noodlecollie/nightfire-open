@@ -750,7 +750,11 @@ qboolean NET_StringToFilterAdr(const char* s, netadr_t* adr, uint* prefixlen)
 		{
 			uint32_t mask;
 
-			len = bound(0, len, 32);
+			if ( len > 32 )
+			{
+				len = 32;
+			}
+
 			*prefixlen = len;
 
 			// drop unneeded bits
@@ -1643,10 +1647,12 @@ int NET_SendLong(
 	if ( splitsize > sizeof(SPLITPACKET) && sock == NS_SERVER && len > splitsize )
 	{
 		char packet[SPLITPACKET_MAX_SIZE];
-		int total_sent, size, packet_count;
-		int ret, packet_number;
+		int total_sent, packet_count;
+		int packet_number;
 		int body_size = splitsize - sizeof(SPLITPACKET);
 		SPLITPACKET* pPacket;
+		size_t size;
+		ssize_t ret;
 
 		net.sequence_number++;
 		if ( net.sequence_number <= 0 )
@@ -1661,7 +1667,7 @@ int NET_SendLong(
 
 		while ( len > 0 )
 		{
-			size = Q_min(body_size, len);
+			size = Q_min((size_t)body_size, len);
 			pPacket->packet_id = (packet_number << 8) + packet_count;
 			memcpy(packet + sizeof(SPLITPACKET), buf + (packet_number * body_size), size);
 
@@ -1673,7 +1679,7 @@ int NET_SendLong(
 				NET_SockadrToNetadr(to, &adr);
 
 				Con_Printf(
-					"Sending split %i of %i with %i bytes and seq %i to %s\n",
+					"Sending split %i of %i with %zu bytes and seq %i to %s\n",
 					packet_number + 1,
 					packet_count,
 					size,
@@ -1682,11 +1688,17 @@ int NET_SendLong(
 			}
 
 			ret = sendto(net_socket, packet, size + sizeof(SPLITPACKET), flags, (const struct sockaddr*)to, tolen);
-			if ( ret < 0 )
-				return ret;  // error
 
-			if ( ret >= size )
+			if ( ret < 0 )
+			{
+				return ret;  // error
+			}
+
+			if ( (size_t)ret >= size )
+			{
 				total_sent += size;
+			}
+
 			len -= size;
 			packet_number++;
 			Sys_Sleep(1);

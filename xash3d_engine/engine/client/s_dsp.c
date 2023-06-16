@@ -883,7 +883,7 @@ void CheckNewDspPresets(void)
 		idsp_room = room_type->value;
 
 	// don't pass invalid presets
-	idsp_room = bound(0, idsp_room, MAX_ROOM_TYPES);
+	idsp_room = bound(0, (size_t)idsp_room, MAX_ROOM_TYPES);
 
 	if ( FBitSet(hisound->flags, FCVAR_CHANGED) )
 	{
