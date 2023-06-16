@@ -509,7 +509,7 @@ static cldll_func_dst_t cldllFuncDst = {
 
 void CL_GetSecuredClientAPI(CL_EXPORT_FUNCS F)
 {
-	modfuncs_t modFuncs = {};
+	modfuncs_t modFuncs;
 
 	// NOODLECOLLIE: Not sure at all what's going on here. The functions passed in here
 	// do not match the struct's expected functions at all. I can only assume that
@@ -523,7 +523,11 @@ void CL_GetSecuredClientAPI(CL_EXPORT_FUNCS F)
 	typedef int (*InitFuncPtr)(cl_enginefunc_t*, int);
 	typedef int (*VidInitFuncPtr)(void);
 
-	cldll_func_src_t cldllFuncSrc = {};
+	cldll_func_src_t cldllFuncSrc;
+
+	memset(&modFuncs, 0, sizeof(modFuncs));
+	memset(&cldllFuncSrc, 0, sizeof(cldllFuncSrc));
+
 	cldllFuncSrc.pfnInitialize = (InitFuncPtr)&modFuncs;
 	cldllFuncSrc.pfnVidInit = (VidInitFuncPtr)&cldllFuncDst;
 

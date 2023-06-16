@@ -66,8 +66,10 @@ Cvar_FindVar
 find the specified variable by name
 ============
 */
-convar_t* Cvar_FindVarExt(const char* var_name, int)
+convar_t* Cvar_FindVarExt(const char* var_name, int ignore_group)
 {
+	(void)ignore_group;
+
 	// TODO: ignore group for cvar
 #if defined(XASH_HASHED_VARS)
 	return (convar_t*)BaseCmd_Find(HM_CVAR, var_name);

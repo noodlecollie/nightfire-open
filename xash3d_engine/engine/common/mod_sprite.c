@@ -28,7 +28,7 @@ Mod_LoadSpriteModel
 load sprite model
 ====================
 */
-void Mod_LoadSpriteModel(model_t* mod, const void* buffer, qboolean* loaded, uint)
+void Mod_LoadSpriteModel(model_t* mod, const void* buffer, qboolean* loaded, uint texFlags)
 {
 	dsprite_q1_t* pinq1;
 	dsprite_hl_t* pinhl;
@@ -36,6 +36,8 @@ void Mod_LoadSpriteModel(model_t* mod, const void* buffer, qboolean* loaded, uin
 	msprite_t* psprite;
 	char poolname[MAX_VA_STRING];
 	int i, size;
+
+	(void)texFlags;
 
 	if ( loaded )
 		*loaded = false;

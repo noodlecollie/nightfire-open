@@ -1418,11 +1418,13 @@ qboolean Image_RemapInternal(rgbdata_t* pic, int topColor, int bottomColor)
 	return true;
 }
 
-qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float)
+qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float reserved)
 {
 	rgbdata_t* pic = *pix;
 	qboolean result = true;
 	byte* out;
+
+	(void)reserved;
 
 	// check for buffers
 	if ( !pic || !pic->buffer )

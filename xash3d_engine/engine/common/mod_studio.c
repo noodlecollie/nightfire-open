@@ -758,11 +758,13 @@ static void SV_StudioSetupBones(
 	const byte* pcontroller,
 	const byte* pblending,
 	int iBone,
-	const edict_t*)
+	const edict_t* pEdict)
 {
 	int i, j, numbones = 0;
 	int boneused[MAXSTUDIOBONES];
 	float f = 0.0;
+
+	(void)pEdict;
 
 	mstudiobone_t* pbones;
 	mstudioseqdesc_t* pseqdesc;

@@ -81,7 +81,7 @@ static struct vgui_instance vgui = {
 	},
 	-1,
 	0,
-	{}
+	{0}
 };
 
 static void GAME_EXPORT* VGUI_EngineMalloc(size_t size)

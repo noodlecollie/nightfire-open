@@ -376,8 +376,11 @@ static int feed_back_bytes(mpg123_handle_t* fr, mpg_off_t bytes)
 	return feed_skip_bytes(fr, -bytes) >= 0 ? 0 : MPG123_ERR;
 }
 
-static int feed_seek_frame(mpg123_handle_t*, mpg_off_t)
+static int feed_seek_frame(mpg123_handle_t* fr, mpg_off_t num)
 {
+	(void)fr;
+	(void)num;
+
 	return MPG123_ERR;
 }
 
@@ -758,51 +761,81 @@ static int bad_init(mpg123_handle_t* mh)
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static mpg_ssize_t bad_fullread(mpg123_handle_t* mh, byte*, mpg_ssize_t)
+
+static mpg_ssize_t bad_fullread(mpg123_handle_t* mh, byte* data, mpg_ssize_t count)
 {
+	(void)data;
+	(void)count;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_head_read(mpg123_handle_t* mh, ulong*)
+
+static int bad_head_read(mpg123_handle_t* mh, ulong* newhead)
 {
+	(void)newhead;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_head_shift(mpg123_handle_t* mh, ulong*)
+
+static int bad_head_shift(mpg123_handle_t* mh, ulong* head)
 {
+	(void)head;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static mpg_off_t bad_skip_bytes(mpg123_handle_t* mh, mpg_off_t)
+
+static mpg_off_t bad_skip_bytes(mpg123_handle_t* mh, mpg_off_t len)
 {
+	(void)len;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_read_frame_body(mpg123_handle_t* mh, byte*, int)
+
+static int bad_read_frame_body(mpg123_handle_t* mh, byte* data, int size)
 {
+	(void)data;
+	(void)size;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_back_bytes(mpg123_handle_t* mh, mpg_off_t)
+
+static int bad_back_bytes(mpg123_handle_t* mh, mpg_off_t bytes)
 {
+	(void)bytes;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_seek_frame(mpg123_handle_t* mh, mpg_off_t)
+
+static int bad_seek_frame(mpg123_handle_t* mh, mpg_off_t num)
 {
+	(void)num;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
+
 static mpg_off_t bad_tell(mpg123_handle_t* mh)
 {
+	(void)mh;
+
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static void bad_rewind(mpg123_handle_t*)
+
+static void bad_rewind(mpg123_handle_t* mh)
 {
+	(void)mh;
 }
-static void bad_close(mpg123_handle_t*)
+
+static void bad_close(mpg123_handle_t* mh)
 {
+	(void)mh;
 }
 
 static reader_t bad_reader = {

@@ -552,8 +552,10 @@ COM_AddAppDirectoryToSearchPath
 
 =============
 */
-void GAME_EXPORT COM_AddAppDirectoryToSearchPath(const char* pszBaseDir, const char*)
+void GAME_EXPORT COM_AddAppDirectoryToSearchPath(const char* pszBaseDir, const char* appName)
 {
+	(void)appName;
+
 	FS_AddGameHierarchy(pszBaseDir, FS_NOWRITE_PATH);
 }
 
@@ -795,8 +797,10 @@ COM_LoadFile
 
 =============
 */
-byte* COM_LoadFile(const char* filename, int, int* pLength)
+byte* COM_LoadFile(const char* filename, int usehunk, int* pLength)
 {
+	(void)usehunk;
+
 	return COM_LoadFileForMe(filename, pLength);
 }
 
@@ -1175,8 +1179,9 @@ pfnRegisterTutorMessageShown
 only exists in PlayStation version
 =============
 */
-void GAME_EXPORT pfnRegisterTutorMessageShown(int)
+void GAME_EXPORT pfnRegisterTutorMessageShown(int mid)
 {
+	(void)mid;
 }
 
 /*
@@ -1186,8 +1191,10 @@ pfnGetTimesTutorMessageShown
 only exists in PlayStation version
 =============
 */
-int GAME_EXPORT pfnGetTimesTutorMessageShown(int)
+int GAME_EXPORT pfnGetTimesTutorMessageShown(int mid)
 {
+	(void)mid;
+
 	return 0;
 }
 
@@ -1198,8 +1205,10 @@ pfnProcessTutorMessageDecayBuffer
 only exists in PlayStation version
 =============
 */
-void GAME_EXPORT pfnProcessTutorMessageDecayBuffer(int*, int)
+void GAME_EXPORT pfnProcessTutorMessageDecayBuffer(int* buffer, int bufferLength)
 {
+	(void)buffer;
+	(void)bufferLength;
 }
 
 /*
@@ -1209,8 +1218,10 @@ pfnConstructTutorMessageDecayBuffer
 only exists in PlayStation version
 =============
 */
-void GAME_EXPORT pfnConstructTutorMessageDecayBuffer(int*, int)
+void GAME_EXPORT pfnConstructTutorMessageDecayBuffer(int* buffer, int bufferLength)
 {
+	(void)buffer;
+	(void)bufferLength;
 }
 
 /*

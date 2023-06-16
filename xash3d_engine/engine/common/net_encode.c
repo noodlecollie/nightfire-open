@@ -278,14 +278,14 @@ static const delta_field_t ent_fields[] = {
 };
 
 static delta_info_t dt_info[] = {
-	{"event_t", ev_fields, NUM_FIELDS(ev_fields), 0, NULL, 0, {}, NULL, false},
-	{"movevars_t", pm_fields, NUM_FIELDS(pm_fields), 0, NULL, 0, {}, NULL, false},
-	{"usercmd_t", cmd_fields, NUM_FIELDS(cmd_fields), 0, NULL, 0, {}, NULL, false},
-	{"clientdata_t", cd_fields, NUM_FIELDS(cd_fields), 0, NULL, 0, {}, NULL, false},
-	{"weapon_data_t", wd_fields, NUM_FIELDS(wd_fields), 0, NULL, 0, {}, NULL, false},
-	{"entity_state_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {}, NULL, false},
-	{"entity_state_player_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {}, NULL, false},
-	{"custom_entity_state_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {}, NULL, false},
+	{"event_t", ev_fields, NUM_FIELDS(ev_fields), 0, NULL, 0, {0}, NULL, false},
+	{"movevars_t", pm_fields, NUM_FIELDS(pm_fields), 0, NULL, 0, {0}, NULL, false},
+	{"usercmd_t", cmd_fields, NUM_FIELDS(cmd_fields), 0, NULL, 0, {0}, NULL, false},
+	{"clientdata_t", cd_fields, NUM_FIELDS(cd_fields), 0, NULL, 0, {0}, NULL, false},
+	{"weapon_data_t", wd_fields, NUM_FIELDS(wd_fields), 0, NULL, 0, {0}, NULL, false},
+	{"entity_state_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {0}, NULL, false},
+	{"entity_state_player_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {0}, NULL, false},
+	{"custom_entity_state_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {0}, NULL, false},
 	{NULL},
 };
 

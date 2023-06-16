@@ -229,9 +229,12 @@ typedef struct
 	int lookups;
 } basecmd_test_stats_t;
 
-static void BaseCmd_CheckCvars(const char* key, const char*, const void*, void* ptr)
+static void BaseCmd_CheckCvars(const char* key, const char* value, const void* unused, void* ptr)
 {
 	basecmd_test_stats_t* stats = ptr;
+
+	(void)value;
+	(void)unused;
 
 	stats->lookups++;
 	if ( !BaseCmd_Find(HM_CVAR, key) )

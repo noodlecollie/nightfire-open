@@ -1652,7 +1652,7 @@ int NET_SendLong(
 		int body_size = splitsize - sizeof(SPLITPACKET);
 		SPLITPACKET* pPacket;
 		size_t size;
-		ssize_t ret;
+		int ret;
 
 		net.sequence_number++;
 		if ( net.sequence_number <= 0 )

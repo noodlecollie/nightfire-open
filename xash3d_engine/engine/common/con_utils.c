@@ -644,9 +644,12 @@ Con_AddCommandToList
 
 ===============
 */
-static void Con_AddCommandToList(const char* s, const char*, const char*, void* _autocompleteList)
+static void Con_AddCommandToList(const char* s, const char* unused1, const char* unused2, void* _autocompleteList)
 {
 	con_autocomplete_t* list = (con_autocomplete_t*)_autocompleteList;
+
+	(void)unused1;
+	(void)unused2;
 
 	if ( *s == '@' )
 		return;  // never show system cvars or cmds
@@ -1156,14 +1159,21 @@ qboolean Cmd_AutocompleteName(const char* source, int arg, char* buffer, size_t 
 Con_PrintCmdMatches
 ===============
 */
-static void Con_PrintCmdMatches(const char* s, const char*, const char* m, void*)
+static void Con_PrintCmdMatches(const char* s, const char* unused1, const char* m, void* unused2)
 {
+	(void)unused1;
+	(void)unused2;
+
 	if ( !Q_strnicmp(s, con.shortestMatch, Q_strlen(con.shortestMatch)) )
 	{
 		if ( COM_CheckString(m) )
+		{
 			Con_Printf("    %s ^3\"%s\"\n", s, m);
+		}
 		else
+		{
 			Con_Printf("    %s\n", s);  // variable or command without description
+		}
 	}
 }
 
@@ -1172,14 +1182,20 @@ static void Con_PrintCmdMatches(const char* s, const char*, const char* m, void*
 Con_PrintCvarMatches
 ===============
 */
-static void Con_PrintCvarMatches(const char* s, const char* value, const char* m, void*)
+static void Con_PrintCvarMatches(const char* s, const char* value, const char* m, void* unused2)
 {
+	(void)unused2;
+
 	if ( !Q_strnicmp(s, con.shortestMatch, Q_strlen(con.shortestMatch)) )
 	{
 		if ( COM_CheckString(m) )
+		{
 			Con_Printf("    %s (%s)   ^3\"%s\"\n", s, value, m);
+		}
 		else
+		{
 			Con_Printf("    %s  (%s)\n", s, value);  // variable or command without description
+		}
 	}
 }
 
@@ -1413,26 +1429,40 @@ static void Cmd_WriteOpenGLCvar(const char* name, const char* string, const char
 	FS_Printf(f, "%s \"%s\"\n", name, string);
 }
 
-static void Cmd_WriteHelp(const char* name, const char*, const char* desc, void* f)
+static void Cmd_WriteHelp(const char* name, const char* unused, const char* desc, void* f)
 {
 	int length;
 
+	(void)unused;
+
 	if ( !COM_CheckString(desc) )
+	{
 		return;  // ignore fantom cmds
+	}
 
 	if ( name[0] == '+' || name[0] == '-' )
+	{
 		return;  // key bindings
+	}
 
 	length = 3 - (Q_strlen(name) / 10);  // Asm_Ed default tab stop is 10
 
 	if ( length == 3 )
+	{
 		FS_Printf(f, "%s\t\t\t\"%s\"\n", name, desc);
+	}
 	if ( length == 2 )
+	{
 		FS_Printf(f, "%s\t\t\"%s\"\n", name, desc);
+	}
 	if ( length == 1 )
+	{
 		FS_Printf(f, "%s\t\"%s\"\n", name, desc);
+	}
 	if ( length == 0 )
+	{
 		FS_Printf(f, "%s \"%s\"\n", name, desc);
+	}
 }
 
 void Cmd_WriteOpenGLVariables(file_t* f)
