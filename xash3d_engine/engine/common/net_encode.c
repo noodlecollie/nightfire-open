@@ -278,28 +278,32 @@ static const delta_field_t ent_fields[] = {
 };
 
 static delta_info_t dt_info[] = {
-	{"event_t", ev_fields, NUM_FIELDS(ev_fields)},
-	{"movevars_t", pm_fields, NUM_FIELDS(pm_fields)},
-	{"usercmd_t", cmd_fields, NUM_FIELDS(cmd_fields)},
-	{"clientdata_t", cd_fields, NUM_FIELDS(cd_fields)},
-	{"weapon_data_t", wd_fields, NUM_FIELDS(wd_fields)},
-	{"entity_state_t", ent_fields, NUM_FIELDS(ent_fields)},
-	{"entity_state_player_t", ent_fields, NUM_FIELDS(ent_fields)},
-	{"custom_entity_state_t", ent_fields, NUM_FIELDS(ent_fields)},
+	{"event_t", ev_fields, NUM_FIELDS(ev_fields), 0, NULL, 0, {}, NULL, false},
+	{"movevars_t", pm_fields, NUM_FIELDS(pm_fields), 0, NULL, 0, {}, NULL, false},
+	{"usercmd_t", cmd_fields, NUM_FIELDS(cmd_fields), 0, NULL, 0, {}, NULL, false},
+	{"clientdata_t", cd_fields, NUM_FIELDS(cd_fields), 0, NULL, 0, {}, NULL, false},
+	{"weapon_data_t", wd_fields, NUM_FIELDS(wd_fields), 0, NULL, 0, {}, NULL, false},
+	{"entity_state_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {}, NULL, false},
+	{"entity_state_player_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {}, NULL, false},
+	{"custom_entity_state_t", ent_fields, NUM_FIELDS(ent_fields), 0, NULL, 0, {}, NULL, false},
 	{NULL},
 };
 
 delta_info_t* Delta_FindStruct(const char* name)
 {
-	int i;
+	size_t i;
 
 	if ( !COM_CheckString(name) )
+	{
 		return NULL;
+	}
 
 	for ( i = 0; i < NUM_FIELDS(dt_info); i++ )
 	{
 		if ( !Q_stricmp(dt_info[i].pName, name) )
+		{
 			return &dt_info[i];
+		}
 	}
 
 	Con_DPrintf(S_WARN "Struct %s not found in delta_info\n", name);
@@ -315,23 +319,29 @@ int Delta_NumTables(void)
 
 delta_info_t* Delta_FindStructByIndex(int index)
 {
-	if ( index < 0 || index >= NUM_FIELDS(dt_info) )
+	if ( index < 0 || (size_t)index >= NUM_FIELDS(dt_info) )
+	{
 		return NULL;
+	}
 
 	return &dt_info[index];
 }
 
 delta_info_t* Delta_FindStructByEncoder(const char* encoderName)
 {
-	int i;
+	size_t i;
 
 	if ( !COM_CheckString(encoderName) )
+	{
 		return NULL;
+	}
 
 	for ( i = 0; i < NUM_FIELDS(dt_info); i++ )
 	{
 		if ( !Q_stricmp(dt_info[i].funcName, encoderName) )
+		{
 			return &dt_info[i];
+		}
 	}
 	// found nothing
 	return NULL;
@@ -339,15 +349,19 @@ delta_info_t* Delta_FindStructByEncoder(const char* encoderName)
 
 delta_info_t* Delta_FindStructByDelta(const delta_t* pFields)
 {
-	int i;
+	size_t i;
 
 	if ( !pFields )
+	{
 		return NULL;
+	}
 
 	for ( i = 0; i < NUM_FIELDS(dt_info); i++ )
 	{
 		if ( dt_info[i].pFields == pFields )
+		{
 			return &dt_info[i];
+		}
 	}
 	// found nothing
 	return NULL;
@@ -837,11 +851,14 @@ void Delta_Init(void)
 
 void Delta_InitClient(void)
 {
-	int i, numActive = 0;
+	size_t i;
+	size_t numActive = 0;
 
 	// already initalized
 	if ( delta_init )
+	{
 		return;
+	}
 
 	for ( i = 0; i < NUM_FIELDS(dt_info); i++ )
 	{
@@ -853,15 +870,19 @@ void Delta_InitClient(void)
 	}
 
 	if ( numActive )
+	{
 		delta_init = true;
+	}
 }
 
 void Delta_Shutdown(void)
 {
-	int i;
+	size_t i;
 
 	if ( !delta_init )
+	{
 		return;
+	}
 
 	for ( i = 0; i < NUM_FIELDS(dt_info); i++ )
 	{
@@ -891,6 +912,8 @@ prevent data to out of range
 */
 int Delta_ClampIntegerField(delta_t* pField, int iValue, qboolean bSigned, int numbits)
 {
+	(void)pField;
+
 #ifdef _DEBUG
 	if ( numbits < 32 && abs(iValue) >= (uint)BIT(numbits) )
 	{
@@ -1234,6 +1257,8 @@ static void Delta_CopyField(delta_t* pField, void* from, void* to, double timeba
 	qboolean bSigned = FBitSet(pField->flags, DT_SIGNED);
 	uint8_t* to_field = (uint8_t*)to + pField->offset;
 	uint8_t* from_field = (uint8_t*)from + pField->offset;
+
+	(void)timebase;
 
 	if ( FBitSet(pField->flags, DT_BYTE) )
 	{

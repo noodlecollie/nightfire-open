@@ -114,7 +114,7 @@ CL_RedoPrediction
 */
 void CL_RedoPrediction(void)
 {
-	if ( cls.netchan.incoming_sequence != cls.lastupdate_sequence )
+	if ( cls.netchan.incoming_sequence != (unsigned int)cls.lastupdate_sequence )
 	{
 		CL_PredictMovement(true);
 		CL_CheckPredictionError();
@@ -278,6 +278,8 @@ void GAME_EXPORT CL_SetUpPlayerPrediction(int dopred, int bIncludeLocalClient)
 	predicted_player_t* player;
 	cl_entity_t* ent;
 	int i;
+
+	(void)dopred;
 
 	for ( i = 0; i < MAX_CLIENTS; i++ )
 	{
@@ -1088,7 +1090,7 @@ void CL_PredictMovement(qboolean repredicting)
 	if ( !cl.validsequence )
 		return;
 
-	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= CL_UPDATE_MASK )
+	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= (unsigned int)CL_UPDATE_MASK )
 		return;
 
 	// this is the last frame received from the server
@@ -1127,7 +1129,7 @@ void CL_PredictMovement(qboolean repredicting)
 	CL_SetSolidPlayers(cl.playernum);
 
 	for ( i = 1;
-		  i < CL_UPDATE_MASK && cls.netchan.incoming_acknowledged + i < cls.netchan.outgoing_sequence + stoppoint;
+		  i < (uint)CL_UPDATE_MASK && cls.netchan.incoming_acknowledged + i < cls.netchan.outgoing_sequence + stoppoint;
 		  i++ )
 	{
 		uint current_command;
@@ -1154,7 +1156,7 @@ void CL_PredictMovement(qboolean repredicting)
 
 	CL_PopPMStates();
 
-	if ( (i == CL_UPDATE_MASK) || (!to && !repredicting) )
+	if ( (i == (uint)CL_UPDATE_MASK) || (!to && !repredicting) )
 	{
 		cl.local.repredicting = false;
 		return;  // net hasn't deliver packets in a long time...

@@ -78,8 +78,12 @@ in hardware mode does nothing
 */
 void GAME_EXPORT R_GetPackedColor(short* packed, short color)
 {
+	(void)color;
+
 	if ( packed )
+	{
 		*packed = 0;
+	}
 }
 
 /*
@@ -1909,7 +1913,7 @@ void GAME_EXPORT R_BulletImpactParticlesForSurface(const vec3_t pos, SurfaceProp
 		R_SparkStreaks(pos, 2, -200, 200);
 	}
 
-	for ( int i = 0; i < quantity * 4; i++ )
+	for ( size_t i = 0; i < quantity * 4; i++ )
 	{
 		if ( !CreateConcreteImpactParticle(pos, quantity) )
 		{
@@ -2005,6 +2009,8 @@ pmove debugging particle
 void CL_Particle(const vec3_t org, int color, float life, int zpos, int zvel)
 {
 	particle_t* p;
+
+	(void)zpos;
 
 	p = R_AllocParticle(NULL);
 	if ( !p )

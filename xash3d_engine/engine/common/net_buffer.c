@@ -366,6 +366,9 @@ void MSG_WriteVec3Angles(sizebuf_t* sb, const float* fa)
 
 void MSG_WriteCmdExt(sizebuf_t* sb, int cmd, netsrc_t type, const char* name)
 {
+	(void)type;
+	(void)name;
+
 #ifdef DEBUG_NET_MESSAGES_SEND
 	if ( name != NULL )
 	{
@@ -603,6 +606,8 @@ int MSG_ReadCmd(sizebuf_t* sb, netsrc_t type)
 {
 	int cmd = MSG_ReadUBitLong(sb, sizeof(byte) << 3);
 
+	(void)type;
+
 #ifdef DEBUG_NET_MESSAGES_READ
 	if ( type == NS_SERVER )
 	{
@@ -687,7 +692,8 @@ qboolean MSG_ReadBytes(sizebuf_t* sb, void* pOut, int nBytes)
 char* MSG_ReadStringExt(sizebuf_t* sb, qboolean bLine)
 {
 	static char string[4096];
-	int l = 0, c;
+	size_t l = 0;
+	int c;
 
 	do
 	{
@@ -695,14 +701,20 @@ char* MSG_ReadStringExt(sizebuf_t* sb, qboolean bLine)
 		c = MSG_ReadByte(sb);
 
 		if ( c == 0 )
+		{
 			break;
+		}
 		else if ( bLine && c == '\n' )
+		{
 			break;
+		}
 
 		// translate all fmt spec to avoid crash bugs
 		// NOTE: but game strings leave unchanged. see pfnWriteString for details
 		if ( c == '%' )
+		{
 			c = '.';
+		}
 
 		string[l] = c;
 		l++;

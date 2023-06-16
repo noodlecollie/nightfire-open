@@ -981,7 +981,7 @@ void Con_Print(const char* txt)
 				break;
 			default:
 				buf[bufpos++] = c | mask;
-				if ( (bufpos >= sizeof(buf) - 1) || bufpos >= (con.linewidth - 1) )
+				if ( ((size_t)bufpos >= sizeof(buf) - 1) || bufpos >= (con.linewidth - 1) )
 				{
 					Con_AddLine(buf, bufpos, true);
 					lastlength = CON_LINES_LAST().length;
@@ -1508,7 +1508,7 @@ static void Con_LoadHistory(con_history_t* self)
 
 		Con_ClearField(&self->lines[self->next]);
 
-		len = Q_min(pFile - pLine + 1, sizeof(f->buffer));
+		len = Q_min((size_t)(pFile - pLine + 1), sizeof(f->buffer));
 		f = &self->lines[self->next % CON_HISTORY];
 		f->widthInChars = con.linewidth;
 		f->cursor = len - 1;
@@ -1760,7 +1760,8 @@ Custom debug messages
 int Con_DrawDebugLines(void)
 {
 	notify_t* notify = con.notify;
-	int i, count = 0;
+	size_t i;
+	int count = 0;
 	int defaultX;
 	int y = 20;
 	int fontTall;
@@ -1778,7 +1779,7 @@ int Con_DrawDebugLines(void)
 		if ( host.realtime > notify->expire )
 			continue;
 
-		if ( notify->key_dest != cls.key_dest )
+		if ( notify->key_dest != (int)cls.key_dest )
 			continue;
 
 		Con_DrawStringLen(notify->szNotify, &len, NULL);
@@ -2385,9 +2386,12 @@ Con_InvalidateFonts
 */
 void Con_InvalidateFonts(void)
 {
-	int i;
+	size_t i;
 	for ( i = 0; i < ARRAYSIZE(con.chars); i++ )
+	{
 		CL_FreeFont(&con.chars[i]);
+	}
+
 	con.curFont = NULL;
 }
 

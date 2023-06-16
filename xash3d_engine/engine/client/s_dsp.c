@@ -440,7 +440,7 @@ void DLY_DoStereoDelay(int count)
 				samplexf = dly->lpdelayline[dly->idelayoutputxf] * (128 - dly->xfade) >> 7;
 				delay = samplexf + ((delay * dly->xfade) >> 7);
 
-				if ( ++dly->idelayoutputxf >= dly->cdelaysamplesmax )
+				if ( (size_t)(++dly->idelayoutputxf) >= dly->cdelaysamplesmax )
 					dly->idelayoutputxf = 0;
 
 				if ( --dly->xfade == 0 )
@@ -661,7 +661,7 @@ int RVB_DoReverbForOneDly(dly_t* dly, const int vlr, const portable_samplepair_t
 			samplexf = (dly->lpdelayline[dly->idelayoutputxf] * (REVERB_XFADE - dly->xfade)) / REVERB_XFADE;
 			delay = ((delay * dly->xfade) / REVERB_XFADE) + samplexf;
 
-			if ( ++dly->idelayoutputxf >= dly->cdelaysamplesmax )
+			if ( (size_t)(++dly->idelayoutputxf) >= dly->cdelaysamplesmax )
 				dly->idelayoutputxf = 0;
 
 			if ( --dly->xfade == 0 )
@@ -813,6 +813,8 @@ DSP_Process
 */
 void DSP_Process(int idsp, portable_samplepair_t* pbfront, int sampleCount)
 {
+	(void)idsp;
+
 	if ( dsp_off->value )
 		return;
 

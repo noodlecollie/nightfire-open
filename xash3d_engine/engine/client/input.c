@@ -128,7 +128,7 @@ void IN_StartupMouse(void)
 
 void GAME_EXPORT IN_SetCursor(void* hCursor)
 {
-	// stub
+	(void)hCursor;
 }
 
 /*
@@ -569,6 +569,8 @@ void IN_EngineAppendMove(float frametime, void* cmd1, qboolean active)
 {
 	float forward, side, pitch, yaw;
 	usercmd_t* cmd = cmd1;
+
+	(void)frametime;
 
 	if ( clgame.dllFuncs.pfnLookEvent )
 		return;

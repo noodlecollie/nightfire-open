@@ -86,7 +86,7 @@ static qboolean Sound_ParseID3Frame(const did3v2_frame_t* frame, const byte* buf
 		{
 			key_len = Q_strncpy(key, (const char*)(&buffer[1]), sizeof(key));
 			value_len = frame_length - (1 + key_len + 1);
-			if ( value_len <= 0 || value_len >= sizeof(value) )
+			if ( value_len <= 0 || (size_t)value_len >= sizeof(value) )
 			{
 				Con_Printf(S_ERROR "Sound_ParseID3Frame: invalid TXXX description, possibly broken file.\n");
 				return false;
@@ -118,7 +118,7 @@ static qboolean Sound_ParseID3Tag(const byte* buffer, fs_offset_t filesize)
 	const byte* buffer_begin = buffer;
 	uint32_t tag_length;
 
-	if ( filesize < sizeof(*header) )
+	if ( (size_t)filesize < sizeof(*header) )
 		return false;
 
 	buffer += sizeof(*header);
@@ -271,20 +271,31 @@ qboolean Sound_LoadMPG(const char* name, const byte* buffer, fs_offset_t filesiz
 			int bufsize;
 
 			// if there are no bytes remainig so we can decompress the new frame
-			if ( pos + FRAME_SIZE > filesize )
+			if ( pos + FRAME_SIZE > (size_t)filesize )
+			{
 				bufsize = (filesize - pos);
+			}
 			else
+			{
 				bufsize = FRAME_SIZE;
+			}
+
 			pos += bufsize;
 
 			if ( feed_mpeg_stream(mpeg, data, bufsize, out, &outsize) != MP3_OK )
+			{
 				break;  // there was end of the stream
+			}
 		}
 
 		if ( bytesWrite + outsize > sound.size )
+		{
 			size = (sound.size - bytesWrite);
+		}
 		else
+		{
 			size = outsize;
+		}
 
 		memcpy(&sound.wav[bytesWrite], out, size);
 		bytesWrite += size;
@@ -388,10 +399,14 @@ int Stream_ReadMPG(stream_t* stream, int needBytes, void* buffer)
 		}
 
 		// check remaining size
-		if ( bytesWritten + stream->pos > needBytes )
+		if ( (size_t)bytesWritten + stream->pos > (size_t)needBytes )
+		{
 			outsize = (needBytes - bytesWritten);
+		}
 		else
+		{
 			outsize = stream->pos;
+		}
 
 		// copy raw sample to output buffer
 		data = (byte*)buffer + bytesWritten;

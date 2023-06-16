@@ -725,7 +725,7 @@ static void PrintLeafPVS(const mleaf_t* leaf)
 
 		Msg("PVS:\n");
 
-		for ( leafIndex = 0; leafIndex < cl.worldmodel->numleafs; ++leafIndex )
+		for ( leafIndex = 0; leafIndex < (uint32_t)cl.worldmodel->numleafs; ++leafIndex )
 		{
 			uint32_t byteIndex = leafIndex / 8;
 			uint32_t bitIndex = leafIndex % 8;
@@ -839,7 +839,7 @@ static void CL_ModelTextureInfo(void)
 
 	Msg("Model %s has %u textures:\n", name, header->numtextures);
 
-	for ( texIndex = 0; texIndex < header->numtextures; ++texIndex )
+	for ( texIndex = 0; texIndex < (uint32_t)header->numtextures; ++texIndex )
 	{
 		mstudiotexture_t* texture = &textures[texIndex];
 
@@ -913,14 +913,22 @@ void CL_CheckClientState(void)
 
 int CL_GetFragmentSize(void* unused, fragsize_t mode)
 {
+	(void)unused;
+
 	if ( mode == FRAGSIZE_SPLIT )
+	{
 		return 0;
+	}
 
 	if ( mode == FRAGSIZE_UNRELIABLE )
+	{
 		return NET_MAX_MESSAGE;
+	}
 
 	if ( Netchan_IsLocal(&cls.netchan) )
+	{
 		return FRAGMENT_LOCAL_SIZE;
+	}
 
 	return cl_upmax->value;
 }
@@ -1072,7 +1080,8 @@ CL_ComputePacketLoss
 */
 void CL_ComputePacketLoss(void)
 {
-	int i, frm;
+	size_t i;
+	size_t frm;
 	frame_t* frame;
 	int count = 0;
 	int lost = 0;
@@ -1090,7 +1099,9 @@ void CL_ComputePacketLoss(void)
 		frame = &cl.frames[frm & CL_UPDATE_MASK];
 
 		if ( frame->receivedtime == -1.0 )
+		{
 			lost++;
+		}
 		count++;
 	}
 
@@ -1486,7 +1497,7 @@ void CL_WritePacket(void)
 			return;
 	}
 
-	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= CL_UPDATE_MASK )
+	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= (unsigned int)CL_UPDATE_MASK )
 	{
 		if ( (host.realtime - cls.netchan.last_received) > CONNECTION_PROBLEM_TIME )
 		{
@@ -2558,6 +2569,8 @@ void CL_ParseNETInfoMessage(netadr_t from, sizebuf_t* msg, const char* s)
 	int errorBits = 0;
 	const char* val;
 
+	(void)msg;
+
 	context = Q_atoi(Cmd_Argv(1));
 	type = Q_atoi(Cmd_Argv(2));
 	while ( *s != '\\' )
@@ -3018,7 +3031,7 @@ void CL_ReadNetMessage(void)
 
 	while ( CL_GetMessage(net_message_buffer, &curSize) )
 	{
-		if ( cls.legacymode && *((int*)&net_message_buffer) == 0xFFFFFFFE )
+		if ( cls.legacymode && *((unsigned int*)&net_message_buffer) == 0xFFFFFFFE )
 			// Will rewrite existing packet by merged
 			if ( !NetSplit_GetLong(&cls.netchan.netsplit, &net_from, net_message_buffer, &curSize) )
 				continue;

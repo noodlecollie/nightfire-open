@@ -2095,7 +2095,7 @@ static void Mod_LoadPlanes(dbspmodel_t* bmod)
 		}
 
 		if ( VectorLength(out->normal) < 0.5f )
-			Con_Printf(S_ERROR "bad normal for plane #%i\n", i);
+			Con_Printf(S_ERROR "bad normal for plane #%zu\n", i);
 
 		out->dist = in->dist;
 		out->type = in->type;
@@ -2865,7 +2865,7 @@ static void Mod_LoadSurfaces(dbspmodel_t* bmod)
 
 			if ( (in->firstedge + in->numedges) > loadmodel->numsurfedges )
 			{
-				Con_Reportf(S_ERROR "bad surface %i from %zu\n", i, bmod->numsurfaces);
+				Con_Reportf(S_ERROR "bad surface %zu from %zu\n", i, bmod->numsurfaces);
 				continue;
 			}
 

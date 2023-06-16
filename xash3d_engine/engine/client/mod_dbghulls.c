@@ -557,7 +557,7 @@ static void hull_windings_r(hull_t* hull, mclipnode_t* node, hullnode_t* polys, 
 	hullnode_t frontlist = LIST_HEAD_INIT(frontlist);
 	hullnode_t backlist = LIST_HEAD_INIT(backlist);
 	winding_t *w, *next, *front, *back;
-	int i;
+	uint i;
 
 	list_for_each_entry_safe(w, next, polys, chain)
 	{

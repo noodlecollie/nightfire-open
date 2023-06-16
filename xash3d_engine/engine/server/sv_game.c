@@ -114,7 +114,7 @@ entavrs table for FindEntityByString
 */
 TYPEDESCRIPTION* SV_GetEntvarsDescirption(int number)
 {
-	if ( number < 0 || number >= ENTVARS_COUNT )
+	if ( number < 0 || (size_t)number >= ENTVARS_COUNT )
 		return NULL;
 	return &gEntvarsDescription[number];
 }
@@ -434,16 +434,17 @@ static int SV_Multicast(int dest, const vec3_t origin, const edict_t* ent, qbool
 				MSG_Clear(&sv.multicast);
 				return 1;
 			}
-			// intentional fallthrough (in-game MSG_INIT it's a MSG_ALL reliable)
+			// In-game MSG_INIT is a MSG_ALL reliable
+			// fall through
 		case MSG_ALL:
 			reliable = true;
-			// intentional fallthrough
+			// fall through
 		case MSG_BROADCAST:
 			// nothing to sort
 			break;
 		case MSG_PAS_R:
 			reliable = true;
-			// intentional fallthrough
+			// fall through
 		case MSG_PAS:
 			if ( origin == NULL )
 				return false;
@@ -453,7 +454,7 @@ static int SV_Multicast(int dest, const vec3_t origin, const edict_t* ent, qbool
 			break;
 		case MSG_PVS_R:
 			reliable = true;
-			// intentional fallthrough
+			// fall through
 		case MSG_PVS:
 			if ( origin == NULL )
 				return 0;
@@ -461,7 +462,7 @@ static int SV_Multicast(int dest, const vec3_t origin, const edict_t* ent, qbool
 			break;
 		case MSG_ONE:
 			reliable = true;
-			// intentional fallthrough
+			// fall through
 		case MSG_ONE_UNRELIABLE:
 			if ( !SV_IsValidEdict(ent) )
 				return 0;
@@ -978,7 +979,7 @@ static char* SV_ReadEntityScript(const char* filename, int* flags)
 	ft1 = FS_FileTime(bspfilename, false);
 	ft2 = FS_FileTime(entfilename, true);
 
-	if ( ft2 != -1 && ft1 < ft2 )
+	if ( ft2 != (size_t)-1 && ft1 < ft2 )
 	{
 		// grab .ent files only from gamedir
 		ents = (char*)FS_LoadFile(entfilename, NULL, true);
@@ -1511,7 +1512,7 @@ void GAME_EXPORT pfnChangeLevel(const char* level, const char* landmark)
 		return;  // ???
 
 	// make sure we don't issue two changelevels
-	if ( svs.spawncount == last_spawncount )
+	if ( (uint)svs.spawncount == last_spawncount )
 		return;
 	last_spawncount = svs.spawncount;
 	landname[0] = '\0';
@@ -1542,6 +1543,7 @@ OBSOLETE, UNUSED
 */
 void GAME_EXPORT pfnGetSpawnParms(edict_t* ent)
 {
+	(void)ent;
 }
 
 /*
@@ -1553,6 +1555,7 @@ OBSOLETE, UNUSED
 */
 void GAME_EXPORT pfnSaveSpawnParms(edict_t* ent)
 {
+	(void)ent;
 }
 
 /*
@@ -1768,7 +1771,9 @@ int SV_CheckClientPVS(int check, qboolean bMergePVS)
 	byte* pvs;
 	vec3_t vieworg;
 	sv_client_t* cl;
-	int i, j, k;
+	int i;
+	size_t j;
+	int k;
 	edict_t* ent = NULL;
 
 	// cycle to the next one
@@ -2463,6 +2468,12 @@ OBSOLETE, UNUSED
 void GAME_EXPORT
 pfnTraceSphere(const float* v1, const float* v2, int fNoMonsters, float radius, edict_t* pentToSkip, TraceResult* ptr)
 {
+	(void)v1;
+	(void)v2;
+	(void)fNoMonsters;
+	(void)radius;
+	(void)pentToSkip;
+	(void)ptr;
 }
 
 /*
@@ -2479,6 +2490,8 @@ void GAME_EXPORT pfnGetAimVector(edict_t* ent, float speed, float* rgflReturn)
 	float dist, bestdist;
 	int i, j;
 	trace_t tr;
+
+	(void)speed;
 
 	VectorCopy(svgame.globals->v_forward, rgflReturn);  // assume failure if it returns early
 
@@ -3107,6 +3120,8 @@ OBSOLETE, UNUSED
 static void pfnEngineFprintf(FILE* pfile, char* szFmt, ...) _format(2);
 static void GAME_EXPORT pfnEngineFprintf(FILE* pfile, char* szFmt, ...)
 {
+	(void)pfile;
+	(void)szFmt;
 }
 
 /*
@@ -3383,7 +3398,7 @@ string_t GAME_EXPORT SV_AllocString(const char* szValue)
 	{
 		uint len = Q_strlen(szValue);
 
-		if ( str64.plast - str64.poldstringbase + len + 2 > str64.maxstringarray )
+		if ( (size_t)(str64.plast - str64.poldstringbase + len + 2) > str64.maxstringarray )
 		{
 			str64.plast = str64.pstringbase + 1;
 			str64.poldstringbase = str64.pstringbase;
@@ -3401,7 +3416,7 @@ string_t GAME_EXPORT SV_AllocString(const char* szValue)
 		str64.numdups++;
 	// MsgDev( D_NOTE, "SV_AllocString: dup %ld %s\n", newString - svgame.globals->pStringBase, szValue );
 
-	if ( newString - str64.pstringarray > str64.maxalloc )
+	if ( (size_t)(newString - str64.pstringarray) > str64.maxalloc )
 		str64.maxalloc = newString - str64.pstringarray;
 
 	return newString - svgame.globals->pStringBase;
@@ -3667,6 +3682,8 @@ OBSOLETE, UNUSED
 */
 void GAME_EXPORT pfnAnimationAutomove(const edict_t* pEdict, float flTime)
 {
+	(void)pEdict;
+	(void)flTime;
 }
 
 /*
@@ -3904,6 +3921,8 @@ OBSOLETE, UNUSED
 */
 uint GAME_EXPORT pfnGetPlayerWONId(edict_t* e)
 {
+	(void)e;
+
 	return (uint)-1;
 }
 
@@ -4176,6 +4195,8 @@ a type of event is ignored at this moment
 */
 word GAME_EXPORT pfnPrecacheEvent(int type, const char* psz)
 {
+	(void)type;
+
 	return (word)SV_EventIndex(psz);
 }
 
@@ -4857,6 +4878,8 @@ extended iface stubs
 */
 static int GAME_EXPORT pfnGetLocalizedStringLength(const char* label)
 {
+	(void)label;
+
 	return 0;
 }
 

@@ -140,7 +140,7 @@ client resources not precached by server
 void CL_AddClientResources(void)
 {
 	char filepath[MAX_QPATH];
-	int i;
+	size_t i;
 
 	// don't request resources from localhost or in quake-compatibility mode
 	if ( cl.maxclients <= 1 || Host_IsQuakeCompatible() )
@@ -150,7 +150,9 @@ void CL_AddClientResources(void)
 	for ( i = 0; i < ARRAYSIZE(cl_default_sprites); i++ )
 	{
 		if ( !FS_FileExists(cl_default_sprites[i], false) )
+		{
 			CL_AddClientResource(cl_default_sprites[i], t_model);
+		}
 	}
 
 	// then check sounds
@@ -160,7 +162,9 @@ void CL_AddClientResources(void)
 		Q_snprintf(filepath, sizeof(filepath), DEFAULT_SOUNDPATH "%s", cl_weapon_shell_sounds[i]);
 
 		if ( !FS_FileExists(filepath, false) )
+		{
 			CL_AddClientResource(cl_weapon_shell_sounds[i], t_sound);
+		}
 	}
 
 	for ( i = 0; i < ARRAYSIZE(cl_explode_sounds); i++ )
@@ -168,7 +172,9 @@ void CL_AddClientResources(void)
 		Q_snprintf(filepath, sizeof(filepath), DEFAULT_SOUNDPATH "%s", cl_explode_sounds[i]);
 
 		if ( !FS_FileExists(filepath, false) )
+		{
 			CL_AddClientResource(cl_explode_sounds[i], t_sound);
+		}
 	}
 }
 
@@ -1371,6 +1377,8 @@ void GAME_EXPORT R_Sprite_Trail(
 	model_t* pmodel;
 	int i;
 
+	(void)type;
+
 	if ( (pmodel = CL_ModelHandle(modelIndex)) == NULL )
 		return;
 
@@ -1917,7 +1925,7 @@ void CL_ParseTempEntity(sizebuf_t* msg)
 	decalIndex = modelIndex = entityIndex = 0;
 
 	// this will probably be fatal anyway
-	if ( iSize > sizeof(pbuf) )
+	if ( (size_t)iSize > sizeof(pbuf) )
 		Con_Printf(S_ERROR "%s: Temp buffer overflow!\n", __FUNCTION__);
 
 	// parse user message into buffer

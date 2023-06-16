@@ -463,7 +463,7 @@ void Mem_PrintList(size_t minallocationsize)
 				Q_memprint(pool->realsize),
 				pool->name,
 				sign,
-				Q_memprint(abs(changed_size)));
+				Q_memprint(abs((int)changed_size)));
 		}
 		else
 		{

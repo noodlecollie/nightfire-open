@@ -814,7 +814,7 @@ void SV_TestBandWidth(netadr_t from)
 
 	test = FS_Open("gfx.wad", "rb", false);
 
-	if ( FS_FileLength(test) < sizeof(send_buf) )
+	if ( (size_t)FS_FileLength(test) < sizeof(send_buf) )
 	{
 		// skip the test and just get challenge
 		SV_GetChallenge(from);
@@ -1290,6 +1290,8 @@ void SV_FullUpdateMovevars(sv_client_t* cl, sizebuf_t* msg)
 {
 	movevars_t nullmovevars;
 
+	(void)cl;
+
 	memset(&nullmovevars, 0, sizeof(nullmovevars));
 	MSG_WriteDeltaMovevars(msg, &nullmovevars, &svgame.movevars);
 }
@@ -1736,6 +1738,8 @@ Dumps the serverinfo info string
 */
 static qboolean SV_ShowServerinfo_f(sv_client_t* cl)
 {
+	(void)cl;
+
 	Info_Print(svs.serverinfo);
 	return true;
 }
@@ -2906,18 +2910,22 @@ static qboolean SV_EntCreate_f(sv_client_t* cl)
 	if ( !ent->v.targetname )
 	{
 		string newname, clientname;
-		int j;
+		size_t j;
 
 		for ( j = 0; j < sizeof(cl->name); j++ )
 		{
 			char c = Q_tolower(cl->name[j]);
+
 			if ( c < 'a' || c > 'z' )
+			{
 				c = '_';
+			}
 			if ( !cl->name[j] )
 			{
 				clientname[j] = 0;
 				break;
 			}
+
 			clientname[j] = c;
 		}
 
@@ -3516,7 +3524,7 @@ void SV_ParseVoiceData(sv_client_t* cl, sizebuf_t* msg)
 		length = size;
 
 		// 6 is a number of bytes for other parts of message
-		if ( MSG_GetNumBytesLeft(&cur->datagram) < length + 6 )
+		if ( (uint)MSG_GetNumBytesLeft(&cur->datagram) < length + 6 )
 			continue;
 
 		if ( cl == cur && !cur->m_bLoopback )

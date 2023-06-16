@@ -70,9 +70,9 @@ static int pfnDrawScaledCharacter(int x, int y, int number, int r, int g, int b,
 	if ( hud_utf8->value )
 		SetBits(flags, FONT_DRAW_UTF8);
 
-	if ( fabs(g_font_scale - scale) > 0.1f || g_scaled_font.hFontTexture != cls.creditsFont.hFontTexture )
+	if ( fabsf(g_font_scale - scale) > 0.1f || g_scaled_font.hFontTexture != cls.creditsFont.hFontTexture )
 	{
-		int i;
+		size_t i;
 
 		g_scaled_font = cls.creditsFont;
 		g_scaled_font.scale *= scale;

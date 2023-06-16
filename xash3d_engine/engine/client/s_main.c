@@ -230,7 +230,7 @@ static int SND_GetChannelTimeLeft(const channel_t* ch)
 
 	if ( ch->isSentence )  // sentences are special, count all remaining words
 	{
-		int i;
+		size_t i;
 
 		if ( !ch->currentWord )
 			return 0;
@@ -479,6 +479,8 @@ S_SpatializeChannel
 void S_SpatializeChannel(int* left_vol, int* right_vol, int master_vol, float gain, float dot, float dist)
 {
 	float lscale, rscale, scale;
+
+	(void)gain;
 
 	rscale = 1.0f + dot;
 	lscale = 1.0f - dot;
@@ -1190,7 +1192,7 @@ static uint S_RawSamplesStereo(
 	uint fracstep, samplefrac;
 	uint src, dst;
 
-	if ( rawend < paintedtime )
+	if ( rawend < (uint)paintedtime )
 		rawend = paintedtime;
 
 	fracstep = ((double)rate / (double)SOUND_DMA_SPEED) * (double)(1 << S_RAW_SAMPLES_PRECISION_BITS);
@@ -1315,7 +1317,7 @@ void S_StreamAviSamples(void* Avi, int entnum, float fvol, float attn, float syn
 	ch->dist_mult = (attn / SND_CLIP_DISTANCE);
 
 	// see how many samples should be copied into the raw buffer
-	if ( ch->s_rawend < soundtime )
+	if ( ch->s_rawend < (uint)soundtime )
 		ch->s_rawend = soundtime;
 
 	// position is changed, synchronization is lost etc
@@ -1337,7 +1339,7 @@ void S_StreamAviSamples(void* Avi, int entnum, float fvol, float attn, float syn
 		// our max buffer size
 		fileBytes = fileSamples * (info->width * info->channels);
 
-		if ( fileBytes > sizeof(raw) )
+		if ( (size_t)fileBytes > sizeof(raw) )
 		{
 			fileBytes = sizeof(raw);
 			fileSamples = fileBytes / (info->width * info->channels);
@@ -1389,7 +1391,7 @@ static void S_FreeIdleRawChannels(void)
 		if ( !ch )
 			continue;
 
-		if ( ch->s_rawend >= paintedtime )
+		if ( ch->s_rawend >= (uint)paintedtime )
 			continue;
 
 		if ( ch->entnum > 0 )
@@ -1441,7 +1443,7 @@ static void S_SpatializeRawChannels(void)
 		if ( !ch )
 			continue;
 
-		if ( ch->s_rawend < paintedtime )
+		if ( ch->s_rawend < (uint)paintedtime )
 		{
 			ch->leftvol = ch->rightvol = 0;
 			continue;

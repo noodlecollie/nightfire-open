@@ -32,7 +32,7 @@ static byte GAME_EXPORT VGUI_GetColor(int, int);
 static int GAME_EXPORT VGUI_UtfProcessChar(int in);
 static qboolean GAME_EXPORT VGUI_IsInGame(void);
 
-static struct
+struct vgui_instance
 {
 	qboolean initialized;
 	vguiapi_t dllFuncs;
@@ -41,7 +41,9 @@ static struct
 	HINSTANCE hInstance;
 
 	enum VGUI_KeyCode virtualKeyTrans[256];
-} vgui = {
+};
+
+static struct vgui_instance vgui = {
 	false,
 	{
 		false,  // Not initialized yet
@@ -68,8 +70,19 @@ static struct
 		Platform_GetClipboardText,
 		Platform_SetClipboardText,
 		Platform_GetKeyModifiers,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
 	},
-	-1};
+	-1,
+	0,
+	{}
+};
 
 static void GAME_EXPORT* VGUI_EngineMalloc(size_t size)
 {
@@ -360,8 +373,10 @@ static enum VGUI_KeyCode VGUI_MapKey(int keyCode)
 {
 	VGUI_InitKeyTranslationTable();
 
-	if ( keyCode >= 0 && keyCode < ARRAYSIZE(vgui.virtualKeyTrans) )
+	if ( keyCode >= 0 && (size_t)keyCode < ARRAYSIZE(vgui.virtualKeyTrans) )
+	{
 		return vgui.virtualKeyTrans[keyCode];
+	}
 
 	return (enum VGUI_KeyCode) - 1;
 }

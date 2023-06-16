@@ -245,14 +245,16 @@ qboolean Sound_LoadWAV(const char* name, const byte* buffer, fs_offset_t filesiz
 
 	if ( sound.samples )
 	{
-		if ( samples < sound.samples )
+		if ( (uint)samples < sound.samples )
 		{
 			Con_DPrintf(S_ERROR "Sound_LoadWAV: %s has a bad loop length\n", name);
 			return false;
 		}
 	}
 	else
+	{
 		sound.samples = samples;
+	}
 
 	if ( sound.samples <= 0 )
 	{
@@ -288,7 +290,8 @@ qboolean Sound_LoadWAV(const char* name, const byte* buffer, fs_offset_t filesiz
 	// now convert 8-bit sounds to signed
 	if ( sound.width == 1 )
 	{
-		int i, j;
+		uint i;
+		int j;
 		signed char* pData = (signed char*)sound.wav;
 
 		for ( i = 0; i < sound.samples; i++ )

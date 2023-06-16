@@ -376,7 +376,7 @@ static int feed_back_bytes(mpg123_handle_t* fr, mpg_off_t bytes)
 	return feed_skip_bytes(fr, -bytes) >= 0 ? 0 : MPG123_ERR;
 }
 
-static int feed_seek_frame(mpg123_handle_t* fr, mpg_off_t num)
+static int feed_seek_frame(mpg123_handle_t*, mpg_off_t)
 {
 	return MPG123_ERR;
 }
@@ -437,7 +437,7 @@ static mpg_ssize_t buffered_fullread(mpg123_handle_t* fr, byte* out, mpg_ssize_t
 
 			need -= got;  // may underflow here...
 
-			if ( got < sizeof(readbuf) )  // that naturally catches got == 0, too.
+			if ( (size_t)got < sizeof(readbuf) )  // that naturally catches got == 0, too.
 				break;  // end.
 		}
 
@@ -758,37 +758,37 @@ static int bad_init(mpg123_handle_t* mh)
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static mpg_ssize_t bad_fullread(mpg123_handle_t* mh, byte* data, mpg_ssize_t count)
+static mpg_ssize_t bad_fullread(mpg123_handle_t* mh, byte*, mpg_ssize_t)
 {
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_head_read(mpg123_handle_t* mh, ulong* newhead)
+static int bad_head_read(mpg123_handle_t* mh, ulong*)
 {
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_head_shift(mpg123_handle_t* mh, ulong* head)
+static int bad_head_shift(mpg123_handle_t* mh, ulong*)
 {
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static mpg_off_t bad_skip_bytes(mpg123_handle_t* mh, mpg_off_t len)
+static mpg_off_t bad_skip_bytes(mpg123_handle_t* mh, mpg_off_t)
 {
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_read_frame_body(mpg123_handle_t* mh, byte* data, int size)
+static int bad_read_frame_body(mpg123_handle_t* mh, byte*, int)
 {
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_back_bytes(mpg123_handle_t* mh, mpg_off_t bytes)
+static int bad_back_bytes(mpg123_handle_t* mh, mpg_off_t)
 {
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static int bad_seek_frame(mpg123_handle_t* mh, mpg_off_t num)
+static int bad_seek_frame(mpg123_handle_t* mh, mpg_off_t)
 {
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
@@ -798,10 +798,10 @@ static mpg_off_t bad_tell(mpg123_handle_t* mh)
 	mh->err = MPG123_NO_READER;
 	return MPG123_ERR;
 }
-static void bad_rewind(mpg123_handle_t* mh)
+static void bad_rewind(mpg123_handle_t*)
 {
 }
-static void bad_close(mpg123_handle_t* mh)
+static void bad_close(mpg123_handle_t*)
 {
 }
 

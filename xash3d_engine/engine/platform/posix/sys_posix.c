@@ -72,6 +72,8 @@ void Platform_ShellExecute(const char* path, const char* parms)
 {
 	char xdgOpen[128];
 
+	(void)parms;
+
 	if ( !Q_strcmp(path, GENERIC_UPDATE_PAGE) || !Q_strcmp(path, PLATFORM_UPDATE_PAGE) )
 		path = DEFAULT_UPDATE_PAGE;
 

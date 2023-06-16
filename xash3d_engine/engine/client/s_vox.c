@@ -271,7 +271,8 @@ static int VOX_ParseString(char* psz, char* rgpparseword[CVOXWORDMAX])
 
 static qboolean VOX_ParseWordParams(char* psz, voxword_t* pvoxword, qboolean fFirst)
 {
-	int len, i;
+	int len;
+	size_t i;
 	char sznum[8], *pszsave = psz;
 	static voxword_t voxwordDefault;
 

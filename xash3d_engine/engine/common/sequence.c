@@ -62,14 +62,16 @@ Sequence_GetCommandEnumForName
 */
 static sequenceCommandEnum_e Sequence_GetCommandEnumForName(const char* commandName, sequenceCommandType_e type)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(g_sequenceCommandMappingTable); i++ )
 	{
 		const sequenceCommandMapping_s* mapping = g_sequenceCommandMappingTable + i;
 
 		if ( mapping->commandType == type && !Q_stricmp(mapping->commandName, commandName) )
+		{
 			return mapping->commandEnum;
+		}
 	}
 	return SEQUENCE_COMMAND_ERROR;
 }
@@ -642,12 +644,14 @@ Sequence_IsCommandAModifier
 */
 static qboolean Sequence_IsCommandAModifier(sequenceCommandEnum_e commandEnum)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(g_sequenceCommandMappingTable); i++ )
 	{
 		if ( g_sequenceCommandMappingTable[i].commandEnum == commandEnum )
+		{
 			return (g_sequenceCommandMappingTable[i].commandType == SEQUENCE_TYPE_MODIFIER);
+		}
 	}
 
 	Con_Reportf(
@@ -1217,6 +1221,8 @@ sentenceEntry_s* Sequence_PickSentence(const char* groupName, int pickMethod, in
 	unsigned int pickedIdx;
 	unsigned int entryIdx;
 
+	(void)pickMethod;
+
 	groupEntry = Sequence_FindSentenceGroup(groupName);
 
 	if ( groupEntry )
@@ -1225,7 +1231,9 @@ sentenceEntry_s* Sequence_PickSentence(const char* groupName, int pickMethod, in
 		sentenceEntry = groupEntry->firstSentence;
 
 		for ( entryIdx = pickedIdx; entryIdx; entryIdx-- )
+		{
 			sentenceEntry = sentenceEntry->nextEntry;
+		}
 	}
 	else
 	{
@@ -1234,7 +1242,9 @@ sentenceEntry_s* Sequence_PickSentence(const char* groupName, int pickMethod, in
 	}
 
 	if ( picked )
+	{
 		*picked = pickedIdx;
+	}
 
 	return sentenceEntry;
 }

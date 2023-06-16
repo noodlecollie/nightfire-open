@@ -286,6 +286,13 @@ void S_Mix8MonoTimeCompress(
 	int outCount,
 	int timecompress)
 {
+	(void)pbuf;
+	(void)volume;
+	(void)pData;
+	(void)inputOffset;
+	(void)rateScale;
+	(void)outCount;
+	(void)timecompress;
 }
 
 void S_Mix8Mono(
@@ -727,6 +734,8 @@ void S_Interpolate2xCubic(portable_samplepair_t* pbuffer, portable_samplepair_t*
 	portable_samplepair_t* psamp3;
 	int outpos = 0;
 
+	(void)cfltmem;
+
 	Assert(upCount <= PAINTBUFFER_SIZE);
 
 	// pfiltermem holds 6 samples from previous buffer pass
@@ -793,6 +802,8 @@ void S_Interpolate2xCubic(portable_samplepair_t* pbuffer, portable_samplepair_t*
 void S_Interpolate2xLinear(portable_samplepair_t* pbuffer, portable_samplepair_t* pfiltermem, int cfltmem, int count)
 {
 	int i, upCount = count << 1;
+
+	(void)cfltmem;
 
 	Assert(upCount <= PAINTBUFFER_SIZE);
 	Assert(cfltmem >= 1);
@@ -967,7 +978,7 @@ void MIX_MixRawSamplesBuffer(int end)
 		stream = ch->entnum == S_RAW_SOUND_BACKGROUNDTRACK || CL_IsPlayerIndex(ch->entnum);
 		pbuf = stream ? streambuf : roombuf;
 
-		stop = (end < ch->s_rawend) ? end : ch->s_rawend;
+		stop = ((uint)end < ch->s_rawend) ? (uint)end : ch->s_rawend;
 
 		for ( j = paintedtime; j < stop; j++ )
 		{

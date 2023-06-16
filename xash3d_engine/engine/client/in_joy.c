@@ -88,7 +88,9 @@ void Joy_HatMotionEvent(byte hat, byte value)
 		{JOY_HAT_LEFT, K_LEFTARROW},
 		{JOY_HAT_RIGHT, K_RIGHTARROW},
 	};
-	int i;
+	size_t i;
+
+	(void)hat;
 
 	if ( !joy_found->value )
 		return;
@@ -98,12 +100,16 @@ void Joy_HatMotionEvent(byte hat, byte value)
 		if ( value & keys[i].mask )
 		{
 			if ( !Key_IsDown(keys[i].key) )
+			{
 				Key_Event(keys[i].key, true);
+			}
 		}
 		else
 		{
 			if ( Key_IsDown(keys[i].key) )
+			{
 				Key_Event(keys[i].key, false);
+			}
 		}
 	}
 }
@@ -274,8 +280,9 @@ Trackball events. UNDONE
 */
 void Joy_BallMotionEvent(byte ball, short xrel, short yrel)
 {
-	// if( !joy_found->value )
-	//	return;
+	(void)ball;
+	(void)xrel;
+	(void)yrel;
 }
 
 /*

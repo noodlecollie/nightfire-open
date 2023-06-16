@@ -74,6 +74,8 @@ S_StartBackgroundTrack
 */
 void S_StartBackgroundTrack(const char* introTrack, const char* mainTrack, int position, qboolean fullpath)
 {
+	(void)fullpath;
+
 	S_StopBackgroundTrack();
 
 	if ( !dma.initialized )
@@ -211,7 +213,7 @@ void S_StreamBackgroundTrack(void)
 	Assert(ch != NULL);
 
 	// see how many samples should be copied into the raw buffer
-	if ( ch->s_rawend < soundtime )
+	if ( ch->s_rawend < (uint)soundtime )
 		ch->s_rawend = soundtime;
 
 	while ( ch->s_rawend < soundtime + ch->max_samples )
@@ -228,7 +230,7 @@ void S_StreamBackgroundTrack(void)
 		// our max buffer size
 		fileBytes = fileSamples * (info->width * info->channels);
 
-		if ( fileBytes > sizeof(raw) )
+		if ( (size_t)fileBytes > sizeof(raw) )
 		{
 			fileBytes = sizeof(raw);
 			fileSamples = fileBytes / (info->width * info->channels);
@@ -315,7 +317,7 @@ void S_StreamSoundTrack(void)
 	Assert(ch != NULL);
 
 	// see how many samples should be copied into the raw buffer
-	if ( ch->s_rawend < soundtime )
+	if ( ch->s_rawend < (uint)soundtime )
 		ch->s_rawend = soundtime;
 
 	while ( ch->s_rawend < soundtime + ch->max_samples )
@@ -335,7 +337,7 @@ void S_StreamSoundTrack(void)
 		// our max buffer size
 		fileBytes = fileSamples * (info->width * info->channels);
 
-		if ( fileBytes > sizeof(raw) )
+		if ( (size_t)fileBytes > sizeof(raw) )
 		{
 			fileBytes = sizeof(raw);
 			fileSamples = fileBytes / (info->width * info->channels);

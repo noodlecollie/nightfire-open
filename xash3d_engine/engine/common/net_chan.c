@@ -906,7 +906,7 @@ void Netchan_CreateFileFragmentsFromBuffer(netchan_t* chan, const char* filename
 		uint uCompressedSize = 0;
 		byte* pbOut = LZSS_Compress(pbuf, size, &uCompressedSize);
 
-		if ( pbOut && uCompressedSize > 0 && uCompressedSize < size )
+		if ( pbOut && uCompressedSize > 0 && uCompressedSize < (uint)size )
 		{
 			Con_DPrintf("Compressing filebuffer (%s -> %s)\n", Q_memprint(size), Q_memprint(uCompressedSize));
 			memcpy(pbuf, pbOut, uCompressedSize);
@@ -1325,6 +1325,9 @@ qboolean Netchan_Validate(
 	int i, buffer, offset;
 	int count, length;
 
+	(void)chan;
+	(void)sb;
+
 	for ( i = 0; i < MAX_STREAMS; i++ )
 	{
 		if ( !frag_message[i] )
@@ -1513,7 +1516,7 @@ void Netchan_TransmitBits(netchan_t* chan, int length, byte* data)
 				maxsize = MAX_RELIABLE_PAYLOAD;
 
 			// if the reliable buffer has gotten too big, queue it at the end of everything and clear out buffer
-			if ( MSG_GetNumBytesWritten(&chan->message) + (((uint)length) >> 3) > maxsize )
+			if ( MSG_GetNumBytesWritten(&chan->message) + (((uint)length) >> 3) > (uint)maxsize )
 			{
 				Netchan_CreateFragments_(chan, &chan->message);
 				MSG_Clear(&chan->message);

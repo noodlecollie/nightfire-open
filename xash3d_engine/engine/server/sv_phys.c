@@ -769,6 +769,8 @@ trace_t SV_PushEntity(edict_t* ent, const vec3_t lpush, const vec3_t apush, int*
 	int type;
 	vec3_t end;
 
+	(void)flDamage;
+
 	monsterClip = FBitSet(ent->v.flags, FL_MONSTERCLIP) ? true : false;
 	VectorAdd(ent->v.origin, lpush, end);
 

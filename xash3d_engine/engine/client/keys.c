@@ -367,7 +367,7 @@ Key_Unbindall_f
 */
 void Key_Unbindall_f(void)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(keys); i++ )
 	{
@@ -388,7 +388,7 @@ Key_Reset_f
 void Key_Reset_f(void)
 {
 	keyname_t* kn;
-	int i;
+	size_t i;
 
 	// clear all keys first
 	for ( i = 0; i < ARRAYSIZE(keys); i++ )

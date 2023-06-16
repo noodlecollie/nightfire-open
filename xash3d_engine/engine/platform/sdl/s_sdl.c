@@ -59,6 +59,8 @@ void SDL_SoundCallback(void* userdata, Uint8* stream, int len)
 	int pos = dma.samplepos << 1;
 	int wrapped = pos + len - size;
 
+	(void)userdata;
+
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	if ( !dma.buffer )
 		return;
@@ -239,6 +241,8 @@ SDL_SoundInputCallback
 void SDL_SoundInputCallback(void* userdata, Uint8* stream, int len)
 {
 	int size = Q_min(len, sizeof(voice.input_buffer) - voice.input_buffer_pos);
+
+	(void)userdata;
 
 	// engine can't keep up, skip audio
 	if ( !size )

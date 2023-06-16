@@ -33,6 +33,10 @@ Default stub for missed callbacks
 */
 int CL_UserMsgStub(const char* pszName, int iSize, void* pbuf)
 {
+	(void)pszName;
+	(void)iSize;
+	(void)pbuf;
+
 	return 1;
 }
 
@@ -1372,8 +1376,11 @@ void CL_RegisterUserMessage(sizebuf_t* msg)
 	pszName = MSG_ReadString(msg);
 
 	// important stuff
-	if ( size == (BIT(bits) - 1) )
+	if ( (unsigned int)size == (BIT(bits) - 1) )
+	{
 		size = -1;
+	}
+
 	svc_num = bound(0, svc_num, 255);
 
 	CL_LinkUserMessage(pszName, svc_num, size);
@@ -3016,10 +3023,11 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_legacy_chokecount:
 			{
-				int i, j;
+				int i;
+				unsigned int j;
 				i = MSG_ReadByte(msg);
 				j = cls.netchan.incoming_acknowledged - 1;
-				for ( ; i > 0 && j > cls.netchan.outgoing_sequence - CL_UPDATE_BACKUP; j-- )
+				for ( ; i > 0 && j > (unsigned int)(cls.netchan.outgoing_sequence - CL_UPDATE_BACKUP); j-- )
 				{
 					if ( cl.frames[j & CL_UPDATE_MASK].receivedtime != -3.0 )
 					{

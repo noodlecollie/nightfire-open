@@ -123,6 +123,8 @@ Platform_Vibrate
 */
 void Platform_Vibrate(float time, char flags)
 {
+	(void)flags;
+
 	if ( g_joy )
 		SDL_JoystickRumble(g_joy, 0xFFFF, 0xFFFF, time * 1000.0f);
 }
@@ -224,6 +226,8 @@ static int SDLash_JoyInit_New(int numjoy)
 {
 	int count, numJoysticks, i;
 
+	(void)numjoy;
+
 	Con_Reportf("Joystick: SDL GameController API\n");
 	if ( SDL_WasInit(SDL_INIT_GAMECONTROLLER) != SDL_INIT_GAMECONTROLLER && SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) )
 	{
@@ -299,7 +303,7 @@ SDLash_FreeCursors
 void SDLash_FreeCursors(void)
 {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	int i = 0;
+	size_t i = 0;
 
 	for ( ; i < ARRAYSIZE(cursors.cursors); i++ )
 	{

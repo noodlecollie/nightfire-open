@@ -1840,6 +1840,9 @@ static void IN_TouchEditClear(void)
 
 static void Touch_EditMove(touchEventType type, int fingerID, float x, float y, float dx, float dy)
 {
+	(void)x;
+	(void)y;
+
 	if ( touch.edit->finger == fingerID )
 	{
 		if ( type == event_up )  // shutdown button move
@@ -1898,6 +1901,10 @@ static void Touch_EditMove(touchEventType type, int fingerID, float x, float y, 
 
 static void Touch_Motion(touchEventType type, int fingerID, float x, float y, float dx, float dy)
 {
+	(void)type;
+	(void)dx;
+	(void)dy;
+
 	// process wheel
 	if ( fingerID == touch.wheel_finger )
 	{
@@ -1999,6 +2006,9 @@ Touch_ButtonPress(touchbuttonlist_t* list, touchEventType type, int fingerID, fl
 {
 	touch_button_t* button;
 	qboolean result = false;
+
+	(void)dx;
+	(void)dy;
 
 	// run from end(front) to start(back)
 	for ( button = list->last; button; button = button->prev )

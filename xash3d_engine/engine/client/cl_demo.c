@@ -831,14 +831,14 @@ qboolean CL_DemoReadMessageQuake(byte* buffer, size_t* length)
 	{
 		if ( cls.timedemo )
 		{
-			if ( host.framecount == cls.td_lastframe )
+			if ( host.framecount == (uint)cls.td_lastframe )
 				return false;  // already read this frame's message
 
 			cls.td_lastframe = host.framecount;
 
 			// if this is the second frame, grab the real td_starttime
 			// so the bogus time on the first frame doesn't count
-			if ( host.framecount == cls.td_startframe + 1 )
+			if ( host.framecount == (uint)cls.td_startframe + 1 )
 				cls.td_starttime = host.realtime;
 		}
 		else if ( cl.time <= cl.mtime[0] )
@@ -1008,7 +1008,7 @@ qboolean CL_DemoReadMessage(byte* buffer, size_t* length)
 
 	// If we are playing back a timedemo, and we've already passed on a
 	//  frame update for this host_frame tag, then we'll just skip this message.
-	if ( cls.timedemo && (tdlastdemoframe == host.framecount) )
+	if ( cls.timedemo && ((uint)tdlastdemoframe == host.framecount) )
 	{
 		FS_Seek(cls.demofile, FS_Tell(cls.demofile) - 5, SEEK_SET);
 		return false;

@@ -201,6 +201,8 @@ int SV_FindBestBaseline(
 	int i, bitCount;
 	int bestfound, j;
 
+	(void)cl;
+
 	bestBitCount = j = Delta_TestBaseline(*baseline, to, player, sv.time);
 	bestfound = index;
 
@@ -804,7 +806,7 @@ void SV_UpdateToReliableMessages(void)
 
 		if ( FBitSet(cl->flags, FCL_RESEND_USERINFO) && cl->next_sendinfotime <= host.realtime )
 		{
-			if ( MSG_GetNumBytesLeft(&sv.reliable_datagram) >= (Q_strlen(cl->userinfo) + 6) )
+			if ( (size_t)MSG_GetNumBytesLeft(&sv.reliable_datagram) >= (Q_strlen(cl->userinfo) + 6) )
 				SV_UpdateUserInfo(cl);
 		}
 

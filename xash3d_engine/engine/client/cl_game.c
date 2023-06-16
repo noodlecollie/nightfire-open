@@ -2292,6 +2292,7 @@ pfnPrecacheEvent
 */
 static word GAME_EXPORT pfnPrecacheEvent(int type, const char* psz)
 {
+	(void)type;
 	return CL_EventIndex(psz);
 }
 
@@ -2811,6 +2812,8 @@ obsolete, unused
 */
 int GAME_EXPORT pfnGetTrackerIDForPlayer(int playerSlot)
 {
+	(void)playerSlot;
+
 	return 0;
 }
 
@@ -2823,6 +2826,8 @@ obsolete, unused
 */
 int GAME_EXPORT pfnGetPlayerForTrackerID(int trackerID)
 {
+	(void)trackerID;
+
 	return 0;
 }
 
@@ -2866,6 +2871,7 @@ legacy of dinput code
 */
 void GAME_EXPORT pfnSetMouseEnable(qboolean fEnable)
 {
+	(void)fEnable;
 }
 
 /*
@@ -2899,6 +2905,7 @@ TODO: implement
 */
 static void GAME_EXPORT pfnEnableTexSort(int enable)
 {
+	(void)enable;
 }
 
 /*
@@ -2910,6 +2917,9 @@ TODO: implement
 */
 static void GAME_EXPORT pfnSetLightmapColor(float red, float green, float blue)
 {
+	(void)red;
+	(void)green;
+	(void)blue;
 }
 
 /*
@@ -2921,6 +2931,7 @@ TODO: implement
 */
 static void GAME_EXPORT pfnSetLightmapScale(float scale)
 {
+	(void)scale;
 }
 
 /*
@@ -2932,6 +2943,9 @@ pfnSPR_DrawGeneric
 static void GAME_EXPORT
 pfnSPR_DrawGeneric(int frame, int x, int y, const wrect_t* prc, int blendsrc, int blenddst, int width, int height)
 {
+	(void)blendsrc;
+	(void)blenddst;
+
 #if 0  // REFTODO:
 	pglEnable( GL_BLEND );
 	pglBlendFunc( blendsrc, blenddst ); // g-cont. are params is valid?
@@ -2958,6 +2972,8 @@ pfnVGUI2DrawCharacter
 */
 static int GAME_EXPORT pfnVGUI2DrawCharacter(int x, int y, int number, unsigned int font)
 {
+	(void)font;
+
 	return pfnDrawCharacter(x, y, number, 255, 255, 255);
 }
 
@@ -2969,6 +2985,8 @@ pfnVGUI2DrawCharacterAdditive
 */
 static int GAME_EXPORT pfnVGUI2DrawCharacterAdditive(int x, int y, int ch, int r, int g, int b, unsigned int font)
 {
+	(void)font;
+
 	return pfnDrawCharacter(x, y, ch, r, g, b);
 }
 
@@ -3131,6 +3149,8 @@ TODO: implement
 */
 static void GAME_EXPORT pfnVguiWrap2_GetMouseDelta(int* x, int* y)
 {
+	(void)x;
+	(void)y;
 }
 
 /*
@@ -3273,13 +3293,17 @@ Heavy legacy of Quake...
 */
 void TriColor4fRendermode(float r, float g, float b, float a, int rendermode)
 {
+	(void)rendermode;
+
 	if ( clgame.ds.renderMode == kRenderTransAlpha )
 	{
 		clgame.ds.triRGBA[3] = a / 255.0f;
 		ref.dllFuncs.Color4f(r, g, b, a);
 	}
 	else
+	{
 		ref.dllFuncs.Color4f(r * a, g * a, b * a, 1.0f);
+	}
 }
 
 /*
@@ -3654,6 +3678,8 @@ Voice_SetControlFloat
 */
 void GAME_EXPORT Voice_SetControlFloat(VoiceTweakControl iControl, float value)
 {
+	(void)iControl;
+	(void)value;
 }
 
 /*
@@ -3664,12 +3690,14 @@ Voice_GetControlFloat
 */
 float GAME_EXPORT Voice_GetControlFloat(VoiceTweakControl iControl)
 {
+	(void)iControl;
+
 	return 1.0f;
 }
 
 static void GAME_EXPORT VGui_ViewportPaintBackground(int extents[4])
 {
-	// stub
+	(void)extents;
 }
 
 // shared between client and server

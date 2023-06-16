@@ -436,6 +436,8 @@ static void NET_ResolveThread(void);
 #define thread_t pthread_t
 void* NET_ThreadStart(void* unused)
 {
+	(void)unused;
+
 	NET_ResolveThread();
 	return NULL;
 }
@@ -472,7 +474,7 @@ static struct nsthread_s
 	qboolean busy;
 } nsthread
 #if !XASH_WIN32
-	= {PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER}
+	= {PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER, 0, 0, {}, 0, {}, false}
 #endif
 ;
 
@@ -498,9 +500,14 @@ void NET_ResolveThread(void)
 #endif
 
 	if ( NET_GetHostByName(nsthread.hostname, nsthread.family, &addr) )
+	{
 		RESOLVE_DBG("[resolve thread] success\n");
+	}
 	else
+	{
 		RESOLVE_DBG("[resolve thread] failed\n");
+	}
+
 	mutex_lock(&nsthread.mutexres);
 	nsthread.addr = addr;
 	nsthread.busy = false;
@@ -1168,6 +1175,8 @@ static void NET_SendLoopPacket(netsrc_t sock, size_t length, const void* data, n
 	net_loopback_t* loop;
 	int i;
 
+	(void)to;
+
 	loop = &net.loopbacks[sock ^ 1];
 
 	i = loop->send & MASK_LOOPBACK;
@@ -1259,6 +1268,8 @@ static void NET_AddToLagged(
 	float timestamp)
 {
 	byte* pStart;
+
+	(void)sock;
 
 	if ( packet->prev || packet->next )
 		return;
@@ -1406,7 +1417,8 @@ receive long packet from network
 */
 qboolean NET_GetLong(byte* pData, int size, size_t* outSize, int splitsize)
 {
-	int i, sequence_number, offset;
+	size_t i;
+	int sequence_number, offset;
 	SPLITPACKET* pHeader = (SPLITPACKET*)pData;
 	int packet_number;
 	int packet_count;
@@ -1416,7 +1428,7 @@ qboolean NET_GetLong(byte* pData, int size, size_t* outSize, int splitsize)
 	if ( body_size < 0 )
 		return false;
 
-	if ( size < sizeof(SPLITPACKET) )
+	if ( (size_t)size < sizeof(SPLITPACKET) )
 	{
 		Con_Printf(S_ERROR "invalid split packet length %i\n", size);
 		return false;
@@ -1427,7 +1439,7 @@ qboolean NET_GetLong(byte* pData, int size, size_t* outSize, int splitsize)
 	packet_count = (packet_id & 0xFF);
 	packet_number = (packet_id >> 8);
 
-	if ( packet_number >= NET_MAX_FRAGMENTS || packet_count > NET_MAX_FRAGMENTS )
+	if ( (size_t)packet_number >= NET_MAX_FRAGMENTS || (size_t)packet_count > NET_MAX_FRAGMENTS )
 	{
 		Con_Printf(S_ERROR "malformed packet number (%i/%i)\n", packet_number + 1, packet_count);
 		return false;
@@ -1441,10 +1453,14 @@ qboolean NET_GetLong(byte* pData, int size, size_t* outSize, int splitsize)
 
 		// clear part's sequence
 		for ( i = 0; i < NET_MAX_FRAGMENTS; i++ )
+		{
 			net.split_flags[i] = -1;
+		}
 
 		if ( net_showpackets && net_showpackets->value == 4.0f )
+		{
 			Con_Printf("<-- Split packet restart %i count %i seq\n", net.split.split_count, sequence_number);
+		}
 	}
 
 	size -= sizeof(SPLITPACKET);
@@ -1482,7 +1498,7 @@ qboolean NET_GetLong(byte* pData, int size, size_t* outSize, int splitsize)
 	{
 		net.split.current_sequence = -1;  // Clear packet
 
-		if ( net.split.total_size > sizeof(net.split.buffer) )
+		if ( (size_t)net.split.total_size > sizeof(net.split.buffer) )
 		{
 			Con_Printf("Split packet too large! %d bytes\n", net.split.total_size);
 			return false;
@@ -2930,12 +2946,14 @@ HTTP_ParseURL
 static httpserver_t* HTTP_ParseURL(const char* url)
 {
 	httpserver_t* server;
-	int i;
+	size_t i;
 
 	url = Q_strstr(url, "http://");
 
 	if ( !url )
+	{
 		return NULL;
+	}
 
 	url += 7;
 	server = Z_Calloc(sizeof(httpserver_t));
@@ -2944,7 +2962,9 @@ static httpserver_t* HTTP_ParseURL(const char* url)
 	while ( *url && (*url != ':') && (*url != '/') && (*url != '\r') && (*url != '\n') )
 	{
 		if ( i > sizeof(server->host) )
+		{
 			return NULL;
+		}
 
 		server->host[i++] = *url++;
 	}
@@ -2956,17 +2976,23 @@ static httpserver_t* HTTP_ParseURL(const char* url)
 		server->port = Q_atoi(++url);
 
 		while ( *url && (*url != '/') && (*url != '\r') && (*url != '\n') )
+		{
 			url++;
+		}
 	}
 	else
+	{
 		server->port = 80;
+	}
 
 	i = 0;
 
 	while ( *url && (*url != '\r') && (*url != '\n') )
 	{
 		if ( i > sizeof(server->path) )
+		{
 			return NULL;
+		}
 
 		server->path[i++] = *url++;
 	}

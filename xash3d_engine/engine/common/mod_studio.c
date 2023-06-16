@@ -513,7 +513,7 @@ qboolean Mod_GetTransformedHitboxPoints(const edict_t* edict, uint32_t hitboxInd
 
 	mod_studiohdr = (studiohdr_t*)Mod_StudioExtradata(model);
 
-	if ( !mod_studiohdr || hitboxIndex >= mod_studiohdr->numhitboxes )
+	if ( !mod_studiohdr || hitboxIndex >= (uint32_t)mod_studiohdr->numhitboxes )
 	{
 		return false;
 	}
@@ -557,7 +557,7 @@ int Mod_GetHitboxHitGroup(const edict_t* edict, uint32_t hitboxIndex)
 
 	header = (studiohdr_t*)Mod_StudioExtradata(model);
 
-	if ( !header || hitboxIndex >= header->numhitboxes )
+	if ( !header || hitboxIndex >= (size_t)header->numhitboxes )
 	{
 		return -1;
 	}
@@ -758,7 +758,7 @@ static void SV_StudioSetupBones(
 	const byte* pcontroller,
 	const byte* pblending,
 	int iBone,
-	const edict_t* pEdict)
+	const edict_t*)
 {
 	int i, j, numbones = 0;
 	int boneused[MAXSTUDIOBONES];

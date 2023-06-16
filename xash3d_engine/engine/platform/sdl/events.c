@@ -677,7 +677,7 @@ static void SDLash_EventFilter(SDL_Event* event)
 			if ( !Joy_IsActive() )
 				break;
 
-			if ( event->caxis.axis >= 0 && event->caxis.axis < ARRAYSIZE(SDLash_GameControllerAxisMapping) )
+			if ( event->caxis.axis < ARRAYSIZE(SDLash_GameControllerAxisMapping) )
 			{
 				Joy_KnownAxisMotionEvent(SDLash_GameControllerAxisMapping[event->caxis.axis], event->caxis.value);
 			}
@@ -691,7 +691,7 @@ static void SDLash_EventFilter(SDL_Event* event)
 				break;
 
 			// TODO: Use joyinput funcs, for future multiple gamepads support
-			if ( event->cbutton.button >= 0 && event->cbutton.button < ARRAYSIZE(SDLash_GameControllerButtonMapping) )
+			if ( event->cbutton.button < ARRAYSIZE(SDLash_GameControllerButtonMapping) )
 			{
 				Key_Event(SDLash_GameControllerButtonMapping[event->cbutton.button], event->cbutton.state);
 			}
@@ -781,6 +781,7 @@ void Platform_RunEvents(void)
 
 void* Platform_GetNativeObject(const char* name)
 {
+	(void)name;
 	return NULL;  // SDL don't have it
 }
 

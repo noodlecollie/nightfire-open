@@ -992,21 +992,21 @@ static const char* mpg123_error[] = {
 
 const char* mpg123_plain_strerror(int errcode)
 {
-	if ( errcode >= 0 && errcode < sizeof(mpg123_error) / sizeof(char*) )
+	if ( errcode >= 0 && (size_t)errcode < sizeof(mpg123_error) / sizeof(char*) )
 		return mpg123_error[errcode];
 
 	switch ( errcode )
 	{
 		case MPG123_ERR:
-			return "A generic mpg123 error.";
+			return "Generic mpg123 error.";
 		case MPG123_DONE:
-			return "Message: I am done with this track.";
+			return "Track is done.";
 		case MPG123_NEED_MORE:
-			return "Message: Feed me more input data!";
+			return "Need more input data.";
 		case MPG123_NEW_FORMAT:
-			return "Message: Prepare for a changed audio format (query the new one)!";
+			return "Prepare for a changed audio format (query the new one).";
 		default:
-			return "I have no idea - an unknown error code!";
+			return "Unknown error code.";
 	}
 }
 

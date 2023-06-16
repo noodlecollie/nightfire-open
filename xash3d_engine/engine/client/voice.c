@@ -461,6 +461,8 @@ void Voice_AddIncomingData(int ent, const byte* data, uint size, uint frames)
 	int samples = 0;
 	int ofs = 0;
 
+	(void)frames;
+
 	if ( !voice.decoder )
 		return;
 
@@ -478,7 +480,7 @@ void Voice_AddIncomingData(int ent, const byte* data, uint size, uint frames)
 		ofs += sizeof(uint16_t);
 
 		// no frame data
-		if ( ofs + compressed_size > size )
+		if ( (uint)ofs + compressed_size > size )
 			break;
 
 		frame_samples = opus_custom_decode(
@@ -512,7 +514,7 @@ void CL_AddVoiceToDatagram(void)
 
 	size = Voice_GetOpusCompressedData(voice.output_buffer, sizeof(voice.output_buffer), &frames);
 
-	if ( size > 0 && MSG_GetNumBytesLeft(&cls.datagram) >= size + 32 )
+	if ( size > 0 && (uint)MSG_GetNumBytesLeft(&cls.datagram) >= size + 32 )
 	{
 		MSG_BeginClientCmd(&cls.datagram, clc_voicedata);
 		MSG_WriteByte(&cls.datagram, voice_loopback.value != 0);

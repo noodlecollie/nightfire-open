@@ -1036,6 +1036,9 @@ pfnChangeInstance
 */
 static void GAME_EXPORT pfnChangeInstance(const char* newInstance, const char* szFinalMessage)
 {
+	(void)newInstance;
+	(void)szFinalMessage;
+
 	Con_Reportf(S_ERROR "ChangeInstance menu call is deprecated!\n");
 }
 
@@ -1210,7 +1213,7 @@ static void pfnEnableTextInput(int enable)
 
 static int pfnGetRenderers(unsigned int num, char* shortName, size_t size1, char* readableName, size_t size2)
 {
-	if ( num >= ref.numRenderers )
+	if ( num >= (unsigned int)ref.numRenderers )
 		return 0;
 
 	if ( shortName && size1 )
