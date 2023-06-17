@@ -96,13 +96,13 @@ qboolean Image_LoadFNT(const char* name, const byte* buffer, fs_offset_t filesiz
 	{
 		// oldstyle font: "conchars" or "creditsfont"
 		image.width = 256;  // hardcoded
-		image.height = font.height;
+		image.height = (word)font.height;
 	}
 	else
 	{
 		// Half-Life 1.1.0.0 font style (qfont_t)
-		image.width = font.width * QCHAR_WIDTH;
-		image.height = font.height;
+		image.width = (word)(font.width * QCHAR_WIDTH);
+		image.height = (word)font.height;
 	}
 
 	if ( !Image_LumpValidSize(name) )
@@ -157,8 +157,8 @@ qboolean Image_LoadMDL(const char* name, const byte* buffer, fs_offset_t filesiz
 	pin = (mstudiotexture_t*)buffer;
 	flags = pin->flags;
 
-	image.width = pin->width;
-	image.height = pin->height;
+	image.width = (word)pin->width;
+	image.height = (word)pin->height;
 	pixels = image.width * image.height;
 	fin = (byte*)g_mdltexdata;
 	ASSERT(fin);
@@ -220,8 +220,8 @@ qboolean Image_LoadSPR(const char* name, const byte* buffer, fs_offset_t filesiz
 	}
 
 	memcpy(&pin, buffer, sizeof(dspriteframe_t));
-	image.width = pin.width;
-	image.height = pin.height;
+	image.width = (word)pin.width;
+	image.height = (word)pin.height;
 
 	if ( filesize < image.width * image.height )
 		return false;
@@ -297,8 +297,8 @@ qboolean Image_LoadLMP(const char* name, const byte* buffer, fs_offset_t filesiz
 	{
 		fin = (byte*)buffer;
 		memcpy(&lmp, fin, sizeof(lmp));
-		image.width = lmp.width;
-		image.height = lmp.height;
+		image.width = (word)lmp.width;
+		image.height = (word)lmp.height;
 		rendermode = LUMP_NORMAL;
 		fin += sizeof(lmp);
 	}
@@ -372,8 +372,8 @@ qboolean Image_LoadMIP(const char* name, const byte* buffer, fs_offset_t filesiz
 		return false;
 
 	memcpy(&mip, buffer, sizeof(mip));
-	image.width = mip.width;
-	image.height = mip.height;
+	image.width = (word)mip.width;
+	image.height = (word)mip.height;
 
 	if ( !Image_ValidSize(name) )
 		return false;
@@ -526,7 +526,9 @@ qboolean Image_LoadMIP(const char* name, const byte* buffer, fs_offset_t filesiz
 			reflectivity[2] += pal[i * 3 + 2];
 		}
 
-		VectorDivide(reflectivity, 256, image.fogParams);
+		image.fogParams[0] = (byte)(reflectivity[0] / 256);
+		image.fogParams[1] = (byte)(reflectivity[1] / 256);
+		image.fogParams[2] = (byte)(reflectivity[2] / 256);
 	}
 
 	image.type = PF_INDEXED_32;  // 32-bit palete

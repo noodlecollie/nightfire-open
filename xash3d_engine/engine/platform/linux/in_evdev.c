@@ -417,7 +417,7 @@ void IN_EvdevFrame(void)
 	{
 		struct input_event ev;
 
-		while ( read(evdev.fds[i], &ev, 16) == 16 )
+		while ( PlatformLib_Read(evdev.fds[i], &ev, 16) == 16 )
 		{
 			if ( ev.type == EV_REL )
 			{

@@ -99,16 +99,16 @@ char Q_toupper(const char in)
 	return out;
 }
 
-char Q_tolower(const char in)
+char Q_tolower(char in)
 {
-	char out;
-
 	if ( in >= 'A' && in <= 'Z' )
-		out = in + 'a' - 'A';
+	{
+		return in + 'a' - 'A';
+	}
 	else
-		out = in;
-
-	return out;
+	{
+		return in;
+	}
 }
 
 size_t Q_strncat(char* dst, const char* src, size_t size)

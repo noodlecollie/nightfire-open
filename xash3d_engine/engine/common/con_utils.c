@@ -209,7 +209,8 @@ qboolean Cmd_GetMapList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, nummaps;
 
-	t = FS_Search(va("maps/%s*.bsp", s), true, con_gamemaps->value);
+	t = FS_Search(va("maps/%s*.bsp", s), true, (int)con_gamemaps->value);
+
 	if ( !t )
 		return false;
 
@@ -596,26 +597,37 @@ qboolean Cmd_GetKeysList(const char* s, char* completedname, int length)
 	size_t i, numkeys;
 	string keys[256];
 	string matchbuf;
-	int len;
+	size_t len;
 
 	// compare keys list with current keyword
 	len = Q_strlen(s);
 
 	for ( i = 0, numkeys = 0; i < 255; i++ )
 	{
-		const char* keyname = Key_KeynumToString(i);
+		const char* keyname = Key_KeynumToString((int)i);
 
 		if ( (*s == '*') || !Q_strnicmp(keyname, s, len) )
+		{
 			Q_strcpy(keys[numkeys++], keyname);
+		}
 	}
 
 	if ( !numkeys )
+	{
 		return false;
+	}
+
 	Q_strncpy(matchbuf, keys[0], sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( numkeys == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0; i < numkeys; i++ )
 	{
@@ -630,7 +642,9 @@ qboolean Cmd_GetKeysList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 
@@ -798,7 +812,7 @@ qboolean Cmd_GetGamesList(const char* s, char* completedname, int length)
 	int i, numgamedirs;
 	string gamedirs[MAX_MODS];
 	string matchbuf;
-	int len;
+	size_t len;
 
 	// stand-alone games doesn't have cmd "game"
 	if ( !Cmd_Exists("game") )
@@ -810,16 +824,27 @@ qboolean Cmd_GetGamesList(const char* s, char* completedname, int length)
 	for ( i = 0, numgamedirs = 0; i < FI->numgames; i++ )
 	{
 		if ( (*s == '*') || !Q_strnicmp(FI->games[i]->gamefolder, s, len) )
+		{
 			Q_strcpy(gamedirs[numgamedirs++], FI->games[i]->gamefolder);
+		}
 	}
 
 	if ( !numgamedirs )
+	{
 		return false;
+	}
+
 	Q_strncpy(matchbuf, gamedirs[0], MAX_STRING);
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( numgamedirs == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0; i < numgamedirs; i++ )
 	{
@@ -835,9 +860,12 @@ qboolean Cmd_GetGamesList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
+
 	return true;
 }
 
@@ -853,7 +881,7 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 	int i, numcdcommands;
 	string cdcommands[8];
 	string matchbuf;
-	int len;
+	size_t len;
 
 	const char* cd_command[] = {
 		"info",
@@ -872,16 +900,27 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 	for ( i = 0, numcdcommands = 0; i < 8; i++ )
 	{
 		if ( (*s == '*') || !Q_strnicmp(cd_command[i], s, len) )
+		{
 			Q_strcpy(cdcommands[numcdcommands++], cd_command[i]);
+		}
 	}
 
 	if ( !numcdcommands )
+	{
 		return false;
+	}
+
 	Q_strncpy(matchbuf, cdcommands[0], MAX_STRING);
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( numcdcommands == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0; i < numcdcommands; i++ )
 	{
@@ -897,7 +936,9 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 	return true;
@@ -910,7 +951,8 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	string mpfilter;
 	char* buffer;
 	string result;
-	int i, size;
+	int i;
+	size_t size;
 	search_t* t;
 	file_t* f;
 
@@ -1037,7 +1079,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 
 	size = Q_strlen(buffer);
 
-	if ( !size )
+	if ( size < 1 )
 	{
 		if ( buffer )
 		{
@@ -1053,7 +1095,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	}
 
 	// write generated maps.lst
-	if ( FS_WriteFile("maps.lst", buffer, size) )
+	if ( FS_WriteFile("maps.lst", buffer, (int)size) )
 	{
 		if ( buffer )
 		{
@@ -1148,7 +1190,9 @@ qboolean Cmd_AutocompleteName(const char* source, int arg, char* buffer, size_t 
 	for ( list = cmd_list; list->name; list++ )
 	{
 		if ( list->arg == arg && Cmd_CheckName(list->name) )
-			return list->func(source, buffer, bufsize);
+		{
+			return list->func(source, buffer, (int)bufsize);
+		}
 	}
 
 	return false;
@@ -1313,7 +1357,7 @@ void Con_CompleteCommand(field_t* field)
 				Q_strncat(con.completionField->buffer, " ", sizeof(con.completionField->buffer));
 			}
 			Q_strncat(con.completionField->buffer, filename, sizeof(con.completionField->buffer));
-			con.completionField->cursor = Q_strlen(con.completionField->buffer);
+			con.completionField->cursor = (int)Q_strlen(con.completionField->buffer);
 		}
 
 		// don't adjusting cursor pos if we nothing found
@@ -1327,7 +1371,7 @@ void Con_CompleteCommand(field_t* field)
 			Q_strncat(con.completionField->buffer, " ", sizeof(con.completionField->buffer));
 		else
 			Con_ConcatRemaining(temp.buffer, con.completionString);
-		con.completionField->cursor = Q_strlen(con.completionField->buffer);
+		con.completionField->cursor = (int)Q_strlen(con.completionField->buffer);
 	}
 	else
 	{
@@ -1353,7 +1397,7 @@ void Con_CompleteCommand(field_t* field)
 
 		// multiple matches, complete to shortest
 		Q_strncpy(con.completionField->buffer, con.shortestMatch, sizeof(con.completionField->buffer));
-		con.completionField->cursor = Q_strlen(con.completionField->buffer);
+		con.completionField->cursor = (int)Q_strlen(con.completionField->buffer);
 		Con_ConcatRemaining(temp.buffer, con.completionString);
 
 		Con_Printf("]%s\n", con.completionField->buffer);
@@ -1431,7 +1475,7 @@ static void Cmd_WriteOpenGLCvar(const char* name, const char* string, const char
 
 static void Cmd_WriteHelp(const char* name, const char* unused, const char* desc, void* f)
 {
-	int length;
+	size_t length;
 
 	(void)unused;
 

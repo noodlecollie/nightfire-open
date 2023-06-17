@@ -97,15 +97,15 @@ void* Cbuf_GetSpace(cmdbuf_t* buf, int length)
 
 static void Cbuf_AddTextToBuffer(cmdbuf_t* buf, const char* text)
 {
-	int l = Q_strlen(text);
+	size_t length = Q_strlen(text);
 
-	if ( (buf->cursize + l) >= buf->maxsize )
+	if ( (buf->cursize + length) >= buf->maxsize )
 	{
 		Con_Reportf(S_WARN "%s: overflow\n", __func__);
 		return;
 	}
 
-	memcpy(Cbuf_GetSpace(buf, l), text, l);
+	memcpy(Cbuf_GetSpace(buf, (int)length), text, length);
 }
 
 /*
@@ -152,17 +152,17 @@ Adds a \n to the text
 */
 static void Cbuf_InsertTextToBuffer(cmdbuf_t* buf, const char* text)
 {
-	int l = Q_strlen(text);
+	size_t length = Q_strlen(text);
 
-	if ( (buf->cursize + l) >= buf->maxsize )
+	if ( (buf->cursize + length) >= buf->maxsize )
 	{
 		Con_Reportf(S_WARN "Cbuf_InsertText: overflow\n");
 	}
 	else
 	{
-		memmove(buf->data + l, buf->data, buf->cursize);
-		memcpy(buf->data, text, l);
-		buf->cursize += l;
+		memmove(buf->data + length, buf->data, buf->cursize);
+		memcpy(buf->data, text, length);
+		buf->cursize += (int)length;
 	}
 }
 
@@ -1037,7 +1037,7 @@ static void Cmd_ExecuteStringWithPrivilegeCheck(const char* text, qboolean isPri
 					*ptoken++ = *text++;
 				*ptoken = 0;
 
-				len += Q_strncpy(pcmd, Cvar_VariableString(token), MAX_CMD_LINE - len);
+				len += (int)Q_strncpy(pcmd, Cvar_VariableString(token), MAX_CMD_LINE - len);
 				pcmd = command + len;
 
 				if ( !*text )
@@ -1385,7 +1385,7 @@ inserts escape sequences
 */
 void Cmd_Escape(char* newCommand, const char* oldCommand, int len)
 {
-	int c;
+	char c;
 	int scripting = CVAR_TO_BOOL(cmd_scripting);
 
 	while ( (c = *oldCommand++) && len > 1 )

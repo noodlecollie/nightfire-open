@@ -113,14 +113,22 @@ static float fran1(void)
 void COM_SetRandomSeed(int lSeed)
 {
 	if ( lSeed )
+	{
 		idum = lSeed;
+	}
 	else
-		idum = -time(NULL);
+	{
+		idum = -(int)(time(NULL));
+	}
 
 	if ( 1000 < idum )
+	{
 		idum = -idum;
+	}
 	else if ( -1000 < idum )
+	{
 		idum -= 22261048;
+	}
 }
 
 float GAME_EXPORT COM_RandomFloat(float flLow, float flHigh)
@@ -346,8 +354,8 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 		if ( encoded_length >= 3 )
 		{
 			*pCmdByte = (*pCmdByte >> 1) | 0x80;
-			*pOutput++ = ((pLookAhead - pEncodedPosition - 1) >> LZSS_LOOKSHIFT);
-			*pOutput++ = ((pLookAhead - pEncodedPosition - 1) << LZSS_LOOKSHIFT) | (encoded_length - 1);
+			*pOutput++ = (byte)((pLookAhead - pEncodedPosition - 1) >> LZSS_LOOKSHIFT);
+			*pOutput++ = (byte)(((pLookAhead - pEncodedPosition - 1) << LZSS_LOOKSHIFT) | (encoded_length - 1));
 		}
 		else
 		{
@@ -392,7 +400,9 @@ byte* LZSS_CompressNoAlloc(lzss_state_t* state, byte* pInput, int input_length, 
 	*pOutput++ = 0;
 
 	if ( pOutputSize )
-		*pOutputSize = pOutput - pStart;
+	{
+		*pOutputSize = (uint)(pOutput - pStart);
+	}
 
 	return pStart;
 }
@@ -606,25 +616,33 @@ and end of a string
 */
 void COM_TrimSpace(const char* source, char* dest)
 {
-	int start, end, length;
+	size_t start;
+	size_t end;
+	size_t length;
 
 	start = 0;
 	end = Q_strlen(source);
 
 	while ( source[start] && COM_IsWhiteSpace(source[start]) )
+	{
 		start++;
+	}
+
 	end--;
 
 	while ( end > 0 && COM_IsWhiteSpace(source[end]) )
+	{
 		end--;
+	}
+
 	end++;
 
 	length = end - start;
 
 	if ( length > 0 )
+	{
 		memcpy(dest, source + start, length);
-	else
-		length = 0;
+	}
 
 	// terminate the dest string
 	dest[length] = 0;

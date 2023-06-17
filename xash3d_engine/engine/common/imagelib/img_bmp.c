@@ -67,7 +67,7 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 	}
 
 	// bogus info header check
-	if ( bhdr.fileSize != filesize )
+	if ( (fs_offset_t)bhdr.fileSize != filesize )
 	{
 		// Sweet Half-Life issues. splash.bmp have bogus filesize
 		Con_Reportf(
@@ -87,8 +87,10 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 		}
 	}
 
-	image.width = columns = bhdr.width;
-	image.height = rows = abs(bhdr.height);
+	columns = bhdr.width;
+	image.width = (word)columns;
+	rows = abs(bhdr.height);
+	image.height = (word)rows;
 
 	if ( !Image_ValidSize(name) )
 		return false;
@@ -111,13 +113,14 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 		if ( bhdr.colors == 0 )
 		{
 			bhdr.colors = 256;
-			cbPalBytes = (1 << bhdr.bitsPerPixel) * sizeof(rgba_t);
+			cbPalBytes = (size_t)(1 << bhdr.bitsPerPixel) * sizeof(rgba_t);
 		}
 		else
 			cbPalBytes = bhdr.colors * sizeof(rgba_t);
 	}
 
-	estimatedSize = (buf_p - buffer) + cbPalBytes;
+	estimatedSize = (fs_offset_t)((buf_p - buffer) + cbPalBytes);
+
 	if ( filesize < estimatedSize )
 	{
 		Con_Reportf(
@@ -134,7 +137,10 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 	if ( !Q_strncmp(name, "#logo", 5) )
 	{
 		for ( i = 0; i < bhdr.colors; i++ )
-			palette[i][3] = i;
+		{
+			palette[i][3] = (byte)i;
+		}
+
 		image.flags |= IMAGE_HAS_ALPHA;
 	}
 
@@ -194,7 +200,7 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 			break;
 	}
 
-	estimatedSize = (buf_p - buffer) + image.width * image.height * (bhdr.bitsPerPixel >> 3);
+	estimatedSize = (fs_offset_t)((buf_p - buffer) + image.width * image.height * (bhdr.bitsPerPixel >> 3));
 	if ( filesize < estimatedSize )
 	{
 		if ( image.palette )
@@ -285,7 +291,7 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 
 					if ( Image_CheckFlag(IL_KEEP_8BIT) )
 					{
-						*pixbuf++ = palIndex;
+						*pixbuf++ = (byte)palIndex;
 					}
 					else
 					{
@@ -297,8 +303,8 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 					break;
 				case 16:
 					shortPixel = *(word*)buf_p, buf_p += 2;
-					*pixbuf++ = blue = (shortPixel & (31 << 10)) >> 7;
-					*pixbuf++ = green = (shortPixel & (31 << 5)) >> 2;
+					*pixbuf++ = blue = (byte)((shortPixel & (31 << 10)) >> 7);
+					*pixbuf++ = green = (byte)((shortPixel & (31 << 5)) >> 2);
 					*pixbuf++ = red = (shortPixel & (31)) << 3;
 					*pixbuf++ = 0xff;
 					break;
@@ -339,7 +345,10 @@ qboolean Image_LoadBMP(const char* name, const byte* buffer, fs_offset_t filesiz
 		buf_p += padSize;  // actual only for 4-bit bmps
 	}
 
-	VectorDivide(reflectivity, (image.width * image.height), image.fogParams);
+	image.fogParams[0] = (byte)(reflectivity[0] / (image.width * image.height));
+	image.fogParams[1] = (byte)(reflectivity[1] / (image.width * image.height));
+	image.fogParams[2] = (byte)(reflectivity[2] / (image.width * image.height));
+
 	if ( image.palette )
 		Image_GetPaletteBMP(image.palette);
 
@@ -408,7 +417,7 @@ qboolean Image_SaveBMP(const char* name, rgbdata_t* pix)
 	hdr.width = biTrueWidth;
 	hdr.height = pix->height;
 	hdr.planes = 1;
-	hdr.bitsPerPixel = pixel_size * 8;
+	hdr.bitsPerPixel = (uint16_t)(pixel_size * 8);
 	hdr.compression = BI_RGB;
 	hdr.bitmapDataSize = cbBmpBits;
 	hdr.hRes = 0;

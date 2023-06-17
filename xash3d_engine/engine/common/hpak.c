@@ -234,7 +234,7 @@ void HPAK_AddLump(qboolean bUseQueue, const char* name, resource_t* pResource, b
 
 	if ( pResource->nDownloadSize < HPAK_ENTRY_MIN_SIZE || pResource->nDownloadSize > HPAK_ENTRY_MAX_SIZE )
 	{
-		Con_Printf(S_ERROR "%s: invalid size %s\n", name, Q_pretifymem(pResource->nDownloadSize, 2));
+		Con_Printf(S_ERROR "%s: invalid size %s\n", name, Q_pretifymem((float)pResource->nDownloadSize, 2));
 		return;
 	}
 
@@ -464,11 +464,16 @@ static qboolean HPAK_Validate(const char* filename, qboolean quiet, qboolean del
 			Con_DPrintf(
 				S_ERROR "HPAK_ValidatePak: lump %i has invalid size %s\n",
 				i,
-				Q_pretifymem(dataDir[i].disksize, 2));
+				Q_pretifymem((float)dataDir[i].disksize, 2));
+
 			Mem_Free(dataDir);
 			FS_Close(f);
+
 			if ( delete )
+			{
 				FS_Delete(pakname);
+			}
+
 			return false;
 		}
 
@@ -487,7 +492,7 @@ static qboolean HPAK_Validate(const char* filename, qboolean quiet, qboolean del
 			"%i:      %s %s %s:   ",
 			i,
 			HPAK_TypeFromIndex(pRes->type),
-			Q_pretifymem(pRes->nDownloadSize, 2),
+			Q_pretifymem((float)pRes->nDownloadSize, 2),
 			pRes->szFileName);
 
 		if ( memcmp(md5, pRes->rgucMD5_hash, 0x10) )
@@ -538,12 +543,17 @@ void HPAK_CheckSize(const char* filename)
 	string pakname;
 	int maxsize;
 
-	maxsize = hpk_maxsize.value;
+	maxsize = (int)hpk_maxsize.value;
+
 	if ( maxsize <= 0 )
+	{
 		return;
+	}
 
 	if ( !COM_CheckString(filename) )
+	{
 		return;
+	}
 
 	Q_strncpy(pakname, filename, sizeof(pakname));
 	COM_ReplaceExtension(pakname, ".hpk");
@@ -693,9 +703,14 @@ qboolean HPAK_GetDataPointer(const char* filename, resource_t* pResource, byte**
 		return false;
 
 	if ( buffer )
+	{
 		*buffer = NULL;
+	}
+
 	if ( bufsize )
+	{
 		*bufsize = 0;
+	}
 
 	for ( p = gp_hpak_queue; p != NULL; p = p->next )
 	{
@@ -709,7 +724,9 @@ qboolean HPAK_GetDataPointer(const char* filename, resource_t* pResource, byte**
 			}
 
 			if ( bufsize )
-				*bufsize = p->size;
+			{
+				*bufsize = (int)p->size;
+			}
 
 			return true;
 		}
@@ -719,8 +736,11 @@ qboolean HPAK_GetDataPointer(const char* filename, resource_t* pResource, byte**
 	COM_ReplaceExtension(pakname, ".hpk");
 
 	f = FS_Open(pakname, "rb", true);
+
 	if ( !f )
+	{
 		return false;
+	}
 
 	FS_Read(f, &header, sizeof(header));
 
@@ -768,7 +788,9 @@ qboolean HPAK_GetDataPointer(const char* filename, resource_t* pResource, byte**
 			}
 
 			if ( bufsize )
+			{
 				*bufsize = entry->disksize;
+			}
 
 			Mem_Free(directory.entries);
 			FS_Close(f);
@@ -975,7 +997,7 @@ void HPAK_List_f(void)
 		entry = &directory.entries[nCurrent];
 		COM_FileBase(entry->resource.szFileName, lumpname);
 		type = HPAK_TypeFromIndex(entry->resource.type);
-		size = Q_memprint(entry->resource.nDownloadSize);
+		size = Q_memprint((float)entry->resource.nDownloadSize);
 
 		Con_Printf(
 			"%i: %10s %s %s\n  :  %s\n",
@@ -1078,13 +1100,13 @@ void HPAK_Extract_f(void)
 
 		COM_FileBase(entry->resource.szFileName, lumpname);
 		type = HPAK_TypeFromIndex(entry->resource.type);
-		size = Q_memprint(entry->resource.nDownloadSize);
+		size = Q_memprint((float)entry->resource.nDownloadSize);
 
 		Con_Printf("Extracting %i: %10s %s %s\n", nCurrent + 1, type, size, lumpname);
 
 		if ( entry->disksize < HPAK_ENTRY_MIN_SIZE || entry->disksize > HPAK_ENTRY_MAX_SIZE )
 		{
-			Con_DPrintf(S_WARN "Unable to extract data, size invalid:  %s\n", Q_memprint(entry->disksize));
+			Con_DPrintf(S_WARN "Unable to extract data, size invalid:  %s\n", Q_memprint((float)entry->disksize));
 			continue;
 		}
 

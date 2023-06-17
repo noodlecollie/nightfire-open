@@ -72,11 +72,11 @@ void Mod_LoadSpriteModel(model_t* mod, const void* buffer, qboolean* loaded, uin
 		psprite = Mem_Calloc(mod->mempool, size);
 		mod->cache.data = psprite;  // make link to extradata
 
-		psprite->type = pinq1->type;
+		psprite->type = (short)pinq1->type;
 		psprite->texFormat = SPR_ADDITIVE;  // SPR_ALPHTEST;
 		psprite->numframes = mod->numframes = pinq1->numframes;
 		psprite->facecull = SPR_CULL_FRONT;
-		psprite->radius = pinq1->boundingradius;
+		psprite->radius = (int)pinq1->boundingradius;
 		psprite->synctype = pinq1->synctype;
 
 		// LordHavoc: hack to allow sprites to be non-fullbright
@@ -96,8 +96,8 @@ void Mod_LoadSpriteModel(model_t* mod, const void* buffer, qboolean* loaded, uin
 		psprite = Mem_Calloc(mod->mempool, size);
 		mod->cache.data = psprite;  // make link to extradata
 
-		psprite->type = pinhl->type;
-		psprite->texFormat = pinhl->texFormat;
+		psprite->type = (short)pinhl->type;
+		psprite->texFormat = (short)pinhl->texFormat;
 		psprite->numframes = mod->numframes = pinhl->numframes;
 		psprite->facecull = pinhl->facetype;
 		psprite->radius = pinhl->boundingradius;
@@ -108,8 +108,11 @@ void Mod_LoadSpriteModel(model_t* mod, const void* buffer, qboolean* loaded, uin
 		mod->mins[2] = -pinhl->bounds[1] * 0.5f;
 		mod->maxs[2] = pinhl->bounds[1] * 0.5f;
 	}
+
 	if ( loaded )
+	{
 		*loaded = true;  // done
+	}
 
 	if ( Host_IsDedicated() )
 	{

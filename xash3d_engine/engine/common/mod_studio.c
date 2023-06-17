@@ -91,10 +91,15 @@ void Mod_InitStudioHull(void)
 		side = i & 1;
 
 		studio_clipnodes[i].children[side] = CONTENTS_EMPTY;
+
 		if ( i != 5 )
-			studio_clipnodes[i].children[side ^ 1] = i + 1;
+		{
+			studio_clipnodes[i].children[side ^ 1] = (short)(i + 1);
+		}
 		else
+		{
 			studio_clipnodes[i].children[side ^ 1] = CONTENTS_SOLID;
+		}
 	}
 
 	for ( i = 0; i < MAXSTUDIOBONES; i++ )
@@ -251,9 +256,13 @@ static void Mod_SetStudioHullPlane(int planenum, int bone, int axis, float offse
 		(pl->normal[2] * studio_bones[bone][2][3]) + offset;
 
 	if ( planenum & 1 )
-		pl->dist -= DotProductFabs(pl->normal, size);
+	{
+		pl->dist -= (float)DotProductFabs(pl->normal, size);
+	}
 	else
-		pl->dist += DotProductFabs(pl->normal, size);
+	{
+		pl->dist += (float)DotProductFabs(pl->normal, size);
+	}
 }
 
 /*
@@ -387,7 +396,7 @@ void Mod_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitc
 	}
 
 	// calc up/down pointing
-	*pBlend = (*pPitch * 3);
+	*pBlend = (int)(*pPitch * 3);
 
 	if ( *pBlend < pseqdesc->blendstart[0] )
 	{
@@ -407,7 +416,8 @@ void Mod_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitc
 		}
 		else
 		{
-			*pBlend = 255.0f * (*pBlend - pseqdesc->blendstart[0]) / (pseqdesc->blendend[0] - pseqdesc->blendstart[0]);
+			*pBlend =
+				(int)(255.0f * (*pBlend - pseqdesc->blendstart[0]) / (pseqdesc->blendend[0] - pseqdesc->blendstart[0]));
 		}
 
 		*pPitch = 0;
@@ -1261,12 +1271,12 @@ void Mod_LoadStudioModel(model_t* mod, const void* buffer, qboolean* loaded)
 				phdr->numtextures = thdr->numtextures;
 				phdr->numskinref = thdr->numskinref;
 				phdr->textureindex = phdr->length;
-				phdr->skinindex = phdr->textureindex + size1;
+				phdr->skinindex = (int32_t)(phdr->textureindex + size1);
 
 				in = (byte*)thdr + thdr->textureindex;
 				out = (byte*)phdr + phdr->textureindex;
 				memcpy(out, in, size1 + size2);  // copy textures + skinrefs
-				phdr->length += size1 + size2;
+				phdr->length += (int32_t)(size1 + size2);
 				Mem_Free(buffer2);  // release T.mdl
 			}
 		}

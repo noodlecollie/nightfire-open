@@ -35,7 +35,8 @@ void Info_Print(const char* s)
 {
 	char key[MAX_KV_SIZE];
 	char value[MAX_KV_SIZE];
-	int l, count;
+	int count;
+	size_t l;
 	char* o;
 
 	if ( *s == '\\' )
@@ -59,7 +60,9 @@ void Info_Print(const char* s)
 			key[20] = 0;
 		}
 		else
+		{
 			*o = 0;
+		}
 
 		Con_Printf("%s", key);
 
@@ -252,31 +255,43 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 	char* start;
 	char pkey[MAX_KV_SIZE];
 	char value[MAX_KV_SIZE];
-	int cmpsize = Q_strlen(key);
+	size_t cmpsize = Q_strlen(key);
 	int count;
 	char* o;
 
 	if ( cmpsize > (MAX_KV_SIZE - 1) )
+	{
 		cmpsize = MAX_KV_SIZE - 1;
+	}
 
 	if ( Q_strchr(key, '\\') )
+	{
 		return false;
+	}
 
 	while ( 1 )
 	{
 		start = s;
+
 		if ( *s == '\\' )
+		{
 			s++;
+		}
+
 		count = 0;
 		o = pkey;
 
 		while ( count < (MAX_KV_SIZE - 1) && *s != '\\' )
 		{
 			if ( !*s )
+			{
 				return false;
+			}
+
 			*o++ = *s++;
 			count++;
 		}
+
 		*o = 0;
 		s++;
 
@@ -286,7 +301,10 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 		while ( count < (MAX_KV_SIZE - 1) && *s != '\\' && *s )
 		{
 			if ( !*s )
+			{
 				return false;
+			}
+
 			*o++ = *s++;
 			count++;
 		}
@@ -299,7 +317,9 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 		}
 
 		if ( !*s )
+		{
 			return false;
+		}
 	}
 }
 
@@ -383,7 +403,7 @@ char* Info_FindLargestKey(char* s)
 	char key[MAX_KV_SIZE];
 	char value[MAX_KV_SIZE];
 	static char largest_key[128];
-	int largest_size = 0;
+	size_t largest_size = 0;
 	int count;
 	char* o;
 
@@ -394,7 +414,7 @@ char* Info_FindLargestKey(char* s)
 
 	while ( *s )
 	{
-		int size = 0;
+		size_t size = 0;
 
 		count = 0;
 		o = key;
@@ -409,7 +429,9 @@ char* Info_FindLargestKey(char* s)
 		size = strlen(key);
 
 		if ( !*s )
+		{
 			return largest_key;
+		}
 
 		count = 0;
 		o = value;
@@ -422,7 +444,9 @@ char* Info_FindLargestKey(char* s)
 		*o = 0;
 
 		if ( *s )
+		{
 			s++;
+		}
 
 		size += strlen(value);
 
@@ -439,7 +463,7 @@ char* Info_FindLargestKey(char* s)
 qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, int maxsize)
 {
 	char newVal[1024], *v;
-	int c, team;
+	char c, team;
 
 	if ( Q_strchr(key, '\\') || Q_strchr(value, '\\') )
 	{
@@ -503,10 +527,16 @@ qboolean Info_SetValueForStarKey(char* s, const char* key, const char* value, in
 	{
 		c = (byte)*v++;
 		if ( team )
+		{
 			c = Q_tolower(c);
+		}
+
 		if ( c > 13 )
+		{
 			*s++ = c;
+		}
 	}
+
 	*s = 0;
 
 	// all done

@@ -124,8 +124,8 @@ static rgbdata_t* ImagePack(void)
 	{
 		image.flags |= IMAGE_CUBEMAP;
 		pack->buffer = image.cubemap;
-		pack->width = image.source_width;
-		pack->height = image.source_height;
+		pack->width = (word)image.source_width;
+		pack->height = (word)image.source_height;
 		pack->type = image.source_type;
 		pack->size = image.size * image.num_sides;
 	}
@@ -204,7 +204,7 @@ static qboolean FS_AddSideToPack(int adjust_flags)
 	memcpy(image.cubemap + image.ptr, image.rgba, image.size);  // add new side
 
 	Mem_Free(image.rgba);  // release source buffer
-	image.ptr += image.size;  // move to next
+	image.ptr += (uint)image.size;  // move to next
 	image.num_sides++;  // bump sides count
 
 	return true;
@@ -234,7 +234,7 @@ Image_ProbeLoadBuffer_(const loadpixformat_t* fmt, const char* name, const byte*
 	else
 		image.hint = fmt->hint;
 
-	return fmt->loadfunc(name, buf, size);
+	return fmt->loadfunc(name, buf, (fs_offset_t)size);
 }
 
 static qboolean
@@ -315,15 +315,23 @@ rgbdata_t* FS_LoadImage(const char* filename, const byte* buffer, size_t size)
 
 	// we needs to compare file extension with list of supported formats
 	// and be sure what is real extension, not a filename with dot
-	if ( (extfmt = Image_GetLoadFormatForExtension(ext)) )
+	extfmt = Image_GetLoadFormatForExtension(ext);
+
+	if ( extfmt )
+	{
 		COM_StripExtension(loadname);
+	}
 
 	// special mode: skip any checks, load file from buffer
 	if ( filename[0] == '#' && buffer && size )
+	{
 		goto load_internal;
+	}
 
 	if ( Image_ProbeLoad(extfmt, loadname, "", -1) )
+	{
 		return ImagePack();
+	}
 
 	// check all cubemap sides with package suffix
 	for ( cmap = load_cubemap; cmap && cmap->type; cmap++ )
@@ -343,7 +351,7 @@ rgbdata_t* FS_LoadImage(const char* filename, const byte* buffer, size_t size)
 					break;
 				// Mem_Alloc already filled memblock with 0x00, no need to do it again
 				image.cubemap = Mem_Realloc(host.imagepool, image.cubemap, image.ptr + image.size);
-				image.ptr += image.size;  // move to next
+				image.ptr += (uint)image.size;  // move to next
 				image.num_sides++;  // merge counter
 			}
 		}
@@ -614,7 +622,7 @@ void Test_RunImagelib(void)
 		host.type = HOST_NORMAL; \
 		Memory_Init(); \
 		Image_Init(); \
-		if ( target("#internal", Data, Size) ) \
+		if ( target("#internal", Data, (fs_offset_t)Size) ) \
 		{ \
 			rgb = ImagePack(); \
 			FS_FreeImage(rgb); \

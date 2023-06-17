@@ -116,7 +116,7 @@ qboolean COM_CreateCustomization(
 
 	if ( FBitSet(pCust->resource.ucFlags, RES_CUSTOM) && pCust->resource.type == t_decal )
 	{
-		pCust->resource.playernum = playernumber;
+		pCust->resource.playernum = (unsigned char)playernumber;
 
 		if ( CustomDecal_Validate(pResource->szFileName, pCust->pBuffer, pResource->nDownloadSize) )
 		{

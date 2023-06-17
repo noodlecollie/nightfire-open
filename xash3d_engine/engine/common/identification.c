@@ -60,7 +60,7 @@ static bloomfilter_t BloomFilter_Process(const char* buffer, int size)
 
 static bloomfilter_t BloomFilter_ProcessStr(const char* buffer)
 {
-	return BloomFilter_Process(buffer, Q_strlen(buffer));
+	return BloomFilter_Process(buffer, (int)Q_strlen(buffer));
 }
 
 static uint BloomFilter_Weight(bloomfilter_t value)
@@ -87,7 +87,7 @@ static qboolean BloomFilter_ContainsString(bloomfilter_t filter, const char* str
 
 	return (filter & value) == value;
 }
-#endif // UNUSED_FUNCTIONS
+#endif  // UNUSED_FUNCTIONS
 
 /*
 =============================================
@@ -176,7 +176,7 @@ static qboolean ID_ProcessCPUInfo(bloomfilter_t* value)
 	if ( cpuinfofd < 0 )
 		return false;
 
-	if ( (ret = read(cpuinfofd, buffer, 1023)) < 0 )
+	if ( (ret = PlatformLib_Read(cpuinfofd, buffer, 1023)) < 0 )
 		return false;
 
 	PlatformLib_Close(cpuinfofd);
@@ -307,7 +307,7 @@ static qboolean ID_ProcessFile(bloomfilter_t* value, const char* path)
 	if ( fd < 0 )
 		return false;
 
-	if ( (ret = read(fd, buffer, 255)) < 0 )
+	if ( (ret = PlatformLib_Read(fd, buffer, 255)) < 0 )
 		return false;
 
 	PlatformLib_Close(fd);
@@ -452,12 +452,18 @@ static int ID_ProcessWMIC(bloomfilter_t* value, const char* cmdline)
 	int count = 0;
 
 	if ( !ID_RunWMIC(buffer, cmdline) )
+	{
 		return 0;
+	}
+
 	pbuf = COM_ParseFile(buffer, token, sizeof(token));  // Header
-	while ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
+
+	for ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)); pbuf; pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
 	{
 		if ( !ID_VerifyHEX(token) )
+		{
 			continue;
+		}
 
 		*value |= BloomFilter_ProcessStr(token);
 		count++;
@@ -472,9 +478,13 @@ static int ID_CheckWMIC(bloomfilter_t value, const char* cmdline)
 	int count = 0;
 
 	if ( !ID_RunWMIC(buffer, cmdline) )
+	{
 		return 0;
+	}
+
 	pbuf = COM_ParseFile(buffer, token, sizeof(token));  // Header
-	while ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
+
+	for ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)); pbuf; pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
 	{
 		bloomfilter_t filter;
 
@@ -530,6 +540,8 @@ static uint ID_CheckRawId(bloomfilter_t filter)
 {
 	bloomfilter_t value = 0;
 	int count = 0;
+
+	(void)value;
 
 #if XASH_LINUX
 #if XASH_ANDROID && !XASH_DEDICATED
@@ -607,12 +619,14 @@ ID_SetCustomClientID
 
 ===============
 */
-void GAME_EXPORT ID_SetCustomClientID(const char* id)
+void GAME_EXPORT ID_SetCustomClientID(const char* inID)
 {
-	if ( !id )
+	if ( !inID )
+	{
 		return;
+	}
 
-	Q_strncpy(id_customid, id, sizeof(id_customid));
+	Q_strncpy(id_customid, inID, sizeof(id_customid));
 }
 
 void ID_Init(void)
@@ -638,7 +652,7 @@ void ID_Init(void)
 #elif XASH_WIN32
 	{
 		CHAR szBuf[MAX_PATH];
-		ID_GetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", "xash_id", szBuf, MAX_PATH);
+		ID_GetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", "xash_id", (LPBYTE)szBuf, MAX_PATH);
 
 		sscanf(szBuf, "%016llX", &id);
 		id ^= SYSTEM_XOR_MASK;
@@ -700,7 +714,7 @@ void ID_Init(void)
 	{
 		CHAR Buf[MAX_PATH];
 		sprintf(Buf, "%016llX", id ^ SYSTEM_XOR_MASK);
-		ID_SetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", REG_SZ, "xash_id", Buf, Q_strlen(Buf));
+		ID_SetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", REG_SZ, "xash_id", (LPBYTE)Buf, (DWORD)Q_strlen(Buf));
 	}
 #else
 	{
@@ -708,10 +722,17 @@ void ID_Init(void)
 		if ( COM_CheckString(home) )
 		{
 			FILE* cfg = fopen(va("%s/.config/.xash_id", home), "w");
+
 			if ( !cfg )
+			{
 				cfg = fopen(va("%s/.local/.xash_id", home), "w");
+			}
+
 			if ( !cfg )
+			{
 				cfg = fopen(va("%s/.xash_id", home), "w");
+			}
+
 			if ( cfg )
 			{
 				fprintf(cfg, "%016llX", (long long unsigned int)(id ^ SYSTEM_XOR_MASK));

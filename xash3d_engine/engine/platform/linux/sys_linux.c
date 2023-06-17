@@ -29,7 +29,7 @@ qboolean Sys_DebuggerPresent(void)
 	if ( status_fd == -1 )
 		return 0;
 
-	num_read = read(status_fd, buf, sizeof(buf));
+	num_read = PlatformLib_Read(status_fd, buf, sizeof(buf));
 	PlatformLib_Close(status_fd);
 
 	if ( num_read > 0 )

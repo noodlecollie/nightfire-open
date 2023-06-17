@@ -221,5 +221,7 @@ void CL_Crashed(void)
 void CL_HudMessage(const char* pMessage)
 {
 }
-
+#else
+	// Avoid warnings about empty translation units.
+	int Dedicated_Dummy = 0;
 #endif  // XASH_DEDICATED

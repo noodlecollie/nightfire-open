@@ -74,7 +74,9 @@ qboolean FS_LoadProgs(void)
 		return false;
 	}
 
-	if ( !(GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, GET_FS_API)) )
+	GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, GET_FS_API);
+
+	if ( !GetFSAPI )
 	{
 		FS_UnloadProgs();
 		Host_Error("FS_LoadProgs: can't find GetFSAPI entry point in %s\n", name);

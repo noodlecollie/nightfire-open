@@ -66,7 +66,7 @@ char* Sys_Input(void)
 		FD_SET(0, &rfds);  // stdin
 		while ( select(1, &rfds, NULL, NULL, &tv) > 0 )
 		{
-			if ( read(0, &line[len], 1) != 1 )
+			if ( PlatformLib_Read(0, &line[len], 1) != 1 )
 				break;
 			if ( line[len] == '\n' || len > 1022 )
 			{

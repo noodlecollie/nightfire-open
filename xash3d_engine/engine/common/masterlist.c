@@ -50,7 +50,8 @@ static net_gai_state_t NET_GetMasterHostByName(master_t* m)
 	if ( res == NET_EAI_OK )
 		return res;
 
-	m->adr.type = NA_UNUSED;
+	m->adr.ip.ip4.type = NA_UNUSED;
+
 	if ( res == NET_EAI_NONAME )
 		Con_Reportf("Can't resolve adr: %s\n", m->address);
 
@@ -268,7 +269,7 @@ static void NET_AddMaster(const char* addr, qboolean save)
 	master->sent = false;
 	master->save = save;
 	master->next = NULL;
-	master->adr.type = NA_UNUSED;
+	master->adr.ip.ip4.type = NA_UNUSED;
 
 	// link in
 	if ( last )
@@ -323,10 +324,15 @@ static void NET_ListMasters_f(void)
 	for ( i = 1, list = ml.list; list; i++, list = list->next )
 	{
 		Msg("%d\t%s", i, list->address);
-		if ( list->adr.type != NA_UNUSED )
+
+		if ( list->adr.ip.ip4.type != NA_UNUSED )
+		{
 			Msg("\t%s\n", NET_AdrToString(list->adr));
+		}
 		else
+		{
 			Msg("\n");
+		}
 	}
 }
 
@@ -354,7 +360,8 @@ static void NET_LoadMasters(void)
 	pfile = (char*)afile;
 
 	// format: master <addr>\n
-	while ( (pfile = COM_ParseFile(pfile, token, sizeof(token))) )
+	for ( pfile = COM_ParseFile(pfile, token, sizeof(token)); pfile;
+		  pfile = COM_ParseFile(pfile, token, sizeof(token)) )
 	{
 		if ( !Q_strcmp(token, "master") )  // load addr
 		{

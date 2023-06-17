@@ -40,10 +40,6 @@ void COM_PushLibraryError(const char* error)
 
 void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 {
-	char** funcs = NULL;
-	size_t numfuncs, i;
-	void* f = NULL;
-
 #if _MSC_VER
 	const char* func = NULL;
 #endif
@@ -54,6 +50,10 @@ void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 #endif
 
 #if XASH_POSIX
+	char** funcs = NULL;
+	size_t numfuncs, i;
+	void* f = NULL;
+
 	funcs = COM_ConvertToLocalPlatform(MANGLE_ITANIUM, pName, &numfuncs);
 
 	if ( funcs )
@@ -326,7 +326,7 @@ static char* COM_GetItaniumName(const char* const in_name)
 	int i;
 	int remaining;
 
-	remaining = Q_strlen(f);
+	remaining = (int)Q_strlen(f);
 
 	if ( remaining < 3 )
 		goto invalid_format;

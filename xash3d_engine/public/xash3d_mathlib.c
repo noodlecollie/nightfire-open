@@ -60,9 +60,13 @@ word FloatToHalf(float v)
 	unsigned short h;
 
 	if ( e <= 127 - 15 )
-		h = ((m | 0x00800000) >> (127 - 14 - e)) >> 13;
+	{
+		h = (unsigned short)(((m | 0x00800000) >> (127 - 14 - e)) >> 13);
+	}
 	else
+	{
 		h = (i >> 13) & 0x3fff;
+	}
 
 	h |= (i >> 16) & 0xc000;
 
@@ -134,7 +138,7 @@ void RoundUpHullSize(vec3_t size)
 				result = (value - hull_table[j]);
 				if ( result <= HULL_PRECISION )
 				{
-					result = -hull_table[j];
+					result = (float)(-hull_table[j]);
 					break;
 				}
 			}
@@ -270,8 +274,8 @@ void SinCos(float radians, float* sine, float* cosine)
 		fstp dword ptr [eax]
 		}
 #else
-	*sine = sin(radians);
-	*cosine = cos(radians);
+	*sine = sinf(radians);
+	*cosine = cosf(radians);
 #endif
 }
 
@@ -285,9 +289,9 @@ qboolean VectorCompareEpsilon(const vec3_t vec1, const vec3_t vec2, vec_t epsilo
 {
 	vec_t ax, ay, az;
 
-	ax = fabs(vec1[0] - vec2[0]);
-	ay = fabs(vec1[1] - vec2[1]);
-	az = fabs(vec1[2] - vec2[2]);
+	ax = fabsf(vec1[0] - vec2[0]);
+	ay = fabsf(vec1[1] - vec2[1]);
+	az = fabsf(vec1[2] - vec2[2]);
 
 	if ( (ax <= epsilon) && (ay <= epsilon) && (az <= epsilon) )
 		return true;
@@ -299,7 +303,7 @@ float VectorNormalizeLength2(const vec3_t v, vec3_t out)
 	float length, ilength;
 
 	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-	length = sqrt(length);
+	length = sqrtf(length);
 
 	if ( length )
 	{
@@ -337,9 +341,9 @@ void GAME_EXPORT AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right,
 {
 	float sr, sp, sy, cr, cp, cy;
 
-	SinCos(DEG2RAD(angles[YAW]), &sy, &cy);
-	SinCos(DEG2RAD(angles[PITCH]), &sp, &cp);
-	SinCos(DEG2RAD(angles[ROLL]), &sr, &cr);
+	SinCos(DEG2RADF(angles[YAW]), &sy, &cy);
+	SinCos(DEG2RADF(angles[PITCH]), &sp, &cp);
+	SinCos(DEG2RADF(angles[ROLL]), &sr, &cr);
 
 	if ( forward )
 	{
@@ -376,7 +380,10 @@ void GAME_EXPORT VectorAngles(const float* forward, float* angles)
 	if ( !forward || !angles )
 	{
 		if ( angles )
+		{
 			VectorClear(angles);
+		}
+
 		return;
 	}
 
@@ -384,21 +391,32 @@ void GAME_EXPORT VectorAngles(const float* forward, float* angles)
 	{
 		// fast case
 		yaw = 0;
+
 		if ( forward[2] > 0 )
+		{
 			pitch = 90.0f;
+		}
 		else
+		{
 			pitch = 270.0f;
+		}
 	}
 	else
 	{
-		yaw = (atan2(forward[1], forward[0]) * 180 / M_PI_F);
-		if ( yaw < 0 )
-			yaw += 360;
+		yaw = (atan2f(forward[1], forward[0]) * 180.0f / M_PI_F);
 
-		tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
-		pitch = (atan2(forward[2], tmp) * 180 / M_PI_F);
+		if ( yaw < 0 )
+		{
+			yaw += 360;
+		}
+
+		tmp = sqrtf(forward[0] * forward[0] + forward[1] * forward[1]);
+		pitch = (atan2f(forward[2], tmp) * 180.0f / M_PI_F);
+
 		if ( pitch < 0 )
+		{
 			pitch += 360;
+		}
 	}
 
 	VectorSet(angles, pitch, yaw, 0);
@@ -414,20 +432,20 @@ void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, ve
 {
 	float pitch, cpitch, yaw, roll;
 
-	pitch = -asin(forward[2]);
-	cpitch = cos(pitch);
+	pitch = -asinf(forward[2]);
+	cpitch = cosf(pitch);
 
 	if ( fabs(cpitch) > EQUAL_EPSILON )  // gimball lock?
 	{
 		cpitch = 1.0f / cpitch;
-		pitch = RAD2DEG(pitch);
-		yaw = RAD2DEG(atan2(forward[1] * cpitch, forward[0] * cpitch));
-		roll = RAD2DEG(atan2(-right[2] * cpitch, up[2] * cpitch));
+		pitch = RAD2DEGF(pitch);
+		yaw = RAD2DEGF(atan2f(forward[1] * cpitch, forward[0] * cpitch));
+		roll = RAD2DEGF(atan2f(-right[2] * cpitch, up[2] * cpitch));
 	}
 	else
 	{
 		pitch = forward[2] > 0 ? -90.0f : 90.0f;
-		yaw = RAD2DEG(atan2(right[0], -right[1]));
+		yaw = RAD2DEGF(atan2f(right[0], -right[1]));
 		roll = 180.0f;
 	}
 
@@ -567,9 +585,10 @@ float RadiusFromBounds(const vec3_t mins, const vec3_t maxs)
 
 	for ( i = 0; i < 3; i++ )
 	{
-		corner[i] = fabs(mins[i]) > fabs(maxs[i]) ? fabs(mins[i]) : fabs(maxs[i]);
+		corner[i] = fabsf(mins[i]) > fabsf(maxs[i]) ? fabsf(mins[i]) : fabsf(maxs[i]);
 	}
-	return VectorLength(corner);
+
+	return (float)VectorLength(corner);
 }
 
 //
@@ -593,9 +612,9 @@ void AngleQuaternion(const vec3_t angles, vec4_t q, qboolean studio)
 	}
 	else
 	{
-		SinCos(DEG2RAD(angles[YAW]) * 0.5f, &sy, &cy);
-		SinCos(DEG2RAD(angles[PITCH]) * 0.5f, &sp, &cp);
-		SinCos(DEG2RAD(angles[ROLL]) * 0.5f, &sr, &cr);
+		SinCos(DEG2RADF(angles[YAW]) * 0.5f, &sy, &cy);
+		SinCos(DEG2RADF(angles[PITCH]) * 0.5f, &sp, &cp);
+		SinCos(DEG2RADF(angles[ROLL]) * 0.5f, &sr, &cr);
 	}
 
 	q[0] = sr * cp * cy - cr * sp * sy;  // X
@@ -667,10 +686,10 @@ void QuaternionSlerpNoAlign(const vec4_t p, const vec4_t q, float t, vec4_t qt)
 	{
 		if ( (1.0f - cosom) > 0.000001f )
 		{
-			omega = acos(cosom);
-			sinom = sin(omega);
-			sclp = sin((1.0f - t) * omega) / sinom;
-			sclq = sin(t * omega) / sinom;
+			omega = acosf(cosom);
+			sinom = sinf(omega);
+			sclp = sinf((1.0f - t) * omega) / sinom;
+			sclq = sinf(t * omega) / sinom;
 		}
 		else
 		{
@@ -689,8 +708,8 @@ void QuaternionSlerpNoAlign(const vec4_t p, const vec4_t q, float t, vec4_t qt)
 		qt[1] = q[0];
 		qt[2] = -q[3];
 		qt[3] = q[2];
-		sclp = sin((1.0f - t) * (0.5f * M_PI_F));
-		sclq = sin(t * (0.5f * M_PI_F));
+		sclp = sinf((1.0f - t) * (0.5f * M_PI_F));
+		sclq = sinf(t * (0.5f * M_PI_F));
 
 		for ( i = 0; i < 3; i++ )
 		{
@@ -727,12 +746,14 @@ float V_CalcFov(float* fov_x, float width, float height)
 	float x, half_fov_y;
 
 	if ( *fov_x < 1.0f || *fov_x > 179.0f )
+	{
 		*fov_x = 90.0f;  // default value
+	}
 
-	x = width / tan(DEG2RAD(*fov_x) * 0.5f);
-	half_fov_y = atan(height / x);
+	x = width / tanf(DEG2RADF(*fov_x) * 0.5f);
+	half_fov_y = atanf(height / x);
 
-	return RAD2DEG(half_fov_y) * 2;
+	return RAD2DEGF(half_fov_y) * 2;
 }
 
 /*
@@ -752,7 +773,7 @@ void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean
 
 	if ( lock_x )
 	{
-		*fov_y = 2 * atan((width * 3) / (height * 4) * tan(*fov_y * M_PI_F / 360.0f * 0.5f)) * 360 / M_PI_F;
+		*fov_y = 2 * atanf((width * 3) / (height * 4) * tanf(*fov_y * M_PI_F / 360.0f * 0.5f)) * 360 / M_PI_F;
 		return;
 	}
 
