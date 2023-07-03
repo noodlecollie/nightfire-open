@@ -96,12 +96,12 @@ static void Sequence_ResetDefaults(sequenceCommandLine_s* destination, sequenceC
 			255,
 			255,
 			255,  // rgba2
-			0.5,
-			0.5,  // xy
-			0.2,
-			0.2,  // fade-in/out
-			1.6,  // holdtime
-			1.0,  // fxtime
+			0.5f,
+			0.5f,  // xy
+			0.2f,
+			0.2f,  // fade-in/out
+			1.6f,  // holdtime
+			1.0f,  // fxtime
 			NULL,
 			NULL  // pName, pMessage
 		};
@@ -454,7 +454,7 @@ static size_t Sequence_GetLine(char* line, int lineMaxLen)
 			g_lineNum,
 			g_sequenceParseFileName);
 
-	lineLen = read - g_scan;
+	lineLen = (int)(read - g_scan);
 
 	if ( lineLen >= lineMaxLen )
 		Con_Reportf(
@@ -719,16 +719,16 @@ static void Sequence_ReadCommandData(sequenceCommandEnum_e commandEnum, sequence
 			break;
 
 		case SEQUENCE_MODIFIER_COLOR:
-			defaults->clientMessage.r1 = Sequence_ReadInt();
-			defaults->clientMessage.g1 = Sequence_ReadInt();
-			defaults->clientMessage.b1 = Sequence_ReadInt();
+			defaults->clientMessage.r1 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.g1 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.b1 = (byte)Sequence_ReadInt();
 			defaults->clientMessage.a1 = 255;
 			break;
 
 		case SEQUENCE_MODIFIER_COLOR2:
-			defaults->clientMessage.r2 = Sequence_ReadInt();
-			defaults->clientMessage.g2 = Sequence_ReadInt();
-			defaults->clientMessage.b2 = Sequence_ReadInt();
+			defaults->clientMessage.r2 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.g2 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.b2 = (byte)Sequence_ReadInt();
 			defaults->clientMessage.a2 = 255;
 			break;
 
@@ -1338,7 +1338,7 @@ static qboolean Sequence_ParseSentenceLine(void)
 	char fullgroup[64];
 	char groupName[64];
 	char* c;
-	int lastCharacterPos;
+	size_t lastCharacterPos;
 	size_t len;
 
 	len = Sequence_GetToken(fullgroup, sizeof(fullgroup));
@@ -1362,7 +1362,9 @@ static qboolean Sequence_ParseSentenceLine(void)
 	lastCharacterPos = len - 1;
 
 	if ( data[lastCharacterPos] == '\n' || data[lastCharacterPos] == '\r' )
+	{
 		data[lastCharacterPos] = 0;
+	}
 
 	Sequence_AddSentenceToGroup(groupName, data);
 	return false;

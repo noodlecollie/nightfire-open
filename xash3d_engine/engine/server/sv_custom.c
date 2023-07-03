@@ -236,17 +236,22 @@ void SV_TransferConsistencyInfo(void)
 				case force_exactfile:
 					// only MD5 hash compare
 					break;
+
 				case force_model_samebounds:
 					if ( !Mod_GetStudioBounds(filepath, mins, maxs) )
+					{
 						Host_Error("Mod_GetStudioBounds: couldn't get bounds for %s\n", filepath);
+					}
+
 					memcpy(&pResource->rguc_reserved[0x01], mins, sizeof(mins));
 					memcpy(&pResource->rguc_reserved[0x0D], maxs, sizeof(maxs));
-					pResource->rguc_reserved[0] = pc->check_type;
+					pResource->rguc_reserved[0] = (unsigned char)pc->check_type;
 					break;
+
 				case force_model_specifybounds:
 					memcpy(&pResource->rguc_reserved[0x01], pc->mins, sizeof(pc->mins));
 					memcpy(&pResource->rguc_reserved[0x0D], pc->maxs, sizeof(pc->maxs));
-					pResource->rguc_reserved[0] = pc->check_type;
+					pResource->rguc_reserved[0] = (unsigned char)pc->check_type;
 					break;
 			}
 		}
@@ -425,22 +430,33 @@ void SV_Customization(sv_client_t* pClient, resource_t* pResource, qboolean bSki
 	int i, nPlayerNumber = -1;
 	sv_client_t* cl;
 
-	i = pClient - svs.clients;
+	i = (int)(pClient - svs.clients);
+
 	if ( i >= 0 && i < svs.maxclients )
+	{
 		nPlayerNumber = i;
+	}
 	else
+	{
 		Host_Error("Couldn't find player index for customization.\n");
+	}
 
 	for ( i = 0, cl = svs.clients; i < svs.maxclients; i++, cl++ )
 	{
 		if ( cl->state != cs_spawned )
+		{
 			continue;
+		}
 
 		if ( FBitSet(cl->flags, FCL_FAKECLIENT) )
+		{
 			continue;
+		}
 
 		if ( cl == pClient && bSkipPlayer )
+		{
 			continue;
+		}
 
 		SV_SendCustomization(cl, nPlayerNumber, pResource);
 	}

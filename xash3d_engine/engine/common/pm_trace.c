@@ -87,11 +87,15 @@ void PM_InitBoxHull(void)
 
 		pm_boxclipnodes[i].children[side] = CONTENTS_EMPTY;
 		if ( i != 5 )
-			pm_boxclipnodes[i].children[side ^ 1] = i + 1;
+		{
+			pm_boxclipnodes[i].children[side ^ 1] = (short)(i + 1);
+		}
 		else
+		{
 			pm_boxclipnodes[i].children[side ^ 1] = CONTENTS_SOLID;
+		}
 
-		pm_boxplanes[i].type = i >> 1;
+		pm_boxplanes[i].type = (byte)(i >> 1);
 		pm_boxplanes[i].normal[i >> 1] = 1.0f;
 		pm_boxplanes[i].signbits = 0;
 	}
@@ -592,7 +596,9 @@ int PM_TestPlayerPosition(playermove_t* pmove, vec3_t pos, pmtrace_t* ptrace, pf
 
 	trace = PM_PlayerTraceExt(pmove, pmove->origin, pmove->origin, 0, pmove->numphysent, pmove->physents, -1, pmFilter);
 	if ( ptrace )
+	{
 		*ptrace = trace;
+	}
 
 	for ( i = 0; i < pmove->numphysent; i++ )
 	{
@@ -602,11 +608,15 @@ int PM_TestPlayerPosition(playermove_t* pmove, vec3_t pos, pmtrace_t* ptrace, pf
 		if ( pmFilter != NULL )
 		{
 			if ( pmFilter(pe) )
+			{
 				continue;
+			}
 		}
 
 		if ( pe->model != NULL && pe->solid == SOLID_NOT && pe->skin != CONTENTS_NONE )
+		{
 			continue;
+		}
 
 		hullcount = 1;
 
@@ -647,9 +657,13 @@ int PM_TestPlayerPosition(playermove_t* pmove, vec3_t pos, pmtrace_t* ptrace, pf
 			}
 
 			if ( transform_bbox )
+			{
 				Matrix4x4_CreateFromEntity(matrix, pe->angles, pe->origin, 1.0f);
+			}
 			else
+			{
 				Matrix4x4_CreateFromEntity(matrix, pe->angles, offset, 1.0f);
+			}
 
 			Matrix4x4_VectorITransform(matrix, pos, pos_l);
 
@@ -680,33 +694,43 @@ int PM_TestPlayerPosition(playermove_t* pmove, vec3_t pos, pmtrace_t* ptrace, pf
 
 		if ( pe->solid == SOLID_CUSTOM )
 		{
-			pmtrace_t trace;
+			pmtrace_t customTrace;
 
-			PM_InitPMTrace(&trace, pos);
+			PM_InitPMTrace(&customTrace, pos);
 
 			// run custom sweep callback
 			if ( pmove->server || Host_IsLocalClient() )
-				SV_ClipPMoveToEntity(pe, pos, mins, maxs, pos, &trace);
+			{
+				SV_ClipPMoveToEntity(pe, pos, mins, maxs, pos, &customTrace);
+			}
 #if !XASH_DEDICATED
 			else
-				CL_ClipPMoveToEntity(pe, pos, mins, maxs, pos, &trace);
+			{
+				CL_ClipPMoveToEntity(pe, pos, mins, maxs, pos, &customTrace);
+			}
 #endif
 
 			// if we inside the custom hull
-			if ( trace.allsolid )
+			if ( customTrace.allsolid )
+			{
 				return i;
+			}
 		}
 		else if ( hullcount == 1 )
 		{
 			if ( PM_HullPointContents(hull, hull->firstclipnode, pos_l) == CONTENTS_SOLID )
+			{
 				return i;
+			}
 		}
 		else
 		{
 			for ( j = 0; j < hullcount; j++ )
 			{
 				if ( PM_HullPointContents(&hull[j], hull[j].firstclipnode, pos_l) == CONTENTS_SOLID )
+				{
 					return i;
+				}
 			}
 		}
 	}

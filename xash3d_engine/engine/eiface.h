@@ -215,8 +215,8 @@ typedef struct enginefuncs_s
 	int (*pfnRegUserMsg)(const char* pszName, int iSize);
 	void (*pfnAnimationAutomove)(const edict_t* pEdict, float flTime);
 	void (*pfnGetBonePosition)(const edict_t* pEdict, int iBone, float* rgflOrigin, float* rgflAngles);
-	unsigned long (*pfnFunctionFromName)(const char* pName);
-	const char* (*pfnNameForFunction)(unsigned long function);
+	void* (*pfnFunctionFromName)(const char* pName);
+	const char* (*pfnNameForFunction)(void* function);
 	void (*pfnClientPrintf)(
 		edict_t* pEdict,
 		PRINT_TYPE ptype,

@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #include <stdlib.h>
 #include <errno.h>
+#include "PlatformLib/String.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>
@@ -623,12 +624,12 @@ qboolean Sys_NewInstance(const char* gamedir)
 	newargs = calloc(host.argc + 4, sizeof(*newargs));
 	while ( i < host.argc )
 	{
-		newargs[i] = strdup(host.argv[i]);
+		newargs[i] = PlatformLib_StrDup(host.argv[i]);
 
 		// replace existing -game argument
 		if ( !Q_stricmp(newargs[i], "-game") )
 		{
-			newargs[i + 1] = strdup(gamedir);
+			newargs[i + 1] = PlatformLib_StrDup(gamedir);
 			replacedArg = true;
 			i += 2;
 		}
@@ -638,11 +639,11 @@ qboolean Sys_NewInstance(const char* gamedir)
 
 	if ( !replacedArg )
 	{
-		newargs[i++] = strdup("-game");
-		newargs[i++] = strdup(gamedir);
+		newargs[i++] = PlatformLib_StrDup("-game");
+		newargs[i++] = PlatformLib_StrDup(gamedir);
 	}
 
-	newargs[i++] = strdup("-changegame");
+	newargs[i++] = PlatformLib_StrDup("-changegame");
 	newargs[i] = NULL;
 
 #if XASH_PSVITA
@@ -665,7 +666,10 @@ qboolean Sys_NewInstance(const char* gamedir)
 	printf("execv failed: %s", strerror(errno));
 
 	for ( ; i >= 0; i-- )
+	{
 		free(newargs[i]);
+	}
+
 	free(newargs);
 	free(exe);
 #endif

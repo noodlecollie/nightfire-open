@@ -510,14 +510,17 @@ void Delta_ParseTableField(sizebuf_t* msg)
 	int tableIndex, nameIndex;
 	float mul = 1.0f, post_mul = 1.0f;
 	int flags, bits;
-	const char* pName;
+	const char* pName = NULL;
 	qboolean ignore = false;
 	delta_info_t* dt;
 
 	tableIndex = MSG_ReadUBitLong(msg, 4);
 	dt = Delta_FindStructByIndex(tableIndex);
+
 	if ( !dt )
+	{
 		Host_Error("Delta_ParseTableField: not initialized");
+	}
 
 	nameIndex = MSG_ReadUBitLong(msg, 8);  // read field name index
 	if ( (nameIndex >= 0 && nameIndex < dt->maxFields) )
@@ -535,17 +538,25 @@ void Delta_ParseTableField(sizebuf_t* msg)
 
 	// read the multipliers
 	if ( MSG_ReadOneBit(msg) )
+	{
 		mul = MSG_ReadFloat(msg);
+	}
 
 	if ( MSG_ReadOneBit(msg) )
+	{
 		post_mul = MSG_ReadFloat(msg);
+	}
 
 	if ( ignore )
+	{
 		return;
+	}
 
 	// delta encoders it's already initialized on this machine (local game)
 	if ( delta_init )
+	{
 		Delta_Shutdown();
+	}
 
 	// add field to table
 	Delta_AddField(dt->pName, pName, flags, bits, mul, post_mul);

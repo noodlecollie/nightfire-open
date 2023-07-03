@@ -2,6 +2,7 @@
 #define PLATFORMLIB_FILE_H
 
 #include <stddef.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -15,6 +16,7 @@ int PlatformLib_Dup(int fileHandle);
 int PlatformLib_Close(int fileHandle);
 int PlatformLib_Read(int fileHandle, void* dstBuf, unsigned int maxCharCount);
 int PlatformLib_Write(int fileHandle, const void* buf, unsigned int maxCharCount);
+int PlatformLib_FileNo(FILE* file);
 
 #ifdef __cplusplus
 }  // extern "C"

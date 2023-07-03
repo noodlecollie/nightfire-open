@@ -3,11 +3,13 @@ include(compiler_settings)
 if(TARGET_PLATFORM STREQUAL "WINDOWS")
 	set(SOURCES
 		src/Win32/File.cpp
+		src/Win32/Net.cpp
 		src/Win32/String.cpp
 	)
 elseif(TARGET_PLATFORM STREQUAL "LINUX")
 	set(SOURCES
 		src/Linux/File.cpp
+		src/Linux/Net.cpp
 		src/Linux/String.cpp
 	)
 else()
@@ -16,6 +18,7 @@ endif()
 
 add_library(${TARGETNAME_LIB_PLATFORMLIB} STATIC
 	include/PlatformLib/File.h
+	include/PlatformLib/Net.h
 	include/PlatformLib/String.h
 	${SOURCES}
 )

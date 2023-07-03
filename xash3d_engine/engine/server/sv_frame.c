@@ -116,13 +116,17 @@ static void SV_AddEntitiesToPacket(
 
 		if ( player )
 		{
-			sv_client_t* cl = &svs.clients[e - 1];
+			sv_client_t* client = &svs.clients[e - 1];
 
-			if ( cl->state != cs_spawned )
+			if ( client->state != cs_spawned )
+			{
 				continue;
+			}
 
-			if ( FBitSet(cl->flags, FCL_HLTV_PROXY) )
+			if ( FBitSet(client->flags, FCL_HLTV_PROXY) )
+			{
 				continue;
+			}
 		}
 
 		if ( FBitSet(ent->v.effects, EF_REQUEST_PHS) )

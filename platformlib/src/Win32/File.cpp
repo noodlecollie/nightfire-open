@@ -41,6 +41,11 @@ int PlatformLib_Write(int fileHandle, const void* buf, unsigned int maxCharCount
 	return _write(fileHandle, buf, maxCharCount);
 }
 
+int PlatformLib_FileNo(FILE* file)
+{
+	return _fileno(file);
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus
