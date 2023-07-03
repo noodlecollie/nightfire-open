@@ -114,15 +114,17 @@ void SV_WaterMove(edict_t* ent)
 
 	if ( ent->v.movetype == MOVETYPE_NOCLIP )
 	{
-		ent->v.air_finished = sv.time + 12.0f;
+		ent->v.air_finished = (float)(sv.time) + 12.0f;
 		return;
 	}
 
 	// no watermove for monsters but pushables
 	if ( (ent->v.flags & FL_MONSTER) && ent->v.health <= 0.0f )
+	{
 		return;
+	}
 
-	drownlevel = (ent->v.deadflag == DEAD_NO) ? 3.0 : 1.0;
+	drownlevel = (ent->v.deadflag == DEAD_NO) ? 3.0f : 1.0f;
 	waterlevel = ent->v.waterlevel;
 	watertype = ent->v.watertype;
 	flags = ent->v.flags;
@@ -137,12 +139,12 @@ void SV_WaterMove(edict_t* ent)
 
 				if ( ent->v.dmg < 15 )
 					ent->v.dmg = 10;  // quake1 original code
-				ent->v.pain_finished = sv.time + 1.0f;
+				ent->v.pain_finished = (float)sv.time + 1.0f;
 			}
 		}
 		else
 		{
-			ent->v.air_finished = sv.time + 12.0f;
+			ent->v.air_finished = (float)sv.time + 12.0f;
 			ent->v.dmg = 2;
 		}
 	}
@@ -157,7 +159,7 @@ void SV_WaterMove(edict_t* ent)
 			ent->v.flags = flags & ~FL_INWATER;
 		}
 
-		ent->v.air_finished = sv.time + 12.0f;
+		ent->v.air_finished = (float)sv.time + 12.0f;
 		return;
 	}
 
@@ -166,9 +168,13 @@ void SV_WaterMove(edict_t* ent)
 		if ( (!(flags & (FL_IMMUNE_LAVA | FL_GODMODE))) && ent->v.dmgtime < sv.time )
 		{
 			if ( ent->v.radsuit_finished < sv.time )
-				ent->v.dmgtime = sv.time + 0.2f;
+			{
+				ent->v.dmgtime = (float)sv.time + 0.2f;
+			}
 			else
-				ent->v.dmgtime = sv.time + 1.0f;
+			{
+				ent->v.dmgtime = (float)sv.time + 1.0f;
+			}
 		}
 	}
 	else if ( watertype == CONTENTS_SLIME )
@@ -176,7 +182,10 @@ void SV_WaterMove(edict_t* ent)
 		if ( (!(flags & (FL_IMMUNE_SLIME | FL_GODMODE))) && ent->v.dmgtime < sv.time )
 		{
 			if ( ent->v.radsuit_finished < sv.time )
-				ent->v.dmgtime = sv.time + 1.0;
+			{
+				ent->v.dmgtime = (float)sv.time + 1.0f;
+			}
+
 			// otherwise radsuit is fully protect entity from slime
 		}
 	}
@@ -219,9 +228,12 @@ float SV_VecToYaw(const vec3_t src)
 	}
 	else
 	{
-		yaw = (int)(atan2(src[1], src[0]) * 180.0 / M_PI);
+		yaw = (float)((int)(atan2f(src[1], src[0]) * 180.0f / M_PI_F));
+
 		if ( yaw < 0 )
+		{
 			yaw += 360.0f;
+		}
 	}
 	return yaw;
 }
@@ -421,7 +433,7 @@ qboolean SV_StepDirection(edict_t* ent, float yaw, float dist)
 	float cSin, cCos;
 	vec3_t move;
 
-	yaw = yaw * M_PI2 / 360.0f;
+	yaw = yaw * M_PI2_F / 360.0f;
 	SinCos(yaw, &cSin, &cCos);
 	VectorSet(move, cCos * dist, cSin * dist, 0.0f);
 

@@ -458,7 +458,7 @@ static void SV_EmitEvents(sv_client_t* cl, client_frame_t* to, sizebuf_t* msg)
 
 		if ( j < to->num_entities )
 		{
-			info->packet_index = j;
+			info->packet_index = (short)j;
 			info->args.ducking = 0;
 
 			if ( !FBitSet(info->args.flags, FEVENT_ORIGIN) )
@@ -472,7 +472,7 @@ static void SV_EmitEvents(sv_client_t* cl, client_frame_t* to, sizebuf_t* msg)
 		else
 		{
 			// couldn't find
-			info->packet_index = to->num_entities;
+			info->packet_index = (short)to->num_entities;
 			info->args.entindex = ent_index;
 		}
 	}
@@ -519,7 +519,7 @@ static void SV_EmitEvents(sv_client_t* cl, client_frame_t* to, sizebuf_t* msg)
 			if ( info->fire_time )
 			{
 				MSG_WriteOneBit(msg, 1);
-				MSG_WriteWord(msg, (info->fire_time * 100.0f));
+				MSG_WriteWord(msg, (int)(info->fire_time * 100.0f));
 			}
 			else
 				MSG_WriteOneBit(msg, 0);
@@ -745,7 +745,7 @@ void SV_SendClientDatagram(sv_client_t* cl)
 
 	// always send servertime at new frame
 	MSG_BeginServerCmd(&msg, svc_time);
-	MSG_WriteFloat(&msg, sv.time);
+	MSG_WriteFloat(&msg, (float)sv.time);
 
 	SV_WriteClientdataToMessage(cl, &msg);
 	SV_WriteEntitiesToClient(cl, &msg);

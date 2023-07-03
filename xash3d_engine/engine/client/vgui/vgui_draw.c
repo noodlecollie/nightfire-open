@@ -101,8 +101,8 @@ static void GAME_EXPORT VGUI_GetMousePos(int* _x, int* _y)
 	int x, y;
 
 	Platform_GetMousePos(&x, &y);
-	*_x = x / xscale;
-	*_y = y / yscale;
+	*_x = (int)((float)x / xscale);
+	*_y = (int)((float)y / yscale);
 }
 
 static void GAME_EXPORT VGUI_CursorSelect(VGUI_DefaultCursor cursor)
@@ -179,16 +179,20 @@ qboolean VGui_LoadProgs(HINSTANCE hInstance)
 		if ( !vgui.hInstance )
 		{
 			if ( FS_FileExists(vguiloader, false) )
+			{
 				Con_Reportf(S_ERROR "Failed to load vgui_support library: %s\n", COM_GetLibraryError());
+			}
 			else
+			{
 				Con_Reportf("vgui_support: not found\n");
+			}
 
 			return false;
 		}
 	}
 
 	// try legacy API first
-	F = COM_GetProcAddress(hInstance, client ? "InitVGUISupportAPI" : "InitAPI");
+	F = (void (*)(vguiapi_t*))COM_GetProcAddress(hInstance, client ? "InitVGUISupportAPI" : "InitAPI");
 
 	if ( F )
 	{
@@ -447,7 +451,7 @@ void VGui_MouseMove(int x, int y)
 	{
 		float xscale = (float)refState.width / (float)clgame.scrInfo.iWidth;
 		float yscale = (float)refState.height / (float)clgame.scrInfo.iHeight;
-		vgui.dllFuncs.MouseMove(x / xscale, y / yscale);
+		vgui.dllFuncs.MouseMove((int)((float)x / xscale), (int)((float)y / yscale));
 	}
 }
 

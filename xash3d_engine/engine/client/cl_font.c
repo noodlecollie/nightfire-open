@@ -73,10 +73,10 @@ qboolean Con_LoadFixedWidthFont(const char* fontname, cl_font_t* font, float sca
 	{
 		font->fontRc[i].left = (i * font_width / 16) % font_width;
 		font->fontRc[i].right = font->fontRc[i].left + font_width / 16;
-		font->fontRc[i].top = (i / 16) * (font_width / 16);
+		font->fontRc[i].top = ((int)i / 16) * (font_width / 16);
 		font->fontRc[i].bottom = font->fontRc[i].top + font_width / 16;
 
-		font->charWidths[i] = Q_rint(font_width / 16 * scale);
+		font->charWidths[i] = (byte)Q_rint(font_width / 16 * scale);
 	}
 
 	return true;
@@ -126,7 +126,7 @@ qboolean Con_LoadVariableWidthFont(const char* fontname, cl_font_t* font, float 
 		font->fontRc[i].top = (word)ci->startoffset / font_width;
 		font->fontRc[i].bottom = font->fontRc[i].top + src.rowheight;
 
-		font->charWidths[i] = Q_rint(src.fontinfo[i].charwidth * scale);
+		font->charWidths[i] = (byte)Q_rint(src.fontinfo[i].charwidth * scale);
 	}
 
 	return true;
@@ -167,9 +167,14 @@ int CL_DrawCharacter(float x, float y, int number, rgba_t color, cl_font_t* font
 	if ( number <= 32 )
 	{
 		if ( number == ' ' )
+		{
 			return font->charWidths[' '];
+		}
 		else if ( number == '\t' )
-			return CL_CalcTabStop(font, x);
+		{
+			return CL_CalcTabStop(font, (int)x);
+		}
+
 		return 0;
 	}
 

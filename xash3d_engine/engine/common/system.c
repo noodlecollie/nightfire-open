@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include <stdlib.h>
 #include <errno.h>
 #include "PlatformLib/String.h"
+#include "PlatformLib/System.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>
@@ -319,7 +320,9 @@ qboolean Sys_LoadLibrary(dll_info_t* dll)
 	// Get the function adresses
 	for ( func = dll->fcts; func && func->name != NULL; func++ )
 	{
-		if ( !(*func->func = Sys_GetProcAddress(dll, func->name)) )
+		*func->func = Sys_GetProcAddress(dll, func->name);
+
+		if ( !(*func->func) )
 		{
 			Q_snprintf(
 				errorstring,
@@ -654,12 +657,12 @@ qboolean Sys_NewInstance(const char* gamedir)
 #else
 	exelen = wai_getExecutablePath(NULL, 0, NULL);
 	exe = malloc(exelen + 1);
-	wai_getExecutablePath(exe, exelen, NULL);
+	wai_getExecutablePath(exe, (int)exelen, NULL);
 	exe[exelen] = 0;
 
 	Host_Shutdown();
 
-	execv(exe, newargs);
+	PlatformLib_ExecV(exe, newargs);
 #endif
 
 	// if execv returned, it's probably an error
