@@ -209,8 +209,11 @@ qboolean AVI_ACMConvertAudio(movie_state_t* Avi)
 	}
 
 	// get the size of the output buffer for streaming the compressed audio
-	if ( pacmStreamSize(Avi->cpa_conversion_stream, Avi->cpa_blockalign, &dest_length, ACM_STREAMSIZEF_SOURCE) !=
-		 MMSYSERR_NOERROR )
+	if ( pacmStreamSize(
+			 Avi->cpa_conversion_stream,
+			 Avi->cpa_blockalign,
+			 (LPDWORD)&dest_length,
+			 ACM_STREAMSIZEF_SOURCE) != MMSYSERR_NOERROR )
 	{
 		if ( !Avi->quiet )
 			Con_Reportf(S_ERROR "Couldn't get ACM conversion stream size.\n");
@@ -298,7 +301,7 @@ int AVI_GetVideoFrameNumber(movie_state_t* Avi, float time)
 	if ( !Avi->active )
 		return 0;
 
-	return (time * Avi->video_fps);
+	return (int)(time * Avi->video_fps);
 }
 
 int AVI_TimeToSoundPosition(movie_state_t* Avi, int time)
@@ -349,13 +352,17 @@ qboolean AVI_GetAudioInfo(movie_state_t* Avi, wavdata_t* snd_info)
 		return false;
 	}
 
-	snd_info->rate = Avi->audio_header->nSamplesPerSec;
-	snd_info->channels = Avi->audio_header->nChannels;
+	snd_info->rate = (word)Avi->audio_header->nSamplesPerSec;
+	snd_info->channels = (byte)Avi->audio_header->nChannels;
 
 	if ( Avi->audio_codec == WAVE_FORMAT_PCM )  // uncompressed audio!
+	{
 		snd_info->width = (Avi->audio_bytes_per_sample > Avi->audio_header->nChannels) ? 2 : 1;
+	}
 	else
+	{
 		snd_info->width = 2;  // assume compressed audio is always 16 bit
+	}
 
 	snd_info->size = snd_info->rate * snd_info->width * snd_info->channels;
 	snd_info->loopStart = 0;  // using loopStart as streampos
@@ -475,7 +482,7 @@ int AVI_GetAudioChunk(movie_state_t* Avi, char* audiodata, int offset, int lengt
 			length / Avi->audio_bytes_per_sample,
 			audiodata,
 			length,
-			&result,
+			(LONG*)&result,
 			NULL);
 		return result;
 	}
@@ -644,10 +651,14 @@ void AVI_OpenVideo(movie_state_t* Avi, const char* filename, qboolean load_audio
 			Avi->audio_stream = stream;
 
 			// read the audio header
-			pAVIStreamReadFormat(Avi->audio_stream, pAVIStreamStart(Avi->audio_stream), 0, &size);
+			pAVIStreamReadFormat(Avi->audio_stream, pAVIStreamStart(Avi->audio_stream), 0, (LONG*)&size);
 
 			Avi->audio_header = (WAVEFORMAT*)Mem_Malloc(cls.mempool, size);
-			pAVIStreamReadFormat(Avi->audio_stream, pAVIStreamStart(Avi->audio_stream), Avi->audio_header, &size);
+			pAVIStreamReadFormat(
+				Avi->audio_stream,
+				pAVIStreamStart(Avi->audio_stream),
+				Avi->audio_header,
+				(LONG*)&size);
 			Avi->audio_header_size = size;
 			Avi->audio_codec = Avi->audio_header->wFormatTag;
 

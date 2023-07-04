@@ -8,7 +8,7 @@ extern "C"
 
 int PlatformLib_ExecV(const char* path, char* const* argv)
 {
-	return _execv(path, argv);
+	return static_cast<int>(_execv(path, argv));
 }
 
 #ifdef __cplusplus

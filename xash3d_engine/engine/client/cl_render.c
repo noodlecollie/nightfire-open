@@ -20,7 +20,7 @@ GNU General Public License for more details.
 
 int R_FatPVS(const vec3_t org, float radius, byte* visbuffer, qboolean merge, qboolean fullvis)
 {
-	return Mod_FatPVS(org, radius, visbuffer, world.visbytes, merge, fullvis);
+	return Mod_FatPVS(org, radius, visbuffer, (int)world.visbytes, merge, fullvis);
 }
 
 lightstyle_t* CL_GetLightStyle(int number)
@@ -216,6 +216,16 @@ static intptr_t pfnRenderGetParm(int parm, int arg)
 	return CL_RenderGetParm(parm, arg, true);
 }
 
+static int Wrapper_AVI_GetVideoInfo(void* avi, int* xres, int* yres, float* duration)
+{
+	return (int)AVI_GetVideoInfo((movie_state_t*)avi, xres, yres, duration);
+}
+
+static int Wrapper_AVI_IsActive(void* avi)
+{
+	return (int)AVI_IsActive((movie_state_t*)avi);
+}
+
 static render_api_t gRenderAPI = {
 	pfnRenderGetParm,  // GL_RenderGetParm,
 	NULL,  // R_GetDetailScaleForTexture,
@@ -240,13 +250,13 @@ static render_api_t gRenderAPI = {
 	NULL,  // DrawSingleDecal,
 	NULL,  // R_DecalSetupVerts,
 	NULL,  // R_EntityRemoveDecals,
-	(void*)AVI_LoadVideo,
-	(void*)AVI_GetVideoInfo,
-	(void*)AVI_GetVideoFrameNumber,
-	(void*)AVI_GetVideoFrame,
+	AVI_LoadVideo,
+	Wrapper_AVI_GetVideoInfo,
+	AVI_GetVideoFrameNumber,
+	AVI_GetVideoFrame,
 	NULL,  // R_UploadStretchRaw,
-	(void*)AVI_FreeVideo,
-	(void*)AVI_IsActive,
+	AVI_FreeVideo,
+	Wrapper_AVI_IsActive,
 	S_StreamAviSamples,
 	NULL,
 	NULL,
@@ -277,7 +287,7 @@ static render_api_t gRenderAPI = {
 	pfnFileBufferCRC32,
 	COM_CompareFileTime,
 	Host_Error,
-	(void*)CL_ModelHandle,
+	CL_ModelHandle,
 	pfnTime,
 	Cvar_Set,
 	S_FadeMusicVolume,

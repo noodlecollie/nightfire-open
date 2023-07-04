@@ -63,7 +63,7 @@ void CL_CalcPlayerVelocity(int idx, vec3_t velocity)
 		if ( dt != 0.0 )
 		{
 			VectorSubtract(clgame.entities[idx].curstate.velocity, clgame.entities[idx].prevstate.velocity, delta);
-			VectorScale(delta, 1.0f / dt, velocity);
+			VectorScale(delta, 1.0f / (float)dt, velocity);
 		}
 		else
 		{
@@ -160,7 +160,7 @@ void CL_SetEventIndex(const char* szEvName, int ev_index)
 
 		if ( !Q_stricmp(ev->name, szEvName) )
 		{
-			ev->index = ev_index;
+			ev->index = (word)ev_index;
 			return;
 		}
 	}
@@ -376,9 +376,9 @@ void CL_QueueEvent(int flags, int index, float delay, event_args_t* args)
 			return;
 	}
 
-	ei->index = index;
+	ei->index = (word)index;
 	ei->packet_index = 0;
-	ei->fire_time = delay ? (cl.time + delay) : 0.0f;
+	ei->fire_time = delay ? ((float)cl.time + delay) : 0.0f;
 	ei->flags = flags;
 	ei->args = *args;
 }

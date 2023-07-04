@@ -696,7 +696,8 @@ void CL_ParseViewBeam(sizebuf_t* msg, int beamType)
 	vec3_t start, end;
 	int modelIndex, startFrame;
 	float frameRate, life, width;
-	int startEnt, endEnt;
+	int startEnt = 0;
+	int endEnt = 0;
 	float noise, speed;
 	float r, g, b, a;
 
@@ -722,10 +723,12 @@ void CL_ParseViewBeam(sizebuf_t* msg, int beamType)
 					start[1] = MSG_ReadCoord(msg);
 					start[2] = MSG_ReadCoord(msg);
 				}
+
 				end[0] = MSG_ReadCoord(msg);
 				end[1] = MSG_ReadCoord(msg);
 				end[2] = MSG_ReadCoord(msg);
 			}
+
 			modelIndex = MSG_ReadShort(msg);
 			startFrame = MSG_ReadByte(msg);
 			frameRate = (float)MSG_ReadByte(msg) * 0.1f;
@@ -737,12 +740,20 @@ void CL_ParseViewBeam(sizebuf_t* msg, int beamType)
 			b = (float)MSG_ReadByte(msg) / 255.0f;
 			a = (float)MSG_ReadByte(msg) / 255.0f;
 			speed = (float)MSG_ReadByte(msg) * 0.1f;
+
 			if ( beamType == TE_BEAMENTS )
+			{
 				R_BeamEnts(startEnt, endEnt, modelIndex, life, width, noise, a, speed, startFrame, frameRate, r, g, b);
+			}
 			else if ( beamType == TE_BEAMENTPOINT )
+			{
 				R_BeamEntPoint(startEnt, end, modelIndex, life, width, noise, a, speed, startFrame, frameRate, r, g, b);
+			}
 			else
+			{
 				R_BeamPoints(start, end, modelIndex, life, width, noise, a, speed, startFrame, frameRate, r, g, b);
+			}
+
 			break;
 		case TE_LIGHTNING:
 			start[0] = MSG_ReadCoord(msg);
@@ -2048,7 +2059,7 @@ static particle_t* CreateTracerEffect(const vec3_t start, const vec3_t end, ptyp
 	speed = Q_max(tracerspeed->value, 3.0f);
 
 	VectorSubtract(end, start, dir);
-	len = VectorLength(dir);
+	len = (float)VectorLength(dir);
 	if ( len == 0.0f )
 	{
 		return NULL;
@@ -2109,7 +2120,7 @@ void GAME_EXPORT R_UserTracerParticle(
 	{
 		p->context = deathcontext;
 		p->deathfunc = deathfunc;
-		p->color = colorIndex;
+		p->color = (short)colorIndex;
 		p->ramp = length;
 	}
 }
@@ -2141,9 +2152,9 @@ void GAME_EXPORT R_SparkStreaks(const vec3_t pos, int count, int velocityMin, in
 
 	for ( i = 0; i < count; i++ )
 	{
-		vel[0] = COM_RandomFloat(velocityMin, velocityMax);
-		vel[1] = COM_RandomFloat(velocityMin, velocityMax);
-		vel[2] = COM_RandomFloat(velocityMin, velocityMax);
+		vel[0] = COM_RandomFloat((float)velocityMin, (float)velocityMax);
+		vel[1] = COM_RandomFloat((float)velocityMin, (float)velocityMax);
+		vel[2] = COM_RandomFloat((float)velocityMin, (float)velocityMax);
 
 		p = R_AllocTracer(pos, vel, COM_RandomFloat(0.1f, 0.5f));
 		if ( !p )
@@ -2171,8 +2182,11 @@ void GAME_EXPORT R_Implosion(const vec3_t end, float radius, int count, float li
 	int i;
 
 	if ( life <= 0.0f )
+	{
 		life = 0.1f;  // to avoid divide by zero
-	factor = -1.0 / life;
+	}
+
+	factor = -1.0f / life;
 
 	for ( i = 0; i < count; i++ )
 	{
@@ -2302,7 +2316,7 @@ void CL_ReadPointFile_f(void)
 
 		p->ramp = 0;
 		p->type = pt_static;
-		p->die = cl.time + 99999;
+		p->die = (float)cl.time + 99999;
 		p->color = (-count) & 15;
 		VectorCopy(org, p->org);
 		VectorClear(p->vel);
@@ -2364,16 +2378,16 @@ void CL_DrawEFX(float time, qboolean fTrans)
 
 void CL_ThinkParticle(double frametime, particle_t* p)
 {
-	float time3 = 15.0f * frametime;
-	float time2 = 10.0f * frametime;
-	float time1 = 5.0f * frametime;
-	float dvel = 4.0f * frametime;
-	float grav = frametime * clgame.movevars.gravity * 0.05f;
+	float time3 = 15.0f * (float)frametime;
+	float time2 = 10.0f * (float)frametime;
+	float time1 = 5.0f * (float)frametime;
+	float dvel = 4.0f * (float)frametime;
+	float grav = (float)frametime * clgame.movevars.gravity * 0.05f;
 
 	if ( p->type != pt_clientcustom )
 	{
 		// update position.
-		VectorMA(p->org, frametime, p->vel, p->org);
+		VectorMA(p->org, (float)frametime, p->vel, p->org);
 	}
 
 	switch ( p->type )
@@ -2385,7 +2399,7 @@ void CL_ThinkParticle(double frametime, particle_t* p)
 			if ( p->ramp >= 6.0f )
 				p->die = -1.0f;
 			else
-				p->color = ramp3[(int)p->ramp];
+				p->color = (short)ramp3[(int)p->ramp];
 			p->vel[2] += grav;
 			break;
 		case pt_explode:
@@ -2393,7 +2407,7 @@ void CL_ThinkParticle(double frametime, particle_t* p)
 			if ( p->ramp >= 8.0f )
 				p->die = -1.0f;
 			else
-				p->color = ramp1[(int)p->ramp];
+				p->color = (short)ramp1[(int)p->ramp];
 			VectorMA(p->vel, dvel, p->vel, p->vel);
 			p->vel[2] -= grav;
 			break;
@@ -2402,8 +2416,8 @@ void CL_ThinkParticle(double frametime, particle_t* p)
 			if ( p->ramp >= 8.0f )
 				p->die = -1.0f;
 			else
-				p->color = ramp2[(int)p->ramp];
-			VectorMA(p->vel, -frametime, p->vel, p->vel);
+				p->color = (short)ramp2[(int)p->ramp];
+			VectorMA(p->vel, (float)(-frametime), p->vel, p->vel);
 			p->vel[2] -= grav;
 			break;
 		case pt_blob:
@@ -2428,8 +2442,8 @@ void CL_ThinkParticle(double frametime, particle_t* p)
 				p->ramp += time2;
 				if ( p->ramp >= 9.0f )
 					p->ramp = 0.0f;
-				p->color = gSparkRamp[(int)p->ramp];
-				VectorMA(p->vel, -frametime * 0.5f, p->vel, p->vel);
+				p->color = (short)gSparkRamp[(int)p->ramp];
+				VectorMA(p->vel, (float)(-frametime) * 0.5f, p->vel, p->vel);
 				p->type = COM_RandomLong(0, 3) ? pt_blob : pt_blob2;
 				p->vel[2] -= grav * 5.0f;
 			}
@@ -2448,7 +2462,7 @@ void CL_ThinkParticle(double frametime, particle_t* p)
 			break;
 		case pt_clientcustom:
 			if ( p->callback )
-				p->callback(p, frametime);
+				p->callback(p, (float)frametime);
 			break;
 		default:
 			break;
