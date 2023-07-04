@@ -539,7 +539,7 @@ static void Touch_SetClientOnly_f(void)
 		return;
 	}
 
-	Touch_SetClientOnly(Q_atoi(Cmd_Argv(1)));
+	Touch_SetClientOnly((byte)Q_atoi(Cmd_Argv(1)));
 }
 
 static void Touch_RemoveButtonFromList(touchbuttonlist_t* list, const char* name, qboolean privileged)
@@ -548,17 +548,26 @@ static void Touch_RemoveButtonFromList(touchbuttonlist_t* list, const char* name
 
 	IN_TouchEditClear();
 
-	while ( (button = Touch_FindFirst(&touch.list_user, name, privileged)) )
+	for ( button = Touch_FindFirst(&touch.list_user, name, privileged); button;
+		  button = Touch_FindFirst(&touch.list_user, name, privileged) )
 	{
 		if ( button->prev )
+		{
 			button->prev->next = button->next;
+		}
 		else
+		{
 			list->first = button->next;
+		}
 
 		if ( button->next )
+		{
 			button->next->prev = button->prev;
+		}
 		else
+		{
 			list->last = button->prev;
+		}
 
 		Mem_Free(button);
 	}
@@ -1133,10 +1142,10 @@ void Touch_Init(void)
 		"invnext",
 		"touch_default/next_weap",
 		"invnext",
-		0.000000,
-		0.530200,
-		0.120000,
-		0.757428,
+		0.000000f,
+		0.530200f,
+		0.120000f,
+		0.757428f,
 		color,
 		2,
 		1,
@@ -1145,23 +1154,34 @@ void Touch_Init(void)
 		"invprev",
 		"touch_default/prev_weap",
 		"invprev",
-		0.000000,
-		0.075743,
-		0.120000,
-		0.302971,
+		0.000000f,
+		0.075743f,
+		0.120000f,
+		0.302971f,
 		color,
 		2,
 		1,
 		0);
-	Touch_AddDefaultButton("use", "touch_default/use", "+use", 0.880000, 0.454457, 1.000000, 0.681685, color, 2, 1, 0);
+	Touch_AddDefaultButton(
+		"use",
+		"touch_default/use",
+		"+use",
+		0.880000f,
+		0.454457f,
+		1.000000f,
+		0.681685f,
+		color,
+		2,
+		1,
+		0);
 	Touch_AddDefaultButton(
 		"jump",
 		"touch_default/jump",
 		"+jump",
-		0.880000,
-		0.227228,
-		1.000000,
-		0.454457,
+		0.880000f,
+		0.227228f,
+		1.000000f,
+		0.454457f,
 		color,
 		2,
 		1,
@@ -1170,10 +1190,10 @@ void Touch_Init(void)
 		"attack",
 		"touch_default/shoot",
 		"+attack",
-		0.760000,
-		0.530200,
-		0.880000,
-		0.757428,
+		0.760000f,
+		0.530200f,
+		0.880000f,
+		0.757428f,
 		color,
 		2,
 		1,
@@ -1182,10 +1202,10 @@ void Touch_Init(void)
 		"attack2",
 		"touch_default/shoot_alt",
 		"+attack2",
-		0.760000,
-		0.302971,
-		0.880000,
-		0.530200,
+		0.760000f,
+		0.302971f,
+		0.880000f,
+		0.530200f,
 		color,
 		2,
 		1,
@@ -1194,10 +1214,10 @@ void Touch_Init(void)
 		"loadquick",
 		"touch_default/load",
 		"loadquick",
-		0.680000,
-		0.000000,
-		0.760000,
-		0.151486,
+		0.680000f,
+		0.000000f,
+		0.760000f,
+		0.151486f,
 		color,
 		2,
 		1,
@@ -1206,10 +1226,10 @@ void Touch_Init(void)
 		"savequick",
 		"touch_default/save",
 		"savequick",
-		0.760000,
-		0.000000,
-		0.840000,
-		0.151486,
+		0.760000f,
+		0.000000f,
+		0.840000f,
+		0.151486f,
 		color,
 		2,
 		1,
@@ -1218,10 +1238,10 @@ void Touch_Init(void)
 		"messagemode",
 		"touch_default/keyboard",
 		"messagemode",
-		0.760000,
-		0.000000,
-		0.840000,
-		0.151486,
+		0.760000f,
+		0.000000f,
+		0.840000f,
+		0.151486f,
 		color,
 		2,
 		1,
@@ -1230,10 +1250,10 @@ void Touch_Init(void)
 		"reload",
 		"touch_default/reload",
 		"+reload",
-		0.000000,
-		0.302971,
-		0.120000,
-		0.530200,
+		0.000000f,
+		0.302971f,
+		0.120000f,
+		0.530200f,
 		color,
 		2,
 		1,
@@ -1242,10 +1262,10 @@ void Touch_Init(void)
 		"flashlight",
 		"touch_default/flash_light_filled",
 		"impulse 100",
-		0.920000,
-		0.000000,
-		1.000000,
-		0.151486,
+		0.920000f,
+		0.000000f,
+		1.000000f,
+		0.151486f,
 		color,
 		2,
 		1,
@@ -1254,10 +1274,10 @@ void Touch_Init(void)
 		"scores",
 		"touch_default/map",
 		"+showscores",
-		0.680000,
-		0.000000,
-		0.760000,
-		0.151486,
+		0.680000f,
+		0.000000f,
+		0.760000f,
+		0.151486f,
 		color,
 		2,
 		1,
@@ -1266,10 +1286,10 @@ void Touch_Init(void)
 		"show_numbers",
 		"touch_default/show_weapons",
 		"exec touch_default/numbers.cfg",
-		0.440000,
-		0.833171,
-		0.520000,
-		0.984656,
+		0.440000f,
+		0.833171f,
+		0.520000f,
+		0.984656f,
 		color,
 		2,
 		1,
@@ -1278,10 +1298,10 @@ void Touch_Init(void)
 		"duck",
 		"touch_default/crouch",
 		"+duck",
-		0.880000,
-		0.757428,
-		1.000000,
-		0.984656,
+		0.880000f,
+		0.757428f,
+		1.000000f,
+		0.984656f,
 		color,
 		2,
 		1,
@@ -1290,10 +1310,10 @@ void Touch_Init(void)
 		"tduck",
 		"touch_default/tduck",
 		";+duck",
-		0.560000,
-		0.833171,
-		0.620000,
-		0.946785,
+		0.560000f,
+		0.833171f,
+		0.620000f,
+		0.946785f,
 		color,
 		2,
 		1,
@@ -1302,10 +1322,10 @@ void Touch_Init(void)
 		"edit",
 		"touch_default/settings",
 		"touch_enableedit",
-		0.420000,
-		0.000000,
-		0.500000,
-		0.151486,
+		0.420000f,
+		0.000000f,
+		0.500000f,
+		0.151486f,
 		color,
 		2,
 		1,
@@ -1314,10 +1334,10 @@ void Touch_Init(void)
 		"menu",
 		"touch_default/menu",
 		"escape",
-		0.000000,
-		0.833171,
-		0.080000,
-		0.984656,
+		0.000000f,
+		0.833171f,
+		0.080000f,
+		0.984656f,
 		color,
 		2,
 		1,
@@ -1326,10 +1346,10 @@ void Touch_Init(void)
 		"spray",
 		"touch_default/spray",
 		"impulse 201",
-		0.840000,
-		0.000000,
-		0.920000,
-		0.151486,
+		0.840000f,
+		0.000000f,
+		0.920000f,
+		0.151486f,
 		color,
 		2,
 		1,
@@ -1565,9 +1585,9 @@ static float Touch_DrawText(float x1, float y1, float x2, float y2, const char* 
 
 	// text is additive and alpha does not work
 	ref.dllFuncs.Color4ub(
-		color[0] * ((float)color[3] / 255.0f),
-		color[1] * ((float)color[3] / 255.0f),
-		color[2] * ((float)color[3] / 255.0f),
+		(unsigned char)(color[0] * ((float)color[3] / 255.0f)),
+		(unsigned char)(color[1] * ((float)color[3] / 255.0f)),
+		(unsigned char)(color[2] * ((float)color[3] / 255.0f)),
 		255);
 
 	while ( *s )
@@ -1600,7 +1620,7 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 
 			if ( B(fadespeed) )
 			{
-				button->fade += B(fadespeed) * host.frametime;
+				button->fade += B(fadespeed) * (float)host.frametime;
 				button->fade = bound(0, B(fade), 1);
 				if ( (B(fade) == 0) || (B(fade) == 1) )
 					B(fadespeed) = 0;
@@ -1611,13 +1631,13 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 
 			if ( (B(finger) != -1) && !FBitSet(B(flags), TOUCH_FL_CLIENT) )
 			{
-				color[0] = bound(0, (float)color[0] * touch_highlight_r->value, 255);
-				color[1] = bound(0, (float)color[1] * touch_highlight_g->value, 255);
-				color[2] = bound(0, (float)color[2] * touch_highlight_b->value, 255);
-				color[3] = bound(0, (float)color[3] * touch_highlight_a->value, 255);
+				color[0] = (byte)bound(0, (float)color[0] * touch_highlight_r->value, 255);
+				color[1] = (byte)bound(0, (float)color[1] * touch_highlight_g->value, 255);
+				color[2] = (byte)bound(0, (float)color[2] * touch_highlight_b->value, 255);
+				color[3] = (byte)bound(0, (float)color[3] * touch_highlight_a->value, 255);
 			}
 
-			color[3] *= B(fade);
+			color[3] = (byte)(color[3] * B(fade));
 			if ( button->texturefile[0] == '#' )
 				Touch_DrawText(
 					touch.swidth / SCR_W + B(x1),
@@ -1643,11 +1663,15 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 			}
 			if ( FBitSet(B(flags), TOUCH_FL_STROKE) )
 			{
-				ref.dllFuncs.Color4ub(touch.scolor[0], touch.scolor[1], touch.scolor[2], touch.scolor[3] * B(fade));
+				ref.dllFuncs.Color4ub(
+					touch.scolor[0],
+					touch.scolor[1],
+					touch.scolor[2],
+					(unsigned char)(touch.scolor[3] * B(fade)));
 				ref.dllFuncs.R_DrawStretchPic(
 					TO_SCRN_X(B(x1)),
 					TO_SCRN_Y(B(y1)),
-					touch.swidth,
+					(float)touch.swidth,
 					TO_SCRN_Y(B(y2) - B(y1)) - touch.swidth,
 					0,
 					0,
@@ -1658,7 +1682,7 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 					TO_SCRN_X(B(x1)) + touch.swidth,
 					TO_SCRN_Y(B(y1)),
 					TO_SCRN_X(B(x2) - B(x1)) - touch.swidth,
-					touch.swidth,
+					(float)touch.swidth,
 					0,
 					0,
 					1,
@@ -1667,7 +1691,7 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 				ref.dllFuncs.R_DrawStretchPic(
 					TO_SCRN_X(B(x2)) - touch.swidth,
 					TO_SCRN_Y(B(y1)) + touch.swidth,
-					touch.swidth,
+					(float)touch.swidth,
 					TO_SCRN_Y(B(y2) - B(y1)) - touch.swidth,
 					0,
 					0,
@@ -1678,7 +1702,7 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 					TO_SCRN_X(B(x1)),
 					TO_SCRN_Y(B(y2)) - touch.swidth,
 					TO_SCRN_X(B(x2) - B(x1)) - touch.swidth,
-					touch.swidth,
+					(float)touch.swidth,
 					0,
 					0,
 					1,
@@ -1695,7 +1719,7 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 			else
 				Touch_DrawTexture(B(x1), B(y1), B(x2), B(y2), touch.whitetexture, 128, 128, 128, 128);
 			MakeRGBA(color, 255, 255, 127, 255);
-			Con_DrawString(TO_SCRN_X(B(x1)), TO_SCRN_Y(B(y1)), B(name), color);
+			Con_DrawString((int)TO_SCRN_X(B(x1)), (int)TO_SCRN_Y(B(y1)), B(name), color);
 		}
 	}
 }
@@ -1723,9 +1747,11 @@ void Touch_Draw(void)
 			Touch_DrawTexture(0, 0, 1, 1, touch.whitetexture, 0, 0, 0, 112);
 		ref.dllFuncs.Color4ub(0, 224, 224, 112);
 		for ( x = 0; x < 1; x += GRID_X )
-			ref.dllFuncs.R_DrawStretchPic(TO_SCRN_X(x), 0, 1, TO_SCRN_Y(1), 0, 0, 1, 1, touch.whitetexture);
+			ref.dllFuncs
+				.R_DrawStretchPic((float)TO_SCRN_X(x), 0, 1, (float)TO_SCRN_Y(1), 0, 0, 1, 1, touch.whitetexture);
 		for ( x = 0; x < 1; x += GRID_Y )
-			ref.dllFuncs.R_DrawStretchPic(0, TO_SCRN_Y(x), TO_SCRN_X(1), 1, 0, 0, 1, 1, touch.whitetexture);
+			ref.dllFuncs
+				.R_DrawStretchPic(0, (float)TO_SCRN_Y(x), (float)TO_SCRN_X(1), 1, 0, 0, 1, 1, touch.whitetexture);
 	}
 
 	Touch_DrawButtons(&touch.list_user);
@@ -1754,20 +1780,20 @@ void Touch_Draw(void)
 			button = touch.selection;
 			Touch_DrawTexture(B(x1), B(y1), B(x2), B(y2), touch.whitetexture, 255, 0, 0, 64);
 
-			Con_DrawString(0, TO_SCRN_Y(GRID_Y * 11), "Selection:", color);
+			Con_DrawString(0, (int)TO_SCRN_Y(GRID_Y * 11), "Selection:", color);
 			Con_DrawString(
-				Con_DrawString(0, TO_SCRN_Y(GRID_Y * 12), "Name: ", color),
-				TO_SCRN_Y(GRID_Y * 12),
+				Con_DrawString(0, (int)TO_SCRN_Y(GRID_Y * 12), "Name: ", color),
+				(int)TO_SCRN_Y(GRID_Y * 12),
 				B(name),
 				color);
 			Con_DrawString(
-				Con_DrawString(0, TO_SCRN_Y(GRID_Y * 13), "Texture: ", color),
-				TO_SCRN_Y(GRID_Y * 13),
+				Con_DrawString(0, (int)TO_SCRN_Y(GRID_Y * 13), "Texture: ", color),
+				(int)TO_SCRN_Y(GRID_Y * 13),
 				B(texturefile),
 				color);
 			Con_DrawString(
-				Con_DrawString(0, TO_SCRN_Y(GRID_Y * 14), "Command: ", color),
-				TO_SCRN_Y(GRID_Y * 14),
+				Con_DrawString(0, (int)TO_SCRN_Y(GRID_Y * 14), "Command: ", color),
+				(int)TO_SCRN_Y(GRID_Y * 14),
 				B(command),
 				color);
 		}
@@ -1930,9 +1956,9 @@ static void Touch_Motion(touchEventType type, int fingerID, float x, float y, fl
 	{
 		// check bounds
 		if ( touch_forwardzone->value <= 0 )
-			Cvar_SetValue("touch_forwardzone", 0.5);
+			Cvar_SetValue("touch_forwardzone", 0.5f);
 		if ( touch_sidezone->value <= 0 )
-			Cvar_SetValue("touch_sidezone", 0.3);
+			Cvar_SetValue("touch_sidezone", 0.3f);
 
 		if ( !touch.move_button || touch.move_button->type == touch_move )
 		{
@@ -1951,10 +1977,10 @@ static void Touch_Motion(touchEventType type, int fingerID, float x, float y, fl
 		else if ( touch.move_button->type == touch_dpad )
 		{
 			// like joy, but without acceleration. useful for bhop
-			touch.forward = round(
+			touch.forward = roundf(
 				((touch.move_button->y2 + touch.move_button->y1) - y * 2) /
 				(touch.move_button->y2 - touch.move_button->y1) * touch_dpad_radius->value);
-			touch.side = round(
+			touch.side = roundf(
 				(x * 2 - (touch.move_button->x2 + touch.move_button->x1)) /
 				(touch.move_button->x2 - touch.move_button->x1) * touch_dpad_radius->value);
 		}
@@ -1974,19 +2000,25 @@ static void Touch_Motion(touchEventType type, int fingerID, float x, float y, fl
 			float dabs, dcos, dsin;
 
 			// save angle, modify only velocity
-			dabs = sqrt(dx * dx + dy * dy);
+			dabs = sqrtf(dx * dx + dy * dy);
 
 			if ( dabs < 0.000001f )
+			{
 				return;  // no motion, avoid division by zero
+			}
 
 			dcos = dx / dabs;
 			dsin = dy / dabs;
 
 			if ( touch_exp_mult->value > 1 )
-				dabs = (exp(dabs * touch_exp_mult->value) - 1) / touch_exp_mult->value;
+			{
+				dabs = (expf(dabs * touch_exp_mult->value) - 1) / touch_exp_mult->value;
+			}
 
 			if ( touch_pow_mult->value > 1 && touch_pow_factor->value > 1 )
-				dabs = pow(dabs * touch_pow_mult->value, touch_pow_factor->value) / touch_pow_mult->value;
+			{
+				dabs = powf(dabs * touch_pow_mult->value, touch_pow_factor->value) / touch_pow_mult->value;
+			}
 
 			dx = dabs * dcos;
 			dy = dabs * dsin;
@@ -2046,7 +2078,8 @@ Touch_ButtonPress(touchbuttonlist_t* list, touchEventType type, int fingerID, fl
 				{
 					string command;
 					touch.wheel_finger = fingerID;
-					touch.wheel_amount = touch.wheel_count = 0;
+					touch.wheel_amount = 0;
+					touch.wheel_count = 0;
 
 					Cmd_TokenizeString(button->command);
 
@@ -2130,10 +2163,10 @@ Touch_ButtonPress(touchbuttonlist_t* list, touchEventType type, int fingerID, fl
 						touch.move_start_x = (touch.move_button->x2 + touch.move_button->x1) / 2;
 
 						// start move instanly
-						touch.forward = round(
+						touch.forward = roundf(
 							((touch.move_button->y2 + touch.move_button->y1) - y * 2) /
 							(touch.move_button->y2 - touch.move_button->y1));
-						touch.side = round(
+						touch.side = roundf(
 							(x * 2 - (touch.move_button->x2 + touch.move_button->x1)) /
 							(touch.move_button->x2 - touch.move_button->x1));
 					}
@@ -2361,7 +2394,7 @@ int IN_TouchEvent(touchEventType type, int fingerID, float x, float y, float dx,
 			if ( type == event_down && x < 0.1f && y > 0.9f )
 				Cbuf_AddText("escape\n");
 		}
-		UI_MouseMove(TO_SCRN_X(x), TO_SCRN_Y(y));
+		UI_MouseMove((int)TO_SCRN_X(x), (int)TO_SCRN_Y(y));
 		// MsgDev( D_NOTE, "touch %d %d\n", TO_SCRN_X(x), TO_SCRN_Y(y) );
 		if ( type == event_down )
 			Key_Event(K_MOUSE1, true);
@@ -2372,7 +2405,7 @@ int IN_TouchEvent(touchEventType type, int fingerID, float x, float y, float dx,
 
 	if ( VGui_IsActive() )
 	{
-		VGui_MouseMove(TO_SCRN_X(x), TO_SCRN_Y(y));
+		VGui_MouseMove((int)TO_SCRN_X(x), (int)TO_SCRN_Y(y));
 
 		switch ( type )
 		{

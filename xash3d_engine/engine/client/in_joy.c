@@ -127,11 +127,11 @@ static void Joy_ProcessTrigger(const engineAxis_t engineAxis, short value)
 	{
 		case JOY_AXIS_RT:
 			trigButton = K_JOY2;
-			trigThreshold = joy_rt_threshold->value;
+			trigThreshold = (int)joy_rt_threshold->value;
 			break;
 		case JOY_AXIS_LT:
 			trigButton = K_JOY1;
-			trigThreshold = joy_lt_threshold->value;
+			trigThreshold = (int)joy_lt_threshold->value;
 			break;
 		default:
 			Con_Reportf(S_ERROR "Joy_ProcessTrigger: invalid axis = %i", engineAxis);
@@ -162,17 +162,17 @@ static int Joy_GetHatValueForAxis(const engineAxis_t engineAxis)
 	switch ( engineAxis )
 	{
 		case JOY_AXIS_SIDE:
-			threshold = joy_side_key_threshold->value;
+			threshold = (int)joy_side_key_threshold->value;
 			negative = JOY_HAT_LEFT;
 			positive = JOY_HAT_RIGHT;
 			break;
 		case JOY_AXIS_FWD:
-			threshold = joy_side_key_threshold->value;
+			threshold = (int)joy_side_key_threshold->value;
 			negative = JOY_HAT_UP;
 			positive = JOY_HAT_DOWN;
 			break;
 		default:
-			ASSERT(false);  // only fwd/side axes can emit key events
+			ASSERT_FAIL("Unrecognised axis");  // only fwd/side axes can emit key events
 			return 0;
 	}
 
@@ -201,16 +201,16 @@ static void Joy_ProcessStick(const engineAxis_t engineAxis, short value)
 	switch ( engineAxis )
 	{
 		case JOY_AXIS_FWD:
-			deadzone = joy_forward_deadzone->value;
+			deadzone = (int)joy_forward_deadzone->value;
 			break;
 		case JOY_AXIS_SIDE:
-			deadzone = joy_side_deadzone->value;
+			deadzone = (int)joy_side_deadzone->value;
 			break;
 		case JOY_AXIS_PITCH:
-			deadzone = joy_pitch_deadzone->value;
+			deadzone = (int)joy_pitch_deadzone->value;
 			break;
 		case JOY_AXIS_YAW:
-			deadzone = joy_yaw_deadzone->value;
+			deadzone = (int)joy_yaw_deadzone->value;
 			break;
 		default:
 			Con_Reportf(S_ERROR "Joy_ProcessStick: invalid axis = %i", engineAxis);
@@ -232,7 +232,7 @@ static void Joy_ProcessStick(const engineAxis_t engineAxis, short value)
 		val |= Joy_GetHatValueForAxis(JOY_AXIS_SIDE);
 		val |= Joy_GetHatValueForAxis(JOY_AXIS_FWD);
 
-		Joy_HatMotionEvent(0, val);
+		Joy_HatMotionEvent(0, (byte)val);
 	}
 }
 
@@ -396,8 +396,8 @@ void Joy_FinalizeMove(float* fw, float* side, float* dpitch, float* dyaw)
 	*dyaw -= joy_yaw->value * (float)joyaxis[JOY_AXIS_YAW].val / (float)SHRT_MAX * host.realframetime;
 #else
 	// HACKHACK: SDL have inverted look axis.
-	*dpitch -= joy_pitch->value * (float)joyaxis[JOY_AXIS_PITCH].val / (float)SHRT_MAX * host.realframetime;
-	*dyaw += joy_yaw->value * (float)joyaxis[JOY_AXIS_YAW].val / (float)SHRT_MAX * host.realframetime;
+	*dpitch -= joy_pitch->value * (float)joyaxis[JOY_AXIS_PITCH].val / (float)SHRT_MAX * (float)host.realframetime;
+	*dyaw += joy_yaw->value * (float)joyaxis[JOY_AXIS_YAW].val / (float)SHRT_MAX * (float)host.realframetime;
 #endif
 }
 
@@ -487,7 +487,7 @@ void Joy_Init(void)
 		return;
 	}
 
-	Cvar_FullSet("joy_found", va("%d", Platform_JoyInit(joy_index->value)), FCVAR_READ_ONLY);
+	Cvar_FullSet("joy_found", va("%d", Platform_JoyInit((int)joy_index->value)), FCVAR_READ_ONLY);
 }
 
 /*

@@ -220,10 +220,10 @@ void S_StreamBackgroundTrack(void)
 	{
 		wavdata_t* info = FS_StreamInfo(s_bgTrack.stream);
 
-		bufferSamples = ch->max_samples - (ch->s_rawend - soundtime);
+		bufferSamples = (int)(ch->max_samples - (ch->s_rawend - soundtime));
 
 		// decide how much data needs to be read from the file
-		fileSamples = bufferSamples * ((float)info->rate / SOUND_DMA_SPEED);
+		fileSamples = (int)(bufferSamples * ((float)info->rate / SOUND_DMA_SPEED));
 		if ( fileSamples <= 1 )
 			return;  // no more samples need
 
@@ -327,10 +327,10 @@ void S_StreamSoundTrack(void)
 		if ( !info )
 			break;  // bad soundtrack?
 
-		bufferSamples = ch->max_samples - (ch->s_rawend - soundtime);
+		bufferSamples = (int)(ch->max_samples - (ch->s_rawend - soundtime));
 
 		// decide how much data needs to be read from the file
-		fileSamples = bufferSamples * ((float)info->rate / SOUND_DMA_SPEED);
+		fileSamples = (int)(bufferSamples * ((float)info->rate / SOUND_DMA_SPEED));
 		if ( fileSamples <= 1 )
 			return;  // no more samples need
 

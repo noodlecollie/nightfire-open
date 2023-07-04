@@ -143,7 +143,7 @@ void IN_MouseSavePos(void)
 	if ( !in_mouseactive )
 		return;
 
-	Platform_GetMousePos(&in_lastvalidpos.x, &in_lastvalidpos.y);
+	Platform_GetMousePos((int*)&in_lastvalidpos.x, (int*)&in_lastvalidpos.y);
 	in_mouse_savedpos = true;
 }
 

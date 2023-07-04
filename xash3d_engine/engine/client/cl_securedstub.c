@@ -379,9 +379,9 @@ static void DstDemo_ReadBuffer(int* size, byte** buffer)
 	(void)buffer;
 }
 
-static void DstConnectionlessPacket(const struct netadr_s** net_from, const char** args, char** buffer, int** size)
+static void DstConnectionlessPacket(const struct netadr_s** net, const char** args, char** buffer, int** size)
 {
-	(void)net_from;
+	(void)net;
 	(void)args;
 	(void)buffer;
 	(void)size;

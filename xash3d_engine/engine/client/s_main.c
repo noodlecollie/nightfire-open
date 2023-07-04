@@ -97,7 +97,7 @@ S_FadeClientVolume
 */
 void S_FadeClientVolume(float fadePercent, float fadeOutSeconds, float holdTime, float fadeInSeconds)
 {
-	soundfade.starttime = cl.mtime[0];
+	soundfade.starttime = (float)cl.mtime[0];
 	soundfade.initial_percent = fadePercent;
 	soundfade.fadeouttime = fadeOutSeconds;
 	soundfade.holdtime = holdTime;
@@ -151,7 +151,7 @@ void S_UpdateSoundFade(void)
 
 	totaltime = soundfade.fadeouttime + soundfade.fadeintime + soundfade.holdtime;
 
-	elapsed = cl.mtime[0] - soundfade.starttime;
+	elapsed = (float)cl.mtime[0] - soundfade.starttime;
 
 	// clock wrapped or reset (BUG) or we've gone far enough
 	if ( elapsed < 0.0f || elapsed >= totaltime || totaltime <= 0.0f )
@@ -176,7 +176,7 @@ void S_UpdateSoundFade(void)
 	}
 
 	// spline it.
-	f = -(cos(M_PI * f) - 1) / 2;
+	f = -(cosf(M_PI_F * f) - 1) / 2;
 	f = bound(0.0f, f, 1.0f);
 
 	soundfade.percent = soundfade.initial_percent * f;
@@ -236,7 +236,7 @@ static int SND_GetChannelTimeLeft(const channel_t* ch)
 			return 0;
 
 		// current word
-		remaining = ch->currentWord->forcedEndSample - ch->currentWord->sample;
+		remaining = (int)(ch->currentWord->forcedEndSample - ch->currentWord->sample);
 
 		// here we count all remaining words, stopping if no sfx or sound file is available
 		// see VOX_LoadWord
@@ -247,17 +247,27 @@ static int SND_GetChannelTimeLeft(const channel_t* ch)
 
 			// don't continue with broken sentences
 			if ( !ch->words[i].sfx )
+			{
 				break;
+			}
 
-			if ( !(sc = S_LoadSound(ch->words[i].sfx)) )
+			sc = S_LoadSound(ch->words[i].sfx);
+
+			if ( !sc )
+			{
 				break;
+			}
 
 			end = ch->words[i].end;
 
 			if ( end )
-				remaining += sc->samples * 0.01f * end;
+			{
+				remaining = (int)(remaining + (sc->samples * 0.01f * end));
+			}
 			else
+			{
 				remaining += sc->samples;
+			}
 		}
 	}
 	else
@@ -267,7 +277,7 @@ static int SND_GetChannelTimeLeft(const channel_t* ch)
 
 		// handle position looping
 		samples = ch->sfx->cache->samples;
-		curpos = S_ConvertLoopedPosition(ch->sfx->cache, ch->pMixer.sample, ch->use_loop);
+		curpos = S_ConvertLoopedPosition(ch->sfx->cache, (int)ch->pMixer.sample, ch->use_loop);
 		remaining = bound(0, samples - curpos, samples);
 	}
 
@@ -575,7 +585,7 @@ void S_StartSound(const vec3_t pos, int ent, int chan, sound_t handle, float fvo
 	if ( !sfx )
 		return;
 
-	vol = bound(0, fvol * 255, 255);
+	vol = (int)bound(0, fvol * 255, 255);
 	if ( pitch <= 1 )
 		pitch = PITCH_NORM;  // Invasion issues
 
@@ -722,7 +732,7 @@ void S_RestoreSound(
 	if ( !sfx )
 		return;
 
-	vol = bound(0, fvol * 255, 255);
+	vol = (int)bound(0, fvol * 255, 255);
 	if ( pitch <= 1 )
 		pitch = PITCH_NORM;  // Invasion issues
 
@@ -840,7 +850,7 @@ void S_AmbientSound(const vec3_t pos, int ent, sound_t handle, float fvol, float
 	if ( !sfx )
 		return;
 
-	vol = bound(0, fvol * 255, 255);
+	vol = (int)bound(0, fvol * 255, 255);
 	if ( pitch <= 1 )
 		pitch = PITCH_NORM;  // Invasion issues
 
@@ -893,7 +903,7 @@ void S_AmbientSound(const vec3_t pos, int ent, sound_t handle, float fvol, float
 		return;
 	}
 
-	pitch *= (sys_timescale.value + 1) / 2;
+	pitch = (int)(pitch * ((sys_timescale.value + 1) / 2));
 
 	// never update positions if source entity is 0
 	ch->staticsound = (ent == 0) ? true : false;
@@ -950,14 +960,14 @@ int S_GetCurrentStaticSounds(soundlist_t* pout, int size)
 				Q_strncpy(pout->name, channels[i].name, sizeof(pout->name));
 			else
 				Q_strncpy(pout->name, channels[i].sfx->name, sizeof(pout->name));
-			pout->entnum = channels[i].entnum;
+			pout->entnum = (short)channels[i].entnum;
 			VectorCopy(channels[i].origin, pout->origin);
 			pout->volume = (float)channels[i].master_vol / 255.0f;
 			pout->attenuation = channels[i].dist_mult * SND_CLIP_DISTANCE;
 			pout->looping = (channels[i].use_loop && channels[i].sfx->cache->loopStart != -1);
-			pout->pitch = channels[i].basePitch;
-			pout->channel = channels[i].entchannel;
-			pout->wordIndex = channels[i].wordIndex;
+			pout->pitch = (byte)channels[i].basePitch;
+			pout->channel = (byte)channels[i].entchannel;
+			pout->wordIndex = (byte)channels[i].wordIndex;
 			pout->samplePos = channels[i].pMixer.sample;
 			pout->forcedEnd = channels[i].pMixer.forcedEndSample;
 
@@ -998,13 +1008,13 @@ int S_GetCurrentDynamicSounds(soundlist_t* pout, int size)
 			Q_strncpy(pout->name, channels[i].name, sizeof(pout->name));
 		else
 			Q_strncpy(pout->name, channels[i].sfx->name, sizeof(pout->name));
-		pout->entnum = (channels[i].entnum < 0) ? 0 : channels[i].entnum;
+		pout->entnum = (short)((channels[i].entnum < 0) ? 0 : channels[i].entnum);
 		VectorCopy(channels[i].origin, pout->origin);
 		pout->volume = (float)channels[i].master_vol / 255.0f;
 		pout->attenuation = channels[i].dist_mult * SND_CLIP_DISTANCE;
-		pout->pitch = channels[i].basePitch;
-		pout->channel = channels[i].entchannel;
-		pout->wordIndex = channels[i].wordIndex;
+		pout->pitch = (byte)channels[i].basePitch;
+		pout->channel = (byte)channels[i].entchannel;
+		pout->wordIndex = (byte)channels[i].wordIndex;
 		pout->samplePos = channels[i].pMixer.sample;
 		pout->forcedEnd = channels[i].pMixer.forcedEndSample;
 		pout->looping = looped;
@@ -1086,15 +1096,21 @@ void S_UpdateAmbientSounds(void)
 		// don't adjust volume too fast
 		if ( chan->master_vol < vol )
 		{
-			chan->master_vol += s_listener.frametime * s_ambient_fade.value;
+			chan->master_vol = (int)(chan->master_vol + (s_listener.frametime * s_ambient_fade.value));
+
 			if ( chan->master_vol > vol )
-				chan->master_vol = vol;
+			{
+				chan->master_vol = (int)vol;
+			}
 		}
 		else if ( chan->master_vol > vol )
 		{
-			chan->master_vol -= s_listener.frametime * s_ambient_fade.value;
+			chan->master_vol = (int)(chan->master_vol - (s_listener.frametime * s_ambient_fade.value));
+
 			if ( chan->master_vol < vol )
-				chan->master_vol = vol;
+			{
+				chan->master_vol = (int)vol;
+			}
 		}
 
 		chan->leftvol = chan->rightvol = chan->master_vol;
@@ -1184,9 +1200,9 @@ static uint S_RawSamplesStereo(
 	uint rawend,
 	uint max_samples,
 	uint samples,
-	uint rate,
+	uint inRate,
 	word width,
-	word channels,
+	word inChannels,
 	const byte* data)
 {
 	uint fracstep, samplefrac;
@@ -1195,14 +1211,14 @@ static uint S_RawSamplesStereo(
 	if ( rawend < (uint)paintedtime )
 		rawend = paintedtime;
 
-	fracstep = ((double)rate / (double)SOUND_DMA_SPEED) * (double)(1 << S_RAW_SAMPLES_PRECISION_BITS);
+	fracstep = (uint)(((double)inRate / (double)SOUND_DMA_SPEED) * (double)(1 << S_RAW_SAMPLES_PRECISION_BITS));
 	samplefrac = 0;
 
 	if ( width == 2 )
 	{
 		const short* in = (const short*)data;
 
-		if ( channels == 2 )
+		if ( inChannels == 2 )
 		{
 			for ( src = 0; src < samples; samplefrac += fracstep, src = (samplefrac >> S_RAW_SAMPLES_PRECISION_BITS) )
 			{
@@ -1223,7 +1239,7 @@ static uint S_RawSamplesStereo(
 	}
 	else
 	{
-		if ( channels == 2 )
+		if ( inChannels == 2 )
 		{
 			const char* in = (const char*)data;
 
@@ -1253,20 +1269,33 @@ static uint S_RawSamplesStereo(
 S_RawEntSamples
 ===================
 */
-void S_RawEntSamples(int entnum, uint samples, uint rate, word width, word channels, const byte* data, int snd_vol)
+void S_RawEntSamples(int entnum, uint samples, uint inRate, word width, word inChannels, const byte* data, int snd_vol)
 {
 	rawchan_t* ch;
 
 	if ( snd_vol < 0 )
+	{
 		snd_vol = 0;
+	}
 
-	if ( !(ch = S_FindRawChannel(entnum, true)) )
+	ch = S_FindRawChannel(entnum, true);
+
+	if ( !ch )
+	{
 		return;
+	}
 
 	ch->master_vol = snd_vol;
 	ch->dist_mult = (ATTN_NONE / SND_CLIP_DISTANCE);
-	ch->s_rawend =
-		S_RawSamplesStereo(ch->rawsamples, ch->s_rawend, ch->max_samples, samples, rate, width, channels, data);
+	ch->s_rawend = S_RawSamplesStereo(
+		ch->rawsamples,
+		ch->s_rawend,
+		(uint)ch->max_samples,
+		samples,
+		inRate,
+		width,
+		inChannels,
+		data);
 	ch->leftvol = ch->rightvol = snd_vol;
 }
 
@@ -1275,14 +1304,14 @@ void S_RawEntSamples(int entnum, uint samples, uint rate, word width, word chann
 S_RawSamples
 ===================
 */
-void S_RawSamples(uint samples, uint rate, word width, word channels, const byte* data, int entnum)
+void S_RawSamples(uint samples, uint inRate, word width, word inChannels, const byte* data, int entnum)
 {
 	int snd_vol = 128;
 
 	if ( entnum < 0 )
 		snd_vol = 256;  // bg track or movie track
 
-	S_RawEntSamples(entnum, samples, rate, width, channels, data, snd_vol);
+	S_RawEntSamples(entnum, samples, inRate, width, inChannels, data, snd_vol);
 }
 
 /*
@@ -1299,21 +1328,31 @@ void S_StreamAviSamples(void* Avi, int entnum, float fvol, float attn, float syn
 	rawchan_t* ch = NULL;
 
 	if ( !dma.initialized || s_listener.paused || !CL_IsInGame() )
+	{
 		return;
+	}
 
 	if ( entnum < 0 || entnum >= GI->max_edicts )
+	{
 		return;
+	}
 
-	if ( !(ch = S_FindRawChannel(entnum, true)) )
+	ch = S_FindRawChannel(entnum, true);
+
+	if ( !ch )
+	{
 		return;
+	}
 
 	if ( ch->sound_info.rate == 0 )
 	{
 		if ( !AVI_GetAudioInfo(Avi, &ch->sound_info) )
+		{
 			return;  // no audiotrack
+		}
 	}
 
-	ch->master_vol = bound(0, fvol * 255, 255);
+	ch->master_vol = (int)bound(0, fvol * 255, 255);
 	ch->dist_mult = (attn / SND_CLIP_DISTANCE);
 
 	// see how many samples should be copied into the raw buffer
@@ -1322,17 +1361,20 @@ void S_StreamAviSamples(void* Avi, int entnum, float fvol, float attn, float syn
 
 	// position is changed, synchronization is lost etc
 	if ( fabs(ch->oldtime - synctime) > s_mixahead.value )
-		ch->sound_info.loopStart = AVI_TimeToSoundPosition(Avi, synctime * 1000);
+	{
+		ch->sound_info.loopStart = AVI_TimeToSoundPosition(Avi, (int)(synctime * 1000));
+	}
+
 	ch->oldtime = synctime;  // keep actual time
 
 	while ( ch->s_rawend < soundtime + ch->max_samples )
 	{
 		wavdata_t* info = &ch->sound_info;
 
-		bufferSamples = ch->max_samples - (ch->s_rawend - soundtime);
+		bufferSamples = (int)(ch->max_samples - (ch->s_rawend - soundtime));
 
 		// decide how much data needs to be read from the file
-		fileSamples = bufferSamples * ((float)info->rate / SOUND_DMA_SPEED);
+		fileSamples = (int)(bufferSamples * ((float)info->rate / SOUND_DMA_SPEED));
 		if ( fileSamples <= 1 )
 			return;  // no more samples need
 
@@ -1361,7 +1403,7 @@ void S_StreamAviSamples(void* Avi, int entnum, float fvol, float attn, float syn
 			ch->s_rawend = S_RawSamplesStereo(
 				ch->rawsamples,
 				ch->s_rawend,
-				ch->max_samples,
+				(uint)ch->max_samples,
 				fileSamples,
 				info->rate,
 				info->width,
@@ -1626,7 +1668,7 @@ void S_UpdateChannels(void)
 	// soundtime - total samples that have been played out to hardware at dmaspeed
 	// paintedtime - total samples that have been mixed at speed
 	// endtime - target for samples in mixahead buffer at speed
-	endtime = soundtime + s_mixahead.value * SOUND_DMA_SPEED;
+	endtime = (uint)(soundtime + s_mixahead.value * SOUND_DMA_SPEED);
 	samps = dma.samples >> 1;
 
 	if ( (int)(endtime - soundtime) > samps )
@@ -1701,7 +1743,7 @@ void SND_UpdateSound(void)
 	S_FreeIdleRawChannels();
 
 	VectorCopy(cl.simvel, s_listener.velocity);
-	s_listener.frametime = (cl.time - cl.oldtime);
+	s_listener.frametime = (float)(cl.time - cl.oldtime);
 	s_listener.waterlevel = cl.local.waterlevel;
 	s_listener.active = CL_IsInGame();
 	s_listener.inmenu = CL_IsInMenu();
@@ -1979,7 +2021,9 @@ void S_SoundFade_f(void)
 	float fadeTime = 5.0f;
 
 	if ( c == 2 )
-		fadeTime = bound(1.0f, atof(Cmd_Argv(1)), 60.0f);
+	{
+		fadeTime = bound(1.0f, (float)atof(Cmd_Argv(1)), 60.0f);
+	}
 
 	S_FadeClientVolume(100.0f, fadeTime, 1.0f, 0.0f);
 	snd_fade_sequence = true;

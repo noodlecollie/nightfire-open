@@ -3465,9 +3465,14 @@ string_t GAME_EXPORT SV_AllocString(const char* szValue)
 
 	if ( !str64.allowdup )
 	{
-		for ( newString = str64.poldstringbase + 1; newString < str64.plast && (cmp = Q_strcmp(newString, szValue));
-			  newString += Q_strlen(newString) + 1 )
+		for ( newString = str64.poldstringbase + 1; newString < str64.plast; newString += Q_strlen(newString) + 1 )
 		{
+			cmp = Q_strcmp(newString, szValue);
+
+			if ( !cmp )
+			{
+				break;
+			}
 		}
 	}
 
@@ -5466,7 +5471,7 @@ void SV_SpawnEntities(const char* mapname)
 	svgame.globals->maxEntities = GI->max_edicts;
 	svgame.globals->mapname = MAKE_STRING(sv.name);
 	svgame.globals->startspot = MAKE_STRING(sv.startspot);
-	svgame.globals->time = sv.time;
+	svgame.globals->time = (float)sv.time;
 
 	// spawn the rest of the entities on the map
 	SV_LoadFromFile(mapname, sv.worldmodel->entities);
