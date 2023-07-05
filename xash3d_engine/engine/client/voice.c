@@ -164,8 +164,8 @@ static uint Voice_GetOpusCompressedData(byte* out, uint maxsize, uint* frames)
 		updateInterval = curtime - voice.start_time;
 		voice.start_time = curtime;
 
-		numbytes = updateInterval * voice.samplerate * voice.width * VOICE_PCM_CHANNELS;
-		numbytes = Q_min(numbytes, voice.input_file->size - voice.input_file_pos);
+		numbytes = (uint)(updateInterval * voice.samplerate * voice.width * VOICE_PCM_CHANNELS);
+		numbytes = (uint)Q_min(numbytes, voice.input_file->size - voice.input_file_pos);
 		numbytes = Q_min(numbytes, sizeof(voice.input_buffer) - voice.input_buffer_pos);
 
 		memcpy(voice.input_buffer + voice.input_buffer_pos, voice.input_file->buffer + voice.input_file_pos, numbytes);
@@ -176,7 +176,7 @@ static uint Voice_GetOpusCompressedData(byte* out, uint maxsize, uint* frames)
 	if ( !voice.input_file )
 		VoiceCapture_Lock(true);
 
-	for ( ofs = 0; voice.input_buffer_pos - ofs >= frame_size_bytes && ofs <= voice.input_buffer_pos;
+	for ( ofs = 0; (uint)voice.input_buffer_pos - ofs >= frame_size_bytes && ofs <= (uint)voice.input_buffer_pos;
 		  ofs += frame_size_bytes )
 	{
 		int bytes;
@@ -199,7 +199,7 @@ static uint Voice_GetOpusCompressedData(byte* out, uint maxsize, uint* frames)
 		if ( bytes > 0 )
 		{
 			// write compressed frame size
-			*((uint16_t*)&out[size]) = bytes;
+			*((uint16_t*)&out[size]) = (uint16_t)bytes;
 
 			size += bytes + sizeof(uint16_t);
 			maxsize -= bytes + sizeof(uint16_t);
@@ -268,7 +268,7 @@ static void Voice_ApplyGainAdjust(int16_t* samples, int count)
 
 			gain = voice.autogain.current_gain + i * voice.autogain.gain_multiplier;
 			adjustedSample = Q_min(SHRT_MAX, Q_max((int)(sample * gain), SHRT_MIN));
-			samples[blockOffset + i] = adjustedSample;
+			samples[blockOffset + i] = (int16_t)adjustedSample;
 		}
 
 		if ( blockOffset % voice.autogain.block_size == 0 )
@@ -446,7 +446,7 @@ Feed the decoded data to engine sound subsystem
 static void Voice_StartChannel(uint samples, byte* data, int entnum)
 {
 	SND_ForceInitMouth(entnum);
-	S_RawEntSamples(entnum, samples, voice.samplerate, voice.width, VOICE_PCM_CHANNELS, data, 255);
+	S_RawEntSamples(entnum, samples, voice.samplerate, (word)voice.width, VOICE_PCM_CHANNELS, data, 255);
 }
 
 /*

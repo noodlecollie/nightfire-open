@@ -3928,6 +3928,7 @@ void GAME_EXPORT pfnCrosshairAngle(const edict_t* pClient, float pitch, float ya
 		return;
 	}
 
+	// NFTODO: Change these so that we don't use loops
 	while ( pitch > 180.0f )
 	{
 		pitch -= 360;

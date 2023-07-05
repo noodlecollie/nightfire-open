@@ -120,7 +120,7 @@ public:
 #define NUMSTR_FAST_DIGIT(digit) \
 	{ \
 		m_nLength = 1; \
-		m_szBuf[0] = '0' + (digit); \
+		m_szBuf[0] = static_cast<char>('0' + (digit)); \
 		m_szBuf[1] = 0; \
 		return m_szBuf; \
 	}

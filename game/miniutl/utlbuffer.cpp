@@ -186,7 +186,8 @@ CUtlBuffer::CUtlBuffer(int growSize, int initSize, int nFlags) :
 	m_Get = 0;
 	m_Put = 0;
 	m_nTab = 0;
-	m_Flags = nFlags;
+	m_Flags = static_cast<uint8_t>(nFlags);
+
 	if ( (initSize != 0) && !IsReadOnly() )
 	{
 		m_nMaxPut = -1;
@@ -196,6 +197,7 @@ CUtlBuffer::CUtlBuffer(int growSize, int initSize, int nFlags) :
 	{
 		m_nMaxPut = 0;
 	}
+
 	SetOverflowFuncs(&CUtlBuffer::GetOverflow, &CUtlBuffer::PutOverflow);
 }
 
@@ -208,7 +210,8 @@ CUtlBuffer::CUtlBuffer(const void* pBuffer, int nSize, int nFlags) :
 	m_Get = 0;
 	m_Put = 0;
 	m_nTab = 0;
-	m_Flags = nFlags;
+	m_Flags = static_cast<uint8_t>(nFlags);
+
 	if ( IsReadOnly() )
 	{
 		m_nMaxPut = nSize;
@@ -278,7 +281,7 @@ void CUtlBuffer::SetExternalBuffer(void* pMemory, int nSize, int nInitialPut, in
 	m_Put = nInitialPut;
 	m_nTab = 0;
 	m_Error = 0;
-	m_Flags = nFlags;
+	m_Flags = static_cast<uint8_t>(nFlags);
 	m_nMaxPut = -1;
 	AddNullTermination();
 }
@@ -1226,7 +1229,7 @@ void CUtlBuffer::PutString(const char* pString)
 		}
 		else
 		{
-			PUT_BIN_DATA(char, 0);
+			PutBinData(0);
 		}
 	}
 	else if ( pString )
@@ -1616,47 +1619,47 @@ void CUtlBuffer::PutChar(char c)
 		PutTabs();
 	}
 
-	PUT_BIN_DATA(char, c);
+	PutBinData(c);
 }
 
 void CUtlBuffer::PutUint8(uint8 ub)
 {
-	PUT_TYPE(uint8, ub);
+	PutType(ub);
 }
 
 void CUtlBuffer::PutUnsignedInt64(uint64 ub)
 {
-	PUT_TYPE(uint64, ub);
+	PutType(ub);
 }
 
 void CUtlBuffer::PutInt64(int64 ub)
 {
-	PUT_TYPE(int64, ub);
+	PutType(ub);
 }
 
 void CUtlBuffer::PutInt16(int16 s16)
 {
-	PUT_TYPE(int16, s16);
+	PutType(s16);
 }
 
 void CUtlBuffer::PutShort(short s)
 {
-	PUT_TYPE(short, s);
+	PutType(s);
 }
 
 void CUtlBuffer::PutUnsignedShort(unsigned short s)
 {
-	PUT_TYPE(unsigned short, s);
+	PutType(s);
 }
 
 void CUtlBuffer::PutInt(int i)
 {
-	PUT_TYPE(int, i);
+	PutType( i);
 }
 
 void CUtlBuffer::PutUnsignedInt(unsigned int u)
 {
-	PUT_TYPE(unsigned int, u);
+	PutType(u);
 }
 
 void CUtlBuffer::PutFloat(float f)
@@ -1665,14 +1668,14 @@ void CUtlBuffer::PutFloat(float f)
 	if ( !IsText() )
 	{
 		uint32 _f = *(uint32*)&f;
-		PUT_BIN_DATA(uint32, _f);
+		PutBinData(_f);
 	}
 	else
 	{
 		PutString(CNumStr(f));
 	}
 #else
-	PUT_TYPE(float, f);
+	PutType(f);
 #endif
 }
 
@@ -1682,14 +1685,14 @@ void CUtlBuffer::PutDouble(double d)
 	if ( !IsText() )
 	{
 		int64 _f = *(int64*)&d;
-		PUT_BIN_DATA(int64, _f);
+		PutBinData(_f);
 	}
 	else
 	{
 		PutString(CNumStr(d));
 	}
 #else
-	PUT_TYPE(double, d);
+	PutType(d);
 #endif
 }
 
@@ -1708,21 +1711,21 @@ uint8 CUtlBuffer::GetUint8()
 {
 	// %u Scanf writes to a 32-bit number
 	uint32 ub;
-	GET_TYPE(uint8, ub, "%u");
+	GetType(ub, "%u");
 	return (uint8)ub;
 }
 
 uint64 CUtlBuffer::GetUnsignedInt64()
 {
 	uint64 ub;
-	GET_TYPE(uint64, ub, "%llu");
+	GetType(ub, "%llu");
 	return ub;
 }
 
 int64 CUtlBuffer::GetInt64()
 {
 	int64 ub;
-	GET_TYPE(int64, ub, "%lld");
+	GetType(ub, "%lld");
 	return ub;
 }
 
@@ -1730,7 +1733,7 @@ int16 CUtlBuffer::GetInt16()
 {
 	// %d Scanf writes to a 32-bit number
 	int32 s16;
-	GET_TYPE(int16, s16, "%d");
+	GetType(s16, "%d");
 	return (int16)s16;
 }
 
@@ -1738,35 +1741,35 @@ short CUtlBuffer::GetShort()
 {
 	// %d Scanf writes to a 32-bit number
 	int32 s;
-	GET_TYPE(short, s, "%d");
+	GetType(s, "%d");
 	return (short)s;
 }
 
 unsigned short CUtlBuffer::GetUnsignedShort()
 {
 	uint32 s;
-	GET_TYPE(unsigned short, s, "%u");
+	GetType(s, "%u");
 	return (unsigned short)s;
 }
 
 int CUtlBuffer::GetInt()
 {
 	int i;
-	GET_TYPE(int, i, "%d");
+	GetType(i, "%d");
 	return i;
 }
 
 int CUtlBuffer::GetIntHex()
 {
 	int i;
-	GET_TYPE(int, i, "%x");
+	GetType(i, "%x");
 	return i;
 }
 
 unsigned int CUtlBuffer::GetUnsignedInt()
 {
 	unsigned int u;
-	GET_TYPE(unsigned int, u, "%u");
+	GetType(u, "%u");
 	return u;
 }
 
@@ -1803,7 +1806,7 @@ float CUtlBuffer::GetFloat()
 		Scanf("%f", &f);
 	}
 #else
-	GET_TYPE(float, f, "%f");
+	GetType(f, "%f");
 #endif
 	return f;
 }
@@ -1841,7 +1844,7 @@ double CUtlBuffer::GetDouble()
 		Scanf("%f", &d);
 	}
 #else
-	GET_TYPE(double, d, "%f");
+	GetType(d, "%f");
 #endif
 	return d;
 }

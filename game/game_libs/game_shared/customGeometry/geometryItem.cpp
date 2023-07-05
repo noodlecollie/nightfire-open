@@ -56,7 +56,7 @@ namespace CustomGeometry
 		return m_Points;
 	}
 
-	const CUtlVector<uint8_t>& CGeometryItem::GetIndices() const
+	const CUtlVector<size_t>& CGeometryItem::GetIndices() const
 	{
 		return m_Indices;
 	}
@@ -80,7 +80,7 @@ namespace CustomGeometry
 			return false;
 		}
 
-		uint8_t baseIndex = CurrentBaseIndex();
+		size_t baseIndex = CurrentBaseIndex();
 
 		m_Points.AddToTail(p0);
 		m_Points.AddToTail(p1);
@@ -99,7 +99,7 @@ namespace CustomGeometry
 			return false;
 		}
 
-		uint8_t baseIndex = CurrentBaseIndex();
+		size_t baseIndex = CurrentBaseIndex();
 
 		m_Points.AddToTail(p0);
 		m_Indices.AddToTail(baseIndex);
@@ -115,7 +115,7 @@ namespace CustomGeometry
 			return false;
 		}
 
-		uint8_t baseIndex = CurrentBaseIndex();
+		size_t baseIndex = CurrentBaseIndex();
 
 		m_Points.AddToTail(p0);
 		m_Points.AddToTail(p1);
@@ -133,7 +133,7 @@ namespace CustomGeometry
 		return true;
 	}
 
-	bool CGeometryItem::AddIndex(uint8_t index)
+	bool CGeometryItem::AddIndex(size_t index)
 	{
 		if ( static_cast<size_t>(m_Indices.Count()) + 1 > MAX_INDICES_PER_MSG )
 		{
@@ -144,7 +144,7 @@ namespace CustomGeometry
 		return true;
 	}
 
-	bool CGeometryItem::AddLineIndices(uint8_t i0, uint8_t i1)
+	bool CGeometryItem::AddLineIndices(size_t i0, size_t i1)
 	{
 		if ( static_cast<size_t>(m_Indices.Count()) + 2 > MAX_INDICES_PER_MSG )
 		{
@@ -161,32 +161,33 @@ namespace CustomGeometry
 		return m_Points.Count();
 	}
 
-	uint8_t CGeometryItem::CurrentBaseIndex() const
+	size_t CGeometryItem::CurrentBaseIndex() const
 	{
 		return static_cast<uint8_t>(m_Points.Count());
 	}
 
-	Vector& CGeometryItem::GetPoint(uint8_t index)
+	Vector& CGeometryItem::GetPoint(size_t index)
 	{
 		static Vector dummy;
-		return index < m_Points.Count() ? m_Points[index] : dummy;
+		// NFTODO: Make containers use size_t
+		return index < m_Points.Count() ? m_Points[static_cast<int>(index)] : dummy;
 	}
 
-	const Vector& CGeometryItem::GetPoint(uint8_t index) const
+	const Vector& CGeometryItem::GetPoint(size_t index) const
 	{
 		static Vector dummy;
-		return index < m_Points.Count() ? m_Points[index] : dummy;
+		return index < m_Points.Count() ? m_Points[static_cast<int>(index)] : dummy;
 	}
 
-	uint8_t& CGeometryItem::GetIndex(uint8_t i)
+	size_t& CGeometryItem::GetIndex(size_t i)
 	{
-		static uint8_t dummy;
-		return i < m_Indices.Count() ? m_Indices[i] : dummy;
+		static size_t dummy;
+		return i < m_Indices.Count() ? m_Indices[static_cast<int>(i)] : dummy;
 	}
 
-	const uint8_t& CGeometryItem::GetIndex(uint8_t i) const
+	const size_t& CGeometryItem::GetIndex(size_t i) const
 	{
-		static uint8_t dummy;
-		return i < m_Indices.Count() ? m_Indices[i] : dummy;
+		static size_t dummy;
+		return i < m_Indices.Count() ? m_Indices[static_cast<int>(i)] : dummy;
 	}
 }  // namespace CustomGeometry

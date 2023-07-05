@@ -360,6 +360,7 @@ Vector CBaseBot::HandleObstacles(Vector& IdealVelocity)
 			UTIL_VecToAngles(tr.vecPlaneNormal);  // vector that is perpendicular to the surface from the TraceResult
 
 		float botY = DirectionHeadingAngle.y;  // [???,???]
+		// NFTODO: Fix these so that we don't use loops
 		while ( botY < 0 )  // [0,???]
 		{
 			botY += 360;

@@ -36,27 +36,27 @@ namespace CustomGeometry
 
 		// These only add indices, and assume that the indices are for valid points
 		// (they are not checked).
-		bool AddIndex(uint8_t index);
-		bool AddLineIndices(uint8_t i0, uint8_t i1);
+		bool AddIndex(size_t index);
+		bool AddLineIndices(size_t i0, size_t i1);
 
 		size_t GetPointCount() const;
 
 		const CUtlVector<Vector>& GetPoints() const;
-		const CUtlVector<uint8_t>& GetIndices() const;
+		const CUtlVector<size_t>& GetIndices() const;
 
-		Vector& GetPoint(uint8_t index);
-		const Vector& GetPoint(uint8_t index) const;
+		Vector& GetPoint(size_t index);
+		const Vector& GetPoint(size_t index) const;
 
-		uint8_t& GetIndex(uint8_t i);
-		const uint8_t& GetIndex(uint8_t i) const;
+		size_t& GetIndex(size_t i);
+		const size_t& GetIndex(size_t i) const;
 
 	private:
-		uint8_t CurrentBaseIndex() const;
+		size_t CurrentBaseIndex() const;
 
 		DrawType m_DrawType = DrawType::None;
 		uint32_t m_Colour = 0xFFFFFFFF;
 		CUtlVector<Vector> m_Points;
-		CUtlVector<uint8_t> m_Indices;
+		CUtlVector<size_t> m_Indices;
 		float m_Scale = 1.0f;
 	};
 }  // namespace CustomGeometry

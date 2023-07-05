@@ -114,7 +114,7 @@ void CPython::Holster(int)
 		SecondaryAttack();
 	}
 
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 1.0;
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 1.0f;
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + UTIL_SharedRandomFloat(m_pPlayer->random_seed, 10, 15);
 	SendWeaponAnim(PYTHON_HOLSTER);
 }
@@ -133,15 +133,17 @@ void CPython::SecondaryAttack(void)
 	if ( m_pPlayer->pev->fov != 0 )
 	{
 		m_fInZoom = FALSE;
-		m_pPlayer->pev->fov = m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
+		m_pPlayer->pev->fov = 0.0f;
+		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
 	}
 	else if ( m_pPlayer->pev->fov != 40 )
 	{
 		m_fInZoom = TRUE;
-		m_pPlayer->pev->fov = m_pPlayer->m_iFOV = 40;
+		m_pPlayer->pev->fov = 40.0f;
+		m_pPlayer->m_iFOV = 40;
 	}
 
-	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.5f;
 }
 
 void CPython::PrimaryAttack()
@@ -150,7 +152,7 @@ void CPython::PrimaryAttack()
 	if ( m_pPlayer->pev->waterlevel == 3 )
 	{
 		PlayEmptySound();
-		m_flNextPrimaryAttack = 0.15;
+		m_flNextPrimaryAttack = 0.15f;
 		return;
 	}
 
@@ -161,7 +163,7 @@ void CPython::PrimaryAttack()
 		else
 		{
 			PlayEmptySound();
-			m_flNextPrimaryAttack = 0.15;
+			m_flNextPrimaryAttack = 0.15f;
 		}
 
 		return;

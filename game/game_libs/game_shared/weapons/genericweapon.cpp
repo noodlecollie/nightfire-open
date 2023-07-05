@@ -435,7 +435,7 @@ void CGenericWeapon::HandleNoButtonsDown_Server()
 		// weapon isn't useable, switch.
 		if ( !(iFlags() & ITEM_FLAG_NOAUTOSWITCHEMPTY) && g_pGameRules->GetNextBestWeapon(m_pPlayer, this) )
 		{
-			m_flNextPrimaryAttack = (UseDecrement() ? 0.0 : gpGlobals->time) + 0.3;
+			m_flNextPrimaryAttack = static_cast<float>((UseDecrement() ? 0.0 : gpGlobals->time) + 0.3f);
 			return;
 		}
 	}
@@ -834,7 +834,7 @@ byte CGenericWeapon::GetPrimaryAttackModeIndex() const
 
 	for ( size_t index = 0; index < attackModeCount; ++index )
 	{
-		if ( m_pPrimaryAttackMode == atts.AttackModes[index].get() )
+		if ( m_pPrimaryAttackMode == atts.AttackModes[static_cast<int>(index)].get() )
 		{
 			// This cast is fine, since we should never exceed MAX_ATTACK_MODES.
 			return static_cast<byte>(index);

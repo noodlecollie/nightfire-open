@@ -50,7 +50,7 @@ namespace
 			}
 		}
 	}
-#endif // CLIENT_DLL
+#endif  // CLIENT_DLL
 }  // namespace
 
 CGenericMeleeWeapon::CGenericMeleeWeapon() :
@@ -256,7 +256,8 @@ void CGenericMeleeWeapon::FireEvent(const WeaponAtts::WAMeleeAttack* meleeAttack
 
 	CEventConstructor event;
 
-	event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict()) << EventIndex(eventID);
+	event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict())
+		  << EventIndex(static_cast<unsigned short>(eventID));
 
 	event.Send();
 }

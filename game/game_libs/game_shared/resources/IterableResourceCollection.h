@@ -114,8 +114,8 @@ public:
 		}
 
 		const IIterableResourceCollection* m_Parent = nullptr;
-		uint32_t m_Id = ~0;
-		uint32_t m_Index = ~0;
+		uint32_t m_Id = static_cast<uint32_t>(~0);
+		uint32_t m_Index = static_cast<uint32_t>(~0);
 	};
 
 	inline IIterableResourceCollection(const CUtlVector<CUtlString>* list, size_t count) :

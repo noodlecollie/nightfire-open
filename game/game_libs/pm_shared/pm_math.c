@@ -29,7 +29,7 @@ vec3_t vec3_origin = {0, 0, 0};
 
 float anglemod(float a)
 {
-	a = (360.0 / 65536) * ((int)(a * (65536 / 360.0)) & 65535);
+	a = (360.0f / 65536) * ((int)(a * (65536 / 360.0f)) & 65535);
 	return a;
 }
 
@@ -38,15 +38,15 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up)
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
 
-	angle = angles[YAW] * (M_PI * 2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[PITCH] * (M_PI * 2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[ROLL] * (M_PI * 2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
+	angle = angles[YAW] * ((float)M_PI * 2 / 360);
+	sy = sinf(angle);
+	cy = cosf(angle);
+	angle = angles[PITCH] * ((float)M_PI * 2 / 360);
+	sp = sinf(angle);
+	cp = cosf(angle);
+	angle = angles[ROLL] * ((float)M_PI * 2 / 360);
+	sr = sinf(angle);
+	cr = cosf(angle);
 
 	if ( forward )
 	{
@@ -73,15 +73,15 @@ void AngleVectorsTranspose(const vec3_t angles, vec3_t forward, vec3_t right, ve
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
 
-	angle = angles[YAW] * (M_PI * 2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[PITCH] * (M_PI * 2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[ROLL] * (M_PI * 2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
+	angle = angles[YAW] * ((float)M_PI * 2 / 360);
+	sy = sinf(angle);
+	cy = cosf(angle);
+	angle = angles[PITCH] * ((float)M_PI * 2 / 360);
+	sp = sinf(angle);
+	cp = cosf(angle);
+	angle = angles[ROLL] * ((float)M_PI * 2 / 360);
+	sr = sinf(angle);
+	cr = cosf(angle);
 
 	if ( forward )
 	{
@@ -108,15 +108,15 @@ void AngleMatrix(const vec3_t angles, float matrix[3][4])
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
 
-	angle = angles[YAW] * (M_PI * 2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[PITCH] * (M_PI * 2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[ROLL] * (M_PI * 2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
+	angle = angles[YAW] * ((float)M_PI * 2 / 360);
+	sy = sinf(angle);
+	cy = cosf(angle);
+	angle = angles[PITCH] * ((float)M_PI * 2 / 360);
+	sp = sinf(angle);
+	cp = cosf(angle);
+	angle = angles[ROLL] * ((float)M_PI * 2 / 360);
+	sr = sinf(angle);
+	cr = cosf(angle);
 
 	// matrix = ( YAW * PITCH ) * ROLL
 	matrix[0][0] = cp * cy;
@@ -138,15 +138,15 @@ void AngleIMatrix(const vec3_t angles, float matrix[3][4])
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
 
-	angle = angles[YAW] * (M_PI * 2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[PITCH] * (M_PI * 2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[ROLL] * (M_PI * 2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
+	angle = angles[YAW] * ((float)M_PI * 2 / 360);
+	sy = sinf(angle);
+	cy = cosf(angle);
+	angle = angles[PITCH] * ((float)M_PI * 2 / 360);
+	sp = sinf(angle);
+	cp = cosf(angle);
+	angle = angles[ROLL] * ((float)M_PI * 2 / 360);
+	sr = sinf(angle);
+	cr = cosf(angle);
 
 	// matrix = ( YAW * PITCH ) * ROLL
 	matrix[0][0] = cp * cy;
@@ -234,8 +234,8 @@ float AngleBetweenVectors(const vec3_t v1, const vec3_t v2)
 	if ( !l1 || !l2 )
 		return 0.0f;
 
-	angle = acos(DotProduct(v1, v2) / (l1 * l2));
-	angle = (angle * 180.0f) / M_PI;
+	angle = acosf(DotProduct(v1, v2) / (l1 * l2));
+	angle = (angle * 180.0f) / (float)M_PI;
 
 	return angle;
 }
@@ -307,7 +307,7 @@ float Length(const vec3_t v)
 
 	for ( i = 0; i < 3; i++ )
 		length += v[i] * v[i];
-	length = sqrt(length);  // FIXME
+	length = sqrtf(length);  // FIXME
 
 	return length;
 }
@@ -324,7 +324,7 @@ float VectorNormalize(vec3_t v)
 	float length, ilength;
 
 	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-	length = sqrt(length);  // FIXME
+	length = sqrtf(length);  // FIXME
 
 	if ( length )
 	{
@@ -397,12 +397,12 @@ void VectorAngles(const vec3_t forward, vec3_t angles)
 	}
 	else
 	{
-		yaw = (atan2(forward[1], forward[0]) * 180 / M_PI);
+		yaw = (atan2f(forward[1], forward[0]) * 180 / (float)M_PI);
 		if ( yaw < 0 )
 			yaw += 360;
 
-		tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
-		pitch = (atan2(forward[2], tmp) * 180 / M_PI);
+		tmp = sqrtf(forward[0] * forward[0] + forward[1] * forward[1]);
+		pitch = (atan2f(forward[2], tmp) * 180 / (float)M_PI);
 		if ( pitch < 0 )
 			pitch += 360;
 	}

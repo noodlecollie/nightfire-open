@@ -70,7 +70,7 @@ protected:
 	const T* GetAttackModeFromAttributes(uint32_t index) const
 	{
 		const WeaponAtts::WACollection& atts = WeaponAttributes();
-		ASSERT(index < atts.AttackModes.Count());
+		ASSERT(index < static_cast<uint32_t>(atts.AttackModes.Count()));
 
 		if ( index >= static_cast<uint32_t>(atts.AttackModes.Count()) )
 		{
@@ -226,7 +226,7 @@ inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetAttackModeFromAttribut
 	uint32_t index) const
 {
 	const WeaponAtts::WACollection& atts = WeaponAttributes();
-	ASSERT(index < atts.AttackModes.Count());
+	ASSERT(index < static_cast<uint32_t>(atts.AttackModes.Count()));
 
 	if ( index >= static_cast<uint32_t>(atts.AttackModes.Count()) )
 	{
