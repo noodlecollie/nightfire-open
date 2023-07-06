@@ -160,20 +160,7 @@ int CHAssassin::Classify(void)
 //=========================================================
 void CHAssassin::SetYawSpeed(void)
 {
-	int ys;
-
-	switch ( m_Activity )
-	{
-		case ACT_TURN_LEFT:
-		case ACT_TURN_RIGHT:
-			ys = 360;
-			break;
-		default:
-			ys = 360;
-			break;
-	}
-
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 360.0f;
 }
 
 //=========================================================
@@ -191,13 +178,13 @@ void CHAssassin::Shoot(void)
 
 	if ( m_flLastShot + 2 < gpGlobals->time )
 	{
-		m_flDiviation = 0.10;
+		m_flDiviation = 0.10f;
 	}
 	else
 	{
-		m_flDiviation -= 0.01;
-		if ( m_flDiviation < 0.02 )
-			m_flDiviation = 0.02;
+		m_flDiviation -= 0.01f;
+		if ( m_flDiviation < 0.02f )
+			m_flDiviation = 0.02f;
 	}
 	m_flLastShot = gpGlobals->time;
 
@@ -222,10 +209,10 @@ void CHAssassin::Shoot(void)
 	switch ( RANDOM_LONG(0, 1) )
 	{
 		case 0:
-			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/pl_gun1.wav", RANDOM_FLOAT(0.6, 0.8), ATTN_NORM);
+			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/pl_gun1.wav", RANDOM_FLOAT(0.6f, 0.8f), ATTN_NORM);
 			break;
 		case 1:
-			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/pl_gun2.wav", RANDOM_FLOAT(0.6, 0.8), ATTN_NORM);
+			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/pl_gun2.wav", RANDOM_FLOAT(0.6f, 0.8f), ATTN_NORM);
 			break;
 	}
 
@@ -272,7 +259,7 @@ void CHAssassin::HandleAnimEvent(MonsterEvent_t* pEvent)
 			pev->movetype = MOVETYPE_TOSS;
 			pev->flags &= ~FL_ONGROUND;
 			pev->velocity = m_vecJumpVelocity;
-			m_flNextJump = gpGlobals->time + 3.0;
+			m_flNextJump = gpGlobals->time + 3.0f;
 		}
 			return;
 		default:
@@ -565,7 +552,7 @@ BOOL CHAssassin::CheckMeleeAttack1(float, float flDist)
 
 		float flGravity = g_psv_gravity->value;
 
-		float time = sqrt(160 / (0.5 * flGravity));
+		float time = sqrtf(160 / (0.5f * flGravity));
 		float speed = flGravity * time / 160;
 		m_vecJumpVelocity = (vecDest - pev->origin) * speed;
 
@@ -657,7 +644,7 @@ void CHAssassin::RunAI(void)
 	{
 		if ( pev->renderamt == 255 )
 		{
-			EMIT_SOUND(ENT(pev), CHAN_BODY, "debris/beamstart1.wav", 0.2, ATTN_NORM);
+			EMIT_SOUND(ENT(pev), CHAN_BODY, "debris/beamstart1.wav", 0.2f, ATTN_NORM);
 		}
 
 		pev->renderamt = Q_max(pev->renderamt - 50, m_iTargetRanderamt);
@@ -710,7 +697,7 @@ void CHAssassin::RunTask(Task_t* pTask)
 	{
 		case TASK_ASSASSIN_FALL_TO_GROUND:
 			MakeIdealYaw(m_vecEnemyLKP);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( m_fSequenceFinished )
 			{

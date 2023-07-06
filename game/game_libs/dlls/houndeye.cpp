@@ -204,9 +204,7 @@ BOOL CHoundeye::CheckRangeAttack1(float flDot, float flDist)
 //=========================================================
 void CHoundeye::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 90;
+	float ys = 90.0f;
 
 	switch ( m_Activity )
 	{
@@ -285,7 +283,7 @@ void CHoundeye::HandleAnimEvent(MonsterEvent_t* pEvent)
 			pev->flags &= ~FL_ONGROUND;
 
 			pev->velocity = gpGlobals->v_forward * -200;
-			pev->velocity.z += (0.6 * flGravity) * 0.5;
+			pev->velocity.z += (0.6f * flGravity) * 0.5f;
 			break;
 		}
 		case HOUND_AE_THUMP:
@@ -401,10 +399,10 @@ void CHoundeye::WarmUpSound(void)
 	switch ( RANDOM_LONG(0, 1) )
 	{
 		case 0:
-			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "houndeye/he_attack1.wav", 0.7, ATTN_NORM);
+			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "houndeye/he_attack1.wav", 0.7f, ATTN_NORM);
 			break;
 		case 1:
-			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "houndeye/he_attack3.wav", 0.7, ATTN_NORM);
+			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "houndeye/he_attack3.wav", 0.7f, ATTN_NORM);
 			break;
 	}
 }
@@ -568,7 +566,7 @@ void CHoundeye::SonicAttack(void)
 	WRITE_COORD(pev->origin.z + 16);
 	WRITE_COORD(pev->origin.x);
 	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z + 16 + HOUNDEYE_MAX_ATTACK_RADIUS / .2);  // reach damage radius over .3 seconds
+	WRITE_COORD(pev->origin.z + 16 + HOUNDEYE_MAX_ATTACK_RADIUS / 0.2f);  // reach damage radius over .3 seconds
 	WRITE_SHORT(m_iSpriteTexture);
 	WRITE_BYTE(0);  // startframe
 	WRITE_BYTE(0);  // framerate
@@ -589,7 +587,7 @@ void CHoundeye::SonicAttack(void)
 	WRITE_COORD(pev->origin.z + 16);
 	WRITE_COORD(pev->origin.x);
 	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z + 16 + (HOUNDEYE_MAX_ATTACK_RADIUS / 2) / .2);  // reach damage radius over .3 seconds
+	WRITE_COORD(pev->origin.z + 16 + (HOUNDEYE_MAX_ATTACK_RADIUS / 2) / 0.2f);  // reach damage radius over .3 seconds
 	WRITE_SHORT(m_iSpriteTexture);
 	WRITE_BYTE(0);  // startframe
 	WRITE_BYTE(0);  // framerate
@@ -772,7 +770,7 @@ void CHoundeye::RunTask(Task_t* pTask)
 		case TASK_HOUND_THREAT_DISPLAY:
 		{
 			MakeIdealYaw(m_vecEnemyLKP);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( m_fSequenceFinished )
 			{
@@ -801,21 +799,21 @@ void CHoundeye::RunTask(Task_t* pTask)
 			pev->skin = RANDOM_LONG(0, HOUNDEYE_EYE_FRAMES - 1);
 
 			MakeIdealYaw(m_vecEnemyLKP);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			float life;
 			life = ((255 - pev->frame) / (pev->framerate * m_flFrameRate));
 			if ( life < 0.1 )
-				life = 0.1;
+				life = 0.1f;
 
 			MESSAGE_BEGIN(MSG_PAS, SVC_TEMPENTITY, pev->origin);
 			WRITE_BYTE(TE_IMPLOSION);
 			WRITE_COORD(pev->origin.x);
 			WRITE_COORD(pev->origin.y);
 			WRITE_COORD(pev->origin.z + 16);
-			WRITE_BYTE(50 * life + 100);  // radius
-			WRITE_BYTE(pev->frame / 25.0);  // count
-			WRITE_BYTE(life * 10);  // life
+			WRITE_BYTE(static_cast<int>(50 * life + 100));  // radius
+			WRITE_BYTE(static_cast<int>(pev->frame / 25.0f));  // count
+			WRITE_BYTE(static_cast<int>(life * 10));  // life
 			MESSAGE_END();
 
 			if ( m_fSequenceFinished )
@@ -876,7 +874,7 @@ void CHoundeye::PrescheduleThink(void)
 			}
 		}
 
-		m_vecPackCenter = m_vecPackCenter / iSquadCount;
+		m_vecPackCenter = m_vecPackCenter / static_cast<float>(iSquadCount);
 	}
 }
 

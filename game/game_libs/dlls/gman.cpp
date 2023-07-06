@@ -82,16 +82,7 @@ int CGMan::Classify(void)
 //=========================================================
 void CGMan::SetYawSpeed(void)
 {
-	int ys;
-
-	switch ( m_Activity )
-	{
-		case ACT_IDLE:
-		default:
-			ys = 90;
-	}
-
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 90.0f;
 }
 
 //=========================================================
