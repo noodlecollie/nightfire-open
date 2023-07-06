@@ -65,7 +65,7 @@ void CHitboxGeometryConstructor::CreateRectFromPoints(
 {
 	ASSERT(HitboxPoints::NUM_ELEMENTS - offset >= 4);
 
-	uint8_t baseIndex = geom->GetPointCount();
+	size_t baseIndex = geom->GetPointCount();
 
 	// Points are specified as (min, min), (max, min), (min, max), (max, max).
 	// Reorder these slightly so that only one component changes on each step.

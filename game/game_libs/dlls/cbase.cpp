@@ -565,7 +565,7 @@ int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 		Vector vecDir = pev->origin - (pevInflictor->absmin + pevInflictor->absmax) * 0.5;
 		vecDir = vecDir.Normalize();
 
-		float flForce = flDamage * ((32 * 32 * 72.0) / (pev->size.x * pev->size.y * pev->size.z)) * 5;
+		float flForce = flDamage * ((32 * 32 * 72.0f) / (pev->size.x * pev->size.y * pev->size.z)) * 5;
 
 		if ( flForce > 1000.0 )
 			flForce = 1000.0;
@@ -653,10 +653,10 @@ void SetObjectCollisionBox(entvars_t* pev)
 		max = 0;
 		for ( i = 0; i < 3; i++ )
 		{
-			v = fabs(((float*)pev->mins)[i]);
+			v = fabsf(((float*)pev->mins)[i]);
 			if ( v > max )
 				max = v;
-			v = fabs(((float*)pev->maxs)[i]);
+			v = fabsf(((float*)pev->maxs)[i]);
 			if ( v > max )
 				max = v;
 		}

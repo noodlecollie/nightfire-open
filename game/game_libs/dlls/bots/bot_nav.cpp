@@ -130,7 +130,7 @@ float CGraph::FConvertArrayToGlobal(int array)
 {
 	// 31-July-2001: return the center of the array box
 	//	return ( array * NAV_GRIDBOX_SIZE ) - 4096;
-	return ((array + 0.5) * NAV_GRIDBOX_SIZE) - 4096;
+	return ((array + 0.5f) * NAV_GRIDBOX_SIZE) - 4096;
 	// 31-July-2001: end
 }
 
@@ -141,7 +141,7 @@ float CGraph::FConvertArrayToGlobal(int array)
 int CGraph::FConvertGlobalToArray(float location)
 {
 	// 30-July-2001: add bounds checking
-	int iArray = (4096 + location) / NAV_GRIDBOX_SIZE;
+	int iArray = static_cast<int>((4096 + location) / NAV_GRIDBOX_SIZE);
 	return (BoundsCheck(iArray));
 	//	return (4096 + location) / NAV_GRIDBOX_SIZE;
 	// 30-July-2001: end
@@ -240,7 +240,7 @@ void CGraph::parse_nav_line(NAV_ARRAY_TYPE space_array[NAV_ARRAY_SIZE][NAV_ARRAY
 	y = atoi(yBuf);
 	z = atoi(zBuf);
 	value = atoi(valueBuf);
-	space_array[x][y][z] = value;
+	space_array[x][y][z] = static_cast<NAV_ARRAY_TYPE>(value);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

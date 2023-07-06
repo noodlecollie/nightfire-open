@@ -224,9 +224,9 @@ void CAGrunt::TraceAttack(
 		{
 			Vector vecTracerDir = vecDir;
 
-			vecTracerDir.x += RANDOM_FLOAT(-0.3, 0.3);
-			vecTracerDir.y += RANDOM_FLOAT(-0.3, 0.3);
-			vecTracerDir.z += RANDOM_FLOAT(-0.3, 0.3);
+			vecTracerDir.x += RANDOM_FLOAT(-0.3f, 0.3f);
+			vecTracerDir.y += RANDOM_FLOAT(-0.3f, 0.3f);
+			vecTracerDir.z += RANDOM_FLOAT(-0.3f, 0.3f);
 
 			vecTracerDir = vecTracerDir * -512;
 
@@ -244,7 +244,7 @@ void CAGrunt::TraceAttack(
 
 		flDamage -= 20;
 		if ( flDamage <= 0 )
-			flDamage = 0.1;  // don't hurt the monster much, but allow bits_COND_LIGHT_DAMAGE to be generated
+			flDamage = 0.1f;  // don't hurt the monster much, but allow bits_COND_LIGHT_DAMAGE to be generated
 	}
 	else
 	{
@@ -366,7 +366,7 @@ void CAGrunt::PainSound(void)
 		return;
 	}
 
-	m_flNextPainTime = gpGlobals->time + 0.6;
+	m_flNextPainTime = gpGlobals->time + 0.6f;
 
 	StopTalking();
 
@@ -388,16 +388,15 @@ int CAGrunt::Classify(void)
 //=========================================================
 void CAGrunt::SetYawSpeed(void)
 {
-	int ys;
+	float ys = 100.0f;
 
 	switch ( m_Activity )
 	{
 		case ACT_TURN_LEFT:
 		case ACT_TURN_RIGHT:
-			ys = 110;
+			ys = 110.0f;
 			break;
 		default:
-			ys = 100;
 			break;
 	}
 
@@ -494,7 +493,8 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 		case AGRUNT_AE_LEFT_PUNCH:
 		{
-			CBaseEntity* pHurt = CheckTraceHullAttack(AGRUNT_MELEE_DIST, gSkillData.agruntDmgPunch, DMG_CLUB);
+			CBaseEntity* pHurt =
+				CheckTraceHullAttack(AGRUNT_MELEE_DIST, static_cast<int>(gSkillData.agruntDmgPunch), DMG_CLUB);
 
 			if ( pHurt )
 			{
@@ -537,7 +537,8 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 		break;
 		case AGRUNT_AE_RIGHT_PUNCH:
 		{
-			CBaseEntity* pHurt = CheckTraceHullAttack(AGRUNT_MELEE_DIST, gSkillData.agruntDmgPunch, DMG_CLUB);
+			CBaseEntity* pHurt =
+				CheckTraceHullAttack(AGRUNT_MELEE_DIST, static_cast<int>(gSkillData.agruntDmgPunch), DMG_CLUB);
 
 			if ( pHurt )
 			{
@@ -598,8 +599,8 @@ void CAGrunt::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->effects = 0;
-	pev->health = gSkillData.agruntHealth;
-	m_flFieldOfView = 0.2;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
+	pev->health = static_cast<float>(gSkillData.agruntHealth);
+	m_flFieldOfView = 0.2f;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
 	m_afCapability = 0;
 	m_afCapability |= bits_CAP_SQUAD;
@@ -908,7 +909,7 @@ BOOL CAGrunt::CheckRangeAttack1(float flDot, float flDist)
 		}
 	}
 
-	m_flNextHornetAttackCheck = gpGlobals->time + 0.2;  // don't check for half second if this check wasn't successful
+	m_flNextHornetAttackCheck = gpGlobals->time + 0.2f;  // don't check for half second if this check wasn't successful
 	m_fCanHornetAttack = FALSE;
 	return m_fCanHornetAttack;
 }

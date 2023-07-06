@@ -230,7 +230,8 @@ void CPython::Reload(void)
 	if ( m_pPlayer->pev->fov != 0 )
 	{
 		m_fInZoom = FALSE;
-		m_pPlayer->pev->fov = m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
+		m_pPlayer->pev->fov = 0.0f;
+		m_pPlayer->m_iFOV = 0;  // 0 means reset to default fov
 	}
 
 	int bUseScope = FALSE;
@@ -254,7 +255,7 @@ void CPython::WeaponIdle(void)
 	// ALERT( at_console, "%.2f\n", gpGlobals->time - m_flSoundDelay );
 	if ( m_flSoundDelay != 0 && m_flSoundDelay <= UTIL_WeaponTimeBase() )
 	{
-		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_reload1.wav", RANDOM_FLOAT(0.8, 0.9), ATTN_NORM);
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_reload1.wav", RANDOM_FLOAT(0.8f, 0.9f), ATTN_NORM);
 		m_flSoundDelay = 0;
 	}
 
@@ -266,22 +267,22 @@ void CPython::WeaponIdle(void)
 	if ( flRand <= 0.5 )
 	{
 		iAnim = PYTHON_IDLE1;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (70.0 / 30.0);
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (70.0f / 30.0f);
 	}
 	else if ( flRand <= 0.7 )
 	{
 		iAnim = PYTHON_IDLE2;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (60.0 / 30.0);
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (60.0f / 30.0f);
 	}
 	else if ( flRand <= 0.9 )
 	{
 		iAnim = PYTHON_IDLE3;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (88.0 / 30.0);
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (88.0f / 30.0f);
 	}
 	else
 	{
 		iAnim = PYTHON_FIDGET;
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (170.0 / 30.0);
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + (170.0f / 30.0f);
 	}
 
 	int bUseScope = FALSE;

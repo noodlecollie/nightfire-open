@@ -16,6 +16,8 @@ GNU General Public License for more details.
 #include "build.h"
 #include "common.h"
 
+#if !XASH_WIN32
+
 int AVI_GetVideoFrameNumber(movie_state_t* Avi, float time)
 {
 	(void)Avi;
@@ -117,3 +119,11 @@ void AVI_Shutdown(void)
 {
 
 }
+
+#else
+
+void AVI_Dummy()
+{
+}
+
+#endif // !XASH_WIN32
