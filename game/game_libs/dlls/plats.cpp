@@ -69,37 +69,37 @@ void CBasePlatTrain::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "lip") )
 	{
-		m_flLip = atof(pkvd->szValue);
+		m_flLip = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "wait") )
 	{
-		m_flWait = atof(pkvd->szValue);
+		m_flWait = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "height") )
 	{
-		m_flHeight = atof(pkvd->szValue);
+		m_flHeight = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "rotation") )
 	{
-		m_vecFinalAngle.x = atof(pkvd->szValue);
+		m_vecFinalAngle.x = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "movesnd") )
 	{
-		m_bMoveSnd = atoi(pkvd->szValue);
+		m_bMoveSnd = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "stopsnd") )
 	{
-		m_bStopSnd = atoi(pkvd->szValue);
+		m_bStopSnd = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "volume") )
 	{
-		m_volume = atof(pkvd->szValue);
+		m_volume = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -305,7 +305,7 @@ void CFuncPlat::Setup(void)
 		pev->speed = 150;
 
 	if ( m_volume == 0 )
-		m_volume = 0.85;
+		m_volume = 0.85f;
 }
 
 void CFuncPlat::Precache()
@@ -665,7 +665,7 @@ void CFuncTrain::Blocked(CBaseEntity* pOther)
 	if ( gpGlobals->time < m_flActivateFinished )
 		return;
 
-	m_flActivateFinished = gpGlobals->time + 0.5;
+	m_flActivateFinished = gpGlobals->time + 0.5f;
 
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
 }
@@ -810,7 +810,7 @@ void CFuncTrain::Activate(void)
 
 		if ( FStringNull(pev->targetname) )
 		{  // not triggered, so start immediately
-			pev->nextthink = pev->ltime + 0.1;
+			pev->nextthink = pev->ltime + 0.1f;
 			SetThink(&CFuncTrain::Next);
 		}
 		else
@@ -854,7 +854,7 @@ void CFuncTrain::Spawn(void)
 	m_activated = FALSE;
 
 	if ( m_volume == 0 )
-		m_volume = 0.85;
+		m_volume = 0.85f;
 }
 
 void CFuncTrain::Precache(void)
@@ -902,7 +902,7 @@ void CFuncTrain::OverrideReset(void)
 		else  // Keep moving for 0.1 secs, then find path_corner again and restart
 		{
 			SetThink(&CFuncTrain::Next);
-			pev->nextthink = pev->ltime + 0.1;
+			pev->nextthink = pev->ltime + 0.1f;
 		}
 	}
 }
@@ -935,17 +935,17 @@ void CFuncTrackTrain::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "wheels") )
 	{
-		m_length = atof(pkvd->szValue);
+		m_length = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "height") )
 	{
-		m_height = atof(pkvd->szValue);
+		m_height = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "startspeed") )
 	{
-		m_startSpeed = atof(pkvd->szValue);
+		m_startSpeed = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "sounds") )
@@ -956,12 +956,12 @@ void CFuncTrackTrain::KeyValue(KeyValueData* pkvd)
 	else if ( FStrEq(pkvd->szKeyName, "volume") )
 	{
 		m_flVolume = (float)atoi(pkvd->szValue);
-		m_flVolume *= 0.1;
+		m_flVolume *= 0.1f;
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "bank") )
 	{
-		m_flBank = atof(pkvd->szValue);
+		m_flBank = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -985,7 +985,7 @@ void CFuncTrackTrain::Blocked(CBaseEntity* pOther)
 	// Blocker is on-ground on the train
 	if ( FBitSet(pevOther->flags, FL_ONGROUND) && VARS(pevOther->groundentity) == pev )
 	{
-		float deltaSpeed = fabs(pev->speed);
+		float deltaSpeed = fabsf(pev->speed);
 		if ( deltaSpeed > 50 )
 			deltaSpeed = 50;
 		if ( !pevOther->velocity.z )
@@ -1033,16 +1033,25 @@ void CFuncTrackTrain::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float va
 	{
 		float delta = value;
 
-		delta = ((int)(pev->speed * 4) / (int)m_speed) * 0.25 + 0.25 * delta;
+		delta = ((int)(pev->speed * 4) / (int)m_speed) * 0.25f + 0.25f * delta;
+
 		if ( delta > 1 )
+		{
 			delta = 1;
+		}
 		else if ( delta < -1 )
+		{
 			delta = -1;
+		}
+
 		if ( pev->spawnflags & SF_TRACKTRAIN_FORWARDONLY )
 		{
 			if ( delta < 0 )
+			{
 				delta = 0;
+			}
 		}
+
 		pev->speed = m_speed * delta;
 		Next();
 		ALERT(at_aiconsole, "TRAIN(%s), speed to %.2f\n", STRING(pev->targetname), pev->speed);
@@ -1107,7 +1116,7 @@ void CFuncTrackTrain::UpdateSound(void)
 	if ( !pev->noise )
 		return;
 
-	flpitch = TRAIN_STARTPITCH + (fabs(pev->speed) * (TRAIN_MAXPITCH - TRAIN_STARTPITCH) / TRAIN_MAXSPEED);
+	flpitch = TRAIN_STARTPITCH + (fabsf(pev->speed) * (TRAIN_MAXPITCH - TRAIN_STARTPITCH) / TRAIN_MAXSPEED);
 
 	if ( !m_soundPlaying )
 	{
@@ -1175,7 +1184,7 @@ void CFuncTrackTrain::Next(void)
 	Vector nextPos = pev->origin;
 
 	nextPos.z -= m_height;
-	CPathTrack* pnext = m_ppath->LookAhead(&nextPos, pev->speed * 0.1, 1);
+	CPathTrack* pnext = m_ppath->LookAhead(&nextPos, pev->speed * 0.1f, 1);
 	nextPos.z += m_height;
 
 	pev->velocity = (nextPos - pev->origin) * 10;
@@ -1392,7 +1401,7 @@ void CFuncTrackTrain::Find(void)
 	if ( pev->spawnflags & SF_TRACKTRAIN_NOPITCH )
 		pev->angles.x = 0;
 	UTIL_SetOrigin(pev, nextPos);
-	NextThink(pev->ltime + 0.1, FALSE);
+	NextThink(pev->ltime + 0.1f, FALSE);
 	SetThink(&CFuncTrackTrain::Next);
 	pev->speed = m_startSpeed;
 
@@ -1441,14 +1450,14 @@ void CFuncTrackTrain::NearestPath(void)
 
 	if ( pev->speed != 0 )
 	{
-		NextThink(pev->ltime + 0.1, FALSE);
+		NextThink(pev->ltime + 0.1f, FALSE);
 		SetThink(&CFuncTrackTrain::Next);
 	}
 }
 
 void CFuncTrackTrain::OverrideReset(void)
 {
-	NextThink(pev->ltime + 0.1, FALSE);
+	NextThink(pev->ltime + 0.1f, FALSE);
 	SetThink(&CFuncTrackTrain::NearestPath);
 }
 
@@ -1507,7 +1516,7 @@ void CFuncTrackTrain::Spawn(void)
 
 	// start trains on the next frame, to make sure their targets have had
 	// a chance to spawn/activate
-	NextThink(pev->ltime + 0.1, FALSE);
+	NextThink(pev->ltime + 0.1f, FALSE);
 	SetThink(&CFuncTrackTrain::Find);
 	Precache();
 }
@@ -1726,7 +1735,7 @@ void CFuncTrackChange::Spawn(void)
 	}
 
 	EnableUse();
-	pev->nextthink = pev->ltime + 2.0;
+	pev->nextthink = pev->ltime + 2.0f;
 	SetThink(&CFuncTrackChange::Find);
 	Precache();
 }
@@ -1768,7 +1777,7 @@ void CFuncTrackChange::KeyValue(KeyValueData* pkvd)
 
 void CFuncTrackChange::OverrideReset(void)
 {
-	pev->nextthink = pev->ltime + 1.0;
+	pev->nextthink = pev->ltime + 1.0f;
 	SetThink(&CFuncTrackChange::Find);
 }
 
@@ -1861,7 +1870,7 @@ void CFuncTrackChange::UpdateTrain(Vector& dest)
 	local.z = DotProduct(offset, gpGlobals->v_up);
 
 	local = local - offset;
-	m_train->pev->velocity = pev->velocity + (local * (1.0 / time));
+	m_train->pev->velocity = pev->velocity + (local * (1.0f / time));
 }
 
 void CFuncTrackChange::GoDown(void)
@@ -2173,7 +2182,7 @@ void CGunTarget::Spawn(void)
 	if ( pev->spawnflags & FGUNTARGET_START_ON )
 	{
 		SetThink(&CGunTarget::Start);
-		pev->nextthink = pev->ltime + 0.3;
+		pev->nextthink = pev->ltime + 0.3f;
 	}
 }
 

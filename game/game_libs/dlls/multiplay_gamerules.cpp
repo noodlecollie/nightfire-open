@@ -438,11 +438,7 @@ BOOL CHalfLifeMultiplay::GetNextBestWeapon(CBasePlayer* pPlayer, CBasePlayerItem
 
 //=========================================================
 //=========================================================
-BOOL CHalfLifeMultiplay::ClientConnected(
-	edict_t* pEntity,
-	const char*,
-	const char*,
-	char szRejectReason[128])
+BOOL CHalfLifeMultiplay::ClientConnected(edict_t* pEntity, const char*, const char*, char szRejectReason[128])
 {
 	(void)pEntity;
 	(void)szRejectReason;
@@ -625,14 +621,14 @@ void CHalfLifeMultiplay::PlayerThink(CBasePlayer* pPlayer)
 void CHalfLifeMultiplay::PlayerSpawn(CBasePlayer* pPlayer)
 {
 	BOOL addDefault;
-	CBaseEntity* pWeaponEntity = NULL;
 
 	pPlayer->pev->weapons |= (1 << WEAPON_SUIT);
 	pPlayer->GiveNamedItem("weapon_fists");
 
 	addDefault = TRUE;
 
-	while ( (pWeaponEntity = UTIL_FindEntityByClassname(pWeaponEntity, "game_player_equip")) )
+	for ( CBaseEntity* pWeaponEntity = UTIL_FindEntityByClassname(nullptr, "game_player_equip"); pWeaponEntity;
+		  pWeaponEntity = UTIL_FindEntityByClassname(pWeaponEntity, "game_player_equip") )
 	{
 		pWeaponEntity->Touch(pPlayer);
 		addDefault = FALSE;
@@ -1330,7 +1326,7 @@ skipwhite:
 				com_token[len] = 0;
 				return data;
 			}
-			com_token[len] = c;
+			com_token[len] = static_cast<char>(c);
 			len++;
 		}
 	}
@@ -1338,7 +1334,7 @@ skipwhite:
 	// parse single characters
 	if ( c == '{' || c == '}' || c == ')' || c == '(' || c == '\'' || c == ',' )
 	{
-		com_token[len] = c;
+		com_token[len] = static_cast<char>(c);
 		len++;
 		com_token[len] = 0;
 		return data + 1;
@@ -1347,7 +1343,7 @@ skipwhite:
 	// parse a regular word
 	do
 	{
-		com_token[len] = c;
+		com_token[len] = static_cast<char>(c);
 		data++;
 		len++;
 		c = *data;
@@ -1760,7 +1756,7 @@ void CHalfLifeMultiplay::SendMOTDToClient(edict_t* client)
 			chunk[MAX_MOTD_CHUNK] = 0;  // strncpy doesn't always append the null terminator
 		}
 
-		char_count += strlen(chunk);
+		char_count += static_cast<int>(strlen(chunk));
 		if ( char_count < MAX_MOTD_LENGTH )
 			pFileList = aFileList + char_count;
 		else

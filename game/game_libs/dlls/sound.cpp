@@ -192,7 +192,7 @@ void CAmbientGeneric::Spawn(void)
 	if ( FStringNull(pev->message) || strlen(szSoundFile) < 1 )
 	{
 		ALERT(at_error, "EMPTY AMBIENT AT: %f, %f, %f\n", pev->origin.x, pev->origin.y, pev->origin.z);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 		SetThink(&CBaseEntity::SUB_Remove);
 		return;
 	}
@@ -244,12 +244,12 @@ void CAmbientGeneric::Precache(void)
 			ENT(pev),
 			pev->origin,
 			szSoundFile,
-			(m_dpv.vol * 0.01),
+			(m_dpv.vol * 0.01f),
 			m_flAttenuation,
 			SND_SPAWNING,
 			m_dpv.pitch);
 
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 }
 
@@ -441,11 +441,11 @@ void CAmbientGeneric::RampThink(void)
 		if ( pitch == PITCH_NORM )
 			pitch = PITCH_NORM + 1;  // don't send 'no pitch' !
 
-		UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile, (vol * 0.01), m_flAttenuation, flags, pitch);
+		UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile, (vol * 0.01f), m_flAttenuation, flags, pitch);
 	}
 
 	// update ramps at 5hz
-	pev->nextthink = gpGlobals->time + 0.2;
+	pev->nextthink = gpGlobals->time + 0.2f;
 	return;
 }
 
@@ -557,7 +557,7 @@ void CAmbientGeneric::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, fl
 		if ( fraction > 1.0 )
 			fraction = 1.0;
 		if ( fraction < 0.0 )
-			fraction = 0.01;
+			fraction = 0.01f;
 
 		m_dpv.pitch = (int)(fraction * 255);
 
@@ -590,7 +590,7 @@ void CAmbientGeneric::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, fl
 				if ( m_dpv.pitchrun > 255 )
 					m_dpv.pitchrun = 255;
 
-				pev->nextthink = gpGlobals->time + 0.1;
+				pev->nextthink = gpGlobals->time + 0.1f;
 			}
 		}
 		else
@@ -608,7 +608,7 @@ void CAmbientGeneric::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, fl
 
 				m_dpv.fadeout = m_dpv.fadeoutsav;
 				m_dpv.fadein = 0;
-				pev->nextthink = gpGlobals->time + 0.1;
+				pev->nextthink = gpGlobals->time + 0.1f;
 			}
 			else
 				UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile, 0, 0, SND_STOP, 0);
@@ -631,9 +631,9 @@ void CAmbientGeneric::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, fl
 		// init all ramp params for startup
 		InitModulationParms();
 
-		UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile, (m_dpv.vol * 0.01), m_flAttenuation, 0, m_dpv.pitch);
+		UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile, (m_dpv.vol * 0.01f), m_flAttenuation, 0, m_dpv.pitch);
 
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 }
 
@@ -836,12 +836,12 @@ void CEnvSound::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "radius") )
 	{
-		m_flRadius = atof(pkvd->szValue);
+		m_flRadius = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	if ( FStrEq(pkvd->szKeyName, "roomtype") )
 	{
-		m_flRoomtype = atof(pkvd->szValue);
+		m_flRoomtype = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 }
@@ -967,10 +967,10 @@ void CEnvSound::Think(void)
 	// not in range. do nothing, fall through to think_fast...
 
 env_sound_Think_fast:
-	pev->nextthink = gpGlobals->time + 0.25;
+	pev->nextthink = gpGlobals->time + 0.25f;
 	return;
 env_sound_Think_slow:
-	pev->nextthink = gpGlobals->time + 0.75;
+	pev->nextthink = gpGlobals->time + 0.75f;
 	return;
 }
 
@@ -1053,7 +1053,7 @@ int USENTENCEG_PickSequential(int isentenceg, char* szfound, int ipick, int fres
 		return -1;
 
 	szgroupname = rgsentenceg[isentenceg].szgroupname;
-	count = rgsentenceg[isentenceg].count;
+	count = static_cast<unsigned char>(rgsentenceg[isentenceg].count);
 
 	if ( count == 0 )
 		return -1;
@@ -1093,7 +1093,7 @@ int USENTENCEG_Pick(int isentenceg, char* szfound)
 	unsigned char i;
 	unsigned char count;
 	char sznum[8];
-	unsigned char ipick;
+	unsigned char ipick = 0;
 	int ffound = FALSE;
 
 	if ( !fSentencesInit )
@@ -1103,7 +1103,7 @@ int USENTENCEG_Pick(int isentenceg, char* szfound)
 		return -1;
 
 	szgroupname = rgsentenceg[isentenceg].szgroupname;
-	count = rgsentenceg[isentenceg].count;
+	count = static_cast<unsigned char>(rgsentenceg[isentenceg].count);
 	plru = rgsentenceg[isentenceg].rgblru;
 
 	while ( !ffound )
@@ -1614,7 +1614,7 @@ void TEXTURETYPE_PlaySound(TraceResult* ptr, Vector vecSrc, Vector vecEnd, int i
 	{
 		UTIL_Sparks(ptr->vecEndPos);
 
-		float flVolume = RANDOM_FLOAT(0.7, 1.0);
+		float flVolume = RANDOM_FLOAT(0.7f, 1.0f);
 
 		switch ( RANDOM_LONG(0, 1) )
 		{
@@ -1683,7 +1683,7 @@ void CSpeaker::Spawn(void)
 			pev->origin.x,
 			pev->origin.y,
 			pev->origin.z);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 		SetThink(&CBaseEntity::SUB_Remove);
 		return;
 	}
@@ -1711,8 +1711,8 @@ void CSpeaker::Precache(void)
 void CSpeaker::SpeakerThink(void)
 {
 	const char* szSoundFile = NULL;
-	float flvolume = pev->health * 0.1;
-	float flattenuation = 0.3;
+	float flvolume = pev->health * 0.1f;
+	float flattenuation = 0.3f;
 	int flags = 0;
 	int pitch = 100;
 
@@ -1813,7 +1813,7 @@ void CSpeaker::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 	if ( useType == USE_ON )
 	{
 		// turn on announcements
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 		return;
 	}
 
@@ -1833,7 +1833,7 @@ void CSpeaker::ToggleUse(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 	else
 	{
 		// turn on announcements
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 }
 

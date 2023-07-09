@@ -475,7 +475,7 @@ void CScientist::RunTask(Task_t* pTask)
 				if ( TargetDistance() > 90 )
 					TaskComplete();
 				pev->ideal_yaw = UTIL_VecToYaw(m_hTargetEnt->pev->origin - pev->origin);
-				ChangeYaw(pev->yaw_speed);
+				ChangeYaw(static_cast<int>(pev->yaw_speed));
 			}
 			break;
 		default:
@@ -499,24 +499,22 @@ int CScientist::Classify(void)
 //=========================================================
 void CScientist::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 90;
+	float ys = 90.0f;
 
 	switch ( m_Activity )
 	{
 		case ACT_IDLE:
-			ys = 120;
+			ys = 120.0f;
 			break;
 		case ACT_WALK:
-			ys = 180;
+			ys = 180.0f;
 			break;
 		case ACT_RUN:
-			ys = 150;
+			ys = 150.0f;
 			break;
 		case ACT_TURN_LEFT:
 		case ACT_TURN_RIGHT:
-			ys = 120;
+			ys = 120.0f;
 			break;
 		default:
 			break;
@@ -1151,7 +1149,7 @@ void CSittingScientist::Spawn()
 	ResetSequenceInfo();
 
 	SetThink(&CSittingScientist::SittingThink);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	DROP_TO_FLOOR(ENT(pev));
 }
@@ -1277,9 +1275,9 @@ void CSittingScientist::SittingThink(void)
 
 		ResetSequenceInfo();
 		pev->frame = 0;
-		SetBoneController(0, m_headTurn);
+		SetBoneController(0, static_cast<float>(m_headTurn));
 	}
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 // prepare sitting scientist to answer a question
@@ -1302,7 +1300,7 @@ int CSittingScientist::FIdleSpeak(void)
 		return FALSE;
 
 	// set global min delay for next conversation
-	CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT(4.8, 5.2);
+	CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT(4.8f, 5.2f);
 
 	pitch = GetVoicePitch();
 
@@ -1319,7 +1317,7 @@ int CSittingScientist::FIdleSpeak(void)
 		IdleHeadTurn(pentFriend->pev->origin);
 		SENTENCEG_PlayRndSz(ENT(pev), m_szGrp[TLK_PQUESTION], 1.0, ATTN_IDLE, 0, pitch);
 		// set global min delay for next conversation
-		CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT(4.8, 5.2);
+		CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT(4.8f, 5.2f);
 		return TRUE;
 	}
 
@@ -1328,7 +1326,7 @@ int CSittingScientist::FIdleSpeak(void)
 	{
 		SENTENCEG_PlayRndSz(ENT(pev), m_szGrp[TLK_PIDLE], 1.0, ATTN_IDLE, 0, pitch);
 		// set global min delay for next conversation
-		CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT(4.8, 5.2);
+		CTalkMonster::g_talkWaitTime = gpGlobals->time + RANDOM_FLOAT(4.8f, 5.2f);
 		return TRUE;
 	}
 

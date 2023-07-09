@@ -81,7 +81,7 @@ void CBaseMonster::RunAI(void)
 		// leave an area where monsters are fighting, and the fight will continue.
 		if ( !FNullEnt(FIND_CLIENT_IN_PVS(edict())) || (m_MonsterState == MONSTERSTATE_COMBAT) )
 		{
-			Look(m_flDistLook);
+			Look(static_cast<int>(m_flDistLook));
 			Listen();  // check for audible sounds.
 
 			// now filter conditions.
