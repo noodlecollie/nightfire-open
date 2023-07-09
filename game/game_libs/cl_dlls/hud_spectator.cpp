@@ -164,7 +164,7 @@ void UTIL_StringToVector(float* pVector, const char* pString)
 
 	for ( j = 0; j < 3; j++ )
 	{
-		pVector[j] = atof(pfront);
+		pVector[j] = static_cast<float>(atof(pfront));
 
 		while ( *pstr && *pstr != ' ' )
 			pstr++;
@@ -233,7 +233,7 @@ int UTIL_FindEntityInMap(const char* name, float* origin, float* angle)
 			strcpy(keyname, token);
 
 			// another hack to fix keynames with trailing spaces
-			n = strlen(keyname);
+			n = static_cast<int>(strlen(keyname));
 			while ( n && keyname[n - 1] == ' ' )
 			{
 				keyname[n - 1] = 0;
@@ -264,7 +264,7 @@ int UTIL_FindEntityInMap(const char* name, float* origin, float* angle)
 
 			if ( !strcmp(keyname, "angle") )
 			{
-				float y = atof(token);
+				float y = static_cast<float>(atof(token));
 
 				if ( y >= 0 )
 				{
@@ -423,10 +423,10 @@ int CHudSpectator::Draw(float)
 		// draw the players name and health underneath
 		sprintf(string, "%s", g_PlayerInfoList[i + 1].name);
 
-		lx = strlen(string) * 3;  // 3 is avg. character length :)
+		lx = static_cast<int>(strlen(string) * 3);  // 3 is avg. character length :)
 
 		DrawSetTextColor(color[0], color[1], color[2]);
-		DrawConsoleString(m_vPlayerPos[i][0] - lx, m_vPlayerPos[i][1], string);
+		DrawConsoleString(static_cast<int>(m_vPlayerPos[i][0] - lx), static_cast<int>(m_vPlayerPos[i][1]), string);
 	}
 
 	return 1;
@@ -627,7 +627,7 @@ void CHudSpectator::HandleButtonsDown(int ButtonPressed)
 	double time = gEngfuncs.GetClientTime();
 
 	int newMainMode = g_iUser1;
-	int newInsetMode = m_pip->value;
+	int newInsetMode = static_cast<int>(m_pip->value);
 
 	// gEngfuncs.Con_Printf( " HandleButtons:%i\n", ButtonPressed );
 
@@ -709,7 +709,7 @@ void CHudSpectator::HandleButtonsDown(int ButtonPressed)
 			m_moveDelta = 12.0f;
 	}
 
-	m_flNextObserverInput = time + 0.2;
+	m_flNextObserverInput = static_cast<float>(time) + 0.2f;
 }
 
 void CHudSpectator::HandleButtonsUp(int ButtonPressed)
@@ -728,10 +728,10 @@ void CHudSpectator::SetModes(int iNewMainMode, int iNewInsetMode)
 		iNewMainMode = g_iUser1;
 
 	if ( iNewInsetMode == -1 )
-		iNewInsetMode = m_pip->value;
+		iNewInsetMode = static_cast<int>(m_pip->value);
 
 	// inset mode is handled only clients side
-	m_pip->value = iNewInsetMode;
+	m_pip->value = static_cast<float>(iNewInsetMode);
 
 	if ( iNewMainMode < OBS_CHASE_LOCKED || iNewMainMode > OBS_MAP_CHASE )
 	{
@@ -812,7 +812,7 @@ void CHudSpectator::SetModes(int iNewMainMode, int iNewInsetMode)
 		char string[128];
 		sprintf(string, "#Spec_Mode%d", g_iUser1);
 		sprintf(string, "%c%s", HUD_PRINTCENTER, CHudTextMessage::BufferedLocaliseTextString(string));
-		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, strlen(string) + 1, string);
+		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, static_cast<int>(strlen(string) + 1), string);
 	}
 }
 
@@ -887,16 +887,16 @@ bool CHudSpectator::ParseOverviewFile()
 				if ( !PlatformLib_StrCaseCmp(token, "zoom") )
 				{
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.zoom = atof(token);
+					m_OverviewData.zoom = static_cast<float>(atof(token));
 				}
 				else if ( !PlatformLib_StrCaseCmp(token, "origin") )
 				{
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.origin[0] = atof(token);
+					m_OverviewData.origin[0] = static_cast<float>(atof(token));
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.origin[1] = atof(token);
+					m_OverviewData.origin[1] = static_cast<float>(atof(token));
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.origin[2] = atof(token);
+					m_OverviewData.origin[2] = static_cast<float>(atof(token));
 				}
 				else if ( !PlatformLib_StrCaseCmp(token, "rotated") )
 				{
@@ -906,13 +906,13 @@ bool CHudSpectator::ParseOverviewFile()
 				else if ( !PlatformLib_StrCaseCmp(token, "inset") )
 				{
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.insetWindowX = atof(token);
+					m_OverviewData.insetWindowX = static_cast<int>(atof(token));
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.insetWindowY = atof(token);
+					m_OverviewData.insetWindowY = static_cast<int>(atof(token));
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.insetWindowWidth = atof(token);
+					m_OverviewData.insetWindowWidth = static_cast<int>(atof(token));
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					m_OverviewData.insetWindowHeight = atof(token);
+					m_OverviewData.insetWindowHeight = static_cast<int>(atof(token));
 				}
 				else
 				{
@@ -952,7 +952,7 @@ bool CHudSpectator::ParseOverviewFile()
 				else if ( !PlatformLib_StrCaseCmp(token, "height") )
 				{
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					height = atof(token);
+					height = static_cast<float>(atof(token));
 					m_OverviewData.layersHeights[m_OverviewData.layers] = height;
 				}
 				else
@@ -998,7 +998,7 @@ void CHudSpectator::DrawOverviewLayer()
 	if ( hasMapImage )
 	{
 		i = m_MapSprite->numframes / (4 * 3);
-		i = sqrt(float(i));
+		i = static_cast<int>(sqrtf(float(i)));
 		xTiles = i * 4;
 		yTiles = i * 3;
 	}
@@ -1188,7 +1188,7 @@ void CHudSpectator::DrawOverviewEntities()
 		hSpriteModel = (struct model_s*)gEngfuncs.GetSpritePointer(m_hsprBeam);
 		gEngfuncs.pTriAPI->SpriteTexture(hSpriteModel, 0);
 
-		gEngfuncs.pTriAPI->Color4f(r, g, b, 0.3);
+		gEngfuncs.pTriAPI->Color4f(r, g, b, 0.3f);
 
 		gEngfuncs.pTriAPI->Begin(TRI_QUADS);
 		gEngfuncs.pTriAPI->TexCoord2f(1, 0);
@@ -1399,7 +1399,7 @@ bool CHudSpectator::AddOverviewEntityToList(HSPRITE sprite, cl_entity_t* ent, do
 void CHudSpectator::CheckSettings()
 {
 	// disallow same inset mode as main mode:
-	m_pip->value = (int)m_pip->value;
+	m_pip->value = floorf(m_pip->value);
 
 	if ( (g_iUser1 < OBS_MAP_FREE) && (m_pip->value == INSET_CHASE_FREE || m_pip->value == INSET_IN_EYE) )
 	{
@@ -1528,5 +1528,5 @@ void CHudSpectator::InitHUDData()
 	g_iUser2 = 0;  // fake not target until first camera command
 
 	// reset HUD FOV
-	gHUD.m_iFOV = CL_CvarGetFloat("default_fov");
+	gHUD.m_iFOV = static_cast<int>(CL_CvarGetFloat("default_fov"));
 }

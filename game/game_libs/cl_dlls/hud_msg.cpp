@@ -106,7 +106,7 @@ int CHud::MsgFunc_Damage(const char*, int iSize, void* pbuf)
 	for ( i = 0; i < 3; i++ )
 		from[i] = READ_COORD();
 
-	count = (blood * 0.5) + (armor * 0.5);
+	count = (blood * 0.5f) + (armor * 0.5f);
 
 	if ( count < 10 )
 		count = 10;
@@ -123,7 +123,11 @@ int CHud::MsgFunc_Concuss(const char*, int iSize, void* pbuf)
 	if ( m_iConcussionEffect )
 	{
 		UnpackRGB(r, g, b, RGB_YELLOWISH);  // Vit_amiN: fixed
-		this->m_StatusIcons.EnableIcon("dmg_concuss", r, g, b);
+		this->m_StatusIcons.EnableIcon(
+			"dmg_concuss",
+			static_cast<unsigned char>(r),
+			static_cast<unsigned char>(g),
+			static_cast<unsigned char>(b));
 	}
 	else
 		this->m_StatusIcons.DisableIcon("dmg_concuss");
