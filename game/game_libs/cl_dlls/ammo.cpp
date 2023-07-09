@@ -913,7 +913,7 @@ int CHudAmmo::Draw(float flTime)
 	a = (int)Max(MIN_ALPHA, m_fFade);
 
 	if ( m_fFade > 0 )
-		m_fFade -= (gHUD.m_flTimeDelta * 20);
+		m_fFade -= static_cast<float>((gHUD.m_flTimeDelta * 20));
 
 	UnpackRGB(r, g, b, RGB_YELLOWISH);
 
@@ -1002,7 +1002,7 @@ int DrawBar(int x, int y, int width, int height, float f)
 
 	if ( f )
 	{
-		int w = f * width;
+		int w = static_cast<int>(f * width);
 
 		// Always show at least one pixel if we have ammo.
 		if ( w <= 0 )

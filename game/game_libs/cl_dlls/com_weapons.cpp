@@ -261,7 +261,7 @@ float UTIL_SharedRandomFloat(unsigned int seed, float low, float high)
 	U_Random();
 	U_Random();
 
-	range = high - low;
+	range = static_cast<unsigned int>(high - low);
 	if ( !range )
 	{
 		return low;
@@ -273,7 +273,7 @@ float UTIL_SharedRandomFloat(unsigned int seed, float low, float high)
 
 		tensixrand = U_Random() & 65535;
 
-		offset = (float)tensixrand / 65536.0;
+		offset = (float)tensixrand / 65536.0f;
 
 		return (low + offset * range);
 	}

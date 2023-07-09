@@ -86,7 +86,7 @@ struct UIVec2
 
 	inline UIVec2 operator*(float factor) const
 	{
-		return UIVec2(static_cast<float>(x) * factor, static_cast<float>(y) * factor);
+		return UIVec2(static_cast<int>(x * factor), static_cast<int>(y * factor));
 	}
 
 	inline UIVec2& operator*=(float factor)
@@ -100,7 +100,7 @@ struct UIVec2
 	{
 		ASSERT(divisor != 0);
 
-		return UIVec2(static_cast<float>(x) / divisor, static_cast<float>(y) / divisor);
+		return UIVec2(static_cast<int>(x / divisor), static_cast<int>(y / divisor));
 	}
 
 	inline UIVec2& operator/=(float divisor)

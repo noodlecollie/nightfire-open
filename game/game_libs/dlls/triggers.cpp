@@ -89,7 +89,7 @@ void CFrictionModifier::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "modifier") )
 	{
-		m_frictionFraction = atof(pkvd->szValue) / 100.0;
+		m_frictionFraction = static_cast<float>(atof(pkvd->szValue)) / 100.0f;
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -167,7 +167,7 @@ void CAutoTrigger::Spawn(void)
 
 void CAutoTrigger::Precache(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CAutoTrigger::Think(void)
@@ -319,7 +319,7 @@ void CMultiManager::KeyValue(KeyValueData* pkvd)
 
 	if ( FStrEq(pkvd->szKeyName, "wait") )
 	{
-		m_flWait = atof(pkvd->szValue);
+		m_flWait = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else  // add this field to the target list
@@ -331,7 +331,7 @@ void CMultiManager::KeyValue(KeyValueData* pkvd)
 
 			UTIL_StripToken(pkvd->szKeyName, tmp);
 			m_iTargetName[m_cTargets] = ALLOC_STRING(tmp);
-			m_flTargetDelay[m_cTargets] = atof(pkvd->szValue);
+			m_flTargetDelay[m_cTargets] = static_cast<float>(atof(pkvd->szValue));
 			m_cTargets++;
 			pkvd->fHandled = TRUE;
 		}
@@ -553,7 +553,7 @@ void CBaseTrigger::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "damage") )
 	{
-		pev->dmg = atof(pkvd->szValue);
+		pev->dmg = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "count") )
@@ -740,7 +740,7 @@ void CTargetCDAudio::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "radius") )
 	{
-		pev->scale = atof(pkvd->szValue);
+		pev->scale = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -753,7 +753,7 @@ void CTargetCDAudio::Spawn(void)
 	pev->movetype = MOVETYPE_NONE;
 
 	if ( pev->scale > 0 )
-		pev->nextthink = gpGlobals->time + 1.0;
+		pev->nextthink = gpGlobals->time + 1.0f;
 }
 
 void CTargetCDAudio::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
@@ -773,7 +773,7 @@ void CTargetCDAudio::Think(void)
 	if ( !pClient )
 		return;
 
-	pev->nextthink = gpGlobals->time + 0.5;
+	pev->nextthink = gpGlobals->time + 0.5f;
 
 	if ( (pClient->v.origin - pev->origin).Length() <= pev->scale )
 		Play();
@@ -871,7 +871,7 @@ void CTriggerHurt::RadiationThink(void)
 			pPlayer->m_flgeigerRange = flRange;
 	}
 
-	pev->nextthink = gpGlobals->time + 0.25;
+	pev->nextthink = gpGlobals->time + 0.25f;
 }
 
 //
@@ -968,7 +968,7 @@ void CBaseTrigger::HurtTouch(CBaseEntity* pOther)
 	// while touching the trigger.  Player continues taking damage for a while after
 	// leaving the trigger
 
-	fldmg = pev->dmg * 0.5;  // 0.5 seconds worth of damage, pev->dmg is damage/second
+	fldmg = pev->dmg * 0.5f;  // 0.5 seconds worth of damage, pev->dmg is damage/second
 
 	// JAY: Cut this because it wasn't fully realized.  Damage is simpler now.
 #if 0
@@ -1008,7 +1008,7 @@ void CBaseTrigger::HurtTouch(CBaseEntity* pOther)
 	pev->pain_finished = gpGlobals->time;
 
 	// Apply damage every half second
-	pev->dmgtime = gpGlobals->time + 0.5;  // half second delay until this trigger can hurt toucher again
+	pev->dmgtime = gpGlobals->time + 0.5f;  // half second delay until this trigger can hurt toucher again
 
 	if ( pev->target )
 	{
@@ -1054,7 +1054,7 @@ LINK_ENTITY_TO_CLASS(trigger_multiple, CTriggerMultiple)
 void CTriggerMultiple::Spawn(void)
 {
 	if ( m_flWait == 0 )
-		m_flWait = 0.2;
+		m_flWait = 0.2f;
 
 	InitTrigger();
 
@@ -1170,7 +1170,7 @@ void CBaseTrigger::ActivateMultiTrigger(CBaseEntity* pActivator)
 		// we can't just remove (self) here, because this is a touch function
 		// called while C code is looping through area links...
 		SetTouch(NULL);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 		SetThink(&CBaseEntity::SUB_Remove);
 	}
 }
@@ -1382,7 +1382,7 @@ void CChangeLevel::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "changedelay") )
 	{
-		m_changeTargetDelay = atof(pkvd->szValue);
+		m_changeTargetDelay = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -1730,7 +1730,7 @@ void NextLevel(void)
 	if ( pChange->pev->nextthink < gpGlobals->time )
 	{
 		pChange->SetThink(&CChangeLevel::ExecuteChangeLevel);
-		pChange->pev->nextthink = gpGlobals->time + 0.1;
+		pChange->pev->nextthink = gpGlobals->time + 0.1f;
 	}
 }
 
@@ -2204,7 +2204,7 @@ void CTriggerCamera::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "wait") )
 	{
-		m_flWait = atof(pkvd->szValue);
+		m_flWait = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "moveto") )
@@ -2214,12 +2214,12 @@ void CTriggerCamera::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "acceleration") )
 	{
-		m_acceleration = atof(pkvd->szValue);
+		m_acceleration = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "deceleration") )
 	{
-		m_deceleration = atof(pkvd->szValue);
+		m_deceleration = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -2358,7 +2358,7 @@ void CTriggerCamera::FollowTarget()
 
 	if ( !(FBitSet(pev->spawnflags, SF_CAMERA_PLAYER_TAKECONTROL)) )
 	{
-		pev->velocity = pev->velocity * 0.8;
+		pev->velocity = pev->velocity * 0.8f;
 		if ( pev->velocity.Length() < 10.0 )
 			pev->velocity = g_vecZero;
 	}

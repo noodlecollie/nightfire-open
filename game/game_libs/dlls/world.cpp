@@ -157,7 +157,7 @@ void CDecal::TriggerDecal(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	MESSAGE_END();
 
 	SetThink(&CBaseEntity::SUB_Remove);
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CDecal::StaticDecal(void)
@@ -559,7 +559,7 @@ void CWorld::Precache(void)
 			pEntity->SetThink(&CBaseEntity::SUB_CallUseToggle);
 			pEntity->pev->message = pev->netname;
 			pev->netname = 0;
-			pEntity->pev->nextthink = gpGlobals->time + 0.3;
+			pEntity->pev->nextthink = gpGlobals->time + 0.3f;
 			pEntity->pev->spawnflags = SF_MESSAGE_ONCE;
 		}
 	}
@@ -610,12 +610,12 @@ void CWorld::KeyValue(KeyValueData* pkvd)
 	else if ( FStrEq(pkvd->szKeyName, "WaveHeight") )
 	{
 		// Sent over net now.
-		pev->scale = atof(pkvd->szValue) * (1.0 / 8.0);
+		pev->scale = static_cast<float>(atof(pkvd->szValue)) * (1.0f / 8.0f);
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "MaxRange") )
 	{
-		pev->speed = atof(pkvd->szValue);
+		pev->speed = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "chaptertitle") )

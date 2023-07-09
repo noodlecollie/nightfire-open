@@ -79,8 +79,8 @@ int CHudBattery::Draw(float)
 	wrect_t rc;
 
 	rc = *m_prc2;
-	rc.top += m_iHeight *
-		((float)(100 - (Min(100, m_iBat))) * 0.01);  // battery can go from 0 to 100 so * 0.01 goes from 0 to 1
+	rc.top = rc.top + static_cast<int>(m_iHeight *
+		((float)(100 - (Min(100, m_iBat))) * 0.01f));  // battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 
 	UnpackRGB(r, g, b, RGB_YELLOWISH);
 
@@ -93,7 +93,7 @@ int CHudBattery::Draw(float)
 		if ( m_fFade > FADE_TIME )
 			m_fFade = FADE_TIME;
 
-		m_fFade -= (gHUD.m_flTimeDelta * 20);
+		m_fFade -= static_cast<float>(gHUD.m_flTimeDelta * 20);
 		if ( m_fFade <= 0 )
 		{
 			a = 128;
@@ -101,10 +101,10 @@ int CHudBattery::Draw(float)
 		}
 
 		// Fade the health number back to dim
-		a = MIN_ALPHA + (m_fFade / FADE_TIME) * 128;
+		a = static_cast<int>(MIN_ALPHA + (m_fFade / FADE_TIME) * 128);
 	}
 	else
-		a = MIN_ALPHA;
+		a = static_cast<int>(MIN_ALPHA);
 
 	ScaleColors(r, g, b, a);
 

@@ -113,7 +113,7 @@ const WeaponAtts::AccuracyParameters* CCrosshairParameters::WeaponAccuracyParams
 		return nullptr;
 	}
 
-	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[index];
+	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[static_cast<int>(index)];
 
 	if ( !baseAttackMode )
 	{
@@ -138,7 +138,7 @@ const WeaponAtts::CrosshairParameters* CCrosshairParameters::CrosshairParamsForA
 		return nullptr;
 	}
 
-	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[index];
+	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[static_cast<int>(index)];
 
 	if ( !baseAttackMode )
 	{
