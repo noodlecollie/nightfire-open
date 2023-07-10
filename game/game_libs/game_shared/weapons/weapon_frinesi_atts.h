@@ -116,13 +116,13 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->SpecialReload = true;
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
-		accuracy.RestValue = 0.1;
+		accuracy.RestValue = 0.1f;
 		accuracy.RestSpread = Vector2D(0.08f, 0.08f);
 		accuracy.RunValue = 0.5;
 		accuracy.RunSpread = Vector2D(0.15f, 0.15f);
 		accuracy.CrouchShift = -0.08f;
 		accuracy.FallShift = 0.15f;
-		accuracy.AirShift = 0.15;
+		accuracy.AirShift = 0.15f;
 		accuracy.AttackCoefficient = 0.3f;
 		accuracy.DecayCoefficient = 0.2f;
 		accuracy.FireImpulse = 0.2f;

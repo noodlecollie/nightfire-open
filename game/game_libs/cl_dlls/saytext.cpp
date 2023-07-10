@@ -193,7 +193,7 @@ void CHudSayText::SayTextPrint(const char* pszBuf, int iBufSize, int clientIndex
 
 			if ( nameInString )
 			{
-				g_iNameLengths[i] = strlen(pName) + (nameInString - pszBuf);
+				g_iNameLengths[i] = static_cast<int>(strlen(pName) + (nameInString - pszBuf));
 				g_pflNameColors[i] = GetClientColor(clientIndex);
 			}
 		}
@@ -290,8 +290,8 @@ void CHudSayText::EnsureTextFitsInOneLineAndWrapIfHaveTo(int line)
 				// copy remaining string into next buffer,  making sure it starts with a space character
 				if ( (char)*last_break == (char)' ' )
 				{
-					int linelen = strlen(g_szLineBuffer[j]);
-					int remaininglen = strlen(last_break);
+					int linelen = static_cast<int>(strlen(g_szLineBuffer[j]));
+					int remaininglen = static_cast<int>(strlen(last_break));
 
 					if ( (linelen - remaininglen) <= MAX_CHARS_PER_LINE )
 						strcat(g_szLineBuffer[j], last_break);

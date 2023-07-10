@@ -454,7 +454,7 @@ void COM_FileBase(const char* in, char* out)
 {
 	int len, start, end;
 
-	len = strlen(in);
+	len = static_cast<int>(strlen(in));
 
 	// scan backward for '.'
 	end = len - 1;
@@ -542,9 +542,9 @@ int CHud::MsgFunc_SetFOV(const char*, int iSize, void* pbuf)
 
 	int newfov = READ_BYTE();
 
-	int def_fov = CL_CvarGetFloat("default_fov");
+	int def_fov = static_cast<int>(CL_CvarGetFloat("default_fov"));
 
-	g_lastFOV = newfov;
+	g_lastFOV = static_cast<float>(newfov);
 
 	if ( newfov == 0 )
 	{

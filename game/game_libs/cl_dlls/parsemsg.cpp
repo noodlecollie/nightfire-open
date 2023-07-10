@@ -141,7 +141,7 @@ char* READ_STRING(void)
 		c = READ_BYTE();
 		if ( c == -1 || c == 0 )
 			break;
-		string[l] = c;
+		string[l] = static_cast<char>(c);
 		l++;
 	}
 	while ( l < sizeof(string) - 1 );

@@ -201,7 +201,7 @@ int CHudStatusBar::Draw(float)
 		if ( (i == STATUSBAR_ID_LINE) && CL_CvarGetFloat("hud_centerid") )
 		{
 			x = Max(0, Max(2, (ScreenWidth - TextWidth)) / 2);
-			y = (ScreenHeight / 2) + (TextHeight * CL_CvarGetFloat("hud_centerid"));
+			y = static_cast<int>((ScreenHeight / 2) + (TextHeight * CL_CvarGetFloat("hud_centerid")));
 		}
 
 		if ( m_pflNameColors[i] )

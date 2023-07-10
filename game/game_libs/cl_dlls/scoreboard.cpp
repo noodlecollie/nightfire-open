@@ -144,7 +144,7 @@ int CHudScoreboard::Draw(float)
 	int xpos_rel = (ScreenWidth - SCOREBOARD_WIDTH) / 2;
 
 	// print the heading line
-	int ypos = ROW_RANGE_MIN + (list_slot * ROW_GAP);
+	int ypos = static_cast<int>(ROW_RANGE_MIN + (list_slot * ROW_GAP));
 	int xpos = NAME_RANGE_MIN + xpos_rel;
 
 	FAR_RIGHT = can_show_packetloss ? PL_RANGE_MAX : PING_RANGE_MAX;
@@ -173,12 +173,12 @@ int CHudScoreboard::Draw(float)
 		DrawUtfString(PL_RANGE_MAX + xpos_rel - 35, ypos, ScreenWidth, "pkt loss", 255, 140, 0);
 	}
 
-	list_slot += 1.2;
-	ypos = ROW_RANGE_MIN + (list_slot * ROW_GAP);
+	list_slot += 1.2f;
+	ypos = static_cast<int>(ROW_RANGE_MIN + (list_slot * ROW_GAP));
 	// xpos = NAME_RANGE_MIN + xpos_rel;
 	FillRGBA(xpos - 4, ypos, FAR_RIGHT - 2, 1, 255, 140, 0, 255);  // draw the seperator line
 
-	list_slot += 0.8;
+	list_slot += 0.8f;
 
 	if ( !gHUD.m_Teamplay )
 	{
@@ -272,7 +272,7 @@ int CHudScoreboard::Draw(float)
 		// draw out the best team
 		team_info_t* team_info = &g_TeamInfo[best_team];
 
-		ypos = ROW_RANGE_MIN + (list_slot * ROW_GAP);
+		ypos = static_cast<int>(ROW_RANGE_MIN + (list_slot * ROW_GAP));
 
 		// check we haven't drawn too far down
 		if ( ypos > ROW_RANGE_MAX )  // don't draw to close to the lower border
@@ -329,7 +329,7 @@ int CHudScoreboard::Draw(float)
 		list_slot++;
 
 		// draw all the players that belong to this team, indented slightly
-		list_slot = DrawPlayers(xpos_rel, list_slot, 10, team_info->name);
+		list_slot = static_cast<float>(DrawPlayers(xpos_rel, list_slot, 10, team_info->name));
 	}
 
 	// draw all the players who are not in a team
@@ -397,7 +397,7 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 		// draw out the best player
 		hud_player_info_t* pl_info = &g_PlayerInfoList[best_player];
 
-		int ypos = ROW_RANGE_MIN + (list_slot * ROW_GAP);
+		int ypos = static_cast<int>(ROW_RANGE_MIN + (list_slot * ROW_GAP));
 
 		// check we haven't drawn too far down
 		if ( ypos > ROW_RANGE_MAX )  // don't draw to close to the lower border
@@ -410,9 +410,11 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 			xpos -= NAME_RANGE_MODIFIER;
 		}
 
-		int r = 255, g = 255, b = 255;
 		const float* colors = GetClientColor(best_player);
-		r *= colors[0], g *= colors[1], b *= colors[2];
+		int r = static_cast<int>(255.0f * colors[0]);
+		int g = static_cast<int>(255.0f * colors[0]);
+		int b = static_cast<int>(255.0f * colors[0]);
+
 		if ( best_player == m_iLastKilledBy && m_fLastKillTime && m_fLastKillTime > gHUD.m_flTime )
 		{
 			if ( pl_info->thisplayer )
@@ -431,7 +433,7 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 					255,
 					0,
 					0,
-					((float)15 * (float)(m_fLastKillTime - gHUD.m_flTime)));
+					static_cast<int>((15.0f * (float)(m_fLastKillTime - gHUD.m_flTime))));
 			}
 		}
 		else if ( pl_info->thisplayer )  // if it is their name, draw it a different color
@@ -490,7 +492,7 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 		list_slot++;
 	}
 
-	return list_slot;
+	return static_cast<int>(list_slot);
 }
 
 void CHudScoreboard::GetAllPlayersInfo(void)
@@ -509,11 +511,11 @@ int CHudScoreboard::MsgFunc_ScoreInfo(const char*, int iSize, void* pbuf)
 	m_iFlags |= HUD_ACTIVE;
 
 	BEGIN_READ(pbuf, iSize);
-	short cl = READ_BYTE();
-	short frags = READ_SHORT();
-	short deaths = READ_SHORT();
-	short playerclass = READ_SHORT();
-	short teamnumber = READ_SHORT();
+	short cl = static_cast<short>(READ_BYTE());
+	short frags = static_cast<short>(READ_SHORT());
+	short deaths = static_cast<short>(READ_SHORT());
+	short playerclass = static_cast<short>(READ_SHORT());
+	short teamnumber = static_cast<short>(READ_SHORT());
 
 	if ( cl > 0 && cl <= MAX_PLAYERS )
 	{
@@ -536,7 +538,7 @@ int CHudScoreboard::MsgFunc_TeamInfo(const char*, int iSize, void* pbuf)
 {
 	int i, j;
 	BEGIN_READ(pbuf, iSize);
-	short cl = READ_BYTE();
+	short cl = static_cast<short>(READ_BYTE());
 
 	if ( cl > 0 && cl <= MAX_PLAYERS )
 	{
@@ -623,8 +625,8 @@ int CHudScoreboard::MsgFunc_TeamScore(const char*, int iSize, void* pbuf)
 
 	// use this new score data instead of combined player scores
 	g_TeamInfo[i].scores_overriden = TRUE;
-	g_TeamInfo[i].frags = READ_SHORT();
-	g_TeamInfo[i].deaths = READ_SHORT();
+	g_TeamInfo[i].frags = static_cast<short>(READ_SHORT());
+	g_TeamInfo[i].deaths = static_cast<short>(READ_SHORT());
 
 	return 1;
 }
@@ -635,7 +637,7 @@ void CHudScoreboard::DeathMsg(int killer, int victim)
 	if ( victim == m_iPlayerNum || killer == 0 )
 	{
 		m_iLastKilledBy = killer ? killer : m_iPlayerNum;
-		m_fLastKillTime = gHUD.m_flTime + 10;  // display who we were killed by for 10 seconds
+		m_fLastKillTime = static_cast<int>(gHUD.m_flTime + 10);  // display who we were killed by for 10 seconds
 
 		if ( killer == m_iPlayerNum )
 			m_iLastKilledBy = m_iPlayerNum;

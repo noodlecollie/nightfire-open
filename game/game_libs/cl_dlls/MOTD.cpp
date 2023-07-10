@@ -87,16 +87,16 @@ int CHudMOTD::Draw(float)
 
 	if ( height > ROW_RANGE_MAX )
 	{
-		ypos = ROW_RANGE_MIN + 7 + scroll;
+		ypos = static_cast<int>(ROW_RANGE_MIN + 7 + scroll);
 
 		if ( ypos > ROW_RANGE_MIN + 4 )
 		{
-			scroll -= (ypos - (ROW_RANGE_MIN + 4)) / 3.0;
+			scroll -= (ypos - (ROW_RANGE_MIN + 4)) / 3.0f;
 		}
 
 		if ( ypos + height < ROW_RANGE_MAX )
 		{
-			scroll += (ROW_RANGE_MAX - (ypos + height)) / 3.0;
+			scroll += (ROW_RANGE_MAX - (ypos + height)) / 3.0f;
 		}
 
 		ypos_r = ROW_RANGE_MIN;

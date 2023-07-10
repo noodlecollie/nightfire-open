@@ -93,7 +93,11 @@ int CHudStatusIcons::MsgFunc_StatusIcon(const char*, int iSize, void* pbuf)
 		int r = READ_BYTE();
 		int g = READ_BYTE();
 		int b = READ_BYTE();
-		EnableIcon(pszIconName, r, g, b);
+		EnableIcon(
+			pszIconName,
+			static_cast<unsigned char>(r),
+			static_cast<unsigned char>(g),
+			static_cast<unsigned char>(b));
 		m_iFlags |= HUD_ACTIVE;
 	}
 	else
