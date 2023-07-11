@@ -90,7 +90,7 @@ enum EUISounds
 	SND_COUNT
 };
 
-typedef struct
+struct uiStatic_t
 {
 	CWindowStack menu;
 	CWindowStack client;  // separate window stack for client windows
@@ -206,7 +206,7 @@ typedef struct
 
 		memset(sounds, 0, sizeof(sounds));
 	}
-} uiStatic_t;
+};
 
 extern float cursorDY;  // use for touch scroll
 extern bool g_bCursorDown;

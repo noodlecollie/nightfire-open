@@ -332,11 +332,11 @@ void CMenuTouchOptions::_Init(void)
 	lookY.LinkCvar("touch_pitch");
 
 	moveX.SetNameAndStatus(L("Side"), L("Side movement sensitity"));
-	moveX.Setup(0.02, 1.0, 0.05);
+	moveX.Setup(0.02f, 1.0f, 0.05f);
 	moveX.LinkCvar("touch_sidezone");
 
 	moveY.SetNameAndStatus(L("Forward"), L("Forward movement sensitivity"));
-	moveY.Setup(0.02, 1.0, 0.05);
+	moveY.Setup(0.02f, 1.0f, 0.05f);
 	moveY.LinkCvar("touch_forwardzone");
 
 	gridsize.szStatusText = L("Set grid size");
@@ -356,7 +356,7 @@ void CMenuTouchOptions::_Init(void)
 	acceleration.LinkCvar("touch_nonlinear_look");
 
 	power.SetNameAndStatus(L("Power factor"), L("Power acceleration factor (touch_pow_factor)"));
-	power.Setup(1, 1.7, 0.05);
+	power.Setup(1.0f, 1.7f, 0.05f);
 	power.LinkCvar("touch_pow_factor");
 
 	multiplier.SetNameAndStatus(L("Power multiplier"), L("Pre-multiplier for pow (touch_pow_mult)"));

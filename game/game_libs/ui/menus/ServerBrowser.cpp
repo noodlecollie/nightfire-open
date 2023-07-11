@@ -185,7 +185,7 @@ public:
 		if ( servers[line].isLegacy )
 		{
 			CColor color = uiPromptTextColor;
-			color.a = color.a * 0.5;
+			color.a = static_cast<int>(color.a * 0.5f);
 			textColor = color;
 
 			// allow colorstrings only in server name
@@ -245,7 +245,7 @@ public:
 	void JoinGame(void);
 	void ResetPing(void)
 	{
-		gameListModel.serversRefreshTime = EngFuncs::DoubleTime();
+		gameListModel.serversRefreshTime = static_cast<float>(EngFuncs::DoubleTime());
 	}
 
 	void AddServerToList(netadr_t adr, const char* info);
@@ -334,15 +334,17 @@ void server_t::UpdateData(void)
 	isLegacy = !strcmp(Info_ValueForKey(info, "legacy"), "1");
 }
 
-void server_t::SetPing(float ping)
+void server_t::SetPing(float inPing)
 {
-	ping = bound(0.0f, ping, 9.999f);
+	inPing = bound(0.0f, inPing, 9.999f);
 
 	if ( isLegacy )
-		ping /= 2;
+	{
+		inPing /= 2;
+	}
 
-	this->ping = ping;
-	PlatformLib_SNPrintF(pingstr, sizeof(pingstr), "%.f ms", ping * 1000);
+	this->ping = inPing;
+	PlatformLib_SNPrintF(pingstr, sizeof(pingstr), "%.f ms", inPing * 1000);
 }
 
 bool CMenuGameListModel::Sort(int column, bool ascend)
@@ -444,7 +446,7 @@ void CMenuGameListModel::AddServerToList(netadr_t adr, const char* info)
 	server_t server(adr, info);
 
 	server.UpdateData();
-	server.SetPing(EngFuncs::DoubleTime() - serversRefreshTime);
+	server.SetPing(static_cast<float>(EngFuncs::DoubleTime()) - serversRefreshTime);
 
 	servers.AddToTail(server);
 

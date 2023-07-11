@@ -146,7 +146,9 @@ void CMenuBotSetup::_VidInit()
 
 void CMenuBotSetup::RecalculateDimensions()
 {
-	Size screenLogicalSize(ScreenWidth / uiStatic.scaleX, ScreenHeight / uiStatic.scaleY);
+	Size screenLogicalSize(
+		static_cast<int>(ScreenWidth / uiStatic.scaleX),
+		static_cast<int>(ScreenHeight / uiStatic.scaleY));
 
 	// Side padding is the distance between the hard left margin and the lists.
 	// This is calculated by taking the margin/lists/central area/right margin away from the total width

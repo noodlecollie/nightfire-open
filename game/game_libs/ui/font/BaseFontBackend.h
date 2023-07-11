@@ -43,7 +43,8 @@ struct charRange_t
 	{
 		if ( sequence )
 			return sequence[pos];
-		return chMin + pos;
+
+		return static_cast<int>(chMin + pos);
 	}
 };
 
@@ -172,9 +173,9 @@ private:
 		int ch;
 		int a, b, c;
 
-		bool operator<(const abc_t& a) const
+		bool operator<(const abc_t& in) const
 		{
-			return ch < a.ch;
+			return ch < in.ch;
 		}
 	};
 

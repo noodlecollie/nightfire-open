@@ -26,7 +26,7 @@ CMenuTabView::CMenuTabView() :
 Point CMenuTabView::GetPositionOffset() const
 {
 	Point ret = m_scPos;
-	ret.y += m_scChSize * 1.5f;
+	ret.y = static_cast<int>(ret.y + m_scChSize * 1.5f);
 
 	return ret;
 }
@@ -40,7 +40,7 @@ void CMenuTabView::VidInit()
 	VidInitItems();
 
 	m_szTab.w = m_scSize.w / m_pItems.Count();
-	m_szTab.h = m_scChSize * 1.5f;
+	m_szTab.h = static_cast<int>(m_scChSize * 1.5f);
 }
 
 void CMenuTabView::DrawTab(Point pt, const char* name, bool isEnd, bool isSelected, bool isHighlighted)
@@ -91,8 +91,8 @@ void CMenuTabView::Draw()
 		tabOffset.x += m_szTab.w;
 	}
 
-	Point contentOffset = Point(m_scPos.x, m_scPos.y + m_scChSize * 1.5f);
-	Size contentSize = Size(m_scSize.w, m_scSize.h - m_scChSize * 1.5f);
+	Point contentOffset = Point(m_scPos.x, static_cast<int>(m_scPos.y + m_scChSize * 1.5f));
+	Size contentSize = Size(m_scSize.w, static_cast<int>(m_scSize.h - m_scChSize * 1.5f));
 
 	// draw line after tab
 	UI_FillRect(contentOffset.x, contentOffset.y, m_scSize.w, UI_OUTLINE_WIDTH, uiColorHelp);

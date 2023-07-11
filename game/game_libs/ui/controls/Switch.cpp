@@ -96,9 +96,13 @@ void CMenuSwitch::VidInit()
 	for ( i = 0; i < m_iSwitches; i++ )
 	{
 		if ( m_szNames[i] != NULL && !bKeepToggleWidth )
+		{
 			sizes[i] = g_FontMgr->GetTextWideScaled(font, m_szNames[i], m_scChSize);
+		}
 		else
-			sizes[i] = (float)m_scSize.w / (float)m_iSwitches;
+		{
+			sizes[i] = static_cast<int>((float)m_scSize.w / (float)m_iSwitches);
+		}
 
 		sum += sizes[i];
 	}
@@ -107,7 +111,7 @@ void CMenuSwitch::VidInit()
 	{
 		float frac = (float)sizes[i] / (float)sum;
 
-		m_Sizes[i].w = m_scSize.w * frac;
+		m_Sizes[i].w = static_cast<int>(m_scSize.w * frac);
 		m_Sizes[i].h = m_scSize.h;
 
 		m_Points[i] = m_scPos;
@@ -116,7 +120,7 @@ void CMenuSwitch::VidInit()
 			m_Points[i].x = m_Points[i - 1].x + m_Sizes[i - 1].w;
 	}
 
-	m_scTextPos.x = m_scPos.x + (m_scSize.w * 1.5f);
+	m_scTextPos.x = static_cast<int>(m_scPos.x + (m_scSize.w * 1.5f));
 	m_scTextPos.y = m_scPos.y;
 
 	m_scTextSize.w = g_FontMgr->GetTextWideScaled(font, szName, m_scChSize);
@@ -145,7 +149,7 @@ bool CMenuSwitch::KeyUp(int key)
 		if ( haveNewState && !bChangeOnPressed )
 		{
 			m_iState = state;
-			SetCvarValue(m_iState);
+			SetCvarValue(static_cast<float>(m_iState));
 			_Event(QM_CHANGED);
 			PlayLocalSound(sound);  // emit sound only on changes
 		}
@@ -176,7 +180,7 @@ bool CMenuSwitch::KeyDown(int key)
 		if ( haveNewState && bChangeOnPressed )
 		{
 			m_iState = state;
-			SetCvarValue(m_iState);
+			SetCvarValue(static_cast<float>(m_iState));
 			_Event(QM_CHANGED);
 			PlayLocalSound(sound);  // emit sound only on changes
 		}
@@ -204,7 +208,7 @@ void CMenuSwitch::Draw(void)
 	{
 		Point coord;
 
-		coord.x = m_scPos.x + 250 * uiStatic.scaleX;
+		coord.x = static_cast<int>(m_scPos.x + 250 * uiStatic.scaleX);
 		coord.y = m_scPos.y + m_scSize.h / 2 - EngFuncs::ConsoleCharacterHeight() / 2;
 
 		int r, g, b;
@@ -223,8 +227,8 @@ void CMenuSwitch::Draw(void)
 	{
 		Point pt = m_Points[i];
 
-		pt.x += fTextOffsetX * uiStatic.scaleX;
-		pt.y += fTextOffsetY * uiStatic.scaleY;
+		pt.x += static_cast<int>(fTextOffsetX * uiStatic.scaleX);
+		pt.y += static_cast<int>(fTextOffsetY * uiStatic.scaleY);
 
 		// draw toggle rectangles
 		if ( m_iState == i )
@@ -258,5 +262,5 @@ void CMenuSwitch::Draw(void)
 
 void CMenuSwitch::UpdateEditable()
 {
-	m_iState = EngFuncs::GetCvarFloat(m_szCvarName);
+	m_iState = static_cast<int>(EngFuncs::GetCvarFloat(m_szCvarName));
 }

@@ -53,10 +53,15 @@ void CMenuAction::VidInit()
 		else
 		{
 			if ( forceCalcW )
-				size.w = g_FontMgr->GetTextWideScaled(font, szName, charSize) / uiStatic.scaleX;
+			{
+				size.w = static_cast<int>(g_FontMgr->GetTextWideScaled(font, szName, charSize) / uiStatic.scaleX);
+			}
 
 			if ( forceCalcY )
-				size.h = g_FontMgr->GetTextHeightExt(font, szName, charSize, size.w) / uiStatic.scaleX;
+			{
+				size.h =
+					static_cast<int>(g_FontMgr->GetTextHeightExt(font, szName, charSize, size.w) / uiStatic.scaleX);
+			}
 		}
 
 		m_bLimitBySize = false;
@@ -148,7 +153,7 @@ void CMenuAction::Draw()
 	{
 		Point coord;
 
-		coord.x = m_scPos.x + 16 * uiStatic.scaleX;
+		coord.x = static_cast<int>(m_scPos.x + 16 * uiStatic.scaleX);
 		coord.y = m_scPos.y + m_scSize.h / 2 - EngFuncs::ConsoleCharacterHeight() / 2;
 
 		int r, g, b;
@@ -186,7 +191,9 @@ void CMenuAction::Draw()
 	{
 		int color;
 
-		color = PackAlpha(colorBase, 255 * (0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR)));
+		color = PackAlpha(
+			colorBase,
+			static_cast<int>(255 * (0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR))));
 
 		UI_DrawString(font, m_scPos, m_scSize, szName, color, m_scChSize, eTextAlignment, textflags);
 	}

@@ -56,7 +56,7 @@ void CMenuField::VidInit(void)
 {
 	BaseClass::VidInit();
 
-	iCursor = strlen(szBuffer);
+	iCursor = static_cast<int>(strlen(szBuffer));
 	iScroll = g_FontMgr->CutText(font, szBuffer, m_scChSize, iRealWidth, true);
 
 	iRealWidth = m_scSize.w - UI_OUTLINE_WIDTH * 2;
@@ -83,17 +83,27 @@ void CMenuField::_Event(int ev)
 			int originalY = 0;
 
 			if ( iFlags & QMF_DISABLESCAILING )
+			{
 				originalY = pos.y;
+			}
 			else
+			{
 				originalY = pos.Scale().y;
+			}
 
 			if ( m_pParent && !IsAbsolutePositioned() )
+			{
 				originalY += m_pParent->GetRenderPosition().y;
+			}
 
 			if ( originalY > gpGlobals->scrHeight - 100 * uiStatic.scaleY )
-				m_scPos.y = gpGlobals->scrHeight - 100 * uiStatic.scaleY;
+			{
+				m_scPos.y = static_cast<int>(gpGlobals->scrHeight - 100 * uiStatic.scaleY);
+			}
 			else
+			{
 				VidInit();
+			}
 		}
 		break;
 	}
@@ -116,7 +126,7 @@ void CMenuField::Paste(void)
 		return;
 
 	// send as if typed, so insert / overstrike works properly
-	pasteLen = strlen(str);
+	pasteLen = static_cast<int>(strlen(str));
 	for ( i = 0; i < pasteLen; i++ )
 		Char(str[i]);
 }
@@ -150,7 +160,7 @@ bool CMenuField::KeyDown(int key)
 	}
 	else
 	{
-		int len = strlen(szBuffer);
+		int len = static_cast<int>(strlen(szBuffer));
 		handled = true;  // predict state
 		if ( UI::Key::IsInsert(key) )
 		{
@@ -188,9 +198,9 @@ bool CMenuField::KeyDown(int key)
 		{
 			if ( iCursor > 0 )
 			{
-				int pos = EngFuncs::UtfMoveLeft(szBuffer, iCursor);
-				memmove(szBuffer + pos, szBuffer + iCursor, len - iCursor + 1);
-				iCursor = pos;
+				int localPos = EngFuncs::UtfMoveLeft(szBuffer, iCursor);
+				memmove(szBuffer + localPos, szBuffer + iCursor, len - iCursor + 1);
+				iCursor = localPos;
 				if ( iScroll )
 					iScroll = EngFuncs::UtfMoveLeft(szBuffer, iScroll);
 			}
@@ -199,20 +209,20 @@ bool CMenuField::KeyDown(int key)
 		{
 			if ( iCursor < len )
 			{
-				int pos = EngFuncs::UtfMoveRight(szBuffer, iCursor, len);
-				memmove(szBuffer + iCursor, szBuffer + pos, len - pos + 1);
+				int localPos = EngFuncs::UtfMoveRight(szBuffer, iCursor, len);
+				memmove(szBuffer + iCursor, szBuffer + localPos, len - localPos + 1);
 
 				iScroll = g_FontMgr->CutText(font, szBuffer, m_scChSize, iRealWidth, true);
 			}
 		}
 		else if ( UI::Key::IsLeftMouse(key) )
 		{
-			float y = m_scPos.y;
+			float y = static_cast<float>(m_scPos.y);
 
 			if ( y > ScreenHeight - size.h - 40 )
 				y = ScreenHeight - size.h - 15;
 
-			if ( UI_CursorInRect(m_scPos.x, y, m_scSize.w, m_scSize.h) )
+			if ( UI_CursorInRect(m_scPos.x, static_cast<int>(y), m_scSize.w, m_scSize.h) )
 			{
 				int x, charpos;
 				int w = 0;
@@ -300,7 +310,7 @@ void CMenuField::Char(int key)
 		Clear();
 	}
 
-	len = strlen(szBuffer);
+	len = static_cast<int>(strlen(szBuffer));
 
 	if ( key == 'a' - 'a' + 1 )
 	{
@@ -349,10 +359,10 @@ void CMenuField::Char(int key)
 
 		// in case a character with X bytes replaced by character with Y bytes
 		// where Y < X, e.g. russian replaced by latin
-		int pos = EngFuncs::UtfMoveRight(szBuffer, iCursor, len);
-		if ( pos != iCursor + 1 )
+		int localPos = EngFuncs::UtfMoveRight(szBuffer, iCursor, len);
+		if ( localPos != iCursor + 1 )
 		{
-			memmove(szBuffer + iCursor + 1, szBuffer + pos, len - pos + 1);
+			memmove(szBuffer + iCursor + 1, szBuffer + localPos, len - localPos + 1);
 		}
 
 		// in case a character with X bytes replaced by character with Y bytes
@@ -360,7 +370,7 @@ void CMenuField::Char(int key)
 		// m_bOverrideOverstrike = EngFuncs::UtfProcessChar( key ) == false;
 		// TODO ???
 
-		szBuffer[iCursor] = key;
+		szBuffer[iCursor] = static_cast<char>(key);
 		iCursor++;
 	}
 	else
@@ -372,7 +382,7 @@ void CMenuField::Char(int key)
 		}
 
 		memmove(szBuffer + iCursor + 1, szBuffer + iCursor, len + 1 - iCursor);
-		szBuffer[iCursor] = key;
+		szBuffer[iCursor] = static_cast<char>(key);
 		iCursor++;
 	}
 
@@ -397,7 +407,7 @@ void CMenuField::Draw(void)
 	int len, drawLen, prestep;
 	int cursor, x, textHeight;
 	char cursor_char[3];
-	float y = m_scPos.y;
+	float y = static_cast<float>(m_scPos.y);
 	uint textflags = (iFlags & QMF_DROPSHADOW) ? ETF_SHADOW : 0;
 	Point newPos = m_scPos;
 
@@ -405,23 +415,28 @@ void CMenuField::Draw(void)
 
 	if ( szStatusText && iFlags & QMF_NOTIFY )
 	{
-		int x;
+		int localX = static_cast<int>(m_scPos.x + m_scSize.w + 16 * uiStatic.scaleX);
 
-		x = m_scPos.x + m_scSize.w + 16 * uiStatic.scaleX;
-
-		int r, g, b;
+		int r = 0;
+		int g = 0;
+		int b = 0;
+		;
 
 		UnpackRGB(r, g, b, uiColorHelp);
 		EngFuncs::DrawSetTextColor(r, g, b);
-		EngFuncs::DrawConsoleString(x, m_scPos.y, szStatusText);
+		EngFuncs::DrawConsoleString(localX, m_scPos.y, szStatusText);
 	}
 
 	if ( newPos.y > ScreenHeight - m_scSize.h - 40 )
 	{
 		if ( iFlags & QMF_HASKEYBOARDFOCUS )
-			newPos.y = ScreenHeight - m_scSize.h - 15;
+		{
+			newPos.y = static_cast<int>(ScreenHeight - m_scSize.h - 15);
+		}
 		else
+		{
 			return;
+		}
 	}
 
 	cursor_char[1] = '\0';
@@ -431,7 +446,7 @@ void CMenuField::Draw(void)
 		cursor_char[0] = '_';
 
 	drawLen = g_FontMgr->CutText(font, szBuffer + iScroll, m_scChSize, m_scSize.w, false);
-	len = strlen(szBuffer) + 1;
+	len = static_cast<int>(strlen(szBuffer) + 1);
 
 	// guarantee that cursor will be visible
 	if ( len <= drawLen )
@@ -499,7 +514,7 @@ void CMenuField::Draw(void)
 		UI_DrawRectangle(newPos, m_scSize, uiInputFgColor);
 	}
 
-	textHeight = y - (m_scChSize * 1.5f);
+	textHeight = static_cast<int>(y - (m_scChSize * 1.5f));
 	UI_DrawString(
 		font,
 		m_scPos.x,
@@ -557,7 +572,7 @@ void CMenuField::Draw(void)
 		UI_DrawString(
 			font,
 			x + cursorOffset,
-			y,
+			static_cast<int>(y),
 			cursor_char_width,
 			m_scSize.h,
 			cursor_char,
@@ -575,7 +590,7 @@ void CMenuField::Draw(void)
 				UI_DrawString(
 					font,
 					x + cursorOffset,
-					y,
+					static_cast<int>(y),
 					cursor_char_width,
 					m_scSize.h,
 					cursor_char,
@@ -588,14 +603,17 @@ void CMenuField::Draw(void)
 		{
 			uint color;
 
-			color = PackAlpha(colorBase, 255 * (0.5f + 0.5f * sin((float)uiStatic.realTime / UI_PULSE_DIVISOR)));
+			color = PackAlpha(
+				colorBase,
+				static_cast<unsigned int>(255 * (0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR))));
+
 			UI_DrawString(font, newPos, m_scSize, text, color, m_scChSize, eTextAlignment, textflags);
 
 			if ( (uiStatic.realTime & 499) < 250 )
 				UI_DrawString(
 					font,
 					x + cursorOffset,
-					y,
+					static_cast<int>(y),
 					cursor_char_width,
 					m_scSize.h,
 					cursor_char,

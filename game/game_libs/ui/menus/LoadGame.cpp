@@ -220,10 +220,15 @@ void CMenuSavesListModel::Update(void)
 		const char* translated_title = nullptr;
 
 		// if comments begin with [ and there is second ]
-		if ( comment[0] == '[' && (p = strchr(comment, ']')) )
+		if ( comment[0] == '[' )
 		{
-			title = p + 1;
-			Q_strncpy(type, comment, title - comment + 1);
+			p = strchr(comment, ']');
+
+			if ( p )
+			{
+				title = p + 1;
+				Q_strncpy(type, comment, title - comment + 1);
+			}
 		}
 
 		if ( *title == '#' )

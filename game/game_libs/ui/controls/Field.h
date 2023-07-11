@@ -46,7 +46,7 @@ public:
 	void SetBuffer(const char* buffer)
 	{
 		Q_strncpy(szBuffer, buffer, UI_MAX_FIELD_LINE);
-		iCursor = strlen(szBuffer);
+		iCursor = static_cast<int>(strlen(szBuffer));
 		iScroll = g_FontMgr->CutText(font, szBuffer, m_scChSize, iRealWidth, true);
 		SetCvarString(szBuffer);
 	}

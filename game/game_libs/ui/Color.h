@@ -78,7 +78,7 @@ private:
 		unsigned int& _rgba;
 
 		ColorWrap(int bytenum, unsigned int& rgba) :
-			_byte(bytenum),
+			_byte(static_cast<byte>(bytenum)),
 			_rgba(rgba)
 		{
 		}

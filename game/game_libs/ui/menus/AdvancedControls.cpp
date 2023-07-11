@@ -192,7 +192,7 @@ void CAdvancedControls::_Init(void)
 	rawinput.SetCoord(72, 610);
 
 	sensitivity.SetNameAndStatus(L("GameUI_MouseSensitivity"), L("Set in-game mouse sensitivity"));
-	sensitivity.Setup(0.0, 20.0f, 0.1);
+	sensitivity.Setup(0.0f, 20.0f, 0.1f);
 	sensitivity.SetCoord(72, 690);
 
 	inputDev.SetNameAndStatus(L("Input devices"), L("Toggle mouse, touch controls"));

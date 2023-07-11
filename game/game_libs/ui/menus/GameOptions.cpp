@@ -75,13 +75,13 @@ void CMenuGameOptions::SetNetworkMode(int maxpacket1, int maxpayload1, int cmdra
 	split.bChecked = true;
 	compress.bChecked = false;
 	normal.bChecked = dsl.bChecked = slowest.bChecked = false;
-	maxpacket.SetCurrentValue(maxpacket1);
-	maxpayload.SetCurrentValue(maxpayload1);
+	maxpacket.SetCurrentValue(static_cast<float>(maxpacket1));
+	maxpayload.SetCurrentValue(static_cast<float>(maxpayload1));
 	if ( !maxpayload1 )
 		maxpayload.ForceDisplayString("auto");
-	cmdrate.SetCurrentValue(cmdrate1);
-	updaterate.SetCurrentValue(updaterate1);
-	rate.SetCurrentValue(rate1);
+	cmdrate.SetCurrentValue(static_cast<float>(cmdrate1));
+	updaterate.SetCurrentValue(static_cast<float>(updaterate1));
+	rate.SetCurrentValue(static_cast<float>(rate1));
 }
 
 void CMenuGameOptions::SaveCb()

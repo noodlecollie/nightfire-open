@@ -165,7 +165,7 @@ void CMenuControls::UnbindCommand(const char* command)
 	int i, l;
 	const char* b;
 
-	l = strlen(command);
+	l = static_cast<int>(strlen(command));
 
 	for ( i = 0; i < MAX_KEYS; i++ )
 	{

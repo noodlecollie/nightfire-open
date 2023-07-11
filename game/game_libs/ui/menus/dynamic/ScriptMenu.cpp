@@ -174,7 +174,7 @@ void CMenuScriptConfig::ListItemCvarGetCb(CMenuBaseItem* pSelf, void* pExtra)
 
 	if ( entry )
 	{
-		self->SetCvarValue(i);
+		self->SetCvarValue(static_cast<float>(i));
 	}
 }
 
@@ -296,7 +296,7 @@ void CMenuScriptConfig::_Init(void)
 	}
 
 	pageSelector.SetInactive(false);
-	pageSelector.Setup(1, m_iPagesCount, 1);
+	pageSelector.Setup(1, static_cast<float>(m_iPagesCount), 1);
 	pageSelector.SetCurrentValue(1);
 	pageSelector.onChanged = VoidCb(&CMenuScriptConfig::FlipMenu);
 }

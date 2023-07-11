@@ -137,7 +137,7 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 
 	EngFuncs::CvarSetValue("deathmatch", 1.0f);  // start deathmatch as default
 	EngFuncs::CvarSetString("defaultmap", mapName);
-	EngFuncs::CvarSetValue("sv_nat", EngFuncs::GetCvarFloat("public") ? menu->nat.bChecked : 0);
+	EngFuncs::CvarSetValue("sv_nat", EngFuncs::GetCvarFloat("public") ? (menu->nat.bChecked ? 1.0f : 0.0f) : 0.0f);
 	menu->password.WriteCvar();
 	menu->hostName.WriteCvar();
 	menu->maxClients.WriteCvar();
@@ -153,7 +153,7 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	EngFuncs::ClientCmd(TRUE, cmd);
 
 	// dirty listenserver config form old xash may rewrite maxplayers
-	EngFuncs::CvarSetValue("maxplayers", atoi(menu->maxClients.GetBuffer()));
+	EngFuncs::CvarSetValue("maxplayers", static_cast<float>(atoi(menu->maxClients.GetBuffer())));
 
 	Com_EscapeCommand(cmd2, mapName, 256);
 

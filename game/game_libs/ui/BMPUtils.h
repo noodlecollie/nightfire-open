@@ -208,7 +208,7 @@ public:
 		{
 			// silently fixup hdr WTF?
 			hdr->colors = 256;
-			return (1 << hdr->bitsPerPixel) * sizeof(rgbquad_t);
+			return (1ULL << hdr->bitsPerPixel) * sizeof(rgbquad_t);
 		}
 
 		return hdr->colors * sizeof(rgbquad_t);

@@ -131,7 +131,7 @@ void CMenuBaseWindow::Draw()
 
 bool CMenuBaseWindow::DrawAnimation()
 {
-	float alpha;
+	float alpha = 0.0f;
 
 	if ( eTransitionType == ANIM_OPENING )
 	{
