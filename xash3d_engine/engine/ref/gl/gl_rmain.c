@@ -349,10 +349,10 @@ void R_SetupFrustum(void)
 
 	if ( RP_NORMALPASS() && (ENGINE_GET_PARM(PARM_WATER_LEVEL) >= 3) && ENGINE_GET_PARM(PARM_QUAKE_COMPATIBLE) )
 	{
-		RI.fov_x = atanf(tanf(DEG2RADF(RI.fov_x) / 2.0f) * (0.97f + sinf(gpGlobals->time * 1.5f) * 0.03f)) *
-			2.0f / (M_PI_F / 180.0f);
-		RI.fov_y = atanf(tanf(DEG2RADF(RI.fov_y) / 2.0f) * (1.03f - sinf(gpGlobals->time * 1.5f) * 0.03f)) *
-			2.0f / (M_PI_F / 180.0f);
+		RI.fov_x = atanf(tanf(DEG2RADF(RI.fov_x) / 2.0f) * (0.97f + sinf(gpGlobals->time * 1.5f) * 0.03f)) * 2.0f /
+			(M_PI_F / 180.0f);
+		RI.fov_y = atanf(tanf(DEG2RADF(RI.fov_y) / 2.0f) * (1.03f - sinf(gpGlobals->time * 1.5f) * 0.03f)) * 2.0f /
+			(M_PI_F / 180.0f);
 	}
 
 	// build the transformation matrix for the given view angles
@@ -556,9 +556,8 @@ void R_SetupGL(qboolean set_gl_state)
 		x = RI.viewport[0] * gpGlobals->width / gpGlobals->width;
 		x2 = (int)ceilf((float)((RI.viewport[0] + RI.viewport[2]) * gpGlobals->width) / (float)gpGlobals->width);
 		y = gpGlobals->height - RI.viewport[1] * gpGlobals->height / gpGlobals->height;
-		y2 = (int)ceilf(
-			(float)(gpGlobals->height - (RI.viewport[1] + RI.viewport[3]) * gpGlobals->height) /
-			(float)gpGlobals->height);
+		y2 = (int)ceilf((float)(gpGlobals->height -
+								(RI.viewport[1] + RI.viewport[3]) * gpGlobals->height / (float)gpGlobals->height));
 
 		pglViewport(x, y2, x2 - x, y - y2);
 	}
