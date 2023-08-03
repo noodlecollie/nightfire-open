@@ -618,7 +618,6 @@ void COM_TrimSpace(const char* source, char* dest)
 {
 	size_t start;
 	size_t end;
-	size_t length;
 
 	start = 0;
 	end = Q_strlen(source);
@@ -637,15 +636,18 @@ void COM_TrimSpace(const char* source, char* dest)
 
 	end++;
 
-	length = end - start;
-
-	if ( length > 0 )
+	if ( end > start )
 	{
-		memcpy(dest, source + start, length);
-	}
+		size_t length = end - start;
+		memmove(dest, source + start, length);
 
-	// terminate the dest string
-	dest[length] = 0;
+		// terminate the dest string
+		dest[length] = 0;
+	}
+	else if ( end == start )
+	{
+		dest[0] = 0;
+	}
 }
 
 /*

@@ -677,11 +677,11 @@ Extracts the base name of a file (no path, no extension, assumes '/' as path sep
 */
 void COM_FileBase(const char* in, char* out)
 {
-	size_t len;
-	size_t start;
-	size_t end;
+	int len;
+	int start;
+	int end;
 
-	len = Q_strlen(in);
+	len = (int)Q_strlen(in);
 
 	if ( len < 1 )
 	{
