@@ -1,0 +1,6 @@
+For Visual Studio to accept the icon on GitHub CI, it must be built with the following embedded frames:
+256x256 PNG
+64x64 32-bit BMP
+48x48 32-bit BMP
+32x32 32-bit BMP
+16x16 32-bit BMP
