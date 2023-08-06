@@ -518,8 +518,10 @@ static void Test_GetMSVCName(void)
 		"?foo@@",
 		"foo",  // not an error?
 		"?foo@bar@baz@@gotstrippedanyway",
-		"foo@bar@baz"};
-	int i;
+		"foo@bar@baz",
+	};
+
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
 	{
@@ -557,7 +559,8 @@ static void Test_GetItaniumName(void)
 		"_ZN3baz3bar3fooEdontcare",
 		"foo@bar@baz",
 	};
-	int i;
+
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
 	{
@@ -569,9 +572,18 @@ static void Test_GetItaniumName(void)
 
 static void Test_ConvertFromValveToLocal(void)
 {
-	const char* symbols[] =
-		{"", "_ZN", "foo", "_ZN3foo", "xash3d@fwgs", "_ZN4fwgs6xash3d", "foo@bar@bazz", "_ZN4bazz3bar3foo"};
-	int i;
+	const char* symbols[] = {
+		"",
+		"_ZN",
+		"foo",
+		"_ZN3foo",
+		"xash3d@fwgs",
+		"_ZN4fwgs6xash3d",
+		"foo@bar@bazz",
+		"_ZN4bazz3bar3foo",
+	};
+
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
 	{

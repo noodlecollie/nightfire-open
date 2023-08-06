@@ -26,6 +26,7 @@ GNU General Public License for more details.
 #include <dlfcn.h>
 #include "platform/misc/swap.h"
 #include "string.h"
+#include "PlatformLib/File.h"
 
 #ifndef XASH_DEFAULT_SWAP_PATH
 #define XASH_DEFAULT_SWAP_PATH "/tmp/xash3d-swap"
@@ -70,7 +71,6 @@ static void SWAP_Initialize(void)
 
 void* SWAP_Sbrk(size_t size)
 {
-	char buf[64];
 	SWAP_Initialize();
 
 	if ( size == 0 )
@@ -79,7 +79,6 @@ void* SWAP_Sbrk(size_t size)
 	{
 		void* res;
 
-		// write(1, buf, PlatformLib_SNPrintF(buf, 32, "allocating %d\n", size) );
 		res = s.top;
 		s.size += size;
 		s.top = res + size;
@@ -99,7 +98,6 @@ void* SWAP_Sbrk(size_t size)
 		{
 			s.top += size;
 			s.size += size;
-			// write(1, buf, PlatformLib_SNPrintF(buf, 32, "freed %d\n", -size) );
 		}
 
 		return res;

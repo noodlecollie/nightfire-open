@@ -309,7 +309,7 @@ static void SV_CleanExpiredIPFilters(void)
 			back = &f->next;
 	}
 }
-#endif // UNUSED_FUNCTIONS
+#endif  // UNUSED_FUNCTIONS
 
 static int SV_FilterToString(char* dest, size_t size, qboolean config, ipfilter_t* f)
 {
@@ -327,7 +327,7 @@ static int SV_FilterToString(char* dest, size_t size, qboolean config, ipfilter_
 
 static qboolean SV_IPFilterIncludesIPFilter(ipfilter_t* a, ipfilter_t* b)
 {
-	if ( a->adr.ip.ip6.type6 != b->adr.ip.ip6.type6)
+	if ( a->adr.ip.ip6.type6 != b->adr.ip.ip6.type6 )
 	{
 		return false;
 	}
@@ -617,7 +617,7 @@ void SV_ShutdownFilter(void)
 void Test_StringToFilterAdr(void)
 {
 	ipfilter_t f1;
-	int i;
+	size_t i;
 	struct
 	{
 		const char* str;
@@ -630,9 +630,11 @@ void Test_StringToFilterAdr(void)
 		{"192.168/23", true, 23, 192, 168, 0, 0},
 		{"192.168./23", true, 23, 192, 168, 0, 0},
 		{"192.168../23", true, 23, 192, 168, 0, 0},
-		{"..192...168/23", false},
-		{"", false},
-		{"abcd", false}};
+		{"..192...168/23", false, 0, 0, 0, 0, 0},
+		{"", false, 0, 0, 0, 0, 0},
+		{"abcd", false, 0, 0, 0, 0, 0},
+	};
+
 	struct
 	{
 		const char* str;
@@ -642,8 +644,8 @@ void Test_StringToFilterAdr(void)
 	} ipv6tests[] = {
 		{"::1", true, 128, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}},
 		{"fd18:b9d4:65cf:83de::/64", true, 64, {0xfd, 0x18, 0xb9, 0xd4, 0x65, 0xcf, 0x83, 0xde}},
-		{"kkljnljkhfjnkj", false},
-		{"fd8a:63d5:e014:0d62:ffff:ffff:ffff:ffff:ffff", false},
+		{"kkljnljkhfjnkj", false, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
+		{"fd8a:63d5:e014:0d62:ffff:ffff:ffff:ffff:ffff", false, 0, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}},
 	};
 
 	for ( i = 0; i < ARRAYSIZE(ipv4tests); i++ )
@@ -693,7 +695,7 @@ void Test_IPFilterIncludesIPFilter(void)
 		"2a00:1370:8190:f9eb:3866:6126:330c:b82b"  // 6
 	};
 	ipfilter_t f[7];
-	int i;
+	size_t i;
 	int tests[][3] = {
 		// ipv4
 		{0, 0, true},
@@ -724,7 +726,7 @@ void Test_IPFilterIncludesIPFilter(void)
 	{
 		ret = SV_IPFilterIncludesIPFilter(&f[tests[i][0]], &f[tests[i][1]]);
 
-		TASSERT_EQi(ret, tests[i][2]);
+		TASSERT_EQi(ret, (qboolean)tests[i][2]);
 	}
 }
 
