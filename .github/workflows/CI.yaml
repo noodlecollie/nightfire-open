@@ -26,8 +26,8 @@ jobs:
         cc: gcc
         cxx: g++
         build-type: MinSizeRel
+        target: install
         configure-options: -DCMAKE_INSTALL_PREFIX=install
-        install-build: true
 
   build-windows:
     name: Build on Windows
@@ -45,5 +45,5 @@ jobs:
         cc: cl
         cxx: cl
         build-type: MinSizeRel
+        target: install
         configure-options: -DCMAKE_INSTALL_PREFIX=install
-        install-build: true
