@@ -1371,7 +1371,9 @@ Netchan_UpdateProgress
 */
 void Netchan_UpdateProgress(netchan_t* chan)
 {
-#if !XASH_DEDICATED
+#if XASH_DEDICATED
+	(void)chan;
+#else
 	fragbuf_t* p;
 	int i, c = 0;
 	int total = 0;

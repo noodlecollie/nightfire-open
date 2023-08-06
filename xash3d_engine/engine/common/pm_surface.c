@@ -28,6 +28,7 @@ typedef struct
 	msurface_t* surface;
 } linetrace_t;
 
+#if !XASH_DEDICATED
 /*
 ==============
 fix_coord
@@ -41,6 +42,7 @@ static uint fix_coord(vec_t in, uint width)
 		return (uint)in % width;
 	return width - ((uint)fabs(in) % width);
 }
+#endif // !XASH_DEDICATED
 
 /*
 =============
@@ -58,6 +60,12 @@ int PM_SampleMiptex(const msurface_t* surf, const vec3_t point)
 	int x, y;
 	mtexinfo_t* tx;
 	texture_t* mt;
+
+	(void)point;
+	(void)ds;
+	(void)dt;
+	(void)x;
+	(void)y;
 
 	// fill the default contents
 	if ( fb )

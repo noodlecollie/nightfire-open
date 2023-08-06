@@ -407,6 +407,7 @@ static mip_t* Mod_GetMipTexForTexture(dbspmodel_t* bmod, int i)
 	return (mip_t*)((byte*)bmod->textures + bmod->textures->dataofs[i]);
 }
 
+#if !XASH_DEDICATED
 // Returns index of WAD that texture was found in, or -1 if not found.
 static int Mod_FindTextureInWadList(wadlist_t* list, const char* name, char* dst, size_t size)
 {
@@ -473,6 +474,7 @@ static qboolean Mod_CalcMipTexUsesCustomPalette(dbspmodel_t* bmod, int textureIn
 	remainingBytes = (fs_offset_t)(bmod->texdatasize - (bmod->textures->dataofs[textureIndex] + size));
 	return (size_t)remainingBytes >= MIPTEX_CUSTOM_PALETTE_SIZE_BYTES;
 }
+#endif // !XASH_DEDICATED
 
 static qboolean Mod_NameImpliesTextureIsAnimated(texture_t* tex)
 {
@@ -2405,11 +2407,13 @@ static qboolean LoadPNGTextureData(const dpngtexturepath_t* in, texture_t** out,
 {
 	qboolean success = false;
 
+	(void)texName;
+
 	do
 	{
+#if !XASH_DEDICATED
 		int textureNum = 0;
 
-#if !XASH_DEDICATED
 		if ( !Host_IsDedicated() )
 		{
 			textureNum = ref.dllFuncs.GL_LoadTexture(texName, NULL, 0, 0);
@@ -2529,7 +2533,11 @@ static void LoadPNGTexture(const dpngtexturepath_t* in, texture_t** out)
 
 static void Mod_LoadTextureData(dbspmodel_t* bmod, int textureIndex, qboolean allowWAD)
 {
-#if !XASH_DEDICATED
+#if XASH_DEDICATED
+	(void)bmod;
+	(void)textureIndex;
+	(void)allowWAD;
+#else
 	texture_t* texture = NULL;
 	mip_t* mipTex = NULL;
 	qboolean usesCustomPalette = false;
@@ -2635,7 +2643,7 @@ static void Mod_LoadTextureData(dbspmodel_t* bmod, int textureIndex, qboolean al
 			}
 		}
 	}
-#endif  // !XASH_DEDICATED
+#endif  // XASH_DEDICATED
 }
 
 static void Mod_LoadTexture(dbspmodel_t* bmod, int textureIndex, qboolean allowWAD)

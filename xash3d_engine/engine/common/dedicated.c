@@ -21,6 +21,8 @@ ref_globals_t refState;
 
 void CL_ProcessFile(qboolean successfully_received, const char* filename)
 {
+	(void)successfully_received;
+	(void)filename;
 }
 
 int GAME_EXPORT CL_Active(void)
@@ -90,10 +92,12 @@ void CL_ClearEdicts(void)
 
 void GAME_EXPORT Key_SetKeyDest(int key_dest)
 {
+	(void)key_dest;
 }
 
 void UI_SetActiveMenu(qboolean fActive)
 {
+	(void)fActive;
 }
 
 void CL_WriteMessageHistory(void)
@@ -126,15 +130,21 @@ void R_ClearAllDecals(void)
 }
 int R_CreateDecalList(struct decallist_s* pList)
 {
+	(void)pList;
 	return 0;
 }
 
 void GAME_EXPORT S_StopSound(int entnum, int channel, const char* soundname)
 {
+	(void)entnum;
+	(void)channel;
+	(void)soundname;
 }
 
 int S_GetCurrentStaticSounds(soundlist_t* pout, int size)
 {
+	(void)pout;
+	(void)size;
 	return 0;
 }
 
@@ -174,27 +184,36 @@ void S_StopBackgroundTrack(void)
 
 void SCR_BeginLoadingPlaque(qboolean is_background)
 {
+	(void)is_background;
 }
 
 int S_GetCurrentDynamicSounds(soundlist_t* pout, int size)
 {
+	(void)pout;
+	(void)size;
 	return 0;
 }
 
 void S_StopAllSounds(qboolean ambient)
 {
+	(void)ambient;
 }
 
 void GAME_EXPORT Con_NPrintf(int idx, const char* fmt, ...)
 {
+	(void)idx;
+	(void)fmt;
 }
 
 void GAME_EXPORT Con_NXPrintf(struct con_nprint_s* info, const char* fmt, ...)
 {
+	(void)info;
+	(void)fmt;
 }
 
 const byte* GL_TextureData(unsigned int texnum)
 {
+	(void)texnum;
 	return NULL;
 }
 
@@ -220,6 +239,7 @@ void CL_Crashed(void)
 
 void CL_HudMessage(const char* pMessage)
 {
+	(void)pMessage;
 }
 #else
 	// Avoid warnings about empty translation units.

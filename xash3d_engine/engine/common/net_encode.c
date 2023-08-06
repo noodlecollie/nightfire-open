@@ -1719,7 +1719,12 @@ Read the clientdata
 */
 void MSG_ReadClientData(sizebuf_t* msg, clientdata_t* from, clientdata_t* to, double timebase)
 {
-#if !XASH_DEDICATED
+#if XASH_DEDICATED
+	(void)msg;
+	(void)from;
+	(void)to;
+	(void)timebase;
+#else
 	delta_t* pField;
 	delta_info_t* dt;
 	int i;
@@ -1985,7 +1990,14 @@ qboolean MSG_ReadDeltaEntity(
 	int delta_type,
 	double timebase)
 {
-#if !XASH_DEDICATED
+#if XASH_DEDICATED
+	(void)msg;
+	(void)from;
+	(void)to;
+	(void)number;
+	(void)delta_type;
+	(void)timebase;
+#else
 	delta_info_t* dt = NULL;
 	delta_t* pField;
 	int i, fRemoveType;

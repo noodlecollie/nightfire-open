@@ -2026,6 +2026,7 @@ static const byte* GL_TextureData(unsigned int texnum)
 #if !XASH_DEDICATED
 	return Host_IsDedicated() ? NULL : ref.dllFuncs.GL_TextureData(texnum);
 #else  // XASH_DEDICATED
+	(void)texnum;
 	return NULL;
 #endif  // XASH_DEDICATED
 }

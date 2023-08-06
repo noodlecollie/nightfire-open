@@ -677,6 +677,10 @@ void SV_RestartAmbientSounds(void)
 	int i, nSounds;
 	int position;
 
+	(void)curtrack;
+	(void)looptrack;
+	(void)position;
+
 	if ( !SV_Active() )
 		return;
 
