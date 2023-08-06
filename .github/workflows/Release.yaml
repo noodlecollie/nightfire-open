@@ -26,7 +26,7 @@ jobs:
         cxx: g++
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install
+        configure-options: -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/build/install/
 
     - shell: bash
       run: tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/build/install/ ${{runner.workspace}}
@@ -54,7 +54,7 @@ jobs:
         cxx: cl
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install
+        configure-options: -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/build/install/
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.1
