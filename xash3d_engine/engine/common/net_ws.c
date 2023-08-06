@@ -364,7 +364,7 @@ static void NET_SockadrToNetadr(const struct sockaddr_storage* s, netadr_t* a)
 	if ( s->ss_family == AF_INET )
 	{
 		a->ip.ip4.type = NA_IP;
-		*(int*)&a->ip = ((struct sockaddr_in*)s)->sin_addr.s_addr;
+		*(int*)&a->ip.ip4.ip = ((struct sockaddr_in*)s)->sin_addr.s_addr;
 		a->port = ((struct sockaddr_in*)s)->sin_port;
 	}
 	else if ( s->ss_family == AF_INET6 )
@@ -1889,43 +1889,43 @@ void NET_SendPacketEx(netsrc_t sock, size_t length, const void* data, netadr_t t
 		{
 			return;
 		}
-		else
+	}
+	else
+	{
+		Host_Error("NET_SendPacket: bad address type %u (%u)\n", to.ip.ip4.type, to.ip.ip6.type6);
+	}
+
+	NET_NetadrToSockadr(&to, &addr);
+
+	ret = NET_SendLong(sock, (int)net_socket, data, length, 0, &addr, NET_SockAddrLen(&addr), splitsize);
+
+	if ( NET_IsSocketError(ret) )
+	{
+		int err = WSAGetLastError();
+
+		// WSAEWOULDBLOCK is silent
+		if ( err == WSAEWOULDBLOCK )
 		{
-			Host_Error("NET_SendPacket: bad address type %i (%i)\n", to.ip.ip4.type, to.ip.ip6.type6);
+			return;
 		}
 
-		NET_NetadrToSockadr(&to, &addr);
-
-		ret = NET_SendLong(sock, (int)net_socket, data, length, 0, &addr, NET_SockAddrLen(&addr), splitsize);
-
-		if ( NET_IsSocketError(ret) )
+		// some PPP links don't allow broadcasts
+		if ( err == WSAEADDRNOTAVAIL && (to.ip.ip4.type == NA_BROADCAST || to.ip.ip6.type6 == NA_MULTICAST_IP6) )
 		{
-			int err = WSAGetLastError();
+			return;
+		}
 
-			// WSAEWOULDBLOCK is silent
-			if ( err == WSAEWOULDBLOCK )
-			{
-				return;
-			}
-
-			// some PPP links don't allow broadcasts
-			if ( err == WSAEADDRNOTAVAIL && (to.ip.ip4.type == NA_BROADCAST || to.ip.ip6.type6 == NA_MULTICAST_IP6) )
-			{
-				return;
-			}
-
-			if ( Host_IsDedicated() )
-			{
-				Con_DPrintf(S_ERROR "NET_SendPacket: %s to %s\n", NET_ErrorString(), NET_AdrToString(to));
-			}
-			else if ( err == WSAEADDRNOTAVAIL || err == WSAENOBUFS )
-			{
-				Con_DPrintf(S_ERROR "NET_SendPacket: %s to %s\n", NET_ErrorString(), NET_AdrToString(to));
-			}
-			else
-			{
-				Con_Printf(S_ERROR "NET_SendPacket: %s to %s\n", NET_ErrorString(), NET_AdrToString(to));
-			}
+		if ( Host_IsDedicated() )
+		{
+			Con_DPrintf(S_ERROR "NET_SendPacket: %s to %s\n", NET_ErrorString(), NET_AdrToString(to));
+		}
+		else if ( err == WSAEADDRNOTAVAIL || err == WSAENOBUFS )
+		{
+			Con_DPrintf(S_ERROR "NET_SendPacket: %s to %s\n", NET_ErrorString(), NET_AdrToString(to));
+		}
+		else
+		{
+			Con_Printf(S_ERROR "NET_SendPacket: %s to %s\n", NET_ErrorString(), NET_AdrToString(to));
 		}
 	}
 }
