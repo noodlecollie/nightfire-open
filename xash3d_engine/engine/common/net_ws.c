@@ -1994,7 +1994,11 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 		return INVALID_SOCKET;
 	}
 
+#ifdef _WIN32
+	addr.ss_family = (ADDRESS_FAMILY)family;
+#else
 	addr.ss_family = (sa_family_t)family;
+#endif
 
 	if ( family == AF_INET6 )
 	{

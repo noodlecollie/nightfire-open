@@ -93,9 +93,9 @@ void S_TransferPaintBuffer(int endtime)
 			{
 				snd_out[i + 0] = 0x7fff;
 			}
-			else if ( val < (short)0x8000 )
+			else if ( val < (short)((unsigned short)0x8000) )
 			{
-				snd_out[i + 0] = (short)0x8000;
+				snd_out[i + 0] = (short)((unsigned short)0x8000);
 			}
 			else
 			{
@@ -108,9 +108,9 @@ void S_TransferPaintBuffer(int endtime)
 			{
 				snd_out[i + 1] = 0x7fff;
 			}
-			else if ( val < (short)0x8000 )
+			else if ( val < (short)((unsigned short)0x8000) )
 			{
-				snd_out[i + 1] = (short)0x8000;
+				snd_out[i + 1] = (short)((unsigned short)0x8000);
 			}
 			else
 			{

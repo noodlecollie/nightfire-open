@@ -243,7 +243,7 @@ static byte* Wrapper_AVI_GetVideoFrame(void* Avi, long frame)
 
 static void Wrapper_AVI_FreeVideo(void* Avi)
 {
-	return AVI_FreeVideo((movie_state_t*)Avi);
+	AVI_FreeVideo((movie_state_t*)Avi);
 }
 
 static void* Wrapper_CL_ModelHandle(int modelindex)

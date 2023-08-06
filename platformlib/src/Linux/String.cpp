@@ -18,11 +18,6 @@ int PlatformLib_StrNCaseCmp(const char* s1, const char* s2, size_t n)
 	return strncasecmp(s1, s2, n);
 }
 
-const char* PlatformLib_StrCaseStr(const char* haystack, const char* needle)
-{
-	return strcasestr(haystack, needle);
-}
-
 int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_list argptr)
 {
 	const int returnVal = vsnprintf(buffer, count, format, argptr);

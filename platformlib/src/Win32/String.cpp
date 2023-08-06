@@ -17,11 +17,6 @@ int PlatformLib_StrNCaseCmp(const char* s1, const char* s2, size_t n)
 	return _strnicmp(s1, s2, n);
 }
 
-const char* PlatformLib_StrCaseStr(const char* haystack, const char* needle)
-{
-	return stristr(haystack, needle);
-}
-
 // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/vsnprintf-vsnprintf-vsnprintf-l-vsnwprintf-vsnwprintf-l
 // "The vsnprintf function always writes a null terminator, even if it truncates the output."
 // This makes this function safe for our use.

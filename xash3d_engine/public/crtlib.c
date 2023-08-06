@@ -491,7 +491,6 @@ const char* Q_timestamp(int format)
 	return timestamp;
 }
 
-#if !defined(HAVE_STRCASESTR)
 char* Q_stristr(const char* string, const char* string2)
 {
 	int c;
@@ -519,7 +518,6 @@ char* Q_stristr(const char* string, const char* string2)
 	}
 	return (char*)string;
 }
-#endif  // !defined( HAVE_STRCASESTR )
 
 int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list args)
 {
