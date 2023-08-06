@@ -1,6 +1,8 @@
 #ifndef PLATFORMLIB_SYSTEM_H
 #define PLATFORMLIB_SYSTEM_H
 
+#include <stddef.h>
+
 #ifdef __cplusplus
 extern "C"
 {
