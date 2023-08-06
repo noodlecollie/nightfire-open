@@ -642,7 +642,7 @@ void Com_EscapeCommand(char* newCommand, const char* oldCommand, int len)
 	char c;
 	int scripting = (int)EngFuncs::GetCvarFloat("cmd_scripting");
 
-	while ( (c = *oldCommand++) && len > 1 )
+	for ( c = *oldCommand++; c && len > 1; c = *oldCommand++ )
 	{
 		if ( c == '"' )
 		{
