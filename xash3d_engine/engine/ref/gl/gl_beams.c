@@ -194,7 +194,7 @@ R_DrawSegs(vec3_t source, vec3_t delta, float width, float scale, float freq, fl
 	float div, length, fraction, factor;
 	float flMaxWidth, vLast, vStep, brightness;
 	vec3_t perp1, vLastNormal;
-	beamseg_t curSeg;
+	beamseg_t curSeg = {{0, 0, 0}, 0, 0};
 
 	if ( segments < 2 )
 		return;

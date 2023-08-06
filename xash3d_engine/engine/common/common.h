@@ -100,15 +100,6 @@ typedef enum
 	HOST_DEDICATED,
 } instance_t;
 
-static inline int Host_IsDedicated()
-{
-#ifdef XASH_DEDICATED
-	return 1;
-#else
-	return host.type == HOST_DEDICATED;
-#endif
-}
-
 #include "system.h"
 #include "com_model.h"
 #include "com_strings.h"
@@ -427,6 +418,15 @@ typedef struct host_parm_s
 
 extern host_parm_t host;
 extern sysinfo_t SI;
+
+static inline int Host_IsDedicated()
+{
+#ifdef XASH_DEDICATED
+	return 1;
+#else
+	return host.type == HOST_DEDICATED;
+#endif
+}
 
 #define CMD_SERVERDLL BIT(0)  // added by server.dll
 #define CMD_CLIENTDLL BIT(1)  // added by client.dll

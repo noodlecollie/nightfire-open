@@ -1228,7 +1228,22 @@ void CL_ParseBaseline(sizebuf_t* msg, qboolean legacy)
 			Host_Error("CL_AllocEdict: no free edicts\n");
 
 		ent = CL_EDICT_NUM(newnum);
+
+		// The memset below produces the inexplicable warnings on GCC 12.3.0 in MinSizeRel mode:
+		//   ‘__builtin_memset’ offset [0, 339] is out of the bounds [0, 0] [-Werror=array-bounds]
+		//   ‘__builtin_memset’ writing 340 bytes into a region of size 0 overflows the destination
+		// I have no idea why this is coming up here - bounds of [0, 0] seem suspect
+		// to me, so this may actually be a compiler issue. For now, just suppress this warning.
+#ifndef _WIN32
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
 		memset(&ent->prevstate, 0, sizeof(ent->prevstate));
+#ifndef _WIN32
+#pragma GCC diagnostic pop
+#endif
+
 		ent->index = newnum;
 
 		MSG_ReadDeltaEntity(msg, &ent->prevstate, &ent->baseline, newnum, player, 1.0f);

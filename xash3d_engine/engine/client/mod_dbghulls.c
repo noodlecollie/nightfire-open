@@ -67,7 +67,15 @@ _inline void list_del(hullnode_t* entry)
 
 static winding_t* winding_alloc(uint numpoints)
 {
-	return (winding_t*)malloc(offsetof(winding_t, p[numpoints]));
+	// This original line:
+	//   return (winding_t*)malloc(offsetof(winding_t, p[numpoints]));
+	// did not take into account padding of the struct,
+	// especially on 64-bit systems.
+	// IMO the way winding_t is set up is dumb, since the
+	// struct member definition can no longer be relied upon,
+	// but I'm not changing it now.
+
+	return (winding_t*)malloc(sizeof(winding_t) - sizeof(((winding_t*)0)->p) + (numpoints * sizeof(vec3_t)));
 }
 
 static void free_winding(winding_t* w)

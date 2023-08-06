@@ -209,7 +209,7 @@ target_compile_definitions(${TARGETNAME_LIB_UI} PRIVATE
 	# we can use MAINUI_USE_FREETYPE=1 for Linux here too.
 	# Only enable if not using STB libraries and not building
 	# with LOW_MEMORY.
-	$<$<NOT:$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">>:MAINUI_USE_STB=1->
+	$<$<NOT:$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">>:MAINUI_USE_STB=1>
 )
 
 target_compile_options(${TARGETNAME_LIB_UI} PRIVATE
