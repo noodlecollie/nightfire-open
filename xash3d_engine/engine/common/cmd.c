@@ -1388,7 +1388,7 @@ void Cmd_Escape(char* newCommand, const char* oldCommand, int len)
 	char c;
 	int scripting = CVAR_TO_BOOL(cmd_scripting);
 
-	while ( (c = *oldCommand++) && len > 1 )
+	for ( c = *oldCommand++; c && len > 1; c = *oldCommand++ )
 	{
 		if ( c == '"' )
 		{

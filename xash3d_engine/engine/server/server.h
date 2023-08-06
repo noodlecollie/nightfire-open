@@ -55,7 +55,7 @@ extern int SV_UPDATE_BACKUP;
 #define GROUP_OP_NAND 1
 
 #ifdef NDEBUG
-#define SV_IsValidEdict(e) (e && !e->free)
+#define SV_IsValidEdict(e) ((e) && !(e)->free)
 #else
 #define SV_IsValidEdict(e) SV_CheckEdict(e, __FILE__, __LINE__)
 #endif
