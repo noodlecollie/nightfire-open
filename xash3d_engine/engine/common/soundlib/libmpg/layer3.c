@@ -931,7 +931,7 @@ static int III_dequantize_sample(
 			// especially why there are (valid?) files that make xrpnt exceed the array with 4 bytes without segfaulting
 			// more seems to be floatly bad, though.
 
-			if ( !(xrpnt < &xr[SBLIMIT][0] + 5) )
+			if ( !(xrpnt < (float*)xr + SBLIMIT + SSLIMIT + 5) )
 				return 2;
 
 			h = htc + gr_info->count1table_select;
