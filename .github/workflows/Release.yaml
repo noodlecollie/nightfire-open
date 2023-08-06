@@ -33,10 +33,10 @@ jobs:
       run: tar -czvf game_linux.tar.gz -C build/install/ ${{runner.workspace}}
 
     - name: Upload build
-        uses: actions/upload-artifact@v3
-        with:
-          name: artefacts_linux
-          path: ${{runner.workspace}}/game_linux.tar.gz
+      uses: actions/upload-artifact@v3
+      with:
+        name: artefacts_linux
+        path: ${{runner.workspace}}/game_linux.tar.gz
 
   build-windows:
     name: Build on Windows
@@ -66,10 +66,10 @@ jobs:
         path: build/install
 
     - name: Upload build
-        uses: actions/upload-artifact@v3
-        with:
-          name: artefacts_windows
-          path: ${{runner.workspace}}/game_windows.zip
+      uses: actions/upload-artifact@v3
+      with:
+        name: artefacts_windows
+        path: ${{runner.workspace}}/game_windows.zip
 
   create-release:
     runs-on: ubuntu-latest
