@@ -1184,7 +1184,7 @@ void R_StudioBuildNormalTable(void)
 		pmesh = (mstudiomesh_t*)((byte*)m_pStudioHeader + m_pSubModel->meshindex) + j;
 		ptricmds = (short*)((byte*)m_pStudioHeader + pmesh->triindex);
 
-		while ( (i = *(ptricmds++)) )
+		for ( i = *(ptricmds++); i; i = *(ptricmds++) )
 		{
 			if ( i < 0 )
 				i = -i;
@@ -1234,7 +1234,7 @@ void R_StudioGenerateNormals(void)
 		pmesh = (mstudiomesh_t*)((byte*)m_pStudioHeader + m_pSubModel->meshindex) + j;
 		ptricmds = (short*)((byte*)m_pStudioHeader + pmesh->triindex);
 
-		while ( (i = *(ptricmds++)) )
+		for ( i = *(ptricmds++); i; i = *(ptricmds++) )
 		{
 			if ( i < 0 )
 			{
@@ -2045,7 +2045,7 @@ _inline void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float
 {
 	int i;
 
-	while ( (i = *(ptricmds++)) )
+	for ( i = *(ptricmds++); i; i = *(ptricmds++) )
 	{
 		if ( i < 0 )
 		{
@@ -2078,7 +2078,7 @@ _inline void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
 	int i;
 
-	while ( (i = *(ptricmds++)) )
+	for ( i = *(ptricmds++); i; i = *(ptricmds++) )
 	{
 		if ( i < 0 )
 		{
@@ -2113,7 +2113,7 @@ _inline void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float
 	qboolean glowShell = (scale > 0.0f) ? true : false;
 	vec3_t vert;
 
-	while ( (i = *(ptricmds++)) )
+	for ( i = *(ptricmds++); i; i = *(ptricmds++) )
 	{
 		if ( i < 0 )
 		{
@@ -2873,7 +2873,7 @@ static void R_StudioDrawPointsShadow(void)
 
 		r_stats.c_studio_polys += pmesh->numtris;
 
-		while ( (i = *(ptricmds++)) )
+		for ( i = *(ptricmds++); i; i = *(ptricmds++) )
 		{
 			if ( i < 0 )
 			{
