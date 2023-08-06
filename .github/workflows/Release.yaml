@@ -21,12 +21,12 @@ jobs:
     - name: Build
       uses: ashutoshvarma/action-cmake-build@master
       with:
-        build-dir: ${{runner.workspace}}/build_windows
+        build-dir: ${{runner.workspace}}/build
         cc: gcc
         cxx: g++
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/build/install/
+        configure-options: -DCMAKE_INSTALL_PREFIX=build/install
 
     - shell: bash
       run: tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/build/install/ ${{runner.workspace}}
@@ -54,7 +54,7 @@ jobs:
         cxx: cl
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/build/install/
+        configure-options: -DCMAKE_INSTALL_PREFIX=build/install
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.1
