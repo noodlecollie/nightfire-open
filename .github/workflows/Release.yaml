@@ -1,0 +1,120 @@
+---
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-linux:
+    name: Build on Ubuntu Latest
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y libsdl2-dev
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build_windows
+        cc: gcc
+        cxx: g++
+        build-type: MinSizeRel
+        target: install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install
+
+    - shell: bash
+      run: tar -czvf game_linux.tar.gz -C build/install/ ${{runner.workspace}}
+
+    - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: artefacts_linux
+          path: ${{runner.workspace}}/game_linux.tar.gz
+
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: cl
+        cxx: cl
+        build-type: MinSizeRel
+        target: install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install
+
+    - name: Archive Release
+      uses: thedoctor0/zip-release@0.7.1
+      with:
+        type: 'zip'
+        filename: 'game_windows.zip'
+        directory: ${{runner.workspace}}
+        path: build/install
+
+    - name: Upload build
+        uses: actions/upload-artifact@v3
+        with:
+          name: artefacts_windows
+          path: ${{runner.workspace}}/game_windows.zip
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: build-windows build-linux
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0 # required for github-action-get-previous-tag
+
+      - name: Get Previous tag
+        id: get_previous_tag
+        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get next version
+        id: get_next_version
+        uses: 'WyriHaximus/github-action-next-release-version@1.0.0'
+        with:
+          version: ${{ steps.get_previous_tag.outputs.tag }}
+
+      - name: Download Linux artefacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artefacts_linux
+
+      - name: Download Windows artefacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artefacts_windows
+
+      - shell: bash
+        run: |
+          mv ${{runner.workspace}}/game_linux.tar.gz ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_linux.tar.gz
+          mv ${{runner.workspace}}/game_windows.zip ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_windows.zip
+
+      - name: Create release
+        uses: 'marvinpinto/action-automatic-releases@latest'
+        with:
+          repo_token: "${{secrets.GITHUB_TOKEN}}"
+          tag_name: ${{steps.get_next_version.outputs.version}}
+          release_name: Release ${{steps.get_next_version.outputs.version}}
+          files: |
+            ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_linux.tar.gz
+            ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_windows.zip
