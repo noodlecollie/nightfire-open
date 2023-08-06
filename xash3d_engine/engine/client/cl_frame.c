@@ -62,9 +62,13 @@ void CL_UpdatePositions(cl_entity_t* ent)
 	VectorCopy(ent->curstate.angles, ph->angles);
 
 	if ( ent->model && ent->model->type == mod_brush )
+	{
 		ph->animtime = ent->curstate.animtime;
+	}
 	else
-		ph->animtime = cl.time;
+	{
+		ph->animtime = (float)cl.time;
+	}
 }
 
 /*
@@ -106,7 +110,7 @@ qboolean CL_EntityTeleported(cl_entity_t* ent)
 
 	// compute potential max movement in units per frame and compare with entity movement
 	maxlen = (clgame.movevars.maxvelocity * (1.0f / GAME_FPS));
-	len = VectorLength(delta);
+	len = (float)VectorLength(delta);
 
 	return (len > maxlen);
 }
@@ -120,8 +124,8 @@ round-off floating errors
 */
 qboolean CL_CompareTimestamps(float t1, float t2)
 {
-	int iTime1 = t1 * 1000;
-	int iTime2 = t2 * 1000;
+	int iTime1 = (int)(t1 * 1000);
+	int iTime2 = (int)(t2 * 1000);
 
 	return ((iTime1 - iTime2) <= 1);
 }
@@ -136,10 +140,14 @@ some ents will be ignore lerping
 qboolean CL_EntityIgnoreLerp(cl_entity_t* e)
 {
 	if ( cl_nointerp->value > 0.f )
+	{
 		return true;
+	}
 
 	if ( e->model && e->model->type == mod_alias )
+	{
 		return false;
+	}
 
 	return (e->curstate.movetype == MOVETYPE_NONE) ? true : false;
 }
@@ -186,9 +194,13 @@ qboolean CL_ParametricMove(cl_entity_t* ent)
 	if ( dt != 0.0f )
 	{
 		if ( ent->lastmove > cl.time )
+		{
 			t = ent->lastmove;
+		}
 		else
-			t = cl.time;
+		{
+			t = (float)cl.time;
+		}
 
 		frac = (t - ent->curstate.starttime) / dt;
 		frac = bound(0.0f, frac, 1.0f);
@@ -288,7 +300,7 @@ void CL_ResetLatchedVars(cl_entity_t* ent, qboolean full_reset)
 		ent->prevstate = ent->curstate;
 	}
 
-	ent->latched.prevanimtime = ent->curstate.animtime = cl.mtime[0];
+	ent->latched.prevanimtime = ent->curstate.animtime = (float)cl.mtime[0];
 	VectorCopy(ent->curstate.origin, ent->latched.prevorigin);
 	VectorCopy(ent->curstate.angles, ent->latched.prevangles);
 	ent->latched.prevsequence = ent->curstate.sequence;
@@ -396,13 +408,12 @@ non-local players interpolation
 */
 void CL_PureOrigin(cl_entity_t* ent, float t, vec3_t outorigin, vec3_t outangles)
 {
-	qboolean extrapolate;
 	float t1, t0, frac;
 	position_history_t *ph0, *ph1;
 	vec3_t delta;
 
 	// NOTE: ph0 is next, ph1 is a prev
-	extrapolate = CL_FindInterpolationUpdates(ent, t, &ph0, &ph1);
+	CL_FindInterpolationUpdates(ent, t, &ph0, &ph1);
 
 	if ( !ph0 || !ph1 )
 		return;
@@ -478,7 +489,7 @@ int CL_InterpolateModel(cl_entity_t* e)
 	if ( cl.local.moving && cl.local.onground == e->index )
 		return 1;
 
-	t = cl.time - cl_interp->value;
+	t = (float)cl.time - cl_interp->value;
 	CL_FindInterpolationUpdates(e, t, &ph0, &ph1);
 
 	if ( ph0 == NULL || ph1 == NULL )
@@ -563,7 +574,7 @@ void CL_ComputePlayerOrigin(cl_entity_t* ent)
 		return;
 	}
 
-	targettime = cl.time - cl_interp->value;
+	targettime = (float)cl.time - cl_interp->value;
 	CL_PureOrigin(ent, targettime, origin, angles);
 
 	VectorCopy(angles, ent->angles);
@@ -584,7 +595,7 @@ void CL_ProcessPlayerState(int playerindex, entity_state_t* state)
 	ps = &cl.frames[cl.parsecountmod].playerstate[playerindex];
 	ps->number = state->number;
 	ps->messagenum = cl.parsecount;
-	ps->msg_time = cl.mtime[0];
+	ps->msg_time = (float)cl.mtime[0];
 
 	clgame.dllFuncs.pfnProcessPlayerState(ps, state);
 }
@@ -609,7 +620,9 @@ void CL_ResetLatchedState(int pnum, frame_t* frame, cl_entity_t* ent)
 
 		// parametric interpolation will starts at this point
 		if ( ent->curstate.starttime != 0.0f && ent->curstate.impacttime != 0.0f )
-			ent->lastmove = cl.time;
+		{
+			ent->lastmove = (float)cl.time;
+		}
 	}
 }
 
@@ -631,7 +644,7 @@ void CL_ProcessPacket(frame_t* frame)
 		// request the entity state from circular buffer
 		state = &cls.packet_entities[(frame->first_entity + pnum) % cls.num_client_entities];
 		state->messagenum = cl.parsecount;
-		state->msg_time = cl.mtime[0];
+		state->msg_time = (float)cl.mtime[0];
 
 		// mark all the players
 		ent = &clgame.entities[state->number];
@@ -1222,7 +1235,7 @@ void CL_LinkPacketEntities(frame_t* frame)
 		{
 			if ( ent->curstate.animtime == ent->prevstate.animtime &&
 				 !VectorCompare(ent->curstate.origin, ent->prevstate.origin) )
-				ent->lastmove = cl.time + 0.2;
+				ent->lastmove = (float)cl.time + 0.2f;
 
 			if ( FBitSet(ent->curstate.eflags, EFLAG_SLERP) )
 			{
@@ -1308,13 +1321,19 @@ void CL_LinkPacketEntities(frame_t* frame)
 
 		// XASH SPECIFIC
 		if ( ent->curstate.rendermode == kRenderNormal && ent->curstate.renderfx == kRenderFxNone )
-			ent->curstate.renderamt = 255.0f;
+		{
+			ent->curstate.renderamt = 255;
+		}
 
 		if ( ent->curstate.aiment != 0 && ent->curstate.movetype != MOVETYPE_COMPOUND )
+		{
 			ent->curstate.movetype = MOVETYPE_FOLLOW;
+		}
 
 		if ( FBitSet(ent->curstate.effects, EF_NOINTERP) )
+		{
 			CL_ResetLatchedVars(ent, false);
+		}
 
 		if ( CL_EntityTeleported(ent) )
 		{

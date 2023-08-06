@@ -91,18 +91,18 @@ public:
 		SetSortingColumn(-1);
 	}
 
-	void SetUpArrowPicture(const char* upArrow, const char* upArrowFocus, const char* upArrowPressed)
+	void SetUpArrowPicture(const char* inUpArrow, const char* inUpArrowFocus, const char* inUpArrowPressed)
 	{
-		szUpArrow = upArrow;
-		szUpArrowFocus = upArrowFocus;
-		szUpArrowPressed = upArrowPressed;
+		szUpArrow = inUpArrow;
+		szUpArrowFocus = inUpArrowFocus;
+		szUpArrowPressed = inUpArrowPressed;
 	}
 
-	void SetDownArrowPicture(const char* downArrow, const char* downArrowFocus, const char* downArrowPressed)
+	void SetDownArrowPicture(const char* inDownArrow, const char* inDownArrowFocus, const char* inDownArrowPressed)
 	{
-		szDownArrow = downArrow;
-		szDownArrowFocus = downArrowFocus;
-		szDownArrowPressed = downArrowPressed;
+		szDownArrow = inDownArrow;
+		szDownArrowFocus = inDownArrowFocus;
+		szDownArrowPressed = inDownArrowPressed;
 	}
 
 	void SetModel(CMenuBaseModel* model)

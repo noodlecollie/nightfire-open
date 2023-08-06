@@ -13,7 +13,7 @@ namespace
 	{
 		for ( uint32_t traceIndex = 0; traceIndex < event.TraceCount(); ++traceIndex )
 		{
-			if ( event.GetTrace(traceIndex)->traceResult.iHitgroup == hitGroup )
+			if ( static_cast<uint32_t>(event.GetTrace(traceIndex)->traceResult.iHitgroup) == hitGroup )
 			{
 				return true;
 			}
@@ -67,7 +67,7 @@ void CHitboxMessageConstructor::SendHitscanGeometry(const CWeaponDebugEvent_Hits
 
 		if ( trace->traceResult.flFraction < 1.0f && trace->traceResult.pHit &&
 			 GetClassPtrFromEdict<CBasePlayer>(trace->traceResult.pHit) &&
-			 trace->traceResult.iHitgroup < m_HitboxCount )
+			 static_cast<uint32_t>(trace->traceResult.iHitgroup) < m_HitboxCount )
 		{
 			hitTraceLines->AddLine(trace->begin, trace->traceResult.vecEndPos);
 		}

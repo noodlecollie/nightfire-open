@@ -90,7 +90,7 @@ enum EUISounds
 	SND_COUNT
 };
 
-typedef struct
+struct uiStatic_t
 {
 	CWindowStack menu;
 	CWindowStack client;  // separate window stack for client windows
@@ -146,7 +146,67 @@ typedef struct
 	int lowmemory;
 
 	char sounds[SND_COUNT][40];
-} uiStatic_t;
+
+	// Annoyingly, memset() is not safe because this struct contains
+	// a few non-trivial members, so we have to do this...
+	void Clear()
+	{
+		menu.Clean();
+		client.Clean();
+
+		memset(bgmaps, 0, sizeof(bgmaps));
+		bgmapcount = 0;
+
+		hFont = 0;
+		hDefaultFont = 0;
+		hSmallFont = 0;
+		hBigFont = 0;
+		hConsoleFont = 0;
+		hBoldFont = 0;
+		hLightBlur = 0;
+		hHeavyBlur = 0;
+
+		m_fDemosPlayed = false;
+		m_fNoOldBackground = false;
+		m_iOldMenuDepth = 0;
+
+		scaleX = 0.0f;
+		scaleY = 0.0f;
+		outlineWidth = 0;
+
+		cursorX = 0;
+		cursorY = 0;
+		realTime = 0;
+		firstDraw = 0;
+		enterSound = 0.0f;
+		mouseInRect = 0;
+		hideCursor = 0;
+		framecount = 0;
+		initialized = 0;
+
+		memset(buttonsPics, 0, sizeof(buttonsPics));
+
+		buttons_width = 0;
+		buttons_height = 0;
+		memset(buttons_points, 0, sizeof(buttons_points));
+
+		buttons_draw_size = Size {};
+		width = 0;
+		textInput = false;
+		enableAlphaFactor = false;
+		alphaFactor = 0.0f;
+		xOffset = 0;
+		yOffset = 0;
+
+		needMapListUpdate = false;
+		nextFrameActive= false;
+		renderPicbuttonText = false;
+
+		lowmemory = 0;
+
+		memset(sounds, 0, sizeof(sounds));
+	}
+};
 
 extern float cursorDY;  // use for touch scroll
 extern bool g_bCursorDown;

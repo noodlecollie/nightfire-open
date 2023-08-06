@@ -101,7 +101,7 @@ void fi_add(frame_index_t* fi, mpg_off_t pos)
 {
 	if ( fi->fill == fi->size )
 	{
-		mpg_off_t framenum = fi->fill * fi->step;
+		mpg_off_t framenum = (mpg_off_t)(fi->fill * fi->step);
 
 		// index is full, we need to shrink... or grow.
 		// store the current frame number to check later if we still want it.

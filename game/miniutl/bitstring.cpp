@@ -85,6 +85,7 @@ void LoadBitString(int* pInts, int nInts, CUtlBuffer& buf)
 
 void CVariableBitStringBase::ValidateOperand(const CVariableBitStringBase& operand) const
 {
+	(void)operand;
 	Assert(Size() == operand.Size());
 }
 

@@ -62,14 +62,16 @@ Sequence_GetCommandEnumForName
 */
 static sequenceCommandEnum_e Sequence_GetCommandEnumForName(const char* commandName, sequenceCommandType_e type)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(g_sequenceCommandMappingTable); i++ )
 	{
 		const sequenceCommandMapping_s* mapping = g_sequenceCommandMappingTable + i;
 
 		if ( mapping->commandType == type && !Q_stricmp(mapping->commandName, commandName) )
+		{
 			return mapping->commandEnum;
+		}
 	}
 	return SEQUENCE_COMMAND_ERROR;
 }
@@ -94,12 +96,12 @@ static void Sequence_ResetDefaults(sequenceCommandLine_s* destination, sequenceC
 			255,
 			255,
 			255,  // rgba2
-			0.5,
-			0.5,  // xy
-			0.2,
-			0.2,  // fade-in/out
-			1.6,  // holdtime
-			1.0,  // fxtime
+			0.5f,
+			0.5f,  // xy
+			0.2f,
+			0.2f,  // fade-in/out
+			1.6f,  // holdtime
+			1.0f,  // fxtime
 			NULL,
 			NULL  // pName, pMessage
 		};
@@ -383,6 +385,7 @@ Sequence_ValidateNameValueString
 
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static void Sequence_ValidateNameValueString(char* token)
 {
 	char* scan;
@@ -398,6 +401,7 @@ static void Sequence_ValidateNameValueString(char* token)
 				*scan);
 	}
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -450,7 +454,7 @@ static size_t Sequence_GetLine(char* line, int lineMaxLen)
 			g_lineNum,
 			g_sequenceParseFileName);
 
-	lineLen = read - g_scan;
+	lineLen = (int)(read - g_scan);
 
 	if ( lineLen >= lineMaxLen )
 		Con_Reportf(
@@ -640,12 +644,14 @@ Sequence_IsCommandAModifier
 */
 static qboolean Sequence_IsCommandAModifier(sequenceCommandEnum_e commandEnum)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(g_sequenceCommandMappingTable); i++ )
 	{
 		if ( g_sequenceCommandMappingTable[i].commandEnum == commandEnum )
+		{
 			return (g_sequenceCommandMappingTable[i].commandType == SEQUENCE_TYPE_MODIFIER);
+		}
 	}
 
 	Con_Reportf(
@@ -713,16 +719,16 @@ static void Sequence_ReadCommandData(sequenceCommandEnum_e commandEnum, sequence
 			break;
 
 		case SEQUENCE_MODIFIER_COLOR:
-			defaults->clientMessage.r1 = Sequence_ReadInt();
-			defaults->clientMessage.g1 = Sequence_ReadInt();
-			defaults->clientMessage.b1 = Sequence_ReadInt();
+			defaults->clientMessage.r1 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.g1 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.b1 = (byte)Sequence_ReadInt();
 			defaults->clientMessage.a1 = 255;
 			break;
 
 		case SEQUENCE_MODIFIER_COLOR2:
-			defaults->clientMessage.r2 = Sequence_ReadInt();
-			defaults->clientMessage.g2 = Sequence_ReadInt();
-			defaults->clientMessage.b2 = Sequence_ReadInt();
+			defaults->clientMessage.r2 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.g2 = (byte)Sequence_ReadInt();
+			defaults->clientMessage.b2 = (byte)Sequence_ReadInt();
 			defaults->clientMessage.a2 = 255;
 			break;
 
@@ -1017,6 +1023,7 @@ Sequence_CalcEntryDuration
 
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static float Sequence_CalcEntryDuration(sequenceEntry_s* entry)
 {
 	float duration;
@@ -1029,6 +1036,7 @@ static float Sequence_CalcEntryDuration(sequenceEntry_s* entry)
 
 	return duration;
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -1036,6 +1044,7 @@ Sequence_DoesEntryContainInfiniteLoop
 
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static qboolean Sequence_DoesEntryContainInfiniteLoop(sequenceEntry_s* entry)
 {
 	sequenceCommandLine_s* cmd;
@@ -1048,6 +1057,7 @@ static qboolean Sequence_DoesEntryContainInfiniteLoop(sequenceEntry_s* entry)
 
 	return false;
 }
+#endif // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -1211,6 +1221,8 @@ sentenceEntry_s* Sequence_PickSentence(const char* groupName, int pickMethod, in
 	unsigned int pickedIdx;
 	unsigned int entryIdx;
 
+	(void)pickMethod;
+
 	groupEntry = Sequence_FindSentenceGroup(groupName);
 
 	if ( groupEntry )
@@ -1219,7 +1231,9 @@ sentenceEntry_s* Sequence_PickSentence(const char* groupName, int pickMethod, in
 		sentenceEntry = groupEntry->firstSentence;
 
 		for ( entryIdx = pickedIdx; entryIdx; entryIdx-- )
+		{
 			sentenceEntry = sentenceEntry->nextEntry;
+		}
 	}
 	else
 	{
@@ -1228,7 +1242,9 @@ sentenceEntry_s* Sequence_PickSentence(const char* groupName, int pickMethod, in
 	}
 
 	if ( picked )
+	{
 		*picked = pickedIdx;
+	}
 
 	return sentenceEntry;
 }
@@ -1322,7 +1338,7 @@ static qboolean Sequence_ParseSentenceLine(void)
 	char fullgroup[64];
 	char groupName[64];
 	char* c;
-	int lastCharacterPos;
+	size_t lastCharacterPos;
 	size_t len;
 
 	len = Sequence_GetToken(fullgroup, sizeof(fullgroup));
@@ -1346,7 +1362,9 @@ static qboolean Sequence_ParseSentenceLine(void)
 	lastCharacterPos = len - 1;
 
 	if ( data[lastCharacterPos] == '\n' || data[lastCharacterPos] == '\r' )
+	{
 		data[lastCharacterPos] = 0;
+	}
 
 	Sequence_AddSentenceToGroup(groupName, data);
 	return false;

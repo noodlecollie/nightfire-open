@@ -50,7 +50,7 @@ void CShower::Spawn(void)
 		pev->velocity.z -= 200;
 	pev->movetype = MOVETYPE_BOUNCE;
 	pev->gravity = 0.5;
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	pev->solid = SOLID_NOT;
 	SET_MODEL(edict(), "models/grenade.mdl");  // Need a model, just use the grenade, we don't draw it anyway
 	UTIL_SetSize(pev, g_vecZero, g_vecZero);
@@ -64,20 +64,20 @@ void CShower::Think(void)
 {
 	UTIL_Sparks(pev->origin);
 
-	pev->speed -= 0.1;
+	pev->speed -= 0.1f;
 	if ( pev->speed > 0 )
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	else
 		UTIL_Remove(this);
 	pev->flags &= ~FL_ONGROUND;
 }
 
-void CShower::Touch(CBaseEntity* pOther)
+void CShower::Touch(CBaseEntity*)
 {
 	if ( pev->flags & FL_ONGROUND )
-		pev->velocity = pev->velocity * 0.1;
+		pev->velocity = pev->velocity * 0.1f;
 	else
-		pev->velocity = pev->velocity * 0.6;
+		pev->velocity = pev->velocity * 0.6f;
 
 	if ( (pev->velocity.x * pev->velocity.x + pev->velocity.y * pev->velocity.y) < 10.0 )
 		pev->speed = 0;
@@ -132,7 +132,7 @@ void CEnvExplosion::Spawn(void)
 	*/
 
 	float flSpriteScale;
-	flSpriteScale = (m_iMagnitude - 50) * 0.6;
+	flSpriteScale = (m_iMagnitude - 50) * 0.6f;
 
 	/*
 	if( flSpriteScale > 50 )
@@ -148,7 +148,7 @@ void CEnvExplosion::Spawn(void)
 	m_spriteScale = (int)flSpriteScale;
 }
 
-void CEnvExplosion::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CEnvExplosion::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	TraceResult tr;
 
@@ -164,7 +164,7 @@ void CEnvExplosion::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE 
 	// Pull out of the wall a bit
 	if ( tr.flFraction != 1.0 )
 	{
-		pev->origin = tr.vecEndPos + (tr.vecPlaneNormal * (m_iMagnitude - 24) * 0.6);
+		pev->origin = tr.vecEndPos + (tr.vecPlaneNormal * (static_cast<float>(m_iMagnitude - 24)) * 0.6f);
 	}
 	else
 	{
@@ -215,11 +215,11 @@ void CEnvExplosion::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE 
 	// do damage
 	if ( !(pev->spawnflags & SF_ENVEXPLOSION_NODAMAGE) )
 	{
-		RadiusDamage(pev, pev, m_iMagnitude, CLASS_NONE, DMG_BLAST);
+		RadiusDamage(pev, pev, static_cast<float>(m_iMagnitude), CLASS_NONE, DMG_BLAST);
 	}
 
 	SetThink(&CEnvExplosion::Smoke);
-	pev->nextthink = gpGlobals->time + 0.3;
+	pev->nextthink = gpGlobals->time + 0.3f;
 
 	// draw sparks
 	if ( !(pev->spawnflags & SF_ENVEXPLOSION_NOSPARKS) )

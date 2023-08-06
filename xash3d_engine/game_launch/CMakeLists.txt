@@ -2,7 +2,6 @@ include(compiler_settings)
 
 add_executable(${TARGETNAME_EXE_GAME_LAUNCHER}
 	game.cpp
-	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:game.rc>
 )
 
 set_target_properties(${TARGETNAME_EXE_GAME_LAUNCHER} PROPERTIES OUTPUT_NAME ${GAME_EXECUTABLE})

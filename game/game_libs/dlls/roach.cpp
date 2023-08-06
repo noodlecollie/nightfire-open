@@ -107,11 +107,7 @@ void CRoach::Touch(CBaseEntity* pOther)
 //=========================================================
 void CRoach::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 120;
-
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 120.0f;
 }
 
 //=========================================================
@@ -158,18 +154,18 @@ void CRoach::Precache()
 //=========================================================
 // Killed.
 //=========================================================
-void CRoach::Killed(entvars_t* pevAttacker, int iGib)
+void CRoach::Killed(entvars_t*, int)
 {
 	pev->solid = SOLID_NOT;
 
 	// random sound
 	if ( RANDOM_LONG(0, 4) == 1 )
 	{
-		EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "roach/rch_die.wav", 0.8, ATTN_NORM, 0, 80 + RANDOM_LONG(0, 39));
+		EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, "roach/rch_die.wav", 0.8f, ATTN_NORM, 0, 80 + RANDOM_LONG(0, 39));
 	}
 	else
 	{
-		EMIT_SOUND_DYN(ENT(pev), CHAN_BODY, "roach/rch_smash.wav", 0.7, ATTN_NORM, 0, 80 + RANDOM_LONG(0, 39));
+		EMIT_SOUND_DYN(ENT(pev), CHAN_BODY, "roach/rch_smash.wav", 0.7f, ATTN_NORM, 0, 80 + RANDOM_LONG(0, 39));
 	}
 
 	CSoundEnt::InsertSound(bits_SOUND_WORLD, pev->origin, 128, 1);
@@ -190,7 +186,7 @@ void CRoach::MonsterThink(void)
 	if ( FNullEnt(FIND_CLIENT_IN_PVS(edict())) )
 		pev->nextthink = gpGlobals->time + RANDOM_FLOAT(1, 1.5);
 	else
-		pev->nextthink = gpGlobals->time + 0.1;  // keep monster thinking
+		pev->nextthink = gpGlobals->time + 0.1f;  // keep monster thinking
 
 	float flInterval = StudioFrameAdvance();  // animate
 
@@ -206,7 +202,7 @@ void CRoach::MonsterThink(void)
 	{
 		// collect light level for the first time, now that all of the lightmaps in the roach's area have been
 		// calculated.
-		m_flLastLightLevel = GETENTITYILLUM(ENT(pev));
+		m_flLastLightLevel = static_cast<float>(GETENTITYILLUM(ENT(pev)));
 	}
 
 	switch ( m_iMode )
@@ -223,7 +219,7 @@ void CRoach::MonsterThink(void)
 				{
 					// if see something scary
 					// ALERT( at_aiconsole, "Scared\n" );
-					Eat(30 + (RANDOM_LONG(0, 14)));  // roach will ignore food for 30 to 45 seconds
+					Eat(static_cast<float>(30 + (RANDOM_LONG(0, 14))));  // roach will ignore food for 30 to 45 seconds
 					PickNewDest(ROACH_SCARED_BY_ENT);
 					SetActivity(ACT_WALK);
 				}
@@ -237,7 +233,7 @@ void CRoach::MonsterThink(void)
 					if ( m_iMode == ROACH_EAT )
 					{
 						// roach will ignore food for 30 to 45 seconds if it got bored while eating.
-						Eat(30 + (RANDOM_LONG(0, 14)));
+						Eat(static_cast<float>(30 + (RANDOM_LONG(0, 14))));
 					}
 				}
 			}
@@ -280,7 +276,7 @@ void CRoach::MonsterThink(void)
 			if ( GETENTITYILLUM(ENT(pev)) <= m_flLastLightLevel )
 			{
 				SetActivity(ACT_IDLE);
-				m_flLastLightLevel = GETENTITYILLUM(ENT(pev));  // make this our new light level.
+				m_flLastLightLevel = static_cast<float>(GETENTITYILLUM(ENT(pev)));  // make this our new light level.
 			}
 			break;
 		}
@@ -328,7 +324,7 @@ void CRoach::PickNewDest(int iCondition)
 		// circles. this is a hack but buys me time to work on the real monsters.
 		vecNewDir.x = RANDOM_FLOAT(-1, 1);
 		vecNewDir.y = RANDOM_FLOAT(-1, 1);
-		flDist = 256 + (RANDOM_LONG(0, 255));
+		flDist = static_cast<float>(256 + (RANDOM_LONG(0, 255)));
 		vecDest = pev->origin + vecNewDir * flDist;
 	}
 	while ( (vecDest - pev->origin).Length2D() < 128 );
@@ -358,7 +354,7 @@ void CRoach::Move(float flInterval)
 	flWaypointDist = (m_Route[m_iRouteIndex].vecLocation - pev->origin).Length2D();
 	MakeIdealYaw(m_Route[m_iRouteIndex].vecLocation);
 
-	ChangeYaw(pev->yaw_speed);
+	ChangeYaw(static_cast<int>(pev->yaw_speed));
 	UTIL_MakeVectors(pev->angles);
 
 	if ( RANDOM_LONG(0, 7) == 1 )
@@ -379,7 +375,8 @@ void CRoach::Move(float flInterval)
 		// take truncated step and stop
 
 		SetActivity(ACT_IDLE);
-		m_flLastLightLevel = GETENTITYILLUM(ENT(pev));  // this is roach's new comfortable light level
+		m_flLastLightLevel =
+			static_cast<float>(GETENTITYILLUM(ENT(pev)));  // this is roach's new comfortable light level
 
 		if ( m_iMode == ROACH_SMELL_FOOD )
 		{
@@ -404,7 +401,6 @@ void CRoach::Move(float flInterval)
 //=========================================================
 void CRoach::Look(int iDistance)
 {
-	CBaseEntity* pSightEnt = NULL;  // the current visible entity that we're dealing with
 	CBaseEntity* pPreviousEnt;  // the last entity added to the link list
 	int iSighted = 0;
 
@@ -424,7 +420,8 @@ void CRoach::Look(int iDistance)
 	// Does sphere also limit itself to PVS?
 	// Examine all entities within a reasonable radius
 	// !!!PERFORMANCE - let's trivially reject the ent list before radius searching!
-	while ( (pSightEnt = UTIL_FindEntityInSphere(pSightEnt, pev->origin, iDistance)) != NULL )
+	for ( CBaseEntity* pSightEnt = UTIL_FindEntityInSphere(nullptr, pev->origin, static_cast<float>(iDistance)); pSightEnt;
+		  pSightEnt = UTIL_FindEntityInSphere(pSightEnt, pev->origin, static_cast<float>(iDistance)) )
 	{
 		// only consider ents that can be damaged. !!!temporarily only considering other monsters and clients
 		if ( pSightEnt->IsPlayer() || FBitSet(pSightEnt->pev->flags, FL_MONSTER) )

@@ -70,28 +70,28 @@ int CHudFlashlight::VidInit(void)
 	return 1;
 }
 
-int CHudFlashlight::MsgFunc_FlashBat(const char* pszName, int iSize, void* pbuf)
+int CHudFlashlight::MsgFunc_FlashBat(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int x = READ_BYTE();
 	m_iBat = x;
-	m_flBat = ((float)x) / 100.0;
+	m_flBat = ((float)x) / 100.0f;
 
 	return 1;
 }
 
-int CHudFlashlight::MsgFunc_Flashlight(const char* pszName, int iSize, void* pbuf)
+int CHudFlashlight::MsgFunc_Flashlight(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	m_fOn = READ_BYTE();
 	int x = READ_BYTE();
 	m_iBat = x;
-	m_flBat = ((float)x) / 100.0;
+	m_flBat = ((float)x) / 100.0f;
 
 	return 1;
 }
 
-int CHudFlashlight::Draw(float flTime)
+int CHudFlashlight::Draw(float)
 {
 	static bool show = (gHUD.m_iHideHUDDisplay & (HIDEHUD_FLASHLIGHT | HIDEHUD_ALL));
 	if ( show != !(gHUD.m_iHideHUDDisplay & (HIDEHUD_FLASHLIGHT | HIDEHUD_ALL)) )
@@ -117,7 +117,7 @@ int CHudFlashlight::Draw(float flTime)
 	if ( m_fOn )
 		a = 225;
 	else
-		a = MIN_ALPHA;
+		a = static_cast<int>(MIN_ALPHA);
 
 	if ( m_flBat < 0.20 )
 		UnpackRGB(r, g, b, RGB_REDISH);
@@ -144,7 +144,7 @@ int CHudFlashlight::Draw(float flTime)
 
 	// draw the flashlight energy level
 	x = ScreenWidth - m_iWidth - m_iWidth / 2;
-	int iOffset = m_iWidth * (1.0 - m_flBat);
+	int iOffset = static_cast<int>(m_iWidth * (1.0f - m_flBat));
 	if ( iOffset < m_iWidth )
 	{
 		rc = *m_prc2;

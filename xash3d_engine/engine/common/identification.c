@@ -18,6 +18,9 @@ GNU General Public License for more details.
 #if !XASH_WIN32
 #include <dirent.h>
 #endif
+
+#include "PlatformLib/File.h"
+
 static char id_md5[33];
 static char id_customid[MAX_STRING];
 
@@ -57,7 +60,7 @@ static bloomfilter_t BloomFilter_Process(const char* buffer, int size)
 
 static bloomfilter_t BloomFilter_ProcessStr(const char* buffer)
 {
-	return BloomFilter_Process(buffer, Q_strlen(buffer));
+	return BloomFilter_Process(buffer, (int)Q_strlen(buffer));
 }
 
 static uint BloomFilter_Weight(bloomfilter_t value)
@@ -77,12 +80,14 @@ static uint BloomFilter_Weight(bloomfilter_t value)
 	return weight;
 }
 
+#ifdef UNUSED_FUNCTIONS
 static qboolean BloomFilter_ContainsString(bloomfilter_t filter, const char* str)
 {
 	bloomfilter_t value = BloomFilter_ProcessStr(str);
 
 	return (filter & value) == value;
 }
+#endif  // UNUSED_FUNCTIONS
 
 /*
 =============================================
@@ -104,7 +109,7 @@ static void ID_BloomFilter_f(void)
 	for ( i = 1; i < Cmd_Argc(); i++ )
 		value |= BloomFilter_ProcessStr(Cmd_Argv(i));
 
-	Msg("%d %016llX\n", BloomFilter_Weight(value), value);
+	Msg("%d %016llX\n", BloomFilter_Weight(value), (long long unsigned int)value);
 
 	// test
 	// for( i = 1; i < Cmd_Argc(); i++ )
@@ -164,17 +169,17 @@ static void ID_VerifyHEX_f(void)
 #if XASH_LINUX
 static qboolean ID_ProcessCPUInfo(bloomfilter_t* value)
 {
-	int cpuinfofd = open("/proc/cpuinfo", O_RDONLY);
+	int cpuinfofd = PlatformLib_Open("/proc/cpuinfo", O_RDONLY);
 	char buffer[1024], *pbuf, *pbuf2;
 	int ret;
 
 	if ( cpuinfofd < 0 )
 		return false;
 
-	if ( (ret = read(cpuinfofd, buffer, 1023)) < 0 )
+	if ( (ret = PlatformLib_Read(cpuinfofd, buffer, 1023)) < 0 )
 		return false;
 
-	close(cpuinfofd);
+	PlatformLib_Close(cpuinfofd);
 
 	buffer[ret] = 0;
 
@@ -282,26 +287,30 @@ static void ID_TestCPUInfo_f(void)
 	bloomfilter_t value = 0;
 
 	if ( ID_ProcessCPUInfo(&value) )
-		Msg("Got %016llX\n", value);
+	{
+		Msg("Got %016llX\n", (long long unsigned int)value);
+	}
 	else
+	{
 		Msg("Could not get serial\n");
+	}
 }
 
 #endif
 
 static qboolean ID_ProcessFile(bloomfilter_t* value, const char* path)
 {
-	int fd = open(path, O_RDONLY);
+	int fd = PlatformLib_Open(path, O_RDONLY);
 	char buffer[256];
 	int ret;
 
 	if ( fd < 0 )
 		return false;
 
-	if ( (ret = read(fd, buffer, 255)) < 0 )
+	if ( (ret = PlatformLib_Read(fd, buffer, 255)) < 0 )
 		return false;
 
-	close(fd);
+	PlatformLib_Close(fd);
 
 	if ( !ret )
 		return false;
@@ -443,12 +452,18 @@ static int ID_ProcessWMIC(bloomfilter_t* value, const char* cmdline)
 	int count = 0;
 
 	if ( !ID_RunWMIC(buffer, cmdline) )
+	{
 		return 0;
+	}
+
 	pbuf = COM_ParseFile(buffer, token, sizeof(token));  // Header
-	while ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
+
+	for ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)); pbuf; pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
 	{
 		if ( !ID_VerifyHEX(token) )
+		{
 			continue;
+		}
 
 		*value |= BloomFilter_ProcessStr(token);
 		count++;
@@ -463,9 +478,13 @@ static int ID_CheckWMIC(bloomfilter_t value, const char* cmdline)
 	int count = 0;
 
 	if ( !ID_RunWMIC(buffer, cmdline) )
+	{
 		return 0;
+	}
+
 	pbuf = COM_ParseFile(buffer, token, sizeof(token));  // Header
-	while ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
+
+	for ( pbuf = COM_ParseFile(pbuf, token, sizeof(token)); pbuf; pbuf = COM_ParseFile(pbuf, token, sizeof(token)) )
 	{
 		bloomfilter_t filter;
 
@@ -521,6 +540,8 @@ static uint ID_CheckRawId(bloomfilter_t filter)
 {
 	bloomfilter_t value = 0;
 	int count = 0;
+
+	(void)value;
 
 #if XASH_LINUX
 #if XASH_ANDROID && !XASH_DEDICATED
@@ -598,12 +619,14 @@ ID_SetCustomClientID
 
 ===============
 */
-void GAME_EXPORT ID_SetCustomClientID(const char* id)
+void GAME_EXPORT ID_SetCustomClientID(const char* inID)
 {
-	if ( !id )
+	if ( !inID )
+	{
 		return;
+	}
 
-	Q_strncpy(id_customid, id, sizeof(id_customid));
+	Q_strncpy(id_customid, inID, sizeof(id_customid));
 }
 
 void ID_Init(void)
@@ -629,7 +652,7 @@ void ID_Init(void)
 #elif XASH_WIN32
 	{
 		CHAR szBuf[MAX_PATH];
-		ID_GetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", "xash_id", szBuf, MAX_PATH);
+		ID_GetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", "xash_id", (LPBYTE)szBuf, MAX_PATH);
 
 		sscanf(szBuf, "%016llX", &id);
 		id ^= SYSTEM_XOR_MASK;
@@ -641,17 +664,25 @@ void ID_Init(void)
 		if ( COM_CheckString(home) )
 		{
 			FILE* cfg = fopen(va("%s/.config/.xash_id", home), "r");
+
 			if ( !cfg )
+			{
 				cfg = fopen(va("%s/.local/.xash_id", home), "r");
+			}
+
 			if ( !cfg )
+			{
 				cfg = fopen(va("%s/.xash_id", home), "r");
+			}
+
 			if ( cfg )
 			{
-				if ( fscanf(cfg, "%016llX", &id) > 0 )
+				if ( fscanf(cfg, "%016llX", (long long unsigned int*)&id) > 0 )
 				{
 					id ^= SYSTEM_XOR_MASK;
 					ID_Check();
 				}
+
 				fclose(cfg);
 			}
 		}
@@ -662,7 +693,7 @@ void ID_Init(void)
 		const char* buf = (const char*)FS_LoadFile(".xash_id", NULL, false);
 		if ( buf )
 		{
-			sscanf(buf, "%016llX", &id);
+			sscanf(buf, "%016llX", (long long unsigned int*)&id);
 			id ^= GAME_XOR_MASK;
 			ID_Check();
 		}
@@ -683,7 +714,7 @@ void ID_Init(void)
 	{
 		CHAR Buf[MAX_PATH];
 		sprintf(Buf, "%016llX", id ^ SYSTEM_XOR_MASK);
-		ID_SetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", REG_SZ, "xash_id", Buf, Q_strlen(Buf));
+		ID_SetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", REG_SZ, "xash_id", (LPBYTE)Buf, (DWORD)Q_strlen(Buf));
 	}
 #else
 	{
@@ -691,19 +722,26 @@ void ID_Init(void)
 		if ( COM_CheckString(home) )
 		{
 			FILE* cfg = fopen(va("%s/.config/.xash_id", home), "w");
+
 			if ( !cfg )
+			{
 				cfg = fopen(va("%s/.local/.xash_id", home), "w");
+			}
+
 			if ( !cfg )
+			{
 				cfg = fopen(va("%s/.xash_id", home), "w");
+			}
+
 			if ( cfg )
 			{
-				fprintf(cfg, "%016llX", id ^ SYSTEM_XOR_MASK);
+				fprintf(cfg, "%016llX", (long long unsigned int)(id ^ SYSTEM_XOR_MASK));
 				fclose(cfg);
 			}
 		}
 	}
 #endif
-	FS_WriteFile(".xash_id", va("%016llX", id ^ GAME_XOR_MASK), 16);
+	FS_WriteFile(".xash_id", va("%016llX", (long long unsigned int)(id ^ GAME_XOR_MASK)), 16);
 #if 0
 	Msg("MD5 id: %s\nRAW id:%016llX\n", id_md5, id );
 #endif

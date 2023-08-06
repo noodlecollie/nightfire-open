@@ -112,6 +112,7 @@ void (*d_pdrawspans)(spanpackage_t* pspanpackage);
 
 void R_PolysetStub(spanpackage_t* pspanpackage)
 {
+	(void)pspanpackage;
 }
 
 void R_PolysetDrawSpans8_33(spanpackage_t* pspanpackage);
@@ -349,7 +350,7 @@ void FloorDivMod(float numer, float denom, int* quotient, int* rem)
 
 	if ( numer >= 0.0f )
 	{
-		x = floor(numer / denom);
+		x = floorf(numer / denom);
 		q = (int)x;
 		r = (int)floor(numer - (x * denom));
 	}
@@ -358,9 +359,9 @@ void FloorDivMod(float numer, float denom, int* quotient, int* rem)
 		//
 		// perform operations with positive values, and fix mod to make floor-based
 		//
-		x = floor(-numer / denom);
+		x = floorf(-numer / denom);
 		q = -(int)x;
-		r = (int)floor(-numer - (x * denom));
+		r = (int)floorf(-numer - (x * denom));
 		if ( r != 0 )
 		{
 			q--;
@@ -369,7 +370,6 @@ void FloorDivMod(float numer, float denom, int* quotient, int* rem)
 	}
 	if ( q > INT_MAX / 2 || q < INT_MIN / 2 )
 	{
-		int i;
 		d_pdrawspans = R_PolysetStub;
 		gEngfuncs.Con_Printf(S_ERROR "FloorDivMod: q overflow!\n");
 		q = 1;
@@ -377,7 +377,6 @@ void FloorDivMod(float numer, float denom, int* quotient, int* rem)
 
 	if ( r > INT_MAX / 2 || r < INT_MIN / 2 )
 	{
-		int i;
 		d_pdrawspans = R_PolysetStub;
 		gEngfuncs.Con_Printf(S_ERROR "FloorDivMod: r overflow!\n");
 		r = 1;
@@ -414,12 +413,12 @@ void R_PolysetSetUpForLineScan(fixed8_t startvertu, fixed8_t startvertv, fixed8_
 	}
 	else
 	{
-		dm = tm;
-		dn = tn;
+		dm = (float)tm;
+		dn = (float)tn;
 
 		FloorDivMod(dm, dn, &ubasestep, &erroradjustup);
 
-		erroradjustdown = dn;
+		erroradjustdown = (int)dn;
 	}
 }
 
@@ -666,15 +665,15 @@ void R_PolysetCalcGradients(int skinwidth)
 		eax
 }
 #else
-qboolean R_PolysetCalcGradients(int skinwidth)
+qboolean R_PolysetCalcGradients(int inskinwidth)
 {
 	float xstepdenominv, ystepdenominv, t0, t1;
 	float p01_minus_p21, p11_minus_p21, p00_minus_p20, p10_minus_p20;
 
-	p00_minus_p20 = r_p0[0] - r_p2[0];
-	p01_minus_p21 = r_p0[1] - r_p2[1];
-	p10_minus_p20 = r_p1[0] - r_p2[0];
-	p11_minus_p21 = r_p1[1] - r_p2[1];
+	p00_minus_p20 = (float)(r_p0[0] - r_p2[0]);
+	p01_minus_p21 = (float)(r_p0[1] - r_p2[1]);
+	p10_minus_p20 = (float)(r_p1[0] - r_p2[0]);
+	p11_minus_p21 = (float)(r_p1[1] - r_p2[1]);
 
 	/*printf("gradients for triangle\n");
 	printf("%d %d %d %d %d %d\n" ,  r_p0[0], r_p0[1], r_p0[2] >> 16, r_p0[3] >> 16, r_p0[4], r_p0[5]);
@@ -688,23 +687,23 @@ qboolean R_PolysetCalcGradients(int skinwidth)
 	// ceil () for light so positive steps are exaggerated, negative steps
 	// diminished,  pushing us away from underflow toward overflow. Underflow is
 	// very visible, overflow is very unlikely, because of ambient lighting
-	t0 = r_p0[4] - r_p2[4];
-	t1 = r_p1[4] - r_p2[4];
+	t0 = (float)(r_p0[4] - r_p2[4]);
+	t1 = (float)(r_p1[4] - r_p2[4]);
 	r_lstepx = (int)ceil((t1 * p01_minus_p21 - t0 * p11_minus_p21) * xstepdenominv);
 	r_lstepy = (int)ceil((t1 * p00_minus_p20 - t0 * p10_minus_p20) * ystepdenominv);
 
-	t0 = r_p0[2] - r_p2[2];
-	t1 = r_p1[2] - r_p2[2];
+	t0 = (float)(r_p0[2] - r_p2[2]);
+	t1 = (float)(r_p1[2] - r_p2[2]);
 	r_sstepx = (int)((t1 * p01_minus_p21 - t0 * p11_minus_p21) * xstepdenominv);
 	r_sstepy = (int)((t1 * p00_minus_p20 - t0 * p10_minus_p20) * ystepdenominv);
 
-	t0 = r_p0[3] - r_p2[3];
-	t1 = r_p1[3] - r_p2[3];
+	t0 = (float)(r_p0[3] - r_p2[3]);
+	t1 = (float)(r_p1[3] - r_p2[3]);
 	r_tstepx = (int)((t1 * p01_minus_p21 - t0 * p11_minus_p21) * xstepdenominv);
 	r_tstepy = (int)((t1 * p00_minus_p20 - t0 * p10_minus_p20) * ystepdenominv);
 
-	t0 = r_p0[5] - r_p2[5];
-	t1 = r_p1[5] - r_p2[5];
+	t0 = (float)(r_p0[5] - r_p2[5]);
+	t1 = (float)(r_p1[5] - r_p2[5]);
 	r_zistepx = (int)((t1 * p01_minus_p21 - t0 * p11_minus_p21) * xstepdenominv);
 	r_zistepy = (int)((t1 * p00_minus_p20 - t0 * p10_minus_p20) * ystepdenominv);
 
@@ -743,9 +742,9 @@ qboolean R_PolysetCalcGradients(int skinwidth)
 	if( r_tstepx >= 65535*8 )
 		return false;*/
 
-	a_ststepxwhole = skinwidth * (r_tstepx >> 16) + (r_sstepx >> 16);
+	a_ststepxwhole = inskinwidth * (r_tstepx >> 16) + (r_sstepx >> 16);
 
-	//	printf("%d %d %d %d\n",a_ststepxwhole, r_sstepx, r_tstepx, skinwidth );
+	//	printf("%d %d %d %d\n",a_ststepxwhole, r_sstepx, r_tstepx, inskinwidth );
 	skinend = (pixel_t*)r_affinetridesc.pskin + r_affinetridesc.skinwidth * r_affinetridesc.skinheight;
 	return true;
 }
@@ -1162,7 +1161,7 @@ void R_PolysetDrawSpans8_33(spanpackage_t* pspanpackage)
 #endif
 					pixel_t temp = *lptex;  // vid.colormap[*lptex + ( llight & 0xFF00 )];
 
-					int alpha = tr.blend * 7;
+					int alpha = (int)(tr.blend * 7.0f);
 					if ( alpha == 7 )
 						*lpdest = temp;
 					else if ( alpha )

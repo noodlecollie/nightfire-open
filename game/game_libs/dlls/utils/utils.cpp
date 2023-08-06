@@ -141,7 +141,7 @@ float UTIL_SharedRandomFloat(unsigned int seed, float low, float high)
 
 		tensixrand = U_Random() & 65535;
 
-		offset = (float)tensixrand / 65536.0;
+		offset = (float)tensixrand / 65536.0f;
 
 		return (low + offset * range);
 	}
@@ -385,7 +385,7 @@ float UTIL_AngleMod(float a)
 		a = a - 360 * ( (int)( a / 360 ) );
 	}*/
 	// a = ( 360.0 / 65536 ) * ( (int)( a * ( 65536 / 360.0 ) ) & 65535 );
-	a = fmod(a, 360.0f);
+	a = fmodf(a, 360.0f);
 	if ( a < 0 )
 		a += 360;
 	return a;
@@ -501,7 +501,7 @@ int UTIL_MonstersInSphere(CBaseEntity** pList, int listMax, const Vector& center
 			continue;
 
 		// Now Z
-		delta = center.z - (pEdict->v.absmin.z + pEdict->v.absmax.z) * 0.5;
+		delta = center.z - (pEdict->v.absmin.z + pEdict->v.absmax.z) * 0.5f;
 		delta *= delta;
 
 		distance += delta;
@@ -739,11 +739,11 @@ void UTIL_ScreenFadeBuild(ScreenFade& fade, const Vector& color, float fadeTime,
 {
 	fade.duration = FixedUnsigned16(fadeTime, 1 << 12);  // 4.12 fixed
 	fade.holdTime = FixedUnsigned16(fadeHold, 1 << 12);  // 4.12 fixed
-	fade.r = (int)color.x;
-	fade.g = (int)color.y;
-	fade.b = (int)color.z;
-	fade.a = alpha;
-	fade.fadeFlags = flags;
+	fade.r = (byte)color.x;
+	fade.g = (byte)color.y;
+	fade.b = (byte)color.z;
+	fade.a = (byte)alpha;
+	fade.fadeFlags = (short)flags;
 }
 
 void UTIL_ScreenFadeWrite(const ScreenFade& fade, CBaseEntity* pEntity)
@@ -1200,7 +1200,7 @@ void UTIL_BloodStream(const Vector& origin, const Vector& direction, int color, 
 	MESSAGE_END();
 }
 
-void UTIL_BloodDrips(const Vector& origin, const Vector& direction, int color, int amount)
+void UTIL_BloodDrips(const Vector& origin, const Vector&, int color, int amount)
 {
 	if ( !UTIL_ShouldShowBlood(color) )
 	{
@@ -1280,7 +1280,7 @@ void UTIL_DecalTrace(TraceResult* pTrace, int decalNumber)
 		CBaseEntity* pEntity = CBaseEntity::Instance(pTrace->pHit);
 		if ( pEntity && !pEntity->IsBSPModel() )
 			return;
-		entityIndex = ENTINDEX(pTrace->pHit);
+		entityIndex = static_cast<short>(ENTINDEX(pTrace->pHit));
 	}
 	else
 		entityIndex = 0;
@@ -1423,7 +1423,7 @@ void UTIL_StringToVector(float* pVector, const char* pString)
 
 	for ( j = 0; j < 3; j++ )  // lifted from pr_edict.c
 	{
-		pVector[j] = atof(pfront);
+		pVector[j] = static_cast<float>(atof(pfront));
 
 		while ( *pstr && *pstr != ' ' )
 			pstr++;
@@ -1512,7 +1512,7 @@ float UTIL_WaterLevel(const Vector& position, float minz, float maxz)
 	float diff = maxz - minz;
 	while ( diff > 1.0 )
 	{
-		midUp.z = minz + diff / 2.0;
+		midUp.z = minz + diff / 2.0f;
 		if ( UTIL_PointContents(midUp) == CONTENTS_WATER )
 		{
 			minz = midUp.z;
@@ -1647,7 +1647,7 @@ float UTIL_DotPoints(const Vector& vecSrc, const Vector& vecCheck, const Vector&
 	vec2LOS = (vecCheck - vecSrc).Make2D();
 	vec2LOS = vec2LOS.Normalize();
 
-	return DotProduct(vec2LOS, (vecDir.Make2D()));
+	return DotProduct2D(vec2LOS, (vecDir.Make2D()));
 }
 
 //=========================================================
@@ -1873,7 +1873,7 @@ unsigned short CSaveRestoreBuffer::TokenHash(const char* pszToken)
 		if ( !m_pdata->pTokens[index] || strcmp(pszToken, m_pdata->pTokens[index]) == 0 )
 		{
 			m_pdata->pTokens[index] = (char*)pszToken;
-			return index;
+			return static_cast<unsigned short>(index);
 		}
 	}
 
@@ -1929,7 +1929,7 @@ void CSave::WriteString(const char* pname, const char* pdata)
 	short token = (short)TokenHash(pdata);
 	WriteShort(pname, &token, 1);
 #else
-	BufferField(pname, strlen(pdata) + 1, pdata);
+	BufferField(pname, static_cast<int>(strlen(pdata) + 1), pdata);
 #endif
 }
 
@@ -1947,13 +1947,13 @@ void CSave::WriteString(const char* pname, const int* stringId, int count)
 #endif
 	size = 0;
 	for ( i = 0; i < count; i++ )
-		size += strlen(STRING(stringId[i])) + 1;
+		size += static_cast<int>(strlen(STRING(stringId[i])) + 1);
 
 	BufferHeader(pname, size);
 	for ( i = 0; i < count; i++ )
 	{
 		const char* pString = STRING(stringId[i]);
-		BufferData(pString, strlen(pString) + 1);
+		BufferData(pString, static_cast<int>(strlen(pString) + 1));
 	}
 #endif
 }
@@ -1998,13 +1998,13 @@ void CSave::WritePositionVector(const char* pname, const float* value, int count
 	}
 }
 
-void CSave::WriteFunction(const char* pname, void** data, int count)
+void CSave::WriteFunction(const char* pname, void** data, int)
 {
 	const char* functionName;
 
 	functionName = NAME_FOR_FUNCTION(*data);
 	if ( functionName )
-		BufferField(pname, strlen(functionName) + 1, functionName);
+		BufferField(pname, static_cast<int>(strlen(functionName) + 1), functionName);
 	else
 		ALERT(at_error, "Invalid function pointer in entity!\n");
 }
@@ -2029,7 +2029,7 @@ void EntvarsKeyvalue(entvars_t* pev, KeyValueData* pkvd)
 					break;
 				case FIELD_TIME:
 				case FIELD_FLOAT:
-					(*(float*)((char*)pev + pField->fieldOffset)) = atof(pkvd->szValue);
+					(*(float*)((char*)pev + pField->fieldOffset)) = static_cast<float>(atof(pkvd->szValue));
 					break;
 				case FIELD_INTEGER:
 					(*(int*)((char*)pev + pField->fieldOffset)) = atoi(pkvd->szValue);
@@ -2224,7 +2224,7 @@ int CRestore::ReadField(
 	TYPEDESCRIPTION* pFields,
 	int fieldCount,
 	int startField,
-	int size,
+	int,
 	char* pName,
 	void* pData)
 {
@@ -2486,7 +2486,7 @@ int CRestore::ReadInt(void)
 	return tmp;
 }
 
-int CRestore::ReadNamedInt(const char* pName)
+int CRestore::ReadNamedInt(const char*)
 {
 	HEADER header;
 
@@ -2494,7 +2494,7 @@ int CRestore::ReadNamedInt(const char* pName)
 	return ((int*)header.pData)[0];
 }
 
-char* CRestore::ReadNamedString(const char* pName)
+char* CRestore::ReadNamedString(const char*)
 {
 	HEADER header;
 
@@ -2567,7 +2567,7 @@ int CRestore::BufferCheckZString(const char* string)
 		return 0;
 
 	int maxLen = m_pdata->bufferSize - m_pdata->size;
-	int len = strlen(string);
+	int len = static_cast<int>(strlen(string));
 	if ( len <= maxLen )
 	{
 		if ( !strncmp(string, m_pdata->pCurrentData, len) )

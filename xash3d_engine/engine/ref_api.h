@@ -649,7 +649,7 @@ typedef int (*REFAPI)(int version, ref_interface_t* pFunctionTable, ref_api_t* e
 #define DEFINE_ENGINE_SHARED_CVAR(x, y) cvar_t* x = NULL;
 #define DECLARE_ENGINE_SHARED_CVAR(x, y) extern cvar_t* x;
 #define RETRIEVE_ENGINE_SHARED_CVAR(x, y) \
-	if ( !(x = gEngfuncs.pfnGetCvarPointer(#y, 0)) ) \
+	if ( (x = gEngfuncs.pfnGetCvarPointer(#y, 0)) == 0 ) \
 		gEngfuncs.Host_Error(S_ERROR "engine betrayed us and didn't gave us %s cvar pointer\n", #y);
 #define ENGINE_SHARED_CVAR_NAME(f, x, y) f(x, y)
 #define ENGINE_SHARED_CVAR(f, x) ENGINE_SHARED_CVAR_NAME(f, x, x)

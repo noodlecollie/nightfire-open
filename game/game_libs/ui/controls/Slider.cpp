@@ -61,14 +61,14 @@ void CMenuSlider::VidInit()
 	BaseClass::VidInit();
 
 	// scale the center box
-	m_scCenterBox.w = m_scSize.w / 5.0f;
+	m_scCenterBox.w = static_cast<int>(m_scSize.w / 5.0f);
 	m_scCenterBox.h = m_scSize.h - m_iSliderOutlineWidth * 2;
 
-	m_iNumSteps = (m_flMaxValue - m_flMinValue) / m_flRange + 1;
+	m_iNumSteps = static_cast<int>((m_flMaxValue - m_flMinValue) / m_flRange + 1);
 	m_flDrawStep = (float)(m_scSize.w - m_iSliderOutlineWidth - m_scCenterBox.w) / (float)m_iNumSteps;
 }
 
-bool CMenuSlider::KeyUp(int key)
+bool CMenuSlider::KeyUp(int)
 {
 	if ( m_iKeepSlider )
 	{
@@ -101,7 +101,7 @@ bool CMenuSlider::KeyDown(int key)
 		int dist, numSteps;
 
 		dist = uiStatic.cursorX - (m_scPos.x + m_iSliderOutlineWidth + m_scCenterBox.w);
-		numSteps = floor(dist / m_flDrawStep);
+		numSteps = static_cast<int>(floorf(dist / m_flDrawStep));
 		m_flCurValue = bound(m_flMinValue, numSteps * m_flRange + m_flMinValue, m_flMaxValue);
 
 		// tell menu about changes
@@ -163,7 +163,7 @@ void CMenuSlider::Draw(void)
 	{
 		Point coord;
 
-		coord.x = m_scPos.x + 16 * uiStatic.scaleX;
+		coord.x = static_cast<int>(m_scPos.x + 16 * uiStatic.scaleX);
 		coord.y = m_scPos.y + m_scSize.h / 2 - EngFuncs::ConsoleCharacterHeight() / 2;
 
 		int r, g, b;
@@ -183,7 +183,7 @@ void CMenuSlider::Draw(void)
 
 			// move slider follow the holded mouse button
 			dist = uiStatic.cursorX - m_scPos.x - m_iSliderOutlineWidth - (m_scCenterBox.w / 2);
-			numSteps = floor(dist / m_flDrawStep);
+			numSteps = static_cast<int>(floorf(dist / m_flDrawStep));
 			m_flCurValue = bound(m_flMinValue, numSteps * m_flRange + m_flMinValue, m_flMaxValue);
 
 			// tell menu about changes
@@ -196,9 +196,10 @@ void CMenuSlider::Draw(void)
 	m_flCurValue = bound(m_flMinValue, m_flCurValue, m_flMaxValue);
 
 	// calc slider position
-	sliderX = m_scPos.x + (m_iSliderOutlineWidth / 2)  // start
+	sliderX = static_cast<int>(
+		m_scPos.x + (m_iSliderOutlineWidth / 2)  // start
 		+ ((m_flCurValue - m_flMinValue) / (m_flMaxValue - m_flMinValue))  // calc fractional part
-			* (m_scSize.w - m_iSliderOutlineWidth - (m_scCenterBox.w));
+			* (m_scSize.w - m_iSliderOutlineWidth - (m_scCenterBox.w)));
 
 	UI_DrawRectangleExt(
 		m_scPos.x + m_iSliderOutlineWidth / 2,
@@ -212,7 +213,7 @@ void CMenuSlider::Draw(void)
 	else
 		UI_DrawPic(sliderX, m_scPos.y, m_scCenterBox.w, m_scSize.h, uiColorWhite, imgSlider);
 
-	textHeight = m_scPos.y - (m_scChSize * 1.5f);
+	textHeight = static_cast<int>(m_scPos.y - (m_scChSize * 1.5f));
 	UI_DrawString(
 		font,
 		m_scPos.x,

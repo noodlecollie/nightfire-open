@@ -105,9 +105,9 @@ BOOL CCrowbar::Deploy()
 	return DefaultDeploy("models/v_crowbar.mdl", "models/p_crowbar.mdl", CROWBAR_DRAW, "crowbar");
 }
 
-void CCrowbar::Holster(int skiplocal /* = 0 */)
+void CCrowbar::Holster(int)
 {
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
 	SendWeaponAnim(CROWBAR_HOLSTER);
 }
 
@@ -161,7 +161,7 @@ void CCrowbar::PrimaryAttack()
 	{
 #ifndef CLIENT_DLL
 		SetThink(&CCrowbar::SwingAgain);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 #endif
 	}
 }
@@ -294,7 +294,7 @@ int CCrowbar::Swing(int fFirst)
 				if ( !pEntity->IsAlive() )
 					return TRUE;
 				else
-					flVol = 0.1;
+					flVol = 0.1f;
 
 				fHitWorld = FALSE;
 			}
@@ -339,7 +339,7 @@ int CCrowbar::Swing(int fFirst)
 		m_pPlayer->m_iWeaponVolume = (int)(flVol * CROWBAR_WALLHIT_VOLUME);
 
 		SetThink(&CCrowbar::Smack);
-		pev->nextthink = UTIL_WeaponTimeBase() + 0.2;
+		pev->nextthink = UTIL_WeaponTimeBase() + 0.2f;
 #endif
 		m_flNextPrimaryAttack = GetNextAttackDelay(0.25);
 	}

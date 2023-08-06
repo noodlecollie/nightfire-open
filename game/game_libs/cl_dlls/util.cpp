@@ -46,7 +46,7 @@ float Length(const float* v)
 	length = 0;
 	for ( i = 0; i < 3; i++ )
 		length += v[i] * v[i];
-	length = sqrt(length);  // FIXME
+	length = sqrtf(length);  // FIXME
 
 	return length;
 }
@@ -65,12 +65,12 @@ void VectorAngles(const float* forward, float* angles)
 	}
 	else
 	{
-		yaw = (atan2(forward[1], forward[0]) * 180 / M_PI);
+		yaw = (atan2f(forward[1], forward[0]) * 180.0f / static_cast<float>(M_PI));
 		if ( yaw < 0 )
 			yaw += 360;
 
-		tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
-		pitch = (atan2(forward[2], tmp) * 180 / M_PI);
+		tmp = sqrtf(forward[0] * forward[0] + forward[1] * forward[1]);
+		pitch = (atan2f(forward[2], tmp) * 180.0f / static_cast<float>(M_PI));
 		if ( pitch < 0 )
 			pitch += 360;
 	}
@@ -85,7 +85,7 @@ float VectorNormalize(float* v)
 	float length, ilength;
 
 	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-	length = sqrt(length);  // FIXME
+	length = sqrtf(length);  // FIXME
 
 	if ( length )
 	{

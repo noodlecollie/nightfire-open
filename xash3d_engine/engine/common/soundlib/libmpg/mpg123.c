@@ -20,7 +20,11 @@ static int initialized = 0;
 
 int mpg123_init(void)
 {
-	if ( (sizeof(short) != 2) || (sizeof(long) < 4) )
+	// To avoid warnings about constant conditions:
+	volatile size_t sizeOfShort = sizeof(short);
+	volatile size_t sizeOfLong = sizeof(long);
+
+	if ( (sizeOfShort != 2) || (sizeOfLong < 4) )
 		return MPG123_BAD_TYPES;
 
 	if ( initialized )
@@ -609,7 +613,7 @@ int mpg123_feed(mpg123_handle_t* mh, const byte* in, size_t size)
 	{
 		if ( in != NULL )
 		{
-			if ( feed_more(mh, in, size) != 0 )
+			if ( feed_more(mh, in, (long)size) != 0 )
 			{
 				return MPG123_ERR;
 			}
@@ -684,7 +688,7 @@ int mpg123_decode(
 
 		if ( mh->buffer.fill )
 		{
-			int a = mh->buffer.fill > (outmemsize - mdone) ? outmemsize - mdone : mh->buffer.fill;
+			int a = mh->buffer.fill > (outmemsize - mdone) ? (int)(outmemsize - mdone) : (int)mh->buffer.fill;
 
 			// copy (part of) the decoded data to the caller's buffer.
 			// get what is needed - or just what is there
@@ -820,12 +824,12 @@ mpg_off_t mpg123_tell(mpg123_handle_t* mh)
 	else if ( mh->to_decode )
 	{
 		// we start fresh with this frame. Buffer should be empty, but we make sure to count it in.
-		pos = frame_outs(mh, mh->num) - bytes_to_samples(mh, mh->buffer.fill);
+		pos = frame_outs(mh, mh->num) - bytes_to_samples(mh, (mpg_off_t)mh->buffer.fill);
 	}
 	else
 	{
 		// we serve what we have in buffer and then the beginning of next frame...
-		pos = frame_outs(mh, mh->num + 1) - bytes_to_samples(mh, mh->buffer.fill);
+		pos = frame_outs(mh, mh->num + 1) - bytes_to_samples(mh, (mpg_off_t)mh->buffer.fill);
 	}
 
 	// substract padding and delay from the beginning. */
@@ -992,21 +996,21 @@ static const char* mpg123_error[] = {
 
 const char* mpg123_plain_strerror(int errcode)
 {
-	if ( errcode >= 0 && errcode < sizeof(mpg123_error) / sizeof(char*) )
+	if ( errcode >= 0 && (size_t)errcode < sizeof(mpg123_error) / sizeof(char*) )
 		return mpg123_error[errcode];
 
 	switch ( errcode )
 	{
 		case MPG123_ERR:
-			return "A generic mpg123 error.";
+			return "Generic mpg123 error.";
 		case MPG123_DONE:
-			return "Message: I am done with this track.";
+			return "Track is done.";
 		case MPG123_NEED_MORE:
-			return "Message: Feed me more input data!";
+			return "Need more input data.";
 		case MPG123_NEW_FORMAT:
-			return "Message: Prepare for a changed audio format (query the new one)!";
+			return "Prepare for a changed audio format (query the new one).";
 		default:
-			return "I have no idea - an unknown error code!";
+			return "Unknown error code.";
 	}
 }
 

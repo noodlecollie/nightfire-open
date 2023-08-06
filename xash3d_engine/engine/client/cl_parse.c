@@ -33,6 +33,10 @@ Default stub for missed callbacks
 */
 int CL_UserMsgStub(const char* pszName, int iSize, void* pbuf)
 {
+	(void)pszName;
+	(void)iSize;
+	(void)pbuf;
+
 	return 1;
 }
 
@@ -300,7 +304,7 @@ void CL_ParseParticles(sizebuf_t* msg)
 			return;
 
 		p->die += life;
-		p->color = color;
+		p->color = (short)color;
 		p->type = pt_static;
 
 		VectorCopy(org, p->org);
@@ -319,12 +323,12 @@ static client entity
 */
 void CL_ParseStaticEntity(sizebuf_t* msg)
 {
-	int i, newnum;
+	int i;
 	entity_state_t from, to;
 	cl_entity_t* ent;
 
 	memset(&from, 0, sizeof(from));
-	newnum = MSG_ReadUBitLong(msg, MAX_ENTITY_BITS);
+	MSG_ReadUBitLong(msg, MAX_ENTITY_BITS);
 	MSG_ReadDeltaEntity(msg, &from, &to, 0, DELTA_STATIC, cl.mtime[0]);
 
 	i = clgame.numStatics;
@@ -404,7 +408,6 @@ void CL_ParseStaticDecal(sizebuf_t* msg)
 {
 	vec3_t origin;
 	int decalIndex, entityIndex, modelIndex;
-	cl_entity_t* ent = NULL;
 	float scale;
 	int flags;
 
@@ -629,7 +632,7 @@ static void CL_StartResourceDownloading(const char* pszMessage, qboolean bCustom
 	}
 
 	cls.dl.doneregistering = false;
-	cls.dl.fLastStatusUpdate = host.realtime;
+	cls.dl.fLastStatusUpdate = (float)host.realtime;
 	cls.dl.nRemainingToTransfer = cls.dl.nTotalToTransfer;
 	memset(cls.dl.rgStats, 0, sizeof(cls.dl.rgStats));
 	cls.dl.nCurStat = 0;
@@ -708,8 +711,11 @@ void CL_ParseCustomization(sizebuf_t* msg)
 	pRes->pNext = pRes->pPrev = NULL;
 
 	if ( FBitSet(pRes->ucFlags, RES_CUSTOM) )
+	{
 		MSG_ReadBytes(msg, pRes->rgucMD5_hash, 16);
-	pRes->playernum = i;
+	}
+
+	pRes->playernum = (unsigned char)i;
 
 	if ( !cl_allow_download.value )
 	{
@@ -927,8 +933,8 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 		// receive the player hulls
 		for ( i = 0; i < MAX_MAP_HULLS * 3; i++ )
 		{
-			host.player_mins[i / 3][i % 3] = MSG_ReadChar(msg);
-			host.player_maxs[i / 3][i % 3] = MSG_ReadChar(msg);
+			host.player_mins[i / 3][i % 3] = (float)MSG_ReadChar(msg);
+			host.player_maxs[i / 3][i % 3] = (float)MSG_ReadChar(msg);
 		}
 	}
 
@@ -1070,7 +1076,7 @@ void CL_ParseClientData(sizebuf_t* msg)
 	memset(&frame->graphdata, 0, sizeof(netbandwidthgraph_t));
 
 	// send time for that frame.
-	parsecounttime = cl.commands[command_ack & CL_UPDATE_MASK].senttime;
+	parsecounttime = (float)cl.commands[command_ack & CL_UPDATE_MASK].senttime;
 
 	// current time that we got a response to the command packet.
 	cl.commands[command_ack & CL_UPDATE_MASK].receivedtime = host.realtime;
@@ -1116,7 +1122,7 @@ void CL_ParseClientData(sizebuf_t* msg)
 		// calculate latency of this frame.
 		// sent time is set when usercmd is sent to server in CL_Move
 		// this is the # of seconds the round trip took.
-		float latency = host.realtime - parsecounttime;
+		float latency = (float)host.realtime - parsecounttime;
 
 		// fill into frame latency
 		frame->latency = latency;
@@ -1184,7 +1190,7 @@ void CL_ParseClientData(sizebuf_t* msg)
 	cl.local.maxspeed = frame->clientdata.maxspeed;
 	cl.local.pushmsec = frame->clientdata.pushmsec;
 	cl.local.weapons = frame->clientdata.weapons;
-	cl.local.health = frame->clientdata.health;
+	cl.local.health = (int)frame->clientdata.health;
 	cl.local.weaponInaccuracy = frame->clientdata.weaponInaccuracy;
 }
 
@@ -1222,7 +1228,22 @@ void CL_ParseBaseline(sizebuf_t* msg, qboolean legacy)
 			Host_Error("CL_AllocEdict: no free edicts\n");
 
 		ent = CL_EDICT_NUM(newnum);
+
+		// The memset below produces the inexplicable warnings on GCC 12.3.0 in MinSizeRel mode:
+		//   ‘__builtin_memset’ offset [0, 339] is out of the bounds [0, 0] [-Werror=array-bounds]
+		//   ‘__builtin_memset’ writing 340 bytes into a region of size 0 overflows the destination
+		// I have no idea why this is coming up here - bounds of [0, 0] seem suspect
+		// to me, so this may actually be a compiler issue. For now, just suppress this warning.
+#ifndef _WIN32
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
 		memset(&ent->prevstate, 0, sizeof(ent->prevstate));
+#ifndef _WIN32
+#pragma GCC diagnostic pop
+#endif
+
 		ent->index = newnum;
 
 		MSG_ReadDeltaEntity(msg, &ent->prevstate, &ent->baseline, newnum, player, 1.0f);
@@ -1300,7 +1321,7 @@ void CL_ParseAddAngle(sizebuf_t* msg)
 	a = &cl.predicted_angle[cl.angle_position];
 
 	// record update
-	a->starttime = cl.mtime[0];
+	a->starttime = (float)cl.mtime[0];
 	a->total = cl.addangletotal;
 }
 
@@ -1373,8 +1394,11 @@ void CL_RegisterUserMessage(sizebuf_t* msg)
 	pszName = MSG_ReadString(msg);
 
 	// important stuff
-	if ( size == (BIT(bits) - 1) )
+	if ( (unsigned int)size == (BIT(bits) - 1) )
+	{
 		size = -1;
+	}
+
 	svc_num = bound(0, svc_num, 255);
 
 	CL_LinkUserMessage(pszName, svc_num, size);
@@ -1389,7 +1413,7 @@ collect userinfo from all players
 */
 void CL_UpdateUserinfo(sizebuf_t* msg, qboolean legacy)
 {
-	int slot, id;
+	int slot;
 	qboolean active;
 	player_info_t* player;
 
@@ -1399,7 +1423,10 @@ void CL_UpdateUserinfo(sizebuf_t* msg, qboolean legacy)
 		Host_Error("CL_ParseServerMessage: svc_updateuserinfo >= MAX_CLIENTS\n");
 
 	if ( !legacy )
-		id = MSG_ReadLong(msg);  // unique user ID
+	{
+		MSG_ReadLong(msg);  // unique user ID
+	}
+
 	player = &cl.players[slot];
 	active = MSG_ReadOneBit(msg) ? true : false;
 
@@ -1411,16 +1438,20 @@ void CL_UpdateUserinfo(sizebuf_t* msg, qboolean legacy)
 		player->topcolor = Q_atoi(Info_ValueForKey(player->userinfo, "topcolor"));
 		player->bottomcolor = Q_atoi(Info_ValueForKey(player->userinfo, "bottomcolor"));
 		player->spectator = Q_atoi(Info_ValueForKey(player->userinfo, "*hltv"));
+
 		if ( !legacy )
+		{
 			MSG_ReadBytes(msg, player->hashedcdkey, sizeof(player->hashedcdkey));
+		}
 
 		if ( slot == cl.playernum )
+		{
 			memcpy(&gameui.playerinfo, player, sizeof(player_info_t));
+		}
 	}
 	else
 	{
 		COM_ClearCustomizationList(&player->customdata, true);
-
 		memset(player, 0, sizeof(*player));
 	}
 }
@@ -1773,20 +1804,23 @@ CL_ParseVoiceData
 */
 void CL_ParseVoiceData(sizebuf_t* msg)
 {
-	int size, idx, frames;
+	uint size;
+	int idx, frames;
 	byte received[8192];
 
 	idx = MSG_ReadByte(msg) + 1;
 
 	frames = MSG_ReadByte(msg);
 
-	size = MSG_ReadShort(msg);
-	size = Q_min(size, sizeof(received));
+	size = (uint)MSG_ReadShort(msg);
+	size = (uint)Q_min((size_t)size, sizeof(received));
 
-	MSG_ReadBytes(msg, received, size);
+	MSG_ReadBytes(msg, received, (int)size);
 
 	if ( idx <= 0 || idx > cl.maxclients )
+	{
 		return;
+	}
 
 	// must notify through as both local player and normal client
 	if ( idx == cl.playernum + 1 )
@@ -1794,8 +1828,10 @@ void CL_ParseVoiceData(sizebuf_t* msg)
 
 	Voice_StatusAck(&voice.players_status[idx], idx);
 
-	if ( !size )
+	if ( size < 1 )
+	{
 		return;
+	}
 
 	Voice_AddIncomingData(idx, received, size, frames);
 }
@@ -1817,12 +1853,14 @@ void CL_ParseResLocation(sizebuf_t* msg)
 		return;
 	}
 
-	while ( (data = COM_ParseFile(data, token, sizeof(token))) )
+	for ( data = COM_ParseFile(data, token, sizeof(token)); data; data = COM_ParseFile(data, token, sizeof(token)) )
 	{
 		Con_Reportf("Adding %s as download location\n", token);
 
 		if ( !cl.downloadUrl[0] )
+		{
 			Q_strncpy(cl.downloadUrl, token, sizeof(token));
+		}
 
 		HTTP_AddCustomServer(token);
 	}
@@ -1893,7 +1931,7 @@ void CL_ParseScreenShake(sizebuf_t* msg)
 	clgame.shake.amplitude = (float)(word)MSG_ReadShort(msg) * (1.0f / (float)(1 << 12));
 	clgame.shake.duration = (float)(word)MSG_ReadShort(msg) * (1.0f / (float)(1 << 12));
 	clgame.shake.frequency = (float)(word)MSG_ReadShort(msg) * (1.0f / (float)(1 << 8));
-	clgame.shake.time = cl.time + Q_max(clgame.shake.duration, 0.01f);
+	clgame.shake.time = (float)cl.time + Q_max(clgame.shake.duration, 0.01f);
 	clgame.shake.next_shake = 0.0f;  // apply immediately
 }
 
@@ -1915,10 +1953,10 @@ void CL_ParseScreenFade(sizebuf_t* msg)
 	sf->fadeFlags = MSG_ReadShort(msg);
 	flScale = FBitSet(sf->fadeFlags, FFADE_LONGFADE) ? (1.0f / 256.0f) : (1.0f / 4096.0f);
 
-	sf->fader = MSG_ReadByte(msg);
-	sf->fadeg = MSG_ReadByte(msg);
-	sf->fadeb = MSG_ReadByte(msg);
-	sf->fadealpha = MSG_ReadByte(msg);
+	sf->fader = (byte)MSG_ReadByte(msg);
+	sf->fadeg = (byte)MSG_ReadByte(msg);
+	sf->fadeb = (byte)MSG_ReadByte(msg);
+	sf->fadealpha = (byte)MSG_ReadByte(msg);
 	sf->fadeSpeed = 0.0f;
 	sf->fadeEnd = duration * flScale;
 	sf->fadeReset = holdTime * flScale;
@@ -1933,7 +1971,7 @@ void CL_ParseScreenFade(sizebuf_t* msg)
 				sf->fadeSpeed = -(float)sf->fadealpha / sf->fadeEnd;
 			}
 
-			sf->fadeEnd += cl.time;
+			sf->fadeEnd += (float)cl.time;
 			sf->fadeTotalEnd = sf->fadeEnd;
 			sf->fadeReset += sf->fadeEnd;
 		}
@@ -1944,7 +1982,7 @@ void CL_ParseScreenFade(sizebuf_t* msg)
 				sf->fadeSpeed = (float)sf->fadealpha / sf->fadeEnd;
 			}
 
-			sf->fadeReset += cl.time;
+			sf->fadeReset += (float)cl.time;
 			sf->fadeEnd += sf->fadeReset;
 		}
 	}
@@ -1962,10 +2000,12 @@ void CL_ParseCvarValue(sizebuf_t* msg, const qboolean ext)
 {
 	const char *cvarName, *response;
 	convar_t* cvar;
-	int requestID;
+	int requestID = 0;
 
 	if ( ext )
+	{
 		requestID = MSG_ReadLong(msg);
+	}
 
 	cvarName = MSG_ReadString(msg);
 	cvar = Cvar_FindVar(cvarName);
@@ -1973,16 +2013,26 @@ void CL_ParseCvarValue(sizebuf_t* msg, const qboolean ext)
 	if ( cvar )
 	{
 		if ( cvar->flags & FCVAR_PRIVILEGED )
+		{
 			response = "CVAR is privileged";
+		}
 		else if ( cvar->flags & FCVAR_SERVER )
+		{
 			response = "CVAR is server-only";
+		}
 		else if ( cvar->flags & FCVAR_PROTECTED )
+		{
 			response = "CVAR is protected";
+		}
 		else
+		{
 			response = cvar->string;
+		}
 	}
 	else
+	{
 		response = "Bad CVAR request";
+	}
 
 	if ( ext )
 	{
@@ -1994,6 +2044,7 @@ void CL_ParseCvarValue(sizebuf_t* msg, const qboolean ext)
 	{
 		MSG_BeginClientCmd(&cls.netchan.message, clc_requestcvarvalue);
 	}
+
 	MSG_WriteString(&cls.netchan.message, response);
 }
 
@@ -2038,7 +2089,7 @@ void CL_ParseExec(sizebuf_t* msg)
 
 		COM_FileBase(clgame.mapname, mapname);
 
-		if ( COM_CheckString(mapname) )
+		if ( COM_CheckStringEmpty(mapname) )
 			Cbuf_AddTextf("exec %s.cfg\n", mapname);
 	}
 }
@@ -2230,7 +2281,7 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 		cmd = MSG_ReadServerCmd(msg);
 
 		// record command for debugging spew on parse problem
-		CL_Parse_RecordCommand(cmd, bufStart);
+		CL_Parse_RecordCommand(cmd, (int)bufStart);
 
 		// other commands
 		switch ( cmd )
@@ -2247,7 +2298,7 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_event:
 				CL_ParseEvent(msg);
-				cl.frames[cl.parsecountmod].graphdata.event += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.event += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_changing:
 				old_background = cl.background;
@@ -2291,7 +2342,7 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_sound:
 				CL_ParseSoundPacket(msg);
-				cl.frames[cl.parsecountmod].graphdata.sound += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.sound += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_time:
 				CL_ParseServerTime(msg);
@@ -2326,7 +2377,7 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_clientdata:
 				CL_ParseClientData(msg);
-				cl.frames[cl.parsecountmod].graphdata.client += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.client += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_resource:
 				CL_ParseResource(msg);
@@ -2339,21 +2390,21 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_restoresound:
 				CL_ParseRestoreSoundPacket(msg);
-				cl.frames[cl.parsecountmod].graphdata.sound += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.sound += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_spawnstatic:
 				CL_ParseStaticEntity(msg);
 				break;
 			case svc_event_reliable:
 				CL_ParseReliableEvent(msg);
-				cl.frames[cl.parsecountmod].graphdata.event += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.event += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_spawnbaseline:
 				CL_ParseBaseline(msg, false);
 				break;
 			case svc_temp_entity:
 				CL_ParseTempEntity(msg);
-				cl.frames[cl.parsecountmod].graphdata.tentities += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.tentities += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_setpause:
 				cl.paused = (MSG_ReadOneBit(msg) != 0);
@@ -2393,7 +2444,7 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_roomtype:
 				param1 = MSG_ReadShort(msg);
-				Cvar_SetValue("room_type", param1);
+				Cvar_SetValue("room_type", (float)param1);
 				break;
 			case svc_addangle:
 				CL_ParseAddAngle(msg);
@@ -2403,13 +2454,15 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_packetentities:
 				playerbytes = CL_ParsePacketEntities(msg, false);
-				cl.frames[cl.parsecountmod].graphdata.players += playerbytes;
-				cl.frames[cl.parsecountmod].graphdata.entities += MSG_GetNumBytesRead(msg) - bufStart - playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.players += (word)playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.entities +=
+					(word)(MSG_GetNumBytesRead(msg) - bufStart - playerbytes);
 				break;
 			case svc_deltapacketentities:
 				playerbytes = CL_ParsePacketEntities(msg, true);
-				cl.frames[cl.parsecountmod].graphdata.players += playerbytes;
-				cl.frames[cl.parsecountmod].graphdata.entities += MSG_GetNumBytesRead(msg) - bufStart - playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.players += (word)playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.entities +=
+					(word)(MSG_GetNumBytesRead(msg) - bufStart - playerbytes);
 				break;
 			case svc_choke:
 				cl.frames[cls.netchan.incoming_sequence & CL_UPDATE_MASK].choked = true;
@@ -2447,7 +2500,7 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_voicedata:
 				CL_ParseVoiceData(msg);
-				cl.frames[cl.parsecountmod].graphdata.voicebytes += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.voicebytes += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_resourcelocation:
 				CL_ParseResLocation(msg);
@@ -2463,12 +2516,12 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			default:
 				CL_ParseUserMessage(msg, cmd);
-				cl.frames[cl.parsecountmod].graphdata.usr += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.usr += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 		}
 	}
 
-	cl.frames[cl.parsecountmod].graphdata.msgbytes += MSG_GetNumBytesRead(msg) - cls.starting_count;
+	cl.frames[cl.parsecountmod].graphdata.msgbytes += (word)(MSG_GetNumBytesRead(msg) - cls.starting_count);
 	CL_Parse_Debug(false);  // done
 
 	// we don't know if it is ok to save a demo message until
@@ -2502,9 +2555,9 @@ void CL_LegacyParseStaticEntity(sizebuf_t* msg)
 	memset(&state, 0, sizeof(state));
 	state.modelindex = MSG_ReadShort(msg);
 	state.sequence = MSG_ReadByte(msg);
-	state.frame = MSG_ReadByte(msg);
+	state.frame = (float)MSG_ReadByte(msg);
 	state.colormap = MSG_ReadWord(msg);
-	state.skin = MSG_ReadByte(msg);
+	state.skin = (short)MSG_ReadByte(msg);
 
 	for ( i = 0; i < 3; i++ )
 	{
@@ -2517,9 +2570,9 @@ void CL_LegacyParseStaticEntity(sizebuf_t* msg)
 	if ( state.rendermode != kRenderNormal )
 	{
 		state.renderamt = MSG_ReadByte(msg);
-		state.rendercolor.r = MSG_ReadByte(msg);
-		state.rendercolor.g = MSG_ReadByte(msg);
-		state.rendercolor.b = MSG_ReadByte(msg);
+		state.rendercolor.r = (byte)MSG_ReadByte(msg);
+		state.rendercolor.g = (byte)MSG_ReadByte(msg);
+		state.rendercolor.b = (byte)MSG_ReadByte(msg);
 		state.renderfx = MSG_ReadByte(msg);
 	}
 
@@ -2648,7 +2701,7 @@ void CL_LegacyPrecacheSound(sizebuf_t* msg)
 	// when we loading map all resources is precached sequentially
 	// if( !cl.audio_prepped ) return;
 
-	cl.sound_index[soundIndex] = S_RegisterSound(cl.sound_precache[soundIndex]);
+	cl.sound_index[soundIndex] = (short)S_RegisterSound(cl.sound_precache[soundIndex]);
 }
 
 void CL_LegacyPrecacheModel(sizebuf_t* msg)
@@ -2817,7 +2870,7 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 		cmd = MSG_ReadServerCmd(msg);
 
 		// record command for debugging spew on parse problem
-		CL_Parse_RecordCommand(cmd, bufStart);
+		CL_Parse_RecordCommand(cmd, (int)bufStart);
 
 		// other commands
 		switch ( cmd )
@@ -2834,7 +2887,7 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_legacy_event:
 				CL_ParseEvent(msg);
-				cl.frames[cl.parsecountmod].graphdata.event += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.event += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_legacy_changing:
 				old_background = cl.background;
@@ -2878,11 +2931,11 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_sound:
 				CL_LegacyParseSoundPacket(msg, false);
-				cl.frames[cl.parsecountmod].graphdata.sound += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.sound += (short)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_legacy_ambientsound:
 				CL_LegacyParseSoundPacket(msg, true);
-				cl.frames[cl.parsecountmod].graphdata.sound += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.sound += (short)(MSG_GetNumBytesRead(msg) - bufStart);
 
 				break;
 			case svc_time:
@@ -2920,7 +2973,7 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_clientdata:
 				CL_ParseClientData(msg);
-				cl.frames[cl.parsecountmod].graphdata.client += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.client += (short)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_resource:
 				CL_ParseResource(msg);
@@ -2933,21 +2986,21 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_restoresound:
 				CL_ParseRestoreSoundPacket(msg);
-				cl.frames[cl.parsecountmod].graphdata.sound += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.sound += (short)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_spawnstatic:
 				CL_LegacyParseStaticEntity(msg);
 				break;
 			case svc_event_reliable:
 				CL_ParseReliableEvent(msg);
-				cl.frames[cl.parsecountmod].graphdata.event += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.event += (short)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_spawnbaseline:
 				CL_ParseBaseline(msg, true);
 				break;
 			case svc_temp_entity:
 				CL_ParseTempEntity(msg);
-				cl.frames[cl.parsecountmod].graphdata.tentities += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.tentities += (short)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_setpause:
 				cl.paused = (MSG_ReadOneBit(msg) != 0);
@@ -2990,7 +3043,7 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_roomtype:
 				param1 = MSG_ReadShort(msg);
-				Cvar_SetValue("room_type", param1);
+				Cvar_SetValue("room_type", (float)param1);
 				break;
 			case svc_addangle:
 				CL_ParseAddAngle(msg);
@@ -3000,20 +3053,23 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_packetentities:
 				playerbytes = CL_ParsePacketEntities(msg, false);
-				cl.frames[cl.parsecountmod].graphdata.players += playerbytes;
-				cl.frames[cl.parsecountmod].graphdata.entities += MSG_GetNumBytesRead(msg) - bufStart - playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.players += (word)playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.entities +=
+					(word)(MSG_GetNumBytesRead(msg) - bufStart - playerbytes);
 				break;
 			case svc_deltapacketentities:
 				playerbytes = CL_ParsePacketEntities(msg, true);
-				cl.frames[cl.parsecountmod].graphdata.players += playerbytes;
-				cl.frames[cl.parsecountmod].graphdata.entities += MSG_GetNumBytesRead(msg) - bufStart - playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.players += (word)playerbytes;
+				cl.frames[cl.parsecountmod].graphdata.entities +=
+					(word)(MSG_GetNumBytesRead(msg) - bufStart - playerbytes);
 				break;
 			case svc_legacy_chokecount:
 			{
-				int i, j;
+				int i;
+				unsigned int j;
 				i = MSG_ReadByte(msg);
 				j = cls.netchan.incoming_acknowledged - 1;
-				for ( ; i > 0 && j > cls.netchan.outgoing_sequence - CL_UPDATE_BACKUP; j-- )
+				for ( ; i > 0 && j > (unsigned int)(cls.netchan.outgoing_sequence - CL_UPDATE_BACKUP); j-- )
 				{
 					if ( cl.frames[j & CL_UPDATE_MASK].receivedtime != -3.0 )
 					{
@@ -3065,12 +3121,12 @@ void CL_ParseLegacyServerMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			default:
 				CL_ParseUserMessage(msg, cmd);
-				cl.frames[cl.parsecountmod].graphdata.usr += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.usr += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 		}
 	}
 
-	cl.frames[cl.parsecountmod].graphdata.msgbytes += MSG_GetNumBytesRead(msg) - cls.starting_count;
+	cl.frames[cl.parsecountmod].graphdata.msgbytes += (word)(MSG_GetNumBytesRead(msg) - cls.starting_count);
 	CL_Parse_Debug(false);  // done
 
 	// we don't know if it is ok to save a demo message until

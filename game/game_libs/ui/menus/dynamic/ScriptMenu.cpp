@@ -174,7 +174,7 @@ void CMenuScriptConfig::ListItemCvarGetCb(CMenuBaseItem* pSelf, void* pExtra)
 
 	if ( entry )
 	{
-		self->SetCvarValue(i);
+		self->SetCvarValue(static_cast<float>(i));
 	}
 }
 
@@ -296,20 +296,24 @@ void CMenuScriptConfig::_Init(void)
 	}
 
 	pageSelector.SetInactive(false);
-	pageSelector.Setup(1, m_iPagesCount, 1);
+	pageSelector.Setup(1, static_cast<float>(m_iPagesCount), 1);
 	pageSelector.SetCurrentValue(1);
 	pageSelector.onChanged = VoidCb(&CMenuScriptConfig::FlipMenu);
 }
 
-void CMenuScriptConfig::SetScriptConfig(const char* path, bool earlyInit)
+void CMenuScriptConfig::SetScriptConfig(const char* path, bool)
 {
 	if ( m_szConfig && m_pVars && !PlatformLib_StrCaseCmp(m_szConfig, path) )
+	{
 		return;  // do nothing
+	}
 
 	m_szConfig = path;
 
 	if ( m_pVars )
+	{
 		CSCR_FreeList(m_pVars);
+	}
 
 	m_pVars = CSCR_LoadDefaultCVars(m_szConfig, &m_iVarsCount);
 }

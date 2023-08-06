@@ -538,24 +538,39 @@ inline void CUtlString::AppendRepeat(char ch, int cCount)
 {
 	if ( m_pchString == NULL )
 	{
-		if ( cCount + 1 > k_cchMaxString )
+		if ( static_cast<uint>(cCount) + 1 > k_cchMaxString )
+		{
 			AssertStringTooLong();
+		}
+
 		char* pchNew = (char*)PvAlloc(cCount + 1);
+
 		for ( int n = 0; n < cCount; n++ )
+		{
 			pchNew[n] = ch;
+		}
+
 		pchNew[cCount] = 0;
 		m_pchString = pchNew;
 	}
 	else
 	{
 		size_t cbOld = strlen(m_pchString);
+
 		if ( 1 + cbOld + cCount > k_cchMaxString )
+		{
 			AssertStringTooLong();
+		}
+
 		char* pchNew = (char*)PvAlloc(1 + cbOld + cCount);
 
 		V_memcpy(pchNew, m_pchString, cbOld);
+
 		for ( int n = 0; n < cCount; n++ )
+		{
 			pchNew[n + cbOld] = ch;
+		}
+
 		pchNew[cCount + cbOld] = 0;
 
 		FreePv(m_pchString);
@@ -638,7 +653,7 @@ public:
 	CDefCaselessUtlStringEquals()
 	{
 	}
-	CDefCaselessUtlStringEquals(int i)
+	CDefCaselessUtlStringEquals(int)
 	{
 	}
 	inline bool operator()(const CUtlString& lhs, const CUtlString& rhs) const
@@ -656,7 +671,7 @@ public:
 	CDefCaselessUtlStringLess()
 	{
 	}
-	CDefCaselessUtlStringLess(int i)
+	CDefCaselessUtlStringLess(int)
 	{
 	}
 	inline bool operator()(const CUtlString& lhs, const CUtlString& rhs) const

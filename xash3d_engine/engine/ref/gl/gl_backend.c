@@ -129,7 +129,7 @@ void GL_BackendEndFrame(void)
 				"%3i static entities\n%3i normal entities\n%3i server entities",
 				r_numStatics,
 				r_numEntities - r_numStatics,
-				ENGINE_GET_PARM(PARM_NUMENTITIES));
+				(int)ENGINE_GET_PARM(PARM_NUMENTITIES));
 			break;
 		case 5:
 			Q_snprintf(
@@ -547,19 +547,26 @@ qboolean VID_CubemapShot(const char* base, uint size, const float* vieworg, qboo
 	byte* temp = NULL;
 	byte* buffer = NULL;
 	string basename;
-	int i = 1, flags, result;
+	uint i = 1, flags, result;
 
 	if ( !RI.drawWorld || !WORLDMODEL )
 		return false;
 
 	// make sure the specified size is valid
 	while ( i < size )
+	{
 		i <<= 1;
+	}
 
 	if ( i != size )
+	{
 		return false;
-	if ( size > gpGlobals->width || size > gpGlobals->height )
+	}
+
+	if ( size > (uint)gpGlobals->width || size > (uint)gpGlobals->height )
+	{
 		return false;
+	}
 
 	// alloc space
 	temp = Mem_Malloc(r_temppool, size * size * 3);
@@ -591,7 +598,7 @@ qboolean VID_CubemapShot(const char* base, uint size, const float* vieworg, qboo
 
 		pglReadPixels(0, 0, size, size, GL_RGB, GL_UNSIGNED_BYTE, temp);
 		r_side->flags = IMAGE_HAS_COLOR;
-		r_side->width = r_side->height = size;
+		r_side->width = r_side->height = (word)size;
 		r_side->type = PF_RGB_24;
 		r_side->size = r_side->width * r_side->height * 3;
 		r_side->buffer = temp;
@@ -603,8 +610,8 @@ qboolean VID_CubemapShot(const char* base, uint size, const float* vieworg, qboo
 
 	r_shot->flags = IMAGE_HAS_COLOR;
 	r_shot->flags |= (skyshot) ? IMAGE_SKYBOX : IMAGE_CUBEMAP;
-	r_shot->width = size;
-	r_shot->height = size;
+	r_shot->width = (word)size;
+	r_shot->height = (word)size;
 	r_shot->type = PF_RGB_24;
 	r_shot->size = r_shot->width * r_shot->height * 3 * 6;
 	r_shot->palette = NULL;
@@ -662,13 +669,13 @@ void R_ShowTextures(void)
 
 rebuild_page:
 	total = base_w * base_h;
-	start = total * (gl_showtextures->value - 1);
-	end = total * gl_showtextures->value;
+	start = total * ((int)gl_showtextures->value - 1);
+	end = total * (int)gl_showtextures->value;
 	if ( end > MAX_TEXTURES )
 		end = MAX_TEXTURES;
 
-	w = gpGlobals->width / base_w;
-	h = gpGlobals->height / base_h;
+	w = (float)(gpGlobals->width / base_w);
+	h = (float)(gpGlobals->height / base_h);
 
 	gEngfuncs.Con_DrawStringLen(NULL, NULL, &charHeight);
 
@@ -731,14 +738,14 @@ rebuild_page:
 			pglTexParameteri(image->target, GL_TEXTURE_COMPARE_MODE_ARB, GL_COMPARE_R_TO_TEXTURE_ARB);
 
 		COM_FileBase(image->name, shortname);
-		if ( Q_strlen(shortname) > 18 )
+		if ( strlen(shortname) > 18 )
 		{
 			// cutoff too long names, it looks ugly
 			shortname[16] = '.';
 			shortname[17] = '.';
 			shortname[18] = '\0';
 		}
-		gEngfuncs.Con_DrawString(x + 1, y + h - charHeight, shortname, color);
+		gEngfuncs.Con_DrawString((int)(x + 1), (int)(y + h - charHeight), shortname, color);
 		j++, k++;
 	}
 

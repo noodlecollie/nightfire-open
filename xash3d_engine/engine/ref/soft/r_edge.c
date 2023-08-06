@@ -773,7 +773,9 @@ void D_FlatFillSurface(surf_t* surf, int color)
 		u = span->u;
 		u2 = span->u + span->count - 1;
 		for ( ; u <= u2; u++ )
-			pdest[u] = color;
+		{
+			pdest[u] = (pixel_t)color;
+		}
 	}
 }
 
@@ -782,27 +784,24 @@ void D_FlatFillSurface(surf_t* surf, int color)
 D_CalcGradients
 ==============
 */
-void D_CalcGradients(msurface_t* pface)
+void D_CalcGradients(msurface_t* inFace)
 {
-	mplane_t* pplane;
 	float mipscale;
 	vec3_t p_temp1;
 	vec3_t p_saxis, p_taxis;
 	float t;
 
-	pplane = pface->plane;
-
 	mipscale = 1.0f / (float)(1 << miplevel);
 
-	if ( pface->texinfo->flags & TEX_WORLD_LUXELS )
+	if ( inFace->texinfo->flags & TEX_WORLD_LUXELS )
 	{
-		TransformVector(pface->texinfo->vecs[0], p_saxis);
-		TransformVector(pface->texinfo->vecs[1], p_taxis);
+		TransformVector(inFace->texinfo->vecs[0], p_saxis);
+		TransformVector(inFace->texinfo->vecs[1], p_taxis);
 	}
 	else
 	{
-		TransformVector(pface->info->lmvecs[0], p_saxis);
-		TransformVector(pface->info->lmvecs[1], p_taxis);
+		TransformVector(inFace->info->lmvecs[0], p_saxis);
+		TransformVector(inFace->info->lmvecs[1], p_taxis);
 	}
 
 	t = xscaleinv * mipscale;
@@ -819,37 +818,47 @@ void D_CalcGradients(msurface_t* pface)
 	VectorScale(transformed_modelorg, mipscale, p_temp1);
 
 	t = 0x10000 * mipscale;
-	if ( pface->texinfo->flags & TEX_WORLD_LUXELS )
+	if ( inFace->texinfo->flags & TEX_WORLD_LUXELS )
 	{
 		sadjust = ((fixed16_t)(DotProduct(p_temp1, p_saxis) * 0x10000 + 0.5f)) -
-			((pface->texturemins[0] << 16) >> miplevel) + pface->texinfo->vecs[0][3] * t;
+			((inFace->texturemins[0] << 16) >> miplevel) + (fixed16_t)(inFace->texinfo->vecs[0][3] * t);
 		tadjust = ((fixed16_t)(DotProduct(p_temp1, p_taxis) * 0x10000 + 0.5f)) -
-			((pface->texturemins[1] << 16) >> miplevel) + pface->texinfo->vecs[1][3] * t;
+			((inFace->texturemins[1] << 16) >> miplevel) + (fixed16_t)(inFace->texinfo->vecs[1][3] * t);
 	}
 	else
 	{
 		sadjust = ((fixed16_t)(DotProduct(p_temp1, p_saxis) * 0x10000 + 0.5f)) -
-			((pface->info->lightmapmins[0] << 16) >> miplevel) + pface->info->lmvecs[0][3] * t;
+			((inFace->info->lightmapmins[0] << 16) >> miplevel) + (fixed16_t)(inFace->info->lmvecs[0][3] * t);
 		tadjust = ((fixed16_t)(DotProduct(p_temp1, p_taxis) * 0x10000 + 0.5f)) -
-			((pface->info->lightmapmins[1] << 16) >> miplevel) + pface->info->lmvecs[1][3] * t;
+			((inFace->info->lightmapmins[1] << 16) >> miplevel) + (fixed16_t)(inFace->info->lmvecs[1][3] * t);
 	}
 	// PGM - changing flow speed for non-warping textures.
-	if ( pface->flags & SURF_CONVEYOR )
+	if ( inFace->flags & SURF_CONVEYOR )
 	{
-		if ( pface->flags & SURF_DRAWTURB )
-			sadjust += 0x10000 * (-128 * ((gpGlobals->time * 0.25f) - (int)(gpGlobals->time * 0.25f)));
+		if ( inFace->flags & SURF_DRAWTURB )
+		{
+			sadjust += (fixed16_t)((float)0x10000 *
+								   (-128.0f * (float)((gpGlobals->time * 0.25f) - (int)(gpGlobals->time * 0.25f))));
+		}
 		else
-			sadjust += 0x10000 * (-128 * ((gpGlobals->time * 0.77f) - (int)(gpGlobals->time * 0.77f)));
-		bbextents = ((pface->extents[0] << 16) >> miplevel) - 1;
+		{
+			sadjust += (fixed16_t)((float)0x10000 *
+								   (-128.0f * (float)((gpGlobals->time * 0.77f) - (int)(gpGlobals->time * 0.77f))));
+		}
+
+		bbextents = ((inFace->extents[0] << 16) >> miplevel) - 1;
 	}
 	else
-		bbextents = ((pface->info->lightextents[0] << 16) >> miplevel) - 1;
-	bbextentt = ((pface->info->lightextents[1] << 16) >> miplevel) - 1;
-
-	if ( pface->texinfo->flags & TEX_WORLD_LUXELS )
 	{
-		bbextents = ((pface->extents[0] << 16) >> miplevel) - 1;
-		bbextentt = ((pface->extents[1] << 16) >> miplevel) - 1;
+		bbextents = ((inFace->info->lightextents[0] << 16) >> miplevel) - 1;
+	}
+
+	bbextentt = ((inFace->info->lightextents[1] << 16) >> miplevel) - 1;
+
+	if ( inFace->texinfo->flags & TEX_WORLD_LUXELS )
+	{
+		bbextents = ((inFace->extents[0] << 16) >> miplevel) - 1;
+		bbextentt = ((inFace->extents[1] << 16) >> miplevel) - 1;
 	}
 }
 
@@ -866,7 +875,7 @@ void D_BackgroundSurf(surf_t* s)
 	// effectively at infinity distance from the viewpoint
 	d_zistepu = 0;
 	d_zistepv = 0;
-	d_ziorigin = -0.9;
+	d_ziorigin = -0.9f;
 
 	D_FlatFillSurface(s, (int)sw_clearcolor->value & 0xFFFF);
 	D_DrawZSpans(s->spans);

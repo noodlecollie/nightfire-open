@@ -99,16 +99,16 @@ char Q_toupper(const char in)
 	return out;
 }
 
-char Q_tolower(const char in)
+char Q_tolower(char in)
 {
-	char out;
-
 	if ( in >= 'A' && in <= 'Z' )
-		out = in + 'a' - 'A';
+	{
+		return in + 'a' - 'A';
+	}
 	else
-		out = in;
-
-	return out;
+	{
+		return in;
+	}
 }
 
 size_t Q_strncat(char* dst, const char* src, size_t size)
@@ -233,7 +233,7 @@ int Q_atoi(const char* str)
 
 float Q_atof(const char* str)
 {
-	double val = 0;
+	float val = 0;
 	int c, sign, decimal, total;
 
 	if ( !str )
@@ -262,19 +262,29 @@ float Q_atof(const char* str)
 		{
 			c = *str++;
 			if ( c >= '0' && c <= '9' )
+			{
 				val = (val * 16) + c - '0';
+			}
 			else if ( c >= 'a' && c <= 'f' )
+			{
 				val = (val * 16) + c - 'a' + 10;
+			}
 			else if ( c >= 'A' && c <= 'F' )
+			{
 				val = (val * 16) + c - 'A' + 10;
+			}
 			else
+			{
 				return val * sign;
+			}
 		}
 	}
 
 	// check for character
 	if ( str[0] == '\'' )
-		return sign * str[1];
+	{
+		return (float)(sign * str[1]);
+	}
 
 	// assume decimal
 	decimal = -1;
@@ -311,7 +321,7 @@ void Q_atov(float* vec, const char* str, size_t siz)
 {
 	string buffer;
 	char *pstr, *pfront;
-	int j;
+	size_t j;
 
 	Q_strncpy(buffer, str, sizeof(buffer));
 	memset(vec, 0, sizeof(vec_t) * siz);
@@ -323,10 +333,15 @@ void Q_atov(float* vec, const char* str, size_t siz)
 
 		// valid separator is space
 		while ( *pstr && *pstr != ' ' )
+		{
 			pstr++;
+		}
 
 		if ( !*pstr )
+		{
 			break;
+		}
+
 		pstr++;
 		pfront = pstr;
 	}
@@ -391,19 +406,41 @@ qboolean Q_stricmpext(const char* pattern, const char* text)
 
 const byte* Q_memmem(const byte* haystack, size_t haystacklen, const byte* needle, size_t needlelen)
 {
-	const byte* i;
+	const byte* cursor;
 
-	// quickly find first matching symbol
-	while ( haystacklen && (i = memchr(haystack, needle[0], haystacklen)) )
+	if ( !haystack || haystacklen < 1 || !needle || needlelen < 1 || needlelen > haystacklen )
 	{
-		if ( !memcmp(i, needle, needlelen) )
-			return i;
+		return NULL;
+	}
 
-		// skip one byte
-		i++;
+	for ( cursor = haystack; cursor < haystack + haystacklen; ++cursor )
+	{
+		const size_t remaining = haystacklen - (cursor - haystack);
 
-		haystacklen -= i - haystack;
-		haystack = i;
+		// If there is not enough space to find the needle, we can exit.
+		if ( remaining < needlelen )
+		{
+			return NULL;
+		}
+
+		// Find the first needle character from where we currently are.
+		cursor = memchr(cursor, needle[0], remaining);
+
+		if ( !cursor )
+		{
+			// We reached the end without encountering anything that could have been the needle.
+			return NULL;
+		}
+
+		// We found the first character - see if the rest matches.
+		if ( memcmp(cursor, needle, needlelen) == 0 )
+		{
+			// We found the entire needle.
+			return cursor;
+		}
+
+		// The entire needle did not match, so go round again.
+		// This will advance the cursor by one.
 	}
 
 	return NULL;
@@ -454,7 +491,6 @@ const char* Q_timestamp(int format)
 	return timestamp;
 }
 
-#if !defined(HAVE_STRCASESTR)
 char* Q_stristr(const char* string, const char* string2)
 {
 	int c;
@@ -482,7 +518,6 @@ char* Q_stristr(const char* string, const char* string2)
 	}
 	return (char*)string;
 }
-#endif  // !defined( HAVE_STRCASESTR )
 
 int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list args)
 {
@@ -500,11 +535,18 @@ int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list arg
 	__except (EXCEPTION_EXECUTE_HANDLER)
 	{
 		Q_strncpy(buffer, "^1sprintf throw exception^7\n", buffersize);
-		result = buffersize;
+		result = (int)buffersize;
 	}
 #endif
 
-	if ( result >= buffersize )
+	if ( result < 0 )
+	{
+		if ( buffer && buffersize > 0 )
+		{
+			buffer[0] = '\0';
+		}
+	}
+	else if ( (size_t)result >= buffersize )
 	{
 		buffer[buffersize - 1] = '\0';
 		return -1;
@@ -602,7 +644,7 @@ char* Q_pretifymem(float value, int digitsafterdecimal)
 	if ( !dot )
 		dot = Q_strchr(i, ' ');
 
-	pos = dot - i;  // compute position of dot
+	pos = (int)(dot - i);  // compute position of dot
 	pos -= 3;  // don't put a comma if it's <= 3 long
 
 	while ( *i )
@@ -633,33 +675,50 @@ Extracts the base name of a file (no path, no extension, assumes '/' as path sep
 */
 void COM_FileBase(const char* in, char* out)
 {
-	int len, start, end;
+	int len;
+	int start;
+	int end;
 
-	len = Q_strlen(in);
-	if ( !len )
+	len = (int)Q_strlen(in);
+
+	if ( len < 1 )
+	{
 		return;
+	}
 
 	// scan backward for '.'
 	end = len - 1;
 
 	while ( end && in[end] != '.' && in[end] != '/' && in[end] != '\\' )
+	{
 		end--;
+	}
 
 	if ( in[end] != '.' )
+	{
 		end = len - 1;  // no '.', copy to end
+	}
 	else
+	{
 		end--;  // found ',', copy to left of '.'
+	}
 
 	// scan backward for '/'
 	start = len - 1;
 
 	while ( start >= 0 && in[start] != '/' && in[start] != '\\' )
+	{
 		start--;
+	}
 
 	if ( start < 0 || (in[start] != '/' && in[start] != '\\') )
+	{
 		start = 0;
+	}
 	else
+	{
 		start++;
+	}
 
 	// length of new sting
 	len = end - start + 1;
@@ -848,7 +907,9 @@ void COM_PathSlashFix(char* path)
 	len = Q_strlen(path);
 
 	if ( path[len - 1] != '\\' && path[len - 1] != '/' )
+	{
 		Q_strcpy(&path[len], "/");
+	}
 }
 
 /*
@@ -858,10 +919,14 @@ COM_Hex2Char
 */
 char COM_Hex2Char(uint8_t hex)
 {
-	if ( hex >= 0x0 && hex <= 0x9 )
+	if ( hex <= 0x9 )
+	{
 		hex += '0';
+	}
 	else if ( hex >= 0xA && hex <= 0xF )
+	{
 		hex += '7';
+	}
 
 	return (char)hex;
 }
@@ -908,7 +973,8 @@ text parser
 */
 char* COM_ParseFileSafe(char* data, char* token, const int size, unsigned int flags, int* plen, qboolean* quoted)
 {
-	int c, len = 0;
+	char c;
+	int len = 0;
 	qboolean overflow = false;
 
 	if ( quoted )

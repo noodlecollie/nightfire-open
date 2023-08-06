@@ -37,7 +37,7 @@ static const int st_to_vec[6][3] = {
 static const int vec_to_st[6][3] = {{-2, 3, 1}, {2, 3, -1}, {1, 3, 2}, {-1, 3, -2}, {-2, -1, 3}, {-2, 1, -3}};
 
 // speed up sin calculations
-float r_turbsin[] = {
+static const float r_turbsin[] = {
 #include "warpsin.h"
 };
 
@@ -98,9 +98,9 @@ void DrawSkyPolygon(int nump, vec3_t vecs)
 	for ( i = 0, vp = vecs; i < nump; i++, vp += 3 )
 		VectorAdd(vp, v, v);
 
-	av[0] = fabs(v[0]);
-	av[1] = fabs(v[1]);
-	av[2] = fabs(v[2]);
+	av[0] = fabsf(v[0]);
+	av[1] = fabsf(v[1]);
+	av[2] = fabsf(v[2]);
 
 	if ( av[0] > av[1] && av[0] > av[2] )
 		axis = (v[0] < 0) ? 1 : 0;
@@ -240,11 +240,11 @@ void MakeSkyVec(float s, float t, int axis)
 	int j, k, farclip;
 	vec3_t v, b;
 
-	farclip = RI.farClip;
+	farclip = (int)RI.farClip;
 
 	b[0] = s * (farclip >> 1);
 	b[1] = t * (farclip >> 1);
-	b[2] = (farclip >> 1);
+	b[2] = (float)(farclip >> 1);
 
 	for ( j = 0; j < 3; j++ )
 	{
@@ -302,11 +302,11 @@ void R_AddSkyBoxSurface(msurface_t* fa)
 
 	if ( ENGINE_GET_PARM(PARM_SKY_SPHERE) && fa->polys && !tr.fCustomSkybox )
 	{
-		glpoly_t* p = fa->polys;
+		glpoly_t* poly = fa->polys;
 
 		// draw the sky poly
 		pglBegin(GL_POLYGON);
-		for ( i = 0, v = p->verts[0]; i < p->numverts; i++, v += VERTEXSIZE )
+		for ( i = 0, v = poly->verts[0]; i < poly->numverts; i++, v += VERTEXSIZE )
 		{
 			pglTexCoord2f(v[3], v[4]);
 			pglVertex3fv(v);
@@ -318,7 +318,10 @@ void R_AddSkyBoxSurface(msurface_t* fa)
 	for ( p = fa->polys; p; p = p->next )
 	{
 		for ( i = 0; i < p->numverts; i++ )
+		{
 			VectorSubtract(p->verts[i], RI.cullorigin, verts[i]);
+		}
+
 		ClipSkyPolygon(p->numverts, verts[0], 0);
 	}
 }
@@ -406,7 +409,8 @@ void R_SetupSky(const char* skyboxname)
 {
 	char loadname[MAX_STRING];
 	char sidenames[6][MAX_STRING];
-	int i, len;
+	int i;
+	size_t len;
 	qboolean result;
 
 	if ( !COM_CheckString(skyboxname) )
@@ -419,10 +423,13 @@ void R_SetupSky(const char* skyboxname)
 	COM_StripExtension(loadname);
 
 	// kill the underline suffix to find them manually later
-	len = Q_strlen(loadname);
+	len = strlen(loadname);
 
 	if ( loadname[len - 1] == '_' )
+	{
 		loadname[len - 1] = '\0';
+	}
+
 	result = CheckSkybox(loadname, sidenames);
 
 	// to prevent infinite recursion if default skybox was missed
@@ -473,11 +480,11 @@ void R_CloudVertex(float s, float t, int axis, vec3_t v)
 	int j, k, farclip;
 	vec3_t b;
 
-	farclip = RI.farClip;
+	farclip = (int)RI.farClip;
 
 	b[0] = s * (farclip >> 1);
 	b[1] = t * (farclip >> 1);
-	b[2] = (farclip >> 1);
+	b[2] = (float)(farclip >> 1);
 
 	for ( j = 0; j < 3; j++ )
 	{
@@ -503,7 +510,7 @@ void R_CloudTexCoord(vec3_t v, float speed, float* s, float* t)
 	VectorSubtract(v, RI.vieworg, dir);
 	dir[2] *= 3.0f;  // flatten the sphere
 
-	length = VectorLength(dir);
+	length = (float)VectorLength(dir);
 	length = 6.0f * 63.0f / length;
 
 	*s = (speedscale + dir[0] * length) * (1.0f / 128.0f);
@@ -704,9 +711,9 @@ void R_InitSkyClouds(const mip_t* mt, texture_t* tx, qboolean custom_palette)
 		}
 	}
 
-	((byte*)&transpix)[0] = r / (r_sky->height * r_sky->height);
-	((byte*)&transpix)[1] = g / (r_sky->height * r_sky->height);
-	((byte*)&transpix)[2] = b / (r_sky->height * r_sky->height);
+	((byte*)&transpix)[0] = (byte)(r / (r_sky->height * r_sky->height));
+	((byte*)&transpix)[1] = (byte)(g / (r_sky->height * r_sky->height));
+	((byte*)&transpix)[2] = (byte)(b / (r_sky->height * r_sky->height));
 	((byte*)&transpix)[3] = 0;
 
 	// build a temporary image

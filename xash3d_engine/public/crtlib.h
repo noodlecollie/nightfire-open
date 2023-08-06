@@ -141,17 +141,7 @@ static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)
 	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrNCaseCmp(s1, s2, n));
 }
 
-#if defined(HAVE_STRCASESTR)
-#if XASH_WIN32
-#define strcasestr stristr
-#endif
-static inline char* Q_stristr(const char* s1, const char* s2)
-{
-	return unlikely(!s1 || !s2) ? NULL : (char*)strcasestr(s1, s2);
-}
-#else  // defined( HAVE_STRCASESTR )
 char* Q_stristr(const char* s1, const char* s2);
-#endif  // defined( HAVE_STRCASESTR )
 
 #if defined(HAVE_STRCHRNUL)
 #define Q_strchrnul strchrnul

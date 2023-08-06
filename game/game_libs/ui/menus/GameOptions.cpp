@@ -75,13 +75,13 @@ void CMenuGameOptions::SetNetworkMode(int maxpacket1, int maxpayload1, int cmdra
 	split.bChecked = true;
 	compress.bChecked = false;
 	normal.bChecked = dsl.bChecked = slowest.bChecked = false;
-	maxpacket.SetCurrentValue(maxpacket1);
-	maxpayload.SetCurrentValue(maxpayload1);
+	maxpacket.SetCurrentValue(static_cast<float>(maxpacket1));
+	maxpayload.SetCurrentValue(static_cast<float>(maxpayload1));
 	if ( !maxpayload1 )
 		maxpayload.ForceDisplayString("auto");
-	cmdrate.SetCurrentValue(cmdrate1);
-	updaterate.SetCurrentValue(updaterate1);
-	rate.SetCurrentValue(rate1);
+	cmdrate.SetCurrentValue(static_cast<float>(cmdrate1));
+	updaterate.SetCurrentValue(static_cast<float>(updaterate1));
+	rate.SetCurrentValue(static_cast<float>(rate1));
 }
 
 void CMenuGameOptions::SaveCb()
@@ -161,6 +161,7 @@ void CMenuGameOptions::_Init(void)
 		L("Network packet size limit (cl_maxpacket)"),
 		L("Split packet size and minimum size to compress"));
 	SET_EVENT_MULTI(maxpacket.onChanged, {
+		(void)pExtra;
 		CMenuSpinControl* self = (CMenuSpinControl*)pSelf;
 		if ( self->GetCurrentValue() == 1550 || self->GetCurrentValue() == 150 )
 		{
@@ -182,6 +183,7 @@ void CMenuGameOptions::_Init(void)
 		L("Signon size (cl_maxpayload)"),
 		L("Signon chain split decrease if cl_maxpacket does not help"));
 	SET_EVENT_MULTI(maxpayload.onChanged, {
+		(void)pExtra;
 		CMenuSpinControl* self = (CMenuSpinControl*)pSelf;
 		if ( self->GetCurrentValue() == 250 || self->GetCurrentValue() == 40050 )
 		{
@@ -221,6 +223,7 @@ void CMenuGameOptions::_Init(void)
 	normal.szName =
 		L("Normal internet connection");  // Такая строка где-то уже была, поэтому в отдельный файл НЕ ВЫНОШУ !
 	SET_EVENT_MULTI(normal.onChanged, {
+		(void)pExtra;
 		pSelf->GetParent(CMenuGameOptions)->SetNetworkMode(1400, 0, 30, 60, 25000);
 		((CMenuCheckBox*)pSelf)->bChecked = true;
 	});
@@ -228,6 +231,7 @@ void CMenuGameOptions::_Init(void)
 	dsl.SetRect(240, 560, 24, 24);
 	dsl.szName = L("DSL or PPTP with limited packet size");  // И такое тоже уже было !
 	SET_EVENT_MULTI(dsl.onChanged, {
+		(void)pExtra;
 		pSelf->GetParent(CMenuGameOptions)->SetNetworkMode(1200, 1000, 30, 60, 25000);
 		((CMenuCheckBox*)pSelf)->bChecked = true;
 	});
@@ -235,6 +239,7 @@ void CMenuGameOptions::_Init(void)
 	slowest.SetRect(240, 610, 24, 24);
 	slowest.szName = L("Slow connection mode (64kbps)");  // Было, повтор !
 	SET_EVENT_MULTI(slowest.onChanged, {
+		(void)pExtra;
 		pSelf->GetParent(CMenuGameOptions)->SetNetworkMode(900, 700, 25, 30, 7500);
 		((CMenuCheckBox*)pSelf)->bChecked = true;
 	});

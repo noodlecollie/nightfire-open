@@ -58,7 +58,7 @@ void BaseWeaponEventPlayer::PlayEvent(
 	EventStart();
 }
 
-void BaseWeaponEventPlayer::ParseEventScript(const rapidjson::Document& document)
+void BaseWeaponEventPlayer::ParseEventScript(const rapidjson::Document&)
 {
 }
 
@@ -71,11 +71,11 @@ bool BaseWeaponEventPlayer::Initialise()
 		return false;
 	}
 
-	const uint32_t attackModeIndex = static_cast<const uint8_t>(m_pSignature->Index);
-	const WeaponId_e weaponId = static_cast<const WeaponId_e>(m_pSignature->WeaponId);
+	const uint32_t attackModeIndex = static_cast<uint8_t>(m_pSignature->Index);
+	const WeaponId_e weaponId = static_cast<WeaponId_e>(m_pSignature->WeaponId);
 	const WeaponAtts::WACollection* atts = CWeaponRegistry::StaticInstance().Get(weaponId);
 
-	if ( !atts || attackModeIndex >= atts->AttackModes.Count() )
+	if ( !atts || attackModeIndex >= static_cast<uint32_t>(atts->AttackModes.Count()) )
 	{
 		return false;
 	}

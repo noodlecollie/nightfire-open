@@ -340,7 +340,7 @@ int CSquadMonster::SquadRecruit(int searchRadius, int maxMembers)
 	}
 	else
 	{
-		while ( (pEntity = UTIL_FindEntityInSphere(pEntity, pev->origin, searchRadius)) != NULL )
+		while ( (pEntity = UTIL_FindEntityInSphere(pEntity, pev->origin, static_cast<float>(searchRadius))) != NULL )
 		{
 			CSquadMonster* pRecruit = pEntity->MySquadMonsterPointer();
 
@@ -383,7 +383,7 @@ int CSquadMonster::SquadRecruit(int searchRadius, int maxMembers)
 //=========================================================
 // CheckEnemy
 //=========================================================
-int CSquadMonster::CheckEnemy(CBaseEntity* pEnemy)
+int CSquadMonster::CheckEnemy(CBaseEntity*)
 {
 	int iUpdatedLKP;
 
@@ -476,8 +476,8 @@ BOOL CSquadMonster::NoFriendlyFire(void)
 
 	// UTIL_MakeVectors( pev->angles );
 
-	vecLeftSide = pev->origin - (gpGlobals->v_right * (pev->size.x * 1.5));
-	vecRightSide = pev->origin + (gpGlobals->v_right * (pev->size.x * 1.5));
+	vecLeftSide = pev->origin - (gpGlobals->v_right * (pev->size.x * 1.5f));
+	vecRightSide = pev->origin + (gpGlobals->v_right * (pev->size.x * 1.5f));
 	v_left = gpGlobals->v_right * -1;
 
 	leftPlane.InitializePlane(gpGlobals->v_right, vecLeftSide);

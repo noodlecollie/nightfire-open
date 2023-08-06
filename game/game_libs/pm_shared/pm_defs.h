@@ -205,9 +205,9 @@ typedef struct playermove_s
 	void (*Con_Printf)(const char* fmt, ...);
 	double (*Sys_FloatTime)(void);
 	void (*PM_StuckTouch)(int hitent, pmtrace_t* ptraceresult);
-	int (*PM_PointContents)(float* p, int* truecontents /*filled in if this is non-null*/);
+	int (*PM_PointContents)(const float* p, int* truecontents /*filled in if this is non-null*/);
 	int (*PM_TruePointContents)(float* p);
-	int (*PM_HullPointContents)(struct hull_s* hull, int num, float* p);
+	int (*PM_HullPointContents)(struct hull_s* hull, int num, const float* p);
 #ifdef __MINGW32__
 	pmtrace_t* (*PM_PlayerTrace_real)(pmtrace_t* retvalue, float* start, float* end, int traceFlags, int ignore_pe);
 

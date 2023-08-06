@@ -81,35 +81,35 @@ typedef struct dly_s
 const sx_preset_t rgsxpre[] = {
 	//          -------reverb--------  -------delay--------
 	// lp  mod  size   refl   rvblp  delay  feedback  dlylp  left
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 2.0, 0.0},  // 0 off
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.065, 0.1, 0.0, 0.01},  // 1 generic
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.02, 0.75, 0.0, 0.01},  // 2 metalic
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.03, 0.78, 0.0, 0.02},  // 3
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.06, 0.77, 0.0, 0.03},  // 4
-	{0.0, 0.0, 0.05, 0.85, 1.0, 0.008, 0.96, 2.0, 0.01},  // 5 tunnel
-	{0.0, 0.0, 0.05, 0.88, 1.0, 0.01, 0.98, 2.0, 0.02},  // 6
-	{0.0, 0.0, 0.05, 0.92, 1.0, 0.015, 0.995, 2.0, 0.04},  // 7
-	{0.0, 0.0, 0.05, 0.84, 1.0, 0.0, 0.0, 2.0, 0.012},  // 8 chamber
-	{0.0, 0.0, 0.05, 0.9, 1.0, 0.0, 0.0, 2.0, 0.008},  // 9
-	{0.0, 0.0, 0.05, 0.95, 1.0, 0.0, 0.0, 2.0, 0.004},  // 10
-	{0.0, 0.0, 0.05, 0.7, 0.0, 0.0, 0.0, 2.0, 0.012},  // 11 brite
-	{0.0, 0.0, 0.055, 0.78, 0.0, 0.0, 0.0, 2.0, 0.008},  // 12
-	{0.0, 0.0, 0.05, 0.86, 0.0, 0.0, 0.0, 2.0, 0.002},  // 13
-	{1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 2.0, 0.01},  // 14 water
-	{1.0, 0.0, 0.0, 0.0, 1.0, 0.06, 0.85, 2.0, 0.02},  // 15
-	{1.0, 0.0, 0.0, 0.0, 1.0, 0.2, 0.6, 2.0, 0.05},  // 16
-	{0.0, 0.0, 0.05, 0.8, 1.0, 0.0, 0.48, 2.0, 0.016},  // 17 concrete
-	{0.0, 0.0, 0.06, 0.9, 1.0, 0.0, 0.52, 2.0, 0.01},  // 18
-	{0.0, 0.0, 0.07, 0.94, 1.0, 0.3, 0.6, 2.0, 0.008},  // 19
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.3, 0.42, 2.0, 0.0},  // 20 outside
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.35, 0.48, 2.0, 0.0},  // 21
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.38, 0.6, 2.0, 0.0},  // 22
-	{0.0, 0.0, 0.05, 0.9, 1.0, 0.2, 0.28, 0.0, 0.0},  // 23 cavern
-	{0.0, 0.0, 0.07, 0.9, 1.0, 0.3, 0.4, 0.0, 0.0},  // 24
-	{0.0, 0.0, 0.09, 0.9, 1.0, 0.35, 0.5, 0.0, 0.0},  // 25
-	{0.0, 1.0, 0.01, 0.9, 0.0, 0.0, 0.0, 2.0, 0.05},  // 26 weirdo
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.009, 0.999, 2.0, 0.04},  // 27
-	{0.0, 0.0, 0.001, 0.999, 0.0, 0.2, 0.8, 2.0, 0.05}  // 28
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 2.0f, 0.0f},  // 0 off
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.065f, 0.1f, 0.0f, 0.01f},  // 1 generic
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.02f, 0.75f, 0.0f, 0.01f},  // 2 metalic
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.03f, 0.78f, 0.0f, 0.02f},  // 3
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.06f, 0.77f, 0.0f, 0.03f},  // 4
+	{0.0f, 0.0f, 0.05f, 0.85f, 1.0f, 0.008f, 0.96f, 2.0f, 0.01f},  // 5 tunnel
+	{0.0f, 0.0f, 0.05f, 0.88f, 1.0f, 0.01f, 0.98f, 2.0f, 0.02f},  // 6
+	{0.0f, 0.0f, 0.05f, 0.92f, 1.0f, 0.015f, 0.995f, 2.0f, 0.04f},  // 7
+	{0.0f, 0.0f, 0.05f, 0.84f, 1.0f, 0.0f, 0.0f, 2.0f, 0.012f},  // 8 chamber
+	{0.0f, 0.0f, 0.05f, 0.9f, 1.0f, 0.0f, 0.0f, 2.0f, 0.008f},  // 9
+	{0.0f, 0.0f, 0.05f, 0.95f, 1.0f, 0.0f, 0.0f, 2.0f, 0.004f},  // 10
+	{0.0f, 0.0f, 0.05f, 0.7f, 0.0f, 0.0f, 0.0f, 2.0f, 0.012f},  // 11 brite
+	{0.0f, 0.0f, 0.055f, 0.78f, 0.0f, 0.0f, 0.0f, 2.0f, 0.008f},  // 12
+	{0.0f, 0.0f, 0.05f, 0.86f, 0.0f, 0.0f, 0.0f, 2.0f, 0.002f},  // 13
+	{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 2.0f, 0.01f},  // 14 water
+	{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.06f, 0.85f, 2.0f, 0.02f},  // 15
+	{1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.2f, 0.6f, 2.0f, 0.05f},  // 16
+	{0.0f, 0.0f, 0.05f, 0.8f, 1.0f, 0.0f, 0.48f, 2.0f, 0.016f},  // 17 concrete
+	{0.0f, 0.0f, 0.06f, 0.9f, 1.0f, 0.0f, 0.52f, 2.0f, 0.01f},  // 18
+	{0.0f, 0.0f, 0.07f, 0.94f, 1.0f, 0.3f, 0.6f, 2.0f, 0.008f},  // 19
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.3f, 0.42f, 2.0f, 0.0f},  // 20 outside
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.35f, 0.48f, 2.0f, 0.0f},  // 21
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.38f, 0.6f, 2.0f, 0.0f},  // 22
+	{0.0f, 0.0f, 0.05f, 0.9f, 1.0f, 0.2f, 0.28f, 0.0f, 0.0f},  // 23 cavern
+	{0.0f, 0.0f, 0.07f, 0.9f, 1.0f, 0.3f, 0.4f, 0.0f, 0.0f},  // 24
+	{0.0f, 0.0f, 0.09f, 0.9f, 1.0f, 0.35f, 0.5f, 0.0f, 0.0f},  // 25
+	{0.0f, 1.0f, 0.01f, 0.9f, 0.0f, 0.0f, 0.0f, 2.0f, 0.05f},  // 26 weirdo
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.009f, 0.999f, 2.0f, 0.04f},  // 27
+	{0.0f, 0.0f, 0.001f, 0.999f, 0.0f, 0.2f, 0.8f, 2.0f, 0.05f}  // 28
 };
 
 // 0x0045dca8 enginegl.exe
@@ -117,35 +117,35 @@ const sx_preset_t rgsxpre[] = {
 const sx_preset_t rgsxpre_hlalpha052[] = {
 	//          -------reverb--------  -------delay--------
 	// lp  mod  size   refl   rvblp  delay  feedback  dlylp  left
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 2.0, 0.0},  // 0 off
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.08, 0.8, 2.0, 0.0},  // 1 generic
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.02, 0.75, 0.0, 0.001},  // 2 metalic
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.03, 0.78, 0.0, 0.002},  // 3
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.06, 0.77, 0.0, 0.003},  // 4
-	{0.0, 0.0, 0.05, 0.85, 1.0, 0.008, 0.96, 2.0, 0.01},  // 5 tunnel
-	{0.0, 0.0, 0.05, 0.88, 1.0, 0.01, 0.98, 2.0, 0.02},  // 6
-	{0.0, 0.0, 0.05, 0.92, 1.0, 0.015, 0.995, 2.0, 0.04},  // 7
-	{0.0, 0.0, 0.05, 0.84, 1.0, 0.0, 0.0, 2.0, 0.003},  // 8 chamber
-	{0.0, 0.0, 0.05, 0.9, 1.0, 0.0, 0.0, 2.0, 0.002},  // 9
-	{0.0, 0.0, 0.05, 0.95, 1.0, 0.0, 0.0, 2.0, 0.001},  // 10
-	{0.0, 0.0, 0.05, 0.7, 0.0, 0.0, 0.0, 2.0, 0.003},  // 11 brite
-	{0.0, 0.0, 0.055, 0.78, 0.0, 0.0, 0.0, 2.0, 0.002},  // 12
-	{0.0, 0.0, 0.05, 0.86, 0.0, 0.0, 0.0, 2.0, 0.001},  // 13
-	{1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 2.0, 0.01},  // 14 water
-	{1.0, 1.0, 0.0, 0.0, 1.0, 0.06, 0.85, 2.0, 0.02},  // 15
-	{1.0, 1.0, 0.0, 0.0, 1.0, 0.2, 0.6, 2.0, 0.05},  // 16
-	{0.0, 0.0, 0.05, 0.8, 1.0, 0.15, 0.48, 2.0, 0.008},  // 17 concrete
-	{0.0, 0.0, 0.06, 0.9, 1.0, 0.22, 0.52, 2.0, 0.005},  // 18
-	{0.0, 0.0, 0.07, 0.94, 1.0, 0.3, 0.6, 2.0, 0.001},  // 19
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.3, 0.42, 2.0, 0.0},  // 20 outside
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.35, 0.48, 2.0, 0.0},  // 21
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.38, 0.6, 2.0, 0.0},  // 22
-	{0.0, 0.0, 0.05, 0.9, 1.0, 0.2, 0.28, 0.0, 0.0},  // 23 cavern
-	{0.0, 0.0, 0.07, 0.9, 1.0, 0.3, 0.4, 0.0, 0.0},  // 24
-	{0.0, 0.0, 0.09, 0.9, 1.0, 0.35, 0.5, 0.0, 0.0},  // 25
-	{0.0, 1.0, 0.01, 0.9, 0.0, 0.0, 0.0, 2.0, 0.05},  // 26 weirdo
-	{0.0, 0.0, 0.0, 0.0, 1.0, 0.009, 0.999, 2.0, 0.04},  // 27
-	{0.0, 0.0, 0.001, 0.999, 0.0, 0.2, 0.8, 2.0, 0.05},  // 28
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 2.0f, 0.0f},  // 0 off
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.08f, 0.8f, 2.0f, 0.0f},  // 1 generic
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.02f, 0.75f, 0.0f, 0.001f},  // 2 metalic
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.03f, 0.78f, 0.0f, 0.002f},  // 3
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.06f, 0.77f, 0.0f, 0.003f},  // 4
+	{0.0f, 0.0f, 0.05f, 0.85f, 1.0f, 0.008f, 0.96f, 2.0f, 0.01f},  // 5 tunnel
+	{0.0f, 0.0f, 0.05f, 0.88f, 1.0f, 0.01f, 0.98f, 2.0f, 0.02f},  // 6
+	{0.0f, 0.0f, 0.05f, 0.92f, 1.0f, 0.015f, 0.995f, 2.0f, 0.04f},  // 7
+	{0.0f, 0.0f, 0.05f, 0.84f, 1.0f, 0.0f, 0.0f, 2.0f, 0.003f},  // 8 chamber
+	{0.0f, 0.0f, 0.05f, 0.9f, 1.0f, 0.0f, 0.0f, 2.0f, 0.002f},  // 9
+	{0.0f, 0.0f, 0.05f, 0.95f, 1.0f, 0.0f, 0.0f, 2.0f, 0.001f},  // 10
+	{0.0f, 0.0f, 0.05f, 0.7f, 0.0f, 0.0f, 0.0f, 2.0f, 0.003f},  // 11 brite
+	{0.0f, 0.0f, 0.055f, 0.78f, 0.0f, 0.0f, 0.0f, 2.0f, 0.002f},  // 12
+	{0.0f, 0.0f, 0.05f, 0.86f, 0.0f, 0.0f, 0.0f, 2.0f, 0.001f},  // 13
+	{1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 2.0f, 0.01f},  // 14 water
+	{1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.06f, 0.85f, 2.0f, 0.02f},  // 15
+	{1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.2f, 0.6f, 2.0f, 0.05f},  // 16
+	{0.0f, 0.0f, 0.05f, 0.8f, 1.0f, 0.15f, 0.48f, 2.0f, 0.008f},  // 17 concrete
+	{0.0f, 0.0f, 0.06f, 0.9f, 1.0f, 0.22f, 0.52f, 2.0f, 0.005f},  // 18
+	{0.0f, 0.0f, 0.07f, 0.94f, 1.0f, 0.3f, 0.6f, 2.0f, 0.001f},  // 19
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.3f, 0.42f, 2.0f, 0.0f},  // 20 outside
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.35f, 0.48f, 2.0f, 0.0f},  // 21
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.38f, 0.6f, 2.0f, 0.0f},  // 22
+	{0.0f, 0.0f, 0.05f, 0.9f, 1.0f, 0.2f, 0.28f, 0.0f, 0.0f},  // 23 cavern
+	{0.0f, 0.0f, 0.07f, 0.9f, 1.0f, 0.3f, 0.4f, 0.0f, 0.0f},  // 24
+	{0.0f, 0.0f, 0.09f, 0.9f, 1.0f, 0.35f, 0.5f, 0.0f, 0.0f},  // 25
+	{0.0f, 1.0f, 0.01f, 0.9f, 0.0f, 0.0f, 0.0f, 2.0f, 0.05f},  // 26 weirdo
+	{0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.009f, 0.999f, 2.0f, 0.04f},  // 27
+	{0.0f, 0.0f, 0.001f, 0.999f, 0.0f, 0.2f, 0.8f, 2.0f, 0.05f},  // 28
 };
 
 const sx_preset_t* ptable = rgsxpre;
@@ -386,15 +386,19 @@ void DLY_CheckNewStereoDelayVal(void)
 		if ( dly->delaysamples != samples )
 		{
 			dly->xfade = 128;
-			dly->idelayoutputxf = dly->idelayinput - samples;
+			dly->idelayoutputxf = (int)(dly->idelayinput - samples);
 			if ( dly->idelayoutputxf < 0 )
-				dly->idelayoutputxf += dly->cdelaysamplesmax;
+			{
+				dly->idelayoutputxf += (int)dly->cdelaysamplesmax;
+			}
 		}
 
 		dly->modcur = dly->mod = 0;
 
 		if ( dly->delaysamples == 0 )
+		{
 			DLY_Free(STEREODLY);
+		}
 	}
 }
 
@@ -427,7 +431,7 @@ void DLY_DoStereoDelay(int count)
 			// set up new crossfade, if not crossfading, not modulating, but going to
 			if ( !dly->xfade && !dly->modcur && dly->mod )
 			{
-				dly->idelayoutputxf = dly->idelayoutput + ((COM_RandomLong(0, 255) * dly->delaysamples) >> 9);
+				dly->idelayoutputxf = (int)(dly->idelayoutput + ((COM_RandomLong(0, 255) * dly->delaysamples) >> 9));
 
 				dly->xfade = 128;
 			}
@@ -440,7 +444,7 @@ void DLY_DoStereoDelay(int count)
 				samplexf = dly->lpdelayline[dly->idelayoutputxf] * (128 - dly->xfade) >> 7;
 				delay = samplexf + ((delay * dly->xfade) >> 7);
 
-				if ( ++dly->idelayoutputxf >= dly->cdelaysamplesmax )
+				if ( (size_t)(++dly->idelayoutputxf) >= dly->cdelaysamplesmax )
 					dly->idelayoutputxf = 0;
 
 				if ( --dly->xfade == 0 )
@@ -504,8 +508,8 @@ void DLY_CheckNewDelayVal(void)
 		}
 	}
 
-	dly->lp = sxdly_lp->value;
-	dly->delayfeedback = 255 * sxdly_feedback->value;
+	dly->lp = (int)sxdly_lp->value;
+	dly->delayfeedback = (int)(255 * sxdly_feedback->value);
 }
 
 /*
@@ -584,9 +588,13 @@ void RVB_SetUpDly(int pos, float delay, int kmod)
 	// set up crossfade, if delay has changed
 	if ( rgsxdly[pos].delaysamples != samples )
 	{
-		rgsxdly[pos].idelayoutputxf = rgsxdly[pos].idelayinput - samples;
+		rgsxdly[pos].idelayoutputxf = (int)(rgsxdly[pos].idelayinput - samples);
+
 		if ( rgsxdly[pos].idelayoutputxf < 0 )
-			rgsxdly[pos].idelayoutputxf += rgsxdly[pos].cdelaysamplesmax;
+		{
+			rgsxdly[pos].idelayoutputxf += (int)rgsxdly[pos].cdelaysamplesmax;
+		}
+
 		rgsxdly[pos].xfade = REVERB_XFADE;
 	}
 
@@ -621,7 +629,7 @@ void RVB_CheckNewReverbVal(void)
 		}
 	}
 
-	dly1->lp = dly2->lp = sxrvb_lp->value;
+	dly1->lp = dly2->lp = (int)sxrvb_lp->value;
 	dly1->delayfeedback = dly2->delayfeedback = (int)(255 * sxrvb_feedback->value);
 }
 
@@ -649,7 +657,7 @@ int RVB_DoReverbForOneDly(dly_t* dly, const int vlr, const portable_samplepair_t
 		// modulate delay rate
 		if ( !dly->mod )
 		{
-			dly->idelayoutputxf = dly->idelayoutput + ((COM_RandomLong(0, 255) * delay) >> 9);
+			dly->idelayoutputxf = (int)(dly->idelayoutput + ((COM_RandomLong(0, 255) * delay) >> 9));
 
 			dly->idelayoutputxf %= dly->cdelaysamplesmax;
 
@@ -661,7 +669,7 @@ int RVB_DoReverbForOneDly(dly_t* dly, const int vlr, const portable_samplepair_t
 			samplexf = (dly->lpdelayline[dly->idelayoutputxf] * (REVERB_XFADE - dly->xfade)) / REVERB_XFADE;
 			delay = ((delay * dly->xfade) / REVERB_XFADE) + samplexf;
 
-			if ( ++dly->idelayoutputxf >= dly->cdelaysamplesmax )
+			if ( (size_t)(++dly->idelayoutputxf) >= dly->cdelaysamplesmax )
 				dly->idelayoutputxf = 0;
 
 			if ( --dly->xfade == 0 )
@@ -813,6 +821,8 @@ DSP_Process
 */
 void DSP_Process(int idsp, portable_samplepair_t* pbfront, int sampleCount)
 {
+	(void)idsp;
+
 	if ( dsp_off->value )
 		return;
 
@@ -876,16 +886,20 @@ void CheckNewDspPresets(void)
 	}
 
 	if ( s_listener.waterlevel > 2 )
-		idsp_room = roomwater_type->value;
+	{
+		idsp_room = (int)roomwater_type->value;
+	}
 	else
-		idsp_room = room_type->value;
+	{
+		idsp_room = (int)room_type->value;
+	}
 
 	// don't pass invalid presets
-	idsp_room = bound(0, idsp_room, MAX_ROOM_TYPES);
+	idsp_room = bound(0, (size_t)idsp_room, MAX_ROOM_TYPES);
 
 	if ( FBitSet(hisound->flags, FCVAR_CHANGED) )
 	{
-		sxhires = hisound->value;
+		sxhires = (int)hisound->value;
 		ClearBits(hisound->flags, FCVAR_CHANGED);
 	}
 

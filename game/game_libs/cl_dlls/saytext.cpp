@@ -34,7 +34,6 @@ extern const float* GetClientColor(int clientIndex);
 // allow 20 pixels on either side of the text
 #define MAX_LINE_WIDTH (ScreenWidth - 40)
 #define LINE_START 10
-static float SCROLL_SPEED = 5;
 
 static char g_szLineBuffer[MAX_LINES + 1][MAX_CHARS_PER_LINE];
 static const float* g_pflNameColors[MAX_LINES + 1];
@@ -151,7 +150,7 @@ int CHudSayText::Draw(float flTime)
 	return 1;
 }
 
-int CHudSayText::MsgFunc_SayText(const char* pszName, int iSize, void* pbuf)
+int CHudSayText::MsgFunc_SayText(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -194,7 +193,7 @@ void CHudSayText::SayTextPrint(const char* pszBuf, int iBufSize, int clientIndex
 
 			if ( nameInString )
 			{
-				g_iNameLengths[i] = strlen(pName) + (nameInString - pszBuf);
+				g_iNameLengths[i] = static_cast<int>(strlen(pName) + (nameInString - pszBuf));
 				g_pflNameColors[i] = GetClientColor(clientIndex);
 			}
 		}
@@ -291,8 +290,8 @@ void CHudSayText::EnsureTextFitsInOneLineAndWrapIfHaveTo(int line)
 				// copy remaining string into next buffer,  making sure it starts with a space character
 				if ( (char)*last_break == (char)' ' )
 				{
-					int linelen = strlen(g_szLineBuffer[j]);
-					int remaininglen = strlen(last_break);
+					int linelen = static_cast<int>(strlen(g_szLineBuffer[j]));
+					int remaininglen = static_cast<int>(strlen(last_break));
 
 					if ( (linelen - remaininglen) <= MAX_CHARS_PER_LINE )
 						strcat(g_szLineBuffer[j], last_break);

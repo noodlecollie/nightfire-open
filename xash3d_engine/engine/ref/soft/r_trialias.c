@@ -202,10 +202,10 @@ void R_AliasProjectAndClipTestFinalVert(finalvert_t* fv)
 	z = fv->xyz[2];
 	zi = 1.0f / z;
 
-	fv->zi = zi * s_ziscale;
+	fv->zi = (int)(zi * s_ziscale);
 
-	fv->u = (x * aliasxscale * zi) + aliasxcenter;
-	fv->v = (y * aliasyscale * zi) + aliasycenter;
+	fv->u = (int)((x * aliasxscale * zi) + aliasxcenter);
+	fv->v = (int)((y * aliasyscale * zi) + aliasycenter);
 
 	if ( fv->u < RI.aliasvrect.x )
 		fv->flags |= ALIAS_LEFT_CLIP;

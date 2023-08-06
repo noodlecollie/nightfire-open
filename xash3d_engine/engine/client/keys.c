@@ -244,7 +244,7 @@ const char* Key_KeynumToString(int keynum)
 	// check for printable ascii (don't use quote)
 	if ( keynum > 32 && keynum < 127 && keynum != '"' && keynum != ';' && keynum != K_SCROLLOCK )
 	{
-		tinystr[0] = keynum;
+		tinystr[0] = (char)keynum;
 		tinystr[1] = 0;
 		return tinystr;
 	}
@@ -262,8 +262,8 @@ const char* Key_KeynumToString(int keynum)
 
 	tinystr[0] = '0';
 	tinystr[1] = 'x';
-	tinystr[2] = i > 9 ? i - 10 + 'a' : i + '0';
-	tinystr[3] = j > 9 ? j - 10 + 'a' : j + '0';
+	tinystr[2] = (char)(i > 9 ? i - 10 + 'a' : i + '0');
+	tinystr[3] = (char)(j > 9 ? j - 10 + 'a' : j + '0');
 	tinystr[4] = 0;
 
 	return tinystr;
@@ -315,7 +315,7 @@ int Key_GetKey(const char* pBinding)
 	if ( !pBinding )
 		return -1;
 
-	len = Q_strlen(pBinding);
+	len = (int)Q_strlen(pBinding);
 
 	for ( i = 0; i < 256; i++ )
 	{
@@ -367,12 +367,12 @@ Key_Unbindall_f
 */
 void Key_Unbindall_f(void)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(keys); i++ )
 	{
 		if ( keys[i].binding )
-			Key_SetBinding(i, "");
+			Key_SetBinding((int)i, "");
 	}
 
 	// set some defaults
@@ -388,13 +388,13 @@ Key_Reset_f
 void Key_Reset_f(void)
 {
 	keyname_t* kn;
-	int i;
+	size_t i;
 
 	// clear all keys first
 	for ( i = 0; i < ARRAYSIZE(keys); i++ )
 	{
 		if ( keys[i].binding )
-			Key_SetBinding(i, "");
+			Key_SetBinding((int)i, "");
 	}
 
 	// apply default values
@@ -926,15 +926,27 @@ A helper function if platform input doesn't support text mode properly
 */
 int Key_ToUpper(int keynum)
 {
-	keynum = Q_toupper(keynum);
+	keynum = Q_toupper((char)keynum);
+
 	if ( keynum == '-' )
+	{
 		keynum = '_';
+	}
+
 	if ( keynum == '=' )
+	{
 		keynum = '+';
+	}
+
 	if ( keynum == ';' )
+	{
 		keynum = ':';
+	}
+
 	if ( keynum == '\'' )
+	{
 		keynum = '"';
+	}
 
 	return keynum;
 }
@@ -1148,8 +1160,8 @@ static void OSK_EnableTextInput(qboolean enable, qboolean force)
 
 #define X_START 0.1347475f
 #define Y_START 0.567f
-#define X_STEP 0.05625
-#define Y_STEP 0.0825
+#define X_STEP 0.05625f
+#define Y_STEP 0.0825f
 
 /*
 ============
@@ -1162,15 +1174,22 @@ static void OSK_DrawSymbolButton(int symb, float x, float y, float width, float 
 {
 	cl_font_t* font = Con_GetCurFont();
 	byte color[] = {255, 255, 255, 255};
-	int x1 = x * refState.width, y1 = y * refState.height, w = width * refState.width, h = height * refState.height;
+	int x1 = (int)(x * refState.width);
+	int y1 = (int)(y * refState.height);
+	int w = (int)(width * refState.width);
+	int h = (int)(height * refState.height);
 
 	if ( symb == osk.curbutton.val )
-		ref.dllFuncs.FillRGBABlend(x1, y1, w, h, 255, 160, 0, 100);
+	{
+		ref.dllFuncs.FillRGBABlend((float)x1, (float)y1, (float)w, (float)h, 255, 160, 0, 100);
+	}
 
 	if ( !symb || symb == ' ' || (symb >= OSK_TAB && symb < OSK_SPECKEY_LAST) )
+	{
 		return;
+	}
 
-	CL_DrawCharacter(x1 + width * 0.4 * refState.width, y1 + height * 0.4 * refState.height, symb, color, font, 0);
+	CL_DrawCharacter(x1 + width * 0.4f * refState.width, y1 + height * 0.4f * refState.height, symb, color, font, 0);
 }
 
 /*
@@ -1185,8 +1204,8 @@ static void OSK_DrawSpecialButton(const char* name, float x, float y, float widt
 	byte color[] = {0, 255, 0, 255};
 
 	Con_DrawString(
-		x * refState.width + width * 0.4 * refState.width,
-		y * refState.height + height * 0.4 * refState.height,
+		(int)(x * refState.width + width * 0.4f * refState.width),
+		(int)(y * refState.height + height * 0.4f * refState.height),
 		name,
 		color);
 }

@@ -250,6 +250,12 @@ static void APIENTRY GL_DebugOutput(
 	const GLcharARB* message,
 	GLvoid* userParam)
 {
+	(void)source;
+	(void)id;
+	(void)severity;
+	(void)length;
+	(void)userParam;
+
 	switch ( type )
 	{
 		case GL_DEBUG_TYPE_ERROR_ARB:
@@ -441,7 +447,7 @@ static void GL_SetDefaults(void)
 	{
 		pglDisable(GL_STENCIL_TEST);
 		pglStencilMask((GLuint)~0);
-		pglStencilFunc(GL_EQUAL, 0, ~0);
+		pglStencilFunc(GL_EQUAL, 0, (GLuint)~0);
 		pglStencilOp(GL_KEEP, GL_INCR, GL_INCR);
 	}
 
@@ -630,10 +636,10 @@ void GL_InitExtensionsBigGL(void)
 	// gl4es may be used system-wide
 	if ( Q_stristr(glConfig.renderer_string, "gl4es") )
 	{
-		const char* vendor = (const char*)pglGetString(GL_VENDOR | 0x10000);
-		const char* renderer = (const char*)pglGetString(GL_RENDERER | 0x10000);
-		const char* version = (const char*)pglGetString(GL_VERSION | 0x10000);
-		const char* extensions = (const char*)pglGetString(GL_EXTENSIONS | 0x10000);
+		// const char* vendor = (const char*)pglGetString(GL_VENDOR | 0x10000);
+		// const char* renderer = (const char*)pglGetString(GL_RENDERER | 0x10000);
+		// const char* version = (const char*)pglGetString(GL_VERSION | 0x10000);
+		// const char* extensions = (const char*)pglGetString(GL_EXTENSIONS | 0x10000);
 		glConfig.wrapper = GLES_WRAPPER_GL4ES;
 	}
 
@@ -1132,7 +1138,7 @@ void GL_SetupAttributes(int safegl)
 	gEngfuncs.Con_Printf("bpp %d\n", gpGlobals->desktopBitsPixel);
 
 	if ( safegl < SAFE_NOSTENCIL )
-		gEngfuncs.GL_SetAttribute(REF_GL_STENCIL_SIZE, gl_stencilbits->value);
+		gEngfuncs.GL_SetAttribute(REF_GL_STENCIL_SIZE, (int)gl_stencilbits->value);
 
 	if ( safegl < SAFE_NOALPHA )
 		gEngfuncs.GL_SetAttribute(REF_GL_ALPHA_SIZE, 8);
@@ -1172,7 +1178,7 @@ void GL_SetupAttributes(int safegl)
 			case 4:
 			case 8:
 			case 16:
-				samples = gEngfuncs.pfnGetCvarFloat("gl_msaa_samples");
+				samples = (int)gEngfuncs.pfnGetCvarFloat("gl_msaa_samples");
 				break;
 			default:
 				samples = 0;  // don't use, because invalid parameter is passed

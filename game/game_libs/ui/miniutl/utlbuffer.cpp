@@ -6,10 +6,6 @@
 // Serialization buffer
 //===========================================================================//
 
-#ifndef _XBOX
-#pragma warning(disable : 4514)
-#endif
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -890,8 +886,6 @@ bool CUtlBuffer::SeekGet(SeekType_t type, int offset)
 // Parse...
 //-----------------------------------------------------------------------------
 
-#pragma warning(disable : 4706)
-
 int CUtlBuffer::VaScanf(const char* pFmt, va_list list)
 {
 	Assert(pFmt);
@@ -1059,8 +1053,6 @@ int CUtlBuffer::VaScanf(const char* pFmt, va_list list)
 	}
 	return numScanned;
 }
-
-#pragma warning(default : 4706)
 
 int CUtlBuffer::Scanf(const char* pFmt, ...)
 {
@@ -1716,21 +1708,21 @@ uint8 CUtlBuffer::GetUint8()
 {
 	// %u Scanf writes to a 32-bit number
 	uint32 ub;
-	GET_TYPE(uint8, ub, "%u");
+	GetType(ub, "%u");
 	return (uint8)ub;
 }
 
 uint64 CUtlBuffer::GetUnsignedInt64()
 {
 	uint64 ub;
-	GET_TYPE(uint64, ub, "%llu");
+	GetType(ub, "%llu");
 	return ub;
 }
 
 int64 CUtlBuffer::GetInt64()
 {
 	int64 ub;
-	GET_TYPE(int64, ub, "%lld");
+	GetType(ub, "%lld");
 	return ub;
 }
 
@@ -1738,7 +1730,7 @@ int16 CUtlBuffer::GetInt16()
 {
 	// %d Scanf writes to a 32-bit number
 	int32 s16;
-	GET_TYPE(int16, s16, "%d");
+	GetType(s16, "%d");
 	return (int16)s16;
 }
 
@@ -1746,35 +1738,35 @@ short CUtlBuffer::GetShort()
 {
 	// %d Scanf writes to a 32-bit number
 	int32 s;
-	GET_TYPE(short, s, "%d");
+	GetType(s, "%d");
 	return (short)s;
 }
 
 unsigned short CUtlBuffer::GetUnsignedShort()
 {
 	uint32 s;
-	GET_TYPE(unsigned short, s, "%u");
+	GetType(s, "%u");
 	return (unsigned short)s;
 }
 
 int CUtlBuffer::GetInt()
 {
 	int i;
-	GET_TYPE(int, i, "%d");
+	GetType(i, "%d");
 	return i;
 }
 
 int CUtlBuffer::GetIntHex()
 {
 	int i;
-	GET_TYPE(int, i, "%x");
+	GetType(i, "%x");
 	return i;
 }
 
 unsigned int CUtlBuffer::GetUnsignedInt()
 {
 	unsigned int u;
-	GET_TYPE(unsigned int, u, "%u");
+	GetType(u, "%u");
 	return u;
 }
 
@@ -1796,7 +1788,7 @@ float CUtlBuffer::GetFloat()
 			}
 			else
 			{
-				COPY_TYPE(float, f);
+				CopyType(f);
 			}
 			m_Get += sizeof(float);
 		}
@@ -1811,7 +1803,7 @@ float CUtlBuffer::GetFloat()
 		Scanf("%f", &f);
 	}
 #else
-	GET_TYPE(float, f, "%f");
+	GetType(float, f, "%f");
 #endif
 	return f;
 }
@@ -1834,7 +1826,7 @@ double CUtlBuffer::GetDouble()
 			}
 			else
 			{
-				COPY_TYPE(double, d);
+				CopyType(d);
 			}
 			m_Get += sizeof(double);
 		}
@@ -1849,7 +1841,7 @@ double CUtlBuffer::GetDouble()
 		Scanf("%f", &d);
 	}
 #else
-	GET_TYPE(double, d, "%f");
+	GetType(d, "%f");
 #endif
 	return d;
 }

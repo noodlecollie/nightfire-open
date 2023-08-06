@@ -165,7 +165,7 @@ Vector CHeadCrab::Center(void)
 	return Vector(pev->origin.x, pev->origin.y, pev->origin.z + 6);
 }
 
-Vector CHeadCrab::BodyTarget(const Vector& posSrc)
+Vector CHeadCrab::BodyTarget(const Vector&)
 {
 	return Center();
 }
@@ -176,7 +176,7 @@ Vector CHeadCrab::BodyTarget(const Vector& posSrc)
 //=========================================================
 void CHeadCrab::SetYawSpeed(void)
 {
-	int ys;
+	float ys = 30.0f;
 
 	switch ( m_Activity )
 	{
@@ -195,7 +195,6 @@ void CHeadCrab::SetYawSpeed(void)
 			ys = 30;
 			break;
 		default:
-			ys = 30;
 			break;
 	}
 
@@ -230,12 +229,12 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 				float height = m_hEnemy->pev->origin.z + m_hEnemy->pev->view_ofs.z - pev->origin.z;
 				if ( height < 16 )
 					height = 16;
-				float speed = sqrt(2 * gravity * height);
+				float speed = sqrtf(2 * gravity * height);
 				float time = speed / gravity;
 
 				// Scale the sideways velocity to get there at the right time
 				vecJumpDir = m_hEnemy->pev->origin + m_hEnemy->pev->view_ofs - pev->origin;
-				vecJumpDir = vecJumpDir * (1.0 / time);
+				vecJumpDir = vecJumpDir * (1.0f / time);
 
 				// Speed to offset gravity at the desired height
 				vecJumpDir.z = speed;
@@ -245,7 +244,7 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 				if ( distance > 650 )
 				{
-					vecJumpDir = vecJumpDir * (650.0 / distance);
+					vecJumpDir = vecJumpDir * (650.0f / distance);
 				}
 			}
 			else
@@ -422,6 +421,9 @@ BOOL CHeadCrab::CheckRangeAttack1(float flDot, float flDist)
 //=========================================================
 BOOL CHeadCrab::CheckRangeAttack2(float flDot, float flDist)
 {
+	(void)flDot;
+	(void)flDist;
+
 	return FALSE;
 	// BUGBUG: Why is this code here?  There is no ACT_RANGE_ATTACK2 animation.  I've disabled it for now.
 #if 0
@@ -526,7 +528,7 @@ public:
 	void SetYawSpeed(void);
 	float GetDamageAmount(void)
 	{
-		return gSkillData.headcrabDmgBite * 0.3;
+		return gSkillData.headcrabDmgBite * 0.3f;
 	}
 	BOOL CheckRangeAttack1(float flDot, float flDist);
 	Schedule_t* GetScheduleOfType(int Type);
@@ -536,7 +538,7 @@ public:
 	}
 	virtual float GetSoundVolue(void)
 	{
-		return 0.8;
+		return 0.8f;
 	}
 };
 
@@ -550,7 +552,7 @@ void CBabyCrab::Spawn(void)
 	pev->renderamt = 192;
 	UTIL_SetSize(pev, Vector(-12, -12, 0), Vector(12, 12, 24));
 
-	pev->health = gSkillData.headcrabHealth * 0.25;  // less health than full grown
+	pev->health = gSkillData.headcrabHealth * 0.25f;  // less health than full grown
 }
 
 void CBabyCrab::Precache(void)

@@ -285,7 +285,7 @@ static unsigned int GetDumpModelFlagFromString(const char* arg)
 
 	for ( index = 0; index < DumpModelDataFlagCount; ++index )
 	{
-		if ( Q_stricmp(arg, DumpModelDataFlagStrings[index]) == 0 )
+		if ( Q_stricmp(arg, DumpModelDataFlagString(index)) == 0 )
 		{
 			return 1 << index;
 		}
@@ -300,7 +300,7 @@ static void PrintAllDumpModelArgs(void)
 
 	for ( index = 0; index < DumpModelDataFlagCount; ++index )
 	{
-		Msg("%s\n", DumpModelDataFlagStrings[index]);
+		Msg("%s\n", DumpModelDataFlagString(index));
 	}
 }
 
@@ -344,7 +344,7 @@ static void CL_Debug_DumpWorldModel(void)
 
 	if ( argc == 2 )
 	{
-		flags = DumpModelAllDataFlags;
+		flags = (unsigned int)DumpModelAllDataFlags;
 	}
 	else
 	{
@@ -684,7 +684,6 @@ static void CL_Debug_LeafInfo(void)
 
 static void PrintLeafPVS(const mleaf_t* leaf)
 {
-	const mnode_t* node = NULL;
 	byte* uncompressed = NULL;
 	size_t uncompressedMaxBytes = 0;
 
@@ -726,7 +725,7 @@ static void PrintLeafPVS(const mleaf_t* leaf)
 
 		Msg("PVS:\n");
 
-		for ( leafIndex = 0; leafIndex < cl.worldmodel->numleafs; ++leafIndex )
+		for ( leafIndex = 0; leafIndex < (uint32_t)cl.worldmodel->numleafs; ++leafIndex )
 		{
 			uint32_t byteIndex = leafIndex / 8;
 			uint32_t bitIndex = leafIndex % 8;
@@ -790,9 +789,9 @@ static void CL_Debug_LeafPVS(void)
 static void CL_ModelTextureInfo(void)
 {
 	int argc = 0;
-	const char* name = NULL;
+	const char* modelName = NULL;
 	int index = 0;
-	model_t* model = NULL;
+	model_t* foundModel = NULL;
 	studiohdr_t* header = NULL;
 	mstudiotexture_t* textures = NULL;
 	uint32_t texIndex = 0;
@@ -811,36 +810,36 @@ static void CL_ModelTextureInfo(void)
 		return;
 	}
 
-	name = Cmd_Argv(1);
-	index = CL_FindModelIndex(name);
+	modelName = Cmd_Argv(1);
+	index = CL_FindModelIndex(modelName);
 
 	if ( index < 1 )
 	{
-		Msg("Could not find model %s. Check that the model is loaded first.\n", name);
+		Msg("Could not find model %s. Check that the model is loaded first.\n", modelName);
 		return;
 	}
 
-	model = CL_ModelHandle(index);
+	foundModel = CL_ModelHandle(index);
 
-	if ( !model )
+	if ( !foundModel )
 	{
-		Msg("Could not obtain model handle for %s (index %d).\n", name, index);
+		Msg("Could not obtain model handle for %s (index %d).\n", modelName, index);
 		return;
 	}
 
-	header = (studiohdr_t*)model->cache.data;
+	header = (studiohdr_t*)foundModel->cache.data;
 
 	if ( !header )
 	{
-		Msg("Model %s header was invalid.\n", name);
+		Msg("Model %s header was invalid.\n", modelName);
 		return;
 	}
 
 	textures = (mstudiotexture_t*)((byte*)header + header->textureindex);
 
-	Msg("Model %s has %u textures:\n", name, header->numtextures);
+	Msg("Model %s has %u textures:\n", modelName, header->numtextures);
 
-	for ( texIndex = 0; texIndex < header->numtextures; ++texIndex )
+	for ( texIndex = 0; texIndex < (uint32_t)header->numtextures; ++texIndex )
 	{
 		mstudiotexture_t* texture = &textures[texIndex];
 
@@ -914,16 +913,24 @@ void CL_CheckClientState(void)
 
 int CL_GetFragmentSize(void* unused, fragsize_t mode)
 {
+	(void)unused;
+
 	if ( mode == FRAGSIZE_SPLIT )
+	{
 		return 0;
+	}
 
 	if ( mode == FRAGSIZE_UNRELIABLE )
+	{
 		return NET_MAX_MESSAGE;
+	}
 
 	if ( Netchan_IsLocal(&cls.netchan) )
+	{
 		return FRAGMENT_LOCAL_SIZE;
+	}
 
-	return cl_upmax->value;
+	return (int)cl_upmax->value;
 }
 
 /*
@@ -967,27 +974,26 @@ should be put at.
 */
 static float CL_LerpPoint(void)
 {
-	double f = cl_serverframetime();
-	double frac = 1.0f;
-
-	if ( f == 0.0 || cls.timedemo )
+	if ( cl_serverframetime() == 0.0 || cls.timedemo )
 	{
 		double fgap = cl_clientframetime();
 		cl.time = cl.mtime[0];
 
 		// maybe don't need for Xash demos
 		if ( cls.demoplayback )
+		{
 			cl.oldtime = cl.mtime[0] - fgap;
+		}
 
 		return 1.0f;
 	}
 
 	if ( cl_interp->value <= 0.001 )
+	{
 		return 1.0f;
+	}
 
-	frac = (cl.time - cl.mtime[0]) / cl_interp->value;
-
-	return frac;
+	return (float)((cl.time - cl.mtime[0]) / cl_interp->value);
 }
 
 /*
@@ -1006,13 +1012,13 @@ int CL_DriftInterpolationAmount(int goal)
 
 	if ( fgoal != cl.local.interp_amount )
 	{
-		maxmove = host.frametime * 0.05;
+		maxmove = (float)host.frametime * 0.05f;
 		diff = fgoal - cl.local.interp_amount;
 		diff = bound(-maxmove, diff, maxmove);
 		cl.local.interp_amount += diff;
 	}
 
-	msec = cl.local.interp_amount * 1000.0f;
+	msec = (int)(cl.local.interp_amount * 1000.0f);
 	msec = bound(0, msec, 100);
 
 	return msec;
@@ -1048,7 +1054,7 @@ void CL_ComputeClientInterpolationAmount(usercmd_t* cmd)
 		max_interp = 0.2f;
 
 	min_interp = 1.0f / cl_updaterate->value;
-	interpolation_time = cl_interp->value * 1000.0;
+	interpolation_time = (float)cl_interp->value * 1000.0f;
 
 	if ( (cl_interp->value + epsilon) < min_interp )
 	{
@@ -1062,7 +1068,7 @@ void CL_ComputeClientInterpolationAmount(usercmd_t* cmd)
 	}
 
 	interpolation_time = bound(min_interp, interpolation_time, max_interp);
-	cmd->lerp_msec = CL_DriftInterpolationAmount(interpolation_time * 1000);
+	cmd->lerp_msec = (short)CL_DriftInterpolationAmount((int)(interpolation_time * 1000));
 }
 
 /*
@@ -1073,7 +1079,8 @@ CL_ComputePacketLoss
 */
 void CL_ComputePacketLoss(void)
 {
-	int i, frm;
+	size_t i;
+	size_t frm;
 	frame_t* frame;
 	int count = 0;
 	int lost = 0;
@@ -1091,7 +1098,9 @@ void CL_ComputePacketLoss(void)
 		frame = &cl.frames[frm & CL_UPDATE_MASK];
 
 		if ( frame->receivedtime == -1.0 )
+		{
 			lost++;
+		}
 		count++;
 	}
 
@@ -1167,12 +1176,16 @@ void CL_ApplyAddAngle(void)
 	float addangletotal = 0.0f;
 	float amove, frac = 0.0f;
 
-	CL_FindInterpolatedAddAngle(cl.time, &frac, &prev, &next);
+	CL_FindInterpolatedAddAngle((float)cl.time, &frac, &prev, &next);
 
 	if ( prev && next )
+	{
 		addangletotal = prev->total + frac * (next->total - prev->total);
+	}
 	else
+	{
 		addangletotal = cl.prevaddangletotal;
+	}
 
 	amove = addangletotal - cl.prevaddangletotal;
 
@@ -1201,19 +1214,26 @@ qboolean CL_ProcessShowTexturesCmds(usercmd_t* cmd)
 {
 	static int oldbuttons;
 	int changed;
-	int pressed, released;
+	int released;
 
 	if ( !gl_showtextures->value || CL_IsDevOverviewMode() )
+	{
 		return false;
+	}
 
 	changed = (oldbuttons ^ cmd->buttons);
-	pressed = changed & cmd->buttons;
 	released = changed & (~cmd->buttons);
 
 	if ( released & (IN_RIGHT | IN_MOVERIGHT) )
+	{
 		Cvar_SetValue("r_showtextures", gl_showtextures->value + 1);
+	}
+
 	if ( released & (IN_LEFT | IN_MOVELEFT) )
+	{
 		Cvar_SetValue("r_showtextures", Q_max(1, gl_showtextures->value - 1));
+	}
+
 	oldbuttons = cmd->buttons;
 
 	return true;
@@ -1231,7 +1251,7 @@ qboolean CL_ProcessOverviewCmds(usercmd_t* cmd)
 	ref_overview_t* ov = &clgame.overView;
 	int sign = 1;
 	float size = world.size[!ov->rotated] / world.size[ov->rotated];
-	float step = (2.0f / size) * host.realframetime;
+	float step = (2.0f / size) * (float)host.realframetime;
 	float step2 = step * 100.0f * (2.0f / ov->flZoom);
 
 	if ( !CL_IsDevOverviewMode() || gl_showtextures->value )
@@ -1303,7 +1323,7 @@ void CL_UpdateClientData(void)
 	cdat.fov = cl.local.scr_fov;
 	cdat.weaponInaccuracy = cl.local.weaponInaccuracy;
 
-	if ( clgame.dllFuncs.pfnUpdateClientData(&cdat, cl.time) )
+	if ( clgame.dllFuncs.pfnUpdateClientData(&cdat, (float)cl.time) )
 	{
 		// grab changes if successful
 		VectorCopy(cdat.viewangles, cl.viewangles);
@@ -1330,7 +1350,7 @@ void CL_CreateCmd(void)
 
 	// store viewangles in case it's will be freeze
 	VectorCopy(cl.viewangles, angles);
-	ms = bound(1, host.frametime * 1000, 255);
+	ms = (int)bound(1, host.frametime * 1000, 255);
 	input_override = 0;
 
 	CL_SetSolidEntities();
@@ -1359,16 +1379,16 @@ void CL_CreateCmd(void)
 
 	active = ((cls.signon == SIGNONS) && !cl.paused && !cls.demoplayback);
 	Platform_PreCreateMove();
-	clgame.dllFuncs.CL_CreateMove(host.frametime, cmd, active);
-	IN_EngineAppendMove(host.frametime, cmd, active);
+	clgame.dllFuncs.CL_CreateMove((float)host.frametime, cmd, active);
+	IN_EngineAppendMove((float)host.frametime, cmd, active);
 
 	CL_PopPMStates();
 
 	if ( !cls.demoplayback )
 	{
 		CL_ComputeClientInterpolationAmount(&pcmd->cmd);
-		pcmd->cmd.lightlevel = cl.local.light_level;
-		pcmd->cmd.msec = ms;
+		pcmd->cmd.lightlevel = (byte)cl.local.light_level;
+		pcmd->cmd.msec = (byte)ms;
 	}
 
 	input_override |= CL_ProcessOverviewCmds(&pcmd->cmd);
@@ -1443,7 +1463,7 @@ void CL_WritePacket(void)
 	MSG_Init(&buf, "ClientData", data, sizeof(data));
 
 	// Determine number of backup commands to send along
-	numbackup = bound(0, cl_cmdbackup->value, cls.legacymode ? MAX_LEGACY_BACKUP_CMDS : MAX_BACKUP_COMMANDS);
+	numbackup = (int)bound(0, cl_cmdbackup->value, cls.legacymode ? MAX_LEGACY_BACKUP_CMDS : MAX_BACKUP_COMMANDS);
 	if ( cls.state == ca_connected )
 		numbackup = 0;
 
@@ -1480,7 +1500,7 @@ void CL_WritePacket(void)
 			return;
 	}
 
-	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= CL_UPDATE_MASK )
+	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= (unsigned int)CL_UPDATE_MASK )
 	{
 		if ( (host.realtime - cls.netchan.last_received) > CONNECTION_PROBLEM_TIME )
 		{
@@ -1498,20 +1518,19 @@ void CL_WritePacket(void)
 
 	if ( send_command )
 	{
-		int outgoing_sequence;
-
 		if ( cl_cmdrate->value > 0 )  // clamped between 10 and 100 fps
-			cls.nextcmdtime = host.realtime + bound(0.1f, (1.0f / cl_cmdrate->value), 0.01f);
+		{
+			cls.nextcmdtime = (float)host.realtime + bound(0.1f, (1.0f / (float)cl_cmdrate->value), 0.01f);
+		}
 		else
-			cls.nextcmdtime = host.realtime;  // always able to send right away
+		{
+			cls.nextcmdtime = (float)host.realtime;  // always able to send right away
+		}
 
 		if ( cls.lastoutgoingcommand == -1 )
 		{
-			outgoing_sequence = cls.netchan.outgoing_sequence;
 			cls.lastoutgoingcommand = cls.netchan.outgoing_sequence;
 		}
-		else
-			outgoing_sequence = cls.lastoutgoingcommand + 1;
 
 		// begin a client move command
 		MSG_BeginClientCmd(&buf, clc_move);
@@ -1521,7 +1540,7 @@ void CL_WritePacket(void)
 		MSG_WriteByte(&buf, 0);
 
 		// write packet lossage percentation
-		MSG_WriteByte(&buf, cls.packet_loss);
+		MSG_WriteByte(&buf, (int)cls.packet_loss);
 
 		// say how many backups we'll be sending
 		MSG_WriteByte(&buf, numbackup);
@@ -1637,28 +1656,32 @@ CL_BeginUpload_f
 */
 void CL_BeginUpload_f(void)
 {
-	const char* name;
+	const char* uploadName;
 	resource_t custResource;
 	byte* buf = NULL;
 	int size = 0;
 	byte md5[16];
 
-	name = Cmd_Argv(1);
+	uploadName = Cmd_Argv(1);
 
-	if ( !COM_CheckString(name) )
+	if ( !COM_CheckString(uploadName) )
+	{
 		return;
+	}
 
 	if ( !cl_allow_upload.value )
+	{
 		return;
+	}
 
-	if ( Q_strlen(name) != 36 || Q_strnicmp(name, "!MD5", 4) )
+	if ( Q_strlen(uploadName) != 36 || Q_strnicmp(uploadName, "!MD5", 4) )
 	{
 		Con_Printf("Ingoring upload of non-customization\n");
 		return;
 	}
 
 	memset(&custResource, 0, sizeof(custResource));
-	COM_HexConvert(name + 4, 32, md5);
+	COM_HexConvert(uploadName + 4, 32, md5);
 
 	if ( HPAK_ResourceForHash(CUSTOM_RES_PATH, md5, &custResource) )
 	{
@@ -1671,19 +1694,19 @@ void CL_BeginUpload_f(void)
 
 		if ( HPAK_GetDataPointer(CUSTOM_RES_PATH, &custResource, &buf, &size) )
 		{
-			byte md5[16];
+			byte localMD5[16];
 			MD5Context_t ctx;
 
 			memset(&ctx, 0, sizeof(ctx));
 			MD5Init(&ctx);
 			MD5Update(&ctx, buf, size);
-			MD5Final(md5, &ctx);
+			MD5Final(localMD5, &ctx);
 
-			if ( memcmp(custResource.rgucMD5_hash, md5, 16) )
+			if ( memcmp(custResource.rgucMD5_hash, localMD5, 16) )
 			{
 				Con_Reportf("HPAK_AddLump called with bogus lump, md5 mismatch\n");
 				Con_Reportf("Purported:  %s\n", MD5_Print(custResource.rgucMD5_hash));
-				Con_Reportf("Actual   :  %s\n", MD5_Print(md5));
+				Con_Reportf("Actual   :  %s\n", MD5_Print(localMD5));
 				Con_Reportf("Removing conflicting lump\n");
 				HPAK_RemoveLump(CUSTOM_RES_PATH, &custResource);
 				return;
@@ -1693,7 +1716,7 @@ void CL_BeginUpload_f(void)
 
 	if ( buf && size > 0 )
 	{
-		Netchan_CreateFileFragmentsFromBuffer(&cls.netchan, name, buf, size);
+		Netchan_CreateFileFragmentsFromBuffer(&cls.netchan, uploadName, buf, size);
 		Netchan_FragSend(&cls.netchan);
 		Mem_Free(buf);
 	}
@@ -1753,7 +1776,7 @@ void CL_SendConnectPacket(void)
 
 	memset(protinfo, 0, sizeof(protinfo));
 
-	if ( adr.type == NA_LOOPBACK )
+	if ( adr.ip.ip4.type == NA_LOOPBACK )
 	{
 		IN_LockInputDevices(false);
 	}
@@ -1849,7 +1872,7 @@ void CL_CheckForResend(void)
 		cls.signon = 0;
 		cls.state = ca_connecting;
 		Q_strncpy(cls.servername, "localhost", sizeof(cls.servername));
-		cls.serveradr.type = NA_LOOPBACK;
+		cls.serveradr.ip.ip4.type = NA_LOOPBACK;
 
 		// we don't need a challenge on the localhost
 		CL_SendConnectPacket();
@@ -1925,15 +1948,18 @@ void CL_CheckForResend(void)
 		Netchan_OutOfBandPrint(NS_CLIENT, adr, "getchallenge\n");
 }
 
-resource_t* CL_AddResource(resourcetype_t type, const char* name, int size, qboolean bFatalIfMissing, int index)
+resource_t* CL_AddResource(resourcetype_t type, const char* resourceName, int size, qboolean bFatalIfMissing, int index)
 {
 	resource_t* r = &cl.resourcelist[cl.num_resources];
 
 	if ( cl.num_resources >= MAX_RESOURCES )
+	{
 		Host_Error("Too many resources on client\n");
+	}
+
 	cl.num_resources++;
 
-	Q_strncpy(r->szFileName, name, sizeof(r->szFileName));
+	Q_strncpy(r->szFileName, resourceName, sizeof(r->szFileName));
 	r->ucFlags |= bFatalIfMissing ? RES_FATALIFMISSING : 0;
 	r->nDownloadSize = size;
 	r->nIndex = index;
@@ -2049,10 +2075,11 @@ void CL_Rcon_f(void)
 		return;
 	}
 
-	message[0] = (char)255;
-	message[1] = (char)255;
-	message[2] = (char)255;
-	message[3] = (char)255;
+	// Double casts to avoid "truncates constant value" warning.
+	message[0] = (char)((unsigned char)0xFF);
+	message[1] = (char)((unsigned char)0xFF);
+	message[2] = (char)((unsigned char)0xFF);
+	message[3] = (char)((unsigned char)0xFF);
 	message[4] = 0;
 
 	NET_Config(true, false);  // allow remote
@@ -2085,7 +2112,7 @@ void CL_Rcon_f(void)
 			to.port = MSG_BigShort(PORT_SERVER);
 	}
 
-	NET_SendPacket(NS_CLIENT, Q_strlen(message) + 1, message, to);
+	NET_SendPacket(NS_CLIENT, strlen(message) + 1, message, to);
 }
 
 /*
@@ -2155,8 +2182,10 @@ void CL_SendDisconnectMessage(void)
 	MSG_BeginClientCmd(&buf, clc_stringcmd);
 	MSG_WriteString(&buf, "disconnect");
 
-	if ( !cls.netchan.remote_address.type )
-		cls.netchan.remote_address.type = NA_LOOPBACK;
+	if ( !cls.netchan.remote_address.ip.ip4.type )
+	{
+		cls.netchan.remote_address.ip.ip4.type = NA_LOOPBACK;
+	}
 
 	// make sure message will be delivered
 	Netchan_TransmitBits(&cls.netchan, MSG_GetNumBitsWritten(&buf), MSG_GetData(&buf));
@@ -2174,12 +2203,12 @@ int CL_GetSplitSize(void)
 	if ( !(cls.extensions & NET_EXT_SPLITSIZE) )
 		return 1400;
 
-	splitsize = cl_dlmax->value;
+	splitsize = (int)cl_dlmax->value;
 
 	if ( splitsize < FRAGMENT_MIN_SIZE || splitsize > FRAGMENT_MAX_SIZE )
 		Cvar_SetValue("cl_dlmax", FRAGMENT_DEFAULT_SIZE);
 
-	return cl_dlmax->value;
+	return (int)cl_dlmax->value;
 }
 
 /*
@@ -2232,7 +2261,7 @@ void CL_Reconnect(qboolean setup_netchan)
 	cl.validsequence = 0;  // haven't gotten a valid frame update yet
 	cl.delta_sequence = -1;  // we'll request a full delta from the baseline
 	cls.lastoutgoingcommand = -1;  // we don't have a backed up cmd history yet
-	cls.nextcmdtime = host.realtime;  // we can send a cmd right away
+	cls.nextcmdtime = (float)host.realtime;  // we can send a cmd right away
 	cl.last_command_ack = -1;
 
 	CL_StartupDemoHeader();
@@ -2327,11 +2356,11 @@ void CL_LocalServers_f(void)
 	NET_Config(true, true);  // allow remote
 
 	// send a broadcast packet
-	adr.type = NA_BROADCAST;
+	adr.ip.ip4.type = NA_BROADCAST;
 	adr.port = MSG_BigShort(PORT_SERVER);
 	Netchan_OutOfBandPrint(NS_CLIENT, adr, "info %i", PROTOCOL_VERSION);
 
-	adr.type = NA_MULTICAST_IP6;
+	adr.ip.ip4.type = NA_MULTICAST_IP6;
 	Netchan_OutOfBandPrint(NS_CLIENT, adr, "info %i", PROTOCOL_VERSION);
 }
 
@@ -2355,9 +2384,9 @@ size_t CL_BuildMasterServerScanRequest(char* buf, size_t size, qboolean nat)
 
 	info[0] = 0;
 
-	Info_SetValueForKey(info, "gamedir", GI->gamefolder, remaining);
-	Info_SetValueForKey(info, "clver", XASH_VERSION, remaining);  // let master know about client version
-	Info_SetValueForKey(info, "nat", nat ? "1" : "0", remaining);
+	Info_SetValueForKey(info, "gamedir", GI->gamefolder, (int)remaining);
+	Info_SetValueForKey(info, "clver", XASH_VERSION, (int)remaining);  // let master know about client version
+	Info_SetValueForKey(info, "nat", nat ? "1" : "0", (int)remaining);
 
 	return sizeof(MS_SCAN_REQUEST) + Q_strlen(info);
 }
@@ -2437,8 +2466,6 @@ all the keys and values must be ends with ^7
 */
 void CL_FixupColorStringsForInfoString(const char* in, char* out)
 {
-	qboolean hasPrefix = false;
-	qboolean endOfKeyVal = false;
 	int color = 7;
 	int count = 0;
 
@@ -2503,7 +2530,6 @@ void CL_ParseStatusMessage(netadr_t from, sizebuf_t* msg)
 {
 	static char infostring[MAX_INFO_STRING + 8];
 	char* s = MSG_ReadString(msg);
-	int i;
 	const char* magic = ": wrong version\n";
 	size_t len = Q_strlen(s), magiclen = Q_strlen(magic);
 
@@ -2555,6 +2581,8 @@ void CL_ParseNETInfoMessage(netadr_t from, sizebuf_t* msg, const char* s)
 	int i, context, type;
 	int errorBits = 0;
 	const char* val;
+
+	(void)msg;
 
 	context = Q_atoi(Cmd_Argv(1));
 	type = Q_atoi(Cmd_Argv(2));
@@ -2692,7 +2720,6 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	const char* c;
 	char buf[MAX_SYSPATH];
 	int len = sizeof(buf);
-	int dataoffset = 0;
 	netadr_t servadr;
 
 	MSG_Clear(msg);
@@ -2793,7 +2820,7 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 
 			Con_DPrintf("CRC %x is matched, get challenge, fragment size %d\n", crcValue, cls.max_fragment_size);
 			Netchan_OutOfBandPrint(NS_CLIENT, from, "getchallenge\n");
-			Cvar_SetValue("cl_dlmax", cls.max_fragment_size);
+			Cvar_SetValue("cl_dlmax", (float)cls.max_fragment_size);
 			cls.connect_time = host.realtime;
 		}
 		else
@@ -2908,9 +2935,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		// serverlist got from masterserver
 		while ( MSG_GetNumBitsLeft(msg) > 8 )
 		{
-			MSG_ReadBytes(msg, servadr.ip, sizeof(servadr.ip));  // 4 bytes for IP
-			servadr.port = MSG_ReadShort(msg);  // 2 bytes for Port
-			servadr.type = NA_IP;
+			MSG_ReadBytes(msg, servadr.ip.ip4.ip.bytes, sizeof(servadr.ip));  // 4 bytes for IP
+			servadr.port = (uint16_t)MSG_ReadShort(msg);  // 2 bytes for Port
+			servadr.ip.ip4.type = NA_IP;
 
 			// list is ends here
 			if ( !servadr.port )
@@ -3017,12 +3044,12 @@ void CL_ReadNetMessage(void)
 
 	while ( CL_GetMessage(net_message_buffer, &curSize) )
 	{
-		if ( cls.legacymode && *((int*)&net_message_buffer) == 0xFFFFFFFE )
+		if ( cls.legacymode && *((unsigned int*)&net_message_buffer) == 0xFFFFFFFE )
 			// Will rewrite existing packet by merged
 			if ( !NetSplit_GetLong(&cls.netchan.netsplit, &net_from, net_message_buffer, &curSize) )
 				continue;
 
-		MSG_Init(&net_message, "ServerData", net_message_buffer, curSize);
+		MSG_Init(&net_message, "ServerData", net_message_buffer, (int)curSize);
 
 		// check for connectionless packet (0xffffffff) first
 		if ( MSG_GetMaxBytes(&net_message) >= 4 && *(int*)net_message.pData == -1 )
@@ -3070,7 +3097,7 @@ void CL_ReadNetMessage(void)
 		// process the incoming buffer(s)
 		if ( Netchan_CopyNormalFragments(&cls.netchan, &net_message, &curSize) )
 		{
-			MSG_Init(&net_message, "ServerData", net_message_buffer, curSize);
+			MSG_Init(&net_message, "ServerData", net_message_buffer, (int)curSize);
 			CL_ParseServerMessage(&net_message, false);
 		}
 
@@ -3496,7 +3523,7 @@ qboolean CL_PrecacheResources(void)
 					else
 					{
 						Q_strncpy(cl.sound_precache[pRes->nIndex], pRes->szFileName, sizeof(cl.sound_precache[0]));
-						cl.sound_index[pRes->nIndex] = S_RegisterSound(pRes->szFileName);
+						cl.sound_index[pRes->nIndex] = (short)S_RegisterSound(pRes->szFileName);
 
 						if ( !cl.sound_index[pRes->nIndex] )
 						{

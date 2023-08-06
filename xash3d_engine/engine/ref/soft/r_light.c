@@ -69,31 +69,31 @@ void GAME_EXPORT CL_RunLightStyles(void)
 
 		if ( !ls->length )
 		{
-			tr.lightstylevalue[i] = 256 * scale;
+			tr.lightstylevalue[i] = (int)(256.0f * scale);
 			continue;
 		}
 		else if ( ls->length == 1 )
 		{
 			// single length style so don't bother interpolating
-			tr.lightstylevalue[i] = ls->map[0] * 22 * scale;
+			tr.lightstylevalue[i] = (int)(ls->map[0] * 22.0f * scale);
 			continue;
 		}
 		else if ( !ls->interp )  // || !CVAR_TO_BOOL( cl_lightstyle_lerping ))
 		{
-			tr.lightstylevalue[i] = ls->map[flight % ls->length] * 22 * scale;
+			tr.lightstylevalue[i] = (int)(ls->map[flight % ls->length] * 22.0f * scale);
 			continue;
 		}
 
 		// interpolate animating light
 		// frame just gone
-		k = ls->map[flight % ls->length];
+		k = (int)ls->map[flight % ls->length];
 		l = (float)(k * 22.0f) * backlerp;
 
 		// upcoming frame
-		k = ls->map[clight % ls->length];
+		k = (int)ls->map[clight % ls->length];
 		l += (float)(k * 22.0f) * lerpfrac;
 
-		tr.lightstylevalue[i] = (int)l * scale;
+		tr.lightstylevalue[i] = (int)((int)l * scale);
 	}
 }
 
@@ -227,7 +227,6 @@ static qboolean R_RecursiveLightPoint(
 	color24 *lm, *dm;
 	mextrasurf_t* info;
 	msurface_t* surf;
-	mtexinfo_t* tex;
 	matrix3x4 tbn;
 	vec3_t mid;
 
@@ -269,7 +268,6 @@ static qboolean R_RecursiveLightPoint(
 	{
 		int smax, tmax;
 
-		tex = surf->texinfo;
 		info = surf->info;
 
 		if ( FBitSet(surf->flags, SURF_DRAWTILED) )
@@ -334,9 +332,9 @@ static qboolean R_RecursiveLightPoint(
 
 			if ( tr.ignore_lightgamma )
 			{
-				cv->r += lm->r * scale * 2.5;  // scale;
-				cv->g += lm->g * scale * 2.5;  // scale;
-				cv->b += lm->b * scale * 2.5;  // scale;
+				cv->r += (unsigned int)((float)lm->r * (float)scale * 2.5f);  // scale;
+				cv->g += (unsigned int)((float)lm->g * (float)scale * 2.5f);  // scale;
+				cv->b += (unsigned int)((float)lm->b * (float)scale * 2.5f);  // scale;
 			}
 			else
 			{

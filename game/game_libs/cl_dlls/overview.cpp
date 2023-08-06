@@ -15,8 +15,6 @@
 #include "com_model.h"
 #include "studio_util.h"
 
-#pragma warning(disable : 4244)
-
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
@@ -45,7 +43,7 @@ int CHudOverview::VidInit()
 // Input  : flTime -
 //			intermission -
 //-----------------------------------------------------------------------------
-int CHudOverview::Draw(float flTime)
+int CHudOverview::Draw(float)
 {
 #if 0
 	// only draw in overview mode

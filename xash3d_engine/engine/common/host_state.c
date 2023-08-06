@@ -166,10 +166,10 @@ void Host_RunFrame(float time)
 
 void COM_Frame(float time)
 {
-	int loopCount = 0;
-
 	if ( setjmp(host.abortframe) )
 		return;
+
+	int loopCount = 0;
 
 	while ( 1 )
 	{
@@ -201,7 +201,7 @@ void COM_Frame(float time)
 		if ( oldState == STATE_RUNFRAME )
 			break;
 
-		if ( (GameState->curstate == oldState) || (++loopCount > 8) )
+		if ( ((int)GameState->curstate == oldState) || (++loopCount > 8) )
 			Sys_Error("state infinity loop!\n");
 	}
 }

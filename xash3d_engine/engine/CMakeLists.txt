@@ -77,7 +77,7 @@ set(ENGINE_SOURCES
 	common/infostring.c
 	common/ipv6text.h
 	common/ipv6text.c
-	common/launcher.c
+	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:common/launcher.c>
 	common/lib_common.c
 	common/library.h
 	common/masterlist.c
@@ -90,6 +90,7 @@ set(ENGINE_SOURCES
 	common/mod_studio.c
 	common/net_buffer.h
 	common/net_buffer.c
+	common/net_byteswap.h
 	common/net_chan.c
 	common/netchan.h
 	common/net_encode.h

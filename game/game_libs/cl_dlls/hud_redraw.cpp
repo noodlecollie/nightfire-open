@@ -47,10 +47,10 @@ void CHud::Think(void)
 		pList = pList->pNext;
 	}
 
-	newfov = HUD_GetFOV();
+	newfov = static_cast<int>(HUD_GetFOV());
 	if ( newfov == 0 )
 	{
-		m_iFOV = default_fov->value;
+		m_iFOV = static_cast<int>(default_fov->value);
 	}
 	else
 	{
@@ -75,7 +75,7 @@ void CHud::Think(void)
 	if ( m_iFOV == 0 )
 	{
 		// only let players adjust up in fov,  and only if they are not overriden by something else
-		m_iFOV = Max(default_fov->value, 90.0f);
+		m_iFOV = static_cast<int>(Max(default_fov->value, 90.0f));
 	}
 }
 
@@ -97,7 +97,7 @@ int CHud::Redraw(float flTime, int intermission)
 	{
 		// Take a screenshot if the client's got the cvar set
 		if ( CL_CvarGetFloat("hud_takesshots") != 0 )
-			m_flShotTime = flTime + 1.0;  // Take a screenshot in a second
+			m_flShotTime = flTime + 1.0f;  // Take a screenshot in a second
 	}
 
 	if ( m_flShotTime && m_flShotTime < flTime )
@@ -201,7 +201,7 @@ int CHud::DrawHudString(int xpos, int ypos, int iMaxX, const char* szIt, int r, 
 {
 	if ( hud_textmode->value == 2 )
 	{
-		gEngfuncs.pfnDrawSetTextColor(r / 255.0, g / 255.0, b / 255.0);
+		gEngfuncs.pfnDrawSetTextColor(r / 255.0f, g / 255.0f, b / 255.0f);
 		return gEngfuncs.pfnDrawConsoleString(xpos, ypos, (char*)szIt);
 	}
 
@@ -387,7 +387,7 @@ int CHud::GetNumWidth(int iNumber, int iFlags)
 void CHud::DrawDarkRectangle(int x, int y, int wide, int tall)
 {
 	// gEngfuncs.pTriAPI->RenderMode( kRenderTransTexture );
-	gEngfuncs.pfnFillRGBABlend(x, y, wide, tall, 0, 0, 0, 255 * 0.6);
+	gEngfuncs.pfnFillRGBABlend(x, y, wide, tall, 0, 0, 0, static_cast<int>(255 * 0.6f));
 	FillRGBA(x + 1, y, wide - 1, 1, 255, 140, 0, 255);
 	FillRGBA(x, y, 1, tall - 1, 255, 140, 0, 255);
 	FillRGBA(x + wide - 1, y + 1, 1, tall - 1, 255, 140, 0, 255);

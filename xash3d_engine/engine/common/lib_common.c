@@ -40,10 +40,9 @@ void COM_PushLibraryError(const char* error)
 
 void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 {
-	char** funcs = NULL;
-	size_t numfuncs, i;
-	void* f = NULL;
+#if _MSC_VER
 	const char* func = NULL;
+#endif
 
 #ifdef XASH_ALLOW_SAVERESTORE_OFFSETS
 	if ( !memcmp(pName, "ofs:", 4) )
@@ -51,6 +50,10 @@ void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 #endif
 
 #if XASH_POSIX
+	char** funcs = NULL;
+	size_t numfuncs, i;
+	void* f = NULL;
+
 	funcs = COM_ConvertToLocalPlatform(MANGLE_ITANIUM, pName, &numfuncs);
 
 	if ( funcs )
@@ -73,7 +76,9 @@ void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 	func = COM_GetPlatformNeutralName(pName);
 
 	if ( func )
+	{
 		return COM_FunctionFromName(hInstance, func);
+	}
 #endif
 
 	return COM_FunctionFromName(hInstance, pName);
@@ -321,7 +326,7 @@ static char* COM_GetItaniumName(const char* const in_name)
 	int i;
 	int remaining;
 
-	remaining = Q_strlen(f);
+	remaining = (int)Q_strlen(f);
 
 	if ( remaining < 3 )
 		goto invalid_format;
@@ -340,7 +345,7 @@ static char* COM_GetItaniumName(const char* const in_name)
 			len = len * 10 + (*f - '0');
 
 		// sane value
-		len = Q_min(remaining, len);
+		len = Q_min((uint)remaining, len);
 
 		if ( len == 0 )
 			goto invalid_format;
@@ -439,7 +444,7 @@ char** COM_ConvertToLocalPlatform(EFunctionMangleType to, const char* from, size
 		Q_strncat(temp, temp2, sizeof(temp));
 	}
 
-	for ( i = 0; i < ARRAYSIZE(postfix); i++ )
+	for ( i = 0; (size_t)i < ARRAYSIZE(postfix); i++ )
 	{
 		Q_snprintf(temp2, sizeof(temp2), "%s%s", temp, postfix[i]);
 		ret[i] = copystring(temp2);
@@ -513,8 +518,10 @@ static void Test_GetMSVCName(void)
 		"?foo@@",
 		"foo",  // not an error?
 		"?foo@bar@baz@@gotstrippedanyway",
-		"foo@bar@baz"};
-	int i;
+		"foo@bar@baz",
+	};
+
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
 	{
@@ -552,7 +559,8 @@ static void Test_GetItaniumName(void)
 		"_ZN3baz3bar3fooEdontcare",
 		"foo@bar@baz",
 	};
-	int i;
+
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
 	{
@@ -564,9 +572,18 @@ static void Test_GetItaniumName(void)
 
 static void Test_ConvertFromValveToLocal(void)
 {
-	const char* symbols[] =
-		{"", "_ZN", "foo", "_ZN3foo", "xash3d@fwgs", "_ZN4fwgs6xash3d", "foo@bar@bazz", "_ZN4bazz3bar3foo"};
-	int i;
+	const char* symbols[] = {
+		"",
+		"_ZN",
+		"foo",
+		"_ZN3foo",
+		"xash3d@fwgs",
+		"_ZN4fwgs6xash3d",
+		"foo@bar@bazz",
+		"_ZN4bazz3bar3foo",
+	};
+
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
 	{

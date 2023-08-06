@@ -98,20 +98,20 @@ void Matrix3x4_OriginFromMatrix(const matrix3x4 in, float* out)
 
 void Matrix3x4_AnglesFromMatrix(const matrix3x4 in, vec3_t out)
 {
-	float xyDist = sqrt(in[0][0] * in[0][0] + in[1][0] * in[1][0]);
+	float xyDist = sqrtf(in[0][0] * in[0][0] + in[1][0] * in[1][0]);
 
 	if ( xyDist > 0.001f )
 	{
 		// enough here to get angles?
-		out[0] = RAD2DEG(atan2(-in[2][0], xyDist));
-		out[1] = RAD2DEG(atan2(in[1][0], in[0][0]));
-		out[2] = RAD2DEG(atan2(in[2][1], in[2][2]));
+		out[0] = RAD2DEGF(atan2f(-in[2][0], xyDist));
+		out[1] = RAD2DEGF(atan2f(in[1][0], in[0][0]));
+		out[2] = RAD2DEGF(atan2f(in[2][1], in[2][2]));
 	}
 	else
 	{
 		// forward is mostly Z, gimbal lock
-		out[0] = RAD2DEG(atan2(-in[2][0], xyDist));
-		out[1] = RAD2DEG(atan2(-in[0][1], in[1][1]));
+		out[0] = RAD2DEGF(atan2f(-in[2][0], xyDist));
+		out[1] = RAD2DEGF(atan2f(-in[0][1], in[1][1]));
 		out[2] = 0.0f;
 	}
 }
@@ -141,11 +141,11 @@ void Matrix3x4_CreateFromEntity(matrix3x4 out, const vec3_t angles, const vec3_t
 
 	if ( angles[ROLL] )
 	{
-		angle = angles[YAW] * (M_PI2 / 360.0f);
+		angle = angles[YAW] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sy, &cy);
-		angle = angles[PITCH] * (M_PI2 / 360.0f);
+		angle = angles[PITCH] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sp, &cp);
-		angle = angles[ROLL] * (M_PI2 / 360.0f);
+		angle = angles[ROLL] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sr, &cr);
 
 		out[0][0] = (cp * cy) * scale;
@@ -163,9 +163,9 @@ void Matrix3x4_CreateFromEntity(matrix3x4 out, const vec3_t angles, const vec3_t
 	}
 	else if ( angles[PITCH] )
 	{
-		angle = angles[YAW] * (M_PI2 / 360.0f);
+		angle = angles[YAW] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sy, &cy);
-		angle = angles[PITCH] * (M_PI2 / 360.0f);
+		angle = angles[PITCH] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sp, &cp);
 
 		out[0][0] = (cp * cy) * scale;
@@ -183,7 +183,7 @@ void Matrix3x4_CreateFromEntity(matrix3x4 out, const vec3_t angles, const vec3_t
 	}
 	else if ( angles[YAW] )
 	{
-		angle = angles[YAW] * (M_PI2 / 360.0f);
+		angle = angles[YAW] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sy, &cy);
 
 		out[0][0] = (cy)*scale;
@@ -230,9 +230,9 @@ void Matrix3x4_TransformAABB(const matrix3x4 world, const vec3_t mins, const vec
 	VectorSubtract(maxs, localCenter, localExtents);
 
 	Matrix3x4_VectorTransform(world, localCenter, worldCenter);
-	worldExtents[0] = DotProductAbs(localExtents, world[0]);  // auto-transposed!
-	worldExtents[1] = DotProductAbs(localExtents, world[1]);
-	worldExtents[2] = DotProductAbs(localExtents, world[2]);
+	worldExtents[0] = (float)DotProductAbs(localExtents, world[0]);  // auto-transposed!
+	worldExtents[1] = (float)DotProductAbs(localExtents, world[1]);
+	worldExtents[2] = (float)DotProductAbs(localExtents, world[2]);
 
 	VectorSubtract(worldCenter, worldExtents, absmin);
 	VectorAdd(worldCenter, worldExtents, absmax);
@@ -308,11 +308,11 @@ void Matrix4x4_CreateFromEntity(matrix4x4 out, const vec3_t angles, const vec3_t
 
 	if ( angles[ROLL] )
 	{
-		angle = angles[YAW] * (M_PI2 / 360.0f);
+		angle = angles[YAW] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sy, &cy);
-		angle = angles[PITCH] * (M_PI2 / 360.0f);
+		angle = angles[PITCH] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sp, &cp);
-		angle = angles[ROLL] * (M_PI2 / 360.0f);
+		angle = angles[ROLL] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sr, &cr);
 
 		out[0][0] = (cp * cy) * scale;
@@ -334,9 +334,9 @@ void Matrix4x4_CreateFromEntity(matrix4x4 out, const vec3_t angles, const vec3_t
 	}
 	else if ( angles[PITCH] )
 	{
-		angle = angles[YAW] * (M_PI2 / 360.0f);
+		angle = angles[YAW] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sy, &cy);
-		angle = angles[PITCH] * (M_PI2 / 360.0f);
+		angle = angles[PITCH] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sp, &cp);
 
 		out[0][0] = (cp * cy) * scale;
@@ -358,7 +358,7 @@ void Matrix4x4_CreateFromEntity(matrix4x4 out, const vec3_t angles, const vec3_t
 	}
 	else if ( angles[YAW] )
 	{
-		angle = angles[YAW] * (M_PI2 / 360.0f);
+		angle = angles[YAW] * (M_PI2_F / 360.0f);
 		SinCos(angle, &sy, &cy);
 
 		out[0][0] = (cy)*scale;
@@ -401,19 +401,19 @@ void Matrix4x4_CreateFromEntity(matrix4x4 out, const vec3_t angles, const vec3_t
 
 void Matrix4x4_ConvertToEntity(const matrix4x4 in, vec3_t angles, vec3_t origin)
 {
-	float xyDist = sqrt(in[0][0] * in[0][0] + in[1][0] * in[1][0]);
+	float xyDist = sqrtf(in[0][0] * in[0][0] + in[1][0] * in[1][0]);
 
 	// enough here to get angles?
 	if ( xyDist > 0.001f )
 	{
-		angles[0] = RAD2DEG(atan2(-in[2][0], xyDist));
-		angles[1] = RAD2DEG(atan2(in[1][0], in[0][0]));
-		angles[2] = RAD2DEG(atan2(in[2][1], in[2][2]));
+		angles[0] = RAD2DEGF(atan2f(-in[2][0], xyDist));
+		angles[1] = RAD2DEGF(atan2f(in[1][0], in[0][0]));
+		angles[2] = RAD2DEGF(atan2f(in[2][1], in[2][2]));
 	}
 	else  // forward is mostly Z, gimbal lock
 	{
-		angles[0] = RAD2DEG(atan2(-in[2][0], xyDist));
-		angles[1] = RAD2DEG(atan2(-in[0][1], in[1][1]));
+		angles[0] = RAD2DEGF(atan2f(-in[2][0], xyDist));
+		angles[1] = RAD2DEGF(atan2f(-in[0][1], in[1][1]));
 		angles[2] = 0.0f;
 	}
 
@@ -424,7 +424,7 @@ void Matrix4x4_ConvertToEntity(const matrix4x4 in, vec3_t angles, vec3_t origin)
 
 void Matrix4x4_TransformPositivePlane(const matrix4x4 in, const vec3_t normal, float d, vec3_t out, float* dist)
 {
-	float scale = sqrt(in[0][0] * in[0][0] + in[0][1] * in[0][1] + in[0][2] * in[0][2]);
+	float scale = sqrtf(in[0][0] * in[0][0] + in[0][1] * in[0][1] + in[0][2] * in[0][2]);
 	float iscale = 1.0f / scale;
 
 	out[0] = (normal[0] * in[0][0] + normal[1] * in[0][1] + normal[2] * in[0][2]) * iscale;

@@ -60,9 +60,9 @@ float CBaseAnimating::StudioFrameAdvance(float flInterval)
 	if ( pev->frame < 0.0 || pev->frame >= 256.0 )
 	{
 		if ( m_fSequenceLoops )
-			pev->frame -= (int)(pev->frame / 256.0) * 256.0;
+			pev->frame -= (int)(pev->frame / 256.0f) * 256.0f;
 		else
-			pev->frame = (pev->frame < 0.0) ? 0 : 255;
+			pev->frame = (pev->frame < 0.0) ? 0.0f : 255.0f;
 		m_fSequenceFinished = TRUE;  // just in case it wasn't caught in GetEvents
 	}
 
@@ -141,7 +141,7 @@ void CBaseAnimating::DispatchAnimEvents(float flInterval)
 	}
 
 	// FIXME: I have to do this or some events get missed, and this is probably causing the problem below
-	flInterval = 0.1;
+	flInterval = 0.1f;
 
 	// FIX: this still sometimes hits events twice
 	float flStart = pev->frame + (m_flLastEventCheck - pev->animtime) * m_flFrameRate * pev->framerate;
@@ -225,7 +225,7 @@ int CBaseAnimating::FindTransition(int iEndingSequence, int iGoalSequence, int* 
 
 //=========================================================
 //=========================================================
-void CBaseAnimating::GetAutomovement(Vector& origin, Vector& angles, float flInterval)
+void CBaseAnimating::GetAutomovement(Vector&, Vector&, float)
 {
 }
 
@@ -256,13 +256,13 @@ void CBaseAnimating::SetSequenceBox(void)
 	{
 		// expand box for rotation
 		// find min / max for rotations
-		float yaw = pev->angles.y * (M_PI / 180.0);
+		float yaw = pev->angles.y * (static_cast<float>(M_PI) / 180.0f);
 
 		Vector xvector, yvector;
-		xvector.x = cos(yaw);
-		xvector.y = sin(yaw);
-		yvector.x = -sin(yaw);
-		yvector.y = cos(yaw);
+		xvector.x = cosf(yaw);
+		xvector.y = sinf(yaw);
+		yvector.x = -sinf(yaw);
+		yvector.y = cosf(yaw);
 		Vector bounds[2];
 
 		bounds[0] = mins;

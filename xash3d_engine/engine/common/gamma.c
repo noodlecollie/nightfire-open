@@ -44,7 +44,7 @@ void BuildGammaTable(float lightgamma, float brightness)
 
 	for ( i = 0; i < 256; i++ )
 	{
-		f = pow(i / 255.f, GAMMA);
+		f = powf(i / 255.f, GAMMA);
 
 		// scale up
 		if ( brightness > 1.0f )
@@ -59,23 +59,27 @@ void BuildGammaTable(float lightgamma, float brightness)
 		// convert linear space to desired gamma space
 		inf = (int)(255.0f * pow(f, g));
 
-		lightgammatable[i] = bound(0, inf, 255);
+		lightgammatable[i] = (byte)bound(0, inf, 255);
 	}
 
 	for ( i = 0; i < 1024; i++ )
 	{
 		// convert from screen gamma space to linear space
-		lineargammatable[i] = 1023 * pow(i / 1023.0f, g1);
+		lineargammatable[i] = (int)(1023 * powf(i / 1023.0f, g1));
 
 		// convert from linear gamma space to screen space
-		screengammatable[i] = 1023 * pow(i / 1023.0f, 1.0f / g1);
+		screengammatable[i] = (int)(1023 * powf(i / 1023.0f, 1.0f / g1));
 	}
 }
 
 byte LightToTexGamma(byte b)
 {
 	if ( FBitSet(host.features, ENGINE_LINEAR_GAMMA_SPACE) )
+	{
 		return b;
+	}
 	else
+	{
 		return lightgammatable[b];
+	}
 }

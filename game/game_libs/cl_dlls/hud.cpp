@@ -103,52 +103,52 @@ void __CmdFunc_ToggleServerBrowser(void)
 }
 
 // TFFree Command Menu Message Handlers
-int __MsgFunc_ValClass(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_ValClass(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_TeamNames(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_TeamNames(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_Feign(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_Feign(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_Detpack(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_Detpack(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_VGUIMenu(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_VGUIMenu(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_BuildSt(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_BuildSt(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_RandomPC(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_RandomPC(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_ServerName(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_ServerName(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_Spectator(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_Spectator(const char*, int, void*)
 {
 	return 0;
 }
 
-int __MsgFunc_AllowSpec(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_AllowSpec(const char*, int, void*)
 {
 	return 0;
 }
@@ -247,8 +247,8 @@ void CHud::Init(void)
 }
 
 CHud::CHud() :
-	m_iSpriteCount(0),
 	m_pHudList(NULL),
+	m_iSpriteCount(0),
 	m_Crosshair(new CHudCrosshair())
 {
 }
@@ -432,7 +432,7 @@ void CHud::VidInit(void)
 	m_Crosshair->VidInit();
 }
 
-int CHud::MsgFunc_Logo(const char* pszName, int iSize, void* pbuf)
+int CHud::MsgFunc_Logo(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -454,7 +454,7 @@ void COM_FileBase(const char* in, char* out)
 {
 	int len, start, end;
 
-	len = strlen(in);
+	len = static_cast<int>(strlen(in));
 
 	// scan backward for '.'
 	end = len - 1;
@@ -536,15 +536,15 @@ float HUD_GetFOV(void)
 	return g_lastFOV;
 }
 
-int CHud::MsgFunc_SetFOV(const char* pszName, int iSize, void* pbuf)
+int CHud::MsgFunc_SetFOV(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
 	int newfov = READ_BYTE();
 
-	int def_fov = CL_CvarGetFloat("default_fov");
+	int def_fov = static_cast<int>(CL_CvarGetFloat("default_fov"));
 
-	g_lastFOV = newfov;
+	g_lastFOV = static_cast<float>(newfov);
 
 	if ( newfov == 0 )
 	{

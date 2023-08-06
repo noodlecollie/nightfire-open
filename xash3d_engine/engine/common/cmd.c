@@ -97,15 +97,15 @@ void* Cbuf_GetSpace(cmdbuf_t* buf, int length)
 
 static void Cbuf_AddTextToBuffer(cmdbuf_t* buf, const char* text)
 {
-	int l = Q_strlen(text);
+	size_t length = Q_strlen(text);
 
-	if ( (buf->cursize + l) >= buf->maxsize )
+	if ( (int)(buf->cursize + length) >= buf->maxsize )
 	{
 		Con_Reportf(S_WARN "%s: overflow\n", __func__);
 		return;
 	}
 
-	memcpy(Cbuf_GetSpace(buf, l), text, l);
+	memcpy(Cbuf_GetSpace(buf, (int)length), text, length);
 }
 
 /*
@@ -152,17 +152,17 @@ Adds a \n to the text
 */
 static void Cbuf_InsertTextToBuffer(cmdbuf_t* buf, const char* text)
 {
-	int l = Q_strlen(text);
+	size_t length = Q_strlen(text);
 
-	if ( (buf->cursize + l) >= buf->maxsize )
+	if ( (int)(buf->cursize + length) >= buf->maxsize )
 	{
 		Con_Reportf(S_WARN "Cbuf_InsertText: overflow\n");
 	}
 	else
 	{
-		memmove(buf->data + l, buf->data, buf->cursize);
-		memcpy(buf->data, text, l);
-		buf->cursize += l;
+		memmove(buf->data + length, buf->data, buf->cursize);
+		memcpy(buf->data, text, length);
+		buf->cursize += (int)length;
 	}
 }
 
@@ -541,7 +541,6 @@ typedef struct cmd_s
 static int cmd_argc;
 static const char* cmd_args = NULL;
 static char* cmd_argv[MAX_CMD_TOKENS];
-static char cmd_tokenized[MAX_CMD_BUFFER];  // will have 0 bytes inserted
 static cmd_t* cmd_functions;  // possible commands to execute
 
 /*
@@ -561,8 +560,11 @@ Cmd_Argv
 */
 const char* Cmd_Argv(int arg)
 {
-	if ( (uint)arg >= cmd_argc )
+	if ( arg >= cmd_argc )
+	{
 		return "";
+	}
+
 	return cmd_argv[arg];
 }
 
@@ -969,7 +971,7 @@ void Cmd_Else_f(void)
 static qboolean Cmd_ShouldAllowCommand(cmd_t* cmd, qboolean isPrivileged)
 {
 	const char* prefixes[] = {"cl_", "gl_", "r_", "m_", "hud_"};
-	int i;
+	size_t i;
 
 	// always allow local commands
 	if ( isPrivileged )
@@ -1035,7 +1037,7 @@ static void Cmd_ExecuteStringWithPrivilegeCheck(const char* text, qboolean isPri
 					*ptoken++ = *text++;
 				*ptoken = 0;
 
-				len += Q_strncpy(pcmd, Cvar_VariableString(token), MAX_CMD_LINE - len);
+				len += (int)Q_strncpy(pcmd, Cvar_VariableString(token), MAX_CMD_LINE - len);
 				pcmd = command + len;
 
 				if ( !*text )
@@ -1383,10 +1385,10 @@ inserts escape sequences
 */
 void Cmd_Escape(char* newCommand, const char* oldCommand, int len)
 {
-	int c;
+	char c;
 	int scripting = CVAR_TO_BOOL(cmd_scripting);
 
-	while ( (c = *oldCommand++) && len > 1 )
+	for ( c = *oldCommand++; c && len > 1; c = *oldCommand++ )
 	{
 		if ( c == '"' )
 		{

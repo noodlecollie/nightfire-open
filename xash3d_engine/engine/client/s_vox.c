@@ -81,10 +81,14 @@ void VOX_LoadWord(channel_t* ch)
 		end = 0;
 
 	if ( start )
-		S_SetSampleStart(ch, data, start * 0.01f * samples);
+	{
+		S_SetSampleStart(ch, data, (int)(start * 0.01f * samples));
+	}
 
 	if ( end )
-		S_SetSampleEnd(ch, data, end * 0.01f * samples);
+	{
+		S_SetSampleEnd(ch, data, (int)(end * 0.01f * samples));
+	}
 }
 
 void VOX_FreeWord(channel_t* ch)
@@ -113,8 +117,8 @@ void VOX_SetChanVol(channel_t* ch)
 	if ( word->volume == 100 )
 		return;
 
-	ch->leftvol = ch->leftvol * word->volume * 0.01f;
-	ch->rightvol = ch->rightvol * word->volume * 0.01f;
+	ch->leftvol = (int)(ch->leftvol * word->volume * 0.01f);
+	ch->rightvol = (int)(ch->rightvol * word->volume * 0.01f);
 }
 
 float VOX_ModifyPitch(channel_t* ch, float pitch)
@@ -147,7 +151,7 @@ static const char* VOX_GetDirectory(char* szpath, const char* psz, int nsize)
 		return psz;
 	}
 
-	len = p - psz + 1;
+	len = (int)(p - psz + 1);
 
 	if ( len > nsize )
 	{
@@ -175,8 +179,13 @@ static const char* VOX_LookupString(const char* pszin)
 		{
 			sentenceEntry_s* sentenceEntry;
 			i = Q_atoi(pszin + 1);
-			if ( (sentenceEntry = Sequence_GetSentenceByIndex(i)) )
+
+			sentenceEntry = Sequence_GetSentenceByIndex(i);
+
+			if ( sentenceEntry )
+			{
 				return sentenceEntry->data;
+			}
 		}
 		else
 		{
@@ -208,7 +217,7 @@ static const char* VOX_LookupString(const char* pszin)
 	if ( i == cszrawsentences )
 		return NULL;
 
-	len = Q_strlen(rgpszrawsentence[i]);
+	len = (int)Q_strlen(rgpszrawsentence[i]);
 
 	c = &rgpszrawsentence[i][len + 1];
 	for ( ; *c == ' ' || *c == '\t'; c++ )
@@ -271,7 +280,8 @@ static int VOX_ParseString(char* psz, char* rgpparseword[CVOXWORDMAX])
 
 static qboolean VOX_ParseWordParams(char* psz, voxword_t* pvoxword, qboolean fFirst)
 {
-	int len, i;
+	int len;
+	size_t i;
 	char sznum[8], *pszsave = psz;
 	static voxword_t voxwordDefault;
 
@@ -287,7 +297,7 @@ static qboolean VOX_ParseWordParams(char* psz, voxword_t* pvoxword, qboolean fFi
 
 	*pvoxword = voxwordDefault;
 
-	len = Q_strlen(psz);
+	len = (int)Q_strlen(psz);
 
 	if ( len == 0 )
 		return false;
@@ -330,19 +340,19 @@ static qboolean VOX_ParseWordParams(char* psz, voxword_t* pvoxword, qboolean fFi
 		switch ( command )
 		{
 			case 'e':
-				pvoxword->end = i;
+				pvoxword->end = (int)i;
 				break;
 			case 'p':
-				pvoxword->pitch = i;
+				pvoxword->pitch = (int)i;
 				break;
 			case 's':
-				pvoxword->start = i;
+				pvoxword->start = (int)i;
 				break;
 			case 't':
-				pvoxword->timecompress = i;
+				pvoxword->timecompress = (int)i;
 				break;
 			case 'v':
-				pvoxword->volume = i;
+				pvoxword->volume = (int)i;
 				break;
 		}
 	}
@@ -455,11 +465,11 @@ static void VOX_ReadSentenceFile_(byte* buf, fs_offset_t size)
 		if ( name )
 		{
 			int index = cszrawsentences;
-			int size = strlen(name) + strlen(value) + 2;
+			size_t localSize = strlen(name) + strlen(value) + 2;
 
-			rgpszrawsentence[index] = Mem_Malloc(host.mempool, size);
-			memcpy(rgpszrawsentence[index], name, size);
-			rgpszrawsentence[index][size - 1] = 0;
+			rgpszrawsentence[index] = Mem_Malloc(host.mempool, localSize);
+			memcpy(rgpszrawsentence[index], name, localSize);
+			rgpszrawsentence[index][localSize - 1] = 0;
 			cszrawsentences++;
 		}
 	}
@@ -544,8 +554,8 @@ static void Test_VOX_LookupString(void)
 
 	VOX_Shutdown();
 
-	rgpszrawsentence[cszrawsentences++] = (char*)"exactmatch\000123";
-	rgpszrawsentence[cszrawsentences++] = (char*)"CaseInsensitive\000456";
+	rgpszrawsentence[cszrawsentences++] = (char*)"exactmatch\000z123";
+	rgpszrawsentence[cszrawsentences++] = (char*)"CaseInsensitive\000z456";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithTabs\0\t\t\t789";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithSpaces\0  SPAAACE";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithTabsAndSpaces\0\t \t\t MEOW";

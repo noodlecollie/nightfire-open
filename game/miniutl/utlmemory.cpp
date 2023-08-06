@@ -9,10 +9,10 @@
 #include <utlmemory.h>
 
 CUtlMemoryBase::CUtlMemoryBase(int nSizeOfType, int nGrowSize, int nInitAllocationCount) :
+	m_unSizeOfElements(nSizeOfType),
 	m_pMemory(0),
 	m_nAllocationCount(nInitAllocationCount),
-	m_nGrowSize(nGrowSize),
-	m_unSizeOfElements(nSizeOfType)
+	m_nGrowSize(nGrowSize)
 {
 	Assert(m_unSizeOfElements > 0);
 	Assert(nGrowSize >= 0);
@@ -24,9 +24,9 @@ CUtlMemoryBase::CUtlMemoryBase(int nSizeOfType, int nGrowSize, int nInitAllocati
 }
 
 CUtlMemoryBase::CUtlMemoryBase(int nSizeOfType, void* pMemory, int numElements) :
+	m_unSizeOfElements(nSizeOfType),
 	m_pMemory(pMemory),
-	m_nAllocationCount(numElements),
-	m_unSizeOfElements(nSizeOfType)
+	m_nAllocationCount(numElements)
 {
 	Assert(m_unSizeOfElements > 0);
 	// Special marker indicating externally supplied modifyable memory
@@ -34,9 +34,9 @@ CUtlMemoryBase::CUtlMemoryBase(int nSizeOfType, void* pMemory, int numElements) 
 }
 
 CUtlMemoryBase::CUtlMemoryBase(int nSizeOfType, const void* pMemory, int numElements) :
+	m_unSizeOfElements(nSizeOfType),
 	m_pMemory((void*)pMemory),
-	m_nAllocationCount(numElements),
-	m_unSizeOfElements(nSizeOfType)
+	m_nAllocationCount(numElements)
 {
 	Assert(m_unSizeOfElements > 0);
 	// Special marker indicating externally supplied modifyable memory

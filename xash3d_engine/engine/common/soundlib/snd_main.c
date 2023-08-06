@@ -35,13 +35,13 @@ wavdata_t* SoundPack(void)
 	wavdata_t* pack = Mem_Calloc(host.soundpool, sizeof(wavdata_t));
 
 	pack->buffer = sound.wav;
-	pack->width = sound.width;
-	pack->rate = sound.rate;
+	pack->width = (byte)sound.width;
+	pack->rate = (word)sound.rate;
 	pack->type = sound.type;
 	pack->size = sound.size;
 	pack->loopStart = sound.loopstart;
 	pack->samples = sound.samples;
-	pack->channels = sound.channels;
+	pack->channels = (byte)sound.channels;
 	pack->flags = sound.flags;
 
 	return pack;
@@ -112,8 +112,10 @@ load_internal:
 		{
 			if ( buffer && size > 0 )
 			{
-				if ( format->loadfunc(loadname, buffer, size) )
+				if ( format->loadfunc(loadname, buffer, (fs_offset_t)size) )
+				{
 					return SoundPack();  // loaded
+				}
 			}
 		}
 	}
@@ -208,9 +210,9 @@ wavdata_t* FS_StreamInfo(stream_t* stream)
 
 	// fill structure
 	info.loopStart = -1;
-	info.rate = stream->rate;
-	info.width = stream->width;
-	info.channels = stream->channels;
+	info.rate = (word)stream->rate;
+	info.width = (byte)stream->width;
+	info.channels = (byte)stream->channels;
 	info.flags = SOUND_STREAM;
 	info.size = stream->size;
 	info.buffer = NULL;
@@ -291,7 +293,7 @@ void FS_FreeStream(stream_t* stream)
 		host.type = HOST_NORMAL; \
 		Memory_Init(); \
 		Sound_Init(); \
-		if ( target("#internal", Data, Size) ) \
+		if ( target("#internal", Data, (fs_offset_t)Size) ) \
 		{ \
 			wav = SoundPack(); \
 			FS_FreeSound(wav); \

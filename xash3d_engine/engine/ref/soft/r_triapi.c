@@ -43,11 +43,11 @@ TriRenderMode
 set rendermode
 =============
 */
-void GAME_EXPORT TriRenderMode(int mode)
+void GAME_EXPORT TriRenderMode(int rendermode)
 {
-	ds.renderMode = vid.rendermode = mode;
+	ds.renderMode = vid.rendermode = rendermode;
 #if 0
-	switch( mode )
+	switch( rendermode )
 	{
 	case kRenderNormal:
 		pglTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
@@ -152,14 +152,14 @@ void GAME_EXPORT _TriColor4f(float rr, float gg, float bb, float aa)
 
 	// gEngfuncs.Con_Printf("%d\n", vid.alpha);
 
-	light = (rr + gg + bb) * 31 / 3;
+	light = (uint)((rr + gg + bb) * 31 / 3);
 	if ( light > 31 )
 		light = 31;
 
 	if ( !vid.is2d && vid.rendermode == kRenderNormal )
 		return;
 
-	vid.alpha = aa * 7;
+	vid.alpha = (byte)(aa * 7);
 	if ( vid.alpha > 7 )
 		vid.alpha = 7;
 
@@ -168,7 +168,9 @@ void GAME_EXPORT _TriColor4f(float rr, float gg, float bb, float aa)
 		vid.color = COLOR_WHITE;
 		return;
 	}
-	r = rr * 31, g = gg * 63, b = bb * 31;
+	r = (unsigned short)(rr * 31);
+	g = (unsigned short)(gg * 63);
+	b = (unsigned short)(bb * 31);
 	if ( r > 31 )
 		r = 31;
 	if ( g > 63 )
@@ -182,7 +184,7 @@ void GAME_EXPORT _TriColor4f(float rr, float gg, float bb, float aa)
 	minor = MOVE_BIT(r, 1, 5) | MOVE_BIT(r, 0, 2) | MOVE_BIT(g, 2, 7) | MOVE_BIT(g, 1, 4) | MOVE_BIT(g, 0, 1) |
 		MOVE_BIT(b, 2, 6) | MOVE_BIT(b, 1, 3) | MOVE_BIT(b, 0, 0);
 
-	vid.color = major << 8 | (minor & 0xFF);
+	vid.color = (pixel_t)(major << 8 | (minor & 0xFF));
 }
 
 /*
@@ -222,7 +224,7 @@ void TriColor4f(float r, float g, float b, float a)
 	// if( a < 0.5 )
 	//	a = 1;
 	if ( ds.renderMode == kRenderTransAlpha )
-		TriColor4ub(r * 255.0f, g * 255.0f, b * 255.0f, a * 255.0f);
+		TriColor4ub((byte)(r * 255.0f), (byte)(g * 255.0f), (byte)(b * 255.0f), (byte)(a * 255.0f));
 	else
 		_TriColor4f(r * a, g * a, b * a, 1.0);
 
@@ -257,8 +259,8 @@ void GAME_EXPORT TriTexCoord2f(float u, float v)
 	while ( v1 > 1 )
 		v1 = v1 - 1;
 
-	s = r_affinetridesc.skinwidth * bound(0.01, u1, 0.99);
-	t = r_affinetridesc.skinheight * bound(0.01, v1, 0.99);
+	s = (short)(r_affinetridesc.skinwidth * bound(0.01, u1, 0.99));
+	t = (short)(r_affinetridesc.skinheight * bound(0.01, v1, 0.99));
 }
 
 /*
@@ -387,6 +389,10 @@ enables global fog on the level
 */
 void GAME_EXPORT TriFog(float flFogColor[3], float flStart, float flEnd, int bOn)
 {
+	(void)flFogColor;
+	(void)flStart;
+	(void)flEnd;
+	(void)bOn;
 #if 0
 	// overrided by internal fog
 	if( RI.fogEnabled ) return;
@@ -431,6 +437,8 @@ very strange export
 */
 void GAME_EXPORT TriGetMatrix(const int pname, float* matrix)
 {
+	(void)pname;
+	(void)matrix;
 	// pglGetFloatv( pname, matrix );
 }
 
@@ -442,6 +450,8 @@ TriForParams
 */
 void GAME_EXPORT TriFogParams(float flDensity, int iFogSkybox)
 {
+	(void)flDensity;
+	(void)iFogSkybox;
 	// RI.fogDensity = flDensity;
 	// RI.fogSkybox = iFogSkybox;
 }
@@ -452,12 +462,13 @@ TriCullFace
 
 =============
 */
-void GAME_EXPORT TriCullFace(TRICULLSTYLE mode)
+void GAME_EXPORT TriCullFace(TRICULLSTYLE inmode)
 {
+	(void)inmode;
 #if 0
 	int glMode;
 
-	switch( mode )
+	switch( inmode )
 	{
 	case TRI_FRONT:
 		glMode = GL_FRONT;
@@ -467,7 +478,7 @@ void GAME_EXPORT TriCullFace(TRICULLSTYLE mode)
 		break;
 	}
 
-	GL_Cull( mode );
+	GL_Cull( inmode );
 #endif
 }
 

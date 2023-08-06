@@ -209,12 +209,15 @@ target_compile_definitions(${TARGETNAME_LIB_UI} PRIVATE
 	# we can use MAINUI_USE_FREETYPE=1 for Linux here too.
 	# Only enable if not using STB libraries and not building
 	# with LOW_MEMORY.
-	$<$<NOT:$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">>:MAINUI_USE_STB=1->
+	$<$<NOT:$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">>:MAINUI_USE_STB=1>
 )
 
 target_compile_options(${TARGETNAME_LIB_UI} PRIVATE
+	# MSVC
 	$<$<STREQUAL:"${HOST_COMPILER}","MSVC">:/GR->
-	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-rtti>
+
+	# Not MSVC
+	$<$<AND:$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>,$<COMPILE_LANGUAGE:CXX>>:-fno-rtti>
 )
 
 target_link_libraries(${TARGETNAME_LIB_UI} PRIVATE

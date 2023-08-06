@@ -138,7 +138,7 @@ void SV_CheckVelocity(edict_t* ent)
 
 	if ( wishspd > maxspd )
 	{
-		wishspd = sqrt(wishspd);
+		wishspd = sqrtf(wishspd);
 		if ( sv_check_errors->value )
 			Con_Printf(
 				"Got a velocity too high on %s ( %.2f > %.2f )\n",
@@ -200,16 +200,21 @@ qboolean SV_RunThink(edict_t* ent)
 			return true;
 
 		if ( thinktime < sv.time )
-			thinktime = sv.time;  // don't let things stay in the past.
-								  // it is possible to start that way
-								  // by a trigger with a local time.
+		{
+			thinktime = (float)sv.time;  // don't let things stay in the past.
+										 // it is possible to start that way
+										 // by a trigger with a local time.
+		}
+
 		ent->v.nextthink = 0.0f;
 		svgame.globals->time = thinktime;
 		svgame.dllFuncs.pfnThink(ent);
 	}
 
 	if ( FBitSet(ent->v.flags, FL_KILLME) )
+	{
 		SV_FreeEdict(ent);
+	}
 
 	return !ent->free;
 }
@@ -238,9 +243,11 @@ qboolean SV_PlayerRunThink(edict_t* ent, float frametime, double time)
 			return true;
 
 		if ( thinktime < time )
-			thinktime = time;  // don't let things stay in the past.
-							   // it is possible to start that way
-							   // by a trigger with a local time.
+		{
+			thinktime = (float)time;  // don't let things stay in the past.
+									  // it is possible to start that way
+									  // by a trigger with a local time.
+		}
 
 		ent->v.nextthink = 0.0f;
 		svgame.globals->time = thinktime;
@@ -262,7 +269,7 @@ Two entities have touched, so run their touch functions
 */
 void SV_Impact(edict_t* e1, edict_t* e2, trace_t* trace)
 {
-	svgame.globals->time = sv.time;
+	svgame.globals->time = (float)sv.time;
 
 	if ( (e1->v.flags | e2->v.flags) & FL_KILLME )
 		return;
@@ -305,7 +312,7 @@ void SV_AngularMove(edict_t* ent, float frametime, float friction)
 	if ( friction == 0.0f )
 		return;
 
-	adjustment = frametime * (sv_stopspeed.value / 10.0f) * sv_friction.value * fabs(friction);
+	adjustment = frametime * (sv_stopspeed.value / 10.0f) * sv_friction.value * fabsf(friction);
 
 	for ( i = 0; i < 3; i++ )
 	{
@@ -340,7 +347,7 @@ void SV_LinearMove(edict_t* ent, float frametime, float friction)
 	if ( friction == 0.0f )
 		return;
 
-	adjustment = frametime * (sv_stopspeed.value / 10.0f) * sv_friction.value * fabs(friction);
+	adjustment = frametime * (sv_stopspeed.value / 10.0f) * sv_friction.value * fabsf(friction);
 
 	for ( i = 0; i < 3; i++ )
 	{
@@ -769,6 +776,8 @@ trace_t SV_PushEntity(edict_t* ent, const vec3_t lpush, const vec3_t apush, int*
 	int type;
 	vec3_t end;
 
+	(void)flDamage;
+
 	monsterClip = FBitSet(ent->v.flags, FL_MONSTERCLIP) ? true : false;
 	VectorAdd(ent->v.origin, lpush, end);
 
@@ -873,7 +882,7 @@ SV_PushMove
 static edict_t* SV_PushMove(edict_t* pusher, float movetime)
 {
 	int i, e, block;
-	int num_moved, oldsolid;
+	int oldsolid;
 	vec3_t mins, maxs, lmove;
 	sv_pushed_t *p, *pushed_p;
 	edict_t* check;
@@ -908,9 +917,6 @@ static edict_t* SV_PushMove(edict_t* pusher, float movetime)
 	// non-solid pushers can't push anything
 	if ( pusher->v.solid == SOLID_NOT )
 		return NULL;
-
-	// see if any solid entities are inside the final position
-	num_moved = 0;
 
 	for ( e = 1; e < svgame.numEntities; e++ )
 	{
@@ -1181,13 +1187,15 @@ void SV_Physics_Pusher(edict_t* ent)
 	for ( i = 0; i < 3; i++ )
 	{
 		if ( ent->v.angles[i] < -3600.0f || ent->v.angles[i] > 3600.0f )
-			ent->v.angles[i] = fmod(ent->v.angles[i], 3600.0f);
+		{
+			ent->v.angles[i] = fmodf(ent->v.angles[i], 3600.0f);
+		}
 	}
 
 	if ( thinktime > oldtime && ((ent->v.flags & FL_ALWAYSTHINK) || thinktime <= ent->v.ltime) )
 	{
 		ent->v.nextthink = 0.0f;
-		svgame.globals->time = sv.time;
+		svgame.globals->time = (float)sv.time;
 		svgame.dllFuncs.pfnThink(ent);
 	}
 }
@@ -1611,7 +1619,7 @@ void SV_Physics_Step(edict_t* ent)
 			float control, speed, newspeed;
 			float friction;
 
-			speed = sqrt((vel[0] * vel[0]) + (vel[1] * vel[1]));  // DotProduct2D
+			speed = sqrtf((vel[0] * vel[0]) + (vel[1] * vel[1]));  // DotProduct2D
 
 			if ( speed )
 			{
@@ -1781,7 +1789,7 @@ void SV_Physics(void)
 
 	SV_CheckAllEnts();
 
-	svgame.globals->time = sv.time;
+	svgame.globals->time = (float)sv.time;
 
 	// let the progs know that a new frame has started
 	svgame.dllFuncs.pfnStartFrame();
@@ -2018,15 +2026,26 @@ static const byte* GL_TextureData(unsigned int texnum)
 #if !XASH_DEDICATED
 	return Host_IsDedicated() ? NULL : ref.dllFuncs.GL_TextureData(texnum);
 #else  // XASH_DEDICATED
+	(void)texnum;
 	return NULL;
 #endif  // XASH_DEDICATED
+}
+
+static void* Wrapper_SV_ModelHandle(int modelIndex)
+{
+	return (void*)SV_ModelHandle(modelIndex);
+}
+
+int Wrapper_SV_BoxInPVS(const float* org, const float* boxmins, const float* boxmaxs)
+{
+	return (int)SV_BoxInPVS(org, boxmins, boxmaxs);
 }
 
 static server_physics_api_t gPhysicsAPI = {
 	SV_LinkEdict,
 	SV_GetServerTime,
 	SV_GetFrameTime,
-	(void*)SV_ModelHandle,
+	Wrapper_SV_ModelHandle,
 	SV_GetHeadNode,
 	SV_ServerState,
 	Host_Error,
@@ -2053,7 +2072,7 @@ static server_physics_api_t gPhysicsAPI = {
 	pfnPointContents,
 	SV_MoveNormal,
 	SV_MoveNoEnts,
-	(void*)SV_BoxInPVS,
+	Wrapper_SV_BoxInPVS,
 	pfnWriteBytes,
 	Mod_CheckLump,
 	Mod_ReadLump,

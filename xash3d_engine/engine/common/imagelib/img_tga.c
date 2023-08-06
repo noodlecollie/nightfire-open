@@ -33,7 +33,7 @@ qboolean Image_LoadTGA(const char* name, const byte* buffer, fs_offset_t filesiz
 	qboolean compressed;
 	tga_t targa_header;
 
-	if ( filesize < sizeof(tga_t) )
+	if ( (size_t)filesize < sizeof(tga_t) )
 		return false;
 
 	buf_p = (byte*)buffer;
@@ -234,7 +234,9 @@ qboolean Image_LoadTGA(const char* name, const byte* buffer, fs_offset_t filesiz
 		}
 	}
 
-	VectorDivide(reflectivity, (image.width * image.height), image.fogParams);
+	image.fogParams[0] = (byte)(reflectivity[0] / (image.width * image.height));
+	image.fogParams[1] = (byte)(reflectivity[1] / (image.width * image.height));
+	image.fogParams[2] = (byte)(reflectivity[2] / (image.width * image.height));
 	image.depth = 1;
 
 	return true;

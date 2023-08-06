@@ -87,7 +87,7 @@ void GAME_EXPORT CL_DrawParticles(double frametime, particle_t* cl_active_partic
 			p->color = bound(0, p->color, 255);
 			pColor = gEngfuncs.CL_GetPaletteColor(p->color);
 
-			alpha = 255 * (p->die - gpGlobals->time) * 16.0f;
+			alpha = (int)(255.0f * (p->die - gpGlobals->time) * 16.0f);
 			if ( alpha > 255 || p->type == pt_static )
 				alpha = 255;
 
@@ -130,8 +130,13 @@ check tracer bbox
 */
 static qboolean CL_CullTracer(particle_t* p, const vec3_t start, const vec3_t end)
 {
-	vec3_t mins, maxs;
-	int i;
+	// vec3_t mins, maxs;
+	// int i;
+
+	(void)p;
+	(void)start;
+	(void)end;
+
 	return false;
 	/*
 		// compute the bounding box
@@ -199,8 +204,8 @@ void GAME_EXPORT CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 	// pglDisable( GL_ALPHA_TEST );
 	// pglDepthMask( GL_FALSE );
 
-	gravity = frametime * MOVEVARS->gravity;
-	scale = 1.0 - (frametime * 0.9);
+	gravity = (float)(frametime * MOVEVARS->gravity);
+	scale = 1.0f - ((float)frametime * 0.9f);
 	if ( scale < 0.0f )
 		scale = 0.0f;
 
@@ -243,7 +248,7 @@ void GAME_EXPORT CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 			VectorAdd(verts[0], delta, verts[2]);
 			VectorAdd(verts[1], delta, verts[3]);
 
-			if ( p->color > sizeof(gTracerColors) / sizeof(color24) )
+			if ( (size_t)p->color > sizeof(gTracerColors) / sizeof(color24) )
 			{
 				gEngfuncs.Con_Printf(S_ERROR "UserTracer with color > %zu\n", sizeof(gTracerColors) / sizeof(color24));
 				p->color = 0;
@@ -270,7 +275,7 @@ void GAME_EXPORT CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 		}
 
 		// evaluate position
-		VectorMA(p->org, frametime, p->vel, p->org);
+		VectorMA(p->org, (float)frametime, p->vel, p->org);
 
 		if ( p->type == pt_grav )
 		{
@@ -278,13 +283,13 @@ void GAME_EXPORT CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 			p->vel[1] *= scale;
 			p->vel[2] -= gravity;
 
-			p->packedColor = 255 * (p->die - gpGlobals->time) * 2;
+			p->packedColor = (short)(255.0f * (p->die - gpGlobals->time) * 2.0f);
 			if ( p->packedColor > 255 )
 				p->packedColor = 255;
 		}
 		else if ( p->type == pt_slowgrav )
 		{
-			p->vel[2] = gravity * 0.05;
+			p->vel[2] = gravity * 0.05f;
 		}
 	}
 

@@ -125,6 +125,9 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 	char cmd[256];
 	int len = 0;
 	FILE* fp;
+	char* retval;
+
+	(void)retval;
 
 	len = PlatformLib_SNPrintF(cmd, sizeof(cmd) - len, "fc-match -f %%{file} \"%s\"", name);
 	if ( flags & FONT_ITALIC )
@@ -141,7 +144,7 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 		return false;
 	}
 
-	fgets(dataFile, dataFileChars, fp);
+	retval = fgets(dataFile, dataFileChars, fp);
 
 	if ( pclose(fp) )
 	{
@@ -305,14 +308,17 @@ bool CStbFont::Create(
 	return true;
 }
 
-void CStbFont::GetCharRGBA(int ch, Point pt, Size sz, unsigned char* rgba, Size& drawSize)
+void CStbFont::GetCharRGBA(int ch, Point, Size sz, unsigned char* rgba, Size& drawSize)
 {
 	byte *buf, *dst;
 	int a, b, c;
 
 	GetCharABCWidths(ch, a, b, c);  // speed up cache
 
-	int bm_top, bm_left, bm_rows, bm_width;
+	int bm_top = 0;
+	int bm_left = 0;
+	int bm_rows = 0;
+	int bm_width = 0;
 
 	buf = stbtt_GetCodepointBitmap(&m_fontInfo, scale, scale, ch, &bm_width, &bm_rows, &bm_left, &bm_top);
 
@@ -389,7 +395,7 @@ void CStbFont::GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c)
 	c = (horiAdvance - horiBearingX - width) * scale;
 }
 
-bool CStbFont::HasChar(int ch) const
+bool CStbFont::HasChar(int) const
 {
 	return true;
 }

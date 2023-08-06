@@ -157,7 +157,7 @@ write time while demo is recording
 */
 float CL_GetDemoRecordClock(void)
 {
-	return cl.mtime[0];
+	return (float)cl.mtime[0];
 }
 
 /*
@@ -169,7 +169,7 @@ overwrite host.realtime
 */
 float CL_GetDemoPlaybackClock(void)
 {
-	return host.realtime + host.frametime;
+	return (float)(host.realtime + host.frametime);
 }
 
 /*
@@ -253,7 +253,7 @@ void CL_WriteDemoUserCmd(int cmdnumber)
 	MSG_Init(&buf, "UserCmd", data, sizeof(data));
 	CL_WriteUsercmd(&buf, -1, cmdnumber);  // always no delta
 
-	bytes = MSG_GetNumBytesWritten(&buf);
+	bytes = (word)MSG_GetNumBytesWritten(&buf);
 
 	FS_Write(cls.demofile, &bytes, sizeof(word));
 	FS_Write(cls.demofile, data, bytes);
@@ -512,7 +512,7 @@ void CL_DrawDemoRecording(void)
 		sizeof(string),
 		"^1RECORDING:^7 %s: %s time: %02d:%02d",
 		cls.demoname,
-		Q_memprint(pos),
+		Q_memprint((float)pos),
 		(int)(cls.demotime / 60.0f),
 		(int)fmod(cls.demotime, 60.0f));
 
@@ -696,7 +696,7 @@ void CL_DemoStartPlayback(int mode)
 	demo.angle_position = 1;
 	demo.framecount = 0;
 	cls.lastoutgoingcommand = -1;
-	cls.nextcmdtime = host.realtime;
+	cls.nextcmdtime = (float)host.realtime;
 	cl.last_command_ack = -1;
 }
 
@@ -831,14 +831,14 @@ qboolean CL_DemoReadMessageQuake(byte* buffer, size_t* length)
 	{
 		if ( cls.timedemo )
 		{
-			if ( host.framecount == cls.td_lastframe )
+			if ( host.framecount == (uint)cls.td_lastframe )
 				return false;  // already read this frame's message
 
 			cls.td_lastframe = host.framecount;
 
 			// if this is the second frame, grab the real td_starttime
 			// so the bogus time on the first frame doesn't count
-			if ( host.framecount == cls.td_startframe + 1 )
+			if ( host.framecount == (uint)cls.td_startframe + 1 )
 				cls.td_starttime = host.realtime;
 		}
 		else if ( cl.time <= cl.mtime[0] )
@@ -854,7 +854,7 @@ qboolean CL_DemoReadMessageQuake(byte* buffer, size_t* length)
 	FS_Read(cls.demofile, &viewangles[1], sizeof(float));
 	FS_Read(cls.demofile, &viewangles[2], sizeof(float));
 	cls.netchan.incoming_sequence++;
-	demo.timestamp = cl.mtime[0];
+	demo.timestamp = (float)cl.mtime[0];
 	cl.skip_interp = false;
 
 	// make sure what interp info contain angles from different frames
@@ -929,7 +929,7 @@ qboolean CL_DemoReadMessage(byte* buffer, size_t* length)
 
 	if ( (!cl.background && (cl.paused || cls.key_dest != key_game)) || cls.key_dest == key_console )
 	{
-		demo.starttime += host.frametime;
+		demo.starttime += (float)host.frametime;
 		return false;  // paused
 	}
 
@@ -963,7 +963,7 @@ qboolean CL_DemoReadMessage(byte* buffer, size_t* length)
 			// never skip first message
 			if ( demo.framecount != 0 )
 			{
-				FS_Seek(cls.demofile, curpos, SEEK_SET);
+				FS_Seek(cls.demofile, (fs_offset_t)curpos, SEEK_SET);
 				return false;  // not time yet.
 			}
 		}
@@ -972,7 +972,7 @@ qboolean CL_DemoReadMessage(byte* buffer, size_t* length)
 		// don't read next usercmd_t so predicting will work properly
 		if ( cmd == dem_usercmd && lastpos != 0 && demo.framecount != 0 )
 		{
-			FS_Seek(cls.demofile, lastpos, SEEK_SET);
+			FS_Seek(cls.demofile, (fs_offset_t)lastpos, SEEK_SET);
 			return false;  // not time yet.
 		}
 
@@ -991,7 +991,10 @@ qboolean CL_DemoReadMessage(byte* buffer, size_t* length)
 				FS_Read(cls.demofile, userbuf, size);
 
 				if ( clgame.hInstance )
-					clgame.dllFuncs.pfnDemo_ReadBuffer(size, userbuf);
+				{
+					clgame.dllFuncs.pfnDemo_ReadBuffer((int)size, userbuf);
+				}
+
 				Mem_Free(userbuf);
 				userbuf = NULL;
 				break;
@@ -1008,7 +1011,7 @@ qboolean CL_DemoReadMessage(byte* buffer, size_t* length)
 
 	// If we are playing back a timedemo, and we've already passed on a
 	//  frame update for this host_frame tag, then we'll just skip this message.
-	if ( cls.timedemo && (tdlastdemoframe == host.framecount) )
+	if ( cls.timedemo && ((uint)tdlastdemoframe == host.framecount) )
 	{
 		FS_Seek(cls.demofile, FS_Tell(cls.demofile) - 5, SEEK_SET);
 		return false;
@@ -1108,7 +1111,7 @@ void CL_DemoInterpolateAngles(void)
 	}
 	else
 	{
-		curtime = (CL_GetDemoPlaybackClock() - demo.starttime) - host.frametime;
+		curtime = (CL_GetDemoPlaybackClock() - demo.starttime) - (float)host.frametime;
 		if ( curtime > demo.timestamp )
 			curtime = demo.timestamp;  // don't run too far
 

@@ -45,8 +45,8 @@ void CBaseBot::AimAtBias(void)
 	float f_scale;
 
 	f_distance = GetLookAtVec().Length();
-	f_scale = f_distance / 1000.0;
-	f_scale *= (1. - (Stats.GetTraitAccuracy() / 100.));
+	f_scale = f_distance / 1000.0f;
+	f_scale *= (1.0f - (Stats.GetTraitAccuracy() / 100.0f));
 
 	// max error is 5 degress
 
@@ -118,7 +118,7 @@ void CBaseBot::AimWander(void)
 	SetCalledAimThisFrame(TRUE);
 
 	Vector newLookAtBiasVec =
-		GetLookAtBiasVec() + Vector(RANDOM_FLOAT(-.1, .1), RANDOM_FLOAT(-.1, .1), RANDOM_FLOAT(-.1, .1));
+		GetLookAtBiasVec() + Vector(RANDOM_FLOAT(-0.1f, 0.1f), RANDOM_FLOAT(-0.1f, 0.1f), RANDOM_FLOAT(-0.1f, 0.1f));
 	newLookAtBiasVec.z = 0;
 	newLookAtBiasVec = newLookAtBiasVec.Normalize();
 
@@ -275,7 +275,7 @@ void CBaseBot::HandleMovement(void)
 	// set Move speeds to accomodate for the independent LookAtVec
 	Vector TrueDesiredVelocity = GetDesiredVelocity() + Memory.GetPrev1Velocity() + Memory.GetPrev2Velocity() +
 		Memory.GetPrev3Velocity() + Memory.GetPrev4Velocity();
-	TrueDesiredVelocity = TrueDesiredVelocity * .2;
+	TrueDesiredVelocity = TrueDesiredVelocity * 0.2f;
 
 	Vector DesiredVelocityAngle = HandleObstacles(TrueDesiredVelocity);
 	Vector FacingAngle = pev->v_angle;
@@ -328,9 +328,9 @@ void CBaseBot::HandleMovement(void)
 			SetMoveStrafe( GetMoveStrafe() * -1 ); // strafe left
 		} */
 
-	Ydiff *= (M_PI / 180.);  // convert from degrees to radians
-	SetMoveForward(cos(Ydiff) * BotMoveSpeed);
-	SetMoveStrafe(-sin(Ydiff) * BotMoveSpeed);
+	Ydiff *= (static_cast<float>(M_PI) / 180.0f);  // convert from degrees to radians
+	SetMoveForward(cosf(Ydiff) * BotMoveSpeed);
+	SetMoveStrafe(-sinf(Ydiff) * BotMoveSpeed);
 	// 28-July-2001: end
 
 	if ( IsOnLadder() )
@@ -360,6 +360,7 @@ Vector CBaseBot::HandleObstacles(Vector& IdealVelocity)
 			UTIL_VecToAngles(tr.vecPlaneNormal);  // vector that is perpendicular to the surface from the TraceResult
 
 		float botY = DirectionHeadingAngle.y;  // [???,???]
+		// NFTODO: Fix these so that we don't use loops
 		while ( botY < 0 )  // [0,???]
 		{
 			botY += 360;
@@ -510,7 +511,7 @@ void CBaseBot::SteerGroupAlign(void)
 		}
 	}
 
-	Vector AvgLocalVelocity = LocalityVelocitySum / PlayersInLocality;
+	Vector AvgLocalVelocity = LocalityVelocitySum / static_cast<float>(PlayersInLocality);
 	;
 
 	SetDesiredVelocity(AvgLocalVelocity);
@@ -543,7 +544,7 @@ void CBaseBot::SteerGroupCohesion(void)
 		}
 	}
 
-	Vector AvgLocalPosition = LocalityVecSum / PlayersInLocality;
+	Vector AvgLocalPosition = LocalityVecSum / static_cast<float>(PlayersInLocality);
 
 	SteerPrimitiveSeek(AvgLocalPosition);
 }
@@ -825,13 +826,13 @@ void CBaseBot::SteerSafeGroupAlign(STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerGroupAlign();
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -852,13 +853,13 @@ void CBaseBot::SteerSafeGroupCohesion(STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerGroupCohesion();
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -879,13 +880,13 @@ void CBaseBot::SteerSafeGroupEscort(CBaseEntity* escortTarget, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerGroupEscort(escortTarget);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -906,13 +907,13 @@ void CBaseBot::SteerSafeGroupFlock(STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerGroupFlock();
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -933,13 +934,13 @@ void CBaseBot::SteerSafeGroupFollow(CBaseEntity* followTarget, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerGroupEscort(followTarget);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -960,13 +961,13 @@ void CBaseBot::SteerSafeGroupSeparation(STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerGroupSeparation();
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -987,13 +988,13 @@ void CBaseBot::SteerSafeEvade(CBaseEntity* evadeTarget, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveEvade(evadeTarget);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1014,13 +1015,13 @@ void CBaseBot::SteerSafeFlee(CBaseEntity* fleeTarget, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveFlee(fleeTarget);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1041,13 +1042,13 @@ void CBaseBot::SteerSafeFlee(const Vector& fleeTarget, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveFlee(fleeTarget);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1068,13 +1069,13 @@ void CBaseBot::SteerSafeOnLadder(STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveOnLadder();
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1095,13 +1096,13 @@ void CBaseBot::SteerSafePursue(CBaseEntity* pursueTarget, STEER precedence, Vect
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitivePursue(pursueTarget, offset);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1122,13 +1123,13 @@ void CBaseBot::SteerSafeSeek(CBaseEntity* seekTarget, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveSeek(seekTarget);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1149,13 +1150,13 @@ void CBaseBot::SteerSafeSeek(const Vector& seekTarget, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveSeek(seekTarget);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1176,13 +1177,13 @@ void CBaseBot::SteerSafeWander(float WanderRate, STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveWander(WanderRate);
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }
@@ -1203,13 +1204,13 @@ void CBaseBot::SteerSafeWanderImproved(STEER precedence)
 	else if ( precedence == GetSteerCallPrecedence() )
 	{
 		Vector PrevDesiredVelocity = GetDesiredVelocity();
-		Vector NewDesiredVelocity = PrevDesiredVelocity * GetSteerCallCounter();
+		Vector NewDesiredVelocity = PrevDesiredVelocity * static_cast<float>(GetSteerCallCounter());
 
 		SteerPrimitiveWanderImproved();
 
 		NewDesiredVelocity = NewDesiredVelocity + GetDesiredVelocity();
 		SetSteerCallCounter(GetSteerCallCounter() + 1);
-		NewDesiredVelocity = NewDesiredVelocity / GetSteerCallCounter();
+		NewDesiredVelocity = NewDesiredVelocity / static_cast<float>(GetSteerCallCounter());
 		SetDesiredVelocity(NewDesiredVelocity);
 	}
 }

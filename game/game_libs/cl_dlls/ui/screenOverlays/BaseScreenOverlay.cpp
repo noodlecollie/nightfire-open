@@ -10,7 +10,7 @@ namespace ScreenOverlays
 	{
 	}
 
-	void CBaseScreenOverlay::Draw(float time)
+	void CBaseScreenOverlay::Draw(float)
 	{
 	}
 }  // namespace ScreenOverlays

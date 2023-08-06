@@ -187,7 +187,7 @@ int main(int argc, char** argv)
 	return Sys_Start();
 }
 #else
-int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int nShow)
+int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	LPWSTR* lpArgv;
 	int ret, i;

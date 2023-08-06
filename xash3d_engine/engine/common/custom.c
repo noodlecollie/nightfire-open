@@ -51,6 +51,8 @@ void COM_ClearCustomizationList(customization_t* pHead, qboolean bCleanDecals)
 	customization_t* pCurrent;
 	customization_t* pNext;
 
+	(void)bCleanDecals;
+
 	for ( pCurrent = pHead->pNext; pCurrent != NULL; pCurrent = pNext )
 	{
 		pNext = pCurrent->pNext;
@@ -116,7 +118,7 @@ qboolean COM_CreateCustomization(
 
 	if ( FBitSet(pCust->resource.ucFlags, RES_CUSTOM) && pCust->resource.type == t_decal )
 	{
-		pCust->resource.playernum = playernumber;
+		pCust->resource.playernum = (unsigned char)playernumber;
 
 		if ( CustomDecal_Validate(pResource->szFileName, pCust->pBuffer, pResource->nDownloadSize) )
 		{

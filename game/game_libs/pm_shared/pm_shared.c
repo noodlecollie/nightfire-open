@@ -53,10 +53,6 @@ extern float vJumpAngles[3];
 
 static int pm_shared_initialized = 0;
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4305)
-#endif
-
 playermove_t* pmove = NULL;
 
 // Ducking time
@@ -83,12 +79,7 @@ playermove_t* pmove = NULL;
 
 #define PLAYER_LONGJUMP_SPEED 350  // how fast we longjump
 
-#define PLAYER_DUCKING_MULTIPLIER 0.333
-
-// double to float warning
-#ifdef _MSC_VER
-#pragma warning(disable : 4244)
-#endif
+#define PLAYER_DUCKING_MULTIPLIER 0.333f
 
 #ifndef MAX_OF
 #define MAX_OF(a, b) (((a) > (b)) ? (a) : (b))
@@ -118,9 +109,6 @@ playermove_t* pmove = NULL;
 
 static vec3_t rgv3tStuckTable[54];
 static int rgStuckLast[MAX_CLIENTS][2];
-
-// Texture names
-static int gcTextures = 0;
 
 int g_onladder = 0;
 
@@ -248,8 +236,8 @@ void PM_UpdateStepSound(void)
 
 	height = pmove->player_maxs[pmove->usehull][2] - pmove->player_mins[pmove->usehull][2];
 
-	knee[2] = pmove->origin[2] - 0.3 * height;
-	feet[2] = pmove->origin[2] - 0.5 * height;
+	knee[2] = pmove->origin[2] - 0.3f * height;
+	feet[2] = pmove->origin[2] - 0.5f * height;
 
 	fvol = 1.0f;
 	stepSoundId = 0;
@@ -258,19 +246,19 @@ void PM_UpdateStepSound(void)
 	if ( isOnLadder )
 	{
 		stepSoundId = PMRes_GetStepSoundIdForSurface(SurfaceProp_SpecialLadder);
-		fvol = 0.35;
+		fvol = 0.35f;
 		pmove->flTimeStepSound = 350;
 	}
 	else if ( pmove->PM_PointContents(knee, NULL) == CONTENTS_WATER )
 	{
 		stepSoundId = PMRes_GetStepSoundIdForWater(true);
-		fvol = 0.65;
+		fvol = 0.65f;
 		pmove->flTimeStepSound = 600;
 	}
 	else if ( pmove->PM_PointContents(feet, NULL) == CONTENTS_WATER )
 	{
 		stepSoundId = PMRes_GetStepSoundIdForWater(false);
-		fvol = isWalking ? 0.2 : 0.5;
+		fvol = isWalking ? 0.2f : 0.5f;
 		pmove->flTimeStepSound = isWalking ? 400 : 300;
 	}
 	else
@@ -279,11 +267,11 @@ void PM_UpdateStepSound(void)
 		stepSoundId = PMRes_GetStepSoundIdForSurface(surfaceProp);
 		pmove->flTimeStepSound = isWalking ? 400 : 300;
 
-		fvol = isWalking ? 0.4 : 0.7;
+		fvol = isWalking ? 0.4f : 0.7f;
 		fvol *= PMRes_GetStepSoundVolumeMultiplierForSurface(surfaceProp, isWalking);
 	}
 
-	pmove->flTimeStepSound += flduck;  // slower step time if ducking
+	pmove->flTimeStepSound += (int)flduck;  // slower step time if ducking
 
 	// play the sound
 	// 35% volume if ducking
@@ -431,7 +419,7 @@ void PM_AddCorrectGravity(void)
 
 	// Add gravity so they'll be in the correct position during movement
 	// yes, this 0.5 looks wrong, but it's not.
-	pmove->velocity[2] -= (ent_gravity * pmove->movevars->gravity * 0.5 * pmove->frametime);
+	pmove->velocity[2] -= (ent_gravity * pmove->movevars->gravity * 0.5f * pmove->frametime);
 	pmove->velocity[2] += pmove->basevelocity[2] * pmove->frametime;
 	pmove->basevelocity[2] = 0;
 
@@ -451,7 +439,7 @@ void PM_FixupGravityVelocity(void)
 		ent_gravity = 1.0;
 
 	// Get the correct velocity for the end of the dt
-	pmove->velocity[2] -= (ent_gravity * pmove->movevars->gravity * pmove->frametime * 0.5);
+	pmove->velocity[2] -= (ent_gravity * pmove->movevars->gravity * pmove->frametime * 0.5f);
 
 	PM_CheckVelocity();
 }
@@ -584,7 +572,7 @@ int PM_FlyMove(void)
 						original_velocity,
 						planes[i],
 						new_velocity,
-						1.0 + pmove->movevars->bounce * (1 - pmove->friction));
+						1.0f + pmove->movevars->bounce * (1 - pmove->friction));
 			}
 
 			VectorCopy(new_velocity, pmove->velocity);
@@ -890,7 +878,7 @@ void PM_Friction(void)
 	vel = pmove->velocity;
 
 	// Calculate speed
-	speed = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
+	speed = sqrtf(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
 
 	// If too slow, return
 	if ( speed < 0.1f )
@@ -1027,7 +1015,7 @@ void PM_WaterMove(void)
 		wishspeed = pmove->maxspeed;
 	}
 	// Slow us down a bit.
-	wishspeed *= 0.8;
+	wishspeed *= 0.8f;
 
 	VectorAdd(pmove->velocity, pmove->basevelocity, pmove->velocity);
 
@@ -1154,8 +1142,8 @@ qboolean PM_CheckWater(void)
 	float heightover2;
 
 	// Pick a spot just above the players feet.
-	point[0] = pmove->origin[0] + (pmove->player_mins[pmove->usehull][0] + pmove->player_maxs[pmove->usehull][0]) * 0.5;
-	point[1] = pmove->origin[1] + (pmove->player_mins[pmove->usehull][1] + pmove->player_maxs[pmove->usehull][1]) * 0.5;
+	point[0] = pmove->origin[0] + (pmove->player_mins[pmove->usehull][0] + pmove->player_maxs[pmove->usehull][0]) * 0.5f;
+	point[1] = pmove->origin[1] + (pmove->player_mins[pmove->usehull][1] + pmove->player_maxs[pmove->usehull][1]) * 0.5f;
 	point[2] = pmove->origin[2] + pmove->player_mins[pmove->usehull][2] + 1;
 
 	// Assume that we are not in water at all.
@@ -1174,7 +1162,7 @@ qboolean PM_CheckWater(void)
 		pmove->waterlevel = 1;
 
 		height = (pmove->player_mins[pmove->usehull][2] + pmove->player_maxs[pmove->usehull][2]);
-		heightover2 = height * 0.5;
+		heightover2 = height * 0.5f;
 
 		// Now check a point that is at the player hull midpoint.
 		point[2] = pmove->origin[2] + heightover2;
@@ -1201,7 +1189,7 @@ qboolean PM_CheckWater(void)
 
 			VectorMA(
 				pmove->basevelocity,
-				50.0 * pmove->waterlevel,
+				50.0f * pmove->waterlevel,
 				current_table[CONTENTS_CURRENT_0 - truecont],
 				pmove->basevelocity);
 		}
@@ -1311,7 +1299,6 @@ int PM_CheckStuck(void)
 	int hitent;
 	int idx;
 	float fTime;
-	int i;
 	pmtrace_t traceresult;
 
 	static float rgStuckCheckTime[MAX_CLIENTS][2];  // Last time we did a full
@@ -1338,7 +1325,7 @@ int PM_CheckStuck(void)
 			PM_ResetStuckOffsets(pmove->player_index, pmove->server);
 			do
 			{
-				i = PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
+				PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
 
 				VectorAdd(base, offset, test);
 				if ( pmove->PM_TestPlayerPosition(test, &traceresult) == -1 )
@@ -1356,11 +1343,15 @@ int PM_CheckStuck(void)
 
 	// Only an issue on the client.
 	if ( pmove->server )
+	{
 		idx = 0;
+	}
 	else
+	{
 		idx = 1;
+	}
 
-	fTime = pmove->Sys_FloatTime();
+	fTime = (float)pmove->Sys_FloatTime();
 	// Too soon?
 	if ( rgStuckCheckTime[pmove->player_index][idx] >= (fTime - PM_CHECKSTUCK_MINTIME) )
 	{
@@ -1370,7 +1361,7 @@ int PM_CheckStuck(void)
 
 	pmove->PM_StuckTouch(hitent, &traceresult);
 
-	i = PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
+	PM_GetRandomStuckOffsets(pmove->player_index, pmove->server, offset);
 
 	VectorAdd(base, offset, test);
 	if ( (hitent = pmove->PM_TestPlayerPosition(test, NULL)) == -1 )
@@ -1462,7 +1453,7 @@ void PM_SpectatorMove(void)
 		{
 			drop = 0;
 
-			friction = pmove->movevars->friction * 1.5;  // extra friction
+			friction = pmove->movevars->friction * 1.5f;  // extra friction
 			control = speed < pmove->movevars->stopspeed ? pmove->movevars->stopspeed : speed;
 			drop += control * friction * pmove->frametime;
 
@@ -1679,7 +1670,7 @@ void PM_Duck(void)
 				pmove->bInDuck = true;
 			}
 
-			time = MAX_OF(0.0, (1.0 - (float)pmove->flDuckTime / 1000.0));
+			time = MAX_OF(0.0f, (1.0f - (float)pmove->flDuckTime / 1000.0f));
 
 			if ( pmove->bInDuck )
 			{
@@ -1993,9 +1984,9 @@ void PM_Physics_Toss(void)
 	}
 
 	if ( pmove->movetype == MOVETYPE_BOUNCE )
-		backoff = 2.0 - pmove->friction;
+		backoff = 2.0f - pmove->friction;
 	else if ( pmove->movetype == MOVETYPE_BOUNCEMISSILE )
-		backoff = 2.0;
+		backoff = 2.0f;
 	else
 		backoff = 1;
 
@@ -2027,7 +2018,7 @@ void PM_Physics_Toss(void)
 		}
 		else
 		{
-			VectorScale(pmove->velocity, (1.0 - trace.fraction) * pmove->frametime * 0.9, move);
+			VectorScale(pmove->velocity, (1.0f - trace.fraction) * pmove->frametime * 0.9f, move);
 			trace = PM_PushEntity(move);
 		}
 		VectorSubtract(pmove->velocity, base, pmove->velocity)
@@ -2099,7 +2090,7 @@ void PM_PreventMegaBunnyJumping(void)
 	if ( spd <= maxscaledspeed )
 		return;
 
-	fraction = (maxscaledspeed / spd) * 0.65;  // Returns the modifier for the velocity
+	fraction = (maxscaledspeed / spd) * 0.65f;  // Returns the modifier for the velocity
 
 	VectorScale(pmove->velocity, fraction, pmove->velocity);  // Crop it down!.
 }
@@ -2217,19 +2208,19 @@ void PM_Jump(void)
 
 			for ( i = 0; i < 2; i++ )
 			{
-				pmove->velocity[i] = pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6;
+				pmove->velocity[i] = pmove->forward[i] * PLAYER_LONGJUMP_SPEED * 1.6f;
 			}
 
-			pmove->velocity[2] = sqrt(2 * 800 * 56.0);
+			pmove->velocity[2] = sqrtf(2 * 800 * 56.0f);
 		}
 		else
 		{
-			pmove->velocity[2] = sqrt(2 * 800 * 45.0);
+			pmove->velocity[2] = sqrtf(2 * 800 * 45.0f);
 		}
 	}
 	else
 	{
-		pmove->velocity[2] = sqrt(2 * 800 * 45.0);
+		pmove->velocity[2] = sqrtf(2 * 800 * 45.0f);
 	}
 
 	// Decay it for simulation
@@ -2320,18 +2311,18 @@ void PM_CheckFalling(void)
 		}
 		else if ( pmove->flFallVelocity > PLAYER_MAX_SAFE_FALL_SPEED )
 		{
-			fvol = 1.0;
+			fvol = 1.0f;
 		}
 		else if ( pmove->flFallVelocity > PLAYER_MAX_SAFE_FALL_SPEED / 2 )
 		{
-			fvol = 0.85;
+			fvol = 0.85f;
 		}
 		else if ( pmove->flFallVelocity < PLAYER_MIN_BOUNCE_SPEED )
 		{
 			fvol = 0;
 		}
 
-		if ( fvol > 0.0 )
+		if ( fvol > 0.0f )
 		{
 			int stepSoundId = 0;
 
@@ -2345,7 +2336,7 @@ void PM_CheckFalling(void)
 			PM_PlayStepSound(stepSoundId, fvol);
 
 			// Knock the screen around a little bit, temporary effect
-			pmove->punchangle[2] = pmove->flFallVelocity * 0.013;  // punch z axis
+			pmove->punchangle[2] = pmove->flFallVelocity * 0.013f;  // punch z axis
 
 			if ( pmove->punchangle[0] > 8 )
 			{
@@ -2393,9 +2384,9 @@ float PM_CalcRoll(vec3_t angles, vec3_t velocity, float rollangle, float rollspe
 
 	side = DotProduct(velocity, right);
 
-	sign = side < 0 ? -1 : 1;
+	sign = side < 0 ? -1.0f : 1.0f;
 
-	side = fabs(side);
+	side = fabsf(side);
 
 	value = rollangle;
 
@@ -2422,8 +2413,8 @@ void PM_DropPunchAngle(vec3_t punchangle)
 	float len;
 
 	len = VectorNormalize(punchangle);
-	len -= (10.0 + len * 0.5) * pmove->frametime;
-	len = MAX_OF(len, 0.0);
+	len -= (10.0f + len * 0.5f) * pmove->frametime;
+	len = MAX_OF(len, 0.0f);
 	VectorScale(punchangle, len, punchangle);
 }
 
@@ -2441,7 +2432,7 @@ void PM_CheckParamters(void)
 
 	spd = (pmove->cmd.forwardmove * pmove->cmd.forwardmove) + (pmove->cmd.sidemove * pmove->cmd.sidemove) +
 		(pmove->cmd.upmove * pmove->cmd.upmove);
-	spd = sqrt(spd);
+	spd = sqrtf(spd);
 
 	maxspeed = pmove->clientmaxspeed;  // atof( pmove->PM_Info_ValueForKey( pmove->physinfo, "maxspd" ) );
 	if ( maxspeed != 0.0 )
@@ -2548,7 +2539,7 @@ void PM_PlayerMove(qboolean server)
 	pmove->numtouch = 0;
 
 	// # of msec to apply movement
-	pmove->frametime = pmove->cmd.msec * 0.001;
+	pmove->frametime = pmove->cmd.msec * 0.001f;
 
 	PM_ReduceTimers();
 
@@ -2619,7 +2610,7 @@ void PM_PlayerMove(qboolean server)
 	// Slow down, I'm pulling it! (a box maybe) but only when I'm standing on ground
 	if ( (pmove->onground != -1) && (pmove->cmd.buttons & IN_USE) )
 	{
-		VectorScale(pmove->velocity, 0.3, pmove->velocity);
+		VectorScale(pmove->velocity, 0.3f, pmove->velocity);
 	}
 
 	// Handle movement

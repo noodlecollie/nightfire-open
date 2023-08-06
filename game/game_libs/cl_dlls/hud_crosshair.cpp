@@ -22,7 +22,7 @@ namespace
 
 	inline constexpr uint8_t PointOffset(CrosshairBar bar)
 	{
-		return 4 * bar;
+		return static_cast<uint8_t>(4 * bar);
 	}
 }  // namespace
 
@@ -58,7 +58,7 @@ void CHudCrosshair::Reset()
 {
 }
 
-int CHudCrosshair::Draw(float flTime)
+int CHudCrosshair::Draw(float)
 {
 	if ( gHUD.m_iHideHUDDisplay & (HIDEHUD_WEAPONS | HIDEHUD_ALL) || !m_CrosshairCvar )
 	{
@@ -206,31 +206,31 @@ void CHudCrosshair::InitialiseGeometry()
 
 	// Top
 	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y - 1, 0),
-		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y - 1, 0),
-		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y - 2, 0),
-		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y - 2, 0));
+		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 1), 0),
+		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 1), 0),
+		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 2), 0),
+		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 2), 0));
 
 	// Bottom
 	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y + 1, 0),
-		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y + 1, 0),
-		Vector(screenCentre.x - BAR_HALF_WIDTH, screenCentre.y + 2, 0),
-		Vector(screenCentre.x + BAR_HALF_WIDTH, screenCentre.y + 2, 0));
+		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 1), 0),
+		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 1), 0),
+		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 2), 0),
+		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 2), 0));
 
 	// Left
 	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(screenCentre.x - 1, screenCentre.y + BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x - 1, screenCentre.y - BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x - 2, screenCentre.y - BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x - 2, screenCentre.y + BAR_HALF_WIDTH, 0));
+		Vector(static_cast<float>(screenCentre.x - 1), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0),
+		Vector(static_cast<float>(screenCentre.x - 1), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0),
+		Vector(static_cast<float>(screenCentre.x - 2), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0),
+		Vector(static_cast<float>(screenCentre.x - 2), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0));
 
 	// Right
 	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(screenCentre.x + 1, screenCentre.y - BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x + 1, screenCentre.y + BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x + 2, screenCentre.y + BAR_HALF_WIDTH, 0),
-		Vector(screenCentre.x + 2, screenCentre.y - BAR_HALF_WIDTH, 0));
+		Vector(static_cast<float>(screenCentre.x + 1), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0),
+		Vector(static_cast<float>(screenCentre.x + 1), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0),
+		Vector(static_cast<float>(screenCentre.x + 2), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0),
+		Vector(static_cast<float>(screenCentre.x + 2), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0));
 }
 
 void CHudCrosshair::UpdateGeometry()
@@ -253,37 +253,37 @@ void CHudCrosshair::UpdateGeometry()
 		{
 			case TopBar:
 			{
-				m_CrosshairGeometry->GetPoint(base + 0).y = screenCentre.y - innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 1).y = screenCentre.y - innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 2).y = screenCentre.y - outerDisp;
-				m_CrosshairGeometry->GetPoint(base + 3).y = screenCentre.y - outerDisp;
+				m_CrosshairGeometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y - innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y - innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y - outerDisp);
+				m_CrosshairGeometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y - outerDisp);
 				break;
 			}
 
 			case BottomBar:
 			{
-				m_CrosshairGeometry->GetPoint(base + 0).y = screenCentre.y + innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 1).y = screenCentre.y + innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 2).y = screenCentre.y + outerDisp;
-				m_CrosshairGeometry->GetPoint(base + 3).y = screenCentre.y + outerDisp;
+				m_CrosshairGeometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y + innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y + innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y + outerDisp);
+				m_CrosshairGeometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y + outerDisp);
 				break;
 			}
 
 			case LeftBar:
 			{
-				m_CrosshairGeometry->GetPoint(base + 0).x = screenCentre.x - innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 1).x = screenCentre.x - innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 2).x = screenCentre.x - outerDisp;
-				m_CrosshairGeometry->GetPoint(base + 3).x = screenCentre.x - outerDisp;
+				m_CrosshairGeometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x - innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x - innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x - outerDisp);
+				m_CrosshairGeometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x - outerDisp);
 				break;
 			}
 
 			case RightBar:
 			{
-				m_CrosshairGeometry->GetPoint(base + 0).x = screenCentre.x + innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 1).x = screenCentre.x + innerDisp;
-				m_CrosshairGeometry->GetPoint(base + 2).x = screenCentre.x + outerDisp;
-				m_CrosshairGeometry->GetPoint(base + 3).x = screenCentre.x + outerDisp;
+				m_CrosshairGeometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x + innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x + innerDisp);
+				m_CrosshairGeometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x + outerDisp);
+				m_CrosshairGeometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x + outerDisp);
 				break;
 			}
 		}

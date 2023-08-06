@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "xash3d_mathlib.h"
 #include "net_encode.h"
 #include "protocol.h"
+#include "net_byteswap.h"
 
 #define MAKE_FRAGID(id, count) (((id & 0xffff) << 16) | (count & 0xffff))
 #define FRAG_GETID(fragid) ((fragid >> 16) & 0xffff)
@@ -219,9 +220,9 @@ void NetSplit_SendLong(netsrc_t sock, size_t length, void* data, netadr_t to, un
 
 	packet.signature = LittleLong(0xFFFFFFFE);
 	packet.id = LittleLong(id);
-	packet.length = LittleLong(length);
+	packet.length = (uint32_t)LittleLong(length);
 	packet.part = LittleLong(part);
-	packet.count = (length - 1) / part + 1;
+	packet.count = (byte)((length - 1) / part + 1);
 
 	// Con_Reportf( S_NOTE "NetSplit_SendLong: packet to %s, count %d, length %d\n", NET_AdrToString( to ),
 	// (int)packet.count, (int)packet.length );
@@ -231,7 +232,9 @@ void NetSplit_SendLong(netsrc_t sock, size_t length, void* data, netadr_t to, un
 		unsigned int size = part;
 
 		if ( size > length )
-			size = length;
+		{
+			size = (unsigned int)length;
+		}
 
 		length -= size;
 
@@ -543,7 +546,7 @@ void Netchan_OutOfBandPrint(int net_socket, netadr_t adr, const char* format, ..
 	Q_vsnprintf(string, sizeof(string) - 1, format, argptr);
 	va_end(argptr);
 
-	Netchan_OutOfBand(net_socket, adr, Q_strlen(string), (byte*)string);
+	Netchan_OutOfBand(net_socket, adr, (int)strlen(string), (byte*)string);
 }
 
 /*
@@ -618,7 +621,7 @@ void Netchan_UpdateFlow(netchan_t* chan)
 			flowstats_t* pprev = &pflow->stats[(start - i) & MASK_LATENT];
 			flowstats_t* pstat = &pflow->stats[(start - i - 1) & MASK_LATENT];
 
-			faccumulatedtime += (pprev->time - pstat->time);
+			faccumulatedtime += (float)(pprev->time - pstat->time);
 			bytes += pstat->size;
 		}
 
@@ -905,9 +908,12 @@ void Netchan_CreateFileFragmentsFromBuffer(netchan_t* chan, const char* filename
 		uint uCompressedSize = 0;
 		byte* pbOut = LZSS_Compress(pbuf, size, &uCompressedSize);
 
-		if ( pbOut && uCompressedSize > 0 && uCompressedSize < size )
+		if ( pbOut && uCompressedSize > 0 && uCompressedSize < (uint)size )
 		{
-			Con_DPrintf("Compressing filebuffer (%s -> %s)\n", Q_memprint(size), Q_memprint(uCompressedSize));
+			Con_DPrintf(
+				"Compressing filebuffer (%s -> %s)\n",
+				Q_memprint((float)size),
+				Q_memprint((float)uCompressedSize));
 			memcpy(pbuf, pbOut, uCompressedSize);
 			size = uCompressedSize;
 		}
@@ -1026,7 +1032,11 @@ int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 
 		if ( compressed )
 		{
-			Con_DPrintf("compressed file %s (%s -> %s)\n", filename, Q_memprint(filesize), Q_memprint(uCompressedSize));
+			Con_DPrintf(
+				"compressed file %s (%s -> %s)\n",
+				filename,
+				Q_memprint((float)filesize),
+				Q_memprint((float)uCompressedSize));
 			FS_WriteFile(compressedfilename, compressed, uCompressedSize);
 			filesize = uCompressedSize;
 			bCompressed = true;
@@ -1210,7 +1220,7 @@ qboolean Netchan_CopyFileFragments(netchan_t* chan, sizebuf_t* msg)
 
 	Q_strncpy(filename, MSG_ReadString(msg), sizeof(filename));
 
-	if ( !COM_CheckString(filename) )
+	if ( !COM_CheckStringEmpty(filename) )
 	{
 		Con_Printf(S_ERROR "file fragment received with no filename\nFlushing input queue\n");
 		Netchan_FlushIncoming(chan, FRAG_FILE_STREAM);
@@ -1324,6 +1334,9 @@ qboolean Netchan_Validate(
 	int i, buffer, offset;
 	int count, length;
 
+	(void)chan;
+	(void)sb;
+
 	for ( i = 0; i < MAX_STREAMS; i++ )
 	{
 		if ( !frag_message[i] )
@@ -1358,7 +1371,9 @@ Netchan_UpdateProgress
 */
 void Netchan_UpdateProgress(netchan_t* chan)
 {
-#if !XASH_DEDICATED
+#if XASH_DEDICATED
+	(void)chan;
+#else
 	fragbuf_t* p;
 	int i, c = 0;
 	int total = 0;
@@ -1512,7 +1527,7 @@ void Netchan_TransmitBits(netchan_t* chan, int length, byte* data)
 				maxsize = MAX_RELIABLE_PAYLOAD;
 
 			// if the reliable buffer has gotten too big, queue it at the end of everything and clear out buffer
-			if ( MSG_GetNumBytesWritten(&chan->message) + (((uint)length) >> 3) > maxsize )
+			if ( MSG_GetNumBytesWritten(&chan->message) + (((uint)length) >> 3) > (uint)maxsize )
 			{
 				Netchan_CreateFragments_(chan, &chan->message);
 				MSG_Clear(&chan->message);
@@ -1734,9 +1749,13 @@ void Netchan_TransmitBits(netchan_t* chan, int length, byte* data)
 	}
 
 	if ( SV_Active() && sv_lan.value && sv_lan_rate.value > 1000.0f )
+	{
 		fRate = 1.0f / sv_lan_rate.value;
+	}
 	else
-		fRate = 1.0f / chan->rate;
+	{
+		fRate = 1.0f / (float)chan->rate;
+	}
 
 	if ( chan->cleartime < host.realtime )
 		chan->cleartime = host.realtime;
@@ -1773,7 +1792,7 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 	int frag_offset[MAX_STREAMS] = {0, 0};
 	int frag_length[MAX_STREAMS] = {0, 0};
 	qboolean message_contains_fragments;
-	int i, qport, statId;
+	int i, statId;
 
 	if ( !CL_IsPlaybackDemo() && !NET_CompareAdr(net_from, chan->remote_address) )
 		return false;
@@ -1785,7 +1804,9 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 
 	// read the qport if we are a server
 	if ( chan->sock == NS_SERVER )
-		qport = MSG_ReadShort(msg);
+	{
+		MSG_ReadShort(msg);
+	}
 
 	reliable_message = sequence >> 31;
 	reliable_ack = sequence_ack >> 31;
@@ -1883,7 +1904,7 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 	{
 		for ( i = 0; i < MAX_STREAMS; i++ )
 		{
-			int j, inbufferid;
+			int j;
 			int intotalbuffers;
 			int oldpos, curbit;
 			int numbitstoremove;
@@ -1892,7 +1913,6 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 			if ( !frag_message[i] )
 				continue;
 
-			inbufferid = FRAG_GETID(fragid[i]);
 			intotalbuffers = FRAG_GETCOUNT(fragid[i]);
 
 			if ( fragid[i] != 0 )

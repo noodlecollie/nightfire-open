@@ -139,7 +139,7 @@ void PlayLockSounds(entvars_t* pev, locksound_t* pls, int flocked, int fbutton)
 			pls->iLockedSentence = SENTENCEG_PlaySequentialSz(
 				ENT(pev),
 				STRING(pls->sLockedSentence),
-				0.85,
+				0.85f,
 				ATTN_NORM,
 				0,
 				100,
@@ -182,7 +182,7 @@ void PlayLockSounds(entvars_t* pev, locksound_t* pls, int flocked, int fbutton)
 			pls->iUnlockedSentence = SENTENCEG_PlaySequentialSz(
 				ENT(pev),
 				STRING(pls->sUnlockedSentence),
-				0.85,
+				0.85f,
 				ATTN_NORM,
 				0,
 				100,
@@ -209,42 +209,42 @@ void CBaseDoor::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "movesnd") )
 	{
-		m_bMoveSnd = atoi(pkvd->szValue);
+		m_bMoveSnd = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "stopsnd") )
 	{
-		m_bStopSnd = atoi(pkvd->szValue);
+		m_bStopSnd = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "healthvalue") )
 	{
-		m_bHealthValue = atoi(pkvd->szValue);
+		m_bHealthValue = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "locked_sound") )
 	{
-		m_bLockedSound = atoi(pkvd->szValue);
+		m_bLockedSound = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "locked_sentence") )
 	{
-		m_bLockedSentence = atoi(pkvd->szValue);
+		m_bLockedSentence = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "unlocked_sound") )
 	{
-		m_bUnlockedSound = atoi(pkvd->szValue);
+		m_bUnlockedSound = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "unlocked_sentence") )
 	{
-		m_bUnlockedSentence = atoi(pkvd->szValue);
+		m_bUnlockedSentence = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "WaveHeight") )
 	{
-		pev->scale = atof(pkvd->szValue) * (1.0 / 8.0);
+		pev->scale = static_cast<float>(atof(pkvd->szValue) * (1.0 / 8.0));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -314,8 +314,8 @@ void CBaseDoor::Spawn()
 	// Subtract 2 from size because the engine expands bboxes by 1 in all directions making the size too big
 	m_vecPosition2 = m_vecPosition1 +
 		(pev->movedir *
-		 (fabs(pev->movedir.x * (pev->size.x - 2)) + fabs(pev->movedir.y * (pev->size.y - 2)) +
-		  fabs(pev->movedir.z * (pev->size.z - 2)) - m_flLip));
+		 (fabsf(pev->movedir.x * (pev->size.x - 2)) + fabsf(pev->movedir.y * (pev->size.y - 2)) +
+		  fabsf(pev->movedir.z * (pev->size.z - 2)) - m_flLip));
 	ASSERTSZ(m_vecPosition1 != m_vecPosition2, "door start/end positions are equal");
 	if ( FBitSet(pev->spawnflags, SF_DOOR_START_OPEN) )
 	{
@@ -565,7 +565,7 @@ void CBaseDoor::DoorTouch(CBaseEntity* pOther)
 //
 // Used by SUB_UseTargets, when a door is the target of a button.
 //
-void CBaseDoor::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CBaseDoor::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 {
 	m_hActivator = pActivator;
 	// if not ready to be used, ignore "use" command.
@@ -988,8 +988,8 @@ void CMomentaryDoor::Spawn(void)
 	// Subtract 2 from size because the engine expands bboxes by 1 in all directions making the size too big
 	m_vecPosition2 = m_vecPosition1 +
 		(pev->movedir *
-		 (fabs(pev->movedir.x * (pev->size.x - 2)) + fabs(pev->movedir.y * (pev->size.y - 2)) +
-		  fabs(pev->movedir.z * (pev->size.z - 2)) - m_flLip));
+		 (fabsf(pev->movedir.x * (pev->size.x - 2)) + fabsf(pev->movedir.y * (pev->size.y - 2)) +
+		  fabsf(pev->movedir.z * (pev->size.z - 2)) - m_flLip));
 	ASSERTSZ(m_vecPosition1 != m_vecPosition2, "door start/end positions are equal");
 
 	if ( FBitSet(pev->spawnflags, SF_DOOR_START_OPEN) )
@@ -1090,12 +1090,12 @@ void CMomentaryDoor::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "movesnd") )
 	{
-		m_bMoveSnd = atoi(pkvd->szValue);
+		m_bMoveSnd = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "stopsnd") )
 	{
-		m_bStopSnd = atof(pkvd->szValue);
+		m_bStopSnd = static_cast<BYTE>(atoi(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "healthvalue") )
@@ -1107,7 +1107,7 @@ void CMomentaryDoor::KeyValue(KeyValueData* pkvd)
 		CBaseToggle::KeyValue(pkvd);
 }
 
-void CMomentaryDoor::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CMomentaryDoor::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( useType != USE_SET )  // Momentary buttons will pass down a float in here
 		return;
@@ -1121,7 +1121,7 @@ void CMomentaryDoor::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE
 
 	Vector delta = move - pev->origin;
 	// float speed = delta.Length() * 10;
-	float speed = delta.Length() / 0.1;  // move there in 0.1 sec
+	float speed = delta.Length() / 0.1f;  // move there in 0.1 sec
 
 	if ( speed != 0 )
 	{

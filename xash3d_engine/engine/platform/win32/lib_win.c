@@ -45,11 +45,14 @@ static void FsGetString(file_t* f, char* str)
 {
 	char ch;
 
-	while ( (ch = FS_Getc(f)) != EOF )
+	for ( ch = (char)FS_Getc(f); ch != EOF; ch = (char)FS_Getc(f) )
 	{
 		*str++ = ch;
+
 		if ( !ch )
+		{
 			break;
+		}
 	}
 }
 
@@ -83,7 +86,7 @@ qboolean LibraryLoadSymbols(dll_user_t* hInst)
 	IMAGE_DOS_HEADER dos_header;
 	LONG nt_signature;
 	IMAGE_FILE_HEADER pe_header;
-	IMAGE_SECTION_HEADER section_header;
+	IMAGE_SECTION_HEADER section_header = {0};
 	qboolean rdata_found;
 	IMAGE_OPTIONAL_HEADER optional_header;
 	long rdata_delta = 0;
@@ -411,7 +414,6 @@ qboolean COM_CheckLibraryDirectDependency(const char* name, const char* depname,
 	PIMAGE_IMPORT_DESCRIPTOR importDesc;
 	byte* data;
 	dll_user_t* hInst;
-	qboolean ret = FALSE;
 
 	hInst = FS_FindLibrary(name, directpath);
 	if ( !hInst )

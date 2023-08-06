@@ -32,7 +32,13 @@ draw line from particles
 */
 void PM_ParticleLine(const vec3_t start, const vec3_t end, int pcolor, float life, float zvel)
 {
-#if !XASH_DEDICATED
+#if XASH_DEDICATED
+	(void)start;
+	(void)end;
+	(void)pcolor;
+	(void)life;
+	(void)zvel;
+#else
 	float len, curdist;
 	vec3_t diff, pos;
 
@@ -44,12 +50,13 @@ void PM_ParticleLine(const vec3_t start, const vec3_t end, int pcolor, float lif
 	while ( curdist <= len )
 	{
 		VectorMA(start, curdist, diff, pos);
-		CL_Particle(pos, pcolor, life, 0, zvel);
+		CL_Particle(pos, pcolor, life, 0, (int)zvel);
 		curdist += 2.0f;
 	}
 #endif  // XASH_DEDICATED
 }
 
+#if !XASH_DEDICATED
 /*
 ================
 PM_DrawRectangle
@@ -63,6 +70,7 @@ static void PM_DrawRectangle(const vec3_t tl, const vec3_t bl, const vec3_t tr, 
 	PM_ParticleLine(br, tr, pcolor, life, 0);
 	PM_ParticleLine(tr, tl, pcolor, life, 0);
 }
+#endif // !XASH_DEDICATED
 
 /*
 ================
@@ -72,7 +80,13 @@ PM_DrawBBox
 */
 void PM_DrawBBox(const vec3_t mins, const vec3_t maxs, const vec3_t origin, int pcolor, float life)
 {
-#if !XASH_DEDICATED
+#if XASH_DEDICATED
+	(void)mins;
+	(void)maxs;
+	(void)origin;
+	(void)pcolor;
+	(void)life;
+#else
 	vec3_t p[8], tmp;
 	float gap = BOX_GAP;
 	int i;

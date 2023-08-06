@@ -44,23 +44,7 @@ typedef enum
 	DumpModelAllDataFlags = ~0
 } DumpModelDataFlag_t;
 
-static const char* DumpModelDataFlagStrings[] = {
-	"general",
-	"planes",
-	"nodes",
-	"leaves",
-	"vertices",
-	"edges",
-	"surfedges",
-	"marksurfaces",
-	"texinfos",
-	"surfaces",
-	"clipnodes",
-	"hulls",
-	"textures",
-	"entities",
-	"submodels",
-	"other"};
+const char* DumpModelDataFlagString(size_t index);
 
 // Not re-entrant!!
 void DumpModelData(const char* fileName, const model_t* model, unsigned int flags);

@@ -57,7 +57,7 @@ void InitInput(void);
 void EV_HookEvents(void);
 void IN_Commands(void);
 
-int __MsgFunc_Bhopcap(const char* pszName, int iSize, void* pbuf)
+int __MsgFunc_Bhopcap(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -137,14 +137,11 @@ the max size of the response_buffer, so you must zero it out if you choose not t
 ================================
 */
 int DLLEXPORT HUD_ConnectionlessPacket(
-	const struct netadr_s* net_from,
-	const char* args,
-	char* response_buffer,
+	const struct netadr_s*,
+	const char*,
+	char*,
 	int* response_buffer_size)
 {
-	// Parse stuff from args
-	int max_buffer_size = *response_buffer_size;
-
 	// Zero it out since we aren't going to respond.
 	// If we wanted to response, we'd write data into response_buffer
 	*response_buffer_size = 0;
@@ -382,7 +379,7 @@ Called by engine every frame that client .dll is loaded
 ==========================
 */
 
-void DLLEXPORT HUD_Frame(double time)
+void DLLEXPORT HUD_Frame(double)
 {
 #ifdef USE_VGUI_FOR_GOLDSOURCE_SUPPORT
 	if ( !gViewPort )
@@ -400,7 +397,7 @@ Called when a player starts or stops talking.
 ==========================
 */
 
-void DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking)
+void DLLEXPORT HUD_VoiceStatus(int, qboolean)
 {
 }
 

@@ -69,30 +69,26 @@ void CMenuBaseItem::VidInit()
 
 void CMenuBaseItem::Reload()
 {
-	;
 }
 
 void CMenuBaseItem::Draw()
 {
-	;
 }
 
 void CMenuBaseItem::Think()
 {
-	;
 }
 
-void CMenuBaseItem::Char(int key)
+void CMenuBaseItem::Char(int)
 {
-	;
 }
 
-bool CMenuBaseItem::KeyUp(int key)
+bool CMenuBaseItem::KeyUp(int)
 {
 	return false;
 }
 
-bool CMenuBaseItem::KeyDown(int key)
+bool CMenuBaseItem::KeyDown(int)
 {
 	return false;
 }
@@ -164,24 +160,24 @@ void CMenuBaseItem::CalcPosition()
 
 	if ( m_scPos.x < 0 )
 	{
-		int pos;
+		int localPos;
 		if ( m_pParent && !IsAbsolutePositioned() )
-			pos = m_pParent->GetRenderSize().w;
+			localPos = m_pParent->GetRenderSize().w;
 		else
-			pos = ScreenWidth;
+			localPos = static_cast<int>(ScreenWidth);
 
-		m_scPos.x = pos + m_scPos.x;
+		m_scPos.x = localPos + m_scPos.x;
 	}
 
 	if ( m_scPos.y < 0 )
 	{
-		int pos;
+		int localPos;
 		if ( m_pParent && !IsAbsolutePositioned() )
-			pos = m_pParent->GetRenderSize().h;
+			localPos = m_pParent->GetRenderSize().h;
 		else
-			pos = ScreenHeight;
+			localPos = static_cast<int>(ScreenHeight);
 
-		m_scPos.y = pos + m_scPos.y;
+		m_scPos.y = localPos + m_scPos.y;
 	}
 
 	if ( !IsAbsolutePositioned() && m_pParent )
@@ -201,29 +197,29 @@ void CMenuBaseItem::CalcSizes()
 	else
 	{
 		m_scSize = size.Scale();
-		m_scChSize *= uiStatic.scaleY;
+		m_scChSize = static_cast<int>(m_scChSize * uiStatic.scaleY);
 	}
 
 	if ( m_scSize.w < 0 )
 	{
-		int size;
+		int localSize;
 		if ( m_pParent && !IsAbsolutePositioned() )
-			size = m_pParent->GetRenderSize().w;
+			localSize = m_pParent->GetRenderSize().w;
 		else
-			size = ScreenWidth;
+			localSize = static_cast<int>(ScreenWidth);
 
-		m_scSize.w = size + m_scSize.w - m_scPos.x;
+		m_scSize.w = localSize + m_scSize.w - m_scPos.x;
 	}
 
 	if ( m_scSize.h < 0 )
 	{
-		int size;
+		int localSize;
 		if ( m_pParent && !IsAbsolutePositioned() )
-			size = m_pParent->GetRenderSize().h;
+			localSize = m_pParent->GetRenderSize().h;
 		else
-			size = ScreenHeight;
+			localSize = static_cast<int>(ScreenHeight);
 
-		m_scSize.h = size + m_scSize.h - m_scPos.y;
+		m_scSize.h = localSize + m_scSize.h - m_scPos.y;
 	}
 }
 
@@ -247,7 +243,7 @@ bool CMenuBaseItem::KeyValueData(const char* key, const char* data)
 			if ( coord < 0 )
 				coord += 640;
 		}
-		pos.x = coord * REMAP_RATIO;
+		pos.x = static_cast<int>(coord * REMAP_RATIO);
 	}
 	else if ( !strcmp(key, "ypos") )
 	{
@@ -264,15 +260,15 @@ bool CMenuBaseItem::KeyValueData(const char* key, const char* data)
 			if ( coord < 0 )
 				coord += 480;
 		}
-		pos.y = coord * REMAP_RATIO;
+		pos.y = static_cast<int>(coord * REMAP_RATIO);
 	}
 	else if ( !strcmp(key, "wide") )
 	{
-		size.w = atoi(data) * REMAP_RATIO;
+		size.w = static_cast<int>(atoi(data) * REMAP_RATIO);
 	}
 	else if ( !strcmp(key, "tall") )
 	{
-		size.h = atoi(data) * REMAP_RATIO;
+		size.h = static_cast<int>(atoi(data) * REMAP_RATIO);
 	}
 	else if ( !strcmp(key, "visible") )
 	{

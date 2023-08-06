@@ -19,7 +19,7 @@ size_t CSpawnPointList::SpawnPointCount() const
 
 CBaseEntity* CSpawnPointList::SpawnPointAtIndex(uint32_t index) const
 {
-	return index < m_SpawnPoints.Count() ? (CBaseEntity*)m_SpawnPoints[index] : nullptr;
+	return index < static_cast<uint32_t>(m_SpawnPoints.Count()) ? (CBaseEntity*)m_SpawnPoints[index] : nullptr;
 }
 
 void CSpawnPointList::Initialise(const CUtlString& className)

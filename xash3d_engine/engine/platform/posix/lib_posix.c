@@ -74,6 +74,10 @@ int dladdr(const void* addr, Dl_info* info)
 qboolean COM_CheckLibraryDirectDependency(const char* name, const char* depname, qboolean directpath)
 {
 	// TODO: implement
+	(void)name;
+	(void)depname;
+	(void)directpath;
+
 	return true;
 }
 
@@ -82,6 +86,8 @@ void* COM_LoadLibrary(const char* dllname, int build_ordinals_table, qboolean di
 	dll_user_t* hInst = NULL;
 	void* pHandle = NULL;
 	char buf[MAX_VA_STRING];
+
+	(void)build_ordinals_table;
 
 	COM_ResetLibraryError();
 
@@ -223,6 +229,8 @@ static int d_dladdr(void* sym, Dl_info* info)
 
 const char* COM_NameForFunction(void* hInstance, void* function)
 {
+	(void)hInstance;
+
 #ifdef XASH_DLL_LOADER
 	void* wm;
 	if ( host.enabledll && (wm = Loader_GetDllHandle(hInstance)) )

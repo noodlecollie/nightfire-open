@@ -119,11 +119,11 @@ bool CSCR_ParseSingleCvar(parserstate_t* ps, scrvardef_t* result)
 		case T_NUMBER:
 			// min
 			ps->buf = EngFuncs::COM_ParseFile(ps->buf, ps->token, sizeof(ps->token));
-			result->number.fMin = atof(ps->token);
+			result->number.fMin = static_cast<float>(atof(ps->token));
 
 			// max
 			ps->buf = EngFuncs::COM_ParseFile(ps->buf, ps->token, sizeof(ps->token));
-			result->number.fMax = atof(ps->token);
+			result->number.fMax = static_cast<float>(atof(ps->token));
 
 			if ( !CSCR_ExpectString(ps, "}", false, true) )
 				goto error;
@@ -155,7 +155,7 @@ bool CSCR_ParseSingleCvar(parserstate_t* ps, scrvardef_t* result)
 				entry->next = NULL;
 				entry->szName = new char[strlen(szName) + 1];
 				strcpy(entry->szName, szName);
-				entry->flValue = atof(szValue);
+				entry->flValue = static_cast<float>(atof(szValue));
 
 				if ( !result->list.pEntries )
 					result->list.pEntries = entry;
@@ -364,11 +364,11 @@ void CSCR_FreeList(scrvardef_t* list)
 
 			while ( i->list.pEntries )
 			{
-				scrvarlistentry_t* next = i->list.pEntries->next;
+				scrvarlistentry_t* next2 = i->list.pEntries->next;
 				delete[] i->list.pEntries->szName;
 				delete i->list.pEntries;
 
-				i->list.pEntries = next;
+				i->list.pEntries = next2;
 			}
 		}
 

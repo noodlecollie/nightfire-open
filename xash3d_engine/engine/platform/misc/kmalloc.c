@@ -60,7 +60,9 @@ static char* rcsid = "$NetBSD: malloc.c,v 1.8 1997/04/07 03:12:14 christos Exp $
 
 #ifndef _WIN32
 #include <unistd.h>
+#ifndef NULL
 #define NULL 0
+#endif
 #else
 
 #define u_char unsigned char
@@ -178,7 +180,7 @@ void* SWAP_Malloc(size_t nbytes)
 		}
 		bucket = 0;
 		amt = 8;
-		while ( pagesz > amt )
+		while ( (unsigned)pagesz > amt )
 		{
 			amt <<= 1;
 			bucket++;
@@ -190,7 +192,8 @@ void* SWAP_Malloc(size_t nbytes)
 	 * stored in hash buckets which satisfies request.
 	 * Account for space used per block for accounting.
 	 */
-	if ( nbytes <= (n = pagesz - sizeof(*op) - RSLOP) )
+	n = pagesz - sizeof(*op) - RSLOP;
+	if ( nbytes <= (size_t)n )
 	{
 #ifndef RCHECK
 		amt = 8; /* size of first bucket */
@@ -206,7 +209,7 @@ void* SWAP_Malloc(size_t nbytes)
 		amt = pagesz;
 		bucket = pagebucket;
 	}
-	while ( nbytes > amt + n )
+	while ( nbytes > (size_t)(amt + n) )
 	{
 		amt <<= 1;
 		if ( amt == 0 )
@@ -335,7 +338,6 @@ void SWAP_Free(void* cp)
 
 size_t SWAP_MallocUsableSize(void* cp)
 {
-	register long size;
 	register union overhead* op;
 
 	if ( cp == NULL )
@@ -413,7 +415,7 @@ void* SWAP_Realloc(void* cp, size_t nbytes)
 			i = NBUCKETS;
 	}
 	onb = 1 << (i + 3);
-	if ( onb < pagesz )
+	if ( onb < (u_long)pagesz )
 		onb -= sizeof(*op) + RSLOP;
 	else
 		onb += pagesz - sizeof(*op) - RSLOP;
@@ -428,7 +430,7 @@ void* SWAP_Realloc(void* cp, size_t nbytes)
 			else
 				i += pagesz - sizeof(*op) - RSLOP;
 		}
-		if ( nbytes <= onb && nbytes > i )
+		if ( nbytes <= onb && nbytes > (size_t)i )
 		{
 #ifdef RCHECK
 			op->ov_size = (nbytes + RSLOP - 1) & ~(RSLOP - 1);

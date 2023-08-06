@@ -102,7 +102,7 @@ public:
 	CDefCaselessStringLess()
 	{
 	}
-	CDefCaselessStringLess(int i)
+	CDefCaselessStringLess(int)
 	{
 	}
 	inline bool operator()(const PConstChar_t& lhs, const PConstChar_t& rhs) const
@@ -121,7 +121,7 @@ public:
 	CDefStringLess()
 	{
 	}
-	CDefStringLess(int i)
+	CDefStringLess(int)
 	{
 	}
 	inline bool operator()(const PConstChar_t& lhs, const PConstChar_t& rhs) const
@@ -257,19 +257,19 @@ template<class I>
 class CDefRBTreeBalanceListener
 {
 public:
-	void OnRotateLeft(I node, I rightNode)
+	void OnRotateLeft(I, I)
 	{
 	}
-	void OnRotateRight(I node, I leftNode)
+	void OnRotateRight(I, I)
 	{
 	}
-	void OnLinkToParent(I node)
+	void OnLinkToParent(I)
 	{
 	}
-	void OnPreUnlink(I node)
+	void OnPreUnlink(I)
 	{
 	}
-	void OnRelinkSuccessor(I node)
+	void OnRelinkSuccessor(I)
 	{
 	}
 };

@@ -9,7 +9,7 @@ static qboolean ProcessRows(
 	size_t outMaxSize,
 	size_t* outSize)
 {
-	int baseIndex;
+	size_t baseIndex;
 	size_t accumulatedSize = 0;
 	qboolean success = false;
 

@@ -104,7 +104,9 @@ static decal_t* R_DecalAlloc(decal_t* pdecal)
 	int limit = MAX_RENDER_DECALS;
 
 	if ( r_decals->value < limit )
-		limit = r_decals->value;
+	{
+		limit = (int)r_decals->value;
+	}
 
 	if ( !limit )
 		return NULL;
@@ -152,11 +154,17 @@ void R_DecalComputeBasis(msurface_t* surf, int flags, vec3_t textureSpaceBasis[3
 {
 	vec3_t surfaceNormal;
 
+	(void)flags;
+
 	// setup normal
 	if ( surf->flags & SURF_PLANEBACK )
+	{
 		VectorNegate(surf->plane->normal, surfaceNormal);
+	}
 	else
+	{
 		VectorCopy(surf->plane->normal, surfaceNormal);
+	}
 
 	VectorNormalize2(surfaceNormal, textureSpaceBasis[2]);
 #if 0
@@ -375,6 +383,8 @@ float* R_DoDecalSHClip(float* pInVerts, decal_t* pDecal, int nStartVerts, int* p
 	float* pOutVerts = g_DecalClipVerts[0];
 	int outCount;
 
+	(void)pDecal;
+
 	// clip the polygon to the decal texture space
 	outCount = SHClip(pInVerts, nStartVerts, g_DecalClipVerts2[0], LEFT_EDGE);
 	outCount = SHClip(g_DecalClipVerts2[0], outCount, g_DecalClipVerts[0], RIGHT_EDGE);
@@ -408,13 +418,11 @@ float* R_DecalVertsClip(decal_t* pDecal, msurface_t* surf, int texture, int* pVe
 static void R_DecalVertsLight(float* v, msurface_t* surf, int vertCount)
 {
 	float s, t;
-	mtexinfo_t* tex;
 	mextrasurf_t* info = surf->info;
 	float sample_size;
 	int j;
 
-	sample_size = gEngfuncs.Mod_SampleSizeForFace(surf);
-	tex = surf->texinfo;
+	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(surf);
 
 	for ( j = 0; j < vertCount; j++, v += VERTEXSIZE )
 	{
@@ -532,12 +540,18 @@ glpoly_t* R_DecalCreatePoly(decalinfo_t* decalinfo, decal_t* pdecal, msurface_t*
 	float* v;
 	int i;
 
+	(void)decalinfo;
+
 	if ( pdecal->polys )  // already created?
+	{
 		return pdecal->polys;
+	}
 
 	v = R_DecalSetupVerts(pdecal, surf, pdecal->texture, &lnumverts);
 	if ( !lnumverts )
+	{
 		return NULL;  // probably this never happens
+	}
 
 	// allocate glpoly
 	// REFTODO: com_studiocache pool!
@@ -606,7 +620,7 @@ static void R_DecalCreate(decalinfo_t* decalinfo, msurface_t* surf, float x, flo
 	if ( !pdecal )
 		return;  // r_decals == 0 ???
 
-	pdecal->flags = decalinfo->m_Flags;
+	pdecal->flags = (short)decalinfo->m_Flags;
 
 	VectorCopy(decalinfo->m_Position, pdecal->position);
 
@@ -615,8 +629,8 @@ static void R_DecalCreate(decalinfo_t* decalinfo, msurface_t* surf, float x, flo
 
 	// set scaling
 	pdecal->scale = decalinfo->m_scale;
-	pdecal->entityIndex = decalinfo->m_Entity;
-	pdecal->texture = decalinfo->m_iTexture;
+	pdecal->entityIndex = (short)decalinfo->m_Entity;
+	pdecal->texture = (short)decalinfo->m_iTexture;
 
 	// check to see if the decal actually intersects the surface
 	// if not, then remove the decal
@@ -679,11 +693,11 @@ void R_DecalSurface(msurface_t* surf, decalinfo_t* decalinfo)
 	// (decalWidth * decalBasis[0], decalHeight * decalBasis[1])
 	// in texture coordinates:
 
-	w = fabs(decalinfo->m_decalWidth * DotProduct(textureU, decalinfo->m_Basis[0])) +
-		fabs(decalinfo->m_decalHeight * DotProduct(textureU, decalinfo->m_Basis[1]));
+	w = fabsf(decalinfo->m_decalWidth * DotProduct(textureU, decalinfo->m_Basis[0])) +
+		fabsf(decalinfo->m_decalHeight * DotProduct(textureU, decalinfo->m_Basis[1]));
 
-	h = fabs(decalinfo->m_decalWidth * DotProduct(textureV, decalinfo->m_Basis[0])) +
-		fabs(decalinfo->m_decalHeight * DotProduct(textureV, decalinfo->m_Basis[1]));
+	h = fabsf(decalinfo->m_decalWidth * DotProduct(textureV, decalinfo->m_Basis[0])) +
+		fabsf(decalinfo->m_decalHeight * DotProduct(textureV, decalinfo->m_Basis[1]));
 
 	// move s,t to upper left corner
 	s -= (w * 0.5f);
@@ -860,8 +874,8 @@ void R_DecalShoot(int textureIndex, int entityIndex, int modelIndex, vec3_t pos,
 	decalInfo.m_scale = bound(MIN_DECAL_SCALE, scale, MAX_DECAL_SCALE);
 
 	// compute the decal dimensions in world space
-	decalInfo.m_decalWidth = width / decalInfo.m_scale;
-	decalInfo.m_decalHeight = height / decalInfo.m_scale;
+	decalInfo.m_decalWidth = (int)((float)width / decalInfo.m_scale);
+	decalInfo.m_decalHeight = (int)((float)height / decalInfo.m_scale);
 
 	R_DecalNode(model, &model->nodes[hull->firstclipnode], &decalInfo);
 }
@@ -1215,9 +1229,9 @@ int R_CreateDecalList(decallist_t* pList)
 				pdecals = pdecals->pnext;
 			}
 
-			pList[total].depth = depth;
-			pList[total].flags = decal->flags;
-			pList[total].scale = decal->scale;
+			pList[total].depth = (byte)depth;
+			pList[total].flags = (byte)decal->flags;
+			pList[total].scale = (byte)decal->scale;
 
 			R_DecalUnProject(decal, &pList[total]);
 			COM_FileBase(R_GetTexture(decal->texture)->name, pList[total].name);

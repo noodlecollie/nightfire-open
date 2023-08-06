@@ -57,7 +57,7 @@ void CPathCorner::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "wait") )
 	{
-		m_flWait = atof(pkvd->szValue);
+		m_flWait = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -73,7 +73,7 @@ void CPathCorner::Spawn()
 void CPathCorner::Touch( CBaseEntity *pOther )
 {
 	entvars_t *pevToucher = pOther->pev;
-		
+
 	if( FBitSet( pevToucher->flags, FL_MONSTER ) )
 	{
 		// monsters don't navigate path corners based on touch anymore
@@ -91,7 +91,7 @@ void CPathCorner::Touch( CBaseEntity *pOther )
 	{
 		return;		// fighting, not following a path
 	}
-	
+
 	// UNDONE: support non-zero flWait
 	/*
 	if( m_flWait != 0 )
@@ -143,7 +143,7 @@ void CPathTrack::KeyValue(KeyValueData* pkvd)
 		CPointEntity::KeyValue(pkvd);
 }
 
-void CPathTrack::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CPathTrack::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	int on;
 

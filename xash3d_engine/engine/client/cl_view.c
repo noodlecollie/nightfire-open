@@ -73,8 +73,8 @@ void V_CalcViewRect(void)
 		size = 1.0f;
 	}
 
-	clgame.viewport[2] = refState.width * size;
-	clgame.viewport[3] = refState.height * size;
+	clgame.viewport[2] = (int)(refState.width * size);
+	clgame.viewport[3] = (int)(refState.height * size);
 
 	if ( clgame.viewport[3] > refState.height - sb_lines )
 		clgame.viewport[3] = refState.height - sb_lines;
@@ -99,7 +99,7 @@ void V_SetupViewModel(void)
 	player_info_t* info = &cl.players[cl.playernum];
 
 	if ( !cl.local.weaponstarttime )
-		cl.local.weaponstarttime = cl.time;
+		cl.local.weaponstarttime = (float)cl.time;
 
 	// setup the viewent variables
 	view->curstate.colormap = (info->topcolor & 0xFFFF) | ((info->bottomcolor << 8) & 0xFFFF);
@@ -131,8 +131,8 @@ void V_SetRefParams(ref_params_t* fd)
 	VectorCopy(refState.vieworg, fd->vieworg);
 	VectorCopy(refState.viewangles, fd->viewangles);
 
-	fd->frametime = host.frametime;
-	fd->time = cl.time;
+	fd->frametime = (float)host.frametime;
+	fd->time = (float)cl.time;
 
 	fd->intermission = cl.intermission;
 	fd->paused = (cl.paused != 0);
@@ -201,8 +201,8 @@ void V_RefApplyOverview(ref_viewpass_t* rvp)
 	// NOTE: Xash3D may use 16:9 or 16:10 aspects
 	aspect = (float)refState.width / (float)refState.height;
 
-	size_x = fabs(8192.0f / ov->flZoom);
-	size_y = fabs(8192.0f / (ov->flZoom * aspect));
+	size_x = fabsf(8192.0f / ov->flZoom);
+	size_y = fabsf(8192.0f / (ov->flZoom * aspect));
 
 	// compute rectangle
 	ov->xLeft = -(size_x / 2);
@@ -253,12 +253,12 @@ static void InitialiseFOV(const float inFov, float* fov_x, float* fov_y)
 	*fov_x = bound(10.0f, inFov, 150.0f);  // this is a final fov value
 
 	// first we need to compute FOV and other things that needs for frustum properly work
-	*fov_y = V_CalcFov(fov_x, clgame.viewport[2], clgame.viewport[3]);
+	*fov_y = V_CalcFov(fov_x, (float)clgame.viewport[2], (float)clgame.viewport[3]);
 
 	// adjust FOV for widescreen
 	if ( refState.wideScreen && r_adjust_fov->value )
 	{
-		V_AdjustFov(fov_x, fov_y, clgame.viewport[2], clgame.viewport[3], false);
+		V_AdjustFov(fov_x, fov_y, (float)clgame.viewport[2], (float)clgame.viewport[3], false);
 	}
 }
 
@@ -493,7 +493,6 @@ V_PostRender
 */
 void V_PostRender(void)
 {
-	static double oldtime;
 	qboolean draw_2d = false;
 
 	ref.dllFuncs.R_AllowFog(false);
@@ -513,6 +512,8 @@ void V_PostRender(void)
 		case scrshot_snapshot:
 			draw_2d = true;
 			break;
+		default:
+			break;
 	}
 
 	if ( draw_2d )
@@ -527,7 +528,7 @@ void V_PostRender(void)
 		ref.dllFuncs.R_ShowTextures();
 		R_ShowTree();
 		Con_DrawConsole();
-		UI_UpdateMenu(host.realtime);
+		UI_UpdateMenu((float)host.realtime);
 		Con_DrawVersion();
 		Con_DrawDebug();  // must be last
 		Touch_Draw();

@@ -126,7 +126,7 @@ static void UI_InitAliasStrings(void)
 		{"Search for %s servers, configure character", IDS_MAIN_MULTIPLAYERHELP},
 	};
 
-	for ( int i = 0; i < V_ARRAYSIZE(aliasStrings); i++ )
+	for ( size_t i = 0; i < V_ARRAYSIZE(aliasStrings); i++ )
 	{
 		if ( MenuStrings[aliasStrings[i].idx][0] )  // check if not initialized by strings.lst
 			continue;
@@ -160,7 +160,7 @@ int UTFToCP1251(char* out, const char* instr, int len, int maxoutlen)
 		if ( instr - inbegin >= len )
 		{
 			*out = 0;
-			return out - outbegin;
+			return static_cast<int>(out - outbegin);
 		}
 
 		// Get character length
@@ -222,7 +222,7 @@ int UTFToCP1251(char* out, const char* instr, int len, int maxoutlen)
 			// cp1252 hackish translate
 			if ( uc > 0x7F && uc <= 0xFF )
 			{
-				*out++ = uc;
+				*out++ = static_cast<char>(uc);
 				instr++;
 				continue;
 			}
@@ -230,13 +230,13 @@ int UTFToCP1251(char* out, const char* instr, int len, int maxoutlen)
 			// cp1251
 			if ( uc >= 0x0410 && uc <= 0x042F )  // Cyrillic Capital Letters
 			{
-				*out++ = uc - 0x410 + 0xC0;
+				*out++ = static_cast<char>(uc - 0x410 + 0xC0);
 				instr++;
 				continue;
 			}
 			else if ( uc >= 0x0430 && uc <= 0x044F )  // Cyrillic Small Letters
 			{
-				*out++ = uc - 0x430 + 0xE0;
+				*out++ = static_cast<char>(uc - 0x430 + 0xE0);
 				instr++;
 				continue;
 			}
@@ -247,21 +247,18 @@ int UTFToCP1251(char* out, const char* instr, int len, int maxoutlen)
 				{
 					if ( table_cp1251[i] == uc )
 					{
-						*out++ = i + 0x80;
+						*out++ = static_cast<char>(i + 0x80);
 						instr++;
 						break;
 					}
 				}
 				continue;
 			}
-
-			*out++ = *instr++;
-			continue;
 		}
 		instr++;
 	}
 	*out = 0;
-	return out - outbegin;
+	return static_cast<int>(out - outbegin);
 }
 
 static void Localize_AddToDictionary(const char* name, const char* lang)
@@ -369,7 +366,8 @@ static void Localize_AddToDictionary(const char* name, const char* lang)
 		goto error;
 	}
 
-	while ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) )
+	for ( pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token)); pfile;
+		  pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token)) )
 	{
 		if ( !strcmp(token, "}") )
 			break;

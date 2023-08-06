@@ -74,12 +74,12 @@ void CCineMonster::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "m_flRepeat") )
 	{
-		m_flRepeat = atof(pkvd->szValue);
+		m_flRepeat = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "m_flRadius") )
 	{
-		m_flRadius = atof(pkvd->szValue);
+		m_flRadius = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "m_iFinishSchedule") )
@@ -134,10 +134,10 @@ void CCineMonster::Spawn(void)
 	if ( FStringNull(pev->targetname) || !FStringNull(m_iszIdle) )
 	{
 		SetThink(&CCineMonster::CineThink);
-		pev->nextthink = gpGlobals->time + 1.0;
+		pev->nextthink = gpGlobals->time + 1.0f;
 		// Wait to be used?
 		if ( pev->targetname )
-			m_startTime = gpGlobals->time + 1E6;
+			m_startTime = gpGlobals->time + 1000000.0f;
 	}
 	if ( pev->spawnflags & SF_SCRIPT_NOINTERRUPT )
 		m_interruptable = FALSE;
@@ -168,7 +168,7 @@ BOOL CCineAI::FCanOverrideState(void)
 //
 // CineStart
 //
-void CCineMonster::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCineMonster::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	// do I already know who I should use
 	CBaseEntity* pEntity = m_hTargetEnt;
@@ -183,7 +183,7 @@ void CCineMonster::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE u
 		if ( pTarget->m_scriptState == SCRIPT_PLAYING )
 			return;
 
-		m_startTime = gpGlobals->time + 0.05;
+		m_startTime = gpGlobals->time + 0.05f;
 	}
 	else
 	{
@@ -194,11 +194,11 @@ void CCineMonster::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE u
 }
 
 // This doesn't really make sense since only MOVETYPE_PUSH get 'Blocked' events
-void CCineMonster::Blocked(CBaseEntity* pOther)
+void CCineMonster::Blocked(CBaseEntity*)
 {
 }
 
-void CCineMonster::Touch(CBaseEntity* pOther)
+void CCineMonster::Touch(CBaseEntity*)
 {
 	/*
 		ALERT( at_aiconsole, "Cine Touch\n" );
@@ -351,7 +351,7 @@ void CCineMonster::PossessEntity(void)
 				pTarget->pev->effects |= EF_NOINTERP;
 				pTarget->pev->angles.y = pev->angles.y;
 				pTarget->m_scriptState = SCRIPT_WAIT;
-				m_startTime = gpGlobals->time + 1E6;
+				m_startTime = gpGlobals->time + 1000000.0f;
 				// UNDONE: Add a flag to do this so people can fixup physics after teleporting monsters
 				//			pTarget->pev->flags &= ~FL_ONGROUND;
 				break;
@@ -420,7 +420,7 @@ void CCineAI::PossessEntity(void)
 				pTarget->pev->effects |= EF_NOINTERP;
 				pTarget->pev->angles.y = pev->angles.y;
 				pTarget->m_scriptState = SCRIPT_WAIT;
-				m_startTime = gpGlobals->time + 1E6;
+				m_startTime = gpGlobals->time + 1000000.0f;
 				// UNDONE: Add a flag to do this so people can fixup physics after teleporting monsters
 				pTarget->pev->flags &= ~FL_ONGROUND;
 				break;
@@ -462,7 +462,7 @@ void CCineMonster::CineThink(void)
 	{
 		CancelScript();
 		ALERT(at_aiconsole, "script \"%s\" can't find monster \"%s\"\n", STRING(pev->targetname), STRING(m_iszEntity));
-		pev->nextthink = gpGlobals->time + 1.0;
+		pev->nextthink = gpGlobals->time + 1.0f;
 	}
 }
 
@@ -541,7 +541,7 @@ void CCineMonster::SequenceDone(CBaseMonster* pMonster)
 	if ( !(pev->spawnflags & SF_SCRIPT_REPEATABLE) )
 	{
 		SetThink(&CBaseEntity::SUB_Remove);
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 
 	// This is done so that another sequence can take over the monster when triggered by the first
@@ -710,7 +710,7 @@ void CCineMonster::DelayStart(int state)
 			{
 				pTarget->m_iDelay--;
 				if ( pTarget->m_iDelay <= 0 )
-					pTarget->m_startTime = gpGlobals->time + 0.05;
+					pTarget->m_startTime = gpGlobals->time + 0.05f;
 			}
 		}
 		pentCine = FIND_ENTITY_BY_TARGETNAME(pentCine, STRING(pev->targetname));
@@ -954,17 +954,17 @@ void CScriptedSentence::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "duration") )
 	{
-		m_flDuration = atof(pkvd->szValue);
+		m_flDuration = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "radius") )
 	{
-		m_flRadius = atof(pkvd->szValue);
+		m_flRadius = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "refire") )
 	{
-		m_flRepeat = atof(pkvd->szValue);
+		m_flRepeat = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "attenuation") )
@@ -974,7 +974,7 @@ void CScriptedSentence::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "volume") )
 	{
-		m_flVolume = atof(pkvd->szValue) * 0.1;
+		m_flVolume = static_cast<float>(atof(pkvd->szValue)) * 0.1f;
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "listener") )
@@ -986,7 +986,7 @@ void CScriptedSentence::KeyValue(KeyValueData* pkvd)
 		CBaseToggle::KeyValue(pkvd);
 }
 
-void CScriptedSentence::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CScriptedSentence::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	if ( !m_active )
 		return;
@@ -1004,7 +1004,7 @@ void CScriptedSentence::Spawn(void)
 	if ( !pev->targetname )
 	{
 		SetThink(&CScriptedSentence::FindThink);
-		pev->nextthink = gpGlobals->time + 1.0;
+		pev->nextthink = gpGlobals->time + 1.0f;
 	}
 
 	switch ( pev->impulse )
@@ -1050,7 +1050,7 @@ void CScriptedSentence::FindThink(void)
 	else
 	{
 		// ALERT( at_console, "%s: can't find monster %s\n", STRING( m_iszSentence ), STRING( m_iszEntity ) );
-		pev->nextthink = gpGlobals->time + m_flRepeat + 0.5;
+		pev->nextthink = gpGlobals->time + m_flRepeat + 0.5f;
 	}
 }
 
@@ -1058,7 +1058,7 @@ void CScriptedSentence::DelayThink(void)
 {
 	m_active = TRUE;
 	if ( !pev->targetname )
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	SetThink(&CScriptedSentence::FindThink);
 }
 

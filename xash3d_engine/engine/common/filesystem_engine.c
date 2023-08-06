@@ -74,7 +74,9 @@ qboolean FS_LoadProgs(void)
 		return false;
 	}
 
-	if ( !(GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, GET_FS_API)) )
+	GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, GET_FS_API);
+
+	if ( !GetFSAPI )
 	{
 		FS_UnloadProgs();
 		Host_Error("FS_LoadProgs: can't find GetFSAPI entry point in %s\n", name);
@@ -100,10 +102,7 @@ FS_Init
 */
 void FS_Init(void)
 {
-	qboolean hasBaseDir = false;
-	qboolean hasGameDir = false;
 	qboolean caseinsensitive = true;
-	int i;
 	string gamedir;
 
 	Cmd_AddRestrictedCommand("fs_rescan", FS_Rescan_f, "rescan filesystem search pathes");
@@ -138,8 +137,6 @@ FS_Shutdown
 */
 void FS_Shutdown(void)
 {
-	int i;
-
 	FS_ShutdownStdio();
 
 	memset(&SI, 0, sizeof(sysinfo_t));

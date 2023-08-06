@@ -22,5 +22,5 @@ private:
 	float m_ScaleMaxX = 1.0f;
 	float m_ScaleYOffset = 0.0f;
 
-	uint8_t m_InaccuracyMarkerBegin = 0;
+	size_t m_InaccuracyMarkerBegin = 0;
 };

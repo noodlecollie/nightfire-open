@@ -271,7 +271,7 @@ protected:
 	IndexType_t m_iNodeFreeListHead;
 
 public:
-#ifndef MY_COMPILER_SUCKS
+#ifndef CXX11_NOT_PRESENT
 	// STL / C++11-style iterators (unspecified / in-memory order!)
 	struct IterateKeyElemProxyAlias
 	{

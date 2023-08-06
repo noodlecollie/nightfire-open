@@ -8,6 +8,8 @@
 #include <whereami.h>
 #endif
 
+#include "PlatformLib/File.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -61,14 +63,8 @@ extern "C"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#if defined(_MSC_VER)
-#pragma warning(push, 3)
-#endif
 #include <windows.h>
 #include <intrin.h>
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 #include <stdbool.h>
 
 static int WAI_PREFIX(getModulePath_)(HMODULE module, char* out, int capacity, int* dirname_length)
@@ -153,17 +149,10 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 	HMODULE module;
 	int length = -1;
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4054)
-#endif
 	if ( GetModuleHandleEx(
 			 GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
 			 (LPCTSTR)WAI_RETURN_ADDRESS(),
 			 &module) )
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 	{
 		length = WAI_PREFIX(getModulePath_)(module, out, capacity, dirname_length);
 	}
@@ -304,7 +293,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						 buffer[length - 3] == 'a' && buffer[length - 4] == '.' )
 					{
 						char *begin, *p;
-						int fd = open(path, O_RDONLY);
+						int fd = PlatformLib_Open(path, O_RDONLY);
 						if ( fd == -1 )
 						{
 							length = -1;  // retry
@@ -314,7 +303,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						begin = (char*)mmap(0, offset, PROT_READ, MAP_SHARED, fd, 0);
 						if ( begin == MAP_FAILED )
 						{
-							close(fd);
+							PlatformLib_Close(fd);
 							length = -1;  // retry
 							break;
 						}
@@ -340,7 +329,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						}
 
 						munmap(begin, offset);
-						close(fd);
+						PlatformLib_Close(fd);
 					}
 #endif
 					if ( length <= capacity )

@@ -54,8 +54,6 @@ typedef unsigned char byte;
 
 extern globalvars_t* gpGlobals;
 
-#pragma warning(disable : 4244)
-
 int ExtractBbox(void* pmodel, int sequence, float* mins, float* maxs)
 {
 	studiohdr_t* pstudiohdr;
@@ -79,7 +77,7 @@ int ExtractBbox(void* pmodel, int sequence, float* mins, float* maxs)
 	return 1;
 }
 
-int LookupActivity(void* pmodel, entvars_t* pev, int activity)
+int LookupActivity(void* pmodel, entvars_t*, int activity)
 {
 	studiohdr_t* pstudiohdr;
 
@@ -106,7 +104,7 @@ int LookupActivity(void* pmodel, entvars_t* pev, int activity)
 	return seq;
 }
 
-int LookupActivityHeaviest(void* pmodel, entvars_t* pev, int activity)
+int LookupActivityHeaviest(void* pmodel, entvars_t*, int activity)
 {
 	studiohdr_t* pstudiohdr;
 
@@ -244,7 +242,7 @@ void GetSequenceInfo(void* pmodel, entvars_t* pev, float* pflFrameRate, float* p
 	if ( pseqdesc->numframes > 1 )
 	{
 		*pflFrameRate = 256 * pseqdesc->fps / (pseqdesc->numframes - 1);
-		*pflGroundSpeed = sqrt(
+		*pflGroundSpeed = sqrtf(
 			pseqdesc->linearmovement[0] * pseqdesc->linearmovement[0] +
 			pseqdesc->linearmovement[1] * pseqdesc->linearmovement[1] +
 			pseqdesc->linearmovement[2] * pseqdesc->linearmovement[2]);
@@ -296,8 +294,8 @@ int GetAnimationEvent(
 
 	if ( pseqdesc->numframes > 1 )
 	{
-		flStart *= (pseqdesc->numframes - 1) / 256.0;
-		flEnd *= (pseqdesc->numframes - 1) / 256.0;
+		flStart *= (pseqdesc->numframes - 1) / 256.0f;
+		flEnd *= (pseqdesc->numframes - 1) / 256.0f;
 	}
 	else
 	{
@@ -362,9 +360,9 @@ float SetController(void* pmodel, entvars_t* pev, int iController, float flValue
 		else
 		{
 			if ( flValue > 360 )
-				flValue = flValue - (int)(flValue / 360.0) * 360.0;
+				flValue = flValue - (int)(flValue / 360.0f) * 360.0f;
 			else if ( flValue < 0 )
-				flValue = flValue + (int)((flValue / -360.0) + 1) * 360.0;
+				flValue = flValue + (int)((flValue / -360.0f) + 1) * 360.0f;
 		}
 	}
 
@@ -374,9 +372,9 @@ float SetController(void* pmodel, entvars_t* pev, int iController, float flValue
 		setting = 0;
 	if ( setting > 255 )
 		setting = 255;
-	pev->controller[iController] = setting;
+	pev->controller[iController] = static_cast<byte>(setting);
 
-	return setting * (1.0 / 255.0) * (pbonecontroller->end - pbonecontroller->start) + pbonecontroller->start;
+	return setting * (1.0f / 255.0f) * (pbonecontroller->end - pbonecontroller->start) + pbonecontroller->start;
 }
 
 float SetBlending(void* pmodel, entvars_t* pev, int iBlender, float flValue)
@@ -418,9 +416,9 @@ float SetBlending(void* pmodel, entvars_t* pev, int iBlender, float flValue)
 	if ( setting > 255 )
 		setting = 255;
 
-	pev->blending[iBlender] = setting;
+	pev->blending[iBlender] = static_cast<byte>(setting);
 
-	return setting * (1.0 / 255.0) * (pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender]) +
+	return setting * (1.0f / 255.0f) * (pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender]) +
 		pseqdesc->blendstart[iBlender];
 }
 

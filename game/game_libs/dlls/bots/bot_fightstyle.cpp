@@ -70,7 +70,7 @@ void CBaseBotFightStyle::DispatchWeaponUse(CGenericWeapon& weapon)
 
 void CBaseBotFightStyle::RandomizeAimAtHead(const int AimAtHeadPropensity)
 {
-	int BotAccuracy = pOwner->Stats.GetTraitAccuracy();
+	int BotAccuracy = static_cast<int>(pOwner->Stats.GetTraitAccuracy());
 	int ModifiedAim = (AimAtHeadPropensity * BotAccuracy) / 100;
 
 	if ( (RANDOM_LONG(0, 100) < ModifiedAim) || (BotAccuracy >= 99) )
@@ -122,7 +122,7 @@ void CBaseBotFightStyle::UseWeaponDefault(void)
 {
 	SetSecondaryFire(FALSE);
 	RandomizeAimAtHead(50);
-	SetNextShootTime(0.75, 1.5, 2.2);
+	SetNextShootTime(0.75f, 1.5f, 2.2f);
 }
 
 // Old Half-Life weapon use functions are below, for posterity.

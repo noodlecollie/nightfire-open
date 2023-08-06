@@ -18,13 +18,26 @@ FSAPI g_pfnGetFSAPI;
 fs_api_t g_fs;
 fs_globals_t* g_nullglobals;
 
+static FILE* fopen_local(const char* fileName, const char* mode)
+{
+#if XASH_WIN32
+	FILE* file = NULL;
+	fopen_s(&file, fileName, mode);
+	return file;
+#else
+	return fopen(fileName, mode);
+#endif;
+}
+
 static qboolean LoadFilesystem(void)
 {
 	g_hModule = LoadLibrary(OS_LIB_PREFIX "filesystem_stdio." OS_LIB_EXT);
+
 	if ( !g_hModule )
 		return false;
 
-	g_pfnGetFSAPI = (void*)GetProcAddress(g_hModule, GET_FS_API);
+	g_pfnGetFSAPI = (FSAPI)GetProcAddress(g_hModule, GET_FS_API);
+
 	if ( !g_pfnGetFSAPI )
 		return false;
 
@@ -86,7 +99,7 @@ static qboolean TestCaseinsensitive(void)
 	}
 
 	// create a file directly, to check if cache can re-read
-	f2 = fopen("FOO/Baz.bin", "wb");
+	f2 = fopen_local("FOO/Baz.bin", "wb");
 	fwrite(&magic, sizeof(magic), 1, f2);
 	fclose(f2);
 
@@ -110,7 +123,7 @@ int main(void)
 	if ( !LoadFilesystem() )
 		return EXIT_FAILURE;
 
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 
 	if ( !TestCaseinsensitive() )
 		return EXIT_FAILURE;

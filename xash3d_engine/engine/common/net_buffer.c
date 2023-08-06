@@ -328,9 +328,12 @@ void MSG_WriteBitAngle(sizebuf_t* sb, float fAngle, int numbits)
 	int d;
 
 	// clamp the angle before receiving
-	fAngle = fmod(fAngle, 360.0f);
+	fAngle = fmodf(fAngle, 360.0f);
+
 	if ( fAngle < 0 )
+	{
 		fAngle += 360.0f;
+	}
 
 	shift = (1 << numbits);
 	mask = shift - 1;
@@ -345,9 +348,13 @@ void MSG_WriteCoord(sizebuf_t* sb, float val)
 {
 	// g-cont. we loose precision here but keep old size of coord variable!
 	if ( FBitSet(host.features, ENGINE_WRITE_LARGE_COORD) )
+	{
 		MSG_WriteShort(sb, Q_rint(val));
+	}
 	else
+	{
 		MSG_WriteShort(sb, (int)(val * 8.0f));
+	}
 }
 
 void MSG_WriteVec3Coord(sizebuf_t* sb, const float* fa)
@@ -366,6 +373,9 @@ void MSG_WriteVec3Angles(sizebuf_t* sb, const float* fa)
 
 void MSG_WriteCmdExt(sizebuf_t* sb, int cmd, netsrc_t type, const char* name)
 {
+	(void)type;
+	(void)name;
+
 #ifdef DEBUG_NET_MESSAGES_SEND
 	if ( name != NULL )
 	{
@@ -543,7 +553,7 @@ qboolean MSG_ReadBits(sizebuf_t* sb, void* pOutData, int nBits)
 	// read the remaining bytes.
 	while ( nBitsLeft >= 8 )
 	{
-		*pOut = MSG_ReadUBitLong(sb, 8);
+		*pOut = (byte)MSG_ReadUBitLong(sb, 8);
 		++pOut;
 		nBitsLeft -= 8;
 	}
@@ -551,7 +561,7 @@ qboolean MSG_ReadBits(sizebuf_t* sb, void* pOutData, int nBits)
 	// read the remaining bits.
 	if ( nBitsLeft )
 	{
-		*pOut = MSG_ReadUBitLong(sb, nBitsLeft);
+		*pOut = (byte)MSG_ReadUBitLong(sb, nBitsLeft);
 	}
 
 	return !sb->bOverflow;
@@ -587,7 +597,9 @@ int MSG_ReadSBitLong(sizebuf_t* sb, int numbits)
 	// (Some old code writes direct integers right into the buffer).
 	sign = MSG_ReadOneBit(sb);
 	if ( sign )
-		r = -(BIT(numbits - 1) - r);
+	{
+		r = -(int)(BIT(numbits - 1) - r);
+	}
 
 	return r;
 }
@@ -602,6 +614,8 @@ uint MSG_ReadBitLong(sizebuf_t* sb, int numbits, qboolean bSigned)
 int MSG_ReadCmd(sizebuf_t* sb, netsrc_t type)
 {
 	int cmd = MSG_ReadUBitLong(sb, sizeof(byte) << 3);
+
+	(void)type;
 
 #ifdef DEBUG_NET_MESSAGES_READ
 	if ( type == NS_SERVER )
@@ -687,27 +701,35 @@ qboolean MSG_ReadBytes(sizebuf_t* sb, void* pOut, int nBytes)
 char* MSG_ReadStringExt(sizebuf_t* sb, qboolean bLine)
 {
 	static char string[4096];
-	int l = 0, c;
+	size_t l = 0;
+	char c;
 
 	do
 	{
 		// use MSG_ReadByte so -1 is out of bounds
-		c = MSG_ReadByte(sb);
+		c = (char)MSG_ReadByte(sb);
 
 		if ( c == 0 )
+		{
 			break;
+		}
 		else if ( bLine && c == '\n' )
+		{
 			break;
+		}
 
 		// translate all fmt spec to avoid crash bugs
 		// NOTE: but game strings leave unchanged. see pfnWriteString for details
 		if ( c == '%' )
+		{
 			c = '.';
+		}
 
 		string[l] = c;
 		l++;
 	}
 	while ( l < sizeof(string) - 1 );
+
 	string[l] = 0;  // terminator
 
 	return string;

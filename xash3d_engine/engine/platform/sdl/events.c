@@ -342,7 +342,7 @@ static void SDLash_KeyEvent(SDL_KeyboardEvent key)
 			case SDL_SCANCODE_PRINTSCREEN:
 			{
 				host.force_draw_version = true;
-				host.force_draw_version_time = host.realtime + FORCE_DRAW_VERSION_TIME;
+				host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
 				break;
 			}
 			case SDL_SCANCODE_PAUSE:
@@ -476,7 +476,7 @@ static void SDLash_ActiveEvent(int gain)
 			SNDDMA_Activate(true);
 		}
 		host.force_draw_version = true;
-		host.force_draw_version_time = host.realtime + FORCE_DRAW_VERSION_TIME;
+		host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
 		if ( vid_fullscreen->value )
 			VID_SetMode();
 	}
@@ -500,7 +500,7 @@ static void SDLash_ActiveEvent(int gain)
 			SNDDMA_Activate(false);
 		}
 		host.force_draw_version = true;
-		host.force_draw_version_time = host.realtime + 2;
+		host.force_draw_version_time = (float)host.realtime + 2.0f;
 		VID_RestoreScreenResolution();
 	}
 }
@@ -655,7 +655,7 @@ static void SDLash_EventFilter(SDL_Event* event)
 				dy /= (float)refState.height;
 			}
 
-			IN_TouchEvent(type, event->tfinger.fingerId, x, y, dx, dy);
+			IN_TouchEvent(type, (int)event->tfinger.fingerId, x, y, dx, dy);
 			break;
 		}
 
@@ -677,7 +677,7 @@ static void SDLash_EventFilter(SDL_Event* event)
 			if ( !Joy_IsActive() )
 				break;
 
-			if ( event->caxis.axis >= 0 && event->caxis.axis < ARRAYSIZE(SDLash_GameControllerAxisMapping) )
+			if ( event->caxis.axis < ARRAYSIZE(SDLash_GameControllerAxisMapping) )
 			{
 				Joy_KnownAxisMotionEvent(SDLash_GameControllerAxisMapping[event->caxis.axis], event->caxis.value);
 			}
@@ -691,7 +691,7 @@ static void SDLash_EventFilter(SDL_Event* event)
 				break;
 
 			// TODO: Use joyinput funcs, for future multiple gamepads support
-			if ( event->cbutton.button >= 0 && event->cbutton.button < ARRAYSIZE(SDLash_GameControllerButtonMapping) )
+			if ( event->cbutton.button < ARRAYSIZE(SDLash_GameControllerButtonMapping) )
 			{
 				Key_Event(SDLash_GameControllerButtonMapping[event->cbutton.button], event->cbutton.state);
 			}
@@ -729,7 +729,7 @@ static void SDLash_EventFilter(SDL_Event* event)
 				case SDL_WINDOWEVENT_RESTORED:
 					host.status = HOST_FRAME;
 					host.force_draw_version = true;
-					host.force_draw_version_time = host.realtime + FORCE_DRAW_VERSION_TIME;
+					host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
 					if ( vid_fullscreen->value )
 						VID_SetMode();
 					break;
@@ -781,6 +781,7 @@ void Platform_RunEvents(void)
 
 void* Platform_GetNativeObject(const char* name)
 {
+	(void)name;
 	return NULL;  // SDL don't have it
 }
 

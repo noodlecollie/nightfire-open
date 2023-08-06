@@ -363,9 +363,14 @@ static void WIN_SetDPIAwareness(void)
 	BOOL(__stdcall * pSetProcessDPIAware)(void);
 	BOOL bSuccess = FALSE;
 
-	if ( (hModule = LoadLibrary("shcore.dll")) )
+	hModule = LoadLibrary("shcore.dll");
+
+	if ( hModule )
 	{
-		if ( (pSetProcessDpiAwareness = (void*)GetProcAddress(hModule, "SetProcessDpiAwareness")) )
+		pSetProcessDpiAwareness =
+			(HRESULT(__stdcall*)(XASH_DPI_AWARENESS))GetProcAddress(hModule, "SetProcessDpiAwareness");
+
+		if ( pSetProcessDpiAwareness )
 		{
 			// I hope SDL don't handle WM_DPICHANGED message
 			HRESULT hResult = pSetProcessDpiAwareness(XASH_SYSTEM_DPI_AWARE);
@@ -391,9 +396,13 @@ static void WIN_SetDPIAwareness(void)
 	{
 		Con_Reportf("SetDPIAwareness: Trying SetProcessDPIAware...\n");
 
-		if ( (hModule = LoadLibrary("user32.dll")) )
+		hModule = LoadLibrary("user32.dll");
+
+		if ( hModule )
 		{
-			if ( (pSetProcessDPIAware = (void*)GetProcAddress(hModule, "SetProcessDPIAware")) )
+			pSetProcessDPIAware = (BOOL(__stdcall*)(void))GetProcAddress(hModule, "SetProcessDPIAware");
+
+			if ( pSetProcessDPIAware )
 			{
 				// I hope SDL don't handle WM_DPICHANGED message
 				BOOL hResult = pSetProcessDPIAware();
@@ -459,7 +468,7 @@ void GL_UpdateSwapInterval(void)
 	{
 		ClearBits(gl_vsync->flags, FCVAR_CHANGED);
 
-		if ( SDL_GL_SetSwapInterval(gl_vsync->value) )
+		if ( SDL_GL_SetSwapInterval((int)gl_vsync->value) )
 			Con_Reportf(S_ERROR "SDL_GL_SetSwapInterval: %s\n", SDL_GetError());
 	}
 #endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
@@ -521,7 +530,7 @@ static qboolean GL_UpdateContext(void)
 void VID_SaveWindowSize(int width, int height)
 {
 	int render_w = width, render_h = height;
-	uint rotate = vid_rotate->value;
+	uint rotate = (uint)vid_rotate->value;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if ( !glw_state.software )
@@ -540,8 +549,8 @@ void VID_SaveWindowSize(int width, int height)
 			render_h = swap;
 		}
 
-		render_h /= vid_scale->value;
-		render_w /= vid_scale->value;
+		render_h = (int)(render_h / vid_scale->value);
+		render_w = (int)(render_w / vid_scale->value);
 	}
 	else
 	{
@@ -637,7 +646,10 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 	qboolean iconLoaded = false;
 	char iconpath[MAX_STRING];
 	int xpos, ypos;
+
+#if XASH_WIN32
 	const char* localIcoPath;
+#endif
 
 	if ( vid_highdpi->value )
 		wndFlags |= SDL_WINDOW_ALLOW_HIGHDPI;
@@ -723,7 +735,9 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 	}
 
 #if XASH_WIN32  // ICO support only for Win32
-	if ( (localIcoPath = FS_GetDiskPath(GI->iconpath, true)) )
+	localIcoPath = FS_GetDiskPath(GI->iconpath, true);
+
+	if ( localIcoPath )
 	{
 		HICON ico;
 
@@ -1057,7 +1071,9 @@ qboolean R_Init_Video(const int type)
 			break;
 	}
 
-	if ( !(retval = VID_SetMode()) )
+	retval = VID_SetMode();
+
+	if ( !retval )
 	{
 		return retval;
 	}

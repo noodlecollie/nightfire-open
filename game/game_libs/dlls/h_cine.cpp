@@ -157,7 +157,7 @@ void CLegacyCineMonster ::CineSpawn(const char* szModel)
 //
 // CineStart
 //
-void CLegacyCineMonster ::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CLegacyCineMonster ::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	pev->animtime = 0;  // reset the sequence
 	SetThink(&CLegacyCineMonster::CineThink);
@@ -191,7 +191,7 @@ void CLegacyCineMonster ::CineThink(void)
 	if ( !pev->animtime )
 		ResetSequenceInfo();
 
-	pev->nextthink = gpGlobals->time + 1.0;
+	pev->nextthink = gpGlobals->time + 1.0f;
 
 	if ( pev->spawnflags != 0 && m_fSequenceFinished )
 	{
@@ -220,7 +220,7 @@ void CCineBlood ::BloodGush(void)
 {
 	Vector vecSplatDir;
 	TraceResult tr;
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	UTIL_MakeVectors(pev->angles);
 	if ( pev->health-- < 0 )
@@ -240,8 +240,8 @@ void CCineBlood ::BloodGush(void)
 	{
 		// decals the floor with blood.
 		vecSplatDir = Vector(0, 0, -1);
-		vecSplatDir = vecSplatDir + (RANDOM_FLOAT(-1, 1) * 0.6 * gpGlobals->v_right) +
-			(RANDOM_FLOAT(-1, 1) * 0.6 * gpGlobals->v_forward);  // randomize a bit
+		vecSplatDir = vecSplatDir + (RANDOM_FLOAT(-1.0f, 1.0f) * 0.6f * gpGlobals->v_right) +
+			(RANDOM_FLOAT(-1.0f, 1.0f) * 0.6f * gpGlobals->v_forward);  // randomize a bit
 		UTIL_TraceLine(pev->origin + Vector(0, 0, 64), pev->origin + vecSplatDir * 256, ignore_monsters, ENT(pev), &tr);
 		if ( tr.flFraction != 1.0 )
 		{
@@ -251,7 +251,7 @@ void CCineBlood ::BloodGush(void)
 	}
 }
 
-void CCineBlood ::BloodStart(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCineBlood ::BloodStart(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	SetThink(&CCineBlood::BloodGush);
 	pev->nextthink = gpGlobals->time;  // now!

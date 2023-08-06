@@ -20,7 +20,7 @@ void CWeaponRegistry::Add(const WeaponAtts::WACollection* atts)
 		return;
 	}
 
-	const int id = static_cast<const int>(atts->Core.Id);
+	const int id = static_cast<int>(atts->Core.Id);
 	ASSERTSZ_Q(id >= 0 && id < MAX_WEAPONS, "Weapon ID is out of range!");
 	ASSERTSZ_Q(m_AttributesList[id] == NULL, "Attributes already present at this index.");
 

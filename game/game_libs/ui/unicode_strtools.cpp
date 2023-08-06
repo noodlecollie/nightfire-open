@@ -190,13 +190,13 @@ int Q_UChar32ToUTF16(uchar32 uVal, uchar16* pUTF16Out)
 {
 	if ( uVal <= 0xFFFF )
 	{
-		pUTF16Out[0] = uVal;
+		pUTF16Out[0] = static_cast<uchar16>(uVal);
 		return 1;
 	}
 	else
 	{
 		pUTF16Out[1] = (uVal & 0x3FF) | 0xDC00;
-		pUTF16Out[0] = ((uVal - 0x10000) >> 10) | 0xD800;
+		pUTF16Out[0] = static_cast<uchar16>(((uVal - 0x10000) >> 10) | 0xD800);
 		return 2;
 	}
 }
@@ -206,18 +206,18 @@ int Q_UChar32ToUTF8(uchar32 uVal, char* pUTF8Out)
 {
 	if ( uVal <= 0x7F )
 	{
-		*pUTF8Out = uVal;
+		*pUTF8Out = static_cast<char>(uVal);
 		return 1;
 	}
 	else if ( uVal <= 0x7FF )
 	{
-		*pUTF8Out = (uVal >> 6) | 0xC0;
+		*pUTF8Out = static_cast<char>((uVal >> 6) | 0xC0);
 		pUTF8Out[1] = (uVal & 0x3F) | 0x80;
 		return 2;
 	}
 	else if ( uVal <= 0xFFFF )
 	{
-		*pUTF8Out = (uVal >> 12) | 0xE0;
+		*pUTF8Out = static_cast<char>((uVal >> 12) | 0xE0);
 		pUTF8Out[2] = (uVal & 0x3F) | 0x80;
 		pUTF8Out[1] = ((uVal >> 6) & 0x3F) | 0x80;
 		return 3;
@@ -661,7 +661,7 @@ qboolean Q_StripUnprintableAndSpace(char* pch)
 {
 	bool bStrippedAny;
 	bool bStrippedWhitespace;
-	int cch = strlen(pch);
+	int cch = static_cast<int>(strlen(pch));
 	int cubDest = (cch + 1) * sizeof(uchar16);
 	uchar16* pwch_alloced = (uchar16*)malloc(cubDest);
 	bStrippedAny = false;

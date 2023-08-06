@@ -26,6 +26,7 @@ GNU General Public License for more details.
 #include <dlfcn.h>
 #include "platform/misc/swap.h"
 #include "string.h"
+#include "PlatformLib/File.h"
 
 #ifndef XASH_DEFAULT_SWAP_PATH
 #define XASH_DEFAULT_SWAP_PATH "/tmp/xash3d-swap"
@@ -45,6 +46,9 @@ static void SWAP_Initialize(void)
 	char* path;
 	char* prealloc = getenv("SWAP_SIZE");
 	int fd;
+	int retval;
+
+	(void)retval;
 
 	if ( s.top )
 		return;
@@ -52,7 +56,7 @@ static void SWAP_Initialize(void)
 	path = getenv("SWAP_PATH");
 	if ( !path )
 		path = XASH_DEFAULT_SWAP_PATH;
-	fd = open(path, O_CREAT | O_RDWR, 0600);
+	fd = PlatformLib_OpenWithPermissions(path, O_CREAT | O_RDWR, 0600);
 
 	if ( prealloc )
 		s.prealloc = atoi(prealloc);
@@ -61,7 +65,7 @@ static void SWAP_Initialize(void)
 	s.prealloc &= ~(PAGE_SIZE - 1);
 
 	s.fd = fd;
-	ftruncate(fd, s.prealloc);
+	retval = ftruncate(fd, s.prealloc);
 	s.top = mmap(0, s.prealloc, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
 	// space will be freed on exit
@@ -70,7 +74,6 @@ static void SWAP_Initialize(void)
 
 void* SWAP_Sbrk(size_t size)
 {
-	char buf[64];
 	SWAP_Initialize();
 
 	if ( size == 0 )
@@ -79,7 +82,6 @@ void* SWAP_Sbrk(size_t size)
 	{
 		void* res;
 
-		// write(1, buf, PlatformLib_SNPrintF(buf, 32, "allocating %d\n", size) );
 		res = s.top;
 		s.size += size;
 		s.top = res + size;
@@ -99,7 +101,6 @@ void* SWAP_Sbrk(size_t size)
 		{
 			s.top += size;
 			s.size += size;
-			// write(1, buf, PlatformLib_SNPrintF(buf, 32, "freed %d\n", -size) );
 		}
 
 		return res;

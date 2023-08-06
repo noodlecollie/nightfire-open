@@ -28,6 +28,7 @@ typedef struct
 	msurface_t* surface;
 } linetrace_t;
 
+#if !XASH_DEDICATED
 /*
 ==============
 fix_coord
@@ -41,6 +42,7 @@ static uint fix_coord(vec_t in, uint width)
 		return (uint)in % width;
 	return width - ((uint)fabs(in) % width);
 }
+#endif // !XASH_DEDICATED
 
 /*
 =============
@@ -58,6 +60,12 @@ int PM_SampleMiptex(const msurface_t* surf, const vec3_t point)
 	int x, y;
 	mtexinfo_t* tx;
 	texture_t* mt;
+
+	(void)point;
+	(void)ds;
+	(void)dt;
+	(void)x;
+	(void)y;
 
 	// fill the default contents
 	if ( fb )
@@ -116,9 +124,12 @@ msurface_t* PM_RecursiveSurfCheck(model_t* mod, mnode_t* node, vec3_t p1, vec3_t
 	int i, side;
 	msurface_t* surf;
 	vec3_t mid;
+
 loc0:
 	if ( node->contents < 0 )
+	{
 		return NULL;
+	}
 
 	t1 = PlaneDiff(p1, node->plane);
 	t2 = PlaneDiff(p2, node->plane);
@@ -142,38 +153,52 @@ loc0:
 	VectorLerp(p1, frac, p2, mid);
 
 	if ( (surf = PM_RecursiveSurfCheck(mod, node->children[side], p1, mid)) != NULL )
+	{
 		return surf;
+	}
 
 	// walk through real faces
 	for ( i = 0; i < node->numsurfaces; i++ )
 	{
-		msurface_t* surf = &mod->surfaces[node->firstsurface + i];
-		mextrasurf_t* info = surf->info;
+		msurface_t* faceSurf = &mod->surfaces[node->firstsurface + i];
+		mextrasurf_t* info = faceSurf->info;
 		mfacebevel_t* fb = info->bevel;
 		int j, contents;
 		vec3_t delta;
 
 		if ( !fb )
+		{
 			continue;  // ???
+		}
 
 		VectorSubtract(mid, fb->origin, delta);
+
 		if ( DotProduct(delta, delta) >= fb->radius )
+		{
 			continue;  // no intersection
+		}
 
 		for ( j = 0; j < fb->numedges; j++ )
 		{
 			if ( PlaneDiff(mid, &fb->edges[j]) > FRAC_EPSILON )
+			{
 				break;  // outside the bounds
+			}
 		}
 
 		if ( j != fb->numedges )
+		{
 			continue;  // we are outside the bounds of the facet
+		}
 
 		// hit the surface
-		contents = PM_SampleMiptex(surf, mid);
+		contents = PM_SampleMiptex(faceSurf, mid);
 
 		if ( contents != CONTENTS_EMPTY )
-			return surf;
+		{
+			return faceSurf;
+		}
+
 		return NULL;  // through the fence
 	}
 

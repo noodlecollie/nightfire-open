@@ -117,13 +117,13 @@ void CBotProfileParser::ReadProfileEntry(rapidjson::SizeType index, const rapidj
 	}
 
 	// Reject if profile name contains any spaces.
-	for ( uint32_t index = 0; index < name.Length(); ++index )
+	for ( uint32_t nameIndex = 0; nameIndex < name.Length(); ++nameIndex )
 	{
-		if ( V_isspace(name.String()[index]) )
+		if ( V_isspace(name.String()[nameIndex]) )
 		{
 			LOG(ILogInterface::Level::Warning,
 				"Bot profile %u name '%s' contains whitespace, which is not allowed.\n",
-				index,
+				nameIndex,
 				name.String());
 			return;
 		}

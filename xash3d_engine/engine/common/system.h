@@ -37,6 +37,8 @@ extern "C"
 #define ASSERT(exp) \
 	if ( !(exp) ) \
 	Sys_Error("assert failed at %s:%i\n", __FILE__, __LINE__)
+#define ASSERT_FAIL(reason) \
+	Sys_Error("assert failed at %s:%i: %s\n", __FILE__, __LINE__, (reason))
 
 /*
 ========================================================================

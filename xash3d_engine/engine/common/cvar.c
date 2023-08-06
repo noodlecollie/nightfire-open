@@ -68,6 +68,8 @@ find the specified variable by name
 */
 convar_t* Cvar_FindVarExt(const char* var_name, int ignore_group)
 {
+	(void)ignore_group;
+
 	// TODO: ignore group for cvar
 #if defined(XASH_HASHED_VARS)
 	return (convar_t*)BaseCmd_Find(HM_CVAR, var_name);
@@ -955,7 +957,7 @@ static void Cvar_SetGL(const char* name, const char* value)
 static qboolean Cvar_ShouldSetCvar(convar_t* v, qboolean isPrivileged)
 {
 	const char* prefixes[] = {"cl_", "gl_", "m_", "r_", "hud_"};
-	int i;
+	size_t i;
 
 	if ( isPrivileged )
 		return true;
@@ -979,7 +981,7 @@ static qboolean Cvar_ShouldSetCvar(convar_t* v, qboolean isPrivileged)
 		// TODO: implement Q_strchrnul
 		while ( cur && *cur )
 		{
-			size_t len = next ? next - cur : Q_strlen(cur);
+			size_t len = next ? (size_t)(next - cur) : Q_strlen(cur);
 
 			// found, quit
 			if ( !Q_strnicmp(cur, v->name, len) )
@@ -1118,25 +1120,37 @@ weren't declared in C code.
 */
 void Cvar_Set_f(void)
 {
-	int i, c, l = 0, len;
+	int i, c;
+	size_t l = 0;
+	size_t len;
 	char combined[MAX_CMD_TOKENS];
 
 	c = Cmd_Argc();
+
 	if ( c < 3 )
 	{
 		Msg(S_USAGE "set <variable> <value>\n");
 		return;
 	}
+
 	combined[0] = 0;
 
 	for ( i = 2; i < c; i++ )
 	{
 		len = Q_strlen(Cmd_Argv(i) + 1);
+
 		if ( l + len >= MAX_CMD_TOKENS - 2 )
+		{
 			break;
+		}
+
 		Q_strcat(combined, Cmd_Argv(i));
+
 		if ( i != c - 1 )
+		{
 			Q_strcat(combined, " ");
+		}
+
 		l += len;
 	}
 
@@ -1152,8 +1166,6 @@ As Cvar_Set, but also flags it as glconfig
 */
 void Cvar_SetGL_f(void)
 {
-	convar_t* var;
-
 	if ( Cmd_Argc() != 3 )
 	{
 		Con_Printf(S_USAGE "setgl <variable> <value>\n");
@@ -1280,7 +1292,7 @@ Cvar_PostFSInit
 */
 void Cvar_PostFSInit(void)
 {
-	int i;
+	size_t i;
 
 	for ( i = 0; i < ARRAYSIZE(cvar_filter_quirks); i++ )
 	{

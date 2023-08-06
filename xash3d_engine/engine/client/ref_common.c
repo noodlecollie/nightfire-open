@@ -45,8 +45,8 @@ void GAME_EXPORT GL_FreeImage(const char* name)
 
 void R_UpdateRefState(void)
 {
-	refState.time = cl.time;
-	refState.oldtime = cl.oldtime;
+	refState.time = (float)cl.time;
+	refState.oldtime = (float)cl.oldtime;
 	refState.realtime = host.realtime;
 	refState.frametime = host.frametime;
 }
@@ -233,16 +233,31 @@ static qboolean R_Init_Video_(const int type)
 	return R_Init_Video(type);
 }
 
+static cvar_t* Wrapper_Cvar_Get(const char* name, const char* value, int flags, const char* var_desc)
+{
+	return (cvar_t*)Cvar_Get(name, value, flags, var_desc);
+}
+
+static cvar_t* Wrapper_Cvar_FindVarExt(const char* var_name, int ignore_group)
+{
+	return (cvar_t*)Cvar_FindVarExt(var_name, ignore_group);
+}
+
+static void Wrapper_Cvar_RegisterVariable(cvar_t* var)
+{
+	Cvar_RegisterVariable((convar_t*)var);
+}
+
 static ref_api_t gEngfuncs = {
 	pfnEngineGetParm,
 
-	(void*)Cvar_Get,
-	(void*)Cvar_FindVarExt,
+	Wrapper_Cvar_Get,
+	Wrapper_Cvar_FindVarExt,
 	Cvar_VariableValue,
 	Cvar_VariableString,
 	Cvar_SetValue,
 	Cvar_Set,
-	(void*)Cvar_RegisterVariable,
+	Wrapper_Cvar_RegisterVariable,
 	Cvar_FullSet,
 
 	Cmd_AddRefCommand,
@@ -435,7 +450,10 @@ static qboolean R_LoadProgs(const char* name)
 		R_UnloadProgs();
 
 	FS_AllowDirectPaths(true);
-	if ( !(ref.hInstance = COM_LoadLibrary(name, false, true)) )
+
+	ref.hInstance = COM_LoadLibrary(name, false, true);
+
+	if ( !ref.hInstance )
 	{
 		FS_AllowDirectPaths(false);
 		Con_Reportf("R_LoadProgs: can't load renderer library %s: %s\n", name, COM_GetLibraryError());
@@ -444,7 +462,9 @@ static qboolean R_LoadProgs(const char* name)
 
 	FS_AllowDirectPaths(false);
 
-	if ( !(GetRefAPI = (REFAPI)COM_GetProcAddress(ref.hInstance, GET_REF_API)) )
+	GetRefAPI = (REFAPI)COM_GetProcAddress(ref.hInstance, GET_REF_API);
+
+	if ( !GetRefAPI )
 	{
 		COM_FreeLibrary(ref.hInstance);
 		Con_Reportf("R_LoadProgs: can't find GetRefAPI entry point in %s\n", name);

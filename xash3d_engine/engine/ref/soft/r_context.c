@@ -44,8 +44,8 @@ CL_FillRGBA
 static void GAME_EXPORT CL_FillRGBA(float _x, float _y, float _w, float _h, int r, int g, int b, int a)
 {
 	vid.rendermode = kRenderTransAdd;
-	_TriColor4ub(r, g, b, a);
-	Draw_Fill(_x, _y, _w, _h);
+	_TriColor4ub((byte)r, (byte)g, (byte)b, (byte)a);
+	Draw_Fill((int)_x, (int)_y, (int)_w, (int)_h);
 }
 
 /*
@@ -57,8 +57,8 @@ pfnFillRGBABlend
 static void GAME_EXPORT CL_FillRGBABlend(float _x, float _y, float _w, float _h, int r, int g, int b, int a)
 {
 	vid.rendermode = kRenderTransAlpha;
-	_TriColor4ub(r, g, b, a);
-	Draw_Fill(_x, _y, _w, _h);
+	_TriColor4ub((byte)r, (byte)g, (byte)b, (byte)a);
+	Draw_Fill((int)_x, (int)_y, (int)_w, (int)_h);
 }
 void Mod_UnloadTextures(model_t* mod);
 
@@ -174,9 +174,8 @@ static int GL_RefGetParm(int parm, int arg)
 		case PARM_SKY_SPHERE:
 			return ENGINE_GET_PARM_(parm, arg) && !tr.fCustomSkybox;
 		default:
-			return ENGINE_GET_PARM_(parm, arg);
+			return (int)ENGINE_GET_PARM_(parm, arg);
 	}
-	return 0;
 }
 
 static void GAME_EXPORT R_GetDetailScaleForTexture(int texture, float* xScale, float* yScale)
@@ -221,7 +220,7 @@ static void GAME_EXPORT R_SetCurrentModel(model_t* mod)
 
 static float GAME_EXPORT R_GetFrameTime(void)
 {
-	return tr.frametime;
+	return (float)tr.frametime;
 }
 
 static const char* GAME_EXPORT GL_TextureName(unsigned int texnum)
@@ -258,8 +257,6 @@ void Mod_BrushUnloadTextures(model_t* mod)
 
 void Mod_UnloadTextures(model_t* mod)
 {
-	int i, j;
-
 	Assert(mod != NULL);
 
 	switch ( mod->type )
@@ -283,12 +280,14 @@ void Mod_UnloadTextures(model_t* mod)
 
 void GAME_EXPORT R_ProcessEntData(qboolean allocate)
 {
+	(void)allocate;
 }
 
 // stubs
 
 void GAME_EXPORT GL_SetTexCoordArrayMode(uint mode)
 {
+	(void)mode;
 }
 
 void GAME_EXPORT GL_BackendStartFrame(void)
@@ -318,32 +317,46 @@ void GAME_EXPORT R_ShowTree(void)
 
 void GAME_EXPORT R_SetupSky(const char* skyboxname)
 {
+	(void)skyboxname;
 }
 
 qboolean GAME_EXPORT VID_CubemapShot(const char* base, uint size, const float* vieworg, qboolean skyshot)
 {
+	(void)base;
+	(void)size;
+	(void)vieworg;
+	(void)skyshot;
+
 	// cubemaps? in my softrender???
 	return false;
 }
 
 void R_InitSkyClouds(const mip_t* mt, texture_t* tx, qboolean custom_palette)
 {
+	(void)mt;
+	(void)tx;
+	(void)custom_palette;
 }
 
 void GAME_EXPORT GL_SubdivideSurface(msurface_t* fa)
 {
+	(void)fa;
 }
 
 void GAME_EXPORT DrawSingleDecal(decal_t* pDecal, msurface_t* fa)
 {
+	(void)pDecal;
+	(void)fa;
 }
 
 void GAME_EXPORT GL_SelectTexture(int texture)
 {
+	(void)texture;
 }
 
 void GAME_EXPORT GL_LoadTexMatrixExt(const float* glmatrix)
 {
+	(void)glmatrix;
 }
 
 void GAME_EXPORT GL_LoadIdentityTexMatrix(void)
@@ -352,14 +365,18 @@ void GAME_EXPORT GL_LoadIdentityTexMatrix(void)
 
 void GAME_EXPORT GL_CleanUpTextureUnits(int last)
 {
+	(void)last;
 }
 
 void GAME_EXPORT GL_TexGen(unsigned int coord, unsigned int mode)
 {
+	(void)coord;
+	(void)mode;
 }
 
 void GAME_EXPORT GL_TextureTarget(uint target)
 {
+	(void)target;
 }
 
 void GAME_EXPORT GL_BuildLightmaps(void)
@@ -369,10 +386,14 @@ void GAME_EXPORT GL_BuildLightmaps(void)
 
 void GAME_EXPORT Mod_SetOrthoBounds(const float* mins, const float* maxs)
 {
+	(void)mins;
+	(void)maxs;
 }
 
 qboolean GAME_EXPORT R_SpeedsMessage(char* out, size_t size)
 {
+	(void)out;
+	(void)size;
 	return false;
 }
 

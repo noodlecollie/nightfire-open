@@ -44,8 +44,8 @@ void UI_UpdateMenu(float realtime)
 		return;
 
 	// menu time (not paused, not clamped)
-	gameui.globals->time = host.realtime;
-	gameui.globals->frametime = host.realframetime;
+	gameui.globals->time = (float)host.realtime;
+	gameui.globals->frametime = (float)host.realframetime;
 	gameui.globals->demoplayback = cls.demoplayback;
 	gameui.globals->demorecording = cls.demorecording;
 	gameui.globals->developer = host.allow_console;
@@ -362,7 +362,7 @@ static void GAME_EXPORT UI_DrawLogo(const char* filename, float x, float y, floa
 	}
 
 	// advances cinematic time (ignores maxfps and host_framerate settings)
-	cin_time += host.realframetime;
+	cin_time += (float)host.realframetime;
 
 	// restarts the cinematic
 	if ( cin_time > gameui.logo_length )
@@ -430,7 +430,7 @@ static void UI_ConvertGameInfo(GAMEINFO* out, gameinfo_t* in)
 
 	Q_strncpy(out->game_url, in->game_url, sizeof(out->game_url));
 	Q_strncpy(out->update_url, in->update_url, sizeof(out->update_url));
-	Q_strncpy(out->size, Q_pretifymem(in->size, 0), sizeof(out->size));
+	Q_strncpy(out->size, Q_pretifymem((float)in->size, 0), sizeof(out->size));
 	Q_strncpy(out->type, in->type, sizeof(out->type));
 	Q_strncpy(out->date, in->date, sizeof(out->date));
 
@@ -469,8 +469,8 @@ static void PIC_DrawGeneric(float x, float y, float width, float height, const w
 
 		if ( width == -1 && height == -1 )
 		{
-			width = prc->right - prc->left;
-			height = prc->bottom - prc->top;
+			width = (float)(prc->right - prc->left);
+			height = (float)(prc->bottom - prc->top);
 		}
 	}
 	else
@@ -481,8 +481,8 @@ static void PIC_DrawGeneric(float x, float y, float width, float height, const w
 
 	if ( width == -1 && height == -1 )
 	{
-		width = w;
-		height = h;
+		width = (float)w;
+		height = (float)h;
 	}
 
 	// pass scissor test if supposed
@@ -568,7 +568,7 @@ void GAME_EXPORT pfnPIC_Set(HIMAGE hPic, int r, int g, int b, int a)
 	g = bound(0, g, 255);
 	b = bound(0, b, 255);
 	a = bound(0, a, 255);
-	ref.dllFuncs.Color4ub(r, g, b, a);
+	ref.dllFuncs.Color4ub((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
 
 /*
@@ -580,7 +580,7 @@ pfnPIC_Draw
 void GAME_EXPORT pfnPIC_Draw(int x, int y, int width, int height, const wrect_t* prc)
 {
 	ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
-	PIC_DrawGeneric(x, y, width, height, prc);
+	PIC_DrawGeneric((float)x, (float)y, (float)width, (float)height, prc);
 }
 
 /*
@@ -592,7 +592,7 @@ pfnPIC_DrawTrans
 void GAME_EXPORT pfnPIC_DrawTrans(int x, int y, int width, int height, const wrect_t* prc)
 {
 	ref.dllFuncs.GL_SetRenderMode(kRenderTransTexture);
-	PIC_DrawGeneric(x, y, width, height, prc);
+	PIC_DrawGeneric((float)x, (float)y, (float)width, (float)height, prc);
 }
 
 /*
@@ -604,7 +604,7 @@ pfnPIC_DrawHoles
 void GAME_EXPORT pfnPIC_DrawHoles(int x, int y, int width, int height, const wrect_t* prc)
 {
 	ref.dllFuncs.GL_SetRenderMode(kRenderTransAlpha);
-	PIC_DrawGeneric(x, y, width, height, prc);
+	PIC_DrawGeneric((float)x, (float)y, (float)width, (float)height, prc);
 }
 
 /*
@@ -616,7 +616,7 @@ pfnPIC_DrawAdditive
 void GAME_EXPORT pfnPIC_DrawAdditive(int x, int y, int width, int height, const wrect_t* prc)
 {
 	ref.dllFuncs.GL_SetRenderMode(kRenderTransAdd);
-	PIC_DrawGeneric(x, y, width, height, prc);
+	PIC_DrawGeneric((float)x, (float)y, (float)width, (float)height, prc);
 }
 
 /*
@@ -659,9 +659,18 @@ static void GAME_EXPORT pfnFillRGBA(int x, int y, int width, int height, int r, 
 	g = bound(0, g, 255);
 	b = bound(0, b, 255);
 	a = bound(0, a, 255);
-	ref.dllFuncs.Color4ub(r, g, b, a);
+	ref.dllFuncs.Color4ub((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 	ref.dllFuncs.GL_SetRenderMode(kRenderTransTexture);
-	ref.dllFuncs.R_DrawStretchPic(x, y, width, height, 0, 0, 1, 1, R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+	ref.dllFuncs.R_DrawStretchPic(
+		(float)x,
+		(float)y,
+		(float)width,
+		(float)height,
+		0,
+		0,
+		1,
+		1,
+		R_GetBuiltinTexture(REF_WHITE_TEXTURE));
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);
 }
 
@@ -709,9 +718,10 @@ static void GAME_EXPORT pfnDrawCharacter(int ix, int iy, int iwidth, int iheight
 	rgba_t color;
 	float row, col, size;
 	float s1, t1, s2, t2;
-	float x = ix, y = iy;
-	float width = iwidth;
-	float height = iheight;
+	float x = (float)ix;
+	float y = (float)iy;
+	float width = (float)iwidth;
+	float height = (float)iheight;
 
 	ch &= 255;
 
@@ -720,10 +730,10 @@ static void GAME_EXPORT pfnDrawCharacter(int ix, int iy, int iwidth, int iheight
 	if ( y < -height )
 		return;
 
-	color[3] = (ulRGBA & 0xFF000000) >> 24;
-	color[0] = (ulRGBA & 0xFF0000) >> 16;
-	color[1] = (ulRGBA & 0xFF00) >> 8;
-	color[2] = (ulRGBA & 0xFF) >> 0;
+	color[3] = (byte)((ulRGBA & 0xFF000000) >> 24);
+	color[0] = (byte)((ulRGBA & 0xFF0000) >> 16);
+	color[1] = (byte)((ulRGBA & 0xFF00) >> 8);
+	color[2] = (byte)((ulRGBA & 0xFF) >> 0);
 	ref.dllFuncs.Color4ub(color[0], color[1], color[2], color[3]);
 
 	col = (ch & 15) * 0.0625f + (0.5f / 256.0f);
@@ -773,10 +783,10 @@ set color for anything
 static void GAME_EXPORT UI_DrawSetTextColor(int r, int g, int b, int alpha)
 {
 	// bound color and convert to byte
-	gameui.ds.textColor[0] = r;
-	gameui.ds.textColor[1] = g;
-	gameui.ds.textColor[2] = b;
-	gameui.ds.textColor[3] = alpha;
+	gameui.ds.textColor[0] = (byte)r;
+	gameui.ds.textColor[1] = (byte)g;
+	gameui.ds.textColor[2] = (byte)b;
+	gameui.ds.textColor[3] = (byte)alpha;
 }
 
 /*
@@ -1036,6 +1046,9 @@ pfnChangeInstance
 */
 static void GAME_EXPORT pfnChangeInstance(const char* newInstance, const char* szFinalMessage)
 {
+	(void)newInstance;
+	(void)szFinalMessage;
+
 	Con_Reportf(S_ERROR "ChangeInstance menu call is deprecated!\n");
 }
 
@@ -1200,7 +1213,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	GL_ProcessTexture,
 	COM_CompareFileTime,
 	VID_GetModeString,
-	(void*)COM_SaveFile,
+	COM_SaveFile,
 	pfnDelete};
 
 static void pfnEnableTextInput(int enable)
@@ -1210,7 +1223,7 @@ static void pfnEnableTextInput(int enable)
 
 static int pfnGetRenderers(unsigned int num, char* shortName, size_t size1, char* readableName, size_t size2)
 {
-	if ( num >= ref.numRenderers )
+	if ( num >= (unsigned int)ref.numRenderers )
 		return 0;
 
 	if ( shortName && size1 )
@@ -1275,8 +1288,9 @@ qboolean UI_LoadProgs(void)
 	gameui.globals = &gpGlobals;
 
 	COM_GetCommonLibraryPath(LIBRARY_GAMEUI, dllpath, sizeof(dllpath));
+	gameui.hInstance = COM_LoadLibrary(dllpath, false, false);
 
-	if ( !(gameui.hInstance = COM_LoadLibrary(dllpath, false, false)) )
+	if ( !gameui.hInstance )
 	{
 		string path = OS_LIB_PREFIX "menu." OS_LIB_EXT;
 
@@ -1285,7 +1299,8 @@ qboolean UI_LoadProgs(void)
 		// no use to load it from engine directory, as library loader
 		// that implements internal gamelibs already knows how to load it
 #ifndef XASH_INTERNAL_GAMELIBS
-		if ( !(gameui.hInstance = COM_LoadLibrary(path, false, true)) )
+		gameui.hInstance = COM_LoadLibrary(path, false, true);
+		if ( !gameui.hInstance )
 #endif
 		{
 			FS_AllowDirectPaths(false);
@@ -1324,7 +1339,9 @@ qboolean UI_LoadProgs(void)
 	memset(&gameui.dllFuncs2, 0, sizeof(gameui.dllFuncs2));
 
 	// try to initialize new extended API
-	if ( (GetExtAPI = (UIEXTENEDEDAPI)COM_GetProcAddress(gameui.hInstance, "GetExtAPI")) )
+	GetExtAPI = (UIEXTENEDEDAPI)COM_GetProcAddress(gameui.hInstance, "GetExtAPI");
+
+	if ( GetExtAPI )
 	{
 		Con_Reportf("UI_LoadProgs: extended Menu API found\n");
 		if ( GetExtAPI(MENU_EXTENDED_API_VERSION, &gameui.dllFuncs2, &gpExtendedfuncs) )
@@ -1335,7 +1352,9 @@ qboolean UI_LoadProgs(void)
 	}
 	else  // otherwise, fallback to old and deprecated extensions
 	{
-		if ( (GiveTextApi = (UITEXTAPI)COM_GetProcAddress(gameui.hInstance, "GiveTextAPI")) )
+		GiveTextApi = (UITEXTAPI)COM_GetProcAddress(gameui.hInstance, "GiveTextAPI");
+
+		if ( GiveTextApi )
 		{
 			Con_Reportf("UI_LoadProgs: extended text API found\n");
 			Con_Reportf(S_WARN

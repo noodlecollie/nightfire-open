@@ -18,15 +18,6 @@ GNU General Public License for more details.
 
 typedef struct mpg123_handle_s mpg123_handle_t;
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4115)  // named type definition in parentheses
-#pragma warning(disable : 4057)  // differs in indirection to slightly different base types
-#pragma warning(disable : 4244)  // conversion possible loss of data
-#pragma warning(disable : 4127)  // conditional expression is constant
-#pragma warning(disable : 4706)  // assignment within conditional expression
-#pragma warning(disable : 4100)  // unreferenced formal parameter
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

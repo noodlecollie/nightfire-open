@@ -75,7 +75,7 @@ void R_AddDynamicLights(msurface_t* surf)
 	float sl, tl, sacc, tacc;
 	vec3_t impact, origin_l;
 	mextrasurf_t* info = surf->info;
-	int sample_frac = 1.0;
+	int sample_frac = 1;
 	float sample_size;
 	mtexinfo_t* tex;
 	dlight_t* dl;
@@ -84,9 +84,9 @@ void R_AddDynamicLights(msurface_t* surf)
 	// no dlighted surfaces here
 	// if( !R_CountSurfaceDlights( surf )) return;
 
-	sample_size = gEngfuncs.Mod_SampleSizeForFace(surf);
-	smax = (info->lightextents[0] / sample_size) + 1;
-	tmax = (info->lightextents[1] / sample_size) + 1;
+	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(surf);
+	smax = (int)((info->lightextents[0] / sample_size) + 1.0f);
+	tmax = (int)((info->lightextents[1] / sample_size) + 1.0f);
 	tex = surf->texinfo;
 
 	if ( FBitSet(tex->flags, TEX_WORLD_LUXELS) )
@@ -114,7 +114,7 @@ void R_AddDynamicLights(msurface_t* surf)
 
 		rad = dl->radius;
 		dist = PlaneDiff(origin_l, surf->plane);
-		rad -= fabs(dist);
+		rad -= fabsf(dist);
 
 		// rad is now the highest intensity on the plane
 		minlight = dl->minlight;
@@ -137,20 +137,20 @@ void R_AddDynamicLights(msurface_t* surf)
 
 		for ( t = 0, tacc = 0; t < tmax; t++, tacc += sample_size )
 		{
-			td = (tl - tacc) * sample_frac;
+			td = (int)((tl - tacc) * sample_frac);
 			if ( td < 0 )
 				td = -td;
 
 			for ( s = 0, sacc = 0; s < smax; s++, sacc += sample_size, bl += 1 )
 			{
-				sd = (sl - sacc) * sample_frac;
+				sd = (int)((sl - sacc) * sample_frac);
 				if ( sd < 0 )
 					sd = -sd;
 
 				if ( sd > td )
-					dist = sd + (td >> 1);
+					dist = (float)(sd + (td >> 1));
 				else
-					dist = td + (sd >> 1);
+					dist = (float)(td + (sd >> 1));
 
 				if ( dist < minlight )
 				{
@@ -179,12 +179,11 @@ static void R_BuildLightMap(void)
 {
 	int smax, tmax;
 	uint *bl, scale;
-	int i, map, size, s, t;
+	int i, map, size, /*s,*/ t;
 	int sample_size;
 	msurface_t* surf = r_drawsurf.surf;
 	mextrasurf_t* info = surf->info;
 	color24* lm;
-	qboolean dynamic = 0;
 
 	sample_size = gEngfuncs.Mod_SampleSizeForFace(surf);
 	smax = (info->lightextents[0] / sample_size) + 1;
@@ -491,22 +490,28 @@ void R_DrawSurface(void)
 	uint sample_size, sample_bits, sample_pot;
 
 	surfrowbytes = r_drawsurf.rowbytes;
-
 	sample_size = LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf);
+
 	if ( sample_size == 16 )
+	{
 		sample_bits = 4, sample_pot = sample_size;
+	}
 	else
 	{
 		sample_bits = tr.sample_bits;
 
-		if ( sample_bits == -1 )
+		if ( sample_bits == (uint)-1 )
 		{
 			sample_bits = 0;
+
 			for ( sample_pot = 1; sample_pot < sample_size; sample_pot <<= 1, sample_bits++ )
-				;
+			{
+			}
 		}
 		else
+		{
 			sample_pot = 1 << sample_bits;
+		}
 	}
 	mt = r_drawsurf.image;
 
@@ -550,8 +555,8 @@ void R_DrawSurface(void)
 	// glitchy and slow way to draw some lightmap
 	if ( r_drawsurf.surf->texinfo->flags & TEX_WORLD_LUXELS )
 	{
-		worldlux_s = r_drawsurf.surf->extents[0] / r_drawsurf.surf->info->lightextents[0];
-		worldlux_t = r_drawsurf.surf->extents[1] / r_drawsurf.surf->info->lightextents[1];
+		worldlux_s = (float)(r_drawsurf.surf->extents[0] / r_drawsurf.surf->info->lightextents[0]);
+		worldlux_t = (float)(r_drawsurf.surf->extents[1] / r_drawsurf.surf->info->lightextents[1]);
 		if ( worldlux_s == 0 )
 			worldlux_s = 1;
 		if ( worldlux_t == 0 )
@@ -629,7 +634,8 @@ Does not draw lightmap correclty, but scale it correctly. Better than nothing
 */
 void R_DrawSurfaceBlock8_World(void)
 {
-	int v, i, b;
+	uint i;
+	int v, b;
 	uint lightstep, lighttemp, light;
 	pixel_t pix, *psource, *prowdest;
 	int lightpos = 0;
@@ -643,7 +649,7 @@ void R_DrawSurfaceBlock8_World(void)
 		// FIXME: use delta rather than both right and left, like ASM?
 		lightleft = r_lightptr[(lightpos / r_lightwidth) * r_lightwidth];
 		lightright = r_lightptr[(lightpos / r_lightwidth) * r_lightwidth + 1];
-		lightpos += r_lightwidth / worldlux_s;
+		lightpos += (int)((float)r_lightwidth / worldlux_s);
 		lightleftstep = (r_lightptr[(lightpos / r_lightwidth) * r_lightwidth] - lightleft) >> (4 - r_drawsurf.surfmip);
 		lightrightstep =
 			(r_lightptr[(lightpos / r_lightwidth) * r_lightwidth + 1] - lightright) >> (4 - r_drawsurf.surfmip);
@@ -685,7 +691,8 @@ R_DrawSurfaceBlock8_Generic
 */
 void R_DrawSurfaceBlock8_Generic(void)
 {
-	int v, i, b;
+	uint i;
+	int v, b;
 	uint lightstep, lighttemp, light;
 	pixel_t pix, *psource, *prowdest;
 
@@ -959,7 +966,7 @@ void R_InitCaches(void)
 	// calculate size to allocate
 	if ( sw_surfcacheoverride->value )
 	{
-		size = sw_surfcacheoverride->value;
+		size = (int)sw_surfcacheoverride->value;
 	}
 	else
 	{
@@ -973,7 +980,7 @@ void R_InitCaches(void)
 	// round up to page size
 	size = (size + 8191) & ~8191;
 
-	gEngfuncs.Con_Printf("%s surface cache\n", Q_memprint(size));
+	gEngfuncs.Con_Printf("%s surface cache\n", Q_memprint((float)size));
 
 	sc_size = size;
 	if ( sc_base )
@@ -1116,8 +1123,9 @@ void R_DrawSurfaceDecals(void)
 		unsigned int f, fstep;
 		int skip;
 		pixel_t* buffer;
-		qboolean transparent;
-		int x, y, u, v, sv, w, h;
+		qboolean transparent = false;
+		int x, y, u, sv, w, h;
+		unsigned int v;
 		vec3_t basis[3];
 
 		Vector4Copy(fa->texinfo->vecs[0], textureU);
@@ -1125,12 +1133,14 @@ void R_DrawSurfaceDecals(void)
 
 		R_DecalComputeBasis(fa, 0, basis);
 
-		w = fabs(tex->width * DotProduct(textureU, basis[0])) + fabs(tex->height * DotProduct(textureU, basis[1]));
-		h = fabs(tex->width * DotProduct(textureV, basis[0])) + fabs(tex->height * DotProduct(textureV, basis[1]));
+		w = (int)(fabsf(tex->width * DotProduct(textureU, basis[0])) +
+				  fabsf(tex->height * DotProduct(textureU, basis[1])));
+		h = (int)(fabsf(tex->width * DotProduct(textureV, basis[0])) +
+				  fabsf(tex->height * DotProduct(textureV, basis[1])));
 
 		// project decal center into the texture space of the surface
-		x = DotProduct(p->position, textureU) + textureU[3] - fa->texturemins[0] - w / 2;
-		y = DotProduct(p->position, textureV) + textureV[3] - fa->texturemins[1] - h / 2;
+		x = (int)(DotProduct(p->position, textureU) + textureU[3] - fa->texturemins[0] - w / 2);
+		y = (int)(DotProduct(p->position, textureV) + textureV[3] - fa->texturemins[1] - h / 2);
 
 		x = x >> r_drawsurf.surfmip;
 		y = y >> r_drawsurf.surfmip;
@@ -1255,13 +1265,13 @@ surfcache_t* D_CacheSurface(msurface_t* surface, int miplevel)
 	{
 		if ( miplevel >= 1 )
 		{
-			surface->extents[0] = surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf) * 2;
-			surface->info->lightmapmins[0] = -surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf);
+			surface->extents[0] = (short)(surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf) * 2);
+			surface->info->lightmapmins[0] = (short)(-surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf));
 		}
 		else
 		{
-			surface->extents[0] = surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf);
-			surface->info->lightmapmins[0] = -surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf) / 2;
+			surface->extents[0] = (short)(surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf));
+			surface->info->lightmapmins[0] = (short)(-surface->info->lightextents[0] * LM_SAMPLE_SIZE_AUTO(r_drawsurf.surf) / 2);
 		}
 	}
 	/// todo: port this
@@ -1302,7 +1312,7 @@ surfcache_t* D_CacheSurface(msurface_t* surface, int miplevel)
 	//
 	// determine shape of surface
 	//
-	surfscale = 1.0 / (1 << miplevel);
+	surfscale = 1.0f / (float)(1 << miplevel);
 	r_drawsurf.surfmip = miplevel;
 	if ( surface->flags & SURF_CONVEYOR )
 		r_drawsurf.surfwidth = surface->extents[0] >> miplevel;

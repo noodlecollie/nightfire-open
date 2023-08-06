@@ -287,6 +287,10 @@ decodeError:
 	bErrorOut = true;
 	return nBytes;
 
+	// NFTODO: No idea what's going on here, this function with gotos is an ugly mess.
+	// This is supposed to be C++, not assembly...
+	// This section was unreachable, so it's been properly taken out.
+#if 0
 	// Do we have a full UTF-16 surrogate pair that's been UTF-8 encoded afterwards?
 	// That is, do we have 0xD800-0xDBFF followed by 0xDC00-0xDFFF? If so, decode it all.
 	if ( (uValue - 0xD800u) < 0x400u && pUTF8[3] == 0xED && (unsigned char)(pUTF8[4] - 0xB0) < 0x10 &&
@@ -297,6 +301,7 @@ decodeError:
 		uMinValue = 0x10000;
 	}
 	goto decodeFinished;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -394,7 +399,7 @@ void Host_Say(edict_t* pEntity, int teamonly)
 	else
 		sprintf(text, "%c%s: ", 2, STRING(pEntity->v.netname));
 
-	j = sizeof(text) - 2 - strlen(text);  // -2 for /n and null terminator
+	j = static_cast<int>(sizeof(text) - 2 - strlen(text));  // -2 for /n and null terminator
 	if ( (int)strlen(p) > j )
 		p[j] = 0;
 
@@ -975,7 +980,7 @@ Sys_Error
 Engine is going to shut down, allows setting a breakpoint in game .dll to catch that occasion
 ================
 */
-void Sys_Error(const char* error_string)
+void Sys_Error(const char*)
 {
 	// Default case, do nothing.  MOD AUTHORS:  Add code ( e.g., _asm { int 3 }; here to cause a breakpoint for
 	// debugging your game .dlls
@@ -1213,7 +1218,7 @@ int AddToFullPack(
 		UTIL_UnsetGroupTrace();
 	}
 
-	memset(state, 0, sizeof(*state));
+	*state = entity_state_s {};
 
 	// Assign index so we can track this entity from frame to frame and
 	//  delta from it.
@@ -1231,7 +1236,7 @@ int AddToFullPack(
 	//
 
 	// Round animtime to nearest millisecond
-	state->animtime = (int)(1000.0 * ent->v.animtime) / 1000.0;
+	state->animtime = (int)(1000.0f * ent->v.animtime) / 1000.0f;
 
 	memcpy(state->origin, ent->v.origin, 3 * sizeof(float));
 	memcpy(state->angles, ent->v.angles, 3 * sizeof(float));
@@ -1249,7 +1254,7 @@ int AddToFullPack(
 
 	state->frame = ent->v.frame;
 
-	state->skin = ent->v.skin;
+	state->skin = static_cast<short>(ent->v.skin);
 	state->effects = ent->v.effects;
 
 	// This non-player entity is being moved by the game .dll and not the physics simulation system
@@ -1260,7 +1265,7 @@ int AddToFullPack(
 	}
 
 	state->scale = ent->v.scale;
-	state->solid = ent->v.solid;
+	state->solid = static_cast<short>(ent->v.solid);
 	state->colormap = ent->v.colormap;
 
 	state->movetype = ent->v.movetype;
@@ -1394,7 +1399,7 @@ void CreateBaseline(
 		baseline->movetype = entity->v.movetype;
 
 		baseline->scale = entity->v.scale;
-		baseline->solid = entity->v.solid;
+		baseline->solid = static_cast<short>(entity->v.solid);
 		baseline->framerate = entity->v.framerate;
 		baseline->gravity = entity->v.gravity;
 	}
@@ -1685,7 +1690,7 @@ int GetWeaponData(struct edict_s* player, struct weapon_data_s* info)
 				gun = (CBasePlayerWeapon*)pPlayerItem->GetWeaponPtr();
 				if ( gun && gun->UseDecrement() )
 				{
-					ItemInfo II = {0};
+					ItemInfo II = {};
 					// Get The ID.
 					gun->GetItemInfo(&II);
 
@@ -1696,16 +1701,16 @@ int GetWeaponData(struct edict_s* player, struct weapon_data_s* info)
 						item->m_iId = II.iId;
 						item->m_iClip = gun->m_iClip;
 
-						item->m_flTimeWeaponIdle = Q_max(gun->m_flTimeWeaponIdle, -0.001);
-						item->m_flNextPrimaryAttack = Q_max(gun->m_flNextPrimaryAttack, -0.001);
-						item->m_flNextSecondaryAttack = Q_max(gun->m_flNextSecondaryAttack, -0.001);
+						item->m_flTimeWeaponIdle = Q_max(gun->m_flTimeWeaponIdle, -0.001f);
+						item->m_flNextPrimaryAttack = Q_max(gun->m_flNextPrimaryAttack, -0.001f);
+						item->m_flNextSecondaryAttack = Q_max(gun->m_flNextSecondaryAttack, -0.001f);
 						item->m_flLastPrimaryAttack = Q_max(gun->m_flLastPrimaryAttack, -10.0f);
 						item->m_flLastSecondaryAttack = Q_max(gun->m_flLastSecondaryAttack, -10.0f);
 						item->m_fInReload = gun->m_fInReload;
 						item->m_fInSpecialReload = gun->m_fInSpecialReload;
 
 						gun->WritePredictionData(item);
-						item->fuser1 = Q_max(item->fuser1, -0.001);
+						item->fuser1 = Q_max(item->fuser1, -0.001f);
 					}
 				}
 				pPlayerItem = pPlayerItem->m_pNext;
@@ -1764,7 +1769,7 @@ void UpdateClientData(const struct edict_s* ent, int sendweapons, struct clientd
 	cd->flTimeStepSound = pev->flTimeStepSound;
 	cd->flDuckTime = pev->flDuckTime;
 	cd->flSwimTime = pev->flSwimTime;
-	cd->waterjumptime = pev->teleport_time;
+	cd->waterjumptime = static_cast<int>(pev->teleport_time);
 
 	strcpy(cd->physinfo, ENGINE_GETPHYSINFO(ent));
 
@@ -1803,20 +1808,20 @@ void UpdateClientData(const struct edict_s* ent, int sendweapons, struct clientd
 				gun = (CBasePlayerWeapon*)pl->m_pActiveItem->GetWeaponPtr();
 				if ( gun && gun->UseDecrement() )
 				{
-					ItemInfo II = {0};
+					ItemInfo II = {};
 					gun->GetItemInfo(&II);
 
 					cd->m_iId = II.iId;
 
-					cd->vuser3.z = gun->m_iSecondaryAmmoType;
-					cd->vuser4.x = gun->m_iPrimaryAmmoType;
-					cd->vuser4.y = pl->m_rgAmmo[gun->m_iPrimaryAmmoType];
-					cd->vuser4.z = pl->m_rgAmmo[gun->m_iSecondaryAmmoType];
+					cd->vuser3.z = static_cast<float>(gun->m_iSecondaryAmmoType);
+					cd->vuser4.x = static_cast<float>(gun->m_iPrimaryAmmoType);
+					cd->vuser4.y = static_cast<float>(pl->m_rgAmmo[gun->m_iPrimaryAmmoType]);
+					cd->vuser4.z = static_cast<float>(pl->m_rgAmmo[gun->m_iSecondaryAmmoType]);
 
 					if ( pl->m_pActiveItem->m_iId == WEAPON_RPG )
 					{
-						cd->vuser2.y = ((CRpg*)pl->m_pActiveItem)->m_fSpotActive;
-						cd->vuser2.z = ((CRpg*)pl->m_pActiveItem)->m_cActiveRockets;
+						cd->vuser2.y = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_fSpotActive);
+						cd->vuser2.z = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_cActiveRockets);
 					}
 				}
 			}
@@ -1833,7 +1838,7 @@ We're about to run this usercmd for the specified player.  We can set up groupin
 This is the time to examine the usercmd for anything extra.  This call happens even if think does not.
 =================
 */
-void CmdStart(const edict_t* player, const struct usercmd_s* cmd, unsigned int random_seed)
+void CmdStart(const edict_t* player, const struct usercmd_s*, unsigned int random_seed)
 {
 	entvars_t* pev = (entvars_t*)&player->v;
 	CBasePlayer* pl = (CBasePlayer*)CBasePlayer::Instance(pev);
@@ -1878,9 +1883,9 @@ the max size of the response_buffer, so you must zero it out if you choose not t
 ================================
 */
 int ConnectionlessPacket(
-	const struct netadr_s* net_from,
-	const char* args,
-	char* response_buffer,
+	const struct netadr_s*,
+	const char*,
+	char*,
 	int* response_buffer_size)
 {
 	// Parse stuff from args
@@ -1959,7 +1964,7 @@ One of the ENGINE_FORCE_UNMODIFIED files failed the consistency check for the sp
 up to 256 characters )
 ================================
 */
-int InconsistentFile(const edict_t* player, const char* filename, char* disconnect_message)
+int InconsistentFile(const edict_t*, const char* filename, char* disconnect_message)
 {
 	// Server doesn't care?
 	if ( CVAR_GET_FLOAT("mp_consistency") != 1 )

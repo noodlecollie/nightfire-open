@@ -309,7 +309,7 @@ void CBaseMonster::RunTask(Task_t* pTask)
 		case TASK_TURN_RIGHT:
 		case TASK_TURN_LEFT:
 		{
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( FacingIdeal() )
 			{
@@ -329,7 +329,7 @@ void CBaseMonster::RunTask(Task_t* pTask)
 			if ( pTarget )
 			{
 				pev->ideal_yaw = UTIL_VecToYaw(pTarget->pev->origin - pev->origin);
-				ChangeYaw(pev->yaw_speed);
+				ChangeYaw(static_cast<int>(pev->yaw_speed));
 			}
 			if ( m_fSequenceFinished )
 				TaskComplete();
@@ -348,7 +348,7 @@ void CBaseMonster::RunTask(Task_t* pTask)
 		{
 			MakeIdealYaw(m_vecEnemyLKP);
 
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( FacingIdeal() )
 			{
@@ -362,7 +362,7 @@ void CBaseMonster::RunTask(Task_t* pTask)
 		case TASK_FACE_IDEAL:
 		case TASK_FACE_ROUTE:
 		{
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( FacingIdeal() )
 			{
@@ -395,7 +395,7 @@ void CBaseMonster::RunTask(Task_t* pTask)
 		case TASK_WAIT_FACE_ENEMY:
 		{
 			MakeIdealYaw(m_vecEnemyLKP);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( gpGlobals->time >= m_flWaitFinished )
 			{
@@ -503,7 +503,7 @@ void CBaseMonster::RunTask(Task_t* pTask)
 		case TASK_RELOAD:
 		{
 			MakeIdealYaw(m_vecEnemyLKP);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( m_fSequenceFinished )
 			{
@@ -803,7 +803,12 @@ void CBaseMonster::StartTask(Task_t* pTask)
 			}
 			*/
 
-			if ( pBestSound && FindCover(pBestSound->m_vecOrigin, g_vecZero, pBestSound->m_iVolume, CoverRadius()) )
+			if ( pBestSound &&
+				 FindCover(
+					 pBestSound->m_vecOrigin,
+					 g_vecZero,
+					 static_cast<float>(pBestSound->m_iVolume),
+					 CoverRadius()) )
 			{
 				// then try for plain ole cover
 				m_flMoveWaitFinished = gpGlobals->time + pTask->flData;
@@ -876,7 +881,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		case TASK_WAIT_RANDOM:
 		{
 			// set a future time that tells us when the wait is over.
-			m_flWaitFinished = gpGlobals->time + RANDOM_FLOAT(0.1, pTask->flData);
+			m_flWaitFinished = gpGlobals->time + RANDOM_FLOAT(0.1f, pTask->flData);
 			break;
 		}
 		case TASK_MOVE_TO_TARGET_RANGE:

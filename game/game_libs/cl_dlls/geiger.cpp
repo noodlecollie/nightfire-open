@@ -48,7 +48,7 @@ int CHudGeiger::VidInit(void)
 	return 1;
 }
 
-int CHudGeiger::MsgFunc_Geiger(const char* pszName, int iSize, void* pbuf)
+int CHudGeiger::MsgFunc_Geiger(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -61,7 +61,7 @@ int CHudGeiger::MsgFunc_Geiger(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudGeiger::Draw(float flTime)
+int CHudGeiger::Draw(float)
 {
 	int pct;
 	float flvol = 0.0f;
@@ -78,7 +78,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 600 )
 		{
 			pct = 2;
-			flvol = 0.4;  // Con_Printf( "range > 600\n" );
+			flvol = 0.4f;  // Con_Printf( "range > 600\n" );
 			// rg[0] = 1;
 			// rg[1] = 1;
 			i = 2;
@@ -94,7 +94,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 400 )
 		{
 			pct = 8;
-			flvol = 0.6;  // Con_Printf( "range > 400\n" );
+			flvol = 0.6f;  // Con_Printf( "range > 400\n" );
 			// rg[0] = 1;
 			// rg[1] = 2;
 			// rg[2] = 3;
@@ -103,7 +103,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 300 )
 		{
 			pct = 8;
-			flvol = 0.7;  // Con_Printf( "range > 300\n" );
+			flvol = 0.7f;  // Con_Printf( "range > 300\n" );
 			// rg[0] = 2;
 			// rg[1] = 3;
 			// rg[2] = 4;
@@ -112,7 +112,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 200 )
 		{
 			pct = 28;
-			flvol = 0.78;  // Con_Printf( "range > 200\n" );
+			flvol = 0.78f;  // Con_Printf( "range > 200\n" );
 			// rg[0] = 2;
 			// rg[1] = 3;
 			// rg[2] = 4;
@@ -121,7 +121,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 150 )
 		{
 			pct = 40;
-			flvol = 0.80;  // Con_Printf( "range > 150\n" );
+			flvol = 0.80f;  // Con_Printf( "range > 150\n" );
 			// rg[0] = 3;
 			// rg[1] = 4;
 			// rg[2] = 5;
@@ -130,7 +130,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 100 )
 		{
 			pct = 60;
-			flvol = 0.85;  // Con_Printf( "range > 100\n" );
+			flvol = 0.85f;  // Con_Printf( "range > 100\n" );
 			// rg[0] = 3;
 			// rg[1] = 4;
 			// rg[2] = 5;
@@ -139,7 +139,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 75 )
 		{
 			pct = 80;
-			flvol = 0.9;  // Con_Printf( "range > 75\n" );
+			flvol = 0.9f;  // Con_Printf( "range > 75\n" );
 			// gflGeigerDelay = cl.time + GEIGERDELAY * 0.75;
 			// rg[0] = 4;
 			// rg[1] = 5;
@@ -149,7 +149,7 @@ int CHudGeiger::Draw(float flTime)
 		else if ( m_iGeigerRange > 50 )
 		{
 			pct = 90;
-			flvol = 0.95;  // Con_Printf( "range > 50\n" );
+			flvol = 0.95f;  // Con_Printf( "range > 50\n" );
 			// rg[0] = 5;
 			// rg[1] = 6;
 			i = 2;
@@ -163,7 +163,7 @@ int CHudGeiger::Draw(float flTime)
 			i = 2;
 		}
 
-		flvol = (flvol * ((rand() & 127)) / 255) + 0.25;  // UTIL_RandomFloat( 0.25, 0.5 );
+		flvol = (flvol * ((rand() & 127)) / 255.0f) + 0.25f;  // UTIL_RandomFloat( 0.25, 0.5 );
 
 		if ( (rand() & 127) < pct || (rand() & 127) < pct )
 		{

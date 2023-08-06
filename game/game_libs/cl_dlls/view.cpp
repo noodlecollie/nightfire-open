@@ -112,12 +112,12 @@ cvar_t* cl_chasedist;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
 // Register these cvars in V_Init() if needed for easy tweaking
-cvar_t v_iyaw_cycle = {"v_iyaw_cycle", "2", 0, 2};
-cvar_t v_iroll_cycle = {"v_iroll_cycle", "0.5", 0, 0.5};
-cvar_t v_ipitch_cycle = {"v_ipitch_cycle", "1", 0, 1};
-cvar_t v_iyaw_level = {"v_iyaw_level", "0.3", 0, 0.3};
-cvar_t v_iroll_level = {"v_iroll_level", "0.1", 0, 0.1};
-cvar_t v_ipitch_level = {"v_ipitch_level", "0.3", 0, 0.3};
+cvar_t v_iyaw_cycle = {"v_iyaw_cycle", "2", 0, 2, NULL};
+cvar_t v_iroll_cycle = {"v_iroll_cycle", "0.5", 0, 0.5f, NULL};
+cvar_t v_ipitch_cycle = {"v_ipitch_cycle", "1", 0, 1, NULL};
+cvar_t v_iyaw_level = {"v_iyaw_level", "0.3", 0, 0.3f, NULL};
+cvar_t v_iroll_level = {"v_iroll_level", "0.1", 0, 0.1f, NULL};
+cvar_t v_ipitch_level = {"v_ipitch_level", "0.3", 0, 0.3f, NULL};
 
 float v_idlescale;  // used by TFC for concussion grenade effect
 
@@ -197,16 +197,17 @@ float V_CalcBob(struct ref_params_s* pparams)
 	lasttime = pparams->time;
 
 	bobtime += pparams->frametime;
-	cycle = bobtime - (int)(bobtime / cl_bobcycle->value) * cl_bobcycle->value;
+	cycle = static_cast<float>(bobtime - (int)(bobtime / cl_bobcycle->value) * cl_bobcycle->value);
 	cycle /= cl_bobcycle->value;
 
 	if ( cycle < cl_bobup->value )
 	{
-		cycle = M_PI * cycle / cl_bobup->value;
+		cycle = static_cast<float>(M_PI) * cycle / cl_bobup->value;
 	}
 	else
 	{
-		cycle = M_PI + M_PI * (cycle - cl_bobup->value) / (1.0 - cl_bobup->value);
+		cycle =
+			static_cast<float>(M_PI) + static_cast<float>(M_PI) * (cycle - cl_bobup->value) / (1.0f - cl_bobup->value);
 	}
 
 	// bob is proportional to simulated velocity in the xy plane
@@ -214,8 +215,8 @@ float V_CalcBob(struct ref_params_s* pparams)
 	VectorCopy(pparams->simvel, vel);
 	vel[2] = 0;
 
-	bob = sqrt(vel[0] * vel[0] + vel[1] * vel[1]) * cl_bob->value;
-	bob = bob * 0.3 + bob * 0.7 * sin(cycle);
+	bob = sqrtf(vel[0] * vel[0] + vel[1] * vel[1]) * cl_bob->value;
+	bob = bob * 0.3f + bob * 0.7f * sinf(cycle);
 	bob = Min(bob, 4.0f);
 	bob = Max(bob, -7.0f);
 	return bob;
@@ -237,8 +238,8 @@ float V_CalcRoll(vec3_t angles, vec3_t velocity, float rollangle, float rollspee
 	AngleVectors(angles, forward, right, up);
 
 	side = DotProduct(velocity, right);
-	sign = side < 0 ? -1 : 1;
-	side = fabs(side);
+	sign = side < 0 ? -1.0f : 1.0f;
+	side = fabsf(side);
 
 	value = rollangle;
 	if ( side < rollspeed )
@@ -259,8 +260,6 @@ typedef struct pitchdrift_s
 	float driftmove;
 	double laststop;
 } pitchdrift_t;
-
-static pitchdrift_t pd;
 
 /*
 ===============
@@ -293,12 +292,12 @@ void V_CalcGunAngle(struct ref_params_s* pparams)
 		return;
 
 	viewent->angles[YAW] = pparams->viewangles[YAW] + pparams->crosshairangle[YAW];
-	viewent->angles[PITCH] = -pparams->viewangles[PITCH] + pparams->crosshairangle[PITCH] * 0.25;
-	viewent->angles[ROLL] -= v_idlescale * sin(pparams->time * v_iroll_cycle.value) * v_iroll_level.value;
+	viewent->angles[PITCH] = -pparams->viewangles[PITCH] + pparams->crosshairangle[PITCH] * 0.25f;
+	viewent->angles[ROLL] -= v_idlescale * sinf(pparams->time * v_iroll_cycle.value) * v_iroll_level.value;
 
 	// don't apply all of the v_ipitch to prevent normally unseen parts of viewmodel from coming into view.
-	viewent->angles[PITCH] -= v_idlescale * sin(pparams->time * v_ipitch_cycle.value) * (v_ipitch_level.value * 0.5);
-	viewent->angles[YAW] -= v_idlescale * sin(pparams->time * v_iyaw_cycle.value) * v_iyaw_level.value;
+	viewent->angles[PITCH] -= v_idlescale * sinf(pparams->time * v_ipitch_cycle.value) * (v_ipitch_level.value * 0.5f);
+	viewent->angles[YAW] -= v_idlescale * sinf(pparams->time * v_iyaw_cycle.value) * v_iyaw_level.value;
 
 	VectorCopy(viewent->angles, viewent->curstate.angles);
 	VectorCopy(viewent->angles, viewent->latched.prevangles);
@@ -313,9 +312,9 @@ Idle swaying
 */
 void V_AddIdle(struct ref_params_s* pparams)
 {
-	pparams->viewangles[ROLL] += v_idlescale * sin(pparams->time * v_iroll_cycle.value) * v_iroll_level.value;
-	pparams->viewangles[PITCH] += v_idlescale * sin(pparams->time * v_ipitch_cycle.value) * v_ipitch_level.value;
-	pparams->viewangles[YAW] += v_idlescale * sin(pparams->time * v_iyaw_cycle.value) * v_iyaw_level.value;
+	pparams->viewangles[ROLL] += v_idlescale * sinf(pparams->time * v_iroll_cycle.value) * v_iroll_level.value;
+	pparams->viewangles[PITCH] += v_idlescale * sinf(pparams->time * v_ipitch_cycle.value) * v_ipitch_level.value;
+	pparams->viewangles[YAW] += v_idlescale * sinf(pparams->time * v_iyaw_cycle.value) * v_iyaw_level.value;
 }
 
 /*
@@ -474,7 +473,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	{
 		int contents, waterDist, waterEntity;
 		vec3_t point;
-		waterDist = cl_waterdist->value;
+		waterDist = static_cast<int>(cl_waterdist->value);
 
 		if ( pparams->hardware )
 		{
@@ -484,7 +483,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 				pwater = gEngfuncs.GetEntityByIndex(waterEntity);
 				if ( pwater && (pwater->model != NULL) )
 				{
-					waterDist += (pwater->curstate.scale * 16);  // Add in wave height
+					waterDist += static_cast<int>(pwater->curstate.scale * 16);  // Add in wave height
 				}
 			}
 		}
@@ -590,18 +589,18 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	VectorAdd(view->origin, pparams->viewheight, view->origin);
 
 	// Let the viewmodel shake at about 10% of the amplitude
-	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9);
+	gEngfuncs.V_ApplyShake(view->origin, view->angles, 0.9f);
 
 	for ( i = 0; i < 3; i++ )
 	{
-		view->origin[i] += bob * 0.4 * pparams->forward[i];
+		view->origin[i] += bob * 0.4f * pparams->forward[i];
 	}
 	view->origin[2] += bob;
 
 	// throw in a little tilt.
-	view->angles[YAW] -= bob * 0.5;
-	view->angles[ROLL] -= bob * 1;
-	view->angles[PITCH] -= bob * 0.3;
+	view->angles[YAW] -= bob * 0.5f;
+	view->angles[ROLL] -= bob * 1.0f;
+	view->angles[PITCH] -= bob * 0.3f;
 
 	if ( cl_viewbob && cl_viewbob->value )
 		VectorCopy(view->angles, view->curstate.angles);
@@ -716,7 +715,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 					ViewInterp.Origins[(foundidx + 1) & ORIGIN_MASK],
 					ViewInterp.Origins[foundidx & ORIGIN_MASK],
 					delta);
-				VectorMA(ViewInterp.Origins[foundidx & ORIGIN_MASK], frac, delta, neworg);
+				VectorMA(ViewInterp.Origins[foundidx & ORIGIN_MASK], static_cast<float>(frac), delta, neworg);
 
 				// Dont interpolate large changes
 				if ( Length(delta) < 64 )
@@ -796,7 +795,7 @@ void V_SmoothInterpolateAngles(float* startAngle, float* endAngle, float* finalA
 			d += 360.0f;
 		}
 
-		absd = fabs(d);
+		absd = fabsf(d);
 
 		if ( absd > 0.01f )
 		{
@@ -838,7 +837,7 @@ void V_GetChaseOrigin(float* angles, float* origin, float distance, float* retur
 	vec3_t vecEnd;
 	vec3_t forward;
 	vec3_t vecStart;
-	pmtrace_t* trace;
+	pmtrace_t* trace = nullptr;
 	int maxLoops = 8;
 
 	int ignoreent = -1;  // first, ignore no entity
@@ -1022,7 +1021,7 @@ float MaxAngleBetweenAngles(float* a1, float* a2)
 			d += 360;
 		}
 
-		d = fabs(d);
+		d = fabsf(d);
 
 		if ( d > maxd )
 			maxd = d;
@@ -1341,7 +1340,7 @@ int V_FindViewModelByWeaponModel(int weaponindex)
 		return 0;
 	}
 
-	int len = strlen(weaponModel->name);
+	int len = static_cast<int>(strlen(weaponModel->name));
 
 	// Check generic weapons first.
 	CWeaponRegistry weaponRegistry = CWeaponRegistry::StaticInstance();

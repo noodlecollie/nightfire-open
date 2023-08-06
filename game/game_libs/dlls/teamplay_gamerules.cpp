@@ -45,7 +45,7 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 	m_szTeamList[0] = 0;
 
 	// Cache this because the team code doesn't want to deal with changing this in the middle of a game
-	strncpy(m_szTeamList, teamlist.string, TEAMPLAY_TEAMLISTLENGTH);
+	strncpy(m_szTeamList, teamlist.string, TEAMPLAY_TEAMLISTLENGTH - 1);
 
 	edict_t* pWorld = INDEXENT(0);
 	if ( pWorld && pWorld->v.team )
@@ -55,7 +55,7 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 			const char* pTeamList = STRING(pWorld->v.team);
 			if ( pTeamList && strlen(pTeamList) )
 			{
-				strncpy(m_szTeamList, pTeamList, TEAMPLAY_TEAMLISTLENGTH);
+				strncpy(m_szTeamList, pTeamList, TEAMPLAY_TEAMLISTLENGTH - 1);
 			}
 		}
 	}
@@ -149,6 +149,8 @@ void CHalfLifeTeamplay::Think(void)
 //=========================================================
 BOOL CHalfLifeTeamplay::ClientCommand(CBasePlayer* pPlayer, const char* pcmd)
 {
+	(void)pPlayer;
+
 #ifndef NO_VOICEGAMEMGR
 	if ( g_VoiceGameMgr.ClientCommand(pPlayer, pcmd) )
 		return TRUE;
@@ -184,7 +186,7 @@ const char* CHalfLifeTeamplay::SetDefaultPlayerTeam(CBasePlayer* pPlayer)
 {
 	// copy out the team name from the model
 	char* mdls = g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model");
-	strncpy(pPlayer->m_szTeamName, mdls, TEAM_NAME_LENGTH);
+	strncpy(pPlayer->m_szTeamName, mdls, TEAM_NAME_LENGTH - 1);
 
 	RecountTeams();
 
@@ -288,7 +290,7 @@ void CHalfLifeTeamplay::ChangePlayerTeam(CBasePlayer* pPlayer, const char* pTeam
 
 	// copy out the team name from the model
 	if ( pPlayer->m_szTeamName != pTeamName )
-		strncpy(pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH);
+		strncpy(pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH - 1);
 
 	g_engfuncs.pfnSetClientKeyValue(
 		clientIndex,
@@ -575,15 +577,15 @@ const char* CHalfLifeTeamplay::TeamWithFewestPlayers(void)
 void CHalfLifeTeamplay::RecountTeams(bool bResendInfo)
 {
 	char* pName;
-	char teamlist[TEAMPLAY_TEAMLISTLENGTH];
+	char teamList[TEAMPLAY_TEAMLISTLENGTH];
 
 	// loop through all teams, recounting everything
 	num_teams = 0;
 
 	// Copy all of the teams from the teamlist
 	// make a copy because strtok is destructive
-	strcpy(teamlist, m_szTeamList);
-	pName = teamlist;
+	strcpy(teamList, m_szTeamList);
+	pName = teamList;
 	pName = strtok(pName, ";");
 	while ( pName != NULL && *pName )
 	{

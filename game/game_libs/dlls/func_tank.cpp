@@ -75,7 +75,7 @@ public:
 	inline void TankActivate(void)
 	{
 		pev->spawnflags |= SF_TANK_ACTIVE;
-		pev->nextthink = pev->ltime + 0.1;
+		pev->nextthink = pev->ltime + 0.1f;
 		m_fireLast = 0;
 	}
 	inline void TankDeactivate(void)
@@ -184,10 +184,10 @@ IMPLEMENT_SAVERESTORE(CFuncTank, CBaseEntity)
 
 static Vector gTankSpread[] = {
 	Vector(0, 0, 0),  // perfect
-	Vector(0.025, 0.025, 0.025),  // small cone
-	Vector(0.05, 0.05, 0.05),  // medium cone
-	Vector(0.1, 0.1, 0.1),  // large cone
-	Vector(0.25, 0.25, 0.25),  // extra-large cone
+	Vector(0.025f, 0.025f, 0.025f),  // small cone
+	Vector(0.05f, 0.05f, 0.05f),  // medium cone
+	Vector(0.1f, 0.1f, 0.1f),  // large cone
+	Vector(0.25f, 0.25f, 0.25f),  // extra-large cone
 };
 
 #define MAX_FIRING_SPREADS XASH_ARRAY_SIZE(gTankSpread)
@@ -204,7 +204,7 @@ void CFuncTank::Spawn(void)
 	m_pitchCenter = pev->angles.x;
 
 	if ( IsActive() )
-		pev->nextthink = pev->ltime + 1.0;
+		pev->nextthink = pev->ltime + 1.0f;
 
 	m_sightOrigin = BarrelPosition();  // Point at the end of the barrel
 
@@ -232,57 +232,57 @@ void CFuncTank::KeyValue(KeyValueData* pkvd)
 {
 	if ( FStrEq(pkvd->szKeyName, "yawrate") )
 	{
-		m_yawRate = atof(pkvd->szValue);
+		m_yawRate = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "yawrange") )
 	{
-		m_yawRange = atof(pkvd->szValue);
+		m_yawRange = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "yawtolerance") )
 	{
-		m_yawTolerance = atof(pkvd->szValue);
+		m_yawTolerance = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "pitchrange") )
 	{
-		m_pitchRange = atof(pkvd->szValue);
+		m_pitchRange = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "pitchrate") )
 	{
-		m_pitchRate = atof(pkvd->szValue);
+		m_pitchRate = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "pitchtolerance") )
 	{
-		m_pitchTolerance = atof(pkvd->szValue);
+		m_pitchTolerance = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "firerate") )
 	{
-		m_fireRate = atof(pkvd->szValue);
+		m_fireRate = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "barrel") )
 	{
-		m_barrelPos.x = atof(pkvd->szValue);
+		m_barrelPos.x = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "barrely") )
 	{
-		m_barrelPos.y = atof(pkvd->szValue);
+		m_barrelPos.y = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "barrelz") )
 	{
-		m_barrelPos.z = atof(pkvd->szValue);
+		m_barrelPos.z = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "spritescale") )
 	{
-		m_spriteScale = atof(pkvd->szValue);
+		m_spriteScale = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "spritesmoke") )
@@ -302,7 +302,7 @@ void CFuncTank::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "persistence") )
 	{
-		m_persist = atof(pkvd->szValue);
+		m_persist = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "bullet") )
@@ -322,12 +322,12 @@ void CFuncTank::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "minRange") )
 	{
-		m_minRange = atof(pkvd->szValue);
+		m_minRange = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "maxRange") )
 	{
-		m_maxRange = atof(pkvd->szValue);
+		m_maxRange = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "master") )
@@ -382,7 +382,7 @@ BOOL CFuncTank::StartControl(CBasePlayer* pController)
 	m_pController->m_iHideHUD |= HIDEHUD_WEAPONS;
 	m_vecControllerUsePos = m_pController->pev->origin;
 
-	pev->nextthink = pev->ltime + 0.1;
+	pev->nextthink = pev->ltime + 0.1f;
 
 	return TRUE;
 }
@@ -408,7 +408,7 @@ void CFuncTank::StopControl()
 	m_pController = NULL;
 
 	if ( IsActive() )
-		pev->nextthink = pev->ltime + 1.0;
+		pev->nextthink = pev->ltime + 1.0f;
 }
 
 // Called each frame by the player's ItemPostFrame
@@ -424,7 +424,7 @@ void CFuncTank::ControllerPostFrame(void)
 		Vector vecForward;
 		UTIL_MakeVectorsPrivate(pev->angles, vecForward, NULL, NULL);
 
-		m_fireLast = gpGlobals->time - (1 / m_fireRate) - 0.01;  // to make sure the gun doesn't fire too many bullets
+		m_fireLast = gpGlobals->time - (1 / m_fireRate) - 0.01f;  // to make sure the gun doesn't fire too many bullets
 
 		Fire(BarrelPosition(), vecForward, m_pController->pev);
 
@@ -437,7 +437,7 @@ void CFuncTank::ControllerPostFrame(void)
 }
 ////////////// END NEW STUFF //////////////
 
-void CFuncTank::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CFuncTank::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float value)
 {
 	if ( pev->spawnflags & SF_TANK_CANCONTROL )
 	{
@@ -510,12 +510,12 @@ void CFuncTank::TrackTarget(void)
 		// Tanks attempt to mirror the player's angles
 		angles = m_pController->pev->v_angle;
 		angles[0] = 0 - angles[0];
-		pev->nextthink = pev->ltime + 0.05;
+		pev->nextthink = pev->ltime + 0.05f;
 	}
 	else
 	{
 		if ( IsActive() )
-			pev->nextthink = pev->ltime + 0.1;
+			pev->nextthink = pev->ltime + 0.1f;
 		else
 			return;
 
@@ -646,18 +646,18 @@ void CFuncTank::AdjustAnglesForBarrel(Vector& angles, float distance)
 		if ( m_barrelPos.y )
 		{
 			r2 = m_barrelPos.y * m_barrelPos.y;
-			angles.y += (180.0 / M_PI) * atan2(m_barrelPos.y, sqrt(d2 - r2));
+			angles.y += (180.0f / static_cast<float>(M_PI)) * atan2f(m_barrelPos.y, sqrtf(d2 - r2));
 		}
 		if ( m_barrelPos.z )
 		{
 			r2 = m_barrelPos.z * m_barrelPos.z;
-			angles.x += (180.0 / M_PI) * atan2(-m_barrelPos.z, sqrt(d2 - r2));
+			angles.x += (180.0f / static_cast<float>(M_PI)) * atan2f(-m_barrelPos.z, sqrtf(d2 - r2));
 		}
 	}
 }
 
 // Fire targets and spawn sprites
-void CFuncTank::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTank::Fire(const Vector& barrelEnd, const Vector&, entvars_t*)
 {
 	if ( m_fireLast != 0 )
 	{
@@ -683,7 +683,7 @@ void CFuncTank::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* 
 			pSprite->SetScale(m_spriteScale);
 
 			// Hack Hack, make it stick around for at least 100 ms.
-			pSprite->pev->nextthink += 0.1;
+			pSprite->pev->nextthink += 0.1f;
 		}
 		SUB_UseTargets(this, USE_TOGGLE, 0);
 	}
@@ -713,7 +713,7 @@ void CFuncTank::StartRotSound(void)
 	if ( !pev->noise || (pev->spawnflags & SF_TANK_SOUNDON) )
 		return;
 	pev->spawnflags |= SF_TANK_SOUNDON;
-	EMIT_SOUND(edict(), CHAN_STATIC, STRING(pev->noise), 0.85, ATTN_NORM);
+	EMIT_SOUND(edict(), CHAN_STATIC, STRING(pev->noise), 0.85f, ATTN_NORM);
 }
 
 void CFuncTank::StopRotSound(void)
@@ -878,7 +878,7 @@ void CFuncTankLaser::Think(void)
 	CFuncTank::Think();
 }
 
-void CFuncTankLaser::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTankLaser::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t*)
 {
 	int i;
 	TraceResult tr;
@@ -898,7 +898,7 @@ void CFuncTankLaser::Fire(const Vector& barrelEnd, const Vector& forward, entvar
 
 				m_laserTime = gpGlobals->time;
 				m_pLaser->TurnOn();
-				m_pLaser->pev->dmgtime = gpGlobals->time - 1.0;
+				m_pLaser->pev->dmgtime = gpGlobals->time - 1.0f;
 				m_pLaser->FireAtPoint(tr);
 				m_pLaser->pev->nextthink = 0;
 			}
@@ -932,7 +932,7 @@ void CFuncTankRocket::Precache(void)
 	CFuncTank::Precache();
 }
 
-void CFuncTankRocket::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTankRocket::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t*)
 {
 	int i;
 
@@ -972,7 +972,7 @@ void CFuncTankMortar::KeyValue(KeyValueData* pkvd)
 		CFuncTank::KeyValue(pkvd);
 }
 
-void CFuncTankMortar::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t* pevAttacker)
+void CFuncTankMortar::Fire(const Vector& barrelEnd, const Vector& forward, entvars_t*)
 {
 	if ( m_fireLast != 0 )
 	{
@@ -1065,7 +1065,7 @@ void CFuncTankControls::Spawn(void)
 	UTIL_SetSize(pev, pev->mins, pev->maxs);
 	UTIL_SetOrigin(pev, pev->origin);
 
-	pev->nextthink = gpGlobals->time + 0.3;  // After all the func_tank's have spawned
+	pev->nextthink = gpGlobals->time + 0.3f;  // After all the func_tank's have spawned
 
 	CBaseEntity::Spawn();
 }

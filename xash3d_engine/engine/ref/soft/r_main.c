@@ -144,6 +144,7 @@ int R_GetEntityRenderMode( cl_entity_t *ent )
 
 void GAME_EXPORT R_AllowFog(qboolean allowed)
 {
+	(void)allowed;
 }
 
 /*
@@ -198,7 +199,9 @@ static int R_TransEntityCompare(const cl_entity_t** a, const cl_entity_t** b)
 		dist1 = DotProduct(vecLen, vecLen);
 	}
 	else
+	{
 		dist1 = 1000000000;
+	}
 
 	if ( (ent1->model && ent2->model->type != mod_brush) || rendermode2 != kRenderTransAlpha )
 	{
@@ -208,20 +211,37 @@ static int R_TransEntityCompare(const cl_entity_t** a, const cl_entity_t** b)
 		dist2 = DotProduct(vecLen, vecLen);
 	}
 	else
+	{
 		dist2 = 1000000000;
+	}
 
 	if ( dist1 > dist2 )
+	{
 		return -1;
+	}
+
 	if ( dist1 < dist2 )
+	{
 		return 1;
+	}
 
 	// then sort by rendermode
 	if ( R_RankForRenderMode(rendermode1) > R_RankForRenderMode(rendermode2) )
+	{
 		return 1;
+	}
+
 	if ( R_RankForRenderMode(rendermode1) < R_RankForRenderMode(rendermode2) )
+	{
 		return -1;
+	}
 
 	return 0;
+}
+
+static int TransEntityCompareGeneric(const void* a, const void* b)
+{
+	return R_TransEntityCompare((const cl_entity_t**)a, (const cl_entity_t**)b);
 }
 
 #if 1
@@ -398,10 +418,12 @@ qboolean GAME_EXPORT R_AddEntity(struct cl_entity_s* clent, int type)
 R_Clear
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static void R_Clear(int bitMask)
 {
-	int bits;
+	(void)bitMask;
 #if 0
+	int bits;
 	if( gEngfuncs.CL_IsDevOverviewMode( ))
 		pglClearColor( 0.0f, 1.0f, 0.0f, 1.0f ); // green background (Valve rules)
 	else pglClearColor( 0.5f, 0.5f, 0.5f, 1.0f );
@@ -432,6 +454,7 @@ static void R_Clear(int bitMask)
 #endif
 	memset(vid.buffer, 0, vid.width * vid.height * 2);
 }
+#endif // UNUSED_FUNCTIONS
 
 //=============================================================================
 /*
@@ -503,10 +526,10 @@ static void R_SetupProjectionMatrix(matrix4x4 m)
 	zNear = 4.0f;
 	zFar = Q_max(256.0f, RI.farClip);
 
-	yMax = zNear * tan(RI.fov_y * M_PI_F / 360.0f);
+	yMax = zNear * tanf(RI.fov_y * M_PI_F / 360.0f);
 	yMin = -yMax;
 
-	xMax = zNear * tan(RI.fov_x * M_PI_F / 360.0f);
+	xMax = zNear * tanf(RI.fov_x * M_PI_F / 360.0f);
 	xMin = -xMax;
 
 	Matrix4x4_CreateProjection(m, xMax, xMin, yMax, yMin, zNear, zFar);
@@ -555,6 +578,7 @@ R_RotateForEntity
 */
 void R_RotateForEntity(cl_entity_t* e)
 {
+	(void)e;
 #if 0
 	float	scale = 1.0f;
 
@@ -583,6 +607,7 @@ R_TranslateForEntity
 */
 void R_TranslateForEntity(cl_entity_t* e)
 {
+	(void)e;
 #if 0
 	float	scale = 1.0f;
 
@@ -632,7 +657,7 @@ static void R_SetupFrame(void)
 			tr.draw_list->trans_entities,
 			tr.draw_list->num_trans_entities,
 			sizeof(cl_entity_t*),
-			(void*)R_TransEntityCompare);
+			&TransEntityCompareGeneric);
 	}
 
 	// current viewleaf
@@ -727,6 +752,7 @@ using to find source waterleaf with
 watertexture to grab fog values from it
 =============
 */
+#ifdef UNUSED_FUNCTIONS
 static image_t* R_RecursiveFindWaterTexture(const mnode_t* node, const mnode_t* ignore, qboolean down)
 {
 	image_t* tex = NULL;
@@ -793,6 +819,8 @@ static image_t* R_RecursiveFindWaterTexture(const mnode_t* node, const mnode_t* 
 	return NULL;
 }
 
+#endif // UNUSED_FUNCTIONS
+
 extern void R_PolysetFillSpans8(void*);
 extern void R_PolysetDrawSpansConstant8_33(void* pspanpackage);
 extern void R_PolysetDrawSpans8_33(void* pspanpackage);
@@ -805,7 +833,7 @@ R_DrawEntitiesOnList
 void R_DrawEntitiesOnList(void)
 {
 	extern void (*d_pdrawspans)(void*);
-	int i;
+	unsigned int i;
 	// extern int d_aflatcolor;
 	// d_aflatcolor = 0;
 	tr.blend = 1.0f;
@@ -877,11 +905,9 @@ void R_DrawEntitiesOnList(void)
 		Assert(RI.currententity != NULL);
 		Assert(RI.currentmodel != NULL);
 
-		switch ( RI.currentmodel->type )
+		if ( RI.currentmodel->type == mod_sprite )
 		{
-			case mod_sprite:
-				R_DrawSpriteModel(RI.currententity);
-				break;
+			R_DrawSpriteModel(RI.currententity);
 		}
 	}
 
@@ -889,7 +915,7 @@ void R_DrawEntitiesOnList(void)
 
 	if ( !RI.onlyClientDraw )
 	{
-		gEngfuncs.CL_DrawEFX(tr.frametime, false);
+		gEngfuncs.CL_DrawEFX((float)tr.frametime, false);
 	}
 
 	//	GL_CheckForErrors();
@@ -951,7 +977,7 @@ void R_DrawEntitiesOnList(void)
 	if ( !RI.onlyClientDraw )
 	{
 		R_AllowFog(false);
-		gEngfuncs.CL_DrawEFX(tr.frametime, true);
+		gEngfuncs.CL_DrawEFX((float)tr.frametime, true);
 		R_AllowFog(true);
 	}
 
@@ -1121,7 +1147,8 @@ R_DrawBEntitiesOnList
 */
 void R_DrawBEntitiesOnList(void)
 {
-	int i, clipflags;
+	unsigned int i;
+	int clipflags;
 	vec3_t oldorigin;
 	vec3_t mins, maxs;
 	float minmaxs[6];
@@ -1191,17 +1218,17 @@ void R_DrawBEntitiesOnList(void)
 		for ( k = 0; k < MAX_DLIGHTS; k++ )
 		{
 			dlight_t* l = gEngfuncs.GetDynamicLight(k);
-			vec3_t origin_l, oldorigin;
+			vec3_t origin_l, localoldorigin;
 
 			if ( l->die < gpGlobals->time || !l->radius )
 				continue;
 
-			VectorCopy(l->origin, oldorigin);  // save lightorigin
+			VectorCopy(l->origin, localoldorigin);  // save lightorigin
 			Matrix4x4_CreateFromEntity(RI.objectMatrix, RI.currententity->angles, RI.currententity->origin, 1);
 			Matrix4x4_VectorITransform(RI.objectMatrix, l->origin, origin_l);
 			VectorCopy(origin_l, l->origin);  // move light in bmodel space
 			R_MarkLights(l, 1 << k, RI.currentmodel->nodes + RI.currentmodel->hulls[0].firstclipnode);
-			VectorCopy(oldorigin, l->origin);  // restore lightorigin*/
+			VectorCopy(localoldorigin, l->origin);  // restore lightorigin*/
 			// R_MarkLights( l, 1<<k, RI.currentmodel->nodes + RI.currentmodel->hulls[0].firstclipnode );
 		}
 
@@ -1246,7 +1273,7 @@ R_DrawBEntitiesOnList
 */
 void R_DrawBrushModel(cl_entity_t* pent)
 {
-	int i, clipflags;
+	int clipflags;
 	vec3_t oldorigin;
 	vec3_t mins, maxs;
 	float minmaxs[6];
@@ -1254,6 +1281,8 @@ void R_DrawBrushModel(cl_entity_t* pent)
 	int k;
 	edge_t ledges[NUMSTACKEDGES + ((CACHE_SIZE - 1) / sizeof(edge_t)) + 1];
 	surf_t lsurfs[NUMSTACKSURFACES + ((CACHE_SIZE - 1) / sizeof(surf_t)) + 1];
+
+	(void)pent;
 
 	if ( !RI.drawWorld )
 		return;
@@ -1340,18 +1369,18 @@ void R_DrawBrushModel(cl_entity_t* pent)
 	for ( k = 0; k < MAX_DLIGHTS; k++ )
 	{
 		dlight_t* l = gEngfuncs.GetDynamicLight(k);
-		vec3_t origin_l, oldorigin;
+		vec3_t origin_l, localoldorigin;
 
 		if ( l->die < gpGlobals->time || !l->radius )
 			continue;
 
-		VectorCopy(l->origin, oldorigin);  // save lightorigin
+		VectorCopy(l->origin, localoldorigin);  // save lightorigin
 		Matrix4x4_CreateFromEntity(RI.objectMatrix, RI.currententity->angles, RI.currententity->origin, 1);
 		Matrix4x4_VectorITransform(RI.objectMatrix, l->origin, origin_l);
 		tr.modelviewIdentity = false;
 		VectorCopy(origin_l, l->origin);  // move light in bmodel space
 		R_MarkLights(l, 1 << k, RI.currentmodel->nodes + RI.currentmodel->hulls[0].firstclipnode);
-		VectorCopy(oldorigin, l->origin);  // restore lightorigin*/
+		VectorCopy(localoldorigin, l->origin);  // restore lightorigin*/
 		// R_MarkLights( l, 1<<k, RI.currentmodel->nodes + RI.currentmodel->hulls[0].firstclipnode );
 	}
 
@@ -1652,6 +1681,7 @@ R_BeginFrame
 */
 void GAME_EXPORT R_BeginFrame(qboolean clearScene)
 {
+	(void)clearScene;
 #if 0  // unused
 	if( R_DoResetGamma( ))
 	{
@@ -1824,7 +1854,7 @@ void GAME_EXPORT R_NewMap(void)
 	R_ClearDecals();  // clear all level decals
 	R_StudioResetPlayerModels();
 
-	r_cnumsurfs = sw_maxsurfs->value;
+	r_cnumsurfs = (int)sw_maxsurfs->value;
 
 	if ( r_cnumsurfs <= MINSURFACES )
 		r_cnumsurfs = MINSURFACES;
@@ -1845,7 +1875,7 @@ void GAME_EXPORT R_NewMap(void)
 		r_surfsonstack = true;
 	}
 
-	r_numallocatededges = sw_maxedges->value;
+	r_numallocatededges = (int)sw_maxedges->value;
 
 	if ( r_numallocatededges < MINEDGES )
 		r_numallocatededges = MINEDGES;
@@ -1874,7 +1904,8 @@ void GAME_EXPORT R_NewMap(void)
 			break;
 		}
 	}
-	tr.sample_bits = -1;
+
+	tr.sample_bits = (uint)~0;
 
 	if ( tr.sample_size != -1 )
 	{
@@ -1882,8 +1913,9 @@ void GAME_EXPORT R_NewMap(void)
 
 		tr.sample_bits = 0;
 
-		for ( sample_pot = 1; sample_pot < tr.sample_size; sample_pot <<= 1, tr.sample_bits++ )
-			;
+		for ( sample_pot = 1; sample_pot < (uint)tr.sample_size; sample_pot <<= 1, tr.sample_bits++ )
+		{
+		}
 	}
 
 	gEngfuncs.Con_Printf("Map sample size is %d\n", tr.sample_size);
@@ -1900,8 +1932,8 @@ void R_InitTurb(void)
 
 	for ( i = 0; i < 1280; i++ )
 	{
-		sintable[i] = AMP + sin(i * 3.14159 * 2 / CYCLE) * AMP;
-		intsintable[i] = AMP2 + sin(i * 3.14159 * 2 / CYCLE) * AMP2;  // AMP2, not 20
+		sintable[i] = (int)((float)AMP + (sinf(((float)i * M_PI_F * 2.0f) / (float)CYCLE) * (float)AMP));
+		intsintable[i] = (int)((float)AMP2 + (sinf(((float)i * M_PI_F * 2.0f) / (float)CYCLE) * (float)AMP2));  // AMP2, not 20
 		blanktable[i] = 0;  // PGM
 	}
 }
@@ -2004,24 +2036,28 @@ int CL_FxBlend(cl_entity_t* e)
 	switch ( e->curstate.renderfx )
 	{
 		case kRenderFxPulseSlowWide:
-			blend = e->curstate.renderamt + 0x40 * sin(gpGlobals->time * 2 + offset);
+			blend = (int)(e->curstate.renderamt + (float)(0x40 * sinf(gpGlobals->time * 2 + offset)));
 			break;
 		case kRenderFxPulseFastWide:
-			blend = e->curstate.renderamt + 0x40 * sin(gpGlobals->time * 8 + offset);
+			blend = (int)(e->curstate.renderamt + (float)(0x40 * sinf(gpGlobals->time * 8 + offset)));
 			break;
 		case kRenderFxPulseSlow:
-			blend = e->curstate.renderamt + 0x10 * sin(gpGlobals->time * 2 + offset);
+			blend = (int)(e->curstate.renderamt + (float)(0x10 * sinf(gpGlobals->time * 2 + offset)));
 			break;
 		case kRenderFxPulseFast:
-			blend = e->curstate.renderamt + 0x10 * sin(gpGlobals->time * 8 + offset);
+			blend = (int)(e->curstate.renderamt + (float)(0x10 * sinf(gpGlobals->time * 8 + offset)));
 			break;
 		case kRenderFxFadeSlow:
 			if ( RP_NORMALPASS() )
 			{
 				if ( e->curstate.renderamt > 0 )
+				{
 					e->curstate.renderamt -= 1;
+				}
 				else
+				{
 					e->curstate.renderamt = 0;
+				}
 			}
 			blend = e->curstate.renderamt;
 			break;
@@ -2029,9 +2065,13 @@ int CL_FxBlend(cl_entity_t* e)
 			if ( RP_NORMALPASS() )
 			{
 				if ( e->curstate.renderamt > 3 )
+				{
 					e->curstate.renderamt -= 4;
+				}
 				else
+				{
 					e->curstate.renderamt = 0;
+				}
 			}
 			blend = e->curstate.renderamt;
 			break;
@@ -2039,9 +2079,13 @@ int CL_FxBlend(cl_entity_t* e)
 			if ( RP_NORMALPASS() )
 			{
 				if ( e->curstate.renderamt < 255 )
+				{
 					e->curstate.renderamt += 1;
+				}
 				else
+				{
 					e->curstate.renderamt = 255;
+				}
 			}
 			blend = e->curstate.renderamt;
 			break;
@@ -2049,46 +2093,70 @@ int CL_FxBlend(cl_entity_t* e)
 			if ( RP_NORMALPASS() )
 			{
 				if ( e->curstate.renderamt < 252 )
+				{
 					e->curstate.renderamt += 4;
+				}
 				else
+				{
 					e->curstate.renderamt = 255;
+				}
 			}
 			blend = e->curstate.renderamt;
 			break;
 		case kRenderFxStrobeSlow:
-			blend = 20 * sin(gpGlobals->time * 4 + offset);
+			blend = (int)(20.0f * sinf(gpGlobals->time * 4 + offset));
 			if ( blend < 0 )
+			{
 				blend = 0;
+			}
 			else
+			{
 				blend = e->curstate.renderamt;
+			}
 			break;
 		case kRenderFxStrobeFast:
-			blend = 20 * sin(gpGlobals->time * 16 + offset);
+			blend = (int)(20.0f * sinf(gpGlobals->time * 16 + offset));
 			if ( blend < 0 )
+			{
 				blend = 0;
+			}
 			else
+			{
 				blend = e->curstate.renderamt;
+			}
 			break;
 		case kRenderFxStrobeFaster:
-			blend = 20 * sin(gpGlobals->time * 36 + offset);
+			blend = (int)(20.0f * sinf(gpGlobals->time * 36 + offset));
 			if ( blend < 0 )
+			{
 				blend = 0;
+			}
 			else
+			{
 				blend = e->curstate.renderamt;
+			}
 			break;
 		case kRenderFxFlickerSlow:
-			blend = 20 * (sin(gpGlobals->time * 2) + sin(gpGlobals->time * 17 + offset));
+			blend = (int)(20.0f * (sinf(gpGlobals->time * 2) + sinf(gpGlobals->time * 17 + offset)));
 			if ( blend < 0 )
+			{
 				blend = 0;
+			}
 			else
+			{
 				blend = e->curstate.renderamt;
+			}
 			break;
 		case kRenderFxFlickerFast:
-			blend = 20 * (sin(gpGlobals->time * 16) + sin(gpGlobals->time * 23 + offset));
+			blend = (int)(20.0f * (sinf(gpGlobals->time * 16) + sinf(gpGlobals->time * 23 + offset)));
 			if ( blend < 0 )
+			{
 				blend = 0;
+			}
 			else
+			{
 				blend = e->curstate.renderamt;
+			}
 			break;
 		case kRenderFxHologram:
 		case kRenderFxDistort:
@@ -2098,7 +2166,9 @@ int CL_FxBlend(cl_entity_t* e)
 
 			// turn off distance fade
 			if ( e->curstate.renderfx == kRenderFxDistort )
+			{
 				dist = 1;
+			}
 
 			if ( dist <= 0 )
 			{
@@ -2107,10 +2177,16 @@ int CL_FxBlend(cl_entity_t* e)
 			else
 			{
 				e->curstate.renderamt = 180;
+
 				if ( dist <= 100 )
+				{
 					blend = e->curstate.renderamt;
+				}
 				else
+				{
 					blend = (int)((1.0f - (dist - 100) * (1.0f / 400.0f)) * e->curstate.renderamt);
+				}
+
 				blend += gEngfuncs.COM_RandomLong(-32, 31);
 			}
 			break;

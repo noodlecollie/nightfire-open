@@ -114,7 +114,7 @@ CL_RedoPrediction
 */
 void CL_RedoPrediction(void)
 {
-	if ( cls.netchan.incoming_sequence != cls.lastupdate_sequence )
+	if ( cls.netchan.incoming_sequence != (unsigned int)cls.lastupdate_sequence )
 	{
 		CL_PredictMovement(true);
 		CL_CheckPredictionError();
@@ -137,7 +137,7 @@ void CL_SetIdealPitch(void)
 	if ( cl.local.onground == -1 )
 		return;
 
-	angleval = cl.viewangles[YAW] * M_PI2 / 360.0f;
+	angleval = cl.viewangles[YAW] * M_PI2_F / 360.0f;
 	SinCos(angleval, &sinval, &cosval);
 
 	// Now move forward by 36, 48, 60, etc. units from the eye position and drop lines straight down
@@ -168,7 +168,7 @@ void CL_SetIdealPitch(void)
 
 	for ( j = 1; j < i; j++ )
 	{
-		step = z[j] - z[j - 1];
+		step = (int)(z[j] - z[j - 1]);
 		if ( step > -ON_EPSILON && step < ON_EPSILON )
 			continue;
 
@@ -206,8 +206,8 @@ static qboolean CL_PlayerTeleported(local_state_t* from, local_state_t* to)
 	VectorSubtract(to->playerstate.origin, from->playerstate.origin, delta);
 
 	// compute potential max movement in units per frame and compare with entity movement
-	maxlen = (clgame.movevars.maxvelocity * (1.0f / GAME_FPS));
-	len = VectorLength(delta);
+	maxlen = (int)(clgame.movevars.maxvelocity * (1.0f / GAME_FPS));
+	len = (int)VectorLength(delta);
 
 	return (len > maxlen);
 }
@@ -233,7 +233,7 @@ void CL_CheckPredictionError(void)
 
 	// compare what the server returned with what we had predicted it to be
 	VectorSubtract(cl.frames[cmd].playerstate[cl.playernum].origin, cl.local.predicted_origins[frame], delta);
-	dist = VectorLength(delta);
+	dist = (float)VectorLength(delta);
 
 	// save the prediction error for interpolation
 	if ( dist > MAX_PREDICTION_ERROR )
@@ -278,6 +278,8 @@ void GAME_EXPORT CL_SetUpPlayerPrediction(int dopred, int bIncludeLocalClient)
 	predicted_player_t* player;
 	cl_entity_t* ent;
 	int i;
+
+	(void)dopred;
 
 	for ( i = 0; i < MAX_CLIENTS; i++ )
 	{
@@ -845,9 +847,9 @@ void CL_InitClientMove(void)
 	clgame.pmove->Con_Printf = Con_Printf;
 	clgame.pmove->Sys_FloatTime = Sys_DoubleTime;
 	clgame.pmove->PM_StuckTouch = pfnStuckTouch;
-	clgame.pmove->PM_PointContents = (void*)PM_CL_PointContents;
+	clgame.pmove->PM_PointContents = PM_CL_PointContents;
 	clgame.pmove->PM_TruePointContents = pfnTruePointContents;
-	clgame.pmove->PM_HullPointContents = (void*)PM_HullPointContents;
+	clgame.pmove->PM_HullPointContents = PM_HullPointContents;
 	clgame.pmove->PM_PlayerTrace = pfnPlayerTrace;
 	clgame.pmove->PM_TraceLine = PM_CL_TraceLine;
 	clgame.pmove->RandomLong = COM_RandomLong;
@@ -884,7 +886,7 @@ CL_SetupPMove(playermove_t* pmove, const local_state_t* from, const usercmd_t* u
 	pmove->player_index = ps->number - 1;
 	pmove->multiplayer = (cl.maxclients > 1);
 	pmove->runfuncs = runfuncs;
-	pmove->time = time * 1000.0f;
+	pmove->time = (float)time * 1000.0f;
 	pmove->frametime = ucmd->msec / 1000.0f;
 	VectorCopy(ps->origin, pmove->origin);
 	VectorCopy(ps->angles, pmove->angles);
@@ -1088,7 +1090,7 @@ void CL_PredictMovement(qboolean repredicting)
 	if ( !cl.validsequence )
 		return;
 
-	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= CL_UPDATE_MASK )
+	if ( (cls.netchan.outgoing_sequence - cls.netchan.incoming_acknowledged) >= (unsigned int)CL_UPDATE_MASK )
 		return;
 
 	// this is the last frame received from the server
@@ -1127,7 +1129,7 @@ void CL_PredictMovement(qboolean repredicting)
 	CL_SetSolidPlayers(cl.playernum);
 
 	for ( i = 1;
-		  i < CL_UPDATE_MASK && cls.netchan.incoming_acknowledged + i < cls.netchan.outgoing_sequence + stoppoint;
+		  i < (uint)CL_UPDATE_MASK && cls.netchan.incoming_acknowledged + i < cls.netchan.outgoing_sequence + stoppoint;
 		  i++ )
 	{
 		uint current_command;
@@ -1154,7 +1156,7 @@ void CL_PredictMovement(qboolean repredicting)
 
 	CL_PopPMStates();
 
-	if ( (i == CL_UPDATE_MASK) || (!to && !repredicting) )
+	if ( (i == (uint)CL_UPDATE_MASK) || (!to && !repredicting) )
 	{
 		cl.local.repredicting = false;
 		return;  // net hasn't deliver packets in a long time...
@@ -1196,14 +1198,18 @@ void CL_PredictMovement(qboolean repredicting)
 	}
 	else
 	{
-		VectorLerp(from->playerstate.origin, f, to->playerstate.origin, cl.simorg);
-		VectorLerp(from->client.velocity, f, to->client.velocity, cl.simvel);
-		VectorLerp(from->client.punchangle, f, to->client.punchangle, cl.punchangle);
+		VectorLerp(from->playerstate.origin, (float)f, to->playerstate.origin, cl.simorg);
+		VectorLerp(from->client.velocity, (float)f, to->client.velocity, cl.simvel);
+		VectorLerp(from->client.punchangle, (float)f, to->client.punchangle, cl.punchangle);
 
 		if ( from->playerstate.usehull == to->playerstate.usehull )
-			VectorLerp(from->client.view_ofs, f, to->client.view_ofs, cl.viewheight);
+		{
+			VectorLerp(from->client.view_ofs, (float)f, to->client.view_ofs, cl.viewheight);
+		}
 		else
+		{
 			VectorCopy(to->client.view_ofs, cl.viewheight);
+		}
 	}
 
 	cl.local.waterlevel = to->client.waterlevel;
@@ -1255,7 +1261,7 @@ void CL_PredictMovement(qboolean repredicting)
 		cls.correction_time = bound(0.0, cls.correction_time, cl_smoothtime->value);
 
 		// Compute backward interpolation fraction along full correction
-		frac = 1.0f - cls.correction_time / cl_smoothtime->value;
+		frac = 1.0f - (float)cls.correction_time / cl_smoothtime->value;
 
 		// Determine how much error we still have to make up for
 		VectorSubtract(cl.simorg, cl.local.lastorigin, delta);

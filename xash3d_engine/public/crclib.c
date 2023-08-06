@@ -434,7 +434,7 @@ uint COM_HashKey(const char* string, uint hashSize)
 	int hashKey = 5381;
 	unsigned char i;
 
-	while ( (i = *string++) )
+	for ( i = *string++; i; i = *string++ )
 		hashKey = (hashKey << 5) + hashKey + (i & 0xDF);
 
 	return hashKey & (hashSize - 1);

@@ -12,7 +12,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
+
 #include "platform/platform.h"
+#include "PlatformLib/File.h"
+
 #if XASH_USE_EVDEV
 
 #include "common.h"
@@ -261,7 +264,7 @@ void Evdev_Autodetect_f(void)
 		if ( Q_strncmp(entry->d_name, "event", 5) )
 			continue;
 
-		fd = open(path, O_RDONLY | O_NONBLOCK);
+		fd = PlatformLib_Open(path, O_RDONLY | O_NONBLOCK);
 
 		if ( fd == -1 )
 			continue;
@@ -306,7 +309,7 @@ void Evdev_Autodetect_f(void)
 #endif
 		goto next;
 	close:
-		close(fd);
+		PlatformLib_Close(fd);
 	next:
 		continue;
 	}
@@ -343,7 +346,7 @@ void Evdev_OpenDevice(const char* path)
 		}
 	}
 
-	ret = open(path, O_RDONLY | O_NONBLOCK);
+	ret = PlatformLib_Open(path, O_RDONLY | O_NONBLOCK);
 	if ( ret < 0 )
 	{
 		Con_Reportf(S_ERROR "Could not open input device %s: %s\n", path, strerror(errno));
@@ -395,7 +398,7 @@ void Evdev_CloseDevice_f(void)
 		return;
 	}
 
-	close(evdev.fds[i]);
+	PlatformLib_Close(evdev.fds[i]);
 	evdev.devices--;
 	Con_Printf("Device %s closed successfully\n", evdev.paths[i]);
 
@@ -414,7 +417,7 @@ void IN_EvdevFrame(void)
 	{
 		struct input_event ev;
 
-		while ( read(evdev.fds[i], &ev, 16) == 16 )
+		while ( PlatformLib_Read(evdev.fds[i], &ev, 16) == 16 )
 		{
 			if ( ev.type == EV_REL )
 			{
@@ -539,7 +542,7 @@ void Evdev_Shutdown(void)
 	for ( i = 0; i < evdev.devices; i++ )
 	{
 		ioctl(evdev.fds[i], EVIOCGRAB, (void*)0);
-		close(evdev.fds[i]);
+		PlatformLib_Close(evdev.fds[i]);
 		evdev.fds[i] = -1;
 	}
 	evdev.devices = 0;

@@ -324,7 +324,7 @@ void R_EmitEdge(mvertex_t* pv0, mvertex_t* pv1)
 			return;
 		}
 
-		edge->surfs[0] = surface_p - surfaces;
+		edge->surfs[0] = (unsigned short)(surface_p - surfaces);
 		edge->surfs[1] = 0;
 
 		u_step = ((r_u1 - u0) / (r_v1 - v0));
@@ -343,14 +343,14 @@ void R_EmitEdge(mvertex_t* pv0, mvertex_t* pv1)
 		}
 
 		edge->surfs[0] = 0;
-		edge->surfs[1] = surface_p - surfaces;
+		edge->surfs[1] = (unsigned short)(surface_p - surfaces);
 
 		u_step = ((u0 - r_u1) / (v0 - r_v1));
 		u = r_u1 + ((float)v - r_v1) * u_step;
 	}
 
-	edge->u_step = u_step * 0x100000;
-	edge->u = u * 0x100000 + 0xFFFFF;
+	edge->u_step = (fixed16_t)(u_step * (float)0x100000);
+	edge->u = (fixed16_t)(u * (float)0x100000 + (float)0xFFFFF);
 
 	// we need to do this to avoid stepping off the edges if a very nearly
 	// horizontal edge is less than epsilon above a scan, and numeric error causes
@@ -502,12 +502,18 @@ void R_EmitCachedEdge(void)
 	pedge_t = (edge_t*)((uintptr_t)r_edges + r_pedge->cachededgeoffset);
 
 	if ( !pedge_t->surfs[0] )
-		pedge_t->surfs[0] = surface_p - surfaces;
+	{
+		pedge_t->surfs[0] = (unsigned short)(surface_p - surfaces);
+	}
 	else
-		pedge_t->surfs[1] = surface_p - surfaces;
+	{
+		pedge_t->surfs[1] = (unsigned short)(surface_p - surfaces);
+	}
 
 	if ( pedge_t->nearzi > r_nearzi )  // for mipmap finding
+	{
 		r_nearzi = pedge_t->nearzi;
+	}
 
 	r_emitted = 1;
 }
@@ -592,7 +598,7 @@ void R_RenderFace(msurface_t* fa, int clipflags)
 			{
 				if ( r_pedge->cachededgeoffset & FULLY_CLIPPED_CACHED )
 				{
-					if ( (r_pedge->cachededgeoffset & FRAMECOUNT_MASK) == tr.framecount )
+					if ( (r_pedge->cachededgeoffset & FRAMECOUNT_MASK) == (unsigned int)tr.framecount )
 					{
 						r_lastvertvalid = false;
 						continue;
@@ -611,7 +617,7 @@ void R_RenderFace(msurface_t* fa, int clipflags)
 			}
 
 			// assume it's cacheable
-			cacheoffset = (byte*)edge_p - (byte*)r_edges;
+			cacheoffset = (unsigned int)((byte*)edge_p - (byte*)r_edges);
 			r_leftclipped = r_rightclipped = false;
 			R_ClipEdge(&r_pcurrentvertbase[r_pedge->v[0]], &r_pcurrentvertbase[r_pedge->v[1]], pclip);
 			r_pedge->cachededgeoffset = cacheoffset;
@@ -631,7 +637,7 @@ void R_RenderFace(msurface_t* fa, int clipflags)
 			{
 				if ( r_pedge->cachededgeoffset & FULLY_CLIPPED_CACHED )
 				{
-					if ( (r_pedge->cachededgeoffset & FRAMECOUNT_MASK) == tr.framecount )
+					if ( (r_pedge->cachededgeoffset & FRAMECOUNT_MASK) == (unsigned int)tr.framecount )
 					{
 						r_lastvertvalid = false;
 						continue;
@@ -652,7 +658,7 @@ void R_RenderFace(msurface_t* fa, int clipflags)
 			}
 
 			// assume it's cacheable
-			cacheoffset = (byte*)edge_p - (byte*)r_edges;
+			cacheoffset = (unsigned int)((byte*)edge_p - (byte*)r_edges);
 			r_leftclipped = r_rightclipped = false;
 			R_ClipEdge(&r_pcurrentvertbase[r_pedge->v[1]], &r_pcurrentvertbase[r_pedge->v[0]], pclip);
 			r_pedge->cachededgeoffset = cacheoffset;
@@ -719,12 +725,13 @@ R_RenderBmodelFace
 */
 void R_RenderBmodelFace(bedge_t* pedges, msurface_t* psurf)
 {
+	static medge_t tedge;
+
 	int i;
 	unsigned mask;
 	mplane_t* pplane;
 	float distinv;
 	vec3_t p_normal;
-	medge_t tedge;
 	clipplane_t* pclip;
 
 	/*if (psurf->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))

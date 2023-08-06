@@ -41,14 +41,14 @@ namespace CustomGeometry
 		}
 
 		const CUtlVector<Vector>& points = geometry.GetPoints();
-		const CUtlVector<uint8_t>& indices = geometry.GetIndices();
+		const CUtlVector<size_t>& indices = geometry.GetIndices();
 
 		if ( points.Count() < 1 )
 		{
 			return false;
 		}
 
-		if ( points.Count() > MAX_POINTS_PER_MSG )
+		if ( static_cast<size_t>(points.Count()) > MAX_POINTS_PER_MSG )
 		{
 			ALERT(
 				at_warning,
@@ -73,7 +73,7 @@ namespace CustomGeometry
 
 		FOR_EACH_VEC(indices, index)
 		{
-			WRITE_CHAR(indices[index]);
+			WRITE_CHAR(static_cast<uint8_t>(indices[index]));
 		}
 
 		EndMessage();

@@ -476,7 +476,7 @@ BOOL CHGrunt::CheckRangeAttack1(float flDot, float flDist)
 // CheckRangeAttack2 - this checks the Grunt's grenade
 // attack.
 //=========================================================
-BOOL CHGrunt::CheckRangeAttack2(float flDot, float flDist)
+BOOL CHGrunt::CheckRangeAttack2(float, float)
 {
 	if ( !FBitSet(pev->weapons, (HGRUNT_HANDGRENADE | HGRUNT_GRENADELAUNCHER)) )
 	{
@@ -588,7 +588,7 @@ BOOL CHGrunt::CheckRangeAttack2(float flDot, float flDist)
 			// throw a hand grenade
 			m_fThrowGrenade = TRUE;
 			// don't check again for a while.
-			m_flNextGrenadeCheck = gpGlobals->time + 0.3;  // 1/3 second.
+			m_flNextGrenadeCheck = gpGlobals->time + 0.3f;  // 1/3 second.
 		}
 		else
 		{
@@ -625,7 +625,7 @@ void CHGrunt::TraceAttack(
 			if ( flDamage <= 0 )
 			{
 				UTIL_Ricochet(newTr.vecEndPos, 1.0);
-				flDamage = 0.01;
+				flDamage = 0.01f;
 			}
 		}
 		// it's head shot anyways
@@ -652,7 +652,7 @@ int CHGrunt::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 //=========================================================
 void CHGrunt::SetYawSpeed(void)
 {
-	int ys;
+	float ys = 90.0f;
 
 	switch ( m_Activity )
 	{
@@ -686,7 +686,6 @@ void CHGrunt::SetYawSpeed(void)
 			ys = 30;
 			break;
 		default:
-			ys = 90;
 			break;
 	}
 
@@ -766,7 +765,7 @@ CBaseEntity* CHGrunt::Kick(void)
 
 	UTIL_MakeVectors(pev->angles);
 	Vector vecStart = pev->origin;
-	vecStart.z += pev->size.z * 0.5;
+	vecStart.z += pev->size.z * 0.5f;
 	Vector vecEnd = vecStart + (gpGlobals->v_forward * 70);
 
 	UTIL_TraceHull(vecStart, vecEnd, dont_ignore_monsters, head_hull, ENT(pev), &tr);
@@ -848,7 +847,7 @@ void CHGrunt::Shotgun(void)
 		m_iShotgunShell,
 		TE_BOUNCE_SHOTSHELL);
 	FireBullets(
-		gSkillData.hgruntShotgunPellets,
+		static_cast<ULONG>(gSkillData.hgruntShotgunPellets),
 		vecShootOrigin,
 		vecShootDir,
 		VECTOR_CONE_15DEGREES,
@@ -921,7 +920,7 @@ void CHGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 		break;
 		case HGRUNT_AE_GREN_LAUNCH:
 		{
-			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/glauncher.wav", 0.8, ATTN_NORM);
+			EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/glauncher.wav", 0.8f, ATTN_NORM);
 			CGrenade::ShootContact(pev, GetGunPosition(), m_vecTossVelocity);
 			m_fThrowGrenade = FALSE;
 			if ( g_iSkillLevel == SKILL_HARD )
@@ -965,7 +964,7 @@ void CHGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND(ENT(pev), CHAN_WEAPON, "weapons/sbarrel1.wav", 1, ATTN_NORM);
 			}
 
-			CSoundEnt::InsertSound(bits_SOUND_COMBAT, pev->origin, 384, 0.3);
+			CSoundEnt::InsertSound(bits_SOUND_COMBAT, pev->origin, 384, 0.3f);
 		}
 		break;
 		case HGRUNT_AE_BURST2:
@@ -1016,7 +1015,7 @@ void CHGrunt::Spawn()
 	m_bloodColor = BLOOD_COLOR_RED;
 	pev->effects = 0;
 	pev->health = gSkillData.hgruntHealth;
-	m_flFieldOfView = 0.2;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
+	m_flFieldOfView = 0.2f;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
 	m_flNextGrenadeCheck = gpGlobals->time + 1;
 	m_flNextPainTime = gpGlobals->time;
@@ -1162,7 +1161,7 @@ void CHGrunt::RunTask(Task_t* pTask)
 		{
 			// project a point along the toss vector and turn to face that point.
 			MakeIdealYaw(pev->origin + m_vecTossVelocity * 64);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( FacingIdeal() )
 			{
@@ -2260,7 +2259,7 @@ void CHGruntRepel::Precache(void)
 	m_iSpriteTexture = PRECACHE_MODEL("sprites/rope.spr");
 }
 
-void CHGruntRepel::RepelUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CHGruntRepel::RepelUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	TraceResult tr;
 	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -4096.0), dont_ignore_monsters, ENT(pev), &tr);
@@ -2282,7 +2281,7 @@ void CHGruntRepel::RepelUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_T
 	pBeam->SetFlags(BEAM_FSOLID);
 	pBeam->SetColor(255, 255, 255);
 	pBeam->SetThink(&CBaseEntity::SUB_Remove);
-	pBeam->pev->nextthink = gpGlobals->time + -4096.0 * tr.flFraction / pGrunt->pev->velocity.z + 0.5;
+	pBeam->pev->nextthink = gpGlobals->time + -4096.0f * tr.flFraction / pGrunt->pev->velocity.z + 0.5f;
 
 	UTIL_Remove(this);
 }

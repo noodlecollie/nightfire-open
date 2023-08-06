@@ -339,9 +339,7 @@ void CHudAmmo::Reset(void)
 	gHR.Reset();
 
 	// VidInit();
-	wrect_t nullrc = {
-		0,
-	};
+	wrect_t nullrc = {};
 	SetCrosshair(0, nullrc, 0, 0, 0);  // reset crosshair
 	m_pWeapon = NULL;  // reset last weapon
 }
@@ -517,7 +515,7 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, int iDirection)
 //
 // AmmoX  -- Update the count of a known type of ammo
 //
-int CHudAmmo::MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_AmmoX(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -529,7 +527,7 @@ int CHudAmmo::MsgFunc_AmmoX(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudAmmo::MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_AmmoPickup(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
@@ -541,7 +539,7 @@ int CHudAmmo::MsgFunc_AmmoPickup(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudAmmo::MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_WeapPickup(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	int iIndex = READ_BYTE();
@@ -552,7 +550,7 @@ int CHudAmmo::MsgFunc_WeapPickup(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudAmmo::MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_ItemPickup(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 	const char* szName = READ_STRING();
@@ -563,7 +561,7 @@ int CHudAmmo::MsgFunc_ItemPickup(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudAmmo::MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_HideWeapon(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -574,9 +572,7 @@ int CHudAmmo::MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
 
 	if ( gHUD.m_iHideHUDDisplay & (HIDEHUD_WEAPONS | HIDEHUD_ALL) )
 	{
-		wrect_t nullrc = {
-			0,
-		};
+		wrect_t nullrc = {};
 		gpActiveSel = NULL;
 		SetCrosshair(0, nullrc, 0, 0, 0);
 	}
@@ -594,11 +590,9 @@ int CHudAmmo::MsgFunc_HideWeapon(const char* pszName, int iSize, void* pbuf)
 //  counts are updated with AmmoX. Server assures that the Weapon ammo type
 //  numbers match a real ammo type.
 //
-int CHudAmmo::MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_CurWeapon(const char*, int iSize, void* pbuf)
 {
-	wrect_t nullrc = {
-		0,
-	};
+	wrect_t nullrc = {};
 	int fOnTarget = FALSE;
 
 	BEGIN_READ(pbuf, iSize);
@@ -674,7 +668,7 @@ int CHudAmmo::MsgFunc_CurWeapon(const char* pszName, int iSize, void* pbuf)
 	return 1;
 }
 
-int CHudAmmo::MsgFunc_CurWeaponPriAttackMode(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_CurWeaponPriAttackMode(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -694,7 +688,7 @@ int CHudAmmo::MsgFunc_CurWeaponPriAttackMode(const char* pszName, int iSize, voi
 //
 // WeaponList -- Tells the hud about a new weapon type.
 //
-int CHudAmmo::MsgFunc_WeaponList(const char* pszName, int iSize, void* pbuf)
+int CHudAmmo::MsgFunc_WeaponList(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -919,7 +913,7 @@ int CHudAmmo::Draw(float flTime)
 	a = (int)Max(MIN_ALPHA, m_fFade);
 
 	if ( m_fFade > 0 )
-		m_fFade -= (gHUD.m_flTimeDelta * 20);
+		m_fFade -= static_cast<float>((gHUD.m_flTimeDelta * 20));
 
 	UnpackRGB(r, g, b, RGB_YELLOWISH);
 
@@ -1008,7 +1002,7 @@ int DrawBar(int x, int y, int width, int height, float f)
 
 	if ( f )
 	{
-		int w = f * width;
+		int w = static_cast<int>(f * width);
 
 		// Always show at least one pixel if we have ammo.
 		if ( w <= 0 )
@@ -1055,7 +1049,7 @@ void DrawAmmoBar(WEAPON* p, int x, int y, int width, int height)
 //
 // Draw Weapon Menu
 //
-int CHudAmmo::DrawWList(float flTime)
+int CHudAmmo::DrawWList(float)
 {
 	int r, g, b, x, y, a, i;
 

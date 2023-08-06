@@ -20,7 +20,7 @@ GNU General Public License for more details.
 
 int R_FatPVS(const vec3_t org, float radius, byte* visbuffer, qboolean merge, qboolean fullvis)
 {
-	return Mod_FatPVS(org, radius, visbuffer, world.visbytes, merge, fullvis);
+	return Mod_FatPVS(org, radius, visbuffer, (int)world.visbytes, merge, fullvis);
 }
 
 lightstyle_t* CL_GetLightStyle(int number)
@@ -216,6 +216,41 @@ static intptr_t pfnRenderGetParm(int parm, int arg)
 	return CL_RenderGetParm(parm, arg, true);
 }
 
+static int Wrapper_AVI_GetVideoInfo(void* avi, int* xres, int* yres, float* duration)
+{
+	return (int)AVI_GetVideoInfo((movie_state_t*)avi, xres, yres, duration);
+}
+
+static int Wrapper_AVI_IsActive(void* avi)
+{
+	return (int)AVI_IsActive((movie_state_t*)avi);
+}
+
+static void* Wrapper_AVI_LoadVideo(const char* filename, qboolean load_audio)
+{
+	return (void*)AVI_LoadVideo(filename, load_audio);
+}
+
+static int Wrapper_AVI_GetVideoFrameNumber(void* Avi, float time)
+{
+	return AVI_GetVideoFrameNumber((movie_state_t*)Avi, time);
+}
+
+static byte* Wrapper_AVI_GetVideoFrame(void* Avi, long frame)
+{
+	return AVI_GetVideoFrame((movie_state_t*)Avi, frame);
+}
+
+static void Wrapper_AVI_FreeVideo(void* Avi)
+{
+	AVI_FreeVideo((movie_state_t*)Avi);
+}
+
+static void* Wrapper_CL_ModelHandle(int modelindex)
+{
+	return (void*)CL_ModelHandle(modelindex);
+}
+
 static render_api_t gRenderAPI = {
 	pfnRenderGetParm,  // GL_RenderGetParm,
 	NULL,  // R_GetDetailScaleForTexture,
@@ -240,13 +275,13 @@ static render_api_t gRenderAPI = {
 	NULL,  // DrawSingleDecal,
 	NULL,  // R_DecalSetupVerts,
 	NULL,  // R_EntityRemoveDecals,
-	(void*)AVI_LoadVideo,
-	(void*)AVI_GetVideoInfo,
-	(void*)AVI_GetVideoFrameNumber,
-	(void*)AVI_GetVideoFrame,
+	Wrapper_AVI_LoadVideo,
+	Wrapper_AVI_GetVideoInfo,
+	Wrapper_AVI_GetVideoFrameNumber,
+	Wrapper_AVI_GetVideoFrame,
 	NULL,  // R_UploadStretchRaw,
-	(void*)AVI_FreeVideo,
-	(void*)AVI_IsActive,
+	Wrapper_AVI_FreeVideo,
+	Wrapper_AVI_IsActive,
 	S_StreamAviSamples,
 	NULL,
 	NULL,
@@ -277,7 +312,7 @@ static render_api_t gRenderAPI = {
 	pfnFileBufferCRC32,
 	COM_CompareFileTime,
 	Host_Error,
-	(void*)CL_ModelHandle,
+	Wrapper_CL_ModelHandle,
 	pfnTime,
 	Cvar_Set,
 	S_FadeMusicVolume,

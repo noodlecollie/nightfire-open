@@ -28,7 +28,7 @@ static int IsComment(const char* pText)
 {
 	if ( pText )
 	{
-		int length = Q_strlen(pText);
+		int length = (int)Q_strlen(pText);
 
 		if ( length >= 2 && pText[0] == '/' && pText[1] == '/' )
 			return 1;
@@ -164,18 +164,18 @@ static int ParseDirective(const char* pText)
 		{
 			if ( ParseFloats(pText, tempFloat, 3) )
 			{
-				gMessageParms.r2 = (int)tempFloat[0];
-				gMessageParms.g2 = (int)tempFloat[1];
-				gMessageParms.b2 = (int)tempFloat[2];
+				gMessageParms.r2 = (byte)tempFloat[0];
+				gMessageParms.g2 = (byte)tempFloat[1];
+				gMessageParms.b2 = (byte)tempFloat[2];
 			}
 		}
 		else if ( IsToken(pText, "color") )
 		{
 			if ( ParseFloats(pText, tempFloat, 3) )
 			{
-				gMessageParms.r1 = (int)tempFloat[0];
-				gMessageParms.g1 = (int)tempFloat[1];
-				gMessageParms.b1 = (int)tempFloat[2];
+				gMessageParms.r1 = (byte)tempFloat[0];
+				gMessageParms.g1 = (byte)tempFloat[1];
+				gMessageParms.b1 = (byte)tempFloat[2];
 			}
 		}
 		else if ( IsToken(pText, "fadein") )
@@ -216,7 +216,7 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 	int mode = MSGFILE_NAME;  // searching for a message name
 	int lineNumber, filePos, lastLinePos;
 	client_textmessage_t textMessages[MAX_MESSAGES];
-	int i, nameHeapSize, textHeapSize, messageSize, nameOffset;
+	int i, nameHeapSize, textHeapSize, messageSize;
 	int messageCount, lastNamePos;
 
 	lastNamePos = 0;
@@ -257,7 +257,7 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 			case MSGFILE_TEXT:
 				if ( IsEndOfText(trim) )
 				{
-					int length = Q_strlen(currentName);
+					int length = (int)strlen(currentName);
 
 					// save name on name heap
 					if ( lastNamePos + length > 32768 )
@@ -306,7 +306,10 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 	textHeapSize = 0;
 
 	for ( i = 0; i < messageCount; i++ )
-		textHeapSize += Q_strlen(textMessages[i].pMessage) + 1;
+	{
+		textHeapSize += (int)Q_strlen(textMessages[i].pMessage) + 1;
+	}
+
 	messageSize = (messageCount * sizeof(client_textmessage_t));
 
 	if ( (textHeapSize + nameHeapSize + messageSize) <= 0 )

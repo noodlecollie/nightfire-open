@@ -226,7 +226,7 @@ void CBarney::AlertSound(void)
 	{
 		if ( FOkToSpeak() )
 		{
-			PlaySentence("BA_ATTACK", RANDOM_FLOAT(2.8, 3.2), VOL_NORM, ATTN_IDLE);
+			PlaySentence("BA_ATTACK", RANDOM_FLOAT(2.8f, 3.2f), VOL_NORM, ATTN_IDLE);
 		}
 	}
 }
@@ -237,23 +237,20 @@ void CBarney::AlertSound(void)
 //=========================================================
 void CBarney::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 0;
+	float ys = 70.0f;
 
 	switch ( m_Activity )
 	{
 		case ACT_IDLE:
-			ys = 70;
+			ys = 70.0f;
 			break;
 		case ACT_WALK:
-			ys = 70;
+			ys = 70.0f;
 			break;
 		case ACT_RUN:
-			ys = 90;
+			ys = 90.0f;
 			break;
 		default:
-			ys = 70;
 			break;
 	}
 
@@ -280,7 +277,7 @@ BOOL CBarney::CheckRangeAttack1(float flDot, float flDist)
 				m_lastAttackCheck = TRUE;
 			else
 				m_lastAttackCheck = FALSE;
-			m_checkAttackTime = gpGlobals->time + 1.5;
+			m_checkAttackTime = gpGlobals->time + 1.5f;
 		}
 		return m_lastAttackCheck;
 	}
@@ -314,7 +311,7 @@ void CBarney::BarneyFirePistol(void)
 		pitchShift -= 5;
 	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, "barney/ba_attack2.wav", 1, ATTN_NORM, 0, 100 + pitchShift);
 
-	CSoundEnt::InsertSound(bits_SOUND_COMBAT, pev->origin, 384, 0.3);
+	CSoundEnt::InsertSound(bits_SOUND_COMBAT, pev->origin, 384, 0.3f);
 
 	// UNDONE: Reload?
 	m_cAmmoLoaded--;  // take away a bullet!
@@ -559,7 +556,7 @@ void CBarney::TraceAttack(
 				if ( flDamage <= 0 )
 				{
 					UTIL_Ricochet(newTr.vecEndPos, 1.0);
-					flDamage = 0.01;
+					flDamage = 0.01f;
 				}
 			}
 

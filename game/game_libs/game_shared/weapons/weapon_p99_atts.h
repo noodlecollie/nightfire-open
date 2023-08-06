@@ -133,8 +133,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		secAttack->ViewModelBodyOverride = P99BODY_SILENCED;
 
-		secAttack->AttackSounds.MinVolume = 0.76;
-		secAttack->AttackSounds.MaxVolume = 0.8;
+		secAttack->AttackSounds.MinVolume = 0.76f;
+		secAttack->AttackSounds.MaxVolume = 0.8f;
 		secAttack->AttackSounds.SoundNames.Clear();
 		secAttack->AttackSounds.SoundNames << "weapons/weapon_p99/p99_fire_sil1.wav";
 	});

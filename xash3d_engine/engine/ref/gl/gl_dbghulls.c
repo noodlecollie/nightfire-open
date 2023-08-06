@@ -45,7 +45,7 @@ void R_DrawWorldHull(void)
 	list_for_each_entry(poly, &hull->polys, chain)
 	{
 		srand((unsigned int)((size_t)poly));
-		pglColor3f(rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0);
+		pglColor3f(rand() % 256 / 255.0f, rand() % 256 / 255.0f, rand() % 256 / 255.0f);
 		pglBegin(GL_POLYGON);
 		for ( i = 0; i < poly->numpoints; i++ )
 			pglVertex3fv(poly->p[i]);
@@ -78,7 +78,7 @@ void R_DrawModelHull(void)
 	list_for_each_entry(poly, &hull->polys, chain)
 	{
 		srand((unsigned int)((size_t)poly));
-		pglColor3f(rand() % 256 / 255.0, rand() % 256 / 255.0, rand() % 256 / 255.0);
+		pglColor3f(rand() % 256 / 255.0f, rand() % 256 / 255.0f, rand() % 256 / 255.0f);
 		pglBegin(GL_POLYGON);
 		for ( i = 0; i < poly->numpoints; i++ )
 			pglVertex3fv(poly->p[i]);

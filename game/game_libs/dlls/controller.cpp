@@ -160,15 +160,7 @@ int CController::Classify(void)
 //=========================================================
 void CController::SetYawSpeed(void)
 {
-	int ys;
-
-	ys = 120;
-#if 0
-	switch ( m_Activity )
-	{
-	}
-#endif
-	pev->yaw_speed = ys;
+	pev->yaw_speed = 120.0f;
 }
 
 int CController::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
@@ -275,9 +267,9 @@ void CController::HandleAnimEvent(MonsterEvent_t* pEvent)
 			MESSAGE_END();
 
 			m_iBall[0] = 192;
-			m_iBallTime[0] = gpGlobals->time + atoi(pEvent->options) / 15.0;
+			m_iBallTime[0] = gpGlobals->time + static_cast<float>(atoi(pEvent->options)) / 15.0f;
 			m_iBall[1] = 255;
-			m_iBallTime[1] = gpGlobals->time + atoi(pEvent->options) / 15.0;
+			m_iBallTime[1] = gpGlobals->time + static_cast<float>(atoi(pEvent->options)) / 15.0f;
 		}
 		break;
 		case CONTROLLER_AE_BALL_SHOOT:
@@ -313,23 +305,23 @@ void CController::HandleAnimEvent(MonsterEvent_t* pEvent)
 		{
 			AttackSound();
 			m_flShootTime = gpGlobals->time;
-			m_flShootEnd = m_flShootTime + atoi(pEvent->options) / 15.0;
+			m_flShootEnd = m_flShootTime + static_cast<float>(atoi(pEvent->options)) / 15.0f;
 		}
 		break;
 		case CONTROLLER_AE_POWERUP_FULL:
 		{
 			m_iBall[0] = 255;
-			m_iBallTime[0] = gpGlobals->time + atoi(pEvent->options) / 15.0;
+			m_iBallTime[0] = gpGlobals->time + static_cast<float>(atoi(pEvent->options)) / 15.0f;
 			m_iBall[1] = 255;
-			m_iBallTime[1] = gpGlobals->time + atoi(pEvent->options) / 15.0;
+			m_iBallTime[1] = gpGlobals->time + static_cast<float>(atoi(pEvent->options)) / 15.0f;
 		}
 		break;
 		case CONTROLLER_AE_POWERUP_HALF:
 		{
 			m_iBall[0] = 192;
-			m_iBallTime[0] = gpGlobals->time + atoi(pEvent->options) / 15.0;
+			m_iBallTime[0] = gpGlobals->time + static_cast<float>(atoi(pEvent->options)) / 15.0f;
 			m_iBall[1] = 192;
-			m_iBallTime[1] = gpGlobals->time + atoi(pEvent->options) / 15.0;
+			m_iBallTime[1] = gpGlobals->time + static_cast<float>(atoi(pEvent->options)) / 15.0f;
 		}
 		break;
 		default:
@@ -533,7 +525,7 @@ Vector Intersect(Vector vecSrc, Vector vecDst, Vector vecMove, float flSpeed)
 	else
 	{
 		t = b * b - 4 * a * c;
-		t = sqrt(t) / (2.0 * a);
+		t = sqrtf(t) / (2.0f * a);
 		float t1 = -b + t;
 		float t2 = -b - t;
 
@@ -546,9 +538,9 @@ Vector Intersect(Vector vecSrc, Vector vecDst, Vector vecMove, float flSpeed)
 	// ALERT( at_console, "Intersect %f\n", t );
 
 	if ( t < 0.1 )
-		t = 0.1;
+		t = 0.1f;
 	if ( t > 10.0 )
-		t = 10.0;
+		t = 10.0f;
 
 	Vector vecHit = vecTo + vecMove * t;
 	return vecHit.Normalize() * flSpeed;
@@ -613,14 +605,14 @@ void CController::RunTask(Task_t* pTask)
 				}
 				else
 				{
-					m_vecEstVelocity = m_vecEstVelocity * 0.8;
+					m_vecEstVelocity = m_vecEstVelocity * 0.8f;
 				}
 				vecDir = Intersect(
 					vecSrc,
 					m_hEnemy->BodyTarget(pev->origin),
 					m_vecEstVelocity,
 					gSkillData.controllerSpeedBall);
-				float delta = 0.03490;  // +-2 degree
+				float delta = 0.03490f;  // +-2 degree
 				vecDir = vecDir +
 					Vector(RANDOM_FLOAT(-delta, delta), RANDOM_FLOAT(-delta, delta), RANDOM_FLOAT(-delta, delta)) *
 						gSkillData.controllerSpeedBall;
@@ -629,7 +621,7 @@ void CController::RunTask(Task_t* pTask)
 				CBaseMonster* pBall = (CBaseMonster*)Create("controller_energy_ball", vecSrc, pev->angles, edict());
 				pBall->pev->velocity = vecDir;
 			}
-			m_flShootTime += 0.2;
+			m_flShootTime += 0.2f;
 		}
 
 		if ( m_flShootTime > m_flShootEnd )
@@ -649,7 +641,7 @@ void CController::RunTask(Task_t* pTask)
 		case TASK_WAIT_FACE_ENEMY:
 		case TASK_WAIT_PVS:
 			MakeIdealYaw(m_vecEnemyLKP);
-			ChangeYaw(pev->yaw_speed);
+			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( m_fSequenceFinished )
 			{
@@ -772,7 +764,7 @@ BOOL CController::CheckRangeAttack2(float flDot, float flDist)
 	return FALSE;
 }
 
-BOOL CController::CheckMeleeAttack1(float flDot, float flDist)
+BOOL CController::CheckMeleeAttack1(float, float)
 {
 	return FALSE;
 }
@@ -815,11 +807,11 @@ void CController::RunAI(void)
 
 		float t = m_iBallTime[i] - gpGlobals->time;
 		if ( t > 0.1 )
-			t = 0.1 / t;
+			t = 0.1f / t;
 		else
-			t = 1.0;
+			t = 1.0f;
 
-		m_iBallCurrent[i] += (m_iBall[i] - m_iBallCurrent[i]) * t;
+		m_iBallCurrent[i] += static_cast<int>((m_iBall[i] - m_iBallCurrent[i]) * t);
 
 		m_pBall[i]->SetBrightness(m_iBallCurrent[i]);
 
@@ -832,7 +824,7 @@ void CController::RunAI(void)
 		WRITE_COORD(vecStart.x);  // origin
 		WRITE_COORD(vecStart.y);
 		WRITE_COORD(vecStart.z);
-		WRITE_COORD(m_iBallCurrent[i] / 8);  // radius
+		WRITE_COORD(static_cast<float>(m_iBallCurrent[i] / 8));  // radius
 		WRITE_BYTE(255);  // R
 		WRITE_BYTE(192);  // G
 		WRITE_BYTE(64);  // B
@@ -972,7 +964,7 @@ void CController::Move(float flInterval)
 					if ( m_moveWaitTime > 0 )
 					{
 						FRefreshRoute();
-						m_flMoveWaitFinished = gpGlobals->time + m_moveWaitTime * 0.5;
+						m_flMoveWaitFinished = gpGlobals->time + m_moveWaitTime * 0.5f;
 					}
 					else
 					{
@@ -1074,7 +1066,7 @@ int CController::CheckLocalMove(const Vector& vecStart, const Vector& vecEnd, CB
 	return LOCALMOVE_VALID;
 }
 
-void CController::MoveExecute(CBaseEntity* pTargetEnt, const Vector& vecDir, float flInterval)
+void CController::MoveExecute(CBaseEntity*, const Vector& vecDir, float flInterval)
 {
 	if ( m_IdealActivity != m_movementActivity )
 		m_IdealActivity = m_movementActivity;
@@ -1084,7 +1076,7 @@ void CController::MoveExecute(CBaseEntity* pTargetEnt, const Vector& vecDir, flo
 	// float flTotal = m_flGroundSpeed * pev->framerate * flInterval;
 	// UTIL_MoveToOrigin ( ENT( pev ), m_Route[m_iRouteIndex].vecLocation, flTotal, MOVE_STRAFE );
 
-	m_velocity = m_velocity * 0.8 + m_flGroundSpeed * vecDir * 0.2;
+	m_velocity = m_velocity * 0.8f + m_flGroundSpeed * vecDir * 0.2f;
 
 	UTIL_MoveToOrigin(ENT(pev), pev->origin + m_velocity, m_velocity.Length() * flInterval, MOVE_STRAFE);
 }
@@ -1131,7 +1123,7 @@ void CControllerHeadBall::Spawn(void)
 
 	m_vecIdeal = Vector(0, 0, 0);
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	m_hOwner = Instance(pev->owner);
 	pev->dmgtime = gpGlobals->time;
@@ -1146,7 +1138,7 @@ void CControllerHeadBall::Precache(void)
 
 void CControllerHeadBall::HuntThink(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	pev->renderamt -= 5;
 
@@ -1211,10 +1203,10 @@ void CControllerHeadBall::HuntThink(void)
 
 		UTIL_EmitAmbientSound(ENT(pev), tr.vecEndPos, "weapons/electro4.wav", 0.5, ATTN_NORM, 0, RANDOM_LONG(140, 160));
 
-		m_flNextAttack = gpGlobals->time + 3.0;
+		m_flNextAttack = static_cast<int>(gpGlobals->time + 3.0f);
 
 		SetThink(&CControllerHeadBall::DieThink);
-		pev->nextthink = gpGlobals->time + 0.3;
+		pev->nextthink = gpGlobals->time + 0.3f;
 	}
 
 	// Crawl();
@@ -1246,7 +1238,7 @@ void CControllerHeadBall::MovetoTarget(Vector vecTarget)
 void CControllerHeadBall::Crawl(void)
 {
 	Vector vecAim = Vector(RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1)).Normalize();
-	Vector vecPnt = pev->origin + pev->velocity * 0.3 + vecAim * 64;
+	Vector vecPnt = pev->origin + pev->velocity * 0.3f + vecAim * 64;
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BEAMENTPOINT);
@@ -1268,7 +1260,7 @@ void CControllerHeadBall::Crawl(void)
 	MESSAGE_END();
 }
 
-void CControllerHeadBall::BounceTouch(CBaseEntity* pOther)
+void CControllerHeadBall::BounceTouch(CBaseEntity*)
 {
 	Vector vecDir = m_vecIdeal.Normalize();
 
@@ -1316,7 +1308,7 @@ void CControllerZapBall::Spawn(void)
 
 	m_hOwner = Instance(pev->owner);
 	pev->dmgtime = gpGlobals->time;  // keep track of when ball spawned
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CControllerZapBall::Precache(void)
@@ -1328,9 +1320,9 @@ void CControllerZapBall::Precache(void)
 
 void CControllerZapBall::AnimateThink(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
-	pev->frame = ((int)pev->frame + 1) % 11;
+	pev->frame = static_cast<float>(((int)pev->frame + 1) % 11);
 
 	if ( gpGlobals->time - pev->dmgtime > 5 || pev->velocity.Length() < 10 )
 	{
@@ -1360,7 +1352,7 @@ void CControllerZapBall::ExplodeTouch(CBaseEntity* pOther)
 		pOther->TraceAttack(pevOwner, gSkillData.controllerDmgBall, pev->velocity.Normalize(), &tr, DMG_ENERGYBEAM);
 		ApplyMultiDamage(pevOwner, pevOwner);
 
-		UTIL_EmitAmbientSound(ENT(pev), tr.vecEndPos, "weapons/electro4.wav", 0.3, ATTN_NORM, 0, RANDOM_LONG(90, 99));
+		UTIL_EmitAmbientSound(ENT(pev), tr.vecEndPos, "weapons/electro4.wav", 0.3f, ATTN_NORM, 0, RANDOM_LONG(90, 99));
 	}
 
 	UTIL_Remove(this);

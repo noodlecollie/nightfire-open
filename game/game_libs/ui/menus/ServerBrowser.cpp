@@ -149,10 +149,13 @@ public:
 		return servers.Count();
 	}
 
-	ECellType GetCellType(int line, int column) override
+	ECellType GetCellType(int, int column) override
 	{
 		if ( column == 0 )
+		{
 			return CELL_IMAGE_ADDITIVE;
+		}
+
 		return CELL_TEXT;
 	}
 
@@ -182,7 +185,7 @@ public:
 		if ( servers[line].isLegacy )
 		{
 			CColor color = uiPromptTextColor;
-			color.a = color.a * 0.5;
+			color.a = static_cast<int>(color.a * 0.5f);
 			textColor = color;
 
 			// allow colorstrings only in server name
@@ -242,7 +245,7 @@ public:
 	void JoinGame(void);
 	void ResetPing(void)
 	{
-		gameListModel.serversRefreshTime = EngFuncs::DoubleTime();
+		gameListModel.serversRefreshTime = static_cast<float>(EngFuncs::DoubleTime());
 	}
 
 	void AddServerToList(netadr_t adr, const char* info);
@@ -331,15 +334,17 @@ void server_t::UpdateData(void)
 	isLegacy = !strcmp(Info_ValueForKey(info, "legacy"), "1");
 }
 
-void server_t::SetPing(float ping)
+void server_t::SetPing(float inPing)
 {
-	ping = bound(0.0f, ping, 9.999f);
+	inPing = bound(0.0f, inPing, 9.999f);
 
 	if ( isLegacy )
-		ping /= 2;
+	{
+		inPing /= 2;
+	}
 
-	this->ping = ping;
-	PlatformLib_SNPrintF(pingstr, sizeof(pingstr), "%.f ms", ping * 1000);
+	this->ping = inPing;
+	PlatformLib_SNPrintF(pingstr, sizeof(pingstr), "%.f ms", inPing * 1000);
 }
 
 bool CMenuGameListModel::Sort(int column, bool ascend)
@@ -401,17 +406,21 @@ CMenuServerBrowser::GetGamesList
 void CMenuGameListModel::Update(void)
 {
 	int i;
-	const char* info;
 
 	// regenerate table data
 	for ( i = 0; i < servers.Count(); i++ )
+	{
 		servers[i].UpdateData();
+	}
 
 	if ( servers.Count() )
 	{
 		parent->joinGame->SetGrayed(false);
+
 		if ( m_iSortingColumn != -1 )
+		{
 			Sort(m_iSortingColumn, m_bAscend);
+		}
 	}
 }
 
@@ -437,7 +446,7 @@ void CMenuGameListModel::AddServerToList(netadr_t adr, const char* info)
 	server_t server(adr, info);
 
 	server.UpdateData();
-	server.SetPing(EngFuncs::DoubleTime() - serversRefreshTime);
+	server.SetPing(static_cast<float>(EngFuncs::DoubleTime()) - serversRefreshTime);
 
 	servers.AddToTail(server);
 
@@ -574,6 +583,7 @@ void CMenuServerBrowser::_Init(void)
 
 	createGame = AddButton(L("GameUI_GameMenu_CreateServer"), NULL, PC_CREATE_GAME);
 	SET_EVENT_MULTI(createGame->onReleased, {
+		(void)pExtra;
 		if ( ((CMenuServerBrowser*)pSelf->Parent())->m_bLanOnly )
 			EngFuncs::CvarSetValue("public", 0.0f);
 		else
@@ -615,6 +625,7 @@ void CMenuServerBrowser::_Init(void)
 	// bit darker
 	natOrDirect.iFgTextColor = uiInputFgColor - 0x00151515;
 	SET_EVENT_MULTI(natOrDirect.onChanged, {
+		(void)pExtra;
 		CMenuSwitch* self = (CMenuSwitch*)pSelf;
 		CMenuServerBrowser* parent = (CMenuServerBrowser*)self->Parent();
 
@@ -635,6 +646,7 @@ void CMenuServerBrowser::_Init(void)
 	password.SetRect(188, 140, 270, 32);
 
 	SET_EVENT_MULTI(askPassword.onPositive, {
+		(void)pExtra;
 		CMenuServerBrowser* parent = (CMenuServerBrowser*)pSelf->Parent();
 
 		EngFuncs::CvarSetString("password", parent->password.GetBuffer());
@@ -643,6 +655,7 @@ void CMenuServerBrowser::_Init(void)
 	});
 
 	SET_EVENT_MULTI(askPassword.onNegative, {
+		(void)pExtra;
 		CMenuServerBrowser* parent = (CMenuServerBrowser*)pSelf->Parent();
 
 		EngFuncs::CvarSetString("password", "");

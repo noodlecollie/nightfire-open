@@ -42,36 +42,36 @@ public:
 	virtual const char* GetCellText(int line, int column) = 0;
 
 	// customization
-	virtual void OnDeleteEntry(int line)
+	virtual void OnDeleteEntry(int)
 	{
 	}
-	virtual void OnActivateEntry(int line)
+	virtual void OnActivateEntry(int)
 	{
 	}
-	virtual unsigned int GetAlignmentForColumn(int column) const
+	virtual unsigned int GetAlignmentForColumn(int) const
 	{
 		return QM_LEFT;
 	}
-	virtual ECellType GetCellType(int line, int column)
+	virtual ECellType GetCellType(int, int)
 	{
 		return CELL_TEXT;
 	}
-	virtual bool GetLineColor(int line, unsigned int& fillColor, bool& force) const
+	virtual bool GetLineColor(int, unsigned int&, bool&) const
 	{
 		return false;
 	}
-	virtual bool GetCellColors(int line, int column, unsigned int& textColor, bool& force) const
+	virtual bool GetCellColors(int, int, unsigned int&, bool&) const
 	{
 		return false;
 	}
-	virtual bool IsCellTextWrapped(int line, int column)
+	virtual bool IsCellTextWrapped(int, int)
 	{
 		return true;
 	}
 	// virtual CMenuBaseItem *GetCellItem( int line, int column ) { return NULL; }
 
 	// sorting
-	virtual bool Sort(int column, bool ascend)
+	virtual bool Sort(int, bool)
 	{
 		return false;
 	}  // false means no sorting support for column

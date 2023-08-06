@@ -82,7 +82,7 @@ void SCR_DrawFPS(int height)
 		framecount = 0;
 	}
 
-	calc = framerate;
+	calc = (float)framerate;
 	framecount++;
 
 	if ( calc < 1.0f )
@@ -128,7 +128,7 @@ void SCR_DrawPos(void)
 		return;
 
 	ent = CL_GetLocalPlayer();
-	speed = VectorLength(cl.simvel);
+	speed = (float)VectorLength(cl.simvel);
 
 	Q_snprintf(
 		msg,
@@ -162,7 +162,7 @@ void SCR_NetSpeeds(void)
 {
 	static char msg[MAX_SYSPATH];
 	int x, y;
-	float time = cl.mtime[0];
+	float time = (float)cl.mtime[0];
 	static int min_svfps = 100;
 	static int max_svfps = 0;
 	int cur_svfps = 0;
@@ -214,14 +214,14 @@ void SCR_NetSpeeds(void)
 		max_clfps,
 		(int)(time / 60.0f),
 		(int)fmod(time, 60.0f),
-		Q_memprint(cls.netchan.total_received),
-		Q_memprint(cls.netchan.total_sended));
+		Q_memprint((float)cls.netchan.total_received),
+		Q_memprint((float)cls.netchan.total_sended));
 
-	x = refState.width - 320 * font->scale;
+	x = (int)(refState.width - 320 * font->scale);
 	y = 384;
 
 	MakeRGBA(color, 255, 255, 255, 255);
-	CL_DrawString(x, y, msg, color, font, FONT_DRAW_RESETCOLORONLF);
+	CL_DrawString((float)x, (float)y, msg, color, font, FONT_DRAW_RESETCOLORONLF);
 }
 
 /*
@@ -242,11 +242,11 @@ void SCR_RSpeeds(void)
 		rgba_t color;
 		cl_font_t* font = Con_GetCurFont();
 
-		x = refState.width - 340 * font->scale;
+		x = (int)(refState.width - 340 * font->scale);
 		y = 64;
 
 		MakeRGBA(color, 255, 255, 255, 255);
-		CL_DrawString(x, y, msg, color, font, FONT_DRAW_RESETCOLORONLF);
+		CL_DrawString((float)x, (float)y, msg, color, font, FONT_DRAW_RESETCOLORONLF);
 	}
 }
 
@@ -311,9 +311,13 @@ void SCR_MakeScreenShot(void)
 	int viewsize;
 
 	if ( cls.envshot_viewsize > 0 )
+	{
 		viewsize = cls.envshot_viewsize;
+	}
 	else
-		viewsize = cl_envshot_size->value;
+	{
+		viewsize = (int)cl_envshot_size->value;
+	}
 
 	switch ( cls.scrshot_action )
 	{
@@ -372,7 +376,7 @@ void SCR_DrawPlaque(void)
 	{
 		int levelshot = ref.dllFuncs.GL_LoadTexture(cl_levelshot_name->string, NULL, 0, TF_IMAGE);
 		ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
-		ref.dllFuncs.R_DrawStretchPic(0, 0, refState.width, refState.height, 0, 0, 1, 1, levelshot);
+		ref.dllFuncs.R_DrawStretchPic(0, 0, (float)refState.width, (float)refState.height, 0, 0, 1, 1, levelshot);
 		if ( !cl.background )
 			CL_DrawHUD(CL_LOADING);
 	}
@@ -414,7 +418,7 @@ void SCR_BeginLoadingPlaque(qboolean is_background)
 		IN_MouseSavePos();
 	cls.draw_changelevel = !is_background;
 	SCR_UpdateScreen();
-	cls.disable_screen = host.realtime;
+	cls.disable_screen = (float)host.realtime;
 	cl.background = is_background;  // set right state before svc_serverdata is came
 
 	if ( !Host_IsDedicated() )
@@ -601,28 +605,38 @@ void SCR_LoadCreditsFont(void)
 		if ( Q_snprintf(charsetFnt, sizeof(charsetFnt), "creditsfont_%s.fnt", Cvar_VariableString("con_charset")) > 0 )
 		{
 			if ( FS_FileExists(charsetFnt, false) )
+			{
 				success = Con_LoadVariableWidthFont(charsetFnt, font, scale, kRenderTransAdd, TF_FONT);
+			}
 		}
 	}
 
 	if ( !success )
+	{
 		success = Con_LoadVariableWidthFont("gfx/creditsfont.fnt", font, scale, kRenderTransAdd, TF_FONT);
+	}
 
 	if ( !success )
+	{
 		success = Con_LoadFixedWidthFont("gfx/conchars", font, scale, kRenderTransAdd, TF_FONT);
+	}
 
 	// copy font size for client.dll
 	if ( success )
 	{
-		int i;
+		size_t i;
 
 		clgame.scrInfo.iCharHeight = cls.creditsFont.charHeight;
 
 		for ( i = 0; i < ARRAYSIZE(cls.creditsFont.charWidths); i++ )
+		{
 			clgame.scrInfo.charWidths[i] = cls.creditsFont.charWidths[i];
+		}
 	}
 	else
+	{
 		Con_DPrintf(S_ERROR "failed to load HUD font\n");
+	}
 }
 
 /*
@@ -644,7 +658,9 @@ void SCR_InstallParticlePalette(void)
 
 	// NOTE: imagelib required this fakebuffer for loading internal palette
 	if ( !pic )
+	{
 		pic = FS_LoadImage("#valve.pal", (byte*)&i, 768);
+	}
 
 	if ( pic )
 	{
@@ -661,9 +677,9 @@ void SCR_InstallParticlePalette(void)
 		// someone deleted internal palette from code...
 		for ( i = 0; i < 256; i++ )
 		{
-			clgame.palette[i].r = i;
-			clgame.palette[i].g = i;
-			clgame.palette[i].b = i;
+			clgame.palette[i].r = (byte)i;
+			clgame.palette[i].g = (byte)i;
+			clgame.palette[i].b = (byte)i;
 		}
 	}
 }

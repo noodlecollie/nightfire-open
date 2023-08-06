@@ -272,7 +272,7 @@ void UTIL_PrecacheOtherWeapon(const char* szClassname)
 
 	if ( pEntity )
 	{
-		ItemInfo II = {0};
+		ItemInfo II = {};
 		pEntity->Precache();
 		if ( ((CBasePlayerItem*)pEntity)->GetItemInfo(&II) )
 		{
@@ -385,15 +385,15 @@ void W_Precache(void)
 		UTIL_PrecacheOther("weaponbox");  // container for dropped deathmatch weapons
 	}
 #endif
-	g_sModelIndexFireball = PRECACHE_MODEL("sprites/zerogxplode.spr");  // fireball
-	g_sModelIndexWExplosion = PRECACHE_MODEL("sprites/WXplo1.spr");  // underwater fireball
-	g_sModelIndexSmoke = PRECACHE_MODEL("sprites/steam1.spr");  // smoke
-	g_sModelIndexBubbles = PRECACHE_MODEL("sprites/bubble.spr");  // bubbles
-	g_sModelIndexBloodSpray = PRECACHE_MODEL("sprites/bloodspray.spr");  // initial blood
-	g_sModelIndexBloodDrop = PRECACHE_MODEL("sprites/blood.spr");  // splattered blood
+	g_sModelIndexFireball = static_cast<short>(PRECACHE_MODEL("sprites/zerogxplode.spr"));  // fireball
+	g_sModelIndexWExplosion = static_cast<short>(PRECACHE_MODEL("sprites/WXplo1.spr"));  // underwater fireball
+	g_sModelIndexSmoke = static_cast<short>(PRECACHE_MODEL("sprites/steam1.spr"));  // smoke
+	g_sModelIndexBubbles = static_cast<short>(PRECACHE_MODEL("sprites/bubble.spr"));  // bubbles
+	g_sModelIndexBloodSpray = static_cast<short>(PRECACHE_MODEL("sprites/bloodspray.spr"));  // initial blood
+	g_sModelIndexBloodDrop = static_cast<short>(PRECACHE_MODEL("sprites/blood.spr"));  // splattered blood
 
-	g_sModelIndexLaser = PRECACHE_MODEL(g_pModelNameLaser);
-	g_sModelIndexLaserDot = PRECACHE_MODEL("sprites/laserdot.spr");
+	g_sModelIndexLaser = static_cast<short>(PRECACHE_MODEL(g_pModelNameLaser));
+	g_sModelIndexLaserDot = static_cast<short>(PRECACHE_MODEL("sprites/laserdot.spr"));
 
 	// used by explosions
 	PRECACHE_MODEL("models/grenade.mdl");
@@ -462,7 +462,7 @@ void CBasePlayerItem::FallInit(void)
 	SetTouch(&CBasePlayerItem::DefaultTouch);
 	SetThink(&CBasePlayerItem::FallThink);
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 //=========================================================
@@ -474,7 +474,7 @@ void CBasePlayerItem::FallInit(void)
 //=========================================================
 void CBasePlayerItem::FallThink(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	if ( pev->flags & FL_ONGROUND )
 	{
@@ -685,7 +685,7 @@ void CBasePlayerWeapon::ItemPostFrame(void)
 			// weapon isn't useable, switch.
 			if ( !(iFlags() & ITEM_FLAG_NOAUTOSWITCHEMPTY) && g_pGameRules->GetNextBestWeapon(m_pPlayer, this) )
 			{
-				m_flNextPrimaryAttack = (UseDecrement() ? 0.0 : gpGlobals->time) + 0.3;
+				m_flNextPrimaryAttack = (UseDecrement() ? 0.0f : gpGlobals->time) + 0.3f;
 				return;
 			}
 		}
@@ -733,17 +733,17 @@ void CBasePlayerItem::Drop(void)
 {
 	SetTouch(NULL);
 	SetThink(&CBaseEntity::SUB_Remove);
-	pev->nextthink = gpGlobals->time + .1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CBasePlayerItem::Kill(void)
 {
 	SetTouch(NULL);
 	SetThink(&CBaseEntity::SUB_Remove);
-	pev->nextthink = gpGlobals->time + .1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
-void CBasePlayerItem::Holster(int skiplocal /* = 0 */)
+void CBasePlayerItem::Holster(int)
 {
 	m_pPlayer->pev->viewmodel = 0;
 	m_pPlayer->pev->weaponmodel = 0;
@@ -986,8 +986,8 @@ BOOL CBasePlayerWeapon::DefaultDeploy(
 	strcpy(m_pPlayer->m_szAnimExtention, szAnimExt);
 	SendWeaponAnim(iAnim, body);
 
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.0;
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
+	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.0f;
 	m_flLastFireTime = 0.0f;
 
 	return TRUE;
@@ -1018,7 +1018,7 @@ BOOL CBasePlayerWeapon::PlayEmptySound(void)
 {
 	if ( m_iPlayEmptySound )
 	{
-		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_cock1.wav", 0.8, ATTN_NORM);
+		EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/357_cock1.wav", 0.8f, ATTN_NORM);
 		m_iPlayEmptySound = 0;
 		return 0;
 	}
@@ -1044,7 +1044,7 @@ int CBasePlayerWeapon::SecondaryAmmoIndex(void)
 	return -1;
 }
 
-void CBasePlayerWeapon::Holster(int skiplocal /* = 0 */)
+void CBasePlayerWeapon::Holster(int)
 {
 	m_fInReload = FALSE;  // cancel any reload in progress.
 	m_pPlayer->pev->viewmodel = 0;
@@ -1117,7 +1117,7 @@ void CBasePlayerAmmo::DefaultTouch(CBaseEntity* pOther)
 		{
 			SetTouch(NULL);
 			SetThink(&CBaseEntity::SUB_Remove);
-			pev->nextthink = gpGlobals->time + .1;
+			pev->nextthink = gpGlobals->time + 0.1f;
 		}
 	}
 	else if ( gEvilImpulse101 )
@@ -1125,7 +1125,7 @@ void CBasePlayerAmmo::DefaultTouch(CBaseEntity* pOther)
 		// evil impulse 101 hack, kill always
 		SetTouch(NULL);
 		SetThink(&CBaseEntity::SUB_Remove);
-		pev->nextthink = gpGlobals->time + .1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 }
 
@@ -1301,7 +1301,7 @@ void CWeaponBox::Kill(void)
 		while ( pWeapon )
 		{
 			pWeapon->SetThink(&CBaseEntity::SUB_Remove);
-			pWeapon->pev->nextthink = gpGlobals->time + 0.1;
+			pWeapon->pev->nextthink = gpGlobals->time + 0.1f;
 			pWeapon = pWeapon->m_pNext;
 		}
 	}

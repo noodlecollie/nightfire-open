@@ -89,9 +89,9 @@ BOOL CHandGrenade::CanHolster(void)
 	return (m_flStartThrow == 0);
 }
 
-void CHandGrenade::Holster(int skiplocal /* = 0 */)
+void CHandGrenade::Holster(int)
 {
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
 
 	if ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] )
 	{
@@ -121,7 +121,7 @@ void CHandGrenade::PrimaryAttack()
 		m_flReleaseThrow = 0;
 
 		SendWeaponAnim(HANDGRENADE_PINPULL);
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.5;
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.5f;
 	}
 }
 
@@ -138,9 +138,9 @@ void CHandGrenade::WeaponIdle(void)
 		Vector angThrow = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
 
 		if ( angThrow.x < 0 )
-			angThrow.x = -10 + angThrow.x * ((90 - 10) / 90.0);
+			angThrow.x = -10 + angThrow.x * ((90 - 10) / 90.0f);
 		else
-			angThrow.x = -10 + angThrow.x * ((90 + 10) / 90.0);
+			angThrow.x = -10 + angThrow.x * ((90 + 10) / 90.0f);
 
 		float flVel = (90 - angThrow.x) * 4;
 		if ( flVel > 500 )
@@ -153,7 +153,7 @@ void CHandGrenade::WeaponIdle(void)
 		Vector vecThrow = gpGlobals->v_forward * flVel + m_pPlayer->pev->velocity;
 
 		// alway explode 3 seconds after the pin was pulled
-		float time = m_flStartThrow - gpGlobals->time + 3.0;
+		float time = m_flStartThrow - gpGlobals->time + 3.0f;
 		if ( time < 0 )
 			time = 0;
 
@@ -178,7 +178,7 @@ void CHandGrenade::WeaponIdle(void)
 		m_flReleaseThrow = 0;
 		m_flStartThrow = 0;
 		m_flNextPrimaryAttack = GetNextAttackDelay(0.5);
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.5;
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.5f;
 
 		m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 
@@ -225,7 +225,7 @@ void CHandGrenade::WeaponIdle(void)
 		else
 		{
 			iAnim = HANDGRENADE_FIDGET;
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 75.0 / 30.0;
+			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 75.0f / 30.0f;
 		}
 
 		SendWeaponAnim(iAnim);

@@ -291,12 +291,12 @@ extern CBaseEntity* UTIL_FindEntityGeneric(const char* szName, Vector& vecSrc, f
 
 inline float UTIL_DegreesToRadians(float deg)
 {
-	return (deg / 180.0f) * M_PI;
+	return (deg / 180.0f) * (float)M_PI;
 }
 
 inline float UTIL_RadiansToDegrees(float rad)
 {
-	return (rad / M_PI) * 180;
+	return (rad / (float)M_PI) * 180.0f;
 }
 
 // returns a CBaseEntity pointer to a player by index.  Only returns if the player is spawned and connected

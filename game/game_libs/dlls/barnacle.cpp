@@ -137,7 +137,7 @@ void CBarnacle::Spawn()
 	SetActivity(ACT_IDLE);
 
 	SetThink(&CBarnacle::BarnacleThink);
-	pev->nextthink = gpGlobals->time + 0.5;
+	pev->nextthink = gpGlobals->time + 0.5f;
 
 	UTIL_SetOrigin(pev, pev->origin);
 }
@@ -167,7 +167,7 @@ void CBarnacle::BarnacleThink(void)
 		UTIL_SetOrigin(pev, pev->origin);
 	}
 #endif
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	if ( m_hEnemy != 0 )
 	{
@@ -196,8 +196,8 @@ void CBarnacle::BarnacleThink(void)
 			vecNewEnemyOrigin.y = pev->origin.y;
 
 			// guess as to where their neck is
-			vecNewEnemyOrigin.x -= 6 * cos(m_hEnemy->pev->angles.y * M_PI / 180.0);
-			vecNewEnemyOrigin.y -= 6 * sin(m_hEnemy->pev->angles.y * M_PI / 180.0);
+			vecNewEnemyOrigin.x -= 6 * cosf(m_hEnemy->pev->angles.y * static_cast<float>(M_PI) / 180.0f);
+			vecNewEnemyOrigin.y -= 6 * sinf(m_hEnemy->pev->angles.y * static_cast<float>(M_PI) / 180.0f);
 
 			m_flAltitude -= BARNACLE_PULL_SPEED;
 			vecNewEnemyOrigin.z += BARNACLE_PULL_SPEED;
@@ -341,13 +341,13 @@ void CBarnacle::BarnacleThink(void)
 
 	// ALERT( at_console, "tounge %f\n", m_flAltitude + m_flTongueAdj );
 	SetBoneController(0, -(m_flAltitude + m_flTongueAdj));
-	StudioFrameAdvance(0.1);
+	StudioFrameAdvance(0.1f);
 }
 
 //=========================================================
 // Killed.
 //=========================================================
-void CBarnacle::Killed(entvars_t* pevAttacker, int iGib)
+void CBarnacle::Killed(entvars_t*, int)
 {
 	CBaseMonster* pVictim;
 
@@ -379,9 +379,9 @@ void CBarnacle::Killed(entvars_t* pevAttacker, int iGib)
 	SetActivity(ACT_DIESIMPLE);
 	SetBoneController(0, 0);
 
-	StudioFrameAdvance(0.1);
+	StudioFrameAdvance(0.1f);
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	SetThink(&CBarnacle::WaitTillDead);
 }
 
@@ -389,9 +389,9 @@ void CBarnacle::Killed(entvars_t* pevAttacker, int iGib)
 //=========================================================
 void CBarnacle::WaitTillDead(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
-	float flInterval = StudioFrameAdvance(0.1);
+	float flInterval = StudioFrameAdvance(0.1f);
 	DispatchAnimEvents(flInterval);
 
 	if ( m_fSequenceFinished )
@@ -431,7 +431,7 @@ CBaseEntity* CBarnacle::TongueTouchEnt(float* pflLength)
 
 	// trace once to hit architecture and see if the tongue needs to change position.
 	UTIL_TraceLine(pev->origin, pev->origin - Vector(0, 0, 2048), ignore_monsters, ENT(pev), &tr);
-	length = fabs(pev->origin.z - tr.vecEndPos.z);
+	length = fabsf(pev->origin.z - tr.vecEndPos.z);
 	if ( pflLength )
 	{
 		*pflLength = length;

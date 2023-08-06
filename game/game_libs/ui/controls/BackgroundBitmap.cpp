@@ -242,7 +242,8 @@ bool CMenuBackgroundBitmap::LoadBackgroundImage(bool gamedirOnly)
 	s_BackgroundImageSize.h = atoi(token);
 
 	// Now read all tiled background list
-	while ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) )
+	for ( pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token)); pfile;
+		  pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token)) )
 	{
 		bimage_t img;
 

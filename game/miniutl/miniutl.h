@@ -90,7 +90,7 @@
 
 #include "strtools.h"
 
-#ifdef MY_COMPILER_SUCKS
+#ifdef CXX11_NOT_PRESENT
 #define COMPILE_TIME_ASSERT(pred) typedef int UNIQUE_ID[(pred) ? 1 : -1]
 #else
 #define COMPILE_TIME_ASSERT(pred) static_assert(pred, "Compile time assert constraint is not true: " #pred)
@@ -117,11 +117,11 @@ inline void AssertMsg(int pred, const char* fmt, ...)
 #define AssertEquals(_exp, _expectedValue) \
 	AssertMsg2((_exp) == (_expectedValue), "Expected %d but got %d!", (_expectedValue), (_exp))
 #else
-#define AssertMsg(x, msg) (x)
-#define AssertMsg1(x, msg, msg1) (x)
-#define DbgAssertMsg1(x, msg, msg1) (x)
-#define AssertMsg2(x, msg, msg1, msg2) (x)
-#define AssertEquals(x, y) (x)
+#define AssertMsg(x, msg)
+#define AssertMsg1(x, msg, msg1)
+#define DbgAssertMsg1(x, msg, msg1)
+#define AssertMsg2(x, msg, msg1, msg2)
+#define AssertEquals(x, y)
 #endif
 
 #define VerifyEquals(x, y) AssertEquals(x, y)

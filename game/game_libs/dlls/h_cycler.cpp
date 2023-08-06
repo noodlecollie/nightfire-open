@@ -150,7 +150,7 @@ void CCycler::Spawn()
 //
 void CCycler::Think(void)
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	if ( m_animate )
 	{
@@ -173,7 +173,7 @@ void CCycler::Think(void)
 //
 // CyclerUse - starts a rotation trend
 //
-void CCycler::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCycler::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	m_animate = !m_animate;
 	if ( m_animate )
@@ -186,7 +186,7 @@ void CCycler::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useTyp
 // CyclerPain , changes sequences when shot
 //
 // void CCycler::Pain( float flDamage )
-int CCycler::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CCycler::TakeDamage(entvars_t*, entvars_t*, float, int)
 {
 	if ( m_animate )
 	{
@@ -204,7 +204,7 @@ int CCycler::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 	else
 	{
 		pev->framerate = 1.0;
-		StudioFrameAdvance(0.1);
+		StudioFrameAdvance(0.1f);
 		pev->framerate = 0;
 		ALERT(at_console, "sequence: %d, frame %.0f\n", pev->sequence, pev->frame);
 	}
@@ -258,7 +258,7 @@ void CCyclerSprite::Spawn(void)
 	pev->effects = 0;
 
 	pev->frame = 0;
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	m_animate = 1;
 	m_lastTime = gpGlobals->time;
 
@@ -273,17 +273,17 @@ void CCyclerSprite::Think(void)
 	if ( ShouldAnimate() )
 		Animate(pev->framerate * (gpGlobals->time - m_lastTime));
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	m_lastTime = gpGlobals->time;
 }
 
-void CCyclerSprite::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+void CCyclerSprite::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	m_animate = !m_animate;
 	ALERT(at_console, "Sprite: %s\n", STRING(pev->model));
 }
 
-int CCyclerSprite::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
+int CCyclerSprite::TakeDamage(entvars_t*, entvars_t*, float, int)
 {
 	if ( m_maxFrame > 1.0 )
 	{
@@ -296,7 +296,7 @@ void CCyclerSprite::Animate(float frames)
 {
 	pev->frame += frames;
 	if ( m_maxFrame > 0 )
-		pev->frame = fmod(pev->frame, m_maxFrame);
+		pev->frame = fmodf(pev->frame, m_maxFrame);
 }
 
 class CWeaponCycler : public CBasePlayerWeapon
@@ -307,7 +307,7 @@ public:
 	{
 		return 1;
 	}
-	int GetItemInfo(ItemInfo* p)
+	int GetItemInfo(ItemInfo*)
 	{
 		return 0;
 	}
@@ -340,22 +340,22 @@ void CWeaponCycler::Spawn()
 BOOL CWeaponCycler::Deploy()
 {
 	m_pPlayer->pev->viewmodel = m_iszModel;
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 1.0;
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 1.0f;
 	SendWeaponAnim(0);
 	m_iClip = 0;
 	return TRUE;
 }
 
-void CWeaponCycler::Holster(int skiplocal /* = 0 */)
+void CWeaponCycler::Holster(int)
 {
-	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5;
+	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
 }
 
 void CWeaponCycler::PrimaryAttack()
 {
 	SendWeaponAnim(pev->sequence);
 
-	m_flNextPrimaryAttack = gpGlobals->time + 0.3;
+	m_flNextPrimaryAttack = gpGlobals->time + 0.3f;
 }
 
 void CWeaponCycler::SecondaryAttack(void)
@@ -376,7 +376,7 @@ void CWeaponCycler::SecondaryAttack(void)
 
 	SendWeaponAnim(pev->sequence);
 
-	m_flNextSecondaryAttack = gpGlobals->time + 0.3;
+	m_flNextSecondaryAttack = gpGlobals->time + 0.3f;
 }
 
 // Flaming Wreakage
@@ -409,7 +409,7 @@ void CWreckage::Spawn(void)
 	pev->effects = 0;
 
 	pev->frame = 0;
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	if ( pev->model )
 	{
@@ -430,7 +430,7 @@ void CWreckage::Precache()
 void CWreckage::Think(void)
 {
 	StudioFrameAdvance();
-	pev->nextthink = gpGlobals->time + 0.2;
+	pev->nextthink = gpGlobals->time + 0.2f;
 
 	if ( pev->dmgtime )
 	{

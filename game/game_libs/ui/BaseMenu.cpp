@@ -109,19 +109,30 @@ Any parameter can be NULL if you don't want it
 void UI_ScaleCoords(int* x, int* y, int* w, int* h)
 {
 	if ( x )
-		*x *= uiStatic.scaleX;
+	{
+		*x = static_cast<int>(*x * uiStatic.scaleX);
+	}
+
 	if ( y )
-		*y *= uiStatic.scaleY;
+	{
+		*y = static_cast<int>(*y * uiStatic.scaleY);
+	}
+
 	if ( w )
-		*w *= uiStatic.scaleX;
+	{
+		*w = static_cast<int>(*w * uiStatic.scaleX);
+	}
+
 	if ( h )
-		*h *= uiStatic.scaleY;
+	{
+		*h = static_cast<int>(*h * uiStatic.scaleY);
+	}
 }
 
 void UI_ScaleCoords(int& x, int& y)
 {
-	x *= uiStatic.scaleX;
-	y *= uiStatic.scaleY;
+	x = static_cast<int>(x * uiStatic.scaleX);
+	y = static_cast<int>(y * uiStatic.scaleY);
 }
 
 void UI_ScaleCoords(int& x, int& y, int& w, int& h)
@@ -132,12 +143,12 @@ void UI_ScaleCoords(int& x, int& y, int& w, int& h)
 
 Point Point::Scale()
 {
-	return Point(x * uiStatic.scaleX, y * uiStatic.scaleY);
+	return Point(static_cast<int>(x * uiStatic.scaleX), static_cast<int>(y * uiStatic.scaleY));
 }
 
 Size Size::Scale()
 {
-	return Size(w * uiStatic.scaleX, h * uiStatic.scaleY);
+	return Size(static_cast<int>(w * uiStatic.scaleX), static_cast<int>(h * uiStatic.scaleY));
 }
 
 /*
@@ -458,7 +469,7 @@ int UI_DrawString(
 		}
 		else  // QM_LEFT
 		{
-			xx = x + (w - pixelWide) / 2.0f;
+			xx = static_cast<int>(x + (w - pixelWide) / 2.0f);
 		}
 
 		// draw it
@@ -657,7 +668,7 @@ void UI_UpdateMenu(float flTime)
 	if ( uiStatic.client.IsActive() )
 	{
 		uiStatic.client.Update();
-		uiStatic.realTime = flTime * 1000;
+		uiStatic.realTime = static_cast<int>(flTime * 1000);
 		uiStatic.framecount++;
 	}
 
@@ -671,7 +682,7 @@ void UI_UpdateMenu(float flTime)
 	if ( !uiStatic.menu.IsActive() )
 		return;
 
-	uiStatic.realTime = flTime * 1000;
+	uiStatic.realTime = static_cast<int>(flTime * 1000);
 	uiStatic.framecount++;
 
 	if ( !EngFuncs::ClientInGame() && EngFuncs::GetCvarFloat("cl_background") )
@@ -802,13 +813,13 @@ void UI_MouseMove(int x, int y)
 	uiStatic.cursorX = x;
 	uiStatic.cursorY = y;
 
-	if ( UI_CursorInRect(1, 1, ScreenWidth - 1, ScreenHeight - 1) )
+	if ( UI_CursorInRect(1, 1, static_cast<int>(ScreenWidth - 1), static_cast<int>(ScreenHeight - 1)) )
 		uiStatic.mouseInRect = true;
 	else
 		uiStatic.mouseInRect = false;
 
-	uiStatic.cursorX = bound(0, uiStatic.cursorX, ScreenWidth);
-	uiStatic.cursorY = bound(0, uiStatic.cursorY, ScreenHeight);
+	uiStatic.cursorX = static_cast<int>(bound(0, uiStatic.cursorX, ScreenWidth));
+	uiStatic.cursorY = static_cast<int>(bound(0, uiStatic.cursorY, ScreenHeight));
 
 	if ( clientActive && !menuActive )
 		uiStatic.client.MouseEvent(x, y);
@@ -1059,7 +1070,7 @@ int UI_VidInit(void)
 	if ( ScreenWidth * 3 < ScreenHeight * 4 )
 	{
 		uiStatic.scaleX = uiStatic.scaleY = ScreenWidth / 1024.0f;
-		uiStatic.yOffset = (ScreenHeight / 2.0f) / uiStatic.scaleX - 768.0f / 2.0f;
+		uiStatic.yOffset = static_cast<int>((ScreenHeight / 2.0f) / uiStatic.scaleX - 768.0f / 2.0f);
 	}
 	else
 	{
@@ -1068,10 +1079,10 @@ int UI_VidInit(void)
 		uiStatic.yOffset = 0;
 	}
 
-	uiStatic.width = ScreenWidth / uiStatic.scaleX;
+	uiStatic.width = static_cast<int>(ScreenWidth / uiStatic.scaleX);
 	// move cursor to screen center
-	uiStatic.cursorX = ScreenWidth / 2;
-	uiStatic.cursorY = ScreenHeight / 2;
+	uiStatic.cursorX = static_cast<int>(ScreenWidth / 2);
+	uiStatic.cursorY = static_cast<int>(ScreenHeight / 2);
 	uiStatic.outlineWidth = 4;
 
 	// all menu buttons have the same view sizes
@@ -1227,5 +1238,5 @@ void UI_Shutdown(void)
 
 	delete g_FontMgr;
 
-	memset(&uiStatic, 0, sizeof(uiStatic_t));
+	uiStatic.Clear();
 }

@@ -86,7 +86,7 @@ static qboolean CL_QuakeEntityTeleported(cl_entity_t* ent, entity_state_t* newst
 
 	// compute potential max movement in units per frame and compare with entity movement
 	maxlen = (clgame.movevars.maxvelocity * (1.0f / GAME_FPS));
-	len = VectorLength(delta);
+	len = (float)VectorLength(delta);
 
 	return (len > maxlen);
 }
@@ -366,12 +366,12 @@ static void CL_ParseQuakeClientData(sizebuf_t* msg)
 	frame->valid = true;  // assume valid
 
 	if ( FBitSet(bits, SU_VIEWHEIGHT) )
-		frame->clientdata.view_ofs[2] = MSG_ReadChar(msg);
+		frame->clientdata.view_ofs[2] = (float)MSG_ReadChar(msg);
 	else
 		frame->clientdata.view_ofs[2] = 22.0f;
 
 	if ( FBitSet(bits, SU_IDEALPITCH) )
-		cl.local.idealpitch = MSG_ReadChar(msg);
+		cl.local.idealpitch = (float)MSG_ReadChar(msg);
 	else
 		cl.local.idealpitch = 0;
 
@@ -473,7 +473,7 @@ void CL_ParseQuakeEntityData(sizebuf_t* msg, int bits)
 	ent = CL_EDICT_NUM(newnum);
 	ent->index = newnum;  // enumerate entity index
 	ent->player = CL_IsPlayerIndex(newnum);
-	state->animtime = cl.mtime[0];
+	state->animtime = (float)cl.mtime[0];
 
 	if ( ent->curstate.msg_time != cl.mtime[1] )
 		forcelink = true;  // no previous frame to lerp from
@@ -486,7 +486,7 @@ void CL_ParseQuakeEntityData(sizebuf_t* msg, int bits)
 		state->modelindex = ent->baseline.modelindex;
 
 	if ( FBitSet(bits, U_FRAME) )
-		state->frame = MSG_ReadByte(msg);
+		state->frame = (float)MSG_ReadByte(msg);
 	else
 		state->frame = ent->baseline.frame;
 
@@ -496,7 +496,7 @@ void CL_ParseQuakeEntityData(sizebuf_t* msg, int bits)
 		state->colormap = ent->baseline.colormap;
 
 	if ( FBitSet(bits, U_SKIN) )
-		state->skin = MSG_ReadByte(msg);
+		state->skin = (short)MSG_ReadByte(msg);
 	else
 		state->skin = ent->baseline.skin;
 
@@ -537,7 +537,7 @@ void CL_ParseQuakeEntityData(sizebuf_t* msg, int bits)
 
 	if ( FBitSet(bits, U_TRANS) )
 	{
-		int temp = MSG_ReadFloat(msg);
+		int temp = (int)MSG_ReadFloat(msg);
 		float alpha = MSG_ReadFloat(msg);
 
 		if ( alpha == 0.0f )
@@ -665,9 +665,9 @@ static void CL_ParseQuakeStaticEntity(sizebuf_t* msg)
 	memset(&state, 0, sizeof(state));
 
 	state.modelindex = MSG_ReadByte(msg);
-	state.frame = MSG_ReadByte(msg);
+	state.frame = (float)MSG_ReadByte(msg);
 	state.colormap = MSG_ReadByte(msg);
-	state.skin = MSG_ReadByte(msg);
+	state.skin = (short)MSG_ReadByte(msg);
 	state.origin[0] = MSG_ReadCoord(msg);
 	state.angles[0] = MSG_ReadAngle(msg);
 	state.origin[1] = MSG_ReadCoord(msg);
@@ -738,9 +738,9 @@ static void CL_ParseQuakeBaseline(sizebuf_t* msg)
 
 	// parse baseline
 	state.modelindex = MSG_ReadByte(msg);
-	state.frame = MSG_ReadByte(msg);
+	state.frame = (float)MSG_ReadByte(msg);
 	state.colormap = MSG_ReadByte(msg);
-	state.skin = MSG_ReadByte(msg);
+	state.skin = (short)MSG_ReadByte(msg);
 	state.origin[0] = MSG_ReadCoord(msg);
 	state.angles[0] = MSG_ReadAngle(msg);
 	state.origin[1] = MSG_ReadCoord(msg);
@@ -975,7 +975,7 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 		}
 
 		// record command for debugging spew on parse problem
-		CL_Parse_RecordCommand(cmd, bufStart);
+		CL_Parse_RecordCommand(cmd, (int)bufStart);
 
 		// other commands
 		switch ( cmd )
@@ -999,7 +999,7 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_sound:
 				CL_ParseQuakeSound(msg);
-				cl.frames[cl.parsecountmod].graphdata.sound += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.sound += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_time:
 				Cbuf_AddText("\n");  // new frame was started
@@ -1024,7 +1024,7 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 			case svc_lightstyle:
 				param1 = MSG_ReadByte(msg);
 				str = MSG_ReadString(msg);
-				CL_SetLightstyle(param1, str, cl.mtime[0]);
+				CL_SetLightstyle(param1, str, (float)cl.mtime[0]);
 				break;
 			case svc_updatename:
 				param1 = MSG_ReadByte(msg);
@@ -1039,12 +1039,12 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_clientdata:
 				CL_ParseQuakeClientData(msg);
-				cl.frames[cl.parsecountmod].graphdata.client += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.client += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_stopsound:
 				param1 = MSG_ReadWord(msg);
 				S_StopSound(param1 >> 3, param1 & 7, NULL);
-				cl.frames[cl.parsecountmod].graphdata.sound += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.sound += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_updatecolors:
 				param1 = MSG_ReadByte(msg);
@@ -1069,7 +1069,7 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_temp_entity:
 				CL_ParseQuakeTempEntity(msg);
-				cl.frames[cl.parsecountmod].graphdata.tentities += MSG_GetNumBytesRead(msg) - bufStart;
+				cl.frames[cl.parsecountmod].graphdata.tentities += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
 			case svc_setpause:
 				cl.paused = MSG_ReadByte(msg);
@@ -1079,7 +1079,7 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 				break;
 			case svc_centerprint:
 				str = MSG_ReadString(msg);
-				CL_DispatchUserMessage("HudText", Q_strlen(str), (void*)str);
+				CL_DispatchUserMessage("HudText", (int)Q_strlen(str), (void*)str);
 				break;
 			case svc_killedmonster:
 				CL_DispatchQuakeMessage("KillMonster");  // just an event
@@ -1131,13 +1131,13 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 					int packed_fog[4];
 
 					fog_settings[3] = MSG_ReadFloat(msg);  // density
-					fog_settings[0] = MSG_ReadByte(msg);  // red
-					fog_settings[1] = MSG_ReadByte(msg);  // green
-					fog_settings[2] = MSG_ReadByte(msg);  // blue
-					packed_fog[0] = fog_settings[0] * 255;
-					packed_fog[1] = fog_settings[1] * 255;
-					packed_fog[2] = fog_settings[2] * 255;
-					packed_fog[3] = fog_settings[3] * 255;
+					fog_settings[0] = (float)MSG_ReadByte(msg);  // red
+					fog_settings[1] = (float)MSG_ReadByte(msg);  // green
+					fog_settings[2] = (float)MSG_ReadByte(msg);  // blue
+					packed_fog[0] = (int)fog_settings[0] * 255;
+					packed_fog[1] = (int)fog_settings[1] * 255;
+					packed_fog[2] = (int)fog_settings[2] * 255;
+					packed_fog[3] = (int)fog_settings[3] * 255;
 					clgame.movevars.fog_settings =
 						(packed_fog[1] << 24) | (packed_fog[2] << 16) | (packed_fog[3] << 8) | packed_fog[0];
 				}
@@ -1152,7 +1152,7 @@ void CL_ParseQuakeMessage(sizebuf_t* msg, qboolean normal_message)
 		}
 	}
 
-	cl.frames[cl.parsecountmod].graphdata.msgbytes += MSG_GetNumBytesRead(msg) - cls.starting_count;
+	cl.frames[cl.parsecountmod].graphdata.msgbytes += (word)(MSG_GetNumBytesRead(msg) - cls.starting_count);
 	CL_Parse_Debug(false);  // done
 
 	// now process packet.

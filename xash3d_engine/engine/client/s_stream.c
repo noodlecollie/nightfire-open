@@ -74,6 +74,8 @@ S_StartBackgroundTrack
 */
 void S_StartBackgroundTrack(const char* introTrack, const char* mainTrack, int position, qboolean fullpath)
 {
+	(void)fullpath;
+
 	S_StopBackgroundTrack();
 
 	if ( !dma.initialized )
@@ -211,24 +213,24 @@ void S_StreamBackgroundTrack(void)
 	Assert(ch != NULL);
 
 	// see how many samples should be copied into the raw buffer
-	if ( ch->s_rawend < soundtime )
+	if ( ch->s_rawend < (uint)soundtime )
 		ch->s_rawend = soundtime;
 
 	while ( ch->s_rawend < soundtime + ch->max_samples )
 	{
 		wavdata_t* info = FS_StreamInfo(s_bgTrack.stream);
 
-		bufferSamples = ch->max_samples - (ch->s_rawend - soundtime);
+		bufferSamples = (int)(ch->max_samples - (ch->s_rawend - soundtime));
 
 		// decide how much data needs to be read from the file
-		fileSamples = bufferSamples * ((float)info->rate / SOUND_DMA_SPEED);
+		fileSamples = (int)(bufferSamples * ((float)info->rate / SOUND_DMA_SPEED));
 		if ( fileSamples <= 1 )
 			return;  // no more samples need
 
 		// our max buffer size
 		fileBytes = fileSamples * (info->width * info->channels);
 
-		if ( fileBytes > sizeof(raw) )
+		if ( (size_t)fileBytes > sizeof(raw) )
 		{
 			fileBytes = sizeof(raw);
 			fileSamples = fileBytes / (info->width * info->channels);
@@ -315,7 +317,7 @@ void S_StreamSoundTrack(void)
 	Assert(ch != NULL);
 
 	// see how many samples should be copied into the raw buffer
-	if ( ch->s_rawend < soundtime )
+	if ( ch->s_rawend < (uint)soundtime )
 		ch->s_rawend = soundtime;
 
 	while ( ch->s_rawend < soundtime + ch->max_samples )
@@ -325,24 +327,24 @@ void S_StreamSoundTrack(void)
 		if ( !info )
 			break;  // bad soundtrack?
 
-		bufferSamples = ch->max_samples - (ch->s_rawend - soundtime);
+		bufferSamples = (int)(ch->max_samples - (ch->s_rawend - soundtime));
 
 		// decide how much data needs to be read from the file
-		fileSamples = bufferSamples * ((float)info->rate / SOUND_DMA_SPEED);
+		fileSamples = (int)(bufferSamples * ((float)info->rate / SOUND_DMA_SPEED));
 		if ( fileSamples <= 1 )
 			return;  // no more samples need
 
 		// our max buffer size
 		fileBytes = fileSamples * (info->width * info->channels);
 
-		if ( fileBytes > sizeof(raw) )
+		if ( (size_t)fileBytes > sizeof(raw) )
 		{
 			fileBytes = sizeof(raw);
 			fileSamples = fileBytes / (info->width * info->channels);
 		}
 
 		// read audio stream
-		r = SCR_GetAudioChunk(raw, fileBytes);
+		r = SCR_GetAudioChunk((char*)raw, fileBytes);
 
 		if ( r < fileBytes )
 		{

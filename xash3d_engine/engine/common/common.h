@@ -100,12 +100,6 @@ typedef enum
 	HOST_DEDICATED,
 } instance_t;
 
-#ifdef XASH_DEDICATED
-#define Host_IsDedicated() (true)
-#else
-#define Host_IsDedicated() (host.type == HOST_DEDICATED)
-#endif
-
 #include "system.h"
 #include "com_model.h"
 #include "com_strings.h"
@@ -333,7 +327,21 @@ typedef struct host_parm_s
 	host_status_t status;  // global host state
 	game_status_t game;  // game manager
 	uint type;  // running at
+
+	// NOODLECOLLIE: jmp_buf is an array, and the type defined for use
+	// has to be padded in order for each item in the array to lie
+	// consecutively in memory without any space between its neighbours.
+	// MSVC warns about this on /W4, and there's not much we can do
+	// about it since the type itself is defined in the Windows headers.
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4324)
+#endif
 	jmp_buf abortframe;  // abort current frame
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 	dword errorframe;  // to prevent multiple host error
 	poolhandle_t mempool;  // static mempool for misc allocations
 	string finalmsg;  // server shutdown final message
@@ -410,6 +418,15 @@ typedef struct host_parm_s
 
 extern host_parm_t host;
 extern sysinfo_t SI;
+
+static inline int Host_IsDedicated()
+{
+#ifdef XASH_DEDICATED
+	return 1;
+#else
+	return host.type == HOST_DEDICATED;
+#endif
+}
 
 #define CMD_SERVERDLL BIT(0)  // added by server.dll
 #define CMD_CLIENTDLL BIT(1)  // added by client.dll

@@ -174,7 +174,7 @@ void CHudStatusBar::ParseStatusString(int line_num)
 	}
 }
 
-int CHudStatusBar::Draw(float fTime)
+int CHudStatusBar::Draw(float)
 {
 	if ( m_bReparseString )
 	{
@@ -201,7 +201,7 @@ int CHudStatusBar::Draw(float fTime)
 		if ( (i == STATUSBAR_ID_LINE) && CL_CvarGetFloat("hud_centerid") )
 		{
 			x = Max(0, Max(2, (ScreenWidth - TextWidth)) / 2);
-			y = (ScreenHeight / 2) + (TextHeight * CL_CvarGetFloat("hud_centerid"));
+			y = static_cast<int>((ScreenHeight / 2) + (TextHeight * CL_CvarGetFloat("hud_centerid")));
 		}
 
 		if ( m_pflNameColors[i] )
@@ -225,7 +225,7 @@ int CHudStatusBar::Draw(float fTime)
 // if StatusValue[slotnum] != 0, the following string is drawn, upto the next newline - otherwise the text is skipped
 // upto next newline %pX, where X is an integer, will substitute a player name here, getting the player index from
 // StatusValue[X] %iX, where X is an integer, will substitute a number here, getting the number from StatusValue[X]
-int CHudStatusBar::MsgFunc_StatusText(const char* pszName, int iSize, void* pbuf)
+int CHudStatusBar::MsgFunc_StatusText(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 
@@ -238,7 +238,7 @@ int CHudStatusBar::MsgFunc_StatusText(const char* pszName, int iSize, void* pbuf
 	m_szStatusText[line][MAX_STATUSTEXT_LENGTH - 1] =
 		0;  // ensure it's null terminated ( strncpy() won't null terminate if read string too long)
 
-	if ( m_szStatusText[0] == 0 )
+	if ( m_szStatusText[0][0] == 0 )
 		m_iFlags &= ~HUD_ACTIVE;
 	else
 		m_iFlags |= HUD_ACTIVE;  // we have status text, so turn on the status bar
@@ -252,7 +252,7 @@ int CHudStatusBar::MsgFunc_StatusText(const char* pszName, int iSize, void* pbuf
 // accepts two values:
 //		byte: index into the status value array
 //		short: value to store
-int CHudStatusBar::MsgFunc_StatusValue(const char* pszName, int iSize, void* pbuf)
+int CHudStatusBar::MsgFunc_StatusValue(const char*, int iSize, void* pbuf)
 {
 	BEGIN_READ(pbuf, iSize);
 

@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "filesystem_internal.h"
 #include "crtlib.h"
 #include "common/com_strings.h"
+#include "PlatformLib/File.h"
 
 /*
 ========================================================================
@@ -104,7 +105,7 @@ static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
 	pack_t* pack;
 	fs_size_t c;
 
-	packhandle = open(packfile, O_RDONLY | O_BINARY);
+	packhandle = PlatformLib_Open(packfile, O_RDONLY | O_BINARY);
 
 	if ( packhandle < 0 )
 	{
@@ -114,14 +115,14 @@ static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
 		return NULL;
 	}
 
-	c = read(packhandle, (void*)&header, sizeof(header));
+	c = PlatformLib_Read(packhandle, (void*)&header, sizeof(header));
 
 	if ( c != sizeof(header) || header.ident != IDPACKV1HEADER )
 	{
 		Con_Reportf("%s is not a packfile. Ignored.\n", packfile);
 		if ( error )
 			*error = PAK_LOAD_BAD_HEADER;
-		close(packhandle);
+		PlatformLib_Close(packhandle);
 		return NULL;
 	}
 
@@ -130,7 +131,7 @@ static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
 		Con_Reportf(S_ERROR "%s has an invalid directory size. Ignored.\n", packfile);
 		if ( error )
 			*error = PAK_LOAD_BAD_FOLDERS;
-		close(packhandle);
+		PlatformLib_Close(packhandle);
 		return NULL;
 	}
 
@@ -141,7 +142,7 @@ static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
 		Con_Reportf(S_ERROR "%s has too many files ( %i ). Ignored.\n", packfile, numpackfiles);
 		if ( error )
 			*error = PAK_LOAD_TOO_MANY_FILES;
-		close(packhandle);
+		PlatformLib_Close(packhandle);
 		return NULL;
 	}
 
@@ -150,19 +151,19 @@ static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
 		Con_Reportf("%s has no files. Ignored.\n", packfile);
 		if ( error )
 			*error = PAK_LOAD_NO_FILES;
-		close(packhandle);
+		PlatformLib_Close(packhandle);
 		return NULL;
 	}
 
 	pack = (pack_t*)Mem_Calloc(fs_mempool, sizeof(pack_t) + sizeof(dpackfile_t) * (numpackfiles - 1));
-	lseek(packhandle, header.dirofs, SEEK_SET);
+	PlatformLib_LSeek(packhandle, header.dirofs, SEEK_SET);
 
-	if ( header.dirlen != read(packhandle, (void*)pack->files, header.dirlen) )
+	if ( header.dirlen != PlatformLib_Read(packhandle, (void*)pack->files, header.dirlen) )
 	{
 		Con_Reportf("%s is an incomplete PAK, not loading\n", packfile);
 		if ( error )
 			*error = PAK_LOAD_CORRUPTED;
-		close(packhandle);
+		PlatformLib_Close(packhandle);
 		Mem_Free(pack);
 		return NULL;
 	}
@@ -176,7 +177,7 @@ static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
 
 #ifdef XASH_REDUCE_FD
 	// will reopen when needed
-	close(pack->handle);
+	PlatformLib_Close(pack->handle);
 	pack->handle = -1;
 #endif
 
@@ -195,11 +196,14 @@ Open a packed file using its package file descriptor
 */
 static file_t* FS_OpenFile_PAK(searchpath_t* search, const char* filename, const char* mode, int pack_ind)
 {
+	(void)filename;
+	(void)mode;
+
 	dpackfile_t* pfile;
 
-	pfile = &search->pack->files[pack_ind];
+	pfile = &search->pkg.pack->files[pack_ind];
 
-	return FS_OpenHandle(search->filename, search->pack->handle, pfile->filepos, pfile->filelen);
+	return FS_OpenHandle(search->filename, search->pkg.pack->handle, pfile->filepos, pfile->filelen);
 }
 
 /*
@@ -214,19 +218,19 @@ static int FS_FindFile_PAK(searchpath_t* search, const char* path, char* fixedna
 
 	// look for the file (binary search)
 	left = 0;
-	right = search->pack->numfiles - 1;
+	right = search->pkg.pack->numfiles - 1;
 	while ( left <= right )
 	{
 		int diff;
 
 		middle = (left + right) / 2;
-		diff = Q_stricmp(search->pack->files[middle].name, path);
+		diff = Q_stricmp(search->pkg.pack->files[middle].name, path);
 
 		// Found it
 		if ( !diff )
 		{
 			if ( fixedname )
-				Q_strncpy(fixedname, search->pack->files[middle].name, len);
+				Q_strncpy(fixedname, search->pkg.pack->files[middle].name, len);
 			return middle;
 		}
 
@@ -252,9 +256,11 @@ static void FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* 
 	const char *slash, *backslash, *colon, *separator;
 	int j, i;
 
-	for ( i = 0; i < search->pack->numfiles; i++ )
+	(void)caseinsensitive;
+
+	for ( i = 0; i < search->pkg.pack->numfiles; i++ )
 	{
-		Q_strncpy(temp, search->pack->files[i].name, sizeof(temp));
+		Q_strncpy(temp, search->pkg.pack->files[i].name, sizeof(temp));
 		while ( temp[0] )
 		{
 			if ( matchpattern(temp, pattern, true) )
@@ -294,7 +300,8 @@ FS_FileTime_PAK
 */
 static int FS_FileTime_PAK(searchpath_t* search, const char* filename)
 {
-	return search->pack->filetime;
+	(void)filename;
+	return (int)(search->pkg.pack->filetime);
 }
 
 /*
@@ -305,7 +312,7 @@ FS_PrintInfo_PAK
 */
 static void FS_PrintInfo_PAK(searchpath_t* search, char* dst, size_t size)
 {
-	Q_snprintf(dst, size, "%s (%i files)", search->filename, search->pack->numfiles);
+	Q_snprintf(dst, size, "%s (%i files)", search->filename, search->pkg.pack->numfiles);
 }
 
 /*
@@ -316,9 +323,12 @@ FS_Close_PAK
 */
 static void FS_Close_PAK(searchpath_t* search)
 {
-	if ( search->pack->handle >= 0 )
-		close(search->pack->handle);
-	Mem_Free(search->pack);
+	if ( search->pkg.pack->handle >= 0 )
+	{
+		PlatformLib_Close(search->pkg.pack->handle);
+	}
+
+	Mem_Free(search->pkg.pack);
 }
 
 /*
@@ -362,7 +372,7 @@ qboolean FS_AddPak_Fullpath(const char* pakfile, qboolean* already_loaded, int f
 	{
 		search = (searchpath_t*)Mem_Calloc(fs_mempool, sizeof(searchpath_t));
 		Q_strncpy(search->filename, pakfile, sizeof(search->filename));
-		search->pack = pak;
+		search->pkg.pack = pak;
 		search->type = SEARCHPATH_PAK;
 		search->next = fs_searchpaths;
 		search->flags = flags;

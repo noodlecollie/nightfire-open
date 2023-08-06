@@ -21,7 +21,8 @@ qboolean Image_CheckDXT3Alpha(dds_t* hdr, byte* fin)
 {
 	word sAlpha;
 	byte* alpha;
-	int x, y, i, j;
+	uint32_t x, y;
+	int i, j;
 
 	for ( y = 0; y < hdr->dwHeight; y += 4 )
 	{
@@ -52,9 +53,10 @@ qboolean Image_CheckDXT3Alpha(dds_t* hdr, byte* fin)
 
 qboolean Image_CheckDXT5Alpha(dds_t* hdr, byte* fin)
 {
-	uint bits, bitmask;
+	uint bits;
 	byte* alphamask;
-	int x, y, i, j;
+	uint32_t x, y;
+	int i, j;
 
 	for ( y = 0; y < hdr->dwHeight; y += 4 )
 	{
@@ -66,7 +68,6 @@ qboolean Image_CheckDXT5Alpha(dds_t* hdr, byte* fin)
 			alphamask = fin + 2;
 			fin += 8;
 
-			bitmask = ((uint*)fin)[1];
 			fin += 8;
 
 			// last three bytes
@@ -182,10 +183,14 @@ void Image_DXTGetPixelFormat(dds_t* hdr, dds_header_dxt10_t* headerExt)
 
 	// setup additional flags
 	if ( hdr->dsCaps.dwCaps1 & DDS_COMPLEX && hdr->dsCaps.dwCaps2 & DDS_CUBEMAP )
+	{
 		image.flags |= IMAGE_CUBEMAP;
+	}
 
 	if ( hdr->dwFlags & DDS_MIPMAPCOUNT )
-		image.num_mips = hdr->dwMipMapCount;  // get actual mip count
+	{
+		image.num_mips = (byte)hdr->dwMipMapCount;  // get actual mip count
+	}
 }
 
 size_t Image_DXTGetLinearSize(int type, int width, int height, int depth)
@@ -217,7 +222,8 @@ size_t Image_DXTGetLinearSize(int type, int width, int height, int depth)
 size_t Image_DXTCalcMipmapSize(dds_t* hdr)
 {
 	size_t buffsize = 0;
-	int i, width, height;
+	uint32_t i;
+	int width, height;
 
 	// now correct buffer size
 	for ( i = 0; i < Q_max(1, (hdr->dwMipMapCount)); i++ )
@@ -233,9 +239,6 @@ size_t Image_DXTCalcMipmapSize(dds_t* hdr)
 uint Image_DXTCalcSize(const char* name, dds_t* hdr, size_t filesize)
 {
 	size_t buffsize = 0;
-	int w = image.width;
-	int h = image.height;
-	int d = image.depth;
 
 	if ( hdr->dsCaps.dwCaps2 & DDS_CUBEMAP )
 	{
@@ -262,18 +265,22 @@ uint Image_DXTCalcSize(const char* name, dds_t* hdr, size_t filesize)
 	{
 		Con_DPrintf(S_WARN "Image_LoadDDS: (%s) probably corrupted (%zu should be %zu)\n", name, buffsize, filesize);
 		if ( buffsize > filesize )
+		{
 			return false;
+		}
 	}
 
-	return buffsize;
+	return (uint)buffsize;
 }
 
 void Image_DXTAdjustVolume(dds_t* hdr)
 {
 	if ( hdr->dwDepth <= 1 )
+	{
 		return;
+	}
 
-	hdr->dwLinearSize = Image_DXTGetLinearSize(image.type, hdr->dwWidth, hdr->dwHeight, hdr->dwDepth);
+	hdr->dwLinearSize = (uint32_t)Image_DXTGetLinearSize(image.type, hdr->dwWidth, hdr->dwHeight, hdr->dwDepth);
 	hdr->dwFlags |= DDS_LINEARSIZE;
 }
 
@@ -289,13 +296,17 @@ qboolean Image_LoadDDS(const char* name, const byte* buffer, fs_offset_t filesiz
 	int headersOffset;
 	dds_header_dxt10_t header2;
 
-	if ( filesize < sizeof(header) )
+	if ( (size_t)filesize < sizeof(header) )
+	{
 		return false;
+	}
 
 	memcpy(&header, buffer, sizeof(header));
 
 	if ( header.dwIdent != DDSHEADER )
+	{
 		return false;  // it's not a dds file, just skip it
+	}
 
 	if ( header.dwSize != sizeof(header) - sizeof(uint) )  // size of the structure (minus MagicNum)
 	{
@@ -316,13 +327,17 @@ qboolean Image_LoadDDS(const char* name, const byte* buffer, fs_offset_t filesiz
 		headersOffset += sizeof(header2);
 	}
 
-	image.width = header.dwWidth;
-	image.height = header.dwHeight;
+	image.width = (word)header.dwWidth;
+	image.height = (word)header.dwHeight;
 
 	if ( header.dwFlags & DDS_DEPTH )
-		image.depth = header.dwDepth;
+	{
+		image.depth = (word)header.dwDepth;
+	}
 	else
+	{
 		image.depth = 1;
+	}
 
 	if ( !Image_ValidSize(name) )
 		return false;
@@ -377,10 +392,10 @@ qboolean Image_LoadDDS(const char* name, const byte* buffer, fs_offset_t filesiz
 	if ( header.dwReserved1[1] != 0 )
 	{
 		// store texture reflectivity
-		image.fogParams[0] = ((header.dwReserved1[1] & 0x000000FF) >> 0);
-		image.fogParams[1] = ((header.dwReserved1[1] & 0x0000FF00) >> 8);
-		image.fogParams[2] = ((header.dwReserved1[1] & 0x00FF0000) >> 16);
-		image.fogParams[3] = ((header.dwReserved1[1] & 0xFF000000) >> 24);
+		image.fogParams[0] = (byte)((header.dwReserved1[1] & 0x000000FF) >> 0);
+		image.fogParams[1] = (byte)((header.dwReserved1[1] & 0x0000FF00) >> 8);
+		image.fogParams[2] = (byte)((header.dwReserved1[1] & 0x00FF0000) >> 16);
+		image.fogParams[3] = (byte)((header.dwReserved1[1] & 0xFF000000) >> 24);
 	}
 
 	// dds files will be uncompressed on a render. requires minimal of info for set this

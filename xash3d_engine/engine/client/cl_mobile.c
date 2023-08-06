@@ -64,26 +64,35 @@ static void pfnEnableTextInput(int enable)
 static int pfnDrawScaledCharacter(int x, int y, int number, int r, int g, int b, float scale)
 {
 	// this call is very ineffective and possibly broken!
-	rgba_t color = {r, g, b, 255};
+	rgba_t color = {
+		(byte)r,
+		(byte)g,
+		(byte)b,
+		255,
+	};
+
 	int flags = FONT_DRAW_HUD;
 
 	if ( hud_utf8->value )
 		SetBits(flags, FONT_DRAW_UTF8);
 
-	if ( fabs(g_font_scale - scale) > 0.1f || g_scaled_font.hFontTexture != cls.creditsFont.hFontTexture )
+	if ( fabsf(g_font_scale - scale) > 0.1f || g_scaled_font.hFontTexture != cls.creditsFont.hFontTexture )
 	{
-		int i;
+		size_t i;
 
 		g_scaled_font = cls.creditsFont;
 		g_scaled_font.scale *= scale;
-		g_scaled_font.charHeight *= scale;
+		g_scaled_font.charHeight = (int)((float)g_scaled_font.charHeight * scale);
+
 		for ( i = 0; i < ARRAYSIZE(g_scaled_font.charWidths); i++ )
-			g_scaled_font.charWidths[i] *= scale;
+		{
+			g_scaled_font.charWidths[i] = (byte)((float)g_scaled_font.charWidths[i] * scale);
+		}
 
 		g_font_scale = scale;
 	}
 
-	return CL_DrawCharacter(x, y, number, color, &g_scaled_font, flags);
+	return CL_DrawCharacter((float)x, (float)y, number, color, &g_scaled_font, flags);
 }
 
 static void* pfnGetNativeObject(const char* obj)
@@ -132,7 +141,7 @@ qboolean Mobile_Init(void)
 	pfnMobilityInterface ExportToClient;
 
 	// find a mobility interface
-	ExportToClient = COM_GetProcAddress(clgame.hInstance, MOBILITY_CLIENT_EXPORT);
+	ExportToClient = (pfnMobilityInterface)COM_GetProcAddress(clgame.hInstance, MOBILITY_CLIENT_EXPORT);
 	gMobileEngfuncs = &gpMobileEngfuncs;
 
 	if ( ExportToClient && !ExportToClient(gMobileEngfuncs) )

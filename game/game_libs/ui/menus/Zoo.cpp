@@ -33,12 +33,12 @@ public:
 	virtual void _Init();
 	virtual void _VidInit();
 
-	static void OKButtonCommand(CMenuBaseItem* pSelf, void* pExtra)
+	static void OKButtonCommand(CMenuBaseItem* pSelf, void*)
 	{
 		pSelf->Parent()->Hide();
 	}
 
-	static void CancelButtonCommand(CMenuBaseItem* pSelf, void* pExtra)
+	static void CancelButtonCommand(CMenuBaseItem* pSelf, void*)
 	{
 		pSelf->Parent()->Hide();
 	}

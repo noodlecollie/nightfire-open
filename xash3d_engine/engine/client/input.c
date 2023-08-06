@@ -128,7 +128,7 @@ void IN_StartupMouse(void)
 
 void GAME_EXPORT IN_SetCursor(void* hCursor)
 {
-	// stub
+	(void)hCursor;
 }
 
 /*
@@ -143,7 +143,7 @@ void IN_MouseSavePos(void)
 	if ( !in_mouseactive )
 		return;
 
-	Platform_GetMousePos(&in_lastvalidpos.x, &in_lastvalidpos.y);
+	Platform_GetMousePos((int*)&in_lastvalidpos.x, (int*)&in_lastvalidpos.y);
 	in_mouse_savedpos = true;
 }
 
@@ -569,6 +569,8 @@ void IN_EngineAppendMove(float frametime, void* cmd1, qboolean active)
 {
 	float forward, side, pitch, yaw;
 	usercmd_t* cmd = cmd1;
+
+	(void)frametime;
 
 	if ( clgame.dllFuncs.pfnLookEvent )
 		return;

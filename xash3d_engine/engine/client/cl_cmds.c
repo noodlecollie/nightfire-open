@@ -348,7 +348,7 @@ void CL_LevelShot_f(void)
 	}
 
 	// missing levelshot or level never than levelshot
-	if ( ft2 == -1 || ft1 > ft2 )
+	if ( ft2 == (size_t)-1 || ft1 > ft2 )
 		cls.scrshot_action = scrshot_plaque;  // build new frame for levelshot
 	else
 		cls.scrshot_action = scrshot_inactive;  // disable - not needs

@@ -81,10 +81,10 @@ void CMenuGamePad::GetConfig(void)
 	_pitch = EngFuncs::GetCvarFloat("joy_pitch");
 	_yaw = EngFuncs::GetCvarFloat("joy_yaw");
 
-	side.SetCurrentValue(fabs(_side));
-	forward.SetCurrentValue(fabs(_forward));
-	pitch.SetCurrentValue(fabs(_pitch));
-	yaw.SetCurrentValue(fabs(_yaw));
+	side.SetCurrentValue(fabsf(_side));
+	forward.SetCurrentValue(fabsf(_forward));
+	pitch.SetCurrentValue(fabsf(_pitch));
+	yaw.SetCurrentValue(fabsf(_yaw));
 
 	invSide.bChecked = _side < 0.0f ? true : false;
 	invFwd.bChecked = _forward < 0.0f ? true : false;

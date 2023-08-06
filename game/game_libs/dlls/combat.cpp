@@ -85,9 +85,9 @@ void CGib::SpawnStickyGibs(entvars_t* pevVictim, Vector vecOrigin, int cGibs)
 			pGib->pev->velocity = g_vecAttackDir * -1;
 
 			// mix in some noise
-			pGib->pev->velocity.x += RANDOM_FLOAT(-0.15, 0.15);
-			pGib->pev->velocity.y += RANDOM_FLOAT(-0.15, 0.15);
-			pGib->pev->velocity.z += RANDOM_FLOAT(-0.15, 0.15);
+			pGib->pev->velocity.x += RANDOM_FLOAT(-0.15f, 0.15f);
+			pGib->pev->velocity.y += RANDOM_FLOAT(-0.15f, 0.15f);
+			pGib->pev->velocity.z += RANDOM_FLOAT(-0.15f, 0.15f);
 
 			pGib->pev->velocity = pGib->pev->velocity * 900;
 
@@ -99,7 +99,7 @@ void CGib::SpawnStickyGibs(entvars_t* pevVictim, Vector vecOrigin, int cGibs)
 
 			if ( pevVictim->health > -50 )
 			{
-				pGib->pev->velocity = pGib->pev->velocity * 0.7;
+				pGib->pev->velocity = pGib->pev->velocity * 0.7f;
 			}
 			else if ( pevVictim->health > -200 )
 			{
@@ -163,7 +163,7 @@ void CGib::SpawnHeadGib(entvars_t* pevVictim)
 
 		if ( pevVictim->health > -50 )
 		{
-			pGib->pev->velocity = pGib->pev->velocity * 0.7;
+			pGib->pev->velocity = pGib->pev->velocity * 0.7f;
 		}
 		else if ( pevVictim->health > -200 )
 		{
@@ -234,7 +234,7 @@ void CGib::SpawnRandomGibs(entvars_t* pevVictim, int cGibs, int human)
 
 			if ( pevVictim->health > -50 )
 			{
-				pGib->pev->velocity = pGib->pev->velocity * 0.7;
+				pGib->pev->velocity = pGib->pev->velocity * 0.7f;
 			}
 			else if ( pevVictim->health > -200 )
 			{
@@ -455,12 +455,8 @@ Activity CBaseMonster::GetDeathActivity(void)
 Activity CBaseMonster::GetSmallFlinchActivity(void)
 {
 	Activity flinchActivity;
-	BOOL fTriedDirection;
-	// float		flDot;
 
-	fTriedDirection = FALSE;
 	UTIL_MakeVectors(pev->angles);
-	// flDot = DotProduct( gpGlobals->v_forward, g_vecAttackDir * -1 );
 
 	switch ( m_LastHitGroup )
 	{
@@ -569,7 +565,7 @@ void CBaseMonster::CallGibMonster(void)
 Killed
 ============
 */
-void CBaseMonster::Killed(entvars_t* pevAttacker, int iGib)
+void CBaseMonster::Killed(entvars_t*, int iGib)
 {
 	// unsigned int	cCount = 0;
 	// BOOL		fDone = FALSE;
@@ -634,7 +630,7 @@ void CBaseEntity::SUB_StartFadeOut(void)
 	pev->solid = SOLID_NOT;
 	pev->avelocity = g_vecZero;
 
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	SetThink(&CBaseEntity::SUB_FadeOut);
 }
 
@@ -643,12 +639,12 @@ void CBaseEntity::SUB_FadeOut(void)
 	if ( pev->renderamt > 7 )
 	{
 		pev->renderamt -= 7;
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 	else
 	{
 		pev->renderamt = 0;
-		pev->nextthink = gpGlobals->time + 0.2;
+		pev->nextthink = gpGlobals->time + 0.2f;
 		SetThink(&CBaseEntity::SUB_Remove);
 	}
 }
@@ -682,14 +678,14 @@ void CGib::WaitTillLand(void)
 	else
 	{
 		// wait and check again in another half second.
-		pev->nextthink = gpGlobals->time + 0.5;
+		pev->nextthink = gpGlobals->time + 0.5f;
 	}
 }
 
 //
 // Gib bounces on the ground or wall, sponges some blood down, too!
 //
-void CGib::BounceGibTouch(CBaseEntity* pOther)
+void CGib::BounceGibTouch(CBaseEntity*)
 {
 	Vector vecSpot;
 	TraceResult tr;
@@ -699,7 +695,7 @@ void CGib::BounceGibTouch(CBaseEntity* pOther)
 
 	if ( pev->flags & FL_ONGROUND )
 	{
-		pev->velocity = pev->velocity * 0.9;
+		pev->velocity = pev->velocity * 0.9f;
 		pev->angles.x = 0;
 		pev->angles.z = 0;
 		pev->avelocity.x = 0;
@@ -720,9 +716,9 @@ void CGib::BounceGibTouch(CBaseEntity* pOther)
 		if ( m_material != matNone && RANDOM_LONG(0, 2) == 0 )
 		{
 			float volume;
-			float zvel = fabs(pev->velocity.z);
+			float zvel = fabsf(pev->velocity.z);
 
-			volume = 0.8 * Q_min(1.0, ((float)zvel) / 450.0);
+			volume = 0.8f * Q_min(1.0f, ((float)zvel) / 450.0f);
 
 			CBreakable::MaterialSoundRandom(edict(), (Materials)m_material, volume);
 		}
@@ -763,7 +759,7 @@ void CGib::StickyGibTouch(CBaseEntity* pOther)
 void CGib::Spawn(const char* szGibModel)
 {
 	pev->movetype = MOVETYPE_BOUNCE;
-	pev->friction = 0.55;  // deading the bounce a bit
+	pev->friction = 0.55f;  // deading the bounce a bit
 
 	// sometimes an entity inherits the edict from a former piece of glass,
 	// and will spawn using the same render FX or rendermode! bad!
@@ -990,7 +986,7 @@ int CBaseMonster::DeadTakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker
 			return 0;
 		}
 		// Accumulate corpse gibbing damage, so you can gib with multiple hits
-		pev->health -= flDamage * 0.1;
+		pev->health -= flDamage * 0.1f;
 	}
 
 	return 1;
@@ -998,7 +994,7 @@ int CBaseMonster::DeadTakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker
 
 float CBaseMonster::DamageForce(float damage)
 {
-	float force = damage * ((32 * 32 * 72.0) / (pev->size.x * pev->size.y * pev->size.z)) * 5;
+	float force = damage * ((32 * 32 * 72.0f) / (pev->size.x * pev->size.y * pev->size.z)) * 5;
 
 	if ( force > 1000.0 )
 	{
@@ -1159,7 +1155,7 @@ CBaseEntity* CBaseMonster::CheckTraceHullAttack(float flDist, int iDamage, int i
 		UTIL_MakeAimVectors(pev->angles);
 
 	Vector vecStart = pev->origin;
-	vecStart.z += pev->size.z * 0.5;
+	vecStart.z += pev->size.z * 0.5f;
 	Vector vecEnd = vecStart + (gpGlobals->v_forward * flDist);
 
 	UTIL_TraceHull(vecStart, vecEnd, dont_ignore_monsters, head_hull, ENT(pev), &tr);
@@ -1170,7 +1166,7 @@ CBaseEntity* CBaseMonster::CheckTraceHullAttack(float flDist, int iDamage, int i
 
 		if ( iDamage > 0 )
 		{
-			pEntity->TakeDamage(pev, pev, iDamage, iDmgType);
+			pEntity->TakeDamage(pev, pev, static_cast<float>(iDamage), iDmgType);
 		}
 
 		return pEntity;
@@ -1194,7 +1190,7 @@ BOOL CBaseMonster::FInViewCone(CBaseEntity* pEntity)
 	vec2LOS = (pEntity->pev->origin - pev->origin).Make2D();
 	vec2LOS = vec2LOS.Normalize();
 
-	flDot = DotProduct(vec2LOS, gpGlobals->v_forward.Make2D());
+	flDot = DotProduct2D(vec2LOS, gpGlobals->v_forward.Make2D());
 
 	if ( flDot > m_flFieldOfView )
 	{
@@ -1221,7 +1217,7 @@ BOOL CBaseMonster::FInViewCone(Vector* pOrigin)
 	vec2LOS = (*pOrigin - pev->origin).Make2D();
 	vec2LOS = vec2LOS.Normalize();
 
-	flDot = DotProduct(vec2LOS, gpGlobals->v_forward.Make2D());
+	flDot = DotProduct2D(vec2LOS, gpGlobals->v_forward.Make2D());
 
 	if ( flDot > m_flFieldOfView )
 	{
@@ -1486,7 +1482,7 @@ void CBaseEntity::FireBullets(
 			{
 				pEntity->TraceAttack(
 					pevAttacker,
-					iDamage,
+					static_cast<float>(iDamage),
 					vecDir,
 					&tr,
 					DMG_BULLET | ((iDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB));
@@ -1552,12 +1548,11 @@ Vector CBaseEntity::FireBulletsPlayer(
 	Vector vecSpread,
 	float flDistance,
 	int iBulletType,
-	int iTracerFreq,
+	int,
 	int iDamage,
 	entvars_t* pevAttacker,
 	int shared_rand)
 {
-	static int tracerCount;
 	TraceResult tr;
 	Vector vecRight = gpGlobals->v_right;
 	Vector vecUp = gpGlobals->v_up;
@@ -1594,7 +1589,7 @@ Vector CBaseEntity::FireBulletsPlayer(
 			{
 				pEntity->TraceAttack(
 					pevAttacker,
-					iDamage,
+					static_cast<float>(iDamage),
 					vecDir,
 					&tr,
 					DMG_BULLET | ((iDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB));
@@ -1674,17 +1669,17 @@ void CBaseEntity::TraceBleed(float flDamage, Vector vecDir, const TraceResult* p
 	*/
 	if ( flDamage < 10 )
 	{
-		flNoise = 0.1;
+		flNoise = 0.1f;
 		cCount = 1;
 	}
 	else if ( flDamage < 25 )
 	{
-		flNoise = 0.2;
+		flNoise = 0.2f;
 		cCount = 2;
 	}
 	else
 	{
-		flNoise = 0.3;
+		flNoise = 0.3f;
 		cCount = 4;
 	}
 

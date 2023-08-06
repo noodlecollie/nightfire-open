@@ -18,6 +18,8 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #include <stdlib.h>
 #include <errno.h>
+#include "PlatformLib/String.h"
+#include "PlatformLib/System.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>
@@ -318,7 +320,9 @@ qboolean Sys_LoadLibrary(dll_info_t* dll)
 	// Get the function adresses
 	for ( func = dll->fcts; func && func->name != NULL; func++ )
 	{
-		if ( !(*func->func = Sys_GetProcAddress(dll, func->name)) )
+		*func->func = Sys_GetProcAddress(dll, func->name);
+
+		if ( !(*func->func) )
 		{
 			Q_snprintf(
 				errorstring,
@@ -623,12 +627,12 @@ qboolean Sys_NewInstance(const char* gamedir)
 	newargs = calloc(host.argc + 4, sizeof(*newargs));
 	while ( i < host.argc )
 	{
-		newargs[i] = strdup(host.argv[i]);
+		newargs[i] = PlatformLib_StrDup(host.argv[i]);
 
 		// replace existing -game argument
 		if ( !Q_stricmp(newargs[i], "-game") )
 		{
-			newargs[i + 1] = strdup(gamedir);
+			newargs[i + 1] = PlatformLib_StrDup(gamedir);
 			replacedArg = true;
 			i += 2;
 		}
@@ -638,11 +642,11 @@ qboolean Sys_NewInstance(const char* gamedir)
 
 	if ( !replacedArg )
 	{
-		newargs[i++] = strdup("-game");
-		newargs[i++] = strdup(gamedir);
+		newargs[i++] = PlatformLib_StrDup("-game");
+		newargs[i++] = PlatformLib_StrDup(gamedir);
 	}
 
-	newargs[i++] = strdup("-changegame");
+	newargs[i++] = PlatformLib_StrDup("-changegame");
 	newargs[i] = NULL;
 
 #if XASH_PSVITA
@@ -653,19 +657,22 @@ qboolean Sys_NewInstance(const char* gamedir)
 #else
 	exelen = wai_getExecutablePath(NULL, 0, NULL);
 	exe = malloc(exelen + 1);
-	wai_getExecutablePath(exe, exelen, NULL);
+	wai_getExecutablePath(exe, (int)exelen, NULL);
 	exe[exelen] = 0;
 
 	Host_Shutdown();
 
-	execv(exe, newargs);
+	PlatformLib_ExecV(exe, newargs);
 #endif
 
 	// if execv returned, it's probably an error
 	printf("execv failed: %s", strerror(errno));
 
 	for ( ; i >= 0; i-- )
+	{
 		free(newargs[i]);
+	}
+
 	free(newargs);
 	free(exe);
 #endif

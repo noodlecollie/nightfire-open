@@ -70,11 +70,15 @@ void SV_InitBoxHull(void)
 
 		box_clipnodes[i].children[side] = CONTENTS_EMPTY;
 		if ( i != 5 )
-			box_clipnodes[i].children[side ^ 1] = i + 1;
+		{
+			box_clipnodes[i].children[side ^ 1] = (short)(i + 1);
+		}
 		else
+		{
 			box_clipnodes[i].children[side ^ 1] = CONTENTS_SOLID;
+		}
 
-		box_planes[i].type = i >> 1;
+		box_planes[i].type = (byte)(i >> 1);
 		box_planes[i].normal[i >> 1] = 1;
 		box_planes[i].signbits = 0;
 	}
@@ -116,7 +120,9 @@ qboolean SV_CheckSphereIntersection(edict_t* ent, const vec3_t start, const vec3
 	radiusSquared = 0.0f;
 
 	for ( i = 0; i < 3; i++ )
-		radiusSquared += Q_max(fabs(pseqdesc->bbmin[i]), fabs(pseqdesc->bbmax[i]));
+	{
+		radiusSquared += Q_max(fabsf(pseqdesc->bbmin[i]), fabsf(pseqdesc->bbmax[i]));
+	}
 
 	return SphereIntersect(ent->v.origin, radiusSquared, traceOrg, traceDir);
 }
@@ -529,7 +535,7 @@ void SV_TouchLinks(edict_t* ent, areanode_t* node)
 		// never touch the triggers when "playersonly" is active
 		if ( !sv.playersonly )
 		{
-			svgame.globals->time = sv.time;
+			svgame.globals->time = (float)sv.time;
 			svgame.dllFuncs.pfnTouch(touch, ent);
 		}
 	}
@@ -570,7 +576,7 @@ void SV_FindTouchedLeafs(edict_t* ent, mnode_t* node, int* headnode)
 		else
 		{
 			leaf = (mleaf_t*)node;
-			ent->leafnums[ent->num_leafs] = leaf->cluster;
+			ent->leafnums[ent->num_leafs] = (short)leaf->cluster;
 			ent->num_leafs++;
 		}
 		return;
@@ -580,7 +586,9 @@ void SV_FindTouchedLeafs(edict_t* ent, mnode_t* node, int* headnode)
 	sides = BOX_ON_PLANE_SIDE(ent->v.absmin, ent->v.absmax, node->plane);
 
 	if ( (sides == 3) && (*headnode == -1) )
-		*headnode = node - sv.worldmodel->nodes;
+	{
+		*headnode = (int)(node - sv.worldmodel->nodes);
+	}
 
 	// recurse down the contacted sides
 	if ( sides & 1 )
@@ -1519,6 +1527,8 @@ trace_t SV_MoveToss(edict_t* tossent, edict_t* ignore)
 	trace_t trace;
 	int i;
 
+	(void)ignore;
+
 	VectorCopy(tossent->v.origin, original_origin);
 	VectorCopy(tossent->v.velocity, original_velocity);
 	VectorCopy(tossent->v.angles, original_angles);
@@ -1568,7 +1578,6 @@ static qboolean SV_RecursiveLightPoint(model_t* model, mnode_t* node, const vec3
 	float ds, dt, s, t;
 	int sample_size;
 	msurface_t* surf;
-	mtexinfo_t* tex;
 	mextrasurf_t* info;
 	color24* lm;
 	vec3_t mid;
@@ -1603,7 +1612,6 @@ static qboolean SV_RecursiveLightPoint(model_t* model, mnode_t* node, const vec3
 	{
 		int smax, tmax;
 
-		tex = surf->texinfo;
 		info = surf->info;
 
 		if ( FBitSet(surf->flags, SURF_DRAWTILED) )
@@ -1664,14 +1672,20 @@ void SV_RunLightStyles(void)
 	for ( i = 0, ls = sv.lightstyles; i < MAX_LIGHTSTYLES; i++, ls++ )
 	{
 		ls->time += sv.frametime;
-		ofs = (ls->time * 10);
+		ofs = (int)(ls->time * 10.0f);
 
 		if ( ls->length == 0 )
+		{
 			ls->value = scale;  // disable this light
+		}
 		else if ( ls->length == 1 )
+		{
 			ls->value = (ls->map[0] / 12.0f) * scale;
+		}
 		else
+		{
 			ls->value = (ls->map[ofs % ls->length] / 12.0f) * scale;
+		}
 	}
 }
 
@@ -1684,19 +1698,24 @@ needs to get correct working SV_LightPoint
 */
 void SV_SetLightStyle(int style, const char* s, float f)
 {
-	int j, k;
+	size_t j;
+	size_t k;
 
 	Q_strncpy(sv.lightstyles[style].pattern, s, sizeof(sv.lightstyles[0].pattern));
 	sv.lightstyles[style].time = f;
 
 	j = Q_strlen(s);
-	sv.lightstyles[style].length = j;
+	sv.lightstyles[style].length = (int)j;
 
 	for ( k = 0; k < j; k++ )
+	{
 		sv.lightstyles[style].map[k] = (float)(s[k] - 'a');
+	}
 
 	if ( sv.state != ss_active )
+	{
 		return;
+	}
 
 	// tell the clients about changed lightstyle
 	MSG_BeginServerCmd(&sv.reliable_datagram, svc_lightstyle);
@@ -1751,5 +1770,5 @@ int SV_LightForEntity(edict_t* pEdict)
 
 	SV_RecursiveLightPoint(sv.worldmodel, sv.worldmodel->nodes, start, end);
 
-	return VectorAvg(sv_pointColor);
+	return (int)VectorAvg(sv_pointColor);
 }

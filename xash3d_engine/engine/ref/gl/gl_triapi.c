@@ -166,7 +166,7 @@ TriColor4f
 void TriColor4f(float r, float g, float b, float a)
 {
 	if ( ds.renderMode == kRenderTransAlpha )
-		TriColor4ub(r * 255.9f, g * 255.9f, b * 255.9f, a * 255.0f);
+		TriColor4ub((byte)(r * 255.9f), (byte)(g * 255.9f), (byte)(b * 255.9f), (byte)(a * 255.0f));
 	else
 		_TriColor4f(r * a, g * a, b * a, 1.0);
 

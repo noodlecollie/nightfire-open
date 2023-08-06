@@ -589,8 +589,7 @@ void DLLEXPORT HUD_StudioEvent(const struct mstudioevent_s* event, const struct 
 	}
 }
 
-const char*
-GetShellTextureImpactSound(ShellType shellType, const Vector& begin, const Vector& end, const pmtrace_t& trace)
+const char* GetShellTextureImpactSound(ShellType shellType, const Vector& begin, const Vector& end, const pmtrace_t&)
 {
 	texture_t* texture = gEngfuncs.pEventAPI->EV_TraceTexture(0, begin, end);
 	SurfaceProp surfaceProp = texture ? static_cast<SurfaceProp>(texture->surfaceType) : SurfaceProp_None;
@@ -642,7 +641,7 @@ void PlayTempEntSound(TEMPENTITY* pTemp, float damp, const Vector& begin, const 
 			return;
 	}
 
-	zvel = abs(pTemp->entity.baseline.origin[2]);
+	zvel = static_cast<int>(abs(pTemp->entity.baseline.origin[2]));
 
 	// only play one out of every n
 	if ( isshellcasing )
@@ -755,9 +754,9 @@ void DLLEXPORT HUD_TempEntUpdate(
 
 	pprev = NULL;
 	// freq = client_time * 0.01;
-	fastFreq = client_time * 5.5;
-	gravity = -frametime * cl_gravity;
-	gravitySlow = gravity * 0.5;
+	fastFreq = static_cast<float>(client_time) * 5.5f;
+	gravity = static_cast<float>(-frametime * cl_gravity);
+	gravitySlow = gravity * 0.5f;
 
 	while ( pTemp )
 	{
@@ -769,20 +768,29 @@ void DLLEXPORT HUD_TempEntUpdate(
 
 		active = 1;
 
-		life = pTemp->die - client_time;
+		life = static_cast<float>(pTemp->die - client_time);
 		pnext = pTemp->next;
 		if ( life < 0 )
 		{
 			if ( pTemp->flags & FTENT_FADEOUT )
 			{
 				if ( pTemp->entity.curstate.rendermode == kRenderNormal )
+				{
 					pTemp->entity.curstate.rendermode = kRenderTransTexture;
-				pTemp->entity.curstate.renderamt = pTemp->entity.baseline.renderamt * (1 + life * pTemp->fadeSpeed);
+				}
+
+				pTemp->entity.curstate.renderamt =
+					static_cast<int>(pTemp->entity.baseline.renderamt * (1 + life * pTemp->fadeSpeed));
+
 				if ( pTemp->entity.curstate.renderamt <= 0 )
+				{
 					active = 0;
+				}
 			}
 			else
+			{
 				active = 0;
+			}
 		}
 		if ( !active )  // Kill it
 		{
@@ -809,19 +817,19 @@ void DLLEXPORT HUD_TempEntUpdate(
 					gEngfuncs.pEfxAPI->R_SparkEffect(pTemp->entity.origin, 8, -200, 200);
 
 					// Reduce life
-					pTemp->entity.baseline.framerate -= 0.1;
+					pTemp->entity.baseline.framerate -= 0.1f;
 
 					if ( pTemp->entity.baseline.framerate <= 0.0 )
 					{
-						pTemp->die = client_time;
+						pTemp->die = static_cast<float>(client_time);
 					}
 					else
 					{
 						// So it will die no matter what
-						pTemp->die = client_time + 0.5;
+						pTemp->die = static_cast<float>(client_time) + 0.5f;
 
 						// Next think
-						pTemp->entity.baseline.scale = client_time + 0.1;
+						pTemp->entity.baseline.scale = static_cast<float>(client_time) + 0.1f;
 					}
 				}
 			}
@@ -835,15 +843,17 @@ void DLLEXPORT HUD_TempEntUpdate(
 			}
 			else if ( pTemp->flags & FTENT_SINEWAVE )
 			{
-				pTemp->x += pTemp->entity.baseline.origin[0] * frametime;
-				pTemp->y += pTemp->entity.baseline.origin[1] * frametime;
+				pTemp->x += static_cast<float>(pTemp->entity.baseline.origin[0] * frametime);
+				pTemp->y += static_cast<float>(pTemp->entity.baseline.origin[1] * frametime);
 
 				pTemp->entity.origin[0] = pTemp->x +
-					sin(pTemp->entity.baseline.origin[2] + client_time * pTemp->entity.prevstate.frame) *
+					sinf(
+						pTemp->entity.baseline.origin[2] +
+						static_cast<float>(client_time) * pTemp->entity.prevstate.frame) *
 						(10 * pTemp->entity.curstate.framerate);
 				pTemp->entity.origin[1] = pTemp->y +
-					sin(pTemp->entity.baseline.origin[2] + fastFreq + 0.7) * (8 * pTemp->entity.curstate.framerate);
-				pTemp->entity.origin[2] += pTemp->entity.baseline.origin[2] * frametime;
+					sinf(pTemp->entity.baseline.origin[2] + fastFreq + 0.7f) * (8 * pTemp->entity.curstate.framerate);
+				pTemp->entity.origin[2] += pTemp->entity.baseline.origin[2] * static_cast<float>(frametime);
 			}
 			else if ( pTemp->flags & FTENT_SPIRAL )
 			{
@@ -851,21 +861,21 @@ void DLLEXPORT HUD_TempEntUpdate(
 				s = sin( pTemp->entity.baseline.origin[2] + fastFreq );
 				c = cos( pTemp->entity.baseline.origin[2] + fastFreq );*/
 
-				pTemp->entity.origin[0] +=
-					pTemp->entity.baseline.origin[0] * frametime + 8 * sin(client_time * 20 + (size_t)pTemp);
-				pTemp->entity.origin[1] +=
-					pTemp->entity.baseline.origin[1] * frametime + 4 * sin(client_time * 30 + (size_t)pTemp);
-				pTemp->entity.origin[2] += pTemp->entity.baseline.origin[2] * frametime;
+				pTemp->entity.origin[0] += pTemp->entity.baseline.origin[0] * static_cast<float>(frametime) +
+					8 * sinf(static_cast<float>(client_time) * 20 + (size_t)pTemp);
+				pTemp->entity.origin[1] += pTemp->entity.baseline.origin[1] * static_cast<float>(frametime) +
+					4 * sinf(static_cast<float>(client_time) * 30 + (size_t)pTemp);
+				pTemp->entity.origin[2] += pTemp->entity.baseline.origin[2] * static_cast<float>(frametime);
 			}
 			else
 			{
 				for ( i = 0; i < 3; i++ )
-					pTemp->entity.origin[i] += pTemp->entity.baseline.origin[i] * frametime;
+					pTemp->entity.origin[i] += pTemp->entity.baseline.origin[i] * static_cast<float>(frametime);
 			}
 
 			if ( pTemp->flags & FTENT_SPRANIMATE )
 			{
-				pTemp->entity.curstate.frame += frametime * pTemp->entity.curstate.framerate;
+				pTemp->entity.curstate.frame += static_cast<float>(frametime) * pTemp->entity.curstate.framerate;
 				if ( pTemp->entity.curstate.frame >= pTemp->frameMax )
 				{
 					pTemp->entity.curstate.frame = pTemp->entity.curstate.frame - (int)(pTemp->entity.curstate.frame);
@@ -873,7 +883,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 					if ( !(pTemp->flags & FTENT_SPRANIMATELOOP) )
 					{
 						// this animating sprite isn't set to loop, so destroy it.
-						pTemp->die = client_time;
+						pTemp->die = static_cast<float>(client_time);
 						pTemp = pnext;
 						continue;
 					}
@@ -881,7 +891,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 			}
 			else if ( pTemp->flags & FTENT_SPRCYCLE )
 			{
-				pTemp->entity.curstate.frame += frametime * 10;
+				pTemp->entity.curstate.frame += static_cast<float>(frametime) * 10;
 				if ( pTemp->entity.curstate.frame >= pTemp->frameMax )
 				{
 					pTemp->entity.curstate.frame = pTemp->entity.curstate.frame - (int)(pTemp->entity.curstate.frame);
@@ -890,14 +900,14 @@ void DLLEXPORT HUD_TempEntUpdate(
 // Experiment
 #if 0
 			if( pTemp->flags & FTENT_SCALE )
-				pTemp->entity.curstate.framerate += 20.0 * ( frametime / pTemp->entity.curstate.framerate );
+				pTemp->entity.curstate.framerate += 20.0 * ( static_cast<float>(frametime) / pTemp->entity.curstate.framerate );
 #endif
 
 			if ( pTemp->flags & FTENT_ROTATE )
 			{
-				pTemp->entity.angles[0] += pTemp->entity.baseline.angles[0] * frametime;
-				pTemp->entity.angles[1] += pTemp->entity.baseline.angles[1] * frametime;
-				pTemp->entity.angles[2] += pTemp->entity.baseline.angles[2] * frametime;
+				pTemp->entity.angles[0] += pTemp->entity.baseline.angles[0] * static_cast<float>(frametime);
+				pTemp->entity.angles[1] += pTemp->entity.baseline.angles[1] * static_cast<float>(frametime);
+				pTemp->entity.angles[2] += pTemp->entity.baseline.angles[2] * static_cast<float>(frametime);
 
 				VectorCopy(pTemp->entity.angles, pTemp->entity.latched.prevangles);
 			}
@@ -908,7 +918,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 
 				if ( pTemp->flags & FTENT_COLLIDEALL )
 				{
-					pmtrace_t pmtrace;
+					pmtrace_t localTrace;
 					physent_t* pe;
 
 					gEngfuncs.pEventAPI->EV_SetTraceHull(2);
@@ -918,22 +928,22 @@ void DLLEXPORT HUD_TempEntUpdate(
 						pTemp->entity.origin,
 						PM_STUDIO_BOX,
 						-1,
-						&pmtrace);
+						&localTrace);
 
-					if ( pmtrace.fraction != 1 )
+					if ( localTrace.fraction != 1 )
 					{
-						pe = gEngfuncs.pEventAPI->EV_GetPhysent(pmtrace.ent);
+						pe = gEngfuncs.pEventAPI->EV_GetPhysent(localTrace.ent);
 
-						if ( !pmtrace.ent || (pe->info != pTemp->clientIndex) )
+						if ( !localTrace.ent || (pe->info != pTemp->clientIndex) )
 						{
-							traceFraction = pmtrace.fraction;
-							VectorCopy(pmtrace.plane.normal, traceNormal);
+							traceFraction = localTrace.fraction;
+							VectorCopy(localTrace.plane.normal, traceNormal);
 							VectorCopy(pTemp->entity.prevstate.origin, traceStart);
 							VectorCopy(pTemp->entity.origin, traceEnd);
 
 							if ( pTemp->hitcallback )
 							{
-								(*pTemp->hitcallback)(pTemp, &pmtrace);
+								(*pTemp->hitcallback)(pTemp, &localTrace);
 							}
 						}
 					}
@@ -960,7 +970,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 						{
 							// Chop spark speeds a bit more
 							//
-							VectorScale(pTemp->entity.baseline.origin, 0.6, pTemp->entity.baseline.origin);
+							VectorScale(pTemp->entity.baseline.origin, 0.6f, pTemp->entity.baseline.origin);
 
 							if ( Length(pTemp->entity.baseline.origin) < 10 )
 							{
@@ -982,7 +992,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 					// Place at contact point
 					VectorMA(
 						pTemp->entity.prevstate.origin,
-						traceFraction * frametime,
+						traceFraction * static_cast<float>(frametime),
 						pTemp->entity.baseline.origin,
 						pTemp->entity.origin);
 					// Damp velocity
@@ -1014,7 +1024,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 					{
 						// die on impact
 						pTemp->flags &= ~FTENT_FADEOUT;
-						pTemp->die = client_time;
+						pTemp->die = static_cast<float>(client_time);
 					}
 					else
 					{
@@ -1035,7 +1045,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 						if ( damp != 1 )
 						{
 							VectorScale(pTemp->entity.baseline.origin, damp, pTemp->entity.baseline.origin);
-							VectorScale(pTemp->entity.angles, 0.9, pTemp->entity.angles);
+							VectorScale(pTemp->entity.angles, 0.9f, pTemp->entity.angles);
 						}
 					}
 				}
@@ -1049,7 +1059,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 				dl->color.r = 255;
 				dl->color.g = 120;
 				dl->color.b = 0;
-				dl->die = client_time + 0.01;
+				dl->die = static_cast<float>(client_time) + 0.01f;
 			}
 
 			if ( pTemp->flags & FTENT_SMOKETRAIL )
@@ -1066,7 +1076,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 			{
 				if ( pTemp->callback )
 				{
-					(*pTemp->callback)(pTemp, frametime, client_time);
+					(*pTemp->callback)(pTemp, static_cast<float>(frametime), static_cast<float>(client_time));
 				}
 			}
 
@@ -1077,7 +1087,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 				{
 					if ( !(pTemp->flags & FTENT_PERSIST) )
 					{
-						pTemp->die = client_time;  // If we can't draw it this frame, just dump it.
+						pTemp->die = static_cast<float>(client_time);  // If we can't draw it this frame, just dump it.
 						pTemp->flags &= ~FTENT_FADEOUT;  // Don't fade out, just die
 					}
 				}
@@ -1104,8 +1114,8 @@ Indices must start at 1, not zero.
 cl_entity_t DLLEXPORT* HUD_GetUserEntity(int index)
 {
 #if defined(BEAM_TEST)
-	// None by default, you would return a valic pointer if you create a client side
-	//  beam and attach it to a client side entity.
+	// None by default, you would return a valid pointer if you create a client side
+	// beam and attach it to a client side entity.
 	if ( index > 0 && index <= 1 )
 	{
 		return &beams[index];
@@ -1115,6 +1125,7 @@ cl_entity_t DLLEXPORT* HUD_GetUserEntity(int index)
 		return NULL;
 	}
 #else
+	(void)index;
 	return NULL;
 #endif
 }

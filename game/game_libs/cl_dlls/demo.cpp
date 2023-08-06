@@ -59,7 +59,7 @@ Demo_ReadBuffer
 Engine wants us to parse some data from the demo stream
 =====================
 */
-void DLLEXPORT Demo_ReadBuffer(int size, unsigned char* buffer)
+void DLLEXPORT Demo_ReadBuffer(int, unsigned char* buffer)
 {
 	int type;
 	int i = 0;

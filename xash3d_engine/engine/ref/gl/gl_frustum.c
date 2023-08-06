@@ -20,8 +20,8 @@ void GL_FrustumSetPlane(gl_frustum_t* out, int side, const vec3_t vecNormal, flo
 {
 	Assert(side >= 0 && side < FRUSTUM_PLANES);
 
-	out->planes[side].type = PlaneTypeForNormal(vecNormal);
-	out->planes[side].signbits = SignbitsForPlane(vecNormal);
+	out->planes[side].type = (byte)PlaneTypeForNormal(vecNormal);
+	out->planes[side].signbits = (byte)SignbitsForPlane(vecNormal);
 	VectorCopy(vecNormal, out->planes[side].normal);
 	out->planes[side].dist = flDist;
 
@@ -35,7 +35,7 @@ void GL_FrustumInitProj(gl_frustum_t* out, float flZNear, float flZFar, float fl
 	vec3_t normal, iforward;
 
 	// horizontal fov used for left and right planes
-	SinCos(DEG2RAD(flFovX) * 0.5f, &xs, &xc);
+	SinCos(DEG2RADF(flFovX) * 0.5f, &xs, &xc);
 
 	// setup left plane
 	VectorMAM(xs, RI.cull_vforward, -xc, RI.cull_vright, normal);
@@ -46,7 +46,7 @@ void GL_FrustumInitProj(gl_frustum_t* out, float flZNear, float flZFar, float fl
 	GL_FrustumSetPlane(out, FRUSTUM_RIGHT, normal, DotProduct(RI.cullorigin, normal));
 
 	// vertical fov used for top and bottom planes
-	SinCos(DEG2RAD(flFovY) * 0.5f, &xs, &xc);
+	SinCos(DEG2RADF(flFovY) * 0.5f, &xs, &xc);
 	VectorNegate(RI.cull_vforward, iforward);
 
 	// setup bottom plane

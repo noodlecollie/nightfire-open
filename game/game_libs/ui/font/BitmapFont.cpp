@@ -75,11 +75,11 @@ bool CBitmapFont::Create(
 	return true;
 }
 
-void CBitmapFont::GetCharRGBA(int ch, Point pt, Size sz, byte* rgba, Size& drawSize)
+void CBitmapFont::GetCharRGBA(int, Point, Size, byte*, Size&)
 {
 }
 
-void CBitmapFont::GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c)
+void CBitmapFont::GetCharABCWidthsNoCache(int, int&, int&, int&)
 {
 	// static font not uses cache
 	return;
@@ -105,7 +105,7 @@ bool CBitmapFont::HasChar(int ch) const
 	return false;
 }
 
-void CBitmapFont::UploadGlyphsForRanges(charRange_t* range, int rangeSize)
+void CBitmapFont::UploadGlyphsForRanges(charRange_t*, int)
 {
 }
 
@@ -142,10 +142,10 @@ int CBitmapFont::DrawCharacter(int ch, Point pt, int charH, const unsigned int c
 		w = iImageWidth;
 		h = iImageHeight;
 
-		rc.top = h * row;
-		rc.left = w * col;
-		rc.bottom = rc.top + h * size;
-		rc.right = rc.left + w * size;
+		rc.top = static_cast<int>(h * row);
+		rc.left = static_cast<int>(w * col);
+		rc.bottom = static_cast<int>(rc.top + h * size);
+		rc.right = static_cast<int>(rc.left + w * size);
 
 		if ( forceAdditive )
 			EngFuncs::PIC_DrawAdditive(pt.x, pt.y, charH / 2, charH, &rc);

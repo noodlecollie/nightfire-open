@@ -56,7 +56,7 @@ void CWeaponL96A1::Reload()
 	CGenericHitscanWeapon::Reload();
 }
 
-void CWeaponL96A1::Holster(int skiplocal)
+void CWeaponL96A1::Holster(int)
 {
 	CGenericHitscanWeapon::Holster();
 	SetZoomLevel(0);
@@ -76,14 +76,16 @@ void CWeaponL96A1::SetZoomLevel(uint32_t level)
 		if ( m_iZoomLevel > 0 )
 		{
 			m_pPlayer->SetScreenOverlay(ScreenOverlays::OverlayId::Overlay_SniperScope);
-			m_pPlayer->pev->fov = m_pPlayer->m_iFOV = L96A1_ZOOM_LEVELS[m_iZoomLevel];
+			m_pPlayer->pev->fov = L96A1_ZOOM_LEVELS[m_iZoomLevel];
+			m_pPlayer->m_iFOV = static_cast<int>(m_pPlayer->pev->fov);
 			m_pPlayer->pev->effects |= EF_HIDEVIEWMODEL;
 			SetPrimaryAttackMode(m_pAttackScoped);
 		}
 		else
 		{
 			m_pPlayer->SetScreenOverlay(ScreenOverlays::OverlayId::Overlay_None);
-			m_pPlayer->pev->fov = m_pPlayer->m_iFOV = 0.0f;
+			m_pPlayer->pev->fov = 0.0f;
+			m_pPlayer->m_iFOV = 0;
 			m_pPlayer->pev->effects &= ~EF_HIDEVIEWMODEL;
 			SetPrimaryAttackMode(m_pAttackUnscoped);
 		}
@@ -103,7 +105,7 @@ void CWeaponL96A1::PlayZoomSound()
 }
 
 #ifndef CLIENT_DLL
-float CWeaponL96A1::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const
+float CWeaponL96A1::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 }
