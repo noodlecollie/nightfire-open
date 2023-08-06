@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-linux:
+    name: Build and run unit tests on Ubuntu Latest
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: sudo apt-get install -y libsdl2-dev
+
+    - name: Build and run unit tests
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: gcc
+        cxx: g++
+        build-type: MinSizeRel
+        configure-options: -DCMAKE_INSTALL_PREFIX=install
+        install-build: true
+
+  build-windows:
+    name: Build and run unit tests on Windows
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Build and run unit tests
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: cl
+        cxx: cl
+        build-type: MinSizeRel
+        configure-options: -DCMAKE_INSTALL_PREFIX=install
+        install-build: true
