@@ -3941,6 +3941,23 @@ static IVoiceTweak gVoiceApi = {
 	Voice_GetControlFloat,
 };
 
+struct cmd_s;
+
+static void* Wrapper_Cmd_GetFirstFunctionHandle(void)
+{
+	return (void*)Cmd_GetFirstFunctionHandle();
+}
+
+static void* Wrapper_Cmd_GetNextFunctionHandle(void* cmdhandle)
+{
+	return (void*)Cmd_GetNextFunctionHandle((struct cmd_s*)cmdhandle);
+}
+
+static const char* Wrapper_Cmd_GetName(void* cmdhandle)
+{
+	return Cmd_GetName((struct cmd_s*)cmdhandle);
+}
+
 // engine callbacks
 static cl_enginefunc_t gEngfuncs = {
 	pfnSPR_Load,
@@ -4046,9 +4063,9 @@ static cl_enginefunc_t gEngfuncs = {
 	Platform_SetMousePos,
 	pfnSetMouseEnable,
 	Cvar_GetList,
-	Cmd_GetFirstFunctionHandle,
-	Cmd_GetNextFunctionHandle,
-	Cmd_GetName,
+	Wrapper_Cmd_GetFirstFunctionHandle,
+	Wrapper_Cmd_GetNextFunctionHandle,
+	Wrapper_Cmd_GetName,
 	pfnGetClientOldTime,
 	pfnGetGravity,
 	CL_ModelHandle,

@@ -18,6 +18,7 @@
 #include <stdarg.h>
 #include "utlstring.h"
 #include "minbase_endian.h"
+#include "fmtstr.h"
 #include <type_traits>
 
 //-----------------------------------------------------------------------------

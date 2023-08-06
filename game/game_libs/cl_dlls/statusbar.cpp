@@ -238,7 +238,7 @@ int CHudStatusBar::MsgFunc_StatusText(const char*, int iSize, void* pbuf)
 	m_szStatusText[line][MAX_STATUSTEXT_LENGTH - 1] =
 		0;  // ensure it's null terminated ( strncpy() won't null terminate if read string too long)
 
-	if ( m_szStatusText[0] == 0 )
+	if ( m_szStatusText[0][0] == 0 )
 		m_iFlags &= ~HUD_ACTIVE;
 	else
 		m_iFlags |= HUD_ACTIVE;  // we have status text, so turn on the status bar

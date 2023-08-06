@@ -323,6 +323,16 @@ fs_offset_t FS_SeekEx(file_t* file, fs_offset_t offset, int whence)
 	return FS_Seek(file, offset, whence) == -1 ? -1 : FS_Tell(file);
 }
 
+static long Wrapper_FS_SeekEx(void* handle, long offset, int whence)
+{
+	return (long)FS_SeekEx((file_t*)handle, (fs_offset_t)offset, whence);
+}
+
+static long Wrapper_FS_Read(void* handle, void* buf, size_t count)
+{
+	return (long)FS_Read((file_t*)handle, buf, count);
+}
+
 /*
 =================
 Stream_OpenMPG
@@ -358,7 +368,7 @@ stream_t* Stream_OpenMPG(const char* filename)
 		Con_DPrintf(S_ERROR "%s\n", get_error(mpeg));
 
 	// trying to open stream and read header
-	if ( !open_mpeg_stream(mpeg, file, FS_Read, FS_SeekEx, &sc) )
+	if ( !open_mpeg_stream(mpeg, file, Wrapper_FS_Read, Wrapper_FS_SeekEx, &sc) )
 	{
 		Con_DPrintf(S_ERROR "Stream_OpenMPG: failed to load (%s): %s\n", filename, get_error(mpeg));
 		close_decoder(mpeg);

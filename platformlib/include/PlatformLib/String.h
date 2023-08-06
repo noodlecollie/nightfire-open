@@ -11,6 +11,7 @@ extern "C"
 
 int PlatformLib_StrCaseCmp(const char* s1, const char* s2);
 int PlatformLib_StrNCaseCmp(const char* s1, const char* s2, size_t n);
+const char* PlatformLib_StrCaseStr(const char* haystack, const char* needle);
 int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_list argptr);
 char* PlatformLib_StrDup(const char* in);
 

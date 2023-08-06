@@ -369,7 +369,7 @@ static void GAME_EXPORT pfnStuckTouch(int hitent, pmtrace_t* tr)
 	PM_StuckTouch(svgame.pmove, hitent, tr);
 }
 
-static int GAME_EXPORT pfnPointContents(float* p, int* truecontents)
+static int GAME_EXPORT pfnPointContents(const float* p, int* truecontents)
 {
 	return PM_PointContentsPmove(svgame.pmove, p, truecontents);
 }
@@ -397,7 +397,7 @@ static pmtrace_t* pfnTraceLine(float* start, float* end, int flags, int usehull,
 	return PM_TraceLine(svgame.pmove, start, end, flags, usehull, ignore_pe);
 }
 
-static hull_t* pfnHullForBsp(physent_t* pe, float* offset)
+static void* pfnHullForBsp(physent_t* pe, float* offset)
 {
 	return PM_HullForBsp(pe, svgame.pmove, offset);
 }

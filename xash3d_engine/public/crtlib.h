@@ -147,7 +147,7 @@ static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)
 #endif
 static inline char* Q_stristr(const char* s1, const char* s2)
 {
-	return unlikely(!s1 || !s2) ? NULL : (char*)strcasestr(s1, s2);
+	return unlikely(!s1 || !s2) ? NULL : (char*)PlatformLib_StrCaseStr(s1, s2);
 }
 #else  // defined( HAVE_STRCASESTR )
 char* Q_stristr(const char* s1, const char* s2);

@@ -170,24 +170,24 @@ namespace CustomGeometry
 	{
 		static Vector dummy;
 		// NFTODO: Make containers use size_t
-		return index < m_Points.Count() ? m_Points[static_cast<int>(index)] : dummy;
+		return index < static_cast<size_t>(m_Points.Count()) ? m_Points[static_cast<int>(index)] : dummy;
 	}
 
 	const Vector& CGeometryItem::GetPoint(size_t index) const
 	{
 		static Vector dummy;
-		return index < m_Points.Count() ? m_Points[static_cast<int>(index)] : dummy;
+		return index < static_cast<size_t>(m_Points.Count()) ? m_Points[static_cast<int>(index)] : dummy;
 	}
 
 	size_t& CGeometryItem::GetIndex(size_t i)
 	{
 		static size_t dummy;
-		return i < m_Indices.Count() ? m_Indices[static_cast<int>(i)] : dummy;
+		return i < static_cast<size_t>(m_Indices.Count()) ? m_Indices[static_cast<int>(i)] : dummy;
 	}
 
 	const size_t& CGeometryItem::GetIndex(size_t i) const
 	{
 		static size_t dummy;
-		return i < m_Indices.Count() ? m_Indices[static_cast<int>(i)] : dummy;
+		return i < static_cast<size_t>(m_Indices.Count()) ? m_Indices[static_cast<int>(i)] : dummy;
 	}
 }  // namespace CustomGeometry

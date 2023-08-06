@@ -1707,7 +1707,7 @@ file_t* FS_OpenHandle(const char* syspath, int handle, fs_offset_t offset, fs_of
 	file->handle = PlatformLib_Open(syspath, O_RDONLY | O_BINARY);
 #endif
 
-	if ( PlatformLib_LSeek(file->handle, offset, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(file->handle, offset, SEEK_SET) == (size_t)-1 )
 	{
 		Mem_Free(file);
 		return NULL;
@@ -2295,7 +2295,7 @@ int FS_Seek(file_t* file, fs_offset_t offset, int whence)
 	// Purge cached data
 	FS_Purge(file);
 
-	if ( PlatformLib_LSeek(file->handle, file->offset + offset, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(file->handle, file->offset + offset, SEEK_SET) == (size_t)-1 )
 		return -1;
 	file->position = offset;
 

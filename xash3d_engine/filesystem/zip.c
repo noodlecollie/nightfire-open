@@ -460,7 +460,7 @@ byte* FS_LoadZIPFile(const char* path, fs_offset_t* sizeptr, qboolean gamedironl
 
 	FS_EnsureOpenZip(search->pkg.zip);
 
-	if ( PlatformLib_LSeek(search->pkg.zip->handle, file->offset, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(search->pkg.zip->handle, file->offset, SEEK_SET) == (size_t)-1 )
 	{
 		return NULL;
 	}

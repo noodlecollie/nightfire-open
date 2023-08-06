@@ -99,7 +99,7 @@ static void Cbuf_AddTextToBuffer(cmdbuf_t* buf, const char* text)
 {
 	size_t length = Q_strlen(text);
 
-	if ( (buf->cursize + length) >= buf->maxsize )
+	if ( (int)(buf->cursize + length) >= buf->maxsize )
 	{
 		Con_Reportf(S_WARN "%s: overflow\n", __func__);
 		return;
@@ -154,7 +154,7 @@ static void Cbuf_InsertTextToBuffer(cmdbuf_t* buf, const char* text)
 {
 	size_t length = Q_strlen(text);
 
-	if ( (buf->cursize + length) >= buf->maxsize )
+	if ( (int)(buf->cursize + length) >= buf->maxsize )
 	{
 		Con_Reportf(S_WARN "Cbuf_InsertText: overflow\n");
 	}

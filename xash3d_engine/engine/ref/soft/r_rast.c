@@ -725,12 +725,13 @@ R_RenderBmodelFace
 */
 void R_RenderBmodelFace(bedge_t* pedges, msurface_t* psurf)
 {
+	static medge_t tedge;
+
 	int i;
 	unsigned mask;
 	mplane_t* pplane;
 	float distinv;
 	vec3_t p_normal;
-	medge_t tedge;
 	clipplane_t* pclip;
 
 	/*if (psurf->texinfo->flags & (SURF_TRANS33|SURF_TRANS66))

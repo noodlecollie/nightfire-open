@@ -440,7 +440,7 @@ static void NET_ResolveThread(void);
 #define mutex_lock pthread_mutex_lock
 #define mutex_unlock pthread_mutex_unlock
 #define exit_thread(x) pthread_exit(x)
-#define create_thread(pfn) !pthread_create(&nsthread.thread, NULL, (pfn), NULL)
+#define create_thread(pfn) pthread_create(&nsthread.thread, NULL, (pfn), NULL)
 #define detach_thread(x) pthread_detach(x)
 #define mutex_t pthread_mutex_t
 #define thread_t pthread_t
@@ -1815,7 +1815,7 @@ int NET_SendLong(
 				NET_SockadrToNetadr(to, &adr);
 
 				Con_Printf(
-					"Sending split %i of %zu with %zu bytes and seq %i to %s\n",
+					"Sending split %zu of %zu with %zu bytes and seq %i to %s\n",
 					packet_number + 1,
 					packet_count,
 					size,
@@ -1994,7 +1994,7 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 		return INVALID_SOCKET;
 	}
 
-	addr.ss_family = (ADDRESS_FAMILY)family;
+	addr.ss_family = (sa_family_t)family;
 
 	if ( family == AF_INET6 )
 	{

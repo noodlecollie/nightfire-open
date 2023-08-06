@@ -226,6 +226,31 @@ static int Wrapper_AVI_IsActive(void* avi)
 	return (int)AVI_IsActive((movie_state_t*)avi);
 }
 
+static void* Wrapper_AVI_LoadVideo(const char* filename, qboolean load_audio)
+{
+	return (void*)AVI_LoadVideo(filename, load_audio);
+}
+
+static int Wrapper_AVI_GetVideoFrameNumber(void* Avi, float time)
+{
+	return AVI_GetVideoFrameNumber((movie_state_t*)Avi, time);
+}
+
+static byte* Wrapper_AVI_GetVideoFrame(void* Avi, long frame)
+{
+	return AVI_GetVideoFrame((movie_state_t*)Avi, frame);
+}
+
+static void Wrapper_AVI_FreeVideo(void* Avi)
+{
+	return AVI_FreeVideo((movie_state_t*)Avi);
+}
+
+static void* Wrapper_CL_ModelHandle(int modelindex)
+{
+	return (void*)CL_ModelHandle(modelindex);
+}
+
 static render_api_t gRenderAPI = {
 	pfnRenderGetParm,  // GL_RenderGetParm,
 	NULL,  // R_GetDetailScaleForTexture,
@@ -250,12 +275,12 @@ static render_api_t gRenderAPI = {
 	NULL,  // DrawSingleDecal,
 	NULL,  // R_DecalSetupVerts,
 	NULL,  // R_EntityRemoveDecals,
-	AVI_LoadVideo,
+	Wrapper_AVI_LoadVideo,
 	Wrapper_AVI_GetVideoInfo,
-	AVI_GetVideoFrameNumber,
-	AVI_GetVideoFrame,
+	Wrapper_AVI_GetVideoFrameNumber,
+	Wrapper_AVI_GetVideoFrame,
 	NULL,  // R_UploadStretchRaw,
-	AVI_FreeVideo,
+	Wrapper_AVI_FreeVideo,
 	Wrapper_AVI_IsActive,
 	S_StreamAviSamples,
 	NULL,
@@ -287,7 +312,7 @@ static render_api_t gRenderAPI = {
 	pfnFileBufferCRC32,
 	COM_CompareFileTime,
 	Host_Error,
-	CL_ModelHandle,
+	Wrapper_CL_ModelHandle,
 	pfnTime,
 	Cvar_Set,
 	S_FadeMusicVolume,

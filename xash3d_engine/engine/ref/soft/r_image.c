@@ -109,9 +109,6 @@ static void GL_UpdateTextureParams(int iTexture)
 
 	Assert(tex != NULL);
 
-	if ( !tex->pixels )
-		return;  // free slot
-
 	GL_Bind(XASH_TEXTURE0, iTexture);
 }
 
@@ -1415,9 +1412,6 @@ void R_TextureList_f(void)
 
 	for ( i = texCount = 0, image = r_images; i < r_numImages; i++, image++ )
 	{
-		if ( !image->pixels )
-			continue;
-
 		bytes += image->size;
 		texCount++;
 
