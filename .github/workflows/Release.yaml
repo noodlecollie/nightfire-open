@@ -26,10 +26,10 @@ jobs:
         cxx: g++
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=build/install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install
 
     - shell: bash
-      run: tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/build/install/ ${{runner.workspace}}
+      run: tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
 
     - name: Upload build
       uses: actions/upload-artifact@v3
@@ -54,7 +54,7 @@ jobs:
         cxx: cl
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=build/install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install
 
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.1
@@ -62,7 +62,7 @@ jobs:
         type: 'zip'
         filename: 'game_windows.zip'
         directory: ${{runner.workspace}}
-        path: build/install
+        path: install
 
     - name: Upload build
       uses: actions/upload-artifact@v3
