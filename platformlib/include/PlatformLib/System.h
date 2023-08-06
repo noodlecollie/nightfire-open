@@ -7,6 +7,7 @@ extern "C"
 #endif  // __cplusplus
 
 int PlatformLib_ExecV(const char* path, char* const* argv);
+char* PlatformLib_GetCWD(char* buffer, size_t maxlen);
 
 #ifdef __cplusplus
 }  // extern "C"

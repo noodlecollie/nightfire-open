@@ -41,6 +41,7 @@ GNU General Public License for more details.
 #include "enginefeatures.h"
 #include "render_api.h"  // decallist_t
 #include "tests.h"
+#include "PlatformLib/System.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms
@@ -1188,7 +1189,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 		Q_strncpy(host.rootdir, szBasePath, sizeof(host.rootdir));
 		SDL_free(szBasePath);
 #else
-		if ( !getcwd(host.rootdir, sizeof(host.rootdir)) )
+		if ( !PlatformLib_GetCWD(host.rootdir, sizeof(host.rootdir)) )
 		{
 			Sys_Error("couldn't determine current directory: %s", strerror(errno));
 			host.rootdir[0] = 0;
