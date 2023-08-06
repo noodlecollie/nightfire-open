@@ -29,7 +29,7 @@ jobs:
         configure-options: -DCMAKE_INSTALL_PREFIX=install
 
     - shell: bash
-      run: tar -czvf game_linux.tar.gz -C build/install/ ${{runner.workspace}}
+      run: tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/build/install/ ${{runner.workspace}}
 
     - name: Upload build
       uses: actions/upload-artifact@v3
