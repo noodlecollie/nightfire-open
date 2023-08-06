@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-linux:
-    name: Build and run unit tests on Ubuntu Latest
+    name: Build on Ubuntu Latest
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y libsdl2-dev
 
-    - name: Build and run unit tests
+    - name: Build
       uses: ashutoshvarma/action-cmake-build@master
       with:
         build-dir: ${{runner.workspace}}/build
@@ -30,7 +30,7 @@ jobs:
         install-build: true
 
   build-windows:
-    name: Build and run unit tests on Windows
+    name: Build on Windows
     runs-on: windows-latest
 
     steps:
@@ -38,7 +38,7 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build and run unit tests
+    - name: Build
       uses: ashutoshvarma/action-cmake-build@master
       with:
         build-dir: ${{runner.workspace}}/build

@@ -634,6 +634,7 @@ bool CUtlBuffer::GetString(char* pString, int nMaxChars)
 	if ( !IsText() )
 	{
 		char c = GetChar();
+		(void)c;
 		VerifyEquals(c, 0);
 	}
 	return true;

@@ -1513,7 +1513,7 @@ int CGraph::RejectInlineLinks(CLink* pLinkPool, FILE* file)
 				flDistToTestNode = vec2DirToTestNode.Length();
 				vec2DirToTestNode = vec2DirToTestNode.Normalize();
 
-				if ( DotProduct(vec2DirToCheckNode, vec2DirToTestNode) >= 0.998 )
+				if ( DotProduct2D(vec2DirToCheckNode, vec2DirToTestNode) >= 0.998 )
 				{
 					// there's a chance that TestNode intersects the line to CheckNode. If so, we should disconnect the
 					// link to CheckNode.
@@ -1526,7 +1526,7 @@ int CGraph::RejectInlineLinks(CLink* pLinkPool, FILE* file)
 								"REJECTED NODE %3d through Node %3d, Dot = %8f\n",
 								pLinkPool[pSrcNode->m_iFirstLink + j].m_iDestNode,
 								pLinkPool[pSrcNode->m_iFirstLink + k].m_iDestNode,
-								DotProduct(vec2DirToCheckNode, vec2DirToTestNode));
+								DotProduct2D(vec2DirToCheckNode, vec2DirToTestNode));
 						}
 
 						pLinkPool[pSrcNode->m_iFirstLink + j] =

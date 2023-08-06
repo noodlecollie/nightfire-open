@@ -46,6 +46,9 @@ static void SWAP_Initialize(void)
 	char* path;
 	char* prealloc = getenv("SWAP_SIZE");
 	int fd;
+	int retval;
+
+	(void)retval;
 
 	if ( s.top )
 		return;
@@ -62,7 +65,7 @@ static void SWAP_Initialize(void)
 	s.prealloc &= ~(PAGE_SIZE - 1);
 
 	s.fd = fd;
-	ftruncate(fd, s.prealloc);
+	retval = ftruncate(fd, s.prealloc);
 	s.top = mmap(0, s.prealloc, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
 	// space will be freed on exit

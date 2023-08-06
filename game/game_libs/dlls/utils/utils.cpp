@@ -1647,7 +1647,7 @@ float UTIL_DotPoints(const Vector& vecSrc, const Vector& vecCheck, const Vector&
 	vec2LOS = (vecCheck - vecSrc).Make2D();
 	vec2LOS = vec2LOS.Normalize();
 
-	return DotProduct(vec2LOS, (vecDir.Make2D()));
+	return DotProduct2D(vec2LOS, (vecDir.Make2D()));
 }
 
 //=========================================================

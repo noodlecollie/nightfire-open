@@ -420,6 +420,9 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 	void *pc = NULL, **bp = NULL, **sp = NULL;  // this must be set for every OS!
 	char message[8192];
 	int len, logfd, i = 0;
+	ssize_t writeResult = 0;
+
+	(void)writeResult;
 
 #if XASH_OPENBSD
 	struct sigcontext* ucontext = (struct sigcontext*)context;
@@ -504,7 +507,7 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 		si->si_addr);
 #endif
 
-	write(STDERR_FILENO, message, len);
+	writeResult = write(STDERR_FILENO, message, len);
 
 	// flush buffers before writing directly to descriptors
 	fflush(stdout);
@@ -512,15 +515,15 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 
 	// now get log fd and write trace directly to log
 	logfd = Sys_LogFileNo();
-	write(logfd, message, len);
+	writeResult = write(logfd, message, len);
 
 	if ( pc && bp && sp )
 	{
 		size_t pagesize = sysconf(_SC_PAGESIZE);
 
 		// try to print backtrace
-		write(STDERR_FILENO, STACK_BACKTRACE_STR, STACK_BACKTRACE_STR_LEN);
-		write(logfd, STACK_BACKTRACE_STR, STACK_BACKTRACE_STR_LEN);
+		writeResult = write(STDERR_FILENO, STACK_BACKTRACE_STR, STACK_BACKTRACE_STR_LEN);
+		writeResult = write(logfd, STACK_BACKTRACE_STR, STACK_BACKTRACE_STR_LEN);
 		Q_strncpy(message + len, STACK_BACKTRACE_STR, sizeof(message) - len);
 		len += STACK_BACKTRACE_STR_LEN;
 
@@ -534,8 +537,8 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 		do
 		{
 			int line = Sys_PrintFrame(message + len, sizeof(message) - len, ++i, pc);
-			write(STDERR_FILENO, message + len, line);
-			write(logfd, message + len, line);
+			writeResult = write(STDERR_FILENO, message + len, line);
+			writeResult = write(logfd, message + len, line);
 			len += line;
 			// if( !dladdr(bp,0) ) break; // only when bp is in module
 			if ( try_allow_read(bp, pagesize) )
@@ -548,8 +551,8 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 		while ( bp && i < 128 );
 
 		// try to print stack
-		write(STDERR_FILENO, STACK_DUMP_STR, STACK_DUMP_STR_LEN);
-		write(logfd, STACK_DUMP_STR, STACK_DUMP_STR_LEN);
+		writeResult = write(STDERR_FILENO, STACK_DUMP_STR, STACK_DUMP_STR_LEN);
+		writeResult = write(logfd, STACK_DUMP_STR, STACK_DUMP_STR_LEN);
 		Q_strncpy(message + len, STACK_DUMP_STR, sizeof(message) - len);
 		len += STACK_DUMP_STR_LEN;
 
@@ -558,8 +561,8 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 			for ( i = 0; i < 32; i++ )
 			{
 				int line = Sys_PrintFrame(message + len, sizeof(message) - len, i, sp[i]);
-				write(STDERR_FILENO, message + len, line);
-				write(logfd, message + len, line);
+				writeResult = write(STDERR_FILENO, message + len, line);
+				writeResult = write(logfd, message + len, line);
 				len += line;
 			}
 		}
@@ -576,7 +579,10 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 
 	// log saved, now we can try to save configs and close log correctly, it may crash
 	if ( host.type == HOST_NORMAL )
+	{
 		CL_Crashed();
+	}
+
 	host.status = HOST_CRASHED;
 	host.crashed = true;
 

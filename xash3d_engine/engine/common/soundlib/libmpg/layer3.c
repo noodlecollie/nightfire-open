@@ -1204,7 +1204,7 @@ static int III_dequantize_sample(
 	backbits(fr, num);
 	num = 0;
 
-	while ( xrpnt < &xr[SBLIMIT][0] )
+	while ( xrpnt < (float*)xr + (SBLIMIT * SSLIMIT * sizeof(float)) )
 		*xrpnt++ = DOUBLE_TO_REAL(0.0);
 
 	while ( part2remain > 16 )

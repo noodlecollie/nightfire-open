@@ -4566,8 +4566,9 @@ byte* pfnSetFatPVS(const float* org)
 	if ( !FBitSet(sv.hostflags, SVF_MERGE_VISIBILITY) )
 	{
 		vec3_t viewPos, offset;
+		int currentPlayer = pfnGetCurrentPlayer();
 
-		ASSERT(pfnGetCurrentPlayer() != -1);
+		ASSERT(currentPlayer != -1);
 
 		// see code from client.cpp for understanding:
 		// org = pView->v.origin + pView->v.view_ofs;
@@ -4587,7 +4588,7 @@ byte* pfnSetFatPVS(const float* org)
 
 		// build a new PVS frame
 		Mod_FatPVS(viewPos, FATPVS_RADIUS, fatpvs, (int)world.fatbytes, false, fullvis);
-		VectorCopy(viewPos, viewPoint[pfnGetCurrentPlayer()]);
+		VectorCopy(viewPos, viewPoint[currentPlayer]);
 	}
 	else
 	{

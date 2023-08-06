@@ -166,10 +166,10 @@ void Host_RunFrame(float time)
 
 void COM_Frame(float time)
 {
-	int loopCount = 0;
-
 	if ( setjmp(host.abortframe) )
 		return;
+
+	int loopCount = 0;
 
 	while ( 1 )
 	{
