@@ -29,7 +29,9 @@ jobs:
         configure-options: -DCMAKE_INSTALL_PREFIX=install
 
     - shell: bash
-      run: tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
+      run: |
+        cd ${{runner.workspace}}
+        tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
 
     - name: Upload build
       uses: actions/upload-artifact@v3
@@ -62,7 +64,7 @@ jobs:
         type: 'zip'
         filename: 'game_windows.zip'
         directory: ${{runner.workspace}}
-        path: install
+        path: nightfire-open/install
 
     - name: Upload build
       uses: actions/upload-artifact@v3
