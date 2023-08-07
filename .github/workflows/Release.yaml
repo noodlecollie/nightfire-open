@@ -77,6 +77,8 @@ jobs:
 
   create-release:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
     # needs: [build-windows, build-linux]
 
     steps:
@@ -124,6 +126,6 @@ jobs:
       - name: Create release
         uses: 'softprops/action-gh-release@v1'
         with:
-          token: "${{secrets.GITHUB_TOKEN}}"
+          token: ${{secrets.GITHUB_TOKEN}}
           name: Release ${{github.ref}}
           files: ${{runner.workspace}}/temp.txt
