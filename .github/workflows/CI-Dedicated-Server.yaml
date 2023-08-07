@@ -1,8 +1,6 @@
-name: CI
+name: CI Dedicated Server
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -27,7 +25,7 @@ jobs:
         cxx: g++
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
 
   build-windows:
     name: Build on Windows
@@ -46,4 +44,4 @@ jobs:
         cxx: cl
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
