@@ -1,6 +1,3 @@
-Nightfire-Open Release v1
-=========================
-
 This is the baseline release from this new repo. It contains:
 
 * Three multiplayer maps:

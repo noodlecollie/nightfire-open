@@ -20,7 +20,7 @@ jobs:
 
     # If this fails, it should fail the step.
     - shell: bash
-      run: stat ${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/CHANGELOG.md
+      run: stat ${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/ReleaseNotes.md
 
   build-linux:
     name: Build on Ubuntu Latest
@@ -116,7 +116,8 @@ jobs:
         with:
           token: ${{secrets.GITHUB_TOKEN}}
           name: Release ${{github.ref_name}}
-          body_path: ${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/CHANGELOG.md
+          body_path: ${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/ReleaseNotes.md
+          generate_release_notes: true
           files:  |
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.zip
