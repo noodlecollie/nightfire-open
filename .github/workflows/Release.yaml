@@ -29,18 +29,18 @@ jobs:
     needs: check-release-notes
 
     steps:
-    # LFS is only enabled in this step, because it's expensive.
-    # We create an archive of the content from here and
-    # upload it, so that we can download it later and
-    # sidestep GitHub's LFS bandwidth tracking.
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-        lfs: true
-
     #######################################
     # TODO: Re-enable this
     #######################################
+
+    # # LFS is only enabled in this step, because it's expensive.
+    # # We create an archive of the content from here and
+    # # upload it, so that we can download it later and
+    # # sidestep GitHub's LFS bandwidth tracking.
+    # - uses: actions/checkout@v3
+    #   with:
+    #     submodules: recursive
+    #     lfs: true
 
     # - name: Checkout LFS objects
     #     run: git lfs checkout
@@ -66,6 +66,10 @@ jobs:
     # For the dry run, we do this instead:
     #######################################
 
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
     - shell: bash
       run: |
         mkdir -p ${{runner.workspace}}/nightfire-open/install/
@@ -83,7 +87,7 @@ jobs:
         path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
 
   build-linux:
-    name: Build on Ubuntu Latest
+    name: Build on Ubuntu
     runs-on: ubuntu-22.04
     needs: archive-content
 
@@ -151,6 +155,7 @@ jobs:
         path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.tar.gz
 
   create-release:
+    name: Create release
     runs-on: ubuntu-22.04
     needs: [build-windows, build-linux]
     permissions:
