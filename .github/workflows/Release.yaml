@@ -78,7 +78,7 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
+      contents: write
     # needs: [build-windows, build-linux]
 
     steps:
