@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+# For some reason, the builds like to be nested in extra nightfire-open
+# directories, and I can't find a way to stop that from happening. Whatever.
+
 jobs:
   build-linux:
     name: Build on Ubuntu Latest
@@ -31,13 +34,13 @@ jobs:
     - shell: bash
       run: |
         cd ${{runner.workspace}}
-        tar -czvf game_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
+        tar -czvf nightfire-open_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
 
     - name: Upload build
       uses: actions/upload-artifact@v3
       with:
         name: artefacts_linux
-        path: ${{runner.workspace}}/game_linux.tar.gz
+        path: ${{runner.workspace}}/nightfire-open_linux.tar.gz
 
   build-windows:
     name: Build on Windows
@@ -62,7 +65,7 @@ jobs:
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: 'zip'
-        filename: 'game_windows.zip'
+        filename: 'nightfire-open_windows.zip'
         directory: ${{runner.workspace}}
         path: nightfire-open/install
 
@@ -70,7 +73,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: artefacts_windows
-        path: ${{runner.workspace}}/game_windows.zip
+        path: ${{runner.workspace}}/nightfire-open_windows.zip
 
   create-release:
     runs-on: ubuntu-latest
@@ -107,8 +110,8 @@ jobs:
 
       - shell: bash
         run: |
-          mv ${{runner.workspace}}/game_linux.tar.gz ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_linux.tar.gz
-          mv ${{runner.workspace}}/game_windows.zip ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_windows.zip
+          mv ${{runner.workspace}}/nightfire-open/nightfire-open_linux.tar.gz ${{runner.workspace}}/nightfire-open/nightfire-open_${{steps.get_next_version.outputs.version}}_linux.tar.gz
+          mv ${{runner.workspace}}/nightfire-open/nightfire-open_windows.zip ${{runner.workspace}}/nightfire-open/nightfire-open_${{steps.get_next_version.outputs.version}}_windows.zip
 
       - name: Create release
         uses: 'marvinpinto/action-automatic-releases@latest'
@@ -117,5 +120,5 @@ jobs:
           tag_name: ${{steps.get_next_version.outputs.version}}
           release_name: Release ${{steps.get_next_version.outputs.version}}
           files: |
-            ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_linux.tar.gz
-            ${{runner.workspace}}/game_${{steps.get_next_version.outputs.version}}_windows.zip
+            ${{runner.workspace}}/nightfire-open/nightfire-open_${{steps.get_next_version.outputs.version}}_linux.tar.gz
+            ${{runner.workspace}}/nightfire-open/nightfire-open_${{steps.get_next_version.outputs.version}}_windows.zip
