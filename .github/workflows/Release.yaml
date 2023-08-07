@@ -18,14 +18,74 @@ jobs:
       with:
         submodules: recursive
 
-    # If this fails, it should fail the step.
+    # Check that there are release notes present for this tag.
+    # If not, this should fail the step.
     - shell: bash
       run: stat ${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/ReleaseNotes.md
+
+  archive-content:
+    name: Archive content
+    runs-on: ubuntu-22.04
+    needs: check-release-notes
+
+    steps:
+    # LFS is only enabled in this step, because it's expensive.
+    # We create an archive of the content from here and
+    # upload it, so that we can download it later and
+    # sidestep GitHub's LFS bandwidth tracking.
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        lfs: true
+
+    #######################################
+    # TODO: Re-enable this
+    #######################################
+
+    # - name: Checkout LFS objects
+    #     run: git lfs checkout
+
+    # - name: Install dependencies
+    #   run: sudo apt update && sudo apt install -y libsdl2-dev
+
+    # # We run the install process because things may not be
+    # # as simple as just copying and pasting the content folder
+    # # into the install prefix. There could be files that are
+    # # generated as part of this process in future.
+    # - name: Collect content
+    #   uses: ashutoshvarma/action-cmake-build@master
+    #   with:
+    #     build-dir: ${{runner.workspace}}/build
+    #     cc: gcc
+    #     cxx: g++
+    #     build-type: MinSizeRel
+    #     target: install
+    #     configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_INSTALL_CONTENT_ONLY=YES
+
+    #######################################
+    # For the dry run, we do this instead:
+    #######################################
+
+    - shell: bash
+      run: |
+        mkdir -p ${{runner.workspace}}/nightfire-open/install/
+        echo "Testing" > ${{runner.workspace}}/nightfire-open/install/nightfire-open/this-should-be-alongside-the-bond-executable.txt
+
+    - shell: bash
+      run: |
+        cd ${{runner.workspace}}
+        tar -czvf nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
+
+    - name: Upload content
+      uses: actions/upload-artifact@v3
+      with:
+        name: lfscontent
+        path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
 
   build-linux:
     name: Build on Ubuntu Latest
     runs-on: ubuntu-22.04
-    needs: check-release-notes
+    needs: archive-content
 
     steps:
     - uses: actions/checkout@v3
@@ -59,7 +119,7 @@ jobs:
   build-windows:
     name: Build on Windows
     runs-on: windows-2022
-    needs: check-release-notes
+    needs: archive-content
 
     steps:
     - uses: actions/checkout@v3
@@ -79,8 +139,8 @@ jobs:
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.1
       with:
-        type: 'zip'
-        filename: 'nightfire-open_${{github.ref_name}}_windows.zip'
+        type: 'tar'
+        filename: 'nightfire-open_${{github.ref_name}}_windows.tar.gz'
         directory: ${{runner.workspace}}
         path: nightfire-open/install
 
@@ -88,7 +148,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: artefacts_windows
-        path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.zip
+        path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.tar.gz
 
   create-release:
     runs-on: ubuntu-22.04
@@ -111,6 +171,42 @@ jobs:
         with:
           name: artefacts_windows
 
+      - name: Download LFS content
+        uses: actions/download-artifact@v3
+        with:
+          name: lfscontent
+
+      # We do this little dance to use the LFS content for both builds, which at the moment are both .tar.gz files.
+      # We will then re-archive them later.
+      - shell: bash
+        run: |
+          cd ${{runner.workspace}}
+
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
+          ls ${{runner.workspace}}/staging/linux
+
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
+          ls ${{runner.workspace}}/staging/windows
+
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
+
+      - name: Archive Windows Release
+        uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: 'zip'
+          filename: 'nightfire-open_${{github.ref_name}}_windows.zip'
+          directory: ${{runner.workspace}}
+          path: staging/windows
+
+      - shell: bash
+        run: |
+          cd ${{runner.workspace}}
+          tar -czvf nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux .
+
       - name: Create release
         uses: 'softprops/action-gh-release@v1'
         with:
@@ -119,5 +215,5 @@ jobs:
           body_path: ${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/ReleaseNotes.md
           generate_release_notes: true
           files:  |
-            ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
-            ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.zip
+            ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_linux.tar.gz
+            ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.zip
