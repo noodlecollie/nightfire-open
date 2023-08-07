@@ -91,12 +91,8 @@ jobs:
         uses: 'WyriHaximus/github-action-get-previous-tag@v1'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get next version
-        id: get_next_version
-        uses: 'WyriHaximus/github-action-next-release-version@1.0.0'
         with:
-          version: ${{ steps.get_previous_tag.outputs.tag }}
+          prefix: v
 
       - name: Download Linux artefacts
         uses: actions/download-artifact@v3
@@ -117,8 +113,7 @@ jobs:
         uses: 'marvinpinto/action-automatic-releases@latest'
         with:
           repo_token: "${{secrets.GITHUB_TOKEN}}"
-          tag_name: ${{steps.get_next_version.outputs.version}}
-          release_name: Release ${{steps.get_next_version.outputs.version}}
+          title: Release ${{steps.get_previous_tag.outputs.tag}}
           files: |
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{steps.get_next_version.outputs.version}}_linux.tar.gz
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{steps.get_next_version.outputs.version}}_windows.zip
