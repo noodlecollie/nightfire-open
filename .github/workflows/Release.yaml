@@ -89,7 +89,7 @@ jobs:
       #     fetch-depth: 0 # required for github-action-get-previous-tag
 
       - shell: bash
-        run: touch ${{runner.workspace}}/temp.txt
+        run: echo "Test" > ${{runner.workspace}}/temp.txt
 
       # - name: Get Previous tag
       #   id: get_previous_tag
