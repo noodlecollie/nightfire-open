@@ -6,7 +6,7 @@ on:
       - "v*"
 
 env:
-  CHANGELOG_PATH: "${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/CHANGELOG.md"
+  CHANGELOG_PATH: nightfire-open/releases/${{github.ref_name}}/CHANGELOG.md
 
 # For some reason, the builds like to be nested in extra nightfire-open
 # directories, and I can't find a way to stop that from happening. Whatever.
@@ -23,7 +23,7 @@ jobs:
 
     # If this fails, it should fail the step.
     - shell: bash
-      run: stat $CHANGELOG_PATH
+      run: stat ${{runner.workspace}}/$CHANGELOG_PATH
 
   build-linux:
     name: Build on Ubuntu Latest
@@ -115,7 +115,7 @@ jobs:
         with:
           token: ${{secrets.GITHUB_TOKEN}}
           name: Release ${{github.ref_name}}
-          body_path: $CHANGELOG_PATH
+          body_path: ${{runner.workspace}}/$CHANGELOG_PATH
           files:  |
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.zip
