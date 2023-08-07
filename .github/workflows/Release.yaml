@@ -96,11 +96,11 @@ jobs:
     permissions:
       contents: write
 
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-
     steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
       - name: Download Linux artefacts
         uses: actions/download-artifact@v3
         with:
