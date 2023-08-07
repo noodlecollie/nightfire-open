@@ -5,13 +5,30 @@ on:
     tags:
       - "v*"
 
+env:
+  CHANGELOG_PATH: "${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/CHANGELOG.md"
+
 # For some reason, the builds like to be nested in extra nightfire-open
 # directories, and I can't find a way to stop that from happening. Whatever.
 
 jobs:
+  check-release-notes:
+    name: Check release notes are present
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    # If this fails, it should fail the step.
+    - shell: bash
+      run: stat $CHANGELOG_PATH
+
   build-linux:
     name: Build on Ubuntu Latest
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    needs: check-release-notes
 
     steps:
     - uses: actions/checkout@v3
@@ -44,7 +61,8 @@ jobs:
 
   build-windows:
     name: Build on Windows
-    runs-on: windows-latest
+    runs-on: windows-2022
+    needs: check-release-notes
 
     steps:
     - uses: actions/checkout@v3
@@ -76,7 +94,7 @@ jobs:
         path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.zip
 
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-windows, build-linux]
     permissions:
       contents: write
@@ -97,6 +115,7 @@ jobs:
         with:
           token: ${{secrets.GITHUB_TOKEN}}
           name: Release ${{github.ref_name}}
+          body_path: $CHANGELOG_PATH
           files:  |
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
             ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.zip
