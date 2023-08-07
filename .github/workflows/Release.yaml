@@ -65,7 +65,7 @@ jobs:
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: 'zip'
-        filename: 'nightfire-open_windows.zip'
+        filename: 'nightfire-open_${{github.ref_name}}_windows.zip'
         directory: ${{runner.workspace}}
         path: nightfire-open/install
 
