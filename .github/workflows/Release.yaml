@@ -186,6 +186,8 @@ jobs:
       - shell: bash
         run: |
           cd ${{runner.workspace}}
+          mkdir -p ${{runner.workspace}}/staging/linux
+          mkdir -p ${{runner.workspace}}/staging/windows
 
           tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
           tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
