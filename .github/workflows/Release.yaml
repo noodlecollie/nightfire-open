@@ -187,6 +187,8 @@ jobs:
 
       # We do this little dance to use the LFS content for both builds, which at the moment are both .tar.gz files.
       # We will then re-archive them later.
+      # Windows paths are different because the zip process from the Windows step sucks, and can't produce
+      # the file structure that we want within the archive.
       - shell: bash
         run: |
           cd ${{runner.workspace}}
@@ -194,11 +196,11 @@ jobs:
           mkdir -p ${{runner.workspace}}/staging/windows
 
           tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
+          tar -xzf --overwrite ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
           ls ${{runner.workspace}}/staging/linux
 
           tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
+          tar -xzf --overwrite ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
           ls ${{runner.workspace}}/staging/windows
 
           rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
@@ -208,8 +210,8 @@ jobs:
       - name: Archive Windows Release
         uses: thedoctor0/zip-release@0.7.1
         with:
-          type: 'zip'
-          filename: 'nightfire-open_${{github.ref_name}}_windows.zip'
+          type: zip
+          filename: nightfire-open_${{github.ref_name}}_windows.zip
           directory: ${{runner.workspace}}/staging/windows
 
       - shell: bash
@@ -226,4 +228,4 @@ jobs:
           generate_release_notes: true
           files:  |
             ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_linux.tar.gz
-            ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.zip
+            ${{runner.workspace}}/staging/windows/nightfire-open_${{github.ref_name}}_windows.zip
