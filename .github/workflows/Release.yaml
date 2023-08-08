@@ -156,7 +156,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: artefacts_windows
-        path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.tar.gz
+        path: ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz
 
   create-release:
     name: Create release
