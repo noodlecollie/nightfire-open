@@ -75,6 +75,10 @@ jobs:
         mkdir -p ${{runner.workspace}}/nightfire-open/install/nightfire-open
         echo "Testing" > ${{runner.workspace}}/nightfire-open/install/nightfire-open/this-should-be-alongside-the-bond-executable.txt
 
+    #######################################
+    # End
+    #######################################
+
     - shell: bash
       run: |
         cd ${{runner.workspace}}
@@ -143,8 +147,8 @@ jobs:
     - name: Archive Release
       uses: thedoctor0/zip-release@0.7.1
       with:
-        type: 'tar'
-        filename: 'nightfire-open_${{github.ref_name}}_windows.tar.gz'
+        type: tar
+        filename: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.tar.gz
         directory: ${{runner.workspace}}/nightfire-open/install
 
     - name: Upload build
@@ -159,6 +163,8 @@ jobs:
     needs: [build-windows, build-linux]
     permissions:
       contents: write
+    env:
+      ARTEFACT_PATH: ${{runner.workspace}}/nightfire-open
 
     steps:
       - uses: actions/checkout@v3
@@ -188,17 +194,17 @@ jobs:
           mkdir -p ${{runner.workspace}}/staging/linux
           mkdir -p ${{runner.workspace}}/staging/windows
 
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
+          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
+          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
           ls ${{runner.workspace}}/staging/linux
 
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
+          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
+          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
           ls ${{runner.workspace}}/staging/windows
 
-          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
-          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz
-          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
+          rm $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_linux.tar.gz
+          rm $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_windows.tar.gz
+          rm $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
 
       - name: Archive Windows Release
         uses: thedoctor0/zip-release@0.7.1
