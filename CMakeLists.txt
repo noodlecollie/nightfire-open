@@ -22,6 +22,7 @@ option(NF_ENABLE_TESTS "Enables test code in targets" OFF)
 option(NF_ENABLE_CUSTOM_SWAP "Enables custom memory swap code for specialist devices with no swap functionality" OFF)
 option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled for dedicated server builds)" OFF)
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client" ON)
+option(NF_INSTALL_CONTENT_ONLY "If enabled, only installs game content to install directory, and does not build game. Only used by release process." OFF)
 
 include(project_definitions)
 
@@ -83,6 +84,9 @@ if(NOT USE_ALLOCA_SUPPORTED)
 	message(FATAL_ERROR "Could not determine alloca support in either alloca.h or malloc.h")
 endif()
 
-add_subdirectory(platformlib)
-add_subdirectory(xash3d_engine)
+if(NOT NF_INSTALL_CONTENT_ONLY)
+	add_subdirectory(platformlib)
+	add_subdirectory(xash3d_engine)
+endif()
+
 add_subdirectory(game)

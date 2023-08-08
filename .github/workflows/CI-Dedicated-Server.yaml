@@ -6,10 +6,11 @@ on:
 
 jobs:
   build-linux:
-    name: Build on Ubuntu Latest
-    runs-on: ubuntu-latest
+    name: Build on Ubuntu
+    runs-on: ubuntu-22.04
 
     steps:
+    # This does not use LFS because it's only for compiling code.
     - uses: actions/checkout@v3
       with:
         submodules: recursive
@@ -24,14 +25,14 @@ jobs:
         cc: gcc
         cxx: g++
         build-type: MinSizeRel
-        target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
+        configure-options: -DNF_DEDICATED_SERVER=YES
 
   build-windows:
     name: Build on Windows
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
+    # This does not use LFS because it's only for compiling code.
     - uses: actions/checkout@v3
       with:
         submodules: recursive
@@ -43,5 +44,4 @@ jobs:
         cc: cl
         cxx: cl
         build-type: MinSizeRel
-        target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
+        configure-options: -DNF_DEDICATED_SERVER=YES
