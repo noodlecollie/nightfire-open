@@ -200,7 +200,7 @@ jobs:
           ls ${{runner.workspace}}/staging/linux
 
           tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows/install
           ls ${{runner.workspace}}/staging/windows
 
           rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
@@ -212,7 +212,7 @@ jobs:
         with:
           type: zip
           filename: nightfire-open_${{github.ref_name}}_windows.zip
-          directory: ${{runner.workspace}}/staging/windows
+          directory: ${{runner.workspace}}/staging/windows/install
 
       - shell: bash
         run: |
@@ -228,4 +228,4 @@ jobs:
           generate_release_notes: true
           files:  |
             ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_linux.tar.gz
-            ${{runner.workspace}}/staging/windows/nightfire-open_${{github.ref_name}}_windows.zip
+            ${{runner.workspace}}/staging/windows/install/nightfire-open_${{github.ref_name}}_windows.zip
