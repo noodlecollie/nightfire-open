@@ -40,7 +40,7 @@ jobs:
         lfs: true
 
     - name: Checkout LFS objects
-        run: git lfs checkout
+      run: git lfs checkout
 
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y libsdl2-dev
