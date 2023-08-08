@@ -6,8 +6,8 @@ on:
 
 jobs:
   build-linux:
-    name: Build on Ubuntu Latest
-    runs-on: ubuntu-latest
+    name: Build on Ubuntu
+    runs-on: ubuntu-22.04
 
     steps:
     # This does not use LFS because it's only for compiling code.
@@ -30,7 +30,7 @@ jobs:
 
   build-windows:
     name: Build on Windows
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     # This does not use LFS because it's only for compiling code.

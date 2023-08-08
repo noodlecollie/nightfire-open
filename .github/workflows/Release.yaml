@@ -7,6 +7,7 @@ on:
 
 # For some reason, the builds like to be nested in extra nightfire-open
 # directories, and I can't find a way to stop that from happening. Whatever.
+# If this looks ugly, it's because I am very much not a CI guy.
 
 jobs:
   check-release-notes:
@@ -90,8 +91,8 @@ jobs:
         name: lfscontent
         path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
 
-  build-linux:
-    name: Build on Ubuntu
+  build-game-linux:
+    name: Build game on Ubuntu
     runs-on: ubuntu-22.04
     needs: archive-content
 
@@ -116,16 +117,50 @@ jobs:
     - shell: bash
       run: |
         cd ${{runner.workspace}}
-        tar -czvf nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
+        tar -czvf nightfire-open_${{github.ref_name}}_game_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
 
-    - name: Upload build
+    - name: Upload linux build
       uses: actions/upload-artifact@v3
       with:
-        name: artefacts_linux
-        path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_linux.tar.gz
+        name: artefacts_game_linux
+        path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_game_linux.tar.gz
 
-  build-windows:
-    name: Build on Windows
+  build-dedicated-server-linux:
+    name: Build dedicated server on Ubuntu
+    runs-on: ubuntu-22.04
+
+    steps:
+    # This does not use LFS because it's only for compiling code.
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y libsdl2-dev
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: gcc
+        cxx: g++
+        build-type: MinSizeRel
+        target: install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
+
+    - shell: bash
+      run: |
+        cd ${{runner.workspace}}
+        tar -czvf nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz -C ${{runner.workspace}}/nightfire-open/install/ .
+
+    - name: Upload linux build
+      uses: actions/upload-artifact@v3
+      with:
+        name: artefacts_dedicated_server_linux
+        path: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz
+
+  build-game-windows:
+    name: Build game on Windows
     runs-on: windows-2022
     needs: archive-content
 
@@ -148,20 +183,54 @@ jobs:
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: tar
-        filename: nightfire-open_${{github.ref_name}}_windows.tar.gz
+        filename: nightfire-open_${{github.ref_name}}_game_windows.tar.gz
         directory: ${{runner.workspace}}/nightfire-open
         path: install
 
-    - name: Upload build
+    - name: Upload Windows build
       uses: actions/upload-artifact@v3
       with:
-        name: artefacts_windows
-        path: ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz
+        name: artefacts_game_windows
+        path: ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_game_windows.tar.gz
+
+  build-dedicated-server-windows:
+    name: Build dedicated server on Windows
+    runs-on: windows-2022
+
+    steps:
+    # This does not use LFS because it's only for compiling code.
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: cl
+        cxx: cl
+        build-type: MinSizeRel
+        target: install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
+
+    - name: Archive Release
+      uses: thedoctor0/zip-release@0.7.1
+      with:
+        type: tar
+        filename: nightfire-open_${{github.ref_name}}_dedicated_server_windows.tar.gz
+        directory: ${{runner.workspace}}/nightfire-open
+        path: install
+
+    - name: Upload Windows build
+      uses: actions/upload-artifact@v3
+      with:
+        name: artefacts_dedicated_server_windows
+        path: ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_dedicated_server_windows.tar.gz
 
   create-release:
     name: Create release
     runs-on: ubuntu-22.04
-    needs: [build-windows, build-linux]
+    needs: [build-game-windows, build-game-linux, build-dedicated-server-windows, build-dedicated-server-linux]
     permissions:
       contents: write
 
@@ -170,54 +239,107 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Download Linux artefacts
-        uses: actions/download-artifact@v3
-        with:
-          name: artefacts_linux
-
-      - name: Download Windows artefacts
-        uses: actions/download-artifact@v3
-        with:
-          name: artefacts_windows
-
       - name: Download LFS content
         uses: actions/download-artifact@v3
         with:
           name: lfscontent
 
-      # We do this little dance to use the LFS content for both builds, which at the moment are both .tar.gz files.
+      # We do this little dance to use the LFS content for all builds, which at the moment are all .tar.gz files.
       # We will then re-archive them later.
       # Windows paths are different because the zip process from the Windows step sucks, and can't produce
       # the file structure that we want within the archive.
+
+      - name: Download Linux game artefacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artefacts_game_linux
+
       - shell: bash
         run: |
           cd ${{runner.workspace}}
-          mkdir -p ${{runner.workspace}}/staging/linux
-          mkdir -p ${{runner.workspace}}/staging/windows
+          mkdir -p ${{runner.workspace}}/staging/linux_game
 
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
-          ls ${{runner.workspace}}/staging/linux
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_game_linux.tar.gz -C ${{runner.workspace}}/staging/linux_game
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux_game
+          ls ${{runner.workspace}}/staging/linux_game
 
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
-          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows/install
-          ls ${{runner.workspace}}/staging/windows
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_game_linux.tar.gz
 
-          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
-          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz
-          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
+          # Archive the release
+          tar -czvf nightfire-open_${{github.ref_name}}_game_linux.tar.gz -C ${{runner.workspace}}/staging/linux .
+          rm -rf ${{runner.workspace}}/staging/linux_game
+
+      - name: Download Linux dedicated server artefacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artefacts_dedicated_server_linux
+
+      - shell: bash
+        run: |
+          cd ${{runner.workspace}}
+          mkdir -p ${{runner.workspace}}/staging/linux_dedicated_server
+
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz -C ${{runner.workspace}}/staging/linux_dedicated_server
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux_dedicated_server
+          ls ${{runner.workspace}}/staging/linux_dedicated_server
+
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz
+
+          # Archive the release
+          tar -czvf nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz -C ${{runner.workspace}}/staging/linux .
+          rm -rf ${{runner.workspace}}/staging/linux_dedicated_server
+
+      - name: Download Windows game artefacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artefacts_game_windows
+
+      - shell: bash
+        run: |
+          cd ${{runner.workspace}}
+          mkdir -p ${{runner.workspace}}/staging/windows_game
+
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_game_windows.tar.gz -C ${{runner.workspace}}/staging/windows_game
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows_game/install
+          ls ${{runner.workspace}}/staging/windows_game
+
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_game_windows.tar.gz
 
       - name: Archive Windows Release
         uses: thedoctor0/zip-release@0.7.1
         with:
           type: zip
-          filename: nightfire-open_${{github.ref_name}}_windows.zip
+          filename: nightfire-open_${{github.ref_name}}_game_windows.zip
           directory: ${{runner.workspace}}/staging/windows/install
+
+      - shell: bash
+        run: rm -rf ${{runner.workspace}}/staging/windows_game
+
+    - name: Download Windows dedicated server artefacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artefacts_dedicated_server_windows
 
       - shell: bash
         run: |
           cd ${{runner.workspace}}
-          tar -czvf nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux .
+          mkdir -p ${{runner.workspace}}/staging/windows_dedicated_server
+
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_dedicated_server_windows.tar.gz -C ${{runner.workspace}}/staging/windows_dedicated_server
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows_dedicated_server/install
+          ls ${{runner.workspace}}/staging/windows_dedicated_server
+
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_dedicated_server_windows.tar.gz
+
+      - name: Archive Windows Release
+        uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: zip
+          filename: nightfire-open_${{github.ref_name}}_dedicated_server_windows.zip
+          directory: ${{runner.workspace}}/staging/windows/install
+
+      - shell: bash
+        run: rm -rf ${{runner.workspace}}/staging/windows_dedicated_server
 
       - name: Create release
         uses: 'softprops/action-gh-release@v1'
@@ -227,5 +349,7 @@ jobs:
           body_path: ${{runner.workspace}}/nightfire-open/releases/${{github.ref_name}}/ReleaseNotes.md
           generate_release_notes: true
           files:  |
-            ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_linux.tar.gz
-            ${{runner.workspace}}/staging/windows/install/nightfire-open_${{github.ref_name}}_windows.zip
+            ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_game_linux.tar.gz
+            ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz
+            ${{runner.workspace}}/staging/windows/install/nightfire-open_${{github.ref_name}}_game_windows.zip
+            ${{runner.workspace}}/staging/windows/install/nightfire-open_${{github.ref_name}}_dedicated_server_windows.zip
