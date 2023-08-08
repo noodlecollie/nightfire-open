@@ -268,7 +268,7 @@ jobs:
           rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_game_linux.tar.gz
 
           # Archive the release
-          tar -czvf nightfire-open_${{github.ref_name}}_game_linux.tar.gz -C ${{runner.workspace}}/staging/linux .
+          tar -czvf nightfire-open_${{github.ref_name}}_game_linux.tar.gz -C ${{runner.workspace}}/staging/linux_game .
           rm -rf ${{runner.workspace}}/staging/linux_game
 
       - name: Download Linux dedicated server artefacts
@@ -288,7 +288,7 @@ jobs:
           rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz
 
           # Archive the release
-          tar -czvf nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz -C ${{runner.workspace}}/staging/linux .
+          tar -czvf nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz -C ${{runner.workspace}}/staging/linux_dedicated_server .
           rm -rf ${{runner.workspace}}/staging/linux_dedicated_server
 
       - name: Download Windows game artefacts
@@ -312,10 +312,7 @@ jobs:
         with:
           type: zip
           filename: nightfire-open_${{github.ref_name}}_game_windows.zip
-          directory: ${{runner.workspace}}/staging/windows/install
-
-      - shell: bash
-        run: rm -rf ${{runner.workspace}}/staging/windows_game
+          directory: ${{runner.workspace}}/staging/windows_game/install
 
       - name: Download Windows dedicated server artefacts
         uses: actions/download-artifact@v3
@@ -338,10 +335,7 @@ jobs:
         with:
           type: zip
           filename: nightfire-open_${{github.ref_name}}_dedicated_server_windows.zip
-          directory: ${{runner.workspace}}/staging/windows/install
-
-      - shell: bash
-        run: rm -rf ${{runner.workspace}}/staging/windows_dedicated_server
+          directory: ${{runner.workspace}}/staging/windows_dedicated_server/install
 
       - name: Create release
         uses: 'softprops/action-gh-release@v1'
@@ -353,5 +347,5 @@ jobs:
           files:  |
             ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_game_linux.tar.gz
             ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_dedicated_server_linux.tar.gz
-            ${{runner.workspace}}/staging/windows/install/nightfire-open_${{github.ref_name}}_game_windows.zip
-            ${{runner.workspace}}/staging/windows/install/nightfire-open_${{github.ref_name}}_dedicated_server_windows.zip
+            ${{runner.workspace}}/staging/windows_game/install/nightfire-open_${{github.ref_name}}_game_windows.zip
+            ${{runner.workspace}}/staging/windows_dedicated_server/install/nightfire-open_${{github.ref_name}}_dedicated_server_windows.zip
