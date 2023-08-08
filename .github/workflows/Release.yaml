@@ -315,7 +315,7 @@ jobs:
       - shell: bash
         run: rm -rf ${{runner.workspace}}/staging/windows_game
 
-    - name: Download Windows dedicated server artefacts
+      - name: Download Windows dedicated server artefacts
         uses: actions/download-artifact@v3
         with:
           name: artefacts_dedicated_server_windows
