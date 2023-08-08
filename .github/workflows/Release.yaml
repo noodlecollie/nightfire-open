@@ -148,8 +148,9 @@ jobs:
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: tar
-        filename: ${{runner.workspace}}/nightfire-open_${{github.ref_name}}_windows.tar.gz
+        filename: nightfire-open_${{github.ref_name}}_windows.tar.gz
         directory: ${{runner.workspace}}/nightfire-open/install
+        path: .
 
     - name: Upload build
       uses: actions/upload-artifact@v3
