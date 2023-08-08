@@ -145,8 +145,7 @@ jobs:
       with:
         type: 'tar'
         filename: 'nightfire-open_${{github.ref_name}}_windows.tar.gz'
-        directory: ${{runner.workspace}}
-        path: nightfire-open/install
+        directory: ${{runner.workspace}}/nightfire-open/install
 
     - name: Upload build
       uses: actions/upload-artifact@v3
@@ -206,8 +205,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'nightfire-open_${{github.ref_name}}_windows.zip'
-          directory: ${{runner.workspace}}
-          path: staging/windows
+          directory: ${{runner.workspace}}/staging/windows
 
       - shell: bash
         run: |
