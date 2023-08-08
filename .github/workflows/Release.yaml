@@ -163,8 +163,6 @@ jobs:
     needs: [build-windows, build-linux]
     permissions:
       contents: write
-    env:
-      ARTEFACT_PATH: ${{runner.workspace}}/nightfire-open
 
     steps:
       - uses: actions/checkout@v3
@@ -194,17 +192,17 @@ jobs:
           mkdir -p ${{runner.workspace}}/staging/linux
           mkdir -p ${{runner.workspace}}/staging/windows
 
-          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
-          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz -C ${{runner.workspace}}/staging/linux
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/linux
           ls ${{runner.workspace}}/staging/linux
 
-          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
-          tar -xzf $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz -C ${{runner.workspace}}/staging/windows
+          tar -xzf ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz -C ${{runner.workspace}}/staging/windows
           ls ${{runner.workspace}}/staging/windows
 
-          rm $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_linux.tar.gz
-          rm $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_windows.tar.gz
-          rm $ARTEFACT_PATH/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_linux.tar.gz
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_windows.tar.gz
+          rm ${{runner.workspace}}/nightfire-open/nightfire-open_${{github.ref_name}}_lfscontent.tar.gz
 
       - name: Archive Windows Release
         uses: thedoctor0/zip-release@0.7.1
