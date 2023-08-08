@@ -30,55 +30,34 @@ jobs:
     needs: check-release-notes
 
     steps:
-    #######################################
-    # TODO: Re-enable this
-    #######################################
-
-    # # LFS is only enabled in this step, because it's expensive.
-    # # We create an archive of the content from here and
-    # # upload it, so that we can download it later and
-    # # sidestep GitHub's LFS bandwidth tracking.
-    # - uses: actions/checkout@v3
-    #   with:
-    #     submodules: recursive
-    #     lfs: true
-
-    # - name: Checkout LFS objects
-    #     run: git lfs checkout
-
-    # - name: Install dependencies
-    #   run: sudo apt update && sudo apt install -y libsdl2-dev
-
-    # # We run the install process because things may not be
-    # # as simple as just copying and pasting the content folder
-    # # into the install prefix. There could be files that are
-    # # generated as part of this process in future.
-    # - name: Collect content
-    #   uses: ashutoshvarma/action-cmake-build@master
-    #   with:
-    #     build-dir: ${{runner.workspace}}/build
-    #     cc: gcc
-    #     cxx: g++
-    #     build-type: MinSizeRel
-    #     target: install
-    #     configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_INSTALL_CONTENT_ONLY=YES
-
-    #######################################
-    # For the dry run, we do this instead:
-    #######################################
-
+    # LFS is only enabled in this step, because it's expensive.
+    # We create an archive of the content from here and
+    # upload it, so that we can download it later and
+    # sidestep GitHub's LFS bandwidth tracking.
     - uses: actions/checkout@v3
       with:
         submodules: recursive
+        lfs: true
 
-    - shell: bash
-      run: |
-        mkdir -p ${{runner.workspace}}/nightfire-open/install/nightfire-open
-        echo "Testing" > ${{runner.workspace}}/nightfire-open/install/nightfire-open/this-should-be-alongside-the-bond-executable.txt
+    - name: Checkout LFS objects
+        run: git lfs checkout
 
-    #######################################
-    # End
-    #######################################
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y libsdl2-dev
+
+    # We run the install process because things may not be
+    # as simple as just copying and pasting the content folder
+    # into the install prefix. There could be files that are
+    # generated as part of this process in future.
+    - name: Collect content
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: gcc
+        cxx: g++
+        build-type: MinSizeRel
+        target: install
+        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_INSTALL_CONTENT_ONLY=YES
 
     - shell: bash
       run: |

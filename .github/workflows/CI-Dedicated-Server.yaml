@@ -25,8 +25,7 @@ jobs:
         cc: gcc
         cxx: g++
         build-type: MinSizeRel
-        target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
+        configure-options: -DNF_DEDICATED_SERVER=YES
 
   build-windows:
     name: Build on Windows
@@ -45,5 +44,4 @@ jobs:
         cc: cl
         cxx: cl
         build-type: MinSizeRel
-        target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_DEDICATED_SERVER=YES
+        configure-options: -DNF_DEDICATED_SERVER=YES
