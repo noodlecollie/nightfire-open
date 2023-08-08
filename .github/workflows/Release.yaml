@@ -94,7 +94,7 @@ jobs:
   build-game-linux:
     name: Build game on Ubuntu
     runs-on: ubuntu-22.04
-    needs: archive-content
+    needs: check-release-notes
 
     steps:
     - uses: actions/checkout@v3
@@ -128,6 +128,7 @@ jobs:
   build-dedicated-server-linux:
     name: Build dedicated server on Ubuntu
     runs-on: ubuntu-22.04
+    needs: check-release-notes
 
     steps:
     # This does not use LFS because it's only for compiling code.
@@ -162,7 +163,7 @@ jobs:
   build-game-windows:
     name: Build game on Windows
     runs-on: windows-2022
-    needs: archive-content
+    needs: check-release-notes
 
     steps:
     - uses: actions/checkout@v3
@@ -196,6 +197,7 @@ jobs:
   build-dedicated-server-windows:
     name: Build dedicated server on Windows
     runs-on: windows-2022
+    needs: check-release-notes
 
     steps:
     # This does not use LFS because it's only for compiling code.
@@ -230,7 +232,7 @@ jobs:
   create-release:
     name: Create release
     runs-on: ubuntu-22.04
-    needs: [build-game-windows, build-game-linux, build-dedicated-server-windows, build-dedicated-server-linux]
+    needs: [archive-content, build-game-windows, build-game-linux, build-dedicated-server-windows, build-dedicated-server-linux]
     permissions:
       contents: write
 
