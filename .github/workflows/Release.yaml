@@ -149,8 +149,8 @@ jobs:
       with:
         type: tar
         filename: nightfire-open_${{github.ref_name}}_windows.tar.gz
-        directory: ${{runner.workspace}}/nightfire-open/install
-        path: .
+        directory: ${{runner.workspace}}/nightfire-open
+        path: install
 
     - name: Upload build
       uses: actions/upload-artifact@v3
