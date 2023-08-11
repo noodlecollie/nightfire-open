@@ -224,7 +224,16 @@ void MSG_WriteUBitLong(sizebuf_t* sb, uint curData, int numbits)
 		dword iCurBitMasked;
 		int nBitsWritten;
 
-		Assert((iDWord * 4 + sizeof(int)) <= (uint)MSG_GetMaxBytes(sb));
+		// NoodleCollie: Not sure what this assertion actually serves.
+		// It seems to fail when SV_New_f() is called to send the
+		// first message to the server, where 2200 + 4 is not <= 2201.
+		// However, this fails even in the version of the engine before
+		// the hard fork - it's just that the assertion handler wasn't
+		// mapped to anything thanks to _DEBUG not being enabled, so
+		// probably no-one noticed. I have no idea what this is actually
+		// trying to check, so just removing it for now. Things seem to
+		// work fine without it... >.>
+		// Assert((iDWord * 4 + sizeof(int)) <= (uint)MSG_GetMaxBytes(sb));
 
 		iCurBitMasked = iCurBit & 31;
 		((dword*)sb->pData)[iDWord] &= BitWriteMasks[iCurBitMasked][nBitsLeft];

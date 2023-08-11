@@ -26,6 +26,7 @@ GNU General Public License for more details.
 #include "sequence.h"
 #include "model_dump.h"
 #include "common/bsp/generic/viscompress.h"
+#include "net_functions.h"
 
 #define MAX_TOTAL_CMDS 32
 #define MAX_CMD_BUFFER 8000
@@ -2457,6 +2458,22 @@ void CL_Reconnect_f(void)
 	}
 }
 
+void CL_NetStatus_f(void)
+{
+	net_status_t status;
+
+	memset(&status, 0, sizeof(status));
+	NetAPI_Status(&status);
+
+	Con_Printf("NET Connected: %s\n", status.connected ? "true" : "false");
+	Con_Printf("NET Connection time: %.3fs\n", status.connection_time);
+	Con_Printf("NET Local address: %s\n", NET_AdrToString(status.local_address));
+	Con_Printf("NET Remote address: %s\n", NET_AdrToString(status.remote_address));
+	Con_Printf("NET Latency: %.3f\n", status.latency);
+	Con_Printf("NET Packet loss: %d\n", status.packet_loss);
+	Con_Printf("NET Rate: %.3f\n", status.rate);
+}
+
 /*
 =================
 CL_FixupColorStringsForInfoString
@@ -2935,7 +2952,7 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		// serverlist got from masterserver
 		while ( MSG_GetNumBitsLeft(msg) > 8 )
 		{
-			MSG_ReadBytes(msg, servadr.ip.ip4.ip.bytes, sizeof(servadr.ip));  // 4 bytes for IP
+			MSG_ReadBytes(msg, servadr.ip.ip4.ip.bytes, sizeof(servadr.ip.ip4.ip.bytes));  // 4 bytes for IP
 			servadr.port = (uint16_t)MSG_ReadShort(msg);  // 2 bytes for Port
 			servadr.ip.ip4.type = NA_IP;
 
@@ -3787,6 +3804,7 @@ void CL_InitLocal(void)
 
 	Cmd_AddCommand("connect", CL_Connect_f, "connect to a server by hostname");
 	Cmd_AddCommand("reconnect", CL_Reconnect_f, "reconnect to current level");
+	Cmd_AddCommand("netstatus", CL_NetStatus_f, "Print network connection information to console");
 
 	Cmd_AddCommand(
 		"rcon",

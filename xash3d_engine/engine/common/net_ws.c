@@ -324,7 +324,7 @@ static void NET_NetadrToSockadr(netadr_t* a, struct sockaddr_storage* s)
 	else if ( a->ip.ip4.type == NA_IP )
 	{
 		((struct sockaddr_in*)s)->sin_family = AF_INET;
-		((struct sockaddr_in*)s)->sin_addr.s_addr = *(uint32_t*)&a->ip;
+		((struct sockaddr_in*)s)->sin_addr.s_addr = *(uint32_t*)&a->ip.ip4.ip;
 		((struct sockaddr_in*)s)->sin_port = a->port;
 	}
 	else if ( a->ip.ip6.type6 == NA_IP6 )
@@ -890,7 +890,7 @@ qboolean NET_CompareBaseAdr(const netadr_t a, const netadr_t b)
 
 	if ( a.ip.ip4.type == NA_IP )
 	{
-		return a.ip.ip4.ip.bytes == b.ip.ip4.ip.bytes;
+		return a.ip.ip4.ip.full == b.ip.ip4.ip.full;
 	}
 
 	if ( a.ip.ip6.type6 == NA_IP6 )

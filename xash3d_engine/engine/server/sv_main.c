@@ -477,7 +477,9 @@ void SV_ReadPackets(void)
 					SV_RemoteCommand(net_from, &net_message);
 			}
 			else
+			{
 				SV_ConnectionlessPacket(net_from, &net_message);
+			}
 
 			continue;
 		}
@@ -495,21 +497,31 @@ void SV_ReadPackets(void)
 			cl = sv.current_client;
 
 			if ( cl->state == cs_free || FBitSet(cl->flags, FCL_FAKECLIENT) )
+			{
 				continue;
+			}
 
 			if ( !NET_CompareBaseAdr(net_from, cl->netchan.remote_address) )
+			{
 				continue;
+			}
 
 			if ( cl->netchan.qport != qport )
+			{
 				continue;
+			}
 
 			if ( cl->netchan.remote_address.port != net_from.port )
+			{
 				cl->netchan.remote_address.port = net_from.port;
+			}
 
 			if ( Netchan_Process(&cl->netchan, &net_message) )
 			{
 				if ( (svs.maxclients == 1 && !host_limitlocal->value) || (cl->state != cs_spawned) )
+				{
 					SetBits(cl->flags, FCL_SEND_NET_MESSAGE);  // reply at end of frame
+				}
 
 				// this is a valid, sequenced packet, so process it
 				if ( cl->frames != NULL && cl->state != cs_zombie )
@@ -544,11 +556,14 @@ void SV_ReadPackets(void)
 					SV_ProcessFile(cl, cl->netchan.incomingfilename);
 				}
 			}
+
 			break;
 		}
 
 		if ( i != svs.maxclients )
+		{
 			continue;
+		}
 	}
 
 	sv.current_client = NULL;
