@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #endif
 
 #include "PlatformLib/File.h"
+#include "PlatformLib/String.h"
 
 static char id_md5[33];
 static char id_customid[MAX_STRING];
@@ -642,7 +643,7 @@ void ID_Init(void)
 #endif
 
 #if XASH_ANDROID && !XASH_DEDICATED
-	sscanf(Android_LoadID(), "%016llX", &id);
+	PlatformLib_SScanF(Android_LoadID(), "%016llX", &id);
 	if ( id )
 	{
 		id ^= SYSTEM_XOR_MASK;
@@ -654,7 +655,7 @@ void ID_Init(void)
 		CHAR szBuf[MAX_PATH];
 		ID_GetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", "xash_id", (LPBYTE)szBuf, MAX_PATH);
 
-		sscanf(szBuf, "%016llX", &id);
+		PlatformLib_SScanF(szBuf, "%016llX", &id);
 		id ^= SYSTEM_XOR_MASK;
 		ID_Check();
 	}
@@ -693,7 +694,7 @@ void ID_Init(void)
 		const char* buf = (const char*)FS_LoadFile(".xash_id", NULL, false);
 		if ( buf )
 		{
-			sscanf(buf, "%016llX", (long long unsigned int*)&id);
+			PlatformLib_SScanF(buf, "%016llX", (long long unsigned int*)&id);
 			id ^= GAME_XOR_MASK;
 			ID_Check();
 		}
@@ -713,7 +714,7 @@ void ID_Init(void)
 #elif XASH_WIN32
 	{
 		CHAR Buf[MAX_PATH];
-		sprintf(Buf, "%016llX", id ^ SYSTEM_XOR_MASK);
+		PlatformLib_SNPrintF(Buf, sizeof(Buf), "%016llX", id ^ SYSTEM_XOR_MASK);
 		ID_SetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", REG_SZ, "xash_id", (LPBYTE)Buf, (DWORD)Q_strlen(Buf));
 	}
 #else

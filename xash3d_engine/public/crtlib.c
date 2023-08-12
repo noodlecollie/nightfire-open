@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "stdio.h"
 #include "crtlib.h"
 #include "xash3d_mathlib.h"
+#include "PlatformLib/Time.h"
 
 void Q_strnlwr(const char* in, char* out, size_t size_out)
 {
@@ -454,7 +455,7 @@ const char* Q_timestamp(int format)
 	string timestring;
 
 	time(&crt_time);
-	crt_tm = localtime(&crt_time);
+	crt_tm = PlatformLib_LocalTime(&crt_time);
 
 	switch ( format )
 	{

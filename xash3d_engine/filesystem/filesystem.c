@@ -43,6 +43,8 @@ GNU General Public License for more details.
 #include "common/com_strings.h"
 #include "common/protocol.h"
 #include "PlatformLib/File.h"
+#include "PlatformLib/String.h"
+#include "PlatformLib/System.h"
 
 #define FILE_COPY_SIZE (1024 * 1024)
 
@@ -1156,11 +1158,11 @@ void FS_Rescan(void)
 		FS_AddPak_Fullpath(buf, NULL, extrasFlags);
 	}
 #else
-	str = getenv("XASH3D_EXTRAS_PAK1");
+	str = PlatformLib_GetEnv("XASH3D_EXTRAS_PAK1");
 	if ( COM_CheckString(str) )
 		FS_AddArchive_Fullpath(str, NULL, extrasFlags);
 
-	str = getenv("XASH3D_EXTRAS_PAK2");
+	str = PlatformLib_GetEnv("XASH3D_EXTRAS_PAK2");
 	if ( COM_CheckString(str) )
 		FS_AddArchive_Fullpath(str, NULL, extrasFlags);
 #endif
@@ -1646,11 +1648,7 @@ file_t* FS_SysOpen(const char* filepath, const char* mode)
 	file->filetime = FS_SysFileTime(filepath);
 	file->ungetc = EOF;
 
-#if XASH_WIN32
-	file->handle = _wopen(FS_PathToWideChar(filepath), mod | opt, 0666);
-#else
 	file->handle = PlatformLib_OpenWithPermissions(filepath, mod | opt, 0666);
-#endif
 
 #if !XASH_WIN32
 	if ( file->handle < 0 )
@@ -2652,7 +2650,7 @@ qboolean FS_Rename(const char* oldname, const char* newname)
 			oldname2,
 			newpath,
 			newname2,
-			strerror(errno));
+			PlatformLib_StrError(errno));
 		return false;
 	}
 
@@ -2683,7 +2681,7 @@ qboolean GAME_EXPORT FS_Delete(const char* path)
 	ret = remove(real_path);
 	if ( ret < 0 )
 	{
-		Con_Printf("%s: failed to delete file %s (%s): %s\n", __FUNCTION__, real_path, path, strerror(errno));
+		Con_Printf("%s: failed to delete file %s (%s): %s\n", __FUNCTION__, real_path, path, PlatformLib_StrError(errno));
 		return false;
 	}
 

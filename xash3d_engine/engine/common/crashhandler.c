@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #endif
 
 #include "common.h"
+#include "PlatformLib/Time.h"
 
 /*
 ================
@@ -231,7 +232,7 @@ static void Sys_GetProcessName(char* processName, size_t bufferSize)
 static void Sys_GetMinidumpFileName(const char* processName, char* mdmpFileName, size_t bufferSize)
 {
 	time_t currentUtcTime = time(NULL);
-	struct tm* currentLocalTime = localtime(&currentUtcTime);
+	const struct tm* currentLocalTime = PlatformLib_LocalTime(&currentUtcTime);
 
 	Q_snprintf(
 		mdmpFileName,

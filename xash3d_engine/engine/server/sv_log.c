@@ -15,11 +15,12 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "server.h"
+#include "PlatformLib/Time.h"
 
 void Log_Open(void)
 {
 	time_t ltime;
-	struct tm* today;
+	const struct tm* today;
 	char szFileBase[MAX_OSPATH];
 	char szTestFile[MAX_OSPATH];
 	file_t* fp = NULL;
@@ -42,7 +43,7 @@ void Log_Open(void)
 
 	// Find a new log file slot
 	time(&ltime);
-	today = localtime(&ltime);
+	today = PlatformLib_LocalTime(&ltime);
 	temp = Cvar_VariableString("logsdir");
 
 	if ( COM_CheckString(temp) && !Q_strchr(temp, ':') && !Q_strstr(temp, "..") )
@@ -109,14 +110,14 @@ void Log_Printf(const char* fmt, ...)
 	static char string[1024];
 	char* p;
 	time_t ltime;
-	struct tm* today;
+	const struct tm* today;
 	int len;
 
 	if ( !svs.log.active )
 		return;
 
 	time(&ltime);
-	today = localtime(&ltime);
+	today = PlatformLib_LocalTime(&ltime);
 
 	len = Q_snprintf(
 		string,

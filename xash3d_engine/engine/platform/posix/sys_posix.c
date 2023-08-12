@@ -108,7 +108,7 @@ void Posix_Daemonize(void)
 
 		if ( daemon < 0 )
 		{
-			Host_Error("fork() failed: %s\n", strerror(errno));
+			Host_Error("fork() failed: %s\n", PlatformLib_StrError(errno));
 		}
 
 		if ( daemon > 0 )
@@ -122,7 +122,7 @@ void Posix_Daemonize(void)
 			// don't be closed by parent
 			if ( setsid() < 0 )
 			{
-				Host_Error("setsid() failed: %s\n", strerror(errno));
+				Host_Error("setsid() failed: %s\n", PlatformLib_StrError(errno));
 			}
 
 			// set permissions

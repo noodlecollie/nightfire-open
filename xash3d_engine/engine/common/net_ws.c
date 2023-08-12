@@ -237,7 +237,7 @@ char* NET_ErrorString(void)
 			return "NO ERROR";
 	}
 #else
-	return strerror(errno);
+	return PlatformLib_StrError(errno);
 #endif
 }
 

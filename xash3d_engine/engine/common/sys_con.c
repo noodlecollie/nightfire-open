@@ -27,6 +27,8 @@ GNU General Public License for more details.
 #endif
 
 #include "PlatformLib/File.h"
+#include "PlatformLib/String.h"
+#include "PlatformLib/Time.h"
 
 // do not waste precious CPU cycles on mobiles or low memory devices
 #if !XASH_WIN32 && !XASH_MOBILE_PLATFORM && !XASH_LOW_MEMORY
@@ -143,11 +145,14 @@ void Sys_InitLog(void)
 	// create log if needed
 	if ( s_ld.log_active )
 	{
-		s_ld.logfile = fopen(s_ld.log_path, mode);
+		s_ld.logfile = PlatformLib_FOpen(s_ld.log_path, mode);
 
 		if ( !s_ld.logfile )
 		{
-			Con_Reportf(S_ERROR "Sys_InitLog: can't create log file %s: %s\n", s_ld.log_path, strerror(errno));
+			Con_Reportf(
+				S_ERROR "Sys_InitLog: can't create log file %s: %s\n",
+				s_ld.log_path,
+				PlatformLib_StrError(errno));
 			return;
 		}
 
@@ -330,7 +335,7 @@ void Sys_PrintLog(const char* pMsg)
 	static char lastchar;
 
 	time(&crt_time);
-	crt_tm = localtime(&crt_time);
+	crt_tm = PlatformLib_LocalTime(&crt_time);
 
 	if ( !lastchar || lastchar == '\n' )
 		strftime(logtime, sizeof(logtime), "[%H:%M:%S] ", crt_tm);  // short time

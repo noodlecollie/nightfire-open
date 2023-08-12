@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "filesystem_internal.h"
 #include "VFileSystem009.h"
 #include "common/com_strings.h"
+#include "PlatformLib/Time.h"
 
 #if __cplusplus < 201103L
 #define override
@@ -229,7 +230,7 @@ public:
 	void FileTimeToString(char* p, int size, long int time) override
 	{
 		const time_t curtime = time;
-		char* buf = ctime(&curtime);
+		const char* buf = PlatformLib_CTime(&curtime);
 
 		Q_strncpy(p, buf, size);
 	}

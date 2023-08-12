@@ -25,6 +25,7 @@ GNU General Public License for more details.
 #include "server.h"  // LUMP_ error codes
 #include "ref_common.h"
 #include "textureproperties.h"
+#include "PlatformLib/String.h"
 
 #define MIPTEX_CUSTOM_PALETTE_SIZE_BYTES (sizeof(int16_t) + 768)
 
@@ -474,7 +475,7 @@ static qboolean Mod_CalcMipTexUsesCustomPalette(dbspmodel_t* bmod, int textureIn
 	remainingBytes = (fs_offset_t)(bmod->texdatasize - (bmod->textures->dataofs[textureIndex] + size));
 	return (size_t)remainingBytes >= MIPTEX_CUSTOM_PALETTE_SIZE_BYTES;
 }
-#endif // !XASH_DEDICATED
+#endif  // !XASH_DEDICATED
 
 static qboolean Mod_NameImpliesTextureIsAnimated(texture_t* tex)
 {
@@ -2079,7 +2080,8 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 					Q_strcat(wadstring, ";");
 
 				// parse wad pathes
-				for ( pszWadFile = strtok(wadstring, ";"); pszWadFile != NULL; pszWadFile = strtok(NULL, ";") )
+				for ( pszWadFile = PlatformLib_StrTok(wadstring, ";"); pszWadFile != NULL;
+					  pszWadFile = PlatformLib_StrTok(NULL, ";") )
 				{
 					COM_FixSlashes(pszWadFile);
 					COM_FileBase(pszWadFile, token);

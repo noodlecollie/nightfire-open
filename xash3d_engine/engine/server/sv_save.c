@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "render_api.h"  // decallist_t
 #include "sound.h"  // S_GetDynamicSounds
 #include "ref_common.h"  // decals
+#include "PlatformLib/Time.h"
 
 /*
 ==============================================================================
@@ -2471,7 +2472,7 @@ int GAME_EXPORT SV_GetSaveComment(const char* savename, char* comment)
 		}
 
 		fileTime = FS_FileTime(savename, true);
-		file_tm = localtime(&fileTime);
+		file_tm = PlatformLib_LocalTime(&fileTime);
 
 		// split comment to sections
 		if ( Q_strstr(savename, "quick") )

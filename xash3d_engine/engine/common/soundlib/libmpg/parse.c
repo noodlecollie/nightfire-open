@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "mpg123.h"
 #include "getbits.h"
 #include <limits.h>
+#include "PlatformLib/String.h"
 
 #define TRACK_MAX_FRAMES (ULONG_MAX / 4 / 1152)
 #define FORGET_INTERVAL 1024  // used by callers to set forget flag each <n> bytes.
@@ -413,7 +414,7 @@ static int check_lame_tag(mpg123_handle_t* fr)
 
 			// Lame versions before 3.95.1 used 83 dB reference level, later
 			// versions 89 dB. We stick with 89 dB as being "normal", adding 6 dB.
-			if ( sscanf(nb + 4, "%u.%u%s", &major, &minor, rest) >= 2 )
+			if ( PlatformLib_SScanF(nb + 4, "%u.%u%s", &major, &minor, rest) >= 2 )
 			{
 				// We cannot detect LAME 3.95 reliably (same version string as
 				// 3.95.1), so this is a blind spot. Everything < 3.95 is safe, though.
