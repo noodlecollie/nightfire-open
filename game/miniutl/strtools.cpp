@@ -304,7 +304,7 @@ char* V_strncat(char* pDest, const char* pSrc, size_t destBufferSize, int max_ch
 		return pDest;
 	}
 
-	char* pOut = strncat(pDest, pSrc, charstocopy);
+	char* pOut = PlatformLib_StrNCat(pDest, destBufferSize, pSrc, charstocopy);
 	return pOut;
 }
 

@@ -44,7 +44,7 @@ static struct sbrk_state_s
 static void SWAP_Initialize(void)
 {
 	char* path;
-	char* prealloc = getenv("SWAP_SIZE");
+	char* prealloc = PlatformLib_GetEnv("SWAP_SIZE");
 	int fd;
 	int retval;
 
@@ -53,7 +53,7 @@ static void SWAP_Initialize(void)
 	if ( s.top )
 		return;
 
-	path = getenv("SWAP_PATH");
+	path = PlatformLib_GetEnv("SWAP_PATH");
 	if ( !path )
 		path = XASH_DEFAULT_SWAP_PATH;
 	fd = PlatformLib_OpenWithPermissions(path, O_CREAT | O_RDWR, 0600);

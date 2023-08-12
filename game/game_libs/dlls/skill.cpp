@@ -18,6 +18,7 @@
 #include "extdll.h"
 #include "util.h"
 #include "skill.h"
+#include "PlatformLib/String.h"
 
 skilldata_t gSkillData;
 
@@ -30,7 +31,7 @@ float GetSkillCvar(const char* pName)
 	float flValue;
 	char szBuffer[64];
 
-	sprintf(szBuffer, "%s%d", pName, gSkillData.iSkillLevel);
+	PlatformLib_SNPrintF(szBuffer, sizeof(szBuffer), "%s%d", pName, gSkillData.iSkillLevel);
 
 	flValue = CVAR_GET_FLOAT(szBuffer);
 
@@ -40,6 +41,7 @@ float GetSkillCvar(const char* pName)
 			at_warning,
 			"GetSkillCVar: Got invalid value %f for %s. Make sure the cvar exists and that its value value is "
 			"correct.\n",
+			flValue,
 			szBuffer);
 	}
 

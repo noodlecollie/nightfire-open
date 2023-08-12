@@ -21,6 +21,7 @@
 #include "player.h"
 #include "weapons.h"
 #include "pm_shared.h"
+#include "PlatformLib/String.h"
 
 extern int gmsgCurWeapon;
 extern int gmsgSetFOV;
@@ -265,7 +266,7 @@ void CBasePlayer::Observer_SetMode(int iMode)
 	// print spepctaor mode on client screen
 
 	char modemsg[16];
-	sprintf(modemsg, "#Spec_Mode%i", pev->iuser1);
+	PlatformLib_SNPrintF(modemsg, sizeof(modemsg), "#Spec_Mode%i", pev->iuser1);
 	ClientPrint(pev, HUD_PRINTCENTER, modemsg);
 
 	m_iObserverLastMode = iMode;

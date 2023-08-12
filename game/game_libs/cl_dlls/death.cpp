@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "miniutl.h"
+#include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_DeathNotice, DeathMsg)
 
@@ -188,8 +189,8 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char*, int iSize, void* pbuf)
 	int victim = READ_BYTE();
 
 	char killedwith[32];
-	strcpy(killedwith, "d_");
-	strncat(killedwith, READ_STRING(), sizeof(killedwith) - strlen(killedwith) - 1);
+	PlatformLib_StrCpy(killedwith, sizeof(killedwith), "d_");
+	PlatformLib_StrCat(killedwith, sizeof(killedwith), READ_STRING());
 
 	gHUD.m_Spectator.DeathMessage(victim);
 
@@ -220,7 +221,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char*, int iSize, void* pbuf)
 	else
 	{
 		rgDeathNoticeList[i].KillerColor = GetClientColor(killer);
-		strncpy(rgDeathNoticeList[i].szKiller, killer_name, MAX_PLAYER_NAME_LENGTH);
+		PlatformLib_StrCpy(rgDeathNoticeList[i].szKiller, sizeof(rgDeathNoticeList[i].szKiller), killer_name);
 		rgDeathNoticeList[i].szKiller[MAX_PLAYER_NAME_LENGTH - 1] = 0;
 	}
 
@@ -237,7 +238,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char*, int iSize, void* pbuf)
 	else
 	{
 		rgDeathNoticeList[i].VictimColor = GetClientColor(victim);
-		strncpy(rgDeathNoticeList[i].szVictim, victim_name, MAX_PLAYER_NAME_LENGTH);
+		PlatformLib_StrCpy(rgDeathNoticeList[i].szVictim, sizeof(rgDeathNoticeList[i].szVictim), victim_name);
 		rgDeathNoticeList[i].szVictim[MAX_PLAYER_NAME_LENGTH - 1] = 0;
 	}
 
@@ -247,7 +248,7 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char*, int iSize, void* pbuf)
 		rgDeathNoticeList[i].iNonPlayerKill = TRUE;
 
 		// Store the object's name in the Victim slot (skip the d_ bit)
-		strcpy(rgDeathNoticeList[i].szVictim, killedwith + 2);
+		PlatformLib_StrCpy(rgDeathNoticeList[i].szVictim, sizeof(rgDeathNoticeList[i].szVictim), killedwith + 2);
 	}
 	else
 	{
@@ -308,9 +309,14 @@ int CHudDeathNotice::MsgFunc_DeathMsg(const char*, int iSize, void* pbuf)
 
 			// replace the code names with the 'real' names
 			if ( !strcmp(killedwith + 2, "egon") )
-				strcpy(killedwith, "d_gluon gun");
+			{
+				PlatformLib_StrCpy(killedwith, sizeof(killedwith), "d_gluon gun");
+			}
+
 			if ( !strcmp(killedwith + 2, "gauss") )
-				strcpy(killedwith, "d_tau cannon");
+			{
+				PlatformLib_StrCpy(killedwith, sizeof(killedwith), "d_tau cannon");
+			}
 
 			ConsolePrint(killedwith + 2);  // skip over the "d_" part
 		}

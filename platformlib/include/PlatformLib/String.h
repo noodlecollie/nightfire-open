@@ -11,6 +11,10 @@ extern "C"
 
 int PlatformLib_StrCaseCmp(const char* s1, const char* s2);
 int PlatformLib_StrNCaseCmp(const char* s1, const char* s2, size_t n);
+char* PlatformLib_StrCat(char* destination, size_t destSize, const char* source);
+char* PlatformLib_StrNCat(char* destination, size_t destSize, const char* source, size_t num);
+char* PlatformLib_StrCpy(char* destination, size_t destSize, const char* source);
+char* PlatformLib_StrNCpy(char* destination, size_t destSize, const char* source, size_t num);
 int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_list argptr);
 int PlatformLib_VSScanF(const char* buffer, const char* format, va_list argptr);
 char* PlatformLib_StrDup(const char* in);

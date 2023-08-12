@@ -24,6 +24,8 @@
 #include "const.h"
 #include "entity_state.h"
 #include "r_efx.h"
+#include "PlatformLib/String.h"
+#include "PlatformLib/File.h"
 
 // g_runfuncs is true if this is the first time we've "predicated" a particular movement/firing
 //  command.  If it is 1, then we should play events/sounds etc., otherwise, we just will be
@@ -59,10 +61,10 @@ void COM_Log(const char* pszFile, const char* fmt, ...)
 	}
 
 	va_start(argptr, fmt);
-	vsprintf(string, fmt, argptr);
+	PlatformLib_VSNPrintF(string, sizeof(string), fmt, argptr);
 	va_end(argptr);
 
-	fp = fopen(pfilename, "a+t");
+	fp = PlatformLib_FOpen(pfilename, "a+t");
 	if ( fp )
 	{
 		fprintf(fp, "%s", string);

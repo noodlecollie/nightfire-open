@@ -50,6 +50,7 @@
 #include "resources/SurfaceAttributes.h"
 #include "sound/ClientSoundInstance.h"
 #include "resources/TextureResources.h"
+#include "PlatformLib/String.h"
 
 // TODO: Make into a convar?
 static constexpr float BULLET_RICOCHET_NOISE_CHANCE = 0.5f;
@@ -221,16 +222,16 @@ char* EV_HLDM_DamageDecal(physent_t* pe)
 	if ( pe->classnumber == 1 )
 	{
 		idx = gEngfuncs.pfnRandomLong(0, 2);
-		sprintf(decalname, "{break%i", idx + 1);
+		PlatformLib_SNPrintF(decalname, sizeof(decalname), "{break%i", idx + 1);
 	}
 	else if ( pe->rendermode != kRenderNormal )
 	{
-		sprintf(decalname, "{bproof1");
+		PlatformLib_SNPrintF(decalname, sizeof(decalname), "{bproof1");
 	}
 	else
 	{
 		idx = gEngfuncs.pfnRandomLong(0, 4);
-		sprintf(decalname, "{shot%i", idx + 1);
+		PlatformLib_SNPrintF(decalname, sizeof(decalname), "{shot%i", idx + 1);
 	}
 
 	return decalname;

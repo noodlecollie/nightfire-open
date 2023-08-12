@@ -129,8 +129,7 @@ int CHudSayText::Draw(float flTime)
 				static char buf[MAX_PLAYER_NAME_LENGTH + 32];
 
 				// draw the first x characters in the player color
-				strncpy(buf, g_szLineBuffer[i], Min(g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 32));
-				buf[Min(g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 31)] = 0;
+				PlatformLib_StrNCpy(buf, sizeof(buf), g_szLineBuffer[i], g_iNameLengths[i]);
 				DrawSetTextColor(g_pflNameColors[i][0], g_pflNameColors[i][1], g_pflNameColors[i][2]);
 				int x = DrawConsoleString(LINE_START, y, buf);
 
@@ -199,7 +198,7 @@ void CHudSayText::SayTextPrint(const char* pszBuf, int iBufSize, int clientIndex
 		}
 	}
 
-	strncpy(g_szLineBuffer[i], pszBuf, Max(iBufSize - 1, MAX_CHARS_PER_LINE - 1));
+	PlatformLib_StrNCpy(g_szLineBuffer[i], sizeof(g_szLineBuffer[i]), pszBuf, iBufSize);
 
 	// make sure the text fits in one line
 	EnsureTextFitsInOneLineAndWrapIfHaveTo(i);
@@ -294,14 +293,16 @@ void CHudSayText::EnsureTextFitsInOneLineAndWrapIfHaveTo(int line)
 					int remaininglen = static_cast<int>(strlen(last_break));
 
 					if ( (linelen - remaininglen) <= MAX_CHARS_PER_LINE )
-						strcat(g_szLineBuffer[j], last_break);
+					{
+						PlatformLib_StrCat(g_szLineBuffer[j], sizeof(g_szLineBuffer[j]), last_break);
+					}
 				}
 				else
 				{
 					if ( (strlen(g_szLineBuffer[j]) - strlen(last_break) - 2) < MAX_CHARS_PER_LINE )
 					{
-						strcat(g_szLineBuffer[j], " ");
-						strcat(g_szLineBuffer[j], last_break);
+						PlatformLib_StrCat(g_szLineBuffer[j], sizeof(g_szLineBuffer[j]), " ");
+						PlatformLib_StrCat(g_szLineBuffer[j], sizeof(g_szLineBuffer[j]), last_break);
 					}
 				}
 

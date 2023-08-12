@@ -311,7 +311,7 @@ int CHudScoreboard::Draw(float)
 		// draw ping
 		// draw ping & packetloss
 		static char buf[64];
-		sprintf(buf, "%d", team_info->ping);
+		PlatformLib_SNPrintF(buf, sizeof(buf), "%d", team_info->ping);
 		xpos = ((PING_RANGE_MAX - PING_RANGE_MIN) / 2) + PING_RANGE_MIN + xpos_rel + 25;
 		UnpackRGB(r, g, b, RGB_YELLOWISH);
 		gHUD.DrawHudStringReverse(xpos, ypos, xpos - 50, buf, r, g, b);
@@ -321,7 +321,7 @@ int CHudScoreboard::Draw(float)
 		{
 			xpos = ((PL_RANGE_MAX - PL_RANGE_MIN) / 2) + PL_RANGE_MIN + xpos_rel + 25;
 
-			sprintf(buf, "  %d", team_info->packetloss);
+			PlatformLib_SNPrintF(buf, sizeof(buf), "  %d", team_info->packetloss);
 			DrawUtfString(xpos, ypos, xpos + 50, buf, r, g, b);
 		}
 
@@ -378,7 +378,10 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 		{
 			if ( g_PlayerInfoList[i].name && g_PlayerExtraInfo[i].frags >= highest_frags )
 			{
-				if ( !(team && PlatformLib_StrCaseCmp(g_PlayerExtraInfo[i].teamname, team)) )  // make sure it is the specified team
+				if ( !(team &&
+					   PlatformLib_StrCaseCmp(
+						   g_PlayerExtraInfo[i].teamname,
+						   team)) )  // make sure it is the specified team
 				{
 					extra_player_info_t* pl_info = &g_PlayerExtraInfo[i];
 					if ( pl_info->frags > highest_frags || pl_info->deaths < lowest_deaths )
@@ -466,7 +469,7 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 
 		// draw ping & packetloss
 		static char buf[64];
-		sprintf(buf, "%d", g_PlayerInfoList[best_player].ping);
+		PlatformLib_SNPrintF(buf, sizeof(buf), "%d", g_PlayerInfoList[best_player].ping);
 		xpos = ((PING_RANGE_MAX - PING_RANGE_MIN) / 2) + PING_RANGE_MIN + xpos_rel + 25;
 		gHUD.DrawHudStringReverse(xpos, ypos, xpos - 50, buf, r, g, b);
 
@@ -476,11 +479,11 @@ int CHudScoreboard::DrawPlayers(int xpos_rel, float list_slot, int nameoffset, c
 			if ( g_PlayerInfoList[best_player].packetloss >= 63 )
 			{
 				UnpackRGB(r, g, b, RGB_REDISH);
-				sprintf(buf, " !!!!");
+				PlatformLib_SNPrintF(buf, sizeof(buf), " !!!!");
 			}
 			else
 			{
-				sprintf(buf, "  %d", g_PlayerInfoList[best_player].packetloss);
+				PlatformLib_SNPrintF(buf, sizeof(buf), "  %d", g_PlayerInfoList[best_player].packetloss);
 			}
 
 			xpos = ((PL_RANGE_MAX - PL_RANGE_MIN) / 2) + PL_RANGE_MIN + xpos_rel + 25;
@@ -543,7 +546,7 @@ int CHudScoreboard::MsgFunc_TeamInfo(const char*, int iSize, void* pbuf)
 	if ( cl > 0 && cl <= MAX_PLAYERS )
 	{
 		// set the players team
-		strncpy(g_PlayerExtraInfo[cl].teamname, READ_STRING(), MAX_TEAM_NAME);
+		PlatformLib_StrCpy(g_PlayerExtraInfo[cl].teamname, sizeof(g_PlayerExtraInfo[cl].teamname), READ_STRING());
 	}
 
 	// rebuild the list of teams
@@ -585,7 +588,7 @@ int CHudScoreboard::MsgFunc_TeamInfo(const char*, int iSize, void* pbuf)
 			}
 			m_iNumTeams = Max(j, m_iNumTeams);
 
-			strncpy(g_TeamInfo[j].name, g_PlayerExtraInfo[i].teamname, MAX_TEAM_NAME);
+			PlatformLib_StrCpy(g_TeamInfo[j].name, sizeof(g_TeamInfo[j].name), g_PlayerExtraInfo[i].teamname);
 			g_TeamInfo[j].players = 0;
 		}
 

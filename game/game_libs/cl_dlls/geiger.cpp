@@ -26,6 +26,7 @@
 #include <stdlib.h>
 
 #include "parsemsg.h"
+#include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_Geiger, Geiger)
 
@@ -174,7 +175,7 @@ int CHudGeiger::Draw(float)
 			if ( i > 2 )
 				j += rand() & 1;
 
-			sprintf(sz, "player/geiger%d.wav", j + 1);
+			PlatformLib_SNPrintF(sz, sizeof(sz), "player/geiger%d.wav", j + 1);
 			PlaySound(sz, flvol);
 		}
 	}

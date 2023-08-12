@@ -38,6 +38,7 @@
 #include "bot_misc.h"
 #include "nodes.h"
 #include "mp_utils.h"
+#include "PlatformLib/String.h"
 
 CBaseBotGlobals BotGlobals;
 
@@ -65,12 +66,12 @@ void CBaseBotGlobals::IncreaseDifficulty(void)
 
 	if ( botSkill < 99 )
 	{
-		sprintf(serverCommand, "bot_skill %d\n", (botSkill + 1));
+		PlatformLib_SNPrintF(serverCommand, sizeof(serverCommand), "bot_skill %d\n", (botSkill + 1));
 		//		CVAR_SET_FLOAT("bot_skill", ((bot_skill.value)+1));
 	}
 	else
 	{
-		sprintf(serverCommand, "bot_skill %d\n", 100);
+		PlatformLib_SNPrintF(serverCommand, sizeof(serverCommand), "bot_skill %d\n", 100);
 		//		CVAR_SET_FLOAT("bot_skill", 100);
 	}
 	SERVER_COMMAND(serverCommand);
@@ -89,12 +90,12 @@ void CBaseBotGlobals::DecreaseDifficulty(void)
 
 	if ( botSkill > 1 )
 	{
-		sprintf(serverCommand, "bot_skill %d\n", (botSkill - 1));
+		PlatformLib_SNPrintF(serverCommand, sizeof(serverCommand), "bot_skill %d\n", (botSkill - 1));
 		//		CVAR_SET_FLOAT("bot_skill", (botSkill-1));
 	}
 	else
 	{
-		sprintf(serverCommand, "bot_skill %d\n", 0);
+		PlatformLib_SNPrintF(serverCommand, sizeof(serverCommand), "bot_skill %d\n", 0);
 		//		CVAR_SET_FLOAT("bot_skill", 0);
 	}
 	SERVER_COMMAND(serverCommand);

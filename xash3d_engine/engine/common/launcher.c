@@ -54,7 +54,7 @@ static void Sys_ChangeGame(const char* progname)
 _inline int Sys_Start(void)
 {
 	int ret;
-	const char* game = getenv(E_GAME);
+	const char* game = PlatformLib_GetEnv(E_GAME);
 
 	if ( !game )
 		game = XASH_GAMEDIR;

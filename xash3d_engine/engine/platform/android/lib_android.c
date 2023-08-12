@@ -26,8 +26,8 @@ void* ANDROID_LoadLibrary(const char* dllname)
 	int i;
 	void* pHandle = NULL;
 
-	libdir[0] = getenv("XASH3D_GAMELIBDIR");
-	libdir[1] = getenv("XASH3D_ENGLIBDIR");
+	libdir[0] = PlatformLib_GetEnv("XASH3D_GAMELIBDIR");
+	libdir[1] = PlatformLib_GetEnv("XASH3D_ENGLIBDIR");
 
 	for ( i = 0; i < 2; i++ )
 	{

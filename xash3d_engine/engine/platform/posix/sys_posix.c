@@ -33,7 +33,7 @@ static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 	if ( !baseName || !baseName[0] )
 		return false;
 
-	envPath = getenv("PATH");
+	envPath = PlatformLib_GetEnv("PATH");
 	if ( !COM_CheckString(envPath) )
 		return false;
 

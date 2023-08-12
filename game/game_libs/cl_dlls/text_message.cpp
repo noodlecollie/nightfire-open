@@ -169,14 +169,12 @@ int CHudTextMessage::MsgFunc_TextMsg(const char*, int iSize, void* pbuf)
 #define MSG_BUF_SIZE 128
 	char szBuf[6][MSG_BUF_SIZE];
 
-	strncpy(szBuf[0], LookupString(READ_STRING(), &msg_dest), MSG_BUF_SIZE - 1);
-	szBuf[0][MSG_BUF_SIZE - 1] = '\0';
+	PlatformLib_StrCpy(szBuf[0], sizeof(szBuf[0]), LookupString(READ_STRING(), &msg_dest));
 
 	for ( int i = 1; i <= 4; i++ )
 	{
 		// keep reading strings and using C format strings for subsituting the strings into the localised text string
-		strncpy(szBuf[i], LookupString(READ_STRING()), MSG_BUF_SIZE - 1);
-		szBuf[i][MSG_BUF_SIZE - 1] = '\0';
+		PlatformLib_StrCpy(szBuf[i], sizeof(szBuf[i]), LookupString(READ_STRING()));
 		StripEndNewlineFromString(szBuf[i]);  // these strings are meant for subsitution into the main strings, so cull
 											  // the automatic end newlines
 	}

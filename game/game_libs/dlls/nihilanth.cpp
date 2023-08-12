@@ -306,17 +306,34 @@ void CNihilanth::Spawn(void)
 	m_iTeleport = 1;
 
 	if ( m_szRechargerTarget[0] == '\0' )
-		strcpy(m_szRechargerTarget, "n_recharger");
+	{
+		PlatformLib_StrCpy(m_szRechargerTarget, sizeof(m_szRechargerTarget), "n_recharger");
+	}
+
 	if ( m_szDrawUse[0] == '\0' )
-		strcpy(m_szDrawUse, "n_draw");
+	{
+		PlatformLib_StrCpy(m_szDrawUse, sizeof(m_szDrawUse), "n_draw");
+	}
+
 	if ( m_szTeleportUse[0] == '\0' )
-		strcpy(m_szTeleportUse, "n_leaving");
+	{
+		PlatformLib_StrCpy(m_szTeleportUse, sizeof(m_szTeleportUse), "n_leaving");
+	}
+
 	if ( m_szTeleportTouch[0] == '\0' )
-		strcpy(m_szTeleportTouch, "n_teleport");
+	{
+		PlatformLib_StrCpy(m_szTeleportTouch, sizeof(m_szTeleportTouch), "n_teleport");
+	}
+
 	if ( m_szDeadUse[0] == '\0' )
-		strcpy(m_szDeadUse, "n_dead");
+	{
+		PlatformLib_StrCpy(m_szDeadUse, sizeof(m_szDeadUse), "n_dead");
+	}
+
 	if ( m_szDeadTouch[0] == '\0' )
-		strcpy(m_szDeadTouch, "n_ending");
+	{
+		PlatformLib_StrCpy(m_szDeadTouch, sizeof(m_szDeadTouch), "n_ending");
+	}
 
 	// near death
 	/*

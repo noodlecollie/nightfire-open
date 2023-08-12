@@ -36,6 +36,7 @@
 #include "genericweapon.h"
 #include "weaponatts_collection.h"
 #include "miniutl.h"
+#include "PlatformLib/String.h"
 
 extern globalvars_t* gpGlobals;
 extern int g_iUser1;
@@ -86,7 +87,7 @@ void AlertMessage(ALERT_TYPE, const char* szFmt, ...)
 	static char string[1024];
 
 	va_start(argptr, szFmt);
-	vsprintf(string, szFmt, argptr);
+	PlatformLib_VSNPrintF(string, sizeof(string), szFmt, argptr);
 	va_end(argptr);
 
 	gEngfuncs.Con_Printf("cl:  ");

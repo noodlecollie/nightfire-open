@@ -371,12 +371,12 @@ void Host_Say(edict_t* pEntity, int teamonly)
 	{
 		if ( CMD_ARGC() >= 2 )
 		{
-			sprintf(szTemp, "%s %s", (char*)pcmd, (char*)CMD_ARGS());
+			PlatformLib_SNPrintF(szTemp, sizeof(szTemp), "%s %s", (char*)pcmd, (char*)CMD_ARGS());
 		}
 		else
 		{
 			// Just a one word command, use the first word...sigh
-			sprintf(szTemp, "%s", (char*)pcmd);
+			PlatformLib_SNPrintF(szTemp, sizeof(szTemp), "%s", (char*)pcmd);
 		}
 		p = szTemp;
 	}
@@ -393,18 +393,24 @@ void Host_Say(edict_t* pEntity, int teamonly)
 
 	// turn on color set 2  (color on,  no sound)
 	if ( player->IsObserver() && (teamonly) )
-		sprintf(text, "%c(SPEC) %s: ", 2, STRING(pEntity->v.netname));
+	{
+		PlatformLib_SNPrintF(text, sizeof(text), "%c(SPEC) %s: ", 2, STRING(pEntity->v.netname));
+	}
 	else if ( teamonly )
-		sprintf(text, "%c(TEAM) %s: ", 2, STRING(pEntity->v.netname));
+	{
+		PlatformLib_SNPrintF(text, sizeof(text), "%c(TEAM) %s: ", 2, STRING(pEntity->v.netname));
+	}
 	else
-		sprintf(text, "%c%s: ", 2, STRING(pEntity->v.netname));
+	{
+		PlatformLib_SNPrintF(text, sizeof(text), "%c%s: ", 2, STRING(pEntity->v.netname));
+	}
 
 	j = static_cast<int>(sizeof(text) - 2 - strlen(text));  // -2 for /n and null terminator
 	if ( (int)strlen(p) > j )
 		p[j] = 0;
 
-	strcat(text, p);
-	strcat(text, "\n");
+	PlatformLib_StrCat(text, sizeof(text), p);
+	PlatformLib_StrCat(text, sizeof(text), "\n");
 
 	player->m_flNextChatTime = gpGlobals->time + CHAT_INTERVAL;
 
@@ -663,7 +669,7 @@ void ClientCommand(edict_t* pEntity)
 
 		// check the length of the command (prevents crash)
 		// max total length is 192 ...and we're adding a string below ("Unknown command: %s\n")
-		strncpy(command, pcmd, 127);
+		PlatformLib_SNPrintF(command, sizeof(command), pcmd, 127);
 		command[127] = '\0';
 
 		// tell the user they entered an unknown command
@@ -692,7 +698,7 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 	{
 		char sName[256];
 		char* pName = g_engfuncs.pfnInfoKeyValue(infobuffer, "name");
-		strncpy(sName, pName, sizeof(sName) - 1);
+		PlatformLib_SNPrintF(sName, sizeof(sName), pName, sizeof(sName) - 1);
 		sName[sizeof(sName) - 1] = '\0';
 
 		// First parse the name and remove any %'s
@@ -1771,7 +1777,7 @@ void UpdateClientData(const struct edict_s* ent, int sendweapons, struct clientd
 	cd->flSwimTime = pev->flSwimTime;
 	cd->waterjumptime = static_cast<int>(pev->teleport_time);
 
-	strcpy(cd->physinfo, ENGINE_GETPHYSINFO(ent));
+	PlatformLib_SNPrintF(cd->physinfo, sizeof(cd->physinfo), ENGINE_GETPHYSINFO(ent));
 
 	cd->maxspeed = pev->maxspeed;
 	cd->fov = pev->fov;
@@ -1882,11 +1888,7 @@ ConnectionlessPacket
 the max size of the response_buffer, so you must zero it out if you choose not to respond.
 ================================
 */
-int ConnectionlessPacket(
-	const struct netadr_s*,
-	const char*,
-	char*,
-	int* response_buffer_size)
+int ConnectionlessPacket(const struct netadr_s*, const char*, char*, int* response_buffer_size)
 {
 	// Parse stuff from args
 	// int max_buffer_size = *response_buffer_size;
@@ -1964,14 +1966,18 @@ One of the ENGINE_FORCE_UNMODIFIED files failed the consistency check for the sp
 up to 256 characters )
 ================================
 */
-int InconsistentFile(const edict_t*, const char* filename, char* disconnect_message)
+int InconsistentFile(const edict_t*, const char* filename, char* disconnect_message, size_t disconnectBufferSize)
 {
 	// Server doesn't care?
 	if ( CVAR_GET_FLOAT("mp_consistency") != 1 )
 		return 0;
 
 	// Default behavior is to kick the player
-	sprintf(disconnect_message, "Server is enforcing file consistency for %s\n", filename);
+	PlatformLib_SNPrintF(
+		disconnect_message,
+		disconnectBufferSize,
+		"Server is enforcing file consistency for %s\n",
+		filename);
 
 	// Kick now with specified disconnect message.
 	return 1;

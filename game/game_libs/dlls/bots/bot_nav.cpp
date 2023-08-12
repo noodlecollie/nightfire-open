@@ -35,6 +35,7 @@
 #include "bot.h"
 #include "nodes.h"
 #include "PlatformLib/String.h"
+#include "PlatformLib/File.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // ActionChooseDirection
@@ -381,9 +382,9 @@ void CGraph::SaveNavToFile(void)
 	FILE* navFile;
 	char navFileName[50] = "default";
 
-	sprintf(navFileName, "rhodmc/nav/%s.nav", (char*)STRING(gpGlobals->mapname));
+	PlatformLib_SNPrintF(navFileName, sizeof(navFileName), "rhodmc/nav/%s.nav", (char*)STRING(gpGlobals->mapname));
 
-	navFile = fopen(navFileName, "w");
+	navFile = PlatformLib_FOpen(navFileName, "w");
 
 	char printThis[64];
 
@@ -395,7 +396,14 @@ void CGraph::SaveNavToFile(void)
 			{
 				if ( WorldGraph.NavigationArray[i][j][k] != 1 )
 				{
-					sprintf(printThis, "%d.%d.%d=%d\n", i, j, k, WorldGraph.NavigationArray[i][j][k]);
+					PlatformLib_SNPrintF(
+						printThis,
+						sizeof(printThis),
+						"%d.%d.%d=%d\n",
+						i,
+						j,
+						k,
+						WorldGraph.NavigationArray[i][j][k]);
 					fprintf(navFile, "%s", printThis);
 				}
 			}

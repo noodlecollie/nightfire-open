@@ -41,6 +41,7 @@
 #include "bot.h"
 #include "botweaponattributes.h"
 #include "genericweapon.h"
+#include "PlatformLib/String.h"
 
 extern DLL_GLOBAL BOOL g_fGameOver;
 
@@ -508,7 +509,7 @@ BOOL CBaseBot::ActionReload(void)
 void CBaseBot::ActionSpeak(const char* pText)
 {
 	char buffer[256];
-	sprintf(buffer, "%s: %s\n", STRING(pev->netname), pText);
+	PlatformLib_SNPrintF(buffer, sizeof(buffer), "%s: %s\n", STRING(pev->netname), pText);
 	UTIL_SayTextAll(buffer, this);
 }
 

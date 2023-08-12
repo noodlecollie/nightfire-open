@@ -1,6 +1,7 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
 * Use safe functions like _vsnprintf_s (remove _CRT_SECURE_NO_WARNINGS)
+* Use safe string lib for Linux, secure CRT for Windows
 * Remove unsupported platforms (eg. Android)
 * Run clang-tidy to insert closing braces where required
 * Add a CMake option to disable treating warnings as errors, as a safety hatch.

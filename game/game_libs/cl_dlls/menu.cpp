@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "PlatformLib/String.h"
 
 #define MAX_MENU_STRING 512
 char g_szMenuString[MAX_MENU_STRING];
@@ -114,7 +115,7 @@ void CHudMenu::SelectMenuItem(int menu_item)
 	if ( (menu_item > 0) && (m_bitsValidSlots & (1 << (menu_item - 1))) )
 	{
 		char szbuf[32];
-		sprintf(szbuf, "menuselect %d\n", menu_item);
+		PlatformLib_SNPrintF(szbuf, sizeof(szbuf), "menuselect %d\n", menu_item);
 		ClientCmd(szbuf);
 
 		// remove the menu
@@ -149,32 +150,29 @@ int CHudMenu::MsgFunc_ShowMenu(const char*, int iSize, void* pbuf)
 	{
 		if ( !m_fWaitingForMore )  // this is the start of a new menu
 		{
-			strncpy(g_szPrelocalisedMenuString, READ_STRING(), MAX_MENU_STRING);
+			PlatformLib_StrCpy(g_szPrelocalisedMenuString, sizeof(g_szPrelocalisedMenuString), READ_STRING());
 		}
 		else
 		{
 			// append to the current menu string
-			strncat(
+			PlatformLib_StrCat(
 				g_szPrelocalisedMenuString,
-				READ_STRING(),
-				MAX_MENU_STRING - strlen(g_szPrelocalisedMenuString) - 1);
+				sizeof(g_szPrelocalisedMenuString),
+				READ_STRING());
 		}
-		g_szPrelocalisedMenuString[MAX_MENU_STRING - 1] = 0;  // ensure null termination (strncat/strncpy does not)
 
 		if ( !NeedMore )
 		{
 			// we have the whole string, so we can localise it now
-			strncpy(
+			PlatformLib_StrCpy(
 				g_szMenuString,
-				gHUD.m_TextMessage.BufferedLocaliseTextString(g_szPrelocalisedMenuString),
-				MAX_MENU_STRING);
-			g_szMenuString[MAX_MENU_STRING - 1] = '\0';
+				sizeof(g_szMenuString),
+				gHUD.m_TextMessage.BufferedLocaliseTextString(g_szPrelocalisedMenuString));
 
 			// Swap in characters
 			if ( KB_ConvertString(g_szMenuString, &temp) )
 			{
-				strncpy(g_szMenuString, temp, MAX_MENU_STRING);
-				g_szMenuString[MAX_MENU_STRING - 1] = '\0';
+				PlatformLib_StrCpy(g_szMenuString, sizeof(g_szMenuString), temp);
 				free(temp);
 			}
 		}

@@ -25,6 +25,7 @@
 #include "triangleapi.h"
 #include <string.h>
 #include <stdio.h>
+#include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_MOTD, MOTD)
 
@@ -170,7 +171,7 @@ int CHudMOTD::MsgFunc_MOTD(const char*, int iSize, void* pbuf)
 	BEGIN_READ(pbuf, iSize);
 
 	int is_finished = READ_BYTE();
-	strncat(m_szMOTD, READ_STRING(), sizeof(m_szMOTD) - 1);
+	PlatformLib_StrCat(m_szMOTD, sizeof(m_szMOTD), READ_STRING());
 
 	if ( is_finished )
 	{

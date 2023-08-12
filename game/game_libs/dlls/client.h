@@ -77,7 +77,8 @@ extern int GetHullBounds(int hullnumber, float* mins, float* maxs);
 
 extern void CreateInstancedBaselines(void);
 
-extern int InconsistentFile(const edict_t* player, const char* filename, char* disconnect_message);
+extern int
+InconsistentFile(const edict_t* player, const char* filename, char* disconnect_message, size_t disconnectBufferSize);
 
 extern int AllowLagCompensation(void);
 extern const char* GetRandomWaterTransitionSound(void);

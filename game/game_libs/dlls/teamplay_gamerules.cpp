@@ -45,7 +45,7 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 	m_szTeamList[0] = 0;
 
 	// Cache this because the team code doesn't want to deal with changing this in the middle of a game
-	strncpy(m_szTeamList, teamlist.string, TEAMPLAY_TEAMLISTLENGTH - 1);
+	PlatformLib_StrCpy(m_szTeamList, sizeof(m_szTeamList), teamlist.string);
 
 	edict_t* pWorld = INDEXENT(0);
 	if ( pWorld && pWorld->v.team )
@@ -55,7 +55,7 @@ CHalfLifeTeamplay::CHalfLifeTeamplay()
 			const char* pTeamList = STRING(pWorld->v.team);
 			if ( pTeamList && strlen(pTeamList) )
 			{
-				strncpy(m_szTeamList, pTeamList, TEAMPLAY_TEAMLISTLENGTH - 1);
+				PlatformLib_StrCpy(m_szTeamList, sizeof(m_szTeamList), pTeamList);
 			}
 		}
 	}
@@ -186,7 +186,7 @@ const char* CHalfLifeTeamplay::SetDefaultPlayerTeam(CBasePlayer* pPlayer)
 {
 	// copy out the team name from the model
 	char* mdls = g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model");
-	strncpy(pPlayer->m_szTeamName, mdls, TEAM_NAME_LENGTH - 1);
+	PlatformLib_StrCpy(pPlayer->m_szTeamName, sizeof(pPlayer->m_szTeamName), mdls);
 
 	RecountTeams();
 
@@ -203,7 +203,7 @@ const char* CHalfLifeTeamplay::SetDefaultPlayerTeam(CBasePlayer* pPlayer)
 		{
 			pTeamName = TeamWithFewestPlayers();
 		}
-		strncpy(pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH);
+		PlatformLib_StrCpy(pPlayer->m_szTeamName, sizeof(pPlayer->m_szTeamName), pTeamName);
 	}
 
 	return pPlayer->m_szTeamName;
@@ -235,11 +235,11 @@ void CHalfLifeTeamplay::InitHUD(CBasePlayer* pPlayer)
 	char text[1024];
 	if ( !strcmp(mdls, pPlayer->m_szTeamName) )
 	{
-		sprintf(text, "* you are on team \'%s\'\n", pPlayer->m_szTeamName);
+		PlatformLib_SNPrintF(text, sizeof(text), "* you are on team \'%s\'\n", pPlayer->m_szTeamName);
 	}
 	else
 	{
-		sprintf(text, "* assigned to team %s\n", pPlayer->m_szTeamName);
+		PlatformLib_SNPrintF(text, sizeof(text), "* assigned to team %s\n", pPlayer->m_szTeamName);
 	}
 
 	ChangePlayerTeam(pPlayer, pPlayer->m_szTeamName, FALSE, FALSE);
@@ -290,7 +290,7 @@ void CHalfLifeTeamplay::ChangePlayerTeam(CBasePlayer* pPlayer, const char* pTeam
 
 	// copy out the team name from the model
 	if ( pPlayer->m_szTeamName != pTeamName )
-		strncpy(pPlayer->m_szTeamName, pTeamName, TEAM_NAME_LENGTH - 1);
+		PlatformLib_StrCpy(pPlayer->m_szTeamName, sizeof(pPlayer->m_szTeamName), pTeamName);
 
 	g_engfuncs.pfnSetClientKeyValue(
 		clientIndex,
@@ -345,7 +345,7 @@ void CHalfLifeTeamplay::ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobu
 			g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()),
 			"team",
 			pPlayer->m_szTeamName);
-		sprintf(text, "* Not allowed to change teams in this game!\n");
+		PlatformLib_SNPrintF(text, sizeof(text), "* Not allowed to change teams in this game!\n");
 		UTIL_SayText(text, pPlayer);
 		return;
 	}
@@ -359,14 +359,14 @@ void CHalfLifeTeamplay::ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobu
 			g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()),
 			"model",
 			pPlayer->m_szTeamName);
-		sprintf(text, "* Can't change team to \'%s\'\n", mdls);
+		PlatformLib_SNPrintF(text, sizeof(text), "* Can't change team to \'%s\'\n", mdls);
 		UTIL_SayText(text, pPlayer);
-		sprintf(text, "* Server limits teams to \'%s\'\n", m_szTeamList);
+		PlatformLib_SNPrintF(text, sizeof(text), "* Server limits teams to \'%s\'\n", m_szTeamList);
 		UTIL_SayText(text, pPlayer);
 		return;
 	}
 	// notify everyone of the team change
-	sprintf(text, "* %s has changed to team \'%s\'\n", STRING(pPlayer->pev->netname), mdls);
+	PlatformLib_SNPrintF(text, sizeof(text), "* %s has changed to team \'%s\'\n", STRING(pPlayer->pev->netname), mdls);
 	UTIL_SayTextAll(text, pPlayer);
 
 	UTIL_LogPrintf(
@@ -584,17 +584,17 @@ void CHalfLifeTeamplay::RecountTeams(bool bResendInfo)
 
 	// Copy all of the teams from the teamlist
 	// make a copy because strtok is destructive
-	strcpy(teamList, m_szTeamList);
+	PlatformLib_StrCpy(teamList, sizeof(teamList), m_szTeamList);
 	pName = teamList;
-	pName = strtok(pName, ";");
+	pName = PlatformLib_StrTok(pName, ";");
 	while ( pName != NULL && *pName )
 	{
 		if ( GetTeamIndex(pName) < 0 )
 		{
-			strcpy(team_names[num_teams], pName);
+			PlatformLib_StrCpy(team_names[num_teams], sizeof(team_names[num_teams]), pName);
 			num_teams++;
 		}
-		pName = strtok(NULL, ";");
+		pName = PlatformLib_StrTok(NULL, ";");
 	}
 
 	if ( num_teams < 2 )
@@ -626,7 +626,7 @@ void CHalfLifeTeamplay::RecountTeams(bool bResendInfo)
 					tm = num_teams;
 					num_teams++;
 					team_scores[tm] = 0;
-					strncpy(team_names[tm], pTeamName, MAX_TEAMNAME_LENGTH);
+					PlatformLib_StrCpy(team_names[tm], sizeof(team_names[tm]), pTeamName);
 				}
 			}
 

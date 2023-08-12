@@ -586,8 +586,8 @@ extern DLL_GLOBAL int g_Language;
 extern char gszallsentencenames[CVOXFILESENTENCEMAX][CBSENTENCENAME_MAX];
 extern int gcallsentences;
 
-int USENTENCEG_Pick(int isentenceg, char* szfound);
-int USENTENCEG_PickSequential(int isentenceg, char* szfound, int ipick, int freset);
+int USENTENCEG_Pick(int isentenceg, char* szfound, size_t foundBufferSize);
+int USENTENCEG_PickSequential(int isentenceg, char* szfound, size_t foundBufferSize, int ipick, int freset);
 void USENTENCEG_InitLRU(unsigned char* plru, int count);
 
 void SENTENCEG_Init();
@@ -604,7 +604,7 @@ int SENTENCEG_PlaySequentialSz(
 	int ipick,
 	int freset);
 int SENTENCEG_GetIndex(const char* szrootname);
-int SENTENCEG_Lookup(const char* sample, char* sentencenum);
+int SENTENCEG_Lookup(const char* sample, char* sentencenum, size_t sentenceBufferSize);
 
 void TEXTURETYPE_Init();
 void TEXTURETYPE_PlaySound(TraceResult* ptr, Vector vecSrc, Vector vecEnd, int iBulletType);

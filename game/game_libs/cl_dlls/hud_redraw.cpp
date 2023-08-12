@@ -20,6 +20,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "miniutl.h"
+#include "PlatformLib/String.h"
 // #include "triangleapi.h"
 
 #define MAX_LOGO_FRAMES 56
@@ -277,7 +278,7 @@ int CHud::DrawHudStringLen(const char* szIt)
 int CHud::DrawHudNumberString(int xpos, int ypos, int iMinX, int iNumber, int r, int g, int b)
 {
 	char szString[32];
-	sprintf(szString, "%d", iNumber);
+	PlatformLib_SNPrintF(szString, sizeof(szString), "%d", iNumber);
 	return DrawHudStringReverse(xpos, ypos, iMinX, szString, r, g, b);
 }
 
