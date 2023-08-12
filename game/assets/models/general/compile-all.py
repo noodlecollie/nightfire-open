@@ -17,7 +17,7 @@ MDL_OUTPUT_DIR = os.path.join(GAME_CONTENT_DIR, "models")
 TEXTURE_DIR = os.path.join(GAME_CONTENT_DIR, "textures")
 TEXTURE_SUBDIR_NAME = "mdl"
 
-STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "utils", "binaries", "afterburner-compile-tools", "abstudiomdl.exe"))
+STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "utils", "binaries", "afterburner-compile-tools", "abstudiomdl.exe"))
 ERROR_SUMMARY_PATH = os.path.join(SCRIPT_DIR, "errors.log")
 
 Aborted = False
