@@ -148,7 +148,7 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	EngFuncs::WriteServerConfig(EngFuncs::GetCvarString("lservercfgfile"));
 
 	char cmd[1024], cmd2[256];
-	sprintf(cmd, "exec %s\n", EngFuncs::GetCvarString("lservercfgfile"));
+	PlatformLib_SNPrintF(cmd, sizeof(cmd), "exec %s\n", EngFuncs::GetCvarString("lservercfgfile"));
 
 	EngFuncs::ClientCmd(TRUE, cmd);
 
@@ -158,8 +158,9 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	Com_EscapeCommand(cmd2, mapName, 256);
 
 	// hack: wait three frames allowing server to completely shutdown, reapply maxplayers and start new map
-	sprintf(
+	PlatformLib_SNPrintF(
 		cmd,
+		sizeof(cmd),
 		"endgame;menu_connectionprogress localserver;wait;wait;wait;maxplayers %i;latch;map %s\n",
 		atoi(menu->maxClients.GetBuffer()),
 		cmd2);
@@ -218,7 +219,7 @@ void CMenuMapListModel::Update(void)
 	char token[1024];
 	int numMaps = 1;
 
-	strcpy(mapName[0], L("GameUI_RandomMap"));
+	PlatformLib_StrCpy(mapName[0], sizeof(mapName[0]), L("GameUI_RandomMap"));
 	mapsDescription[0][0] = 0;
 
 	while ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) != NULL )

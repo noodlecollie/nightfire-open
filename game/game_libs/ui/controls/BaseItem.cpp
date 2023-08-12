@@ -296,8 +296,9 @@ bool CMenuBaseItem::KeyValueData(const char* key, const char* data)
 
 		if ( m_bAllocName )
 		{
-			char* name = new char[strlen(data) + 1];
-			strcpy(name, data);
+			size_t dataLength = strlen(data) + 1;
+			char* name = new char[dataLength];
+			PlatformLib_StrCpy(name, dataLength, data);
 
 			szName = name;
 		}

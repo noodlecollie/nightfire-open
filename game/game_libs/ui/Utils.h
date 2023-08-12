@@ -159,7 +159,7 @@ int colorstrcmp(const char* a, const char* b);
 extern int ColorStrlen(const char* str);  // returns string length without color symbols
 extern int ColorPrexfixCount(const char* str);
 extern const unsigned int g_iColorTable[8];
-extern void COM_FileBase(const char* in, char* out);  // ripped out from hlsdk 2.3
+extern void COM_FileBase(const char* in, char* out, size_t outBufferSize);  // ripped out from hlsdk 2.3
 extern int UI_FadeAlpha(int starttime, int endtime);
 extern const char* Info_ValueForKey(const char* s, const char* key);
 extern int KEY_GetKey(const char* binding);  // ripped out from engine

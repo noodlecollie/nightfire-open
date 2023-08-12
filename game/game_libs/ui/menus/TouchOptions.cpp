@@ -111,7 +111,7 @@ void CMenuTouchOptions::CProfiliesListModel::Update(void)
 			break;
 
 		// strip path, leave only filename (empty slots doesn't have savename)
-		COM_FileBase(filenames[j], profileDesc[i]);
+		COM_FileBase(filenames[j], profileDesc[i], sizeof(profileDesc[i]));
 	}
 
 	// Overwrite "Presets:" line if there is no presets
@@ -135,7 +135,7 @@ void CMenuTouchOptions::CProfiliesListModel::Update(void)
 		if ( i >= UI_MAXGAMES )
 			break;
 
-		COM_FileBase(filenames[j], profileDesc[i]);
+		COM_FileBase(filenames[j], profileDesc[i], sizeof(profileDesc[i]));
 		if ( !strcmp(filenames[j], curprofile) )
 			iHighlight = i;
 	}
@@ -213,7 +213,7 @@ void CMenuTouchOptions::Apply()
 			char copystring[256];
 			char filebase[256];
 
-			COM_FileBase(curconfig, filebase);
+			COM_FileBase(curconfig, filebase, sizeof(filebase));
 
 			if ( PlatformLib_SNPrintF(copystring, 256, "touch_profiles/%s (new).cfg", filebase) > 255 )
 				break;
@@ -266,7 +266,7 @@ void CMenuTouchOptions::UpdateProfilies()
 	int isCurrent;
 	int idx = profiles.GetCurrentIndex();
 
-	COM_FileBase(EngFuncs::GetCvarString("touch_config_file"), curprofile);
+	COM_FileBase(EngFuncs::GetCvarString("touch_config_file"), curprofile, sizeof(curprofile));
 	isCurrent = !strcmp(curprofile, model.profileDesc[idx]);
 
 	// Scrolllist changed, update available options

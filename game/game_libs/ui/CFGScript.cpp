@@ -153,8 +153,9 @@ bool CSCR_ParseSingleCvar(parserstate_t* ps, scrvardef_t* result)
 
 				entry = new scrvarlistentry_t;
 				entry->next = NULL;
-				entry->szName = new char[strlen(szName) + 1];
-				strcpy(entry->szName, szName);
+				size_t entryNameLength = strlen(szName) + 1;
+				entry->szName = new char[entryNameLength];
+				PlatformLib_StrCpy(entry->szName, entryNameLength, szName);
 				entry->flValue = static_cast<float>(atof(szValue));
 
 				if ( !result->list.pEntries )

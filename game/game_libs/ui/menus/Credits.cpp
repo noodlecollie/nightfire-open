@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "Framework.h"
 #include "Bitmap.h"
+#include "PlatformLib/String.h"
 
 #define UI_CREDITS_PATH "credits.txt"
 #define UI_CREDITS_MAXLINES 2048
@@ -200,8 +201,10 @@ void CMenuCredits::_Init(void)
 				char* tmp = new char[count + 2];
 				memcpy(tmp, buffer, count);
 				EngFuncs::COM_FreeFile(buffer);
+
+				PlatformLib_StrCpy(tmp + count, 2, "\r");  // add terminator
+
 				buffer = tmp;
-				strncpy(buffer + count, "\r", 2);  // add terminator
 				count += 2;  // added "\r\0"
 			}
 			p = buffer;
