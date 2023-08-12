@@ -1,0 +1,10 @@
+$qceversion 2.10.1.0
+
+$replaceactivity "flinchback" ACT_FLINCH_BACK
+$replaceactivity "flinchlarmhand" ACT_FLINCH_LEFTARMHAND
+$replaceactivity "flinchlleglower" ACT_FLINCH_LEFTLEGLOWER
+$replaceactivity "flinchrarmhand" ACT_FLINCH_RIGHTARMHAND
+$replaceactivity "flinchrleglower" ACT_FLINCH_RIGHTLEGLOWER
+$replaceactivity "flinchrlegupper" ACT_FLINCH_RIGHTLEGUPPER
+
+

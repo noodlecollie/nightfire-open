@@ -1,0 +1,16 @@
+$qceversion 2.10.1.0
+
+$replaceactivity "leftleglowerflinch" ACT_FLINCH_LEFTLEGLOWER
+$replaceactivity "rightlegupperflinch" ACT_FLINCH_RIGHTLEGUPPER
+$replaceactivity "rightleglowerflinch" ACT_FLINCH_RIGHTLEGLOWER
+$replaceactivity "rightarmlowerflinch" ACT_FLINCH_RIGHTARMLOWER
+$replaceactivity "rightarmhandflinch" ACT_FLINCH_RIGHTARMHAND
+$replaceactivity "leftarmlowerflinch" ACT_FLINCH_LEFTARMLOWER
+$replaceactivity "leftarmhandflinch" ACT_FLINCH_LEFTARMHAND
+$replaceactivity "backflinch" ACT_FLINCH_BACK
+$replaceactivity "dieback1" ACT_DIE_NUTSHOT
+$replaceactivity "dienutshot" ACT_DIE_NUTSHOT
+$replaceactivity "hostage" ACT_HOSTAGE
+$replaceactivity "hostage_threat" ACT_HOSTAGE_THREAT
+
+

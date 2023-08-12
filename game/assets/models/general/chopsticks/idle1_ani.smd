@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "chopsticks"  -1
+end
+skeleton
+time 0
+  0 -0.050803 0.018692 0.669802 0.000000 0.000000 0.000000
+end

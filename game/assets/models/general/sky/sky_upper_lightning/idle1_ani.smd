@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "plane_med"  -1
+end
+skeleton
+time 0
+  0 5.873230 -5.873291 0.168602 3.141593 0.000000 0.000000
+end

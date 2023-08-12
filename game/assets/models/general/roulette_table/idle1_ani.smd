@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "roulette_table"  -1
+end
+skeleton
+time 0
+  0 -5.820490 0.003230 0.000000 0.000000 0.000000 0.000000
+end

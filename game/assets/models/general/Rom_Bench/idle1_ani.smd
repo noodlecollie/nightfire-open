@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "New_Bench"  -1
+end
+skeleton
+time 0
+  0 0.386646 -0.669627 19.478000 0.000000 0.000000 0.000000
+end

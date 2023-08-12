@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Hanging lantern"  -1
+end
+skeleton
+time 0
+  0 0.003778 0.026343 0.029410 1.570796 0.000000 -0.000012
+end

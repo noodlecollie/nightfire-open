@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Terrain"  -1
+end
+skeleton
+time 0
+  0 0.000006 0.000000 -125.906700 0.000000 0.000000 0.000000
+end

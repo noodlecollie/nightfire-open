@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "vol_SackRice"  -1
+end
+skeleton
+time 0
+  0 -2.432520 3.301630 3.148115 0.000000 0.000000 0.000000
+end

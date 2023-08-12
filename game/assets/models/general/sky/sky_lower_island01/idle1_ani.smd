@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Sphere01"  -1
+end
+skeleton
+time 0
+  0 24.672060 17.082290 -25.653300 0.000000 0.000000 0.322886
+end

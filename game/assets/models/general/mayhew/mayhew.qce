@@ -1,0 +1,7 @@
+$qceversion 2.10.1.0
+
+$replaceactivity "dieback1" ACT_DIE_NUTSHOT
+$replaceactivity "dieforward" 90
+$replaceactivity "dienutshot" ACT_DIE_NUTSHOT
+
+

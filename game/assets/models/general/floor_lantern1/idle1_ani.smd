@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "floor lantern1"  -1
+end
+skeleton
+time 0
+  0 0.022709 -0.003777 0.000000 0.000000 0.000000 0.000000
+end

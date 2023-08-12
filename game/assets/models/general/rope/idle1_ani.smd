@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "mesh_rope_coilShape"  -1
+end
+skeleton
+time 0
+  0 0.343519 -0.002033 -0.000110 0.000000 0.000000 0.000000
+end
