@@ -42,9 +42,24 @@ int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_lis
 	return returnVal;
 }
 
+int PlatformLib_VSScanF(const char* buffer, const char* format, va_list argptr)
+{
+	return vsscanf(buffer, format, argptr);
+}
+
 char* PlatformLib_StrDup(const char* in)
 {
 	return strdup(in);
+}
+
+char* PlatformLib_StrTok(char* str, const char* delimiters)
+{
+	return strtok(str, delimiters);
+}
+
+const char* PlatformLib_StrError(int errornum)
+{
+	return strerror(errornum);
 }
 
 #ifdef __cplusplus

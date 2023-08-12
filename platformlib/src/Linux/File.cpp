@@ -17,6 +17,16 @@ int PlatformLib_Open(const char* filePath, int flags)
 	return open(filePath, flags);
 }
 
+FILE* PlatformLib_FOpen(const char* filename, const char* mode)
+{
+	return fopen(filename, mode);
+}
+
+int PlatformLib_FClose(FILE* stream)
+{
+	return fclose(stream);
+}
+
 int PlatformLib_OpenWithPermissions(const char* filePath, int flags, int permissions)
 {
 	return open(filePath, flags, permissions);

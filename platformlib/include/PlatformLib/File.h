@@ -11,6 +11,8 @@ extern "C"
 
 size_t PlatformLib_LSeek(int fileHandle, size_t offset, int from);
 int PlatformLib_Open(const char* filePath, int flags);
+FILE* PlatformLib_FOpen(const char* filename, const char* mode);
+int PlatformLib_FClose(FILE* stream);
 int PlatformLib_OpenWithPermissions(const char* filePath, int flags, int permissions);
 int PlatformLib_Dup(int fileHandle);
 int PlatformLib_Close(int fileHandle);

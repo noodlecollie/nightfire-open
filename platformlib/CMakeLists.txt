@@ -6,6 +6,7 @@ if(TARGET_PLATFORM STREQUAL "WINDOWS")
 		src/Win32/Net.cpp
 		src/Win32/String.cpp
 		src/Win32/System.cpp
+		src/Win32/Time.cpp
 	)
 elseif(TARGET_PLATFORM STREQUAL "LINUX")
 	set(SOURCES
@@ -13,6 +14,7 @@ elseif(TARGET_PLATFORM STREQUAL "LINUX")
 		src/Linux/Net.cpp
 		src/Linux/String.cpp
 		src/Linux/System.cpp
+		src/Linux/Time.cpp
 	)
 else()
 	message(FATAL_ERROR "Unsupported platform: ${TARGET_PLATFORM}")
@@ -23,6 +25,7 @@ add_library(${TARGETNAME_LIB_PLATFORMLIB} STATIC
 	include/PlatformLib/Net.h
 	include/PlatformLib/String.h
 	include/PlatformLib/System.h
+	include/PlatformLib/Time.h
 	${SOURCES}
 )
 
