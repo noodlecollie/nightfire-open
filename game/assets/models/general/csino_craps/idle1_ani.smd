@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "craps table"  -1
+end
+skeleton
+time 0
+  0 4.509542 -8.483307 0.000000 0.000000 0.000000 0.000000
+end

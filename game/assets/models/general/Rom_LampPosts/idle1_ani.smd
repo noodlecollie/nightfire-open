@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Lamppost"  -1
+end
+skeleton
+time 0
+  0 -0.293088 0.693346 116.198800 0.000000 0.000000 0.000000
+end

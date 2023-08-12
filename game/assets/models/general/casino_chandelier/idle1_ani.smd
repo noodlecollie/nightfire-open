@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "chandelier"  -1
+end
+skeleton
+time 0
+  0 -67.795040 0.002008 -0.000017 0.000000 0.000000 0.000000
+end

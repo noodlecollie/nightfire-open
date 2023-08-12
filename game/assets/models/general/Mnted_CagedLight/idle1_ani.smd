@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Mnted_Light"  -1
+end
+skeleton
+time 0
+  0 0.125701 -0.414284 7.580931 0.000000 0.000000 0.000000
+end

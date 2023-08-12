@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "kimono"  -1
+end
+skeleton
+time 0
+  0 0.097657 -0.001821 35.744200 0.000000 0.000000 0.000000
+end

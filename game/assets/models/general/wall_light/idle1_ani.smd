@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Base"  -1
+end
+skeleton
+time 0
+  0 -0.080790 0.082120 3.807085 0.000000 0.000000 0.000000
+end

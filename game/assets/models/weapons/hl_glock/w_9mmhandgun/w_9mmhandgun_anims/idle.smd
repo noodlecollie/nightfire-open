@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "sides01" -1
+end
+skeleton
+  time 0
+    0 0.240764 -1.062400 1.248789 -1.570796 0.000000 1.570796
+end

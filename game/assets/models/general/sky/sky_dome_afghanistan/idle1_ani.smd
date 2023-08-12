@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "dome"  -1
+end
+skeleton
+time 0
+  0 -0.002940 -1.488327 0.594772 0.000000 0.000000 0.000000
+end

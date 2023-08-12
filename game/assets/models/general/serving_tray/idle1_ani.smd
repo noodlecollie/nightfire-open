@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "tray"  -1
+end
+skeleton
+time 0
+  0 0.035728 -0.032001 1.684751 0.000000 0.000000 0.000000
+end

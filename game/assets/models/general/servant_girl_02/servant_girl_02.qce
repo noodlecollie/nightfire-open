@@ -1,0 +1,8 @@
+$qceversion 2.10.1.0
+
+$replaceactivity "hostage" ACT_HOSTAGE
+$replaceactivity "hostagescared" ACT_HOSTAGE_THREAT
+$replaceactivity "hostagedeath" 88
+$replaceactivity "hostagerescued" 87
+
+

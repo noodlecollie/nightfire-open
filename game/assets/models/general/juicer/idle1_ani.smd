@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "juicer"  -1
+end
+skeleton
+time 0
+  0 0.000000 0.000000 21.446020 0.000000 0.000000 0.000000
+end

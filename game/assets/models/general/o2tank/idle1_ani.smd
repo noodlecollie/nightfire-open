@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "tank"  -1
+end
+skeleton
+time 0
+  0 2.130908 14.304010 26.093170 0.000000 0.000000 0.000000
+end

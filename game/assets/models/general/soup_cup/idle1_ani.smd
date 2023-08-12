@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "soup cup"  -1
+end
+skeleton
+time 0
+  0 -0.011892 -0.035547 0.195078 0.000000 0.000000 -0.279253
+end

@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "HanginLamp"  -1
+end
+skeleton
+time 0
+  0 0.273784 -0.576303 39.370990 0.000000 0.000000 0.000000
+end

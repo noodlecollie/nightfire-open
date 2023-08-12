@@ -1,0 +1,8 @@
+version 1
+nodes
+  0 "Bench"  -1
+end
+skeleton
+time 0
+  0 -6.711144 0.001612 -0.000004 0.000000 0.000000 0.000000
+end

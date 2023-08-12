@@ -1,0 +1,35 @@
+$cdtexture "../../../../afterburner/textures"
+$cd "."
+$modelname "sitting_seagull.mdl"
+
+$root "Bone01"
+
+$flags 2048
+$origin 0.000000 0.000000 0.000000
+$eyeposition 0.000000 0.000000 0.000000
+$bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+$cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+
+
+
+$bodygroup "studio"
+{
+	studio "seagull_ref"
+}
+
+
+
+$hbox 0 "Bone01" -4.600000 -5.090000 -3.120000 4.600000 5.638668 3.752903
+$hbox 0 "Bone02" -1.070000 -0.090000 -0.060000 1.070000 1.520000 1.410000
+$hbox 0 "Bone03" -0.880000 -1.340000 0.000000 0.880000 1.330000 2.870000
+$hbox 0 "Bone04" -0.980000 -3.920000 -1.210000 0.980000 0.940000 1.270000
+$hbox 0 "Bone06" -1.340000 0.000000 -0.894520 1.480000 7.060109 0.200000
+$hbox 0 "Bone09" 0.000000 -1.950000 -0.710000 5.750000 2.790000 0.400000
+$hbox 0 "Bone13" -5.800000 -2.040000 -0.730000 0.000000 2.690000 0.380000
+
+$sequence "idle1" "idle1_ani" ACT_IDLE 1 fps 20 loop
+$sequence "idle2" "idle2_ani" ACT_IDLE 1 fps 25 loop
+$sequence "idle3" "idle3_ani" ACT_IDLE_ANGRY 1 loop
+$sequence "idle4" "idle4_ani" ACT_FEAR_DISPLAY 1 fps 40 loop
+$sequence "idle5" "idle5_ani" ACT_COWER 1 fps 40 loop
+$sequence "idle6" "idle6_ani" ACT_EXCITED 1 fps 40 loop

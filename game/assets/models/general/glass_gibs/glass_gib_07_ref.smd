@@ -1,0 +1,10 @@
+version 1
+nodes
+  0 "gib"  -1
+end
+skeleton
+time 0
+  0 -1.046284 0.000000 0.000000 0.000000 0.000000 0.000000
+end
+triangles
+end
