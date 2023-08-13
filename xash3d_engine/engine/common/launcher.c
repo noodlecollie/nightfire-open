@@ -26,6 +26,8 @@ GNU General Public License for more details.
 #elif XASH_WIN32
 #include <shellapi.h>
 
+#include "PlatformLib/System.h"
+
 // Enable NVIDIA High Performance Graphics while using Integrated Graphics.
 __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 
@@ -121,7 +123,9 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int n
 
 		// just in case, allocate some more memory
 		szArgv[i] = (char*)malloc(size * sizeof(wchar_t));
-		wcstombs(szArgv[i], lpArgv[i], size);
+
+		size_t convertedLength = 0;
+		wcstombs_s(&convertedLength, szArgv[i], size * sizeof(wchar_t), lpArgv[i], size);
 	}
 	szArgv[szArgc] = 0;
 
