@@ -97,7 +97,7 @@ const char* COM_FileWithoutPath(const char* in);
 void COM_StripExtension(char* path);
 void COM_RemoveLineFeed(char* str);
 void COM_FixSlashes(char* pname);
-void COM_PathSlashFix(char* path);
+qboolean COM_PathSlashFix(char* path, size_t pathBufferLength);
 char COM_Hex2Char(uint8_t hex);
 void COM_Hex2String(uint8_t hex, char* str);
 // return 0 on empty or null string, 1 otherwise

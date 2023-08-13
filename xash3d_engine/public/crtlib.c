@@ -843,22 +843,27 @@ COM_StripExtension
 */
 void COM_StripExtension(char* path)
 {
-	size_t length;
-
-	length = Q_strlen(path);
+	size_t length = Q_strlen(path);
 
 	if ( length > 0 )
+	{
 		length--;
+	}
 
 	while ( length > 0 && path[length] != '.' )
 	{
 		length--;
+
 		if ( path[length] == '/' || path[length] == '\\' || path[length] == ':' )
+		{
 			return;  // no extension
+		}
 	}
 
 	if ( length )
+	{
 		path[length] = 0;
+	}
 }
 
 /*
@@ -911,7 +916,9 @@ void COM_RemoveLineFeed(char* str)
 	while ( *str != '\0' )
 	{
 		if ( *str == '\r' || *str == '\n' )
+		{
 			*str = '\0';
+		}
 
 		++str;
 	}
@@ -929,7 +936,9 @@ void COM_FixSlashes(char* pname)
 	for ( ; *pname; pname++ )
 	{
 		if ( *pname == '\\' )
+		{
 			*pname = '/';
+		}
 	}
 }
 
@@ -938,16 +947,29 @@ void COM_FixSlashes(char* pname)
 COM_PathSlashFix
 ============
 */
-void COM_PathSlashFix(char* path)
+qboolean COM_PathSlashFix(char* path, size_t pathBufferLength)
 {
 	size_t len;
 
+	if ( !path || pathBufferLength < 1 )
+	{
+		return false;
+	}
+
 	len = Q_strlen(path);
+
+	// Don't overflow the buffer.
+	if ( len + 2 > pathBufferLength )
+	{
+		return false;
+	}
 
 	if ( path[len - 1] != '\\' && path[len - 1] != '/' )
 	{
-		Q_strcpy(&path[len], "/");
+		PlatformLib_StrCpy(path + len, pathBufferLength - len, "/");
 	}
+
+	return true;
 }
 
 /*
