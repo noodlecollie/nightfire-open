@@ -39,8 +39,9 @@ GNU General Public License for more details.
 // CONFIG        platform/config
 
 #define FixupPath(var, str) \
-	char* var = static_cast<char*>(alloca(Q_strlen((str)) + 1)); \
-	CopyAndFixSlashes((var), (str))
+	size_t varLength = Q_strlen((str)) + 1; \
+	char* var = static_cast<char*>(alloca(varLength)); \
+	CopyAndFixSlashes((var), varLength, (str))
 
 static inline bool IsIdGamedir(const char* id)
 {
@@ -71,9 +72,9 @@ static inline const char* IdToDir(char* dir, size_t size, const char* id)
 	return fs_rootdir;  // give at least root directory
 }
 
-static inline void CopyAndFixSlashes(char* p, const char* in)
+static inline void CopyAndFixSlashes(char* p, size_t size, const char* in)
 {
-	Q_strcpy(p, in);
+	Q_strcpy(p, size, in);
 	COM_FixSlashes(p);
 }
 
@@ -400,7 +401,7 @@ public:
 		return p;
 	}
 
-	bool FullPathToRelativePath(const char* path, char* out) override
+	bool FullPathToRelativePath(const char* path, char* out, size_t size) override
 	{
 		searchpath_t* sp;
 
@@ -418,12 +419,12 @@ public:
 
 			if ( !Q_strnicmp(sp->filename, p, splen) )
 			{
-				Q_strcpy(out, p + splen + 1);
+				Q_strcpy(out, size, p + splen + 1);
 				return true;
 			}
 		}
 
-		Q_strcpy(out, p);
+		Q_strcpy(out, size, p);
 		return false;
 	}
 
@@ -468,7 +469,7 @@ public:
 		char dir[MAX_VA_STRING], fullpath[MAX_VA_STRING];
 
 		Q_snprintf(fullpath, sizeof(fullpath), "%s/%s", IdToDir(dir, sizeof(dir), id), path);
-		CopyAndFixSlashes(fullpath, path);
+		CopyAndFixSlashes(fullpath, sizeof(fullpath), path);
 
 		return !!FS_AddPak_Fullpath(fullpath, nullptr, FS_CUSTOM_PATH);
 	}

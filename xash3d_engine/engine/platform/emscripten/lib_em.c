@@ -26,7 +26,7 @@ void* EMSCRIPTEN_LoadLibrary(const char* dllname)
 #ifdef EMSCRIPTEN_LIB_FS
 	char path[MAX_SYSPATH], buf[MAX_VA_STRING];
 	string prefix;
-	Q_strcpy(prefix, PlatformLib_GetEnv("LIBRARY_PREFIX"));
+	Q_strcpy(prefix, sizeof(prefix), PlatformLib_GetEnv("LIBRARY_PREFIX"));
 	Q_snprintf(path, MAX_SYSPATH, "%s%s%s", prefix, dllname, PlatformLib_GetEnv("LIBRARY_SUFFIX"));
 	pHandle = dlopen(path, RTLD_LAZY);
 	if ( !pHandle )

@@ -3516,8 +3516,8 @@ void SV_ParseCvarValue2(sv_client_t* cl, sizebuf_t* msg)
 	string name, value;
 	int requestID = MSG_ReadLong(msg);
 
-	Q_strcpy(name, MSG_ReadString(msg));
-	Q_strcpy(value, MSG_ReadString(msg));
+	Q_strcpy(name, sizeof(name), MSG_ReadString(msg));
+	Q_strcpy(value, sizeof(value), MSG_ReadString(msg));
 
 	if ( svgame.dllFuncs2.pfnCvarValue2 != NULL )
 		svgame.dllFuncs2.pfnCvarValue2(cl->edict, requestID, name, value);

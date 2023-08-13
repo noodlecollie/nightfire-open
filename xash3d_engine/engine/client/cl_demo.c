@@ -1352,7 +1352,7 @@ static void CL_DemoGetName(int lastnum, char* filename)
 	if ( lastnum < 0 || lastnum > 9999 )
 	{
 		// bound
-		Q_strcpy(filename, "demo9999");
+		Q_strcpy(filename, sizeof(filename), "demo9999");
 		return;
 	}
 

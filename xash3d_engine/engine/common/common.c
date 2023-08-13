@@ -1135,14 +1135,22 @@ const char* COM_GetResourceTypeName(resourcetype_t restype)
 char* _copystring(poolhandle_t mempool, const char* s, const char* filename, int fileline)
 {
 	char* b;
+	size_t length;
 
 	if ( !s )
+	{
 		return NULL;
-	if ( !mempool )
-		mempool = host.mempool;
+	}
 
-	b = _Mem_Alloc(mempool, Q_strlen(s) + 1, false, filename, fileline);
-	Q_strcpy(b, s);
+	if ( !mempool )
+	{
+		mempool = host.mempool;
+	}
+
+	length = Q_strlen(s) + 1;
+
+	b = _Mem_Alloc(mempool, length, false, filename, fileline);
+	Q_strcpy(b, length, s);
 
 	return b;
 }

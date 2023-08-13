@@ -2724,7 +2724,7 @@ const char* pfnGetGameDirectory(void)
 {
 	static char szGetGameDir[MAX_SYSPATH];
 
-	Q_strcpy(szGetGameDir, GI->gamefolder);
+	Q_strcpy(szGetGameDir, sizeof(szGetGameDir), GI->gamefolder);
 	return szGetGameDir;
 }
 
@@ -3592,7 +3592,7 @@ void GAME_EXPORT NetAPI_SendRequest(
 			nr->resp.remote_address.port = MSG_BigShort(PORT_MASTER);
 
 		// grab the list from the master server
-		Q_strcpy(&fullquery[22], GI->gamefolder);
+		Q_strcpy(&fullquery[22], sizeof(fullquery) - 22, GI->gamefolder);
 		NET_SendPacket(NS_CLIENT, Q_strlen(GI->gamefolder) + 23, fullquery, nr->resp.remote_address);
 		clgame.request_type = NET_REQUEST_CLIENT;
 		clgame.master_request = nr;  // holds the master request unitl the master acking

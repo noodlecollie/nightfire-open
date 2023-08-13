@@ -67,7 +67,6 @@ char Q_toupper(const char in);
 char Q_tolower(const char in);
 #define Q_strcat(dst, src) Q_strncat(dst, src, (size_t)~0)
 size_t Q_strncat(char* dst, const char* src, size_t siz);
-#define Q_strcpy(dst, src) Q_strncpy(dst, src, (size_t)~0)
 size_t Q_strncpy(char* dst, const char* src, size_t siz);
 qboolean Q_isdigit(const char* str);
 qboolean Q_isspace(const char* str);
@@ -139,6 +138,11 @@ static inline int Q_stricmp(const char* s1, const char* s2)
 static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)
 {
 	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrNCaseCmp(s1, s2, n));
+}
+
+static inline char* Q_strcpy(char* dest, size_t destSize, const char* src)
+{
+	return PlatformLib_StrCpy(dest, destSize, src);
 }
 
 char* Q_stristr(const char* s1, const char* s2);

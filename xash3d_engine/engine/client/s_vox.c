@@ -137,23 +137,23 @@ float VOX_ModifyPitch(channel_t* ch, float pitch)
 	return pitch;
 }
 
-static const char* VOX_GetDirectory(char* szpath, const char* psz, int nsize)
+static const char* VOX_GetDirectory(char* szpath, const char* psz, size_t nsize)
 {
 	const char* p;
-	int len;
+	size_t len;
 
 	// search / backwards
 	p = Q_strrchr(psz, '/');
 
 	if ( !p )
 	{
-		Q_strcpy(szpath, "vox/");
+		Q_strcpy(szpath, nsize, "vox/");
 		return psz;
 	}
 
-	len = (int)(p - psz + 1);
+	len = (size_t)(p - psz + 1);
 
-	if ( len > nsize )
+	if ( len >= nsize )
 	{
 		Con_Printf("VOX_GetDirectory: invalid directory in: %s\n", psz);
 		return NULL;

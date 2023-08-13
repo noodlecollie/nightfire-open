@@ -633,15 +633,15 @@ char* Q_pretifymem(float value, int digitsafterdecimal)
 	if ( value > onemb )
 	{
 		value /= onemb;
-		Q_strcpy(suffix, " Mb");
+		Q_strcpy(suffix, sizeof(suffix), " Mb");
 	}
 	else if ( value > onekb )
 	{
 		value /= onekb;
-		Q_strcpy(suffix, " Kb");
+		Q_strcpy(suffix, sizeof(suffix), " Kb");
 	}
 	else
-		Q_strcpy(suffix, " bytes");
+		Q_strcpy(suffix, sizeof(suffix), " bytes");
 
 	// clamp to >= 0
 	digitsafterdecimal = Q_max(digitsafterdecimal, 0);
