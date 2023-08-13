@@ -19,26 +19,26 @@ int PlatformLib_StrNCaseCmp(const char* s1, const char* s2, size_t n)
 
 char* PlatformLib_StrCat(char* destination, size_t destSize, const char* source)
 {
-	errno_t result = strcat_s(destination, destSize, source);
-	return result == 0 ? destination : nullptr;
+	strcat_s(destination, destSize, source);
+	return destination;
 }
 
 char* PlatformLib_StrNCat(char* destination, size_t destSize, const char* source, size_t num)
 {
-	errno_t result = strncat_s(destination, destSize, source, num);
-	return result == 0 ? destination : nullptr;
+	strncat_s(destination, destSize, source, num);
+	return destination;
 }
 
 char* PlatformLib_StrCpy(char* destination, size_t destSize, const char* source)
 {
-	errno_t result = strcpy_s(destination, destSize, source);
-	return result == 0 ? destination : nullptr;
+	strcpy_s(destination, destSize, source);
+	return destination;
 }
 
 char* PlatformLib_StrNCpy(char* destination, size_t destSize, const char* source, size_t num)
 {
-	errno_t result = strncpy_s(destination, destSize, source, num);
-	return result == 0 ? destination : nullptr;
+	strncpy_s(destination, destSize, source, num);
+	return destination;
 }
 
 // https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/vsnprintf-vsnprintf-vsnprintf-l-vsnwprintf-vsnwprintf-l
@@ -47,11 +47,6 @@ char* PlatformLib_StrNCpy(char* destination, size_t destSize, const char* source
 int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_list argptr)
 {
 	return vsnprintf(buffer, count, format, argptr);
-}
-
-int PlatformLib_VSScanF(const char* buffer, const char* format, va_list argptr)
-{
-	return vsscanf_s(buffer, format, argptr);
 }
 
 char* PlatformLib_StrDup(const char* in)
@@ -72,6 +67,11 @@ const char* PlatformLib_StrError(int errornum)
 
 	errno_t result = strerror_s(buffer, errornum);
 	return result == 0 ? buffer : nullptr;
+}
+
+int PlatformLib_VSScanF(const char* buffer, const char* format, va_list argptr)
+{
+	return vsscanf_s(buffer, format, argptr);
 }
 
 #ifdef __cplusplus

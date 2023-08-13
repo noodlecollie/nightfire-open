@@ -16,7 +16,6 @@ char* PlatformLib_StrNCat(char* destination, size_t destSize, const char* source
 char* PlatformLib_StrCpy(char* destination, size_t destSize, const char* source);
 char* PlatformLib_StrNCpy(char* destination, size_t destSize, const char* source, size_t num);
 int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_list argptr);
-int PlatformLib_VSScanF(const char* buffer, const char* format, va_list argptr);
 char* PlatformLib_StrDup(const char* in);
 char* PlatformLib_StrTok(char* str, const char* delimiters);
 const char* PlatformLib_StrError(int errornum);
@@ -31,6 +30,11 @@ static inline int PlatformLib_SNPrintF(char* buffer, size_t count, const char* f
 
 	return returnVal;
 }
+
+// TODO: sscanf and its related variants are just considered bad to use.
+// Maybe we should modify the code to remove usage of these, if possible.
+// For now, we don't guarantee safety for these function wrappers.
+int PlatformLib_VSScanF(const char* buffer, const char* format, va_list argptr);
 
 static inline int PlatformLib_SScanF(const char* buffer, const char* format, ...)
 {
