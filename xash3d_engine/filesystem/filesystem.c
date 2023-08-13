@@ -1648,7 +1648,7 @@ file_t* FS_SysOpen(const char* filepath, const char* mode)
 	file->filetime = FS_SysFileTime(filepath);
 	file->ungetc = EOF;
 
-	file->handle = PlatformLib_OpenWithPermissions(filepath, mod | opt, 0666);
+	file->handle = PlatformLib_Open(filepath, mod | opt);
 
 #if !XASH_WIN32
 	if ( file->handle < 0 )

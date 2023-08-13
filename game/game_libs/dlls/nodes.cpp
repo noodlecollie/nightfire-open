@@ -2830,6 +2830,9 @@ int CGraph::CheckNODFile(const char* szMapName)
 	char szBspFilename[MAX_PATH];
 	char szGraphFilename[MAX_PATH];
 
+	szBspFilename[0] = '\0';
+	szGraphFilename[0] = '\0';
+
 	PlatformLib_StrCat(szBspFilename, sizeof(szBspFilename), "maps/");
 	PlatformLib_StrCat(szBspFilename, sizeof(szBspFilename), szMapName);
 	PlatformLib_StrCat(szBspFilename, sizeof(szBspFilename), ".bsp");
