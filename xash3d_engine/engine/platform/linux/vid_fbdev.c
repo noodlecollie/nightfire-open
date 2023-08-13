@@ -64,7 +64,7 @@ qboolean R_Init_Video(const int type)
 
 	if ( fb.fd < 0 )
 	{
-		Con_Printf(S_ERROR, "failed to open framebuffer device: %s\n", strerror(errno));
+		Con_Printf(S_ERROR, "failed to open framebuffer device: %s\n", PlatformLib_StrError(errno));
 	}
 
 	if ( Sys_CheckParm("-ttygfx") )

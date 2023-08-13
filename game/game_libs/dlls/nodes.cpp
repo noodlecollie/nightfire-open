@@ -26,6 +26,8 @@
 #include "doors.h"
 #include "com_strings.h"
 #include <limits>
+#include "PlatformLib/String.h"
+#include "PlatformLib/File.h"
 
 #define HULL_STEP_SIZE 16  // how far the test hull moves on each step
 #define NODE_HEIGHT 8  // how high to lift nodes off the ground after we drop them all (make stair/ramp mapping easier)
@@ -1780,17 +1782,17 @@ void CTestHull::BuildNodeGraph(void)
 	}
 
 	// make sure directories have been made
-	GET_GAME_DIR(szNrpFilename);
-	strcat(szNrpFilename, "/maps");
+	GET_GAME_DIR(szNrpFilename, sizeof(szNrpFilename));
+	PlatformLib_StrCat(szNrpFilename, sizeof(szNrpFilename), "/maps");
 	CreateDirectory(szNrpFilename, NULL);
-	strcat(szNrpFilename, "/graphs");
+	PlatformLib_StrCat(szNrpFilename, sizeof(szNrpFilename), "/graphs");
 	CreateDirectory(szNrpFilename, NULL);
 
-	strcat(szNrpFilename, "/");
-	strcat(szNrpFilename, STRING(gpGlobals->mapname));
-	strcat(szNrpFilename, ".nrp");
+	PlatformLib_StrCat(szNrpFilename, sizeof(szNrpFilename), "/");
+	PlatformLib_StrCat(szNrpFilename, sizeof(szNrpFilename), STRING(gpGlobals->mapname));
+	PlatformLib_StrCat(szNrpFilename, sizeof(szNrpFilename), ".nrp");
 
-	file = fopen(szNrpFilename, "w+");
+	file = PlatformLib_FOpen(szNrpFilename, "w+");
 
 	if ( !file )
 	{
@@ -2472,15 +2474,15 @@ int CGraph::FLoadGraph(const char* szMapName)
 
 	// make sure the directories have been made
 	char szDirName[MAX_PATH];
-	GET_GAME_DIR(szDirName);
-	strcat(szDirName, "/maps");
+	GET_GAME_DIR(szDirName, sizeof(szDirName));
+	PlatformLib_StrCat(szDirName, sizeof(szDirName), "/maps");
 	CreateDirectory(szDirName, NULL);
-	strcat(szDirName, "/graphs");
+	PlatformLib_StrCat(szDirName, sizeof(szDirName), "/graphs");
 	CreateDirectory(szDirName, NULL);
 
-	strcpy(szFilename, "maps/graphs/");
-	strcat(szFilename, szMapName);
-	strcat(szFilename, ".nod");
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), "maps/graphs/");
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), szMapName);
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), ".nod");
 
 	pMemFile = aMemFile = LOAD_FILE_FOR_ME(szFilename, &length);
 
@@ -2702,17 +2704,17 @@ int CGraph::FSaveGraph(const char* szMapName)
 	}
 
 	// make sure directories have been made
-	GET_GAME_DIR(szFilename);
-	strcat(szFilename, "/maps");
+	GET_GAME_DIR(szFilename, sizeof(szFilename));
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), "/maps");
 	CreateDirectory(szFilename, NULL);
-	strcat(szFilename, "/graphs");
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), "/graphs");
 	CreateDirectory(szFilename, NULL);
 
-	strcat(szFilename, "/");
-	strcat(szFilename, szMapName);
-	strcat(szFilename, ".nod");
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), "/");
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), szMapName);
+	PlatformLib_StrCat(szFilename, sizeof(szFilename), ".nod");
 
-	file = fopen(szFilename, "wb");
+	file = PlatformLib_FOpen(szFilename, "wb");
 
 	ALERT(at_aiconsole, "Created: %s\n", szFilename);
 
@@ -2823,20 +2825,13 @@ int CGraph::FSetGraphPointers(void)
 //=========================================================
 int CGraph::CheckNODFile(const char* szMapName)
 {
-	int retValue;
+	int retValue = TRUE;
 
 	char szBspFilename[MAX_PATH];
 	char szGraphFilename[MAX_PATH];
 
-	strcpy(szBspFilename, "maps/");
-	strcat(szBspFilename, szMapName);
-	strcat(szBspFilename, ".bsp");
-
-	strcpy(szGraphFilename, "maps/graphs/");
-	strcat(szGraphFilename, szMapName);
-	strcat(szGraphFilename, ".nod");
-
-	retValue = TRUE;
+	PlatformLib_SNPrintF(szBspFilename, sizeof(szBspFilename), "maps/%s.bsp", szMapName);
+	PlatformLib_SNPrintF(szBspFilename, sizeof(szBspFilename), "maps/graphs/%s.nod", szMapName);
 
 	int iCompare;
 	if ( COMPARE_FILE_TIME(szBspFilename, szGraphFilename, &iCompare) )

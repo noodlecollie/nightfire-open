@@ -17,6 +17,8 @@ GNU General Public License for more details.
 
 #include "build.h"
 #include "common.h"
+#include "PlatformLib/System.h"
+
 #ifdef XASH_SDLMAIN
 #include "SDL.h"
 #endif
@@ -54,7 +56,7 @@ static void Sys_ChangeGame(const char* progname)
 _inline int Sys_Start(void)
 {
 	int ret;
-	const char* game = getenv(E_GAME);
+	const char* game = PlatformLib_GetEnv(E_GAME);
 
 	if ( !game )
 		game = XASH_GAMEDIR;
@@ -121,7 +123,9 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int n
 
 		// just in case, allocate some more memory
 		szArgv[i] = (char*)malloc(size * sizeof(wchar_t));
-		wcstombs(szArgv[i], lpArgv[i], size);
+
+		size_t convertedLength = 0;
+		wcstombs_s(&convertedLength, szArgv[i], size * sizeof(wchar_t), lpArgv[i], size);
 	}
 	szArgv[szArgc] = 0;
 

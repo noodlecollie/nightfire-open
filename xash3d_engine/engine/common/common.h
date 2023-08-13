@@ -673,7 +673,7 @@ void COM_TrimSpace(const char* source, char* dest);
 void pfnGetModelBounds(model_t* mod, float* mins, float* maxs);
 void pfnCVarDirectSet(cvar_t* var, const char* szValue);
 int COM_CheckParm(char* parm, char** ppnext);
-void pfnGetGameDir(char* szGetGameDir);
+void pfnGetGameDir(char* szGetGameDir, int bufferSize);
 int pfnDecalIndex(const char* m);
 int pfnGetModelType(model_t* mod);
 int pfnIsMapValid(char* filename);

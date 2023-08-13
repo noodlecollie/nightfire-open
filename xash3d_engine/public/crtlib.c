@@ -22,6 +22,8 @@ GNU General Public License for more details.
 #include "stdio.h"
 #include "crtlib.h"
 #include "xash3d_mathlib.h"
+#include "PlatformLib/Time.h"
+#include "PlatformLib/String.h"
 
 void Q_strnlwr(const char* in, char* out, size_t size_out)
 {
@@ -150,8 +152,16 @@ size_t Q_strncpy(char* dst, const char* src, size_t size)
 	register const char* s = src;
 	register size_t n = size;
 
-	if ( !dst || !src || !size )
+	if ( !dst || !size )
+	{
 		return 0;
+	}
+
+	if ( !src )
+	{
+		*dst = '\0';
+		return 0;
+	}
 
 	// copy as many bytes as will fit
 	if ( n != 0 && --n != 0 )
@@ -159,7 +169,9 @@ size_t Q_strncpy(char* dst, const char* src, size_t size)
 		do
 		{
 			if ( (*d++ = *s++) == 0 )
+			{
 				break;
+			}
 		}
 		while ( --n != 0 );
 	}
@@ -168,10 +180,16 @@ size_t Q_strncpy(char* dst, const char* src, size_t size)
 	if ( n == 0 )
 	{
 		if ( size != 0 )
+		{
 			*d = '\0';  // NULL-terminate dst
+		}
+
 		while ( *s++ )
-			;
+		{
+			// Seek to end
+		}
 	}
+
 	return (s - src - 1);  // count does not include NULL
 }
 
@@ -454,7 +472,7 @@ const char* Q_timestamp(int format)
 	string timestring;
 
 	time(&crt_time);
-	crt_tm = localtime(&crt_time);
+	crt_tm = PlatformLib_LocalTime(&crt_time);
 
 	switch ( format )
 	{
@@ -579,15 +597,22 @@ int Q_sprintf(char* buffer, const char* format, ...)
 	return result;
 }
 
-void COM_StripColors(const char* in, char* out)
+void COM_StripColors(const char* in, char* out, size_t outBufferLength)
 {
-	while ( *in )
+	char* lastOutChar = out + outBufferLength - 1;
+
+	while ( *in && out < lastOutChar )
 	{
 		if ( IsColorString(in) )
+		{
 			in += 2;
+		}
 		else
+		{
 			*out++ = *in++;
+		}
 	}
+
 	*out = '\0';
 }
 
@@ -673,7 +698,7 @@ COM_FileBase
 Extracts the base name of a file (no path, no extension, assumes '/' as path separator)
 ============
 */
-void COM_FileBase(const char* in, char* out)
+void COM_FileBase(const char* in, char* out, size_t outBufferSize)
 {
 	int len;
 	int start;
@@ -724,8 +749,7 @@ void COM_FileBase(const char* in, char* out)
 	len = end - start + 1;
 
 	// Copy partial string
-	Q_strncpy(out, &in[start], len + 1);
-	out[len] = 0;
+	PlatformLib_StrNCpy(out, outBufferSize, &in[start], len);
 }
 
 /*
@@ -784,21 +808,32 @@ const char* COM_FileWithoutPath(const char* in)
 COM_ExtractFilePath
 ============
 */
-void COM_ExtractFilePath(const char* path, char* dest)
+void COM_ExtractFilePath(const char* path, char* dest, size_t destBufferSize)
 {
-	const char* src = path + Q_strlen(path) - 1;
+	const char* src;
+
+	if ( !dest || destBufferSize < 1 )
+	{
+		return;
+	}
+
+	src = path + Q_strlen(path) - 1;
 
 	// back up until a \ or the start
 	while ( src != path && !(*(src - 1) == '\\' || *(src - 1) == '/') )
+	{
 		src--;
+	}
 
 	if ( src != path )
 	{
-		memcpy(dest, path, src - path);
+		PlatformLib_StrNCpy(dest, destBufferSize, path, src - path);
 		dest[src - path - 1] = 0;  // cutoff backslash
 	}
 	else
+	{
 		dest[0] = 0;  // file without path
+	}
 }
 
 /*
@@ -808,22 +843,27 @@ COM_StripExtension
 */
 void COM_StripExtension(char* path)
 {
-	size_t length;
-
-	length = Q_strlen(path);
+	size_t length = Q_strlen(path);
 
 	if ( length > 0 )
+	{
 		length--;
+	}
 
 	while ( length > 0 && path[length] != '.' )
 	{
 		length--;
+
 		if ( path[length] == '/' || path[length] == '\\' || path[length] == ':' )
+		{
 			return;  // no extension
+		}
 	}
 
 	if ( length )
+	{
 		path[length] = 0;
+	}
 }
 
 /*
@@ -831,7 +871,7 @@ void COM_StripExtension(char* path)
 COM_DefaultExtension
 ==================
 */
-void COM_DefaultExtension(char* path, const char* extension)
+void COM_DefaultExtension(char* path, size_t pathBufferLength, const char* extension)
 {
 	const char* src;
 	size_t len;
@@ -845,11 +885,14 @@ void COM_DefaultExtension(char* path, const char* extension)
 	{
 		// it has an extension
 		if ( *src == '.' )
+		{
 			return;
+		}
+
 		src--;
 	}
 
-	Q_strcpy(&path[len], extension);
+	PlatformLib_StrCat(path, pathBufferLength, extension);
 }
 
 /*
@@ -857,10 +900,10 @@ void COM_DefaultExtension(char* path, const char* extension)
 COM_ReplaceExtension
 ==================
 */
-void COM_ReplaceExtension(char* path, const char* extension)
+void COM_ReplaceExtension(char* path, size_t pathBufferLength, const char* extension)
 {
 	COM_StripExtension(path);
-	COM_DefaultExtension(path, extension);
+	COM_DefaultExtension(path, pathBufferLength, extension);
 }
 
 /*
@@ -873,7 +916,9 @@ void COM_RemoveLineFeed(char* str)
 	while ( *str != '\0' )
 	{
 		if ( *str == '\r' || *str == '\n' )
+		{
 			*str = '\0';
+		}
 
 		++str;
 	}
@@ -891,7 +936,9 @@ void COM_FixSlashes(char* pname)
 	for ( ; *pname; pname++ )
 	{
 		if ( *pname == '\\' )
+		{
 			*pname = '/';
+		}
 	}
 }
 
@@ -900,16 +947,29 @@ void COM_FixSlashes(char* pname)
 COM_PathSlashFix
 ============
 */
-void COM_PathSlashFix(char* path)
+qboolean COM_PathSlashFix(char* path, size_t pathBufferLength)
 {
 	size_t len;
 
+	if ( !path || pathBufferLength < 1 )
+	{
+		return false;
+	}
+
 	len = Q_strlen(path);
+
+	// Don't overflow the buffer.
+	if ( len + 2 > pathBufferLength )
+	{
+		return false;
+	}
 
 	if ( path[len - 1] != '\\' && path[len - 1] != '/' )
 	{
-		Q_strcpy(&path[len], "/");
+		PlatformLib_StrCpy(path + len, pathBufferLength - len, "/");
 	}
+
+	return true;
 }
 
 /*

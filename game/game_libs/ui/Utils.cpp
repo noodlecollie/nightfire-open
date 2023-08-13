@@ -46,9 +46,14 @@ void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int 
 
 	char szOut[512];
 	if ( szMessage != NULL )
-		sprintf(szOut, "ASSERT FAILED:\n %s \n(%s@%d)\n%s", szExpr, szFile, szLine, szMessage);
+	{
+		PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)\n%s", szExpr, szFile, szLine, szMessage);
+	}
 	else
-		sprintf(szOut, "ASSERT FAILED:\n %s \n(%s@%d)", szExpr, szFile, szLine);
+	{
+		PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)", szExpr, szFile, szLine);
+	}
+
 	Host_Error(szOut);
 }
 #endif  // DEBUG
@@ -199,10 +204,13 @@ int ColorPrexfixCount(const char* str)
 char* StringCopy(const char* input)
 {
 	if ( !input )
+	{
 		return NULL;
+	}
 
-	char* out = new char[strlen(input) + 1];
-	strcpy(out, input);
+	size_t length = strlen(input) + 1;
+	char* out = new char[length];
+	PlatformLib_StrCpy(out, length, input);
 
 	return out;
 }
@@ -232,7 +240,7 @@ COM_FileBase
 ============
 */
 // Extracts the base name of a file (no path, no extension, assumes '/' as path separator)
-void COM_FileBase(const char* in, char* out)
+void COM_FileBase(const char* in, char* out, size_t outBufferSize)
 {
 	int len, start, end;
 
@@ -262,7 +270,7 @@ void COM_FileBase(const char* in, char* out)
 	len = end - start + 1;
 
 	// Copy partial string
-	strncpy(out, &in[start], len);
+	PlatformLib_StrNCpy(out, outBufferSize, &in[start], len);
 	// Terminate it
 	out[len] = 0;
 }

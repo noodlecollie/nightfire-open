@@ -118,7 +118,7 @@ size_t CUtlString::FormatV(const char* pFormat, va_list args)
 	// get it
 	FreePv(m_pchString);
 	m_pchString = (char*)PvAlloc(len + 1);
-	strcpy(m_pchString, buf);
+	PlatformLib_StrCpy(m_pchString, len + 1, buf);
 #elif defined(_PS3)
 
 	// ignore the PS3 documentation about vsnprintf returning -1 when the string is too small. vsprintf seems to do the

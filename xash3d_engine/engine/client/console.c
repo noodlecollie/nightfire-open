@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "qfont.h"
 #include "wadfile.h"
 #include "input.h"
+#include "PlatformLib/String.h"
 
 convar_t* con_notifytime;
 convar_t* scr_conspeed;
@@ -167,7 +168,7 @@ static void Con_SetColor(void)
 	if ( !FBitSet(con_color->flags, FCVAR_CHANGED) )
 		return;
 
-	num = sscanf(con_color->string, "%i %i %i", &r, &g, &b);
+	num = PlatformLib_SScanF(con_color->string, "%i %i %i", &r, &g, &b);
 
 	switch ( num )
 	{

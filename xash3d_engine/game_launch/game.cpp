@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include <stdlib.h>
 #include <stdarg.h>
 #include "PlatformLib/String.h"
+#include "PlatformLib/System.h"
 
 #if XASH_POSIX
 #define XASHLIB "libxash." OS_LIB_EXT
@@ -148,7 +149,7 @@ static void Sys_ChangeGame(const char* progname)
 	if ( Xash_Shutdown == NULL )
 		Xash_Error("Sys_ChangeGame: missed 'Host_Shutdown' export\n");
 
-	strncpy(szGameDir, progname, sizeof(szGameDir) - 1);
+	PlatformLib_StrCpy(szGameDir, sizeof(szGameDir), progname);
 
 	Sys_UnloadEngine();
 	Sys_LoadEngine();
@@ -159,12 +160,12 @@ _inline int Sys_Start(void)
 {
 	int ret;
 	pfnChangeGame changeGame = NULL;
-	const char* game = getenv(E_GAME);
+	const char* game = PlatformLib_GetEnv(E_GAME);
 
 	if ( !game )
 		game = XASH_GAMEDIR;
 
-	strncpy(szGameDir, game, sizeof(szGameDir) - 1);
+	PlatformLib_StrCpy(szGameDir, sizeof(szGameDir), game);
 
 	Sys_LoadEngine();
 
@@ -201,7 +202,9 @@ int __stdcall WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// just in case, allocate some more memory
 		szArgv[i] = (char*)malloc(size * sizeof(wchar_t));
-		wcstombs(szArgv[i], lpArgv[i], size);
+
+		size_t convertedLength = 0;
+		wcstombs_s(&convertedLength, szArgv[i], size * sizeof(wchar_t), lpArgv[i], size);
 	}
 	szArgv[szArgc] = 0;
 

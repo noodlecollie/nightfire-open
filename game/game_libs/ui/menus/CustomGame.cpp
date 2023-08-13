@@ -86,7 +86,7 @@ private:
 void CMenuCustomGame::ChangeGame(void* pExtra)
 {
 	char cmd[128];
-	sprintf(cmd, "game %s\n", (const char*)pExtra);
+	PlatformLib_SNPrintF(cmd, sizeof(cmd), "game %s\n", (const char*)pExtra);
 	EngFuncs::ClientCmd(FALSE, cmd);
 }
 

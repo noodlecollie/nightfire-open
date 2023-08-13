@@ -180,9 +180,9 @@ void CMenuSavesListModel::Update(void)
 		// create new entry for current save game
 		Q_strncpy(saveName[i], "new", CS_SIZE);  // special name, handled in SV_Save_f
 		Q_strncpy(delName[i], "", CS_SIZE);
-		strcpy(m_szCells[i][0], L("GameUI_SaveGame_Current"));
-		strcpy(m_szCells[i][1], L("GameUI_SaveGame_NewSavedGame"));
-		strcpy(m_szCells[i][2], L("GameUI_SaveGame_New"));
+		PlatformLib_StrCpy(m_szCells[i][0], sizeof(m_szCells[i][0]), L("GameUI_SaveGame_Current"));
+		PlatformLib_StrCpy(m_szCells[i][1], sizeof(m_szCells[i][1]), L("GameUI_SaveGame_NewSavedGame"));
+		PlatformLib_StrCpy(m_szCells[i][2], sizeof(m_szCells[i][2]), L("GameUI_SaveGame_New"));
 		i++;
 	}
 
@@ -200,15 +200,15 @@ void CMenuSavesListModel::Update(void)
 				Q_strncpy(m_szCells[i][0], comment, MAX_CELLSTRING);
 				m_szCells[i][1][0] = 0;
 				m_szCells[i][2][0] = 0;
-				COM_FileBase(filenames[j], saveName[i]);
-				COM_FileBase(filenames[j], delName[i]);
+				COM_FileBase(filenames[j], saveName[i], sizeof(saveName[i]));
+				COM_FileBase(filenames[j], delName[i], sizeof(delName[i]));
 			}
 			continue;
 		}
 
 		// strip path, leave only filename (empty slots doesn't have savename)
-		COM_FileBase(filenames[j], saveName[i]);
-		COM_FileBase(filenames[j], delName[i]);
+		COM_FileBase(filenames[j], saveName[i], sizeof(saveName[i]));
+		COM_FileBase(filenames[j], delName[i], sizeof(delName[i]));
 
 		// they are defined by comment string format
 		const char* time = comment + CS_SIZE;
@@ -342,7 +342,7 @@ void CMenuLoadGame::LoadGame()
 	if ( saveName[0] )
 	{
 		char cmd[128];
-		sprintf(cmd, "load \"%s\"\n", saveName);
+		PlatformLib_SNPrintF(cmd, sizeof(cmd), "load \"%s\"\n", saveName);
 
 		EngFuncs::StopBackgroundTrack();
 
@@ -359,10 +359,10 @@ void CMenuLoadGame::SaveGame()
 	{
 		char cmd[128];
 
-		sprintf(cmd, "save/%s.bmp", saveName);
+		PlatformLib_SNPrintF(cmd, sizeof(cmd), "save/%s.bmp", saveName);
 		EngFuncs::PIC_Free(cmd);
 
-		sprintf(cmd, "save \"%s\"\n", saveName);
+		PlatformLib_SNPrintF(cmd, sizeof(cmd), "save \"%s\"\n", saveName);
 		EngFuncs::ClientCmd(FALSE, cmd);
 
 		UI_CloseMenu();
@@ -391,11 +391,11 @@ void CMenuLoadGame::DeleteGame()
 	if ( delName[0] )
 	{
 		char cmd[128];
-		sprintf(cmd, "killsave \"%s\"\n", delName);
+		PlatformLib_SNPrintF(cmd, sizeof(cmd), "killsave \"%s\"\n", delName);
 
 		EngFuncs::ClientCmd(TRUE, cmd);
 
-		sprintf(cmd, "save/%s.bmp", delName);
+		PlatformLib_SNPrintF(cmd, sizeof(cmd), "save/%s.bmp", delName);
 		EngFuncs::PIC_Free(cmd);
 
 		savesListModel.Update();

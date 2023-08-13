@@ -1040,7 +1040,7 @@ void USENTENCEG_InitLRU(unsigned char* plru, int count)
 // ipick 'next' is returned.
 // return of -1 indicates an error.
 
-int USENTENCEG_PickSequential(int isentenceg, char* szfound, int ipick, int freset)
+int USENTENCEG_PickSequential(int isentenceg, char* szfound, size_t foundBufferSize, int ipick, int freset)
 {
 	char* szgroupname;
 	unsigned char count;
@@ -1061,10 +1061,10 @@ int USENTENCEG_PickSequential(int isentenceg, char* szfound, int ipick, int fres
 	if ( ipick >= count )
 		ipick = count - 1;
 
-	strcpy(szfound, "!");
-	strcat(szfound, szgroupname);
+	PlatformLib_StrCpy(szfound, foundBufferSize, "!");
+	PlatformLib_StrCat(szfound, foundBufferSize, szgroupname);
 	PlatformLib_SNPrintF(sznum, sizeof(sznum), "%d", ipick);
-	strcat(szfound, sznum);
+	PlatformLib_StrCat(szfound, foundBufferSize, sznum);
 
 	if ( ipick >= count )
 	{
@@ -1086,7 +1086,7 @@ int USENTENCEG_PickSequential(int isentenceg, char* szfound, int ipick, int fres
 // actually the size of the list.  Returns ipick, the ordinal
 // of the picked sentence within the group.
 
-int USENTENCEG_Pick(int isentenceg, char* szfound)
+int USENTENCEG_Pick(int isentenceg, char* szfound, size_t foundBufferSize)
 {
 	char* szgroupname;
 	unsigned char* plru;
@@ -1121,10 +1121,10 @@ int USENTENCEG_Pick(int isentenceg, char* szfound)
 			USENTENCEG_InitLRU(plru, count);
 		else
 		{
-			strcpy(szfound, "!");
-			strcat(szfound, szgroupname);
-			sprintf(sznum, "%d", ipick);
-			strcat(szfound, sznum);
+			PlatformLib_StrCpy(szfound, foundBufferSize, "!");
+			PlatformLib_StrCat(szfound, foundBufferSize, szgroupname);
+			PlatformLib_SNPrintF(sznum, sizeof(sznum), "%d", ipick);
+			PlatformLib_StrCat(szfound, foundBufferSize, sznum);
 			return ipick;
 		}
 	}
@@ -1170,7 +1170,7 @@ int SENTENCEG_PlayRndI(edict_t* entity, int isentenceg, float volume, float atte
 
 	name[0] = 0;
 
-	ipick = USENTENCEG_Pick(isentenceg, name);
+	ipick = USENTENCEG_Pick(isentenceg, name, sizeof(name));
 	if ( ipick > 0 )
 		EMIT_SOUND_DYN(entity, CHAN_VOICE, name, volume, attenuation, flags, pitch);
 	return ipick;
@@ -1196,7 +1196,7 @@ int SENTENCEG_PlayRndSz(edict_t* entity, const char* szgroupname, float volume, 
 		return -1;
 	}
 
-	ipick = USENTENCEG_Pick(isentenceg, name);
+	ipick = USENTENCEG_Pick(isentenceg, name, sizeof(name));
 	if ( ipick >= 0 && name[0] )
 		EMIT_SOUND_DYN(entity, CHAN_VOICE, name, volume, attenuation, flags, pitch);
 
@@ -1228,7 +1228,7 @@ int SENTENCEG_PlaySequentialSz(
 	if ( isentenceg < 0 )
 		return -1;
 
-	ipicknext = USENTENCEG_PickSequential(isentenceg, name, ipick, freset);
+	ipicknext = USENTENCEG_PickSequential(isentenceg, name, sizeof(name), ipick, freset);
 	if ( ipicknext >= 0 && name[0] )
 		EMIT_SOUND_DYN(entity, CHAN_VOICE, name, volume, attenuation, flags, pitch);
 	return ipicknext;
@@ -1248,10 +1248,10 @@ void SENTENCEG_Stop(edict_t* entity, int isentenceg, int ipick)
 	if ( isentenceg < 0 || ipick < 0 )
 		return;
 
-	strcpy(buffer, "!");
-	strcat(buffer, rgsentenceg[isentenceg].szgroupname);
-	sprintf(sznum, "%d", ipick);
-	strcat(buffer, sznum);
+	PlatformLib_StrCpy(buffer, sizeof(buffer), "!");
+	PlatformLib_StrCat(buffer, sizeof(buffer), rgsentenceg[isentenceg].szgroupname);
+	PlatformLib_SNPrintF(sznum, sizeof(sznum), "%d", ipick);
+	PlatformLib_StrCat(buffer, sizeof(buffer), sznum);
 
 	STOP_SOUND(entity, CHAN_VOICE, buffer);
 }
@@ -1318,7 +1318,8 @@ void SENTENCEG_Init()
 		if ( strlen(pString) >= CBSENTENCENAME_MAX )
 			ALERT(at_warning, "Sentence %s longer than %d letters\n", pString, CBSENTENCENAME_MAX - 1);
 
-		strcpy(gszallsentencenames[gcallsentences++], pString);
+		PlatformLib_StrCpy(gszallsentencenames[gcallsentences], sizeof(gszallsentencenames[gcallsentences]), pString);
+		++gcallsentences;
 
 		j--;
 		if ( j <= i )
@@ -1348,10 +1349,14 @@ void SENTENCEG_Init()
 				break;
 			}
 
-			strcpy(rgsentenceg[isentencegs].szgroupname, &(buffer[i]));
+			PlatformLib_StrCpy(
+				rgsentenceg[isentencegs].szgroupname,
+				sizeof(rgsentenceg[isentencegs].szgroupname),
+				&(buffer[i]));
+
 			rgsentenceg[isentencegs].count = 1;
 
-			strcpy(szgroup, &(buffer[i]));
+			PlatformLib_StrCpy(szgroup, sizeof(szgroup), &(buffer[i]));
 
 			continue;
 		}
@@ -1380,7 +1385,7 @@ void SENTENCEG_Init()
 
 // convert sentence (sample) name to !sentencenum, return !sentencenum
 
-int SENTENCEG_Lookup(const char* sample, char* sentencenum)
+int SENTENCEG_Lookup(const char* sample, char* sentencenum, size_t sentenceBufferSize)
 {
 	char sznum[8];
 
@@ -1390,11 +1395,11 @@ int SENTENCEG_Lookup(const char* sample, char* sentencenum)
 	for ( i = 0; i < gcallsentences; i++ )
 		if ( !PlatformLib_StrCaseCmp(gszallsentencenames[i], sample + 1) )
 		{
-			if ( sentencenum )
+			if ( sentencenum && sentenceBufferSize > 0 )
 			{
-				strcpy(sentencenum, "!");
+				PlatformLib_StrCpy(sentencenum, sentenceBufferSize, "!");
 				PlatformLib_SNPrintF(sznum, sizeof(sznum), "%d", i);
-				strcat(sentencenum, sznum);
+				PlatformLib_StrCat(sentencenum, sentenceBufferSize, sznum);
 			}
 			return i;
 		}
@@ -1414,7 +1419,7 @@ void EMIT_SOUND_DYN(
 	if ( sample && *sample == '!' )
 	{
 		char name[32];
-		if ( SENTENCEG_Lookup(sample, name) >= 0 )
+		if ( SENTENCEG_Lookup(sample, name, sizeof(name)) >= 0 )
 			EMIT_SOUND_DYN2(entity, channel, name, volume, attenuation, flags, pitch);
 		else
 			ALERT(at_aiconsole, "Unable to find %s in sentences.txt\n", sample);

@@ -25,6 +25,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include <string.h>
+#include "PlatformLib/String.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846  // matches value in gcc v2 math.h
@@ -129,7 +130,7 @@ HSPRITE LoadSprite(const char* pszName)
 	else
 		i = 640;
 
-	sprintf(sz, pszName, i);
+	PlatformLib_SNPrintF(sz, sizeof(sz), pszName, i);
 
 	return SPR_Load(sz);
 }

@@ -349,7 +349,7 @@ void Evdev_OpenDevice(const char* path)
 	ret = PlatformLib_Open(path, O_RDONLY | O_NONBLOCK);
 	if ( ret < 0 )
 	{
-		Con_Reportf(S_ERROR "Could not open input device %s: %s\n", path, strerror(errno));
+		Con_Reportf(S_ERROR "Could not open input device %s: %s\n", path, PlatformLib_StrError(errno));
 		return;
 	}
 	Con_Printf("Input device #%d: %s opened sucessfully\n", evdev.devices, path);

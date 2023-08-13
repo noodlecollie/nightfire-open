@@ -26,6 +26,7 @@
 #include "event_api.h"
 #include "studio_util.h"
 #include "screenfade.h"
+#include "PlatformLib/String.h"
 
 extern "C" int iJumpSpectator;
 extern "C" float vJumpOrigin[3];
@@ -72,8 +73,9 @@ void SpectatorSpray(void)
 	pmtrace_t* trace = gEngfuncs.PM_TraceLine(v_origin, forward, PM_TRACELINE_PHYSENTSONLY, 2, -1);
 	if ( trace->fraction != 1.0 )
 	{
-		sprintf(
+		PlatformLib_SNPrintF(
 			string,
+			sizeof(string),
 			"drc_spray %.2f %.2f %.2f %i",
 			trace->endpos[0],
 			trace->endpos[1],
@@ -159,7 +161,7 @@ void UTIL_StringToVector(float* pVector, const char* pString)
 	char *pstr, *pfront, tempString[128];
 	int j;
 
-	strcpy(tempString, pString);
+	PlatformLib_StrCpy(tempString, sizeof(tempString), pString);
 	pstr = pfront = tempString;
 
 	for ( j = 0; j < 3; j++ )
@@ -230,7 +232,7 @@ int UTIL_FindEntityInMap(const char* name, float* origin, float* angle)
 				return 0;
 			}
 
-			strcpy(keyname, token);
+			PlatformLib_StrCpy(keyname, sizeof(keyname), token);
 
 			// another hack to fix keynames with trailing spaces
 			n = static_cast<int>(strlen(keyname));
@@ -421,7 +423,7 @@ int CHudSpectator::Draw(float)
 		color = GetClientColor(i + 1);
 
 		// draw the players name and health underneath
-		sprintf(string, "%s", g_PlayerInfoList[i + 1].name);
+		PlatformLib_SNPrintF(string, sizeof(string), "%s", g_PlayerInfoList[i + 1].name);
 
 		lx = static_cast<int>(strlen(string) * 3);  // 3 is avg. character length :)
 
@@ -510,8 +512,10 @@ void CHudSpectator::DirectorMessage(int iSize, void* pbuf)
 			msg->holdtime = READ_FLOAT();  // holdtime
 			msg->fxtime = READ_FLOAT();  // fxtime;
 
-			strncpy(m_HUDMessageText[m_lastHudMessage], READ_STRING(), 128);
-			m_HUDMessageText[m_lastHudMessage][127] = 0;  // text
+			PlatformLib_StrCpy(
+				m_HUDMessageText[m_lastHudMessage],
+				sizeof(m_HUDMessageText[m_lastHudMessage]),
+				READ_STRING());  // text
 
 			msg->pMessage = m_HUDMessageText[m_lastHudMessage];
 			msg->pName = "HUD_MESSAGE";
@@ -564,7 +568,7 @@ void CHudSpectator::FindNextPlayer(bool bReverse)
 	{
 		char cmdstring[32];
 		// forward command to server
-		sprintf(cmdstring, "follownext %i", bReverse ? 1 : 0);
+		PlatformLib_SNPrintF(cmdstring, sizeof(cmdstring), "follownext %i", bReverse ? 1 : 0);
 		gEngfuncs.pfnServerCmd(cmdstring);
 		return;
 	}
@@ -810,8 +814,13 @@ void CHudSpectator::SetModes(int iNewMainMode, int iNewInsetMode)
 		}
 
 		char string[128];
-		sprintf(string, "#Spec_Mode%d", g_iUser1);
-		sprintf(string, "%c%s", HUD_PRINTCENTER, CHudTextMessage::BufferedLocaliseTextString(string));
+		PlatformLib_SNPrintF(string, sizeof(string), "#Spec_Mode%d", g_iUser1);
+		PlatformLib_SNPrintF(
+			string,
+			sizeof(string),
+			"%c%s",
+			HUD_PRINTCENTER,
+			CHudTextMessage::BufferedLocaliseTextString(string));
 		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, static_cast<int>(strlen(string) + 1), string);
 	}
 }
@@ -845,12 +854,12 @@ bool CHudSpectator::ParseOverviewFile()
 	m_OverviewData.zoom = 1.0f;
 	m_OverviewData.layers = 0;
 	m_OverviewData.layersHeights[0] = 0.0f;
-	strcpy(m_OverviewData.map, gEngfuncs.pfnGetLevelName());
+	PlatformLib_StrCpy(m_OverviewData.map, sizeof(m_OverviewData.map), gEngfuncs.pfnGetLevelName());
 
 	if ( strlen(m_OverviewData.map) == 0 )
 		return false;  // not active yet
 
-	strncpy(levelname, m_OverviewData.map + 5, sizeof(levelname));
+	PlatformLib_StrCpy(levelname, sizeof(levelname), m_OverviewData.map + 5);
 	levelname[strlen(levelname) - 4] = 0;
 
 	PlatformLib_SNPrintF(filename, sizeof(filename), "overviews/%s.txt", levelname);
@@ -947,7 +956,10 @@ bool CHudSpectator::ParseOverviewFile()
 				if ( !PlatformLib_StrCaseCmp(token, "image") )
 				{
 					pfile = gEngfuncs.COM_ParseFile(pfile, token);
-					strcpy(m_OverviewData.layersImages[m_OverviewData.layers], token);
+					PlatformLib_StrCpy(
+						m_OverviewData.layersImages[m_OverviewData.layers],
+						sizeof(m_OverviewData.layersImages[m_OverviewData.layers]),
+						token);
 				}
 				else if ( !PlatformLib_StrCaseCmp(token, "height") )
 				{
@@ -1427,7 +1439,7 @@ void CHudSpectator::CheckSettings()
 		{
 			// tell proxy our new chat mode
 			char chatcmd[32];
-			sprintf(chatcmd, "ignoremsg %i", m_chatEnabled ? 0 : 1);
+			PlatformLib_SNPrintF(chatcmd, sizeof(chatcmd), "ignoremsg %i", m_chatEnabled ? 0 : 1);
 			gEngfuncs.pfnServerCmd(chatcmd);
 		}
 	}

@@ -627,7 +627,7 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
 		}
 		else
 		{
-			const char* PATH = getenv("PATH");
+			const char* PATH = PlatformLib_GetEnv("PATH");
 			if ( !PATH )
 				break;
 

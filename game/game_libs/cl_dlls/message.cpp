@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parsemsg.h"
+#include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_Message, HudText)
 DECLARE_MESSAGE(m_Message, GameTitle)
@@ -484,7 +485,7 @@ void CHudMessage::MessageAdd(const char* pName, float time)
 				g_pCustomMessage.fxtime = 0.25f;
 				g_pCustomMessage.holdtime = 5;
 				g_pCustomMessage.pName = g_pCustomName;
-				strcpy(g_pCustomText, pName);
+				PlatformLib_StrCpy(g_pCustomText, sizeof(g_pCustomText), pName);
 				g_pCustomMessage.pMessage = g_pCustomText;
 
 				tempMessage = &g_pCustomMessage;

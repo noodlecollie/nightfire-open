@@ -485,7 +485,7 @@ void Host_Exec_f(void)
 	}
 
 	Q_strncpy(cfgpath, arg, sizeof(cfgpath));
-	COM_DefaultExtension(cfgpath, ".cfg");  // append as default
+	COM_DefaultExtension(cfgpath, sizeof(cfgpath), ".cfg");  // append as default
 
 	f = FS_LoadFile(cfgpath, &len, false);
 	if ( !f )
@@ -612,7 +612,7 @@ static qboolean Host_RegisterDecal(const char* name, size_t* count)
 		return false;
 	}
 
-	COM_FileBase(name, shortname);
+	COM_FileBase(name, shortname, sizeof(shortname));
 	return Host_RegisterDecalEx(shortname, shortname, count);
 }
 
@@ -648,7 +648,7 @@ static size_t RegisterNewDecalList(search_t* list)
 	for ( int i = 0; i < list->numfilenames; i++ )
 	{
 		char shortname[MAX_QPATH];
-		COM_FileBase(list->filenames[i], shortname);
+		COM_FileBase(list->filenames[i], shortname, sizeof(shortname));
 
 		if ( !Host_RegisterDecalEx(shortname, list->filenames[i], &count) )
 		{
@@ -1161,7 +1161,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 
 	Platform_Init();
 
-	baseDir = getenv("XASH3D_BASEDIR");
+	baseDir = PlatformLib_GetEnv("XASH3D_BASEDIR");
 
 	if ( COM_CheckString(baseDir) )
 	{
@@ -1191,7 +1191,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 #else
 		if ( !PlatformLib_GetCWD(host.rootdir, sizeof(host.rootdir)) )
 		{
-			Sys_Error("couldn't determine current directory: %s", strerror(errno));
+			Sys_Error("couldn't determine current directory: %s", PlatformLib_StrError(errno));
 			host.rootdir[0] = 0;
 		}
 #endif
@@ -1213,7 +1213,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	host.rodir[0] = '\0';
 	if ( !Sys_GetParmFromCmdLine("-rodir", host.rodir) )
 	{
-		char* roDir = getenv("XASH3D_RODIR");
+		const char* roDir = PlatformLib_GetEnv("XASH3D_RODIR");
 
 		if ( COM_CheckString(roDir) )
 			Q_strncpy(host.rodir, roDir, sizeof(host.rodir));

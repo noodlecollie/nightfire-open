@@ -189,7 +189,7 @@ void CMenuPlayerSetup::CModelListModel::Update(void)
 	// build the model list
 	for ( i = 0; i < numFiles; i++ )
 	{
-		COM_FileBase(filenames[i], modelName);
+		COM_FileBase(filenames[i], modelName, sizeof(modelName));
 		Q_strncpy(models[m_iCount], modelName, sizeof(models[0]));
 
 		// check if the path is a valid model
@@ -237,7 +237,7 @@ void CMenuPlayerSetup::CLogosListModel::Update()
 
 		if ( png || logoFileName.BEndsWithCaseless(".bmp") )
 		{
-			COM_FileBase(logoFileName.String(), temp);
+			COM_FileBase(logoFileName.String(), temp, sizeof(temp));
 
 			if ( !PlatformLib_StrCaseCmp(temp, "remapped") )
 				continue;
@@ -297,7 +297,7 @@ void CMenuPlayerSetup::UpdateModel()
 
 	if ( !strcmp(mdl, "player") )
 	{
-		strcpy(image, PLAYER_MODEL_PATH);
+		PlatformLib_StrCpy(image, sizeof(image), PLAYER_MODEL_PATH);
 	}
 	else
 	{

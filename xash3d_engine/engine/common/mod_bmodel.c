@@ -25,6 +25,7 @@ GNU General Public License for more details.
 #include "server.h"  // LUMP_ error codes
 #include "ref_common.h"
 #include "textureproperties.h"
+#include "PlatformLib/String.h"
 
 #define MIPTEX_CUSTOM_PALETTE_SIZE_BYTES (sizeof(int16_t) + 768)
 
@@ -474,7 +475,7 @@ static qboolean Mod_CalcMipTexUsesCustomPalette(dbspmodel_t* bmod, int textureIn
 	remainingBytes = (fs_offset_t)(bmod->texdatasize - (bmod->textures->dataofs[textureIndex] + size));
 	return (size_t)remainingBytes >= MIPTEX_CUSTOM_PALETTE_SIZE_BYTES;
 }
-#endif // !XASH_DEDICATED
+#endif  // !XASH_DEDICATED
 
 static qboolean Mod_NameImpliesTextureIsAnimated(texture_t* tex)
 {
@@ -1710,7 +1711,7 @@ static qboolean Mod_LoadColoredLighting(dbspmodel_t* bmod)
 	fs_offset_t litdatasize;
 	byte* in;
 
-	COM_FileBase(loadmodel->name, modelname);
+	COM_FileBase(loadmodel->name, modelname, sizeof(modelname));
 	Q_snprintf(path, sizeof(path), "maps/%s.lit", modelname);
 
 	// make sure what deluxemap is actual
@@ -1770,7 +1771,7 @@ static void Mod_LoadDeluxemap(dbspmodel_t* bmod)
 	if ( !FBitSet(host.features, ENGINE_LOAD_DELUXEDATA) )
 		return;
 
-	COM_FileBase(loadmodel->name, modelname);
+	COM_FileBase(loadmodel->name, modelname, sizeof(modelname));
 	Q_snprintf(path, sizeof(path), "maps/%s.dlit", modelname);
 
 	// make sure what deluxemap is actual
@@ -2011,7 +2012,7 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 
 		// world is check for entfile too
 		Q_strncpy(entfilename, loadmodel->name, sizeof(entfilename));
-		COM_ReplaceExtension(entfilename, ".ent");
+		COM_ReplaceExtension(entfilename, sizeof(entfilename), ".ent");
 
 		ft1 = FS_FileTime(loadmodel->name, false);
 		ft2 = FS_FileTime(entfilename, true);
@@ -2071,20 +2072,28 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 			if ( !Q_stricmp(keyname, "wad") )
 			{
 				char* pszWadFile;
+				size_t wadStringLength = 0;
+				char** strtokContext = NULL;
 
 				Q_strncpy(wadstring, token, MAX_TOKEN - 2);
 				wadstring[MAX_TOKEN - 2] = 0;
 
 				if ( !Q_strchr(wadstring, ';') )
+				{
 					Q_strcat(wadstring, ";");
+				}
 
-				// parse wad pathes
-				for ( pszWadFile = strtok(wadstring, ";"); pszWadFile != NULL; pszWadFile = strtok(NULL, ";") )
+				wadStringLength = strlen(wadstring);
+
+					// parse wad paths
+					for ( pszWadFile = PlatformLib_StrTok(wadstring, &wadStringLength, ";", strtokContext);
+						  pszWadFile != NULL;
+						  pszWadFile = PlatformLib_StrTok(NULL, &wadStringLength, ";", strtokContext) )
 				{
 					COM_FixSlashes(pszWadFile);
-					COM_FileBase(pszWadFile, token);
+					COM_FileBase(pszWadFile, token, sizeof(token));
 
-					// make sure what wad is really exist
+					// make sure wad really exists
 					if ( FS_FileExists(va("%s.wad", token), false) )
 					{
 						int num = bmod->wadlist.count++;

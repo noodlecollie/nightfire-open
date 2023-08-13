@@ -342,7 +342,7 @@ void SV_CreateGenericResources(void)
 	string filename;
 
 	Q_strncpy(filename, sv.model_precache[1], sizeof(filename));
-	COM_ReplaceExtension(filename, ".res");
+	COM_ReplaceExtension(filename, sizeof(filename), ".res");
 	COM_FixSlashes(filename);
 
 	SV_ReadResourceList(filename);
@@ -1003,8 +1003,8 @@ qboolean SV_SpawnServer(const char* mapname, const char* startspot, qboolean bac
 	if ( svs.maxclients == 1 )
 		Cvar_SetValue("sv_clienttrace", 1);
 
-	// make sure what server name doesn't contain path and extension
-	COM_FileBase(mapname, sv.name);
+	// make sure that server name doesn't contain path and extension
+	COM_FileBase(mapname, sv.name, sizeof(sv.name));
 
 	// precache and static commands can be issued during map initialization
 	Host_SetServerState(ss_loading);

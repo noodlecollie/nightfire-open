@@ -350,11 +350,11 @@ void DBG_AssertFunction(
 		char szOut[512];
 		if ( szMessage != NULL )
 		{
-			sprintf(szOut, "ASSERT FAILED:\n %s \n(%s@%d)\n%s", szExpr, szFile, szLine, szMessage);
+			PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)\n%s", szExpr, szFile, szLine, szMessage);
 		}
 		else
 		{
-			sprintf(szOut, "ASSERT FAILED:\n %s \n(%s@%d)", szExpr, szFile, szLine);
+			PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)", szExpr, szFile, szLine);
 		}
 
 		ALERT(at_console, szOut);
@@ -648,7 +648,7 @@ void UTIL_EmitAmbientSound(
 	if ( samp && *samp == '!' )
 	{
 		char name[32];
-		if ( SENTENCEG_Lookup(samp, name) >= 0 )
+		if ( SENTENCEG_Lookup(samp, name, sizeof(name)) >= 0 )
 			EMIT_AMBIENT_SOUND(entity, rgfl, name, vol, attenuation, fFlags, pitch);
 	}
 	else
@@ -822,8 +822,8 @@ void UTIL_HudMessage(CBaseEntity* pEntity, const hudtextparms_t& textparms, cons
 	else
 	{
 		char tmp[512];
-		strncpy(tmp, pMessage, 511);
-		tmp[511] = 0;
+		PlatformLib_StrCpy(tmp, sizeof(tmp), pMessage);
+
 		WRITE_STRING(tmp);
 	}
 	MESSAGE_END();
@@ -911,28 +911,28 @@ void UTIL_SayTextAll(const char* pText, CBaseEntity* pEntity)
 char* UTIL_dtos1(int d)
 {
 	static char buf[8];
-	sprintf(buf, "%d", d);
+	PlatformLib_SNPrintF(buf, sizeof(buf), "%d", d);
 	return buf;
 }
 
 char* UTIL_dtos2(int d)
 {
 	static char buf[8];
-	sprintf(buf, "%d", d);
+	PlatformLib_SNPrintF(buf, sizeof(buf), "%d", d);
 	return buf;
 }
 
 char* UTIL_dtos3(int d)
 {
 	static char buf[8];
-	sprintf(buf, "%d", d);
+	PlatformLib_SNPrintF(buf, sizeof(buf), "%d", d);
 	return buf;
 }
 
 char* UTIL_dtos4(int d)
 {
 	static char buf[8];
-	sprintf(buf, "%d", d);
+	PlatformLib_SNPrintF(buf, sizeof(buf), "%d", d);
 	return buf;
 }
 
@@ -1108,7 +1108,7 @@ char* UTIL_VarArgs(const char* format, ...)
 	static char string[1024];
 
 	va_start(argptr, format);
-	vsprintf(string, format, argptr);
+	PlatformLib_VSNPrintF(string, sizeof(string), format, argptr);
 	va_end(argptr);
 
 	return string;
@@ -1418,7 +1418,7 @@ void UTIL_StringToVector(float* pVector, const char* pString)
 	char *pstr, *pfront, tempString[128];
 	int j;
 
-	strcpy(tempString, pString);
+	PlatformLib_StrCpy(tempString, sizeof(tempString), pString);
 	pstr = pfront = tempString;
 
 	for ( j = 0; j < 3; j++ )  // lifted from pr_edict.c
@@ -1448,7 +1448,7 @@ void UTIL_StringToIntArray(int* pVector, int count, const char* pString)
 	char *pstr, *pfront, tempString[128];
 	int j;
 
-	strcpy(tempString, pString);
+	PlatformLib_StrCpy(tempString, sizeof(tempString), pString);
 	pstr = pfront = tempString;
 
 	for ( j = 0; j < count; j++ )  // lifted from pr_edict.c
@@ -1629,7 +1629,7 @@ void UTIL_LogPrintf(const char* fmt, ...)
 	static char string[1024];
 
 	va_start(argptr, fmt);
-	vsprintf(string, fmt, argptr);
+	PlatformLib_VSNPrintF(string, sizeof(string), fmt, argptr);
 	va_end(argptr);
 
 	// Print to server console

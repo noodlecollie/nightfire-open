@@ -136,49 +136,49 @@ public:
 #ifdef _WIN32
 	inline const char* SetInt8(int8 n8)
 	{
-		NUMSTR_CHECK_FAST(n8, uint8) _itoa((int32)n8, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(n8, uint8) _itoa_s((int32)n8, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}
 	inline const char* SetUint8(uint8 un8)
 	{
-		NUMSTR_CHECK_FAST(un8, uint8) _itoa((int32)un8, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(un8, uint8) _itoa_s((int32)un8, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}
 	inline const char* SetInt16(int16 n16)
 	{
-		NUMSTR_CHECK_FAST(n16, uint16) _itoa((int32)n16, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(n16, uint16) _itoa_s((int32)n16, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}
 	inline const char* SetUint16(uint16 un16)
 	{
-		NUMSTR_CHECK_FAST(un16, uint16) _itoa((int32)un16, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(un16, uint16) _itoa_s((int32)un16, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}
 	inline const char* SetInt32(int32 n32)
 	{
-		NUMSTR_CHECK_FAST(n32, uint32) _itoa(n32, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(n32, uint32) _itoa_s(n32, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}
 	inline const char* SetUint32(uint32 un32)
 	{
-		NUMSTR_CHECK_FAST(un32, uint32) _i64toa((int64)un32, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(un32, uint32) _i64toa_s((int64)un32, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}
 	inline const char* SetInt64(int64 n64)
 	{
-		NUMSTR_CHECK_FAST(n64, uint64) _i64toa(n64, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(n64, uint64) _i64toa_s(n64, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}
 	inline const char* SetUint64(uint64 un64)
 	{
-		NUMSTR_CHECK_FAST(un64, uint64) _ui64toa(un64, m_szBuf, 10);
+		NUMSTR_CHECK_FAST(un64, uint64) _ui64toa_s(un64, m_szBuf, sizeof(m_szBuf), 10);
 		m_nLength = V_strlen(m_szBuf);
 		return m_szBuf;
 	}

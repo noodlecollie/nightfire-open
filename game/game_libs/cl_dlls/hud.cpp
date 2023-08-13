@@ -339,10 +339,15 @@ void CHud::VidInit(void)
 				if ( p->iRes == m_iRes )
 				{
 					char sz[256];
-					sprintf(sz, "sprites/%s.spr", p->szSprite);
+					PlatformLib_SNPrintF(sz, sizeof(sz), "sprites/%s.spr", p->szSprite);
+
 					m_rghSprites[index] = SPR_Load(sz);
 					m_rgrcRects[index] = p->rc;
-					strncpy(&m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH);
+
+					PlatformLib_StrCpy(
+						m_rgszSpriteNames + (index * MAX_SPRITE_NAME_LENGTH),
+						MAX_SPRITE_NAME_LENGTH,
+						p->szName);
 
 					index++;
 				}
@@ -383,10 +388,15 @@ void CHud::VidInit(void)
 			if ( p->iRes == m_iRes )
 			{
 				char sz[256];
-				sprintf(sz, "sprites/%s.spr", p->szSprite);
+				PlatformLib_SNPrintF(sz, sizeof(sz), "sprites/%s.spr", p->szSprite);
+
 				m_rghSprites[index] = SPR_Load(sz);
 				m_rgrcRects[index] = p->rc;
-				strncpy(&m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH);
+
+				PlatformLib_StrCpy(
+					m_rgszSpriteNames + (index * MAX_SPRITE_NAME_LENGTH),
+					MAX_SPRITE_NAME_LENGTH,
+					p->szName);
 
 				index++;
 			}
@@ -450,7 +460,7 @@ COM_FileBase
 ============
 */
 // Extracts the base name of a file (no path, no extension, assumes '/' as path separator)
-void COM_FileBase(const char* in, char* out)
+static void COM_FileBase(const char* in, char* out, size_t outBufferSize)
 {
 	int len, start, end;
 
@@ -480,7 +490,7 @@ void COM_FileBase(const char* in, char* out)
 	len = end - start + 1;
 
 	// Copy partial string
-	strncpy(out, &in[start], len);
+	PlatformLib_StrNCpy(out, outBufferSize, &in[start], len);
 
 	// Terminate it
 	out[len] = 0;
@@ -500,7 +510,7 @@ int HUD_IsGame(const char* game)
 	gamedir = gEngfuncs.pfnGetGameDirectory();
 	if ( gamedir && gamedir[0] )
 	{
-		COM_FileBase(gamedir, gd);
+		COM_FileBase(gamedir, gd, sizeof(gd));
 		if ( !PlatformLib_StrCaseCmp(gd, game) )
 			return 1;
 	}

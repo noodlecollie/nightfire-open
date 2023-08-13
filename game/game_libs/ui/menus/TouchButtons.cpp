@@ -222,7 +222,7 @@ void CMenuTouchButtons::UpdateFields()
 {
 	int i = buttonList.GetCurrentIndex();
 
-	strcpy(selectedName, model.buttons[i].szName);
+	PlatformLib_StrCpy(selectedName, sizeof(selectedName), model.buttons[i].szName);
 	red.SetCurrentValue(model.buttons[i].bColors[0]);
 	green.SetCurrentValue(model.buttons[i].bColors[1]);
 	blue.SetCurrentValue(model.buttons[i].bColors[2]);
@@ -249,13 +249,13 @@ void CMenuTouchButtons::OpenFileDialog()
 	// TODO: Make uiFileDialog menu globally known
 	// TODO: Make FileDialogCallback as event
 	uiFileDialogGlobal.npatterns = 7;
-	strcpy(uiFileDialogGlobal.patterns[0], "touch/*");
-	strcpy(uiFileDialogGlobal.patterns[1], "touch_default/*");
-	strcpy(uiFileDialogGlobal.patterns[2], "gfx/touch/*");
-	strcpy(uiFileDialogGlobal.patterns[3], "gfx/vgui/*");
-	strcpy(uiFileDialogGlobal.patterns[4], "gfx/shell/*");
-	strcpy(uiFileDialogGlobal.patterns[5], "*.tga");
-	strcpy(uiFileDialogGlobal.patterns[6], "*.png");
+	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[0], sizeof(uiFileDialogGlobal.patterns[0]), "touch/*");
+	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[1], sizeof(uiFileDialogGlobal.patterns[1]), "touch_default/*");
+	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[2], sizeof(uiFileDialogGlobal.patterns[2]), "gfx/touch/*");
+	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[3], sizeof(uiFileDialogGlobal.patterns[3]), "gfx/vgui/*");
+	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[4], sizeof(uiFileDialogGlobal.patterns[4]), "gfx/shell/*");
+	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[5], sizeof(uiFileDialogGlobal.patterns[5]), "*.tga");
+	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[6], sizeof(uiFileDialogGlobal.patterns[6]), "*.png");
 	uiFileDialogGlobal.preview = true;
 	uiFileDialogGlobal.valid = true;
 	uiFileDialogGlobal.callback = CMenuTouchButtons::FileDialogCallback;

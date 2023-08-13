@@ -401,7 +401,7 @@ DECLARE_JNI_INTERFACE(int, nativeInit, jobject array)
 
 	/* Run the application. */
 
-	status = Host_Main(argc, argv, getenv("XASH3D_GAMEDIR"), false, NULL);
+	status = Host_Main(argc, argv, PlatformLib_GetEnv("XASH3D_GAMEDIR"), false, NULL);
 
 	/* Release the arguments. */
 

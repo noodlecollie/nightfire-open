@@ -286,9 +286,9 @@ public:
 		return engfuncs.pfnFileExists(filename, gamedironly);
 	}
 
-	static inline void GetGameDir(char* szGetGameDir)
+	static inline void GetGameDir(char* szGetGameDir, int bufferSize)
 	{
-		engfuncs.pfnGetGameDir(szGetGameDir);
+		engfuncs.pfnGetGameDir(szGetGameDir, bufferSize);
 	}
 
 	// gameinfo handlers

@@ -8,11 +8,6 @@ function(set_common_library_compiler_settings targetname)
 		target_link_options(${targetname} PRIVATE
 			/WX
 		)
-
-		# NFTODO: Remove this
-		target_compile_definitions(${targetname} PRIVATE
-			_CRT_SECURE_NO_WARNINGS=1
-		)
 	else()
 		# Unfortunately, we can't apply -pedantic here without some
 		# significant changes to the codebase. When pedantic (ISO C)

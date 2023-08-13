@@ -133,7 +133,7 @@ static void UI_InitAliasStrings(void)
 
 		char token[1024];
 		char token2[1024];
-		sprintf(token, "StringsList_%d", aliasStrings[i].idx);
+		PlatformLib_SNPrintF(token, sizeof(token), "StringsList_%d", aliasStrings[i].idx);
 
 		const char* fmt = L(token);
 		if ( fmt == token )
@@ -141,7 +141,7 @@ static void UI_InitAliasStrings(void)
 			fmt = aliasStrings[i].defAliasString;
 		}
 
-		sprintf(token2, fmt, gMenu.m_gameinfo.title);
+		PlatformLib_SNPrintF(token2, sizeof(token2), fmt, gMenu.m_gameinfo.title);
 		MenuStrings[aliasStrings[i].idx] = StringCopy(token2);
 
 		Dictionary_Insert(token, MenuStrings[aliasStrings[i].idx]);

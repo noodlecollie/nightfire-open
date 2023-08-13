@@ -258,8 +258,8 @@ void CGlobalState::EntityAdd(string_t globalname, string_t mapName, GLOBALESTATE
 	ASSERT(pNewEntity != NULL);
 	pNewEntity->pNext = m_pList;
 	m_pList = pNewEntity;
-	strcpy(pNewEntity->name, STRING(globalname));
-	strcpy(pNewEntity->levelName, STRING(mapName));
+	PlatformLib_StrCpy(pNewEntity->name, sizeof(pNewEntity->name), STRING(globalname));
+	PlatformLib_StrCpy(pNewEntity->levelName, sizeof(pNewEntity->levelName), STRING(mapName));
 	pNewEntity->state = state;
 	m_listCount++;
 }
@@ -346,7 +346,9 @@ void CGlobalState::EntityUpdate(string_t globalname, string_t mapname)
 	globalentity_t* pEnt = Find(globalname);
 
 	if ( pEnt )
-		strcpy(pEnt->levelName, STRING(mapname));
+	{
+		PlatformLib_StrCpy(pEnt->levelName, sizeof(pEnt->levelName), STRING(mapname));
+	}
 }
 
 void CGlobalState::ClearStates(void)

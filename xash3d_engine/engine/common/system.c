@@ -666,7 +666,7 @@ qboolean Sys_NewInstance(const char* gamedir)
 #endif
 
 	// if execv returned, it's probably an error
-	printf("execv failed: %s", strerror(errno));
+	printf("execv failed: %s", PlatformLib_StrError(errno));
 
 	for ( ; i >= 0; i-- )
 	{

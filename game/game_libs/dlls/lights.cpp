@@ -23,6 +23,7 @@
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
+#include "PlatformLib/String.h"
 
 class CLight : public CPointEntity
 {
@@ -147,7 +148,7 @@ void CEnvLight::KeyValue(KeyValueData* pkvd)
 	{
 		int r, g, b, v, j;
 		char szColor[64];
-		j = sscanf(pkvd->szValue, "%d %d %d %d\n", &r, &g, &b, &v);
+		j = PlatformLib_SScanF(pkvd->szValue, "%d %d %d %d\n", &r, &g, &b, &v);
 		if ( j == 1 )
 		{
 			g = b = r;
@@ -166,11 +167,11 @@ void CEnvLight::KeyValue(KeyValueData* pkvd)
 		b = (int)(pow(b / 114.0, 0.6) * 264.0);
 
 		pkvd->fHandled = TRUE;
-		sprintf(szColor, "%d", r);
+		PlatformLib_SNPrintF(szColor, sizeof(szColor), "%d", r);
 		CVAR_SET_STRING("sv_skycolor_r", szColor);
-		sprintf(szColor, "%d", g);
+		PlatformLib_SNPrintF(szColor, sizeof(szColor), "%d", g);
 		CVAR_SET_STRING("sv_skycolor_g", szColor);
-		sprintf(szColor, "%d", b);
+		PlatformLib_SNPrintF(szColor, sizeof(szColor), "%d", b);
 		CVAR_SET_STRING("sv_skycolor_b", szColor);
 	}
 	else
@@ -184,11 +185,11 @@ void CEnvLight::Spawn(void)
 	char szVector[64];
 	UTIL_MakeAimVectors(pev->angles);
 
-	sprintf(szVector, "%f", gpGlobals->v_forward.x);
+	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward.x);
 	CVAR_SET_STRING("sv_skyvec_x", szVector);
-	sprintf(szVector, "%f", gpGlobals->v_forward.y);
+	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward.y);
 	CVAR_SET_STRING("sv_skyvec_y", szVector);
-	sprintf(szVector, "%f", gpGlobals->v_forward.z);
+	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward.z);
 	CVAR_SET_STRING("sv_skyvec_z", szVector);
 
 	CLight::Spawn();

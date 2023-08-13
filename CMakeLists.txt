@@ -85,7 +85,7 @@ if(NOT USE_ALLOCA_SUPPORTED)
 endif()
 
 if(NOT NF_INSTALL_CONTENT_ONLY)
-	add_subdirectory(platformlib)
+	add_subdirectory(libraries)
 	add_subdirectory(xash3d_engine)
 endif()
 

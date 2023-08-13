@@ -21,10 +21,11 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #include "menu_int.h"
 #include "PlatformLib/File.h"
+#include "PlatformLib/System.h"
 
 static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 {
-	char* envPath;
+	const char* envPath;
 	char* part;
 	size_t length;
 	size_t baseNameLength;
@@ -33,7 +34,7 @@ static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 	if ( !baseName || !baseName[0] )
 		return false;
 
-	envPath = getenv("PATH");
+	envPath = PlatformLib_GetEnv("PATH");
 	if ( !COM_CheckString(envPath) )
 		return false;
 
@@ -108,7 +109,7 @@ void Posix_Daemonize(void)
 
 		if ( daemon < 0 )
 		{
-			Host_Error("fork() failed: %s\n", strerror(errno));
+			Host_Error("fork() failed: %s\n", PlatformLib_StrError(errno));
 		}
 
 		if ( daemon > 0 )
@@ -122,7 +123,7 @@ void Posix_Daemonize(void)
 			// don't be closed by parent
 			if ( setsid() < 0 )
 			{
-				Host_Error("setsid() failed: %s\n", strerror(errno));
+				Host_Error("setsid() failed: %s\n", PlatformLib_StrError(errno));
 			}
 
 			// set permissions

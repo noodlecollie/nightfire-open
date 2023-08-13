@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "miniutl.h"
+#include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_StatusBar, StatusText)
 DECLARE_MESSAGE(m_StatusBar, StatusValue)
@@ -143,16 +144,16 @@ void CHudStatusBar::ParseStatusString(int line_num)
 								GetPlayerInfo(indexval, &g_PlayerInfoList[indexval]);
 								if ( g_PlayerInfoList[indexval].name != NULL )
 								{
-									strncpy(szRepString, g_PlayerInfoList[indexval].name, MAX_PLAYER_NAME_LENGTH);
+									PlatformLib_StrCpy(szRepString, sizeof(szRepString), g_PlayerInfoList[indexval].name);
 									m_pflNameColors[line_num] = GetClientColor(indexval);
 								}
 								else
 								{
-									strcpy(szRepString, "******");
+									PlatformLib_StrCpy(szRepString, sizeof(szRepString), "******");
 								}
 								break;
 							case 'i':  // number
-								sprintf(szRepString, "%d", indexval);
+								PlatformLib_SNPrintF(szRepString, sizeof(szRepString), "%d", indexval);
 								break;
 							default:
 								szRepString[0] = 0;
@@ -234,7 +235,7 @@ int CHudStatusBar::MsgFunc_StatusText(const char*, int iSize, void* pbuf)
 	if ( line < 0 || line >= MAX_STATUSBAR_LINES )
 		return 1;
 
-	strncpy(m_szStatusText[line], READ_STRING(), MAX_STATUSTEXT_LENGTH);
+	PlatformLib_StrCpy(m_szStatusText[line], sizeof(m_szStatusText[line]), READ_STRING());
 	m_szStatusText[line][MAX_STATUSTEXT_LENGTH - 1] =
 		0;  // ensure it's null terminated ( strncpy() won't null terminate if read string too long)
 

@@ -239,7 +239,7 @@ typedef struct enginefuncs_s
 	void (*pfnFreeFile)(void* buffer);
 	void (*pfnEndSection)(const char* pszSectionName);  // trigger_endsection
 	int (*pfnCompareFileTime)(const char* filename1, const char* filename2, int* iCompare);
-	void (*pfnGetGameDir)(char* szGetGameDir);
+	void (*pfnGetGameDir)(char* szGetGameDir, int bufferSize);
 	void (*pfnCvar_RegisterVariable)(cvar_t* variable);
 	void (*pfnFadeClientVolume)(
 		const edict_t* pEdict,
@@ -587,7 +587,11 @@ typedef struct
 	// One of the pfnForceUnmodified files failed the consistency check for the specified player
 	// Return 0 to allow the client to continue, 1 to force immediate disconnection ( with an optional disconnect
 	// message of up to 256 characters )
-	int (*pfnInconsistentFile)(const struct edict_s* player, const char* filename, char* disconnect_message);
+	int (*pfnInconsistentFile)(
+		const struct edict_s* player,
+		const char* filename,
+		char* disconnect_message,
+		size_t disconnectBufferSize);
 
 	// The game .dll should return 1 if lag compensation should be allowed ( could also just set
 	//  the sv_unlag cvar.

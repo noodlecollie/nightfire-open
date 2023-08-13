@@ -1625,7 +1625,7 @@ static client_sprite_t* pfnSPR_GetList(char* psz, int* piCount)
 	}
 
 	if ( !clgame.itemspath[0] )  // typically it's sprites\*.txt
-		COM_ExtractFilePath(psz, clgame.itemspath);
+		COM_ExtractFilePath(psz, clgame.itemspath, sizeof(clgame.itemspath));
 
 	afile = FS_LoadFile(psz, NULL, false);
 	if ( !afile )

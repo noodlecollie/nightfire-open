@@ -30,6 +30,7 @@ GNU General Public License for more details.
 #include "crtlib.h"
 #include "common/com_strings.h"
 #include "PlatformLib/File.h"
+#include "PlatformLib/String.h"
 
 /*
 ========================================================================
@@ -109,7 +110,7 @@ static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
 
 	if ( packhandle < 0 )
 	{
-		Con_Reportf("%s couldn't open: %s\n", packfile, strerror(errno));
+		Con_Reportf("%s couldn't open: %s\n", packfile, PlatformLib_StrError(errno));
 		if ( error )
 			*error = PAK_LOAD_COULDNT_OPEN;
 		return NULL;

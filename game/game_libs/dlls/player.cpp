@@ -1036,10 +1036,14 @@ void CBasePlayer::SetAnimation(PLAYER_ANIM playerAnim)
 			return;
 		case ACT_RANGE_ATTACK1:
 			if ( FBitSet(pev->flags, FL_DUCKING) )  // crouching
-				strcpy(szAnim, "crouch_shoot_");
+			{
+				PlatformLib_StrCpy(szAnim, sizeof(szAnim), "crouch_shoot_");
+			}
 			else
-				strcpy(szAnim, "ref_shoot_");
-			strcat(szAnim, m_szAnimExtention);
+			{
+				PlatformLib_StrCpy(szAnim, sizeof(szAnim), "ref_shoot_");
+			}
+			PlatformLib_StrCat(szAnim, sizeof(szAnim), m_szAnimExtention);
 			animDesired = LookupSequence(szAnim);
 			if ( animDesired == -1 )
 				animDesired = 0;
@@ -1063,10 +1067,15 @@ void CBasePlayer::SetAnimation(PLAYER_ANIM playerAnim)
 			if ( m_Activity != ACT_RANGE_ATTACK1 || m_fSequenceFinished )
 			{
 				if ( FBitSet(pev->flags, FL_DUCKING) )  // crouching
-					strcpy(szAnim, "crouch_aim_");
+				{
+					PlatformLib_StrCpy(szAnim, sizeof(szAnim), "crouch_aim_");
+				}
 				else
-					strcpy(szAnim, "ref_aim_");
-				strcat(szAnim, m_szAnimExtention);
+				{
+					PlatformLib_StrCpy(szAnim, sizeof(szAnim), "ref_aim_");
+				}
+
+				PlatformLib_StrCat(szAnim, sizeof(szAnim), m_szAnimExtention);
 				animDesired = LookupSequence(szAnim);
 				if ( animDesired == -1 )
 					animDesired = 0;
@@ -1711,8 +1720,8 @@ void CBasePlayer::UpdateStatusBar()
 	char sbuf0[SBAR_STRING_SIZE];
 	char sbuf1[SBAR_STRING_SIZE];
 
-	strcpy(sbuf0, m_SbarString0);
-	strcpy(sbuf1, m_SbarString1);
+	PlatformLib_StrCpy(sbuf0, sizeof(sbuf0), m_SbarString0);
+	PlatformLib_StrCpy(sbuf1, sizeof(sbuf1), m_SbarString1);
 
 	// Find an ID Target
 	TraceResult tr;
@@ -1730,7 +1739,7 @@ void CBasePlayer::UpdateStatusBar()
 			if ( pEntity->Classify() == CLASS_PLAYER )
 			{
 				newSBarState[SBAR_ID_TARGETNAME] = ENTINDEX(pEntity->edict());
-				strcpy(sbuf1, "1 %p1\n2 Health: %i2%%\n3 Armor: %i3%%");
+				PlatformLib_StrCpy(sbuf1, sizeof(sbuf1), "1 %p1\n2 Health: %i2%%\n3 Armor: %i3%%");
 
 				// allies and medics get to see the targets health
 				if ( g_pGameRules->PlayerRelationship(this, pEntity) == GR_TEAMMATE )
@@ -1761,7 +1770,7 @@ void CBasePlayer::UpdateStatusBar()
 		WRITE_STRING(sbuf0);
 		MESSAGE_END();
 
-		strcpy(m_SbarString0, sbuf0);
+		PlatformLib_StrCpy(m_SbarString0, sizeof(m_SbarString0), sbuf0);
 
 		// make sure everything's resent
 		bForceResend = TRUE;
@@ -1774,7 +1783,7 @@ void CBasePlayer::UpdateStatusBar()
 		WRITE_STRING(sbuf1);
 		MESSAGE_END();
 
-		strcpy(m_SbarString1, sbuf1);
+		PlatformLib_StrCpy(m_SbarString1, sizeof(m_SbarString1), sbuf1);
 
 		// make sure everything's resent
 		bForceResend = TRUE;
@@ -2274,8 +2283,8 @@ void CBasePlayer::CheckSuitUpdate()
 			{
 				// play sentence number
 				char sentence[CBSENTENCENAME_MAX + 1];
-				strcpy(sentence, "!");
-				strcat(sentence, gszallsentencenames[isentence]);
+				PlatformLib_StrCpy(sentence, sizeof(sentence), "!");
+				PlatformLib_StrCpy(sentence, sizeof(sentence), gszallsentencenames[isentence]);
 				EMIT_SOUND_SUIT(ENT(pev), sentence);
 			}
 			else
@@ -2324,7 +2333,7 @@ void CBasePlayer::SetSuitUpdate(const char* name, int fgroup, int iNoRepeatTime)
 	// get sentence or group number
 	if ( !fgroup )
 	{
-		isentence = SENTENCEG_Lookup(name, NULL);
+		isentence = SENTENCEG_Lookup(name, NULL, 0);
 		if ( isentence < 0 )
 			return;
 	}

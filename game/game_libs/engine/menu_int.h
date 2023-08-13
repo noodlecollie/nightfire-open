@@ -109,7 +109,7 @@ typedef struct ui_enginefuncs_s
 	// misc handlers
 	void (*pfnHostError)(const char* szFmt, ...);
 	int (*pfnFileExists)(const char* filename, int gamedironly);
-	void (*pfnGetGameDir)(char* szGetGameDir);
+	void (*pfnGetGameDir)(char* szGetGameDir, int bufferSize);
 
 	// gameinfo handlers
 	int (*pfnCreateMapsList)(int fRefresh);

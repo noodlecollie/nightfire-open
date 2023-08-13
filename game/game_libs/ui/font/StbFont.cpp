@@ -224,9 +224,9 @@ bool CStbFont::FindFontDataFile(const char* name, int tall, int weight, int flag
 	return true;
 #elif defined _WIN32
 	if ( !strcmp(name, "Arial") )
-		PlatformLib_SNPrintF(dataFile, dataFileChars, "%s\\Fonts\\arial.ttf", getenv("WINDIR"));
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "%s\\Fonts\\arial.ttf", PlatformLib_GetEnv("WINDIR"));
 	else
-		PlatformLib_SNPrintF(dataFile, dataFileChars, "%s\\Fonts\\trebucbd.ttf", getenv("WINDIR"));
+		PlatformLib_SNPrintF(dataFile, dataFileChars, "%s\\Fonts\\trebucbd.ttf", PlatformLib_GetEnv("WINDIR"));
 	return true;
 #else
 	// strcpy( dataFile, "/usr/share/fonts/truetype/droid/DroidSans.ttf");
