@@ -65,7 +65,6 @@ void Q_strnlwr(const char* in, char* out, size_t size_out);
 size_t Q_colorstr(const char* string);
 char Q_toupper(const char in);
 char Q_tolower(const char in);
-#define Q_strcat(dst, src) Q_strncat(dst, src, (size_t)~0)
 size_t Q_strncat(char* dst, const char* src, size_t siz);
 size_t Q_strncpy(char* dst, const char* src, size_t siz);
 qboolean Q_isdigit(const char* str);
@@ -143,6 +142,11 @@ static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)
 static inline char* Q_strcpy(char* dest, size_t destSize, const char* src)
 {
 	return PlatformLib_StrCpy(dest, destSize, src);
+}
+
+static inline char* Q_strcat(char* dest, size_t destSize, const char* src)
+{
+	return PlatformLib_StrCat(dest, destSize, src);
 }
 
 char* Q_stristr(const char* s1, const char* s2);

@@ -979,7 +979,8 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 		return false;
 	}
 
-	buffer = Mem_Calloc(host.mempool, t->numfilenames * 2 * sizeof(result));
+	size_t bufferSize = t->numfilenames * 2 * sizeof(result);
+	buffer = Mem_Calloc(host.mempool, bufferSize);
 	use_filter = COM_CheckStringEmpty(GI->mp_filter) ? true : false;
 
 	for ( i = 0; i < t->numfilenames; i++ )
@@ -1073,7 +1074,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 			{
 				// format: mapname "maptitle"\n
 				Q_sprintf(result, "%s \"%s\"\n", mapname, message);
-				Q_strcat(buffer, result);  // add new string
+				Q_strcat(buffer, bufferSize, result);  // add new string
 			}
 		}
 	}

@@ -1069,8 +1069,8 @@ void SV_RemoteCommand(netadr_t from, sizebuf_t* msg)
 		remaining[0] = 0;
 		for ( i = 2; i < Cmd_Argc(); i++ )
 		{
-			Q_strcat(remaining, Cmd_Argv(i));
-			Q_strcat(remaining, " ");
+			Q_strcat(remaining, sizeof(remaining), Cmd_Argv(i));
+			Q_strcat(remaining, sizeof(remaining), " ");
 		}
 		Cmd_ExecuteString(remaining);
 	}

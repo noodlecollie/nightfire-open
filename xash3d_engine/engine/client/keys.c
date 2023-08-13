@@ -442,9 +442,9 @@ void Key_Bind_f(void)
 
 	for ( i = 2; i < c; i++ )
 	{
-		Q_strcat(cmd, Cmd_Argv(i));
+		Q_strcat(cmd, sizeof(cmd), Cmd_Argv(i));
 		if ( i != (c - 1) )
-			Q_strcat(cmd, " ");
+			Q_strcat(cmd, sizeof(cmd), " ");
 	}
 
 	Key_SetBinding(b, cmd);
