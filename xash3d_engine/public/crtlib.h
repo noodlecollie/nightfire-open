@@ -85,14 +85,14 @@ int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list arg
 int Q_snprintf(char* buffer, size_t buffersize, const char* format, ...) _format(3);
 int Q_sprintf(char* buffer, const char* format, ...) _format(2);
 #define Q_strpbrk strpbrk
-void COM_StripColors(const char* in, char* out);
+void COM_StripColors(const char* in, char* out, size_t outBufferLength);
 #define Q_memprint(val) Q_pretifymem(val, 2)
 char* Q_pretifymem(float value, int digitsafterdecimal);
 void COM_FileBase(const char* in, char* out, size_t outBufferSize);
 const char* COM_FileExtension(const char* in);
-void COM_DefaultExtension(char* path, const char* extension);
-void COM_ReplaceExtension(char* path, const char* extension);
-void COM_ExtractFilePath(const char* path, char* dest);
+void COM_DefaultExtension(char* path, size_t pathBufferLength, const char* extension);
+void COM_ReplaceExtension(char* path, size_t pathBufferLength, const char* extension);
+void COM_ExtractFilePath(const char* path, char* dest, size_t destBufferSize);
 const char* COM_FileWithoutPath(const char* in);
 void COM_StripExtension(char* path);
 void COM_RemoveLineFeed(char* str);

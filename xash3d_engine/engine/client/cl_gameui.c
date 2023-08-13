@@ -331,7 +331,7 @@ static void GAME_EXPORT UI_DrawLogo(const char* filename, float x, float y, floa
 
 		// run cinematic if not
 		Q_snprintf(path, sizeof(path), "media/%s", filename);
-		COM_DefaultExtension(path, ".avi");
+		COM_DefaultExtension(path, sizeof(path), ".avi");
 		fullpath = FS_GetDiskPath(path, false);
 
 		if ( FS_FileExists(path, false) && !fullpath )

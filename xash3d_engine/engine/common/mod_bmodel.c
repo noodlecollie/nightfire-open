@@ -2012,7 +2012,7 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 
 		// world is check for entfile too
 		Q_strncpy(entfilename, loadmodel->name, sizeof(entfilename));
-		COM_ReplaceExtension(entfilename, ".ent");
+		COM_ReplaceExtension(entfilename, sizeof(entfilename), ".ent");
 
 		ft1 = FS_FileTime(loadmodel->name, false);
 		ft2 = FS_FileTime(entfilename, true);

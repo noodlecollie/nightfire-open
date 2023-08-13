@@ -683,7 +683,7 @@ void FS_ParseGenericGameInfo(gameinfo_t* GameInfo, const char* buf, const qboole
 		{
 			pfile = COM_ParseFile(pfile, GameInfo->iconpath, sizeof(GameInfo->iconpath));
 			COM_FixSlashes(GameInfo->iconpath);
-			COM_DefaultExtension(GameInfo->iconpath, ".ico");
+			COM_DefaultExtension(GameInfo->iconpath, sizeof(GameInfo->iconpath), ".ico");
 		}
 		else if ( !Q_stricmp(token, "type") )
 		{
@@ -1277,7 +1277,7 @@ static qboolean FS_FindLibrary(const char* dllname, qboolean directpath, fs_dlli
 	}
 	dllInfo->shortPath[i] = '\0';
 
-	COM_DefaultExtension(dllInfo->shortPath, "." OS_LIB_EXT);  // apply ext if forget
+	COM_DefaultExtension(dllInfo->shortPath, sizeof(dllInfo->shortPath), "." OS_LIB_EXT);  // apply ext just in case
 
 	search = FS_FindFile(dllInfo->shortPath, &index, NULL, 0, false);
 

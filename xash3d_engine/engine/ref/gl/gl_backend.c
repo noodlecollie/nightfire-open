@@ -620,7 +620,7 @@ qboolean VID_CubemapShot(const char* base, uint size, const float* vieworg, qboo
 	// make sure what we have right extension
 	Q_strncpy(basename, base, MAX_STRING);
 	COM_StripExtension(basename);
-	COM_DefaultExtension(basename, ".tga");
+	COM_DefaultExtension(basename, sizeof(basename), ".tga");
 
 	// write image as 6 sides
 	result = gEngfuncs.FS_SaveImage(basename, r_shot);

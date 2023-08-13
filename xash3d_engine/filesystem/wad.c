@@ -481,20 +481,20 @@ static int FS_FindFile_WAD(searchpath_t* search, const char* path, char* fixedna
 	if ( type == TYP_NONE )
 		return -1;
 
-	COM_ExtractFilePath(path, wadname);
+	COM_ExtractFilePath(path, wadname, sizeof(wadname));
 	wadfolder[0] = '\0';
 
 	if ( COM_CheckStringEmpty(wadname) )
 	{
 		COM_FileBase(wadname, wadname, sizeof(wadname));
 		Q_strncpy(wadfolder, wadname, sizeof(wadfolder));
-		COM_DefaultExtension(wadname, ".wad");
+		COM_DefaultExtension(wadname, sizeof(wadname), ".wad");
 		anywadname = false;
 	}
 
 	// make wadname from wad fullpath
 	COM_FileBase(search->filename, shortname, sizeof(shortname));
-	COM_DefaultExtension(shortname, ".wad");
+	COM_DefaultExtension(shortname, sizeof(shortname), ".wad");
 
 	// quick reject by wadname
 	if ( !anywadname && Q_stricmp(wadname, shortname) )
@@ -541,7 +541,7 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 	if ( type == TYP_NONE )
 		return;
 
-	COM_ExtractFilePath(pattern, wadname);
+	COM_ExtractFilePath(pattern, wadname, sizeof(wadname));
 	COM_FileBase(pattern, wadpattern, sizeof(wadpattern));
 	wadfolder[0] = '\0';
 
@@ -549,13 +549,13 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 	{
 		COM_FileBase(wadname, wadname, sizeof(wadname));
 		Q_strncpy(wadfolder, wadname, sizeof(wadfolder));
-		COM_DefaultExtension(wadname, ".wad");
+		COM_DefaultExtension(wadname, sizeof(wadname), ".wad");
 		anywadname = false;
 	}
 
 	// make wadname from wad fullpath
 	COM_FileBase(search->filename, temp2, sizeof(temp2));
-	COM_DefaultExtension(temp2, ".wad");
+	COM_DefaultExtension(temp2, sizeof(temp2), ".wad");
 
 	// quick reject by wadname
 	if ( !anywadname && Q_stricmp(wadname, temp2) )
@@ -585,7 +585,7 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 					// build path: wadname/lumpname.ext
 					Q_snprintf(temp2, sizeof(temp2), "%s/%s", wadfolder, temp);
 					Q_snprintf(buf, sizeof(buf), ".%s", W_ExtFromType(search->pkg.wad->lumps[i].type));
-					COM_DefaultExtension(temp2, buf);
+					COM_DefaultExtension(temp2, sizeof(temp2), buf);
 					stringlistappend(list, temp2);
 				}
 			}

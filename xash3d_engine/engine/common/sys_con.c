@@ -296,7 +296,7 @@ static void Sys_PrintStdout(const char* logtime, const char* msg)
 	static char buf[MAX_PRINT_MSG];
 
 	// strip color codes
-	COM_StripColors(msg, buf);
+	COM_StripColors(msg, buf, sizeof(buf));
 
 	// platform-specific output
 #if XASH_ANDROID && !XASH_DEDICATED

@@ -104,7 +104,7 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 
 			Q_strncpy(entfilename, t->filenames[i], sizeof(entfilename));
 			COM_StripExtension(entfilename);
-			COM_DefaultExtension(entfilename, ".ent");
+			COM_DefaultExtension(entfilename, sizeof(entfilename), ".ent");
 			ents = (char*)FS_LoadFile(entfilename, NULL, true);
 
 			if ( !ents && lumplen >= 10 )
@@ -1015,7 +1015,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 
 			Q_strncpy(entfilename, t->filenames[i], sizeof(entfilename));
 			COM_StripExtension(entfilename);
-			COM_DefaultExtension(entfilename, ".ent");
+			COM_DefaultExtension(entfilename, sizeof(entfilename), ".ent");
 			ents = (char*)FS_LoadFile(entfilename, NULL, true);
 
 			if ( !ents && lumplen >= 10 )
