@@ -1043,7 +1043,7 @@ void CBasePlayer::SetAnimation(PLAYER_ANIM playerAnim)
 			{
 				PlatformLib_StrCpy(szAnim, sizeof(szAnim), "ref_shoot_");
 			}
-			PlatformLib_StrCpy(szAnim, sizeof(szAnim), m_szAnimExtention);
+			PlatformLib_StrCat(szAnim, sizeof(szAnim), m_szAnimExtention);
 			animDesired = LookupSequence(szAnim);
 			if ( animDesired == -1 )
 				animDesired = 0;
@@ -1075,7 +1075,7 @@ void CBasePlayer::SetAnimation(PLAYER_ANIM playerAnim)
 					PlatformLib_StrCpy(szAnim, sizeof(szAnim), "ref_aim_");
 				}
 
-				PlatformLib_StrCpy(szAnim, sizeof(szAnim), m_szAnimExtention);
+				PlatformLib_StrCat(szAnim, sizeof(szAnim), m_szAnimExtention);
 				animDesired = LookupSequence(szAnim);
 				if ( animDesired == -1 )
 					animDesired = 0;

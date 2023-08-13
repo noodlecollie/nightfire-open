@@ -233,7 +233,7 @@ typedef struct enginefuncs_s
 	void (*pfnFreeFile)(void* buffer);
 	void (*pfnEndSection)(const char* pszSectionName);  // trigger_endsection
 	int (*pfnCompareFileTime)(char* filename1, char* filename2, int* iCompare);
-	void (*pfnGetGameDir)(char* szGetGameDir);
+	void (*pfnGetGameDir)(char* szGetGameDir, int bufferSize);
 	void (*pfnCvar_RegisterVariable)(cvar_t* variable);
 	void (*pfnFadeClientVolume)(
 		const edict_t* pEdict,

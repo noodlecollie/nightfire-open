@@ -59,15 +59,15 @@ const char* Q_buildcommit(void);
 //
 // crtlib.c
 //
-#define Q_strlwr(in, out) Q_strnlwr(in, out, 99999)
+#define Q_strlwr(in, out) Q_strnlwr(in, out, (size_t)~0)
 void Q_strnlwr(const char* in, char* out, size_t size_out);
 #define Q_strlen(str) ((str) ? strlen((str)) : 0)
 size_t Q_colorstr(const char* string);
 char Q_toupper(const char in);
 char Q_tolower(const char in);
-#define Q_strcat(dst, src) Q_strncat(dst, src, 99999)
+#define Q_strcat(dst, src) Q_strncat(dst, src, (size_t)~0)
 size_t Q_strncat(char* dst, const char* src, size_t siz);
-#define Q_strcpy(dst, src) Q_strncpy(dst, src, 99999)
+#define Q_strcpy(dst, src) Q_strncpy(dst, src, (size_t)~0)
 size_t Q_strncpy(char* dst, const char* src, size_t siz);
 qboolean Q_isdigit(const char* str);
 qboolean Q_isspace(const char* str);
@@ -80,7 +80,7 @@ qboolean Q_stricmpext(const char* pattern, const char* text);
 qboolean Q_strnicmpext(const char* pattern, const char* text, size_t minimumlen);
 const byte* Q_memmem(const byte* haystack, size_t haystacklen, const byte* needle, size_t needlelen);
 const char* Q_timestamp(int format);
-#define Q_vsprintf(buffer, format, args) Q_vsnprintf(buffer, 99999, format, args)
+#define Q_vsprintf(buffer, format, args) Q_vsnprintf(buffer, (size_t)~0, format, args)
 int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list args);
 int Q_snprintf(char* buffer, size_t buffersize, const char* format, ...) _format(3);
 int Q_sprintf(char* buffer, const char* format, ...) _format(2);

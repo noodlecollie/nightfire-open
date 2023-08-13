@@ -822,8 +822,8 @@ void UTIL_HudMessage(CBaseEntity* pEntity, const hudtextparms_t& textparms, cons
 	else
 	{
 		char tmp[512];
-		PlatformLib_SNPrintF(tmp, sizeof(tmp), pMessage, 511);
-		tmp[511] = 0;
+		PlatformLib_StrCpy(tmp, sizeof(tmp), pMessage);
+
 		WRITE_STRING(tmp);
 	}
 	MESSAGE_END();

@@ -1062,9 +1062,9 @@ int USENTENCEG_PickSequential(int isentenceg, char* szfound, size_t foundBufferS
 		ipick = count - 1;
 
 	PlatformLib_StrCpy(szfound, foundBufferSize, "!");
-	PlatformLib_StrCpy(szfound, foundBufferSize, szgroupname);
+	PlatformLib_StrCat(szfound, foundBufferSize, szgroupname);
 	PlatformLib_SNPrintF(sznum, sizeof(sznum), "%d", ipick);
-	PlatformLib_StrCpy(szfound, foundBufferSize, sznum);
+	PlatformLib_StrCat(szfound, foundBufferSize, sznum);
 
 	if ( ipick >= count )
 	{
@@ -1122,9 +1122,9 @@ int USENTENCEG_Pick(int isentenceg, char* szfound, size_t foundBufferSize)
 		else
 		{
 			PlatformLib_StrCpy(szfound, foundBufferSize, "!");
-			PlatformLib_StrCpy(szfound, foundBufferSize, szgroupname);
+			PlatformLib_StrCat(szfound, foundBufferSize, szgroupname);
 			PlatformLib_SNPrintF(sznum, sizeof(sznum), "%d", ipick);
-			PlatformLib_StrCpy(szfound, foundBufferSize, sznum);
+			PlatformLib_StrCat(szfound, foundBufferSize, sznum);
 			return ipick;
 		}
 	}

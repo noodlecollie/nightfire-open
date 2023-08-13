@@ -651,7 +651,9 @@ void ClientCommand(edict_t* pEntity)
 		CBasePlayer* pPlayer = GetClassPtr<CBasePlayer>(pev);
 
 		if ( pPlayer->IsObserver() )
+		{
 			pPlayer->Observer_FindNextPlayer(atoi(CMD_ARGV(1)) ? true : false);
+		}
 	}
 	else if ( g_pGameRules->ClientCommand(GetClassPtr<CBasePlayer>(pev), pcmd) )
 	{
@@ -664,16 +666,11 @@ void ClientCommand(edict_t* pEntity)
 	}
 	else
 	{
-		// tell the user they entered an unknown command
-		char command[128];
-
-		// check the length of the command (prevents crash)
-		// max total length is 192 ...and we're adding a string below ("Unknown command: %s\n")
-		PlatformLib_SNPrintF(command, sizeof(command), pcmd, 127);
-		command[127] = '\0';
+		char msg[192];
+		PlatformLib_SNPrintF(msg, sizeof(msg), "Unknown command: %s", pcmd);
 
 		// tell the user they entered an unknown command
-		ClientPrint(&pEntity->v, HUD_PRINTCONSOLE, UTIL_VarArgs("Unknown command: %s\n", command));
+		ClientPrint(&pEntity->v, HUD_PRINTCONSOLE, msg);
 	}
 }
 

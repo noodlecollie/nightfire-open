@@ -1782,7 +1782,7 @@ void CTestHull::BuildNodeGraph(void)
 	}
 
 	// make sure directories have been made
-	GET_GAME_DIR(szNrpFilename);
+	GET_GAME_DIR(szNrpFilename, sizeof(szNrpFilename));
 	PlatformLib_StrCat(szNrpFilename, sizeof(szNrpFilename), "/maps");
 	CreateDirectory(szNrpFilename, NULL);
 	PlatformLib_StrCat(szNrpFilename, sizeof(szNrpFilename), "/graphs");
@@ -2474,7 +2474,7 @@ int CGraph::FLoadGraph(const char* szMapName)
 
 	// make sure the directories have been made
 	char szDirName[MAX_PATH];
-	GET_GAME_DIR(szDirName);
+	GET_GAME_DIR(szDirName, sizeof(szDirName));
 	PlatformLib_StrCat(szDirName, sizeof(szDirName), "/maps");
 	CreateDirectory(szDirName, NULL);
 	PlatformLib_StrCat(szDirName, sizeof(szDirName), "/graphs");
@@ -2704,7 +2704,7 @@ int CGraph::FSaveGraph(const char* szMapName)
 	}
 
 	// make sure directories have been made
-	GET_GAME_DIR(szFilename);
+	GET_GAME_DIR(szFilename, sizeof(szFilename));
 	PlatformLib_StrCat(szFilename, sizeof(szFilename), "/maps");
 	CreateDirectory(szFilename, NULL);
 	PlatformLib_StrCat(szFilename, sizeof(szFilename), "/graphs");

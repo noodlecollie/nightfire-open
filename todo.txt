@@ -12,3 +12,6 @@ All points in sources/scripts which reference tasks in this file are tagged with
   * server
   * pm_shared
   * game_shared
+* Upgrade APIs so that:
+  * String buffers that are writable always pass sizes (uint64_t)
+  * String pointers that should not be writable are always const

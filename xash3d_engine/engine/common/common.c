@@ -1055,11 +1055,14 @@ pfnGetGameDir
 
 =============
 */
-void GAME_EXPORT pfnGetGameDir(char* szGetGameDir)
+void GAME_EXPORT pfnGetGameDir(char* szGetGameDir, int bufferSize)
 {
-	if ( !szGetGameDir )
+	if ( !szGetGameDir || bufferSize < 1 )
+	{
 		return;
-	Q_strcpy(szGetGameDir, GI->gamefolder);
+	}
+
+	Q_strncpy(szGetGameDir, GI->gamefolder, (size_t)bufferSize);
 }
 
 qboolean COM_IsSafeFileToDownload(const char* filename)

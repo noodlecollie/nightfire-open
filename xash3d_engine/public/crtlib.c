@@ -151,8 +151,16 @@ size_t Q_strncpy(char* dst, const char* src, size_t size)
 	register const char* s = src;
 	register size_t n = size;
 
-	if ( !dst || !src || !size )
+	if ( !dst || !size )
+	{
 		return 0;
+	}
+
+	if ( !src )
+	{
+		*dst = '\0';
+		return 0;
+	}
 
 	// copy as many bytes as will fit
 	if ( n != 0 && --n != 0 )
@@ -160,7 +168,9 @@ size_t Q_strncpy(char* dst, const char* src, size_t size)
 		do
 		{
 			if ( (*d++ = *s++) == 0 )
+			{
 				break;
+			}
 		}
 		while ( --n != 0 );
 	}
@@ -169,10 +179,16 @@ size_t Q_strncpy(char* dst, const char* src, size_t size)
 	if ( n == 0 )
 	{
 		if ( size != 0 )
+		{
 			*d = '\0';  // NULL-terminate dst
+		}
+
 		while ( *s++ )
-			;
+		{
+			// Seek to end
+		}
 	}
+
 	return (s - src - 1);  // count does not include NULL
 }
 

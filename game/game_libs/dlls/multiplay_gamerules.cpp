@@ -1568,12 +1568,14 @@ static void ExtractCommandString(char* s, char* szCommand, size_t commandBufferS
 		}
 		*o = 0;
 
-		PlatformLib_StrCat(szCommand, commandBufferSize, pkey);
+		PlatformLib_StrCpy(szCommand, commandBufferSize, pkey);
+
 		if ( strlen(value) > 0 )
 		{
 			PlatformLib_StrCat(szCommand, commandBufferSize, " ");
 			PlatformLib_StrCat(szCommand, commandBufferSize, value);
 		}
+
 		PlatformLib_StrCat(szCommand, commandBufferSize, "\n");
 
 		if ( !*s )
