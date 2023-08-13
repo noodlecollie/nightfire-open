@@ -2825,23 +2825,13 @@ int CGraph::FSetGraphPointers(void)
 //=========================================================
 int CGraph::CheckNODFile(const char* szMapName)
 {
-	int retValue;
+	int retValue = TRUE;
 
 	char szBspFilename[MAX_PATH];
 	char szGraphFilename[MAX_PATH];
 
-	szBspFilename[0] = '\0';
-	szGraphFilename[0] = '\0';
-
-	PlatformLib_StrCat(szBspFilename, sizeof(szBspFilename), "maps/");
-	PlatformLib_StrCat(szBspFilename, sizeof(szBspFilename), szMapName);
-	PlatformLib_StrCat(szBspFilename, sizeof(szBspFilename), ".bsp");
-
-	PlatformLib_StrCat(szGraphFilename, sizeof(szGraphFilename), "maps/graphs/");
-	PlatformLib_StrCat(szGraphFilename, sizeof(szGraphFilename), szMapName);
-	PlatformLib_StrCat(szGraphFilename, sizeof(szGraphFilename), ".nod");
-
-	retValue = TRUE;
+	PlatformLib_SNPrintF(szBspFilename, sizeof(szBspFilename), "maps/%s.bsp", szMapName);
+	PlatformLib_SNPrintF(szBspFilename, sizeof(szBspFilename), "maps/graphs/%s.nod", szMapName);
 
 	int iCompare;
 	if ( COMPARE_FILE_TIME(szBspFilename, szGraphFilename, &iCompare) )
