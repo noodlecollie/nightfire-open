@@ -551,11 +551,11 @@ void Key_AddKeyCommands(int key, const char* kb, qboolean down)
 			*buttonPtr = '\0';
 			if ( button[0] == '+' )
 			{
-				// button commands add keynum as a parm
+				// button commands add keynum as a param
 				if ( down )
-					Q_sprintf(cmd, "%s %i\n", button, key);
+					Q_snprintf(cmd, sizeof(cmd), "%s %i\n", button, key);
 				else
-					Q_sprintf(cmd, "-%s %i\n", button + 1, key);
+					Q_snprintf(cmd, sizeof(cmd), "-%s %i\n", button + 1, key);
 				Cbuf_AddText(cmd);
 			}
 			else if ( down )

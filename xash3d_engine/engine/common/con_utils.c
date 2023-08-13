@@ -1073,7 +1073,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 			if ( num_spawnpoints )
 			{
 				// format: mapname "maptitle"\n
-				Q_sprintf(result, "%s \"%s\"\n", mapname, message);
+				Q_snprintf(result, sizeof(result), "%s \"%s\"\n", mapname, message);
 				Q_strcat(buffer, bufferSize, result);  // add new string
 			}
 		}

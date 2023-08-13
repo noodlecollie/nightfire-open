@@ -1347,16 +1347,10 @@ void CL_CheckStartupDemos(void)
 CL_DemoGetName
 ==================
 */
-static void CL_DemoGetName(int lastnum, char* filename)
+static void CL_DemoGetName(int lastnum, char* filename, size_t bufferSize)
 {
-	if ( lastnum < 0 || lastnum > 9999 )
-	{
-		// bound
-		Q_strcpy(filename, sizeof(filename), "demo9999");
-		return;
-	}
-
-	Q_sprintf(filename, "demo%04d", lastnum);
+	lastnum = bound(0, lastnum, 9999);
+	Q_snprintf(filename, bufferSize, "demo%04d", lastnum);
 }
 
 /*
@@ -1410,7 +1404,7 @@ void CL_Record_f(void)
 		// scan for a free filename
 		for ( n = 0; n < 10000; n++ )
 		{
-			CL_DemoGetName(n, demoname);
+			CL_DemoGetName(n, demoname, sizeof(demoname));
 			if ( !FS_FileExists(va("%s.dem", demoname), true) )
 				break;
 		}
@@ -1425,7 +1419,7 @@ void CL_Record_f(void)
 		Q_strncpy(demoname, name, sizeof(demoname));
 
 	// open the demo file
-	Q_sprintf(demopath, "%s.dem", demoname);
+	Q_snprintf(demopath, sizeof(demopath), "%s.dem", demoname);
 
 	// make sure that old demo is removed
 	if ( FS_FileExists(demopath, false) )
