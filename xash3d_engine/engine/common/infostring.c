@@ -250,7 +250,6 @@ const char* Info_ValueForKey(const char* s, const char* key)
 	}
 }
 
-// NFTODO: This needs the buffer size passing in!
 qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 {
 	char* start;
@@ -313,9 +312,17 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 
 		if ( !Q_strncmp(key, pkey, cmpsize) )
 		{
-			// NFTODO: For now we have to blindly assume that this size is fine.
-			// Update this function's API!
-			Q_strcpy(start, MAX_KV_SIZE, s);  // remove this part
+			// Copy the later part of the string to the start.
+			for ( ;; )
+			{
+				*(start++) = *(s++);
+
+				if ( !(*(s - 1)) )
+				{
+					break;
+				}
+			}
+
 			return true;
 		}
 
