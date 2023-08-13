@@ -252,7 +252,7 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 					Con_Reportf("TextMessage: unexpected '}' found, line %d\n", lineNumber);
 					return;
 				}
-				Q_strcpy(currentName, trim);
+				Q_strcpy(currentName, sizeof(currentName), trim);
 				break;
 			case MSGFILE_TEXT:
 				if ( IsEndOfText(trim) )
@@ -266,7 +266,7 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 						return;
 					}
 
-					Q_strcpy(nameHeap + lastNamePos, currentName);
+					Q_strcpy(nameHeap + lastNamePos, (size_t)(sizeof(nameHeap) - lastNamePos), currentName);
 
 					// terminate text in-place in the memory file
 					// (it's temporary memory that will be deleted)
@@ -332,18 +332,26 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 
 	// copy text & fixup pointers
 	pCurrentText = pNameHeap + nameHeapSize;
+	char* textHeapBase = pCurrentText;
 
 	for ( i = 0; i < messageCount; i++ )
 	{
 		clgame.titles[i].pName = pNameHeap;  // adjust name pointer (parallel buffer)
-		Q_strcpy(pCurrentText, clgame.titles[i].pMessage);  // copy text over
+
+		Q_strcpy(
+			pCurrentText,
+			textHeapSize - (pCurrentText - textHeapBase),
+			clgame.titles[i].pMessage);  // copy text over
+
 		clgame.titles[i].pMessage = pCurrentText;
 		pNameHeap += Q_strlen(pNameHeap) + 1;
 		pCurrentText += Q_strlen(pCurrentText) + 1;
 	}
 
 	if ( (pCurrentText - (char*)clgame.titles) != (textHeapSize + nameHeapSize + messageSize) )
+	{
 		Con_DPrintf(S_ERROR "TextMessage: overflow text message buffer!\n");
+	}
 
 	clgame.numTitles = messageCount;
 }

@@ -2085,15 +2085,15 @@ void CL_Rcon_f(void)
 
 	NET_Config(true, false);  // allow remote
 
-	Q_strcat(message, "rcon ");
-	Q_strcat(message, rcon_password.string);
-	Q_strcat(message, " ");
+	Q_strcat(message, sizeof(message), "rcon ");
+	Q_strcat(message, sizeof(message), rcon_password.string);
+	Q_strcat(message, sizeof(message), " ");
 
 	for ( i = 1; i < Cmd_Argc(); i++ )
 	{
 		Cmd_Escape(command, Cmd_Argv(i), sizeof(command));
-		Q_strcat(message, command);
-		Q_strcat(message, " ");
+		Q_strcat(message, sizeof(message), command);
+		Q_strcat(message, sizeof(message), " ");
 	}
 
 	if ( cls.state >= ca_connected )
@@ -3405,7 +3405,7 @@ void CL_ServerCommand(qboolean reliable, const char* fmt, ...)
 		return;
 
 	va_start(argptr, fmt);
-	Q_vsprintf(string, fmt, argptr);
+	Q_vsnprintf(string, sizeof(string), fmt, argptr);
 	va_end(argptr);
 
 	if ( reliable )

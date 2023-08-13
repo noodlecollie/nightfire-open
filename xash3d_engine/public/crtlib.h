@@ -65,9 +65,7 @@ void Q_strnlwr(const char* in, char* out, size_t size_out);
 size_t Q_colorstr(const char* string);
 char Q_toupper(const char in);
 char Q_tolower(const char in);
-#define Q_strcat(dst, src) Q_strncat(dst, src, (size_t)~0)
 size_t Q_strncat(char* dst, const char* src, size_t siz);
-#define Q_strcpy(dst, src) Q_strncpy(dst, src, (size_t)~0)
 size_t Q_strncpy(char* dst, const char* src, size_t siz);
 qboolean Q_isdigit(const char* str);
 qboolean Q_isspace(const char* str);
@@ -80,10 +78,8 @@ qboolean Q_stricmpext(const char* pattern, const char* text);
 qboolean Q_strnicmpext(const char* pattern, const char* text, size_t minimumlen);
 const byte* Q_memmem(const byte* haystack, size_t haystacklen, const byte* needle, size_t needlelen);
 const char* Q_timestamp(int format);
-#define Q_vsprintf(buffer, format, args) Q_vsnprintf(buffer, (size_t)~0, format, args)
 int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list args);
 int Q_snprintf(char* buffer, size_t buffersize, const char* format, ...) _format(3);
-int Q_sprintf(char* buffer, const char* format, ...) _format(2);
 #define Q_strpbrk strpbrk
 void COM_StripColors(const char* in, char* out, size_t outBufferLength);
 #define Q_memprint(val) Q_pretifymem(val, 2)
@@ -139,6 +135,16 @@ static inline int Q_stricmp(const char* s1, const char* s2)
 static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)
 {
 	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrNCaseCmp(s1, s2, n));
+}
+
+static inline char* Q_strcpy(char* dest, size_t destSize, const char* src)
+{
+	return PlatformLib_StrCpy(dest, destSize, src);
+}
+
+static inline char* Q_strcat(char* dest, size_t destSize, const char* src)
+{
+	return PlatformLib_StrCat(dest, destSize, src);
 }
 
 char* Q_stristr(const char* s1, const char* s2);

@@ -312,7 +312,17 @@ qboolean GAME_EXPORT Info_RemoveKey(char* s, const char* key)
 
 		if ( !Q_strncmp(key, pkey, cmpsize) )
 		{
-			Q_strcpy(start, s);  // remove this part
+			// Copy the later part of the string to the start.
+			for ( ;; )
+			{
+				*(start++) = *(s++);
+
+				if ( !(*(s - 1)) )
+				{
+					break;
+				}
+			}
+
 			return true;
 		}
 

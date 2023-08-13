@@ -32,40 +32,63 @@ static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 	size_t needTrailingSlash;
 
 	if ( !baseName || !baseName[0] )
+	{
 		return false;
+	}
 
 	envPath = PlatformLib_GetEnv("PATH");
+
 	if ( !COM_CheckString(envPath) )
+	{
 		return false;
+	}
 
 	baseNameLength = Q_strlen(baseName);
+
 	while ( *envPath )
 	{
 		part = Q_strchr(envPath, ':');
+
 		if ( part )
+		{
 			length = part - envPath;
+		}
 		else
+		{
 			length = Q_strlen(envPath);
+		}
 
 		if ( length > 0 )
 		{
 			needTrailingSlash = (envPath[length - 1] == '/') ? 0 : 1;
+
 			if ( length + baseNameLength + needTrailingSlash < size )
 			{
 				Q_strncpy(buf, envPath, length + 1);
+
 				if ( needTrailingSlash )
-					Q_strcpy(buf + length, "/");
-				Q_strcpy(buf + length + needTrailingSlash, baseName);
+				{
+					Q_strcpy(buf + length, size - length, "/");
+				}
+
+				Q_strcpy(buf + length + needTrailingSlash, size - length - needTrailingSlash, baseName);
 				buf[length + needTrailingSlash + baseNameLength] = '\0';
+
 				if ( access(buf, X_OK) == 0 )
+				{
 					return true;
+				}
 			}
 		}
 
 		envPath += length;
+
 		if ( *envPath == ':' )
+		{
 			envPath++;
+		}
 	}
+
 	return false;
 }
 

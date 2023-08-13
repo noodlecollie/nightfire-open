@@ -2831,7 +2831,7 @@ int CGraph::CheckNODFile(const char* szMapName)
 	char szGraphFilename[MAX_PATH];
 
 	PlatformLib_SNPrintF(szBspFilename, sizeof(szBspFilename), "maps/%s.bsp", szMapName);
-	PlatformLib_SNPrintF(szBspFilename, sizeof(szBspFilename), "maps/graphs/%s.nod", szMapName);
+	PlatformLib_SNPrintF(szGraphFilename, sizeof(szGraphFilename), "maps/graphs/%s.nod", szMapName);
 
 	int iCompare;
 	if ( COMPARE_FILE_TIME(szBspFilename, szGraphFilename, &iCompare) )

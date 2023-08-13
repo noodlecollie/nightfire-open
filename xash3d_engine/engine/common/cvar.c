@@ -1144,11 +1144,11 @@ void Cvar_Set_f(void)
 			break;
 		}
 
-		Q_strcat(combined, Cmd_Argv(i));
+		Q_strcat(combined, sizeof(combined), Cmd_Argv(i));
 
 		if ( i != c - 1 )
 		{
-			Q_strcat(combined, " ");
+			Q_strcat(combined, sizeof(combined), " ");
 		}
 
 		l += len;

@@ -2080,7 +2080,7 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 
 				if ( !Q_strchr(wadstring, ';') )
 				{
-					Q_strcat(wadstring, ";");
+					Q_strcat(wadstring, sizeof(wadstring), ";");
 				}
 
 				wadStringLength = strlen(wadstring);

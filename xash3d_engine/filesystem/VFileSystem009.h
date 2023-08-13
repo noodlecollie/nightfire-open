@@ -119,7 +119,7 @@ public:
 
 	virtual bool FullPathToRelativePath(
 		const char*,
-		char*) = 0; /* linkage=_ZN11IFileSystem22FullPathToRelativePathEPKcPc */
+		char*, size_t) = 0; /* Linkage is now probably wrong because of the additional size_t, it used to be _ZN11IFileSystem22FullPathToRelativePathEPKcPc */
 
 	virtual bool GetCurrentDirectory(char*, int) = 0; /* linkage=_ZN11IFileSystem19GetCurrentDirectoryEPci */
 

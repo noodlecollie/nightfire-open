@@ -753,7 +753,7 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 
 	if ( !iconLoaded )
 	{
-		Q_strcpy(iconpath, GI->iconpath);
+		Q_strcpy(iconpath, sizeof(iconpath), GI->iconpath);
 		COM_StripExtension(iconpath);
 		COM_DefaultExtension(iconpath, sizeof(iconpath), ".tga");
 

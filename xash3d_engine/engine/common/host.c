@@ -882,7 +882,7 @@ void GAME_EXPORT Host_Error(const char* error, ...)
 	va_list argptr;
 
 	va_start(argptr, error);
-	Q_vsprintf(hosterror1, error, argptr);
+	Q_vsnprintf(hosterror1, sizeof(hosterror1), error, argptr);
 	va_end(argptr);
 
 	CL_WriteMessageHistory();  // before Q_error call
@@ -920,7 +920,7 @@ void GAME_EXPORT Host_Error(const char* error, ...)
 	recursive = true;
 	Q_strncpy(hosterror2, hosterror1, MAX_SYSPATH);
 	host.errorframe = host.framecount;  // to avoid multply calls per frame
-	Q_sprintf(host.finalmsg, "Server crashed: %s", hosterror1);
+	Q_snprintf(host.finalmsg, sizeof(host.finalmsg), "Server crashed: %s", hosterror1);
 
 	// clearing cmd buffer to prevent execute any commands
 	COM_InitHostState();

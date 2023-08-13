@@ -531,21 +531,29 @@ static void R_GetRendererName(char* dest, size_t size, const char* opt)
 
 #ifdef XASH_INTERNAL_GAMELIBS
 		if ( !Q_strcmp(opt, "ref_") )
+		{
 			format = "%s";
+		}
 		else
+		{
 			format = "ref_%s";
+		}
 #else
 		if ( !Q_strcmp(opt, "ref_") )
+		{
 			format = OS_LIB_PREFIX "%s." OS_LIB_EXT;
+		}
 		else
+		{
 			format = OS_LIB_PREFIX "ref_%s." OS_LIB_EXT;
+		}
 #endif
 		Q_snprintf(dest, size, format, opt);
 	}
 	else
 	{
 		// full path
-		Q_strcpy(dest, opt);
+		Q_strcpy(dest, size, opt);
 	}
 }
 

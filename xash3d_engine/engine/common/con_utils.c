@@ -611,7 +611,8 @@ qboolean Cmd_GetKeysList(const char* s, char* completedname, int length)
 
 		if ( (*s == '*') || !Q_strnicmp(keyname, s, len) )
 		{
-			Q_strcpy(keys[numkeys++], keyname);
+			Q_strcpy(keys[numkeys], sizeof(keys[numkeys]), keyname);
+			++numkeys;
 		}
 	}
 
@@ -828,7 +829,8 @@ qboolean Cmd_GetGamesList(const char* s, char* completedname, int length)
 	{
 		if ( (*s == '*') || !Q_strnicmp(FI->games[i]->gamefolder, s, len) )
 		{
-			Q_strcpy(gamedirs[numgamedirs++], FI->games[i]->gamefolder);
+			Q_strcpy(gamedirs[numgamedirs], sizeof(gamedirs[numgamedirs]), FI->games[i]->gamefolder);
+			++numgamedirs;
 		}
 	}
 
@@ -904,7 +906,8 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 	{
 		if ( (*s == '*') || !Q_strnicmp(cd_command[i], s, len) )
 		{
-			Q_strcpy(cdcommands[numcdcommands++], cd_command[i]);
+			Q_strcpy(cdcommands[numcdcommands], sizeof(cdcommands[numcdcommands]), cd_command[i]);
+			++numcdcommands;
 		}
 	}
 
@@ -976,7 +979,8 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 		return false;
 	}
 
-	buffer = Mem_Calloc(host.mempool, t->numfilenames * 2 * sizeof(result));
+	size_t bufferSize = t->numfilenames * 2 * sizeof(result);
+	buffer = Mem_Calloc(host.mempool, bufferSize);
 	use_filter = COM_CheckStringEmpty(GI->mp_filter) ? true : false;
 
 	for ( i = 0; i < t->numfilenames; i++ )
@@ -1069,8 +1073,8 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 			if ( num_spawnpoints )
 			{
 				// format: mapname "maptitle"\n
-				Q_sprintf(result, "%s \"%s\"\n", mapname, message);
-				Q_strcat(buffer, result);  // add new string
+				Q_snprintf(result, sizeof(result), "%s \"%s\"\n", mapname, message);
+				Q_strcat(buffer, bufferSize, result);  // add new string
 			}
 		}
 	}

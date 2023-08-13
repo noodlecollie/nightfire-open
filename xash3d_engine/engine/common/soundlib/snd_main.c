@@ -90,7 +90,7 @@ wavdata_t* FS_LoadSound(const char* filename, const byte* buffer, size_t size)
 	{
 		if ( anyformat || !Q_stricmp(ext, format->ext) )
 		{
-			Q_sprintf(path, format->formatstring, loadname, "", format->ext);
+			Q_snprintf(path, sizeof(path), format->formatstring, loadname, "", format->ext);
 			f = FS_LoadFile(path, &filesize, false);
 			if ( f && filesize > 0 )
 			{
@@ -180,7 +180,7 @@ stream_t* FS_OpenStream(const char* filename)
 	{
 		if ( anyformat || !Q_stricmp(ext, format->ext) )
 		{
-			Q_sprintf(path, format->formatstring, loadname, "", format->ext);
+			Q_snprintf(path, sizeof(path), format->formatstring, loadname, "", format->ext);
 			if ( (stream = format->openfunc(path)) != NULL )
 			{
 				stream->format = format;

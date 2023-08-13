@@ -834,7 +834,7 @@ const char* NET_AdrToString(const netadr_t a)
 
 	ipBuffer = a.ip.ip4.ip.bytes;
 
-	Q_sprintf(s, "%i.%i.%i.%i:%i", ipBuffer[0], ipBuffer[1], ipBuffer[2], ipBuffer[3], ntohs(a.port));
+	Q_snprintf(s, sizeof(s), "%i.%i.%i.%i:%i", ipBuffer[0], ipBuffer[1], ipBuffer[2], ipBuffer[3], ntohs(a.port));
 
 	return s;
 }
@@ -866,7 +866,7 @@ const char* NET_BaseAdrToString(const netadr_t a)
 
 	ipBuffer = a.ip.ip4.ip.bytes;
 
-	Q_sprintf(s, "%i.%i.%i.%i", ipBuffer[0], ipBuffer[1], ipBuffer[2], ipBuffer[3]);
+	Q_snprintf(s, sizeof(s), "%i.%i.%i.%i", ipBuffer[0], ipBuffer[1], ipBuffer[2], ipBuffer[3]);
 
 	return s;
 }

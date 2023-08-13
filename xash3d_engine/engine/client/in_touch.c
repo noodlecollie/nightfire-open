@@ -1885,9 +1885,19 @@ static void Touch_EditMove(touchEventType type, int fingerID, float x, float y, 
 				touch.hidebutton->flags &= ~TOUCH_FL_HIDE;
 
 				if ( FBitSet(button->flags, TOUCH_FL_HIDE) )
-					Q_strcpy(touch.hidebutton->texturefile, "touch_default/edit_show");
+				{
+					Q_strcpy(
+						touch.hidebutton->texturefile,
+						sizeof(touch.hidebutton->texturefile),
+						"touch_default/edit_show");
+				}
 				else
-					Q_strcpy(touch.hidebutton->texturefile, "touch_default/edit_hide");
+				{
+					Q_strcpy(
+						touch.hidebutton->texturefile,
+						sizeof(touch.hidebutton->texturefile),
+						"touch_default/edit_hide");
+				}
 			}
 		}
 		if ( type == event_motion )  // shutdown button move

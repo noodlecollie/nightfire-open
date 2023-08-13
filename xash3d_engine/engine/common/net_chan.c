@@ -284,8 +284,8 @@ void Netchan_ReportFlow(netchan_t* chan)
 
 	Assert(chan != NULL);
 
-	Q_strcpy(incoming, Q_pretifymem((float)chan->flow[FLOW_INCOMING].totalbytes, 3));
-	Q_strcpy(outgoing, Q_pretifymem((float)chan->flow[FLOW_OUTGOING].totalbytes, 3));
+	Q_strcpy(incoming, sizeof(incoming), Q_pretifymem((float)chan->flow[FLOW_INCOMING].totalbytes, 3));
+	Q_strcpy(outgoing, sizeof(outgoing), Q_pretifymem((float)chan->flow[FLOW_OUTGOING].totalbytes, 3));
 
 	Con_DPrintf("Signon network traffic:  %s from server, %s to server\n", incoming, outgoing);
 }
