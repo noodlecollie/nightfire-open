@@ -57,7 +57,7 @@ char* PlatformLib_StrDup(const char* in)
 char* PlatformLib_StrTok(char* str, size_t* /*sizePtr*/, const char* delimiters, char** context)
 {
 	// Windows does not support sizePtr.
-	return strtok_s(str, delimiters, &context);
+	return strtok_s(str, delimiters, context);
 }
 
 const char* PlatformLib_StrError(int errornum)
