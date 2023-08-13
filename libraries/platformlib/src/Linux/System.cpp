@@ -1,6 +1,7 @@
 #include "PlatformLib/System.h"
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C"

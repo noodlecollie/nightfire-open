@@ -135,13 +135,15 @@ static convar_t* net6_address;
 NET_ErrorString
 ====================
 */
-char* NET_ErrorString(void)
+static const char* NET_ErrorString(void)
 {
 #if XASH_WIN32
 	int err = WSANOTINITIALISED;
 
 	if ( net.initialized )
+	{
 		err = WSAGetLastError();
+	}
 
 	switch ( err )
 	{

@@ -17,6 +17,8 @@ GNU General Public License for more details.
 
 #include "build.h"
 #include "common.h"
+#include "PlatformLib/System.h"
+
 #ifdef XASH_SDLMAIN
 #include "SDL.h"
 #endif
@@ -25,8 +27,6 @@ GNU General Public License for more details.
 #include <emscripten.h>
 #elif XASH_WIN32
 #include <shellapi.h>
-
-#include "PlatformLib/System.h"
 
 // Enable NVIDIA High Performance Graphics while using Integrated Graphics.
 __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;

@@ -21,10 +21,11 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #include "menu_int.h"
 #include "PlatformLib/File.h"
+#include "PlatformLib/System.h"
 
 static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 {
-	char* envPath;
+	const char* envPath;
 	char* part;
 	size_t length;
 	size_t baseNameLength;

@@ -55,7 +55,7 @@ char* PlatformLib_StrCpy(char* destination, size_t destSize, const char* source)
 		return destination;
 	}
 
-	char* result = strncpy(destination, destSize, source);
+	char* result = strncpy(destination, source, destSize);
 
 	// Cheap way to stay safe
 	destination[destSize - 1] = '\0';
