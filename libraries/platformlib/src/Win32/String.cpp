@@ -54,10 +54,9 @@ char* PlatformLib_StrDup(const char* in)
 	return _strdup(in);
 }
 
-char* PlatformLib_StrTok(char* str, const char* delimiters)
+char* PlatformLib_StrTok(char* str, size_t* /*sizePtr*/, const char* delimiters, char** context)
 {
-	// This is not thread safe, but that's OK - we're not looking for that right now.
-	static char* context = nullptr;
+	// Windows does not support sizePtr.
 	return strtok_s(str, delimiters, &context);
 }
 

@@ -578,6 +578,8 @@ void CHalfLifeTeamplay::RecountTeams(bool bResendInfo)
 {
 	char* pName;
 	char teamList[TEAMPLAY_TEAMLISTLENGTH];
+	char* strtokContext = nullptr;
+	size_t teamListLength = 0;
 
 	// loop through all teams, recounting everything
 	num_teams = 0;
@@ -585,8 +587,11 @@ void CHalfLifeTeamplay::RecountTeams(bool bResendInfo)
 	// Copy all of the teams from the teamlist
 	// make a copy because strtok is destructive
 	PlatformLib_StrCpy(teamList, sizeof(teamList), m_szTeamList);
+
 	pName = teamList;
-	pName = PlatformLib_StrTok(pName, ";");
+	teamListLength = strlen(pName);
+	pName = PlatformLib_StrTok(pName, &teamListLength, ";", &strtokContext);
+
 	while ( pName != NULL && *pName )
 	{
 		if ( GetTeamIndex(pName) < 0 )
@@ -594,7 +599,8 @@ void CHalfLifeTeamplay::RecountTeams(bool bResendInfo)
 			PlatformLib_StrCpy(team_names[num_teams], sizeof(team_names[num_teams]), pName);
 			num_teams++;
 		}
-		pName = PlatformLib_StrTok(NULL, ";");
+
+		pName = PlatformLib_StrTok(NULL, &teamListLength, ";", &strtokContext);
 	}
 
 	if ( num_teams < 2 )

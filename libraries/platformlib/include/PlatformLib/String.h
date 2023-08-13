@@ -9,6 +9,11 @@ extern "C"
 {
 #endif  // __cplusplus
 
+// String functions here use safe implementations where possible.
+// However, if an error is returned by the inner function, this
+// is not currently propagated to the caller, as existing code
+// in the game doesn't cater for this.
+
 int PlatformLib_StrCaseCmp(const char* s1, const char* s2);
 int PlatformLib_StrNCaseCmp(const char* s1, const char* s2, size_t n);
 char* PlatformLib_StrCat(char* destination, size_t destSize, const char* source);
@@ -17,7 +22,7 @@ char* PlatformLib_StrCpy(char* destination, size_t destSize, const char* source)
 char* PlatformLib_StrNCpy(char* destination, size_t destSize, const char* source, size_t num);
 int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_list argptr);
 char* PlatformLib_StrDup(const char* in);
-char* PlatformLib_StrTok(char* str, const char* delimiters);
+char* PlatformLib_StrTok(char* str, size_t* sizePtr, const char* delimiters, char** context);
 const char* PlatformLib_StrError(int errornum);
 
 static inline int PlatformLib_SNPrintF(char* buffer, size_t count, const char* format, ...)

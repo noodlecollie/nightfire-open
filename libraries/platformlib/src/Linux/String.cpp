@@ -8,79 +8,52 @@ extern "C"
 {
 #endif  // __cplusplus
 
+// Must be within extern "C" block as this is C code,
+// and linking fails otherwise.
+#include "safe_str_lib.h"
+
 int PlatformLib_StrCaseCmp(const char* s1, const char* s2)
 {
-	// SAFESTR REPLACE
+	// This does not use the safe string lib because
+	// strcasecmp_s requires a buffer size for s1, which
+	// is a significant departure from the existing API.
 	return strcasecmp(s1, s2);
 }
 
 int PlatformLib_StrNCaseCmp(const char* s1, const char* s2, size_t n)
 {
+	// There is no equivanelt safe string function for this.
 	return strncasecmp(s1, s2, n);
 }
 
 char* PlatformLib_StrCat(char* destination, size_t destSize, const char* source)
 {
-	if ( !destination || destSize < 1 )
-	{
-		return destination;
-	}
-
-	char* result = strncat(destination, source, destSize);
-
-	// Cheap way to stay safe
-	destination[destSize - 1] = '\0';
-
-	return result;
+	strcat_s(destination, destSize, source);
+	return destination;
 }
 
 char* PlatformLib_StrNCat(char* destination, size_t destSize, const char* source, size_t num)
 {
-	if ( !destination || destSize < 1 )
-	{
-		return destination;
-	}
-
-	char* result = strncat(destination, source, destSize < num ? destSize : num);
-
-	// Cheap way to stay safe
-	destination[destSize - 1] = '\0';
-
-	return result;
+	strncat_s(destination, destSize, source, num);
+	return destination;
 }
 
 char* PlatformLib_StrCpy(char* destination, size_t destSize, const char* source)
 {
-	if ( !destination || destSize < 1 )
-	{
-		return destination;
-	}
-
-	char* result = strncpy(destination, source, destSize);
-
-	// Cheap way to stay safe
-	destination[destSize - 1] = '\0';
-
-	return result;
+	strcpy_s(destination, destSize, source);
+	return destination;
 }
 
 char* PlatformLib_StrNCpy(char* destination, size_t destSize, const char* source, size_t num)
 {
-	if ( !destination || destSize < 1 )
-	{
-		return destination;
-	}
-
-	char* result = strncpy(destination, source, destSize < num ? destSize : num);
-
-	// Cheap way to stay safe
-	destination[destSize - 1] = '\0';
-
-	return result;
+	strncpy_s(destination, destSize, source, num);
+	return destination;
 }
 
 int PlatformLib_VSNPrintF(char* buffer, size_t count, const char* format, va_list argptr)
 {
+	// There is no safe string lib implementation of this, so we have to do it manually.
+
 	const int returnVal = vsnprintf(buffer, count, format, argptr);
 
 	if ( returnVal < 0 )
@@ -108,9 +81,9 @@ char* PlatformLib_StrDup(const char* in)
 	return strdup(in);
 }
 
-char* PlatformLib_StrTok(char* str, const char* delimiters)
+char* PlatformLib_StrTok(char* str, size_t* sizePtr, const char* delimiters, char** context)
 {
-	return strtok(str, delimiters);
+	return strtok_s(str, sizePtr, delimiters, context);
 }
 
 const char* PlatformLib_StrError(int errornum)
@@ -120,6 +93,7 @@ const char* PlatformLib_StrError(int errornum)
 
 int PlatformLib_VSScanF(const char* buffer, const char* format, va_list argptr)
 {
+	// There is no safe string lib version of this function.
 	return vsscanf(buffer, format, argptr);
 }
 

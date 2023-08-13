@@ -2072,16 +2072,23 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 			if ( !Q_stricmp(keyname, "wad") )
 			{
 				char* pszWadFile;
+				size_t wadStringLength = 0;
+				char** strtokContext = NULL;
 
 				Q_strncpy(wadstring, token, MAX_TOKEN - 2);
 				wadstring[MAX_TOKEN - 2] = 0;
 
 				if ( !Q_strchr(wadstring, ';') )
+				{
 					Q_strcat(wadstring, ";");
+				}
 
-				// parse wad pathes
-				for ( pszWadFile = PlatformLib_StrTok(wadstring, ";"); pszWadFile != NULL;
-					  pszWadFile = PlatformLib_StrTok(NULL, ";") )
+				wadStringLength = strlen(wadstring);
+
+					// parse wad paths
+					for ( pszWadFile = PlatformLib_StrTok(wadstring, &wadStringLength, ";", strtokContext);
+						  pszWadFile != NULL;
+						  pszWadFile = PlatformLib_StrTok(NULL, &wadStringLength, ";", strtokContext) )
 				{
 					COM_FixSlashes(pszWadFile);
 					COM_FileBase(pszWadFile, token);
