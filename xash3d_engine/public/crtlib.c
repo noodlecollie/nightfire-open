@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "crtlib.h"
 #include "xash3d_mathlib.h"
 #include "PlatformLib/Time.h"
+#include "PlatformLib/String.h"
 
 void Q_strnlwr(const char* in, char* out, size_t size_out)
 {
@@ -690,7 +691,7 @@ COM_FileBase
 Extracts the base name of a file (no path, no extension, assumes '/' as path separator)
 ============
 */
-void COM_FileBase(const char* in, char* out)
+void COM_FileBase(const char* in, char* out, size_t outBufferSize)
 {
 	int len;
 	int start;
@@ -741,8 +742,7 @@ void COM_FileBase(const char* in, char* out)
 	len = end - start + 1;
 
 	// Copy partial string
-	Q_strncpy(out, &in[start], len + 1);
-	out[len] = 0;
+	PlatformLib_StrNCpy(out, outBufferSize, &in[start], len);
 }
 
 /*

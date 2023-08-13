@@ -612,7 +612,7 @@ static qboolean Host_RegisterDecal(const char* name, size_t* count)
 		return false;
 	}
 
-	COM_FileBase(name, shortname);
+	COM_FileBase(name, shortname, sizeof(shortname));
 	return Host_RegisterDecalEx(shortname, shortname, count);
 }
 
@@ -648,7 +648,7 @@ static size_t RegisterNewDecalList(search_t* list)
 	for ( int i = 0; i < list->numfilenames; i++ )
 	{
 		char shortname[MAX_QPATH];
-		COM_FileBase(list->filenames[i], shortname);
+		COM_FileBase(list->filenames[i], shortname, sizeof(shortname));
 
 		if ( !Host_RegisterDecalEx(shortname, list->filenames[i], &count) )
 		{

@@ -486,14 +486,14 @@ static int FS_FindFile_WAD(searchpath_t* search, const char* path, char* fixedna
 
 	if ( COM_CheckStringEmpty(wadname) )
 	{
-		COM_FileBase(wadname, wadname);
+		COM_FileBase(wadname, wadname, sizeof(wadname));
 		Q_strncpy(wadfolder, wadname, sizeof(wadfolder));
 		COM_DefaultExtension(wadname, ".wad");
 		anywadname = false;
 	}
 
 	// make wadname from wad fullpath
-	COM_FileBase(search->filename, shortname);
+	COM_FileBase(search->filename, shortname, sizeof(shortname));
 	COM_DefaultExtension(shortname, ".wad");
 
 	// quick reject by wadname
@@ -502,7 +502,7 @@ static int FS_FindFile_WAD(searchpath_t* search, const char* path, char* fixedna
 
 	// NOTE: we can't using long names for wad,
 	// because we using original wad names[16];
-	COM_FileBase(path, shortname);
+	COM_FileBase(path, shortname, sizeof(shortname));
 
 	lump = W_FindLump(search->pkg.wad, shortname, type);
 
@@ -542,19 +542,19 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 		return;
 
 	COM_ExtractFilePath(pattern, wadname);
-	COM_FileBase(pattern, wadpattern);
+	COM_FileBase(pattern, wadpattern, sizeof(wadpattern));
 	wadfolder[0] = '\0';
 
 	if ( COM_CheckStringEmpty(wadname) )
 	{
-		COM_FileBase(wadname, wadname);
+		COM_FileBase(wadname, wadname, sizeof(wadname));
 		Q_strncpy(wadfolder, wadname, sizeof(wadfolder));
 		COM_DefaultExtension(wadname, ".wad");
 		anywadname = false;
 	}
 
 	// make wadname from wad fullpath
-	COM_FileBase(search->filename, temp2);
+	COM_FileBase(search->filename, temp2, sizeof(temp2));
 	COM_DefaultExtension(temp2, ".wad");
 
 	// quick reject by wadname

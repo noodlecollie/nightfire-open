@@ -995,7 +995,7 @@ void HPAK_List_f(void)
 	for ( nCurrent = 0; nCurrent < directory.count; nCurrent++ )
 	{
 		entry = &directory.entries[nCurrent];
-		COM_FileBase(entry->resource.szFileName, lumpname);
+		COM_FileBase(entry->resource.szFileName, lumpname, sizeof(lumpname));
 		type = HPAK_TypeFromIndex(entry->resource.type);
 		size = Q_memprint((float)entry->resource.nDownloadSize);
 
@@ -1098,7 +1098,7 @@ void HPAK_Extract_f(void)
 		if ( nIndex != -1 && nIndex != nCurrent )
 			continue;
 
-		COM_FileBase(entry->resource.szFileName, lumpname);
+		COM_FileBase(entry->resource.szFileName, lumpname, sizeof(lumpname));
 		type = HPAK_TypeFromIndex(entry->resource.type);
 		size = Q_memprint((float)entry->resource.nDownloadSize);
 

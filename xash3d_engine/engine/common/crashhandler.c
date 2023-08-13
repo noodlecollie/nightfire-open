@@ -226,7 +226,8 @@ static void Sys_StackTrace(PEXCEPTION_POINTERS pInfo)
 static void Sys_GetProcessName(char* processName, size_t bufferSize)
 {
 	GetModuleBaseName(GetCurrentProcess(), NULL, processName, (DWORD)(bufferSize - 1));
-	COM_FileBase(processName, processName);
+	processName[bufferSize - 1] = '\0';
+	COM_FileBase(processName, processName, bufferSize);
 }
 
 static void Sys_GetMinidumpFileName(const char* processName, char* mdmpFileName, size_t bufferSize)
