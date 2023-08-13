@@ -10,6 +10,7 @@ extern "C"
 
 int PlatformLib_StrCaseCmp(const char* s1, const char* s2)
 {
+	// SAFESTR REPLACE
 	return strcasecmp(s1, s2);
 }
 

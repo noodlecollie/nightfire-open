@@ -62,4 +62,7 @@ set(TARGETNAME_LIB_SERVER server)
 set(TARGETNAME_LIB_UI menu)
 set(TARGETNAME_LIB_PLATFORMLIB platformlib)
 
+# Only supported on Linux
+set(TARGETNAME_LIB_SAFESTRING safestring_static)
+
 set(TARGETNAME_EXE_GAME_LAUNCHER game_launch)
