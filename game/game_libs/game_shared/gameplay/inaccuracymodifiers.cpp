@@ -52,6 +52,8 @@ namespace
 			CvarDebugFallShift && CvarDebugAttackCoefficient && CvarDebugDecayCoefficient && CvarDebugFireImpulse &&
 			CvarDebugFireImpulseCeiling && CvarDebugFireImpulseHoldTime;
 
+		ASSERTSZ(CvarsLoaded, "Unable to load inaccuracy debugging cvars.");
+
 		CvarInitWasRun = true;
 	}
 }  // namespace

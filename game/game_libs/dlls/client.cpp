@@ -667,7 +667,7 @@ void ClientCommand(edict_t* pEntity)
 	else
 	{
 		char msg[192];
-		PlatformLib_SNPrintF(msg, sizeof(msg), "Unknown command: %s", pcmd);
+		PlatformLib_SNPrintF(msg, sizeof(msg), "Unknown command: %s\n", pcmd);
 
 		// tell the user they entered an unknown command
 		ClientPrint(&pEntity->v, HUD_PRINTCONSOLE, msg);

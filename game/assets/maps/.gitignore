@@ -5,3 +5,4 @@
 *.prt
 *.lin
 */autosave/*
+*/compile/*
