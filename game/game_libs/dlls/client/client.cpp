@@ -45,6 +45,8 @@
 #include "resources/SoundResources.h"
 #include "com_strings.h"
 #include "PlatformLib/String.h"
+#include "client/clientCommandRegister.h"
+#include "inaccuracy_debugging/inaccuracy_commands.h"
 
 extern DLL_GLOBAL ULONG g_ulModelIndexPlayer;
 extern DLL_GLOBAL BOOL g_fGameOver;
@@ -62,6 +64,8 @@ extern int g_teamplay;
 
 extern cvar_t bhopcap;
 extern "C" int g_bhopcap;
+
+static CClientCommandRegister g_ClientCommandRegister;
 
 void LinkUserMessages(void);
 
@@ -512,166 +516,33 @@ void ClientCommand(edict_t* pEntity)
 	}
 
 	entvars_t* pev = &pEntity->v;
+	CBasePlayer* player = GetClassPtr<CBasePlayer>(pev);
 
-	if ( FStrEq(pcmd, "say") )
+	if ( g_ClientCommandRegister.ExecuteCommand(pcmd, player) )
 	{
-		Host_Say(pEntity, 0);
-	}
-	else if ( FStrEq(pcmd, "say_team") )
-	{
-		Host_Say(pEntity, 1);
-	}
-	else if ( FStrEq(pcmd, "fullupdate") )
-	{
-		GetClassPtr<CBasePlayer>(pev)->ForceClientDllUpdate();
-	}
-	else if ( FStrEq(pcmd, "give") )
-	{
-		if ( g_flWeaponCheat != 0.0 )
-		{
-			int iszItem = ALLOC_STRING(CMD_ARGV(1));  // Make a copy of the classname
-			GetClassPtr<CBasePlayer>(pev)->GiveNamedItem(STRING(iszItem));
-		}
-	}
-	else if ( FStrEq(pcmd, "fire") )
-	{
-		if ( g_flWeaponCheat != 0.0 )
-		{
-			CBaseEntity* pPlayer = CBaseEntity::Instance(pEntity);
-			if ( CMD_ARGC() > 1 )
-			{
-				FireTargets(CMD_ARGV(1), pPlayer, pPlayer, USE_TOGGLE, 0);
-			}
-			else
-			{
-				TraceResult tr;
-				UTIL_MakeVectors(pev->v_angle);
-				UTIL_TraceLine(
-					pev->origin + pev->view_ofs,
-					pev->origin + pev->view_ofs + gpGlobals->v_forward * 1000,
-					dont_ignore_monsters,
-					pEntity,
-					&tr);
-
-				if ( tr.pHit )
-				{
-					CBaseEntity* pHitEnt = CBaseEntity::Instance(tr.pHit);
-					if ( pHitEnt )
-					{
-						pHitEnt->Use(pPlayer, pPlayer, USE_TOGGLE, 0);
-						ClientPrint(
-							&pEntity->v,
-							HUD_PRINTCONSOLE,
-							UTIL_VarArgs(
-								"Fired %s \"%s\"\n",
-								STRING(pHitEnt->pev->classname),
-								STRING(pHitEnt->pev->targetname)));
-					}
-				}
-			}
-		}
-	}
-	else if ( FStrEq(pcmd, "drop") )
-	{
-		// player is dropping an item.
-		GetClassPtr<CBasePlayer>(pev)->DropPlayerItem((char*)CMD_ARGV(1));
-	}
-	else if ( FStrEq(pcmd, "fov") )
-	{
-		if ( g_flWeaponCheat && CMD_ARGC() > 1 )
-		{
-			GetClassPtr<CBasePlayer>(pev)->m_iFOV = atoi(CMD_ARGV(1));
-		}
-		else
-		{
-			CLIENT_PRINTF(
-				pEntity,
-				print_console,
-				UTIL_VarArgs("\"fov\" is \"%d\"\n", (int)GetClassPtr<CBasePlayer>(pev)->m_iFOV));
-		}
-	}
-	else if ( FStrEq(pcmd, "use") )
-	{
-		GetClassPtr<CBasePlayer>(pev)->SelectItem((char*)CMD_ARGV(1));
-	}
-	else if ( ((pstr = strstr(pcmd, "weapon_")) != NULL) && (pstr == pcmd) )
-	{
-		GetClassPtr<CBasePlayer>(pev)->SelectItem(pcmd);
-	}
-	else if ( FStrEq(pcmd, "lastinv") )
-	{
-		GetClassPtr<CBasePlayer>(pev)->SelectLastItem();
-	}
-	else if ( FStrEq(pcmd, "spectate") )  // clients wants to become a spectator
-	{
-		CBasePlayer* pPlayer = GetClassPtr<CBasePlayer>(pev);
-		if ( !pPlayer->IsObserver() )
-		{
-			// always allow proxies to become a spectator
-			if ( (pev->flags & FL_PROXY) || allow_spectators.value )
-			{
-				edict_t* pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot(pPlayer);
-				pPlayer->StartObserver(pev->origin, VARS(pentSpawnSpot)->angles);
-
-				// notify other clients of player switching to spectator mode
-				UTIL_ClientPrintAll(
-					HUD_PRINTNOTIFY,
-					UTIL_VarArgs(
-						"%s switched to spectator mode\n",
-						(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"));
-			}
-			else
-				ClientPrint(pev, HUD_PRINTCONSOLE, "Spectator mode is disabled.\n");
-		}
-		else
-		{
-			pPlayer->StopObserver();
-
-			// notify other clients of player left spectators
-			UTIL_ClientPrintAll(
-				HUD_PRINTNOTIFY,
-				UTIL_VarArgs(
-					"%s has left spectator mode\n",
-					(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"));
-		}
-	}
-	else if ( FStrEq(pcmd, "specmode") )  // new spectator mode
-	{
-		CBasePlayer* pPlayer = GetClassPtr<CBasePlayer>(pev);
-
-		if ( pPlayer->IsObserver() )
-			pPlayer->Observer_SetMode(atoi(CMD_ARGV(1)));
-	}
-	else if ( FStrEq(pcmd, "closemenus") )
-	{
-		// just ignore it
-	}
-	else if ( FStrEq(pcmd, "follownext") )  // follow next player
-	{
-		CBasePlayer* pPlayer = GetClassPtr<CBasePlayer>(pev);
-
-		if ( pPlayer->IsObserver() )
-		{
-			pPlayer->Observer_FindNextPlayer(atoi(CMD_ARGV(1)) ? true : false);
-		}
-	}
-	else if ( g_pGameRules->ClientCommand(GetClassPtr<CBasePlayer>(pev), pcmd) )
-	{
-		// MenuSelect returns true only if the command is properly handled,  so don't print a warning
-	}
-	else if ( FStrEq(pcmd, "VModEnable") )
-	{
-		// clear 'Unknown command: VModEnable' in singleplayer
+		// Command was handled.
 		return;
 	}
-	else
-	{
-		char msg[192];
-		PlatformLib_SNPrintF(msg, sizeof(msg), "Unknown command: %s\n", pcmd);
 
-		// tell the user they entered an unknown command
-		ClientPrint(&pEntity->v, HUD_PRINTCONSOLE, msg);
+	// This command is special because it works on a prefix.
+	if ( ((pstr = strstr(pcmd, "weapon_")) != NULL) && (pstr == pcmd) )
+	{
+		player->SelectItem(pcmd);
+		return;
 	}
+
+	// Allow any unhandled command to be passed to the gamerules.
+	if ( g_pGameRules->ClientCommand(player, pcmd) )
+	{
+		// MenuSelect returns true only if the command is properly handled, so don't print a warning
+		return;
+	}
+
+	char msg[192];
+	PlatformLib_SNPrintF(msg, sizeof(msg), "Unknown command: %s\n", pcmd);
+
+	// tell the user they entered an unknown command
+	ClientPrint(pev, HUD_PRINTCONSOLE, msg);
 }
 
 /*
@@ -772,12 +643,202 @@ void ServerDeactivate(void)
 
 	GameplaySystems::NotifyServerDeactivated();
 	GameplaySystems::Destroy();
+
+	g_ClientCommandRegister.Clear();
+}
+
+static void RegisterClientCommands()
+{
+	g_ClientCommandRegister.AddCommand(
+		"say",
+		[](CBasePlayer* player)
+		{
+			Host_Say(player->edict(), 0);
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"say_team",
+		[](CBasePlayer* player)
+		{
+			Host_Say(player->edict(), 1);
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"fullupdate",
+		[](CBasePlayer* player)
+		{
+			player->ForceClientDllUpdate();
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"give",
+		[](CBasePlayer* player)
+		{
+			if ( g_flWeaponCheat != 0.0 )
+			{
+				int iszItem = ALLOC_STRING(CMD_ARGV(1));  // Make a copy of the classname
+				player->GiveNamedItem(STRING(iszItem));
+			}
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"fire",
+		[](CBasePlayer* player)
+		{
+			if ( g_flWeaponCheat != 0.0 )
+			{
+				if ( CMD_ARGC() > 1 )
+				{
+					FireTargets(CMD_ARGV(1), player, player, USE_TOGGLE, 0);
+				}
+				else
+				{
+					entvars_t* pev = &player->edict()->v;
+					TraceResult tr;
+					UTIL_MakeVectors(pev->v_angle);
+					UTIL_TraceLine(
+						pev->origin + pev->view_ofs,
+						pev->origin + pev->view_ofs + gpGlobals->v_forward * 1000,
+						dont_ignore_monsters,
+						player->edict(),
+						&tr);
+
+					if ( tr.pHit )
+					{
+						CBaseEntity* pHitEnt = CBaseEntity::Instance(tr.pHit);
+						if ( pHitEnt )
+						{
+							pHitEnt->Use(player, player, USE_TOGGLE, 0);
+							ClientPrint(
+								pev,
+								HUD_PRINTCONSOLE,
+								UTIL_VarArgs(
+									"Fired %s \"%s\"\n",
+									STRING(pHitEnt->pev->classname),
+									STRING(pHitEnt->pev->targetname)));
+						}
+					}
+				}
+			}
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"drop",
+		[](CBasePlayer* player)
+		{
+			player->DropPlayerItem(CMD_ARGV(1));
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"fov",
+		[](CBasePlayer* player)
+		{
+			if ( g_flWeaponCheat && CMD_ARGC() > 1 )
+			{
+				player->m_iFOV = atoi(CMD_ARGV(1));
+			}
+			else
+			{
+				CLIENT_PRINTF(player->edict(), print_console, UTIL_VarArgs("\"fov\" is \"%d\"\n", (int)player->m_iFOV));
+			}
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"fov",
+		[](CBasePlayer* player)
+		{
+			player->SelectItem(CMD_ARGV(1));
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"lastinv",
+		[](CBasePlayer* player)
+		{
+			player->SelectLastItem();
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"spectate",
+		[](CBasePlayer* player)
+		{
+			entvars_t* pev = &player->edict()->v;
+
+			if ( !player->IsObserver() )
+			{
+				// always allow proxies to become a spectator
+				if ( (pev->flags & FL_PROXY) || allow_spectators.value )
+				{
+					edict_t* pentSpawnSpot = g_pGameRules->GetPlayerSpawnSpot(player);
+					player->StartObserver(pev->origin, VARS(pentSpawnSpot)->angles);
+
+					// notify other clients of player switching to spectator mode
+					UTIL_ClientPrintAll(
+						HUD_PRINTNOTIFY,
+						UTIL_VarArgs(
+							"%s switched to spectator mode\n",
+							(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"));
+				}
+				else
+				{
+					ClientPrint(pev, HUD_PRINTCONSOLE, "Spectator mode is disabled.\n");
+				}
+			}
+			else
+			{
+				player->StopObserver();
+
+				// notify other clients of player left spectators
+				UTIL_ClientPrintAll(
+					HUD_PRINTNOTIFY,
+					UTIL_VarArgs(
+						"%s has left spectator mode\n",
+						(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"));
+			}
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"specmode",
+		[](CBasePlayer* player)
+		{
+			if ( player->IsObserver() )
+			{
+				player->Observer_SetMode(atoi(CMD_ARGV(1)));
+			}
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"closemenus",
+		[](CBasePlayer*)
+		{
+			// just ignore it
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"follownext",
+		[](CBasePlayer* player)
+		{
+			if ( player->IsObserver() )
+			{
+				player->Observer_FindNextPlayer(atoi(CMD_ARGV(1)) ? true : false);
+			}
+		});
+
+	g_ClientCommandRegister.AddCommand(
+		"VModEnable",
+		[](CBasePlayer*)
+		{
+			// clear 'Unknown command: VModEnable' in singleplayer
+		});
+
+	InaccuracyDebugging::AddCommands(g_ClientCommandRegister);
 }
 
 void ServerActivate(edict_t* pEdictList, int edictCount, int clientMax)
 {
 	int i;
 	CBaseEntity* pClass;
+
+	RegisterClientCommands();
 
 	// ALERT( at_console, "ServerActivate()\n" );
 
@@ -973,7 +1034,7 @@ const char* GetGameDescription()
 	if ( g_pGameRules )  // this function may be called before the world has spawned, and the game rules initialized
 		return g_pGameRules->GetGameDescription();
 	else
-		return "Half-Life";
+		return "Nightfire Open";
 }
 
 /*

@@ -54,6 +54,7 @@ namespace CrosshairCvars
 		if ( !CvarCheats->value )
 		{
 			gEngfuncs.Con_Printf("Cheats must be enabled to execute this command.\n");
+			return;
 		}
 
 		WEAPON* currentWeapon = gHUD.m_Ammo.GetCurrentWeapon();

@@ -92,7 +92,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->ShellModelName = "models/shell.mdl";
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
-		accuracy.RestValue = 0.1f;
+		accuracy.RestValue = 0.02f;
 		accuracy.RestSpread = Vector2D(0.01f, 0.01f);
 		accuracy.RunValue = 0.5f;
 		accuracy.RunSpread = Vector2D(0.03f, 0.03f);
@@ -101,9 +101,9 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		accuracy.FallShift = 0.1f;
 		accuracy.AttackCoefficient = 0.3f;
 		accuracy.DecayCoefficient = 0.3f;
-		accuracy.FireImpulse = 0.3f;
-		accuracy.FireImpulseCeiling = 0.5f;
-		accuracy.FireImpulseHoldTime = 0.05f;
+		accuracy.FireImpulse = 0.01f;
+		accuracy.FireImpulseCeiling = 0.1f;
+		accuracy.FireImpulseHoldTime = 0.2f;
 
 		priAttack->ViewModelAnimList_Attack << P99_SHOOT;
 		priAttack->ViewModelAnimList_AttackEmpty << P99_SHOOT_EMPTY;
@@ -116,10 +116,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_p99/p99_fire1.wav";
 
 		CrosshairParameters& crosshair = priAttack->Crosshair;
-		crosshair.BarScaleMin = 0.03f;
-		crosshair.BarScaleMax = 0.03f;
-		crosshair.RadiusMin = 0.015f;
-		crosshair.RadiusMax = 0.04f;
+		crosshair.BarScaleMin = 0.025f;
+		crosshair.BarScaleMax = 0.025f;
+		crosshair.RadiusMin = 0.012f;
+		crosshair.RadiusMax = 0.02f;
 
 		// Silenced
 		WAHitscanAttack* secAttack = new WAHitscanAttack();

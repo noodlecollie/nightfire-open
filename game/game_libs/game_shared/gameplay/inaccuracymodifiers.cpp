@@ -106,4 +106,27 @@ namespace InaccuracyModifiers
 
 		return true;
 	}
+
+	void SetInaccuracyDebugCvarsFromValues(const WeaponAtts::AccuracyParameters& params)
+	{
+		InitCvars();
+
+		if ( !CvarsLoaded )
+		{
+			return;
+		}
+
+		CvarDebugRestValue->value = params.RestValue;
+		CvarDebugRestSpread->value = params.RestSpread.x;
+		CvarDebugRunValue->value = params.RunValue;
+		CvarDebugRunSpread->value = params.RunSpread.x;
+		CvarDebugCrouchShift->value = params.CrouchShift;
+		CvarDebugAirShift->value = params.AirShift;
+		CvarDebugFallShift->value = params.FallShift;
+		CvarDebugAttackCoefficient->value = params.AttackCoefficient;
+		CvarDebugDecayCoefficient->value = params.AttackCoefficient;
+		CvarDebugFireImpulse->value = params.FireImpulse;
+		CvarDebugFireImpulseCeiling->value = params.FireImpulseCeiling;
+		CvarDebugFireImpulseHoldTime->value = params.FireImpulseHoldTime;
+	}
 }  // namespace InaccuracyModifiers

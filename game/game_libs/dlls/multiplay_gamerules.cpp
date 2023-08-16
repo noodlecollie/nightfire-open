@@ -152,7 +152,9 @@ BOOL CHalfLifeMultiplay::ClientCommand(CBasePlayer* pPlayer, const char* pcmd)
 {
 #ifndef NO_VOICEGAMEMGR
 	if ( g_VoiceGameMgr.ClientCommand(pPlayer, pcmd) )
+	{
 		return TRUE;
+	}
 #endif
 
 	if ( m_pBotGameRulesInterface->ClientCommand(pPlayer, pcmd) )

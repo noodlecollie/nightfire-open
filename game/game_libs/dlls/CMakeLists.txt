@@ -217,6 +217,9 @@ set(SOURCES_SERVER
 	bots/botgamerulesinterface.cpp
 	bots/botregister.h
 	bots/botregister.cpp
+	client/client.cpp
+	client/clientCommandRegister.h
+	client/clientCommandRegister.cpp
 	customGeometry/commands.h
 	customGeometry/commands.cpp
 	customGeometry/messageWriter.h
@@ -244,6 +247,8 @@ set(SOURCES_SERVER
 	hitbox_debugging/hitbox_debugData.cpp
 	hitbox_debugging/hitbox_messageConstructor.h
 	hitbox_debugging/hitbox_messageConstructor.cpp
+	inaccuracy_debugging/inaccuracy_commands.h
+	inaccuracy_debugging/inaccuracy_commands.cpp
 	messages/baseMessageWriter.h
 	messages/baseMessageWriter.cpp
 	messages/messageRegistrationHelper.h
@@ -285,7 +290,6 @@ set(SOURCES_SERVER
 	buttons.cpp
 	cbase.cpp
 	client.h
-	client.cpp
 	combat.cpp
 	controller.cpp
 	decals.h

@@ -170,6 +170,10 @@ void ClientPrint(entvars_t*, int, const char*, const char*, const char*, const c
 {
 }
 
+void ClientPrintMsg(entvars_t*, int, const char*, ...)
+{
+}
+
 // CBaseToggle Stubs
 int CBaseToggle::Restore(class CRestore&)
 {
@@ -890,7 +894,7 @@ int CBasePlayer::GetCustomDecalFrames(void)
 {
 	return -1;
 }
-void CBasePlayer::DropPlayerItem(char*)
+void CBasePlayer::DropPlayerItem(const char*)
 {
 }
 BOOL CBasePlayer::HasPlayerItem(CBasePlayerItem*)
