@@ -171,6 +171,14 @@ namespace CrosshairCvars
 		return CvarsLoaded && CvarCheats->value != 0.0f && CvarOverrideCrosshairAtts->value != 0.0f;
 	}
 
+	void PopulateCrosshairParametersFromDebugCvars(WeaponAtts::CrosshairParameters& params)
+	{
+		params.RadiusMin = RadiusMin();
+		params.RadiusMax = RadiusMax();
+		params.BarScaleMin = BarLengthMin();
+		params.BarScaleMax = BarLengthMax();
+	}
+
 	int AttackModeForSpreadVisualisation()
 	{
 		return CvarsLoaded ? static_cast<int>(CvarDebugSpread->value) : 0;

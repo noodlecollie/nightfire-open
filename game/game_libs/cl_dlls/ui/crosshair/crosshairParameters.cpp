@@ -39,7 +39,7 @@ float CCrosshairParameters::WeaponInaccuracy() const
 
 void CCrosshairParameters::SetWeaponInaccuracy(float inaccuracy)
 {
-	m_WeaponInaccuracy = ExtraMath::Clamp(0.0f, inaccuracy, 1.0f);
+	m_WeaponInaccuracy = inaccuracy;
 }
 
 float CCrosshairParameters::Radius() const

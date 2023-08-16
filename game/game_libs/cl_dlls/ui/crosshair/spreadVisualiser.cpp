@@ -49,6 +49,8 @@ void CSpreadVisualiser::ConstructGeometry(const CCrosshairParameters& params)
 	m_ScaleYOffset = YOFFSET_FRAC * params.ScreenDimensions().y;
 
 	const float halfScaleHeight = static_cast<float>(SCALE_HEIGHT) / 2.0f;
+	const float smallScaleHeight = static_cast<float>(SCALE_HEIGHT) / 6.0f;
+	const float decimalSectionWidth = (m_ScaleMaxX - m_ScaleMinX) / 10.0f;
 
 	// Horizontal ruled line for scale
 	m_Geometry->AddLine(Vector(m_ScaleMinX, m_ScaleYOffset, 0.0f), Vector(m_ScaleMaxX, m_ScaleYOffset, 0.0f));
@@ -60,6 +62,16 @@ void CSpreadVisualiser::ConstructGeometry(const CCrosshairParameters& params)
 	m_Geometry->AddLine(
 		Vector(m_ScaleMaxX, m_ScaleYOffset - halfScaleHeight, 0),
 		Vector(m_ScaleMaxX, m_ScaleYOffset + halfScaleHeight, 0));
+
+	// Decimal lines
+	for ( int section = 1; section <= 9; ++section )
+	{
+		const float offset = m_ScaleMinX + (static_cast<float>(section) * decimalSectionWidth);
+
+		m_Geometry->AddLine(
+			Vector(offset, m_ScaleYOffset - smallScaleHeight, 0),
+			Vector(offset, m_ScaleYOffset + smallScaleHeight, 0));
+	}
 
 	const float inaccuracyX = ExtraMath::RemapLinear(params.WeaponInaccuracy(), 0, 1, m_ScaleMinX, m_ScaleMaxX);
 
@@ -147,11 +159,7 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 
 	if ( crosshairOverridden )
 	{
-		// TODO: Make this a function in CrosshairCvars to fill out the struct?
-		crosshairParams.RadiusMin = CrosshairCvars::RadiusMin();
-		crosshairParams.RadiusMax = CrosshairCvars::RadiusMax();
-		crosshairParams.BarScaleMin = CrosshairCvars::BarLengthMin();
-		crosshairParams.BarScaleMax = CrosshairCvars::BarLengthMax();
+		CrosshairCvars::PopulateCrosshairParametersFromDebugCvars(crosshairParams);
 	}
 	else
 	{
@@ -172,10 +180,13 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 		? CCrosshairParameters::ComputeCrosshairBarLengthFromDebugCvars(accuracyParams, params.WeaponInaccuracy())
 		: CCrosshairParameters::ComputeCrosshairBarLength(accuracyParams, params.WeaponInaccuracy(), crosshairParams);
 
+	const Vector2D spread = InaccuracyModifiers::GetInterpolatedSpread(accuracyParams, params.WeaponInaccuracy());
+
 	CUtlString text;
 
 	text.AppendFormat("Weapon: %s (ID %u)\n", weaponName, static_cast<uint32_t>(params.WeaponID()));
 	text.AppendFormat("Current inaccuracy: %f\n", params.WeaponInaccuracy());
+	text.AppendFormat("Spread: (%f, %f)\n", spread.x, spread.y);
 	text.AppendFormat("Crosshair radius: %f\n", radius);
 	text.AppendFormat("Crosshair bar length: %f\n", barLength);
 	text.AppendFormat(

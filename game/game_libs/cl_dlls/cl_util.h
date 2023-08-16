@@ -46,15 +46,15 @@
 
 inline float CL_CvarGetFloat(const char* x)
 {
-	return gEngfuncs.pfnGetCvarFloat((char*)x);
+	return gEngfuncs.pfnGetCvarFloat(x);
 }
-inline char* CL_CvarGetString(const char* x)
+inline const char* CL_CvarGetString(const char* x)
 {
-	return gEngfuncs.pfnGetCvarString((char*)x);
+	return gEngfuncs.pfnGetCvarString(x);
 }
 inline struct cvar_s* CL_CvarCreate(const char* cv, const char* val, const int flags)
 {
-	return gEngfuncs.pfnRegisterVariable((char*)cv, (char*)val, flags);
+	return gEngfuncs.pfnRegisterVariable(cv, val, flags);
 }
 
 #define SPR_Load (*gEngfuncs.pfnSPR_Load)
