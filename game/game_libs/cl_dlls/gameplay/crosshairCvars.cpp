@@ -103,7 +103,7 @@ namespace CrosshairCvars
 		PopulateCvars(ammoAttack->Crosshair);
 
 		gEngfuncs.Con_Printf(
-			"Convars populated from current client weapon %s (%d).\n",
+			"Crosshair convars populated from current client weapon %s (%d).\n",
 			currentWeapon->szName,
 			currentWeapon->iId);
 	}
@@ -139,7 +139,7 @@ namespace CrosshairCvars
 		AddValue(output, CvarOverrideCrosshairBarLengthMin);
 		AddValue(output, CvarOverrideCrosshairBarLengthMax);
 
-		gEngfuncs.Con_Printf(output.Get());
+		gEngfuncs.Con_Printf("%s", output.Get());
 	}
 
 	void Init()

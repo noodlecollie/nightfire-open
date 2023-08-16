@@ -109,22 +109,18 @@ bool CHudCrosshair::UpdateParameters()
 	m_Params.SetWeaponInaccuracy(gHUD.m_flWeaponInaccuracy);
 	m_Params.SetWeaponAttackMode(weapon->iPriAttackMode);
 
-	float radius = ExtraMath::RemapLinear(
+	float radius = CCrosshairParameters::ComputeCrosshairRadius(
+		ammoAttack->Accuracy,
 		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		m_CrosshairParams->RadiusMin,
-		m_CrosshairParams->RadiusMax,
-		false);
+		*m_CrosshairParams);
+
 	m_Params.SetRadius(radius);
 
-	float barLength = ExtraMath::RemapLinear(
+	float barLength = CCrosshairParameters::ComputeCrosshairBarLength(
+		ammoAttack->Accuracy,
 		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		m_CrosshairParams->BarScaleMin,
-		m_CrosshairParams->BarScaleMin,
-		false);
+		*m_CrosshairParams);
+
 	m_Params.SetBarLength(barLength);
 
 	UpdateParametersFromDebugCvars();
@@ -169,23 +165,14 @@ void CHudCrosshair::UpdateParametersFromDebugCvars()
 		return;
 	}
 
-	float radius = ExtraMath::RemapLinear(
-		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		CrosshairCvars::RadiusMin(),
-		CrosshairCvars::RadiusMax(),
-		false);
+	float radius =
+		CCrosshairParameters::ComputeCrosshairRadiusFromDebugCvars(ammoAttack->Accuracy, m_Params.WeaponInaccuracy());
 
 	m_Params.SetRadius(radius);
 
-	float barLength = ExtraMath::RemapLinear(
-		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		CrosshairCvars::BarLengthMin(),
-		CrosshairCvars::BarLengthMax(),
-		false);
+	float barLength = CCrosshairParameters::ComputeCrosshairBarLengthFromDebugCvars(
+		ammoAttack->Accuracy,
+		m_Params.WeaponInaccuracy());
 
 	m_Params.SetBarLength(barLength);
 }
@@ -242,7 +229,7 @@ void CHudCrosshair::UpdateGeometry()
 
 	const UIVec2 screenCentre = m_Params.HalfScreenDimensions();
 	const int innerDisp = m_Params.DisplacementFromScreenCentre(m_Params.Radius());
-	const float barLength = Max(m_Params.BarLength(), 0.01f);
+	const float barLength = m_Params.BarLength();
 	const int outerDisp = m_Params.DisplacementFromScreenCentre(m_Params.Radius() + barLength);
 
 	for ( uint8_t bar = 0; bar < 4; ++bar )

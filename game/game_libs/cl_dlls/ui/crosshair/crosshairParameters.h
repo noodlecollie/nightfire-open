@@ -43,6 +43,30 @@ public:
 	const WeaponAtts::AccuracyParameters* WeaponAccuracyParamsForAttack(size_t index) const;
 	const WeaponAtts::CrosshairParameters* CrosshairParamsForAttack(size_t index) const;
 
+	static float InterpolateBetweenRestAndRun(
+		const WeaponAtts::AccuracyParameters& accuracyParams,
+		float inaccuracy,
+		float min,
+		float max);
+
+	static float ComputeCrosshairRadius(
+		const WeaponAtts::AccuracyParameters& accuracyParams,
+		float inaccuracy,
+		const WeaponAtts::CrosshairParameters& crosshairParams);
+
+	static float ComputeCrosshairBarLength(
+		const WeaponAtts::AccuracyParameters& accuracyParams,
+		float inaccuracy,
+		const WeaponAtts::CrosshairParameters& crosshairParams);
+
+	static float ComputeCrosshairRadiusFromDebugCvars(
+		const WeaponAtts::AccuracyParameters& accuracyParams,
+		float inaccuracy);
+
+	static float ComputeCrosshairBarLengthFromDebugCvars(
+		const WeaponAtts::AccuracyParameters& accuracyParams,
+		float inaccuracy);
+
 private:
 	UIVec2 m_ScreenDimensions;
 	float m_WeaponInaccuracy = 0.0f;

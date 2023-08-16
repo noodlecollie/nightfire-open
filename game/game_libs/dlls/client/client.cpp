@@ -46,7 +46,6 @@
 #include "com_strings.h"
 #include "PlatformLib/String.h"
 #include "client/clientCommandRegister.h"
-#include "inaccuracy_debugging/inaccuracy_commands.h"
 
 extern DLL_GLOBAL ULONG g_ulModelIndexPlayer;
 extern DLL_GLOBAL BOOL g_fGameOver;
@@ -829,8 +828,6 @@ static void RegisterClientCommands()
 		{
 			// clear 'Unknown command: VModEnable' in singleplayer
 		});
-
-	InaccuracyDebugging::AddCommands(g_ClientCommandRegister);
 }
 
 void ServerActivate(edict_t* pEdictList, int edictCount, int clientMax)

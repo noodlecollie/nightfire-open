@@ -20,6 +20,8 @@
 #include "exportdef.h"
 #include "cvardef.h"
 
+#include <limits>
+
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
@@ -131,22 +133,26 @@ inline int DrawConsoleString(int x, int y, const char* string)
 		return gHUD.DrawHudString(
 			x,
 			y,
-			9999,
+			std::numeric_limits<int>::max(),
 			string,
 			static_cast<int>(255 * g_hud_text_color[0]),
 			static_cast<int>(255 * g_hud_text_color[1]),
 			static_cast<int>(255 * g_hud_text_color[2]));
 	}
 
-	return gEngfuncs.pfnDrawConsoleString(x, y, (char*)string);
+	return gEngfuncs.pfnDrawConsoleString(x, y, string);
 }
 
 inline void GetConsoleStringSize(const char* string, int* width, int* height)
 {
 	if ( hud_textmode->value == 1 )
-		*height = 13, *width = gHUD.DrawHudStringLen((char*)string);
+	{
+		*height = 13, *width = gHUD.DrawHudStringLen(string);
+	}
 	else
-		gEngfuncs.pfnDrawConsoleStringLen((char*)string, width, height);
+	{
+		gEngfuncs.pfnDrawConsoleStringLen(string, width, height);
+	}
 }
 
 int DrawUtfString(int xpos, int ypos, int iMaxX, const char* szIt, int r, int g, int b);
@@ -155,7 +161,10 @@ inline int ConsoleStringLen(const char* string)
 {
 	int _width = 0, _height = 0;
 	if ( hud_textmode->value == 1 )
-		return gHUD.DrawHudStringLen((char*)string);
+	{
+		return gHUD.DrawHudStringLen(string);
+	}
+
 	GetConsoleStringSize(string, &_width, &_height);
 	return _width;
 }

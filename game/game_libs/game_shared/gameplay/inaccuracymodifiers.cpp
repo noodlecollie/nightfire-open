@@ -5,7 +5,7 @@
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 #include "util/cvarFuncs.h"
 
-namespace
+namespace InaccuracyModifiers
 {
 	cvar_t* CvarCheats = nullptr;
 	cvar_t* CvarEnableDebugging = nullptr;
@@ -56,10 +56,7 @@ namespace
 
 		CvarInitWasRun = true;
 	}
-}  // namespace
 
-namespace InaccuracyModifiers
-{
 	Vector2D GetInterpolatedSpread(const WeaponAtts::AccuracyParameters& params, float inaccuracy)
 	{
 		// The inaccuracy starts out in the overall range [0 1]. The rest and run values also live within this range.

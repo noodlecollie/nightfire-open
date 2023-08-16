@@ -15,7 +15,8 @@ namespace WeaponAtts
 		// hard clamped within the range [0 1].
 
 		// To modify these settings while debugging/testing, see the list of convars
-		// in game_libs/dlls/gameplay/gameplayCvars.cpp
+		// in game_libs/game_shared/gameplay/inaccuracymodifiers.cpp
+		// and game_libs/dlls/gameplay/weaponInaccuracyCvars.cpp
 
 		// To begin, we define two points in the [0 1] range: the inaccuracy value
 		// at rest, and the inaccuracy value when the player is running at full speed.
@@ -106,13 +107,15 @@ namespace WeaponAtts
 
 		// The radius is how far away from the centre of the screen each
 		// crosshair bar is. A value of 1 means the length of the shortest
-		// screen dimension.
+		// screen dimension. Minimum radius is when the weapon is at
+		// rest spread, and maximum radius is when it is at run spread.
 		float RadiusMin = 0.0f;
 		float RadiusMax = 0.5f;
 
 		// These scales specify how long the crosshair bars are at minimum
 		// and maximum inaccuracy. A value of 1 means the bar is the length
-		// of the shortest screen dimension.
+		// of the shortest screen dimension. Minimum scale is when the weapon
+		// is at rest spread, and maximum scale is when it is at run spread.
 		float BarScaleMin = 0.04f;
 		float BarScaleMax = 0.03f;
 	};

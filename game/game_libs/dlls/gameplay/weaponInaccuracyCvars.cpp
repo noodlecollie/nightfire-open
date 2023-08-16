@@ -1,5 +1,6 @@
-#include "gameplay/gameplayCvars.h"
+#include "gameplay/weaponInaccuracyCvars.h"
 #include "standard_includes.h"
+#include "cvardef.h"
 #include "utlstring.h"
 #include "mp_utils.h"
 #include "weapons/weaponregistry.h"
@@ -7,7 +8,7 @@
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 #include "gameplay/gameplaySystems.h"
 
-namespace GameplayCvars
+namespace WeaponInaccuracyCvars
 {
 #define DEFINE_CVAR(name, value) static cvar_t name = {#name, #value, 0, (float)value, nullptr};
 
@@ -156,7 +157,12 @@ namespace GameplayCvars
 		}
 
 		PopulateCvars(attack->Accuracy);
-		ALERT(at_console, "Cvars populated from player's active weapon %s (%d).\n", atts.Core.Classname, atts.Core.Id);
+
+		ALERT(
+			at_console,
+			"Weapon inaccuravy convars populated from player's active weapon %s (%d).\n",
+			atts.Core.Classname,
+			atts.Core.Id);
 	}
 
 	void Init()

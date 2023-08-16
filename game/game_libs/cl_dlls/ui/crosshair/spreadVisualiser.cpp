@@ -103,15 +103,19 @@ void CSpreadVisualiser::UpdateDynamicBars(const CCrosshairParameters& params)
 
 	const float halfHeight = (2.0f * static_cast<float>(SCALE_HEIGHT)) / 6.0f;
 
+	m_LabelY = m_ScaleYOffset + halfHeight + 2.0f;
+
 	// Line representing rest inaccuracy.
-	const float restX = ExtraMath::RemapLinear(accuracyParams->RestValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
+	m_RestX = ExtraMath::RemapLinear(accuracyParams->RestValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	m_DynamicBars->AddLine(
-		Vector(restX, m_ScaleYOffset - halfHeight, 0),
-		Vector(restX, m_ScaleYOffset + halfHeight, 0));
+		Vector(m_RestX, m_ScaleYOffset - halfHeight, 0),
+		Vector(m_RestX, m_ScaleYOffset + halfHeight, 0));
 
 	// Line representing run inaccuracy.
-	const float runX = ExtraMath::RemapLinear(accuracyParams->RunValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
-	m_DynamicBars->AddLine(Vector(runX, m_ScaleYOffset - halfHeight, 0), Vector(runX, m_ScaleYOffset + halfHeight, 0));
+	m_RunX = ExtraMath::RemapLinear(accuracyParams->RunValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
+	m_DynamicBars->AddLine(
+		Vector(m_RunX, m_ScaleYOffset - halfHeight, 0),
+		Vector(m_RunX, m_ScaleYOffset + halfHeight, 0));
 }
 
 void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
@@ -160,10 +164,20 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 		}
 	}
 
+	const float radius = CrosshairCvars::CrosshairOverrideEnabled()
+		? CCrosshairParameters::ComputeCrosshairRadiusFromDebugCvars(accuracyParams, params.WeaponInaccuracy())
+		: CCrosshairParameters::ComputeCrosshairRadius(accuracyParams, params.WeaponInaccuracy(), crosshairParams);
+
+	const float barLength = CrosshairCvars::CrosshairOverrideEnabled()
+		? CCrosshairParameters::ComputeCrosshairBarLengthFromDebugCvars(accuracyParams, params.WeaponInaccuracy())
+		: CCrosshairParameters::ComputeCrosshairBarLength(accuracyParams, params.WeaponInaccuracy(), crosshairParams);
+
 	CUtlString text;
 
 	text.AppendFormat("Weapon: %s (ID %u)\n", weaponName, static_cast<uint32_t>(params.WeaponID()));
 	text.AppendFormat("Current inaccuracy: %f\n", params.WeaponInaccuracy());
+	text.AppendFormat("Crosshair radius: %f\n", radius);
+	text.AppendFormat("Crosshair bar length: %f\n", barLength);
 	text.AppendFormat(
 		"Attributes for attack mode %u (source: %s):\n",
 		params.WeaponAttackMode(),
@@ -190,4 +204,21 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 	text.AppendFormat("  Bar scale range: %f - %f\n", crosshairParams.BarScaleMin, crosshairParams.BarScaleMax);
 
 	DrawConsoleString(PADDING, PADDING, text.Get());
+
+	DrawLabel(m_RestX, m_LabelY, "Rest");
+	DrawLabel(m_RunX, m_LabelY, "Run");
+}
+
+void CSpreadVisualiser::DrawLabel(float x, float y, const char* text)
+{
+	if ( !text || !(*text) )
+	{
+		return;
+	}
+
+	int stringWidth = 0;
+	GetConsoleStringSize(text, &stringWidth, nullptr);
+
+	int posX = static_cast<int>(x - (static_cast<float>(stringWidth) / 2.0f));
+	DrawConsoleString(posX, static_cast<int>(y), text);
 }

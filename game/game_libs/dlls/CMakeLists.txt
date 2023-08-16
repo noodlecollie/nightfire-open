@@ -224,8 +224,6 @@ set(SOURCES_SERVER
 	customGeometry/commands.cpp
 	customGeometry/messageWriter.h
 	customGeometry/messageWriter.cpp
-	gameplay/gameplayCvars.h
-	gameplay/gameplayCvars.cpp
 	gameplay/gameplaySystems.h
 	gameplay/gameplaySystems.cpp
 	gameplay/gameplaySystemsBase.h
@@ -239,6 +237,8 @@ set(SOURCES_SERVER
 	gameplay/spawnpointlist.cpp
 	gameplay/spawnpointmanager.h
 	gameplay/spawnpointmanager.cpp
+	gameplay/weaponInaccuracyCvars.h
+	gameplay/weaponInaccuracyCvars.cpp
 	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.h
 	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.cpp
 	hitbox_debugging/hitbox_commands.h
@@ -247,8 +247,6 @@ set(SOURCES_SERVER
 	hitbox_debugging/hitbox_debugData.cpp
 	hitbox_debugging/hitbox_messageConstructor.h
 	hitbox_debugging/hitbox_messageConstructor.cpp
-	inaccuracy_debugging/inaccuracy_commands.h
-	inaccuracy_debugging/inaccuracy_commands.cpp
 	messages/baseMessageWriter.h
 	messages/baseMessageWriter.cpp
 	messages/messageRegistrationHelper.h
