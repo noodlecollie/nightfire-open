@@ -1,4 +1,5 @@
 #include "gameplay/weaponInaccuracyCvars.h"
+#include "gameplay/inaccuracymodifiers.h"
 #include "standard_includes.h"
 #include "cvardef.h"
 #include "utlstring.h"
@@ -10,26 +11,26 @@
 
 namespace WeaponInaccuracyCvars
 {
-#define DEFINE_CVAR(name, value) static cvar_t name = {#name, #value, 0, (float)value, nullptr};
+#define DEFINE_CVAR(name, value) {name, #value, 0, (float)value, nullptr};
 
 	// By default this is slightly lower than the max movement speed of the player,
 	// to avoid jitter at the top end of the velocity.
-	DEFINE_CVAR(sv_weapon_inaccuracy_maxspeed, 275);
-	DEFINE_CVAR(sv_weapon_inaccuracy_maxfallspeed, 400);
+	static cvar_t sv_weapon_inaccuracy_maxspeed = DEFINE_CVAR(CVARNAME_WEAPON_INACCURACY_MAXSPEED, 275);
+	static cvar_t sv_weapon_inaccuracy_maxfallspeed = DEFINE_CVAR(CVARNAME_WEAPON_INACCURACY_MAXFALLSPEED, 400);
 
-	DEFINE_CVAR(sv_weapon_debug_inac_enabled, 0);
-	DEFINE_CVAR(sv_weapon_debug_inac_restvalue, 0.1);
-	DEFINE_CVAR(sv_weapon_debug_inac_restspread, 0);
-	DEFINE_CVAR(sv_weapon_debug_inac_runvalue, 0.5);
-	DEFINE_CVAR(sv_weapon_debug_inac_runspread, 0);
-	DEFINE_CVAR(sv_weapon_debug_inac_crouchshift, -0.08);
-	DEFINE_CVAR(sv_weapon_debug_inac_airshift, 0.2);
-	DEFINE_CVAR(sv_weapon_debug_inac_fallshift, 0.05);
-	DEFINE_CVAR(sv_weapon_debug_inac_attackcoeff, 0.5);
-	DEFINE_CVAR(sv_weapon_debug_inac_decaycoeff, 0.5);
-	DEFINE_CVAR(sv_weapon_debug_inac_fireimpulse, 0.1);
-	DEFINE_CVAR(sv_weapon_debug_inac_fireimpulseceil, 0.3);
-	DEFINE_CVAR(sv_weapon_debug_inac_fireimpulsehold, 0.05);
+	static cvar_t sv_weapon_debug_inac_enabled = DEFINE_CVAR(CVARNAME_WEAPON_DEBUC_INAC_ENABLED, 0);
+	static cvar_t sv_weapon_debug_inac_restvalue = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_RESTVALUE, 0.1);
+	static cvar_t sv_weapon_debug_inac_restspread = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_RESTSPREAD, 0);
+	static cvar_t sv_weapon_debug_inac_runvalue = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_RUNVALUE, 0.5);
+	static cvar_t sv_weapon_debug_inac_runspread = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_RUNSPREAD, 0);
+	static cvar_t sv_weapon_debug_inac_crouchshift = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_CROUCHSHIFT, -0.08);
+	static cvar_t sv_weapon_debug_inac_airshift = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_AIRSHIFT, 0.2);
+	static cvar_t sv_weapon_debug_inac_fallshift = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FALLSHIFT, 0.05);
+	static cvar_t sv_weapon_debug_inac_attackcoeff = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_ATTACKCOEFF, 0.5);
+	static cvar_t sv_weapon_debug_inac_decaycoeff = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_DECAYCOEFF, 0.5);
+	static cvar_t sv_weapon_debug_inac_fireimpulse = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSE, 0.1);
+	static cvar_t sv_weapon_debug_inac_fireimpulseceil = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSECEIL, 0.3);
+	static cvar_t sv_weapon_debug_inac_fireimpulsehold = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEHOLD, 0.05);
 
 #undef DEFINE_CVAR
 

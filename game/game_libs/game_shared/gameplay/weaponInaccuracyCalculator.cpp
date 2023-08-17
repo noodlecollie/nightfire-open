@@ -219,8 +219,8 @@ void CWeaponInaccuracyCalculator::InitCvars()
 		return;
 	}
 
-	m_CvarMaxSpeed = GetCvarByName("sv_weapon_inaccuracy_maxspeed");
-	m_CvarMaxFallSpeed = GetCvarByName("sv_weapon_inaccuracy_maxfallspeed");
+	m_CvarMaxSpeed = GetCvarByName(CVARNAME_WEAPON_INACCURACY_MAXSPEED);
+	m_CvarMaxFallSpeed = GetCvarByName(CVARNAME_WEAPON_INACCURACY_MAXFALLSPEED);
 
 	m_CvarsLoaded = m_CvarMaxSpeed && m_CvarMaxFallSpeed;
 

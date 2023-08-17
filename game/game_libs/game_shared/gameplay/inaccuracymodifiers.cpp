@@ -33,19 +33,19 @@ namespace InaccuracyModifiers
 		}
 
 		CvarCheats = GetCvarByName("sv_cheats");
-		CvarEnableDebugging = GetCvarByName("sv_weapon_debug_inac_enabled");
-		CvarDebugRestValue = GetCvarByName("sv_weapon_debug_inac_restvalue");
-		CvarDebugRestSpread = GetCvarByName("sv_weapon_debug_inac_restspread");
-		CvarDebugRunValue = GetCvarByName("sv_weapon_debug_inac_runvalue");
-		CvarDebugRunSpread = GetCvarByName("sv_weapon_debug_inac_runspread");
-		CvarDebugCrouchShift = GetCvarByName("sv_weapon_debug_inac_crouchshift");
-		CvarDebugAirShift = GetCvarByName("sv_weapon_debug_inac_airshift");
-		CvarDebugFallShift = GetCvarByName("sv_weapon_debug_inac_fallshift");
-		CvarDebugAttackCoefficient = GetCvarByName("sv_weapon_debug_inac_attackcoeff");
-		CvarDebugDecayCoefficient = GetCvarByName("sv_weapon_debug_inac_decaycoeff");
-		CvarDebugFireImpulse = GetCvarByName("sv_weapon_debug_inac_fireimpulse");
-		CvarDebugFireImpulseCeiling = GetCvarByName("sv_weapon_debug_inac_fireimpulseceil");
-		CvarDebugFireImpulseHoldTime = GetCvarByName("sv_weapon_debug_inac_fireimpulsehold");
+		CvarEnableDebugging = GetCvarByName(CVARNAME_WEAPON_DEBUC_INAC_ENABLED);
+		CvarDebugRestValue = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_RESTVALUE);
+		CvarDebugRestSpread = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_RESTSPREAD);
+		CvarDebugRunValue = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_RUNVALUE);
+		CvarDebugRunSpread = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_RUNSPREAD);
+		CvarDebugCrouchShift = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_CROUCHSHIFT);
+		CvarDebugAirShift = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_AIRSHIFT);
+		CvarDebugFallShift = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FALLSHIFT);
+		CvarDebugAttackCoefficient = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_ATTACKCOEFF);
+		CvarDebugDecayCoefficient = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_DECAYCOEFF);
+		CvarDebugFireImpulse = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSE);
+		CvarDebugFireImpulseCeiling = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSECEIL);
+		CvarDebugFireImpulseHoldTime = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEHOLD);
 
 		CvarsLoaded = CvarCheats && CvarEnableDebugging && CvarDebugRestValue && CvarDebugRestSpread &&
 			CvarDebugRunValue && CvarDebugRunSpread && CvarDebugCrouchShift && CvarDebugAirShift &&
