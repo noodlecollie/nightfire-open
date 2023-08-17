@@ -100,15 +100,15 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestValue = 0.12f;
 		accuracy.RestSpread = Vector2D(0.007f, 0.007f);
-		accuracy.RunValue = 0.6f;
+		accuracy.RunValue = 0.4f;
 		accuracy.RunSpread = Vector2D(0.03f, 0.03f);
 		accuracy.CrouchShift = -0.08f;
-		accuracy.AirShift = 0.1f;
-		accuracy.FallShift = 0.1f;
+		accuracy.AirShift = 0.06f;
+		accuracy.FallShift = 0.06f;
 		accuracy.AttackCoefficient = 0.3f;
 		accuracy.DecayCoefficient = 0.3f;
 		accuracy.FireImpulse = 0.02f;
-		accuracy.FireImpulseCeiling = 0.15f;
+		accuracy.FireImpulseCeiling = 0.2f;
 		accuracy.FireImpulseHoldTime = 0.2f;
 
 		CrosshairParameters& crosshair = priAttack->Crosshair;

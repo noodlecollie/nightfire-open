@@ -12,13 +12,30 @@
 #include "gameplay/inaccuracymodifiers.h"
 #include "gameplay/crosshairCvars.h"
 
-namespace
+static constexpr float YOFFSET_FRAC = 0.7f;
+static constexpr size_t PADDING = 40;
+static constexpr size_t SCALE_HEIGHT = 50;
+static constexpr size_t MARKER_WIDTH = 25;
+
+// Returns if the params were overridden.
+static bool PopulateAccuracyParams(const CCrosshairParameters& params, WeaponAtts::AccuracyParameters& accuracyParams)
 {
-	static constexpr float YOFFSET_FRAC = 0.7f;
-	static constexpr size_t PADDING = 40;
-	static constexpr size_t SCALE_HEIGHT = 50;
-	static constexpr size_t MARKER_WIDTH = 25;
-}  // namespace
+	if ( InaccuracyModifiers::IsInaccuracyDebuggingEnabled() )
+	{
+		InaccuracyModifiers::GetInaccuracyValuesFromDebugCvars(accuracyParams);
+		return true;
+	}
+
+	const WeaponAtts::AccuracyParameters* accuracyParamsFromWeapon =
+		params.WeaponAccuracyParamsForAttack(params.WeaponAttackMode());
+
+	if ( accuracyParamsFromWeapon )
+	{
+		accuracyParams = *accuracyParamsFromWeapon;
+	}
+
+	return false;
+}
 
 void CSpreadVisualiser::Draw(const CCrosshairParameters& params)
 {
@@ -105,26 +122,21 @@ void CSpreadVisualiser::UpdateDynamicBars(const CCrosshairParameters& params)
 
 	m_DynamicBars->ClearGeometry();
 
-	const WeaponAtts::AccuracyParameters* accuracyParams =
-		params.WeaponAccuracyParamsForAttack(params.WeaponAttackMode());
-
-	if ( !accuracyParams )
-	{
-		return;
-	}
+	WeaponAtts::AccuracyParameters accuracyParams {};
+	PopulateAccuracyParams(params, accuracyParams);
 
 	const float halfHeight = (2.0f * static_cast<float>(SCALE_HEIGHT)) / 6.0f;
 
 	m_LabelY = m_ScaleYOffset + halfHeight + 2.0f;
 
 	// Line representing rest inaccuracy.
-	m_RestX = ExtraMath::RemapLinear(accuracyParams->RestValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
+	m_RestX = ExtraMath::RemapLinear(accuracyParams.RestValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	m_DynamicBars->AddLine(
 		Vector(m_RestX, m_ScaleYOffset - halfHeight, 0),
 		Vector(m_RestX, m_ScaleYOffset + halfHeight, 0));
 
 	// Line representing run inaccuracy.
-	m_RunX = ExtraMath::RemapLinear(accuracyParams->RunValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
+	m_RunX = ExtraMath::RemapLinear(accuracyParams.RunValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	m_DynamicBars->AddLine(
 		Vector(m_RunX, m_ScaleYOffset - halfHeight, 0),
 		Vector(m_RunX, m_ScaleYOffset + halfHeight, 0));
@@ -136,23 +148,8 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 	const WeaponAtts::WACollection* atts = registry.Get(params.WeaponID());
 	const char* weaponName = atts ? atts->Core.Classname : "UNKNOWN";
 
-	WeaponAtts::AccuracyParameters accuracyParams;
-	const bool usingDebugParams = InaccuracyModifiers::IsInaccuracyDebuggingEnabled();
-
-	if ( usingDebugParams )
-	{
-		InaccuracyModifiers::GetInaccuracyValuesFromDebugCvars(accuracyParams);
-	}
-	else
-	{
-		const WeaponAtts::AccuracyParameters* accuracyParamsFromWeapon =
-			params.WeaponAccuracyParamsForAttack(params.WeaponAttackMode());
-
-		if ( accuracyParamsFromWeapon )
-		{
-			accuracyParams = *accuracyParamsFromWeapon;
-		}
-	}
+	WeaponAtts::AccuracyParameters accuracyParams {};
+	const bool usingDebugParams = PopulateAccuracyParams(params, accuracyParams);
 
 	WeaponAtts::CrosshairParameters crosshairParams;
 	const bool crosshairOverridden = CrosshairCvars::CrosshairOverrideEnabled();
