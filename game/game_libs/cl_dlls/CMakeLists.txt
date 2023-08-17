@@ -238,7 +238,6 @@ set(SOURCES_CLIENT
 	sound/ClientSoundInstance.h
 	sound/ClientSoundInstance.cpp
 	ui/core/uiVec2.h
-	ui/crosshair/crosshairBase.h
 	ui/crosshair/crosshairParameters.h
 	ui/crosshair/crosshairParameters.cpp
 	ui/crosshair/spreadVisualiser.h

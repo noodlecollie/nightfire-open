@@ -14,8 +14,10 @@
 
 static constexpr float YOFFSET_FRAC = 0.7f;
 static constexpr size_t PADDING = 40;
-static constexpr size_t SCALE_HEIGHT = 50;
-static constexpr size_t MARKER_WIDTH = 25;
+static constexpr float SCALE_HEIGHT = 50.0f;
+static constexpr float HALF_DYNAMIC_BAR_HEIGHT = (1.0f/3.0f) * SCALE_HEIGHT;
+static constexpr float ACCURACY_BAR_HEIGHT = 0.5f * SCALE_HEIGHT;
+static constexpr float HALF_ACCURACY_BAR_DEV = 5.0f;
 
 // Returns if the params were overridden.
 static bool PopulateAccuracyParams(const CCrosshairParameters& params, WeaponAtts::AccuracyParameters& accuracyParams)
@@ -40,11 +42,13 @@ static bool PopulateAccuracyParams(const CCrosshairParameters& params, WeaponAtt
 void CSpreadVisualiser::Draw(const CCrosshairParameters& params)
 {
 	ConstructGeometry(params);
-	UpdateInaccuracyMarker(params);
 	UpdateDynamicBars(params);
+	UpdateInaccuracyBar(params);
 
 	CustomGeometry::RenderAdHocGeometry(m_Geometry);
 	CustomGeometry::RenderAdHocGeometry(m_DynamicBars);
+	CustomGeometry::RenderAdHocGeometry(m_InaccuracyBar);
+
 	DrawInfoText(params);
 }
 
@@ -65,8 +69,8 @@ void CSpreadVisualiser::ConstructGeometry(const CCrosshairParameters& params)
 	m_ScaleMaxX = static_cast<float>(params.ScreenDimensions().x - PADDING);
 	m_ScaleYOffset = YOFFSET_FRAC * params.ScreenDimensions().y;
 
-	const float halfScaleHeight = static_cast<float>(SCALE_HEIGHT) / 2.0f;
-	const float smallScaleHeight = static_cast<float>(SCALE_HEIGHT) / 6.0f;
+	const float halfScaleHeight = SCALE_HEIGHT / 2.0f;
+	const float smallScaleHeight = SCALE_HEIGHT / 6.0f;
 	const float decimalSectionWidth = (m_ScaleMaxX - m_ScaleMinX) / 10.0f;
 
 	// Horizontal ruled line for scale
@@ -89,26 +93,6 @@ void CSpreadVisualiser::ConstructGeometry(const CCrosshairParameters& params)
 			Vector(offset, m_ScaleYOffset - smallScaleHeight, 0),
 			Vector(offset, m_ScaleYOffset + smallScaleHeight, 0));
 	}
-
-	const float inaccuracyX = ExtraMath::RemapLinear(params.WeaponInaccuracy(), 0, 1, m_ScaleMinX, m_ScaleMaxX);
-
-	// Arrow marker for current inaccuracy.
-	// This will be updated properly later.
-	m_InaccuracyMarkerBegin = m_Geometry->GetPointCount();
-	m_Geometry->AddLine(Vector(inaccuracyX, m_ScaleYOffset - SCALE_HEIGHT, 0), Vector(inaccuracyX, m_ScaleYOffset, 0));
-	m_Geometry->AddLine(Vector(inaccuracyX, m_ScaleYOffset - SCALE_HEIGHT, 0), Vector(inaccuracyX, m_ScaleYOffset, 0));
-}
-
-void CSpreadVisualiser::UpdateInaccuracyMarker(const CCrosshairParameters& params)
-{
-	const float inaccuracyX = ExtraMath::RemapLinear(params.WeaponInaccuracy(), 0, 1, m_ScaleMinX, m_ScaleMaxX);
-	const float halfMarkerWidth = static_cast<float>(MARKER_WIDTH) / 2.0f;
-
-	size_t index = m_InaccuracyMarkerBegin;
-	m_Geometry->GetPoint(index++) = Vector(inaccuracyX - halfMarkerWidth, m_ScaleYOffset - SCALE_HEIGHT, 0);
-	m_Geometry->GetPoint(index++) = Vector(inaccuracyX, m_ScaleYOffset, 0);
-	m_Geometry->GetPoint(index++) = Vector(inaccuracyX + halfMarkerWidth, m_ScaleYOffset - SCALE_HEIGHT, 0);
-	m_Geometry->GetPoint(index++) = Vector(inaccuracyX, m_ScaleYOffset, 0);
 }
 
 void CSpreadVisualiser::UpdateDynamicBars(const CCrosshairParameters& params)
@@ -125,21 +109,47 @@ void CSpreadVisualiser::UpdateDynamicBars(const CCrosshairParameters& params)
 	WeaponAtts::AccuracyParameters accuracyParams {};
 	PopulateAccuracyParams(params, accuracyParams);
 
-	const float halfHeight = (2.0f * static_cast<float>(SCALE_HEIGHT)) / 6.0f;
-
-	m_LabelY = m_ScaleYOffset + halfHeight + 2.0f;
+	m_LabelY = m_ScaleYOffset + HALF_DYNAMIC_BAR_HEIGHT + 2.0f;
 
 	// Line representing rest inaccuracy.
 	m_RestX = ExtraMath::RemapLinear(accuracyParams.RestValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	m_DynamicBars->AddLine(
-		Vector(m_RestX, m_ScaleYOffset - halfHeight, 0),
-		Vector(m_RestX, m_ScaleYOffset + halfHeight, 0));
+		Vector(m_RestX, m_ScaleYOffset - HALF_DYNAMIC_BAR_HEIGHT, 0),
+		Vector(m_RestX, m_ScaleYOffset + HALF_DYNAMIC_BAR_HEIGHT, 0));
 
 	// Line representing run inaccuracy.
 	m_RunX = ExtraMath::RemapLinear(accuracyParams.RunValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	m_DynamicBars->AddLine(
-		Vector(m_RunX, m_ScaleYOffset - halfHeight, 0),
-		Vector(m_RunX, m_ScaleYOffset + halfHeight, 0));
+		Vector(m_RunX, m_ScaleYOffset - HALF_DYNAMIC_BAR_HEIGHT, 0),
+		Vector(m_RunX, m_ScaleYOffset + HALF_DYNAMIC_BAR_HEIGHT, 0));
+}
+
+void CSpreadVisualiser::UpdateInaccuracyBar(const CCrosshairParameters& params)
+{
+	if ( !m_InaccuracyBar )
+	{
+		m_InaccuracyBar = CustomGeometry::GeometryItemPtr_t(new CustomGeometry::CGeometryItem());
+		m_InaccuracyBar->SetColour(0xFF0000FF);
+		m_InaccuracyBar->SetDrawType(CustomGeometry::DrawType::Lines);
+	}
+
+	m_InaccuracyBar->ClearGeometry();
+
+	const float inaccuracyX = ExtraMath::RemapLinear(params.WeaponInaccuracy(), 0, 1, m_ScaleMinX, m_ScaleMaxX);
+
+	// Accuracy bar itself
+	m_InaccuracyBar->AddLine(
+		Vector(inaccuracyX, m_ScaleYOffset - ACCURACY_BAR_HEIGHT, 0),
+		Vector(inaccuracyX, m_ScaleYOffset, 0));
+
+	// Top whiskers
+	m_InaccuracyBar->AddLine(
+		Vector(inaccuracyX - HALF_ACCURACY_BAR_DEV, m_ScaleYOffset - ACCURACY_BAR_HEIGHT - HALF_ACCURACY_BAR_DEV, 0),
+		Vector(inaccuracyX, m_ScaleYOffset - ACCURACY_BAR_HEIGHT, 0));
+
+	m_InaccuracyBar->AddLine(
+		Vector(inaccuracyX + HALF_ACCURACY_BAR_DEV, m_ScaleYOffset - ACCURACY_BAR_HEIGHT - HALF_ACCURACY_BAR_DEV, 0),
+		Vector(inaccuracyX, m_ScaleYOffset - ACCURACY_BAR_HEIGHT, 0));
 }
 
 void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
