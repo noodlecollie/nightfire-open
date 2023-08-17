@@ -18,6 +18,7 @@ static constexpr float SCALE_HEIGHT = 50.0f;
 static constexpr float HALF_DYNAMIC_BAR_HEIGHT = (1.0f/3.0f) * SCALE_HEIGHT;
 static constexpr float ACCURACY_BAR_HEIGHT = 0.5f * SCALE_HEIGHT;
 static constexpr float HALF_ACCURACY_BAR_DEV = 5.0f;
+static constexpr float LABEL_Y_OFFSET = 48.0f;
 
 // Returns if the params were overridden.
 static bool PopulateAccuracyParams(const CCrosshairParameters& params, WeaponAtts::AccuracyParameters& accuracyParams)
@@ -49,6 +50,7 @@ void CSpreadVisualiser::Draw(const CCrosshairParameters& params)
 	CustomGeometry::RenderAdHocGeometry(m_DynamicBars);
 	CustomGeometry::RenderAdHocGeometry(m_InaccuracyBar);
 
+	DrawScaleLabels();
 	DrawInfoText(params);
 }
 
@@ -109,19 +111,20 @@ void CSpreadVisualiser::UpdateDynamicBars(const CCrosshairParameters& params)
 	WeaponAtts::AccuracyParameters accuracyParams {};
 	PopulateAccuracyParams(params, accuracyParams);
 
-	m_LabelY = m_ScaleYOffset + HALF_DYNAMIC_BAR_HEIGHT + 2.0f;
+	m_ScaleNumY = m_ScaleYOffset + (SCALE_HEIGHT / 2.0f) + 4.0f;
+	m_LabelY = m_ScaleYOffset + LABEL_Y_OFFSET;
 
 	// Line representing rest inaccuracy.
 	m_RestX = ExtraMath::RemapLinear(accuracyParams.RestValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	m_DynamicBars->AddLine(
 		Vector(m_RestX, m_ScaleYOffset - HALF_DYNAMIC_BAR_HEIGHT, 0),
-		Vector(m_RestX, m_ScaleYOffset + HALF_DYNAMIC_BAR_HEIGHT, 0));
+		Vector(m_RestX, m_ScaleYOffset + LABEL_Y_OFFSET - 4.0f, 0));
 
 	// Line representing run inaccuracy.
 	m_RunX = ExtraMath::RemapLinear(accuracyParams.RunValue, 0, 1, m_ScaleMinX, m_ScaleMaxX);
 	m_DynamicBars->AddLine(
 		Vector(m_RunX, m_ScaleYOffset - HALF_DYNAMIC_BAR_HEIGHT, 0),
-		Vector(m_RunX, m_ScaleYOffset + HALF_DYNAMIC_BAR_HEIGHT, 0));
+		Vector(m_RunX, m_ScaleYOffset + LABEL_Y_OFFSET - 4.0f, 0));
 }
 
 void CSpreadVisualiser::UpdateInaccuracyBar(const CCrosshairParameters& params)
@@ -150,6 +153,20 @@ void CSpreadVisualiser::UpdateInaccuracyBar(const CCrosshairParameters& params)
 	m_InaccuracyBar->AddLine(
 		Vector(inaccuracyX + HALF_ACCURACY_BAR_DEV, m_ScaleYOffset - ACCURACY_BAR_HEIGHT - HALF_ACCURACY_BAR_DEV, 0),
 		Vector(inaccuracyX, m_ScaleYOffset - ACCURACY_BAR_HEIGHT, 0));
+}
+
+void CSpreadVisualiser::DrawScaleLabels()
+{
+	const float decimalSectionWidth = (m_ScaleMaxX - m_ScaleMinX) / 10.0f;
+
+	for ( int section = 0; section <= 10; ++section )
+	{
+		char buffer[8];
+		const float offset = m_ScaleMinX + (static_cast<float>(section) * decimalSectionWidth);
+
+		PlatformLib_SNPrintF(buffer, sizeof(buffer), "%d.%d", section / 10, section % 10);
+		DrawLabel(offset, m_ScaleNumY, buffer);
+	}
 }
 
 void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)

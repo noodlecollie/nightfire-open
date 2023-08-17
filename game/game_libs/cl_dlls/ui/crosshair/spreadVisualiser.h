@@ -15,6 +15,7 @@ private:
 	void UpdateInaccuracyBar(const CCrosshairParameters& params);
 	void DrawInfoText(const CCrosshairParameters& params);
 	void DrawLabel(float x, float y, const char* text);
+	void DrawScaleLabels();
 
 	CustomGeometry::GeometryItemPtr_t m_Geometry;
 	CustomGeometry::GeometryItemPtr_t m_DynamicBars;
@@ -24,6 +25,7 @@ private:
 	float m_ScaleMaxX = 1.0f;
 	float m_ScaleYOffset = 0.0f;
 
+	float m_ScaleNumY = 0.0f;
 	float m_LabelY = 0.0f;
 	float m_RestX = 0.0f;
 	float m_RunX = 0.0f;
