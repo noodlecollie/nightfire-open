@@ -1,5 +1,6 @@
 #include "gameplay/weaponInaccuracyCvars.h"
 #include "gameplay/inaccuracymodifiers.h"
+#include "gameplay/inaccuracyCvars.h"
 #include "standard_includes.h"
 #include "cvardef.h"
 #include "utlstring.h"
@@ -185,7 +186,7 @@ namespace WeaponInaccuracyCvars
 		CVAR_REGISTER(&sv_weapon_debug_inac_fireimpulseceil);
 		CVAR_REGISTER(&sv_weapon_debug_inac_fireimpulsehold);
 
-		g_engfuncs.pfnAddServerCommand("sv_weapon_debug_inac_dump", &DumpValues);
-		g_engfuncs.pfnAddServerCommand("sv_weapon_debug_inac_populate", &PopulateCvarsFromPlayerWeapon);
+		g_engfuncs.pfnAddServerCommand(CVARNAME_WEAPON_DEBUG_INAC_DUMP, &DumpValues);
+		g_engfuncs.pfnAddServerCommand(CVARNAME_WEAPON_DEBUG_INAC_POPULATE, &PopulateCvarsFromPlayerWeapon);
 	}
 }  // namespace GameplayCvars

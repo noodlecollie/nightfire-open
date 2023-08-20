@@ -1,4 +1,5 @@
 #include "gameplay/inaccuracymodifiers.h"
+#include "gameplay/inaccuracyCvars.h"
 #include "standard_includes.h"
 #include "miniutl.h"
 #include "util/extramath.h"

@@ -1,4 +1,5 @@
 #include "gameplay/crosshairCvars.h"
+#include "gameplay/inaccuracyCvars.h"
 #include "cvardef.h"
 #include "cl_dll.h"
 #include "debug_assert.h"
@@ -145,20 +146,20 @@ namespace CrosshairCvars
 	void Init()
 	{
 		CvarCheats = gEngfuncs.pfnGetCvarPointer("sv_cheats");
-		CvarDebugSpread = GetOrCreateClientCvar("cl_debug_weapon_spread");
-		CvarOverrideCrosshairAtts = GetOrCreateClientCvar("cl_crosshair_ovr_enabled");
-		CvarOverrideCrosshairRadiusMin = GetOrCreateClientCvar("cl_crosshair_ovr_rad_min", "0");
-		CvarOverrideCrosshairRadiusMax = GetOrCreateClientCvar("cl_crosshair_ovr_rad_max", "0.5");
-		CvarOverrideCrosshairBarLengthMin = GetOrCreateClientCvar("cl_crosshair_ovr_bar_min", "0.04");
-		CvarOverrideCrosshairBarLengthMax = GetOrCreateClientCvar("cl_crosshair_ovr_bar_max", "0.03");
+		CvarDebugSpread = GetOrCreateClientCvar(CVARNAME_DEBUG_WEAPON_SPREAD);
+		CvarOverrideCrosshairAtts = GetOrCreateClientCvar(CVARNAME_CROSSHAIR_OVR_ENABLED);
+		CvarOverrideCrosshairRadiusMin = GetOrCreateClientCvar(CVARNAME_CROSSHAIR_OVR_RAD_MIN, "0");
+		CvarOverrideCrosshairRadiusMax = GetOrCreateClientCvar(CVARNAME_CROSSHAIR_OVR_RAD_MAX, "0.5");
+		CvarOverrideCrosshairBarLengthMin = GetOrCreateClientCvar(CVARNAME_CROSSHAIR_OVR_BAR_MIN, "0.04");
+		CvarOverrideCrosshairBarLengthMax = GetOrCreateClientCvar(CVARNAME_CROSSHAIR_OVR_BAR_MAX, "0.03");
 
 		CvarsLoaded = CvarCheats && CvarDebugSpread && CvarOverrideCrosshairAtts && CvarOverrideCrosshairRadiusMin &&
 			CvarOverrideCrosshairRadiusMax && CvarOverrideCrosshairBarLengthMin && CvarOverrideCrosshairBarLengthMax;
 
 		ASSERTSZ(CvarsLoaded, "Unable to load crosshair debugging cvars.");
 
-		gEngfuncs.pfnAddCommand("cl_crosshair_ovr_populate", &PopulateCvarsFromCurrentWeapon);
-		gEngfuncs.pfnAddCommand("cl_crosshair_ovr_dump", &DumpCvars);
+		gEngfuncs.pfnAddCommand(CVARNAME_CROSSHAIR_OVR_POPULATE, &PopulateCvarsFromCurrentWeapon);
+		gEngfuncs.pfnAddCommand(CVARNAME_CROSSHAIR_OVR_DUMP, &DumpCvars);
 	}
 
 	bool SpreadVisualisationEnabled()

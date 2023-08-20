@@ -6,6 +6,7 @@
 #include "util/cvarFuncs.h"
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 #include "gameplay/inaccuracymodifiers.h"
+#include "gameplay/inaccuracyCvars.h"
 
 bool CWeaponInaccuracyCalculator::m_CvarsLoaded = false;
 cvar_t* CWeaponInaccuracyCalculator::m_CvarMaxSpeed = nullptr;
