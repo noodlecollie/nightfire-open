@@ -112,9 +112,9 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		accuracy.FireImpulseHoldTime = 0.2f;
 
 		CrosshairParameters& crosshair = priAttack->Crosshair;
-		crosshair.BarScaleMin = 0.025f;
-		crosshair.BarScaleMax = 0.025f;
-		crosshair.RadiusMin = 0.012f;
+		crosshair.BarScaleMin = 0.02f;
+		crosshair.BarScaleMax = 0.02f;
+		crosshair.RadiusMin = 0.01f;
 		crosshair.RadiusMax = 0.02f;
 
 		priAttack->ViewModelAnimList_Attack << P99_SHOOT;
