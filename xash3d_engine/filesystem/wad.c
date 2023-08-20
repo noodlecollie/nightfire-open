@@ -549,9 +549,9 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 
 	if ( COM_CheckStringEmpty(wadname) )
 	{
-		string temp;
-		PlatformLib_StrCpy(temp, sizeof(temp), wadname);
-		COM_FileBase(temp, wadname, sizeof(wadname));
+		string filebase;
+		PlatformLib_StrCpy(filebase, sizeof(filebase), wadname);
+		COM_FileBase(filebase, wadname, sizeof(wadname));
 		Q_strncpy(wadfolder, wadname, sizeof(wadfolder));
 		COM_DefaultExtension(wadname, sizeof(wadname), ".wad");
 		anywadname = false;
