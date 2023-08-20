@@ -32,6 +32,8 @@ namespace WeaponInaccuracyCvars
 	static cvar_t sv_weapon_debug_inac_fireimpulse = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSE, 0.1);
 	static cvar_t sv_weapon_debug_inac_fireimpulseceil = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSECEIL, 0.3);
 	static cvar_t sv_weapon_debug_inac_fireimpulsehold = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEHOLD, 0.05);
+	static cvar_t sv_weapon_debug_inac_fireimpulsedecaywin = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEDECAYWIN, 0.0);
+	static cvar_t sv_weapon_debug_inac_fireimpulsedecaymod = DEFINE_CVAR(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEDECAYMOD, 1.0);
 
 #undef DEFINE_CVAR
 
@@ -68,6 +70,8 @@ namespace WeaponInaccuracyCvars
 		AddValue(output, sv_weapon_debug_inac_fireimpulse);
 		AddValue(output, sv_weapon_debug_inac_fireimpulseceil);
 		AddValue(output, sv_weapon_debug_inac_fireimpulsehold);
+		AddValue(output, sv_weapon_debug_inac_fireimpulsedecaywin);
+		AddValue(output, sv_weapon_debug_inac_fireimpulsedecaymod);
 
 		ALERT(at_console, "%s", output.Get());
 	}
@@ -86,6 +90,8 @@ namespace WeaponInaccuracyCvars
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_fireimpulse.name, params.FireImpulse);
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_fireimpulseceil.name, params.FireImpulseCeiling);
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_fireimpulsehold.name, params.FireImpulseHoldTime);
+		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_fireimpulsedecaywin.name, params.FireImpulseDecayWindow);
+		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_fireimpulsedecaymod.name, params.FireImpulseDecayMod);
 	}
 
 	static void PopulateCvarsFromPlayerWeapon(void)
@@ -185,6 +191,8 @@ namespace WeaponInaccuracyCvars
 		CVAR_REGISTER(&sv_weapon_debug_inac_fireimpulse);
 		CVAR_REGISTER(&sv_weapon_debug_inac_fireimpulseceil);
 		CVAR_REGISTER(&sv_weapon_debug_inac_fireimpulsehold);
+		CVAR_REGISTER(&sv_weapon_debug_inac_fireimpulsedecaywin);
+		CVAR_REGISTER(&sv_weapon_debug_inac_fireimpulsedecaymod);
 
 		g_engfuncs.pfnAddServerCommand(CVARNAME_WEAPON_DEBUG_INAC_DUMP, &DumpValues);
 		g_engfuncs.pfnAddServerCommand(CVARNAME_WEAPON_DEBUG_INAC_POPULATE, &PopulateCvarsFromPlayerWeapon);

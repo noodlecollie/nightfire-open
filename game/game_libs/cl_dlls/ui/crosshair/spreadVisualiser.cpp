@@ -234,6 +234,8 @@ void CSpreadVisualiser::DrawInfoText(const CCrosshairParameters& params)
 	text.AppendFormat("  Fire impulse: %f\n", accuracyParams.FireImpulse);
 	text.AppendFormat("  Fire impulse ceiling: %f\n", accuracyParams.FireImpulseCeiling);
 	text.AppendFormat("  Fire impulse hold time: %f\n", accuracyParams.FireImpulseHoldTime);
+	text.AppendFormat("  Fire impulse decay window: %fs\n", accuracyParams.FireImpulseDecayWindow);
+	text.AppendFormat("  Fire impulse decay mod: %f\n", accuracyParams.FireImpulseDecayMod);
 	text.AppendFormat("Attributes for crosshair (source: %s):\n", crosshairOverridden ? "debug" : "weapon");
 	text.AppendFormat("  Radius range: %f - %f\n", crosshairParams.RadiusMin, crosshairParams.RadiusMax);
 	text.AppendFormat("  Bar scale range: %f - %f\n", crosshairParams.BarScaleMin, crosshairParams.BarScaleMax);

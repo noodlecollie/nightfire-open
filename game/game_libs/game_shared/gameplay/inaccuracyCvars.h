@@ -20,6 +20,8 @@
 #define CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSE "sv_weapon_debug_inac_fireimpulse"
 #define CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSECEIL "sv_weapon_debug_inac_fireimpulseceil"
 #define CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEHOLD "sv_weapon_debug_inac_fireimpulsehold"
+#define CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEDECAYWIN "sv_weapon_debug_inac_fireimpulsedecaywin"
+#define CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEDECAYMOD "sv_weapon_debug_inac_fireimpulsedecaymod"
 
 // Inaccuracy debugging commands:
 #define CVARNAME_WEAPON_DEBUG_INAC_DUMP "sv_weapon_debug_inac_dump"

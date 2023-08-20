@@ -59,7 +59,7 @@ float CCrosshairParameters::BarLength() const
 
 void CCrosshairParameters::SetBarLength(float length)
 {
-	m_BarLength = Max(length, 0.01f);
+	m_BarLength = Max(length, 0.001f);
 }
 
 bool CCrosshairParameters::ShowCrosshair() const

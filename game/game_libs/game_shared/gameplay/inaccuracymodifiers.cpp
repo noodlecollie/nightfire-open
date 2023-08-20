@@ -22,6 +22,8 @@ namespace InaccuracyModifiers
 	cvar_t* CvarDebugFireImpulse = nullptr;
 	cvar_t* CvarDebugFireImpulseCeiling = nullptr;
 	cvar_t* CvarDebugFireImpulseHoldTime = nullptr;
+	cvar_t* CvarDebugFireImpulseDecayWindow = nullptr;
+	cvar_t* CvarDebugFireImpulseDecayMod = nullptr;
 
 	bool CvarInitWasRun = false;
 	bool CvarsLoaded = false;
@@ -47,11 +49,14 @@ namespace InaccuracyModifiers
 		CvarDebugFireImpulse = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSE);
 		CvarDebugFireImpulseCeiling = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSECEIL);
 		CvarDebugFireImpulseHoldTime = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEHOLD);
+		CvarDebugFireImpulseDecayWindow = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEDECAYWIN);
+		CvarDebugFireImpulseDecayMod = GetCvarByName(CVARNAME_WEAPON_DEBUG_INAC_FIREIMPULSEDECAYMOD);
 
 		CvarsLoaded = CvarCheats && CvarEnableDebugging && CvarDebugRestValue && CvarDebugRestSpread &&
 			CvarDebugRunValue && CvarDebugRunSpread && CvarDebugCrouchShift && CvarDebugAirShift &&
 			CvarDebugFallShift && CvarDebugAttackCoefficient && CvarDebugDecayCoefficient && CvarDebugFireImpulse &&
-			CvarDebugFireImpulseCeiling && CvarDebugFireImpulseHoldTime;
+			CvarDebugFireImpulseCeiling && CvarDebugFireImpulseHoldTime && CvarDebugFireImpulseDecayWindow &&
+			CvarDebugFireImpulseDecayMod;
 
 		ASSERTSZ(CvarsLoaded, "Unable to load inaccuracy debugging cvars.");
 
@@ -97,10 +102,12 @@ namespace InaccuracyModifiers
 		params.AirShift = CvarDebugAirShift->value;
 		params.FallShift = CvarDebugFallShift->value;
 		params.AttackCoefficient = CvarDebugAttackCoefficient->value;
-		params.AttackCoefficient = CvarDebugDecayCoefficient->value;
+		params.DecayCoefficient = CvarDebugDecayCoefficient->value;
 		params.FireImpulse = CvarDebugFireImpulse->value;
 		params.FireImpulseCeiling = CvarDebugFireImpulseCeiling->value;
 		params.FireImpulseHoldTime = CvarDebugFireImpulseHoldTime->value;
+		params.FireImpulseDecayWindow = CvarDebugFireImpulseDecayWindow->value;
+		params.FireImpulseDecayMod = CvarDebugFireImpulseDecayMod->value;
 
 		return true;
 	}
@@ -126,5 +133,7 @@ namespace InaccuracyModifiers
 		CvarDebugFireImpulse->value = params.FireImpulse;
 		CvarDebugFireImpulseCeiling->value = params.FireImpulseCeiling;
 		CvarDebugFireImpulseHoldTime->value = params.FireImpulseHoldTime;
+		CvarDebugFireImpulseDecayWindow->value = params.FireImpulseDecayWindow;
+		CvarDebugFireImpulseDecayMod->value = params.FireImpulseDecayMod;
 	}
 }  // namespace InaccuracyModifiers

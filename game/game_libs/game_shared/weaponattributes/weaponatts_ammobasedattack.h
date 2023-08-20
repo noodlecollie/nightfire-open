@@ -15,8 +15,7 @@ namespace WeaponAtts
 		// hard clamped within the range [0 1].
 
 		// To modify these settings while debugging/testing, see the list of convars
-		// in game_libs/game_shared/gameplay/inaccuracymodifiers.cpp
-		// and game_libs/dlls/gameplay/weaponInaccuracyCvars.cpp
+		// in game/game_libs/game_shared/gameplay/inaccuracyCvars.h
 
 		// To begin, we define two points in the [0 1] range: the inaccuracy value
 		// at rest, and the inaccuracy value when the player is running at full speed.
@@ -70,6 +69,20 @@ namespace WeaponAtts
 		// Once the fire impulse has been applied, the value is held at this point for a certain
 		// amount of time before receding. The hold time is specified here, in seconds.
 		float FireImpulseHoldTime = 0.05f;
+
+		// Once the fire impulse hold time has expired, the inaccuracy decays again as per
+		// the decay coefficient. However, in a time window immediately after the fire
+		// impulse hold time, the decay value may be modulated further. This mainly caters
+		// for having the inaccuracy decay slowly immedately after the weapon has been
+		// fired, and then decay more quickly as the firing time moves further into the
+		// past. The variable below specifies the decay window length in seconds.
+		float FireImpulseDecayWindow = 0.0f;
+
+		// This value modulates the decay coefficient within the above window. When then
+		// window begins, the decay coefficient is multiplied by this value: smaller values
+		// make the decay slower, and larger values make it quicker. As time passes within
+		// the window, the modulation value slowly decays, before quickly dropping back to 1.
+		float FireImpulseDecayMod = 1.0f;
 
 		// Finally, the inaccuracy value is used to calculate the weapon's spread when fired.
 		// The two points that define the spread scale are specified below, and use RestValue

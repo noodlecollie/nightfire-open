@@ -128,6 +128,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		accuracy.FireImpulse = 0.2f;
 		accuracy.FireImpulseCeiling = 0.6f;
 		accuracy.FireImpulseHoldTime = 0.1f;
+		accuracy.FireImpulseDecayWindow = 0.0f;
+		accuracy.FireImpulseDecayMod = 1.0f;
 
 		CrosshairParameters& crosshair = priAttack->Crosshair;
 		crosshair.RadiusMin = 0.08f;
