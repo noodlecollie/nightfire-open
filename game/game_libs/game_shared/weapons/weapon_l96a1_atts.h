@@ -122,7 +122,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		accuracy.FireImpulseDecayMod = 1.0f;
 
 		CrosshairParameters& crosshair = priAttack->Crosshair;
-		crosshair.HasCrosshair = false;
+		crosshair.CrosshairRenderStyle = CrosshairStyle::None;
 
 		WAHitscanAttack* scopedAttack = new WAHitscanAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(scopedAttack));

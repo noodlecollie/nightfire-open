@@ -240,8 +240,14 @@ set(SOURCES_CLIENT
 	sound/ClientSoundInstance.h
 	sound/ClientSoundInstance.cpp
 	ui/core/uiVec2.h
+	ui/crosshair/BaseCrosshairRenderer.h
+	ui/crosshair/BaseCrosshairRenderer.cpp
 	ui/crosshair/crosshairParameters.h
 	ui/crosshair/crosshairParameters.cpp
+	ui/crosshair/CrosshairRendererFactory.h
+	ui/crosshair/CrosshairRendererFactory.cpp
+	ui/crosshair/QuadLineCrosshairRenderer.h
+	ui/crosshair/QuadLineCrosshairRenderer.cpp
 	ui/crosshair/spreadVisualiser.h
 	ui/crosshair/spreadVisualiser.cpp
 	ui/drawable/BaseUIDrawable.h

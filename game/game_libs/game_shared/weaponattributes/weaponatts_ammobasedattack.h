@@ -7,6 +7,12 @@
 
 namespace WeaponAtts
 {
+	enum class CrosshairStyle
+	{
+		None = 0,
+		QuadLine
+	};
+
 	struct AccuracyParameters
 	{
 		// Weapon inaccuracy calculations take a number of parameters. The inaccuracy
@@ -113,7 +119,8 @@ namespace WeaponAtts
 
 	struct CrosshairParameters
 	{
-		bool HasCrosshair = true;
+		// The type of crosshair to use.
+		CrosshairStyle CrosshairRenderStyle = CrosshairStyle::QuadLine;
 
 		// To modify these settings while debugging/testing, see the list of convars
 		// in game_libs/cl_dll/gameplay/crosshairCvars.cpp

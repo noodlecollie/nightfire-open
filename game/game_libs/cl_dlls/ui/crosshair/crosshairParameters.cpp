@@ -62,14 +62,14 @@ void CCrosshairParameters::SetBarLength(float length)
 	m_BarLength = Max(length, 0.001f);
 }
 
-bool CCrosshairParameters::ShowCrosshair() const
+WeaponAtts::CrosshairStyle CCrosshairParameters::CrosshairStyle() const
 {
-	return m_ShowCrosshair;
+	return m_CrosshairStyle;
 }
 
-void CCrosshairParameters::SetShowCrosshair(bool show)
+void CCrosshairParameters::SetCrosshairStyle(WeaponAtts::CrosshairStyle style)
 {
-	m_ShowCrosshair = show;
+	m_CrosshairStyle = style;
 }
 
 WeaponId_e CCrosshairParameters::WeaponID() const
