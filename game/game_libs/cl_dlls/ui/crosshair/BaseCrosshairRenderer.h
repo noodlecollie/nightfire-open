@@ -10,6 +10,7 @@ class CBaseCrosshairRenderer
 public:
 	WeaponAtts::CrosshairStyle RenderStyle() const;
 
+	virtual void Initialise(const CCrosshairParameters& params) = 0;
 	virtual void Update(const CCrosshairParameters& params) = 0;
 	virtual void Draw() = 0;
 

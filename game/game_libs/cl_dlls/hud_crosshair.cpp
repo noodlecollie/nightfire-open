@@ -35,6 +35,11 @@ int CHudCrosshair::VidInit()
 
 	m_Params.SetScreenDimensions(UIVec2(screenInfo.iWidth, screenInfo.iHeight));
 
+	if ( m_CrosshairRenderer )
+	{
+		m_CrosshairRenderer->Initialise(m_Params);
+	}
+
 	return 1;
 }
 
@@ -61,6 +66,11 @@ int CHudCrosshair::Draw(float)
 			if ( !m_CrosshairRenderer || m_CrosshairRenderer->RenderStyle() != m_Params.CrosshairStyle() )
 			{
 				m_CrosshairRenderer = GetCrosshairRenderer(m_Params.CrosshairStyle());
+
+				if ( m_CrosshairRenderer )
+				{
+					m_CrosshairRenderer->Initialise(m_Params);
+				}
 			}
 		}
 		else

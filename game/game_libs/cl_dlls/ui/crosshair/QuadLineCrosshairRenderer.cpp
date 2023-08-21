@@ -24,11 +24,6 @@ static inline constexpr uint8_t PointOffset(CrosshairBar bar)
 CQuadLineCrosshairRenderer::CQuadLineCrosshairRenderer() :
 	CBaseCrosshairRenderer(WeaponAtts::CrosshairStyle::QuadLine)
 {
-	Initialise();
-}
-
-void CQuadLineCrosshairRenderer::Initialise()
-{
 	m_Geometry->ClearGeometry();
 
 	m_Geometry->SetColour(CCrosshairParameters::DEFAULT_COLOUR);
@@ -67,6 +62,56 @@ void CQuadLineCrosshairRenderer::Initialise()
 		Vector(2.0f, -BAR_HALF_WIDTH, 0));
 }
 
+void CQuadLineCrosshairRenderer::Initialise(const CCrosshairParameters& params)
+{
+	const UIVec2 screenCentre = params.HalfScreenDimensions();
+
+	// Centre the relevant co-ordinates based on the screen dimensions.
+	for ( uint8_t bar = 0; bar < 4; ++bar )
+	{
+		const uint8_t base = PointOffset(static_cast<CrosshairBar>(bar));
+
+		switch ( bar )
+		{
+			case TopBar:
+			{
+				m_Geometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
+				break;
+			}
+
+			case BottomBar:
+			{
+				m_Geometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
+				break;
+			}
+
+			case LeftBar:
+			{
+				m_Geometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
+				break;
+			}
+
+			case RightBar:
+			{
+				m_Geometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
+				break;
+			}
+		}
+	}
+}
+
 void CQuadLineCrosshairRenderer::Update(const CCrosshairParameters& params)
 {
 	if ( m_Geometry->GetPointCount() != 4 * 4 )
@@ -79,6 +124,7 @@ void CQuadLineCrosshairRenderer::Update(const CCrosshairParameters& params)
 	const float barLength = params.BarLength();
 	const int outerDisp = params.DisplacementFromScreenCentre(params.Radius() + barLength);
 
+	// Move the relevant co-ordinates based on the displacement.
 	for ( uint8_t bar = 0; bar < 4; ++bar )
 	{
 		const uint8_t base = PointOffset(static_cast<CrosshairBar>(bar));

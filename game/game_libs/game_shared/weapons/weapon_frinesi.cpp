@@ -1,3 +1,4 @@
+#include <cmath>
 #include "weapon_frinesi.h"
 #include "weaponinfo.h"
 #include "skill.h"
@@ -235,7 +236,7 @@ Vector2D CWeaponFrinesi::GetShotSpread(uint32_t shotNumber, uint32_t totalShots,
 	// each shot will live somewhere within the segment. We then apply
 	// variance to where that shot actually lands within the segment.
 
-	const float segmentAngle = static_cast<float>(M_PI_2) / static_cast<float>(totalShots);
+	const float segmentAngle = (static_cast<float>(M_PI) * 2.0f) / static_cast<float>(totalShots);
 	float shotAngle = static_cast<float>(shotNumber) * segmentAngle;
 
 	// First of all, work out how much to vary the angle.
