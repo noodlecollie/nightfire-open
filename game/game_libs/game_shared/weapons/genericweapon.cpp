@@ -900,6 +900,7 @@ void CGenericWeapon::GetSharedCircularGaussianSpread(uint32_t shotIndex, int sha
 	// We make 4 calls to UTIL_SharedRandomFloat. For each shot that is fired, we want to generate 4
 	// pseudo-random numbers from a consistent seed, so we increment the seed in a way that will
 	// allow each call to UTIL_SharedRandomFloat return a different value.
+	// TODO: Why do we have 4 calls here and not 2?
 	static constexpr uint32_t NUM_COMPONENTS = 4;
 
 	x = UTIL_SharedRandomFloat(shared_rand + (shotIndex * NUM_COMPONENTS) + 0, -0.5, 0.5) +

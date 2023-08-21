@@ -15,10 +15,12 @@ public:
 	virtual void WeaponIdle() override;
 
 protected:
-	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode) override;
-	virtual bool InvokeWithAttackMode(
+	void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode) override;
+	bool InvokeWithAttackMode(
 		const CGenericWeapon::WeaponAttackType type,
 		const WeaponAtts::WABaseAttack* attackMode) override;
+
+	virtual Vector2D GetShotSpread(uint32_t shotNumber, uint32_t totalShots, const Vector2D baseSpread) const;
 
 private:
 	Vector FireBulletsPlayer(

@@ -25,10 +25,12 @@ public:
 #endif
 
 protected:
-	virtual int HandleSpecialReload(int currentState) override;
-	virtual bool InvokeWithAttackMode(
+	int HandleSpecialReload(int currentState) override;
+	bool InvokeWithAttackMode(
 		const CGenericWeapon::WeaponAttackType type,
 		const WeaponAtts::WABaseAttack* attackMode) override;
+
+	Vector2D GetShotSpread(uint32_t shotNumber, uint32_t totalShots, const Vector2D baseSpread) const override;
 
 private:
 	void PlayPumpSound();
