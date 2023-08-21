@@ -16,8 +16,8 @@ static constexpr float YOFFSET_FRAC = 0.7f;
 static constexpr size_t PADDING = 40;
 static constexpr float SCALE_HEIGHT = 50.0f;
 static constexpr float HALF_DYNAMIC_BAR_HEIGHT = (1.0f/3.0f) * SCALE_HEIGHT;
-static constexpr float ACCURACY_BAR_HEIGHT = 0.5f * SCALE_HEIGHT;
-static constexpr float HALF_ACCURACY_BAR_DEV = 5.0f;
+static constexpr float ACCURACY_MARKER_HEIGHT = 0.75f * SCALE_HEIGHT;
+static constexpr float HALF_ACCURACY_MARKER_DEV = 10.0f;
 static constexpr float LABEL_Y_OFFSET = 48.0f;
 
 // Returns if the params were overridden.
@@ -133,26 +133,17 @@ void CSpreadVisualiser::UpdateInaccuracyBar(const CCrosshairParameters& params)
 	{
 		m_InaccuracyBar = CustomGeometry::GeometryItemPtr_t(new CustomGeometry::CGeometryItem());
 		m_InaccuracyBar->SetColour(0xFF0000FF);
-		m_InaccuracyBar->SetDrawType(CustomGeometry::DrawType::Lines);
+		m_InaccuracyBar->SetDrawType(CustomGeometry::DrawType::Triangles);
 	}
 
 	m_InaccuracyBar->ClearGeometry();
 
 	const float inaccuracyX = ExtraMath::RemapLinear(params.WeaponInaccuracy(), 0, 1, m_ScaleMinX, m_ScaleMaxX);
 
-	// Accuracy bar itself
-	m_InaccuracyBar->AddLine(
-		Vector(inaccuracyX, m_ScaleYOffset - ACCURACY_BAR_HEIGHT, 0),
-		Vector(inaccuracyX, m_ScaleYOffset, 0));
-
-	// Top whiskers
-	m_InaccuracyBar->AddLine(
-		Vector(inaccuracyX - HALF_ACCURACY_BAR_DEV, m_ScaleYOffset - ACCURACY_BAR_HEIGHT - HALF_ACCURACY_BAR_DEV, 0),
-		Vector(inaccuracyX, m_ScaleYOffset - ACCURACY_BAR_HEIGHT, 0));
-
-	m_InaccuracyBar->AddLine(
-		Vector(inaccuracyX + HALF_ACCURACY_BAR_DEV, m_ScaleYOffset - ACCURACY_BAR_HEIGHT - HALF_ACCURACY_BAR_DEV, 0),
-		Vector(inaccuracyX, m_ScaleYOffset - ACCURACY_BAR_HEIGHT, 0));
+	m_InaccuracyBar->AddTriangle(
+		Vector(inaccuracyX, m_ScaleYOffset, 0),
+		Vector(inaccuracyX - HALF_ACCURACY_MARKER_DEV, m_ScaleYOffset - ACCURACY_MARKER_HEIGHT, 0),
+		Vector(inaccuracyX + HALF_ACCURACY_MARKER_DEV, m_ScaleYOffset - ACCURACY_MARKER_HEIGHT, 0));
 }
 
 void CSpreadVisualiser::DrawScaleLabels()

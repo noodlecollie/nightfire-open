@@ -29,7 +29,7 @@ enum RaptorAttackMode_e
 };
 
 // Rounds per second:
-static constexpr float RAPTOR_FIRE_RATE = 1.0f / 0.4f;
+static constexpr float RAPTOR_FIRE_RATE = 4.0f;
 
 static constexpr CAmmoDef Ammo_Raptor = {
 	"ammo_raptor",  // ClassName
@@ -86,19 +86,19 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestValue = 0.2f;
-		accuracy.RestSpread = Vector2D(0.01f, 0.01f);
-		accuracy.RunValue = 0.4f;
-		accuracy.RunSpread = Vector2D(0.035f, 0.035f);
-		accuracy.CrouchShift = -0.08f;
-		accuracy.AirShift = 0.2f;
-		accuracy.FallShift = 0.1f;
+		accuracy.RestSpread = Vector2D(0.005f, 0.005f);
+		accuracy.RunValue = 0.3f;
+		accuracy.RunSpread = Vector2D(0.025f, 0.025f);
+		accuracy.CrouchShift = -0.03f;
+		accuracy.AirShift = 0.05f;
+		accuracy.FallShift = 0.025f;
 		accuracy.AttackCoefficient = 0.3f;
-		accuracy.DecayCoefficient = 0.3f;
+		accuracy.DecayCoefficient = 0.4f;
 		accuracy.FireImpulse = 0.2f;
-		accuracy.FireImpulseCeiling = 0.5f;
-		accuracy.FireImpulseHoldTime = 0.3f;
-		accuracy.FireImpulseDecayWindow = 1.0f;
-		accuracy.FireImpulseDecayMod = 0.1f;
+		accuracy.FireImpulseCeiling = 0.3f;
+		accuracy.FireImpulseHoldTime = 0.1f;
+		accuracy.FireImpulseDecayWindow = 0.5f;
+		accuracy.FireImpulseDecayMod = 0.05f;
 
 		CrosshairParameters& crosshair = priAttack->Crosshair;
 		crosshair.BarScaleMin = 0.02f;
