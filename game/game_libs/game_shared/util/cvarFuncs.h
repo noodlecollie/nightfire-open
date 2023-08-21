@@ -1,11 +1,12 @@
 #pragma once
 
 #include "cvardef.h"
+#include "vector_classes.h"
 
 #ifdef CLIENT_DLL
 #include "cl_dll.h"
 #else
-#include "enginecallback.h"
+#include "standard_includes.h"
 #endif
 
 static inline cvar_t* GetCvarByName(const char* name)
@@ -16,3 +17,6 @@ static inline cvar_t* GetCvarByName(const char* name)
 	return g_engfuncs.pfnCVarGetPointer(name);
 #endif
 }
+
+Vector2D CvarStringToVector2D(const char* str, bool* ok = nullptr);
+void Vector2DToCvarString(const Vector2D& vec, char* buffer, size_t length);

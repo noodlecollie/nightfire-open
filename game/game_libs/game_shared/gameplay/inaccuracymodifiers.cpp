@@ -28,7 +28,7 @@ namespace InaccuracyModifiers
 	bool CvarInitWasRun = false;
 	bool CvarsLoaded = false;
 
-	void InitCvars()
+	static void InitCvars()
 	{
 		if ( CvarInitWasRun )
 		{
@@ -63,6 +63,37 @@ namespace InaccuracyModifiers
 		CvarInitWasRun = true;
 	}
 
+	static Vector2D ParseCvarAsVector2D(const cvar_t& cvar)
+	{
+		bool ok = false;
+		Vector2D vec = CvarStringToVector2D(cvar.string, &ok);
+
+		if ( ok )
+		{
+			return vec;
+		}
+
+		return Vector2D(cvar.value, cvar.value);
+	}
+
+	static void PopulateVector2DCvar(cvar_t& cvar, const Vector2D& vec)
+	{
+		if ( vec.x == vec.y )
+		{
+			cvar.value = vec.x;
+			return;
+		}
+
+		char buffer[32];
+		Vector2DToCvarString(vec, buffer, sizeof(buffer));
+
+#ifdef CLIENT_DLL
+		gEngfuncs.Cvar_Set(cvar.name, buffer);
+#else
+		g_engfuncs.pfnCvar_DirectSet(&cvar, buffer);
+#endif
+	}
+
 	Vector2D GetInterpolatedSpread(const WeaponAtts::AccuracyParameters& params, float inaccuracy)
 	{
 		// The inaccuracy starts out in the overall range [0 1]. The rest and run values also live within this range.
@@ -95,9 +126,9 @@ namespace InaccuracyModifiers
 		}
 
 		params.RestValue = CvarDebugRestValue->value;
-		params.RestSpread = Vector2D(CvarDebugRestSpread->value, CvarDebugRestSpread->value);
+		params.RestSpread = ParseCvarAsVector2D(*CvarDebugRestSpread);
 		params.RunValue = CvarDebugRunValue->value;
-		params.RunSpread = Vector2D(CvarDebugRunSpread->value, CvarDebugRunSpread->value);
+		params.RunSpread = ParseCvarAsVector2D(*CvarDebugRunSpread);
 		params.CrouchShift = CvarDebugCrouchShift->value;
 		params.AirShift = CvarDebugAirShift->value;
 		params.FallShift = CvarDebugFallShift->value;
@@ -122,9 +153,9 @@ namespace InaccuracyModifiers
 		}
 
 		CvarDebugRestValue->value = params.RestValue;
-		CvarDebugRestSpread->value = params.RestSpread.x;
+		PopulateVector2DCvar(*CvarDebugRestSpread, params.RestSpread);
 		CvarDebugRunValue->value = params.RunValue;
-		CvarDebugRunSpread->value = params.RunSpread.x;
+		PopulateVector2DCvar(*CvarDebugRunSpread, params.RunSpread);
 		CvarDebugCrouchShift->value = params.CrouchShift;
 		CvarDebugAirShift->value = params.AirShift;
 		CvarDebugFallShift->value = params.FallShift;

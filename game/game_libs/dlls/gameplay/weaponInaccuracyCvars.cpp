@@ -9,6 +9,7 @@
 #include "weapons/genericweapon.h"
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 #include "gameplay/gameplaySystems.h"
+#include "util/cvarFuncs.h"
 
 namespace WeaponInaccuracyCvars
 {
@@ -39,7 +40,7 @@ namespace WeaponInaccuracyCvars
 
 	static inline void AddValue(CUtlString& str, const cvar_t& cvar)
 	{
-		str.AppendFormat("  %s = %f\n", cvar.name, cvar.value);
+		str.AppendFormat("  %s = %s\n", cvar.name, cvar.string);
 	}
 
 	static void DumpValues(void)
@@ -76,12 +77,26 @@ namespace WeaponInaccuracyCvars
 		ALERT(at_console, "%s", output.Get());
 	}
 
+	static void PopulateVector2DCvar(const char* name, const Vector2D& vec)
+	{
+		if ( vec.x == vec.y )
+		{
+			g_engfuncs.pfnCVarSetFloat(name, vec.x);
+			return;
+		}
+
+		char buffer[32];
+		Vector2DToCvarString(vec, buffer, sizeof(buffer));
+
+		g_engfuncs.pfnCVarSetString(name, buffer);
+	}
+
 	static void PopulateCvars(const WeaponAtts::AccuracyParameters& params)
 	{
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_restvalue.name, params.RestValue);
-		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_restspread.name, params.RestSpread.x);
+		PopulateVector2DCvar(sv_weapon_debug_inac_restspread.name, params.RestSpread);
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_runvalue.name, params.RunValue);
-		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_runspread.name, params.RunSpread.x);
+		PopulateVector2DCvar(sv_weapon_debug_inac_runspread.name, params.RunSpread);
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_crouchshift.name, params.CrouchShift);
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_airshift.name, params.AirShift);
 		g_engfuncs.pfnCVarSetFloat(sv_weapon_debug_inac_fallshift.name, params.FallShift);

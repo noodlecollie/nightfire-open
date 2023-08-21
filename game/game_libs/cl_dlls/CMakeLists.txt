@@ -56,6 +56,7 @@ set(SOURCES_GAME_SHARED
 	../game_shared/sound/SoundInstance.h
 	../game_shared/sound/SoundInstance.cpp
 	../game_shared/util/cvarFuncs.h
+	../game_shared/util/cvarFuncs.cpp
 	../game_shared/util/debugLogger.h
 	../game_shared/util/debugLogger.cpp
 	../game_shared/util/extramath.h
