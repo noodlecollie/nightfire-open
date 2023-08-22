@@ -13,6 +13,12 @@ namespace WeaponAtts
 		QuadLine
 	};
 
+	enum class SpreadPattern
+	{
+		Gaussian = 0,
+		SegmentedCircle
+	};
+
 	struct AccuracyParameters
 	{
 		// Weapon inaccuracy calculations take a number of parameters. The inaccuracy
@@ -102,6 +108,9 @@ namespace WeaponAtts
 		// Weapon spread when the inaccuracy is equal to RunValue.
 		Vector2D RunSpread;
 
+		// The method to apply the computed inaccuracy spread.
+		SpreadPattern FireSpreadPattern = SpreadPattern::Gaussian;
+
 		inline void Validate() const
 		{
 			ASSERTSZ_Q(RestValue >= 0.0f && RestValue <= 1.0f, "Rest value must be in range [0 1].");
@@ -114,6 +123,8 @@ namespace WeaponAtts
 				"Decay coefficient must be in range [0 1].");
 			ASSERTSZ_Q(RestSpread.x >= 0.0f && RestSpread.y >= 0.0f, "Rest spread cannot be negative.");
 			ASSERTSZ_Q(RunSpread.x >= 0.0f && RunSpread.y >= 0.0f, "Run spread cannot be negative.");
+			ASSERTSZ_Q(FireImpulseHoldTime >= 0.0f, "Fire impulse hold time cannot be negative.");
+			ASSERTSZ_Q(FireImpulseDecayWindow >= 0.0f, "Fire impulse decay window cannot be negative.");
 		}
 	};
 

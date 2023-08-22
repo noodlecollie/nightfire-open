@@ -224,39 +224,6 @@ const WeaponAtts::WACollection& CWeaponFrinesi::WeaponAttributes() const
 	return WeaponAtts::StaticWeaponAttributes<CWeaponFrinesi>();
 }
 
-Vector2D CWeaponFrinesi::GetShotSpread(uint32_t shotNumber, uint32_t totalShots, const Vector2D baseSpread) const
-{
-	if ( !m_pPlayer )
-	{
-		return Vector2D();
-	}
-
-	// For the Frinesi, we split the circle of potential spread into
-	// equal segments based on the number of shots we have, so that
-	// each shot will live somewhere within the segment. We then apply
-	// variance to where that shot actually lands within the segment.
-
-	const float segmentAngle = (static_cast<float>(M_PI) * 2.0f) / static_cast<float>(totalShots);
-	float shotAngle = static_cast<float>(shotNumber) * segmentAngle;
-
-	// First of all, work out how much to vary the angle.
-	float angleVariance = UTIL_SharedRandomFloat(
-		m_pPlayer->random_seed + (shotNumber * 2) + 0,
-		-(segmentAngle / 2.0f),
-		segmentAngle / 2.0f);
-
-	// Then, work out how much to vary the actual spread from 100% accuracy.
-	// The spread is divided by 2 here, since the base spread actually represents
-	// the total number of radians either side of 100% accuracy, and we're only
-	// dealing with deviation in one direction here.
-	float spreadDist = UTIL_SharedRandomFloat(
-		m_pPlayer->random_seed + (shotNumber * 2) + 1,
-		0,
-		baseSpread.Length() / 2.0f);
-
-	return Vector2D(spreadDist * cosf(shotAngle + angleVariance), spreadDist * sinf(shotAngle + angleVariance));
-}
-
 #ifndef CLIENT_DLL
 TYPEDESCRIPTION CWeaponFrinesi::m_SaveData[] = {
 	DEFINE_FIELD(CWeaponFrinesi, m_flNextPumpSoundTime, FIELD_FLOAT),

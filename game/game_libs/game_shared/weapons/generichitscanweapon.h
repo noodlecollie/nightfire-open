@@ -20,8 +20,6 @@ protected:
 		const CGenericWeapon::WeaponAttackType type,
 		const WeaponAtts::WABaseAttack* attackMode) override;
 
-	virtual Vector2D GetShotSpread(uint32_t shotNumber, uint32_t totalShots, const Vector2D baseSpread) const;
-
 private:
 	Vector FireBulletsPlayer(
 		const WeaponAtts::WAHitscanAttack& hitscanAttack,

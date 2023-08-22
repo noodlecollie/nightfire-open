@@ -24,6 +24,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/gameplay/inaccuracymodifiers.cpp
 	../game_shared/gameplay/radialdamage.h
 	../game_shared/gameplay/radialdamage.cpp
+	../game_shared/gameplay/spreadPatterns.h
+	../game_shared/gameplay/spreadPatterns.cpp
 	../game_shared/gameplay/weaponInaccuracyCalculator.h
 	../game_shared/gameplay/weaponInaccuracyCalculator.cpp
 	../game_shared/resources/BaseResourceCollection.h

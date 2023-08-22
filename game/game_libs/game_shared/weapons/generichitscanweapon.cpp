@@ -4,6 +4,7 @@
 #include "skill.h"
 #include "eventConstructor/eventConstructor.h"
 #include "gameplay/inaccuracymodifiers.h"
+#include "gameplay/spreadPatterns.h"
 
 #ifndef CLIENT_DLL
 #include "weaponregistry.h"
@@ -134,7 +135,7 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer(
 	TraceResult tr;
 	Vector vecRight = gpGlobals->v_right;
 	Vector vecUp = gpGlobals->v_up;
-	Vector2D spreadVariance;
+	Vector2D modifiedSpread;
 
 	WeaponAtts::AccuracyParameters accuracyParams(hitscanAttack.Accuracy);
 
@@ -150,19 +151,26 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer(
 	ClearMultiDamage();
 	gMultiDamage.type = DMG_BULLET | DMG_NEVERGIB;
 
-	const uint32_t numShots = hitscanAttack.BulletsPerShot;
-	for ( uint32_t shot = 0; shot < numShots; shot++ )
+	SpreadPatternArgs spreadArgs {};
+
+	spreadArgs.pattern = accuracyParams.FireSpreadPattern;
+	spreadArgs.baseSpread = baseSpread;
+	spreadArgs.randomSeed = m_pPlayer->random_seed;
+	spreadArgs.totalShots = hitscanAttack.BulletsPerShot;
+
+	for ( spreadArgs.shotNumber = 0; spreadArgs.shotNumber < spreadArgs.totalShots; ++spreadArgs.shotNumber )
 	{
 		float damagePerShot = 0.0f;
 		const WeaponAtts::WASkillRecord::SkillDataEntryPtr dmgPtr = hitscanAttack.BaseDamagePerShot;
+
 		if ( dmgPtr )
 		{
 			damagePerShot = gSkillData.*dmgPtr;
 		}
 
-		spreadVariance = GetShotSpread(shot, numShots, baseSpread);
+		modifiedSpread = CalculateSpread(spreadArgs);
 
-		Vector vecDir = vecDirShooting + (spreadVariance.x * vecRight) + (spreadVariance.y * vecUp);
+		Vector vecDir = vecDirShooting + (modifiedSpread.x * vecRight) + (modifiedSpread.y * vecUp);
 		Vector vecEnd = vecSrc + (vecDir * DEFAULT_BULLET_TRACE_DISTANCE);
 		UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(pev), &tr);
 
@@ -185,28 +193,8 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer(
 	Debug_FinaliseHitscanEvent();
 	ApplyMultiDamage(pev, pevAttacker);
 
-	return Vector(spreadVariance.x, spreadVariance.y, 0.0);
+	return Vector(modifiedSpread.x, modifiedSpread.y, 0.0);
 #endif
-}
-
-Vector2D CGenericHitscanWeapon::GetShotSpread(uint32_t shotNumber, uint32_t, const Vector2D baseSpread) const
-{
-	if ( !m_pPlayer )
-	{
-		return Vector2D();
-	}
-
-	Vector2D variance;
-
-	// Spread is defined as the total number of radians either side of a perfectly
-	// accurate shot, so the spread deviation in each direction on an axis is half
-	// of the total spread value. The spread variance therefore should be in the
-	// range [-0.5 0.5], so that the shot will deviate either half the spread value
-	// in one direction, or half the value in the other direction.
-	// By default, we just use Gaussian spread.
-	GetSharedCircularGaussianSpread(shotNumber, m_pPlayer->random_seed, variance.x, variance.y);
-
-	return Vector2D(variance.x * baseSpread.x, variance.y * baseSpread.y);
 }
 
 ////////////////////////////////////////////
@@ -267,10 +255,17 @@ Vector CGenericHitscanWeapon::FireBulletsPlayer_Client(const WeaponAtts::WAHitsc
 
 	const Vector2D baseSpread = InaccuracyModifiers::GetInterpolatedSpread(accuracyParams, GetInaccuracy());
 
-	// Just return the last vector we would have generated.
-	const Vector2D spreadVariance =
-		GetShotSpread(hitscanAttack.BulletsPerShot - 1, hitscanAttack.BulletsPerShot, baseSpread);
+	SpreadPatternArgs spreadArgs {};
 
-	return Vector(spreadVariance.x, spreadVariance.y, 0.0);
+	spreadArgs.pattern = accuracyParams.FireSpreadPattern;
+	spreadArgs.baseSpread = baseSpread;
+	spreadArgs.randomSeed = m_pPlayer->random_seed;
+	spreadArgs.totalShots = hitscanAttack.BulletsPerShot;
+	spreadArgs.shotNumber = spreadArgs.totalShots - 1;
+
+	// Just return the last vector we would have generated.
+	const Vector2D spread = CalculateSpread(spreadArgs);
+
+	return Vector(spread.x, spread.y, 0.0);
 }
 #endif
