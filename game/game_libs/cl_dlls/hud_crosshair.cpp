@@ -112,7 +112,7 @@ bool CHudCrosshair::UpdateParameters()
 
 	const WeaponAtts::CrosshairParameters* m_CrosshairParams = &ammoAttack->Crosshair;
 
-	m_Params.SetCrosshairStyle(m_CrosshairParams->CrosshairRenderStyle);
+	m_Params.SetCrosshairStyle(m_CrosshairParams->RenderStyle);
 	m_Params.SetWeaponInaccuracy(gHUD.m_flWeaponInaccuracy);
 	m_Params.SetWeaponAttackMode(weapon->iPriAttackMode);
 

@@ -31,6 +31,9 @@ public:
 	float BarLength() const;
 	void SetBarLength(float length);
 
+	float Thickness() const;
+	void SetThickness(float thickness);
+
 	WeaponAtts::CrosshairStyle CrosshairStyle() const;
 	void SetCrosshairStyle(WeaponAtts::CrosshairStyle style);
 
@@ -75,6 +78,7 @@ private:
 	float m_WeaponInaccuracy = 0.0f;
 	float m_Radius = 0.0f;
 	float m_BarLength = 0.1f;
+	float m_Thickness = 2.0f;
 	WeaponAtts::CrosshairStyle m_CrosshairStyle = WeaponAtts::CrosshairStyle::None;
 	int m_AttackMode = 0;
 	WeaponId_e m_WeaponID = WeaponId_e::WeaponNone;

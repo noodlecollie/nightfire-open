@@ -13,6 +13,9 @@ set(SOURCES_PM_SHARED
 set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/constructors/aabboxConstructor.h
 	../game_shared/customGeometry/constructors/aabboxConstructor.cpp
+	../game_shared/customGeometry/constructors/baseConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.cpp
 	../game_shared/customGeometry/geometryItem.h
 	../game_shared/customGeometry/geometryItem.cpp
 	../game_shared/customGeometry/sharedDefs.h
@@ -244,6 +247,8 @@ set(SOURCES_CLIENT
 	ui/core/uiVec2.h
 	ui/crosshair/BaseCrosshairRenderer.h
 	ui/crosshair/BaseCrosshairRenderer.cpp
+	ui/crosshair/CircleCrosshairRenderer.h
+	ui/crosshair/CircleCrosshairRenderer.cpp
 	ui/crosshair/crosshairParameters.h
 	ui/crosshair/crosshairParameters.cpp
 	ui/crosshair/CrosshairRendererFactory.h

@@ -14,8 +14,6 @@ enum CrosshairBar
 	RightBar
 };
 
-static constexpr float BAR_HALF_WIDTH = 1;
-
 static inline constexpr uint8_t PointOffset(CrosshairBar bar)
 {
 	return static_cast<uint8_t>(4 * bar);
@@ -35,36 +33,37 @@ CQuadLineCrosshairRenderer::CQuadLineCrosshairRenderer() :
 
 	// Top
 	m_Geometry->AddTriangleQuad(
-		Vector(-BAR_HALF_WIDTH, -1.0f, 0),
-		Vector(BAR_HALF_WIDTH, -1.0f, 0),
-		Vector(BAR_HALF_WIDTH, -2.0f, 0),
-		Vector(-BAR_HALF_WIDTH, -2.0f, 0));
+		Vector(-1, -1.0f, 0),
+		Vector(1, -1.0f, 0),
+		Vector(1, -2.0f, 0),
+		Vector(-1, -2.0f, 0));
 
 	// Bottom
 	m_Geometry->AddTriangleQuad(
-		Vector(BAR_HALF_WIDTH, 1.0f, 0),
-		Vector(-BAR_HALF_WIDTH, 1.0f, 0),
-		Vector(-BAR_HALF_WIDTH, 2.0f, 0),
-		Vector(BAR_HALF_WIDTH, 2.0f, 0));
+		Vector(1, 1.0f, 0),
+		Vector(-1, 1.0f, 0),
+		Vector(-1, 2.0f, 0),
+		Vector(1, 2.0f, 0));
 
 	// Left
 	m_Geometry->AddTriangleQuad(
-		Vector(-1.0f, BAR_HALF_WIDTH, 0),
-		Vector(-1.0f, -BAR_HALF_WIDTH, 0),
-		Vector(-2.0f, -BAR_HALF_WIDTH, 0),
-		Vector(-2.0f, BAR_HALF_WIDTH, 0));
+		Vector(-1.0f, 1, 0),
+		Vector(-1.0f, -1, 0),
+		Vector(-2.0f, -1, 0),
+		Vector(-2.0f, 1, 0));
 
 	// Right
 	m_Geometry->AddTriangleQuad(
-		Vector(1.0f, -BAR_HALF_WIDTH, 0),
-		Vector(1.0f, BAR_HALF_WIDTH, 0),
-		Vector(2.0f, BAR_HALF_WIDTH, 0),
-		Vector(2.0f, -BAR_HALF_WIDTH, 0));
+		Vector(1.0f, -1, 0),
+		Vector(1.0f, 1, 0),
+		Vector(2.0f, 1, 0),
+		Vector(2.0f, -1, 0));
 }
 
 void CQuadLineCrosshairRenderer::Initialise(const CCrosshairParameters& params)
 {
 	const UIVec2 screenCentre = params.HalfScreenDimensions();
+	const float halfThickness = params.Thickness() / 2.0f;
 
 	// Centre the relevant co-ordinates based on the screen dimensions.
 	for ( uint8_t bar = 0; bar < 4; ++bar )
@@ -75,37 +74,37 @@ void CQuadLineCrosshairRenderer::Initialise(const CCrosshairParameters& params)
 		{
 			case TopBar:
 			{
-				m_Geometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x - halfThickness);
+				m_Geometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x + halfThickness);
+				m_Geometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x + halfThickness);
+				m_Geometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x - halfThickness);
 				break;
 			}
 
 			case BottomBar:
 			{
-				m_Geometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x - BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x + halfThickness);
+				m_Geometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x - halfThickness);
+				m_Geometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x - halfThickness);
+				m_Geometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x + halfThickness);
 				break;
 			}
 
 			case LeftBar:
 			{
-				m_Geometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y + halfThickness);
+				m_Geometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y - halfThickness);
+				m_Geometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y - halfThickness);
+				m_Geometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y + halfThickness);
 				break;
 			}
 
 			case RightBar:
 			{
-				m_Geometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y + BAR_HALF_WIDTH);
-				m_Geometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y - BAR_HALF_WIDTH);
+				m_Geometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y - halfThickness);
+				m_Geometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y + halfThickness);
+				m_Geometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y + halfThickness);
+				m_Geometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y - halfThickness);
 				break;
 			}
 		}

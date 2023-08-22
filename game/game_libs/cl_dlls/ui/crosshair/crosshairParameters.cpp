@@ -19,6 +19,7 @@ void CCrosshairParameters::Reset()
 	m_WeaponInaccuracy = 0.0f;
 	m_Radius = 0.0f;
 	m_BarLength = 0.1f;
+	m_Thickness = 2.0f;
 	m_WeaponID = WeaponId_e::WeaponNone;
 }
 
@@ -60,6 +61,16 @@ float CCrosshairParameters::BarLength() const
 void CCrosshairParameters::SetBarLength(float length)
 {
 	m_BarLength = Max(length, 0.001f);
+}
+
+float CCrosshairParameters::Thickness() const
+{
+	return m_Thickness;
+}
+
+void CCrosshairParameters::SetThickness(float thickness)
+{
+	m_Thickness = Max(thickness, 0.001f);
 }
 
 WeaponAtts::CrosshairStyle CCrosshairParameters::CrosshairStyle() const

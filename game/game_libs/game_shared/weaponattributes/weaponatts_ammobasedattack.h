@@ -10,7 +10,8 @@ namespace WeaponAtts
 	enum class CrosshairStyle
 	{
 		None = 0,
-		QuadLine
+		QuadLine,
+		Circle
 	};
 
 	enum class SpreadPattern
@@ -131,7 +132,7 @@ namespace WeaponAtts
 	struct CrosshairParameters
 	{
 		// The type of crosshair to use.
-		CrosshairStyle CrosshairRenderStyle = CrosshairStyle::QuadLine;
+		CrosshairStyle RenderStyle = CrosshairStyle::QuadLine;
 
 		// To modify these settings while debugging/testing, see the list of convars
 		// in game_libs/cl_dll/gameplay/crosshairCvars.cpp
@@ -149,6 +150,9 @@ namespace WeaponAtts
 		// is at rest spread, and maximum scale is when it is at run spread.
 		float BarScaleMin = 0.04f;
 		float BarScaleMax = 0.03f;
+
+		// This is the thickness of the crosshair lines, in pixels.
+		float Thickness = 2.0f;
 	};
 
 	struct WAAmmoBasedAttack : public WABaseAttack
