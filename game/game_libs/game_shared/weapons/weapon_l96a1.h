@@ -14,6 +14,7 @@ public:
 	virtual void SecondaryAttack() override;
 	virtual void Reload() override;
 	virtual void Holster(int skiplocal = 0) override;
+	virtual void WeaponTick() override;
 
 #ifndef CLIENT_DLL
 	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
@@ -21,6 +22,8 @@ public:
 #endif
 
 private:
+	static constexpr float SCOPE_MOVE_SPEED_FACTOR = 0.5f;
+
 	void SetZoomLevel(uint32_t level);
 	void PlayZoomSound();
 
