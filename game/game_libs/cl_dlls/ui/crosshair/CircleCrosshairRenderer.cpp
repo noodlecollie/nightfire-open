@@ -54,10 +54,11 @@ void CCircleCrosshairRenderer::Update(const CCrosshairParameters& params)
 	for ( size_t index = 0; index < pointCount; ++index )
 	{
 		// We encounter an outer point followed by an inner point each time.
-		m_Geometry->GetPoint(2 * index) = screenCentrePoint + (m_CirclePoints.Element(2 * index) * outerDisp);
+		m_Geometry->GetPoint(2 * index) =
+			screenCentrePoint + (m_CirclePoints.Element(static_cast<int>(2 * index)) * outerDisp);
 
 		m_Geometry->GetPoint((2 * index) + 1) =
-			screenCentrePoint + (m_CirclePoints.Element((2 * index) + 1) * innerDisp);
+			screenCentrePoint + (m_CirclePoints.Element(static_cast<int>((2 * index) + 1)) * innerDisp);
 	}
 }
 
