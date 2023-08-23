@@ -92,11 +92,7 @@ GNU General Public License for more details.
 #endif
 
 static int SDLash_GameControllerButtonMapping[] = {
-#if XASH_NSWITCH  // devkitPro/SDL has inverted Nintendo layout for SDL_GameController
-	K_B_BUTTON,       K_A_BUTTON,       K_Y_BUTTON,       K_X_BUTTON,
-#else
 	K_A_BUTTON,       K_B_BUTTON,       K_X_BUTTON,       K_Y_BUTTON,
-#endif
 	K_BACK_BUTTON,    K_MODE_BUTTON,    K_START_BUTTON,   K_LSTICK,         K_RSTICK,     K_L1_BUTTON,
 	K_R1_BUTTON,      K_DPAD_UP,        K_DPAD_DOWN,      K_DPAD_LEFT,      K_DPAD_RIGHT, K_MISC_BUTTON,
 	K_PADDLE1_BUTTON, K_PADDLE2_BUTTON, K_PADDLE3_BUTTON, K_PADDLE4_BUTTON, K_TOUCHPAD,

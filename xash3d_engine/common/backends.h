@@ -41,7 +41,6 @@ GNU General Public License for more details.
 #define MSGBOX_STDERR 0
 #define MSGBOX_SDL 1
 #define MSGBOX_WIN32 2
-#define MSGBOX_NSWITCH 3
 
 // library loading (XASH_LIB)
 #define LIB_NULL 0

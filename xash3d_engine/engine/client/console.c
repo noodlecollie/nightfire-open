@@ -1660,8 +1660,7 @@ void Key_Console(int key)
 		return;
 	}
 
-	// exit the console by pressing MINUS on NSwitch
-	// or both Back(Select)/Start buttons for everyone else
+	// exit the console
 	if ( key == K_BACK_BUTTON || key == K_START_BUTTON )
 	{
 		if ( cls.state == ca_active && !cl.background )

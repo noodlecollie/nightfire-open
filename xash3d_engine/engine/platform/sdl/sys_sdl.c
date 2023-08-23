@@ -69,8 +69,6 @@ void Platform_Init(void)
 	Posix_Daemonize();
 #if XASH_PSVITA
 	PSVita_Init();
-#elif XASH_NSWITCH
-	NSwitch_Init();
 #endif
 #endif  // XASH_POSIX
 
@@ -81,9 +79,7 @@ void Platform_Shutdown(void)
 {
 	SDLash_FreeCursors();
 
-#if XASH_NSWITCH
-	NSwitch_Shutdown();
-#elif XASH_WIN32
+#if XASH_WIN32
 	Wcon_DestroyConsole();
 #elif XASH_PSVITA
 	PSVita_Shutdown();

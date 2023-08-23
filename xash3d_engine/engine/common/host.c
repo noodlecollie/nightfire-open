@@ -1177,7 +1177,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 			Sys_Error("couldn't find xash3d data directory");
 			host.rootdir[0] = 0;
 		}
-#elif (XASH_SDL == 2) && !XASH_NSWITCH  // GetBasePath not impl'd in switch-sdl2
+#elif (XASH_SDL == 2)
 		char* szBasePath = SDL_GetBasePath();
 
 		if ( !szBasePath )

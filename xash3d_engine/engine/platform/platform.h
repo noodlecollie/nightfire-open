@@ -47,11 +47,6 @@ static inline void Platform_UpdateStatusLine(void)
 }
 #endif
 
-#if XASH_NSWITCH
-void NSwitch_Init(void);
-void NSwitch_Shutdown(void);
-#endif
-
 #if XASH_PSVITA
 void PSVita_Init(void);
 void PSVita_Shutdown(void);

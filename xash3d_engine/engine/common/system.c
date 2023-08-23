@@ -35,10 +35,6 @@ GNU General Public License for more details.
 #include <process.h>
 #endif
 
-#if XASH_NSWITCH
-#include <switch.h>
-#endif
-
 #if XASH_PSVITA
 #include <vitasdk.h>
 #endif
@@ -137,7 +133,7 @@ const char* Sys_GetCurrentUser(void)
 	sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, username, sizeof(username) - 1);
 	if ( COM_CheckStringEmpty(username) )
 		return username;
-#elif XASH_POSIX && !XASH_NSWITCH
+#elif XASH_POSIX
 	uid_t uid = geteuid();
 	struct passwd* pw = getpwuid(uid);
 
@@ -586,19 +582,6 @@ it explicitly doesn't use internal allocation or string copy utils
 */
 qboolean Sys_NewInstance(const char* gamedir)
 {
-#if XASH_NSWITCH
-	char newargs[4096];
-	const char* exe = host.argv[0];  // arg 0 is always the full NRO path
-
-	// TODO: carry over the old args (assuming you can even pass any)
-	Q_snprintf(newargs, sizeof(newargs), "%s -game %s", exe, gamedir);
-	// just restart the entire thing
-	printf("envSetNextLoad exe: `%s`\n", exe);
-	printf("envSetNextLoad argv:\n`%s`\n", newargs);
-	Host_Shutdown();
-	envSetNextLoad(exe, newargs);
-	exit(0);
-#else
 	int i = 0;
 	qboolean replacedArg = false;
 	size_t exelen;
@@ -657,7 +640,6 @@ qboolean Sys_NewInstance(const char* gamedir)
 
 	free(newargs);
 	free(exe);
-#endif
 
 	return false;
 }
