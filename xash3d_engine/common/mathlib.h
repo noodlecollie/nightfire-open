@@ -29,9 +29,6 @@ struct mplane_s;
 
 extern vec3_t vec3_origin;
 
-#ifdef XASH_IRIX
-#undef isnan
-#endif
 #ifdef isnan  // check for C99 isnan
 #define IS_NAN isnan
 #else

@@ -17,9 +17,6 @@ GNU General Public License for more details.
 #endif
 #include "platform/platform.h"
 #if XASH_LIB == LIB_POSIX
-#ifdef XASH_IRIX
-#include "platform/irix/dladdr.h"
-#endif
 #include "common.h"
 #include "library.h"
 #include "filesystem.h"

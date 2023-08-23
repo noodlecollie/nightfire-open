@@ -34,8 +34,7 @@ GNU General Public License for more details.
 #define PLATFORM_OPENBSD 5
 #define PLATFORM_HAIKU 6
 #define PLATFORM_SERENITY 7
-#define PLATFORM_IRIX 8
-#define PLATFORM_LINUX_UNKNOWN 9
+#define PLATFORM_LINUX_UNKNOWN 8
 
 #if XASH_WIN32
 #define XASH_PLATFORM PLATFORM_WIN32
@@ -53,8 +52,6 @@ GNU General Public License for more details.
 #define XASH_PLATFORM PLATFORM_HAIKU
 #elif XASH_SERENITY
 #define XASH_PLATFORM PLATFORM_SERENITY
-#elif XASH_IRIX
-#define XASH_PLATFORM PLATFORM_IRIX
 #else
 #error Unsupported platform!
 #endif

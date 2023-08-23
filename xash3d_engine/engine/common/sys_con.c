@@ -20,9 +20,6 @@ GNU General Public License for more details.
 #endif
 #include <string.h>
 #include <errno.h>
-#if XASH_IRIX
-#include <sys/time.h>
-#endif
 
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"

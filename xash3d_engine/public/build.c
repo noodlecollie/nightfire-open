@@ -101,8 +101,6 @@ const char* Q_PlatformStringByID(const int platform)
 			return "haiku";
 		case PLATFORM_SERENITY:
 			return "serenity";
-		case PLATFORM_IRIX:
-			return "irix";
 	}
 
 	assert(0);
