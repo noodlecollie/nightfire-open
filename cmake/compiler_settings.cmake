@@ -16,6 +16,13 @@ function(set_common_library_compiler_settings targetname)
 		# I don't want to make right now. Until that point, we have
 		# to compile with -pedantic disabled. :c
 		target_compile_options(${targetname} PRIVATE
+			# This is very important, as without it the engine gets
+			# confused as to where the filesytem global variables
+			# (FI) actually live. I don't know why. This is a lesson
+			# in not exposing global mutable variables across
+			# library boundaries.
+			-fvisibility=hidden
+
 			-Wall
 			-Wextra
 		)
