@@ -1,5 +1,5 @@
 cd "."
-$cdtexture "../../../../afterburner/textures"
+$cdtexture "../../../../nfopen/textures"
 $modelname "mp_castle_guard.mdl"
 
 $root "Bip01"

@@ -1,4 +1,4 @@
-$cdtexture "../../../../afterburner/textures"
+$cdtexture "../../../../nfopen/textures"
 $cd "."
 $modelname "austria_snow_rocks.mdl"
 

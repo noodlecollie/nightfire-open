@@ -1,4 +1,4 @@
-$cdtexture "../../../../afterburner/textures"
+$cdtexture "../../../../nfopen/textures"
 $cd "."
 $modelname "laser_Reset_switch.mdl"
 

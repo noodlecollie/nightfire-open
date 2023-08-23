@@ -1,4 +1,4 @@
-$cdtexture "../../../../../afterburner/textures"
+$cdtexture "../../../../../nfopen/textures"
 $cd "."
 $modelname "sky_upper_lightning.mdl"
 

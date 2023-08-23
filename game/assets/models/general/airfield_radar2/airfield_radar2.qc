@@ -1,4 +1,4 @@
-$cdtexture "../../../../afterburner/textures"
+$cdtexture "../../../../nfopen/textures"
 $cd "."
 $modelname "airfield_radar2.mdl"
 
@@ -16,4 +16,3 @@ $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
 
 $hbox 0 "default" -37.000000 -43.720000 -76.820000 37.000000 43.720000 76.820000
-

@@ -1,5 +1,5 @@
 $cd .
-$cdtexture "../../../../../afterburner/textures"
+$cdtexture "../../../../../nfopen/textures"
 $modelname "w_ammo_shotgun.mdl"
 
 $root "ammo"

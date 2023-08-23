@@ -1,5 +1,5 @@
 $cd .
-$cdtexture "../../../../../afterburner/textures"
+$cdtexture "../../../../../nfopen/textures"
 $modelname "p_l96a1.mdl"
 
 $root "Bip01"

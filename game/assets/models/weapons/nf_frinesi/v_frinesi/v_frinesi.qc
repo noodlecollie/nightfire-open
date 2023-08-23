@@ -1,5 +1,5 @@
 $cd .
-$cdtexture "../../../../../afterburner/textures"
+$cdtexture "../../../../../nfopen/textures"
 $modelname "v_frinesi.mdl"
 
 $root "Bip01"

@@ -1,4 +1,4 @@
-$cdtexture "../../../../../afterburner/textures"
+$cdtexture "../../../../../nfopen/textures"
 $cd "."
 $modelname "sky_dome_tokyo_night.mdl"
 
