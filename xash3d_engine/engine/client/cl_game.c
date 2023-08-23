@@ -1158,9 +1158,7 @@ void CL_InitEdicts(void)
 
 	if ( !clgame.mempool )
 		return;  // Host_Error without client
-#if XASH_LOW_MEMORY != 2
 	CL_UPDATE_BACKUP = (cl.maxclients <= 1) ? SINGLEPLAYER_BACKUP : MULTIPLAYER_BACKUP;
-#endif
 	cls.num_client_entities = CL_UPDATE_BACKUP * NUM_PACKET_ENTITIES;
 	cls.packet_entities =
 		Mem_Realloc(clgame.mempool, cls.packet_entities, sizeof(entity_state_t) * cls.num_client_entities);

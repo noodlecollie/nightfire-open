@@ -252,7 +252,7 @@ void CMenuPicButton::Draw()
 			DrawButton(r, g, b, 255, rects, state);
 		}
 	}
-	else if ( !uiStatic.lowmemory )
+	else
 	{
 		uint textflags = ETF_NOSIZELIMIT | ETF_FORCECOL;
 
@@ -368,39 +368,6 @@ void CMenuPicButton::Draw()
 				m_scSize,
 				szName,
 				colorBase,
-				m_scChSize,
-				eTextAlignment,
-				textflags);
-		}
-	}
-	else
-	{
-		uint textflags = ETF_NOSIZELIMIT | ETF_FORCECOL;
-
-		SetBits(textflags, (iFlags & QMF_DROPSHADOW) ? ETF_SHADOW : 0);
-
-		if ( iFlags & QMF_GRAYED )
-		{
-			UI_DrawString(font, m_scPos, m_scSize, szName, uiColorDkGrey, m_scChSize, eTextAlignment, textflags);
-		}
-		else if ( this != m_pParent->ItemAtCursor() )
-		{
-			UI_DrawString(font, m_scPos, m_scSize, szName, colorBase, m_scChSize, eTextAlignment, textflags);
-		}
-		else if ( eFocusAnimation == QM_HIGHLIGHTIFFOCUS )
-		{
-			UI_DrawString(font, m_scPos, m_scSize, szName, colorFocus, m_scChSize, eTextAlignment, textflags);
-		}
-		else if ( eFocusAnimation == QM_PULSEIFFOCUS )
-		{
-			float pulsar = 0.5f + 0.5f * sinf((float)uiStatic.realTime / UI_PULSE_DIVISOR);
-
-			UI_DrawString(
-				font,
-				m_scPos,
-				m_scSize,
-				szName,
-				InterpColor(colorBase, colorFocus, pulsar),
 				m_scChSize,
 				eTextAlignment,
 				textflags);

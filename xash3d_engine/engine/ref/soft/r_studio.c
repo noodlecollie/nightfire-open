@@ -40,11 +40,6 @@ typedef struct sortedmesh_s
 	int flags;  // face flags
 } sortedmesh_t;
 
-#if XASH_LOW_MEMORY
-#undef MAXSTUDIOVERTS
-#define MAXSTUDIOVERTS 1024
-#endif
-
 typedef struct
 {
 	double time;

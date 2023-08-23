@@ -47,9 +47,6 @@ void UI_LoadBmpButtons()
 {
 	memset(uiStatic.buttonsPics, 0, sizeof(uiStatic.buttonsPics));
 
-	if ( uiStatic.lowmemory )
-		return;
-
 	CBMP* bmp = CBMP::LoadFile(ART_BUTTONS_MAIN);
 
 	if ( bmp == nullptr )

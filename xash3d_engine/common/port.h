@@ -69,10 +69,6 @@ typedef struct tagPOINT
 #define HAVE_DUP
 #endif  // WIN32
 
-#ifndef XASH_LOW_MEMORY
-#define XASH_LOW_MEMORY 0
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>

@@ -67,13 +67,6 @@ extern poolhandle_t r_temppool;
 #define MAX_TEXTURES 8192  // a1ba: increased by users request
 #define MAX_DECAL_SURFS 4096
 
-#if XASH_LOW_MEMORY
-#undef MAX_TEXTURES
-#undef MAX_DECAL_SURFS
-#define MAX_TEXTURES 1024
-#define MAX_DECAL_SURFS 256
-#endif
-
 #define MAX_DETAIL_TEXTURES 256
 #define MAX_LIGHTMAPS 256
 #define SUBDIVIDE_SIZE 64
@@ -1109,11 +1102,7 @@ extern int r_currentbkey;
 extern qboolean insubmodel;
 
 extern vec3_t r_entorigin;
-#if XASH_LOW_MEMORY
-extern unsigned short r_leafkeys[MAX_MAP_LEAFS];
-#else
 extern int r_leafkeys[MAX_MAP_LEAFS];
-#endif
 #define LEAF_KEY(pleaf) r_leafkeys[(pleaf - WORLDMODEL->leafs)]
 
 extern mvertex_t* r_pcurrentvertbase;

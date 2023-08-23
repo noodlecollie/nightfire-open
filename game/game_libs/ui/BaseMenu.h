@@ -35,11 +35,7 @@ GNU General Public License for more details.
 
 #define UI_OUTLINE_WIDTH uiStatic.outlineWidth  // outline thickness
 
-#if XASH_LOW_MEMORY
-#define UI_MAXGAMES 32
-#else
 #define UI_MAXGAMES 1024  // slots for savegame/demos
-#endif
 #define UI_MAX_BGMAPS 32
 
 #define MAX_HINT_TEXT 512
@@ -143,8 +139,6 @@ struct uiStatic_t
 	bool nextFrameActive;
 	bool renderPicbuttonText;
 
-	int lowmemory;
-
 	char sounds[SND_COUNT][40];
 
 	// Annoyingly, memset() is not safe because this struct contains
@@ -201,8 +195,6 @@ struct uiStatic_t
 		needMapListUpdate = false;
 		nextFrameActive= false;
 		renderPicbuttonText = false;
-
-		lowmemory = 0;
 
 		memset(sounds, 0, sizeof(sounds));
 	}

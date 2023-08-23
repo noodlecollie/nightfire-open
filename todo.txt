@@ -1,5 +1,6 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
+* Write a readme and create a tracker board
 * Remove low memory and custom swap as we'll likely never need them
 * Run engine tests as part of CI
 * For each target, separate files into a public header directory and a private src directory

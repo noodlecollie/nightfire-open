@@ -1287,13 +1287,6 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		Q_buildos(),
 		Q_buildarch(),
 		Q_buildcommit());
-	Cvar_Getf(
-		"host_lowmemorymode",
-		FCVAR_READ_ONLY,
-		"indicates if engine compiled for low RAM consumption (0 - normal, 1 - low engine limits, 2 - low protocol "
-		"limits)",
-		"%i",
-		XASH_LOW_MEMORY);
 
 	Mod_Init();
 	NET_Init();

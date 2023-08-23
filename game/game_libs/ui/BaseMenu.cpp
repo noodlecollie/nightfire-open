@@ -1029,9 +1029,6 @@ static void UI_LoadSounds(void)
 {
 	memset(uiStatic.sounds, 0, sizeof(uiStatic.sounds));
 
-	if ( uiStatic.lowmemory )
-		return;
-
 	for ( int i = 0; i < SND_COUNT; i++ )
 	{
 		if ( !uiSounds[i] || *uiSounds[i] == '\0' )
@@ -1200,7 +1197,6 @@ void UI_Init(void)
 	g_FontMgr = new CFontManager();
 
 	uiStatic.initialized = true;
-	uiStatic.lowmemory = (int)EngFuncs::GetCvarFloat("host_lowmemorymode");
 
 	// setup game info
 	EngFuncs::GetGameInfo(&gMenu.m_gameinfo);

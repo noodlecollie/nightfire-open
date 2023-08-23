@@ -25,8 +25,7 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "PlatformLib/Time.h"
 
-// do not waste precious CPU cycles on mobiles or low memory devices
-#if !XASH_WIN32 && !XASH_LOW_MEMORY
+#if !XASH_WIN32
 #define XASH_COLORIZE_CONSOLE true
 // use with caution, running engine in Qt Creator may cause a freeze in read() call
 // I was never encountered this bug anywhere else, so still enable by default
