@@ -1,13 +1,6 @@
 function(set_common_library_compiler_settings targetname)
 	if(HOST_COMPILER STREQUAL "MSVC")
-		target_compile_options(${targetname} PRIVATE
-			/W4
-			/WX
-		)
-
-		target_link_options(${targetname} PRIVATE
-			/WX
-		)
+		target_compile_options(${targetname} PRIVATE /W4)
 	else()
 		# Unfortunately, we can't apply -pedantic here without some
 		# significant changes to the codebase. When pedantic (ISO C)
@@ -23,15 +16,12 @@ function(set_common_library_compiler_settings targetname)
 		# I don't want to make right now. Until that point, we have
 		# to compile with -pedantic disabled. :c
 		target_compile_options(${targetname} PRIVATE
-			-fvisibility=hidden
 			-Wall
 			-Wextra
-			-Werror
 		)
 
 		target_link_options(${targetname} PRIVATE
 			-Wl,--no-undefined
-			-Wl,--fatal-warnings
 		)
 	endif()
 endfunction()

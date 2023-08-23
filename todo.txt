@@ -1,8 +1,5 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
-* Remove unsupported platforms (eg. Android)
-* Run clang-tidy to insert closing braces where required
-* Add a CMake option to disable treating warnings as errors, as a safety hatch.
 * Change game content folder from afterburner to nf-open
 * Run engine tests as part of CI
 * For each target, separate files into a public header directory and a private src directory

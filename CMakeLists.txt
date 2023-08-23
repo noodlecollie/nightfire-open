@@ -23,6 +23,7 @@ option(NF_ENABLE_CUSTOM_SWAP "Enables custom memory swap code for specialist dev
 option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled for dedicated server builds)" OFF)
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client" ON)
 option(NF_INSTALL_CONTENT_ONLY "If enabled, only installs game content to install directory, and does not build game. Only used by release process." OFF)
+option(NF_WARNINGS_AS_ERRORS "If disabled, compiler warnings will not be treated as errors. Intended as a temporary workaround only, recommended to leave enabled." ON)
 
 include(project_definitions)
 
@@ -50,6 +51,9 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED YES)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE YES)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ${NF_WARNINGS_AS_ERRORS})
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 set(VCS_COMMIT_ID "notset")
 
