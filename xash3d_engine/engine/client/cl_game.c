@@ -2053,7 +2053,10 @@ void GAME_EXPORT pfnDrawConsoleStringLen(const char* pText, int* length, int* he
 		*height = font->charHeight;
 	}
 
-	CL_DrawStringLen(font, pText, length, NULL, FONT_DRAW_UTF8 | FONT_DRAW_HUD);
+	if ( length )
+	{
+		CL_DrawStringLen(font, pText, length, NULL, FONT_DRAW_UTF8 | FONT_DRAW_HUD);
+	}
 }
 
 /*

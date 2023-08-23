@@ -6,6 +6,7 @@
 #include "util/cvarFuncs.h"
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 #include "gameplay/inaccuracymodifiers.h"
+#include "gameplay/inaccuracyCvars.h"
 
 bool CWeaponInaccuracyCalculator::m_CvarsLoaded = false;
 cvar_t* CWeaponInaccuracyCalculator::m_CvarMaxSpeed = nullptr;
@@ -182,7 +183,8 @@ void CWeaponInaccuracyCalculator::CalculateSmoothedInaccuracy(const WeaponAtts::
 	}
 	else if ( !LastFireTimeIsInHoldRegion(params->FireImpulseHoldTime) )
 	{
-		smoothed += params->DecayCoefficient * difference;
+		const float decayModulation = DecayModulatorAfterFireImpulse(*params);
+		smoothed += params->DecayCoefficient * decayModulation * difference;
 	}
 
 	m_SmoothedInaccuracy = ExtraMath::Clamp(0.0f, smoothed, 1.0f);
@@ -195,8 +197,44 @@ bool CWeaponInaccuracyCalculator::LastFireTimeIsInHoldRegion(float holdTime) con
 		return false;
 	}
 
+	return TimeSinceLastFire() <= holdTime;
+}
+
+float CWeaponInaccuracyCalculator::DecayModulatorAfterFireImpulse(const WeaponAtts::AccuracyParameters& params) const
+{
+	if ( params.FireImpulseDecayWindow <= 0.0f )
+	{
+		// No decay window, so don't modulate.
+		return 1.0f;
+	}
+
+	const float durationIntoWindow = TimeSinceLastFire() - params.FireImpulseHoldTime;
+
+	if ( durationIntoWindow > params.FireImpulseDecayWindow )
+	{
+		// Decay window has passed.
+		return 1.0f;
+	}
+
+	// Remap how far we are into the window between max mod and 1.
+	const float mod = ExtraMath::RemapParametric(durationIntoWindow,
+		0,
+		params.FireImpulseDecayWindow,
+		params.FireImpulseDecayMod,
+		1.0f,
+		[](float input)
+		{
+			// x^6 creates a nice lingering falloff
+			return input * input * input * input * input * input;
+		});
+
+	return mod;
+}
+
+float CWeaponInaccuracyCalculator::TimeSinceLastFire() const
+{
 	const float baseTime = m_LastFireTimeIsDecremented ? 0.0f : gpGlobals->time;
-	return (baseTime - m_LastFireTime) <= holdTime;
+	return baseTime - m_LastFireTime;
 }
 
 const WeaponAtts::AccuracyParameters* CWeaponInaccuracyCalculator::GetInternalParameters() const
@@ -219,8 +257,8 @@ void CWeaponInaccuracyCalculator::InitCvars()
 		return;
 	}
 
-	m_CvarMaxSpeed = GetCvarByName("sv_weapon_inaccuracy_maxspeed");
-	m_CvarMaxFallSpeed = GetCvarByName("sv_weapon_inaccuracy_maxfallspeed");
+	m_CvarMaxSpeed = GetCvarByName(CVARNAME_WEAPON_INACCURACY_MAXSPEED);
+	m_CvarMaxFallSpeed = GetCvarByName(CVARNAME_WEAPON_INACCURACY_MAXFALLSPEED);
 
 	m_CvarsLoaded = m_CvarMaxSpeed && m_CvarMaxFallSpeed;
 

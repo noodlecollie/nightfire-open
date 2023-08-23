@@ -4380,7 +4380,7 @@ int CBasePlayer::GetCustomDecalFrames(void)
 // DropPlayerItem - drop the named item, or if no name,
 // the active item.
 //=========================================================
-void CBasePlayer::DropPlayerItem(char* pszItemName)
+void CBasePlayer::DropPlayerItem(const char* pszItemName)
 {
 	if ( !g_pGameRules->IsMultiplayer() || (weaponstay.value > 0) )
 	{
@@ -4388,7 +4388,7 @@ void CBasePlayer::DropPlayerItem(char* pszItemName)
 		return;
 	}
 
-	if ( !strlen(pszItemName) )
+	if ( !pszItemName || !(*pszItemName) )
 	{
 		// if this string has no length, the client didn't type a name!
 		// assume player wants to drop the active item.

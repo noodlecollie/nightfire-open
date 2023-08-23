@@ -14,7 +14,7 @@ size_t PlatformLib_LSeek(int fileHandle, size_t offset, int from)
 
 int PlatformLib_Open(const char* filePath, int flags)
 {
-	return open(filePath, flags);
+	return open(filePath, flags, 0666);
 }
 
 FILE* PlatformLib_FOpen(const char* filename, const char* mode)

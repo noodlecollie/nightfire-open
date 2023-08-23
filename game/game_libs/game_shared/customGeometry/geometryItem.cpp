@@ -133,6 +133,27 @@ namespace CustomGeometry
 		return true;
 	}
 
+	bool CGeometryItem::AddTriangle(const Vector& p0, const Vector& p1, const Vector& p2)
+	{
+		if ( static_cast<size_t>(m_Points.Count()) + 3 > MAX_POINTS_PER_MSG ||
+			 static_cast<size_t>(m_Indices.Count()) + 3 > MAX_INDICES_PER_MSG )
+		{
+			return false;
+		}
+
+		size_t baseIndex = CurrentBaseIndex();
+
+		m_Points.AddToTail(p0);
+		m_Points.AddToTail(p1);
+		m_Points.AddToTail(p2);
+
+		m_Indices.AddToTail(baseIndex + 0);
+		m_Indices.AddToTail(baseIndex + 1);
+		m_Indices.AddToTail(baseIndex + 2);
+
+		return true;
+	}
+
 	bool CGeometryItem::AddIndex(size_t index)
 	{
 		if ( static_cast<size_t>(m_Indices.Count()) + 1 > MAX_INDICES_PER_MSG )

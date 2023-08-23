@@ -1,20 +1,18 @@
 #pragma once
 
-#include "standard_includes.h"
-#include "customGeometry/geometryItem.h"
+#include "customGeometry/constructors/baseConstructor.h"
 
 namespace CustomGeometry
 {
-	class CAABBoxConstructor
+	class CAABBoxConstructor : public CBaseConstructor
 	{
 	public:
-		bool IsValid() const;
+		bool IsValid() const override;
+		GeometryItemPtr_t Construct() const override;
 
 		Vector Min() const;
 		Vector Max() const;
 		void SetBounds(const Vector& min, const Vector& max);
-
-		GeometryItemPtr_t Construct() const;
 
 	private:
 		// On which axes (if any) is the bounding box degenerate?

@@ -91,19 +91,33 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->ViewPunchY = -2.0f;
 		priAttack->ShellModelName = "models/shell.mdl";
 
+		// Weapon play style: accurate, reliable sidearm which doesn't do
+		// a ton of damage.
+		// - Spread is generally very low, affected little by speed and jumping.
+		// - Each shot applies a small penalty, so shooting lots in quick
+		//   successsion decreases accuracy.
+
 		AccuracyParameters& accuracy = priAttack->Accuracy;
-		accuracy.RestValue = 0.1f;
-		accuracy.RestSpread = Vector2D(0.01f, 0.01f);
-		accuracy.RunValue = 0.5f;
+		accuracy.RestValue = 0.12f;
+		accuracy.RestSpread = Vector2D(0.007f, 0.007f);
+		accuracy.RunValue = 0.4f;
 		accuracy.RunSpread = Vector2D(0.03f, 0.03f);
 		accuracy.CrouchShift = -0.08f;
-		accuracy.AirShift = 0.2f;
-		accuracy.FallShift = 0.1f;
+		accuracy.AirShift = 0.06f;
+		accuracy.FallShift = 0.06f;
 		accuracy.AttackCoefficient = 0.3f;
 		accuracy.DecayCoefficient = 0.3f;
-		accuracy.FireImpulse = 0.3f;
-		accuracy.FireImpulseCeiling = 0.5f;
-		accuracy.FireImpulseHoldTime = 0.05f;
+		accuracy.FireImpulse = 0.02f;
+		accuracy.FireImpulseCeiling = 0.2f;
+		accuracy.FireImpulseHoldTime = 0.2f;
+		accuracy.FireImpulseDecayWindow = 0.0f;
+		accuracy.FireImpulseDecayMod = 1.0f;
+
+		CrosshairParameters& crosshair = priAttack->Crosshair;
+		crosshair.BarScaleMin = 0.02f;
+		crosshair.BarScaleMax = 0.02f;
+		crosshair.RadiusMin = 0.01f;
+		crosshair.RadiusMax = 0.02f;
 
 		priAttack->ViewModelAnimList_Attack << P99_SHOOT;
 		priAttack->ViewModelAnimList_AttackEmpty << P99_SHOOT_EMPTY;
@@ -114,12 +128,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->AttackSounds.MinPitch = 98;
 		priAttack->AttackSounds.MaxPitch = 104;
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_p99/p99_fire1.wav";
-
-		CrosshairParameters& crosshair = priAttack->Crosshair;
-		crosshair.BarScaleMin = 0.03f;
-		crosshair.BarScaleMax = 0.03f;
-		crosshair.RadiusMin = 0.015f;
-		crosshair.RadiusMax = 0.04f;
 
 		// Silenced
 		WAHitscanAttack* secAttack = new WAHitscanAttack();

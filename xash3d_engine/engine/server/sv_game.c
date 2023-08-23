@@ -4076,7 +4076,7 @@ pfnFadeClientVolume(const edict_t* pEdict, int fadePercent, int fadeOutSeconds, 
 =============
 pfnSetClientMaxspeed
 
-fakeclients can be changed speed to
+fakeclients' speed can be changed too
 =============
 */
 void GAME_EXPORT pfnSetClientMaxspeed(const edict_t* pEdict, float fNewMaxspeed)

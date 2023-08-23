@@ -1,3 +1,4 @@
+#include <cmath>
 #include "weapon_frinesi.h"
 #include "weaponinfo.h"
 #include "skill.h"
@@ -50,9 +51,7 @@ void CWeaponFrinesi::Precache()
 	PRECACHE_SOUND(FRINESI_COCK_SOUND);
 }
 
-bool CWeaponFrinesi::InvokeWithAttackMode(
-	const CGenericWeapon::WeaponAttackType type,
-	const WeaponAtts::WABaseAttack*)
+bool CWeaponFrinesi::InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType type, const WeaponAtts::WABaseAttack*)
 {
 	if ( FlagReloadInterrupt() )
 	{

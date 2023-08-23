@@ -62,6 +62,14 @@ void CWeaponL96A1::Holster(int)
 	SetZoomLevel(0);
 }
 
+void CWeaponL96A1::WeaponTick()
+{
+	if ( m_iZoomLevel > 0 )
+	{
+		m_pPlayer->pev->maxspeed *= SCOPE_MOVE_SPEED_FACTOR;
+	}
+}
+
 void CWeaponL96A1::SetZoomLevel(uint32_t level)
 {
 	if ( level >= L96A1_ZOOM_LEVEL_COUNT )

@@ -260,9 +260,9 @@ void CL_TextMessageParse(byte* pMemFile, int fileSize)
 					int length = (int)strlen(currentName);
 
 					// save name on name heap
-					if ( lastNamePos + length > 32768 )
+					if ( (size_t)(lastNamePos + length + 1) > sizeof(nameHeap) )
 					{
-						Con_Reportf("TextMessage: error while parsing!\n");
+						Con_Reportf("TextMessage: error while parsing! Exceeded internal heap\n");
 						return;
 					}
 

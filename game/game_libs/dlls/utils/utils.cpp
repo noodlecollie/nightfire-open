@@ -889,6 +889,23 @@ void ClientPrint(
 	MESSAGE_END();
 }
 
+void ClientPrintMsg(entvars_t* client, int msg_dest, const char* msg, ...)
+{
+	if ( !client )
+	{
+		return;
+	}
+
+	char buffer[192];
+	va_list argptr;
+
+	va_start(argptr, msg);
+	PlatformLib_VSNPrintF(buffer, sizeof(buffer), msg, argptr);
+	va_end(argptr);
+
+	ClientPrint(client, msg_dest, buffer);
+}
+
 void UTIL_SayText(const char* pText, CBaseEntity* pEntity)
 {
 	if ( !pEntity->IsNetClient() )

@@ -95,6 +95,11 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);
 		accuracy.RunSpread = Vector2D(0.1f, 0.1f);
 
+		CrosshairParameters& crosshair = priAttack->Crosshair;
+		crosshair.RenderStyle = CrosshairStyle::Circle;
+		crosshair.RadiusMin = 0.07f;
+		crosshair.RadiusMax = 0.07f;
+
 		priAttack->ViewModelAnimList_Attack << GRENADELAUNCHER_FIRE;
 
 		priAttack->AttackSounds.MinVolume = 0.9f;
@@ -102,12 +107,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->AttackSounds.MinPitch = 96;
 		priAttack->AttackSounds.MaxPitch = 100;
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_grenadelauncher/grenade_launcher_fire.wav";
-
-		CrosshairParameters& crosshair = priAttack->Crosshair;
-		crosshair.BarScaleMin = 0.07f;
-		crosshair.BarScaleMax = 0.07f;
-		crosshair.RadiusMin = 0.14f;
-		crosshair.RadiusMax = 0.14f;
 
 		// Explode after delay
 		WAProjectileAttack* secAttack = new WAProjectileAttack();

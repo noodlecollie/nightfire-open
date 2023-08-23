@@ -305,20 +305,30 @@ void CL_DrawStringLen(cl_font_t* font, const char* s, int* width, int* height, i
 {
 	int draw_len = 0;
 
-	if ( !font || !font->valid )
-		return;
-
 	if ( height )
-		*height = font->charHeight;
+	{
+		*height = (font && font->valid) ? font->charHeight : 0;
+	}
 
 	if ( width )
+	{
 		*width = 0;
+	}
+
+	if ( !font || !font->valid )
+	{
+		return;
+	}
 
 	if ( !COM_CheckString(s) )
+	{
 		return;
+	}
 
 	if ( FBitSet(flags, FONT_DRAW_UTF8) )
+	{
 		Con_UtfProcessChar(0);  // reset utf state
+	}
 
 	while ( *s )
 	{
@@ -333,8 +343,11 @@ void CL_DrawStringLen(cl_font_t* font, const char* s, int* width, int* height, i
 			if ( !FBitSet(flags, FONT_DRAW_NOLF) )
 			{
 				if ( height )
+				{
 					*height += font->charHeight;
+				}
 			}
+
 			continue;
 		}
 		else if ( *s == '\t' )
@@ -351,16 +364,22 @@ void CL_DrawStringLen(cl_font_t* font, const char* s, int* width, int* height, i
 		}
 
 		if ( FBitSet(flags, FONT_DRAW_UTF8) )
+		{
 			number = Con_UtfProcessChar((byte)*s);
+		}
 		else
+		{
 			number = (byte)*s;
+		}
 
 		if ( number )
 		{
 			draw_len += font->charWidths[number];
 
 			if ( draw_len > *width )
+			{
 				*width = draw_len;
+			}
 		}
 
 		s++;

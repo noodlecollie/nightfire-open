@@ -13,16 +13,22 @@ set(SOURCES_PM_SHARED
 set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/constructors/aabboxConstructor.h
 	../game_shared/customGeometry/constructors/aabboxConstructor.cpp
+	../game_shared/customGeometry/constructors/baseConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.cpp
 	../game_shared/customGeometry/geometryItem.h
 	../game_shared/customGeometry/geometryItem.cpp
 	../game_shared/customGeometry/sharedDefs.h
 	../game_shared/customGeometry/sharedDefs.cpp
 	../game_shared/eventConstructor/eventConstructor.h
 	../game_shared/eventConstructor/eventConstructor.cpp
+	../game_shared/gameplay/inaccuracyCvars.h
 	../game_shared/gameplay/inaccuracymodifiers.h
 	../game_shared/gameplay/inaccuracymodifiers.cpp
 	../game_shared/gameplay/radialdamage.h
 	../game_shared/gameplay/radialdamage.cpp
+	../game_shared/gameplay/spreadPatterns.h
+	../game_shared/gameplay/spreadPatterns.cpp
 	../game_shared/gameplay/weaponInaccuracyCalculator.h
 	../game_shared/gameplay/weaponInaccuracyCalculator.cpp
 	../game_shared/resources/BaseResourceCollection.h
@@ -55,6 +61,7 @@ set(SOURCES_GAME_SHARED
 	../game_shared/sound/SoundInstance.h
 	../game_shared/sound/SoundInstance.cpp
 	../game_shared/util/cvarFuncs.h
+	../game_shared/util/cvarFuncs.cpp
 	../game_shared/util/debugLogger.h
 	../game_shared/util/debugLogger.cpp
 	../game_shared/util/extramath.h
@@ -238,9 +245,16 @@ set(SOURCES_CLIENT
 	sound/ClientSoundInstance.h
 	sound/ClientSoundInstance.cpp
 	ui/core/uiVec2.h
-	ui/crosshair/crosshairBase.h
+	ui/crosshair/BaseCrosshairRenderer.h
+	ui/crosshair/BaseCrosshairRenderer.cpp
+	ui/crosshair/CircleCrosshairRenderer.h
+	ui/crosshair/CircleCrosshairRenderer.cpp
 	ui/crosshair/crosshairParameters.h
 	ui/crosshair/crosshairParameters.cpp
+	ui/crosshair/CrosshairRendererFactory.h
+	ui/crosshair/CrosshairRendererFactory.cpp
+	ui/crosshair/QuadLineCrosshairRenderer.h
+	ui/crosshair/QuadLineCrosshairRenderer.cpp
 	ui/crosshair/spreadVisualiser.h
 	ui/crosshair/spreadVisualiser.cpp
 	ui/drawable/BaseUIDrawable.h
