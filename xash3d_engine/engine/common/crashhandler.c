@@ -358,7 +358,7 @@ void Sys_RestoreCrashHandler(void)
 		SetUnhandledExceptionFilter(oldFilter);
 }
 
-#elif XASH_FREEBSD || XASH_NETBSD || XASH_OPENBSD || XASH_LINUX
+#elif XASH_LINUX
 // Posix signal handler
 #include <ucontext.h>
 #include <signal.h>
@@ -426,48 +426,16 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 
 	(void)writeResult;
 
-#if XASH_OPENBSD
-	struct sigcontext* ucontext = (struct sigcontext*)context;
-#else
 	ucontext_t* ucontext = (ucontext_t*)context;
-#endif
 
 #if XASH_AMD64
-#if XASH_FREEBSD
-	pc = (void*)ucontext->uc_mcontext.mc_rip;
-	bp = (void**)ucontext->uc_mcontext.mc_rbp;
-	sp = (void**)ucontext->uc_mcontext.mc_rsp;
-#elif XASH_NETBSD
-	pc = (void*)ucontext->uc_mcontext.__gregs[REG_RIP];
-	bp = (void**)ucontext->uc_mcontext.__gregs[REG_RBP];
-	sp = (void**)ucontext->uc_mcontext.__gregs[REG_RSP];
-#elif XASH_OPENBSD
-	pc = (void*)ucontext->sc_rip;
-	bp = (void**)ucontext->sc_rbp;
-	sp = (void**)ucontext->sc_rsp;
-#else
 	pc = (void*)ucontext->uc_mcontext.gregs[REG_RIP];
 	bp = (void**)ucontext->uc_mcontext.gregs[REG_RBP];
 	sp = (void**)ucontext->uc_mcontext.gregs[REG_RSP];
-#endif
 #elif XASH_X86
-#if XASH_FREEBSD
-	pc = (void*)ucontext->uc_mcontext.mc_eip;
-	bp = (void**)ucontext->uc_mcontext.mc_ebp;
-	sp = (void**)ucontext->uc_mcontext.mc_esp;
-#elif XASH_NETBSD
-	pc = (void*)ucontext->uc_mcontext.__gregs[REG_EIP];
-	bp = (void**)ucontext->uc_mcontext.__gregs[REG_EBP];
-	sp = (void**)ucontext->uc_mcontext.__gregs[REG_ESP];
-#elif XASH_OPENBSD
-	pc = (void*)ucontext->sc_eip;
-	bp = (void**)ucontext->sc_ebp;
-	sp = (void**)ucontext->sc_esp;
-#else
 	pc = (void*)ucontext->uc_mcontext.gregs[REG_EIP];
 	bp = (void**)ucontext->uc_mcontext.gregs[REG_EBP];
 	sp = (void**)ucontext->uc_mcontext.gregs[REG_ESP];
-#endif
 #elif XASH_ARM && XASH_64BIT
 	pc = (void*)ucontext->uc_mcontext.pc;
 	bp = (void*)ucontext->uc_mcontext.regs[29];
@@ -488,7 +456,6 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 		Q_buildos(),
 		Q_buildarch());
 
-#if !XASH_FREEBSD && !XASH_NETBSD && !XASH_OPENBSD
 	len += Q_snprintf(
 		message + len,
 		sizeof(message) - len,
@@ -498,16 +465,6 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 		si->si_code,
 		si->si_addr,
 		si->si_ptr);
-#else
-	len += Q_snprintf(
-		message + len,
-		sizeof(message) - len,
-		"Crash: signal %d errno %d with code %d at %p\n",
-		signal,
-		si->si_errno,
-		si->si_code,
-		si->si_addr);
-#endif
 
 	writeResult = write(STDERR_FILENO, message, len);
 

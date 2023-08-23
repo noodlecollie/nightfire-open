@@ -59,20 +59,15 @@ Then you can use another oneliner to query all variables:
 #undef XASH_ARMv8
 #undef XASH_BIG_ENDIAN
 #undef XASH_E2K
-#undef XASH_FREEBSD
-#undef XASH_HAIKU
 #undef XASH_LINUX
 #undef XASH_LINUX_UNKNOWN
 #undef XASH_LITTLE_ENDIAN
 #undef XASH_MIPS
-#undef XASH_NETBSD
-#undef XASH_OPENBSD
 #undef XASH_POSIX
 #undef XASH_RISCV
 #undef XASH_RISCV_DOUBLEFP
 #undef XASH_RISCV_SINGLEFP
 #undef XASH_RISCV_SOFTFP
-#undef XASH_SERENITY
 #undef XASH_WIN32
 #undef XASH_X86
 
@@ -93,16 +88,6 @@ Then you can use another oneliner to query all variables:
 #define XASH_LINUX_UNKNOWN 1
 #endif
 #define XASH_LINUX 1
-#elif defined __FreeBSD__
-#define XASH_FREEBSD 1
-#elif defined __NetBSD__
-#define XASH_NETBSD 1
-#elif defined __OpenBSD__
-#define XASH_OPENBSD 1
-#elif defined __HAIKU__
-#define XASH_HAIKU 1
-#elif defined __serenity__
-#define XASH_SERENITY 1
 #else
 #error Unsupported platform!
 #endif

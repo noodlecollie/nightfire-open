@@ -91,16 +91,6 @@ const char* Q_PlatformStringByID(const int platform)
 			return "linuxunkabi";
 		case PLATFORM_LINUX:
 			return "linux";
-		case PLATFORM_FREEBSD:
-			return "freebsd";
-		case PLATFORM_NETBSD:
-			return "netbsd";
-		case PLATFORM_OPENBSD:
-			return "openbsd";
-		case PLATFORM_HAIKU:
-			return "haiku";
-		case PLATFORM_SERENITY:
-			return "serenity";
 	}
 
 	assert(0);

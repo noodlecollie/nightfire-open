@@ -29,12 +29,7 @@ GNU General Public License for more details.
 //================================================================
 #define PLATFORM_WIN32 1
 #define PLATFORM_LINUX 2
-#define PLATFORM_FREEBSD 3
-#define PLATFORM_NETBSD 4
-#define PLATFORM_OPENBSD 5
-#define PLATFORM_HAIKU 6
-#define PLATFORM_SERENITY 7
-#define PLATFORM_LINUX_UNKNOWN 8
+#define PLATFORM_LINUX_UNKNOWN 3
 
 #if XASH_WIN32
 #define XASH_PLATFORM PLATFORM_WIN32
@@ -42,16 +37,6 @@ GNU General Public License for more details.
 #define XASH_PLATFORM PLATFORM_LINUX_UNKNOWN
 #elif XASH_LINUX
 #define XASH_PLATFORM PLATFORM_LINUX
-#elif XASH_FREEBSD
-#define XASH_PLATFORM PLATFORM_FREEBSD
-#elif XASH_NETBSD
-#define XASH_PLATFORM PLATFORM_NETBSD
-#elif XASH_OPENBSD
-#define XASH_PLATFORM PLATFORM_OPENBSD
-#elif XASH_HAIKU
-#define XASH_PLATFORM PLATFORM_HAIKU
-#elif XASH_SERENITY
-#define XASH_PLATFORM PLATFORM_SERENITY
 #else
 #error Unsupported platform!
 #endif
