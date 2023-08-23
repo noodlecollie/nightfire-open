@@ -1,6 +1,6 @@
 /*
 model_dump.h - For dumping data about models to the console.
-Copyright (C) 2017 X6Herbius
+Copyright (C) 2017 NoodleCollie
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

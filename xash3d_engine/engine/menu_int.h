@@ -24,7 +24,7 @@ GNU General Public License for more details.
 // Xash3D 1.0 interface
 #define NEW_ENGINE_INTERFACE
 
-// Convenience define for modifications that are specific to Afterburner,
+// Convenience define for modifications that are specific to Nightfire Open,
 // to avoid ripping code out of the repo completely.
 #define MENU_AFTERBURNER
 
