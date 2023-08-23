@@ -67,16 +67,6 @@ SETUP BACKENDS DEFINITIONS
 #endif  // XASH_SOUND
 
 #define XASH_USE_EVDEV 1
-#elif XASH_DOS4GW
-#ifndef XASH_VIDEO
-#define XASH_VIDEO VIDEO_DOS
-#endif
-#ifndef XASH_TIMER
-#define XASH_TIMER TIMER_DOS
-#endif
-
-// usually only 10-20 fds availiable
-#define XASH_REDUCE_FD
 #endif
 
 #endif  // XASH_DEDICATED

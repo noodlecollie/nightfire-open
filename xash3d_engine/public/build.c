@@ -99,8 +99,6 @@ const char* Q_PlatformStringByID(const int platform)
 			return "openbsd";
 		case PLATFORM_EMSCRIPTEN:
 			return "emscripten";
-		case PLATFORM_DOS4GW:
-			return "DOS4GW";
 		case PLATFORM_HAIKU:
 			return "haiku";
 		case PLATFORM_SERENITY:

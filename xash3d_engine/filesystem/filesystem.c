@@ -24,9 +24,6 @@ GNU General Public License for more details.
 #if XASH_WIN32
 #include <direct.h>
 #include <io.h>
-#elif XASH_DOS4GW
-#include <direct.h>
-#include <errno.h>
 #else
 #include <dirent.h>
 #include <errno.h>
@@ -189,21 +186,6 @@ void stringlistsort(stringlist_t* list)
 	}
 }
 
-#if XASH_DOS4GW
-// convert names to lowercase because dos doesn't care, but pattern matching code often does
-static void listlowercase(stringlist_t* list)
-{
-	char* c;
-	int i;
-
-	for ( i = 0; i < list->numstrings; i++ )
-	{
-		for ( c = list->strings[i]; *c; c++ )
-			*c = Q_tolower(*c);
-	}
-}
-#endif
-
 void listdirectory(stringlist_t* list, const char* path)
 {
 #if XASH_WIN32
@@ -237,11 +219,6 @@ void listdirectory(stringlist_t* list, const char* path)
 	while ( (entry = readdir(dir)) )
 		stringlistappend(list, entry->d_name);
 	closedir(dir);
-#endif
-
-#if XASH_DOS4GW
-	// convert names to lowercase because 8.3 always in CAPS
-	listlowercase(list);
 #endif
 }
 

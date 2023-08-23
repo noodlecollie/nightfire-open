@@ -68,7 +68,6 @@ GNU General Public License for more details.
 #define WSAENAMETOOLONG ENAMETOOLONG
 #define WSAEHOSTDOWN EHOSTDOWN
 
-#ifndef XASH_DOS4GW
 #define HAVE_GETADDRINFO
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -83,8 +82,9 @@ static int ioctl_stub(int d, unsigned long r, ...)
 #elif !XASH_PSVITA  // XASH_EMSCRIPTEN
 #define ioctlsocket ioctl
 #endif  // XASH_EMSCRIPTEN
+
 #define closesocket close
-#endif
+
 #define SOCKET int
 typedef int WSAsize_t;
 

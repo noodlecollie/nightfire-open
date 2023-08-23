@@ -110,113 +110,117 @@ void Sys_PrintUsage(void)
 										O("-minidumps       ", "enable writing minidumps when game crashed")
 #endif  // XASH_WIN32
 
-#if XASH_DOS
-											O("-novesa          ", "disable vesa")
-#endif  // XASH_DOS
-
 #if XASH_VIDEO == VIDEO_FBDEV
-												O("-fbdev <path>    ", "open selected framebuffer")
-													O("-ttygfx          ", "set graphics mode in tty") O(
-														"-doublebuffer    ",
-														"enable doublebuffering")
+											O("-fbdev <path>    ", "open selected framebuffer")
+												O("-ttygfx          ", "set graphics mode in tty") O(
+													"-doublebuffer    ",
+													"enable doublebuffering")
 #endif  // XASH_VIDEO == VIDEO_FBDEV
 
 #if XASH_SOUND == SOUND_ALSA
-														O("-alsadev <dev>   ", "open selected ALSA device")
+													O("-alsadev <dev>   ", "open selected ALSA device")
 #endif  // XASH_SOUND == SOUND_ALSA
 
-															O("-nojoy           ", "disable joystick support")
+														O("-nojoy           ", "disable joystick support")
 
 #ifdef XASH_SDL
-																O("-sdl_joy_old_api ", "use SDL legacy joystick API") O(
-																	"-sdl_renderer <n>",
-																	"use alternative SDL_Renderer for software")
+															O("-sdl_joy_old_api ", "use SDL legacy joystick API") O(
+																"-sdl_renderer <n>",
+																"use alternative SDL_Renderer for software")
 #endif  // XASH_SDL
-																	O("-nosound         ", "disable sound") O(
-																		"-noenginemouse   ",
-																		"disable mouse completely")
+																O("-nosound         ", "disable sound") O(
+																	"-noenginemouse   ",
+																	"disable mouse completely")
 
-																		O("-ref <name>      ",
-																		  "use selected renderer dll")
-																			O("-gldebug         ",
-																			  "enable OpenGL debug log")
+																	O("-ref <name>      ", "use selected renderer dll")
+																		O("-gldebug         ",
+																		  "enable OpenGL debug log")
 #endif  // XASH_DEDICATED
 
-																				O("-noip            ", "disable TCP/IP") O(
-																					"-noch            ",
-																					"disable crashhandler")
-																					O("-disablehelp     ",
-																					  "disable this message")
-																						O("-dll <path>      ",
-																						  "override server DLL "
-																						  "path")
+																			O("-noip            ", "disable TCP/IP") O(
+																				"-noch            ",
+																				"disable crashhandler")
+																				O("-disablehelp     ",
+																				  "disable this message")
+																					O("-dll <path>      ",
+																					  "override server DLL "
+																					  "path")
 #if !XASH_DEDICATED
-																							O("-clientlib "
-																							  "<path>",
-																							  "override client "
-																							  "DLL path")
+																						O("-clientlib "
+																						  "<path>",
+																						  "override client "
+																						  "DLL path")
 #endif
-																								O("-rodir "
-																								  "<path>    ",
-																								  "set "
-																								  "read-only "
-																								  "base "
-																								  "directory, "
-																								  "experimenta"
-																								  "l")
-																									O("-bugcomp"
-																									  "        "
+																							O("-rodir "
+																							  "<path>    ",
+																							  "set "
+																							  "read-only "
+																							  "base "
+																							  "directory, "
+																							  "experimenta"
+																							  "l")
+																								O("-bugcomp"
+																								  "        "
+																								  " ",
+																								  "enable "
+																								  "precise "
+																								  "bug "
+																								  "compatib"
+																								  "ility. "
+																								  "Will "
+																								  "break "
+																								  "games "
+																								  "that "
+																								  "don't "
+																								  "require "
+																								  "it")
+																									O("    "
+																									  "    "
+																									  "    "
+																									  "    "
 																									  " ",
-																									  "enable "
-																									  "precise "
-																									  "bug "
-																									  "compatib"
-																									  "ility. "
-																									  "Will "
-																									  "break "
-																									  "games "
-																									  "that "
-																									  "don't "
-																									  "require "
-																									  "it")
-																										O("    "
-																										  "    "
-																										  "    "
-																										  "    "
-																										  " ",
-																										  "Refe"
-																										  "r "
-																										  "to "
-																										  "engi"
-																										  "ne "
-																										  "docu"
-																										  "ment"
-																										  "atio"
-																										  "n "
-																										  "for "
-																										  "more"
-																										  " inf"
-																										  "o")
+																									  "Refe"
+																									  "r "
+																									  "to "
+																									  "engi"
+																									  "ne "
+																									  "docu"
+																									  "ment"
+																									  "atio"
+																									  "n "
+																									  "for "
+																									  "more"
+																									  " inf"
+																									  "o")
 
-																											O("-ip "
-																											  "<ip>    "
-																											  "     ",
+																										O("-ip "
+																										  "<ip>    "
+																										  "     ",
+																										  "set "
+																										  "custom "
+																										  "ip")
+																											O("-por"
+																											  "t "
+																											  "<por"
+																											  "t>  "
+																											  "   ",
 																											  "set "
-																											  "custom "
-																											  "ip")
-																												O("-por"
-																												  "t "
-																												  "<por"
-																												  "t>  "
-																												  "   ",
-																												  "set "
-																												  "cust"
-																												  "om "
-																												  "host"
-																												  " por"
-																												  "t")
-																													O("-clockwindow <cw>",
-																													  "adjust clockwindow");
+																											  "cust"
+																											  "om "
+																											  "host"
+																											  " por"
+																											  "t")
+																												O("-clo"
+																												  "ckwi"
+																												  "ndow"
+																												  " <"
+																												  "cw>",
+																												  "adju"
+																												  "st "
+																												  "cloc"
+																												  "kwin"
+																												  "do"
+																												  "w");
 #undef O
 
 	Sys_Error("%s", usage_str);

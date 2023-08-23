@@ -19,7 +19,6 @@ GNU General Public License for more details.
 #define VIDEO_NULL 0
 #define VIDEO_SDL 1
 #define VIDEO_FBDEV 2
-#define VIDEO_DOS 3
 
 // audio backends (XASH_SOUND)
 #define SOUND_NULL 0
@@ -37,7 +36,6 @@ GNU General Public License for more details.
 #define TIMER_SDL 1
 #define TIMER_POSIX 2
 #define TIMER_WIN32 3
-#define TIMER_DOS 4
 
 // messageboxes (XASH_MESSAGEBOX)
 #define MSGBOX_STDERR 0

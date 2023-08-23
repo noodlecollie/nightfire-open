@@ -58,7 +58,6 @@ Then you can use another oneliner to query all variables:
 #undef XASH_ARMv7
 #undef XASH_ARMv8
 #undef XASH_BIG_ENDIAN
-#undef XASH_DOS4GW
 #undef XASH_E2K
 #undef XASH_EMSCRIPTEN
 #undef XASH_FREEBSD
@@ -91,8 +90,6 @@ Then you can use another oneliner to query all variables:
 #define XASH_WIN32 1
 #elif defined __EMSCRIPTEN__
 #define XASH_EMSCRIPTEN 1
-#elif defined __WATCOMC__ && defined __DOS__
-#define XASH_DOS4GW 1
 #else  // POSIX compatible
 #define XASH_POSIX 1
 #if defined __linux__
