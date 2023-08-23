@@ -134,8 +134,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		CrosshairParameters& crosshair = priAttack->Crosshair;
 		crosshair.RadiusMin = 0.04f;
 		crosshair.RadiusMax = 0.1f;
-		crosshair.BarScaleMin = 0.05f;
-		crosshair.BarScaleMax = 0.04f;
+		crosshair.BarScaleMin = 0.03f;
+		crosshair.BarScaleMax = 0.03f;
 
 		priAttack->ViewModelAnimList_Attack << FRINESI_SHOOT;
 
