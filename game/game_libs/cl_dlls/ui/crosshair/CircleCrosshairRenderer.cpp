@@ -30,7 +30,7 @@ CCircleCrosshairRenderer::CCircleCrosshairRenderer() :
 	m_Geometry->SetColour(CCrosshairParameters::DEFAULT_COLOUR);
 
 	// Cache the unit circle point values for later use.
-	m_CirclePoints.EnsureCapacity(m_Geometry->GetPointCount());
+	m_CirclePoints.EnsureCapacity(static_cast<int>(m_Geometry->GetPointCount()));
 
 	for ( size_t index = 0; index < m_Geometry->GetPointCount(); ++index )
 	{
@@ -46,9 +46,9 @@ void CCircleCrosshairRenderer::Update(const CCrosshairParameters& params)
 {
 	const UIVec2 screenCentre = params.HalfScreenDimensions();
 	const Vector screenCentrePoint(static_cast<float>(screenCentre.x), static_cast<float>(screenCentre.y), 0.0f);
-	const int innerDisp = params.DisplacementFromScreenCentre(params.Radius());
+	const float innerDisp = static_cast<float>(params.DisplacementFromScreenCentre(params.Radius()));
 	const float thickness = params.Thickness();
-	const int outerDisp = innerDisp + thickness;
+	const float outerDisp = innerDisp + thickness;
 	const size_t pointCount = m_CirclePoints.Count() / 2;
 
 	for ( size_t index = 0; index < pointCount; ++index )
