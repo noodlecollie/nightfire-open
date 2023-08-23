@@ -761,11 +761,9 @@ void Platform_RunEvents(void)
 	SDL_Event event;
 
 	while ( !host.crashed && !host.shutdown_issued && SDL_PollEvent(&event) )
+	{
 		SDLash_EventFilter(&event);
-
-#if XASH_PSVITA
-	PSVita_InputUpdate();
-#endif
+	}
 }
 
 void* Platform_GetNativeObject(const char* name)

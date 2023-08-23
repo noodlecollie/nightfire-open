@@ -1171,13 +1171,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	}
 	else
 	{
-#if XASH_PSVITA
-		if ( !PSVita_GetBasePath(host.rootdir, sizeof(host.rootdir)) )
-		{
-			Sys_Error("couldn't find xash3d data directory");
-			host.rootdir[0] = 0;
-		}
-#elif (XASH_SDL == 2)
+#if (XASH_SDL == 2)
 		char* szBasePath = SDL_GetBasePath();
 
 		if ( !szBasePath )

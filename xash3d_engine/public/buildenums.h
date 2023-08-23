@@ -35,8 +35,7 @@ GNU General Public License for more details.
 #define PLATFORM_HAIKU 6
 #define PLATFORM_SERENITY 7
 #define PLATFORM_IRIX 8
-#define PLATFORM_PSVITA 9
-#define PLATFORM_LINUX_UNKNOWN 10
+#define PLATFORM_LINUX_UNKNOWN 9
 
 #if XASH_WIN32
 #define XASH_PLATFORM PLATFORM_WIN32
@@ -56,10 +55,8 @@ GNU General Public License for more details.
 #define XASH_PLATFORM PLATFORM_SERENITY
 #elif XASH_IRIX
 #define XASH_PLATFORM PLATFORM_IRIX
-#elif XASH_PSVITA
-#define XASH_PLATFORM PLATFORM_PSVITA
 #else
-#error
+#error Unsupported platform!
 #endif
 
 //================================================================

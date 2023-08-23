@@ -742,7 +742,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 	return length;
 }
 
-#elif defined(__sgi) || defined(__vita__)
+#elif defined(__sgi)
 
 /*
  * These functions are stubbed for now to get the code compiling.

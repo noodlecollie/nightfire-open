@@ -25,10 +25,6 @@ GNU General Public License for more details.
 #else
 #include "platform/posix/net.h"
 #endif
-#if XASH_PSVITA
-#include "platform/psvita/net_psvita.h"
-static const struct in6_addr in6addr_any;
-#endif
 
 #ifndef XASH_NO_NETWORK
 #include "PlatformLib/Net.h"

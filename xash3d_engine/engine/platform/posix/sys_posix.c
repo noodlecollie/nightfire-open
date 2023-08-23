@@ -92,7 +92,6 @@ static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 	return false;
 }
 
-#if !XASH_PSVITA
 void Platform_ShellExecute(const char* path, const char* parms)
 {
 	char xdgOpen[128];
@@ -118,7 +117,6 @@ void Platform_ShellExecute(const char* path, const char* parms)
 		Con_Reportf(S_WARN "Could not find " OPEN_COMMAND " utility\n");
 	}
 }
-#endif
 
 void Posix_Daemonize(void)
 {

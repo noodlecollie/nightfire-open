@@ -1166,9 +1166,6 @@ R_EndFrame
 */
 void R_EndFrame(void)
 {
-#if XASH_PSVITA
-	VGL_ShimEndFrame();
-#endif
 	// flush any remaining 2D bits
 	R_Set2DMode(false);
 	gEngfuncs.GL_SwapBuffers();

@@ -35,15 +35,9 @@ GNU General Public License for more details.
 
 #if XASH_POSIX
 #include <unistd.h>
-#if XASH_PSVITA
-#define VRTLD_LIBDL_COMPAT
-#include <vrtld.h>
-#define O_BINARY 0
-#else
 #include <dlfcn.h>
 #define HAVE_DUP
 #define O_BINARY 0
-#endif
 #define O_TEXT 0
 #define _mkdir(x) mkdir(x, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 #endif

@@ -17,9 +17,7 @@ GNU General Public License for more details.
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#if !XASH_PSVITA
 #include <sys/ioctl.h>
-#endif
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -72,10 +70,7 @@ GNU General Public License for more details.
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 
-#if !XASH_PSVITA
 #define ioctlsocket ioctl
-#endif
-
 #define closesocket close
 
 #define SOCKET int

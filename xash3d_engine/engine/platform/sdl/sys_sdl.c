@@ -67,9 +67,6 @@ void Platform_Init(void)
 	Wcon_CreateConsole();  // system console used by dedicated server or show fatal errors
 #elif XASH_POSIX
 	Posix_Daemonize();
-#if XASH_PSVITA
-	PSVita_Init();
-#endif
 #endif  // XASH_POSIX
 
 	SDLash_InitCursors();
@@ -81,7 +78,5 @@ void Platform_Shutdown(void)
 
 #if XASH_WIN32
 	Wcon_DestroyConsole();
-#elif XASH_PSVITA
-	PSVita_Shutdown();
 #endif
 }
