@@ -118,7 +118,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestValue = 0.2f;
 		accuracy.RestSpread = Vector2D(0.04f, 0.04f);
-		accuracy.RunValue = 0.4;
+		accuracy.RunValue = 0.4f;
 		accuracy.RunSpread = Vector2D(0.1f, 0.1f);
 		accuracy.CrouchShift = -0.08f;
 		accuracy.FallShift = 0.15f;
