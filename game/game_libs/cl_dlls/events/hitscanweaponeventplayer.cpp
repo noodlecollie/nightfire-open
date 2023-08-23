@@ -16,6 +16,7 @@
 #include "debugging/hitscanweapondebugging.h"
 #include "eventCommands.h"
 #include "gameplay/inaccuracymodifiers.h"
+#include "gameplay/spreadPatterns.h"
 
 namespace
 {
@@ -60,8 +61,6 @@ void HitscanWeaponEventPlayer::EventStart()
 
 void HitscanWeaponEventPlayer::CreateBulletTracers()
 {
-	const uint32_t numShots = m_pHitscanAttack->BulletsPerShot;
-
 	WeaponAtts::AccuracyParameters accuracyParams(m_pHitscanAttack->Accuracy);
 
 	if ( InaccuracyModifiers::IsInaccuracyDebuggingEnabled() )
@@ -69,25 +68,21 @@ void HitscanWeaponEventPlayer::CreateBulletTracers()
 		InaccuracyModifiers::GetInaccuracyValuesFromDebugCvars(accuracyParams);
 	}
 
+	SpreadPatternArgs spreadArgs {};
+
+	spreadArgs.baseSpread = InaccuracyModifiers::GetInterpolatedSpread(accuracyParams, m_flSpreadInterp);
+	spreadArgs.pattern = accuracyParams.FireSpreadPattern;
+	spreadArgs.randomSeed = m_iRandomSeed;
+	spreadArgs.totalShots = m_pHitscanAttack->BulletsPerShot;
+
 	HitscanWeaponDebugging::Clear();
 	Debug_BeginBatch();
 
-	for ( uint32_t shot = 0; shot < numShots; ++shot )
+	for ( spreadArgs.shotNumber = 0; spreadArgs.shotNumber < spreadArgs.totalShots; ++spreadArgs.shotNumber )
 	{
-		vec3_t shotDir;
-		const Vector2D spread = InaccuracyModifiers::GetInterpolatedSpread(accuracyParams, m_flSpreadInterp);
-		float spreadX = 0.0f;
-		float spreadY = 0.0f;
-
-		CGenericWeapon::GetSharedCircularGaussianSpread(shot, m_iRandomSeed, spreadX, spreadY);
-
-		for ( uint8_t axis = 0; axis < 3; ++axis )
-		{
-			shotDir[axis] =
-				m_vecFwd[axis] + (spreadX * spread.x * m_vecRight[axis]) + (spreadY * spread.y * m_vecUp[axis]);
-		}
-
-		vec3_t traceEnd = m_vecGunPosition + (CGenericWeapon::DEFAULT_BULLET_TRACE_DISTANCE * shotDir);
+		Vector2D spread = CalculateSpread(spreadArgs);
+		Vector shotDir = m_vecFwd + (spread.x * m_vecRight) + (spread.y * m_vecUp);
+		Vector traceEnd = m_vecGunPosition + (CGenericWeapon::DEFAULT_BULLET_TRACE_DISTANCE * shotDir);
 
 		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
 

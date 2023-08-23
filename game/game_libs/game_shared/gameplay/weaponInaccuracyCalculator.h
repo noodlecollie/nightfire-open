@@ -42,6 +42,8 @@ private:
 	void CalculateInstantaneousInaccuracy(const WeaponAtts::AccuracyParameters* params);
 	void CalculateSmoothedInaccuracy(const WeaponAtts::AccuracyParameters* params);
 	bool LastFireTimeIsInHoldRegion(float holdTime) const;
+	float DecayModulatorAfterFireImpulse(const WeaponAtts::AccuracyParameters& params) const;
+	float TimeSinceLastFire() const;
 
 	static bool m_CvarsLoaded;
 	static cvar_t* m_CvarMaxSpeed;

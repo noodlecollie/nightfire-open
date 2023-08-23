@@ -4,6 +4,8 @@
 #include "weapons/weaponregistry.h"
 #include "weaponattributes/weaponatts_collection.h"
 #include "weaponattributes/weaponatts_ammobasedattack.h"
+#include "util/extramath.h"
+#include "gameplay/crosshairCvars.h"
 
 CCrosshairParameters::CCrosshairParameters()
 {
@@ -17,6 +19,7 @@ void CCrosshairParameters::Reset()
 	m_WeaponInaccuracy = 0.0f;
 	m_Radius = 0.0f;
 	m_BarLength = 0.1f;
+	m_Thickness = 2.0f;
 	m_WeaponID = WeaponId_e::WeaponNone;
 }
 
@@ -37,7 +40,7 @@ float CCrosshairParameters::WeaponInaccuracy() const
 
 void CCrosshairParameters::SetWeaponInaccuracy(float inaccuracy)
 {
-	m_WeaponInaccuracy = ExtraMath::Clamp(0.0f, inaccuracy, 1.0f);
+	m_WeaponInaccuracy = inaccuracy;
 }
 
 float CCrosshairParameters::Radius() const
@@ -57,17 +60,27 @@ float CCrosshairParameters::BarLength() const
 
 void CCrosshairParameters::SetBarLength(float length)
 {
-	m_BarLength = length;
+	m_BarLength = Max(length, 0.001f);
 }
 
-bool CCrosshairParameters::ShowCrosshair() const
+float CCrosshairParameters::Thickness() const
 {
-	return m_ShowCrosshair;
+	return m_Thickness;
 }
 
-void CCrosshairParameters::SetShowCrosshair(bool show)
+void CCrosshairParameters::SetThickness(float thickness)
 {
-	m_ShowCrosshair = show;
+	m_Thickness = Max(thickness, 0.001f);
+}
+
+WeaponAtts::CrosshairStyle CCrosshairParameters::CrosshairStyle() const
+{
+	return m_CrosshairStyle;
+}
+
+void CCrosshairParameters::SetCrosshairStyle(WeaponAtts::CrosshairStyle style)
+{
+	m_CrosshairStyle = style;
 }
 
 WeaponId_e CCrosshairParameters::WeaponID() const
@@ -151,4 +164,59 @@ const WeaponAtts::CrosshairParameters* CCrosshairParameters::CrosshairParamsForA
 	// I know this is technically returning a raw pointer from shared pointer contents,
 	// but the shared object's lifetime is static so it's OK.
 	return ammoBasedAttack ? &ammoBasedAttack->Crosshair : nullptr;
+}
+
+float CCrosshairParameters::InterpolateBetweenRestAndRun(
+	const WeaponAtts::AccuracyParameters& accuracyParams,
+	float inaccuracy,
+	float min,
+	float max)
+{
+	return ExtraMath::RemapLinear(inaccuracy, accuracyParams.RestValue, accuracyParams.RunValue, min, max, false);
+}
+
+float CCrosshairParameters::ComputeCrosshairRadius(
+	const WeaponAtts::AccuracyParameters& accuracyParams,
+	float inaccuracy,
+	const WeaponAtts::CrosshairParameters& crosshairParams)
+{
+	return InterpolateBetweenRestAndRun(
+		accuracyParams,
+		inaccuracy,
+		crosshairParams.RadiusMin,
+		crosshairParams.RadiusMax);
+}
+
+float CCrosshairParameters::ComputeCrosshairBarLength(
+	const WeaponAtts::AccuracyParameters& accuracyParams,
+	float inaccuracy,
+	const WeaponAtts::CrosshairParameters& crosshairParams)
+{
+	return InterpolateBetweenRestAndRun(
+		accuracyParams,
+		inaccuracy,
+		crosshairParams.BarScaleMin,
+		crosshairParams.BarScaleMax);
+}
+
+float CCrosshairParameters::ComputeCrosshairRadiusFromDebugCvars(
+	const WeaponAtts::AccuracyParameters& accuracyParams,
+	float inaccuracy)
+{
+	return InterpolateBetweenRestAndRun(
+		accuracyParams,
+		inaccuracy,
+		CrosshairCvars::RadiusMin(),
+		CrosshairCvars::RadiusMax());
+}
+
+float CCrosshairParameters::ComputeCrosshairBarLengthFromDebugCvars(
+	const WeaponAtts::AccuracyParameters& accuracyParams,
+	float inaccuracy)
+{
+	return InterpolateBetweenRestAndRun(
+		accuracyParams,
+		inaccuracy,
+		CrosshairCvars::BarLengthMin(),
+		CrosshairCvars::BarLengthMax());
 }

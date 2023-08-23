@@ -65,7 +65,7 @@ typedef struct ui_enginefuncs_s
 	// cvar handlers
 	cvar_t* (*pfnRegisterVariable)(const char* szName, const char* szValue, int flags);
 	float (*pfnGetCvarFloat)(const char* szName);
-	char* (*pfnGetCvarString)(const char* szName);
+	const char* (*pfnGetCvarString)(const char* szName);
 	void (*pfnCvarSetString)(const char* szName, const char* szValue);
 	void (*pfnCvarSetValue)(const char* szName, float flValue);
 

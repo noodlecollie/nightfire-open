@@ -97,7 +97,7 @@ public:
 	virtual BOOL IsCoOp(void) = 0;  // is this a coop game?
 	virtual const char* GetGameDescription(void)
 	{
-		return "Afterburner";
+		return "Nightfire Open";
 	}  // this is the game name that gets seen in the server browser
 	virtual void ServerActivate(void);  // All clients have been activated by the time this is called.
 	virtual void ServerDeactivate(void);

@@ -13,16 +13,22 @@ set(SOURCES_PM_SHARED
 set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/constructors/aabboxConstructor.h
 	../game_shared/customGeometry/constructors/aabboxConstructor.cpp
+	../game_shared/customGeometry/constructors/baseConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.cpp
 	../game_shared/customGeometry/geometryItem.h
 	../game_shared/customGeometry/geometryItem.cpp
 	../game_shared/customGeometry/sharedDefs.h
 	../game_shared/customGeometry/sharedDefs.cpp
 	../game_shared/eventConstructor/eventConstructor.h
 	../game_shared/eventConstructor/eventConstructor.cpp
+	../game_shared/gameplay/inaccuracyCvars.h
 	../game_shared/gameplay/inaccuracymodifiers.h
 	../game_shared/gameplay/inaccuracymodifiers.cpp
 	../game_shared/gameplay/radialdamage.h
 	../game_shared/gameplay/radialdamage.cpp
+	../game_shared/gameplay/spreadPatterns.h
+	../game_shared/gameplay/spreadPatterns.cpp
 	../game_shared/gameplay/weaponInaccuracyCalculator.h
 	../game_shared/gameplay/weaponInaccuracyCalculator.cpp
 	../game_shared/resources/BaseResourceCollection.h
@@ -55,6 +61,7 @@ set(SOURCES_GAME_SHARED
 	../game_shared/sound/SoundInstance.h
 	../game_shared/sound/SoundInstance.cpp
 	../game_shared/util/cvarFuncs.h
+	../game_shared/util/cvarFuncs.cpp
 	../game_shared/util/debugLogger.h
 	../game_shared/util/debugLogger.cpp
 	../game_shared/util/extramath.h
@@ -217,12 +224,13 @@ set(SOURCES_SERVER
 	bots/botgamerulesinterface.cpp
 	bots/botregister.h
 	bots/botregister.cpp
+	client/client.cpp
+	client/clientCommandRegister.h
+	client/clientCommandRegister.cpp
 	customGeometry/commands.h
 	customGeometry/commands.cpp
 	customGeometry/messageWriter.h
 	customGeometry/messageWriter.cpp
-	gameplay/gameplayCvars.h
-	gameplay/gameplayCvars.cpp
 	gameplay/gameplaySystems.h
 	gameplay/gameplaySystems.cpp
 	gameplay/gameplaySystemsBase.h
@@ -236,6 +244,8 @@ set(SOURCES_SERVER
 	gameplay/spawnpointlist.cpp
 	gameplay/spawnpointmanager.h
 	gameplay/spawnpointmanager.cpp
+	gameplay/weaponInaccuracyCvars.h
+	gameplay/weaponInaccuracyCvars.cpp
 	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.h
 	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.cpp
 	hitbox_debugging/hitbox_commands.h
@@ -285,7 +295,6 @@ set(SOURCES_SERVER
 	buttons.cpp
 	cbase.cpp
 	client.h
-	client.cpp
 	combat.cpp
 	controller.cpp
 	decals.h

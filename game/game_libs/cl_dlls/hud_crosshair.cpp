@@ -5,30 +5,17 @@
 #include "util/extramath.h"
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 #include "gameplay/crosshairCvars.h"
+#include "ui/crosshair/CrosshairRendererFactory.h"
 
-namespace
+enum CrosshairDisplayMode
 {
-	// Crosshair bars are added in this order.
-	// The first two points of each bar are inner, and the second two are outer.
-	enum CrosshairBar
-	{
-		TopBar = 0,
-		BottomBar,
-		LeftBar,
-		RightBar
-	};
-
-	static constexpr size_t BAR_HALF_WIDTH = 1;
-
-	inline constexpr uint8_t PointOffset(CrosshairBar bar)
-	{
-		return static_cast<uint8_t>(4 * bar);
-	}
-}  // namespace
+	DisplayNoCrosshair = 0,
+	DisplaySpriteCrosshair = 1,
+	DisplayDynamicCrosshair = 2
+};
 
 int CHudCrosshair::Init()
 {
-	m_CrosshairGeometry = CustomGeometry::GeometryItemPtr_t(new CustomGeometry::CGeometryItem());
 	m_iFlags |= HUD_ACTIVE;
 
 	m_CheatsCvar = gEngfuncs.pfnGetCvarPointer("sv_cheats");
@@ -47,9 +34,11 @@ int CHudCrosshair::VidInit()
 	gEngfuncs.pfnGetScreenInfo(&screenInfo);
 
 	m_Params.SetScreenDimensions(UIVec2(screenInfo.iWidth, screenInfo.iHeight));
-	m_CrosshairGeometry->SetColour(0xFF0000FF);
-	m_CrosshairGeometry->SetDrawType(CustomGeometry::DrawType::Triangles);
-	InitialiseGeometry();
+
+	if ( m_CrosshairRenderer )
+	{
+		m_CrosshairRenderer->Initialise(m_Params);
+	}
 
 	return 1;
 }
@@ -70,12 +59,30 @@ int CHudCrosshair::Draw(float)
 		return 1;
 	}
 
-	// Value of 1 is default crosshair sprite,
-	// value of 2 is dynamic crosshair.
-	if ( m_CrosshairCvar->value == 2 && m_Params.ShowCrosshair() )
+	if ( m_CrosshairCvar->value == DisplayDynamicCrosshair )
 	{
-		UpdateGeometry();
-		CustomGeometry::RenderAdHocGeometry(m_CrosshairGeometry);
+		if ( m_Params.CrosshairStyle() != WeaponAtts::CrosshairStyle::None )
+		{
+			if ( !m_CrosshairRenderer || m_CrosshairRenderer->RenderStyle() != m_Params.CrosshairStyle() )
+			{
+				m_CrosshairRenderer = GetCrosshairRenderer(m_Params.CrosshairStyle());
+
+				if ( m_CrosshairRenderer )
+				{
+					m_CrosshairRenderer->Initialise(m_Params);
+				}
+			}
+		}
+		else
+		{
+			m_CrosshairRenderer.reset();
+		}
+
+		if ( m_CrosshairRenderer )
+		{
+			m_CrosshairRenderer->Update(m_Params);
+			m_CrosshairRenderer->Draw();
+		}
 	}
 
 	if ( CrosshairCvars::SpreadVisualisationEnabled() )
@@ -105,26 +112,22 @@ bool CHudCrosshair::UpdateParameters()
 
 	const WeaponAtts::CrosshairParameters* m_CrosshairParams = &ammoAttack->Crosshair;
 
-	m_Params.SetShowCrosshair(m_CrosshairParams->HasCrosshair);
+	m_Params.SetCrosshairStyle(m_CrosshairParams->RenderStyle);
 	m_Params.SetWeaponInaccuracy(gHUD.m_flWeaponInaccuracy);
 	m_Params.SetWeaponAttackMode(weapon->iPriAttackMode);
 
-	float radius = ExtraMath::RemapLinear(
+	float radius = CCrosshairParameters::ComputeCrosshairRadius(
+		ammoAttack->Accuracy,
 		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		m_CrosshairParams->RadiusMin,
-		m_CrosshairParams->RadiusMax,
-		false);
+		*m_CrosshairParams);
+
 	m_Params.SetRadius(radius);
 
-	float barLength = ExtraMath::RemapLinear(
+	float barLength = CCrosshairParameters::ComputeCrosshairBarLength(
+		ammoAttack->Accuracy,
 		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		m_CrosshairParams->BarScaleMin,
-		m_CrosshairParams->BarScaleMin,
-		false);
+		*m_CrosshairParams);
+
 	m_Params.SetBarLength(barLength);
 
 	UpdateParametersFromDebugCvars();
@@ -140,7 +143,10 @@ void CHudCrosshair::UpdateParametersFromDebugCvars()
 	}
 
 	// Make sure we always show the crosshair if the override cvars are in use.
-	m_Params.SetShowCrosshair(true);
+	if ( m_Params.CrosshairStyle() == WeaponAtts::CrosshairStyle::None )
+	{
+		m_Params.SetCrosshairStyle(WeaponAtts::CrosshairStyle::QuadLine);
+	}
 
 	WEAPON* weapon = gHUD.m_Ammo.GetCurrentWeapon();
 
@@ -169,125 +175,16 @@ void CHudCrosshair::UpdateParametersFromDebugCvars()
 		return;
 	}
 
-	float radius = ExtraMath::RemapLinear(
-		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		CrosshairCvars::RadiusMin(),
-		CrosshairCvars::RadiusMax(),
-		false);
+	float radius =
+		CCrosshairParameters::ComputeCrosshairRadiusFromDebugCvars(ammoAttack->Accuracy, m_Params.WeaponInaccuracy());
 
 	m_Params.SetRadius(radius);
 
-	float barLength = ExtraMath::RemapLinear(
-		m_Params.WeaponInaccuracy(),
-		ammoAttack->Accuracy.RestValue,
-		ammoAttack->Accuracy.RunValue,
-		CrosshairCvars::BarLengthMin(),
-		CrosshairCvars::BarLengthMax(),
-		false);
+	float barLength = CCrosshairParameters::ComputeCrosshairBarLengthFromDebugCvars(
+		ammoAttack->Accuracy,
+		m_Params.WeaponInaccuracy());
 
 	m_Params.SetBarLength(barLength);
-}
-
-void CHudCrosshair::InitialiseGeometry()
-{
-	if ( !m_CrosshairGeometry )
-	{
-		return;
-	}
-
-	m_CrosshairGeometry->ClearGeometry();
-	const UIVec2 screenCentre = m_Params.HalfScreenDimensions();
-
-	// Compute crosshair spokes. The positions will be manually modified later
-	// according to the parameters we have.
-	// The first two points of each bar are inner, and the second two are outer.
-
-	// Top
-	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 1), 0),
-		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 1), 0),
-		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 2), 0),
-		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y - 2), 0));
-
-	// Bottom
-	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 1), 0),
-		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 1), 0),
-		Vector(static_cast<float>(screenCentre.x - BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 2), 0),
-		Vector(static_cast<float>(screenCentre.x + BAR_HALF_WIDTH), static_cast<float>(screenCentre.y + 2), 0));
-
-	// Left
-	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(static_cast<float>(screenCentre.x - 1), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0),
-		Vector(static_cast<float>(screenCentre.x - 1), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0),
-		Vector(static_cast<float>(screenCentre.x - 2), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0),
-		Vector(static_cast<float>(screenCentre.x - 2), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0));
-
-	// Right
-	m_CrosshairGeometry->AddTriangleQuad(
-		Vector(static_cast<float>(screenCentre.x + 1), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0),
-		Vector(static_cast<float>(screenCentre.x + 1), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0),
-		Vector(static_cast<float>(screenCentre.x + 2), static_cast<float>(screenCentre.y + BAR_HALF_WIDTH), 0),
-		Vector(static_cast<float>(screenCentre.x + 2), static_cast<float>(screenCentre.y - BAR_HALF_WIDTH), 0));
-}
-
-void CHudCrosshair::UpdateGeometry()
-{
-	if ( !m_CrosshairGeometry || m_CrosshairGeometry->GetPointCount() != 4 * 4 )
-	{
-		return;
-	}
-
-	const UIVec2 screenCentre = m_Params.HalfScreenDimensions();
-	const int innerDisp = m_Params.DisplacementFromScreenCentre(m_Params.Radius());
-	const float barLength = Max(m_Params.BarLength(), 0.01f);
-	const int outerDisp = m_Params.DisplacementFromScreenCentre(m_Params.Radius() + barLength);
-
-	for ( uint8_t bar = 0; bar < 4; ++bar )
-	{
-		const uint8_t base = PointOffset(static_cast<CrosshairBar>(bar));
-
-		switch ( bar )
-		{
-			case TopBar:
-			{
-				m_CrosshairGeometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y - innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y - innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y - outerDisp);
-				m_CrosshairGeometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y - outerDisp);
-				break;
-			}
-
-			case BottomBar:
-			{
-				m_CrosshairGeometry->GetPoint(base + 0).y = static_cast<float>(screenCentre.y + innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 1).y = static_cast<float>(screenCentre.y + innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 2).y = static_cast<float>(screenCentre.y + outerDisp);
-				m_CrosshairGeometry->GetPoint(base + 3).y = static_cast<float>(screenCentre.y + outerDisp);
-				break;
-			}
-
-			case LeftBar:
-			{
-				m_CrosshairGeometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x - innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x - innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x - outerDisp);
-				m_CrosshairGeometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x - outerDisp);
-				break;
-			}
-
-			case RightBar:
-			{
-				m_CrosshairGeometry->GetPoint(base + 0).x = static_cast<float>(screenCentre.x + innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 1).x = static_cast<float>(screenCentre.x + innerDisp);
-				m_CrosshairGeometry->GetPoint(base + 2).x = static_cast<float>(screenCentre.x + outerDisp);
-				m_CrosshairGeometry->GetPoint(base + 3).x = static_cast<float>(screenCentre.x + outerDisp);
-				break;
-			}
-		}
-	}
 }
 
 const WeaponAtts::WAAmmoBasedAttack* CHudCrosshair::GetAttackMode(const WEAPON& weapon) const

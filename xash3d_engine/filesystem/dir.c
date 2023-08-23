@@ -291,9 +291,19 @@ qboolean FS_FixFileCase(dir_t* dir, const char* path, char* dst, const size_t le
 	const char* next;
 	size_t i = 0;
 
+	// Append the base directory name to the destination buffer to start off with.
 	if ( !FS_AppendToPath(dst, &i, len, dir->name, path, "init") )
+	{
 		return false;
+	}
 
+	if ( !(*path) )
+	{
+		// Nothing to fix.
+		return true;
+	}
+
+	// Keep iterating over the input path looking for separators.
 	for ( prev = path, next = Q_strchrnul(prev, '/');; prev = next + 1, next = Q_strchrnul(prev, '/') )
 	{
 		qboolean uptodate = false;  // do not run second scan if we're just updated our directory list
@@ -308,34 +318,53 @@ qboolean FS_FixFileCase(dir_t* dir, const char* path, char* dst, const size_t le
 			uptodate = true;
 		}
 
-		// this subdirectory is case insensitive, just slam everything that's left
+		// If this subdirectory is case insensitive, we don't need to fix any casing.
+		// Add the rest of the path to the destination buffer, we can quit early here.
 		if ( dir->numentries == DIRENTRY_CASEINSENSITIVE )
 		{
 			if ( !FS_AppendToPath(dst, &i, len, prev, path, "caseinsensitive entry") )
+			{
 				return false;
+			}
 
-			// check file existense
+			// Make sure the full path does actually exist.
+			// If we're creating it, we know it will exist.
 			return createpath ? true : FS_SysFileOrFolderExists(dst);
 		}
 
-		// get our entry name
+		// Get the entry name (the name of the current subdirectory we're looking at,
+		// without the final separator).
 		Q_strncpy(entryname, prev, next - prev + 1);
 
-		// didn't found, but does it exists in FS?
-		if ( (ret = FS_FindDirEntry(dir, entryname)) < 0 )
+		// Check if this subdirectory exists in the parent on the filesystem.
+		ret = FS_FindDirEntry(dir, entryname);
+
+		// If it doesn't exist:
+		if ( ret < 0 )
 		{
-			// if we're creating files or folders, we don't care if path doesn't exist
-			// so copy everything that's left and exit without an error
-			if ( uptodate || (ret = FS_MaybeUpdateDirEntries(dir, dst, entryname)) < 0 )
+			// If we're creating files or folders, we don't care that the path doesn't exist,
+			// so copy everything that's left and exit without an error.
+
+			if ( !uptodate )
+			{
+				ret = FS_MaybeUpdateDirEntries(dir, dst, entryname);
+			}
+
+			if ( uptodate || ret < 0 )
+			{
 				return createpath ? FS_AppendToPath(dst, &i, len, prev, path, "create path") : false;
+			}
 
 			uptodate = true;
 		}
 
 		dir = &dir->entries[ret];
 		temp = i;
+
 		if ( !FS_AppendToPath(dst, &temp, len, dir->name, path, "case fix") )
+		{
 			return false;
+		}
 
 		if ( !uptodate && !FS_SysFileOrFolderExists(dst) )  // file not found, rescan...
 		{
@@ -344,20 +373,30 @@ qboolean FS_FixFileCase(dir_t* dir, const char* path, char* dst, const size_t le
 			// if we're creating files or folders, we don't care if path doesn't exist
 			// so copy everything that's left and exit without an error
 			if ( (ret = FS_MaybeUpdateDirEntries(dir, dst, entryname)) < 0 )
+			{
 				return createpath ? FS_AppendToPath(dst, &i, len, prev, path, "create path rescan") : false;
+			}
 
 			dir = &dir->entries[ret];
+
 			if ( !FS_AppendToPath(dst, &temp, len, dir->name, path, "case fix rescan") )
+			{
 				return false;
+			}
 		}
+
 		i = temp;
 
 		// end of string, found file, return
 		if ( next[0] == '\0' || (next[0] == '/' && next[1] == '\0') )
+		{
 			break;
+		}
 
 		if ( !FS_AppendToPath(dst, &i, len, "/", path, "path separator") )
+		{
 			return false;
+		}
 	}
 
 	return true;

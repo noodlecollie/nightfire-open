@@ -25,8 +25,8 @@ public:
 #endif
 
 protected:
-	virtual int HandleSpecialReload(int currentState) override;
-	virtual bool InvokeWithAttackMode(
+	int HandleSpecialReload(int currentState) override;
+	bool InvokeWithAttackMode(
 		const CGenericWeapon::WeaponAttackType type,
 		const WeaponAtts::WABaseAttack* attackMode) override;
 

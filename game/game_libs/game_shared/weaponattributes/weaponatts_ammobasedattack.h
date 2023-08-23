@@ -7,6 +7,19 @@
 
 namespace WeaponAtts
 {
+	enum class CrosshairStyle
+	{
+		None = 0,
+		QuadLine,
+		Circle
+	};
+
+	enum class SpreadPattern
+	{
+		Gaussian = 0,
+		SegmentedCircle
+	};
+
 	struct AccuracyParameters
 	{
 		// Weapon inaccuracy calculations take a number of parameters. The inaccuracy
@@ -15,7 +28,7 @@ namespace WeaponAtts
 		// hard clamped within the range [0 1].
 
 		// To modify these settings while debugging/testing, see the list of convars
-		// in game_libs/dlls/gameplay/gameplayCvars.cpp
+		// in game/game_libs/game_shared/gameplay/inaccuracyCvars.h
 
 		// To begin, we define two points in the [0 1] range: the inaccuracy value
 		// at rest, and the inaccuracy value when the player is running at full speed.
@@ -70,6 +83,20 @@ namespace WeaponAtts
 		// amount of time before receding. The hold time is specified here, in seconds.
 		float FireImpulseHoldTime = 0.05f;
 
+		// Once the fire impulse hold time has expired, the inaccuracy decays again as per
+		// the decay coefficient. However, in a time window immediately after the fire
+		// impulse hold time, the decay value may be modulated further. This mainly caters
+		// for having the inaccuracy decay slowly immedately after the weapon has been
+		// fired, and then decay more quickly as the firing time moves further into the
+		// past. The variable below specifies the decay window length in seconds.
+		float FireImpulseDecayWindow = 0.0f;
+
+		// This value modulates the decay coefficient within the above window. When then
+		// window begins, the decay coefficient is multiplied by this value: smaller values
+		// make the decay slower, and larger values make it quicker. As time passes within
+		// the window, the modulation value slowly decays, before quickly dropping back to 1.
+		float FireImpulseDecayMod = 1.0f;
+
 		// Finally, the inaccuracy value is used to calculate the weapon's spread when fired.
 		// The two points that define the spread scale are specified below, and use RestValue
 		// and RunValue as reference points. Note that other factors (eg. crouching, falling,
@@ -81,6 +108,9 @@ namespace WeaponAtts
 
 		// Weapon spread when the inaccuracy is equal to RunValue.
 		Vector2D RunSpread;
+
+		// The method to apply the computed inaccuracy spread.
+		SpreadPattern FireSpreadPattern = SpreadPattern::Gaussian;
 
 		inline void Validate() const
 		{
@@ -94,27 +124,35 @@ namespace WeaponAtts
 				"Decay coefficient must be in range [0 1].");
 			ASSERTSZ_Q(RestSpread.x >= 0.0f && RestSpread.y >= 0.0f, "Rest spread cannot be negative.");
 			ASSERTSZ_Q(RunSpread.x >= 0.0f && RunSpread.y >= 0.0f, "Run spread cannot be negative.");
+			ASSERTSZ_Q(FireImpulseHoldTime >= 0.0f, "Fire impulse hold time cannot be negative.");
+			ASSERTSZ_Q(FireImpulseDecayWindow >= 0.0f, "Fire impulse decay window cannot be negative.");
 		}
 	};
 
 	struct CrosshairParameters
 	{
-		bool HasCrosshair = true;
+		// The type of crosshair to use.
+		CrosshairStyle RenderStyle = CrosshairStyle::QuadLine;
 
 		// To modify these settings while debugging/testing, see the list of convars
 		// in game_libs/cl_dll/gameplay/crosshairCvars.cpp
 
 		// The radius is how far away from the centre of the screen each
 		// crosshair bar is. A value of 1 means the length of the shortest
-		// screen dimension.
+		// screen dimension. Minimum radius is when the weapon is at
+		// rest spread, and maximum radius is when it is at run spread.
 		float RadiusMin = 0.0f;
 		float RadiusMax = 0.5f;
 
 		// These scales specify how long the crosshair bars are at minimum
 		// and maximum inaccuracy. A value of 1 means the bar is the length
-		// of the shortest screen dimension.
+		// of the shortest screen dimension. Minimum scale is when the weapon
+		// is at rest spread, and maximum scale is when it is at run spread.
 		float BarScaleMin = 0.04f;
 		float BarScaleMax = 0.03f;
+
+		// This is the thickness of the crosshair lines, in pixels.
+		float Thickness = 2.0f;
 	};
 
 	struct WAAmmoBasedAttack : public WABaseAttack

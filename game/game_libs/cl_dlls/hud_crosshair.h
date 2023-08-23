@@ -1,10 +1,12 @@
 #pragma once
 
+#include <memory>
 #include "hud.h"
 #include "customGeometry/geometryItemPtr.h"
 #include "ui/crosshair/crosshairParameters.h"
 #include "weapons/weaponids.h"
 #include "ui/crosshair/spreadVisualiser.h"
+#include "ui/crosshair/BaseCrosshairRenderer.h"
 
 namespace WeaponAtts
 {
@@ -24,14 +26,12 @@ public:
 private:
 	bool UpdateParameters();
 	void UpdateParametersFromDebugCvars();
-	void InitialiseGeometry();
-	void UpdateGeometry();
 	const WeaponAtts::WAAmmoBasedAttack* GetAttackMode(const WEAPON& weapon) const;
 
 	cvar_t* m_CheatsCvar = nullptr;
 	cvar_t* m_CrosshairCvar = nullptr;
 
-	CustomGeometry::GeometryItemPtr_t m_CrosshairGeometry;
 	CCrosshairParameters m_Params;
 	CSpreadVisualiser m_SpreadVisualiser;
+	std::shared_ptr<CBaseCrosshairRenderer> m_CrosshairRenderer;
 };

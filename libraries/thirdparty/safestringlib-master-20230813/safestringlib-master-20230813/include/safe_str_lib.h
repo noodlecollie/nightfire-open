@@ -16,7 +16,10 @@
 #define RSIZE_MIN_STR      ( 1 )
 
 /* maximum sring length */
-#define RSIZE_MAX_STR      ( 4UL << 10 )      /* 4KB */
+/* NoodleCollie: This used to be 4KB, but Xash uses string
+   functions with large buffers sometimes. Bumping up to
+   accommodate the largest I've seen */
+#define RSIZE_MAX_STR      (32 * 1024)
 
 
 /* The makeup of a password */

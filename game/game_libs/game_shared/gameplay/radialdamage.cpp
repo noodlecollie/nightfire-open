@@ -125,7 +125,7 @@ void CRadialDamageInflictor::DamageEntityFromSphere(CBaseEntity& target)
 		return;
 	}
 
-	// Blasts don't tavel into or out of water
+	// Blasts don't travel into or out of water
 	if ( (m_bWorkingInWater && target.pev->waterlevel == 0) || (!m_bWorkingInWater && target.pev->waterlevel == 3) )
 	{
 		return;

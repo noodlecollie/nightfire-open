@@ -304,7 +304,7 @@ public:
 	void AddPointsToTeam(int score, BOOL bAllowNegativeScore);
 	BOOL AddPlayerItem(CBasePlayerItem* pItem);
 	BOOL RemovePlayerItem(CBasePlayerItem* pItem, bool bCallHoster);
-	void DropPlayerItem(char* pszItemName);
+	void DropPlayerItem(const char* pszItemName);
 	BOOL HasPlayerItem(CBasePlayerItem* pCheckItem);
 	BOOL HasNamedPlayerItem(const char* pszItemName);
 	BOOL HasWeapons(void);  // do I have ANY weapons?
