@@ -20,14 +20,10 @@ GNU General Public License for more details.
 #include "build.h"
 
 #if !XASH_WIN32
-#if XASH_APPLE
-#include <sys/syslimits.h>
-#define OS_LIB_EXT "dylib"
-#define OPEN_COMMAND "open"
-#else
+
 #define OS_LIB_EXT "so"
 #define OPEN_COMMAND "xdg-open"
-#endif
+
 #define OS_LIB_PREFIX "lib"
 #define VGUI_SUPPORT_DLL "libvgui_support." OS_LIB_EXT
 

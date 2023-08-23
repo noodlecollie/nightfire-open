@@ -49,7 +49,6 @@ Then you can use another oneliner to query all variables:
 
 #undef XASH_64BIT
 #undef XASH_AMD64
-#undef XASH_APPLE
 #undef XASH_ARM
 #undef XASH_ARM_HARDFP
 #undef XASH_ARM_SOFTFP
@@ -64,7 +63,6 @@ Then you can use another oneliner to query all variables:
 #undef XASH_EMSCRIPTEN
 #undef XASH_FREEBSD
 #undef XASH_HAIKU
-#undef XASH_IOS
 #undef XASH_IRIX
 #undef XASH_JS
 #undef XASH_LINUX
@@ -117,12 +115,6 @@ Then you can use another oneliner to query all variables:
 #define XASH_SERENITY 1
 #elif defined __sgi
 #define XASH_IRIX 1
-#elif defined __APPLE__
-#include <TargetConditionals.h>
-#define XASH_APPLE 1
-#if TARGET_OS_IOS
-#define XASH_IOS 1
-#endif  // TARGET_OS_IOS
 #elif defined __SWITCH__
 #define XASH_NSWITCH 1
 #elif defined __vita__

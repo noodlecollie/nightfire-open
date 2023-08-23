@@ -1170,10 +1170,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	}
 	else
 	{
-#if TARGET_OS_IOS
-		const char* IOS_GetDocsDir();
-		Q_strncpy(host.rootdir, IOS_GetDocsDir(), sizeof(host.rootdir));
-#elif XASH_PSVITA
+#if XASH_PSVITA
 		if ( !PSVita_GetBasePath(host.rootdir, sizeof(host.rootdir)) )
 		{
 			Sys_Error("couldn't find xash3d data directory");

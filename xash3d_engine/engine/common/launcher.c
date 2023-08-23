@@ -62,27 +62,6 @@ _inline int Sys_Start(void)
 		game = XASH_GAMEDIR;
 
 	Q_strncpy(szGameDir, game, sizeof(szGameDir));
-#if XASH_EMSCRIPTEN
-#ifdef EMSCRIPTEN_LIB_FS
-	// For some unknown reason emscripten refusing to load libraries later
-	COM_LoadLibrary("menu", 0);
-	COM_LoadLibrary("server", 0);
-	COM_LoadLibrary("client", 0);
-#endif
-#if XASH_DEDICATED
-	// NodeJS support for debug
-	EM_ASM(try {
-		FS.mkdir('/xash');
-		FS.mount(NODEFS, {root: '.'}, '/xash');
-		FS.chdir('/xash');
-	} catch ( e ) {};);
-#endif
-#elif XASH_IOS
-	{
-		void IOS_LaunchDialog(void);
-		IOS_LaunchDialog();
-	}
-#endif
 
 	ret = Host_Main(szArgc, szArgv, game, 0, Sys_ChangeGame);
 

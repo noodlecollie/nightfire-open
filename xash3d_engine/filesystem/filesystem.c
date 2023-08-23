@@ -1148,16 +1148,6 @@ void FS_Rescan(void)
 
 	FS_ClearSearchPath();
 
-#if XASH_IOS
-	{
-		char buf[MAX_VA_STRING];
-
-		Q_snprintf(buf, sizeof(buf), "%sextras.pak", SDL_GetBasePath());
-		FS_AddPak_Fullpath(buf, NULL, extrasFlags);
-		Q_snprintf(buf, sizeof(buf), "%sextras_%s.pak", SDL_GetBasePath(), GI->gamefolder);
-		FS_AddPak_Fullpath(buf, NULL, extrasFlags);
-	}
-#else
 	str = PlatformLib_GetEnv("XASH3D_EXTRAS_PAK1");
 	if ( COM_CheckString(str) )
 		FS_AddArchive_Fullpath(str, NULL, extrasFlags);
@@ -1165,7 +1155,6 @@ void FS_Rescan(void)
 	str = PlatformLib_GetEnv("XASH3D_EXTRAS_PAK2");
 	if ( COM_CheckString(str) )
 		FS_AddArchive_Fullpath(str, NULL, extrasFlags);
-#endif
 
 	if ( Q_stricmp(GI->basedir, GI->gamefolder) )
 		FS_AddGameHierarchy(GI->basedir, 0);
