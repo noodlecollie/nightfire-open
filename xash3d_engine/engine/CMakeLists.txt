@@ -272,6 +272,7 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 	#SUPPORT_BSP2_FORMAT=0 # NFTODO: Don't need to support this, but if it's defined then BSP loading screws up as struct layout is different! Needs to be fixed
 	$<$<BOOL:${TARGET_IS_64BIT}>:XASH_64BIT=1>
 	AFTERBURNER_ENGINE=1 # NFTODO: Rename this to NIGHTFIRE_OPEN_ENGINE
+	XASH_EXECUTABLE_NAME="${GAME_EXECUTABLE}"
 	DBGHELP=$<BOOL:${WIN32}>
 	PSAPI_VERSION=$<BOOL:${WIN32}>
 	$<$<BOOL:${SDL2_FOUND}>:XASH_SDL=2>
