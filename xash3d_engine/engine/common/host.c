@@ -26,9 +26,6 @@ GNU General Public License for more details.
 #include <sys/stat.h>
 #include <fcntl.h>
 #endif
-#if XASH_EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#endif
 #include <errno.h>
 #include "common.h"
 #include "base_cmd.h"

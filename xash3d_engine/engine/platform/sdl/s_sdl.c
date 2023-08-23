@@ -199,16 +199,13 @@ void SNDDMA_Shutdown(void)
 	if ( sdl_dev )
 	{
 		SNDDMA_Activate(false);
-
-#if !XASH_EMSCRIPTEN
 		SDL_CloseAudioDevice(sdl_dev);
-#endif
 	}
 
-#if !XASH_EMSCRIPTEN
 	if ( SDL_WasInit(SDL_INIT_AUDIO) )
+	{
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
-#endif
+	}
 
 	if ( dma.buffer )
 	{

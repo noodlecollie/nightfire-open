@@ -23,9 +23,7 @@ GNU General Public License for more details.
 #include "SDL.h"
 #endif
 
-#if XASH_EMSCRIPTEN
-#include <emscripten.h>
-#elif XASH_WIN32
+#if XASH_WIN32
 #include <shellapi.h>
 
 // Enable NVIDIA High Performance Graphics while using Integrated Graphics.

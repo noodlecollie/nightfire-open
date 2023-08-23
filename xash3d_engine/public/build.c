@@ -97,8 +97,6 @@ const char* Q_PlatformStringByID(const int platform)
 			return "netbsd";
 		case PLATFORM_OPENBSD:
 			return "openbsd";
-		case PLATFORM_EMSCRIPTEN:
-			return "emscripten";
 		case PLATFORM_HAIKU:
 			return "haiku";
 		case PLATFORM_SERENITY:
@@ -147,8 +145,6 @@ const char* Q_ArchitectureStringByID(const int arch, const uint abi, const int e
 			return "i386";
 		case ARCHITECTURE_E2K:
 			return "e2k";
-		case ARCHITECTURE_JS:
-			return "javascript";
 		case ARCHITECTURE_MIPS:
 			return endianness == ENDIANNESS_LITTLE ? (is64 ? "mips64el" : "mipsel") : (is64 ? "mips64" : "mips");
 		case ARCHITECTURE_ARM:

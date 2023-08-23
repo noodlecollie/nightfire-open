@@ -430,9 +430,9 @@ qboolean NET_GetHostByName(const char* hostname, int family, struct sockaddr_sto
 #endif
 }
 
-#if !XASH_EMSCRIPTEN && !defined XASH_NO_ASYNC_NS_RESOLVE
+#if !defined XASH_NO_ASYNC_NS_RESOLVE
 #define CAN_ASYNC_NS_RESOLVE
-#endif  // !XASH_EMSCRIPTEN && !defined XASH_NO_ASYNC_NS_RESOLVE
+#endif  // !defined XASH_NO_ASYNC_NS_RESOLVE
 
 #ifdef CAN_ASYNC_NS_RESOLVE
 static void NET_ResolveThread(void);

@@ -72,16 +72,9 @@ GNU General Public License for more details.
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 
-#if XASH_EMSCRIPTEN
-/* All socket operations are non-blocking already */
-static int ioctl_stub(int d, unsigned long r, ...)
-{
-	return 0;
-}
-#define ioctlsocket ioctl_stub
-#elif !XASH_PSVITA  // XASH_EMSCRIPTEN
+#if !XASH_PSVITA
 #define ioctlsocket ioctl
-#endif  // XASH_EMSCRIPTEN
+#endif
 
 #define closesocket close
 

@@ -24,7 +24,6 @@ GNU General Public License for more details.
 #include "library.h"
 #include "filesystem.h"
 #include "server.h"
-#include "platform/emscripten/lib_em.h"
 
 #ifdef XASH_DLL_LOADER  // wine-based dll loader
 void* Loader_LoadLibrary(const char* name);

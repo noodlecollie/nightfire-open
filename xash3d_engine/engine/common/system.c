@@ -484,21 +484,6 @@ void Sys_Error(const char* error, ...)
 	Sys_Quit();
 }
 
-#if XASH_EMSCRIPTEN
-/* strange glitchy bug on emscripten
-_exit->_Exit->asm._exit->_exit
-As we do not need atexit(), just throw hidden exception
-*/
-#include <emscripten.h>
-#define exit my_exit
-void my_exit(int ret)
-{
-	emscripten_cancel_main_loop();
-	printf("exit(%d)\n", ret);
-	EM_ASM(if ( showElement ) showElement('reload', true); throw 'SimulateInfiniteLoop');
-}
-#endif
-
 /*
 ================
 Sys_Quit
