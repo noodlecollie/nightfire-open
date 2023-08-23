@@ -42,12 +42,7 @@ GNU General Public License for more details.
 #define DEFAULT_PLAYER_PATH_AFTERBURNER "models/player/fallback/fallback.mdl"
 
 #ifndef PLAYER_MODEL_PATH
-#ifdef AFTERBURNER_ENGINE
 #define PLAYER_MODEL_PATH DEFAULT_PLAYER_PATH_AFTERBURNER
-#else
-// Default to Half Life - we will never build with Quake support.
-#define PLAYER_MODEL_PATH DEFAULT_PLAYER_PATH_HALFLIFE
-#endif
 #endif  // PLAYER_MODEL_PATH
 
 // debug beams

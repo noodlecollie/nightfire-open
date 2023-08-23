@@ -1,6 +1,7 @@
 All points in sources/scripts which reference tasks in this file are tagged with NFTODO.
 
 * Change game content folder from afterburner to nf-open
+* Remove low memory and custom swap as we'll likely never need them
 * Run engine tests as part of CI
 * For each target, separate files into a public header directory and a private src directory
   * Adjust include paths accordingly, and also #include statements
@@ -13,3 +14,6 @@ All points in sources/scripts which reference tasks in this file are tagged with
 * Upgrade APIs so that:
   * String buffers that are writable always pass sizes (uint64_t)
   * String pointers that should not be writable are always const
+  * Containers use size_t rather than int
+* Bring compile tools into this repo
+  * Integrate PrimeXT tools? https://github.com/SNMetamorph/PrimeXT
