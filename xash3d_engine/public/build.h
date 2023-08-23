@@ -49,7 +49,6 @@ Then you can use another oneliner to query all variables:
 
 #undef XASH_64BIT
 #undef XASH_AMD64
-#undef XASH_ANDROID
 #undef XASH_APPLE
 #undef XASH_ARM
 #undef XASH_ARM_HARDFP
@@ -72,7 +71,6 @@ Then you can use another oneliner to query all variables:
 #undef XASH_LINUX_UNKNOWN
 #undef XASH_LITTLE_ENDIAN
 #undef XASH_MIPS
-#undef XASH_MOBILE_PLATFORM
 #undef XASH_NETBSD
 #undef XASH_OPENBSD
 #undef XASH_POSIX
@@ -100,15 +98,11 @@ Then you can use another oneliner to query all variables:
 #else  // POSIX compatible
 #define XASH_POSIX 1
 #if defined __linux__
-#if defined __ANDROID__
-#define XASH_ANDROID 1
-#else
 #include <features.h>
 // if our system libc has features.h header
 // try to detect it to not confuse other libcs with built with glibc game libraries
 #if !defined __GLIBC__
 #define XASH_LINUX_UNKNOWN 1
-#endif
 #endif
 #define XASH_LINUX 1
 #elif defined __FreeBSD__
@@ -136,10 +130,6 @@ Then you can use another oneliner to query all variables:
 #else
 #error
 #endif
-#endif
-
-#if XASH_ANDROID || defined XASH_IOS || defined XASH_NSWITCH || defined XASH_PSVITA
-#define XASH_MOBILE_PLATFORM 1
 #endif
 
 //================================================================

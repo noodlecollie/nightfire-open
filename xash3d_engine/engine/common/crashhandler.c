@@ -358,7 +358,7 @@ void Sys_RestoreCrashHandler(void)
 		SetUnhandledExceptionFilter(oldFilter);
 }
 
-#elif XASH_FREEBSD || XASH_NETBSD || XASH_OPENBSD || XASH_ANDROID || XASH_LINUX
+#elif XASH_FREEBSD || XASH_NETBSD || XASH_OPENBSD || XASH_LINUX
 // Posix signal handler
 #include <ucontext.h>
 #include <signal.h>

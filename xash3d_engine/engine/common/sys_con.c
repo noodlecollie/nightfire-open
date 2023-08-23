@@ -17,8 +17,6 @@ GNU General Public License for more details.
 #if XASH_WIN32
 #define STDOUT_FILENO 1
 #include <io.h>
-#elif XASH_ANDROID
-#include <android/log.h>
 #endif
 #include <string.h>
 #include <errno.h>
@@ -31,7 +29,7 @@ GNU General Public License for more details.
 #include "PlatformLib/Time.h"
 
 // do not waste precious CPU cycles on mobiles or low memory devices
-#if !XASH_WIN32 && !XASH_MOBILE_PLATFORM && !XASH_LOW_MEMORY
+#if !XASH_WIN32 && !XASH_LOW_MEMORY
 #define XASH_COLORIZE_CONSOLE true
 // use with caution, running engine in Qt Creator may cause a freeze in read() call
 // I was never encountered this bug anywhere else, so still enable by default
@@ -115,10 +113,7 @@ int Sys_LogFileNo(void)
 
 static void Sys_FlushStdout(void)
 {
-	// never printing anything to stdout on mobiles
-#if !XASH_MOBILE_PLATFORM
 	fflush(stdout);
-#endif
 }
 
 static void Sys_FlushLogfile(void)
@@ -289,39 +284,7 @@ static void Sys_PrintLogfile(const int fd, const char* logtime, const char* msg,
 
 static void Sys_PrintStdout(const char* logtime, const char* msg)
 {
-	(void)logtime;
-	(void)msg;
-
-#if XASH_MOBILE_PLATFORM
-	static char buf[MAX_PRINT_MSG];
-
-	// strip color codes
-	COM_StripColors(msg, buf, sizeof(buf));
-
-	// platform-specific output
-#if XASH_ANDROID && !XASH_DEDICATED
-	__android_log_write(ANDROID_LOG_DEBUG, "Xash", buf);
-#endif  // XASH_ANDROID && !XASH_DEDICATED
-
-#if TARGET_OS_IOS
-	void IOS_Log(const char*);
-	IOS_Log(buf);
-#endif  // TARGET_OS_IOS
-
-#if XASH_NSWITCH && NSWITCH_DEBUG
-	// just spew it to stderr normally in debug mode
-	fprintf(stderr, "%s %s", logtime, buf);
-#endif  // XASH_NSWITCH && NSWITCH_DEBUG
-
-#if XASH_PSVITA
-	// spew to stderr only in developer mode
-	if ( host_developer.value )
-	{
-		fprintf(stderr, "%s %s", logtime, buf);
-	}
-#endif
-
-#elif !XASH_WIN32  // Wcon does the job
+#if !XASH_WIN32  // Wcon does the job
 	Sys_PrintLogfile(STDOUT_FILENO, logtime, msg, XASH_COLORIZE_CONSOLE);
 	Sys_FlushStdout();
 #endif

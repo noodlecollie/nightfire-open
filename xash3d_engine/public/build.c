@@ -87,8 +87,6 @@ const char* Q_PlatformStringByID(const int platform)
 	{
 		case PLATFORM_WIN32:
 			return "win32";
-		case PLATFORM_ANDROID:
-			return "android";
 		case PLATFORM_LINUX_UNKNOWN:
 			return "linuxunkabi";
 		case PLATFORM_LINUX:

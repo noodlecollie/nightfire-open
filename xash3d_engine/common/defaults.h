@@ -52,26 +52,6 @@ SETUP BACKENDS DEFINITIONS
 #endif
 #endif  // XASH_MESSAGEBOX
 #endif
-#elif XASH_ANDROID
-// we are building for Android platform, use Android APIs
-#ifndef XASH_VIDEO
-#define XASH_VIDEO VIDEO_ANDROID
-#endif  // XASH_VIDEO
-
-#ifndef XASH_INPUT
-#define XASH_INPUT INPUT_ANDROID
-#endif  // XASH_INPUT
-
-#ifndef XASH_SOUND
-#define XASH_SOUND SOUND_OPENSLES
-#endif  // XASH_SOUND
-
-#ifndef XASH_MESSAGEBOX
-#define XASH_MESSAGEBOX MSGBOX_ANDROID
-#endif  // XASH_MESSAGEBOX
-
-#define XASH_USE_EVDEV 1
-#define XASH_DYNAMIC_DLADDR
 #elif XASH_LINUX
 // we are building for Linux without SDL2, can draw only to framebuffer yet
 #ifndef XASH_VIDEO
@@ -171,16 +151,7 @@ Default build-depended cvar and constant values
 #define DEFAULT_MODE_WIDTH 960
 #define DEFAULT_MODE_HEIGHT 544
 #define DEFAULT_ALLOWCONSOLE 1
-#elif XASH_MOBILE_PLATFORM
-#define DEFAULT_TOUCH_ENABLE "1"
-#define DEFAULT_M_IGNORE "1"
-#endif  // !XASH_MOBILE_PLATFORM && !XASH_NSWITCH
-
-#if XASH_ANDROID || XASH_IOS || XASH_EMSCRIPTEN
-// this means that libraries are provided with engine, but not in game data
-// You need add library loading code to library.c when adding new platform
-#define XASH_INTERNAL_GAMELIBS
-#endif  // XASH_ANDROID || XASH_IOS || XASH_EMSCRIPTEN
+#endif
 
 // Defaults
 #ifndef DEFAULT_TOUCH_ENABLE

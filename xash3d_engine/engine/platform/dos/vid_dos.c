@@ -29,7 +29,7 @@ GNU General Public License for more details.
 
 /*
 ========================
-Android_SwapBuffers
+GL_SwapBuffers
 
 Update screen. Use native EGL if possible
 ========================

@@ -234,11 +234,6 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
 #endif
 #endif
 
-#if defined(__ANDROID__) || defined(ANDROID)
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
-#endif
 #include <stdbool.h>
 
 WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
@@ -288,50 +283,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						break;
 
 					length = (int)strlen(resolved);
-#if defined(__ANDROID__) || defined(ANDROID)
-					if ( length > 4 && buffer[length - 1] == 'k' && buffer[length - 2] == 'p' &&
-						 buffer[length - 3] == 'a' && buffer[length - 4] == '.' )
-					{
-						char *begin, *p;
-						int fd = PlatformLib_Open(path, O_RDONLY);
-						if ( fd == -1 )
-						{
-							length = -1;  // retry
-							break;
-						}
 
-						begin = (char*)mmap(0, offset, PROT_READ, MAP_SHARED, fd, 0);
-						if ( begin == MAP_FAILED )
-						{
-							PlatformLib_Close(fd);
-							length = -1;  // retry
-							break;
-						}
-
-						p = begin + offset - 30;  // minimum size of local file header
-						while ( p >= begin )  // scan backwards
-						{
-							if ( *((uint32_t*)p) == 0x04034b50UL )  // local file header signature found
-							{
-								uint16_t length_ = *((uint16_t*)(p + 26));
-
-								if ( length + 2 + length_ < (int)sizeof(buffer) )
-								{
-									memcpy(&buffer[length], "!/", 2);
-									memcpy(&buffer[length + 2], p + 30, length_);
-									length += 2 + length_;
-								}
-
-								break;
-							}
-
-							--p;
-						}
-
-						munmap(begin, offset);
-						PlatformLib_Close(fd);
-					}
-#endif
 					if ( length <= capacity )
 					{
 						memcpy(out, resolved, length);

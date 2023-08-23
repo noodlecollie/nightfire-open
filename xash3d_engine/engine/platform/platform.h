@@ -39,12 +39,6 @@ void Platform_ShellExecute(const char* path, const char* parms);
 void Platform_MessageBox(const char* title, const char* message, qboolean parentMainWindow);
 qboolean Sys_DebuggerPresent(void);  // optional, see Sys_DebugBreak
 
-#if XASH_ANDROID
-const char* Android_GetAndroidID(void);
-const char* Android_LoadID(void);
-void Android_SaveID(const char* id);
-#endif
-
 #if XASH_WIN32
 void Platform_UpdateStatusLine(void);
 #else
@@ -108,11 +102,6 @@ void Platform_SetClipboardText(const char* buffer);
 
 #if !XASH_SDL
 #define SDL_VERSION_ATLEAST(x, y, z) 0
-#endif
-
-#if XASH_ANDROID
-void Android_ShowMouse(qboolean show);
-void Android_MouseMove(float* x, float* y);
 #endif
 
 /*
