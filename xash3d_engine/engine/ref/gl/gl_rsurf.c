@@ -2302,7 +2302,7 @@ static void R_AdditionalPasses(vboarray_t* vbo, int indexlen, void* indexarray, 
 		pglScalef(glt->xscale, glt->yscale, 1);
 
 		// draw
-#if !defined XASH_NANOGL || defined XASH_WES && XASH_EMSCRIPTEN  // WebGL need to know array sizes
+#if !defined XASH_NANOGL || defined XASH_WES  // WebGL need to know array sizes
 		if ( pglDrawRangeElements )
 			pglDrawRangeElements(GL_TRIANGLES, 0, vbo->array_len, indexlen, GL_UNSIGNED_SHORT, indexarray);
 		else
@@ -2333,7 +2333,7 @@ Draw array for given vbotexture_t. build and draw dynamic lightmaps if present
 static void
 R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, int lightmap, qboolean skiplighting)
 {
-#if !defined XASH_NANOGL || defined XASH_WES && XASH_EMSCRIPTEN  // WebGL need to know array sizes
+#if !defined XASH_NANOGL || defined XASH_WES  // WebGL need to know array sizes
 	if ( pglDrawRangeElements )
 		pglDrawRangeElements(GL_TRIANGLES, 0, vbo->array_len, vbotex->curindex, GL_UNSIGNED_SHORT, vbotex->indexarray);
 	else
@@ -2350,7 +2350,7 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 		GL_SelectTexture(XASH_TEXTURE0);
 		pglDisable(GL_TEXTURE_2D);
 		pglDisable(GL_DEPTH_TEST);
-#if !defined XASH_NANOGL || defined XASH_WES && XASH_EMSCRIPTEN  // WebGL need to know array sizes
+#if !defined XASH_NANOGL || defined XASH_WES  // WebGL need to know array sizes
 		if ( pglDrawRangeElements )
 			pglDrawRangeElements(GL_LINES, 0, vbo->array_len, vbotex->curindex, GL_UNSIGNED_SHORT, vbotex->indexarray);
 		else
@@ -2419,7 +2419,7 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 				// out of free block space. Draw all generated index array and clear it
 				// upload already generated block
 				LM_UploadDynamicBlock();
-#if !defined XASH_NANOGL || defined XASH_WES && XASH_EMSCRIPTEN  // WebGL need to know array sizes
+#if !defined XASH_NANOGL || defined XASH_WES  // WebGL need to know array sizes
 				if ( pglDrawRangeElements )
 					pglDrawRangeElements(GL_TRIANGLES, 0, vbo->array_len, dlightindex, GL_UNSIGNED_SHORT, dlightarray);
 				else
@@ -2629,7 +2629,7 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 			LM_UploadDynamicBlock();
 
 			// draw remaining array
-#if !defined XASH_NANOGL || defined XASH_WES && XASH_EMSCRIPTEN  // WebGL need to know array sizes
+#if !defined XASH_NANOGL || defined XASH_WES  // WebGL need to know array sizes
 			if ( pglDrawRangeElements )
 				pglDrawRangeElements(GL_TRIANGLES, 0, vbo->array_len, dlightindex, GL_UNSIGNED_SHORT, dlightarray);
 			else

@@ -144,9 +144,6 @@ intptr_t CL_RenderGetParm(const int parm, const int arg, const qboolean checkRef
 	switch ( parm )
 	{
 		case PARM_BSP2_SUPPORTED:
-#ifdef SUPPORT_BSP2_FORMAT
-			return 1;
-#endif
 			return 0;
 		case PARM_SKY_SPHERE:
 			return FBitSet(world.flags, FWORLD_SKYSPHERE) && !FBitSet(world.flags, FWORLD_CUSTOM_SKYBOX);

@@ -21,9 +21,9 @@ GNU General Public License for more details.
 #include "shake.h"
 #include "hltv.h"
 #include "input.h"
-#if XASH_LOW_MEMORY != 2
+
 int CL_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
-#endif
+
 /*
 ===============
 CL_UserMsgStub
@@ -2748,13 +2748,8 @@ void CL_LegacyPrecacheEvent(sizebuf_t* msg)
 	CL_SetEventIndex(cl.event_precache[eventIndex], eventIndex);
 }
 
-#if XASH_LOW_MEMORY == 0
 #define MAX_LEGACY_RESOURCES 2048
-#elif XASH_LOW_MEMORY == 2
-#define MAX_LEGACY_RESOURCES 1
-#elif XASH_LOW_MEMORY == 1
-#define MAX_LEGACY_RESOURCES 512
-#endif
+
 /*
 ==============
 CL_ParseResourceList

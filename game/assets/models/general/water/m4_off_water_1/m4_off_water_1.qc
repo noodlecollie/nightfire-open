@@ -1,4 +1,4 @@
-$cdtexture "../../../../../afterburner/textures"
+$cdtexture "../../../../../nfopen/textures"
 $cd "."
 $modelname "m4_off_water_1.mdl"
 

@@ -151,11 +151,6 @@ void R_StudioInit(void)
 	r_studio_drawelements =
 		gEngfuncs.Cvar_Get("r_studio_drawelements", "1", FCVAR_GLCONFIG, "use glDrawElements for studiomodels");
 
-#if XASH_PSVITA
-	// don't do the same array-building work twice since that's what our FFP shim does anyway
-	gEngfuncs.Cvar_FullSet("r_studio_drawelements", "0", FCVAR_READ_ONLY);
-#endif
-
 	Matrix3x4_LoadIdentity(g_studio.rotationmatrix);
 
 	// g-cont. cvar disabled by Valve
@@ -2328,7 +2323,7 @@ _inline void R_StudioDrawArrays(uint startverts, uint startelems)
 		pglColorPointer(4, GL_UNSIGNED_BYTE, 0, g_studio.arraycolor);
 	}
 
-#if !defined XASH_NANOGL || defined XASH_WES && XASH_EMSCRIPTEN  // WebGL need to know array sizes
+#if !defined XASH_NANOGL || defined XASH_WES  // WebGL need to know array sizes
 	if ( pglDrawRangeElements )
 		pglDrawRangeElements(
 			GL_TRIANGLES,

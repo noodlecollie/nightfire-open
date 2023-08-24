@@ -39,31 +39,12 @@ void Platform_ShellExecute(const char* path, const char* parms);
 void Platform_MessageBox(const char* title, const char* message, qboolean parentMainWindow);
 qboolean Sys_DebuggerPresent(void);  // optional, see Sys_DebugBreak
 
-#if XASH_ANDROID
-const char* Android_GetAndroidID(void);
-const char* Android_LoadID(void);
-void Android_SaveID(const char* id);
-#endif
-
 #if XASH_WIN32
 void Platform_UpdateStatusLine(void);
 #else
 static inline void Platform_UpdateStatusLine(void)
 {
 }
-#endif
-
-#if XASH_NSWITCH
-void NSwitch_Init(void);
-void NSwitch_Shutdown(void);
-#endif
-
-#if XASH_PSVITA
-void PSVita_Init(void);
-void PSVita_Shutdown(void);
-qboolean PSVita_GetBasePath(char* buf, const size_t buflen);
-int PSVita_GetArgv(int in_argc, char** in_argv, char*** out_argv);
-void PSVita_InputUpdate(void);
 #endif
 
 /*
@@ -108,11 +89,6 @@ void Platform_SetClipboardText(const char* buffer);
 
 #if !XASH_SDL
 #define SDL_VERSION_ATLEAST(x, y, z) 0
-#endif
-
-#if XASH_ANDROID
-void Android_ShowMouse(qboolean show);
-void Android_MouseMove(float* x, float* y);
 #endif
 
 /*

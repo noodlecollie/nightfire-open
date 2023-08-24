@@ -18,14 +18,8 @@ GNU General Public License for more details.
 #define MEMHEADER_SENTINEL1 0xDEADF00DU
 #define MEMHEADER_SENTINEL2 0xDFU
 
-#ifdef XASH_CUSTOM_SWAP
-#include "platform/misc/swap.h"
-#define Q_malloc SWAP_Malloc
-#define Q_free SWAP_Free
-#else
 #define Q_malloc malloc
 #define Q_free free
-#endif
 
 typedef struct memheader_s
 {

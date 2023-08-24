@@ -63,22 +63,14 @@ typedef struct
 typedef struct
 {
 	int planenum;
-#ifdef SUPPORT_BSP2_FORMAT
-	int children[2];  // negative numbers are contents
-#else
 	short children[2];  // negative numbers are contents
-#endif
 } mclipnode_t;
 
 // size is matched but representation is not
 typedef struct
 {
-#ifdef SUPPORT_BSP2_FORMAT
-	unsigned int v[2];
-#else
 	unsigned short v[2];
 	unsigned int cachededgeoffset;
-#endif
 } medge_t;
 
 #define HALFLIFE_TEXPATH_SKY "sky"
@@ -153,13 +145,8 @@ typedef struct mnode_s
 	// node specific
 	mplane_t* plane;
 	struct mnode_s* children[2];
-#ifdef SUPPORT_BSP2_FORMAT
-	int firstsurface;
-	int numsurfaces;
-#else
 	unsigned short firstsurface;
 	unsigned short numsurfaces;
-#endif
 } mnode_t;
 
 typedef struct msurface_s msurface_t;

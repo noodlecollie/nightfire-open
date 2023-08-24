@@ -501,26 +501,12 @@ static int ID_CheckWMIC(bloomfilter_t value, const char* cmdline)
 }
 #endif
 
-#if XASH_IOS
-char* IOS_GetUDID(void);
-#endif
-
 static bloomfilter_t ID_GenerateRawId(void)
 {
 	bloomfilter_t value = 0;
 	int count = 0;
 
 #if XASH_LINUX
-#if XASH_ANDROID && !XASH_DEDICATED
-	{
-		const char* androidid = Android_GetAndroidID();
-		if ( androidid && ID_VerifyHEX(androidid) )
-		{
-			value |= BloomFilter_ProcessStr(androidid);
-			count++;
-		}
-	}
-#endif
 	count += ID_ProcessCPUInfo(&value);
 	count += ID_ProcessFiles(&value, "/sys/block", "device/cid");
 	count += ID_ProcessNetDevices(&value);
@@ -528,12 +514,6 @@ static bloomfilter_t ID_GenerateRawId(void)
 #if XASH_WIN32
 	count += ID_ProcessWMIC(&value, "wmic path win32_physicalmedia get SerialNumber ");
 	count += ID_ProcessWMIC(&value, "wmic bios get serialnumber ");
-#endif
-#if XASH_IOS
-	{
-		value |= BloomFilter_ProcessStr(IOS_GetUDID());
-		count++;
-	}
 #endif
 	return value;
 }
@@ -546,17 +526,6 @@ static uint ID_CheckRawId(bloomfilter_t filter)
 	(void)value;
 
 #if XASH_LINUX
-#if XASH_ANDROID && !XASH_DEDICATED
-	{
-		const char* androidid = Android_GetAndroidID();
-		if ( androidid && ID_VerifyHEX(androidid) )
-		{
-			value = BloomFilter_ProcessStr(androidid);
-			count += (filter & value) == value;
-			value = 0;
-		}
-	}
-#endif
 	count += ID_CheckNetDevices(filter);
 	count += ID_CheckFiles(filter, "/sys/block", "device/cid");
 	if ( ID_ProcessCPUInfo(&value) )
@@ -568,13 +537,6 @@ static uint ID_CheckRawId(bloomfilter_t filter)
 	count += ID_CheckWMIC(filter, "wmic bios get serialnumber");
 #endif
 
-#if XASH_IOS
-	{
-		value = BloomFilter_ProcessStr(IOS_GetUDID());
-		count += (filter & value) == value;
-		value = 0;
-	}
-#endif
 #if 0
 	Msg( "ID_CheckRawId: %d\n", count );
 #endif
@@ -643,15 +605,7 @@ void ID_Init(void)
 	Cmd_AddRestrictedCommand("testcpuinfo", ID_TestCPUInfo_f, "try read cpu serial");
 #endif
 
-#if XASH_ANDROID && !XASH_DEDICATED
-	PlatformLib_SScanF(Android_LoadID(), "%016llX", &id);
-	if ( id )
-	{
-		id ^= SYSTEM_XOR_MASK;
-		ID_Check();
-	}
-
-#elif XASH_WIN32
+#if XASH_WIN32
 	{
 		CHAR szBuf[MAX_PATH];
 		ID_GetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", "xash_id", (LPBYTE)szBuf, MAX_PATH);
@@ -712,9 +666,7 @@ void ID_Init(void)
 		Q_snprintf(&id_md5[i * 2], 3, "%02hhx", md5[i]);
 	}
 
-#if XASH_ANDROID && !XASH_DEDICATED
-	Android_SaveID(va("%016llX", id ^ SYSTEM_XOR_MASK));
-#elif XASH_WIN32
+#if XASH_WIN32
 	{
 		CHAR Buf[MAX_PATH];
 		PlatformLib_SNPrintF(Buf, sizeof(Buf), "%016llX", id ^ SYSTEM_XOR_MASK);

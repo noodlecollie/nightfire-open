@@ -25,10 +25,6 @@ GNU General Public License for more details.
 #else
 #include "platform/posix/net.h"
 #endif
-#if XASH_PSVITA
-#include "platform/psvita/net_psvita.h"
-static const struct in6_addr in6addr_any;
-#endif
 
 #ifndef XASH_NO_NETWORK
 #include "PlatformLib/Net.h"
@@ -258,7 +254,7 @@ _inline socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
 
 _inline qboolean NET_IsSocketError(int retval)
 {
-#if XASH_WIN32 || XASH_DOS4GW
+#if XASH_WIN32
 	return retval == SOCKET_ERROR ? true : false;
 #else
 	return retval < 0 ? true : false;
@@ -267,7 +263,7 @@ _inline qboolean NET_IsSocketError(int retval)
 
 _inline qboolean NET_IsSocketValid(int socket)
 {
-#if XASH_WIN32 || XASH_DOS4GW
+#if XASH_WIN32
 	return socket != INVALID_SOCKET;
 #else
 	return socket >= 0;
@@ -430,9 +426,9 @@ qboolean NET_GetHostByName(const char* hostname, int family, struct sockaddr_sto
 #endif
 }
 
-#if !XASH_EMSCRIPTEN && !XASH_DOS4GW && !defined XASH_NO_ASYNC_NS_RESOLVE
+#if !defined XASH_NO_ASYNC_NS_RESOLVE
 #define CAN_ASYNC_NS_RESOLVE
-#endif  // !XASH_EMSCRIPTEN && !XASH_DOS4GW && !defined XASH_NO_ASYNC_NS_RESOLVE
+#endif  // !defined XASH_NO_ASYNC_NS_RESOLVE
 
 #ifdef CAN_ASYNC_NS_RESOLVE
 static void NET_ResolveThread(void);

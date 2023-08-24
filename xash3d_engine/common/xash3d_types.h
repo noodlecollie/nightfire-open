@@ -4,10 +4,6 @@
 
 #include "build.h"
 
-#if XASH_IRIX
-#include <port.h>
-#endif
-
 #if XASH_WIN32
 #include <wchar.h>  // off_t
 #endif  // _WIN32
@@ -155,13 +151,8 @@ typedef void (*setpair_t)(const char* key, const void* value, const void* buffer
 // config strings are a general means of communication from
 // the server to all connected clients.
 // each config string can be at most CS_SIZE characters.
-#if XASH_LOW_MEMORY == 0
+
 #define MAX_QPATH 64  // max length of a game pathname
-#elif XASH_LOW_MEMORY == 2
-#define MAX_QPATH 32  // should be enough for singleplayer
-#elif XASH_LOW_MEMORY == 1
-#define MAX_QPATH 48
-#endif
 #define MAX_OSPATH 260  // max length of a filesystem pathname
 #define CS_SIZE 64  // size of one config string
 #define CS_TIME 16  // size of time string

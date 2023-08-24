@@ -350,7 +350,7 @@ typedef struct enginefuncs_s
 	// added in 8279
 	edict_t* (*pfnPEntityOfEntIndexAllEntities)(int iEntIndex);
 
-	// Afterburner extensions begin here
+	// Nightfire Open extensions begin here
 
 	float (*pfnModelSequenceDuration)(int modelIndex, int anim);
 	uint32_t (*pfnGetHitboxCount)(const edict_t* edict);
@@ -599,7 +599,7 @@ typedef struct
 	//  and tested for them.
 	int (*pfnAllowLagCompensation)(void);
 
-	// Afterburner extensions start here
+	// Nightfire Open extensions start here
 
 	// This isn't a fantastic way to do this, but really we should factor out the bits of the engine
 	// which play contents sounds for movement (eg. water) and do all that stuff in the game libs.

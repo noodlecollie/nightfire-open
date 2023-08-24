@@ -80,11 +80,28 @@ static winding_t* winding_alloc(uint numpoints)
 
 static void free_winding(winding_t* w)
 {
+	// GCC says this may be uninitialised when inlined.
+	// I have no idea why, and don't have the
+	// time to pick through sorting this all out.
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
+	unsigned* sentinel = (unsigned*)w;
+
 	// simple sentinel by Carmack
-	if ( *(unsigned*)w == 0xDEADC0DE )
+	if ( *sentinel == 0xDEADC0DE )
+	{
 		Host_Error("free_winding: freed a freed winding\n");
-	*(unsigned*)w = 0xDEADC0DE;
+	}
+
+	*sentinel = 0xDEADC0DE;
 	free(w);
+
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
 }
 
 static winding_t* winding_copy(winding_t* w)
@@ -377,7 +394,8 @@ static void winding_split(winding_t* in, const mplane_t* split, winding_t** pfro
 	int counts[3];
 	vec_t dot;
 	int i, j;
-	winding_t *front, *back;
+	winding_t* front = NULL;
+	winding_t* back = NULL;
 	vec_t *p1, *p2, *mid;
 	int maxpts;
 

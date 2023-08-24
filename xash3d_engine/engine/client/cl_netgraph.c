@@ -17,13 +17,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "kbutton.h"
 
-#if XASH_LOW_MEMORY == 0
 #define NET_TIMINGS 1024
-#elif XASH_LOW_MEMORY == 1
-#define NET_TIMINGS 256
-#elif XASH_LOW_MEMORY == 2
-#define NET_TIMINGS 64
-#endif
 #define NET_TIMINGS_MASK (NET_TIMINGS - 1)
 #define LATENCY_AVG_FRAC 0.5f
 #define FRAMERATE_AVG_FRAC 0.5f

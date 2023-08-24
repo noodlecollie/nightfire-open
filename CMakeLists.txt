@@ -14,21 +14,16 @@ project(Nightfire-Open LANGUAGES C CXX)
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 option(NF_DEDICATED_SERVER "Build dedicated server (no client-specific code)" OFF)
 option(NF_SINGLE_ENGINE_BINARY "Build Xash3D engine as single binary (always enabled for dedicated server builds)" OFF)
-option(NF_LOW_MEMORY_SUPPORT "Build with reduced memory footprint" OFF)
 option(NF_SOFTWARE_RENDERER_ENABLED "Enables support for software rendering if building client" ON)
 option(NF_OPENGL_RENDERER_ENABLED "Enables support for OpenGL rendering if building client" ON)
 option(NF_OPENGL_STATIC_LINK "If OpenGL rendering is enabled, links statically against the OpenGL libraries" OFF)
 option(NF_ENABLE_TESTS "Enables test code in targets" OFF)
-option(NF_ENABLE_CUSTOM_SWAP "Enables custom memory swap code for specialist devices with no swap functionality" OFF)
 option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled for dedicated server builds)" OFF)
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client" ON)
 option(NF_INSTALL_CONTENT_ONLY "If enabled, only installs game content to install directory, and does not build game. Only used by release process." OFF)
+option(NF_WARNINGS_AS_ERRORS "If disabled, compiler warnings will not be treated as errors. Intended as a temporary workaround only, recommended to leave enabled." ON)
 
 include(project_definitions)
-
-if(NF_ENABLE_CUSTOM_SWAP AND TARGET_PLATFORM STREQUAL "WINDOWS")
-	message(FATAL_ERROR "Custom swap is not supported on Windows builds")
-endif()
 
 if(NF_ENABLE_STDIN_INPUT AND TARGET_PLATFORM STREQUAL "WINDOWS")
 	message(WARNING "Using stdin is not supported on Windows builds, ignoring NF_ENABLE_STDIN_INPUT")
@@ -50,6 +45,9 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED YES)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE YES)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ${NF_WARNINGS_AS_ERRORS})
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 set(VCS_COMMIT_ID "notset")
 

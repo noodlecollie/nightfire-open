@@ -182,7 +182,7 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 				}
 				break;
 			case ABBSP_VERSION:
-				Q_strncpy(version_description, "Afterburner", sizeof(version_description));
+				Q_strncpy(version_description, "Nightfire Open", sizeof(version_description));
 				break;
 			default:
 				Q_strncpy(version_description, "??", sizeof(version_description));

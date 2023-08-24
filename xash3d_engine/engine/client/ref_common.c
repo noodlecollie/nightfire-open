@@ -595,7 +595,6 @@ static void SetWidthAndHeightFromCommandLine(void)
 
 static void SetFullscreenModeFromCommandLine(void)
 {
-#if !XASH_MOBILE_PLATFORM
 	if ( Sys_CheckParm("-fullscreen") )
 	{
 		Cvar_Set("fullscreen", "1");
@@ -604,7 +603,6 @@ static void SetFullscreenModeFromCommandLine(void)
 	{
 		Cvar_Set("fullscreen", "0");
 	}
-#endif
 }
 
 static void R_CollectRendererNames(void)

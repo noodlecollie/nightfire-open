@@ -23,7 +23,7 @@ static constexpr float GRENADELAUNCHER_TUMBLEVEL_MAX = -500.0f;
 
 LINK_ENTITY_TO_CLASS(weapon_grenadelauncher, CWeaponGrenadeLauncher);
 
-#ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
+#ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known weapons to this one.
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponGrenadeLauncher)
 LINK_ENTITY_TO_CLASS(weapon_rocketlauncher, CWeaponGrenadeLauncher)
@@ -236,7 +236,7 @@ public:
 
 LINK_ENTITY_TO_CLASS(ammo_grenadelauncher, CAmmoGrenadeLauncher)
 
-#ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
+#ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known ammo to this one.
 LINK_ENTITY_TO_CLASS(ammo_rocketlauncher, CAmmoGrenadeLauncher)
 #endif

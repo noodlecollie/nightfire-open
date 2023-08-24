@@ -182,9 +182,6 @@ void IN_ToggleClientMouse(int newstate, int oldstate)
 	{
 		Platform_SetCursorType(dc_arrow);
 
-#if XASH_ANDROID
-		Android_ShowMouse(true);
-#endif
 #if XASH_USE_EVDEV
 		Evdev_SetGrab(false);
 #endif
@@ -193,9 +190,6 @@ void IN_ToggleClientMouse(int newstate, int oldstate)
 	{
 		Platform_SetCursorType(dc_none);
 
-#if XASH_ANDROID
-		Android_ShowMouse(false);
-#endif
 #if XASH_USE_EVDEV
 		Evdev_SetGrab(true);
 #endif

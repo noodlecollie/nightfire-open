@@ -290,7 +290,7 @@ decodeError:
 	bErrorOut = true;
 	return nBytes;
 
-	// NFTODO: No idea what's going on here, this function with gotos is an ugly mess.
+	// No idea what's going on here, this function with gotos is an ugly mess.
 	// This is supposed to be C++, not assembly...
 	// This section was unreachable, so it's been properly taken out.
 #if 0

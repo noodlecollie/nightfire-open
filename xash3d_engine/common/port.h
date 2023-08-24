@@ -20,14 +20,10 @@ GNU General Public License for more details.
 #include "build.h"
 
 #if !XASH_WIN32
-#if XASH_APPLE
-#include <sys/syslimits.h>
-#define OS_LIB_EXT "dylib"
-#define OPEN_COMMAND "open"
-#else
+
 #define OS_LIB_EXT "so"
 #define OPEN_COMMAND "xdg-open"
-#endif
+
 #define OS_LIB_PREFIX "lib"
 #define VGUI_SUPPORT_DLL "libvgui_support." OS_LIB_EXT
 
@@ -39,18 +35,9 @@ GNU General Public License for more details.
 
 #if XASH_POSIX
 #include <unistd.h>
-#if XASH_NSWITCH
-#define SOLDER_LIBDL_COMPAT
-#include <solder.h>
-#elif XASH_PSVITA
-#define VRTLD_LIBDL_COMPAT
-#include <vrtld.h>
-#define O_BINARY 0
-#else
 #include <dlfcn.h>
 #define HAVE_DUP
 #define O_BINARY 0
-#endif
 #define O_TEXT 0
 #define _mkdir(x) mkdir(x, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
 #endif
@@ -81,10 +68,6 @@ typedef struct tagPOINT
 #define VGUI_SUPPORT_DLL "../vgui_support." OS_LIB_EXT
 #define HAVE_DUP
 #endif  // WIN32
-
-#ifndef XASH_LOW_MEMORY
-#define XASH_LOW_MEMORY 0
-#endif
 
 #include <stdlib.h>
 #include <string.h>

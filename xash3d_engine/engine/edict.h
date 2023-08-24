@@ -16,11 +16,7 @@
 #ifndef EDICT_H
 #define EDICT_H
 
-#ifdef SUPPORT_BSP2_FORMAT
-#define MAX_ENT_LEAFS 24  // Orignally was 16
-#else
 #define MAX_ENT_LEAFS 48
-#endif
 
 #include "progdefs.h"
 
@@ -33,11 +29,7 @@ struct edict_s
 	int headnode;  // -1 to use normal leaf check
 
 	int num_leafs;
-#ifdef SUPPORT_BSP2_FORMAT
-	int leafnums[MAX_ENT_LEAFS];
-#else
 	short leafnums[MAX_ENT_LEAFS];
-#endif
 	float freetime;  // sv.time when the object was freed
 
 	void* pvPrivateData;  // Alloced and freed by engine, used by DLLs

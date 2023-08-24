@@ -434,14 +434,6 @@ void* GL_GetProcAddress(const char* name)
 {
 	void* func = SDL_GL_GetProcAddress(name);
 
-#if XASH_PSVITA
-	// try to find in main module
-	if ( !func )
-	{
-		func = dlsym(NULL, name);
-	}
-#endif
-
 	if ( !func )
 	{
 		Con_Reportf(S_ERROR "GL_GetProcAddress failed for %s\n", name);
@@ -567,10 +559,11 @@ static qboolean VID_SetScreenResolution(int width, int height)
 	Uint32 wndFlags = 0;
 	static string wndname;
 
-#if !XASH_APPLE
 	if ( vid_highdpi->value )
+	{
 		wndFlags |= SDL_WINDOW_ALLOW_HIGHDPI;
-#endif
+	}
+
 	Q_strncpy(wndname, GI->title, sizeof(wndname));
 
 	want.w = width;

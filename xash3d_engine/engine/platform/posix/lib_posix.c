@@ -17,16 +17,10 @@ GNU General Public License for more details.
 #endif
 #include "platform/platform.h"
 #if XASH_LIB == LIB_POSIX
-#ifdef XASH_IRIX
-#include "platform/irix/dladdr.h"
-#endif
 #include "common.h"
 #include "library.h"
 #include "filesystem.h"
 #include "server.h"
-#include "platform/android/lib_android.h"
-#include "platform/emscripten/lib_em.h"
-#include "platform/apple/lib_ios.h"
 
 #ifdef XASH_DLL_LOADER  // wine-based dll loader
 void* Loader_LoadLibrary(const char* name);

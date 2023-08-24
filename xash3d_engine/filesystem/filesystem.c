@@ -24,9 +24,6 @@ GNU General Public License for more details.
 #if XASH_WIN32
 #include <direct.h>
 #include <io.h>
-#elif XASH_DOS4GW
-#include <direct.h>
-#include <errno.h>
 #else
 #include <dirent.h>
 #include <errno.h>
@@ -189,21 +186,6 @@ void stringlistsort(stringlist_t* list)
 	}
 }
 
-#if XASH_DOS4GW
-// convert names to lowercase because dos doesn't care, but pattern matching code often does
-static void listlowercase(stringlist_t* list)
-{
-	char* c;
-	int i;
-
-	for ( i = 0; i < list->numstrings; i++ )
-	{
-		for ( c = list->strings[i]; *c; c++ )
-			*c = Q_tolower(*c);
-	}
-}
-#endif
-
 void listdirectory(stringlist_t* list, const char* path)
 {
 #if XASH_WIN32
@@ -237,11 +219,6 @@ void listdirectory(stringlist_t* list, const char* path)
 	while ( (entry = readdir(dir)) )
 		stringlistappend(list, entry->d_name);
 	closedir(dir);
-#endif
-
-#if XASH_DOS4GW
-	// convert names to lowercase because 8.3 always in CAPS
-	listlowercase(list);
 #endif
 }
 
@@ -1148,16 +1125,6 @@ void FS_Rescan(void)
 
 	FS_ClearSearchPath();
 
-#if XASH_IOS
-	{
-		char buf[MAX_VA_STRING];
-
-		Q_snprintf(buf, sizeof(buf), "%sextras.pak", SDL_GetBasePath());
-		FS_AddPak_Fullpath(buf, NULL, extrasFlags);
-		Q_snprintf(buf, sizeof(buf), "%sextras_%s.pak", SDL_GetBasePath(), GI->gamefolder);
-		FS_AddPak_Fullpath(buf, NULL, extrasFlags);
-	}
-#else
 	str = PlatformLib_GetEnv("XASH3D_EXTRAS_PAK1");
 	if ( COM_CheckString(str) )
 		FS_AddArchive_Fullpath(str, NULL, extrasFlags);
@@ -1165,7 +1132,6 @@ void FS_Rescan(void)
 	str = PlatformLib_GetEnv("XASH3D_EXTRAS_PAK2");
 	if ( COM_CheckString(str) )
 		FS_AddArchive_Fullpath(str, NULL, extrasFlags);
-#endif
 
 	if ( Q_stricmp(GI->basedir, GI->gamefolder) )
 		FS_AddGameHierarchy(GI->basedir, 0);

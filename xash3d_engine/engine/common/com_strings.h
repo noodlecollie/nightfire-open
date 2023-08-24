@@ -42,12 +42,7 @@ GNU General Public License for more details.
 #define DEFAULT_PLAYER_PATH_AFTERBURNER "models/player/fallback/fallback.mdl"
 
 #ifndef PLAYER_MODEL_PATH
-#ifdef AFTERBURNER_ENGINE
 #define PLAYER_MODEL_PATH DEFAULT_PLAYER_PATH_AFTERBURNER
-#else
-// Default to Half Life - we will never build with Quake support.
-#define PLAYER_MODEL_PATH DEFAULT_PLAYER_PATH_HALFLIFE
-#endif
 #endif  // PLAYER_MODEL_PATH
 
 // debug beams
@@ -72,9 +67,6 @@ GNU General Public License for more details.
 #define DEFAULT_TEXTURE_DIR_PATH "textures/"
 
 #define CVAR_GLCONFIG_DESCRIPTION "enable or disable %s"
-
-#define DEFAULT_BSP_BUILD_ERROR \
-	"%s can't be loaded in this build. Please rebuild engine with enabled SUPPORT_BSP2_FORMAT\n"
 
 #define DEFAULT_UPDATE_PAGE "https://github.com/FWGS/xash3d-fwgs/releases/latest"
 

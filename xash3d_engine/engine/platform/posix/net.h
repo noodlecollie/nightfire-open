@@ -17,18 +17,13 @@ GNU General Public License for more details.
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#if !XASH_PSVITA
 #include <sys/ioctl.h>
-#endif
 #include <sys/select.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <errno.h>
 #include <fcntl.h>
-#if XASH_IRIX
-#include <sys/time.h>
-#endif
 
 #define WSAGetLastError() errno
 #define WSAEINTR EINTR
@@ -68,23 +63,13 @@ GNU General Public License for more details.
 #define WSAENAMETOOLONG ENAMETOOLONG
 #define WSAEHOSTDOWN EHOSTDOWN
 
-#ifndef XASH_DOS4GW
 #define HAVE_GETADDRINFO
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
 
-#if XASH_EMSCRIPTEN
-/* All socket operations are non-blocking already */
-static int ioctl_stub(int d, unsigned long r, ...)
-{
-	return 0;
-}
-#define ioctlsocket ioctl_stub
-#elif !XASH_PSVITA  // XASH_EMSCRIPTEN
 #define ioctlsocket ioctl
-#endif  // XASH_EMSCRIPTEN
 #define closesocket close
-#endif
+
 #define SOCKET int
 typedef int WSAsize_t;
 

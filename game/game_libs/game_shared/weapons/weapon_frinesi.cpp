@@ -27,7 +27,7 @@ static constexpr int NextReloadState(int orig, int next)
 
 LINK_ENTITY_TO_CLASS(weapon_frinesi, CWeaponFrinesi)
 
-#ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
+#ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known weapons to this one.
 LINK_ENTITY_TO_CLASS(weapon_commando, CWeaponFrinesi)
 LINK_ENTITY_TO_CLASS(weapon_minigun, CWeaponFrinesi)
@@ -283,7 +283,7 @@ public:
 LINK_ENTITY_TO_CLASS(ammo_frinesi, CAmmoFrinesi)
 LINK_ENTITY_TO_CLASS(ammo_shotgun, CAmmoFrinesi)  // For Nightfire compatibility
 
-#ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
+#ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known ammo to this one.
 LINK_ENTITY_TO_CLASS(ammo_commando, CAmmoFrinesi)
 LINK_ENTITY_TO_CLASS(ammo_mini, CAmmoFrinesi)

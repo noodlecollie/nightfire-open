@@ -9,7 +9,7 @@
 
 LINK_ENTITY_TO_CLASS(weapon_raptor, CWeaponRaptor)
 
-#ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
+#ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known weapons to this one.
 LINK_ENTITY_TO_CLASS(weapon_pdw90, CWeaponRaptor)
 #endif
@@ -59,7 +59,7 @@ public:
 
 LINK_ENTITY_TO_CLASS(ammo_raptor, CAmmoRaptor)
 
-#ifdef AFTERBURNER_GAMEPLAY_PLACEHOLDERS
+#ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known ammo to this one.
 LINK_ENTITY_TO_CLASS(ammo_pdw90, CAmmoRaptor)
 #endif

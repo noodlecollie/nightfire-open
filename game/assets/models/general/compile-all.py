@@ -12,7 +12,7 @@ import argparse
 from concurrent.futures.thread import ThreadPoolExecutor
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(os.path.realpath(sys.argv[0])))
-GAME_CONTENT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "afterburner"))
+GAME_CONTENT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "nfopen"))
 MDL_OUTPUT_DIR = os.path.join(GAME_CONTENT_DIR, "models")
 TEXTURE_DIR = os.path.join(GAME_CONTENT_DIR, "textures")
 TEXTURE_SUBDIR_NAME = "mdl"

@@ -41,15 +41,9 @@ static qboolean g_messagemode_privileged = true;
 #define COLOR_DEFAULT '7'
 #define CON_HISTORY 64
 #define MAX_DBG_NOTIFY 128
-#if XASH_LOW_MEMORY
-#define CON_NUMFONTS 1  // do not load different font textures
-#define CON_TEXTSIZE 32768  // max scrollback buffer characters in console (32 kb)
-#define CON_MAXLINES 2048  // max scrollback buffer lines in console
-#else
 #define CON_NUMFONTS 3  // maxfonts
 #define CON_TEXTSIZE 1048576  // max scrollback buffer characters in console (1 Mb)
 #define CON_MAXLINES 16384  // max scrollback buffer lines in console
-#endif
 #define CON_LINES(i) (con.lines[(con.lines_first + (i)) % con.maxlines])
 #define CON_LINES_COUNT con.lines_count
 #define CON_LINES_LAST() CON_LINES(CON_LINES_COUNT - 1)
@@ -1660,8 +1654,7 @@ void Key_Console(int key)
 		return;
 	}
 
-	// exit the console by pressing MINUS on NSwitch
-	// or both Back(Select)/Start buttons for everyone else
+	// exit the console
 	if ( key == K_BACK_BUTTON || key == K_START_BUTTON )
 	{
 		if ( cls.state == ca_active && !cl.background )
@@ -2304,9 +2297,7 @@ void Con_VidInit(void)
 
 	Con_LoadConchars();
 	Con_CheckResize();
-#if XASH_LOW_MEMORY
-	con.background = R_GetBuiltinTexture(REF_BLACK_TEXTURE);
-#else
+
 	// loading console image
 	if ( host.allow_console )
 	{
@@ -2381,7 +2372,6 @@ void Con_VidInit(void)
 	// missed console image will be replaced as gray background like X-Ray or Crysis
 	if ( con.background == R_GetBuiltinTexture(REF_DEFAULT_TEXTURE) || con.background == 0 )
 		con.background = R_GetBuiltinTexture(REF_GRAY_TEXTURE);
-#endif
 }
 
 /*

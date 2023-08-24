@@ -1,4 +1,4 @@
-$cdtexture "../../../../afterburner/textures"
+$cdtexture "../../../../nfopen/textures"
 $cd "."
 $modelname "speaker_alarm.mdl"
 
@@ -15,7 +15,3 @@ $bodygroup "studio"
 {
 	studio "alarm_ref"
 }
-
-
-
-

@@ -92,7 +92,6 @@ static qboolean Sys_FindExecutable(const char* baseName, char* buf, size_t size)
 	return false;
 }
 
-#if !XASH_ANDROID && !XASH_NSWITCH && !XASH_PSVITA
 void Platform_ShellExecute(const char* path, const char* parms)
 {
 	char xdgOpen[128];
@@ -118,14 +117,13 @@ void Platform_ShellExecute(const char* path, const char* parms)
 		Con_Reportf(S_WARN "Could not find " OPEN_COMMAND " utility\n");
 	}
 }
-#endif  // XASH_ANDROID
 
 void Posix_Daemonize(void)
 {
 	// to be accessed later
 	if ( (host.daemonized = Sys_CheckParm("-daemonize")) )
 	{
-#if XASH_POSIX && defined(_POSIX_VERSION) && !defined(XASH_MOBILE_PLATFORM)
+#if XASH_POSIX && defined(_POSIX_VERSION)
 		pid_t daemon;
 
 		daemon = fork();
@@ -163,16 +161,13 @@ void Posix_Daemonize(void)
 
 			// fallthrough
 		}
-#elif defined(XASH_MOBILE_PLATFORM)
-		Sys_Error("Can't run in background on mobile platforms!");
 #else
 		Sys_Error("Daemonize not supported on this platform!");
 #endif
 	}
 }
 
-#if !XASH_SDL && !XASH_ANDROID
-
+#if !XASH_SDL
 void Platform_Init(void)
 {
 	Posix_Daemonize();
@@ -186,11 +181,8 @@ void Platform_Shutdown(void)
 double Platform_DoubleTime(void)
 {
 	struct timespec ts;
-#if XASH_IRIX
-	clock_gettime(CLOCK_SGI_CYCLE, &ts);
-#else
 	clock_gettime(CLOCK_MONOTONIC, &ts);
-#endif
+
 	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
 }
 

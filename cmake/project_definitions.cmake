@@ -43,7 +43,7 @@ endif()
 ############################################################
 
 set(INSTALL_ROOT nightfire-open)
-set(GAME_FOLDER_NAME afterburner)
+set(GAME_FOLDER_NAME nfopen)
 set(GAME_EXECUTABLE bond)
 
 set(TARGETNAME_INCLUDES_SDK sdk_includes)

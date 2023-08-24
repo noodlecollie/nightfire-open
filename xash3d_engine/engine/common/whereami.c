@@ -234,11 +234,6 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
 #endif
 #endif
 
-#if defined(__ANDROID__) || defined(ANDROID)
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <unistd.h>
-#endif
 #include <stdbool.h>
 
 WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
@@ -288,50 +283,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 						break;
 
 					length = (int)strlen(resolved);
-#if defined(__ANDROID__) || defined(ANDROID)
-					if ( length > 4 && buffer[length - 1] == 'k' && buffer[length - 2] == 'p' &&
-						 buffer[length - 3] == 'a' && buffer[length - 4] == '.' )
-					{
-						char *begin, *p;
-						int fd = PlatformLib_Open(path, O_RDONLY);
-						if ( fd == -1 )
-						{
-							length = -1;  // retry
-							break;
-						}
 
-						begin = (char*)mmap(0, offset, PROT_READ, MAP_SHARED, fd, 0);
-						if ( begin == MAP_FAILED )
-						{
-							PlatformLib_Close(fd);
-							length = -1;  // retry
-							break;
-						}
-
-						p = begin + offset - 30;  // minimum size of local file header
-						while ( p >= begin )  // scan backwards
-						{
-							if ( *((uint32_t*)p) == 0x04034b50UL )  // local file header signature found
-							{
-								uint16_t length_ = *((uint16_t*)(p + 26));
-
-								if ( length + 2 + length_ < (int)sizeof(buffer) )
-								{
-									memcpy(&buffer[length], "!/", 2);
-									memcpy(&buffer[length + 2], p + 30, length_);
-									length += 2 + length_;
-								}
-
-								break;
-							}
-
-							--p;
-						}
-
-						munmap(begin, offset);
-						PlatformLib_Close(fd);
-					}
-#endif
 					if ( length <= capacity )
 					{
 						memcpy(out, resolved, length);
@@ -575,8 +527,7 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 	return length;
 }
 
-#elif defined(__DragonFly__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || \
-	defined(__OpenBSD__)
+#elif defined(__DragonFly__)
 
 #include <limits.h>
 #include <stdlib.h>
@@ -585,115 +536,6 @@ int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 #include <sys/sysctl.h>
 #include <dlfcn.h>
 #include <stdbool.h>
-
-#if defined(__OpenBSD__)
-
-#include <unistd.h>
-
-WAI_FUNCSPEC
-int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
-{
-	char buffer1[4096];
-	char buffer2[PATH_MAX];
-	char buffer3[PATH_MAX];
-	char** argv = (char**)buffer1;
-	char* resolved = NULL;
-	int length = -1;
-	bool ok;
-
-	for ( ok = false; !ok; ok = true )
-	{
-		int mib[4] = {CTL_KERN, KERN_PROC_ARGS, getpid(), KERN_PROC_ARGV};
-		size_t size;
-
-		if ( sysctl(mib, 4, NULL, &size, NULL, 0) != 0 )
-			break;
-
-		if ( size > sizeof(buffer1) )
-		{
-			argv = (char**)WAI_MALLOC(size);
-			if ( !argv )
-				break;
-		}
-
-		if ( sysctl(mib, 4, argv, &size, NULL, 0) != 0 )
-			break;
-
-		if ( strchr(argv[0], '/') )
-		{
-			resolved = realpath(argv[0], buffer2);
-			if ( !resolved )
-				break;
-		}
-		else
-		{
-			const char* PATH = PlatformLib_GetEnv("PATH");
-			if ( !PATH )
-				break;
-
-			size_t argv0_length = strlen(argv[0]);
-
-			const char* begin = PATH;
-			while ( 1 )
-			{
-				const char* separator = strchr(begin, ':');
-				const char* end = separator ? separator : begin + strlen(begin);
-
-				if ( end - begin > 0 )
-				{
-					if ( *(end - 1) == '/' )
-						--end;
-
-					if ( ((end - begin) + 1 + argv0_length + 1) <= sizeof(buffer2) )
-					{
-						memcpy(buffer2, begin, end - begin);
-						buffer2[end - begin] = '/';
-						memcpy(buffer2 + (end - begin) + 1, argv[0], argv0_length + 1);
-
-						resolved = realpath(buffer2, buffer3);
-						if ( resolved )
-							break;
-					}
-				}
-
-				if ( !separator )
-					break;
-
-				begin = ++separator;
-			}
-
-			if ( !resolved )
-				break;
-		}
-
-		length = (int)strlen(resolved);
-		if ( length <= capacity )
-		{
-			memcpy(out, resolved, length);
-
-			if ( dirname_length )
-			{
-				int i;
-
-				for ( i = length - 1; i >= 0; --i )
-				{
-					if ( out[i] == '/' )
-					{
-						*dirname_length = i;
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	if ( argv != (char**)buffer1 )
-		WAI_FREE(argv);
-
-	return ok ? length : -1;
-}
-
-#else
 
 WAI_FUNCSPEC
 int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
@@ -707,11 +549,7 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
 
 	for ( ok = false; !ok; ok = true )
 	{
-#if defined(__NetBSD__)
-		int mib[4] = {CTL_KERN, KERN_PROC_ARGS, -1, KERN_PROC_PATHNAME};
-#else
 		int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
-#endif
 		size_t size = sizeof(buffer1);
 
 		if ( sysctl(mib, 4, path, &size, NULL, 0) != 0 )
@@ -744,8 +582,6 @@ int WAI_PREFIX(getExecutablePath)(char* out, int capacity, int* dirname_length)
 
 	return ok ? length : -1;
 }
-
-#endif
 
 WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity, int* dirname_length)
 {
@@ -790,7 +626,7 @@ WAI_NOINLINE WAI_FUNCSPEC int WAI_PREFIX(getModulePath)(char* out, int capacity,
 	return length;
 }
 
-#elif defined(__sgi) || defined(__SWITCH__) || defined(__vita__)
+#elif defined(__sgi)
 
 /*
  * These functions are stubbed for now to get the code compiling.

@@ -26,9 +26,6 @@ GNU General Public License for more details.
 #include <sys/stat.h>
 #include <fcntl.h>
 #endif
-#if XASH_EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#endif
 #include <errno.h>
 #include "common.h"
 #include "base_cmd.h"
@@ -65,158 +62,89 @@ convar_t* host_sleeptime;
 convar_t* con_gamemaps;
 convar_t *build, *ver;
 
+#if XASH_WIN32
+#define EXECUTABLE_NAME XASH_EXECUTABLE_NAME ".exe"
+#else  // XASH_WIN32
+#define EXECUTABLE_NAME XASH_EXECUTABLE_NAME
+#endif  // !XASH_WIN32
+
 void Sys_PrintUsage(void)
 {
-	const char* usage_str;
-
-#define O(x, y) \
-	"   " x \
-	"  "y \
-	"\n"
-
-	usage_str =
+	const char* usage_str =
 		""
+
 #if XASH_MESSAGEBOX == MSGBOX_STDERR
 		"\n"  // dirty hack to not have Xash Error: Usage: on same line
 #endif  // XASH_MESSAGEBOX == MSGBOX_STDERR
-		S_USAGE "\n"
-#if !XASH_MOBILE_PLATFORM
-#if XASH_WIN32
-		O("<xash>.exe [options] [+command1] [+command2 arg]", "")
-#else  // XASH_WIN32
-		O("<xash> [options] [+command1] [+command2 arg]", "")
-#endif  // !XASH_WIN32
-#endif  // !XASH_MOBILE_PLATFORM
-			"Options:\n" O("-dev [level]     ", "set log verbosity 0-2") O(
-				"-log             ",
-				"write log to \"engine.log\"") O("-nowriteconfig   ", "disable config save")
+
+		S_USAGE
+		"\n"
+		"   " EXECUTABLE_NAME
+		" [options] [+command1] [+command2 arg]\n"
+		"Options:\n"
+		"   -dev [level]       set log verbosity 0-2\n"
+		"   -log               write log to \"engine.log\"\n"
+		"   -nowriteconfig     disable config save\n"
 
 #if !XASH_WIN32
-				O("-casesensitive   ", "disable case-insensitive FS emulation")
+		"   -casesensitive     disable case-insensitive FS emulation\n"
 #endif  // !XASH_WIN32
 
-#if !XASH_MOBILE_PLATFORM
-					O("-daemonize       ", "run engine in background, dedicated only")
-#endif  // !XASH_MOBILE_PLATFORM
+		"   -daemonize         run engine in background, dedicated only\n"
 
 #if !XASH_DEDICATED
-						O("-toconsole       ", "run engine witn console open") O("-width <n>       ", "set window width") O(
-							"-height <n>      ",
-							"set window height") O("-oldfont         ", "enable unused Quake font in Half-Life")
-
-#if !XASH_MOBILE_PLATFORM
-							O("-fullscreen      ",
-							  "run engine in fullscreen mode") O("-windowed        ", "run engine in windowed mode")
-								O("-dedicated       ", "run engine in dedicated server mode")
-#endif  // XASH_MOBILE_PLATFORM
-
-#if XASH_ANDROID
-									O("-nativeegl       ",
-									  "use native egl implementation. Use if screen does not update or black")
-#endif  // XASH_ANDROID
+		"   -toconsole         run engine witn console open\n"
+		"   -width <n>         set window width\n"
+		"   -height <n>        set window height\n"
+		"   -oldfont           enable unused Quake font in Half-Life\n"
+		"   -fullscreen        run engine in fullscreen mode\n"
+		"   -windowed          run engine in windowed mode\n"
+		"   -dedicated         run engine in dedicated server mode\n"
 
 #if XASH_WIN32
-										O("-noavi           ",
-										  "disable AVI support") O("-nointro         ", "disable intro video")
-											O("-minidumps       ", "enable writing minidumps when game crashed")
+		"   -noavi             disable AVI support\n"
+		"   -nointro           disable intro video\n"
+		"   -minidumps         enable writing minidumps when game crashed\n"
 #endif  // XASH_WIN32
 
-#if XASH_DOS
-												O("-novesa          ", "disable vesa")
-#endif  // XASH_DOS
-
 #if XASH_VIDEO == VIDEO_FBDEV
-													O("-fbdev <path>    ", "open selected framebuffer")
-														O("-ttygfx          ", "set graphics mode in tty") O(
-															"-doublebuffer    ",
-															"enable doublebuffering")
+		"   -fbdev <path>      open selected framebuffer\n"
+		"   -ttygfx            set graphics mode in tty\n"
+		"   -doublebuffer      enable doublebuffering\n"
 #endif  // XASH_VIDEO == VIDEO_FBDEV
 
 #if XASH_SOUND == SOUND_ALSA
-															O("-alsadev <dev>   ", "open selected ALSA device")
+		"   -alsadev <dev>     open selected ALSA device\n"
 #endif  // XASH_SOUND == SOUND_ALSA
 
-																O("-nojoy           ", "disable joystick support")
+		"   -nojoy             disable joystick support\n"
 
 #ifdef XASH_SDL
-																	O("-sdl_joy_old_api ", "use SDL legacy joystick API") O(
-																		"-sdl_renderer <n>",
-																		"use alternative SDL_Renderer for software")
+		"   -sdl_joy_old_api   use SDL legacy joystick API\n"
+		"   -sdl_renderer <n>  use alternative SDL_Renderer for software\n"
 #endif  // XASH_SDL
-																		O("-nosound         ", "disable sound") O(
-																			"-noenginemouse   ",
-																			"disable mouse completely")
 
-																			O("-ref <name>      ",
-																			  "use selected renderer dll")
-																				O("-gldebug         ",
-																				  "enable OpenGL debug log")
+		"   -nosound           disable sound\n"
+		"   -noenginemouse     disable mouse completely\n"
+		"   -ref <name>        use selected renderer dll\n"
+		"   -gldebug           enable OpenGL debug log\n"
 #endif  // XASH_DEDICATED
 
-																					O("-noip            ",
-																					  "disable TCP/IP")
-																						O("-noch            ",
-																						  "disable crashhandler")
-																							O("-disablehelp     ",
-																							  "disable this message")
-																								O("-dll <path>      ",
-																								  "override server DLL "
-																								  "path")
-#if !XASH_DEDICATED
-																									O("-clientlib "
-																									  "<path>",
-																									  "override client "
-																									  "DLL path")
-#endif
-																										O("-rodir "
-																										  "<path>    ",
-																										  "set "
-																										  "read-only "
-																										  "base "
-																										  "directory, "
-																										  "experimenta"
-																										  "l")
-																											O("-bugcomp"
-																											  "        "
-																											  " ",
-																											  "enable "
-																											  "precise "
-																											  "bug "
-																											  "compatib"
-																											  "ility. "
-																											  "Will "
-																											  "break "
-																											  "games "
-																											  "that "
-																											  "don't "
-																											  "require "
-																											  "it")
-																												O("    "
-																												  "    "
-																												  "    "
-																												  "    "
-																												  " ",
-																												  "Refe"
-																												  "r "
-																												  "to "
-																												  "engi"
-																												  "ne "
-																												  "docu"
-																												  "ment"
-																												  "atio"
-																												  "n "
-																												  "for "
-																												  "more"
-																												  " inf"
-																												  "o")
+		"   -noip              disable TCP/IP\n"
+		"   -noch              disable crashhandler\n"
+		"   -disablehelp       disable this message\n"
+		"   -dll <path>        override server DLL path\n"
 
-																													O("-ip <ip>         ",
-																													  "set custom ip")
-																														O("-port <port>     ",
-																														  "set custom host port")
-																															O("-clockwindow <cw>",
-																															  "adjust clockwindow");
-#undef O
+#if !XASH_DEDICATED
+		"   -clientlib <path>  override client DLL path\n"
+#endif
+
+		"   -rodir <path>      set read-only base directory, experimental\n"
+		"   -bugcomp           enable precise bug compatibility. Will break games that don't require it\n"
+		"                      Refer to engine documentation for more info\n"
+		"   -ip <ip>           set custom ip\n"
+		"   -port <port>       set custom host port\n"
+		"   -clockwindow <cw>  adjust clockwindow\n";
 
 	Sys_Error("%s", usage_str);
 }
@@ -1169,16 +1097,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	}
 	else
 	{
-#if TARGET_OS_IOS
-		const char* IOS_GetDocsDir();
-		Q_strncpy(host.rootdir, IOS_GetDocsDir(), sizeof(host.rootdir));
-#elif XASH_PSVITA
-		if ( !PSVita_GetBasePath(host.rootdir, sizeof(host.rootdir)) )
-		{
-			Sys_Error("couldn't find xash3d data directory");
-			host.rootdir[0] = 0;
-		}
-#elif (XASH_SDL == 2) && !XASH_NSWITCH  // GetBasePath not impl'd in switch-sdl2
+#if ( XASH_SDL == 2 )
 		char* szBasePath = SDL_GetBasePath();
 
 		if ( !szBasePath )
@@ -1368,13 +1287,6 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		Q_buildos(),
 		Q_buildarch(),
 		Q_buildcommit());
-	Cvar_Getf(
-		"host_lowmemorymode",
-		FCVAR_READ_ONLY,
-		"indicates if engine compiled for low RAM consumption (0 - normal, 1 - low engine limits, 2 - low protocol "
-		"limits)",
-		"%i",
-		XASH_LOW_MEMORY);
 
 	Mod_Init();
 	NET_Init();

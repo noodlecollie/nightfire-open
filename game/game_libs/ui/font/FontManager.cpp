@@ -87,16 +87,13 @@ void CFontManager::VidInit(void)
 								 .SetHandleNum(QM_BOLDFONT)
 								 .Create();
 
-		if ( !uiStatic.lowmemory )
-		{
-			uiStatic.hLightBlur = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), 1000)
-									  .SetBlurParams(2, 1.0f)
-									  .Create();
+		uiStatic.hLightBlur = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), 1000)
+									.SetBlurParams(2, 1.0f)
+									.Create();
 
-			uiStatic.hHeavyBlur = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), 1000)
-									  .SetBlurParams(8, 1.75f)
-									  .Create();
-		}
+		uiStatic.hHeavyBlur = CFontBuilder(DEFAULT_MENUFONT, static_cast<int>(UI_MED_CHAR_HEIGHT * scale), 1000)
+									.SetBlurParams(8, 1.75f)
+									.Create();
 
 		uiStatic.hConsoleFont = CFontBuilder(DEFAULT_CONFONT, static_cast<int>(UI_CONSOLE_CHAR_HEIGHT * scale), 500)
 									.SetOutlineSize()

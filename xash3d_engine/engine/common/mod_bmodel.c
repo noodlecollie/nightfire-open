@@ -558,12 +558,7 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 	real_entrysize = info->entrysize;  // default
 
 	// analyze real entrysize
-	if ( version == QBSP2_VERSION && info->entrysize32 > 0 )
-	{
-		// always use alternate entrysize for BSP2
-		real_entrysize = info->entrysize32;
-	}
-	else if ( version == HLBSP_VERSION && FBitSet(flags, LUMP_BSP30EXT) && info->lumpnumber == LUMP_CLIPNODES )
+	if ( version == HLBSP_VERSION && FBitSet(flags, LUMP_BSP30EXT) && info->lumpnumber == LUMP_CLIPNODES )
 	{
 		// if this map is bsp30ext, try to guess extended clipnodes
 		if ( ((l->filelen % info->entrysize) || (l->filelen / info->entrysize32) >= MAX_MAP_CLIPNODES_HLBSP) )
@@ -2202,25 +2197,12 @@ static void Mod_LoadEdges(dbspmodel_t* bmod)
 	loadmodel->edges = out = Mem_Malloc(loadmodel->mempool, bmod->numedges * sizeof(medge_t));
 	loadmodel->numedges = (int)bmod->numedges;
 
-	if ( bmod->version == QBSP2_VERSION )
-	{
-		dedge32_t* in = (dedge32_t*)bmod->edges.edges32;
+	dedge_t* in = (dedge_t*)bmod->edges.edges;
 
-		for ( i = 0; i < bmod->numedges; i++, in++, out++ )
-		{
-			out->v[0] = (unsigned short)in->v[0];
-			out->v[1] = (unsigned short)in->v[1];
-		}
-	}
-	else
+	for ( i = 0; i < bmod->numedges; i++, in++, out++ )
 	{
-		dedge_t* in = (dedge_t*)bmod->edges.edges;
-
-		for ( i = 0; i < bmod->numedges; i++, in++, out++ )
-		{
-			out->v[0] = (word)in->v[0];
-			out->v[1] = (word)in->v[1];
-		}
+		out->v[0] = (word)in->v[0];
+		out->v[1] = (word)in->v[1];
 	}
 }
 
@@ -2249,30 +2231,16 @@ static void Mod_LoadMarkSurfaces(dbspmodel_t* bmod)
 	loadmodel->marksurfaces = out = Mem_Malloc(loadmodel->mempool, bmod->nummarkfaces * sizeof(*out));
 	loadmodel->nummarksurfaces = (int)bmod->nummarkfaces;
 
-	if ( bmod->version == QBSP2_VERSION )
+	dmarkface_t* in = bmod->markfaces.markfaces;
+
+	for ( i = 0; i < bmod->nummarkfaces; i++, in++ )
 	{
-		dmarkface32_t* in = bmod->markfaces.markfaces32;
-
-		for ( i = 0; i < bmod->nummarkfaces; i++, in++ )
+		if ( (int)(*in) >= loadmodel->numsurfaces )
 		{
-			if ( *in < 0 || *in >= loadmodel->numsurfaces )
-				Host_Error("Mod_LoadMarkFaces: bad surface number in '%s'\n", loadmodel->name);
-			out[i] = loadmodel->surfaces + *in;
+			Host_Error("Mod_LoadMarkFaces: bad surface number in '%s'\n", loadmodel->name);
 		}
-	}
-	else
-	{
-		dmarkface_t* in = bmod->markfaces.markfaces;
 
-		for ( i = 0; i < bmod->nummarkfaces; i++, in++ )
-		{
-			if ( (int)(*in) >= loadmodel->numsurfaces )
-			{
-				Host_Error("Mod_LoadMarkFaces: bad surface number in '%s'\n", loadmodel->name);
-			}
-
-			out[i] = loadmodel->surfaces + *in;
-		}
+		out[i] = loadmodel->surfaces + *in;
 	}
 }
 
@@ -2897,7 +2865,7 @@ static void Mod_LoadSurfaces(dbspmodel_t* bmod)
 	loadmodel->numsurfaces = (int)bmod->numsurfaces;
 
 	// predict samplecount based on bspversion
-	if ( bmod->version == Q1BSP_VERSION || bmod->version == QBSP2_VERSION )
+	if ( bmod->version == Q1BSP_VERSION )
 	{
 		bmod->lightmap_samples = 1;
 	}
@@ -2914,61 +2882,31 @@ static void Mod_LoadSurfaces(dbspmodel_t* bmod)
 		out->info = info;
 		info->surf = out;
 
-		if ( bmod->version == QBSP2_VERSION )
+		dface_t* in = &bmod->surfaces.surfaces[i];
+
+		if ( (in->firstedge + in->numedges) > loadmodel->numsurfedges )
 		{
-			dface32_t* in = &bmod->surfaces.surfaces32[i];
-
-			if ( (in->firstedge + in->numedges) > loadmodel->numsurfedges )
-			{
-				continue;  // corrupted level?
-			}
-
-			out->firstedge = in->firstedge;
-			out->numedges = in->numedges;
-
-			if ( in->side )
-			{
-				SetBits(out->flags, SURF_PLANEBACK);
-			}
-
-			out->plane = loadmodel->planes + in->planenum;
-			out->texinfo = loadmodel->texinfo + in->texinfo;
-
-			for ( j = 0; j < MAXLIGHTMAPS; j++ )
-			{
-				out->styles[j] = in->styles[j];
-			}
-
-			lightofs = in->lightofs;
+			Con_Reportf(S_ERROR "bad surface %zu from %zu\n", i, bmod->numsurfaces);
+			continue;
 		}
-		else
+
+		out->firstedge = in->firstedge;
+		out->numedges = in->numedges;
+
+		if ( in->side )
 		{
-			dface_t* in = &bmod->surfaces.surfaces[i];
-
-			if ( (in->firstedge + in->numedges) > loadmodel->numsurfedges )
-			{
-				Con_Reportf(S_ERROR "bad surface %zu from %zu\n", i, bmod->numsurfaces);
-				continue;
-			}
-
-			out->firstedge = in->firstedge;
-			out->numedges = in->numedges;
-
-			if ( in->side )
-			{
-				SetBits(out->flags, SURF_PLANEBACK);
-			}
-
-			out->plane = loadmodel->planes + in->planenum;
-			out->texinfo = loadmodel->texinfo + in->texinfo;
-
-			for ( j = 0; j < MAXLIGHTMAPS; j++ )
-			{
-				out->styles[j] = in->styles[j];
-			}
-
-			lightofs = in->lightofs;
+			SetBits(out->flags, SURF_PLANEBACK);
 		}
+
+		out->plane = loadmodel->planes + in->planenum;
+		out->texinfo = loadmodel->texinfo + in->texinfo;
+
+		for ( j = 0; j < MAXLIGHTMAPS; j++ )
+		{
+			out->styles[j] = in->styles[j];
+		}
+
+		lightofs = in->lightofs;
 
 		tex = out->texinfo->texture;
 
@@ -3075,57 +3013,29 @@ static void Mod_LoadNodes(dbspmodel_t* bmod)
 
 	for ( i = 0; i < loadmodel->numnodes; i++, out++ )
 	{
-		if ( bmod->version == QBSP2_VERSION )
+		dnode_t* in = &bmod->nodes.nodes[i];
+
+		for ( j = 0; j < 3; j++ )
 		{
-			dnode32_t* in = &bmod->nodes.nodes32[i];
-
-			for ( j = 0; j < 3; j++ )
-			{
-				out->minmaxs[j + 0] = in->mins[j];
-				out->minmaxs[j + 3] = in->maxs[j];
-			}
-
-			p = in->planenum;
-			out->plane = loadmodel->planes + p;
-			out->firstsurface = (unsigned short)in->firstface;
-			out->numsurfaces = (unsigned short)in->numfaces;
-
-			for ( j = 0; j < 2; j++ )
-			{
-				p = in->children[j];
-
-				if ( p >= 0 )
-				{
-					out->children[j] = loadmodel->nodes + p;
-				}
-				else
-				{
-					out->children[j] = (mnode_t*)(loadmodel->leafs + (-1 - p));
-				}
-			}
+			out->minmaxs[j + 0] = in->mins[j];
+			out->minmaxs[j + 3] = in->maxs[j];
 		}
-		else
+
+		p = in->planenum;
+		out->plane = loadmodel->planes + p;
+		out->firstsurface = in->firstface;
+		out->numsurfaces = in->numfaces;
+
+		for ( j = 0; j < 2; j++ )
 		{
-			dnode_t* in = &bmod->nodes.nodes[i];
-
-			for ( j = 0; j < 3; j++ )
+			p = in->children[j];
+			if ( p >= 0 )
 			{
-				out->minmaxs[j + 0] = in->mins[j];
-				out->minmaxs[j + 3] = in->maxs[j];
+				out->children[j] = loadmodel->nodes + p;
 			}
-
-			p = in->planenum;
-			out->plane = loadmodel->planes + p;
-			out->firstsurface = in->firstface;
-			out->numsurfaces = in->numfaces;
-
-			for ( j = 0; j < 2; j++ )
+			else
 			{
-				p = in->children[j];
-				if ( p >= 0 )
-					out->children[j] = loadmodel->nodes + p;
-				else
-					out->children[j] = (mnode_t*)(loadmodel->leafs + (-1 - p));
+				out->children[j] = (mnode_t*)(loadmodel->leafs + (-1 - p));
 			}
 		}
 	}
@@ -3159,44 +3069,22 @@ static void Mod_LoadLeafs(dbspmodel_t* bmod)
 
 	for ( i = 0; i < bmod->numleafs; i++, out++ )
 	{
-		if ( bmod->version == QBSP2_VERSION )
+		dleaf_t* in = &bmod->leafs.leafs[i];
+
+		for ( j = 0; j < 3; j++ )
 		{
-			dleaf32_t* in = &bmod->leafs.leafs32[i];
-
-			for ( j = 0; j < 3; j++ )
-			{
-				out->minmaxs[j + 0] = in->mins[j];
-				out->minmaxs[j + 3] = in->maxs[j];
-			}
-
-			out->contents = in->contents;
-			p = in->visofs;
-
-			for ( j = 0; j < 4; j++ )
-				out->ambient_sound_level[j] = in->ambient_level[j];
-
-			out->firstmarksurface = loadmodel->marksurfaces + in->firstmarksurface;
-			out->nummarksurfaces = in->nummarksurfaces;
+			out->minmaxs[j + 0] = in->mins[j];
+			out->minmaxs[j + 3] = in->maxs[j];
 		}
-		else
-		{
-			dleaf_t* in = &bmod->leafs.leafs[i];
 
-			for ( j = 0; j < 3; j++ )
-			{
-				out->minmaxs[j + 0] = in->mins[j];
-				out->minmaxs[j + 3] = in->maxs[j];
-			}
+		out->contents = in->contents;
+		p = in->visofs;
 
-			out->contents = in->contents;
-			p = in->visofs;
+		for ( j = 0; j < 4; j++ )
+			out->ambient_sound_level[j] = in->ambient_level[j];
 
-			for ( j = 0; j < 4; j++ )
-				out->ambient_sound_level[j] = in->ambient_level[j];
-
-			out->firstmarksurface = loadmodel->marksurfaces + in->firstmarksurface;
-			out->nummarksurfaces = in->nummarksurfaces;
-		}
+		out->firstmarksurface = loadmodel->marksurfaces + in->firstmarksurface;
+		out->nummarksurfaces = in->nummarksurfaces;
 
 		if ( bmod->isworld )
 		{
@@ -3259,8 +3147,7 @@ static void Mod_LoadClipnodes(dbspmodel_t* bmod)
 
 	bmod->clipnodes_out = out = (dclipnode32_t*)Mem_Malloc(loadmodel->mempool, bmod->numclipnodes * sizeof(*out));
 
-	if ( (bmod->version == QBSP2_VERSION) ||
-		 (bmod->version == HLBSP_VERSION && bmod->isbsp30ext && bmod->numclipnodes >= MAX_MAP_CLIPNODES_HLBSP) )
+	if ( (bmod->version == HLBSP_VERSION && bmod->isbsp30ext && bmod->numclipnodes >= MAX_MAP_CLIPNODES_HLBSP) )
 	{
 		dclipnode32_t* in = bmod->clipnodes.clipnodes32;
 
@@ -3409,14 +3296,7 @@ static void Mod_LoadLighting(dbspmodel_t* bmod)
 	// setup lightdata pointers
 	for ( i = 0; i < (size_t)loadmodel->numsurfaces; i++, surf++ )
 	{
-		if ( bmod->version == QBSP2_VERSION )
-		{
-			lightofs = bmod->surfaces.surfaces32[i].lightofs;
-		}
-		else
-		{
-			lightofs = bmod->surfaces.surfaces[i].lightofs;
-		}
+		lightofs = bmod->surfaces.surfaces[i].lightofs;
 
 		if ( loadmodel->lightdata && lightofs != -1 )
 		{
@@ -3475,13 +3355,12 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 	Q_strncpy(loadstat.name, loadmodel->name, sizeof(loadstat.name));
 	wadvalue[0] = '\0';
 
-#ifndef SUPPORT_BSP2_FORMAT
 	if ( header->version == QBSP2_VERSION )
 	{
-		Con_Printf(S_ERROR DEFAULT_BSP_BUILD_ERROR, loadmodel->name);
+		Con_Printf(S_ERROR "%s is a QBSP2-format level, which is not supported\n", loadmodel->name);
 		return false;
 	}
-#endif
+
 	switch ( header->version )
 	{
 		case HLBSP_VERSION:
@@ -3505,7 +3384,6 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 			}
 			// fall through
 		case Q1BSP_VERSION:
-		case QBSP2_VERSION:
 		case ABBSP_VERSION:
 			// everything else
 			srclumps[0].lumpnumber = LUMP_ENTITIES;
@@ -3646,17 +3524,21 @@ qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, 
 
 	// store the name to correct show errors and warnings
 	Q_strncpy(loadstat.name, name, sizeof(loadstat.name));
-	if ( silent )
-		SetBits(flags, LUMP_SILENT);
 
-#ifndef SUPPORT_BSP2_FORMAT
+	if ( silent )
+	{
+		SetBits(flags, LUMP_SILENT);
+	}
+
 	if ( header->version == QBSP2_VERSION )
 	{
 		if ( !FBitSet(flags, LUMP_SILENT) )
-			Con_Printf(S_ERROR DEFAULT_BSP_BUILD_ERROR, name);
+		{
+			Con_Printf(S_ERROR "%s is a QBSP2-format level, which is not supported\n", loadmodel->name);
+		}
+
 		return false;
 	}
-#endif
 
 	switch ( header->version )
 	{
@@ -3689,7 +3571,6 @@ qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, 
 			}
 			// fall through
 		case Q1BSP_VERSION:
-		case QBSP2_VERSION:
 		case ABBSP_VERSION:
 			// everything else
 			*entities = header->lumps[LUMP_ENTITIES];

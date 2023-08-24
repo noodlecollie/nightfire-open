@@ -23,9 +23,7 @@ GNU General Public License for more details.
 #include "SDL.h"
 #endif
 
-#if XASH_EMSCRIPTEN
-#include <emscripten.h>
-#elif XASH_WIN32
+#if XASH_WIN32
 #include <shellapi.h>
 
 // Enable NVIDIA High Performance Graphics while using Integrated Graphics.
@@ -62,27 +60,6 @@ _inline int Sys_Start(void)
 		game = XASH_GAMEDIR;
 
 	Q_strncpy(szGameDir, game, sizeof(szGameDir));
-#if XASH_EMSCRIPTEN
-#ifdef EMSCRIPTEN_LIB_FS
-	// For some unknown reason emscripten refusing to load libraries later
-	COM_LoadLibrary("menu", 0);
-	COM_LoadLibrary("server", 0);
-	COM_LoadLibrary("client", 0);
-#endif
-#if XASH_DEDICATED
-	// NodeJS support for debug
-	EM_ASM(try {
-		FS.mkdir('/xash');
-		FS.mount(NODEFS, {root: '.'}, '/xash');
-		FS.chdir('/xash');
-	} catch ( e ) {};);
-#endif
-#elif XASH_IOS
-	{
-		void IOS_LaunchDialog(void);
-		IOS_LaunchDialog();
-	}
-#endif
 
 	ret = Host_Main(szArgc, szArgv, game, 0, Sys_ChangeGame);
 
@@ -92,13 +69,8 @@ _inline int Sys_Start(void)
 #if !XASH_WIN32
 int main(int argc, char** argv)
 {
-#if XASH_PSVITA
-	// inject -dev -console into args if required
-	szArgc = PSVita_GetArgv(argc, argv, &szArgv);
-#else
 	szArgc = argc;
 	szArgv = argv;
-#endif  // XASH_PSVITA
 	return Sys_Start();
 }
 #else

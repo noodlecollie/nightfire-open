@@ -87,34 +87,10 @@ const char* Q_PlatformStringByID(const int platform)
 	{
 		case PLATFORM_WIN32:
 			return "win32";
-		case PLATFORM_ANDROID:
-			return "android";
 		case PLATFORM_LINUX_UNKNOWN:
 			return "linuxunkabi";
 		case PLATFORM_LINUX:
 			return "linux";
-		case PLATFORM_APPLE:
-			return "apple";
-		case PLATFORM_FREEBSD:
-			return "freebsd";
-		case PLATFORM_NETBSD:
-			return "netbsd";
-		case PLATFORM_OPENBSD:
-			return "openbsd";
-		case PLATFORM_EMSCRIPTEN:
-			return "emscripten";
-		case PLATFORM_DOS4GW:
-			return "DOS4GW";
-		case PLATFORM_HAIKU:
-			return "haiku";
-		case PLATFORM_SERENITY:
-			return "serenity";
-		case PLATFORM_IRIX:
-			return "irix";
-		case PLATFORM_NSWITCH:
-			return "nswitch";
-		case PLATFORM_PSVITA:
-			return "psvita";
 	}
 
 	assert(0);
@@ -153,8 +129,6 @@ const char* Q_ArchitectureStringByID(const int arch, const uint abi, const int e
 			return "i386";
 		case ARCHITECTURE_E2K:
 			return "e2k";
-		case ARCHITECTURE_JS:
-			return "javascript";
 		case ARCHITECTURE_MIPS:
 			return endianness == ENDIANNESS_LITTLE ? (is64 ? "mips64el" : "mipsel") : (is64 ? "mips64" : "mips");
 		case ARCHITECTURE_ARM:

@@ -6,7 +6,7 @@ import shutil
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "utils", "binaries", "afterburner-compile-tools", "abstudiomdl.exe"))
-MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join("..", "..", "..", "afterburner", "models"))
+MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join("..", "..", "..", "nfopen", "models"))
 
 QC_COMMAND_MODELNAME = "$modelname"
 EXPECTED_MODELNAME_PREFIXES = [ "p_", "v_", "w_", "w_ammo_" ]

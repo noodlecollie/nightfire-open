@@ -768,16 +768,9 @@ void GL_InitExtensionsBigGL(void)
 
 	// this won't work without extended context
 	if ( glw_state.extended )
+	{
 		GL_CheckExtension("GL_ARB_debug_output", debugoutputfuncs, "gl_debug_output", GL_DEBUG_OUTPUT);
-
-#if XASH_PSVITA
-	// not all GL1.1 functions are implemented in vitaGL, but there's enough
-	GL_SetExtension(GL_OPENGL_110, true);
-	// NPOT textures are actually supported, but the extension is not listed in GL_EXTENSIONS
-	GL_SetExtension(GL_ARB_TEXTURE_NPOT_EXT, true);
-	// init our immediate mode override
-	VGL_ShimInit();
-#endif
+	}
 }
 #endif
 
@@ -850,10 +843,6 @@ void GL_ClearExtensions(void)
 	// now all extensions are disabled
 	memset(glConfig.extension, 0, sizeof(glConfig.extension));
 	glw_state.initialized = false;
-#if XASH_PSVITA
-	// deinit our immediate mode override
-	VGL_ShimShutdown();
-#endif
 }
 
 //=======================================================================
@@ -935,18 +924,9 @@ static void R_CheckVBO(void)
 
 	// some bad GLES1 implementations breaks dlights completely
 	if ( glConfig.max_texture_units < 3 )
+	{
 		disable = true;
-
-#ifdef XASH_MOBILE_PLATFORM
-	// VideoCore4 drivers have a problem with mixing VBO and client arrays
-	// Disable it, as there is no suitable workaround here
-	if ( Q_stristr(glConfig.renderer_string, "VideoCore IV") || Q_stristr(glConfig.renderer_string, "vc4") )
-		disable = true;
-
-	// dlightmode 1 is not too much tested on android
-	// so better to left it off
-	dlightmode = "0";
-#endif
+	}
 
 	if ( disable )
 	{

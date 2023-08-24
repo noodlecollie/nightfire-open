@@ -28,22 +28,11 @@ GNU General Public License for more details.
 #if XASH_POSIX
 #include <unistd.h>
 #include <signal.h>
-
-#if !XASH_ANDROID
 #include <pwd.h>
-#endif
 #endif
 
 #if XASH_WIN32
 #include <process.h>
-#endif
-
-#if XASH_NSWITCH
-#include <switch.h>
-#endif
-
-#if XASH_PSVITA
-#include <vitasdk.h>
 #endif
 
 #include "menu_int.h"  // _UPDATE_PAGE macro
@@ -135,12 +124,7 @@ const char* Sys_GetCurrentUser(void)
 
 	if ( GetUserName(s_userName, &size) )
 		return s_userName;
-#elif XASH_PSVITA
-	static string username;
-	sceAppUtilSystemParamGetString(SCE_SYSTEM_PARAM_ID_USERNAME, username, sizeof(username) - 1);
-	if ( COM_CheckStringEmpty(username) )
-		return username;
-#elif XASH_POSIX && !XASH_ANDROID && !XASH_NSWITCH
+#elif XASH_POSIX
 	uid_t uid = geteuid();
 	struct passwd* pw = getpwuid(uid);
 
@@ -487,21 +471,6 @@ void Sys_Error(const char* error, ...)
 	Sys_Quit();
 }
 
-#if XASH_EMSCRIPTEN
-/* strange glitchy bug on emscripten
-_exit->_Exit->asm._exit->_exit
-As we do not need atexit(), just throw hidden exception
-*/
-#include <emscripten.h>
-#define exit my_exit
-void my_exit(int ret)
-{
-	emscripten_cancel_main_loop();
-	printf("exit(%d)\n", ret);
-	EM_ASM(if ( showElement ) showElement('reload', true); throw 'SimulateInfiniteLoop');
-}
-#endif
-
 /*
 ================
 Sys_Quit
@@ -604,19 +573,6 @@ it explicitly doesn't use internal allocation or string copy utils
 */
 qboolean Sys_NewInstance(const char* gamedir)
 {
-#if XASH_NSWITCH
-	char newargs[4096];
-	const char* exe = host.argv[0];  // arg 0 is always the full NRO path
-
-	// TODO: carry over the old args (assuming you can even pass any)
-	Q_snprintf(newargs, sizeof(newargs), "%s -game %s", exe, gamedir);
-	// just restart the entire thing
-	printf("envSetNextLoad exe: `%s`\n", exe);
-	printf("envSetNextLoad argv:\n`%s`\n", newargs);
-	Host_Shutdown();
-	envSetNextLoad(exe, newargs);
-	exit(0);
-#else
 	int i = 0;
 	qboolean replacedArg = false;
 	size_t exelen;
@@ -649,12 +605,6 @@ qboolean Sys_NewInstance(const char* gamedir)
 	newargs[i++] = PlatformLib_StrDup("-changegame");
 	newargs[i] = NULL;
 
-#if XASH_PSVITA
-	// under normal circumstances it's always going to be the same path
-	exe = strdup("app0:/eboot.bin");
-	Host_Shutdown();
-	sceAppMgrLoadExec(exe, newargs, NULL);
-#else
 	exelen = wai_getExecutablePath(NULL, 0, NULL);
 	exe = malloc(exelen + 1);
 	wai_getExecutablePath(exe, (int)exelen, NULL);
@@ -663,7 +613,6 @@ qboolean Sys_NewInstance(const char* gamedir)
 	Host_Shutdown();
 
 	PlatformLib_ExecV(exe, newargs);
-#endif
 
 	// if execv returned, it's probably an error
 	printf("execv failed: %s", PlatformLib_StrError(errno));
@@ -675,7 +624,6 @@ qboolean Sys_NewInstance(const char* gamedir)
 
 	free(newargs);
 	free(exe);
-#endif
 
 	return false;
 }
