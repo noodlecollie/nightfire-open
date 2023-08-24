@@ -280,7 +280,10 @@ static void Sys_PrintLogfile(const int fd, const char* logtime, const char* msg,
 
 static void Sys_PrintStdout(const char* logtime, const char* msg)
 {
-#if !XASH_WIN32  // Wcon does the job
+#if XASH_WIN32  // Wcon does the job
+	(void)logtime;
+	(void)msg;
+#else
 	Sys_PrintLogfile(STDOUT_FILENO, logtime, msg, XASH_COLORIZE_CONSOLE);
 	Sys_FlushStdout();
 #endif
