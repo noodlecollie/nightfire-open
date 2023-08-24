@@ -378,7 +378,8 @@ void CStbFont::GetCharABCWidthsNoCache(int ch, int& a, int& b, int& c)
 {
 	int glyphId = stbtt_FindGlyphIndex(&m_fontInfo, ch);
 
-	int x0, x1;
+	int x0 = 0;
+	int x1 = 0;
 	int width, horiBearingX, horiAdvance;
 
 	stbtt_GetGlyphBox(&m_fontInfo, glyphId, &x0, NULL, &x1, NULL);

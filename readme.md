@@ -14,7 +14,15 @@ To run the game:
 
 ## Building
 
+Ensure you have [Git LFS](https://git-lfs.com/) installed, as the repo uses this to manage the game content.
+
 [CMake](https://cmake.org/download/) 3.21 or greater is required to build the game. Compilation has been tested with Visual Studio 2022 on Windows, and GCC 12.3 on Linux.
+
+On Windows, dependencies should be managed by the embedded `vcpkg` install. On Linux, you will need at least the following:
+
+``` bash
+sudo apt install build-essential mesa-utils libsdl2-dev
+```
 
 For a basic debug build of the game client, follow these steps:
 

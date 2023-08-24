@@ -733,7 +733,21 @@ static void CL_ParseQuakeBaseline(sizebuf_t* msg)
 		Host_Error("CL_AllocEdict: no free edicts\n");
 
 	ent = CL_EDICT_NUM(newnum);
+
+// For some inexplicable reason, this triggers a warning on GCC:
+// error: ‘__builtin_memset’ offset [0, 339] is out of the bounds [0, 0]
+// There's no obvious reason why this happens, or how to fix it.
+// Bounds of [0 0] seem suspect, so I reckon this may be a compiler issue.
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
 	memset(&ent->prevstate, 0, sizeof(ent->prevstate));
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
+
 	ent->index = newnum;
 
 	// parse baseline
