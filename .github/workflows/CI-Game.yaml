@@ -3,6 +3,8 @@ name: CI Game
 on:
   pull_request:
     branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   build-linux:
@@ -25,6 +27,14 @@ jobs:
         cc: gcc
         cxx: g++
         build-type: MinSizeRel
+        target: install
+        configure-options: -DNF_ENABLE_TESTS=YES -DCMAKE_INSTALL_PREFIX=install -DNF_INSTALL_MODE=BINARIES
+
+    - name: Run tests
+      shell: bash
+      run: |
+        cd ${{runner.workspace}}/nightfire-open/install/nightfire-open
+        LD_LIBRARY_PATH=. ./bond -runtests
 
   build-windows:
     name: Build on Windows
@@ -43,3 +53,11 @@ jobs:
         cc: cl
         cxx: cl
         build-type: MinSizeRel
+        target: install
+        configure-options: -DNF_ENABLE_TESTS=YES -DCMAKE_INSTALL_PREFIX=install -DNF_INSTALL_MODE=BINARIES
+
+    - name: Run tests
+      shell: cmd
+      run: |
+        cd ${{runner.workspace}}/nightfire-open/install/nightfire-open
+        bond.exe -runtests

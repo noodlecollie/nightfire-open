@@ -105,9 +105,9 @@ void FS_Init(void)
 	qboolean caseinsensitive = true;
 	string gamedir;
 
-	Cmd_AddRestrictedCommand("fs_rescan", FS_Rescan_f, "rescan filesystem search pathes");
-	Cmd_AddRestrictedCommand("fs_path", FS_Path_f_, "show filesystem search pathes");
-	Cmd_AddRestrictedCommand("fs_clearpaths", FS_ClearPaths_f, "clear filesystem search pathes");
+	Cmd_AddRestrictedCommand("fs_rescan", FS_Rescan_f, "rescan filesystem search paths");
+	Cmd_AddRestrictedCommand("fs_path", FS_Path_f_, "show filesystem search paths");
+	Cmd_AddRestrictedCommand("fs_clearpaths", FS_ClearPaths_f, "clear filesystem search paths");
 
 #if !XASH_WIN32
 	if ( Sys_CheckParm("-casesensitive") )

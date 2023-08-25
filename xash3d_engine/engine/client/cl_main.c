@@ -1731,7 +1731,7 @@ CL_Quit_f
 void CL_Quit_f(void)
 {
 	CL_Disconnect();
-	Sys_Quit();
+	Sys_Quit(0);
 }
 
 /*

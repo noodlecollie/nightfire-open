@@ -20,8 +20,9 @@ option(NF_OPENGL_STATIC_LINK "If OpenGL rendering is enabled, links statically a
 option(NF_ENABLE_TESTS "Enables test code in targets" OFF)
 option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled for dedicated server builds)" OFF)
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client" ON)
-option(NF_INSTALL_CONTENT_ONLY "If enabled, only installs game content to install directory, and does not build game. Only used by release process." OFF)
 option(NF_WARNINGS_AS_ERRORS "If disabled, compiler warnings will not be treated as errors. Intended as a temporary workaround only, recommended to leave enabled." ON)
+
+set(NF_INSTALL_MODE "ALL" CACHE STRING "Whether to install all files (ALL, default), just content (CONTENT), or just binaries (BINARIES). Mainly useful for CI.")
 
 include(project_definitions)
 
@@ -82,7 +83,7 @@ if(NOT USE_ALLOCA_SUPPORTED)
 	message(FATAL_ERROR "Could not determine alloca support in either alloca.h or malloc.h")
 endif()
 
-if(NOT NF_INSTALL_CONTENT_ONLY)
+if(NOT "${NF_INSTALL_MODE}" STREQUAL "CONTENT")
 	add_subdirectory(libraries)
 	add_subdirectory(xash3d_engine)
 endif()

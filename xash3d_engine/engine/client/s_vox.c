@@ -515,7 +515,8 @@ static void Test_VOX_GetDirectory(void)
 		{"", "", "vox/", "bark bark", "bark bark", "vox/", "barney/meow", "meow", "barney/"
 
 		};
-	int i;
+
+	size_t i;
 
 	for ( i = 0; i < sizeof(data) / sizeof(data[0]); i += 3 )
 	{
@@ -529,7 +530,7 @@ static void Test_VOX_GetDirectory(void)
 
 static void Test_VOX_LookupString(void)
 {
-	int i;
+	size_t i;
 	const char *p,
 		*data[] = {
 			"0",
@@ -554,8 +555,8 @@ static void Test_VOX_LookupString(void)
 
 	VOX_Shutdown();
 
-	rgpszrawsentence[cszrawsentences++] = (char*)"exactmatch\000z123";
-	rgpszrawsentence[cszrawsentences++] = (char*)"CaseInsensitive\000z456";
+	rgpszrawsentence[cszrawsentences++] = (char*)"exactmatch""\x00""123";
+	rgpszrawsentence[cszrawsentences++] = (char*)"CaseInsensitive""\x00""456";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithTabs\0\t\t\t789";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithSpaces\0  SPAAACE";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithTabsAndSpaces\0\t \t\t MEOW";
@@ -588,7 +589,8 @@ static void Test_VOX_ParseString(void)
 		"_period",
 		NULL,
 	};
-	int i = 0;
+
+	size_t i = 0;
 
 	while ( i < sizeof(data) / sizeof(data[0]) )
 	{

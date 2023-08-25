@@ -1084,7 +1084,7 @@ static void GAME_EXPORT UI_ShellExecute(const char* path, const char* parms, int
 	Platform_ShellExecute(path, parms);
 
 	if ( shouldExit )
-		Sys_Quit();
+		Sys_Quit(0);
 }
 
 /*

@@ -586,7 +586,7 @@ static void SDLash_EventFilter(SDL_Event* event)
 			break;
 
 		case SDL_QUIT:
-			Sys_Quit();
+			Sys_Quit(0);
 			break;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		case SDL_MOUSEWHEEL:

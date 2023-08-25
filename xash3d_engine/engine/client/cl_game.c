@@ -4096,7 +4096,8 @@ static cl_enginefunc_t gEngfuncs = {
 	pfnGetAppID,
 	Cmd_AliasGetList,
 	pfnVguiWrap2_GetMouseDelta,
-	pfnFilteredClientCmd};
+	pfnFilteredClientCmd,
+};
 
 void CL_UnloadProgs(void)
 {

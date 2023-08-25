@@ -1386,6 +1386,7 @@ FS_InitStdio(qboolean caseinsensitive, const char* rootdir, const char* basedir,
 	(void)caseinsensitive;
 
 	FS_InitMemory();
+
 #if !XASH_WIN32
 	fs_caseinsensitive = caseinsensitive;
 #endif

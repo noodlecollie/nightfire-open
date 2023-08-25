@@ -331,7 +331,7 @@ static long _stdcall Sys_Crash(PEXCEPTION_POINTERS pInfo)
 		if ( host_developer.value <= 0 )
 		{
 			// no reason to call debugger in release build - just exit
-			Sys_Quit();
+			Sys_Quit(-1);
 			return EXCEPTION_CONTINUE_EXECUTION;
 		}
 
@@ -545,7 +545,7 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 	host.status = HOST_CRASHED;
 	host.crashed = true;
 
-	Sys_Quit();
+	Sys_Quit(-1);
 }
 
 void Sys_SetupCrashHandler(void)
