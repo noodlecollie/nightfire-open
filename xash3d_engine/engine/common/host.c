@@ -92,6 +92,10 @@ void Sys_PrintUsage(void)
 
 		"   -daemonize         run engine in background, dedicated only\n"
 
+#if XASH_ENGINE_TESTS
+		"   -runtests          run engine tests\n"
+#endif
+
 #if !XASH_DEDICATED
 		"   -toconsole         run engine witn console open\n"
 		"   -width <n>         set window width\n"
@@ -935,7 +939,7 @@ static void Host_RunTests(int stage)
 			TEST_LIST_1_CLIENT;
 #endif
 			Msg("Done! %d passed, %d failed\n", tests_stats.passed, tests_stats.failed);
-			Sys_Quit();
+			Sys_Quit(tests_stats.failed > 0 ? 1 : 0);
 	}
 }
 #endif
@@ -1232,6 +1236,11 @@ void Host_FreeCommon(void)
 	FS_Shutdown();
 }
 
+static void Cmd_Sys_Quit()
+{
+	Sys_Quit(0);
+}
+
 /*
 =================
 Host_Main
@@ -1316,8 +1325,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		Wcon_InitConsoleCommands();
 #endif
 
-		Cmd_AddRestrictedCommand("quit", Sys_Quit, "quit the game");
-		Cmd_AddRestrictedCommand("exit", Sys_Quit, "quit the game");
+		Cmd_AddRestrictedCommand("quit", Cmd_Sys_Quit, "quit the game");
+		Cmd_AddRestrictedCommand("exit", Cmd_Sys_Quit, "quit the game");
 	}
 	else
 		Cmd_AddRestrictedCommand("minimize", Host_Minimize_f, "minimize main window to tray");

@@ -40,8 +40,6 @@ GNU General Public License for more details.
 #include "library.h"
 #include "whereami.h"
 
-qboolean error_on_exit = false;  // arg for exit();
-
 /*
 ================
 Sys_DoubleTime
@@ -257,7 +255,9 @@ void Sys_SendKeyEvents(void)
 	while ( PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) )
 	{
 		if ( !GetMessage(&msg, NULL, 0, 0) )
-			Sys_Quit();
+		{
+			Sys_Quit(0);
+		}
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -437,7 +437,6 @@ void Sys_Error(const char* error, ...)
 	if ( host.change_game )
 		Sys_Sleep(200);
 
-	error_on_exit = true;
 	host.status = HOST_ERR_FATAL;
 	va_start(argptr, error);
 	Q_vsnprintf(text, MAX_PRINT_MSG, error, argptr);
@@ -468,7 +467,7 @@ void Sys_Error(const char* error, ...)
 		Sys_WaitForQuit();
 	}
 
-	Sys_Quit();
+	Sys_Quit(1);
 }
 
 /*
@@ -476,10 +475,10 @@ void Sys_Error(const char* error, ...)
 Sys_Quit
 ================
 */
-void Sys_Quit(void)
+void Sys_Quit(int exitCode)
 {
 	Host_Shutdown();
-	exit(error_on_exit);
+	exit(exitCode);
 }
 
 /*
