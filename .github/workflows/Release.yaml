@@ -57,7 +57,7 @@ jobs:
         cxx: g++
         build-type: MinSizeRel
         target: install
-        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_INSTALL_CONTENT_ONLY=YES
+        configure-options: -DCMAKE_INSTALL_PREFIX=install -DNF_INSTALL_MODE=CONTENT
 
     - shell: bash
       run: |

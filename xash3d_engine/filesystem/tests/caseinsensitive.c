@@ -13,21 +13,12 @@
 #include <windows.h>
 #endif
 
+#include "PlatformLib/File.h"
+
 void* g_hModule;
 FSAPI g_pfnGetFSAPI;
 fs_api_t g_fs;
 fs_globals_t* g_nullglobals;
-
-static FILE* fopen_local(const char* fileName, const char* mode)
-{
-#if XASH_WIN32
-	FILE* file = NULL;
-	fopen_s(&file, fileName, mode);
-	return file;
-#else
-	return fopen(fileName, mode);
-#endif;
-}
 
 static qboolean LoadFilesystem(void)
 {
@@ -99,7 +90,7 @@ static qboolean TestCaseinsensitive(void)
 	}
 
 	// create a file directly, to check if cache can re-read
-	f2 = fopen_local("FOO/Baz.bin", "wb");
+	f2 = PlatformLib_FOpen("FOO/Baz.bin", "wb");
 	fwrite(&magic, sizeof(magic), 1, f2);
 	fclose(f2);
 

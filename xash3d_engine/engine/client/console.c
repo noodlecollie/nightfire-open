@@ -2444,7 +2444,7 @@ static void Test_RunConHistory(void)
 	const char* testbackup = "unfinished_edit";
 	int i;
 
-	for ( i = 0; i < ARRAYSIZE(strs1); i++ )
+	for ( i = 0; (size_t)i < ARRAYSIZE(strs1); i++ )
 	{
 		Field_Set(&input, strs1[i]);
 		Con_HistoryAppend(&hist, &input);
@@ -2452,7 +2452,7 @@ static void Test_RunConHistory(void)
 
 	Field_Set(&input, testbackup);
 
-	for ( i = 0; i < ARRAYSIZE(strs2); i++ )
+	for ( i = 0; (size_t)i < ARRAYSIZE(strs2); i++ )
 	{
 		Con_HistoryUp(&hist, &input);
 		TASSERT_STR(input.buffer, strs2[i]);
@@ -2461,7 +2461,7 @@ static void Test_RunConHistory(void)
 	// check for overrun
 	Con_HistoryUp(&hist, &input);
 
-	for ( i = ARRAYSIZE(strs2) - 1; i >= 0; i-- )
+	for ( i = (int)ARRAYSIZE(strs2) - 1; i >= 0; i-- )
 	{
 		TASSERT_STR(input.buffer, strs2[i]);
 		Con_HistoryDown(&hist, &input);
