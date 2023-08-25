@@ -1,7 +1,7 @@
 Nightfire Open
 ==============
 
-![Tests](https://github.com/noodlecollie/nightfire-open/actions/workflows/CI-Tests.yml/badge.svg)
+![Tests](https://github.com/noodlecollie/nightfire-open/actions/workflows/CI-Game.yml/badge.svg)
 ![Releases](https://github.com/noodlecollie/nightfire-open/actions/workflows/Release.yml/badge.svg)
 
 Nightfire Open is an open source reboot of [James Bond 007: Nightfire](https://en.wikipedia.org/wiki/James_Bond_007:_Nightfire) as a Half Life mod, which runs on Windows and Linux.
