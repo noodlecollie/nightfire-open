@@ -555,8 +555,8 @@ static void Test_VOX_LookupString(void)
 
 	VOX_Shutdown();
 
-	rgpszrawsentence[cszrawsentences++] = (char*)"exactmatch\000123";
-	rgpszrawsentence[cszrawsentences++] = (char*)"CaseInsensitive\000456";
+	rgpszrawsentence[cszrawsentences++] = (char*)"exactmatch""\x00""123";
+	rgpszrawsentence[cszrawsentences++] = (char*)"CaseInsensitive""\x00""456";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithTabs\0\t\t\t789";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithSpaces\0  SPAAACE";
 	rgpszrawsentence[cszrawsentences++] = (char*)"SentenceWithTabsAndSpaces\0\t \t\t MEOW";

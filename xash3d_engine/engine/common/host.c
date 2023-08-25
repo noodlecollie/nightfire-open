@@ -1236,7 +1236,7 @@ void Host_FreeCommon(void)
 	FS_Shutdown();
 }
 
-static void Cmd_Sys_Quit()
+static void Cmd_Sys_Quit(void)
 {
 	Sys_Quit(0);
 }
