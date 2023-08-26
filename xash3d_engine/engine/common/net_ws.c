@@ -1512,7 +1512,7 @@ static qboolean NET_LagPacket(qboolean newdata, netsrc_t sock, netadr_t* from, s
 			}
 		}
 
-		pNewPacketLag = (packetlag_t*)Z_Malloc(sizeof(packetlag_t));
+		pNewPacketLag = (packetlag_t*)Z_Calloc(sizeof(packetlag_t));
 		// queue packet to simulate fake lag
 		NET_AddToLagged(sock, &net.lagdata[sock], pNewPacketLag, from, *length, data, curtime);
 	}
@@ -1522,23 +1522,29 @@ static qboolean NET_LagPacket(qboolean newdata, netsrc_t sock, netadr_t* from, s
 	while ( pPacket != &net.lagdata[sock] )
 	{
 		if ( pPacket->receivedtime <= curtime - (net.fakelag / 1000.0f) )
+		{
 			break;
+		}
 
 		pPacket = pPacket->next;
 	}
 
 	if ( pPacket == &net.lagdata[sock] )
+	{
 		return false;
+	}
 
 	NET_RemoveFromPacketList(pPacket);
 
-	// delivery packet from fake lag queue
+	// deliver packet from fake lag queue
 	memcpy(data, pPacket->data, pPacket->size);
 	memcpy(&net_from, &pPacket->from, sizeof(netadr_t));
 	*length = pPacket->size;
 
 	if ( pPacket->data )
+	{
 		Mem_Free(pPacket->data);
+	}
 
 	Mem_Free(pPacket);
 

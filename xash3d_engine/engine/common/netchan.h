@@ -78,10 +78,14 @@ GNU General Public License for more details.
 #define PORT_CLIENT 27005
 #define PORT_SERVER 27015
 
-#define MULTIPLAYER_BACKUP 64  // how many data slots to use when in multiplayer (must be power of 2)
+#define MULTIPLAYER_BACKUP 128  // how many data slots to use when in multiplayer (must be power of 2)
 #define SINGLEPLAYER_BACKUP 16  // same for single player
-#define CMD_BACKUP 64  // allow a lot of command backups for very fast systems
+
+// allow a lot of command backups for very fast systems.
+// This must not be smaller than either of the above two values!!
+#define CMD_BACKUP 128
 #define CMD_MASK (CMD_BACKUP - 1)
+
 #define NUM_PACKET_ENTITIES 256  // 170 Mb for multiplayer with 32 players
 #define MAX_CUSTOM_BASELINES 64
 #define NET_LEGACY_EXT_SPLIT (1U << 1)
