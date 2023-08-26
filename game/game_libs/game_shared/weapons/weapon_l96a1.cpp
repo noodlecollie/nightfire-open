@@ -2,6 +2,7 @@
 #include "skill.h"
 #include "gamerules.h"
 #include "weapon_l96a1_atts.h"
+#include "weaponinfo.h"
 
 #ifndef CLIENT_DLL
 #include "bot.h"
@@ -84,16 +85,14 @@ void CWeaponL96A1::SetZoomLevel(uint32_t level)
 		if ( m_iZoomLevel > 0 )
 		{
 			m_pPlayer->SetScreenOverlay(ScreenOverlays::OverlayId::Overlay_SniperScope);
-			m_pPlayer->pev->fov = L96A1_ZOOM_LEVELS[m_iZoomLevel];
-			m_pPlayer->m_iFOV = static_cast<int>(m_pPlayer->pev->fov);
+			m_pPlayer->SetFOV(L96A1_ZOOM_LEVELS[m_iZoomLevel]);
 			m_pPlayer->pev->effects |= EF_HIDEVIEWMODEL;
 			SetPrimaryAttackMode(m_pAttackScoped);
 		}
 		else
 		{
 			m_pPlayer->SetScreenOverlay(ScreenOverlays::OverlayId::Overlay_None);
-			m_pPlayer->pev->fov = 0.0f;
-			m_pPlayer->m_iFOV = 0;
+			m_pPlayer->ResetFOV();
 			m_pPlayer->pev->effects &= ~EF_HIDEVIEWMODEL;
 			SetPrimaryAttackMode(m_pAttackUnscoped);
 		}
@@ -110,6 +109,30 @@ void CWeaponL96A1::PlayZoomSound()
 		ATTN_NORM,
 		0,
 		100);
+}
+
+bool CWeaponL96A1::ReadPredictionData(const weapon_data_t* from)
+{
+	if ( !CGenericHitscanWeapon::ReadPredictionData(from) )
+	{
+		return false;
+	}
+
+	SetZoomLevel(static_cast<uint32_t>(from->iuser1));
+
+	return true;
+}
+
+bool CWeaponL96A1::WritePredictionData(weapon_data_t* to)
+{
+	if ( !CGenericHitscanWeapon::WritePredictionData(to) )
+	{
+		return false;
+	}
+
+	to->iuser1 = static_cast<int>(m_iZoomLevel);
+
+	return true;
 }
 
 #ifndef CLIENT_DLL

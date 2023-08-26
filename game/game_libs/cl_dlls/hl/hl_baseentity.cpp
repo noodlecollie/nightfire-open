@@ -927,6 +927,14 @@ void CBasePlayer::SetScreenOverlay(ScreenOverlays::OverlayId)
 {
 }
 
+void CBasePlayer::SetFOV(float)
+{
+}
+
+void CBasePlayer::ResetFOV()
+{
+}
+
 void ClearMultiDamage(void)
 {
 }

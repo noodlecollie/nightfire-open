@@ -771,7 +771,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 
 	if ( !pWeapon )
 	{
-		// Once all weapons use attributes, this can go.
+		// NFTODO: Once all weapons use attributes, this can go.
 		switch ( from->client.m_iId )
 		{
 			case WEAPON_CROWBAR:
@@ -976,7 +976,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 
 	// Make sure that weapon animation matches what the game .dll is telling us
 	//  over the wire ( fixes some animation glitches )
-	// TODO: Remove this once all the HL weapons are gone. It doesn't apply to Afterburner weapons.
+	// NFTODO: Remove this once all the HL weapons are gone. It doesn't apply to Afterburner weapons.
 	if ( g_runfuncs && (HUD_GetWeaponAnim() != to->client.weaponanim) && !dynamic_cast<CGenericWeapon*>(pWeapon) )
 	{
 		int body = 0;
@@ -1072,7 +1072,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		}
 	}
 
-	// m_flNextAttack is now part of the weapons, but is part of the player instead
+	// m_flNextAttack is not part of the weapons, but is part of the player instead
 	to->client.m_flNextAttack -= cmd->msec / 1000.0f;
 	if ( to->client.m_flNextAttack < -0.001f )
 	{
