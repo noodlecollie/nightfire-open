@@ -348,6 +348,9 @@ public:
 	int GetCustomDecalFrames(void);
 	void SetScreenOverlay(ScreenOverlays::OverlayId id);
 
+	void SetFOV(float fov);
+	void ResetFOV();
+
 	Vector m_vecLastViewAngles;
 
 	float m_flStartCharge;

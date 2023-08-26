@@ -2695,6 +2695,17 @@ void CBasePlayer::SetScreenOverlay(ScreenOverlays::OverlayId id)
 	msgWriter.WriteMessage();
 }
 
+void CBasePlayer::SetFOV(float fov)
+{
+	pev->fov = fov;
+	m_iFOV = static_cast<int>(fov);
+}
+
+void CBasePlayer::ResetFOV()
+{
+	SetFOV(0.0f);
+}
+
 void CBasePlayer::Spawn(void)
 {
 	pev->classname = MAKE_STRING("player");
