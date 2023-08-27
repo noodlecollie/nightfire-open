@@ -21,7 +21,7 @@ option(NF_ENABLE_TESTS "Enables test code in targets." OFF)
 option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled for dedicated server builds)." OFF)
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client." ON)
 option(NF_WARNINGS_AS_ERRORS "If disabled, compiler warnings will not be treated as errors. Intended as a temporary workaround only, recommended to leave enabled." ON)
-option(NF_BUILD_TOOLS "Enables building tools such as map and model compilers." ON)
+option(NF_ENABLE_TOOLS "Enables building tools such as map and model compilers." ON)
 
 set(NF_INSTALL_MODE "ALL" CACHE STRING "Whether to install all files (ALL, default), just content (CONTENT), or just binaries (BINARIES). Mainly useful for CI.")
 
@@ -91,6 +91,6 @@ endif()
 
 add_subdirectory(game)
 
-if(NF_BUILD_TOOLS)
+if(NF_ENABLE_TOOLS)
 	add_subdirectory(tools)
 endif()
