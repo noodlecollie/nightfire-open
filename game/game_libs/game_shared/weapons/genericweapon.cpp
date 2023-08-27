@@ -309,6 +309,22 @@ void CGenericWeapon::ItemPostFrame()
 	m_InaccuracyCalculator.SetPlayer(m_pPlayer);
 	m_InaccuracyCalculator.CalculateInaccuracy();
 
+#if defined(CLIENT_WEAPONS)
+	const bool canAttack = m_pPlayer->m_flNextAttack <= 0;
+#else
+	const bool canAttack = gpGlobals->time >= m_pPlayer->m_flNextAttack;
+#endif
+
+	if ( canAttack )
+	{
+		RunAttackLogic();
+	}
+
+	UpdateValuesPostFrame();
+}
+
+void CGenericWeapon::RunAttackLogic()
+{
 	WeaponTick();
 
 	if ( (m_fInReload) && (m_pPlayer->m_flNextAttack <= UTIL_WeaponTimeBase()) )
@@ -360,8 +376,6 @@ void CGenericWeapon::ItemPostFrame()
 			WeaponIdle();
 		}
 	}
-
-	UpdateValuesPostFrame();
 }
 
 void CGenericWeapon::PerformReload()

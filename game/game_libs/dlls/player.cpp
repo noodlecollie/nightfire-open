@@ -3734,22 +3734,21 @@ Called every frame by the player PostThink
 */
 void CBasePlayer::ItemPostFrame()
 {
-	// static int fInSelect = FALSE;
-
-	// check if the player is using a tank
 	if ( m_pTank != 0 )
-		return;
-
-#if defined(CLIENT_WEAPONS)
-	if ( m_flNextAttack > 0 )
-#else
-	if ( gpGlobals->time < m_flNextAttack )
-#endif
 	{
 		return;
 	}
 
-	ImpulseCommands();
+#if defined(CLIENT_WEAPONS)
+	const bool canAttack = m_flNextAttack <= 0;
+#else
+	const bool canAttack = gpGlobals->time >= m_flNextAttack;
+#endif
+
+	if ( canAttack )
+	{
+		ImpulseCommands();
+	}
 
 	if ( !m_pActiveItem )
 	{
