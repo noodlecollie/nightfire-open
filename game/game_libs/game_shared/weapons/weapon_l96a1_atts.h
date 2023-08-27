@@ -1,5 +1,6 @@
 #pragma once
 
+#include "weapon_l96a1.h"
 #include "weaponatts_collection.h"
 #include "weapon_pref_weights.h"
 #include "weaponatts_hitscanattack.h"
@@ -79,7 +80,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
 
 		priAttack->EventScript = "events/weapon_l96a1/fire_unscoped.sc";
-		priAttack->FunctionsUnderwater = true;
+		priAttack->FunctionsUnderwater = false;
 		priAttack->IsContinuous = false;
 		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
 		priAttack->AttackRate = L96A1_FIRE_RATE;
@@ -87,7 +88,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->AutoAim = AUTOAIM_10DEGREES;
 		priAttack->Volume = LOUD_GUN_VOLUME;
 		priAttack->MuzzleFlashBrightness = BRIGHT_GUN_FLASH;
-		priAttack->ViewPunchY = -3.0f;
+		priAttack->ViewPunchY = -7.0f;
 		priAttack->ShellModelName = "models/shell.mdl";
 
 		priAttack->ViewModelAnimList_Attack << L96A1_FIRE;
@@ -133,4 +134,5 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		scopedAttack->EventScript = "events/weapon_l96a1/fire_scoped.sc";
 		scopedAttack->Accuracy.RestSpread = Vector2D(0.0f, 0.0f);
 		scopedAttack->Accuracy.RunSpread = Vector2D(0.02f, 0.02f);
+		scopedAttack->ViewPunchY = -3.0f;
 	});

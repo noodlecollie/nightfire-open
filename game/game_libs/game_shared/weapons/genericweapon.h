@@ -189,6 +189,7 @@ private:
 	void FindWeaponSlotInfo();
 	const WeaponAtts::AccuracyParameters* GetWeaponAccuracyParams() const;
 
+	void RunAttackLogic();
 	void PerformReload();
 	bool ReloadUsableWeaponIfEmpty();
 	void UpdateValuesPostFrame();

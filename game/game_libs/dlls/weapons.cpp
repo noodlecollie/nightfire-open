@@ -631,6 +631,24 @@ BOOL CBasePlayerWeapon::CanAttack(float attack_time, float curtime, BOOL isPredi
 
 void CBasePlayerWeapon::ItemPostFrame(void)
 {
+	// To retain default behaviour for original HL weapons:
+	// don't proceed if we can't attack again yet.
+	// Generic weapon does run ItemPostFrame() even if it
+	// can't attack, in order to keep calculating weapon
+	// inaccuracy, but this would probably break the existing
+	// weapon logic in this class.
+
+#if defined(CLIENT_WEAPONS)
+	const bool canAttack = m_pPlayer->m_flNextAttack <= 0;
+#else
+	const bool canAttack = gpGlobals->time >= m_pPlayer->m_flNextAttack;
+#endif
+
+	if ( !canAttack )
+	{
+		return;
+	}
+
 	WeaponTick();
 
 	if ( (m_fInReload) && (m_pPlayer->m_flNextAttack <= UTIL_WeaponTimeBase()) )
