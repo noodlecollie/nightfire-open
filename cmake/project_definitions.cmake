@@ -43,6 +43,7 @@ endif()
 ############################################################
 
 set(INSTALL_ROOT nightfire-open)
+set(TOOLS_INSTALL_ROOT ${INSTALL_ROOT}/tools)
 set(GAME_FOLDER_NAME nfopen)
 set(GAME_EXECUTABLE bond)
 
@@ -66,3 +67,7 @@ set(TARGETNAME_LIB_PLATFORMLIB platformlib)
 set(TARGETNAME_LIB_SAFESTRING safestring_static)
 
 set(TARGETNAME_EXE_GAME_LAUNCHER game_launch)
+set(TARGETNAME_EXE_NFCSG nfcsg)
+set(TARGETNAME_EXE_NFBSP nfbsp)
+set(TARGETNAME_EXE_NFVIS nfvis)
+set(TARGETNAME_EXE_NFRAD nfrad)

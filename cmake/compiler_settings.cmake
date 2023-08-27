@@ -1,5 +1,5 @@
 function(set_common_library_compiler_settings targetname)
-	if(HOST_COMPILER STREQUAL "MSVC")
+	if("${HOST_COMPILER}" STREQUAL "MSVC")
 		target_compile_options(${targetname} PRIVATE /W4)
 	else()
 		# Unfortunately, we can't apply -pedantic here without some
