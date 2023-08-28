@@ -1,4 +1,4 @@
-$cdtexture "../../../../nfopen/textures"
+$cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "vase_s_01_gibs.mdl"
 

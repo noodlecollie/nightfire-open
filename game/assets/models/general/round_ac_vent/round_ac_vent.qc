@@ -1,4 +1,4 @@
-$cdtexture "../../../../nfopen/textures"
+$cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "round_ac_vent.mdl"
 

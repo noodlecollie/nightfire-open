@@ -1,4 +1,4 @@
-$cdtexture "../../../../nfopen/textures"
+$cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "missile_crane.mdl"
 

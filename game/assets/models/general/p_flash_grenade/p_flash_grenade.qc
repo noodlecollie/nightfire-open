@@ -1,4 +1,4 @@
-$cdtexture "../../../../nfopen/textures"
+$cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "p_flash_grenade.mdl"
 

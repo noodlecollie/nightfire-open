@@ -1,5 +1,5 @@
 cd "."
-$cdtexture "../../../../nfopen/textures"
+$cdtexture "../../../../content/nfopen/textures"
 $modelname "mp_yakuza.mdl"
 
 $root "Bip01"
