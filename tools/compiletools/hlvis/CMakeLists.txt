@@ -27,8 +27,6 @@ target_compile_options(${TARGETNAME_EXE_NFVIS} PRIVATE
 	${COMMON_COMPILE_OPTIONS}
 )
 
-set_common_library_compiler_settings(${TARGETNAME_EXE_NFVIS})
-
 install(TARGETS ${TARGETNAME_EXE_NFVIS}
 	RUNTIME DESTINATION ${TOOLS_INSTALL_ROOT}
 )
