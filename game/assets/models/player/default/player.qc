@@ -1,6 +1,6 @@
 $cd "."
-$cdtexture "../../../../nfopen/textures"
-$modelname "player.mdl"
+$cdtexture "../../../../content/nfopen/textures/mdl"
+$modelname "fallback.mdl"
 
 $root "Bip01"
 
@@ -10,11 +10,9 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
-
-
 $bodygroup "studio"
 {
-	studio "mp_MI6_Stealth_ref"
+	studio "mp_mi6_Stealth_ref"
 }
 
 $attachment "" "Bip01 R Hand" 34.700000 3.000000 1.800000
