@@ -25,7 +25,7 @@ jobs:
         cc: gcc
         cxx: g++
         build-type: MinSizeRel
-        configure-options: -DNF_DEDICATED_SERVER=YES
+        configure-options: -DNF_DEDICATED_SERVER=YES -DNF_ENABLE_TOOLS=NO
 
   build-windows:
     name: Build on Windows
