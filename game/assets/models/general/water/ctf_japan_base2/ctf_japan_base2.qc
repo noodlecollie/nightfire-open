@@ -1,4 +1,4 @@
-$cdtexture "../../../../../nfopen/textures"
+$cdtexture "../../../../../content/nfopen/textures"
 $cd "."
 $modelname "ctf_japan_base2.mdl"
 

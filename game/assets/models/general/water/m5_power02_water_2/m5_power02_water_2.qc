@@ -1,4 +1,4 @@
-$cdtexture "../../../../../nfopen/textures"
+$cdtexture "../../../../../content/nfopen/textures"
 $cd "."
 $modelname "m5_power02_water_2.mdl"
 
