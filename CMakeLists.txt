@@ -87,10 +87,10 @@ endif()
 if(NOT "${NF_INSTALL_MODE}" STREQUAL "CONTENT")
 	add_subdirectory(libraries)
 	add_subdirectory(xash3d_engine)
+
+	if(NF_ENABLE_TOOLS)
+		add_subdirectory(tools)
+	endif()
 endif()
 
 add_subdirectory(game)
-
-if(NF_ENABLE_TOOLS)
-	add_subdirectory(tools)
-endif()
