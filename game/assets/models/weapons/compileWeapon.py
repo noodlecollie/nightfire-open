@@ -5,8 +5,8 @@ import subprocess
 import shutil
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
-STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "utils", "binaries", "afterburner-compile-tools", "abstudiomdl.exe"))
-MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join("..", "..", "..", "nfopen", "models"))
+STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "build", "install", "nightfire-open", "tools", "studiomdl.exe"))
+MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "content", "nfopen", "models"))
 
 QC_COMMAND_MODELNAME = "$modelname"
 EXPECTED_MODELNAME_PREFIXES = [ "p_", "v_", "w_", "w_ammo_" ]
@@ -117,6 +117,10 @@ def compileRecursive(path : str):
 def main():
 	if sys.platform != "win32":
 		print("This script is only supported on Windows.", file=sys.stderr)
+		sys.exit(1)
+
+	if not os.path.isfile(STUDIOMDL_PATH):
+		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
 		sys.exit(1)
 
 	args = parseArguments()

@@ -3371,7 +3371,7 @@ int main (int argc, char **argv)
 
 	if (argc == 1)
 	{
-		Error("usage: abstudiomdl <flags>\n"
+		Error("usage: studiomdl <flags>\n"
 			  " [-t texture]\n"
 			  " -r(tag reversed)\n"
 			  " -n(tag bad normals)\n"

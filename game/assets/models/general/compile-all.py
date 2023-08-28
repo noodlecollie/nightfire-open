@@ -12,12 +12,12 @@ import argparse
 from concurrent.futures.thread import ThreadPoolExecutor
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(os.path.realpath(sys.argv[0])))
-GAME_CONTENT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "nfopen"))
+GAME_CONTENT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "content", "nfopen"))
 MDL_OUTPUT_DIR = os.path.join(GAME_CONTENT_DIR, "models")
 TEXTURE_DIR = os.path.join(GAME_CONTENT_DIR, "textures")
 TEXTURE_SUBDIR_NAME = "mdl"
 
-STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "utils", "binaries", "afterburner-compile-tools", "abstudiomdl.exe"))
+STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "build", "install", "nightfire-open", "tools", "studiomdl.exe"))
 ERROR_SUMMARY_PATH = os.path.join(SCRIPT_DIR, "errors.log")
 
 Aborted = False
@@ -215,7 +215,7 @@ def parseArgs():
 						action="store_true")
 
 	parser.add_argument("--skip-patch",
-						help="Only compiled models, does not patch SMD or QC files.",
+						help="Only compiles models, does not patch SMD or QC files.",
 						action="store_true")
 
 	return parser.parse_args()
@@ -276,6 +276,10 @@ def main():
 
 	args = parseArgs()
 	validateArgs(args)
+
+	if not os.path.isfile(STUDIOMDL_PATH):
+		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
+		sys.exit(1)
 
 	filesToProcess = getInputFiles()
 

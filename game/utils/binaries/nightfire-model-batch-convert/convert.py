@@ -18,7 +18,7 @@ OUTPUT_DIR = os.path.join(SCRIPT_DIR, "v10")
 SCRATCH_DIR = os.path.join(SCRIPT_DIR, "scratch")
 TEXTURE_DIR_NAME = "mdl"
 
-STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "afterburner-compile-tools", "abstudiomdl.exe"))
+STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "build", "install", "nightfire-open", "tools", "studiomdl.exe"))
 ERROR_SUMMARY_PATH = os.path.join(SCRIPT_DIR, "errors.log")
 
 # Map from all-lowercase texture names to actual names.
