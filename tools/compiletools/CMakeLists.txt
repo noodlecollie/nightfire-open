@@ -31,6 +31,8 @@ set(COMMON_LINK_LIBRARIES
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:pthread>
 )
 
+# This code will be replaced with the better compile tools SDK later,
+# so no point spending loads of time fixing these warnings now.
 set(COMMON_COMPILE_OPTIONS
 	# MSVC
 	$<$<STREQUAL:"${HOST_COMPILER}","MSVC">:/wd4311>
@@ -49,8 +51,32 @@ set(COMMON_COMPILE_OPTIONS
 	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-mavx>
 	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-floop-interchange>
 	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-mfpmath=sse>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-strict-aliasing>
 	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-deprecated-declarations>
-	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-deprecated-register>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-unused-parameter>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-unused-variable>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-unused-value>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-sign-compare>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-unused-but-set-variable>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-maybe-uninitialized>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-string-compare>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-parentheses>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-dangling-else>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-unused-result>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-unused-function>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-uninitialized>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-type-limits>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-unknown-pragmas>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-misleading-indentation>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-format-overflow>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-address>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-stringop-truncation>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-array-parameter>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-switch>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-class-memaccess>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-deprecated-copy>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-missing-braces>
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-implicit-fallthrough>
 )
 
 set(COMMON_SOURCE_FILES

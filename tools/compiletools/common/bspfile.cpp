@@ -313,7 +313,7 @@ static void SwapBSPFile( const bool todisk )
 	{
 		for( j = 0; j < 8; j++ )
 		{
-			g_texinfo[i].vecs[0][j] = LittleFloat( g_texinfo[i].vecs[0][j] );
+			g_texinfo[i].vecs[j/2][j%4] = LittleFloat( g_texinfo[i].vecs[j/2][j%4] );
 		}
 
 		g_texinfo[i].miptex = LittleLong( g_texinfo[i].miptex );

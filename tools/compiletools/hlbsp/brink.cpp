@@ -112,7 +112,7 @@ bbrink_t *CreateBrink (vec3_t start, vec3_t stop)
 	newnode.isleaf = true;
 	newnode.clipnode = NULL;
 	b->nodes->push_back (newnode);
-	
+
 	// CreateBrink must be followed by BrinkSplitClipnode
 	return b;
 }
@@ -167,14 +167,14 @@ void BrinkSplitClipnode (bbrink_t *b, const dplane_t *plane, int planenum, bclip
 	bbrinknode_t *node = &(*b->nodes)[found];
 	bbrinknode_t *front = &(*b->nodes)[b->numnodes];
 	bbrinknode_t *back = &(*b->nodes)[b->numnodes + 1];
-	
+
 	node->clipnode = NULL;
 	node->isleaf = false;
 	node->plane = plane;
 	node->planenum = planenum;
 	node->children[0] = b->numnodes;
 	node->children[1] = b->numnodes + 1;
-	
+
 	front->isleaf = true;
 	front->content = n0->content;
 	front->clipnode = n0;
@@ -1004,7 +1004,7 @@ void SplitTreeLeaf (int &numobjects, btreeleaf_t *tl, const dplane_t *plane, int
 				tmp_side = SIDE_CROSS;
 			}
 		}
-		
+
 		std::map< btreeedge_t *, int > edges;
 		std::map< btreeedge_t *, int >::iterator edge;
 
@@ -1013,7 +1013,7 @@ void SplitTreeLeaf (int &numobjects, btreeleaf_t *tl, const dplane_t *plane, int
 			btreeface_t *tf = fi->f;
 			int side = fi->side;
 			RemoveFaceFromLeaf (tl, tf, side); // because we can only store 2 leafs for a face
-			
+
 			// fi is unusable now
 			if (tf->tmp_side == SIDE_FRONT || tf->tmp_side == SIDE_ON && tmp_side != SIDE_BACK)
 			{
@@ -1581,7 +1581,7 @@ void AnalyzeBrinks (bbrinkinfo_t *info)
 			continue;
 #endif
 		}
-		
+
 		if (b->numnodes > 2 * MAXBRINKWEDGES - 1)
 		{
 			if (g_developer >= DEVELOPER_LEVEL_MEGASPAM)
@@ -1604,7 +1604,7 @@ void AnalyzeBrinks (bbrinkinfo_t *info)
 			countinvalid++;
 			continue;
 		}
-		
+
 		int transitionfound[2];
 		bsurface_t *transitionpos[2];
 		bool transitionside[2];
@@ -1644,7 +1644,7 @@ void AnalyzeBrinks (bbrinkinfo_t *info)
 			countskipped++;
 			continue;
 		}
-		
+
 		if (transitionside[1] != !transitionside[0])
 		{
 			PrintOnce ("AnalyzeBrinks: internal error 2");
@@ -1876,7 +1876,7 @@ void *CreateBrinkinfo (const dclipnode_t *clipnodes, int headnode)
 		DeleteTreeCells (info);
 		SortPartitions (info);
 	}
-	catch (std::bad_alloc)
+	catch (const std::bad_alloc&)
 	{
 		hlassume (false, assume_NoMemory);
 	}

@@ -32,6 +32,8 @@ target_compile_options(${TARGETNAME_EXE_NFBSP} PRIVATE
 	${COMMON_COMPILE_OPTIONS}
 )
 
+set_common_library_compiler_settings(${TARGETNAME_EXE_NFBSP})
+
 install(TARGETS ${TARGETNAME_EXE_NFBSP}
 	RUNTIME DESTINATION ${TOOLS_INSTALL_ROOT}
 )
