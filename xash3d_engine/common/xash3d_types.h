@@ -2,7 +2,7 @@
 #ifndef XASH_TYPES_H
 #define XASH_TYPES_H
 
-#include "build.h"
+#include "BuildDefs/build.h"
 
 #if XASH_WIN32
 #include <wchar.h>  // off_t

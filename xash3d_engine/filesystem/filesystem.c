@@ -16,7 +16,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -32,11 +32,11 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "port.h"
 #include "const.h"
-#include "crtlib.h"
-#include "crclib.h"
+#include "CommonUtils/crtlib.h"
+#include "CommonUtils/crclib.h"
 #include "filesystem.h"
 #include "filesystem_internal.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "common/com_strings.h"
 #include "common/protocol.h"
 #include "PlatformLib/File.h"

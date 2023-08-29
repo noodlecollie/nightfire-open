@@ -28,7 +28,7 @@ extern "C"
 #include <time.h>
 #include "xash3d_types.h"
 #include "const.h"
-#include "crtlib.h"
+#include "CommonUtils/crtlib.h"
 #include "platform/platform.h"
 
 #define MSGBOX(x) Platform_MessageBox("Xash Error", (x), false);

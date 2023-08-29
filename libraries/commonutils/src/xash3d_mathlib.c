@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "xash3d_types.h"
 #include "const.h"
 #include "com_model.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "eiface.h"
 
 #define NUM_HULL_ROUNDS ARRAYSIZE(hull_table)

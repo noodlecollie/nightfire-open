@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include <string.h>
 #include <stdarg.h>
-#include "build.h"
+#include "BuildDefs/build.h"
 #include "xash3d_types.h"
 #include "PlatformLib/String.h"
 

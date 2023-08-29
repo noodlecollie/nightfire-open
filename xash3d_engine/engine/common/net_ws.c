@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"  // ConnectionProgress
 #include "netchan.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "ipv6text.h"
 #if XASH_WIN32
 #include "platform/win32/net.h"

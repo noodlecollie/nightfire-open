@@ -25,9 +25,9 @@ GNU General Public License for more details.
 #include <stdint.h>
 #include "port.h"
 #include "filesystem_internal.h"
-#include "crtlib.h"
+#include "CommonUtils/crtlib.h"
 #include "common/com_strings.h"
-#include "miniz.h"
+#include "CommonUtils/miniz.h"
 #include "PlatformLib/File.h"
 
 #define ZIP_HEADER_LF (('K' << 8) + ('P') + (0x03 << 16) + (0x04 << 24))

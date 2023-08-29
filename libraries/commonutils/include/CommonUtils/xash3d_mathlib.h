@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include <tgmath.h>
 #endif
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #include "xash3d_types.h"
 #include "const.h"
 #include "com_model.h"

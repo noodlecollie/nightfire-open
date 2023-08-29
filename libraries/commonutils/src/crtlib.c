@@ -20,8 +20,8 @@ GNU General Public License for more details.
 #include <ctype.h>
 #include <time.h>
 #include "stdio.h"
-#include "crtlib.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/crtlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "PlatformLib/Time.h"
 #include "PlatformLib/String.h"
 

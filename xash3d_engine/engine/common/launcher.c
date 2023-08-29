@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #ifdef SINGLE_BINARY
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #include "common.h"
 #include "PlatformLib/System.h"
 

@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #ifndef PORT_H
 #define PORT_H
 
-#include "build.h"
+#include "BuildDefs/build.h"
 
 #if !XASH_WIN32
 

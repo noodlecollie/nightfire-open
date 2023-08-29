@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "imagelib.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "mod_local.h"
 
 #define LERPBYTE(i) \

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 extern poolhandle_t sndpool;
 
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 
 // sound engine rate defines
 #define SOUND_DMA_SPEED 44100  // hardware playback rate

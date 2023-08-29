@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include <stddef.h>
 #include "port.h"
 #include "filesystem_internal.h"
-#include "crtlib.h"
+#include "CommonUtils/crtlib.h"
 #include "common/com_strings.h"
 #include "wadfile.h"
 

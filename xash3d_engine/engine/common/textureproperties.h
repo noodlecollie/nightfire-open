@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "studio.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "const.h"
 #include "com_model.h"
 

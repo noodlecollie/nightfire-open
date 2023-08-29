@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "port.h"
-#include "build.h"
+#include "BuildDefs/build.h"
 
 #include <stdio.h>
 #include <string.h>
