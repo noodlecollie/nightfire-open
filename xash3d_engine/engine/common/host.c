@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #ifdef XASH_SDL
 #include <SDL.h>
 #endif  // XASH_SDL
@@ -33,7 +33,8 @@ GNU General Public License for more details.
 #include "netchan.h"
 #include "protocol.h"
 #include "mod_local.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
+#include "CommonUtils/arch.h"
 #include "input.h"
 #include "enginefeatures.h"
 #include "render_api.h"  // decallist_t

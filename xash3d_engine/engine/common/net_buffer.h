@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #define NET_BUFFER_H
 
 #include "enginefeatures.h"
+#include "CommonUtils/typedefs.h"
 
 /*
 ==============================================================================
@@ -30,7 +31,7 @@ GNU General Public License for more details.
 // So PAD_NUMBER(0,4) is 0 and PAD_NUMBER(1,4) is 4
 #define PAD_NUMBER(num, boundary) (((num) + ((boundary)-1)) / (boundary)) * (boundary)
 
-_inline int BitByte(int bits)
+static inline int BitByte(int bits)
 {
 	return PAD_NUMBER(bits, 8) >> 3;
 }
@@ -60,11 +61,11 @@ void MSG_InitExt(sizebuf_t* sb, const char* pDebugName, void* pData, int nBytes,
 void MSG_InitMasks(void);  // called once at startup engine
 int MSG_SeekToBit(sizebuf_t* sb, int bitPos, int whence);
 void MSG_ExciseBits(sizebuf_t* sb, int startbit, int bitstoremove);
-_inline int MSG_TellBit(sizebuf_t* sb)
+static inline int MSG_TellBit(sizebuf_t* sb)
 {
 	return sb->iCurBit;
 }
-_inline const char* MSG_GetName(sizebuf_t* sb)
+static inline const char* MSG_GetName(sizebuf_t* sb)
 {
 	return sb->pDebugName;
 }
@@ -110,39 +111,39 @@ qboolean MSG_WriteString(sizebuf_t* sb, const char* pStr);  // returns false if 
 qboolean MSG_WriteStringf(sizebuf_t* sb, const char* format, ...) _format(2);
 
 // helper functions
-_inline int MSG_GetNumBytesWritten(sizebuf_t* sb)
+static inline int MSG_GetNumBytesWritten(sizebuf_t* sb)
 {
 	return BitByte(sb->iCurBit);
 }
-_inline int MSG_GetRealBytesWritten(sizebuf_t* sb)
+static inline int MSG_GetRealBytesWritten(sizebuf_t* sb)
 {
 	return sb->iCurBit >> 3;
 }  // unpadded
-_inline int MSG_GetNumBitsWritten(sizebuf_t* sb)
+static inline int MSG_GetNumBitsWritten(sizebuf_t* sb)
 {
 	return sb->iCurBit;
 }
-_inline int MSG_GetMaxBits(sizebuf_t* sb)
+static inline int MSG_GetMaxBits(sizebuf_t* sb)
 {
 	return sb->nDataBits;
 }
-_inline int MSG_GetMaxBytes(sizebuf_t* sb)
+static inline int MSG_GetMaxBytes(sizebuf_t* sb)
 {
 	return sb->nDataBits >> 3;
 }
-_inline int MSG_GetNumBitsLeft(sizebuf_t* sb)
+static inline int MSG_GetNumBitsLeft(sizebuf_t* sb)
 {
 	return sb->nDataBits - sb->iCurBit;
 }
-_inline int MSG_GetNumBytesLeft(sizebuf_t* sb)
+static inline int MSG_GetNumBytesLeft(sizebuf_t* sb)
 {
 	return MSG_GetNumBitsLeft(sb) >> 3;
 }
-_inline byte* MSG_GetData(sizebuf_t* sb)
+static inline byte* MSG_GetData(sizebuf_t* sb)
 {
 	return sb->pData;
 }
-_inline byte* MSG_GetBuf(sizebuf_t* sb)
+static inline byte* MSG_GetBuf(sizebuf_t* sb)
 {
 	return sb->pData;
 }  // just an alias

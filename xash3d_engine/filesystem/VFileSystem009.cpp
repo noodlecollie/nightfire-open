@@ -17,12 +17,13 @@ GNU General Public License for more details.
 #include <time.h>
 #include <stdarg.h>
 #include ALLOCA_H
-#include "crtlib.h"
+#include "CommonUtils/crtlib.h"
 #include "filesystem.h"
 #include "filesystem_internal.h"
 #include "VFileSystem009.h"
 #include "common/com_strings.h"
 #include "PlatformLib/Time.h"
+#include "BuildDefs/decorators.h"
 
 #if __cplusplus < 201103L
 #define override
@@ -536,9 +537,9 @@ public:
 	}
 } g_VFileSystem009;
 
-extern "C" void EXPORT* CreateInterface(const char* interface, int* retval)
+extern "C" void EXPORT* CreateInterface(const char* ifc, int* retval)
 {
-	if ( !Q_strcmp(interface, "VFileSystem009") )
+	if ( !Q_strcmp(ifc, "VFileSystem009") )
 	{
 		if ( retval )
 			*retval = 0;
@@ -546,7 +547,7 @@ extern "C" void EXPORT* CreateInterface(const char* interface, int* retval)
 		return &g_VFileSystem009;
 	}
 
-	if ( !Q_strcmp(interface, FS_API_CREATEINTERFACE_TAG) )
+	if ( !Q_strcmp(ifc, FS_API_CREATEINTERFACE_TAG) )
 	{
 		static fs_api_t copy = {};  // return a copy, to disallow overriding
 

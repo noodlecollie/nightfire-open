@@ -1,2 +1,4 @@
 add_subdirectory(platformlib)
 add_subdirectory(thirdparty)
+add_subdirectory(builddefs)
+add_subdirectory(commonutils)

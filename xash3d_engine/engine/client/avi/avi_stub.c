@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #include "common.h"
 
 #if !XASH_WIN32

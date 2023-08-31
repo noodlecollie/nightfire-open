@@ -13,11 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "port.h"
-#include "xash3d_types.h"
-#include "const.h"
-#include "com_model.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 
 const matrix3x4 m_matrix3x4_identity = {
 	{1, 0, 0, 0},  // PITCH	[forward], org[0]

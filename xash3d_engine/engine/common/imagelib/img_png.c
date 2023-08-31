@@ -13,14 +13,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "miniz.h"
+#include <limits.h>
+#include "CommonUtils/miniz.h"
 #include "imagelib.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "img_png.h"
+#include "PlatformLib/Net.h"
 
-#if defined(XASH_NO_NETWORK)
-#include "platform/stub/net_stub.h"
-#elif !XASH_WIN32
+#if !XASH_WIN32
 #include <netinet/in.h>
 #endif
 
@@ -71,7 +71,7 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 	}
 
 	// convert IHDR chunk length to little endian
-	png_hdr.ihdr_len = ntohl(png_hdr.ihdr_len);
+	png_hdr.ihdr_len = PlatformLib_NToHL(png_hdr.ihdr_len);
 
 	// check IHDR chunk length (valid value - 13)
 	if ( png_hdr.ihdr_len != sizeof(png_ihdr_t) )
@@ -88,10 +88,10 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 	}
 
 	// convert image width and height to little endian
-	png_hdr.ihdr_chunk.height = ntohl(png_hdr.ihdr_chunk.height);
+	png_hdr.ihdr_chunk.height = PlatformLib_NToHL(png_hdr.ihdr_chunk.height);
 	image.height = (word)png_hdr.ihdr_chunk.height;
 
-	png_hdr.ihdr_chunk.width = ntohl(png_hdr.ihdr_chunk.width);
+	png_hdr.ihdr_chunk.width = PlatformLib_NToHL(png_hdr.ihdr_chunk.width);
 	image.width = (word)png_hdr.ihdr_chunk.width;
 
 	if ( png_hdr.ihdr_chunk.height == 0 || png_hdr.ihdr_chunk.width == 0 )
@@ -157,7 +157,7 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 	crc32_check = CRC32_Final(crc32_check);
 
 	// check IHDR chunk CRC
-	if ( ntohl(png_hdr.ihdr_crc32) != crc32_check )
+	if ( PlatformLib_NToHL(png_hdr.ihdr_crc32) != crc32_check )
 	{
 		Con_DPrintf(S_ERROR "Image_LoadPNG: IHDR chunk has wrong CRC32 sum (%s)\n", name);
 		return false;
@@ -173,7 +173,7 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 		memcpy(&chunk_len, buf_p, sizeof(chunk_len));
 
 		// convert chunk length to little endian
-		chunk_len = ntohl(chunk_len);
+		chunk_len = PlatformLib_NToHL(chunk_len);
 
 		if ( chunk_len > INT_MAX )
 		{
@@ -230,7 +230,7 @@ qboolean Image_LoadPNG(const char* name, const byte* buffer, fs_offset_t filesiz
 		memcpy(&crc32, buf_p, sizeof(crc32));
 
 		// check chunk CRC
-		if ( ntohl(crc32) != crc32_check )
+		if ( PlatformLib_NToHL(crc32) != crc32_check )
 		{
 			Con_DPrintf(S_ERROR "Image_LoadPNG: Found chunk with wrong CRC32 sum (%s)\n", name);
 			if ( idat_buf )
@@ -639,16 +639,16 @@ qboolean Image_SavePNG(const char* name, rgbdata_t* pix)
 	memcpy(png_hdr.sign, png_sign, sizeof(png_sign));
 
 	// write IHDR chunk length
-	png_hdr.ihdr_len = htonl(ihdr_len);
+	png_hdr.ihdr_len = PlatformLib_HToNL(ihdr_len);
 
 	// write IHDR chunk signature
 	memcpy(png_hdr.ihdr_sign, ihdr_sign, sizeof(ihdr_sign));
 
 	// write image width
-	png_hdr.ihdr_chunk.width = htonl(pix->width);
+	png_hdr.ihdr_chunk.width = PlatformLib_HToNL(pix->width);
 
 	// write image height
-	png_hdr.ihdr_chunk.height = htonl(pix->height);
+	png_hdr.ihdr_chunk.height = PlatformLib_HToNL(pix->height);
 
 	// write image bitdepth
 	png_hdr.ihdr_chunk.bitdepth = 8;
@@ -671,7 +671,7 @@ qboolean Image_SavePNG(const char* name, rgbdata_t* pix)
 	crc32 = CRC32_Final(crc32);
 
 	// write IHDR chunk CRC
-	png_hdr.ihdr_crc32 = htonl(crc32);
+	png_hdr.ihdr_crc32 = PlatformLib_HToNL(crc32);
 
 	out = buffer = (byte*)Mem_Malloc(host.imagepool, outsize);
 
@@ -711,7 +711,7 @@ qboolean Image_SavePNG(const char* name, rgbdata_t* pix)
 	out += sizeof(png_t);
 
 	// convert IDAT chunk length to big endian
-	big_idat_len = htonl(idat_len);
+	big_idat_len = PlatformLib_HToNL(idat_len);
 
 	// write IDAT chunk length
 	memcpy(out, &big_idat_len, sizeof(idat_len));
@@ -730,7 +730,7 @@ qboolean Image_SavePNG(const char* name, rgbdata_t* pix)
 	out += idat_len;
 
 	// write IDAT chunk CRC
-	png_ftr.idat_crc32 = htonl(crc32);
+	png_ftr.idat_crc32 = PlatformLib_HToNL(crc32);
 
 	// write IEND chunk length
 	png_ftr.iend_len = 0;
@@ -739,7 +739,7 @@ qboolean Image_SavePNG(const char* name, rgbdata_t* pix)
 	memcpy(png_ftr.iend_sign, iend_sign, sizeof(iend_sign));
 
 	// write IEND chunk CRC
-	png_ftr.iend_crc32 = htonl(iend_crc32);
+	png_ftr.iend_crc32 = PlatformLib_HToNL(iend_crc32);
 
 	// write PNG footer to buffer
 	memcpy(out, &png_ftr, sizeof(png_ftr));

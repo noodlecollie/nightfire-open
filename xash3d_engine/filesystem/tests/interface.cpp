@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "port.h"
-#include "build.h"
+#include "BuildDefs/build.h"
 #include "VFileSystem009.h"
 #include "filesystem.h"
 

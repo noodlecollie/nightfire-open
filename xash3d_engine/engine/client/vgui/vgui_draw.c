@@ -22,6 +22,14 @@ GNU General Public License for more details.
 #include "ref_common.h"
 #include "input.h"
 #include "platform/platform.h"
+#include "BuildDefs/libnames.h"
+#include "BuildDefs/build.h"
+
+#ifdef XASH_WIN32
+#define VGUI_SUPPORT_DLL "../vgui_support." OS_LIB_EXT
+#else
+#define VGUI_SUPPORT_DLL "libvgui_support." OS_LIB_EXT
+#endif
 
 CVAR_DEFINE_AUTO(vgui_utf8, "0", FCVAR_ARCHIVE, "enable utf-8 support for vgui text");
 

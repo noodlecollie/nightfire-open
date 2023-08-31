@@ -14,8 +14,9 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "mod_local.h"
+#include <limits.h>
 
 typedef struct
 {
@@ -909,7 +910,7 @@ void DrawGLPolyChain(glpoly_t* p, float soffset, float toffset)
 	}
 }
 
-_inline qboolean R_HasLightmap(void)
+static qboolean R_HasLightmap(void)
 {
 	if ( CVAR_TO_BOOL(r_fullbright) || !WORLDMODEL->lightdata )
 		return false;

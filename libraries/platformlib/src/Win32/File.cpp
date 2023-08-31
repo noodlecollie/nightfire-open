@@ -1,6 +1,7 @@
 #include "PlatformLib/File.h"
 #include <io.h>
 #include <sys/stat.h>
+#include <direct.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -65,6 +66,11 @@ int PlatformLib_Write(int fileHandle, const void* buf, unsigned int maxCharCount
 int PlatformLib_FileNo(FILE* file)
 {
 	return _fileno(file);
+}
+
+int PlatformLib_MkDir(const char* path)
+{
+	return _mkdir(path);
 }
 
 #ifdef __cplusplus

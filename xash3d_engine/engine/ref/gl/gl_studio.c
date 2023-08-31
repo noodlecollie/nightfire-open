@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "const.h"
 #include "r_studioint.h"
 #include "triangleapi.h"
@@ -879,8 +879,8 @@ void R_StudioCalcRotations(
 
 	for ( i = 0; i < m_pStudioHeader->numbones; i++, pbone++, panim++ )
 	{
-		R_StudioCalcBoneQuaternion(frame, s, pbone, panim, adj, q[i]);
-		R_StudioCalcBonePosition(frame, s, pbone, panim, adj, pos[i]);
+		gEngfuncs.R_StudioCalcBoneQuaternion(frame, s, pbone, panim, adj, q[i]);
+		gEngfuncs.R_StudioCalcBonePosition(frame, s, pbone, panim, adj, pos[i]);
 	}
 
 	if ( pseqdesc->motiontype & STUDIO_X )
@@ -2020,7 +2020,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
+static void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
 {
 	int i;
 
@@ -2053,7 +2053,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
+static void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
 	int i;
 
@@ -2085,7 +2085,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
+static void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
 {
 	float *lv, *av;
 	int i, idx;
@@ -2130,7 +2130,7 @@ _inline void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float
 	}
 }
 
-_inline int R_StudioBuildIndices(qboolean tri_strip, int vertexState)
+static int R_StudioBuildIndices(qboolean tri_strip, int vertexState)
 {
 	// build in indices
 	if ( vertexState++ < 3 )
@@ -2173,7 +2173,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioBuildArrayNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
+static void R_StudioBuildArrayNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
 {
 	int i;
 
@@ -2213,7 +2213,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioBuildArrayFloatMesh(short* ptricmds, vec3_t* pstudionorms)
+static void R_StudioBuildArrayFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
 	int i;
 
@@ -2253,7 +2253,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioBuildArrayChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
+static void R_StudioBuildArrayChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
 {
 	float *lv, *av;
 	int i, idx;
@@ -2309,7 +2309,7 @@ _inline void R_StudioBuildArrayChromeMesh(short* ptricmds, vec3_t* pstudionorms,
 	}
 }
 
-_inline void R_StudioDrawArrays(uint startverts, uint startelems)
+static void R_StudioDrawArrays(uint startverts, uint startelems)
 {
 	pglEnableClientState(GL_VERTEX_ARRAY);
 	pglVertexPointer(3, GL_FLOAT, 12, g_studio.arrayverts);

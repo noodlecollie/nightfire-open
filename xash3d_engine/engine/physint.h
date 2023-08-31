@@ -92,7 +92,7 @@ typedef struct server_physics_api_s
 	// trace & contents
 	int (*pfnMaskPointContents)(const float* pos, int groupmask);
 	trace_t (*pfnTrace)(const float* p0, float* mins, float* maxs, const float* p1, int type, edict_t* e);
-	trace_t (*pfnTraceNoEnts)(const float* p0, float* mins, float* maxs, const float* p1, int type, edict_t* e);
+	trace_t (*pfnTraceNoEnts)(const float* p0, const float* mins, const float* maxs, const float* p1, int type, edict_t* e);
 	int (*pfnBoxInPVS)(const float* org, const float* boxmins, const float* boxmaxs);
 
 	// message handler (missed function to write raw bytes)
@@ -140,8 +140,8 @@ typedef struct physics_interface_s
 	void (*ClipMoveToEntity)(
 		edict_t* ent,
 		const float* start,
-		float* mins,
-		float* maxs,
+		const float* mins,
+		const float* maxs,
 		const float* end,
 		trace_t* trace);
 	// tracing entities with SOLID_CUSTOM mode on a server (only used by pmove code)

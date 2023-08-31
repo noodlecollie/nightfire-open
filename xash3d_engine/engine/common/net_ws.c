@@ -16,19 +16,16 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"  // ConnectionProgress
 #include "netchan.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
+#include "CommonUtils/arch.h"
 #include "ipv6text.h"
 #if XASH_WIN32
 #include "platform/win32/net.h"
-#elif defined XASH_NO_NETWORK
-#include "platform/stub/net_stub.h"
 #else
 #include "platform/posix/net.h"
 #endif
 
-#ifndef XASH_NO_NETWORK
 #include "PlatformLib/Net.h"
-#endif  // XASH_NO_NETWORK
 
 #define NET_USE_FRAGMENTS
 
@@ -239,7 +236,7 @@ static const char* NET_ErrorString(void)
 #endif
 }
 
-_inline socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
+static socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
 {
 	switch ( addr->ss_family )
 	{
@@ -252,7 +249,7 @@ _inline socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
 	}
 }
 
-_inline qboolean NET_IsSocketError(int retval)
+static qboolean NET_IsSocketError(int retval)
 {
 #if XASH_WIN32
 	return retval == SOCKET_ERROR ? true : false;
@@ -261,7 +258,7 @@ _inline qboolean NET_IsSocketError(int retval)
 #endif
 }
 
-_inline qboolean NET_IsSocketValid(int socket)
+static qboolean NET_IsSocketValid(int socket)
 {
 #if XASH_WIN32
 	return socket != INVALID_SOCKET;
@@ -290,7 +287,7 @@ void NET_IP6BytesToNetadr(netadr_t* adr, const uint8_t* ip6)
 #endif
 }
 
-_inline int NET_NetadrIP6Compare(const netadr_t* a, const netadr_t* b)
+static int NET_NetadrIP6Compare(const netadr_t* a, const netadr_t* b)
 {
 #if XASH_LITTLE_ENDIAN
 	return memcmp(a->ip.ip6.ip6, b->ip.ip6.ip6, sizeof(a->ip.ip6.ip6));
@@ -793,8 +790,8 @@ qboolean NET_StringToFilterAdr(const char* s, netadr_t* adr, uint* prefixlen)
 			*prefixlen = len;
 
 			// drop unneeded bits
-			mask = htonl(adr->ip.ip4.ip.full) & (0xFFFFFFFF << (32 - len));
-			adr->ip.ip4.ip.full = ntohl(mask);
+			mask = PlatformLib_HToNL(adr->ip.ip4.ip.full) & (0xFFFFFFFF << (32 - len));
+			adr->ip.ip4.ip.full = PlatformLib_NToHL(mask);
 		}
 
 		adr->ip.ip4.type = NA_IP;
@@ -954,8 +951,8 @@ qboolean NET_CompareAdrByMask(const netadr_t a, const netadr_t b, uint prefixlen
 
 	if ( a.ip.ip4.type == NA_IP )
 	{
-		uint32_t ipa = htonl(a.ip.ip4.ip.full);
-		uint32_t ipb = htonl(b.ip.ip4.ip.full);
+		uint32_t ipa = PlatformLib_HToNL(a.ip.ip4.ip.full);
+		uint32_t ipb = PlatformLib_HToNL(b.ip.ip4.ip.full);
 
 		if ( (ipa & ((0xFFFFFFFFU) << (32 - prefixlen))) == ipb )
 		{
@@ -2385,7 +2382,6 @@ sleeps msec or until net socket is ready
 */
 void NET_Sleep(int msec)
 {
-#ifndef XASH_NO_NETWORK
 	struct timeval timeout;
 	fd_set fdset;
 	int i = 0;
@@ -2404,7 +2400,6 @@ void NET_Sleep(int msec)
 	timeout.tv_sec = msec / 1000;
 	timeout.tv_usec = (msec % 1000) * 1000;
 	select(i + 1, &fdset, NULL, NULL, &timeout);
-#endif
 }
 
 /*

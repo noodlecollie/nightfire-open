@@ -138,6 +138,8 @@ if(CLIENT_SUPPORT)
 		client/avi/avi.h
 		client/vgui/vgui_draw.h
 		client/vgui/vgui_draw.c
+		client/cl_bytenormals.h
+		client/cl_bytenormals.c
 		client/cl_cmds.c
 		client/cl_custom.c
 		client/cl_debug.c
@@ -251,7 +253,8 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PUBLIC
 target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
 	$<$<BOOL:${CLIENT_SUPPORT}>:SDL2::SDL2>
 	$<$<BOOL:${CLIENT_SUPPORT}>:Opus::opus>
-	${TARGETNAME_LIB_PUBLIC}
+	${TARGETNAME_LIB_COMMONUTILS}
+	${TARGETNAME_INCLUDES_SDK}
 )
 
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
@@ -271,6 +274,9 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 )
 
 target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
+	${TARGETNAME_LIB_COMMONUTILS}
+	${TARGETNAME_INCLUDES_SDK}
+
 	# Windows
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:USER32>
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:SHELL32>

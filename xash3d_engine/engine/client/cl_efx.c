@@ -7,6 +7,7 @@
 #include "cl_tent.h"
 #include "pm_local.h"
 #include "cl_surfaceprop_effects.h"
+#include "client/cl_bytenormals.h"
 
 #define PART_SIZE Q_max(0.5f, cl_draw_particles->value)
 
@@ -593,8 +594,8 @@ passed through this
 */
 static void R_BeamSetup(
 	BEAM* pbeam,
-	vec3_t start,
-	vec3_t end,
+	const vec3_t start,
+	const vec3_t end,
 	int modelIndex,
 	float life,
 	float width,
@@ -1135,8 +1136,8 @@ template for new beams
 ==============
 */
 BEAM* GAME_EXPORT R_BeamLightning(
-	vec3_t start,
-	vec3_t end,
+	const vec3_t start,
+	const vec3_t end,
 	int modelIndex,
 	float life,
 	float width,
@@ -1191,7 +1192,7 @@ void GAME_EXPORT R_EntityParticles(cl_entity_t* ent)
 		p->die = (float)cl.time + 0.001f;
 		p->color = 111;  // yellow
 
-		VectorMAMAM(1.0f, ent->origin, 64.0f, m_bytenormals[i], 16.0f, forward, p->org);
+		VectorMAMAM(1.0f, ent->origin, 64.0f, BYTE_NORMALS[i], 16.0f, forward, p->org);
 	}
 }
 

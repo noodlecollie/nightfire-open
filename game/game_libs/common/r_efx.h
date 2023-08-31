@@ -271,8 +271,8 @@ struct efx_api_s
 		float brightness);
 	void (*R_BeamKill)(int deadEntity);
 	BEAM* (*R_BeamLightning)(
-		float* start,
-		float* end,
+		const float* start,
+		const float* end,
 		int modelIndex,
 		float life,
 		float width,

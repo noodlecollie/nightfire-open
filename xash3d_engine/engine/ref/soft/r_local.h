@@ -15,7 +15,6 @@ GNU General Public License for more details.
 
 #ifndef GL_LOCAL_H
 #define GL_LOCAL_H
-#include "port.h"
 #include "xash3d_types.h"
 #include "cvardef.h"
 #include "const.h"
@@ -25,7 +24,7 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "dlight.h"
 #include "ref_api.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "ref_params.h"
 #include "enginefeatures.h"
 #include "com_strings.h"
@@ -1198,8 +1197,8 @@ void R_SetUpWorldTransform(void);
 //
 // engine callbacks
 //
-#include "crtlib.h"
-#include "crclib.h"
+#include "CommonUtils/crtlib.h"
+#include "CommonUtils/crclib.h"
 #if 1
 #define Mem_Malloc(pool, size) gEngfuncs._Mem_Alloc(pool, size, false, __FILE__, __LINE__)
 #define Mem_Calloc(pool, size) gEngfuncs._Mem_Alloc(pool, size, true, __FILE__, __LINE__)

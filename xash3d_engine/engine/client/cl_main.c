@@ -27,6 +27,11 @@ GNU General Public License for more details.
 #include "model_dump.h"
 #include "common/bsp/generic/viscompress.h"
 #include "net_functions.h"
+#include "CommonUtils/arch.h"
+
+#if defined XASH_SDL
+#include <SDL.h>
+#endif
 
 #define MAX_TOTAL_CMDS 32
 #define MAX_CMD_BUFFER 8000

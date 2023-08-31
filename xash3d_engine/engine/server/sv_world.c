@@ -23,9 +23,12 @@ GNU General Public License for more details.
 typedef struct moveclip_s
 {
 	vec3_t boxmins, boxmaxs;  // enclose the test object along entire move
-	float *mins, *maxs;  // size of the moving object
-	vec3_t mins2, maxs2;  // size when clipping against mosnters
-	const float *start, *end;
+	const float* mins;
+	const float* maxs;  // size of the moving object
+	vec3_t mins2;
+	vec3_t maxs2;  // size when clipping against mosnters
+	const float* start;
+	const float* end;
 	edict_t* passedict;
 	trace_t trace;
 	int type;  // move type
@@ -234,7 +237,7 @@ Offset is filled in to contain the adjustment that must be added to the
 testing object's origin to get a point to use with the returned hull.
 ================
 */
-hull_t* SV_HullForEntity(edict_t* ent, vec3_t mins, vec3_t maxs, vec3_t offset)
+static hull_t* SV_HullForEntity(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t offset)
 {
 	hull_t* hull;
 	vec3_t hullmins, hullmaxs;
@@ -267,7 +270,8 @@ SV_HullForStudioModel
 
 ====================
 */
-hull_t* SV_HullForStudioModel(edict_t* ent, vec3_t mins, vec3_t maxs, vec3_t offset, int* numhitboxes)
+static hull_t*
+SV_HullForStudioModel(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t offset, int* numhitboxes)
 {
 	qboolean useComplexHull;
 	float scale = 0.5f;
@@ -841,7 +845,13 @@ Handles selection or creation of a clipping hull, and offseting (and
 eventually rotation) of the end points
 ==================
 */
-void SV_ClipMoveToEntity(edict_t* ent, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, trace_t* trace)
+void SV_ClipMoveToEntity(
+	edict_t* ent,
+	const vec3_t start,
+	const vec3_t mins,
+	const vec3_t maxs,
+	const vec3_t end,
+	trace_t* trace)
 {
 	hull_t* hull;
 	model_t* model;
@@ -1114,8 +1124,8 @@ or custom physics implementation
 void SV_CustomClipMoveToEntity(
 	edict_t* ent,
 	const vec3_t start,
-	vec3_t mins,
-	vec3_t maxs,
+	const vec3_t mins,
+	const vec3_t maxs,
 	const vec3_t end,
 	trace_t* trace)
 {
@@ -1355,8 +1365,14 @@ void SV_ClipToWorldBrush(areanode_t* node, moveclip_t* clip)
 SV_Move
 ==================
 */
-trace_t
-SV_Move(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int type, edict_t* e, qboolean monsterclip)
+trace_t SV_Move(
+	const vec3_t start,
+	const vec3_t mins,
+	const vec3_t maxs,
+	const vec3_t end,
+	int type,
+	edict_t* e,
+	qboolean monsterclip)
 {
 	moveclip_t clip;
 	vec3_t trace_endpos;
@@ -1416,7 +1432,7 @@ trace_t SV_MoveNormal(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t
 SV_MoveNoEnts
 ==================
 */
-trace_t SV_MoveNoEnts(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int type, edict_t* e)
+trace_t SV_MoveNoEnts(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int type, edict_t* e)
 {
 	moveclip_t clip;
 	vec3_t trace_endpos;

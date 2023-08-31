@@ -17,15 +17,14 @@ GNU General Public License for more details.
 #define XASH3D_MATHLIB_H
 
 #include <math.h>
+#include <stdlib.h>
+
 #if HAVE_TGMATH_H
 #include <tgmath.h>
 #endif
 
-#include "build.h"
-#include "xash3d_types.h"
-#include "const.h"
-#include "com_model.h"
-#include "studio.h"
+#include "BuildDefs/build.h"
+#include "CommonUtils/typedefs.h"
 
 // euler angle order
 #define PITCH 0
@@ -33,7 +32,7 @@ GNU General Public License for more details.
 #define ROLL 2
 
 #ifndef M_PI
-#define M_PI (double)3.14159265358979323846
+#define M_PI ((double)3.14159265358979323846)
 #endif
 
 #ifndef M_PI2
@@ -229,7 +228,7 @@ void VectorVectors(const vec3_t forward, vec3_t right, vec3_t up);
 void VectorAngles(const float* forward, float* angles);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, vec3_t angles);
-void PlaneIntersect(const struct mplane_s* plane, const vec3_t p0, const vec3_t p1, vec3_t out);
+void PlaneIntersect(const mplane_t* plane, const vec3_t p0, const vec3_t p1, vec3_t out);
 
 void ClearBounds(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
@@ -282,30 +281,15 @@ float V_CalcFov(float* fov_x, float width, float height);
 void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean lock_x);
 
 void R_StudioSlerpBones(int numbones, vec4_t q1[], float pos1[][3], const vec4_t q2[], const float pos2[][3], float s);
-void R_StudioCalcBoneQuaternion(
-	int frame,
-	float s,
-	const mstudiobone_t* pbone,
-	const mstudioanim_t* panim,
-	const float* adj,
-	vec4_t q);
-void R_StudioCalcBonePosition(
-	int frame,
-	float s,
-	const mstudiobone_t* pbone,
-	const mstudioanim_t* panim,
-	const vec3_t adj,
-	vec3_t pos);
 
 int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p);
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p) \
 	(((p)->type < 3) ? (((p)->dist <= (emins)[(p)->type]) ? 1 : (((p)->dist >= (emaxs)[(p)->type]) ? 2 : 3)) \
 					 : BoxOnPlaneSide((emins), (emaxs), (p)))
 
-extern vec3_t vec3_origin;
-extern int boxpnt[6][4];
+extern const vec3_t vec3_origin;
+extern const int boxpnt[6][4];
 extern const matrix3x4 m_matrix3x4_identity;
 extern const matrix4x4 m_matrix4x4_identity;
-extern const float m_bytenormals[NUMVERTEXNORMALS][3];
 
 #endif  // XASH3D_MATHLIB_H

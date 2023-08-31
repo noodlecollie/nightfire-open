@@ -749,8 +749,6 @@ enum
 typedef int func_t;
 typedef int string_t;
 
-typedef unsigned short word;
-
 #include "xash3d_types.h"
 
 typedef struct
@@ -780,7 +778,8 @@ typedef struct
 {
 	qboolean allsolid;  // if true, plane is not valid
 	qboolean startsolid;  // if true, the initial point was in a solid area
-	qboolean inopen, inwater;
+	qboolean inopen;
+	qboolean inwater;
 	float fraction;  // time completed, 1.0 = didn't hit anything
 	vec3_t endpos;  // final position
 	plane_t plane;  // surface normal at impact

@@ -10,7 +10,6 @@
 add_library(${TARGETNAME_INCLUDES_SDK} INTERFACE)
 
 target_include_directories(${TARGETNAME_INCLUDES_SDK} INTERFACE
-	public
 	common
 	pm_shared
 	engine
@@ -35,7 +34,6 @@ target_link_libraries(${TARGETNAME_INCLUDES_ENGINE} INTERFACE
 )
 
 add_subdirectory(thirdparty)
-add_subdirectory(public)
 add_subdirectory(filesystem)
 add_subdirectory(engine)
 

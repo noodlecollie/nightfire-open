@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "r_local.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 #include "const.h"
 #include "r_studioint.h"
 #include "triangleapi.h"
@@ -884,8 +884,8 @@ void R_StudioCalcRotations(
 
 	for ( i = 0; i < m_pStudioHeader->numbones; i++, pbone++, panim++ )
 	{
-		R_StudioCalcBoneQuaternion(frame, s, pbone, panim, adj, q[i]);
-		R_StudioCalcBonePosition(frame, s, pbone, panim, adj, pos[i]);
+		gEngfuncs.R_StudioCalcBoneQuaternion(frame, s, pbone, panim, adj, q[i]);
+		gEngfuncs.R_StudioCalcBonePosition(frame, s, pbone, panim, adj, pos[i]);
 	}
 
 	if ( pseqdesc->motiontype & STUDIO_X )
@@ -2036,7 +2036,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
+static void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
 {
 	int i;
 
@@ -2069,7 +2069,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
+static void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
 	int i;
 
@@ -2101,7 +2101,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-_inline void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
+static void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
 {
 	float *lv, *av;
 	int i, idx;

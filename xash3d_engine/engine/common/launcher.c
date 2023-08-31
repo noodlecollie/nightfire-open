@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #ifdef SINGLE_BINARY
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #include "common.h"
 #include "PlatformLib/System.h"
 
@@ -51,7 +51,7 @@ static void Sys_ChangeGame(const char* progname)
 	exit(Host_Main(szArgc, szArgv, szGameDir, 1, &Sys_ChangeGame));
 }
 
-_inline int Sys_Start(void)
+static inline int Sys_Start(void)
 {
 	int ret;
 	const char* game = PlatformLib_GetEnv(E_GAME);

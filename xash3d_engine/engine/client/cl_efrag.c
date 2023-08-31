@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "studio.h"
 #include "world.h"  // BOX_ON_PLANE_SIDE
 #include "client.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
 
 /*
 ===============================================================================

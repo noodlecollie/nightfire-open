@@ -14,20 +14,23 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "BuildDefs/build.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
 #if XASH_POSIX
 #include <unistd.h>
 #endif
+
 #include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "port.h"
+#include <limits.h>
 #include "filesystem_internal.h"
-#include "crtlib.h"
+#include "CommonUtils/crtlib.h"
 #include "common/com_strings.h"
-#include "miniz.h"
+#include "CommonUtils/miniz.h"
 #include "PlatformLib/File.h"
 
 #define ZIP_HEADER_LF (('K' << 8) + ('P') + (0x03 << 16) + (0x04 << 24))

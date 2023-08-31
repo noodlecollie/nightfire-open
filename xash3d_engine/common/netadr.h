@@ -16,7 +16,7 @@
 #ifndef NETADR_H
 #define NETADR_H
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #include <stdint.h>
 
 typedef enum

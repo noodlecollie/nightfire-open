@@ -16,7 +16,7 @@
 #ifndef ALIAS_H
 #define ALIAS_H
 
-#include "build.h"
+#include "BuildDefs/build.h"
 #include <stdint.h>
 #include "synctype.h"
 

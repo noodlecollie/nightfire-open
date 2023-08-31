@@ -13,8 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "port.h"
-#include "build.h"
+#include "BuildDefs/build.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -22,13 +21,21 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
+#include "BuildDefs/libnames.h"
 
 #if XASH_POSIX
+#include <dlfcn.h>
+
 #define XASHLIB "libxash." OS_LIB_EXT
 #define LoadLibrary(x) dlopen(x, RTLD_NOW)
 #define GetProcAddress(x, y) dlsym(x, y)
 #define FreeLibrary(x) dlclose(x)
+
+typedef void* HINSTANCE;
+
 #elif XASH_WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #include <shellapi.h>  // CommandLineToArgvW
 #define XASHLIB "xash.dll"
 #define SDL2LIB "SDL2.dll"
@@ -156,7 +163,7 @@ static void Sys_ChangeGame(const char* progname)
 	Xash_Main(szArgc, szArgv, szGameDir, 1, Sys_ChangeGame);
 }
 
-_inline int Sys_Start(void)
+static inline int Sys_Start(void)
 {
 	int ret;
 	pfnChangeGame changeGame = NULL;

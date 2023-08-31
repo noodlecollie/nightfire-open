@@ -12,18 +12,22 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#include "port.h"
-#include "xash3d_types.h"
-#include "const.h"
+
 #include <math.h>
 #include <stdarg.h>
 #include <ctype.h>
 #include <time.h>
 #include "stdio.h"
-#include "crtlib.h"
-#include "xash3d_mathlib.h"
+#include "CommonUtils/crtlib.h"
+#include "CommonUtils/xash3d_mathlib.h"
+#include "CommonUtils/bitdefs.h"
 #include "PlatformLib/Time.h"
 #include "PlatformLib/String.h"
+
+#ifdef _MSC_VER
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 
 void Q_strnlwr(const char* in, char* out, size_t size_out)
 {
@@ -552,7 +556,7 @@ int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list arg
 	// to prevent crash while output
 	__except (EXCEPTION_EXECUTE_HANDLER)
 	{
-		Q_strncpy(buffer, "^1sprintf throw exception^7\n", buffersize);
+		Q_strncpy(buffer, "^1vsnprintf threw exception^7\n", buffersize);
 		result = (int)buffersize;
 	}
 #endif
@@ -1001,13 +1005,19 @@ interpert this character as single
 static int COM_IsSingleChar(unsigned int flags, char c)
 {
 	if ( c == '{' || c == '}' || c == '\'' || c == ',' )
+	{
 		return true;
+	}
 
 	if ( !FBitSet(flags, PFILE_IGNOREBRACKET) && (c == ')' || c == '(') )
+	{
 		return true;
+	}
 
 	if ( FBitSet(flags, PFILE_HANDLECOLON) && c == ':' )
+	{
 		return true;
+	}
 
 	return false;
 }

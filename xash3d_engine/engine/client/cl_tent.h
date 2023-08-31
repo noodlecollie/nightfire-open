@@ -144,8 +144,8 @@ struct particle_s* CL_AllocParticleFast(void);
 
 // Beams
 struct beam_s* R_BeamLightning(
-	vec3_t start,
-	vec3_t end,
+	const vec3_t start,
+	const vec3_t end,
 	int modelIndex,
 	float life,
 	float width,

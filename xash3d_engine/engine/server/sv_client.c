@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include "net_encode.h"
 #include "net_api.h"
+#include "CommonUtils/arch.h"
 
 typedef void (*RedirectFlushFunc)(netadr_t adr, rdtype_t target, char* buffer);
 

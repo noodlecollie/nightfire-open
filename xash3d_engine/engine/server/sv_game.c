@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "const.h"
 #include "render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
+#include <limits.h>
 
 #define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)
 
@@ -242,12 +243,12 @@ each trace will share their result into global state
 */
 void SV_CopyTraceToGlobal(trace_t* trace)
 {
-	svgame.globals->trace_allsolid = trace->allsolid;
-	svgame.globals->trace_startsolid = trace->startsolid;
+	svgame.globals->trace_allsolid = trace->allsolid ? 1.0f : 0.0f;
+	svgame.globals->trace_startsolid = trace->startsolid ? 1.0f : 0.0f;
 	svgame.globals->trace_fraction = trace->fraction;
 	svgame.globals->trace_plane_dist = trace->plane.dist;
-	svgame.globals->trace_inopen = trace->inopen;
-	svgame.globals->trace_inwater = trace->inwater;
+	svgame.globals->trace_inopen = trace->inopen ? 1.0f : 0.0f;
+	svgame.globals->trace_inwater = trace->inwater ? 1.0f : 0.0f;
 	VectorCopy(trace->endpos, svgame.globals->trace_endpos);
 	VectorCopy(trace->plane.normal, svgame.globals->trace_plane_normal);
 	svgame.globals->trace_hitgroup = trace->hitgroup;
@@ -3327,6 +3328,7 @@ void SV_SetStringArrayMode(qboolean dynamic)
 #if XASH_64BIT && !XASH_WIN32
 #define USE_MMAP
 #include <sys/mman.h>
+#include <unistd.h>
 #endif
 
 /*

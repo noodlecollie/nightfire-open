@@ -19,6 +19,10 @@ GNU General Public License for more details.
 #include "vgui_draw.h"
 #include "mobility_int.h"
 
+#if defined XASH_SDL
+#include <SDL.h>
+#endif
+
 typedef enum
 {
 	touch_command,  // just tap a button
