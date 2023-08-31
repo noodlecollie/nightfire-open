@@ -27,12 +27,6 @@ GNU General Public License for more details.
 #define OS_LIB_PREFIX "lib"
 #define VGUI_SUPPORT_DLL "libvgui_support." OS_LIB_EXT
 
-// Windows-specific
-#define __cdecl
-#define __stdcall
-#define _inline static inline
-#define FORCEINLINE inline __attribute__((always_inline))
-
 #if XASH_POSIX
 #include <unistd.h>
 #include <dlfcn.h>
@@ -50,12 +44,6 @@ typedef struct tagPOINT
 	int x, y;
 } POINT;
 #else  // WIN32
-#ifdef __MINGW32__
-#define _inline static inline
-#define FORCEINLINE inline __attribute__((always_inline))
-#else
-#define FORCEINLINE __forceinline
-#endif
 
 #define HSPRITE WINAPI_HSPRITE
 #define WIN32_LEAN_AND_MEAN

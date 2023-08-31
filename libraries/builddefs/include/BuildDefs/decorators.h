@@ -10,16 +10,15 @@
 #endif
 #define _format(x) __attribute__((format(printf, x, x + 1)))
 #define NORETURN __attribute__((noreturn))
+#define FORCEINLINE inline __attribute__((always_inline))
 #elif defined(_MSC_VER)
 #define EXPORT __declspec(dllexport)
 #define GAME_EXPORT
 #define _format(x)
 #define NORETURN
+#define FORCEINLINE __forceinline
 #else
-#define EXPORT
-#define GAME_EXPORT
-#define _format(x)
-#define NORETURN
+#error Unsupported compiler!
 #endif
 
 #if ( __GNUC__ >= 3 )

@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <stdbool.h>
 
 // This version catches errors where the macro is used
 // on a pointer rather than an array.
