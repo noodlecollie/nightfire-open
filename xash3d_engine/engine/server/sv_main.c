@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include "net_encode.h"
 #include "platform/platform.h"
+#include "CommonUtils/arch.h"
 
 // server cvars
 CVAR_DEFINE_AUTO(
@@ -285,7 +286,7 @@ void SV_UpdateMovevars(qboolean initialize)
 	svgame.movevars.zmax = sv_zmax.value;
 	svgame.movevars.waveHeight = sv_wateramp.value;
 	Q_strncpy(svgame.movevars.skyName, sv_skyname.string, sizeof(svgame.movevars.skyName));
-	svgame.movevars.footsteps = sv_footsteps.value;
+	svgame.movevars.footsteps = sv_footsteps.value != 0.0f;
 	svgame.movevars.rollangle = sv_rollangle.value;
 	svgame.movevars.rollspeed = sv_rollspeed.value;
 	svgame.movevars.skycolor_r = sv_skycolor_r.value;

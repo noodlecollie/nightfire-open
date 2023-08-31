@@ -1419,8 +1419,8 @@ void CreateBaseline(
 	struct entity_state_s* baseline,
 	struct edict_s* entity,
 	int playermodelindex,
-	vec3_t player_mins,
-	vec3_t player_maxs)
+	const vec3_t player_mins,
+	const vec3_t player_maxs)
 {
 	baseline->origin = entity->v.origin;
 	baseline->angles = entity->v.angles;

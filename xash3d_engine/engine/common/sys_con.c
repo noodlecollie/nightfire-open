@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/Time.h"
+#include "CommonUtils/arch.h"
 
 #if !XASH_WIN32
 #define XASH_COLORIZE_CONSOLE true

@@ -77,7 +77,7 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 		compiler[0] = '\0';
 		generator[0] = '\0';
 
-		f = FS_Open(t->filenames[i], "rb", con_gamemaps->value);
+		f = FS_Open(t->filenames[i], "rb", con_gamemaps->value != 0.0f);
 
 		if ( f )
 		{

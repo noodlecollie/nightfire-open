@@ -138,6 +138,8 @@ if(CLIENT_SUPPORT)
 		client/avi/avi.h
 		client/vgui/vgui_draw.h
 		client/vgui/vgui_draw.c
+		client/cl_bytenormals.h
+		client/cl_bytenormals.c
 		client/cl_cmds.c
 		client/cl_custom.c
 		client/cl_debug.c

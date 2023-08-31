@@ -1210,8 +1210,8 @@ passed through this
 */
 static void R_BeamSetup(
 	BEAM* pbeam,
-	vec3_t start,
-	vec3_t end,
+	const vec3_t start,
+	const vec3_t end,
 	int modelIndex,
 	float life,
 	float width,

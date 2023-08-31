@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "model_dump.h"
 #include "common/bsp/generic/viscompress.h"
 #include "net_functions.h"
+#include "CommonUtils/arch.h"
 
 #define MAX_TOTAL_CMDS 32
 #define MAX_CMD_BUFFER 8000

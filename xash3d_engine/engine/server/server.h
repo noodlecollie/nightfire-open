@@ -683,18 +683,30 @@ qboolean SV_PlayerIsFrozen(edict_t* pClient);
 //
 void SV_ClearWorld(void);
 void SV_UnlinkEdict(edict_t* ent);
-void SV_ClipMoveToEntity(edict_t* ent, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, trace_t* trace);
+void SV_ClipMoveToEntity(
+	edict_t* ent,
+	const vec3_t start,
+	const vec3_t mins,
+	const vec3_t maxs,
+	const vec3_t end,
+	trace_t* trace);
 void SV_CustomClipMoveToEntity(
 	edict_t* ent,
 	const vec3_t start,
-	vec3_t mins,
-	vec3_t maxs,
+	const vec3_t mins,
+	const vec3_t maxs,
 	const vec3_t end,
 	trace_t* trace);
 trace_t SV_TraceHull(edict_t* ent, int hullNum, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end);
-trace_t
-SV_Move(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int type, edict_t* e, qboolean monsterclip);
-trace_t SV_MoveNoEnts(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int type, edict_t* e);
+trace_t SV_Move(
+	const vec3_t start,
+	const vec3_t mins,
+	const vec3_t maxs,
+	const vec3_t end,
+	int type,
+	edict_t* e,
+	qboolean monsterclip);
+trace_t SV_MoveNoEnts(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int type, edict_t* e);
 trace_t SV_MoveNormal(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int type, edict_t* e);
 texture_t* SV_TraceTexture(edict_t* ent, const vec3_t start, const vec3_t end);
 msurface_t* SV_TraceSurface(edict_t* ent, const vec3_t start, const vec3_t end);

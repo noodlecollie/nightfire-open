@@ -483,7 +483,7 @@ static qboolean R_LoadProgs(const char* name)
 		return false;
 	}
 
-	refState.developer = host_developer.value;
+	refState.developer = host_developer.value != 0;
 
 	if ( !ref.dllFuncs.R_Init() )
 	{

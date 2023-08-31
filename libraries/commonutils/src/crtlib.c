@@ -24,6 +24,11 @@ GNU General Public License for more details.
 #include "PlatformLib/Time.h"
 #include "PlatformLib/String.h"
 
+#ifdef _MSC_VER
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 void Q_strnlwr(const char* in, char* out, size_t size_out)
 {
 	if ( size_out == 0 )
@@ -551,7 +556,7 @@ int Q_vsnprintf(char* buffer, size_t buffersize, const char* format, va_list arg
 	// to prevent crash while output
 	__except (EXCEPTION_EXECUTE_HANDLER)
 	{
-		Q_strncpy(buffer, "^1sprintf throw exception^7\n", buffersize);
+		Q_strncpy(buffer, "^1vsnprintf threw exception^7\n", buffersize);
 		result = (int)buffersize;
 	}
 #endif

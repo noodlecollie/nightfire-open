@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 // This version catches errors where the macro is used
 // on a pointer rather than an array.
@@ -9,7 +10,7 @@
   ((sizeof(a) / sizeof(*(a))) / \
   (size_t)(!(sizeof(a) % sizeof(*(a)))))
 
-#ifdef __cplusplus
+#if defined(__cplusplus) || defined(__bool_true_false_are_defined)
 // C++ already has bool. Typedef qboolean to be an int,
 // so that it's the same width as the C enum below.
 typedef int qboolean;
@@ -53,5 +54,3 @@ typedef struct mplane_s
 	byte signbits;  // signx + (signy<<1) + (signz<<1)
 	byte pad[2];
 } mplane_t;
-
-#include <windows.h>

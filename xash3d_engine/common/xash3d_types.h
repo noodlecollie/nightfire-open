@@ -22,9 +22,6 @@ typedef uint32_t poolhandle_t;
 typedef void* poolhandle_t;
 #endif
 
-#undef true
-#undef false
-
 typedef uint64_t longtime_t;
 
 #define MAX_INFO_STRING 256  // infostrings are transmitted across network
