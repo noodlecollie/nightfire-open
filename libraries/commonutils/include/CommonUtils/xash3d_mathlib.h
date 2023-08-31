@@ -17,6 +17,8 @@ GNU General Public License for more details.
 #define XASH3D_MATHLIB_H
 
 #include <math.h>
+#include <stdlib.h>
+
 #if HAVE_TGMATH_H
 #include <tgmath.h>
 #endif
@@ -30,7 +32,7 @@ GNU General Public License for more details.
 #define ROLL 2
 
 #ifndef M_PI
-#define M_PI (double)3.14159265358979323846
+#define M_PI ((double)3.14159265358979323846)
 #endif
 
 #ifndef M_PI2
