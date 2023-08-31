@@ -35,6 +35,7 @@ GNU General Public License for more details.
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/crclib.h"
 #include "CommonUtils/arch.h"
+#include "CommonUtils/linux_win32_compat.h"
 #include "BuildDefs/libnames.h"
 #include "filesystem.h"
 #include "filesystem_internal.h"

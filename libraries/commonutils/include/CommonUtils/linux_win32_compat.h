@@ -2,7 +2,12 @@
 
 #include "BuildDefs/build.h"
 
-#ifndef XASH_WIN32
+#ifdef XASH_WIN32
+#define HSPRITE WINAPI_HSPRITE
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#undef HSPRITE
+#else
 typedef void* HANDLE;
 typedef void* HINSTANCE;
 

@@ -21,15 +21,11 @@ GNU General Public License for more details.
 #include "ipv6text.h"
 #if XASH_WIN32
 #include "platform/win32/net.h"
-#elif defined XASH_NO_NETWORK
-#include "platform/stub/net_stub.h"
 #else
 #include "platform/posix/net.h"
 #endif
 
-#ifndef XASH_NO_NETWORK
 #include "PlatformLib/Net.h"
-#endif  // XASH_NO_NETWORK
 
 #define NET_USE_FRAGMENTS
 
@@ -794,8 +790,8 @@ qboolean NET_StringToFilterAdr(const char* s, netadr_t* adr, uint* prefixlen)
 			*prefixlen = len;
 
 			// drop unneeded bits
-			mask = htonl(adr->ip.ip4.ip.full) & (0xFFFFFFFF << (32 - len));
-			adr->ip.ip4.ip.full = ntohl(mask);
+			mask = PlatformLib_HToNL(adr->ip.ip4.ip.full) & (0xFFFFFFFF << (32 - len));
+			adr->ip.ip4.ip.full = PlatformLib_NToHL(mask);
 		}
 
 		adr->ip.ip4.type = NA_IP;
@@ -955,8 +951,8 @@ qboolean NET_CompareAdrByMask(const netadr_t a, const netadr_t b, uint prefixlen
 
 	if ( a.ip.ip4.type == NA_IP )
 	{
-		uint32_t ipa = htonl(a.ip.ip4.ip.full);
-		uint32_t ipb = htonl(b.ip.ip4.ip.full);
+		uint32_t ipa = PlatformLib_HToNL(a.ip.ip4.ip.full);
+		uint32_t ipb = PlatformLib_HToNL(b.ip.ip4.ip.full);
 
 		if ( (ipa & ((0xFFFFFFFFU) << (32 - prefixlen))) == ipb )
 		{
@@ -2386,7 +2382,6 @@ sleeps msec or until net socket is ready
 */
 void NET_Sleep(int msec)
 {
-#ifndef XASH_NO_NETWORK
 	struct timeval timeout;
 	fd_set fdset;
 	int i = 0;
@@ -2405,7 +2400,6 @@ void NET_Sleep(int msec)
 	timeout.tv_sec = msec / 1000;
 	timeout.tv_usec = (msec % 1000) * 1000;
 	select(i + 1, &fdset, NULL, NULL, &timeout);
-#endif
 }
 
 /*

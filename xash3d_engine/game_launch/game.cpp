@@ -34,6 +34,8 @@ GNU General Public License for more details.
 typedef void* HINSTANCE;
 
 #elif XASH_WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #include <shellapi.h>  // CommandLineToArgvW
 #define XASHLIB "xash.dll"
 #define SDL2LIB "SDL2.dll"

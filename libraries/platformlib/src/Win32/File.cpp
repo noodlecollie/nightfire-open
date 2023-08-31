@@ -1,6 +1,7 @@
 #include "PlatformLib/File.h"
 #include <io.h>
 #include <sys/stat.h>
+#include <direct.h>
 
 #ifdef __cplusplus
 extern "C"
