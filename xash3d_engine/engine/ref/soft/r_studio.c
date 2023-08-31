@@ -2036,7 +2036,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
+static void R_StudioDrawNormalMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t)
 {
 	int i;
 
@@ -2069,7 +2069,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
+static void R_StudioDrawFloatMesh(short* ptricmds, vec3_t* pstudionorms)
 {
 	int i;
 
@@ -2101,7 +2101,7 @@ R_StudioDrawNormalMesh
 generic path
 ===============
 */
-void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
+static void R_StudioDrawChromeMesh(short* ptricmds, vec3_t* pstudionorms, float s, float t, float scale)
 {
 	float *lv, *av;
 	int i, idx;
