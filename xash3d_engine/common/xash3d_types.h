@@ -3,6 +3,8 @@
 #define XASH_TYPES_H
 
 #include "BuildDefs/build.h"
+#include "CommonUtil/typedefs.h"
+#include "CommonUtil/bitdefs.h"
 
 #if XASH_WIN32
 #include <wchar.h>  // off_t
@@ -12,17 +14,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-typedef unsigned char byte;
 typedef int sound_t;
-typedef float vec_t;
-typedef vec_t vec2_t[2];
-typedef vec_t vec3_t[3];
-typedef vec_t vec4_t[4];
-typedef vec_t quat_t[4];
-typedef byte rgba_t[4];  // unsigned byte colorpack
-typedef byte rgb_t[3];  // unsigned byte colorpack
-typedef vec_t matrix3x4[3][4];
-typedef vec_t matrix4x4[4][4];
 
 #if XASH_64BIT
 typedef uint32_t poolhandle_t;
@@ -33,19 +25,8 @@ typedef void* poolhandle_t;
 #undef true
 #undef false
 
-#ifndef __cplusplus
-typedef enum
-{
-	false,
-	true
-} qboolean;
-#else
-typedef int qboolean;
-#endif
-
 typedef uint64_t longtime_t;
 
-#define MAX_STRING 256  // generic string
 #define MAX_INFO_STRING 256  // infostrings are transmitted across network
 #define MAX_SERVERINFO_STRING 512  // server handles too many settings. expand to 1024?
 #define MAX_LOCALINFO_STRING 32768  // localinfo used on server and not sended to the clients
@@ -56,13 +37,9 @@ typedef uint64_t longtime_t;
 #define MAX_MODS 512  // environment games that engine can keep visible
 #define MAX_USERMSG_LENGTH 2048  // don't modify it's relies on a client-side definitions
 
-#define BIT(n) (1U << (n))
 #define GAMMA (2.2f)  // Valve Software gamma
 #define INVGAMMA (1.0f / 2.2f)  // back to 1.0
 #define TEXGAMMA (0.9f)  // compensate dim textures
-#define SetBits(iBitVector, bits) ((iBitVector) = (iBitVector) | (bits))
-#define ClearBits(iBitVector, bits) ((iBitVector) = (iBitVector) & ~(bits))
-#define FBitSet(iBitVector, bit) ((iBitVector) & (bit))
 
 #ifndef __cplusplus
 #ifdef NULL
@@ -72,57 +49,12 @@ typedef uint64_t longtime_t;
 #define NULL ((void*)0)
 #endif
 
-// color strings
-#define IsColorString(p) (p && *(p) == '^' && *((p) + 1) && *((p) + 1) >= '0' && *((p) + 1) <= '9')
-#define ColorIndex(c) (((c) - '0') & 7)
-
-#if defined(__GNUC__)
-#ifdef __i386__
-#define EXPORT __attribute__((visibility("default"), force_align_arg_pointer))
-#define GAME_EXPORT __attribute((force_align_arg_pointer))
-#else
-#define EXPORT __attribute__((visibility("default")))
-#define GAME_EXPORT
-#endif
-#define _format(x) __attribute__((format(printf, x, x + 1)))
-#define NORETURN __attribute__((noreturn))
-#elif defined(_MSC_VER)
-#define EXPORT __declspec(dllexport)
-#define GAME_EXPORT
-#define _format(x)
-#define NORETURN
-#else
-#define EXPORT
-#define GAME_EXPORT
-#define _format(x)
-#define NORETURN
-#endif
-
-#if ( __GNUC__ >= 3 )
-#define unlikely(x) __builtin_expect(x, 0)
-#define likely(x) __builtin_expect(x, 1)
-#elif defined(__has_builtin)
-#if __has_builtin(__builtin_expect)
-#define unlikely(x) __builtin_expect(x, 0)
-#define likely(x) __builtin_expect(x, 1)
-#else
-#define unlikely(x) (x)
-#define likely(x) (x)
-#endif
-#else
-#define unlikely(x) (x)
-#define likely(x) (x)
-#endif
-
 #if defined(static_assert)  // C11 static_assert
 #define STATIC_ASSERT static_assert
 #else
 #define STATIC_ASSERT(x, y) extern int _static_assert_##__LINE__[(x) ? 1 : -1]
 #endif
 
-typedef unsigned int dword;
-typedef unsigned int uint;
-typedef char string[MAX_STRING];
 typedef struct file_s file_t;  // normal file
 typedef struct stream_s stream_t;  // sound stream for background music playing
 typedef off_t fs_offset_t;

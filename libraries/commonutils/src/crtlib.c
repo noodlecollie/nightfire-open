@@ -12,9 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#include "port.h"
-#include "xash3d_types.h"
-#include "const.h"
+
 #include <math.h>
 #include <stdarg.h>
 #include <ctype.h>
@@ -22,6 +20,7 @@ GNU General Public License for more details.
 #include "stdio.h"
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/xash3d_mathlib.h"
+#include "CommonUtils/bitdefs.h"
 #include "PlatformLib/Time.h"
 #include "PlatformLib/String.h"
 
@@ -1001,13 +1000,19 @@ interpert this character as single
 static int COM_IsSingleChar(unsigned int flags, char c)
 {
 	if ( c == '{' || c == '}' || c == '\'' || c == ',' )
+	{
 		return true;
+	}
 
 	if ( !FBitSet(flags, PFILE_IGNOREBRACKET) && (c == ')' || c == '(') )
+	{
 		return true;
+	}
 
 	if ( FBitSet(flags, PFILE_HANDLECOLON) && c == ':' )
+	{
 		return true;
+	}
 
 	return false;
 }

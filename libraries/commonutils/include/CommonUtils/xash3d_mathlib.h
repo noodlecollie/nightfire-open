@@ -22,10 +22,7 @@ GNU General Public License for more details.
 #endif
 
 #include "BuildDefs/build.h"
-#include "xash3d_types.h"
-#include "const.h"
-#include "com_model.h"
-#include "studio.h"
+#include "CommonUtils/typedefs.h"
 
 // euler angle order
 #define PITCH 0
@@ -178,6 +175,15 @@ GNU General Public License for more details.
 	(((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal)) - (plane)->dist)
 #define bound(min, num, max) ((num) >= (min) ? ((num) < (max) ? (num) : (max)) : (min))
 
+typedef struct mplane_s
+{
+	vec3_t normal;
+	vec_t dist;
+	byte type;  // for fast side tests
+	byte signbits;  // signx + (signy<<1) + (signz<<1)
+	byte pad[2];
+} mplane_t;
+
 // horrible cast but helps not breaking strict aliasing in mathlib
 // as union type punning should be fine in C but not in C++
 // so don't carry over this to C++ code
@@ -229,7 +235,7 @@ void VectorVectors(const vec3_t forward, vec3_t right, vec3_t up);
 void VectorAngles(const float* forward, float* angles);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, vec3_t angles);
-void PlaneIntersect(const struct mplane_s* plane, const vec3_t p0, const vec3_t p1, vec3_t out);
+void PlaneIntersect(const mplane_t* plane, const vec3_t p0, const vec3_t p1, vec3_t out);
 
 void ClearBounds(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
@@ -282,30 +288,15 @@ float V_CalcFov(float* fov_x, float width, float height);
 void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean lock_x);
 
 void R_StudioSlerpBones(int numbones, vec4_t q1[], float pos1[][3], const vec4_t q2[], const float pos2[][3], float s);
-void R_StudioCalcBoneQuaternion(
-	int frame,
-	float s,
-	const mstudiobone_t* pbone,
-	const mstudioanim_t* panim,
-	const float* adj,
-	vec4_t q);
-void R_StudioCalcBonePosition(
-	int frame,
-	float s,
-	const mstudiobone_t* pbone,
-	const mstudioanim_t* panim,
-	const vec3_t adj,
-	vec3_t pos);
 
 int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p);
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p) \
 	(((p)->type < 3) ? (((p)->dist <= (emins)[(p)->type]) ? 1 : (((p)->dist >= (emaxs)[(p)->type]) ? 2 : 3)) \
 					 : BoxOnPlaneSide((emins), (emaxs), (p)))
 
-extern vec3_t vec3_origin;
-extern int boxpnt[6][4];
+extern const vec3_t vec3_origin;
+extern const int boxpnt[6][4];
 extern const matrix3x4 m_matrix3x4_identity;
 extern const matrix4x4 m_matrix4x4_identity;
-extern const float m_bytenormals[NUMVERTEXNORMALS][3];
 
 #endif  // XASH3D_MATHLIB_H

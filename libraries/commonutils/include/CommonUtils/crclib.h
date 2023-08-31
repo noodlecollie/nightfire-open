@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #ifndef CRCLIB_H
 #define CRCLIB_H
 
-#include "xash3d_types.h"
+#include "CommonUtils/typedefs.h"
 
 typedef struct
 {

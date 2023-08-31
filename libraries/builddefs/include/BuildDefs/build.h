@@ -26,9 +26,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
 */
+
 #pragma once
-#ifndef BUILD_H
-#define BUILD_H
 
 /*
 All XASH_* macros set by this header are guaranteed to have positive value
@@ -196,5 +195,3 @@ Then you can use another oneliner to query all variables:
 #elif XASH_ARM == 4
 #define XASH_ARMv4 1
 #endif
-
-#endif  // BUILD_H

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 #include <string.h>
 #include <stdarg.h>
 #include "BuildDefs/build.h"
-#include "xash3d_types.h"
+#include "BuildDefs/decorators.h"
+#include "CommonUtils/typedefs.h"
 #include "PlatformLib/String.h"
 
 #ifdef __cplusplus
@@ -45,16 +46,8 @@ enum
 #define PFILE_TOKEN_MAX_LENGTH 1024
 #define PFILE_FS_TOKEN_MAX_LENGTH 512
 
-//
-// build.c
-//
-int Q_buildnum(void);
-int Q_buildnum_compat(void);
-const char* Q_PlatformStringByID(const int platform);
-const char* Q_buildos(void);
-const char* Q_ArchitectureStringByID(const int arch, const uint abi, const int endianness, const qboolean is64);
-const char* Q_buildarch(void);
-const char* Q_buildcommit(void);
+#define IsColorString(p) (p && *(p) == '^' && *((p) + 1) && *((p) + 1) >= '0' && *((p) + 1) <= '9')
+#define ColorIndex(c) (((c) - '0') & 7)
 
 //
 // crtlib.c
