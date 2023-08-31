@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "filesystem.h"
 #include "server.h"
 #include <ctype.h>
+#include "CommonUtils/arch.h"
 
 static char s_szLastError[1024] = "";
 

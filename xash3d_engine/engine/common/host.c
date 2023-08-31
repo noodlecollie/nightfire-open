@@ -34,6 +34,7 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "mod_local.h"
 #include "CommonUtils/xash3d_mathlib.h"
+#include "CommonUtils/arch.h"
 #include "input.h"
 #include "enginefeatures.h"
 #include "render_api.h"  // decallist_t

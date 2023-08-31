@@ -34,6 +34,7 @@ GNU General Public License for more details.
 #include "const.h"
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/crclib.h"
+#include "CommonUtils/arch.h"
 #include "filesystem.h"
 #include "filesystem_internal.h"
 #include "CommonUtils/xash3d_mathlib.h"

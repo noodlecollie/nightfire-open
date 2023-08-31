@@ -175,15 +175,6 @@ GNU General Public License for more details.
 	(((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal)) - (plane)->dist)
 #define bound(min, num, max) ((num) >= (min) ? ((num) < (max) ? (num) : (max)) : (min))
 
-typedef struct mplane_s
-{
-	vec3_t normal;
-	vec_t dist;
-	byte type;  // for fast side tests
-	byte signbits;  // signx + (signy<<1) + (signz<<1)
-	byte pad[2];
-} mplane_t;
-
 // horrible cast but helps not breaking strict aliasing in mathlib
 // as union type punning should be fine in C but not in C++
 // so don't carry over this to C++ code

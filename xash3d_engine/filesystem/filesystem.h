@@ -25,6 +25,7 @@ GNU General Public License for more details.
 #include "xash3d_types.h"
 #include "const.h"
 #include "com_model.h"
+#include "BuildDefs/decorators.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -214,7 +215,7 @@ typedef struct fs_interface_t
 	void (*_Mem_Free)(void* data, const char* filename, int fileline);
 } fs_interface_t;
 
-typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* interface);
+typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* ifc);
 #define GET_FS_API "GetFSAPI"
 
 #ifdef __cplusplus

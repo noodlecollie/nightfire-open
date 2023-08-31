@@ -18,6 +18,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "PlatformLib/Time.h"
+#include "CommonUtils/arch.h"
 
 /*
 ================

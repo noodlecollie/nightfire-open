@@ -45,4 +45,13 @@ typedef uint dword;
 #define MAX_STRING 256
 typedef char string[MAX_STRING];
 
+typedef struct mplane_s
+{
+	vec3_t normal;
+	vec_t dist;
+	byte type;  // for fast side tests
+	byte signbits;  // signx + (signy<<1) + (signz<<1)
+	byte pad[2];
+} mplane_t;
+
 #include <windows.h>
