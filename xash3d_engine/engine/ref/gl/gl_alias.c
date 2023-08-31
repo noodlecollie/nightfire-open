@@ -1098,10 +1098,16 @@ void GL_DrawAliasFrame(aliashdr_t* paliashdr)
 			}
 			order += 2;
 
+			vec3_t normal0;
+			gEngfuncs.GetByteNormal(verts0->lightnormalindex, &normal0[0], &normal0[1], &normal0[2]);
+
+			vec3_t normal1;
+			gEngfuncs.GetByteNormal(verts1->lightnormalindex, &normal1[0], &normal1[1], &normal1[2]);
+
 			VectorLerp(
-				m_bytenormals[verts0->lightnormalindex],
+				normal0,
 				g_alias.lerpfrac,
-				m_bytenormals[verts1->lightnormalindex],
+				normal1,
 				norm);
 			VectorNormalize(norm);
 			R_AliasLighting(&lv_tmp, norm);

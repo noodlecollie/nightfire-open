@@ -30,6 +30,10 @@ GNU General Public License for more details.
 #include "sound.h"  // SND_STOP_LOOPING
 #include "platform/platform.h"
 
+#ifdef XASH_SDL
+#include <SDL.h>
+#endif
+
 #define MAX_LINELENGTH 80
 #define MAX_TEXTCHANNELS 8  // must be power of two (GoldSrc uses 4 channels)
 #define TEXT_MSGNAME "TextMessage%i"

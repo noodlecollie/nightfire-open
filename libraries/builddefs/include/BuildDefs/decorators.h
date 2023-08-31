@@ -36,3 +36,8 @@
 #define unlikely(x) (x)
 #define likely(x) (x)
 #endif
+
+#ifndef _MSC_VER
+#define __cdecl
+#define __stdcall
+#endif

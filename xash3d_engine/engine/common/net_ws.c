@@ -240,7 +240,7 @@ static const char* NET_ErrorString(void)
 #endif
 }
 
-_inline socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
+static socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
 {
 	switch ( addr->ss_family )
 	{
@@ -253,7 +253,7 @@ _inline socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
 	}
 }
 
-_inline qboolean NET_IsSocketError(int retval)
+static qboolean NET_IsSocketError(int retval)
 {
 #if XASH_WIN32
 	return retval == SOCKET_ERROR ? true : false;
@@ -262,7 +262,7 @@ _inline qboolean NET_IsSocketError(int retval)
 #endif
 }
 
-_inline qboolean NET_IsSocketValid(int socket)
+static qboolean NET_IsSocketValid(int socket)
 {
 #if XASH_WIN32
 	return socket != INVALID_SOCKET;
@@ -291,7 +291,7 @@ void NET_IP6BytesToNetadr(netadr_t* adr, const uint8_t* ip6)
 #endif
 }
 
-_inline int NET_NetadrIP6Compare(const netadr_t* a, const netadr_t* b)
+static int NET_NetadrIP6Compare(const netadr_t* a, const netadr_t* b)
 {
 #if XASH_LITTLE_ENDIAN
 	return memcmp(a->ip.ip6.ip6, b->ip.ip6.ip6, sizeof(a->ip.ip6.ip6));

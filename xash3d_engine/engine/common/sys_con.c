@@ -17,7 +17,10 @@ GNU General Public License for more details.
 #if XASH_WIN32
 #define STDOUT_FILENO 1
 #include <io.h>
+#else
+#include <unistd.h>
 #endif
+
 #include <string.h>
 #include <errno.h>
 

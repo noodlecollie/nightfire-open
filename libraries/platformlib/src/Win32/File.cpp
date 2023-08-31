@@ -67,6 +67,11 @@ int PlatformLib_FileNo(FILE* file)
 	return _fileno(file);
 }
 
+int PlatformLib_MkDir(const char* path)
+{
+	return _mkdir(path);
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

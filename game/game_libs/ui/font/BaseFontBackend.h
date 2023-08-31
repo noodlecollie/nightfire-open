@@ -16,7 +16,6 @@ GNU General Public License for more details.
 #ifndef BASEFONT_H
 #define BASEFONT_H
 
-// #include "port.h" // defines XASH_MOBILE_PLATFORM
 #include "BaseMenu.h"
 #include "utlrbtree.h"
 

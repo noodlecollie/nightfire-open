@@ -1,15 +1,17 @@
-#include "port.h"
 #include "BuildDefs/build.h"
+#include "BuildDefs/libnames.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "filesystem.h"
+
 #if XASH_POSIX
 #include <dlfcn.h>
 #define LoadLibrary(x) dlopen(x, RTLD_NOW)
 #define GetProcAddress(x, y) dlsym(x, y)
 #define FreeLibrary(x) dlclose(x)
 #elif XASH_WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 

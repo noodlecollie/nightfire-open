@@ -20,6 +20,8 @@ GNU General Public License for more details.
 #include "input.h"
 #include "server.h"  // !!svgame.hInstance
 #include "vid_common.h"
+#include "BuildDefs/libnames.h"
+#include <limits.h>
 
 static void UI_UpdateUserinfo(void);
 

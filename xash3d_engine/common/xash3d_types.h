@@ -38,14 +38,6 @@ typedef uint64_t longtime_t;
 #define INVGAMMA (1.0f / 2.2f)  // back to 1.0
 #define TEXGAMMA (0.9f)  // compensate dim textures
 
-#ifndef __cplusplus
-#ifdef NULL
-#undef NULL
-#endif
-
-#define NULL ((void*)0)
-#endif
-
 #if defined(static_assert)  // C11 static_assert
 #define STATIC_ASSERT static_assert
 #else

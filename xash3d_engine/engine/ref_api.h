@@ -443,6 +443,25 @@ typedef struct ref_api_s
 
 	// filesystem exports
 	fs_api_t* fsapi;
+
+	// Other API functions added in Nightfire Open refactor
+	qboolean (*GetByteNormal)(size_t index, float* x, float* y, float* z);
+
+	void (*R_StudioCalcBoneQuaternion)(
+	int frame,
+	float s,
+	const mstudiobone_t* pbone,
+	const mstudioanim_t* panim,
+	const float* adj,
+	vec4_t q);
+
+	void (*R_StudioCalcBonePosition)(
+	int frame,
+	float s,
+	const mstudiobone_t* pbone,
+	const mstudioanim_t* panim,
+	const vec3_t adj,
+	vec3_t pos);
 } ref_api_t;
 
 struct mip_s;

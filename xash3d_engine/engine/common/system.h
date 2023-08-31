@@ -21,8 +21,6 @@ extern "C"
 {
 #endif
 
-#include "port.h"
-
 #include <setjmp.h>
 #include <stdio.h>
 #include <time.h>

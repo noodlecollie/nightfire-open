@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include <limits.h>
 #include "CommonUtils/miniz.h"
 #include "imagelib.h"
 #include "CommonUtils/xash3d_mathlib.h"

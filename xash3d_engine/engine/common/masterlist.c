@@ -15,6 +15,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "netchan.h"
 #include "server.h"
+#include <limits.h>
 
 typedef struct master_s
 {

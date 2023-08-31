@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"
 #include "voice.h"
+#include <limits.h>
 
 voice_state_t voice = {0};
 

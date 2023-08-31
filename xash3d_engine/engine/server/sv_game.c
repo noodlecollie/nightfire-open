@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "const.h"
 #include "render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
+#include <limits.h>
 
 #define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)
 
@@ -3327,6 +3328,7 @@ void SV_SetStringArrayMode(qboolean dynamic)
 #if XASH_64BIT && !XASH_WIN32
 #define USE_MMAP
 #include <sys/mman.h>
+#include <unistd.h>
 #endif
 
 /*

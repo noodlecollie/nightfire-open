@@ -20,6 +20,10 @@ GNU General Public License for more details.
 #include "PlatformLib/Time.h"
 #include "CommonUtils/arch.h"
 
+#if defined XASH_SDL
+#include <SDL.h>
+#endif
+
 /*
 ================
 Sys_Crash
@@ -364,6 +368,7 @@ void Sys_RestoreCrashHandler(void)
 #include <ucontext.h>
 #include <signal.h>
 #include <sys/mman.h>
+#include <dlfcn.h>
 #include "library.h"
 
 #define STACK_BACKTRACE_STR "Stack backtrace:\n"

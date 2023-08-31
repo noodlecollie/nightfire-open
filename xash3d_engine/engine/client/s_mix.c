@@ -128,20 +128,20 @@ void S_TransferPaintBuffer(int endtime)
 //===============================================================================
 // Activate a paintbuffer.  All active paintbuffers are mixed in parallel within
 // MIX_MixChannelsToPaintbuffer, according to flags
-_inline void MIX_ActivatePaintbuffer(int ipaintbuffer)
+static inline void MIX_ActivatePaintbuffer(int ipaintbuffer)
 {
 	Assert(ipaintbuffer < CPAINTBUFFERS);
 	paintbuffers[ipaintbuffer].factive = true;
 }
 
-_inline void MIX_SetCurrentPaintbuffer(int ipaintbuffer)
+static inline void MIX_SetCurrentPaintbuffer(int ipaintbuffer)
 {
 	Assert(ipaintbuffer < CPAINTBUFFERS);
 	g_curpaintbuffer = paintbuffers[ipaintbuffer].pbuf;
 	Assert(g_curpaintbuffer != NULL);
 }
 
-_inline int MIX_GetCurrentPaintbufferIndex(void)
+static inline int MIX_GetCurrentPaintbufferIndex(void)
 {
 	int i;
 
@@ -153,7 +153,7 @@ _inline int MIX_GetCurrentPaintbufferIndex(void)
 	return 0;
 }
 
-_inline paintbuffer_t* MIX_GetCurrentPaintbufferPtr(void)
+static inline paintbuffer_t* MIX_GetCurrentPaintbufferPtr(void)
 {
 	int ipaint = MIX_GetCurrentPaintbufferIndex();
 
@@ -162,7 +162,7 @@ _inline paintbuffer_t* MIX_GetCurrentPaintbufferPtr(void)
 }
 
 // Don't mix into any paintbuffers
-_inline void MIX_DeactivateAllPaintbuffers(void)
+static inline void MIX_DeactivateAllPaintbuffers(void)
 {
 	int i;
 
@@ -171,7 +171,7 @@ _inline void MIX_DeactivateAllPaintbuffers(void)
 }
 
 // set upsampling filter indexes back to 0
-_inline void MIX_ResetPaintbufferFilterCounters(void)
+static inline void MIX_ResetPaintbufferFilterCounters(void)
 {
 	int i;
 
@@ -180,13 +180,13 @@ _inline void MIX_ResetPaintbufferFilterCounters(void)
 }
 
 // return pointer to front paintbuffer pbuf, given index
-_inline portable_samplepair_t* MIX_GetPFrontFromIPaint(int ipaintbuffer)
+static inline portable_samplepair_t* MIX_GetPFrontFromIPaint(int ipaintbuffer)
 {
 	Assert(ipaintbuffer < CPAINTBUFFERS);
 	return paintbuffers[ipaintbuffer].pbuf;
 }
 
-_inline paintbuffer_t* MIX_GetPPaintFromIPaint(int ipaint)
+static inline paintbuffer_t* MIX_GetPPaintFromIPaint(int ipaint)
 {
 	Assert(ipaint < CPAINTBUFFERS);
 	return &paintbuffers[ipaint];
@@ -696,7 +696,7 @@ void MIX_MixChannelsToPaintbuffer(int endtime, int localRate, int outputRate)
 }
 
 // pass in index -1...count+2, return pointer to source sample in either paintbuffer or delay buffer
-_inline portable_samplepair_t*
+static inline portable_samplepair_t*
 S_GetNextpFilter(int i, portable_samplepair_t* pbuffer, portable_samplepair_t* pfiltermem)
 {
 	// The delay buffer is assumed to precede the paintbuffer by 6 duplicated samples

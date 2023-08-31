@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include <netdb.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #define WSAGetLastError() errno
 #define WSAEINTR EINTR

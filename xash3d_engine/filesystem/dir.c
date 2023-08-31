@@ -31,7 +31,6 @@ GNU General Public License for more details.
 #endif  // FS_CASEFOLD_FL
 #endif  // XASH_LINUX
 
-#include "port.h"
 #include "filesystem_internal.h"
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/xash3d_mathlib.h"

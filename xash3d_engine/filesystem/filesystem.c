@@ -27,14 +27,15 @@ GNU General Public License for more details.
 #else
 #include <dirent.h>
 #include <errno.h>
+#include <unistd.h>
 #endif
 #include <stdio.h>
 #include <stdarg.h>
-#include "port.h"
 #include "const.h"
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/crclib.h"
 #include "CommonUtils/arch.h"
+#include "BuildDefs/libnames.h"
 #include "filesystem.h"
 #include "filesystem_internal.h"
 #include "CommonUtils/xash3d_mathlib.h"
@@ -265,7 +266,7 @@ void FS_CreatePath(char* path)
 			// create the directory
 			save = *ofs;
 			*ofs = 0;
-			_mkdir(path);
+			PlatformLib_MkDir(path);
 			*ofs = save;
 		}
 	}
@@ -1650,18 +1651,6 @@ file_t* FS_SysOpen(const char* filepath, const char* mode)
 
 	return file;
 }
-/*
-static int FS_DuplicateHandle( const char *filename, int handle, fs_offset_t pos )
-{
-#ifdef HAVE_DUP
-	return dup( handle );
-#else
-	int newhandle = PlatformLib_OpenWith( filename, O_RDONLY|O_BINARY );
-	PlatformLib_LSeek( newhandle, pos, SEEK_SET );
-	return newhandle;
-#endif
-}
-*/
 
 file_t* FS_OpenHandle(const char* syspath, int handle, fs_offset_t offset, fs_offset_t len)
 {
@@ -1670,11 +1659,7 @@ file_t* FS_OpenHandle(const char* syspath, int handle, fs_offset_t offset, fs_of
 	(void)syspath;
 
 #ifndef XASH_REDUCE_FD
-#ifdef HAVE_DUP
 	file->handle = PlatformLib_Dup(handle);
-#else
-	file->handle = PlatformLib_Open(syspath, O_RDONLY | O_BINARY);
-#endif
 
 	if ( PlatformLib_LSeek(file->handle, offset, SEEK_SET) == (size_t)-1 )
 	{
@@ -1779,7 +1764,7 @@ int FS_SetCurrentDirectory(const char* path)
 #elif XASH_POSIX
 	return !chdir(path);
 #else
-#error
+#error Unsupported platform!
 #endif
 }
 

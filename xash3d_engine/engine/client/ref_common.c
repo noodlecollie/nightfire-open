@@ -4,6 +4,9 @@
 #include "cl_tent.h"
 #include "platform/platform.h"
 #include "vid_common.h"
+#include "client/cl_bytenormals.h"
+#include "common/mod_local.h"
+#include "BuildDefs/libnames.h"
 
 struct ref_state_s ref;
 ref_globals_t refState;
@@ -248,6 +251,31 @@ static void Wrapper_Cvar_RegisterVariable(cvar_t* var)
 	Cvar_RegisterVariable((convar_t*)var);
 }
 
+static qboolean GetByteNormal(size_t index, float* x, float* y, float* z)
+{
+	if ( index >= NUMVERTEXNORMALS )
+	{
+		return false;
+	}
+
+	if ( x )
+	{
+		*x = BYTE_NORMALS[index][0];
+	}
+
+	if ( y )
+	{
+		*y = BYTE_NORMALS[index][1];
+	}
+
+	if ( z )
+	{
+		*z = BYTE_NORMALS[index][2];
+	}
+
+	return true;
+}
+
 static ref_api_t gEngfuncs = {
 	pfnEngineGetParm,
 
@@ -394,6 +422,10 @@ static ref_api_t gEngfuncs = {
 	&clgame.drawFuncs,
 
 	&g_fsapi,
+
+	GetByteNormal,
+	R_StudioCalcBoneQuaternion,
+	R_StudioCalcBonePosition,
 };
 
 static void R_UnloadProgs(void)

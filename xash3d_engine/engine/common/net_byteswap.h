@@ -10,7 +10,7 @@
 #define LittleLongSW(x) (x = LittleLong(x))
 #define LittleShort(x) ((short)((((short)(x) >> 8) & 255) + (((short)(x)&255) << 8)))
 #define LittleShortSW(x) (x = LittleShort(x))
-_inline float LittleFloat(float f)
+static inline float LittleFloat(float f)
 {
 	union
 	{

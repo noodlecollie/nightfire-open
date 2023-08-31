@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include <ctype.h>
 #include "CommonUtils/arch.h"
+#include "BuildDefs/libnames.h"
 
 static char s_szLastError[1024] = "";
 

@@ -29,6 +29,10 @@ GNU General Public License for more details.
 #include "net_functions.h"
 #include "CommonUtils/arch.h"
 
+#if defined XASH_SDL
+#include <SDL.h>
+#endif
+
 #define MAX_TOTAL_CMDS 32
 #define MAX_CMD_BUFFER 8000
 #define CONNECTION_PROBLEM_TIME 15.0  // 15 seconds

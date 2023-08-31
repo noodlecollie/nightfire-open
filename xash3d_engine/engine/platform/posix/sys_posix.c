@@ -101,7 +101,7 @@ void Platform_ShellExecute(const char* path, const char* parms)
 	if ( !Q_strcmp(path, GENERIC_UPDATE_PAGE) || !Q_strcmp(path, PLATFORM_UPDATE_PAGE) )
 		path = DEFAULT_UPDATE_PAGE;
 
-	if ( Sys_FindExecutable(OPEN_COMMAND, xdgOpen, sizeof(xdgOpen)) )
+	if ( Sys_FindExecutable("xdg-open", xdgOpen, sizeof(xdgOpen)) )
 	{
 		const char* argv[] = {xdgOpen, path, NULL};
 		pid_t id = fork();
@@ -114,7 +114,7 @@ void Platform_ShellExecute(const char* path, const char* parms)
 	}
 	else
 	{
-		Con_Reportf(S_WARN "Could not find " OPEN_COMMAND " utility\n");
+		Con_Reportf(S_WARN "Could not find xdg-open utility\n");
 	}
 }
 

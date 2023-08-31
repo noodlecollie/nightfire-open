@@ -876,7 +876,7 @@ qboolean CL_Scissor(
 	float* u1,
 	float* v1);
 
-_inline cl_entity_t* CL_EDICT_NUM(int n)
+static inline cl_entity_t* CL_EDICT_NUM(int n)
 {
 	if ( !clgame.entities )
 	{
