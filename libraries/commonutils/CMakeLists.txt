@@ -3,14 +3,12 @@ include(compiler_settings)
 add_library(${TARGETNAME_LIB_COMMONUTILS} STATIC
 	include/CommonUtils/arch.h
 	include/CommonUtils/bitdefs.h
-	include/CommonUtils/crclib.h
 	include/CommonUtils/crtlib.h
 	include/CommonUtils/linux_win32_compat.h
 	include/CommonUtils/miniz.h
 	include/CommonUtils/xash3d_mathlib.h
 	src/arch.c
 	src/buildenums.h
-	src/crclib.c
 	src/crtlib.c
 	src/matrixlib.c
 	src/xash3d_mathlib.c

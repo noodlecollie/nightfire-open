@@ -1197,8 +1197,6 @@ void R_SetUpWorldTransform(void);
 //
 // engine callbacks
 //
-#include "CommonUtils/crtlib.h"
-#include "CommonUtils/crclib.h"
 #if 1
 #define Mem_Malloc(pool, size) gEngfuncs._Mem_Alloc(pool, size, false, __FILE__, __LINE__)
 #define Mem_Calloc(pool, size) gEngfuncs._Mem_Alloc(pool, size, true, __FILE__, __LINE__)

@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
+#include "CRCLib/crclib.h"
 
 static char id_md5[33];
 static char id_customid[MAX_STRING];
@@ -596,7 +597,7 @@ void GAME_EXPORT ID_SetCustomClientID(const char* inID)
 void ID_Init(void)
 {
 	MD5Context_t hash = {0};
-	byte md5[16];
+	MD5Digest_t md5;
 	int i;
 
 	Cmd_AddRestrictedCommand("bloomfilter", ID_BloomFilter_f, "print bloomfilter raw value of arguments set");
@@ -659,11 +660,11 @@ void ID_Init(void)
 
 	MD5Init(&hash);
 	MD5Update(&hash, (byte*)&id, sizeof(id));
-	MD5Final((byte*)md5, &hash);
+	MD5Final(&md5, &hash);
 
 	for ( i = 0; i < 16; i++ )
 	{
-		Q_snprintf(&id_md5[i * 2], 3, "%02hhx", md5[i]);
+		Q_snprintf(&id_md5[i * 2], 3, "%02hhx", md5.data[i]);
 	}
 
 #if XASH_WIN32

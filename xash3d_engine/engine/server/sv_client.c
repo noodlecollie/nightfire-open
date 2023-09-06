@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "net_encode.h"
 #include "net_api.h"
 #include "CommonUtils/arch.h"
+#include "CRCLib/crclib.h"
 
 typedef void (*RedirectFlushFunc)(netadr_t adr, rdtype_t target, char* buffer);
 
@@ -747,7 +748,10 @@ const char* SV_GetClientIDString(sv_client_t* cl)
 	}
 	else
 	{
-		Q_snprintf(result, sizeof(result), "ID_%s", MD5_Print((byte*)cl->hashedcdkey));
+		MD5Digest_t hash;
+		memcpy(hash.data, cl->hashedcdkey, sizeof(hash.data));
+
+		Q_snprintf(result, sizeof(result), "ID_%s", MD5_Print(&hash));
 	}
 
 	return result;
@@ -1234,8 +1238,8 @@ Writes all update values to a bitbuf
 void SV_FullClientUpdate(sv_client_t* cl, sizebuf_t* msg)
 {
 	char info[MAX_INFO_STRING];
-	char digest[16];
 	MD5Context_t ctx;
+	MD5Digest_t digest;
 	int i;
 
 	// process userinfo before updating
@@ -1259,12 +1263,14 @@ void SV_FullClientUpdate(sv_client_t* cl, sizebuf_t* msg)
 
 		MD5Init(&ctx);
 		MD5Update(&ctx, (byte*)cl->hashedcdkey, sizeof(cl->hashedcdkey));
-		MD5Final((byte*)digest, &ctx);
+		MD5Final(&digest, &ctx);
 
-		MSG_WriteBytes(msg, digest, sizeof(digest));
+		MSG_WriteBytes(msg, digest.data, sizeof(digest.data));
 	}
 	else
+	{
 		MSG_WriteOneBit(msg, 0);
+	}
 }
 
 /*

@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "server.h"
+#include "CRCLib/crclib.h"
 
 void SV_CreateCustomizationList(sv_client_t* cl)
 {
@@ -318,14 +319,21 @@ qboolean SV_CheckFile(sizebuf_t* msg, const char* filename)
 		COM_HexConvert(filename + 4, 32, p.rgucMD5_hash);
 
 		if ( HPAK_GetDataPointer(CUSTOM_RES_PATH, &p, NULL, NULL) )
+		{
 			return true;
+		}
 	}
 
 	if ( !sv_allow_upload.value )
+	{
 		return true;
+	}
+
+	MD5Digest_t hash;
+	memcpy(hash.data, p.rgucMD5_hash, sizeof(hash.data));
 
 	MSG_BeginServerCmd(msg, svc_stufftext);
-	MSG_WriteStringf(msg, "upload \"!MD5%s\"\n", MD5_Print(p.rgucMD5_hash));
+	MSG_WriteStringf(msg, "upload \"!MD5%s\"\n", MD5_Print(&hash));
 
 	return false;
 }
@@ -551,10 +559,15 @@ void SV_BatchUploadRequest(sv_client_t* cl)
 		{
 			if ( FBitSet(p->ucFlags, RES_CUSTOM) )
 			{
-				Q_snprintf(filename, sizeof(filename), "!MD5%s", MD5_Print(p->rgucMD5_hash));
+				MD5Digest_t hash;
+				memcpy(hash.data, p->rgucMD5_hash, sizeof(hash.data));
+
+				Q_snprintf(filename, sizeof(filename), "!MD5%s", MD5_Print(&hash));
 
 				if ( SV_CheckFile(&cl->netchan.message, filename) )
+				{
 					SV_MoveToOnHandList(cl, p);
+				}
 			}
 			else
 			{

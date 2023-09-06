@@ -33,7 +33,7 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "const.h"
 #include "CommonUtils/crtlib.h"
-#include "CommonUtils/crclib.h"
+#include "CRCLib/crclib.h"
 #include "CommonUtils/arch.h"
 #include "CommonUtils/linux_win32_compat.h"
 #include "BuildDefs/libnames.h"
@@ -2370,10 +2370,13 @@ qboolean MD5_HashFile(byte digest[16], const char* pszFileName, uint seed[4])
 	file_t* file;
 	byte buffer[1024];
 	MD5Context_t MD5_Hash;
+	MD5Digest_t localDigest;
 	int bytes;
 
 	if ( (file = FS_Open(pszFileName, "rb", false)) == NULL )
+	{
 		return false;
+	}
 
 	memset(&MD5_Hash, 0, sizeof(MD5Context_t));
 
@@ -2396,7 +2399,8 @@ qboolean MD5_HashFile(byte digest[16], const char* pszFileName, uint seed[4])
 	}
 
 	FS_Close(file);
-	MD5Final(digest, &MD5_Hash);
+	MD5Final(&localDigest, &MD5_Hash);
+	memcpy(digest, localDigest.data, 16);
 
 	return true;
 }

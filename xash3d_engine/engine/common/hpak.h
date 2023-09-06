@@ -42,25 +42,27 @@ infotable	dlumpinfo_t[dwadinfo_t->numlumps]
 #pragma pack(push, 8)
 typedef struct dresource_s
 {
-	char szFileName[64]; /*     0    64 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	resourcetype_t type; /*    64     4 */
-	int nIndex; /*    68     4 */
-	int nDownloadSize; /*    72     4 */
-	unsigned char ucFlags; /*    76     1 */
-	unsigned char rgucMD5_hash[16]; /*    77    16 */
-	unsigned char playernum; /*    93     1 */
-	unsigned char rguc_reserved[32]; /*    94    32 */
+	char szFileName[64];  // 0, 64
 
-	/* XXX 2 bytes hole, try to pack */
+	// cacheline 1 boundary (64 bytes)
 
-	/* --- cacheline 2 boundary (128 bytes) --- */
-	uint32_t pNext; /*   128     4 */
-	uint32_t pPrev; /*   132     4 */
+	resourcetype_t type;  // 64, 4
+	int nIndex;  // 68, 4
+	int nDownloadSize;  // 72, 4
+	unsigned char ucFlags;  // 76, 1
+	unsigned char rgucMD5_hash[16];  // 77, 16
+	unsigned char playernum;  // 93, 1
+	unsigned char rguc_reserved[32];  // 94, 32
 
-	/* size: 136, cachelines: 3, members: 10 */
-	/* sum members: 134, holes: 1, sum holes: 2 */
-	/* last cacheline: 8 bytes */
+	// 2 bytes hole, try to pack
+
+	// cacheline 2 boundary (128 bytes)
+	uint32_t pNext;  // 128, 4
+	uint32_t pPrev;  // 132, 4
+
+	// size: 136, cachelines: 3, members: 10
+	// sum members: 134, holes: 1, sum holes: 2
+	// last cacheline: 8 bytes
 } dresource_t;
 #pragma pack(pop)
 

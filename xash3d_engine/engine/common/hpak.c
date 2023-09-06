@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "hpak.h"
+#include "CRCLib/crclib.h"
 
 #define HPAK_MAX_ENTRIES 0x8000
 #define HPAK_ENTRY_MIN_SIZE (512)
@@ -115,9 +116,9 @@ void HPAK_CreatePak(const char* filename, resource_t* pResource, byte* pData, fi
 {
 	int filelocation;
 	string pakname;
-	byte md5[16];
 	file_t* fout;
 	MD5Context_t ctx;
+	MD5Digest_t md5;
 
 	if ( !COM_CheckString(filename) )
 		return;
@@ -158,9 +159,9 @@ void HPAK_CreatePak(const char* filename, resource_t* pResource, byte* pData, fi
 		MD5Update(&ctx, pData, pResource->nDownloadSize);
 	}
 
-	MD5Final(md5, &ctx);
+	MD5Final(&md5, &ctx);
 
-	if ( memcmp(md5, pResource->rgucMD5_hash, 16) )
+	if ( memcmp(md5.data, pResource->rgucMD5_hash, 16) )
 	{
 		Con_DPrintf(S_ERROR "HPAK_CreatePak: bad checksum for %s. Ignored\n", pakname);
 		return;
@@ -226,8 +227,8 @@ void HPAK_AddLump(qboolean bUseQueue, const char* name, resource_t* pResource, b
 	hpak_info_t srcpak, dstpak;
 	file_t* file_src;
 	file_t* file_dst;
-	byte md5[16];
 	MD5Context_t ctx;
+	MD5Digest_t md5;
 
 	if ( pData == NULL && pFile == NULL )
 		return;
@@ -259,9 +260,9 @@ void HPAK_AddLump(qboolean bUseQueue, const char* name, resource_t* pResource, b
 		MD5Update(&ctx, pData, pResource->nDownloadSize);
 	}
 
-	MD5Final(md5, &ctx);
+	MD5Final(&md5, &ctx);
 
-	if ( memcmp(md5, pResource->rgucMD5_hash, 16) )
+	if ( memcmp(md5.data, pResource->rgucMD5_hash, sizeof(md5.data)) )
 	{
 		Con_DPrintf(S_ERROR "HPAK_AddLump: bad checksum for %s. Ignored\n", pResource->szFileName);
 		return;
@@ -346,12 +347,14 @@ void HPAK_AddLump(qboolean bUseQueue, const char* name, resource_t* pResource, b
 	// check is there are entry with same hash
 	for ( i = 0; i < srcpak.count; i++ )
 	{
-		if ( memcmp(md5, srcpak.entries[i].resource.rgucMD5_hash, 16) == 0 )
+		if ( memcmp(md5.data, srcpak.entries[i].resource.rgucMD5_hash, sizeof(md5.data)) == 0 )
 		{
 			pCurrentEntry = &dstpak.entries[i];
 
 			for ( j = i; j < srcpak.count; j++ )
+			{
 				dstpak.entries[j + 1] = srcpak.entries[j];
+			}
 		}
 	}
 
@@ -401,9 +404,9 @@ static qboolean HPAK_Validate(const char* filename, qboolean quiet, qboolean del
 	byte* dataPak;
 	int i, num_lumps;
 	MD5Context_t MD5_Hash;
+	MD5Digest_t md5;
 	string pakname;
 	dresource_t* pRes;
-	byte md5[16];
 
 	if ( quiet )
 		HPAK_FlushHostQueue();
@@ -484,7 +487,7 @@ static qboolean HPAK_Validate(const char* filename, qboolean quiet, qboolean del
 		memset(&MD5_Hash, 0, sizeof(MD5Context_t));
 		MD5Init(&MD5_Hash);
 		MD5Update(&MD5_Hash, dataPak, dataDir[i].disksize);
-		MD5Final(md5, &MD5_Hash);
+		MD5Final(&md5, &MD5_Hash);
 
 		pRes = &dataDir[i].resource;
 
@@ -495,7 +498,7 @@ static qboolean HPAK_Validate(const char* filename, qboolean quiet, qboolean del
 			Q_pretifymem((float)pRes->nDownloadSize, 2),
 			pRes->szFileName);
 
-		if ( memcmp(md5, pRes->rgucMD5_hash, 0x10) )
+		if ( memcmp(md5.data, pRes->rgucMD5_hash, sizeof(md5.data)) )
 		{
 			if ( quiet )
 			{
@@ -999,13 +1002,16 @@ void HPAK_List_f(void)
 		type = HPAK_TypeFromIndex(entry->resource.type);
 		size = Q_memprint((float)entry->resource.nDownloadSize);
 
+		MD5Digest_t hash;
+		memcpy(hash.data, entry->resource.rgucMD5_hash, sizeof(hash.data));
+
 		Con_Printf(
 			"%i: %10s %s %s\n  :  %s\n",
 			nCurrent + 1,
 			type,
 			size,
 			lumpname,
-			MD5_Print(entry->resource.rgucMD5_hash));
+			MD5_Print(&hash));
 	}
 
 	if ( directory.entries )

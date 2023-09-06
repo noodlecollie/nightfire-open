@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "enginefeatures.h"
 #include "client.h"
 #include "server.h"
+#include "CRCLib/crclib.h"
 
 static model_info_t mod_crcinfo[MAX_MODELS];
 static model_t mod_known[MAX_MODELS];
