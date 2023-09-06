@@ -7,8 +7,6 @@ add_library(${TARGETNAME_LIB_FILESYSTEM_STDIO} SHARED
 	filesystem.h
 	fscallback.h
 	pak.c
-	VFileSystem009.h
-	VFileSystem009.cpp
 	wad.c
 	zip.c
 )
