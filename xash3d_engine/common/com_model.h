@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "xash3d_types.h"
 #include "bspfile.h"  // we need some declarations from it
-#include "CommonUtils/typedefs.h"
+#include "PlatformDefs/typedefs.h"
 
 /*
 ==============================================================================

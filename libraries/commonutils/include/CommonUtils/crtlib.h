@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/decorators.h"
-#include "CommonUtils/typedefs.h"
+#include "PlatformDefs/typedefs.h"
 #include "PlatformLib/String.h"
 
 #ifdef __cplusplus

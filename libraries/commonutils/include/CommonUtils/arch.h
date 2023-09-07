@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CommonUtils/typedefs.h"
+#include "PlatformDefs/typedefs.h"
 
 int Q_buildnum(void);
 int Q_buildnum_compat(void);

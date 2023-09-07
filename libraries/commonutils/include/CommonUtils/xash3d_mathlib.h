@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #endif
 
 #include "PlatformDefs/platformid.h"
-#include "CommonUtils/typedefs.h"
+#include "PlatformDefs/typedefs.h"
 
 // euler angle order
 #define PITCH 0

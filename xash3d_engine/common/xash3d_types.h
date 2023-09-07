@@ -3,7 +3,7 @@
 #define XASH_TYPES_H
 
 #include "PlatformDefs/platformid.h"
-#include "CommonUtils/typedefs.h"
+#include "PlatformDefs/typedefs.h"
 #include "CommonUtils/bitdefs.h"
 
 #if XASH_WIN32

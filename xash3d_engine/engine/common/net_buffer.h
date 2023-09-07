@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #define NET_BUFFER_H
 
 #include "enginefeatures.h"
-#include "CommonUtils/typedefs.h"
+#include "PlatformDefs/typedefs.h"
 
 /*
 ==============================================================================
