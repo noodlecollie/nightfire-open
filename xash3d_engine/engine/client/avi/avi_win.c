@@ -14,7 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #if XASH_WIN32
 #include "common.h"
 #include "client.h"

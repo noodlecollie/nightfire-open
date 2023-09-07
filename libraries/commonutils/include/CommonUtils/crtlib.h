@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include <string.h>
 #include <stdarg.h>
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include "PlatformDefs/decorators.h"
 #include "CommonUtils/typedefs.h"
 #include "PlatformLib/String.h"

@@ -16,7 +16,7 @@
 #ifndef ALIAS_H
 #define ALIAS_H
 
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include <stdint.h>
 
 /*

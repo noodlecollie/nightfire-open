@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include <tgmath.h>
 #endif
 
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include "CommonUtils/typedefs.h"
 
 // euler angle order

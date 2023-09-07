@@ -1,4 +1,4 @@
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include "PlatformDefs/libnames.h"
 #include <stdlib.h>
 #include <string.h>

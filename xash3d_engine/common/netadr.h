@@ -16,7 +16,7 @@
 #ifndef NETADR_H
 #define NETADR_H
 
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include <stdint.h>
 
 typedef enum

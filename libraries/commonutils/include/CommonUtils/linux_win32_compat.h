@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 
 #ifdef XASH_WIN32
 #define HSPRITE WINAPI_HSPRITE

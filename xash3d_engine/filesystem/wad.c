@@ -16,7 +16,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

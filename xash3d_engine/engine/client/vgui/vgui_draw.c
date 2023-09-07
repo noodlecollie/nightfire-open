@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "input.h"
 #include "platform/platform.h"
 #include "PlatformDefs/libnames.h"
-#include "PlatformDefs/build.h"
+#include "PlatformDefs/platformid.h"
 
 #ifdef XASH_WIN32
 #define VGUI_SUPPORT_DLL "../vgui_support." OS_LIB_EXT
