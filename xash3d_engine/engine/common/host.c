@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/build.h"
 #ifdef XASH_SDL
 #include <SDL.h>
 #endif  // XASH_SDL

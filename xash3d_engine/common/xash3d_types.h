@@ -2,7 +2,7 @@
 #ifndef XASH_TYPES_H
 #define XASH_TYPES_H
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/build.h"
 #include "CommonUtils/typedefs.h"
 #include "CommonUtils/bitdefs.h"
 

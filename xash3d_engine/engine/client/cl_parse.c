@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "shake.h"
 #include "hltv.h"
 #include "input.h"
+#include "CRCLib/crclib.h"
 
 int CL_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 
@@ -519,9 +520,11 @@ void CL_BatchResourceRequest(qboolean initialize)
 				{
 					if ( !FBitSet(p->ucFlags, RES_REQUESTED) )
 					{
+						MD5Digest_t hash;
+						memcpy(hash.data, p->rgucMD5_hash, sizeof(hash.data));
+
 						MSG_BeginClientCmd(&msg, clc_stringcmd);
-						MSG_WriteStringf(&msg, "dlfile !MD5%s", MD5_Print(p->rgucMD5_hash));
-						;
+						MSG_WriteStringf(&msg, "dlfile !MD5%s", MD5_Print(&hash));
 						SetBits(p->ucFlags, RES_REQUESTED);
 					}
 					break;

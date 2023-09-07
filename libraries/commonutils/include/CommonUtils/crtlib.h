@@ -18,8 +18,8 @@ GNU General Public License for more details.
 
 #include <string.h>
 #include <stdarg.h>
-#include "BuildDefs/build.h"
-#include "BuildDefs/decorators.h"
+#include "PlatformDefs/build.h"
+#include "PlatformDefs/decorators.h"
 #include "CommonUtils/typedefs.h"
 #include "PlatformLib/String.h"
 

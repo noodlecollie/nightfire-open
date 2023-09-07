@@ -1,5 +1,5 @@
-#include "BuildDefs/build.h"
-#include "BuildDefs/libnames.h"
+#include "PlatformDefs/build.h"
+#include "PlatformDefs/libnames.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>

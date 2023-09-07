@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "xash3d_types.h"
 #include "const.h"
 #include "com_model.h"
-#include "BuildDefs/decorators.h"
+#include "PlatformDefs/decorators.h"
 
 #ifdef __cplusplus
 extern "C"

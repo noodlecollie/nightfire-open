@@ -6,7 +6,7 @@
 #include "vid_common.h"
 #include "client/cl_bytenormals.h"
 #include "common/mod_local.h"
-#include "BuildDefs/libnames.h"
+#include "PlatformDefs/libnames.h"
 
 struct ref_state_s ref;
 ref_globals_t refState;

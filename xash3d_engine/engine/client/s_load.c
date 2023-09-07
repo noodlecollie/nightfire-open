@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"
 #include "sound.h"
+#include "CRCLib/crclib.h"
 
 // during registration it is possible to have more sounds
 // than could actually be referenced during gameplay,

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/build.h"
 
 #ifdef XASH_WIN32
 #define OS_LIB_PREFIX ""

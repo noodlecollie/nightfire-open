@@ -18,12 +18,13 @@ GNU General Public License for more details.
 
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #if HAVE_TGMATH_H
 #include <tgmath.h>
 #endif
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/build.h"
 #include "CommonUtils/typedefs.h"
 
 // euler angle order
