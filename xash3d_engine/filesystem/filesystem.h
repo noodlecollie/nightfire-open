@@ -22,9 +22,8 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
-#include "xash3d_types.h"
-#include "const.h"
 #include "PlatformDefs/decorators.h"
+#include "PlatformDefs/typedefs.h"
 #include "XashDefs/engine_limits.h"
 
 #ifdef __cplusplus
@@ -35,14 +34,23 @@ extern "C"
 #define FS_API_VERSION 2  // not stable yet!
 #define FS_API_CREATEINTERFACE_TAG "XashFileSystem002"  // follow FS_API_VERSION!!!
 
+typedef struct file_s file_t;  // normal file
+typedef off_t fs_offset_t;
+
+#if XASH_WIN32
+typedef int fs_size_t;  // return type of _read, _write funcs
+#else /* !XASH_WIN32 */
+typedef ssize_t fs_size_t;
+#endif /* !XASH_WIN32 */
+
 // search path flags
 enum
 {
-	FS_STATIC_PATH = BIT(0),  // FS_ClearSearchPath will be ignore this path
-	FS_NOWRITE_PATH = BIT(1),  // default behavior - last added gamedir set as writedir. This flag disables it
-	FS_GAMEDIR_PATH = BIT(2),  // just a marker for gamedir path
-	FS_CUSTOM_PATH = BIT(3),  // gamedir but with custom/mod data
-	FS_GAMERODIR_PATH = BIT(4),  // gamedir but read-only
+	FS_STATIC_PATH = (1 << 0),  // FS_ClearSearchPath will be ignore this path
+	FS_NOWRITE_PATH = (1 << 1),  // default behavior - last added gamedir set as writedir. This flag disables it
+	FS_GAMEDIR_PATH = (1 << 2),  // just a marker for gamedir path
+	FS_CUSTOM_PATH = (1 << 3),  // gamedir but with custom/mod data
+	FS_GAMERODIR_PATH = (1 << 4),  // gamedir but read-only
 
 	FS_GAMEDIRONLY_SEARCH_FLAGS = FS_GAMEDIR_PATH | FS_CUSTOM_PATH | FS_GAMERODIR_PATH
 };

@@ -1071,25 +1071,6 @@ qboolean Cvar_CommandWithPrivilegeCheck(convar_t* v, qboolean isPrivileged)
 
 /*
 ============
-Cvar_WriteVariables
-
-Writes lines containing "variable value" for all variables
-with the specified flag set to true.
-============
-*/
-void Cvar_WriteVariables(file_t* f, int group)
-{
-	convar_t* var;
-
-	for ( var = cvar_vars; var; var = var->next )
-	{
-		if ( FBitSet(var->flags, group) )
-			FS_Printf(f, "%s \"%s\"\n", var->name, var->string);
-	}
-}
-
-/*
-============
 Cvar_Toggle_f
 
 Toggles a cvar for easy single key binding
