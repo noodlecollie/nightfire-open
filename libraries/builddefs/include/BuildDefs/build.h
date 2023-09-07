@@ -119,7 +119,7 @@ Then you can use another oneliner to query all variables:
 #define XASH_LITTLE_ENDIAN 1
 #endif
 #endif  // !XASH_WIN32
-#endif
+#endif  // XASH_ENDIANNESS
 
 //================================================================
 //
