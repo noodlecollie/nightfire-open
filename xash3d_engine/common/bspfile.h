@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #define BSPFILE_H
 
 #include <stdint.h>
+#include "XashDefs/engine_limits.h"
 
 /*
 ==============================================================================
@@ -137,7 +138,6 @@ enum
 	AMBIENT_SKY,  // wind
 	AMBIENT_SLIME,  // never used in quake
 	AMBIENT_LAVA,  // never used in quake
-	NUM_AMBIENTS,  // automatic ambient sounds
 };
 
 //

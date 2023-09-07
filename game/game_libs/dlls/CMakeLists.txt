@@ -407,6 +407,7 @@ add_library(${TARGETNAME_LIB_SERVER} SHARED
 target_link_libraries(${TARGETNAME_LIB_SERVER} PRIVATE
 	${TARGETNAME_LIB_MINIUTL}
 	${TARGETNAME_LIB_PLATFORMLIB}
+	${TARGETNAME_LIB_ENGINEDEFS}
 )
 
 # Since this library is looked up entirely at runtime,

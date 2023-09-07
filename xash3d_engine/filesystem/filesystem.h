@@ -24,8 +24,8 @@ GNU General Public License for more details.
 #include <stdio.h>
 #include "xash3d_types.h"
 #include "const.h"
-#include "com_model.h"
 #include "PlatformDefs/decorators.h"
+#include "XashDefs/engine_limits.h"
 
 #ifdef __cplusplus
 extern "C"

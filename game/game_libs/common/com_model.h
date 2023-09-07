@@ -35,7 +35,6 @@ typedef vec_t vec4_t[4];
 #define MIPLEVELS 4
 #define VERTEXSIZE 7
 #define MAXLIGHTMAPS 4
-#define NUM_AMBIENTS 4  // automatic ambient sounds
 
 // model types
 typedef enum

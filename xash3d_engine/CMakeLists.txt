@@ -36,6 +36,7 @@ target_link_libraries(${TARGETNAME_INCLUDES_ENGINE} INTERFACE
 add_subdirectory(thirdparty)
 add_subdirectory(filesystem)
 add_subdirectory(engine)
+add_subdirectory(enginedefs)
 
 if(NOT NF_SINGLE_ENGINE_BINARY)
 	add_subdirectory(game_launch)
