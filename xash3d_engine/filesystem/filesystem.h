@@ -16,8 +16,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef FILESYSTEM_H
-#define FILESYSTEM_H
+#pragma once
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -229,5 +228,3 @@ typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_inte
 #ifdef __cplusplus
 }
 #endif  // __cplusplus
-
-#endif  // FILESYSTEM_H
