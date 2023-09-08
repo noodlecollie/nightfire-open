@@ -23,9 +23,9 @@ GNU General Public License for more details.
 extern fs_api_t g_fsapi;
 extern fs_globals_t* FI;
 
-#define GI FI->GameInfo
-#define FS_Gamedir() GI->gamefolder
-#define FS_Title() GI->title
+#define GI (FI->GameInfo)
+#define FS_Gamedir() (GI->gamefolder)
+#define FS_Title() (GI->title)
 
 #define FS_InitStdio (*g_fsapi.InitStdio)
 #define FS_ShutdownStdio (*g_fsapi.ShutdownStdio)
