@@ -13,10 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "common.h"
-
 #if XASH_LIB == LIB_WIN32
+#include "common.h"
 #include "lib_win.h"
+#include "Filesystem/fscallback.h"
 
 static DWORD GetOffsetByRVA(DWORD rva, PIMAGE_NT_HEADERS nt_header)
 {
