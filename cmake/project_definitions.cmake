@@ -48,7 +48,6 @@ set(GAME_FOLDER_NAME nfopen)
 set(GAME_EXECUTABLE bond)
 
 set(TARGETNAME_INCLUDES_SDK sdk_includes)
-set(TARGETNAME_INCLUDES_FILESYSTEM filesystem_includes)
 set(TARGETNAME_INCLUDES_ENGINE engine_includes)
 
 set(TARGETNAME_LIB_PLATFORMDEFS platformdefs)
