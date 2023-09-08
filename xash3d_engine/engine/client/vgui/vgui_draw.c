@@ -22,8 +22,9 @@ GNU General Public License for more details.
 #include "ref_common.h"
 #include "input.h"
 #include "platform/platform.h"
-#include "BuildDefs/libnames.h"
-#include "BuildDefs/build.h"
+#include "PlatformDefs/libnames.h"
+#include "PlatformDefs/platformid.h"
+#include "Filesystem/fscallback.h"
 
 #ifdef XASH_WIN32
 #define VGUI_SUPPORT_DLL "../vgui_support." OS_LIB_EXT

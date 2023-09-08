@@ -16,9 +16,8 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include <stdint.h>
-#include "synctype.h"
 
 /*
 ==============================================================================

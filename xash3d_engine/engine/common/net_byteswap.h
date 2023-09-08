@@ -1,7 +1,7 @@
 #ifndef NET_BYTESWAP_H
 #define NET_BYTESWAP_H
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/platformid.h"
 
 #ifdef XASH_BIG_ENDIAN
 #define LittleLong(x) \

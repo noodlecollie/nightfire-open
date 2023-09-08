@@ -20,6 +20,8 @@ GNU General Public License for more details.
 #include "voice.h"
 #include "pm_local.h"
 #include "sequence.h"
+#include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 int SV_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 

@@ -28,6 +28,8 @@ GNU General Public License for more details.
 #include "common/bsp/generic/viscompress.h"
 #include "net_functions.h"
 #include "CommonUtils/arch.h"
+#include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 #if defined XASH_SDL
 #include <SDL.h>
@@ -1700,19 +1702,22 @@ void CL_BeginUpload_f(void)
 
 		if ( HPAK_GetDataPointer(CUSTOM_RES_PATH, &custResource, &buf, &size) )
 		{
-			byte localMD5[16];
+			MD5Digest_t localMD5;
 			MD5Context_t ctx;
 
 			memset(&ctx, 0, sizeof(ctx));
 			MD5Init(&ctx);
 			MD5Update(&ctx, buf, size);
-			MD5Final(localMD5, &ctx);
+			MD5Final(&localMD5, &ctx);
 
-			if ( memcmp(custResource.rgucMD5_hash, localMD5, 16) )
+			if ( memcmp(custResource.rgucMD5_hash, localMD5.data, sizeof(localMD5.data)) )
 			{
+				MD5Digest_t hash;
+				memcpy(hash.data, custResource.rgucMD5_hash, sizeof(hash.data));
+
 				Con_Reportf("HPAK_AddLump called with bogus lump, md5 mismatch\n");
-				Con_Reportf("Purported:  %s\n", MD5_Print(custResource.rgucMD5_hash));
-				Con_Reportf("Actual   :  %s\n", MD5_Print(localMD5));
+				Con_Reportf("Purported:  %s\n", MD5_Print(&hash));
+				Con_Reportf("Actual   :  %s\n", MD5_Print(&localMD5));
 				Con_Reportf("Removing conflicting lump\n");
 				HPAK_RemoveLump(CUSTOM_RES_PATH, &custResource);
 				return;

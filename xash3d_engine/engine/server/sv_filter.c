@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "server.h"
+#include "Filesystem/fscallback.h"
 
 /*
 =============================================================================

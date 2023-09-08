@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "base_cmd.h"
 #include "eiface.h"  // ARRAYSIZE
+#include "Filesystem/fscallback.h"
 
 convar_t* cvar_vars = NULL;  // head of list
 convar_t* cmd_scripting;
@@ -1066,25 +1067,6 @@ qboolean Cvar_CommandWithPrivilegeCheck(convar_t* v, qboolean isPrivileged)
 	{
 		Cvar_DirectSet(v, Cmd_Argv(1));
 		return true;
-	}
-}
-
-/*
-============
-Cvar_WriteVariables
-
-Writes lines containing "variable value" for all variables
-with the specified flag set to true.
-============
-*/
-void Cvar_WriteVariables(file_t* f, int group)
-{
-	convar_t* var;
-
-	for ( var = cvar_vars; var; var = var->next )
-	{
-		if ( FBitSet(var->flags, group) )
-			FS_Printf(f, "%s \"%s\"\n", var->name, var->string);
 	}
 }
 

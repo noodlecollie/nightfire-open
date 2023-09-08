@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #define DEFAULTS_H
 
 #include "backends.h"
-#include "BuildDefs/build.h"
+#include "PlatformDefs/platformid.h"
 
 /*
 ===================================================================

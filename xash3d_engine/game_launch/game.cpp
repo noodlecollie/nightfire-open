@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/platformid.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
-#include "BuildDefs/libnames.h"
+#include "PlatformDefs/libnames.h"
 
 #if XASH_POSIX
 #include <dlfcn.h>

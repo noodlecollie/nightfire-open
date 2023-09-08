@@ -1,12 +1,15 @@
 #pragma once
 
+// NFTODO: We should remove EXPORT and GAME_EXPORT - I'm not sure what these are doing,
+// but they're not used in a conventional way and I think this is part of the reason
+// why messing about with -fvisibility on Linux causes crashes.
+
 #if defined(__GNUC__)
-#ifdef __i386__
-#define EXPORT __attribute__((visibility("default"), force_align_arg_pointer))
-#define GAME_EXPORT __attribute((force_align_arg_pointer))
-#else
+#ifndef __i386__
 #define EXPORT __attribute__((visibility("default")))
 #define GAME_EXPORT
+#else
+#error 32-bit builds are not supported.
 #endif
 #define _format(x) __attribute__((format(printf, x, x + 1)))
 #define NORETURN __attribute__((noreturn))
@@ -37,6 +40,7 @@
 #define likely(x) (x)
 #endif
 
+// These are not supported on non-Windows platforms.
 #ifndef _MSC_VER
 #define __cdecl
 #define __stdcall

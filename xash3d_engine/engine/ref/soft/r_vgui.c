@@ -15,6 +15,7 @@ GNU General Public License for more details.
 */
 
 #include "r_local.h"
+#include "CommonUtils/crtlib.h"
 
 #define VGUI_MAX_TEXTURES (MAX_TEXTURES / 2)  // a half of total textures count
 

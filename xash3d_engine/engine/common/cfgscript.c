@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common.h"
+#include "Filesystem/fscallback.h"
 
 typedef enum
 {

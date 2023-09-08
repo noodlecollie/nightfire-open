@@ -26,6 +26,7 @@ GNU General Public License for more details.
 #endif
 
 #include "PlatformLib/Net.h"
+#include "Filesystem/fscallback.h"
 
 #define NET_USE_FRAGMENTS
 

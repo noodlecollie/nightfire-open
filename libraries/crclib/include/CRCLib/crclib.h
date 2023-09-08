@@ -1,4 +1,4 @@
-/*
+/*dwordbyte
 crclib.c - generate crc stuff
 Copyright (C) 2007 Uncle Mike
 Copyright (C) 2019 a1batross
@@ -13,28 +13,32 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#pragma once
-#ifndef CRCLIB_H
-#define CRCLIB_H
 
-#include "CommonUtils/typedefs.h"
+#pragma once
+
+#include <stdint.h>
 
 typedef struct
 {
-	uint buf[4];
-	uint bits[2];
-	uint in[16];
+	uint32_t buf[4];
+	uint32_t bits[2];
+	uint32_t in[16];
 } MD5Context_t;
 
-void CRC32_Init(dword* pulCRC);
-byte CRC32_BlockSequence(byte* base, int length, int sequence);
-void CRC32_ProcessBuffer(dword* pulCRC, const void* pBuffer, int nBuffer);
-void CRC32_ProcessByte(dword* pulCRC, byte ch);
-dword CRC32_Final(dword pulCRC);
-void MD5Init(MD5Context_t* ctx);
-void MD5Update(MD5Context_t* ctx, const byte* buf, uint len);
-void MD5Final(byte digest[16], MD5Context_t* ctx);
-uint COM_HashKey(const char* string, uint hashSize);
-char* MD5_Print(byte hash[16]);
+typedef struct
+{
+	uint8_t data[16];
+} MD5Digest_t;
 
-#endif  // CRCLIB_H
+void CRC32_Init(uint32_t* crc);
+uint8_t CRC32_BlockSequence(uint8_t* base, int length, int sequence);
+void CRC32_ProcessBuffer(uint32_t* crc, const void* pBuffer, int nBuffer);
+void CRC32_ProcessByte(uint32_t* crc, uint8_t ch);
+uint32_t CRC32_Final(uint32_t crc);
+
+void MD5Init(MD5Context_t* ctx);
+void MD5Update(MD5Context_t* ctx, const uint8_t* buf, uint32_t len);
+void MD5Final(MD5Digest_t* outDigest, MD5Context_t* ctx);
+char* MD5_Print(const MD5Digest_t* hash);
+
+uint32_t COM_HashKey(const char* string, uint32_t hashSize);

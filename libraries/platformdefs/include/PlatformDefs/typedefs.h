@@ -21,6 +21,8 @@ typedef enum
 } qboolean;
 #endif
 
+// TODO: Deprecate some of these types in favour of stdint names, to reduce confusion.
+
 // Numerical types
 typedef unsigned char byte;
 typedef uint32_t uint;

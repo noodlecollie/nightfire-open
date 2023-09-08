@@ -12,6 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
+
 #if !XASH_DEDICATED
 #include <SDL.h>
 #include "common.h"
@@ -20,6 +21,7 @@ GNU General Public License for more details.
 #include "input.h"
 #include "vid_common.h"
 #include "platform/sdl/events.h"
+#include "Filesystem/fscallback.h"
 
 static vidmode_t* vidmodes = NULL;
 static int num_vidmodes = 0;

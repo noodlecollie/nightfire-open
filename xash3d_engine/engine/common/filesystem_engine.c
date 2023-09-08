@@ -15,7 +15,8 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "library.h"
-#include "BuildDefs/libnames.h"
+#include "PlatformDefs/libnames.h"
+#include "Filesystem/fscallback.h"
 
 fs_api_t g_fsapi;
 fs_globals_t* FI;

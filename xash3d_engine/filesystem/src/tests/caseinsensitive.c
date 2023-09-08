@@ -1,9 +1,9 @@
-#include "BuildDefs/build.h"
-#include "BuildDefs/libnames.h"
+#include "PlatformDefs/platformid.h"
+#include "PlatformDefs/libnames.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 
 #if XASH_POSIX
 #include <dlfcn.h>

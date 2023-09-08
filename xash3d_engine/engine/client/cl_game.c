@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "vgui_draw.h"
 #include "sound.h"  // SND_STOP_LOOPING
 #include "platform/platform.h"
+#include "Filesystem/fscallback.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>

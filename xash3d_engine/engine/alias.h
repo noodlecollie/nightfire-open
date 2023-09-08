@@ -16,9 +16,8 @@
 #ifndef ALIAS_H
 #define ALIAS_H
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include <stdint.h>
-#include "synctype.h"
 
 /*
 ==============================================================================

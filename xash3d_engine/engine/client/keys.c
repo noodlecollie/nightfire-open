@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "vgui_draw.h"
 #include "platform/platform.h"
+#include "Filesystem/fscallback.h"
 
 typedef struct
 {

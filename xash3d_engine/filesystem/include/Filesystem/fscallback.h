@@ -15,17 +15,17 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#ifndef FSCALLBACK_H
-#define FSCALLBACK_H
 
-#include "filesystem.h"
+#pragma once
+
+#include "Filesystem/filesystem.h"
 
 extern fs_api_t g_fsapi;
 extern fs_globals_t* FI;
 
-#define GI FI->GameInfo
-#define FS_Gamedir() GI->gamefolder
-#define FS_Title() GI->title
+#define GI (FI->GameInfo)
+#define FS_Gamedir() (GI->gamefolder)
+#define FS_Title() (GI->title)
 
 #define FS_InitStdio (*g_fsapi.InitStdio)
 #define FS_ShutdownStdio (*g_fsapi.ShutdownStdio)
@@ -78,5 +78,3 @@ extern fs_globals_t* FI;
 #define FS_Delete (*g_fsapi.Delete)
 #define FS_SysFileExists (*g_fsapi.SysFileExists)
 #define FS_GetDiskPath (*g_fsapi.GetDiskPath)
-
-#endif  // FSCALLBACK_H

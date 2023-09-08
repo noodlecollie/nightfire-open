@@ -9,6 +9,8 @@
 #include "texturedirectorylisting.h"
 #endif
 
+#include "XashDefs/engine_limits.h"
+
 #if _MSC_VER >= 1000
 #pragma once
 #endif
@@ -375,8 +377,6 @@ typedef struct
 #define AMBIENT_SKY		1
 #define AMBIENT_SLIME	2
 #define AMBIENT_LAVA	3
-
-#define NUM_AMBIENTS	4				// automatic ambient sounds
 
 // leaf 0 is the generic CONTENTS_SOLID leaf, used for all solid areas
 // all other leafs need visibility info

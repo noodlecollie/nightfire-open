@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "BuildDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #ifdef XASH_SDL
 #include <SDL.h>
 #endif  // XASH_SDL
@@ -40,6 +40,7 @@ GNU General Public License for more details.
 #include "render_api.h"  // decallist_t
 #include "tests.h"
 #include "PlatformLib/System.h"
+#include "Filesystem/fscallback.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms

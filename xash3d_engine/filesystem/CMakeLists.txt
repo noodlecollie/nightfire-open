@@ -1,23 +1,27 @@
 include(compiler_settings)
 
 add_library(${TARGETNAME_LIB_FILESYSTEM_STDIO} SHARED
-	dir.c
-	filesystem_internal.h
-	filesystem.c
-	filesystem.h
-	fscallback.h
-	pak.c
-	VFileSystem009.h
-	VFileSystem009.cpp
-	wad.c
-	zip.c
+	include/Filesystem/filesystem.h
+	include/Filesystem/fscallback.h
+	src/dir.c
+	src/filesystem_internal.h
+	src/filesystem.c
+	src/pak.c
+	src/wad.c
+	src/zip.c
+)
+
+target_include_directories(${TARGETNAME_LIB_FILESYSTEM_STDIO}
+	PUBLIC include
+	PRIVATE src
 )
 
 target_link_libraries(${TARGETNAME_LIB_FILESYSTEM_STDIO} PUBLIC
-	${TARGETNAME_INCLUDES_FILESYSTEM}
 	${TARGETNAME_INCLUDES_SDK}
 	${TARGETNAME_LIB_COMMONUTILS}
-	${TARGETNAME_LIB_BUILDDEFS}
+	${TARGETNAME_LIB_PLATFORMDEFS}
+	${TARGETNAME_LIB_CRCLIB}
+	${TARGETNAME_LIB_ENGINEDEFS}
 )
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_FILESYSTEM_STDIO})
@@ -37,7 +41,7 @@ target_compile_options(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
 
 if(NF_ENABLE_TESTS)
 	add_executable(${TARGETNAME_LIB_FILESYSTEM_TESTS}
-		tests/caseinsensitive.c
+		src/tests/caseinsensitive.c
 	)
 
 	target_link_libraries(${TARGETNAME_LIB_FILESYSTEM_TESTS} PRIVATE

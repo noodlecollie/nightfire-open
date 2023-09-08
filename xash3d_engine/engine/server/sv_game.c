@@ -24,6 +24,8 @@ GNU General Public License for more details.
 #include "render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
 #include <limits.h>
+#include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 #define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)
 

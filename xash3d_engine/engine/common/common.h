@@ -106,9 +106,7 @@ typedef enum
 #include "CommonUtils/crtlib.h"
 #include "cvar.h"
 #include "con_nprint.h"
-#include "CommonUtils/crclib.h"
 #include "ref_api.h"
-#include "fscallback.h"
 
 // PERFORMANCE INFO
 #define MIN_FPS 20.0f  // host minimum fps value for maxfps.

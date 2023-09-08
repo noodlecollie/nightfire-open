@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "CommonUtils/arch.h"
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/bitdefs.h"
-#include "BuildDefs/build.h"
+#include "PlatformDefs/platformid.h"
 #include "buildenums.h"
 
 static const char* date = __DATE__;

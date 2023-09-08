@@ -18,9 +18,9 @@ GNU General Public License for more details.
 
 #include <string.h>
 #include <stdarg.h>
-#include "BuildDefs/build.h"
-#include "BuildDefs/decorators.h"
-#include "CommonUtils/typedefs.h"
+#include "PlatformDefs/platformid.h"
+#include "PlatformDefs/decorators.h"
+#include "PlatformDefs/typedefs.h"
 #include "PlatformLib/String.h"
 
 #ifdef __cplusplus
@@ -87,8 +87,6 @@ void COM_StripExtension(char* path);
 void COM_RemoveLineFeed(char* str);
 void COM_FixSlashes(char* pname);
 qboolean COM_PathSlashFix(char* path, size_t pathBufferLength);
-char COM_Hex2Char(uint8_t hex);
-void COM_Hex2String(uint8_t hex, char* str);
 // return 0 on empty or null string, 1 otherwise
 #define COM_CheckString(string) ((!string || !*string) ? 0 : 1)
 #define COM_CheckStringEmpty(string) ((!*string) ? 0 : 1)

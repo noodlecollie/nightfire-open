@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "const.h"
 #include "kbutton.h"
+#include "Filesystem/fscallback.h"
 
 extern convar_t* con_gamemaps;
 
@@ -1534,6 +1535,25 @@ void Host_FinalizeConfig(file_t* f, const char* config)
 	FS_Delete(backup);
 	FS_Rename(config, backup);
 	FS_Rename(newcfg, config);
+}
+
+/*
+============
+Cvar_WriteVariables
+
+Writes lines containing "variable value" for all variables
+with the specified flag set to true.
+============
+*/
+static void Cvar_WriteVariables(struct file_s* f, int group)
+{
+	for ( cvar_t* var = Cvar_GetList(); var; var = var->next )
+	{
+		if ( FBitSet(var->flags, group) )
+		{
+			FS_Printf(f, "%s \"%s\"\n", var->name, var->string);
+		}
+	}
 }
 
 /*
