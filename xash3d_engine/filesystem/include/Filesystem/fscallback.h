@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 
 extern fs_api_t g_fsapi;
 extern fs_globals_t* FI;

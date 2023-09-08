@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 
 #if XASH_POSIX
 #include <dlfcn.h>

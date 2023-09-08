@@ -2,7 +2,7 @@
 #if XASH_VIDEO == VIDEO_FBDEV
 #include "input.h"
 #include "client.h"
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 #include "vid_common.h"
 #include <fcntl.h>
 #include <errno.h>

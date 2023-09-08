@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "studio.h"
 #include "r_efx.h"
 #include "com_image.h"
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 
 // RefAPI changelog:
 // 1. Initial release

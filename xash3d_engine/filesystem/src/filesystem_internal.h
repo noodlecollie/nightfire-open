@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #define FILESYSTEM_INTERNAL_H
 
 #include "xash3d_types.h"
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 
 #ifdef __cplusplus
 extern "C"

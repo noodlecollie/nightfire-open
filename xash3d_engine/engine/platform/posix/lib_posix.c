@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #if XASH_LIB == LIB_POSIX
 #include "common.h"
 #include "library.h"
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 #include "server.h"
 #include <dlfcn.h>
 

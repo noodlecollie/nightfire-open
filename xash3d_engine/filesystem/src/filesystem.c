@@ -37,7 +37,7 @@ GNU General Public License for more details.
 #include "CommonUtils/arch.h"
 #include "CommonUtils/linux_win32_compat.h"
 #include "PlatformDefs/libnames.h"
-#include "filesystem.h"
+#include "Filesystem/filesystem.h"
 #include "filesystem_internal.h"
 #include "CommonUtils/xash3d_mathlib.h"
 #include "common/com_strings.h"
