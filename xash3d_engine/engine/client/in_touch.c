@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "math.h"
 #include "vgui_draw.h"
 #include "mobility_int.h"
+#include "Filesystem/fscallback.h"
 
 #if defined XASH_SDL
 #include <SDL.h>

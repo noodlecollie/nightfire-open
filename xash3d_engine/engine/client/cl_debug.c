@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "shake.h"
 #include "hltv.h"
 #include "input.h"
+#include "Filesystem/fscallback.h"
 
 #define MSG_COUNT 32  // last 32 messages parsed
 #define MSG_MASK (MSG_COUNT - 1)

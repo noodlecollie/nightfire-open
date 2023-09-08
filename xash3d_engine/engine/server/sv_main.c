@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "net_encode.h"
 #include "platform/platform.h"
 #include "CommonUtils/arch.h"
+#include "Filesystem/fscallback.h"
 
 // server cvars
 CVAR_DEFINE_AUTO(

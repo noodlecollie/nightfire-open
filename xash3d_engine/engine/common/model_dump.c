@@ -13,12 +13,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include <stdint.h>
 #include "model_dump.h"
 #include "common.h"
 #include "bsp/generic/viscompress.h"
 #include "mathlib.h"
 #include "eiface.h"
-#include <stdint.h>
+#include "Filesystem/fscallback.h"
 
 // For utility:
 #define MAX_INDENT 31

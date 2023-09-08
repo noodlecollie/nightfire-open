@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "server.h"
 #include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 void SV_CreateCustomizationList(sv_client_t* cl)
 {

@@ -40,6 +40,7 @@ GNU General Public License for more details.
 #include "render_api.h"  // decallist_t
 #include "tests.h"
 #include "PlatformLib/System.h"
+#include "Filesystem/fscallback.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms

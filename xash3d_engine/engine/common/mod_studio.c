@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "library.h"
 #include "ref_common.h"
 #include "mod_local.h"
+#include "Filesystem/fscallback.h"
 
 typedef int (*STUDIOAPI)(
 	int,

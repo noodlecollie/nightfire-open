@@ -12,6 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
+
 #include "common.h"
 #include "mod_local.h"
 #include "sprite.h"
@@ -24,6 +25,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "server.h"
 #include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 static model_info_t mod_crcinfo[MAX_MODELS];
 static model_t mod_known[MAX_MODELS];

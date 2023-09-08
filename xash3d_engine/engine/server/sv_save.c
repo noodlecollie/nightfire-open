@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "sound.h"  // S_GetDynamicSounds
 #include "ref_common.h"  // decals
 #include "PlatformLib/Time.h"
+#include "Filesystem/fscallback.h"
 
 /*
 ==============================================================================

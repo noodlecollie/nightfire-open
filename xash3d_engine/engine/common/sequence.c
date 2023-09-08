@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "eiface.h"
 #include "sequence.h"
+#include "Filesystem/fscallback.h"
 
 sequenceCommandLine_s g_fileScopeDefaults;
 sequenceCommandLine_s g_blockScopeDefaults;

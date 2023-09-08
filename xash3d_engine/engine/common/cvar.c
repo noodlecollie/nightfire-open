@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "base_cmd.h"
 #include "eiface.h"  // ARRAYSIZE
+#include "Filesystem/fscallback.h"
 
 convar_t* cvar_vars = NULL;  // head of list
 convar_t* cmd_scripting;

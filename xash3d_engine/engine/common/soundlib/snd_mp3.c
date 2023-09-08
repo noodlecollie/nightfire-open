@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "soundlib.h"
 #include "libmpg/libmpg.h"
+#include "Filesystem/fscallback.h"
 
 #pragma pack(push, 1)
 typedef struct did3v2_header_s

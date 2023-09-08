@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "const.h"
 #include "kbutton.h"
+#include "Filesystem/fscallback.h"
 
 extern convar_t* con_gamemaps;
 

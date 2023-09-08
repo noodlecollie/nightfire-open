@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "net_functions.h"
 #include "CommonUtils/arch.h"
 #include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 #if defined XASH_SDL
 #include <SDL.h>

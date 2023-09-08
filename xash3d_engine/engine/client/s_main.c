@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "con_nprint.h"
 #include "pm_local.h"
 #include "platform/platform.h"
+#include "Filesystem/fscallback.h"
 
 #define SND_CLIP_DISTANCE 1000.0f
 

@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "net_api.h"
 #include "CommonUtils/arch.h"
 #include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 typedef void (*RedirectFlushFunc)(netadr_t adr, rdtype_t target, char* buffer);
 

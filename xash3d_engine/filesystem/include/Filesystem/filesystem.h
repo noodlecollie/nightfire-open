@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/engine_limits.h"
+#include "xash3d_types.h"
 
 #ifdef __cplusplus
 extern "C"

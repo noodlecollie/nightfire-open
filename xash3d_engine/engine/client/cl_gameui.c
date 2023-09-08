@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "vid_common.h"
 #include "PlatformDefs/libnames.h"
 #include <limits.h>
+#include "Filesystem/fscallback.h"
 
 static void UI_UpdateUserinfo(void);
 

@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "studio.h"
 #include "wadfile.h"  // acess decal size
 #include "sound.h"
+#include "Filesystem/fscallback.h"
 
 /*
 ==============================================================

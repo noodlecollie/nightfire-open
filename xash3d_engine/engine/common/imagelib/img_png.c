@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "img_png.h"
 #include "PlatformLib/Net.h"
 #include "CRCLib/crclib.h"
+#include "Filesystem/fscallback.h"
 
 #if !XASH_WIN32
 #include <netinet/in.h>
