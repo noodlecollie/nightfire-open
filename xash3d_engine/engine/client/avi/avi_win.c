@@ -14,8 +14,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#if XASH_WIN32
 #include "PlatformDefs/platformid.h"
+
+#if XASH_WIN32
 #include "Filesystem/fscallback.h"
 #include "common.h"
 #include "client.h"
