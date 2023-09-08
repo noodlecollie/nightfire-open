@@ -57,10 +57,10 @@ typedef enum
 // 		};
 // 		struct
 // 		{
-// #if XASH_LITTLE_ENDIAN
+// #if XASH_LITTLE_ENDIAN()
 // 			uint16_t type6;
 // 			uint8_t ip6[16];
-// #elif XASH_BIG_ENDIAN
+// #elif XASH_BIG_ENDIAN()
 // 			uint8_t ip6_0[2];
 // 			uint16_t type6;
 // 			uint8_t ip6_2[14];
@@ -84,13 +84,13 @@ typedef struct netadr_ipv4_s
 	uint8_t ipx[10];  // 10 bytes
 } netadr_ipv4_t;  // 18 bytes
 
-#if XASH_LITTLE_ENDIAN
+#if XASH_LITTLE_ENDIAN()
 typedef struct netadr_ipv6_s
 {
 	uint16_t type6;  // 2 bytes
 	uint8_t ip6[16];  // 16 bytes
 } netadr_ipv6_t;  // 18 bytes
-#elif XASH_BIG_ENDIAN
+#elif XASH_BIG_ENDIAN()
 typedef struct netadr_ipv6_s
 {
 	uint8_t ip6_0[2];  // 2 bytes

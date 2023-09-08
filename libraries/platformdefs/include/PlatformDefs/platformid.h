@@ -39,6 +39,9 @@ For more information, please refer to <http://unlicense.org/>
 #define XASH_LINUX() 0
 #define XASH_LINUX_UNKNOWN() 0
 
+#define XASH_LITTLE_ENDIAN() 0
+#define XASH_BIG_ENDIAN() 0
+
 //================================================================
 //
 //           PLATFORM DETECTION CODE
@@ -78,7 +81,7 @@ For more information, please refer to <http://unlicense.org/>
 // This should shake out to either Windows or Linux, as far as we're concerned.
 #if !XASH_WIN32() && !XASH_LINUX()
 #error Unsupported platform!
-#endif  // !XASH_WIN32 && !XASH_LINUX
+#endif  // !XASH_WIN32() && !XASH_LINUX()
 
 //================================================================
 //
@@ -86,28 +89,45 @@ For more information, please refer to <http://unlicense.org/>
 //
 //================================================================
 
-#if !defined XASH_ENDIANNESS
-#if defined XASH_WIN32 || __LITTLE_ENDIAN__
-//!!! Probably all WinNT installations runs in little endian
-#define XASH_LITTLE_ENDIAN 1
+// Easy, explicit cases:
+#if __LITTLE_ENDIAN__
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
 #elif __BIG_ENDIAN__
-#define XASH_BIG_ENDIAN 1
+#undef XASH_BIG_ENDIAN
+#define XASH_BIG_ENDIAN() 1
 #elif defined __BYTE_ORDER__ && defined __ORDER_BIG_ENDIAN__ && \
 	defined __ORDER_LITTLE_ENDIAN__  // some compilers define this
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define XASH_BIG_ENDIAN 1
+#undef XASH_BIG_ENDIAN
+#define XASH_BIG_ENDIAN() 1
 #elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define XASH_LITTLE_ENDIAN 1
-#endif
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
+#endif  // __BYTE_ORDER__
+#endif  // __LITTLE_ENDIAN__
+
+// Platform-based checks are separate, just to make sure they
+// don't conflict with the above (we sanity check at the end).
+#if XASH_WIN32()
+// We treat all Windows installs as little-endian
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
 #else
 #include <sys/param.h>
 #if __BYTE_ORDER == __BIG_ENDIAN
-#define XASH_BIG_ENDIAN 1
+#undef XASH_BIG_ENDIAN
+#define XASH_BIG_ENDIAN() 1
 #elif __BYTE_ORDER == __LITTLE_ENDIAN
-#define XASH_LITTLE_ENDIAN 1
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
 #endif
-#endif  // !XASH_WIN32
-#endif  // XASH_ENDIANNESS
+#endif  //  XASH_WIN32()
+
+// Sanity:
+#if XASH_BIG_ENDIAN() == XASH_LITTLE_ENDIAN()
+#error Platform must be either big-endian or little-endian!
+#endif
 
 //================================================================
 //

@@ -3,7 +3,7 @@
 
 #include "PlatformDefs/platformid.h"
 
-#ifdef XASH_BIG_ENDIAN
+#if XASH_BIG_ENDIAN()
 #define LittleLong(x) \
 	(((int)(((x)&255) << 24)) + ((int)((((x) >> 8) & 255) << 16)) + ((int)(((x) >> 16) & 255) << 8) + \
 	 (((x) >> 24) & 255))

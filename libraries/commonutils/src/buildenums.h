@@ -80,9 +80,9 @@ GNU General Public License for more details.
 #define ENDIANNESS_LITTLE 1
 #define ENDIANNESS_BIG 2
 
-#if XASH_LITTLE_ENDIAN
+#if XASH_LITTLE_ENDIAN()
 #define XASH_ENDIANNESS ENDIANNESS_LITTLE
-#elif XASH_BIG_ENDIAN
+#elif XASH_BIG_ENDIAN()
 #define XASH_ENDIANNESS ENDIANNESS_BIG
 #else
 #error

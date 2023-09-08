@@ -270,9 +270,9 @@ static qboolean NET_IsSocketValid(int socket)
 
 void NET_NetadrToIP6Bytes(uint8_t* ip6, const netadr_t* adr)
 {
-#if XASH_LITTLE_ENDIAN
+#if XASH_LITTLE_ENDIAN()
 	memcpy(ip6, adr->ip.ip6.ip6, sizeof(adr->ip.ip6.ip6));
-#elif XASH_BIG_ENDIAN
+#elif XASH_BIG_ENDIAN()
 	memcpy(ip6, adr->ip.ip6.ip6_0, sizeof(adr->ip.ip6.ip6_0));
 	memcpy(ip6 + sizeof(adr->ip.ip6.ip6_0), adr->ip.ip6.ip6_2, sizeof(adr->ip.ip6.ip6_2));
 #endif
@@ -280,9 +280,9 @@ void NET_NetadrToIP6Bytes(uint8_t* ip6, const netadr_t* adr)
 
 void NET_IP6BytesToNetadr(netadr_t* adr, const uint8_t* ip6)
 {
-#if XASH_LITTLE_ENDIAN
+#if XASH_LITTLE_ENDIAN()
 	memcpy(adr->ip.ip6.ip6, ip6, sizeof(adr->ip.ip6.ip6));
-#elif XASH_BIG_ENDIAN
+#elif XASH_BIG_ENDIAN()
 	memcpy(adr->ip.ip6.ip6_0, ip6, sizeof(adr->ip.ip6.ip6_0));
 	memcpy(adr->ip.ip6.ip6_2, ip6 + sizeof(adr->ip.ip6.ip6_0), sizeof(adr->ip.ip6.ip6_2));
 #endif
@@ -290,9 +290,9 @@ void NET_IP6BytesToNetadr(netadr_t* adr, const uint8_t* ip6)
 
 static int NET_NetadrIP6Compare(const netadr_t* a, const netadr_t* b)
 {
-#if XASH_LITTLE_ENDIAN
+#if XASH_LITTLE_ENDIAN()
 	return memcmp(a->ip.ip6.ip6, b->ip.ip6.ip6, sizeof(a->ip.ip6.ip6));
-#elif XASH_BIG_ENDIAN
+#elif XASH_BIG_ENDIAN()
 	int ret = memcmp(a->ip.ip6.ip6_0, b->ip.ip6.ip6_0, sizeof(a->ip.ip6.ip6_0));
 	if ( !ret )
 	{
