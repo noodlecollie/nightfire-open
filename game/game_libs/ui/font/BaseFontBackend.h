@@ -19,7 +19,6 @@ GNU General Public License for more details.
 #include "BaseMenu.h"
 #include "utlrbtree.h"
 
-// #ifdef XASH_MOBILE_PLATFORM
 #if defined(__ANDROID__) || TARGET_OS_IPHONE || defined(__SAILFISH__) || defined(MAINUI_FONT_SCALE)
 #define SCALE_FONTS
 #endif
