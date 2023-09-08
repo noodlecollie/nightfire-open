@@ -31,7 +31,7 @@ Sys_Crash
 Crash handler, called from system
 ================
 */
-#if XASH_WIN32
+#if XASH_WIN32()
 
 #if DBGHELP
 
@@ -363,7 +363,7 @@ void Sys_RestoreCrashHandler(void)
 		SetUnhandledExceptionFilter(oldFilter);
 }
 
-#elif XASH_LINUX
+#elif XASH_LINUX()
 // Posix signal handler
 #include <ucontext.h>
 #include <signal.h>

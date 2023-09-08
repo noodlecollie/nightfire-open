@@ -46,7 +46,7 @@ XASH SPECIFIC			- sort of hack that works only in Xash3D not in GoldSrc
 #include <stdlib.h>  // rand, adbs
 #include <stdarg.h>  // va
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 #include <stddef.h>  // size_t
 #else
 #include <sys/types.h>  // off_t

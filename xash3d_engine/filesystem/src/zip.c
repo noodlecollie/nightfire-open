@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#if XASH_POSIX
+#if XASH_POSIX()
 #include <unistd.h>
 #endif
 

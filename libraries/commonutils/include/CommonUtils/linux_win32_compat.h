@@ -2,7 +2,7 @@
 
 #include "PlatformDefs/platformid.h"
 
-#ifdef XASH_WIN32
+#if XASH_WIN32()
 #define HSPRITE WINAPI_HSPRITE
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -15,4 +15,4 @@ typedef struct tagPOINT
 {
 	int x, y;
 } POINT;
-#endif // XASH_WIN32
+#endif // XASH_WIN32()

@@ -29,68 +29,56 @@ For more information, please refer to <http://unlicense.org/>
 
 #pragma once
 
-/*
-All XASH_* macros set by this header are guaranteed to have positive value
-otherwise not defined.
+// Xash had its own conventions for these preprocessor macros,
+// but I didn't like them. Treating the macros as function invocations
+// means that compilation fails if the header is not included, instead
+// of #if or #ifdef silently failing.
 
-Every macro is intended to be the unified interface for buildsystems that lack
-platform & CPU detection, and a neat quick way for checks in platform code
-For Q_build* macros, refer to buildenums.h
-
-Any new define must be undefined at first
-You can generate #undef list below with this oneliner:
-  $ sed 's/\t//g' build.h | grep '^#define XASH' | awk '{ print $2 }' | \
-		sort | uniq | awk '{ print "#undef " $1 }'
-
-Then you can use another oneliner to query all variables:
-  $ grep '^#undef XASH' build.h | awk '{ print $2 }'
-*/
-
-#undef XASH_64BIT
-#undef XASH_AMD64
-#undef XASH_ARM
-#undef XASH_ARM_HARDFP
-#undef XASH_ARM_SOFTFP
-#undef XASH_ARMv4
-#undef XASH_ARMv5
-#undef XASH_ARMv6
-#undef XASH_ARMv7
-#undef XASH_ARMv8
-#undef XASH_BIG_ENDIAN
-#undef XASH_E2K
-#undef XASH_LINUX
-#undef XASH_LINUX_UNKNOWN
-#undef XASH_LITTLE_ENDIAN
-#undef XASH_MIPS
-#undef XASH_POSIX
-#undef XASH_RISCV
-#undef XASH_RISCV_DOUBLEFP
-#undef XASH_RISCV_SINGLEFP
-#undef XASH_RISCV_SOFTFP
-#undef XASH_WIN32
-#undef XASH_X86
+#define XASH_WIN32() 0
+#define XASH_POSIX() 0
+#define XASH_LINUX() 0
+#define XASH_LINUX_UNKNOWN() 0
 
 //================================================================
 //
 //           PLATFORM DETECTION CODE
 //
 //================================================================
-#if defined _WIN32
-#define XASH_WIN32 1
-#else  // POSIX compatible
-#define XASH_POSIX 1
-#if defined __linux__
+
+#ifdef _WIN32
+
+// Platform is Windows
+#undef XASH_WIN32
+#define XASH_WIN32() 1
+
+#else  // _WIN32
+
+// Platform is not Windows, so is assumed to be POSIX-compliant.
+#undef XASH_POSIX
+#define XASH_POSIX() 1
+
+// Which platform is it specifically?
+#ifdef __linux__
+
+// Platform is Linux
+#undef XASH_LINUX
+#define XASH_LINUX() 1
+
 #include <features.h>
-// if our system libc has features.h header
-// try to detect it to not confuse other libcs with built with glibc game libraries
-#if !defined __GLIBC__
-#define XASH_LINUX_UNKNOWN 1
-#endif
-#define XASH_LINUX 1
-#else
+
+#ifndef __GLIBC__
+// This is some weird variant of Linux.
+#undef XASH_LINUX_UNKNOWN
+#define XASH_LINUX_UNKNOWN() 1
+#endif  // __GLIBC__
+
+#endif  // __linux__
+#endif  // _WIN32
+
+// This should shake out to either Windows or Linux, as far as we're concerned.
+#if !XASH_WIN32() && !XASH_LINUX()
 #error Unsupported platform!
-#endif
-#endif
+#endif  // !XASH_WIN32 && !XASH_LINUX
 
 //================================================================
 //

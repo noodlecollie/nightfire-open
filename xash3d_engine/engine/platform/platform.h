@@ -39,7 +39,7 @@ void Platform_ShellExecute(const char* path, const char* parms);
 void Platform_MessageBox(const char* title, const char* message, qboolean parentMainWindow);
 qboolean Sys_DebuggerPresent(void);  // optional, see Sys_DebugBreak
 
-#if XASH_WIN32
+#if XASH_WIN32()
 void Platform_UpdateStatusLine(void);
 #else
 static inline void Platform_UpdateStatusLine(void)

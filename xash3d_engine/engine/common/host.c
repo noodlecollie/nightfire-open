@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include <stdarg.h>  // va_args
 #include <errno.h>  // errno
 #include <string.h>  // strerror
-#if !XASH_WIN32
+#if !XASH_WIN32()
 #include <unistd.h>  // fork
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -64,11 +64,11 @@ convar_t* host_sleeptime;
 convar_t* con_gamemaps;
 convar_t *build, *ver;
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #define EXECUTABLE_NAME XASH_EXECUTABLE_NAME ".exe"
-#else  // XASH_WIN32
+#else  // XASH_WIN32()
 #define EXECUTABLE_NAME XASH_EXECUTABLE_NAME
-#endif  // !XASH_WIN32
+#endif  // !XASH_WIN32()
 
 void Sys_PrintUsage(void)
 {
@@ -88,9 +88,9 @@ void Sys_PrintUsage(void)
 		"   -log               write log to \"engine.log\"\n"
 		"   -nowriteconfig     disable config save\n"
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 		"   -casesensitive     disable case-insensitive FS emulation\n"
-#endif  // !XASH_WIN32
+#endif  // !XASH_WIN32()
 
 		"   -daemonize         run engine in background, dedicated only\n"
 
@@ -107,11 +107,11 @@ void Sys_PrintUsage(void)
 		"   -windowed          run engine in windowed mode\n"
 		"   -dedicated         run engine in dedicated server mode\n"
 
-#if XASH_WIN32
+#if XASH_WIN32()
 		"   -noavi             disable AVI support\n"
 		"   -nointro           disable intro video\n"
 		"   -minidumps         enable writing minidumps when game crashed\n"
-#endif  // XASH_WIN32
+#endif  // XASH_WIN32()
 
 #if XASH_VIDEO == VIDEO_FBDEV
 		"   -fbdev <path>      open selected framebuffer\n"
@@ -1122,7 +1122,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 #endif
 	}
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	COM_FixSlashes(host.rootdir);
 #endif
 
@@ -1144,7 +1144,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 			Q_strncpy(host.rodir, roDir, sizeof(host.rodir));
 	}
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	COM_FixSlashes(host.rootdir);
 #endif
 

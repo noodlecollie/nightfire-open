@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "CRCLib/crclib.h"
 #include "Filesystem/fscallback.h"
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 #include <netinet/in.h>
 #endif
 

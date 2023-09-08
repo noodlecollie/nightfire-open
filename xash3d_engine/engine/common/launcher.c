@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "SDL.h"
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <shellapi.h>
 
 // Enable NVIDIA High Performance Graphics while using Integrated Graphics.
@@ -66,7 +66,7 @@ static inline int Sys_Start(void)
 	return ret;
 }
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 int main(int argc, char** argv)
 {
 	szArgc = argc;
@@ -111,6 +111,6 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int n
 
 	return ret;
 }
-#endif  // XASH_WIN32
+#endif  // XASH_WIN32()
 
 #endif

@@ -20,16 +20,16 @@ GNU General Public License for more details.
 #include <fcntl.h>
 #include <errno.h>
 #include <stddef.h>
-#if XASH_POSIX
+#if XASH_POSIX()
 #include <unistd.h>
 #include <sys/ioctl.h>
 #endif
-#if XASH_LINUX
+#if XASH_LINUX()
 #include <linux/fs.h>
 #ifndef FS_CASEFOLD_FL  // for compatibility with older distros
 #define FS_CASEFOLD_FL 0x40000000
 #endif  // FS_CASEFOLD_FL
-#endif  // XASH_LINUX
+#endif  // XASH_LINUX()
 
 #include "filesystem_internal.h"
 #include "CommonUtils/crtlib.h"
@@ -53,10 +53,10 @@ typedef struct dir_s
 
 static qboolean Platform_GetDirectoryCaseSensitivity(const char* dir)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	(void)dir;
 	return false;
-#elif XASH_LINUX && defined(FS_IOC_GETFLAGS)
+#elif XASH_LINUX() && defined(FS_IOC_GETFLAGS)
 	int flags = 0;
 	int fd;
 

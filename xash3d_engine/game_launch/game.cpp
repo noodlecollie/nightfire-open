@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "PlatformLib/System.h"
 #include "PlatformDefs/libnames.h"
 
-#if XASH_POSIX
+#if XASH_POSIX()
 #include <dlfcn.h>
 
 #define XASHLIB "libxash." OS_LIB_EXT
@@ -33,7 +33,7 @@ GNU General Public License for more details.
 
 typedef void* HINSTANCE;
 
-#elif XASH_WIN32
+#elif XASH_WIN32()
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <shellapi.h>  // CommandLineToArgvW
@@ -107,7 +107,7 @@ static const char* GetStringLastError()
 
 static void Sys_LoadEngine(void)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	HMODULE hSdl;
 
 	if ( (hSdl = LoadLibraryEx(SDL2LIB, NULL, LOAD_LIBRARY_AS_DATAFILE)) == NULL )
@@ -186,7 +186,7 @@ static inline int Sys_Start(void)
 	return ret;
 }
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 int main(int argc, char** argv)
 {
 	szArgc = argc;

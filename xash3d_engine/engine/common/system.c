@@ -25,13 +25,13 @@ GNU General Public License for more details.
 #include <SDL.h>
 #endif
 
-#if XASH_POSIX
+#if XASH_POSIX()
 #include <unistd.h>
 #include <signal.h>
 #include <pwd.h>
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <process.h>
 #endif
 
@@ -57,7 +57,7 @@ Sys_DebugBreak
 */
 void Sys_DebugBreak(void)
 {
-#if XASH_LINUX || (XASH_WIN32 && !XASH_64BIT)
+#if XASH_LINUX() || (XASH_WIN32() && !XASH_64BIT)
 #if _MSC_VER
 	if ( Sys_DebuggerPresent() )
 		_asm { int 3 }
@@ -116,13 +116,13 @@ returns username for current profile
 */
 const char* Sys_GetCurrentUser(void)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	static string s_userName;
 	unsigned long size = sizeof(s_userName);
 
 	if ( GetUserName(s_userName, &size) )
 		return s_userName;
-#elif XASH_POSIX
+#elif XASH_POSIX()
 	uid_t uid = geteuid();
 	struct passwd* pw = getpwuid(uid);
 
@@ -249,7 +249,7 @@ qboolean Sys_GetIntFromCmdLine(const char* argName, int* out)
 
 void Sys_SendKeyEvents(void)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	MSG msg;
 
 	while ( PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) )
@@ -369,7 +369,7 @@ wait for 'Esc' key will be hit
 */
 void Sys_WaitForQuit(void)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	MSG msg;
 	msg.message = 0;
 
@@ -451,7 +451,7 @@ void Sys_Error(const char* error, ...)
 		if ( host.hWnd )
 			SDL_HideWindow(host.hWnd);
 #endif
-#if XASH_WIN32
+#if XASH_WIN32()
 		Wcon_ShowConsole(false);
 #endif
 		MSGBOX(text);
@@ -459,7 +459,7 @@ void Sys_Error(const char* error, ...)
 	}
 	else
 	{
-#if XASH_WIN32
+#if XASH_WIN32()
 		Wcon_ShowConsole(true);
 		Wcon_DisableInput();  // disable input line for dedicated server
 #endif
@@ -497,7 +497,7 @@ void Sys_Print(const char* pMsg)
 	}
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	{
 		const char* msg;
 		static char buffer[MAX_PRINT_MSG];

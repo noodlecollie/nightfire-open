@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "CommonUtils/xash3d_mathlib.h"
 #include "CommonUtils/arch.h"
 #include "ipv6text.h"
-#if XASH_WIN32
+#if XASH_WIN32()
 #include "platform/win32/net.h"
 #else
 #include "platform/posix/net.h"
@@ -100,7 +100,7 @@ typedef struct
 	qboolean configured;
 	qboolean allow_ip;
 	qboolean allow_ip6;
-#if XASH_WIN32
+#if XASH_WIN32()
 	WSADATA winsockdata;
 #endif
 } net_state_t;
@@ -131,7 +131,7 @@ NET_ErrorString
 */
 static const char* NET_ErrorString(void)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	int err = WSANOTINITIALISED;
 
 	if ( net.initialized )
@@ -252,7 +252,7 @@ static socklen_t NET_SockAddrLen(const struct sockaddr_storage* addr)
 
 static qboolean NET_IsSocketError(int retval)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	return retval == SOCKET_ERROR ? true : false;
 #else
 	return retval < 0 ? true : false;
@@ -261,7 +261,7 @@ static qboolean NET_IsSocketError(int retval)
 
 static qboolean NET_IsSocketValid(int socket)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	return socket != INVALID_SOCKET;
 #else
 	return socket >= 0;
@@ -431,7 +431,7 @@ qboolean NET_GetHostByName(const char* hostname, int family, struct sockaddr_sto
 #ifdef CAN_ASYNC_NS_RESOLVE
 static void NET_ResolveThread(void);
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 #include <pthread.h>
 #define mutex_lock pthread_mutex_lock
 #define mutex_unlock pthread_mutex_unlock
@@ -480,7 +480,7 @@ static struct nsthread_s
 	struct sockaddr_storage addr;
 	qboolean busy;
 } nsthread
-#if !XASH_WIN32
+#if !XASH_WIN32()
 	= {PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER, 0, 0, {}, 0, {}, false}
 #endif
 ;
@@ -488,7 +488,7 @@ static struct nsthread_s
 static void NET_InitializeCriticalSections(void)
 {
 	net.threads_initialized = true;
-#if XASH_WIN32
+#if XASH_WIN32()
 	InitializeCriticalSection(&nsthread.mutexns);
 	InitializeCriticalSection(&nsthread.mutexres);
 #endif
@@ -2462,7 +2462,7 @@ void NET_Init(void)
 		net.ip6_sockets[i] = INVALID_SOCKET;
 	}
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	if ( WSAStartup(MAKEWORD(1, 1), &net.winsockdata) )
 	{
 		Con_DPrintf(S_ERROR "network initialization failed.\n");
@@ -2515,7 +2515,7 @@ void NET_Shutdown(void)
 	NET_ClearLagData(true, true);
 
 	NET_Config(false, false);
-#if XASH_WIN32
+#if XASH_WIN32()
 	WSACleanup();
 #endif
 	net.initialized = false;
@@ -2907,7 +2907,7 @@ void HTTP_Run(void)
 			// but download will lock engine, maybe you will need to add manual returns
 			mode = 1;
 			ioctlsocket(curfile->socket, FIONBIO, (void*)&mode);
-#if XASH_LINUX
+#if XASH_LINUX()
 			// SOCK_NONBLOCK is not portable, so use fcntl
 			fcntl(curfile->socket, F_SETFL, fcntl(curfile->socket, F_GETFL, 0) | O_NONBLOCK);
 #endif

@@ -27,15 +27,16 @@ GNU General Public License for more details.
 //           OPERATING SYSTEM DEFINES
 //
 //================================================================
+
 #define PLATFORM_WIN32 1
 #define PLATFORM_LINUX 2
 #define PLATFORM_LINUX_UNKNOWN 3
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #define XASH_PLATFORM PLATFORM_WIN32
-#elif XASH_LINUX_UNKNOWN
+#elif XASH_LINUX_UNKNOWN()
 #define XASH_PLATFORM PLATFORM_LINUX_UNKNOWN
-#elif XASH_LINUX
+#elif XASH_LINUX()
 #define XASH_PLATFORM PLATFORM_LINUX
 #else
 #error Unsupported platform!
@@ -46,6 +47,7 @@ GNU General Public License for more details.
 //           CPU ARCHITECTURE DEFINES
 //
 //================================================================
+
 #define ARCHITECTURE_AMD64 1
 #define ARCHITECTURE_X86 2
 #define ARCHITECTURE_ARM 3
@@ -74,6 +76,7 @@ GNU General Public License for more details.
 //           ENDIANNESS DEFINES
 //
 //================================================================
+
 #define ENDIANNESS_LITTLE 1
 #define ENDIANNESS_BIG 2
 
@@ -90,6 +93,7 @@ GNU General Public License for more details.
 //           APPLICATION BINARY INTERFACE
 //
 //================================================================
+
 #define BIT(n) (1U << (n))
 
 #define ARCHITECTURE_ARM_VER_MASK (BIT(5) - 1)

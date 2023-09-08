@@ -123,7 +123,7 @@ void Posix_Daemonize(void)
 	// to be accessed later
 	if ( (host.daemonized = Sys_CheckParm("-daemonize")) )
 	{
-#if XASH_POSIX && defined(_POSIX_VERSION)
+#if XASH_POSIX() && defined(_POSIX_VERSION)
 		pid_t daemon;
 
 		daemon = fork();

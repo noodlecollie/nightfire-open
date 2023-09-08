@@ -76,7 +76,7 @@ void Platform_UpdateStatusLine(void)
 		clientsCount,
 		svs.maxclients,
 		host.game.levelName);
-#ifdef XASH_WIN32
+#if XASH_WIN32()
 	Wcon_SetStatus(szStatus);
 #endif
 	lastTime = sv.time;

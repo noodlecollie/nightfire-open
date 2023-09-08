@@ -37,11 +37,11 @@ extern "C"
 typedef struct file_s file_t;  // normal file
 typedef off_t fs_offset_t;
 
-#if XASH_WIN32
+#if XASH_WIN32()
 typedef int fs_size_t;  // return type of _read, _write funcs
-#else /* !XASH_WIN32 */
+#else /* !XASH_WIN32() */
 typedef ssize_t fs_size_t;
-#endif /* !XASH_WIN32 */
+#endif /* !XASH_WIN32() */
 
 // search path flags
 enum

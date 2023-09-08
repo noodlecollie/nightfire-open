@@ -50,7 +50,7 @@ SETUP BACKENDS DEFINITIONS
 #define XASH_MESSAGEBOX MSGBOX_SDL
 #endif  // XASH_MESSAGEBOX
 #endif
-#elif XASH_LINUX
+#elif XASH_LINUX()
 // we are building for Linux without SDL2, can draw only to framebuffer yet
 #ifndef XASH_VIDEO
 #define XASH_VIDEO VIDEO_FBDEV
@@ -73,31 +73,31 @@ SETUP BACKENDS DEFINITIONS
 // select messagebox implementation
 //
 #ifndef XASH_MESSAGEBOX
-#if XASH_WIN32
+#if XASH_WIN32()
 #define XASH_MESSAGEBOX MSGBOX_WIN32
-#else  // !XASH_WIN32
+#else  // !XASH_WIN32()
 #define XASH_MESSAGEBOX MSGBOX_STDERR
-#endif  // !XASH_WIN32
+#endif  // !XASH_WIN32()
 #endif  // XASH_MESSAGEBOX
 
 //
 // no timer - no xash
 //
 #ifndef XASH_TIMER
-#if XASH_WIN32
+#if XASH_WIN32()
 #define XASH_TIMER TIMER_WIN32
-#else  // !XASH_WIN32
+#else  // !XASH_WIN32()
 #define XASH_TIMER TIMER_POSIX
-#endif  // !XASH_WIN32
+#endif  // !XASH_WIN32()
 #endif
 
 #ifdef XASH_STATIC_LIBS
 #define XASH_LIB LIB_STATIC
 #define XASH_INTERNAL_GAMELIBS
 #define XASH_ALLOW_SAVERESTORE_OFFSETS
-#elif XASH_WIN32
+#elif XASH_WIN32()
 #define XASH_LIB LIB_WIN32
-#elif XASH_POSIX
+#elif XASH_POSIX()
 #define XASH_LIB LIB_POSIX
 #endif
 
