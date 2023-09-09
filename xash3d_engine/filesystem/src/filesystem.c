@@ -43,10 +43,10 @@ GNU General Public License for more details.
 #include "PlatformLib/System.h"
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/arch.h"
+#include "CommonUtils/bitdefs.h"
 #include "CommonUtils/linux_win32_compat.h"
 #include "CommonUtils/xash3d_mathlib.h"
 #include "CRCLib/crclib.h"
-#include "const.h"
 #include "Filesystem/filesystem.h"
 #include "filesystem_internal.h"
 
