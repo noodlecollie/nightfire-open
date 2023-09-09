@@ -32,6 +32,7 @@ GNU General Public License for more details.
 
 #include "XashDefs/engine_version.h"
 #include "PlatformLib/System.h"
+#include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"
 #include "Identity/arch.h"
 #include "common.h"
