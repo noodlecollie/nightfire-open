@@ -13,6 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "XashDefs/engine_version.h"
+#include "CommonUtils/arch.h"
+#include "CRCLib/crclib.h"
 #include "common.h"
 #include "client.h"
 #include "net_encode.h"
@@ -27,8 +30,6 @@ GNU General Public License for more details.
 #include "model_dump.h"
 #include "common/bsp/generic/viscompress.h"
 #include "net_functions.h"
-#include "CommonUtils/arch.h"
-#include "CRCLib/crclib.h"
 #include "fscallback.h"
 
 #if defined XASH_SDL

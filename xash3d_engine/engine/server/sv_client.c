@@ -13,13 +13,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "XashDefs/engine_version.h"
+#include "CommonUtils/arch.h"
+#include "CRCLib/crclib.h"
 #include "common.h"
 #include "const.h"
 #include "server.h"
 #include "net_encode.h"
 #include "net_api.h"
-#include "CommonUtils/arch.h"
-#include "CRCLib/crclib.h"
 #include "fscallback.h"
 
 typedef void (*RedirectFlushFunc)(netadr_t adr, rdtype_t target, char* buffer);

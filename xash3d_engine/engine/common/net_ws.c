@@ -13,20 +13,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "PlatformDefs/platformid.h"
+#include "XashDefs/engine_version.h"
+#include "PlatformLib/Net.h"
+#include "CommonUtils/xash3d_mathlib.h"
+#include "CommonUtils/arch.h"
 #include "common.h"
 #include "client.h"  // ConnectionProgress
 #include "netchan.h"
-#include "CommonUtils/xash3d_mathlib.h"
-#include "CommonUtils/arch.h"
 #include "ipv6text.h"
+#include "fscallback.h"
+
 #if XASH_WIN32()
 #include "platform/win32/net.h"
 #else
 #include "platform/posix/net.h"
 #endif
-
-#include "PlatformLib/Net.h"
-#include "fscallback.h"
 
 #define NET_USE_FRAGMENTS
 

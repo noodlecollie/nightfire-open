@@ -13,11 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "XashDefs/engine_version.h"
+#include "CommonUtils/arch.h"
 #include "common.h"
 #include "server.h"
 #include "net_encode.h"
 #include "platform/platform.h"
-#include "CommonUtils/arch.h"
 #include "fscallback.h"
 
 // server cvars

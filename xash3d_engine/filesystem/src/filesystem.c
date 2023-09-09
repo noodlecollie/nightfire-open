@@ -37,6 +37,7 @@ GNU General Public License for more details.
 
 #include "PlatformDefs/libnames.h"
 #include "XashDefs/log_strings.h"
+#include "XashDefs/engine_version.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
@@ -45,7 +46,6 @@ GNU General Public License for more details.
 #include "CommonUtils/linux_win32_compat.h"
 #include "CommonUtils/xash3d_mathlib.h"
 #include "CRCLib/crclib.h"
-#include "common/com_strings.h"
 #include "common/protocol.h"
 #include "const.h"
 #include "Filesystem/filesystem.h"
