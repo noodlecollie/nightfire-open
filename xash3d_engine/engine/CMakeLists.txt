@@ -68,6 +68,7 @@ set(ENGINE_SOURCES
 	common/cvar.h
 	common/cvar.c
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:common/dedicated.c>
+	common/dll_types.h
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c
@@ -106,6 +107,7 @@ set(ENGINE_SOURCES
 	common/pm_trace.c
 	common/protocol.h
 	common/sequence.c
+	common/setpair.h
 	common/sys_con.c
 	common/system.c
 	common/system.h

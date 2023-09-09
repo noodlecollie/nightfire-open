@@ -24,10 +24,10 @@ extern "C"
 #include <setjmp.h>
 #include <stdio.h>
 #include <time.h>
-#include "xash3d_types.h"
 #include "const.h"
 #include "CRTLib/crtlib.h"
 #include "platform/platform.h"
+#include "dll_types.h"
 
 #define MSGBOX(x) Platform_MessageBox("Xash Error", (x), false);
 #define MSGBOX2(x) Platform_MessageBox("Host Error", (x), true);

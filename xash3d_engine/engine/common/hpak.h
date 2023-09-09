@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #define HPAK_H
 
 #include "custom.h"
+#include "PlatformDefs/static_assert.h"
 
 /*
 ========================================================================

@@ -12,9 +12,10 @@
  *   without written permission from Valve LLC.
  *
  ****/
-#ifndef CONST_H
-#define CONST_H
 
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 #include "surfaceprops.h"
 
 //
@@ -749,8 +750,6 @@ enum
 typedef int func_t;
 typedef int string_t;
 
-#include "xash3d_types.h"
-
 typedef struct
 {
 	byte r, g, b;
@@ -794,5 +793,3 @@ typedef struct
 #define MDLEVENT_SPARK0 5002
 #define MDLEVENT_SOUND0 5004
 #define MDLEVENT_SOUND_AMBIENT 5005
-
-#endif  // CONST_H

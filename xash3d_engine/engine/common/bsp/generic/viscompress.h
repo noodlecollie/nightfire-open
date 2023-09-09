@@ -18,7 +18,6 @@ GNU General Public License for more details.
 #endif
 
 #include <stddef.h>
-#include "xash3d_types.h"
 #include "const.h"
 
 // Functions return false if a truncation occurred, or the operation was generally unsuccessful.

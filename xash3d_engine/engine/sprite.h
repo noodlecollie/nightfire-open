@@ -16,8 +16,9 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "PlatformDefs/platformid.h"
 #include <stdint.h>
+#include "PlatformDefs/platformid.h"
+#include "PlatformDefs/static_assert.h"
 
 /*
 ==============================================================================

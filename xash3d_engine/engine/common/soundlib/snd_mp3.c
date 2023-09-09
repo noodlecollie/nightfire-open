@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "PlatformDefs/static_assert.h"
 #include "soundlib.h"
 #include "libmpg/libmpg.h"
 #include "fscallback.h"

@@ -10,8 +10,10 @@
 #define MAX_LOCAL_SAMPLES	16		// unsigned byte limit
 #define MAX_SAMPLES		32		// enough
 #define MAX_LEAF_PLANES	512		// QuArK cylinder :-)
+
+// NFTODO: Make these two common with engine
 #define GAMMA		( 2.2f )		// Valve Software gamma
-#define INVGAMMA		( 1.0f / 2.2f )	// back to 1.0
+#define INVGAMMA		( 1.0f / GAMMA )	// back to 1.0
 
 vec_t g_anorms[NUMVERTEXNORMALS][3] =
 {

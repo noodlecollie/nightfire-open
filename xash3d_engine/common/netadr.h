@@ -13,11 +13,11 @@
  *
  ****/
 
-#ifndef NETADR_H
-#define NETADR_H
+#pragma once
 
-#include "PlatformDefs/platformid.h"
 #include <stdint.h>
+#include "PlatformDefs/platformid.h"
+#include "PlatformDefs/static_assert.h"
 
 typedef enum
 {
@@ -113,5 +113,3 @@ typedef struct netadr_s
 #pragma pack(pop)
 
 STATIC_ASSERT(sizeof(netadr_t) == 20, "invalid netadr_t size");
-
-#endif  // NETADR_H

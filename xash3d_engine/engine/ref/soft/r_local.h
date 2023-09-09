@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #ifndef GL_LOCAL_H
 #define GL_LOCAL_H
-#include "xash3d_types.h"
+
 #include "cvardef.h"
 #include "const.h"
 #include "com_model.h"

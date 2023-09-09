@@ -583,6 +583,8 @@ typedef struct
 //
 // soundlib
 //
+typedef struct stream_s stream_t;  // sound stream for background music playing
+
 void Sound_Init(void);
 void Sound_Shutdown(void);
 wavdata_t* FS_LoadSound(const char* filename, const byte* buffer, size_t size);
