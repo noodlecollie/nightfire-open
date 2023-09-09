@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/engine_limits.h"
+#include "Filesystem/libexport.h"
 #include "xash3d_types.h"
 
 #ifdef __cplusplus
@@ -223,8 +224,7 @@ typedef struct fs_interface_t
 	void (*_Mem_Free)(void* data, const char* filename, int fileline);
 } fs_interface_t;
 
-typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* ifc);
-#define GET_FS_API "GetFSAPI"
+FILESYSTEM_STDIO_PUBLIC(int) GetFSAPI(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* engfuncs);
 
 #ifdef __cplusplus
 }

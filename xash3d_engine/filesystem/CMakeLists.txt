@@ -2,12 +2,14 @@ include(compiler_settings)
 include(lib_utils)
 
 set(GENERATED_HEADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated_headers)
-set(EXPORT_HEADER_PATH ${GENERATED_HEADER_DIR}/libexport.h)
 
-generate_shared_export_header(${TARGETNAME_LIB_FILESYSTEM_STDIO} ${EXPORT_HEADER_PATH})
+generate_shared_export_header(
+	${TARGETNAME_LIB_FILESYSTEM_STDIO}
+	${GENERATED_HEADER_DIR}/Filesystem/libexport.h
+)
 
 add_library(${TARGETNAME_LIB_FILESYSTEM_STDIO} SHARED
-	${EXPORT_HEADER_PATH}
+	${GENERATED_HEADER_DIR}/Filesystem/libexport.h
 	include/Filesystem/filesystem.h
 	include/Filesystem/fscallback.h
 	src/dir.c
@@ -38,6 +40,7 @@ target_link_libraries(${TARGETNAME_LIB_FILESYSTEM_STDIO} PUBLIC
 set_common_library_compiler_settings(${TARGETNAME_LIB_FILESYSTEM_STDIO})
 
 target_compile_definitions(${TARGETNAME_LIB_FILESYSTEM_STDIO} PRIVATE
+	FILESYSTEM_STDIO_PRODUCER
 	"ALLOCA_H=<${ALLOCA_HEADER}>"
 )
 

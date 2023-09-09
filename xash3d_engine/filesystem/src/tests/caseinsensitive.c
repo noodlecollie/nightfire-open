@@ -17,25 +17,33 @@
 
 #include "PlatformLib/File.h"
 
-void* g_hModule;
-FSAPI g_pfnGetFSAPI;
-fs_api_t g_fs;
-fs_globals_t* g_nullglobals;
+typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* ifc);
+
+static void* g_hModule;
+static FSAPI g_pfnGetFSAPI;
+static fs_api_t g_fs;
+static fs_globals_t* g_nullglobals;
 
 static qboolean LoadFilesystem(void)
 {
 	g_hModule = LoadLibrary(OS_LIB_PREFIX "filesystem_stdio." OS_LIB_EXT);
 
 	if ( !g_hModule )
+	{
 		return false;
+	}
 
-	g_pfnGetFSAPI = (FSAPI)GetProcAddress(g_hModule, GET_FS_API);
+	g_pfnGetFSAPI = (FSAPI)GetProcAddress(g_hModule, "GetFSAPI");
 
 	if ( !g_pfnGetFSAPI )
+	{
 		return false;
+	}
 
 	if ( !g_pfnGetFSAPI(FS_API_VERSION, &g_fs, &g_nullglobals, NULL) )
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -98,11 +106,15 @@ static qboolean TestCaseinsensitive(void)
 
 	// try to open first file back but with different file name case
 	if ( !CheckFileContents("foo/bar.BIN", &magic, sizeof(magic)) )
+	{
 		return false;
+	}
 
 	// try to open second file that we created directly
 	if ( !CheckFileContents("Foo/BaZ.Bin", &magic, sizeof(magic)) )
+	{
 		return false;
+	}
 
 	g_fs.Delete("foo/Baz.biN");
 	g_fs.Delete("foo/bar.bin");
@@ -114,12 +126,16 @@ static qboolean TestCaseinsensitive(void)
 int main(void)
 {
 	if ( !LoadFilesystem() )
+	{
 		return EXIT_FAILURE;
+	}
 
 	srand((unsigned int)time(NULL));
 
 	if ( !TestCaseinsensitive() )
+	{
 		return EXIT_FAILURE;
+	}
 
 	printf("success\n");
 

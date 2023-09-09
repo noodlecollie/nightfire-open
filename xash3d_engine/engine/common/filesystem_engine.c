@@ -63,6 +63,8 @@ static void FS_UnloadProgs(void)
 #define FILESYSTEM_STDIO_DLL OS_LIB_PREFIX "filesystem_stdio." OS_LIB_EXT
 #endif
 
+typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* ifc);
+
 qboolean FS_LoadProgs(void)
 {
 	const char* name = FILESYSTEM_STDIO_DLL;
@@ -76,7 +78,7 @@ qboolean FS_LoadProgs(void)
 		return false;
 	}
 
-	GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, GET_FS_API);
+	GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, "GetFSAPI");
 
 	if ( !GetFSAPI )
 	{
