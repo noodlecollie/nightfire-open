@@ -16,12 +16,6 @@
 
 typedef int sound_t;
 
-#if XASH_64BIT()
-typedef uint32_t poolhandle_t;
-#else
-typedef void* poolhandle_t;
-#endif
-
 typedef uint64_t longtime_t;
 
 #define GAMMA (2.2f)  // Valve Software gamma
