@@ -31,7 +31,6 @@ GNU General Public License for more details.
 #include "XashDefs/log_strings.h"
 #include "XashDefs/wadfile.h"
 #include "CommonUtils/crtlib.h"
-#include "common/com_strings.h"
 #include "filesystem_internal.h"
 
 /*
@@ -53,8 +52,6 @@ infotable	dlumpinfo_t[dwadinfo_t->numlumps]
 #define WAD3_NAMELEN 16
 #define HINT_NAMELEN 5  // e.g. _mask, _norm
 #define MAX_FILES_IN_WAD 65535  // real limit as above <2Gb size not a lumpcount
-
-#include "const.h"
 
 typedef struct
 {
