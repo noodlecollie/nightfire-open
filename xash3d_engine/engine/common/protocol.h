@@ -13,8 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef NET_PROTOCOL_H
-#define NET_PROTOCOL_H
+#pragma once
+
+#include "XashDefs/engine_limits.h"
 
 #define PROTOCOL_VERSION 49
 
@@ -117,11 +118,16 @@ GNU General Public License for more details.
 #define MAX_SOUNDS_NONSENTENCE MAX_SOUNDS
 
 #define MAX_ENTITY_BITS 13  // 13 bits = 8192 edicts
-#define MAX_EDICTS (1 << MAX_ENTITY_BITS)
+
+// MAX_EDICTS used to be defined here, but has now been moved to engine_limits.h
+// To make sure that the netcode uses the correct number of bits now that
+// MAX_EDICTS is defined independently of these bits, we do a check here.
+#if MAX_EDICTS != (1 << MAX_ENTITY_BITS)
+#error Mismatch between max edicts and number of network bits used to represent them!
+#endif
+
 #define MAX_EDICTS_BYTES ((MAX_EDICTS + 7) / 8)
 #define LAST_EDICT (MAX_EDICTS - 1)
-
-#define MIN_EDICTS 64
 
 #define MAX_CUSTOM_BITS 10
 #define MAX_CUSTOM (1 << MAX_CUSTOM_BITS)  // 10 bits == 1024 generic file
@@ -271,5 +277,3 @@ extern const char* clc_strings[clc_lastmsg + 1];
 #define MS_SCAN_REQUEST \
 	"1\xFF" \
 	"0.0.0.0:0\0"  // TODO: implement IP filter
-
-#endif  // NET_PROTOCOL_H

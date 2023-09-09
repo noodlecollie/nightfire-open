@@ -19,3 +19,14 @@
 #define MAX_OSPATH 260  // max length of a filesystem pathname
 #define CS_SIZE 64  // size of one config string
 #define CS_TIME 16  // size of time string
+
+// This used to be defined based on the number of network bits used to represent
+// the edicts, but is now decoupled from the netcode definitions.
+// If this number is changed, protocol.h will need to be updated (there is a
+// compile-time check there that should trigger anyway).
+#define MAX_EDICTS 8192
+#define MIN_EDICTS 64
+
+#if MAX_EDICTS < MIN_EDICTS
+#error MAX_EDICTS cannot be less than MIN_EDICTS!
+#endif

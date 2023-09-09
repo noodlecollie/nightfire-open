@@ -46,7 +46,6 @@ GNU General Public License for more details.
 #include "CommonUtils/linux_win32_compat.h"
 #include "CommonUtils/xash3d_mathlib.h"
 #include "CRCLib/crclib.h"
-#include "common/protocol.h"
 #include "const.h"
 #include "Filesystem/filesystem.h"
 #include "filesystem_internal.h"
