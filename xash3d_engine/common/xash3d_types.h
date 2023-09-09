@@ -6,11 +6,6 @@
 #include "PlatformDefs/typedefs.h"
 #include "CommonUtils/bitdefs.h"
 
-#if XASH_WIN32()
-#include <wchar.h>  // off_t
-#endif  // _WIN32
-
-#include <sys/types.h>  // off_t
 #include <stdint.h>
 #include <assert.h>
 

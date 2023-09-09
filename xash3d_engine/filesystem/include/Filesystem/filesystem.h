@@ -24,8 +24,15 @@ GNU General Public License for more details.
 #include "Filesystem/libexport.h"
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
+#include "PlatformDefs/platformid.h"
 #include "XashDefs/engine_limits.h"
 #include "XashDefs/mempool.h"
+
+#if XASH_WIN32()
+#include <wchar.h>  // off_t
+#endif  // XASH_WIN32
+
+#include <sys/types.h>  // off_t
 
 #ifdef __cplusplus
 extern "C"
