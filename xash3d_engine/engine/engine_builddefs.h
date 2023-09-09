@@ -14,3 +14,9 @@
 #else
 #define XASH_ENGINE_TESTS() 0
 #endif
+
+#ifdef BUILDFLAG_USE_SELECT
+#define XASH_USE_SELECT() 1
+#else
+#define XASH_USE_SELECT() 0
+#endif

@@ -85,7 +85,7 @@ void Sys_PrintUsage(void)
 		"   " EXECUTABLE_NAME
 		" [options] [+command1] [+command2 arg]\n"
 		"Options:\n"
-		"   -dev [level]       set log verbosity 0-2\n"
+		"   -dev [level]       set log verbosity 0-5\n"
 		"   -log               write log to \"engine.log\"\n"
 		"   -nowriteconfig     disable config save\n"
 
