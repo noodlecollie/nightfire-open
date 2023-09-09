@@ -467,7 +467,7 @@ const char* COM_GetPlatformNeutralName(const char* in_name)
 	}
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 static void Test_DetectMangleType(void)
@@ -608,4 +608,4 @@ void Test_RunLibCommon(void)
 	TRUN(Test_GetItaniumName());
 	TRUN(Test_ConvertFromValveToLocal());
 }
-#endif /* XASH_ENGINE_TESTS */
+#endif  // XASH_ENGINE_TESTS()

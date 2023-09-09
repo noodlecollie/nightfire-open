@@ -2423,7 +2423,7 @@ void GAME_EXPORT Con_DefaultColor(int r, int g, int b)
 	MakeRGBA(g_color_table[7], (byte)r, (byte)g, (byte)b, 255);
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 /*
@@ -2477,4 +2477,4 @@ void Test_RunCon(void)
 	TRUN(Test_RunConHistory());
 }
 
-#endif /* XASH_ENGINE_TESTS */
+#endif  // XASH_ENGINE_TESTS()

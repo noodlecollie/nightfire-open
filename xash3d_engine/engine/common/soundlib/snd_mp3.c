@@ -196,14 +196,14 @@ static qboolean Sound_ParseID3Tag(const byte* buffer, fs_offset_t filesize)
 	return true;
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 int EXPORT Fuzz_Sound_ParseID3Tag(const uint8_t* Data, size_t Size)
 {
 	memset(&sound, 0, sizeof(sound));
 	Sound_ParseID3Tag(Data, (fs_offset_t)Size);
 	return 0;
 }
-#endif
+#endif  // XASH_ENGINE_TESTS()
 
 /*
 =================================================================

@@ -8,3 +8,9 @@
 #else
 #define XASH_DEDICATED() 0
 #endif
+
+#ifdef BUILDFLAG_BUILD_ENGINE_TESTS
+#define XASH_ENGINE_TESTS() 1
+#else
+#define XASH_ENGINE_TESTS() 0
+#endif

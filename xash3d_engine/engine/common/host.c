@@ -41,14 +41,15 @@ GNU General Public License for more details.
 #include "tests.h"
 #include "PlatformLib/System.h"
 #include "fscallback.h"
+#include "engine_builddefs.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms
 sysinfo_t SI;
 
-#ifdef XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 struct tests_stats_s tests_stats;
-#endif
+#endif  // XASH_ENGINE_TESTS()
 
 CVAR_DEFINE(host_developer, "developer", "0", FCVAR_FILTERABLE, "engine is in development-mode");
 CVAR_DEFINE_AUTO(sys_timescale, "1.0", FCVAR_CHEAT | FCVAR_FILTERABLE, "scale frame time");
@@ -94,7 +95,7 @@ void Sys_PrintUsage(void)
 
 		"   -daemonize         run engine in background, dedicated only\n"
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 		"   -runtests          run engine tests\n"
 #endif
 
@@ -925,7 +926,7 @@ void Host_Userconfigd_f(void)
 	Mem_Free(t);
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 static void Host_RunTests(int stage)
 {
 	switch ( stage )
@@ -1006,7 +1007,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 		}
 	}
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 	if ( Sys_CheckParm("-runtests") )
 	{
 		host.allow_console = true;
@@ -1090,7 +1091,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 
 	Con_Init();  // early console running to catch all the messages
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 	if ( Sys_CheckParm("-runtests") )
 		Host_RunTests(0);
 #endif
@@ -1190,7 +1191,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	Image_Init();
 	Sound_Init();
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 	if ( Sys_CheckParm("-runtests") )
 	{
 		Host_RunTests(1);

@@ -1459,7 +1459,7 @@ void Cmd_Init(void)
 #endif
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 enum
@@ -1518,4 +1518,4 @@ void Test_RunCmd(void)
 	Cmd_RemoveCommand("test_unprivileged");
 	Cmd_RemoveCommand("test_privileged");
 }
-#endif
+#endif // XASH_ENGINE_TESTS()

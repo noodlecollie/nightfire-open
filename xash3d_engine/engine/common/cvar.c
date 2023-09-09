@@ -1288,7 +1288,7 @@ void Cvar_PostFSInit(void)
 	}
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 void Test_RunCvar(void)
@@ -1333,4 +1333,4 @@ void Test_RunCvar(void)
 	TASSERT(hud_filtered->value == 0.0f);
 	TASSERT(filtered2->value == 0.0f);
 }
-#endif
+#endif  // XASH_ENGINE_TESTS()
