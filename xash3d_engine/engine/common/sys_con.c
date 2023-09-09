@@ -14,7 +14,8 @@ GNU General Public License for more details.
 */
 
 #include "common.h"
-#if XASH_WIN32
+
+#if XASH_WIN32()
 #define STDOUT_FILENO 1
 #include <io.h>
 #else
@@ -28,17 +29,15 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "PlatformLib/Time.h"
 #include "CommonUtils/arch.h"
+#include "engine_builddefs.h"
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 #define XASH_COLORIZE_CONSOLE true
-// use with caution, running engine in Qt Creator may cause a freeze in read() call
-// I was never encountered this bug anywhere else, so still enable by default
-// #define XASH_USE_SELECT 1
 #else
 #define XASH_COLORIZE_CONSOLE false
 #endif
 
-#if XASH_USE_SELECT
+#if XASH_USE_SELECT()
 // non-blocking console input
 #include <sys/select.h>
 #endif
@@ -56,7 +55,7 @@ static LogData s_ld;
 
 char* Sys_Input(void)
 {
-#if XASH_USE_SELECT
+#if XASH_USE_SELECT()
 	{
 		fd_set rfds;
 		static char line[1024];
@@ -83,7 +82,7 @@ char* Sys_Input(void)
 	}
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	return Wcon_Input();
 #else
 	return NULL;
@@ -94,7 +93,7 @@ void Sys_DestroyConsole(void)
 {
 	// last text message into console or log
 	Con_Reportf("Sys_DestroyConsole: Exiting!\n");
-#if XASH_WIN32
+#if XASH_WIN32()
 	Wcon_DestroyConsole();
 #endif
 }
@@ -284,7 +283,7 @@ static void Sys_PrintLogfile(const int fd, const char* logtime, const char* msg,
 
 static void Sys_PrintStdout(const char* logtime, const char* msg)
 {
-#if XASH_WIN32  // Wcon does the job
+#if XASH_WIN32()  // Wcon does the job
 	(void)logtime;
 	(void)msg;
 #else

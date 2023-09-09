@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "ref_common.h"  // decals
 #include <limits.h>
 #include "CRCLib/crclib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)
 
@@ -707,7 +707,7 @@ void SV_RestartAmbientSounds(void)
 			si->pitch);
 	}
 
-#if !XASH_DEDICATED  // TODO: ???
+#if !XASH_DEDICATED()  // TODO: ???
 	// restart soundtrack
 	if ( S_StreamGetCurrentState(curtrack, looptrack, &position) )
 	{
@@ -732,12 +732,14 @@ void SV_RestartDecals(void)
 	int i;
 
 	if ( !SV_Active() )
+	{
 		return;
+	}
 
 	// g-cont. add space for studiodecals if present
 	host.decalList = (decallist_t*)Z_Calloc(sizeof(decallist_t) * MAX_RENDER_DECALS * 2);
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Host_IsDedicated() )
 	{
 		host.numdecals = ref.dllFuncs.R_CreateDecalList(host.decalList);
@@ -746,7 +748,7 @@ void SV_RestartDecals(void)
 		ref.dllFuncs.R_ClearAllDecals();
 	}
 	else
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 	{
 		// we probably running a dedicated server
 		host.numdecals = 0;
@@ -3263,7 +3265,7 @@ void* pfnPvEntPrivateData(edict_t* pEdict)
 	return NULL;
 }
 
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 static struct str64_s
 {
 	size_t maxstringarray;
@@ -3291,7 +3293,7 @@ Free strings on server stop. Reset string pointer on 64 bits
 */
 void SV_EmptyStringPool(void)
 {
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 	if ( str64.dynamic )  // switch only after array fill (more space for multiplayer games)
 		str64.pstringbase = str64.pstringarray;
 	else
@@ -3315,7 +3317,7 @@ this helps not to lose strings that belongs to static game part
 */
 void SV_SetStringArrayMode(qboolean dynamic)
 {
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 	Con_Reportf("SV_SetStringArrayMode(%d) %d\n", dynamic, str64.dynamic);
 
 	if ( dynamic == str64.dynamic )
@@ -3327,7 +3329,7 @@ void SV_SetStringArrayMode(qboolean dynamic)
 #endif
 }
 
-#if XASH_64BIT && !XASH_WIN32
+#if XASH_64BIT() && !XASH_WIN32()
 #define USE_MMAP
 #include <sys/mman.h>
 #include <unistd.h>
@@ -3345,7 +3347,7 @@ this case need patched game dll with MAKE_STRING checking ptrdiff size
 */
 void SV_AllocStringPool(void)
 {
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 	void* ptr = NULL;
 	string lenstr;
 
@@ -3434,7 +3436,7 @@ void SV_AllocStringPool(void)
 
 void SV_FreeStringPool(void)
 {
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 	Con_Reportf("SV_FreeStringPool()\n");
 
 #ifdef USE_MMAP
@@ -3468,7 +3470,7 @@ string_t GAME_EXPORT SV_AllocString(const char* szValue)
 		return svgame.physFuncs.pfnAllocString(szValue);
 	}
 
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 	cmp = 1;
 
 	if ( !str64.allowdup )
@@ -3520,7 +3522,7 @@ string_t GAME_EXPORT SV_AllocString(const char* szValue)
 #endif
 }
 
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 void SV_PrintStr64Stats_f(void)
 {
 	Msg("====================\n");
@@ -3544,14 +3546,22 @@ make constant string
 string_t SV_MakeString(const char* szValue)
 {
 	if ( svgame.physFuncs.pfnMakeString != NULL )
+	{
 		return svgame.physFuncs.pfnMakeString(szValue);
-#ifdef XASH_64BIT
+	}
+
+#if XASH_64BIT()
 	{
 		long long ptrdiff = szValue - svgame.globals->pStringBase;
+
 		if ( ptrdiff > INT_MAX || ptrdiff < INT_MIN )
+		{
 			return SV_AllocString(szValue);
+		}
 		else
+		{
 			return (int)ptrdiff;
+		}
 	}
 #else
 	return szValue - svgame.globals->pStringBase;

@@ -28,7 +28,7 @@ typedef struct
 	msurface_t* surface;
 } linetrace_t;
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 /*
 ==============
 fix_coord
@@ -42,7 +42,7 @@ static uint fix_coord(vec_t in, uint width)
 		return (uint)in % width;
 	return width - ((uint)fabs(in) % width);
 }
-#endif // !XASH_DEDICATED
+#endif // !XASH_DEDICATED()
 
 /*
 =============
@@ -84,7 +84,7 @@ int PM_SampleMiptex(const msurface_t* surf, const vec3_t point)
 
 		// TODO: this won't work under dedicated
 		// should we bring up imagelib and keep original buffers?
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Host_IsDedicated() )
 	{
 		const byte* data;
@@ -107,7 +107,7 @@ int PM_SampleMiptex(const msurface_t* surf, const vec3_t point)
 			return CONTENTS_EMPTY;
 		return CONTENTS_SOLID;
 	}
-#endif  // !XASH_DEDICATED
+#endif  // !XASH_DEDICATED()
 
 	return contents;
 }

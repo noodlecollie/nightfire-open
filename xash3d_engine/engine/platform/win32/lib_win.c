@@ -17,7 +17,7 @@ GNU General Public License for more details.
 
 #if XASH_LIB == LIB_WIN32
 #include "lib_win.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static DWORD GetOffsetByRVA(DWORD rva, PIMAGE_NT_HEADERS nt_header)
 {
@@ -482,7 +482,7 @@ void* COM_LoadLibrary(const char* dllname, int build_ordinals_table, qboolean di
 		return NULL;
 	}
 
-#if XASH_X86
+#if XASH_X86()
 	if ( hInst->custom_loader )
 	{
 		hInst->hInstance = MemoryLoadLibrary(hInst->fullPath);
@@ -524,12 +524,17 @@ void* COM_GetProcAddress(void* hInstance, const char* name)
 	dll_user_t* hInst = (dll_user_t*)hInstance;
 
 	if ( !hInst || !hInst->hInstance )
+	{
 		return NULL;
+	}
 
-#if XASH_X86
+#if XASH_X86()
 	if ( hInst->custom_loader )
+	{
 		return (void*)MemoryGetProcAddress(hInst->hInstance, name);
+	}
 #endif
+
 	return (void*)GetProcAddress(hInst->hInstance, name);
 }
 
@@ -549,7 +554,7 @@ void COM_FreeLibrary(void* hInstance)
 	else
 		Con_Reportf("Sys_FreeLibrary: Unloading %s\n", hInst->dllName);
 
-#if XASH_X86
+#if XASH_X86()
 	if ( hInst->custom_loader )
 	{
 		MemoryFreeLibrary(hInst->hInstance);

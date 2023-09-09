@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include <stdarg.h>  // va_args
 #include <errno.h>  // errno
 #include <string.h>  // strerror
-#if !XASH_WIN32
+#if !XASH_WIN32()
 #include <unistd.h>  // fork
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,15 +40,16 @@ GNU General Public License for more details.
 #include "render_api.h"  // decallist_t
 #include "tests.h"
 #include "PlatformLib/System.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
+#include "engine_builddefs.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms
 sysinfo_t SI;
 
-#ifdef XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 struct tests_stats_s tests_stats;
-#endif
+#endif  // XASH_ENGINE_TESTS()
 
 CVAR_DEFINE(host_developer, "developer", "0", FCVAR_FILTERABLE, "engine is in development-mode");
 CVAR_DEFINE_AUTO(sys_timescale, "1.0", FCVAR_CHEAT | FCVAR_FILTERABLE, "scale frame time");
@@ -64,11 +65,11 @@ convar_t* host_sleeptime;
 convar_t* con_gamemaps;
 convar_t *build, *ver;
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #define EXECUTABLE_NAME XASH_EXECUTABLE_NAME ".exe"
-#else  // XASH_WIN32
+#else  // XASH_WIN32()
 #define EXECUTABLE_NAME XASH_EXECUTABLE_NAME
-#endif  // !XASH_WIN32
+#endif  // !XASH_WIN32()
 
 void Sys_PrintUsage(void)
 {
@@ -84,21 +85,21 @@ void Sys_PrintUsage(void)
 		"   " EXECUTABLE_NAME
 		" [options] [+command1] [+command2 arg]\n"
 		"Options:\n"
-		"   -dev [level]       set log verbosity 0-2\n"
+		"   -dev [level]       set log verbosity 0-5\n"
 		"   -log               write log to \"engine.log\"\n"
 		"   -nowriteconfig     disable config save\n"
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 		"   -casesensitive     disable case-insensitive FS emulation\n"
-#endif  // !XASH_WIN32
+#endif  // !XASH_WIN32()
 
 		"   -daemonize         run engine in background, dedicated only\n"
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 		"   -runtests          run engine tests\n"
 #endif
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		"   -toconsole         run engine witn console open\n"
 		"   -width <n>         set window width\n"
 		"   -height <n>        set window height\n"
@@ -107,11 +108,11 @@ void Sys_PrintUsage(void)
 		"   -windowed          run engine in windowed mode\n"
 		"   -dedicated         run engine in dedicated server mode\n"
 
-#if XASH_WIN32
+#if XASH_WIN32()
 		"   -noavi             disable AVI support\n"
 		"   -nointro           disable intro video\n"
 		"   -minidumps         enable writing minidumps when game crashed\n"
-#endif  // XASH_WIN32
+#endif  // XASH_WIN32()
 
 #if XASH_VIDEO == VIDEO_FBDEV
 		"   -fbdev <path>      open selected framebuffer\n"
@@ -134,14 +135,14 @@ void Sys_PrintUsage(void)
 		"   -noenginemouse     disable mouse completely\n"
 		"   -ref <name>        use selected renderer dll\n"
 		"   -gldebug           enable OpenGL debug log\n"
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 		"   -noip              disable TCP/IP\n"
 		"   -noch              disable crashhandler\n"
 		"   -disablehelp       disable this message\n"
 		"   -dll <path>        override server DLL path\n"
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		"   -clientlib <path>  override client DLL path\n"
 #endif
 
@@ -208,11 +209,11 @@ qboolean Host_IsQuakeCompatible(void)
 	if ( FBitSet(host.features, ENGINE_QUAKE_COMPATIBLE) )
 		return true;
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	// quake demo playing
 	if ( cls.demoplayback == DEMO_QUAKE1 )
 		return true;
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 	return false;
 }
@@ -234,7 +235,7 @@ void Host_EndGame(qboolean abort, const char* message, ...)
 	Con_Printf("Host_EndGame: %s\n", string);
 
 	SV_Shutdown("\n");
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	CL_Disconnect();
 
 	// recreate world if needs
@@ -267,11 +268,13 @@ Host_CalcSleep
 */
 static int Host_CalcSleep(void)
 {
-#ifndef XASH_DEDICATED
+#if !XASH_DEDICATED()
 	// never sleep in timedemo for benchmarking purposes
 	// also don't sleep with vsync for less lag
 	if ( CL_IsTimeDemo() || CVAR_TO_BOOL(gl_vsync) )
+	{
 		return 0;
+	}
 #endif
 
 	if ( Host_IsDedicated() )
@@ -371,7 +374,7 @@ void Host_Exec_f(void)
 
 	arg = Cmd_Argv(1);
 
-#ifndef XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Cmd_CurrentCommandIsPrivileged() )
 	{
 		const char* unprivilegedWhitelist[] = {
@@ -409,7 +412,7 @@ void Host_Exec_f(void)
 			return;
 		}
 	}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 	if ( !Q_stricmp("game.cfg", arg) )
 	{
@@ -667,7 +670,7 @@ double Host_CalcFPS(void)
 	{
 		fps = sys_ticrate.value;
 	}
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	else if ( CL_IsPlaybackDemo() || CL_IsRecordDemo() )  // NOTE: we should play demos with same fps as it was recorded
 	{
 		fps = CL_GetDemoFramerate();
@@ -923,7 +926,7 @@ void Host_Userconfigd_f(void)
 	Mem_Free(t);
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 static void Host_RunTests(int stage)
 {
 	switch ( stage )
@@ -931,13 +934,13 @@ static void Host_RunTests(int stage)
 		case 0:  // early engine load
 			memset(&tests_stats, 0, sizeof(tests_stats));
 			TEST_LIST_0;
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 			TEST_LIST_0_CLIENT;
-#endif /* XASH_DEDICATED */
+#endif
 			break;
 		case 1:  // after FS load
 			TEST_LIST_1;
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 			TEST_LIST_1_CLIENT;
 #endif
 			Msg("Done! %d passed, %d failed\n", tests_stats.passed, tests_stats.failed);
@@ -1004,7 +1007,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 		}
 	}
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 	if ( Sys_CheckParm("-runtests") )
 	{
 		host.allow_console = true;
@@ -1014,7 +1017,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 
 	host.con_showalways = true;
 
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	host.type = HOST_DEDICATED;  // predict state
 #else
 	if ( Sys_CheckParm("-dedicated") || progname[0] == '#' )
@@ -1088,7 +1091,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 
 	Con_Init();  // early console running to catch all the messages
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 	if ( Sys_CheckParm("-runtests") )
 		Host_RunTests(0);
 #endif
@@ -1122,7 +1125,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 #endif
 	}
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	COM_FixSlashes(host.rootdir);
 #endif
 
@@ -1144,7 +1147,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 			Q_strncpy(host.rodir, roDir, sizeof(host.rodir));
 	}
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	COM_FixSlashes(host.rootdir);
 #endif
 
@@ -1188,7 +1191,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	Image_Init();
 	Sound_Init();
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 	if ( Sys_CheckParm("-runtests") )
 	{
 		Host_RunTests(1);
@@ -1411,7 +1414,7 @@ void EXPORT Host_Shutdown(void)
 	if ( !host.change_game )
 		Q_strncpy(host.finalmsg, "Server shutdown", sizeof(host.finalmsg));
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( host.type == HOST_NORMAL )
 		Host_WriteConfig();
 #endif

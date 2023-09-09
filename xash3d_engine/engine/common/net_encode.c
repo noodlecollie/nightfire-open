@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "client.h"
 #include "server.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define DELTA_PATH "delta.lst"
 
@@ -1724,7 +1724,7 @@ Read the clientdata
 */
 void MSG_ReadClientData(sizebuf_t* msg, clientdata_t* from, clientdata_t* to, double timebase)
 {
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	(void)msg;
 	(void)from;
 	(void)to;
@@ -1995,7 +1995,7 @@ qboolean MSG_ReadDeltaEntity(
 	int delta_type,
 	double timebase)
 {
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	(void)msg;
 	(void)from;
 	(void)to;
@@ -2089,7 +2089,8 @@ qboolean MSG_ReadDeltaEntity(
 	{
 		Delta_ReadField(msg, pField, from, to, timebase);
 	}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
+
 	// message parsed
 	return true;
 }

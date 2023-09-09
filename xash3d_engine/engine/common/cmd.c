@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "server.h"
 #include "base_cmd.h"
+#include "engine_builddefs.h"
 
 #define MAX_CMD_BUFFER 32768
 #define MAX_CMD_LINE 2048
@@ -1129,13 +1130,13 @@ static void Cmd_ExecuteStringWithPrivilegeCheck(const char* text, qboolean isPri
 	// forward the command line to the server, so the entity DLL can parse it
 	if ( host.type == HOST_NORMAL )
 	{
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		if ( cls.state >= ca_connected )
 		{
 			Cmd_ForwardToServer();
 		}
 		else
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 			if ( Cvar_VariableInteger("host_gameloaded") )
 			{
 				Con_Printf(S_WARN "Unknown command \"%s\"\n", Cmd_Argv(0));
@@ -1157,7 +1158,7 @@ things like godmode, noclip, etc, are commands directed to the server,
 so when they are typed in at the console, they will need to be forwarded.
 ===================
 */
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 void Cmd_ForwardToServer(void)
 {
 	char str[MAX_CMD_BUFFER];
@@ -1196,7 +1197,7 @@ void Cmd_ForwardToServer(void)
 
 	MSG_WriteString(&cls.netchan.message, str);
 }
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 /*
 ============
@@ -1441,9 +1442,9 @@ void Cmd_Init(void)
 		"apropos",
 		Cmd_Apropos_f,
 		"lists all console variables/commands/aliases containing the specified string in the name or description");
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	Cmd_AddCommand("cmd", Cmd_ForwardToServer, "send a console commandline to the server");
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 	Cmd_AddRestrictedCommand(
 		"alias",
 		Cmd_Alias_f,
@@ -1458,7 +1459,7 @@ void Cmd_Init(void)
 #endif
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 enum
@@ -1517,4 +1518,4 @@ void Test_RunCmd(void)
 	Cmd_RemoveCommand("test_unprivileged");
 	Cmd_RemoveCommand("test_privileged");
 }
-#endif
+#endif // XASH_ENGINE_TESTS()

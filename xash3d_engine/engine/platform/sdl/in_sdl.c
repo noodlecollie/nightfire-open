@@ -12,7 +12,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#if !XASH_DEDICATED
+
+#include "staticbuildchecks.h"
+
+#if !XASH_IS_SDL_CLIENT()
+#error This file is only for client builds that use SDL!
+#endif
+
 #include <SDL.h>
 
 #include "common.h"
@@ -409,5 +415,3 @@ key_modifier_t Platform_GetKeyModifiers(void)
 	return KeyModifier_None;
 #endif
 }
-
-#endif  // XASH_DEDICATED

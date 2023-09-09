@@ -7,7 +7,7 @@
 #include "client/cl_bytenormals.h"
 #include "common/mod_local.h"
 #include "PlatformDefs/libnames.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 struct ref_state_s ref;
 ref_globals_t refState;

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include <fcntl.h>
-#if !XASH_WIN32
+#if !XASH_WIN32()
 #include <dirent.h>
 #endif
 
@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
 #include "CRCLib/crclib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static char id_md5[33];
 static char id_customid[MAX_STRING];
@@ -170,7 +170,7 @@ static void ID_VerifyHEX_f(void)
 		Msg("Bad\n");
 }
 
-#if XASH_LINUX
+#if XASH_LINUX()
 static qboolean ID_ProcessCPUInfo(bloomfilter_t* value)
 {
 	int cpuinfofd = PlatformLib_Open("/proc/cpuinfo", O_RDONLY);
@@ -328,7 +328,7 @@ static qboolean ID_ProcessFile(bloomfilter_t* value, const char* path)
 	return true;
 }
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 static int ID_ProcessFiles(bloomfilter_t* value, const char* prefix, const char* postfix)
 {
 	DIR* dir;
@@ -508,12 +508,12 @@ static bloomfilter_t ID_GenerateRawId(void)
 	bloomfilter_t value = 0;
 	int count = 0;
 
-#if XASH_LINUX
+#if XASH_LINUX()
 	count += ID_ProcessCPUInfo(&value);
 	count += ID_ProcessFiles(&value, "/sys/block", "device/cid");
 	count += ID_ProcessNetDevices(&value);
 #endif
-#if XASH_WIN32
+#if XASH_WIN32()
 	count += ID_ProcessWMIC(&value, "wmic path win32_physicalmedia get SerialNumber ");
 	count += ID_ProcessWMIC(&value, "wmic bios get serialnumber ");
 #endif
@@ -527,14 +527,14 @@ static uint ID_CheckRawId(bloomfilter_t filter)
 
 	(void)value;
 
-#if XASH_LINUX
+#if XASH_LINUX()
 	count += ID_CheckNetDevices(filter);
 	count += ID_CheckFiles(filter, "/sys/block", "device/cid");
 	if ( ID_ProcessCPUInfo(&value) )
 		count += (filter & value) == value;
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	count += ID_CheckWMIC(filter, "wmic path win32_physicalmedia get SerialNumber");
 	count += ID_CheckWMIC(filter, "wmic bios get serialnumber");
 #endif
@@ -603,11 +603,11 @@ void ID_Init(void)
 
 	Cmd_AddRestrictedCommand("bloomfilter", ID_BloomFilter_f, "print bloomfilter raw value of arguments set");
 	Cmd_AddRestrictedCommand("verifyhex", ID_VerifyHEX_f, "check if id source seems to be fake");
-#if XASH_LINUX
+#if XASH_LINUX()
 	Cmd_AddRestrictedCommand("testcpuinfo", ID_TestCPUInfo_f, "try read cpu serial");
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	{
 		CHAR szBuf[MAX_PATH];
 		ID_GetKeyData(HKEY_CURRENT_USER, "Software\\Xash3D\\", "xash_id", (LPBYTE)szBuf, MAX_PATH);
@@ -668,7 +668,7 @@ void ID_Init(void)
 		Q_snprintf(&id_md5[i * 2], 3, "%02hhx", md5.data[i]);
 	}
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	{
 		CHAR Buf[MAX_PATH];
 		PlatformLib_SNPrintF(Buf, sizeof(Buf), "%016llX", id ^ SYSTEM_XOR_MASK);

@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "library.h"
 #include "ref_common.h"
 #include "mod_local.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 typedef int (*STUDIOAPI)(
 	int,
@@ -1435,7 +1435,7 @@ void Mod_LoadStudioModel(model_t* mod, const void* buffer, qboolean* loaded)
 			}
 			else
 			{
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 				ref.dllFuncs.Mod_StudioLoadTextures(mod, thdr);
 #endif
 
@@ -1464,7 +1464,7 @@ void Mod_LoadStudioModel(model_t* mod, const void* buffer, qboolean* loaded)
 			loadmodel->cache.data = Mem_Calloc(loadmodel->mempool, phdr->length);
 			memcpy(loadmodel->cache.data, buffer, phdr->length);
 			phdr = (studiohdr_t*)loadmodel->cache.data;  // get the new pointer on studiohdr
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 			ref.dllFuncs.Mod_StudioLoadTextures(mod, phdr);
 #endif
 

@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "PlatformLib/System.h"
 #include "PlatformDefs/libnames.h"
 
-#if XASH_POSIX
+#if XASH_POSIX()
 #include <dlfcn.h>
 
 #define XASHLIB "libxash." OS_LIB_EXT
@@ -33,7 +33,7 @@ GNU General Public License for more details.
 
 typedef void* HINSTANCE;
 
-#elif XASH_WIN32
+#elif XASH_WIN32()
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <shellapi.h>  // CommandLineToArgvW
@@ -53,10 +53,7 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 #error  // port me!
 #endif
 
-#define E_GAME "AFTERBURNER_GAME"  // default env dir to start from
-#ifndef XASH_GAMEDIR
-#define XASH_GAMEDIR "valve"
-#endif
+#define E_GAME "NFOPEN_GAMEDIR"  // default env dir to start from
 
 typedef void (*pfnChangeGame)(const char* progname);
 typedef int (*pfnInit)(int argc, char** argv, const char* progname, int bChangeGame, pfnChangeGame func);
@@ -107,7 +104,7 @@ static const char* GetStringLastError()
 
 static void Sys_LoadEngine(void)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	HMODULE hSdl;
 
 	if ( (hSdl = LoadLibraryEx(SDL2LIB, NULL, LOAD_LIBRARY_AS_DATAFILE)) == NULL )
@@ -170,7 +167,9 @@ static inline int Sys_Start(void)
 	const char* game = PlatformLib_GetEnv(E_GAME);
 
 	if ( !game )
-		game = XASH_GAMEDIR;
+	{
+		game = "nfopen";
+	}
 
 	PlatformLib_StrCpy(szGameDir, sizeof(szGameDir), game);
 
@@ -186,7 +185,7 @@ static inline int Sys_Start(void)
 	return ret;
 }
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 int main(int argc, char** argv)
 {
 	szArgc = argc;

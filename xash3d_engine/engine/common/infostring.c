@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define MAX_KV_SIZE 128
 
@@ -141,7 +141,7 @@ qboolean Info_IsValid(const char* s)
 	return true;
 }
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 /*
 ==============
 Info_WriteVars
@@ -193,7 +193,7 @@ void Info_WriteVars(file_t* f)
 		s++;
 	}
 }
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 /*
 ===============

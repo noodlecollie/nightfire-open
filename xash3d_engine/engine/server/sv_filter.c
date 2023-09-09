@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "server.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 /*
 =============================================================================
@@ -611,7 +611,7 @@ void SV_ShutdownFilter(void)
 	SV_ShutdownIDFilter();
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 
 #include "tests.h"
 
@@ -737,4 +737,4 @@ void Test_RunIPFilter(void)
 	Test_IPFilterIncludesIPFilter();
 }
 
-#endif  // XASH_ENGINE_TESTS
+#endif  // XASH_ENGINE_TESTS()

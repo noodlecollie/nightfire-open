@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include <math.h>
 #include "imagelib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 // global image variables
 imglib_t image;
@@ -541,7 +541,7 @@ rgbdata_t* FS_CopyImage(rgbdata_t* in)
 	return out;
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 static void GeneratePixel(byte* pix, uint i, uint j, uint w, uint h, qboolean genAlpha)
@@ -637,4 +637,4 @@ IMPLEMENT_IMAGELIB_FUZZ_TARGET(Fuzz_Image_LoadPNG, Image_LoadPNG)
 IMPLEMENT_IMAGELIB_FUZZ_TARGET(Fuzz_Image_LoadDDS, Image_LoadDDS)
 IMPLEMENT_IMAGELIB_FUZZ_TARGET(Fuzz_Image_LoadTGA, Image_LoadTGA)
 
-#endif /* XASH_ENGINE_TESTS */
+#endif  // XASH_ENGINE_TESTS()

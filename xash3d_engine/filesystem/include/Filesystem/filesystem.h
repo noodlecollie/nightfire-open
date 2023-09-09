@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/engine_limits.h"
+#include "Filesystem/libexport.h"
 #include "xash3d_types.h"
 
 #ifdef __cplusplus
@@ -37,11 +38,11 @@ extern "C"
 typedef struct file_s file_t;  // normal file
 typedef off_t fs_offset_t;
 
-#if XASH_WIN32
+#if XASH_WIN32()
 typedef int fs_size_t;  // return type of _read, _write funcs
-#else /* !XASH_WIN32 */
+#else /* !XASH_WIN32() */
 typedef ssize_t fs_size_t;
-#endif /* !XASH_WIN32 */
+#endif /* !XASH_WIN32() */
 
 // search path flags
 enum
@@ -223,8 +224,7 @@ typedef struct fs_interface_t
 	void (*_Mem_Free)(void* data, const char* filename, int fileline);
 } fs_interface_t;
 
-typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* ifc);
-#define GET_FS_API "GetFSAPI"
+FILESYSTEM_STDIO_PUBLIC(int) GetFSAPI(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* engfuncs);
 
 #ifdef __cplusplus
 }

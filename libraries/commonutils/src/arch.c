@@ -110,7 +110,7 @@ Shortcut for Q_buildos_
 */
 const char* Q_buildos(void)
 {
-	return Q_PlatformStringByID(XASH_PLATFORM);
+	return Q_PlatformStringByID(XASH_PLATFORM());
 }
 
 /*
@@ -188,10 +188,10 @@ Returns current name of the architecture. Without any spaces.
 const char* Q_buildarch(void)
 {
 	return Q_ArchitectureStringByID(
-		XASH_ARCHITECTURE,
-		XASH_ARCHITECTURE_ABI,
-		XASH_ENDIANNESS,
-#if XASH_64BIT
+		XASH_ARCHITECTURE(),
+		XASH_ARCHITECTURE_ABI(),
+		XASH_ENDIANNESS(),
+#if XASH_64BIT()
 		true
 #else
 		false

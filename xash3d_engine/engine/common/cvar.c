@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "base_cmd.h"
 #include "eiface.h"  // ARRAYSIZE
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 convar_t* cvar_vars = NULL;  // head of list
 convar_t* cmd_scripting;
@@ -156,11 +156,13 @@ static qboolean Cvar_UpdateInfo(convar_t* var, const char* value, qboolean notif
 			Info_SetValueForKey(SV_Serverinfo(), var->name, value, MAX_SERVERINFO_STRING),
 				SV_BroadcastCommand("fullserverinfo \"%s\"\n", SV_Serverinfo());
 		}
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		else
 		{
 			if ( !Info_SetValueForKey(CL_Userinfo(), var->name, value, MAX_INFO_STRING) )
+			{
 				return false;  // failed to change value
+			}
 
 			// time to update server copy of userinfo
 			CL_ServerCommand(true, "setinfo \"%s\" \"%s\"\n", var->name, value);
@@ -1286,7 +1288,7 @@ void Cvar_PostFSInit(void)
 	}
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 void Test_RunCvar(void)
@@ -1331,4 +1333,4 @@ void Test_RunCvar(void)
 	TASSERT(hud_filtered->value == 0.0f);
 	TASSERT(filtered2->value == 0.0f);
 }
-#endif
+#endif  // XASH_ENGINE_TESTS()

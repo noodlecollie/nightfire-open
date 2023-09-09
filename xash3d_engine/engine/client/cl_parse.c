@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "hltv.h"
 #include "input.h"
 #include "CRCLib/crclib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 int CL_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 

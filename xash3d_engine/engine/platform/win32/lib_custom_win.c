@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 #include "common.h"
 
-#if XASH_LIB == LIB_WIN32 && XASH_X86
+#if XASH_LIB == LIB_WIN32 && XASH_X86()
 #include "lib_win.h"
 
 #define NUMBER_OF_DIRECTORY_ENTRIES 16
@@ -495,4 +495,4 @@ library_error:
 	return NULL;
 }
 
-#endif  // XASH_LIB == LIB_WIN32 && XASH_X86
+#endif  // XASH_LIB == LIB_WIN32 && XASH_X86()

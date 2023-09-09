@@ -7,7 +7,7 @@
 
 #pragma once
 
-// Defined if this target is a shared library
+// Only defined if this target is a shared library
 @sharedLibDefLine@
 
 ////////////////////////////////////////////
@@ -76,5 +76,3 @@
 // Now combine all of these switches into a macro that exposes a function in the library's public API:
 #define @uppercaseTargetName@_PUBLIC(returnType) @uppercaseTargetName@_EXTERNC \
 	@uppercaseTargetName@_EXPORT returnType @uppercaseTargetName@_CDECL
-
-#endif  // @uppercaseTargetName@_EXPORT_H

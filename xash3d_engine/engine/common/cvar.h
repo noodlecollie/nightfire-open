@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "cvardef.h"
 
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 #define CVAR_SENTINEL 0xDEADBEEFDEADBEEF
 #else
 #define CVAR_SENTINEL 0xDEADBEEF

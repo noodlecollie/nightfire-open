@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <direct.h>
 #include <io.h>
 #else
@@ -58,7 +58,7 @@ searchpath_t* fs_writepath;
 
 static char fs_basedir[MAX_SYSPATH];  // base game directory
 static char fs_gamedir[MAX_SYSPATH];  // game current directory
-#if !XASH_WIN32
+#if !XASH_WIN32()
 static qboolean fs_caseinsensitive = true;  // try to search missing files
 #endif
 
@@ -191,7 +191,7 @@ void stringlistsort(stringlist_t* list)
 
 void listdirectory(stringlist_t* list, const char* path)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	char pattern[4096];
 	struct _finddata_t n_file;
 	intptr_t hFile;
@@ -200,7 +200,7 @@ void listdirectory(stringlist_t* list, const char* path)
 	struct dirent* entry;
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	Q_snprintf(pattern, sizeof(pattern), "%s/*", path);
 
 	// ask for the directory listing handle
@@ -233,7 +233,7 @@ OTHER PRIVATE FUNCTIONS
 =============================================================================
 */
 
-#if XASH_WIN32
+#if XASH_WIN32()
 /*
 ====================
 FS_PathToWideChar
@@ -1278,7 +1278,7 @@ static qboolean FS_FindLibrary(const char* dllname, qboolean directpath, fs_dlli
 
 		if ( search && search->type != SEARCHPATH_PLAIN )
 		{
-#if XASH_WIN32 && XASH_X86  // a1ba: custom loader is non-portable (I just don't want to touch it)
+#if XASH_WIN32() && XASH_X86()  // a1ba: custom loader is non-portable (I just don't want to touch it)
 			Con_Printf(
 				S_WARN
 				"%s: loading libraries from packs is deprecated "
@@ -1390,7 +1390,7 @@ FS_InitStdio(qboolean caseinsensitive, const char* rootdir, const char* basedir,
 
 	FS_InitMemory();
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 	fs_caseinsensitive = caseinsensitive;
 #endif
 
@@ -1549,7 +1549,7 @@ Internal function used to determine filetime
 */
 int FS_SysFileTime(const char* filename)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	struct _stat buf;
 	if ( _wstat(FS_PathToWideChar(filename), &buf) < 0 )
 	{
@@ -1623,7 +1623,7 @@ file_t* FS_SysOpen(const char* filepath, const char* mode)
 
 	file->handle = PlatformLib_Open(filepath, mod | opt);
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 	if ( file->handle < 0 )
 		FS_BackupFileName(file, filepath, mod | opt);
 #endif
@@ -1700,7 +1700,7 @@ Look for a file in the filesystem only
 */
 qboolean FS_SysFileExists(const char* path)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	struct _stat buf;
 	if ( _wstat(FS_PathToWideChar(path), &buf) < 0 )
 #else
@@ -1721,7 +1721,7 @@ Look for a existing folder
 */
 qboolean FS_SysFolderExists(const char* path)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	struct _stat buf;
 	if ( _wstat(FS_PathToWideChar(path), &buf) < 0 )
 #else
@@ -1742,7 +1742,7 @@ Check if filesystem entry exists at all, don't mind the type
 */
 qboolean FS_SysFileOrFolderExists(const char* path)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	struct _stat buf;
 	return _wstat(FS_PathToWideChar(path), &buf) >= 0;
 #else
@@ -1760,9 +1760,9 @@ Sets current directory, path should be in UTF-8 encoding
 */
 int FS_SetCurrentDirectory(const char* path)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	return SetCurrentDirectoryW(FS_PathToWideChar(path));
-#elif XASH_POSIX
+#elif XASH_POSIX()
 	return !chdir(path);
 #else
 #error Unsupported platform!
@@ -1940,7 +1940,7 @@ int FS_Flush(file_t* file)
 	FS_Purge(file);
 
 	// sync
-#if XASH_POSIX
+#if XASH_POSIX()
 	if ( fsync(file->handle) < 0 )
 		return EOF;
 #else
@@ -2862,10 +2862,12 @@ fs_api_t g_api = {
 	NULL
 };
 
-int EXPORT GetFSAPI(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* engfuncs)
+FILESYSTEM_STDIO_PUBLIC(int) GetFSAPI(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* engfuncs)
 {
 	if ( engfuncs && !FS_InitInterface(version, engfuncs) )
+	{
 		return 0;
+	}
 
 	memcpy(api, &g_api, sizeof(*api));
 	*globals = &FI;

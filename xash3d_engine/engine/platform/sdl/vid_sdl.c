@@ -13,7 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#if !XASH_DEDICATED
+#include "staticbuildchecks.h"
+
+#if !XASH_IS_SDL_CLIENT()
+#error This file is only for client builds that use SDL!
+#endif
+
 #include <SDL.h>
 #include "common.h"
 #include "client.h"
@@ -21,7 +26,7 @@ GNU General Public License for more details.
 #include "input.h"
 #include "vid_common.h"
 #include "platform/sdl/events.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static vidmode_t* vidmodes = NULL;
 static int num_vidmodes = 0;
@@ -611,7 +616,7 @@ void VID_RestoreScreenResolution(void)
 #endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
 }
 
-#if XASH_WIN32  // ICO support only for Win32
+#if XASH_WIN32()  // ICO support only for Win32
 #include "SDL_syswm.h"
 static void WIN_SetWindowIcon(HICON ico)
 {
@@ -642,7 +647,7 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 	char iconpath[MAX_STRING];
 	int xpos, ypos;
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	const char* localIcoPath;
 #endif
 
@@ -729,7 +734,7 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 		VID_RestoreScreenResolution();
 	}
 
-#if XASH_WIN32  // ICO support only for Win32
+#if XASH_WIN32()  // ICO support only for Win32
 	localIcoPath = FS_GetDiskPath(GI->iconpath, true);
 
 	if ( localIcoPath )
@@ -744,7 +749,7 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 			WIN_SetWindowIcon(ico);
 		}
 	}
-#endif  // _WIN32 && !XASH_64BIT
+#endif  // _WIN32
 
 	if ( !iconLoaded )
 	{
@@ -778,7 +783,7 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 		}
 	}
 
-#if XASH_WIN32  // ICO support only for Win32
+#if XASH_WIN32()  // ICO support only for Win32
 	if ( !iconLoaded )
 	{
 		WIN_SetWindowIcon(LoadIcon(host.hInst, MAKEINTRESOURCE(101)));
@@ -1031,7 +1036,7 @@ qboolean R_Init_Video(const int type)
 	refState.desktopBitsPixel = 16;
 #endif
 
-#if SDL_VERSION_ATLEAST(2, 0, 0) && !XASH_WIN32
+#if SDL_VERSION_ATLEAST(2, 0, 0) && !XASH_WIN32()
 	SDL_SetHint("SDL_VIDEO_X11_XRANDR", "1");
 	SDL_SetHint("SDL_VIDEO_X11_XVIDMODE", "1");
 	if ( Sys_CheckParm("-egl") )
@@ -1039,7 +1044,7 @@ qboolean R_Init_Video(const int type)
 #endif
 
 		// must be initialized before creating window
-#if XASH_WIN32
+#if XASH_WIN32()
 	WIN_SetDPIAwareness();
 #endif
 
@@ -1235,5 +1240,3 @@ void R_Free_Video(void)
 	SDL_VideoQuit();
 #endif
 }
-
-#endif  // XASH_DEDICATED

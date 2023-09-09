@@ -16,14 +16,14 @@ GNU General Public License for more details.
 #include "common.h"
 #include "hpak.h"
 #include "CRCLib/crclib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define HPAK_MAX_ENTRIES 0x8000
 #define HPAK_ENTRY_MIN_SIZE (512)
 #define HPAK_ENTRY_MAX_SIZE (128 * 1024)
 #define HPAK_SENTINEL 0xDEADBEEF
 
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 #define HPAK_SENTINEL_PTR ((void*)0xDEADBEEFDEADBEEF)
 #else
 #define HPAK_SENTINEL_PTR ((void*)0xDEADBEEF)

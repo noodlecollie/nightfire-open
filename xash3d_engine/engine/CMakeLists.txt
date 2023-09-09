@@ -54,6 +54,7 @@ set(ENGINE_SOURCES
 	common/soundlib/soundlib.h
 	common/bsp/generic/viscompress.h
 	common/bsp/generic/viscompress.c
+	common/backends.h
 	common/base_cmd.h
 	common/base_cmd.c
 	common/cfgscript.c
@@ -66,7 +67,7 @@ set(ENGINE_SOURCES
 	common/custom.c
 	common/cvar.h
 	common/cvar.c
-	common/dedicated.c
+	$<$<BOOL:${NF_DEDICATED_SERVER}>:common/dedicated.c>
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c
@@ -129,6 +130,31 @@ set(ENGINE_SOURCES
 	server/sv_pmove.c
 	server/sv_save.c
 	server/sv_world.c
+	alias.h
+	anorms.h
+	cdll_exp.h
+	cdll_int.h
+	cursor_type.h
+	custom.h
+	customentity.h
+	edict.h
+	eiface.h
+	engine_builddefs.h
+	fscallback.h
+	key_modifiers.h
+	keydefs.h
+	menu_int.h
+	mobility_int.h
+	physint.h
+	progdefs.h
+	ref_api.h
+	sequence.h
+	shake.h
+	sprite.h
+	staticbuildchecks.h
+	studio.h
+	vgui_api.h
+	warpsin.h
 )
 
 if(CLIENT_SUPPORT)
@@ -146,7 +172,7 @@ if(CLIENT_SUPPORT)
 		client/cl_demo.c
 		client/cl_efrag.c
 		client/cl_efx.c
-		client/cl_events.c
+		$<$<BOOL:${CLIENT_SUPPORT}>:client/cl_events.c>
 		client/cl_font.c
 		client/cl_frame.c
 		client/cl_game.c
@@ -258,12 +284,9 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
 )
 
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
-	$<$<BOOL:${NF_DEDICATED_SERVER}>:XASH_DEDICATED=1>
-	$<$<BOOL:${NF_ENABLE_TESTS}>:XASH_ENGINE_TESTS=1>
-	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
-	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="nfopen">
-	$<$<BOOL:${NF_ENABLE_STDIN_INPUT}>:XASH_USE_SELECT=1>
-	$<$<BOOL:${TARGET_IS_64BIT}>:XASH_64BIT=1>
+	$<$<BOOL:${NF_DEDICATED_SERVER}>:BUILDFLAG_IS_DEDICATED_SERVER>
+	$<$<BOOL:${NF_ENABLE_TESTS}>:BUILDFLAG_BUILD_ENGINE_TESTS=1>
+	$<$<BOOL:${NF_ENABLE_STDIN_INPUT}>:BUILDFLAG_USE_SELECT=1>
 	NIGHTFIRE_OPEN_ENGINE=1
 	XASH_EXECUTABLE_NAME="${GAME_EXECUTABLE}"
 	DBGHELP=$<BOOL:${WIN32}>

@@ -13,8 +13,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifdef SINGLE_BINARY
-
 #include "PlatformDefs/platformid.h"
 #include "common.h"
 #include "PlatformLib/System.h"
@@ -23,7 +21,7 @@ GNU General Public License for more details.
 #include "SDL.h"
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <shellapi.h>
 
 // Enable NVIDIA High Performance Graphics while using Integrated Graphics.
@@ -33,10 +31,7 @@ __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 #endif
 
-#define E_GAME "XASH3D_GAME"  // default env dir to start from
-#ifndef XASH_GAMEDIR
-#define XASH_GAMEDIR "valve"
-#endif
+#define E_GAME "NFOPEN_GAMEDIR"  // default env dir to start from
 
 static char szGameDir[128];  // safe place to keep gamedir
 static int szArgc;
@@ -57,7 +52,9 @@ static inline int Sys_Start(void)
 	const char* game = PlatformLib_GetEnv(E_GAME);
 
 	if ( !game )
-		game = XASH_GAMEDIR;
+	{
+		game = "nfopen";
+	}
 
 	Q_strncpy(szGameDir, game, sizeof(szGameDir));
 
@@ -66,7 +63,7 @@ static inline int Sys_Start(void)
 	return ret;
 }
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 int main(int argc, char** argv)
 {
 	szArgc = argc;
@@ -111,6 +108,4 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int n
 
 	return ret;
 }
-#endif  // XASH_WIN32
-
-#endif
+#endif  // XASH_WIN32()

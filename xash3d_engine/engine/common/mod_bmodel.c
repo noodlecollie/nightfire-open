@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "ref_common.h"
 #include "textureproperties.h"
 #include "PlatformLib/String.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define MIPTEX_CUSTOM_PALETTE_SIZE_BYTES (sizeof(int16_t) + 768)
 
@@ -410,7 +410,7 @@ static mip_t* Mod_GetMipTexForTexture(dbspmodel_t* bmod, int i)
 	return (mip_t*)((byte*)bmod->textures + bmod->textures->dataofs[i]);
 }
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 // Returns index of WAD that texture was found in, or -1 if not found.
 static int Mod_FindTextureInWadList(wadlist_t* list, const char* name, char* dst, size_t size)
 {
@@ -477,7 +477,7 @@ static qboolean Mod_CalcMipTexUsesCustomPalette(dbspmodel_t* bmod, int textureIn
 	remainingBytes = (fs_offset_t)(bmod->texdatasize - (bmod->textures->dataofs[textureIndex] + size));
 	return (size_t)remainingBytes >= MIPTEX_CUSTOM_PALETTE_SIZE_BYTES;
 }
-#endif  // !XASH_DEDICATED
+#endif  // !XASH_DEDICATED()
 
 static qboolean Mod_NameImpliesTextureIsAnimated(texture_t* tex)
 {
@@ -509,14 +509,14 @@ static void Mod_CreateDefaultTexture(texture_t** texture)
 	*texture = tex = Mem_Calloc(loadmodel->mempool, sizeof(*tex));
 	Q_strncpy(tex->name, REF_DEFAULT_TEXTURE, sizeof(tex->name));
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Host_IsDedicated() )
 	{
 		tex->gl_texturenum = R_GetBuiltinTexture(REF_DEFAULT_TEXTURE);
 		tex->width = 16;
 		tex->height = 16;
 	}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 }
 
 /*
@@ -1414,10 +1414,10 @@ static void Mod_CalcSurfaceExtents(msurface_t* surf)
 			info->lightextents[i] = surf->extents[i];
 		}
 
-#if !XASH_DEDICATED && 0  // REFTODO:
+#if !XASH_DEDICATED() && 0  // REFTODO:
 		if ( !FBitSet(tex->flags, TEX_SPECIAL) && (surf->extents[i] > 16384) && (tr.block_size == BLOCK_SIZE_DEFAULT) )
 			Con_Reportf(S_ERROR "Bad surface extents %i\n", surf->extents[i]);
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 	}
 }
 
@@ -2390,7 +2390,7 @@ static qboolean LoadPNGTextureData(const dpngtexturepath_t* in, texture_t** out,
 
 	do
 	{
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		int textureNum = 0;
 
 		if ( !Host_IsDedicated() )
@@ -2403,18 +2403,18 @@ static qboolean LoadPNGTextureData(const dpngtexturepath_t* in, texture_t** out,
 				break;
 			}
 		}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 		*out = Mem_Calloc(loadmodel->mempool, sizeof(texture_t));
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		if ( !Host_IsDedicated() )
 		{
 			(*out)->gl_texturenum = textureNum;
 			(*out)->width = ref.dllFuncs.RefGetParm(PARM_TEX_SRC_WIDTH, textureNum);
 			(*out)->height = ref.dllFuncs.RefGetParm(PARM_TEX_SRC_HEIGHT, textureNum);
 		}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 		Q_strncpy((*out)->name, in->path, sizeof((*out)->name));
 		success = true;
@@ -2512,7 +2512,7 @@ static void LoadPNGTexture(const dpngtexturepath_t* in, texture_t** out)
 
 static void Mod_LoadTextureData(dbspmodel_t* bmod, int textureIndex, qboolean allowWAD)
 {
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	(void)bmod;
 	(void)textureIndex;
 	(void)allowWAD;
@@ -2622,7 +2622,7 @@ static void Mod_LoadTextureData(dbspmodel_t* bmod, int textureIndex, qboolean al
 			}
 		}
 	}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 }
 
 static void Mod_LoadTexture(dbspmodel_t* bmod, int textureIndex, qboolean allowWAD)
@@ -2757,7 +2757,7 @@ static void Mod_LoadTextures(dbspmodel_t* bmod)
 {
 	dmiptexlump_t* lump;
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	// release old sky layers first
 	if ( !Host_IsDedicated() && bmod->isworld )
 	{
@@ -2972,7 +2972,7 @@ static void Mod_LoadSurfaces(dbspmodel_t* bmod)
 			next_lightofs = 99999999;
 		}
 
-#if !XASH_DEDICATED  // TODO: Do we need subdivide on server?
+#if !XASH_DEDICATED()  // TODO: Do we need subdivide on server?
 		if ( FBitSet(out->flags, SURF_DRAWTURB) && !Host_IsDedicated() )
 			ref.dllFuncs.GL_SubdivideSurface(out);  // cut up polygon for warps
 #endif
@@ -3450,11 +3450,11 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 	if ( isworld )
 	{
 		loadmodel = mod;  // restore pointer to world
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		Mod_InitDebugHulls();  // FIXME: build hulls for separate bmodels (shells, medkits etc)
 		world.deluxedata = bmod->deluxedata_out;  // deluxemap data pointer
 		world.shadowdata = bmod->shadowdata_out;  // occlusion data pointer
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 	}
 
 	for ( i = 0; i < (size_t)bmod->wadlist.count; i++ )

@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "sound.h"  // S_GetDynamicSounds
 #include "ref_common.h"  // decals
 #include "PlatformLib/Time.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 /*
 ==============================================================================
@@ -588,10 +588,10 @@ static void AgeSaveList(const char* pName, int count)
 	FS_Delete(newName);
 	FS_Delete(newShot);
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	// unloading the shot footprint
 	GL_FreeImage(newShot);
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 	while ( count > 0 )
 	{
@@ -611,10 +611,10 @@ static void AgeSaveList(const char* pName, int count)
 		Q_snprintf(newName, sizeof(newName), DEFAULT_SAVE_DIRECTORY "%s%02d.sav", pName, count);
 		Q_snprintf(newShot, sizeof(newShot), DEFAULT_SAVE_DIRECTORY "%s%02d.bmp", pName, count);
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		// unloading the oldshot footprint too
 		GL_FreeImage(oldShot);
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 		// scroll the name list down (e.g. rename quick04.sav to quick05.sav)
 		FS_Rename(oldName, newName);
@@ -1219,13 +1219,13 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 	decalList = (decallist_t*)Z_Calloc(sizeof(decallist_t) * MAX_RENDER_DECALS * 2);
 
 	// initialize client header
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Host_IsDedicated() )
 	{
 		header.decalCount = ref.dllFuncs.R_CreateDecalList(decalList);
 	}
 	else
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 	{
 		// we probably running a dedicated server
 		header.decalCount = 0;
@@ -1236,7 +1236,7 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 	{
 		// sounds won't going across transition
 		header.soundCount = S_GetCurrentDynamicSounds(soundInfo, MAX_CHANNELS);
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		// music not reqiured to save position: it's just continue playing on a next level
 		S_StreamGetCurrentState(header.introTrack, header.mainTrack, &header.trackPosition);
 #endif
@@ -2245,10 +2245,10 @@ qboolean SV_SaveGame(const char* pName)
 	else
 		Q_strncpy(savename, pName, sizeof(savename));
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	// unload previous image from memory (it's will be overwritten)
 	GL_FreeImage(va(DEFAULT_SAVE_DIRECTORY "%s.bmp", savename));
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 	SaveBuildComment(comment, sizeof(comment));
 	return SaveGameSlot(savename, comment);

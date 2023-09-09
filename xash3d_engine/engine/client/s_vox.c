@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "const.h"
 #include "sequence.h"
 #include <ctype.h>
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static int cszrawsentences = 0;
 static char* rgpszrawsentence[CVOXFILESENTENCEMAX];
@@ -507,7 +507,7 @@ void VOX_Shutdown(void)
 	cszrawsentences = 0;
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 static void Test_VOX_GetDirectory(void)
@@ -649,4 +649,4 @@ void Test_RunVOX(void)
 	TRUN(Test_VOX_ParseWordParams());
 }
 
-#endif /* XASH_ENGINE_TESTS */
+#endif  // XASH_ENGINE_TESTS()

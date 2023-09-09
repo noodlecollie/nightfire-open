@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "studio.h"
 #include "CommonUtils/xash3d_mathlib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 #include "const.h"
 #include "client.h"
 #include "library.h"
@@ -1267,7 +1267,7 @@ void GAME_EXPORT pfnResetTutorMessageDecayData(void)
 {
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 
 #include "tests.h"
 
@@ -1297,4 +1297,4 @@ void Test_RunCommon(void)
 	file = COM_ParseFileSafe(file, buf, sizeof(buf), 0, &len, NULL);
 	TASSERT(!Q_strcmp(buf, "bark") && len == 4);
 }
-#endif
+#endif  // XASH_ENGINE_TESTS()

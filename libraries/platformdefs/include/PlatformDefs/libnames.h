@@ -2,7 +2,7 @@
 
 #include "PlatformDefs/platformid.h"
 
-#ifdef XASH_WIN32
+#if XASH_WIN32()
 #define OS_LIB_PREFIX ""
 #define OS_LIB_EXT "dll"
 #else

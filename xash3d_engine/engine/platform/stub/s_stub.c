@@ -13,7 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef XASH_DEDICATED
+#include "engine_builddefs.h"
+
+#if !XASH_DEDICATED()
 #include "common.h"
 #if XASH_SOUND == SOUND_NULL
 

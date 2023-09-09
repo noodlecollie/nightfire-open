@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "shake.h"
 #include "hltv.h"
 #include "input.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define STAT_HEALTH 0
 #define STAT_FRAGS 1

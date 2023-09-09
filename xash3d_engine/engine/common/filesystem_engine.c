@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "library.h"
 #include "PlatformDefs/libnames.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 fs_api_t g_fsapi;
 fs_globals_t* FI;
@@ -63,6 +63,8 @@ static void FS_UnloadProgs(void)
 #define FILESYSTEM_STDIO_DLL OS_LIB_PREFIX "filesystem_stdio." OS_LIB_EXT
 #endif
 
+typedef int (*FSAPI)(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* ifc);
+
 qboolean FS_LoadProgs(void)
 {
 	const char* name = FILESYSTEM_STDIO_DLL;
@@ -76,7 +78,7 @@ qboolean FS_LoadProgs(void)
 		return false;
 	}
 
-	GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, GET_FS_API);
+	GetFSAPI = (FSAPI)COM_GetProcAddress(fs_hInstance, "GetFSAPI");
 
 	if ( !GetFSAPI )
 	{
@@ -111,7 +113,7 @@ void FS_Init(void)
 	Cmd_AddRestrictedCommand("fs_path", FS_Path_f_, "show filesystem search paths");
 	Cmd_AddRestrictedCommand("fs_clearpaths", FS_ClearPaths_f, "clear filesystem search paths");
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 	if ( Sys_CheckParm("-casesensitive") )
 		caseinsensitive = false;
 #endif

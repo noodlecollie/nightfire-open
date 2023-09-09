@@ -1,7 +1,8 @@
-#ifndef TESTS_H
-#define TESTS_H
+#pragma once
 
-#if XASH_ENGINE_TESTS
+#include "engine_builddefs.h"
+
+#if XASH_ENGINE_TESTS()
 
 struct tests_stats_s
 {
@@ -57,6 +58,4 @@ void Test_RunIPFilter(void);
 
 #define TEST_LIST_1_CLIENT Test_RunVOX();
 
-#endif
-
-#endif /* TESTS_H */
+#endif  // XASH_ENGINE_TESTS()

@@ -6,7 +6,7 @@
 #include "PlatformDefs/typedefs.h"
 #include "CommonUtils/bitdefs.h"
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <wchar.h>  // off_t
 #endif  // _WIN32
 
@@ -16,7 +16,7 @@
 
 typedef int sound_t;
 
-#if XASH_64BIT
+#if XASH_64BIT()
 typedef uint32_t poolhandle_t;
 #else
 typedef void* poolhandle_t;

@@ -63,11 +63,11 @@ void Platform_Init(void)
 	SDL_StopTextInput();
 #endif  // XASH_SDL == 2
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	Wcon_CreateConsole();  // system console used by dedicated server or show fatal errors
-#elif XASH_POSIX
+#elif XASH_POSIX()
 	Posix_Daemonize();
-#endif  // XASH_POSIX
+#endif  // XASH_POSIX()
 
 	SDLash_InitCursors();
 }
@@ -76,7 +76,7 @@ void Platform_Shutdown(void)
 {
 	SDLash_FreeCursors();
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	Wcon_DestroyConsole();
 #endif
 }

@@ -29,68 +29,80 @@ For more information, please refer to <http://unlicense.org/>
 
 #pragma once
 
-/*
-All XASH_* macros set by this header are guaranteed to have positive value
-otherwise not defined.
+// Xash had its own conventions for these preprocessor macros,
+// but I didn't like them. Treating the macros as function invocations
+// means that compilation fails if the header is not included, instead
+// of #if or #ifdef silently failing.
 
-Every macro is intended to be the unified interface for buildsystems that lack
-platform & CPU detection, and a neat quick way for checks in platform code
-For Q_build* macros, refer to buildenums.h
+#define XASH_WIN32() 0
+#define XASH_POSIX() 0
+#define XASH_LINUX() 0
+#define XASH_LINUX_UNKNOWN() 0
 
-Any new define must be undefined at first
-You can generate #undef list below with this oneliner:
-  $ sed 's/\t//g' build.h | grep '^#define XASH' | awk '{ print $2 }' | \
-		sort | uniq | awk '{ print "#undef " $1 }'
+#define XASH_LITTLE_ENDIAN() 0
+#define XASH_BIG_ENDIAN() 0
 
-Then you can use another oneliner to query all variables:
-  $ grep '^#undef XASH' build.h | awk '{ print $2 }'
-*/
+#define XASH_64BIT() 0
+#define XASH_AMD64() 0
+#define XASH_X86() 0
 
-#undef XASH_64BIT
-#undef XASH_AMD64
-#undef XASH_ARM
-#undef XASH_ARM_HARDFP
-#undef XASH_ARM_SOFTFP
-#undef XASH_ARMv4
-#undef XASH_ARMv5
-#undef XASH_ARMv6
-#undef XASH_ARMv7
-#undef XASH_ARMv8
-#undef XASH_BIG_ENDIAN
-#undef XASH_E2K
-#undef XASH_LINUX
-#undef XASH_LINUX_UNKNOWN
-#undef XASH_LITTLE_ENDIAN
-#undef XASH_MIPS
-#undef XASH_POSIX
-#undef XASH_RISCV
-#undef XASH_RISCV_DOUBLEFP
-#undef XASH_RISCV_SINGLEFP
-#undef XASH_RISCV_SOFTFP
-#undef XASH_WIN32
-#undef XASH_X86
+#define XASH_ARM() 0
+#define XASH_ARMv4() 0
+#define XASH_ARMv5() 0
+#define XASH_ARMv6() 0
+#define XASH_ARMv7() 0
+#define XASH_ARMv8() 0
+#define XASH_ARM_HARDFP() 0
+#define XASH_ARM_SOFTFP() 0
+
+#define XASH_RISCV() 0
+#define XASH_RISCV_SOFTFP() 0
+#define XASH_RISCV_SINGLEFP() 0
+#define XASH_RISCV_DOUBLEFP() 0
+
+#define XASH_MIPS() 0
+#define XASH_E2K() 0
 
 //================================================================
 //
 //           PLATFORM DETECTION CODE
 //
 //================================================================
-#if defined _WIN32
-#define XASH_WIN32 1
-#else  // POSIX compatible
-#define XASH_POSIX 1
-#if defined __linux__
+
+#ifdef _WIN32
+
+// Platform is Windows
+#undef XASH_WIN32
+#define XASH_WIN32() 1
+
+#else  // _WIN32
+
+// Platform is not Windows, so is assumed to be POSIX-compliant.
+#undef XASH_POSIX
+#define XASH_POSIX() 1
+
+// Which platform is it specifically?
+#ifdef __linux__
+
+// Platform is Linux
+#undef XASH_LINUX
+#define XASH_LINUX() 1
+
 #include <features.h>
-// if our system libc has features.h header
-// try to detect it to not confuse other libcs with built with glibc game libraries
-#if !defined __GLIBC__
-#define XASH_LINUX_UNKNOWN 1
-#endif
-#define XASH_LINUX 1
-#else
+
+#ifndef __GLIBC__
+// This is some weird variant of Linux.
+#undef XASH_LINUX_UNKNOWN
+#define XASH_LINUX_UNKNOWN() 1
+#endif  // __GLIBC__
+
+#endif  // __linux__
+#endif  // _WIN32
+
+// This should shake out to either Windows or Linux, as far as we're concerned.
+#if !XASH_WIN32() && !XASH_LINUX()
 #error Unsupported platform!
-#endif
-#endif
+#endif  // !XASH_WIN32() && !XASH_LINUX()
 
 //================================================================
 //
@@ -98,100 +110,145 @@ Then you can use another oneliner to query all variables:
 //
 //================================================================
 
-#if !defined XASH_ENDIANNESS
-#if defined XASH_WIN32 || __LITTLE_ENDIAN__
-//!!! Probably all WinNT installations runs in little endian
-#define XASH_LITTLE_ENDIAN 1
+// Easy, explicit cases:
+#if __LITTLE_ENDIAN__
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
 #elif __BIG_ENDIAN__
-#define XASH_BIG_ENDIAN 1
+#undef XASH_BIG_ENDIAN
+#define XASH_BIG_ENDIAN() 1
 #elif defined __BYTE_ORDER__ && defined __ORDER_BIG_ENDIAN__ && \
 	defined __ORDER_LITTLE_ENDIAN__  // some compilers define this
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define XASH_BIG_ENDIAN 1
+#undef XASH_BIG_ENDIAN
+#define XASH_BIG_ENDIAN() 1
 #elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define XASH_LITTLE_ENDIAN 1
-#endif
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
+#endif  // __BYTE_ORDER__
+#endif  // __LITTLE_ENDIAN__
+
+// Platform-based checks are separate, just to make sure they
+// don't conflict with the above (we sanity check at the end).
+#if XASH_WIN32()
+// We treat all Windows installs as little-endian
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
 #else
 #include <sys/param.h>
 #if __BYTE_ORDER == __BIG_ENDIAN
-#define XASH_BIG_ENDIAN 1
+#undef XASH_BIG_ENDIAN
+#define XASH_BIG_ENDIAN() 1
 #elif __BYTE_ORDER == __LITTLE_ENDIAN
-#define XASH_LITTLE_ENDIAN 1
+#undef XASH_LITTLE_ENDIAN
+#define XASH_LITTLE_ENDIAN() 1
 #endif
-#endif  // !XASH_WIN32
-#endif  // XASH_ENDIANNESS
+#endif  //  XASH_WIN32()
+
+// Sanity:
+#if XASH_BIG_ENDIAN() == XASH_LITTLE_ENDIAN()
+#error Platform must be either big-endian or little-endian!
+#endif
 
 //================================================================
 //
 //           CPU ARCHITECTURE DEFINES
 //
 //================================================================
+
 #if defined __x86_64__ || defined _M_X64
-#define XASH_64BIT 1
-#define XASH_AMD64 1
+#undef XASH_64BIT
+#define XASH_64BIT() 1
+#undef XASH_AMD64
+#define XASH_AMD64() 1
 #elif defined __i386__ || defined _X86_ || defined _M_IX86
-#define XASH_X86 1
+#undef XASH_X86
+#define XASH_X86() 1
 #elif defined __aarch64__ || defined _M_ARM64
-#define XASH_64BIT 1
-#define XASH_ARM 8
+#undef XASH_64BIT
+#define XASH_64BIT() 1
+#undef XASH_ARM
+#define XASH_ARM() 8
 #elif defined __mips__
-#define XASH_MIPS 1
+#undef XASH_MIPS
+#define XASH_MIPS() 1
 #elif defined __e2k__
-#define XASH_64BIT 1
-#define XASH_E2K 1
-#elif defined _M_ARM  // msvc
-#define XASH_ARM 7
-#define XASH_ARM_HARDFP 1
+#undef XASH_64BIT
+#define XASH_64BIT() 1
+#undef XASH_E2K
+#define XASH_E2K() 1
+#elif defined _M_ARM  // MSVC
+#undef XASH_ARM
+#define XASH_ARM() 7
+#undef XASH_ARM_HARDFP
+#define XASH_ARM_HARDFP() 1
 #elif defined __arm__
 #if __ARM_ARCH == 8 || __ARM_ARCH_8__
-#define XASH_ARM 8
+#undef XASH_ARM
+#define XASH_ARM() 8
 #elif __ARM_ARCH == 7 || __ARM_ARCH_7__
-#define XASH_ARM 7
+#undef XASH_ARM
+#define XASH_ARM() 7
 #elif __ARM_ARCH == 6 || __ARM_ARCH_6__ || __ARM_ARCH_6J__
-#define XASH_ARM 6
+#undef XASH_ARM
+#define XASH_ARM() 6
 #elif __ARM_ARCH == 5 || __ARM_ARCH_5__
-#define XASH_ARM 5
+#undef XASH_ARM
+#define XASH_ARM() 5
 #elif __ARM_ARCH == 4 || __ARM_ARCH_4__
-#define XASH_ARM 4
+#undef XASH_ARM
+#define XASH_ARM() 4
 #else
-#error "Unknown ARM"
+#error "Unknown ARM architecture!"
 #endif
 
 #if defined __SOFTFP__ || __ARM_PCS_VFP == 0
-#define XASH_ARM_SOFTFP 1
+#undef XASH_ARM_SOFTFP
+#define XASH_ARM_SOFTFP() 1
 #else  // __SOFTFP__
-#define XASH_ARM_HARDFP 1
+#undef XASH_ARM_HARDFP
+#define XASH_ARM_HARDFP() 1
 #endif  // __SOFTFP__
 #elif defined __riscv
-#define XASH_RISCV 1
+#undef XASH_RISCV
+#define XASH_RISCV() 1
 
 #if __riscv_xlen == 64
-#define XASH_64BIT 1
+#undef XASH_64BIT
+#define XASH_64BIT() 1
 #elif __riscv_xlen != 32
-#error "Unknown RISC-V ABI"
+#error "Unknown RISC-V ABI!"
 #endif
 
 #if defined __riscv_float_abi_soft
-#define XASH_RISCV_SOFTFP 1
+#undef XASH_RISCV_SOFTFP
+#define XASH_RISCV_SOFTFP() 1
 #elif defined __riscv_float_abi_single
-#define XASH_RISCV_SINGLEFP 1
+#undef XASH_RISCV_SINGLEFP
+#define XASH_RISCV_SINGLEFP() 1
 #elif defined __riscv_float_abi_double
-#define XASH_RISCV_DOUBLEFP 1
+#undef XASH_RISCV_DOUBLEFP
+#define XASH_RISCV_DOUBLEFP() 1
 #else
-#error "Unknown RISC-V float ABI"
+#error "Unknown RISC-V float ABI!"
 #endif
 #else
-#error "Place your architecture name here! If this is a mistake, try to fix conditions above and report a bug"
+#error "Unknown CPU architecture!"
 #endif
 
-#if XASH_ARM == 8
-#define XASH_ARMv8 1
-#elif XASH_ARM == 7
-#define XASH_ARMv7 1
-#elif XASH_ARM == 6
-#define XASH_ARMv6 1
-#elif XASH_ARM == 5
-#define XASH_ARMv5 1
-#elif XASH_ARM == 4
-#define XASH_ARMv4 1
+#if XASH_ARM() == 8
+#undef XASH_ARMv8
+#define XASH_ARMv8() 1
+#elif XASH_ARM() == 7
+#undef XASH_ARMv7
+#define XASH_ARMv7() 1
+#elif XASH_ARM() == 6
+#undef XASH_ARMv6
+#define XASH_ARMv6() 1
+#elif XASH_ARM() == 5
+#undef XASH_ARMv5
+#define XASH_ARMv5() 1
+#elif XASH_ARM() == 4
+#undef XASH_ARMv4
+#define XASH_ARMv4() 1
 #endif

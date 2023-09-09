@@ -71,7 +71,7 @@ static inline const char* MSG_GetName(sizebuf_t* sb)
 }
 qboolean MSG_CheckOverflow(sizebuf_t* sb);
 
-#if XASH_BIG_ENDIAN
+#if XASH_BIG_ENDIAN()
 #define MSG_BigShort(x) (x)
 #else
 static inline uint16_t MSG_BigShort(const uint16_t x)

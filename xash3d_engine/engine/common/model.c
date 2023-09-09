@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "server.h"
 #include "CRCLib/crclib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static model_info_t mod_crcinfo[MAX_MODELS];
 static model_t mod_known[MAX_MODELS];
@@ -88,7 +88,7 @@ static void Mod_FreeUserData(model_t* mod)
 			svgame.physFuncs.Mod_ProcessUserData(mod, false, NULL);
 		}
 	}
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	else
 	{
 		ref.dllFuncs.Mod_ProcessRenderData(mod, false, NULL);
@@ -158,11 +158,15 @@ void Mod_FreeAll(void)
 {
 	int i;
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	Mod_ReleaseHullPolygons();
 #endif
+
 	for ( i = 0; i < mod_numknown; i++ )
+	{
 		Mod_FreeModel(&mod_known[i]);
+	}
+
 	mod_numknown = 0;
 }
 
@@ -341,7 +345,7 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 				svgame.physFuncs.Mod_ProcessUserData(mod, true, buf);
 			}
 		}
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		else
 		{
 			loaded = ref.dllFuncs.Mod_ProcessRenderData(mod, true, buf);
@@ -420,10 +424,12 @@ static void Mod_PurgeStudioCache(void)
 
 	// refresh hull data
 	SetBits(r_showhull->flags, FCVAR_CHANGED);
-#if !XASH_DEDICATED
+
+#if !XASH_DEDICATED()
 	Mod_ReleaseHullPolygons();
 #endif
-	// release previois map
+
+	// release previous map
 	Mod_FreeModel(mod_known);  // world is stuck on slot #0 always
 
 	// we should release all the world submodels

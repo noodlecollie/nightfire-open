@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "Filesystem/filesystem.h"
 #include "client.h"
 #include "qfont.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 qboolean CL_FixedFont(cl_font_t* font)
 {

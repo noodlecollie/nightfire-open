@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include <ctype.h>
 #include "CommonUtils/arch.h"
 #include "PlatformDefs/libnames.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static char s_szLastError[1024] = "";
 
@@ -52,7 +52,7 @@ void* COM_FunctionFromName_SR(void* hInstance, const char* pName)
 		return (byte*)svgame.dllFuncs.pfnGameInit + Q_atoi(pName + 4);
 #endif
 
-#if XASH_POSIX
+#if XASH_POSIX()
 	char** funcs = NULL;
 	size_t numfuncs, i;
 	void* f = NULL;
@@ -137,9 +137,9 @@ dll_user_t* FS_FindLibrary(const char* dllname, qboolean directpath)
 
 static void COM_GenerateCommonLibraryName(const char* name, const char* ext, char* out, size_t size)
 {
-#if ( XASH_WIN32 || XASH_LINUX ) && XASH_X86
+#if ( XASH_WIN32() || XASH_LINUX() ) && XASH_X86()
 	Q_snprintf(out, size, "%s.%s", name, ext);
-#elif (XASH_WIN32 || XASH_LINUX)
+#elif (XASH_WIN32() || XASH_LINUX())
 	Q_snprintf(out, size, "%s_%s.%s", name, Q_buildarch(), ext);
 #else
 	Q_snprintf(out, size, "%s_%s_%s.%s", name, Q_buildos(), Q_buildarch(), ext);
@@ -194,11 +194,11 @@ static void COM_GenerateServerLibraryPath(char* out, size_t size)
 {
 #ifdef XASH_INTERNAL_GAMELIBS  // assuming library loader knows where to get libraries
 	Q_strncpy(out, "server", size);
-#elif (XASH_WIN32 || XASH_LINUX) && XASH_X86
+#elif (XASH_WIN32() || XASH_LINUX()) && XASH_X86()
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	Q_strncpy(out, GI->game_dll, size);
-#else  // XASH_LINUX
+#else  // XASH_LINUX()
 	Q_strncpy(out, GI->game_dll_linux, size);
 #endif
 
@@ -206,7 +206,7 @@ static void COM_GenerateServerLibraryPath(char* out, size_t size)
 	string dllpath;
 	const char* ext;
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	Q_strncpy(dllpath, GI->game_dll, sizeof(dllpath));
 #else
 	Q_strncpy(dllpath, GI->game_dll_linux, sizeof(dllpath));
@@ -467,7 +467,7 @@ const char* COM_GetPlatformNeutralName(const char* in_name)
 	}
 }
 
-#if XASH_ENGINE_TESTS
+#if XASH_ENGINE_TESTS()
 #include "tests.h"
 
 static void Test_DetectMangleType(void)
@@ -608,4 +608,4 @@ void Test_RunLibCommon(void)
 	TRUN(Test_GetItaniumName());
 	TRUN(Test_ConvertFromValveToLocal());
 }
-#endif /* XASH_ENGINE_TESTS */
+#endif  // XASH_ENGINE_TESTS()

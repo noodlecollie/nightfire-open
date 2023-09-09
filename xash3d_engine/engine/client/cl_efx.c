@@ -8,7 +8,7 @@
 #include "pm_local.h"
 #include "cl_surfaceprop_effects.h"
 #include "client/cl_bytenormals.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define PART_SIZE Q_max(0.5f, cl_draw_particles->value)
 
