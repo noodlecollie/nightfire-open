@@ -99,6 +99,7 @@ set(ENGINE_SOURCES
 	common/net_ws.h
 	common/net_ws.c
 	common/pm_debug.c
+	common/pm_defs.h
 	common/pm_local.h
 	common/pm_surface.c
 	common/pm_trace.c
