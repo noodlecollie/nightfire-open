@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #ifndef FILESYSTEM_INTERNAL_H
 #define FILESYSTEM_INTERNAL_H
 
-#include "xash3d_types.h"
+#include <time.h>
 #include "Filesystem/filesystem.h"
 
 #ifdef __cplusplus
@@ -41,10 +41,10 @@ struct file_s
 	fs_offset_t real_length;  // uncompressed file size (for files opened in "read" mode)
 	fs_offset_t position;  // current position in the file
 	fs_offset_t offset;  // offset into the package (0 if external file)
-	time_t filetime;  // pak, wad or real filetime
-					  // contents buffer
+	time_t filetime;  // pak, wad or real filetime contents buffer
 	fs_offset_t buff_ind, buff_len;  // buffer current index and length
 	byte buff[FILE_BUFF_SIZE];  // intermediate buffer
+
 #ifdef XASH_REDUCE_FD
 	const char* backup_path;
 	fs_offset_t backup_position;

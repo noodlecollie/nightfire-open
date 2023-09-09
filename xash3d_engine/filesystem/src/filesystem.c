@@ -16,11 +16,16 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/platformid.h"
+
+#include <stdio.h>
+#include <stdarg.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <time.h>
+
+#include "PlatformDefs/platformid.h"
+
 #if XASH_WIN32()
 #include <direct.h>
 #include <io.h>
@@ -29,22 +34,22 @@ GNU General Public License for more details.
 #include <errno.h>
 #include <unistd.h>
 #endif
-#include <stdio.h>
-#include <stdarg.h>
-#include "const.h"
-#include "CommonUtils/crtlib.h"
-#include "CRCLib/crclib.h"
-#include "CommonUtils/arch.h"
-#include "CommonUtils/linux_win32_compat.h"
+
 #include "PlatformDefs/libnames.h"
-#include "Filesystem/filesystem.h"
-#include "filesystem_internal.h"
-#include "CommonUtils/xash3d_mathlib.h"
-#include "common/com_strings.h"
-#include "common/protocol.h"
+#include "XashDefs/log_strings.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
+#include "CommonUtils/crtlib.h"
+#include "CommonUtils/arch.h"
+#include "CommonUtils/linux_win32_compat.h"
+#include "CommonUtils/xash3d_mathlib.h"
+#include "CRCLib/crclib.h"
+#include "common/com_strings.h"
+#include "common/protocol.h"
+#include "const.h"
+#include "Filesystem/filesystem.h"
+#include "filesystem_internal.h"
 
 #define FILE_COPY_SIZE (1024 * 1024)
 

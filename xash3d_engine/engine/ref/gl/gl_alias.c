@@ -12,8 +12,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#include "gl_local.h"
+
+#include "XashDefs/log_strings.h"
 #include "CommonUtils/xash3d_mathlib.h"
+#include "gl_local.h"
 #include "const.h"
 #include "r_studioint.h"
 #include "triangleapi.h"

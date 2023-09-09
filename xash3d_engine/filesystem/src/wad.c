@@ -16,20 +16,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/platformid.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <stddef.h>
+
+#include "PlatformDefs/platformid.h"
 
 #if XASH_POSIX()
 #include <unistd.h>
 #endif
 
-#include <errno.h>
-#include <stddef.h>
-#include "filesystem_internal.h"
+#include "XashDefs/log_strings.h"
 #include "CommonUtils/crtlib.h"
 #include "common/com_strings.h"
+#include "filesystem_internal.h"
 #include "wadfile.h"
 
 /*

@@ -13,8 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "gl_local.h"
+#include "XashDefs/log_strings.h"
 #include "CommonUtils/xash3d_mathlib.h"
+#include "gl_local.h"
 
 char r_speeds_msg[MAX_SYSPATH];
 ref_speeds_t r_stats;  // r_speeds counters

@@ -32,6 +32,7 @@ GNU General Public License for more details.
 #include "common/com_strings.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
+#include "XashDefs/log_strings.h"
 
 /*
 ========================================================================

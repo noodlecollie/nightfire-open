@@ -14,24 +14,25 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/platformid.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <limits.h>
+
+#include "PlatformDefs/platformid.h"
 
 #if XASH_POSIX()
 #include <unistd.h>
 #endif
 
-#include <errno.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <limits.h>
-#include "filesystem_internal.h"
 #include "CommonUtils/crtlib.h"
-#include "common/com_strings.h"
 #include "CommonUtils/miniz.h"
 #include "PlatformLib/File.h"
+#include "XashDefs/log_strings.h"
+#include "filesystem_internal.h"
 
 #define ZIP_HEADER_LF (('K' << 8) + ('P') + (0x03 << 16) + (0x04 << 24))
 #define ZIP_HEADER_SPANNED ((0x08 << 24) + (0x07 << 16) + ('K' << 8) + 'P')

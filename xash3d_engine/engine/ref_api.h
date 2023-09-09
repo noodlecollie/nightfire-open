@@ -12,10 +12,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#pragma once
-#ifndef REF_API
-#define REF_API
 
+#pragma once
+
+#include "XashDefs/log_strings.h"
+#include "Filesystem/filesystem.h"
 #include <stdarg.h>
 #include "com_image.h"
 #include "vgui_api.h"
@@ -27,7 +28,6 @@ GNU General Public License for more details.
 #include "studio.h"
 #include "r_efx.h"
 #include "com_image.h"
-#include "Filesystem/filesystem.h"
 
 // RefAPI changelog:
 // 1. Initial release
@@ -669,7 +669,9 @@ typedef int (*REFAPI)(int version, ref_interface_t* pFunctionTable, ref_api_t* e
 #define DECLARE_ENGINE_SHARED_CVAR(x, y) extern cvar_t* x;
 #define RETRIEVE_ENGINE_SHARED_CVAR(x, y) \
 	if ( (x = gEngfuncs.pfnGetCvarPointer(#y, 0)) == 0 ) \
-		gEngfuncs.Host_Error(S_ERROR "engine betrayed us and didn't gave us %s cvar pointer\n", #y);
+	{ \
+		gEngfuncs.Host_Error(S_ERROR "engine betrayed us and didn't gave us %s cvar pointer\n", #y); \
+	}
 #define ENGINE_SHARED_CVAR_NAME(f, x, y) f(x, y)
 #define ENGINE_SHARED_CVAR(f, x) ENGINE_SHARED_CVAR_NAME(f, x, x)
 
@@ -708,5 +710,3 @@ typedef int (*REFAPI)(int version, ref_interface_t* pFunctionTable, ref_api_t* e
 
 #define RETRIEVE_ENGINE_SHARED_CVAR_LIST() ENGINE_SHARED_CVAR_LIST(RETRIEVE_ENGINE_SHARED_CVAR)
 #endif
-
-#endif  // REF_API
