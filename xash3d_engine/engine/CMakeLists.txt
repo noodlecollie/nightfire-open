@@ -101,6 +101,7 @@ set(ENGINE_SOURCES
 	common/pm_debug.c
 	common/pm_defs.h
 	common/pm_local.h
+	common/pm_movevars.h
 	common/pm_surface.c
 	common/pm_trace.c
 	common/protocol.h
