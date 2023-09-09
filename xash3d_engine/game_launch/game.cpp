@@ -53,10 +53,7 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 #error  // port me!
 #endif
 
-#define E_GAME "AFTERBURNER_GAME"  // default env dir to start from
-#ifndef XASH_GAMEDIR
-#define XASH_GAMEDIR "valve"
-#endif
+#define E_GAME "NFOPEN_GAMEDIR"  // default env dir to start from
 
 typedef void (*pfnChangeGame)(const char* progname);
 typedef int (*pfnInit)(int argc, char** argv, const char* progname, int bChangeGame, pfnChangeGame func);
@@ -170,7 +167,9 @@ static inline int Sys_Start(void)
 	const char* game = PlatformLib_GetEnv(E_GAME);
 
 	if ( !game )
-		game = XASH_GAMEDIR;
+	{
+		game = "nfopen";
+	}
 
 	PlatformLib_StrCpy(szGameDir, sizeof(szGameDir), game);
 
