@@ -54,6 +54,7 @@ set(ENGINE_SOURCES
 	common/soundlib/soundlib.h
 	common/bsp/generic/viscompress.h
 	common/bsp/generic/viscompress.c
+	common/backends.h
 	common/base_cmd.h
 	common/base_cmd.c
 	common/cfgscript.c
@@ -67,7 +68,6 @@ set(ENGINE_SOURCES
 	common/cvar.h
 	common/cvar.c
 	common/dedicated.c
-	common/defaults.h
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c

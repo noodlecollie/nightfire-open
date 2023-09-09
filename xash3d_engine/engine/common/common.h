@@ -39,7 +39,7 @@ XASH SPECIFIC			- sort of hack that works only in Xash3D not in GoldSrc
 
 #include "CommonUtils/linux_win32_compat.h"
 
-#include "defaults.h"
+#include "backends.h"
 
 #include <stdio.h>
 #include <stdlib.h>  // rand, adbs
