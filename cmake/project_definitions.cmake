@@ -67,6 +67,7 @@ set(TARGETNAME_LIB_CRCLIB crclib)
 set(TARGETNAME_LIB_CRTLIB crtlib)
 set(TARGETNAME_LIB_MINIZ miniz)
 set(TARGETNAME_LIB_MATHLIB mathlib)
+set(TARGETNAME_LIB_IDENTITY identity)
 
 # Only supported on Linux
 set(TARGETNAME_LIB_SAFESTRING safestring_static)
