@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "MathLib/mathlib.h"
+#include "XashDefs/engine_version.h"
 
 /*
 ===============================================================================
