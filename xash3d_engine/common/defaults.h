@@ -13,10 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef DEFAULTS_H
-#define DEFAULTS_H
+#pragma once
 
-#include "backends.h"
 #include "PlatformDefs/platformid.h"
 
 /*
@@ -26,6 +24,40 @@ SETUP BACKENDS DEFINITIONS
 
 ===================================================================
 */
+
+// video backends (XASH_VIDEO)
+#define VIDEO_NULL 0
+#define VIDEO_SDL 1
+#define VIDEO_FBDEV 2
+
+// audio backends (XASH_SOUND)
+#define SOUND_NULL 0
+#define SOUND_SDL 1
+#define SOUND_OPENSLES 2
+#define SOUND_ALSA 3
+
+// input (XASH_INPUT)
+#define INPUT_NULL 0
+#define INPUT_SDL 1
+#define INPUT_EVDEV 2
+
+// timer (XASH_TIMER)
+#define TIMER_NULL 0  // not used
+#define TIMER_SDL 1
+#define TIMER_POSIX 2
+#define TIMER_WIN32 3
+
+// messageboxes (XASH_MESSAGEBOX)
+#define MSGBOX_STDERR 0
+#define MSGBOX_SDL 1
+#define MSGBOX_WIN32 2
+
+// library loading (XASH_LIB)
+#define LIB_NULL 0
+#define LIB_POSIX 1
+#define LIB_WIN32 2
+#define LIB_STATIC 3
+
 #if !XASH_DEDICATED
 #if XASH_SDL
 // we are building using libSDL
@@ -148,5 +180,3 @@ Default build-depended cvar and constant values
 #ifndef DEFAULT_FULLSCREEN
 #define DEFAULT_FULLSCREEN 1
 #endif  // DEFAULT_FULLSCREEN
-
-#endif  // DEFAULTS_H
