@@ -67,7 +67,7 @@ set(ENGINE_SOURCES
 	common/custom.c
 	common/cvar.h
 	common/cvar.c
-	common/dedicated.c
+	$<$<BOOL:${NF_DEDICATED_SERVER}>:common/dedicated.c>
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c
@@ -139,6 +139,7 @@ set(ENGINE_SOURCES
 	customentity.h
 	edict.h
 	eiface.h
+	engine_builddefs.h
 	fscallback.h
 	key_modifiers.h
 	keydefs.h
@@ -150,6 +151,7 @@ set(ENGINE_SOURCES
 	sequence.h
 	shake.h
 	sprite.h
+	staticbuildchecks.h
 	studio.h
 	vgui_api.h
 	warpsin.h
@@ -170,7 +172,7 @@ if(CLIENT_SUPPORT)
 		client/cl_demo.c
 		client/cl_efrag.c
 		client/cl_efx.c
-		client/cl_events.c
+		$<$<BOOL:${CLIENT_SUPPORT}>:client/cl_events.c>
 		client/cl_font.c
 		client/cl_frame.c
 		client/cl_game.c
@@ -282,7 +284,7 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
 )
 
 target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
-	$<$<BOOL:${NF_DEDICATED_SERVER}>:XASH_DEDICATED=1>
+	$<$<BOOL:${NF_DEDICATED_SERVER}>:BUILDFLAG_IS_DEDICATED_SERVER>
 	$<$<BOOL:${NF_ENABLE_TESTS}>:XASH_ENGINE_TESTS=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:SINGLE_BINARY=1>
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:XASH_GAMEDIR="nfopen">

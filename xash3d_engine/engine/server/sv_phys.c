@@ -22,7 +22,8 @@ GNU General Public License for more details.
 #include "fscallback.h"
 
 typedef int (*PHYSICAPI)(int, server_physics_api_t*, physics_interface_t*);
-#if !XASH_DEDICATED
+
+#if !XASH_DEDICATED()
 extern triangleapi_t gTriApi;
 #endif
 
@@ -2024,12 +2025,12 @@ const char* pfnGetModelName(int modelindex)
 
 static const byte* GL_TextureData(unsigned int texnum)
 {
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	return Host_IsDedicated() ? NULL : ref.dllFuncs.GL_TextureData(texnum);
-#else  // XASH_DEDICATED
+#else  // XASH_DEDICATED()
 	(void)texnum;
 	return NULL;
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 }
 
 static void* Wrapper_SV_ModelHandle(int modelIndex)
@@ -2050,7 +2051,7 @@ static server_physics_api_t gPhysicsAPI = {
 	SV_GetHeadNode,
 	SV_ServerState,
 	Host_Error,
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	&gTriApi,  // ouch!
 	pfnDrawConsoleString,
 	pfnDrawSetTextColor,

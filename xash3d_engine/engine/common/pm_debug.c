@@ -16,7 +16,8 @@ GNU General Public License for more details.
 #include "common.h"
 #include "CommonUtils/xash3d_mathlib.h"
 #include "pm_local.h"
-#if !XASH_DEDICATED
+
+#if !XASH_DEDICATED()
 #include "client.h"  // CL_Particle
 #endif
 
@@ -32,7 +33,7 @@ draw line from particles
 */
 void PM_ParticleLine(const vec3_t start, const vec3_t end, int pcolor, float life, float zvel)
 {
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	(void)start;
 	(void)end;
 	(void)pcolor;
@@ -53,10 +54,10 @@ void PM_ParticleLine(const vec3_t start, const vec3_t end, int pcolor, float lif
 		CL_Particle(pos, pcolor, life, 0, (int)zvel);
 		curdist += 2.0f;
 	}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 }
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 /*
 ================
 PM_DrawRectangle
@@ -70,7 +71,7 @@ static void PM_DrawRectangle(const vec3_t tl, const vec3_t bl, const vec3_t tr, 
 	PM_ParticleLine(br, tr, pcolor, life, 0);
 	PM_ParticleLine(tr, tl, pcolor, life, 0);
 }
-#endif // !XASH_DEDICATED
+#endif // !XASH_DEDICATED()
 
 /*
 ================
@@ -80,7 +81,7 @@ PM_DrawBBox
 */
 void PM_DrawBBox(const vec3_t mins, const vec3_t maxs, const vec3_t origin, int pcolor, float life)
 {
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	(void)mins;
 	(void)maxs;
 	(void)origin;
@@ -105,5 +106,5 @@ void PM_DrawBBox(const vec3_t mins, const vec3_t maxs, const vec3_t origin, int 
 	{
 		PM_DrawRectangle(p[boxpnt[i][1]], p[boxpnt[i][0]], p[boxpnt[i][2]], p[boxpnt[i][3]], pcolor, life);
 	}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 }

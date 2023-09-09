@@ -1372,7 +1372,7 @@ Netchan_UpdateProgress
 */
 void Netchan_UpdateProgress(netchan_t* chan)
 {
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	(void)chan;
 #else
 	fragbuf_t* p;
@@ -1450,7 +1450,7 @@ void Netchan_UpdateProgress(netchan_t* chan)
 	}
 
 	scr_download->value = bestpercent;
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 }
 
 /*

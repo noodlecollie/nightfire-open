@@ -39,6 +39,7 @@ XASH SPECIFIC			- sort of hack that works only in Xash3D not in GoldSrc
 
 #include "CommonUtils/linux_win32_compat.h"
 
+#include "engine_builddefs.h"
 #include "backends.h"
 
 #include <stdio.h>
@@ -60,7 +61,7 @@ XASH SPECIFIC			- sort of hack that works only in Xash3D not in GoldSrc
 #error "Please select timer backend"
 #endif
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 #if XASH_VIDEO == VIDEO_NULL
 #error "Please select video backend"
 #endif
@@ -410,7 +411,7 @@ extern sysinfo_t SI;
 
 static inline int Host_IsDedicated()
 {
-#ifdef XASH_DEDICATED
+#if XASH_DEDICATED()
 	return 1;
 #else
 	return host.type == HOST_DEDICATED;

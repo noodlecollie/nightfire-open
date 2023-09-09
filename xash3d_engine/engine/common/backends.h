@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/platformid.h"
+#include "engine_builddefs.h"
 
 /*
 ===================================================================
@@ -58,7 +59,7 @@ SETUP BACKENDS DEFINITIONS
 #define LIB_WIN32 2
 #define LIB_STATIC 3
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 #if XASH_SDL
 // we are building using libSDL
 #ifndef XASH_VIDEO
@@ -99,7 +100,7 @@ SETUP BACKENDS DEFINITIONS
 #define XASH_USE_EVDEV 1
 #endif
 
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 //
 // select messagebox implementation

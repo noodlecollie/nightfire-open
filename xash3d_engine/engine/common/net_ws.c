@@ -1700,9 +1700,11 @@ static qboolean NET_QueuePacket(netsrc_t sock, netadr_t* from, byte* data, size_
 				// Transfer data
 				memcpy(data, buf, ret);
 				*length = ret;
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 				if ( CL_LegacyMode() )
+				{
 					return NET_LagPacket(true, sock, from, length, data);
+				}
 
 				// check for split message
 				if ( sock == NS_CLIENT && *(int*)data == NET_HEADER_SPLITPACKET )

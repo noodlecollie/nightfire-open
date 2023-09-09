@@ -13,7 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#if !XASH_DEDICATED
+#include "staticbuildchecks.h"
+
+#if !XASH_IS_SDL_CLIENT()
+#error This file is only for client builds that use SDL!
+#endif
+
 #include <SDL.h>
 #include "common.h"
 #include "client.h"
@@ -1235,5 +1240,3 @@ void R_Free_Video(void)
 	SDL_VideoQuit();
 #endif
 }
-
-#endif  // XASH_DEDICATED

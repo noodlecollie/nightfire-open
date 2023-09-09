@@ -707,7 +707,7 @@ void SV_RestartAmbientSounds(void)
 			si->pitch);
 	}
 
-#if !XASH_DEDICATED  // TODO: ???
+#if !XASH_DEDICATED()  // TODO: ???
 	// restart soundtrack
 	if ( S_StreamGetCurrentState(curtrack, looptrack, &position) )
 	{
@@ -732,12 +732,14 @@ void SV_RestartDecals(void)
 	int i;
 
 	if ( !SV_Active() )
+	{
 		return;
+	}
 
 	// g-cont. add space for studiodecals if present
 	host.decalList = (decallist_t*)Z_Calloc(sizeof(decallist_t) * MAX_RENDER_DECALS * 2);
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Host_IsDedicated() )
 	{
 		host.numdecals = ref.dllFuncs.R_CreateDecalList(host.decalList);
@@ -746,7 +748,7 @@ void SV_RestartDecals(void)
 		ref.dllFuncs.R_ClearAllDecals();
 	}
 	else
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 	{
 		// we probably running a dedicated server
 		host.numdecals = 0;

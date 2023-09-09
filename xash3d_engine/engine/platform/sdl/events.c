@@ -12,7 +12,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#if defined(XASH_SDL) && !XASH_DEDICATED
+
+#include "staticbuildchecks.h"
+
+#if !XASH_IS_SDL_CLIENT()
+#error This file is only for client builds that use SDL!
+#endif
+
 #include <SDL.h>
 #include <ctype.h>
 
@@ -788,5 +794,3 @@ void Platform_PreCreateMove(void)
 		SDL_ShowCursor(SDL_TRUE);
 	}
 }
-
-#endif  //  defined( XASH_SDL ) && !XASH_DEDICATED

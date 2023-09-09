@@ -511,10 +511,14 @@ pmtrace_t PM_PlayerTraceExt(
 		{
 			// run custom sweep callback
 			if ( pmove->server || Host_IsLocalClient() )
+			{
 				SV_ClipPMoveToEntity(pe, start, mins, maxs, end, &trace_bbox);
-#if !XASH_DEDICATED
+			}
+#if !XASH_DEDICATED()
 			else
+			{
 				CL_ClipPMoveToEntity(pe, start, mins, maxs, end, &trace_bbox);
+			}
 #endif
 		}
 		else if ( hullcount == 1 )
@@ -703,7 +707,7 @@ int PM_TestPlayerPosition(playermove_t* pmove, vec3_t pos, pmtrace_t* ptrace, pf
 			{
 				SV_ClipPMoveToEntity(pe, pos, mins, maxs, pos, &customTrace);
 			}
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 			else
 			{
 				CL_ClipPMoveToEntity(pe, pos, mins, maxs, pos, &customTrace);

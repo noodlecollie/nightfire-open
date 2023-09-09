@@ -98,7 +98,7 @@ void Sys_PrintUsage(void)
 		"   -runtests          run engine tests\n"
 #endif
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		"   -toconsole         run engine witn console open\n"
 		"   -width <n>         set window width\n"
 		"   -height <n>        set window height\n"
@@ -134,16 +134,16 @@ void Sys_PrintUsage(void)
 		"   -noenginemouse     disable mouse completely\n"
 		"   -ref <name>        use selected renderer dll\n"
 		"   -gldebug           enable OpenGL debug log\n"
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 		"   -noip              disable TCP/IP\n"
 		"   -noch              disable crashhandler\n"
 		"   -disablehelp       disable this message\n"
 		"   -dll <path>        override server DLL path\n"
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		"   -clientlib <path>  override client DLL path\n"
-#endif
+#endif()
 
 		"   -rodir <path>      set read-only base directory, experimental\n"
 		"   -bugcomp           enable precise bug compatibility. Will break games that don't require it\n"
@@ -208,11 +208,11 @@ qboolean Host_IsQuakeCompatible(void)
 	if ( FBitSet(host.features, ENGINE_QUAKE_COMPATIBLE) )
 		return true;
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	// quake demo playing
 	if ( cls.demoplayback == DEMO_QUAKE1 )
 		return true;
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 	return false;
 }
@@ -234,7 +234,7 @@ void Host_EndGame(qboolean abort, const char* message, ...)
 	Con_Printf("Host_EndGame: %s\n", string);
 
 	SV_Shutdown("\n");
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	CL_Disconnect();
 
 	// recreate world if needs
@@ -267,11 +267,13 @@ Host_CalcSleep
 */
 static int Host_CalcSleep(void)
 {
-#ifndef XASH_DEDICATED
+#if !XASH_DEDICATED()
 	// never sleep in timedemo for benchmarking purposes
 	// also don't sleep with vsync for less lag
 	if ( CL_IsTimeDemo() || CVAR_TO_BOOL(gl_vsync) )
+	{
 		return 0;
+	}
 #endif
 
 	if ( Host_IsDedicated() )
@@ -371,7 +373,7 @@ void Host_Exec_f(void)
 
 	arg = Cmd_Argv(1);
 
-#ifndef XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Cmd_CurrentCommandIsPrivileged() )
 	{
 		const char* unprivilegedWhitelist[] = {
@@ -409,7 +411,7 @@ void Host_Exec_f(void)
 			return;
 		}
 	}
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 	if ( !Q_stricmp("game.cfg", arg) )
 	{
@@ -667,7 +669,7 @@ double Host_CalcFPS(void)
 	{
 		fps = sys_ticrate.value;
 	}
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	else if ( CL_IsPlaybackDemo() || CL_IsRecordDemo() )  // NOTE: we should play demos with same fps as it was recorded
 	{
 		fps = CL_GetDemoFramerate();
@@ -931,13 +933,13 @@ static void Host_RunTests(int stage)
 		case 0:  // early engine load
 			memset(&tests_stats, 0, sizeof(tests_stats));
 			TEST_LIST_0;
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 			TEST_LIST_0_CLIENT;
-#endif /* XASH_DEDICATED */
+#endif
 			break;
 		case 1:  // after FS load
 			TEST_LIST_1;
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 			TEST_LIST_1_CLIENT;
 #endif
 			Msg("Done! %d passed, %d failed\n", tests_stats.passed, tests_stats.failed);
@@ -1014,7 +1016,7 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 
 	host.con_showalways = true;
 
-#if XASH_DEDICATED
+#if XASH_DEDICATED()
 	host.type = HOST_DEDICATED;  // predict state
 #else
 	if ( Sys_CheckParm("-dedicated") || progname[0] == '#' )
@@ -1411,7 +1413,7 @@ void EXPORT Host_Shutdown(void)
 	if ( !host.change_game )
 		Q_strncpy(host.finalmsg, "Server shutdown", sizeof(host.finalmsg));
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( host.type == HOST_NORMAL )
 		Host_WriteConfig();
 #endif

@@ -12,7 +12,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#if XASH_DEDICATED
+
+#include "engine_builddefs.h"
+
+#if !XASH_DEDICATED()
+#error This file should only be compiled when building a dedicated server!
+#endif
+
 #include "common.h"
 #include "CommonUtils/xash3d_mathlib.h"
 #include "ref_api.h"
@@ -241,7 +247,3 @@ void CL_HudMessage(const char* pMessage)
 {
 	(void)pMessage;
 }
-#else
-	// Avoid warnings about empty translation units.
-	int Dedicated_Dummy = 0;
-#endif  // XASH_DEDICATED

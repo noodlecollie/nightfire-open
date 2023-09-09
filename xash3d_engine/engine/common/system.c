@@ -77,7 +77,7 @@ void Sys_DebugBreak(void)
 #endif
 }
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 /*
 ================
 Sys_GetClipboardData
@@ -95,7 +95,7 @@ char* Sys_GetClipboardData(void)
 
 	return data;
 }
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 /*
 ================
@@ -430,18 +430,24 @@ void Sys_Error(const char* error, ...)
 	va_list argptr;
 	char text[MAX_PRINT_MSG];
 
+#if !XASH_DEDICATED()
 	// enable cursor before debugger call
-#if !XASH_DEDICATED
 	if ( !Host_IsDedicated() )
+	{
 		Platform_SetCursorType(dc_arrow);
+	}
 #endif
 
 	if ( host.status == HOST_ERR_FATAL )
+	{
 		return;  // don't multiple executes
+	}
 
 	// make sure that console received last message
 	if ( host.change_game )
+	{
 		Sys_Sleep(200);
+	}
 
 	host.status = HOST_ERR_FATAL;
 	va_start(argptr, error);
@@ -496,7 +502,7 @@ print into window console
 */
 void Sys_Print(const char* pMsg)
 {
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	if ( !Host_IsDedicated() )
 	{
 		Con_Print(pMsg);

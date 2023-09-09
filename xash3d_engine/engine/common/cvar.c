@@ -156,11 +156,13 @@ static qboolean Cvar_UpdateInfo(convar_t* var, const char* value, qboolean notif
 			Info_SetValueForKey(SV_Serverinfo(), var->name, value, MAX_SERVERINFO_STRING),
 				SV_BroadcastCommand("fullserverinfo \"%s\"\n", SV_Serverinfo());
 		}
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 		else
 		{
 			if ( !Info_SetValueForKey(CL_Userinfo(), var->name, value, MAX_INFO_STRING) )
+			{
 				return false;  // failed to change value
+			}
 
 			// time to update server copy of userinfo
 			CL_ServerCommand(true, "setinfo \"%s\" \"%s\"\n", var->name, value);

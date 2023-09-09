@@ -538,7 +538,7 @@ qboolean Cmd_GetSoundList(const char* s, char* completedname, int length)
 	return true;
 }
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 /*
 =====================================
 Cmd_GetItemsList
@@ -655,7 +655,7 @@ qboolean Cmd_GetKeysList(const char* s, char* completedname, int length)
 
 	return true;
 }
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 /*
 ===============
@@ -1147,7 +1147,7 @@ autocomplete_list_t cmd_list[] = {
 	},
 	{"movie", 1, Cmd_GetMovieList},
 	{"exec", 1, Cmd_GetConfigList},
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 	{"give", 1, Cmd_GetItemsList},
 	{"drop", 1, Cmd_GetItemsList},
 	{"bind", 1, Cmd_GetKeysList},
@@ -1522,7 +1522,7 @@ void Cmd_WriteOpenGLVariables(file_t* f)
 	Cvar_LookupVars(FCVAR_GLCONFIG, NULL, f, (setpair_t)Cmd_WriteOpenGLCvar);
 }
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 void Host_FinalizeConfig(file_t* f, const char* config)
 {
 	string backup, newcfg;
@@ -1705,7 +1705,7 @@ void Host_WriteVideoConfig(void)
 	else
 		Con_DPrintf(S_ERROR "can't update video.cfg.\n");
 }
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 void Key_EnumCmds_f(void)
 {

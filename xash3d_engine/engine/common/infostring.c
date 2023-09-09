@@ -141,7 +141,7 @@ qboolean Info_IsValid(const char* s)
 	return true;
 }
 
-#if !XASH_DEDICATED
+#if !XASH_DEDICATED()
 /*
 ==============
 Info_WriteVars
@@ -193,7 +193,7 @@ void Info_WriteVars(file_t* f)
 		s++;
 	}
 }
-#endif  // XASH_DEDICATED
+#endif  // XASH_DEDICATED()
 
 /*
 ===============
