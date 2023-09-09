@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #endif
 
 #include "common.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "ref_api.h"
 
 ref_globals_t refState;

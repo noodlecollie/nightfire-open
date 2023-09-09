@@ -19,7 +19,6 @@ GNU General Public License for more details.
 #include <time.h>
 #include "stdio.h"
 #include "CommonUtils/crtlib.h"
-#include "CommonUtils/xash3d_mathlib.h"
 #include "CommonUtils/bitdefs.h"
 #include "PlatformLib/Time.h"
 #include "PlatformLib/String.h"
@@ -636,7 +635,10 @@ char* Q_pretifymem(float value, int digitsafterdecimal)
 		Q_strcpy(suffix, sizeof(suffix), " bytes");
 
 	// clamp to >= 0
-	digitsafterdecimal = Q_max(digitsafterdecimal, 0);
+	if ( digitsafterdecimal < 0 )
+	{
+		digitsafterdecimal = 0;
+	}
 
 	// if it's basically integral, don't do any decimals
 	if ( fabs(value - (int)value) < 0.00001f )

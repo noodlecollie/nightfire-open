@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "imagelib.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "img_tga.h"
 #include "fscallback.h"
 

@@ -1,6 +1,7 @@
 add_library(${TARGETNAME_LIB_MATHLIB} STATIC
 	include/MathLib/mathlib.h
 	src/mathlib.c
+	src/matrixlib.c
 )
 
 target_include_directories(${TARGETNAME_LIB_MATHLIB}

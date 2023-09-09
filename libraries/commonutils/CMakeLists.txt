@@ -5,12 +5,9 @@ add_library(${TARGETNAME_LIB_COMMONUTILS} STATIC
 	include/CommonUtils/bitdefs.h
 	include/CommonUtils/crtlib.h
 	include/CommonUtils/linux_win32_compat.h
-	include/CommonUtils/xash3d_mathlib.h
 	src/arch.c
 	src/buildenums.h
 	src/crtlib.c
-	src/matrixlib.c
-	src/xash3d_mathlib.c
 )
 
 target_include_directories(${TARGETNAME_LIB_COMMONUTILS}

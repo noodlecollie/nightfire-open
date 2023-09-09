@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "XashDefs/log_strings.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "gl_local.h"
 
 char r_speeds_msg[MAX_SYSPATH];

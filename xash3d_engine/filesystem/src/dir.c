@@ -38,7 +38,6 @@ GNU General Public License for more details.
 
 #include "CommonUtils/bitdefs.h"
 #include "CommonUtils/crtlib.h"
-#include "CommonUtils/xash3d_mathlib.h"
 #include "PlatformLib/File.h"
 #include "XashDefs/log_strings.h"
 #include "filesystem_internal.h"
@@ -450,8 +449,8 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 	backslash = Q_strrchr(pattern, '\\');
 	colon = Q_strrchr(pattern, ':');
 
-	separator = Q_max(slash, backslash);
-	separator = Q_max(separator, colon);
+	separator = slash > backslash ? slash : backslash;
+	separator = separator > colon ? separator : colon;
 
 	basepathlength = (int)(separator ? (separator + 1 - pattern) : 0);
 	basepath = Mem_Calloc(fs_mempool, basepathlength + 1);

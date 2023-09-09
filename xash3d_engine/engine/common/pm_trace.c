@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "mod_local.h"
 #include "pm_local.h"
 #include "pm_movevars.h"
