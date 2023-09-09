@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "ref_common.h"  // decals
 #include <limits.h>
 #include "CRCLib/crclib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)
 

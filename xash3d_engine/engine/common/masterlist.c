@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "netchan.h"
 #include "server.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 typedef struct master_s
 {

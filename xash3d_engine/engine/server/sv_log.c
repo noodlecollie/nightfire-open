@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include "PlatformLib/Time.h"
 #include "CommonUtils/arch.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 void Log_Open(void)
 {

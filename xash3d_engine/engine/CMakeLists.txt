@@ -129,6 +129,29 @@ set(ENGINE_SOURCES
 	server/sv_pmove.c
 	server/sv_save.c
 	server/sv_world.c
+	alias.h
+	anorms.h
+	cdll_exp.h
+	cdll_int.h
+	cursor_type.h
+	custom.h
+	customentity.h
+	edict.h
+	eiface.h
+	fscallback.h
+	key_modifiers.h
+	keydefs.h
+	menu_int.h
+	mobility_int.h
+	physint.h
+	progdefs.h
+	ref_api.h
+	sequence.h
+	shake.h
+	sprite.h
+	studio.h
+	vgui_api.h
+	warpsin.h
 )
 
 if(CLIENT_SUPPORT)

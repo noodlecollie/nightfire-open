@@ -11,7 +11,6 @@ generate_shared_export_header(
 add_library(${TARGETNAME_LIB_FILESYSTEM_STDIO} SHARED
 	${GENERATED_HEADER_DIR}/Filesystem/libexport.h
 	include/Filesystem/filesystem.h
-	include/Filesystem/fscallback.h
 	src/dir.c
 	src/filesystem_internal.h
 	src/filesystem.c

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "soundlib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static const byte* iff_data;
 static const byte* iff_dataPtr;

@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "server.h"
 #include "CRCLib/crclib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static model_info_t mod_crcinfo[MAX_MODELS];
 static model_t mod_known[MAX_MODELS];

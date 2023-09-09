@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "custom.h"
 #include "ref_common.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static rgbdata_t* CustomDecal_LoadImage(const char* path, void* raw, int size)
 {

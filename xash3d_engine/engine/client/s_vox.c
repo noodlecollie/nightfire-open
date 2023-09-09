@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "const.h"
 #include "sequence.h"
 #include <ctype.h>
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static int cszrawsentences = 0;
 static char* rgpszrawsentence[CVOXFILESENTENCEMAX];

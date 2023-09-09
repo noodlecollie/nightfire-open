@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "input.h"
 #include "PlatformLib/String.h"
 #include "CommonUtils/arch.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 convar_t* con_notifytime;
 convar_t* scr_conspeed;

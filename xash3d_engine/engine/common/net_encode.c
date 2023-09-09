@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "client.h"
 #include "server.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define DELTA_PATH "delta.lst"
 

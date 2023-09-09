@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "ref_common.h"
 #include "textureproperties.h"
 #include "PlatformLib/String.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 #define MIPTEX_CUSTOM_PALETTE_SIZE_BYTES (sizeof(int16_t) + 768)
 

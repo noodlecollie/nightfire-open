@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "studio.h"
 #include "CommonUtils/xash3d_mathlib.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 #include "const.h"
 #include "client.h"
 #include "library.h"

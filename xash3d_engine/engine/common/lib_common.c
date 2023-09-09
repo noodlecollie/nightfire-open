@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include <ctype.h>
 #include "CommonUtils/arch.h"
 #include "PlatformDefs/libnames.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static char s_szLastError[1024] = "";
 

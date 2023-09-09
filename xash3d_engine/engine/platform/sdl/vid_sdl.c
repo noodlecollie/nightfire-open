@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "input.h"
 #include "vid_common.h"
 #include "platform/sdl/events.h"
-#include "Filesystem/fscallback.h"
+#include "fscallback.h"
 
 static vidmode_t* vidmodes = NULL;
 static int num_vidmodes = 0;
