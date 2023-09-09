@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "Filesystem/filesystem.h"
 #include "server.h"
 #include <ctype.h>
-#include "CommonUtils/arch.h"
+#include "Identity/arch.h"
 #include "PlatformDefs/libnames.h"
 #include "fscallback.h"
 

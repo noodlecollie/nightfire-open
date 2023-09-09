@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 add_library(${TARGETNAME_LIB_CRTLIB} STATIC
 	include/CRTLib/bitdefs.h
 	include/CRTLib/crtlib.h

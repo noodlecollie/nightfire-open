@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 # NFTODO: Make a proper library out of this
 set(SOURCES_GAME_MENU_SHARED
 	../game_menu_shared/botprofiles/botprofileparser.h

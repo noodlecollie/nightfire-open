@@ -28,7 +28,7 @@ GNU General Public License for more details.
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/Time.h"
-#include "CommonUtils/arch.h"
+#include "Identity/arch.h"
 #include "engine_builddefs.h"
 
 #if !XASH_WIN32()

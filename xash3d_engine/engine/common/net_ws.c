@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "PlatformLib/Net.h"
 #include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"
-#include "CommonUtils/arch.h"
+#include "Identity/arch.h"
 #include "common.h"
 #include "client.h"  // ConnectionProgress
 #include "netchan.h"

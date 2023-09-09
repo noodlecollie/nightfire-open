@@ -41,7 +41,7 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
 #include "CRTLib/crtlib.h"
-#include "CommonUtils/arch.h"
+#include "Identity/arch.h"
 #include "CRTLib/bitdefs.h"
 #include "CommonUtils/linux_win32_compat.h"
 #include "CRCLib/crclib.h"

@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 add_library(${TARGETNAME_LIB_MATHLIB} STATIC
 	include/MathLib/mathlib.h
 	src/mathlib.c

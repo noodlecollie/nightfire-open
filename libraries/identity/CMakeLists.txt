@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 add_library(${TARGETNAME_LIB_IDENTITY} STATIC
 	include/Identity/arch.h
 	src/arch.c

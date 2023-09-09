@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 add_library(${TARGETNAME_LIB_MINIUTL} STATIC
 	bitstring.h
 	bitstring.cpp
