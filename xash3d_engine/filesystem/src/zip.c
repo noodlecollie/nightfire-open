@@ -29,7 +29,7 @@ GNU General Public License for more details.
 #endif
 
 #include "CommonUtils/crtlib.h"
-#include "CommonUtils/miniz.h"
+#include "miniz/miniz.h"
 #include "PlatformLib/File.h"
 #include "XashDefs/log_strings.h"
 #include "filesystem_internal.h"
