@@ -1,6 +1,13 @@
 include(compiler_settings)
+include(lib_utils)
+
+set(GENERATED_HEADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated_headers)
+set(EXPORT_HEADER_PATH ${GENERATED_HEADER_DIR}/libexport.h)
+
+generate_shared_export_header(${TARGETNAME_LIB_FILESYSTEM_STDIO} ${EXPORT_HEADER_PATH})
 
 add_library(${TARGETNAME_LIB_FILESYSTEM_STDIO} SHARED
+	${EXPORT_HEADER_PATH}
 	include/Filesystem/filesystem.h
 	include/Filesystem/fscallback.h
 	src/dir.c
@@ -12,8 +19,12 @@ add_library(${TARGETNAME_LIB_FILESYSTEM_STDIO} SHARED
 )
 
 target_include_directories(${TARGETNAME_LIB_FILESYSTEM_STDIO}
-	PUBLIC include
-	PRIVATE src
+	PUBLIC
+	${GENERATED_HEADER_DIR}
+	include
+
+	PRIVATE
+	src
 )
 
 target_link_libraries(${TARGETNAME_LIB_FILESYSTEM_STDIO} PUBLIC
