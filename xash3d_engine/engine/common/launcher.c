@@ -13,8 +13,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifdef SINGLE_BINARY
-
 #include "PlatformDefs/platformid.h"
 #include "common.h"
 #include "PlatformLib/System.h"
@@ -112,5 +110,3 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int n
 	return ret;
 }
 #endif  // XASH_WIN32()
-
-#endif
