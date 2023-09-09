@@ -16,7 +16,7 @@
 
 typedef int sound_t;
 
-#if XASH_64BIT
+#if XASH_64BIT()
 typedef uint32_t poolhandle_t;
 #else
 typedef void* poolhandle_t;

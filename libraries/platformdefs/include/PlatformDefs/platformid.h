@@ -41,6 +41,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #define XASH_LITTLE_ENDIAN() 0
 #define XASH_BIG_ENDIAN() 0
+#define XASH_64BIT() 0
 
 //================================================================
 //
@@ -134,18 +135,22 @@ For more information, please refer to <http://unlicense.org/>
 //           CPU ARCHITECTURE DEFINES
 //
 //================================================================
+
 #if defined __x86_64__ || defined _M_X64
-#define XASH_64BIT 1
+#undef XASH_64BIT
+#define XASH_64BIT() 1
 #define XASH_AMD64 1
 #elif defined __i386__ || defined _X86_ || defined _M_IX86
 #define XASH_X86 1
 #elif defined __aarch64__ || defined _M_ARM64
-#define XASH_64BIT 1
+#undef XASH_64BIT
+#define XASH_64BIT() 1
 #define XASH_ARM 8
 #elif defined __mips__
 #define XASH_MIPS 1
 #elif defined __e2k__
-#define XASH_64BIT 1
+#undef XASH_64BIT
+#define XASH_64BIT() 1
 #define XASH_E2K 1
 #elif defined _M_ARM  // msvc
 #define XASH_ARM 7

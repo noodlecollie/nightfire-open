@@ -191,7 +191,7 @@ const char* Q_buildarch(void)
 		XASH_ARCHITECTURE,
 		XASH_ARCHITECTURE_ABI,
 		XASH_ENDIANNESS,
-#if XASH_64BIT
+#if XASH_64BIT()
 		true
 #else
 		false

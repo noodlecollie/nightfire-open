@@ -625,7 +625,7 @@ string_t SV_MakeString(const char* szValue);
 const char* SV_GetString(string_t iString);
 void SV_SetStringArrayMode(qboolean dynamic);
 void SV_EmptyStringPool(void);
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 void SV_PrintStr64Stats_f(void);
 #endif
 sv_client_t* SV_ClientFromEdict(const edict_t* pEdict, qboolean spawned_only);

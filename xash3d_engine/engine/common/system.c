@@ -57,16 +57,22 @@ Sys_DebugBreak
 */
 void Sys_DebugBreak(void)
 {
-#if XASH_LINUX() || (XASH_WIN32() && !XASH_64BIT)
+#if XASH_LINUX() || (XASH_WIN32() && !XASH_64BIT())
 #if _MSC_VER
 	if ( Sys_DebuggerPresent() )
+	{
 		_asm { int 3 }
+	}
 #elif XASH_X86
 	if ( Sys_DebuggerPresent() )
+	{
 		asm volatile("int $3;");
+	}
 #else
 	if ( Sys_DebuggerPresent() )
+	{
 		raise(SIGINT);
+	}
 #endif
 #endif
 }

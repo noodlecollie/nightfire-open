@@ -4160,7 +4160,7 @@ qboolean CL_LoadProgs(const char* name)
 
 	// a1ba: we need to check if client.dll has direct dependency on SDL2
 	// and if so, disable relative mouse mode
-#if XASH_WIN32() && !XASH_64BIT
+#if XASH_WIN32() && !XASH_64BIT()
 	if ( (clgame.client_dll_uses_sdl =
 			  COM_CheckLibraryDirectDependency(name, OS_LIB_PREFIX "SDL2." OS_LIB_EXT, false)) )
 	{

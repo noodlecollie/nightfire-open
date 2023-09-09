@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #define HPAK_ENTRY_MAX_SIZE (128 * 1024)
 #define HPAK_SENTINEL 0xDEADBEEF
 
-#ifdef XASH_64BIT
+#if XASH_64BIT()
 #define HPAK_SENTINEL_PTR ((void*)0xDEADBEEFDEADBEEF)
 #else
 #define HPAK_SENTINEL_PTR ((void*)0xDEADBEEF)

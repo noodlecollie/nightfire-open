@@ -744,7 +744,7 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 			WIN_SetWindowIcon(ico);
 		}
 	}
-#endif  // _WIN32 && !XASH_64BIT
+#endif  // _WIN32
 
 	if ( !iconLoaded )
 	{

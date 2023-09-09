@@ -29,7 +29,7 @@ typedef struct memheader_s
 	size_t size;  // size of the memory after the header (excluding header and sentinel2)
 	const char* filename;  // file name and line where Mem_Alloc was called
 	int fileline;
-#if !XASH_64BIT
+#if !XASH_64BIT()
 	uint32_t pad0;  // doesn't have value, only to make Mem_Alloc return aligned addresses on ILP32
 #endif
 	uint32_t sentinel1;  // should always be MEMHEADER_SENTINEL1
@@ -47,7 +47,7 @@ typedef struct mempool_s
 	struct mempool_s* next;  // linked into global mempool list
 	const char* filename;  // file name and line where Mem_AllocPool was called
 	int fileline;
-#if XASH_64BIT
+#if XASH_64BIT()
 	poolhandle_t idx;
 #endif
 	char name[64];  // name of the pool
@@ -56,7 +56,7 @@ typedef struct mempool_s
 
 static mempool_t* poolchain = NULL;  // critical stuff
 
-#if XASH_64BIT
+#if XASH_64BIT()
 // a1ba: due to mempool being passed with the model through reused 32-bit field
 // which makes engine incompatible with 64-bit pointers I changed mempool type
 // from pointer to 32-bit handle, thankfully mempool structure is private
@@ -246,7 +246,7 @@ poolhandle_t _Mem_AllocPool(const char* name, const char* filename, int fileline
 	pool->next = poolchain;
 	poolchain = pool;
 
-#if XASH_64BIT
+#if XASH_64BIT()
 	pool->idx = ++lastidx;
 	return pool->idx;
 #else
