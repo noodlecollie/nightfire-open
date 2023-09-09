@@ -67,6 +67,7 @@ set(ENGINE_SOURCES
 	common/cvar.h
 	common/cvar.c
 	common/dedicated.c
+	common/defaults.h
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c
