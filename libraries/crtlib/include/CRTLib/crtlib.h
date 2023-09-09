@@ -13,15 +13,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef STDLIB_H
-#define STDLIB_H
+#pragma once
 
 #include <string.h>
 #include <stdarg.h>
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
-#include "PlatformLib/String.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -101,61 +99,24 @@ int matchpattern_with_separator(
 	qboolean wildcard_least_one);
 
 // libc implementations
-static inline int Q_strcmp(const char* s1, const char* s2)
-{
-	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : strcmp(s1, s2));
-}
-
-static inline int Q_strncmp(const char* s1, const char* s2, size_t n)
-{
-	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : strncmp(s1, s2, n));
-}
-
-static inline char* Q_strstr(const char* s1, const char* s2)
-{
-	return unlikely(!s1 || !s2) ? NULL : (char*)strstr(s1, s2);
-}
+int Q_strcmp(const char* s1, const char* s2);
+int Q_strncmp(const char* s1, const char* s2, size_t n);
+char* Q_strstr(const char* s1, const char* s2);
 
 // libc extensions, be careful
-
-static inline int Q_stricmp(const char* s1, const char* s2)
-{
-	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrCaseCmp(s1, s2));
-}
-
-static inline int Q_strnicmp(const char* s1, const char* s2, size_t n)
-{
-	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrNCaseCmp(s1, s2, n));
-}
-
-static inline char* Q_strcpy(char* dest, size_t destSize, const char* src)
-{
-	return PlatformLib_StrCpy(dest, destSize, src);
-}
-
-static inline char* Q_strcat(char* dest, size_t destSize, const char* src)
-{
-	return PlatformLib_StrCat(dest, destSize, src);
-}
+int Q_stricmp(const char* s1, const char* s2);
+int Q_strnicmp(const char* s1, const char* s2, size_t n);
+char* Q_strcpy(char* dest, size_t destSize, const char* src);
+char* Q_strcat(char* dest, size_t destSize, const char* src);
 
 char* Q_stristr(const char* s1, const char* s2);
 
 #if defined(HAVE_STRCHRNUL)
 #define Q_strchrnul strchrnul
 #else
-static inline const char* Q_strchrnul(const char* s, int c)
-{
-	const char* p = Q_strchr(s, c);
-
-	if ( p )
-		return p;
-
-	return s + Q_strlen(s);
-}
+const char* Q_strchrnul(const char* s, int c);
 #endif
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // STDLIB_H

@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include <fcntl.h>
 #include <errno.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "PlatformDefs/platformid.h"
 
@@ -37,7 +38,7 @@ GNU General Public License for more details.
 #endif  // XASH_LINUX()
 
 #include "CommonUtils/bitdefs.h"
-#include "CommonUtils/crtlib.h"
+#include "CRTLib/crtlib.h"
 #include "PlatformLib/File.h"
 #include "XashDefs/log_strings.h"
 #include "filesystem_internal.h"

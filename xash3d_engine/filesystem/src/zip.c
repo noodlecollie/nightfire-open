@@ -28,7 +28,7 @@ GNU General Public License for more details.
 #include <unistd.h>
 #endif
 
-#include "CommonUtils/crtlib.h"
+#include "CRTLib/crtlib.h"
 #include "miniz/miniz.h"
 #include "PlatformLib/File.h"
 #include "XashDefs/log_strings.h"

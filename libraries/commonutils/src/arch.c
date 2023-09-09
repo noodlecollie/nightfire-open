@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include <assert.h>
 #include "CommonUtils/arch.h"
-#include "CommonUtils/crtlib.h"
+#include "CRTLib/crtlib.h"
 #include "CommonUtils/bitdefs.h"
 #include "PlatformDefs/platformid.h"
 #include "buildenums.h"

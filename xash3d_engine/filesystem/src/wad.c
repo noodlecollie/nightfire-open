@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include <stddef.h>
 
 #include "PlatformDefs/platformid.h"
+#include "PlatformLib/String.h"
 
 #if XASH_POSIX()
 #include <unistd.h>
@@ -30,7 +31,7 @@ GNU General Public License for more details.
 
 #include "XashDefs/log_strings.h"
 #include "XashDefs/wadfile.h"
-#include "CommonUtils/crtlib.h"
+#include "CRTLib/crtlib.h"
 #include "filesystem_internal.h"
 
 /*

@@ -17,9 +17,9 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include <ctype.h>
 #include <time.h>
-#include "stdio.h"
-#include "CommonUtils/crtlib.h"
-#include "CommonUtils/bitdefs.h"
+#include <stdio.h>
+#include "CRTLib/crtlib.h"
+#include "CRTLib/bitdefs.h"
 #include "PlatformLib/Time.h"
 #include "PlatformLib/String.h"
 
@@ -1213,3 +1213,54 @@ int matchpattern_with_separator(
 		return 0;  // reached end of pattern but not end of input
 	return 1;  // success
 }
+
+int Q_strcmp(const char* s1, const char* s2)
+{
+	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : strcmp(s1, s2));
+}
+
+int Q_strncmp(const char* s1, const char* s2, size_t n)
+{
+	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : strncmp(s1, s2, n));
+}
+
+char* Q_strstr(const char* s1, const char* s2)
+{
+	return unlikely(!s1 || !s2) ? NULL : (char*)strstr(s1, s2);
+}
+
+// libc extensions, be careful
+
+int Q_stricmp(const char* s1, const char* s2)
+{
+	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrCaseCmp(s1, s2));
+}
+
+int Q_strnicmp(const char* s1, const char* s2, size_t n)
+{
+	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : PlatformLib_StrNCaseCmp(s1, s2, n));
+}
+
+char* Q_strcpy(char* dest, size_t destSize, const char* src)
+{
+	return PlatformLib_StrCpy(dest, destSize, src);
+}
+
+char* Q_strcat(char* dest, size_t destSize, const char* src)
+{
+	return PlatformLib_StrCat(dest, destSize, src);
+}
+
+#if !defined(HAVE_STRCHRNUL)
+const char* Q_strchrnul(const char* s, int c)
+{
+	const char* p = Q_strchr(s, c);
+
+	if ( p )
+	{
+		return p;
+	}
+
+	return s + Q_strlen(s);
+}
+#endif

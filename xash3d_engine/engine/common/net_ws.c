@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/platformid.h"
 #include "XashDefs/engine_version.h"
 #include "PlatformLib/Net.h"
+#include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"
 #include "CommonUtils/arch.h"
 #include "common.h"

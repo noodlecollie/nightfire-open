@@ -9,6 +9,8 @@ target_include_directories(${TARGETNAME_LIB_MATHLIB}
 	PRIVATE src
 )
 
-target_link_libraries(${TARGETNAME_LIB_MATHLIB} PUBLIC
+target_link_libraries(${TARGETNAME_LIB_MATHLIB}
+	PUBLIC
 	${TARGETNAME_LIB_PLATFORMDEFS}
+	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:m>
 )

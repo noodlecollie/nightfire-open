@@ -2,12 +2,9 @@ include(compiler_settings)
 
 add_library(${TARGETNAME_LIB_COMMONUTILS} STATIC
 	include/CommonUtils/arch.h
-	include/CommonUtils/bitdefs.h
-	include/CommonUtils/crtlib.h
 	include/CommonUtils/linux_win32_compat.h
 	src/arch.c
 	src/buildenums.h
-	src/crtlib.c
 )
 
 target_include_directories(${TARGETNAME_LIB_COMMONUTILS}
@@ -21,6 +18,7 @@ target_link_libraries(${TARGETNAME_LIB_COMMONUTILS}
 	${TARGETNAME_LIB_PLATFORMDEFS}
 
 	PRIVATE
+	${TARGETNAME_LIB_CRTLIB}
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:m>
 )
 
