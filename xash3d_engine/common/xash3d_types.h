@@ -4,7 +4,6 @@
 
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/typedefs.h"
-#include "CommonUtils/bitdefs.h"
 
 #if XASH_WIN32()
 #include <wchar.h>  // off_t

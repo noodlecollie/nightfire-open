@@ -42,7 +42,7 @@ GNU General Public License for more details.
 #include "PlatformLib/System.h"
 #include "CRTLib/crtlib.h"
 #include "CommonUtils/arch.h"
-#include "CommonUtils/bitdefs.h"
+#include "CRTLib/bitdefs.h"
 #include "CommonUtils/linux_win32_compat.h"
 #include "CRCLib/crclib.h"
 #include "Filesystem/filesystem.h"

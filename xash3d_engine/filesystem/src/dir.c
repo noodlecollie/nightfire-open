@@ -37,7 +37,7 @@ GNU General Public License for more details.
 
 #endif  // XASH_LINUX()
 
-#include "CommonUtils/bitdefs.h"
+#include "CRTLib/bitdefs.h"
 #include "CRTLib/crtlib.h"
 #include "PlatformLib/File.h"
 #include "XashDefs/log_strings.h"
