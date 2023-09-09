@@ -63,7 +63,7 @@ void Sys_DebugBreak(void)
 	{
 		_asm { int 3 }
 	}
-#elif XASH_X86
+#elif XASH_X86()
 	if ( Sys_DebuggerPresent() )
 	{
 		asm volatile("int $3;");

@@ -41,7 +41,19 @@ For more information, please refer to <http://unlicense.org/>
 
 #define XASH_LITTLE_ENDIAN() 0
 #define XASH_BIG_ENDIAN() 0
+
 #define XASH_64BIT() 0
+#define XASH_AMD64() 0
+#define XASH_X86() 0
+
+#define XASH_ARM() 0
+#define XASH_ARMv4() 0
+#define XASH_ARMv5() 0
+#define XASH_ARMv6() 0
+#define XASH_ARMv7() 0
+#define XASH_ARMv8() 0
+#define XASH_ARM_HARDFP() 0
+#define XASH_ARM_SOFTFP() 0
 
 //================================================================
 //
@@ -139,41 +151,53 @@ For more information, please refer to <http://unlicense.org/>
 #if defined __x86_64__ || defined _M_X64
 #undef XASH_64BIT
 #define XASH_64BIT() 1
-#define XASH_AMD64 1
+#undef XASH_AMD64
+#define XASH_AMD64() 1
 #elif defined __i386__ || defined _X86_ || defined _M_IX86
-#define XASH_X86 1
+#undef XASH_X86
+#define XASH_X86() 1
 #elif defined __aarch64__ || defined _M_ARM64
 #undef XASH_64BIT
 #define XASH_64BIT() 1
-#define XASH_ARM 8
+#undef XASH_ARM
+#define XASH_ARM() 8
 #elif defined __mips__
 #define XASH_MIPS 1
 #elif defined __e2k__
 #undef XASH_64BIT
 #define XASH_64BIT() 1
 #define XASH_E2K 1
-#elif defined _M_ARM  // msvc
-#define XASH_ARM 7
-#define XASH_ARM_HARDFP 1
+#elif defined _M_ARM  // MSVC
+#undef XASH_ARM
+#define XASH_ARM() 7
+#undef XASH_ARM_HARDFP
+#define XASH_ARM_HARDFP() 1
 #elif defined __arm__
 #if __ARM_ARCH == 8 || __ARM_ARCH_8__
-#define XASH_ARM 8
+#undef XASH_ARM
+#define XASH_ARM() 8
 #elif __ARM_ARCH == 7 || __ARM_ARCH_7__
-#define XASH_ARM 7
+#undef XASH_ARM
+#define XASH_ARM() 7
 #elif __ARM_ARCH == 6 || __ARM_ARCH_6__ || __ARM_ARCH_6J__
-#define XASH_ARM 6
+#undef XASH_ARM
+#define XASH_ARM() 6
 #elif __ARM_ARCH == 5 || __ARM_ARCH_5__
-#define XASH_ARM 5
+#undef XASH_ARM
+#define XASH_ARM() 5
 #elif __ARM_ARCH == 4 || __ARM_ARCH_4__
-#define XASH_ARM 4
+#undef XASH_ARM
+#define XASH_ARM() 4
 #else
-#error "Unknown ARM"
+#error "Unknown ARM architecture!"
 #endif
 
 #if defined __SOFTFP__ || __ARM_PCS_VFP == 0
-#define XASH_ARM_SOFTFP 1
+#undef XASH_ARM_SOFTFP
+#define XASH_ARM_SOFTFP() 1
 #else  // __SOFTFP__
-#define XASH_ARM_HARDFP 1
+#undef XASH_ARM_HARDFP
+#define XASH_ARM_HARDFP() 1
 #endif  // __SOFTFP__
 #elif defined __riscv
 #define XASH_RISCV 1
@@ -181,7 +205,7 @@ For more information, please refer to <http://unlicense.org/>
 #if __riscv_xlen == 64
 #define XASH_64BIT 1
 #elif __riscv_xlen != 32
-#error "Unknown RISC-V ABI"
+#error "Unknown RISC-V ABI!"
 #endif
 
 #if defined __riscv_float_abi_soft
@@ -191,20 +215,25 @@ For more information, please refer to <http://unlicense.org/>
 #elif defined __riscv_float_abi_double
 #define XASH_RISCV_DOUBLEFP 1
 #else
-#error "Unknown RISC-V float ABI"
+#error "Unknown RISC-V float ABI!"
 #endif
 #else
-#error "Place your architecture name here! If this is a mistake, try to fix conditions above and report a bug"
+#error "Unknown CPU architecture!"
 #endif
 
-#if XASH_ARM == 8
-#define XASH_ARMv8 1
-#elif XASH_ARM == 7
-#define XASH_ARMv7 1
-#elif XASH_ARM == 6
-#define XASH_ARMv6 1
-#elif XASH_ARM == 5
-#define XASH_ARMv5 1
-#elif XASH_ARM == 4
-#define XASH_ARMv4 1
+#if XASH_ARM() == 8
+#undef XASH_ARMv8
+#define XASH_ARMv8() 1
+#elif XASH_ARM() == 7
+#undef XASH_ARMv7
+#define XASH_ARMv7() 1
+#elif XASH_ARM() == 6
+#undef XASH_ARMv6
+#define XASH_ARMv6() 1
+#elif XASH_ARM() == 5
+#undef XASH_ARMv5
+#define XASH_ARMv5() 1
+#elif XASH_ARM() == 4
+#undef XASH_ARMv4
+#define XASH_ARMv4() 1
 #endif

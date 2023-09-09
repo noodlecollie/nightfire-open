@@ -1278,7 +1278,7 @@ static qboolean FS_FindLibrary(const char* dllname, qboolean directpath, fs_dlli
 
 		if ( search && search->type != SEARCHPATH_PLAIN )
 		{
-#if XASH_WIN32() && XASH_X86  // a1ba: custom loader is non-portable (I just don't want to touch it)
+#if XASH_WIN32() && XASH_X86()  // a1ba: custom loader is non-portable (I just don't want to touch it)
 			Con_Printf(
 				S_WARN
 				"%s: loading libraries from packs is deprecated "
