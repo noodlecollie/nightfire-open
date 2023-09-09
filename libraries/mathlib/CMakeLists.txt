@@ -14,3 +14,5 @@ target_link_libraries(${TARGETNAME_LIB_MATHLIB}
 	${TARGETNAME_LIB_PLATFORMDEFS}
 	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:m>
 )
+
+set_common_library_compiler_settings(${TARGETNAME_LIB_MATHLIB})
