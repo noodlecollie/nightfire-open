@@ -13,8 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef COMMON_H
-#define COMMON_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C"
@@ -37,7 +36,22 @@ XASH SPECIFIC			- sort of hack that works only in Xash3D not in GoldSrc
 ===================================================================================================================================
 */
 
-#include "CommonUtils/linux_win32_compat.h"
+#include "PlatformDefs/platformid.h"
+
+#if XASH_WIN32()
+#define HSPRITE WINAPI_HSPRITE
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#undef HSPRITE
+#else
+typedef void* HANDLE;
+typedef void* HINSTANCE;
+
+typedef struct tagPOINT
+{
+	int x, y;
+} POINT;
+#endif
 
 #include "engine_builddefs.h"
 #include "backends.h"
@@ -931,4 +945,3 @@ qboolean NET_GetMaster(netadr_t from, uint* challenge, double* last_heartbeat);
 #ifdef __cplusplus
 }
 #endif
-#endif  // COMMON_H

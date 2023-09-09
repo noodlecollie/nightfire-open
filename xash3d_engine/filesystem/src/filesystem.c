@@ -43,7 +43,6 @@ GNU General Public License for more details.
 #include "CRTLib/crtlib.h"
 #include "Identity/arch.h"
 #include "CRTLib/bitdefs.h"
-#include "CommonUtils/linux_win32_compat.h"
 #include "CRCLib/crclib.h"
 #include "Filesystem/filesystem.h"
 #include "filesystem_internal.h"
@@ -55,7 +54,7 @@ GNU General Public License for more details.
 #define BOUND(min, val, max) (MIN_OF((max), MAX_OF((val), (min))))
 
 fs_globals_t FI;
-qboolean fs_ext_path = false;  // attempt to read\write from ./ or ../ pathes
+qboolean fs_ext_path = false;  // attempt to read\write from ./ or ../ paths
 poolhandle_t fs_mempool;
 searchpath_t* fs_searchpaths = NULL;  // chain
 char fs_rodir[MAX_SYSPATH];

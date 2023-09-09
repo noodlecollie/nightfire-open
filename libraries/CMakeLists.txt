@@ -1,7 +1,6 @@
 add_subdirectory(platformlib)
 add_subdirectory(thirdparty)
 add_subdirectory(platformdefs)
-add_subdirectory(commonutils)
 add_subdirectory(crclib)
 add_subdirectory(crtlib)
 add_subdirectory(mathlib)

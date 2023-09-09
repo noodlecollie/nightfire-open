@@ -51,7 +51,6 @@ set(TARGETNAME_INCLUDES_SDK sdk_includes)
 set(TARGETNAME_INCLUDES_ENGINE engine_includes)
 
 set(TARGETNAME_LIB_PLATFORMDEFS platformdefs)
-set(TARGETNAME_LIB_COMMONUTILS commonutils)
 set(TARGETNAME_LIB_FILESYSTEM_STDIO filesystem_stdio)
 set(TARGETNAME_LIB_FILESYSTEM_TESTS filesystem_test_caseinsensitive)
 set(TARGETNAME_LIB_REF_SOFT ref_soft)
