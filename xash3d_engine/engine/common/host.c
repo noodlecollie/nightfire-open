@@ -144,7 +144,7 @@ void Sys_PrintUsage(void)
 
 #if !XASH_DEDICATED()
 		"   -clientlib <path>  override client DLL path\n"
-#endif()
+#endif
 
 		"   -rodir <path>      set read-only base directory, experimental\n"
 		"   -bugcomp           enable precise bug compatibility. Will break games that don't require it\n"
