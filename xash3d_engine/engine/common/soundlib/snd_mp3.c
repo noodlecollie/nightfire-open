@@ -14,8 +14,9 @@ GNU General Public License for more details.
 */
 
 #include "PlatformDefs/static_assert.h"
-#include "soundlib.h"
+#include "CRTLib/bitdefs.h"
 #include "libmpg/libmpg.h"
+#include "soundlib.h"
 #include "fscallback.h"
 
 #pragma pack(push, 1)

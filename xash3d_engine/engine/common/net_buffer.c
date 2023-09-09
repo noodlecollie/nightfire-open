@@ -13,10 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
+#include "MathLib/mathlib.h"
 #include "common.h"
 #include "protocol.h"
 #include "net_buffer.h"
-#include "MathLib/mathlib.h"
+
 // #define DEBUG_NET_MESSAGES_SEND
 // #define DEBUG_NET_MESSAGES_READ
 

@@ -13,18 +13,19 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
+#include "MathLib/mathlib.h"
+#include "XashDefs/wadfile.h"
+#include "CRCLib/crclib.h"
 #include "common.h"
 #include "mod_local.h"
 #include "sprite.h"
-#include "MathLib/mathlib.h"
 #include "alias.h"
 #include "studio.h"
-#include "XashDefs/wadfile.h"
 #include "world.h"
 #include "enginefeatures.h"
 #include "client.h"
 #include "server.h"
-#include "CRCLib/crclib.h"
 #include "fscallback.h"
 
 static model_info_t mod_crcinfo[MAX_MODELS];

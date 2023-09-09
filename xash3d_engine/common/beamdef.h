@@ -13,8 +13,9 @@
  *
  ****/
 
-#ifndef BEAMDEF_H
-#define BEAMDEF_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 
 #define FBEAM_STARTENTITY 0x00000001
 #define FBEAM_ENDENTITY 0x00000002
@@ -30,6 +31,9 @@
 #define FBEAM_FOREVER 0x80000000
 
 typedef struct beam_s BEAM;
+struct model_s;
+struct particle_s;
+
 struct beam_s
 {
 	BEAM* next;
@@ -56,5 +60,3 @@ struct beam_s
 	struct model_s* pFollowModel;
 	struct particle_s* particles;
 };
-
-#endif  // BEAMDEF_H

@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include <math.h>  // fabs...
+#include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "base_cmd.h"
 #include "eiface.h"  // ARRAYSIZE

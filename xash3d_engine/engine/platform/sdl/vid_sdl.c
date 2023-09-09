@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #error This file is only for client builds that use SDL!
 #endif
 
+#include "CRTLib/bitdefs.h"
 #include <SDL.h>
 #include "common.h"
 #include "client.h"

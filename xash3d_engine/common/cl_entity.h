@@ -13,8 +13,22 @@
  *
  ****/
 
-#ifndef CL_ENTITY_H
-#define CL_ENTITY_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
+#include "entity_state.h"
+#include "event_args.h"
+#include "const.h"
+
+#define HISTORY_MAX 64  // Must be power of 2
+#define HISTORY_MASK (HISTORY_MAX - 1)
+#define CL_ENTITY_MAX_ATTACHMENTS 8
+
+struct mleaf_s;
+struct model_s;
+struct mnode_s;
+struct efrag_s;
+struct cl_entity_s;
 
 typedef struct efrag_s
 {
@@ -57,14 +71,6 @@ typedef struct
 
 typedef struct cl_entity_s cl_entity_t;
 
-#define HISTORY_MAX 64  // Must be power of 2
-#define HISTORY_MASK (HISTORY_MAX - 1)
-
-#include "entity_state.h"
-#include "event_args.h"
-
-#define CL_ENTITY_MAX_ATTACHMENTS 8
-
 struct cl_entity_s
 {
 	int index;  // Index into cl_entities ( should match actual slot, but not necessarily )
@@ -103,5 +109,3 @@ struct cl_entity_s
 	int visframe;  // last frame this entity was found in an active leaf
 	colorVec cvFloorColor;
 };
-
-#endif  // CL_ENTITY_H

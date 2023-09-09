@@ -13,9 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
+#include "CRCLib/crclib.h"
 #include "common.h"
 #include "server.h"
-#include "CRCLib/crclib.h"
 #include "fscallback.h"
 
 void SV_CreateCustomizationList(sv_client_t* cl)

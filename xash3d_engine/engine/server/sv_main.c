@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "XashDefs/engine_version.h"
 #include "Identity/arch.h"
+#include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "server.h"
 #include "net_encode.h"

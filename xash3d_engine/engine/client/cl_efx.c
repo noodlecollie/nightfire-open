@@ -1,5 +1,6 @@
 
 
+#include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
 #include "customentity.h"

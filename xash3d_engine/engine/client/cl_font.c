@@ -13,8 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "common.h"
+#include "CRTLib/bitdefs.h"
 #include "Filesystem/filesystem.h"
+#include "common.h"
 #include "client.h"
 #include "qfont.h"
 #include "fscallback.h"

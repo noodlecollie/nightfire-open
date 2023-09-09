@@ -13,8 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef LIBMPG_H
-#define LIBMPG_H
+#pragma once
+
+#include <stddef.h>
+#include "PlatformDefs/typedefs.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -52,5 +54,3 @@ const char* get_error(void* mpeg);
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // LIBMPG_H

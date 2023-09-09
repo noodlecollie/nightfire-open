@@ -16,10 +16,12 @@ GNU General Public License for more details.
 
 #define CUSTOM_MODES 1  // required to correctly link with Opus Custom
 #include <opus_custom.h>
+
+#include <limits.h>
+#include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
 #include "voice.h"
-#include <limits.h>
 
 voice_state_t voice = {0};
 

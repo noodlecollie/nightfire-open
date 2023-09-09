@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CRTLib/bitdefs.h"
+#include "PlatformDefs/typedefs.h"
 
 /*
 ========================================================================
@@ -11,8 +11,10 @@ typically expanded to rgba buffer
 NOTE: number at end of pixelformat name it's a total bitscount e.g. PF_RGB_24 == PF_RGB_888
 ========================================================================
 */
+
 #define ImageRAW(type) \
 	(type == PF_RGBA_32 || type == PF_BGRA_32 || type == PF_RGB_24 || type == PF_BGR_24 || type == PF_LUMINANCE)
+
 #define ImageDXT(type) \
 	(type == PF_DXT1 || type == PF_DXT3 || type == PF_DXT5 || type == PF_ATI2 || type == PF_BC6H_SIGNED || \
 	 type == PF_BC6H_UNSIGNED || type == PF_BC7)
@@ -48,14 +50,14 @@ typedef struct bpc_desc_s
 // imagelib global settings
 typedef enum
 {
-	IL_USE_LERPING = BIT(0),  // lerping images during resample
-	IL_KEEP_8BIT = BIT(1),  // don't expand paletted images
-	IL_ALLOW_OVERWRITE = BIT(2),  // allow to overwrite stored images
-	IL_DONTFLIP_TGA = BIT(3),  // Steam background completely ignore tga attribute 0x20 (stupid lammers!)
-	IL_DDS_HARDWARE = BIT(4),  // DXT compression is support
-	IL_LOAD_DECAL = BIT(5),  // special mode for load gradient decals
-	IL_OVERVIEW = BIT(6),  // overview required some unque operations
-	IL_LOAD_PLAYER_DECAL = BIT(7),  // special mode for player decals
+	IL_USE_LERPING = (1 << 0),  // lerping images during resample
+	IL_KEEP_8BIT = (1 << 1),  // don't expand paletted images
+	IL_ALLOW_OVERWRITE = (1 << 2),  // allow to overwrite stored images
+	IL_DONTFLIP_TGA = (1 << 3),  // Steam background completely ignore tga attribute 0x20 (stupid lammers!)
+	IL_DDS_HARDWARE = (1 << 4),  // DXT compression is support
+	IL_LOAD_DECAL = (1 << 5),  // special mode for load gradient decals
+	IL_OVERVIEW = (1 << 6),  // overview required some unque operations
+	IL_LOAD_PLAYER_DECAL = (1 << 7),  // special mode for player decals
 } ilFlags_t;
 
 // goes into rgbdata_t->encode
@@ -74,33 +76,33 @@ typedef enum
 typedef enum
 {
 	// rgbdata->flags
-	IMAGE_CUBEMAP = BIT(0),  // it's 6-sides cubemap buffer
-	IMAGE_HAS_ALPHA = BIT(1),  // image contain alpha-channel
-	IMAGE_HAS_COLOR = BIT(2),  // image contain RGB-channel
-	IMAGE_COLORINDEX = BIT(3),  // all colors in palette is gradients of last color (decals)
-	IMAGE_HAS_LUMA = BIT(4),  // image has luma pixels (q1-style maps)
-	IMAGE_SKYBOX = BIT(5),  // only used by FS_SaveImage - for write right suffixes
-	IMAGE_QUAKESKY = BIT(6),  // it's a quake sky double layered clouds (so keep it as 8 bit)
-	IMAGE_DDS_FORMAT = BIT(7),  // a hint for GL loader
-	IMAGE_MULTILAYER = BIT(8),  // to differentiate from 3D texture
-	IMAGE_ONEBIT_ALPHA = BIT(9),  // binary alpha
-	IMAGE_QUAKEPAL = BIT(10),  // image has quake1 palette
+	IMAGE_CUBEMAP = (1 << 0),  // it's 6-sides cubemap buffer
+	IMAGE_HAS_ALPHA = (1 << 1),  // image contain alpha-channel
+	IMAGE_HAS_COLOR = (1 << 2),  // image contain RGB-channel
+	IMAGE_COLORINDEX = (1 << 3),  // all colors in palette is gradients of last color (decals)
+	IMAGE_HAS_LUMA = (1 << 4),  // image has luma pixels (q1-style maps)
+	IMAGE_SKYBOX = (1 << 5),  // only used by FS_SaveImage - for write right suffixes
+	IMAGE_QUAKESKY = (1 << 6),  // it's a quake sky double layered clouds (so keep it as 8 bit)
+	IMAGE_DDS_FORMAT = (1 << 7),  // a hint for GL loader
+	IMAGE_MULTILAYER = (1 << 8),  // to differentiate from 3D texture
+	IMAGE_ONEBIT_ALPHA = (1 << 9),  // binary alpha
+	IMAGE_QUAKEPAL = (1 << 10),  // image has quake1 palette
 
 	// Image_Process manipulation flags
-	IMAGE_FLIP_X = BIT(16),  // flip the image by width
-	IMAGE_FLIP_Y = BIT(17),  // flip the image by height
-	IMAGE_ROT_90 = BIT(18),  // flip from upper left corner to down right corner
+	IMAGE_FLIP_X = (1 << 16),  // flip the image by width
+	IMAGE_FLIP_Y = (1 << 17),  // flip the image by height
+	IMAGE_ROT_90 = (1 << 18),  // flip from upper left corner to down right corner
 	IMAGE_ROT180 = IMAGE_FLIP_X | IMAGE_FLIP_Y,
 	IMAGE_ROT270 = IMAGE_FLIP_X | IMAGE_FLIP_Y | IMAGE_ROT_90,
 	// reserved
-	IMAGE_RESAMPLE = BIT(20),  // resample image to specified dims
-							   // reserved
-							   // reserved
-	IMAGE_FORCE_RGBA = BIT(23),  // force image to RGBA buffer
-	IMAGE_MAKE_LUMA = BIT(24),  // create luma texture from indexed
-	IMAGE_QUANTIZE = BIT(25),  // make indexed image from 24 or 32- bit image
-	IMAGE_LIGHTGAMMA = BIT(26),  // apply gamma for image
-	IMAGE_REMAP = BIT(27),  // interpret width and height as top and bottom color
+	IMAGE_RESAMPLE = (1 << 20),  // resample image to specified dims
+								 // reserved
+								 // reserved
+	IMAGE_FORCE_RGBA = (1 << 23),  // force image to RGBA buffer
+	IMAGE_MAKE_LUMA = (1 << 24),  // create luma texture from indexed
+	IMAGE_QUANTIZE = (1 << 25),  // make indexed image from 24 or 32- bit image
+	IMAGE_LIGHTGAMMA = (1 << 26),  // apply gamma for image
+	IMAGE_REMAP = (1 << 27),  // interpret width and height as top and bottom color
 } imgFlags_t;
 
 typedef struct rgbdata_s
