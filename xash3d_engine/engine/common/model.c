@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "CommonUtils/xash3d_mathlib.h"
 #include "alias.h"
 #include "studio.h"
-#include "wadfile.h"
+#include "XashDefs/wadfile.h"
 #include "world.h"
 #include "enginefeatures.h"
 #include "client.h"

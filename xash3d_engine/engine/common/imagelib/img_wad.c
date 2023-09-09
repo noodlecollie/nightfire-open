@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "imagelib.h"
 #include "CommonUtils/xash3d_mathlib.h"
-#include "wadfile.h"
+#include "XashDefs/wadfile.h"
 #include "studio.h"
 #include "sprite.h"
 #include "qfont.h"

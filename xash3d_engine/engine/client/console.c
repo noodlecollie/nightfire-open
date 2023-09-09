@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "protocol.h"  // get the protocol version
 #include "con_nprint.h"
 #include "qfont.h"
-#include "wadfile.h"
+#include "XashDefs/wadfile.h"
 #include "input.h"
 #include "fscallback.h"
 

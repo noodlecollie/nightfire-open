@@ -29,10 +29,10 @@ GNU General Public License for more details.
 #endif
 
 #include "XashDefs/log_strings.h"
+#include "XashDefs/wadfile.h"
 #include "CommonUtils/crtlib.h"
 #include "common/com_strings.h"
 #include "filesystem_internal.h"
-#include "wadfile.h"
 
 /*
 ========================================================================
