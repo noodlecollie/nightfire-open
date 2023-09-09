@@ -21,11 +21,11 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
+#include "Filesystem/libexport.h"
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/engine_limits.h"
-#include "Filesystem/libexport.h"
-#include "xash3d_types.h"
+#include "XashDefs/mempool.h"
 
 #ifdef __cplusplus
 extern "C"

@@ -13,10 +13,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "common.h"
-#include "server.h"
+#include "XashDefs/engine_version.h"
 #include "PlatformLib/Time.h"
 #include "CommonUtils/arch.h"
+#include "common.h"
+#include "server.h"
 #include "fscallback.h"
 
 void Log_Open(void)

@@ -27,11 +27,11 @@ GNU General Public License for more details.
 
 #include <errno.h>
 #include <stddef.h>
-#include "filesystem_internal.h"
 #include "CommonUtils/crtlib.h"
-#include "common/com_strings.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
+#include "XashDefs/log_strings.h"
+#include "filesystem_internal.h"
 
 /*
 ========================================================================

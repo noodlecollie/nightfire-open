@@ -13,19 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef COM_STRINGS_H
-#define COM_STRINGS_H
-
-// default colored message headers
-#define S_NOTE "^2Note:^7 "
-#define S_WARN "^3Warning:^7 "
-#define S_ERROR "^1Error:^7 "
-#define S_USAGE "Usage: "
-#define S_USAGE_INDENT "       "
-
-#define S_OPENGL_NOTE "^2OpenGL Note:^7 "
-#define S_OPENGL_WARN "^3OpenGL Warning:^7 "
-#define S_OPENGL_ERROR "^3OpenGL Error:^7 "
+#pragma once
 
 // end game final default message
 #define DEFAULT_ENDGAME_MESSAGE "The End"
@@ -69,9 +57,3 @@ GNU General Public License for more details.
 #define CVAR_GLCONFIG_DESCRIPTION "enable or disable %s"
 
 #define DEFAULT_UPDATE_PAGE "https://github.com/FWGS/xash3d-fwgs/releases/latest"
-
-#define XASH_ENGINE_NAME "Xash3D FWGS"
-#define XASH_VERSION "0.20"  // engine current version
-#define XASH_COMPAT_VERSION "0.99"  // version we are based on
-
-#endif  // COM_STRINGS_H

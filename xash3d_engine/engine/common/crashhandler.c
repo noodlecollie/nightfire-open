@@ -12,13 +12,15 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
 
-#include "common.h"
+#include "XashDefs/engine_version.h"
 #include "PlatformLib/Time.h"
 #include "CommonUtils/arch.h"
+#include "common.h"
 
 #if defined XASH_SDL
 #include <SDL.h>

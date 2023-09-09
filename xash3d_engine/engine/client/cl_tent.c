@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "cl_tent.h"
 #include "pm_local.h"
 #include "studio.h"
-#include "wadfile.h"  // acess decal size
+#include "XashDefs/wadfile.h"  // acess decal size
 #include "sound.h"
 #include "fscallback.h"
 

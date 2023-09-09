@@ -14,8 +14,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "r_local.h"
+#include "XashDefs/log_strings.h"
 #include "CommonUtils/crtlib.h"
+#include "r_local.h"
 
 #define VGUI_MAX_TEXTURES (MAX_TEXTURES / 2)  // a half of total textures count
 

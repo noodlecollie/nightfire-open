@@ -39,12 +39,17 @@ int Q_buildnum(void)
 	int y = 0;
 
 	if ( b != 0 )
+	{
 		return b;
+	}
 
 	for ( m = 0; m < 11; m++ )
 	{
 		if ( !Q_strnicmp(&date[0], mon[m], 3) )
+		{
 			break;
+		}
+
 		d += mond[m];
 	}
 
@@ -56,6 +61,7 @@ int Q_buildnum(void)
 	{
 		b += 1;
 	}
+
 	b -= 41728;  // Apr 1 2015
 
 	return b;
@@ -90,11 +96,19 @@ const char* Q_PlatformStringByID(const int platform)
 	switch ( platform )
 	{
 		case PLATFORM_WIN32:
+		{
 			return "win32";
+		}
+
 		case PLATFORM_LINUX_UNKNOWN:
+		{
 			return "linuxunkabi";
+		}
+
 		case PLATFORM_LINUX:
+		{
 			return "linux";
+		}
 	}
 
 	assert(0);
@@ -122,20 +136,30 @@ Returns name of the architecture by it's ID. Without any spaces.
 */
 const char* Q_ArchitectureStringByID(const int arch, const uint abi, const int endianness, const qboolean is64)
 {
-	// I don't want to change this function prototype
-	// and don't want to use static buffer either
-	// so encode all possible variants... :)
 	switch ( arch )
 	{
 		case ARCHITECTURE_AMD64:
+		{
 			return "amd64";
+		}
+
 		case ARCHITECTURE_X86:
+		{
 			return "i386";
+		}
+
 		case ARCHITECTURE_E2K:
+		{
 			return "e2k";
+		}
+
 		case ARCHITECTURE_MIPS:
+		{
 			return endianness == ENDIANNESS_LITTLE ? (is64 ? "mips64el" : "mipsel") : (is64 ? "mips64" : "mips");
+		}
+
 		case ARCHITECTURE_ARM:
+		{
 			// no support for big endian ARM here
 			if ( endianness == ENDIANNESS_LITTLE )
 			{
@@ -143,37 +167,67 @@ const char* Q_ArchitectureStringByID(const int arch, const uint abi, const int e
 				const qboolean hardfp = FBitSet(abi, ARCHITECTURE_ARM_HARDFP);
 
 				if ( is64 )
+				{
 					return "arm64";  // keep as arm64, it's not aarch64!
+				}
 
 				switch ( ver )
 				{
 					case 8:
+					{
 						return hardfp ? "armv8_32hf" : "armv8_32l";
+					}
+
 					case 7:
+					{
 						return hardfp ? "armv7hf" : "armv7l";
+					}
+
 					case 6:
+					{
 						return "armv6l";
+					}
+
 					case 5:
+					{
 						return "armv5l";
+					}
+
 					case 4:
+					{
 						return "armv4l";
+					}
 				}
 			}
 			break;
+		}
+
 		case ARCHITECTURE_RISCV:
+		{
 			switch ( abi )
 			{
 				case ARCHITECTURE_RISCV_FP_SOFT:
+				{
 					return is64 ? "riscv64" : "riscv32";
+				}
+
 				case ARCHITECTURE_RISCV_FP_SINGLE:
+				{
 					return is64 ? "riscv64f" : "riscv32f";
+				}
+
 				case ARCHITECTURE_RISCV_FP_DOUBLE:
+				{
 					return is64 ? "riscv64d" : "riscv64f";
+				}
 			}
+
 			break;
+		}
 	}
 
 	assert(0);
+
 	return is64 ? (endianness == ENDIANNESS_LITTLE ? "unknown64el" : "unknownel")
 				: (endianness == ENDIANNESS_LITTLE ? "unknown64be" : "unknownbe");
 }

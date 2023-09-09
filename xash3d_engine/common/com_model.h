@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "xash3d_types.h"
 #include "bspfile.h"  // we need some declarations from it
 #include "PlatformDefs/typedefs.h"
+#include "XashDefs/mempool.h"
 
 /*
 ==============================================================================

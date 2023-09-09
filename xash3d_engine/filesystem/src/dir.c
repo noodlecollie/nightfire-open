@@ -14,28 +14,34 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/platformid.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <stddef.h>
+
+#include "PlatformDefs/platformid.h"
+
 #if XASH_POSIX()
 #include <unistd.h>
 #include <sys/ioctl.h>
 #endif
+
 #if XASH_LINUX()
 #include <linux/fs.h>
+
 #ifndef FS_CASEFOLD_FL  // for compatibility with older distros
 #define FS_CASEFOLD_FL 0x40000000
 #endif  // FS_CASEFOLD_FL
+
 #endif  // XASH_LINUX()
 
-#include "filesystem_internal.h"
+#include "CommonUtils/bitdefs.h"
 #include "CommonUtils/crtlib.h"
 #include "CommonUtils/xash3d_mathlib.h"
-#include "common/com_strings.h"
 #include "PlatformLib/File.h"
+#include "XashDefs/log_strings.h"
+#include "filesystem_internal.h"
 
 enum
 {

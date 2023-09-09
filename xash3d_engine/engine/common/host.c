@@ -13,33 +13,37 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include <stdarg.h>
+#include <errno.h>
+#include <string.h>
+
 #include "PlatformDefs/platformid.h"
+
 #ifdef XASH_SDL
 #include <SDL.h>
 #endif  // XASH_SDL
-#include <stdarg.h>  // va_args
-#include <errno.h>  // errno
-#include <string.h>  // strerror
+
 #if !XASH_WIN32()
-#include <unistd.h>  // fork
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#endif
-#include <errno.h>
+#endif  // !XASH_WIN32()
+
+#include "XashDefs/engine_version.h"
+#include "PlatformLib/System.h"
+#include "CommonUtils/xash3d_mathlib.h"
+#include "CommonUtils/arch.h"
 #include "common.h"
 #include "base_cmd.h"
 #include "client.h"
 #include "netchan.h"
 #include "protocol.h"
 #include "mod_local.h"
-#include "CommonUtils/xash3d_mathlib.h"
-#include "CommonUtils/arch.h"
 #include "input.h"
 #include "enginefeatures.h"
-#include "render_api.h"  // decallist_t
+#include "render_api.h"
 #include "tests.h"
-#include "PlatformLib/System.h"
 #include "fscallback.h"
 #include "engine_builddefs.h"
 

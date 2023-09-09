@@ -1,0 +1,4 @@
+#pragma once
+
+#define PLAT_STRINGIFY_TOKEN(x) #x
+#define PLAT_STRINGIFY_VALUE(x) PLAT_STRINGIFY_TOKEN(x)

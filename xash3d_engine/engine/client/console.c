@@ -13,16 +13,17 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "XashDefs/engine_version.h"
+#include "PlatformLib/String.h"
+#include "CommonUtils/arch.h"
 #include "common.h"
 #include "client.h"
 #include "keydefs.h"
 #include "protocol.h"  // get the protocol version
 #include "con_nprint.h"
 #include "qfont.h"
-#include "wadfile.h"
+#include "XashDefs/wadfile.h"
 #include "input.h"
-#include "PlatformLib/String.h"
-#include "CommonUtils/arch.h"
 #include "fscallback.h"
 
 convar_t* con_notifytime;

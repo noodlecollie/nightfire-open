@@ -13,8 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "gl_local.h"
+#include "XashDefs/log_strings.h"
 #include "CRCLib/crclib.h"
+#include "gl_local.h"
 
 #define TEXTURES_HASH_SIZE (MAX_TEXTURES >> 2)
 

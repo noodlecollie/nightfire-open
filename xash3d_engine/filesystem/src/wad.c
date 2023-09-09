@@ -16,21 +16,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/platformid.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <stddef.h>
+
+#include "PlatformDefs/platformid.h"
 
 #if XASH_POSIX()
 #include <unistd.h>
 #endif
 
-#include <errno.h>
-#include <stddef.h>
-#include "filesystem_internal.h"
+#include "XashDefs/log_strings.h"
+#include "XashDefs/wadfile.h"
 #include "CommonUtils/crtlib.h"
-#include "common/com_strings.h"
-#include "wadfile.h"
+#include "filesystem_internal.h"
 
 /*
 ========================================================================
@@ -51,8 +52,6 @@ infotable	dlumpinfo_t[dwadinfo_t->numlumps]
 #define WAD3_NAMELEN 16
 #define HINT_NAMELEN 5  // e.g. _mask, _norm
 #define MAX_FILES_IN_WAD 65535  // real limit as above <2Gb size not a lumpcount
-
-#include "const.h"
 
 typedef struct
 {

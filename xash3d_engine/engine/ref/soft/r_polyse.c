@@ -20,8 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // d_polyset.c: routines for drawing sets of polygons sharing the same
 // texture (used for Alias models)
 
-#include "r_local.h"
+#include "XashDefs/log_strings.h"
 #include <limits.h>
+#include "r_local.h"
 
 // TODO: put in span spilling to shrink list size
 // !!! if this is changed, it must be changed in d_polysa.s too !!!

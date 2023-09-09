@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "XashDefs/log_strings.h"
 #include "r_local.h"
 #include "r_efx.h"
 #include "event_flags.h"

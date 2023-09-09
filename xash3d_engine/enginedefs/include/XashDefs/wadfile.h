@@ -13,8 +13,9 @@
  *
  ****/
 
-#ifndef WADFILE_H
-#define WADFILE_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 
 /*
 ========================================================================
@@ -38,10 +39,10 @@ infotable	dlumpinfo_t[dwadinfo_t->numlumps]
 
 // dlumpinfo_t->attribs
 #define ATTR_NONE 0  // allow to read-write
-#define ATTR_READONLY BIT(0)  // don't overwrite this lump in anyway
-#define ATTR_COMPRESSED BIT(1)  // not used for now, just reserved
-#define ATTR_HIDDEN BIT(2)  // not used for now, just reserved
-#define ATTR_SYSTEM BIT(3)  // not used for now, just reserved
+#define ATTR_READONLY (1 << 0)  // don't overwrite this lump in any way
+#define ATTR_COMPRESSED (1 << 1)  // not used for now, just reserved
+#define ATTR_HIDDEN (1 << 2)  // not used for now, just reserved
+#define ATTR_SYSTEM (1 << 3)  // not used for now, just reserved
 
 // dlumpinfo_t->type
 #define TYP_ANY -1  // any type can be accepted
@@ -64,8 +65,8 @@ infotable	dlumpinfo_t[dwadinfo_t->numlumps]
 */
 typedef struct lmp_s
 {
-	unsigned int width;
-	unsigned int height;
+	uint32_t width;
+	uint32_t height;
 } lmp_t;
 
 /*
@@ -78,9 +79,7 @@ typedef struct lmp_s
 typedef struct mip_s
 {
 	char name[16];
-	unsigned int width;
-	unsigned int height;
-	unsigned int offsets[4];  // four mip maps stored
+	uint32_t width;
+	uint32_t height;
+	uint32_t offsets[4];  // four mip maps stored
 } mip_t;
-
-#endif  // WADFILE_H

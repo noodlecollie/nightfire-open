@@ -32,7 +32,7 @@ GNU General Public License for more details.
 #include "pm_movevars.h"
 // #include "cvar.h"
 #include "gl_export.h"
-#include "wadfile.h"
+#include "XashDefs/wadfile.h"
 
 #ifndef offsetof
 #ifdef __GNUC__
