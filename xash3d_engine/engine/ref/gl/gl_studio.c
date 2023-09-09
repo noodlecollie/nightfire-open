@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "const.h"
 #include "r_studioint.h"
 #include "triangleapi.h"

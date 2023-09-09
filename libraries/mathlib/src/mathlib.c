@@ -1,5 +1,5 @@
 /*
-xash3d_mathlib.c - internal mathlib
+mathlib.c - internal mathlib
 Copyright (C) 2010 Uncle Mike
 
 This program is free software: you can redistribute it and/or modify
@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 
 #define NUM_HULL_ROUNDS SIZE_OF_ARRAY(hull_table)
 #define HULL_PRECISION 4

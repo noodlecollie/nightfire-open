@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 # NFTODO: Make a proper library out of this
 set(SOURCES_GAME_MENU_SHARED
 	../game_menu_shared/botprofiles/botprofileparser.h
@@ -225,7 +227,6 @@ target_link_libraries(${TARGETNAME_LIB_UI} PRIVATE
 	${TARGETNAME_INCLUDES_SDK}
 	${TARGETNAME_LIB_PLATFORMLIB}
 	${TARGETNAME_LIB_PLATFORMDEFS}
-	${TARGETNAME_LIB_COMMONUTILS}
 	${TARGETNAME_LIB_ENGINEDEFS}
 
 	# Windows

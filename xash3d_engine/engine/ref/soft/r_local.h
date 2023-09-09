@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "dlight.h"
 #include "ref_api.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "ref_params.h"
 #include "enginefeatures.h"
 #include "com_strings.h"

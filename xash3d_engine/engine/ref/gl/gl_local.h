@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "dlight.h"
 #include "gl_frustum.h"
 #include "ref_api.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "ref_params.h"
 #include "enginefeatures.h"
 #include "com_strings.h"
@@ -749,7 +749,7 @@ DECLARE_ENGINE_SHARED_CVAR_LIST()
 //
 // engine callbacks
 //
-#include "CommonUtils/crtlib.h"
+#include "CRTLib/crtlib.h"
 
 #define Mem_Malloc(pool, size) gEngfuncs._Mem_Alloc(pool, size, false, __FILE__, __LINE__)
 #define Mem_Calloc(pool, size) gEngfuncs._Mem_Alloc(pool, size, true, __FILE__, __LINE__)

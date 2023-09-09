@@ -1,3 +1,5 @@
+include(compiler_settings)
+
 set(SOURCES_PM_SHARED
 	../pm_shared/pm_debug.h
 	../pm_shared/pm_debug.c

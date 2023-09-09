@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "XashDefs/engine_version.h"
 #include "PlatformLib/Time.h"
-#include "CommonUtils/arch.h"
+#include "Identity/arch.h"
 #include "common.h"
 #include "server.h"
 #include "fscallback.h"

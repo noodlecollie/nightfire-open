@@ -1,5 +1,5 @@
 /*
-xash3d_mathlib.h - base math functions
+mathlib.h - base math functions
 Copyright (C) 2007 Uncle Mike
 
 This program is free software: you can redistribute it and/or modify

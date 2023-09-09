@@ -14,9 +14,9 @@ GNU General Public License for more details.
 */
 
 #include <limits.h>
-#include "CommonUtils/miniz.h"
+#include "miniz/miniz.h"
 #include "imagelib.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "img_png.h"
 #include "PlatformLib/Net.h"
 #include "CRCLib/crclib.h"

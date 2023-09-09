@@ -51,7 +51,6 @@ set(TARGETNAME_INCLUDES_SDK sdk_includes)
 set(TARGETNAME_INCLUDES_ENGINE engine_includes)
 
 set(TARGETNAME_LIB_PLATFORMDEFS platformdefs)
-set(TARGETNAME_LIB_COMMONUTILS commonutils)
 set(TARGETNAME_LIB_FILESYSTEM_STDIO filesystem_stdio)
 set(TARGETNAME_LIB_FILESYSTEM_TESTS filesystem_test_caseinsensitive)
 set(TARGETNAME_LIB_REF_SOFT ref_soft)
@@ -64,6 +63,10 @@ set(TARGETNAME_LIB_SERVER server)
 set(TARGETNAME_LIB_UI menu)
 set(TARGETNAME_LIB_PLATFORMLIB platformlib)
 set(TARGETNAME_LIB_CRCLIB crclib)
+set(TARGETNAME_LIB_CRTLIB crtlib)
+set(TARGETNAME_LIB_MINIZ miniz)
+set(TARGETNAME_LIB_MATHLIB mathlib)
+set(TARGETNAME_LIB_IDENTITY identity)
 
 # Only supported on Linux
 set(TARGETNAME_LIB_SAFESTRING safestring_static)

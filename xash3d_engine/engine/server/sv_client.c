@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "XashDefs/engine_version.h"
-#include "CommonUtils/arch.h"
+#include "Identity/arch.h"
 #include "CRCLib/crclib.h"
 #include "common.h"
 #include "const.h"

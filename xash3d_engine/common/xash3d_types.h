@@ -4,7 +4,6 @@
 
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/typedefs.h"
-#include "CommonUtils/bitdefs.h"
 
 #include <stdint.h>
 #include <assert.h>

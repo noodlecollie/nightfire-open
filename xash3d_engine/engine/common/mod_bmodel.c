@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "mod_local.h"
 #include "sprite.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "alias.h"
 #include "studio.h"
 #include "XashDefs/wadfile.h"

@@ -16,7 +16,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <fcntl.h>
@@ -27,6 +26,8 @@ GNU General Public License for more details.
 #include "PlatformDefs/platformid.h"
 
 #if XASH_WIN32()
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #include <direct.h>
 #include <io.h>
 #else
@@ -41,19 +42,21 @@ GNU General Public License for more details.
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
-#include "CommonUtils/crtlib.h"
-#include "CommonUtils/arch.h"
-#include "CommonUtils/bitdefs.h"
-#include "CommonUtils/linux_win32_compat.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "CRTLib/crtlib.h"
+#include "Identity/arch.h"
+#include "CRTLib/bitdefs.h"
 #include "CRCLib/crclib.h"
 #include "Filesystem/filesystem.h"
 #include "filesystem_internal.h"
 
 #define FILE_COPY_SIZE (1024 * 1024)
 
+#define MIN_OF(a, b) ((a) < (b) ? (a) : (b))
+#define MAX_OF(a, b) ((a) > (b) ? (a) : (b))
+#define BOUND(min, val, max) (MIN_OF((max), MAX_OF((val), (min))))
+
 fs_globals_t FI;
-qboolean fs_ext_path = false;  // attempt to read\write from ./ or ../ pathes
+qboolean fs_ext_path = false;  // attempt to read\write from ./ or ../ paths
 poolhandle_t fs_mempool;
 searchpath_t* fs_searchpaths = NULL;  // chain
 char fs_rodir[MAX_SYSPATH];
@@ -738,7 +741,7 @@ void FS_ParseGenericGameInfo(gameinfo_t* GameInfo, const char* buf, const qboole
 		else if ( !Q_stricmp(token, isGameInfo ? "max_edicts" : "edicts") )
 		{
 			pfile = COM_ParseFile(pfile, token, sizeof(token));
-			GameInfo->max_edicts = bound(MIN_EDICTS, Q_atoi(token), MAX_EDICTS);
+			GameInfo->max_edicts = BOUND(MIN_EDICTS, Q_atoi(token), MAX_EDICTS);
 		}
 		// only for gameinfo
 		else if ( isGameInfo )
@@ -765,17 +768,17 @@ void FS_ParseGenericGameInfo(gameinfo_t* GameInfo, const char* buf, const qboole
 			else if ( !Q_stricmp(token, "max_tempents") )
 			{
 				pfile = COM_ParseFile(pfile, token, sizeof(token));
-				GameInfo->max_tents = bound(300, Q_atoi(token), 2048);
+				GameInfo->max_tents = BOUND(300, Q_atoi(token), 2048);
 			}
 			else if ( !Q_stricmp(token, "max_beams") )
 			{
 				pfile = COM_ParseFile(pfile, token, sizeof(token));
-				GameInfo->max_beams = bound(64, Q_atoi(token), 512);
+				GameInfo->max_beams = BOUND(64, Q_atoi(token), 512);
 			}
 			else if ( !Q_stricmp(token, "max_particles") )
 			{
 				pfile = COM_ParseFile(pfile, token, sizeof(token));
-				GameInfo->max_particles = bound(4096, Q_atoi(token), 32768);
+				GameInfo->max_particles = BOUND(4096, Q_atoi(token), 32768);
 			}
 			else if ( !Q_stricmp(token, "gamemode") )
 			{
@@ -2646,7 +2649,12 @@ qboolean GAME_EXPORT FS_Delete(const char* path)
 	ret = remove(real_path);
 	if ( ret < 0 )
 	{
-		Con_Printf("%s: failed to delete file %s (%s): %s\n", __FUNCTION__, real_path, path, PlatformLib_StrError(errno));
+		Con_Printf(
+			"%s: failed to delete file %s (%s): %s\n",
+			__FUNCTION__,
+			real_path,
+			path,
+			PlatformLib_StrError(errno));
 		return false;
 	}
 
@@ -2863,8 +2871,7 @@ fs_api_t g_api = {
 	FS_GetDiskPath,
 
 	NULL,
-	NULL
-};
+	NULL};
 
 FILESYSTEM_STDIO_PUBLIC(int) GetFSAPI(int version, fs_api_t* api, fs_globals_t** globals, fs_interface_t* engfuncs)
 {

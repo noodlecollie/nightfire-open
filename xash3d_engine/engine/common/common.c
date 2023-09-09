@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #endif
 #include "common.h"
 #include "studio.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "fscallback.h"
 #include "const.h"
 #include "client.h"

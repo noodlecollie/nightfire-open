@@ -15,7 +15,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"
 #include "mod_local.h"
-#include "CommonUtils/xash3d_mathlib.h"
+#include "MathLib/mathlib.h"
 #include "world.h"
 #include "eiface.h"  // offsetof
 
