@@ -206,6 +206,8 @@ typedef struct
 #define MAX_RAW_CHANNELS 48
 #define MAX_RAW_SAMPLES 8192
 
+typedef int sound_t;
+
 extern sound_t ambient_sfx[NUM_AMBIENTS];
 extern qboolean snd_ambient;
 extern channel_t channels[MAX_CHANNELS];

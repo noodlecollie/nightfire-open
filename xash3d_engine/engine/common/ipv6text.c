@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "ipv6text.h"
-#include "xash3d_types.h"
 #include "PlatformLib/String.h"
+#include "PlatformDefs/typedefs.h"
 
 void IPv6IPToString(char* pszOutText, const unsigned char* ip)
 {

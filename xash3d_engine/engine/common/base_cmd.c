@@ -230,7 +230,7 @@ typedef struct
 	int lookups;
 } basecmd_test_stats_t;
 
-static void BaseCmd_CheckCvars(const char* key, const char* value, const void* unused, void* ptr)
+static void BaseCmd_CheckCvars(const char* key, const void* value, const void* unused, void* ptr)
 {
 	basecmd_test_stats_t* stats = ptr;
 
@@ -287,7 +287,7 @@ void BaseCmd_Test_f(void)
 			}
 		}
 
-		Cvar_LookupVars(0, NULL, &stats.valid, (setpair_t)BaseCmd_CheckCvars);
+		Cvar_LookupVars(0, NULL, &stats.valid, BaseCmd_CheckCvars);
 	}
 
 	end = Sys_DoubleTime() * 1000;

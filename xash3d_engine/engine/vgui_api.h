@@ -15,7 +15,6 @@ GNU General Public License for more details.
 #ifndef VGUI_API_H
 #define VGUI_API_H
 
-#include "xash3d_types.h"
 #include "key_modifiers.h"
 #include "cursor_type.h"
 

@@ -20,6 +20,9 @@ GNU General Public License for more details.
 //-----------------------------------------------------------------------------
 // Gamma conversion support
 //-----------------------------------------------------------------------------
+
+#define GAMMA (2.2f)  // Valve Software gamma
+
 static byte lightgammatable[256];
 static int lineargammatable[1024];
 static int screengammatable[1024];

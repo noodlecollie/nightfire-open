@@ -1,4 +1,3 @@
-#include "xash3d_types.h"
 #include "const.h"
 #include "com_model.h"
 #include "cl_surfaceprop_effects.h"

@@ -16,7 +16,6 @@ GNU General Public License for more details.
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "xash3d_types.h"
 #include "MathLib/mathlib.h"
 #include "cdll_int.h"
 #include "menu_int.h"

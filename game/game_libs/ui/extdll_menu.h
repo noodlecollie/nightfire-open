@@ -16,8 +16,6 @@ GNU General Public License for more details.
 #ifndef EXTDLL_H
 #define EXTDLL_H
 
-#include "xash3d_types.h"
-
 #ifndef EXPORT
 #ifdef _WIN32
 #define EXPORT __declspec(dllexport)

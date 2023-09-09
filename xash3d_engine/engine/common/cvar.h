@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #define CVAR_H
 
 #include "cvardef.h"
+#include "setpair.h"
 
 #if XASH_64BIT()
 #define CVAR_SENTINEL 0xDEADBEEFDEADBEEF
