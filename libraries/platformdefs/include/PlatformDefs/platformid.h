@@ -55,6 +55,14 @@ For more information, please refer to <http://unlicense.org/>
 #define XASH_ARM_HARDFP() 0
 #define XASH_ARM_SOFTFP() 0
 
+#define XASH_RISCV() 0
+#define XASH_RISCV_SOFTFP() 0
+#define XASH_RISCV_SINGLEFP() 0
+#define XASH_RISCV_DOUBLEFP() 0
+
+#define XASH_MIPS() 0
+#define XASH_E2K() 0
+
 //================================================================
 //
 //           PLATFORM DETECTION CODE
@@ -162,11 +170,13 @@ For more information, please refer to <http://unlicense.org/>
 #undef XASH_ARM
 #define XASH_ARM() 8
 #elif defined __mips__
-#define XASH_MIPS 1
+#undef XASH_MIPS
+#define XASH_MIPS() 1
 #elif defined __e2k__
 #undef XASH_64BIT
 #define XASH_64BIT() 1
-#define XASH_E2K 1
+#undef XASH_E2K
+#define XASH_E2K() 1
 #elif defined _M_ARM  // MSVC
 #undef XASH_ARM
 #define XASH_ARM() 7
@@ -200,20 +210,25 @@ For more information, please refer to <http://unlicense.org/>
 #define XASH_ARM_HARDFP() 1
 #endif  // __SOFTFP__
 #elif defined __riscv
-#define XASH_RISCV 1
+#undef XASH_RISCV
+#define XASH_RISCV() 1
 
 #if __riscv_xlen == 64
-#define XASH_64BIT 1
+#undef XASH_64BIT
+#define XASH_64BIT() 1
 #elif __riscv_xlen != 32
 #error "Unknown RISC-V ABI!"
 #endif
 
 #if defined __riscv_float_abi_soft
-#define XASH_RISCV_SOFTFP 1
+#undef XASH_RISCV_SOFTFP
+#define XASH_RISCV_SOFTFP() 1
 #elif defined __riscv_float_abi_single
-#define XASH_RISCV_SINGLEFP 1
+#undef XASH_RISCV_SINGLEFP
+#define XASH_RISCV_SINGLEFP() 1
 #elif defined __riscv_float_abi_double
-#define XASH_RISCV_DOUBLEFP 1
+#undef XASH_RISCV_DOUBLEFP
+#define XASH_RISCV_DOUBLEFP() 1
 #else
 #error "Unknown RISC-V float ABI!"
 #endif

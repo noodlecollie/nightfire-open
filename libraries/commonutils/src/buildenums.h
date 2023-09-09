@@ -61,14 +61,14 @@ GNU General Public License for more details.
 #define XASH_ARCHITECTURE ARCHITECTURE_X86
 #elif XASH_ARM()
 #define XASH_ARCHITECTURE ARCHITECTURE_ARM
-#elif XASH_MIPS
+#elif XASH_MIPS()
 #define XASH_ARCHITECTURE ARCHITECTURE_MIPS
-#elif XASH_E2K
+#elif XASH_E2K()
 #define XASH_ARCHITECTURE ARCHITECTURE_E2K
-#elif XASH_RISCV
+#elif XASH_RISCV()
 #define XASH_ARCHITECTURE ARCHITECTURE_RISCV
 #else
-#error
+#error Unknown architecture!
 #endif
 
 //================================================================
@@ -85,7 +85,7 @@ GNU General Public License for more details.
 #elif XASH_BIG_ENDIAN()
 #define XASH_ENDIANNESS ENDIANNESS_BIG
 #else
-#error
+#error Unknown endianness!
 #endif
 
 //================================================================
@@ -111,14 +111,14 @@ GNU General Public License for more details.
 #define XASH_ARCHITECTURE_ABI (XASH_ARM())
 #endif
 #elif XASH_ARCHITECTURE == ARCHITECTURE_RISCV
-#if XASH_RISCV_SOFTFP
+#if XASH_RISCV_SOFTFP()
 #define XASH_ARCHITECTURE_ABI ARCHITECTURE_RISCV_FP_SOFT
-#elif XASH_RISCV_SINGLEFP
+#elif XASH_RISCV_SINGLEFP()
 #define XASH_ARCHITECTURE_ABI ARCHITECTURE_RISCV_FP_SINGLE
-#elif XASH_RISCV_DOUBLEFP
+#elif XASH_RISCV_DOUBLEFP()
 #define XASH_ARCHITECTURE_ABI ARCHITECTURE_RISCV_FP_DOUBLE
 #else
-#error
+#error Unknown RISCV architecture!
 #endif
 #else
 #define XASH_ARCHITECTURE_ABI 0  // unused
