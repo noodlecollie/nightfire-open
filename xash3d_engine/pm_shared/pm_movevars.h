@@ -5,9 +5,9 @@
 // $NoKeywords: $
 //=============================================================================
 
-// pm_movevars.h
-#if !defined(PM_MOVEVARSH)
-#define PM_MOVEVARSH
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 
 // movevars_t                  // Physics variables.
 typedef struct movevars_s movevars_t;
@@ -50,5 +50,3 @@ struct movevars_s
 };
 
 extern movevars_t movevars;
-
-#endif
