@@ -35,8 +35,6 @@ Crash handler, called from system
 
 #if DBGHELP
 
-#pragma comment(lib, "dbghelp")
-
 #include <winnt.h>
 #include <dbghelp.h>
 #include <psapi.h>
