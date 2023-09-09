@@ -114,20 +114,20 @@ void CRC32_ProcessBuffer(uint32_t* crc, const void* pBuffer, int nBuffer)
 			case 7:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 6:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 5:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 4:
 			{
@@ -146,20 +146,20 @@ void CRC32_ProcessBuffer(uint32_t* crc, const void* pBuffer, int nBuffer)
 			case 3:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 2:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 1:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 0:
 			{
@@ -180,20 +180,20 @@ void CRC32_ProcessBuffer(uint32_t* crc, const void* pBuffer, int nBuffer)
 			case 3:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 2:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 
 			case 1:
 			{
 				ulCrc = crc32table[*pb++ ^ (uint8_t)ulCrc] ^ (ulCrc >> 8);
-				// fallthrough
 			}
+			// fall through
 		}
 
 		nMain = nBuffer >> 3;
