@@ -1,6 +1,5 @@
 add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/beamdef.h
-	include/XashDefs/boneinfo.h
 	include/XashDefs/bspfile.h
 	include/XashDefs/cl_entity.h
 	include/XashDefs/com_image.h
