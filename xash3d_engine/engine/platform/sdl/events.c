@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include <ctype.h>
 
 #include "common.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "input.h"
 #include "client.h"
 #include "vgui_draw.h"

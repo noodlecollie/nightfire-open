@@ -19,9 +19,9 @@ GNU General Public License for more details.
 #include "Identity/arch.h"
 #include "common.h"
 #include "client.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "protocol.h"  // get the protocol version
-#include "con_nprint.h"
+#include "XashDefs/con_nprint.h"
 #include "qfont.h"
 #include "XashDefs/wadfile.h"
 #include "input.h"

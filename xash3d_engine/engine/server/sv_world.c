@@ -16,9 +16,9 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "server.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "pm_local.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "mod_local.h"
 
 typedef struct moveclip_s

@@ -16,11 +16,11 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "cl_tent.h"
 #include "pm_local.h"
-#include "particledef.h"
-#include "studio.h"
+#include "XashDefs/particledef.h"
+#include "XashDefs/studio.h"
 
 #define MAX_FORWARD 6  // forward probes for set idealpitch
 #define MIN_CORRECTION_DISTANCE 0.25f  // use smoothing if error is > this

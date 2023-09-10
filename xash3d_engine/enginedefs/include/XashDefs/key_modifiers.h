@@ -1,6 +1,6 @@
 /*
-boneinfo.h - structure that send delta-compressed bones across network
-Copyright (C) 2018 Uncle Mike
+key_modifiers.h - enumeration of possible key modifiers
+Copyright (C) 2022 FWGS Team
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,10 +15,17 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
-
-typedef struct
+typedef enum
 {
-	vec3_t angles;
-	vec3_t origin;
-} boneinfo_t;
+	KeyModifier_None = 0,
+	KeyModifier_LeftShift = (1 << 0),
+	KeyModifier_RightShift = (1 << 1),
+	KeyModifier_LeftCtrl = (1 << 2),
+	KeyModifier_RightCtrl = (1 << 3),
+	KeyModifier_LeftAlt = (1 << 4),
+	KeyModifier_RightAlt = (1 << 5),
+	KeyModifier_LeftSuper = (1 << 6),
+	KeyModifier_RightSuper = (1 << 7),
+	KeyModifier_NumLock = (1 << 8),
+	KeyModifier_CapsLock = (1 << 9)
+} key_modifier_t;

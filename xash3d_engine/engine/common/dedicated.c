@@ -21,7 +21,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "MathLib/mathlib.h"
-#include "ref_api.h"
+#include "XashDefs/ref_api.h"
 
 ref_globals_t refState;
 

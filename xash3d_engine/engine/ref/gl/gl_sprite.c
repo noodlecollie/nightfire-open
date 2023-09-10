@@ -16,9 +16,9 @@ GNU General Public License for more details.
 #include "XashDefs/log_strings.h"
 #include "gl_local.h"
 #include "pm_local.h"
-#include "sprite.h"
-#include "studio.h"
-#include "entity_types.h"
+#include "XashDefs/sprite.h"
+#include "XashDefs/studio.h"
+#include "XashDefs/entity_types.h"
 
 // it's a Valve default value for LoadMapSprite (probably must be power of two)
 #define MAPSPRITE_SIZE 128

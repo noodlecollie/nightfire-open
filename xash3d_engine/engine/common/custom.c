@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common.h"
-#include "custom.h"
+#include "XashDefs/custom.h"
 #include "ref_common.h"
 #include "fscallback.h"
 

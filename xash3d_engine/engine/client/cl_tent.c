@@ -17,12 +17,12 @@ GNU General Public License for more details.
 #include "XashDefs/wadfile.h"  // acess decal size
 #include "common.h"
 #include "client.h"
-#include "r_efx.h"
-#include "entity_types.h"
-#include "triangleapi.h"
+#include "XashDefs/r_efx.h"
+#include "XashDefs/entity_types.h"
+#include "XashDefs/triangleapi.h"
 #include "cl_tent.h"
 #include "pm_local.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "sound.h"
 #include "fscallback.h"
 

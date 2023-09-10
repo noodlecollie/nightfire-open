@@ -21,8 +21,10 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "extdll_menu.h"
 #include "Primitive.h"
-#include "netadr.h"
+#include "XashDefs/netadr.h"
 #include "PlatformLib/String.h"
+#include "XashDefs/wrect.h"
+#include "XashDefs/cvardef.h"
 
 class EngFuncs
 {

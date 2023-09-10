@@ -19,12 +19,12 @@ GNU General Public License for more details.
 #include "common.h"
 #include "server.h"
 #include "net_encode.h"
-#include "event_flags.h"
+#include "XashDefs/event_flags.h"
 #include "library.h"
 #include "pm_defs.h"
-#include "studio.h"
-#include "const.h"
-#include "render_api.h"  // modelstate_t
+#include "XashDefs/studio.h"
+#include "XashDefs/const.h"
+#include "XashDefs/render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
 #include "fscallback.h"
 

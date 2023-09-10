@@ -13,10 +13,23 @@
  *
  ****/
 
-#ifndef CUSTOM_H
-#define CUSTOM_H
+#pragma once
 
-#include "const.h"
+#include "PlatformDefs/typedefs.h"
+#include "XashDefs/const.h"
+
+#define RES_FATALIFMISSING (1 << 0)  // Disconnect if we can't get this file.
+#define RES_WASMISSING (1 << 1)  // Do we have the file locally, did we get it ok?
+#define RES_CUSTOM (1 << 2)  // Is this resource one that corresponds to another player's customization
+// or is it a server startup resource.
+#define RES_REQUESTED (1 << 3)  // Already requested a download of this one
+#define RES_PRECACHED (1 << 4)  // Already precached
+#define RES_ALWAYS (1 << 5)  // Download always even if available on client
+#define RES_CHECKFILE (1 << 7)  // Check file on client
+
+#define FCUST_FROMHPAK (1 << 0)
+#define FCUST_WIPEDATA (1 << 1)
+#define FCUST_IGNOREINIT (1 << 2)
 
 /////////////////
 // Customization
@@ -43,15 +56,6 @@ typedef struct resourceinfo_s
 {
 	_resourceinfo_t info[8];
 } resourceinfo_t;
-
-#define RES_FATALIFMISSING (1 << 0)  // Disconnect if we can't get this file.
-#define RES_WASMISSING (1 << 1)  // Do we have the file locally, did we get it ok?
-#define RES_CUSTOM (1 << 2)  // Is this resource one that corresponds to another player's customization
-// or is it a server startup resource.
-#define RES_REQUESTED (1 << 3)  // Already requested a download of this one
-#define RES_PRECACHED (1 << 4)  // Already precached
-#define RES_ALWAYS (1 << 5)  // Download always even if available on client
-#define RES_CHECKFILE (1 << 7)  // Check file on client
 
 typedef struct resource_s
 {
@@ -85,9 +89,3 @@ typedef struct customization_s
 					// (the raw .wad data)
 	struct customization_s* pNext;  // Next in chain
 } customization_t;
-
-#define FCUST_FROMHPAK (1 << 0)
-#define FCUST_WIPEDATA (1 << 1)
-#define FCUST_IGNOREINIT (1 << 2)
-
-#endif  // CUSTOM_H

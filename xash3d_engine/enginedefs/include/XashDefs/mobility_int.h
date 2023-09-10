@@ -14,8 +14,7 @@ GNU General Public License for more details.
 */
 
 #pragma once
-#ifndef MOBILITY_INT_H
-#define MOBILITY_INT_H
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -116,5 +115,4 @@ typedef int (*pfnMobilityInterface)(mobile_engfuncs_t* gMobileEngfuncs);
 
 #ifdef __cplusplus
 }
-#endif
 #endif

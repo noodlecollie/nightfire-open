@@ -15,9 +15,9 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "trace.h"
-#include "lightstyle.h"
-#include "link.h"
+#include "XashDefs/trace.h"
+#include "XashDefs/lightstyle.h"
+#include "XashDefs/link.h"
 
 #define MOVE_NORMAL 0  // normal trace
 #define MOVE_NOMONSTERS 1  // ignore monsters (edicts with flags (FL_MONSTER|FL_FAKECLIENT|FL_CLIENT) set)
@@ -62,7 +62,7 @@ int RankForContents(int contents);
 ===============================================================================
 */
 #include "event_api.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 
 #define MAX_EVENT_QUEUE 64  // 16 simultaneous events, max
 

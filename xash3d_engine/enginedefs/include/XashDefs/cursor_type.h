@@ -1,5 +1,5 @@
 /*
-key_modifiers.h - enumeration of possible key modifiers
+cursor_type.h - enumeration of possible mouse cursor types
 Copyright (C) 2022 FWGS Team
 
 This program is free software: you can redistribute it and/or modify
@@ -14,22 +14,22 @@ GNU General Public License for more details.
 */
 
 #pragma once
-#ifndef KEY_MODIFIERS_H
-#define KEY_MODIFIERS_H
 
 typedef enum
 {
-	KeyModifier_None = 0,
-	KeyModifier_LeftShift = (1 << 0),
-	KeyModifier_RightShift = (1 << 1),
-	KeyModifier_LeftCtrl = (1 << 2),
-	KeyModifier_RightCtrl = (1 << 3),
-	KeyModifier_LeftAlt = (1 << 4),
-	KeyModifier_RightAlt = (1 << 5),
-	KeyModifier_LeftSuper = (1 << 6),
-	KeyModifier_RightSuper = (1 << 7),
-	KeyModifier_NumLock = (1 << 8),
-	KeyModifier_CapsLock = (1 << 9)
-} key_modifier_t;
-
-#endif
+	dc_user,
+	dc_none,
+	dc_arrow,
+	dc_ibeam,
+	dc_hourglass,
+	dc_crosshair,
+	dc_up,
+	dc_sizenwse,
+	dc_sizenesw,
+	dc_sizewe,
+	dc_sizens,
+	dc_sizeall,
+	dc_no,
+	dc_hand,
+	dc_last
+} VGUI_DefaultCursor;

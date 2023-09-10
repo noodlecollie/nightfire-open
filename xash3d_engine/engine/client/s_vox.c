@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "sound.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "sequence.h"
 #include <ctype.h>
 #include "fscallback.h"

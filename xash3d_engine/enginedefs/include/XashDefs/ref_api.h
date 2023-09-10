@@ -18,16 +18,16 @@ GNU General Public License for more details.
 #include "XashDefs/log_strings.h"
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
-#include "com_image.h"
-#include "vgui_api.h"
-#include "render_api.h"
-#include "triangleapi.h"
-#include "const.h"
-#include "cl_entity.h"
-#include "com_model.h"
-#include "studio.h"
-#include "r_efx.h"
-#include "com_image.h"
+#include "XashDefs/com_image.h"
+#include "XashDefs/vgui_api.h"
+#include "XashDefs/render_api.h"
+#include "XashDefs/triangleapi.h"
+#include "XashDefs/const.h"
+#include "XashDefs/cl_entity.h"
+#include "XashDefs/com_model.h"
+#include "XashDefs/studio.h"
+#include "XashDefs/r_efx.h"
+#include "XashDefs/com_image.h"
 
 // RefAPI changelog:
 // 1. Initial release

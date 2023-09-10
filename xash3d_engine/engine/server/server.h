@@ -17,16 +17,16 @@ GNU General Public License for more details.
 #define SERVER_H
 
 #include "MathLib/mathlib.h"
-#include "edict.h"
-#include "eiface.h"
-#include "physint.h"  // physics interface
+#include "XashDefs/edict.h"
+#include "XashDefs/eiface.h"
+#include "XashDefs/physint.h"  // physics interface
 #include "mod_local.h"
 #include "pm_defs.h"
 #include "pm_movevars.h"
-#include "entity_state.h"
+#include "XashDefs/entity_state.h"
 #include "protocol.h"
 #include "netchan.h"
-#include "custom.h"
+#include "XashDefs/custom.h"
 #include "world.h"
 
 //=============================================================================

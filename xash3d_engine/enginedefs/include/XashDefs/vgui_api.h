@@ -12,11 +12,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#ifndef VGUI_API_H
-#define VGUI_API_H
 
-#include "key_modifiers.h"
-#include "cursor_type.h"
+#pragma once
+
+#include "XashDefs/key_modifiers.h"
+#include "XashDefs/cursor_type.h"
 
 // VGUI generic vertex
 
@@ -195,4 +195,3 @@ typedef struct vguiapi_s
 	void (*MouseMove)(int x, int y);
 	void (*TextInput)(const char* text);
 } vguiapi_t;
-#endif  // VGUI_API_H

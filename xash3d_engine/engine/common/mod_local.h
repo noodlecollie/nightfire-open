@@ -13,14 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef MOD_LOCAL_H
-#define MOD_LOCAL_H
+#pragma once
 
-// #include "common.h"
-#include "edict.h"
-#include "eiface.h"
-#include "ref_api.h"
-#include "studio.h"
+#include "XashDefs/edict.h"
+#include "XashDefs/eiface.h"
+#include "XashDefs/ref_api.h"
+#include "XashDefs/studio.h"
 
 #define LM_SAMPLE_SIZE 16
 #define LM_SAMPLE_EXTRASIZE 8
@@ -230,5 +228,3 @@ void Mod_PrecacheEventSounds(model_t* model);
 //
 void Mod_LoadSpriteModel(model_t* mod, const void* buffer, qboolean* loaded, uint texFlags);
 #endif
-
-#endif  // MOD_LOCAL_H

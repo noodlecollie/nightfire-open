@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 
 /*
 ====================

@@ -19,8 +19,8 @@ GNU General Public License for more details.
 #include "mod_local.h"
 #include "pm_local.h"
 #include "pm_movevars.h"
-#include "enginefeatures.h"
-#include "studio.h"
+#include "XashDefs/enginefeatures.h"
+#include "XashDefs/studio.h"
 #include "world.h"
 
 #define PM_AllowHitBoxTrace(model, hull) \

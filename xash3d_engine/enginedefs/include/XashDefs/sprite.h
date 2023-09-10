@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef SPRITE_H
-#define SPRITE_H
+#pragma once
 
 #include <stdint.h>
 #include "PlatformDefs/platformid.h"
@@ -132,5 +131,3 @@ typedef struct
 } dframetype_t;
 
 STATIC_ASSERT(sizeof(dframetype_t) == 4, "invalid dframetype_t size");
-
-#endif  // SPRITE_H

@@ -16,13 +16,13 @@ GNU General Public License for more details.
 #include "XashDefs/log_strings.h"
 #include "MathLib/mathlib.h"
 #include "gl_local.h"
-#include "const.h"
-#include "r_studioint.h"
-#include "triangleapi.h"
-#include "alias.h"
+#include "XashDefs/const.h"
+#include "XashDefs/r_studioint.h"
+#include "XashDefs/triangleapi.h"
+#include "XashDefs/alias.h"
 #include "pm_local.h"
-#include "pmtrace.h"
-#include "typedefs.h"
+#include "XashDefs/pmtrace.h"
+#include "XashDefs/typedefs.h"
 
 extern cvar_t r_shadows;
 

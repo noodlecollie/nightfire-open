@@ -13,13 +13,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef MENU_INT_H
-#define MENU_INT_H
+#pragma once
 
-#include "cvardef.h"
-#include "gameinfo.h"
-#include "wrect.h"
+#include <stddef.h>
 #include "PlatformDefs/decorators.h"
+#include "PlatformDefs/typedefs.h"
+#include "XashDefs/gameinfo.h"
+#include "XashDefs/netadr.h"
 
 // a macro for mainui_cpp, indicating that mainui should be compiled for
 // Xash3D 1.0 interface
@@ -29,7 +29,7 @@ GNU General Public License for more details.
 // to avoid ripping code out of the repo completely.
 #define MENU_AFTERBURNER
 
-typedef int HIMAGE;  // handle to a graphic
+#define MENU_EXTENDED_API_VERSION 1
 
 // flags for PIC_Load
 #define PIC_NEAREST (1 << 0)  // disable texfilter
@@ -40,6 +40,19 @@ typedef int HIMAGE;  // handle to a graphic
 // flags for COM_ParseFileSafe
 #define PFILE_IGNOREBRACKET (1 << 0)
 #define PFILE_HANDLECOLON (1 << 1)
+
+#define PLATFORM_UPDATE_PAGE "PlatformUpdatePage"
+#define GENERIC_UPDATE_PAGE "GenericUpdatePage"
+
+struct con_nprint_s;
+struct wrect_s;
+struct ref_viewpass_s;
+struct cvar_s;
+struct cl_entity_s;
+struct con_nprint_s;
+struct GAMEINFO_S;
+
+typedef int HIMAGE;  // handle to a graphic
 
 typedef struct ui_globalvars_s
 {
@@ -57,8 +70,6 @@ typedef struct ui_globalvars_s
 	char maptitle[64];  // title of active map
 } ui_globalvars_t;
 
-struct ref_viewpass_s;
-
 typedef struct ui_enginefuncs_s
 {
 	// image handlers
@@ -67,10 +78,10 @@ typedef struct ui_enginefuncs_s
 	int (*pfnPIC_Width)(HIMAGE hPic);
 	int (*pfnPIC_Height)(HIMAGE hPic);
 	void (*pfnPIC_Set)(HIMAGE hPic, int r, int g, int b, int a);
-	void (*pfnPIC_Draw)(int x, int y, int width, int height, const wrect_t* prc);
-	void (*pfnPIC_DrawHoles)(int x, int y, int width, int height, const wrect_t* prc);
-	void (*pfnPIC_DrawTrans)(int x, int y, int width, int height, const wrect_t* prc);
-	void (*pfnPIC_DrawAdditive)(int x, int y, int width, int height, const wrect_t* prc);
+	void (*pfnPIC_Draw)(int x, int y, int width, int height, const struct wrect_s* prc);
+	void (*pfnPIC_DrawHoles)(int x, int y, int width, int height, const struct wrect_s* prc);
+	void (*pfnPIC_DrawTrans)(int x, int y, int width, int height, const struct wrect_s* prc);
+	void (*pfnPIC_DrawAdditive)(int x, int y, int width, int height, const struct wrect_s* prc);
 	void (*pfnPIC_EnableScissor)(int x, int y, int width, int height);
 	void (*pfnPIC_DisableScissor)(void);
 
@@ -78,7 +89,7 @@ typedef struct ui_enginefuncs_s
 	void (*pfnFillRGBA)(int x, int y, int width, int height, int r, int g, int b, int a);
 
 	// cvar handlers
-	cvar_t* (*pfnRegisterVariable)(const char* szName, const char* szValue, int flags);
+	struct cvar_s* (*pfnRegisterVariable)(const char* szName, const char* szValue, int flags);
 	float (*pfnGetCvarFloat)(const char* szName);
 	const char* (*pfnGetCvarString)(const char* szName);
 	void (*pfnCvarSetString)(const char* szName, const char* szValue);
@@ -152,8 +163,8 @@ typedef struct ui_enginefuncs_s
 	void (*pfnMemFree)(void* mem, const char* filename, const int fileline);
 
 	// collect info from engine
-	int (*pfnGetGameInfo)(GAMEINFO* pgameinfo);
-	GAMEINFO** (*pfnGetGamesList)(int* numGames);  // collect info about all mods
+	int (*pfnGetGameInfo)(struct GAMEINFO_S* pgameinfo);
+	struct GAMEINFO_S** (*pfnGetGamesList)(int* numGames);  // collect info about all mods
 	char** (*pfnGetFilesList)(const char* pattern, int* numFiles, int gamedironly);  // find in files
 	int (*pfnGetSaveComment)(const char* savename, char* comment);
 	int (*pfnGetDemoComment)(const char* demoname, char* comment);
@@ -201,8 +212,6 @@ typedef struct
 	int (*pfnCreditsActive)(void);  // unused
 	void (*pfnFinalCredits)(void);  // show credits + game end
 } UI_FUNCTIONS;
-
-#define MENU_EXTENDED_API_VERSION 1
 
 typedef struct ui_extendedfuncs_s
 {
@@ -254,8 +263,3 @@ typedef int (*UIEXTENEDEDAPI)(int version, UI_EXTENDED_FUNCTIONS* pFunctionTable
 
 // deprecated interface from old engine
 typedef int (*UITEXTAPI)(ui_extendedfuncs_t* engfuncs);
-
-#define PLATFORM_UPDATE_PAGE "PlatformUpdatePage"
-#define GENERIC_UPDATE_PAGE "GenericUpdatePage"
-
-#endif  // MENU_INT_H

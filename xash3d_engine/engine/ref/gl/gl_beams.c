@@ -15,13 +15,13 @@ GNU General Public License for more details.
 
 #include "XashDefs/log_strings.h"
 #include "gl_local.h"
-#include "r_efx.h"
-#include "event_flags.h"
-#include "entity_types.h"
-#include "triangleapi.h"
-#include "customentity.h"
+#include "XashDefs/r_efx.h"
+#include "XashDefs/event_flags.h"
+#include "XashDefs/entity_types.h"
+#include "XashDefs/triangleapi.h"
+#include "XashDefs/customentity.h"
 #include "pm_local.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 
 #define NOISE_DIVISIONS 64  // don't touch - many tripmines cause the crash when it equal 128
 

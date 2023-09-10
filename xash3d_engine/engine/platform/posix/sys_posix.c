@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include <fcntl.h>
 #include <errno.h>
 #include "platform/platform.h"
-#include "menu_int.h"
+#include "XashDefs/menu_int.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/System.h"
 #include "PlatformLib/String.h"

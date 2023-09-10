@@ -27,7 +27,7 @@ GAMEINFO stuff
 internal shared gameinfo structure (readonly for engine parts)
 ========================================================================
 */
-typedef struct
+typedef struct GAMEINFO_S
 {
 	// filesystem info
 	char gamefolder[64];  // used for change game '-game x'

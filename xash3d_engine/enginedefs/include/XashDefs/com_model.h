@@ -18,8 +18,9 @@ GNU General Public License for more details.
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/mempool.h"
 #include "XashDefs/engine_limits.h"
-#include "bspfile.h"
-#include "typedefs.h"
+#include "XashDefs/bspfile.h"
+#include "XashDefs/typedefs.h"
+#include "XashDefs/custom.h"
 
 /*
 ==============================================================================
@@ -40,6 +41,40 @@ GNU General Public License for more details.
 
 #define HALFLIFE_TEXPATH_SKY "sky"
 #define AFTERBURNER_TEXPATH_SKY "special/sky"
+
+#define MAX_SCOREBOARDNAME 32
+#define MAX_INFO_STRING 256
+
+#define MAXALIASVERTS 2048
+#define MAXALIASFRAMES 256
+#define MAXALIASTRIS 4096
+#define MAX_SKINS 32
+
+// remapping info
+#define SUIT_HUE_START 192
+#define SUIT_HUE_END 223
+#define PLATE_HUE_START 160
+#define PLATE_HUE_END 191
+
+#define SHIRT_HUE_START 16
+#define SHIRT_HUE_END 32
+#define PANTS_HUE_START 96
+#define PANTS_HUE_END 112
+
+// 1/32 epsilon to keep floating point happy
+#define DIST_EPSILON (1.0f / 32.0f)
+#define FRAC_EPSILON (1.0f / 1024.0f)
+#define BACKFACE_EPSILON 0.01f
+#define MAX_BOX_LEAFS 256
+#define ANIM_CYCLE 2
+#define MOD_FRAMES 20
+
+#define MAX_DEMOS 32
+#define MAX_MOVIES 8
+#define MAX_CDTRACKS 32
+#define MAX_CLIENT_SPRITES 512  // SpriteTextures (0-256 hud, 256-512 client)
+#define MAX_EFRAGS 8192  // Arcane Dimensions required
+#define MAX_REQUESTS 64
 
 struct msurface_s;
 struct dmodel_s;
@@ -262,13 +297,10 @@ typedef struct hull_s
 	vec3_t clip_maxs;
 } hull_t;
 
-#ifndef CACHE_USER
-#define CACHE_USER
 typedef struct cache_user_s
 {
 	void* data;  // extradata
 } cache_user_t;
-#endif
 
 typedef struct model_s
 {
@@ -352,11 +384,6 @@ typedef struct auxvert_s
 	float fv[3];  // viewspace x, y
 } auxvert_t;
 
-#define MAX_SCOREBOARDNAME 32
-#define MAX_INFO_STRING 256
-
-#include "custom.h"
-
 typedef struct player_info_s
 {
 	int userid;  // User id on server
@@ -439,10 +466,6 @@ ALIAS MODELS
 Alias models are position independent, so the cache manager can move them.
 ==============================================================================
 */
-#define MAXALIASVERTS 2048
-#define MAXALIASFRAMES 256
-#define MAXALIASTRIS 4096
-#define MAX_SKINS 32
 
 // This mirrors trivert_t in trilib.h, is present so Quake knows how to
 // load this data
@@ -494,29 +517,3 @@ typedef struct
 
 	maliasframedesc_t frames[1];  // variable sized
 } aliashdr_t;
-
-// remapping info
-#define SUIT_HUE_START 192
-#define SUIT_HUE_END 223
-#define PLATE_HUE_START 160
-#define PLATE_HUE_END 191
-
-#define SHIRT_HUE_START 16
-#define SHIRT_HUE_END 32
-#define PANTS_HUE_START 96
-#define PANTS_HUE_END 112
-
-// 1/32 epsilon to keep floating point happy
-#define DIST_EPSILON (1.0f / 32.0f)
-#define FRAC_EPSILON (1.0f / 1024.0f)
-#define BACKFACE_EPSILON 0.01f
-#define MAX_BOX_LEAFS 256
-#define ANIM_CYCLE 2
-#define MOD_FRAMES 20
-
-#define MAX_DEMOS 32
-#define MAX_MOVIES 8
-#define MAX_CDTRACKS 32
-#define MAX_CLIENT_SPRITES 512  // SpriteTextures (0-256 hud, 256-512 client)
-#define MAX_EFRAGS 8192  // Arcane Dimensions required
-#define MAX_REQUESTS 64

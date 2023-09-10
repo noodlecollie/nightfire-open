@@ -115,12 +115,12 @@ typedef enum
 } instance_t;
 
 #include "system.h"
-#include "com_model.h"
+#include "XashDefs/com_model.h"
 #include "com_strings.h"
 #include "CRTLib/crtlib.h"
 #include "cvar.h"
-#include "con_nprint.h"
-#include "ref_api.h"
+#include "XashDefs/con_nprint.h"
+#include "XashDefs/ref_api.h"
 
 // PERFORMANCE INFO
 #define MIN_FPS 20.0f  // host minimum fps value for maxfps.
@@ -513,7 +513,7 @@ void Mem_PrintStats(void);
 //
 // imagelib
 //
-#include "com_image.h"
+#include "XashDefs/com_image.h"
 
 void Image_Setup(void);
 void Image_Init(void);

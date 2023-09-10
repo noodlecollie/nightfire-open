@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
-#include "mobility_int.h"
+#include "XashDefs/mobility_int.h"
 #include "library.h"
 #include "input.h"
 #include "platform/platform.h"

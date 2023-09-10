@@ -69,6 +69,7 @@ set(ENGINE_SOURCES
 	common/cvar.c
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:common/dedicated.c>
 	common/dll_types.h
+	common/event_api.h
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c
@@ -79,13 +80,14 @@ set(ENGINE_SOURCES
 	common/infostring.c
 	common/ipv6text.h
 	common/ipv6text.c
+	common/kbutton.h
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:common/launcher.c>
 	common/lib_common.c
 	common/library.h
-	common/link.h
 	common/masterlist.c
 	common/mod_bmodel.c
 	common/model.c
+	common/net_api.h
 	common/model_dump.h
 	common/model_dump.c
 	common/mod_local.h
@@ -107,14 +109,17 @@ set(ENGINE_SOURCES
 	common/pm_surface.c
 	common/pm_trace.c
 	common/protocol.h
+	common/qfont.h
 	common/sequence.c
 	common/setpair.h
+	common/surfaceprops.h
 	common/sys_con.c
 	common/system.c
 	common/system.h
 	common/tests.h
 	common/textureproperties.h
 	common/textureproperties.c
+	common/usercmd.h
 	common/whereami.h
 	common/whereami.c
 	common/world.h
@@ -135,31 +140,10 @@ set(ENGINE_SOURCES
 	server/sv_pmove.c
 	server/sv_save.c
 	server/sv_world.c
-	alias.h
-	anorms.h
-	cdll_exp.h
-	cdll_int.h
-	cursor_type.h
-	custom.h
-	customentity.h
-	edict.h
-	eiface.h
 	engine_builddefs.h
 	fscallback.h
-	key_modifiers.h
-	keydefs.h
-	menu_int.h
-	mobility_int.h
-	physint.h
-	progdefs.h
-	ref_api.h
 	sequence.h
-	shake.h
-	sprite.h
 	staticbuildchecks.h
-	studio.h
-	vgui_api.h
-	warpsin.h
 )
 
 if(CLIENT_SUPPORT)
@@ -169,6 +153,7 @@ if(CLIENT_SUPPORT)
 		client/avi/avi.h
 		client/vgui/vgui_draw.h
 		client/vgui/vgui_draw.c
+		client/cdll_exp.h
 		client/cl_bytenormals.h
 		client/cl_bytenormals.c
 		client/cl_cmds.c
@@ -200,9 +185,12 @@ if(CLIENT_SUPPORT)
 		client/cl_video.c
 		client/cl_view.c
 		client/console.c
+		client/demo_api.h
+		client/hltv.h
 		client/in_joy.c
 		client/input.h
 		client/input.c
+		client/ivoicetweak.h
 		client/in_touch.c
 		client/keys.c
 		client/mod_dbghulls.c
