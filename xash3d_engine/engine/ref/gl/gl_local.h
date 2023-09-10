@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "XashDefs/dlight.h"
 #include "gl_frustum.h"
-#include "ref_api.h"
+#include "XashDefs/ref_api.h"
 #include "MathLib/mathlib.h"
 #include "XashDefs/ref_params.h"
 #include "XashDefs/enginefeatures.h"

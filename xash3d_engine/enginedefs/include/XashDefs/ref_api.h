@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
 #include "XashDefs/com_image.h"
-#include "vgui_api.h"
+#include "XashDefs/vgui_api.h"
 #include "XashDefs/render_api.h"
 #include "XashDefs/triangleapi.h"
 #include "XashDefs/const.h"

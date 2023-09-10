@@ -14,8 +14,6 @@ GNU General Public License for more details.
 */
 
 #pragma once
-#ifndef CURSOR_TYPE_H
-#define CURSOR_TYPE_H
 
 typedef enum
 {
@@ -35,5 +33,3 @@ typedef enum
 	dc_hand,
 	dc_last
 } VGUI_DefaultCursor;
-
-#endif

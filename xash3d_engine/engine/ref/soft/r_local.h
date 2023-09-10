@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "XashDefs/render_api.h"
 #include "protocol.h"
 #include "XashDefs/dlight.h"
-#include "ref_api.h"
+#include "XashDefs/ref_api.h"
 #include "XashDefs/ref_params.h"
 #include "XashDefs/enginefeatures.h"
 #include "com_strings.h"

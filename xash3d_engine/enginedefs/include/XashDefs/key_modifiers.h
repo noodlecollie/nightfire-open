@@ -14,8 +14,6 @@ GNU General Public License for more details.
 */
 
 #pragma once
-#ifndef KEY_MODIFIERS_H
-#define KEY_MODIFIERS_H
 
 typedef enum
 {
@@ -31,5 +29,3 @@ typedef enum
 	KeyModifier_NumLock = (1 << 8),
 	KeyModifier_CapsLock = (1 << 9)
 } key_modifier_t;
-
-#endif

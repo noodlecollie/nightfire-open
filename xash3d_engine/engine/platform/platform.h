@@ -20,8 +20,8 @@ GNU General Public License for more details.
 #include "common.h"
 #include "system.h"
 #include "backends.h"
-#include "cursor_type.h"
-#include "key_modifiers.h"
+#include "XashDefs/cursor_type.h"
+#include "XashDefs/key_modifiers.h"
 
 /*
 ==============================================================================

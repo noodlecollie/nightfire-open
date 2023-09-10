@@ -142,22 +142,18 @@ set(ENGINE_SOURCES
 	server/sv_pmove.c
 	server/sv_save.c
 	server/sv_world.c
-	cursor_type.h
 	engine_builddefs.h
 	fscallback.h
-	key_modifiers.h
 	menu_int.h
 	mobility_int.h
 	physint.h
 	progdefs.h
-	ref_api.h
 	sequence.h
 	shake.h
 	sprite.h
 	staticbuildchecks.h
 	studio_event.h
 	studio.h
-	vgui_api.h
 	warpsin.h
 )
 

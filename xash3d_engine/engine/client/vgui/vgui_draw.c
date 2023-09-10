@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"
 #include "vgui_draw.h"
-#include "vgui_api.h"
+#include "XashDefs/vgui_api.h"
 #include "library.h"
 #include "XashDefs/keydefs.h"
 #include "ref_common.h"

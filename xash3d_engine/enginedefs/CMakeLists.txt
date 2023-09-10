@@ -10,6 +10,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/com_model.h
 	include/XashDefs/con_nprint.h
 	include/XashDefs/const.h
+	include/XashDefs/cursor_type.h
 	include/XashDefs/custom.h
 	include/XashDefs/customentity.h
 	include/XashDefs/cvardef.h
@@ -24,6 +25,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/event_args.h
 	include/XashDefs/event_flags.h
 	include/XashDefs/gameinfo.h
+	include/XashDefs/key_modifiers.h
 	include/XashDefs/keydefs.h
 	include/XashDefs/lightstyle.h
 	include/XashDefs/log_strings.h
@@ -34,12 +36,14 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/pmtrace.h
 	include/XashDefs/r_efx.h
 	include/XashDefs/r_studioint.h
+	include/XashDefs/ref_api.h
 	include/XashDefs/ref_params.h
 	include/XashDefs/render_api.h
 	include/XashDefs/screenfade.h
 	include/XashDefs/triangleapi.h
 	include/XashDefs/typedefs.h
-	include/XashDefs/wadfile.h
+	include/XashDefs/typedefs.h
+	include/XashDefs/vgui_api.h
 	include/XashDefs/weaponinfo.h
 	include/XashDefs/wrect.h
 )
