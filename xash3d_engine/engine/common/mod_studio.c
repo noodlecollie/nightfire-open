@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "server.h"
 #include "studio.h"
-#include "r_studioint.h"
+#include "XashDefs/r_studioint.h"
 #include "library.h"
 #include "ref_common.h"
 #include "mod_local.h"

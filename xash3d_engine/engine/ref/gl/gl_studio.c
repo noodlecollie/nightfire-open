@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "gl_local.h"
 #include "MathLib/mathlib.h"
 #include "XashDefs/const.h"
-#include "r_studioint.h"
+#include "XashDefs/r_studioint.h"
 #include "triangleapi.h"
 #include "studio.h"
 #include "pm_local.h"
