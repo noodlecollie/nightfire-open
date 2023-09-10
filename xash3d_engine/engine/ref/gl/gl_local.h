@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #ifndef GL_LOCAL_H
 #define GL_LOCAL_H
 
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 #include "XashDefs/const.h"
 #include "XashDefs/com_model.h"
 #include "XashDefs/cl_entity.h"

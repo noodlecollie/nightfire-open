@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 #include "custom.h"
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 #include "edict.h"
 
 //

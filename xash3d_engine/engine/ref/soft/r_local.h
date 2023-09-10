@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "MathLib/mathlib.h"
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 #include "XashDefs/const.h"
 #include "XashDefs/com_model.h"
 #include "XashDefs/cl_entity.h"
