@@ -144,7 +144,6 @@ set(ENGINE_SOURCES
 	fscallback.h
 	sequence.h
 	staticbuildchecks.h
-	warpsin.h
 )
 
 if(CLIENT_SUPPORT)
