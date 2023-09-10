@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/mempool.h"
 #include "XashDefs/engine_limits.h"
-#include "bspfile.h"
+#include "XashDefs/bspfile.h"
 #include "typedefs.h"
 
 /*
