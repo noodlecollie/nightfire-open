@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "XashDefs/ref_params.h"
 #include "XashDefs/render_api.h"
 #include "cdll_exp.h"
-#include "screenfade.h"
+#include "XashDefs/screenfade.h"
 #include "protocol.h"
 #include "netchan.h"
 #include "net_api.h"
