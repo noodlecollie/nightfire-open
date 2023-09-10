@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "triangleapi.h"
 #include "XashDefs/const.h"
 #include "XashDefs/cl_entity.h"
-#include "com_model.h"
+#include "XashDefs/com_model.h"
 #include "studio.h"
 #include "r_efx.h"
 #include "XashDefs/com_image.h"

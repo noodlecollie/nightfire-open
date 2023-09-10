@@ -20,7 +20,7 @@
 // PM_PlayerTrace results.
 #include "pmtrace.h"
 
-#include "com_model.h"
+#include "XashDefs/com_model.h"
 #include "usercmd.h"
 #include "trace.h"
 

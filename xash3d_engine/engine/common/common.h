@@ -115,7 +115,7 @@ typedef enum
 } instance_t;
 
 #include "system.h"
-#include "com_model.h"
+#include "XashDefs/com_model.h"
 #include "com_strings.h"
 #include "CRTLib/crtlib.h"
 #include "cvar.h"

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "cvardef.h"
 #include "XashDefs/const.h"
-#include "com_model.h"
+#include "XashDefs/com_model.h"
 #include "XashDefs/cl_entity.h"
 #include "render_api.h"
 #include "protocol.h"
