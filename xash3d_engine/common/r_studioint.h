@@ -13,10 +13,21 @@
  *
  ****/
 
-#ifndef R_STUDIOINT_H
-#define R_STUDIOINT_H
+#pragma once
+
+#include <stddef.h>
 
 #define STUDIO_INTERFACE_VERSION 1
+#define SV_BLENDING_INTERFACE_VERSION 1
+
+struct edict_s;
+struct model_s;
+struct cache_user_s;
+struct cl_entity_s;
+struct player_info_s;
+struct entity_state_s;
+struct cvar_s;
+struct alight_s;
 
 typedef struct engine_studio_api_s
 {
@@ -132,9 +143,6 @@ typedef struct r_studio_interface_s
 	int (*StudioDrawPlayer)(int flags, struct entity_state_s* pplayer);
 } r_studio_interface_t;
 
-// server blending
-#define SV_BLENDING_INTERFACE_VERSION 1
-
 typedef struct sv_blending_interface_s
 {
 	int version;
@@ -148,7 +156,5 @@ typedef struct sv_blending_interface_s
 		const byte* pcontroller,
 		const byte* pblending,
 		int iBone,
-		const edict_t* pEdict);
+		const struct edict_s* pEdict);
 } sv_blending_interface_t;
-
-#endif  // R_STUDIOINT_H

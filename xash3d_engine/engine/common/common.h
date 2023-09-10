@@ -153,6 +153,8 @@ void DBG_AssertFunction(qboolean fExpr, const char* szExpr, const char* szFile, 
 #define Assert(f)
 #endif
 
+struct edict_s;
+
 extern convar_t* gl_vsync;
 extern convar_t* scr_loading;
 extern convar_t* scr_download;
@@ -797,7 +799,7 @@ struct cmd_s* Cmd_GetFirstFunctionHandle(void);
 struct cmd_s* Cmd_GetNextFunctionHandle(struct cmd_s* cmd);
 struct cmdalias_s* Cmd_AliasGetList(void);
 const char* Cmd_GetName(struct cmd_s* cmd);
-void SV_StartSound(edict_t* ent, int chan, const char* sample, float vol, float attn, int flags, int pitch);
+void SV_StartSound(struct edict_s* ent, int chan, const char* sample, float vol, float attn, int flags, int pitch);
 void SV_StartMusic(const char* curtrack, const char* looptrack, int position);
 void SV_CreateDecal(
 	sizebuf_t* msg,
@@ -809,7 +811,7 @@ void SV_CreateDecal(
 	float scale);
 void Log_Printf(const char* fmt, ...) _format(1);
 void SV_BroadcastCommand(const char* fmt, ...) _format(1);
-qboolean SV_RestoreCustomDecal(struct decallist_s* entry, edict_t* pEdict, qboolean adjacent);
+qboolean SV_RestoreCustomDecal(struct decallist_s* entry, struct edict_s* pEdict, qboolean adjacent);
 void SV_BroadcastPrintf(struct sv_client_s* ignore, const char* fmt, ...) _format(2);
 int R_CreateDecalList(struct decallist_s* pList);
 void R_ClearAllDecals(void);

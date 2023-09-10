@@ -17,6 +17,8 @@
 
 #include "PlatformDefs/typedefs.h"
 #include "typedefs.h"
+#include "pm_info.h"
+#include "weaponinfo.h"
 
 // For entityType below
 #define ENTITY_NORMAL (1 << 0)
@@ -121,8 +123,6 @@ struct entity_state_s
 	vec3_t vuser4;
 };
 
-#include "pm_info.h"
-
 typedef struct clientdata_s
 {
 	vec3_t origin;
@@ -174,8 +174,6 @@ typedef struct clientdata_s
 	vec3_t vuser4;
 
 } clientdata_t;
-
-#include "weaponinfo.h"
 
 #define MAX_LOCAL_WEAPONS 32  // max weapons that can be predicted on the client
 

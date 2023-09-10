@@ -15,6 +15,9 @@
 
 #pragma once
 
+#include "PlatformDefs/typedefs.h"
+#include "typedefs.h"
+
 typedef struct dlight_s
 {
 	vec3_t origin;

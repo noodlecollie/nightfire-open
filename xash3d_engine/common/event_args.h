@@ -12,10 +12,10 @@
  *   without written permission from Valve LLC.
  *
  ****/
-#ifndef EVENT_ARGS_H
-#define EVENT_ARGS_H
 
-typedef struct edict_s edict_t;
+#pragma once
+
+struct edict_s;
 
 // Event was invoked with stated origin
 #define FEVENT_ORIGIN (1 << 0)
@@ -53,7 +53,7 @@ typedef struct event_args_s
 typedef struct event_fire_args_s
 {
 	int flags;
-	const edict_t* invoker;
+	const struct edict_s* invoker;
 	unsigned short eventIndex;
 	float delay;
 	const float* vec3Origin;
@@ -66,5 +66,3 @@ typedef struct event_fire_args_s
 	int bparam2;
 	const float* vec3param1;
 } event_fire_args_t;
-
-#endif  // EVENT_ARGS_H
