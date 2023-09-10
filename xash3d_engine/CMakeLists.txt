@@ -10,7 +10,6 @@
 add_library(${TARGETNAME_INCLUDES_SDK} INTERFACE)
 
 target_include_directories(${TARGETNAME_INCLUDES_SDK} INTERFACE
-	common
 	engine
 )
 

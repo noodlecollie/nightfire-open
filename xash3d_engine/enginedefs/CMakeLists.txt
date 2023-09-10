@@ -30,7 +30,6 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/typedefs.h
 	include/XashDefs/wadfile.h
 	include/XashDefs/weaponinfo.h
-	include/XashDefs/wrect.h
 )
 
 target_compile_definitions(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
