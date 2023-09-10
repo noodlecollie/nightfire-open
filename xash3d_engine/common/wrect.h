@@ -13,12 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef WRECT_H
-#define WRECT_H
+#pragma once
 
 typedef struct wrect_s
 {
-	int left, right, top, bottom;
+	int left;
+	int right;
+	int top;
+	int bottom;
 } wrect_t;
-
-#endif  // WRECT_H

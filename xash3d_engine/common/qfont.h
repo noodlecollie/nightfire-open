@@ -13,10 +13,9 @@
  *
  ****/
 
-#ifndef QFONT_H
-#define QFONT_H
+#pragma once
 
-// Font stuff
+#include "PlatformDefs/typedefs.h"
 
 #define NUM_GLYPHS 256
 
@@ -34,5 +33,3 @@ typedef struct qfont_s
 	charinfo fontinfo[NUM_GLYPHS];
 	byte data[4];
 } qfont_t;
-
-#endif  // QFONT_H

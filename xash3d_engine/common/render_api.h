@@ -13,11 +13,18 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef RENDER_API_H
-#define RENDER_API_H
+#pragma once
 
+#include "PlatformDefs/typedefs.h"
+#include "typedefs.h"
 #include "lightstyle.h"
 #include "dlight.h"
+
+struct ref_viewpass_s;
+struct cl_entity_s;
+struct mstudiotex_s;
+struct ref_overview_s;
+struct model_s;
 
 #define CL_RENDER_INTERFACE_VERSION 37  // Xash3D 1.0
 #define MAX_STUDIO_DECALS 4096  // + unused space of BSP decals
@@ -157,8 +164,6 @@ typedef struct decallist_s
 	modelstate_t studio_state;  // studio decals only
 } decallist_t;
 
-struct ref_viewpass_s;
-
 typedef struct render_api_s
 {
 	// Get renderer info (doesn't changes engine state at all)
@@ -287,5 +292,3 @@ typedef struct render_interface_s
 	// shuffle previous & next states for lerping
 	void (*CL_UpdateLatchedVars)(struct cl_entity_s* e, qboolean reset);
 } render_interface_t;
-
-#endif  // RENDER_API_H

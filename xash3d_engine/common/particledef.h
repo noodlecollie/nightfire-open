@@ -15,6 +15,10 @@
 
 #pragma once
 
+#include "PlatformDefs/typedefs.h"
+
+struct particle_s;
+
 typedef enum
 {
 	pt_static,

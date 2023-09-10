@@ -1,5 +1,4 @@
-#ifndef SURFACEPROPS_H
-#define SURFACEPROPS_H
+#pragma once
 
 #define SURFACEPROP_ENTRY_LIST \
 	LIST_ITEM(SurfaceProp_None = 0, "none") \
@@ -35,5 +34,3 @@ typedef enum _SurfaceProp
 	SURFACEPROP_ENTRY_LIST SurfaceProp__Count
 } SurfaceProp;
 #undef LIST_ITEM
-
-#endif  // SURFACEPROPS_H

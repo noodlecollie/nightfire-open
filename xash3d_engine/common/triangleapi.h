@@ -13,14 +13,7 @@
  *
  ****/
 
-#ifndef TRIANGLEAPI_H
-#define TRIANGLEAPI_H
-
-typedef enum
-{
-	TRI_FRONT = 0,
-	TRI_NONE = 1,
-} TRICULLSTYLE;
+#pragma once
 
 #define TRI_API_VERSION 1
 
@@ -32,6 +25,14 @@ typedef enum
 #define TRI_TRIANGLE_STRIP 5
 #define TRI_QUAD_STRIP 6
 #define TRI_POINTS 7  // Xash3D added
+
+struct model_s;
+
+typedef enum
+{
+	TRI_FRONT = 0,
+	TRI_NONE = 1,
+} TRICULLSTYLE;
 
 typedef struct triangleapi_s
 {
@@ -62,5 +63,3 @@ typedef struct triangleapi_s
 	void (*Color4fRendermode)(float r, float g, float b, float a, int rendermode);
 	void (*FogParams)(float flDensity, int iFogSkybox);
 } triangleapi_t;
-
-#endif  // TRIANGLEAPI_H

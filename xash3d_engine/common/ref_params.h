@@ -13,8 +13,18 @@
  *
  ****/
 
-#ifndef REF_PARAMS_H
-#define REF_PARAMS_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
+
+// ref_viewpass_t->flags
+#define RF_DRAW_WORLD (1 << 0)  // pass should draw the world (otherwise it's player menu model)
+#define RF_DRAW_CUBEMAP (1 << 1)  // special 6x pass to render cubemap\skybox sides
+#define RF_DRAW_OVERVIEW (1 << 2)  // overview mode is active
+#define RF_ONLY_CLIENTDRAW (1 << 3)  // nothing is drawn by the engine except clientDraw functions
+
+struct usercmd_s;
+struct movevars_s;
 
 typedef struct ref_params_s
 {
@@ -85,12 +95,6 @@ typedef struct ref_overview_s
 	float flZoom;
 } ref_overview_t;
 
-// ref_viewpass_t->flags
-#define RF_DRAW_WORLD (1 << 0)  // pass should draw the world (otherwise it's player menu model)
-#define RF_DRAW_CUBEMAP (1 << 1)  // special 6x pass to render cubemap\skybox sides
-#define RF_DRAW_OVERVIEW (1 << 2)  // overview mode is active
-#define RF_ONLY_CLIENTDRAW (1 << 3)  // nothing is drawn by the engine except clientDraw functions
-
 // intermediate struct for viewpass (or just a single frame)
 typedef struct ref_viewpass_s
 {
@@ -102,5 +106,3 @@ typedef struct ref_viewpass_s
 	float viewmodelfov_x, viewmodelfov_y;
 	int flags;  // if !=0 nothing is drawn by the engine except clientDraw functions
 } ref_viewpass_t;
-
-#endif  // REF_PARAMS_H
