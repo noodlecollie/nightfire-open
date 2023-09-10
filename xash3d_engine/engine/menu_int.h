@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #define MENU_INT_H
 
 #include "XashDefs/cvardef.h"
-#include "gameinfo.h"
+#include "XashDefs/gameinfo.h"
 #include "wrect.h"
 #include "PlatformDefs/decorators.h"
 

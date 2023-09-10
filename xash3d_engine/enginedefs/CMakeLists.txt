@@ -23,6 +23,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/entity_types.h
 	include/XashDefs/event_args.h
 	include/XashDefs/event_flags.h
+	include/XashDefs/gameinfo.h
 	include/XashDefs/lightstyle.h
 	include/XashDefs/log_strings.h
 	include/XashDefs/mempool.h

@@ -145,7 +145,6 @@ set(ENGINE_SOURCES
 	cursor_type.h
 	engine_builddefs.h
 	fscallback.h
-	gameinfo.h
 	key_modifiers.h
 	keydefs.h
 	menu_int.h
