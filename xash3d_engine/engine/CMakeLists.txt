@@ -89,6 +89,7 @@ set(ENGINE_SOURCES
 	common/masterlist.c
 	common/mod_bmodel.c
 	common/model.c
+	common/net_api.h
 	common/model_dump.h
 	common/model_dump.c
 	common/mod_local.h
