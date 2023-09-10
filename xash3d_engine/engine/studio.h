@@ -12,9 +12,12 @@
  *   without written permission from Valve LLC.
  *
  ****/
+
 #pragma once
-#ifndef STUDIO_H
-#define STUDIO_H
+
+#include <stdint.h>
+#include "PlatformDefs/typedefs.h"
+#include "XashDefs/studio_event.h"
 
 /*
 ==============================================================================
@@ -142,6 +145,46 @@ Studio models are position independent, so the cache manager can move them.
 #define STUDIO_AL_NOBLEND 0x0008  // animation always blends at 1.0 (ignores weight)
 #define STUDIO_AL_LOCAL 0x0010  // layer is a local context sequence
 #define STUDIO_AL_POSE 0x0020  // layer blends using a pose parameter instead of parent cycle
+
+// JIGGLEBONES
+#define JIGGLE_IS_FLEXIBLE 0x01
+#define JIGGLE_IS_RIGID 0x02
+#define JIGGLE_HAS_YAW_CONSTRAINT 0x04
+#define JIGGLE_HAS_PITCH_CONSTRAINT 0x08
+#define JIGGLE_HAS_ANGLE_CONSTRAINT 0x10
+#define JIGGLE_HAS_LENGTH_CONSTRAINT 0x20
+#define JIGGLE_HAS_BASE_SPRING 0x40
+#define JIGGLE_IS_BOING 0x80  // simple squash and stretch sinusoid "boing"
+
+#define IK_SELF 1
+#define IK_WORLD 2
+#define IK_GROUND 3
+#define IK_RELEASE 4
+#define IK_ATTACHMENT 5
+#define IK_UNLATCH 6
+
+// bone flags
+#define BONE_ALWAYS_PROCEDURAL 0x0001  // bone is always procedurally animated
+#define BONE_SCREEN_ALIGN_SPHERE 0x0002  // bone aligns to the screen, not constrained in motion.
+#define BONE_SCREEN_ALIGN_CYLINDER 0x0004  // bone aligns to the screen, constrained by it's own axis.
+#define BONE_JIGGLE_PROCEDURAL 0x0008
+#define BONE_FIXED_ALIGNMENT \
+	0x0010  // bone can't spin 360 degrees, all interpolation is normalized around a fixed orientation
+
+#define BONE_USED_MASK (BONE_USED_BY_HITBOX | BONE_USED_BY_ATTACHMENT | BONE_USED_BY_VERTEX | BONE_USED_BY_BONE_MERGE)
+#define BONE_USED_BY_ANYTHING BONE_USED_MASK
+#define BONE_USED_BY_HITBOX 0x00000100  // bone (or child) is used by a hit box
+#define BONE_USED_BY_ATTACHMENT 0x00000200  // bone (or child) is used by an attachment point
+#define BONE_USED_BY_VERTEX 0x00000400  // bone (or child) is used by the toplevel model via skinned vertex
+#define BONE_USED_BY_BONE_MERGE 0x00000800
+
+#define STUDIO_PROC_AXISINTERP 1
+#define STUDIO_PROC_QUATINTERP 2
+#define STUDIO_PROC_AIMATBONE 3
+#define STUDIO_PROC_AIMATATTACH 4
+#define STUDIO_PROC_JIGGLE 5
+
+#define STUDIO_ATTACHMENT_LOCAL (1 << 0)  // vectors are filled
 
 typedef struct studiohdr_s
 {
@@ -303,21 +346,6 @@ typedef struct
 	int32_t length;
 } studioseqhdr_t;
 
-// bone flags
-#define BONE_ALWAYS_PROCEDURAL 0x0001  // bone is always procedurally animated
-#define BONE_SCREEN_ALIGN_SPHERE 0x0002  // bone aligns to the screen, not constrained in motion.
-#define BONE_SCREEN_ALIGN_CYLINDER 0x0004  // bone aligns to the screen, constrained by it's own axis.
-#define BONE_JIGGLE_PROCEDURAL 0x0008
-#define BONE_FIXED_ALIGNMENT \
-	0x0010  // bone can't spin 360 degrees, all interpolation is normalized around a fixed orientation
-
-#define BONE_USED_MASK (BONE_USED_BY_HITBOX | BONE_USED_BY_ATTACHMENT | BONE_USED_BY_VERTEX | BONE_USED_BY_BONE_MERGE)
-#define BONE_USED_BY_ANYTHING BONE_USED_MASK
-#define BONE_USED_BY_HITBOX 0x00000100  // bone (or child) is used by a hit box
-#define BONE_USED_BY_ATTACHMENT 0x00000200  // bone (or child) is used by an attachment point
-#define BONE_USED_BY_VERTEX 0x00000400  // bone (or child) is used by the toplevel model via skinned vertex
-#define BONE_USED_BY_BONE_MERGE 0x00000800
-
 // bones
 typedef struct mstudiobone_s
 {
@@ -354,12 +382,6 @@ typedef struct mstudiobone_s
 	 */
 	vec_t scale[6];
 } mstudiobone_t;
-
-#define STUDIO_PROC_AXISINTERP 1
-#define STUDIO_PROC_QUATINTERP 2
-#define STUDIO_PROC_AIMATBONE 3
-#define STUDIO_PROC_AIMATATTACH 4
-#define STUDIO_PROC_JIGGLE 5
 
 typedef struct
 {
@@ -418,16 +440,6 @@ typedef struct
 	// for future expansions
 	int32_t reserved[10];
 } mstudioboneinfo_t;
-
-// JIGGLEBONES
-#define JIGGLE_IS_FLEXIBLE 0x01
-#define JIGGLE_IS_RIGID 0x02
-#define JIGGLE_HAS_YAW_CONSTRAINT 0x04
-#define JIGGLE_HAS_PITCH_CONSTRAINT 0x08
-#define JIGGLE_HAS_ANGLE_CONSTRAINT 0x10
-#define JIGGLE_HAS_LENGTH_CONSTRAINT 0x20
-#define JIGGLE_HAS_BASE_SPRING 0x40
-#define JIGGLE_IS_BOING 0x80  // simple squash and stretch sinusoid "boing"
 
 typedef struct
 {
@@ -551,11 +563,6 @@ typedef struct
 	int32_t unused2;
 } mstudioseqgroup_t;
 
-// events
-#include "studio_event.h"
-
-#define STUDIO_ATTACHMENT_LOCAL (1 << 0)  // vectors are filled
-
 // attachment
 typedef struct
 {
@@ -573,13 +580,6 @@ typedef struct
 	// the attachment vectors
 	vec3_t vectors[3];
 } mstudioattachment_t;
-
-#define IK_SELF 1
-#define IK_WORLD 2
-#define IK_GROUND 3
-#define IK_RELEASE 4
-#define IK_ATTACHMENT 5
-#define IK_UNLATCH 6
 
 typedef struct
 {
@@ -1003,5 +1003,3 @@ typedef struct
 	// texture coordinates in absolute space (unnormalized)
 	int16_t s, t;
 } mstudiotrivert_t;
-
-#endif  // STUDIO_H
