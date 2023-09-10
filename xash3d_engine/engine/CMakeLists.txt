@@ -142,7 +142,6 @@ set(ENGINE_SOURCES
 	server/sv_world.c
 	engine_builddefs.h
 	fscallback.h
-	progdefs.h
 	sequence.h
 	shake.h
 	sprite.h

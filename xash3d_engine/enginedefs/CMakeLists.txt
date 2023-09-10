@@ -38,6 +38,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/physint.h
 	include/XashDefs/pm_info.h
 	include/XashDefs/pmtrace.h
+	include/XashDefs/progdefs.h
 	include/XashDefs/r_efx.h
 	include/XashDefs/r_studioint.h
 	include/XashDefs/ref_api.h
