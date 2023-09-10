@@ -13,6 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
+#include "CRCLib/crclib.h"
 #include "common.h"
 #include "server.h"
 #include "net_encode.h"
@@ -20,7 +22,6 @@ GNU General Public License for more details.
 #include "voice.h"
 #include "pm_local.h"
 #include "sequence.h"
-#include "CRCLib/crclib.h"
 #include "fscallback.h"
 
 int SV_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;

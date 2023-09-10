@@ -13,6 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
+#include "PlatformDefs/libnames.h"
 #include "common.h"
 #include "client.h"
 #include "const.h"
@@ -20,7 +22,6 @@ GNU General Public License for more details.
 #include "input.h"
 #include "server.h"  // !!svgame.hInstance
 #include "vid_common.h"
-#include "PlatformDefs/libnames.h"
 #include <limits.h>
 #include "fscallback.h"
 

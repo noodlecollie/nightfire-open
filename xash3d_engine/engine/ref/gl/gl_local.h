@@ -34,6 +34,7 @@ GNU General Public License for more details.
 #include "gl_export.h"
 #include "XashDefs/wadfile.h"
 #include "dll_types.h"
+#include "CRTLib/bitdefs.h"
 
 #ifndef offsetof
 #ifdef __GNUC__

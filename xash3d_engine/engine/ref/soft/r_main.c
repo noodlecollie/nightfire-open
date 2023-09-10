@@ -13,11 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "r_local.h"
 #include "MathLib/mathlib.h"
+#include "CRTLib/bitdefs.h"
+#include "r_local.h"
 #include "library.h"
-// #include "beamdef.h"
-// #include "particledef.h"
 #include "entity_types.h"
 #include "mod_local.h"
 int r_cnumsurfs;

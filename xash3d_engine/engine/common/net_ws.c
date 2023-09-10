@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
 #include "PlatformDefs/platformid.h"
 #include "XashDefs/engine_version.h"
 #include "PlatformLib/Net.h"

@@ -13,13 +13,16 @@
  *
  ****/
 
-#ifndef EVENT_API_H
-#define EVENT_API_H
+#pragma once
 
 #define EVENT_API_VERSION 2
 
 struct event_fire_args_s;
-typedef struct texture_s texture_t;
+struct texture_s;
+struct pmtrace_s;
+struct physent_s;
+struct msurface_s;
+struct movevars_s;
 
 typedef struct event_api_s
 {
@@ -50,7 +53,7 @@ typedef struct event_api_s
 	void (*EV_WeaponAnimation)(int sequence, int body);
 	unsigned short (*EV_PrecacheEvent)(int type, const char* psz);
 	void (*EV_PlaybackEvent)(const struct event_fire_args_s* inArgs);
-	texture_t* (*EV_TraceTexture)(int ground, const float* vstart, const float* vend);
+	struct texture_s* (*EV_TraceTexture)(int ground, const float* vstart, const float* vend);
 	void (*EV_StopAllSounds)(int entnum, int entchannel);
 	void (*EV_KillEvents)(int entnum, const char* eventname);
 
@@ -70,5 +73,3 @@ typedef struct event_api_s
 	void (*EV_PushTraceBounds)(int hullnum, const float* mins, const float* maxs);
 	void (*EV_PopTraceBounds)(void);
 } event_api_t;
-
-#endif  // EVENT_API_H

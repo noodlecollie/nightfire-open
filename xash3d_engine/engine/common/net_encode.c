@@ -13,9 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
+#include "MathLib/mathlib.h"
 #include "common.h"
 #include "netchan.h"
-#include "MathLib/mathlib.h"
 #include "net_encode.h"
 #include "event_api.h"
 #include "usercmd.h"

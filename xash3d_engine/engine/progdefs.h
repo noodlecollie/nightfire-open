@@ -13,8 +13,12 @@
  *
  ****/
 
-#ifndef PROGDEFS_H
-#define PROGDEFS_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
+#include "typedefs.h"
+
+struct edict_s;
 
 typedef struct
 {
@@ -37,7 +41,7 @@ typedef struct
 	vec3_t trace_endpos;
 	vec3_t trace_plane_normal;
 	float trace_plane_dist;
-	edict_t* trace_ent;
+	struct edict_s* trace_ent;
 	float trace_inopen;
 	float trace_inwater;
 	int trace_hitgroup;
@@ -133,12 +137,12 @@ typedef struct entvars_s
 	int button;
 	int impulse;
 
-	edict_t* chain;  // Entity pointer when linked into a linked list
-	edict_t* dmg_inflictor;
-	edict_t* enemy;
-	edict_t* aiment;  // entity pointer when MOVETYPE_FOLLOW
-	edict_t* owner;
-	edict_t* groundentity;
+	struct edict_s* chain;  // Entity pointer when linked into a linked list
+	struct edict_s* dmg_inflictor;
+	struct edict_s* enemy;
+	struct edict_s* aiment;  // entity pointer when MOVETYPE_FOLLOW
+	struct edict_s* owner;
+	struct edict_s* groundentity;
 
 	int spawnflags;
 	int flags;
@@ -173,7 +177,7 @@ typedef struct entvars_s
 	float pain_finished;
 	float radsuit_finished;
 
-	edict_t* pContainingEntity;
+	struct edict_s* pContainingEntity;
 
 	int playerclass;
 	float maxspeed;
@@ -209,10 +213,8 @@ typedef struct entvars_s
 	vec3_t vuser2;
 	vec3_t vuser3;
 	vec3_t vuser4;
-	edict_t* euser1;
-	edict_t* euser2;
-	edict_t* euser3;
-	edict_t* euser4;
+	struct edict_s* euser1;
+	struct edict_s* euser2;
+	struct edict_s* euser3;
+	struct edict_s* euser4;
 } entvars_t;
-
-#endif  // PROGDEFS_H

@@ -13,8 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef BSPFILE_H
-#define BSPFILE_H
+#pragma once
 
 #include <stdint.h>
 #include "XashDefs/engine_limits.h"
@@ -49,14 +48,14 @@ BRUSH MODELS
 // bmodel limits
 #define MAX_MAP_HULLS 4  // MAX_HULLS
 
-#define SURF_PLANEBACK BIT(1)  // plane should be negated
-#define SURF_DRAWSKY BIT(2)  // sky surface
-#define SURF_DRAWTURB_QUADS BIT(3)  // all subidivided polygons are quads
-#define SURF_DRAWTURB BIT(4)  // warp surface
-#define SURF_DRAWTILED BIT(5)  // face without lighmap
-#define SURF_CONVEYOR BIT(6)  // scrolled texture (was SURF_DRAWBACKGROUND)
-#define SURF_UNDERWATER BIT(7)  // caustics
-#define SURF_TRANSPARENT BIT(8)  // it's a transparent texture (was SURF_DONTWARP)
+#define SURF_PLANEBACK (1 << 1)  // plane should be negated
+#define SURF_DRAWSKY (1 << 2)  // sky surface
+#define SURF_DRAWTURB_QUADS (1 << 3)  // all subidivided polygons are quads
+#define SURF_DRAWTURB (1 << 4)  // warp surface
+#define SURF_DRAWTILED (1 << 5)  // face without lighmap
+#define SURF_CONVEYOR (1 << 6)  // scrolled texture (was SURF_DRAWBACKGROUND)
+#define SURF_UNDERWATER (1 << 7)  // caustics
+#define SURF_TRANSPARENT (1 << 8)  // it's a transparent texture (was SURF_DONTWARP)
 
 // lightstyle management
 #define LM_STYLES 4  // MAXLIGHTMAPS
@@ -122,14 +121,12 @@ BRUSH MODELS
 #define EXTRA_LUMPS 12  // count of the extra lumps
 
 // texture flags
-#define TEX_SPECIAL BIT(0)  // sky or slime, no lightmap or 256 subdivision
+#define TEX_SPECIAL (1 << 0)  // sky or slime, no lightmap or 256 subdivision
 #define TEX_WORLD_LUXELS \
-	BIT(1)  // alternative lightmap matrix will be used (luxels per world units instead of luxels per texels)
-#define TEX_AXIAL_LUXELS BIT(2)  // force world luxels to axial positive scales
-#define TEX_EXTRA_LIGHTMAP BIT(3)  // bsp31 legacy - using 8 texels per luxel instead of 16 texels per luxel
-#define TEX_SCROLL BIT(6)  // Doom special FX
-
-#define IsLiquidContents(cnt) (cnt == CONTENTS_WATER || cnt == CONTENTS_SLIME || cnt == CONTENTS_LAVA)
+	(1 << 1)  // alternative lightmap matrix will be used (luxels per world units instead of luxels per texels)
+#define TEX_AXIAL_LUXELS (1 << 2)  // force world luxels to axial positive scales
+#define TEX_EXTRA_LIGHTMAP (1 << 3)  // bsp31 legacy - using 8 texels per luxel instead of 16 texels per luxel
+#define TEX_SCROLL (1 << 4)  // Doom special FX
 
 // ambient sound types
 enum
@@ -333,5 +330,3 @@ typedef struct
 {
 	char path[AB_MAX_TEXTURE_NAME_LENGTH];
 } dpngtexturepath_t;
-
-#endif  // BSPFILE_H

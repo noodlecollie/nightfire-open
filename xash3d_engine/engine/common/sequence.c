@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include <ctype.h>
+#include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "eiface.h"
 #include "sequence.h"

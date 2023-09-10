@@ -13,11 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "CRTLib/bitdefs.h"
+#include "CRCLib/crclib.h"
 #include "common.h"
 #include "client.h"
 #include "library.h"
 #include "platform/platform.h"
-#include "CRCLib/crclib.h"
 #include "fscallback.h"
 
 int R_FatPVS(const vec3_t org, float radius, byte* visbuffer, qboolean merge, qboolean fullvis)

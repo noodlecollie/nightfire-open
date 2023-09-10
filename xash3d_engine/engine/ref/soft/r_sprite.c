@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "XashDefs/log_strings.h"
 #include "CRTLib/crtlib.h"
+#include "CRTLib/bitdefs.h"
 #include "r_local.h"
 #include "pm_local.h"
 #include "sprite.h"

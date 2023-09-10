@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef DEMO_API_H
-#define DEMO_API_H
+#pragma once
 
 typedef struct demo_api_s
 {
@@ -23,5 +22,3 @@ typedef struct demo_api_s
 	int (*IsTimeDemo)(void);
 	void (*WriteBuffer)(int size, unsigned char* buffer);
 } demo_api_t;
-
-#endif  // DEMO_API_H

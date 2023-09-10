@@ -13,28 +13,12 @@
  *
  ****/
 
-#ifndef R_EFX_H
-#define R_EFX_H
+#pragma once
 
-// particle_t
-#if !defined(PARTICLEDEFH)
 #include "particledef.h"
-#endif
-
-// BEAM
-#if !defined(BEAMDEFH)
 #include "beamdef.h"
-#endif
-
-// dlight_t
-#if !defined(DLIGHTH)
 #include "dlight.h"
-#endif
-
-// cl_entity_t
-#if !defined(CL_ENTITYH)
 #include "cl_entity.h"
-#endif
 
 /*
 // FOR REFERENCE, These are the built-in tracer colors.  Note, color 4 is the one
@@ -87,6 +71,8 @@ color24 gTracerColors[] =
 #define FTENT_SCALE 0x00100000  // An experiment
 
 struct pmtrace_s;
+enum _SurfaceProp;
+
 typedef struct tempent_s
 {
 	int flags;
@@ -116,7 +102,6 @@ typedef struct tempent_s
 } TEMPENTITY;
 
 typedef struct efx_api_s efx_api_t;
-typedef enum _SurfaceProp SurfaceProp;
 
 struct efx_api_s
 {
@@ -137,7 +122,7 @@ struct efx_api_s
 	void (*R_Bubbles)(const float* mins, const float* maxs, float height, int modelIndex, int count, float speed);
 	void (*R_BubbleTrail)(const float* start, const float* end, float height, int modelIndex, int count, float speed);
 	void (*R_BulletImpactParticles)(const float* pos);
-	void (*R_BulletImpactParticlesForSurface)(const float* pos, SurfaceProp surfaceProp);
+	void (*R_BulletImpactParticlesForSurface)(const float* pos, enum _SurfaceProp surfaceProp);
 	void (*R_EntityParticles)(struct cl_entity_s* ent);
 	void (*R_Explosion)(float* pos, int model, float scale, float framerate, int flags);
 	void (*R_FizzEffect)(struct cl_entity_s* pent, int modelIndex, int density);
@@ -356,5 +341,3 @@ struct efx_api_s
 		int textureIndex);  // textureIndex points to the decal index in the array, not the actual texture index.
 	void (*R_FireCustomDecal)(int textureIndex, int entity, int modelIndex, float* position, int flags, float scale);
 };
-
-#endif  // R_EFX_H

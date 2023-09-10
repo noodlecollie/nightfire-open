@@ -13,12 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifdef _WIN32
-#include <rpc.h>
-#endif
-
 #include <stddef.h>
-#include "const.h"
+#include "PlatformDefs/typedefs.h"
 
 // Functions return false if a truncation occurred, or the operation was generally unsuccessful.
 

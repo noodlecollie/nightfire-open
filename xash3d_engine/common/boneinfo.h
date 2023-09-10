@@ -13,13 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef BONEINFO_H
-#define BONEINFO_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 
 typedef struct
 {
 	vec3_t angles;
 	vec3_t origin;
 } boneinfo_t;
-
-#endif  // BONEINFO_H

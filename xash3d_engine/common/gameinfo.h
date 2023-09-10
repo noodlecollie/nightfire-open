@@ -13,8 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef GAMEINFO_H
-#define GAMEINFO_H
+#pragma once
 
 #define GFL_NOMODELS (1 << 0)
 #define GFL_NOSKILLS (1 << 1)
@@ -47,5 +46,3 @@ typedef struct
 
 	int gamemode;
 } GAMEINFO;
-
-#endif  // GAMEINFO_H

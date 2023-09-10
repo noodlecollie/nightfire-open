@@ -13,8 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "imagelib.h"
 #include "MathLib/mathlib.h"
+#include "CRTLib/bitdefs.h"
+#include "imagelib.h"
 #include "mod_local.h"
 
 #define LERPBYTE(i) \

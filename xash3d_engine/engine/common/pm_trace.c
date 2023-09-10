@@ -13,8 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "common.h"
+#include "CRTLib/bitdefs.h"
 #include "MathLib/mathlib.h"
+#include "common.h"
 #include "mod_local.h"
 #include "pm_local.h"
 #include "pm_movevars.h"

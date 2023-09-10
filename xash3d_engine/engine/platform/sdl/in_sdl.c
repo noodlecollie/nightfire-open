@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #endif
 
 #include <SDL.h>
-
+#include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "keydefs.h"
 #include "input.h"

@@ -12,9 +12,10 @@
  *   without written permission from Valve LLC.
  *
  ****/
+
 #pragma once
-#ifndef STUDIO_EVENT_H
-#define STUDIO_EVENT_H
+
+#include <stdint.h>
 
 #define MAXEVENTSTRING 64
 
@@ -33,5 +34,3 @@ typedef struct mstudioevent_s
 	// could be path to sound WAVE files
 	char options[MAXEVENTSTRING];
 } mstudioevent_t;
-
-#endif  // STUDIO_EVENT_H

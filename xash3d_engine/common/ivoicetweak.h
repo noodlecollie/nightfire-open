@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef IVOICETWEAK_H
-#define IVOICETWEAK_H
+#pragma once
 
 // These provide access to the voice controls.
 typedef enum
@@ -34,5 +33,3 @@ typedef struct IVoiceTweak_s
 	void (*SetControlFloat)(VoiceTweakControl iControl, float value);
 	float (*GetControlFloat)(VoiceTweakControl iControl);
 } IVoiceTweak;
-
-#endif  // IVOICETWEAK_H

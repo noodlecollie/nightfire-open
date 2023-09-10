@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef WEAPONINFO_H
-#define WEAPONINFO_H
+#pragma once
 
 // Info about weapons player might have in his/her possession
 typedef struct weapon_data_s
@@ -48,5 +47,3 @@ typedef struct weapon_data_s
 	float fuser3;
 	float fuser4;
 } weapon_data_t;
-
-#endif  // WEAPONINFO_H

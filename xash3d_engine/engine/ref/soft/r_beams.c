@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "XashDefs/log_strings.h"
+#include "CRTLib/bitdefs.h"
 #include "r_local.h"
 #include "r_efx.h"
 #include "event_flags.h"

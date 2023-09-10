@@ -13,8 +13,9 @@
  *
  ****/
 
-#ifndef USERCMD_H
-#define USERCMD_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 
 typedef struct usercmd_s
 {
@@ -35,5 +36,3 @@ typedef struct usercmd_s
 	int impact_index;
 	vec3_t impact_position;
 } usercmd_t;
-
-#endif  // USERCMD_H

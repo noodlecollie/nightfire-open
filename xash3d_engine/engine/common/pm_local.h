@@ -13,11 +13,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef PM_LOCAL_H
-#define PM_LOCAL_H
+#pragma once
 
 #include <string.h>
 #include "pm_defs.h"
+
+struct edict_s;
 
 typedef int (*pfnIgnore)(physent_t* pe);  // custom trace filter
 
@@ -55,7 +56,7 @@ struct msurface_s* PM_TraceSurfacePmove(playermove_t* pmove, int ground, const f
 texture_t* PM_TraceTexture(playermove_t* pmove, int ground, const float* vstart, const float* vend);
 int PM_PointContentsPmove(playermove_t* pmove, const float* p, int* truecontents);
 void PM_StuckTouch(playermove_t* pmove, int hitent, pmtrace_t* tr);
-void PM_ConvertTrace(trace_t* out, pmtrace_t* in, edict_t* ent);
+void PM_ConvertTrace(trace_t* out, pmtrace_t* in, struct edict_s* ent);
 
 static inline void PM_InitTrace(trace_t* trace, const vec3_t end)
 {
@@ -79,5 +80,3 @@ static inline void PM_InitPMTrace(pmtrace_t* trace, const vec3_t end)
 msurface_t* PM_RecursiveSurfCheck(model_t* model, mnode_t* node, vec3_t p1, vec3_t p2);
 msurface_t* PM_TraceSurface(physent_t* pe, const float* start, const float* end);
 int PM_TestLineExt(playermove_t* pmove, physent_t* ents, int numents, const vec3_t start, const vec3_t end, int flags);
-
-#endif  // PM_LOCAL_H

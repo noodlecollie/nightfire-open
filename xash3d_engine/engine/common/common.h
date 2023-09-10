@@ -153,6 +153,8 @@ void DBG_AssertFunction(qboolean fExpr, const char* szExpr, const char* szFile, 
 #define Assert(f)
 #endif
 
+struct edict_s;
+
 extern convar_t* gl_vsync;
 extern convar_t* scr_loading;
 extern convar_t* scr_download;
@@ -432,12 +434,12 @@ static inline int Host_IsDedicated()
 #endif
 }
 
-#define CMD_SERVERDLL BIT(0)  // added by server.dll
-#define CMD_CLIENTDLL BIT(1)  // added by client.dll
-#define CMD_GAMEUIDLL BIT(2)  // added by GameUI.dll
-#define CMD_PRIVILEGED BIT(3)  // only available in privileged mode
-#define CMD_FILTERABLE BIT(4)  // filtered in unprivileged mode if cl_filterstuffcmd is 1
-#define CMD_REFDLL BIT(5)  // added by ref.dll
+#define CMD_SERVERDLL (1 << 0)  // added by server.dll
+#define CMD_CLIENTDLL (1 << 1)  // added by client.dll
+#define CMD_GAMEUIDLL (1 << 2)  // added by GameUI.dll
+#define CMD_PRIVILEGED (1 << 3)  // only available in privileged mode
+#define CMD_FILTERABLE (1 << 4)  // filtered in unprivileged mode if cl_filterstuffcmd is 1
+#define CMD_REFDLL (1 << 5)  // added by ref.dll
 
 typedef void (*xcommand_t)(void);
 
@@ -550,21 +552,21 @@ typedef enum
 // soundlib global settings
 typedef enum
 {
-	SL_USE_LERPING = BIT(0),  // lerping sounds during resample
-	SL_KEEP_8BIT = BIT(1),  // don't expand 8bit sounds automatically up to 16 bit
-	SL_ALLOW_OVERWRITE = BIT(2),  // allow to overwrite stored sounds
+	SL_USE_LERPING = (1 << 0),  // lerping sounds during resample
+	SL_KEEP_8BIT = (1 << 1),  // don't expand 8bit sounds automatically up to 16 bit
+	SL_ALLOW_OVERWRITE = (1 << 2),  // allow to overwrite stored sounds
 } slFlags_t;
 
 // wavdata output flags
 typedef enum
 {
 	// wavdata->flags
-	SOUND_LOOPED = BIT(0),  // this is looped sound (contain cue markers)
-	SOUND_STREAM = BIT(1),  // this is a streaminfo, not a real sound
+	SOUND_LOOPED = (1 << 0),  // this is looped sound (contain cue markers)
+	SOUND_STREAM = (1 << 1),  // this is a streaminfo, not a real sound
 
 	// Sound_Process manipulation flags
-	SOUND_RESAMPLE = BIT(12),  // resample sound to specified rate
-	SOUND_CONVERT16BIT = BIT(13),  // change sound resolution from 8 bit to 16
+	SOUND_RESAMPLE = (1 << 12),  // resample sound to specified rate
+	SOUND_CONVERT16BIT = (1 << 13),  // change sound resolution from 8 bit to 16
 } sndFlags_t;
 
 typedef struct
@@ -797,7 +799,7 @@ struct cmd_s* Cmd_GetFirstFunctionHandle(void);
 struct cmd_s* Cmd_GetNextFunctionHandle(struct cmd_s* cmd);
 struct cmdalias_s* Cmd_AliasGetList(void);
 const char* Cmd_GetName(struct cmd_s* cmd);
-void SV_StartSound(edict_t* ent, int chan, const char* sample, float vol, float attn, int flags, int pitch);
+void SV_StartSound(struct edict_s* ent, int chan, const char* sample, float vol, float attn, int flags, int pitch);
 void SV_StartMusic(const char* curtrack, const char* looptrack, int position);
 void SV_CreateDecal(
 	sizebuf_t* msg,
@@ -809,7 +811,7 @@ void SV_CreateDecal(
 	float scale);
 void Log_Printf(const char* fmt, ...) _format(1);
 void SV_BroadcastCommand(const char* fmt, ...) _format(1);
-qboolean SV_RestoreCustomDecal(struct decallist_s* entry, edict_t* pEdict, qboolean adjacent);
+qboolean SV_RestoreCustomDecal(struct decallist_s* entry, struct edict_s* pEdict, qboolean adjacent);
 void SV_BroadcastPrintf(struct sv_client_s* ignore, const char* fmt, ...) _format(2);
 int R_CreateDecalList(struct decallist_s* pList);
 void R_ClearAllDecals(void);

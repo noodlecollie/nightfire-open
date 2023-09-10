@@ -12,8 +12,13 @@
  *   without written permission from Valve LLC.
  *
  ****/
-#ifndef ENTITY_STATE_H
-#define ENTITY_STATE_H
+
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
+#include "typedefs.h"
+#include "pm_info.h"
+#include "weaponinfo.h"
 
 // For entityType below
 #define ENTITY_NORMAL (1 << 0)
@@ -118,8 +123,6 @@ struct entity_state_s
 	vec3_t vuser4;
 };
 
-#include "pm_info.h"
-
 typedef struct clientdata_s
 {
 	vec3_t origin;
@@ -172,8 +175,6 @@ typedef struct clientdata_s
 
 } clientdata_t;
 
-#include "weaponinfo.h"
-
 #define MAX_LOCAL_WEAPONS 32  // max weapons that can be predicted on the client
 
 typedef struct local_state_s
@@ -182,5 +183,3 @@ typedef struct local_state_s
 	clientdata_t client;
 	weapon_data_t weapondata[MAX_LOCAL_WEAPONS];
 } local_state_t;
-
-#endif  // ENTITY_STATE_H

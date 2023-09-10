@@ -13,9 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "imagelib.h"
 #include "MathLib/mathlib.h"
 #include "XashDefs/wadfile.h"
+#include "CRTLib/bitdefs.h"
+#include "imagelib.h"
 #include "studio.h"
 #include "sprite.h"
 #include "qfont.h"

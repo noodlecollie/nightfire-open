@@ -13,12 +13,15 @@
  *
  ****/
 
-#ifndef EDICT_H
-#define EDICT_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
+#include "progdefs.h"
+#include "link.h"
 
 #define MAX_ENT_LEAFS 48
 
-#include "progdefs.h"
+typedef struct edict_s edict_t;
 
 struct edict_s
 {
@@ -37,5 +40,3 @@ struct edict_s
 
 	// other fields from progs come immediately after
 };
-
-#endif  // EDICT_H

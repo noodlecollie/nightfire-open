@@ -12,8 +12,9 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#ifndef IMG_PNG_H
-#define IMG_PNG_H
+
+#pragma once
+
 /*
 ========================================================================
 
@@ -24,10 +25,10 @@ GNU General Public License for more details.
 
 enum png_colortype
 {
-	PNG_CT_GREY,
-	PNG_CT_RGB = BIT(1),
-	PNG_CT_PALLETE = (PNG_CT_RGB | BIT(0)),
-	PNG_CT_ALPHA = BIT(2),
+	PNG_CT_GREY = 0,
+	PNG_CT_RGB = (1 << 1),
+	PNG_CT_PALLETE = (PNG_CT_RGB | (1 << 0)),
+	PNG_CT_ALPHA = (1 << 2),
 	PNG_CT_RGBA = (PNG_CT_RGB | PNG_CT_ALPHA)
 };
 
@@ -69,4 +70,3 @@ typedef struct png_footer_s
 	uint32_t iend_crc32;
 } png_footer_t;
 #pragma pack(pop)
-#endif  // IMG_PNG_H

@@ -13,8 +13,9 @@
  *
  ****/
 
-#ifndef PM_TRACE_H
-#define PM_TRACE_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 
 typedef struct
 {
@@ -37,5 +38,3 @@ struct pmtrace_s
 						   // Only run on server.
 	int hitgroup;
 };
-
-#endif  // PM_TRACE_H

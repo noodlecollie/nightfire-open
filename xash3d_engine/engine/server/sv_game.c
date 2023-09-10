@@ -13,6 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include <limits.h>
+#include "CRTLib/bitdefs.h"
+#include "CRCLib/crclib.h"
 #include "common.h"
 #include "server.h"
 #include "net_encode.h"
@@ -23,8 +26,6 @@ GNU General Public License for more details.
 #include "const.h"
 #include "render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
-#include <limits.h>
-#include "CRCLib/crclib.h"
 #include "fscallback.h"
 
 #define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)

@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include "textureproperties.h"
+#include "surfaceprops.h"
+#include "CRTLib/crtlib.h"
 
 #define LIST_ITEM(enum, str) str,
 static const char* const SurfacePropertyStrings[SurfaceProp__Count] = {SURFACEPROP_ENTRY_LIST};

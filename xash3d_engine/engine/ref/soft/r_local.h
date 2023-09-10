@@ -16,6 +16,8 @@ GNU General Public License for more details.
 #ifndef GL_LOCAL_H
 #define GL_LOCAL_H
 
+#include "CRTLib/bitdefs.h"
+#include "MathLib/mathlib.h"
 #include "cvardef.h"
 #include "const.h"
 #include "com_model.h"
@@ -24,7 +26,6 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "dlight.h"
 #include "ref_api.h"
-#include "MathLib/mathlib.h"
 #include "ref_params.h"
 #include "enginefeatures.h"
 #include "com_strings.h"

@@ -13,8 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef FEATURES_H
-#define FEATURES_H
+#pragma once
 
 // list of engine features that can be enabled through callback SV_CheckFeatures
 #define ENGINE_WRITE_LARGE_COORD \
@@ -29,5 +28,3 @@ GNU General Public License for more details.
 #define ENGINE_COMPUTE_STUDIO_LERP (1 << 7)  // enable MOVETYPE_STEP lerping back in engine
 #define ENGINE_LINEAR_GAMMA_SPACE \
 	(1 << 8)  // disable influence of gamma/brightness cvars to textures/lightmaps, for mods with custom renderer
-
-#endif  // FEATURES_H

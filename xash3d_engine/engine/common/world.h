@@ -13,8 +13,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef WORLD_H
-#define WORLD_H
+#pragma once
+
+#include "trace.h"
+#include "lightstyle.h"
+#include "link.h"
 
 #define MOVE_NORMAL 0  // normal trace
 #define MOVE_NOMONSTERS 1  // ignore monsters (edicts with flags (FL_MONSTER|FL_FAKECLIENT|FL_CLIENT) set)
@@ -33,7 +36,7 @@ ENTITY AREA CHECKING
 #define AREA_NODES 32
 #define AREA_DEPTH 4
 
-#include "lightstyle.h"
+struct edict_s;
 
 extern const char* et_name[];
 
@@ -45,7 +48,7 @@ void ClearLink(link_t* l);
 // trace common
 void World_MoveBounds(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, vec3_t boxmins, vec3_t boxmaxs);
 void World_TransformAABB(matrix4x4 transform, const vec3_t mins, const vec3_t maxs, vec3_t outmins, vec3_t outmaxs);
-trace_t World_CombineTraces(trace_t* cliptrace, trace_t* trace, edict_t* touch);
+trace_t World_CombineTraces(trace_t* cliptrace, trace_t* trace, struct edict_s* touch);
 int RankForContents(int contents);
 
 #define check_angles(x) \
@@ -80,5 +83,3 @@ typedef struct event_state_s
 {
 	event_info_t ei[MAX_EVENT_QUEUE];
 } event_state_t;
-
-#endif  // WORLD_H

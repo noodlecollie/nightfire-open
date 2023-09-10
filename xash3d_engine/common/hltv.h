@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef HLTV_H
-#define HLTV_H
+#pragma once
 
 #define TYPE_CLIENT 0  // client is a normal HL client (default)
 #define TYPE_PROXY 1  // client is another proxy
@@ -55,5 +54,3 @@
 
 #define MAX_DIRECTOR_CMD_PARAMETERS 4
 #define MAX_DIRECTOR_CMD_STRING 128
-
-#endif  // HLTV_H

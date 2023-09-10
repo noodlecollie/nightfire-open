@@ -13,8 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef LIGHTSTYLE_H
-#define LIGHTSTYLE_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
 
 typedef struct
 {
@@ -25,5 +26,3 @@ typedef struct
 	qboolean interp;  // allow to interpolate this lightstyle
 	float time;  // local time is gurantee what new style begins from the start, not mid or end of the sequence
 } lightstyle_t;
-
-#endif  // LIGHTSTYLE_H

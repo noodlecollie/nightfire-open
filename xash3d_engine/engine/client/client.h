@@ -319,12 +319,12 @@ typedef struct
 #define FONT_FIXED 0
 #define FONT_VARIABLE 1
 
-#define FONT_DRAW_HUD BIT(0)  // pass to drawing function to apply hud_scale
-#define FONT_DRAW_UTF8 BIT(1)  // call UtfProcessChar
-#define FONT_DRAW_FORCECOL BIT(2)  // ignore colorcodes
-#define FONT_DRAW_NORENDERMODE BIT(3)  // ignore font's default rendermode
-#define FONT_DRAW_NOLF BIT(4)  // ignore \n
-#define FONT_DRAW_RESETCOLORONLF BIT(5)  // yet another flag to simulate consecutive Con_DrawString calls...
+#define FONT_DRAW_HUD (1 << 0)  // pass to drawing function to apply hud_scale
+#define FONT_DRAW_UTF8 (1 << 1)  // call UtfProcessChar
+#define FONT_DRAW_FORCECOL (1 << 2)  // ignore colorcodes
+#define FONT_DRAW_NORENDERMODE (1 << 3)  // ignore font's default rendermode
+#define FONT_DRAW_NOLF (1 << 4)  // ignore \n
+#define FONT_DRAW_RESETCOLORONLF (1 << 5)  // yet another flag to simulate consecutive Con_DrawString calls...
 
 typedef struct
 {

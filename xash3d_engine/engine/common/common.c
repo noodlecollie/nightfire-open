@@ -16,6 +16,8 @@ GNU General Public License for more details.
 #if defined(ALLOCA_H)
 #include ALLOCA_H
 #endif
+
+#include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "studio.h"
 #include "MathLib/mathlib.h"

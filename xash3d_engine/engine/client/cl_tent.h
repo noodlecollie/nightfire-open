@@ -18,6 +18,8 @@ GNU General Public License for more details.
 
 #include "triangleapi.h"
 
+enum _SurfaceProp;
+
 // EfxAPI
 struct particle_s* R_AllocParticle(void (*callback)(struct particle_s*, float));
 void R_Explosion(vec3_t pos, int model, float scale, float framerate, int flags);
@@ -51,7 +53,7 @@ void R_ParticleLine(const vec3_t start, const vec3_t end, byte r, byte g, byte b
 void R_ParticleBox(const vec3_t mins, const vec3_t maxs, byte r, byte g, byte b, float life);
 void R_ShowLine(const vec3_t start, const vec3_t end);
 void R_BulletImpactParticles(const vec3_t pos);
-void R_BulletImpactParticlesForSurface(const vec3_t pos, SurfaceProp surfaceProp);
+void R_BulletImpactParticlesForSurface(const vec3_t pos, enum _SurfaceProp surfaceProp);
 void R_SparkShower(const vec3_t org);
 struct tempent_s* CL_TempEntAlloc(const vec3_t org, model_t* pmodel);
 struct tempent_s* CL_TempEntAllocHigh(const vec3_t org, model_t* pmodel);
