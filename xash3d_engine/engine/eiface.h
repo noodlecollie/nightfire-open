@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include "XashDefs/custom.h"
 #include "XashDefs/cvardef.h"
-#include "edict.h"
+#include "XashDefs/edict.h"
 
 //
 // Defines entity interface between engine and DLLs.
