@@ -114,6 +114,7 @@ set(ENGINE_SOURCES
 	common/qfont.h
 	common/sequence.c
 	common/setpair.h
+	common/surfaceprops.h
 	common/sys_con.c
 	common/system.c
 	common/system.h
@@ -163,6 +164,7 @@ set(ENGINE_SOURCES
 	shake.h
 	sprite.h
 	staticbuildchecks.h
+	studio_event.h
 	studio.h
 	vgui_api.h
 	warpsin.h
