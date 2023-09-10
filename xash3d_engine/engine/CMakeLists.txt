@@ -142,7 +142,6 @@ set(ENGINE_SOURCES
 	server/sv_pmove.c
 	server/sv_save.c
 	server/sv_world.c
-	anorms.h
 	cdll_exp.h
 	cdll_int.h
 	cursor_type.h
