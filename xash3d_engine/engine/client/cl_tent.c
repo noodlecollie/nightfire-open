@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "XashDefs/wadfile.h"  // acess decal size
 #include "common.h"
 #include "client.h"
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 #include "XashDefs/entity_types.h"
 #include "triangleapi.h"
 #include "cl_tent.h"

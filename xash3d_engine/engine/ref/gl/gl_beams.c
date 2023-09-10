@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "XashDefs/log_strings.h"
 #include "gl_local.h"
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 #include "XashDefs/event_flags.h"
 #include "XashDefs/entity_types.h"
 #include "triangleapi.h"

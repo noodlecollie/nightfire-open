@@ -4,7 +4,7 @@
 #include "common.h"
 #include "client.h"
 #include "customentity.h"
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 #include "cl_tent.h"
 #include "pm_local.h"
 #include "cl_surfaceprop_effects.h"

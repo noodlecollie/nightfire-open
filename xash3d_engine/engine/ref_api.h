@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "XashDefs/cl_entity.h"
 #include "XashDefs/com_model.h"
 #include "studio.h"
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 #include "XashDefs/com_image.h"
 
 // RefAPI changelog:

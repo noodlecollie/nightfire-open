@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "XashDefs/const.h"
 #include "triangleapi.h"
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 #include "demo_api.h"
 #include "ivoicetweak.h"
 #include "pm_local.h"
