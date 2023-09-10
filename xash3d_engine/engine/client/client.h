@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "mod_local.h"
 #include "pm_defs.h"
 #include "pm_movevars.h"
-#include "ref_params.h"
+#include "XashDefs/ref_params.h"
 #include "render_api.h"
 #include "cdll_exp.h"
 #include "screenfade.h"

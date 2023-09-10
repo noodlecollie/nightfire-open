@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "gl_frustum.h"
 #include "ref_api.h"
 #include "MathLib/mathlib.h"
-#include "ref_params.h"
+#include "XashDefs/ref_params.h"
 #include "XashDefs/enginefeatures.h"
 #include "com_strings.h"
 #include "pm_movevars.h"

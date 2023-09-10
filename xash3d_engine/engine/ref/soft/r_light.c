@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "pm_local.h"
 #include "studio.h"
 #include "MathLib/mathlib.h"
-#include "ref_params.h"
+#include "XashDefs/ref_params.h"
 
 // unused, need refactor
 unsigned blocklights[10240];
