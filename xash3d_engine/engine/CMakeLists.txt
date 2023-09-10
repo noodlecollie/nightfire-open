@@ -81,6 +81,7 @@ set(ENGINE_SOURCES
 	common/infostring.c
 	common/ipv6text.h
 	common/ipv6text.c
+	common/kbutton.h
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:common/launcher.c>
 	common/lib_common.c
 	common/library.h
