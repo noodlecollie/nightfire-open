@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "pm_info.h"
+#include "XashDefs/pm_info.h"
 
 // PM_PlayerTrace results.
 #include "pmtrace.h"

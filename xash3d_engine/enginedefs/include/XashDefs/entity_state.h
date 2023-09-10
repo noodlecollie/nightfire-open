@@ -17,7 +17,7 @@
 
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/typedefs.h"
-#include "pm_info.h"
+#include "XashDefs/pm_info.h"
 #include "XashDefs/weaponinfo.h"
 
 // For entityType below
