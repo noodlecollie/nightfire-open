@@ -13,12 +13,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef COM_MODEL_H
-#define COM_MODEL_H
+#pragma once
 
-#include "bspfile.h"  // we need some declarations from it
 #include "PlatformDefs/typedefs.h"
 #include "XashDefs/mempool.h"
+#include "XashDefs/engine_limits.h"
+#include "bspfile.h"
+#include "typedefs.h"
 
 /*
 ==============================================================================
@@ -26,6 +27,7 @@ GNU General Public License for more details.
 	ENGINE MODEL FORMAT
 ==============================================================================
 */
+
 #define STUDIO_RENDER 1
 #define STUDIO_EVENTS 2
 
@@ -35,6 +37,15 @@ GNU General Public License for more details.
 #define VERTEXSIZE 7
 #define MAXLIGHTMAPS 4  // max light styles per face
 #define MAXDYNLIGHTS 8  // maximum dynamic lights per one pixel
+
+#define HALFLIFE_TEXPATH_SKY "sky"
+#define AFTERBURNER_TEXPATH_SKY "special/sky"
+
+struct msurface_s;
+struct dmodel_s;
+
+typedef struct msurface_s msurface_t;
+typedef struct decal_s decal_t;
 
 // model types
 typedef enum
@@ -63,10 +74,6 @@ typedef struct
 	unsigned short v[2];
 	unsigned int cachededgeoffset;
 } medge_t;
-
-#define HALFLIFE_TEXPATH_SKY "sky"
-
-#define AFTERBURNER_TEXPATH_SKY "special/sky"
 
 typedef struct texture_s
 {
@@ -139,9 +146,6 @@ typedef struct mnode_s
 	unsigned short firstsurface;
 	unsigned short numsurfaces;
 } mnode_t;
-
-typedef struct msurface_s msurface_t;
-typedef struct decal_s decal_t;
 
 // JAY: Compress this as much as possible
 struct decal_s
@@ -516,5 +520,3 @@ typedef struct
 #define MAX_CLIENT_SPRITES 512  // SpriteTextures (0-256 hud, 256-512 client)
 #define MAX_EFRAGS 8192  // Arcane Dimensions required
 #define MAX_REQUESTS 64
-
-#endif  // COM_MODEL_H

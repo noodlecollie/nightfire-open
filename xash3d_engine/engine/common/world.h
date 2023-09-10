@@ -13,8 +13,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef WORLD_H
-#define WORLD_H
+#pragma once
+
+#include "trace.h"
+#include "lightstyle.h"
+#include "link.h"
 
 #define MOVE_NORMAL 0  // normal trace
 #define MOVE_NOMONSTERS 1  // ignore monsters (edicts with flags (FL_MONSTER|FL_FAKECLIENT|FL_CLIENT) set)
@@ -32,8 +35,6 @@ ENTITY AREA CHECKING
 #define MAX_TOTAL_ENT_LEAFS 128
 #define AREA_NODES 32
 #define AREA_DEPTH 4
-
-#include "lightstyle.h"
 
 extern const char* et_name[];
 
@@ -80,5 +81,3 @@ typedef struct event_state_s
 {
 	event_info_t ei[MAX_EVENT_QUEUE];
 } event_state_t;
-
-#endif  // WORLD_H

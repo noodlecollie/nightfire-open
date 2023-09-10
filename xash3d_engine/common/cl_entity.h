@@ -19,6 +19,7 @@
 #include "entity_state.h"
 #include "event_args.h"
 #include "const.h"
+#include "typedefs.h"
 
 #define HISTORY_MAX 64  // Must be power of 2
 #define HISTORY_MASK (HISTORY_MAX - 1)

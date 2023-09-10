@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "alias.h"
 #include "pm_local.h"
 #include "pmtrace.h"
+#include "typedefs.h"
 
 extern cvar_t r_shadows;
 

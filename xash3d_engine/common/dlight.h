@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef DLIGHT_H
-#define DLIGHT_H
+#pragma once
 
 typedef struct dlight_s
 {
@@ -27,5 +26,3 @@ typedef struct dlight_s
 	int key;
 	qboolean dark;  // subtracts light instead of adding
 } dlight_t;
-
-#endif  // DLIGHT_H

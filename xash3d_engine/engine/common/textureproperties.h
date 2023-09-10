@@ -1,10 +1,6 @@
 #ifndef TEXTURE_PROPERTIES_H
 #define TEXTURE_PROPERTIES_H
 
-#include "common.h"
-#include "studio.h"
-#include "MathLib/mathlib.h"
-#include "const.h"
 #include "com_model.h"
 
 #define TEXTURE_PROPERTY_SURFACEPROP "surfaceprop"

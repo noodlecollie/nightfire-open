@@ -12,8 +12,11 @@
  *   without written permission from Valve LLC.
  *
  ****/
-#ifndef ENTITY_STATE_H
-#define ENTITY_STATE_H
+
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
+#include "typedefs.h"
 
 // For entityType below
 #define ENTITY_NORMAL (1 << 0)
@@ -182,5 +185,3 @@ typedef struct local_state_s
 	clientdata_t client;
 	weapon_data_t weapondata[MAX_LOCAL_WEAPONS];
 } local_state_t;
-
-#endif  // ENTITY_STATE_H

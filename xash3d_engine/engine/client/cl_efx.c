@@ -10,6 +10,7 @@
 #include "cl_surfaceprop_effects.h"
 #include "client/cl_bytenormals.h"
 #include "fscallback.h"
+#include "surfaceprops.h"
 
 #define PART_SIZE Q_max(0.5f, cl_draw_particles->value)
 
@@ -1933,7 +1934,7 @@ static qboolean CreateConcreteImpactParticle(const vec3_t pos, size_t quantity)
 	return true;
 }
 
-void GAME_EXPORT R_BulletImpactParticlesForSurface(const vec3_t pos, SurfaceProp surfaceProp)
+void GAME_EXPORT R_BulletImpactParticlesForSurface(const vec3_t pos, enum _SurfaceProp surfaceProp)
 {
 	const size_t quantity = CalculateImpactParticleQuantity(pos);
 

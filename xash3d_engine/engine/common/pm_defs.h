@@ -12,7 +12,17 @@
  *   without written permission from Valve LLC.
  *
  ****/
+
 #pragma once
+
+#include "pm_info.h"
+
+// PM_PlayerTrace results.
+#include "pmtrace.h"
+
+#include "com_model.h"
+#include "usercmd.h"
+#include "trace.h"
 
 #define MAX_PHYSENTS 600  // Must have room for all entities in the world.
 #define MAX_MOVEENTS 64
@@ -28,14 +38,6 @@
 // Values for flags parameter of PM_TraceLine
 #define PM_TRACELINE_PHYSENTSONLY 0
 #define PM_TRACELINE_ANYVISIBLE 1
-
-#include "pm_info.h"
-
-// PM_PlayerTrace results.
-#include "pmtrace.h"
-
-#include "com_model.h"
-#include "usercmd.h"
 
 typedef struct pm_event_fire_args_s
 {

@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef PARTICLEDEF_H
-#define PARTICLEDEF_H
+#pragma once
 
 typedef enum
 {
@@ -50,5 +49,3 @@ typedef struct particle_s
 	// For deathfunc, etc.
 	unsigned char context;
 } particle_t;
-
-#endif  // PARTICLEDEF_H

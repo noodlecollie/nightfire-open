@@ -13,10 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef PHYSINT_H
-#define PHYSINT_H
+#pragma once
 
 #include "eiface.h"  // offsetof
+#include "trace.h"
 
 #define SV_PHYSICS_INTERFACE_VERSION 6
 
@@ -175,5 +175,3 @@ typedef struct physics_interface_s
 	// handle player custom think function
 	int (*SV_PlayerThink)(edict_t* ent, float frametime, double time);
 } physics_interface_t;
-
-#endif  // PHYSINT_H

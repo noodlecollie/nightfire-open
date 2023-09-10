@@ -82,6 +82,7 @@ set(ENGINE_SOURCES
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:common/launcher.c>
 	common/lib_common.c
 	common/library.h
+	common/link.h
 	common/masterlist.c
 	common/mod_bmodel.c
 	common/model.c
