@@ -44,7 +44,7 @@ GNU General Public License for more details.
 #include "mod_local.h"
 #include "input.h"
 #include "XashDefs/enginefeatures.h"
-#include "render_api.h"
+#include "XashDefs/render_api.h"
 #include "tests.h"
 #include "fscallback.h"
 #include "engine_builddefs.h"

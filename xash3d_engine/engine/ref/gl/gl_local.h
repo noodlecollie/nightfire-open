@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "XashDefs/const.h"
 #include "XashDefs/com_model.h"
 #include "XashDefs/cl_entity.h"
-#include "render_api.h"
+#include "XashDefs/render_api.h"
 #include "protocol.h"
 #include "XashDefs/dlight.h"
 #include "gl_frustum.h"
