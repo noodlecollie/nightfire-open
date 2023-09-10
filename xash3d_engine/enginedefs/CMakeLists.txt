@@ -45,6 +45,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/ref_params.h
 	include/XashDefs/render_api.h
 	include/XashDefs/screenfade.h
+	include/XashDefs/shake.h
 	include/XashDefs/trace.h
 	include/XashDefs/triangleapi.h
 	include/XashDefs/typedefs.h

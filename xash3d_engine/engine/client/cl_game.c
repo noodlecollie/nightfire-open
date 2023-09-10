@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "pm_local.h"
 #include "cl_tent.h"
 #include "input.h"
-#include "shake.h"
+#include "XashDefs/shake.h"
 #include "sprite.h"
 #include "library.h"
 #include "vgui_draw.h"

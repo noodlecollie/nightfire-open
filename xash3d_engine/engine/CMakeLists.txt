@@ -143,7 +143,6 @@ set(ENGINE_SOURCES
 	engine_builddefs.h
 	fscallback.h
 	sequence.h
-	shake.h
 	sprite.h
 	staticbuildchecks.h
 	studio_event.h

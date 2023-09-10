@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "net_encode.h"
 #include "XashDefs/particledef.h"
 #include "cl_tent.h"
-#include "shake.h"
+#include "XashDefs/shake.h"
 #include "hltv.h"
 #include "input.h"
 #include "fscallback.h"
