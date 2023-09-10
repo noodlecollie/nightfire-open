@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "r_local.h"
 #include "pm_local.h"
-#include "sprite.h"
+#include "XashDefs/sprite.h"
 #include "studio.h"
 #include "XashDefs/entity_types.h"
 

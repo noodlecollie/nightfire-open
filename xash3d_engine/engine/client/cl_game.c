@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "cl_tent.h"
 #include "input.h"
 #include "XashDefs/shake.h"
-#include "sprite.h"
+#include "XashDefs/sprite.h"
 #include "library.h"
 #include "vgui_draw.h"
 #include "sound.h"  // SND_STOP_LOOPING

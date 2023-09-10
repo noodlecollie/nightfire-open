@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "CRCLib/crclib.h"
 #include "common.h"
 #include "mod_local.h"
-#include "sprite.h"
+#include "XashDefs/sprite.h"
 #include "XashDefs/alias.h"
 #include "studio.h"
 #include "world.h"

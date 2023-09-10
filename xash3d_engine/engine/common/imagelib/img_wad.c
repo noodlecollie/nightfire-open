@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "imagelib.h"
 #include "studio.h"
-#include "sprite.h"
+#include "XashDefs/sprite.h"
 #include "qfont.h"
 
 /*

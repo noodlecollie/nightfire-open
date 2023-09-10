@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "XashDefs/log_strings.h"
 #include "gl_local.h"
 #include "pm_local.h"
-#include "sprite.h"
+#include "XashDefs/sprite.h"
 #include "studio.h"
 #include "XashDefs/entity_types.h"
 

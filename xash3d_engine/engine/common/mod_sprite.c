@@ -15,7 +15,7 @@ GNU General Public License for more details.
 */
 
 #include "common.h"
-#include "sprite.h"
+#include "XashDefs/sprite.h"
 #include "studio.h"
 
 #if !XASH_DEDICATED()
