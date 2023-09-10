@@ -14,7 +14,6 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/entity_types.h
 	include/XashDefs/event_args.h
 	include/XashDefs/event_flags.h
-	include/XashDefs/hltv.h
 	include/XashDefs/ivoicetweak.h
 	include/XashDefs/kbutton.h
 	include/XashDefs/lightstyle.h

@@ -204,6 +204,7 @@ if(CLIENT_SUPPORT)
 		client/cl_view.c
 		client/console.c
 		client/demo_api.h
+		client/hltv.h
 		client/in_joy.c
 		client/input.h
 		client/input.c
