@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "gl_local.h"
 #include "XashDefs/const.h"
 #include "XashDefs/r_studioint.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "alias.h"
 #include "pm_local.h"
 #include "XashDefs/pmtrace.h"

@@ -19,10 +19,10 @@ GNU General Public License for more details.
 #include "XashDefs/r_efx.h"
 #include "XashDefs/event_flags.h"
 #include "XashDefs/entity_types.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "customentity.h"
 #include "pm_local.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "studio.h"
 
 #define NOISE_DIVISIONS 64  // don't touch - many tripmines cause the crash when it equal 128

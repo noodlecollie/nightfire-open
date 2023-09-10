@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/r_efx.h"
 #include "XashDefs/event_flags.h"
 #include "XashDefs/entity_types.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "pm_local.h"
 #include "studio.h"
 

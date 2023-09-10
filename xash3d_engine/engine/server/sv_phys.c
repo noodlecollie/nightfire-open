@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include "XashDefs/const.h"
 #include "library.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "ref_common.h"
 #include "fscallback.h"
 

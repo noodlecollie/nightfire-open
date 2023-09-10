@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "XashDefs/com_image.h"
 #include "vgui_api.h"
 #include "XashDefs/render_api.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "XashDefs/const.h"
 #include "XashDefs/cl_entity.h"
 #include "XashDefs/com_model.h"

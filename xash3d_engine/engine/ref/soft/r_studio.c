@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "CRTLib/crtlib.h"
 #include "XashDefs/const.h"
 #include "XashDefs/r_studioint.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "studio.h"
 #include "pm_local.h"
 #include "XashDefs/pmtrace.h"
