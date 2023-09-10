@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "alias.h"
 #include "studio.h"
 #include "world.h"
-#include "enginefeatures.h"
+#include "XashDefs/enginefeatures.h"
 #include "client.h"
 #include "server.h"
 #include "fscallback.h"

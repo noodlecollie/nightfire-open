@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #ifndef NET_BUFFER_H
 #define NET_BUFFER_H
 
-#include "enginefeatures.h"
+#include "XashDefs/enginefeatures.h"
 #include "PlatformDefs/typedefs.h"
 
 /*

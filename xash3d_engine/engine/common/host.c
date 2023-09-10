@@ -43,7 +43,7 @@ GNU General Public License for more details.
 #include "protocol.h"
 #include "mod_local.h"
 #include "input.h"
-#include "enginefeatures.h"
+#include "XashDefs/enginefeatures.h"
 #include "render_api.h"
 #include "tests.h"
 #include "fscallback.h"

@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "XashDefs/dlight.h"
 #include "ref_api.h"
 #include "ref_params.h"
-#include "enginefeatures.h"
+#include "XashDefs/enginefeatures.h"
 #include "com_strings.h"
 #include "pm_movevars.h"
 // #include "cvar.h"
