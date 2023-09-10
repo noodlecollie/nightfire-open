@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "vgui_draw.h"
 #include "vgui_api.h"
 #include "library.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "ref_common.h"
 #include "input.h"
 #include "platform/platform.h"

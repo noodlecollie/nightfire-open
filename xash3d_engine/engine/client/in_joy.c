@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "input.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "client.h"
 #include "platform/platform.h"
 

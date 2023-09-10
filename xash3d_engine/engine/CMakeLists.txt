@@ -146,7 +146,6 @@ set(ENGINE_SOURCES
 	engine_builddefs.h
 	fscallback.h
 	key_modifiers.h
-	keydefs.h
 	menu_int.h
 	mobility_int.h
 	physint.h

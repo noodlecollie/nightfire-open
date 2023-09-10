@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include <SDL.h>
 #include "CRTLib/bitdefs.h"
 #include "common.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "input.h"
 #include "client.h"
 #include "vgui_draw.h"

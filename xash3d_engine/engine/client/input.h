@@ -24,7 +24,7 @@ INPUT
 ==============================================================
 */
 
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 
 //
 // input.c
