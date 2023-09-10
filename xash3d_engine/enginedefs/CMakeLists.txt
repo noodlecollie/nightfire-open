@@ -4,6 +4,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/cl_entity.h
 	include/XashDefs/com_image.h
 	include/XashDefs/com_model.h
+	include/XashDefs/con_nprint.h
 	include/XashDefs/const.h
 	include/XashDefs/cvardef.h
 	include/XashDefs/dlight.h

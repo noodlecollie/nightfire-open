@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "XashDefs/event_flags.h"
 #include "net_encode.h"
-#include "con_nprint.h"
+#include "XashDefs/con_nprint.h"
 
 /*
 ===============

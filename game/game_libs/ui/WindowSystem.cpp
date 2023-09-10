@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "Primitive.h"
 #include "WindowSystem.h"
 #include "BaseWindow.h"
-#include "con_nprint.h"
+#include "XashDefs/con_nprint.h"
 
 void CWindowStack::VidInit(bool calledOnce)
 {

@@ -90,7 +90,7 @@ void UI_ConnectionProgress_ParseServerInfo(const char* server);
 extern "C" EXPORT void
 AddTouchButtonToList(const char* name, const char* texture, const char* command, unsigned char* color, int flags);
 
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 
 // ScreenHeight returns the height of the screen, in ppos.xels
 #define ScreenHeight ((float)(gpGlobals->scrHeight))
