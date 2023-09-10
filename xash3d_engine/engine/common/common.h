@@ -513,7 +513,7 @@ void Mem_PrintStats(void);
 //
 // imagelib
 //
-#include "com_image.h"
+#include "XashDefs/com_image.h"
 
 void Image_Setup(void);
 void Image_Init(void);

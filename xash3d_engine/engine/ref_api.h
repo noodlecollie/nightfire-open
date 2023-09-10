@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "XashDefs/log_strings.h"
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
-#include "com_image.h"
+#include "XashDefs/com_image.h"
 #include "vgui_api.h"
 #include "render_api.h"
 #include "triangleapi.h"
@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "com_model.h"
 #include "studio.h"
 #include "r_efx.h"
-#include "com_image.h"
+#include "XashDefs/com_image.h"
 
 // RefAPI changelog:
 // 1. Initial release
