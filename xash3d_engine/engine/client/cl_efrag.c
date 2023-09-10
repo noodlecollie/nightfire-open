@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "studio.h"
 #include "world.h"  // BOX_ON_PLANE_SIDE
 #include "client.h"

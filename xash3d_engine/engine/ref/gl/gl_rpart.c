@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "gl_local.h"
 #include "r_efx.h"
 #include "event_flags.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "triangleapi.h"
 #include "pm_local.h"
 #include "studio.h"

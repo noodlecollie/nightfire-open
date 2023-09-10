@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"
 #include "XashDefs/const.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "vgui_draw.h"
 #include "sound.h"
 #include "input.h"  // touch

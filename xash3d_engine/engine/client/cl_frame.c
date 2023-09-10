@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"
 #include "net_encode.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "pm_local.h"
 #include "cl_tent.h"
 #include "studio.h"

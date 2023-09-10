@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "client.h"
 #include "r_efx.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "triangleapi.h"
 #include "cl_tent.h"
 #include "pm_local.h"

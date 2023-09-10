@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "r_local.h"
 #include "library.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "mod_local.h"
 int r_cnumsurfs;
 #define IsLiquidContents(cnt) (cnt == CONTENTS_WATER || cnt == CONTENTS_SLIME || cnt == CONTENTS_LAVA)

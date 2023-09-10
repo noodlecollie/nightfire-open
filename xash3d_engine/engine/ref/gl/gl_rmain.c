@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "library.h"
 #include "XashDefs/beamdef.h"
 #include "XashDefs/particledef.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 
 #define IsLiquidContents(cnt) (cnt == CONTENTS_WATER || cnt == CONTENTS_SLIME || cnt == CONTENTS_LAVA)
 
