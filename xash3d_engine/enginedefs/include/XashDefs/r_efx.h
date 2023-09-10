@@ -16,7 +16,7 @@
 #pragma once
 
 #include "particledef.h"
-#include "beamdef.h"
+#include "XashDefs/beamdef.h"
 #include "dlight.h"
 #include "cl_entity.h"
 
