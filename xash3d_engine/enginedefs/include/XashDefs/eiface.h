@@ -13,19 +13,15 @@
  *
  ****/
 
-#ifndef EIFACE_H
-#define EIFACE_H
-
-#ifdef HLDEMO_BUILD
-#define INTERFACE_VERSION 001
-#else  // !HLDEMO_BUILD, i.e., regular version of HL
-#define INTERFACE_VERSION 140
-#endif  // !HLDEMO_BUILD
+#pragma once
 
 #include <stdio.h>
 #include "XashDefs/custom.h"
 #include "XashDefs/cvardef.h"
 #include "XashDefs/edict.h"
+
+#define NEW_DLL_FUNCTIONS_VERSION 1
+#define INTERFACE_VERSION 140
 
 //
 // Defines entity interface between engine and DLLs.
@@ -36,6 +32,7 @@
 // This is conveniently done for them in extdll.h
 //
 
+// NFTODO: Remove this
 #ifdef _WIN32
 #define DLLEXPORT __stdcall
 #else
@@ -611,9 +608,6 @@ typedef struct
 
 extern DLL_FUNCTIONS gEntityInterface;
 
-// Current version.
-#define NEW_DLL_FUNCTIONS_VERSION 1
-
 typedef struct
 {
 	// Called right before the object's memory is freed.
@@ -631,5 +625,3 @@ extern NEW_DLL_FUNCTIONS gNewDLLFunctions;
 
 typedef int (*APIFUNCTION)(DLL_FUNCTIONS* pFunctionTable, int interfaceVersion);
 typedef int (*APIFUNCTION2)(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion);
-
-#endif  // EIFACE_H

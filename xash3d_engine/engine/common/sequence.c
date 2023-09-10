@@ -222,13 +222,20 @@ Sequence_BakeDefaults
 */
 static void Sequence_BakeDefaults(sequenceCommandLine_s* destination, sequenceCommandLine_s* source)
 {
-	char *saveName, *saveMessage;
+	char* saveName = NULL;
+	char* saveMessage = NULL;
 
 	if ( !destination )
+	{
 		Con_Reportf(S_ERROR "Attempt to bake defaults into a non-existant command.");
+		return;
+	}
 
 	if ( !source )
+	{
 		Con_Reportf(S_ERROR "Attempt to bake defaults from a non-existant command.");
+		return;
+	}
 
 	saveName = destination->clientMessage.pName;
 	saveMessage = destination->clientMessage.pMessage;
@@ -403,7 +410,7 @@ static void Sequence_ValidateNameValueString(char* token)
 				*scan);
 	}
 }
-#endif // UNUSED_FUNCTIONS
+#endif  // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -600,20 +607,27 @@ static void Sequence_ReadQuotedString(char** dest, char* str, size_t len)
 	Sequence_SkipWhitespace();
 
 	ch = Sequence_GetSymbol();
+
 	if ( ch != '\"' )
+	{
 		Con_Reportf(
 			S_ERROR "Parsing error on or before line %d of %s.seq: expected quote (\"), found '%c' instead\n",
 			g_lineNum,
 			g_sequenceParseFileName,
 			ch);
+	}
 
 	for ( write = str; *g_scan && len; write++, g_scan++, len-- )
 	{
 		if ( *g_scan == '\"' )
+		{
 			break;
+		}
 
 		if ( *g_scan == '\n' )
+		{
 			g_lineNum++;
+		}
 
 		*write = *g_scan;
 	}
@@ -622,7 +636,9 @@ static void Sequence_ReadQuotedString(char** dest, char* str, size_t len)
 	g_scan++;
 
 	if ( dest )
+	{
 		*dest = copystring(str);
+	}
 }
 
 /*
@@ -1038,7 +1054,7 @@ static float Sequence_CalcEntryDuration(sequenceEntry_s* entry)
 
 	return duration;
 }
-#endif // UNUSED_FUNCTIONS
+#endif  // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -1059,7 +1075,7 @@ static qboolean Sequence_DoesEntryContainInfiniteLoop(sequenceEntry_s* entry)
 
 	return false;
 }
-#endif // UNUSED_FUNCTIONS
+#endif  // UNUSED_FUNCTIONS
 
 /*
 =============

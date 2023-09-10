@@ -160,7 +160,6 @@ set(ENGINE_SOURCES
 	studio.h
 	vgui_api.h
 	warpsin.h
-	wrect.h
 )
 
 if(CLIENT_SUPPORT)

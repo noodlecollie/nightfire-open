@@ -12,25 +12,22 @@
  *   without written permission from Valve LLC.
  *
  ****/
-//
-//  cdll_int.h
-//
-// 4-23-98
-// JOHN:  client dll interface declarations
-//
 
-#ifndef CDLL_INT_H
-#define CDLL_INT_H
+#pragma once
+
+#include <stdint.h>
+#include "XashDefs/const.h"
+#include "XashDefs/wrect.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "XashDefs/const.h"
-#include <stdint.h>
-
 #define MAX_ALIAS_NAME 32
+#define SCRINFO_SCREENFLASH 1
+#define SCRINFO_STRETCHED 2
+#define CLDLL_INTERFACE_VERSION 7
 
 typedef struct cmdalias_s
 {
@@ -44,11 +41,6 @@ typedef struct cmdalias_s
 
 typedef int HSPRITE;  // handle to a graphic
 typedef int (*pfnUserMsgHook)(const char* pszName, int iSize, void* pbuf);
-
-#include "wrect.h"
-
-#define SCRINFO_SCREENFLASH 1
-#define SCRINFO_STRETCHED 2
 
 typedef struct SCREENINFO_s
 {
@@ -92,8 +84,8 @@ typedef struct client_textmessage_s
 	float fadeout;
 	float holdtime;
 	float fxtime;
-	const char* pName;
-	const char* pMessage;
+	char* pName;
+	char* pMessage;
 } client_textmessage_t;
 
 typedef struct hud_player_info_s
@@ -331,10 +323,6 @@ typedef struct cl_enginefuncs_s
 	int (*pfnFilteredClientCmd)(const char* cmd);
 } cl_enginefunc_t;
 
-#define CLDLL_INTERFACE_VERSION 7
-
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // CDLL_INT_H

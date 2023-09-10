@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "XashDefs/cvardef.h"
 #include "XashDefs/gameinfo.h"
-#include "wrect.h"
+#include "XashDefs/wrect.h"
 #include "PlatformDefs/decorators.h"
 
 // a macro for mainui_cpp, indicating that mainui should be compiled for

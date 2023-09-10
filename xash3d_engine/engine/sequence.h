@@ -3,32 +3,10 @@
 //		S c r i p t e d   S e q u e n c e s
 //
 //---------------------------------------------------------------------------
-#ifndef _INCLUDE_SEQUENCE_H_
-#define _INCLUDE_SEQUENCE_H_
 
-#ifndef _DEF_BYTE_
-// typedef unsigned char byte;
-#endif
+#pragma once
 
-#ifndef CDLL_INT_H
-//---------------------------------------------------------------------------
-// client_textmessage_t
-//---------------------------------------------------------------------------
-typedef struct client_textmessage_s
-{
-	int effect;
-	byte r1, g1, b1, a1;  // 2 colors for effects
-	byte r2, g2, b2, a2;
-	float x;
-	float y;
-	float fadein;
-	float fadeout;
-	float holdtime;
-	float fxtime;
-	char* pName;
-	char* pMessage;
-} client_textmessage_t;
-#endif
+#include "XashDefs/cdll_int.h"
 
 //---------------------------------------------------------------------------
 // sequenceCommandEnum_e
@@ -191,5 +169,3 @@ void Sequence_OnLevelLoad(const char* mapName);
 sentenceEntry_s* Sequence_PickSentence(const char* groupName, int pickMethod, int* picked);
 void Sequence_Init(void);
 sentenceEntry_s* Sequence_GetSentenceByIndex(unsigned int index);
-
-#endif  // _INCLUDE_SEQUENCE_H_
