@@ -2,7 +2,7 @@
 #include "usercmd.h"
 #include "cvardef.h"
 #include "kbutton.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "input_mouse.h"
 extern cvar_t* sensitivity;
 extern cvar_t* in_joystick;

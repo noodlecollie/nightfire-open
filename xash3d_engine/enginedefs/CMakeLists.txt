@@ -30,6 +30,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/lightstyle.h
 	include/XashDefs/log_strings.h
 	include/XashDefs/mempool.h
+	include/XashDefs/menu_int.h
 	include/XashDefs/netadr.h
 	include/XashDefs/particledef.h
 	include/XashDefs/pm_info.h

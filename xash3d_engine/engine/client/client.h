@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "MathLib/mathlib.h"
 #include "XashDefs/cdll_int.h"
-#include "menu_int.h"
+#include "XashDefs/menu_int.h"
 #include "XashDefs/cl_entity.h"
 #include "mod_local.h"
 #include "pm_defs.h"

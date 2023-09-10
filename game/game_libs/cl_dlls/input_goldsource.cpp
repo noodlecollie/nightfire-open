@@ -20,7 +20,7 @@
 #include "const.h"
 #include "camera.h"
 #include "in_defs.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "view.h"
 
 #ifndef _WIN32

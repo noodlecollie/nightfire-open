@@ -35,7 +35,7 @@ GNU General Public License for more details.
 #include <process.h>
 #endif
 
-#include "menu_int.h"  // _UPDATE_PAGE macro
+#include "XashDefs/menu_int.h"  // _UPDATE_PAGE macro
 
 #include "library.h"
 #include "whereami.h"

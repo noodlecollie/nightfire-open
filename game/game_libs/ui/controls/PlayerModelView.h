@@ -18,7 +18,7 @@ GNU General Public License for more details.
 // HLSDK includes
 #include "mathlib.h"
 #include "XashDefs/const.h"
-#include "keydefs.h"
+#include "XashDefs/keydefs.h"
 #include "XashDefs/ref_params.h"
 #include "XashDefs/cl_entity.h"
 #include "XashDefs/com_model.h"

@@ -23,6 +23,8 @@ GNU General Public License for more details.
 #include "Primitive.h"
 #include "XashDefs/netadr.h"
 #include "PlatformLib/String.h"
+#include "XashDefs/wrect.h"
+#include "XashDefs/cvardef.h"
 
 class EngFuncs
 {

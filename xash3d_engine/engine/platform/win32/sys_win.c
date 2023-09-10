@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "platform/platform.h"
-#include "menu_int.h"
+#include "XashDefs/menu_int.h"
 #include "server.h"
 #include <shellapi.h>
 
