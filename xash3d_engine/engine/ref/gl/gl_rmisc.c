@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "gl_local.h"
 #include "shake.h"
 #include "XashDefs/screenfade.h"
-#include "cdll_int.h"
+#include "XashDefs/cdll_int.h"
 
 static void R_ParseDetailTextures(const char* filename)
 {

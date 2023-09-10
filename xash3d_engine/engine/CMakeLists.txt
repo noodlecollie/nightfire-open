@@ -142,8 +142,6 @@ set(ENGINE_SOURCES
 	server/sv_pmove.c
 	server/sv_save.c
 	server/sv_world.c
-	cdll_exp.h
-	cdll_int.h
 	cursor_type.h
 	custom.h
 	customentity.h
@@ -177,6 +175,7 @@ if(CLIENT_SUPPORT)
 		client/avi/avi.h
 		client/vgui/vgui_draw.h
 		client/vgui/vgui_draw.c
+		client/cdll_exp.h
 		client/cl_bytenormals.h
 		client/cl_bytenormals.c
 		client/cl_cmds.c

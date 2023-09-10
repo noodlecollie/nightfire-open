@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #define CLIENT_H
 
 #include "MathLib/mathlib.h"
-#include "cdll_int.h"
+#include "XashDefs/cdll_int.h"
 #include "menu_int.h"
 #include "XashDefs/cl_entity.h"
 #include "mod_local.h"

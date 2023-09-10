@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "base_cmd.h"
-#include "cdll_int.h"
+#include "XashDefs/cdll_int.h"
 #include "CRCLib/crclib.h"
 
 #define HASH_SIZE 128  // 128 * 4 * 4 == 2048 bytes
