@@ -42,7 +42,7 @@ typedef enum
 #define NET_HEADER_SPLITPACKET -2
 #define NET_HEADER_COMPRESSEDPACKET -3
 
-#include "netadr.h"
+#include "XashDefs/netadr.h"
 
 extern convar_t* net_showpackets;
 extern convar_t* net_clockwindow;

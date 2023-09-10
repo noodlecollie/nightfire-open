@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "entity_types.h"
 #include "vgui_draw.h"
 #include "sound.h"

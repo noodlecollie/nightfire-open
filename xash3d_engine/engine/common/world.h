@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include "trace.h"
-#include "lightstyle.h"
+#include "XashDefs/lightstyle.h"
 #include "link.h"
 
 #define MOVE_NORMAL 0  // normal trace
@@ -62,7 +62,7 @@ int RankForContents(int contents);
 ===============================================================================
 */
 #include "event_api.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 
 #define MAX_EVENT_QUEUE 64  // 16 simultaneous events, max
 

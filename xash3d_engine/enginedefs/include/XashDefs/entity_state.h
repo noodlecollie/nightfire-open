@@ -16,9 +16,9 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "typedefs.h"
+#include "XashDefs/typedefs.h"
 #include "pm_info.h"
-#include "weaponinfo.h"
+#include "XashDefs/weaponinfo.h"
 
 // For entityType below
 #define ENTITY_NORMAL (1 << 0)

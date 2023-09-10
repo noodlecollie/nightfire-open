@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "Identity/arch.h"
 #include "CRCLib/crclib.h"
 #include "common.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "server.h"
 #include "net_encode.h"
 #include "net_api.h"

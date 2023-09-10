@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/mempool.h"
 #include "XashDefs/engine_limits.h"
 #include "XashDefs/bspfile.h"
-#include "typedefs.h"
+#include "XashDefs/typedefs.h"
 
 /*
 ==============================================================================

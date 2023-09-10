@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include "particledef.h"
+#include "XashDefs/particledef.h"
 #include "XashDefs/beamdef.h"
-#include "dlight.h"
-#include "cl_entity.h"
+#include "XashDefs/dlight.h"
+#include "XashDefs/cl_entity.h"
 
 /*
 // FOR REFERENCE, These are the built-in tracer colors.  Note, color 4 is the one

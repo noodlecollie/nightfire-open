@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/libnames.h"
 #include "common.h"
 #include "client.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "library.h"
 #include "input.h"
 #include "server.h"  // !!svgame.hInstance

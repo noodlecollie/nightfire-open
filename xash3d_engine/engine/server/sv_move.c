@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "common.h"
 #include "server.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "pm_defs.h"
 
 #define MOVE_NORMAL 0  // normal move in the direction monster is facing

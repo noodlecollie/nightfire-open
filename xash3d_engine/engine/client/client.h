@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "cdll_int.h"
 #include "menu_int.h"
-#include "cl_entity.h"
+#include "XashDefs/cl_entity.h"
 #include "mod_local.h"
 #include "pm_defs.h"
 #include "pm_movevars.h"

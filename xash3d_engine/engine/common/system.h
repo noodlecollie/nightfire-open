@@ -24,7 +24,7 @@ extern "C"
 #include <setjmp.h>
 #include <stdio.h>
 #include <time.h>
-#include "const.h"
+#include "XashDefs/const.h"
 #include "CRTLib/crtlib.h"
 #include "platform/platform.h"
 #include "dll_types.h"

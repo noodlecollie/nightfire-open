@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "r_local.h"
 #include "MathLib/mathlib.h"
 #include "CRTLib/crtlib.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "r_studioint.h"
 #include "triangleapi.h"
 #include "studio.h"

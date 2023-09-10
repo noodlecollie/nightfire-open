@@ -16,7 +16,7 @@
 #ifndef CUSTOM_H
 #define CUSTOM_H
 
-#include "const.h"
+#include "XashDefs/const.h"
 
 /////////////////
 // Customization

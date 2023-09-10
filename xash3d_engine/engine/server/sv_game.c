@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "library.h"
 #include "pm_defs.h"
 #include "studio.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
 #include "fscallback.h"

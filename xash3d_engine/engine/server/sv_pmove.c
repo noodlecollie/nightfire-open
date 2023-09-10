@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "server.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "pm_local.h"
 #include "event_flags.h"
 #include "studio.h"

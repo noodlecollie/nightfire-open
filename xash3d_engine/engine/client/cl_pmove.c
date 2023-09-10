@@ -16,10 +16,10 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "cl_tent.h"
 #include "pm_local.h"
-#include "particledef.h"
+#include "XashDefs/particledef.h"
 #include "studio.h"
 
 #define MAX_FORWARD 6  // forward probes for set idealpitch

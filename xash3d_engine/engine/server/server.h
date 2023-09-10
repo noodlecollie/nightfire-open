@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "mod_local.h"
 #include "pm_defs.h"
 #include "pm_movevars.h"
-#include "entity_state.h"
+#include "XashDefs/entity_state.h"
 #include "protocol.h"
 #include "netchan.h"
 #include "custom.h"

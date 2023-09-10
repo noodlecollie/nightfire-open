@@ -16,7 +16,7 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "typedefs.h"
+#include "XashDefs/typedefs.h"
 
 typedef struct dlight_s
 {

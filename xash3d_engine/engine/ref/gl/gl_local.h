@@ -17,12 +17,12 @@ GNU General Public License for more details.
 #define GL_LOCAL_H
 
 #include "cvardef.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "com_model.h"
-#include "cl_entity.h"
+#include "XashDefs/cl_entity.h"
 #include "render_api.h"
 #include "protocol.h"
-#include "dlight.h"
+#include "XashDefs/dlight.h"
 #include "gl_frustum.h"
 #include "ref_api.h"
 #include "MathLib/mathlib.h"

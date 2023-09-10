@@ -16,9 +16,9 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "typedefs.h"
-#include "lightstyle.h"
-#include "dlight.h"
+#include "XashDefs/typedefs.h"
+#include "XashDefs/lightstyle.h"
+#include "XashDefs/dlight.h"
 
 struct ref_viewpass_s;
 struct cl_entity_s;
