@@ -11,6 +11,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/con_nprint.h
 	include/XashDefs/const.h
 	include/XashDefs/custom.h
+	include/XashDefs/customentity.h
 	include/XashDefs/cvardef.h
 	include/XashDefs/dlight.h
 	include/XashDefs/engine_limits.h

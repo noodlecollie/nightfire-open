@@ -3,7 +3,7 @@
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
-#include "customentity.h"
+#include "XashDefs/customentity.h"
 #include "XashDefs/r_efx.h"
 #include "cl_tent.h"
 #include "pm_local.h"

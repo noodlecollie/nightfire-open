@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/event_flags.h"
 #include "XashDefs/entity_types.h"
 #include "XashDefs/triangleapi.h"
-#include "customentity.h"
+#include "XashDefs/customentity.h"
 #include "pm_local.h"
 #include "studio.h"
 
