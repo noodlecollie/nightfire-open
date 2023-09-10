@@ -17,7 +17,7 @@
 
 #include "PlatformDefs/typedefs.h"
 #include "progdefs.h"
-#include "link.h"
+#include "XashDefs/link.h"
 
 #define MAX_ENT_LEAFS 48
 

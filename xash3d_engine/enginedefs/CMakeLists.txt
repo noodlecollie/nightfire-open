@@ -28,12 +28,14 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/key_modifiers.h
 	include/XashDefs/keydefs.h
 	include/XashDefs/lightstyle.h
+	include/XashDefs/link.h
 	include/XashDefs/log_strings.h
 	include/XashDefs/mempool.h
 	include/XashDefs/menu_int.h
 	include/XashDefs/mobility_int.h
 	include/XashDefs/netadr.h
 	include/XashDefs/particledef.h
+	include/XashDefs/physint.h
 	include/XashDefs/pm_info.h
 	include/XashDefs/pmtrace.h
 	include/XashDefs/r_efx.h
@@ -42,10 +44,11 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/ref_params.h
 	include/XashDefs/render_api.h
 	include/XashDefs/screenfade.h
+	include/XashDefs/trace.h
 	include/XashDefs/triangleapi.h
 	include/XashDefs/typedefs.h
-	include/XashDefs/typedefs.h
 	include/XashDefs/vgui_api.h
+	include/XashDefs/wadfile.h
 	include/XashDefs/weaponinfo.h
 	include/XashDefs/wrect.h
 )

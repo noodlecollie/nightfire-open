@@ -15,9 +15,9 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "trace.h"
+#include "XashDefs/trace.h"
 #include "XashDefs/lightstyle.h"
-#include "link.h"
+#include "XashDefs/link.h"
 
 #define MOVE_NORMAL 0  // normal trace
 #define MOVE_NOMONSTERS 1  // ignore monsters (edicts with flags (FL_MONSTER|FL_FAKECLIENT|FL_CLIENT) set)

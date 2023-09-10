@@ -84,7 +84,6 @@ set(ENGINE_SOURCES
 	$<$<BOOL:${NF_SINGLE_ENGINE_BINARY}>:common/launcher.c>
 	common/lib_common.c
 	common/library.h
-	common/link.h
 	common/masterlist.c
 	common/mod_bmodel.c
 	common/model.c
@@ -120,7 +119,6 @@ set(ENGINE_SOURCES
 	common/tests.h
 	common/textureproperties.h
 	common/textureproperties.c
-	common/trace.h
 	common/usercmd.h
 	common/whereami.h
 	common/whereami.c
@@ -144,7 +142,6 @@ set(ENGINE_SOURCES
 	server/sv_world.c
 	engine_builddefs.h
 	fscallback.h
-	physint.h
 	progdefs.h
 	sequence.h
 	shake.h

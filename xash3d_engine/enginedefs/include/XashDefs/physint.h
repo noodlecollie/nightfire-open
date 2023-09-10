@@ -15,8 +15,12 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "XashDefs/eiface.h"  // offsetof
-#include "trace.h"
+#include "PlatformDefs/typedefs.h"
+#include "PlatformDefs/utils.h"
+#include "XashDefs/trace.h"
+#include "XashDefs/edict.h"
+#include "XashDefs/link.h"
+#include "XashDefs/typedefs.h"
 
 #define SV_PHYSICS_INTERFACE_VERSION 6
 
@@ -49,6 +53,14 @@ GNU General Public License for more details.
 #define LUMP_SAVE_ALREADY_EXIST 6
 #define LUMP_SAVE_NO_DATA 7
 #define LUMP_SAVE_CORRUPTED 8
+
+struct triangleapi_s;
+struct con_nprint_s;
+struct msurface_s;
+struct physent_s;
+struct saverestore_s;
+struct decallist_s;
+struct playermove_s;
 
 typedef struct areanode_s
 {
@@ -157,7 +169,7 @@ typedef struct physics_interface_s
 	// obsolete
 	void (*pfnPrepWorldFrame)(void);
 	// called through save\restore process
-	void (*pfnCreateEntitiesInRestoreList)(SAVERESTOREDATA* pSaveData, int levelMask, qboolean create_world);
+	void (*pfnCreateEntitiesInRestoreList)(struct saverestore_s* pSaveData, int levelMask, qboolean create_world);
 	// allocate custom string (e.g. using user implementation of stringtable, not engine strings)
 	string_t (*pfnAllocString)(const char* szValue);
 	// make custom string (e.g. using user implementation of stringtable, not engine strings)
