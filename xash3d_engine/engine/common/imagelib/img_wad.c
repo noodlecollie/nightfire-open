@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "XashDefs/wadfile.h"
 #include "CRTLib/bitdefs.h"
 #include "imagelib.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "XashDefs/sprite.h"
 #include "qfont.h"
 

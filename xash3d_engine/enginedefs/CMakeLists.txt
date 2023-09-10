@@ -48,6 +48,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/shake.h
 	include/XashDefs/sprite.h
 	include/XashDefs/studio_event.h
+	include/XashDefs/studio.h
 	include/XashDefs/trace.h
 	include/XashDefs/triangleapi.h
 	include/XashDefs/typedefs.h

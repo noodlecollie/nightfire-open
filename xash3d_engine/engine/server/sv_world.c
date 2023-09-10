@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include "XashDefs/const.h"
 #include "pm_local.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "mod_local.h"
 
 typedef struct moveclip_s

@@ -19,7 +19,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "MathLib/mathlib.h"
 #include "fscallback.h"
 #include "XashDefs/const.h"

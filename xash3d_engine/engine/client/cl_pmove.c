@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "cl_tent.h"
 #include "pm_local.h"
 #include "XashDefs/particledef.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 
 #define MAX_FORWARD 6  // forward probes for set idealpitch
 #define MIN_CORRECTION_DISTANCE 0.25f  // use smoothing if error is > this

@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "XashDefs/triangleapi.h"
 #include "XashDefs/customentity.h"
 #include "pm_local.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 
 #define NOISE_DIVISIONS 64  // don't touch - many tripmines cause the crash when it equal 128
 

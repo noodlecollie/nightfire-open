@@ -144,7 +144,6 @@ set(ENGINE_SOURCES
 	fscallback.h
 	sequence.h
 	staticbuildchecks.h
-	studio.h
 	warpsin.h
 )
 

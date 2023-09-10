@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "mod_local.h"
 #include "XashDefs/sprite.h"
 #include "XashDefs/alias.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "world.h"
 #include "XashDefs/enginefeatures.h"
 #include "client.h"

@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "XashDefs/triangleapi.h"
 #include "cl_tent.h"
 #include "pm_local.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "sound.h"
 #include "fscallback.h"
 

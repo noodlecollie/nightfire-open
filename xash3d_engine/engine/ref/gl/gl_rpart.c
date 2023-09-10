@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "XashDefs/entity_types.h"
 #include "XashDefs/triangleapi.h"
 #include "pm_local.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 
 static float gTracerSize[] = {
 	1.5f,  // pt_static

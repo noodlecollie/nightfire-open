@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "pm_defs.h"
 #include "mod_local.h"
 #include "MathLib/mathlib.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 
 // just for debug
 const char* et_name[] = {

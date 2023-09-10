@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "XashDefs/edict.h"
 #include "XashDefs/eiface.h"
 #include "XashDefs/ref_api.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 
 #define LM_SAMPLE_SIZE 16
 #define LM_SAMPLE_EXTRASIZE 8

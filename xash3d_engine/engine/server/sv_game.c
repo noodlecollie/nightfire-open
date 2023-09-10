@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "XashDefs/event_flags.h"
 #include "library.h"
 #include "pm_defs.h"
-#include "studio.h"
+#include "XashDefs/studio.h"
 #include "XashDefs/const.h"
 #include "XashDefs/render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
