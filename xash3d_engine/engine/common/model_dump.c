@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "bsp/generic/viscompress.h"
 #include "MathLib/mathlib.h"
-#include "eiface.h"
+#include "XashDefs/eiface.h"
 #include "fscallback.h"
 
 // For utility:

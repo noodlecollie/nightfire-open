@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "MathLib/mathlib.h"
 #include "XashDefs/edict.h"
-#include "eiface.h"
+#include "XashDefs/eiface.h"
 #include "physint.h"  // physics interface
 #include "mod_local.h"
 #include "pm_defs.h"

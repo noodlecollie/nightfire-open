@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "eiface.h"  // offsetof
+#include "XashDefs/eiface.h"  // offsetof
 #include "trace.h"
 
 #define SV_PHYSICS_INTERFACE_VERSION 6

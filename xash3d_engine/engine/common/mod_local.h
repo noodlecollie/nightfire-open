@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include "XashDefs/edict.h"
-#include "eiface.h"
+#include "XashDefs/eiface.h"
 #include "ref_api.h"
 #include "studio.h"
 

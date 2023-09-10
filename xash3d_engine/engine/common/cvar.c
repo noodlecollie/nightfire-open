@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "base_cmd.h"
-#include "eiface.h"  // ARRAYSIZE
+#include "XashDefs/eiface.h"  // ARRAYSIZE
 #include "fscallback.h"
 
 convar_t* cvar_vars = NULL;  // head of list
