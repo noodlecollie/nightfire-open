@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "triangleapi.h"
 #include "alias.h"
 #include "pm_local.h"
-#include "pmtrace.h"
+#include "XashDefs/pmtrace.h"
 #include "XashDefs/typedefs.h"
 
 extern cvar_t r_shadows;

@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "triangleapi.h"
 #include "studio.h"
 #include "pm_local.h"
-#include "pmtrace.h"
+#include "XashDefs/pmtrace.h"
 
 #define EVENT_CLIENT 5000  // less than this value it's a server-side studio events
 #define MAX_LOCALLIGHTS 4

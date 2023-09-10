@@ -18,7 +18,7 @@
 #include "XashDefs/pm_info.h"
 
 // PM_PlayerTrace results.
-#include "pmtrace.h"
+#include "XashDefs/pmtrace.h"
 
 #include "XashDefs/com_model.h"
 #include "usercmd.h"
