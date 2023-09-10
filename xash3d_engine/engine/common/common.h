@@ -119,7 +119,7 @@ typedef enum
 #include "com_strings.h"
 #include "CRTLib/crtlib.h"
 #include "cvar.h"
-#include "XashDefs/con_nprint.h"
+#include "con_nprint.h"
 #include "ref_api.h"
 
 // PERFORMANCE INFO

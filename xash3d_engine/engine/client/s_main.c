@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "sound.h"
 #include "client.h"
-#include "XashDefs/con_nprint.h"
+#include "con_nprint.h"
 #include "pm_local.h"
 #include "platform/platform.h"
 #include "fscallback.h"

@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "keydefs.h"
 #include "protocol.h"  // get the protocol version
-#include "XashDefs/con_nprint.h"
+#include "con_nprint.h"
 #include "qfont.h"
 #include "XashDefs/wadfile.h"
 #include "input.h"
