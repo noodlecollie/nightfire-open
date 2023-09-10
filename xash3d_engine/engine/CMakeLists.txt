@@ -111,6 +111,7 @@ set(ENGINE_SOURCES
 	common/pm_surface.c
 	common/pm_trace.c
 	common/protocol.h
+	common/qfont.h
 	common/sequence.c
 	common/setpair.h
 	common/sys_con.c

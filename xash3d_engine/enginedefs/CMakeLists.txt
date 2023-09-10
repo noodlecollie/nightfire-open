@@ -21,7 +21,6 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/particledef.h
 	include/XashDefs/pm_info.h
 	include/XashDefs/pmtrace.h
-	include/XashDefs/qfont.h
 	include/XashDefs/r_efx.h
 	include/XashDefs/r_studioint.h
 	include/XashDefs/ref_params.h
