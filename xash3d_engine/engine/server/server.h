@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "XashDefs/entity_state.h"
 #include "protocol.h"
 #include "netchan.h"
-#include "custom.h"
+#include "XashDefs/custom.h"
 #include "world.h"
 
 //=============================================================================

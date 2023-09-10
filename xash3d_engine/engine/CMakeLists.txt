@@ -143,7 +143,6 @@ set(ENGINE_SOURCES
 	server/sv_save.c
 	server/sv_world.c
 	cursor_type.h
-	custom.h
 	customentity.h
 	edict.h
 	eiface.h

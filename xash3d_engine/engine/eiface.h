@@ -23,7 +23,7 @@
 #endif  // !HLDEMO_BUILD
 
 #include <stdio.h>
-#include "custom.h"
+#include "XashDefs/custom.h"
 #include "XashDefs/cvardef.h"
 #include "edict.h"
 
