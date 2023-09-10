@@ -144,7 +144,6 @@ set(ENGINE_SOURCES
 	server/sv_world.c
 	engine_builddefs.h
 	fscallback.h
-	mobility_int.h
 	physint.h
 	progdefs.h
 	sequence.h
