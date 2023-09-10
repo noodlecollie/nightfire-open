@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/const.h"
 #include "XashDefs/r_studioint.h"
 #include "XashDefs/triangleapi.h"
-#include "alias.h"
+#include "XashDefs/alias.h"
 #include "pm_local.h"
 #include "XashDefs/pmtrace.h"
 #include "XashDefs/typedefs.h"

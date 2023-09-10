@@ -1,4 +1,7 @@
+# NFTODO: Some of these will only be used by the renderers,
+# so could be moved to a private renderer-only interface
 add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+	include/XashDefs/alias.h
 	include/XashDefs/beamdef.h
 	include/XashDefs/bspfile.h
 	include/XashDefs/cl_entity.h

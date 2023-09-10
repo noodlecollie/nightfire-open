@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "mod_local.h"
 #include "sprite.h"
-#include "alias.h"
+#include "XashDefs/alias.h"
 #include "studio.h"
 #include "world.h"
 #include "XashDefs/enginefeatures.h"

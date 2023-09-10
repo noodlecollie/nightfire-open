@@ -13,12 +13,13 @@
  *
  ****/
 
-#ifndef ALIAS_H
-#define ALIAS_H
+#pragma once
 
 #include <stdint.h>
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/static_assert.h"
+#include "PlatformDefs/typedefs.h"
+#include "XashDefs/com_model.h"
 
 /*
 ==============================================================================
@@ -148,5 +149,3 @@ typedef struct
 } daliasskintype_t;
 
 STATIC_ASSERT(sizeof(daliasskintype_t) == 4, "invalid daliasskintype_t size");
-
-#endif  // ALIAS_H
