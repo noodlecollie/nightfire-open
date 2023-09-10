@@ -13,8 +13,7 @@
  *
  ****/
 
-#ifndef EVENT_FLAGS_H
-#define EVENT_FLAGS_H
+#pragma once
 
 // Skip local host for event send.
 #define FEV_NOTHOST (1 << 0)
@@ -42,5 +41,3 @@
 
 // Only issue event client side ( from shared code )
 #define FEV_CLIENT (1 << 6)
-
-#endif  // EVENT_FLAGS_H
