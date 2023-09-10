@@ -12,7 +12,6 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/enginefeatures.h
 	include/XashDefs/entity_state.h
 	include/XashDefs/entity_types.h
-	include/XashDefs/event_api.h
 	include/XashDefs/event_args.h
 	include/XashDefs/event_flags.h
 	include/XashDefs/gameinfo.h

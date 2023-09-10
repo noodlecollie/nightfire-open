@@ -70,6 +70,7 @@ set(ENGINE_SOURCES
 	common/cvar.c
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:common/dedicated.c>
 	common/dll_types.h
+	common/event_api.h
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c

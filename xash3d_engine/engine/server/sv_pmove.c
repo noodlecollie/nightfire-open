@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include "XashDefs/const.h"
 #include "pm_local.h"
-#include "event_flags.h"
+#include "XashDefs/event_flags.h"
 #include "studio.h"
 
 static qboolean has_update = false;

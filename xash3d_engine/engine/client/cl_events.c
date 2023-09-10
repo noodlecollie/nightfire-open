@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "client.h"
-#include "event_flags.h"
+#include "XashDefs/event_flags.h"
 #include "net_encode.h"
 #include "con_nprint.h"
 

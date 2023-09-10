@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "server.h"
 #include "net_encode.h"
-#include "event_flags.h"
+#include "XashDefs/event_flags.h"
 #include "library.h"
 #include "pm_defs.h"
 #include "studio.h"
