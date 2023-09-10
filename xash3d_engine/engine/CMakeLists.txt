@@ -208,6 +208,7 @@ if(CLIENT_SUPPORT)
 		client/in_joy.c
 		client/input.h
 		client/input.c
+		client/ivoicetweak.h
 		client/in_touch.c
 		client/keys.c
 		client/mod_dbghulls.c
