@@ -28,7 +28,6 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/screenfade.h
 	include/XashDefs/triangleapi.h
 	include/XashDefs/typedefs.h
-	include/XashDefs/usercmd.h
 	include/XashDefs/wadfile.h
 	include/XashDefs/weaponinfo.h
 	include/XashDefs/wrect.h

@@ -122,6 +122,7 @@ set(ENGINE_SOURCES
 	common/textureproperties.h
 	common/textureproperties.c
 	common/trace.h
+	common/usercmd.h
 	common/whereami.h
 	common/whereami.c
 	common/world.h
