@@ -7,12 +7,6 @@
 # targets if they do not link against them. Decouple these
 # when possible.
 
-add_library(${TARGETNAME_INCLUDES_SDK} INTERFACE)
-
-target_include_directories(${TARGETNAME_INCLUDES_SDK} INTERFACE
-	engine
-)
-
 add_library(${TARGETNAME_INCLUDES_ENGINE} INTERFACE)
 
 target_include_directories(${TARGETNAME_INCLUDES_ENGINE} INTERFACE
