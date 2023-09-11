@@ -61,7 +61,6 @@ set(ENGINE_SOURCES
 	common/cmd.c
 	common/common.h
 	common/common.c
-	common/com_strings.h
 	common/con_utils.c
 	common/crashhandler.c
 	common/custom.c
@@ -286,7 +285,6 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE}
 	$<$<BOOL:${CLIENT_SUPPORT}>:SDL2::SDL2>
 	$<$<BOOL:${CLIENT_SUPPORT}>:Opus::opus>
 	${TARGETNAME_LIB_CRCLIB}
-	${TARGETNAME_INCLUDES_SDK}
 	${TARGETNAME_LIB_MINIZ}
 	${TARGETNAME_LIB_MATHLIB}
 	${TARGETNAME_LIB_CRTLIB}

@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "PlayerModelView.h"
 #include "StringArrayModel.h"
 #include "StringVectorModel.h"
-#include "common/com_strings.h"
+#include "XashDefs/com_strings.h"
 #include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_customize"
