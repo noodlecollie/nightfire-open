@@ -116,7 +116,7 @@ typedef enum
 
 #include "system.h"
 #include "XashDefs/com_model.h"
-#include "com_strings.h"
+#include "XashDefs/com_strings.h"
 #include "CRTLib/crtlib.h"
 #include "cvar.h"
 #include "XashDefs/con_nprint.h"

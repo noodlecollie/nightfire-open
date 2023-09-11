@@ -28,7 +28,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "XashDefs/ref_params.h"
 #include "XashDefs/enginefeatures.h"
-#include "com_strings.h"
+#include "XashDefs/com_strings.h"
 #include "pm_movevars.h"
 // #include "cvar.h"
 #include "gl_export.h"

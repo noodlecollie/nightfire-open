@@ -61,7 +61,6 @@ set(ENGINE_SOURCES
 	common/cmd.c
 	common/common.h
 	common/common.c
-	common/com_strings.h
 	common/con_utils.c
 	common/crashhandler.c
 	common/custom.c
