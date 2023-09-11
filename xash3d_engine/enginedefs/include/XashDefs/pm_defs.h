@@ -15,13 +15,11 @@
 
 #pragma once
 
+#include "PlatformDefs/typedefs.h"
 #include "XashDefs/pm_info.h"
-
-// PM_PlayerTrace results.
 #include "XashDefs/pmtrace.h"
-
 #include "XashDefs/com_model.h"
-#include "usercmd.h"
+#include "XashDefs/usercmd.h"
 #include "XashDefs/trace.h"
 
 #define MAX_PHYSENTS 600  // Must have room for all entities in the world.

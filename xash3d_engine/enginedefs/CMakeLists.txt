@@ -37,7 +37,9 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/netadr.h
 	include/XashDefs/particledef.h
 	include/XashDefs/physint.h
+	include/XashDefs/pm_defs.h
 	include/XashDefs/pm_info.h
+	include/XashDefs/pm_movevars.h
 	include/XashDefs/pmtrace.h
 	include/XashDefs/progdefs.h
 	include/XashDefs/r_efx.h
@@ -53,6 +55,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/trace.h
 	include/XashDefs/triangleapi.h
 	include/XashDefs/typedefs.h
+	include/XashDefs/usercmd.h
 	include/XashDefs/vgui_api.h
 	include/XashDefs/wadfile.h
 	include/XashDefs/weaponinfo.h

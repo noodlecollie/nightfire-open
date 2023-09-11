@@ -376,7 +376,6 @@ target_include_directories(${TARGETNAME_LIB_CLIENT} PRIVATE
 	../game_shared/util
 	../game_shared/gameplay
 	../game_menu_shared
-	../miniutl
 	../utils/false_vgui/include
 	hl
 	events

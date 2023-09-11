@@ -102,9 +102,7 @@ set(ENGINE_SOURCES
 	common/net_ws.h
 	common/net_ws.c
 	common/pm_debug.c
-	common/pm_defs.h
 	common/pm_local.h
-	common/pm_movevars.h
 	common/pm_surface.c
 	common/pm_trace.c
 	common/protocol.h
@@ -118,7 +116,6 @@ set(ENGINE_SOURCES
 	common/tests.h
 	common/textureproperties.h
 	common/textureproperties.c
-	common/usercmd.h
 	common/whereami.h
 	common/whereami.c
 	common/world.h

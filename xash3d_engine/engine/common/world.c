@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common.h"
 #include "world.h"
-#include "pm_defs.h"
+#include "XashDefs/pm_defs.h"
 #include "mod_local.h"
 #include "MathLib/mathlib.h"
 #include "XashDefs/studio.h"

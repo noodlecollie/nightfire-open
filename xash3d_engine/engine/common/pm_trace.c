@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "mod_local.h"
 #include "pm_local.h"
-#include "pm_movevars.h"
+#include "XashDefs/pm_movevars.h"
 #include "XashDefs/enginefeatures.h"
 #include "XashDefs/studio.h"
 #include "world.h"

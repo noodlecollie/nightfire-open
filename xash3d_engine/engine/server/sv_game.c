@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "net_encode.h"
 #include "XashDefs/event_flags.h"
 #include "library.h"
-#include "pm_defs.h"
+#include "XashDefs/pm_defs.h"
 #include "XashDefs/studio.h"
 #include "XashDefs/const.h"
 #include "XashDefs/render_api.h"  // modelstate_t

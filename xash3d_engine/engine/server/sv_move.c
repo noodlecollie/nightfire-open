@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "server.h"
 #include "XashDefs/const.h"
-#include "pm_defs.h"
+#include "XashDefs/pm_defs.h"
 
 #define MOVE_NORMAL 0  // normal move in the direction monster is facing
 #define MOVE_STRAFE 1  // moves in direction specified, no matter which way monster is facing

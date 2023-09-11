@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include <string.h>
-#include "pm_defs.h"
+#include "XashDefs/pm_defs.h"
 
 struct edict_s;
 
