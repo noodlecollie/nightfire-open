@@ -109,7 +109,6 @@ set(ENGINE_SOURCES
 	common/qfont.h
 	common/sequence.c
 	common/setpair.h
-	common/surfaceprops.h
 	common/sys_con.c
 	common/system.c
 	common/system.h

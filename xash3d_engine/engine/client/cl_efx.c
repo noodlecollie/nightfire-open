@@ -10,7 +10,7 @@
 #include "cl_surfaceprop_effects.h"
 #include "client/cl_bytenormals.h"
 #include "fscallback.h"
-#include "surfaceprops.h"
+#include "XashDefs/surfaceprops.h"
 
 #define PART_SIZE Q_max(0.5f, cl_draw_particles->value)
 
