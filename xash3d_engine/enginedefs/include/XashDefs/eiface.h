@@ -32,13 +32,6 @@
 // This is conveniently done for them in extdll.h
 //
 
-// NFTODO: Remove this
-#ifdef _WIN32
-#define DLLEXPORT __stdcall
-#else
-#define DLLEXPORT /* */
-#endif
-
 struct texture_s;
 
 typedef enum
