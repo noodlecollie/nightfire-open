@@ -584,7 +584,7 @@ static convar_t* Cvar_Set2(const char* var_name, const char* value)
 		{
 			if ( FBitSet(var->flags, FCVAR_PRIVILEGED) )
 			{
-				Con_Printf("%s is priveleged.\n", var->name);
+				Con_Printf("%s is privileged.\n", var->name);
 				return var;
 			}
 

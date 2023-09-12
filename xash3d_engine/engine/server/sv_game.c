@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "XashDefs/render_api.h"  // modelstate_t
 #include "ref_common.h"  // decals
 #include "fscallback.h"
+#include "common/xcvar_internal.h"
 
 #define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)
 
@@ -5212,7 +5213,13 @@ static enginefuncs_t gEngfuncs = {
 	pfnModelSequenceDuration,
 	pfnGetHitboxCount,
 	pfnGetTransformedHitboxPoints,
-	pfnGetHitboxHitGroup};
+	pfnGetHitboxHitGroup,
+	Xcvar_LookUp,
+	Xcvar_GetFloatByHandle,
+	Xcvar_GetStringByHandle,
+	Xcvar_SetFloatByHandle,
+	Xcvar_SetStringByHandle,
+};
 
 /*
 ====================

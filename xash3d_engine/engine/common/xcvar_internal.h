@@ -28,19 +28,6 @@ typedef enum xcvar_internalflag_e
 	FXCVAR_INTERNAL_CHANGED = (1 << 5),
 } xcvar_internalflag;
 
-struct xcvar_handle_s
-{
-	char* name;
-	char* description;
-	char* defaultValue;
-	uint32_t externalFlags;
-	uint32_t internalFlags;
-	char* valueString;
-	float valueFloat;
-
-	xcvar_handle_t* next;
-};
-
 void Xcvar_Init(void);
 
 xcvar_handle_t* Xcvar_GetFirst(void);
@@ -52,4 +39,14 @@ xcvar_handle_t* Xcvar_Find(const char* name);
 xcvar_handle_t* Xcvar_LookUp(const xcvar_params_t* params);
 
 // This invalidates the handles of any matching cvars!
-size_t Xcvar_Unlink(const char* name, uint32_t externalFlagMask, uint32_t internalFlagMask);
+// Name may be null if no name matching is required.
+// Masks may be 0 if no mask matching is required.
+// Unlike Xcvar_Unlink(), no checks are performed based on whether
+// game DLLs are loaded.
+size_t Xcvar_UnlinkDirect(const char* name, uint32_t externalFlagMask, uint32_t internalFlagMask);
+void Xcvar_Unlink(uint32_t externalFlagMask, uint32_t internalFlagMask);
+
+float Xcvar_GetFloatByHandle(const xcvar_handle_t* handle);
+const char* Xcvar_GetStringByHandle(const xcvar_handle_t* handle);
+void Xcvar_SetFloatByHandle(xcvar_handle_t* handle, float value);
+void Xcvar_SetStringByHandle(xcvar_handle_t* handle, const char* value);

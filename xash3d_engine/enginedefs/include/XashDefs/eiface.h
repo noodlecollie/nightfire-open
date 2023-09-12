@@ -19,6 +19,7 @@
 #include "XashDefs/custom.h"
 #include "XashDefs/cvardef.h"
 #include "XashDefs/edict.h"
+#include "XashDefs/xcvar.h"
 
 #define NEW_DLL_FUNCTIONS_VERSION 1
 #define INTERFACE_VERSION 140
@@ -359,6 +360,12 @@ typedef struct enginefuncs_s
 	qboolean (*pfnGetTransformedHitboxPoints)(const edict_t* edict, uint32_t hitboxIndex, float* points);
 
 	int (*pfnGetHitboxHitGroup)(const edict_t* edict, uint32_t hitboxIndex);
+
+	xcvar_handle_t* (*pfnXcvar_LookUp)(const xcvar_params_t* params);
+	float (*pfnXcvar_GetFloatByHandle)(const xcvar_handle_t* handle);
+	const char* (*pfnXcvar_GetStringByHandle)(const xcvar_handle_t* handle);
+	void (*pfnXcvar_SetFloatByHandle)(xcvar_handle_t* handle, float value);
+	void (*pfnXcvar_SetStringByHandle)(xcvar_handle_t* handle, const char* value);
 } enginefuncs_t;
 // ONLY ADD NEW FUNCTIONS TO THE END OF THIS STRUCT.  INTERFACE VERSION IS FROZEN AT 138
 

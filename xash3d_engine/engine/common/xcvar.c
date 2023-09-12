@@ -5,6 +5,21 @@
 #include "common/base_cmd.h"
 #include "common/xcvar_internal.h"
 
+// NFTODO: Replace GAME_EXPORT macro with something better defined
+
+struct xcvar_handle_s
+{
+	char* name;
+	char* description;
+	char* defaultValue;
+	uint32_t externalFlags;
+	uint32_t internalFlags;
+	char* valueString;
+	float valueFloat;
+
+	xcvar_handle_t* next;
+};
+
 typedef struct cvarcollection_s
 {
 	xcvar_handle_t* head;
@@ -15,6 +30,17 @@ static cvarcollection_t* g_CvarCollection = NULL;
 static qboolean NameIsValid(const char* name)
 {
 	return name && *name && !isspace(*name);
+}
+
+static qboolean CheckNameIsValid(const char* name, const char* source)
+{
+	if ( !NameIsValid(name) )
+	{
+		Con_Printf(S_ERROR "%s: Provided convar name was %s.\n", source, name ? "empty" : "null");
+		return false;
+	}
+
+	return true;
 }
 
 static xcvar_handle_t* AllocVariable(const xcvar_params_t* params)
@@ -135,7 +161,12 @@ static void HandleChange(xcvar_handle_t* var)
 
 static xcvar_handle_t* RegisterNewVariable(const xcvar_params_t* params)
 {
-	if ( !g_CvarCollection || !params || !NameIsValid(params->name) )
+	if ( !g_CvarCollection || !params )
+	{
+		return NULL;
+	}
+
+	if ( !CheckNameIsValid(params->name, "RegisterNewVariable") )
 	{
 		return NULL;
 	}
@@ -160,7 +191,7 @@ static xcvar_handle_t* RegisterNewVariable(const xcvar_params_t* params)
 			}
 
 			// Unlink the existing temporary variable, to be replaced with the new one.
-			Xcvar_Unlink(params->name, 0, FXCVAR_INTERNAL_TEMPORARY);
+			Xcvar_UnlinkDirect(params->name, 0, FXCVAR_INTERNAL_TEMPORARY);
 		}
 	}
 
@@ -233,7 +264,7 @@ xcvar_handle_t* Xcvar_GetNext(xcvar_handle_t* cvar)
 
 xcvar_handle_t* Xcvar_Find(const char* name)
 {
-	if ( !NameIsValid(name) )
+	if ( !CheckNameIsValid(name, "Xcvar_Find") )
 	{
 		return NULL;
 	}
@@ -241,7 +272,7 @@ xcvar_handle_t* Xcvar_Find(const char* name)
 	return (xcvar_handle_t*)BaseCmd_Find(HM_CVAR, name);
 }
 
-xcvar_handle_t* Xcvar_LookUp(const xcvar_params_t* params)
+xcvar_handle_t* GAME_EXPORT Xcvar_LookUp(const xcvar_params_t* params)
 {
 	if ( !g_CvarCollection || !params )
 	{
@@ -259,7 +290,7 @@ xcvar_handle_t* Xcvar_LookUp(const xcvar_params_t* params)
 	return RegisterNewVariable(params);
 }
 
-size_t Xcvar_Unlink(const char* name, uint32_t externalFlagMask, uint32_t internalFlagMask)
+size_t Xcvar_UnlinkDirect(const char* name, uint32_t externalFlagMask, uint32_t internalFlagMask)
 {
 	if ( !g_CvarCollection )
 	{
@@ -315,4 +346,62 @@ size_t Xcvar_Unlink(const char* name, uint32_t externalFlagMask, uint32_t intern
 	}
 
 	return count;
+}
+
+void Xcvar_Unlink(uint32_t externalFlagMask, uint32_t internalFlagMask)
+{
+	if ( Cvar_VariableInteger("host_gameloaded") && FBitSet(externalFlagMask, FCVAR_EXTDLL) )
+	{
+		Con_Printf(S_ERROR "Refusing to unlink EXTDLL cvars while the game server is loaded!");
+		return;
+	}
+
+	if ( Cvar_VariableInteger("host_clientloaded") && FBitSet(externalFlagMask, FCVAR_CLIENTDLL) )
+	{
+		Con_Printf(S_ERROR "Refusing to unlink CLIENTDLL cvars while the game client is loaded!");
+		return;
+	}
+
+	if ( Cvar_VariableInteger("host_gameuiloaded") && FBitSet(externalFlagMask, FCVAR_GAMEUIDLL) )
+	{
+		Con_Printf(S_ERROR "Refusing to unlink GAMEUIDLL cvars while the game UI is loaded!");
+		return;
+	}
+
+	size_t numUnlinked = Xcvar_UnlinkDirect(NULL, externalFlagMask, internalFlagMask);
+	Con_Reportf("Unlinked %zu cvars.\n", numUnlinked);
+}
+
+float GAME_EXPORT Xcvar_GetFloatByHandle(const xcvar_handle_t* handle)
+{
+	return handle ? handle->valueFloat : 0.0f;
+}
+
+const char* GAME_EXPORT Xcvar_GetStringByHandle(const xcvar_handle_t* handle)
+{
+	return handle ? handle->valueString : "";
+}
+
+void GAME_EXPORT Xcvar_SetFloatByHandle(xcvar_handle_t* handle, float value)
+{
+	if ( !handle )
+	{
+		return;
+	}
+
+	// TODO
+	(void)value;
+	Con_Printf(S_ERROR "Implement Xcvar_SetFloatByHandle\n");
+}
+
+void GAME_EXPORT Xcvar_SetStringByHandle(xcvar_handle_t* handle, const char* value)
+{
+	if ( !handle )
+	{
+		return;
+	}
+
+	// TODO
+	(void)value;
+	Con_Printf(S_ERROR "Implement Xcvar_SetStringByHandle\n");
 }

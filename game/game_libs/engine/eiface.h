@@ -342,7 +342,7 @@ typedef struct enginefuncs_s
 	// added in 8279
 	edict_t* (*pfnPEntityOfEntIndexAllEntities)(int iEntIndex);
 
-	// Afterburner extensions begin here
+	// Nightfire Open extensions begin here
 
 	float (*pfnModelSequenceDuration)(int modelIndex, int anim);
 	uint32_t (*pfnGetHitboxCount)(const edict_t* edict);
