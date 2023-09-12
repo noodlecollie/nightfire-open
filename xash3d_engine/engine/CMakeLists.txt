@@ -123,6 +123,8 @@ set(ENGINE_SOURCES
 	common/whereami.c
 	common/world.h
 	common/world.c
+	common/xcvar_internal.h
+	common/xcvar.c
 	common/zone.c
 	server/server.h
 	server/sv_client.c

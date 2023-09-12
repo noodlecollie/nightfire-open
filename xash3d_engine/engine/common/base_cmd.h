@@ -14,12 +14,6 @@ GNU General Public License for more details.
 */
 
 #pragma once
-#ifndef BASE_CMD_H
-#define BASE_CMD_H
-
-#define XASH_HASHED_VARS
-
-#ifdef XASH_HASHED_VARS
 
 typedef enum base_command_type
 {
@@ -38,7 +32,3 @@ void BaseCmd_Insert(base_command_type_e type, base_command_t* basecmd, const cha
 void BaseCmd_Remove(base_command_type_e type, const char* name);
 void BaseCmd_Stats_f(void);  // to be registered later
 void BaseCmd_Test_f(void);  // to be registered later
-
-#endif  // XASH_HASHED_VARS
-
-#endif  // BASE_CMD_H

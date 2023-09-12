@@ -457,9 +457,7 @@ void Cmd_Alias_f(void)
 			cmd_alias = a;
 		a->next = cur;
 
-#if defined(XASH_HASHED_VARS)
 		BaseCmd_Insert(HM_CMDALIAS, a, a->name);
-#endif
 	}
 
 	// copy the rest of the command line
@@ -506,9 +504,8 @@ static void Cmd_UnAlias_f(void)
 		{
 			if ( !Q_strcmp(s, a->name) )
 			{
-#if defined(XASH_HASHED_VARS)
 				BaseCmd_Remove(HM_CMDALIAS, a->name);
-#endif
+
 				if ( a == cmd_alias )
 					cmd_alias = a->next;
 				if ( p )
@@ -734,9 +731,7 @@ Cmd_AddCommandEx(const char* funcname, const char* cmd_name, xcommand_t function
 		cmd_functions = cmd;
 	cmd->next = cur;
 
-#if defined(XASH_HASHED_VARS)
 	BaseCmd_Insert(HM_CMD, cmd, cmd->name);
-#endif
 
 	return 1;
 }
@@ -830,9 +825,7 @@ void GAME_EXPORT Cmd_RemoveCommand(const char* cmd_name)
 
 		if ( !Q_strcmp(cmd_name, cmd->name) )
 		{
-#if defined(XASH_HASHED_VARS)
 			BaseCmd_Remove(HM_CMD, cmd->name);
-#endif
 
 			*back = cmd->next;
 
@@ -883,18 +876,7 @@ Cmd_Exists
 */
 qboolean Cmd_Exists(const char* cmd_name)
 {
-#if defined(XASH_HASHED_VARS)
 	return BaseCmd_Find(HM_CMD, cmd_name) != NULL;
-#else
-	cmd_t* cmd;
-
-	for ( cmd = cmd_functions; cmd; cmd = cmd->next )
-	{
-		if ( !Q_strcmp(cmd_name, cmd->name) )
-			return true;
-	}
-	return false;
-#endif
 }
 
 /*
@@ -1068,9 +1050,7 @@ static void Cmd_ExecuteStringWithPrivilegeCheck(const char* text, qboolean isPri
 	if ( !Cmd_Argc() )
 		return;  // no tokens
 
-#if defined(XASH_HASHED_VARS)
 	BaseCmd_FindAll(cmd_argv[0], (base_command_t**)&cmd, (base_command_t**)&a, (base_command_t**)&cvar);
-#endif
 
 	if ( !host.apply_game_config )
 	{
@@ -1270,9 +1250,7 @@ void Cmd_Unlink(int group)
 			continue;
 		}
 
-#if defined(XASH_HASHED_VARS)
 		BaseCmd_Remove(HM_CMD, cmd->name);
-#endif
 
 		*prev = cmd->next;
 
@@ -1288,7 +1266,7 @@ void Cmd_Unlink(int group)
 	Con_Reportf("unlink %i commands\n", count);
 }
 
-static void Cmd_Apropos_f(void)
+static void Cmd_Find_f(void)
 {
 	cmd_t* cmd;
 	convar_t* var;
@@ -1299,7 +1277,7 @@ static void Cmd_Apropos_f(void)
 
 	if ( Cmd_Argc() < 2 )
 	{
-		Msg("apropos what?\n");
+		Msg("Usage: find <string>\n");
 		return;
 	}
 
@@ -1440,8 +1418,8 @@ void Cmd_Init(void)
 		Cmd_StuffCmds_f,
 		"execute commandline parameters (must be present in .rc script)");
 	Cmd_AddCommand(
-		"apropos",
-		Cmd_Apropos_f,
+		"find",
+		Cmd_Find_f,
 		"lists all console variables/commands/aliases containing the specified string in the name or description");
 #if !XASH_DEDICATED()
 	Cmd_AddCommand("cmd", Cmd_ForwardToServer, "send a console commandline to the server");
@@ -1454,10 +1432,8 @@ void Cmd_Init(void)
 	Cmd_AddRestrictedCommand("if", Cmd_If_f, "compare and set condition bits");
 	Cmd_AddRestrictedCommand("else", Cmd_Else_f, "invert condition bit");
 
-#if defined(XASH_HASHED_VARS)
 	Cmd_AddCommand("basecmd_stats", BaseCmd_Stats_f, "print info about basecmd usage");
 	Cmd_AddCommand("basecmd_test", BaseCmd_Test_f, "test basecmd");
-#endif
 }
 
 #if XASH_ENGINE_TESTS()
