@@ -19,8 +19,8 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "XashDefs/const.h"
 #include "XashDefs/render_api.h"  // decallist_t
-#include "sound.h"  // S_GetDynamicSounds
-#include "ref_common.h"  // decals
+#include "client/sound.h"  // S_GetDynamicSounds
+#include "client/ref_common.h"  // decals
 #include "PlatformLib/Time.h"
 #include "fscallback.h"
 

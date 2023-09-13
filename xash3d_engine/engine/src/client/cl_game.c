@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "XashDefs/const.h"
 #include "XashDefs/triangleapi.h"
 #include "XashDefs/r_efx.h"
@@ -23,12 +23,12 @@ GNU General Public License for more details.
 #include "ivoicetweak.h"
 #include "common/pm_local.h"
 #include "cl_tent.h"
-#include "input.h"
+#include "client/input.h"
 #include "XashDefs/shake.h"
 #include "XashDefs/sprite.h"
 #include "common/library.h"
 #include "client/vgui/vgui_draw.h"
-#include "sound.h"  // SND_STOP_LOOPING
+#include "client/sound.h"  // SND_STOP_LOOPING
 #include "platform/platform.h"
 #include "fscallback.h"
 

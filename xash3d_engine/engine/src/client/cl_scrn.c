@@ -14,10 +14,10 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "client/vgui/vgui_draw.h"
 #include "common/qfont.h"
-#include "input.h"
+#include "client/input.h"
 #include "common/library.h"
 #include "fscallback.h"
 

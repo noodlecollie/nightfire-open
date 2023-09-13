@@ -24,12 +24,12 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "XashDefs/keydefs.h"
-#include "input.h"
-#include "client.h"
+#include "client/input.h"
+#include "client/client.h"
 #include "client/vgui/vgui_draw.h"
 #include "events.h"
-#include "sound.h"
-#include "vid_common.h"
+#include "client/sound.h"
+#include "client/vid_common.h"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 #define SDL_SCANCODE_A SDLK_a

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 
 #define MAX_MESSAGES 2048
 

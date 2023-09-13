@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #if XASH_SOUND == SOUND_ALSA
 #include <alsa/asoundlib.h>
-#include "sound.h"
+#include "client/sound.h"
 
 #define PERIOD_SIZE_DEFAULT 2048
 

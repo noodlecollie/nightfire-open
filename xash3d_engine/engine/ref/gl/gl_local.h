@@ -507,7 +507,7 @@ void VGUI_DrawQuad(const vpoint_t* ul, const vpoint_t* lr);
 void VGUI_GetTextureSizes(int* width, int* height);
 int VGUI_GenerateTexture(void);
 
-// #include "vid_common.h"
+// #include "client/vid_common.h"
 
 //
 // renderer exports

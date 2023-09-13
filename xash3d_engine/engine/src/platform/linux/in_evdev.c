@@ -19,8 +19,8 @@ GNU General Public License for more details.
 #if XASH_USE_EVDEV
 
 #include "common/common.h"
-#include "input.h"
-#include "client.h"
+#include "client/input.h"
+#include "client/client.h"
 #include <fcntl.h>
 #include <errno.h>
 #include <linux/input.h>

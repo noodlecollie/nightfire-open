@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "XashDefs/weaponinfo.h"
 #include "XashDefs/event_args.h"
 #include "XashDefs/protocol.h"
-#include "client.h"
+#include "client/client.h"
 #include "server.h"
 #include "fscallback.h"
 

@@ -14,13 +14,13 @@ GNU General Public License for more details.
 */
 #include <string.h>
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "client/vgui/vgui_draw.h"
 #include "XashDefs/vgui_api.h"
 #include "common/library.h"
 #include "XashDefs/keydefs.h"
-#include "ref_common.h"
-#include "input.h"
+#include "client/ref_common.h"
+#include "client/input.h"
 #include "platform/platform.h"
 #include "PlatformDefs/libnames.h"
 #include "PlatformDefs/platformid.h"

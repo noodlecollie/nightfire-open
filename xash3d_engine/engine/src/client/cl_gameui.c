@@ -16,12 +16,12 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "PlatformDefs/libnames.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "XashDefs/const.h"
 #include "common/library.h"
-#include "input.h"
+#include "client/input.h"
 #include "server.h"  // !!svgame.hInstance
-#include "vid_common.h"
+#include "client/vid_common.h"
 #include <limits.h>
 #include "fscallback.h"
 

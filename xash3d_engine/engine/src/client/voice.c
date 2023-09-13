@@ -20,8 +20,8 @@ GNU General Public License for more details.
 #include <limits.h>
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "client.h"
-#include "voice.h"
+#include "client/client.h"
+#include "client/voice.h"
 
 voice_state_t voice = {0};
 

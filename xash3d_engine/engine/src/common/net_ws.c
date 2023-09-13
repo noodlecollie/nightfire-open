@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "Identity/arch.h"
 #include "common/common.h"
-#include "client.h"  // ConnectionProgress
+#include "client/client.h"  // ConnectionProgress
 #include "common/netchan.h"
 #include "ipv6text.h"
 #include "fscallback.h"

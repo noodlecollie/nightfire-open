@@ -24,9 +24,9 @@ GNU General Public License for more details.
 #include "XashDefs/studio.h"
 #include "common/world.h"
 #include "XashDefs/enginefeatures.h"
-#include "client.h"
+#include "client/client.h"
 #include "server.h"  // LUMP_ error codes
-#include "ref_common.h"
+#include "client/ref_common.h"
 #include "textureproperties.h"
 #include "fscallback.h"
 

@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "XashDefs/studio.h"
 #include "common/world.h"
 #include "XashDefs/enginefeatures.h"
-#include "client.h"
+#include "client/client.h"
 #include "server.h"
 #include "fscallback.h"
 

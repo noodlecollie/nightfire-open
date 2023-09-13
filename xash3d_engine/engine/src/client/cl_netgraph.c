@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "common/kbutton.h"
 
 #define NET_TIMINGS 1024

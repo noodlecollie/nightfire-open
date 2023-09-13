@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #if XASH_WIN32()
 #include "fscallback.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include <vfw.h>  // video for windows
 
 // msvfw32.dll exports

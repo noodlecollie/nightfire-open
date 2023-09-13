@@ -2,7 +2,7 @@
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "XashDefs/customentity.h"
 #include "XashDefs/r_efx.h"
 #include "cl_tent.h"

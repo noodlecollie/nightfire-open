@@ -22,10 +22,10 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include <SDL.h>
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "common/mod_local.h"
-#include "input.h"
-#include "vid_common.h"
+#include "client/input.h"
+#include "client/vid_common.h"
 #include "platform/sdl/events.h"
 #include "fscallback.h"
 

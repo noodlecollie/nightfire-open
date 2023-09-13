@@ -18,13 +18,13 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "Identity/arch.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "XashDefs/keydefs.h"
 #include "XashDefs/protocol.h"  // get the protocol version
 #include "XashDefs/con_nprint.h"
 #include "common/qfont.h"
 #include "XashDefs/wadfile.h"
-#include "input.h"
+#include "client/input.h"
 #include "fscallback.h"
 
 convar_t* con_notifytime;

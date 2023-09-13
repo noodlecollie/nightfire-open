@@ -15,15 +15,15 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "common/net_encode.h"
 #include "XashDefs/entity_types.h"
 #include "common/pm_local.h"
 #include "cl_tent.h"
 #include "XashDefs/studio.h"
 #include "XashDefs/dlight.h"
-#include "sound.h"
-#include "input.h"
+#include "client/sound.h"
+#include "client/input.h"
 
 #define STUDIO_INTERPOLATION_FIX
 

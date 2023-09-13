@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #if XASH_SOUND == SOUND_NULL
 
-#include "sound.h"
+#include "client/sound.h"
 
 #define SAMPLE_16BIT_SHIFT 1
 #define SECONDARY_BUFFER_SIZE 0x10000

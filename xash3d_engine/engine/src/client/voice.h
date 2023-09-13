@@ -19,7 +19,7 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "XashDefs/protocol.h"  // MAX_CLIENTS
-#include "sound.h"
+#include "client/sound.h"
 
 typedef struct OpusCustomEncoder OpusCustomEncoder;
 typedef struct OpusCustomDecoder OpusCustomDecoder;

@@ -15,12 +15,12 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "XashDefs/const.h"
 #include "XashDefs/entity_types.h"
 #include "client/vgui/vgui_draw.h"
-#include "sound.h"
-#include "input.h"  // touch
+#include "client/sound.h"
+#include "client/input.h"  // touch
 #include "platform/platform.h"  // GL_UpdateSwapInterval
 
 /*

@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "server.h"
 #include "common/net_encode.h"
 #include "common/library.h"
-#include "voice.h"
+#include "client/voice.h"
 #include "common/pm_local.h"
 #include "sequence.h"
 #include "fscallback.h"

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common/pm_local.h"
 
 #if !XASH_DEDICATED()
-#include "client.h"  // CL_Particle
+#include "client/client.h"  // CL_Particle
 #endif
 
 // expand debugging BBOX particle hulls by this many units.

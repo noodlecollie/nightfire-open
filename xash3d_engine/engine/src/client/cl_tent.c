@@ -16,14 +16,14 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "XashDefs/wadfile.h"  // acess decal size
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "XashDefs/r_efx.h"
 #include "XashDefs/entity_types.h"
 #include "XashDefs/triangleapi.h"
 #include "cl_tent.h"
 #include "common/pm_local.h"
 #include "XashDefs/studio.h"
-#include "sound.h"
+#include "client/sound.h"
 #include "fscallback.h"
 
 /*

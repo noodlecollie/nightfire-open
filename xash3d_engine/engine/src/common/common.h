@@ -766,7 +766,7 @@ void HPAK_CheckIntegrity(const char* filename);
 void HPAK_CheckSize(const char* filename);
 void HPAK_FlushHostQueue(void);
 
-#include "avi/avi.h"
+#include "client/avi/avi.h"
 
 //
 // input.c

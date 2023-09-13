@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "XashDefs/custom.h"
-#include "ref_common.h"
+#include "client/ref_common.h"
 #include "fscallback.h"
 
 static rgbdata_t* CustomDecal_LoadImage(const char* path, void* raw, int size)

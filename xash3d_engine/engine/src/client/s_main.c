@@ -15,8 +15,8 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "sound.h"
-#include "client.h"
+#include "client/sound.h"
+#include "client/client.h"
 #include "XashDefs/con_nprint.h"
 #include "common/pm_local.h"
 #include "platform/platform.h"

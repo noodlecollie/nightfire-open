@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/studio.h"
 #include "XashDefs/r_studioint.h"
 #include "common/library.h"
-#include "ref_common.h"
+#include "client/ref_common.h"
 #include "common/mod_local.h"
 #include "fscallback.h"
 

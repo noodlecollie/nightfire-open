@@ -14,8 +14,8 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "sound.h"
-#include "client.h"
+#include "client/sound.h"
+#include "client/client.h"
 
 #define IPAINTBUFFER 0
 #define IROOMBUFFER 1

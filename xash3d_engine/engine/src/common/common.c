@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "fscallback.h"
 #include "XashDefs/const.h"
-#include "client.h"
+#include "client/client.h"
 #include "common/library.h"
 #include "sequence.h"
 

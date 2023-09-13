@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "XashDefs/mobility_int.h"
 #include "common/library.h"
-#include "input.h"
+#include "client/input.h"
 #include "platform/platform.h"
 
 mobile_engfuncs_t* gMobileEngfuncs;

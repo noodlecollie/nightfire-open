@@ -14,8 +14,8 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "sound.h"
-#include "client.h"
+#include "client/sound.h"
+#include "client/client.h"
 
 static bg_track_t s_bgTrack;
 static musicfade_t musicfade;  // controlled by game dlls

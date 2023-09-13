@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "sound.h"
+#include "client/sound.h"
 
 // hardcoded macros to test for zero crossing
 #define ZERO_X_8(b) ((b) < 2 && (b) > -2)

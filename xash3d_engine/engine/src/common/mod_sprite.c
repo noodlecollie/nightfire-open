@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/studio.h"
 
 #if !XASH_DEDICATED()
-#include "ref_common.h"
+#include "client/ref_common.h"
 #endif  // XASH_DEDICATED()
 
 /*

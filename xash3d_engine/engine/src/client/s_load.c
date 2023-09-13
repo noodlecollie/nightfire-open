@@ -14,8 +14,8 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "client.h"
-#include "sound.h"
+#include "client/client.h"
+#include "client/sound.h"
 #include "CRCLib/crclib.h"
 #include "fscallback.h"
 

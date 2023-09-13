@@ -1,9 +1,9 @@
 #include "platform/platform.h"
 #if XASH_VIDEO == VIDEO_FBDEV
-#include "input.h"
-#include "client.h"
+#include "client/input.h"
+#include "client/client.h"
 #include "Filesystem/filesystem.h"
-#include "vid_common.h"
+#include "client/vid_common.h"
 #include <fcntl.h>
 #include <errno.h>
 

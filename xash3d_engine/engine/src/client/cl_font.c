@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "Filesystem/filesystem.h"
 #include "common/common.h"
-#include "client.h"
+#include "client/client.h"
 #include "common/qfont.h"
 #include "fscallback.h"
 

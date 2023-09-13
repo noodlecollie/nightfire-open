@@ -15,8 +15,8 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "input.h"
-#include "client.h"
+#include "client/input.h"
+#include "client/client.h"
 #include "client/vgui/vgui_draw.h"
 
 #if XASH_SDL

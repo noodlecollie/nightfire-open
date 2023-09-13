@@ -17,8 +17,8 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #if XASH_SOUND == SOUND_SDL
 
-#include "sound.h"
-#include "voice.h"
+#include "client/sound.h"
+#include "client/voice.h"
 #include "fscallback.h"
 
 #include <SDL.h>
