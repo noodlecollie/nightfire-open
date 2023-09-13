@@ -17,7 +17,7 @@
 #include "../cl_util.h"
 #include "../demo.h"
 
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "XashDefs/const.h"
 #include "XashDefs/entity_state.h"
 #include "XashDefs/cl_entity.h"

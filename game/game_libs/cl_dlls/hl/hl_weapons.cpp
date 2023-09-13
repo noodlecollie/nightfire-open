@@ -23,7 +23,7 @@
 
 #include "XashDefs/usercmd.h"
 #include "XashDefs/entity_state.h"
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "XashDefs/pm_defs.h"
 #include "event_api.h"
 #include "XashDefs/r_efx.h"

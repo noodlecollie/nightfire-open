@@ -26,7 +26,7 @@
 #include "parsemsg.h"
 
 #include "demo.h"
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "hud_crosshair.h"
 #include "PlatformLib/String.h"
 

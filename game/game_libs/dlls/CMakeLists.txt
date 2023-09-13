@@ -3,7 +3,6 @@ include(compiler_settings)
 set(SOURCES_PM_SHARED
 	../pm_shared/pm_debug.h
 	../pm_shared/pm_debug.c
-	../pm_shared/pm_defs.h
 	../pm_shared/pm_info.h
 	../pm_shared/pm_materials.h
 	../pm_shared/pm_math.c

@@ -43,7 +43,7 @@
 #include "prop_playercorpse.h"
 #include "gameplay/gameplaySystems.h"
 #include "resources/SoundResources.h"
-#include "com_strings.h"
+#include "XashDefs/com_strings.h"
 #include "PlatformLib/String.h"
 #include "client/clientCommandRegister.h"
 

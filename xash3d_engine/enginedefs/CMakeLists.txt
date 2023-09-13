@@ -15,6 +15,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/custom.h
 	include/XashDefs/customentity.h
 	include/XashDefs/cvardef.h
+	include/XashDefs/demo_api.h
 	include/XashDefs/dlight.h
 	include/XashDefs/edict.h
 	include/XashDefs/eiface.h
@@ -26,6 +27,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/event_args.h
 	include/XashDefs/event_flags.h
 	include/XashDefs/gameinfo.h
+	include/XashDefs/hltv.h
 	include/XashDefs/key_modifiers.h
 	include/XashDefs/keydefs.h
 	include/XashDefs/lightstyle.h

@@ -32,7 +32,7 @@
 #include "../cl_dll/demo.h"
 #endif
 
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "voice_status.h"
 #include "XashDefs/r_efx.h"
 #include "entity_types.h"

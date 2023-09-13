@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/const.h"
 #include "XashDefs/triangleapi.h"
 #include "XashDefs/r_efx.h"
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "ivoicetweak.h"
 #include "pm_local.h"
 #include "cl_tent.h"

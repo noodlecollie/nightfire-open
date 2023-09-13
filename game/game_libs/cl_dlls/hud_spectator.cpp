@@ -11,7 +11,7 @@
 #include "cl_util.h"
 #include "XashDefs/cl_entity.h"
 #include "triangleapi.h"
-#include "hltv.h"
+#include "XashDefs/hltv.h"
 
 #include "pm_shared.h"
 #include "XashDefs/pm_defs.h"
@@ -22,7 +22,7 @@
 
 // these are included for the math functions
 #include "XashDefs/com_model.h"
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "event_api.h"
 #include "studio_util.h"
 #include "screenfade.h"

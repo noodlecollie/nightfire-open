@@ -24,7 +24,7 @@
 #include "XashDefs/pmtrace.h"
 #include "screenfade.h"
 #include "shake.h"
-#include "hltv.h"
+#include "XashDefs/hltv.h"
 #include "weaponregistry.h"
 #include "weaponatts_collection.h"
 #include "miniutl.h"

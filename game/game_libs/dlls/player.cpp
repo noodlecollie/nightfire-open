@@ -35,7 +35,7 @@
 #include "gamerules.h"
 #include "game.h"
 #include "pm_shared.h"
-#include "hltv.h"
+#include "XashDefs/hltv.h"
 #include "gameresources/GameResources.h"
 #include "prop_playercorpse.h"
 #include "spawnpointmanager.h"
@@ -47,7 +47,7 @@
 #include "XashDefs/com_model.h"
 #include "resources/SoundResources.h"
 #include "weapons/genericweapon.h"
-#include "com_strings.h"
+#include "XashDefs/com_strings.h"
 #include "PlatformLib/String.h"
 
 // #define DUCKFIX
