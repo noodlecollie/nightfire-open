@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "XashDefs/const.h"
-#include "cl_tent.h"
+#include "client/cl_tent.h"
 #include "common/pm_local.h"
 #include "XashDefs/particledef.h"
 #include "XashDefs/studio.h"

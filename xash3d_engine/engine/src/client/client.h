@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "XashDefs/pm_movevars.h"
 #include "XashDefs/ref_params.h"
 #include "XashDefs/render_api.h"
-#include "cdll_exp.h"
+#include "client/cdll_exp.h"
 #include "XashDefs/screenfade.h"
 #include "XashDefs/protocol.h"
 #include "common/netchan.h"

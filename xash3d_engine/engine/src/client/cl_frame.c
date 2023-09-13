@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common/net_encode.h"
 #include "XashDefs/entity_types.h"
 #include "common/pm_local.h"
-#include "cl_tent.h"
+#include "client/cl_tent.h"
 #include "XashDefs/studio.h"
 #include "XashDefs/dlight.h"
 #include "client/sound.h"

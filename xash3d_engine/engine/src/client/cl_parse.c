@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "common/net_encode.h"
 #include "XashDefs/particledef.h"
-#include "cl_tent.h"
+#include "client/cl_tent.h"
 #include "XashDefs/shake.h"
 #include "XashDefs/hltv.h"
 #include "client/input.h"

@@ -1,7 +1,7 @@
 #include "common/common.h"
 #include "client/client.h"
 #include "common/library.h"
-#include "cl_tent.h"
+#include "client/cl_tent.h"
 #include "platform/platform.h"
 #include "client/vid_common.h"
 #include "client/cl_bytenormals.h"

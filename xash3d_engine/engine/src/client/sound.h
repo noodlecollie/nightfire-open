@@ -120,7 +120,7 @@ typedef struct
 	const char* backendName;
 } dma_t;
 
-#include "vox.h"
+#include "client/vox.h"
 
 typedef struct
 {

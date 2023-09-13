@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "common/net_encode.h"
-#include "cl_tent.h"
+#include "client/cl_tent.h"
 #include "client/input.h"
 #include "common/kbutton.h"
 #include "client/vgui/vgui_draw.h"
@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include "common/sequence.h"
 #include "common/model_dump.h"
 #include "common/bsp/generic/viscompress.h"
-#include "net_functions.h"
+#include "client/net_functions.h"
 #include "common/fscallback.h"
 
 #if defined XASH_SDL
