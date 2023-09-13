@@ -44,7 +44,7 @@
 
 typedef struct cvar_s
 {
-	const char* name;
+	char* name;
 	char* string;
 	int flags;
 	float value;
