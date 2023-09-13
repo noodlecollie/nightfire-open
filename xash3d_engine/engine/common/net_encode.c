@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common.h"
 #include "netchan.h"
 #include "net_encode.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "XashDefs/usercmd.h"
 #include "XashDefs/pm_movevars.h"
 #include "XashDefs/entity_state.h"

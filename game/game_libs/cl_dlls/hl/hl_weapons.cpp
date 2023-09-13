@@ -25,7 +25,7 @@
 #include "XashDefs/entity_state.h"
 #include "XashDefs/demo_api.h"
 #include "XashDefs/pm_defs.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "XashDefs/r_efx.h"
 
 #include "../hud_iface.h"

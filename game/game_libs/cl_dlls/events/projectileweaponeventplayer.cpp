@@ -1,7 +1,7 @@
 #include "projectileweaponeventplayer.h"
 #include "eventscripts.h"
 #include "cl_dll.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 
 void ProjectileWeaponEventPlayer::EventStart()
 {

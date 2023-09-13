@@ -24,7 +24,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "parsemsg.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_StatusIcons, StatusIcon)

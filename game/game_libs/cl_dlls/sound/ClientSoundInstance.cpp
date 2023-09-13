@@ -2,7 +2,7 @@
 #include "standard_includes.h"
 #include "cdll_int.h"
 #include "cl_dll.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 
 namespace ClientSoundInstance
 {

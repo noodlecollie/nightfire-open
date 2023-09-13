@@ -61,7 +61,7 @@ int RankForContents(int contents);
 
 ===============================================================================
 */
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "XashDefs/event_args.h"
 
 #define MAX_EVENT_QUEUE 64  // 16 simultaneous events, max

@@ -17,13 +17,13 @@
 #include "XashDefs/pm_defs.h"
 #include "XashDefs/pmtrace.h"
 #include "parsemsg.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "PlatformLib/String.h"
 
 // these are included for the math functions
 #include "XashDefs/com_model.h"
 #include "XashDefs/demo_api.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "studio_util.h"
 #include "screenfade.h"
 #include "PlatformLib/String.h"

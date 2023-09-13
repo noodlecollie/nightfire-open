@@ -20,7 +20,7 @@
 #include "pm_movevars.h"
 #include "pm_shared.h"
 #include "XashDefs/pm_defs.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "XashDefs/pmtrace.h"
 #include "screenfade.h"
 #include "shake.h"

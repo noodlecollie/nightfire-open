@@ -16,8 +16,8 @@ GNU General Public License for more details.
 #ifndef RENDER_API_H
 #define RENDER_API_H
 
-#include "lightstyle.h"
-#include "dlight.h"
+#include "XashDefs/lightstyle.h"
+#include "XashDefs/dlight.h"
 
 // changes for version 28
 // replace decal_t from software declaration to hardware (matched to normal HL)

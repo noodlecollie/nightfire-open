@@ -19,7 +19,7 @@
 #include "XashDefs/const.h"
 #include "XashDefs/entity_state.h"
 #include "XashDefs/cl_entity.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "XashDefs/usercmd.h"
 #include "XashDefs/pm_defs.h"
 #include "pm_materials.h"
@@ -28,7 +28,7 @@
 #include "ev_hldm.h"
 
 #include "XashDefs/r_efx.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "XashDefs/event_args.h"
 #include "in_defs.h"
 

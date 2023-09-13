@@ -23,8 +23,8 @@
 #include "XashDefs/cl_entity.h"
 
 #include "XashDefs/pm_defs.h"
-#include "event_api.h"
-#include "entity_types.h"
+#include "XashDefs/event_api.h"
+#include "XashDefs/entity_types.h"
 #include "XashDefs/r_efx.h"
 
 extern BEAM* pBeam;

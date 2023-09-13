@@ -2,7 +2,7 @@
 #include "XashDefs/event_args.h"
 #include "cdll_int.h"
 #include "cl_dll.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "vector_classes.h"
 #include "eventscripts.h"
 #include "hud.h"

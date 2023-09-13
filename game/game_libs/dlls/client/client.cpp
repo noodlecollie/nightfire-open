@@ -37,7 +37,7 @@
 #include "weapons.h"
 #include "XashDefs/weaponinfo.h"
 #include "XashDefs/usercmd.h"
-#include "netadr.h"
+#include "XashDefs/netadr.h"
 #include "pm_shared.h"
 #include "gameresources/GameResources.h"
 #include "prop_playercorpse.h"
