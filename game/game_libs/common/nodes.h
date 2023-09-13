@@ -15,11 +15,11 @@
 //=========================================================
 // nodes.h
 //=========================================================
+
 #pragma once
-#ifndef NODES_H
-#define NODES_H
 
 #include <fstream>
+#include "PlatformDefs/platformid.h"
 
 typedef short int NAV_ARRAY_TYPE;
 constexpr int NAV_GRIDBOX_SIZE = 32;
@@ -115,7 +115,7 @@ typedef struct
 // CGraph
 //=========================================================
 #define _GRAPH_VERSION_RETAIL 16  // Retail Half-Life graph version. Don't increment this
-#if GAME_64BIT()
+#if XASH_64BIT()
 #define _GRAPH_VERSION (16 * 10)
 #else
 #define _GRAPH_VERSION \
@@ -431,4 +431,3 @@ enum
 };
 
 extern CGraph WorldGraph;
-#endif  // NODES_H
