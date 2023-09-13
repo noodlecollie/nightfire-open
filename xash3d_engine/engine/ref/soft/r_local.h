@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "XashDefs/com_model.h"
 #include "XashDefs/cl_entity.h"
 #include "XashDefs/render_api.h"
-#include "protocol.h"
+#include "XashDefs/protocol.h"
 #include "XashDefs/dlight.h"
 #include "XashDefs/ref_api.h"
 #include "XashDefs/ref_params.h"
@@ -54,9 +54,6 @@ typedef int fixed16_t;
 #define WORLD (gEngfuncs.GetWorld())
 #define WORLDMODEL (gEngfuncs.pfnGetModelByIndex(1))
 #define MOVEVARS (gEngfuncs.pfnGetMoveVars())
-
-// make mod_ref.h?
-#define LM_SAMPLE_SIZE 16
 
 extern poolhandle_t r_temppool;
 
@@ -404,15 +401,6 @@ float* R_DecalSetupVerts(decal_t* pDecal, msurface_t* surf, int texture, int* ou
 void R_EntityRemoveDecals(model_t* mod);
 // void DrawDecalsBatch( void );
 void R_ClearDecals(void);
-
-#if 0
-
-//
-// gl_drawhulls.c
-//
-void R_DrawWorldHull( void );
-void R_DrawModelHull( void );
-#endif
 
 void GL_Bind(int tmu, unsigned int texnum);
 

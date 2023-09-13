@@ -14,10 +14,10 @@ GNU General Public License for more details.
 */
 
 #include "r_local.h"
-#include "pm_local.h"
 #include "XashDefs/studio.h"
 #include "MathLib/mathlib.h"
 #include "XashDefs/ref_params.h"
+#include "XashDefs/pm_defs.h"
 
 // unused, need refactor
 unsigned blocklights[10240];

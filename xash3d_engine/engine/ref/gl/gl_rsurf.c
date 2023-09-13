@@ -13,10 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include <limits.h>
 #include "gl_local.h"
 #include "MathLib/mathlib.h"
-#include "mod_local.h"
-#include <limits.h>
+#include "XashDefs/mod_local_defs.h"
 
 typedef struct
 {

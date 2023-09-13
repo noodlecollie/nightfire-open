@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include <string.h>
 #include "r_local.h"
+#include "XashDefs/mod_local_defs.h"
 
 ref_api_t gEngfuncs;
 ref_globals_t* gpGlobals;

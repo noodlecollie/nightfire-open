@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "XashDefs/com_model.h"
 #include "XashDefs/cl_entity.h"
 #include "XashDefs/render_api.h"
-#include "protocol.h"
+#include "XashDefs/protocol.h"
 #include "XashDefs/dlight.h"
 #include "gl_frustum.h"
 #include "XashDefs/ref_api.h"
@@ -33,7 +33,7 @@ GNU General Public License for more details.
 // #include "cvar.h"
 #include "gl_export.h"
 #include "XashDefs/wadfile.h"
-#include "dll_types.h"
+#include "XashDefs/dll_types.h"
 #include "CRTLib/bitdefs.h"
 
 #ifndef offsetof

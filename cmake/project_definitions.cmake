@@ -66,6 +66,7 @@ set(TARGETNAME_LIB_CRTLIB crtlib)
 set(TARGETNAME_LIB_MINIZ miniz)
 set(TARGETNAME_LIB_MATHLIB mathlib)
 set(TARGETNAME_LIB_IDENTITY identity)
+set(TARGETNAME_LIB_WHEREAMI whereami)
 
 # Only supported on Linux
 set(TARGETNAME_LIB_SAFESTRING safestring_static)

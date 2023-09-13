@@ -21,7 +21,6 @@ GNU General Public License for more details.
 #include "XashDefs/entity_types.h"
 #include "XashDefs/triangleapi.h"
 #include "XashDefs/customentity.h"
-#include "pm_local.h"
 #include "XashDefs/triangleapi.h"
 #include "XashDefs/studio.h"
 

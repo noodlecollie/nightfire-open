@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "CRTLib/crtlib.h"
 #include "CRTLib/bitdefs.h"
 #include "r_local.h"
-#include "mod_local.h"
+#include "XashDefs/mod_local_defs.h"
 
 drawsurf_t r_drawsurf;
 

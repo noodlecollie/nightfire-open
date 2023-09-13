@@ -15,7 +15,6 @@ GNU General Public License for more details.
 
 #include "gl_local.h"
 #include "MathLib/mathlib.h"
-#include "library.h"
 #include "XashDefs/beamdef.h"
 #include "XashDefs/particledef.h"
 #include "XashDefs/entity_types.h"
