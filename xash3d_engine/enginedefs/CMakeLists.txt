@@ -1,6 +1,6 @@
 # NFTODO: Some of these will only be used by the renderers,
 # so could be moved to a private renderer-only interface
-add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+add_library(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	include/XashDefs/alias.h
 	include/XashDefs/beamdef.h
 	include/XashDefs/bspfile.h
@@ -17,6 +17,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/cvardef.h
 	include/XashDefs/demo_api.h
 	include/XashDefs/dlight.h
+	include/XashDefs/dll_types.h
 	include/XashDefs/edict.h
 	include/XashDefs/eiface.h
 	include/XashDefs/engine_limits.h
@@ -37,6 +38,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/mempool.h
 	include/XashDefs/menu_int.h
 	include/XashDefs/mobility_int.h
+	include/XashDefs/mod_local_defs.h
 	include/XashDefs/netadr.h
 	include/XashDefs/particledef.h
 	include/XashDefs/physint.h
@@ -45,6 +47,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/pm_movevars.h
 	include/XashDefs/pmtrace.h
 	include/XashDefs/progdefs.h
+	include/XashDefs/protocol.h
 	include/XashDefs/r_efx.h
 	include/XashDefs/r_studioint.h
 	include/XashDefs/ref_api.h
@@ -66,14 +69,14 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/wrect.h
 )
 
-target_compile_definitions(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+target_compile_definitions(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	BUILDVAR_VERSION_STRING="${VCS_TAG_ID}"
 )
 
-target_include_directories(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+target_include_directories(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	include
 )
 
-target_link_libraries(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+target_link_libraries(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	${TARGETNAME_LIB_PLATFORMDEFS}
 )

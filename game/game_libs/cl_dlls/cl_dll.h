@@ -44,14 +44,6 @@ typedef int (*pfnUserMsgHook)(const char* pszName, int iSize, void* pbuf);
 #include "exportdef.h"
 #include <string.h>
 
-// NFTODO: Put this somewhere canonical.
-#if defined(__LP64__) || defined(__LLP64__) || defined(_WIN64) || (defined(__x86_64__) && !defined(__ILP32__)) || \
-	defined(_M_X64) || defined(__ia64) || defined(_M_IA64) || defined(__aarch64__) || defined(__powerpc64__)
-#define GAME_64BIT() 1
-#else
-#define GAME_64BIT() 0
-#endif
-
 extern cl_enginefunc_t gEngfuncs;
 #include "XashDefs/mobility_int.h"
 extern mobile_engfuncs_t* gMobileEngfuncs;

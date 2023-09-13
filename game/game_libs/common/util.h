@@ -12,7 +12,10 @@
  *   without written permission from Valve LLC.
  *
  ****/
+
 #pragma once
+
+#include "PlatformDefs/platformid.h"
 
 //
 // Misc utility code
@@ -46,7 +49,7 @@ extern globalvars_t* gpGlobals;
 // Use this instead of ALLOC_STRING on constant strings
 #define STRING(offset) (const char*)(gpGlobals->pStringBase + (int)offset)
 
-#if !GAME_64BIT() || defined(CLIENT_DLL)
+#if !XASH_64BIT() || defined(CLIENT_DLL)
 #define MAKE_STRING(str) ((int)(size_t)str - (int)(size_t)STRING(0))
 #else
 static inline int MAKE_STRING(const char* szValue)
