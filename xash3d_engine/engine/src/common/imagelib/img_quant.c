@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include <limits.h>
-#include "imagelib.h"
+#include "common/imagelib/imagelib.h"
 
 #define netsize 256  // number of colours used
 #define prime1 499

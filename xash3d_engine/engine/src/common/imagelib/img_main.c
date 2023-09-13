@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include <math.h>
-#include "imagelib.h"
+#include "common/imagelib/imagelib.h"
 #include "common/fscallback.h"
 
 // global image variables

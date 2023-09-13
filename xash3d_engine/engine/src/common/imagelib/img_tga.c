@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "imagelib.h"
+#include "common/imagelib/imagelib.h"
 #include "MathLib/mathlib.h"
 #include "img_tga.h"
 #include "common/fscallback.h"

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "MathLib/mathlib.h"
 #include "CRTLib/bitdefs.h"
-#include "imagelib.h"
+#include "common/imagelib/imagelib.h"
 #include "common/mod_local.h"
 
 #define LERPBYTE(i) \

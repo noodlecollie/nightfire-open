@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include <limits.h>
 #include "miniz/miniz.h"
-#include "imagelib.h"
+#include "common/imagelib/imagelib.h"
 #include "MathLib/mathlib.h"
 #include "img_png.h"
 #include "PlatformLib/Net.h"

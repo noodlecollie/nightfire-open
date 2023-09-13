@@ -1,4 +1,4 @@
-#include "viscompress.h"
+#include "common/bsp/generic/viscompress.h"
 
 static qboolean ProcessRows(
 	const qboolean compress,
