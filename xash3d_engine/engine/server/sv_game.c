@@ -28,7 +28,7 @@ GNU General Public License for more details.
 #include "ref_common.h"  // decals
 #include "fscallback.h"
 
-#define ENTVARS_COUNT ARRAYSIZE(gEntvarsDescription)
+#define ENTVARS_COUNT SIZE_OF_ARRAY(gEntvarsDescription)
 
 // fatpvs stuff
 static byte fatpvs[MAX_MAP_LEAFS / 8];

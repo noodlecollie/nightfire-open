@@ -386,7 +386,7 @@ static enum VGUI_KeyCode VGUI_MapKey(int keyCode)
 {
 	VGUI_InitKeyTranslationTable();
 
-	if ( keyCode >= 0 && (size_t)keyCode < ARRAYSIZE(vgui.virtualKeyTrans) )
+	if ( keyCode >= 0 && (size_t)keyCode < SIZE_OF_ARRAY(vgui.virtualKeyTrans) )
 	{
 		return vgui.virtualKeyTrans[keyCode];
 	}

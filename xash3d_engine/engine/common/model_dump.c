@@ -1048,7 +1048,7 @@ const char* DumpModelDataFlagString(size_t index)
 		"other",
 	};
 
-	return index < ARRAYSIZE(STRINGS) ? STRINGS[index] : NULL;
+	return index < SIZE_OF_ARRAY(STRINGS) ? STRINGS[index] : NULL;
 }
 
 void DumpLeafBoundsAsWavefrontObj(const char* fileName, const model_t* model, const mleaf_t* leaf, qboolean nodeBounds)

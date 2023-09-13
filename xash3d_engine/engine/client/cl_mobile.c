@@ -85,7 +85,7 @@ static int pfnDrawScaledCharacter(int x, int y, int number, int r, int g, int b,
 		g_scaled_font.scale *= scale;
 		g_scaled_font.charHeight = (int)((float)g_scaled_font.charHeight * scale);
 
-		for ( i = 0; i < ARRAYSIZE(g_scaled_font.charWidths); i++ )
+		for ( i = 0; i < SIZE_OF_ARRAY(g_scaled_font.charWidths); i++ )
 		{
 			g_scaled_font.charWidths[i] = (byte)((float)g_scaled_font.charWidths[i] * scale);
 		}

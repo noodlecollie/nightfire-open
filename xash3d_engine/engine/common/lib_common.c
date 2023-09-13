@@ -432,8 +432,8 @@ char** COM_ConvertToLocalPlatform(EFunctionMangleType to, const char* from, size
 	}
 
 	// only three possible variations
-	*numfuncs = ARRAYSIZE(postfix);
-	ret = Z_Malloc(sizeof(char*) * ARRAYSIZE(postfix));
+	*numfuncs = SIZE_OF_ARRAY(postfix);
+	ret = Z_Malloc(sizeof(char*) * SIZE_OF_ARRAY(postfix));
 
 	Q_strncpy(temp, "_ZN", sizeof(temp));
 
@@ -443,7 +443,7 @@ char** COM_ConvertToLocalPlatform(EFunctionMangleType to, const char* from, size
 		Q_strncat(temp, temp2, sizeof(temp));
 	}
 
-	for ( i = 0; (size_t)i < ARRAYSIZE(postfix); i++ )
+	for ( i = 0; (size_t)i < SIZE_OF_ARRAY(postfix); i++ )
 	{
 		Q_snprintf(temp2, sizeof(temp2), "%s%s", temp, postfix[i]);
 		ret[i] = copystring(temp2);
@@ -522,7 +522,7 @@ static void Test_GetMSVCName(void)
 
 	size_t i;
 
-	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
+	for ( i = 0; i < SIZE_OF_ARRAY(symbols); i += 2 )
 	{
 		Msg("Checking if MSVC '%s' converts to '%s'...\n", symbols[i], symbols[i + 1]);
 
@@ -561,7 +561,7 @@ static void Test_GetItaniumName(void)
 
 	size_t i;
 
-	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
+	for ( i = 0; i < SIZE_OF_ARRAY(symbols); i += 2 )
 	{
 		Msg("Checking if Itanium '%s' converts to '%s'...\n", symbols[i], symbols[i + 1]);
 
@@ -584,7 +584,7 @@ static void Test_ConvertFromValveToLocal(void)
 
 	size_t i;
 
-	for ( i = 0; i < ARRAYSIZE(symbols); i += 2 )
+	for ( i = 0; i < SIZE_OF_ARRAY(symbols); i += 2 )
 	{
 		char** ret;
 		size_t numfuncs;

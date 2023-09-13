@@ -149,7 +149,7 @@ void CL_AddClientResources(void)
 		return;
 
 	// check sprites first
-	for ( i = 0; i < ARRAYSIZE(cl_default_sprites); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(cl_default_sprites); i++ )
 	{
 		if ( !FS_FileExists(cl_default_sprites[i], false) )
 		{
@@ -159,7 +159,7 @@ void CL_AddClientResources(void)
 
 	// then check sounds
 
-	for ( i = 0; i < ARRAYSIZE(cl_weapon_shell_sounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(cl_weapon_shell_sounds); i++ )
 	{
 		Q_snprintf(filepath, sizeof(filepath), DEFAULT_SOUNDPATH "%s", cl_weapon_shell_sounds[i]);
 
@@ -169,7 +169,7 @@ void CL_AddClientResources(void)
 		}
 	}
 
-	for ( i = 0; i < ARRAYSIZE(cl_explode_sounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(cl_explode_sounds); i++ )
 	{
 		Q_snprintf(filepath, sizeof(filepath), DEFAULT_SOUNDPATH "%s", cl_explode_sounds[i]);
 
@@ -1688,7 +1688,7 @@ void GAME_EXPORT R_Explosion(vec3_t pos, int model, float scale, float framerate
 
 	if ( !FBitSet(flags, TE_EXPLFLAG_NOSOUND) )
 	{
-		hSound = S_RegisterSound(cl_explode_sounds[COM_RandomLong(0, ARRAYSIZE(cl_explode_sounds) - 1)]);
+		hSound = S_RegisterSound(cl_explode_sounds[COM_RandomLong(0, SIZE_OF_ARRAY(cl_explode_sounds) - 1)]);
 		S_StartSound(pos, 0, CHAN_STATIC, hSound, VOL_NORM, 0.3f, PITCH_NORM, 0);
 	}
 }

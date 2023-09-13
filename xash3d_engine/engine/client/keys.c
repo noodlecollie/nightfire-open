@@ -370,7 +370,7 @@ void Key_Unbindall_f(void)
 {
 	size_t i;
 
-	for ( i = 0; i < ARRAYSIZE(keys); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(keys); i++ )
 	{
 		if ( keys[i].binding )
 			Key_SetBinding((int)i, "");
@@ -392,7 +392,7 @@ void Key_Reset_f(void)
 	size_t i;
 
 	// clear all keys first
-	for ( i = 0; i < ARRAYSIZE(keys); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(keys); i++ )
 	{
 		if ( keys[i].binding )
 			Key_SetBinding((int)i, "");

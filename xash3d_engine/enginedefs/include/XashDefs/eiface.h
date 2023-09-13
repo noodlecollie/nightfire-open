@@ -462,9 +462,6 @@ typedef struct
 	short flags;
 } TYPEDESCRIPTION;
 
-#undef ARRAYSIZE
-#define ARRAYSIZE(p) (sizeof(p) / sizeof(p[0]))
-
 struct weapon_data_s;
 struct playermove_s;
 struct clientdata_s;

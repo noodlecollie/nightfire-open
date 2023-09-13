@@ -711,7 +711,7 @@ qboolean Mod_GetTransformedHitboxPoints(const edict_t* edict, uint32_t hitboxInd
 
 	hitbox = (mstudiobbox_t*)((byte*)mod_studiohdr + mod_studiohdr->hitboxindex) + hitboxIndex;
 
-	for ( uint32_t index = 0; index < ARRAYSIZE(box->points); ++index )
+	for ( uint32_t index = 0; index < SIZE_OF_ARRAY(box->points); ++index )
 	{
 		vec3_t point;
 
