@@ -8,7 +8,8 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
-#include "../gl/gl_export.h"
+// NFTODO: This is a bit disgusting and needs to be changed.
+#include "../gl/src/gl_export.h"
 #ifndef _MSC_VER
 #pragma GCC diagnostic pop
 #endif

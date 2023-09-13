@@ -9,31 +9,31 @@ if(NF_OPENGL_STATIC_LINK)
 endif()
 
 add_library(${TARGETNAME_LIB_REF_OPENGL} SHARED
-	gl_alias.c
-	gl_backend.c
-	gl_beams.c
-	gl_context.c
-	gl_cull.c
-	gl_dbghulls.c
-	gl_decals.c
-	gl_draw.c
-	gl_export.h
-	gl_frustum.h
-	gl_frustum.c
-	gl_image.c
-	gl_local.h
-	gl_opengl.c
-	gl_rlight.c
-	gl_rmain.c
-	gl_rmath.c
-	gl_rmisc.c
-	gl_rpart.c
-	gl_rsurf.c
-	gl_sprite.c
-	gl_studio.c
-	gl_triapi.c
-	gl_vgui.c
-	gl_warp.c
+	src/gl_alias.c
+	src/gl_backend.c
+	src/gl_beams.c
+	src/gl_context.c
+	src/gl_cull.c
+	src/gl_dbghulls.c
+	src/gl_decals.c
+	src/gl_draw.c
+	src/gl_export.h
+	src/gl_frustum.h
+	src/gl_frustum.c
+	src/gl_image.c
+	src/gl_local.h
+	src/gl_opengl.c
+	src/gl_rlight.c
+	src/gl_rmain.c
+	src/gl_rmath.c
+	src/gl_rmisc.c
+	src/gl_rpart.c
+	src/gl_rsurf.c
+	src/gl_sprite.c
+	src/gl_studio.c
+	src/gl_triapi.c
+	src/gl_vgui.c
+	src/gl_warp.c
 )
 
 target_compile_definitions(${TARGETNAME_LIB_REF_OPENGL} PRIVATE
