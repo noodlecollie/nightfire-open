@@ -15,7 +15,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 
 #if XASH_LIB == LIB_WIN32 && XASH_X86()
-#include "lib_win.h"
+#include "platform/win32/lib_win.h"
 
 #define NUMBER_OF_DIRECTORY_ENTRIES 16
 #ifndef IMAGE_SIZEOF_BASE_RELOCATION

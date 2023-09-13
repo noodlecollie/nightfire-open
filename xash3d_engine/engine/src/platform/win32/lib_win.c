@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 
 #if XASH_LIB == LIB_WIN32
-#include "lib_win.h"
+#include "platform/win32/lib_win.h"
 #include "common/fscallback.h"
 
 static DWORD GetOffsetByRVA(DWORD rva, PIMAGE_NT_HEADERS nt_header)

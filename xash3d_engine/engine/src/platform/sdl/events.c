@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "client/input.h"
 #include "client/client.h"
 #include "client/vgui/vgui_draw.h"
-#include "events.h"
+#include "platform/sdl/events.h"
 #include "client/sound.h"
 #include "client/vid_common.h"
 
