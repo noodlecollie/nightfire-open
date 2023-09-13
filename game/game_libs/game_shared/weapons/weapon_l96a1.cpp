@@ -2,7 +2,7 @@
 #include "skill.h"
 #include "gamerules.h"
 #include "weapon_l96a1_atts.h"
-#include "weaponinfo.h"
+#include "XashDefs/weaponinfo.h"
 
 #ifndef CLIENT_DLL
 #include "bot.h"

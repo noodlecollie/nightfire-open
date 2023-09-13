@@ -64,7 +64,7 @@ public:
 		memcpy(
 			(void*)&other->m_RangeStart,
 			(void*)m_RangeStart,
-			XASH_OFFSETOF(class CGraph, m_pHashLinks) - XASH_OFFSETOF(class CGraph, m_RangeStart));
+			offsetof(class CGraph, m_pHashLinks) - offsetof(class CGraph, m_RangeStart));
 
 #if 0  // replacement routine in case a change in CGraph breaks the above memcpy
 		for (int i = 0; i < 3; ++i)

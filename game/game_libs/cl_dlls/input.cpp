@@ -19,9 +19,9 @@ extern "C"
 {
 #include "kbutton.h"
 }
-#include "cvardef.h"
-#include "usercmd.h"
-#include "const.h"
+#include "XashDefs/cvardef.h"
+#include "XashDefs/usercmd.h"
+#include "XashDefs/const.h"
 #include "camera.h"
 #include "in_defs.h"
 // #include "view.h"
@@ -305,7 +305,7 @@ KeyDown
 void KeyDown(kbutton_t* b)
 {
 	int k;
-	char* c;
+	const char* c;
 
 	c = gEngfuncs.Cmd_Argv(1);
 	if ( c[0] )
@@ -339,7 +339,7 @@ KeyUp
 void KeyUp(kbutton_t* b)
 {
 	int k;
-	char* c;
+	const char* c;
 
 	c = gEngfuncs.Cmd_Argv(1);
 	if ( c[0] )

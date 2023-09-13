@@ -990,7 +990,7 @@ static qboolean Cmd_ShouldAllowCommand(cmd_t* cmd, qboolean isPrivileged)
 	if ( FBitSet(cmd->flags, CMD_FILTERABLE) )
 		return false;
 
-	for ( i = 0; i < ARRAYSIZE(prefixes); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(prefixes); i++ )
 	{
 		if ( !Q_strnicmp(cmd->name, prefixes[i], Q_strlen(prefixes[i])) )
 			return false;

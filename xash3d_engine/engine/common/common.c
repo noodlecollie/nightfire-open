@@ -1103,7 +1103,7 @@ qboolean COM_IsSafeFileToDownload(const char* filename)
 
 	ext = COM_FileExtension(lwrfilename);
 
-	for ( i = 0; i < ARRAYSIZE(file_exts); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(file_exts); i++ )
 	{
 		if ( !Q_stricmp(ext, file_exts[i]) )
 			return false;

@@ -263,7 +263,7 @@ void ExplosionCreate(const Vector& center, const Vector& angles, edict_t* pOwner
 
 	CBaseEntity* pExplosion = CBaseEntity::Create("env_explosion", center, angles, pOwner);
 	PlatformLib_SNPrintF(buf, sizeof(buf), "%3d", magnitude);
-	kvd.szKeyName = "iMagnitude";
+	kvd.szKeyName = (char*)"iMagnitude";
 	kvd.szValue = buf;
 	pExplosion->KeyValue(&kvd);
 	if ( !doDamage )

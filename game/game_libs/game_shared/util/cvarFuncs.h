@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 #include "vector_classes.h"
 
 #ifdef CLIENT_DLL

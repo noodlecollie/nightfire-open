@@ -18,13 +18,13 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "const.h"
-#include "entity_state.h"
-#include "cl_entity.h"
+#include "XashDefs/const.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/cl_entity.h"
 #include <string.h>
 #include <stdio.h>
 #include "parsemsg.h"
-#include "event_api.h"
+#include "XashDefs/event_api.h"
 #include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_StatusIcons, StatusIcon)

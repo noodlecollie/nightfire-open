@@ -741,7 +741,7 @@ void Mod_PrintWorldStats_f(void)
 	Con_Printf("Object names  Objects/Maxobjs  Memory / Maxmem  Fullness\n");
 	Con_Printf("------------  ---------------  ---------------  --------\n");
 
-	for ( i = 0; i < ARRAYSIZE(worldstats); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(worldstats); i++ )
 	{
 		mlumpstat_t* stat = &worldstats[i];
 
@@ -3408,12 +3408,12 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 	bmod->isbsp30ext = FBitSet(flags, LUMP_BSP30EXT);
 
 	// loading base lumps
-	for ( i = 0; i < ARRAYSIZE(srclumps); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(srclumps); i++ )
 		Mod_LoadLump(mod_base, &srclumps[i], &worldstats[i], flags);
 
 	// loading extralumps
-	for ( i = 0; i < ARRAYSIZE(extlumps); i++ )
-		Mod_LoadLump(mod_base, &extlumps[i], &worldstats[ARRAYSIZE(srclumps) + i], flags);
+	for ( i = 0; i < SIZE_OF_ARRAY(extlumps); i++ )
+		Mod_LoadLump(mod_base, &extlumps[i], &worldstats[SIZE_OF_ARRAY(srclumps) + i], flags);
 
 	if ( !bmod->isworld && loadstat.numerrors )
 	{
@@ -3590,12 +3590,12 @@ qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, 
 	}
 
 	// loading base lumps
-	for ( i = 0; i < ARRAYSIZE(srclumps); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(srclumps); i++ )
 		Mod_LoadLump(mod_base, &srclumps[i], &worldstats[i], flags);
 
 	// loading extralumps
-	for ( i = 0; i < ARRAYSIZE(extlumps); i++ )
-		Mod_LoadLump(mod_base, &extlumps[i], &worldstats[ARRAYSIZE(srclumps) + i], flags);
+	for ( i = 0; i < SIZE_OF_ARRAY(extlumps); i++ )
+		Mod_LoadLump(mod_base, &extlumps[i], &worldstats[SIZE_OF_ARRAY(srclumps) + i], flags);
 
 	if ( loadstat.numerrors )
 	{

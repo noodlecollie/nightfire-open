@@ -96,7 +96,7 @@ void Joy_HatMotionEvent(byte hat, byte value)
 	if ( !joy_found->value )
 		return;
 
-	for ( i = 0; i < ARRAYSIZE(keys); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(keys); i++ )
 	{
 		if ( value & keys[i].mask )
 		{

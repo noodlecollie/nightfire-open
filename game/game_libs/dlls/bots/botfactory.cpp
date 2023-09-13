@@ -4,7 +4,7 @@
 #include "standard_includes.h"
 #include "bot.h"
 #include "util.h"
-#include "eiface.h"
+#include "XashDefs/eiface.h"
 #include "cbase.h"
 #include "client.h"
 #include "botprofiles/botprofileparser.h"

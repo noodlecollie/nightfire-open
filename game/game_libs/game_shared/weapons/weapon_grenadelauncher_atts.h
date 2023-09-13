@@ -25,7 +25,7 @@ enum GrenadeLauncherAttackMode_e
 static constexpr float GRENADELAUNCHER_FIRE_RATE = 1.0f / 0.8f;
 
 // Dynamic attributes for tuning purposes
-#define DEV_CVAR(name, value) static cvar_t name = {#name, value, FCVAR_SPONLY, 0.0f, NULL}
+#define DEV_CVAR(name, value) static cvar_t name = {(char*)#name, (char*)value, FCVAR_SPONLY, 0.0f, NULL}
 DEV_CVAR(grenadelauncher_explosion_radius, "250");
 DEV_CVAR(grenadelauncher_fuse_time, "4");
 DEV_CVAR(grenadelauncher_launch_speed, "1000");

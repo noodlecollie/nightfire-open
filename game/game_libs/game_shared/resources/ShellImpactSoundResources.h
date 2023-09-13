@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseResourceCollection.h"
-#include "surfaceprops.h"
+#include "XashDefs/surfaceprops.h"
 
 enum class ShellType
 {

@@ -18,9 +18,9 @@ GNU General Public License for more details.
 #include "common.h"
 #include "netchan.h"
 #include "net_encode.h"
-#include "event_api.h"
-#include "usercmd.h"
-#include "pm_movevars.h"
+#include "XashDefs/event_api.h"
+#include "XashDefs/usercmd.h"
+#include "XashDefs/pm_movevars.h"
 #include "XashDefs/entity_state.h"
 #include "XashDefs/weaponinfo.h"
 #include "XashDefs/event_args.h"
@@ -2103,7 +2103,7 @@ qboolean MSG_ReadDeltaEntity(
 
 =============================================================================
 */
-void GAME_EXPORT Delta_AddEncoder(char* name, pfnDeltaEncode encodeFunc)
+void GAME_EXPORT Delta_AddEncoder(const char* name, pfnDeltaEncode encodeFunc)
 {
 	delta_info_t* dt;
 

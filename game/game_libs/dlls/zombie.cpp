@@ -149,7 +149,7 @@ void CZombie::PainSound(void)
 		EMIT_SOUND_DYN(
 			ENT(pev),
 			CHAN_VOICE,
-			pPainSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pPainSounds) - 1)],
+			pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pPainSounds) - 1)],
 			1.0,
 			ATTN_NORM,
 			0,
@@ -163,7 +163,7 @@ void CZombie::AlertSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_VOICE,
-		pAlertSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAlertSounds) - 1)],
+		pAlertSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAlertSounds) - 1)],
 		1.0,
 		ATTN_NORM,
 		0,
@@ -178,7 +178,7 @@ void CZombie::IdleSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_VOICE,
-		pIdleSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pIdleSounds) - 1)],
+		pIdleSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pIdleSounds) - 1)],
 		1.0,
 		ATTN_NORM,
 		0,
@@ -193,7 +193,7 @@ void CZombie::AttackSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_VOICE,
-		pAttackSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackSounds) - 1)],
+		pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackSounds) - 1)],
 		1.0,
 		ATTN_NORM,
 		0,
@@ -225,7 +225,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -235,7 +235,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -261,7 +261,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -271,7 +271,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -295,7 +295,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -305,7 +305,7 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -352,22 +352,22 @@ void CZombie::Precache()
 
 	PRECACHE_MODEL("models/zombie.mdl");
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackHitSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAttackHitSounds); i++ )
 		PRECACHE_SOUND(pAttackHitSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackMissSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAttackMissSounds); i++ )
 		PRECACHE_SOUND(pAttackMissSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAttackSounds); i++ )
 		PRECACHE_SOUND(pAttackSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pIdleSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pIdleSounds); i++ )
 		PRECACHE_SOUND(pIdleSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAlertSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAlertSounds); i++ )
 		PRECACHE_SOUND(pAlertSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pPainSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pPainSounds); i++ )
 		PRECACHE_SOUND(pPainSounds[i]);
 }
 

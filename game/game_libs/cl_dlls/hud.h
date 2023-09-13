@@ -27,7 +27,7 @@
 #define RGB_GREENISH 0x0000A000  // 0,160,0
 
 #include <memory>
-#include "wrect.h"
+#include "XashDefs/wrect.h"
 #include "cl_dll.h"
 #include "ammo.h"
 #include "ui/drawable/BaseUIDrawable.h"

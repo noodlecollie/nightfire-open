@@ -21,8 +21,8 @@ GNU General Public License for more details.
 #include "XashDefs/eiface.h"
 #include "XashDefs/physint.h"  // physics interface
 #include "mod_local.h"
-#include "pm_defs.h"
-#include "pm_movevars.h"
+#include "XashDefs/pm_defs.h"
+#include "XashDefs/pm_movevars.h"
 #include "XashDefs/entity_state.h"
 #include "protocol.h"
 #include "netchan.h"

@@ -68,7 +68,6 @@ set(ENGINE_SOURCES
 	common/cvar.c
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:common/dedicated.c>
 	common/dll_types.h
-	common/event_api.h
 	common/filesystem_engine.c
 	common/gamma.c
 	common/host.c
@@ -102,23 +101,19 @@ set(ENGINE_SOURCES
 	common/net_ws.h
 	common/net_ws.c
 	common/pm_debug.c
-	common/pm_defs.h
 	common/pm_local.h
-	common/pm_movevars.h
 	common/pm_surface.c
 	common/pm_trace.c
 	common/protocol.h
 	common/qfont.h
 	common/sequence.c
 	common/setpair.h
-	common/surfaceprops.h
 	common/sys_con.c
 	common/system.c
 	common/system.h
 	common/tests.h
 	common/textureproperties.h
 	common/textureproperties.c
-	common/usercmd.h
 	common/whereami.h
 	common/whereami.c
 	common/world.h
@@ -184,8 +179,6 @@ if(CLIENT_SUPPORT)
 		client/cl_video.c
 		client/cl_view.c
 		client/console.c
-		client/demo_api.h
-		client/hltv.h
 		client/in_joy.c
 		client/input.h
 		client/input.c

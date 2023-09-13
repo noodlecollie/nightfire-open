@@ -3,7 +3,6 @@ include(compiler_settings)
 set(SOURCES_PM_SHARED
 	../pm_shared/pm_debug.h
 	../pm_shared/pm_debug.c
-	../pm_shared/pm_defs.h
 	../pm_shared/pm_info.h
 	../pm_shared/pm_materials.h
 	../pm_shared/pm_math.c
@@ -366,7 +365,6 @@ target_link_libraries(${TARGETNAME_LIB_CLIENT} PRIVATE
 target_include_directories(${TARGETNAME_LIB_CLIENT} PRIVATE
 	.
 	../common
-	../engine
 	../pm_shared
 	../game_shared
 	../shared_utils/cpp
@@ -376,7 +374,6 @@ target_include_directories(${TARGETNAME_LIB_CLIENT} PRIVATE
 	../game_shared/util
 	../game_shared/gameplay
 	../game_menu_shared
-	../miniutl
 	../utils/false_vgui/include
 	hl
 	events

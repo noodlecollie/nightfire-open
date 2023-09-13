@@ -673,7 +673,7 @@ byte* COM_LoadFileForMe(const char* filename, int* pLength);
 qboolean COM_IsSafeFileToDownload(const char* filename);
 const char* COM_GetResourceTypeName(resourcetype_t restype);
 cvar_t* pfnCVarGetPointer(const char* szVarName);
-int pfnDrawConsoleString(int x, int y, char* string);
+int pfnDrawConsoleString(int x, int y, const char* string);
 void pfnDrawSetTextColor(float r, float g, float b);
 void pfnDrawConsoleStringLen(const char* pText, int* length, int* height);
 void* Cache_Check(poolhandle_t mempool, struct cache_user_s* c);

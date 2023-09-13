@@ -66,7 +66,7 @@ static sequenceCommandEnum_e Sequence_GetCommandEnumForName(const char* commandN
 {
 	size_t i;
 
-	for ( i = 0; i < ARRAYSIZE(g_sequenceCommandMappingTable); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(g_sequenceCommandMappingTable); i++ )
 	{
 		const sequenceCommandMapping_s* mapping = g_sequenceCommandMappingTable + i;
 
@@ -664,7 +664,7 @@ static qboolean Sequence_IsCommandAModifier(sequenceCommandEnum_e commandEnum)
 {
 	size_t i;
 
-	for ( i = 0; i < ARRAYSIZE(g_sequenceCommandMappingTable); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(g_sequenceCommandMappingTable); i++ )
 	{
 		if ( g_sequenceCommandMappingTable[i].commandEnum == commandEnum )
 		{

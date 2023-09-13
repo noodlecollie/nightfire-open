@@ -32,10 +32,10 @@
 #include "../cl_dll/demo.h"
 #endif
 
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "voice_status.h"
-#include "r_efx.h"
-#include "entity_types.h"
+#include "XashDefs/r_efx.h"
+#include "XashDefs/entity_types.h"
 #include "VGUI_ActionSignal.h"
 #include "VGUI_Scheme.h"
 #include "VGUI_TextImage.h"

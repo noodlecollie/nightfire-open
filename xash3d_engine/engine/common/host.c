@@ -403,7 +403,7 @@ void Host_Exec_f(void)
 		Q_snprintf(temp, sizeof(temp), "%s.cfg", clgame.mapname);
 		unprivilegedWhitelist[0] = temp;
 
-		for ( i = 0; i < ARRAYSIZE(unprivilegedWhitelist); i++ )
+		for ( i = 0; i < SIZE_OF_ARRAY(unprivilegedWhitelist); i++ )
 		{
 			if ( !Q_strcmp(arg, unprivilegedWhitelist[i]) )
 			{

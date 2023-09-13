@@ -3,12 +3,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-// This version catches errors where the macro is used
-// on a pointer rather than an array.
-#define SIZE_OF_ARRAY(a) \
-  ((sizeof(a) / sizeof(*(a))) / \
-  (size_t)(!(sizeof(a) % sizeof(*(a)))))
-
 #if defined(__cplusplus) || defined(__bool_true_false_are_defined)
 // C++ already has bool. Typedef qboolean to be an int,
 // so that it's the same width as the C enum below.

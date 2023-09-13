@@ -660,7 +660,7 @@ static void R_CollectRendererNames(void)
 	};
 
 	// ordering is important here too!
-	static const char* readableNames[ARRAYSIZE(shortNames)] = {
+	static const char* readableNames[SIZE_OF_ARRAY(shortNames)] = {
 #if XASH_REF_GL_ENABLED
 		"OpenGL",
 #endif
@@ -678,7 +678,7 @@ static void R_CollectRendererNames(void)
 #endif
 	};
 
-	ref.numRenderers = ARRAYSIZE(shortNames);
+	ref.numRenderers = SIZE_OF_ARRAY(shortNames);
 	ref.shortNames = shortNames;
 	ref.readableNames = readableNames;
 }

@@ -13,8 +13,7 @@
  *
  ****/
 #pragma once
-#ifndef CBASE_H
-#define CBASE_H
+
 /*
 
 Class Hierachy
@@ -48,6 +47,7 @@ CBaseEntity
 #include "vector_classes.h"
 #include "saverestore.h"
 #include "schedule.h"
+#include "PlatformDefs/utils.h"
 
 #ifndef MONSTEREVENT_H
 #include "monsterevent.h"
@@ -454,25 +454,25 @@ public:
 	BASEPTR ThinkSet(BASEPTR func, const char* name)
 	{
 		m_pfnThink = func;
-		FunctionCheck((void*)*((int*)((char*)this + (XASH_OFFSETOF(CBaseEntity, m_pfnThink)))), name);
+		FunctionCheck((void*)*((int*)((char*)this + (offsetof(CBaseEntity, m_pfnThink)))), name);
 		return func;
 	}
 	ENTITYFUNCPTR TouchSet(ENTITYFUNCPTR func, const char* name)
 	{
 		m_pfnTouch = func;
-		FunctionCheck((void*)*((int*)((char*)this + (XASH_OFFSETOF(CBaseEntity, m_pfnTouch)))), name);
+		FunctionCheck((void*)*((int*)((char*)this + (offsetof(CBaseEntity, m_pfnTouch)))), name);
 		return func;
 	}
 	USEPTR UseSet(USEPTR func, const char* name)
 	{
 		m_pfnUse = func;
-		FunctionCheck((void*)*((int*)((char*)this + (XASH_OFFSETOF(CBaseEntity, m_pfnUse)))), name);
+		FunctionCheck((void*)*((int*)((char*)this + (offsetof(CBaseEntity, m_pfnUse)))), name);
 		return func;
 	}
 	ENTITYFUNCPTR BlockedSet(ENTITYFUNCPTR func, const char* name)
 	{
 		m_pfnBlocked = func;
-		FunctionCheck((void*)*((int*)((char*)this + (XASH_OFFSETOF(CBaseEntity, m_pfnBlocked)))), name);
+		FunctionCheck((void*)*((int*)((char*)this + (offsetof(CBaseEntity, m_pfnBlocked)))), name);
 		return func;
 	}
 #endif
@@ -979,4 +979,3 @@ public:
 	void Precache(void);
 	void KeyValue(KeyValueData* pkvd);
 };
-#endif

@@ -190,7 +190,7 @@ static Vector gTankSpread[] = {
 	Vector(0.25f, 0.25f, 0.25f),  // extra-large cone
 };
 
-#define MAX_FIRING_SPREADS XASH_ARRAY_SIZE(gTankSpread)
+#define MAX_FIRING_SPREADS SIZE_OF_ARRAY(gTankSpread)
 
 void CFuncTank::Spawn(void)
 {

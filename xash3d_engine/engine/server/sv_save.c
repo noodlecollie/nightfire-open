@@ -314,7 +314,7 @@ static void SaveBuildComment(char* text, int maxlength)
 		size_t i;
 		const char* mapname = STRING(svgame.globals->mapname);
 
-		for ( i = 0; i < ARRAYSIZE(gTitleComments); i++ )
+		for ( i = 0; i < SIZE_OF_ARRAY(gTitleComments); i++ )
 		{
 			// compare if strings are equal at beginning
 			size_t len = strlen(gTitleComments[i].mapname);
@@ -985,13 +985,13 @@ static void ParseSaveTables(SAVERESTOREDATA* pSaveData, SAVE_HEADER* pHeader, in
 
 	for ( i = 0; i < pSaveData->tableCount; i++ )
 		svgame.dllFuncs
-			.pfnSaveReadFields(pSaveData, "ETABLE", &pSaveData->pTable[i], gEntityTable, ARRAYSIZE(gEntityTable));
+			.pfnSaveReadFields(pSaveData, "ETABLE", &pSaveData->pTable[i], gEntityTable, SIZE_OF_ARRAY(gEntityTable));
 
 	pSaveData->pBaseData = pSaveData->pCurrentData;
 	pSaveData->size = 0;
 
 	// process SAVE_HEADER
-	svgame.dllFuncs.pfnSaveReadFields(pSaveData, "Save Header", pHeader, gSaveHeader, ARRAYSIZE(gSaveHeader));
+	svgame.dllFuncs.pfnSaveReadFields(pSaveData, "Save Header", pHeader, gSaveHeader, SIZE_OF_ARRAY(gSaveHeader));
 
 	pSaveData->connectionCount = pHeader->connectionCount;
 	VectorClear(pSaveData->vecLandmarkOffset);
@@ -1001,14 +1001,14 @@ static void ParseSaveTables(SAVERESTOREDATA* pSaveData, SAVE_HEADER* pHeader, in
 	// read adjacency list
 	for ( i = 0; i < pSaveData->connectionCount; i++ )
 		svgame.dllFuncs
-			.pfnSaveReadFields(pSaveData, "ADJACENCY", &pSaveData->levelList[i], gAdjacency, ARRAYSIZE(gAdjacency));
+			.pfnSaveReadFields(pSaveData, "ADJACENCY", &pSaveData->levelList[i], gAdjacency, SIZE_OF_ARRAY(gAdjacency));
 
 	if ( updateGlobals )
 		memset(sv.lightstyles, 0, sizeof(sv.lightstyles));
 
 	for ( i = 0; i < pHeader->lightStyleCount; i++ )
 	{
-		svgame.dllFuncs.pfnSaveReadFields(pSaveData, "LIGHTSTYLE", &light, gLightStyle, ARRAYSIZE(gLightStyle));
+		svgame.dllFuncs.pfnSaveReadFields(pSaveData, "LIGHTSTYLE", &light, gLightStyle, SIZE_OF_ARRAY(gLightStyle));
 		if ( updateGlobals )
 			SV_SetLightStyle(light.index, light.style, light.time);
 	}
@@ -1253,7 +1253,7 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 	header.wateramp = sv_wateramp.value;
 
 	// Store the client header
-	svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "ClientHeader", &header, gSaveClient, ARRAYSIZE(gSaveClient));
+	svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "ClientHeader", &header, gSaveClient, SIZE_OF_ARRAY(gSaveClient));
 
 	// store decals
 	for ( i = 0; i < header.decalCount; i++ )
@@ -1262,7 +1262,7 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 		if ( pSaveData->fUseLandmark && FBitSet(decalList[i].flags, FDECAL_USE_LANDMARK) )
 			VectorSubtract(decalList[i].position, pSaveData->vecLandmarkOffset, decalList[i].position);
 
-		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "DECALLIST", &decalList[i], gDecalEntry, ARRAYSIZE(gDecalEntry));
+		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "DECALLIST", &decalList[i], gDecalEntry, SIZE_OF_ARRAY(gDecalEntry));
 	}
 	Z_Free(decalList);
 
@@ -1273,11 +1273,11 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 			"STATICENTITY",
 			&svs.static_entities[i],
 			gStaticEntry,
-			ARRAYSIZE(gStaticEntry));
+			SIZE_OF_ARRAY(gStaticEntry));
 
 	// write sounds
 	for ( i = 0; i < header.soundCount; i++ )
-		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "SOUNDLIST", &soundInfo[i], gSoundEntry, ARRAYSIZE(gSoundEntry));
+		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "SOUNDLIST", &soundInfo[i], gSoundEntry, SIZE_OF_ARRAY(gSoundEntry));
 
 	// Write entity string token table
 	pTokenData = StoreHashTable(pSaveData);
@@ -1359,12 +1359,12 @@ static void LoadClientState(SAVERESTOREDATA* pSaveData, const char* level, qbool
 	FS_Close(pFile);
 
 	// Read the client header
-	svgame.dllFuncs.pfnSaveReadFields(pSaveData, "ClientHeader", &header, gSaveClient, ARRAYSIZE(gSaveClient));
+	svgame.dllFuncs.pfnSaveReadFields(pSaveData, "ClientHeader", &header, gSaveClient, SIZE_OF_ARRAY(gSaveClient));
 
 	// restore decals
 	for ( i = 0; i < header.decalCount; i++ )
 	{
-		svgame.dllFuncs.pfnSaveReadFields(pSaveData, "DECALLIST", &decalEntry, gDecalEntry, ARRAYSIZE(gDecalEntry));
+		svgame.dllFuncs.pfnSaveReadFields(pSaveData, "DECALLIST", &decalEntry, gDecalEntry, SIZE_OF_ARRAY(gDecalEntry));
 
 		// NOTE: apply landmark offset only for brush entities without origin brushes
 		if ( pSaveData->fUseLandmark && FBitSet(decalEntry.flags, FDECAL_USE_LANDMARK) )
@@ -1388,7 +1388,7 @@ static void LoadClientState(SAVERESTOREDATA* pSaveData, const char* level, qbool
 			"STATICENTITY",
 			&svs.static_entities[id],
 			gStaticEntry,
-			ARRAYSIZE(gStaticEntry));
+			SIZE_OF_ARRAY(gStaticEntry));
 		if ( adjacent )
 			continue;  // static entities won't loading from adjacent levels
 
@@ -1399,7 +1399,7 @@ static void LoadClientState(SAVERESTOREDATA* pSaveData, const char* level, qbool
 	// restore sounds
 	for ( i = 0; i < header.soundCount; i++ )
 	{
-		svgame.dllFuncs.pfnSaveReadFields(pSaveData, "SOUNDLIST", &soundEntry, gSoundEntry, ARRAYSIZE(gSoundEntry));
+		svgame.dllFuncs.pfnSaveReadFields(pSaveData, "SOUNDLIST", &soundEntry, gSoundEntry, SIZE_OF_ARRAY(gSoundEntry));
 		if ( adjacent )
 			continue;  // sounds don't going across the levels
 
@@ -1552,13 +1552,13 @@ static SAVERESTOREDATA* SaveGameState(int changelevel)
 
 	// Write the main header
 	pSaveData->time = 0.0f;  // prohibits rebase of header.time (keep compatibility with old saves)
-	svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "Save Header", &header, gSaveHeader, ARRAYSIZE(gSaveHeader));
+	svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "Save Header", &header, gSaveHeader, SIZE_OF_ARRAY(gSaveHeader));
 	pSaveData->time = header.time;
 
 	// Write the adjacency list
 	for ( i = 0; i < pSaveData->connectionCount; i++ )
 		svgame.dllFuncs
-			.pfnSaveWriteFields(pSaveData, "ADJACENCY", &pSaveData->levelList[i], gAdjacency, ARRAYSIZE(gAdjacency));
+			.pfnSaveWriteFields(pSaveData, "ADJACENCY", &pSaveData->levelList[i], gAdjacency, SIZE_OF_ARRAY(gAdjacency));
 
 	// Write the lightstyles
 	for ( i = 0; i < MAX_LIGHTSTYLES; i++ )
@@ -1570,7 +1570,7 @@ static SAVERESTOREDATA* SaveGameState(int changelevel)
 		light.time = sv.lightstyles[i].time;
 		light.index = i;
 
-		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "LIGHTSTYLE", &light, gLightStyle, ARRAYSIZE(gLightStyle));
+		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "LIGHTSTYLE", &light, gLightStyle, SIZE_OF_ARRAY(gLightStyle));
 	}
 
 	// build the table of entities
@@ -1605,7 +1605,7 @@ static SAVERESTOREDATA* SaveGameState(int changelevel)
 
 	for ( i = 0; i < pSaveData->tableCount; i++ )
 		svgame.dllFuncs
-			.pfnSaveWriteFields(pSaveData, "ETABLE", &pSaveData->pTable[i], gEntityTable, ARRAYSIZE(gEntityTable));
+			.pfnSaveWriteFields(pSaveData, "ETABLE", &pSaveData->pTable[i], gEntityTable, SIZE_OF_ARRAY(gEntityTable));
 
 	tableSize = pSaveData->size - dataSize;
 
@@ -1752,7 +1752,7 @@ static qboolean SaveGameSlot(const char* pSaveName, const char* pSaveComment)
 	gameHeader.mapCount = DirectoryCount(hlPath);  // counting all the adjacency maps
 
 	// Store the game header
-	svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "GameHeader", &gameHeader, gGameHeader, ARRAYSIZE(gGameHeader));
+	svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "GameHeader", &gameHeader, gGameHeader, SIZE_OF_ARRAY(gGameHeader));
 
 	// Write the game globals
 	svgame.dllFuncs.pfnSaveGlobalState(pSaveData);
@@ -1843,7 +1843,7 @@ static int SaveReadHeader(file_t* pFile, GAME_HEADER* pHeader)
 
 	FS_Read(pFile, pSaveData->pBaseData, size);
 
-	svgame.dllFuncs.pfnSaveReadFields(pSaveData, "GameHeader", pHeader, gGameHeader, ARRAYSIZE(gGameHeader));
+	svgame.dllFuncs.pfnSaveReadFields(pSaveData, "GameHeader", pHeader, gGameHeader, SIZE_OF_ARRAY(gGameHeader));
 
 	svgame.dllFuncs.pfnRestoreGlobalState(pSaveData);
 
@@ -1890,7 +1890,7 @@ static int CreateEntityTransitionList(SAVERESTOREDATA* pSaveData, int levelMask)
 				// NOTE: we need to update table pointer so decals on the global entities with brush models can be
 				// correctly moved. found the classname and the globalname for our globalentity
 				svgame.dllFuncs
-					.pfnSaveReadFields(pSaveData, "ENTVARS", &tmpVars, gTempEntvars, ARRAYSIZE(gTempEntvars));
+					.pfnSaveReadFields(pSaveData, "ENTVARS", &tmpVars, gTempEntvars, SIZE_OF_ARRAY(gTempEntvars));
 
 				// reset the save pointers, so dll can read this too
 				pSaveData->pCurrentData = pSaveData->pBaseData + pTable->location;

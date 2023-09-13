@@ -23,7 +23,7 @@
 #include "nodes.h"
 #include "monsters.h"
 #include "schedule.h"
-#include "customentity.h"
+#include "XashDefs/customentity.h"
 #include "weapons.h"
 #include "effects.h"
 #include "soundent.h"
@@ -384,7 +384,7 @@ Task_t tlGargFlame[] = {
 };
 
 Schedule_t slGargFlame[] = {
-	{tlGargFlame, XASH_ARRAY_SIZE(tlGargFlame), 0, 0, "GargFlame"},
+	{tlGargFlame, SIZE_OF_ARRAY(tlGargFlame), 0, 0, "GargFlame"},
 };
 
 // primary melee attack
@@ -395,7 +395,7 @@ Task_t tlGargSwipe[] = {
 };
 
 Schedule_t slGargSwipe[] = {
-	{tlGargSwipe, XASH_ARRAY_SIZE(tlGargSwipe), bits_COND_CAN_MELEE_ATTACK2, 0, "GargSwipe"},
+	{tlGargSwipe, SIZE_OF_ARRAY(tlGargSwipe), bits_COND_CAN_MELEE_ATTACK2, 0, "GargSwipe"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CGargantua) {
@@ -443,7 +443,7 @@ void CGargantua::StompAttack(void)
 	EMIT_SOUND_DYN(
 		edict(),
 		CHAN_WEAPON,
-		pStompSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pStompSounds) - 1)],
+		pStompSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pStompSounds) - 1)],
 		1.0,
 		ATTN_GARG,
 		0,
@@ -764,34 +764,34 @@ void CGargantua::Precache()
 	gGargGibModel = PRECACHE_MODEL(GARG_GIB_MODEL);
 	PRECACHE_SOUND(GARG_STOMP_BUZZ_SOUND);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackHitSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAttackHitSounds); i++ )
 		PRECACHE_SOUND(pAttackHitSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pBeamAttackSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pBeamAttackSounds); i++ )
 		PRECACHE_SOUND(pBeamAttackSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackMissSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAttackMissSounds); i++ )
 		PRECACHE_SOUND(pAttackMissSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pFootSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pFootSounds); i++ )
 		PRECACHE_SOUND(pFootSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pIdleSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pIdleSounds); i++ )
 		PRECACHE_SOUND(pIdleSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAlertSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAlertSounds); i++ )
 		PRECACHE_SOUND(pAlertSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pPainSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pPainSounds); i++ )
 		PRECACHE_SOUND(pPainSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAttackSounds); i++ )
 		PRECACHE_SOUND(pAttackSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pStompSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pStompSounds); i++ )
 		PRECACHE_SOUND(pStompSounds[i]);
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pBreatheSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pBreatheSounds); i++ )
 		PRECACHE_SOUND(pBreatheSounds[i]);
 }
 
@@ -831,7 +831,7 @@ void CGargantua::TraceAttack(
 			EMIT_SOUND_DYN(
 				ENT(pev),
 				CHAN_VOICE,
-				pPainSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pPainSounds) - 1)],
+				pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pPainSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -984,7 +984,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					edict(),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -994,7 +994,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					edict(),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -1010,7 +1010,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 			EMIT_SOUND_DYN(
 				edict(),
 				CHAN_BODY,
-				pFootSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pFootSounds) - 1)],
+				pFootSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pFootSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -1024,7 +1024,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 			EMIT_SOUND_DYN(
 				edict(),
 				CHAN_VOICE,
-				pBreatheSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pBreatheSounds) - 1)],
+				pBreatheSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pBreatheSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -1107,7 +1107,7 @@ void CGargantua::StartTask(Task_t* pTask)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_VOICE,
-					pAttackSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackSounds) - 1)],
+					pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackSounds) - 1)],
 					1.0,
 					ATTN_GARG,
 					0,
@@ -1361,7 +1361,7 @@ void SpawnExplosion(Vector center, float randomRange, float time, int magnitude)
 
 	CBaseEntity* pExplosion = CBaseEntity::Create("env_explosion", center, g_vecZero, NULL);
 	PlatformLib_SNPrintF(buf, sizeof(buf), "%3d", magnitude);
-	kvd.szKeyName = "iMagnitude";
+	kvd.szKeyName = const_cast<char*>("iMagnitude");
 	kvd.szValue = buf;
 	pExplosion->KeyValue(&kvd);
 	pExplosion->pev->spawnflags |= SF_ENVEXPLOSION_NODAMAGE;

@@ -17,8 +17,9 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common.h"
 #include "base_cmd.h"
-#include "XashDefs/eiface.h"  // ARRAYSIZE
+#include "XashDefs/eiface.h"  // SIZE_OF_ARRAY
 #include "fscallback.h"
+#include "PlatformLib/String.h"
 
 convar_t* cvar_vars = NULL;  // head of list
 convar_t* cmd_scripting;
@@ -1008,7 +1009,7 @@ static qboolean Cvar_ShouldSetCvar(convar_t* v, qboolean isPrivileged)
 	if ( FBitSet(v->flags, FCVAR_FILTERABLE) )
 		return false;
 
-	for ( i = 0; i < ARRAYSIZE(prefixes); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(prefixes); i++ )
 	{
 		if ( !Q_strnicmp(v->name, prefixes[i], Q_strlen(prefixes[i])) )
 			return false;
@@ -1279,7 +1280,7 @@ void Cvar_PostFSInit(void)
 {
 	size_t i;
 
-	for ( i = 0; i < ARRAYSIZE(cvar_filter_quirks); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(cvar_filter_quirks); i++ )
 	{
 		if ( !Q_stricmp(cvar_filter_quirks[i].gamedir, GI->gamefolder) )
 		{

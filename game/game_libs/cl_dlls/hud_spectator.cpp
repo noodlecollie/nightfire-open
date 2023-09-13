@@ -9,23 +9,23 @@
 #include <stdio.h>
 #include "hud.h"
 #include "cl_util.h"
-#include "cl_entity.h"
-#include "triangleapi.h"
-#include "hltv.h"
+#include "XashDefs/cl_entity.h"
+#include "XashDefs/triangleapi.h"
+#include "XashDefs/hltv.h"
 
 #include "pm_shared.h"
-#include "pm_defs.h"
-#include "pmtrace.h"
+#include "XashDefs/pm_defs.h"
+#include "XashDefs/pmtrace.h"
 #include "parsemsg.h"
-#include "entity_types.h"
+#include "XashDefs/entity_types.h"
 #include "PlatformLib/String.h"
 
 // these are included for the math functions
-#include "com_model.h"
-#include "demo_api.h"
-#include "event_api.h"
+#include "XashDefs/com_model.h"
+#include "XashDefs/demo_api.h"
+#include "XashDefs/event_api.h"
 #include "studio_util.h"
-#include "screenfade.h"
+#include "XashDefs/screenfade.h"
 #include "PlatformLib/String.h"
 
 extern "C" int iJumpSpectator;
@@ -518,7 +518,7 @@ void CHudSpectator::DirectorMessage(int iSize, void* pbuf)
 				READ_STRING());  // text
 
 			msg->pMessage = m_HUDMessageText[m_lastHudMessage];
-			msg->pName = "HUD_MESSAGE";
+			msg->pName = const_cast<char*>("HUD_MESSAGE");
 
 			gHUD.m_Message.MessageAdd(msg);
 

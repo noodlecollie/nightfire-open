@@ -242,7 +242,7 @@ static int SND_GetChannelTimeLeft(const channel_t* ch)
 
 		// here we count all remaining words, stopping if no sfx or sound file is available
 		// see VOX_LoadWord
-		for ( i = ch->wordIndex + 1; i < ARRAYSIZE(ch->words); i++ )
+		for ( i = ch->wordIndex + 1; i < SIZE_OF_ARRAY(ch->words); i++ )
 		{
 			wavdata_t* sc;
 			int end;

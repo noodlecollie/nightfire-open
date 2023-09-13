@@ -808,7 +808,7 @@ Task_t tlBigNode[] = {
 };
 
 Schedule_t slBigNode[] = {
-	{tlBigNode, XASH_ARRAY_SIZE(tlBigNode), 0, 0, "Big Node"},
+	{tlBigNode, SIZE_OF_ARRAY(tlBigNode), 0, 0, "Big Node"},
 };
 
 Task_t tlNodeFail[] = {
@@ -817,7 +817,7 @@ Task_t tlNodeFail[] = {
 };
 
 Schedule_t slNodeFail[] = {
-	{tlNodeFail, XASH_ARRAY_SIZE(tlNodeFail), 0, 0, "NodeFail"},
+	{tlNodeFail, SIZE_OF_ARRAY(tlNodeFail), 0, 0, "NodeFail"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CBigMomma) {

@@ -1759,7 +1759,7 @@ int Con_DrawDebugLines(void)
 	defaultX = refState.width / 4;
 	fontTall = con.curFont->charHeight + 1;
 
-	for ( i = 0; i < ARRAYSIZE(con.notify); i++, notify++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(con.notify); i++, notify++ )
 	{
 		int x, len;
 
@@ -2387,7 +2387,7 @@ Con_InvalidateFonts
 void Con_InvalidateFonts(void)
 {
 	size_t i;
-	for ( i = 0; i < ARRAYSIZE(con.chars); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(con.chars); i++ )
 	{
 		CL_FreeFont(&con.chars[i]);
 	}
@@ -2448,7 +2448,7 @@ static void Test_RunConHistory(void)
 	const char* testbackup = "unfinished_edit";
 	int i;
 
-	for ( i = 0; (size_t)i < ARRAYSIZE(strs1); i++ )
+	for ( i = 0; (size_t)i < SIZE_OF_ARRAY(strs1); i++ )
 	{
 		Field_Set(&input, strs1[i]);
 		Con_HistoryAppend(&hist, &input);
@@ -2456,7 +2456,7 @@ static void Test_RunConHistory(void)
 
 	Field_Set(&input, testbackup);
 
-	for ( i = 0; (size_t)i < ARRAYSIZE(strs2); i++ )
+	for ( i = 0; (size_t)i < SIZE_OF_ARRAY(strs2); i++ )
 	{
 		Con_HistoryUp(&hist, &input);
 		TASSERT_STR(input.buffer, strs2[i]);
@@ -2465,7 +2465,7 @@ static void Test_RunConHistory(void)
 	// check for overrun
 	Con_HistoryUp(&hist, &input);
 
-	for ( i = (int)ARRAYSIZE(strs2) - 1; i >= 0; i-- )
+	for ( i = (int)SIZE_OF_ARRAY(strs2) - 1; i >= 0; i-- )
 	{
 		TASSERT_STR(input.buffer, strs2[i]);
 		Con_HistoryDown(&hist, &input);

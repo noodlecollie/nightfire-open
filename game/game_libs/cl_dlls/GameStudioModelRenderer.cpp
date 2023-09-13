@@ -8,13 +8,13 @@
 #include <assert.h>
 #include "hud.h"
 #include "cl_util.h"
-#include "const.h"
-#include "com_model.h"
-#include "studio.h"
-#include "entity_state.h"
-#include "cl_entity.h"
-#include "dlight.h"
-#include "triangleapi.h"
+#include "XashDefs/const.h"
+#include "XashDefs/com_model.h"
+#include "XashDefs/studio.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/cl_entity.h"
+#include "XashDefs/dlight.h"
+#include "XashDefs/triangleapi.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +22,7 @@
 #include <math.h>
 
 #include "studio_util.h"
-#include "r_studioint.h"
+#include "XashDefs/r_studioint.h"
 
 #include "StudioModelRenderer.h"
 #include "GameStudioModelRenderer.h"

@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//========= Copyright ï¿½ 1996-2002, Valve LLC, All rights reserved. ============
 //
 // Purpose:
 //
@@ -16,7 +16,7 @@
 #include "VGUI_InputSignal.h"
 #include "VGUI_Button.h"
 #include "voice_common.h"
-#include "cl_entity.h"
+#include "XashDefs/cl_entity.h"
 #include "voice_banmgr.h"
 #include "vgui_checkbutton2.h"
 #include "vgui_defaultinputsignal.h"

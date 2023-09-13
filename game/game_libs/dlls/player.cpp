@@ -30,12 +30,12 @@
 #include "weapons.h"
 #include "soundent.h"
 #include "monsters.h"
-#include "shake.h"
+#include "XashDefs/shake.h"
 #include "decals.h"
 #include "gamerules.h"
 #include "game.h"
 #include "pm_shared.h"
-#include "hltv.h"
+#include "XashDefs/hltv.h"
 #include "gameresources/GameResources.h"
 #include "prop_playercorpse.h"
 #include "spawnpointmanager.h"
@@ -44,10 +44,10 @@
 #include "gameplay/gameplaySystemsBase.h"
 #include "gameplay/spawnpointmanager.h"
 #include "screenOverlays/messageWriter.h"
-#include "com_model.h"
+#include "XashDefs/com_model.h"
 #include "resources/SoundResources.h"
 #include "weapons/genericweapon.h"
-#include "com_strings.h"
+#include "XashDefs/com_strings.h"
 #include "PlatformLib/String.h"
 
 // #define DUCKFIX
@@ -1223,12 +1223,12 @@ void CBasePlayer::WaterMove()
 		EMIT_SOUND(ENT(pev), CHAN_BODY, soundPath, 0.8f, ATTN_NORM);
 	}
 
-	if ( pev->watertype == CONTENT_LAVA )  // do damage
+	if ( pev->watertype == CONTENTS_LAVA )  // do damage
 	{
 		if ( pev->dmgtime < gpGlobals->time )
 			TakeDamage(VARS(eoNullEntity), VARS(eoNullEntity), 10.0f * pev->waterlevel, DMG_BURN);
 	}
-	else if ( pev->watertype == CONTENT_SLIME )  // do damage
+	else if ( pev->watertype == CONTENTS_SLIME )  // do damage
 	{
 		pev->dmgtime = gpGlobals->time + 1;
 		TakeDamage(VARS(eoNullEntity), VARS(eoNullEntity), 4.0f * pev->waterlevel, DMG_ACID);
@@ -2865,7 +2865,7 @@ int CBasePlayer::Save(CSave& save)
 	if ( !CBaseMonster::Save(save) )
 		return 0;
 
-	return save.WriteFields("PLAYER", this, m_playerSaveData, XASH_ARRAY_SIZE(m_playerSaveData));
+	return save.WriteFields("PLAYER", this, m_playerSaveData, SIZE_OF_ARRAY(m_playerSaveData));
 }
 
 //
@@ -2880,7 +2880,7 @@ int CBasePlayer::Restore(CRestore& restore)
 	if ( !CBaseMonster::Restore(restore) )
 		return 0;
 
-	int status = restore.ReadFields("PLAYER", this, m_playerSaveData, XASH_ARRAY_SIZE(m_playerSaveData));
+	int status = restore.ReadFields("PLAYER", this, m_playerSaveData, SIZE_OF_ARRAY(m_playerSaveData));
 
 	SAVERESTOREDATA* pSaveData = (SAVERESTOREDATA*)gpGlobals->pSaveData;
 	// landmark isn't present.

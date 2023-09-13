@@ -15,7 +15,7 @@
 // pm_math.c -- math primitives
 
 #include "mathlib.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include <math.h>
 
 // up / down

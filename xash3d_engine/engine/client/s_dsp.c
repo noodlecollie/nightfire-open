@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "sound.h"
 
 #define MAX_DELAY 0.4f
-#define MAX_ROOM_TYPES ARRAYSIZE(rgsxpre)
+#define MAX_ROOM_TYPES SIZE_OF_ARRAY(rgsxpre)
 
 #define MONODLY 0
 #define MAX_MONO_DELAY 0.4f

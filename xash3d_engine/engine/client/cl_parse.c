@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "XashDefs/particledef.h"
 #include "cl_tent.h"
 #include "XashDefs/shake.h"
-#include "hltv.h"
+#include "XashDefs/hltv.h"
 #include "input.h"
 #include "CRCLib/crclib.h"
 #include "fscallback.h"

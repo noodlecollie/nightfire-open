@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "XashDefs/const.h"
 #include "XashDefs/triangleapi.h"
 #include "XashDefs/r_efx.h"
-#include "demo_api.h"
+#include "XashDefs/demo_api.h"
 #include "ivoicetweak.h"
 #include "pm_local.h"
 #include "cl_tent.h"
@@ -1602,7 +1602,7 @@ pfnSPR_GetList
 for parsing half-life scripts - hud.txt etc
 =========
 */
-static client_sprite_t* pfnSPR_GetList(char* psz, int* piCount)
+static client_sprite_t* pfnSPR_GetList(const char* psz, int* piCount)
 {
 	cached_spritelist_t* pEntry = &clgame.sprlist[0];
 	int slot, index, numSprites = 0;
@@ -2021,7 +2021,7 @@ pfnDrawConsoleString
 drawing string like a console string
 =============
 */
-int GAME_EXPORT pfnDrawConsoleString(int x, int y, char* string)
+int GAME_EXPORT pfnDrawConsoleString(int x, int y, const char* string)
 {
 	cl_font_t* font = Con_GetFont((int)con_fontsize->value);
 	rgba_t color;

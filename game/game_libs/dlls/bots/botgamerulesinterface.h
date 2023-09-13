@@ -2,10 +2,11 @@
 
 #include <cstdint>
 #include "mathlib.h"
-#include "const.h"
+#include "XashDefs/const.h"
 #include "botprofiles/botprofiletable.h"
 #include "utlstring.h"
 #include "botfactory.h"
+#include "XashDefs/edict.h"
 
 class CBasePlayer;
 class CGameRules;

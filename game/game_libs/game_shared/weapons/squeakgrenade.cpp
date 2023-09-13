@@ -24,7 +24,7 @@
 #include "soundent.h"
 #include "gamerules.h"
 #include "ammodefs.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 enum w_squeak_e

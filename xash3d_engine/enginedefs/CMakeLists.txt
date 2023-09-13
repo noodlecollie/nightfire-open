@@ -15,6 +15,7 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/custom.h
 	include/XashDefs/customentity.h
 	include/XashDefs/cvardef.h
+	include/XashDefs/demo_api.h
 	include/XashDefs/dlight.h
 	include/XashDefs/edict.h
 	include/XashDefs/eiface.h
@@ -23,9 +24,11 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/enginefeatures.h
 	include/XashDefs/entity_state.h
 	include/XashDefs/entity_types.h
+	include/XashDefs/event_api.h
 	include/XashDefs/event_args.h
 	include/XashDefs/event_flags.h
 	include/XashDefs/gameinfo.h
+	include/XashDefs/hltv.h
 	include/XashDefs/key_modifiers.h
 	include/XashDefs/keydefs.h
 	include/XashDefs/lightstyle.h
@@ -37,7 +40,9 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/netadr.h
 	include/XashDefs/particledef.h
 	include/XashDefs/physint.h
+	include/XashDefs/pm_defs.h
 	include/XashDefs/pm_info.h
+	include/XashDefs/pm_movevars.h
 	include/XashDefs/pmtrace.h
 	include/XashDefs/progdefs.h
 	include/XashDefs/r_efx.h
@@ -50,9 +55,11 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/sprite.h
 	include/XashDefs/studio_event.h
 	include/XashDefs/studio.h
+	include/XashDefs/surfaceprops.h
 	include/XashDefs/trace.h
 	include/XashDefs/triangleapi.h
 	include/XashDefs/typedefs.h
+	include/XashDefs/usercmd.h
 	include/XashDefs/vgui_api.h
 	include/XashDefs/wadfile.h
 	include/XashDefs/weaponinfo.h

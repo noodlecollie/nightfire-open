@@ -4,6 +4,7 @@
 #include "SurfaceSoundResources.h"
 #include "SurfaceDecalResources.h"
 #include "FootstepSoundResources.h"
+#include "XashDefs/surfaceprops.h"
 
 class CSurfaceAttributes
 {

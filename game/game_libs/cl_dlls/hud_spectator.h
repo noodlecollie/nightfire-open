@@ -9,7 +9,7 @@
 #ifndef HUD_SPECTATOR_H
 #define HUD_SPECTATOR_H
 
-#include "cl_entity.h"
+#include "XashDefs/cl_entity.h"
 
 #define INSET_OFF 0
 #define INSET_CHASE_FREE 1

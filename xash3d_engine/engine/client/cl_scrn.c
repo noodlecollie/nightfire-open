@@ -629,7 +629,7 @@ void SCR_LoadCreditsFont(void)
 
 		clgame.scrInfo.iCharHeight = cls.creditsFont.charHeight;
 
-		for ( i = 0; i < ARRAYSIZE(cls.creditsFont.charWidths); i++ )
+		for ( i = 0; i < SIZE_OF_ARRAY(cls.creditsFont.charWidths); i++ )
 		{
 			clgame.scrInfo.charWidths[i] = cls.creditsFont.charWidths[i];
 		}

@@ -6,12 +6,11 @@
 //=============================================================================
 
 #pragma once
-#if !defined(EV_HLDMH)
-#define EV_HLDMH
 
-typedef struct pmtrace_s pmtrace_t;
-typedef struct event_args_s event_args_t;
-typedef enum _SurfaceProp SurfaceProp;
+#include "XashDefs/surfaceprops.h"
+
+struct pmtrace_s;
+struct event_args_s;
 
 extern "C"
 {
@@ -37,15 +36,15 @@ void EV_SnarkFire(event_args_t* args);
 
 void EV_TrainPitchAdjust(event_args_t* args);
 
-void EV_HandleGenericWeaponFire(event_args_t* args);
+void EV_HandleGenericWeaponFire(struct event_args_s* args);
 }
 
 void EV_HLDM_Init();
-void EV_HLDM_PlayTextureSound(int idx, pmtrace_t* ptr, float* vecSrc, float* vecEnd, int iBulletType);
-SurfaceProp EV_HLDM_GetSurfacePropForTexture(int idx, pmtrace_t* ptr, float* vecSrc, float* vecEnd);
-void EV_HLDM_GunshotDecalTrace(pmtrace_t* pTrace, const char* decalName);
-void EV_HLDM_DecalGunshot(pmtrace_t* pTrace, int iBulletType);
-void EV_HLDM_DecalGunshotNew(int idx, pmtrace_t* ptr, float* vecSrc, float* vecEnd);
+void EV_HLDM_PlayTextureSound(int idx, struct pmtrace_s* ptr, float* vecSrc, float* vecEnd, int iBulletType);
+enum _SurfaceProp EV_HLDM_GetSurfacePropForTexture(int idx, struct pmtrace_s* ptr, float* vecSrc, float* vecEnd);
+void EV_HLDM_GunshotDecalTrace(struct pmtrace_s* pTrace, const char* decalName);
+void EV_HLDM_DecalGunshot(struct pmtrace_s* pTrace, int iBulletType);
+void EV_HLDM_DecalGunshotNew(int idx, struct pmtrace_s* ptr, float* vecSrc, float* vecEnd);
 void EV_HLDM_CheckTracer(int idx, float* vecSrc, float* end, float* forward, float* right, int iBulletType);
 void EV_HLDM_FireBullets(
 	int idx,
@@ -60,4 +59,3 @@ void EV_HLDM_FireBullets(
 	int iTracerFreq,
 	float flSpreadX,
 	float flSpreadY);
-#endif  // EV_HLDMH

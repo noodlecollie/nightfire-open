@@ -134,7 +134,7 @@ typedef struct cl_enginefuncs_s
 	void (*pfnSPR_DrawCustom)(const sprite_draw_args_t* args);
 	void (*pfnSPR_EnableScissor)(int x, int y, int width, int height);
 	void (*pfnSPR_DisableScissor)(void);
-	client_sprite_t* (*pfnSPR_GetList)(char* psz, int* piCount);
+	client_sprite_t* (*pfnSPR_GetList)(const char* psz, int* piCount);
 
 	// screen handlers
 	void (*pfnFillRGBA)(int x, int y, int width, int height, int r, int g, int b, int a);
@@ -164,7 +164,7 @@ typedef struct cl_enginefuncs_s
 	// text message system
 	client_textmessage_t* (*pfnTextMessageGet)(const char* pName);
 	int (*pfnDrawCharacter)(int x, int y, int number, int r, int g, int b);
-	int (*pfnDrawConsoleString)(int x, int y, char* string);
+	int (*pfnDrawConsoleString)(int x, int y, const char* string);
 	void (*pfnDrawSetTextColor)(float r, float g, float b);
 	void (*pfnDrawConsoleStringLen)(const char* string, int* length, int* height);
 
