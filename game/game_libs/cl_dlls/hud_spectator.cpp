@@ -10,7 +10,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "XashDefs/cl_entity.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "XashDefs/hltv.h"
 
 #include "pm_shared.h"
@@ -25,7 +25,7 @@
 #include "XashDefs/demo_api.h"
 #include "XashDefs/event_api.h"
 #include "studio_util.h"
-#include "screenfade.h"
+#include "XashDefs/screenfade.h"
 #include "PlatformLib/String.h"
 
 extern "C" int iJumpSpectator;
@@ -518,7 +518,7 @@ void CHudSpectator::DirectorMessage(int iSize, void* pbuf)
 				READ_STRING());  // text
 
 			msg->pMessage = m_HUDMessageText[m_lastHudMessage];
-			msg->pName = "HUD_MESSAGE";
+			msg->pName = const_cast<char*>("HUD_MESSAGE");
 
 			gHUD.m_Message.MessageAdd(msg);
 

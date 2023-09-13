@@ -21,7 +21,7 @@
 #include "nodes.h"
 #include "soundent.h"
 #include "effects.h"
-#include "customentity.h"
+#include "XashDefs/customentity.h"
 
 typedef struct
 {

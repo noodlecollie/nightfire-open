@@ -484,7 +484,7 @@ void CHudMessage::MessageAdd(const char* pName, float time)
 				g_pCustomMessage.fadeout = 1.5f;
 				g_pCustomMessage.fxtime = 0.25f;
 				g_pCustomMessage.holdtime = 5;
-				g_pCustomMessage.pName = g_pCustomName;
+				g_pCustomMessage.pName = const_cast<char*>(g_pCustomName);
 				PlatformLib_StrCpy(g_pCustomText, sizeof(g_pCustomText), pName);
 				g_pCustomMessage.pMessage = g_pCustomText;
 

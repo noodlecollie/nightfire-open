@@ -8,7 +8,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "XashDefs/cl_entity.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 #include "overview.h"
 
 // these are included for the math functions

@@ -22,7 +22,7 @@
 #include "nodes.h"
 #include "player.h"
 #include "soundent.h"
-#include "shake.h"
+#include "XashDefs/shake.h"
 #include "gamerules.h"
 #include "game.h"
 #include "ammodefs.h"

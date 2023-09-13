@@ -15,7 +15,7 @@
 #include "cl_util.h"
 #include "XashDefs/const.h"
 #include "XashDefs/entity_types.h"
-#include "studio_event.h"  // def. of mstudioevent_t
+#include "XashDefs/studio_event.h"  // def. of mstudioevent_t
 #include "XashDefs/r_efx.h"
 #include "XashDefs/event_api.h"
 #include "XashDefs/pm_defs.h"

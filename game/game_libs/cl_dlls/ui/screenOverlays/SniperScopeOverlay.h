@@ -2,7 +2,7 @@
 
 #include "BaseScreenOverlay.h"
 #include "standard_includes.h"
-#include "cdll_int.h"
+#include "XashDefs/cdll_int.h"
 #include "customGeometry/geometryItem.h"
 #include "ui/core/uiVec2.h"
 

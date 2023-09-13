@@ -365,7 +365,6 @@ target_link_libraries(${TARGETNAME_LIB_CLIENT} PRIVATE
 target_include_directories(${TARGETNAME_LIB_CLIENT} PRIVATE
 	.
 	../common
-	../engine
 	../pm_shared
 	../game_shared
 	../shared_utils/cpp

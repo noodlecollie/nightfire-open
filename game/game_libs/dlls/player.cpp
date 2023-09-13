@@ -30,7 +30,7 @@
 #include "weapons.h"
 #include "soundent.h"
 #include "monsters.h"
-#include "shake.h"
+#include "XashDefs/shake.h"
 #include "decals.h"
 #include "gamerules.h"
 #include "game.h"

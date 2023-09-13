@@ -1,6 +1,6 @@
 #include "ClientSoundInstance.h"
 #include "standard_includes.h"
-#include "cdll_int.h"
+#include "XashDefs/cdll_int.h"
 #include "cl_dll.h"
 #include "XashDefs/event_api.h"
 

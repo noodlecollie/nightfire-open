@@ -21,7 +21,7 @@
 #include "cl_util.h"
 #include "miniutl.h"
 #include "PlatformLib/String.h"
-// #include "triangleapi.h"
+// #include "XashDefs/triangleapi.h"
 
 #define MAX_LOGO_FRAMES 56
 

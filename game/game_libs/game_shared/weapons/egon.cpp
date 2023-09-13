@@ -22,7 +22,7 @@
 #include "weapons.h"
 #include "nodes.h"
 #include "effects.h"
-#include "customentity.h"
+#include "XashDefs/customentity.h"
 #include "gamerules.h"
 #include "ammodefs.h"
 #include "XashDefs/weaponinfo.h"

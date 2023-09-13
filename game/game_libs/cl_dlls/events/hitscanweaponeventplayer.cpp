@@ -1,6 +1,6 @@
 #include "hitscanweaponeventplayer.h"
 #include "XashDefs/event_args.h"
-#include "cdll_int.h"
+#include "XashDefs/cdll_int.h"
 #include "cl_dll.h"
 #include "XashDefs/event_api.h"
 #include "vector_classes.h"

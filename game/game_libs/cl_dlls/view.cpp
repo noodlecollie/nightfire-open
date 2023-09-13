@@ -15,15 +15,15 @@
 
 #include "XashDefs/entity_state.h"
 #include "XashDefs/cl_entity.h"
-#include "ref_params.h"
+#include "XashDefs/ref_params.h"
 #include "in_defs.h"  // PITCH YAW ROLL
 #include "pm_movevars.h"
 #include "pm_shared.h"
 #include "XashDefs/pm_defs.h"
 #include "XashDefs/event_api.h"
 #include "XashDefs/pmtrace.h"
-#include "screenfade.h"
-#include "shake.h"
+#include "XashDefs/screenfade.h"
+#include "XashDefs/shake.h"
 #include "XashDefs/hltv.h"
 #include "weaponregistry.h"
 #include "weaponatts_collection.h"

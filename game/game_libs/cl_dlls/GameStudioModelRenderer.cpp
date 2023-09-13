@@ -14,7 +14,7 @@
 #include "XashDefs/entity_state.h"
 #include "XashDefs/cl_entity.h"
 #include "XashDefs/dlight.h"
-#include "triangleapi.h"
+#include "XashDefs/triangleapi.h"
 
 #include <stdio.h>
 #include <string.h>

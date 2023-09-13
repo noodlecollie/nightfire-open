@@ -27,7 +27,7 @@
 #include "parsemsg.h"
 #include <string.h>
 
-#include "mobility_int.h"
+#include "XashDefs/mobility_int.h"
 #include "damagedefs.h"
 #include "miniutl.h"
 
