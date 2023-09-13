@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "input.h"
 #include "client.h"
 #include "math.h"
-#include "vgui_draw.h"
+#include "client/vgui/vgui_draw.h"
 #include "XashDefs/mobility_int.h"
 #include "fscallback.h"
 

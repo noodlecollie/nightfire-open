@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "XashDefs/shake.h"
 #include "XashDefs/sprite.h"
 #include "common/library.h"
-#include "vgui_draw.h"
+#include "client/vgui/vgui_draw.h"
 #include "sound.h"  // SND_STOP_LOOPING
 #include "platform/platform.h"
 #include "fscallback.h"

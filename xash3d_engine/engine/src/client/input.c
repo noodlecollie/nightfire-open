@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "input.h"
 #include "client.h"
-#include "vgui_draw.h"
+#include "client/vgui/vgui_draw.h"
 
 #if XASH_SDL
 #include <SDL.h>

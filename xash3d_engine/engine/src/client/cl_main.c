@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "cl_tent.h"
 #include "input.h"
 #include "common/kbutton.h"
-#include "vgui_draw.h"
+#include "client/vgui/vgui_draw.h"
 #include "common/library.h"
 #include "vid_common.h"
 #include "common/pm_local.h"

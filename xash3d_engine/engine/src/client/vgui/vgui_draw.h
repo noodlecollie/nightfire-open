@@ -13,8 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef VGUI_DRAW_H
-#define VGUI_DRAW_H
+#pragma once
+
+#include "PlatformDefs/typedefs.h"
+#include "common/common.h"
 
 //
 // vgui_draw.c
@@ -33,5 +35,3 @@ qboolean VGui_IsActive(void);
 void* VGui_GetPanel(void);
 void VGui_ReportTextInput(const char* text);
 void VGui_UpdateInternalCursorState(VGUI_DefaultCursor cursorType);
-
-#endif  // VGUI_DRAW_H

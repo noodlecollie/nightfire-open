@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "XashDefs/keydefs.h"
 #include "input.h"
 #include "client.h"
-#include "vgui_draw.h"
+#include "client/vgui/vgui_draw.h"
 #include "events.h"
 #include "sound.h"
 #include "vid_common.h"

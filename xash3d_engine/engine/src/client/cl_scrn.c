@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "client.h"
-#include "vgui_draw.h"
+#include "client/vgui/vgui_draw.h"
 #include "common/qfont.h"
 #include "input.h"
 #include "common/library.h"

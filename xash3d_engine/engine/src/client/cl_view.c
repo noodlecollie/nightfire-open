@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "client.h"
 #include "XashDefs/const.h"
 #include "XashDefs/entity_types.h"
-#include "vgui_draw.h"
+#include "client/vgui/vgui_draw.h"
 #include "sound.h"
 #include "input.h"  // touch
 #include "platform/platform.h"  // GL_UpdateSwapInterval
