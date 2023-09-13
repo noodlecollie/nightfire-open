@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "XashDefs/shake.h"
 #include "XashDefs/hltv.h"
 #include "client/input.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define STAT_HEALTH 0
 #define STAT_FRAGS 1

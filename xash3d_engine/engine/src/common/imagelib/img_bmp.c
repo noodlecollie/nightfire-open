@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "imagelib.h"
 #include "MathLib/mathlib.h"
 #include "img_bmp.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 /*
 =============

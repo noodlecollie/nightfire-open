@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "XashDefs/triangleapi.h"
 #include "client/ref_common.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 typedef int (*PHYSICAPI)(int, server_physics_api_t*, physics_interface_t*);
 

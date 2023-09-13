@@ -27,11 +27,11 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "client/vid_common.h"
 #include "common/pm_local.h"
-#include "sequence.h"
+#include "common/sequence.h"
 #include "common/model_dump.h"
 #include "common/bsp/generic/viscompress.h"
 #include "net_functions.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #if defined XASH_SDL
 #include <SDL.h>

@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/net_encode.h"
 #include "XashDefs/protocol.h"
 #include "net_byteswap.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define MAKE_FRAGID(id, count) (((id & 0xffff) << 16) | (count & 0xffff))
 #define FRAG_GETID(fragid) ((fragid >> 16) & 0xffff)

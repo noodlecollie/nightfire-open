@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/platformid.h"
-#include "engine_builddefs.h"
+#include "common/engine_builddefs.h"
 
 /*
 ===================================================================

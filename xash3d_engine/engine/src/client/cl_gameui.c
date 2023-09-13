@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "server/server.h"  // !!svgame.hInstance
 #include "client/vid_common.h"
 #include <limits.h>
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 static void UI_UpdateUserinfo(void);
 

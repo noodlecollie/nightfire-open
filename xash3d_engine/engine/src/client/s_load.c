@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "client/sound.h"
 #include "CRCLib/crclib.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 // during registration it is possible to have more sounds
 // than could actually be referenced during gameplay,

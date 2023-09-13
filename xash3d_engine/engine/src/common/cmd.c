@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "server/server.h"
 #include "base_cmd.h"
-#include "engine_builddefs.h"
+#include "common/engine_builddefs.h"
 
 #define MAX_CMD_BUFFER 32768
 #define MAX_CMD_LINE 2048

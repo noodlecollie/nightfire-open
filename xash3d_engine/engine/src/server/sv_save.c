@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "client/sound.h"  // S_GetDynamicSounds
 #include "client/ref_common.h"  // decals
 #include "PlatformLib/Time.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 /*
 ==============================================================================

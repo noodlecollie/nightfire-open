@@ -46,8 +46,8 @@ GNU General Public License for more details.
 #include "XashDefs/enginefeatures.h"
 #include "XashDefs/render_api.h"
 #include "tests.h"
-#include "fscallback.h"
-#include "engine_builddefs.h"
+#include "common/fscallback.h"
+#include "common/engine_builddefs.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms

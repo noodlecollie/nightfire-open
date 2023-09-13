@@ -21,11 +21,11 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "XashDefs/studio.h"
 #include "MathLib/mathlib.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 #include "XashDefs/const.h"
 #include "client/client.h"
 #include "common/library.h"
-#include "sequence.h"
+#include "common/sequence.h"
 
 static const char* file_exts[] = {
 	"cfg",

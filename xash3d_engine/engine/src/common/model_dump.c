@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "bsp/generic/viscompress.h"
 #include "MathLib/mathlib.h"
 #include "XashDefs/eiface.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 // For utility:
 #define MAX_INDENT 31

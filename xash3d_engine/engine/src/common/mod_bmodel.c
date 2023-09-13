@@ -28,7 +28,7 @@ GNU General Public License for more details.
 #include "server/server.h"  // LUMP_ error codes
 #include "client/ref_common.h"
 #include "textureproperties.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define MIPTEX_CUSTOM_PALETTE_SIZE_BYTES (sizeof(int16_t) + 768)
 

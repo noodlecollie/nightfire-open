@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "common/qfont.h"
 #include "XashDefs/wadfile.h"
 #include "client/input.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 convar_t* con_notifytime;
 convar_t* scr_conspeed;

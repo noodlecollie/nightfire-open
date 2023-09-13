@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"
 #include "CRCLib/crclib.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 static char id_md5[33];
 static char id_customid[MAX_STRING];

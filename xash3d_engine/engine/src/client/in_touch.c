@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "math.h"
 #include "client/vgui/vgui_draw.h"
 #include "XashDefs/mobility_int.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #if defined XASH_SDL
 #include <SDL.h>

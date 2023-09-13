@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine_builddefs.h"
+#include "common/engine_builddefs.h"
 
 #if XASH_ENGINE_TESTS()
 

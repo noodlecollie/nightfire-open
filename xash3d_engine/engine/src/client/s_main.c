@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "XashDefs/con_nprint.h"
 #include "common/pm_local.h"
 #include "platform/platform.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define SND_CLIP_DISTANCE 1000.0f
 

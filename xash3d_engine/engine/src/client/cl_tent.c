@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "common/pm_local.h"
 #include "XashDefs/studio.h"
 #include "client/sound.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 /*
 ==============================================================

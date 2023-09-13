@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "XashDefs/shake.h"
 #include "XashDefs/hltv.h"
 #include "client/input.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define MSG_COUNT 32  // last 32 messages parsed
 #define MSG_MASK (MSG_COUNT - 1)

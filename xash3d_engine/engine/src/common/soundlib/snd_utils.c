@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "soundlib.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 /*
 =============================================================================

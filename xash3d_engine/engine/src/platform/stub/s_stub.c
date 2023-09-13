@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "engine_builddefs.h"
+#include "common/engine_builddefs.h"
 
 #if !XASH_DEDICATED()
 #include "common/common.h"

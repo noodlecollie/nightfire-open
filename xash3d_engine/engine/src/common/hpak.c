@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "hpak.h"
 #include "CRCLib/crclib.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define HPAK_MAX_ENTRIES 0x8000
 #define HPAK_ENTRY_MIN_SIZE (512)

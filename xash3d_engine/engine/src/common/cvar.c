@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "base_cmd.h"
 #include "XashDefs/eiface.h"  // SIZE_OF_ARRAY
-#include "fscallback.h"
+#include "common/fscallback.h"
 #include "PlatformLib/String.h"
 
 convar_t* cvar_vars = NULL;  // head of list

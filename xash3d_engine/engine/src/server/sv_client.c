@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "server/server.h"
 #include "common/net_encode.h"
 #include "common/net_api.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 typedef void (*RedirectFlushFunc)(netadr_t adr, rdtype_t target, char* buffer);
 

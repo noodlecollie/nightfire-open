@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "server/server.h"
 #include "common/net_encode.h"
 #include "platform/platform.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 // server cvars
 CVAR_DEFINE_AUTO(

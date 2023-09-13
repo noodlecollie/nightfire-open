@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common/qfont.h"
 #include "client/input.h"
 #include "common/library.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 convar_t* scr_centertime;
 convar_t* scr_loading;

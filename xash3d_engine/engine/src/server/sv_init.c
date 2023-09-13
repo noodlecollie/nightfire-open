@@ -21,8 +21,8 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "client/voice.h"
 #include "common/pm_local.h"
-#include "sequence.h"
-#include "fscallback.h"
+#include "common/sequence.h"
+#include "common/fscallback.h"
 
 int SV_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 

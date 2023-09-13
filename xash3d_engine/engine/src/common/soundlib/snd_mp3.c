@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "libmpg/libmpg.h"
 #include "soundlib.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #pragma pack(push, 1)
 typedef struct did3v2_header_s

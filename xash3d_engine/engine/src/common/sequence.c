@@ -17,8 +17,8 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "XashDefs/eiface.h"
-#include "sequence.h"
-#include "fscallback.h"
+#include "common/sequence.h"
+#include "common/fscallback.h"
 
 sequenceCommandLine_s g_fileScopeDefaults;
 sequenceCommandLine_s g_blockScopeDefaults;

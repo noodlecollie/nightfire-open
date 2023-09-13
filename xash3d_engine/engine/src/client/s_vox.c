@@ -16,9 +16,9 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/sound.h"
 #include "XashDefs/const.h"
-#include "sequence.h"
+#include "common/sequence.h"
 #include <ctype.h>
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 static int cszrawsentences = 0;
 static char* rgpszrawsentence[CVOXFILESENTENCEMAX];

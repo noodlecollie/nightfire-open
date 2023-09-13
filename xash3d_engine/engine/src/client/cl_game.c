@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include "client/vgui/vgui_draw.h"
 #include "client/sound.h"  // SND_STOP_LOOPING
 #include "platform/platform.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>

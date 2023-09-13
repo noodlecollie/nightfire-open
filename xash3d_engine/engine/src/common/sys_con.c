@@ -29,7 +29,7 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "PlatformLib/Time.h"
 #include "Identity/arch.h"
-#include "engine_builddefs.h"
+#include "common/engine_builddefs.h"
 
 #if !XASH_WIN32()
 #define XASH_COLORIZE_CONSOLE true

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "XashDefs/const.h"
 #include "common/kbutton.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 extern convar_t* con_gamemaps;
 

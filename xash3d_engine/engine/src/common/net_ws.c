@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "client/client.h"  // ConnectionProgress
 #include "common/netchan.h"
 #include "ipv6text.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #if XASH_WIN32()
 #include "platform/win32/net.h"

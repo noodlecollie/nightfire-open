@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "XashDefs/const.h"
 #include "XashDefs/render_api.h"  // modelstate_t
 #include "client/ref_common.h"  // decals
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define ENTVARS_COUNT SIZE_OF_ARRAY(gEntvarsDescription)
 

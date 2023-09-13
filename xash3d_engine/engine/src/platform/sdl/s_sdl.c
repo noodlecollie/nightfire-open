@@ -19,7 +19,7 @@ GNU General Public License for more details.
 
 #include "client/sound.h"
 #include "client/voice.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #include <SDL.h>
 

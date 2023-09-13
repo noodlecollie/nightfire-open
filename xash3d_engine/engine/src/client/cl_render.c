@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "common/library.h"
 #include "platform/platform.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 int R_FatPVS(const vec3_t org, float radius, byte* visbuffer, qboolean merge, qboolean fullvis)
 {

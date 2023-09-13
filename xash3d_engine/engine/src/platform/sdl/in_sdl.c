@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "staticbuildchecks.h"
+#include "common/staticbuildchecks.h"
 
 #if !XASH_IS_SDL_CLIENT()
 #error This file is only for client builds that use SDL!

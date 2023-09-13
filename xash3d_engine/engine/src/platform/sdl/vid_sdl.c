@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "staticbuildchecks.h"
+#include "common/staticbuildchecks.h"
 
 #if !XASH_IS_SDL_CLIENT()
 #error This file is only for client builds that use SDL!
@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "client/input.h"
 #include "client/vid_common.h"
 #include "platform/sdl/events.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 static vidmode_t* vidmodes = NULL;
 static int num_vidmodes = 0;

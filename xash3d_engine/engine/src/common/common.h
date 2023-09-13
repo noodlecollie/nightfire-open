@@ -53,7 +53,7 @@ typedef struct tagPOINT
 } POINT;
 #endif
 
-#include "engine_builddefs.h"
+#include "common/engine_builddefs.h"
 #include "common/backends.h"
 
 #include <stdio.h>

@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "XashDefs/hltv.h"
 #include "client/input.h"
 #include "CRCLib/crclib.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 int CL_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 

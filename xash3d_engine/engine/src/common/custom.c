@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "XashDefs/custom.h"
 #include "client/ref_common.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 static rgbdata_t* CustomDecal_LoadImage(const char* path, void* raw, int size)
 {

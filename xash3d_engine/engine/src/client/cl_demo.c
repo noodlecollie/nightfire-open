@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "common/net_encode.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define dem_unknown 0  // unknown command
 #define dem_norewind 1  // startup message

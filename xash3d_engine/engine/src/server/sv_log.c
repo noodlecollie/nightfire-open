@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "Identity/arch.h"
 #include "common/common.h"
 #include "server/server.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 void Log_Open(void)
 {

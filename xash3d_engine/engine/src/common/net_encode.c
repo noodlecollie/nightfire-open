@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "XashDefs/protocol.h"
 #include "client/client.h"
 #include "server/server.h"
-#include "fscallback.h"
+#include "common/fscallback.h"
 
 #define DELTA_PATH "delta.lst"
 
