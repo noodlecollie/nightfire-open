@@ -67,7 +67,9 @@ set(ENGINE_SOURCES
 	src/common/cvar.h
 	src/common/cvar.c
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:src/common/dedicated.c>
+	src/common/engine_builddefs.h
 	src/common/filesystem_engine.c
+	src/common/fscallback.h
 	src/common/gamma.c
 	src/common/host.c
 	src/common/host_state.c
@@ -104,8 +106,10 @@ set(ENGINE_SOURCES
 	src/common/pm_surface.c
 	src/common/pm_trace.c
 	src/common/qfont.h
+	src/common/sequence.h
 	src/common/sequence.c
 	src/common/setpair.h
+	src/common/staticbuildchecks.h
 	src/common/sys_con.c
 	src/common/system.c
 	src/common/system.h
@@ -130,10 +134,6 @@ set(ENGINE_SOURCES
 	src/server/sv_pmove.c
 	src/server/sv_save.c
 	src/server/sv_world.c
-	src/engine_builddefs.h
-	src/fscallback.h
-	src/sequence.h
-	src/staticbuildchecks.h
 )
 
 if(CLIENT_SUPPORT)
@@ -267,7 +267,6 @@ target_compile_definitions(${TARGETNAME_LIB_ENGINE} PRIVATE
 
 target_link_libraries(${TARGETNAME_LIB_ENGINE}
 	PUBLIC
-	${TARGETNAME_INCLUDES_ENGINE}
 	${TARGETNAME_LIB_FILESYSTEM_STDIO}
 
 	PRIVATE
