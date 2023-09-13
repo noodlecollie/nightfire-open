@@ -1,6 +1,6 @@
 #pragma once
 
-#include "surfaceprops.h"
+#include "XashDefs/surfaceprops.h"
 
 #ifdef __cplusplus
 extern "C"

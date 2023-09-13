@@ -10,9 +10,7 @@ CDebugLogger::CDebugLogger(const char* cvarName)
 {
 	ASSERT(cvarName && *cvarName);
 
-	// Bad casting, but I don't think we have a choice.
 	m_EnableCvar.name = const_cast<char*>(cvarName);
-	m_EnableCvar.string = "0";
 }
 
 void CDebugLogger::RegisterCvar()
@@ -20,6 +18,7 @@ void CDebugLogger::RegisterCvar()
 #ifndef CLIENT_DLL
 	m_pEnableCvar = &m_EnableCvar;
 	CVAR_REGISTER(m_pEnableCvar);
+	CVAR_SET_FLOAT(const_cast<char*>(m_pEnableCvar->name), 0);
 #else
 	ASSERT(!m_pEnableCvar);
 	m_pEnableCvar = gEngfuncs.pfnRegisterVariable(m_EnableCvar.name, m_EnableCvar.string, 0);

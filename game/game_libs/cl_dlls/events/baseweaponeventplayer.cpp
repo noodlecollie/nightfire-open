@@ -1,7 +1,7 @@
 #include "baseweaponeventplayer.h"
 #include "hitscanweaponeventplayer.h"
 #include "weaponregistry.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 #include "cdll_int.h"
 #include "cl_dll.h"
 #include "event_api.h"

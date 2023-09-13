@@ -34,7 +34,7 @@
 
 #include "demo_api.h"
 #include "voice_status.h"
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 #include "entity_types.h"
 #include "VGUI_ActionSignal.h"
 #include "VGUI_Scheme.h"

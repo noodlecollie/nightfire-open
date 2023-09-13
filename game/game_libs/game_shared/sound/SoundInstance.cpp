@@ -1,6 +1,6 @@
 #include "SoundInstance.h"
 #include "standard_includes.h"
-#include "eiface.h"
+#include "XashDefs/eiface.h"
 #include "util.h"
 #include "projectInterface/IProjectInterface.h"
 

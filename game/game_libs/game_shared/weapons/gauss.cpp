@@ -26,9 +26,9 @@
 #include "gamerules.h"
 #include "game.h"
 #include "ammodefs.h"
-#include "weaponinfo.h"
+#include "XashDefs/weaponinfo.h"
 #include "radialdamage.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 LINK_ENTITY_TO_CLASS(weapon_gauss, CGauss)

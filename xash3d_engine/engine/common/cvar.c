@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "base_cmd.h"
 #include "XashDefs/eiface.h"  // ARRAYSIZE
 #include "fscallback.h"
+#include "PlatformLib/String.h"
 
 convar_t* cvar_vars = NULL;  // head of list
 convar_t* cmd_scripting;

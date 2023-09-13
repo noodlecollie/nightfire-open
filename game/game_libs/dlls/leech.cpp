@@ -265,7 +265,7 @@ void CLeech::AttackSound(void)
 		EMIT_SOUND_DYN(
 			ENT(pev),
 			CHAN_VOICE,
-			pAttackSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAttackSounds) - 1)],
+			pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackSounds) - 1)],
 			1.0,
 			ATTN_NORM,
 			0,
@@ -279,7 +279,7 @@ void CLeech::AlertSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_VOICE,
-		pAlertSounds[RANDOM_LONG(0, XASH_ARRAY_SIZE(pAlertSounds) - 1)],
+		pAlertSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAlertSounds) - 1)],
 		1.0,
 		ATTN_NORM * 0.5,
 		0,
@@ -293,9 +293,9 @@ void CLeech::Precache(void)
 	// PRECACHE_MODEL( "models/icky.mdl" );
 	PRECACHE_MODEL("models/leech.mdl");
 
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAttackSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAttackSounds); i++ )
 		PRECACHE_SOUND(pAttackSounds[i]);
-	for ( i = 0; i < XASH_ARRAY_SIZE(pAlertSounds); i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY(pAlertSounds); i++ )
 		PRECACHE_SOUND(pAlertSounds[i]);
 }
 

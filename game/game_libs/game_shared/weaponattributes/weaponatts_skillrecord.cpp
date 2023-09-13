@@ -1,6 +1,6 @@
 #include "weaponatts_skillrecord.h"
 #include "util.h"
-#include "eiface.h"
+#include "XashDefs/eiface.h"
 
 namespace WeaponAtts
 {
@@ -16,8 +16,7 @@ namespace WeaponAtts
 
 			cvar_t* cvar = &m_Cvars[index];
 			memset(cvar, 0, sizeof(cvar_t));
-			cvar->name = m_NameBuffers[index].String();
-			cvar->string = "0";
+			cvar->name = const_cast<char*>(m_NameBuffers[index].String());
 		}
 	}
 
@@ -29,7 +28,7 @@ namespace WeaponAtts
 		{
 			m_NameBuffers[index] = other.m_NameBuffers[index];
 			m_Cvars[index] = other.m_Cvars[index];
-			m_Cvars[index].name = m_NameBuffers[index].String();
+			m_Cvars[index].name = const_cast<char*>(m_NameBuffers[index].String());
 		}
 	}
 
@@ -38,6 +37,7 @@ namespace WeaponAtts
 		for ( uint32_t index = 0; index < TOTAL_SKILL_LEVELS; ++index )
 		{
 			CVAR_REGISTER(&m_Cvars[index]);
+			CVAR_SET_FLOAT(m_Cvars[index].name, 0);
 		}
 	}
 

@@ -2,7 +2,7 @@
 #ifndef INPUT_MOUSE_H
 #define INPUT_MOUSE_H
 #include "cl_dll.h"
-#include "usercmd.h"
+#include "XashDefs/usercmd.h"
 #include "in_defs.h"
 
 class AbstractInput

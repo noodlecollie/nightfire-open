@@ -40,7 +40,7 @@ public:
 LINK_ENTITY_TO_CLASS( my_monster, CMyMonster )
 
 //=========================================================
-// Classify - indicates this monster's place in the 
+// Classify - indicates this monster's place in the
 // relationship table.
 //=========================================================
 int	CMyMonster :: Classify ( void )

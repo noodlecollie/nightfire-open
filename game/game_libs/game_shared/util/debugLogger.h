@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 #include "projectInterface/ILogInterface.h"
 
 class CDebugLogger : public ILogInterface

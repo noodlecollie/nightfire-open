@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "MathLib/mathlib.h"
+#include "PlatformDefs/utils.h"
 
 #define NUM_HULL_ROUNDS SIZE_OF_ARRAY(hull_table)
 #define HULL_PRECISION 4

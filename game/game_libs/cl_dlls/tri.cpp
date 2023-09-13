@@ -12,9 +12,9 @@
 
 // Triangle rendering apis are in gEngfuncs.pTriAPI
 
-#include "const.h"
-#include "entity_state.h"
-#include "cl_entity.h"
+#include "XashDefs/const.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/cl_entity.h"
 #include "triangleapi.h"
 #include "customGeometry/geometryStatics.h"
 

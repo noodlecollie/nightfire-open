@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include "eventCommands.h"
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 #include "cl_dll.h"
 #include "projectInterface/IProjectInterface.h"
 #include "debugging/hitscanweapondebugging.h"

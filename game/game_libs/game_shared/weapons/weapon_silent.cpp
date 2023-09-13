@@ -1,6 +1,6 @@
 #include "weapon_silent.h"
 #include "weaponregistry.h"
-#include "weaponinfo.h"
+#include "XashDefs/weaponinfo.h"
 #include "skill.h"
 #include "gamerules.h"
 #include "weapon_pref_weights.h"

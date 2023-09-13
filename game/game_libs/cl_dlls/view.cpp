@@ -9,19 +9,19 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "cvardef.h"
-#include "usercmd.h"
-#include "const.h"
+#include "XashDefs/cvardef.h"
+#include "XashDefs/usercmd.h"
+#include "XashDefs/const.h"
 
-#include "entity_state.h"
-#include "cl_entity.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/cl_entity.h"
 #include "ref_params.h"
 #include "in_defs.h"  // PITCH YAW ROLL
 #include "pm_movevars.h"
 #include "pm_shared.h"
-#include "pm_defs.h"
+#include "XashDefs/pm_defs.h"
 #include "event_api.h"
-#include "pmtrace.h"
+#include "XashDefs/pmtrace.h"
 #include "screenfade.h"
 #include "shake.h"
 #include "hltv.h"
@@ -66,8 +66,8 @@ float vJumpAngles[3];
 void V_DropPunchAngle(float frametime, float* ev_punchangle);
 void VectorAngles(const float* forward, float* angles);
 
-#include "r_studioint.h"
-#include "com_model.h"
+#include "XashDefs/r_studioint.h"
+#include "XashDefs/com_model.h"
 
 extern engine_studio_api_t IEngineStudio;
 
@@ -112,12 +112,12 @@ cvar_t* cl_chasedist;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
 // Register these cvars in V_Init() if needed for easy tweaking
-cvar_t v_iyaw_cycle = {"v_iyaw_cycle", "2", 0, 2, NULL};
-cvar_t v_iroll_cycle = {"v_iroll_cycle", "0.5", 0, 0.5f, NULL};
-cvar_t v_ipitch_cycle = {"v_ipitch_cycle", "1", 0, 1, NULL};
-cvar_t v_iyaw_level = {"v_iyaw_level", "0.3", 0, 0.3f, NULL};
-cvar_t v_iroll_level = {"v_iroll_level", "0.1", 0, 0.1f, NULL};
-cvar_t v_ipitch_level = {"v_ipitch_level", "0.3", 0, 0.3f, NULL};
+cvar_t v_iyaw_cycle = {(char*)"v_iyaw_cycle", (char*)"2", 0, 2, NULL};
+cvar_t v_iroll_cycle = {(char*)"v_iroll_cycle", (char*)"0.5", 0, 0.5f, NULL};
+cvar_t v_ipitch_cycle = {(char*)"v_ipitch_cycle", (char*)"1", 0, 1, NULL};
+cvar_t v_iyaw_level = {(char*)"v_iyaw_level", (char*)"0.3", 0, 0.3f, NULL};
+cvar_t v_iroll_level = {(char*)"v_iroll_level", (char*)"0.1", 0, 0.1f, NULL};
+cvar_t v_ipitch_level = {(char*)"v_ipitch_level", (char*)"0.3", 0, 0.3f, NULL};
 
 float v_idlescale;  // used by TFC for concussion grenade effect
 

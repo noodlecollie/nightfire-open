@@ -2103,7 +2103,7 @@ qboolean MSG_ReadDeltaEntity(
 
 =============================================================================
 */
-void GAME_EXPORT Delta_AddEncoder(char* name, pfnDeltaEncode encodeFunc)
+void GAME_EXPORT Delta_AddEncoder(const char* name, pfnDeltaEncode encodeFunc)
 {
 	delta_info_t* dt;
 

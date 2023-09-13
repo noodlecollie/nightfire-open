@@ -2652,8 +2652,8 @@ pfnClientCommand
 
 =========
 */
-void GAME_EXPORT pfnClientCommand(edict_t* pEdict, char* szFmt, ...) _format(2);
-void GAME_EXPORT pfnClientCommand(edict_t* pEdict, char* szFmt, ...)
+void GAME_EXPORT pfnClientCommand(edict_t* pEdict, const char* szFmt, ...) _format(2);
+void GAME_EXPORT pfnClientCommand(edict_t* pEdict, const char* szFmt, ...)
 {
 	sv_client_t* cl;
 	string buffer;
@@ -3143,8 +3143,8 @@ pfnAlertMessage
 
 =============
 */
-static void pfnAlertMessage(ALERT_TYPE type, char* szFmt, ...) _format(2);
-static void GAME_EXPORT pfnAlertMessage(ALERT_TYPE type, char* szFmt, ...)
+static void pfnAlertMessage(ALERT_TYPE type, const char* szFmt, ...) _format(2);
+static void GAME_EXPORT pfnAlertMessage(ALERT_TYPE type, const char* szFmt, ...)
 {
 	char buffer[2048];
 	va_list args;
@@ -4223,21 +4223,27 @@ pfnSetClientKeyValue
 
 =============
 */
-void GAME_EXPORT pfnSetClientKeyValue(int clientIndex, char* infobuffer, char* key, char* value)
+void GAME_EXPORT pfnSetClientKeyValue(int clientIndex, char* infobuffer, const char* key, const char* value)
 {
 	sv_client_t* cl;
 
 	if ( infobuffer == svs.localinfo || infobuffer == svs.serverinfo )
+	{
 		return;
+	}
 
 	clientIndex -= 1;
 
 	if ( !svs.clients || clientIndex < 0 || clientIndex >= svs.maxclients )
+	{
 		return;
+	}
 
 	// value not changed?
 	if ( !Q_strcmp(Info_ValueForKey(infobuffer, key), value) )
+	{
 		return;
+	}
 
 	cl = &svs.clients[clientIndex];
 

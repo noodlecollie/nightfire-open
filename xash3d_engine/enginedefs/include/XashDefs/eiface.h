@@ -170,7 +170,7 @@ typedef struct enginefuncs_s
 	void (*pfnGetAimVector)(edict_t* ent, float speed, float* rgflReturn);
 	void (*pfnServerCommand)(const char* str);
 	void (*pfnServerExecute)(void);
-	void (*pfnClientCommand)(edict_t* pEdict, char* szFmt, ...);
+	void (*pfnClientCommand)(edict_t* pEdict, const char* szFmt, ...);
 	void (*pfnParticleEffect)(const float* org, const float* dir, float color, float count);
 	void (*pfnLightStyle)(int style, const char* val);
 	int (*pfnDecalIndex)(const char* name);
@@ -190,7 +190,7 @@ typedef struct enginefuncs_s
 	const char* (*pfnCVarGetString)(const char* szVarName);
 	void (*pfnCVarSetFloat)(const char* szVarName, float flValue);
 	void (*pfnCVarSetString)(const char* szVarName, const char* szValue);
-	void (*pfnAlertMessage)(ALERT_TYPE atype, char* szFmt, ...);
+	void (*pfnAlertMessage)(ALERT_TYPE atype, const char* szFmt, ...);
 	void (*pfnEngineFprintf)(FILE* pfile, char* szFmt, ...);
 	void* (*pfnPvAllocEntPrivateData)(edict_t* pEdict, long cb);
 	void* (*pfnPvEntPrivateData)(edict_t* pEdict);
@@ -254,7 +254,7 @@ typedef struct enginefuncs_s
 	char* (*pfnGetInfoKeyBuffer)(edict_t* e);  // passing in NULL gets the serverinfo
 	const char* (*pfnInfoKeyValue)(const char* infobuffer, const char* key);
 	void (*pfnSetKeyValue)(char* infobuffer, char* key, char* value);
-	void (*pfnSetClientKeyValue)(int clientIndex, char* infobuffer, char* key, char* value);
+	void (*pfnSetClientKeyValue)(int clientIndex, char* infobuffer, const char* key, const char* value);
 	int (*pfnIsMapValid)(char* filename);
 	void (*pfnStaticDecal)(const float* origin, int decalIndex, int entityIndex, int modelIndex);
 	int (*pfnPrecacheGeneric)(const char* s);
@@ -295,7 +295,7 @@ typedef struct enginefuncs_s
 	void (*pfnDeltaSetField)(struct delta_s* pFields, const char* fieldname);
 	void (*pfnDeltaUnsetField)(struct delta_s* pFields, const char* fieldname);
 	void (*pfnDeltaAddEncoder)(
-		char* name,
+		const char* name,
 		void (*conditionalencode)(struct delta_s* pFields, const unsigned char* from, const unsigned char* to));
 	int (*pfnGetCurrentPlayer)(void);
 	int (*pfnCanSkipPlayer)(const edict_t* player);

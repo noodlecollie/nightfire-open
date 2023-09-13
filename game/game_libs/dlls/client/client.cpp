@@ -35,8 +35,8 @@
 #include "game.h"
 #include "customentity.h"
 #include "weapons.h"
-#include "weaponinfo.h"
-#include "usercmd.h"
+#include "XashDefs/weaponinfo.h"
+#include "XashDefs/usercmd.h"
 #include "netadr.h"
 #include "pm_shared.h"
 #include "gameresources/GameResources.h"
@@ -564,7 +564,7 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 		 !FStrEq(STRING(pEntity->v.netname), g_engfuncs.pfnInfoKeyValue(infobuffer, "name")) )
 	{
 		char sName[256];
-		char* pName = g_engfuncs.pfnInfoKeyValue(infobuffer, "name");
+		const char* pName = g_engfuncs.pfnInfoKeyValue(infobuffer, "name");
 		PlatformLib_SNPrintF(sName, sizeof(sName), pName, sizeof(sName) - 1);
 		sName[sizeof(sName) - 1] = '\0';
 
@@ -1192,7 +1192,7 @@ void SetupVisibility(edict_t* pViewEntity, edict_t* pClient, unsigned char** pvs
 	*pas = ENGINE_SET_PAS((float*)&org);
 }
 
-#include "entity_state.h"
+#include "XashDefs/entity_state.h"
 
 /*
 AddToFullPack

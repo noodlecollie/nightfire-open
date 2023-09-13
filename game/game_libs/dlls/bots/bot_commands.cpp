@@ -1,7 +1,7 @@
 #include "bot_commands.h"
 #include "standard_includes.h"
 #include "enginecallback.h"
-#include "eiface.h"
+#include "XashDefs/eiface.h"
 #include "gamerules.h"
 #include "botgamerulesinterface.h"
 #include "botregister.h"

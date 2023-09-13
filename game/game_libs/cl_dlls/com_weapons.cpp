@@ -21,9 +21,10 @@
 #include "cl_util.h"
 #include "com_weapons.h"
 
-#include "const.h"
-#include "entity_state.h"
-#include "r_efx.h"
+#include "XashDefs/const.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/r_efx.h"
+#include "XashDefs/edict.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/File.h"
 

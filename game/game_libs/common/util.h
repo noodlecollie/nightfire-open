@@ -38,7 +38,7 @@ MESSAGE_BEGIN(int msg_dest, int msg_type, const float* pOrigin, entvars_t* ent);
 #include "hulldefs.h"
 #include "utlstring.h"
 #include "debug_assert.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 
 class CBaseEntity;
 
@@ -643,7 +643,7 @@ void EMIT_GROUPNAME_SUIT(edict_t* entity, const char* groupname);
 
 #define PRECACHE_SOUND_ARRAY(a) \
 	{ \
-		for ( int i = 0; i < (int)XASH_ARRAY_SIZE(a); i++ ) \
+		for ( int i = 0; i < (int)SIZE_OF_ARRAY(a); i++ ) \
 			PRECACHE_SOUND(a[i]); \
 	}
 
@@ -651,13 +651,13 @@ void EMIT_GROUPNAME_SUIT(edict_t* entity, const char* groupname);
 	EMIT_SOUND_DYN( \
 		ENT(pev), \
 		chan, \
-		array[RANDOM_LONG(0, XASH_ARRAY_SIZE(array) - 1)], \
+		array[RANDOM_LONG(0, SIZE_OF_ARRAY(array) - 1)], \
 		1.0, \
 		ATTN_NORM, \
 		0, \
 		RANDOM_LONG(95, 105));
 
-#define RANDOM_SOUND_ARRAY(array) (array)[RANDOM_LONG(0, XASH_ARRAY_SIZE((array)) - 1)]
+#define RANDOM_SOUND_ARRAY(array) (array)[RANDOM_LONG(0, SIZE_OF_ARRAY((array)) - 1)]
 
 #define GROUP_OP_AND 0
 #define GROUP_OP_NAND 1

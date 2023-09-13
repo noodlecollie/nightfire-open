@@ -1,6 +1,6 @@
 #include "hud.h"
-#include "usercmd.h"
-#include "cvardef.h"
+#include "XashDefs/usercmd.h"
+#include "XashDefs/cvardef.h"
 #include "kbutton.h"
 #include "XashDefs/keydefs.h"
 #include "input_mouse.h"

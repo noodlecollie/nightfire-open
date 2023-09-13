@@ -9,19 +9,19 @@
 #include <stdio.h>
 #include "hud.h"
 #include "cl_util.h"
-#include "cl_entity.h"
+#include "XashDefs/cl_entity.h"
 #include "triangleapi.h"
 #include "hltv.h"
 
 #include "pm_shared.h"
-#include "pm_defs.h"
-#include "pmtrace.h"
+#include "XashDefs/pm_defs.h"
+#include "XashDefs/pmtrace.h"
 #include "parsemsg.h"
 #include "entity_types.h"
 #include "PlatformLib/String.h"
 
 // these are included for the math functions
-#include "com_model.h"
+#include "XashDefs/com_model.h"
 #include "demo_api.h"
 #include "event_api.h"
 #include "studio_util.h"

@@ -16,27 +16,27 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "hulldefs.h"
-#include "const.h"
-#include "entity_state.h"
-#include "cl_entity.h"
+#include "XashDefs/const.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/cl_entity.h"
 #include "entity_types.h"
-#include "usercmd.h"
-#include "pm_defs.h"
+#include "XashDefs/usercmd.h"
+#include "XashDefs/pm_defs.h"
 #include "pm_materials.h"
 
 #include "eventscripts.h"
 #include "ev_hldm.h"
 
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 #include "event_api.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 #include "in_defs.h"
 
 #include <string.h>
 #include <stdio.h>
 
-#include "r_studioint.h"
-#include "com_model.h"
+#include "XashDefs/r_studioint.h"
+#include "XashDefs/com_model.h"
 
 #include "weaponregistry.h"
 #include "genericweapon.h"

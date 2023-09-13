@@ -18,14 +18,14 @@
 #include "../demo.h"
 
 #include "demo_api.h"
-#include "const.h"
-#include "entity_state.h"
-#include "cl_entity.h"
+#include "XashDefs/const.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/cl_entity.h"
 
-#include "pm_defs.h"
+#include "XashDefs/pm_defs.h"
 #include "event_api.h"
 #include "entity_types.h"
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 
 extern BEAM* pBeam;
 extern BEAM* pBeam2;

@@ -21,7 +21,7 @@
 #include "nodes.h"
 #include "player.h"
 #include "ammodefs.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 LINK_ENTITY_TO_CLASS(weapon_glock, CGlock)

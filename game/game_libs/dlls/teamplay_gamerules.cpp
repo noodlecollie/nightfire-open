@@ -194,7 +194,7 @@ void CHalfLifeTeamplay::UpdateGameMode(CBasePlayer* pPlayer)
 const char* CHalfLifeTeamplay::SetDefaultPlayerTeam(CBasePlayer* pPlayer)
 {
 	// copy out the team name from the model
-	char* mdls = g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model");
+	const char* mdls = g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model");
 	PlatformLib_StrCpy(pPlayer->m_szTeamName, sizeof(pPlayer->m_szTeamName), mdls);
 
 	RecountTeams();
@@ -239,7 +239,7 @@ void CHalfLifeTeamplay::InitHUD(CBasePlayer* pPlayer)
 
 	RecountTeams();
 
-	char* mdls = g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model");
+	const char* mdls = g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model");
 	// update the current player of the team he is joining
 	char text[1024];
 	if ( !strcmp(mdls, pPlayer->m_szTeamName) )
@@ -335,7 +335,7 @@ void CHalfLifeTeamplay::ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobu
 	char text[1024];
 
 	// prevent skin/color/model changes
-	char* mdls = g_engfuncs.pfnInfoKeyValue(infobuffer, "model");
+	const char* mdls = g_engfuncs.pfnInfoKeyValue(infobuffer, "model");
 
 	if ( !PlatformLib_StrCaseCmp(mdls, pPlayer->m_szTeamName) )
 		return;

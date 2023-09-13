@@ -16,11 +16,11 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "const.h"
-#include "entity_state.h"
-#include "cl_entity.h"
+#include "XashDefs/const.h"
+#include "XashDefs/entity_state.h"
+#include "XashDefs/cl_entity.h"
 
-#include "r_efx.h"
+#include "XashDefs/r_efx.h"
 
 #include "eventscripts.h"
 #include "event_api.h"

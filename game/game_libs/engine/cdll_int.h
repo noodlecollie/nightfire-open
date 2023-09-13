@@ -27,7 +27,7 @@ extern "C"
 {
 #endif
 
-#include "const.h"
+#include "XashDefs/const.h"
 
 #define MAX_ALIAS_NAME 32
 

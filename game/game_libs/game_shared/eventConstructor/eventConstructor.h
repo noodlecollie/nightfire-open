@@ -2,7 +2,7 @@
 
 #include <utility>
 #include "standard_includes.h"
-#include "event_args.h"
+#include "XashDefs/event_args.h"
 
 namespace EventConstructor
 {

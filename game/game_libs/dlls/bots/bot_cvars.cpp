@@ -2,16 +2,16 @@
 #include "extdll.h"
 #include "enginecallback.h"
 
-cvar_t bot_speed = {"bot_speed", "300", 0, 0.0f, nullptr};
-cvar_t bot_number = {"bot_number", "3", 0, 0.0f, nullptr};
-cvar_t bot_skill = {"bot_skill", "50", 0, 0.0f, nullptr};
-cvar_t bot_skill_aa = {"bot_skill_aa", "0", 0, 0.0f, nullptr};
-cvar_t bot_jump = {"bot_jump", "50", 0, 0.0f, nullptr};
-cvar_t bot_chat = {"bot_chat", "30", 0, 0.0f, nullptr};
-cvar_t bot_dontshoot = {"bot_dontshoot", "0", 0, 0.0f, nullptr};
-cvar_t bot_observer = {"bot_observer", "0", 0, 0.0f, nullptr};
-cvar_t bot_dontmove = {"bot_dontmove", "0", 0, 0.0f, nullptr};
-cvar_t bot_profile_file = {"bot_profile_file", "bot_profiles.json", 0, 0.0f, nullptr};
+cvar_t bot_speed = {(char*)"bot_speed", (char*)"300", 0, 0.0f, nullptr};
+cvar_t bot_number = {(char*)"bot_number", (char*)"3", 0, 0.0f, nullptr};
+cvar_t bot_skill = {(char*)"bot_skill", (char*)"50", 0, 0.0f, nullptr};
+cvar_t bot_skill_aa = {(char*)"bot_skill_aa", (char*)"0", 0, 0.0f, nullptr};
+cvar_t bot_jump = {(char*)"bot_jump", (char*)"50", 0, 0.0f, nullptr};
+cvar_t bot_chat = {(char*)"bot_chat", (char*)"30", 0, 0.0f, nullptr};
+cvar_t bot_dontshoot = {(char*)"bot_dontshoot", (char*)"0", 0, 0.0f, nullptr};
+cvar_t bot_observer = {(char*)"bot_observer", (char*)"0", 0, 0.0f, nullptr};
+cvar_t bot_dontmove = {(char*)"bot_dontmove", (char*)"0", 0, 0.0f, nullptr};
+cvar_t bot_profile_file = {(char*)"bot_profile_file", (char*)"bot_profiles.json", 0, 0.0f, nullptr};
 
 void Bot_RegisterCVars(void)
 {

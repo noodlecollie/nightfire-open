@@ -21,7 +21,7 @@
 #include "nodes.h"
 #include "player.h"
 #include "ammodefs.h"
-#include "weaponinfo.h"
+#include "XashDefs/weaponinfo.h"
 
 #define HANDGRENADE_PRIMARY_VOLUME 450
 

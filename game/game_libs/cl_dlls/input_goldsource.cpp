@@ -16,8 +16,8 @@
 #include "cl_util.h"
 #include "camera.h"
 #include "kbutton.h"
-#include "cvardef.h"
-#include "const.h"
+#include "XashDefs/cvardef.h"
+#include "XashDefs/const.h"
 #include "camera.h"
 #include "in_defs.h"
 #include "XashDefs/keydefs.h"
@@ -28,7 +28,7 @@
 #endif
 
 #ifdef USE_SDL2
-#define XASH_ARRAY_SIZE(p) (sizeof(p) / sizeof(p[0]))
+#define SIZE_OF_ARRAY(p) (sizeof(p) / sizeof(p[0]))
 #include <dlfcn.h>
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_gamecontroller.h>
@@ -156,7 +156,7 @@ bool isMouseRelative = false;
 #endif
 
 #ifdef _WIN32
-#include "progdefs.h"
+#include "XashDefs/progdefs.h"
 extern globalvars_t* gpGlobals;
 #endif
 
@@ -574,7 +574,7 @@ void GoldSourceInput::IN_Shutdown(void)
 #endif
 
 #ifdef USE_SDL2
-	for ( int j = 0; j < XASH_ARRAY_SIZE(sdlFunctions); ++j )
+	for ( int j = 0; j < SIZE_OF_ARRAY(sdlFunctions); ++j )
 	{
 		*(sdlFunctions[j].ppfnFunc) = NULL;
 	}
@@ -1614,7 +1614,7 @@ void GoldSourceInput::IN_Init(void)
 	sdl2Lib = dlopen(SDL2_FULL_LIBNAME, RTLD_NOW | RTLD_LOCAL);
 	if ( sdl2Lib )
 	{
-		for ( int j = 0; j < XASH_ARRAY_SIZE(sdlFunctions); ++j )
+		for ( int j = 0; j < SIZE_OF_ARRAY(sdlFunctions); ++j )
 		{
 			*(sdlFunctions[j].ppfnFunc) = dlsym(sdl2Lib, sdlFunctions[j].name);
 			if ( *sdlFunctions[j].ppfnFunc == NULL )

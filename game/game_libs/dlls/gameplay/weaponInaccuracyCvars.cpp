@@ -2,7 +2,7 @@
 #include "gameplay/inaccuracymodifiers.h"
 #include "gameplay/inaccuracyCvars.h"
 #include "standard_includes.h"
-#include "cvardef.h"
+#include "XashDefs/cvardef.h"
 #include "utlstring.h"
 #include "mp_utils.h"
 #include "weapons/weaponregistry.h"
@@ -13,7 +13,7 @@
 
 namespace WeaponInaccuracyCvars
 {
-#define DEFINE_CVAR(name, value) {name, #value, 0, (float)value, nullptr};
+#define DEFINE_CVAR(name, value) {(char*)name, (char*)#value, 0, (float)value, nullptr};
 
 	// By default this is slightly lower than the max movement speed of the player,
 	// to avoid jitter at the top end of the velocity.
