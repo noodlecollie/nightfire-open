@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "common/library.h"
 #include "Filesystem/filesystem.h"
-#include "server.h"
+#include "server/server.h"
 #include <ctype.h>
 #include "Identity/arch.h"
 #include "PlatformDefs/libnames.h"

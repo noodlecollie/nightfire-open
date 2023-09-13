@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "MathLib/mathlib.h"
 #include "common/common.h"
-#include "server.h"
+#include "server/server.h"
 #include "XashDefs/const.h"
 #include "XashDefs/pm_defs.h"
 

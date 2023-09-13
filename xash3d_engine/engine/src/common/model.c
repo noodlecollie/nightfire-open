@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "common/world.h"
 #include "XashDefs/enginefeatures.h"
 #include "client/client.h"
-#include "server.h"
+#include "server/server.h"
 #include "fscallback.h"
 
 static model_info_t mod_crcinfo[MAX_MODELS];

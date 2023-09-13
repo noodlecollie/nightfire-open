@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "server.h"
+#include "server/server.h"
 #include "base_cmd.h"
 #include "engine_builddefs.h"
 

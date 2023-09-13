@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "XashDefs/const.h"
 #include "common/library.h"
 #include "client/input.h"
-#include "server.h"  // !!svgame.hInstance
+#include "server/server.h"  // !!svgame.hInstance
 #include "client/vid_common.h"
 #include <limits.h>
 #include "fscallback.h"

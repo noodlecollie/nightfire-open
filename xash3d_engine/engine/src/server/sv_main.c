@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "Identity/arch.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "server.h"
+#include "server/server.h"
 #include "common/net_encode.h"
 #include "platform/platform.h"
 #include "fscallback.h"

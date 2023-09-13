@@ -302,7 +302,6 @@ set_common_library_compiler_settings(${TARGETNAME_LIB_ENGINE})
 
 target_include_directories(${TARGETNAME_LIB_ENGINE} PRIVATE
 	src
-	src/server
 )
 
 if(CLIENT_SUPPORT)

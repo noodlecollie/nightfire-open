@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "CRCLib/crclib.h"
 #include "common/common.h"
-#include "server.h"
+#include "server/server.h"
 #include "common/net_encode.h"
 #include "common/library.h"
 #include "client/voice.h"

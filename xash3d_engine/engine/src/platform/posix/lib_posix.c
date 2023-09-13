@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "common/library.h"
 #include "Filesystem/filesystem.h"
-#include "server.h"
+#include "server/server.h"
 #include <dlfcn.h>
 
 #ifdef XASH_DLL_LOADER  // wine-based dll loader

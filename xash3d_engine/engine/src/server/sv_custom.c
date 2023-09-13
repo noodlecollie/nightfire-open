@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "CRCLib/crclib.h"
 #include "common/common.h"
-#include "server.h"
+#include "server/server.h"
 #include "fscallback.h"
 
 void SV_CreateCustomizationList(sv_client_t* cl)

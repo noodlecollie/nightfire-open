@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "PlatformLib/Time.h"
 #include "Identity/arch.h"
 #include "common/common.h"
-#include "server.h"
+#include "server/server.h"
 #include "fscallback.h"
 
 void Log_Open(void)

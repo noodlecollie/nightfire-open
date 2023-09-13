@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "server.h"
+#include "server/server.h"
 #include "common/library.h"
 #include "XashDefs/const.h"
 #include "XashDefs/render_api.h"  // decallist_t

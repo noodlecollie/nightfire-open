@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "server.h"
+#include "server/server.h"
 #include "fscallback.h"
 
 extern convar_t* con_gamemaps;

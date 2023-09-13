@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "platform/platform.h"
 #include "XashDefs/menu_int.h"
-#include "server.h"
+#include "server/server.h"
 #include <shellapi.h>
 
 #if XASH_TIMER == TIMER_WIN32
