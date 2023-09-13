@@ -1,31 +1,31 @@
 include(compiler_settings)
 
 add_library(${TARGETNAME_LIB_REF_SOFT} SHARED
-	adivtab.h
-	r_aclip.c
-	r_beams.c
-	r_bsp.c
-	r_context.c
-	r_decals.c
-	r_draw.c
-	r_edge.c
-	r_glblit.c
-	r_image.c
-	r_light.c
-	r_local.h
-	r_main.c
-	r_math.c
-	r_misc.c
-	r_part.c
-	r_polyse.c
-	r_rast.c
-	r_scan.c
-	r_sprite.c
-	r_studio.c
-	r_surf.c
-	r_trialias.c
-	r_triapi.c
-	r_vgui.c
+	src/adivtab.h
+	src/r_aclip.c
+	src/r_beams.c
+	src/r_bsp.c
+	src/r_context.c
+	src/r_decals.c
+	src/r_draw.c
+	src/r_edge.c
+	src/r_glblit.c
+	src/r_image.c
+	src/r_light.c
+	src/r_local.h
+	src/r_main.c
+	src/r_math.c
+	src/r_misc.c
+	src/r_part.c
+	src/r_polyse.c
+	src/r_rast.c
+	src/r_scan.c
+	src/r_sprite.c
+	src/r_studio.c
+	src/r_surf.c
+	src/r_trialias.c
+	src/r_triapi.c
+	src/r_vgui.c
 )
 
 target_compile_definitions(${TARGETNAME_LIB_REF_SOFT} PRIVATE
