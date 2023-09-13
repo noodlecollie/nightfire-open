@@ -1,6 +1,6 @@
 # NFTODO: Some of these will only be used by the renderers,
 # so could be moved to a private renderer-only interface
-add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+add_library(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	include/XashDefs/alias.h
 	include/XashDefs/beamdef.h
 	include/XashDefs/bspfile.h
@@ -69,14 +69,14 @@ add_library(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
 	include/XashDefs/wrect.h
 )
 
-target_compile_definitions(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+target_compile_definitions(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	BUILDVAR_VERSION_STRING="${VCS_TAG_ID}"
 )
 
-target_include_directories(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+target_include_directories(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	include
 )
 
-target_link_libraries(${TARGETNAME_LIB_ENGINEDEFS} INTERFACE
+target_link_libraries(${TARGETNAME_LIB_ENGINEPUBLIC} INTERFACE
 	${TARGETNAME_LIB_PLATFORMDEFS}
 )
