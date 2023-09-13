@@ -24,7 +24,7 @@ GNU General Public License for more details.
 ==========================================================
 */
 #include "CRTLib/crtlib.h"
-#include "net_buffer.h"
+#include "common/net_buffer.h"
 
 // 0 == regular, 1 == file stream
 #define MAX_STREAMS 2

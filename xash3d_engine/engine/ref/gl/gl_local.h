@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include "XashDefs/enginefeatures.h"
 #include "XashDefs/com_strings.h"
 #include "XashDefs/pm_movevars.h"
-// #include "cvar.h"
+// #include "common/cvar.h"
 #include "gl_export.h"
 #include "XashDefs/wadfile.h"
 #include "XashDefs/dll_types.h"

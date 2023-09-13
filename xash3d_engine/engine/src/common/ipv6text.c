@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "ipv6text.h"
+#include "common/ipv6text.h"
 #include "PlatformLib/String.h"
 #include "PlatformDefs/typedefs.h"
 

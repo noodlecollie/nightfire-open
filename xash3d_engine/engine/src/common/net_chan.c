@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common/netchan.h"
 #include "common/net_encode.h"
 #include "XashDefs/protocol.h"
-#include "net_byteswap.h"
+#include "common/net_byteswap.h"
 #include "common/fscallback.h"
 
 #define MAKE_FRAGID(id, count) (((id & 0xffff) << 16) | (count & 0xffff))

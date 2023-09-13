@@ -37,7 +37,7 @@ GNU General Public License for more details.
 #include "Identity/arch.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "base_cmd.h"
+#include "common/base_cmd.h"
 #include "client/client.h"
 #include "common/netchan.h"
 #include "XashDefs/protocol.h"
@@ -45,7 +45,7 @@ GNU General Public License for more details.
 #include "client/input.h"
 #include "XashDefs/enginefeatures.h"
 #include "XashDefs/render_api.h"
-#include "tests.h"
+#include "common/tests.h"
 #include "common/fscallback.h"
 #include "common/engine_builddefs.h"
 

@@ -508,7 +508,7 @@ void VOX_Shutdown(void)
 }
 
 #if XASH_ENGINE_TESTS()
-#include "tests.h"
+#include "common/tests.h"
 
 static void Test_VOX_GetDirectory(void)
 {

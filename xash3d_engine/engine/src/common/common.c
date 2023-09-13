@@ -1271,7 +1271,7 @@ void GAME_EXPORT pfnResetTutorMessageDecayData(void)
 
 #if XASH_ENGINE_TESTS()
 
-#include "tests.h"
+#include "common/tests.h"
 
 void Test_RunCommon(void)
 {

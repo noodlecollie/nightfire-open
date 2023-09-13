@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include <math.h>  // fabs...
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "base_cmd.h"
+#include "common/base_cmd.h"
 #include "XashDefs/eiface.h"  // SIZE_OF_ARRAY
 #include "common/fscallback.h"
 #include "PlatformLib/String.h"
@@ -1291,7 +1291,7 @@ void Cvar_PostFSInit(void)
 }
 
 #if XASH_ENGINE_TESTS()
-#include "tests.h"
+#include "common/tests.h"
 
 void Test_RunCvar(void)
 {

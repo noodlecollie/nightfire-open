@@ -542,7 +542,7 @@ rgbdata_t* FS_CopyImage(rgbdata_t* in)
 }
 
 #if XASH_ENGINE_TESTS()
-#include "tests.h"
+#include "common/tests.h"
 
 static void GeneratePixel(byte* pix, uint i, uint j, uint w, uint h, qboolean genAlpha)
 {

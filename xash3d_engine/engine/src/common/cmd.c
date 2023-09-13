@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "server/server.h"
-#include "base_cmd.h"
+#include "common/base_cmd.h"
 #include "common/engine_builddefs.h"
 
 #define MAX_CMD_BUFFER 32768
@@ -1461,7 +1461,7 @@ void Cmd_Init(void)
 }
 
 #if XASH_ENGINE_TESTS()
-#include "tests.h"
+#include "common/tests.h"
 
 enum
 {

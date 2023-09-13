@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "base_cmd.h"
+#include "common/base_cmd.h"
 #include "XashDefs/cdll_int.h"
 #include "CRCLib/crclib.h"
 

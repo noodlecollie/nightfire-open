@@ -468,7 +468,7 @@ const char* COM_GetPlatformNeutralName(const char* in_name)
 }
 
 #if XASH_ENGINE_TESTS()
-#include "tests.h"
+#include "common/tests.h"
 
 static void Test_DetectMangleType(void)
 {

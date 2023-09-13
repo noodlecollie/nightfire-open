@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"  // ConnectionProgress
 #include "common/netchan.h"
-#include "ipv6text.h"
+#include "common/ipv6text.h"
 #include "common/fscallback.h"
 
 #if XASH_WIN32()

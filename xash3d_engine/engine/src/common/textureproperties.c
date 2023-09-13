@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "textureproperties.h"
+#include "common/textureproperties.h"
 #include "XashDefs/surfaceprops.h"
 #include "CRTLib/crtlib.h"
 

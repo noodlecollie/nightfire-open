@@ -118,7 +118,7 @@ typedef enum
 #include "XashDefs/com_model.h"
 #include "XashDefs/com_strings.h"
 #include "CRTLib/crtlib.h"
-#include "cvar.h"
+#include "common/cvar.h"
 #include "XashDefs/con_nprint.h"
 #include "XashDefs/ref_api.h"
 
@@ -239,7 +239,7 @@ typedef enum
 	RD_PACKET
 } rdtype_t;
 
-#include "net_ws.h"
+#include "common/net_ws.h"
 
 // console field
 typedef struct

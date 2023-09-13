@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include "XashDefs/enginefeatures.h"
 #include "XashDefs/com_strings.h"
 #include "XashDefs/pm_movevars.h"
-// #include "cvar.h"
+// #include "common/cvar.h"
 typedef struct mip_s mip_t;
 
 typedef int fixed8_t;

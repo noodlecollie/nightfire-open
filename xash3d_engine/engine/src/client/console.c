@@ -2426,7 +2426,7 @@ void GAME_EXPORT Con_DefaultColor(int r, int g, int b)
 }
 
 #if XASH_ENGINE_TESTS()
-#include "tests.h"
+#include "common/tests.h"
 
 /*
 ================

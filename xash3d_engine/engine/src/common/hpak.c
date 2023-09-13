@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "hpak.h"
+#include "common/hpak.h"
 #include "CRCLib/crclib.h"
 #include "common/fscallback.h"
 

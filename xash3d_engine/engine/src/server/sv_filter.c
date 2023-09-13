@@ -613,7 +613,7 @@ void SV_ShutdownFilter(void)
 
 #if XASH_ENGINE_TESTS()
 
-#include "tests.h"
+#include "common/tests.h"
 
 void Test_StringToFilterAdr(void)
 {
