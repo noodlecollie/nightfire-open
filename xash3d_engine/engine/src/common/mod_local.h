@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "EngineGamesAPI/mod_local_defs.h"
+#include "EngineRefAPI/mod_local_defs.h"
 
 #ifndef REF_DLL
 extern world_static_t world;

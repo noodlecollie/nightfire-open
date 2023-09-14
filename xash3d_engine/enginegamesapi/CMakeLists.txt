@@ -29,7 +29,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/keydefs.h
 	include/EngineGamesAPI/link.h
 	include/EngineGamesAPI/mobility_int.h
-	include/EngineGamesAPI/mod_local_defs.h
 	include/EngineGamesAPI/netadr.h
 	include/EngineGamesAPI/particledef.h
 	include/EngineGamesAPI/physint.h
