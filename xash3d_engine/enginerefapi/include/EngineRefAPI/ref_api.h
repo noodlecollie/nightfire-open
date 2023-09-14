@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
 #include "EngineRefAPI/com_image.h"
-#include "EngineGamesAPI/vgui_api.h"
+#include "EngineRefAPI/vgui_api.h"
 #include "EngineGamesAPI/render_api.h"
 #include "EngineGamesAPI/triangleapi.h"
 #include "EngineGamesAPI/const.h"

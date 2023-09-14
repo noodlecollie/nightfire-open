@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/protocol.h"
 #include "EngineGamesAPI/dlight.h"
 #include "gl_frustum.h"
-#include "EngineGamesAPI/ref_api.h"
+#include "EngineRefAPI/ref_api.h"
 #include "MathLib/mathlib.h"
 #include "EngineGamesAPI/ref_params.h"
 #include "EngineGamesAPI/enginefeatures.h"

@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include "EngineGamesAPI/key_modifiers.h"
-#include "EngineGamesAPI/cursor_type.h"
+#include "EngineRefAPI/cursor_type.h"
 
 // VGUI generic vertex
 

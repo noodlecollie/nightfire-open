@@ -4,7 +4,7 @@
 
 #include "EngineGamesAPI/edict.h"
 #include "EngineGamesAPI/eiface.h"
-#include "EngineGamesAPI/ref_api.h"
+#include "EngineRefAPI/ref_api.h"
 #include "EngineGamesAPI/studio.h"
 
 #define LM_SAMPLE_SIZE 16

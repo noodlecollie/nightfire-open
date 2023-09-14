@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #if !defined REF_COMMON_H && !defined REF_DLL
 #define REF_COMMON_H
 
-#include "EngineGamesAPI/ref_api.h"
+#include "EngineRefAPI/ref_api.h"
 
 #define RP_LOCALCLIENT(e) ((e) != NULL && (e)->index == (cl.playernum + 1) && e->player)
 

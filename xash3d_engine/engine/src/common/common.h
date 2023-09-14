@@ -120,7 +120,7 @@ typedef enum
 #include "CRTLib/crtlib.h"
 #include "common/cvar.h"
 #include "EngineGamesAPI/con_nprint.h"
-#include "EngineGamesAPI/ref_api.h"
+#include "EngineRefAPI/ref_api.h"
 
 // PERFORMANCE INFO
 #define MIN_FPS 20.0f  // host minimum fps value for maxfps.
