@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/cl_entity.h"
 #include "common/mod_local.h"
 #include "EngineGamesAPI/pm_defs.h"
-#include "EngineGamesAPI/pm_movevars.h"
+#include "EngineRefAPI/pm_movevars.h"
 #include "EngineGamesAPI/ref_params.h"
 #include "EngineGamesAPI/render_api.h"
 #include "client/cdll_exp.h"

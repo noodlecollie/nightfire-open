@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/net_encode.h"
 #include "EngineGamesAPI/event_api.h"
 #include "EngineGamesAPI/usercmd.h"
-#include "EngineGamesAPI/pm_movevars.h"
+#include "EngineRefAPI/pm_movevars.h"
 #include "EngineGamesAPI/entity_state.h"
 #include "EngineGamesAPI/weaponinfo.h"
 #include "EngineGamesAPI/event_args.h"

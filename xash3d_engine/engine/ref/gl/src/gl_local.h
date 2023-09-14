@@ -29,7 +29,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/ref_params.h"
 #include "EngineRefAPI/enginefeatures.h"
 #include "EngineGamesAPI/com_strings.h"
-#include "EngineGamesAPI/pm_movevars.h"
+#include "EngineRefAPI/pm_movevars.h"
 // #include "common/cvar.h"
 #include "gl_export.h"
 #include "EngineGamesAPI/wadfile.h"

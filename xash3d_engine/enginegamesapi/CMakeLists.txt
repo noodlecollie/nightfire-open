@@ -34,7 +34,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/physint.h
 	include/EngineGamesAPI/pm_defs.h
 	include/EngineGamesAPI/pm_info.h
-	include/EngineGamesAPI/pm_movevars.h
 	include/EngineGamesAPI/pmtrace.h
 	include/EngineGamesAPI/progdefs.h
 	include/EngineGamesAPI/protocol.h

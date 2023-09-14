@@ -11,6 +11,7 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/mempool.h
 	include/EngineRefAPI/menu_int.h
 	include/EngineRefAPI/mod_local_defs.h
+	include/EngineRefAPI/pm_movevars.h
 	include/EngineRefAPI/ref_api.h
 	include/EngineRefAPI/vgui_api.h
 )

@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/physint.h"  // physics interface
 #include "common/mod_local.h"
 #include "EngineGamesAPI/pm_defs.h"
-#include "EngineGamesAPI/pm_movevars.h"
+#include "EngineRefAPI/pm_movevars.h"
 #include "EngineGamesAPI/entity_state.h"
 #include "EngineGamesAPI/protocol.h"
 #include "common/netchan.h"
