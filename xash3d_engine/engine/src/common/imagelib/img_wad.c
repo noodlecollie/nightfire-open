@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"
 #include "EngineGamesAPI/studio.h"
-#include "EngineGamesAPI/sprite.h"
+#include "EngineRefAPI/sprite.h"
 #include "common/qfont.h"
 
 /*

@@ -41,7 +41,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/ref_params.h
 	include/EngineGamesAPI/screenfade.h
 	include/EngineGamesAPI/shake.h
-	include/EngineGamesAPI/sprite.h
 	include/EngineGamesAPI/studio_event.h
 	include/EngineGamesAPI/studio.h
 	include/EngineGamesAPI/surfaceprops.h

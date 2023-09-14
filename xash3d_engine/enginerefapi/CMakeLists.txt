@@ -15,6 +15,7 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/protocol.h
 	include/EngineRefAPI/ref_api.h
 	include/EngineRefAPI/render_api.h
+	include/EngineRefAPI/sprite.h
 	include/EngineRefAPI/vgui_api.h
 )
 

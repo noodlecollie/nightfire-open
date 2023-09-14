@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "CRCLib/crclib.h"
 #include "common/common.h"
 #include "common/mod_local.h"
-#include "EngineGamesAPI/sprite.h"
+#include "EngineRefAPI/sprite.h"
 #include "EngineRefAPI/alias.h"
 #include "EngineGamesAPI/studio.h"
 #include "common/world.h"

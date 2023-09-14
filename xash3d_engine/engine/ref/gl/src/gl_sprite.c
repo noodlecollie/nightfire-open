@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "EngineRefAPI/log_strings.h"
 #include "gl_local.h"
-#include "EngineGamesAPI/sprite.h"
+#include "EngineRefAPI/sprite.h"
 #include "EngineGamesAPI/studio.h"
 #include "EngineGamesAPI/entity_types.h"
 #include "EngineGamesAPI/pm_defs.h"
