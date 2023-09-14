@@ -19,10 +19,10 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/studio.h"
 #include "MathLib/mathlib.h"
 #include "common/fscallback.h"
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/const.h"
 #include "client/client.h"
 #include "common/library.h"
 #include "common/sequence.h"

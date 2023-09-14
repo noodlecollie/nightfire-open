@@ -16,9 +16,9 @@
 #pragma once
 
 #include <stdio.h>
-#include "EngineGamesAPI/custom.h"
-#include "EngineGamesAPI/cvardef.h"
-#include "EngineGamesAPI/edict.h"
+#include "EnginePublicAPI/custom.h"
+#include "EnginePublicAPI/cvardef.h"
+#include "EnginePublicAPI/edict.h"
 
 #define NEW_DLL_FUNCTIONS_VERSION 1
 #define INTERFACE_VERSION 140

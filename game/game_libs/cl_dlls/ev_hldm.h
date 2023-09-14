@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "EngineGamesAPI/surfaceprops.h"
+#include "EnginePublicAPI/surfaceprops.h"
 
 struct pmtrace_s;
 struct event_args_s;

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "EngineGamesAPI/cdll_int.h"
+#include "EnginePublicAPI/cdll_int.h"
 
 //---------------------------------------------------------------------------
 // sequenceCommandEnum_e

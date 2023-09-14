@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #define _GNU_SOURCE
 #endif
 
-#include "EngineGamesAPI/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/Time.h"
 #include "Identity/arch.h"
 #include "common/common.h"

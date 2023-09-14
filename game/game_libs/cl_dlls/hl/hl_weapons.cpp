@@ -21,12 +21,12 @@
 #include "nodes.h"
 #include "player.h"
 
-#include "EngineGamesAPI/usercmd.h"
-#include "EngineGamesAPI/entity_state.h"
-#include "EngineGamesAPI/demo_api.h"
-#include "EngineGamesAPI/pm_defs.h"
-#include "EngineGamesAPI/event_api.h"
-#include "EngineGamesAPI/r_efx.h"
+#include "EnginePublicAPI/usercmd.h"
+#include "EnginePublicAPI/entity_state.h"
+#include "EnginePublicAPI/demo_api.h"
+#include "EnginePublicAPI/pm_defs.h"
+#include "EnginePublicAPI/event_api.h"
+#include "EnginePublicAPI/r_efx.h"
 
 #include "../hud_iface.h"
 #include "../com_weapons.h"

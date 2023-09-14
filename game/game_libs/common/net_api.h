@@ -16,7 +16,7 @@
 #ifndef NET_API_H
 #define NET_API_H
 
-#include "EngineGamesAPI/netadr.h"
+#include "EnginePublicAPI/netadr.h"
 
 #define NETAPI_REQUEST_SERVERLIST (0)  // Doesn't need a remote address
 #define NETAPI_REQUEST_PING (1)

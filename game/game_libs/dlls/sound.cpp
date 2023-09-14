@@ -24,7 +24,7 @@
 #include "talkmonster.h"
 #include "gamerules.h"
 #include "resources/SoundResources.h"
-#include "EngineGamesAPI/com_model.h"
+#include "EnginePublicAPI/com_model.h"
 #include "sound/ServerSoundInstance.h"
 #include "resources/SurfaceAttributes.h"
 #include "PlatformLib/String.h"

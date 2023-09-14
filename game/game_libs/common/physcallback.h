@@ -16,7 +16,7 @@
 #ifndef PHYSCALLBACK_H
 #define PHYSCALLBACK_H
 
-#include "EngineGamesAPI/physint.h"
+#include "EnginePublicAPI/physint.h"
 
 // Must be provided by user of this code
 extern server_physics_api_t g_physfuncs;

@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
 #include "PlatformDefs/platformid.h"
-#include "EngineGamesAPI/engine_limits.h"
+#include "EnginePublicAPI/engine_limits.h"
 #include "EngineRefAPI/mempool.h"
 
 #if XASH_WIN32()

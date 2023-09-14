@@ -14,14 +14,14 @@ GNU General Public License for more details.
 */
 
 #include "CRTLib/bitdefs.h"
-#include "EngineGamesAPI/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/String.h"
 #include "Identity/arch.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "EngineGamesAPI/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "EngineRefAPI/protocol.h"  // get the protocol version
-#include "EngineGamesAPI/con_nprint.h"
+#include "EnginePublicAPI/con_nprint.h"
 #include "common/qfont.h"
 #include "EngineRefAPI/wadfile.h"
 #include "client/input.h"

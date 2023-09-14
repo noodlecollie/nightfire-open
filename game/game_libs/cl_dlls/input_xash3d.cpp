@@ -1,8 +1,8 @@
 #include "hud.h"
-#include "EngineGamesAPI/usercmd.h"
-#include "EngineGamesAPI/cvardef.h"
+#include "EnginePublicAPI/usercmd.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "kbutton.h"
-#include "EngineGamesAPI/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "input_mouse.h"
 extern cvar_t* sensitivity;
 extern cvar_t* in_joystick;

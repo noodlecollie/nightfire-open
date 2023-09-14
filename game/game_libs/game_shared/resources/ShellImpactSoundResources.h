@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseResourceCollection.h"
-#include "EngineGamesAPI/surfaceprops.h"
+#include "EnginePublicAPI/surfaceprops.h"
 
 enum class ShellType
 {

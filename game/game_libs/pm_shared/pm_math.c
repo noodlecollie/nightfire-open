@@ -15,7 +15,7 @@
 // pm_math.c -- math primitives
 
 #include "mathlib.h"
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/const.h"
 #include <math.h>
 
 // up / down

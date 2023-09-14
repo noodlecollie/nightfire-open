@@ -22,13 +22,13 @@
 #include "nodes.h"
 #include "player.h"
 #include "soundent.h"
-#include "EngineGamesAPI/shake.h"
+#include "EnginePublicAPI/shake.h"
 #include "gamerules.h"
 #include "game.h"
 #include "ammodefs.h"
-#include "EngineGamesAPI/weaponinfo.h"
+#include "EnginePublicAPI/weaponinfo.h"
 #include "radialdamage.h"
-#include "EngineGamesAPI/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 LINK_ENTITY_TO_CLASS(weapon_gauss, CGauss)

@@ -16,9 +16,9 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "EngineGamesAPI/typedefs.h"
+#include "EnginePublicAPI/typedefs.h"
 #include "EngineRefAPI/lightstyle.h"
-#include "EngineGamesAPI/dlight.h"
+#include "EnginePublicAPI/dlight.h"
 
 struct ref_viewpass_s;
 struct cl_entity_s;

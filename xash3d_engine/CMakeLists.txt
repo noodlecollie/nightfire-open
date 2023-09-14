@@ -18,7 +18,7 @@ target_include_directories(${TARGETNAME_INCLUDES_ENGINE} INTERFACE
 add_subdirectory(thirdparty)
 add_subdirectory(filesystem)
 add_subdirectory(engine)
-add_subdirectory(enginegamesapi)
+add_subdirectory(enginepublicapi)
 add_subdirectory(enginerefapi)
 
 if(NOT NF_SINGLE_ENGINE_BINARY)

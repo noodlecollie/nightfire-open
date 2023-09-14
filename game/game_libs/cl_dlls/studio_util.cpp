@@ -8,8 +8,8 @@
 #include <memory.h>
 #include "hud.h"
 #include "cl_util.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/com_model.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/com_model.h"
 #include "studio_util.h"
 
 /*

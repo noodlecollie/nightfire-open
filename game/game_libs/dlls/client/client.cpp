@@ -33,17 +33,17 @@
 #include "soundent.h"
 #include "gamerules.h"
 #include "game.h"
-#include "EngineGamesAPI/customentity.h"
+#include "EnginePublicAPI/customentity.h"
 #include "weapons.h"
-#include "EngineGamesAPI/weaponinfo.h"
-#include "EngineGamesAPI/usercmd.h"
-#include "EngineGamesAPI/netadr.h"
+#include "EnginePublicAPI/weaponinfo.h"
+#include "EnginePublicAPI/usercmd.h"
+#include "EnginePublicAPI/netadr.h"
 #include "pm_shared.h"
 #include "gameresources/GameResources.h"
 #include "prop_playercorpse.h"
 #include "gameplay/gameplaySystems.h"
 #include "resources/SoundResources.h"
-#include "EngineGamesAPI/com_strings.h"
+#include "EnginePublicAPI/com_strings.h"
 #include "PlatformLib/String.h"
 #include "client/clientCommandRegister.h"
 
@@ -1192,7 +1192,7 @@ void SetupVisibility(edict_t* pViewEntity, edict_t* pClient, unsigned char** pvs
 	*pas = ENGINE_SET_PAS((float*)&org);
 }
 
-#include "EngineGamesAPI/entity_state.h"
+#include "EnginePublicAPI/entity_state.h"
 
 /*
 AddToFullPack

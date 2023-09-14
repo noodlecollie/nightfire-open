@@ -19,9 +19,9 @@ extern "C"
 {
 #include "kbutton.h"
 }
-#include "EngineGamesAPI/cvardef.h"
-#include "EngineGamesAPI/usercmd.h"
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/cvardef.h"
+#include "EnginePublicAPI/usercmd.h"
+#include "EnginePublicAPI/const.h"
 #include "camera.h"
 #include "in_defs.h"
 // #include "view.h"

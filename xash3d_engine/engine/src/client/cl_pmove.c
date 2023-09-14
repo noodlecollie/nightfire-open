@@ -16,11 +16,11 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/const.h"
 #include "client/cl_tent.h"
 #include "common/pm_local.h"
-#include "EngineGamesAPI/particledef.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/particledef.h"
+#include "EnginePublicAPI/studio.h"
 
 #define MAX_FORWARD 6  // forward probes for set idealpitch
 #define MIN_CORRECTION_DISTANCE 0.25f  // use smoothing if error is > this

@@ -17,12 +17,12 @@ GNU General Public License for more details.
 
 // HLSDK includes
 #include "mathlib.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/keydefs.h"
-#include "EngineGamesAPI/ref_params.h"
-#include "EngineGamesAPI/cl_entity.h"
-#include "EngineGamesAPI/com_model.h"
-#include "EngineGamesAPI/entity_types.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/keydefs.h"
+#include "EnginePublicAPI/ref_params.h"
+#include "EnginePublicAPI/cl_entity.h"
+#include "EnginePublicAPI/com_model.h"
+#include "EnginePublicAPI/entity_types.h"
 // HLSDK includes end
 #include "BaseItem.h"
 

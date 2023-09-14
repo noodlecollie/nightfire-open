@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/libnames.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/const.h"
 #include "common/library.h"
 #include "client/input.h"
 #include "server/server.h"  // !!svgame.hInstance

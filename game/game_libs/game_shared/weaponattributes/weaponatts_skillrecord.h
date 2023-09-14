@@ -1,7 +1,7 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "EngineGamesAPI/cvardef.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "skill.h"
 #include "utlstring.h"
 

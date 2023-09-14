@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include "eventCommands.h"
-#include "EngineGamesAPI/cvardef.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "cl_dll.h"
 #include "projectInterface/IProjectInterface.h"
 #include "debugging/hitscanweapondebugging.h"

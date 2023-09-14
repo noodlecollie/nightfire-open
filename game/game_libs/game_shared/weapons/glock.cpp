@@ -21,7 +21,7 @@
 #include "nodes.h"
 #include "player.h"
 #include "ammodefs.h"
-#include "EngineGamesAPI/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 LINK_ENTITY_TO_CLASS(weapon_glock, CGlock)

@@ -15,9 +15,9 @@ GNU General Public License for more details.
 
 #include "gl_local.h"
 #include "MathLib/mathlib.h"
-#include "EngineGamesAPI/beamdef.h"
-#include "EngineGamesAPI/particledef.h"
-#include "EngineGamesAPI/entity_types.h"
+#include "EnginePublicAPI/beamdef.h"
+#include "EnginePublicAPI/particledef.h"
+#include "EnginePublicAPI/entity_types.h"
 
 #define IsLiquidContents(cnt) (cnt == CONTENTS_WATER || cnt == CONTENTS_SLIME || cnt == CONTENTS_LAVA)
 

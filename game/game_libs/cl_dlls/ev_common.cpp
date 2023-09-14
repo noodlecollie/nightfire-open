@@ -16,14 +16,14 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/entity_state.h"
-#include "EngineGamesAPI/cl_entity.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/entity_state.h"
+#include "EnginePublicAPI/cl_entity.h"
 
-#include "EngineGamesAPI/r_efx.h"
+#include "EnginePublicAPI/r_efx.h"
 
 #include "eventscripts.h"
-#include "EngineGamesAPI/event_api.h"
+#include "EnginePublicAPI/event_api.h"
 #include "pm_shared.h"
 
 #define IS_FIRSTPERSON_SPEC (g_iUser1 == OBS_IN_EYE || (g_iUser1 && (gHUD.m_Spectator.m_pip->value == INSET_IN_EYE)))

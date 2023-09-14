@@ -15,7 +15,7 @@ GNU General Public License for more details.
 #ifndef HPAK_H
 #define HPAK_H
 
-#include "EngineGamesAPI/custom.h"
+#include "EnginePublicAPI/custom.h"
 #include "PlatformDefs/static_assert.h"
 
 /*

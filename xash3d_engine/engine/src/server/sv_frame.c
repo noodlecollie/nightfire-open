@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/const.h"
 #include "common/net_encode.h"
 
 typedef struct

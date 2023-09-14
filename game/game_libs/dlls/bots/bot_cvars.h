@@ -1,7 +1,7 @@
 #ifndef BOT_CVARS_H
 #define BOT_CVARS_H
 
-#include "EngineGamesAPI/cvardef.h"
+#include "EnginePublicAPI/cvardef.h"
 
 extern cvar_t bot_speed;
 extern cvar_t bot_number;

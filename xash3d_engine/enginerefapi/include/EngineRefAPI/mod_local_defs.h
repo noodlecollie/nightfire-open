@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "EngineGamesAPI/edict.h"
-#include "EngineGamesAPI/eiface.h"
+#include "EnginePublicAPI/edict.h"
+#include "EnginePublicAPI/eiface.h"
 #include "EngineRefAPI/ref_api.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/studio.h"
 
 #define LM_SAMPLE_SIZE 16
 #define LM_SAMPLE_EXTRASIZE 8

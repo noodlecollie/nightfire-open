@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "client/vgui/vgui_draw.h"
 #include "EngineRefAPI/vgui_api.h"
 #include "common/library.h"
-#include "EngineGamesAPI/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "client/ref_common.h"
 #include "client/input.h"
 #include "platform/platform.h"

@@ -25,7 +25,7 @@
 #include "cbase.h"
 #include "saverestore.h"
 #include <time.h>
-#include "EngineGamesAPI/shake.h"
+#include "EnginePublicAPI/shake.h"
 #include "decals.h"
 #include "player.h"
 #include "weapons.h"

@@ -10,13 +10,13 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/com_model.h"
-#include "EngineGamesAPI/studio.h"
-#include "EngineGamesAPI/entity_state.h"
-#include "EngineGamesAPI/cl_entity.h"
-#include "EngineGamesAPI/dlight.h"
-#include "EngineGamesAPI/triangleapi.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/com_model.h"
+#include "EnginePublicAPI/studio.h"
+#include "EnginePublicAPI/entity_state.h"
+#include "EnginePublicAPI/cl_entity.h"
+#include "EnginePublicAPI/dlight.h"
+#include "EnginePublicAPI/triangleapi.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -26,7 +26,7 @@
 #include "PlatformLib/String.h"
 
 #include "studio_util.h"
-#include "EngineGamesAPI/r_studioint.h"
+#include "EnginePublicAPI/r_studioint.h"
 
 #include "StudioModelRenderer.h"
 #include "GameStudioModelRenderer.h"

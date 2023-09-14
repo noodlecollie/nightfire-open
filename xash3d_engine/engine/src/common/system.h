@@ -24,7 +24,7 @@ extern "C"
 #include <setjmp.h>
 #include <stdio.h>
 #include <time.h>
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/const.h"
 #include "CRTLib/crtlib.h"
 #include "platform/platform.h"
 #include "EngineRefAPI/dll_types.h"

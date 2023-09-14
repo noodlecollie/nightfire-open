@@ -14,9 +14,9 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "EngineGamesAPI/shake.h"
-#include "EngineGamesAPI/screenfade.h"
-#include "EngineGamesAPI/cdll_int.h"
+#include "EnginePublicAPI/shake.h"
+#include "EnginePublicAPI/screenfade.h"
+#include "EnginePublicAPI/cdll_int.h"
 
 static void R_ParseDetailTextures(const char* filename)
 {

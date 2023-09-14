@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include <ctype.h>
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "EngineGamesAPI/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 #include "common/sequence.h"
 #include "common/fscallback.h"
 

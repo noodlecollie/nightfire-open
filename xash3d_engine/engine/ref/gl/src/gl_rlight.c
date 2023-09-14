@@ -14,10 +14,10 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/studio.h"
 #include "MathLib/mathlib.h"
-#include "EngineGamesAPI/ref_params.h"
-#include "EngineGamesAPI/pm_defs.h"
+#include "EnginePublicAPI/ref_params.h"
+#include "EnginePublicAPI/pm_defs.h"
 
 /*
 =============================================================================

@@ -27,7 +27,7 @@
 #include "parsemsg.h"
 #include <string.h>
 
-#include "EngineGamesAPI/mobility_int.h"
+#include "EnginePublicAPI/mobility_int.h"
 #include "damagedefs.h"
 #include "miniutl.h"
 

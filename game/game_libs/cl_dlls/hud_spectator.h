@@ -9,7 +9,7 @@
 #ifndef HUD_SPECTATOR_H
 #define HUD_SPECTATOR_H
 
-#include "EngineGamesAPI/cl_entity.h"
+#include "EnginePublicAPI/cl_entity.h"
 
 #define INSET_OFF 0
 #define INSET_CHASE_FREE 1

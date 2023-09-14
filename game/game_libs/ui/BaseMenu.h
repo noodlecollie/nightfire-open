@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "../public/cl_dll/IGameClientExports.h"
 #endif
 #include "enginecallback_menu.h"
-#include "EngineGamesAPI/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "Primitive.h"
 #include "EventSystem.h"
 #include "Utils.h"

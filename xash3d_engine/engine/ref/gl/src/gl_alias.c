@@ -16,13 +16,13 @@ GNU General Public License for more details.
 #include "EngineRefAPI/log_strings.h"
 #include "MathLib/mathlib.h"
 #include "gl_local.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/r_studioint.h"
-#include "EngineGamesAPI/triangleapi.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/r_studioint.h"
+#include "EnginePublicAPI/triangleapi.h"
 #include "EngineRefAPI/alias.h"
-#include "EngineGamesAPI/pm_defs.h"
-#include "EngineGamesAPI/pmtrace.h"
-#include "EngineGamesAPI/typedefs.h"
+#include "EnginePublicAPI/pm_defs.h"
+#include "EnginePublicAPI/pmtrace.h"
+#include "EnginePublicAPI/typedefs.h"
 
 extern cvar_t r_shadows;
 

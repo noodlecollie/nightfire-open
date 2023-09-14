@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "EngineGamesAPI/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/Time.h"
 #include "Identity/arch.h"
 #include "common/common.h"

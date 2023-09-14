@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include <fcntl.h>
 #endif  // !XASH_WIN32()
 
-#include "EngineGamesAPI/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/System.h"
 #include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "EngineGamesAPI/custom.h"
+#include "EnginePublicAPI/custom.h"
 #include "client/ref_common.h"
 #include "common/fscallback.h"
 

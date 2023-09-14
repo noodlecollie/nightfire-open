@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include "BaseMenu.h"  // ADD_MENU
 #include "Framework.h"
-#include "EngineGamesAPI/mobility_int.h"
+#include "EnginePublicAPI/mobility_int.h"
 #include "Bitmap.h"
 #include "PicButton.h"
 #include "Slider.h"

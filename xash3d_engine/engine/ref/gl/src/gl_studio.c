@@ -15,12 +15,12 @@ GNU General Public License for more details.
 
 #include "gl_local.h"
 #include "MathLib/mathlib.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/r_studioint.h"
-#include "EngineGamesAPI/triangleapi.h"
-#include "EngineGamesAPI/studio.h"
-#include "EngineGamesAPI/pmtrace.h"
-#include "EngineGamesAPI/pm_defs.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/r_studioint.h"
+#include "EnginePublicAPI/triangleapi.h"
+#include "EnginePublicAPI/studio.h"
+#include "EnginePublicAPI/pmtrace.h"
+#include "EnginePublicAPI/pm_defs.h"
 
 #define EVENT_CLIENT 5000  // less than this value it's a server-side studio events
 #define MAX_LOCALLIGHTS 4

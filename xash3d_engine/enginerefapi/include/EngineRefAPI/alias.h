@@ -19,7 +19,7 @@
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/static_assert.h"
 #include "PlatformDefs/typedefs.h"
-#include "EngineGamesAPI/com_model.h"
+#include "EnginePublicAPI/com_model.h"
 
 /*
 ==============================================================================

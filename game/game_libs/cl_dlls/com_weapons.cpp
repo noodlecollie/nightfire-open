@@ -21,10 +21,10 @@
 #include "cl_util.h"
 #include "com_weapons.h"
 
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/entity_state.h"
-#include "EngineGamesAPI/r_efx.h"
-#include "EngineGamesAPI/edict.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/entity_state.h"
+#include "EnginePublicAPI/r_efx.h"
+#include "EnginePublicAPI/edict.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/File.h"
 

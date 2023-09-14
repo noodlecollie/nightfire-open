@@ -7,12 +7,12 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "EngineGamesAPI/cl_entity.h"
-#include "EngineGamesAPI/triangleapi.h"
+#include "EnginePublicAPI/cl_entity.h"
+#include "EnginePublicAPI/triangleapi.h"
 #include "overview.h"
 
 // these are included for the math functions
-#include "EngineGamesAPI/com_model.h"
+#include "EnginePublicAPI/com_model.h"
 #include "studio_util.h"
 
 //-----------------------------------------------------------------------------

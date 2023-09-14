@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/input.h"
-#include "EngineGamesAPI/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "client/client.h"
 #include "platform/platform.h"
 

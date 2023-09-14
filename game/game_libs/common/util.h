@@ -40,7 +40,7 @@ MESSAGE_BEGIN(int msg_dest, int msg_type, const float* pOrigin, entvars_t* ent);
 #include "hulldefs.h"
 #include "utlstring.h"
 #include "debug_assert.h"
-#include "EngineGamesAPI/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 
 class CBaseEntity;
 

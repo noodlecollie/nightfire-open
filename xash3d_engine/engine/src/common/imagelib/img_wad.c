@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "EngineRefAPI/wadfile.h"
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/studio.h"
 #include "EngineRefAPI/sprite.h"
 #include "common/qfont.h"
 

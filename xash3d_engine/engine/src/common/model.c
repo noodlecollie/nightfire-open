@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "common/mod_local.h"
 #include "EngineRefAPI/sprite.h"
 #include "EngineRefAPI/alias.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/studio.h"
 #include "common/world.h"
 #include "EngineRefAPI/enginefeatures.h"
 #include "client/client.h"

@@ -21,7 +21,7 @@
 #include "cl_util.h"
 #include "miniutl.h"
 #include "PlatformLib/String.h"
-// #include "EngineGamesAPI/triangleapi.h"
+// #include "EnginePublicAPI/triangleapi.h"
 
 #define MAX_LOGO_FRAMES 56
 

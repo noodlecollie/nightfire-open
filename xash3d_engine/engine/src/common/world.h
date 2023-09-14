@@ -15,9 +15,9 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "EngineGamesAPI/trace.h"
+#include "EnginePublicAPI/trace.h"
 #include "EngineRefAPI/lightstyle.h"
-#include "EngineGamesAPI/link.h"
+#include "EnginePublicAPI/link.h"
 
 #define MOVE_NORMAL 0  // normal trace
 #define MOVE_NOMONSTERS 1  // ignore monsters (edicts with flags (FL_MONSTER|FL_FAKECLIENT|FL_CLIENT) set)
@@ -61,8 +61,8 @@ int RankForContents(int contents);
 
 ===============================================================================
 */
-#include "EngineGamesAPI/event_api.h"
-#include "EngineGamesAPI/event_args.h"
+#include "EnginePublicAPI/event_api.h"
+#include "EnginePublicAPI/event_args.h"
 
 #define MAX_EVENT_QUEUE 64  // 16 simultaneous events, max
 

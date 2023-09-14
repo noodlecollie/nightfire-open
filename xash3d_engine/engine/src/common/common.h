@@ -115,11 +115,11 @@ typedef enum
 } instance_t;
 
 #include "common/system.h"
-#include "EngineGamesAPI/com_model.h"
-#include "EngineGamesAPI/com_strings.h"
+#include "EnginePublicAPI/com_model.h"
+#include "EnginePublicAPI/com_strings.h"
 #include "CRTLib/crtlib.h"
 #include "common/cvar.h"
-#include "EngineGamesAPI/con_nprint.h"
+#include "EnginePublicAPI/con_nprint.h"
 #include "EngineRefAPI/ref_api.h"
 
 // PERFORMANCE INFO

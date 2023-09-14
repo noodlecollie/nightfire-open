@@ -13,7 +13,7 @@
  *
  ****/
 #include "extdll.h"
-#include "EngineGamesAPI/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 #include "util.h"
 #include "game.h"
 #include "weaponregistry.h"

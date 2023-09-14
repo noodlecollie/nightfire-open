@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "common/base_cmd.h"
-#include "EngineGamesAPI/cdll_int.h"
+#include "EnginePublicAPI/cdll_int.h"
 #include "CRCLib/crclib.h"
 
 #define HASH_SIZE 128  // 128 * 4 * 4 == 2048 bytes

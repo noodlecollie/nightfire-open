@@ -1,6 +1,6 @@
 #include "weapon_p99.h"
 #include "weaponregistry.h"
-#include "EngineGamesAPI/weaponinfo.h"
+#include "EnginePublicAPI/weaponinfo.h"
 #include "skill.h"
 #include "gamerules.h"
 #include "weapon_pref_weights.h"

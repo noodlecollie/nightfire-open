@@ -16,9 +16,9 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "EngineGamesAPI/typedefs.h"
-#include "EngineGamesAPI/pm_info.h"
-#include "EngineGamesAPI/weaponinfo.h"
+#include "EnginePublicAPI/typedefs.h"
+#include "EnginePublicAPI/pm_info.h"
+#include "EnginePublicAPI/weaponinfo.h"
 
 // For entityType below
 #define ENTITY_NORMAL (1 << 0)

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "EngineGamesAPI/entity_types.h"
+#include "EnginePublicAPI/entity_types.h"
 
 /*
 =============================================================

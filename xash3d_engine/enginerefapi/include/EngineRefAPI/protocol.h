@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "EngineGamesAPI/engine_limits.h"
+#include "EnginePublicAPI/engine_limits.h"
 
 #define PROTOCOL_VERSION 49
 

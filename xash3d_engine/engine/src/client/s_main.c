@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/sound.h"
 #include "client/client.h"
-#include "EngineGamesAPI/con_nprint.h"
+#include "EnginePublicAPI/con_nprint.h"
 #include "common/pm_local.h"
 #include "platform/platform.h"
 #include "common/fscallback.h"

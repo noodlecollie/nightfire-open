@@ -16,8 +16,8 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/entity_types.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/entity_types.h"
 #include "client/vgui/vgui_draw.h"
 #include "client/sound.h"
 #include "client/input.h"  // touch

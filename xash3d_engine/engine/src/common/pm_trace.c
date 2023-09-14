@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/pm_local.h"
 #include "EngineRefAPI/pm_movevars.h"
 #include "EngineRefAPI/enginefeatures.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/studio.h"
 #include "common/world.h"
 
 #define PM_AllowHitBoxTrace(model, hull) \

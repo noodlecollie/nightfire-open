@@ -20,7 +20,7 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "EngineGamesAPI/netadr.h"
+#include "EnginePublicAPI/netadr.h"
 #include "parsemsg.h"
 #include "projectInterface/IProjectInterface.h"
 #include "projectInterface_client.h"

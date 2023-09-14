@@ -15,11 +15,11 @@ GNU General Public License for more details.
 
 #include "EngineRefAPI/log_strings.h"
 #include "gl_local.h"
-#include "EngineGamesAPI/r_efx.h"
-#include "EngineGamesAPI/event_flags.h"
-#include "EngineGamesAPI/entity_types.h"
-#include "EngineGamesAPI/triangleapi.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/r_efx.h"
+#include "EnginePublicAPI/event_flags.h"
+#include "EnginePublicAPI/entity_types.h"
+#include "EnginePublicAPI/triangleapi.h"
+#include "EnginePublicAPI/studio.h"
 
 static float gTracerSize[] = {
 	1.5f,  // pt_static

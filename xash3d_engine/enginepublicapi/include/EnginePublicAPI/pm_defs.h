@@ -16,11 +16,11 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "EngineGamesAPI/pm_info.h"
-#include "EngineGamesAPI/pmtrace.h"
-#include "EngineGamesAPI/com_model.h"
-#include "EngineGamesAPI/usercmd.h"
-#include "EngineGamesAPI/trace.h"
+#include "EnginePublicAPI/pm_info.h"
+#include "EnginePublicAPI/pmtrace.h"
+#include "EnginePublicAPI/com_model.h"
+#include "EnginePublicAPI/usercmd.h"
+#include "EnginePublicAPI/trace.h"
 
 #define MAX_PHYSENTS 600  // Must have room for all entities in the world.
 #define MAX_MOVEENTS 64

@@ -16,7 +16,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "demo.h"
-#include "EngineGamesAPI/demo_api.h"
+#include "EnginePublicAPI/demo_api.h"
 #include <memory.h>
 
 int g_demosniper = 0;

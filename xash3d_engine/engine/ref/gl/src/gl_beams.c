@@ -15,12 +15,12 @@ GNU General Public License for more details.
 
 #include "EngineRefAPI/log_strings.h"
 #include "gl_local.h"
-#include "EngineGamesAPI/r_efx.h"
-#include "EngineGamesAPI/event_flags.h"
-#include "EngineGamesAPI/entity_types.h"
-#include "EngineGamesAPI/triangleapi.h"
-#include "EngineGamesAPI/customentity.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/r_efx.h"
+#include "EnginePublicAPI/event_flags.h"
+#include "EnginePublicAPI/entity_types.h"
+#include "EnginePublicAPI/triangleapi.h"
+#include "EnginePublicAPI/customentity.h"
+#include "EnginePublicAPI/studio.h"
 
 #define NOISE_DIVISIONS 64  // don't touch - many tripmines cause the crash when it equal 128
 

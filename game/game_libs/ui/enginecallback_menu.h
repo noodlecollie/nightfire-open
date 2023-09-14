@@ -21,10 +21,10 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "extdll_menu.h"
 #include "Primitive.h"
-#include "EngineGamesAPI/netadr.h"
+#include "EnginePublicAPI/netadr.h"
 #include "PlatformLib/String.h"
-#include "EngineGamesAPI/wrect.h"
-#include "EngineGamesAPI/cvardef.h"
+#include "EnginePublicAPI/wrect.h"
+#include "EnginePublicAPI/cvardef.h"
 
 class EngFuncs
 {

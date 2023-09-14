@@ -18,13 +18,13 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/entity_state.h"
-#include "EngineGamesAPI/cl_entity.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/entity_state.h"
+#include "EnginePublicAPI/cl_entity.h"
 #include <string.h>
 #include <stdio.h>
 #include "parsemsg.h"
-#include "EngineGamesAPI/event_api.h"
+#include "EnginePublicAPI/event_api.h"
 #include "PlatformLib/String.h"
 
 DECLARE_MESSAGE(m_StatusIcons, StatusIcon)

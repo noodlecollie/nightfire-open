@@ -16,9 +16,9 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"
-#include "EngineGamesAPI/const.h"
+#include "EnginePublicAPI/const.h"
 #include "common/library.h"
-#include "EngineGamesAPI/triangleapi.h"
+#include "EnginePublicAPI/triangleapi.h"
 #include "client/ref_common.h"
 #include "common/fscallback.h"
 

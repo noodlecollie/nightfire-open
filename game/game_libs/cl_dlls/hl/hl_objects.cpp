@@ -17,15 +17,15 @@
 #include "../cl_util.h"
 #include "../demo.h"
 
-#include "EngineGamesAPI/demo_api.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/entity_state.h"
-#include "EngineGamesAPI/cl_entity.h"
+#include "EnginePublicAPI/demo_api.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/entity_state.h"
+#include "EnginePublicAPI/cl_entity.h"
 
-#include "EngineGamesAPI/pm_defs.h"
-#include "EngineGamesAPI/event_api.h"
-#include "EngineGamesAPI/entity_types.h"
-#include "EngineGamesAPI/r_efx.h"
+#include "EnginePublicAPI/pm_defs.h"
+#include "EnginePublicAPI/event_api.h"
+#include "EnginePublicAPI/entity_types.h"
+#include "EnginePublicAPI/r_efx.h"
 
 extern BEAM* pBeam;
 extern BEAM* pBeam2;

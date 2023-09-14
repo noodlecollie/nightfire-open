@@ -21,7 +21,7 @@
 #include "nodes.h"
 #include "player.h"
 #include "ammodefs.h"
-#include "EngineGamesAPI/weaponinfo.h"
+#include "EnginePublicAPI/weaponinfo.h"
 
 #define HANDGRENADE_PRIMARY_VOLUME 450
 

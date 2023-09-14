@@ -21,12 +21,12 @@ GNU General Public License for more details.
 #include "EngineRefAPI/com_image.h"
 #include "EngineRefAPI/vgui_api.h"
 #include "EngineRefAPI/render_api.h"
-#include "EngineGamesAPI/triangleapi.h"
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/cl_entity.h"
-#include "EngineGamesAPI/com_model.h"
-#include "EngineGamesAPI/studio.h"
-#include "EngineGamesAPI/r_efx.h"
+#include "EnginePublicAPI/triangleapi.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/cl_entity.h"
+#include "EnginePublicAPI/com_model.h"
+#include "EnginePublicAPI/studio.h"
+#include "EnginePublicAPI/r_efx.h"
 #include "EngineRefAPI/com_image.h"
 
 // RefAPI changelog:

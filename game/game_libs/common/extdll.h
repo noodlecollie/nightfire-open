@@ -62,12 +62,12 @@ typedef int string_t;  // from engine's pr_comp.h;
 #include "vector_classes.h"
 
 // Shared engine/DLL constants
-#include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/progdefs.h"
-#include "EngineGamesAPI/edict.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/progdefs.h"
+#include "EnginePublicAPI/edict.h"
 
 // Shared header describing protocol between engine and DLLs
-#include "EngineGamesAPI/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 
 // Shared header between the client DLL and the game DLLs
 #include "cdll_dll.h"

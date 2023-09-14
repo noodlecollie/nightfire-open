@@ -17,12 +17,12 @@ GNU General Public License for more details.
 #include "EngineRefAPI/wadfile.h"  // acess decal size
 #include "common/common.h"
 #include "client/client.h"
-#include "EngineGamesAPI/r_efx.h"
-#include "EngineGamesAPI/entity_types.h"
-#include "EngineGamesAPI/triangleapi.h"
+#include "EnginePublicAPI/r_efx.h"
+#include "EnginePublicAPI/entity_types.h"
+#include "EnginePublicAPI/triangleapi.h"
 #include "client/cl_tent.h"
 #include "common/pm_local.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/studio.h"
 #include "client/sound.h"
 #include "common/fscallback.h"
 

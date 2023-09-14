@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #ifndef NET_ENCODE_H
 #define NET_ENCODE_H
 
-#include "EngineGamesAPI/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 
 #define DT_BYTE BIT(0)  // A byte
 #define DT_SHORT BIT(1)  // 2 byte field

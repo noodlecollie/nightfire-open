@@ -24,7 +24,7 @@ INPUT
 ==============================================================
 */
 
-#include "EngineGamesAPI/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 
 //
 // input.c

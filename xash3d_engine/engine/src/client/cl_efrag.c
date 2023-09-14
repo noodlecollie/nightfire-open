@@ -14,8 +14,8 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "EngineGamesAPI/entity_types.h"
-#include "EngineGamesAPI/studio.h"
+#include "EnginePublicAPI/entity_types.h"
+#include "EnginePublicAPI/studio.h"
 #include "common/world.h"  // BOX_ON_PLANE_SIDE
 #include "client/client.h"
 #include "MathLib/mathlib.h"

@@ -25,7 +25,7 @@
 #include "cbase.h"
 #include "trains.h"
 #include "saverestore.h"
-#include "EngineGamesAPI/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 static void PlatSpawnInsideTrigger(entvars_t* pevPlatform);

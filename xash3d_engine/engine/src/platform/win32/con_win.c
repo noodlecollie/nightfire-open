@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "MathLib/mathlib.h"
-#include "EngineGamesAPI/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 
 /*
 ===============================================================================

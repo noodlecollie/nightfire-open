@@ -2,7 +2,7 @@
 
 #include "BaseScreenOverlay.h"
 #include "standard_includes.h"
-#include "EngineGamesAPI/cdll_int.h"
+#include "EnginePublicAPI/cdll_int.h"
 #include "customGeometry/geometryItem.h"
 #include "ui/core/uiVec2.h"
 

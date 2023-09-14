@@ -16,10 +16,10 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "EngineGamesAPI/engine_limits.h"
-#include "EngineGamesAPI/bspfile.h"
-#include "EngineGamesAPI/typedefs.h"
-#include "EngineGamesAPI/custom.h"
+#include "EnginePublicAPI/engine_limits.h"
+#include "EnginePublicAPI/bspfile.h"
+#include "EnginePublicAPI/typedefs.h"
+#include "EnginePublicAPI/custom.h"
 
 /*
 ==============================================================================
