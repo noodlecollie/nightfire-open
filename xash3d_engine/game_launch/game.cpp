@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #if XASH_POSIX()
 #include <dlfcn.h>
 
-#define XASHLIB "libxash." OS_LIB_EXT
+#define XASHLIB "libengine." OS_LIB_EXT
 #define LoadLibrary(x) dlopen(x, RTLD_NOW)
 #define GetProcAddress(x, y) dlsym(x, y)
 #define FreeLibrary(x) dlclose(x)
