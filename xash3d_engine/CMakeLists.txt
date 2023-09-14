@@ -18,7 +18,7 @@ target_include_directories(${TARGETNAME_INCLUDES_ENGINE} INTERFACE
 add_subdirectory(thirdparty)
 add_subdirectory(filesystem)
 add_subdirectory(engine)
-add_subdirectory(enginedefs)
+add_subdirectory(enginegamesapi)
 
 if(NOT NF_SINGLE_ENGINE_BINARY)
 	add_subdirectory(game_launch)
