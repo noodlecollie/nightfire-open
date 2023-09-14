@@ -16,11 +16,10 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/mempool.h"
-#include "XashDefs/engine_limits.h"
-#include "XashDefs/bspfile.h"
-#include "XashDefs/typedefs.h"
-#include "XashDefs/custom.h"
+#include "EnginePublicAPI/engine_limits.h"
+#include "EnginePublicAPI/bspfile.h"
+#include "EnginePublicAPI/typedefs.h"
+#include "EnginePublicAPI/custom.h"
 
 /*
 ==============================================================================
@@ -310,7 +309,7 @@ typedef struct model_s
 	// shared modelinfo
 	modtype_t type;  // model type
 	int numframes;  // sprite's framecount
-	poolhandle_t mempool;  // private mempool (was synctype)
+	uint32_t mempool;  // private mempool (was synctype)
 	int flags;  // hl compatibility
 
 	//

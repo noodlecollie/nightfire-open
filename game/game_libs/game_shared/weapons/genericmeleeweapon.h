@@ -1,7 +1,7 @@
 #pragma once
 
 #include "genericweapon.h"
-#include "XashDefs/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 
 namespace WeaponAtts
 {

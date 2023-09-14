@@ -1,6 +1,6 @@
 #include "ServerSoundInstance.h"
 #include "standard_includes.h"
-#include "XashDefs/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 #include "util.h"
 
 namespace ServerSoundInstance

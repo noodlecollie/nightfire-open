@@ -18,7 +18,7 @@
 #ifndef CL_UTIL_H
 #define CL_UTIL_H
 #include "exportdef.h"
-#include "XashDefs/cvardef.h"
+#include "EnginePublicAPI/cvardef.h"
 
 #include <limits>
 

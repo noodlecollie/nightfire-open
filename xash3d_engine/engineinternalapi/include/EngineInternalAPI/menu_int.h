@@ -18,8 +18,8 @@ GNU General Public License for more details.
 #include <stddef.h>
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/gameinfo.h"
-#include "XashDefs/netadr.h"
+#include "EngineInternalAPI/gameinfo.h"
+#include "EnginePublicAPI/netadr.h"
 
 // a macro for mainui_cpp, indicating that mainui should be compiled for
 // Xash3D 1.0 interface

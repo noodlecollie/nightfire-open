@@ -1,6 +1,6 @@
 #include "geometryRenderer.h"
 #include "cl_dll.h"
-#include "XashDefs/triangleapi.h"
+#include "EnginePublicAPI/triangleapi.h"
 #include "debug_assert.h"
 #include "hud.h"
 #include "cl_util.h"

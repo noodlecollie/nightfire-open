@@ -23,7 +23,7 @@
 //	-------------------------------------------
 
 #include "extdll.h"
-#include "XashDefs/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 #include "util.h"
 #include "gamerules.h"
 // #include "maprules.h" //empty file

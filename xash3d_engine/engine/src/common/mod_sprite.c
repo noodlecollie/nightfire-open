@@ -15,8 +15,8 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "XashDefs/sprite.h"
-#include "XashDefs/studio.h"
+#include "EngineInternalAPI/sprite.h"
+#include "EnginePublicAPI/studio.h"
 
 #if !XASH_DEDICATED()
 #include "client/ref_common.h"

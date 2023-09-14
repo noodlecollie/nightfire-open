@@ -18,7 +18,7 @@
 #pragma once
 
 #include <cstdint>
-#include "XashDefs/event_flags.h"
+#include "EnginePublicAPI/event_flags.h"
 #include "vector_classes.h"
 
 // Fix warning in MSVC8

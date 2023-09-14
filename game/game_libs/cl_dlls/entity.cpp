@@ -13,18 +13,18 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/const.h"
-#include "XashDefs/entity_types.h"
-#include "XashDefs/studio_event.h"  // def. of mstudioevent_t
-#include "XashDefs/r_efx.h"
-#include "XashDefs/event_api.h"
-#include "XashDefs/pm_defs.h"
-#include "XashDefs/pmtrace.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/entity_types.h"
+#include "EnginePublicAPI/studio_event.h"  // def. of mstudioevent_t
+#include "EnginePublicAPI/r_efx.h"
+#include "EnginePublicAPI/event_api.h"
+#include "EnginePublicAPI/pm_defs.h"
+#include "EnginePublicAPI/pmtrace.h"
 #include "pm_shared.h"
 #include "debug_assert.h"
 #include "utlstring.h"
 #include "resources/SoundResources.h"
-#include "XashDefs/com_model.h"
+#include "EnginePublicAPI/com_model.h"
 
 void Game_AddObjects(void);
 

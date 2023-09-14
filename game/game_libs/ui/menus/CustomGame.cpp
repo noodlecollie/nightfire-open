@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Action.h"
 #include "Table.h"
 #include "YesNoMessageBox.h"
-#include "XashDefs/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "PlatformLib/String.h"
 
 #define ART_BANNER "gfx/shell/head_custom"

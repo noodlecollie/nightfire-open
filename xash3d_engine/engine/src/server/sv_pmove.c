@@ -16,10 +16,10 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"
-#include "XashDefs/const.h"
+#include "EnginePublicAPI/const.h"
 #include "common/pm_local.h"
-#include "XashDefs/event_flags.h"
-#include "XashDefs/studio.h"
+#include "EnginePublicAPI/event_flags.h"
+#include "EnginePublicAPI/studio.h"
 
 static qboolean has_update = false;
 

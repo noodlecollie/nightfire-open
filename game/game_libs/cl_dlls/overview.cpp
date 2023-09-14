@@ -7,12 +7,12 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/triangleapi.h"
+#include "EnginePublicAPI/cl_entity.h"
+#include "EnginePublicAPI/triangleapi.h"
 #include "overview.h"
 
 // these are included for the math functions
-#include "XashDefs/com_model.h"
+#include "EnginePublicAPI/com_model.h"
 #include "studio_util.h"
 
 //-----------------------------------------------------------------------------

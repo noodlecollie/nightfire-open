@@ -22,7 +22,7 @@
 #include "player.h"
 #include "gamerules.h"
 #include "ammodefs.h"
-#include "XashDefs/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 LINK_ENTITY_TO_CLASS(weapon_python, CPython)

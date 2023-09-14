@@ -14,16 +14,16 @@ GNU General Public License for more details.
 */
 
 #include "CRTLib/bitdefs.h"
-#include "XashDefs/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/String.h"
 #include "Identity/arch.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "XashDefs/keydefs.h"
-#include "XashDefs/protocol.h"  // get the protocol version
-#include "XashDefs/con_nprint.h"
+#include "EnginePublicAPI/keydefs.h"
+#include "EngineInternalAPI/protocol.h"  // get the protocol version
+#include "EnginePublicAPI/con_nprint.h"
 #include "common/qfont.h"
-#include "XashDefs/wadfile.h"
+#include "EngineInternalAPI/wadfile.h"
 #include "client/input.h"
 #include "common/fscallback.h"
 

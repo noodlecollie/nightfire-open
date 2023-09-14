@@ -30,7 +30,7 @@
 #ifndef NO_VOICEGAMEMGR
 #include "voice_gamemgr.h"
 #endif
-#include "XashDefs/hltv.h"
+#include "EnginePublicAPI/hltv.h"
 #include "ammodefs.h"
 
 #include "bot_misc.h"

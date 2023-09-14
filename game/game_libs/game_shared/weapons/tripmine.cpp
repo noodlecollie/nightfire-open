@@ -23,7 +23,7 @@
 #include "effects.h"
 #include "gamerules.h"
 #include "ammodefs.h"
-#include "XashDefs/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 #define TRIPMINE_PRIMARY_VOLUME 450

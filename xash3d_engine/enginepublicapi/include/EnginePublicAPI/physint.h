@@ -17,10 +17,10 @@ GNU General Public License for more details.
 
 #include "PlatformDefs/typedefs.h"
 #include "PlatformDefs/utils.h"
-#include "XashDefs/trace.h"
-#include "XashDefs/edict.h"
-#include "XashDefs/link.h"
-#include "XashDefs/typedefs.h"
+#include "EnginePublicAPI/trace.h"
+#include "EnginePublicAPI/edict.h"
+#include "EnginePublicAPI/link.h"
+#include "EnginePublicAPI/typedefs.h"
 
 #define SV_PHYSICS_INTERFACE_VERSION 6
 

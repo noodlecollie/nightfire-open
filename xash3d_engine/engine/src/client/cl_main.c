@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "CRTLib/bitdefs.h"
-#include "XashDefs/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "Identity/arch.h"
 #include "CRCLib/crclib.h"
 #include "common/common.h"

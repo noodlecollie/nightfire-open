@@ -2,7 +2,7 @@
 #include "gameplay/inaccuracymodifiers.h"
 #include "gameplay/inaccuracyCvars.h"
 #include "standard_includes.h"
-#include "XashDefs/cvardef.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "utlstring.h"
 #include "mp_utils.h"
 #include "weapons/weaponregistry.h"

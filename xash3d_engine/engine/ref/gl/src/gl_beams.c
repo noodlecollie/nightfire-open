@@ -13,14 +13,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "XashDefs/log_strings.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "gl_local.h"
-#include "XashDefs/r_efx.h"
-#include "XashDefs/event_flags.h"
-#include "XashDefs/entity_types.h"
-#include "XashDefs/triangleapi.h"
-#include "XashDefs/customentity.h"
-#include "XashDefs/studio.h"
+#include "EnginePublicAPI/r_efx.h"
+#include "EnginePublicAPI/event_flags.h"
+#include "EnginePublicAPI/entity_types.h"
+#include "EnginePublicAPI/triangleapi.h"
+#include "EnginePublicAPI/customentity.h"
+#include "EnginePublicAPI/studio.h"
 
 #define NOISE_DIVISIONS 64  // don't touch - many tripmines cause the crash when it equal 128
 

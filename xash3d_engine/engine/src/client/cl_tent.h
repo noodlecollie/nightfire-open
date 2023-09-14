@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #ifndef CL_TENT_H
 #define CL_TENT_H
 
-#include "XashDefs/triangleapi.h"
+#include "EnginePublicAPI/triangleapi.h"
 
 enum _SurfaceProp;
 

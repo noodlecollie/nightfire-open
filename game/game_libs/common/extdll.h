@@ -62,12 +62,12 @@ typedef int string_t;  // from engine's pr_comp.h;
 #include "vector_classes.h"
 
 // Shared engine/DLL constants
-#include "XashDefs/const.h"
-#include "XashDefs/progdefs.h"
-#include "XashDefs/edict.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/progdefs.h"
+#include "EnginePublicAPI/edict.h"
 
 // Shared header describing protocol between engine and DLLs
-#include "XashDefs/eiface.h"
+#include "EnginePublicAPI/eiface.h"
 
 // Shared header between the client DLL and the game DLLs
 #include "cdll_dll.h"

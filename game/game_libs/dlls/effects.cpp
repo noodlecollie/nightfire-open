@@ -17,12 +17,12 @@
 #include "util.h"
 #include "cbase.h"
 #include "monsters.h"
-#include "XashDefs/customentity.h"
+#include "EnginePublicAPI/customentity.h"
 #include "effects.h"
 #include "weapons.h"
 #include "decals.h"
 #include "func_break.h"
-#include "XashDefs/shake.h"
+#include "EnginePublicAPI/shake.h"
 #include "miniutl.h"
 
 #define SF_GIBSHOOTER_REPEATABLE 1  // allows a gibshooter to be refired

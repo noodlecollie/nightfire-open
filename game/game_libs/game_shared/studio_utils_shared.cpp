@@ -1,8 +1,8 @@
 #include "studio_utils_shared.h"
 #include "mathlib.h"
-#include "XashDefs/const.h"
-#include "XashDefs/edict.h"
-#include "XashDefs/eiface.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/edict.h"
+#include "EnginePublicAPI/eiface.h"
 #include "enginecallback.h"
 
 float StudioGetAnimationDuration(int modelIndex, int anim)

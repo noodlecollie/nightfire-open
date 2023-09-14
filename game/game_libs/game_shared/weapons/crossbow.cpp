@@ -24,7 +24,7 @@
 #include "gamerules.h"
 #include "ammodefs.h"
 #include "radialdamage.h"
-#include "XashDefs/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 #ifndef CLIENT_DLL

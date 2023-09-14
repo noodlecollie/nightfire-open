@@ -31,7 +31,7 @@ GNU General Public License for more details.
 #include "CRTLib/crtlib.h"
 #include "miniz/miniz.h"
 #include "PlatformLib/File.h"
-#include "XashDefs/log_strings.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "filesystem_internal.h"
 
 #define ZIP_HEADER_LF (('K' << 8) + ('P') + (0x03 << 16) + (0x04 << 24))

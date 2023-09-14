@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "XashDefs/surfaceprops.h"
+#include "EnginePublicAPI/surfaceprops.h"
 
 struct pmtrace_s;
 struct event_args_s;

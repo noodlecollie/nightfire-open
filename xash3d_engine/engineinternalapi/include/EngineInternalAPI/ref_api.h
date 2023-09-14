@@ -15,19 +15,19 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "XashDefs/log_strings.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
-#include "XashDefs/com_image.h"
-#include "XashDefs/vgui_api.h"
-#include "XashDefs/render_api.h"
-#include "XashDefs/triangleapi.h"
-#include "XashDefs/const.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/com_model.h"
-#include "XashDefs/studio.h"
-#include "XashDefs/r_efx.h"
-#include "XashDefs/com_image.h"
+#include "EngineInternalAPI/com_image.h"
+#include "EngineInternalAPI/vgui_api.h"
+#include "EngineInternalAPI/render_api.h"
+#include "EnginePublicAPI/triangleapi.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/cl_entity.h"
+#include "EnginePublicAPI/com_model.h"
+#include "EnginePublicAPI/studio.h"
+#include "EnginePublicAPI/r_efx.h"
+#include "EngineInternalAPI/com_image.h"
 
 // RefAPI changelog:
 // 1. Initial release

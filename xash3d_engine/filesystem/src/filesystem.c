@@ -37,8 +37,8 @@ GNU General Public License for more details.
 #endif
 
 #include "PlatformDefs/libnames.h"
-#include "XashDefs/log_strings.h"
-#include "XashDefs/engine_version.h"
+#include "EngineInternalAPI/log_strings.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/System.h"

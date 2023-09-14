@@ -1,7 +1,7 @@
-#include "XashDefs/const.h"
-#include "XashDefs/com_model.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/com_model.h"
 #include "client/cl_surfaceprop_effects.h"
-#include "XashDefs/surfaceprops.h"
+#include "EnginePublicAPI/surfaceprops.h"
 
 qboolean R_SurfaceImpactCreatesSparks(SurfaceProp surfaceProp)
 {

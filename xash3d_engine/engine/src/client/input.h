@@ -24,7 +24,7 @@ INPUT
 ==============================================================
 */
 
-#include "XashDefs/keydefs.h"
+#include "EnginePublicAPI/keydefs.h"
 
 //
 // input.c

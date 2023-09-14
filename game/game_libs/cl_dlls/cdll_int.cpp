@@ -20,7 +20,7 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/netadr.h"
+#include "EnginePublicAPI/netadr.h"
 #include "parsemsg.h"
 #include "projectInterface/IProjectInterface.h"
 #include "projectInterface_client.h"

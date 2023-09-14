@@ -8,8 +8,8 @@
 #include <memory.h>
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/const.h"
-#include "XashDefs/com_model.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/com_model.h"
 #include "studio_util.h"
 
 /*

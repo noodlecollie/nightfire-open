@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/studio_event.h"
+#include "EnginePublicAPI/studio_event.h"
 
 /*
 ==============================================================================

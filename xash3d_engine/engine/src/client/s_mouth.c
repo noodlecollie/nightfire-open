@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/sound.h"
 #include "client/client.h"
-#include "XashDefs/const.h"
+#include "EnginePublicAPI/const.h"
 
 #define CAVGSAMPLES 10
 

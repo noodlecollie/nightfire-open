@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include <fcntl.h>
 #endif  // !XASH_WIN32()
 
-#include "XashDefs/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/System.h"
 #include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"
@@ -40,11 +40,11 @@ GNU General Public License for more details.
 #include "common/base_cmd.h"
 #include "client/client.h"
 #include "common/netchan.h"
-#include "XashDefs/protocol.h"
+#include "EngineInternalAPI/protocol.h"
 #include "common/mod_local.h"
 #include "client/input.h"
-#include "XashDefs/enginefeatures.h"
-#include "XashDefs/render_api.h"
+#include "EngineInternalAPI/enginefeatures.h"
+#include "EngineInternalAPI/render_api.h"
 #include "common/tests.h"
 #include "common/fscallback.h"
 #include "common/engine_builddefs.h"

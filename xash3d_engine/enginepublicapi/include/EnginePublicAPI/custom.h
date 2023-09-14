@@ -16,7 +16,7 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/const.h"
+#include "EnginePublicAPI/const.h"
 
 #define RES_FATALIFMISSING (1 << 0)  // Disconnect if we can't get this file.
 #define RES_WASMISSING (1 << 1)  // Do we have the file locally, did we get it ok?

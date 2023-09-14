@@ -16,10 +16,10 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/entity_state.h"
-#include "XashDefs/event_args.h"
-#include "XashDefs/const.h"
-#include "XashDefs/typedefs.h"
+#include "EnginePublicAPI/entity_state.h"
+#include "EnginePublicAPI/event_args.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/typedefs.h"
 
 #define HISTORY_MAX 64  // Must be power of 2
 #define HISTORY_MASK (HISTORY_MAX - 1)

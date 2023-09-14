@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "MathLib/mathlib.h"
-#include "XashDefs/engine_version.h"
+#include "EnginePublicAPI/engine_version.h"
 
 /*
 ===============================================================================
@@ -589,7 +589,7 @@ destroy win32 console
 void Wcon_DestroyConsole(void)
 {
 	// last text message into console or log
-	Con_Reportf("Sys_FreeLibrary: Unloading xash.dll\n");
+	Con_Reportf("Sys_FreeLibrary: Unloading engine.dll\n");
 
 	Sys_CloseLog();
 

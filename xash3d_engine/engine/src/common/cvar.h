@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #ifndef CVAR_H
 #define CVAR_H
 
-#include "XashDefs/cvardef.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "common/setpair.h"
 
 #if XASH_64BIT()

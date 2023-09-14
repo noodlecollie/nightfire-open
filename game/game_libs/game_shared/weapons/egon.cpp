@@ -22,12 +22,12 @@
 #include "weapons.h"
 #include "nodes.h"
 #include "effects.h"
-#include "XashDefs/customentity.h"
+#include "EnginePublicAPI/customentity.h"
 #include "gamerules.h"
 #include "ammodefs.h"
-#include "XashDefs/weaponinfo.h"
+#include "EnginePublicAPI/weaponinfo.h"
 #include "radialdamage.h"
-#include "XashDefs/event_args.h"
+#include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 #define EGON_PRIMARY_VOLUME 450

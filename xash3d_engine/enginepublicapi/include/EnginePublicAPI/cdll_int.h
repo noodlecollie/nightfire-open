@@ -16,8 +16,8 @@
 #pragma once
 
 #include <stdint.h>
-#include "XashDefs/const.h"
-#include "XashDefs/wrect.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/wrect.h"
 
 #ifdef __cplusplus
 extern "C"

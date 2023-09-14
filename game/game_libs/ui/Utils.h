@@ -20,7 +20,7 @@ GNU General Public License for more details.
 // extern ui_textfuncs_t g_textfuncs;
 
 #include "enginecallback_menu.h"
-#include "XashDefs/gameinfo.h"
+#include "EngineInternalAPI/gameinfo.h"
 #include "FontManager.h"
 #include "BMPUtils.h"
 #include "miniutl.h"
@@ -90,7 +90,7 @@ void UI_ConnectionProgress_ParseServerInfo(const char* server);
 extern "C" EXPORT void
 AddTouchButtonToList(const char* name, const char* texture, const char* command, unsigned char* color, int flags);
 
-#include "XashDefs/cvardef.h"
+#include "EnginePublicAPI/cvardef.h"
 
 // ScreenHeight returns the height of the screen, in ppos.xels
 #define ScreenHeight ((float)(gpGlobals->scrHeight))

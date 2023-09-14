@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "common/base_cmd.h"
-#include "XashDefs/eiface.h"  // SIZE_OF_ARRAY
+#include "EnginePublicAPI/eiface.h"  // SIZE_OF_ARRAY
 #include "common/fscallback.h"
 #include "PlatformLib/String.h"
 

@@ -25,8 +25,8 @@ GNU General Public License for more details.
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
 #include "PlatformDefs/platformid.h"
-#include "XashDefs/engine_limits.h"
-#include "XashDefs/mempool.h"
+#include "EnginePublicAPI/engine_limits.h"
+#include "EngineInternalAPI/mempool.h"
 
 #if XASH_WIN32()
 #include <wchar.h>  // off_t

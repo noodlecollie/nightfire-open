@@ -14,9 +14,9 @@
  ****/
 
 #include "mathlib.h"
-#include "XashDefs/const.h"
-#include "XashDefs/usercmd.h"
-#include "XashDefs/pm_defs.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/usercmd.h"
+#include "EnginePublicAPI/pm_defs.h"
 #include "pm_shared.h"
 #include "pm_movevars.h"
 #include "pm_debug.h"

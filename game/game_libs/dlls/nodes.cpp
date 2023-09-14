@@ -24,7 +24,7 @@
 #include "nodes_compat.h"
 #include "animation.h"
 #include "doors.h"
-#include "XashDefs/com_strings.h"
+#include "EnginePublicAPI/com_strings.h"
 #include <limits>
 #include "PlatformLib/String.h"
 #include "PlatformLib/File.h"

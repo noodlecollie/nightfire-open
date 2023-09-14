@@ -16,8 +16,8 @@ GNU General Public License for more details.
 #ifndef MODEL_DUMP_H
 #define MODEL_DUMP_H
 
-#include "XashDefs/const.h"
-#include "XashDefs/com_model.h"
+#include "EnginePublicAPI/const.h"
+#include "EnginePublicAPI/com_model.h"
 #include "common/common.h"
 
 typedef enum

@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #if XASH_POSIX()
 #include <dlfcn.h>
 
-#define XASHLIB "libxash." OS_LIB_EXT
+#define XASHLIB "libengine." OS_LIB_EXT
 #define LoadLibrary(x) dlopen(x, RTLD_NOW)
 #define GetProcAddress(x, y) dlsym(x, y)
 #define FreeLibrary(x) dlclose(x)
@@ -37,7 +37,7 @@ typedef void* HINSTANCE;
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <shellapi.h>  // CommandLineToArgvW
-#define XASHLIB "xash.dll"
+#define XASHLIB "engine.dll"
 #define SDL2LIB "SDL2.dll"
 #define dlerror() GetStringLastError()
 
@@ -109,7 +109,7 @@ static void Sys_LoadEngine(void)
 
 	if ( (hSdl = LoadLibraryEx(SDL2LIB, NULL, LOAD_LIBRARY_AS_DATAFILE)) == NULL )
 	{
-		Xash_Error("Unable to load the " SDL2LIB ": %s", dlerror());
+		Xash_Error("Unable to load " SDL2LIB ": %s", dlerror());
 	}
 	else
 	{
@@ -119,12 +119,12 @@ static void Sys_LoadEngine(void)
 
 	if ( (hEngine = LoadLibrary(XASHLIB)) == NULL )
 	{
-		Xash_Error("Unable to load the " XASHLIB ": %s", dlerror());
+		Xash_Error("Unable to load " XASHLIB ": %s", dlerror());
 	}
 
 	if ( (Xash_Main = (pfnInit)GetProcAddress(hEngine, "Host_Main")) == NULL )
 	{
-		Xash_Error(XASHLIB " missed 'Host_Main' export: %s", dlerror());
+		Xash_Error(XASHLIB " did not expose 'Host_Main' export: %s", dlerror());
 	}
 
 	// this is non-fatal for us but change game will not working
@@ -151,7 +151,7 @@ static void Sys_ChangeGame(const char* progname)
 		Xash_Error("Sys_ChangeGame: NULL gamedir");
 
 	if ( Xash_Shutdown == NULL )
-		Xash_Error("Sys_ChangeGame: missed 'Host_Shutdown' export\n");
+		Xash_Error("Sys_ChangeGame: could not find 'Host_Shutdown' export\n");
 
 	PlatformLib_StrCpy(szGameDir, sizeof(szGameDir), progname);
 
