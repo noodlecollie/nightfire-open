@@ -1,4 +1,9 @@
+set(GENERATED_HEADER_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated_headers")
+
+configure_file(configure/engine_version.h.in ${GENERATED_HEADER_DIR}/EngineGamesAPI/engine_version.h)
+
 add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
+	${GENERATED_HEADER_DIR}/EngineGamesAPI/engine_version.h
 	include/EngineGamesAPI/beamdef.h
 	include/EngineGamesAPI/bspfile.h
 	include/EngineGamesAPI/cdll_int.h
@@ -15,7 +20,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/edict.h
 	include/EngineGamesAPI/eiface.h
 	include/EngineGamesAPI/engine_limits.h
-	include/EngineGamesAPI/engine_version.h
 	include/EngineGamesAPI/enginefeatures.h
 	include/EngineGamesAPI/entity_state.h
 	include/EngineGamesAPI/entity_types.h
@@ -61,11 +65,8 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/wrect.h
 )
 
-target_compile_definitions(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
-	BUILDVAR_VERSION_STRING="${VCS_TAG_ID}"
-)
-
 target_include_directories(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
+	${GENERATED_HEADER_DIR}
 	include
 )
 

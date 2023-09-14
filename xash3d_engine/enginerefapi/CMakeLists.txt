@@ -7,10 +7,6 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/vgui_api.h
 )
 
-target_compile_definitions(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
-	BUILDVAR_VERSION_STRING="${VCS_TAG_ID}"
-)
-
 target_include_directories(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include
 )
