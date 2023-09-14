@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "common/netchan.h"
 #include "common/net_encode.h"
-#include "EngineRefAPI/protocol.h"
+#include "EngineInternalAPI/protocol.h"
 #include "common/net_byteswap.h"
 #include "common/fscallback.h"
 

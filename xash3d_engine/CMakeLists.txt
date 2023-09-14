@@ -19,7 +19,7 @@ add_subdirectory(thirdparty)
 add_subdirectory(filesystem)
 add_subdirectory(engine)
 add_subdirectory(enginepublicapi)
-add_subdirectory(enginerefapi)
+add_subdirectory(engineinternalapi)
 
 if(NOT NF_SINGLE_ENGINE_BINARY)
 	add_subdirectory(game_launch)

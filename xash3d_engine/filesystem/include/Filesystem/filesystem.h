@@ -26,7 +26,7 @@ GNU General Public License for more details.
 #include "PlatformDefs/typedefs.h"
 #include "PlatformDefs/platformid.h"
 #include "EnginePublicAPI/engine_limits.h"
-#include "EngineRefAPI/mempool.h"
+#include "EngineInternalAPI/mempool.h"
 
 #if XASH_WIN32()
 #include <wchar.h>  // off_t

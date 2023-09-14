@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #include "CRTLib/crtlib.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
-#include "EngineRefAPI/log_strings.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "filesystem_internal.h"
 
 /*

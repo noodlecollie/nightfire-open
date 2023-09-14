@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/pm_defs.h"
 #include "EnginePublicAPI/studio.h"
 #include "EnginePublicAPI/const.h"
-#include "EngineRefAPI/render_api.h"  // modelstate_t
+#include "EngineInternalAPI/render_api.h"  // modelstate_t
 #include "client/ref_common.h"  // decals
 #include "common/fscallback.h"
 

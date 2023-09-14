@@ -18,8 +18,8 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "common/mod_local.h"
 #include "common/pm_local.h"
-#include "EngineRefAPI/pm_movevars.h"
-#include "EngineRefAPI/enginefeatures.h"
+#include "EngineInternalAPI/pm_movevars.h"
+#include "EngineInternalAPI/enginefeatures.h"
 #include "EnginePublicAPI/studio.h"
 #include "common/world.h"
 

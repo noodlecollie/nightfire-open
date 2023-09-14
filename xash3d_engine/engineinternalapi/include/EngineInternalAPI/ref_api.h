@@ -15,19 +15,19 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "EngineRefAPI/log_strings.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
-#include "EngineRefAPI/com_image.h"
-#include "EngineRefAPI/vgui_api.h"
-#include "EngineRefAPI/render_api.h"
+#include "EngineInternalAPI/com_image.h"
+#include "EngineInternalAPI/vgui_api.h"
+#include "EngineInternalAPI/render_api.h"
 #include "EnginePublicAPI/triangleapi.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/cl_entity.h"
 #include "EnginePublicAPI/com_model.h"
 #include "EnginePublicAPI/studio.h"
 #include "EnginePublicAPI/r_efx.h"
-#include "EngineRefAPI/com_image.h"
+#include "EngineInternalAPI/com_image.h"
 
 // RefAPI changelog:
 // 1. Initial release

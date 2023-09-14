@@ -22,9 +22,9 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/physint.h"  // physics interface
 #include "common/mod_local.h"
 #include "EnginePublicAPI/pm_defs.h"
-#include "EngineRefAPI/pm_movevars.h"
+#include "EngineInternalAPI/pm_movevars.h"
 #include "EnginePublicAPI/entity_state.h"
-#include "EngineRefAPI/protocol.h"
+#include "EngineInternalAPI/protocol.h"
 #include "common/netchan.h"
 #include "EnginePublicAPI/custom.h"
 #include "common/world.h"

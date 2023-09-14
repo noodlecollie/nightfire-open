@@ -15,7 +15,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "EngineRefAPI/sprite.h"
+#include "EngineInternalAPI/sprite.h"
 #include "EnginePublicAPI/studio.h"
 
 #if !XASH_DEDICATED()

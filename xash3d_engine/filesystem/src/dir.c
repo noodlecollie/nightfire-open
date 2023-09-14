@@ -40,7 +40,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "CRTLib/crtlib.h"
 #include "PlatformLib/File.h"
-#include "EngineRefAPI/log_strings.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "filesystem_internal.h"
 
 enum

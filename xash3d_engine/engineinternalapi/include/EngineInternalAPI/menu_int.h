@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include <stddef.h>
 #include "PlatformDefs/decorators.h"
 #include "PlatformDefs/typedefs.h"
-#include "EngineRefAPI/gameinfo.h"
+#include "EngineInternalAPI/gameinfo.h"
 #include "EnginePublicAPI/netadr.h"
 
 // a macro for mainui_cpp, indicating that mainui should be compiled for

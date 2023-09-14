@@ -20,8 +20,8 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "common/system.h"
 #include "common/backends.h"
-#include "EngineRefAPI/cursor_type.h"
-#include "EngineRefAPI/key_modifiers.h"
+#include "EngineInternalAPI/cursor_type.h"
+#include "EngineInternalAPI/key_modifiers.h"
 
 /*
 ==============================================================================

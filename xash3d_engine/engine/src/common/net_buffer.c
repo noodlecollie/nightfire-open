@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "MathLib/mathlib.h"
 #include "common/common.h"
-#include "EngineRefAPI/protocol.h"
+#include "EngineInternalAPI/protocol.h"
 #include "common/net_buffer.h"
 
 // #define DEBUG_NET_MESSAGES_SEND

@@ -14,11 +14,11 @@ GNU General Public License for more details.
 */
 
 #include "MathLib/mathlib.h"
-#include "EngineRefAPI/wadfile.h"
+#include "EngineInternalAPI/wadfile.h"
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"
 #include "EnginePublicAPI/studio.h"
-#include "EngineRefAPI/sprite.h"
+#include "EngineInternalAPI/sprite.h"
 #include "common/qfont.h"
 
 /*

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "EngineRefAPI/enginefeatures.h"
+#include "EngineInternalAPI/enginefeatures.h"
 #include "PlatformDefs/typedefs.h"
 
 /*

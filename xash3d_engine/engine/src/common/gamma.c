@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
-#include "EngineRefAPI/enginefeatures.h"
+#include "EngineInternalAPI/enginefeatures.h"
 
 //-----------------------------------------------------------------------------
 // Gamma conversion support

@@ -4,7 +4,7 @@
 
 #include "EnginePublicAPI/edict.h"
 #include "EnginePublicAPI/eiface.h"
-#include "EngineRefAPI/ref_api.h"
+#include "EngineInternalAPI/ref_api.h"
 #include "EnginePublicAPI/studio.h"
 
 #define LM_SAMPLE_SIZE 16

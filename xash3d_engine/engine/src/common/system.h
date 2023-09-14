@@ -27,7 +27,7 @@ extern "C"
 #include "EnginePublicAPI/const.h"
 #include "CRTLib/crtlib.h"
 #include "platform/platform.h"
-#include "EngineRefAPI/dll_types.h"
+#include "EngineInternalAPI/dll_types.h"
 
 #define MSGBOX(x) Platform_MessageBox("Xash Error", (x), false);
 #define MSGBOX2(x) Platform_MessageBox("Host Error", (x), true);

@@ -29,8 +29,8 @@ GNU General Public License for more details.
 #include <unistd.h>
 #endif
 
-#include "EngineRefAPI/log_strings.h"
-#include "EngineRefAPI/wadfile.h"
+#include "EngineInternalAPI/log_strings.h"
+#include "EngineInternalAPI/wadfile.h"
 #include "CRTLib/crtlib.h"
 #include "filesystem_internal.h"
 

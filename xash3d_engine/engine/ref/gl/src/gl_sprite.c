@@ -13,9 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "EngineRefAPI/log_strings.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "gl_local.h"
-#include "EngineRefAPI/sprite.h"
+#include "EngineInternalAPI/sprite.h"
 #include "EnginePublicAPI/studio.h"
 #include "EnginePublicAPI/entity_types.h"
 #include "EnginePublicAPI/pm_defs.h"

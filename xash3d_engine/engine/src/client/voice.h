@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #define VOICE_H
 
 #include "common/common.h"
-#include "EngineRefAPI/protocol.h"  // MAX_CLIENTS
+#include "EngineInternalAPI/protocol.h"  // MAX_CLIENTS
 #include "client/sound.h"
 
 typedef struct OpusCustomEncoder OpusCustomEncoder;

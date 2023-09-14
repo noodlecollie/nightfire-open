@@ -120,7 +120,7 @@ typedef enum
 #include "CRTLib/crtlib.h"
 #include "common/cvar.h"
 #include "EnginePublicAPI/con_nprint.h"
-#include "EngineRefAPI/ref_api.h"
+#include "EngineInternalAPI/ref_api.h"
 
 // PERFORMANCE INFO
 #define MIN_FPS 20.0f  // host minimum fps value for maxfps.
@@ -513,7 +513,7 @@ void Mem_PrintStats(void);
 //
 // imagelib
 //
-#include "EngineRefAPI/com_image.h"
+#include "EngineInternalAPI/com_image.h"
 
 void Image_Setup(void);
 void Image_Init(void);

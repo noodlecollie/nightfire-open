@@ -17,7 +17,7 @@ GNU General Public License for more details.
 
 #include "PlatformDefs/typedefs.h"
 #include "EnginePublicAPI/typedefs.h"
-#include "EngineRefAPI/lightstyle.h"
+#include "EngineInternalAPI/lightstyle.h"
 #include "EnginePublicAPI/dlight.h"
 
 struct ref_viewpass_s;

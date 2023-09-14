@@ -25,7 +25,7 @@ GNU General Public License for more details.
 #include "client/cl_tent.h"
 #include "client/input.h"
 #include "EnginePublicAPI/shake.h"
-#include "EngineRefAPI/sprite.h"
+#include "EngineInternalAPI/sprite.h"
 #include "common/library.h"
 #include "client/vgui/vgui_draw.h"
 #include "client/sound.h"  // SND_STOP_LOOPING
