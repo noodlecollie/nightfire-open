@@ -20,7 +20,7 @@ GNU General Public License for more details.
 // extern ui_textfuncs_t g_textfuncs;
 
 #include "enginecallback_menu.h"
-#include "EngineGamesAPI/gameinfo.h"
+#include "EngineRefAPI/gameinfo.h"
 #include "FontManager.h"
 #include "BMPUtils.h"
 #include "miniutl.h"

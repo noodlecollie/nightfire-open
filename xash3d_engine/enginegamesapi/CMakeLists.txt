@@ -25,7 +25,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/event_api.h
 	include/EngineGamesAPI/event_args.h
 	include/EngineGamesAPI/event_flags.h
-	include/EngineGamesAPI/gameinfo.h
 	include/EngineGamesAPI/hltv.h
 	include/EngineGamesAPI/key_modifiers.h
 	include/EngineGamesAPI/keydefs.h
