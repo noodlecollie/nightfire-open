@@ -7,14 +7,6 @@
 # targets if they do not link against them. Decouple these
 # when possible.
 
-add_library(${TARGETNAME_INCLUDES_ENGINE} INTERFACE)
-
-target_include_directories(${TARGETNAME_INCLUDES_ENGINE} INTERFACE
-	engine
-	engine/common
-	engine/common/imagelib
-)
-
 add_subdirectory(thirdparty)
 add_subdirectory(filesystem)
 add_subdirectory(engine)

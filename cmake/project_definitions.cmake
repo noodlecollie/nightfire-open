@@ -47,8 +47,6 @@ set(TOOLS_INSTALL_ROOT ${INSTALL_ROOT}/tools)
 set(GAME_FOLDER_NAME nfopen)
 set(GAME_EXECUTABLE bond)
 
-set(TARGETNAME_INCLUDES_ENGINE engine_includes)
-
 set(TARGETNAME_LIB_PLATFORMDEFS platformdefs)
 set(TARGETNAME_LIB_FILESYSTEM_STDIO filesystem_stdio)
 set(TARGETNAME_LIB_FILESYSTEM_TESTS filesystem_test_caseinsensitive)
