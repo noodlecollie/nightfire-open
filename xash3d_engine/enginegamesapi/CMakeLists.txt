@@ -39,7 +39,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/r_efx.h
 	include/EngineGamesAPI/r_studioint.h
 	include/EngineGamesAPI/ref_params.h
-	include/EngineGamesAPI/render_api.h
 	include/EngineGamesAPI/screenfade.h
 	include/EngineGamesAPI/shake.h
 	include/EngineGamesAPI/sprite.h

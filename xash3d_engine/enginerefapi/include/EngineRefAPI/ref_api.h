@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include "EngineRefAPI/com_image.h"
 #include "EngineRefAPI/vgui_api.h"
-#include "EngineGamesAPI/render_api.h"
+#include "EngineRefAPI/render_api.h"
 #include "EngineGamesAPI/triangleapi.h"
 #include "EngineGamesAPI/const.h"
 #include "EngineGamesAPI/cl_entity.h"

@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/pm_defs.h"
 #include "EngineRefAPI/pm_movevars.h"
 #include "EngineGamesAPI/ref_params.h"
-#include "EngineGamesAPI/render_api.h"
+#include "EngineRefAPI/render_api.h"
 #include "client/cdll_exp.h"
 #include "EngineGamesAPI/screenfade.h"
 #include "EngineRefAPI/protocol.h"

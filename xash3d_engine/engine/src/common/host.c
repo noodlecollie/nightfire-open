@@ -44,7 +44,7 @@ GNU General Public License for more details.
 #include "common/mod_local.h"
 #include "client/input.h"
 #include "EngineRefAPI/enginefeatures.h"
-#include "EngineGamesAPI/render_api.h"
+#include "EngineRefAPI/render_api.h"
 #include "common/tests.h"
 #include "common/fscallback.h"
 #include "common/engine_builddefs.h"

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "server/server.h"
 #include "common/library.h"
 #include "EngineGamesAPI/const.h"
-#include "EngineGamesAPI/render_api.h"  // decallist_t
+#include "EngineRefAPI/render_api.h"  // decallist_t
 #include "client/sound.h"  // S_GetDynamicSounds
 #include "client/ref_common.h"  // decals
 #include "PlatformLib/Time.h"
