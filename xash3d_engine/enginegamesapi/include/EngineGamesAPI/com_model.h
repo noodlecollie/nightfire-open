@@ -16,7 +16,6 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "EngineGamesAPI/mempool.h"
 #include "EngineGamesAPI/engine_limits.h"
 #include "EngineGamesAPI/bspfile.h"
 #include "EngineGamesAPI/typedefs.h"
@@ -310,7 +309,7 @@ typedef struct model_s
 	// shared modelinfo
 	modtype_t type;  // model type
 	int numframes;  // sprite's framecount
-	poolhandle_t mempool;  // private mempool (was synctype)
+	uint32_t mempool;  // private mempool (was synctype)
 	int flags;  // hl compatibility
 
 	//
