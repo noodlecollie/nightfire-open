@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "EngineGamesAPI/log_strings.h"
+#include "EngineRefAPI/log_strings.h"
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
 #include "EngineRefAPI/com_image.h"

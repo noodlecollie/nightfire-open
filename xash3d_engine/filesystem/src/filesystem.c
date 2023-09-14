@@ -37,7 +37,7 @@ GNU General Public License for more details.
 #endif
 
 #include "PlatformDefs/libnames.h"
-#include "EngineGamesAPI/log_strings.h"
+#include "EngineRefAPI/log_strings.h"
 #include "EngineGamesAPI/engine_version.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"

@@ -29,7 +29,7 @@ GNU General Public License for more details.
 #include <unistd.h>
 #endif
 
-#include "EngineGamesAPI/log_strings.h"
+#include "EngineRefAPI/log_strings.h"
 #include "EngineGamesAPI/wadfile.h"
 #include "CRTLib/crtlib.h"
 #include "filesystem_internal.h"

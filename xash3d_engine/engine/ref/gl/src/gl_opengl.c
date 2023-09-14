@@ -1,5 +1,5 @@
 
-#include "EngineGamesAPI/log_strings.h"
+#include "EngineRefAPI/log_strings.h"
 #include "gl_local.h"
 
 #if XASH_GL4ES
