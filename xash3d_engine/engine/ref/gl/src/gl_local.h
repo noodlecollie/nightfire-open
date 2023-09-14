@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "EngineRefAPI/ref_api.h"
 #include "MathLib/mathlib.h"
 #include "EngineGamesAPI/ref_params.h"
-#include "EngineGamesAPI/enginefeatures.h"
+#include "EngineRefAPI/enginefeatures.h"
 #include "EngineGamesAPI/com_strings.h"
 #include "EngineGamesAPI/pm_movevars.h"
 // #include "common/cvar.h"

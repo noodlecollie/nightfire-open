@@ -20,7 +20,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/edict.h
 	include/EngineGamesAPI/eiface.h
 	include/EngineGamesAPI/engine_limits.h
-	include/EngineGamesAPI/enginefeatures.h
 	include/EngineGamesAPI/entity_state.h
 	include/EngineGamesAPI/entity_types.h
 	include/EngineGamesAPI/event_api.h

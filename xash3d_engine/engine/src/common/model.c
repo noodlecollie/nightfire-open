@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "EngineRefAPI/alias.h"
 #include "EngineGamesAPI/studio.h"
 #include "common/world.h"
-#include "EngineGamesAPI/enginefeatures.h"
+#include "EngineRefAPI/enginefeatures.h"
 #include "client/client.h"
 #include "server/server.h"
 #include "common/fscallback.h"

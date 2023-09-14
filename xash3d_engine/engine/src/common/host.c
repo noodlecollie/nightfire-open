@@ -43,7 +43,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/protocol.h"
 #include "common/mod_local.h"
 #include "client/input.h"
-#include "EngineGamesAPI/enginefeatures.h"
+#include "EngineRefAPI/enginefeatures.h"
 #include "EngineGamesAPI/render_api.h"
 #include "common/tests.h"
 #include "common/fscallback.h"

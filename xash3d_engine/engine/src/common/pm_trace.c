@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "common/mod_local.h"
 #include "common/pm_local.h"
 #include "EngineGamesAPI/pm_movevars.h"
-#include "EngineGamesAPI/enginefeatures.h"
+#include "EngineRefAPI/enginefeatures.h"
 #include "EngineGamesAPI/studio.h"
 #include "common/world.h"
 

@@ -3,6 +3,7 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/com_image.h
 	include/EngineRefAPI/cursor_type.h
 	include/EngineRefAPI/dll_types.h
+	include/EngineRefAPI/enginefeatures.h
 	include/EngineRefAPI/ref_api.h
 	include/EngineRefAPI/vgui_api.h
 )
