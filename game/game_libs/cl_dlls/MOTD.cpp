@@ -22,7 +22,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "kbutton.h"
-#include "XashDefs/triangleapi.h"
+#include "EngineGamesAPI/triangleapi.h"
 #include <string.h>
 #include <stdio.h>
 #include "PlatformLib/String.h"

@@ -25,12 +25,12 @@ typedef int BOOL;
 typedef int qboolean;
 typedef unsigned char byte;
 #include "mathlib.h"
-#include "XashDefs/const.h"
-#include "XashDefs/progdefs.h"
-#include "XashDefs/edict.h"
-#include "XashDefs/eiface.h"
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/progdefs.h"
+#include "EngineGamesAPI/edict.h"
+#include "EngineGamesAPI/eiface.h"
 
-#include "XashDefs/studio.h"
+#include "EngineGamesAPI/studio.h"
 
 #ifndef ACTIVITY_H
 #include "activity.h"

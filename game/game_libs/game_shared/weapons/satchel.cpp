@@ -23,7 +23,7 @@
 #include "player.h"
 #include "gamerules.h"
 #include "ammodefs.h"
-#include "XashDefs/weaponinfo.h"
+#include "EngineGamesAPI/weaponinfo.h"
 #include "PlatformLib/String.h"
 
 enum satchel_state

@@ -16,11 +16,11 @@
 #include "cl_util.h"
 #include "camera.h"
 #include "kbutton.h"
-#include "XashDefs/cvardef.h"
-#include "XashDefs/const.h"
+#include "EngineGamesAPI/cvardef.h"
+#include "EngineGamesAPI/const.h"
 #include "camera.h"
 #include "in_defs.h"
-#include "XashDefs/keydefs.h"
+#include "EngineGamesAPI/keydefs.h"
 #include "view.h"
 
 #ifndef _WIN32
@@ -156,7 +156,7 @@ bool isMouseRelative = false;
 #endif
 
 #ifdef _WIN32
-#include "XashDefs/progdefs.h"
+#include "EngineGamesAPI/progdefs.h"
 extern globalvars_t* gpGlobals;
 #endif
 

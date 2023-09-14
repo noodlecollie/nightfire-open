@@ -1,6 +1,6 @@
 #include "gameplay/crosshairCvars.h"
 #include "gameplay/inaccuracyCvars.h"
-#include "XashDefs/cvardef.h"
+#include "EngineGamesAPI/cvardef.h"
 #include "cl_dll.h"
 #include "debug_assert.h"
 #include "hud.h"

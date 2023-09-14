@@ -9,22 +9,22 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/cvardef.h"
-#include "XashDefs/usercmd.h"
-#include "XashDefs/const.h"
+#include "EngineGamesAPI/cvardef.h"
+#include "EngineGamesAPI/usercmd.h"
+#include "EngineGamesAPI/const.h"
 
-#include "XashDefs/entity_state.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/ref_params.h"
+#include "EngineGamesAPI/entity_state.h"
+#include "EngineGamesAPI/cl_entity.h"
+#include "EngineGamesAPI/ref_params.h"
 #include "in_defs.h"  // PITCH YAW ROLL
 #include "pm_movevars.h"
 #include "pm_shared.h"
-#include "XashDefs/pm_defs.h"
-#include "XashDefs/event_api.h"
-#include "XashDefs/pmtrace.h"
-#include "XashDefs/screenfade.h"
-#include "XashDefs/shake.h"
-#include "XashDefs/hltv.h"
+#include "EngineGamesAPI/pm_defs.h"
+#include "EngineGamesAPI/event_api.h"
+#include "EngineGamesAPI/pmtrace.h"
+#include "EngineGamesAPI/screenfade.h"
+#include "EngineGamesAPI/shake.h"
+#include "EngineGamesAPI/hltv.h"
 #include "weaponregistry.h"
 #include "weaponatts_collection.h"
 #include "miniutl.h"
@@ -66,8 +66,8 @@ float vJumpAngles[3];
 void V_DropPunchAngle(float frametime, float* ev_punchangle);
 void VectorAngles(const float* forward, float* angles);
 
-#include "XashDefs/r_studioint.h"
-#include "XashDefs/com_model.h"
+#include "EngineGamesAPI/r_studioint.h"
+#include "EngineGamesAPI/com_model.h"
 
 extern engine_studio_api_t IEngineStudio;
 

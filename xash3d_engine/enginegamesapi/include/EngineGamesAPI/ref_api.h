@@ -15,19 +15,19 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "XashDefs/log_strings.h"
+#include "EngineGamesAPI/log_strings.h"
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
-#include "XashDefs/com_image.h"
-#include "XashDefs/vgui_api.h"
-#include "XashDefs/render_api.h"
-#include "XashDefs/triangleapi.h"
-#include "XashDefs/const.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/com_model.h"
-#include "XashDefs/studio.h"
-#include "XashDefs/r_efx.h"
-#include "XashDefs/com_image.h"
+#include "EngineGamesAPI/com_image.h"
+#include "EngineGamesAPI/vgui_api.h"
+#include "EngineGamesAPI/render_api.h"
+#include "EngineGamesAPI/triangleapi.h"
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/cl_entity.h"
+#include "EngineGamesAPI/com_model.h"
+#include "EngineGamesAPI/studio.h"
+#include "EngineGamesAPI/r_efx.h"
+#include "EngineGamesAPI/com_image.h"
 
 // RefAPI changelog:
 // 1. Initial release

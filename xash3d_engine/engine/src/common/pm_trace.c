@@ -18,9 +18,9 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "common/mod_local.h"
 #include "common/pm_local.h"
-#include "XashDefs/pm_movevars.h"
-#include "XashDefs/enginefeatures.h"
-#include "XashDefs/studio.h"
+#include "EngineGamesAPI/pm_movevars.h"
+#include "EngineGamesAPI/enginefeatures.h"
+#include "EngineGamesAPI/studio.h"
 #include "common/world.h"
 
 #define PM_AllowHitBoxTrace(model, hull) \

@@ -1,6 +1,6 @@
 #include <cmath>
 #include "weapon_frinesi.h"
-#include "XashDefs/weaponinfo.h"
+#include "EngineGamesAPI/weaponinfo.h"
 #include "skill.h"
 #include "gamerules.h"
 #include "weapon_pref_weights.h"

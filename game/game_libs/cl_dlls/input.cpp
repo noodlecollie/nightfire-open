@@ -19,9 +19,9 @@ extern "C"
 {
 #include "kbutton.h"
 }
-#include "XashDefs/cvardef.h"
-#include "XashDefs/usercmd.h"
-#include "XashDefs/const.h"
+#include "EngineGamesAPI/cvardef.h"
+#include "EngineGamesAPI/usercmd.h"
+#include "EngineGamesAPI/const.h"
 #include "camera.h"
 #include "in_defs.h"
 // #include "view.h"

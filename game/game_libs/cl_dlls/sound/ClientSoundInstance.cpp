@@ -1,8 +1,8 @@
 #include "ClientSoundInstance.h"
 #include "standard_includes.h"
-#include "XashDefs/cdll_int.h"
+#include "EngineGamesAPI/cdll_int.h"
 #include "cl_dll.h"
-#include "XashDefs/event_api.h"
+#include "EngineGamesAPI/event_api.h"
 
 namespace ClientSoundInstance
 {

@@ -24,7 +24,7 @@ INPUT
 ==============================================================
 */
 
-#include "XashDefs/keydefs.h"
+#include "EngineGamesAPI/keydefs.h"
 
 //
 // input.c

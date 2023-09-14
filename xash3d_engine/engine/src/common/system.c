@@ -35,7 +35,7 @@ GNU General Public License for more details.
 #include <process.h>
 #endif
 
-#include "XashDefs/menu_int.h"  // _UPDATE_PAGE macro
+#include "EngineGamesAPI/menu_int.h"  // _UPDATE_PAGE macro
 
 #include "common/library.h"
 #include "WhereAmI/whereami.h"

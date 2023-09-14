@@ -17,8 +17,8 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "common/common.h"
 #include "server/server.h"
-#include "XashDefs/const.h"
-#include "XashDefs/pm_defs.h"
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/pm_defs.h"
 
 #define MOVE_NORMAL 0  // normal move in the direction monster is facing
 #define MOVE_STRAFE 1  // moves in direction specified, no matter which way monster is facing

@@ -21,7 +21,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
-#include "XashDefs/triangleapi.h"
+#include "EngineGamesAPI/triangleapi.h"
 
 #include <string.h>
 #include <stdio.h>

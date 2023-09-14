@@ -32,10 +32,10 @@
 #include "../cl_dll/demo.h"
 #endif
 
-#include "XashDefs/demo_api.h"
+#include "EngineGamesAPI/demo_api.h"
 #include "voice_status.h"
-#include "XashDefs/r_efx.h"
-#include "XashDefs/entity_types.h"
+#include "EngineGamesAPI/r_efx.h"
+#include "EngineGamesAPI/entity_types.h"
 #include "VGUI_ActionSignal.h"
 #include "VGUI_Scheme.h"
 #include "VGUI_TextImage.h"

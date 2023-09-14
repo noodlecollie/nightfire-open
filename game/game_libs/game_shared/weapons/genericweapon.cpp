@@ -3,13 +3,13 @@
 #include "weaponslots.h"
 #include "gamerules.h"
 #include "gameplay/inaccuracymodifiers.h"
-#include "XashDefs/weaponinfo.h"
+#include "EngineGamesAPI/weaponinfo.h"
 #include "util/extramath.h"
 #include "util/cvarFuncs.h"
 
 #ifdef CLIENT_DLL
 #include "cl_dll.h"
-#include "XashDefs/cl_entity.h"
+#include "EngineGamesAPI/cl_entity.h"
 #endif
 
 #ifndef CLIENT_DLL

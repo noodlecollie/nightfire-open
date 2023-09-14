@@ -21,7 +21,7 @@
 #include "nodes.h"
 #include "player.h"
 #include "gamerules.h"
-#include "XashDefs/event_args.h"
+#include "EngineGamesAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
 
 #define CROWBAR_BODYHIT_VOLUME 128

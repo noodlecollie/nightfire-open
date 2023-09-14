@@ -17,16 +17,16 @@ GNU General Public License for more details.
 #define SERVER_H
 
 #include "MathLib/mathlib.h"
-#include "XashDefs/edict.h"
-#include "XashDefs/eiface.h"
-#include "XashDefs/physint.h"  // physics interface
+#include "EngineGamesAPI/edict.h"
+#include "EngineGamesAPI/eiface.h"
+#include "EngineGamesAPI/physint.h"  // physics interface
 #include "common/mod_local.h"
-#include "XashDefs/pm_defs.h"
-#include "XashDefs/pm_movevars.h"
-#include "XashDefs/entity_state.h"
-#include "XashDefs/protocol.h"
+#include "EngineGamesAPI/pm_defs.h"
+#include "EngineGamesAPI/pm_movevars.h"
+#include "EngineGamesAPI/entity_state.h"
+#include "EngineGamesAPI/protocol.h"
 #include "common/netchan.h"
-#include "XashDefs/custom.h"
+#include "EngineGamesAPI/custom.h"
 #include "common/world.h"
 
 //=============================================================================

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "customGeometry/geometryItem.h"
-#include "XashDefs/cdll_int.h"
+#include "EngineGamesAPI/cdll_int.h"
 
 namespace CustomGeometry
 {

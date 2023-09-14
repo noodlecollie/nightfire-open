@@ -15,11 +15,11 @@
 
 #pragma once
 
-#include "XashDefs/particledef.h"
-#include "XashDefs/beamdef.h"
-#include "XashDefs/dlight.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/surfaceprops.h"
+#include "EngineGamesAPI/particledef.h"
+#include "EngineGamesAPI/beamdef.h"
+#include "EngineGamesAPI/dlight.h"
+#include "EngineGamesAPI/cl_entity.h"
+#include "EngineGamesAPI/surfaceprops.h"
 
 /*
 // FOR REFERENCE, These are the built-in tracer colors.  Note, color 4 is the one

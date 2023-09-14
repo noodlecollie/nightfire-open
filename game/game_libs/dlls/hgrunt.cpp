@@ -39,7 +39,7 @@
 #include "talkmonster.h"
 #include "soundent.h"
 #include "effects.h"
-#include "XashDefs/customentity.h"
+#include "EngineGamesAPI/customentity.h"
 
 int g_fGruntQuestion;  // true if an idle grunt asked a question. Cleared when someone answers.
 

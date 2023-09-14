@@ -9,23 +9,23 @@
 #include <stdio.h>
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/triangleapi.h"
-#include "XashDefs/hltv.h"
+#include "EngineGamesAPI/cl_entity.h"
+#include "EngineGamesAPI/triangleapi.h"
+#include "EngineGamesAPI/hltv.h"
 
 #include "pm_shared.h"
-#include "XashDefs/pm_defs.h"
-#include "XashDefs/pmtrace.h"
+#include "EngineGamesAPI/pm_defs.h"
+#include "EngineGamesAPI/pmtrace.h"
 #include "parsemsg.h"
-#include "XashDefs/entity_types.h"
+#include "EngineGamesAPI/entity_types.h"
 #include "PlatformLib/String.h"
 
 // these are included for the math functions
-#include "XashDefs/com_model.h"
-#include "XashDefs/demo_api.h"
-#include "XashDefs/event_api.h"
+#include "EngineGamesAPI/com_model.h"
+#include "EngineGamesAPI/demo_api.h"
+#include "EngineGamesAPI/event_api.h"
 #include "studio_util.h"
-#include "XashDefs/screenfade.h"
+#include "EngineGamesAPI/screenfade.h"
 #include "PlatformLib/String.h"
 
 extern "C" int iJumpSpectator;

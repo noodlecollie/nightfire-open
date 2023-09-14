@@ -15,7 +15,7 @@
 
 #include "../hud.h"
 #include "../cl_util.h"
-#include "XashDefs/event_api.h"
+#include "EngineGamesAPI/event_api.h"
 #include "ev_hldm.h"
 #include "weaponregistry.h"
 #include "genericweapon.h"

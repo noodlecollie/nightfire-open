@@ -16,9 +16,9 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "XashDefs/event_flags.h"
+#include "EngineGamesAPI/event_flags.h"
 #include "common/net_encode.h"
-#include "XashDefs/con_nprint.h"
+#include "EngineGamesAPI/con_nprint.h"
 
 /*
 ===============

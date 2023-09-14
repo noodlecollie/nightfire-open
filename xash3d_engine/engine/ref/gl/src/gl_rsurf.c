@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include <limits.h>
 #include "gl_local.h"
 #include "MathLib/mathlib.h"
-#include "XashDefs/mod_local_defs.h"
+#include "EngineGamesAPI/mod_local_defs.h"
 
 typedef struct
 {

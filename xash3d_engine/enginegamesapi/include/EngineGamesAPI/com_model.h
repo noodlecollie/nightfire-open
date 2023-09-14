@@ -16,11 +16,11 @@ GNU General Public License for more details.
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/mempool.h"
-#include "XashDefs/engine_limits.h"
-#include "XashDefs/bspfile.h"
-#include "XashDefs/typedefs.h"
-#include "XashDefs/custom.h"
+#include "EngineGamesAPI/mempool.h"
+#include "EngineGamesAPI/engine_limits.h"
+#include "EngineGamesAPI/bspfile.h"
+#include "EngineGamesAPI/typedefs.h"
+#include "EngineGamesAPI/custom.h"
 
 /*
 ==============================================================================

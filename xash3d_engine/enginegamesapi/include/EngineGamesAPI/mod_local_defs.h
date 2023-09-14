@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "XashDefs/edict.h"
-#include "XashDefs/eiface.h"
-#include "XashDefs/ref_api.h"
-#include "XashDefs/studio.h"
+#include "EngineGamesAPI/edict.h"
+#include "EngineGamesAPI/eiface.h"
+#include "EngineGamesAPI/ref_api.h"
+#include "EngineGamesAPI/studio.h"
 
 #define LM_SAMPLE_SIZE 16
 #define LM_SAMPLE_EXTRASIZE 8

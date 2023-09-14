@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "XashDefs/cdll_int.h"
+#include "EngineGamesAPI/cdll_int.h"
 
 //---------------------------------------------------------------------------
 // sequenceCommandEnum_e

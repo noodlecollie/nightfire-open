@@ -15,7 +15,7 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "XashDefs/const.h"
+#include "EngineGamesAPI/const.h"
 
 static struct
 {

@@ -17,8 +17,8 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "server/server.h"
 #include "common/library.h"
-#include "XashDefs/const.h"
-#include "XashDefs/render_api.h"  // decallist_t
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/render_api.h"  // decallist_t
 #include "client/sound.h"  // S_GetDynamicSounds
 #include "client/ref_common.h"  // decals
 #include "PlatformLib/Time.h"

@@ -15,10 +15,10 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "common/world.h"
-#include "XashDefs/pm_defs.h"
+#include "EngineGamesAPI/pm_defs.h"
 #include "common/mod_local.h"
 #include "MathLib/mathlib.h"
-#include "XashDefs/studio.h"
+#include "EngineGamesAPI/studio.h"
 
 // just for debug
 const char* et_name[] = {

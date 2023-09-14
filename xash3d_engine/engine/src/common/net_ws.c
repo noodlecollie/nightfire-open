@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "PlatformDefs/platformid.h"
-#include "XashDefs/engine_version.h"
+#include "EngineGamesAPI/engine_version.h"
 #include "PlatformLib/Net.h"
 #include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"

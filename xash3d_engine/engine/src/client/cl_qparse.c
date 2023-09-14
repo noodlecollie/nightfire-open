@@ -17,10 +17,10 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "common/net_encode.h"
-#include "XashDefs/particledef.h"
+#include "EngineGamesAPI/particledef.h"
 #include "client/cl_tent.h"
-#include "XashDefs/shake.h"
-#include "XashDefs/hltv.h"
+#include "EngineGamesAPI/shake.h"
+#include "EngineGamesAPI/hltv.h"
 #include "client/input.h"
 #include "common/fscallback.h"
 

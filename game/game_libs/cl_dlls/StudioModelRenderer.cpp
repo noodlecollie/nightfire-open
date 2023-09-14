@@ -10,13 +10,13 @@
 
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/const.h"
-#include "XashDefs/com_model.h"
-#include "XashDefs/studio.h"
-#include "XashDefs/entity_state.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/dlight.h"
-#include "XashDefs/triangleapi.h"
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/com_model.h"
+#include "EngineGamesAPI/studio.h"
+#include "EngineGamesAPI/entity_state.h"
+#include "EngineGamesAPI/cl_entity.h"
+#include "EngineGamesAPI/dlight.h"
+#include "EngineGamesAPI/triangleapi.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -26,7 +26,7 @@
 #include "PlatformLib/String.h"
 
 #include "studio_util.h"
-#include "XashDefs/r_studioint.h"
+#include "EngineGamesAPI/r_studioint.h"
 
 #include "StudioModelRenderer.h"
 #include "GameStudioModelRenderer.h"

@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "XashDefs/mobility_int.h"
+#include "EngineGamesAPI/mobility_int.h"
 #include "common/library.h"
 #include "client/input.h"
 #include "platform/platform.h"

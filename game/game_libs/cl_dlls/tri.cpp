@@ -12,10 +12,10 @@
 
 // Triangle rendering apis are in gEngfuncs.pTriAPI
 
-#include "XashDefs/const.h"
-#include "XashDefs/entity_state.h"
-#include "XashDefs/cl_entity.h"
-#include "XashDefs/triangleapi.h"
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/entity_state.h"
+#include "EngineGamesAPI/cl_entity.h"
+#include "EngineGamesAPI/triangleapi.h"
 #include "customGeometry/geometryStatics.h"
 
 extern "C"

@@ -15,8 +15,8 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "XashDefs/key_modifiers.h"
-#include "XashDefs/cursor_type.h"
+#include "EngineGamesAPI/key_modifiers.h"
+#include "EngineGamesAPI/cursor_type.h"
 
 // VGUI generic vertex
 

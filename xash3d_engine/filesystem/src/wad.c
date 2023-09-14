@@ -29,8 +29,8 @@ GNU General Public License for more details.
 #include <unistd.h>
 #endif
 
-#include "XashDefs/log_strings.h"
-#include "XashDefs/wadfile.h"
+#include "EngineGamesAPI/log_strings.h"
+#include "EngineGamesAPI/wadfile.h"
 #include "CRTLib/crtlib.h"
 #include "filesystem_internal.h"
 

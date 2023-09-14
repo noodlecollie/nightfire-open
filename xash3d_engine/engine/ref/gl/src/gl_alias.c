@@ -13,16 +13,16 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "XashDefs/log_strings.h"
+#include "EngineGamesAPI/log_strings.h"
 #include "MathLib/mathlib.h"
 #include "gl_local.h"
-#include "XashDefs/const.h"
-#include "XashDefs/r_studioint.h"
-#include "XashDefs/triangleapi.h"
-#include "XashDefs/alias.h"
-#include "XashDefs/pm_defs.h"
-#include "XashDefs/pmtrace.h"
-#include "XashDefs/typedefs.h"
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/r_studioint.h"
+#include "EngineGamesAPI/triangleapi.h"
+#include "EngineGamesAPI/alias.h"
+#include "EngineGamesAPI/pm_defs.h"
+#include "EngineGamesAPI/pmtrace.h"
+#include "EngineGamesAPI/typedefs.h"
 
 extern cvar_t r_shadows;
 

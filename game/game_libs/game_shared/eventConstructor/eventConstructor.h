@@ -2,7 +2,7 @@
 
 #include <utility>
 #include "standard_includes.h"
-#include "XashDefs/event_args.h"
+#include "EngineGamesAPI/event_args.h"
 
 namespace EventConstructor
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mathlib.h"
-#include "XashDefs/eiface.h"
+#include "EngineGamesAPI/eiface.h"
 
 typedef struct entvars_s entvars_t;
 class CBaseEntity;

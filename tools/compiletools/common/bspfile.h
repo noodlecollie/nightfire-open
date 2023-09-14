@@ -9,7 +9,7 @@
 #include "texturedirectorylisting.h"
 #endif
 
-#include "XashDefs/engine_limits.h"
+#include "EngineGamesAPI/engine_limits.h"
 
 #if _MSC_VER >= 1000
 #pragma once

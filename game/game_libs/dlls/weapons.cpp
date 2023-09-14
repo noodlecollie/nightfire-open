@@ -31,7 +31,7 @@
 #include "decals.h"
 #include "gamerules.h"
 #include "weaponregistry.h"
-#include "XashDefs/weaponinfo.h"
+#include "EngineGamesAPI/weaponinfo.h"
 #include "weaponatts_collection.h"
 #include "resources/SoundResources.h"
 #include "PlatformLib/String.h"

@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Bitmap.h"
 #include "PicButton.h"
 #include "YesNoMessageBox.h"
-#include "XashDefs/keydefs.h"
+#include "EngineGamesAPI/keydefs.h"
 #include "MenuStrings.h"
 
 #define ART_BANNER "gfx/shell/head_newgame"

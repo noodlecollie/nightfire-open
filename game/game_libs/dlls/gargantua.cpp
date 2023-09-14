@@ -23,7 +23,7 @@
 #include "nodes.h"
 #include "monsters.h"
 #include "schedule.h"
-#include "XashDefs/customentity.h"
+#include "EngineGamesAPI/customentity.h"
 #include "weapons.h"
 #include "effects.h"
 #include "soundent.h"

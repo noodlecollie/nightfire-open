@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "common/textureproperties.h"
-#include "XashDefs/surfaceprops.h"
+#include "EngineGamesAPI/surfaceprops.h"
 #include "CRTLib/crtlib.h"
 
 #define LIST_ITEM(enum, str) str,

@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "XashDefs/engine_version.h"
+#include "EngineGamesAPI/engine_version.h"
 #include "Identity/arch.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"

@@ -3,14 +3,14 @@
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"
-#include "XashDefs/customentity.h"
-#include "XashDefs/r_efx.h"
+#include "EngineGamesAPI/customentity.h"
+#include "EngineGamesAPI/r_efx.h"
 #include "client/cl_tent.h"
 #include "common/pm_local.h"
 #include "client/cl_surfaceprop_effects.h"
 #include "client/cl_bytenormals.h"
 #include "common/fscallback.h"
-#include "XashDefs/surfaceprops.h"
+#include "EngineGamesAPI/surfaceprops.h"
 
 #define PART_SIZE Q_max(0.5f, cl_draw_particles->value)
 

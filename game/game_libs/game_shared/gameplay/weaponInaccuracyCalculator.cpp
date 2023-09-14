@@ -1,6 +1,6 @@
 #include "standard_includes.h"
-#include "XashDefs/entity_state.h"
-#include "XashDefs/cvardef.h"
+#include "EngineGamesAPI/entity_state.h"
+#include "EngineGamesAPI/cvardef.h"
 #include "gameplay/weaponInaccuracyCalculator.h"
 #include "util/extramath.h"
 #include "util/cvarFuncs.h"

@@ -2,7 +2,7 @@
 #include "cl_dll.h"
 #include "hud.h"
 #include "cl_util.h"
-#include "XashDefs/triangleapi.h"
+#include "EngineGamesAPI/triangleapi.h"
 #include "customGeometry/geometryStatics.h"
 #include "coreutil/coreutil.h"
 #include "standard_includes.h"

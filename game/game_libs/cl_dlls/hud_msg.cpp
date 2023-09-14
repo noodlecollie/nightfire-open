@@ -19,7 +19,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
-#include "XashDefs/r_efx.h"
+#include "EngineGamesAPI/r_efx.h"
 #include "debug_assert.h"
 
 #define MAX_CLIENTS 32

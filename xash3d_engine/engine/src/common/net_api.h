@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "XashDefs/netadr.h"
+#include "EngineGamesAPI/netadr.h"
 
 #define NETAPI_REQUEST_SERVERLIST (0)  // Doesn't need a remote address
 #define NETAPI_REQUEST_PING (1)

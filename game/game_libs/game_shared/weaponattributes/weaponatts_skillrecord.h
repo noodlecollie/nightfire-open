@@ -1,7 +1,7 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "XashDefs/cvardef.h"
+#include "EngineGamesAPI/cvardef.h"
 #include "skill.h"
 #include "utlstring.h"
 

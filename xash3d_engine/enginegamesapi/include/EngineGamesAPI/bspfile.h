@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include <stdint.h>
-#include "XashDefs/engine_limits.h"
+#include "EngineGamesAPI/engine_limits.h"
 
 /*
 ==============================================================================

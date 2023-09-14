@@ -2,11 +2,11 @@
 
 #include <cstdint>
 #include "mathlib.h"
-#include "XashDefs/const.h"
+#include "EngineGamesAPI/const.h"
 #include "botprofiles/botprofiletable.h"
 #include "utlstring.h"
 #include "botfactory.h"
-#include "XashDefs/edict.h"
+#include "EngineGamesAPI/edict.h"
 
 class CBasePlayer;
 class CGameRules;

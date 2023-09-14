@@ -14,11 +14,11 @@ GNU General Public License for more details.
 */
 
 #include "CRTLib/bitdefs.h"
-#include "XashDefs/engine_version.h"
+#include "EngineGamesAPI/engine_version.h"
 #include "Identity/arch.h"
 #include "CRCLib/crclib.h"
 #include "common/common.h"
-#include "XashDefs/const.h"
+#include "EngineGamesAPI/const.h"
 #include "server/server.h"
 #include "common/net_encode.h"
 #include "common/net_api.h"

@@ -14,7 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "XashDefs/log_strings.h"
+#include "EngineGamesAPI/log_strings.h"
 #include "gl_local.h"
 
 #define VGUI_MAX_TEXTURES (MAX_TEXTURES / 2)  // a half of total textures count

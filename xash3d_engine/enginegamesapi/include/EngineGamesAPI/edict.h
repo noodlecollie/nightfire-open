@@ -16,8 +16,8 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/progdefs.h"
-#include "XashDefs/link.h"
+#include "EngineGamesAPI/progdefs.h"
+#include "EngineGamesAPI/link.h"
 
 #define MAX_ENT_LEAFS 48
 

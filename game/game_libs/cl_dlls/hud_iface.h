@@ -12,7 +12,7 @@
 #include "exportdef.h"
 
 typedef int (*pfnUserMsgHook)(const char* pszName, int iSize, void* pbuf);
-#include "XashDefs/wrect.h"
-#include "XashDefs/cdll_int.h"
+#include "EngineGamesAPI/wrect.h"
+#include "EngineGamesAPI/cdll_int.h"
 extern cl_enginefunc_t gEngfuncs;
 #endif

@@ -15,7 +15,7 @@
 // pm_math.c -- math primitives
 
 #include "mathlib.h"
-#include "XashDefs/const.h"
+#include "EngineGamesAPI/const.h"
 #include <math.h>
 
 // up / down

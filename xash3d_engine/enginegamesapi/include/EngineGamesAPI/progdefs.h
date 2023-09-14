@@ -16,7 +16,7 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "XashDefs/typedefs.h"
+#include "EngineGamesAPI/typedefs.h"
 
 struct edict_s;
 

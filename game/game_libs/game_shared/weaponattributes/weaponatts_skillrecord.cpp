@@ -1,6 +1,6 @@
 #include "weaponatts_skillrecord.h"
 #include "util.h"
-#include "XashDefs/eiface.h"
+#include "EngineGamesAPI/eiface.h"
 
 namespace WeaponAtts
 {

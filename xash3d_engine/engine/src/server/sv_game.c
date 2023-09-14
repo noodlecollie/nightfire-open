@@ -19,12 +19,12 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "server/server.h"
 #include "common/net_encode.h"
-#include "XashDefs/event_flags.h"
+#include "EngineGamesAPI/event_flags.h"
 #include "common/library.h"
-#include "XashDefs/pm_defs.h"
-#include "XashDefs/studio.h"
-#include "XashDefs/const.h"
-#include "XashDefs/render_api.h"  // modelstate_t
+#include "EngineGamesAPI/pm_defs.h"
+#include "EngineGamesAPI/studio.h"
+#include "EngineGamesAPI/const.h"
+#include "EngineGamesAPI/render_api.h"  // modelstate_t
 #include "client/ref_common.h"  // decals
 #include "common/fscallback.h"
 
