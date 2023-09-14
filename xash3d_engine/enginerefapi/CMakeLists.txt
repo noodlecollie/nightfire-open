@@ -1,4 +1,4 @@
-add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
+add_library(${TARGETNAME_LIB_ENGINEINTERNALAPI} INTERFACE
 	include/EngineRefAPI/alias.h
 	include/EngineRefAPI/com_image.h
 	include/EngineRefAPI/cursor_type.h
@@ -20,10 +20,10 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/wadfile.h
 )
 
-target_include_directories(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
+target_include_directories(${TARGETNAME_LIB_ENGINEINTERNALAPI} INTERFACE
 	include
 )
 
-target_link_libraries(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
+target_link_libraries(${TARGETNAME_LIB_ENGINEINTERNALAPI} INTERFACE
 	${TARGETNAME_LIB_PLATFORMDEFS}
 )

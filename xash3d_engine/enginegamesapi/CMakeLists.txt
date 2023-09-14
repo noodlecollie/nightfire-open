@@ -2,7 +2,7 @@ set(GENERATED_HEADER_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated_headers")
 
 configure_file(configure/engine_version.h.in ${GENERATED_HEADER_DIR}/EngineGamesAPI/engine_version.h)
 
-add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
+add_library(${TARGETNAME_LIB_ENGINEPUBLICAPI} INTERFACE
 	${GENERATED_HEADER_DIR}/EngineGamesAPI/engine_version.h
 	include/EngineGamesAPI/beamdef.h
 	include/EngineGamesAPI/bspfile.h
@@ -52,11 +52,11 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/wrect.h
 )
 
-target_include_directories(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
+target_include_directories(${TARGETNAME_LIB_ENGINEPUBLICAPI} INTERFACE
 	${GENERATED_HEADER_DIR}
 	include
 )
 
-target_link_libraries(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
+target_link_libraries(${TARGETNAME_LIB_ENGINEPUBLICAPI} INTERFACE
 	${TARGETNAME_LIB_PLATFORMDEFS}
 )
