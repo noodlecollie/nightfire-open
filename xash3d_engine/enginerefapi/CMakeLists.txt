@@ -1,0 +1,15 @@
+add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
+	include/EngineRefAPI/alias.h
+)
+
+target_compile_definitions(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
+	BUILDVAR_VERSION_STRING="${VCS_TAG_ID}"
+)
+
+target_include_directories(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
+	include
+)
+
+target_link_libraries(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
+	${TARGETNAME_LIB_PLATFORMDEFS}
+)

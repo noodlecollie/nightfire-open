@@ -1,7 +1,4 @@
-# NFTODO: Some of these will only be used by the renderers,
-# so could be moved to a private renderer-only interface
 add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
-	include/EngineGamesAPI/alias.h
 	include/EngineGamesAPI/beamdef.h
 	include/EngineGamesAPI/bspfile.h
 	include/EngineGamesAPI/cdll_int.h

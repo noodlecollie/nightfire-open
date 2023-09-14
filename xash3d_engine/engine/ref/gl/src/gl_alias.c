@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/const.h"
 #include "EngineGamesAPI/r_studioint.h"
 #include "EngineGamesAPI/triangleapi.h"
-#include "EngineGamesAPI/alias.h"
+#include "EngineRefAPI/alias.h"
 #include "EngineGamesAPI/pm_defs.h"
 #include "EngineGamesAPI/pmtrace.h"
 #include "EngineGamesAPI/typedefs.h"

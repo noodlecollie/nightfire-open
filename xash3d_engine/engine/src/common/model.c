@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "common/mod_local.h"
 #include "EngineGamesAPI/sprite.h"
-#include "EngineGamesAPI/alias.h"
+#include "EngineRefAPI/alias.h"
 #include "EngineGamesAPI/studio.h"
 #include "common/world.h"
 #include "EngineGamesAPI/enginefeatures.h"
