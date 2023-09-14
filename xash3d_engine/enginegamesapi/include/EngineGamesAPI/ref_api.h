@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/log_strings.h"
 #include "Filesystem/filesystem.h"
 #include <stdarg.h>
-#include "EngineGamesAPI/com_image.h"
+#include "EngineRefAPI/com_image.h"
 #include "EngineGamesAPI/vgui_api.h"
 #include "EngineGamesAPI/render_api.h"
 #include "EngineGamesAPI/triangleapi.h"
@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/com_model.h"
 #include "EngineGamesAPI/studio.h"
 #include "EngineGamesAPI/r_efx.h"
-#include "EngineGamesAPI/com_image.h"
+#include "EngineRefAPI/com_image.h"
 
 // RefAPI changelog:
 // 1. Initial release
