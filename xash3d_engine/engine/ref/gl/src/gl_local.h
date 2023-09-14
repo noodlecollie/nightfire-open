@@ -33,7 +33,7 @@ GNU General Public License for more details.
 // #include "common/cvar.h"
 #include "gl_export.h"
 #include "EngineGamesAPI/wadfile.h"
-#include "EngineGamesAPI/dll_types.h"
+#include "EngineRefAPI/dll_types.h"
 #include "CRTLib/bitdefs.h"
 
 #ifndef offsetof
