@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include "EngineGamesAPI/trace.h"
-#include "EngineGamesAPI/lightstyle.h"
+#include "EngineRefAPI/lightstyle.h"
 #include "EngineGamesAPI/link.h"
 
 #define MOVE_NORMAL 0  // normal trace

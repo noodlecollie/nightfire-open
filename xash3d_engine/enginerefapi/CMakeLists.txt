@@ -6,6 +6,7 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/enginefeatures.h
 	include/EngineRefAPI/gameinfo.h
 	include/EngineRefAPI/key_modifiers.h
+	include/EngineRefAPI/lightstyle.h
 	include/EngineRefAPI/ref_api.h
 	include/EngineRefAPI/vgui_api.h
 )
