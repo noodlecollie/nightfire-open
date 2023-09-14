@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/entity_state.h"
 #include "EngineGamesAPI/weaponinfo.h"
 #include "EngineGamesAPI/event_args.h"
-#include "EngineGamesAPI/protocol.h"
+#include "EngineRefAPI/protocol.h"
 #include "client/client.h"
 #include "server/server.h"
 #include "common/fscallback.h"

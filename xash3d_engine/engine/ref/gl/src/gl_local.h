@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/com_model.h"
 #include "EngineGamesAPI/cl_entity.h"
 #include "EngineGamesAPI/render_api.h"
-#include "EngineGamesAPI/protocol.h"
+#include "EngineRefAPI/protocol.h"
 #include "EngineGamesAPI/dlight.h"
 #include "gl_frustum.h"
 #include "EngineRefAPI/ref_api.h"

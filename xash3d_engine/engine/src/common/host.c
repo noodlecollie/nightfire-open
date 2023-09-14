@@ -40,7 +40,7 @@ GNU General Public License for more details.
 #include "common/base_cmd.h"
 #include "client/client.h"
 #include "common/netchan.h"
-#include "EngineGamesAPI/protocol.h"
+#include "EngineRefAPI/protocol.h"
 #include "common/mod_local.h"
 #include "client/input.h"
 #include "EngineRefAPI/enginefeatures.h"

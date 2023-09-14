@@ -24,7 +24,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/pm_defs.h"
 #include "EngineRefAPI/pm_movevars.h"
 #include "EngineGamesAPI/entity_state.h"
-#include "EngineGamesAPI/protocol.h"
+#include "EngineRefAPI/protocol.h"
 #include "common/netchan.h"
 #include "EngineGamesAPI/custom.h"
 #include "common/world.h"

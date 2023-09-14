@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include "EngineGamesAPI/render_api.h"
 #include "client/cdll_exp.h"
 #include "EngineGamesAPI/screenfade.h"
-#include "EngineGamesAPI/protocol.h"
+#include "EngineRefAPI/protocol.h"
 #include "common/netchan.h"
 #include "common/net_api.h"
 #include "common/world.h"

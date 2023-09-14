@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "EngineGamesAPI/keydefs.h"
-#include "EngineGamesAPI/protocol.h"  // get the protocol version
+#include "EngineRefAPI/protocol.h"  // get the protocol version
 #include "EngineGamesAPI/con_nprint.h"
 #include "common/qfont.h"
 #include "EngineGamesAPI/wadfile.h"

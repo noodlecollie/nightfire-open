@@ -36,7 +36,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/pm_info.h
 	include/EngineGamesAPI/pmtrace.h
 	include/EngineGamesAPI/progdefs.h
-	include/EngineGamesAPI/protocol.h
 	include/EngineGamesAPI/r_efx.h
 	include/EngineGamesAPI/r_studioint.h
 	include/EngineGamesAPI/ref_params.h
