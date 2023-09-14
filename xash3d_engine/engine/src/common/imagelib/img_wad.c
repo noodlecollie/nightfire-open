@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "MathLib/mathlib.h"
-#include "EngineGamesAPI/wadfile.h"
+#include "EngineRefAPI/wadfile.h"
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"
 #include "EngineGamesAPI/studio.h"

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "CRTLib/bitdefs.h"
-#include "EngineGamesAPI/wadfile.h"  // acess decal size
+#include "EngineRefAPI/wadfile.h"  // acess decal size
 #include "common/common.h"
 #include "client/client.h"
 #include "EngineGamesAPI/r_efx.h"

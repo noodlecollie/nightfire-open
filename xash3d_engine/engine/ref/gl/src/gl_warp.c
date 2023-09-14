@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "EngineRefAPI/log_strings.h"
 #include "gl_local.h"
-#include "EngineGamesAPI/wadfile.h"
+#include "EngineRefAPI/wadfile.h"
 
 #define SKYCLOUDS_QUALITY 12
 #define MAX_CLIP_VERTS 128  // skybox clip vertices

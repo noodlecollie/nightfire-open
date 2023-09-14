@@ -48,7 +48,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/triangleapi.h
 	include/EngineGamesAPI/typedefs.h
 	include/EngineGamesAPI/usercmd.h
-	include/EngineGamesAPI/wadfile.h
 	include/EngineGamesAPI/weaponinfo.h
 	include/EngineGamesAPI/wrect.h
 )

@@ -30,7 +30,7 @@ GNU General Public License for more details.
 #endif
 
 #include "EngineRefAPI/log_strings.h"
-#include "EngineGamesAPI/wadfile.h"
+#include "EngineRefAPI/wadfile.h"
 #include "CRTLib/crtlib.h"
 #include "filesystem_internal.h"
 

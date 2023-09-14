@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "MathLib/mathlib.h"
-#include "EngineGamesAPI/wadfile.h"
+#include "EngineRefAPI/wadfile.h"
 #include "PlatformLib/String.h"
 #include "common/common.h"
 #include "common/mod_local.h"

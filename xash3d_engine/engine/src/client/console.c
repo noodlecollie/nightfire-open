@@ -23,7 +23,7 @@ GNU General Public License for more details.
 #include "EngineRefAPI/protocol.h"  // get the protocol version
 #include "EngineGamesAPI/con_nprint.h"
 #include "common/qfont.h"
-#include "EngineGamesAPI/wadfile.h"
+#include "EngineRefAPI/wadfile.h"
 #include "client/input.h"
 #include "common/fscallback.h"
 

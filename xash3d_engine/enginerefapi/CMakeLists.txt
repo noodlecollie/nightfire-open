@@ -17,6 +17,7 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/render_api.h
 	include/EngineRefAPI/sprite.h
 	include/EngineRefAPI/vgui_api.h
+	include/EngineRefAPI/wadfile.h
 )
 
 target_include_directories(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
