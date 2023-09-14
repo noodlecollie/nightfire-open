@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "common/system.h"
 #include "common/backends.h"
 #include "EngineRefAPI/cursor_type.h"
-#include "EngineGamesAPI/key_modifiers.h"
+#include "EngineRefAPI/key_modifiers.h"
 
 /*
 ==============================================================================
