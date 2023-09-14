@@ -642,40 +642,14 @@ static void R_CollectRendererNames(void)
 {
 	// ordering is important!
 	static const char* shortNames[] = {
-#if XASH_REF_GL_ENABLED
 		"gl",
-#endif
-#if XASH_REF_NANOGL_ENABLED
-		"gles1",
-#endif
-#if XASH_REF_GLWES_ENABLED
-		"gles2",
-#endif
-#if XASH_REF_GL4ES_ENABLED
-		"gl4es",
-#endif
-#if XASH_REF_SOFT_ENABLED
-		"soft",
-#endif
+		"gl_experimental",
 	};
 
 	// ordering is important here too!
 	static const char* readableNames[SIZE_OF_ARRAY(shortNames)] = {
-#if XASH_REF_GL_ENABLED
 		"OpenGL",
-#endif
-#if XASH_REF_NANOGL_ENABLED
-		"GLES1 (NanoGL)",
-#endif
-#if XASH_REF_GLWES_ENABLED
-		"GLES2 (gl-wes-v2)",
-#endif
-#if XASH_REF_GL4ES_ENABLED
-		"GL4ES",
-#endif
-#if XASH_REF_SOFT_ENABLED
-		"Software",
-#endif
+		"OpenGL (Experimental)",
 	};
 
 	ref.numRenderers = SIZE_OF_ARRAY(shortNames);

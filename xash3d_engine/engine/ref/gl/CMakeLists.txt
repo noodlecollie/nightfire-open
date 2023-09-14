@@ -42,8 +42,8 @@ target_compile_definitions(${TARGETNAME_LIB_REF_OPENGL} PRIVATE
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_REF_OPENGL})
 
-target_include_directories(${TARGETNAME_LIB_REF_OPENGL} PUBLIC
-	.
+target_include_directories(${TARGETNAME_LIB_REF_OPENGL} PRIVATE
+	src
 )
 
 target_link_libraries(${TARGETNAME_LIB_REF_OPENGL} PRIVATE
@@ -61,13 +61,7 @@ target_link_libraries(${TARGETNAME_LIB_REF_OPENGL} PRIVATE
 )
 
 target_compile_definitions(${TARGETNAME_LIB_REF_OPENGL} PUBLIC
-	XASH_REF_GL_ENABLED=1
 	$<$<BOOL:${NF_OPENGL_STATIC_LINK}>:XASH_GL_STATIC=1>
-)
-
-# If this renderer is enabled, add it as an engine dependency
-target_link_libraries(${TARGETNAME_LIB_ENGINE} PRIVATE
-	${TARGETNAME_LIB_REF_OPENGL}
 )
 
 install(TARGETS ${TARGETNAME_LIB_REF_OPENGL}

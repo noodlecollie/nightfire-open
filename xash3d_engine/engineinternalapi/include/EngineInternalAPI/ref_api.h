@@ -15,19 +15,20 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "EngineInternalAPI/log_strings.h"
-#include "Filesystem/filesystem.h"
 #include <stdarg.h>
-#include "EngineInternalAPI/com_image.h"
-#include "EngineInternalAPI/vgui_api.h"
-#include "EngineInternalAPI/render_api.h"
 #include "EnginePublicAPI/triangleapi.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/cl_entity.h"
 #include "EnginePublicAPI/com_model.h"
 #include "EnginePublicAPI/studio.h"
 #include "EnginePublicAPI/r_efx.h"
+#include "EnginePublicAPI/cvardef.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "EngineInternalAPI/com_image.h"
+#include "EngineInternalAPI/vgui_api.h"
+#include "EngineInternalAPI/render_api.h"
+#include "EngineInternalAPI/com_image.h"
+#include "Filesystem/filesystem.h"
 
 // RefAPI changelog:
 // 1. Initial release
@@ -661,7 +662,7 @@ typedef struct ref_interface_s
 	int (*VGUI_GenerateTexture)(void);
 } ref_interface_t;
 
-typedef int (*REFAPI)(int version, ref_interface_t* pFunctionTable, ref_api_t* engfuncs, ref_globals_t* pGlobals);
+typedef int (*REFAPI)(int version, ref_interface_t* pFunctionTable, const ref_api_t* engfuncs, ref_globals_t* pGlobals);
 #define GET_REF_API "GetRefAPI"
 
 #ifdef REF_DLL
