@@ -66,6 +66,6 @@ typedef unsigned char byte;
 typedef unsigned int uint;
 typedef unsigned int uint32;  //!!!
 
-#include "EngineGamesAPI/menu_int.h"
+#include "EngineRefAPI/menu_int.h"
 
 #endif  // EXTDLL_H

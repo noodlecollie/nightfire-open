@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include <fcntl.h>
 #include <errno.h>
 #include "platform/platform.h"
-#include "EngineGamesAPI/menu_int.h"
+#include "EngineRefAPI/menu_int.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/System.h"
 #include "PlatformLib/String.h"

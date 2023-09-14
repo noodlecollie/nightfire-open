@@ -28,7 +28,6 @@ add_library(${TARGETNAME_LIB_ENGINEGAMESAPI} INTERFACE
 	include/EngineGamesAPI/hltv.h
 	include/EngineGamesAPI/keydefs.h
 	include/EngineGamesAPI/link.h
-	include/EngineGamesAPI/menu_int.h
 	include/EngineGamesAPI/mobility_int.h
 	include/EngineGamesAPI/mod_local_defs.h
 	include/EngineGamesAPI/netadr.h

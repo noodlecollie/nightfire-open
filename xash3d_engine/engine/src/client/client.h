@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "MathLib/mathlib.h"
 #include "EngineGamesAPI/cdll_int.h"
-#include "EngineGamesAPI/menu_int.h"
+#include "EngineRefAPI/menu_int.h"
 #include "EngineGamesAPI/cl_entity.h"
 #include "common/mod_local.h"
 #include "EngineGamesAPI/pm_defs.h"

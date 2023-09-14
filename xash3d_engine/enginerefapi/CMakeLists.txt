@@ -9,6 +9,7 @@ add_library(${TARGETNAME_LIB_ENGINEREFAPI} INTERFACE
 	include/EngineRefAPI/lightstyle.h
 	include/EngineRefAPI/log_strings.h
 	include/EngineRefAPI/mempool.h
+	include/EngineRefAPI/menu_int.h
 	include/EngineRefAPI/ref_api.h
 	include/EngineRefAPI/vgui_api.h
 )

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "platform/platform.h"
-#include "EngineGamesAPI/menu_int.h"
+#include "EngineRefAPI/menu_int.h"
 #include "server/server.h"
 #include <shellapi.h>
 
