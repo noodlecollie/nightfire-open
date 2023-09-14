@@ -1,2 +1,5 @@
 add_subdirectory(gl)
-add_subdirectory(gl_experimental)
+
+if(NF_EXPERIMENTAL_RENDERER)
+	add_subdirectory(gl_experimental)
+endif()

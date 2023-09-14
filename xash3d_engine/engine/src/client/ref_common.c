@@ -640,21 +640,14 @@ static void SetFullscreenModeFromCommandLine(void)
 
 static void R_CollectRendererNames(void)
 {
-	// ordering is important!
-	static const char* shortNames[] = {
-		"gl",
-		"gl_experimental",
+	// Ordered by priority
+	static const renderer_name_t RENDERER_NAMES[] = {
+		{"gl", "OpenGL"},
+		{"gl_experimental", "OpenGL (Experimental)"},
 	};
 
-	// ordering is important here too!
-	static const char* readableNames[SIZE_OF_ARRAY(shortNames)] = {
-		"OpenGL",
-		"OpenGL (Experimental)",
-	};
-
-	ref.numRenderers = SIZE_OF_ARRAY(shortNames);
-	ref.shortNames = shortNames;
-	ref.readableNames = readableNames;
+	ref.rendererNames = RENDERER_NAMES;
+	ref.numRenderers = SIZE_OF_ARRAY(RENDERER_NAMES);
 }
 
 qboolean R_Init(void)
@@ -721,15 +714,15 @@ qboolean R_Init(void)
 
 	if ( !success )
 	{
-		int i;
-
-		for ( i = 0; i < ref.numRenderers && !success; i++ )
+		for ( size_t index = 0; index < ref.numRenderers && !success; ++index )
 		{
 			// skip renderer that was requested but failed to load
-			if ( !Q_strcmp(requested, ref.shortNames[i]) )
+			if ( Q_strcmp(requested, ref.rendererNames[index].shortName) == 0 )
+			{
 				continue;
+			}
 
-			success = R_LoadRenderer(ref.shortNames[i]);
+			success = R_LoadRenderer(ref.rendererNames[index].shortName);
 		}
 	}
 

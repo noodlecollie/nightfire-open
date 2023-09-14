@@ -1218,16 +1218,22 @@ static void pfnEnableTextInput(int enable)
 	Key_EnableTextInput(enable, false);
 }
 
-static int pfnGetRenderers(unsigned int num, char* shortName, size_t size1, char* readableName, size_t size2)
+static int pfnGetRenderers(size_t index, char* shortName, size_t size1, char* readableName, size_t size2)
 {
-	if ( num >= (unsigned int)ref.numRenderers )
+	if ( index >= ref.numRenderers )
+	{
 		return 0;
+	}
 
-	if ( shortName && size1 )
-		Q_strncpy(shortName, ref.shortNames[num], size1);
+	if ( shortName && size1 > 0 )
+	{
+		Q_strncpy(shortName, ref.rendererNames[index].shortName, size1);
+	}
 
-	if ( readableName && size2 )
-		Q_strncpy(readableName, ref.readableNames[num], size2);
+	if ( readableName && size2 > 0 )
+	{
+		Q_strncpy(readableName, ref.rendererNames[index].readableName, size2);
+	}
 
 	return 1;
 }
