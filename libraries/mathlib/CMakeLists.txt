@@ -5,6 +5,7 @@ add_library(${TARGETNAME_LIB_MATHLIB} STATIC
 	include/MathLib/mathlib.h
 	include/MathLib/mathtypes.h
 	include/MathLib/matrixlib.h
+	include/MathLib/vec2.h
 	include/MathLib/vec3.h
 	src/mathlib.c
 	src/matrixlib.c

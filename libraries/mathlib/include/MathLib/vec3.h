@@ -15,12 +15,10 @@ extern const vec3_t vec3_origin;
 	((c)[0] = (a)[1] * (b)[2] - (a)[2] * (b)[1], \
 	 (c)[1] = (a)[2] * (b)[0] - (a)[0] * (b)[2], \
 	 (c)[2] = (a)[0] * (b)[1] - (a)[1] * (b)[0])
-#define Vector2Subtract(a, b, c) ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1])
-#define VectorSubtract(a, b, c) ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
-#define Vector2Add(a, b, c) ((c)[0] = (a)[0] + (b)[0], (c)[1] = (a)[1] + (b)[1])
+
 #define VectorAdd(a, b, c) ((c)[0] = (a)[0] + (b)[0], (c)[1] = (a)[1] + (b)[1], (c)[2] = (a)[2] + (b)[2])
 #define VectorAddScalar(a, b, c) ((c)[0] = (a)[0] + (b), (c)[1] = (a)[1] + (b), (c)[2] = (a)[2] + (b))
-#define Vector2Copy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1])
+#define VectorSubtract(a, b, c) ((c)[0] = (a)[0] - (b)[0], (c)[1] = (a)[1] - (b)[1], (c)[2] = (a)[2] - (b)[2])
 #define VectorCopy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2])
 #define Vector4Copy(a, b) ((b)[0] = (a)[0], (b)[1] = (a)[1], (b)[2] = (a)[2], (b)[3] = (a)[3])
 #define VectorScale(in, scale, out) \
@@ -35,15 +33,12 @@ extern const vec3_t vec3_origin;
 #define VectorDistance2(a, b) \
 	(((a)[0] - (b)[0]) * ((a)[0] - (b)[0]) + ((a)[1] - (b)[1]) * ((a)[1] - (b)[1]) + \
 	 ((a)[2] - (b)[2]) * ((a)[2] - (b)[2]))
-#define Vector2Average(a, b, o) ((o)[0] = ((a)[0] + (b)[0]) * 0.5f, (o)[1] = ((a)[1] + (b)[1]) * 0.5f)
 #define VectorAverage(a, b, o) \
 	((o)[0] = ((a)[0] + (b)[0]) * 0.5f, (o)[1] = ((a)[1] + (b)[1]) * 0.5f, (o)[2] = ((a)[2] + (b)[2]) * 0.5f)
-#define Vector2Set(v, x, y) ((v)[0] = (x), (v)[1] = (y))
 #define VectorSet(v, x, y, z) ((v)[0] = (x), (v)[1] = (y), (v)[2] = (z))
 #define Vector4Set(v, a, b, c, d) ((v)[0] = (a), (v)[1] = (b), (v)[2] = (c), (v)[3] = (d))
 #define VectorClear(x) ((x)[0] = (x)[1] = (x)[2] = 0)
-#define Vector2Lerp(v1, lerp, v2, c) \
-	((c)[0] = (v1)[0] + (lerp) * ((v2)[0] - (v1)[0]), (c)[1] = (v1)[1] + (lerp) * ((v2)[1] - (v1)[1]))
+
 #define VectorLerp(v1, lerp, v2, c) \
 	((c)[0] = (v1)[0] + (lerp) * ((v2)[0] - (v1)[0]), \
 	 (c)[1] = (v1)[1] + (lerp) * ((v2)[1] - (v1)[1]), \

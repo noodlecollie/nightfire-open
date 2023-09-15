@@ -13,8 +13,14 @@
 #endif
 #endif
 
+#ifdef __cplusplus
+template<typename T, size_t SIZE>
+constexpr size_t SIZE_OF_ARRAY(T (&)[SIZE])
+{
+	return SIZE;
+}
+#else
 // This version catches errors where the macro is used
 // on a pointer rather than an array.
-#define SIZE_OF_ARRAY(a) \
-  ((sizeof(a) / sizeof(*(a))) / \
-  (size_t)(!(sizeof(a) % sizeof(*(a)))))
+#define SIZE_OF_ARRAY(a) ((sizeof(a) / sizeof(*(a))) / (size_t)(!(sizeof(a) % sizeof(*(a)))))
+#endif
