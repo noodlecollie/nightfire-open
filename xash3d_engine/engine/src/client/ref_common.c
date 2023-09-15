@@ -640,47 +640,16 @@ static void SetFullscreenModeFromCommandLine(void)
 
 static void R_CollectRendererNames(void)
 {
-	// ordering is important!
-	static const char* shortNames[] = {
-#if XASH_REF_GL_ENABLED
-		"gl",
-#endif
-#if XASH_REF_NANOGL_ENABLED
-		"gles1",
-#endif
-#if XASH_REF_GLWES_ENABLED
-		"gles2",
-#endif
-#if XASH_REF_GL4ES_ENABLED
-		"gl4es",
-#endif
-#if XASH_REF_SOFT_ENABLED
-		"soft",
+	// Ordered by priority
+	static const renderer_name_t RENDERER_NAMES[] = {
+		{"gl", "OpenGL"},
+#ifdef REF_OPENGL_EXPERIMENTAL_ENABLED
+		{"gl_experimental", "OpenGL (Experimental)"},
 #endif
 	};
 
-	// ordering is important here too!
-	static const char* readableNames[SIZE_OF_ARRAY(shortNames)] = {
-#if XASH_REF_GL_ENABLED
-		"OpenGL",
-#endif
-#if XASH_REF_NANOGL_ENABLED
-		"GLES1 (NanoGL)",
-#endif
-#if XASH_REF_GLWES_ENABLED
-		"GLES2 (gl-wes-v2)",
-#endif
-#if XASH_REF_GL4ES_ENABLED
-		"GL4ES",
-#endif
-#if XASH_REF_SOFT_ENABLED
-		"Software",
-#endif
-	};
-
-	ref.numRenderers = SIZE_OF_ARRAY(shortNames);
-	ref.shortNames = shortNames;
-	ref.readableNames = readableNames;
+	ref.rendererNames = RENDERER_NAMES;
+	ref.numRenderers = SIZE_OF_ARRAY(RENDERER_NAMES);
 }
 
 qboolean R_Init(void)
@@ -747,15 +716,15 @@ qboolean R_Init(void)
 
 	if ( !success )
 	{
-		int i;
-
-		for ( i = 0; i < ref.numRenderers && !success; i++ )
+		for ( size_t index = 0; index < ref.numRenderers && !success; ++index )
 		{
 			// skip renderer that was requested but failed to load
-			if ( !Q_strcmp(requested, ref.shortNames[i]) )
+			if ( Q_strcmp(requested, ref.rendererNames[index].shortName) == 0 )
+			{
 				continue;
+			}
 
-			success = R_LoadRenderer(ref.shortNames[i]);
+			success = R_LoadRenderer(ref.rendererNames[index].shortName);
 		}
 	}
 
