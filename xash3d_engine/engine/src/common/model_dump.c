@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "common/model_dump.h"
 #include "common/common.h"
 #include "bsp/generic/viscompress.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 #include "EnginePublicAPI/eiface.h"
 #include "common/fscallback.h"
 

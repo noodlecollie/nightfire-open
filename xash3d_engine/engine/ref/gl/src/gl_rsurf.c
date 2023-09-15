@@ -15,7 +15,8 @@ GNU General Public License for more details.
 
 #include <limits.h>
 #include "gl_local.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
+#include "MathLib/matrixlib.h"
 #include "EngineInternalAPI/mod_local_defs.h"
 
 typedef struct

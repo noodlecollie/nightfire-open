@@ -17,6 +17,7 @@
 
 #include "PlatformDefs/typedefs.h"
 #include "EnginePublicAPI/typedefs.h"
+#include "MathLib/mathtypes.h"
 
 typedef struct dlight_s
 {

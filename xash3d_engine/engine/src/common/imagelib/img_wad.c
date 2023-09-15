@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 #include "EngineInternalAPI/wadfile.h"
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"

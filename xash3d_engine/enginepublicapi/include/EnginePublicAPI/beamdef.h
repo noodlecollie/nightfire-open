@@ -16,6 +16,7 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
+#include "MathLib/mathtypes.h"
 
 #define FBEAM_STARTENTITY 0x00000001
 #define FBEAM_ENDENTITY 0x00000002

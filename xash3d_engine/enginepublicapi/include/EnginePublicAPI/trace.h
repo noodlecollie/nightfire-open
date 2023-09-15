@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
+#include "MathLib/mathtypes.h"
 
 struct edict_s;
 

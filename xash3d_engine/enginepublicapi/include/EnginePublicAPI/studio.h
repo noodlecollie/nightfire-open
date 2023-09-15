@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include "PlatformDefs/typedefs.h"
 #include "EnginePublicAPI/studio_event.h"
+#include "MathLib/mathtypes.h"
 
 /*
 ==============================================================================

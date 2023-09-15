@@ -13,7 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/mathdefs.h"
 #include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 
 const matrix3x4 m_matrix3x4_identity = {
 	{1, 0, 0, 0},  // PITCH	[forward], org[0]

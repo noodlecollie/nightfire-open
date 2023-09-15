@@ -1,3 +1,4 @@
+#include "MathLib/vec3.h"
 #include "common/common.h"
 #include "client/client.h"
 #include "common/library.h"

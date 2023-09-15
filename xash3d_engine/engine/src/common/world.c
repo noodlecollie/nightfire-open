@@ -18,6 +18,8 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/pm_defs.h"
 #include "common/mod_local.h"
 #include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
+#include "MathLib/matrixlib.h"
 #include "EnginePublicAPI/studio.h"
 
 // just for debug

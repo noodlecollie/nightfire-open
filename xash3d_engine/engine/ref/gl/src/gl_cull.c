@@ -15,6 +15,8 @@ GNU General Public License for more details.
 
 #include "gl_local.h"
 #include "EnginePublicAPI/entity_types.h"
+#include "MathLib/vec3.h"
+#include "MathLib/matrixlib.h"
 
 /*
 =============================================================

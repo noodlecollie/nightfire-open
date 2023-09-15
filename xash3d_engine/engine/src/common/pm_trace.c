@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "CRTLib/bitdefs.h"
 #include "MathLib/mathlib.h"
+#include "MathLib/matrixlib.h"
 #include "common/common.h"
 #include "common/mod_local.h"
 #include "common/pm_local.h"

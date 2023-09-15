@@ -20,6 +20,7 @@
 #include "EnginePublicAPI/event_args.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/typedefs.h"
+#include "MathLib/mathtypes.h"
 
 #define HISTORY_MAX 64  // Must be power of 2
 #define HISTORY_MASK (HISTORY_MAX - 1)

@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "MathLib/mathtypes.h"
+
 #define EVENT_API_VERSION 2
 
 struct event_fire_args_s;
