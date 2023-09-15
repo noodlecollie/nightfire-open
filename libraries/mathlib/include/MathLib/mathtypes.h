@@ -3,20 +3,10 @@
 #include "PlatformDefs/typedefs.h"
 #include "MathLib/mathdefs.h"
 
-typedef vec_t vec3_t[3];
 typedef vec_t vec4_t[4];
 typedef vec_t quat_t[4];
 typedef vec_t matrix3x4[3][4];
 typedef vec_t matrix4x4[4][4];
-
-typedef struct mplane_s
-{
-	vec3_t normal;
-	vec_t dist;
-	byte type;  // for fast side tests
-	byte signbits;  // signx + (signy<<1) + (signz<<1)
-	byte pad[2];
-} mplane_t;
 
 typedef enum
 {

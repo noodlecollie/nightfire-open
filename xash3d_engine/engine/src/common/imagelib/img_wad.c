@@ -21,6 +21,11 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/sprite.h"
 #include "common/qfont.h"
 
+static inline byte AverageRGB(rgba_t rgba)
+{
+	return (byte)(((float)rgba[0] + (float)rgba[1] + (float)rgba[2]) / 3.0f);
+}
+
 /*
 ============
 Image_LoadPAL
@@ -515,7 +520,7 @@ qboolean Image_LoadMIP(const char* name, const byte* buffer, fs_offset_t filesiz
 		image.fogParams[2] = pal[255 * 3 + 2];
 
 		// calc the decal reflectivity
-		image.fogParams[3] = VectorAvg(image.fogParams);
+		image.fogParams[3] = AverageRGB(image.fogParams);
 	}
 	else if ( pal != NULL )
 	{

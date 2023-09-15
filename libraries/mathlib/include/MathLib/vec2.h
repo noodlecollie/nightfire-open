@@ -1,9 +1,10 @@
 #pragma once
 
 #include <assert.h>
+#include "PlatformDefs/typedefs.h"
 #include "PlatformDefs/utils.h"
 #include "PlatformDefs/static_assert.h"
-#include "MathLib/mathtypes.h"
+#include "MathLib/mathdefs.h"
 
 typedef vec_t vec2_t[2];
 
@@ -37,10 +38,10 @@ static inline void Vector2Set(vec2_t v, vec_t x, vec_t y)
 	v[1] = y;
 }
 
-static inline void Vector2Lerp(const vec2_t v1, vec_t lerp, const vec2_t v2, vec2_t c)
+static inline void Vector2Lerp(const vec2_t v1, float lerp, const vec2_t v2, vec2_t c)
 {
-	c[0] = v1[0] + lerp * (v2[0] - v1[0]);
-	c[1] = v1[1] + lerp * (v2[1] - v1[1]);
+	c[0] = v1[0] + (lerp * (v2[0] - v1[0]));
+	c[1] = v1[1] + (lerp * (v2[1] - v1[1]));
 }
 
 #ifdef __cplusplus
@@ -116,12 +117,7 @@ public:
 	{
 		static float g_Dummy = 0.0f;
 
-#ifndef NDEBUG
-		if ( index >= SIZE )
-		{
-			assert(false);
-		}
-#endif
+		assert(index < SIZE);
 
 		return index < SIZE ? operator float*()[index] : g_Dummy;
 	}
@@ -130,12 +126,7 @@ public:
 	{
 		static const float g_Dummy = 0.0f;
 
-#ifndef NDEBUG
-		if ( index >= SIZE )
-		{
-			assert(false);
-		}
-#endif
+		assert(index < SIZE);
 
 		return index < SIZE ? operator const float*()[index] : g_Dummy;
 	}
@@ -149,4 +140,13 @@ public:
 	vec_t x;
 	vec_t y;
 };
+
+inline float DotProduct(const Vector2D& a, const Vector2D& b)
+{
+	return (a.x * b.x) + (a.y * b.y);
+}
+inline Vector2D operator*(float fl, const Vector2D& v)
+{
+	return v * fl;
+}
 #endif  // __cplusplus

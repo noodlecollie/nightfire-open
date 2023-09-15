@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/log_strings.h"
 #include "MathLib/vec2.h"
 #include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
 #include "MathLib/matrixlib.h"
 
 #define DECAL_OVERLAP_DISTANCE 2

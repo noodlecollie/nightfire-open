@@ -1415,7 +1415,7 @@ void GAME_EXPORT R_BloodStream(const vec3_t org, const vec3_t dir, int pcolor, i
 
 		p->vel[2] -= arc;
 		arc -= 0.005f;
-		VectorScale(p->vel, accel, p->vel);
+		VectorScale(p->vel, (float)accel, p->vel);
 		// accel -= 0.00001f;  // so last few will drip
 	}
 
@@ -1442,7 +1442,7 @@ void GAME_EXPORT R_BloodStream(const vec3_t org, const vec3_t dir, int pcolor, i
 		num *= 1.7f;
 
 		VectorScale(p->vel, num, p->vel);
-		VectorScale(p->vel, accel, p->vel);
+		VectorScale(p->vel, (float)accel, p->vel);
 
 		for ( j = 0; j < 2; j++ )
 		{
@@ -1462,7 +1462,7 @@ void GAME_EXPORT R_BloodStream(const vec3_t org, const vec3_t dir, int pcolor, i
 			p->vel[2] -= arc;
 
 			VectorScale(p->vel, num, p->vel);
-			VectorScale(p->vel, accel, p->vel);
+			VectorScale(p->vel, (float)accel, p->vel);
 		}
 	}
 }
@@ -1538,7 +1538,7 @@ void GAME_EXPORT R_ParticleBurst(const vec3_t org, int size, int color, float li
 			VectorCopy(org, p->org);
 			VectorAddScalar(org, COM_RandomFloat((float)(-size), (float)size), dest);
 			VectorSubtract(dest, p->org, dir);
-			dist = VectorNormalizeLength(dir);
+			dist = VectorNormalizeLength(dir, dir);
 			VectorScale(dir, (dist / life), p->vel);
 		}
 	}
@@ -1584,7 +1584,7 @@ void GAME_EXPORT R_LargeFunnel(const vec3_t org, int reverse)
 			if ( vel < 64.0f )
 				vel = 64.0f;
 
-			dist = VectorNormalizeLength(dir);
+			dist = VectorNormalizeLength(dir, dir);
 			vel += COM_RandomFloat(64.0f, 128.0f);
 			VectorScale(dir, vel, p->vel);
 			p->die = (float)cl.time + (dist / vel);
@@ -1651,7 +1651,7 @@ void GAME_EXPORT R_RocketTrail(vec3_t start, vec3_t end, int type)
 	particle_t* p;
 
 	VectorSubtract(end, start, vec);
-	len = VectorNormalizeLength(vec);
+	len = VectorNormalizeLength(vec, vec);
 
 	if ( type == 7 )
 	{
@@ -1810,7 +1810,7 @@ void GAME_EXPORT R_ShowLine(const vec3_t start, const vec3_t end)
 	particle_t* p;
 
 	VectorSubtract(end, start, dir);
-	len = VectorNormalizeLength(dir);
+	len = VectorNormalizeLength(dir, dir);
 	VectorScale(dir, 5.0f, dir);
 	VectorCopy(start, org);
 

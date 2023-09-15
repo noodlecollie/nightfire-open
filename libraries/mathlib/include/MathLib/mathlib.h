@@ -22,9 +22,9 @@ GNU General Public License for more details.
 #include <tgmath.h>
 #endif
 
-#include "MathLib/mathdefs.h"
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/typedefs.h"
+#include "MathLib/mathdefs.h"
 #include "MathLib/mathtypes.h"
 
 #define MakeRGBA(out, x, y, z, w) Vector4Set(out, (byte)x, (byte)y, (byte)z, (byte)w)
@@ -73,36 +73,10 @@ float rsqrt(float number);
 float anglemod(float a);
 word FloatToHalf(float v);
 float HalfToFloat(word h);
-void RoundUpHullSize(vec3_t size);
-int SignbitsForPlane(const vec3_t normal);
-int PlaneTypeForNormal(const vec3_t normal);
 int NearestPOW(int value, qboolean roundDown);
 void SinCos(float radians, float* sine, float* cosine);
-void PlaneIntersect(const mplane_t* plane, const vec3_t p0, const vec3_t p1, vec3_t out);
-
-void ClearBounds(vec3_t mins, vec3_t maxs);
-void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
-qboolean BoundsIntersect(const vec3_t mins1, const vec3_t maxs1, const vec3_t mins2, const vec3_t maxs2);
-qboolean BoundsAndSphereIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t origin, float radius);
-qboolean
-SphereIntersect(const vec3_t vSphereCenter, float fSphereRadiusSquared, const vec3_t vLinePt, const vec3_t vLineDir);
-float RadiusFromBounds(const vec3_t mins, const vec3_t maxs);
-void ExpandBounds(vec3_t mins, vec3_t maxs, float offset);
-
-void AngleQuaternion(const vec3_t angles, vec4_t q, qboolean studio);
-void QuaternionAngle(const vec4_t q, vec3_t angles);
-void QuaternionSlerp(const vec4_t p, const vec4_t q, float t, vec4_t qt);
 float RemapVal(float val, float A, float B, float C, float D);
 float ApproachVal(float target, float value, float speed);
 
 float V_CalcFov(float* fov_x, float width, float height);
 void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean lock_x);
-
-void R_StudioSlerpBones(int numbones, vec4_t q1[], float pos1[][3], const vec4_t q2[], const float pos2[][3], float s);
-
-int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p);
-#define BOX_ON_PLANE_SIDE(emins, emaxs, p) \
-	(((p)->type < 3) ? (((p)->dist <= (emins)[(p)->type]) ? 1 : (((p)->dist >= (emaxs)[(p)->type]) ? 2 : 3)) \
-					 : BoxOnPlaneSide((emins), (emaxs), (p)))
-
-extern const int boxpnt[6][4];

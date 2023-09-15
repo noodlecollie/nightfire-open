@@ -541,7 +541,7 @@ void SND_Spatialize(channel_t* ch)
 	VectorSubtract(ch->origin, s_listener.origin, source_vec);
 
 	// normalize source_vec and get distance from listener to source
-	dist = VectorNormalizeLength(source_vec);
+	dist = VectorNormalizeLength(source_vec, source_vec);
 	dot = DotProduct(s_listener.right, source_vec);
 
 	// don't pan sounds with no attenuation
@@ -1506,7 +1506,7 @@ static void S_SpatializeRawChannels(void)
 				VectorSubtract(ch->origin, s_listener.origin, source_vec);
 
 				// normalize source_vec and get distance from listener to source
-				dist = VectorNormalizeLength(source_vec);
+				dist = VectorNormalizeLength(source_vec, source_vec);
 				dot = DotProduct(s_listener.right, source_vec);
 
 				// don't pan sounds with no attenuation

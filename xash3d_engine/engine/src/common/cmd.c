@@ -1473,6 +1473,13 @@ enum
 
 static int test_flags[3] = {NO_CALL, NO_CALL, NO_CALL};
 
+static void SetFlags(int v[3], int x, int y, int z)
+{
+	v[0] = x;
+	v[1] = y;
+	v[2] = z;
+}
+
 static void Test_PrivilegedCommand_f(void)
 {
 	test_flags[0] = Cmd_CurrentCommandIsPrivileged() ? PRIV : UNPRIV;
@@ -1500,7 +1507,7 @@ void Test_RunCmd(void)
 	TASSERT(test_flags[1] == PRIV);
 	TASSERT(test_flags[2] == PRIV);
 
-	VectorSet(test_flags, NO_CALL, NO_CALL, NO_CALL);
+	SetFlags(test_flags, NO_CALL, NO_CALL, NO_CALL);
 	Cvar_DirectSet(&cl_filterstuffcmd, "0");
 	Cbuf_AddFilteredText("test_privileged; test_unprivileged; hud_filtered\n");
 	Cbuf_Execute();
@@ -1508,7 +1515,7 @@ void Test_RunCmd(void)
 	TASSERT(test_flags[1] == NO_CALL);
 	TASSERT(test_flags[2] == UNPRIV);
 
-	VectorSet(test_flags, NO_CALL, NO_CALL, NO_CALL);
+	SetFlags(test_flags, NO_CALL, NO_CALL, NO_CALL);
 	Cvar_DirectSet(&cl_filterstuffcmd, "1");
 	Cbuf_AddFilteredText("test_privileged; test_unprivileged; hud_filtered\n");
 	Cbuf_Execute();

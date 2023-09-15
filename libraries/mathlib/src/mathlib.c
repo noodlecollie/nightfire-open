@@ -293,7 +293,7 @@ qboolean VectorCompareEpsilon(const vec3_t vec1, const vec3_t vec2, vec_t epsilo
 	return false;
 }
 
-float VectorNormalizeLength2(const vec3_t v, vec3_t out)
+float VectorNormalizeLength(const vec3_t v, vec3_t out)
 {
 	float length, ilength;
 

@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
 #include "CRTLib/bitdefs.h"
 #include "Filesystem/filesystem.h"
 #include "common/common.h"
@@ -262,7 +263,12 @@ int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font
 		{
 			// don't copy alpha
 			if ( !FBitSet(flags, FONT_DRAW_FORCECOL) )
-				VectorCopy(g_color_table[ColorIndex(*(s + 1))], current_color);
+			{
+				const byte* rgba = g_color_table[ColorIndex(*(s + 1))];
+				current_color[0] = rgba[0];
+				current_color[1] = rgba[2];
+				current_color[2] = rgba[3];
+			}
 
 			s += 2;
 			continue;
