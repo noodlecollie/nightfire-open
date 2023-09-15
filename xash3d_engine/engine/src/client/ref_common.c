@@ -643,7 +643,9 @@ static void R_CollectRendererNames(void)
 	// Ordered by priority
 	static const renderer_name_t RENDERER_NAMES[] = {
 		{"gl", "OpenGL"},
+#ifdef REF_OPENGL_EXPERIMENTAL_ENABLED
 		{"gl_experimental", "OpenGL (Experimental)"},
+#endif
 	};
 
 	ref.rendererNames = RENDERER_NAMES;
