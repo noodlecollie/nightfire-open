@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include "MathLib/mathdefs.h"
 #include "MathLib/mathlib.h"
 #include "MathLib/vec3.h"
+#include "MathLib/matrixlib.h"
 
 const matrix3x4 m_matrix3x4_identity = {
 	{1, 0, 0, 0},  // PITCH	[forward], org[0]
@@ -114,7 +115,7 @@ void Matrix3x4_AnglesFromMatrix(const matrix3x4 in, vec3_t out)
 	}
 }
 
-void Matrix3x4_FromOriginQuat(matrix3x4 out, const vec4_t quaternion, const vec3_t origin)
+void Matrix3x4_FromOriginQuat(matrix3x4 out, const quat_t quaternion, const vec3_t origin)
 {
 	out[0][0] = 1.0f - 2.0f * quaternion[1] * quaternion[1] - 2.0f * quaternion[2] * quaternion[2];
 	out[1][0] = 2.0f * quaternion[0] * quaternion[1] + 2.0f * quaternion[3] * quaternion[2];

@@ -117,6 +117,24 @@ char* Q_stristr(const char* s1, const char* s2);
 const char* Q_strchrnul(const char* s, int c);
 #endif
 
+// NFTODO: There's probably a better place to put these.
+
+static inline void RGBA_Copy(const rgba_t in, rgba_t out)
+{
+	out[0] = in[0];
+	out[1] = in[1];
+	out[2] = in[2];
+	out[3] = in[3];
+}
+
+static inline void RGBA_Set(rgba_t rgba, byte r, byte g, byte b, byte a)
+{
+	rgba[0] = r;
+	rgba[1] = g;
+	rgba[2] = b;
+	rgba[3] = a;
+}
+
 #ifdef __cplusplus
 }
 #endif

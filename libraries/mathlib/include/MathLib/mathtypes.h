@@ -1,13 +1,5 @@
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
-#include "MathLib/mathdefs.h"
-
-typedef vec_t vec4_t[4];
-typedef vec_t quat_t[4];
-typedef vec_t matrix3x4[3][4];
-typedef vec_t matrix4x4[4][4];
-
 typedef enum
 {
 	PITCH = 0,

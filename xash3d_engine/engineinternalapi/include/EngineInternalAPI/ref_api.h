@@ -29,6 +29,8 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/render_api.h"
 #include "EngineInternalAPI/com_image.h"
 #include "Filesystem/filesystem.h"
+#include "MathLib/quaternion.h"
+#include "MathLib/vec3.h"
 
 // RefAPI changelog:
 // 1. Initial release
@@ -454,7 +456,7 @@ typedef struct ref_api_s
 	const mstudiobone_t* pbone,
 	const mstudioanim_t* panim,
 	const float* adj,
-	vec4_t q);
+	quat_t q);
 
 	void (*R_StudioCalcBonePosition)(
 	int frame,

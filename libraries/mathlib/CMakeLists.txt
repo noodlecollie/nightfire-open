@@ -5,8 +5,10 @@ add_library(${TARGETNAME_LIB_MATHLIB} STATIC
 	include/MathLib/mathlib.h
 	include/MathLib/mathtypes.h
 	include/MathLib/matrixlib.h
+	include/MathLib/quaternion.h
 	include/MathLib/vec2.h
 	include/MathLib/vec3.h
+	include/MathLib/vec4.h
 	src/mathlib.c
 	src/matrixlib.c
 )

@@ -91,7 +91,7 @@ void SCR_DrawFPS(int height)
 	if ( calc < 1.0f )
 	{
 		Q_snprintf(fpsstring, sizeof(fpsstring), "%4i spf", (int)(1.0f / calc + 0.5f));
-		MakeRGBA(color, 255, 0, 0, 255);
+		RGBA_Set(color, 255, 0, 0, 255);
 	}
 	else
 	{
@@ -106,7 +106,7 @@ void SCR_DrawFPS(int height)
 			Q_snprintf(fpsstring, sizeof(fpsstring), "fps: ^1%4i min, ^3%4i cur, ^2%4i max", minfps, curfps, maxfps);
 		else
 			Q_snprintf(fpsstring, sizeof(fpsstring), "%4i fps", curfps);
-		MakeRGBA(color, 255, 255, 255, 255);
+		RGBA_Set(color, 255, 255, 255, 255);
 	}
 
 	Con_DrawStringLen(fpsstring, &offset, NULL);
@@ -149,7 +149,7 @@ void SCR_DrawPos(void)
 		ent->angles[2],
 		speed);
 
-	MakeRGBA(color, 255, 255, 255, 255);
+	RGBA_Set(color, 255, 255, 255, 255);
 
 	Con_DrawString(refState.width / 2, 4, msg, color);
 }
@@ -223,7 +223,7 @@ void SCR_NetSpeeds(void)
 	x = (int)(refState.width - 320 * font->scale);
 	y = 384;
 
-	MakeRGBA(color, 255, 255, 255, 255);
+	RGBA_Set(color, 255, 255, 255, 255);
 	CL_DrawString((float)x, (float)y, msg, color, font, FONT_DRAW_RESETCOLORONLF);
 }
 
@@ -248,7 +248,7 @@ void SCR_RSpeeds(void)
 		x = (int)(refState.width - 340 * font->scale);
 		y = 64;
 
-		MakeRGBA(color, 255, 255, 255, 255);
+		RGBA_Set(color, 255, 255, 255, 255);
 		CL_DrawString((float)x, (float)y, msg, color, font, FONT_DRAW_RESETCOLORONLF);
 	}
 }

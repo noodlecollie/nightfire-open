@@ -247,10 +247,6 @@ qboolean
 SphereIntersect(const vec3_t vSphereCenter, float fSphereRadiusSquared, const vec3_t vLinePt, const vec3_t vLineDir);
 float RadiusFromBounds(const vec3_t mins, const vec3_t maxs);
 void ExpandBounds(vec3_t mins, vec3_t maxs, float offset);
-void AngleQuaternion(const vec3_t angles, vec4_t q, qboolean studio);
-void QuaternionAngle(const vec4_t q, vec3_t angles);
-void QuaternionSlerp(const vec4_t p, const vec4_t q, float t, vec4_t qt);
-void R_StudioSlerpBones(int numbones, vec4_t q1[], float pos1[][3], const vec4_t q2[], const float pos2[][3], float s);
 
 int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p);
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p) \

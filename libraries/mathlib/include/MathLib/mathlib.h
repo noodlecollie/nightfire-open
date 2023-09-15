@@ -27,7 +27,6 @@ GNU General Public License for more details.
 #include "MathLib/mathdefs.h"
 #include "MathLib/mathtypes.h"
 
-#define MakeRGBA(out, x, y, z, w) Vector4Set(out, (byte)x, (byte)y, (byte)z, (byte)w)
 #define PlaneDist(point, plane) ((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal))
 #define PlaneDiff(point, plane) \
 	(((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal)) - (plane)->dist)

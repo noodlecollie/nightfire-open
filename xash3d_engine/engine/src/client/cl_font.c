@@ -236,7 +236,7 @@ int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font
 	if ( !FBitSet(flags, FONT_DRAW_NORENDERMODE) )
 		ref.dllFuncs.GL_SetRenderMode(font->rendermode);
 
-	Vector4Copy(color, current_color);
+	RGBA_Copy(color, current_color);
 
 	while ( *s )
 	{
@@ -255,7 +255,10 @@ int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font
 			}
 
 			if ( FBitSet(flags, FONT_DRAW_RESETCOLORONLF) )
-				Vector4Copy(color, current_color);
+			{
+				RGBA_Copy(color, current_color);
+			}
+
 			continue;
 		}
 
