@@ -2,6 +2,11 @@
 
 #include "PlatformDefs/typedefs.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef vec_t vec4_t[4];
 
 static inline void Vector4Copy(const vec4_t a, vec4_t b)
@@ -19,3 +24,7 @@ static inline void Vector4Set(vec4_t v, vec_t a, vec_t b, vec_t c, vec_t d)
 	v[2] = c;
 	v[3] = d;
 }
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif

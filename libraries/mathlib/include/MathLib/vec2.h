@@ -6,7 +6,17 @@
 #include "PlatformDefs/static_assert.h"
 #include "MathLib/mathdefs.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef vec_t vec2_t[2];
+
+static inline float Vector2DotProduct(const vec2_t x, const vec2_t y)
+{
+	return (x[0] * y[0]) + (x[1] * y[1]);
+}
 
 static inline void Vector2Add(const vec2_t a, const vec2_t b, vec2_t c)
 {
@@ -44,91 +54,164 @@ static inline void Vector2Lerp(const vec2_t v1, float lerp, const vec2_t v2, vec
 	c[1] = v1[1] + (lerp * (v2[1] - v1[1]));
 }
 
+static inline void Vector2Scale(const vec2_t in, float scale, vec2_t out)
+{
+	out[0] = in[0] * scale;
+	out[1] = in[1] * scale;
+}
+
+static inline void Vector2Divide(const vec2_t in, float d, vec2_t out)
+{
+	assert(d != 0.0f);
+	Vector2Scale(in, (1.0f / d), out);
+}
+
+static inline float Vector2LengthSquared(const vec2_t a)
+{
+	return Vector2DotProduct(a, a);
+}
+
+static inline float Vector2Length(const vec2_t a)
+{
+	return sqrtf(Vector2LengthSquared(a));
+}
+
+static inline float Vector2Normalize(vec2_t v)
+{
+	const float length = Vector2Length(v);
+	const float iLength = length != 0.0f ? (1.0f / length) : 0.0f;
+
+	v[0] *= iLength;
+	v[1] *= iLength;
+
+	return length;
+}
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
+
 #ifdef __cplusplus
 class Vector2D
 {
 public:
 	static constexpr size_t SIZE = sizeof(vec2_t);
 
-	inline Vector2D(void) :
+	Vector2D() :
 		x(0.0f),
 		y(0.0f)
 	{
 		static_assert(sizeof(*this) == SIZE, "Expected class to match the size of vec2_t");
 	}
 
-	inline Vector2D(float inX, float inY) :
+	Vector2D(vec_t inX, vec_t inY) :
 		x(inX),
 		y(inY)
 	{
 	}
 
-	inline Vector2D operator+(const Vector2D& v) const
+	Vector2D operator+(const Vector2D& v) const
 	{
-		return Vector2D(x + v.x, y + v.y);
+		Vector2D out;
+		Vector2Add(RawData(), v.RawData(), out.RawData());
+		return out;
 	}
 
-	inline Vector2D operator-(const Vector2D& v) const
+	Vector2D operator-(const Vector2D& v) const
 	{
-		return Vector2D(x - v.x, y - v.y);
+		Vector2D out;
+		Vector2Subtract(RawData(), v.RawData(), out.RawData());
+		return out;
 	}
 
-	inline Vector2D operator*(float fl) const
+	Vector2D operator*(float fl) const
 	{
-		return Vector2D(x * fl, y * fl);
+		Vector2D out;
+		Vector2Scale(RawData(), fl, out.RawData());
+		return out;
 	}
 
-	inline Vector2D operator/(float fl) const
+	Vector2D operator/(float fl) const
 	{
-		return Vector2D(x / fl, y / fl);
+		assert(fl != 0.0f);
+
+		Vector out;
+		Vector2Divide(RawData(), fl, out.RawData());
+		return out;
 	}
 
-	operator float*()
+	Vector2D& operator+=(const Vector2D& other)
+	{
+		*this = *this + other;
+		return *this;
+	}
+
+	Vector2D& operator-=(const Vector2D& other)
+	{
+		*this = *this - other;
+		return *this;
+	}
+
+	Vector2D& operator*=(float fl)
+	{
+		*this = *this * fl;
+		return *this;
+	}
+
+	Vector2D& operator/=(float fl)
+	{
+		*this = *this / fl;
+		return *this;
+	}
+
+	const vec_t* RawData() const
 	{
 		return &x;
 	}
 
-	operator const float*() const
+	vec_t* RawData()
 	{
 		return &x;
 	}
 
-	inline float Length(void) const
+	operator vec_t*()
 	{
-		return sqrtf((x * x) + (y * y));
+		return RawData();
 	}
 
-	inline Vector2D Normalize(void) const
+	operator const vec_t*() const
 	{
-		float flLen = Length();
-
-		if ( flLen == 0 )
-		{
-			return Vector2D(0, 0);
-		}
-		else
-		{
-			flLen = 1 / flLen;
-			return Vector2D(x * flLen, y * flLen);
-		}
+		return RawData();
 	}
 
-	inline float& operator[](size_t index)
+	float Length() const
 	{
-		static float g_Dummy = 0.0f;
+		return Vector2Length(RawData());
+	}
+
+	Vector2D Normalize() const
+	{
+		Vector2D out(*this);
+		Vector2Normalize(out);
+		return out;
+	}
+
+	vec_t& operator[](size_t index)
+	{
+		static vec_t g_Dummy = 0.0f;
 
 		assert(index < SIZE);
 
-		return index < SIZE ? operator float*()[index] : g_Dummy;
+		return index < SIZE ? RawData()[index] : g_Dummy;
 	}
 
-	inline const float& operator[](size_t index) const
+	const vec_t& operator[](size_t index) const
 	{
-		static const float g_Dummy = 0.0f;
+		static const vec_t g_Dummy = 0.0f;
 
 		assert(index < SIZE);
 
-		return index < SIZE ? operator const float*()[index] : g_Dummy;
+		return index < SIZE ? RawData()[index] : g_Dummy;
 	}
 
 	// This is lame and an array would be better, but lots of things will

@@ -4,6 +4,12 @@
 #include "PlatformDefs/typedefs.h"
 #include "MathLib/mathdefs.h"
 #include "MathLib/mathlib.h"
+#include "MathLib/vec2.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 typedef vec_t vec3_t[3];
 
@@ -102,6 +108,11 @@ static inline vec_t VectorMax(const vec3_t a)
 	return Q_max(a[0], Q_max(a[1], a[2]));
 }
 
+static inline vec_t VectorMin(const vec3_t a)
+{
+	return Q_min(a[0], Q_min(a[1], a[2]));
+}
+
 static inline float VectorAvg(const vec3_t a)
 {
 	return (a[0] + a[1] + a[2]) / 3.0f;
@@ -141,9 +152,9 @@ static inline void VectorSet(vec3_t v, vec_t x, vec_t y, vec_t z)
 	v[2] = z;
 }
 
-static inline void VectorClear(vec3_t x)
+static inline void VectorClear(vec3_t v)
 {
-	VectorSet(x, 0.0f, 0.0f, 0.0f);
+	VectorSet(v, 0.0f, 0.0f, 0.0f);
 }
 
 static inline void VectorLerp(const vec3_t v1, float lerp, const vec3_t v2, vec3_t c)
@@ -254,3 +265,222 @@ int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p);
 					 : BoxOnPlaneSide((emins), (emaxs), (p)))
 
 extern const int boxpnt[6][4];
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif
+
+#ifdef __cplusplus
+// NFTODO: Rename this to Vector3D
+class Vector
+{
+public:
+	static constexpr size_t SIZE = sizeof(vec3_t);
+
+	Vector() :
+		x(0.0f),
+		y(0.0f),
+		z(0.0f)
+	{
+		static_assert(sizeof(*this) == SIZE, "Expected class to match the size of vec2_t");
+	}
+
+	Vector(vec_t inX, vec_t inY, vec_t inZ) :
+		x(inX),
+		y(inY),
+		z(inZ)
+	{
+	}
+
+	template<size_t INSIZE>
+	explicit Vector(const vec_t (&in)[INSIZE]) :
+		x(in[0]),
+		y(in[1]),
+		z(in[2])
+	{
+		static_assert(INSIZE == SIZE, "Input array size does not match vector size");
+	}
+
+	Vector(const vec_t* values, size_t size) :
+		x((values && size > 0) ? values[size] : 0.0f),
+		y((values && size > 1) ? values[size] : 0.0f),
+		z((values && size > 2) ? values[size] : 0.0f)
+	{
+	}
+
+	Vector operator-() const
+	{
+		return Vector(-x, -y, -z);
+	}
+
+	bool operator==(const Vector& v) const
+	{
+		return x == v.x && y == v.y && z == v.z;
+	}
+
+	bool operator!=(const Vector& v) const
+	{
+		return !(*this == v);
+	}
+
+	Vector& operator=(const Vector& v)
+	{
+		x = v.x;
+		y = v.y;
+		z = v.z;
+
+		return *this;
+	}
+
+	Vector operator+(const Vector& v) const
+	{
+		Vector out;
+		VectorAdd(RawData(), v.RawData(), out.RawData());
+		return out;
+	}
+
+	Vector operator-(const Vector& v) const
+	{
+		Vector out;
+		VectorSubtract(RawData(), v.RawData(), out.RawData());
+		return out;
+	}
+
+	Vector operator*(float fl) const
+	{
+		Vector out;
+		VectorScale(RawData(), fl, out.RawData());
+		return out;
+	}
+
+	Vector operator/(float fl) const
+	{
+		assert(fl != 0.0f);
+
+		Vector out;
+		VectorDivide(RawData(), fl, out.RawData());
+		return out;
+	}
+
+	Vector& operator+=(const Vector& other)
+	{
+		*this = *this + other;
+		return *this;
+	}
+
+	Vector& operator-=(const Vector& other)
+	{
+		*this = *this - other;
+		return *this;
+	}
+
+	Vector& operator*=(float fl)
+	{
+		*this = *this * fl;
+		return *this;
+	}
+
+	Vector& operator/=(float fl)
+	{
+		*this = *this / fl;
+		return *this;
+	}
+
+	template<size_t OUTSIZE>
+	void CopyToArray(float (&out)[OUTSIZE]) const
+	{
+		static_assert(OUTSIZE == SIZE, "Output array size does not match vector size");
+
+		out[0] = x;
+		out[1] = y;
+		out[2] = z;
+	}
+
+	float LengthSquared() const
+	{
+		return VectorLengthSquared(RawData());
+	}
+
+	float Length() const
+	{
+		return VectorLength(RawData());
+	}
+
+	const vec_t* RawData() const
+	{
+		return &x;
+	}
+
+	vec_t* RawData()
+	{
+		return &x;
+	}
+
+	operator vec_t*()
+	{
+		return RawData();
+	}
+
+	operator const vec_t*() const
+	{
+		return RawData();
+	}
+
+	Vector Normalize() const
+	{
+		Vector out(*this);
+		VectorNormalize(out);
+		return out;
+	}
+
+	Vector2D Make2D() const
+	{
+		return Vector2D(x, y);
+	}
+
+	float Length2D() const
+	{
+		return Make2D().Length();
+	}
+
+	vec_t& operator[](size_t index)
+	{
+		static float g_Dummy = 0.0f;
+
+		assert(index < SIZE);
+
+		return index < size ? RawData()[index] : g_Dummy;
+	}
+
+	const vec_t& operator[](size_t index) const
+	{
+		static const float g_Dummy = 0.0f;
+
+		assert(index < SIZE);
+
+		return index < size ? RawData()[index] : g_Dummy;
+	}
+
+	// This is lame and an array would be better, but lots of things will
+	// be relying on being able to index by x/y/z. We can't use an array
+	// along with some alias references, because these would change the
+	// size of the class. The static_assert should give us a level of
+	// confidence for now, but evaluate whether it'd be worth the effort
+	// to swap these out.
+	vec_t x;
+	vec_t y;
+	vec_t z;
+};
+
+static inline Vector operator*(float fl, const Vector& v)
+{
+	return v * fl;
+}
+
+static inline Vector CrossProduct(const Vector& a, const Vector& b)
+{
+	Vector out;
+	CrossProduct(a.RawData(), b.RawData(), out.RawData());
+	return out;
+}
+#endif
