@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/ref_api.h"
 #include "MathLib/mathlib.h"
 #include "MathLib/matrixlib.h"
+#include "MathLib/mat4x4.h"
 #include "EnginePublicAPI/ref_params.h"
 #include "EngineInternalAPI/enginefeatures.h"
 #include "EnginePublicAPI/com_strings.h"
