@@ -27,10 +27,12 @@ GNU General Public License for more details.
 #include "MathLib/mathdefs.h"
 #include "MathLib/mathtypes.h"
 
-#define PlaneDist(point, plane) ((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal))
-#define PlaneDiff(point, plane) \
-	(((plane)->type < 3 ? (point)[(plane)->type] : DotProduct((point), (plane)->normal)) - (plane)->dist)
-#define bound(min, num, max) ((num) >= (min) ? ((num) < (max) ? (num) : (max)) : (min))
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+extern const int boxpnt[6][4];
 
 // horrible cast but helps not breaking strict aliasing in mathlib
 // as union type punning should be fine in C but not in C++
@@ -74,8 +76,7 @@ word FloatToHalf(float v);
 float HalfToFloat(word h);
 int NearestPOW(int value, qboolean roundDown);
 void SinCos(float radians, float* sine, float* cosine);
-float RemapVal(float val, float A, float B, float C, float D);
-float ApproachVal(float target, float value, float speed);
 
-float V_CalcFov(float* fov_x, float width, float height);
-void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean lock_x);
+#ifdef __cplusplus
+}  // extern "C"
+#endif

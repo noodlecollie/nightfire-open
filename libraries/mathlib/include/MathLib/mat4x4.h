@@ -3,6 +3,11 @@
 #include "PlatformDefs/typedefs.h"
 #include "MathLib/vec3.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef vec_t matrix4x4[4][4];
 
 extern const matrix4x4 m_matrix4x4_identity;
@@ -23,3 +28,7 @@ static inline void Matrix4x4_LoadIdentity(matrix4x4 mat)
 {
 	Matrix4x4_Copy(mat, m_matrix4x4_identity);
 }
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif

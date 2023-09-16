@@ -34,6 +34,7 @@ GNU General Public License for more details.
 #include "PlatformLib/System.h"
 #include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"
+#include "MathLib/utils.h"
 #include "Identity/arch.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"

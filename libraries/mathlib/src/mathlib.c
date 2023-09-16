@@ -18,6 +18,8 @@ GNU General Public License for more details.
 #include "MathLib/vec4.h"
 #include "MathLib/mat3x4.h"
 #include "MathLib/quaternion.h"
+#include "MathLib/plane.h"
+#include "MathLib/utils.h"
 #include "PlatformDefs/utils.h"
 
 #define NUM_HULL_ROUNDS SIZE_OF_ARRAY(hull_table)
@@ -786,14 +788,15 @@ void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean
 
 /*
 ==================
-BoxOnPlaneSide
+BoxOnPlaneSideNonAxial
 
 Returns 1, 2, or 1 + 2
 ==================
 */
-int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p)
+static int BoxOnPlaneSideNonAxial(const vec3_t emins, const vec3_t emaxs, const mplane_t* p)
 {
-	float dist1, dist2;
+	float dist1 = 0.0f;
+	float dist2 = 0.0f;
 	int sides = 0;
 
 	// general case
@@ -832,17 +835,46 @@ int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p)
 			dist2 = p->normal[0] * emaxs[0] + p->normal[1] * emaxs[1] + p->normal[2] * emaxs[2];
 			break;
 		default:
-			// shut up compiler
-			dist1 = dist2 = 0;
 			break;
 	}
 
 	if ( dist1 >= p->dist )
+	{
 		sides = 1;
+	}
+
 	if ( dist2 < p->dist )
+	{
 		sides |= 2;
+	}
 
 	return sides;
+}
+
+int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p)
+{
+	if ( !p )
+	{
+		return 0;
+	}
+
+	if ( p->type >= PLANE_NONAXIAL )
+	{
+		return BoxOnPlaneSideNonAxial(emins, emaxs, p);
+	}
+
+	if ( p->dist <= emins[p->type] )
+	{
+		return 1;
+	}
+	else if ( p->dist >= emaxs[p->type] )
+	{
+		return 2;
+	}
+	else
+	{
+		return 3;
+	}
 }
 
 /*

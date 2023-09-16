@@ -4,6 +4,11 @@
 #include "MathLib/quaternion.h"
 #include "MathLib/vec3.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef vec_t matrix3x4[3][4];
 
 extern const matrix3x4 m_matrix3x4_identity;
@@ -25,3 +30,7 @@ static inline void Matrix3x4_LoadIdentity(matrix3x4 mat)
 {
 	Matrix3x4_Copy(mat, m_matrix3x4_identity);
 }
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif

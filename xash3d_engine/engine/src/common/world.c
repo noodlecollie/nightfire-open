@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "common/mod_local.h"
 #include "MathLib/mathlib.h"
 #include "MathLib/vec3.h"
+#include "MathLib/utils.h"
 #include "EnginePublicAPI/studio.h"
 
 // just for debug

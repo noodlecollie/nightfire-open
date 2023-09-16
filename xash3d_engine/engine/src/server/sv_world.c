@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"
@@ -588,7 +589,7 @@ void SV_FindTouchedLeafs(edict_t* ent, mnode_t* node, int* headnode)
 	}
 
 	// NODE_MIXED
-	sides = BOX_ON_PLANE_SIDE(ent->v.absmin, ent->v.absmax, node->plane);
+	sides = BoxOnPlaneSide(ent->v.absmin, ent->v.absmax, node->plane);
 
 	if ( (sides == 3) && (*headnode == -1) )
 	{

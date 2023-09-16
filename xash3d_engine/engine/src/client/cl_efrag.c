@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "EnginePublicAPI/entity_types.h"
 #include "EnginePublicAPI/studio.h"
-#include "common/world.h"  // BOX_ON_PLANE_SIDE
+#include "common/world.h"  // BoxOnPlaneSide
 #include "client/client.h"
 #include "MathLib/mat3x4.h"
 #include "MathLib/vec3.h"
@@ -80,7 +80,7 @@ static void R_SplitEntityOnNode(mnode_t* node)
 	}
 
 	// NODE_MIXED
-	sides = BOX_ON_PLANE_SIDE(r_emins, r_emaxs, node->plane);
+	sides = BoxOnPlaneSide(r_emins, r_emaxs, node->plane);
 
 	if ( sides == 3 )
 	{

@@ -95,13 +95,14 @@ static inline float Vector2Normalize(vec2_t v)
 class Vector2D
 {
 public:
-	static constexpr size_t SIZE = sizeof(vec2_t);
+	static constexpr size_t SIZE_BYTES = sizeof(vec2_t);
+	static constexpr size_t SIZE_ELEMENTS = SIZE_BYTES / sizeof(vec_t);
 
 	Vector2D() :
 		x(0.0f),
 		y(0.0f)
 	{
-		static_assert(sizeof(*this) == SIZE, "Expected class to match the size of vec2_t");
+		static_assert(sizeof(*this) == SIZE_BYTES, "Expected class to match the size of vec2_t");
 	}
 
 	Vector2D(vec_t inX, vec_t inY) :
@@ -135,7 +136,7 @@ public:
 	{
 		assert(fl != 0.0f);
 
-		Vector out;
+		Vector2D out;
 		Vector2Divide(RawData(), fl, out.RawData());
 		return out;
 	}
@@ -200,18 +201,18 @@ public:
 	{
 		static vec_t g_Dummy = 0.0f;
 
-		assert(index < SIZE);
+		assert(index < SIZE_ELEMENTS);
 
-		return index < SIZE ? RawData()[index] : g_Dummy;
+		return index < SIZE_ELEMENTS ? RawData()[index] : g_Dummy;
 	}
 
 	const vec_t& operator[](size_t index) const
 	{
 		static const vec_t g_Dummy = 0.0f;
 
-		assert(index < SIZE);
+		assert(index < SIZE_ELEMENTS);
 
-		return index < SIZE ? RawData()[index] : g_Dummy;
+		return index < SIZE_ELEMENTS ? RawData()[index] : g_Dummy;
 	}
 
 	// This is lame and an array would be better, but lots of things will

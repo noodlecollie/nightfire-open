@@ -13,16 +13,6 @@ extern "C"
 
 typedef vec_t vec3_t[3];
 
-// NFTODO: Move this to its own header, along with functions.
-typedef struct mplane_s
-{
-	vec3_t normal;
-	vec_t dist;
-	byte type;  // for fast side tests
-	byte signbits;  // signx + (signy<<1) + (signz<<1)
-	byte pad[2];
-} mplane_t;
-
 extern const vec3_t vec3_origin;
 
 static inline qboolean VectorIsNAN(const vec3_t v)
@@ -246,25 +236,6 @@ void VectorVectors(const vec3_t forward, vec3_t right, vec3_t up);
 void VectorAngles(const float* forward, float* angles);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, vec3_t angles);
-void RoundUpHullSize(vec3_t size);
-int SignbitsForPlane(const vec3_t normal);
-int PlaneTypeForNormal(const vec3_t normal);
-void PlaneIntersect(const mplane_t* plane, const vec3_t p0, const vec3_t p1, vec3_t out);
-void ClearBounds(vec3_t mins, vec3_t maxs);
-void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
-qboolean BoundsIntersect(const vec3_t mins1, const vec3_t maxs1, const vec3_t mins2, const vec3_t maxs2);
-qboolean BoundsAndSphereIntersect(const vec3_t mins, const vec3_t maxs, const vec3_t origin, float radius);
-qboolean
-SphereIntersect(const vec3_t vSphereCenter, float fSphereRadiusSquared, const vec3_t vLinePt, const vec3_t vLineDir);
-float RadiusFromBounds(const vec3_t mins, const vec3_t maxs);
-void ExpandBounds(vec3_t mins, vec3_t maxs, float offset);
-
-int BoxOnPlaneSide(const vec3_t emins, const vec3_t emaxs, const mplane_t* p);
-#define BOX_ON_PLANE_SIDE(emins, emaxs, p) \
-	(((p)->type < 3) ? (((p)->dist <= (emins)[(p)->type]) ? 1 : (((p)->dist >= (emaxs)[(p)->type]) ? 2 : 3)) \
-					 : BoxOnPlaneSide((emins), (emaxs), (p)))
-
-extern const int boxpnt[6][4];
 
 #ifdef __cplusplus
 }  // extern "C"
@@ -275,14 +246,15 @@ extern const int boxpnt[6][4];
 class Vector
 {
 public:
-	static constexpr size_t SIZE = sizeof(vec3_t);
+	static constexpr size_t SIZE_BYTES = sizeof(vec3_t);
+	static constexpr size_t SIZE_ELEMENTS = SIZE_BYTES / sizeof(vec_t);
 
 	Vector() :
 		x(0.0f),
 		y(0.0f),
 		z(0.0f)
 	{
-		static_assert(sizeof(*this) == SIZE, "Expected class to match the size of vec2_t");
+		static_assert(sizeof(*this) == SIZE_BYTES, "Expected class to match the size of vec2_t");
 	}
 
 	Vector(vec_t inX, vec_t inY, vec_t inZ) :
@@ -298,7 +270,7 @@ public:
 		y(in[1]),
 		z(in[2])
 	{
-		static_assert(INSIZE == SIZE, "Input array size does not match vector size");
+		static_assert(INSIZE == SIZE_ELEMENTS, "Input array size does not match vector size");
 	}
 
 	Vector(const vec_t* values, size_t size) :
@@ -447,18 +419,18 @@ public:
 	{
 		static float g_Dummy = 0.0f;
 
-		assert(index < SIZE);
+		assert(index < SIZE_ELEMENTS);
 
-		return index < size ? RawData()[index] : g_Dummy;
+		return index < SIZE_ELEMENTS ? RawData()[index] : g_Dummy;
 	}
 
 	const vec_t& operator[](size_t index) const
 	{
 		static const float g_Dummy = 0.0f;
 
-		assert(index < SIZE);
+		assert(index < SIZE_ELEMENTS);
 
-		return index < size ? RawData()[index] : g_Dummy;
+		return index < SIZE_ELEMENTS ? RawData()[index] : g_Dummy;
 	}
 
 	// This is lame and an array would be better, but lots of things will

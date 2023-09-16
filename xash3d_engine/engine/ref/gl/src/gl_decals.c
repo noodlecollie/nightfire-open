@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "MathLib/vec2.h"
 #include "MathLib/vec3.h"
 #include "MathLib/vec4.h"
+#include "MathLib/utils.h"
 
 #define DECAL_OVERLAP_DISTANCE 2
 #define DECAL_DISTANCE 4  // too big values produce more clipped polygons

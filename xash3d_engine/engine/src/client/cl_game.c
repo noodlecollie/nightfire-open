@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "MathLib/vec4.h"
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"

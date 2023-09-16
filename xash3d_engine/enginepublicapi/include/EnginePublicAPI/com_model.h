@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/typedefs.h"
 #include "EnginePublicAPI/custom.h"
 #include "MathLib/mathtypes.h"
+#include "MathLib/plane.h"
 
 /*
 ==============================================================================
