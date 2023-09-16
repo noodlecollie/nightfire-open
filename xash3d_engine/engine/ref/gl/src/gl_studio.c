@@ -16,7 +16,6 @@ GNU General Public License for more details.
 #include "gl_local.h"
 #include "MathLib/vec3.h"
 #include "MathLib/vec4.h"
-#include "MathLib/matrixlib.h"
 #include "MathLib/mat3x4.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/r_studioint.h"

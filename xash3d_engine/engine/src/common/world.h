@@ -18,7 +18,6 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/trace.h"
 #include "EngineInternalAPI/lightstyle.h"
 #include "EnginePublicAPI/link.h"
-#include "MathLib/matrixlib.h"
 #include "MathLib/mat4x4.h"
 
 #define MOVE_NORMAL 0  // normal trace

@@ -14,7 +14,6 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "MathLib/matrixlib.h"
 
 /*
 ========================================================================

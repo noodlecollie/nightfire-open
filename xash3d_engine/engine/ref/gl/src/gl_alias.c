@@ -15,7 +15,6 @@ GNU General Public License for more details.
 
 #include "EngineInternalAPI/log_strings.h"
 #include "MathLib/vec3.h"
-#include "MathLib/matrixlib.h"
 #include "MathLib/mat3x4.h"
 #include "gl_local.h"
 #include "EnginePublicAPI/const.h"

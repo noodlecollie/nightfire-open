@@ -17,7 +17,6 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/studio.h"
 #include "MathLib/vec3.h"
 #include "MathLib/vec4.h"
-#include "MathLib/matrixlib.h"
 #include "MathLib/mat3x4.h"
 #include "EnginePublicAPI/ref_params.h"
 #include "EnginePublicAPI/pm_defs.h"
