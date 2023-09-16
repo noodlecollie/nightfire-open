@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "MathLib/vec3.h"
 #include "MathLib/matrixlib.h"
+#include "MathLib/mat3x4.h"
 #include "PlatformDefs/utils.h"
 
 #define NUM_HULL_ROUNDS SIZE_OF_ARRAY(hull_table)

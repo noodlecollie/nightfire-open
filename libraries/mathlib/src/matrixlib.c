@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "MathLib/vec3.h"
 #include "MathLib/matrixlib.h"
+#include "MathLib/mat3x4.h"
 
 const matrix3x4 m_matrix3x4_identity = {
 	{1, 0, 0, 0},  // PITCH	[forward], org[0]
@@ -31,6 +32,11 @@ const matrix3x4 m_matrix3x4_identity = {
 
 ========================================================================
 */
+void Matrix3x4_Copy(matrix3x4 out, const matrix3x4 in)
+{
+	memcpy(out, in, sizeof(matrix3x4));
+}
+
 void Matrix3x4_VectorTransform(const matrix3x4 in, const float v[3], float out[3])
 {
 	out[0] = v[0] * in[0][0] + v[1] * in[0][1] + v[2] * in[0][2] + in[0][3];

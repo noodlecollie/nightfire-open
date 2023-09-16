@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "common/world.h"  // BOX_ON_PLANE_SIDE
 #include "client/client.h"
 #include "MathLib/matrixlib.h"
+#include "MathLib/mat3x4.h"
 #include "MathLib/vec3.h"
 
 /*
