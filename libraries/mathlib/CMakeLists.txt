@@ -10,8 +10,9 @@ add_library(${TARGETNAME_LIB_MATHLIB} STATIC
 	include/MathLib/vec2.h
 	include/MathLib/vec3.h
 	include/MathLib/vec4.h
+	src/mat3x4.c
+	src/mat4x4.c
 	src/mathlib.c
-	src/matrixlib.c
 )
 
 target_include_directories(${TARGETNAME_LIB_MATHLIB}
