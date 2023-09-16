@@ -15,6 +15,7 @@ add_library(${TARGETNAME_LIB_MATHLIB} STATIC
 	src/mat3x4.c
 	src/mat4x4.c
 	src/mathlib.c
+	src/vec3.c
 )
 
 target_include_directories(${TARGETNAME_LIB_MATHLIB}
