@@ -20,7 +20,6 @@
 #include "EnginePublicAPI/dlight.h"
 #include "EnginePublicAPI/cl_entity.h"
 #include "EnginePublicAPI/surfaceprops.h"
-#include "MathLib/mathtypes.h"
 
 /*
 // FOR REFERENCE, These are the built-in tracer colors.  Note, color 4 is the one

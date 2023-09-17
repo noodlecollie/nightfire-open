@@ -19,7 +19,6 @@
 #include "EnginePublicAPI/custom.h"
 #include "EnginePublicAPI/cvardef.h"
 #include "EnginePublicAPI/edict.h"
-#include "MathLib/mathtypes.h"
 
 #define NEW_DLL_FUNCTIONS_VERSION 1
 #define INTERFACE_VERSION 140

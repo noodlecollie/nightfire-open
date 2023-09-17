@@ -25,7 +25,6 @@ GNU General Public License for more details.
 #include "PlatformDefs/platformid.h"
 #include "PlatformDefs/typedefs.h"
 #include "MathLib/mathdefs.h"
-#include "MathLib/mathtypes.h"
 
 #ifdef __cplusplus
 extern "C"

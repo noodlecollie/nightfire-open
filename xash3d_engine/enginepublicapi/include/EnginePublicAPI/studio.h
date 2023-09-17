@@ -18,7 +18,6 @@
 #include <stdint.h>
 #include "PlatformDefs/typedefs.h"
 #include "EnginePublicAPI/studio_event.h"
-#include "MathLib/mathtypes.h"
 #include "MathLib/vec3.h"
 #include "MathLib/vec4.h"
 #include "MathLib/quaternion.h"

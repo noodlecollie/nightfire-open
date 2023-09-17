@@ -21,7 +21,6 @@
 #include "EnginePublicAPI/com_model.h"
 #include "EnginePublicAPI/usercmd.h"
 #include "EnginePublicAPI/trace.h"
-#include "MathLib/mathtypes.h"
 
 #define MAX_PHYSENTS 600  // Must have room for all entities in the world.
 #define MAX_MOVEENTS 64

@@ -17,7 +17,6 @@
 
 #include <stddef.h>
 #include "PlatformDefs/typedefs.h"
-#include "MathLib/mathtypes.h"
 
 #define STUDIO_INTERFACE_VERSION 1
 #define SV_BLENDING_INTERFACE_VERSION 1

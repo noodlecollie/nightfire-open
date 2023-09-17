@@ -16,7 +16,6 @@
 #pragma once
 
 #include "PlatformDefs/typedefs.h"
-#include "MathLib/mathtypes.h"
 
 // ref_viewpass_t->flags
 #define RF_DRAW_WORLD (1 << 0)  // pass should draw the world (otherwise it's player menu model)

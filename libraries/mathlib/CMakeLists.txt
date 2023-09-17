@@ -6,7 +6,6 @@ add_library(${TARGETNAME_LIB_MATHLIB} STATIC
 	include/MathLib/mat4x4.h
 	include/MathLib/mathdefs.h
 	include/MathLib/mathlib.h
-	include/MathLib/mathtypes.h
 	include/MathLib/plane.h
 	include/MathLib/quaternion.h
 	include/MathLib/utils.h
