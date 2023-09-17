@@ -37,6 +37,7 @@
 #include "weaponatts_collection.h"
 #include "miniutl.h"
 #include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 
 extern globalvars_t* gpGlobals;
 extern int g_iUser1;
@@ -609,8 +610,8 @@ void UTIL_ParticleBoxes(void)
 
 		if ( pe->info >= 1 && pe->info <= gEngfuncs.GetMaxClients() )
 		{
-			mins = pe->origin + pe->mins;
-			maxs = pe->origin + pe->maxs;
+			VectorAdd(pe->origin, pe->mins, mins);
+			VectorAdd(pe->origin, pe->maxs, maxs);
 
 			gEngfuncs.pEfxAPI->R_ParticleBox((float*)&mins, (float*)&maxs, 0, 0, 255, 2.0);
 		}
@@ -889,7 +890,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 	// Set player variables that weapons code might check/alter
 	player.pev->button = cmd->buttons;
 
-	player.pev->velocity = from->client.velocity;
+	VectorCopy(from->client.velocity, player.pev->velocity);
 	player.pev->flags = from->client.flags;
 
 	player.pev->deadflag = from->client.deadflag;
@@ -1133,8 +1134,8 @@ void _DLLEXPORT HUD_PostRunCmd(
 	if ( g_irunninggausspred == 1 )
 	{
 		Vector forward;
-		gEngfuncs.pfnAngleVectors(v_angles, forward, NULL, NULL);
-		to->client.velocity = to->client.velocity - forward * g_flApplyVel * 5;
+		AngleVectors(v_angles, forward, NULL, NULL);
+		(Vector(to->client.velocity) - forward * g_flApplyVel * 5).CopyToArray(to->client.velocity);
 		g_irunninggausspred = false;
 	}
 

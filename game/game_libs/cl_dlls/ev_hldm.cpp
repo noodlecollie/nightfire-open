@@ -51,6 +51,8 @@
 #include "sound/ClientSoundInstance.h"
 #include "resources/TextureResources.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 
 // TODO: Make into a convar?
 static constexpr float BULLET_RICOCHET_NOISE_CHANCE = 0.5f;
@@ -334,7 +336,7 @@ void EV_HLDM_CheckTracer(int idx, float* vecSrc, float* end, float* forward, flo
 	if ( player )
 	{
 		int i;
-		vec3_t offset(0, 0, -4);
+		Vector offset(0, 0, -4);
 
 		// adjust tracer position for player
 		for ( i = 0; i < 3; i++ )
@@ -522,7 +524,6 @@ void EV_FireGlock2(event_args_t* args)
 	vec3_t ShellOrigin;
 	int shell;
 	vec3_t vecSrc, vecAiming;
-	vec3_t vecSpread;
 	vec3_t up, right, forward;
 
 	idx = args->entindex;
@@ -594,9 +595,11 @@ void EV_FireShotGunDouble(event_args_t* args)
 	vec3_t ShellVelocity;
 	vec3_t ShellOrigin;
 	int shell;
-	vec3_t vecSrc, vecAiming;
-	vec3_t vecSpread;
-	vec3_t up, right, forward;
+	vec3_t vecSrc;
+	vec3_t vecAiming;
+	vec3_t up;
+	vec3_t right;
+	vec3_t forward;
 	// float flSpread = 0.01;
 
 	idx = args->entindex;
@@ -681,8 +684,9 @@ void EV_FireShotGunSingle(event_args_t* args)
 	vec3_t ShellOrigin;
 	int shell;
 	vec3_t vecSrc, vecAiming;
-	vec3_t vecSpread;
-	vec3_t up, right, forward;
+	vec3_t up;
+	vec3_t right;
+	vec3_t forward;
 	// float flSpread = 0.01;
 
 	idx = args->entindex;
@@ -1265,7 +1269,7 @@ void EV_FireGauss(event_args_t* args)
 
 						VectorSubtract(beam_tr.endpos, tr.endpos, delta);
 
-						n = Length(delta);
+						n = VectorLength(delta);
 
 						if ( n < flDamage )
 						{
@@ -1410,8 +1414,6 @@ void EV_Crowbar(event_args_t* args)
 {
 	int idx;
 	vec3_t origin;
-	vec3_t angles;
-	vec3_t velocity;
 
 	idx = args->entindex;
 	VectorCopy(args->origin, origin);
@@ -1465,8 +1467,8 @@ enum crossbow_e
 //=====================
 void EV_BoltCallback(struct tempent_s* ent, float, float)
 {
-	ent->entity.origin = ent->entity.baseline.vuser1;
-	ent->entity.angles = ent->entity.baseline.vuser2;
+	VectorCopy(ent->entity.baseline.vuser1, ent->entity.origin);
+	VectorCopy(ent->entity.baseline.vuser2, ent->entity.angles);
 }
 
 void EV_FireCrossbow2(event_args_t* args)
@@ -1585,7 +1587,7 @@ void EV_FireCrossbow2(event_args_t* args)
 			VectorAngles(forward, vBoltAngles);
 
 			TEMPENTITY* bolt = gEngfuncs.pEfxAPI->R_TempModel(
-				tr.endpos - forward * 10,
+				Vector(tr.endpos) - Vector(forward) * 10,
 				Vector(0, 0, 0),
 				vBoltAngles,
 				5,
@@ -1595,8 +1597,9 @@ void EV_FireCrossbow2(event_args_t* args)
 			if ( bolt )
 			{
 				bolt->flags |= (FTENT_CLIENTCUSTOM);  // So it calls the callback function.
-				bolt->entity.baseline.vuser1 = tr.endpos - forward * 10;  // Pull out a little bit
-				bolt->entity.baseline.vuser2 = vBoltAngles;  // Look forward!
+				(Vector(tr.endpos) - Vector(forward) * 10)
+					.CopyToArray(bolt->entity.baseline.vuser1);  // Pull out a little bit
+				VectorCopy(vBoltAngles, bolt->entity.baseline.vuser2);  // Look forward!
 				bolt->callback =
 					EV_BoltCallback;  // So we can set the angles and origin back. (Stick the bolt to the wall)
 			}
@@ -1723,11 +1726,11 @@ TEMPENTITY* pFlare;  // Vit_amiN: egon's beam flare
 
 void EV_EgonFlareCallback(struct tempent_s* ent, float, float currenttime)
 {
-	float delta = currenttime - ent->tentOffset.z;  // time past since the last scale
-	if ( delta >= ent->tentOffset.y )
+	float delta = currenttime - ent->tentOffset[2];  // time past since the last scale
+	if ( delta >= ent->tentOffset[1] )
 	{
-		ent->entity.curstate.scale += ent->tentOffset.x * delta;
-		ent->tentOffset.z = currenttime;
+		ent->entity.curstate.scale += ent->tentOffset[0] * delta;
+		ent->tentOffset[2] = currenttime;
 	}
 }
 
@@ -1810,9 +1813,20 @@ void EV_EgonFire(event_args_t* args)
 				g /= 100.0f;
 			}
 
-			pBeam =
-				gEngfuncs.pEfxAPI
-					->R_BeamEntPoint(idx | 0x1000, tr.endpos, iBeamModelIndex, 99999, 3.5f, 0.2f, 0.7f, 55, 0, 0, r, g, b);
+			pBeam = gEngfuncs.pEfxAPI->R_BeamEntPoint(
+				idx | 0x1000,
+				tr.endpos,
+				iBeamModelIndex,
+				99999,
+				3.5f,
+				0.2f,
+				0.7f,
+				55,
+				0,
+				0,
+				r,
+				g,
+				b);
 
 			if ( pBeam )
 				pBeam->flags |= (FBEAM_SINENOISE);
@@ -1848,7 +1862,7 @@ void EV_EgonFire(event_args_t* args)
 
 	if ( pFlare )  // Vit_amiN: store the last mode for EV_EgonStop()
 	{
-		pFlare->tentOffset.x = (iFireMode == FIRE_WIDE) ? 1.0f : 0.0f;
+		pFlare->tentOffset[0] = (iFireMode == FIRE_WIDE) ? 1.0f : 0.0f;
 	}
 }
 
@@ -1885,13 +1899,13 @@ void EV_EgonStop(event_args_t* args)
 
 			if ( gEngfuncs.GetMaxClients() == 1 || !(pFlare->flags & FTENT_NOMODEL) )
 			{
-				if ( pFlare->tentOffset.x != 0.0f )  // true for iFireMode == FIRE_WIDE
+				if ( pFlare->tentOffset[0] != 0.0f )  // true for iFireMode == FIRE_WIDE
 				{
 					pFlare->callback = &EV_EgonFlareCallback;
 					pFlare->fadeSpeed = 2.0f;  // fade out will take 0.5 sec
-					pFlare->tentOffset.x = 10.0f;  // scaling speed per second
-					pFlare->tentOffset.y = 0.1f;  // min time between two scales
-					pFlare->tentOffset.z = pFlare->die;  // the last callback run time
+					pFlare->tentOffset[0] = 10.0f;  // scaling speed per second
+					pFlare->tentOffset[1] = 0.1f;  // min time between two scales
+					pFlare->tentOffset[2] = pFlare->die;  // the last callback run time
 					pFlare->flags = FTENT_FADEOUT | FTENT_CLIENTCUSTOM;
 				}
 			}
@@ -1920,7 +1934,8 @@ enum hgun_e
 void EV_HornetGunFire(event_args_t* args)
 {
 	int idx;  //, iFireMode;
-	vec3_t origin, angles, vecSrc, forward, right, up;
+	vec3_t origin;
+	vec3_t angles;
 
 	idx = args->entindex;
 	VectorCopy(args->origin, origin);
@@ -1987,7 +2002,7 @@ void EV_TripmineFire(event_args_t* args)
 	// Grab predicted result for local player
 	gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(view_ofs);
 
-	vecSrc = vecSrc + view_ofs;
+	VectorAdd(vecSrc, view_ofs, vecSrc);
 
 	// Store off the old count
 	gEngfuncs.pEventAPI->EV_PushPMStates();
@@ -1995,7 +2010,7 @@ void EV_TripmineFire(event_args_t* args)
 	// Now add in all of the players.
 	gEngfuncs.pEventAPI->EV_SetSolidPlayers(idx - 1);
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, vecSrc + forward * 128, PM_NORMAL, -1, &tr);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc, Vector(vecSrc) + Vector(forward) * 128, PM_NORMAL, -1, &tr);
 
 	// Hit something solid
 	if ( tr.fraction < 1.0 )
@@ -2023,7 +2038,9 @@ enum squeak_e
 void EV_SnarkFire(event_args_t* args)
 {
 	int idx;
-	vec3_t vecSrc, angles, view_ofs, forward;
+	vec3_t vecSrc;
+	vec3_t angles;
+	vec3_t forward;
 	pmtrace_t tr;
 
 	idx = args->entindex;
@@ -2036,7 +2053,9 @@ void EV_SnarkFire(event_args_t* args)
 		return;
 
 	if ( args->ducking )
-		vecSrc = vecSrc - (VEC_HULL_MIN - VEC_DUCK_HULL_MIN);
+	{
+		VectorSubtract(vecSrc, (VEC_HULL_MIN - VEC_DUCK_HULL_MIN), vecSrc);
+	}
 
 	// Store off the old count
 	gEngfuncs.pEventAPI->EV_PushPMStates();
@@ -2044,7 +2063,12 @@ void EV_SnarkFire(event_args_t* args)
 	// Now add in all of the players.
 	gEngfuncs.pEventAPI->EV_SetSolidPlayers(idx - 1);
 	gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-	gEngfuncs.pEventAPI->EV_PlayerTrace(vecSrc + forward * 20, vecSrc + forward * 64, PM_NORMAL, -1, &tr);
+	gEngfuncs.pEventAPI->EV_PlayerTrace(
+		Vector(vecSrc) + Vector(forward) * 20,
+		Vector(vecSrc) + Vector(forward) * 64,
+		PM_NORMAL,
+		-1,
+		&tr);
 
 	// Find space to drop the thing.
 	if ( tr.allsolid == 0 && tr.startsolid == 0 && tr.fraction > 0.25 )

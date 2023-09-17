@@ -102,25 +102,25 @@ HUD_GetHullBounds
   Engine calls this to enumerate player collision hulls, for prediction.  Return 0 if the hullnumber doesn't exist.
 ================================
 */
-int DLLEXPORT HUD_GetHullBounds(int hullnumber, float* mins, float* maxs)
+int DLLEXPORT HUD_GetHullBounds(int hullnumber, vec3_t mins, vec3_t maxs)
 {
 	int iret = 0;
 
 	switch ( hullnumber )
 	{
 		case 0:  // Normal player
-			Vector(-16, -16, -36).CopyToArray(mins);
-			Vector(16, 16, 36).CopyToArray(maxs);
+			Vector(-16, -16, -36).CopyToArrayRaw(mins, sizeof(vec3_t));
+			Vector(16, 16, 36).CopyToArrayRaw(maxs, sizeof(vec3_t));
 			iret = 1;
 			break;
 		case 1:  // Crouched player
-			Vector(-16, -16, -18).CopyToArray(mins);
-			Vector(16, 16, 18).CopyToArray(maxs);
+			Vector(-16, -16, -18).CopyToArrayRaw(mins, sizeof(vec3_t));
+			Vector(16, 16, 18).CopyToArrayRaw(maxs, sizeof(vec3_t));
 			iret = 1;
 			break;
 		case 2:  // Point based hull
-			Vector(0, 0, 0).CopyToArray(mins);
-			Vector(0, 0, 0).CopyToArray(maxs);
+			Vector(0, 0, 0).CopyToArrayRaw(mins, sizeof(vec3_t));
+			Vector(0, 0, 0).CopyToArrayRaw(maxs, sizeof(vec3_t));
 			iret = 1;
 			break;
 	}

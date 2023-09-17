@@ -346,7 +346,7 @@ void CGauss::StartFire(void)
 {
 	float flDamage;
 
-	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
+	UTIL_MakeVectors(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 	Vector vecAiming = gpGlobals->v_forward;
 	Vector vecSrc = m_pPlayer->GetGunPosition();  // + gpGlobals->v_up * -8 + gpGlobals->v_right * 8;
 
@@ -399,7 +399,12 @@ void CGauss::StartFire(void)
 void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 {
 	m_pPlayer->m_iWeaponVolume = GAUSS_PRIMARY_FIRE_VOLUME;
-	TraceResult tr, beam_tr;
+	TraceResult tr;
+	TraceResult beam_tr;
+
+	(void)tr;
+	(void)beam_tr;
+
 #ifndef CLIENT_DLL
 	Vector vecSrc = vecOrigSrc;
 	Vector vecDest = vecSrc + vecDir * 8192;

@@ -439,7 +439,7 @@ void CTripmine::PrimaryAttack(void)
 	if ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )
 		return;
 
-	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
+	UTIL_MakeVectors(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 	Vector vecSrc = m_pPlayer->GetGunPosition();
 	Vector vecAiming = gpGlobals->v_forward;
 
@@ -468,7 +468,11 @@ void CTripmine::PrimaryAttack(void)
 		{
 			Vector angles = UTIL_VecToAngles(tr.vecPlaneNormal);
 
-			CBaseEntity::Create("monster_tripmine", tr.vecEndPos + tr.vecPlaneNormal * 8, angles, m_pPlayer->edict());
+			CBaseEntity::Create(
+				"monster_tripmine",
+				Vector(tr.vecEndPos) + Vector(tr.vecPlaneNormal) * 8,
+				angles,
+				m_pPlayer->edict());
 
 			m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 

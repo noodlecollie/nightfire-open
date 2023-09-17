@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "MathLib/utils.h"
 #include "hud.h"
 #include "cl_util.h"
 #include "EnginePublicAPI/cl_entity.h"
@@ -24,7 +25,6 @@
 #include "EnginePublicAPI/com_model.h"
 #include "EnginePublicAPI/demo_api.h"
 #include "EnginePublicAPI/event_api.h"
-#include "studio_util.h"
 #include "EnginePublicAPI/screenfade.h"
 #include "PlatformLib/String.h"
 
@@ -35,8 +35,6 @@ extern "C" float vJumpAngles[3];
 extern void V_GetInEyePos(int entity, float* origin, float* angles);
 extern void V_ResetChaseCam();
 extern void V_GetChasePos(int target, float* cl_angles, float* origin, float* angles);
-extern void VectorAngles(const float* forward, float* angles);
-extern "C" void NormalizeAngles(float* angles);
 extern const float* GetClientColor(int clientIndex);
 
 extern vec3_t v_origin;  // last view origin
@@ -390,7 +388,7 @@ int CHudSpectator::Draw(float)
 		VectorNormalize(right);
 		VectorScale(right, m_moveDelta, right);
 
-		VectorAdd(m_mapOrigin, right, m_mapOrigin)
+		VectorAdd(m_mapOrigin, right, m_mapOrigin);
 	}
 
 	// Only draw the icon names only if map mode is in Main Mode
@@ -788,13 +786,13 @@ void CHudSpectator::SetModes(int iNewMainMode, int iNewInsetMode)
 				g_iUser1 = OBS_MAP_FREE;
 				// reset user values
 				m_mapZoom = m_OverviewData.zoom;
-				m_mapOrigin = m_OverviewData.origin;
+				VectorCopy(m_OverviewData.origin, m_mapOrigin);
 				break;
 			case OBS_MAP_CHASE:
 				g_iUser1 = OBS_MAP_CHASE;
 				// reset user values
 				m_mapZoom = m_OverviewData.zoom;
-				m_mapOrigin = m_OverviewData.origin;
+				VectorCopy(m_OverviewData.origin, m_mapOrigin);
 				break;
 		}
 
@@ -983,7 +981,7 @@ bool CHudSpectator::ParseOverviewFile()
 	gEngfuncs.COM_FreeFile(pfile);
 
 	m_mapZoom = m_OverviewData.zoom;
-	m_mapOrigin = m_OverviewData.origin;
+	VectorCopy(m_OverviewData.origin, m_mapOrigin);
 
 	return true;
 }
@@ -1119,9 +1117,20 @@ void CHudSpectator::DrawOverviewLayer()
 
 void CHudSpectator::DrawOverviewEntities()
 {
-	int i, ir, ig, ib;
+	int i;
+	int ir;
+	int ig;
+	int ib;
 	struct model_s* hSpriteModel;
-	vec3_t origin, angles, point, forward, right, left, up, world, screen, offset;
+	vec3_t origin;
+	vec3_t angles;
+	vec3_t point;
+	vec3_t forward;
+	vec3_t right;
+	vec3_t left;
+	vec3_t up;
+	vec3_t screen;
+	vec3_t offset;
 	float x, y, z, r, g, b, sizeScale = 4.0f;
 	cl_entity_t* ent;
 	float rmatrix[3][4];  // transformation matrix
@@ -1247,7 +1256,7 @@ void CHudSpectator::DrawOverviewEntities()
 		int playerNum = ent->index - 1;
 
 		m_vPlayerPos[playerNum][0] = screen[0];
-		m_vPlayerPos[playerNum][1] = screen[1] + Length(offset);
+		m_vPlayerPos[playerNum][1] = screen[1] + VectorLength(offset);
 		m_vPlayerPos[playerNum][2] = 1;  // mark player as visible
 	}
 
@@ -1291,12 +1300,12 @@ void CHudSpectator::DrawOverviewEntities()
 	offset[1] = 45.0f;
 	offset[2] = 0.0f;
 
-	AngleMatrix(offset, rmatrix);
-	VectorTransform(forward, rmatrix, right);
+	Matrix3x4_AnglesToMatrix(offset, rmatrix);
+	Matrix3x4_VectorTransform(rmatrix, forward, right);
 
 	offset[1] = -45.0f;
-	AngleMatrix(offset, rmatrix);
-	VectorTransform(forward, rmatrix, left);
+	Matrix3x4_AnglesToMatrix(offset, rmatrix);
+	Matrix3x4_VectorTransform(rmatrix, forward, left);
 
 	gEngfuncs.pTriAPI->Begin(TRI_TRIANGLES);
 	gEngfuncs.pTriAPI->TexCoord2f(0, 0);

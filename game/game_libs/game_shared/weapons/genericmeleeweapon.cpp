@@ -204,7 +204,12 @@ bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* melee
 {
 	(void)meleeAttack;
 
-	UTIL_TraceLine(m_vecAttackTraceStart, m_vecAttackTraceEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
+	UTIL_TraceLine(
+		Vector(m_vecAttackTraceStart),
+		Vector(m_vecAttackTraceEnd),
+		dont_ignore_monsters,
+		ENT(m_pPlayer->pev),
+		&tr);
 
 #ifndef CLIENT_DLL
 	if ( tr.flFraction >= 1.0f )
@@ -264,8 +269,8 @@ void CGenericMeleeWeapon::FireEvent(const WeaponAtts::WAMeleeAttack* meleeAttack
 
 void CGenericMeleeWeapon::InitTraceVecs(const WeaponAtts::WAMeleeAttack* meleeAttack)
 {
-	UTIL_MakeVectors(m_pPlayer->pev->v_angle);
+	UTIL_MakeVectors(Vector(m_pPlayer->pev->v_angle));
 	m_vecAttackTraceStart = m_pPlayer->GetGunPosition();
-	m_vecAttackTraceEnd = m_vecAttackTraceStart + (gpGlobals->v_forward * meleeAttack->Reach);
-	m_vecContactPointOnSurface = vec3_t();
+	m_vecAttackTraceEnd = m_vecAttackTraceStart + (Vector(gpGlobals->v_forward) * meleeAttack->Reach);
+	m_vecContactPointOnSurface = Vector();
 }

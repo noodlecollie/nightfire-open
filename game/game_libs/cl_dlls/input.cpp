@@ -29,6 +29,7 @@ extern "C"
 #include <ctype.h>
 #include <stdlib.h>
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 extern "C"
 {

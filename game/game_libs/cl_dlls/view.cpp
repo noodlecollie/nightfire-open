@@ -29,6 +29,8 @@
 #include "weaponatts_collection.h"
 #include "miniutl.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 
 // Spectator Mode
 extern "C"
@@ -54,10 +56,6 @@ void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams);
 void PM_ParticleLine(float* start, float* end, int pcolor, float life, float vert);
 int PM_GetVisEntInfo(int ent);
 int PM_GetPhysEntInfo(int ent);
-void InterpolateAngles(float* start, float* end, float* output, float frac);
-void NormalizeAngles(float* angles);
-float Distance(const float* v1, const float* v2);
-float AngleBetweenVectors(const float* v1, const float* v2);
 
 float vJumpOrigin[3];
 float vJumpAngles[3];
@@ -383,9 +381,9 @@ void V_CalcIntermissionRefdef(struct ref_params_s* pparams)
 
 	v_idlescale = old;
 
-	v_cl_angles = pparams->cl_viewangles;
-	v_origin = pparams->vieworg;
-	v_angles = pparams->viewangles;
+	VectorCopy(pparams->cl_viewangles, v_cl_angles);
+	VectorCopy(pparams->vieworg, v_origin);
+	VectorCopy(pparams->viewangles, v_angles);
 }
 
 #define ORIGIN_BACKUP 64
@@ -668,7 +666,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 
 		VectorSubtract(pparams->simorg, lastorg, delta);
 
-		if ( Length(delta) != 0.0 )
+		if ( VectorLength(delta) != 0.0 )
 		{
 			VectorCopy(pparams->simorg, ViewInterp.Origins[ViewInterp.CurrentOrigin & ORIGIN_MASK]);
 			ViewInterp.OriginTime[ViewInterp.CurrentOrigin & ORIGIN_MASK] = pparams->time;
@@ -718,7 +716,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 				VectorMA(ViewInterp.Origins[foundidx & ORIGIN_MASK], static_cast<float>(frac), delta, neworg);
 
 				// Dont interpolate large changes
-				if ( Length(delta) < 64 )
+				if ( VectorLength(delta) < 64 )
 				{
 					VectorSubtract(neworg, pparams->simorg, delta);
 
@@ -731,9 +729,10 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	}
 
 	// Store off v_angles before munging for third person
-	v_angles = pparams->viewangles;
-	v_lastAngles = pparams->viewangles;
+	VectorCopy(pparams->viewangles, v_angles);
+	VectorCopy(pparams->viewangles, v_lastAngles);
 	// v_cl_angles = pparams->cl_viewangles;	// keep old user mouse angles !
+
 	if ( CL_IsThirdPerson() )
 	{
 		VectorCopy(camAngles, pparams->viewangles);
@@ -766,13 +765,13 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 			VectorCopy(viewentity->angles, pparams->viewangles);
 
 			// Store off overridden viewangles
-			v_angles = pparams->viewangles;
+			VectorCopy(pparams->viewangles, v_angles);
 		}
 	}
 
 	lasttime = pparams->time;
 
-	v_origin = pparams->vieworg;
+	VectorCopy(pparams->vieworg, v_origin);
 }
 
 void V_SmoothInterpolateAngles(float* startAngle, float* endAngle, float* finalAngle, float degreesPerSec)
@@ -872,7 +871,7 @@ void V_GetChaseOrigin(float* angles, float* origin, float distance, float* retur
 			break;
 
 		// if close enought to end pos, stop, otherwise continue trace
-		if ( Distance(trace->endpos, vecEnd) < 1.0f )
+		if ( VectorDistance(trace->endpos, vecEnd) < 1.0f )
 		{
 			break;
 		}
@@ -893,7 +892,7 @@ void V_GetChaseOrigin(float* angles, float* origin, float distance, float* retur
 
 	VectorMA(trace->endpos, 4, trace->plane.normal, returnvec);
 
-	v_lastDistance = Distance(trace->endpos, origin);  // real distance without offset
+	v_lastDistance = VectorDistance(trace->endpos, origin);  // real distance without offset
 }
 
 /*void V_GetDeathCam( cl_entity_t * ent1, cl_entity_t * ent2, float * angle, float * origin )
@@ -1382,7 +1381,7 @@ V_CalcSpectatorRefdef
 */
 void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 {
-	static vec3_t velocity(0.0f, 0.0f, 0.0f);
+	static vec3_t velocity {0.0f, 0.0f, 0.0f};
 
 	static int lastWeaponModelIndex = 0;
 	static int lastViewModelIndex = 0;
@@ -1536,7 +1535,8 @@ void V_CalcSpectatorRefdef(struct ref_params_s* pparams)
 
 	// write back new values into pparams
 	VectorCopy(v_cl_angles, pparams->cl_viewangles);
-	VectorCopy(v_angles, pparams->viewangles) VectorCopy(v_origin, pparams->vieworg);
+	VectorCopy(v_angles, pparams->viewangles);
+	VectorCopy(v_origin, pparams->vieworg);
 }
 
 void DLLEXPORT V_CalcRefdef(struct ref_params_s* pparams)

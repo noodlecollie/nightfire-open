@@ -914,7 +914,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 
 			if ( pTemp->flags & (FTENT_COLLIDEALL | FTENT_COLLIDEWORLD) )
 			{
-				vec3_t traceNormal(0.0f, 0.0f, 0.0f);
+				Vector traceNormal(0.0f, 0.0f, 0.0f);
 
 				if ( pTemp->flags & FTENT_COLLIDEALL )
 				{
@@ -972,7 +972,7 @@ void DLLEXPORT HUD_TempEntUpdate(
 							//
 							VectorScale(pTemp->entity.baseline.origin, 0.6f, pTemp->entity.baseline.origin);
 
-							if ( Length(pTemp->entity.baseline.origin) < 10 )
+							if ( VectorLength(pTemp->entity.baseline.origin) < 10 )
 							{
 								pTemp->entity.baseline.framerate = 0.0;
 							}

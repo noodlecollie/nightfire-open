@@ -30,6 +30,7 @@
 #include "EnginePublicAPI/mobility_int.h"
 #include "damagedefs.h"
 #include "miniutl.h"
+#include "MathLib/utils.h"
 
 DECLARE_MESSAGE(m_Health, Health)
 DECLARE_MESSAGE(m_Health, Damage)
@@ -256,9 +257,9 @@ void CHudHealth::CalcDamageDirection(vec3_t vecFrom)
 
 	VectorSubtract(vecFrom, vecOrigin, vecFrom);
 
-	float flDistToTarget = vecFrom.Length();
+	float flDistToTarget = VectorLength(vecFrom);
 
-	vecFrom = vecFrom.Normalize();
+	VectorNormalize(vecFrom);
 	AngleVectors(vecAngles, forward, right, up);
 
 	front = DotProduct(vecFrom, right);

@@ -6,6 +6,11 @@
 #include "MathLib/quaternion.h"
 #include "MathLib/angles.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define bound(min, num, max) ((num) >= (min) ? ((num) < (max) ? (num) : (max)) : (min))
 
 // remap a value in the range [A,B] to [C,D].
@@ -46,3 +51,7 @@ float ApproachVal(float target, float value, float speed);
 
 // NFTODO: Move this somewhere better
 void R_StudioSlerpBones(int numbones, quat_t q1[], float pos1[][3], const quat_t q2[], const float pos2[][3], float s);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif

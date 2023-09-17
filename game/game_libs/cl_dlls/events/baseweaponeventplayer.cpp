@@ -13,6 +13,8 @@
 #include "rapidjson/document.h"
 #include "rapidjson_helpers/rapidjson_helpers.h"
 #include "weaponatts_collection.h"
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 
 namespace
 {

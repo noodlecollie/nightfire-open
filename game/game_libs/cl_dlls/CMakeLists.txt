@@ -323,8 +323,6 @@ set(SOURCES_CLIENT
 	scoreboard.cpp
 	status_icons.cpp
 	statusbar.cpp
-	studio_util.h
-	studio_util.cpp
 	StudioModelRenderer.h
 	StudioModelRenderer.cpp
 	text_message.cpp

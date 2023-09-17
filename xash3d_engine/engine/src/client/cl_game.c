@@ -4001,7 +4001,6 @@ static cl_enginefunc_t gEngfuncs = {
 	pfnGetPlayerInfo,
 	pfnPlaySoundByName,
 	pfnPlaySoundByIndex,
-	AngleVectors,
 	CL_TextMessageGet,
 	pfnDrawCharacter,
 	pfnDrawConsoleString,

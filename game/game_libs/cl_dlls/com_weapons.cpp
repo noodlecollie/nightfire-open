@@ -141,8 +141,8 @@ void HUD_PlaybackEvent(const struct event_fire_args_s* args)
 	}
 
 	// Weapon prediction events are assumed to occur at the player's origin.
-	org = g_finalstate->playerstate.origin;
-	ang = v_angles;
+	VectorCopy(g_finalstate->playerstate.origin, org);
+	VectorCopy(v_angles, ang);
 
 	event_fire_args_t modifiedArgs;
 	memset(&modifiedArgs, 0, sizeof(modifiedArgs));

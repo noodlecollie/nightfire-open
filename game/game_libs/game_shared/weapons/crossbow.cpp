@@ -413,9 +413,9 @@ void CCrossbow::FireSniperBolt()
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	Vector anglesAim = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+	Vector anglesAim(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 	UTIL_MakeVectors(anglesAim);
-	Vector vecSrc = m_pPlayer->GetGunPosition() - gpGlobals->v_up * 2;
+	Vector vecSrc = m_pPlayer->GetGunPosition() - Vector(gpGlobals->v_up) * 2;
 	Vector vecDir = gpGlobals->v_forward;
 
 	UTIL_TraceLine(vecSrc, vecSrc + vecDir * 8192, dont_ignore_monsters, m_pPlayer->edict(), &tr);
@@ -432,8 +432,6 @@ void CCrossbow::FireSniperBolt()
 
 void CCrossbow::FireBolt()
 {
-	TraceResult tr;
-
 	if ( m_iClip == 0 )
 	{
 		PlayEmptySound();
@@ -462,7 +460,7 @@ void CCrossbow::FireBolt()
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	Vector anglesAim = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+	Vector anglesAim(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 	UTIL_MakeVectors(anglesAim);
 
 	anglesAim.x = -anglesAim.x;

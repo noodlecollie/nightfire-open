@@ -2,6 +2,11 @@
 
 #include "MathLib/vec3.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef enum
 {
 	PITCH = 0,
@@ -17,3 +22,7 @@ static inline vec_t anglemod(vec_t a)
 void NormalizeAngles(vec3_t angles);
 void NormalizeAnglesOut(const vec3_t in, vec3_t out);
 void InterpolateAngles(const vec3_t start, const vec3_t end, vec3_t output, float frac);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif

@@ -16,6 +16,7 @@
 #include "EnginePublicAPI/edict.h"
 #include "camera.h"
 #include "in_defs.h"
+#include "MathLib/angles.h"
 
 float CL_KeyState(kbutton_t* key);
 
@@ -144,14 +145,18 @@ extern trace_t SV_ClipMoveToEntity(edict_t* ent, vec3_t start, vec3_t mins, vec3
 
 void DLLEXPORT CAM_Think(void)
 {
-	vec3_t origin;
-	vec3_t ext, pnt, camForward, camRight, camUp;
-	moveclip_t clip;
 	float dist;
 	vec3_t camAngles;
 	float flSensitivity;
 #ifdef LATER
+	vec3_t origin;
 	int i;
+	vec3_t ext;
+	vec3_t pnt;
+	vec3_t camForward;
+	vec3_t camRight;
+	vec3_t camUp;
+	moveclip_t clip;
 #endif
 	vec3_t viewangles;
 

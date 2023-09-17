@@ -11,6 +11,13 @@ extern "C"
 {
 #endif
 
+typedef enum
+{
+	VEC3_X = 0,
+	VEC3_Y,
+	VEC3_Z
+} Vec3Axis_e;
+
 typedef vec_t vec3_t[3];
 
 extern const vec3_t vec3_origin;
@@ -68,11 +75,11 @@ static inline void VectorSubtract(const vec3_t a, const vec3_t b, vec3_t c)
 	c[2] = a[2] - b[2];
 }
 
-static inline void VectorCopy(const vec3_t a, vec3_t b)
+static inline void VectorCopy(const vec3_t source, vec3_t dest)
 {
-	b[0] = a[0];
-	b[1] = a[1];
-	b[2] = a[2];
+	dest[0] = source[0];
+	dest[1] = source[1];
+	dest[2] = source[2];
 }
 
 static inline void VectorScale(const vec3_t in, float scale, vec3_t out)
@@ -262,7 +269,7 @@ public:
 	}
 
 	template<size_t INSIZE>
-	explicit constexpr Vector(const vec_t (&in)[INSIZE]) :
+	constexpr Vector(const vec_t (&in)[INSIZE]) :
 		x(in[0]),
 		y(in[1]),
 		z(in[2])
@@ -370,6 +377,29 @@ public:
 		out[0] = x;
 		out[1] = y;
 		out[2] = z;
+	}
+
+	void CopyToArrayRaw(float* out, size_t outSize) const
+	{
+		if ( !out )
+		{
+			return;
+		}
+
+		if ( outSize >= 1 )
+		{
+			out[0] = x;
+		}
+
+		if ( outSize >= 2 )
+		{
+			out[1] = x;
+		}
+
+		if ( outSize >= 3 )
+		{
+			out[2] = x;
+		}
 	}
 
 	float LengthSquared() const

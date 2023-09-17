@@ -20,12 +20,16 @@ void QuaternionAlign(const quat_t p, const quat_t q, quat_t qt)
 	if ( a > b )
 	{
 		for ( i = 0; i < 4; i++ )
+		{
 			qt[i] = -q[i];
+		}
 	}
 	else
 	{
 		for ( i = 0; i < 4; i++ )
+		{
 			qt[i] = q[i];
+		}
 	}
 }
 
@@ -73,6 +77,7 @@ void QuaternionSlerpNoAlign(const quat_t p, const quat_t q, float t, quat_t qt)
 		qt[1] = q[0];
 		qt[2] = -q[3];
 		qt[3] = q[2];
+
 		sclp = sinf((1.0f - t) * (0.5f * M_PI_F));
 		sclq = sinf(t * (0.5f * M_PI_F));
 

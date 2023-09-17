@@ -506,8 +506,8 @@ void CSqueak::PrimaryAttack()
 
 		// find place to toss monster
 		UTIL_TraceLine(
-			trace_origin + gpGlobals->v_forward * 20,
-			trace_origin + gpGlobals->v_forward * 64,
+			trace_origin + Vector(gpGlobals->v_forward) * 20,
+			trace_origin + Vector(gpGlobals->v_forward) * 64,
 			dont_ignore_monsters,
 			NULL,
 			&tr);

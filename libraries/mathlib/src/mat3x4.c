@@ -78,6 +78,15 @@ void Matrix3x4_OriginFromMatrix(const matrix3x4 in, vec3_t out)
 
 void Matrix3x4_FromOriginQuat(matrix3x4 out, const quat_t quaternion, const vec3_t origin)
 {
+	Matrix3x4_FromQuat(out, quaternion);
+
+	out[0][3] = origin[0];
+	out[1][3] = origin[1];
+	out[2][3] = origin[2];
+}
+
+void Matrix3x4_FromQuat(matrix3x4 out, const quat_t quaternion)
+{
 	out[0][0] = 1.0f - 2.0f * quaternion[1] * quaternion[1] - 2.0f * quaternion[2] * quaternion[2];
 	out[1][0] = 2.0f * quaternion[0] * quaternion[1] + 2.0f * quaternion[3] * quaternion[2];
 	out[2][0] = 2.0f * quaternion[0] * quaternion[2] - 2.0f * quaternion[3] * quaternion[1];
@@ -89,10 +98,6 @@ void Matrix3x4_FromOriginQuat(matrix3x4 out, const quat_t quaternion, const vec3
 	out[0][2] = 2.0f * quaternion[0] * quaternion[2] + 2.0f * quaternion[3] * quaternion[1];
 	out[1][2] = 2.0f * quaternion[1] * quaternion[2] - 2.0f * quaternion[3] * quaternion[0];
 	out[2][2] = 1.0f - 2.0f * quaternion[0] * quaternion[0] - 2.0f * quaternion[1] * quaternion[1];
-
-	out[0][3] = origin[0];
-	out[1][3] = origin[1];
-	out[2][3] = origin[2];
 }
 
 void Matrix3x4_CreateFromEntity(matrix3x4 out, const vec3_t angles, const vec3_t origin, float scale)
