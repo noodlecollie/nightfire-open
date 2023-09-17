@@ -1,5 +1,3 @@
-#pragma once
-
 #include "MathLib/vec3.h"
 
 float VectorNormalizeLength(const vec3_t v, vec3_t out)

@@ -13,6 +13,8 @@
 #endif
 #endif
 
+#define ALIGN(x, a) (((size_t)(x) + ((size_t)(a)-1)) & ~((size_t)(a)-1))
+
 #ifdef __cplusplus
 template<typename T, size_t SIZE>
 constexpr size_t SIZE_OF_ARRAY(T (&)[SIZE])

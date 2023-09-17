@@ -49,5 +49,3 @@
 #else
 #define IS_NAN(x) (((*(int*)&x) & (255 << 23)) == (255 << 23))
 #endif
-
-#define ALIGN(x, a) (((x) + ((size_t)(a)-1)) & ~((size_t)(a)-1))

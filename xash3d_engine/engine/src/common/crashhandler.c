@@ -376,7 +376,6 @@ void Sys_RestoreCrashHandler(void)
 
 #define STACK_BACKTRACE_STR_LEN (sizeof(STACK_BACKTRACE_STR) - 1)
 #define STACK_DUMP_STR_LEN (sizeof(STACK_DUMP_STR) - 1)
-#define ALIGN(x, y) (((uintptr_t)(x) + ((y)-1)) & ~((y)-1))
 
 static struct sigaction oldFilter;
 

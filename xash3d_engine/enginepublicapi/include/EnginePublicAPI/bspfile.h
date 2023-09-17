@@ -17,7 +17,7 @@ GNU General Public License for more details.
 
 #include <stdint.h>
 #include "EnginePublicAPI/engine_limits.h"
-#include "Mathlib/mathtypes.h"
+#include "MathLib/mathtypes.h"
 #include "MathLib/vec3.h"
 
 /*
