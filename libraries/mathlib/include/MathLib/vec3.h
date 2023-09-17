@@ -233,9 +233,6 @@ static inline qboolean VectorIsNull(const vec3_t v)
 float VectorNormalizeLength(const vec3_t v, vec3_t out);
 qboolean VectorCompareEpsilon(const vec3_t vec1, const vec3_t vec2, vec_t epsilon);
 void VectorVectors(const vec3_t forward, vec3_t right, vec3_t up);
-void VectorAngles(const float* forward, float* angles);
-void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
-void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, vec3_t angles);
 
 #ifdef __cplusplus
 }  // extern "C"

@@ -1,5 +1,5 @@
 #include "MathLib/mat3x4.h"
-#include "MathLib/euleraxes.h"
+#include "MathLib/angles.h"
 
 const matrix3x4 m_matrix3x4_identity = {
 	{1, 0, 0, 0},  // PITCH	[forward], org[0]
@@ -74,26 +74,6 @@ void Matrix3x4_OriginFromMatrix(const matrix3x4 in, float* out)
 	out[0] = in[0][3];
 	out[1] = in[1][3];
 	out[2] = in[2][3];
-}
-
-void Matrix3x4_AnglesFromMatrix(const matrix3x4 in, vec3_t out)
-{
-	float xyDist = sqrtf(in[0][0] * in[0][0] + in[1][0] * in[1][0]);
-
-	if ( xyDist > 0.001f )
-	{
-		// enough here to get angles?
-		out[0] = RAD2DEGF(atan2f(-in[2][0], xyDist));
-		out[1] = RAD2DEGF(atan2f(in[1][0], in[0][0]));
-		out[2] = RAD2DEGF(atan2f(in[2][1], in[2][2]));
-	}
-	else
-	{
-		// forward is mostly Z, gimbal lock
-		out[0] = RAD2DEGF(atan2f(-in[2][0], xyDist));
-		out[1] = RAD2DEGF(atan2f(-in[0][1], in[1][1]));
-		out[2] = 0.0f;
-	}
 }
 
 void Matrix3x4_FromOriginQuat(matrix3x4 out, const quat_t quaternion, const vec3_t origin)

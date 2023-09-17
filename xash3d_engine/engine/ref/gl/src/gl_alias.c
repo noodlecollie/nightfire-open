@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/log_strings.h"
 #include "MathLib/vec3.h"
 #include "MathLib/mat3x4.h"
-#include "MathLib/euleraxes.h"
+#include "MathLib/angles.h"
 #include "MathLib/utils.h"
 #include "gl_local.h"
 #include "EnginePublicAPI/const.h"

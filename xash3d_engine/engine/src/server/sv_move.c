@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "CRTLib/bitdefs.h"
+#include "MathLib/angles.h"
 #include "MathLib/vec3.h"
 #include "common/common.h"
 #include "server/server.h"

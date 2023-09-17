@@ -70,11 +70,11 @@ static inline float UintAsFloat(uint32_t u)
 }
 
 float rsqrt(float number);
-float anglemod(float a);
 word FloatToHalf(float v);
 float HalfToFloat(word h);
 int NearestPOW(int value, qboolean roundDown);
 void SinCos(float radians, float* sine, float* cosine);
+int Q_log2(int val);
 
 #ifdef __cplusplus
 }  // extern "C"

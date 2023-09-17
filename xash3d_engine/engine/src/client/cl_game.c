@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "MathLib/euleraxes.h"
+#include "MathLib/angles.h"
 #include "MathLib/vec4.h"
 #include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"

@@ -14,6 +14,7 @@
 #define M_PI_F ((float)(M_PI))
 #define M_PI2_F ((float)(M_PI2))
 
+// NFTODO: Evaluate where these are used and refactor/remove accordingly
 #define BOGUS_RANGE ((vec_t)114032.64)  // world.size * 1.74
 #define EQUAL_EPSILON 0.001f
 #define STOP_EPSILON 0.1f

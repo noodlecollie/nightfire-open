@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/entity_types.h"
 #include "EnginePublicAPI/pm_defs.h"
 #include "MathLib/vec3.h"
-#include "MathLib/euleraxes.h"
+#include "MathLib/angles.h"
 #include "MathLib/utils.h"
 
 // it's a Valve default value for LoadMapSprite (probably must be power of two)

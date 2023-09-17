@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "gl_local.h"
 #include "MathLib/vec3.h"
+#include "MathLib/angles.h"
 #include "MathLib/utils.h"
 #include "EnginePublicAPI/beamdef.h"
 #include "EnginePublicAPI/particledef.h"
