@@ -69,7 +69,7 @@ void Matrix3x4_SetOrigin(matrix3x4 out, float x, float y, float z)
 	out[2][3] = z;
 }
 
-void Matrix3x4_OriginFromMatrix(const matrix3x4 in, float* out)
+void Matrix3x4_OriginFromMatrix(const matrix3x4 in, vec3_t out)
 {
 	out[0] = in[0][3];
 	out[1] = in[1][3];
@@ -93,6 +93,33 @@ void Matrix3x4_FromOriginQuat(matrix3x4 out, const quat_t quaternion, const vec3
 	out[0][3] = origin[0];
 	out[1][3] = origin[1];
 	out[2][3] = origin[2];
+}
+
+void Matrix3x4_FromVectors(matrix3x4 out, const vec3_t forward, const vec3_t right, const vec3_t up)
+{
+	if ( forward[0] == 0 && forward[1] == 0 )
+	{
+		right[0] = 1;
+		right[1] = 0;
+		right[2] = 0;
+
+		up[0] = -forward[2];
+		up[1] = 0;
+		up[2] = 0;
+
+		return;
+	}
+
+	vec3_t tmp;
+
+	tmp[0] = 0;
+	tmp[1] = 0;
+	tmp[2] = 1.0;
+
+	CrossProduct(forward, tmp, right);
+	VectorNormalize(right);
+	CrossProduct(right, forward, up);
+	VectorNormalize(up);
 }
 
 void Matrix3x4_CreateFromEntity(matrix3x4 out, const vec3_t angles, const vec3_t origin, float scale)

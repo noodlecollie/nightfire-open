@@ -14,7 +14,6 @@
  ****/
 
 #include <assert.h>
-#include "mathlib.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/usercmd.h"
 #include "EnginePublicAPI/pm_defs.h"

@@ -153,6 +153,21 @@ void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, ve
 	angles[ROLL] = roll;
 }
 
+float AngleBetweenVectors(const vec3_t v1, const vec3_t v2)
+{
+	const float l1 = Length(v1);
+	const float l2 = Length(v2);
+
+	if ( l1 == 0.0f || l2 == 0.0f )
+	{
+		return 0.0f;
+	}
+
+	float angle = acosf(DotProduct(v1, v2) / (l1 * l2));
+
+	return RAD2DEGF(angle);
+}
+
 void Matrix3x4_AnglesFromMatrix(const matrix3x4 in, vec3_t out)
 {
 	float xyDist = sqrtf(in[0][0] * in[0][0] + in[1][0] * in[1][0]);
