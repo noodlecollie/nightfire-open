@@ -16,6 +16,7 @@
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/usercmd.h"
 #include "EnginePublicAPI/pm_defs.h"
+#include "MathLib/utils.h"
 #include "pm_shared.h"
 #include "pm_movevars.h"
 #include "pm_debug.h"

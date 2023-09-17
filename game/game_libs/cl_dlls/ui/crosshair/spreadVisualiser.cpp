@@ -2,7 +2,7 @@
 #include "ui/crosshair/spreadVisualiser.h"
 #include "customGeometry/geometryItem.h"
 #include "customGeometry/geometryStatics.h"
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 #include "util/extramath.h"
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 #include "hud.h"

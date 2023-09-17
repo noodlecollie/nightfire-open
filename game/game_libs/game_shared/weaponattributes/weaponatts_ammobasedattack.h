@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vector_classes.h"
+#include "MathLib/vec2.h"
 #include "weaponatts_baseattack.h"
 #include "weapons.h"
 #include "resources/ShellImpactSoundResources.h"

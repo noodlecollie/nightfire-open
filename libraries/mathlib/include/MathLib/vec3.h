@@ -246,7 +246,7 @@ public:
 	static constexpr size_t SIZE_BYTES = sizeof(vec3_t);
 	static constexpr size_t SIZE_ELEMENTS = SIZE_BYTES / sizeof(vec_t);
 
-	Vector() :
+	constexpr Vector() :
 		x(0.0f),
 		y(0.0f),
 		z(0.0f)
@@ -254,7 +254,7 @@ public:
 		static_assert(sizeof(*this) == SIZE_BYTES, "Expected class to match the size of vec2_t");
 	}
 
-	Vector(vec_t inX, vec_t inY, vec_t inZ) :
+	constexpr Vector(vec_t inX, vec_t inY, vec_t inZ) :
 		x(inX),
 		y(inY),
 		z(inZ)
@@ -262,7 +262,7 @@ public:
 	}
 
 	template<size_t INSIZE>
-	explicit Vector(const vec_t (&in)[INSIZE]) :
+	explicit constexpr Vector(const vec_t (&in)[INSIZE]) :
 		x(in[0]),
 		y(in[1]),
 		z(in[2])
@@ -270,10 +270,17 @@ public:
 		static_assert(INSIZE == SIZE_ELEMENTS, "Input array size does not match vector size");
 	}
 
-	Vector(const vec_t* values, size_t size) :
+	constexpr Vector(const vec_t* values, size_t size) :
 		x((values && size > 0) ? values[size] : 0.0f),
 		y((values && size > 1) ? values[size] : 0.0f),
 		z((values && size > 2) ? values[size] : 0.0f)
+	{
+	}
+
+	constexpr Vector(const Vector& other) :
+		x(other.x),
+		y(other.y),
+		z(other.z)
 	{
 	}
 
@@ -358,7 +365,7 @@ public:
 	template<size_t OUTSIZE>
 	void CopyToArray(float (&out)[OUTSIZE]) const
 	{
-		static_assert(OUTSIZE == SIZE, "Output array size does not match vector size");
+		static_assert(OUTSIZE == SIZE_ELEMENTS, "Output array size does not match vector size");
 
 		out[0] = x;
 		out[1] = y;

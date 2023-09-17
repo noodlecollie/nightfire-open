@@ -20,7 +20,7 @@
 #define PARSEMSG_H
 
 #include <cstdint>
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 
 void BEGIN_READ(void* buf, int size);
 int READ_CHAR(void);

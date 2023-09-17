@@ -19,7 +19,7 @@
 
 #include <cstdint>
 #include "EnginePublicAPI/event_flags.h"
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 
 // Fix warning in MSVC8
 #undef SERVER_EXECUTE

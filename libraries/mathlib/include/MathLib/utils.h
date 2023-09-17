@@ -19,6 +19,7 @@ void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void AngleVectorsTranspose(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, vec3_t angles);
 float AngleBetweenVectors(const vec3_t v1, const vec3_t v2);
+void GenerateBasisVectors(const vec3_t forward, vec3_t right, vec3_t up);
 
 void Matrix3x4_AnglesFromMatrix(const matrix3x4 in, vec3_t out);
 void Matrix3x4_AnglesToMatrix(const vec3_t angles, matrix3x4 matrix);

@@ -95,33 +95,6 @@ void Matrix3x4_FromOriginQuat(matrix3x4 out, const quat_t quaternion, const vec3
 	out[2][3] = origin[2];
 }
 
-void Matrix3x4_FromVectors(matrix3x4 out, const vec3_t forward, const vec3_t right, const vec3_t up)
-{
-	if ( forward[0] == 0 && forward[1] == 0 )
-	{
-		right[0] = 1;
-		right[1] = 0;
-		right[2] = 0;
-
-		up[0] = -forward[2];
-		up[1] = 0;
-		up[2] = 0;
-
-		return;
-	}
-
-	vec3_t tmp;
-
-	tmp[0] = 0;
-	tmp[1] = 0;
-	tmp[2] = 1.0;
-
-	CrossProduct(forward, tmp, right);
-	VectorNormalize(right);
-	CrossProduct(right, forward, up);
-	VectorNormalize(up);
-}
-
 void Matrix3x4_CreateFromEntity(matrix3x4 out, const vec3_t angles, const vec3_t origin, float scale)
 {
 	float angle, sr, sp, sy, cr, cp, cy;

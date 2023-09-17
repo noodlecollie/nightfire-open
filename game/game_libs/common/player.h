@@ -227,7 +227,7 @@ public:
 	virtual void Killed(entvars_t* pevAttacker, int iGib);
 	virtual Vector BodyTarget(const Vector&)
 	{
-		return Center() + pev->view_ofs * RANDOM_FLOAT(0.5f, 1.1f);
+		return Center() + Vector(pev->view_ofs) * RANDOM_FLOAT(0.5f, 1.1f);
 	};  // position to shoot at
 	virtual void StartSneaking(void)
 	{

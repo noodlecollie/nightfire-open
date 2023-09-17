@@ -1,6 +1,5 @@
 #pragma once
-
-#include "vector_classes.h"
+#include "MathLib/vec2.h"
 
 class CBasePlayer;
 

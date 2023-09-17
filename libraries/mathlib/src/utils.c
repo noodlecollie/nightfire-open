@@ -155,8 +155,8 @@ void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, ve
 
 float AngleBetweenVectors(const vec3_t v1, const vec3_t v2)
 {
-	const float l1 = Length(v1);
-	const float l2 = Length(v2);
+	const float l1 = VectorLength(v1);
+	const float l2 = VectorLength(v2);
 
 	if ( l1 == 0.0f || l2 == 0.0f )
 	{
@@ -166,6 +166,29 @@ float AngleBetweenVectors(const vec3_t v1, const vec3_t v2)
 	float angle = acosf(DotProduct(v1, v2) / (l1 * l2));
 
 	return RAD2DEGF(angle);
+}
+
+void GenerateBasisVectors(const vec3_t forward, vec3_t right, vec3_t up)
+{
+	if ( forward[0] == 0 && forward[1] == 0 )
+	{
+		right[0] = 1;
+		right[1] = 0;
+		right[2] = 0;
+
+		up[0] = -forward[2];
+		up[1] = 0;
+		up[2] = 0;
+
+		return;
+	}
+
+	const vec3_t pointingUpwards = { 0.0f, 0.0f, 1.0f };
+
+	CrossProduct(forward, pointingUpwards, right);
+	VectorNormalize(right);
+	CrossProduct(right, forward, up);
+	VectorNormalize(up);
 }
 
 void Matrix3x4_AnglesFromMatrix(const matrix3x4 in, vec3_t out)

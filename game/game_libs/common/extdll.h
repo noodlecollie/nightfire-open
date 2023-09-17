@@ -13,8 +13,6 @@
  *
  ****/
 #pragma once
-#ifndef EXTDLL_H
-#define EXTDLL_H
 
 //
 // Global header file for extension DLLs
@@ -51,15 +49,9 @@ typedef int BOOL;
 #endif  //_WIN32
 
 // Misc C-runtime library headers
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
-
-// Header file containing definition of globalvars_t and entvars_t
-typedef unsigned int func_t;
-typedef int string_t;  // from engine's pr_comp.h;
-
-#include "vector_classes.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 // Shared engine/DLL constants
 #include "EnginePublicAPI/const.h"
@@ -71,11 +63,3 @@ typedef int string_t;  // from engine's pr_comp.h;
 
 // Shared header between the client DLL and the game DLLs
 #include "cdll_dll.h"
-#ifndef Q_min
-#define Q_min(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef Q_max
-#define Q_max(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-
-#endif  // EXTDLL_H
