@@ -1,6 +1,7 @@
 include(compiler_settings)
 
 add_library(${TARGETNAME_LIB_MATHLIB} STATIC
+	include/MathLib/euleraxes.h
 	include/MathLib/mat3x4.h
 	include/MathLib/mat4x4.h
 	include/MathLib/mathdefs.h

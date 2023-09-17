@@ -1,4 +1,5 @@
 #include "MathLib/mat3x4.h"
+#include "MathLib/euleraxes.h"
 
 const matrix3x4 m_matrix3x4_identity = {
 	{1, 0, 0, 0},  // PITCH	[forward], org[0]

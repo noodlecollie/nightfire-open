@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "MathLib/vec3.h"
+#include "MathLib/euleraxes.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"

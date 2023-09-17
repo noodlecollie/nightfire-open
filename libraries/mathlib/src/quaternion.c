@@ -1,5 +1,6 @@
 #include "MathLib/quaternion.h"
 #include "MathLib/mat3x4.h"
+#include "MathLib/euleraxes.h"
 
 void AngleQuaternion(const vec3_t angles, quat_t q, qboolean studio)
 {

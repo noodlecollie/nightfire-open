@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include <limits.h>
 #include "MathLib/vec3.h"
+#include "MathLib/euleraxes.h"
 #include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "CRCLib/crclib.h"

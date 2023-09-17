@@ -1,4 +1,5 @@
 #include "MathLib/vec3.h"
+#include "MathLib/euleraxes.h"
 
 float VectorNormalizeLength(const vec3_t v, vec3_t out)
 {
