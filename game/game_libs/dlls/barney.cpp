@@ -268,9 +268,9 @@ BOOL CBarney::CheckRangeAttack1(float flDot, float flDist)
 		{
 			TraceResult tr;
 
-			Vector shootOrigin = pev->origin + Vector(0, 0, 55);
+			Vector shootOrigin = Vector(pev->origin) + Vector(0, 0, 55);
 			CBaseEntity* pEnemy = m_hEnemy;
-			Vector shootTarget = ((pEnemy->BodyTarget(shootOrigin) - pEnemy->pev->origin) + m_vecEnemyLKP);
+			Vector shootTarget = ((pEnemy->BodyTarget(shootOrigin) - Vector(pEnemy->pev->origin)) + m_vecEnemyLKP);
 			UTIL_TraceLine(shootOrigin, shootTarget, dont_ignore_monsters, ENT(pev), &tr);
 			m_checkAttackTime = gpGlobals->time + 1;
 			if ( tr.flFraction == 1.0 || (tr.pHit != NULL && CBaseEntity::Instance(tr.pHit) == pEnemy) )
@@ -293,7 +293,7 @@ void CBarney::BarneyFirePistol(void)
 	Vector vecShootOrigin;
 
 	UTIL_MakeVectors(pev->angles);
-	vecShootOrigin = pev->origin + Vector(0, 0, 55);
+	vecShootOrigin = Vector(pev->origin) + Vector(0, 0, 55);
 	Vector vecShootDir = ShootAtEnemy(vecShootOrigin);
 
 	Vector angDir = UTIL_VecToAngles(vecShootDir);
@@ -359,7 +359,7 @@ void CBarney::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_RED;
 	pev->health = gSkillData.barneyHealth;
-	pev->view_ofs = Vector(0, 0, 50);  // position of the eyes relative to monster's origin.
+	VectorCopy(Vector(0, 0, 50), pev->view_ofs);  // position of the eyes relative to monster's origin.
 	m_flFieldOfView = VIEW_FIELD_WIDE;  // NOTE: we need a wide field of view so npc will notice player and say hello
 	m_MonsterState = MONSTERSTATE_NONE;
 
@@ -432,7 +432,7 @@ void CBarney::TalkInit()
 
 static BOOL IsFacing(entvars_t* pevTest, const Vector& reference)
 {
-	Vector vecDir = reference - pevTest->origin;
+	Vector vecDir = reference - Vector(pevTest->origin);
 	vecDir.z = 0;
 	vecDir = vecDir.Normalize();
 	Vector forward, angle;

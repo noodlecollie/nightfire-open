@@ -13,8 +13,7 @@
  *
  ****/
 #pragma once
-#ifndef ACTIVITYMAP_H
-#define ACTIVITYMAP_H
+
 #define _A(a) \
 	{ \
 		a, #a \
@@ -99,4 +98,4 @@ activity_map_t activity_map[] = {
 	_A(ACT_FLINCH_RIGHTLEG),
 	_A(ACT_INVALID),
 	{0, NULL}};
-#endif  // ACTIVITYMAP_H
+#undef _A

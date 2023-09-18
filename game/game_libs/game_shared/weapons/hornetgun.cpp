@@ -139,10 +139,11 @@ void CHgun::PrimaryAttack()
 
 	CBaseEntity* pHornet = CBaseEntity::Create(
 		"hornet",
-		m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16 + gpGlobals->v_right * 8 + gpGlobals->v_up * -12,
+		m_pPlayer->GetGunPosition() + Vector(gpGlobals->v_forward) * 16 + Vector(gpGlobals->v_right) * 8 +
+			Vector(gpGlobals->v_up) * -12,
 		m_pPlayer->pev->v_angle,
 		m_pPlayer->edict());
-	pHornet->pev->velocity = gpGlobals->v_forward * 300;
+	(Vector(gpGlobals->v_forward) * 300).CopyToArray(pHornet->pev->velocity);
 
 	m_flRechargeTime = gpGlobals->time + 0.5f;
 #endif
@@ -194,45 +195,46 @@ void CHgun::SecondaryAttack(void)
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle);
 
-	vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16 + gpGlobals->v_right * 8 + gpGlobals->v_up * -12;
+	vecSrc = m_pPlayer->GetGunPosition() + Vector(gpGlobals->v_forward) * 16 + Vector(gpGlobals->v_right) * 8 +
+		Vector(gpGlobals->v_up) * -12;
 
 	m_iFirePhase++;
 	switch ( m_iFirePhase )
 	{
 		case 1:
-			vecSrc = vecSrc + gpGlobals->v_up * 8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_up) * 8;
 			break;
 		case 2:
-			vecSrc = vecSrc + gpGlobals->v_up * 8;
-			vecSrc = vecSrc + gpGlobals->v_right * 8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_up) * 8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_right) * 8;
 			break;
 		case 3:
-			vecSrc = vecSrc + gpGlobals->v_right * 8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_right) * 8;
 			break;
 		case 4:
-			vecSrc = vecSrc + gpGlobals->v_up * -8;
-			vecSrc = vecSrc + gpGlobals->v_right * 8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_up) * -8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_right) * 8;
 			break;
 		case 5:
-			vecSrc = vecSrc + gpGlobals->v_up * -8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_up) * -8;
 			break;
 		case 6:
-			vecSrc = vecSrc + gpGlobals->v_up * -8;
-			vecSrc = vecSrc + gpGlobals->v_right * -8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_up) * -8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_right) * -8;
 			break;
 		case 7:
-			vecSrc = vecSrc + gpGlobals->v_right * -8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_right) * -8;
 			break;
 		case 8:
-			vecSrc = vecSrc + gpGlobals->v_up * 8;
-			vecSrc = vecSrc + gpGlobals->v_right * -8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_up) * 8;
+			vecSrc = Vector(vecSrc) + Vector(gpGlobals->v_right) * -8;
 			m_iFirePhase = 0;
 			break;
 	}
 
 	pHornet = CBaseEntity::Create("hornet", vecSrc, m_pPlayer->pev->v_angle, m_pPlayer->edict());
-	pHornet->pev->velocity = gpGlobals->v_forward * 1200;
-	pHornet->pev->angles = UTIL_VecToAngles(pHornet->pev->velocity);
+	(Vector(gpGlobals->v_forward) * 1200).CopyToArray(pHornet->pev->velocity);
+	UTIL_VecToAngles(pHornet->pev->velocity).CopyToArray(pHornet->pev->angles);
 
 	pHornet->SetThink(&CHornet::StartDart);
 

@@ -168,6 +168,32 @@ float AngleBetweenVectors(const vec3_t v1, const vec3_t v2)
 	return RAD2DEGF(angle);
 }
 
+float VectorToYaw(const vec3_t src)
+{
+	float yaw;
+
+	if ( !src )
+	{
+		return 0.0f;
+	}
+
+	if ( src[1] == 0.0f && src[0] == 0.0f )
+	{
+		yaw = 0.0f;
+	}
+	else
+	{
+		yaw = (float)((int)(atan2f(src[1], src[0]) * 180.0f / M_PI_F));
+
+		if ( yaw < 0 )
+		{
+			yaw += 360.0f;
+		}
+	}
+
+	return yaw;
+}
+
 void GenerateBasisVectors(const vec3_t forward, vec3_t right, vec3_t up)
 {
 	if ( forward[0] == 0 && forward[1] == 0 )

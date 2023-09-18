@@ -25,6 +25,7 @@
 #include "cbase.h"
 #include "animation.h"
 #include "saverestore.h"
+#include "MathLib/angles.h"
 
 TYPEDESCRIPTION CBaseAnimating::m_SaveData[] = {
 	DEFINE_FIELD(CBaseMonster, m_flFrameRate, FIELD_FLOAT),
@@ -256,7 +257,7 @@ void CBaseAnimating::SetSequenceBox(void)
 	{
 		// expand box for rotation
 		// find min / max for rotations
-		float yaw = pev->angles.y * (static_cast<float>(M_PI) / 180.0f);
+		float yaw = pev->angles[YAW] * (static_cast<float>(M_PI) / 180.0f);
 
 		Vector xvector, yvector;
 		xvector.x = cosf(yaw);

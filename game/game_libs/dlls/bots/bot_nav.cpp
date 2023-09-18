@@ -43,9 +43,9 @@
 
 DIRECTION CBaseBot::ActionChooseDirection(void)
 {
-	int arrayX = WorldGraph.FConvertGlobalToArray(pev->origin.x);
-	int arrayY = WorldGraph.FConvertGlobalToArray(pev->origin.y);
-	int arrayZ = WorldGraph.FConvertGlobalToArray(pev->origin.z);
+	int arrayX = WorldGraph.FConvertGlobalToArray(pev->origin[VEC3_X]);
+	int arrayY = WorldGraph.FConvertGlobalToArray(pev->origin[VEC3_Y]);
+	int arrayZ = WorldGraph.FConvertGlobalToArray(pev->origin[VEC3_Z]);
 
 	int AreaNavPropensityTotal =
 		(WorldGraph.FGetNavPropensity(arrayX + 1, arrayY + 1, arrayZ) +

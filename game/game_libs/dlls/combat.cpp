@@ -1190,7 +1190,7 @@ BOOL CBaseMonster::FInViewCone(CBaseEntity* pEntity)
 	vec2LOS = (pEntity->pev->origin - pev->origin).Make2D();
 	vec2LOS = vec2LOS.Normalize();
 
-	flDot = DotProduct2D(vec2LOS, gpGlobals->v_forward.Make2D());
+	flDot = Vector2DotProduct(vec2LOS, gpGlobals->v_forward.Make2D());
 
 	if ( flDot > m_flFieldOfView )
 	{
@@ -1217,7 +1217,7 @@ BOOL CBaseMonster::FInViewCone(Vector* pOrigin)
 	vec2LOS = (*pOrigin - pev->origin).Make2D();
 	vec2LOS = vec2LOS.Normalize();
 
-	flDot = DotProduct2D(vec2LOS, gpGlobals->v_forward.Make2D());
+	flDot = Vector2DotProduct(vec2LOS, gpGlobals->v_forward.Make2D());
 
 	if ( flDot > m_flFieldOfView )
 	{

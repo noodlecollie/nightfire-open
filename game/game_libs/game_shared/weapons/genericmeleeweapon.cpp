@@ -15,7 +15,7 @@ namespace
 
 		float distance = 1e6f;
 
-		Vector vecHullEnd = vecSrc + ((tr.vecEndPos - vecSrc) * 2);
+		Vector vecHullEnd = vecSrc + ((Vector(tr.vecEndPos) - vecSrc) * 2);
 		UTIL_TraceLine(vecSrc, vecHullEnd, dont_ignore_monsters, pEntity, &tmpTrace);
 
 		if ( tmpTrace.flFraction < 1.0 )
@@ -38,7 +38,7 @@ namespace
 
 					if ( tmpTrace.flFraction < 1.0 )
 					{
-						float thisDistance = (tmpTrace.vecEndPos - vecSrc).Length();
+						float thisDistance = (Vector(tmpTrace.vecEndPos) - vecSrc).Length();
 
 						if ( thisDistance < distance )
 						{
@@ -169,7 +169,7 @@ void CGenericMeleeWeapon::AttackStrike()
 		}
 		else
 		{
-			vec3_t traceEnd = m_vecAttackTraceStart + ((m_vecContactPointOnSurface - m_vecAttackTraceStart) * 2);
+			Vector traceEnd = m_vecAttackTraceStart + ((m_vecContactPointOnSurface - m_vecAttackTraceStart) * 2);
 
 			TEXTURETYPE_PlaySound(&tr, m_vecAttackTraceStart, traceEnd, BULLET_MELEE);
 

@@ -373,17 +373,18 @@ void CGauss::StartFire(void)
 	{
 		// ALERT( at_console, "Time:%f Damage:%f\n", gpGlobals->time - m_pPlayer->m_flStartCharge, flDamage );
 #ifndef CLIENT_DLL
-		float flZVel = m_pPlayer->pev->velocity.z;
+		float flZVel = m_pPlayer->pev->velocity[VEC3_Z];
 
 		if ( !m_fPrimaryFire )
 		{
-			m_pPlayer->pev->velocity = m_pPlayer->pev->velocity - gpGlobals->v_forward * flDamage * 5;
+			(Vector(m_pPlayer->pev->velocity) - Vector(gpGlobals->v_forward) * flDamage * 5)
+				.CopyToArray(m_pPlayer->pev->velocity);
 		}
 
 		if ( !g_pGameRules->IsMultiplayer() )
 		{
 			// in deathmatch, gauss can pop you up into the air. Not in single play.
-			m_pPlayer->pev->velocity.z = flZVel;
+			m_pPlayer->pev->velocity[VEC3_Z] = flZVel;
 		}
 #endif
 		// player "shoot" animation
@@ -503,10 +504,10 @@ void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 				// reflect
 				Vector r;
 
-				r = 2.0 * tr.vecPlaneNormal * n + vecDir;
+				r = 2.0 * Vector(tr.vecPlaneNormal) * n + vecDir;
 				flMaxFrac = flMaxFrac - tr.flFraction;
 				vecDir = r;
-				vecSrc = tr.vecEndPos + vecDir * 8;
+				vecSrc = Vector(tr.vecEndPos) + vecDir * 8;
 				vecDest = vecSrc + vecDir * 8192;
 
 				// explode a bit
@@ -531,13 +532,19 @@ void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 				// try punching through wall if secondary attack (primary is incapable of breaking through)
 				if ( !m_fPrimaryFire )
 				{
-					UTIL_TraceLine(tr.vecEndPos + vecDir * 8, vecDest, dont_ignore_monsters, pentIgnore, &beam_tr);
+					UTIL_TraceLine(
+						Vector(tr.vecEndPos) + vecDir * 8,
+						vecDest,
+						dont_ignore_monsters,
+						pentIgnore,
+						&beam_tr);
+
 					if ( !beam_tr.fAllSolid )
 					{
 						// trace backwards to find exit point
 						UTIL_TraceLine(beam_tr.vecEndPos, tr.vecEndPos, dont_ignore_monsters, pentIgnore, &beam_tr);
 
-						n = (beam_tr.vecEndPos - tr.vecEndPos).Length();
+						n = (Vector(beam_tr.vecEndPos) - Vector(tr.vecEndPos)).Length();
 
 						if ( n < flDamage )
 						{
@@ -564,7 +571,7 @@ void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 
 							CRadialDamageInflictor damage;
 
-							damage.SetOrigin(beam_tr.vecEndPos + vecDir * 8);
+							damage.SetOrigin(Vector(beam_tr.vecEndPos) + vecDir * 8);
 							damage.SetInflictor(pev);
 							damage.SetAttacker(m_pPlayer->pev);
 							damage.SetDamage(flDamage);
@@ -577,7 +584,7 @@ void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 
 							nTotal += 53;
 
-							vecSrc = beam_tr.vecEndPos + vecDir;
+							vecSrc = Vector(beam_tr.vecEndPos) + vecDir;
 						}
 						else if ( !selfgauss.value )
 						{
@@ -600,7 +607,7 @@ void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 		}
 		else
 		{
-			vecSrc = tr.vecEndPos + vecDir;
+			vecSrc = Vector(tr.vecEndPos) + vecDir;
 			pentIgnore = ENT(pEntity->pev);
 		}
 	}
@@ -618,13 +625,28 @@ void CGauss::WeaponIdle(void)
 		switch ( RANDOM_LONG(0, 3) )
 		{
 			case 0:
-				EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro4.wav", RANDOM_FLOAT(0.7f, 0.8f), ATTN_NORM);
+				EMIT_SOUND(
+					ENT(m_pPlayer->pev),
+					CHAN_WEAPON,
+					"weapons/electro4.wav",
+					RANDOM_FLOAT(0.7f, 0.8f),
+					ATTN_NORM);
 				break;
 			case 1:
-				EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro5.wav", RANDOM_FLOAT(0.7f, 0.8f), ATTN_NORM);
+				EMIT_SOUND(
+					ENT(m_pPlayer->pev),
+					CHAN_WEAPON,
+					"weapons/electro5.wav",
+					RANDOM_FLOAT(0.7f, 0.8f),
+					ATTN_NORM);
 				break;
 			case 2:
-				EMIT_SOUND(ENT(m_pPlayer->pev), CHAN_WEAPON, "weapons/electro6.wav", RANDOM_FLOAT(0.7f, 0.8f), ATTN_NORM);
+				EMIT_SOUND(
+					ENT(m_pPlayer->pev),
+					CHAN_WEAPON,
+					"weapons/electro6.wav",
+					RANDOM_FLOAT(0.7f, 0.8f),
+					ATTN_NORM);
 				break;
 			case 3:
 				break;  // no sound

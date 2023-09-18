@@ -98,8 +98,8 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponAtts::WAProjectileAtta
 	const bool isPrimaryAttack = projectileAttack.Signature()->Index == 0;
 
 	UTIL_MakeVectors(GetGrenadeLaunchAngles());
-	const Vector forward = gpGlobals->v_forward;
-	const Vector location = m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + forward * 16.0f;
+	const Vector forward(gpGlobals->v_forward);
+	const Vector location = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs) + forward * 16.0f;
 
 	CWeaponGrenadeLauncher_Grenade* grenade = CreateGrenade(m_pPlayer->pev, location, forward);
 
@@ -119,8 +119,8 @@ CWeaponGrenadeLauncher::CreateGrenade(entvars_t* pevOwner, const Vector& locatio
 	pGrenade->Spawn();
 
 	UTIL_SetOrigin(pGrenade->pev, location);
-	pGrenade->pev->velocity = launchDir;
-	pGrenade->pev->angles = UTIL_VecToAngles(pGrenade->pev->velocity);
+	launchDir.CopyToArray(pGrenade->pev->velocity);
+	UTIL_VecToAngles(pGrenade->pev->velocity).CopyToArray(pGrenade->pev->angles);
 	pGrenade->pev->owner = ENT(pevOwner);
 	pGrenade->pev->gravity = 1.4f;
 	pGrenade->SetFuseTime(-1.0f);
@@ -131,7 +131,7 @@ CWeaponGrenadeLauncher::CreateGrenade(entvars_t* pevOwner, const Vector& locatio
 
 Vector CWeaponGrenadeLauncher::GetGrenadeLaunchAngles() const
 {
-	Vector viewAngles = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+	Vector viewAngles = Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle);
 
 	// Add some more pitch depending on the cosine of the original pitch.
 	// If the player is looking horizontally, we want the grenade to be
@@ -169,7 +169,7 @@ void CWeaponGrenadeLauncher_Grenade::SetExplodeOnContact(bool explodeOnContact)
 
 void CWeaponGrenadeLauncher_Grenade::SetTumbleAngVel(float vel)
 {
-	pev->avelocity.x = vel;
+	pev->avelocity[VEC3_X] = vel;
 }
 
 void CWeaponGrenadeLauncher_Grenade::SetRandomTumbleAngVel(float min, float max)
@@ -184,14 +184,14 @@ void CWeaponGrenadeLauncher_Grenade::SetDamageOnExplode(float damage)
 
 void CWeaponGrenadeLauncher_Grenade::SetSpeed(float speed)
 {
-	Vector& vel = pev->velocity;
+	Vector vel(pev->velocity);
 
 	if ( vel.Length() == 0.0f )
 	{
 		return;
 	}
 
-	vel = vel.Normalize() * speed;
+	(vel.Normalize() * speed).CopyToArray(pev->velocity);
 }
 
 void CWeaponGrenadeLauncher_Grenade::SetFuseTime(float fuseTime)
@@ -211,7 +211,7 @@ void CWeaponGrenadeLauncher_Grenade::SetFuseTime(float fuseTime)
 	if ( fuseTime < 0.1 )
 	{
 		pev->nextthink = gpGlobals->time;
-		pev->velocity = Vector(0, 0, 0);
+		VectorClear(pev->velocity);
 	}
 }
 #endif

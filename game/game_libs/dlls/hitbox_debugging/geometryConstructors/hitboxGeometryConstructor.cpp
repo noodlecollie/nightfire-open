@@ -84,6 +84,9 @@ void CHitboxGeometryConstructor::HitboxFloatsToPoints(const HitboxFloats& floats
 {
 	for ( uint32_t pointIndex = 0; pointIndex < HitboxPoints::NUM_ELEMENTS; ++pointIndex )
 	{
-		points.points[pointIndex] = Vector(&floats.floats[3 * pointIndex]);
+		points.points[pointIndex] = Vector(
+			floats.floats[(3 * pointIndex) + 0],
+			floats.floats[(3 * pointIndex) + 1],
+			floats.floats[(3 * pointIndex) + 2]);
 	}
 }

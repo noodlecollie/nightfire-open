@@ -249,7 +249,7 @@ void CWeaponFrinesi::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
 	CBaseBot* bot = fightStyle.GetOwner();
 	CBaseEntity* enemy = bot->GetEnemy();
 
-	if ( enemy && (enemy->pev->origin - bot->pev->origin).Length() <= SECONDARY_FIRE_PROXIMITY )
+	if ( enemy && (Vector(enemy->pev->origin) - Vector(bot->pev->origin)).Length() <= SECONDARY_FIRE_PROXIMITY )
 	{
 		chanceOfSecondaryFire = 90;
 	}

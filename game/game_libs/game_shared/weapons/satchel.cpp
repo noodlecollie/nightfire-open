@@ -25,6 +25,7 @@
 #include "ammodefs.h"
 #include "EnginePublicAPI/weaponinfo.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 enum satchel_state
 {
@@ -386,11 +387,11 @@ void CSatchel::Throw(void)
 #ifndef CLIENT_DLL
 		Vector vecSrc = m_pPlayer->pev->origin;
 
-		Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
+		Vector vecThrow = Vector(gpGlobals->v_forward) * 274 + Vector(m_pPlayer->pev->velocity);
 
 		CBaseEntity* pSatchel = Create("monster_satchel", vecSrc, Vector(0, 0, 0), m_pPlayer->edict());
-		pSatchel->pev->velocity = vecThrow;
-		pSatchel->pev->avelocity.y = 400;
+		VectorCopy(vecThrow, pSatchel->pev->velocity);
+		pSatchel->pev->avelocity[YAW] = 400;
 
 		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_satchel_radio.mdl");
 		m_pPlayer->pev->weaponmodel = MAKE_STRING("models/p_satchel_radio.mdl");

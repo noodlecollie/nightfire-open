@@ -176,7 +176,7 @@ int CBaseBot::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float 
 		SetEnemy(NULL);  // Make sure enemy is reset
 
 		// face the attacker...
-		SetLookAtVec(pAttacker->pev->origin - pev->origin);
+		SetLookAtVec(Vector(pAttacker->pev->origin) - Vector(pev->origin));
 
 		// set enemy if not a teammate
 		if ( pAttacker->IsAlive() && g_pGameRules->PlayerRelationship(this, pAttacker) == GR_NOTTEAMMATE )

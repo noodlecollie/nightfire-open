@@ -1180,7 +1180,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 			vec2DirToPoint = (m_Route[0].vecLocation - pev->origin).Make2D().Normalize();
 			vec2RightSide = gpGlobals->v_right.Make2D().Normalize();
 
-			if ( DotProduct2D(vec2DirToPoint, vec2RightSide) > 0 )
+			if ( Vector2DotProduct(vec2DirToPoint, vec2RightSide) > 0 )
 			{
 				// strafe right
 				m_movementActivity = ACT_STRAFE_RIGHT;

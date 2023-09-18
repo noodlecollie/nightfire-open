@@ -77,8 +77,8 @@ public:
 	void HandleAnimEvent(MonsterEvent_t* pEvent);
 	void SetObjectCollisionBox(void)
 	{
-		pev->absmin = pev->origin + Vector(-32, -32, 0);
-		pev->absmax = pev->origin + Vector(32, 32, 85);
+		(Vector(pev->origin) + Vector(-32, -32, 0)).CopyToArray(pev->absmin);
+		(Vector(pev->origin) + Vector(32, 32, 85)).CopyToArray(pev->absmax);
 	}
 
 	Schedule_t* GetSchedule(void);
@@ -232,9 +232,9 @@ void CAGrunt::TraceAttack(
 
 			MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, ptr->vecEndPos);
 			WRITE_BYTE(TE_TRACER);
-			WRITE_COORD(ptr->vecEndPos.x);
-			WRITE_COORD(ptr->vecEndPos.y);
-			WRITE_COORD(ptr->vecEndPos.z);
+			WRITE_COORD(ptr->vecEndPos[VEC3_X]);
+			WRITE_COORD(ptr->vecEndPos[VEC3_Y]);
+			WRITE_COORD(ptr->vecEndPos[VEC3_Z]);
 
 			WRITE_COORD(vecTracerDir.x);
 			WRITE_COORD(vecTracerDir.y);
@@ -426,7 +426,7 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( HasConditions(bits_COND_SEE_ENEMY) )
 			{
-				vecDirToEnemy = ((m_vecEnemyLKP)-pev->origin);
+				vecDirToEnemy = m_vecEnemyLKP - Vector(pev->origin);
 				angDir = UTIL_VecToAngles(vecDirToEnemy);
 				vecDirToEnemy = vecDirToEnemy.Normalize();
 			}
@@ -461,7 +461,7 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			CBaseEntity* pHornet = CBaseEntity::Create("hornet", vecArmPos, UTIL_VecToAngles(vecDirToEnemy), edict());
 			UTIL_MakeVectors(pHornet->pev->angles);
-			pHornet->pev->velocity = gpGlobals->v_forward * 300;
+			VectorScale(gpGlobals->v_forward, 300, pHornet->pev->velocity);
 
 			switch ( RANDOM_LONG(0, 2) )
 			{
@@ -498,14 +498,14 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( pHurt )
 			{
-				pHurt->pev->punchangle.y = -25;
-				pHurt->pev->punchangle.x = 8;
+				pHurt->pev->punchangle[VEC3_Y] = -25;
+				pHurt->pev->punchangle[VEC3_X] = 8;
 
 				// OK to use gpGlobals without calling MakeVectors, cause CheckTraceHullAttack called it above.
 				if ( pHurt->IsPlayer() )
 				{
 					// this is a player. Knock him around.
-					pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_right * 250;
+					(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_right) * 250).CopyToArray(pHurt->pev->velocity);
 				}
 
 				EMIT_SOUND_DYN(
@@ -542,14 +542,15 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( pHurt )
 			{
-				pHurt->pev->punchangle.y = 25;
-				pHurt->pev->punchangle.x = 8;
+				pHurt->pev->punchangle[VEC3_Y] = 25;
+				pHurt->pev->punchangle[VEC3_X] = 8;
 
 				// OK to use gpGlobals without calling MakeVectors, cause CheckTraceHullAttack called it above.
 				if ( pHurt->IsPlayer() )
 				{
 					// this is a player. Knock him around.
-					pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_right * -250;
+					(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_right) * -250)
+						.CopyToArray(pHurt->pev->velocity);
 				}
 
 				EMIT_SOUND_DYN(
@@ -924,7 +925,7 @@ void CAGrunt::StartTask(Task_t* pTask)
 		case TASK_AGRUNT_GET_PATH_TO_ENEMY_CORPSE:
 		{
 			UTIL_MakeVectors(pev->angles);
-			if ( BuildRoute(m_vecEnemyLKP - gpGlobals->v_forward * 50, bits_MF_TO_LOCATION, NULL) )
+			if ( BuildRoute(m_vecEnemyLKP - Vector(gpGlobals->v_forward) * 50, bits_MF_TO_LOCATION, NULL) )
 			{
 				TaskComplete();
 			}
@@ -952,12 +953,12 @@ void CAGrunt::StartTask(Task_t* pTask)
 				fSkip = FALSE;
 				vecCenter = Center();
 
-				UTIL_VecToAngles(m_vecEnemyLKP - pev->origin);
+				UTIL_VecToAngles(m_vecEnemyLKP - Vector(pev->origin));
 
-				UTIL_TraceLine(Center() + gpGlobals->v_forward * 128, m_vecEnemyLKP, ignore_monsters, ENT(pev), &tr);
+				UTIL_TraceLine(Center() + Vector(gpGlobals->v_forward) * 128, m_vecEnemyLKP, ignore_monsters, ENT(pev), &tr);
 				if ( tr.flFraction == 1.0 )
 				{
-					MakeIdealYaw(pev->origin + gpGlobals->v_right * 128);
+					MakeIdealYaw(Vector(pev->origin) + Vector(gpGlobals->v_right) * 128);
 					fSkip = TRUE;
 					TaskComplete();
 				}
@@ -965,14 +966,14 @@ void CAGrunt::StartTask(Task_t* pTask)
 				if ( !fSkip )
 				{
 					UTIL_TraceLine(
-						Center() - gpGlobals->v_forward * 128,
+						Center() - Vector(gpGlobals->v_forward) * 128,
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
 						&tr);
 					if ( tr.flFraction == 1.0 )
 					{
-						MakeIdealYaw(pev->origin - gpGlobals->v_right * 128);
+						MakeIdealYaw(Vector(pev->origin) - Vector(gpGlobals->v_right) * 128);
 						fSkip = TRUE;
 						TaskComplete();
 					}
@@ -981,14 +982,14 @@ void CAGrunt::StartTask(Task_t* pTask)
 				if ( !fSkip )
 				{
 					UTIL_TraceLine(
-						Center() + gpGlobals->v_forward * 256,
+						Center() + Vector(gpGlobals->v_forward) * 256,
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
 						&tr);
 					if ( tr.flFraction == 1.0 )
 					{
-						MakeIdealYaw(pev->origin + gpGlobals->v_right * 256);
+						MakeIdealYaw(Vector(pev->origin) + Vector(gpGlobals->v_right) * 256);
 						fSkip = TRUE;
 						TaskComplete();
 					}
@@ -997,14 +998,14 @@ void CAGrunt::StartTask(Task_t* pTask)
 				if ( !fSkip )
 				{
 					UTIL_TraceLine(
-						Center() - gpGlobals->v_forward * 256,
+						Center() - Vector(gpGlobals->v_forward) * 256,
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
 						&tr);
 					if ( tr.flFraction == 1.0 )
 					{
-						MakeIdealYaw(pev->origin - gpGlobals->v_right * 256);
+						MakeIdealYaw(Vector(pev->origin) - Vector(gpGlobals->v_right) * 256);
 						fSkip = TRUE;
 						TaskComplete();
 					}

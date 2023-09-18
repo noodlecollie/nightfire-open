@@ -32,6 +32,7 @@
 #include "gamerules.h"
 #include <cassert>
 #include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 
 float UTIL_WeaponTimeBase(void)
 {
@@ -149,19 +150,26 @@ float UTIL_SharedRandomFloat(unsigned int seed, float low, float high)
 
 void UTIL_ParametricRocket(entvars_t* pev, Vector vecOrigin, Vector vecAngles, edict_t* owner)
 {
-	pev->startpos = vecOrigin;
+	vecOrigin.CopyToArray(pev->startpos);
+
 	// Trace out line to end pos
 	TraceResult tr;
 	UTIL_MakeVectors(vecAngles);
-	UTIL_TraceLine(pev->startpos, pev->startpos + gpGlobals->v_forward * 8192, ignore_monsters, owner, &tr);
-	pev->endpos = tr.vecEndPos;
+	UTIL_TraceLine(
+		pev->startpos,
+		Vector(pev->startpos) + Vector(gpGlobals->v_forward) * 8192,
+		ignore_monsters,
+		owner,
+		&tr);
+
+	VectorCopy(tr.vecEndPos, pev->endpos);
 
 	// Now compute how long it will take based on current velocity
-	Vector vecTravel = pev->endpos - pev->startpos;
+	Vector vecTravel = Vector(pev->endpos) - Vector(pev->startpos);
 	float travelTime = 0.0;
-	if ( pev->velocity.Length() > 0 )
+	if ( VectorLength(pev->velocity) > 0 )
 	{
-		travelTime = vecTravel.Length() / pev->velocity.Length();
+		travelTime = vecTravel.Length() / VectorLength(pev->velocity);
 	}
 	pev->starttime = gpGlobals->time;
 	pev->impacttime = gpGlobals->time + travelTime;
@@ -350,7 +358,14 @@ void DBG_AssertFunction(
 		char szOut[512];
 		if ( szMessage != NULL )
 		{
-			PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)\n%s", szExpr, szFile, szLine, szMessage);
+			PlatformLib_SNPrintF(
+				szOut,
+				sizeof(szOut),
+				"ASSERT FAILED:\n %s \n(%s@%d)\n%s",
+				szExpr,
+				szFile,
+				szLine,
+				szMessage);
 		}
 		else
 		{
@@ -411,9 +426,9 @@ float UTIL_AngleDiff(float destAngle, float srcAngle)
 
 Vector UTIL_VecToAngles(const Vector& vec)
 {
-	float rgflVecOut[3];
-	VEC_TO_ANGLES(vec, rgflVecOut);
-	return Vector(rgflVecOut);
+	vec3_t angles;
+	VectorAngles(vec, angles);
+	return Vector(angles);
 }
 
 // float UTIL_MoveToOrigin( edict_t *pent, const Vector vecGoal, float flDist, int iMoveType )
@@ -444,8 +459,9 @@ int UTIL_EntitiesInBox(CBaseEntity** pList, int listMax, const Vector& mins, con
 		if ( flagMask && !(pEdict->v.flags & flagMask) )  // Does it meet the criteria?
 			continue;
 
-		if ( mins.x > pEdict->v.absmax.x || mins.y > pEdict->v.absmax.y || mins.z > pEdict->v.absmax.z ||
-			 maxs.x < pEdict->v.absmin.x || maxs.y < pEdict->v.absmin.y || maxs.z < pEdict->v.absmin.z )
+		if ( mins.x > pEdict->v.absmax[VEC3_X] || mins.y > pEdict->v.absmax[VEC3_Y] ||
+			 mins.z > pEdict->v.absmax[VEC3_Z] || maxs.x < pEdict->v.absmin[VEC3_X] ||
+			 maxs.y < pEdict->v.absmin[VEC3_Y] || maxs.z < pEdict->v.absmin[VEC3_Z] )
 			continue;
 
 		pEntity = CBaseEntity::Instance(pEdict);
@@ -485,7 +501,7 @@ int UTIL_MonstersInSphere(CBaseEntity** pList, int listMax, const Vector& center
 
 		// Use origin for X & Y since they are centered for all monsters
 		// Now X
-		delta = center.x - pEdict->v.origin.x;  //( pEdict->v.absmin.x + pEdict->v.absmax.x ) * 0.5;
+		delta = center.x - pEdict->v.origin[VEC3_X];  //( pEdict->v.absmin.x + pEdict->v.absmax.x ) * 0.5;
 		delta *= delta;
 
 		if ( delta > radiusSquared )
@@ -493,7 +509,7 @@ int UTIL_MonstersInSphere(CBaseEntity** pList, int listMax, const Vector& center
 		distance = delta;
 
 		// Now Y
-		delta = center.y - pEdict->v.origin.y;  //( pEdict->v.absmin.y + pEdict->v.absmax.y )*0.5;
+		delta = center.y - pEdict->v.origin[VEC3_Y];  //( pEdict->v.absmin.y + pEdict->v.absmax.y )*0.5;
 		delta *= delta;
 
 		distance += delta;
@@ -501,7 +517,7 @@ int UTIL_MonstersInSphere(CBaseEntity** pList, int listMax, const Vector& center
 			continue;
 
 		// Now Z
-		delta = center.z - (pEdict->v.absmin.z + pEdict->v.absmax.z) * 0.5f;
+		delta = center.z - (pEdict->v.absmin[VEC3_Z] + pEdict->v.absmax[VEC3_Z]) * 0.5f;
 		delta *= delta;
 
 		distance += delta;
@@ -576,7 +592,7 @@ CBaseEntity* UTIL_FindEntityGeneric(const char* szWhatever, Vector& vecSrc, floa
 	float flMaxDist2 = flRadius * flRadius;
 	while ( (pSearch = UTIL_FindEntityByClassname(pSearch, szWhatever)) != NULL )
 	{
-		float flDist2 = (pSearch->pev->origin - vecSrc).Length();
+		float flDist2 = (Vector(pSearch->pev->origin) - vecSrc).Length();
 		flDist2 = flDist2 * flDist2;
 		if ( flMaxDist2 > flDist2 )
 		{
@@ -626,11 +642,11 @@ void UTIL_MakeInvVectors(const Vector& vec, globalvars_t* pgv)
 	MAKE_VECTORS(vec);
 
 	float tmp;
-	pgv->v_right = pgv->v_right * -1;
+	VectorNegate(pgv->v_right, pgv->v_right);
 
-	SWAP(pgv->v_forward.y, pgv->v_right.x, tmp);
-	SWAP(pgv->v_forward.z, pgv->v_up.x, tmp);
-	SWAP(pgv->v_right.z, pgv->v_up.y, tmp);
+	SWAP(pgv->v_forward[VEC3_Y], pgv->v_right[VEC3_X], tmp);
+	SWAP(pgv->v_forward[VEC3_Z], pgv->v_up[VEC3_X], tmp);
+	SWAP(pgv->v_right[VEC3_Z], pgv->v_up[VEC3_Y], tmp);
 }
 
 void UTIL_EmitAmbientSound(
@@ -710,7 +726,7 @@ void UTIL_ScreenShake(const Vector& center, float amplitude, float frequency, fl
 			localAmplitude = amplitude;
 		else
 		{
-			Vector delta = center - pPlayer->pev->origin;
+			Vector delta = center - Vector(pPlayer->pev->origin);
 			float distance = delta.Length();
 
 			// Had to get rid of this falloff - it didn't work well
@@ -1030,8 +1046,8 @@ TraceResult UTIL_GetGlobalTrace()
 	tr.flFraction = gpGlobals->trace_fraction;
 	tr.flPlaneDist = gpGlobals->trace_plane_dist;
 	tr.pHit = gpGlobals->trace_ent;
-	tr.vecEndPos = gpGlobals->trace_endpos;
-	tr.vecPlaneNormal = gpGlobals->trace_plane_normal;
+	VectorCopy(gpGlobals->trace_endpos, tr.vecEndPos);
+	VectorCopy(gpGlobals->trace_plane_normal, tr.vecPlaneNormal);
 	tr.iHitgroup = gpGlobals->trace_hitgroup;
 	return tr;
 }
@@ -1043,7 +1059,7 @@ void UTIL_SetSize(entvars_t* pev, const Vector& vecMin, const Vector& vecMax)
 
 float UTIL_VecToYaw(const Vector& vec)
 {
-	return VEC_TO_YAW(vec);
+	return VectorToYaw(vec);
 }
 
 void UTIL_SetOrigin(entvars_t* pev, const Vector& vecOrigin)
@@ -1323,9 +1339,9 @@ void UTIL_DecalTrace(TraceResult* pTrace, int decalNumber)
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(message);
-	WRITE_COORD(pTrace->vecEndPos.x);
-	WRITE_COORD(pTrace->vecEndPos.y);
-	WRITE_COORD(pTrace->vecEndPos.z);
+	WRITE_COORD(pTrace->vecEndPos[0]);
+	WRITE_COORD(pTrace->vecEndPos[1]);
+	WRITE_COORD(pTrace->vecEndPos[2]);
 	WRITE_BYTE(index);
 	if ( entityIndex )
 		WRITE_SHORT(entityIndex);
@@ -1363,9 +1379,9 @@ void UTIL_PlayerDecalTrace(TraceResult* pTrace, int playernum, int decalNumber, 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_PLAYERDECAL);
 	WRITE_BYTE(playernum);
-	WRITE_COORD(pTrace->vecEndPos.x);
-	WRITE_COORD(pTrace->vecEndPos.y);
-	WRITE_COORD(pTrace->vecEndPos.z);
+	WRITE_COORD(pTrace->vecEndPos[0]);
+	WRITE_COORD(pTrace->vecEndPos[1]);
+	WRITE_COORD(pTrace->vecEndPos[2]);
 	WRITE_SHORT((short)ENTINDEX(pTrace->pHit));
 	WRITE_BYTE(index);
 	MESSAGE_END();
@@ -1385,9 +1401,9 @@ void UTIL_GunshotDecalTrace(TraceResult* pTrace, int decalNumber)
 
 	MESSAGE_BEGIN(MSG_PAS, SVC_TEMPENTITY, pTrace->vecEndPos);
 	WRITE_BYTE(TE_GUNSHOTDECAL);
-	WRITE_COORD(pTrace->vecEndPos.x);
-	WRITE_COORD(pTrace->vecEndPos.y);
-	WRITE_COORD(pTrace->vecEndPos.z);
+	WRITE_COORD(pTrace->vecEndPos[0]);
+	WRITE_COORD(pTrace->vecEndPos[1]);
+	WRITE_COORD(pTrace->vecEndPos[2]);
 	WRITE_SHORT((short)ENTINDEX(pTrace->pHit));
 	WRITE_BYTE(index);
 	MESSAGE_END();
@@ -1664,7 +1680,7 @@ float UTIL_DotPoints(const Vector& vecSrc, const Vector& vecCheck, const Vector&
 	vec2LOS = (vecCheck - vecSrc).Make2D();
 	vec2LOS = vec2LOS.Normalize();
 
-	return DotProduct2D(vec2LOS, (vecDir.Make2D()));
+	return Vector2DotProduct(vec2LOS, (vecDir.Make2D()));
 }
 
 //=========================================================
@@ -1990,7 +2006,7 @@ void CSave::WritePositionVector(const char* pname, const Vector& value)
 {
 	if ( m_pdata && m_pdata->fUseLandmark )
 	{
-		Vector tmp = value - m_pdata->vecLandmarkOffset;
+		Vector tmp = value - Vector(m_pdata->vecLandmarkOffset);
 		WriteVector(pname, tmp);
 	}
 
@@ -2008,7 +2024,9 @@ void CSave::WritePositionVector(const char* pname, const float* value, int count
 		Vector tmp(value[0], value[1], value[2]);
 
 		if ( m_pdata && m_pdata->fUseLandmark )
-			tmp = tmp - m_pdata->vecLandmarkOffset;
+		{
+			tmp = tmp - Vector(m_pdata->vecLandmarkOffset);
+		}
 
 		BufferData((const char*)&tmp.x, sizeof(float) * 3);
 		value += 3;

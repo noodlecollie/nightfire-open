@@ -13,8 +13,6 @@
  *
  ****/
 #pragma once
-#ifndef ANIMATION_H
-#define ANIMATION_H
 
 #define ACTIVITY_NOT_AVAILABLE -1
 
@@ -49,4 +47,3 @@ int ExtractBbox(void* pmodel, int sequence, float* mins, float* maxs);
 
 // From /engine/studio.h
 #define STUDIO_LOOPING 0x0001
-#endif  // ANIMATION_H

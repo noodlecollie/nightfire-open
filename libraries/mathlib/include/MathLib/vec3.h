@@ -161,6 +161,9 @@ static inline void VectorLerp(const vec3_t v1, float lerp, const vec3_t v2, vec3
 	c[2] = v1[2] + (lerp * (v2[2] - v1[2]));
 }
 
+// NFTODO: Make variants of this and similar functions where those suffixed
+// with "Self" apply the operation to the input, and other functions have
+// specific inputs and outputs.
 static inline float VectorNormalize(vec3_t v)
 {
 	const float length = VectorLength(v);

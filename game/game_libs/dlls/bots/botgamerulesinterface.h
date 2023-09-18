@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include "mathlib.h"
 #include "EnginePublicAPI/const.h"
 #include "botprofiles/botprofiletable.h"
 #include "utlstring.h"

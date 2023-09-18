@@ -151,7 +151,7 @@ void CRadialDamageInflictor::ApplyDamageToEntity(CBaseEntity& target)
 	if ( m_TraceResult.fStartSolid )
 	{
 		// if we're stuck inside them, fixup the position and distance
-		m_TraceResult.vecEndPos = m_vecOrigin;
+		VectorCopy(m_vecOrigin, m_TraceResult.vecEndPos);
 		m_TraceResult.flFraction = 0.0f;
 	}
 
@@ -168,7 +168,7 @@ void CRadialDamageInflictor::ApplyDamageToEntity(CBaseEntity& target)
 		target.TraceAttack(
 			m_pInflictor,
 			adjustedDamage,
-			(m_TraceResult.vecEndPos - m_vecOrigin).Normalize(),
+			(Vector(m_TraceResult.vecEndPos) - m_vecOrigin).Normalize(),
 			&m_TraceResult,
 			m_bitsDamageType);
 		ApplyMultiDamage(m_pInflictor, m_pWorkingAttacker);

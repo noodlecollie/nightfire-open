@@ -1,7 +1,7 @@
 #include "MathLib/mathdefs.h"
 #include "MathLib/angles.h"
 
-static float NormalizeAngleValue(float val)
+static vec_t NormalizeAngleValue(vec_t val)
 {
 	if ( val < 0.0f )
 	{
