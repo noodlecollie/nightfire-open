@@ -99,11 +99,11 @@ edict_t* CGameRules::GetPlayerSpawnSpot(CBasePlayer* pPlayer)
 
 	edict_t* pentSpawnSpot = gpSys->SpawnPointManager().GetNextSpawnPoint(pPlayer, spType, flags)->edict();
 
-	pPlayer->pev->origin = VARS(pentSpawnSpot)->origin + Vector(0, 0, 1);
-	pPlayer->pev->v_angle = g_vecZero;
-	pPlayer->pev->velocity = g_vecZero;
-	pPlayer->pev->angles = VARS(pentSpawnSpot)->angles;
-	pPlayer->pev->punchangle = g_vecZero;
+	VectorAdd(VARS(pentSpawnSpot)->origin, Vector(0, 0, 1), pPlayer->pev->origin);
+	VectorClear(pPlayer->pev->v_angle);
+	VectorClear(pPlayer->pev->velocity);
+	VectorCopy(VARS(pentSpawnSpot)->angles, pPlayer->pev->angles);
+	VectorClear(pPlayer->pev->punchangle);
 	pPlayer->pev->fixangle = TRUE;
 
 	return pentSpawnSpot;

@@ -63,7 +63,7 @@ void CLight::KeyValue(KeyValueData* pkvd)
 	}
 	else if ( FStrEq(pkvd->szKeyName, "pitch") )
 	{
-		pev->angles.x = static_cast<float>(atof(pkvd->szValue));
+		pev->angles[VEC3_X] = static_cast<float>(atof(pkvd->szValue));
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "pattern") )
@@ -185,11 +185,11 @@ void CEnvLight::Spawn(void)
 	char szVector[64];
 	UTIL_MakeAimVectors(pev->angles);
 
-	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward.x);
+	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward[VEC3_X]);
 	CVAR_SET_STRING("sv_skyvec_x", szVector);
-	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward.y);
+	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward[VEC3_Y]);
 	CVAR_SET_STRING("sv_skyvec_y", szVector);
-	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward.z);
+	PlatformLib_SNPrintF(szVector, sizeof(szVector), "%f", gpGlobals->v_forward[VEC3_Z]);
 	CVAR_SET_STRING("sv_skyvec_z", szVector);
 
 	CLight::Spawn();

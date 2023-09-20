@@ -19,7 +19,7 @@
 #include "effects.h"
 #include "weapons.h"
 #include "explode.h"
-
+#include "MathLib/angles.h"
 #include "player.h"
 
 #define SF_TANK_ACTIVE 0x0001
@@ -99,7 +99,8 @@ public:
 	{
 		Vector forward, right, up;
 		UTIL_MakeVectorsPrivate(pev->angles, forward, right, up);
-		return pev->origin + (forward * m_barrelPos.x) + (right * m_barrelPos.y) + (up * m_barrelPos.z);
+		return Vector(pev->origin) + (forward * m_barrelPos[VEC3_X]) + (right * m_barrelPos[VEC3_Y]) +
+			(up * m_barrelPos[VEC3_Z]);
 	}
 
 	void AdjustAnglesForBarrel(Vector& angles, float distance);
@@ -200,20 +201,27 @@ void CFuncTank::Spawn(void)
 	pev->solid = SOLID_BSP;
 	SET_MODEL(ENT(pev), STRING(pev->model));
 
-	m_yawCenter = pev->angles.y;
-	m_pitchCenter = pev->angles.x;
+	m_yawCenter = pev->angles[YAW];
+	m_pitchCenter = pev->angles[PITCH];
 
 	if ( IsActive() )
+	{
 		pev->nextthink = pev->ltime + 1.0f;
+	}
 
 	m_sightOrigin = BarrelPosition();  // Point at the end of the barrel
 
 	if ( m_fireRate <= 0 )
+	{
 		m_fireRate = 1;
-	if ( m_spread > (int)MAX_FIRING_SPREADS )
-		m_spread = 0;
+	}
 
-	pev->oldorigin = pev->origin;
+	if ( m_spread > (int)MAX_FIRING_SPREADS )
+	{
+		m_spread = 0;
+	}
+
+	VectorCopy(pev->origin, pev->oldorigin);
 }
 
 void CFuncTank::Precache(void)
@@ -350,8 +358,10 @@ BOOL CFuncTank::OnControls(entvars_t* pevTest)
 
 	// Vector offset = pevTest->origin - pev->origin;
 
-	if ( (m_vecControllerUsePos - pevTest->origin).Length() < 30 )
+	if ( (m_vecControllerUsePos - Vector(pevTest->origin)).Length() < 30 )
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -487,13 +497,17 @@ BOOL CFuncTank::InRange(float range)
 
 void CFuncTank::Think(void)
 {
-	pev->avelocity = g_vecZero;
+	VectorClear(pev->avelocity);
 	TrackTarget();
 
-	if ( fabs(pev->avelocity.x) > 1 || fabs(pev->avelocity.y) > 1 )
+	if ( fabs(pev->avelocity[PITCH]) > 1 || fabs(pev->avelocity[YAW]) > 1 )
+	{
 		StartRotSound();
+	}
 	else
+	{
 		StopRotSound();
+	}
 }
 
 void CFuncTank::TrackTarget(void)
@@ -531,11 +545,13 @@ void CFuncTank::TrackTarget(void)
 
 		// Calculate angle needed to aim at target
 		barrelEnd = BarrelPosition();
-		targetPosition = pTarget->v.origin + pTarget->v.view_ofs;
+		targetPosition = Vector(pTarget->v.origin) + Vector(pTarget->v.view_ofs);
 		float range = (targetPosition - barrelEnd).Length();
 
 		if ( !InRange(range) )
+		{
 			return;
+		}
 
 		UTIL_TraceLine(barrelEnd, targetPosition, dont_ignore_monsters, edict(), &tr);
 
@@ -551,7 +567,7 @@ void CFuncTank::TrackTarget(void)
 
 		// Track sight origin
 		// !!! I'm not sure what i changed
-		direction = m_sightOrigin - pev->origin;
+		direction = m_sightOrigin - Vector(pev->origin);
 		// direction = m_sightOrigin - barrelEnd;
 		angles = UTIL_VecToAngles(direction);
 
@@ -581,30 +597,45 @@ void CFuncTank::TrackTarget(void)
 		m_lastSightTime = gpGlobals->time;
 
 	// Move toward target at rate or less
-	float distY = UTIL_AngleDistance(angles.y, pev->angles.y);
-	pev->avelocity.y = distY * 10;
-	if ( pev->avelocity.y > m_yawRate )
-		pev->avelocity.y = m_yawRate;
-	else if ( pev->avelocity.y < -m_yawRate )
-		pev->avelocity.y = -m_yawRate;
+	float distY = UTIL_AngleDistance(angles[YAW], pev->angles[YAW]);
+	pev->avelocity[YAW] = distY * 10;
+
+	if ( pev->avelocity[YAW] > m_yawRate )
+	{
+		pev->avelocity[YAW] = m_yawRate;
+	}
+	else if ( pev->avelocity[YAW] < -m_yawRate )
+	{
+		pev->avelocity[YAW] = -m_yawRate;
+	}
 
 	// Limit against range in x
 	if ( angles.x > m_pitchCenter + m_pitchRange )
+	{
 		angles.x = m_pitchCenter + m_pitchRange;
+	}
 	else if ( angles.x < m_pitchCenter - m_pitchRange )
+	{
 		angles.x = m_pitchCenter - m_pitchRange;
+	}
 
 	// Move toward target at rate or less
-	float distX = UTIL_AngleDistance(angles.x, pev->angles.x);
-	pev->avelocity.x = distX * 10;
+	float distX = UTIL_AngleDistance(angles[PITCH], pev->angles[PITCH]);
+	pev->avelocity[PITCH] = distX * 10;
 
-	if ( pev->avelocity.x > m_pitchRate )
-		pev->avelocity.x = m_pitchRate;
-	else if ( pev->avelocity.x < -m_pitchRate )
-		pev->avelocity.x = -m_pitchRate;
+	if ( pev->avelocity[PITCH] > m_pitchRate )
+	{
+		pev->avelocity[PITCH] = m_pitchRate;
+	}
+	else if ( pev->avelocity[PITCH] < -m_pitchRate )
+	{
+		pev->avelocity[PITCH] = -m_pitchRate;
+	}
 
 	if ( m_pController )
+	{
 		return;
+	}
 
 	if ( CanFire() &&
 		 ((fabs(distX) < m_pitchTolerance && fabs(distY) < m_yawTolerance) || (pev->spawnflags & SF_TANK_LINEOFSIGHT)) )
@@ -667,12 +698,12 @@ void CFuncTank::Fire(const Vector& barrelEnd, const Vector&, entvars_t*)
 			pSprite->AnimateAndDie(RANDOM_FLOAT(15.0, 20.0));
 			pSprite->SetTransparency(
 				kRenderTransAlpha,
-				(int)pev->rendercolor.x,
-				(int)pev->rendercolor.y,
-				(int)pev->rendercolor.z,
+				(int)pev->rendercolor[0],
+				(int)pev->rendercolor[1],
+				(int)pev->rendercolor[2],
 				255,
 				kRenderFxNone);
-			pSprite->pev->velocity.z = RANDOM_FLOAT(40, 80);
+			pSprite->pev->velocity[VEC3_Z] = RANDOM_FLOAT(40, 80);
 			pSprite->SetScale(m_spriteScale);
 		}
 		if ( m_iszSpriteFlash )
@@ -701,7 +732,8 @@ void CFuncTank::TankTrace(const Vector& vecStart, const Vector& vecForward, cons
 		z = x * x + y * y;
 	}
 	while ( z > 1 );
-	Vector vecDir = vecForward + x * vecSpread.x * gpGlobals->v_right + y * vecSpread.y * gpGlobals->v_up;
+	Vector vecDir =
+		vecForward + x * vecSpread.x * Vector(gpGlobals->v_right) + y * vecSpread.y * Vector(gpGlobals->v_up);
 	Vector vecEnd;
 
 	vecEnd = vecStart + vecDir * 4096;
@@ -893,7 +925,7 @@ void CFuncTankLaser::Fire(const Vector& barrelEnd, const Vector& forward, entvar
 		{
 			for ( i = 0; i < bulletCount; i++ )
 			{
-				m_pLaser->pev->origin = barrelEnd;
+				VectorCopy(barrelEnd, m_pLaser->pev->origin);
 				TankTrace(barrelEnd, forward, gTankSpread[m_spread], tr);
 
 				m_laserTime = gpGlobals->time;

@@ -12,13 +12,12 @@
  *   without written permission from Valve LLC.
  *
  ****/
+
 #pragma once
 
-#define ACTIVITY_NOT_AVAILABLE -1
-
-#ifndef MONSTEREVENT_H
 #include "monsterevent.h"
-#endif
+
+#define ACTIVITY_NOT_AVAILABLE -1
 
 extern int IsSoundEvent(int eventNumber);
 

@@ -17,6 +17,7 @@
 #include "cbase.h"
 #include "animation.h"
 #include "effects.h"
+#include "MathLib/angles.h"
 
 #define XEN_PLANT_GLOW_SPRITE "sprites/flare3.spr"
 #define XEN_PLANT_HIDE_TIME 5
@@ -103,13 +104,13 @@ void CXenPLight::Spawn(void)
 
 	m_pGlow = CSprite::SpriteCreate(
 		XEN_PLANT_GLOW_SPRITE,
-		pev->origin + Vector(0, 0, (pev->mins.z + pev->maxs.z) * 0.5f),
+		Vector(pev->origin) + Vector(0, 0, (pev->mins[VEC3_Z] + pev->maxs[VEC3_Z]) * 0.5f),
 		FALSE);
 	m_pGlow->SetTransparency(
 		kRenderGlow,
-		(int)pev->rendercolor.x,
-		(int)pev->rendercolor.y,
-		(int)pev->rendercolor.z,
+		(int)pev->rendercolor[0],
+		(int)pev->rendercolor[1],
+		(int)pev->rendercolor[2],
 		(int)pev->renderamt,
 		(int)pev->renderfx);
 	m_pGlow->SetAttachment(edict(), 1);
@@ -232,7 +233,7 @@ LINK_ENTITY_TO_CLASS(xen_ttrigger, CXenTreeTrigger)
 CXenTreeTrigger* CXenTreeTrigger::TriggerCreate(edict_t* pOwner, const Vector& position)
 {
 	CXenTreeTrigger* pTrigger = GetClassPtr<CXenTreeTrigger>();
-	pTrigger->pev->origin = position;
+	VectorCopy(position, pTrigger->pev->origin);
 	pTrigger->pev->classname = MAKE_STRING("xen_ttrigger");
 	pTrigger->pev->solid = SOLID_TRIGGER;
 	pTrigger->pev->movetype = MOVETYPE_NONE;
@@ -308,7 +309,7 @@ void CXenTree::Spawn(void)
 
 	Vector triggerPosition;
 	UTIL_MakeVectorsPrivate(pev->angles, triggerPosition, NULL, NULL);
-	triggerPosition = pev->origin + (triggerPosition * 64);
+	triggerPosition = Vector(pev->origin) + (triggerPosition * 64);
 	// Create the trigger
 	m_pTrigger = CXenTreeTrigger::TriggerCreate(edict(), triggerPosition);
 	UTIL_SetSize(m_pTrigger->pev, Vector(-24, -24, 0), Vector(24, 24, 128));
@@ -373,8 +374,8 @@ void CXenTree::HandleAnimEvent(MonsterEvent_t* pEvent)
 					{
 						sound = TRUE;
 						pList[i]->TakeDamage(pev, pev, 25, DMG_CRUSH | DMG_SLASH);
-						pList[i]->pev->punchangle.x = 15;
-						pList[i]->pev->velocity = pList[i]->pev->velocity + forward * 100;
+						pList[i]->pev->punchangle[PITCH] = 15;
+						(Vector(pList[i]->pev->velocity) + forward * 100).CopyToArray(pList[i]->pev->velocity);
 					}
 				}
 			}
@@ -470,7 +471,7 @@ CXenHull* CXenHull::CreateHull(CBaseEntity* source, const Vector& mins, const Ve
 {
 	CXenHull* pHull = GetClassPtr<CXenHull>();
 
-	UTIL_SetOrigin(pHull->pev, source->pev->origin + offset);
+	UTIL_SetOrigin(pHull->pev, Vector(source->pev->origin) + offset);
 	SET_MODEL(pHull->edict(), STRING(source->pev->model));
 	pHull->pev->solid = SOLID_BBOX;
 	pHull->pev->classname = MAKE_STRING("xen_hull");

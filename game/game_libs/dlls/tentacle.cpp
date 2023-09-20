@@ -26,6 +26,7 @@
 #include "monsters.h"
 #include "weapons.h"
 #include "soundent.h"
+#include "MathLib/angles.h"
 
 #define ACT_T_IDLE 1010
 #define ACT_T_TAP 1020
@@ -53,8 +54,8 @@ public:
 
 	void SetObjectCollisionBox(void)
 	{
-		pev->absmin = pev->origin + Vector(-400, -400, 0);
-		pev->absmax = pev->origin + Vector(400, 400, 850);
+		VectorAdd(pev->origin, Vector(-400, -400, 0), pev->absmin);
+		VectorAdd(pev->origin, Vector(400, 400, 850), pev->absmax);
 	}
 
 	void EXPORT Cycle(void);
@@ -261,7 +262,7 @@ void CTentacle::Spawn()
 	m_iDir = 1;
 
 	pev->yaw_speed = 18;
-	m_flInitialYaw = pev->angles.y;
+	m_flInitialYaw = pev->angles[YAW];
 	pev->ideal_yaw = m_flInitialYaw;
 
 	g_fFlySound = FALSE;
@@ -435,7 +436,7 @@ void CTentacle::Cycle(void)
 
 	if ( m_MonsterState == MONSTERSTATE_SCRIPT || m_IdealMonsterState == MONSTERSTATE_SCRIPT )
 	{
-		pev->angles.y = m_flInitialYaw;
+		pev->angles[YAW] = m_flInitialYaw;
 		pev->ideal_yaw = m_flInitialYaw;
 		ClearConditions(IgnoreConditions());
 		MonsterThink();
@@ -464,11 +465,11 @@ void CTentacle::Cycle(void)
 		if ( gpGlobals->time - m_flPrevSoundTime < 0.5 )
 		{
 			float dt = gpGlobals->time - m_flPrevSoundTime;
-			vecDir = pSound->m_vecOrigin + (pSound->m_vecOrigin - m_vecPrevSound) / dt - pev->origin;
+			vecDir = pSound->m_vecOrigin + (pSound->m_vecOrigin - m_vecPrevSound) / dt - Vector(pev->origin);
 		}
 		else
 		{
-			vecDir = pSound->m_vecOrigin - pev->origin;
+			vecDir = pSound->m_vecOrigin - Vector(pev->origin);
 		}
 		m_flPrevSoundTime = gpGlobals->time;
 		m_vecPrevSound = pSound->m_vecOrigin;
@@ -653,11 +654,11 @@ void CTentacle::Cycle(void)
 
 				TraceResult tr1, tr2;
 
-				vecSrc = pev->origin + Vector(0, 0, MyHeight() - 4);
-				UTIL_TraceLine(vecSrc, vecSrc + gpGlobals->v_forward * 512, ignore_monsters, ENT(pev), &tr1);
+				vecSrc = Vector(pev->origin) + Vector(0, 0, MyHeight() - 4);
+				UTIL_TraceLine(vecSrc, vecSrc + Vector(gpGlobals->v_forward) * 512, ignore_monsters, ENT(pev), &tr1);
 
-				vecSrc = pev->origin + Vector(0, 0, MyHeight() + 8);
-				UTIL_TraceLine(vecSrc, vecSrc + gpGlobals->v_forward * 512, ignore_monsters, ENT(pev), &tr2);
+				vecSrc = Vector(pev->origin) + Vector(0, 0, MyHeight() + 8);
+				UTIL_TraceLine(vecSrc, vecSrc + Vector(gpGlobals->v_forward) * 512, ignore_monsters, ENT(pev), &tr2);
 
 				// ALERT( at_console, "%f %f\n", tr1.flFraction * 512, tr2.flFraction * 512 );
 
@@ -668,7 +669,7 @@ void CTentacle::Cycle(void)
 				m_flTapRadius = 336;  // 400 - 64
 				break;
 		}
-		pev->view_ofs.z = MyHeight();
+		pev->view_ofs[VEC3_Z] = MyHeight();
 		// ALERT( at_console, "seq %d\n", pev->sequence );
 	}
 
@@ -833,11 +834,11 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 		case 6:
 			// light tap
 			{
-				Vector vecSrc = pev->origin +
+				Vector vecSrc = Vector(pev->origin) +
 					m_flTapRadius *
 						Vector(
-							cosf(pev->angles.y * (static_cast<float>(M_PI) / 180.0f)),
-							sinf(pev->angles.y * (static_cast<float>(M_PI) / 180.0f)),
+							cosf(pev->angles[YAW] * (static_cast<float>(M_PI) / 180.0f)),
+							sinf(pev->angles[YAW] * (static_cast<float>(M_PI) / 180.0f)),
 							0.0f);
 
 				vecSrc.z += MyHeight();
@@ -867,7 +868,14 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 					break;
 			}
 
-			UTIL_EmitAmbientSound(ENT(pev), pev->origin + Vector(0, 0, MyHeight()), sound, 1.0, ATTN_NORM, 0, 100);
+			UTIL_EmitAmbientSound(
+				ENT(pev),
+				Vector(pev->origin) + Vector(0, 0, MyHeight()),
+				sound,
+				1.0,
+				ATTN_NORM,
+				0,
+				100);
 			break;
 		case 8:
 			// search
@@ -881,7 +889,14 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 					break;
 			}
 
-			UTIL_EmitAmbientSound(ENT(pev), pev->origin + Vector(0, 0, MyHeight()), sound, 1.0, ATTN_NORM, 0, 100);
+			UTIL_EmitAmbientSound(
+				ENT(pev),
+				Vector(pev->origin) + Vector(0, 0, MyHeight()),
+				sound,
+				1.0,
+				ATTN_NORM,
+				0,
+				100);
 			break;
 		case 9:
 			// swing
@@ -894,7 +909,14 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 					sound = "tentacle/te_move2.wav";
 					break;
 			}
-			UTIL_EmitAmbientSound(ENT(pev), pev->origin + Vector(0, 0, MyHeight()), sound, 1.0, ATTN_NORM, 0, 100);
+			UTIL_EmitAmbientSound(
+				ENT(pev),
+				Vector(pev->origin) + Vector(0, 0, MyHeight()),
+				sound,
+				1.0,
+				ATTN_NORM,
+				0,
+				100);
 			break;
 		default:
 			CBaseMonster::HandleAnimEvent(pEvent);
@@ -1004,7 +1026,7 @@ void CTentacleMaw::Spawn()
 	pev->yaw_speed = 8;
 	pev->sequence = 0;
 
-	pev->angles.x = 90;
+	pev->angles[PITCH] = 90;
 	// ResetSequenceInfo( );
 }
 

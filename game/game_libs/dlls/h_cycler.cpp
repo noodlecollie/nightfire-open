@@ -27,6 +27,7 @@
 #include "animation.h"
 #include "weapons.h"
 #include "player.h"
+#include "MathLib/angles.h"
 
 #define TEMP_FOR_SCREEN_SHOTS
 #ifdef TEMP_FOR_SCREEN_SHOTS  //===================================================
@@ -92,7 +93,7 @@ LINK_ENTITY_TO_CLASS(cycler_prdroid, CCyclerProbe)
 
 void CCyclerProbe::Spawn(void)
 {
-	pev->origin = pev->origin + Vector(0, 0, 16);
+	VectorAdd(pev->origin, Vector(0, 0, 16), pev->origin);
 	GenericCyclerSpawn("models/prdroid.mdl", Vector(-16, -16, -16), Vector(16, 16, 16));
 }
 
@@ -101,7 +102,13 @@ void CCycler::GenericCyclerSpawn(const char* szModel, Vector vecMin, Vector vecM
 {
 	if ( !szModel || !*szModel )
 	{
-		ALERT(at_error, "cycler at %.0f %.0f %0.f missing modelname", pev->origin.x, pev->origin.y, pev->origin.z);
+		ALERT(
+			at_error,
+			"cycler at %.0f %.0f %0.f missing modelname",
+			pev->origin[VEC3_X],
+			pev->origin[VEC3_Y],
+			pev->origin[VEC3_Z]);
+
 		REMOVE_ENTITY(ENT(pev));
 		return;
 	}
@@ -124,7 +131,7 @@ void CCycler::Spawn()
 	pev->effects = 0;
 	pev->health = 80000;  // no cycler should die
 	pev->yaw_speed = 5;
-	pev->ideal_yaw = pev->angles.y;
+	pev->ideal_yaw = pev->angles[YAW];
 	ChangeYaw(360);
 
 	m_flFrameRate = 75;
@@ -447,9 +454,9 @@ void CWreckage::Think(void)
 
 	Vector VecSrc;
 
-	VecSrc.x = RANDOM_FLOAT(pev->absmin.x, pev->absmax.x);
-	VecSrc.y = RANDOM_FLOAT(pev->absmin.y, pev->absmax.y);
-	VecSrc.z = RANDOM_FLOAT(pev->absmin.z, pev->absmax.z);
+	VecSrc.x = RANDOM_FLOAT(pev->absmin[VEC3_X], pev->absmax[VEC3_X]);
+	VecSrc.y = RANDOM_FLOAT(pev->absmin[VEC3_Y], pev->absmax[VEC3_Y]);
+	VecSrc.z = RANDOM_FLOAT(pev->absmin[VEC3_Z], pev->absmax[VEC3_Z]);
 
 	MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, VecSrc);
 	WRITE_BYTE(TE_SMOKE);

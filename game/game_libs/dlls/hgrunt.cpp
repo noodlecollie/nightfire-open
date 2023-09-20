@@ -40,6 +40,7 @@
 #include "soundent.h"
 #include "effects.h"
 #include "EnginePublicAPI/customentity.h"
+#include "MathLib/angles.h"
 
 int g_fGruntQuestion;  // true if an idle grunt asked a question. Cleared when someone answers.
 
@@ -304,8 +305,10 @@ void CHGrunt::GibMonster(void)
 
 		if ( pGun )
 		{
-			pGun->pev->velocity = Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300));
-			pGun->pev->avelocity = Vector(0, RANDOM_FLOAT(200, 400), 0);
+			Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300))
+				.CopyToArray(pGun->pev->velocity);
+
+			Vector(0, RANDOM_FLOAT(200, 400), 0).CopyToArray(pGun->pev->avelocity);
 		}
 
 		if ( FBitSet(pev->weapons, HGRUNT_GRENADELAUNCHER) )
@@ -313,8 +316,10 @@ void CHGrunt::GibMonster(void)
 			pGun = DropItem("ammo_ARgrenades", vecGunPos, vecGunAngles);
 			if ( pGun )
 			{
-				pGun->pev->velocity = Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300));
-				pGun->pev->avelocity = Vector(0, RANDOM_FLOAT(200, 400), 0);
+				Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300))
+					.CopyToArray(pGun->pev->velocity);
+
+				Vector(0, RANDOM_FLOAT(200, 400), 0).CopyToArray(pGun->pev->avelocity);
 			}
 		}
 	}
@@ -497,7 +502,7 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 	}
 
 	if ( !FBitSet(m_hEnemy->pev->flags, FL_ONGROUND) && m_hEnemy->pev->waterlevel == 0 &&
-		 m_vecEnemyLKP.z > pev->absmax.z )
+		 m_vecEnemyLKP[VEC3_Z] > pev->absmax[VEC3_Z] )
 	{
 		//!!!BUGBUG - we should make this check movetype and make sure it isn't FLY? Players who jump a lot are unlikely
 		//! to
@@ -515,7 +520,8 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 		if ( RANDOM_LONG(0, 1) )
 		{
 			// magically know where they are
-			vecTarget = Vector(m_hEnemy->pev->origin.x, m_hEnemy->pev->origin.y, m_hEnemy->pev->absmin.z);
+			vecTarget =
+				Vector(m_hEnemy->pev->origin[VEC3_X], m_hEnemy->pev->origin[VEC3_Y], m_hEnemy->pev->absmin[VEC3_Z]);
 		}
 		else
 		{
@@ -530,11 +536,14 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 	{
 		// find target
 		// vecTarget = m_hEnemy->BodyTarget( pev->origin );
-		vecTarget = m_vecEnemyLKP + (m_hEnemy->BodyTarget(pev->origin) - m_hEnemy->pev->origin);
+		vecTarget = m_vecEnemyLKP + (m_hEnemy->BodyTarget(pev->origin) - Vector(m_hEnemy->pev->origin));
 		// estimate position
 		if ( HasConditions(bits_COND_SEE_ENEMY) )
+		{
 			vecTarget = vecTarget +
-				((vecTarget - pev->origin).Length() / gSkillData.hgruntGrenadeSpeed) * m_hEnemy->pev->velocity;
+				((vecTarget - Vector(pev->origin)).Length() / gSkillData.hgruntGrenadeSpeed) *
+					Vector(m_hEnemy->pev->velocity);
+		}
 	}
 
 	// are any of my squad members near the intended grenade impact area?
@@ -548,7 +557,7 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 		}
 	}
 
-	if ( (vecTarget - pev->origin).Length2D() <= 256 )
+	if ( (vecTarget - Vector(pev->origin)).Length2D() <= 256 )
 	{
 		// crap, I don't want to blow myself up
 		m_flNextGrenadeCheck = gpGlobals->time + 1;  // one full second.
@@ -765,8 +774,8 @@ CBaseEntity* CHGrunt::Kick(void)
 
 	UTIL_MakeVectors(pev->angles);
 	Vector vecStart = pev->origin;
-	vecStart.z += pev->size.z * 0.5f;
-	Vector vecEnd = vecStart + (gpGlobals->v_forward * 70);
+	vecStart[VEC3_Z] += pev->size[VEC3_Z] * 0.5f;
+	Vector vecEnd = vecStart + (Vector(gpGlobals->v_forward) * 70);
 
 	UTIL_TraceHull(vecStart, vecEnd, dont_ignore_monsters, head_hull, ENT(pev), &tr);
 
@@ -787,11 +796,11 @@ Vector CHGrunt::GetGunPosition()
 {
 	if ( m_fStanding )
 	{
-		return pev->origin + Vector(0, 0, 60);
+		return Vector(pev->origin) + Vector(0, 0, 60);
 	}
 	else
 	{
-		return pev->origin + Vector(0, 0, 48);
+		return Vector(pev->origin) + Vector(0, 0, 48);
 	}
 }
 
@@ -810,9 +819,9 @@ void CHGrunt::Shoot(void)
 
 	UTIL_MakeVectors(pev->angles);
 
-	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT(40, 90) + gpGlobals->v_up * RANDOM_FLOAT(75, 200) +
-		gpGlobals->v_forward * RANDOM_FLOAT(-40, 40);
-	EjectBrass(vecShootOrigin - vecShootDir * 24, vecShellVelocity, pev->angles.y, m_iBrassShell, TE_BOUNCE_SHELL);
+	Vector vecShellVelocity = Vector(gpGlobals->v_right) * RANDOM_FLOAT(40, 90) +
+		Vector(gpGlobals->v_up) * RANDOM_FLOAT(75, 200) + Vector(gpGlobals->v_forward) * RANDOM_FLOAT(-40, 40);
+	EjectBrass(vecShootOrigin - vecShootDir * 24, vecShellVelocity, pev->angles[YAW], m_iBrassShell, TE_BOUNCE_SHELL);
 	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_10DEGREES, 2048, BULLET_MONSTER_MP5);  // shoot +-5 degrees
 
 	pev->effects |= EF_MUZZLEFLASH;
@@ -838,12 +847,12 @@ void CHGrunt::Shotgun(void)
 
 	UTIL_MakeVectors(pev->angles);
 
-	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT(40, 90) + gpGlobals->v_up * RANDOM_FLOAT(75, 200) +
-		gpGlobals->v_forward * RANDOM_FLOAT(-40, 40);
+	Vector vecShellVelocity = Vector(gpGlobals->v_right) * RANDOM_FLOAT(40, 90) +
+		Vector(gpGlobals->v_up) * RANDOM_FLOAT(75, 200) + Vector(gpGlobals->v_forward) * RANDOM_FLOAT(-40, 40);
 	EjectBrass(
 		vecShootOrigin - vecShootDir * 24,
 		vecShellVelocity,
-		pev->angles.y,
+		pev->angles[YAW],
 		m_iShotgunShell,
 		TE_BOUNCE_SHOTSHELL);
 	FireBullets(
@@ -936,7 +945,8 @@ void CHGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 			UTIL_MakeVectors(pev->angles);
 			CGrenade::ShootTimed(
 				pev,
-				pev->origin + gpGlobals->v_forward * 17 - gpGlobals->v_right * 27 + gpGlobals->v_up * 6,
+				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 17 - Vector(gpGlobals->v_right) * 27 +
+					Vector(gpGlobals->v_up) * 6,
 				g_vecZero,
 				3);
 		}
@@ -979,8 +989,9 @@ void CHGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				// SOUND HERE!
 				UTIL_MakeVectors(pev->angles);
-				pHurt->pev->punchangle.x = 15;
-				pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_forward * 100 + gpGlobals->v_up * 50;
+				pHurt->pev->punchangle[PITCH] = 15;
+				(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_forward) * 100 + Vector(gpGlobals->v_up) * 50)
+					.CopyToArray(pHurt->pev->velocity);
 				pHurt->TakeDamage(pev, pev, gSkillData.hgruntDmgKick, DMG_CLUB);
 			}
 		}
@@ -1160,7 +1171,7 @@ void CHGrunt::RunTask(Task_t* pTask)
 		case TASK_GRUNT_FACE_TOSS_DIR:
 		{
 			// project a point along the toss vector and turn to face that point.
-			MakeIdealYaw(pev->origin + m_vecTossVelocity * 64);
+			MakeIdealYaw(Vector(pev->origin) + m_vecTossVelocity * 64);
 			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( FacingIdeal() )
@@ -2208,14 +2219,20 @@ Schedule_t* CHGrunt::GetScheduleOfType(int Type)
 		}
 		case SCHED_GRUNT_REPEL:
 		{
-			if ( pev->velocity.z > -128 )
-				pev->velocity.z -= 32;
+			if ( pev->velocity[VEC3_Z] > -128 )
+			{
+				pev->velocity[VEC3_Z] -= 32;
+			}
+
 			return &slGruntRepel[0];
 		}
 		case SCHED_GRUNT_REPEL_ATTACK:
 		{
-			if ( pev->velocity.z > -128 )
-				pev->velocity.z -= 32;
+			if ( pev->velocity[VEC3_Z] > -128 )
+			{
+				pev->velocity[VEC3_Z] -= 32;
+			}
+
 			return &slGruntRepelAttack[0];
 		}
 		case SCHED_GRUNT_REPEL_LAND:
@@ -2262,7 +2279,7 @@ void CHGruntRepel::Precache(void)
 void CHGruntRepel::RepelUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	TraceResult tr;
-	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -4096.0), dont_ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(pev->origin, Vector(pev->origin) + Vector(0, 0, -4096.0), dont_ignore_monsters, ENT(pev), &tr);
 	/*
 	if( tr.pHit && Instance( tr.pHit )->pev->solid != SOLID_BSP )
 		return NULL;
@@ -2271,17 +2288,17 @@ void CHGruntRepel::RepelUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	CBaseEntity* pEntity = Create("monster_human_grunt", pev->origin, pev->angles);
 	CBaseMonster* pGrunt = pEntity->MyMonsterPointer();
 	pGrunt->pev->movetype = MOVETYPE_FLY;
-	pGrunt->pev->velocity = Vector(0, 0, RANDOM_FLOAT(-196, -128));
+	VectorCopy(Vector(0, 0, RANDOM_FLOAT(-196, -128)), pGrunt->pev->velocity);
 	pGrunt->SetActivity(ACT_GLIDE);
 	// UNDONE: position?
 	pGrunt->m_vecLastPosition = tr.vecEndPos;
 
 	CBeam* pBeam = CBeam::BeamCreate("sprites/rope.spr", 10);
-	pBeam->PointEntInit(pev->origin + Vector(0, 0, 112), pGrunt->entindex());
+	pBeam->PointEntInit(Vector(pev->origin) + Vector(0, 0, 112), pGrunt->entindex());
 	pBeam->SetFlags(BEAM_FSOLID);
 	pBeam->SetColor(255, 255, 255);
 	pBeam->SetThink(&CBaseEntity::SUB_Remove);
-	pBeam->pev->nextthink = gpGlobals->time + -4096.0f * tr.flFraction / pGrunt->pev->velocity.z + 0.5f;
+	pBeam->pev->nextthink = gpGlobals->time + -4096.0f * tr.flFraction / pGrunt->pev->velocity[VEC3_Z] + 0.5f;
 
 	UTIL_Remove(this);
 }

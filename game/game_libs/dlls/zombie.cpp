@@ -23,6 +23,7 @@
 #include "cbase.h"
 #include "monsters.h"
 #include "schedule.h"
+#include "MathLib/angles.h"
 
 //=========================================================
 // Monster's Anim Events Go Here
@@ -128,10 +129,10 @@ int CZombie::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float f
 	// Take 30% damage from bullets
 	if ( bitsDamageType == DMG_BULLET )
 	{
-		Vector vecDir = pev->origin - (pevInflictor->absmin + pevInflictor->absmax) * 0.5;
+		Vector vecDir = Vector(pev->origin) - (Vector(pevInflictor->absmin) + Vector(pevInflictor->absmax)) * 0.5;
 		vecDir = vecDir.Normalize();
 		float flForce = DamageForce(flDamage);
-		pev->velocity = pev->velocity + vecDir * flForce;
+		(Vector(pev->velocity) + vecDir * flForce).CopyToArray(pev->velocity);
 		flDamage *= 0.3f;
 	}
 
@@ -217,9 +218,9 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
 				{
-					pHurt->pev->punchangle.z = -18;
-					pHurt->pev->punchangle.x = 5;
-					pHurt->pev->velocity = pHurt->pev->velocity - gpGlobals->v_right * 100;
+					pHurt->pev->punchangle[ROLL] = -18;
+					pHurt->pev->punchangle[PITCH] = 5;
+					(Vector(pHurt->pev->velocity) - Vector(gpGlobals->v_right) * 100).CopyToArray(pHurt->pev->velocity);
 				}
 				// Play a random attack hit sound
 				EMIT_SOUND_DYN(
@@ -254,9 +255,9 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
 				{
-					pHurt->pev->punchangle.z = 18;
-					pHurt->pev->punchangle.x = 5;
-					pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_right * 100;
+					pHurt->pev->punchangle[ROLL] = 18;
+					pHurt->pev->punchangle[PITCH] = 5;
+					(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_right) * 100).CopyToArray(pHurt->pev->velocity);
 				}
 				EMIT_SOUND_DYN(
 					ENT(pev),
@@ -289,8 +290,9 @@ void CZombie::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
 				{
-					pHurt->pev->punchangle.x = 5;
-					pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_forward * -100;
+					pHurt->pev->punchangle[PITCH] = 5;
+					(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_forward) * -100)
+						.CopyToArray(pHurt->pev->velocity);
 				}
 				EMIT_SOUND_DYN(
 					ENT(pev),
@@ -335,7 +337,7 @@ void CZombie::Spawn()
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->health = gSkillData.zombieHealth;
-	pev->view_ofs = VEC_VIEW;  // position of the eyes relative to monster's origin.
+	VectorCopy(VEC_VIEW, pev->view_ofs);  // position of the eyes relative to monster's origin.
 	m_flFieldOfView = 0.5;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
 	m_afCapability = bits_CAP_DOORS_GROUP;

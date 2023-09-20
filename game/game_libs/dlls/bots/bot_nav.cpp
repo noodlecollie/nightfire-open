@@ -305,7 +305,7 @@ void CGraph::InitNavArray(void)
 // IsInWorld
 ///////////////////////////////////////////////////////////////////////////////
 
-BOOL CGraph::IsInWorld(Vector& location)
+BOOL CGraph::IsInWorld(const Vector& location)
 {
 	if ( location.x > 4096 )
 		return FALSE;
@@ -327,7 +327,7 @@ BOOL CGraph::IsInWorld(Vector& location)
 // MarkLocationFavorable
 ///////////////////////////////////////////////////////////////////////////////
 
-void CGraph::MarkLocationFavorable(Vector& location)
+void CGraph::MarkLocationFavorable(const Vector& location)
 {
 	if ( !IsInWorld(location) )
 	{
@@ -352,7 +352,7 @@ void CGraph::MarkLocationFavorable(Vector& location)
 // MarkLocationUnfavorable
 ///////////////////////////////////////////////////////////////////////////////
 
-void CGraph::MarkLocationUnfavorable(Vector& location)
+void CGraph::MarkLocationUnfavorable(const Vector& location)
 {
 	if ( !IsInWorld(location) )
 	{

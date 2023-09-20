@@ -219,7 +219,7 @@ void CBaseBot::ActionChooseGoal(void)
 
 		if ( PickupDesire > 0 )  // desire this at all?
 		{
-			DistanceToEntity = (pNextEnt->pev->origin - pev->origin).Length();
+			DistanceToEntity = (Vector(pNextEnt->pev->origin) - Vector(pev->origin)).Length();
 
 			float diff = SEARCH_DISTANCE - DistanceToEntity;
 
@@ -257,7 +257,7 @@ void CBaseBot::ActionChooseWeapon(void)
 
 	if ( currentEnemy )
 	{
-		DistanceToEnemy = (currentEnemy->pev->origin - pev->origin).Length();
+		DistanceToEnemy = (Vector(currentEnemy->pev->origin) - Vector(pev->origin)).Length();
 	}
 
 	for ( int i = 0; i < MAX_ITEM_TYPES; i++ )
@@ -341,7 +341,7 @@ void CBaseBot::ActionLook(int SearchDistance)
 			{
 				if ( g_pGameRules->PlayerRelationship(this, pPlayer) == GR_NOTTEAMMATE && CheckNotice(pPlayer) )
 				{
-					DistanceToEntity = (pPlayer->pev->origin - pev->origin).Length();
+					DistanceToEntity = (Vector(pPlayer->pev->origin) - Vector(pev->origin)).Length();
 
 					if ( DistanceToEntity < NearestEnemyDistance )
 					{
@@ -352,7 +352,7 @@ void CBaseBot::ActionLook(int SearchDistance)
 				else if (
 					!pPlayer->IsFakeClient() && g_pGameRules->PlayerRelationship(this, pPlayer) != GR_NOTTEAMMATE )
 				{
-					DistanceToEntity = (pPlayer->pev->origin - pev->origin).Length();
+					DistanceToEntity = (Vector(pPlayer->pev->origin) - Vector(pev->origin)).Length();
 
 					if ( DistanceToEntity < GROUPING_DISTANCE )
 					{
@@ -365,7 +365,7 @@ void CBaseBot::ActionLook(int SearchDistance)
 				}
 				else if ( pPlayer->IsFakeClient() && g_pGameRules->PlayerRelationship(this, pPlayer) != GR_NOTTEAMMATE )
 				{
-					DistanceToEntity = (pPlayer->pev->origin - pev->origin).Length();
+					DistanceToEntity = (Vector(pPlayer->pev->origin) - Vector(pev->origin)).Length();
 
 					if ( DistanceToEntity < GROUPING_DISTANCE )
 					{
@@ -414,7 +414,7 @@ void CBaseBot::ActionLook(int SearchDistance)
 		SetTimeGoalCheck(gpGlobals->time + GetTimeGoalCheckDelay());
 	}
 
-	int count = UTIL_EntitiesInBox(pList, 100, pev->origin - delta, pev->origin + delta, 0);
+	int count = UTIL_EntitiesInBox(pList, 100, Vector(pev->origin) - delta, Vector(pev->origin) + delta, 0);
 	for ( int i = 0; i < count; i++ )
 	{
 		pNextEnt = pList[i];
@@ -423,7 +423,7 @@ void CBaseBot::ActionLook(int SearchDistance)
 		{
 			if ( CheckNotice(pNextEnt) )
 			{
-				DistanceToEntity = (pNextEnt->pev->origin - pev->origin).Length();
+				DistanceToEntity = (Vector(pNextEnt->pev->origin) - Vector(pev->origin)).Length();
 
 				if ( FClassnameIs(pNextEnt->pev, "monster_satchel") || FClassnameIs(pNextEnt->pev, "monster_snark") ||
 					 FClassnameIs(pNextEnt->pev, "hornet") || FClassnameIs(pNextEnt->pev, "rpg_rocket") ||
@@ -439,7 +439,7 @@ void CBaseBot::ActionLook(int SearchDistance)
 				{
 					CBeam* pBeam = (CBeam*)pNextEnt;
 					Vector BeamStart = pBeam->GetStartPos();
-					if ( (BeamStart - pev->origin).Length() < 375 )
+					if ( (BeamStart - Vector(pev->origin)).Length() < 375 )
 					{
 						SteerSafeFlee(BeamStart);  // run away from the tripmine if within range
 					}
@@ -450,7 +450,7 @@ void CBaseBot::ActionLook(int SearchDistance)
 					{
 						if ( GetEnemy() != NULL )
 						{
-							if ( (pNextEnt->pev->origin - GetEnemy()->pev->origin).Length() < 375 )
+							if ( (Vector(pNextEnt->pev->origin) - Vector(GetEnemy()->pev->origin)).Length() < 375 )
 							{
 								AimAtEntity(pNextEnt);
 							}
@@ -703,7 +703,7 @@ BOOL CBaseBot::CheckNotice(CBaseEntity* pEntity)
 
 		distance_helper *= distance_helper;  // [1/256, 256]
 
-		float velocity_helper = (pEntity->pev->velocity.Length()) / CVAR_GET_FLOAT("sv_maxspeed");  // velocity ratio
+		float velocity_helper = VectorLength(pEntity->pev->velocity) / CVAR_GET_FLOAT("sv_maxspeed");  // velocity ratio
 
 		velocity_helper = (velocity_helper * (2.0f * velocity_helper + 1.0f) + 1.0f);  // [1, 4]
 
@@ -714,7 +714,7 @@ BOOL CBaseBot::CheckNotice(CBaseEntity* pEntity)
 			UTIL_MakeVectors(pev->v_angle);
 
 			angle_helper = DotProduct(
-				gpGlobals->v_forward.Normalize(),
+				Vector(gpGlobals->v_forward).Normalize(),
 				NoticeVector.Normalize());  // cosine of view angle to entity angle [0, 1]
 		}
 
@@ -865,7 +865,7 @@ void CBaseBot::ThinkStart(void)
 
 	pev->button = 0;
 
-	SetMovedDistance((Memory.GetPrevOrigin() - pev->origin).Length());
+	SetMovedDistance((Memory.GetPrevOrigin() - Vector(pev->origin)).Length());
 
 	// 26-Aug-2001: Scott: fix marking location, included marking favorable
 	if ( IsAlive() && GetSteerCallPrecedence() != STEER_WANDER )
@@ -879,7 +879,9 @@ void CBaseBot::ThinkStart(void)
 
 		Vector start = pev->origin;
 		UTIL_MakeVectors(pev->v_angle);
-		Vector moveDir = (gpGlobals->v_forward * GetMoveForward() + gpGlobals->v_right * GetMoveStrafe()).Normalize();
+		Vector moveDir =
+			(Vector(gpGlobals->v_forward) * GetMoveForward() + Vector(gpGlobals->v_right) * GetMoveStrafe())
+				.Normalize();
 		float scaleFactor = NAV_GRIDBOX_SIZE / (fabs(moveDir.x) > fabs(moveDir.y) ? fabs(moveDir.x) : fabs(moveDir.y));
 		Vector dest = start + moveDir * scaleFactor;
 		WorldGraph.MarkLocationUnfavorable(dest);

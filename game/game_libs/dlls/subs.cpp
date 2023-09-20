@@ -297,19 +297,19 @@ void SetMovedir(entvars_t* pev)
 {
 	if ( pev->angles == Vector(0, -1, 0) )
 	{
-		pev->movedir = Vector(0, 0, 1);
+		VectorCopy(Vector(0, 0, 1), pev->movedir);
 	}
 	else if ( pev->angles == Vector(0, -2, 0) )
 	{
-		pev->movedir = Vector(0, 0, -1);
+		VectorCopy(Vector(0, 0, -1), pev->movedir);
 	}
 	else
 	{
 		UTIL_MakeVectors(pev->angles);
-		pev->movedir = gpGlobals->v_forward;
+		VectorCopy(gpGlobals->v_forward, pev->movedir);
 	}
 
-	pev->angles = g_vecZero;
+	VectorClear(pev->angles);
 }
 
 void CBaseDelay::DelayThink(void)
@@ -399,14 +399,14 @@ void CBaseToggle::LinearMove(Vector vecDest, float flSpeed)
 	m_vecFinalDest = vecDest;
 
 	// Already there?
-	if ( vecDest == pev->origin )
+	if ( VectorCompare(vecDest, pev->origin) )
 	{
 		LinearMoveDone();
 		return;
 	}
 
 	// set destdelta to the vector needed to move
-	Vector vecDestDelta = vecDest - pev->origin;
+	Vector vecDestDelta = vecDest - Vector(pev->origin);
 
 	// divide vector length by speed to get time to reach dest
 	float flTravelTime = vecDestDelta.Length() / flSpeed;
@@ -423,7 +423,7 @@ void CBaseToggle::LinearMove(Vector vecDest, float flSpeed)
 	SetThink(&CBaseToggle::LinearMoveDone);
 
 	// scale the destdelta vector by the time spent traveling to get velocity
-	pev->velocity = vecDestDelta / flTravelTime;
+	VectorDivide(vecDestDelta, flTravelTime, pev->velocity);
 }
 
 /*
@@ -433,7 +433,7 @@ After moving, set origin to exact final destination, call "move done" function
 */
 void CBaseToggle::LinearMoveDone(void)
 {
-	Vector delta = m_vecFinalDest - pev->origin;
+	Vector delta = m_vecFinalDest - Vector(pev->origin);
 	float error = delta.Length();
 	if ( error > 0.03125 )
 	{
@@ -442,10 +442,13 @@ void CBaseToggle::LinearMoveDone(void)
 	}
 
 	UTIL_SetOrigin(pev, m_vecFinalDest);
-	pev->velocity = g_vecZero;
+	VectorClear(pev->velocity);
 	pev->nextthink = -1;
+
 	if ( m_pfnCallWhenMoveDone )
+	{
 		(this->*m_pfnCallWhenMoveDone)();
+	}
 }
 
 BOOL CBaseToggle::IsLockedByMaster(void)
@@ -473,14 +476,14 @@ void CBaseToggle::AngularMove(Vector vecDestAngle, float flSpeed)
 	m_vecFinalAngle = vecDestAngle;
 
 	// Already there?
-	if ( vecDestAngle == pev->angles )
+	if ( VectorCompare(vecDestAngle, pev->angles) )
 	{
 		AngularMoveDone();
 		return;
 	}
 
 	// set destdelta to the vector needed to move
-	Vector vecDestDelta = vecDestAngle - pev->angles;
+	Vector vecDestDelta = vecDestAngle - Vector(pev->angles);
 
 	// divide by speed to get time to reach dest
 	float flTravelTime = vecDestDelta.Length() / flSpeed;
@@ -490,7 +493,7 @@ void CBaseToggle::AngularMove(Vector vecDestAngle, float flSpeed)
 	SetThink(&CBaseToggle::AngularMoveDone);
 
 	// scale the destdelta vector by the time spent traveling to get velocity
-	pev->avelocity = vecDestDelta / flTravelTime;
+	VectorDivide(vecDestDelta, flTravelTime, pev->avelocity);
 }
 
 /*
@@ -500,11 +503,14 @@ After rotating, set angle to exact final angle, call "move done" function
 */
 void CBaseToggle::AngularMoveDone(void)
 {
-	pev->angles = m_vecFinalAngle;
-	pev->avelocity = g_vecZero;
+	VectorCopy(m_vecFinalAngle, pev->angles);
+	VectorClear(pev->avelocity);
 	pev->nextthink = -1;
+
 	if ( m_pfnCallWhenMoveDone )
+	{
 		(this->*m_pfnCallWhenMoveDone)();
+	}
 }
 
 float CBaseToggle::AxisValue(int flags, const Vector& angles)
@@ -520,11 +526,17 @@ float CBaseToggle::AxisValue(int flags, const Vector& angles)
 void CBaseToggle::AxisDir(entvars_t* pev)
 {
 	if ( FBitSet(pev->spawnflags, SF_DOOR_ROTATE_Z) )
-		pev->movedir = Vector(0, 0, 1);  // around z-axis
+	{
+		VectorCopy(Vector(0, 0, 1), pev->movedir);  // around z-axis
+	}
 	else if ( FBitSet(pev->spawnflags, SF_DOOR_ROTATE_X) )
-		pev->movedir = Vector(1, 0, 0);  // around x-axis
+	{
+		VectorCopy(Vector(1, 0, 0), pev->movedir);  // around x-axis
+	}
 	else
-		pev->movedir = Vector(0, 1, 0);  // around y-axis
+	{
+		VectorCopy(Vector(0, 1, 0), pev->movedir);  // around y-axis
+	}
 }
 
 float CBaseToggle::AxisDelta(int flags, const Vector& angle1, const Vector& angle2)
@@ -547,8 +559,8 @@ returns TRUE if the passed entity is visible to caller, even if not infront ()
 */
 BOOL FEntIsVisible(entvars_t* pev, entvars_t* pevTarget)
 {
-	Vector vecSpot1 = pev->origin + pev->view_ofs;
-	Vector vecSpot2 = pevTarget->origin + pevTarget->view_ofs;
+	Vector vecSpot1 = Vector(pev->origin) + Vector(pev->view_ofs);
+	Vector vecSpot2 = Vector(pevTarget->origin) + Vector(pevTarget->view_ofs);
 	TraceResult tr;
 
 	UTIL_TraceLine(vecSpot1, vecSpot2, ignore_monsters, ENT(pev), &tr);

@@ -294,7 +294,7 @@ void CController::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			CBaseMonster* pBall = (CBaseMonster*)Create("controller_head_ball", vecStart, pev->angles, edict());
 
-			pBall->pev->velocity = Vector(0, 0, 32);
+			VectorCopy(Vector(0, 0, 32), pBall->pev->velocity);
 			pBall->m_hEnemy = m_hEnemy;
 
 			m_iBall[0] = 0;
@@ -345,7 +345,7 @@ void CController::Spawn()
 	pev->flags |= FL_FLY;
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->health = gSkillData.controllerHealth;
-	pev->view_ofs = Vector(0, 0, -2);  // position of the eyes relative to monster's origin.
+	VectorCopy(Vector(0, 0, -2), pev->view_ofs);  // position of the eyes relative to monster's origin.
 	m_flFieldOfView =
 		VIEW_FIELD_FULL;  // indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
@@ -465,7 +465,7 @@ void CController::StartTask(Task_t* pTask)
 					 m_vecEnemyLKP,
 					 pev->view_ofs,
 					 pTask->flData,
-					 (m_vecEnemyLKP - pev->origin).Length() + 1024) )
+					 (m_vecEnemyLKP - Vector(pev->origin)).Length() + 1024) )
 			{
 				TaskComplete();
 			}
@@ -491,7 +491,7 @@ void CController::StartTask(Task_t* pTask)
 					 pEnemy->pev->origin,
 					 pEnemy->pev->view_ofs,
 					 pTask->flData,
-					 (pEnemy->pev->origin - pev->origin).Length() + 1024) )
+					 (Vector(pEnemy->pev->origin) - Vector(pev->origin)).Length() + 1024) )
 			{
 				TaskComplete();
 			}
@@ -594,14 +594,14 @@ void CController::RunTask(Task_t* pTask)
 
 		while ( m_flShootTime < m_flShootEnd && m_flShootTime < gpGlobals->time )
 		{
-			Vector vecSrc = vecHand + pev->velocity * (m_flShootTime - gpGlobals->time);
+			Vector vecSrc = vecHand + Vector(pev->velocity) * (m_flShootTime - gpGlobals->time);
 			Vector vecDir;
 
 			if ( m_hEnemy != 0 )
 			{
 				if ( HasConditions(bits_COND_SEE_ENEMY) )
 				{
-					m_vecEstVelocity = m_vecEstVelocity * 0.5 + m_hEnemy->pev->velocity * 0.5;
+					m_vecEstVelocity = m_vecEstVelocity * 0.5 + Vector(m_hEnemy->pev->velocity) * 0.5;
 				}
 				else
 				{
@@ -619,7 +619,7 @@ void CController::RunTask(Task_t* pTask)
 
 				vecSrc = vecSrc + vecDir * (gpGlobals->time - m_flShootTime);
 				CBaseMonster* pBall = (CBaseMonster*)Create("controller_energy_ball", vecSrc, pev->angles, edict());
-				pBall->pev->velocity = vecDir;
+				VectorCopy(vecDir, pBall->pev->velocity);
 			}
 			m_flShootTime += 0.2f;
 		}
@@ -895,8 +895,8 @@ void CController::Move(float flInterval)
 	do
 	{
 		// local move to waypoint.
-		vecDir = (m_Route[m_iRouteIndex].vecLocation - pev->origin).Normalize();
-		flWaypointDist = (m_Route[m_iRouteIndex].vecLocation - pev->origin).Length();
+		vecDir = (m_Route[m_iRouteIndex].vecLocation - Vector(pev->origin)).Normalize();
+		flWaypointDist = (m_Route[m_iRouteIndex].vecLocation - Vector(pev->origin)).Length();
 
 		// MakeIdealYaw( m_Route[m_iRouteIndex].vecLocation );
 		// ChangeYaw( pev->yaw_speed );
@@ -925,7 +925,8 @@ void CController::Move(float flInterval)
 		// If this fails, it should be because of some dynamic entity blocking this guy.
 		// We've already checked this path, so we should wait and time out if the entity doesn't move
 		flDist = 0;
-		if ( CheckLocalMove(pev->origin, pev->origin + vecDir * flCheckDist, pTargetEnt, &flDist) != LOCALMOVE_VALID )
+		if ( CheckLocalMove(pev->origin, Vector(pev->origin) + vecDir * flCheckDist, pTargetEnt, &flDist) !=
+			 LOCALMOVE_VALID )
 		{
 			CBaseEntity* pBlocker;
 
@@ -1052,7 +1053,7 @@ int CController::CheckLocalMove(const Vector& vecStart, const Vector& vecEnd, CB
 
 	if ( pflDist )
 	{
-		*pflDist = ((tr.vecEndPos - Vector(0, 0, 32)) - vecStart).Length();  // get the distance.
+		*pflDist = ((Vector(tr.vecEndPos) - Vector(0, 0, 32)) - vecStart).Length();  // get the distance.
 	}
 
 	// ALERT( at_console, "check %d %d %f\n", tr.fStartSolid, tr.fAllSolid, tr.flFraction );
@@ -1078,7 +1079,7 @@ void CController::MoveExecute(CBaseEntity*, const Vector& vecDir, float flInterv
 
 	m_velocity = m_velocity * 0.8f + m_flGroundSpeed * vecDir * 0.2f;
 
-	UTIL_MoveToOrigin(ENT(pev), pev->origin + m_velocity, m_velocity.Length() * flInterval, MOVE_STRAFE);
+	UTIL_MoveToOrigin(ENT(pev), Vector(pev->origin) + m_velocity, m_velocity.Length() * flInterval, MOVE_STRAFE);
 }
 
 //=========================================================
@@ -1109,9 +1110,9 @@ void CControllerHeadBall::Spawn(void)
 
 	SET_MODEL(ENT(pev), "sprites/xspark4.spr");
 	pev->rendermode = kRenderTransAdd;
-	pev->rendercolor.x = 255;
-	pev->rendercolor.y = 255;
-	pev->rendercolor.z = 255;
+	pev->rendercolor[0] = 255;
+	pev->rendercolor[1] = 255;
+	pev->rendercolor[2] = 255;
 	pev->renderamt = 255;
 	pev->scale = 2.0;
 
@@ -1145,9 +1146,9 @@ void CControllerHeadBall::HuntThink(void)
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_ELIGHT);
 	WRITE_SHORT(entindex());  // entity, attachment
-	WRITE_COORD(pev->origin.x);  // origin
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[0]);  // origin
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
 	WRITE_COORD(pev->renderamt / 16);  // radius
 	WRITE_BYTE(255);  // R
 	WRITE_BYTE(255);  // G
@@ -1158,8 +1159,8 @@ void CControllerHeadBall::HuntThink(void)
 
 	// check world boundaries
 	if ( gpGlobals->time - pev->dmgtime > 5 || pev->renderamt < 64 || m_hEnemy == 0 || m_hOwner == 0 ||
-		 pev->origin.x < -4096 || pev->origin.x > 4096 || pev->origin.y < -4096 || pev->origin.y > 4096 ||
-		 pev->origin.z < -4096 || pev->origin.z > 4096 )
+		 pev->origin[VEC3_X] < -4096 || pev->origin[VEC3_X] > 4096 || pev->origin[VEC3_Y] < -4096 ||
+		 pev->origin[VEC3_Y] > 4096 || pev->origin[VEC3_Z] < -4096 || pev->origin[VEC3_Z] > 4096 )
 	{
 		SetTouch(NULL);
 		UTIL_Remove(this);
@@ -1168,7 +1169,7 @@ void CControllerHeadBall::HuntThink(void)
 
 	MovetoTarget(m_hEnemy->Center());
 
-	if ( (m_hEnemy->Center() - pev->origin).Length() < 64 )
+	if ( (m_hEnemy->Center() - Vector(pev->origin)).Length() < 64 )
 	{
 		TraceResult tr;
 
@@ -1185,9 +1186,9 @@ void CControllerHeadBall::HuntThink(void)
 		MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 		WRITE_BYTE(TE_BEAMENTPOINT);
 		WRITE_SHORT(entindex());
-		WRITE_COORD(tr.vecEndPos.x);
-		WRITE_COORD(tr.vecEndPos.y);
-		WRITE_COORD(tr.vecEndPos.z);
+		WRITE_COORD(tr.vecEndPos[0]);
+		WRITE_COORD(tr.vecEndPos[1]);
+		WRITE_COORD(tr.vecEndPos[2]);
 		WRITE_SHORT(g_sModelIndexLaser);
 		WRITE_BYTE(0);  // frame start
 		WRITE_BYTE(10);  // framerate
@@ -1231,14 +1232,14 @@ void CControllerHeadBall::MovetoTarget(Vector vecTarget)
 	{
 		m_vecIdeal = m_vecIdeal.Normalize() * 400;
 	}
-	m_vecIdeal = m_vecIdeal + (vecTarget - pev->origin).Normalize() * 100;
-	pev->velocity = m_vecIdeal;
+	m_vecIdeal = m_vecIdeal + (vecTarget - Vector(pev->origin)).Normalize() * 100;
+	VectorCopy(m_vecIdeal, pev->velocity);
 }
 
 void CControllerHeadBall::Crawl(void)
 {
 	Vector vecAim = Vector(RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1)).Normalize();
-	Vector vecPnt = pev->origin + pev->velocity * 0.3f + vecAim * 64;
+	Vector vecPnt = Vector(pev->origin) + Vector(pev->velocity) * 0.3f + vecAim * 64;
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BEAMENTPOINT);
@@ -1268,7 +1269,7 @@ void CControllerHeadBall::BounceTouch(CBaseEntity*)
 
 	float n = -DotProduct(tr.vecPlaneNormal, vecDir);
 
-	vecDir = 2.0 * tr.vecPlaneNormal * n + vecDir;
+	vecDir = 2.0 * Vector(tr.vecPlaneNormal) * n + vecDir;
 
 	m_vecIdeal = vecDir * m_vecIdeal.Length();
 }
@@ -1294,9 +1295,9 @@ void CControllerZapBall::Spawn(void)
 
 	SET_MODEL(ENT(pev), "sprites/xspark4.spr");
 	pev->rendermode = kRenderTransAdd;
-	pev->rendercolor.x = 255;
-	pev->rendercolor.y = 255;
-	pev->rendercolor.z = 255;
+	pev->rendercolor[0] = 255;
+	pev->rendercolor[1] = 255;
+	pev->rendercolor[2] = 255;
 	pev->renderamt = 255;
 	pev->scale = 0.5;
 
@@ -1324,7 +1325,7 @@ void CControllerZapBall::AnimateThink(void)
 
 	pev->frame = static_cast<float>(((int)pev->frame + 1) % 11);
 
-	if ( gpGlobals->time - pev->dmgtime > 5 || pev->velocity.Length() < 10 )
+	if ( gpGlobals->time - pev->dmgtime > 5 || VectorLength(pev->velocity) < 10 )
 	{
 		SetTouch(NULL);
 		UTIL_Remove(this);
@@ -1349,7 +1350,12 @@ void CControllerZapBall::ExplodeTouch(CBaseEntity* pOther)
 		}
 
 		ClearMultiDamage();
-		pOther->TraceAttack(pevOwner, gSkillData.controllerDmgBall, pev->velocity.Normalize(), &tr, DMG_ENERGYBEAM);
+		pOther->TraceAttack(
+			pevOwner,
+			gSkillData.controllerDmgBall,
+			Vector(pev->velocity).Normalize(),
+			&tr,
+			DMG_ENERGYBEAM);
 		ApplyMultiDamage(pevOwner, pevOwner);
 
 		UTIL_EmitAmbientSound(ENT(pev), tr.vecEndPos, "weapons/electro4.wav", 0.3f, ATTN_NORM, 0, RANDOM_LONG(90, 99));

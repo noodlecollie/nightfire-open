@@ -22,6 +22,7 @@
 #include "nodes.h"
 #include "effects.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 #define N_SCALE 15
 #define N_SPHERES 20
@@ -49,8 +50,8 @@ public:
 
 	void SetObjectCollisionBox(void)
 	{
-		pev->absmin = pev->origin + Vector(-16 * N_SCALE, -16 * N_SCALE, -48 * N_SCALE);
-		pev->absmax = pev->origin + Vector(16 * N_SCALE, 16 * N_SCALE, 28 * N_SCALE);
+		VectorAdd(pev->origin, Vector(-16 * N_SCALE, -16 * N_SCALE, -48 * N_SCALE), pev->absmin);
+		VectorAdd(pev->origin, Vector(16 * N_SCALE, 16 * N_SCALE, 28 * N_SCALE), pev->absmax);
 	}
 
 	void HandleAnimEvent(MonsterEvent_t* pEvent);
@@ -287,7 +288,7 @@ void CNihilanth::Spawn(void)
 	pev->flags |= FL_MONSTER;
 	pev->takedamage = DAMAGE_AIM;
 	pev->health = gSkillData.nihilanthHealth;
-	pev->view_ofs = Vector(0, 0, 300);
+	VectorCopy(Vector(0, 0, 300), pev->view_ofs);
 
 	m_flFieldOfView = -1;  // 360 degrees
 
@@ -300,7 +301,7 @@ void CNihilanth::Spawn(void)
 	pev->nextthink = gpGlobals->time + 0.1f;
 
 	m_vecDesired = Vector(1, 0, 0);
-	m_posDesired = Vector(pev->origin.x, pev->origin.y, 512);
+	m_posDesired = Vector(pev->origin[VEC3_X], pev->origin[VEC3_Y], 512);
 
 	m_iLevel = 1;
 	m_iTeleport = 1;
@@ -425,16 +426,26 @@ void CNihilanth::StartupThink(void)
 	CBaseEntity* pEntity;
 
 	pEntity = UTIL_FindEntityByTargetname(NULL, "n_min");
+
 	if ( pEntity )
-		m_flMinZ = pEntity->pev->origin.z;
+	{
+		m_flMinZ = pEntity->pev->origin[VEC3_Z];
+	}
 	else
+	{
 		m_flMinZ = -4096;
+	}
 
 	pEntity = UTIL_FindEntityByTargetname(NULL, "n_max");
+
 	if ( pEntity )
-		m_flMaxZ = pEntity->pev->origin.z;
+	{
+		m_flMaxZ = pEntity->pev->origin[VEC3_Z];
+	}
 	else
+	{
 		m_flMaxZ = 4096;
+	}
 
 	m_hRecharger = this;
 	for ( int i = 0; i < N_SPHERES; i++ )
@@ -471,9 +482,9 @@ void CNihilanth::DyingThink(void)
 	{
 		Flight();
 
-		if ( fabs(pev->origin.z - m_flMaxZ) < 16 )
+		if ( fabs(pev->origin[VEC3_Z] - m_flMaxZ) < 16 )
 		{
-			pev->velocity = Vector(0, 0, 0);
+			VectorClear(pev->velocity);
 			FireTargets(m_szDeadUse, this, this, USE_ON, 1.0);
 			pev->deadflag = DEAD_DEAD;
 		}
@@ -481,11 +492,17 @@ void CNihilanth::DyingThink(void)
 
 	if ( m_fSequenceFinished )
 	{
-		pev->avelocity.y += RANDOM_FLOAT(-100, 100);
-		if ( pev->avelocity.y < -100 )
-			pev->avelocity.y = -100;
-		if ( pev->avelocity.y > 100 )
-			pev->avelocity.y = 100;
+		pev->avelocity[YAW] += RANDOM_FLOAT(-100, 100);
+
+		if ( pev->avelocity[YAW] < -100 )
+		{
+			pev->avelocity[YAW] = -100;
+		}
+
+		if ( pev->avelocity[YAW] > 100 )
+		{
+			pev->avelocity[YAW] = 100;
+		}
 
 		pev->sequence = LookupSequence("die1");
 	}
@@ -519,26 +536,31 @@ void CNihilanth::DyingThink(void)
 		case 1:
 			// head
 			vecDir.z = fabsf(vecDir.z) * 0.5f;
-			vecDir = vecDir + 2 * gpGlobals->v_up;
+			vecDir = vecDir + 2 * Vector(gpGlobals->v_up);
 			break;
 		case 2:
 			// eyes
 			if ( DotProduct(vecDir, gpGlobals->v_forward) < 0 )
+			{
 				vecDir = vecDir * -1;
+			}
 
-			vecDir = vecDir + 2 * gpGlobals->v_forward;
+			vecDir = vecDir + 2 * Vector(gpGlobals->v_forward);
 			break;
 		case 3:
 			// left hand
 			if ( DotProduct(vecDir, gpGlobals->v_right) > 0 )
+			{
 				vecDir = vecDir * -1;
-			vecDir = vecDir - 2 * gpGlobals->v_right;
+			}
+
+			vecDir = vecDir - 2 * Vector(gpGlobals->v_right);
 			break;
 		case 4:
 			// right hand
 			if ( DotProduct(vecDir, gpGlobals->v_right) < 0 )
 				vecDir = vecDir * -1;
-			vecDir = vecDir + 2 * gpGlobals->v_right;
+			vecDir = vecDir + 2 * Vector(gpGlobals->v_right);
 			break;
 	}
 
@@ -551,9 +573,9 @@ void CNihilanth::DyingThink(void)
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BEAMENTPOINT);
 	WRITE_SHORT(entindex() + 0x1000 * iAttachment);
-	WRITE_COORD(tr.vecEndPos.x);
-	WRITE_COORD(tr.vecEndPos.y);
-	WRITE_COORD(tr.vecEndPos.z);
+	WRITE_COORD(tr.vecEndPos[0]);
+	WRITE_COORD(tr.vecEndPos[1]);
+	WRITE_COORD(tr.vecEndPos[2]);
 	WRITE_SHORT(g_sModelIndexLaser);
 	WRITE_BYTE(0);  // frame start
 	WRITE_BYTE(10);  // framerate
@@ -569,7 +591,7 @@ void CNihilanth::DyingThink(void)
 
 	GetAttachment(0, vecSrc, vecAngles);
 	CNihilanthHVR* pEntity = (CNihilanthHVR*)Create("nihilanth_energy_ball", vecSrc, pev->angles, edict());
-	pEntity->pev->velocity = Vector(RANDOM_FLOAT(-0.7f, 0.7f), RANDOM_FLOAT(-0.7f, 0.7f), 1.0f) * 600.0f;
+	VectorScale(Vector(RANDOM_FLOAT(-0.7f, 0.7f), RANDOM_FLOAT(-0.7f, 0.7f), 1.0f), 600.0f, pEntity->pev->velocity);
 	pEntity->GreenBallInit();
 
 	return;
@@ -632,21 +654,21 @@ void CNihilanth::ShootBalls(void)
 				CNihilanthHVR* pEntity;
 
 				GetAttachment(2, vecHand, vecAngle);
-				vecSrc = vecHand + pev->velocity * (m_flShootTime - gpGlobals->time);
+				vecSrc = vecHand + Vector(pev->velocity) * (m_flShootTime - gpGlobals->time);
 				// vecDir = ( m_posTarget - vecSrc ).Normalize();
-				vecDir = (m_posTarget - pev->origin).Normalize();
+				vecDir = (m_posTarget - Vector(pev->origin)).Normalize();
 				vecSrc = vecSrc + vecDir * (gpGlobals->time - m_flShootTime);
 				pEntity = (CNihilanthHVR*)Create("nihilanth_energy_ball", vecSrc, pev->angles, edict());
-				pEntity->pev->velocity = vecDir * 200.0;
+				VectorScale(vecDir, 200.0f, pEntity->pev->velocity);
 				pEntity->ZapInit(m_hEnemy);
 
 				GetAttachment(3, vecHand, vecAngle);
-				vecSrc = vecHand + pev->velocity * (m_flShootTime - gpGlobals->time);
+				vecSrc = vecHand + Vector(pev->velocity) * (m_flShootTime - gpGlobals->time);
 				// vecDir = ( m_posTarget - vecSrc ).Normalize();
-				vecDir = (m_posTarget - pev->origin).Normalize();
+				vecDir = (m_posTarget - Vector(pev->origin)).Normalize();
 				vecSrc = vecSrc + vecDir * (gpGlobals->time - m_flShootTime);
 				pEntity = (CNihilanthHVR*)Create("nihilanth_energy_ball", vecSrc, pev->angles, edict());
-				pEntity->pev->velocity = vecDir * 200.0;
+				VectorScale(vecDir, 200.0f, pEntity->pev->velocity);
 				pEntity->ZapInit(m_hEnemy);
 			}
 			m_flShootTime += 0.2f;
@@ -739,9 +761,9 @@ void CNihilanth::NextActivity()
 			MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 			WRITE_BYTE(TE_ELIGHT);
 			WRITE_SHORT(entindex() + 0x1000);  // entity, attachment
-			WRITE_COORD(pev->origin.x);  // origin
-			WRITE_COORD(pev->origin.y);
-			WRITE_COORD(pev->origin.z);
+			WRITE_COORD(pev->origin[0]);  // origin
+			WRITE_COORD(pev->origin[1]);
+			WRITE_COORD(pev->origin[2]);
 			WRITE_COORD(256);  // radius
 			WRITE_BYTE(255);  // R
 			WRITE_BYTE(192);  // G
@@ -765,7 +787,7 @@ void CNihilanth::NextActivity()
 
 		while ( (pEnt = UTIL_FindEntityByTargetname(pEnt, szName)) != NULL )
 		{
-			float flLocal = (pEnt->pev->origin - pev->origin).Length();
+			float flLocal = (Vector(pEnt->pev->origin) - Vector(pev->origin)).Length();
 			if ( flLocal < flDist )
 			{
 				flDist = flLocal;
@@ -776,8 +798,8 @@ void CNihilanth::NextActivity()
 		if ( pRecharger )
 		{
 			m_hRecharger = pRecharger;
-			m_posDesired = Vector(pev->origin.x, pev->origin.y, pRecharger->pev->origin.z);
-			m_vecDesired = (pRecharger->pev->origin - m_posDesired).Normalize();
+			m_posDesired = Vector(pev->origin[VEC3_X], pev->origin[VEC3_Y], pRecharger->pev->origin[VEC3_Z]);
+			m_vecDesired = (Vector(pRecharger->pev->origin) - m_posDesired).Normalize();
 			m_vecDesired.z = 0;
 			m_vecDesired = m_vecDesired.Normalize();
 		}
@@ -786,12 +808,15 @@ void CNihilanth::NextActivity()
 			m_hRecharger = NULL;
 			ALERT(at_aiconsole, "nihilanth can't find %s\n", szName);
 			m_iLevel++;
+
 			if ( m_iLevel > 9 )
+			{
 				m_irritation = 2;
+			}
 		}
 	}
 
-	float flDist = (m_posDesired - pev->origin).Length();
+	float flDist = (m_posDesired - Vector(pev->origin)).Length();
 	float flDot = DotProduct(m_vecDesired, gpGlobals->v_forward);
 
 	if ( m_hRecharger != 0 )
@@ -917,12 +942,15 @@ void CNihilanth::HuntThink(void)
 		if ( FVisible(m_hEnemy) )
 		{
 			if ( m_flLastSeen < gpGlobals->time - 5 )
+			{
 				m_flPrevSeen = gpGlobals->time;
+			}
+
 			m_flLastSeen = gpGlobals->time;
 			m_posTarget = m_hEnemy->pev->origin;
-			m_vecTarget = (m_posTarget - pev->origin).Normalize();
+			m_vecTarget = (m_posTarget - Vector(pev->origin)).Normalize();
 			m_vecDesired = m_vecTarget;
-			m_posDesired = Vector(pev->origin.x, pev->origin.y, m_posTarget.z + m_flAdj);
+			m_posDesired = Vector(pev->origin[VEC3_X], pev->origin[VEC3_Y], m_posTarget[VEC3_Z] + m_flAdj);
 		}
 		else
 		{
@@ -932,11 +960,15 @@ void CNihilanth::HuntThink(void)
 
 	// don't go too high
 	if ( m_posDesired.z > m_flMaxZ )
+	{
 		m_posDesired.z = m_flMaxZ;
+	}
 
 	// don't go too low
 	if ( m_posDesired.z < m_flMinZ )
+	{
 		m_posDesired.z = m_flMinZ;
+	}
 
 	Flight();
 }
@@ -944,7 +976,7 @@ void CNihilanth::HuntThink(void)
 void CNihilanth::Flight(void)
 {
 	// estimate where I'll be facing in one seconds
-	UTIL_MakeAimVectors(pev->angles + m_avelocity);
+	UTIL_MakeAimVectors(Vector(pev->angles) + m_avelocity);
 	// Vector vecEst1 = pev->origin + m_velocity + gpGlobals->v_up * m_flForce - Vector( 0, 0, 384 );
 	// float flSide = DotProduct( m_posDesired - vecEst1, gpGlobals->v_right );
 
@@ -964,29 +996,34 @@ void CNihilanth::Flight(void)
 			m_avelocity.y -= 6;  // 9 * ( 3.0 / 2.0 );
 		}
 	}
+
 	m_avelocity.y *= 0.98f;
 
 	// estimate where I'll be in two seconds
-	Vector vecEst = pev->origin + m_velocity * 2.0 + gpGlobals->v_up * m_flForce * 20;
+	Vector vecEst = Vector(pev->origin) + m_velocity * 2.0 + Vector(gpGlobals->v_up) * m_flForce * 20;
 
 	// add immediate force
 	UTIL_MakeAimVectors(pev->angles);
-	m_velocity.x += gpGlobals->v_up.x * m_flForce;
-	m_velocity.y += gpGlobals->v_up.y * m_flForce;
-	m_velocity.z += gpGlobals->v_up.z * m_flForce;
+	m_velocity[VEC3_X] += gpGlobals->v_up[VEC3_X] * m_flForce;
+	m_velocity[VEC3_Y] += gpGlobals->v_up[VEC3_Y] * m_flForce;
+	m_velocity[VEC3_Z] += gpGlobals->v_up[VEC3_Z] * m_flForce;
 
 	float flSpeed = m_velocity.Length();
-	float flDir =
-		DotProduct(Vector(gpGlobals->v_forward.x, gpGlobals->v_forward.y, 0), Vector(m_velocity.x, m_velocity.y, 0));
+	float flDir = DotProduct(
+		Vector(gpGlobals->v_forward[VEC3_X], gpGlobals->v_forward[VEC3_Y], 0),
+		Vector(m_velocity[VEC3_X], m_velocity[VEC3_Y], 0));
+
 	if ( flDir < 0 )
+	{
 		flSpeed = -flSpeed;
+	}
 
 	// float flDist = DotProduct( m_posDesired - vecEst, gpGlobals->v_forward );
 
 	// sideways drag
-	m_velocity.x = m_velocity.x * (1.0f - fabsf(gpGlobals->v_right.x) * 0.05f);
-	m_velocity.y = m_velocity.y * (1.0f - fabsf(gpGlobals->v_right.y) * 0.05f);
-	m_velocity.z = m_velocity.z * (1.0f - fabsf(gpGlobals->v_right.z) * 0.05f);
+	m_velocity.x = m_velocity.x * (1.0f - fabsf(gpGlobals->v_right[VEC3_X]) * 0.05f);
+	m_velocity.y = m_velocity.y * (1.0f - fabsf(gpGlobals->v_right[VEC3_Y]) * 0.05f);
+	m_velocity.z = m_velocity.z * (1.0f - fabsf(gpGlobals->v_right[VEC3_Z]) * 0.05f);
 
 	// general drag
 	m_velocity = m_velocity * 0.995f;
@@ -1002,8 +1039,8 @@ void CNihilanth::Flight(void)
 			m_flForce -= 10;
 	}
 
-	UTIL_SetOrigin(pev, pev->origin + m_velocity * 0.1f);
-	pev->angles = pev->angles + m_avelocity * 0.1f;
+	UTIL_SetOrigin(pev, Vector(pev->origin) + m_velocity * 0.1f);
+	(Vector(pev->angles) + m_avelocity * 0.1f).CopyToArray(pev->angles);
 
 	// ALERT( at_console, "%5.0f %5.0f : %4.0f : %3.0f : %2.0f\n", m_posDesired.z, pev->origin.z, m_velocity.z,
 	// m_avelocity.y, m_flForce );
@@ -1047,7 +1084,7 @@ BOOL CNihilanth::EmitSphere(void)
 
 	Vector vecSrc = m_hRecharger->pev->origin;
 	CNihilanthHVR* pEntity = (CNihilanthHVR*)Create("nihilanth_energy_ball", vecSrc, pev->angles, edict());
-	pEntity->pev->velocity = pev->origin - vecSrc;
+	VectorSubtract(pev->origin, vecSrc, pEntity->pev->velocity);
 	pEntity->CircleInit(this);
 
 	m_hSphere[empty] = pEntity;
@@ -1078,8 +1115,8 @@ void CNihilanth::TargetSphere(USE_TYPE useType, float value)
 	GetAttachment(2, vecSrc, vecAngles);
 	UTIL_SetOrigin(pSphere->pev, vecSrc);
 	pSphere->Use(this, this, useType, value);
-	pSphere->pev->velocity = m_vecDesired * RANDOM_FLOAT(50, 100) +
-		Vector(RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50));
+	(m_vecDesired * RANDOM_FLOAT(50, 100) + Vector(RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50), RANDOM_FLOAT(-50, 50)))
+		.CopyToArray(pSphere->pev->velocity);
 }
 
 void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
@@ -1101,9 +1138,9 @@ void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
 				MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 				WRITE_BYTE(TE_ELIGHT);
 				WRITE_SHORT(entindex() + 0x3000);  // entity, attachment
-				WRITE_COORD(pev->origin.x);  // origin
-				WRITE_COORD(pev->origin.y);
-				WRITE_COORD(pev->origin.z);
+				WRITE_COORD(pev->origin[0]);  // origin
+				WRITE_COORD(pev->origin[1]);
+				WRITE_COORD(pev->origin[2]);
 				WRITE_COORD(256);  // radius
 				WRITE_BYTE(128);  // R
 				WRITE_BYTE(128);  // G
@@ -1115,9 +1152,9 @@ void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
 				MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 				WRITE_BYTE(TE_ELIGHT);
 				WRITE_SHORT(entindex() + 0x4000);  // entity, attachment
-				WRITE_COORD(pev->origin.x);  // origin
-				WRITE_COORD(pev->origin.y);
-				WRITE_COORD(pev->origin.z);
+				WRITE_COORD(pev->origin[0]);  // origin
+				WRITE_COORD(pev->origin[1]);
+				WRITE_COORD(pev->origin[2]);
 				WRITE_COORD(256);  // radius
 				WRITE_BYTE(128);  // R
 				WRITE_BYTE(128);  // G
@@ -1150,7 +1187,7 @@ void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
 					GetAttachment(2, vecSrc, vecAngles);
 					CNihilanthHVR* pEntity =
 						(CNihilanthHVR*)Create("nihilanth_energy_ball", vecSrc, pev->angles, edict());
-					pEntity->pev->velocity = pev->origin - vecSrc;
+					VectorSubtract(pev->origin, vecSrc, pEntity->pev->velocity);
 					pEntity->TeleportInit(this, m_hEnemy, pTrigger, pTouch);
 				}
 				else
@@ -1164,9 +1201,9 @@ void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
 					MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 					WRITE_BYTE(TE_ELIGHT);
 					WRITE_SHORT(entindex() + 0x3000);  // entity, attachment
-					WRITE_COORD(pev->origin.x);  // origin
-					WRITE_COORD(pev->origin.y);
-					WRITE_COORD(pev->origin.z);
+					WRITE_COORD(pev->origin[0]);  // origin
+					WRITE_COORD(pev->origin[1]);
+					WRITE_COORD(pev->origin[2]);
 					WRITE_COORD(256);  // radius
 					WRITE_BYTE(128);  // R
 					WRITE_BYTE(128);  // G
@@ -1178,9 +1215,9 @@ void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
 					MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 					WRITE_BYTE(TE_ELIGHT);
 					WRITE_SHORT(entindex() + 0x4000);  // entity, attachment
-					WRITE_COORD(pev->origin.x);  // origin
-					WRITE_COORD(pev->origin.y);
-					WRITE_COORD(pev->origin.z);
+					WRITE_COORD(pev->origin[0]);  // origin
+					WRITE_COORD(pev->origin[1]);
+					WRITE_COORD(pev->origin[2]);
 					WRITE_COORD(256);  // radius
 					WRITE_BYTE(128);  // R
 					WRITE_BYTE(128);  // G
@@ -1218,7 +1255,7 @@ void CNihilanth::HandleAnimEvent(MonsterEvent_t* pEvent)
 				Vector vecSrc, vecAngles;
 				GetAttachment(2, vecSrc, vecAngles);
 				CNihilanthHVR* pEntity = (CNihilanthHVR*)Create("nihilanth_energy_ball", vecSrc, pev->angles, edict());
-				pEntity->pev->velocity = pev->origin - vecSrc;
+				VectorSubtract(pev->origin, vecSrc, pEntity->pev->velocity);
 				pEntity->ZapInit(m_hEnemy);
 			}
 			break;
@@ -1290,12 +1327,7 @@ int CNihilanth::TakeDamage(entvars_t* pevInflictor, entvars_t*, float flDamage, 
 	return 0;
 }
 
-void CNihilanth::TraceAttack(
-	entvars_t* pevAttacker,
-	float flDamage,
-	Vector,
-	const TraceResult* ptr,
-	int bitsDamageType)
+void CNihilanth::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector, const TraceResult* ptr, int bitsDamageType)
 {
 	if ( m_irritation == 3 )
 		m_irritation = 2;
@@ -1305,7 +1337,7 @@ void CNihilanth::TraceAttack(
 
 	if ( m_irritation != 3 )
 	{
-		Vector vecBlood = (ptr->vecEndPos - pev->origin).Normalize();
+		Vector vecBlood = (Vector(ptr->vecEndPos) - Vector(pev->origin)).Normalize();
 
 		UTIL_BloodStream(
 			ptr->vecEndPos,
@@ -1369,9 +1401,9 @@ void CNihilanthHVR::CircleInit(CBaseEntity* pTarget)
 	// pev->scale = 3.0;
 	// SET_MODEL( edict(), "sprites/xspark4.spr" );
 	SET_MODEL(edict(), "sprites/muzzleflash3.spr");
-	pev->rendercolor.x = 255;
-	pev->rendercolor.y = 224;
-	pev->rendercolor.z = 192;
+	pev->rendercolor[0] = 255;
+	pev->rendercolor[1] = 224;
+	pev->rendercolor[2] = 192;
 	pev->scale = 2.0;
 	m_nFrames = 1;
 	pev->renderamt = 255;
@@ -1407,7 +1439,7 @@ void CNihilanthHVR::HoverThink(void)
 
 	if ( m_hTargetEnt != 0 )
 	{
-		CircleTarget(m_hTargetEnt->pev->origin + Vector(0, 0, 16 * N_SCALE));
+		CircleTarget(Vector(m_hTargetEnt->pev->origin) + Vector(0, 0, 16 * N_SCALE));
 	}
 	else
 	{
@@ -1469,12 +1501,12 @@ void CNihilanthHVR::ZapInit(CBaseEntity* pEnemy)
 
 	SET_MODEL(edict(), "sprites/nhth1.spr");
 
-	pev->rendercolor.x = 255;
-	pev->rendercolor.y = 255;
-	pev->rendercolor.z = 255;
+	pev->rendercolor[0] = 255;
+	pev->rendercolor[1] = 255;
+	pev->rendercolor[2] = 255;
 	pev->scale = 2.0;
 
-	pev->velocity = (pEnemy->pev->origin - pev->origin).Normalize() * 200;
+	((Vector(pEnemy->pev->origin) - Vector(pev->origin)).Normalize() * 200).CopyToArray(pev->velocity);
 
 	m_hEnemy = pEnemy;
 	SetThink(&CNihilanthHVR::ZapThink);
@@ -1489,22 +1521,22 @@ void CNihilanthHVR::ZapThink(void)
 	pev->nextthink = gpGlobals->time + 0.05f;
 
 	// check world boundaries
-	if ( m_hEnemy == 0 || pev->origin.x < -4096 || pev->origin.x > 4096 || pev->origin.y < -4096 ||
-		 pev->origin.y > 4096 || pev->origin.z < -4096 || pev->origin.z > 4096 )
+	if ( m_hEnemy == 0 || pev->origin[VEC3_X] < -4096 || pev->origin[VEC3_X] > 4096 || pev->origin[VEC3_Y] < -4096 ||
+		 pev->origin[VEC3_Y] > 4096 || pev->origin[VEC3_Z] < -4096 || pev->origin[VEC3_Z] > 4096 )
 	{
 		SetTouch(NULL);
 		UTIL_Remove(this);
 		return;
 	}
 
-	if ( pev->velocity.Length() < 2000 )
+	if ( VectorLength(pev->velocity) < 2000 )
 	{
-		pev->velocity = pev->velocity * 1.2f;
+		VectorScale(pev->velocity, 1.2f, pev->velocity);
 	}
 
 	// MovetoTarget( m_hEnemy->Center() );
 
-	if ( (m_hEnemy->Center() - pev->origin).Length() < 256 )
+	if ( (m_hEnemy->Center() - Vector(pev->origin)).Length() < 256 )
 	{
 		TraceResult tr;
 
@@ -1521,9 +1553,9 @@ void CNihilanthHVR::ZapThink(void)
 		MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 		WRITE_BYTE(TE_BEAMENTPOINT);
 		WRITE_SHORT(entindex());
-		WRITE_COORD(tr.vecEndPos.x);
-		WRITE_COORD(tr.vecEndPos.y);
-		WRITE_COORD(tr.vecEndPos.z);
+		WRITE_COORD(tr.vecEndPos[0]);
+		WRITE_COORD(tr.vecEndPos[1]);
+		WRITE_COORD(tr.vecEndPos[2]);
 		WRITE_SHORT(g_sModelIndexLaser);
 		WRITE_BYTE(0);  // frame start
 		WRITE_BYTE(10);  // framerate
@@ -1550,9 +1582,9 @@ void CNihilanthHVR::ZapThink(void)
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_ELIGHT);
 	WRITE_SHORT(entindex());  // entity, attachment
-	WRITE_COORD(pev->origin.x);  // origin
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[0]);  // origin
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
 	WRITE_COORD(128);  // radius
 	WRITE_BYTE(128);  // R
 	WRITE_BYTE(128);  // G
@@ -1569,7 +1601,7 @@ void CNihilanthHVR::ZapTouch(CBaseEntity*)
 	UTIL_EmitAmbientSound(edict(), pev->origin, "weapons/electro4.wav", 1.0, ATTN_NORM, 0, RANDOM_LONG(90, 95));
 
 	RadiusDamage(pev, pev, 50, CLASS_NONE, DMG_SHOCK);
-	pev->velocity = pev->velocity * 0;
+	VectorClear(pev->velocity);
 
 	/*
 	for( int i = 0; i < 10; i++ )
@@ -1588,10 +1620,10 @@ void CNihilanthHVR::TeleportInit(CNihilanth* pOwner, CBaseEntity* pEnemy, CBaseE
 	pev->movetype = MOVETYPE_FLY;
 	pev->solid = SOLID_BBOX;
 
-	pev->rendercolor.x = 255;
-	pev->rendercolor.y = 255;
-	pev->rendercolor.z = 255;
-	pev->velocity.z *= 0.2f;
+	pev->rendercolor[0] = 255;
+	pev->rendercolor[1] = 255;
+	pev->rendercolor[2] = 255;
+	pev->velocity[VEC3_Z] *= 0.2f;
 
 	SET_MODEL(edict(), "sprites/exit1.spr");
 
@@ -1612,9 +1644,9 @@ void CNihilanthHVR::GreenBallInit()
 	pev->movetype = MOVETYPE_FLY;
 	pev->solid = SOLID_BBOX;
 
-	pev->rendercolor.x = 255;
-	pev->rendercolor.y = 255;
-	pev->rendercolor.z = 255;
+	pev->rendercolor[0] = 255;
+	pev->rendercolor[1] = 255;
+	pev->rendercolor[2] = 255;
 	pev->scale = 1.0;
 
 	SET_MODEL(edict(), "sprites/exit1.spr");
@@ -1627,24 +1659,29 @@ void CNihilanthHVR::TeleportThink(void)
 	pev->nextthink = gpGlobals->time + 0.1f;
 
 	// check world boundaries
-	if ( m_hEnemy == 0 || !m_hEnemy->IsAlive() || pev->origin.x < -4096 || pev->origin.x > 4096 ||
-		 pev->origin.y < -4096 || pev->origin.y > 4096 || pev->origin.z < -4096 || pev->origin.z > 4096 )
+	if ( m_hEnemy == 0 || !m_hEnemy->IsAlive() || pev->origin[VEC3_X] < -4096 || pev->origin[VEC3_X] > 4096 ||
+		 pev->origin[VEC3_Y] < -4096 || pev->origin[VEC3_Y] > 4096 || pev->origin[VEC3_Z] < -4096 ||
+		 pev->origin[VEC3_Z] > 4096 )
 	{
 		STOP_SOUND(edict(), CHAN_WEAPON, "x/x_teleattack1.wav");
 		UTIL_Remove(this);
 		return;
 	}
 
-	if ( (m_hEnemy->Center() - pev->origin).Length() < 128 )
+	if ( (m_hEnemy->Center() - Vector(pev->origin)).Length() < 128 )
 	{
 		STOP_SOUND(edict(), CHAN_WEAPON, "x/x_teleattack1.wav");
 		UTIL_Remove(this);
 
 		if ( m_hTargetEnt != 0 )
+		{
 			m_hTargetEnt->Use(m_hEnemy, m_hEnemy, USE_ON, 1.0);
+		}
 
 		if ( m_hTouch != 0 && m_hEnemy != 0 )
+		{
 			m_hTouch->Touch(m_hEnemy);
+		}
 	}
 	else
 	{
@@ -1654,9 +1691,9 @@ void CNihilanthHVR::TeleportThink(void)
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_ELIGHT);
 	WRITE_SHORT(entindex());  // entity, attachment
-	WRITE_COORD(pev->origin.x);  // origin
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[0]);  // origin
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
 	WRITE_COORD(256);  // radius
 	WRITE_BYTE(0);  // R
 	WRITE_BYTE(255);  // G
@@ -1725,7 +1762,7 @@ void CNihilanthHVR::DissipateThink(void)
 
 	if ( m_hTargetEnt != 0 )
 	{
-		CircleTarget(m_hTargetEnt->pev->origin + Vector(0, 0, 4096));
+		CircleTarget(Vector(m_hTargetEnt->pev->origin) + Vector(0, 0, 4096));
 	}
 	else
 	{
@@ -1735,9 +1772,9 @@ void CNihilanthHVR::DissipateThink(void)
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_ELIGHT);
 	WRITE_SHORT(entindex());  // entity, attachment
-	WRITE_COORD(pev->origin.x);  // origin
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[0]);  // origin
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
 	WRITE_COORD(pev->renderamt);  // radius
 	WRITE_BYTE(255);  // R
 	WRITE_BYTE(192);  // G
@@ -1752,7 +1789,7 @@ BOOL CNihilanthHVR::CircleTarget(Vector vecTarget)
 	BOOL fClose = FALSE;
 
 	Vector vecDest = vecTarget;
-	Vector vecEst = pev->origin + pev->velocity * 0.5;
+	Vector vecEst = Vector(pev->origin) + Vector(pev->velocity) * 0.5f;
 	Vector vecSrc = pev->origin;
 	vecDest.z = 0;
 	vecEst.z = 0;
@@ -1775,7 +1812,8 @@ BOOL CNihilanthHVR::CircleTarget(Vector vecTarget)
 		// ALERT( at_console, "too far\n" );
 		m_vecIdeal = m_vecIdeal + (vecDest - vecSrc).Normalize() * 50;
 	}
-	pev->avelocity.z = d1 * 20;
+
+	pev->avelocity[VEC3_Z] = d1 * 20;
 
 	if ( d1 < 32 )
 	{
@@ -1789,13 +1827,18 @@ BOOL CNihilanthHVR::CircleTarget(Vector vecTarget)
 	// m_vecIdeal = m_vecIdeal + Vector( -m_vecIdeal.y, m_vecIdeal.x, 0 ).Normalize() * 2;
 
 	// move up/down
-	d1 = vecTarget.z - pev->origin.z;
-	if ( d1 > 0 && m_vecIdeal.z < 200 )
-		m_vecIdeal.z += 20;
-	else if ( d1 < 0 && m_vecIdeal.z > -200 )
-		m_vecIdeal.z -= 20;
+	d1 = vecTarget[VEC3_Z] - pev->origin[VEC3_Z];
 
-	pev->velocity = m_vecIdeal;
+	if ( d1 > 0 && m_vecIdeal.z < 200 )
+	{
+		m_vecIdeal.z += 20;
+	}
+	else if ( d1 < 0 && m_vecIdeal.z > -200 )
+	{
+		m_vecIdeal.z -= 20;
+	}
+
+	VectorCopy(m_vecIdeal, pev->velocity);
 
 	// ALERT( at_console, "%.0f %.0f %.0f\n", m_vecIdeal.x, m_vecIdeal.y, m_vecIdeal.z );
 	return fClose;
@@ -1814,14 +1857,14 @@ void CNihilanthHVR::MovetoTarget(Vector vecTarget)
 	{
 		m_vecIdeal = m_vecIdeal.Normalize() * 300;
 	}
-	m_vecIdeal = m_vecIdeal + (vecTarget - pev->origin).Normalize() * 300;
-	pev->velocity = m_vecIdeal;
+	m_vecIdeal = m_vecIdeal + (vecTarget - Vector(pev->origin)).Normalize() * 300;
+	VectorCopy(m_vecIdeal, pev->velocity);
 }
 
 void CNihilanthHVR::Crawl(void)
 {
 	Vector vecAim = Vector(RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1), RANDOM_FLOAT(-1, 1)).Normalize();
-	Vector vecPnt = pev->origin + pev->velocity * 0.2f + vecAim * 128;
+	Vector vecPnt = Vector(pev->origin) + Vector(pev->velocity) * 0.2f + vecAim * 128;
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BEAMENTPOINT);
@@ -1857,7 +1900,7 @@ void CNihilanthHVR::BounceTouch(CBaseEntity*)
 
 	float n = -DotProduct(tr.vecPlaneNormal, vecDir);
 
-	vecDir = 2.0 * tr.vecPlaneNormal * n + vecDir;
+	vecDir = 2.0 * Vector(tr.vecPlaneNormal) * n + vecDir;
 
 	m_vecIdeal = vecDir * m_vecIdeal.Length();
 }

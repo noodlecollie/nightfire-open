@@ -35,6 +35,7 @@
 #include "weaponatts_collection.h"
 #include "resources/SoundResources.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 extern CGraph WorldGraph;
 extern int gEvilImpulse101;
@@ -110,7 +111,6 @@ void ApplyMultiDamage(entvars_t* pevInflictor, entvars_t* pevAttacker)
 {
 	Vector vecSpot1;  // where blood comes from
 	Vector vecDir;  // direction blood should go
-	TraceResult tr;
 
 	if ( !gMultiDamage.pEntity )
 		return;
@@ -444,8 +444,8 @@ IMPLEMENT_SAVERESTORE(CBasePlayerWeapon, CBasePlayerItem)
 
 void CBasePlayerItem::SetObjectCollisionBox(void)
 {
-	pev->absmin = pev->origin + Vector(-24, -24, 0);
-	pev->absmax = pev->origin + Vector(24, 24, 16);
+	 VectorAdd(pev->origin, Vector(-24, -24, 0), pev->absmin);
+	 VectorAdd(pev->origin, Vector(24, 24, 16), pev->absmax);
 }
 
 //=========================================================
@@ -488,8 +488,8 @@ void CBasePlayerItem::FallThink(void)
 		}
 
 		// lie flat
-		pev->angles.x = 0;
-		pev->angles.z = 0;
+		pev->angles[PITCH] = 0;
+		pev->angles[ROLL] = 0;
 
 		Materialize();
 	}
@@ -1615,8 +1615,8 @@ BOOL CWeaponBox::IsEmpty(void)
 //=========================================================
 void CWeaponBox::SetObjectCollisionBox(void)
 {
-	pev->absmin = pev->origin + Vector(-16, -16, 0);
-	pev->absmax = pev->origin + Vector(16, 16, 16);
+	VectorAdd(pev->origin, Vector(-16, -16, 0), pev->absmin);
+	VectorAdd(pev->origin, Vector(16, 16, 16), pev->absmax);
 }
 
 void CBasePlayerWeapon::PrintState(void)

@@ -228,8 +228,8 @@ public:
 		return pev->skin & 0xFFF;
 	}
 
-	const Vector& GetStartPos(void);
-	const Vector& GetEndPos(void);
+	Vector GetStartPos(void);
+	Vector GetEndPos(void);
 
 	Vector Center(void)
 	{

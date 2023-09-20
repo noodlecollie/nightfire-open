@@ -28,6 +28,7 @@
 #include <limits>
 #include "PlatformLib/String.h"
 #include "PlatformLib/File.h"
+#include "MathLib/angles.h"
 
 #define HULL_STEP_SIZE 16  // how far the test hull moves on each step
 #define NODE_HEIGHT 8  // how high to lift nodes off the ground after we drop them all (make stair/ramp mapping easier)
@@ -223,7 +224,6 @@ int CGraph::HandleLinkEnt(int, entvars_t* pevLinkEnt, int afCapMask, NODEQUERY q
 {
 	// edict_t *pentWorld;
 	CBaseEntity* pDoor;
-	TraceResult tr;
 
 	if ( !m_fGraphPresent || !m_fGraphPointersSet )
 	{
@@ -926,7 +926,6 @@ int CGraph::FindNearestNode(const Vector& vecOrigin, CBaseEntity* pEntity)
 int CGraph::FindNearestNode(const Vector& vecOrigin, int afNodeTypes)
 {
 	int i;
-	TraceResult tr;
 
 	if ( !m_fGraphPresent || !m_fGraphPointersSet )
 	{
@@ -1673,7 +1672,7 @@ void CNodeEnt::Spawn(void)
 
 	WorldGraph.m_pNodes[WorldGraph.m_cNodes].m_vecOriginPeek = WorldGraph.m_pNodes[WorldGraph.m_cNodes].m_vecOrigin =
 		pev->origin;
-	WorldGraph.m_pNodes[WorldGraph.m_cNodes].m_flHintYaw = pev->angles.y;
+	WorldGraph.m_pNodes[WorldGraph.m_cNodes].m_flHintYaw = pev->angles[YAW];
 	WorldGraph.m_pNodes[WorldGraph.m_cNodes].m_sHintType = m_sHintType;
 	WorldGraph.m_pNodes[WorldGraph.m_cNodes].m_sHintActivity = m_sHintActivity;
 
@@ -1696,15 +1695,15 @@ void CNodeEnt::Spawn(void)
 void CTestHull::ShowBadNode(void)
 {
 	pev->movetype = MOVETYPE_FLY;
-	pev->angles.y = pev->angles.y + 4;
+	pev->angles[YAW] = pev->angles[YAW] + 4;
 
 	UTIL_MakeVectors(pev->angles);
 
-	UTIL_ParticleEffect(pev->origin, g_vecZero, 255, 25);
-	UTIL_ParticleEffect(pev->origin + gpGlobals->v_forward * 64, g_vecZero, 255, 25);
-	UTIL_ParticleEffect(pev->origin - gpGlobals->v_forward * 64, g_vecZero, 255, 25);
-	UTIL_ParticleEffect(pev->origin + gpGlobals->v_right * 64, g_vecZero, 255, 25);
-	UTIL_ParticleEffect(pev->origin - gpGlobals->v_right * 64, g_vecZero, 255, 25);
+	UTIL_ParticleEffect(Vector(pev->origin), Vector(), 255, 25);
+	UTIL_ParticleEffect(Vector(pev->origin) + Vector(gpGlobals->v_forward) * 64, Vector(), 255, 25);
+	UTIL_ParticleEffect(Vector(pev->origin) - Vector(gpGlobals->v_forward) * 64, Vector(), 255, 25);
+	UTIL_ParticleEffect(Vector(pev->origin) + Vector(gpGlobals->v_right) * 64, Vector(), 255, 25);
+	UTIL_ParticleEffect(Vector(pev->origin) - Vector(gpGlobals->v_right) * 64, Vector(), 255, 25);
 
 	pev->nextthink = gpGlobals->time + 0.1f;
 }
@@ -1874,11 +1873,13 @@ void CTestHull::BuildNodeGraph(void)
 			{
 				// If it was a world brush entity, copy the node location
 				if ( trEnt.pHit && (trEnt.pHit->v.flags & FL_WORLDBRUSH) )
-					tr.vecEndPos = trEnt.vecEndPos;
+				{
+					VectorCopy(trEnt.vecEndPos, tr.vecEndPos);
+				}
 			}
 
-			WorldGraph.m_pNodes[i].m_vecOriginPeek.z = WorldGraph.m_pNodes[i].m_vecOrigin.z =
-				tr.vecEndPos.z + NODE_HEIGHT;
+			WorldGraph.m_pNodes[i].m_vecOriginPeek[VEC3_Z] = WorldGraph.m_pNodes[i].m_vecOrigin[VEC3_Z] =
+				tr.vecEndPos[VEC3_Z] + NODE_HEIGHT;
 		}
 	}
 
@@ -1890,7 +1891,7 @@ void CTestHull::BuildNodeGraph(void)
 
 		SetThink(&CTestHull::ShowBadNode);  // send the hull off to show the offending node.
 		// pev->solid = SOLID_NOT;
-		pev->origin = WorldGraph.m_pNodes[iBadNode].m_vecOrigin;
+		VectorCopy(WorldGraph.m_pNodes[iBadNode].m_vecOrigin, pev->origin);
 
 		if ( pTempPool )
 		{
@@ -1991,9 +1992,9 @@ void CTestHull::BuildNodeGraph(void)
 						MoveMode = WALKMOVE_NORMAL;
 					}
 
-					flYaw = UTIL_VecToYaw(pDestNode->m_vecOrigin - pev->origin);
+					flYaw = UTIL_VecToYaw(Vector(pDestNode->m_vecOrigin) - Vector(pev->origin));
 
-					flDist = (vecSpot - pev->origin).Length2D();
+					flDist = (vecSpot - Vector(pev->origin)).Length2D();
 
 					int fWalkFailed = FALSE;
 
@@ -2004,7 +2005,9 @@ void CTestHull::BuildNodeGraph(void)
 						float stepSize = HULL_STEP_SIZE;
 
 						if ( (step + stepSize) >= (flDist - 1) )
+						{
 							stepSize = (flDist - step) - 1;
+						}
 
 						if ( !WALK_MOVE(ENT(pev), flYaw, stepSize, MoveMode) )
 						{
@@ -2014,7 +2017,7 @@ void CTestHull::BuildNodeGraph(void)
 						}
 					}
 
-					if ( !fWalkFailed && (pev->origin - vecSpot).Length() > 64 )
+					if ( !fWalkFailed && (Vector(pev->origin) - vecSpot).Length() > 64 )
 					{
 						// ALERT( at_console, "bogus walk\n" );
 						// we thought we

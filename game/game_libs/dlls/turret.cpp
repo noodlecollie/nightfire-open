@@ -30,6 +30,7 @@
 #include "monsters.h"
 #include "weapons.h"
 #include "effects.h"
+#include "MathLib/angles.h"
 
 extern Vector VecBModelOrigin(entvars_t* pevBModel);
 
@@ -111,7 +112,7 @@ public:
 	// other functions
 	void SetTurretAnim(TURRET_ANIM anim);
 	int MoveTurret(void);
-	virtual void Shoot(Vector&, Vector&) {};
+	virtual void Shoot(const Vector&, const Vector&) {};
 
 	float m_flMaxSpin;  // Max time to spin the barrel w/o a target
 	int m_iSpin;
@@ -192,7 +193,7 @@ public:
 	static TYPEDESCRIPTION m_SaveData[];
 
 	// other functions
-	void Shoot(Vector& vecSrc, Vector& vecDirToEnemy);
+	void Shoot(const Vector& vecSrc, const Vector& vecDirToEnemy);
 
 private:
 	int m_iStartSpin;
@@ -210,7 +211,7 @@ public:
 	void Spawn();
 	void Precache(void);
 	// other functions
-	void Shoot(Vector& vecSrc, Vector& vecDirToEnemy);
+	void Shoot(const Vector& vecSrc, const Vector& vecDirToEnemy);
 };
 
 LINK_ENTITY_TO_CLASS(monster_turret, CTurret)
@@ -307,7 +308,7 @@ void CTurret::Spawn()
 	pev->health = gSkillData.turretHealth;
 	m_HackedGunPos = Vector(0, 0, 12.75);
 	m_flMaxSpin = TURRET_MAXSPIN;
-	pev->view_ofs.z = 12.75;
+	pev->view_ofs[VEC3_Z] = 12.75;
 
 	CBaseTurret::Spawn();
 
@@ -343,7 +344,7 @@ void CMiniTurret::Spawn()
 	pev->health = gSkillData.miniturretHealth;
 	m_HackedGunPos = Vector(0, 0, 12.75);
 	m_flMaxSpin = 0;
-	pev->view_ofs.z = 12.75;
+	pev->view_ofs[VEC3_Z] = 12.75;
 
 	CBaseTurret::Spawn();
 	m_iRetractHeight = 16;
@@ -380,16 +381,19 @@ void CBaseTurret::Initialize(void)
 		m_iBaseTurnRate = TURRET_TURNRATE;
 	if ( m_flMaxWait == 0 )
 		m_flMaxWait = TURRET_MAXWAIT;
-	m_flStartYaw = pev->angles.y;
+	m_flStartYaw = pev->angles[YAW];
 	if ( m_iOrientation == 1 )
 	{
 		pev->idealpitch = 180;
-		pev->angles.x = 180;
-		pev->view_ofs.z = -pev->view_ofs.z;
+		pev->angles[PITCH] = 180;
+		pev->view_ofs[VEC3_Z] = -pev->view_ofs[VEC3_Z];
 		pev->effects |= EF_INVLIGHT;
-		pev->angles.y = pev->angles.y + 180;
-		if ( pev->angles.y > 360 )
-			pev->angles.y = pev->angles.y - 360;
+		pev->angles[YAW] = pev->angles[YAW] + 180;
+
+		if ( pev->angles[YAW] > 360 )
+		{
+			pev->angles[YAW] -= 360;
+		}
 	}
 
 	m_vecGoalAngles.x = 0;
@@ -508,7 +512,7 @@ void CBaseTurret::ActiveThink(void)
 		}
 	}
 
-	Vector vecMid = pev->origin + pev->view_ofs;
+	Vector vecMid = Vector(pev->origin) + Vector(pev->view_ofs);
 	Vector vecMidEnemy = m_hEnemy->BodyTarget(vecMid);
 
 	// Look for our current enemy
@@ -627,14 +631,14 @@ void CBaseTurret::ActiveThink(void)
 	MoveTurret();
 }
 
-void CTurret::Shoot(Vector& vecSrc, Vector& vecDirToEnemy)
+void CTurret::Shoot(const Vector& vecSrc, const Vector& vecDirToEnemy)
 {
 	FireBullets(1, vecSrc, vecDirToEnemy, TURRET_SPREAD, TURRET_RANGE, BULLET_MONSTER_12MM, 1);
 	EMIT_SOUND(ENT(pev), CHAN_WEAPON, "turret/tu_fire1.wav", 1, 0.6f);
 	pev->effects = pev->effects | EF_MUZZLEFLASH;
 }
 
-void CMiniTurret::Shoot(Vector& vecSrc, Vector& vecDirToEnemy)
+void CMiniTurret::Shoot(const Vector& vecSrc, const Vector& vecDirToEnemy)
 {
 	FireBullets(1, vecSrc, vecDirToEnemy, TURRET_SPREAD, TURRET_RANGE, BULLET_MONSTER_9MM, 1);
 
@@ -668,19 +672,19 @@ void CBaseTurret::Deploy(void)
 
 	if ( m_fSequenceFinished )
 	{
-		pev->maxs.z = static_cast<float>(m_iDeployHeight);
-		pev->mins.z = static_cast<float>(-m_iDeployHeight);
+		pev->maxs[VEC3_Z] = static_cast<float>(m_iDeployHeight);
+		pev->mins[VEC3_Z] = static_cast<float>(-m_iDeployHeight);
 		UTIL_SetSize(pev, pev->mins, pev->maxs);
 
 		m_vecCurAngles.x = 0;
 
 		if ( m_iOrientation == 1 )
 		{
-			m_vecCurAngles.y = UTIL_AngleMod(pev->angles.y + 180);
+			m_vecCurAngles.y = UTIL_AngleMod(pev->angles[YAW] + 180);
 		}
 		else
 		{
-			m_vecCurAngles.y = UTIL_AngleMod(pev->angles.y);
+			m_vecCurAngles.y = UTIL_AngleMod(pev->angles[YAW]);
 		}
 
 		SetTurretAnim(TURRET_ANIM_SPIN);
@@ -720,8 +724,8 @@ void CBaseTurret::Retire(void)
 			m_iOn = 0;
 			m_flLastSight = 0;
 			SetTurretAnim(TURRET_ANIM_NONE);
-			pev->maxs.z = static_cast<float>(m_iRetractHeight);
-			pev->mins.z = static_cast<float>(-m_iRetractHeight);
+			pev->maxs[VEC3_Z] = static_cast<float>(m_iRetractHeight);
+			pev->mins[VEC3_Z] = static_cast<float>(-m_iRetractHeight);
 			UTIL_SetSize(pev, pev->mins, pev->maxs);
 			if ( m_iAutoStart )
 			{
@@ -965,9 +969,9 @@ void CBaseTurret::TurretDeath(void)
 		// lots of smoke
 		MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 		WRITE_BYTE(TE_SMOKE);
-		WRITE_COORD(RANDOM_FLOAT(pev->absmin.x, pev->absmax.x));
-		WRITE_COORD(RANDOM_FLOAT(pev->absmin.y, pev->absmax.y));
-		WRITE_COORD(pev->origin.z - m_iOrientation * 64);
+		WRITE_COORD(RANDOM_FLOAT(pev->absmin[VEC3_X], pev->absmax[VEC3_X]));
+		WRITE_COORD(RANDOM_FLOAT(pev->absmin[VEC3_Y], pev->absmax[VEC3_Y]));
+		WRITE_COORD(pev->origin[VEC3_Z] - m_iOrientation * 64);
 		WRITE_SHORT(g_sModelIndexSmoke);
 		WRITE_BYTE(25);  // scale * 10
 		WRITE_BYTE(10 - m_iOrientation * 5);  // framerate
@@ -976,12 +980,19 @@ void CBaseTurret::TurretDeath(void)
 
 	if ( pev->dmgtime + RANDOM_FLOAT(0, 5) > gpGlobals->time )
 	{
-		Vector vecSrc =
-			Vector(RANDOM_FLOAT(pev->absmin.x, pev->absmax.x), RANDOM_FLOAT(pev->absmin.y, pev->absmax.y), 0);
+		Vector vecSrc = Vector(
+			RANDOM_FLOAT(pev->absmin[VEC3_X], pev->absmax[VEC3_X]),
+			RANDOM_FLOAT(pev->absmin[VEC3_Y], pev->absmax[VEC3_Y]),
+			0);
+
 		if ( m_iOrientation == 0 )
-			vecSrc = vecSrc + Vector(0, 0, RANDOM_FLOAT(pev->origin.z, pev->absmax.z));
+		{
+			vecSrc = vecSrc + Vector(0, 0, RANDOM_FLOAT(pev->origin[VEC3_Z], pev->absmax[VEC3_Z]));
+		}
 		else
-			vecSrc = vecSrc + Vector(0, 0, RANDOM_FLOAT(pev->absmin.z, pev->origin.z));
+		{
+			vecSrc = vecSrc + Vector(0, 0, RANDOM_FLOAT(pev->absmin[VEC3_Z], pev->origin[VEC3_Z]));
+		}
 
 		UTIL_Sparks(vecSrc);
 	}
@@ -1124,9 +1135,13 @@ int CBaseTurret::MoveTurret(void)
 
 		// ALERT( at_console, "%.2f -> %.2f\n", m_vecCurAngles.y, y );
 		if ( m_iOrientation == 0 )
-			SetBoneController(0, m_vecCurAngles.y - pev->angles.y);
+		{
+			SetBoneController(0, m_vecCurAngles[YAW] - pev->angles[YAW]);
+		}
 		else
-			SetBoneController(0, pev->angles.y - 180 - m_vecCurAngles.y);
+		{
+			SetBoneController(0, pev->angles[YAW] - 180 - m_vecCurAngles[YAW]);
+		}
 		state = 1;
 	}
 
@@ -1157,7 +1172,7 @@ public:
 	void Spawn();
 	void Precache(void);
 	// other functions
-	void Shoot(Vector& vecSrc, Vector& vecDirToEnemy);
+	void Shoot(const Vector& vecSrc, const Vector& vecDirToEnemy);
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	void EXPORT SentryTouch(CBaseEntity* pOther);
 	void EXPORT SentryDeath(void);
@@ -1177,7 +1192,7 @@ void CSentry::Spawn()
 	SET_MODEL(ENT(pev), "models/sentry.mdl");
 	pev->health = gSkillData.sentryHealth;
 	m_HackedGunPos = Vector(0, 0, 48);
-	pev->view_ofs.z = 48;
+	pev->view_ofs[VEC3_Z] = 48;
 	m_flMaxWait = 1E6;
 	m_flMaxSpin = 1E6;
 
@@ -1195,7 +1210,7 @@ void CSentry::Spawn()
 	pev->nextthink = gpGlobals->time + 0.3f;
 }
 
-void CSentry::Shoot(Vector& vecSrc, Vector& vecDirToEnemy)
+void CSentry::Shoot(const Vector& vecSrc, const Vector& vecDirToEnemy)
 {
 	FireBullets(1, vecSrc, vecDirToEnemy, TURRET_SPREAD, TURRET_RANGE, BULLET_MONSTER_MP5, 1);
 
@@ -1282,7 +1297,7 @@ void CSentry::SentryDeath(void)
 		SetTurretAnim(TURRET_ANIM_DIE);
 
 		pev->solid = SOLID_NOT;
-		pev->angles.y = UTIL_AngleMod(pev->angles.y + RANDOM_LONG(0, 2) * 120);
+		pev->angles[YAW] = UTIL_AngleMod(pev->angles[YAW] + RANDOM_LONG(0, 2) * 120);
 
 		EyeOn();
 	}

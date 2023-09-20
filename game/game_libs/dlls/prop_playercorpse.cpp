@@ -41,12 +41,12 @@ void CPropPlayerCorpse::Initialise(entvars_t* other)
 		SetMultiplayerModel(other);
 
 		// TODO: Movement, solidity, collision ignore with anything but the world (in spawn function?)
-		pev->angles = other->angles;
+		VectorCopy(other->angles, pev->angles);
 		pev->frame = other->frame;
 		pev->colormap = other->colormap;
 		pev->movetype = MOVETYPE_TOSS;
-		pev->velocity = other->velocity;
-		pev->avelocity = other->avelocity;
+		VectorCopy(other->velocity, pev->velocity);
+		VectorCopy(other->avelocity, pev->avelocity);
 		pev->flags = 0;
 		pev->deadflag = other->deadflag;
 

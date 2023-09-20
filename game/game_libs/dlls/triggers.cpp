@@ -28,6 +28,7 @@
 #include "trains.h"  // trigger_camera has train functionality
 #include "gamerules.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 #define SF_TRIGGER_PUSH_START_OFF 2  // spawnflag that makes trigger_push spawn turned OFF
 #define SF_TRIGGER_HURT_TARGETONCE 1  // Only fire hurt target once
@@ -496,13 +497,24 @@ void CRenderFxManager::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 
 			entvars_t* pevTarget = VARS(pentTarget);
 			if ( !FBitSet(pev->spawnflags, SF_RENDER_MASKFX) )
+			{
 				pevTarget->renderfx = pev->renderfx;
+			}
+
 			if ( !FBitSet(pev->spawnflags, SF_RENDER_MASKAMT) )
+			{
 				pevTarget->renderamt = pev->renderamt;
+			}
+
 			if ( !FBitSet(pev->spawnflags, SF_RENDER_MASKMODE) )
+			{
 				pevTarget->rendermode = pev->rendermode;
+			}
+
 			if ( !FBitSet(pev->spawnflags, SF_RENDER_MASKCOLOR) )
-				pevTarget->rendercolor = pev->rendercolor;
+			{
+				VectorCopy(pev->rendercolor, pevTarget->rendercolor);
+			}
 		}
 	}
 }
@@ -629,7 +641,7 @@ void CTriggerMonsterJump::Touch(CBaseEntity* pOther)
 		return;
 	}
 
-	pevOther->origin.z += 1;
+	pevOther->origin[VEC3_Z] += 1;
 
 	if ( FBitSet(pevOther->flags, FL_ONGROUND) )
 	{
@@ -638,8 +650,8 @@ void CTriggerMonsterJump::Touch(CBaseEntity* pOther)
 	}
 
 	// toss the monster!
-	pevOther->velocity = pev->movedir * pev->speed;
-	pevOther->velocity.z += m_flHeight;
+	VectorScale(pev->movedir, pev->speed, pevOther->velocity);
+	pevOther->velocity[VEC3_Z] += m_flHeight;
 	pev->nextthink = gpGlobals->time;
 }
 
@@ -776,8 +788,10 @@ void CTargetCDAudio::Think(void)
 
 	pev->nextthink = gpGlobals->time + 0.5f;
 
-	if ( (pClient->v.origin - pev->origin).Length() <= pev->scale )
+	if ( (Vector(pClient->v.origin) - Vector(pev->origin)).Length() <= pev->scale )
+	{
 		Play();
+	}
 }
 
 void CTargetCDAudio::Play(void)
@@ -842,13 +856,13 @@ void CTriggerHurt::RadiationThink(void)
 	origin = pev->origin;
 	view_ofs = pev->view_ofs;
 
-	pev->origin = (pev->absmin + pev->absmax) * 0.5;
-	pev->view_ofs = pev->view_ofs * 0.0;
+	((Vector(pev->absmin) + Vector(pev->absmax)) * 0.5).CopyToArray(pev->origin);
+	VectorClear(pev->view_ofs);
 
 	pentPlayer = FIND_CLIENT_IN_PVS(edict());
 
-	pev->origin = origin;
-	pev->view_ofs = view_ofs;
+	VectorCopy(origin, pev->origin);
+	VectorCopy(view_ofs, pev->view_ofs);
 
 	// reset origin
 	if ( !FNullEnt(pentPlayer) )
@@ -858,8 +872,8 @@ void CTriggerHurt::RadiationThink(void)
 		pevTarget = VARS(pentPlayer);
 
 		// get range to player;
-		vecSpot1 = (pev->absmin + pev->absmax) * 0.5;
-		vecSpot2 = (pevTarget->absmin + pevTarget->absmax) * 0.5;
+		vecSpot1 = (Vector(pev->absmin) + Vector(pev->absmax)) * 0.5;
+		vecSpot2 = (Vector(pevTarget->absmin) + Vector(pevTarget->absmax)) * 0.5;
 
 		vecRange = vecSpot1 - vecSpot2;
 		flRange = vecRange.Length();
@@ -1486,7 +1500,7 @@ void CChangeLevel::ChangeLevelNow(CBaseEntity* pActivator)
 			// Set target and delay
 			pFireAndDie->pev->target = m_changeTarget;
 			pFireAndDie->m_flDelay = m_changeTargetDelay;
-			pFireAndDie->pev->origin = pPlayer->pev->origin;
+			VectorCopy(pPlayer->pev->origin, pFireAndDie->pev->origin);
 
 			// Call spawn
 			DispatchSpawn(pFireAndDie->edict());
@@ -1505,7 +1519,7 @@ void CChangeLevel::ChangeLevelNow(CBaseEntity* pActivator)
 	if ( !FNullEnt(pentLandmark) )
 	{
 		PlatformLib_StrCpy(st_szNextSpot, sizeof(st_szNextSpot), m_szLandmarkName);
-		gpGlobals->vecLandmarkOffset = VARS(pentLandmark)->origin;
+		VectorCopy(VARS(pentLandmark)->origin, gpGlobals->vecLandmarkOffset);
 	}
 	// ALERT( at_console, "Level touches %d levels\n", ChangeList( levels, 16 ) );
 	ALERT(at_console, "CHANGE LEVEL: %s %s\n", st_szNextMap, st_szNextSpot);
@@ -1545,7 +1559,7 @@ int CChangeLevel::AddTransitionToList(
 	PlatformLib_StrCpy(pLevelList[listCount].mapName, sizeof(pLevelList[listCount].mapName), pMapName);
 	PlatformLib_StrCpy(pLevelList[listCount].landmarkName, sizeof(pLevelList[listCount].landmarkName), pLandmarkName);
 	pLevelList[listCount].pentLandmark = pentLandmark;
-	pLevelList[listCount].vecLandmarkOrigin = VARS(pentLandmark)->origin;
+	VectorCopy(VARS(pentLandmark)->origin, pLevelList[listCount].vecLandmarkOrigin);
 
 	return 1;
 }
@@ -1802,20 +1816,29 @@ Pushes the player
 void CTriggerPush::Spawn()
 {
 	if ( pev->angles == g_vecZero )
-		pev->angles.y = 360;
+	{
+		pev->angles[YAW] = 360;
+	}
+
 	InitTrigger();
 
 	if ( pev->speed == 0 )
+	{
 		pev->speed = 100;
+	}
 
 	// this flag was changed and flying barrels on c2a5 stay broken
 	if ( FStrEq(STRING(gpGlobals->mapname), "c2a5") && pev->spawnflags & 4 )
+	{
 		pev->spawnflags |= SF_TRIG_PUSH_ONCE;
+	}
 
 	if ( FBitSet(
 			 pev->spawnflags,
 			 SF_TRIGGER_PUSH_START_OFF) )  // if flagged to Start Turned Off, make trigger nonsolid.
+	{
 		pev->solid = SOLID_NOT;
+	}
 
 	SetUse(&CBaseTrigger::ToggleUse);
 
@@ -1841,19 +1864,26 @@ void CTriggerPush::Touch(CBaseEntity* pOther)
 		// Instant trigger, just transfer velocity and remove
 		if ( FBitSet(pev->spawnflags, SF_TRIG_PUSH_ONCE) )
 		{
-			pevToucher->velocity = pevToucher->velocity + (pev->speed * pev->movedir);
-			if ( pevToucher->velocity.z > 0 )
+			(Vector(pevToucher->velocity) + (pev->speed * Vector(pev->movedir))).CopyToArray(pevToucher->velocity);
+
+			if ( pevToucher->velocity[VEC3_Z] > 0 )
+			{
 				pevToucher->flags &= ~FL_ONGROUND;
+			}
+
 			UTIL_Remove(this);
 		}
 		else
 		{
 			// Push field, transfer to base velocity
-			Vector vecPush = pev->speed * pev->movedir;
-			if ( pevToucher->flags & FL_BASEVELOCITY )
-				vecPush = vecPush + pevToucher->basevelocity;
+			Vector vecPush = pev->speed * Vector(pev->movedir);
 
-			pevToucher->basevelocity = vecPush;
+			if ( pevToucher->flags & FL_BASEVELOCITY )
+			{
+				vecPush = vecPush + pevToucher->basevelocity;
+			}
+
+			VectorCopy(vecPush, pevToucher->basevelocity);
 
 			pevToucher->flags |= FL_BASEVELOCITY;
 			// ALERT( at_console, "Vel %f, base %f\n", pevToucher->velocity.z, pevToucher->basevelocity.z );
@@ -1903,8 +1933,8 @@ void CBaseTrigger::TeleportTouch(CBaseEntity* pOther)
 
 	if ( pOther->IsPlayer() )
 	{
-		tmp.z -= pOther->pev->mins
-					 .z;  // make origin adjustments in case the teleportee is a player. (origin in center, not at feet)
+		// make origin adjustments in case the teleportee is a player. (origin in center, not at feet)
+		tmp.z -= pOther->pev->mins[VEC3_Z];
 	}
 
 	tmp.z++;
@@ -1913,15 +1943,16 @@ void CBaseTrigger::TeleportTouch(CBaseEntity* pOther)
 
 	UTIL_SetOrigin(pevToucher, tmp);
 
-	pevToucher->angles = pentTarget->v.angles;
+	VectorCopy(pentTarget->v.angles, pevToucher->angles);
 
 	if ( pOther->IsPlayer() )
 	{
-		pevToucher->v_angle = pentTarget->v.angles;
+		VectorCopy(pentTarget->v.angles, pevToucher->v_angle);
 	}
 
 	pevToucher->fixangle = TRUE;
-	pevToucher->velocity = pevToucher->basevelocity = g_vecZero;
+	VectorClear(pevToucher->basevelocity);
+	VectorClear(pevToucher->velocity);
 }
 
 class CTriggerTeleport : public CBaseTrigger
@@ -2293,15 +2324,15 @@ void CTriggerCamera::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType
 	// copy over player information
 	if ( FBitSet(pev->spawnflags, SF_CAMERA_PLAYER_POSITION) )
 	{
-		UTIL_SetOrigin(pev, pActivator->pev->origin + pActivator->pev->view_ofs);
-		pev->angles.x = -pActivator->pev->angles.x;
-		pev->angles.y = pActivator->pev->angles.y;
-		pev->angles.z = 0;
-		pev->velocity = pActivator->pev->velocity;
+		UTIL_SetOrigin(pev, Vector(pActivator->pev->origin) + Vector(pActivator->pev->view_ofs));
+		pev->angles[PITCH] = -pActivator->pev->angles[PITCH];
+		pev->angles[YAW] = pActivator->pev->angles[YAW];
+		pev->angles[ROLL] = 0;
+		VectorCopy(pActivator->pev->velocity, pev->velocity);
 	}
 	else
 	{
-		pev->velocity = Vector(0, 0, 0);
+		VectorClear(pev->velocity);
 	}
 
 	SET_VIEW(pActivator->edict(), edict());
@@ -2329,41 +2360,58 @@ void CTriggerCamera::FollowTarget()
 			((CBasePlayer*)((CBaseEntity*)m_hPlayer))->EnableControl(TRUE);
 		}
 		SUB_UseTargets(this, USE_TOGGLE, 0);
-		pev->avelocity = Vector(0, 0, 0);
+		VectorClear(pev->avelocity);
 		m_state = 0;
 		return;
 	}
 
-	Vector vecGoal = UTIL_VecToAngles(m_hTarget->pev->origin - pev->origin);
+	Vector vecGoal = UTIL_VecToAngles(Vector(m_hTarget->pev->origin) - Vector(pev->origin));
 	vecGoal.x = -vecGoal.x;
 
-	if ( pev->angles.y > 360 )
-		pev->angles.y -= 360;
+	if ( pev->angles[YAW] > 360 )
+	{
+		pev->angles[YAW] -= 360;
+	}
 
-	if ( pev->angles.y < 0 )
-		pev->angles.y += 360;
+	if ( pev->angles[YAW] < 0 )
+	{
+		pev->angles[YAW] += 360;
+	}
 
-	float dx = vecGoal.x - pev->angles.x;
-	float dy = vecGoal.y - pev->angles.y;
+	float dx = vecGoal.x - pev->angles[PITCH];
+	float dy = vecGoal.y - pev->angles[YAW];
 
 	if ( dx < -180 )
+	{
 		dx += 360;
+	}
+
 	if ( dx > 180 )
+	{
 		dx = dx - 360;
+	}
 
 	if ( dy < -180 )
+	{
 		dy += 360;
-	if ( dy > 180 )
-		dy = dy - 360;
+	}
 
-	pev->avelocity.x = dx * 40 * gpGlobals->frametime;
-	pev->avelocity.y = dy * 40 * gpGlobals->frametime;
+	if ( dy > 180 )
+	{
+		dy = dy - 360;
+	}
+
+	pev->avelocity[PITCH] = dx * 40 * gpGlobals->frametime;
+	pev->avelocity[YAW] = dy * 40 * gpGlobals->frametime;
 
 	if ( !(FBitSet(pev->spawnflags, SF_CAMERA_PLAYER_TAKECONTROL)) )
 	{
-		pev->velocity = pev->velocity * 0.8f;
-		if ( pev->velocity.Length() < 10.0 )
-			pev->velocity = g_vecZero;
+		VectorScale(pev->velocity, 0.8f, pev->velocity);
+
+		if ( VectorLength(pev->velocity) < 10.0 )
+		{
+			VectorClear(pev->velocity);
+		}
 	}
 
 	pev->nextthink = gpGlobals->time;
@@ -2397,16 +2445,18 @@ void CTriggerCamera::Move()
 		// Set up next corner
 		if ( !m_pentPath )
 		{
-			pev->velocity = g_vecZero;
+			VectorClear(pev->velocity);
 		}
 		else
 		{
 			if ( m_pentPath->pev->speed != 0 )
+			{
 				m_targetSpeed = m_pentPath->pev->speed;
+			}
 
-			Vector delta = m_pentPath->pev->origin - pev->origin;
+			Vector delta = Vector(m_pentPath->pev->origin) - Vector(pev->origin);
 			m_moveDistance = delta.Length();
-			pev->movedir = delta.Normalize();
+			delta.Normalize().CopyToArray(pev->movedir);
 			m_flStopTime = gpGlobals->time + m_pentPath->GetDelay();
 		}
 	}
@@ -2417,5 +2467,6 @@ void CTriggerCamera::Move()
 		pev->speed = UTIL_Approach(m_targetSpeed, pev->speed, m_acceleration * gpGlobals->frametime);
 
 	float fraction = 2 * gpGlobals->frametime;
-	pev->velocity = ((pev->movedir * pev->speed) * fraction) + (pev->velocity * (1 - fraction));
+	(((Vector(pev->movedir) * pev->speed) * fraction) + (Vector(pev->velocity) * (1 - fraction)))
+		.CopyToArray(pev->velocity);
 }

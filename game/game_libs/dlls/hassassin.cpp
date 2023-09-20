@@ -27,6 +27,7 @@
 #include "weapons.h"
 #include "soundent.h"
 #include "game.h"
+#include "MathLib/angles.h"
 
 extern DLL_GLOBAL int g_iSkillLevel;
 
@@ -190,14 +191,16 @@ void CHAssassin::Shoot(void)
 
 	UTIL_MakeVectors(pev->angles);
 
-	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT(40, 90) + gpGlobals->v_up * RANDOM_FLOAT(75, 200) +
-		gpGlobals->v_forward * RANDOM_FLOAT(-40, 40);
+	Vector vecShellVelocity = Vector(gpGlobals->v_right) * RANDOM_FLOAT(40, 90) +
+		Vector(gpGlobals->v_up) * RANDOM_FLOAT(75, 200) + Vector(gpGlobals->v_forward) * RANDOM_FLOAT(-40, 40);
+
 	EjectBrass(
-		pev->origin + gpGlobals->v_up * 32 + gpGlobals->v_forward * 12,
+		Vector(pev->origin) + Vector(gpGlobals->v_up) * 32 + Vector(gpGlobals->v_forward) * 12,
 		vecShellVelocity,
-		pev->angles.y,
+		pev->angles[YAW],
 		m_iShell,
 		TE_BOUNCE_SHELL);
+
 	FireBullets(
 		1,
 		vecShootOrigin,
@@ -242,12 +245,13 @@ void CHAssassin::HandleAnimEvent(MonsterEvent_t* pEvent)
 			UTIL_MakeVectors(pev->angles);
 			CGrenade::ShootTimed(
 				pev,
-				pev->origin + gpGlobals->v_forward * 34 + Vector(0, 0, 32),
+				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 34 + Vector(0, 0, 32),
 				m_vecTossVelocity,
 				2.0);
 
 			m_flNextGrenadeCheck =
 				gpGlobals->time + 6;  // wait six seconds before even looking again to see if a grenade can be thrown.
+
 			m_fThrowGrenade = FALSE;
 			// !!!LATER - when in a group, only try to throw grenade if ordered.
 		}
@@ -258,7 +262,7 @@ void CHAssassin::HandleAnimEvent(MonsterEvent_t* pEvent)
 			UTIL_MakeAimVectors(pev->angles);
 			pev->movetype = MOVETYPE_TOSS;
 			pev->flags &= ~FL_ONGROUND;
-			pev->velocity = m_vecJumpVelocity;
+			VectorCopy(m_vecJumpVelocity, pev->velocity);
 			m_flNextJump = gpGlobals->time + 3.0f;
 		}
 			return;
@@ -535,10 +539,10 @@ BOOL CHAssassin::CheckMeleeAttack1(float, float flDist)
 	{
 		TraceResult tr;
 
-		Vector vecDest = pev->origin + Vector(RANDOM_FLOAT(-64, 64), RANDOM_FLOAT(-64, 64), 160);
+		Vector vecDest = Vector(pev->origin) + Vector(RANDOM_FLOAT(-64, 64), RANDOM_FLOAT(-64, 64), 160);
 
 		UTIL_TraceHull(
-			pev->origin + Vector(0, 0, 36),
+			Vector(pev->origin) + Vector(0, 0, 36),
 			vecDest + Vector(0, 0, 36),
 			dont_ignore_monsters,
 			human_hull,
@@ -554,7 +558,7 @@ BOOL CHAssassin::CheckMeleeAttack1(float, float flDist)
 
 		float time = sqrtf(160 / (0.5f * flGravity));
 		float speed = flGravity * time / 160;
-		m_vecJumpVelocity = (vecDest - pev->origin) * speed;
+		m_vecJumpVelocity = (vecDest - Vector(pev->origin)) * speed;
 
 		return TRUE;
 	}
@@ -701,7 +705,7 @@ void CHAssassin::RunTask(Task_t* pTask)
 
 			if ( m_fSequenceFinished )
 			{
-				if ( pev->velocity.z > 0 )
+				if ( pev->velocity[VEC3_Z] > 0 )
 				{
 					pev->sequence = LookupSequence("fly_up");
 				}

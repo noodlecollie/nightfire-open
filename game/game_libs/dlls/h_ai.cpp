@@ -52,13 +52,13 @@ BOOL FBoxVisible(entvars_t* pevLooker, entvars_t* pevTarget, Vector& vecTargetOr
 		return FALSE;
 
 	TraceResult tr;
-	Vector vecLookerOrigin = pevLooker->origin + pevLooker->view_ofs;  // look through the monster's 'eyes'
+	Vector vecLookerOrigin = Vector(pevLooker->origin) + Vector(pevLooker->view_ofs);  // look through the monster's 'eyes'
 	for ( int i = 0; i < 5; i++ )
 	{
 		Vector vecTarget = pevTarget->origin;
-		vecTarget.x += RANDOM_FLOAT(pevTarget->mins.x + flSize, pevTarget->maxs.x - flSize);
-		vecTarget.y += RANDOM_FLOAT(pevTarget->mins.y + flSize, pevTarget->maxs.y - flSize);
-		vecTarget.z += RANDOM_FLOAT(pevTarget->mins.z + flSize, pevTarget->maxs.z - flSize);
+		vecTarget.x += RANDOM_FLOAT(pevTarget->mins[VEC3_X] + flSize, pevTarget->maxs[VEC3_X] - flSize);
+		vecTarget.y += RANDOM_FLOAT(pevTarget->mins[VEC3_Y] + flSize, pevTarget->maxs[VEC3_Y] - flSize);
+		vecTarget.z += RANDOM_FLOAT(pevTarget->mins[VEC3_Z] + flSize, pevTarget->maxs[VEC3_Z] - flSize);
 
 		UTIL_TraceLine(vecLookerOrigin, vecTarget, ignore_monsters, ignore_glass, ENT(pevLooker) /*pentIgnore*/, &tr);
 
@@ -94,8 +94,8 @@ Vector VecCheckToss(entvars_t* pev, const Vector& vecSpot1, Vector vecSpot2, flo
 	UTIL_MakeVectors(pev->angles);
 
 	// toss a little bit to the left or right, not right down on the enemy's bean (head).
-	vecSpot2 = vecSpot2 + gpGlobals->v_right * (RANDOM_FLOAT(-8, 8) + RANDOM_FLOAT(-16, 16));
-	vecSpot2 = vecSpot2 + gpGlobals->v_forward * (RANDOM_FLOAT(-8, 8) + RANDOM_FLOAT(-16, 16));
+	vecSpot2 = vecSpot2 + Vector(gpGlobals->v_right) * (RANDOM_FLOAT(-8, 8) + RANDOM_FLOAT(-16, 16));
+	vecSpot2 = vecSpot2 + Vector(gpGlobals->v_forward) * (RANDOM_FLOAT(-8, 8) + RANDOM_FLOAT(-16, 16));
 
 	// calculate the midpoint and apex of the 'triangle'
 	// UNDONE: normalize any Z position differences between spot1 and spot2 so that triangle is always RIGHT

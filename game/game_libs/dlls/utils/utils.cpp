@@ -580,26 +580,32 @@ CBaseEntity* UTIL_FindEntityByTargetname(CBaseEntity* pStartEntity, const char* 
 	return UTIL_FindEntityByString(pStartEntity, "targetname", szName);
 }
 
-CBaseEntity* UTIL_FindEntityGeneric(const char* szWhatever, Vector& vecSrc, float flRadius)
+CBaseEntity* UTIL_FindEntityGeneric(const char* szWhatever, const Vector& vecSrc, float flRadius)
 {
 	CBaseEntity* pEntity = NULL;
 
 	pEntity = UTIL_FindEntityByTargetname(NULL, szWhatever);
+
 	if ( pEntity )
+	{
 		return pEntity;
+	}
 
 	CBaseEntity* pSearch = NULL;
 	float flMaxDist2 = flRadius * flRadius;
+
 	while ( (pSearch = UTIL_FindEntityByClassname(pSearch, szWhatever)) != NULL )
 	{
 		float flDist2 = (Vector(pSearch->pev->origin) - vecSrc).Length();
 		flDist2 = flDist2 * flDist2;
+
 		if ( flMaxDist2 > flDist2 )
 		{
 			pEntity = pSearch;
 			flMaxDist2 = flDist2;
 		}
 	}
+
 	return pEntity;
 }
 

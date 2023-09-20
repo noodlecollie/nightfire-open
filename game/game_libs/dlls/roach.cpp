@@ -92,7 +92,7 @@ void CRoach::Touch(CBaseEntity* pOther)
 		return;
 	}
 
-	vecSpot = pev->origin + Vector(0, 0, 8);  // move up a bit, and trace down.
+	VectorAdd(pev->origin, Vector(0, 0, 8), vecSpot);  // move up a bit, and trace down.
 	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -24), ignore_monsters, ENT(pev), &tr);
 
 	// This isn't really blood.  So you don't have to screen it out based on violence levels (UTIL_ShouldShowBlood())
@@ -131,7 +131,7 @@ void CRoach::Spawn()
 	MonsterInit();
 	SetActivity(ACT_IDLE);
 
-	pev->view_ofs = Vector(0, 0, 1);  // position of the eyes relative to monster's origin.
+	VectorCopy(Vector(0, 0, 1), pev->view_ofs);  // position of the eyes relative to monster's origin.
 	pev->takedamage = DAMAGE_YES;
 	m_fLightHacked = FALSE;
 	m_flLastLightLevel = -1;
@@ -260,7 +260,7 @@ void CRoach::MonsterThink(void)
 					pSound = CSoundEnt::SoundPointerForIndex(m_iAudibleList);
 
 					// roach smells food and is just standing around. Go to food unless food isn't on same z-plane.
-					if ( pSound && fabs(pSound->m_vecOrigin.z - pev->origin.z) <= 3.0 )
+					if ( pSound && fabs(pSound->m_vecOrigin[VEC3_Z] - pev->origin[VEC3_Z]) <= 3.0 )
 					{
 						PickNewDest(ROACH_SMELL_FOOD);
 						SetActivity(ACT_WALK);
@@ -325,13 +325,13 @@ void CRoach::PickNewDest(int iCondition)
 		vecNewDir.x = RANDOM_FLOAT(-1, 1);
 		vecNewDir.y = RANDOM_FLOAT(-1, 1);
 		flDist = static_cast<float>(256 + (RANDOM_LONG(0, 255)));
-		vecDest = pev->origin + vecNewDir * flDist;
+		vecDest = Vector(pev->origin) + vecNewDir * flDist;
 	}
-	while ( (vecDest - pev->origin).Length2D() < 128 );
+	while ( (vecDest - Vector(pev->origin)).Length2D() < 128 );
 
-	m_Route[0].vecLocation.x = vecDest.x;
-	m_Route[0].vecLocation.y = vecDest.y;
-	m_Route[0].vecLocation.z = pev->origin.z;
+	m_Route[0].vecLocation.x = vecDest[VEC3_X];
+	m_Route[0].vecLocation.y = vecDest[VEC3_Y];
+	m_Route[0].vecLocation.z = pev->origin[VEC3_Z];
 	m_Route[0].iType = bits_MF_TO_LOCATION;
 	m_movementGoal = RouteClassify(m_Route[0].iType);
 
@@ -351,7 +351,7 @@ void CRoach::Move(float flInterval)
 	Vector vecApex;
 
 	// local move to waypoint.
-	flWaypointDist = (m_Route[m_iRouteIndex].vecLocation - pev->origin).Length2D();
+	flWaypointDist = (m_Route[m_iRouteIndex].vecLocation - Vector(pev->origin)).Length2D();
 	MakeIdealYaw(m_Route[m_iRouteIndex].vecLocation);
 
 	ChangeYaw(static_cast<int>(pev->yaw_speed));
@@ -420,7 +420,8 @@ void CRoach::Look(int iDistance)
 	// Does sphere also limit itself to PVS?
 	// Examine all entities within a reasonable radius
 	// !!!PERFORMANCE - let's trivially reject the ent list before radius searching!
-	for ( CBaseEntity* pSightEnt = UTIL_FindEntityInSphere(nullptr, pev->origin, static_cast<float>(iDistance)); pSightEnt;
+	for ( CBaseEntity* pSightEnt = UTIL_FindEntityInSphere(nullptr, pev->origin, static_cast<float>(iDistance));
+		  pSightEnt;
 		  pSightEnt = UTIL_FindEntityInSphere(pSightEnt, pev->origin, static_cast<float>(iDistance)) )
 	{
 		// only consider ents that can be damaged. !!!temporarily only considering other monsters and clients

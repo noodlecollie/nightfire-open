@@ -100,7 +100,7 @@ void CBaseSpectator::SpectatorImpulseCommand(void)
 
 			pGoal = pCurrentGoal;
 			UTIL_SetOrigin(pev, pGoal->v.origin);
-			pev->angles = pGoal->v.angles;
+			VectorCopy(pGoal->v.angles, pev->angles);
 			pev->fixangle = FALSE;
 			break;
 		default:
