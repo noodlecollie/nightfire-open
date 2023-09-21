@@ -12,8 +12,8 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#ifndef BASEWINDOW_H
-#define BASEWINDOW_H
+
+#pragma once
 
 #include "ItemsHolder.h"
 #include "BackgroundBitmap.h"
@@ -116,5 +116,3 @@ private:
 	bool m_bHolding;
 	Point m_bHoldOffset;
 };
-
-#endif  // BASEWINDOW_H

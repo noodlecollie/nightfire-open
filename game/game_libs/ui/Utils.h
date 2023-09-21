@@ -33,9 +33,6 @@ GNU General Public License for more details.
 
 #define MAX_INFO_STRING 256  // engine limit
 
-#define RAD2DEG(x) ((float)(x) * (float)(180.f / (float)M_PI))
-#define DEG2RAD(x) ((float)(x) * (float)((float)M_PI / 180.f))
-
 //
 // How did I ever live without ASSERT?
 //
@@ -147,11 +144,6 @@ inline unsigned int InterpColor(const unsigned int from, const unsigned int to, 
 		static_cast<unsigned int>(InterpVal(static_cast<float>(Green(from)), static_cast<float>(Green(to)), frac)),
 		static_cast<unsigned int>(InterpVal(static_cast<float>(Blue(from)), static_cast<float>(Blue(to)), frac)),
 		static_cast<unsigned int>(InterpVal(static_cast<float>(Alpha(from)), static_cast<float>(Alpha(to)), frac)));
-}
-
-inline float RemapVal(const float val, const float A, const float B, const float C, const float D)
-{
-	return C + (D - C) * (val - A) / (B - A);
 }
 
 int colorstricmp(const char* a, const char* b);

@@ -1572,18 +1572,6 @@ void GAME_EXPORT pfnSaveSpawnParms(edict_t* ent)
 {
 	(void)ent;
 }
-
-/*
-=================
-pfnVecToYaw
-
-=================
-*/
-float GAME_EXPORT pfnVecToYaw(const float* rgflVector)
-{
-	return SV_VecToYaw(rgflVector);
-}
-
 /*
 =================
 pfnMoveToOrigin
@@ -5068,8 +5056,6 @@ static enginefuncs_t gEngfuncs = {
 	pfnChangeLevel,
 	pfnGetSpawnParms,
 	pfnSaveSpawnParms,
-	pfnVecToYaw,
-	VectorAngles,
 	pfnMoveToOrigin,
 	pfnChangeYaw,
 	pfnChangePitch,

@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "BaseMenu.h"
 #include "Slider.h"
 #include "Utils.h"
+#include "MathLib/utils.h"
 
 CMenuSlider::CMenuSlider() :
 	BaseClass(),

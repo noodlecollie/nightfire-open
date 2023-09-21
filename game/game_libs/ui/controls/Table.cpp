@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "Table.h"
 #include "Utils.h"
 #include "Scissor.h"
+#include "MathLib/utils.h"
 
 #define HEADER_HEIGHT_FRAC 1.75f
 

@@ -235,10 +235,10 @@ void UI_DisableAlphaFactor();
 
 enum ETextFlags
 {
-	ETF_FORCECOL = BIT(0),
-	ETF_SHADOW = BIT(1),
-	ETF_NOSIZELIMIT = BIT(2),
-	ETF_ADDITIVE = BIT(3)
+	ETF_FORCECOL = (1 << 0),
+	ETF_SHADOW = (1 << 1),
+	ETF_NOSIZELIMIT = (1 << 2),
+	ETF_ADDITIVE = (1 << 3)
 };
 
 int UI_DrawString(

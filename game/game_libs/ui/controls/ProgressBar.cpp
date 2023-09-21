@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include "extdll_menu.h"
 #include "BaseMenu.h"
 #include "ProgressBar.h"
+#include "MathLib/utils.h"
 
 CMenuProgressBar::CMenuProgressBar() :
 	BaseClass()

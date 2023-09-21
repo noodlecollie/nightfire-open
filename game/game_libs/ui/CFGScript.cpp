@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "CFGScript.h"
 #include "PlatformLib/String.h"
 
-#define CVAR_USERINFO BIT(1)
+#define CVAR_USERINFO (1 << 1)
 
 const char* cvartypes[] = {NULL, "BOOL", "NUMBER", "LIST", "STRING"};
 
