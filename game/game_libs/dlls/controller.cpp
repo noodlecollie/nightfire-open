@@ -401,7 +401,7 @@ Task_t tlControllerChaseEnemy[] = {
 
 Schedule_t slControllerChaseEnemy[] = {
 	{tlControllerChaseEnemy,
-	 SIZE_OF_ARRAY(tlControllerChaseEnemy),
+	 SIZE_OF_ARRAY_AS_INT(tlControllerChaseEnemy),
 	 bits_COND_NEW_ENEMY | bits_COND_TASK_FAILED,
 	 0,
 	 "ControllerChaseEnemy"},
@@ -415,7 +415,7 @@ Task_t tlControllerStrafe[] = {
 };
 
 Schedule_t slControllerStrafe[] = {
-	{tlControllerStrafe, SIZE_OF_ARRAY(tlControllerStrafe), bits_COND_NEW_ENEMY, 0, "ControllerStrafe"},
+	{tlControllerStrafe, SIZE_OF_ARRAY_AS_INT(tlControllerStrafe), bits_COND_NEW_ENEMY, 0, "ControllerStrafe"},
 };
 
 Task_t tlControllerTakeCover[] = {
@@ -426,7 +426,7 @@ Task_t tlControllerTakeCover[] = {
 };
 
 Schedule_t slControllerTakeCover[] = {
-	{tlControllerTakeCover, SIZE_OF_ARRAY(tlControllerTakeCover), bits_COND_NEW_ENEMY, 0, "ControllerTakeCover"},
+	{tlControllerTakeCover, SIZE_OF_ARRAY_AS_INT(tlControllerTakeCover), bits_COND_NEW_ENEMY, 0, "ControllerTakeCover"},
 };
 
 Task_t tlControllerFail[] = {
@@ -437,7 +437,7 @@ Task_t tlControllerFail[] = {
 };
 
 Schedule_t slControllerFail[] = {
-	{tlControllerFail, SIZE_OF_ARRAY(tlControllerFail), 0, 0, "ControllerFail"},
+	{tlControllerFail, SIZE_OF_ARRAY_AS_INT(tlControllerFail), 0, 0, "ControllerFail"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CController) {

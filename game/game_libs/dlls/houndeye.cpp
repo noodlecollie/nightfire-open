@@ -888,7 +888,7 @@ Task_t tlHoundGuardPack[] = {
 
 Schedule_t slHoundGuardPack[] = {
 	{tlHoundGuardPack,
-	 SIZE_OF_ARRAY(tlHoundGuardPack),
+	 SIZE_OF_ARRAY_AS_INT(tlHoundGuardPack),
 	 bits_COND_SEE_HATE | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_PROVOKED | bits_COND_HEAR_SOUND,
 
 	 bits_SOUND_COMBAT |  // sound flags
@@ -913,14 +913,14 @@ Task_t tlHoundYell2[] = {
 Schedule_t slHoundRangeAttack[] = {
 	{
 		tlHoundYell1,
-		SIZE_OF_ARRAY(tlHoundYell1),
+		SIZE_OF_ARRAY_AS_INT(tlHoundYell1),
 		bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 		0,
 		"HoundRangeAttack1",
 	},
 	{
 		tlHoundYell2,
-		SIZE_OF_ARRAY(tlHoundYell2),
+		SIZE_OF_ARRAY_AS_INT(tlHoundYell2),
 		bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 		0,
 		"HoundRangeAttack2",
@@ -943,7 +943,7 @@ Task_t tlHoundSleep[] = {
 
 Schedule_t slHoundSleep[] = {
 	{tlHoundSleep,
-	 SIZE_OF_ARRAY(tlHoundSleep),
+	 SIZE_OF_ARRAY_AS_INT(tlHoundSleep),
 	 bits_COND_HEAR_SOUND | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_NEW_ENEMY,
 
 	 bits_SOUND_COMBAT | bits_SOUND_PLAYER | bits_SOUND_WORLD,
@@ -960,7 +960,7 @@ Task_t tlHoundWakeLazy[] = {
 };
 
 Schedule_t slHoundWakeLazy[] = {
-	{tlHoundWakeLazy, SIZE_OF_ARRAY(tlHoundWakeLazy), 0, 0, "WakeLazy"},
+	{tlHoundWakeLazy, SIZE_OF_ARRAY_AS_INT(tlHoundWakeLazy), 0, 0, "WakeLazy"},
 };
 
 // wake and stand up with great urgency!
@@ -972,7 +972,7 @@ Task_t tlHoundWakeUrgent[] = {
 };
 
 Schedule_t slHoundWakeUrgent[] = {
-	{tlHoundWakeUrgent, SIZE_OF_ARRAY(tlHoundWakeUrgent), 0, 0, "WakeUrgent"},
+	{tlHoundWakeUrgent, SIZE_OF_ARRAY_AS_INT(tlHoundWakeUrgent), 0, 0, "WakeUrgent"},
 };
 
 Task_t tlHoundSpecialAttack1[] = {
@@ -984,7 +984,7 @@ Task_t tlHoundSpecialAttack1[] = {
 
 Schedule_t slHoundSpecialAttack1[] = {
 	{tlHoundSpecialAttack1,
-	 SIZE_OF_ARRAY(tlHoundSpecialAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlHoundSpecialAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_ENEMY_OCCLUDED,
 
 	 0,
@@ -998,7 +998,7 @@ Task_t tlHoundAgitated[] = {
 
 Schedule_t slHoundAgitated[] = {
 	{tlHoundAgitated,
-	 SIZE_OF_ARRAY(tlHoundAgitated),
+	 SIZE_OF_ARRAY_AS_INT(tlHoundAgitated),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "Hound Agitated"},
@@ -1011,7 +1011,7 @@ Task_t tlHoundHopRetreat[] = {
 };
 
 Schedule_t slHoundHopRetreat[] = {
-	{tlHoundHopRetreat, SIZE_OF_ARRAY(tlHoundHopRetreat), 0, 0, "Hound Hop Retreat"},
+	{tlHoundHopRetreat, SIZE_OF_ARRAY_AS_INT(tlHoundHopRetreat), 0, 0, "Hound Hop Retreat"},
 };
 
 // hound fails in combat with client in the PVS
@@ -1023,7 +1023,7 @@ Task_t tlHoundCombatFailPVS[] = {
 
 Schedule_t slHoundCombatFailPVS[] = {
 	{tlHoundCombatFailPVS,
-	 SIZE_OF_ARRAY(tlHoundCombatFailPVS),
+	 SIZE_OF_ARRAY_AS_INT(tlHoundCombatFailPVS),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "HoundCombatFailPVS"},
@@ -1040,7 +1040,7 @@ Task_t tlHoundCombatFailNoPVS[] = {
 
 Schedule_t slHoundCombatFailNoPVS[] = {
 	{tlHoundCombatFailNoPVS,
-	 SIZE_OF_ARRAY(tlHoundCombatFailNoPVS),
+	 SIZE_OF_ARRAY_AS_INT(tlHoundCombatFailNoPVS),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "HoundCombatFailNoPVS"},

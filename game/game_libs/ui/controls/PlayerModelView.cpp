@@ -73,7 +73,7 @@ void CMenuPlayerModelView::VidInit()
 	ent->latched.prevcontroller[1] = 127;
 	ent->latched.prevcontroller[2] = 127;
 	ent->latched.prevcontroller[3] = 127;
-	ent->origin[0] = ent->curstate.origin[0] = 45.0f / tanf(DEG2RAD(refdef.fov_y / 2.0f));
+	ent->origin[0] = ent->curstate.origin[0] = 45.0f / tanf(DEG2RADF(refdef.fov_y / 2.0f));
 	ent->origin[2] = ent->curstate.origin[2] = 2.0f;
 	ent->angles[1] = ent->curstate.angles[1] = 180.0f;
 
@@ -217,7 +217,7 @@ assume refdef is valid
 */
 void CMenuPlayerModelView::CalcFov()
 {
-	float x = refdef.viewport[2] / tanf(DEG2RAD(refdef.fov_x) * 0.5f);
+	float x = refdef.viewport[2] / tanf(DEG2RADF(refdef.fov_x) * 0.5f);
 	float half_fov_y = atanf(refdef.viewport[3] / x);
-	refdef.fov_y = RAD2DEG(half_fov_y) * 2;
+	refdef.fov_y = RAD2DEGF(half_fov_y) * 2;
 }

@@ -113,7 +113,7 @@ Task_t tlBaFollow[] = {
 
 Schedule_t slBaFollow[] = {
 	{tlBaFollow,
-	 SIZE_OF_ARRAY(tlBaFollow),
+	 SIZE_OF_ARRAY_AS_INT(tlBaFollow),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND | bits_COND_PROVOKED,
 	 bits_SOUND_DANGER,
 	 "Follow"},
@@ -129,7 +129,8 @@ Task_t tlBarneyEnemyDraw[] = {
 	{TASK_PLAY_SEQUENCE_FACE_ENEMY, (float)ACT_ARM},
 };
 
-Schedule_t slBarneyEnemyDraw[] = {{tlBarneyEnemyDraw, SIZE_OF_ARRAY(tlBarneyEnemyDraw), 0, 0, "Barney Enemy Draw"}};
+Schedule_t slBarneyEnemyDraw[] = {
+	{tlBarneyEnemyDraw, SIZE_OF_ARRAY_AS_INT(tlBarneyEnemyDraw), 0, 0, "Barney Enemy Draw"}};
 
 Task_t tlBaFaceTarget[] = {
 	{TASK_SET_ACTIVITY, (float)ACT_IDLE},
@@ -140,7 +141,7 @@ Task_t tlBaFaceTarget[] = {
 
 Schedule_t slBaFaceTarget[] = {
 	{tlBaFaceTarget,
-	 SIZE_OF_ARRAY(tlBaFaceTarget),
+	 SIZE_OF_ARRAY_AS_INT(tlBaFaceTarget),
 	 bits_COND_CLIENT_PUSH | bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_HEAR_SOUND | bits_COND_PROVOKED,
 	 bits_SOUND_DANGER,
@@ -156,7 +157,7 @@ Task_t tlIdleBaStand[] = {
 
 Schedule_t slIdleBaStand[] = {
 	{tlIdleBaStand,
-	 SIZE_OF_ARRAY(tlIdleBaStand),
+	 SIZE_OF_ARRAY_AS_INT(tlIdleBaStand),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND | bits_COND_SMELL |
 		 bits_COND_PROVOKED,
 	 bits_SOUND_COMBAT |  // sound flags - change these, and you'll break the talking code.

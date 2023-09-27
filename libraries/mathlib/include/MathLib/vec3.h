@@ -454,20 +454,78 @@ public:
 
 	vec_t& operator[](size_t index)
 	{
-		static float g_Dummy = 0.0f;
+		static vec_t g_Dummy = 0.0f;
 
 		assert(index < SIZE_ELEMENTS);
 
-		return index < SIZE_ELEMENTS ? RawData()[index] : g_Dummy;
+		// NFTODO: Due to the note below about member variables,
+		// and to MSVC not liking (vec3_t*)(&x)[index],
+		// we have to do this switch statement here. The proper
+		// fix for this would be to use an array in the
+		// class itself, but that would require a lot of refactoring
+		// of the code that uses this class, and I've already done
+		// weeks worth of tedious vector-related refactoring
+		// by this point, so my spirit can't take it any more.
+		switch ( index )
+		{
+			case 0:
+			{
+				return x;
+			}
+
+			case 1:
+			{
+				return y;
+			}
+
+			case 2:
+			{
+				return z;
+			}
+
+			default:
+			{
+				return g_Dummy;
+			}
+		}
 	}
 
 	const vec_t& operator[](size_t index) const
 	{
-		static const float g_Dummy = 0.0f;
+		static const vec_t g_Dummy = 0.0f;
 
 		assert(index < SIZE_ELEMENTS);
 
-		return index < SIZE_ELEMENTS ? RawData()[index] : g_Dummy;
+		// NFTODO: Due to the note below about member variables,
+		// and to MSVC not liking (vec3_t*)(&x)[index],
+		// we have to do this switch statement here. The proper
+		// fix for this would be to use an array in the
+		// class itself, but that would require a lot of refactoring
+		// of the code that uses this class, and I've already done
+		// weeks worth of tedious vector-related refactoring
+		// by this point, so my spirit can't take it any more.
+		switch ( index )
+		{
+			case 0:
+			{
+				return x;
+			}
+
+			case 1:
+			{
+				return y;
+			}
+
+			case 2:
+			{
+				return z;
+			}
+
+			default:
+			{
+				return g_Dummy;
+			}
+		}
 	}
 
 	// This is lame and an array would be better, but lots of things will

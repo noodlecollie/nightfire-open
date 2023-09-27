@@ -39,7 +39,7 @@ Task_t tlHCRangeAttack1[] = {
 
 Schedule_t slHCRangeAttack1[] = {
 	{tlHCRangeAttack1,
-	 SIZE_OF_ARRAY(tlHCRangeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlHCRangeAttack1),
 	 bits_COND_ENEMY_OCCLUDED | bits_COND_NO_AMMO_LOADED,
 	 0,
 	 "HCRangeAttack1"},
@@ -54,7 +54,7 @@ Task_t tlHCRangeAttack1Fast[] = {
 
 Schedule_t slHCRangeAttack1Fast[] = {
 	{tlHCRangeAttack1Fast,
-	 SIZE_OF_ARRAY(tlHCRangeAttack1Fast),
+	 SIZE_OF_ARRAY_AS_INT(tlHCRangeAttack1Fast),
 	 bits_COND_ENEMY_OCCLUDED | bits_COND_NO_AMMO_LOADED,
 	 0,
 	 "HCRAFast"},

@@ -142,14 +142,18 @@ private:
 	int derivedClass::Save(CSave& save) \
 	{ \
 		if ( !baseClass::Save(save) ) \
+		{ \
 			return 0; \
-		return save.WriteFields(#derivedClass, this, m_SaveData, SIZE_OF_ARRAY(m_SaveData)); \
+		} \
+		return save.WriteFields(#derivedClass, this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData)); \
 	} \
 	int derivedClass::Restore(CRestore& restore) \
 	{ \
 		if ( !baseClass::Restore(restore) ) \
+		{ \
 			return 0; \
-		return restore.ReadFields(#derivedClass, this, m_SaveData, SIZE_OF_ARRAY(m_SaveData)); \
+		} \
+		return restore.ReadFields(#derivedClass, this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData)); \
 	}
 
 typedef enum

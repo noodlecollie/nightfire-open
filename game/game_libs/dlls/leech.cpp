@@ -271,7 +271,7 @@ void CLeech::AttackSound(void)
 		EMIT_SOUND_DYN(
 			ENT(pev),
 			CHAN_VOICE,
-			pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackSounds) - 1)],
+			pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackSounds) - 1)],
 			1.0,
 			ATTN_NORM,
 			0,
@@ -285,7 +285,7 @@ void CLeech::AlertSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_VOICE,
-		pAlertSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAlertSounds) - 1)],
+		pAlertSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAlertSounds) - 1)],
 		1.0,
 		ATTN_NORM * 0.5,
 		0,

@@ -234,7 +234,7 @@ void CISlave::PainSound(void)
 		EMIT_SOUND_DYN(
 			ENT(pev),
 			CHAN_WEAPON,
-			pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pPainSounds) - 1)],
+			pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pPainSounds) - 1)],
 			1.0,
 			ATTN_NORM,
 			0,
@@ -250,7 +250,7 @@ void CISlave::DeathSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_WEAPON,
-		pDeathSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pDeathSounds) - 1)],
+		pDeathSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pDeathSounds) - 1)],
 		1.0,
 		ATTN_NORM,
 		0,
@@ -324,7 +324,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -336,7 +336,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -357,7 +357,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -368,7 +368,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -649,7 +649,7 @@ Task_t tlSlaveAttack1[] = {
 
 Schedule_t slSlaveAttack1[] = {
 	{tlSlaveAttack1,
-	 SIZE_OF_ARRAY(tlSlaveAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlSlaveAttack1),
 	 bits_COND_CAN_MELEE_ATTACK1 | bits_COND_HEAR_SOUND | bits_COND_HEAVY_DAMAGE,
 
 	 bits_SOUND_DANGER,

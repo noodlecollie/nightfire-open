@@ -113,14 +113,14 @@ int CBaseMonster::Save(CSave& save)
 {
 	if ( !CBaseToggle::Save(save) )
 		return 0;
-	return save.WriteFields("CBaseMonster", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData));
+	return save.WriteFields("CBaseMonster", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData));
 }
 
 int CBaseMonster::Restore(CRestore& restore)
 {
 	if ( !CBaseToggle::Restore(restore) )
 		return 0;
-	int status = restore.ReadFields("CBaseMonster", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData));
+	int status = restore.ReadFields("CBaseMonster", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData));
 
 	// We don't save/restore routes yet
 	RouteClear();
@@ -752,9 +752,9 @@ void DrawRoute(entvars_t* pev, WayPoint_t* m_Route, int m_iRouteIndex, int r, in
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BEAMPOINTS);
-	WRITE_COORD(pev->origin.x);
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[0]);
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
 	WRITE_COORD(m_Route[m_iRouteIndex].vecLocation.x);
 	WRITE_COORD(m_Route[m_iRouteIndex].vecLocation.y);
 	WRITE_COORD(m_Route[m_iRouteIndex].vecLocation.z);

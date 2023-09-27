@@ -21,8 +21,15 @@ constexpr size_t SIZE_OF_ARRAY(T (&)[SIZE])
 {
 	return SIZE;
 }
+
+template<typename T, size_t SIZE>
+constexpr int SIZE_OF_ARRAY_AS_INT(T (&arr)[SIZE])
+{
+	return static_cast<int>(SIZE_OF_ARRAY<T, SIZE>(arr));
+}
 #else
 // This version catches errors where the macro is used
 // on a pointer rather than an array.
-#define SIZE_OF_ARRAY(a) ((sizeof(a) / sizeof(*(a))) / (size_t)(!(sizeof(a) % sizeof(*(a)))))
+#define SIZE_OF_ARRAY(a) ((size_t)(sizeof(a) / sizeof(*(a))) / (size_t)(!(sizeof(a) % sizeof(*(a)))))
+#define SIZE_OF_ARRAY_AS_INT(a) ((int)(SIZE_OF_ARRAY(a)))
 #endif

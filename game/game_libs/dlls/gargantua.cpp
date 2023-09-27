@@ -387,7 +387,7 @@ Task_t tlGargFlame[] = {
 };
 
 Schedule_t slGargFlame[] = {
-	{tlGargFlame, SIZE_OF_ARRAY(tlGargFlame), 0, 0, "GargFlame"},
+	{tlGargFlame, SIZE_OF_ARRAY_AS_INT(tlGargFlame), 0, 0, "GargFlame"},
 };
 
 // primary melee attack
@@ -398,7 +398,7 @@ Task_t tlGargSwipe[] = {
 };
 
 Schedule_t slGargSwipe[] = {
-	{tlGargSwipe, SIZE_OF_ARRAY(tlGargSwipe), bits_COND_CAN_MELEE_ATTACK2, 0, "GargSwipe"},
+	{tlGargSwipe, SIZE_OF_ARRAY_AS_INT(tlGargSwipe), bits_COND_CAN_MELEE_ATTACK2, 0, "GargSwipe"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CGargantua) {
@@ -446,7 +446,7 @@ void CGargantua::StompAttack(void)
 	EMIT_SOUND_DYN(
 		edict(),
 		CHAN_WEAPON,
-		pStompSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pStompSounds) - 1)],
+		pStompSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pStompSounds) - 1)],
 		1.0,
 		ATTN_GARG,
 		0,
@@ -840,7 +840,7 @@ void CGargantua::TraceAttack(
 			EMIT_SOUND_DYN(
 				ENT(pev),
 				CHAN_VOICE,
-				pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pPainSounds) - 1)],
+				pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pPainSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -993,7 +993,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					edict(),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -1003,7 +1003,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					edict(),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -1019,7 +1019,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 			EMIT_SOUND_DYN(
 				edict(),
 				CHAN_BODY,
-				pFootSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pFootSounds) - 1)],
+				pFootSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pFootSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -1033,7 +1033,7 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 			EMIT_SOUND_DYN(
 				edict(),
 				CHAN_VOICE,
-				pBreatheSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pBreatheSounds) - 1)],
+				pBreatheSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pBreatheSounds) - 1)],
 				1.0,
 				ATTN_GARG,
 				0,
@@ -1116,7 +1116,7 @@ void CGargantua::StartTask(Task_t* pTask)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_VOICE,
-					pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackSounds) - 1)],
+					pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackSounds) - 1)],
 					1.0,
 					ATTN_GARG,
 					0,

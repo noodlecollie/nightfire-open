@@ -149,7 +149,7 @@ Task_t tlFollow[] = {
 
 Schedule_t slFollow[] = {
 	{tlFollow,
-	 SIZE_OF_ARRAY(tlFollow),
+	 SIZE_OF_ARRAY_AS_INT(tlFollow),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_COMBAT | bits_SOUND_DANGER,
 	 "Follow"},
@@ -163,7 +163,7 @@ Task_t tlFollowScared[] = {
 
 Schedule_t slFollowScared[] = {
 	{tlFollowScared,
-	 SIZE_OF_ARRAY(tlFollowScared),
+	 SIZE_OF_ARRAY_AS_INT(tlFollowScared),
 	 bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 bits_SOUND_DANGER,
 	 "FollowScared"},
@@ -177,7 +177,7 @@ Task_t tlFaceTargetScared[] = {
 
 Schedule_t slFaceTargetScared[] = {
 	{tlFaceTargetScared,
-	 SIZE_OF_ARRAY(tlFaceTargetScared),
+	 SIZE_OF_ARRAY_AS_INT(tlFaceTargetScared),
 	 bits_COND_HEAR_SOUND | bits_COND_NEW_ENEMY,
 	 bits_SOUND_DANGER,
 	 "FaceTargetScared"},
@@ -188,7 +188,7 @@ Task_t tlStopFollowing[] = {
 };
 
 Schedule_t slStopFollowing[] = {
-	{tlStopFollowing, SIZE_OF_ARRAY(tlStopFollowing), 0, 0, "StopFollowing"},
+	{tlStopFollowing, SIZE_OF_ARRAY_AS_INT(tlStopFollowing), 0, 0, "StopFollowing"},
 };
 
 Task_t tlHeal[] = {
@@ -205,7 +205,7 @@ Task_t tlHeal[] = {
 
 Schedule_t slHeal[] = {
 	{tlHeal,
-	 SIZE_OF_ARRAY(tlHeal),
+	 SIZE_OF_ARRAY_AS_INT(tlHeal),
 	 0,  // Don't interrupt or he'll end up running around with a needle all the time
 	 0,
 	 "Heal"},
@@ -220,7 +220,7 @@ Task_t tlFaceTarget[] = {
 
 Schedule_t slFaceTarget[] = {
 	{tlFaceTarget,
-	 SIZE_OF_ARRAY(tlFaceTarget),
+	 SIZE_OF_ARRAY_AS_INT(tlFaceTarget),
 	 bits_COND_CLIENT_PUSH | bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND,
 	 bits_SOUND_COMBAT | bits_SOUND_DANGER,
 	 "FaceTarget"},
@@ -235,7 +235,7 @@ Task_t tlSciPanic[] = {
 };
 
 Schedule_t slSciPanic[] = {
-	{tlSciPanic, SIZE_OF_ARRAY(tlSciPanic), 0, 0, "SciPanic"},
+	{tlSciPanic, SIZE_OF_ARRAY_AS_INT(tlSciPanic), 0, 0, "SciPanic"},
 };
 
 Task_t tlIdleSciStand[] = {
@@ -247,7 +247,7 @@ Task_t tlIdleSciStand[] = {
 
 Schedule_t slIdleSciStand[] = {
 	{tlIdleSciStand,
-	 SIZE_OF_ARRAY(tlIdleSciStand),
+	 SIZE_OF_ARRAY_AS_INT(tlIdleSciStand),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND | bits_COND_SMELL |
 		 bits_COND_CLIENT_PUSH | bits_COND_PROVOKED,
 	 bits_SOUND_COMBAT |  // sound flags
@@ -270,7 +270,7 @@ Task_t tlScientistCover[] = {
 };
 
 Schedule_t slScientistCover[] = {
-	{tlScientistCover, SIZE_OF_ARRAY(tlScientistCover), bits_COND_NEW_ENEMY, 0, "ScientistCover"},
+	{tlScientistCover, SIZE_OF_ARRAY_AS_INT(tlScientistCover), bits_COND_NEW_ENEMY, 0, "ScientistCover"},
 };
 
 Task_t tlScientistHide[] = {
@@ -283,7 +283,7 @@ Task_t tlScientistHide[] = {
 
 Schedule_t slScientistHide[] = {
 	{tlScientistHide,
-	 SIZE_OF_ARRAY(tlScientistHide),
+	 SIZE_OF_ARRAY_AS_INT(tlScientistHide),
 	 bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND | bits_COND_SEE_ENEMY | bits_COND_SEE_HATE | bits_COND_SEE_FEAR |
 		 bits_COND_SEE_DISLIKE,
 	 bits_SOUND_DANGER,
@@ -302,7 +302,7 @@ Task_t tlScientistStartle[] = {
 
 Schedule_t slScientistStartle[] = {
 	{tlScientistStartle,
-	 SIZE_OF_ARRAY(tlScientistStartle),
+	 SIZE_OF_ARRAY_AS_INT(tlScientistStartle),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_ENEMY | bits_COND_SEE_HATE | bits_COND_SEE_FEAR | bits_COND_SEE_DISLIKE,
 	 0,
 	 "ScientistStartle"},
@@ -316,7 +316,7 @@ Task_t tlFear[] = {
 };
 
 Schedule_t slFear[] = {
-	{tlFear, SIZE_OF_ARRAY(tlFear), bits_COND_NEW_ENEMY, 0, "Fear"},
+	{tlFear, SIZE_OF_ARRAY_AS_INT(tlFear), bits_COND_NEW_ENEMY, 0, "Fear"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CScientist) {

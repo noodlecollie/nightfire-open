@@ -189,7 +189,7 @@ BOOL CBaseMonster::FScheduleValid(void)
 			ALERT(at_aiconsole, "Schedule: %s Failed\n", m_pSchedule->pName);
 
 			Vector tmp = pev->origin;
-			tmp.z = pev->absmax.z + 16;
+			tmp.z = pev->absmax[VEC3_Z] + 16;
 			UTIL_Sparks(tmp);
 		}
 #endif  // DEBUG

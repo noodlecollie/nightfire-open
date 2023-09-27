@@ -320,13 +320,13 @@ int CGlobalState::Save(CSave& save)
 	int i;
 	globalentity_t* pEntity;
 
-	if ( !save.WriteFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData)) )
+	if ( !save.WriteFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData)) )
 		return 0;
 
 	pEntity = m_pList;
 	for ( i = 0; i < m_listCount && pEntity; i++ )
 	{
-		if ( !save.WriteFields("GENT", pEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY(gGlobalEntitySaveData)) )
+		if ( !save.WriteFields("GENT", pEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY_AS_INT(gGlobalEntitySaveData)) )
 			return 0;
 
 		pEntity = pEntity->pNext;
@@ -341,7 +341,7 @@ int CGlobalState::Restore(CRestore& restore)
 	globalentity_t tmpEntity;
 
 	ClearStates();
-	if ( !restore.ReadFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData)) )
+	if ( !restore.ReadFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData)) )
 		return 0;
 
 	listCount = m_listCount;  // Get new list count
@@ -349,7 +349,7 @@ int CGlobalState::Restore(CRestore& restore)
 
 	for ( i = 0; i < listCount; i++ )
 	{
-		if ( !restore.ReadFields("GENT", &tmpEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY(gGlobalEntitySaveData)) )
+		if ( !restore.ReadFields("GENT", &tmpEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY_AS_INT(gGlobalEntitySaveData)) )
 			return 0;
 		EntityAdd(MAKE_STRING(tmpEntity.name), MAKE_STRING(tmpEntity.levelName), tmpEntity.state);
 	}

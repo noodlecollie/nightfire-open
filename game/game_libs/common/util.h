@@ -653,13 +653,13 @@ void EMIT_GROUPNAME_SUIT(edict_t* entity, const char* groupname);
 	EMIT_SOUND_DYN( \
 		ENT(pev), \
 		chan, \
-		array[RANDOM_LONG(0, SIZE_OF_ARRAY(array) - 1)], \
+		array[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(array) - 1)], \
 		1.0, \
 		ATTN_NORM, \
 		0, \
 		RANDOM_LONG(95, 105));
 
-#define RANDOM_SOUND_ARRAY(array) (array)[RANDOM_LONG(0, SIZE_OF_ARRAY((array)) - 1)]
+#define RANDOM_SOUND_ARRAY(array) (array)[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT((array)) - 1)]
 
 #define GROUP_OP_AND 0
 #define GROUP_OP_NAND 1

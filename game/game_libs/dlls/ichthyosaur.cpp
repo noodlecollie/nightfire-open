@@ -175,7 +175,7 @@ const char* CIchthyosaur::pDieSounds[] = {
 	EMIT_SOUND_DYN( \
 		ENT(pev), \
 		chan, \
-		array[RANDOM_LONG(0, SIZE_OF_ARRAY(array) - 1)], \
+		array[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(array) - 1)], \
 		1.0f, \
 		0.6f, \
 		0, \
@@ -232,7 +232,7 @@ static Task_t tlSwimAround[] = {
 
 static Schedule_t slSwimAround[] = {
 	{tlSwimAround,
-	 SIZE_OF_ARRAY(tlSwimAround),
+	 SIZE_OF_ARRAY_AS_INT(tlSwimAround),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_SEE_ENEMY | bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND,
 	 bits_SOUND_PLAYER | bits_SOUND_COMBAT,
 	 "SwimAround"},
@@ -245,7 +245,7 @@ static Task_t tlSwimAgitated[] = {
 };
 
 static Schedule_t slSwimAgitated[] = {
-	{tlSwimAgitated, SIZE_OF_ARRAY(tlSwimAgitated), 0, 0, "SwimAgitated"},
+	{tlSwimAgitated, SIZE_OF_ARRAY_AS_INT(tlSwimAgitated), 0, 0, "SwimAgitated"},
 };
 
 static Task_t tlCircleEnemy[] = {
@@ -255,7 +255,7 @@ static Task_t tlCircleEnemy[] = {
 
 static Schedule_t slCircleEnemy[] = {
 	{tlCircleEnemy,
-	 SIZE_OF_ARRAY(tlCircleEnemy),
+	 SIZE_OF_ARRAY_AS_INT(tlCircleEnemy),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_CAN_MELEE_ATTACK1 |
 		 bits_COND_CAN_RANGE_ATTACK1,
 	 0,
@@ -270,7 +270,7 @@ Task_t tlTwitchDie[] = {
 };
 
 Schedule_t slTwitchDie[] = {
-	{tlTwitchDie, SIZE_OF_ARRAY(tlTwitchDie), 0, 0, "Die"},
+	{tlTwitchDie, SIZE_OF_ARRAY_AS_INT(tlTwitchDie), 0, 0, "Die"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CIchthyosaur) {

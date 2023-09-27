@@ -334,7 +334,7 @@ Task_t tlAssassinFail[] = {
 
 Schedule_t slAssassinFail[] = {
 	{tlAssassinFail,
-	 SIZE_OF_ARRAY(tlAssassinFail),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinFail),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_PROVOKED | bits_COND_CAN_RANGE_ATTACK1 |
 		 bits_COND_CAN_RANGE_ATTACK2 | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER | bits_SOUND_PLAYER,
@@ -354,7 +354,7 @@ Task_t tlAssassinExposed[] = {
 Schedule_t slAssassinExposed[] = {
 	{
 		tlAssassinExposed,
-		SIZE_OF_ARRAY(tlAssassinExposed),
+		SIZE_OF_ARRAY_AS_INT(tlAssassinExposed),
 		bits_COND_CAN_MELEE_ATTACK1,
 		0,
 		"AssassinExposed",
@@ -378,7 +378,7 @@ Task_t tlAssassinTakeCoverFromEnemy[] = {
 
 Schedule_t slAssassinTakeCoverFromEnemy[] = {
 	{tlAssassinTakeCoverFromEnemy,
-	 SIZE_OF_ARRAY(tlAssassinTakeCoverFromEnemy),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinTakeCoverFromEnemy),
 	 bits_COND_NEW_ENEMY | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
 	 "AssassinTakeCoverFromEnemy"},
@@ -403,7 +403,7 @@ Task_t tlAssassinTakeCoverFromEnemy2[] = {
 
 Schedule_t slAssassinTakeCoverFromEnemy2[] = {
 	{tlAssassinTakeCoverFromEnemy2,
-	 SIZE_OF_ARRAY(tlAssassinTakeCoverFromEnemy2),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinTakeCoverFromEnemy2),
 	 bits_COND_NEW_ENEMY | bits_COND_CAN_MELEE_ATTACK2 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
 	 "AssassinTakeCoverFromEnemy2"},
@@ -424,7 +424,7 @@ Task_t tlAssassinTakeCoverFromBestSound[] = {
 
 Schedule_t slAssassinTakeCoverFromBestSound[] = {
 	{tlAssassinTakeCoverFromBestSound,
-	 SIZE_OF_ARRAY(tlAssassinTakeCoverFromBestSound),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinTakeCoverFromBestSound),
 	 bits_COND_NEW_ENEMY,
 	 0,
 	 "AssassinTakeCoverFromBestSound"},
@@ -442,7 +442,7 @@ Task_t tlAssassinHide[] = {
 
 Schedule_t slAssassinHide[] = {
 	{tlAssassinHide,
-	 SIZE_OF_ARRAY(tlAssassinHide),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinHide),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_ENEMY | bits_COND_SEE_FEAR | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_PROVOKED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -460,7 +460,7 @@ Task_t tlAssassinHunt[] = {
 
 Schedule_t slAssassinHunt[] = {
 	{tlAssassinHunt,
-	 SIZE_OF_ARRAY(tlAssassinHunt),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinHunt),
 	 bits_COND_NEW_ENEMY |
 		 // bits_COND_SEE_ENEMY |
 		 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_HEAR_SOUND,
@@ -478,7 +478,7 @@ Task_t tlAssassinJump[] = {
 };
 
 Schedule_t slAssassinJump[] = {
-	{tlAssassinJump, SIZE_OF_ARRAY(tlAssassinJump), 0, 0, "AssassinJump"},
+	{tlAssassinJump, SIZE_OF_ARRAY_AS_INT(tlAssassinJump), 0, 0, "AssassinJump"},
 };
 
 //=========================================================
@@ -491,7 +491,7 @@ Task_t tlAssassinJumpAttack[] = {
 };
 
 Schedule_t slAssassinJumpAttack[] = {
-	{tlAssassinJumpAttack, SIZE_OF_ARRAY(tlAssassinJumpAttack), 0, 0, "AssassinJumpAttack"},
+	{tlAssassinJumpAttack, SIZE_OF_ARRAY_AS_INT(tlAssassinJumpAttack), 0, 0, "AssassinJumpAttack"},
 };
 
 //=========================================================
@@ -512,7 +512,7 @@ Task_t tlAssassinJumpLand[] = {
 };
 
 Schedule_t slAssassinJumpLand[] = {
-	{tlAssassinJumpLand, SIZE_OF_ARRAY(tlAssassinJumpLand), 0, 0, "AssassinJumpLand"},
+	{tlAssassinJumpLand, SIZE_OF_ARRAY_AS_INT(tlAssassinJumpLand), 0, 0, "AssassinJumpLand"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CHAssassin) {
