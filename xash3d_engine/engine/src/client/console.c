@@ -145,6 +145,11 @@ void Field_CharEvent(field_t* edit, int ch);
 static void Con_LoadHistory(con_history_t* self);
 static void Con_SaveHistory(con_history_t* self);
 
+const byte* Con_GetColorFromTable(char ch)
+{
+	return g_color_table[(size_t)(ch & 7)];
+}
+
 /*
 ================
 Con_Clear_f

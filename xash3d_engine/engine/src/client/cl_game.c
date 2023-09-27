@@ -492,7 +492,8 @@ void CL_DrawCenterPrint(void)
 	char* pText;
 	int i, j, x, y;
 	int width, lineLength;
-	byte *colorDefault, line[MAX_LINELENGTH];
+	const byte* colorDefault;
+	byte line[MAX_LINELENGTH];
 	int charWidth, charHeight;
 
 	if ( !clgame.centerPrint.time )
@@ -506,7 +507,7 @@ void CL_DrawCenterPrint(void)
 	}
 
 	y = clgame.centerPrint.y;  // start y
-	colorDefault = g_color_table[7];
+	colorDefault = Con_GetColorFromTable(7);
 	pText = clgame.centerPrint.message;
 
 	CL_DrawCharacterLen(font, 0, NULL, &charHeight);
