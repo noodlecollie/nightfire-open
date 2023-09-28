@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "Utils.h"
 #include "miniutl/utlbuffer.h"
 #include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 
 CBaseFont::CBaseFont() :
 	m_iTall(),

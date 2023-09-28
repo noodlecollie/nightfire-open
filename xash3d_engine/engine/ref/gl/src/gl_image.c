@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/vec3.h"
 #include "EngineInternalAPI/log_strings.h"
 #include "CRCLib/crclib.h"
 #include "gl_local.h"
@@ -906,8 +907,10 @@ byte* GL_ResampleTexture(
 				normal[1] = MAKE_SIGNED(pix1[1]) + MAKE_SIGNED(pix2[1]) + MAKE_SIGNED(pix3[1]) + MAKE_SIGNED(pix4[1]);
 				normal[2] = MAKE_SIGNED(pix1[2]) + MAKE_SIGNED(pix2[2]) + MAKE_SIGNED(pix3[2]) + MAKE_SIGNED(pix4[2]);
 
-				if ( !VectorNormalizeLength(normal) )
+				if ( !VectorNormalizeLength(normal, normal) )
+				{
 					VectorSet(normal, 0.5f, 0.5f, 1.0f);
+				}
 
 				((byte*)(out + x))[0] = 128 + (byte)(127.0f * normal[0]);
 				((byte*)(out + x))[1] = 128 + (byte)(127.0f * normal[1]);
@@ -1068,8 +1071,10 @@ static void GL_BuildMipMap(byte* in, int srcWidth, int srcHeight, int srcDepth, 
 						normal[2] = MAKE_SIGNED(in[row + 2]) + MAKE_SIGNED(next[row + 2]);
 					}
 
-					if ( !VectorNormalizeLength(normal) )
+					if ( !VectorNormalizeLength(normal, normal) )
+					{
 						VectorSet(normal, 0.5f, 0.5f, 1.0f);
+					}
 
 					out[0] = 128 + (byte)(127.0f * normal[0]);
 					out[1] = 128 + (byte)(127.0f * normal[1]);

@@ -26,6 +26,7 @@
 #include "decals.h"
 #include "soundent.h"
 #include "game.h"
+#include "MathLib/angles.h"
 
 #define SQUID_SPRINT_DIST 256  // how close the squid has to get before starting to sprint and refusing to swerve
 
@@ -116,7 +117,7 @@ void CSquidSpit::Shoot(entvars_t* pevOwner, Vector vecStart, Vector vecVelocity)
 	pSpit->Spawn();
 
 	UTIL_SetOrigin(pSpit->pev, vecStart);
-	pSpit->pev->velocity = vecVelocity;
+	VectorCopy(vecVelocity, pSpit->pev->velocity);
 	pSpit->pev->owner = ENT(pevOwner);
 
 	pSpit->SetThink(&CSquidSpit::Animate);
@@ -146,18 +147,23 @@ void CSquidSpit::Touch(CBaseEntity* pOther)
 	if ( !pOther->pev->takedamage )
 	{
 		// make a splat on the wall
-		UTIL_TraceLine(pev->origin, pev->origin + pev->velocity * 10, dont_ignore_monsters, ENT(pev), &tr);
+		UTIL_TraceLine(
+			pev->origin,
+			Vector(pev->origin) + Vector(pev->velocity) * 10,
+			dont_ignore_monsters,
+			ENT(pev),
+			&tr);
 		UTIL_DecalTrace(&tr, DECAL_SPIT1 + RANDOM_LONG(0, 1));
 
 		// make some flecks
 		MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, tr.vecEndPos);
 		WRITE_BYTE(TE_SPRITE_SPRAY);
-		WRITE_COORD(tr.vecEndPos.x);  // pos
-		WRITE_COORD(tr.vecEndPos.y);
-		WRITE_COORD(tr.vecEndPos.z);
-		WRITE_COORD(tr.vecPlaneNormal.x);  // dir
-		WRITE_COORD(tr.vecPlaneNormal.y);
-		WRITE_COORD(tr.vecPlaneNormal.z);
+		WRITE_COORD(tr.vecEndPos[0]);  // pos
+		WRITE_COORD(tr.vecEndPos[1]);
+		WRITE_COORD(tr.vecEndPos[2]);
+		WRITE_COORD(tr.vecPlaneNormal[0]);  // dir
+		WRITE_COORD(tr.vecPlaneNormal[1]);
+		WRITE_COORD(tr.vecPlaneNormal[2]);
 		WRITE_SHORT(iSquidSpitSprite);  // model
 		WRITE_BYTE(5);  // count
 		WRITE_BYTE(30);  // speed
@@ -288,11 +294,11 @@ int CBullsquid::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, floa
 	// too close to the enemy, it will swerve. (whew).
 	if ( m_hEnemy != 0 && IsMoving() && pevAttacker == m_hEnemy->pev && gpGlobals->time - m_flLastHurtTime > 3 )
 	{
-		flDist = (pev->origin - m_hEnemy->pev->origin).Length2D();
+		flDist = (Vector(pev->origin) - Vector(m_hEnemy->pev->origin)).Length2D();
 
 		if ( flDist > SQUID_SPRINT_DIST )
 		{
-			flDist = (pev->origin - m_Route[m_iRouteIndex].vecLocation).Length2D();  // reusing flDist.
+			flDist = (Vector(pev->origin) - m_Route[m_iRouteIndex].vecLocation).Length2D();  // reusing flDist.
 
 			if ( FTriangulate(pev->origin, m_Route[m_iRouteIndex].vecLocation, flDist * 0.5f, m_hEnemy, &vecApex) )
 			{
@@ -325,7 +331,7 @@ BOOL CBullsquid::CheckRangeAttack1(float flDot, float flDist)
 	{
 		if ( m_hEnemy != 0 )
 		{
-			if ( fabs(pev->origin.z - m_hEnemy->pev->origin.z) > 256 )
+			if ( fabsf(pev->origin[VEC3_Z] - m_hEnemy->pev->origin[VEC3_Z]) > 256 )
 			{
 				// don't try to spit at someone up really high or down really low.
 				return FALSE;
@@ -515,9 +521,11 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			// !!!HACKHACK - the spot at which the spit originates (in front of the mouth) was measured in 3ds and
 			// hardcoded here. we should be able to read the position of bones at runtime for this info.
-			vecSpitOffset = (gpGlobals->v_right * 8 + gpGlobals->v_forward * 37 + gpGlobals->v_up * 23);
-			vecSpitOffset = (pev->origin + vecSpitOffset);
-			vecSpitDir = ((m_hEnemy->pev->origin + m_hEnemy->pev->view_ofs) - vecSpitOffset).Normalize();
+			vecSpitOffset =
+				(Vector(gpGlobals->v_right) * 8 + Vector(gpGlobals->v_forward) * 37 + Vector(gpGlobals->v_up) * 23);
+			vecSpitOffset = (Vector(pev->origin) + vecSpitOffset);
+			vecSpitDir =
+				((Vector(m_hEnemy->pev->origin) + Vector(m_hEnemy->pev->view_ofs)) - vecSpitOffset).Normalize();
 
 			vecSpitDir.x += RANDOM_FLOAT(-0.05f, 0.05f);
 			vecSpitDir.y += RANDOM_FLOAT(-0.05f, 0.05f);
@@ -553,8 +561,8 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				// pHurt->pev->punchangle.z = -15;
 				// pHurt->pev->punchangle.x = -45;
-				pHurt->pev->velocity = pHurt->pev->velocity - gpGlobals->v_forward * 100;
-				pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_up * 100;
+				(Vector(pHurt->pev->velocity) - Vector(gpGlobals->v_forward) * 100).CopyToArray(pHurt->pev->velocity);
+				(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_up) * 100).CopyToArray(pHurt->pev->velocity);
 			}
 		}
 		break;
@@ -565,10 +573,10 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( pHurt )
 			{
-				pHurt->pev->punchangle.z = -20;
-				pHurt->pev->punchangle.x = 20;
-				pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_right * 200;
-				pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_up * 100;
+				pHurt->pev->punchangle[ROLL] = -20;
+				pHurt->pev->punchangle[PITCH] = 20;
+				(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_right) * 200).CopyToArray(pHurt->pev->velocity);
+				(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_up) * 100).CopyToArray(pHurt->pev->velocity);
 			}
 		}
 		break;
@@ -590,7 +598,7 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			// jump into air for 0.8 (24/30) seconds
 			// pev->velocity.z += ( 0.875 * flGravity ) * 0.5;
-			pev->velocity.z += (0.625f * flGravity) * 0.5f;
+			pev->velocity[VEC3_Z] += (0.625f * flGravity) * 0.5f;
 		}
 		break;
 		case BSQUID_AE_THROW:
@@ -625,7 +633,8 @@ void CBullsquid::HandleAnimEvent(MonsterEvent_t* pEvent)
 				if ( pHurt->IsPlayer() )
 				{
 					UTIL_MakeVectors(pev->angles);
-					pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_forward * 300 + gpGlobals->v_up * 300;
+					(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_forward) * 300 + Vector(gpGlobals->v_up) * 300)
+						.CopyToArray(pHurt->pev->velocity);
 				}
 			}
 		}
@@ -761,7 +770,7 @@ void CBullsquid::RunAI(void)
 	if ( m_hEnemy != 0 && m_Activity == ACT_RUN )
 	{
 		// chasing enemy. Sprint for last bit
-		if ( (pev->origin - m_hEnemy->pev->origin).Length2D() < SQUID_SPRINT_DIST )
+		if ( (Vector(pev->origin) - Vector(m_hEnemy->pev->origin)).Length2D() < SQUID_SPRINT_DIST )
 		{
 			pev->framerate = 1.25;
 		}
@@ -782,7 +791,7 @@ Task_t tlSquidRangeAttack1[] = {
 
 Schedule_t slSquidRangeAttack1[] = {
 	{tlSquidRangeAttack1,
-	 SIZE_OF_ARRAY(tlSquidRangeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlSquidRangeAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_HEAVY_DAMAGE | bits_COND_ENEMY_OCCLUDED |
 		 bits_COND_NO_AMMO_LOADED,
 	 0,
@@ -799,7 +808,7 @@ Task_t tlSquidChaseEnemy1[] = {
 
 Schedule_t slSquidChaseEnemy[] = {
 	{tlSquidChaseEnemy1,
-	 SIZE_OF_ARRAY(tlSquidChaseEnemy1),
+	 SIZE_OF_ARRAY_AS_INT(tlSquidChaseEnemy1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_SMELL_FOOD | bits_COND_CAN_RANGE_ATTACK1 |
 		 bits_COND_CAN_MELEE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK2 | bits_COND_TASK_FAILED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER | bits_SOUND_MEAT,
@@ -813,7 +822,7 @@ Task_t tlSquidHurtHop[] = {
 	{TASK_FACE_ENEMY, (float)0},  // in case squid didn't turn all the way in the air.
 };
 
-Schedule_t slSquidHurtHop[] = {{tlSquidHurtHop, SIZE_OF_ARRAY(tlSquidHurtHop), 0, 0, "SquidHurtHop"}};
+Schedule_t slSquidHurtHop[] = {{tlSquidHurtHop, SIZE_OF_ARRAY_AS_INT(tlSquidHurtHop), 0, 0, "SquidHurtHop"}};
 
 Task_t tlSquidSeeCrab[] = {
 	{TASK_STOP_MOVING, (float)0},
@@ -824,7 +833,7 @@ Task_t tlSquidSeeCrab[] = {
 
 Schedule_t slSquidSeeCrab[] = {{
 	tlSquidSeeCrab,
-	SIZE_OF_ARRAY(tlSquidSeeCrab),
+	SIZE_OF_ARRAY_AS_INT(tlSquidSeeCrab),
 	bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	0,
 	"SquidSeeCrab",
@@ -850,7 +859,7 @@ Task_t tlSquidEat[] = {
 
 Schedule_t slSquidEat[] = {
 	{tlSquidEat,
-	 SIZE_OF_ARRAY(tlSquidEat),
+	 SIZE_OF_ARRAY_AS_INT(tlSquidEat),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_NEW_ENEMY,
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.
@@ -879,7 +888,7 @@ Task_t tlSquidSniffAndEat[] = {
 
 Schedule_t slSquidSniffAndEat[] = {
 	{tlSquidSniffAndEat,
-	 SIZE_OF_ARRAY(tlSquidSniffAndEat),
+	 SIZE_OF_ARRAY_AS_INT(tlSquidSniffAndEat),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_NEW_ENEMY,
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.
@@ -904,7 +913,7 @@ Task_t tlSquidWallow[] = {
 
 Schedule_t slSquidWallow[] = {
 	{tlSquidWallow,
-	 SIZE_OF_ARRAY(tlSquidWallow),
+	 SIZE_OF_ARRAY_AS_INT(tlSquidWallow),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_NEW_ENEMY,
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.

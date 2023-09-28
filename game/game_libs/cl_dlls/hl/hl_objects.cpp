@@ -26,6 +26,7 @@
 #include "EnginePublicAPI/event_api.h"
 #include "EnginePublicAPI/entity_types.h"
 #include "EnginePublicAPI/r_efx.h"
+#include "MathLib/utils.h"
 
 extern BEAM* pBeam;
 extern BEAM* pBeam2;
@@ -35,7 +36,6 @@ void HUD_GetLastOrg(float* org);
 void UpdateBeams(void)
 {
 	vec3_t forward, vecSrc, vecEnd, origin, angles, right, up;
-	vec3_t view_ofs;
 	pmtrace_t tr;
 	cl_entity_t* pthisplayer = gEngfuncs.GetLocalPlayer();
 	int idx = pthisplayer->index;
@@ -67,21 +67,21 @@ void UpdateBeams(void)
 
 	if ( pBeam )
 	{
-		pBeam->target = tr.endpos;
+		VectorCopy(tr.endpos, pBeam->target);
 		pBeam->die =
 			gEngfuncs.GetClientTime() + 0.1f;  // We keep it alive just a little bit forward in the future, just in case.
 	}
 
 	if ( pBeam2 )
 	{
-		pBeam2->target = tr.endpos;
+		VectorCopy(tr.endpos, pBeam2->target);
 		pBeam2->die =
 			gEngfuncs.GetClientTime() + 0.1f;  // We keep it alive just a little bit forward in the future, just in case.
 	}
 
 	if ( pFlare )  // Vit_amiN: beam flare
 	{
-		pFlare->entity.origin = tr.endpos;
+		VectorCopy(tr.endpos, pFlare->entity.origin);
 		pFlare->die =
 			gEngfuncs.GetClientTime() + 0.1f;  // We keep it alive just a little bit forward in the future, just in case.
 

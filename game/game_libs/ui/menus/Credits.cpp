@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Framework.h"
 #include "Bitmap.h"
 #include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 
 #define UI_CREDITS_PATH "credits.txt"
 #define UI_CREDITS_MAXLINES 2048

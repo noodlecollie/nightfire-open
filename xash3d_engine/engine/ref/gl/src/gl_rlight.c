@@ -15,7 +15,10 @@ GNU General Public License for more details.
 
 #include "gl_local.h"
 #include "EnginePublicAPI/studio.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
+#include "MathLib/mat3x4.h"
+#include "MathLib/utils.h"
 #include "EnginePublicAPI/ref_params.h"
 #include "EnginePublicAPI/pm_defs.h"
 

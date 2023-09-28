@@ -52,4 +52,4 @@ GNU General Public License for more details.
 
 #define CVAR_GLCONFIG_DESCRIPTION "enable or disable %s"
 
-#define DEFAULT_UPDATE_PAGE "https://github.com/FWGS/xash3d-fwgs/releases/latest"
+#define DEFAULT_UPDATE_PAGE "https://github.com/noodlecollie/nightfire-open/releases"

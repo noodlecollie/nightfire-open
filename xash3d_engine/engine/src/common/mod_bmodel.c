@@ -14,7 +14,8 @@ GNU General Public License for more details.
 */
 
 #include "CRTLib/bitdefs.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
+#include "MathLib/utils.h"
 #include "EngineInternalAPI/wadfile.h"
 #include "PlatformLib/String.h"
 #include "common/common.h"
@@ -979,7 +980,7 @@ static void Mod_BoxLeafnums_r(leaflist_t* ll, mnode_t* node)
 			return;
 		}
 
-		sides = BOX_ON_PLANE_SIDE(ll->mins, ll->maxs, node->plane);
+		sides = BoxOnPlaneSide(ll->mins, ll->maxs, node->plane);
 
 		if ( sides == 1 )
 		{

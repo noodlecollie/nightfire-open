@@ -21,6 +21,7 @@
 #include "decals.h"
 #include "gamerules.h"
 #include "game.h"
+#include "MathLib/angles.h"
 
 void EntvarsKeyvalue(entvars_t* pev, KeyValueData* pkvd);
 
@@ -137,8 +138,8 @@ int DispatchSpawn(edict_t* pent)
 	if ( pEntity )
 	{
 		// Initialize these or entities who don't link to the world won't have anything in here
-		pEntity->pev->absmin = pEntity->pev->origin - Vector(1, 1, 1);
-		pEntity->pev->absmax = pEntity->pev->origin + Vector(1, 1, 1);
+		VectorSubtract(pEntity->pev->origin, Vector(1, 1, 1), pEntity->pev->absmin);
+		VectorAdd(pEntity->pev->origin, Vector(1, 1, 1), pEntity->pev->absmax);
 
 		pEntity->Spawn();
 
@@ -341,7 +342,8 @@ int DispatchRestore(edict_t* pent, SAVERESTOREDATA* pSaveData, int globalEntity)
 				// tmpVars.classname ) );
 				//  Tell the restore code we're overlaying a global entity from another level
 				restoreHelper.SetGlobalMode(1);  // Don't overwrite global fields
-				pSaveData->vecLandmarkOffset = (pSaveData->vecLandmarkOffset - pNewEntity->pev->mins) + tmpVars.mins;
+				((Vector(pSaveData->vecLandmarkOffset) - Vector(pNewEntity->pev->mins)) + Vector(tmpVars.mins))
+					.CopyToArray(pSaveData->vecLandmarkOffset);
 				pEntity = pNewEntity;  // we're going to restore this data OVER the old entity
 				pent = ENT(pEntity->pev);
 				// Update the global table to say that the global definition of this entity should come from this level
@@ -379,7 +381,7 @@ int DispatchRestore(edict_t* pent, SAVERESTOREDATA* pSaveData, int globalEntity)
 		{
 			// ALERT( at_console, "After: %f %f %f %s\n", pEntity->pev->origin.x, pEntity->pev->origin.y,
 			// pEntity->pev->origin.z, STRING( pEntity->pev->model ) );
-			pSaveData->vecLandmarkOffset = oldOffset;
+			VectorCopy(oldOffset, pSaveData->vecLandmarkOffset);
 			if ( pEntity )
 			{
 				UTIL_SetOrigin(pEntity->pev, pEntity->pev->origin);
@@ -546,12 +548,12 @@ int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 	// (that is, no actual entity projectile was involved in the attack so use the shooter's origin).
 	if ( pevAttacker == pevInflictor )
 	{
-		vecTemp = pevAttacker->origin - VecBModelOrigin(pev);
+		vecTemp = Vector(pevAttacker->origin) - VecBModelOrigin(pev);
 	}
 	else
 	// an actual missile was involved.
 	{
-		vecTemp = pevInflictor->origin - VecBModelOrigin(pev);
+		vecTemp = Vector(pevInflictor->origin) - VecBModelOrigin(pev);
 	}
 
 	// this global is still used for glass and other non-monster killables, along with decals.
@@ -562,14 +564,17 @@ int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 	if ( (!FNullEnt(pevInflictor)) && (pev->movetype == MOVETYPE_WALK || pev->movetype == MOVETYPE_STEP) &&
 		 (pevAttacker->solid != SOLID_TRIGGER) )
 	{
-		Vector vecDir = pev->origin - (pevInflictor->absmin + pevInflictor->absmax) * 0.5;
+		Vector vecDir = Vector(pev->origin) - (Vector(pevInflictor->absmin) + Vector(pevInflictor->absmax)) * 0.5;
 		vecDir = vecDir.Normalize();
 
-		float flForce = flDamage * ((32 * 32 * 72.0f) / (pev->size.x * pev->size.y * pev->size.z)) * 5;
+		float flForce = flDamage * ((32 * 32 * 72.0f) / (pev->size[VEC3_X] * pev->size[VEC3_Y] * pev->size[VEC3_Z])) * 5;
 
 		if ( flForce > 1000.0 )
+		{
 			flForce = 1000.0;
-		pev->velocity = pev->velocity + vecDir * flForce;
+		}
+
+		(Vector(pev->velocity) + vecDir * flForce).CopyToArray(pev->velocity);
 	}
 
 	// do the damage
@@ -614,7 +619,9 @@ TYPEDESCRIPTION CBaseEntity::m_SaveData[] = {
 int CBaseEntity::Save(CSave& save)
 {
 	if ( save.WriteEntVars("ENTVARS", pev) )
-		return save.WriteFields("BASE", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData));
+	{
+		return save.WriteFields("BASE", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData));
+	}
 
 	return 0;
 }
@@ -624,8 +631,11 @@ int CBaseEntity::Restore(CRestore& restore)
 	int status;
 
 	status = restore.ReadEntVars("ENTVARS", pev);
+
 	if ( status )
-		status = restore.ReadFields("BASE", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData));
+	{
+		status = restore.ReadFields("BASE", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData));
+	}
 
 	if ( pev->modelindex != 0 && !FStringNull(pev->model) )
 	{
@@ -644,7 +654,7 @@ int CBaseEntity::Restore(CRestore& restore)
 // Initialize absmin & absmax to the appropriate box
 void SetObjectCollisionBox(entvars_t* pev)
 {
-	if ( (pev->solid == SOLID_BSP) && (pev->angles.x || pev->angles.y || pev->angles.z) )
+	if ( (pev->solid == SOLID_BSP) && (pev->angles[PITCH] || pev->angles[YAW] || pev->angles[ROLL]) )
 	{
 		// expand for rotation
 		float max, v;
@@ -654,11 +664,18 @@ void SetObjectCollisionBox(entvars_t* pev)
 		for ( i = 0; i < 3; i++ )
 		{
 			v = fabsf(((float*)pev->mins)[i]);
+
 			if ( v > max )
+			{
 				max = v;
+			}
+
 			v = fabsf(((float*)pev->maxs)[i]);
+
 			if ( v > max )
+			{
 				max = v;
+			}
 		}
 		for ( i = 0; i < 3; i++ )
 		{
@@ -668,16 +685,16 @@ void SetObjectCollisionBox(entvars_t* pev)
 	}
 	else
 	{
-		pev->absmin = pev->origin + pev->mins;
-		pev->absmax = pev->origin + pev->maxs;
+		VectorAdd(pev->origin, pev->mins, pev->absmin);
+		VectorAdd(pev->origin, pev->maxs, pev->absmax);
 	}
 
-	pev->absmin.x -= 1;
-	pev->absmin.y -= 1;
-	pev->absmin.z -= 1;
-	pev->absmax.x += 1;
-	pev->absmax.y += 1;
-	pev->absmax.z += 1;
+	pev->absmin[VEC3_X] -= 1;
+	pev->absmin[VEC3_Y] -= 1;
+	pev->absmin[VEC3_Z] -= 1;
+	pev->absmax[VEC3_X] += 1;
+	pev->absmax[VEC3_Y] += 1;
+	pev->absmax[VEC3_Z] += 1;
 }
 
 void CBaseEntity::SetObjectCollisionBox(void)
@@ -687,9 +704,9 @@ void CBaseEntity::SetObjectCollisionBox(void)
 
 int CBaseEntity::Intersects(CBaseEntity* pOther)
 {
-	if ( pOther->pev->absmin.x > pev->absmax.x || pOther->pev->absmin.y > pev->absmax.y ||
-		 pOther->pev->absmin.z > pev->absmax.z || pOther->pev->absmax.x < pev->absmin.x ||
-		 pOther->pev->absmax.y < pev->absmin.y || pOther->pev->absmax.z < pev->absmin.z )
+	if ( pOther->pev->absmin[VEC3_X] > pev->absmax[VEC3_X] || pOther->pev->absmin[VEC3_Y] > pev->absmax[VEC3_Y] ||
+		 pOther->pev->absmin[VEC3_Z] > pev->absmax[VEC3_Z] || pOther->pev->absmax[VEC3_X] < pev->absmin[VEC3_X] ||
+		 pOther->pev->absmax[VEC3_Y] < pev->absmin[VEC3_Y] || pOther->pev->absmax[VEC3_Z] < pev->absmin[VEC3_Z] )
 		return 0;
 	return 1;
 }
@@ -718,30 +735,30 @@ int CBaseEntity::IsDormant(void)
 BOOL CBaseEntity::IsInWorld(void)
 {
 	// position
-	if ( pev->origin.x >= 4096 )
+	if ( pev->origin[VEC3_X] >= 4096 )
 		return FALSE;
-	if ( pev->origin.y >= 4096 )
+	if ( pev->origin[VEC3_Y] >= 4096 )
 		return FALSE;
-	if ( pev->origin.z >= 4096 )
+	if ( pev->origin[VEC3_Z] >= 4096 )
 		return FALSE;
-	if ( pev->origin.x <= -4096 )
+	if ( pev->origin[VEC3_X] <= -4096 )
 		return FALSE;
-	if ( pev->origin.y <= -4096 )
+	if ( pev->origin[VEC3_Y] <= -4096 )
 		return FALSE;
-	if ( pev->origin.z <= -4096 )
+	if ( pev->origin[VEC3_Z] <= -4096 )
 		return FALSE;
 	// speed
-	if ( pev->velocity.x >= 2000 )
+	if ( pev->velocity[VEC3_X] >= 2000 )
 		return FALSE;
-	if ( pev->velocity.y >= 2000 )
+	if ( pev->velocity[VEC3_Y] >= 2000 )
 		return FALSE;
-	if ( pev->velocity.z >= 2000 )
+	if ( pev->velocity[VEC3_Z] >= 2000 )
 		return FALSE;
-	if ( pev->velocity.x <= -2000 )
+	if ( pev->velocity[VEC3_X] <= -2000 )
 		return FALSE;
-	if ( pev->velocity.y <= -2000 )
+	if ( pev->velocity[VEC3_Y] <= -2000 )
 		return FALSE;
-	if ( pev->velocity.z <= -2000 )
+	if ( pev->velocity[VEC3_Z] <= -2000 )
 		return FALSE;
 
 	return TRUE;
@@ -784,8 +801,8 @@ CBaseEntity::Create(const char* szName, const Vector& vecOrigin, const Vector& v
 	}
 	pEntity = Instance(pent);
 	pEntity->pev->owner = pentOwner;
-	pEntity->pev->origin = vecOrigin;
-	pEntity->pev->angles = vecAngles;
+	VectorCopy(vecOrigin, pEntity->pev->origin);
+	VectorCopy(vecAngles, pEntity->pev->angles);
 	DispatchSpawn(pEntity->edict());
 	return pEntity;
 }

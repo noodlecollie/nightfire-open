@@ -8,6 +8,8 @@
 // studio_model.cpp
 // routines for setting up to draw 3DStudio models
 
+#include "MathLib/vec3.h"
+#include "MathLib/utils.h"
 #include "hud.h"
 #include "cl_util.h"
 #include "EnginePublicAPI/const.h"
@@ -25,7 +27,6 @@
 #include <cstdlib>
 #include "PlatformLib/String.h"
 
-#include "studio_util.h"
 #include "EnginePublicAPI/r_studioint.h"
 
 #include "StudioModelRenderer.h"
@@ -269,13 +270,13 @@ void CStudioModelRenderer::StudioCalcBoneQuaterion(
 
 	if ( !VectorCompare(angle1, angle2) )
 	{
-		AngleQuaternion(angle1, q1);
-		AngleQuaternion(angle2, q2);
+		AngleQuaternion(angle1, q1, true);
+		AngleQuaternion(angle2, q2, true);
 		QuaternionSlerp(q1, q2, s, q);
 	}
 	else
 	{
-		AngleQuaternion(angle1, q);
+		AngleQuaternion(angle1, q, true);
 	}
 }
 
@@ -551,7 +552,7 @@ void CStudioModelRenderer::StudioSetUpTransform(int trivial_accept)
 	// Con_DPrintf( "%.0f %0.f %0.f\n", angles[0], angles[1], angles[2] );
 
 	angles[PITCH] = -angles[PITCH];
-	AngleMatrix(angles, (*m_protationmatrix));
+	Matrix3x4_AnglesToMatrix(angles, (*m_protationmatrix));
 
 	if ( !IEngineStudio.IsHardware() )
 	{
@@ -559,14 +560,14 @@ void CStudioModelRenderer::StudioSetUpTransform(int trivial_accept)
 
 		VectorCopy(m_vRight, viewmatrix[0]);
 		VectorCopy(m_vUp, viewmatrix[1]);
-		VectorInverse(viewmatrix[1]);
+		VectorNegate(viewmatrix[1], viewmatrix[1]);
 		VectorCopy(m_vNormal, viewmatrix[2]);
 
 		(*m_protationmatrix)[0][3] = modelpos[0] - m_vRenderOrigin[0];
 		(*m_protationmatrix)[1][3] = modelpos[1] - m_vRenderOrigin[1];
 		(*m_protationmatrix)[2][3] = modelpos[2] - m_vRenderOrigin[2];
 
-		ConcatTransforms(viewmatrix, (*m_protationmatrix), (*m_paliastransform));
+		Matrix3x4_ConcatTransforms((*m_paliastransform), viewmatrix, (*m_protationmatrix));
 
 		// do the scaling up of x and y to screen coordinates as part of the transform
 		// for the unclipped case (it would mess up clipping in the clipped case).
@@ -865,7 +866,8 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		StudioCalcRotations(pos2, q2, pseqdesc, panim, static_cast<float>(f));
 
 		dadt = StudioEstimateInterpolant();
-		s = (m_pCurrentEntity->curstate.blending[0] * dadt + m_pCurrentEntity->latched.prevblending[0] * (1.0f - dadt)) /
+		s = (m_pCurrentEntity->curstate.blending[0] * dadt +
+			 m_pCurrentEntity->latched.prevblending[0] * (1.0f - dadt)) /
 			255.0f;
 
 		StudioSlerpBones(q, pos, q2, pos2, s);
@@ -972,7 +974,7 @@ void CStudioModelRenderer::StudioSetupBones(void)
 
 	for ( i = 0; i < m_pStudioHeader->numbones; i++ )
 	{
-		QuaternionMatrix(q[i], bonematrix);
+		Matrix3x4_FromQuat(bonematrix, q[i]);
 
 		bonematrix[0][3] = pos[i][0];
 		bonematrix[1][3] = pos[i][1];
@@ -982,16 +984,13 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		{
 			if ( IEngineStudio.IsHardware() )
 			{
-				ConcatTransforms((*m_protationmatrix), bonematrix, (*m_pbonetransform)[i]);
-
-				// MatrixCopy should be faster...
-				// ConcatTransforms( (*m_protationmatrix), bonematrix, (*m_plighttransform)[i] );
-				MatrixCopy((*m_pbonetransform)[i], (*m_plighttransform)[i]);
+				Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_protationmatrix), bonematrix);
+				Matrix3x4_Copy((*m_plighttransform)[i], (*m_pbonetransform)[i]);
 			}
 			else
 			{
-				ConcatTransforms((*m_paliastransform), bonematrix, (*m_pbonetransform)[i]);
-				ConcatTransforms((*m_protationmatrix), bonematrix, (*m_plighttransform)[i]);
+				Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_paliastransform), bonematrix);
+				Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_protationmatrix), bonematrix);
 			}
 
 			// Apply client-side effects to the transformation matrix
@@ -999,8 +998,8 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		}
 		else
 		{
-			ConcatTransforms((*m_pbonetransform)[pbones[i].parent], bonematrix, (*m_pbonetransform)[i]);
-			ConcatTransforms((*m_plighttransform)[pbones[i].parent], bonematrix, (*m_plighttransform)[i]);
+			Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_pbonetransform)[pbones[i].parent], bonematrix);
+			Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_plighttransform)[pbones[i].parent], bonematrix);
 		}
 	}
 }
@@ -1023,8 +1022,8 @@ void CStudioModelRenderer::StudioSaveBones(void)
 	for ( i = 0; i < m_pStudioHeader->numbones; i++ )
 	{
 		PlatformLib_StrCpy(m_nCachedBoneNames[i], sizeof(m_nCachedBoneNames[i]), pbones[i].name);
-		MatrixCopy((*m_pbonetransform)[i], m_rgCachedBoneTransform[i]);
-		MatrixCopy((*m_plighttransform)[i], m_rgCachedLightTransform[i]);
+		Matrix3x4_Copy(m_rgCachedBoneTransform[i], (*m_pbonetransform)[i]);
+		Matrix3x4_Copy(m_rgCachedLightTransform[i], (*m_plighttransform)[i]);
 	}
 }
 
@@ -1073,14 +1072,14 @@ void CStudioModelRenderer::StudioMergeBones(model_t* subModel)
 		{
 			if ( PlatformLib_StrCaseCmp(pbones[i].name, m_nCachedBoneNames[j]) == 0 )
 			{
-				MatrixCopy(m_rgCachedBoneTransform[j], (*m_pbonetransform)[i]);
-				MatrixCopy(m_rgCachedLightTransform[j], (*m_plighttransform)[i]);
+				Matrix3x4_Copy((*m_pbonetransform)[i], m_rgCachedBoneTransform[j]);
+				Matrix3x4_Copy((*m_plighttransform)[i], m_rgCachedLightTransform[j]);
 				break;
 			}
 		}
 		if ( j >= m_nCachedBones )
 		{
-			QuaternionMatrix(q[i], bonematrix);
+			Matrix3x4_FromQuat(bonematrix, q[i]);
 
 			bonematrix[0][3] = pos[i][0];
 			bonematrix[1][3] = pos[i][1];
@@ -1090,16 +1089,13 @@ void CStudioModelRenderer::StudioMergeBones(model_t* subModel)
 			{
 				if ( IEngineStudio.IsHardware() )
 				{
-					ConcatTransforms((*m_protationmatrix), bonematrix, (*m_pbonetransform)[i]);
-
-					// MatrixCopy should be faster...
-					// ConcatTransforms( (*m_protationmatrix), bonematrix, (*m_plighttransform)[i] );
-					MatrixCopy((*m_pbonetransform)[i], (*m_plighttransform)[i]);
+					Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_protationmatrix), bonematrix);
+					Matrix3x4_Copy((*m_plighttransform)[i], (*m_pbonetransform)[i]);
 				}
 				else
 				{
-					ConcatTransforms((*m_paliastransform), bonematrix, (*m_pbonetransform)[i]);
-					ConcatTransforms((*m_protationmatrix), bonematrix, (*m_plighttransform)[i]);
+					Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_paliastransform), bonematrix);
+					Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_protationmatrix), bonematrix);
 				}
 
 				// Apply client-side effects to the transformation matrix
@@ -1107,8 +1103,8 @@ void CStudioModelRenderer::StudioMergeBones(model_t* subModel)
 			}
 			else
 			{
-				ConcatTransforms((*m_pbonetransform)[pbones[i].parent], bonematrix, (*m_pbonetransform)[i]);
-				ConcatTransforms((*m_plighttransform)[pbones[i].parent], bonematrix, (*m_plighttransform)[i]);
+				Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_pbonetransform)[pbones[i].parent], bonematrix);
+				Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_plighttransform)[pbones[i].parent], bonematrix);
 			}
 		}
 	}
@@ -1206,7 +1202,7 @@ int CStudioModelRenderer::StudioDrawModel(int flags)
 
 			for ( size_t index = 0; index < CL_ENTITY_MAX_ATTACHMENTS; ++index )
 			{
-				ent->attachment[index] = m_pCurrentEntity->attachment[index];
+				VectorCopy(m_pCurrentEntity->attachment[index], ent->attachment[index]);
 			}
 		}
 	}
@@ -1266,7 +1262,7 @@ void CStudioModelRenderer::StudioEstimateGait(entity_state_t* pplayer)
 	{
 		VectorSubtract(m_pCurrentEntity->origin, m_pPlayerInfo->prevgaitorigin, est_velocity);
 		VectorCopy(m_pCurrentEntity->origin, m_pPlayerInfo->prevgaitorigin);
-		m_flGaitMovement = Length(est_velocity);
+		m_flGaitMovement = VectorLength(est_velocity);
 		if ( dt <= 0 || m_flGaitMovement / dt < 5 )
 		{
 			m_flGaitMovement = 0;
@@ -1277,7 +1273,7 @@ void CStudioModelRenderer::StudioEstimateGait(entity_state_t* pplayer)
 	else
 	{
 		VectorCopy(pplayer->velocity, est_velocity);
-		m_flGaitMovement = Length(est_velocity) * dt;
+		m_flGaitMovement = VectorLength(est_velocity) * dt;
 	}
 
 	if ( est_velocity[1] == 0 && est_velocity[0] == 0 )
@@ -1513,7 +1509,7 @@ int CStudioModelRenderer::StudioDrawPlayer(int flags, entity_state_t* pplayer)
 
 			for ( size_t index = 0; index < CL_ENTITY_MAX_ATTACHMENTS; ++index )
 			{
-				ent->attachment[index] = m_pCurrentEntity->attachment[index];
+				VectorCopy(m_pCurrentEntity->attachment[index], ent->attachment[index]);
 			}
 		}
 	}
@@ -1610,7 +1606,10 @@ void CStudioModelRenderer::StudioCalcAttachments(void)
 	pattachment = (mstudioattachment_t*)((byte*)m_pStudioHeader + m_pStudioHeader->attachmentindex);
 	for ( i = 0; i < m_pStudioHeader->numattachments; i++ )
 	{
-		VectorTransform(pattachment[i].org, (*m_plighttransform)[pattachment[i].bone], m_pCurrentEntity->attachment[i]);
+		Matrix3x4_VectorTransform(
+			(*m_plighttransform)[pattachment[i].bone],
+			pattachment[i].org,
+			m_pCurrentEntity->attachment[i]);
 	}
 }
 

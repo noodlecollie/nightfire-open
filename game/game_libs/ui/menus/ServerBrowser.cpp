@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "utlvector.h"
 #include "CheckBox.h"
 #include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 
 #define ART_BANNER_INET "gfx/shell/head_inetgames"
 #define ART_BANNER_LAN "gfx/shell/head_lan"

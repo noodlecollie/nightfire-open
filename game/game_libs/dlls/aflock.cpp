@@ -20,6 +20,7 @@
 #include "cbase.h"
 #include "monsters.h"
 #include "squadmonster.h"
+#include "MathLib/angles.h"
 
 #define AFLOCK_MAX_RECRUIT_RADIUS 1024
 #define AFLOCK_FLY_SPEED 125
@@ -205,14 +206,14 @@ void CFlockingFlyerFlock::SpawnFlock(void)
 		vecSpot.x = RANDOM_FLOAT(-R, R);
 		vecSpot.y = RANDOM_FLOAT(-R, R);
 		vecSpot.z = RANDOM_FLOAT(0, 16);
-		vecSpot = pev->origin + vecSpot;
+		vecSpot = Vector(pev->origin) + vecSpot;
 
 		UTIL_SetOrigin(pBoid->pev, vecSpot);
 		pBoid->pev->movetype = MOVETYPE_FLY;
 		pBoid->SpawnCommonCode();
 		pBoid->pev->flags &= ~FL_ONGROUND;
-		pBoid->pev->velocity = g_vecZero;
-		pBoid->pev->angles = pev->angles;
+		VectorClear(pBoid->pev->velocity);
+		VectorCopy(pev->angles, pBoid->pev->angles);
 
 		pBoid->pev->frame = 0;
 		pBoid->pev->nextthink = gpGlobals->time + 0.2f;
@@ -320,7 +321,7 @@ void CFlockingFlyer::FallHack(void)
 		}
 		else
 		{
-			pev->velocity = g_vecZero;
+			VectorClear(pev->velocity);
 			SetThink(NULL);
 		}
 	}
@@ -364,10 +365,10 @@ void CFlockingFlyer::BoidAdvanceFrame()
 	pev->framerate = flapspeed;
 
 	// lean
-	pev->avelocity.x = -(pev->angles.x + flapspeed * 5);
+	pev->avelocity[PITCH] = -(pev->angles[PITCH] + flapspeed * 5);
 
 	// bank
-	pev->avelocity.z = -(pev->angles.z + pev->avelocity.y);
+	pev->avelocity[ROLL] = -(pev->angles[ROLL] + pev->avelocity[YAW]);
 
 	// pev->framerate = flapspeed;
 	StudioFrameAdvance(0.1f);
@@ -467,18 +468,18 @@ void CFlockingFlyer::SpreadFlock()
 	CFlockingFlyer* pList = m_pSquadLeader;
 	while ( pList )
 	{
-		if ( pList != this && (pev->origin - pList->pev->origin).Length() <= AFLOCK_TOO_CLOSE )
+		if ( pList != this && (Vector(pev->origin) - Vector(pList->pev->origin)).Length() <= AFLOCK_TOO_CLOSE )
 		{
 			// push the other away
-			vecDir = pList->pev->origin - pev->origin;
+			vecDir = Vector(pList->pev->origin) - Vector(pev->origin);
 			vecDir = vecDir.Normalize();
 
 			// store the magnitude of the other boid's velocity, and normalize it so we
 			// can average in a course that points away from the leader.
-			flSpeed = pList->pev->velocity.Length();
-			pList->pev->velocity = pList->pev->velocity.Normalize();
-			pList->pev->velocity = (pList->pev->velocity + vecDir) * 0.5;
-			pList->pev->velocity = pList->pev->velocity * flSpeed;
+			flSpeed = VectorLength(pList->pev->velocity);
+			VectorNormalize(pList->pev->velocity);
+			((Vector(pList->pev->velocity) + vecDir) * 0.5f).CopyToArray(pList->pev->velocity);
+			VectorScale(pList->pev->velocity, flSpeed, pList->pev->velocity);
 		}
 
 		pList = pList->m_pSquadNext;
@@ -497,12 +498,12 @@ void CFlockingFlyer::SpreadFlock2()
 	CFlockingFlyer* pList = m_pSquadLeader;
 	while ( pList )
 	{
-		if ( pList != this && (pev->origin - pList->pev->origin).Length() <= AFLOCK_TOO_CLOSE )
+		if ( pList != this && (Vector(pev->origin) - Vector(pList->pev->origin)).Length() <= AFLOCK_TOO_CLOSE )
 		{
-			vecDir = pev->origin - pList->pev->origin;
+			vecDir = Vector(pev->origin) - Vector(pList->pev->origin);
 			vecDir = vecDir.Normalize();
 
-			pev->velocity = pev->velocity + vecDir;
+			VectorAdd(pev->velocity, vecDir, pev->velocity);
 		}
 
 		pList = pList->m_pSquadNext;
@@ -532,7 +533,12 @@ BOOL CFlockingFlyer::FPathBlocked()
 	fBlocked = FALSE;  // assume the way ahead is clear
 
 	// check for obstacle ahead
-	UTIL_TraceLine(pev->origin, pev->origin + gpGlobals->v_forward * AFLOCK_CHECK_DIST, ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(
+		pev->origin,
+		Vector(pev->origin) + Vector(gpGlobals->v_forward) * AFLOCK_CHECK_DIST,
+		ignore_monsters,
+		ENT(pev),
+		&tr);
 	if ( tr.flFraction != 1.0 )
 	{
 		m_flLastBlockedTime = gpGlobals->time;
@@ -541,8 +547,8 @@ BOOL CFlockingFlyer::FPathBlocked()
 
 	// extra wide checks
 	UTIL_TraceLine(
-		pev->origin + gpGlobals->v_right * 12,
-		pev->origin + gpGlobals->v_right * 12 + gpGlobals->v_forward * AFLOCK_CHECK_DIST,
+		Vector(pev->origin) + Vector(gpGlobals->v_right) * 12,
+		Vector(pev->origin) + Vector(gpGlobals->v_right) * 12 + Vector(gpGlobals->v_forward) * AFLOCK_CHECK_DIST,
 		ignore_monsters,
 		ENT(pev),
 		&tr);
@@ -553,8 +559,8 @@ BOOL CFlockingFlyer::FPathBlocked()
 	}
 
 	UTIL_TraceLine(
-		pev->origin - gpGlobals->v_right * 12,
-		pev->origin - gpGlobals->v_right * 12 + gpGlobals->v_forward * AFLOCK_CHECK_DIST,
+		Vector(pev->origin) - Vector(gpGlobals->v_right) * 12,
+		Vector(pev->origin) - Vector(gpGlobals->v_right) * 12 + Vector(gpGlobals->v_forward) * AFLOCK_CHECK_DIST,
 		ignore_monsters,
 		ENT(pev),
 		&tr);
@@ -595,15 +601,17 @@ void CFlockingFlyer::FlockLeaderThink(void)
 		if ( m_fTurning )
 		{
 			m_fTurning = FALSE;
-			pev->avelocity.y = 0;
+			pev->avelocity[YAW] = 0;
 		}
 
 		m_fPathBlocked = FALSE;
 
 		if ( pev->speed <= AFLOCK_FLY_SPEED )
+		{
 			pev->speed += 5;
+		}
 
-		pev->velocity = gpGlobals->v_forward * pev->speed;
+		VectorScale(gpGlobals->v_forward, pev->speed, pev->velocity);
 
 		BoidAdvanceFrame();
 
@@ -618,32 +626,32 @@ void CFlockingFlyer::FlockLeaderThink(void)
 		// measure clearance on left and right to pick the best dir to turn
 		UTIL_TraceLine(
 			pev->origin,
-			pev->origin + gpGlobals->v_right * AFLOCK_CHECK_DIST,
+			Vector(pev->origin) + Vector(gpGlobals->v_right) * AFLOCK_CHECK_DIST,
 			ignore_monsters,
 			ENT(pev),
 			&tr);
-		vecDist = (tr.vecEndPos - pev->origin);
+		VectorSubtract(tr.vecEndPos, pev->origin, vecDist);
 		flRightSide = vecDist.Length();
 
 		UTIL_TraceLine(
 			pev->origin,
-			pev->origin - gpGlobals->v_right * AFLOCK_CHECK_DIST,
+			Vector(pev->origin) - Vector(gpGlobals->v_right) * AFLOCK_CHECK_DIST,
 			ignore_monsters,
 			ENT(pev),
 			&tr);
-		vecDist = tr.vecEndPos - pev->origin;
+		VectorSubtract(tr.vecEndPos, pev->origin, vecDist);
 		flLeftSide = vecDist.Length();
 
 		// turn right if more clearance on right side
 		if ( flRightSide > flLeftSide )
 		{
-			pev->avelocity.y = -AFLOCK_TURN_RATE;
+			pev->avelocity[YAW] = -AFLOCK_TURN_RATE;
 			m_fTurning = TRUE;
 		}
 		// default to left turn :)
 		else if ( flLeftSide > flRightSide )
 		{
-			pev->avelocity.y = AFLOCK_TURN_RATE;
+			pev->avelocity[YAW] = AFLOCK_TURN_RATE;
 			m_fTurning = TRUE;
 		}
 		else
@@ -653,28 +661,31 @@ void CFlockingFlyer::FlockLeaderThink(void)
 
 			if ( RANDOM_LONG(0, 1) == 0 )
 			{
-				pev->avelocity.y = AFLOCK_TURN_RATE;
+				pev->avelocity[YAW] = AFLOCK_TURN_RATE;
 			}
 			else
 			{
-				pev->avelocity.y = -AFLOCK_TURN_RATE;
+				pev->avelocity[YAW] = -AFLOCK_TURN_RATE;
 			}
 		}
 	}
 	SpreadFlock();
 
-	pev->velocity = gpGlobals->v_forward * pev->speed;
+	VectorScale(gpGlobals->v_forward, pev->speed, pev->velocity);
 
 	// check and make sure we aren't about to plow into the ground, don't let it happen
-	UTIL_TraceLine(pev->origin, pev->origin - gpGlobals->v_up * 16, ignore_monsters, ENT(pev), &tr);
-	if ( tr.flFraction != 1.0 && pev->velocity.z < 0 )
-		pev->velocity.z = 0;
+	UTIL_TraceLine(pev->origin, Vector(pev->origin) - Vector(gpGlobals->v_up) * 16, ignore_monsters, ENT(pev), &tr);
+
+	if ( tr.flFraction != 1.0 && pev->velocity[VEC3_Z] < 0 )
+	{
+		pev->velocity[VEC3_Z] = 0;
+	}
 
 	// maybe it did, though.
 	if ( FBitSet(pev->flags, FL_ONGROUND) )
 	{
-		UTIL_SetOrigin(pev, pev->origin + Vector(0, 0, 1));
-		pev->velocity.z = 0;
+		UTIL_SetOrigin(pev, Vector(pev->origin) + Vector(0, 0, 1));
+		pev->velocity[VEC3_Z] = 0;
 	}
 
 	if ( m_flFlockNextSoundTime < gpGlobals->time )
@@ -693,7 +704,6 @@ void CFlockingFlyer::FlockLeaderThink(void)
 //=========================================================
 void CFlockingFlyer::FlockFollowerThink(void)
 {
-	TraceResult tr;
 	Vector vecDist;
 	Vector vecDir;
 	Vector vecDirToLeader;
@@ -708,11 +718,11 @@ void CFlockingFlyer::FlockFollowerThink(void)
 		return;
 	}
 
-	vecDirToLeader = (m_pSquadLeader->pev->origin - pev->origin);
+	vecDirToLeader = (Vector(m_pSquadLeader->pev->origin) - Vector(pev->origin));
 	flDistToLeader = vecDirToLeader.Length();
 
 	// match heading with leader
-	pev->angles = m_pSquadLeader->pev->angles;
+	VectorCopy(m_pSquadLeader->pev->angles, pev->angles);
 
 	//
 	// We can see the leader, so try to catch up to it
@@ -722,31 +732,31 @@ void CFlockingFlyer::FlockFollowerThink(void)
 		// if we're too far away, speed up
 		if ( flDistToLeader > AFLOCK_TOO_FAR )
 		{
-			m_flGoalSpeed = m_pSquadLeader->pev->velocity.Length() * 1.5f;
+			m_flGoalSpeed = VectorLength(m_pSquadLeader->pev->velocity) * 1.5f;
 		}
 
 		// if we're too close, slow down
 		else if ( flDistToLeader < AFLOCK_TOO_CLOSE )
 		{
-			m_flGoalSpeed = m_pSquadLeader->pev->velocity.Length() * 0.5f;
+			m_flGoalSpeed = VectorLength(m_pSquadLeader->pev->velocity) * 0.5f;
 		}
 	}
 	else
 	{
 		// wait up! the leader isn't out in front, so we slow down to let him pass
-		m_flGoalSpeed = m_pSquadLeader->pev->velocity.Length() * 0.5f;
+		m_flGoalSpeed = VectorLength(m_pSquadLeader->pev->velocity) * 0.5f;
 	}
 
 	SpreadFlock2();
 
-	pev->speed = pev->velocity.Length();
-	pev->velocity = pev->velocity.Normalize();
+	pev->speed = VectorLength(pev->velocity);
+	VectorNormalize(pev->velocity);
 
 	// if we are too far from leader, average a vector towards it into our current velocity
 	if ( flDistToLeader > AFLOCK_TOO_FAR )
 	{
 		vecDirToLeader = vecDirToLeader.Normalize();
-		pev->velocity = (pev->velocity + vecDirToLeader) * 0.5;
+		((Vector(pev->velocity) + vecDirToLeader) * 0.5f).CopyToArray(pev->velocity);
 	}
 
 	// clamp speeds and handle acceleration
@@ -764,12 +774,14 @@ void CFlockingFlyer::FlockFollowerThink(void)
 		pev->speed -= AFLOCK_ACCELERATE;
 	}
 
-	pev->velocity = pev->velocity * pev->speed;
+	VectorScale(pev->velocity, pev->speed, pev->velocity);
 
 	BoidAdvanceFrame();
 }
 
 /*
+	TraceResult tr;
+
 	// Is this boid's course blocked?
 	if( FBoidPathBlocked( pev ) )
 	{

@@ -32,6 +32,7 @@
 #include "cbase.h"
 #include "player.h"
 #include "bot.h"
+#include "MathLib/angles.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // AimAtBias
@@ -80,7 +81,7 @@ void CBaseBot::AimAtEnemy(void)
 		}
 		else if ( FightStyle.GetAimAt() == AIM_SPLASH )  // TODO: this should be aiming at feet's future position
 		{
-			SetLookAtVec(GetEnemy()->pev->origin - GetGunPosition());
+			SetLookAtVec(Vector(GetEnemy()->pev->origin) - GetGunPosition());
 		}
 		else
 		{
@@ -101,7 +102,7 @@ void CBaseBot::AimAtEntity(CBaseEntity* pEntity)
 	{
 		SetCalledAimThisFrame(TRUE);
 
-		SetLookAtVec(pEntity->pev->origin - GetGunPosition());
+		SetLookAtVec(Vector(pEntity->pev->origin) - GetGunPosition());
 
 		AimAtBias();
 
@@ -122,7 +123,7 @@ void CBaseBot::AimWander(void)
 	newLookAtBiasVec.z = 0;
 	newLookAtBiasVec = newLookAtBiasVec.Normalize();
 
-	Vector newLookAtVec = (pev->velocity).Normalize();
+	Vector newLookAtVec = Vector(pev->velocity).Normalize();
 	newLookAtVec.z = 0;
 
 	SetLookAtVec((newLookAtVec * 2) + newLookAtBiasVec);
@@ -200,7 +201,7 @@ BOOL CBaseBot::CheckWallOnLeft(void)
 	// do a trace to the left...
 
 	v_src = pev->origin;
-	v_left = v_src + gpGlobals->v_right * -40;  // 40 units to the left
+	v_left = v_src + Vector(gpGlobals->v_right) * -40;  // 40 units to the left
 
 	UTIL_TraceLine(v_src, v_left, dont_ignore_monsters, ENT(pev), &tr);
 
@@ -227,7 +228,7 @@ BOOL CBaseBot::CheckWallOnRight(void)
 	// do a trace to the right...
 
 	v_src = pev->origin;
-	v_right = v_src + gpGlobals->v_right * 40;  // 40 units to the right
+	v_right = v_src + Vector(gpGlobals->v_right) * 40;  // 40 units to the right
 
 	UTIL_TraceLine(v_src, v_right, dont_ignore_monsters, ENT(pev), &tr);
 
@@ -256,18 +257,23 @@ void CBaseBot::HandleMovement(void)
 		Memory.GetPrev3LookAtVec() + Memory.GetPrev4LookAtVec();
 	Vector TrueLookAtVecAngles = UTIL_VecToAngles(TrueLookAtVec);
 
-	pev->v_angle = TrueLookAtVecAngles;
+	TrueLookAtVecAngles.CopyToArray(pev->v_angle);
 
 	// Scott: SDK 2.x fix for body direction. From botman's HPB Bot
-	if ( pev->v_angle.y > 180 )
-		pev->v_angle.y -= 360;
-	if ( pev->v_angle.x > 180 )
-		pev->v_angle.x -= 360;
+	if ( pev->v_angle[YAW] > 180 )
+	{
+		pev->v_angle[YAW] -= 360;
+	}
 
-	pev->angles.x = pev->v_angle.x / 3;
-	pev->angles.y = pev->v_angle.y;
-	pev->angles.z = 0.0;
-	pev->v_angle.x = -pev->v_angle.x;  // invert this dimension for engine
+	if ( pev->v_angle[PITCH] > 180 )
+	{
+		pev->v_angle[PITCH] -= 360;
+	}
+
+	pev->angles[PITCH] = pev->v_angle[PITCH] / 3;
+	pev->angles[YAW] = pev->v_angle[YAW];
+	pev->angles[ROLL] = 0.0;
+	pev->v_angle[PITCH] = -pev->v_angle[PITCH];  // invert this dimension for engine
 	// End Fix
 
 	float BotMoveSpeed = GetServerMaxSpeed();
@@ -500,7 +506,7 @@ void CBaseBot::SteerGroupAlign(void)
 
 		if ( pPlayer && pPlayer != this && pPlayer->IsAlive() && CheckVisible(pPlayer) )
 		{
-			DistanceToPlayer = (pev->origin - pPlayer->pev->origin).Length();
+			DistanceToPlayer = (Vector(pev->origin) - Vector(pPlayer->pev->origin)).Length();
 
 			if ( DistanceToPlayer < GROUPING_DISTANCE )
 			{
@@ -533,7 +539,7 @@ void CBaseBot::SteerGroupCohesion(void)
 
 		if ( pPlayer && pPlayer != this && pPlayer->IsAlive() && CheckVisible(pPlayer) )
 		{
-			DistanceToPlayer = (pev->origin - pPlayer->pev->origin).Length();
+			DistanceToPlayer = (Vector(pev->origin) - Vector(pPlayer->pev->origin)).Length();
 
 			if ( DistanceToPlayer < GROUPING_DISTANCE )
 			{
@@ -602,7 +608,7 @@ void CBaseBot::SteerGroupSeparation(void)
 
 		if ( pPlayer && pPlayer != this && pPlayer->IsAlive() && CheckVisible(pPlayer) )
 		{
-			VectorToPlayer = pev->origin - pPlayer->pev->origin;
+			VectorSubtract(pev->origin, pPlayer->pev->origin, VectorToPlayer);
 			DistanceToPlayer = VectorToPlayer.Length();
 
 			if ( DistanceToPlayer < GROUPING_DISTANCE )
@@ -622,8 +628,8 @@ void CBaseBot::SteerGroupSeparation(void)
 
 void CBaseBot::SteerPrimitiveEvade(CBaseEntity* evadeTarget)
 {
-	float distance = (evadeTarget->pev->origin - pev->origin).Length();
-	SteerPrimitiveFlee((evadeTarget->pev->velocity * distance) + evadeTarget->pev->origin);
+	float distance = (Vector(evadeTarget->pev->origin) - Vector(pev->origin)).Length();
+	SteerPrimitiveFlee((Vector(evadeTarget->pev->velocity) * distance) + Vector(evadeTarget->pev->origin));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -642,7 +648,7 @@ void CBaseBot::SteerPrimitiveFlee(CBaseEntity* fleeTarget)
 void CBaseBot::SteerPrimitiveFlee(const Vector& fleeTarget)
 {
 	//	SetDesiredVelocity( ( fleeTarget - pev->origin ).Normalize() * GetServerMaxSpeed() );
-	SetDesiredVelocity((pev->origin - fleeTarget).Normalize() * GetServerMaxSpeed());
+	SetDesiredVelocity((Vector(pev->origin) - fleeTarget).Normalize() * GetServerMaxSpeed());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -687,8 +693,8 @@ void CBaseBot::SteerPrimitiveOnLadder(void)
 
 void CBaseBot::SteerPrimitivePursue(CBaseEntity* pursueTarget, Vector offset)
 {
-	float distance = (pursueTarget->pev->origin - pev->origin).Length();
-	SteerPrimitiveSeek((pursueTarget->pev->velocity * distance) + pursueTarget->pev->origin + offset);
+	float distance = (Vector(pursueTarget->pev->origin) - Vector(pev->origin)).Length();
+	SteerPrimitiveSeek((Vector(pursueTarget->pev->velocity) * distance) + Vector(pursueTarget->pev->origin) + offset);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -706,7 +712,7 @@ void CBaseBot::SteerPrimitiveSeek(CBaseEntity* seekTarget)
 
 void CBaseBot::SteerPrimitiveSeek(const Vector& seekTarget)
 {
-	SetDesiredVelocity((seekTarget - pev->origin).Normalize() * GetServerMaxSpeed());
+	SetDesiredVelocity((seekTarget - Vector(pev->origin)).Normalize() * GetServerMaxSpeed());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

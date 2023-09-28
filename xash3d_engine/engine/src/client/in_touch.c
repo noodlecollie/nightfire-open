@@ -13,6 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/utils.h"
+#include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/input.h"
@@ -481,7 +484,12 @@ static void Touch_Stroke_f(void)
 	}
 
 	touch.swidth = Q_atoi(Cmd_Argv(1));
-	MakeRGBA(touch.scolor, Q_atoi(Cmd_Argv(2)), Q_atoi(Cmd_Argv(3)), Q_atoi(Cmd_Argv(4)), Q_atoi(Cmd_Argv(5)));
+	RGBA_Set(
+		touch.scolor,
+		(byte)Q_atoi(Cmd_Argv(2)),
+		(byte)Q_atoi(Cmd_Argv(3)),
+		(byte)Q_atoi(Cmd_Argv(4)),
+		(byte)Q_atoi(Cmd_Argv(5)));
 }
 
 static touch_button_t* Touch_FindButton(touchbuttonlist_t* list, const char* name, qboolean privileged)
@@ -621,7 +629,9 @@ static void Touch_SetColor(touchbuttonlist_t* list, const char* name, byte* colo
 	{
 		if ( (Q_strchr(name, '*') && Q_stricmpext(name, button->name)) ||
 			 !Q_strncmp(name, button->name, sizeof(button->name)) )
-			MakeRGBA(button->color, color[0], color[1], color[2], color[3]);
+		{
+			RGBA_Set(button->color, color[0], color[1], color[2], color[3]);
+		}
 	}
 }
 
@@ -748,7 +758,12 @@ static void Touch_SetColor_f(void)
 	rgba_t color;
 	if ( Cmd_Argc() == 6 )
 	{
-		MakeRGBA(color, Q_atoi(Cmd_Argv(2)), Q_atoi(Cmd_Argv(3)), Q_atoi(Cmd_Argv(4)), Q_atoi(Cmd_Argv(5)));
+		RGBA_Set(
+			color,
+			(byte)Q_atoi(Cmd_Argv(2)),
+			(byte)Q_atoi(Cmd_Argv(3)),
+			(byte)Q_atoi(Cmd_Argv(4)),
+			(byte)Q_atoi(Cmd_Argv(5)));
 		Touch_SetColor(&touch.list_user, Cmd_Argv(1), color);
 		return;
 	}
@@ -833,7 +848,7 @@ static touch_button_t* Touch_AddButton(
 	button->x2 = x2;
 	button->y2 = y2;
 	button->flags = privileged ? 0 : TOUCH_FL_UNPRIVILEGED | TOUCH_FL_CLIENT;
-	MakeRGBA(button->color, color[0], color[1], color[2], color[3]);
+	RGBA_Set(button->color, color[0], color[1], color[2], color[3]);
 	button->command[0] = 0;
 	button->fade = 1;
 
@@ -946,7 +961,7 @@ void Touch_AddDefaultButton(
 	B(y1) = y1;
 	B(x2) = x2;
 	B(y2) = y2;
-	MakeRGBA(B(color), color[0], color[1], color[2], color[3]);
+	RGBA_Set(B(color), color[0], color[1], color[2], color[3]);
 	B(round) = round;
 	B(aspect) = aspect;
 	B(flags) = flags;
@@ -993,11 +1008,16 @@ static void Touch_AddButton_f(void)
 
 	if ( argc < 12 )
 	{
-		MakeRGBA(color, 255, 255, 255, 255);
+		RGBA_Set(color, 255, 255, 255, 255);
 	}
 	else
 	{
-		MakeRGBA(color, Q_atoi(Cmd_Argv(8)), Q_atoi(Cmd_Argv(9)), Q_atoi(Cmd_Argv(10)), Q_atoi(Cmd_Argv(11)));
+		RGBA_Set(
+			color,
+			(byte)Q_atoi(Cmd_Argv(8)),
+			(byte)Q_atoi(Cmd_Argv(9)),
+			(byte)Q_atoi(Cmd_Argv(10)),
+			(byte)Q_atoi(Cmd_Argv(11)));
 	}
 
 	button = Touch_AddButton(&touch.list_user, name, texture, command, x1, y1, x2, y2, color, privileged);
@@ -1067,7 +1087,7 @@ static void Touch_InitEditor(void)
 	touch_button_t* temp;
 	rgba_t color;
 
-	MakeRGBA(color, 255, 255, 255, 255);
+	RGBA_Set(color, 255, 255, 255, 255);
 
 	Touch_ClearList(&touch.list_edit);
 
@@ -1134,7 +1154,7 @@ void Touch_Init(void)
 	touch.showeditbuttons = true;
 	touch.clientonly = false;
 	touch.precision = false;
-	MakeRGBA(touch.scolor, 255, 255, 255, 255);
+	RGBA_Set(touch.scolor, 255, 255, 255, 255);
 	touch.swidth = 1;
 	g_LastDefaultButton = 0;
 
@@ -1142,7 +1162,7 @@ void Touch_Init(void)
 	touch.list_user.first = touch.list_user.last = NULL;
 
 	// fill default buttons list
-	MakeRGBA(color, 255, 255, 255, 255);
+	RGBA_Set(color, 255, 255, 255, 255);
 	Touch_AddDefaultButton("look", "", "_look", 0.500000, 0.000000, 1.000000, 1, color, 0, 0, 0);
 	Touch_AddDefaultButton("move", "", "_move", 0.000000, 0.000000, 0.500000, 1, color, 0, 0, 0);
 	Touch_AddDefaultButton(
@@ -1623,7 +1643,7 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 		if ( Touch_IsVisible(button) )
 		{
 			rgba_t color;
-			MakeRGBA(color, B(color[0]), B(color[1]), B(color[2]), B(color[3]));
+			RGBA_Set(color, B(color[0]), B(color[1]), B(color[2]), B(color[3]));
 
 			if ( B(fadespeed) )
 			{
@@ -1725,7 +1745,7 @@ static void Touch_DrawButtons(touchbuttonlist_t* list)
 				Touch_DrawTexture(B(x1), B(y1), B(x2), B(y2), touch.whitetexture, 255, 255, 0, 32);
 			else
 				Touch_DrawTexture(B(x1), B(y1), B(x2), B(y2), touch.whitetexture, 128, 128, 128, 128);
-			MakeRGBA(color, 255, 255, 127, 255);
+			RGBA_Set(color, 255, 255, 127, 255);
 			Con_DrawString((int)TO_SCRN_X(B(x1)), (int)TO_SCRN_Y(B(y1)), B(name), color);
 		}
 	}
@@ -1767,7 +1787,7 @@ void Touch_Draw(void)
 	{
 		rgba_t color;
 
-		MakeRGBA(color, 255, 255, 255, 255);
+		RGBA_Set(color, 255, 255, 255, 255);
 
 		if ( touch.edit )
 		{

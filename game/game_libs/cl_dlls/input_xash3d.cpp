@@ -4,6 +4,8 @@
 #include "kbutton.h"
 #include "EnginePublicAPI/keydefs.h"
 #include "input_mouse.h"
+#include "MathLib/angles.h"
+
 extern cvar_t* sensitivity;
 extern cvar_t* in_joystick;
 

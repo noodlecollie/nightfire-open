@@ -14,7 +14,10 @@ GNU General Public License for more details.
 */
 
 #include "EngineInternalAPI/log_strings.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
+#include "MathLib/mat3x4.h"
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 #include "gl_local.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/r_studioint.h"
@@ -77,6 +80,13 @@ static int g_numorder;
 static int g_stripverts[128];
 static int g_striptris[128];
 static int g_stripcount;
+
+static inline void ByteVectorLerp(const byte* v1, float lerp, const byte* v2, vec3_t c)
+{
+	c[0] = (float)v1[0] + (lerp * (float)(v2[0] - v1[0]));
+	c[1] = (float)v1[1] + (lerp * (float)(v2[1] - v1[1]));
+	c[2] = (float)v1[2] + (lerp * (float)(v2[2] - v1[2]));
+}
 
 /*
 ====================
@@ -1119,7 +1129,7 @@ void GL_DrawAliasFrame(aliashdr_t* paliashdr)
 				g_alias.lightcolor[1] * lv_tmp,
 				g_alias.lightcolor[2] * lv_tmp,
 				tr.blend);
-			VectorLerp(verts0->v, g_alias.lerpfrac, verts1->v, vert);
+			ByteVectorLerp(verts0->v, g_alias.lerpfrac, verts1->v, vert);
 			pglVertex3fv(vert);
 			verts0++, verts1++;
 		}
@@ -1183,7 +1193,7 @@ void GL_DrawAliasShadow(aliashdr_t* paliashdr)
 			order += 2;
 
 			// normals and vertexes come from the frame list
-			VectorLerp(verts0->v, g_alias.lerpfrac, verts1->v, av);
+			ByteVectorLerp(verts0->v, g_alias.lerpfrac, verts1->v, av);
 			point[0] = av[0] * paliashdr->scale[0] + paliashdr->scale_origin[0];
 			point[1] = av[1] * paliashdr->scale[1] + paliashdr->scale_origin[1];
 			point[2] = av[2] * paliashdr->scale[2] + paliashdr->scale_origin[2];

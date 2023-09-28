@@ -17,6 +17,7 @@ GNU General Public License for more details.
 
 #include <string.h>
 #include "EnginePublicAPI/pm_defs.h"
+#include "MathLib/vec3.h"
 
 struct edict_s;
 

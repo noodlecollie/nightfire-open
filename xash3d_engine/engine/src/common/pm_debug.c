@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 #include "common/pm_local.h"
 
 #if !XASH_DEDICATED()
@@ -45,7 +45,7 @@ void PM_ParticleLine(const vec3_t start, const vec3_t end, int pcolor, float lif
 
 	// determine distance
 	VectorSubtract(end, start, diff);
-	len = VectorNormalizeLength(diff);
+	len = VectorNormalizeLength(diff, diff);
 	curdist = 0;
 
 	while ( curdist <= len )

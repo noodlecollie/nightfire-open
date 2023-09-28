@@ -13,13 +13,18 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 #include "EngineInternalAPI/wadfile.h"
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"
 #include "EnginePublicAPI/studio.h"
 #include "EngineInternalAPI/sprite.h"
 #include "common/qfont.h"
+
+static inline byte AverageRGB(rgba_t rgba)
+{
+	return (byte)(((float)rgba[0] + (float)rgba[1] + (float)rgba[2]) / 3.0f);
+}
 
 /*
 ============
@@ -515,7 +520,7 @@ qboolean Image_LoadMIP(const char* name, const byte* buffer, fs_offset_t filesiz
 		image.fogParams[2] = pal[255 * 3 + 2];
 
 		// calc the decal reflectivity
-		image.fogParams[3] = VectorAvg(image.fogParams);
+		image.fogParams[3] = AverageRGB(image.fogParams);
 	}
 	else if ( pal != NULL )
 	{

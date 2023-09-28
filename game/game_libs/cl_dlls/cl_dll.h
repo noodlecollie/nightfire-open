@@ -26,25 +26,20 @@
 //		- Handling the custum HUD-update packets
 //
 #pragma once
-#ifndef CL_DLL_H
-#define CL_DLL_H
-typedef unsigned char byte;
-typedef unsigned short word;
-typedef float vec_t;
-typedef int (*pfnUserMsgHook)(const char* pszName, int iSize, void* pbuf);
-
-#include "vector_classes.h"
-
-#include "EnginePublicAPI/cdll_int.h"
-#include "cdll_dll.h"
 
 #ifndef __MSC_VER
 #define _cdecl
 #endif
-#include "exportdef.h"
+
 #include <string.h>
+#include "EnginePublicAPI/cdll_int.h"
+#include "EnginePublicAPI/mobility_int.h"
+#include "cdll_dll.h"
+#include "exportdef.h"
+
+typedef unsigned char byte;
+typedef unsigned short word;
+typedef int (*pfnUserMsgHook)(const char* pszName, int iSize, void* pbuf);
 
 extern cl_enginefunc_t gEngfuncs;
-#include "EnginePublicAPI/mobility_int.h"
 extern mobile_engfuncs_t* gMobileEngfuncs;
-#endif

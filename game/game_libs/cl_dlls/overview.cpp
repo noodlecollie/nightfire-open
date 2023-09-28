@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //=============================================================================
 
+#include "MathLib/utils.h"
 #include "hud.h"
 #include "cl_util.h"
 #include "EnginePublicAPI/cl_entity.h"
@@ -13,7 +14,6 @@
 
 // these are included for the math functions
 #include "EnginePublicAPI/com_model.h"
-#include "studio_util.h"
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -111,26 +111,26 @@ int CHudOverview::Draw(float)
 			angles[1] += 90.f;
 			angles[1] = -angles[1];
 			angles[2] = 0.0f;
-			AngleMatrix( angles, rmatrix );
+			Matrix3x4_AnglesToMatrix( angles, rmatrix );
 			a[2] = 0;
 
 			a[0] = -scale; a[1] = -scale;
-			VectorTransform( a, rmatrix, b );
+			Matrix3x4_VectorTransform( rmatrix, a, b );
 			gEngfuncs.pTriAPI->TexCoord2f( 0, 0 );
 			gEngfuncs.pTriAPI->Vertex3f( x + b[0], y + b[1], z );
 
 			a[0] = -scale; a[1] = scale;
-			VectorTransform( a, rmatrix, b );
+			Matrix3x4_VectorTransform( rmatrix, a, b );
 			gEngfuncs.pTriAPI->TexCoord2f( 0, 1 );
 			gEngfuncs.pTriAPI->Vertex3f( x + b[0], y + b[1], z );
 
 			a[0] = scale; a[1] = scale;
-			VectorTransform( a, rmatrix, b );
+			Matrix3x4_VectorTransform( rmatrix, a, b );
 			gEngfuncs.pTriAPI->TexCoord2f( 1, 1 );
 			gEngfuncs.pTriAPI->Vertex3f( x + b[0], y + b[1], z );
 
 			a[0] = scale; a[1] = -scale;
-			VectorTransform( a, rmatrix, b );
+			Matrix3x4_VectorTransform( rmatrix, a, b );
 			gEngfuncs.pTriAPI->TexCoord2f( 1, 0 );
 			gEngfuncs.pTriAPI->Vertex3f( x + b[0], y + b[1], z );
 

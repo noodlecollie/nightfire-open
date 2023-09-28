@@ -174,13 +174,13 @@ void CMonsterMaker::MakeMonster(void)
 		// set altitude. Now that I'm activated, any breakables, etc should be out from under me.
 		TraceResult tr;
 
-		UTIL_TraceLine(pev->origin, pev->origin - Vector(0, 0, 2048), ignore_monsters, ENT(pev), &tr);
-		m_flGround = tr.vecEndPos.z;
+		UTIL_TraceLine(pev->origin, Vector(pev->origin) - Vector(0, 0, 2048), ignore_monsters, ENT(pev), &tr);
+		m_flGround = tr.vecEndPos[VEC3_Z];
 	}
 
-	Vector mins = pev->origin - Vector(34, 34, 0);
-	Vector maxs = pev->origin + Vector(34, 34, 0);
-	maxs.z = pev->origin.z;
+	Vector mins = Vector(pev->origin) - Vector(34, 34, 0);
+	Vector maxs = Vector(pev->origin) + Vector(34, 34, 0);
+	maxs.z = pev->origin[VEC3_Z];
 	mins.z = m_flGround;
 
 	CBaseEntity* pList[2];
@@ -207,13 +207,15 @@ void CMonsterMaker::MakeMonster(void)
 	}
 
 	pevCreate = VARS(pent);
-	pevCreate->origin = pev->origin;
-	pevCreate->angles = pev->angles;
+	VectorCopy(pev->origin, pevCreate->origin);
+	VectorCopy(pev->angles, pevCreate->angles);
 	SetBits(pevCreate->spawnflags, SF_MONSTER_FALL_TO_GROUND);
 
 	// Children hit monsterclip brushes
 	if ( pev->spawnflags & SF_MONSTERMAKER_MONSTERCLIP )
+	{
 		SetBits(pevCreate->spawnflags, SF_MONSTER_HITMONSTERCLIP);
+	}
 
 	DispatchSpawn(ENT(pevCreate));
 	pevCreate->owner = edict();

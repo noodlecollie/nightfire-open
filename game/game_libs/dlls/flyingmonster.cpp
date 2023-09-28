@@ -19,6 +19,7 @@
 #include "monsters.h"
 #include "schedule.h"
 #include "flyingmonster.h"
+#include "MathLib/angles.h"
 
 #define FLYING_AE_FLAP (8)
 #define FLYING_AE_FLAPSOUND (9)
@@ -47,7 +48,7 @@ int CFlyingMonster::CheckLocalMove(const Vector& vecStart, const Vector& vecEnd,
 
 	if ( pflDist )
 	{
-		*pflDist = ((tr.vecEndPos - Vector(0, 0, 32)) - vecStart).Length();  // get the distance.
+		*pflDist = ((Vector(tr.vecEndPos) - Vector(0, 0, 32)) - vecStart).Length();  // get the distance.
 	}
 
 	// ALERT( at_console, "check %d %d %f\n", tr.fStartSolid, tr.fAllSolid, tr.flFraction );
@@ -87,8 +88,8 @@ void CFlyingMonster::Stop(void)
 		m_flightSpeed = 0;
 		m_IdealActivity = stopped;
 	}
-	pev->angles.z = 0;
-	pev->angles.x = 0;
+	pev->angles[ROLL] = 0;
+	pev->angles[PITCH] = 0;
 	m_vecTravel = g_vecZero;
 }
 
@@ -102,11 +103,15 @@ float CFlyingMonster::ChangeYaw(int speed)
 		if ( m_IdealActivity != GetStoppedActivity() )
 		{
 			if ( diff < -20 )
+			{
 				target = 90;
+			}
 			else if ( diff > 20 )
+			{
 				target = -90;
+			}
 		}
-		pev->angles.z = UTIL_Approach(target, pev->angles.z, 220.0f * gpGlobals->frametime);
+		pev->angles[ROLL] = UTIL_Approach(target, pev->angles[ROLL], 220.0f * gpGlobals->frametime);
 	}
 	return CBaseMonster::ChangeYaw(speed);
 }
@@ -115,8 +120,8 @@ void CFlyingMonster::Killed(entvars_t* pevAttacker, int iGib)
 {
 	pev->movetype = MOVETYPE_STEP;
 	ClearBits(pev->flags, FL_ONGROUND);
-	pev->angles.z = 0;
-	pev->angles.x = 0;
+	pev->angles[ROLL] = 0;
+	pev->angles[PITCH] = 0;
 	CBaseMonster::Killed(pevAttacker, iGib);
 }
 
@@ -148,10 +153,14 @@ BOOL CFlyingMonster::ShouldAdvanceRoute(float flWaypointDist)
 {
 	// Get true 3D distance to the goal so we actually reach the correct height
 	if ( m_Route[m_iRouteIndex].iType & bits_MF_IS_GOAL )
-		flWaypointDist = (m_Route[m_iRouteIndex].vecLocation - pev->origin).Length();
+	{
+		flWaypointDist = (m_Route[m_iRouteIndex].vecLocation - Vector(pev->origin)).Length();
+	}
 
 	if ( flWaypointDist <= 64 + (m_flGroundSpeed * gpGlobals->frametime) )
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -169,20 +178,24 @@ void CFlyingMonster::MoveExecute(CBaseEntity* pTargetEnt, const Vector& vecDir, 
 			}
 		}
 		Vector vecMove =
-			pev->origin + ((vecDir + (m_vecTravel * m_momentum)).Normalize() * (m_flGroundSpeed * flInterval));
+			Vector(pev->origin) + ((vecDir + (m_vecTravel * m_momentum)).Normalize() * (m_flGroundSpeed * flInterval));
 
 		if ( m_IdealActivity != m_movementActivity )
 		{
 			m_flightSpeed = UTIL_Approach(100, m_flightSpeed, 75 * gpGlobals->frametime);
 			if ( m_flightSpeed < 100 )
+			{
 				m_stopTime = gpGlobals->time;
+			}
 		}
 		else
+		{
 			m_flightSpeed = UTIL_Approach(20, m_flightSpeed, 300 * gpGlobals->frametime);
+		}
 
 		if ( CheckLocalMove(pev->origin, vecMove, pTargetEnt, NULL) )
 		{
-			m_vecTravel = vecMove - pev->origin;
+			m_vecTravel = vecMove - Vector(pev->origin);
 			m_vecTravel = m_vecTravel.Normalize();
 			UTIL_MoveToOrigin(ENT(pev), vecMove, (m_flGroundSpeed * flInterval), MOVE_STRAFE);
 		}
@@ -206,13 +219,17 @@ float CFlyingMonster::CeilingZ(const Vector& position)
 	maxUp.z += 4096.0;
 
 	UTIL_TraceLine(position, maxUp, ignore_monsters, NULL, &tr);
+
 	if ( tr.flFraction != 1.0 )
-		maxUp.z = tr.vecEndPos.z;
+	{
+		maxUp.z = tr.vecEndPos[VEC3_Z];
+	}
 
 	if ( (pev->flags) & FL_SWIM )
 	{
 		return UTIL_WaterLevel(position, minUp.z, maxUp.z);
 	}
+
 	return maxUp.z;
 }
 
@@ -272,7 +289,9 @@ float CFlyingMonster::FloorZ(const Vector& position)
 	UTIL_TraceLine(position, down, ignore_monsters, NULL, &tr);
 
 	if ( tr.flFraction != 1.0 )
-		return tr.vecEndPos.z;
+	{
+		return tr.vecEndPos[VEC3_Z];
+	}
 
 	return down.z;
 }

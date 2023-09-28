@@ -3,7 +3,7 @@
 #include "EnginePublicAPI/cdll_int.h"
 #include "cl_dll.h"
 #include "EnginePublicAPI/event_api.h"
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 #include "eventscripts.h"
 #include "hud.h"
 #include "cl_util.h"

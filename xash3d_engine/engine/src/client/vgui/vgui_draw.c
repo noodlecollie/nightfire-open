@@ -122,7 +122,7 @@ static void GAME_EXPORT VGUI_CursorSelect(VGUI_DefaultCursor cursor)
 
 static byte GAME_EXPORT VGUI_GetColor(int i, int j)
 {
-	return g_color_table[i][j];
+	return Con_GetColorFromTable((char)i)[j % 4];
 }
 
 static int GAME_EXPORT VGUI_UtfProcessChar(int in)

@@ -17,40 +17,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef int BOOL;
-#define TRUE 1
-#define FALSE 0
-
-// hack into header files that we can ship
-typedef int qboolean;
-typedef unsigned char byte;
-#include "mathlib.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/progdefs.h"
 #include "EnginePublicAPI/edict.h"
 #include "EnginePublicAPI/eiface.h"
-
 #include "EnginePublicAPI/studio.h"
-
-#ifndef ACTIVITY_H
-#include "activity.h"
-#endif
-
-#include "activitymap.h"
-
-#ifndef ANIMATION_H
-#include "animation.h"
-#endif
-
-#ifndef SCRIPTEVENT_H
-#include "scriptevent.h"
-#endif
-
-#ifndef ENGINECALLBACK_H
-#include "enginecallback.h"
-#endif
-
 #include "PlatformLib/String.h"
+
+#include "activity.h"
+#include "activitymap.h"
+#include "animation.h"
+#include "scriptevent.h"
+#include "enginecallback.h"
 
 extern globalvars_t* gpGlobals;
 

@@ -121,9 +121,9 @@ void CFuncMortarField::FieldUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE,
 {
 	Vector vecStart;
 
-	vecStart.x = RANDOM_FLOAT(pev->mins.x, pev->maxs.x);
-	vecStart.y = RANDOM_FLOAT(pev->mins.y, pev->maxs.y);
-	vecStart.z = pev->maxs.z;
+	vecStart.x = RANDOM_FLOAT(pev->mins[VEC3_X], pev->maxs[VEC3_X]);
+	vecStart.y = RANDOM_FLOAT(pev->mins[VEC3_Y], pev->maxs[VEC3_Y]);
+	vecStart.z = pev->maxs[VEC3_Z];
 
 	switch ( m_fControl )
 	{
@@ -134,8 +134,8 @@ void CFuncMortarField::FieldUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE,
 			// Trigger Activator
 			if ( pActivator != NULL )
 			{
-				vecStart.x = pActivator->pev->origin.x;
-				vecStart.y = pActivator->pev->origin.y;
+				vecStart.x = pActivator->pev->origin[VEC3_X];
+				vecStart.y = pActivator->pev->origin[VEC3_Y];
 			}
 			break;
 		case 2:
@@ -148,7 +148,7 @@ void CFuncMortarField::FieldUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE,
 					pController = UTIL_FindEntityByTargetname(NULL, STRING(m_iszXController));
 					if ( pController != NULL )
 					{
-						vecStart.x = pev->mins.x + pController->pev->ideal_yaw * (pev->size.x);
+						vecStart.x = pev->mins[VEC3_X] + pController->pev->ideal_yaw * (pev->size[VEC3_X]);
 					}
 				}
 				if ( !FStringNull(m_iszYController) )
@@ -156,7 +156,7 @@ void CFuncMortarField::FieldUse(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE,
 					pController = UTIL_FindEntityByTargetname(NULL, STRING(m_iszYController));
 					if ( pController != NULL )
 					{
-						vecStart.y = pev->mins.y + pController->pev->ideal_yaw * (pev->size.y);
+						vecStart.y = pev->mins[VEC3_Y] + pController->pev->ideal_yaw * (pev->size[VEC3_Y]);
 					}
 				}
 			}
@@ -227,12 +227,12 @@ void CMortar::MortarExplode(void)
 	// mortar beam
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BEAMPOINTS);
-	WRITE_COORD(pev->origin.x);
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
-	WRITE_COORD(pev->origin.x);
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z + 1024);
+	WRITE_COORD(pev->origin[0]);
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
+	WRITE_COORD(pev->origin[0]);
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2] + 1024);
 	WRITE_SHORT(m_spriteTexture);
 	WRITE_BYTE(0);  // framerate
 	WRITE_BYTE(0);  // framerate
@@ -273,8 +273,8 @@ void CMortar::MortarExplode(void)
 
 	TraceResult tr;
 	UTIL_TraceLine(
-		pev->origin + Vector(0, 0, 1024),
-		pev->origin - Vector(0, 0, 1024),
+		Vector(pev->origin) + Vector(0, 0, 1024),
+		Vector(pev->origin) - Vector(0, 0, 1024),
 		dont_ignore_monsters,
 		ENT(pev),
 		&tr);

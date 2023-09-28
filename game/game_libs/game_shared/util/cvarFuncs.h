@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EnginePublicAPI/cvardef.h"
-#include "vector_classes.h"
+#include "MathLib/vec2.h"
 
 #ifdef CLIENT_DLL
 #include "cl_dll.h"

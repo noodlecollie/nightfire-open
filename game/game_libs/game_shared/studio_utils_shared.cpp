@@ -1,5 +1,4 @@
 #include "studio_utils_shared.h"
-#include "mathlib.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/edict.h"
 #include "EnginePublicAPI/eiface.h"

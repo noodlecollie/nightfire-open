@@ -135,22 +135,30 @@ void CHandGrenade::WeaponIdle(void)
 
 	if ( m_flStartThrow )
 	{
-		Vector angThrow = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+		Vector angThrow(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 
 		if ( angThrow.x < 0 )
+		{
 			angThrow.x = -10 + angThrow.x * ((90 - 10) / 90.0f);
+		}
 		else
+		{
 			angThrow.x = -10 + angThrow.x * ((90 + 10) / 90.0f);
+		}
 
 		float flVel = (90 - angThrow.x) * 4;
+
 		if ( flVel > 500 )
+		{
 			flVel = 500;
+		}
 
 		UTIL_MakeVectors(angThrow);
 
-		Vector vecSrc = m_pPlayer->pev->origin + m_pPlayer->pev->view_ofs + gpGlobals->v_forward * 16;
+		Vector vecSrc(
+			Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs) + Vector(gpGlobals->v_forward) * 16);
 
-		Vector vecThrow = gpGlobals->v_forward * flVel + m_pPlayer->pev->velocity;
+		Vector vecThrow(Vector(gpGlobals->v_forward) * flVel + Vector(m_pPlayer->pev->velocity));
 
 		// alway explode 3 seconds after the pin was pulled
 		float time = m_flStartThrow - gpGlobals->time + 3.0f;

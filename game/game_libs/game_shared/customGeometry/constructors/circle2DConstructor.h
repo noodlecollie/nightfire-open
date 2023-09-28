@@ -1,7 +1,7 @@
 #pragma once
 
 #include "customGeometry/constructors/baseConstructor.h"
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 
 namespace CustomGeometry
 {

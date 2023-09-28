@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mathlib.h"
+#include "MathLib/vec3.h"
 #include "EnginePublicAPI/eiface.h"
 
 typedef struct entvars_s entvars_t;

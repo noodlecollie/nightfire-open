@@ -141,7 +141,7 @@ void CWeaponInaccuracyCalculator::CalculateInstantaneousInaccuracy(const WeaponA
 
 	const float maxPlayerSpeed = m_CvarMaxSpeed->value;
 	float spreadValue = ExtraMath::RemapLinear(
-		m_Player->pev->velocity.Length2D(),
+		Vector(m_Player->pev->velocity).Length2D(),
 		0.0f,
 		maxPlayerSpeed,
 		params->RestValue,
@@ -157,7 +157,7 @@ void CWeaponInaccuracyCalculator::CalculateInstantaneousInaccuracy(const WeaponA
 		spreadValue += params->AirShift;
 	}
 
-	const float zSpeed = fabs(m_Player->pev->velocity.z);
+	const float zSpeed = fabs(m_Player->pev->velocity[VEC3_Z]);
 	const float maxZSpeed = m_CvarMaxFallSpeed->value;
 	const float shiftFromZSpeed = ExtraMath::RemapSqrt(zSpeed, 0.0f, maxZSpeed, 0, params->FallShift);
 

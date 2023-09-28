@@ -14,10 +14,10 @@
  ****/
 
 #include <assert.h>
-#include "mathlib.h"
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/usercmd.h"
 #include "EnginePublicAPI/pm_defs.h"
+#include "MathLib/utils.h"
 #include "pm_shared.h"
 #include "pm_movevars.h"
 #include "pm_debug.h"
@@ -67,7 +67,6 @@ playermove_t* pmove = NULL;
 #define VEC_HULL_MIN -36
 #define VEC_HULL_MAX 36
 #define VEC_VIEW 28
-#define STOP_EPSILON 0.1
 
 #define PLAYER_FATAL_FALL_SPEED 1024  // approx 60 feet
 #define PLAYER_MAX_SAFE_FALL_SPEED 580  // approx 20 feet
@@ -135,7 +134,7 @@ static void PM_PlayStepSound(int stepSoundId, float volume)
 	VectorCopy(pmove->velocity, hvel);
 	hvel[2] = 0.0;
 
-	if ( pmove->multiplayer && !g_onladder && Length(hvel) <= 220 )
+	if ( pmove->multiplayer && !g_onladder && VectorLength(hvel) <= 220 )
 	{
 		return;
 	}
@@ -196,7 +195,7 @@ void PM_UpdateStepSound(void)
 		return;
 	}
 
-	speed = Length(pmove->velocity);
+	speed = VectorLength(pmove->velocity);
 
 	if ( speed <= 0.0f )
 	{
@@ -740,7 +739,7 @@ void PM_WalkMove(void)
 	// Add in any base velocity to the current velocity.
 	VectorAdd(pmove->velocity, pmove->basevelocity, pmove->velocity);
 
-	spd = Length(pmove->velocity);
+	spd = VectorLength(pmove->velocity);
 
 	// We must clamp the actual resultant velocity, as otherwise the wishspeed
 	// can take us over the top of the server's max speed. This is noticeable,
@@ -1142,8 +1141,10 @@ qboolean PM_CheckWater(void)
 	float heightover2;
 
 	// Pick a spot just above the players feet.
-	point[0] = pmove->origin[0] + (pmove->player_mins[pmove->usehull][0] + pmove->player_maxs[pmove->usehull][0]) * 0.5f;
-	point[1] = pmove->origin[1] + (pmove->player_mins[pmove->usehull][1] + pmove->player_maxs[pmove->usehull][1]) * 0.5f;
+	point[0] =
+		pmove->origin[0] + (pmove->player_mins[pmove->usehull][0] + pmove->player_maxs[pmove->usehull][0]) * 0.5f;
+	point[1] =
+		pmove->origin[1] + (pmove->player_mins[pmove->usehull][1] + pmove->player_maxs[pmove->usehull][1]) * 0.5f;
 	point[2] = pmove->origin[2] + pmove->player_mins[pmove->usehull][2] + 1;
 
 	// Assume that we are not in water at all.
@@ -1444,10 +1445,10 @@ void PM_SpectatorMove(void)
 		}
 #endif
 		// Move around in normal spectator method
-		speed = Length(pmove->velocity);
+		speed = VectorLength(pmove->velocity);
 		if ( speed < 1 )
 		{
-			VectorCopy(vec3_origin, pmove->velocity)
+			VectorCopy(vec3_origin, pmove->velocity);
 		}
 		else
 		{
@@ -2021,7 +2022,7 @@ void PM_Physics_Toss(void)
 			VectorScale(pmove->velocity, (1.0f - trace.fraction) * pmove->frametime * 0.9f, move);
 			trace = PM_PushEntity(move);
 		}
-		VectorSubtract(pmove->velocity, base, pmove->velocity)
+		VectorSubtract(pmove->velocity, base, pmove->velocity);
 	}
 
 	// check for in water
@@ -2085,7 +2086,7 @@ void PM_PreventMegaBunnyJumping(void)
 	if ( maxscaledspeed <= 0.0f )
 		return;
 
-	spd = Length(pmove->velocity);
+	spd = VectorLength(pmove->velocity);
 
 	if ( spd <= maxscaledspeed )
 		return;
@@ -2202,7 +2203,8 @@ void PM_Jump(void)
 	{
 		// Adjust for super long jump module
 		// UNDONE -- note this should be based on forward angles, not current velocity.
-		if ( cansuperjump && (pmove->cmd.buttons & IN_DUCK) && (pmove->flDuckTime > 0) && Length(pmove->velocity) > 50 )
+		if ( cansuperjump && (pmove->cmd.buttons & IN_DUCK) && (pmove->flDuckTime > 0) &&
+			 VectorLength(pmove->velocity) > 50 )
 		{
 			pmove->punchangle[0] = -5;
 

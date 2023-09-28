@@ -18,6 +18,9 @@
 #include <stdint.h>
 #include "PlatformDefs/typedefs.h"
 #include "EnginePublicAPI/studio_event.h"
+#include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
+#include "MathLib/quaternion.h"
 
 /*
 ==============================================================================
@@ -395,7 +398,7 @@ typedef struct
 	vec3_t pos[6];
 
 	// X+, X-, Y+, Y-, Z+, Z-
-	vec4_t quat[6];
+	quat_t quat[6];
 } mstudioaxisinterpbone_t;
 
 typedef struct
@@ -410,7 +413,7 @@ typedef struct
 	vec3_t pos;
 
 	// new angle
-	vec4_t quat;
+	quat_t quat;
 } mstudioquatinterpinfo_t;
 
 typedef struct
@@ -427,7 +430,7 @@ typedef struct
 	// boneweighting reqiures
 	vec_t poseToBone[3][4];
 
-	vec4_t qAlignment;
+	quat_t qAlignment;
 
 	int32_t proctype;
 
@@ -435,7 +438,7 @@ typedef struct
 	int32_t procindex;
 
 	// aligned bone rotation
-	vec4_t quat;
+	quat_t quat;
 
 	// for future expansions
 	int32_t reserved[10];
@@ -607,7 +610,7 @@ typedef struct
 	vec_t radius;
 	vec_t floor;
 	vec3_t pos;
-	vec4_t quat;
+	quat_t quat;
 
 	// offset to the compressed IK error
 	int32_t ikerrorindex;

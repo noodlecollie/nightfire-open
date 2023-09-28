@@ -39,7 +39,7 @@ Task_t tlHCRangeAttack1[] = {
 
 Schedule_t slHCRangeAttack1[] = {
 	{tlHCRangeAttack1,
-	 SIZE_OF_ARRAY(tlHCRangeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlHCRangeAttack1),
 	 bits_COND_ENEMY_OCCLUDED | bits_COND_NO_AMMO_LOADED,
 	 0,
 	 "HCRangeAttack1"},
@@ -54,7 +54,7 @@ Task_t tlHCRangeAttack1Fast[] = {
 
 Schedule_t slHCRangeAttack1Fast[] = {
 	{tlHCRangeAttack1Fast,
-	 SIZE_OF_ARRAY(tlHCRangeAttack1Fast),
+	 SIZE_OF_ARRAY_AS_INT(tlHCRangeAttack1Fast),
 	 bits_COND_ENEMY_OCCLUDED | bits_COND_NO_AMMO_LOADED,
 	 0,
 	 "HCRAFast"},
@@ -162,7 +162,7 @@ int CHeadCrab::Classify(void)
 //=========================================================
 Vector CHeadCrab::Center(void)
 {
-	return Vector(pev->origin.x, pev->origin.y, pev->origin.z + 6);
+	return Vector(pev->origin[VEC3_X], pev->origin[VEC3_Y], pev->origin[VEC3_Z] + 6);
 }
 
 Vector CHeadCrab::BodyTarget(const Vector&)
@@ -215,7 +215,9 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			UTIL_SetOrigin(
 				pev,
-				pev->origin + Vector(0, 0, 1));  // take him off ground so engine doesn't instantly reset onground
+				Vector(pev->origin) +
+					Vector(0, 0, 1));  // take him off ground so engine doesn't instantly reset onground
+
 			UTIL_MakeVectors(pev->angles);
 
 			Vector vecJumpDir;
@@ -226,14 +228,18 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 					gravity = 1;
 
 				// How fast does the headcrab need to travel to reach that height given gravity?
-				float height = m_hEnemy->pev->origin.z + m_hEnemy->pev->view_ofs.z - pev->origin.z;
+				float height = m_hEnemy->pev->origin[VEC3_Z] + m_hEnemy->pev->view_ofs[VEC3_Z] - pev->origin[VEC3_Z];
+
 				if ( height < 16 )
+				{
 					height = 16;
+				}
+
 				float speed = sqrtf(2 * gravity * height);
 				float time = speed / gravity;
 
 				// Scale the sideways velocity to get there at the right time
-				vecJumpDir = m_hEnemy->pev->origin + m_hEnemy->pev->view_ofs - pev->origin;
+				vecJumpDir = Vector(m_hEnemy->pev->origin) + Vector(m_hEnemy->pev->view_ofs) - Vector(pev->origin);
 				vecJumpDir = vecJumpDir * (1.0f / time);
 
 				// Speed to offset gravity at the desired height
@@ -250,11 +256,14 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 			else
 			{
 				// jump hop, don't care where
-				vecJumpDir = Vector(gpGlobals->v_forward.x, gpGlobals->v_forward.y, gpGlobals->v_up.z) * 350;
+				vecJumpDir =
+					Vector(gpGlobals->v_forward[VEC3_X], gpGlobals->v_forward[VEC3_Y], gpGlobals->v_up[VEC3_Z]) * 350;
 			}
 
 			int iSound = RANDOM_LONG(0, 2);
+
 			if ( iSound != 0 )
+			{
 				EMIT_SOUND_DYN(
 					edict(),
 					CHAN_VOICE,
@@ -263,8 +272,9 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 					ATTN_IDLE,
 					0,
 					GetVoicePitch());
+			}
 
-			pev->velocity = vecJumpDir;
+			VectorCopy(vecJumpDir, pev->velocity);
 			m_flNextAttack = gpGlobals->time + 2;
 		}
 		break;
@@ -289,7 +299,7 @@ void CHeadCrab::Spawn()
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->effects = 0;
 	pev->health = gSkillData.headcrabHealth;
-	pev->view_ofs = Vector(0, 0, 20);  // position of the eyes relative to monster's origin.
+	VectorCopy(pev->view_ofs, Vector(0, 0, 20));  // position of the eyes relative to monster's origin.
 	pev->yaw_speed =
 		5;  //!!! should we put this in the monster's changeanim function since turn rates may vary with state/anim?
 	m_flFieldOfView = 0.5;  // indicates the width of this monster's forward view cone ( as a dotproduct result )

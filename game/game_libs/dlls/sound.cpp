@@ -191,7 +191,13 @@ void CAmbientGeneric::Spawn(void)
 
 	if ( FStringNull(pev->message) || strlen(szSoundFile) < 1 )
 	{
-		ALERT(at_error, "EMPTY AMBIENT AT: %f, %f, %f\n", pev->origin.x, pev->origin.y, pev->origin.z);
+		ALERT(
+			at_error,
+			"EMPTY AMBIENT AT: %f, %f, %f\n",
+			pev->origin[VEC3_X],
+			pev->origin[VEC3_Y],
+			pev->origin[VEC3_Z]);
+
 		pev->nextthink = gpGlobals->time + 0.1f;
 		SetThink(&CBaseEntity::SUB_Remove);
 		return;
@@ -852,8 +858,8 @@ void CEnvSound::KeyValue(KeyValueData* pkvd)
 BOOL FEnvSoundInRange(entvars_t* pev, entvars_t* pevTarget, float* pflRange)
 {
 	CEnvSound* pSound = GetClassPtr<CEnvSound>(pev);
-	Vector vecSpot1 = pev->origin + pev->view_ofs;
-	Vector vecSpot2 = pevTarget->origin + pevTarget->view_ofs;
+	Vector vecSpot1 = Vector(pev->origin) + Vector(pev->view_ofs);
+	Vector vecSpot2 = Vector(pevTarget->origin) + Vector(pevTarget->view_ofs);
 	Vector vecRange;
 	float flRange;
 	TraceResult tr;
@@ -865,7 +871,7 @@ BOOL FEnvSoundInRange(entvars_t* pev, entvars_t* pevTarget, float* pflRange)
 		return FALSE;
 
 	// calc range from sound entity to player
-	vecRange = tr.vecEndPos - vecSpot1;
+	vecRange = Vector(tr.vecEndPos) - vecSpot1;
 	flRange = vecRange.Length();
 
 	if ( pSound->m_flRadius < flRange )
@@ -1685,9 +1691,9 @@ void CSpeaker::Spawn(void)
 		ALERT(
 			at_error,
 			"SPEAKER with no Level/Sentence! at: %f, %f, %f\n",
-			pev->origin.x,
-			pev->origin.y,
-			pev->origin.z);
+			pev->origin[VEC3_X],
+			pev->origin[VEC3_Y],
+			pev->origin[VEC3_Z]);
 		pev->nextthink = gpGlobals->time + 0.1f;
 		SetThink(&CBaseEntity::SUB_Remove);
 		return;

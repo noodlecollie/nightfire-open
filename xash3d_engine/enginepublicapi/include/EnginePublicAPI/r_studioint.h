@@ -16,6 +16,7 @@
 #pragma once
 
 #include <stddef.h>
+#include "PlatformDefs/typedefs.h"
 
 #define STUDIO_INTERFACE_VERSION 1
 #define SV_BLENDING_INTERFACE_VERSION 1

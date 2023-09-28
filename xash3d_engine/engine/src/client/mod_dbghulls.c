@@ -12,14 +12,15 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
+
 #include "common/common.h"
 #include "client/client.h"
 #include "common/mod_local.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 #include "common/world.h"
 #include "PlatformDefs/utils.h"
 
-#define MAX_CLIPNODE_DEPTH 256  // should never exceeds
+#define MAX_CLIPNODE_DEPTH 256  // should never exceed
 
 #define list_entry(ptr, type, member) ((type*)((char*)(ptr) - (size_t)(&((type*)0)->member)))
 

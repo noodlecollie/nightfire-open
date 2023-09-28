@@ -5,7 +5,6 @@
 #include "EnginePublicAPI/cdll_int.h"
 #include "cl_dll.h"
 #include "EnginePublicAPI/event_api.h"
-#include "vector_classes.h"
 #include "eventscripts.h"
 #include "hud.h"
 #include "cl_util.h"
@@ -14,6 +13,8 @@
 #include "rapidjson/document.h"
 #include "rapidjson_helpers/rapidjson_helpers.h"
 #include "weaponatts_collection.h"
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 
 namespace
 {

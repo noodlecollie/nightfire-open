@@ -21,7 +21,6 @@
 #include <memory.h>
 #include <math.h>
 
-#include "studio_util.h"
 #include "EnginePublicAPI/r_studioint.h"
 
 #include "StudioModelRenderer.h"

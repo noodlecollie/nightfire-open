@@ -28,7 +28,7 @@ private:
 
 	const WeaponAtts::WAMeleeAttack* m_pCachedAttack;
 	int m_iStrikeIndex;
-	vec3_t m_vecAttackTraceStart;
-	vec3_t m_vecAttackTraceEnd;
-	vec3_t m_vecContactPointOnSurface;
+	Vector m_vecAttackTraceStart;
+	Vector m_vecAttackTraceEnd;
+	Vector m_vecContactPointOnSurface;
 };

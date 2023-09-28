@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "vector_classes.h"
+#include "MathLib/vec2.h"
 #include "weaponattributes/weaponatts_ammobasedattack.h"
 
 struct SpreadPatternArgs

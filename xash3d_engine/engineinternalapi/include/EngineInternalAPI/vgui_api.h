@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
+#include "MathLib/vec2.h"
 #include "EngineInternalAPI/key_modifiers.h"
 #include "EngineInternalAPI/cursor_type.h"
 

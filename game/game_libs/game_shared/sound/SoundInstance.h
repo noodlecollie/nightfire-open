@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 #include "utlstring.h"
 
 class CSoundInstance

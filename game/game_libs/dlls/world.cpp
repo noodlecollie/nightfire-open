@@ -142,13 +142,18 @@ void CDecal::TriggerDecal(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	TraceResult trace;
 	int entityIndex;
 
-	UTIL_TraceLine(pev->origin - Vector(5, 5, 5), pev->origin + Vector(5, 5, 5), ignore_monsters, ENT(pev), &trace);
+	UTIL_TraceLine(
+		Vector(pev->origin) - Vector(5, 5, 5),
+		Vector(pev->origin) + Vector(5, 5, 5),
+		ignore_monsters,
+		ENT(pev),
+		&trace);
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BSPDECAL);
-	WRITE_COORD(pev->origin.x);
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[0]);
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
 	WRITE_SHORT((int)pev->skin);
 	entityIndex = (short)ENTINDEX(trace.pHit);
 	WRITE_SHORT(entityIndex);
@@ -165,13 +170,23 @@ void CDecal::StaticDecal(void)
 	TraceResult trace;
 	int entityIndex, modelIndex;
 
-	UTIL_TraceLine(pev->origin - Vector(5, 5, 5), pev->origin + Vector(5, 5, 5), ignore_monsters, ENT(pev), &trace);
+	UTIL_TraceLine(
+		Vector(pev->origin) - Vector(5, 5, 5),
+		Vector(pev->origin) + Vector(5, 5, 5),
+		ignore_monsters,
+		ENT(pev),
+		&trace);
 
 	entityIndex = (short)ENTINDEX(trace.pHit);
+
 	if ( entityIndex )
+	{
 		modelIndex = (int)VARS(trace.pHit)->modelindex;
+	}
 	else
+	{
 		modelIndex = 0;
+	}
 
 	g_engfuncs.pfnStaticDecal(pev->origin, (int)pev->skin, entityIndex, modelIndex);
 
@@ -305,13 +320,13 @@ int CGlobalState::Save(CSave& save)
 	int i;
 	globalentity_t* pEntity;
 
-	if ( !save.WriteFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData)) )
+	if ( !save.WriteFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData)) )
 		return 0;
 
 	pEntity = m_pList;
 	for ( i = 0; i < m_listCount && pEntity; i++ )
 	{
-		if ( !save.WriteFields("GENT", pEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY(gGlobalEntitySaveData)) )
+		if ( !save.WriteFields("GENT", pEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY_AS_INT(gGlobalEntitySaveData)) )
 			return 0;
 
 		pEntity = pEntity->pNext;
@@ -326,7 +341,7 @@ int CGlobalState::Restore(CRestore& restore)
 	globalentity_t tmpEntity;
 
 	ClearStates();
-	if ( !restore.ReadFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY(m_SaveData)) )
+	if ( !restore.ReadFields("GLOBAL", this, m_SaveData, SIZE_OF_ARRAY_AS_INT(m_SaveData)) )
 		return 0;
 
 	listCount = m_listCount;  // Get new list count
@@ -334,7 +349,7 @@ int CGlobalState::Restore(CRestore& restore)
 
 	for ( i = 0; i < listCount; i++ )
 	{
-		if ( !restore.ReadFields("GENT", &tmpEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY(gGlobalEntitySaveData)) )
+		if ( !restore.ReadFields("GENT", &tmpEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY_AS_INT(gGlobalEntitySaveData)) )
 			return 0;
 		EntityAdd(MAKE_STRING(tmpEntity.name), MAKE_STRING(tmpEntity.levelName), tmpEntity.state);
 	}

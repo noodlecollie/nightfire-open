@@ -313,10 +313,13 @@ void CBaseDoor::Spawn()
 
 	// Subtract 2 from size because the engine expands bboxes by 1 in all directions making the size too big
 	m_vecPosition2 = m_vecPosition1 +
-		(pev->movedir *
-		 (fabsf(pev->movedir.x * (pev->size.x - 2)) + fabsf(pev->movedir.y * (pev->size.y - 2)) +
-		  fabsf(pev->movedir.z * (pev->size.z - 2)) - m_flLip));
+		(Vector(pev->movedir) *
+		 (fabsf(pev->movedir[VEC3_X] * (pev->size[VEC3_X] - 2)) +
+		  fabsf(pev->movedir[VEC3_Y] * (pev->size[VEC3_Y] - 2)) +
+		  fabsf(pev->movedir[VEC3_Z] * (pev->size[VEC3_Z] - 2)) - m_flLip));
+
 	ASSERTSZ(m_vecPosition1 != m_vecPosition2, "door start/end positions are equal");
+
 	if ( FBitSet(pev->spawnflags, SF_DOOR_START_OPEN) )
 	{
 		// swap pos1 and pos2, put door at pos2
@@ -637,18 +640,22 @@ void CBaseDoor::DoorGoUp(void)
 			pevActivator = m_hActivator->pev;
 
 			if ( !FBitSet(pev->spawnflags, SF_DOOR_ONEWAY) &&
-				 pev->movedir.y )  // Y axis rotation, move away from the player
+				 pev->movedir[VEC3_Y] )  // Y axis rotation, move away from the player
 			{
-				Vector vec = pevActivator->origin - pev->origin;
+				Vector vec = Vector(pevActivator->origin) - Vector(pev->origin);
 				Vector angles = pevActivator->angles;
 				angles.x = 0;
 				angles.z = 0;
 				UTIL_MakeVectors(angles);
 				// Vector vnext = ( pevToucher->origin + ( pevToucher->velocity * 10 ) ) - pev->origin;
 				UTIL_MakeVectors(pevActivator->angles);
-				Vector vnext = (pevActivator->origin + (gpGlobals->v_forward * 10)) - pev->origin;
+				Vector vnext =
+					(Vector(pevActivator->origin) + (Vector(gpGlobals->v_forward) * 10)) - Vector(pev->origin);
+
 				if ( (vec.x * vnext.y - vec.y * vnext.x) < 0 )
+				{
 					sign = -1.0;
+				}
 			}
 		}
 		AngularMove(m_vecAngle2 * sign, pev->speed);
@@ -806,23 +813,30 @@ void CBaseDoor::Blocked(CBaseEntity* pOther)
 							if ( FClassnameIs(pentTarget, "func_door") )
 							{
 								// set origin to realign normal doors
-								pDoor->pev->origin = pev->origin;
-								pDoor->pev->velocity = g_vecZero;  // stop!
+								VectorCopy(pev->origin, pDoor->pev->origin);
+								VectorClear(pDoor->pev->velocity);  // stop!
 							}
 							else
 							{
 								// set angles to realign rotating doors
-								pDoor->pev->angles = pev->angles;
-								pDoor->pev->avelocity = g_vecZero;
+								VectorCopy(pev->angles, pDoor->pev->angles);
+								VectorClear(pDoor->pev->avelocity);
 							}
 						}
+
 						if ( !FBitSet(pev->spawnflags, SF_DOOR_SILENT) )
+						{
 							STOP_SOUND(ENT(pev), CHAN_STATIC, STRING(pev->noiseMoving));
+						}
 
 						if ( pDoor->m_toggle_state == TS_GOING_DOWN )
+						{
 							pDoor->DoorGoUp();
+						}
 						else
+						{
 							pDoor->DoorGoDown();
+						}
 					}
 				}
 			}
@@ -886,11 +900,13 @@ void CRotDoor::Spawn(void)
 
 	// check for clockwise rotation
 	if ( FBitSet(pev->spawnflags, SF_DOOR_ROTATE_BACKWARDS) )
-		pev->movedir = pev->movedir * -1;
+	{
+		VectorNegate(pev->movedir, pev->movedir);
+	}
 
 	// m_flWait = 2; who the hell did this? (sjb)
 	m_vecAngle1 = pev->angles;
-	m_vecAngle2 = pev->angles + pev->movedir * m_flMoveDistance;
+	m_vecAngle2 = Vector(pev->angles) + Vector(pev->movedir) * m_flMoveDistance;
 
 	ASSERTSZ(m_vecAngle1 != m_vecAngle2, "rotating door start/end positions are equal");
 
@@ -911,11 +927,11 @@ void CRotDoor::Spawn(void)
 	if ( FBitSet(pev->spawnflags, SF_DOOR_START_OPEN) )
 	{
 		// swap pos1 and pos2, put door at pos2, invert movement direction
-		pev->angles = m_vecAngle2;
+		VectorCopy(m_vecAngle2, pev->angles);
 		Vector vecSav = m_vecAngle1;
 		m_vecAngle2 = m_vecAngle1;
 		m_vecAngle1 = vecSav;
-		pev->movedir = pev->movedir * -1;
+		VectorNegate(pev->movedir, pev->movedir);
 	}
 
 	m_toggle_state = TS_AT_BOTTOM;
@@ -931,9 +947,13 @@ void CRotDoor::Spawn(void)
 void CRotDoor::SetToggleState(int state)
 {
 	if ( state == TS_AT_TOP )
-		pev->angles = m_vecAngle2;
+	{
+		VectorCopy(m_vecAngle2, pev->angles);
+	}
 	else
-		pev->angles = m_vecAngle1;
+	{
+		VectorCopy(m_vecAngle1, pev->angles);
+	}
 
 	UTIL_SetOrigin(pev, pev->origin);
 }
@@ -980,16 +1000,23 @@ void CMomentaryDoor::Spawn(void)
 	SET_MODEL(ENT(pev), STRING(pev->model));
 
 	if ( pev->speed == 0 )
+	{
 		pev->speed = 100;
+	}
+
 	if ( pev->dmg == 0 )
+	{
 		pev->dmg = 2;
+	}
 
 	m_vecPosition1 = pev->origin;
 	// Subtract 2 from size because the engine expands bboxes by 1 in all directions making the size too big
 	m_vecPosition2 = m_vecPosition1 +
-		(pev->movedir *
-		 (fabsf(pev->movedir.x * (pev->size.x - 2)) + fabsf(pev->movedir.y * (pev->size.y - 2)) +
-		  fabsf(pev->movedir.z * (pev->size.z - 2)) - m_flLip));
+		(Vector(pev->movedir) *
+		 (fabsf(pev->movedir[VEC3_X] * (pev->size[VEC3_X] - 2)) +
+		  fabsf(pev->movedir[VEC3_Y] * (pev->size[VEC3_Y] - 2)) +
+		  fabsf(pev->movedir[VEC3_Z] * (pev->size[VEC3_Z] - 2)) - m_flLip));
+
 	ASSERTSZ(m_vecPosition1 != m_vecPosition2, "door start/end positions are equal");
 
 	if ( FBitSet(pev->spawnflags, SF_DOOR_START_OPEN) )
@@ -998,7 +1025,8 @@ void CMomentaryDoor::Spawn(void)
 		m_vecPosition2 = m_vecPosition1;
 		m_vecPosition1 = pev->origin;
 	}
-	SetTouch(NULL);
+
+	SetTouch(nullptr);
 
 	Precache();
 }
@@ -1112,14 +1140,19 @@ void CMomentaryDoor::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float val
 	if ( useType != USE_SET )  // Momentary buttons will pass down a float in here
 		return;
 
-	if ( value > 1.0 )
-		value = 1.0;
-	if ( value < 0.0 )
-		value = 0.0;
+	if ( value > 1.0f )
+	{
+		value = 1.0f;
+	}
+
+	if ( value < 0.0f )
+	{
+		value = 0.0f;
+	}
 
 	Vector move = m_vecPosition1 + (value * (m_vecPosition2 - m_vecPosition1));
 
-	Vector delta = move - pev->origin;
+	Vector delta = move - Vector(pev->origin);
 	// float speed = delta.Length() * 10;
 	float speed = delta.Length() / 0.1f;  // move there in 0.1 sec
 

@@ -23,18 +23,12 @@
 #include "util.h"
 #include "cbase.h"
 #include "monsters.h"
-
-#ifndef ANIMATION_H
 #include "animation.h"
-#endif
-
-#ifndef SAVERESTORE_H
 #include "saverestore.h"
-#endif
-
 #include "schedule.h"
 #include "scripted.h"
 #include "defaultai.h"
+#include "MathLib/angles.h"
 
 /*
 classname "scripted_sequence"
@@ -345,11 +339,11 @@ void CCineMonster::PossessEntity(void)
 				break;
 			case 4:
 				UTIL_SetOrigin(pTarget->pev, pev->origin);
-				pTarget->pev->ideal_yaw = pev->angles.y;
-				pTarget->pev->avelocity = Vector(0, 0, 0);
-				pTarget->pev->velocity = Vector(0, 0, 0);
+				pTarget->pev->ideal_yaw = pev->angles[YAW];
+				VectorClear(pTarget->pev->avelocity);
+				VectorClear(pTarget->pev->velocity);
 				pTarget->pev->effects |= EF_NOINTERP;
-				pTarget->pev->angles.y = pev->angles.y;
+				pTarget->pev->angles[YAW] = pev->angles[YAW];
 				pTarget->m_scriptState = SCRIPT_WAIT;
 				m_startTime = gpGlobals->time + 1000000.0f;
 				// UNDONE: Add a flag to do this so people can fixup physics after teleporting monsters
@@ -414,11 +408,11 @@ void CCineAI::PossessEntity(void)
 			case 4:
 				// zap the monster instantly to the site of the script entity.
 				UTIL_SetOrigin(pTarget->pev, pev->origin);
-				pTarget->pev->ideal_yaw = pev->angles.y;
-				pTarget->pev->avelocity = Vector(0, 0, 0);
-				pTarget->pev->velocity = Vector(0, 0, 0);
+				pTarget->pev->ideal_yaw = pev->angles[YAW];
+				VectorClear(pTarget->pev->avelocity);
+				VectorClear(pTarget->pev->velocity);
 				pTarget->pev->effects |= EF_NOINTERP;
-				pTarget->pev->angles.y = pev->angles.y;
+				pTarget->pev->angles[YAW] = pev->angles[YAW];
 				pTarget->m_scriptState = SCRIPT_WAIT;
 				m_startTime = gpGlobals->time + 1000000.0f;
 				// UNDONE: Add a flag to do this so people can fixup physics after teleporting monsters
@@ -792,7 +786,7 @@ BOOL CBaseMonster::CineCleanup()
 		pev->solid = SOLID_NOT;
 		SetState(MONSTERSTATE_DEAD);
 		pev->deadflag = DEAD_DEAD;
-		UTIL_SetSize(pev, pev->mins, Vector(pev->maxs.x, pev->maxs.y, pev->mins.z + 2));
+		UTIL_SetSize(pev, pev->mins, Vector(pev->maxs[VEC3_X], pev->maxs[VEC3_Y], pev->mins[VEC3_Z] + 2));
 
 		if ( pOldCine && FBitSet(pOldCine->pev->spawnflags, SF_SCRIPT_LEAVECORPSE) )
 		{
@@ -801,7 +795,10 @@ BOOL CBaseMonster::CineCleanup()
 			SetTouch(NULL);
 		}
 		else
+		{
 			SUB_StartFadeOut();  // SetThink( &SUB_DoNothing );
+		}
+
 		// This turns off animation & physics in case their origin ends up stuck in the world or something
 		StopAnimation();
 		pev->movetype = MOVETYPE_NONE;
@@ -837,19 +834,21 @@ BOOL CBaseMonster::CineCleanup()
 			if ( (oldOrigin - new_origin).Length2D() < 8.0 )
 				new_origin = oldOrigin;
 
-			pev->origin.x = new_origin.x;
-			pev->origin.y = new_origin.y;
-			pev->origin.z += 1;
+			pev->origin[VEC3_X] = new_origin[VEC3_X];
+			pev->origin[VEC3_Y] = new_origin[VEC3_Y];
+			pev->origin[VEC3_Z] += 1;
 
 			pev->flags |= FL_ONGROUND;
 			int drop = DROP_TO_FLOOR(ENT(pev));
 
 			// Origin in solid?  Set to org at the end of the sequence
 			if ( drop < 0 )
-				pev->origin = oldOrigin;
+			{
+				VectorCopy(oldOrigin, pev->origin);
+			}
 			else if ( drop == 0 )  // Hanging in air?
 			{
-				pev->origin.z = new_origin.z;
+				pev->origin[VEC3_Z] = new_origin[VEC3_Z];
 				pev->flags &= ~FL_ONGROUND;
 			}
 			// else entity hit floor, leave there

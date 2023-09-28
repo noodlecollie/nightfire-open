@@ -13,13 +13,15 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "EngineInternalAPI/log_strings.h"
 #include "gl_local.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "EnginePublicAPI/r_efx.h"
 #include "EnginePublicAPI/event_flags.h"
 #include "EnginePublicAPI/entity_types.h"
 #include "EnginePublicAPI/triangleapi.h"
 #include "EnginePublicAPI/studio.h"
+#include "MathLib/vec3.h"
+#include "MathLib/utils.h"
 
 static float gTracerSize[] = {
 	1.5f,  // pt_static

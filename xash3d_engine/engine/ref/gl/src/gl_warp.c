@@ -13,9 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "EngineInternalAPI/log_strings.h"
 #include "gl_local.h"
+#include "EngineInternalAPI/log_strings.h"
 #include "EngineInternalAPI/wadfile.h"
+#include "MathLib/vec3.h"
 
 #define SKYCLOUDS_QUALITY 12
 #define MAX_CLIP_VERTS 128  // skybox clip vertices

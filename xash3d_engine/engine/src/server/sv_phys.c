@@ -13,6 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/vec3.h"
+#include "MathLib/angles.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"
@@ -1622,7 +1624,7 @@ void SV_Physics_Step(edict_t* ent)
 			float control, speed, newspeed;
 			float friction;
 
-			speed = sqrtf((vel[0] * vel[0]) + (vel[1] * vel[1]));  // DotProduct2D
+			speed = sqrtf((vel[0] * vel[0]) + (vel[1] * vel[1]));  // Vector2DotProduct
 
 			if ( speed )
 			{

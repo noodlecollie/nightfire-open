@@ -5,7 +5,6 @@ set(SOURCES_PM_SHARED
 	../pm_shared/pm_debug.c
 	../pm_shared/pm_info.h
 	../pm_shared/pm_materials.h
-	../pm_shared/pm_math.c
 	../pm_shared/pm_movevars.h
 	../pm_shared/pm_shared.h
 	../pm_shared/pm_shared.c
@@ -324,8 +323,6 @@ set(SOURCES_CLIENT
 	scoreboard.cpp
 	status_icons.cpp
 	statusbar.cpp
-	studio_util.h
-	studio_util.cpp
 	StudioModelRenderer.h
 	StudioModelRenderer.cpp
 	text_message.cpp

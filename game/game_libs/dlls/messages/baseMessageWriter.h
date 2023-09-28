@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 
 class CBasePlayer;
 typedef struct entvars_s entvars_t;

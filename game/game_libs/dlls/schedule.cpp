@@ -26,6 +26,7 @@
 #include "nodes.h"
 #include "defaultai.h"
 #include "soundent.h"
+#include "MathLib/angles.h"
 
 extern CGraph WorldGraph;
 
@@ -188,7 +189,7 @@ BOOL CBaseMonster::FScheduleValid(void)
 			ALERT(at_aiconsole, "Schedule: %s Failed\n", m_pSchedule->pName);
 
 			Vector tmp = pev->origin;
-			tmp.z = pev->absmax.z + 16;
+			tmp.z = pev->absmax[VEC3_Z] + 16;
 			UTIL_Sparks(tmp);
 		}
 #endif  // DEBUG
@@ -328,7 +329,7 @@ void CBaseMonster::RunTask(Task_t* pTask)
 				pTarget = m_hEnemy;
 			if ( pTarget )
 			{
-				pev->ideal_yaw = UTIL_VecToYaw(pTarget->pev->origin - pev->origin);
+				pev->ideal_yaw = UTIL_VecToYaw(Vector(pTarget->pev->origin) - Vector(pev->origin));
 				ChangeYaw(static_cast<int>(pev->yaw_speed));
 			}
 			if ( m_fSequenceFinished )
@@ -408,17 +409,19 @@ void CBaseMonster::RunTask(Task_t* pTask)
 			float distance;
 
 			if ( m_hTargetEnt == 0 )
+			{
 				TaskFail();
+			}
 			else
 			{
-				distance = (m_vecMoveGoal - pev->origin).Length2D();
+				distance = (m_vecMoveGoal - Vector(pev->origin)).Length2D();
 
 				// Re-evaluate when you think your finished, or the target has moved too far
 				if ( (distance < pTask->flData) ||
-					 (m_vecMoveGoal - m_hTargetEnt->pev->origin).Length() > pTask->flData * 0.5 )
+					 (m_vecMoveGoal - Vector(m_hTargetEnt->pev->origin)).Length() > pTask->flData * 0.5 )
 				{
 					m_vecMoveGoal = m_hTargetEnt->pev->origin;
-					distance = (m_vecMoveGoal - pev->origin).Length2D();
+					distance = (m_vecMoveGoal - Vector(pev->origin)).Length2D();
 					FRefreshRoute();
 				}
 
@@ -430,9 +433,13 @@ void CBaseMonster::RunTask(Task_t* pTask)
 					RouteClear();  // Stop moving
 				}
 				else if ( distance < 190 && m_movementActivity != ACT_WALK )
+				{
 					m_movementActivity = ACT_WALK;
+				}
 				else if ( distance >= 270 && m_movementActivity != ACT_RUN )
+				{
 					m_movementActivity = ACT_RUN;
+				}
 			}
 			break;
 		}
@@ -461,12 +468,15 @@ void CBaseMonster::RunTask(Task_t* pTask)
 					// pev->solid = SOLID_NOT;
 					UTIL_SetSize(pev, Vector(-4, -4, 0), Vector(4, 4, 1));
 				}
-				else  // !!!HACKHACK - put monster in a thin, wide bounding box until we fix the solid type/bounding
-					  // volume problem
+				else
+				{
+					// !!!HACKHACK - put monster in a thin, wide bounding box until we fix the solid type/bounding
+					// volume problem
 					UTIL_SetSize(
 						pev,
-						Vector(pev->mins.x, pev->mins.y, pev->mins.z),
-						Vector(pev->maxs.x, pev->maxs.y, pev->mins.z + 1));
+						Vector(pev->mins[VEC3_X], pev->mins[VEC3_Y], pev->mins[VEC3_Z]),
+						Vector(pev->maxs[VEC3_X], pev->maxs[VEC3_Y], pev->mins[VEC3_Z] + 1));
+				}
 
 				if ( ShouldFadeOnDeath() )
 				{
@@ -580,7 +590,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		{
 			float flCurrentYaw;
 
-			flCurrentYaw = UTIL_AngleMod(pev->angles.y);
+			flCurrentYaw = UTIL_AngleMod(pev->angles[YAW]);
 			pev->ideal_yaw = UTIL_AngleMod(flCurrentYaw - pTask->flData);
 			SetTurnActivity();
 			break;
@@ -589,7 +599,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		{
 			float flCurrentYaw;
 
-			flCurrentYaw = UTIL_AngleMod(pev->angles.y);
+			flCurrentYaw = UTIL_AngleMod(pev->angles[YAW]);
 			pev->ideal_yaw = UTIL_AngleMod(flCurrentYaw + pTask->flData);
 			SetTurnActivity();
 			break;
@@ -886,13 +896,18 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		}
 		case TASK_MOVE_TO_TARGET_RANGE:
 		{
-			if ( (m_hTargetEnt->pev->origin - pev->origin).Length() < 1 )
+			if ( (Vector(m_hTargetEnt->pev->origin) - Vector(pev->origin)).Length() < 1 )
+			{
 				TaskComplete();
+			}
 			else
 			{
 				m_vecMoveGoal = m_hTargetEnt->pev->origin;
+
 				if ( !MoveToTarget(ACT_WALK, 2) )
+				{
 					TaskFail();
+				}
 			}
 			break;
 		}
@@ -901,18 +916,26 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		{
 			Activity newActivity;
 
-			if ( (m_hTargetEnt->pev->origin - pev->origin).Length() < 1 )
+			if ( (Vector(m_hTargetEnt->pev->origin) - Vector(pev->origin)).Length() < 1 )
+			{
 				TaskComplete();
+			}
 			else
 			{
 				if ( pTask->iTask == TASK_WALK_TO_TARGET )
+				{
 					newActivity = ACT_WALK;
+				}
 				else
+				{
 					newActivity = ACT_RUN;
+				}
 
 				// This monster can't do this!
 				if ( LookupActivity(newActivity) == ACTIVITY_NOT_AVAILABLE )
+				{
 					TaskComplete();
+				}
 				else
 				{
 					if ( m_hTargetEnt == 0 || !MoveToTarget(newActivity, 2) )
@@ -984,7 +1007,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 			{
 				TaskComplete();
 			}
-			else if ( BuildNearestRoute(m_vecEnemyLKP, pev->view_ofs, 0, (m_vecEnemyLKP - pev->origin).Length()) )
+			else if ( BuildNearestRoute(m_vecEnemyLKP, pev->view_ofs, 0, (m_vecEnemyLKP - Vector(pev->origin)).Length()) )
 			{
 				TaskComplete();
 			}
@@ -1014,7 +1037,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 						  pEnemy->pev->origin,
 						  pEnemy->pev->view_ofs,
 						  0,
-						  (pEnemy->pev->origin - pev->origin).Length()) )
+						  (Vector(pEnemy->pev->origin) - Vector(pev->origin)).Length()) )
 			{
 				TaskComplete();
 			}
@@ -1029,7 +1052,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		case TASK_GET_PATH_TO_ENEMY_CORPSE:
 		{
 			UTIL_MakeVectors(pev->angles);
-			if ( BuildRoute(m_vecEnemyLKP - gpGlobals->v_forward * 64, bits_MF_TO_LOCATION, NULL) )
+			if ( BuildRoute(m_vecEnemyLKP - Vector(gpGlobals->v_forward) * 64, bits_MF_TO_LOCATION, NULL) )
 			{
 				TaskComplete();
 			}
@@ -1177,10 +1200,10 @@ void CBaseMonster::StartTask(Task_t* pTask)
 			// to start strafing, we have to first figure out if the target is on the left side or right side
 			UTIL_MakeVectors(pev->angles);
 
-			vec2DirToPoint = (m_Route[0].vecLocation - pev->origin).Make2D().Normalize();
-			vec2RightSide = gpGlobals->v_right.Make2D().Normalize();
+			vec2DirToPoint = (m_Route[0].vecLocation - Vector(pev->origin)).Make2D().Normalize();
+			vec2RightSide = Vector(gpGlobals->v_right).Make2D().Normalize();
 
-			if ( DotProduct2D(vec2DirToPoint, vec2RightSide) > 0 )
+			if ( Vector2DotProduct(vec2DirToPoint, vec2RightSide) > 0 )
 			{
 				// strafe right
 				m_movementActivity = ACT_STRAFE_RIGHT;
@@ -1289,7 +1312,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		{
 			if ( m_hTargetEnt != 0 )
 			{
-				pev->origin = m_hTargetEnt->pev->origin;  // Plant on target
+				VectorCopy(m_hTargetEnt->pev->origin, pev->origin);  // Plant on target
 			}
 
 			TaskComplete();
@@ -1299,7 +1322,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		{
 			if ( m_hTargetEnt != 0 )
 			{
-				pev->ideal_yaw = UTIL_AngleMod(m_hTargetEnt->pev->angles.y);
+				pev->ideal_yaw = UTIL_AngleMod(m_hTargetEnt->pev->angles[YAW]);
 			}
 
 			TaskComplete();

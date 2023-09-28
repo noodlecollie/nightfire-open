@@ -25,6 +25,7 @@
 #include "ammodefs.h"
 #include "EnginePublicAPI/weaponinfo.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 enum satchel_state
 {
@@ -116,16 +117,16 @@ void CSatchelCharge::SatchelSlide(CBaseEntity* pOther)
 
 	// HACKHACK - On ground isn't always set, so look for ground underneath
 	TraceResult tr;
-	UTIL_TraceLine(pev->origin, pev->origin - Vector(0, 0, 10), ignore_monsters, edict(), &tr);
+	UTIL_TraceLine(Vector(pev->origin), Vector(pev->origin) - Vector(0, 0, 10), ignore_monsters, edict(), &tr);
 
 	if ( tr.flFraction < 1.0 )
 	{
 		// add a bit of static friction
-		pev->velocity = pev->velocity * 0.95f;
-		pev->avelocity = pev->avelocity * 0.9f;
+		VectorScale(pev->velocity, 0.95f, pev->velocity);
+		VectorScale(pev->avelocity, 0.9f, pev->avelocity);
 		// play sliding sound, volume based on velocity
 	}
-	if ( !(pev->flags & FL_ONGROUND) && pev->velocity.Length2D() > 10 )
+	if ( !(pev->flags & FL_ONGROUND) && Vector(pev->velocity).Length2D() > 10 )
 	{
 		// Fix for a bug in engine: when object isn't moving, but its speed isn't 0 and on ground isn't set
 		if ( pev->origin != m_lastBounceOrigin )
@@ -151,9 +152,9 @@ void CSatchelCharge::SatchelThink(void)
 	if ( pev->waterlevel == 3 )
 	{
 		pev->movetype = MOVETYPE_FLY;
-		pev->velocity = pev->velocity * 0.8f;
-		pev->avelocity = pev->avelocity * 0.9f;
-		pev->velocity.z += 8;
+		VectorScale(pev->velocity, 0.8f, pev->velocity);
+		VectorScale(pev->avelocity, 0.9f, pev->avelocity);
+		pev->velocity[VEC3_Z] += 8;
 	}
 	else if ( pev->waterlevel == 0 )
 	{
@@ -161,7 +162,7 @@ void CSatchelCharge::SatchelThink(void)
 	}
 	else
 	{
-		pev->velocity.z -= 8;
+		pev->velocity[VEC3_Z] -= 8;
 	}
 }
 
@@ -386,11 +387,11 @@ void CSatchel::Throw(void)
 #ifndef CLIENT_DLL
 		Vector vecSrc = m_pPlayer->pev->origin;
 
-		Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
+		Vector vecThrow = Vector(gpGlobals->v_forward) * 274 + Vector(m_pPlayer->pev->velocity);
 
 		CBaseEntity* pSatchel = Create("monster_satchel", vecSrc, Vector(0, 0, 0), m_pPlayer->edict());
-		pSatchel->pev->velocity = vecThrow;
-		pSatchel->pev->avelocity.y = 400;
+		VectorCopy(vecThrow, pSatchel->pev->velocity);
+		pSatchel->pev->avelocity[YAW] = 400;
 
 		m_pPlayer->pev->viewmodel = MAKE_STRING("models/v_satchel_radio.mdl");
 		m_pPlayer->pev->weaponmodel = MAKE_STRING("models/p_satchel_radio.mdl");

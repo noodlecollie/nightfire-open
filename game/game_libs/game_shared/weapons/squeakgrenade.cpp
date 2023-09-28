@@ -26,6 +26,7 @@
 #include "ammodefs.h"
 #include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
+#include "MathLib/angles.h"
 
 enum w_squeak_e
 {
@@ -219,7 +220,7 @@ void CSqueakGrenade::HuntThink(void)
 	// explode when ready
 	if ( gpGlobals->time >= m_flDie )
 	{
-		g_vecAttackDir = pev->velocity.Normalize();
+		g_vecAttackDir = Vector(pev->velocity).Normalize();
 		pev->health = -1;
 		Killed(pev, 0);
 		return;
@@ -232,8 +233,9 @@ void CSqueakGrenade::HuntThink(void)
 		{
 			pev->movetype = MOVETYPE_FLY;
 		}
-		pev->velocity = pev->velocity * 0.9f;
-		pev->velocity.z += 8.0;
+
+		VectorScale(pev->velocity, 0.9f, pev->velocity);
+		pev->velocity[VEC3_Z] += 8.0f;
 	}
 	else if ( pev->movetype == MOVETYPE_FLY )
 	{
@@ -248,7 +250,6 @@ void CSqueakGrenade::HuntThink(void)
 
 	// CBaseEntity *pOther = NULL;
 	Vector vecDir;
-	TraceResult tr;
 
 	Vector vecFlat = pev->velocity;
 	vecFlat.z = 0;
@@ -279,11 +280,11 @@ void CSqueakGrenade::HuntThink(void)
 	{
 		if ( FVisible(m_hEnemy) )
 		{
-			vecDir = m_hEnemy->EyePosition() - pev->origin;
+			vecDir = m_hEnemy->EyePosition() - Vector(pev->origin);
 			m_vecTarget = vecDir.Normalize();
 		}
 
-		float flVel = pev->velocity.Length();
+		float flVel = VectorLength(pev->velocity);
 		float flAdj = 50.0f / (flVel + 10.0f);
 
 		if ( flAdj > 1.2 )
@@ -293,32 +294,33 @@ void CSqueakGrenade::HuntThink(void)
 
 		// ALERT( at_console, "%.0f %.2f %.2f %.2f\n", flVel, m_vecTarget.x, m_vecTarget.y, m_vecTarget.z );
 
-		pev->velocity = pev->velocity * flAdj + m_vecTarget * 300;
+		(Vector(pev->velocity) * flAdj + m_vecTarget * 300).CopyToArray(pev->velocity);
 	}
 
 	if ( pev->flags & FL_ONGROUND )
 	{
-		pev->avelocity = Vector(0, 0, 0);
+		VectorClear(pev->velocity);
 	}
 	else
 	{
 		if ( pev->avelocity == Vector(0, 0, 0) )
 		{
-			pev->avelocity.x = RANDOM_FLOAT(-100, 100);
-			pev->avelocity.z = RANDOM_FLOAT(-100, 100);
+			pev->avelocity[VEC3_X] = RANDOM_FLOAT(-100, 100);
+			pev->avelocity[VEC3_Z] = RANDOM_FLOAT(-100, 100);
 		}
 	}
 
-	if ( (pev->origin - m_posPrev).Length() < 1.0 )
+	if ( (Vector(pev->origin) - m_posPrev).Length() < 1.0 )
 	{
-		pev->velocity.x = RANDOM_FLOAT(-100, 100);
-		pev->velocity.y = RANDOM_FLOAT(-100, 100);
+		pev->velocity[VEC3_X] = RANDOM_FLOAT(-100, 100);
+		pev->velocity[VEC3_Y] = RANDOM_FLOAT(-100, 100);
 	}
+
 	m_posPrev = pev->origin;
 
-	pev->angles = UTIL_VecToAngles(pev->velocity);
-	pev->angles.z = 0;
-	pev->angles.x = 0;
+	UTIL_VecToAngles(pev->velocity).CopyToArray(pev->angles);
+	pev->angles[ROLL] = 0;
+	pev->angles[PITCH] = 0;
 }
 
 void CSqueakGrenade::SuperBounceTouch(CBaseEntity* pOther)
@@ -334,8 +336,8 @@ void CSqueakGrenade::SuperBounceTouch(CBaseEntity* pOther)
 	// at least until we've bounced once
 	pev->owner = NULL;
 
-	pev->angles.x = 0;
-	pev->angles.z = 0;
+	pev->angles[PITCH] = 0;
+	pev->angles[ROLL] = 0;
 
 	// avoid bouncing too much
 	if ( m_flNextHit > gpGlobals->time )
@@ -506,8 +508,8 @@ void CSqueak::PrimaryAttack()
 
 		// find place to toss monster
 		UTIL_TraceLine(
-			trace_origin + gpGlobals->v_forward * 20,
-			trace_origin + gpGlobals->v_forward * 64,
+			trace_origin + Vector(gpGlobals->v_forward) * 20,
+			trace_origin + Vector(gpGlobals->v_forward) * 64,
 			dont_ignore_monsters,
 			NULL,
 			&tr);
@@ -533,7 +535,7 @@ void CSqueak::PrimaryAttack()
 #ifndef CLIENT_DLL
 			CBaseEntity* pSqueak =
 				CBaseEntity::Create("monster_snark", tr.vecEndPos, m_pPlayer->pev->v_angle, m_pPlayer->edict());
-			pSqueak->pev->velocity = gpGlobals->v_forward * 200 + m_pPlayer->pev->velocity;
+			(Vector(gpGlobals->v_forward) * 200 + Vector(m_pPlayer->pev->velocity)).CopyToArray(pSqueak->pev->velocity);
 #endif
 			// play hunt sound
 			float flRndSound = RANDOM_FLOAT(0, 1);

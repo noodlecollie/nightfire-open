@@ -812,11 +812,11 @@ qboolean CL_FixedFont(cl_font_t* font);
 qboolean Con_LoadFixedWidthFont(const char* fontname, cl_font_t* font, float scale, int rendermode, uint texFlags);
 qboolean Con_LoadVariableWidthFont(const char* fontname, cl_font_t* font, float scale, int rendermode, uint texFlags);
 void CL_FreeFont(cl_font_t* font);
-int CL_DrawCharacter(float x, float y, int number, rgba_t color, cl_font_t* font, int flags);
-int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font, int flags);
+int CL_DrawCharacter(float x, float y, int number, const rgba_t color, cl_font_t* font, int flags);
+int CL_DrawString(float x, float y, const char* s, const rgba_t color, cl_font_t* font, int flags);
 void CL_DrawCharacterLen(cl_font_t* font, int number, int* width, int* height);
 void CL_DrawStringLen(cl_font_t* font, const char* s, int* width, int* height, int flags);
-int CL_DrawStringf(cl_font_t* font, float x, float y, rgba_t color, int flags, const char* fmt, ...) _format(6);
+int CL_DrawStringf(cl_font_t* font, float x, float y, const rgba_t color, int flags, const char* fmt, ...) _format(6);
 
 //
 // cl_game.c
@@ -1199,6 +1199,6 @@ void Key_EnableTextInput(qboolean enable, qboolean force);
 int Key_ToUpper(int key);
 void OSK_Draw(void);
 
-extern rgba_t g_color_table[8];
+const byte* Con_GetColorFromTable(char ch);
 
 #endif  // CLIENT_H

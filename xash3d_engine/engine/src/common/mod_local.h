@@ -14,6 +14,9 @@ GNU General Public License for more details.
 */
 
 #include "EngineInternalAPI/mod_local_defs.h"
+#include "MathLib/quaternion.h"
+#include "MathLib/vec3.h"
+#include "cvar.h"
 
 #ifndef REF_DLL
 extern world_static_t world;
@@ -94,14 +97,14 @@ hull_t* Mod_HullForStudio(
 uint32_t Mod_GetHitboxCount(const edict_t* edict);
 qboolean Mod_GetTransformedHitboxPoints(const edict_t* edict, uint32_t hitboxIndex, Mod_BoxPoints* box);
 int Mod_GetHitboxHitGroup(const edict_t* edict, uint32_t hitboxIndex);
-void R_StudioSlerpBones(int numbones, vec4_t q1[], float pos1[][3], const vec4_t q2[], const float pos2[][3], float s);
+void R_StudioSlerpBones(int numbones, quat_t q1[], float pos1[][3], const quat_t q2[], const float pos2[][3], float s);
 void R_StudioCalcBoneQuaternion(
 	int frame,
 	float s,
 	const mstudiobone_t* pbone,
 	const mstudioanim_t* panim,
 	const float* adj,
-	vec4_t q);
+	quat_t q);
 void R_StudioCalcBonePosition(
 	int frame,
 	float s,

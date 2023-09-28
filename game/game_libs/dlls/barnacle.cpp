@@ -21,6 +21,7 @@
 #include "cbase.h"
 #include "monsters.h"
 #include "schedule.h"
+#include "MathLib/angles.h"
 
 #define BARNACLE_BODY_HEIGHT 44  // how 'tall' the barnacle's model is.
 #define BARNACLE_PULL_SPEED 8
@@ -192,17 +193,18 @@ void CBarnacle::BarnacleThink(void)
 
 			// still pulling prey.
 			Vector vecNewEnemyOrigin = m_hEnemy->pev->origin;
-			vecNewEnemyOrigin.x = pev->origin.x;
-			vecNewEnemyOrigin.y = pev->origin.y;
+			vecNewEnemyOrigin.x = pev->origin[VEC3_X];
+			vecNewEnemyOrigin.y = pev->origin[VEC3_X];
 
 			// guess as to where their neck is
-			vecNewEnemyOrigin.x -= 6 * cosf(m_hEnemy->pev->angles.y * static_cast<float>(M_PI) / 180.0f);
-			vecNewEnemyOrigin.y -= 6 * sinf(m_hEnemy->pev->angles.y * static_cast<float>(M_PI) / 180.0f);
+			vecNewEnemyOrigin.x -= 6 * cosf(m_hEnemy->pev->angles[YAW] * static_cast<float>(M_PI) / 180.0f);
+			vecNewEnemyOrigin.y -= 6 * sinf(m_hEnemy->pev->angles[YAW] * static_cast<float>(M_PI) / 180.0f);
 
 			m_flAltitude -= BARNACLE_PULL_SPEED;
 			vecNewEnemyOrigin.z += BARNACLE_PULL_SPEED;
 
-			if ( fabs(pev->origin.z - (vecNewEnemyOrigin.z + m_hEnemy->pev->view_ofs.z - 8)) < BARNACLE_BODY_HEIGHT )
+			if ( fabs(pev->origin[VEC3_Z] - (vecNewEnemyOrigin.z + m_hEnemy->pev->view_ofs[VEC3_Z] - 8)) <
+				 BARNACLE_BODY_HEIGHT )
 			{
 				// prey has just been lifted into position ( if the victim origin + eye height + 8 is higher than the
 				// bottom of the barnacle, it is assumed that the head is within barnacle's body )
@@ -311,15 +313,15 @@ void CBarnacle::BarnacleThink(void)
 				m_hEnemy = pTouchEnt;
 
 				pTouchEnt->pev->movetype = MOVETYPE_FLY;
-				pTouchEnt->pev->velocity = g_vecZero;
-				pTouchEnt->pev->basevelocity = g_vecZero;
-				pTouchEnt->pev->origin.x = pev->origin.x;
-				pTouchEnt->pev->origin.y = pev->origin.y;
+				VectorClear(pTouchEnt->pev->velocity);
+				VectorClear(pTouchEnt->pev->basevelocity);
+				pTouchEnt->pev->origin[VEC3_X] = pev->origin[VEC3_X];
+				pTouchEnt->pev->origin[VEC3_Y] = pev->origin[VEC3_Y];
 
 				m_fLiftingPrey = TRUE;  // indicate that we should be lifting prey.
 				m_flKillVictimTime = -1;  // set this to a bogus time while the victim is lifted.
 
-				m_flAltitude = pev->origin.z - pTouchEnt->EyePosition().z;
+				m_flAltitude = pev->origin[VEC3_Z] - pTouchEnt->EyePosition().z;
 			}
 		}
 		else
@@ -430,17 +432,17 @@ CBaseEntity* CBarnacle::TongueTouchEnt(float* pflLength)
 	float length;
 
 	// trace once to hit architecture and see if the tongue needs to change position.
-	UTIL_TraceLine(pev->origin, pev->origin - Vector(0, 0, 2048), ignore_monsters, ENT(pev), &tr);
-	length = fabsf(pev->origin.z - tr.vecEndPos.z);
+	UTIL_TraceLine(pev->origin, Vector(pev->origin) - Vector(0, 0, 2048), ignore_monsters, ENT(pev), &tr);
+	length = fabsf(pev->origin[VEC3_Z] - tr.vecEndPos[VEC3_Z]);
 	if ( pflLength )
 	{
 		*pflLength = length;
 	}
 
 	Vector delta = Vector(BARNACLE_CHECK_SPACING, BARNACLE_CHECK_SPACING, 0);
-	Vector mins = pev->origin - delta;
-	Vector maxs = pev->origin + delta;
-	maxs.z = pev->origin.z;
+	Vector mins = Vector(pev->origin) - delta;
+	Vector maxs = Vector(pev->origin) + delta;
+	maxs.z = pev->origin[VEC3_Z];
 	mins.z -= length;
 
 	CBaseEntity* pList[10];

@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "gl_local.h"
 #include "EngineInternalAPI/mod_local_defs.h"
+#include "MathLib/utils.h"
 
 #define list_entry(ptr, type, member) ((type*)((char*)(ptr) - (size_t)(&((type*)0)->member)))
 

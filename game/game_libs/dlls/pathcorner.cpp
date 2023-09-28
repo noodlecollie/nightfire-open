@@ -244,9 +244,9 @@ void CPathTrack::Project(CPathTrack* pstart, CPathTrack* pend, Vector* origin, f
 {
 	if ( pstart && pend )
 	{
-		Vector dir = pend->pev->origin - pstart->pev->origin;
+		Vector dir = Vector(pend->pev->origin) - Vector(pstart->pev->origin);
 		dir = dir.Normalize();
-		*origin = pend->pev->origin + dir * dist;
+		*origin = Vector(pend->pev->origin) + dir * dist;
 	}
 }
 
@@ -287,7 +287,7 @@ CPathTrack* CPathTrack::LookAhead(Vector* origin, float dist, int move)
 		dist = -dist;
 		while ( dist > 0 )
 		{
-			Vector dir = pcurrent->pev->origin - currentPos;
+			Vector dir = Vector(pcurrent->pev->origin) - currentPos;
 			float length = dir.Length();
 			if ( !length )
 			{
@@ -296,7 +296,10 @@ CPathTrack* CPathTrack::LookAhead(Vector* origin, float dist, int move)
 						 move) )  // If there is no previous node, or it's disabled, return now.
 				{
 					if ( !move )
+					{
 						Project(pcurrent->GetNext(), pcurrent, origin, dist);
+					}
+
 					return NULL;
 				}
 				pcurrent = pcurrent->GetPrevious();
@@ -332,7 +335,7 @@ CPathTrack* CPathTrack::LookAhead(Vector* origin, float dist, int move)
 					Project(pcurrent->GetPrevious(), pcurrent, origin, dist);
 				return NULL;
 			}
-			Vector dir = pcurrent->GetNext()->pev->origin - currentPos;
+			Vector dir = Vector(pcurrent->GetNext()->pev->origin) - currentPos;
 			float length = dir.Length();
 			if ( !length && !ValidPath(pcurrent->GetNext()->GetNext(), move) )
 			{
@@ -367,7 +370,7 @@ CPathTrack* CPathTrack::Nearest(Vector origin)
 	Vector delta;
 	CPathTrack *ppath, *pnearest;
 
-	delta = origin - pev->origin;
+	delta = origin - Vector(pev->origin);
 	delta.z = 0;
 	minDist = delta.Length();
 	pnearest = this;
@@ -383,7 +386,7 @@ CPathTrack* CPathTrack::Nearest(Vector origin)
 			ALERT(at_error, "Bad sequence of path_tracks from %s", STRING(pev->targetname));
 			return NULL;
 		}
-		delta = origin - ppath->pev->origin;
+		delta = origin - Vector(ppath->pev->origin);
 		delta.z = 0;
 		dist = delta.Length();
 		if ( dist < minDist )

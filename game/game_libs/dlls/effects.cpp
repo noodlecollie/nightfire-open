@@ -24,6 +24,7 @@
 #include "func_break.h"
 #include "EnginePublicAPI/shake.h"
 #include "miniutl.h"
+#include "MathLib/angles.h"
 
 #define SF_GIBSHOOTER_REPEATABLE 1  // allows a gibshooter to be refired
 
@@ -81,9 +82,9 @@ void CBubbling::Spawn(void)
 	int speed = static_cast<int>(fabsf(pev->speed));
 
 	// HACKHACK!!! - Speed in rendercolor
-	pev->rendercolor.x = static_cast<float>(speed >> 8);
-	pev->rendercolor.y = static_cast<float>(speed & 255);
-	pev->rendercolor.z = static_cast<float>((pev->speed < 0) ? 1 : 0);
+	pev->rendercolor[0] = static_cast<float>(speed >> 8);
+	pev->rendercolor[1] = static_cast<float>(speed & 255);
+	pev->rendercolor[2] = static_cast<float>((pev->speed < 0) ? 1 : 0);
 
 	if ( !(pev->spawnflags & SF_BUBBLES_STARTOFF) )
 	{
@@ -92,7 +93,9 @@ void CBubbling::Spawn(void)
 		m_state = 1;
 	}
 	else
+	{
 		m_state = 0;
+	}
 }
 
 void CBubbling::Precache(void)
@@ -135,7 +138,9 @@ void CBubbling::KeyValue(KeyValueData* pkvd)
 		pkvd->fHandled = TRUE;
 	}
 	else
+	{
 		CBaseEntity::KeyValue(pkvd);
+	}
 }
 
 void CBubbling::FizzThink(void)
@@ -148,9 +153,13 @@ void CBubbling::FizzThink(void)
 	MESSAGE_END();
 
 	if ( m_frequency > 19 )
+	{
 		pev->nextthink = gpGlobals->time + 0.5f;
+	}
 	else
+	{
 		pev->nextthink = gpGlobals->time + 2.5f - (0.1f * m_frequency);
+	}
 }
 
 // --------------------------------------------------
@@ -170,9 +179,14 @@ void CBeam::Spawn(void)
 void CBeam::Precache(void)
 {
 	if ( pev->owner )
+	{
 		SetStartEntity(ENTINDEX(pev->owner));
+	}
+
 	if ( pev->aiment )
+	{
 		SetEndEntity(ENTINDEX(pev->aiment));
+	}
 }
 
 void CBeam::SetStartEntity(int entityIndex)
@@ -188,28 +202,34 @@ void CBeam::SetEndEntity(int entityIndex)
 }
 
 // These don't take attachments into account
-const Vector& CBeam::GetStartPos(void)
+Vector CBeam::GetStartPos(void)
 {
 	if ( GetType() == BEAM_ENTS )
 	{
 		edict_t* pent = g_engfuncs.pfnPEntityOfEntIndex(GetStartEntity());
-		return pent->v.origin;
+		return Vector(pent->v.origin);
 	}
-	return pev->origin;
+
+	return Vector(pev->origin);
 }
 
-const Vector& CBeam::GetEndPos(void)
+Vector CBeam::GetEndPos(void)
 {
 	int type = GetType();
+
 	if ( type == BEAM_POINTS || type == BEAM_HOSE )
 	{
-		return pev->angles;
+		return Vector(pev->angles);
 	}
 
 	edict_t* pent = g_engfuncs.pfnPEntityOfEntIndex(GetEndEntity());
+
 	if ( pent )
-		return pent->v.origin;
-	return pev->angles;
+	{
+		return Vector(pent->v.origin);
+	}
+
+	return Vector(pev->angles);
 }
 
 CBeam* CBeam::BeamCreate(const char* pSpriteName, int width)
@@ -281,16 +301,18 @@ void CBeam::EntsInit(int startIndex, int endIndex)
 
 void CBeam::RelinkBeam(void)
 {
-	const Vector &startPos = GetStartPos(), &endPos = GetEndPos();
+	Vector startPos = GetStartPos();
+	Vector endPos = GetEndPos();
 
-	pev->mins.x = Q_min(startPos.x, endPos.x);
-	pev->mins.y = Q_min(startPos.y, endPos.y);
-	pev->mins.z = Q_min(startPos.z, endPos.z);
-	pev->maxs.x = Q_max(startPos.x, endPos.x);
-	pev->maxs.y = Q_max(startPos.y, endPos.y);
-	pev->maxs.z = Q_max(startPos.z, endPos.z);
-	pev->mins = pev->mins - pev->origin;
-	pev->maxs = pev->maxs - pev->origin;
+	pev->mins[VEC3_X] = Q_min(startPos.x, endPos.x);
+	pev->mins[VEC3_Y] = Q_min(startPos.y, endPos.y);
+	pev->mins[VEC3_Z] = Q_min(startPos.z, endPos.z);
+	pev->maxs[VEC3_X] = Q_max(startPos.x, endPos.x);
+	pev->maxs[VEC3_Y] = Q_max(startPos.y, endPos.y);
+	pev->maxs[VEC3_Z] = Q_max(startPos.z, endPos.z);
+
+	VectorSubtract(pev->mins, pev->origin, pev->mins);
+	VectorSubtract(pev->maxs, pev->origin, pev->maxs);
 
 	UTIL_SetSize(pev, pev->mins, pev->maxs);
 	UTIL_SetOrigin(pev, pev->origin);
@@ -364,7 +386,7 @@ public:
 	void EXPORT StrikeThink(void);
 	void EXPORT DamageThink(void);
 	void RandomArea(void);
-	void RandomPoint(Vector& vecSrc);
+	void RandomPoint(const Vector& vecSrc);
 	void Zap(const Vector& vecSrc, const Vector& vecDest);
 	void EXPORT StrikeUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 	void EXPORT ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
@@ -618,9 +640,13 @@ void CLightning::StrikeThink(void)
 	if ( m_life != 0 )
 	{
 		if ( pev->spawnflags & SF_BEAM_RANDOM )
+		{
 			pev->nextthink = gpGlobals->time + m_life + RANDOM_FLOAT(0, m_restrike);
+		}
 		else
+		{
 			pev->nextthink = gpGlobals->time + m_life + m_restrike;
+		}
 	}
 	m_active = 1;
 
@@ -634,9 +660,13 @@ void CLightning::StrikeThink(void)
 		{
 			CBaseEntity* pStart = RandomTargetname(STRING(m_iszStartEntity));
 			if ( pStart != NULL )
+			{
 				RandomPoint(pStart->pev->origin);
+			}
 			else
+			{
 				ALERT(at_console, "env_beam: unknown entity \"%s\"\n", STRING(m_iszStartEntity));
+			}
 		}
 		return;
 	}
@@ -669,27 +699,32 @@ void CLightning::StrikeThink(void)
 			{
 				WRITE_BYTE(TE_BEAMENTPOINT);
 				WRITE_SHORT(pStart->entindex());
-				WRITE_COORD(pEnd->pev->origin.x);
-				WRITE_COORD(pEnd->pev->origin.y);
-				WRITE_COORD(pEnd->pev->origin.z);
+				WRITE_COORD(pEnd->pev->origin[0]);
+				WRITE_COORD(pEnd->pev->origin[1]);
+				WRITE_COORD(pEnd->pev->origin[2]);
 			}
 			else
 			{
 				WRITE_BYTE(TE_BEAMPOINTS);
-				WRITE_COORD(pStart->pev->origin.x);
-				WRITE_COORD(pStart->pev->origin.y);
-				WRITE_COORD(pStart->pev->origin.z);
-				WRITE_COORD(pEnd->pev->origin.x);
-				WRITE_COORD(pEnd->pev->origin.y);
-				WRITE_COORD(pEnd->pev->origin.z);
+				WRITE_COORD(pStart->pev->origin[0]);
+				WRITE_COORD(pStart->pev->origin[1]);
+				WRITE_COORD(pStart->pev->origin[2]);
+				WRITE_COORD(pEnd->pev->origin[0]);
+				WRITE_COORD(pEnd->pev->origin[1]);
+				WRITE_COORD(pEnd->pev->origin[2]);
 			}
 		}
 		else
 		{
 			if ( pev->spawnflags & SF_BEAM_RING )
+			{
 				WRITE_BYTE(TE_BEAMRING);
+			}
 			else
+			{
 				WRITE_BYTE(TE_BEAMENTS);
+			}
+
 			WRITE_SHORT(pStart->entindex());
 			WRITE_SHORT(pEnd->entindex());
 		}
@@ -700,9 +735,9 @@ void CLightning::StrikeThink(void)
 		WRITE_BYTE((int)(m_life * 10.0));  // life
 		WRITE_BYTE(m_boltWidth);  // width
 		WRITE_BYTE(m_noiseAmplitude);  // noise
-		WRITE_BYTE((int)pev->rendercolor.x);  // r, g, b
-		WRITE_BYTE((int)pev->rendercolor.y);  // r, g, b
-		WRITE_BYTE((int)pev->rendercolor.z);  // r, g, b
+		WRITE_BYTE((int)pev->rendercolor[0]);  // r, g, b
+		WRITE_BYTE((int)pev->rendercolor[1]);  // r, g, b
+		WRITE_BYTE((int)pev->rendercolor[2]);  // r, g, b
 		WRITE_BYTE((int)pev->renderamt);  // brightness
 		WRITE_BYTE(m_speed);  // speed
 		MESSAGE_END();
@@ -728,14 +763,18 @@ void CBeam::BeamDamage(TraceResult* ptr)
 			pHit->TraceAttack(
 				pev,
 				pev->dmg * (gpGlobals->time - pev->dmgtime),
-				(ptr->vecEndPos - pev->origin).Normalize(),
+				(Vector(ptr->vecEndPos) - Vector(pev->origin)).Normalize(),
 				ptr,
 				DMG_ENERGYBEAM);
+
 			ApplyMultiDamage(pev, pev);
+
 			if ( pev->spawnflags & SF_BEAM_DECALS )
 			{
 				if ( pHit->IsBSPModel() )
+				{
 					UTIL_DecalTrace(ptr, DECAL_BIGSHOT1 + RANDOM_LONG(0, 4));
+				}
 			}
 		}
 	}
@@ -767,9 +806,9 @@ void CLightning::Zap(const Vector& vecSrc, const Vector& vecDest)
 	WRITE_BYTE((int)(m_life * 10.0));  // life
 	WRITE_BYTE(m_boltWidth);  // width
 	WRITE_BYTE(m_noiseAmplitude);  // noise
-	WRITE_BYTE((int)pev->rendercolor.x);  // r, g, b
-	WRITE_BYTE((int)pev->rendercolor.y);  // r, g, b
-	WRITE_BYTE((int)pev->rendercolor.z);  // r, g, b
+	WRITE_BYTE((int)pev->rendercolor[0]);  // r, g, b
+	WRITE_BYTE((int)pev->rendercolor[1]);  // r, g, b
+	WRITE_BYTE((int)pev->rendercolor[2]);  // r, g, b
 	WRITE_BYTE((int)pev->renderamt);  // brightness
 	WRITE_BYTE(m_speed);  // speed
 	MESSAGE_END();
@@ -820,13 +859,17 @@ void CLightning::RandomArea(void)
 		if ( tr2.flFraction == 1.0 )
 			continue;
 
-		if ( (tr1.vecEndPos - tr2.vecEndPos).Length() < m_radius * 0.1 )
+		if ( (Vector(tr1.vecEndPos) - Vector(tr2.vecEndPos)).Length() < m_radius * 0.1 )
+		{
 			continue;
+		}
 
 		UTIL_TraceLine(tr1.vecEndPos, tr2.vecEndPos, ignore_monsters, ENT(pev), &tr2);
 
 		if ( tr2.flFraction != 1.0 )
+		{
 			continue;
+		}
 
 		Zap(tr1.vecEndPos, tr2.vecEndPos);
 
@@ -834,7 +877,7 @@ void CLightning::RandomArea(void)
 	}
 }
 
-void CLightning::RandomPoint(Vector& vecSrc)
+void CLightning::RandomPoint(const Vector& vecSrc)
 {
 	int iLoops;
 
@@ -845,11 +888,15 @@ void CLightning::RandomPoint(Vector& vecSrc)
 		TraceResult tr1;
 		UTIL_TraceLine(vecSrc, vecSrc + vecDir1 * m_radius, ignore_monsters, ENT(pev), &tr1);
 
-		if ( (tr1.vecEndPos - vecSrc).Length() < m_radius * 0.1 )
+		if ( (Vector(tr1.vecEndPos) - vecSrc).Length() < m_radius * 0.1 )
+		{
 			continue;
+		}
 
 		if ( tr1.flFraction == 1.0 )
+		{
 			continue;
+		}
 
 		Zap(vecSrc, tr1.vecEndPos);
 		break;
@@ -946,23 +993,33 @@ void CLaser::Spawn(void)
 	PointsInit(pev->origin, pev->origin);
 
 	if ( !m_pSprite && m_iszSpriteName )
+	{
 		m_pSprite = CSprite::SpriteCreate(STRING(m_iszSpriteName), pev->origin, TRUE);
+	}
 	else
+	{
 		m_pSprite = NULL;
+	}
 
 	if ( m_pSprite )
+	{
 		m_pSprite->SetTransparency(
 			kRenderGlow,
-			(int)pev->rendercolor.x,
-			(int)pev->rendercolor.y,
-			(int)pev->rendercolor.z,
+			(int)pev->rendercolor[0],
+			(int)pev->rendercolor[1],
+			(int)pev->rendercolor[2],
 			(int)pev->renderamt,
 			(int)pev->renderfx);
+	}
 
 	if ( pev->targetname && !(pev->spawnflags & SF_BEAM_STARTON) )
+	{
 		TurnOff();
+	}
 	else
+	{
 		TurnOn();
+	}
 }
 
 void CLaser::Precache(void)
@@ -1157,15 +1214,19 @@ void CSprite::Spawn(void)
 
 	m_maxFrame = (float)MODEL_FRAMES(pev->modelindex) - 1;
 	if ( pev->targetname && !(pev->spawnflags & SF_SPRITE_STARTON) )
+	{
 		TurnOff();
+	}
 	else
+	{
 		TurnOn();
+	}
 
 	// Worldcraft only sets y rotation, copy to Z
-	if ( pev->angles.y != 0 && pev->angles.z == 0 )
+	if ( pev->angles[YAW] != 0 && pev->angles[ROLL] == 0 )
 	{
-		pev->angles.z = pev->angles.y;
-		pev->angles.y = 0;
+		pev->angles[ROLL] = pev->angles[YAW];
+		pev->angles[YAW] = 0;
 	}
 }
 
@@ -1187,7 +1248,7 @@ void CSprite::Precache(void)
 void CSprite::SpriteInit(const char* pSpriteName, const Vector& origin)
 {
 	pev->model = MAKE_STRING(pSpriteName);
-	pev->origin = origin;
+	VectorCopy(origin, pev->origin);
 	Spawn();
 }
 
@@ -1432,11 +1493,11 @@ void CGibShooter::ShootThink(void)
 
 	vecShootDir = pev->movedir;
 
-	vecShootDir = vecShootDir + gpGlobals->v_right * RANDOM_FLOAT(-1, 1) * m_flVariance;
+	vecShootDir = vecShootDir + Vector(gpGlobals->v_right) * RANDOM_FLOAT(-1, 1) * m_flVariance;
 	;
-	vecShootDir = vecShootDir + gpGlobals->v_forward * RANDOM_FLOAT(-1, 1) * m_flVariance;
+	vecShootDir = vecShootDir + Vector(gpGlobals->v_forward) * RANDOM_FLOAT(-1, 1) * m_flVariance;
 	;
-	vecShootDir = vecShootDir + gpGlobals->v_up * RANDOM_FLOAT(-1, 1) * m_flVariance;
+	vecShootDir = vecShootDir + Vector(gpGlobals->v_up) * RANDOM_FLOAT(-1, 1) * m_flVariance;
 	;
 
 	vecShootDir = vecShootDir.Normalize();
@@ -1444,11 +1505,11 @@ void CGibShooter::ShootThink(void)
 
 	if ( pGib )
 	{
-		pGib->pev->origin = pev->origin;
-		pGib->pev->velocity = vecShootDir * m_flGibVelocity;
+		VectorCopy(pev->origin, pGib->pev->origin);
+		VectorScale(vecShootDir, m_flGibVelocity, pGib->pev->velocity);
 
-		pGib->pev->avelocity.x = RANDOM_FLOAT(100, 200);
-		pGib->pev->avelocity.y = RANDOM_FLOAT(100, 300);
+		pGib->pev->avelocity[PITCH] = RANDOM_FLOAT(100, 200);
+		pGib->pev->avelocity[YAW] = RANDOM_FLOAT(100, 300);
 
 		float thinkTime = pGib->pev->nextthink - gpGlobals->time;
 
@@ -1548,7 +1609,7 @@ CGib* CEnvShooter::CreateGib(void)
 
 	pGib->pev->rendermode = pev->rendermode;
 	pGib->pev->renderamt = pev->renderamt;
-	pGib->pev->rendercolor = pev->rendercolor;
+	VectorCopy(pev->rendercolor, pGib->pev->rendercolor);
 	pGib->pev->renderfx = pev->renderfx;
 	pGib->pev->scale = pev->scale;
 	pGib->pev->skin = pev->skin;
@@ -1751,10 +1812,15 @@ Vector CBlood::BloodPosition(CBaseEntity* pActivator)
 			pPlayer = pActivator->edict();
 		}
 		else
+		{
 			pPlayer = g_engfuncs.pfnPEntityOfEntIndex(1);
+		}
+
 		if ( pPlayer )
-			return (pPlayer->v.origin + pPlayer->v.view_ofs) +
+		{
+			return (Vector(pPlayer->v.origin) + Vector(pPlayer->v.view_ofs)) +
 				Vector(RANDOM_FLOAT(-10, 10), RANDOM_FLOAT(-10, 10), RANDOM_FLOAT(-10, 10));
+		}
 	}
 
 	return pev->origin;
@@ -2099,9 +2165,9 @@ void CEnvFunnel::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_LARGEFUNNEL);
-	WRITE_COORD(pev->origin.x);
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[0]);
+	WRITE_COORD(pev->origin[1]);
+	WRITE_COORD(pev->origin[2]);
 	WRITE_SHORT(m_iSprite);
 
 	if ( pev->spawnflags & SF_FUNNEL_REVERSE )  // funnel flows in reverse?

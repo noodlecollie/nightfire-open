@@ -49,6 +49,7 @@
 #include "weapons/genericweapon.h"
 #include "EnginePublicAPI/com_strings.h"
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 // #define DUCKFIX
 
@@ -377,11 +378,7 @@ Vector CBasePlayer::GetGunPosition()
 {
 	// UTIL_MakeVectors( pev->v_angle );
 	// m_HackedGunPos = pev->view_ofs;
-	Vector origin;
-
-	origin = pev->origin + pev->view_ofs;
-
-	return origin;
+	return Vector(pev->origin) + Vector(pev->view_ofs);
 }
 
 //=========================================================
@@ -632,7 +629,7 @@ int CBasePlayer::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 		}
 	}
 
-	pev->punchangle.x = -2;
+	pev->punchangle[PITCH] = -2;
 
 	if ( fTookDamage && !ftrivial && fmajor && flHealthPrev >= 75 )
 	{
@@ -769,8 +766,8 @@ void CBasePlayer::PackDeadPlayerItems(void)
 	// create a box to pack the stuff into.
 	CWeaponBox* pWeaponBox = (CWeaponBox*)CBaseEntity::Create("weaponbox", pev->origin, pev->angles, edict());
 
-	pWeaponBox->pev->angles.x = 0;  // don't let weaponbox tilt.
-	pWeaponBox->pev->angles.z = 0;
+	pWeaponBox->pev->angles[PITCH] = 0;  // don't let weaponbox tilt.
+	pWeaponBox->pev->angles[ROLL] = 0;
 
 	pWeaponBox->SetThink(&CWeaponBox::Kill);
 	pWeaponBox->pev->nextthink = gpGlobals->time + 120;
@@ -797,7 +794,7 @@ void CBasePlayer::PackDeadPlayerItems(void)
 		iPW++;
 	}
 
-	pWeaponBox->pev->velocity = pev->velocity * 1.2f;  // weaponbox has player's velocity, then some.
+	VectorScale(pev->velocity, 1.2f, pWeaponBox->pev->velocity);  // weaponbox has player's velocity, then some.
 
 	RemoveAllItems(TRUE);  // now strip off everything that wasn't handled by the code above.
 }
@@ -900,8 +897,11 @@ void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib)
 	pev->deadflag = DEAD_DYING;
 	pev->movetype = MOVETYPE_TOSS;
 	ClearBits(pev->flags, FL_ONGROUND);
-	if ( pev->velocity.z < 10 )
-		pev->velocity.z += RANDOM_FLOAT(0, 300);
+
+	if ( pev->velocity[VEC3_Z] < 10 )
+	{
+		pev->velocity[VEC3_Z] += RANDOM_FLOAT(0, 300);
+	}
 
 	// clear out the suit message cache so we don't keep chattering
 	SetSuitUpdate(NULL, FALSE, 0);
@@ -941,8 +941,8 @@ void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib)
 
 	DeathSound();
 
-	pev->angles.x = 0;
-	pev->angles.z = 0;
+	pev->angles[PITCH] = 0;
+	pev->angles[ROLL] = 0;
 
 	SetThink(&CBasePlayer::PlayerDeathThink);
 	pev->nextthink = gpGlobals->time + 0.1f;
@@ -955,7 +955,7 @@ void CBasePlayer::SetAnimation(PLAYER_ANIM playerAnim)
 	float speed;
 	char szAnim[64];
 
-	speed = pev->velocity.Length2D();
+	speed = Vector(pev->velocity).Length2D();
 
 	if ( pev->flags & FL_FROZEN )
 	{
@@ -1253,11 +1253,16 @@ void CBasePlayer::PlayerDeathThink(void)
 
 	if ( FBitSet(pev->flags, FL_ONGROUND) )
 	{
-		flForward = pev->velocity.Length() - 20;
+		flForward = VectorLength(pev->velocity) - 20;
+
 		if ( flForward <= 0 )
-			pev->velocity = g_vecZero;
+		{
+			VectorClear(pev->velocity);
+		}
 		else
-			pev->velocity = flForward * pev->velocity.Normalize();
+		{
+			VectorScale(Vector(pev->velocity).Normalize(), flForward, pev->velocity);
+		}
 	}
 
 	if ( HasWeapons() )
@@ -1374,22 +1379,24 @@ void CBasePlayer::StartDeathCam(void)
 		CPropPlayerCorpse::Create(pev);
 
 		UTIL_SetOrigin(pev, pSpot->v.origin);
-		pev->angles = pev->v_angle = pSpot->v.v_angle;
+		VectorCopy(pSpot->v.v_angle, pev->v_angle);
+		VectorCopy(pSpot->v.v_angle, pev->angles);
 	}
 	else
 	{
 		// no intermission spot. Push them up in the air, looking down at their corpse
 		TraceResult tr;
 		CPropPlayerCorpse::Create(pev);
-		UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, 128), ignore_monsters, edict(), &tr);
+		UTIL_TraceLine(pev->origin, Vector(pev->origin) + Vector(0, 0, 128), ignore_monsters, edict(), &tr);
 
 		UTIL_SetOrigin(pev, tr.vecEndPos);
-		pev->angles = pev->v_angle = UTIL_VecToAngles(tr.vecEndPos - pev->origin);
+		VectorCopy(UTIL_VecToAngles(Vector(tr.vecEndPos) - Vector(pev->origin)), pev->v_angle);
+		VectorCopy(pev->v_angle, pev->angles);
 	}
 
 	// start death cam
 	m_afPhysicsFlags |= PFLAG_OBSERVER;
-	pev->view_ofs = g_vecZero;
+	VectorClear(pev->view_ofs);
 	pev->fixangle = TRUE;
 	pev->solid = SOLID_NOT;
 	pev->takedamage = DAMAGE_NO;
@@ -1433,8 +1440,9 @@ void CBasePlayer::StartObserver(Vector vecPosition, Vector vecViewAngle)
 	m_iHideHUD = (HIDEHUD_HEALTH | HIDEHUD_FLASHLIGHT | HIDEHUD_WEAPONS);
 	m_afPhysicsFlags |= PFLAG_OBSERVER;
 	pev->effects = EF_NODRAW;
-	pev->view_ofs = g_vecZero;
-	pev->angles = pev->v_angle = vecViewAngle;
+	VectorClear(pev->view_ofs);
+	VectorCopy(vecViewAngle, pev->v_angle);
+	VectorCopy(vecViewAngle, pev->angles);
 	pev->fixangle = TRUE;
 	pev->solid = SOLID_NOT;
 	pev->takedamage = DAMAGE_NO;
@@ -1528,11 +1536,11 @@ void CBasePlayer::PlayerUse(void)
 			// !!!PERFORMANCE- should this check be done on a per case basis AFTER we've determined that
 			// this object is actually usable? This dot is being done for every object within PLAYER_SEARCH_RADIUS
 			// when player hits the use key. How many objects can be in that area, anyway? (sjb)
-			vecLOS = (VecBModelOrigin(pObject->pev) - (pev->origin + pev->view_ofs));
+			vecLOS = (VecBModelOrigin(pObject->pev) - (Vector(pev->origin) + Vector(pev->view_ofs)));
 
 			// This essentially moves the origin of the target to the corner nearest the player to test to see
 			// if it's "hull" is in the view cone
-			vecLOS = UTIL_ClampVectorToBox(vecLOS, pObject->pev->size * 0.5);
+			vecLOS = UTIL_ClampVectorToBox(vecLOS, Vector(pObject->pev->size) * 0.5);
 
 			flDot = DotProduct(vecLOS, gpGlobals->v_forward);
 			if ( flDot > flMaxDot )
@@ -1583,7 +1591,6 @@ void CBasePlayer::Jump()
 	Vector vecWallCheckDir;  // direction we're tracing a line to find a wall when walljumping
 	Vector vecAdjustedVelocity;
 	Vector vecSpot;
-	TraceResult tr;
 
 	if ( FBitSet(pev->flags, FL_WATERJUMP) )
 		return;
@@ -1611,7 +1618,7 @@ void CBasePlayer::Jump()
 
 	SetAnimation(PLAYER_JUMP);
 
-	if ( m_fLongJump && (pev->button & IN_DUCK) && (pev->flDuckTime > 0) && pev->velocity.Length() > 50 )
+	if ( m_fLongJump && (pev->button & IN_DUCK) && (pev->flDuckTime > 0) && VectorLength(pev->velocity) > 50 )
 	{
 		SetAnimation(PLAYER_SUPERJUMP);
 	}
@@ -1620,7 +1627,7 @@ void CBasePlayer::Jump()
 	entvars_t* pevGround = VARS(pev->groundentity);
 	if ( pevGround && (pevGround->flags & FL_CONVEYOR) )
 	{
-		pev->velocity = pev->velocity + pev->basevelocity;
+		VectorAdd(pev->velocity, pev->basevelocity, pev->velocity);
 	}
 }
 
@@ -1636,9 +1643,13 @@ void FixPlayerCrouchStuck(edict_t* pPlayer)
 	{
 		UTIL_TraceHull(pPlayer->v.origin, pPlayer->v.origin, dont_ignore_monsters, head_hull, pPlayer, &trace);
 		if ( trace.fStartSolid )
-			pPlayer->v.origin.z++;
+		{
+			pPlayer->v.origin[VEC3_Z]++;
+		}
 		else
+		{
 			break;
+		}
 	}
 }
 
@@ -1725,9 +1736,9 @@ void CBasePlayer::UpdateStatusBar()
 
 	// Find an ID Target
 	TraceResult tr;
-	UTIL_MakeVectors(pev->v_angle + pev->punchangle);
+	UTIL_MakeVectors(Vector(pev->v_angle) + Vector(pev->punchangle));
 	Vector vecSrc = EyePosition();
-	Vector vecEnd = vecSrc + (gpGlobals->v_forward * MAX_ID_RANGE);
+	Vector vecEnd = vecSrc + (Vector(gpGlobals->v_forward) * MAX_ID_RANGE);
 	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, edict(), &tr);
 
 	if ( tr.flFraction != 1.0 )
@@ -1891,7 +1902,12 @@ void CBasePlayer::PreThink(void)
 		{
 			TraceResult trainTrace;
 			// Maybe this is on the other side of a level transition
-			UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -38), ignore_monsters, ENT(pev), &trainTrace);
+			UTIL_TraceLine(
+				pev->origin,
+				Vector(pev->origin) + Vector(0, 0, -38),
+				ignore_monsters,
+				ENT(pev),
+				&trainTrace);
 
 			// HACKHACK - Just look for the func_tracktrain classname
 			if ( trainTrace.flFraction != 1.0 && trainTrace.pHit )
@@ -1915,7 +1931,7 @@ void CBasePlayer::PreThink(void)
 			return;
 		}
 
-		pev->velocity = g_vecZero;
+		VectorClear(pev->velocity);
 		vel = 0;
 		if ( m_afButtonPressed & IN_FORWARD )
 		{
@@ -1952,7 +1968,7 @@ void CBasePlayer::PreThink(void)
 
 	if ( !FBitSet(pev->flags, FL_ONGROUND) )
 	{
-		m_flFallVelocity = -pev->velocity.z;
+		m_flFallVelocity = -pev->velocity[VEC3_Z];
 	}
 
 	// StudioFrameAdvance();//!!!HACKHACK!!! Can't be hit by traceline when not animating?
@@ -1962,7 +1978,7 @@ void CBasePlayer::PreThink(void)
 
 	if ( m_afPhysicsFlags & PFLAG_ONBARNACLE )
 	{
-		pev->velocity = g_vecZero;
+		VectorClear(pev->velocity);
 	}
 }
 /* Time based Damage works as follows:
@@ -2434,7 +2450,7 @@ void CBasePlayer::UpdatePlayerSound(void)
 	// is louder than his body/movement, use the weapon volume, else, use the body volume.
 	if ( FBitSet(pev->flags, FL_ONGROUND) )
 	{
-		iBodyVolume = (int)pev->velocity.Length();
+		iBodyVolume = (int)VectorLength(pev->velocity);
 
 		// clamp the noise that can be made by the body, in case a push trigger,
 		// weapon recoil, or anything shoves the player abnormally fast.
@@ -2576,7 +2592,7 @@ void CBasePlayer::PostThink()
 			if ( flFallDamage > 0 )
 			{
 				TakeDamage(VARS(eoNullEntity), VARS(eoNullEntity), flFallDamage, DMG_FALL);
-				pev->punchangle.x = 0;
+				pev->punchangle[PITCH] = 0;
 			}
 		}
 
@@ -2599,12 +2615,18 @@ void CBasePlayer::PostThink()
 	// select the proper animation for the player character
 	if ( IsAlive() )
 	{
-		if ( !pev->velocity.x && !pev->velocity.y )
+		if ( !pev->velocity[VEC3_X] && !pev->velocity[VEC3_Y] )
+		{
 			SetAnimation(PLAYER_IDLE);
-		else if ( (pev->velocity.x || pev->velocity.y) && (FBitSet(pev->flags, FL_ONGROUND)) )
+		}
+		else if ( (pev->velocity[VEC3_X] || pev->velocity[VEC3_Y]) && (FBitSet(pev->flags, FL_ONGROUND)) )
+		{
 			SetAnimation(PLAYER_WALK);
+		}
 		else if ( pev->waterlevel > 1 )
+		{
 			SetAnimation(PLAYER_WALK);
+		}
 	}
 
 	StudioFrameAdvance();
@@ -2613,9 +2635,13 @@ void CBasePlayer::PostThink()
 	UpdatePlayerSound();
 pt_end:
 	if ( pev->deadflag == DEAD_NO )
+	{
 		m_vecLastViewAngles = pev->angles;
+	}
 	else
-		pev->angles = m_vecLastViewAngles;
+	{
+		VectorCopy(m_vecLastViewAngles, pev->angles);
+	}
 
 	// Track button info so we can detect 'pressed' and 'released' buttons next frame
 	m_afButtonLast = pev->button;
@@ -2778,7 +2804,7 @@ void CBasePlayer::Spawn(void)
 	else
 		UTIL_SetSize(pev, VEC_HULL_MIN, VEC_HULL_MAX);
 
-	pev->view_ofs = VEC_VIEW;
+	VectorCopy(VEC_VIEW, pev->view_ofs);
 	Precache();
 	m_HackedGunPos = Vector(0, 32, 0);
 
@@ -2865,7 +2891,7 @@ int CBasePlayer::Save(CSave& save)
 	if ( !CBaseMonster::Save(save) )
 		return 0;
 
-	return save.WriteFields("PLAYER", this, m_playerSaveData, SIZE_OF_ARRAY(m_playerSaveData));
+	return save.WriteFields("PLAYER", this, m_playerSaveData, SIZE_OF_ARRAY_AS_INT(m_playerSaveData));
 }
 
 //
@@ -2880,7 +2906,7 @@ int CBasePlayer::Restore(CRestore& restore)
 	if ( !CBaseMonster::Restore(restore) )
 		return 0;
 
-	int status = restore.ReadFields("PLAYER", this, m_playerSaveData, SIZE_OF_ARRAY(m_playerSaveData));
+	int status = restore.ReadFields("PLAYER", this, m_playerSaveData, SIZE_OF_ARRAY_AS_INT(m_playerSaveData));
 
 	SAVERESTOREDATA* pSaveData = (SAVERESTOREDATA*)gpGlobals->pSaveData;
 	// landmark isn't present.
@@ -2892,11 +2918,12 @@ int CBasePlayer::Restore(CRestore& restore)
 		ASSERT(g_pGameRules);
 		CGameplaySystemsBase* gpSys = GameplaySystems::GetBase();
 		edict_t* pentSpawnSpot = gpSys->SpawnPointManager().GetNextSpawnPoint(this)->edict();
-		pev->origin = VARS(pentSpawnSpot)->origin + Vector(0, 0, 1);
-		pev->angles = VARS(pentSpawnSpot)->angles;
+		VectorAdd(VARS(pentSpawnSpot)->origin, Vector(0, 0, 1), pev->origin);
+		VectorCopy(VARS(pentSpawnSpot)->angles, pev->angles);
 	}
-	pev->v_angle.z = 0;  // Clear out roll
-	pev->angles = pev->v_angle;
+
+	pev->v_angle[ROLL] = 0;  // Clear out roll
+	VectorCopy(pev->v_angle, pev->angles);
 
 	pev->fixangle = TRUE;  // turn this way immediately
 
@@ -3106,8 +3133,8 @@ public:
 
 void CSprayCan::Spawn(entvars_t* pevOwner)
 {
-	pev->origin = pevOwner->origin + Vector(0, 0, 32);
-	pev->angles = pevOwner->v_angle;
+	VectorAdd(pevOwner->origin, Vector(0, 0, 32), pev->origin);
+	VectorCopy(pevOwner->v_angle, pev->angles);
 	pev->owner = ENT(pevOwner);
 	pev->frame = 0;
 
@@ -3134,7 +3161,12 @@ void CSprayCan::Think(void)
 	// ALERT( at_console, "Spray by player %i, %i of %i\n", playernum, (int)( pev->frame + 1 ), nFrames );
 
 	UTIL_MakeVectors(pev->angles);
-	UTIL_TraceLine(pev->origin, pev->origin + gpGlobals->v_forward * 128, ignore_monsters, pev->owner, &tr);
+	UTIL_TraceLine(
+		pev->origin,
+		Vector(pev->origin) + Vector(gpGlobals->v_forward) * 128,
+		ignore_monsters,
+		pev->owner,
+		&tr);
 
 	// No customization present.
 	if ( nFrames == -1 )
@@ -3147,7 +3179,9 @@ void CSprayCan::Think(void)
 		UTIL_PlayerDecalTrace(&tr, playernum, (int)pev->frame, TRUE);
 		// Just painted last custom frame.
 		if ( pev->frame++ >= (nFrames - 1) )
+		{
 			UTIL_Remove(this);
+		}
 	}
 
 	pev->nextthink = gpGlobals->time + 0.1f;
@@ -3162,8 +3196,8 @@ public:
 
 void CBloodSplat::Spawn(entvars_t* pevOwner)
 {
-	pev->origin = pevOwner->origin + Vector(0, 0, 32);
-	pev->angles = pevOwner->v_angle;
+	VectorAdd(pevOwner->origin, Vector(0, 0, 32), pev->origin);
+	VectorCopy(pevOwner->v_angle, pev->angles);
 	pev->owner = ENT(pevOwner);
 
 	SetThink(&CBloodSplat::Spray);
@@ -3177,7 +3211,12 @@ void CBloodSplat::Spray(void)
 	if ( g_Language != LANGUAGE_GERMAN )
 	{
 		UTIL_MakeVectors(pev->angles);
-		UTIL_TraceLine(pev->origin, pev->origin + gpGlobals->v_forward * 128, ignore_monsters, pev->owner, &tr);
+		UTIL_TraceLine(
+			pev->origin,
+			Vector(pev->origin) + Vector(gpGlobals->v_forward) * 128,
+			ignore_monsters,
+			pev->owner,
+			&tr);
 
 		UTIL_BloodDecalTrace(&tr, BLOOD_COLOR_RED);
 	}
@@ -3188,17 +3227,15 @@ void CBloodSplat::Spray(void)
 //==============================================
 void CBasePlayer::GiveNamedItem(const char* pszName)
 {
-	edict_t* pent;
+	edict_t* pent = CREATE_NAMED_ENTITY(MAKE_STRING(pszName));
 
-	int istr = MAKE_STRING(pszName);
-
-	pent = CREATE_NAMED_ENTITY(istr);
 	if ( FNullEnt(pent) )
 	{
 		ALERT(at_console, "NULL Ent in GiveNamedItem for item %s!\n", pszName);
 		return;
 	}
-	VARS(pent)->origin = pev->origin;
+
+	VectorCopy(pev->origin, VARS(pent)->origin);
 	pent->v.spawnflags |= SF_NORESPAWN;
 
 	DispatchSpawn(pent);
@@ -3211,16 +3248,18 @@ CBaseEntity* FindEntityForward(CBaseEntity* pMe)
 
 	UTIL_MakeVectors(pMe->pev->v_angle);
 	UTIL_TraceLine(
-		pMe->pev->origin + pMe->pev->view_ofs,
-		pMe->pev->origin + pMe->pev->view_ofs + gpGlobals->v_forward * 8192,
+		Vector(pMe->pev->origin) + Vector(pMe->pev->view_ofs),
+		Vector(pMe->pev->origin) + Vector(pMe->pev->view_ofs) + Vector(gpGlobals->v_forward) * 8192,
 		dont_ignore_monsters,
 		pMe->edict(),
 		&tr);
+
 	if ( tr.flFraction != 1.0 && !FNullEnt(tr.pHit) )
 	{
 		CBaseEntity* pHit = CBaseEntity::Instance(tr.pHit);
 		return pHit;
 	}
+
 	return NULL;
 }
 
@@ -3349,8 +3388,8 @@ void CBasePlayer::ImpulseCommands()
 
 			UTIL_MakeVectors(pev->v_angle);
 			UTIL_TraceLine(
-				pev->origin + pev->view_ofs,
-				pev->origin + pev->view_ofs + gpGlobals->v_forward * 128,
+				Vector(pev->origin) + Vector(pev->view_ofs),
+				Vector(pev->origin) + Vector(pev->view_ofs) + Vector(gpGlobals->v_forward) * 128,
 				ignore_monsters,
 				ENT(pev),
 				&tr);
@@ -3395,8 +3434,8 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 			}
 			else
 			{
-				UTIL_MakeVectors(Vector(0, pev->v_angle.y, 0));
-				Create("monster_human_grunt", pev->origin + gpGlobals->v_forward * 128, pev->angles);
+				UTIL_MakeVectors(Vector(0, pev->v_angle[YAW], 0));
+				Create("monster_human_grunt", Vector(pev->origin) + Vector(gpGlobals->v_forward) * 128, pev->angles);
 			}
 			break;
 		case 101:
@@ -3486,8 +3525,8 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 
 			edict_t* pWorld = g_engfuncs.pfnPEntityOfEntIndex(0);
 
-			Vector start = pev->origin + pev->view_ofs;
-			Vector end = start + gpGlobals->v_forward * 1024;
+			Vector start = Vector(pev->origin) + Vector(pev->view_ofs);
+			Vector end = start + Vector(gpGlobals->v_forward) * 1024;
 			UTIL_TraceLine(start, end, ignore_monsters, edict(), &tr);
 
 			if ( tr.pHit )
@@ -3532,8 +3571,8 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 			// Random blood splatter
 			UTIL_MakeVectors(pev->v_angle);
 			UTIL_TraceLine(
-				pev->origin + pev->view_ofs,
-				pev->origin + pev->view_ofs + gpGlobals->v_forward * 128,
+				Vector(pev->origin) + Vector(pev->view_ofs),
+				Vector(pev->origin) + Vector(pev->view_ofs) + Vector(gpGlobals->v_forward) * 128,
 				ignore_monsters,
 				ENT(pev),
 				&tr);
@@ -3894,7 +3933,8 @@ void CBasePlayer::UpdateClientData(void)
 	if ( pev->health != m_iClientHealth )
 	{
 #define clamp(val, min, max) (((val) > (max)) ? (max) : (((val) < (min)) ? (min) : (val)))
-		int iHealth = static_cast<int>(clamp(pev->health, 0.0f, 255.0f));  // make sure that no negative health values are sent
+		int iHealth =
+			static_cast<int>(clamp(pev->health, 0.0f, 255.0f));  // make sure that no negative health values are sent
 #undef clamp
 
 		if ( pev->health > 0.0f && pev->health <= 1.0f )
@@ -4149,7 +4189,7 @@ Vector CBasePlayer::GetAutoaimVector(float flDelta)
 {
 	if ( g_iSkillLevel == SKILL_HARD )
 	{
-		UTIL_MakeVectors(pev->v_angle + pev->punchangle);
+		UTIL_MakeVectors(Vector(pev->v_angle) + Vector(pev->punchangle));
 		return gpGlobals->v_forward;
 	}
 
@@ -4171,29 +4211,53 @@ Vector CBasePlayer::GetAutoaimVector(float flDelta)
 
 	// update ontarget if changed
 	if ( !g_pGameRules->AllowAutoTargetCrosshair() )
+	{
 		m_fOnTarget = 0;
+	}
 	else if ( m_fOldTargeting != m_fOnTarget )
 	{
 		m_pActiveItem->UpdateItemInfo();
 	}
 
 	if ( angles.x > 180 )
+	{
 		angles.x -= 360;
+	}
+
 	if ( angles.x < -180 )
+	{
 		angles.x += 360;
+	}
+
 	if ( angles.y > 180 )
+	{
 		angles.y -= 360;
+	}
+
 	if ( angles.y < -180 )
+	{
 		angles.y += 360;
+	}
 
 	if ( angles.x > 25 )
+	{
 		angles.x = 25;
+	}
+
 	if ( angles.x < -25 )
+	{
 		angles.x = -25;
+	}
+
 	if ( angles.y > 12 )
+	{
 		angles.y = 12;
+	}
+
 	if ( angles.y < -12 )
+	{
 		angles.y = -12;
+	}
 
 	// always use non-sticky autoaim
 	// UNDONE: use sever variable to chose!
@@ -4222,7 +4286,7 @@ Vector CBasePlayer::GetAutoaimVector(float flDelta)
 
 	// ALERT( at_console, "%f %f\n", angles.x, angles.y );
 
-	UTIL_MakeVectors(pev->v_angle + pev->punchangle + m_vecAutoAim);
+	UTIL_MakeVectors(Vector(pev->v_angle) + Vector(pev->punchangle) + m_vecAutoAim);
 	return gpGlobals->v_forward;
 }
 
@@ -4241,7 +4305,7 @@ Vector CBasePlayer::AutoaimDeflection(Vector& vecSrc, float flDist, float flDelt
 		return g_vecZero;
 	}
 
-	UTIL_MakeVectors(pev->v_angle + pev->punchangle + m_vecAutoAim);
+	UTIL_MakeVectors(Vector(pev->v_angle) + Vector(pev->punchangle) + m_vecAutoAim);
 
 	// try all possible entities
 	bestdir = gpGlobals->v_forward;
@@ -4259,7 +4323,9 @@ Vector CBasePlayer::AutoaimDeflection(Vector& vecSrc, float flDist, float flDelt
 			   (pev->waterlevel == 3 && tr.pHit->v.waterlevel == 0)) )
 		{
 			if ( tr.pHit->v.takedamage == DAMAGE_AIM )
+			{
 				m_fOnTarget = TRUE;
+			}
 
 			return m_vecAutoAim;
 		}
@@ -4272,28 +4338,46 @@ Vector CBasePlayer::AutoaimDeflection(Vector& vecSrc, float flDist, float flDelt
 		float dot;
 
 		if ( pEdict->free )  // Not in use
+		{
 			continue;
+		}
 
 		if ( pEdict->v.takedamage != DAMAGE_AIM )
+		{
 			continue;
+		}
+
 		if ( pEdict == edict() )
+		{
 			continue;
+		}
+
 		// if( pev->team > 0 && pEdict->v.team == pev->team )
 		//	continue;	// don't aim at teammate
+
 		if ( !g_pGameRules->ShouldAutoAim(this, pEdict) )
+		{
 			continue;
+		}
 
 		pEntity = Instance(pEdict);
+
 		if ( pEntity == NULL )
+		{
 			continue;
+		}
 
 		if ( !pEntity->IsAlive() )
+		{
 			continue;
+		}
 
 		// don't look through water
 		if ( (pev->waterlevel != 3 && pEntity->pev->waterlevel == 3) ||
 			 (pev->waterlevel == 3 && pEntity->pev->waterlevel == 0) )
+		{
 			continue;
+		}
 
 		center = pEntity->BodyTarget(vecSrc);
 
@@ -4301,7 +4385,9 @@ Vector CBasePlayer::AutoaimDeflection(Vector& vecSrc, float flDist, float flDelt
 
 		// make sure it's in front of the player
 		if ( DotProduct(dir, gpGlobals->v_forward) < 0 )
+		{
 			continue;
+		}
 
 		dot = fabsf(DotProduct(dir, gpGlobals->v_right)) + fabsf(DotProduct(dir, gpGlobals->v_up)) * 0.5f;
 
@@ -4309,7 +4395,9 @@ Vector CBasePlayer::AutoaimDeflection(Vector& vecSrc, float flDist, float flDelt
 		dot *= 1.0f + 0.2f * ((center - vecSrc).Length() / flDist);
 
 		if ( dot > bestdot )
-			continue;  // to far to turn
+		{
+			continue;  // too far to turn
+		}
 
 		UTIL_TraceLine(vecSrc, center, dont_ignore_monsters, edict(), &tr);
 		if ( tr.flFraction != 1.0 && tr.pHit != pEdict )
@@ -4323,8 +4411,10 @@ Vector CBasePlayer::AutoaimDeflection(Vector& vecSrc, float flDist, float flDelt
 		if ( IRelationship(pEntity) < 0 )
 		{
 			if ( !pEntity->IsPlayer() && !g_pGameRules->IsDeathmatch() )
+			{
 				// ALERT( at_console, "friend\n" );
 				continue;
+			}
 		}
 
 		// can shoot at this one
@@ -4337,10 +4427,12 @@ Vector CBasePlayer::AutoaimDeflection(Vector& vecSrc, float flDist, float flDelt
 	{
 		bestdir = UTIL_VecToAngles(bestdir);
 		bestdir.x = -bestdir.x;
-		bestdir = bestdir - pev->v_angle - pev->punchangle;
+		bestdir = bestdir - Vector(pev->v_angle) - Vector(pev->punchangle);
 
 		if ( bestent->v.takedamage == DAMAGE_AIM )
+		{
 			m_fOnTarget = TRUE;
+		}
 
 		return bestdir;
 	}
@@ -4355,6 +4447,7 @@ void CBasePlayer::ResetAutoaim()
 		m_vecAutoAim = Vector(0, 0, 0);
 		SET_CROSSHAIRANGLE(edict(), 0, 0);
 	}
+
 	m_fOnTarget = FALSE;
 }
 
@@ -4448,12 +4541,17 @@ void CBasePlayer::DropPlayerItem(const char* pszItemName)
 
 			pev->weapons &= ~(1 << pWeapon->m_iId);  // take item off hud
 
-			CWeaponBox* pWeaponBox = (CWeaponBox*)
-				CBaseEntity::Create("weaponbox", pev->origin + gpGlobals->v_forward * 10, pev->angles, edict());
-			pWeaponBox->pev->angles.x = 0;
-			pWeaponBox->pev->angles.z = 0;
+			CWeaponBox* pWeaponBox = (CWeaponBox*)CBaseEntity::Create(
+				"weaponbox",
+				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 10,
+				pev->angles,
+				edict());
+
+			pWeaponBox->pev->angles[PITCH] = 0;
+			pWeaponBox->pev->angles[ROLL] = 0;
 			pWeaponBox->PackWeapon(pWeapon);
-			pWeaponBox->pev->velocity = gpGlobals->v_forward * 300 + gpGlobals->v_forward * 100;
+			(Vector(gpGlobals->v_forward) * 300 + Vector(gpGlobals->v_forward) * 100)
+				.CopyToArray(pWeaponBox->pev->velocity);
 
 			// drop half of the ammo for this weapon.
 			int iAmmoIndex;
@@ -4712,7 +4810,7 @@ void CInfoIntermission::Spawn(void)
 	UTIL_SetOrigin(pev, pev->origin);
 	pev->solid = SOLID_NOT;
 	pev->effects = EF_NODRAW;
-	pev->v_angle = g_vecZero;
+	VectorClear(pev->v_angle);
 
 	pev->nextthink = gpGlobals->time + 2;  // let targets spawn!
 }
@@ -4726,8 +4824,8 @@ void CInfoIntermission::Think(void)
 
 	if ( !FNullEnt(pTarget) )
 	{
-		pev->v_angle = UTIL_VecToAngles((pTarget->v.origin - pev->origin).Normalize());
-		pev->v_angle.x = -pev->v_angle.x;
+		UTIL_VecToAngles((Vector(pTarget->v.origin) - Vector(pev->origin)).Normalize()).CopyToArray(pev->v_angle);
+		pev->v_angle[PITCH] = -pev->v_angle[PITCH];
 	}
 }
 

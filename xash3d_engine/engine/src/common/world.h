@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/trace.h"
 #include "EngineInternalAPI/lightstyle.h"
 #include "EnginePublicAPI/link.h"
+#include "MathLib/mat4x4.h"
 
 #define MOVE_NORMAL 0  // normal trace
 #define MOVE_NOMONSTERS 1  // ignore monsters (edicts with flags (FL_MONSTER|FL_FAKECLIENT|FL_CLIENT) set)

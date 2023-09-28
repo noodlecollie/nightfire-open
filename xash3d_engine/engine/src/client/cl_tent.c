@@ -13,6 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "EngineInternalAPI/wadfile.h"  // acess decal size
 #include "common/common.h"
@@ -1492,7 +1494,7 @@ void GAME_EXPORT R_FunnelSprite(const vec3_t org, int modelIndex, int reverse)
 			vel = dest[2] / 8.0f;
 			if ( vel < 64.0f )
 				vel = 64.0f;
-			dist = VectorNormalizeLength(dir);
+			dist = VectorNormalizeLength(dir, dir);
 			vel += COM_RandomFloat(64.0f, 128.0f);
 			VectorScale(dir, vel, pTemp->entity.baseline.origin);
 			pTemp->die = (float)cl.time + (dist / vel) - 0.5f;

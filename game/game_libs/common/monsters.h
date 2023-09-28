@@ -170,9 +170,11 @@ public:
 #define IMPLEMENT_CUSTOM_SCHEDULES(derivedClass, baseClass) \
 	Schedule_t* derivedClass::ScheduleFromName(const char* pName) \
 	{ \
-		Schedule_t* pSchedule = ScheduleInList(pName, m_scheduleList, SIZE_OF_ARRAY(m_scheduleList)); \
+		Schedule_t* pSchedule = ScheduleInList(pName, m_scheduleList, SIZE_OF_ARRAY_AS_INT(m_scheduleList)); \
 		if ( !pSchedule ) \
+		{ \
 			return baseClass::ScheduleFromName(pName); \
+		} \
 		return pSchedule; \
 	}
 #endif  // MONSTERS_H

@@ -27,6 +27,7 @@
 #include "weapons.h"
 #include "soundent.h"
 #include "game.h"
+#include "MathLib/angles.h"
 
 extern DLL_GLOBAL int g_iSkillLevel;
 
@@ -190,14 +191,16 @@ void CHAssassin::Shoot(void)
 
 	UTIL_MakeVectors(pev->angles);
 
-	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT(40, 90) + gpGlobals->v_up * RANDOM_FLOAT(75, 200) +
-		gpGlobals->v_forward * RANDOM_FLOAT(-40, 40);
+	Vector vecShellVelocity = Vector(gpGlobals->v_right) * RANDOM_FLOAT(40, 90) +
+		Vector(gpGlobals->v_up) * RANDOM_FLOAT(75, 200) + Vector(gpGlobals->v_forward) * RANDOM_FLOAT(-40, 40);
+
 	EjectBrass(
-		pev->origin + gpGlobals->v_up * 32 + gpGlobals->v_forward * 12,
+		Vector(pev->origin) + Vector(gpGlobals->v_up) * 32 + Vector(gpGlobals->v_forward) * 12,
 		vecShellVelocity,
-		pev->angles.y,
+		pev->angles[YAW],
 		m_iShell,
 		TE_BOUNCE_SHELL);
+
 	FireBullets(
 		1,
 		vecShootOrigin,
@@ -242,12 +245,13 @@ void CHAssassin::HandleAnimEvent(MonsterEvent_t* pEvent)
 			UTIL_MakeVectors(pev->angles);
 			CGrenade::ShootTimed(
 				pev,
-				pev->origin + gpGlobals->v_forward * 34 + Vector(0, 0, 32),
+				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 34 + Vector(0, 0, 32),
 				m_vecTossVelocity,
 				2.0);
 
 			m_flNextGrenadeCheck =
 				gpGlobals->time + 6;  // wait six seconds before even looking again to see if a grenade can be thrown.
+
 			m_fThrowGrenade = FALSE;
 			// !!!LATER - when in a group, only try to throw grenade if ordered.
 		}
@@ -258,7 +262,7 @@ void CHAssassin::HandleAnimEvent(MonsterEvent_t* pEvent)
 			UTIL_MakeAimVectors(pev->angles);
 			pev->movetype = MOVETYPE_TOSS;
 			pev->flags &= ~FL_ONGROUND;
-			pev->velocity = m_vecJumpVelocity;
+			VectorCopy(m_vecJumpVelocity, pev->velocity);
 			m_flNextJump = gpGlobals->time + 3.0f;
 		}
 			return;
@@ -330,7 +334,7 @@ Task_t tlAssassinFail[] = {
 
 Schedule_t slAssassinFail[] = {
 	{tlAssassinFail,
-	 SIZE_OF_ARRAY(tlAssassinFail),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinFail),
 	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_PROVOKED | bits_COND_CAN_RANGE_ATTACK1 |
 		 bits_COND_CAN_RANGE_ATTACK2 | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER | bits_SOUND_PLAYER,
@@ -350,7 +354,7 @@ Task_t tlAssassinExposed[] = {
 Schedule_t slAssassinExposed[] = {
 	{
 		tlAssassinExposed,
-		SIZE_OF_ARRAY(tlAssassinExposed),
+		SIZE_OF_ARRAY_AS_INT(tlAssassinExposed),
 		bits_COND_CAN_MELEE_ATTACK1,
 		0,
 		"AssassinExposed",
@@ -374,7 +378,7 @@ Task_t tlAssassinTakeCoverFromEnemy[] = {
 
 Schedule_t slAssassinTakeCoverFromEnemy[] = {
 	{tlAssassinTakeCoverFromEnemy,
-	 SIZE_OF_ARRAY(tlAssassinTakeCoverFromEnemy),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinTakeCoverFromEnemy),
 	 bits_COND_NEW_ENEMY | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
 	 "AssassinTakeCoverFromEnemy"},
@@ -399,7 +403,7 @@ Task_t tlAssassinTakeCoverFromEnemy2[] = {
 
 Schedule_t slAssassinTakeCoverFromEnemy2[] = {
 	{tlAssassinTakeCoverFromEnemy2,
-	 SIZE_OF_ARRAY(tlAssassinTakeCoverFromEnemy2),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinTakeCoverFromEnemy2),
 	 bits_COND_NEW_ENEMY | bits_COND_CAN_MELEE_ATTACK2 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
 	 "AssassinTakeCoverFromEnemy2"},
@@ -420,7 +424,7 @@ Task_t tlAssassinTakeCoverFromBestSound[] = {
 
 Schedule_t slAssassinTakeCoverFromBestSound[] = {
 	{tlAssassinTakeCoverFromBestSound,
-	 SIZE_OF_ARRAY(tlAssassinTakeCoverFromBestSound),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinTakeCoverFromBestSound),
 	 bits_COND_NEW_ENEMY,
 	 0,
 	 "AssassinTakeCoverFromBestSound"},
@@ -438,7 +442,7 @@ Task_t tlAssassinHide[] = {
 
 Schedule_t slAssassinHide[] = {
 	{tlAssassinHide,
-	 SIZE_OF_ARRAY(tlAssassinHide),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinHide),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_ENEMY | bits_COND_SEE_FEAR | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_PROVOKED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -456,7 +460,7 @@ Task_t tlAssassinHunt[] = {
 
 Schedule_t slAssassinHunt[] = {
 	{tlAssassinHunt,
-	 SIZE_OF_ARRAY(tlAssassinHunt),
+	 SIZE_OF_ARRAY_AS_INT(tlAssassinHunt),
 	 bits_COND_NEW_ENEMY |
 		 // bits_COND_SEE_ENEMY |
 		 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_HEAR_SOUND,
@@ -474,7 +478,7 @@ Task_t tlAssassinJump[] = {
 };
 
 Schedule_t slAssassinJump[] = {
-	{tlAssassinJump, SIZE_OF_ARRAY(tlAssassinJump), 0, 0, "AssassinJump"},
+	{tlAssassinJump, SIZE_OF_ARRAY_AS_INT(tlAssassinJump), 0, 0, "AssassinJump"},
 };
 
 //=========================================================
@@ -487,7 +491,7 @@ Task_t tlAssassinJumpAttack[] = {
 };
 
 Schedule_t slAssassinJumpAttack[] = {
-	{tlAssassinJumpAttack, SIZE_OF_ARRAY(tlAssassinJumpAttack), 0, 0, "AssassinJumpAttack"},
+	{tlAssassinJumpAttack, SIZE_OF_ARRAY_AS_INT(tlAssassinJumpAttack), 0, 0, "AssassinJumpAttack"},
 };
 
 //=========================================================
@@ -508,7 +512,7 @@ Task_t tlAssassinJumpLand[] = {
 };
 
 Schedule_t slAssassinJumpLand[] = {
-	{tlAssassinJumpLand, SIZE_OF_ARRAY(tlAssassinJumpLand), 0, 0, "AssassinJumpLand"},
+	{tlAssassinJumpLand, SIZE_OF_ARRAY_AS_INT(tlAssassinJumpLand), 0, 0, "AssassinJumpLand"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CHAssassin) {
@@ -535,10 +539,10 @@ BOOL CHAssassin::CheckMeleeAttack1(float, float flDist)
 	{
 		TraceResult tr;
 
-		Vector vecDest = pev->origin + Vector(RANDOM_FLOAT(-64, 64), RANDOM_FLOAT(-64, 64), 160);
+		Vector vecDest = Vector(pev->origin) + Vector(RANDOM_FLOAT(-64, 64), RANDOM_FLOAT(-64, 64), 160);
 
 		UTIL_TraceHull(
-			pev->origin + Vector(0, 0, 36),
+			Vector(pev->origin) + Vector(0, 0, 36),
 			vecDest + Vector(0, 0, 36),
 			dont_ignore_monsters,
 			human_hull,
@@ -554,7 +558,7 @@ BOOL CHAssassin::CheckMeleeAttack1(float, float flDist)
 
 		float time = sqrtf(160 / (0.5f * flGravity));
 		float speed = flGravity * time / 160;
-		m_vecJumpVelocity = (vecDest - pev->origin) * speed;
+		m_vecJumpVelocity = (vecDest - Vector(pev->origin)) * speed;
 
 		return TRUE;
 	}
@@ -701,7 +705,7 @@ void CHAssassin::RunTask(Task_t* pTask)
 
 			if ( m_fSequenceFinished )
 			{
-				if ( pev->velocity.z > 0 )
+				if ( pev->velocity[VEC3_Z] > 0 )
 				{
 					pev->sequence = LookupSequence("fly_up");
 				}

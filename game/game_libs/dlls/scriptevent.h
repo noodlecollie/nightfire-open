@@ -13,8 +13,6 @@
  *
  ****/
 #pragma once
-#ifndef SCRIPTEVENT_H
-#define SCRIPTEVENT_H
 
 #define SCRIPT_EVENT_DEAD 1000  // character is now dead
 #define SCRIPT_EVENT_NOINTERRUPT 1001  // does not allow interrupt
@@ -27,4 +25,3 @@
 #define SCRIPT_EVENT_SOUND_VOICE 1008  // Play named wave file (on CHAN_VOICE)
 #define SCRIPT_EVENT_SENTENCE_RND1 1009  // Play sentence group 25% of the time
 #define SCRIPT_EVENT_NOT_DEAD 1010  // Bring back to life (for life/death sequences)
-#endif  // SCRIPTEVENT_H

@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/utils.h"
 #include "common/common.h"
 #include "client/client.h"
 #include "common/fscallback.h"

@@ -42,7 +42,7 @@ extern DLL_GLOBAL Vector g_vecAttackDir;
 //
 Vector VecBModelOrigin(entvars_t* pevBModel)
 {
-	return pevBModel->absmin + (pevBModel->size * 0.5);
+	return Vector(pevBModel->absmin) + (Vector(pevBModel->size) * 0.5);
 }
 
 // =================== FUNC_WALL ==============================================
@@ -67,7 +67,7 @@ LINK_ENTITY_TO_CLASS(func_wall, CFuncWall)
 
 void CFuncWall::Spawn(void)
 {
-	pev->angles = g_vecZero;
+	VectorClear(pev->angles);
 	pev->movetype = MOVETYPE_PUSH;  // so it doesn't get pushed by anything
 	pev->solid = SOLID_BSP;
 	SET_MODEL(ENT(pev), STRING(pev->model));
@@ -178,12 +178,16 @@ void CFuncConveyor::UpdateSpeed(float speed)
 	int speedCode = (int)(fabsf(speed) * 16.0f);
 
 	if ( speed < 0 )
-		pev->rendercolor.x = 1;
+	{
+		pev->rendercolor[0] = 1;
+	}
 	else
-		pev->rendercolor.x = 0;
+	{
+		pev->rendercolor[0] = 0;
+	}
 
-	pev->rendercolor.y = static_cast<float>(speedCode >> 8);
-	pev->rendercolor.z = static_cast<float>(speedCode & 0xFF);
+	pev->rendercolor[1] = static_cast<float>(speedCode >> 8);
+	pev->rendercolor[2] = static_cast<float>(speedCode & 0xFF);
 }
 
 void CFuncConveyor::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
@@ -224,7 +228,7 @@ void CFuncIllusionary::KeyValue(KeyValueData* pkvd)
 
 void CFuncIllusionary::Spawn(void)
 {
-	pev->angles = g_vecZero;
+	VectorClear(pev->angles);
 	pev->movetype = MOVETYPE_NONE;
 	pev->solid = SOLID_NOT;  // always solid_not
 	SET_MODEL(ENT(pev), STRING(pev->model));
@@ -329,7 +333,9 @@ void CFuncRotating::KeyValue(KeyValueData* pkvd)
 		Vector tmp;
 		UTIL_StringToVector((float*)tmp, pkvd->szValue);
 		if ( tmp != g_vecZero )
-			pev->origin = tmp;
+		{
+			VectorCopy(tmp, pev->origin);
+		}
 	}
 	else if ( FStrEq(pkvd->szKeyName, "sounds") )
 	{
@@ -386,15 +392,23 @@ void CFuncRotating::Spawn()
 	}
 
 	if ( FBitSet(pev->spawnflags, SF_BRUSH_ROTATE_Z_AXIS) )
-		pev->movedir = Vector(0, 0, 1);
+	{
+		VectorCopy(Vector(0, 0, 1), pev->movedir);
+	}
 	else if ( FBitSet(pev->spawnflags, SF_BRUSH_ROTATE_X_AXIS) )
-		pev->movedir = Vector(1, 0, 0);
+	{
+		VectorCopy(Vector(1, 0, 0), pev->movedir);
+	}
 	else
-		pev->movedir = Vector(0, 1, 0);  // y-axis
+	{
+		VectorCopy(Vector(0, 1, 0), pev->movedir);
+	}
 
 	// check for reverse rotation
 	if ( FBitSet(pev->spawnflags, SF_BRUSH_ROTATE_BACKWARDS) )
-		pev->movedir = pev->movedir * -1;
+	{
+		VectorNegate(pev->movedir, pev->movedir);
+	}
 
 	// some rotating objects like fake volumetric lights will not be solid.
 	if ( FBitSet(pev->spawnflags, SF_ROTATING_NOT_SOLID) )
@@ -500,11 +514,11 @@ void CFuncRotating::HurtTouch(CBaseEntity* pOther)
 		return;
 
 	// calculate damage based on rotation speed
-	pev->dmg = pev->avelocity.Length() / 10;
+	pev->dmg = VectorLength(pev->avelocity) / 10;
 
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
 
-	pevOther->velocity = (pevOther->origin - VecBModelOrigin(pev)).Normalize() * pev->dmg;
+	((Vector(pevOther->origin) - VecBModelOrigin(pev)).Normalize() * pev->dmg).CopyToArray(pevOther->velocity);
 }
 
 //
@@ -528,7 +542,9 @@ void CFuncRotating::RampPitchVol(int)
 	vecCur = fabsf(vecAVel.x != 0 ? vecAVel.x : (vecAVel.y != 0 ? vecAVel.y : vecAVel.z));
 
 	// get target angular velocity
-	vecFinal = (pev->movedir.x != 0 ? pev->movedir.x : (pev->movedir.y != 0 ? pev->movedir.y : pev->movedir.z));
+	vecFinal =
+		(pev->movedir[VEC3_X] != 0 ? pev->movedir[VEC3_X]
+								   : (pev->movedir[VEC3_Y] != 0 ? pev->movedir[VEC3_Y] : pev->movedir[VEC3_Z]));
 	vecFinal *= pev->speed;
 	vecFinal = fabsf(vecFinal);
 
@@ -564,15 +580,16 @@ void CFuncRotating::SpinUp(void)
 	Vector vecAVel;  // rotational velocity
 
 	pev->nextthink = pev->ltime + 0.1f;
-	pev->avelocity = pev->avelocity + (pev->movedir * (pev->speed * m_flFanFriction));
+	(Vector(pev->avelocity) + (Vector(pev->movedir) * (pev->speed * m_flFanFriction))).CopyToArray(pev->avelocity);
 
 	vecAVel = pev->avelocity;  // cache entity's rotational velocity
 
 	// if we've met or exceeded target speed, set target speed and stop thinking
-	if ( fabs(vecAVel.x) >= fabs(pev->movedir.x * pev->speed) && fabs(vecAVel.y) >= fabs(pev->movedir.y * pev->speed) &&
-		 fabs(vecAVel.z) >= fabs(pev->movedir.z * pev->speed) )
+	if ( fabs(vecAVel.x) >= fabs(pev->movedir[VEC3_X] * pev->speed) &&
+		 fabs(vecAVel.y) >= fabs(pev->movedir[VEC3_Y] * pev->speed) &&
+		 fabs(vecAVel.z) >= fabs(pev->movedir[VEC3_Z] * pev->speed) )
 	{
-		pev->avelocity = pev->movedir * pev->speed;  // set speed in case we overshot
+		VectorScale(pev->movedir, pev->speed, pev->avelocity);  // set speed in case we overshot
 		EMIT_SOUND_DYN(
 			ENT(pev),
 			CHAN_STATIC,
@@ -601,23 +618,30 @@ void CFuncRotating::SpinDown(void)
 
 	pev->nextthink = pev->ltime + 0.1f;
 
-	pev->avelocity = pev->avelocity - (pev->movedir * (pev->speed * m_flFanFriction));  // spin down slower than spinup
+	(Vector(pev->avelocity) - (Vector(pev->movedir) * (pev->speed * m_flFanFriction)))
+		.CopyToArray(pev->avelocity);  // spin down slower than spinup
 
 	vecAVel = pev->avelocity;  // cache entity's rotational velocity
 
-	if ( pev->movedir.x != 0 )
-		vecdir = pev->movedir.x;
-	else if ( pev->movedir.y != 0 )
-		vecdir = pev->movedir.y;
+	if ( pev->movedir[VEC3_X] != 0 )
+	{
+		vecdir = pev->movedir[VEC3_X];
+	}
+	else if ( pev->movedir[VEC3_Y] != 0 )
+	{
+		vecdir = pev->movedir[VEC3_Y];
+	}
 	else
-		vecdir = pev->movedir.z;
+	{
+		vecdir = pev->movedir[VEC3_Z];
+	}
 
 	// if we've met or exceeded target speed, set target speed and stop thinking
 	// (note: must check for movedir > 0 or < 0)
 	if ( ((vecdir > 0) && (vecAVel.x <= 0 && vecAVel.y <= 0 && vecAVel.z <= 0)) ||
 		 ((vecdir < 0) && (vecAVel.x >= 0 && vecAVel.y >= 0 && vecAVel.z >= 0)) )
 	{
-		pev->avelocity = g_vecZero;  // set speed in case we overshot
+		VectorClear(pev->avelocity);  // set speed in case we overshot
 
 		// stop sound, we're done
 		EMIT_SOUND_DYN(ENT(pev), CHAN_STATIC, STRING(pev->noiseRunning /* Stop */), 0, 0, SND_STOP, (int)m_pitch);
@@ -684,7 +708,8 @@ void CFuncRotating::RotatingUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 				m_flAttenuation,
 				0,
 				FANPITCHMAX);
-			pev->avelocity = pev->movedir * pev->speed;
+
+			VectorScale(pev->movedir, pev->speed, pev->avelocity);
 
 			SetThink(&CFuncRotating::Rotate);
 			Rotate();
@@ -726,8 +751,8 @@ public:
 	float m_damp;
 	float m_maxSpeed;
 	float m_dampSpeed;
-	vec3_t m_center;
-	vec3_t m_start;
+	Vector m_center;
+	Vector m_start;
 };
 
 LINK_ENTITY_TO_CLASS(func_pendulum, CPendulum)
@@ -775,16 +800,21 @@ void CPendulum::Spawn(void)
 	SET_MODEL(ENT(pev), STRING(pev->model));
 
 	if ( m_distance == 0 )
+	{
 		return;
+		}
 
 	if ( pev->speed == 0 )
+	{
 		pev->speed = 100;
+		}
 
 	m_accel =
 		(pev->speed * pev->speed) / (2 * fabsf(m_distance));  // Calculate constant acceleration from speed and distance
+
 	m_maxSpeed = pev->speed;
 	m_start = pev->angles;
-	m_center = pev->angles + (m_distance * 0.5f) * pev->movedir;
+	m_center = Vector(pev->angles) + (m_distance * 0.5f) * Vector(pev->movedir);
 
 	if ( FBitSet(pev->spawnflags, SF_BRUSH_ROTATE_INSTANT) )
 	{
@@ -810,15 +840,15 @@ void CPendulum::PendulumUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 
 			delta = CBaseToggle::AxisDelta(pev->spawnflags, pev->angles, m_start);
 
-			pev->avelocity = m_maxSpeed * pev->movedir;
+			VectorScale(pev->movedir, m_maxSpeed, pev->avelocity);
 			pev->nextthink = pev->ltime + (delta / m_maxSpeed);
 			SetThink(&CPendulum::Stop);
 		}
 		else
 		{
 			pev->speed = 0;  // Dead stop
-			SetThink(NULL);
-			pev->avelocity = g_vecZero;
+			SetThink(nullptr);
+			VectorClear(pev->avelocity);
 		}
 	}
 	else
@@ -832,10 +862,10 @@ void CPendulum::PendulumUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 
 void CPendulum::Stop(void)
 {
-	pev->angles = m_start;
+	VectorCopy(m_start, pev->angles);
 	pev->speed = 0;
 	SetThink(NULL);
-	pev->avelocity = g_vecZero;
+	VectorClear(pev->avelocity);
 }
 
 void CPendulum::Blocked(CBaseEntity*)
@@ -852,16 +882,25 @@ void CPendulum::Swing(void)
 	m_time = gpGlobals->time;  // Remember the last time called
 
 	if ( delta > 0 && m_accel > 0 )
+	{
 		pev->speed -= m_accel * dt;  // Integrate velocity
+	}
 	else
+	{
 		pev->speed += m_accel * dt;
+	}
 
 	if ( pev->speed > m_maxSpeed )
+	{
 		pev->speed = m_maxSpeed;
+	}
 	else if ( pev->speed < -m_maxSpeed )
+	{
 		pev->speed = -m_maxSpeed;
+	}
+
 	// scale the destdelta vector by the time spent traveling to get velocity
-	pev->avelocity = pev->speed * pev->movedir;
+	VectorScale(pev->movedir, pev->speed, pev->avelocity);
 
 	// Call this again
 	pev->nextthink = pev->ltime + 0.1f;
@@ -871,15 +910,19 @@ void CPendulum::Swing(void)
 		m_dampSpeed -= m_damp * m_dampSpeed * dt;
 		if ( m_dampSpeed < 30.0 )
 		{
-			pev->angles = m_center;
+			VectorCopy(m_center, pev->angles);
 			pev->speed = 0;
 			SetThink(NULL);
-			pev->avelocity = g_vecZero;
+			VectorClear(pev->avelocity);
 		}
 		else if ( pev->speed > m_dampSpeed )
+		{
 			pev->speed = m_dampSpeed;
+		}
 		else if ( pev->speed < -m_dampSpeed )
+		{
 			pev->speed = -m_dampSpeed;
+		}
 	}
 }
 
@@ -902,7 +945,7 @@ void CPendulum::Touch(CBaseEntity* pOther)
 
 	pOther->TakeDamage(pev, pev, damage, DMG_CRUSH);
 
-	pevOther->velocity = (pevOther->origin - VecBModelOrigin(pev)).Normalize() * damage;
+	((Vector(pevOther->origin) - VecBModelOrigin(pev)).Normalize() * damage).CopyToArray(pevOther->velocity);
 }
 
 void CPendulum::RopeTouch(CBaseEntity* pOther)
@@ -923,6 +966,6 @@ void CPendulum::RopeTouch(CBaseEntity* pOther)
 	}
 
 	pev->enemy = pOther->edict();
-	pevOther->velocity = g_vecZero;
+	VectorClear(pevOther->velocity);
 	pevOther->movetype = MOVETYPE_NONE;
 }

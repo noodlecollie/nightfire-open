@@ -26,6 +26,7 @@
 #include "radialdamage.h"
 #include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
+#include "MathLib/angles.h"
 
 #ifndef CLIENT_DLL
 #define BOLT_AIR_VELOCITY 2000
@@ -116,22 +117,26 @@ void CCrossbowBolt::BoltTouch(CBaseEntity* pOther)
 
 		if ( pOther->IsPlayer() )
 		{
-			pOther
-				->TraceAttack(pevOwner, gSkillData.plrDmgCrossbowClient, pev->velocity.Normalize(), &tr, DMG_NEVERGIB);
+			pOther->TraceAttack(
+				pevOwner,
+				gSkillData.plrDmgCrossbowClient,
+				Vector(pev->velocity).Normalize(),
+				&tr,
+				DMG_NEVERGIB);
 		}
 		else
 		{
 			pOther->TraceAttack(
 				pevOwner,
 				gSkillData.plrDmgCrossbowMonster,
-				pev->velocity.Normalize(),
+				Vector(pev->velocity).Normalize(),
 				&tr,
 				DMG_BULLET | DMG_NEVERGIB);
 		}
 
 		ApplyMultiDamage(pev, pevOwner);
 
-		pev->velocity = Vector(0, 0, 0);
+		VectorClear(pev->velocity);
 		// play body "thwack" sound
 		switch ( RANDOM_LONG(0, 1) )
 		{
@@ -166,25 +171,25 @@ void CCrossbowBolt::BoltTouch(CBaseEntity* pOther)
 		if ( FClassnameIs(pOther->pev, "worldspawn") )
 		{
 			// if what we hit is static architecture, can stay around for a while.
-			Vector vecDir = pev->velocity.Normalize();
-			UTIL_SetOrigin(pev, pev->origin - vecDir * 12);
-			pev->angles = UTIL_VecToAngles(vecDir);
+			Vector vecDir = Vector(pev->velocity).Normalize();
+			UTIL_SetOrigin(pev, Vector(pev->origin) - vecDir * 12);
+			UTIL_VecToAngles(vecDir).CopyToArray(pev->angles);
 			pev->solid = SOLID_NOT;
 			pev->movetype = MOVETYPE_FLY;
-			pev->velocity = Vector(0, 0, 0);
-			pev->avelocity.z = 0;
-			pev->angles.z = static_cast<float>(RANDOM_LONG(0, 360));
+			VectorClear(pev->velocity);
+			pev->avelocity[ROLL] = 0;
+			pev->angles[ROLL]= static_cast<float>(RANDOM_LONG(0, 360));
 			pev->nextthink = static_cast<float>(gpGlobals->time + 10.0);
 		}
 		else if ( pOther->pev->movetype == MOVETYPE_PUSH || pOther->pev->movetype == MOVETYPE_PUSHSTEP )
 		{
-			Vector vecDir = pev->velocity.Normalize();
-			UTIL_SetOrigin(pev, pev->origin - vecDir * 12);
-			pev->angles = UTIL_VecToAngles(vecDir);
+			Vector vecDir = Vector(pev->velocity).Normalize();
+			UTIL_SetOrigin(pev, Vector(pev->origin) - vecDir * 12);
+			UTIL_VecToAngles(vecDir).CopyToArray(pev->angles);
 			pev->solid = SOLID_NOT;
-			pev->velocity = Vector(0, 0, 0);
-			pev->avelocity.z = 0;
-			pev->angles.z = static_cast<float>(RANDOM_LONG(0, 360));
+			VectorClear(pev->velocity);
+			pev->avelocity[ROLL] = 0;
+			pev->angles[ROLL] = static_cast<float>(RANDOM_LONG(0, 360));
 			pev->nextthink = static_cast<float>(gpGlobals->time + 10.0);
 
 			if ( gPhysicsInterfaceInitialized )
@@ -215,7 +220,7 @@ void CCrossbowBolt::BubbleThink(void)
 	if ( pev->waterlevel == 0 )
 		return;
 
-	UTIL_BubbleTrail(pev->origin - pev->velocity * 0.1f, pev->origin, 1);
+	UTIL_BubbleTrail(Vector(pev->origin) - Vector(pev->velocity) * 0.1f, pev->origin, 1);
 }
 
 void CCrossbowBolt::ExplodeThink(void)
@@ -228,9 +233,9 @@ void CCrossbowBolt::ExplodeThink(void)
 
 	MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, pev->origin);
 	WRITE_BYTE(TE_EXPLOSION);
-	WRITE_COORD(pev->origin.x);
-	WRITE_COORD(pev->origin.y);
-	WRITE_COORD(pev->origin.z);
+	WRITE_COORD(pev->origin[VEC3_X]);
+	WRITE_COORD(pev->origin[VEC3_Y]);
+	WRITE_COORD(pev->origin[VEC3_Z]);
 	if ( iContents != CONTENTS_WATER )
 	{
 		WRITE_SHORT(g_sModelIndexFireball);
@@ -413,9 +418,9 @@ void CCrossbow::FireSniperBolt()
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	Vector anglesAim = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+	Vector anglesAim(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 	UTIL_MakeVectors(anglesAim);
-	Vector vecSrc = m_pPlayer->GetGunPosition() - gpGlobals->v_up * 2;
+	Vector vecSrc = m_pPlayer->GetGunPosition() - Vector(gpGlobals->v_up) * 2;
 	Vector vecDir = gpGlobals->v_forward;
 
 	UTIL_TraceLine(vecSrc, vecSrc + vecDir * 8192, dont_ignore_monsters, m_pPlayer->edict(), &tr);
@@ -432,8 +437,6 @@ void CCrossbow::FireSniperBolt()
 
 void CCrossbow::FireBolt()
 {
-	TraceResult tr;
-
 	if ( m_iClip == 0 )
 	{
 		PlayEmptySound();
@@ -462,31 +465,31 @@ void CCrossbow::FireBolt()
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	Vector anglesAim = m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle;
+	Vector anglesAim(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 	UTIL_MakeVectors(anglesAim);
 
 	anglesAim.x = -anglesAim.x;
 
 #ifndef CLIENT_DLL
-	Vector vecSrc = m_pPlayer->GetGunPosition() - gpGlobals->v_up * 2;
+	Vector vecSrc = m_pPlayer->GetGunPosition() - Vector(gpGlobals->v_up) * 2;
 	Vector vecDir = gpGlobals->v_forward;
 
 	CCrossbowBolt* pBolt = CCrossbowBolt::BoltCreate();
-	pBolt->pev->origin = vecSrc;
-	pBolt->pev->angles = anglesAim;
+	VectorCopy(vecSrc, pBolt->pev->origin);
+	VectorCopy(anglesAim, pBolt->pev->angles);
 	pBolt->pev->owner = m_pPlayer->edict();
 
 	if ( m_pPlayer->pev->waterlevel == 3 )
 	{
-		pBolt->pev->velocity = vecDir * BOLT_WATER_VELOCITY;
+		(vecDir * BOLT_WATER_VELOCITY).CopyToArray(pBolt->pev->velocity);
 		pBolt->pev->speed = BOLT_WATER_VELOCITY;
 	}
 	else
 	{
-		pBolt->pev->velocity = vecDir * BOLT_AIR_VELOCITY;
+		(vecDir * BOLT_AIR_VELOCITY).CopyToArray(pBolt->pev->velocity);
 		pBolt->pev->speed = BOLT_AIR_VELOCITY;
 	}
-	pBolt->pev->avelocity.z = 10;
+	pBolt->pev->avelocity[ROLL] = 10;
 #endif
 
 	if ( !m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )

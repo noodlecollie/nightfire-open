@@ -102,9 +102,9 @@ void CItem::Spawn(void)
 			at_error,
 			"Item %s fell out of level at %f,%f,%f\n",
 			STRING(pev->classname),
-			pev->origin.x,
-			pev->origin.y,
-			pev->origin.z);
+			pev->origin[VEC3_X],
+			pev->origin[VEC3_Y],
+			pev->origin[VEC3_Z]);
 		UTIL_Remove(this);
 		return;
 	}

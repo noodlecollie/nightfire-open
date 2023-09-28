@@ -17,6 +17,7 @@
 
 #include "PlatformDefs/typedefs.h"
 #include "EnginePublicAPI/typedefs.h"
+#include "MathLib/vec3.h"
 
 struct edict_s;
 

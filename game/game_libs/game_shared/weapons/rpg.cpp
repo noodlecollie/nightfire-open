@@ -24,6 +24,7 @@
 #include "gamerules.h"
 #include "ammodefs.h"
 #include "eventConstructor/eventConstructor.h"
+#include "MathLib/angles.h"
 
 LINK_ENTITY_TO_CLASS(weapon_rpg, CRpg)
 
@@ -94,7 +95,7 @@ CRpgRocket* CRpgRocket::CreateRpgRocket(Vector vecOrigin, Vector vecAngles, CBas
 	CRpgRocket* pRocket = GetClassPtr<CRpgRocket>();
 
 	UTIL_SetOrigin(pRocket->pev, vecOrigin);
-	pRocket->pev->angles = vecAngles;
+	vecAngles.CopyToArray(pRocket->pev->angles);
 	pRocket->Spawn();
 	pRocket->SetTouch(&CRpgRocket::RocketTouch);
 	pRocket->m_hLauncher = pLauncher;  // remember what RPG fired me.
@@ -122,11 +123,11 @@ void CRpgRocket::Spawn(void)
 	SetThink(&CRpgRocket::IgniteThink);
 	SetTouch(&CGrenade::ExplodeTouch);
 
-	pev->angles.x -= 30;
+	pev->angles[PITCH] -= 30;
 	UTIL_MakeVectors(pev->angles);
-	pev->angles.x = -(pev->angles.x + 30);
+	pev->angles[PITCH] = -(pev->angles[PITCH] + 30);
 
-	pev->velocity = gpGlobals->v_forward * 250;
+	VectorScale(gpGlobals->v_forward, 250, pev->velocity);
 	pev->gravity = 0.5;
 
 	pev->nextthink = gpGlobals->time + 0.4f;
@@ -207,7 +208,7 @@ void CRpgRocket::FollowThink(void)
 		// ALERT( at_console, "%f\n", tr.flFraction );
 		if ( tr.flFraction >= 0.90 )
 		{
-			vecDir = pOther->pev->origin - pev->origin;
+			vecDir = Vector(pOther->pev->origin) - Vector(pev->origin);
 			flDist = vecDir.Length();
 			vecDir = vecDir.Normalize();
 			flDot = DotProduct(gpGlobals->v_forward, vecDir);
@@ -219,27 +220,29 @@ void CRpgRocket::FollowThink(void)
 		}
 	}
 
-	pev->angles = UTIL_VecToAngles(vecTarget);
+	UTIL_VecToAngles(vecTarget).CopyToArray(pev->angles);
 
 	// this acceleration and turning math is totally wrong, but it seems to respond well so don't change it.
-	float flSpeed = pev->velocity.Length();
+	float flSpeed = VectorLength(pev->velocity);
 	if ( gpGlobals->time - m_flIgniteTime < 1.0 )
 	{
-		pev->velocity = pev->velocity * 0.2f + vecTarget * (flSpeed * 0.8f + 400);
+		(Vector(pev->velocity) * 0.2f + vecTarget * (flSpeed * 0.8f + 400)).CopyToArray(pev->velocity);
 		if ( pev->waterlevel == 3 )
 		{
 			// go slow underwater
-			if ( pev->velocity.Length() > 300 )
+			if ( VectorLength(pev->velocity) > 300 )
 			{
-				pev->velocity = pev->velocity.Normalize() * 300;
+				VectorNormalize(pev->velocity);
+				VectorScale(pev->velocity, 300, pev->velocity);
 			}
-			UTIL_BubbleTrail(pev->origin - pev->velocity * 0.1f, pev->origin, 4);
+
+			UTIL_BubbleTrail(Vector(pev->origin) - Vector(pev->velocity) * 0.1f, pev->origin, 4);
 		}
 		else
 		{
-			if ( pev->velocity.Length() > 2000 )
+			if ( VectorLength(pev->velocity) > 2000 )
 			{
-				pev->velocity = pev->velocity.Normalize() * 2000;
+				VectorScale(pev->velocity, 2000, pev->velocity);
 			}
 		}
 	}
@@ -250,8 +253,10 @@ void CRpgRocket::FollowThink(void)
 			pev->effects = 0;
 			STOP_SOUND(ENT(pev), CHAN_VOICE, "weapons/rocket1.wav");
 		}
-		pev->velocity = pev->velocity * 0.2f + vecTarget * flSpeed * 0.798f;
-		if ( pev->waterlevel == 0 && pev->velocity.Length() < 1500 )
+
+		(Vector(pev->velocity) * 0.2f + vecTarget * flSpeed * 0.798f).CopyToArray(pev->velocity);
+
+		if ( pev->waterlevel == 0 && VectorLength(pev->velocity) < 1500 )
 		{
 			if ( CRpg* pLauncher = (CRpg*)((CBaseEntity*)(m_hLauncher)) )
 			{
@@ -430,14 +435,15 @@ void CRpg::PrimaryAttack()
 		m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
 		UTIL_MakeVectors(m_pPlayer->pev->v_angle);
-		Vector vecSrc =
-			m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16 + gpGlobals->v_right * 8 + gpGlobals->v_up * -8;
+		Vector vecSrc = m_pPlayer->GetGunPosition() + Vector(gpGlobals->v_forward) * 16 +
+			Vector(gpGlobals->v_right) * 8 + Vector(gpGlobals->v_up) * -8;
 
 		CRpgRocket* pRocket = CRpgRocket::CreateRpgRocket(vecSrc, m_pPlayer->pev->v_angle, m_pPlayer, this);
 
 		UTIL_MakeVectors(m_pPlayer->pev->v_angle);  // RpgRocket::Create stomps on globals, so remake.
-		pRocket->pev->velocity =
-			pRocket->pev->velocity + gpGlobals->v_forward * DotProduct(m_pPlayer->pev->velocity, gpGlobals->v_forward);
+		(Vector(pRocket->pev->velocity) +
+		 Vector(gpGlobals->v_forward) * DotProduct(m_pPlayer->pev->velocity, gpGlobals->v_forward))
+			.CopyToArray(pRocket->pev->velocity);
 #endif
 
 		// firing RPG no longer turns on the designator. ALT fire is a toggle switch for the LTD.

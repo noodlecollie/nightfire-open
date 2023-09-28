@@ -179,8 +179,8 @@ void CEgon::Attack(void)
 		return;
 	}
 
-	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
-	Vector vecAiming = gpGlobals->v_forward;
+	UTIL_MakeVectors(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
+	Vector vecAiming(gpGlobals->v_forward);
 	Vector vecSrc = m_pPlayer->GetGunPosition();
 
 	int flags;
@@ -262,7 +262,7 @@ void CEgon::Fire(const Vector& vecOrigSrc, const Vector& vecDir)
 	TraceResult tr;
 
 	pentIgnore = m_pPlayer->edict();
-	Vector tmpSrc = vecOrigSrc + gpGlobals->v_up * -8 + gpGlobals->v_right * 3;
+	Vector tmpSrc(vecOrigSrc + Vector(gpGlobals->v_up) * -8 + Vector(gpGlobals->v_right) * 3);
 
 	// ALERT( at_console, "." );
 

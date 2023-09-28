@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 #include "Framework.h"
 #include "PicButton.h"
+#include "MathLib/utils.h"
 
 // menu banners used fiexed rectangle (virtual screenspace at 640x480)
 #define UI_BANNER_POSX 72

@@ -696,8 +696,8 @@ static void RegisterClientCommands()
 					TraceResult tr;
 					UTIL_MakeVectors(pev->v_angle);
 					UTIL_TraceLine(
-						pev->origin + pev->view_ofs,
-						pev->origin + pev->view_ofs + gpGlobals->v_forward * 1000,
+						Vector(pev->origin) + Vector(pev->view_ofs),
+						Vector(pev->origin) + Vector(pev->view_ofs) + Vector(gpGlobals->v_forward) * 1000,
 						dont_ignore_monsters,
 						player->edict(),
 						&tr);
@@ -1181,7 +1181,7 @@ void SetupVisibility(edict_t* pViewEntity, edict_t* pClient, unsigned char** pvs
 	}
 	else
 	{
-		org = pView->v.origin + pView->v.view_ofs;
+		org = Vector(pView->v.origin) + Vector(pView->v.view_ofs);
 		if ( pView->v.flags & FL_DUCKING )
 		{
 			org = org + (VEC_HULL_MIN - VEC_DUCK_HULL_MIN);
@@ -1347,9 +1347,9 @@ int AddToFullPack(
 	state->rendermode = ent->v.rendermode;
 	state->renderamt = (int)ent->v.renderamt;
 	state->renderfx = ent->v.renderfx;
-	state->rendercolor.r = (byte)ent->v.rendercolor.x;
-	state->rendercolor.g = (byte)ent->v.rendercolor.y;
-	state->rendercolor.b = (byte)ent->v.rendercolor.z;
+	state->rendercolor.r = (byte)ent->v.rendercolor[0];
+	state->rendercolor.g = (byte)ent->v.rendercolor[1];
+	state->rendercolor.b = (byte)ent->v.rendercolor[2];
 
 	state->aiment = 0;
 	if ( ent->v.aiment )
@@ -1422,23 +1422,23 @@ void CreateBaseline(
 	const vec3_t player_mins,
 	const vec3_t player_maxs)
 {
-	baseline->origin = entity->v.origin;
-	baseline->angles = entity->v.angles;
+	VectorCopy(entity->v.origin, baseline->origin);
+	VectorCopy(entity->v.angles, baseline->angles);
 	baseline->frame = entity->v.frame;
 	baseline->skin = (short)entity->v.skin;
 
 	// render information
 	baseline->rendermode = (byte)entity->v.rendermode;
 	baseline->renderamt = (byte)entity->v.renderamt;
-	baseline->rendercolor.r = (byte)entity->v.rendercolor.x;
-	baseline->rendercolor.g = (byte)entity->v.rendercolor.y;
-	baseline->rendercolor.b = (byte)entity->v.rendercolor.z;
+	baseline->rendercolor.r = (byte)entity->v.rendercolor[0];
+	baseline->rendercolor.g = (byte)entity->v.rendercolor[1];
+	baseline->rendercolor.b = (byte)entity->v.rendercolor[2];
 	baseline->renderfx = (byte)entity->v.renderfx;
 
 	if ( player )
 	{
-		baseline->mins = player_mins;
-		baseline->maxs = player_maxs;
+		VectorCopy(player_mins, baseline->mins);
+		VectorCopy(player_maxs, baseline->maxs);
 
 		baseline->colormap = eindex;
 		baseline->modelindex = playermodelindex;
@@ -1452,8 +1452,8 @@ void CreateBaseline(
 	}
 	else
 	{
-		baseline->mins = entity->v.mins;
-		baseline->maxs = entity->v.maxs;
+		VectorCopy(entity->v.mins, baseline->mins);
+		VectorCopy(entity->v.maxs, baseline->maxs);
 
 		baseline->colormap = 0;
 		baseline->modelindex = entity->v.modelindex;  // SV_ModelIndex(pr_strings + entity->v.model);
@@ -1821,10 +1821,10 @@ void UpdateClientData(const struct edict_s* ent, int sendweapons, struct clientd
 	cd->weapons = pev->weapons;
 
 	// Vectors
-	cd->origin = pev->origin;
-	cd->velocity = pev->velocity;
-	cd->view_ofs = pev->view_ofs;
-	cd->punchangle = pev->punchangle;
+	VectorCopy(pev->origin, cd->origin);
+	VectorCopy(pev->velocity, cd->velocity);
+	VectorCopy(pev->view_ofs, cd->view_ofs);
+	VectorCopy(pev->punchangle, cd->punchangle);
 
 	cd->bInDuck = pev->bInDuck;
 	cd->flTimeStepSound = pev->flTimeStepSound;
@@ -1874,15 +1874,15 @@ void UpdateClientData(const struct edict_s* ent, int sendweapons, struct clientd
 
 					cd->m_iId = II.iId;
 
-					cd->vuser3.z = static_cast<float>(gun->m_iSecondaryAmmoType);
-					cd->vuser4.x = static_cast<float>(gun->m_iPrimaryAmmoType);
-					cd->vuser4.y = static_cast<float>(pl->m_rgAmmo[gun->m_iPrimaryAmmoType]);
-					cd->vuser4.z = static_cast<float>(pl->m_rgAmmo[gun->m_iSecondaryAmmoType]);
+					cd->vuser3[2] = static_cast<float>(gun->m_iSecondaryAmmoType);
+					cd->vuser4[0] = static_cast<float>(gun->m_iPrimaryAmmoType);
+					cd->vuser4[1] = static_cast<float>(pl->m_rgAmmo[gun->m_iPrimaryAmmoType]);
+					cd->vuser4[2] = static_cast<float>(pl->m_rgAmmo[gun->m_iSecondaryAmmoType]);
 
 					if ( pl->m_pActiveItem->m_iId == WEAPON_RPG )
 					{
-						cd->vuser2.y = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_fSpotActive);
-						cd->vuser2.z = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_cActiveRockets);
+						cd->vuser2[1] = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_fSpotActive);
+						cd->vuser2[2] = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_cActiveRockets);
 					}
 				}
 			}
@@ -1971,18 +1971,18 @@ int GetHullBounds(int hullnumber, float* mins, float* maxs)
 	switch ( hullnumber )
 	{
 		case 0:  // Normal player
-			VEC_HULL_MIN.CopyToArray(mins);
-			VEC_HULL_MAX.CopyToArray(maxs);
+			VectorCopy(VEC_HULL_MIN, mins);
+			VectorCopy(VEC_HULL_MAX, maxs);
 			iret = 1;
 			break;
 		case 1:  // Crouched player
-			VEC_DUCK_HULL_MIN.CopyToArray(mins);
-			VEC_DUCK_HULL_MAX.CopyToArray(maxs);
+			VectorCopy(VEC_DUCK_HULL_MIN, mins);
+			VectorCopy(VEC_DUCK_HULL_MAX, maxs);
 			iret = 1;
 			break;
 		case 2:  // Point based hull
-			Vector(0, 0, 0).CopyToArray(mins);
-			Vector(0, 0, 0).CopyToArray(maxs);
+			VectorClear(mins);
+			VectorClear(maxs);
 			iret = 1;
 			break;
 	}

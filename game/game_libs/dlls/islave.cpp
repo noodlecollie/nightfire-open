@@ -25,6 +25,7 @@
 #include "effects.h"
 #include "weapons.h"
 #include "soundent.h"
+#include "MathLib/angles.h"
 
 extern DLL_GLOBAL int g_iSkillLevel;
 
@@ -163,7 +164,7 @@ void CISlave::CallForHelp(const char*, float flDist, EHANDLE hEnemy, Vector& vec
 
 	while ( (pEntity = UTIL_FindEntityByString(pEntity, "netname", STRING(pev->netname))) != NULL )
 	{
-		float d = (pev->origin - pEntity->pev->origin).Length();
+		float d = (Vector(pev->origin) - Vector(pEntity->pev->origin)).Length();
 		if ( d < flDist )
 		{
 			CBaseMonster* pMonster = pEntity->MyMonsterPointer();
@@ -233,7 +234,7 @@ void CISlave::PainSound(void)
 		EMIT_SOUND_DYN(
 			ENT(pev),
 			CHAN_WEAPON,
-			pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pPainSounds) - 1)],
+			pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pPainSounds) - 1)],
 			1.0,
 			ATTN_NORM,
 			0,
@@ -249,7 +250,7 @@ void CISlave::DeathSound(void)
 	EMIT_SOUND_DYN(
 		ENT(pev),
 		CHAN_WEAPON,
-		pDeathSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pDeathSounds) - 1)],
+		pDeathSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pDeathSounds) - 1)],
 		1.0,
 		ATTN_NORM,
 		0,
@@ -316,14 +317,14 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
 				{
-					pHurt->pev->punchangle.z = -18;
-					pHurt->pev->punchangle.x = 5;
+					pHurt->pev->punchangle[ROLL] = -18;
+					pHurt->pev->punchangle[PITCH] = 5;
 				}
 				// Play a random attack hit sound
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -335,7 +336,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -350,13 +351,13 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
 				{
-					pHurt->pev->punchangle.z = -18;
-					pHurt->pev->punchangle.x = 5;
+					pHurt->pev->punchangle[ROLL] = -18;
+					pHurt->pev->punchangle[PITCH] = 5;
 				}
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -367,7 +368,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -385,7 +386,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( m_iBeams == 0 )
 			{
-				Vector vecSrc = pev->origin + gpGlobals->v_forward * 2;
+				Vector vecSrc = Vector(pev->origin) + Vector(gpGlobals->v_forward) * 2;
 				MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, vecSrc);
 				WRITE_BYTE(TE_DLIGHT);
 				WRITE_COORD(vecSrc.x);  // X
@@ -421,7 +422,7 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( m_hDead != 0 )
 			{
-				Vector vecDest = m_hDead->pev->origin + Vector(0, 0, 38);
+				Vector vecDest = Vector(m_hDead->pev->origin) + Vector(0, 0, 38);
 				TraceResult trace;
 				UTIL_TraceHull(vecDest, vecDest, dont_ignore_monsters, human_hull, m_hDead->edict(), &trace);
 
@@ -559,7 +560,7 @@ void CISlave::Spawn()
 	m_bloodColor = BLOOD_COLOR_GREEN;
 	pev->effects = 0;
 	pev->health = gSkillData.slaveHealth;
-	pev->view_ofs = Vector(0, 0, 64);  // position of the eyes relative to monster's origin.
+	VectorCopy(Vector(0, 0, 64), pev->view_ofs);  // position of the eyes relative to monster's origin.
 	m_flFieldOfView = VIEW_FIELD_WIDE;  // NOTE: we need a wide field of view so npc will notice player and say hello
 	m_MonsterState = MONSTERSTATE_NONE;
 	m_afCapability = bits_CAP_HEAR | bits_CAP_TURN_HEAD | bits_CAP_RANGE_ATTACK2 | bits_CAP_DOORS_GROUP;
@@ -648,7 +649,7 @@ Task_t tlSlaveAttack1[] = {
 
 Schedule_t slSlaveAttack1[] = {
 	{tlSlaveAttack1,
-	 SIZE_OF_ARRAY(tlSlaveAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlSlaveAttack1),
 	 bits_COND_CAN_MELEE_ATTACK1 | bits_COND_HEAR_SOUND | bits_COND_HEAVY_DAMAGE,
 
 	 bits_SOUND_DANGER,
@@ -746,16 +747,19 @@ void CISlave::ArmBeam(int side)
 	float flDist = 1.0;
 
 	if ( m_iBeams >= ISLAVE_MAX_BEAMS )
+	{
 		return;
+	}
 
 	UTIL_MakeAimVectors(pev->angles);
-	Vector vecSrc = pev->origin + gpGlobals->v_up * 36.0f + gpGlobals->v_right * static_cast<float>(side) * 16.0f +
-		gpGlobals->v_forward * 32.0f;
+	Vector vecSrc = Vector(pev->origin) + Vector(gpGlobals->v_up) * 36.0f +
+		Vector(gpGlobals->v_right) * static_cast<float>(side) * 16.0f + Vector(gpGlobals->v_forward) * 32.0f;
 
 	for ( int i = 0; i < 3; i++ )
 	{
-		Vector vecAim =
-			gpGlobals->v_right * static_cast<float>(side) * RANDOM_FLOAT(0.0f, 1.0f) + gpGlobals->v_up * RANDOM_FLOAT(-1.0f, 1.0f);
+		Vector vecAim = Vector(gpGlobals->v_right) * static_cast<float>(side) * RANDOM_FLOAT(0.0f, 1.0f) +
+			Vector(gpGlobals->v_up) * RANDOM_FLOAT(-1.0f, 1.0f);
+
 		TraceResult tr1;
 		UTIL_TraceLine(vecSrc, vecSrc + vecAim * 512, dont_ignore_monsters, ENT(pev), &tr1);
 		if ( flDist > tr1.flFraction )
@@ -767,13 +771,17 @@ void CISlave::ArmBeam(int side)
 
 	// Couldn't find anything close enough
 	if ( flDist == 1.0 )
+	{
 		return;
+	}
 
 	DecalGunshot(&tr, BULLET_PLAYER_CROWBAR);
 
 	m_pBeam[m_iBeams] = CBeam::BeamCreate("sprites/lgtning.spr", 30);
 	if ( !m_pBeam[m_iBeams] )
+	{
 		return;
+	}
 
 	m_pBeam[m_iBeams]->PointEntInit(tr.vecEndPos, entindex());
 	m_pBeam[m_iBeams]->SetEndAttachment(side < 0 ? 2 : 1);
@@ -833,23 +841,31 @@ void CISlave::WackBeam(int side, CBaseEntity* pEntity)
 //=========================================================
 void CISlave::ZapBeam(int side)
 {
-	Vector vecSrc, vecAim;
+	Vector vecSrc;
+	Vector vecAim;
 	TraceResult tr;
 	CBaseEntity* pEntity;
 
 	if ( m_iBeams >= ISLAVE_MAX_BEAMS )
+	{
 		return;
+	}
 
-	vecSrc = pev->origin + gpGlobals->v_up * 36;
+	vecSrc = Vector(pev->origin) + Vector(gpGlobals->v_up) * 36;
 	vecAim = ShootAtEnemy(vecSrc);
 	float deflection = 0.01f;
-	vecAim = vecAim + static_cast<float>(side) * gpGlobals->v_right * RANDOM_FLOAT(0.0f, deflection) +
-		gpGlobals->v_up * RANDOM_FLOAT(-deflection, deflection);
+
+	vecAim = vecAim + static_cast<float>(side) * Vector(gpGlobals->v_right) * RANDOM_FLOAT(0.0f, deflection) +
+		Vector(gpGlobals->v_up) * RANDOM_FLOAT(-deflection, deflection);
+
 	UTIL_TraceLine(vecSrc, vecSrc + vecAim * 1024, dont_ignore_monsters, ENT(pev), &tr);
 
 	m_pBeam[m_iBeams] = CBeam::BeamCreate("sprites/lgtning.spr", 50);
+
 	if ( !m_pBeam[m_iBeams] )
+	{
 		return;
+	}
 
 	m_pBeam[m_iBeams]->PointEntInit(tr.vecEndPos, entindex());
 	m_pBeam[m_iBeams]->SetEndAttachment(side < 0 ? 2 : 1);
@@ -863,6 +879,7 @@ void CISlave::ZapBeam(int side)
 	{
 		pEntity->TraceAttack(pev, gSkillData.slaveDmgZap, vecAim, &tr, DMG_SHOCK);
 	}
+
 	UTIL_EmitAmbientSound(ENT(pev), tr.vecEndPos, "weapons/electro4.wav", 0.5, ATTN_NORM, 0, RANDOM_LONG(140, 160));
 }
 

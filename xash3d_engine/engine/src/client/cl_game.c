@@ -13,6 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/angles.h"
+#include "MathLib/vec4.h"
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "client/client.h"
@@ -489,7 +492,8 @@ void CL_DrawCenterPrint(void)
 	char* pText;
 	int i, j, x, y;
 	int width, lineLength;
-	byte *colorDefault, line[MAX_LINELENGTH];
+	const byte* colorDefault;
+	byte line[MAX_LINELENGTH];
 	int charWidth, charHeight;
 
 	if ( !clgame.centerPrint.time )
@@ -503,7 +507,7 @@ void CL_DrawCenterPrint(void)
 	}
 
 	y = clgame.centerPrint.y;  // start y
-	colorDefault = g_color_table[7];
+	colorDefault = Con_GetColorFromTable(7);
 	pText = clgame.centerPrint.message;
 
 	CL_DrawCharacterLen(font, 0, NULL, &charHeight);
@@ -1028,7 +1032,7 @@ void CL_DrawCrosshair(void)
 	y -= (int)(0.5f * height);
 
 	clgame.ds.pSprite = clgame.ds.pCrosshair;
-	Vector4Copy(clgame.ds.rgbaCrosshair, clgame.ds.spriteColor);
+	RGBA_Copy(clgame.ds.rgbaCrosshair, clgame.ds.spriteColor);
 
 	pfnSPR_DrawHoles(0, x, y, &clgame.ds.rcCrosshair);
 }
@@ -2025,8 +2029,8 @@ int GAME_EXPORT pfnDrawConsoleString(int x, int y, const char* string)
 {
 	cl_font_t* font = Con_GetFont((int)con_fontsize->value);
 	rgba_t color;
-	Vector4Copy(clgame.ds.textColor, color);
-	Vector4Set(clgame.ds.textColor, 255, 255, 255, 255);
+	RGBA_Copy(clgame.ds.textColor, color);
+	RGBA_Set(clgame.ds.textColor, 255, 255, 255, 255);
 
 	return x + CL_DrawString((float)x, (float)y, string, color, font, FONT_DRAW_UTF8 | FONT_DRAW_HUD);
 }
@@ -3998,7 +4002,6 @@ static cl_enginefunc_t gEngfuncs = {
 	pfnGetPlayerInfo,
 	pfnPlaySoundByName,
 	pfnPlaySoundByIndex,
-	AngleVectors,
 	CL_TextMessageGet,
 	pfnDrawCharacter,
 	pfnDrawConsoleString,

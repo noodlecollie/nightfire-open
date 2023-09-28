@@ -26,6 +26,7 @@
 #include "scripted.h"
 #include "animation.h"
 #include "soundent.h"
+#include "MathLib/angles.h"
 
 #define NUM_SCIENTIST_HEADS 4  // four heads available for scientist model
 
@@ -148,7 +149,7 @@ Task_t tlFollow[] = {
 
 Schedule_t slFollow[] = {
 	{tlFollow,
-	 SIZE_OF_ARRAY(tlFollow),
+	 SIZE_OF_ARRAY_AS_INT(tlFollow),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_COMBAT | bits_SOUND_DANGER,
 	 "Follow"},
@@ -162,7 +163,7 @@ Task_t tlFollowScared[] = {
 
 Schedule_t slFollowScared[] = {
 	{tlFollowScared,
-	 SIZE_OF_ARRAY(tlFollowScared),
+	 SIZE_OF_ARRAY_AS_INT(tlFollowScared),
 	 bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 bits_SOUND_DANGER,
 	 "FollowScared"},
@@ -176,7 +177,7 @@ Task_t tlFaceTargetScared[] = {
 
 Schedule_t slFaceTargetScared[] = {
 	{tlFaceTargetScared,
-	 SIZE_OF_ARRAY(tlFaceTargetScared),
+	 SIZE_OF_ARRAY_AS_INT(tlFaceTargetScared),
 	 bits_COND_HEAR_SOUND | bits_COND_NEW_ENEMY,
 	 bits_SOUND_DANGER,
 	 "FaceTargetScared"},
@@ -187,7 +188,7 @@ Task_t tlStopFollowing[] = {
 };
 
 Schedule_t slStopFollowing[] = {
-	{tlStopFollowing, SIZE_OF_ARRAY(tlStopFollowing), 0, 0, "StopFollowing"},
+	{tlStopFollowing, SIZE_OF_ARRAY_AS_INT(tlStopFollowing), 0, 0, "StopFollowing"},
 };
 
 Task_t tlHeal[] = {
@@ -204,7 +205,7 @@ Task_t tlHeal[] = {
 
 Schedule_t slHeal[] = {
 	{tlHeal,
-	 SIZE_OF_ARRAY(tlHeal),
+	 SIZE_OF_ARRAY_AS_INT(tlHeal),
 	 0,  // Don't interrupt or he'll end up running around with a needle all the time
 	 0,
 	 "Heal"},
@@ -219,7 +220,7 @@ Task_t tlFaceTarget[] = {
 
 Schedule_t slFaceTarget[] = {
 	{tlFaceTarget,
-	 SIZE_OF_ARRAY(tlFaceTarget),
+	 SIZE_OF_ARRAY_AS_INT(tlFaceTarget),
 	 bits_COND_CLIENT_PUSH | bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND,
 	 bits_SOUND_COMBAT | bits_SOUND_DANGER,
 	 "FaceTarget"},
@@ -234,7 +235,7 @@ Task_t tlSciPanic[] = {
 };
 
 Schedule_t slSciPanic[] = {
-	{tlSciPanic, SIZE_OF_ARRAY(tlSciPanic), 0, 0, "SciPanic"},
+	{tlSciPanic, SIZE_OF_ARRAY_AS_INT(tlSciPanic), 0, 0, "SciPanic"},
 };
 
 Task_t tlIdleSciStand[] = {
@@ -246,7 +247,7 @@ Task_t tlIdleSciStand[] = {
 
 Schedule_t slIdleSciStand[] = {
 	{tlIdleSciStand,
-	 SIZE_OF_ARRAY(tlIdleSciStand),
+	 SIZE_OF_ARRAY_AS_INT(tlIdleSciStand),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND | bits_COND_SMELL |
 		 bits_COND_CLIENT_PUSH | bits_COND_PROVOKED,
 	 bits_SOUND_COMBAT |  // sound flags
@@ -269,7 +270,7 @@ Task_t tlScientistCover[] = {
 };
 
 Schedule_t slScientistCover[] = {
-	{tlScientistCover, SIZE_OF_ARRAY(tlScientistCover), bits_COND_NEW_ENEMY, 0, "ScientistCover"},
+	{tlScientistCover, SIZE_OF_ARRAY_AS_INT(tlScientistCover), bits_COND_NEW_ENEMY, 0, "ScientistCover"},
 };
 
 Task_t tlScientistHide[] = {
@@ -282,7 +283,7 @@ Task_t tlScientistHide[] = {
 
 Schedule_t slScientistHide[] = {
 	{tlScientistHide,
-	 SIZE_OF_ARRAY(tlScientistHide),
+	 SIZE_OF_ARRAY_AS_INT(tlScientistHide),
 	 bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND | bits_COND_SEE_ENEMY | bits_COND_SEE_HATE | bits_COND_SEE_FEAR |
 		 bits_COND_SEE_DISLIKE,
 	 bits_SOUND_DANGER,
@@ -301,7 +302,7 @@ Task_t tlScientistStartle[] = {
 
 Schedule_t slScientistStartle[] = {
 	{tlScientistStartle,
-	 SIZE_OF_ARRAY(tlScientistStartle),
+	 SIZE_OF_ARRAY_AS_INT(tlScientistStartle),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_ENEMY | bits_COND_SEE_HATE | bits_COND_SEE_FEAR | bits_COND_SEE_DISLIKE,
 	 0,
 	 "ScientistStartle"},
@@ -315,7 +316,7 @@ Task_t tlFear[] = {
 };
 
 Schedule_t slFear[] = {
-	{tlFear, SIZE_OF_ARRAY(tlFear), bits_COND_NEW_ENEMY, 0, "Fear"},
+	{tlFear, SIZE_OF_ARRAY_AS_INT(tlFear), bits_COND_NEW_ENEMY, 0, "Fear"},
 };
 
 DEFINE_CUSTOM_SCHEDULES(CScientist) {
@@ -402,13 +403,17 @@ void CScientist::StartTask(Task_t* pTask)
 			break;
 		case TASK_MOVE_TO_TARGET_RANGE_SCARED:
 		{
-			if ( (m_hTargetEnt->pev->origin - pev->origin).Length() < 1 )
+			if ( (Vector(m_hTargetEnt->pev->origin) - Vector(pev->origin)).Length() < 1 )
+			{
 				TaskComplete();
+			}
 			else
 			{
 				m_vecMoveGoal = m_hTargetEnt->pev->origin;
 				if ( !MoveToTarget(ACT_WALK_SCARED, 0.5) )
+				{
 					TaskFail();
+				}
 			}
 		}
 		break;
@@ -441,13 +446,13 @@ void CScientist::RunTask(Task_t* pTask)
 			{
 				float distance;
 
-				distance = (m_vecMoveGoal - pev->origin).Length2D();
+				distance = (m_vecMoveGoal - Vector(pev->origin)).Length2D();
 				// Re-evaluate when you think your finished, or the target has moved too far
 				if ( (distance < pTask->flData) ||
-					 (m_vecMoveGoal - m_hTargetEnt->pev->origin).Length() > pTask->flData * 0.5 )
+					 (m_vecMoveGoal - Vector(m_hTargetEnt->pev->origin)).Length() > pTask->flData * 0.5 )
 				{
 					m_vecMoveGoal = m_hTargetEnt->pev->origin;
-					distance = (m_vecMoveGoal - pev->origin).Length2D();
+					distance = (m_vecMoveGoal - Vector(pev->origin)).Length2D();
 					FRefreshRoute();
 				}
 
@@ -473,8 +478,10 @@ void CScientist::RunTask(Task_t* pTask)
 			else
 			{
 				if ( TargetDistance() > 90 )
+				{
 					TaskComplete();
-				pev->ideal_yaw = UTIL_VecToYaw(m_hTargetEnt->pev->origin - pev->origin);
+				}
+				pev->ideal_yaw = UTIL_VecToYaw(Vector(m_hTargetEnt->pev->origin) - Vector(pev->origin));
 				ChangeYaw(static_cast<int>(pev->yaw_speed));
 			}
 			break;
@@ -565,7 +572,7 @@ void CScientist::Spawn(void)
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_RED;
 	pev->health = gSkillData.scientistHealth;
-	pev->view_ofs = Vector(0, 0, 50);  // position of the eyes relative to monster's origin.
+	VectorCopy(Vector(0, 0, 50), pev->view_ofs);  // position of the eyes relative to monster's origin.
 	m_flFieldOfView =
 		VIEW_FIELD_WIDE;  // NOTE: we need a wide field of view so scientists will notice player and say hello
 	m_MonsterState = MONSTERSTATE_NONE;
@@ -585,7 +592,9 @@ void CScientist::Spawn(void)
 
 	// Luther is black, make his hands black
 	if ( pev->body == HEAD_LUTHER )
+	{
 		pev->skin = 1;
+	}
 
 	MonsterInit();
 	SetUse(&CTalkMonster::FollowerUse);
@@ -978,9 +987,12 @@ void CScientist::Heal(void)
 	if ( !CanHeal() )
 		return;
 
-	Vector target = m_hTargetEnt->pev->origin - pev->origin;
+	Vector target = Vector(m_hTargetEnt->pev->origin) - Vector(pev->origin);
+
 	if ( target.Length() > 100 )
+	{
 		return;
+	}
 
 	m_hTargetEnt->TakeHealth(gSkillData.scientistHeal, DMG_GENERIC);
 	// Don't heal again for 1 minute
@@ -989,9 +1001,13 @@ void CScientist::Heal(void)
 
 int CScientist::FriendNumber(int arrayNumber)
 {
-	static int array[3] = {1, 2, 0};
+	static const int array[3] = {1, 2, 0};
+
 	if ( arrayNumber < 3 )
+	{
 		return array[arrayNumber];
+	}
+
 	return arrayNumber;
 }
 
@@ -1191,17 +1207,26 @@ void CSittingScientist::SittingThink(void)
 		pent = FindNearestFriend(TRUE);
 		if ( pent )
 		{
-			float yaw = VecToYaw(pent->pev->origin - pev->origin) - pev->angles.y;
+			float yaw = VecToYaw(Vector(pent->pev->origin) - Vector(pev->origin)) - pev->angles[YAW];
 
 			if ( yaw > 180 )
+			{
 				yaw -= 360;
+			}
+
 			if ( yaw < -180 )
+			{
 				yaw += 360;
+			}
 
 			if ( yaw > 0 )
+			{
 				pev->sequence = m_baseSequence + SITTING_ANIM_sitlookleft;
+			}
 			else
+			{
 				pev->sequence = m_baseSequence + SITTING_ANIM_sitlookright;
+			}
 
 			ResetSequenceInfo();
 			pev->frame = 0;
@@ -1239,7 +1264,7 @@ void CSittingScientist::SittingThink(void)
 			else
 			{
 				// only turn head if we spoke
-				float yaw = VecToYaw(pent->pev->origin - pev->origin) - pev->angles.y;
+				float yaw = VecToYaw(Vector(pent->pev->origin) - Vector(pev->origin)) - pev->angles[YAW];
 
 				if ( yaw > 180 )
 					yaw -= 360;

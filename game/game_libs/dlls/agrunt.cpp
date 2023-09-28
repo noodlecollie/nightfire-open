@@ -77,8 +77,8 @@ public:
 	void HandleAnimEvent(MonsterEvent_t* pEvent);
 	void SetObjectCollisionBox(void)
 	{
-		pev->absmin = pev->origin + Vector(-32, -32, 0);
-		pev->absmax = pev->origin + Vector(32, 32, 85);
+		(Vector(pev->origin) + Vector(-32, -32, 0)).CopyToArray(pev->absmin);
+		(Vector(pev->origin) + Vector(32, 32, 85)).CopyToArray(pev->absmax);
 	}
 
 	Schedule_t* GetSchedule(void);
@@ -232,9 +232,9 @@ void CAGrunt::TraceAttack(
 
 			MESSAGE_BEGIN(MSG_PVS, SVC_TEMPENTITY, ptr->vecEndPos);
 			WRITE_BYTE(TE_TRACER);
-			WRITE_COORD(ptr->vecEndPos.x);
-			WRITE_COORD(ptr->vecEndPos.y);
-			WRITE_COORD(ptr->vecEndPos.z);
+			WRITE_COORD(ptr->vecEndPos[VEC3_X]);
+			WRITE_COORD(ptr->vecEndPos[VEC3_Y]);
+			WRITE_COORD(ptr->vecEndPos[VEC3_Z]);
 
 			WRITE_COORD(vecTracerDir.x);
 			WRITE_COORD(vecTracerDir.y);
@@ -303,7 +303,7 @@ void CAGrunt::PrescheduleThink(void)
 
 			do
 			{
-				num = RANDOM_LONG(0, SIZE_OF_ARRAY(pIdleSounds) - 1);
+				num = RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pIdleSounds) - 1);
 			}
 			while ( num == m_iLastWord );
 
@@ -333,7 +333,7 @@ void CAGrunt::DeathSound(void)
 {
 	StopTalking();
 
-	EMIT_SOUND(ENT(pev), CHAN_VOICE, pDieSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pDieSounds) - 1)], 1.0, ATTN_NORM);
+	EMIT_SOUND(ENT(pev), CHAN_VOICE, pDieSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pDieSounds) - 1)], 1.0, ATTN_NORM);
 }
 
 //=========================================================
@@ -343,7 +343,12 @@ void CAGrunt::AlertSound(void)
 {
 	StopTalking();
 
-	EMIT_SOUND(ENT(pev), CHAN_VOICE, pAlertSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAlertSounds) - 1)], 1.0, ATTN_NORM);
+	EMIT_SOUND(
+		ENT(pev),
+		CHAN_VOICE,
+		pAlertSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAlertSounds) - 1)],
+		1.0,
+		ATTN_NORM);
 }
 
 //=========================================================
@@ -353,7 +358,12 @@ void CAGrunt::AttackSound(void)
 {
 	StopTalking();
 
-	EMIT_SOUND(ENT(pev), CHAN_VOICE, pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackSounds) - 1)], 1.0, ATTN_NORM);
+	EMIT_SOUND(
+		ENT(pev),
+		CHAN_VOICE,
+		pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackSounds) - 1)],
+		1.0,
+		ATTN_NORM);
 }
 
 //=========================================================
@@ -370,7 +380,12 @@ void CAGrunt::PainSound(void)
 
 	StopTalking();
 
-	EMIT_SOUND(ENT(pev), CHAN_VOICE, pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pPainSounds) - 1)], 1.0, ATTN_NORM);
+	EMIT_SOUND(
+		ENT(pev),
+		CHAN_VOICE,
+		pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pPainSounds) - 1)],
+		1.0,
+		ATTN_NORM);
 }
 
 //=========================================================
@@ -426,7 +441,7 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( HasConditions(bits_COND_SEE_ENEMY) )
 			{
-				vecDirToEnemy = ((m_vecEnemyLKP)-pev->origin);
+				vecDirToEnemy = m_vecEnemyLKP - Vector(pev->origin);
 				angDir = UTIL_VecToAngles(vecDirToEnemy);
 				vecDirToEnemy = vecDirToEnemy.Normalize();
 			}
@@ -461,7 +476,7 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			CBaseEntity* pHornet = CBaseEntity::Create("hornet", vecArmPos, UTIL_VecToAngles(vecDirToEnemy), edict());
 			UTIL_MakeVectors(pHornet->pev->angles);
-			pHornet->pev->velocity = gpGlobals->v_forward * 300;
+			VectorScale(gpGlobals->v_forward, 300, pHornet->pev->velocity);
 
 			switch ( RANDOM_LONG(0, 2) )
 			{
@@ -498,20 +513,20 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( pHurt )
 			{
-				pHurt->pev->punchangle.y = -25;
-				pHurt->pev->punchangle.x = 8;
+				pHurt->pev->punchangle[VEC3_Y] = -25;
+				pHurt->pev->punchangle[VEC3_X] = 8;
 
 				// OK to use gpGlobals without calling MakeVectors, cause CheckTraceHullAttack called it above.
 				if ( pHurt->IsPlayer() )
 				{
 					// this is a player. Knock him around.
-					pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_right * 250;
+					(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_right) * 250).CopyToArray(pHurt->pev->velocity);
 				}
 
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -527,7 +542,7 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -542,20 +557,21 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			if ( pHurt )
 			{
-				pHurt->pev->punchangle.y = 25;
-				pHurt->pev->punchangle.x = 8;
+				pHurt->pev->punchangle[VEC3_Y] = 25;
+				pHurt->pev->punchangle[VEC3_X] = 8;
 
 				// OK to use gpGlobals without calling MakeVectors, cause CheckTraceHullAttack called it above.
 				if ( pHurt->IsPlayer() )
 				{
 					// this is a player. Knock him around.
-					pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_right * -250;
+					(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_right) * -250)
+						.CopyToArray(pHurt->pev->velocity);
 				}
 
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackHitSounds) - 1)],
+					pAttackHitSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackHitSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -571,7 +587,7 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 				EMIT_SOUND_DYN(
 					ENT(pev),
 					CHAN_WEAPON,
-					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY(pAttackMissSounds) - 1)],
+					pAttackMissSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackMissSounds) - 1)],
 					1.0,
 					ATTN_NORM,
 					0,
@@ -665,7 +681,7 @@ Task_t tlAGruntFail[] = {
 
 Schedule_t slAGruntFail[] = {
 	{tlAGruntFail,
-	 SIZE_OF_ARRAY(tlAGruntFail),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntFail),
 	 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK1,
 	 0,
 	 "AGrunt Fail"},
@@ -683,7 +699,7 @@ Task_t tlAGruntCombatFail[] = {
 
 Schedule_t slAGruntCombatFail[] = {
 	{tlAGruntCombatFail,
-	 SIZE_OF_ARRAY(tlAGruntCombatFail),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntCombatFail),
 	 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK1,
 	 0,
 	 "AGrunt Combat Fail"},
@@ -702,7 +718,7 @@ Task_t tlAGruntStandoff[] = {
 
 Schedule_t slAGruntStandoff[] = {
 	{tlAGruntStandoff,
-	 SIZE_OF_ARRAY(tlAGruntStandoff),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntStandoff),
 	 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_SEE_ENEMY | bits_COND_NEW_ENEMY |
 		 bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -719,7 +735,7 @@ Task_t tlAGruntSuppressHornet[] = {
 Schedule_t slAGruntSuppress[] = {
 	{
 		tlAGruntSuppressHornet,
-		SIZE_OF_ARRAY(tlAGruntSuppressHornet),
+		SIZE_OF_ARRAY_AS_INT(tlAGruntSuppressHornet),
 		0,
 		0,
 		"AGrunt Suppress Hornet",
@@ -737,7 +753,7 @@ Task_t tlAGruntRangeAttack1[] = {
 
 Schedule_t slAGruntRangeAttack1[] = {
 	{tlAGruntRangeAttack1,
-	 SIZE_OF_ARRAY(tlAGruntRangeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntRangeAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "AGrunt Range Attack1"},
@@ -753,7 +769,7 @@ Task_t tlAGruntHiddenRangeAttack1[] = {
 
 Schedule_t slAGruntHiddenRangeAttack[] = {
 	{tlAGruntHiddenRangeAttack1,
-	 SIZE_OF_ARRAY(tlAGruntHiddenRangeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntHiddenRangeAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
 	 "AGrunt Hidden Range Attack1"},
@@ -775,7 +791,7 @@ Task_t tlAGruntTakeCoverFromEnemy[] = {
 
 Schedule_t slAGruntTakeCoverFromEnemy[] = {
 	{tlAGruntTakeCoverFromEnemy,
-	 SIZE_OF_ARRAY(tlAGruntTakeCoverFromEnemy),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntTakeCoverFromEnemy),
 	 bits_COND_NEW_ENEMY,
 	 0,
 	 "AGruntTakeCoverFromEnemy"},
@@ -808,7 +824,7 @@ Task_t tlAGruntVictoryDance[] = {
 
 Schedule_t slAGruntVictoryDance[] = {
 	{tlAGruntVictoryDance,
-	 SIZE_OF_ARRAY(tlAGruntVictoryDance),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntVictoryDance),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "AGruntVictoryDance"},
@@ -824,7 +840,7 @@ Task_t tlAGruntThreatDisplay[] = {
 
 Schedule_t slAGruntThreatDisplay[] = {
 	{tlAGruntThreatDisplay,
-	 SIZE_OF_ARRAY(tlAGruntThreatDisplay),
+	 SIZE_OF_ARRAY_AS_INT(tlAGruntThreatDisplay),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 bits_SOUND_PLAYER | bits_SOUND_COMBAT | bits_SOUND_WORLD,
 	 "AGruntThreatDisplay"},
@@ -924,7 +940,7 @@ void CAGrunt::StartTask(Task_t* pTask)
 		case TASK_AGRUNT_GET_PATH_TO_ENEMY_CORPSE:
 		{
 			UTIL_MakeVectors(pev->angles);
-			if ( BuildRoute(m_vecEnemyLKP - gpGlobals->v_forward * 50, bits_MF_TO_LOCATION, NULL) )
+			if ( BuildRoute(m_vecEnemyLKP - Vector(gpGlobals->v_forward) * 50, bits_MF_TO_LOCATION, NULL) )
 			{
 				TaskComplete();
 			}
@@ -952,12 +968,17 @@ void CAGrunt::StartTask(Task_t* pTask)
 				fSkip = FALSE;
 				vecCenter = Center();
 
-				UTIL_VecToAngles(m_vecEnemyLKP - pev->origin);
+				UTIL_VecToAngles(m_vecEnemyLKP - Vector(pev->origin));
 
-				UTIL_TraceLine(Center() + gpGlobals->v_forward * 128, m_vecEnemyLKP, ignore_monsters, ENT(pev), &tr);
+				UTIL_TraceLine(
+					Center() + Vector(gpGlobals->v_forward) * 128,
+					m_vecEnemyLKP,
+					ignore_monsters,
+					ENT(pev),
+					&tr);
 				if ( tr.flFraction == 1.0 )
 				{
-					MakeIdealYaw(pev->origin + gpGlobals->v_right * 128);
+					MakeIdealYaw(Vector(pev->origin) + Vector(gpGlobals->v_right) * 128);
 					fSkip = TRUE;
 					TaskComplete();
 				}
@@ -965,14 +986,14 @@ void CAGrunt::StartTask(Task_t* pTask)
 				if ( !fSkip )
 				{
 					UTIL_TraceLine(
-						Center() - gpGlobals->v_forward * 128,
+						Center() - Vector(gpGlobals->v_forward) * 128,
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
 						&tr);
 					if ( tr.flFraction == 1.0 )
 					{
-						MakeIdealYaw(pev->origin - gpGlobals->v_right * 128);
+						MakeIdealYaw(Vector(pev->origin) - Vector(gpGlobals->v_right) * 128);
 						fSkip = TRUE;
 						TaskComplete();
 					}
@@ -981,14 +1002,14 @@ void CAGrunt::StartTask(Task_t* pTask)
 				if ( !fSkip )
 				{
 					UTIL_TraceLine(
-						Center() + gpGlobals->v_forward * 256,
+						Center() + Vector(gpGlobals->v_forward) * 256,
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
 						&tr);
 					if ( tr.flFraction == 1.0 )
 					{
-						MakeIdealYaw(pev->origin + gpGlobals->v_right * 256);
+						MakeIdealYaw(Vector(pev->origin) + Vector(gpGlobals->v_right) * 256);
 						fSkip = TRUE;
 						TaskComplete();
 					}
@@ -997,14 +1018,14 @@ void CAGrunt::StartTask(Task_t* pTask)
 				if ( !fSkip )
 				{
 					UTIL_TraceLine(
-						Center() - gpGlobals->v_forward * 256,
+						Center() - Vector(gpGlobals->v_forward) * 256,
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
 						&tr);
 					if ( tr.flFraction == 1.0 )
 					{
-						MakeIdealYaw(pev->origin - gpGlobals->v_right * 256);
+						MakeIdealYaw(Vector(pev->origin) - Vector(gpGlobals->v_right) * 256);
 						fSkip = TRUE;
 						TaskComplete();
 					}

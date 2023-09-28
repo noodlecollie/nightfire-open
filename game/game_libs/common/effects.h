@@ -13,8 +13,9 @@
  *
  ****/
 #pragma once
-#ifndef EFFECTS_H
-#define EFFECTS_H
+
+#include "MathLib/vec3.h"
+#include "cbase.h"
 
 #define SF_BEAM_STARTON 0x0001
 #define SF_BEAM_TOGGLE 0x0002
@@ -71,9 +72,9 @@ public:
 	inline void SetTransparency(int rendermode, int r, int g, int b, int a, int fx)
 	{
 		pev->rendermode = rendermode;
-		pev->rendercolor.x = (float)r;
-		pev->rendercolor.y = (float)g;
-		pev->rendercolor.z = (float)b;
+		pev->rendercolor[0] = (float)r;
+		pev->rendercolor[1] = (float)g;
+		pev->rendercolor[2] = (float)b;
 		pev->renderamt = (float)a;
 		pev->renderfx = fx;
 	}
@@ -90,9 +91,9 @@ public:
 
 	inline void SetColor(int r, int g, int b)
 	{
-		pev->rendercolor.x = (float)r;
-		pev->rendercolor.y = (float)g;
-		pev->rendercolor.z = (float)b;
+		pev->rendercolor[0] = (float)r;
+		pev->rendercolor[1] = (float)g;
+		pev->rendercolor[2] = (float)b;
 	}
 
 	inline void SetBrightness(int brightness)
@@ -149,12 +150,12 @@ public:
 
 	inline void SetStartPos(const Vector& pos)
 	{
-		pev->origin = pos;
+		pos.CopyToArray(pev->origin);
 	}
 
 	inline void SetEndPos(const Vector& pos)
 	{
-		pev->angles = pos;
+		pos.CopyToArray(pev->angles);
 	}
 
 	void SetStartEntity(int entityIndex);
@@ -187,9 +188,9 @@ public:
 
 	inline void SetColor(int r, int g, int b)
 	{
-		pev->rendercolor.x = (float)r;
-		pev->rendercolor.y = (float)g;
-		pev->rendercolor.z = (float)b;
+		pev->rendercolor[0] = (float)r;
+		pev->rendercolor[1] = (float)g;
+		pev->rendercolor[2] = (float)b;
 	}
 
 	inline void SetBrightness(int brightness)
@@ -227,8 +228,8 @@ public:
 		return pev->skin & 0xFFF;
 	}
 
-	const Vector& GetStartPos(void);
-	const Vector& GetEndPos(void);
+	Vector GetStartPos(void);
+	Vector GetEndPos(void);
 
 	Vector Center(void)
 	{
@@ -328,4 +329,3 @@ public:
 	string_t m_iszSpriteName;
 	Vector m_firePosition;
 };
-#endif  // EFFECTS_H

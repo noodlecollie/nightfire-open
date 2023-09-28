@@ -44,7 +44,7 @@ CBaseEntity
 // UNDONE: This will ignore transition volumes (trigger_transition), but not the PVS!!!
 #define FCAP_FORCE_TRANSITION 0x00000080  // ALWAYS goes across transitions
 
-#include "vector_classes.h"
+#include "MathLib/vec3.h"
 #include "saverestore.h"
 #include "schedule.h"
 #include "PlatformDefs/utils.h"
@@ -506,15 +506,15 @@ public:
 
 	virtual Vector Center()
 	{
-		return (pev->absmax + pev->absmin) * 0.5;
+		return (Vector(pev->absmax) + Vector(pev->absmin)) * 0.5;
 	};  // center point of entity
 	virtual Vector EyePosition()
 	{
-		return pev->origin + pev->view_ofs;
+		return Vector(pev->origin) + Vector(pev->view_ofs);
 	};  // position of eyes
 	virtual Vector EarPosition()
 	{
-		return pev->origin + pev->view_ofs;
+		return Vector(pev->origin) + Vector(pev->view_ofs);
 	};  // position of ears
 	virtual Vector BodyTarget(const Vector&)
 	{

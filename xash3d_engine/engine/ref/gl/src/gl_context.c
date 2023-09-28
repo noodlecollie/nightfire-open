@@ -22,6 +22,8 @@ GNU General Public License for more details.
 #include "gl4es/include/gl4esinit.h"
 #endif
 
+#include "MathLib/utils.h"
+
 ref_api_t gEngfuncs;
 ref_globals_t* gpGlobals;
 

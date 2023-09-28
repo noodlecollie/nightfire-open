@@ -37,7 +37,7 @@ Task_t tlFail[] = {
 };
 
 Schedule_t slFail[] = {
-	{tlFail, SIZE_OF_ARRAY(tlFail), bits_COND_CAN_ATTACK, 0, "Fail"},
+	{tlFail, SIZE_OF_ARRAY_AS_INT(tlFail), bits_COND_CAN_ATTACK, 0, "Fail"},
 };
 
 //=========================================================
@@ -52,7 +52,7 @@ Task_t tlIdleStand1[] = {
 
 Schedule_t slIdleStand[] = {
 	{tlIdleStand1,
-	 SIZE_OF_ARRAY(tlIdleStand1),
+	 SIZE_OF_ARRAY_AS_INT(tlIdleStand1),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_FEAR | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND |
 		 bits_COND_SMELL_FOOD | bits_COND_SMELL | bits_COND_PROVOKED,
 
@@ -65,7 +65,11 @@ Schedule_t slIdleStand[] = {
 };
 
 Schedule_t slIdleTrigger[] = {
-	{tlIdleStand1, SIZE_OF_ARRAY(tlIdleStand1), bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE, 0, "Idle Trigger"},
+	{tlIdleStand1,
+	 SIZE_OF_ARRAY_AS_INT(tlIdleStand1),
+	 bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
+	 0,
+	 "Idle Trigger"},
 };
 
 Task_t tlIdleWalk1[] = {
@@ -75,7 +79,7 @@ Task_t tlIdleWalk1[] = {
 
 Schedule_t slIdleWalk[] = {
 	{tlIdleWalk1,
-	 SIZE_OF_ARRAY(tlIdleWalk1),
+	 SIZE_OF_ARRAY_AS_INT(tlIdleWalk1),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND |
 		 bits_COND_SMELL_FOOD | bits_COND_SMELL | bits_COND_PROVOKED,
 
@@ -98,7 +102,7 @@ Task_t tlAmbush[] = {
 
 Schedule_t slAmbush[] = {
 	{tlAmbush,
-	 SIZE_OF_ARRAY(tlAmbush),
+	 SIZE_OF_ARRAY_AS_INT(tlAmbush),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_PROVOKED,
 	 0,
 	 "Ambush"},
@@ -129,7 +133,7 @@ Task_t tlActiveIdle[] = {
 
 Schedule_t slActiveIdle[] = {
 	{tlActiveIdle,
-	 SIZE_OF_ARRAY(tlActiveIdle),
+	 SIZE_OF_ARRAY_AS_INT(tlActiveIdle),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_PROVOKED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_COMBAT | bits_SOUND_WORLD | bits_SOUND_PLAYER | bits_SOUND_DANGER,
 	 "Active Idle"}};
@@ -144,7 +148,7 @@ Task_t tlWakeAngry1[] = {
 	{TASK_FACE_IDEAL, (float)0},
 };
 
-Schedule_t slWakeAngry[] = {{tlWakeAngry1, SIZE_OF_ARRAY(tlWakeAngry1), 0, 0, "Wake Angry"}};
+Schedule_t slWakeAngry[] = {{tlWakeAngry1, SIZE_OF_ARRAY_AS_INT(tlWakeAngry1), 0, 0, "Wake Angry"}};
 
 //=========================================================
 // AlertFace Schedules
@@ -157,7 +161,7 @@ Task_t tlAlertFace1[] = {
 
 Schedule_t slAlertFace[] = {
 	{tlAlertFace1,
-	 SIZE_OF_ARRAY(tlAlertFace1),
+	 SIZE_OF_ARRAY_AS_INT(tlAlertFace1),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_FEAR | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_PROVOKED,
 	 0,
 	 "Alert Face"},
@@ -175,7 +179,7 @@ Task_t tlAlertSmallFlinch[] = {
 };
 
 Schedule_t slAlertSmallFlinch[] = {
-	{tlAlertSmallFlinch, SIZE_OF_ARRAY(tlAlertSmallFlinch), 0, 0, "Alert Small Flinch"},
+	{tlAlertSmallFlinch, SIZE_OF_ARRAY_AS_INT(tlAlertSmallFlinch), 0, 0, "Alert Small Flinch"},
 };
 
 //=========================================================
@@ -190,7 +194,7 @@ Task_t tlAlertStand1[] = {
 
 Schedule_t slAlertStand[] = {
 	{tlAlertStand1,
-	 SIZE_OF_ARRAY(tlAlertStand1),
+	 SIZE_OF_ARRAY_AS_INT(tlAlertStand1),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_ENEMY | bits_COND_SEE_FEAR | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_PROVOKED | bits_COND_SMELL | bits_COND_SMELL_FOOD | bits_COND_HEAR_SOUND,
 	 bits_SOUND_COMBAT |  // sound flags
@@ -220,7 +224,7 @@ Task_t tlInvestigateSound[] = {
 
 Schedule_t slInvestigateSound[] = {
 	{tlInvestigateSound,
-	 SIZE_OF_ARRAY(tlInvestigateSound),
+	 SIZE_OF_ARRAY_AS_INT(tlInvestigateSound),
 	 bits_COND_NEW_ENEMY | bits_COND_SEE_FEAR | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
 	 "InvestigateSound"},
@@ -237,7 +241,7 @@ Task_t tlCombatStand1[] = {
 
 Schedule_t slCombatStand[] = {
 	{tlCombatStand1,
-	 SIZE_OF_ARRAY(tlCombatStand1),
+	 SIZE_OF_ARRAY_AS_INT(tlCombatStand1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_CAN_ATTACK,
 	 0,
@@ -255,7 +259,7 @@ Task_t tlCombatFace1[] = {
 
 Schedule_t slCombatFace[] = {
 	{tlCombatFace1,
-	 SIZE_OF_ARRAY(tlCombatFace1),
+	 SIZE_OF_ARRAY_AS_INT(tlCombatFace1),
 	 bits_COND_CAN_ATTACK | bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD,
 	 0,
 	 "Combat Face"},
@@ -274,7 +278,7 @@ Task_t tlStandoff[] = {
 
 Schedule_t slStandoff[] = {
 	{tlStandoff,
-	 SIZE_OF_ARRAY(tlStandoff),
+	 SIZE_OF_ARRAY_AS_INT(tlStandoff),
 	 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_RANGE_ATTACK2 | bits_COND_ENEMY_DEAD | bits_COND_NEW_ENEMY |
 		 bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -285,7 +289,7 @@ Schedule_t slStandoff[] = {
 //=========================================================
 Task_t tlArmWeapon[] = {{TASK_STOP_MOVING, 0}, {TASK_PLAY_SEQUENCE, (float)ACT_ARM}};
 
-Schedule_t slArmWeapon[] = {{tlArmWeapon, SIZE_OF_ARRAY(tlArmWeapon), 0, 0, "Arm Weapon"}};
+Schedule_t slArmWeapon[] = {{tlArmWeapon, SIZE_OF_ARRAY_AS_INT(tlArmWeapon), 0, 0, "Arm Weapon"}};
 
 //=========================================================
 // reload schedule
@@ -295,7 +299,7 @@ Task_t tlReload[] = {
 	{TASK_PLAY_SEQUENCE, float(ACT_RELOAD)},
 };
 
-Schedule_t slReload[] = {{tlReload, SIZE_OF_ARRAY(tlReload), bits_COND_HEAVY_DAMAGE, 0, "Reload"}};
+Schedule_t slReload[] = {{tlReload, SIZE_OF_ARRAY_AS_INT(tlReload), bits_COND_HEAVY_DAMAGE, 0, "Reload"}};
 
 //=========================================================
 //	Attack Schedules
@@ -310,7 +314,7 @@ Task_t tlRangeAttack1[] = {
 
 Schedule_t slRangeAttack1[] = {
 	{tlRangeAttack1,
-	 SIZE_OF_ARRAY(tlRangeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlRangeAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_ENEMY_OCCLUDED | bits_COND_NO_AMMO_LOADED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -326,7 +330,7 @@ Task_t tlRangeAttack2[] = {
 
 Schedule_t slRangeAttack2[] = {
 	{tlRangeAttack2,
-	 SIZE_OF_ARRAY(tlRangeAttack2),
+	 SIZE_OF_ARRAY_AS_INT(tlRangeAttack2),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_ENEMY_OCCLUDED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -342,7 +346,7 @@ Task_t tlPrimaryMeleeAttack1[] = {
 
 Schedule_t slPrimaryMeleeAttack[] = {
 	{tlPrimaryMeleeAttack1,
-	 SIZE_OF_ARRAY(tlPrimaryMeleeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlPrimaryMeleeAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_ENEMY_OCCLUDED,
 	 0,
@@ -358,7 +362,7 @@ Task_t tlSecondaryMeleeAttack1[] = {
 
 Schedule_t slSecondaryMeleeAttack[] = {
 	{tlSecondaryMeleeAttack1,
-	 SIZE_OF_ARRAY(tlSecondaryMeleeAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlSecondaryMeleeAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_ENEMY_OCCLUDED,
 	 0,
@@ -374,7 +378,7 @@ Task_t tlSpecialAttack1[] = {
 
 Schedule_t slSpecialAttack1[] = {
 	{tlSpecialAttack1,
-	 SIZE_OF_ARRAY(tlSpecialAttack1),
+	 SIZE_OF_ARRAY_AS_INT(tlSpecialAttack1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_ENEMY_OCCLUDED | bits_COND_NO_AMMO_LOADED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -390,7 +394,7 @@ Task_t tlSpecialAttack2[] = {
 
 Schedule_t slSpecialAttack2[] = {
 	{tlSpecialAttack2,
-	 SIZE_OF_ARRAY(tlSpecialAttack2),
+	 SIZE_OF_ARRAY_AS_INT(tlSpecialAttack2),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE |
 		 bits_COND_ENEMY_OCCLUDED | bits_COND_NO_AMMO_LOADED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -407,7 +411,7 @@ Task_t tlChaseEnemy1[] = {
 
 Schedule_t slChaseEnemy[] = {
 	{tlChaseEnemy1,
-	 SIZE_OF_ARRAY(tlChaseEnemy1),
+	 SIZE_OF_ARRAY_AS_INT(tlChaseEnemy1),
 	 bits_COND_NEW_ENEMY | bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_CAN_RANGE_ATTACK2 |
 		 bits_COND_CAN_MELEE_ATTACK2 | bits_COND_TASK_FAILED | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -429,7 +433,7 @@ Task_t tlChaseEnemyFailed[] = {
 
 Schedule_t slChaseEnemyFailed[] = {
 	{tlChaseEnemyFailed,
-	 SIZE_OF_ARRAY(tlChaseEnemyFailed),
+	 SIZE_OF_ARRAY_AS_INT(tlChaseEnemyFailed),
 	 bits_COND_NEW_ENEMY | bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_CAN_RANGE_ATTACK2 |
 		 bits_COND_CAN_MELEE_ATTACK2 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -446,7 +450,7 @@ Task_t tlSmallFlinch[] = {
 };
 
 Schedule_t slSmallFlinch[] = {
-	{tlSmallFlinch, SIZE_OF_ARRAY(tlSmallFlinch), 0, 0, "Small Flinch"},
+	{tlSmallFlinch, SIZE_OF_ARRAY_AS_INT(tlSmallFlinch), 0, 0, "Small Flinch"},
 };
 
 //=========================================================
@@ -459,7 +463,7 @@ Task_t tlDie1[] = {
 };
 
 Schedule_t slDie[] = {
-	{tlDie1, SIZE_OF_ARRAY(tlDie1), 0, 0, "Die"},
+	{tlDie1, SIZE_OF_ARRAY_AS_INT(tlDie1), 0, 0, "Die"},
 };
 
 //=========================================================
@@ -472,7 +476,7 @@ Task_t tlVictoryDance[] = {
 };
 
 Schedule_t slVictoryDance[] = {
-	{tlVictoryDance, SIZE_OF_ARRAY(tlVictoryDance), 0, 0, "Victory Dance"},
+	{tlVictoryDance, SIZE_OF_ARRAY_AS_INT(tlVictoryDance), 0, 0, "Victory Dance"},
 };
 
 //=========================================================
@@ -489,7 +493,7 @@ Task_t tlBarnacleVictimGrab[] = {
 
 Schedule_t slBarnacleVictimGrab[] = {{
 	tlBarnacleVictimGrab,
-	SIZE_OF_ARRAY(tlBarnacleVictimGrab),
+	SIZE_OF_ARRAY_AS_INT(tlBarnacleVictimGrab),
 	0,
 	0,
 	"Barnacle Victim",
@@ -508,7 +512,7 @@ Task_t tlBarnacleVictimChomp[] = {
 };
 
 Schedule_t slBarnacleVictimChomp[] = {
-	{tlBarnacleVictimChomp, SIZE_OF_ARRAY(tlBarnacleVictimChomp), 0, 0, "Barnacle Chomp"}};
+	{tlBarnacleVictimChomp, SIZE_OF_ARRAY_AS_INT(tlBarnacleVictimChomp), 0, 0, "Barnacle Chomp"}};
 
 // Universal Error Schedule
 Task_t tlError[] = {
@@ -517,7 +521,7 @@ Task_t tlError[] = {
 };
 
 Schedule_t slError[] = {
-	{tlError, SIZE_OF_ARRAY(tlError), 0, 0, "Error"},
+	{tlError, SIZE_OF_ARRAY_AS_INT(tlError), 0, 0, "Error"},
 };
 
 Task_t tlScriptedWalk[] = {
@@ -532,7 +536,7 @@ Task_t tlScriptedWalk[] = {
 };
 
 Schedule_t slWalkToScript[] = {
-	{tlScriptedWalk, SIZE_OF_ARRAY(tlScriptedWalk), SCRIPT_BREAK_CONDITIONS, 0, "WalkToScript"},
+	{tlScriptedWalk, SIZE_OF_ARRAY_AS_INT(tlScriptedWalk), SCRIPT_BREAK_CONDITIONS, 0, "WalkToScript"},
 };
 
 Task_t tlScriptedRun[] = {
@@ -547,7 +551,7 @@ Task_t tlScriptedRun[] = {
 };
 
 Schedule_t slRunToScript[] = {
-	{tlScriptedRun, SIZE_OF_ARRAY(tlScriptedRun), SCRIPT_BREAK_CONDITIONS, 0, "RunToScript"},
+	{tlScriptedRun, SIZE_OF_ARRAY_AS_INT(tlScriptedRun), SCRIPT_BREAK_CONDITIONS, 0, "RunToScript"},
 };
 
 Task_t tlScriptedWait[] = {
@@ -557,7 +561,7 @@ Task_t tlScriptedWait[] = {
 };
 
 Schedule_t slWaitScript[] = {
-	{tlScriptedWait, SIZE_OF_ARRAY(tlScriptedWait), SCRIPT_BREAK_CONDITIONS, 0, "WaitForScript"},
+	{tlScriptedWait, SIZE_OF_ARRAY_AS_INT(tlScriptedWait), SCRIPT_BREAK_CONDITIONS, 0, "WaitForScript"},
 };
 
 Task_t tlScriptedFace[] = {
@@ -569,7 +573,7 @@ Task_t tlScriptedFace[] = {
 };
 
 Schedule_t slFaceScript[] = {
-	{tlScriptedFace, SIZE_OF_ARRAY(tlScriptedFace), SCRIPT_BREAK_CONDITIONS, 0, "FaceScript"},
+	{tlScriptedFace, SIZE_OF_ARRAY_AS_INT(tlScriptedFace), SCRIPT_BREAK_CONDITIONS, 0, "FaceScript"},
 };
 
 //=========================================================
@@ -582,7 +586,7 @@ Task_t tlCower[] = {
 };
 
 Schedule_t slCower[] = {
-	{tlCower, SIZE_OF_ARRAY(tlCower), 0, 0, "Cower"},
+	{tlCower, SIZE_OF_ARRAY_AS_INT(tlCower), 0, 0, "Cower"},
 };
 
 //=========================================================
@@ -598,7 +602,7 @@ Task_t tlTakeCoverFromOrigin[] = {
 };
 
 Schedule_t slTakeCoverFromOrigin[] = {
-	{tlTakeCoverFromOrigin, SIZE_OF_ARRAY(tlTakeCoverFromOrigin), bits_COND_NEW_ENEMY, 0, "TakeCoverFromOrigin"},
+	{tlTakeCoverFromOrigin, SIZE_OF_ARRAY_AS_INT(tlTakeCoverFromOrigin), bits_COND_NEW_ENEMY, 0, "TakeCoverFromOrigin"},
 };
 
 //=========================================================
@@ -615,7 +619,7 @@ Task_t tlTakeCoverFromBestSound[] = {
 
 Schedule_t slTakeCoverFromBestSound[] = {{
 	tlTakeCoverFromBestSound,
-	SIZE_OF_ARRAY(tlTakeCoverFromBestSound),
+	SIZE_OF_ARRAY_AS_INT(tlTakeCoverFromBestSound),
 	bits_COND_NEW_ENEMY,
 	0,
 	"TakeCoverFromBestSound",
@@ -638,7 +642,7 @@ Task_t tlTakeCoverFromEnemy[] = {
 };
 
 Schedule_t slTakeCoverFromEnemy[] = {
-	{tlTakeCoverFromEnemy, SIZE_OF_ARRAY(tlTakeCoverFromEnemy), bits_COND_NEW_ENEMY, 0, "tlTakeCoverFromEnemy"},
+	{tlTakeCoverFromEnemy, SIZE_OF_ARRAY_AS_INT(tlTakeCoverFromEnemy), bits_COND_NEW_ENEMY, 0, "tlTakeCoverFromEnemy"},
 };
 
 Schedule_t* CBaseMonster::m_scheduleList[] = {
@@ -683,7 +687,7 @@ Schedule_t* CBaseMonster::m_scheduleList[] = {
 
 Schedule_t* CBaseMonster::ScheduleFromName(const char* pName)
 {
-	return ScheduleInList(pName, m_scheduleList, SIZE_OF_ARRAY(m_scheduleList));
+	return ScheduleInList(pName, m_scheduleList, SIZE_OF_ARRAY_AS_INT(m_scheduleList));
 }
 
 Schedule_t* CBaseMonster::ScheduleInList(const char* pName, Schedule_t** pList, int listCount)

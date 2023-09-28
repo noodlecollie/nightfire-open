@@ -27,6 +27,7 @@
 #include "saverestore.h"
 #include "EnginePublicAPI/event_args.h"
 #include "eventConstructor/eventConstructor.h"
+#include "MathLib/angles.h"
 
 static void PlatSpawnInsideTrigger(entvars_t* pevPlatform);
 
@@ -281,11 +282,16 @@ void CFuncPlat::Setup(void)
 	// pev->noiseStopMoving = MAKE_STRING( "plats/platstop1.wav" );
 
 	if ( m_flTLength == 0 )
+	{
 		m_flTLength = 80;
-	if ( m_flTWidth == 0 )
-		m_flTWidth = 10;
+	}
 
-	pev->angles = g_vecZero;
+	if ( m_flTWidth == 0 )
+	{
+		m_flTWidth = 10;
+	}
+
+	VectorClear(pev->angles);
 
 	pev->solid = SOLID_BSP;
 	pev->movetype = MOVETYPE_PUSH;
@@ -297,15 +303,25 @@ void CFuncPlat::Setup(void)
 	// vecPosition1 is the top position, vecPosition2 is the bottom
 	m_vecPosition1 = pev->origin;
 	m_vecPosition2 = pev->origin;
+
 	if ( m_flHeight != 0 )
-		m_vecPosition2.z = pev->origin.z - m_flHeight;
+	{
+		m_vecPosition2.z = pev->origin[VEC3_Z] - m_flHeight;
+	}
 	else
-		m_vecPosition2.z = pev->origin.z - pev->size.z + 8;
+	{
+		m_vecPosition2.z = pev->origin[VEC3_Z] - pev->size[VEC3_Z] + 8;
+	}
+
 	if ( pev->speed == 0 )
+	{
 		pev->speed = 150;
+	}
 
 	if ( m_volume == 0 )
+	{
 		m_volume = 0.85f;
+	}
 }
 
 void CFuncPlat::Precache()
@@ -352,22 +368,25 @@ void CPlatTrigger::SpawnInsideTrigger(CFuncPlat* pPlatform)
 	// Create trigger entity, "point" it at the owning platform, give it a touch method
 	pev->solid = SOLID_TRIGGER;
 	pev->movetype = MOVETYPE_NONE;
-	pev->origin = pPlatform->pev->origin;
+	VectorCopy(pPlatform->pev->origin, pev->origin);
 
 	// Establish the trigger field's size
-	Vector vecTMin = pPlatform->pev->mins + Vector(25, 25, 0);
-	Vector vecTMax = pPlatform->pev->maxs + Vector(25, 25, 8);
+	Vector vecTMin = Vector(pPlatform->pev->mins) + Vector(25, 25, 0);
+	Vector vecTMax = Vector(pPlatform->pev->maxs) + Vector(25, 25, 8);
 	vecTMin.z = vecTMax.z - (pPlatform->m_vecPosition1.z - pPlatform->m_vecPosition2.z + 8);
-	if ( pPlatform->pev->size.x <= 50 )
+
+	if ( pPlatform->pev->size[VEC3_X] <= 50 )
 	{
-		vecTMin.x = (pPlatform->pev->mins.x + pPlatform->pev->maxs.x) / 2;
+		vecTMin.x = (pPlatform->pev->mins[VEC3_X] + pPlatform->pev->maxs[VEC3_X]) / 2;
 		vecTMax.x = vecTMin.x + 1;
 	}
-	if ( pPlatform->pev->size.y <= 50 )
+
+	if ( pPlatform->pev->size[VEC3_Y] <= 50 )
 	{
-		vecTMin.y = (pPlatform->pev->mins.y + pPlatform->pev->maxs.y) / 2;
+		vecTMin.y = (pPlatform->pev->mins[VEC3_Y] + pPlatform->pev->maxs[VEC3_Y]) / 2;
 		vecTMax.y = vecTMin.y + 1;
 	}
+
 	UTIL_SetSize(pev, vecTMin, vecTMax);
 }
 
@@ -544,7 +563,7 @@ void CFuncPlatRot::SetupRotation(void)
 	{
 		CBaseToggle::AxisDir(pev);
 		m_start = pev->angles;
-		m_end = pev->angles + pev->movedir * m_vecFinalAngle.x;
+		m_end = Vector(pev->angles) + Vector(pev->movedir) * m_vecFinalAngle[VEC3_X];
 	}
 	else
 	{
@@ -553,7 +572,7 @@ void CFuncPlatRot::SetupRotation(void)
 	}
 	if ( !FStringNull(pev->targetname) )  // Start at top
 	{
-		pev->angles = m_end;
+		VectorCopy(m_end, pev->angles);
 	}
 }
 
@@ -575,8 +594,8 @@ void CFuncPlatRot::GoDown(void)
 void CFuncPlatRot::HitBottom(void)
 {
 	CFuncPlat::HitBottom();
-	pev->avelocity = g_vecZero;
-	pev->angles = m_start;
+	VectorClear(pev->avelocity);
+	VectorCopy(m_start, pev->angles);
 }
 
 //
@@ -594,21 +613,23 @@ void CFuncPlatRot::GoUp(void)
 void CFuncPlatRot::HitTop(void)
 {
 	CFuncPlat::HitTop();
-	pev->avelocity = g_vecZero;
-	pev->angles = m_end;
+	VectorClear(pev->avelocity);
+	VectorCopy(m_end, pev->angles);
 }
 
 void CFuncPlatRot::RotMove(Vector& destAngle, float time)
 {
 	// set destdelta to the vector needed to move
-	Vector vecDestDelta = destAngle - pev->angles;
+	Vector vecDestDelta = destAngle - Vector(pev->angles);
 
 	// Travel time is so short, we're practically there already;  so make it so.
 	if ( time >= 0.1 )
-		pev->avelocity = vecDestDelta / time;
+	{
+		VectorDivide(vecDestDelta, time, pev->avelocity);
+	}
 	else
 	{
-		pev->avelocity = vecDestDelta;
+		VectorCopy(vecDestDelta, pev->avelocity);
 		pev->nextthink = pev->ltime + 1;
 	}
 }
@@ -681,13 +702,20 @@ void CFuncTrain::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	else
 	{
 		pev->spawnflags |= SF_TRAIN_WAIT_RETRIGGER;
+
 		// Pop back to last target if it's available
 		if ( pev->enemy )
+		{
 			pev->target = pev->enemy->v.targetname;
+		}
+
 		pev->nextthink = 0;
-		pev->velocity = g_vecZero;
+		VectorClear(pev->velocity);
+
 		if ( pev->noiseStopMoving )
+		{
 			EMIT_SOUND(ENT(pev), CHAN_VOICE, STRING(pev->noiseStopMoving), m_volume, ATTN_NORM);
+		}
 	}
 }
 
@@ -773,7 +801,7 @@ void CFuncTrain::Next(void)
 	{
 		// Path corner has indicated a teleport to the next corner.
 		SetBits(pev->effects, EF_NOINTERP);
-		UTIL_SetOrigin(pev, pTarg->pev->origin - (pev->mins + pev->maxs) * 0.5);
+		UTIL_SetOrigin(pev, Vector(pTarg->pev->origin) - (Vector(pev->mins) + Vector(pev->maxs)) * 0.5);
 		Wait();  // Get on with doing the next path corner.
 	}
 	else
@@ -791,7 +819,7 @@ void CFuncTrain::Next(void)
 
 		ClearBits(pev->effects, EF_NOINTERP);
 		SetMoveDone(&CFuncTrain::Wait);
-		LinearMove(pTarg->pev->origin - (pev->mins + pev->maxs) * 0.5, pev->speed);
+		LinearMove(Vector(pTarg->pev->origin) - (Vector(pev->mins) + Vector(pev->maxs)) * 0.5, pev->speed);
 	}
 }
 
@@ -806,7 +834,7 @@ void CFuncTrain::Activate(void)
 		pev->target = pevTarg->target;
 		m_pevCurrentTarget = pevTarg;  // keep track of this since path corners change our target for us.
 
-		UTIL_SetOrigin(pev, pevTarg->origin - (pev->mins + pev->maxs) * 0.5);
+		UTIL_SetOrigin(pev, Vector(pevTarg->origin) - (Vector(pev->mins) + Vector(pev->maxs)) * 0.5);
 
 		if ( FStringNull(pev->targetname) )
 		{  // not triggered, so start immediately
@@ -814,7 +842,9 @@ void CFuncTrain::Activate(void)
 			SetThink(&CFuncTrain::Next);
 		}
 		else
+		{
 			pev->spawnflags |= SF_TRAIN_WAIT_RETRIGGER;
+		}
 	}
 }
 
@@ -897,7 +927,7 @@ void CFuncTrain::OverrideReset(void)
 		if ( !pTarg )
 		{
 			pev->nextthink = 0;
-			pev->velocity = g_vecZero;
+			VectorClear(pev->velocity);
 		}
 		else  // Keep moving for 0.1 secs, then find path_corner again and restart
 		{
@@ -971,9 +1001,13 @@ void CFuncTrackTrain::KeyValue(KeyValueData* pkvd)
 void CFuncTrackTrain::NextThink(float thinkTime, BOOL alwaysThink)
 {
 	if ( alwaysThink )
+	{
 		pev->flags |= FL_ALWAYSTHINK;
+	}
 	else
+	{
 		pev->flags &= ~FL_ALWAYSTHINK;
+	}
 
 	pev->nextthink = thinkTime;
 }
@@ -986,14 +1020,23 @@ void CFuncTrackTrain::Blocked(CBaseEntity* pOther)
 	if ( FBitSet(pevOther->flags, FL_ONGROUND) && VARS(pevOther->groundentity) == pev )
 	{
 		float deltaSpeed = fabsf(pev->speed);
+
 		if ( deltaSpeed > 50 )
+		{
 			deltaSpeed = 50;
-		if ( !pevOther->velocity.z )
-			pevOther->velocity.z += deltaSpeed;
+		}
+
+		if ( !pevOther->velocity[VEC3_Z] )
+		{
+			pevOther->velocity[VEC3_Z] += deltaSpeed;
+		}
+
 		return;
 	}
 	else
-		pevOther->velocity = (pevOther->origin - pev->origin).Normalize() * pev->dmg;
+	{
+		((Vector(pevOther->origin) - Vector(pev->origin)).Normalize() * pev->dmg).CopyToArray(pevOther->velocity);
+	}
 
 	ALERT(
 		at_aiconsole,
@@ -1001,8 +1044,12 @@ void CFuncTrackTrain::Blocked(CBaseEntity* pOther)
 		STRING(pev->targetname),
 		STRING(pOther->pev->classname),
 		pev->dmg);
+
 	if ( pev->dmg <= 0 )
+	{
 		return;
+	}
+
 	// we can't hurt this thing, so we're not concerned with it
 	pOther->TakeDamage(pev, pev, pev->dmg, DMG_CRUSH);
 }
@@ -1023,8 +1070,8 @@ void CFuncTrackTrain::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float va
 		else
 		{
 			pev->speed = 0;
-			pev->velocity = g_vecZero;
-			pev->avelocity = g_vecZero;
+			VectorClear(pev->velocity);
+			VectorClear(pev->avelocity);
 			StopSound();
 			SetThink(NULL);
 		}
@@ -1061,18 +1108,23 @@ void CFuncTrackTrain::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float va
 static float Fix(float angle)
 {
 	while ( angle < 0 )
+	{
 		angle += 360;
+	}
+
 	while ( angle > 360 )
+	{
 		angle -= 360;
+	}
 
 	return angle;
 }
 
-static void FixupAngles(Vector& v)
+static void FixupAngles(vec3_t v)
 {
-	v.x = Fix(v.x);
-	v.y = Fix(v.y);
-	v.z = Fix(v.z);
+	v[VEC3_X] = Fix(v[VEC3_X]);
+	v[VEC3_Y] = Fix(v[VEC3_Y]);
+	v[VEC3_Z] = Fix(v[VEC3_Z]);
 }
 
 #define TRAIN_STARTPITCH 60
@@ -1187,17 +1239,21 @@ void CFuncTrackTrain::Next(void)
 	CPathTrack* pnext = m_ppath->LookAhead(&nextPos, pev->speed * 0.1f, 1);
 	nextPos.z += m_height;
 
-	pev->velocity = (nextPos - pev->origin) * 10;
+	((nextPos - Vector(pev->origin)) * 10).CopyToArray(pev->velocity);
 	Vector nextFront = pev->origin;
 
 	nextFront.z -= m_height;
 	if ( m_length > 0 )
+	{
 		m_ppath->LookAhead(&nextFront, m_length, 0);
+	}
 	else
+	{
 		m_ppath->LookAhead(&nextFront, 100, 0);
+	}
 	nextFront.z += m_height;
 
-	Vector delta = nextFront - pev->origin;
+	Vector delta = nextFront - Vector(pev->origin);
 	Vector angles = UTIL_VecToAngles(delta);
 	// The train actually points west
 	angles.y += 180;
@@ -1211,25 +1267,36 @@ void CFuncTrackTrain::Next(void)
 
 	float vy, vx;
 	if ( !(pev->spawnflags & SF_TRACKTRAIN_NOPITCH) )
-		vx = UTIL_AngleDistance(angles.x, pev->angles.x);
+	{
+		vx = UTIL_AngleDistance(angles.x, pev->angles[PITCH]);
+	}
 	else
+	{
 		vx = 0;
-	vy = UTIL_AngleDistance(angles.y, pev->angles.y);
+	}
 
-	pev->avelocity.y = vy * 10;
-	pev->avelocity.x = vx * 10;
+	vy = UTIL_AngleDistance(angles.y, pev->angles[YAW]);
+
+	pev->avelocity[YAW] = vy * 10;
+	pev->avelocity[PITCH] = vx * 10;
 
 	if ( m_flBank != 0 )
 	{
-		if ( pev->avelocity.y < -5 )
-			pev->avelocity.z =
-				UTIL_AngleDistance(UTIL_ApproachAngle(-m_flBank, pev->angles.z, m_flBank * 2), pev->angles.z);
-		else if ( pev->avelocity.y > 5 )
-			pev->avelocity.z =
-				UTIL_AngleDistance(UTIL_ApproachAngle(m_flBank, pev->angles.z, m_flBank * 2), pev->angles.z);
+		if ( pev->avelocity[YAW] < -5 )
+		{
+			pev->avelocity[ROLL] =
+				UTIL_AngleDistance(UTIL_ApproachAngle(-m_flBank, pev->angles[ROLL], m_flBank * 2), pev->angles[ROLL]);
+		}
+		else if ( pev->avelocity[YAW] > 5 )
+		{
+			pev->avelocity[ROLL] =
+				UTIL_AngleDistance(UTIL_ApproachAngle(m_flBank, pev->angles[ROLL], m_flBank * 2), pev->angles[ROLL]);
+		}
 		else
-			pev->avelocity.z =
-				UTIL_AngleDistance(UTIL_ApproachAngle(0, pev->angles.z, m_flBank * 4), pev->angles.z) * 4;
+		{
+			pev->avelocity[ROLL] =
+				UTIL_AngleDistance(UTIL_ApproachAngle(0, pev->angles[ROLL], m_flBank * 4), pev->angles[ROLL]) * 4;
+		}
 	}
 
 	if ( pnext )
@@ -1238,9 +1305,13 @@ void CFuncTrackTrain::Next(void)
 		{
 			CPathTrack* pFire;
 			if ( pev->speed >= 0 )
+			{
 				pFire = pnext;
+			}
 			else
+			{
 				pFire = m_ppath;
+			}
 
 			m_ppath = pnext;
 			// Fire the pass target if there is one
@@ -1271,9 +1342,9 @@ void CFuncTrackTrain::Next(void)
 	else  // end of path, stop
 	{
 		StopSound();
-		pev->velocity = nextPos - pev->origin;
-		pev->avelocity = g_vecZero;
-		float distance = pev->velocity.Length();
+		VectorSubtract(nextPos, pev->origin, pev->velocity);
+		VectorClear(pev->avelocity);
+		float distance = VectorLength(pev->velocity);
 		m_oldSpeed = pev->speed;
 
 		pev->speed = 0;
@@ -1285,7 +1356,7 @@ void CFuncTrackTrain::Next(void)
 		{
 			// no, how long to get there?
 			time = distance / m_oldSpeed;
-			pev->velocity = pev->velocity * (m_oldSpeed / distance);
+			VectorScale(pev->velocity, (m_oldSpeed / distance), pev->velocity);
 			SetThink(&CFuncTrackTrain::DeadEnd);
 			NextThink(pev->ltime + time, FALSE);
 		}
@@ -1331,32 +1402,40 @@ void CFuncTrackTrain::DeadEnd(void)
 		}
 	}
 
-	pev->velocity = g_vecZero;
-	pev->avelocity = g_vecZero;
+	VectorClear(pev->velocity);
+	VectorClear(pev->avelocity);
+
 	if ( pTrack )
 	{
 		ALERT(at_aiconsole, "at %s\n", STRING(pTrack->pev->targetname));
+
 		if ( pTrack->pev->netname )
+		{
 			FireTargets(STRING(pTrack->pev->netname), this, this, USE_TOGGLE, 0);
+		}
 	}
 	else
+	{
 		ALERT(at_aiconsole, "\n");
+	}
 }
 
 void CFuncTrackTrain::SetControls(entvars_t* pevControls)
 {
-	Vector offset = pevControls->origin - pev->oldorigin;
+	Vector offset = Vector(pevControls->origin) - Vector(pev->oldorigin);
 
-	m_controlMins = pevControls->mins + offset;
-	m_controlMaxs = pevControls->maxs + offset;
+	m_controlMins = Vector(pevControls->mins) + offset;
+	m_controlMaxs = Vector(pevControls->maxs) + offset;
 }
 
 BOOL CFuncTrackTrain::OnControls(entvars_t* pevTest)
 {
-	Vector offset = pevTest->origin - pev->origin;
+	Vector offset = Vector(pevTest->origin) - Vector(pev->origin);
 
 	if ( pev->spawnflags & SF_TRACKTRAIN_NOCONTROL )
+	{
 		return FALSE;
+	}
 
 	// Transform offset into local coordinates
 	UTIL_MakeVectors(pev->angles);
@@ -1367,7 +1446,9 @@ BOOL CFuncTrackTrain::OnControls(entvars_t* pevTest)
 
 	if ( local.x >= m_controlMins.x && local.y >= m_controlMins.y && local.z >= m_controlMins.z &&
 		 local.x <= m_controlMaxs.x && local.y <= m_controlMaxs.y && local.z <= m_controlMaxs.z )
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -1394,12 +1475,16 @@ void CFuncTrackTrain::Find(void)
 	m_ppath->LookAhead(&look, m_length, 0);
 	look.z += m_height;
 
-	pev->angles = UTIL_VecToAngles(look - nextPos);
+	UTIL_VecToAngles(look - nextPos).CopyToArray(pev->angles);
+
 	// The train actually points west
-	pev->angles.y += 180;
+	pev->angles[YAW] += 180;
 
 	if ( pev->spawnflags & SF_TRACKTRAIN_NOPITCH )
-		pev->angles.x = 0;
+	{
+		pev->angles[PITCH] = 0;
+	}
+
 	UTIL_SetOrigin(pev, nextPos);
 	NextThink(pev->ltime + 0.1f, FALSE);
 	SetThink(&CFuncTrackTrain::Next);
@@ -1421,7 +1506,8 @@ void CFuncTrackTrain::NearestPath(void)
 		// filter out non-tracks
 		if ( !(pTrack->pev->flags & (FL_CLIENT | FL_MONSTER)) && FClassnameIs(pTrack->pev, "path_track") )
 		{
-			dist = (pev->origin - pTrack->pev->origin).Length();
+			dist = (Vector(pev->origin) - Vector(pTrack->pev->origin)).Length();
+
 			if ( dist < closest )
 			{
 				closest = dist;
@@ -1442,8 +1528,11 @@ void CFuncTrackTrain::NearestPath(void)
 	pTrack = ((CPathTrack*)pNearest)->GetNext();
 	if ( pTrack )
 	{
-		if ( (pev->origin - pTrack->pev->origin).Length() < (pev->origin - pNearest->pev->origin).Length() )
+		if ( (Vector(pev->origin) - Vector(pTrack->pev->origin)).Length() <
+			 (Vector(pev->origin) - Vector(pNearest->pev->origin)).Length() )
+		{
 			pNearest = pTrack;
+		}
 	}
 
 	m_ppath = (CPathTrack*)pNearest;
@@ -1487,19 +1576,26 @@ void CFuncTrackTrain::Spawn(void)
 		m_speed = pev->speed;
 
 	pev->speed = 0;
-	pev->velocity = g_vecZero;
-	pev->avelocity = g_vecZero;
+	VectorClear(pev->velocity);
+	VectorClear(pev->avelocity);
 	pev->impulse = (int)m_speed;
 
 	m_dir = 1;
 
 	if ( FStringNull(pev->target) )
+	{
 		ALERT(at_console, "FuncTrain with no target");
+	}
 
 	if ( pev->spawnflags & SF_TRACKTRAIN_PASSABLE )
+	{
 		pev->solid = SOLID_NOT;
+	}
 	else
+	{
 		pev->solid = SOLID_BSP;
+	}
+
 	pev->movetype = MOVETYPE_PUSH;
 
 	SET_MODEL(ENT(pev), STRING(pev->model));
@@ -1508,7 +1604,7 @@ void CFuncTrackTrain::Spawn(void)
 	UTIL_SetOrigin(pev, pev->origin);
 
 	// Cache off placed origin for train controls
-	pev->oldorigin = pev->origin;
+	VectorCopy(pev->origin, pev->oldorigin);
 
 	m_controlMins = pev->mins;
 	m_controlMaxs = pev->maxs;
@@ -1714,8 +1810,11 @@ IMPLEMENT_SAVERESTORE(CFuncTrackChange, CFuncPlatRot)
 void CFuncTrackChange::Spawn(void)
 {
 	Setup();
+
 	if ( FBitSet(pev->spawnflags, SF_TRACK_DONT_MOVE) )
-		m_vecPosition2.z = pev->origin.z;
+	{
+		m_vecPosition2[VEC3_Z] = pev->origin[VEC3_Z];
+	}
 
 	SetupRotation();
 
@@ -1723,14 +1822,14 @@ void CFuncTrackChange::Spawn(void)
 	{
 		UTIL_SetOrigin(pev, m_vecPosition2);
 		m_toggle_state = TS_AT_BOTTOM;
-		pev->angles = m_start;
+		VectorCopy(m_start, pev->angles);
 		m_targetState = TS_AT_TOP;
 	}
 	else
 	{
 		UTIL_SetOrigin(pev, m_vecPosition1);
 		m_toggle_state = TS_AT_TOP;
-		pev->angles = m_end;
+		VectorCopy(m_end, pev->angles);
 		m_targetState = TS_AT_BOTTOM;
 	}
 
@@ -1791,23 +1890,27 @@ void CFuncTrackChange::Find(void)
 	{
 		m_trackTop = CPathTrack::Instance(target);
 		target = FIND_ENTITY_BY_TARGETNAME(NULL, STRING(m_trackBottomName));
+
 		if ( !FNullEnt(target) )
 		{
 			m_trackBottom = CPathTrack::Instance(target);
 			target = FIND_ENTITY_BY_TARGETNAME(NULL, STRING(m_trainName));
+
 			if ( !FNullEnt(target) )
 			{
 				m_train = CFuncTrackTrain::Instance(FIND_ENTITY_BY_TARGETNAME(NULL, STRING(m_trainName)));
+
 				if ( !m_train )
 				{
 					ALERT(at_error, "Can't find train for track change! %s\n", STRING(m_trainName));
 					return;
 				}
-				Vector center = (pev->absmin + pev->absmax) * 0.5;
+
+				Vector center = (Vector(pev->absmin) + Vector(pev->absmax)) * 0.5;
 				m_trackBottom = m_trackBottom->Nearest(center);
 				m_trackTop = m_trackTop->Nearest(center);
 				UpdateAutoTargets(m_toggle_state);
-				SetThink(NULL);
+				SetThink(nullptr);
 				return;
 			}
 			else
@@ -1817,30 +1920,43 @@ void CFuncTrackChange::Find(void)
 			}
 		}
 		else
+		{
 			ALERT(at_error, "Can't find bottom track for track change! %s\n", STRING(m_trackBottomName));
+		}
 	}
 	else
+	{
 		ALERT(at_error, "Can't find top track for track change! %s\n", STRING(m_trackTopName));
+	}
 }
 
 TRAIN_CODE CFuncTrackChange::EvaluateTrain(CPathTrack* pcurrent)
 {
 	// Go ahead and work, we don't have anything to switch, so just be an elevator
 	if ( !pcurrent || !m_train )
+	{
 		return TRAIN_SAFE;
+	}
 
 	if ( m_train->m_ppath == pcurrent || (pcurrent->m_pprevious && m_train->m_ppath == pcurrent->m_pprevious) ||
 		 (pcurrent->m_pnext && m_train->m_ppath == pcurrent->m_pnext) )
 	{
 		if ( m_train->pev->speed != 0 )
+		{
 			return TRAIN_BLOCKING;
+		}
 
-		Vector dist = pev->origin - m_train->pev->origin;
+		Vector dist = Vector(pev->origin) - Vector(m_train->pev->origin);
 		float length = dist.Length2D();
+
 		if ( length < m_train->m_length )  // Empirically determined close distance
+		{
 			return TRAIN_FOLLOWING;
+		}
 		else if ( length > (150 + m_train->m_length) )
+		{
 			return TRAIN_SAFE;
+		}
 
 		return TRAIN_BLOCKING;
 	}
@@ -1852,16 +1968,16 @@ void CFuncTrackChange::UpdateTrain(Vector& dest)
 {
 	float time = (pev->nextthink - pev->ltime);
 
-	m_train->pev->velocity = pev->velocity;
-	m_train->pev->avelocity = pev->avelocity;
+	VectorCopy(pev->velocity, m_train->pev->velocity);
+	VectorCopy(pev->avelocity, m_train->pev->avelocity);
 	m_train->NextThink(m_train->pev->ltime + time, FALSE);
 
 	// Attempt at getting the train to rotate properly around the origin of the trackchange
 	if ( time <= 0 )
 		return;
 
-	Vector offset = m_train->pev->origin - pev->origin;
-	Vector delta = dest - pev->angles;
+	Vector offset = Vector(m_train->pev->origin) - Vector(pev->origin);
+	Vector delta = dest - Vector(pev->angles);
 	// Transform offset into local coordinates
 	UTIL_MakeInvVectors(delta, gpGlobals);
 	Vector local;
@@ -1870,7 +1986,7 @@ void CFuncTrackChange::UpdateTrain(Vector& dest)
 	local.z = DotProduct(offset, gpGlobals->v_up);
 
 	local = local - offset;
-	m_train->pev->velocity = pev->velocity + (local * (1.0f / time));
+	(Vector(pev->velocity) + (local * (1.0f / time))).CopyToArray(m_train->pev->velocity);
 }
 
 void CFuncTrackChange::GoDown(void)
@@ -2195,7 +2311,7 @@ void CGunTarget::Activate(void)
 	if ( pTarg )
 	{
 		m_hTargetEnt = pTarg;
-		UTIL_SetOrigin(pev, pTarg->pev->origin - (pev->mins + pev->maxs) * 0.5);
+		UTIL_SetOrigin(pev, Vector(pTarg->pev->origin) - (Vector(pev->mins) + Vector(pev->maxs)) * 0.5);
 	}
 }
 
@@ -2217,7 +2333,7 @@ void CGunTarget::Next(void)
 		return;
 	}
 	SetMoveDone(&CGunTarget::Wait);
-	LinearMove(pTarget->pev->origin - (pev->mins + pev->maxs) * 0.5, pev->speed);
+	LinearMove(Vector(pTarget->pev->origin) - (Vector(pev->mins) + Vector(pev->maxs)) * 0.5, pev->speed);
 }
 
 void CGunTarget::Wait(void)
@@ -2255,7 +2371,7 @@ void CGunTarget::Wait(void)
 
 void CGunTarget::Stop(void)
 {
-	pev->velocity = g_vecZero;
+	VectorClear(pev->velocity);
 	pev->nextthink = 0;
 	pev->takedamage = DAMAGE_NO;
 }
@@ -2265,21 +2381,28 @@ int CGunTarget::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 	if ( pev->health > 0 )
 	{
 		pev->health -= flDamage;
+
 		if ( pev->health <= 0 )
 		{
 			pev->health = 0;
 			Stop();
+
 			if ( pev->message )
+			{
 				FireTargets(STRING(pev->message), this, this, USE_TOGGLE, 0);
+			}
 		}
 	}
+
 	return 0;
 }
 
 void CGunTarget::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_on) )
+	{
 		return;
+	}
 
 	if ( m_on )
 	{
@@ -2289,8 +2412,12 @@ void CGunTarget::Use(CBaseEntity*, CBaseEntity*, USE_TYPE useType, float)
 	{
 		pev->takedamage = DAMAGE_AIM;
 		m_hTargetEnt = GetNextTarget();
+
 		if ( m_hTargetEnt == 0 )
+		{
 			return;
+		}
+
 		pev->health = pev->max_health;
 		Next();
 	}

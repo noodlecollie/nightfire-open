@@ -1,5 +1,6 @@
 #include "ScrollView.h"
 #include "Scissor.h"
+#include "MathLib/utils.h"
 
 CMenuScrollView::CMenuScrollView() :
 	CMenuItemsHolder(),

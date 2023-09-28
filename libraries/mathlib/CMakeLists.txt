@@ -1,9 +1,25 @@
 include(compiler_settings)
 
 add_library(${TARGETNAME_LIB_MATHLIB} STATIC
+	include/MathLib/angles.h
+	include/MathLib/mat3x4.h
+	include/MathLib/mat4x4.h
+	include/MathLib/mathdefs.h
 	include/MathLib/mathlib.h
+	include/MathLib/plane.h
+	include/MathLib/quaternion.h
+	include/MathLib/utils.h
+	include/MathLib/vec2.h
+	include/MathLib/vec3.h
+	include/MathLib/vec4.h
+	src/angles.c
+	src/mat3x4.c
+	src/mat4x4.c
 	src/mathlib.c
-	src/matrixlib.c
+	src/plane.c
+	src/quaternion.c
+	src/utils.c
+	src/vec3.c
 )
 
 target_include_directories(${TARGETNAME_LIB_MATHLIB}

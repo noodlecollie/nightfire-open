@@ -500,9 +500,10 @@ void CBaseButton::Spawn()
 	m_vecPosition1 = pev->origin;
 	// Subtract 2 from size because the engine expands bboxes by 1 in all directions making the size too big
 	m_vecPosition2 = m_vecPosition1 +
-		(pev->movedir *
-		 (fabsf(pev->movedir.x * (pev->size.x - 2)) + fabsf(pev->movedir.y * (pev->size.y - 2)) +
-		  fabsf(pev->movedir.z * (pev->size.z - 2)) - m_flLip));
+		(Vector(pev->movedir) *
+		 (fabsf(pev->movedir[VEC3_X] * (pev->size[VEC3_X] - 2)) +
+		  fabsf(pev->movedir[VEC3_Y] * (pev->size[VEC3_Y] - 2)) +
+		  fabsf(pev->movedir[VEC3_Z] * (pev->size[VEC3_Z] - 2)) - m_flLip));
 
 	// Is this a non-moving button?
 	if ( ((m_vecPosition2 - m_vecPosition1).Length() < 1) || (pev->spawnflags & SF_BUTTON_DONTMOVE) )
@@ -608,7 +609,7 @@ const char* ButtonSound(int sound)
 //
 void DoSpark(entvars_t* pev, const Vector& location)
 {
-	Vector tmp = location + pev->size * 0.5;
+	Vector tmp = location + Vector(pev->size) * 0.5;
 	UTIL_Sparks(tmp);
 
 	float flVolume = RANDOM_FLOAT(0.25f, 0.75f) * 0.4f;  // random volume range
@@ -883,22 +884,32 @@ void CRotButton::Spawn(void)
 
 	// check for clockwise rotation
 	if ( FBitSet(pev->spawnflags, SF_DOOR_ROTATE_BACKWARDS) )
-		pev->movedir = pev->movedir * -1;
+	{
+		VectorNegate(pev->movedir, pev->movedir);
+	}
 
 	pev->movetype = MOVETYPE_PUSH;
 
 	if ( pev->spawnflags & SF_ROTBUTTON_NOTSOLID )
+	{
 		pev->solid = SOLID_NOT;
+	}
 	else
+	{
 		pev->solid = SOLID_BSP;
+	}
 
 	SET_MODEL(ENT(pev), STRING(pev->model));
 
 	if ( pev->speed == 0 )
+	{
 		pev->speed = 40;
+	}
 
 	if ( m_flWait == 0 )
+	{
 		m_flWait = 1;
+	}
 
 	if ( pev->health > 0 )
 	{
@@ -907,7 +918,7 @@ void CRotButton::Spawn(void)
 
 	m_toggle_state = TS_AT_BOTTOM;
 	m_vecAngle1 = pev->angles;
-	m_vecAngle2 = pev->angles + pev->movedir * m_flMoveDistance;
+	m_vecAngle2 = Vector(pev->angles) + Vector(pev->movedir) * m_flMoveDistance;
 	ASSERTSZ(m_vecAngle1 != m_vecAngle2, "rotating button start/end positions are equal");
 
 	m_fStayPushed = m_flWait == -1 ? TRUE : FALSE;
@@ -964,8 +975,8 @@ public:
 	int m_lastUsed;
 	int m_direction;
 	float m_returnSpeed;
-	vec3_t m_start;
-	vec3_t m_end;
+	Vector m_start;
+	Vector m_end;
 	int m_sounds;
 };
 
@@ -987,11 +998,13 @@ void CMomentaryRotButton::Spawn(void)
 	CBaseToggle::AxisDir(pev);
 
 	if ( pev->speed == 0 )
+	{
 		pev->speed = 100;
+	}
 
 	if ( m_flMoveDistance < 0 )
 	{
-		m_start = pev->angles + pev->movedir * m_flMoveDistance;
+		m_start = Vector(pev->angles) + Vector(pev->movedir) * m_flMoveDistance;
 		m_end = pev->angles;
 		m_direction = 1;  // This will toggle to -1 on the first use()
 		m_flMoveDistance = -m_flMoveDistance;
@@ -999,7 +1012,7 @@ void CMomentaryRotButton::Spawn(void)
 	else
 	{
 		m_start = pev->angles;
-		m_end = pev->angles + pev->movedir * m_flMoveDistance;
+		m_end = Vector(pev->angles) + Vector(pev->movedir) * m_flMoveDistance;
 		m_direction = -1;  // This will toggle to +1 on the first use()
 	}
 
@@ -1050,7 +1063,7 @@ void CMomentaryRotButton::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 
 	// Calculate destination angle and use it to predict value, this prevents sending target in wrong direction on
 	// retriggering
-	Vector dest = pev->angles + pev->avelocity * (pev->nextthink - pev->ltime);
+	Vector dest = Vector(pev->angles) + Vector(pev->avelocity) * (pev->nextthink - pev->ltime);
 	float value1 = CBaseToggle::AxisDelta(pev->spawnflags, dest, m_start) / m_flMoveDistance;
 	UpdateTarget(value1);
 }
@@ -1093,28 +1106,34 @@ void CMomentaryRotButton::UpdateSelf(float value)
 	pev->nextthink = pev->ltime + 0.1f;
 	if ( m_direction > 0 && value >= 1.0 )
 	{
-		pev->avelocity = g_vecZero;
-		pev->angles = m_end;
+		VectorClear(pev->avelocity);
+		VectorCopy(m_end, pev->angles);
 		return;
 	}
 	else if ( m_direction < 0 && value <= 0 )
 	{
-		pev->avelocity = g_vecZero;
-		pev->angles = m_start;
+		VectorClear(pev->avelocity);
+		VectorCopy(m_start, pev->angles);
 		return;
 	}
 
 	if ( fplaysound )
+	{
 		PlaySound();
+	}
 
 	// HACKHACK -- If we're going slow, we'll get multiple player packets per frame, bump nexthink on each one to avoid
 	// stalling
 	if ( pev->nextthink < pev->ltime )
+	{
 		pev->nextthink = pev->ltime + 0.1f;
+	}
 	else
+	{
 		pev->nextthink += 0.1f;
+	}
 
-	pev->avelocity = m_direction * pev->speed * pev->movedir;
+	(m_direction * pev->speed * Vector(pev->movedir)).CopyToArray(pev->avelocity);
 	SetThink(&CMomentaryRotButton::Off);
 }
 
@@ -1139,7 +1158,7 @@ void CMomentaryRotButton::UpdateTarget(float value)
 
 void CMomentaryRotButton::Off(void)
 {
-	pev->avelocity = g_vecZero;
+	VectorClear(pev->avelocity);
 	m_lastUsed = 0;
 	if ( FBitSet(pev->spawnflags, SF_PENDULUM_AUTO_RETURN) && m_returnSpeed > 0 )
 	{
@@ -1148,7 +1167,9 @@ void CMomentaryRotButton::Off(void)
 		m_direction = -1;
 	}
 	else
-		SetThink(NULL);
+	{
+		SetThink(nullptr);
+	}
 }
 
 void CMomentaryRotButton::Return(void)
@@ -1164,14 +1185,14 @@ void CMomentaryRotButton::UpdateSelfReturn(float value)
 {
 	if ( value <= 0 )
 	{
-		pev->avelocity = g_vecZero;
-		pev->angles = m_start;
+		VectorClear(pev->avelocity);
+		VectorCopy(m_start, pev->angles);
 		pev->nextthink = -1;
 		SetThink(NULL);
 	}
 	else
 	{
-		pev->avelocity = -m_returnSpeed * pev->movedir;
+		VectorScale(pev->movedir, -m_returnSpeed, pev->avelocity);
 		pev->nextthink = pev->ltime + 0.1f;
 	}
 }

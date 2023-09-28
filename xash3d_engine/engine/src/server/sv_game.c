@@ -14,6 +14,9 @@ GNU General Public License for more details.
 */
 
 #include <limits.h>
+#include "MathLib/vec3.h"
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "CRCLib/crclib.h"
 #include "common/common.h"
@@ -1569,18 +1572,6 @@ void GAME_EXPORT pfnSaveSpawnParms(edict_t* ent)
 {
 	(void)ent;
 }
-
-/*
-=================
-pfnVecToYaw
-
-=================
-*/
-float GAME_EXPORT pfnVecToYaw(const float* rgflVector)
-{
-	return SV_VecToYaw(rgflVector);
-}
-
 /*
 =================
 pfnMoveToOrigin
@@ -5065,8 +5056,6 @@ static enginefuncs_t gEngfuncs = {
 	pfnChangeLevel,
 	pfnGetSpawnParms,
 	pfnSaveSpawnParms,
-	pfnVecToYaw,
-	VectorAngles,
 	pfnMoveToOrigin,
 	pfnChangeYaw,
 	pfnChangePitch,

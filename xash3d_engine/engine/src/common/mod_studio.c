@@ -13,6 +13,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/vec3.h"
+#include "MathLib/mat3x4.h"
+#include "MathLib/angles.h"
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"

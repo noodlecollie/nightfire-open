@@ -141,7 +141,7 @@ void CTripmineGrenade::Spawn(void)
 	UTIL_MakeAimVectors(pev->angles);
 
 	m_vecDir = gpGlobals->v_forward;
-	m_vecEnd = pev->origin + m_vecDir * 2048;
+	m_vecEnd = Vector(pev->origin) + m_vecDir * 2048;
 }
 
 void CTripmineGrenade::Precache(void)
@@ -178,7 +178,13 @@ void CTripmineGrenade::PowerupThink(void)
 		// find an owner
 		edict_t* oldowner = pev->owner;
 		pev->owner = NULL;
-		UTIL_TraceLine(pev->origin + m_vecDir * 8, pev->origin - m_vecDir * 32, dont_ignore_monsters, ENT(pev), &tr);
+		UTIL_TraceLine(
+			Vector(pev->origin) + m_vecDir * 8,
+			Vector(pev->origin) - m_vecDir * 32,
+			dont_ignore_monsters,
+			ENT(pev),
+			&tr);
+
 		if ( tr.fStartSolid || (oldowner && tr.pHit == oldowner) )
 		{
 			pev->owner = oldowner;
@@ -202,19 +208,19 @@ void CTripmineGrenade::PowerupThink(void)
 			ALERT(
 				at_console,
 				"WARNING:Tripmine at %.0f, %.0f, %.0f removed\n",
-				pev->origin.x,
-				pev->origin.y,
-				pev->origin.z);
+				pev->origin[VEC3_X],
+				pev->origin[VEC3_Y],
+				pev->origin[VEC3_Z]);
 			KillBeam();
 			return;
 		}
 	}
-	else if ( m_posOwner != m_hOwner->pev->origin || m_angleOwner != m_hOwner->pev->angles )
+	else if ( m_posOwner != Vector(m_hOwner->pev->origin) || m_angleOwner != Vector(m_hOwner->pev->angles) )
 	{
 		// disable
 		STOP_SOUND(ENT(pev), CHAN_VOICE, "weapons/mine_deploy.wav");
 		STOP_SOUND(ENT(pev), CHAN_BODY, "weapons/mine_charge.wav");
-		CBaseEntity* pMine = Create("weapon_tripmine", pev->origin + m_vecDir * 24, pev->angles);
+		CBaseEntity* pMine = Create("weapon_tripmine", Vector(pev->origin) + m_vecDir * 24, pev->angles);
 		pMine->pev->spawnflags |= SF_NORESPAWN;
 
 		SetThink(&CBaseEntity::SUB_Remove);
@@ -262,7 +268,7 @@ void CTripmineGrenade::MakeBeam(void)
 	SetThink(&CTripmineGrenade::BeamBreakThink);
 	pev->nextthink = gpGlobals->time + 0.1f;
 
-	Vector vecTmpEnd = pev->origin + m_vecDir * 2048 * m_flBeamLength;
+	Vector vecTmpEnd = Vector(pev->origin) + m_vecDir * 2048 * m_flBeamLength;
 
 	m_pBeam = CBeam::BeamCreate(g_pModelNameLaser, 10);
 	m_pBeam->PointEntInit(vecTmpEnd, entindex());
@@ -298,11 +304,17 @@ void CTripmineGrenade::BeamBreakThink(void)
 	else
 	{
 		if ( m_hOwner == 0 )
+		{
 			bBlowup = 1;
-		else if ( m_posOwner != m_hOwner->pev->origin )
+		}
+		else if ( m_posOwner != Vector(m_hOwner->pev->origin) )
+		{
 			bBlowup = 1;
-		else if ( m_angleOwner != m_hOwner->pev->angles )
+		}
+		else if ( m_angleOwner != Vector(m_hOwner->pev->angles) )
+		{
 			bBlowup = 1;
+		}
 	}
 
 	if ( bBlowup )
@@ -354,7 +366,12 @@ void CTripmineGrenade::DelayDeathThink(void)
 {
 	KillBeam();
 	TraceResult tr;
-	UTIL_TraceLine(pev->origin + m_vecDir * 8, pev->origin - m_vecDir * 64, dont_ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(
+		Vector(pev->origin) + m_vecDir * 8,
+		Vector(pev->origin) - m_vecDir * 64,
+		dont_ignore_monsters,
+		ENT(pev),
+		&tr);
 
 	Explode(&tr, DMG_BLAST);
 }
@@ -439,7 +456,7 @@ void CTripmine::PrimaryAttack(void)
 	if ( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )
 		return;
 
-	UTIL_MakeVectors(m_pPlayer->pev->v_angle + m_pPlayer->pev->punchangle);
+	UTIL_MakeVectors(Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle));
 	Vector vecSrc = m_pPlayer->GetGunPosition();
 	Vector vecAiming = gpGlobals->v_forward;
 
@@ -468,7 +485,11 @@ void CTripmine::PrimaryAttack(void)
 		{
 			Vector angles = UTIL_VecToAngles(tr.vecPlaneNormal);
 
-			CBaseEntity::Create("monster_tripmine", tr.vecEndPos + tr.vecPlaneNormal * 8, angles, m_pPlayer->edict());
+			CBaseEntity::Create(
+				"monster_tripmine",
+				Vector(tr.vecEndPos) + Vector(tr.vecPlaneNormal) * 8,
+				angles,
+				m_pPlayer->edict());
 
 			m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 

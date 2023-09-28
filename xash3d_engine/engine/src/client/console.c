@@ -13,6 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/String.h"
@@ -141,6 +144,11 @@ void Field_CharEvent(field_t* edit, int ch);
 
 static void Con_LoadHistory(con_history_t* self);
 static void Con_SaveHistory(con_history_t* self);
+
+const byte* Con_GetColorFromTable(char ch)
+{
+	return g_color_table[(size_t)(ch & 7)];
+}
 
 /*
 ================
@@ -1048,7 +1056,7 @@ void GAME_EXPORT Con_NPrintf(int idx, const char* fmt, ...)
 	// reset values
 	con.notify[idx].key_dest = key_game;
 	con.notify[idx].expire = (float)host.realtime + 4.0f;
-	MakeRGBA(con.notify[idx].color, 255, 255, 255, 255);
+	RGBA_Set(con.notify[idx].color, 255, 255, 255, 255);
 	con.draw_notify = true;
 }
 
@@ -1078,7 +1086,7 @@ void GAME_EXPORT Con_NXPrintf(con_nprint_t* info, const char* fmt, ...)
 	// setup values
 	con.notify[info->index].key_dest = key_game;
 	con.notify[info->index].expire = (float)host.realtime + info->time_to_live;
-	MakeRGBA(
+	RGBA_Set(
 		con.notify[info->index].color,
 		(byte)(info->color[0] * 255),
 		(byte)(info->color[1] * 255),
@@ -1110,7 +1118,7 @@ void GAME_EXPORT UI_NPrintf(int idx, const char* fmt, ...)
 	// reset values
 	con.notify[idx].key_dest = key_menu;
 	con.notify[idx].expire = (float)host.realtime + 4.0f;
-	MakeRGBA(con.notify[idx].color, 255, 255, 255, 255);
+	RGBA_Set(con.notify[idx].color, 255, 255, 255, 255);
 	con.draw_notify = true;
 }
 
@@ -1140,7 +1148,7 @@ void GAME_EXPORT UI_NXPrintf(con_nprint_t* info, const char* fmt, ...)
 	// setup values
 	con.notify[info->index].key_dest = key_menu;
 	con.notify[info->index].expire = (float)host.realtime + info->time_to_live;
-	MakeRGBA(
+	RGBA_Set(
 		con.notify[info->index].color,
 		(byte)(info->color[0] * 255),
 		(byte)(info->color[1] * 255),
@@ -2422,7 +2430,7 @@ void GAME_EXPORT Con_DefaultColor(int r, int g, int b)
 	r = bound(0, r, 255);
 	g = bound(0, g, 255);
 	b = bound(0, b, 255);
-	MakeRGBA(g_color_table[7], (byte)r, (byte)g, (byte)b, 255);
+	RGBA_Set(g_color_table[7], (byte)r, (byte)g, (byte)b, 255);
 }
 
 #if XASH_ENGINE_TESTS()

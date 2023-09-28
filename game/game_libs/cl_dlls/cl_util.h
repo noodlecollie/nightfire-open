@@ -95,7 +95,6 @@ inline struct cvar_s* CL_CvarCreate(const char* cv, const char* val, const int f
 #define ServerCmd (*gEngfuncs.pfnServerCmd)
 #define ClientCmd (*gEngfuncs.pfnClientCmd)
 #define SetCrosshair (*gEngfuncs.pfnSetCrosshair)
-#define AngleVectors (*gEngfuncs.pfnAngleVectors)
 extern cvar_t* hud_textmode;
 extern float g_hud_text_color[3];
 inline void DrawSetTextColor(float r, float g, float b)
@@ -192,6 +191,7 @@ inline void PlaySound(int iSound, float vol)
 	gEngfuncs.pfnPlaySoundByIndex(iSound, vol);
 }
 
+// NFTODO:
 // This seems to break the Windows compile in mysterious ways if it's defined.
 // Just use the standard library fabs(), people, none of this macro bullshittery.
 #if !defined(WIN32) && !defined(fabs)
@@ -199,14 +199,6 @@ inline void PlaySound(int iSound, float vol)
 #endif
 
 void ScaleColors(int& r, int& g, int& b, int a);
-
-float Length(const float* v);
-void VectorMA(const float* veca, float scale, const float* vecb, float* vecc);
-void VectorScale(const float* in, float scale, float* out);
-float VectorNormalize(float* v);
-void VectorInverse(float* v);
-
-extern vec3_t vec3_origin;
 
 inline void UnpackRGB(int& r, int& g, int& b, unsigned long ulRGB)
 {

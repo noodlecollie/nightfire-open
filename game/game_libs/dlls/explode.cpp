@@ -42,13 +42,19 @@ LINK_ENTITY_TO_CLASS(spark_shower, CShower)
 
 void CShower::Spawn(void)
 {
-	pev->velocity = RANDOM_FLOAT(200, 300) * pev->angles;
-	pev->velocity.x += RANDOM_FLOAT(-100.f, 100.f);
-	pev->velocity.y += RANDOM_FLOAT(-100.f, 100.f);
-	if ( pev->velocity.z >= 0 )
-		pev->velocity.z += 200;
+	VectorScale(pev->angles, RANDOM_FLOAT(200, 300), pev->velocity);
+	pev->velocity[VEC3_X] += RANDOM_FLOAT(-100.f, 100.f);
+	pev->velocity[VEC3_Y] += RANDOM_FLOAT(-100.f, 100.f);
+
+	if ( pev->velocity[VEC3_Z] >= 0 )
+	{
+		pev->velocity[VEC3_Z] += 200;
+	}
 	else
-		pev->velocity.z -= 200;
+	{
+		pev->velocity[VEC3_Z] -= 200;
+	}
+
 	pev->movetype = MOVETYPE_BOUNCE;
 	pev->gravity = 0.5;
 	pev->nextthink = gpGlobals->time + 0.1f;
@@ -57,8 +63,7 @@ void CShower::Spawn(void)
 	UTIL_SetSize(pev, g_vecZero, g_vecZero);
 	pev->effects |= EF_NODRAW;
 	pev->speed = RANDOM_FLOAT(0.5, 1.5);
-
-	pev->angles = g_vecZero;
+	VectorClear(pev->angles);
 }
 
 void CShower::Think(void)
@@ -76,12 +81,18 @@ void CShower::Think(void)
 void CShower::Touch(CBaseEntity*)
 {
 	if ( pev->flags & FL_ONGROUND )
-		pev->velocity = pev->velocity * 0.1f;
+	{
+		VectorScale(pev->velocity, 0.1f, pev->velocity);
+	}
 	else
-		pev->velocity = pev->velocity * 0.6f;
+	{
+		VectorScale(pev->velocity, 0.6f, pev->velocity);
+	}
 
-	if ( (pev->velocity.x * pev->velocity.x + pev->velocity.y * pev->velocity.y) < 10.0 )
+	if ( (pev->velocity[VEC3_X] * pev->velocity[VEC3_X] + pev->velocity[VEC3_Y] * pev->velocity[VEC3_Y]) < 10.0 )
+	{
 		pev->speed = 0;
+	}
 }
 
 class CEnvExplosion : public CBaseMonster
@@ -158,18 +169,15 @@ void CEnvExplosion::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 
 	Vector vecSpot;  // trace starts here!
 
-	vecSpot = pev->origin + Vector(0, 0, 8);
+	vecSpot = Vector(pev->origin) + Vector(0, 0, 8);
 
 	UTIL_TraceLine(vecSpot, vecSpot + Vector(0, 0, -40), ignore_monsters, ENT(pev), &tr);
 
 	// Pull out of the wall a bit
 	if ( tr.flFraction != 1.0 )
 	{
-		pev->origin = tr.vecEndPos + (tr.vecPlaneNormal * (static_cast<float>(m_iMagnitude - 24)) * 0.6f);
-	}
-	else
-	{
-		pev->origin = pev->origin;
+		(Vector(tr.vecEndPos) + (Vector(tr.vecPlaneNormal) * (static_cast<float>(m_iMagnitude - 24)) * 0.6f))
+			.CopyToArray(pev->origin);
 	}
 
 	// draw decal
@@ -190,9 +198,9 @@ void CEnvExplosion::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	{
 		MESSAGE_BEGIN(MSG_PAS, SVC_TEMPENTITY, pev->origin);
 		WRITE_BYTE(TE_EXPLOSION);
-		WRITE_COORD(pev->origin.x);
-		WRITE_COORD(pev->origin.y);
-		WRITE_COORD(pev->origin.z);
+		WRITE_COORD(pev->origin[0]);
+		WRITE_COORD(pev->origin[1]);
+		WRITE_COORD(pev->origin[2]);
 		WRITE_SHORT(g_sModelIndexFireball);
 		WRITE_BYTE((BYTE)m_spriteScale);  // scale * 10
 		WRITE_BYTE(15);  // framerate
@@ -203,9 +211,9 @@ void CEnvExplosion::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	{
 		MESSAGE_BEGIN(MSG_PAS, SVC_TEMPENTITY, pev->origin);
 		WRITE_BYTE(TE_EXPLOSION);
-		WRITE_COORD(pev->origin.x);
-		WRITE_COORD(pev->origin.y);
-		WRITE_COORD(pev->origin.z);
+		WRITE_COORD(pev->origin[0]);
+		WRITE_COORD(pev->origin[1]);
+		WRITE_COORD(pev->origin[2]);
 		WRITE_SHORT(g_sModelIndexFireball);
 		WRITE_BYTE(0);  // no sprite
 		WRITE_BYTE(15);  // framerate
@@ -240,9 +248,9 @@ void CEnvExplosion::Smoke(void)
 	{
 		MESSAGE_BEGIN(MSG_PAS, SVC_TEMPENTITY, pev->origin);
 		WRITE_BYTE(TE_SMOKE);
-		WRITE_COORD(pev->origin.x);
-		WRITE_COORD(pev->origin.y);
-		WRITE_COORD(pev->origin.z);
+		WRITE_COORD(pev->origin[0]);
+		WRITE_COORD(pev->origin[1]);
+		WRITE_COORD(pev->origin[2]);
 		WRITE_SHORT(g_sModelIndexSmoke);
 		WRITE_BYTE((BYTE)m_spriteScale);  // scale * 10
 		WRITE_BYTE(12);  // framerate

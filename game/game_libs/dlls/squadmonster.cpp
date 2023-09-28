@@ -354,8 +354,8 @@ int CSquadMonster::SquadRecruit(int searchRadius, int maxMembers)
 				{
 					TraceResult tr;
 					UTIL_TraceLine(
-						pev->origin + pev->view_ofs,
-						pRecruit->pev->origin + pev->view_ofs,
+						Vector(pev->origin) + Vector(pev->view_ofs),
+						Vector(pRecruit->pev->origin) + Vector(pev->view_ofs),
 						ignore_monsters,
 						pRecruit->edict(),
 						&tr);  // try to hit recruit with a traceline.
@@ -466,7 +466,7 @@ BOOL CSquadMonster::NoFriendlyFire(void)
 	//! it is facing!!!
 	if ( m_hEnemy != 0 )
 	{
-		UTIL_MakeVectors(UTIL_VecToAngles(m_hEnemy->Center() - pev->origin));
+		UTIL_MakeVectors(UTIL_VecToAngles(m_hEnemy->Center() - Vector(pev->origin)));
 	}
 	else
 	{
@@ -476,9 +476,9 @@ BOOL CSquadMonster::NoFriendlyFire(void)
 
 	// UTIL_MakeVectors( pev->angles );
 
-	vecLeftSide = pev->origin - (gpGlobals->v_right * (pev->size.x * 1.5f));
-	vecRightSide = pev->origin + (gpGlobals->v_right * (pev->size.x * 1.5f));
-	v_left = gpGlobals->v_right * -1;
+	vecLeftSide = Vector(pev->origin) - (Vector(gpGlobals->v_right) * (pev->size[VEC3_X] * 1.5f));
+	vecRightSide = Vector(pev->origin) + (Vector(gpGlobals->v_right) * (pev->size[VEC3_X] * 1.5f));
+	v_left = Vector(gpGlobals->v_right) * -1;
 
 	leftPlane.InitializePlane(gpGlobals->v_right, vecLeftSide);
 	rightPlane.InitializePlane(v_left, vecRightSide);
@@ -592,7 +592,7 @@ BOOL CSquadMonster::SquadMemberInRange(const Vector& vecLocation, float flDist)
 	for ( int i = 0; i < MAX_SQUAD_MEMBERS; i++ )
 	{
 		CSquadMonster* pSquadMember = pSquadLeader->MySquadMember(i);
-		if ( pSquadMember && (vecLocation - pSquadMember->pev->origin).Length2D() <= flDist )
+		if ( pSquadMember && (vecLocation - Vector(pSquadMember->pev->origin)).Length2D() <= flDist )
 			return TRUE;
 	}
 	return FALSE;

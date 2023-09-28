@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "EnginePublicAPI/studio.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 #include "common/fscallback.h"
 #include "EnginePublicAPI/const.h"
 #include "client/client.h"

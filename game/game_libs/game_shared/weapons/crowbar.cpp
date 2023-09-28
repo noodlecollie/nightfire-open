@@ -143,7 +143,7 @@ void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, float* mins, fl
 				UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, pEntity, &tmpTrace);
 				if ( tmpTrace.flFraction < 1.0 )
 				{
-					float thisDistance = (tmpTrace.vecEndPos - vecSrc).Length();
+					float thisDistance = (Vector(tmpTrace.vecEndPos) - vecSrc).Length();
 					if ( thisDistance < distance )
 					{
 						tr = tmpTrace;
@@ -184,7 +184,7 @@ int CCrowbar::Swing(int fFirst)
 
 	UTIL_MakeVectors(m_pPlayer->pev->v_angle);
 	Vector vecSrc = m_pPlayer->GetGunPosition();
-	Vector vecEnd = vecSrc + gpGlobals->v_forward * 32;
+	Vector vecEnd = vecSrc + Vector(gpGlobals->v_forward) * 32;
 
 	UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(m_pPlayer->pev), &tr);
 

@@ -148,9 +148,9 @@ public:
 	NAV_ARRAY_TYPE FGetNavPropensity(int arrayX, int arrayY, int arrayZ);
 	void HalfNavArray(void);
 	void InitNavArray(void);
-	BOOL IsInWorld(Vector& location);
-	void MarkLocationFavorable(Vector& location);
-	void MarkLocationUnfavorable(Vector& location);
+	BOOL IsInWorld(const Vector& location);
+	void MarkLocationFavorable(const Vector& location);
+	void MarkLocationUnfavorable(const Vector& location);
 	void SaveNavToFile(void);
 	int FLoadBotNav(const char* szMapName);
 

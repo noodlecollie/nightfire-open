@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MathLib/vec3.h"
 #include "utlstring.h"
 #include "rapidjson/document.h"
 #include "weaponatts_baseattack.h"
@@ -34,11 +35,11 @@ protected:
 	int m_iEntIndex = -1;
 	bool m_bWeaponIsEmpty = false;
 
-	vec3_t m_vecEntAngles;
-	vec3_t m_vecEntOrigin;
-	vec3_t m_vecEntVelocity;
-	vec3_t m_vecFwd;
-	vec3_t m_vecRight;
-	vec3_t m_vecUp;
-	vec3_t m_vecGunPosition;
+	Vector m_vecEntAngles;
+	Vector m_vecEntOrigin;
+	Vector m_vecEntVelocity;
+	Vector m_vecFwd;
+	Vector m_vecRight;
+	Vector m_vecUp;
+	Vector m_vecGunPosition;
 };

@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/wrect.h"
+#include "MathLib/vec3.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -157,9 +158,6 @@ typedef struct cl_enginefuncs_s
 	// sound handlers
 	void (*pfnPlaySoundByName)(const char* szSound, float volume);
 	void (*pfnPlaySoundByIndex)(int iSound, float volume);
-
-	// vector helpers
-	void (*pfnAngleVectors)(const float* vecAngles, float* forward, float* right, float* up);
 
 	// text message system
 	client_textmessage_t* (*pfnTextMessageGet)(const char* pName);

@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "projectInterface/IProjectInterface.h"
 #include "projectInterface_mainui.h"
 #include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 #ifdef CS16CLIENT
 #include "Scoreboard.h"
 #endif

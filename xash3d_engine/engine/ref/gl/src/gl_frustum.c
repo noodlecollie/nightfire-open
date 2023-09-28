@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "gl_local.h"
-#include "MathLib/mathlib.h"
+#include "MathLib/vec3.h"
 
 void GL_FrustumSetPlane(gl_frustum_t* out, int side, const vec3_t vecNormal, float flDist)
 {

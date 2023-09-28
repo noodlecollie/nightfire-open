@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "EnginePublicAPI/keydefs.h"
 #include "BtnsBMPTable.h"
 #include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 
 #if defined _WIN32
 #undef GetParent

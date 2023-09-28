@@ -40,6 +40,7 @@
 #include "soundent.h"
 #include "effects.h"
 #include "EnginePublicAPI/customentity.h"
+#include "MathLib/angles.h"
 
 int g_fGruntQuestion;  // true if an idle grunt asked a question. Cleared when someone answers.
 
@@ -304,8 +305,10 @@ void CHGrunt::GibMonster(void)
 
 		if ( pGun )
 		{
-			pGun->pev->velocity = Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300));
-			pGun->pev->avelocity = Vector(0, RANDOM_FLOAT(200, 400), 0);
+			Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300))
+				.CopyToArray(pGun->pev->velocity);
+
+			Vector(0, RANDOM_FLOAT(200, 400), 0).CopyToArray(pGun->pev->avelocity);
 		}
 
 		if ( FBitSet(pev->weapons, HGRUNT_GRENADELAUNCHER) )
@@ -313,8 +316,10 @@ void CHGrunt::GibMonster(void)
 			pGun = DropItem("ammo_ARgrenades", vecGunPos, vecGunAngles);
 			if ( pGun )
 			{
-				pGun->pev->velocity = Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300));
-				pGun->pev->avelocity = Vector(0, RANDOM_FLOAT(200, 400), 0);
+				Vector(RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(-100, 100), RANDOM_FLOAT(200, 300))
+					.CopyToArray(pGun->pev->velocity);
+
+				Vector(0, RANDOM_FLOAT(200, 400), 0).CopyToArray(pGun->pev->avelocity);
 			}
 		}
 	}
@@ -497,7 +502,7 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 	}
 
 	if ( !FBitSet(m_hEnemy->pev->flags, FL_ONGROUND) && m_hEnemy->pev->waterlevel == 0 &&
-		 m_vecEnemyLKP.z > pev->absmax.z )
+		 m_vecEnemyLKP[VEC3_Z] > pev->absmax[VEC3_Z] )
 	{
 		//!!!BUGBUG - we should make this check movetype and make sure it isn't FLY? Players who jump a lot are unlikely
 		//! to
@@ -515,7 +520,8 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 		if ( RANDOM_LONG(0, 1) )
 		{
 			// magically know where they are
-			vecTarget = Vector(m_hEnemy->pev->origin.x, m_hEnemy->pev->origin.y, m_hEnemy->pev->absmin.z);
+			vecTarget =
+				Vector(m_hEnemy->pev->origin[VEC3_X], m_hEnemy->pev->origin[VEC3_Y], m_hEnemy->pev->absmin[VEC3_Z]);
 		}
 		else
 		{
@@ -530,11 +536,14 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 	{
 		// find target
 		// vecTarget = m_hEnemy->BodyTarget( pev->origin );
-		vecTarget = m_vecEnemyLKP + (m_hEnemy->BodyTarget(pev->origin) - m_hEnemy->pev->origin);
+		vecTarget = m_vecEnemyLKP + (m_hEnemy->BodyTarget(pev->origin) - Vector(m_hEnemy->pev->origin));
 		// estimate position
 		if ( HasConditions(bits_COND_SEE_ENEMY) )
+		{
 			vecTarget = vecTarget +
-				((vecTarget - pev->origin).Length() / gSkillData.hgruntGrenadeSpeed) * m_hEnemy->pev->velocity;
+				((vecTarget - Vector(pev->origin)).Length() / gSkillData.hgruntGrenadeSpeed) *
+					Vector(m_hEnemy->pev->velocity);
+		}
 	}
 
 	// are any of my squad members near the intended grenade impact area?
@@ -548,7 +557,7 @@ BOOL CHGrunt::CheckRangeAttack2(float, float)
 		}
 	}
 
-	if ( (vecTarget - pev->origin).Length2D() <= 256 )
+	if ( (vecTarget - Vector(pev->origin)).Length2D() <= 256 )
 	{
 		// crap, I don't want to blow myself up
 		m_flNextGrenadeCheck = gpGlobals->time + 1;  // one full second.
@@ -765,8 +774,8 @@ CBaseEntity* CHGrunt::Kick(void)
 
 	UTIL_MakeVectors(pev->angles);
 	Vector vecStart = pev->origin;
-	vecStart.z += pev->size.z * 0.5f;
-	Vector vecEnd = vecStart + (gpGlobals->v_forward * 70);
+	vecStart[VEC3_Z] += pev->size[VEC3_Z] * 0.5f;
+	Vector vecEnd = vecStart + (Vector(gpGlobals->v_forward) * 70);
 
 	UTIL_TraceHull(vecStart, vecEnd, dont_ignore_monsters, head_hull, ENT(pev), &tr);
 
@@ -787,11 +796,11 @@ Vector CHGrunt::GetGunPosition()
 {
 	if ( m_fStanding )
 	{
-		return pev->origin + Vector(0, 0, 60);
+		return Vector(pev->origin) + Vector(0, 0, 60);
 	}
 	else
 	{
-		return pev->origin + Vector(0, 0, 48);
+		return Vector(pev->origin) + Vector(0, 0, 48);
 	}
 }
 
@@ -810,9 +819,9 @@ void CHGrunt::Shoot(void)
 
 	UTIL_MakeVectors(pev->angles);
 
-	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT(40, 90) + gpGlobals->v_up * RANDOM_FLOAT(75, 200) +
-		gpGlobals->v_forward * RANDOM_FLOAT(-40, 40);
-	EjectBrass(vecShootOrigin - vecShootDir * 24, vecShellVelocity, pev->angles.y, m_iBrassShell, TE_BOUNCE_SHELL);
+	Vector vecShellVelocity = Vector(gpGlobals->v_right) * RANDOM_FLOAT(40, 90) +
+		Vector(gpGlobals->v_up) * RANDOM_FLOAT(75, 200) + Vector(gpGlobals->v_forward) * RANDOM_FLOAT(-40, 40);
+	EjectBrass(vecShootOrigin - vecShootDir * 24, vecShellVelocity, pev->angles[YAW], m_iBrassShell, TE_BOUNCE_SHELL);
 	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_10DEGREES, 2048, BULLET_MONSTER_MP5);  // shoot +-5 degrees
 
 	pev->effects |= EF_MUZZLEFLASH;
@@ -838,12 +847,12 @@ void CHGrunt::Shotgun(void)
 
 	UTIL_MakeVectors(pev->angles);
 
-	Vector vecShellVelocity = gpGlobals->v_right * RANDOM_FLOAT(40, 90) + gpGlobals->v_up * RANDOM_FLOAT(75, 200) +
-		gpGlobals->v_forward * RANDOM_FLOAT(-40, 40);
+	Vector vecShellVelocity = Vector(gpGlobals->v_right) * RANDOM_FLOAT(40, 90) +
+		Vector(gpGlobals->v_up) * RANDOM_FLOAT(75, 200) + Vector(gpGlobals->v_forward) * RANDOM_FLOAT(-40, 40);
 	EjectBrass(
 		vecShootOrigin - vecShootDir * 24,
 		vecShellVelocity,
-		pev->angles.y,
+		pev->angles[YAW],
 		m_iShotgunShell,
 		TE_BOUNCE_SHOTSHELL);
 	FireBullets(
@@ -936,7 +945,8 @@ void CHGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 			UTIL_MakeVectors(pev->angles);
 			CGrenade::ShootTimed(
 				pev,
-				pev->origin + gpGlobals->v_forward * 17 - gpGlobals->v_right * 27 + gpGlobals->v_up * 6,
+				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 17 - Vector(gpGlobals->v_right) * 27 +
+					Vector(gpGlobals->v_up) * 6,
 				g_vecZero,
 				3);
 		}
@@ -979,8 +989,9 @@ void CHGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 			{
 				// SOUND HERE!
 				UTIL_MakeVectors(pev->angles);
-				pHurt->pev->punchangle.x = 15;
-				pHurt->pev->velocity = pHurt->pev->velocity + gpGlobals->v_forward * 100 + gpGlobals->v_up * 50;
+				pHurt->pev->punchangle[PITCH] = 15;
+				(Vector(pHurt->pev->velocity) + Vector(gpGlobals->v_forward) * 100 + Vector(gpGlobals->v_up) * 50)
+					.CopyToArray(pHurt->pev->velocity);
 				pHurt->TakeDamage(pev, pev, gSkillData.hgruntDmgKick, DMG_CLUB);
 			}
 		}
@@ -1160,7 +1171,7 @@ void CHGrunt::RunTask(Task_t* pTask)
 		case TASK_GRUNT_FACE_TOSS_DIR:
 		{
 			// project a point along the toss vector and turn to face that point.
-			MakeIdealYaw(pev->origin + m_vecTossVelocity * 64);
+			MakeIdealYaw(Vector(pev->origin) + m_vecTossVelocity * 64);
 			ChangeYaw(static_cast<int>(pev->yaw_speed));
 
 			if ( FacingIdeal() )
@@ -1254,7 +1265,7 @@ Task_t tlGruntFail[] = {
 
 Schedule_t slGruntFail[] = {
 	{tlGruntFail,
-	 SIZE_OF_ARRAY(tlGruntFail),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntFail),
 	 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_RANGE_ATTACK2 | bits_COND_CAN_MELEE_ATTACK1 |
 		 bits_COND_CAN_MELEE_ATTACK2,
 	 0,
@@ -1273,7 +1284,7 @@ Task_t tlGruntCombatFail[] = {
 
 Schedule_t slGruntCombatFail[] = {
 	{tlGruntCombatFail,
-	 SIZE_OF_ARRAY(tlGruntCombatFail),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntCombatFail),
 	 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_RANGE_ATTACK2,
 	 0,
 	 "Grunt Combat Fail"},
@@ -1295,7 +1306,7 @@ Task_t tlGruntVictoryDance[] = {
 
 Schedule_t slGruntVictoryDance[] = {
 	{tlGruntVictoryDance,
-	 SIZE_OF_ARRAY(tlGruntVictoryDance),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntVictoryDance),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE,
 	 0,
 	 "GruntVictoryDance"},
@@ -1315,7 +1326,7 @@ Task_t tlGruntEstablishLineOfFire[] = {
 
 Schedule_t slGruntEstablishLineOfFire[] = {
 	{tlGruntEstablishLineOfFire,
-	 SIZE_OF_ARRAY(tlGruntEstablishLineOfFire),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntEstablishLineOfFire),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK1 |
 		 bits_COND_CAN_RANGE_ATTACK2 | bits_COND_CAN_MELEE_ATTACK2 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -1333,7 +1344,7 @@ Task_t tlGruntFoundEnemy[] = {
 };
 
 Schedule_t slGruntFoundEnemy[] = {
-	{tlGruntFoundEnemy, SIZE_OF_ARRAY(tlGruntFoundEnemy), bits_COND_HEAR_SOUND, bits_SOUND_DANGER, "GruntFoundEnemy"},
+	{tlGruntFoundEnemy, SIZE_OF_ARRAY_AS_INT(tlGruntFoundEnemy), bits_COND_HEAR_SOUND, bits_SOUND_DANGER, "GruntFoundEnemy"},
 };
 
 //=========================================================
@@ -1349,7 +1360,7 @@ Task_t tlGruntCombatFace1[] = {
 
 Schedule_t slGruntCombatFace[] = {
 	{tlGruntCombatFace1,
-	 SIZE_OF_ARRAY(tlGruntCombatFace1),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntCombatFace1),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_RANGE_ATTACK2,
 	 0,
 	 "Combat Face"},
@@ -1382,7 +1393,7 @@ Task_t tlGruntSignalSuppress[] = {
 
 Schedule_t slGruntSignalSuppress[] = {
 	{tlGruntSignalSuppress,
-	 SIZE_OF_ARRAY(tlGruntSignalSuppress),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntSignalSuppress),
 	 bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND |
 		 bits_COND_GRUNT_NOFIRE | bits_COND_NO_AMMO_LOADED,
 	 bits_SOUND_DANGER,
@@ -1410,7 +1421,7 @@ Task_t tlGruntSuppress[] = {
 
 Schedule_t slGruntSuppress[] = {
 	{tlGruntSuppress,
-	 SIZE_OF_ARRAY(tlGruntSuppress),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntSuppress),
 	 bits_COND_ENEMY_DEAD | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND |
 		 bits_COND_GRUNT_NOFIRE | bits_COND_NO_AMMO_LOADED,
 	 bits_SOUND_DANGER,
@@ -1430,7 +1441,7 @@ Task_t tlGruntWaitInCover[] = {
 
 Schedule_t slGruntWaitInCover[] = {
 	{tlGruntWaitInCover,
-	 SIZE_OF_ARRAY(tlGruntWaitInCover),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntWaitInCover),
 	 bits_COND_NEW_ENEMY | bits_COND_HEAR_SOUND | bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_RANGE_ATTACK2 |
 		 bits_COND_CAN_MELEE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK2,
 	 bits_SOUND_DANGER,
@@ -1454,7 +1465,7 @@ Task_t tlGruntTakeCover1[] = {
 };
 
 Schedule_t slGruntTakeCover[] = {
-	{tlGruntTakeCover1, SIZE_OF_ARRAY(tlGruntTakeCover1), 0, 0, "TakeCover"},
+	{tlGruntTakeCover1, SIZE_OF_ARRAY_AS_INT(tlGruntTakeCover1), 0, 0, "TakeCover"},
 };
 
 //=========================================================
@@ -1472,7 +1483,7 @@ Task_t tlGruntGrenadeCover1[] = {
 };
 
 Schedule_t slGruntGrenadeCover[] = {
-	{tlGruntGrenadeCover1, SIZE_OF_ARRAY(tlGruntGrenadeCover1), 0, 0, "GrenadeCover"},
+	{tlGruntGrenadeCover1, SIZE_OF_ARRAY_AS_INT(tlGruntGrenadeCover1), 0, 0, "GrenadeCover"},
 };
 
 //=========================================================
@@ -1485,7 +1496,7 @@ Task_t tlGruntTossGrenadeCover1[] = {
 };
 
 Schedule_t slGruntTossGrenadeCover[] = {
-	{tlGruntTossGrenadeCover1, SIZE_OF_ARRAY(tlGruntTossGrenadeCover1), 0, 0, "TossGrenadeCover"},
+	{tlGruntTossGrenadeCover1, SIZE_OF_ARRAY_AS_INT(tlGruntTossGrenadeCover1), 0, 0, "TossGrenadeCover"},
 };
 
 //=========================================================
@@ -1503,7 +1514,7 @@ Task_t tlGruntTakeCoverFromBestSound[] = {
 
 Schedule_t slGruntTakeCoverFromBestSound[] = {{
 	tlGruntTakeCoverFromBestSound,
-	SIZE_OF_ARRAY(tlGruntTakeCoverFromBestSound),
+	SIZE_OF_ARRAY_AS_INT(tlGruntTakeCoverFromBestSound),
 	0,
 	0,
 	"GruntTakeCoverFromBestSound",
@@ -1525,7 +1536,7 @@ Task_t tlGruntHideReload[] = {
 
 Schedule_t slGruntHideReload[] = {
 	{tlGruntHideReload,
-	 SIZE_OF_ARRAY(tlGruntHideReload),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntHideReload),
 	 bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
 	 "GruntHideReload"}};
@@ -1542,7 +1553,7 @@ Task_t tlGruntSweep[] = {
 
 Schedule_t slGruntSweep[] = {
 	{tlGruntSweep,
-	 SIZE_OF_ARRAY(tlGruntSweep),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntSweep),
 	 bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_CAN_RANGE_ATTACK1 |
 		 bits_COND_CAN_RANGE_ATTACK2 | bits_COND_HEAR_SOUND,
 	 bits_SOUND_WORLD |  // sound flags
@@ -1572,7 +1583,7 @@ Task_t tlGruntRangeAttack1A[] = {
 
 Schedule_t slGruntRangeAttack1A[] = {
 	{tlGruntRangeAttack1A,
-	 SIZE_OF_ARRAY(tlGruntRangeAttack1A),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntRangeAttack1A),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_HEAVY_DAMAGE | bits_COND_ENEMY_OCCLUDED |
 		 bits_COND_HEAR_SOUND | bits_COND_GRUNT_NOFIRE | bits_COND_NO_AMMO_LOADED,
 	 bits_SOUND_DANGER,
@@ -1601,7 +1612,7 @@ Task_t tlGruntRangeAttack1B[] = {
 
 Schedule_t slGruntRangeAttack1B[] = {
 	{tlGruntRangeAttack1B,
-	 SIZE_OF_ARRAY(tlGruntRangeAttack1B),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntRangeAttack1B),
 	 bits_COND_NEW_ENEMY | bits_COND_ENEMY_DEAD | bits_COND_HEAVY_DAMAGE | bits_COND_ENEMY_OCCLUDED |
 		 bits_COND_NO_AMMO_LOADED | bits_COND_GRUNT_NOFIRE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
@@ -1620,7 +1631,7 @@ Task_t tlGruntRangeAttack2[] = {
 };
 
 Schedule_t slGruntRangeAttack2[] = {
-	{tlGruntRangeAttack2, SIZE_OF_ARRAY(tlGruntRangeAttack2), 0, 0, "RangeAttack2"},
+	{tlGruntRangeAttack2, SIZE_OF_ARRAY_AS_INT(tlGruntRangeAttack2), 0, 0, "RangeAttack2"},
 };
 
 //=========================================================
@@ -1634,7 +1645,7 @@ Task_t tlGruntRepel[] = {
 
 Schedule_t slGruntRepel[] = {
 	{tlGruntRepel,
-	 SIZE_OF_ARRAY(tlGruntRepel),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntRepel),
 	 bits_COND_SEE_ENEMY | bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER | bits_SOUND_COMBAT | bits_SOUND_PLAYER,
 	 "Repel"},
@@ -1650,7 +1661,7 @@ Task_t tlGruntRepelAttack[] = {
 };
 
 Schedule_t slGruntRepelAttack[] = {
-	{tlGruntRepelAttack, SIZE_OF_ARRAY(tlGruntRepelAttack), bits_COND_ENEMY_OCCLUDED, 0, "Repel Attack"},
+	{tlGruntRepelAttack, SIZE_OF_ARRAY_AS_INT(tlGruntRepelAttack), bits_COND_ENEMY_OCCLUDED, 0, "Repel Attack"},
 };
 
 //=========================================================
@@ -1667,7 +1678,7 @@ Task_t tlGruntRepelLand[] = {
 
 Schedule_t slGruntRepelLand[] = {
 	{tlGruntRepelLand,
-	 SIZE_OF_ARRAY(tlGruntRepelLand),
+	 SIZE_OF_ARRAY_AS_INT(tlGruntRepelLand),
 	 bits_COND_SEE_ENEMY | bits_COND_NEW_ENEMY | bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER | bits_SOUND_COMBAT | bits_SOUND_PLAYER,
 	 "Repel Land"},
@@ -2208,14 +2219,20 @@ Schedule_t* CHGrunt::GetScheduleOfType(int Type)
 		}
 		case SCHED_GRUNT_REPEL:
 		{
-			if ( pev->velocity.z > -128 )
-				pev->velocity.z -= 32;
+			if ( pev->velocity[VEC3_Z] > -128 )
+			{
+				pev->velocity[VEC3_Z] -= 32;
+			}
+
 			return &slGruntRepel[0];
 		}
 		case SCHED_GRUNT_REPEL_ATTACK:
 		{
-			if ( pev->velocity.z > -128 )
-				pev->velocity.z -= 32;
+			if ( pev->velocity[VEC3_Z] > -128 )
+			{
+				pev->velocity[VEC3_Z] -= 32;
+			}
+
 			return &slGruntRepelAttack[0];
 		}
 		case SCHED_GRUNT_REPEL_LAND:
@@ -2262,7 +2279,7 @@ void CHGruntRepel::Precache(void)
 void CHGruntRepel::RepelUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 {
 	TraceResult tr;
-	UTIL_TraceLine(pev->origin, pev->origin + Vector(0, 0, -4096.0), dont_ignore_monsters, ENT(pev), &tr);
+	UTIL_TraceLine(pev->origin, Vector(pev->origin) + Vector(0, 0, -4096.0), dont_ignore_monsters, ENT(pev), &tr);
 	/*
 	if( tr.pHit && Instance( tr.pHit )->pev->solid != SOLID_BSP )
 		return NULL;
@@ -2271,17 +2288,17 @@ void CHGruntRepel::RepelUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	CBaseEntity* pEntity = Create("monster_human_grunt", pev->origin, pev->angles);
 	CBaseMonster* pGrunt = pEntity->MyMonsterPointer();
 	pGrunt->pev->movetype = MOVETYPE_FLY;
-	pGrunt->pev->velocity = Vector(0, 0, RANDOM_FLOAT(-196, -128));
+	VectorCopy(Vector(0, 0, RANDOM_FLOAT(-196, -128)), pGrunt->pev->velocity);
 	pGrunt->SetActivity(ACT_GLIDE);
 	// UNDONE: position?
 	pGrunt->m_vecLastPosition = tr.vecEndPos;
 
 	CBeam* pBeam = CBeam::BeamCreate("sprites/rope.spr", 10);
-	pBeam->PointEntInit(pev->origin + Vector(0, 0, 112), pGrunt->entindex());
+	pBeam->PointEntInit(Vector(pev->origin) + Vector(0, 0, 112), pGrunt->entindex());
 	pBeam->SetFlags(BEAM_FSOLID);
 	pBeam->SetColor(255, 255, 255);
 	pBeam->SetThink(&CBaseEntity::SUB_Remove);
-	pBeam->pev->nextthink = gpGlobals->time + -4096.0f * tr.flFraction / pGrunt->pev->velocity.z + 0.5f;
+	pBeam->pev->nextthink = gpGlobals->time + -4096.0f * tr.flFraction / pGrunt->pev->velocity[VEC3_Z] + 0.5f;
 
 	UTIL_Remove(this);
 }

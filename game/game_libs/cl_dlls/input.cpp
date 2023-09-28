@@ -29,6 +29,7 @@ extern "C"
 #include <ctype.h>
 #include <stdlib.h>
 #include "PlatformLib/String.h"
+#include "MathLib/angles.h"
 
 extern "C"
 {
@@ -42,9 +43,6 @@ extern int g_iAlive;
 
 extern int g_weaponselect;
 extern cl_enginefunc_t gEngfuncs;
-
-// Defined in pm_math.c
-extern "C" float anglemod(float a);
 
 void IN_Init(void);
 void IN_Move(float frametime, usercmd_t* cmd);

@@ -13,6 +13,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
 #include "CRTLib/bitdefs.h"
 #include "Filesystem/filesystem.h"
 #include "common/common.h"
@@ -155,7 +157,7 @@ static int CL_CalcTabStop(const cl_font_t* font, int x)
 	return stop;
 }
 
-int CL_DrawCharacter(float x, float y, int number, rgba_t color, cl_font_t* font, int flags)
+int CL_DrawCharacter(float x, float y, int number, const rgba_t color, cl_font_t* font, int flags)
 {
 	wrect_t* rc;
 	float w, h;
@@ -220,7 +222,7 @@ int CL_DrawCharacter(float x, float y, int number, rgba_t color, cl_font_t* font
 	return font->charWidths[number];
 }
 
-int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font, int flags)
+int CL_DrawString(float x, float y, const char* s, const rgba_t color, cl_font_t* font, int flags)
 {
 	rgba_t current_color;
 	int draw_len = 0;
@@ -234,7 +236,7 @@ int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font
 	if ( !FBitSet(flags, FONT_DRAW_NORENDERMODE) )
 		ref.dllFuncs.GL_SetRenderMode(font->rendermode);
 
-	Vector4Copy(color, current_color);
+	RGBA_Copy(color, current_color);
 
 	while ( *s )
 	{
@@ -253,7 +255,10 @@ int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font
 			}
 
 			if ( FBitSet(flags, FONT_DRAW_RESETCOLORONLF) )
-				Vector4Copy(color, current_color);
+			{
+				RGBA_Copy(color, current_color);
+			}
+
 			continue;
 		}
 
@@ -261,7 +266,12 @@ int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font
 		{
 			// don't copy alpha
 			if ( !FBitSet(flags, FONT_DRAW_FORCECOL) )
-				VectorCopy(g_color_table[ColorIndex(*(s + 1))], current_color);
+			{
+				const byte* rgba = Con_GetColorFromTable(ColorIndex(*(s + 1)));
+				current_color[0] = rgba[0];
+				current_color[1] = rgba[1];
+				current_color[2] = rgba[2];
+			}
 
 			s += 2;
 			continue;
@@ -276,7 +286,7 @@ int CL_DrawString(float x, float y, const char* s, rgba_t color, cl_font_t* font
 	return draw_len;
 }
 
-int CL_DrawStringf(cl_font_t* font, float x, float y, rgba_t color, int flags, const char* fmt, ...)
+int CL_DrawStringf(cl_font_t* font, float x, float y, const rgba_t color, int flags, const char* fmt, ...)
 {
 	va_list va;
 	char buf[MAX_VA_STRING];

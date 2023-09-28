@@ -1141,8 +1141,8 @@ public:
 	void SetObjectCollisionBox(void)
 	{
 		//!!!BUGBUG - fix the model!
-		pev->absmin = pev->origin + Vector(-16, -16, -5);
-		pev->absmax = pev->origin + Vector(16, 16, 28);
+		(Vector(pev->origin) + Vector(-16, -16, -5)).CopyToArray(pev->absmin);
+		(Vector(pev->origin) + Vector(16, 16, 28)).CopyToArray(pev->absmax);
 	}
 
 	void PrimaryAttack(void);

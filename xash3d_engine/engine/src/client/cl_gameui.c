@@ -13,6 +13,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "MathLib/vec3.h"
+#include "MathLib/vec4.h"
+#include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "PlatformDefs/libnames.h"
 #include "common/common.h"
@@ -772,7 +775,7 @@ static int GAME_EXPORT UI_DrawConsoleString(int x, int y, const char* string)
 	if ( !string || !*string )
 		return 0;  // silent ignore
 	drawLen = Con_DrawString(x, y, string, gameui.ds.textColor);
-	MakeRGBA(gameui.ds.textColor, 255, 255, 255, 255);
+	RGBA_Set(gameui.ds.textColor, 255, 255, 255, 255);
 
 	return (x + drawLen);  // exclude color prexfixes
 }
