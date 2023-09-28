@@ -19,6 +19,7 @@
 #include "EnginePublicAPI/typedefs.h"
 #include "EnginePublicAPI/pm_info.h"
 #include "EnginePublicAPI/weaponinfo.h"
+#include "MathLib/vec3.h"
 
 // For entityType below
 #define ENTITY_NORMAL (1 << 0)
