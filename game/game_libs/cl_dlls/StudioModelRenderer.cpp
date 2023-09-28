@@ -567,7 +567,7 @@ void CStudioModelRenderer::StudioSetUpTransform(int trivial_accept)
 		(*m_protationmatrix)[1][3] = modelpos[1] - m_vRenderOrigin[1];
 		(*m_protationmatrix)[2][3] = modelpos[2] - m_vRenderOrigin[2];
 
-		Matrix3x4_ConcatTransforms((*m_protationmatrix), (*m_paliastransform), viewmatrix);
+		Matrix3x4_ConcatTransforms((*m_paliastransform), viewmatrix, (*m_protationmatrix));
 
 		// do the scaling up of x and y to screen coordinates as part of the transform
 		// for the unclipped case (it would mess up clipping in the clipped case).
@@ -984,16 +984,13 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		{
 			if ( IEngineStudio.IsHardware() )
 			{
-				Matrix3x4_ConcatTransforms(bonematrix, (*m_pbonetransform)[i], (*m_protationmatrix));
-
-				// MatrixCopy should be faster...
-				// Matrix3x4_ConcatTransforms( bonematrix, (*m_plighttransform)[i], (*m_protationmatrix) );
+				Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_protationmatrix), bonematrix);
 				Matrix3x4_Copy((*m_plighttransform)[i], (*m_pbonetransform)[i]);
 			}
 			else
 			{
-				Matrix3x4_ConcatTransforms(bonematrix, (*m_pbonetransform)[i], (*m_paliastransform));
-				Matrix3x4_ConcatTransforms(bonematrix, (*m_plighttransform)[i], (*m_protationmatrix));
+				Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_paliastransform), bonematrix);
+				Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_protationmatrix), bonematrix);
 			}
 
 			// Apply client-side effects to the transformation matrix
@@ -1001,8 +998,8 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		}
 		else
 		{
-			Matrix3x4_ConcatTransforms(bonematrix, (*m_pbonetransform)[i], (*m_pbonetransform)[pbones[i].parent]);
-			Matrix3x4_ConcatTransforms(bonematrix, (*m_plighttransform)[i], (*m_plighttransform)[pbones[i].parent]);
+			Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_pbonetransform)[pbones[i].parent], bonematrix);
+			Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_plighttransform)[pbones[i].parent], bonematrix);
 		}
 	}
 }
@@ -1092,16 +1089,13 @@ void CStudioModelRenderer::StudioMergeBones(model_t* subModel)
 			{
 				if ( IEngineStudio.IsHardware() )
 				{
-					Matrix3x4_ConcatTransforms(bonematrix, (*m_pbonetransform)[i], (*m_protationmatrix));
-
-					// MatrixCopy should be faster...
-					// Matrix3x4_ConcatTransforms( bonematrix, (*m_plighttransform)[i], (*m_protationmatrix) );
+					Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_protationmatrix), bonematrix);
 					Matrix3x4_Copy((*m_plighttransform)[i], (*m_pbonetransform)[i]);
 				}
 				else
 				{
-					Matrix3x4_ConcatTransforms(bonematrix, (*m_pbonetransform)[i], (*m_paliastransform));
-					Matrix3x4_ConcatTransforms(bonematrix, (*m_plighttransform)[i], (*m_protationmatrix));
+					Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_paliastransform), bonematrix);
+					Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_protationmatrix), bonematrix);
 				}
 
 				// Apply client-side effects to the transformation matrix
@@ -1109,8 +1103,8 @@ void CStudioModelRenderer::StudioMergeBones(model_t* subModel)
 			}
 			else
 			{
-				Matrix3x4_ConcatTransforms(bonematrix, (*m_pbonetransform)[i], (*m_pbonetransform)[pbones[i].parent]);
-				Matrix3x4_ConcatTransforms(bonematrix, (*m_plighttransform)[i], (*m_plighttransform)[pbones[i].parent]);
+				Matrix3x4_ConcatTransforms((*m_pbonetransform)[i], (*m_pbonetransform)[pbones[i].parent], bonematrix);
+				Matrix3x4_ConcatTransforms((*m_plighttransform)[i], (*m_plighttransform)[pbones[i].parent], bonematrix);
 			}
 		}
 	}
