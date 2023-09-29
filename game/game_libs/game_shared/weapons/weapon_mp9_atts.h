@@ -29,7 +29,7 @@ enum MP9Animations_e
 
 enum MP9AttackMode_e
 {
-	ATTACKMODE_NORMAL = 0
+	MP9_ATTACKMODE_NORMAL = 0
 };
 
 // Rounds per second:
@@ -37,11 +37,9 @@ static constexpr float MP9_FIRE_RATE = 12.0f;
 
 static constexpr CAmmoDef Ammo_MP9 = {
 	"ammo_mp9",  // ClassName
-	"ammodef_mp9",  // AmmoName
-
-	// NFTODO: Correct these
-	200,  // MaxCarry
-	32  // AmmoBoxGive
+	AMMOPOOL_9MM_NAME,  // AmmoName
+	AMMOPOOL_9MM_MAXCARRY,  // MaxCarry
+	AMMOPOOL_9MM_AMMOBOXGIVE  // AmmoBoxGive
 };
 
 static const WeaponAtts::WACollection StaticWeaponAttributes(

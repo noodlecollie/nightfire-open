@@ -24,14 +24,14 @@ enum P99Animations_e
 
 enum P99Body_e
 {
-	P99BODY_UNSILENCED = 0,
-	P99BODY_SILENCED
+	P99_BODY_UNSILENCED = 0,
+	P99_BODY_SILENCED
 };
 
 enum P99AttackMode_e
 {
-	ATTACKMODE_UNSILENCED = 0,
-	ATTACKMODE_SILENCED
+	P99_ATTACKMODE_UNSILENCED = 0,
+	P99_ATTACKMODE_SILENCED
 };
 
 // Rounds per second:
@@ -39,9 +39,9 @@ static constexpr float P99_FIRE_RATE = 6.0f;
 
 static constexpr CAmmoDef Ammo_P99 = {
 	"ammo_p99",  // ClassName
-	"ammodef_p99",  // AmmoName
-	200,  // MaxCarry
-	32  // AmmoBoxGive
+	AMMOPOOL_9MM_NAME,  // AmmoName
+	AMMOPOOL_9MM_MAXCARRY,  // MaxCarry
+	AMMOPOOL_9MM_AMMOBOXGIVE  // AmmoBoxGive
 };
 
 static const WeaponAtts::WACollection StaticWeaponAttributes(
@@ -121,7 +121,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		priAttack->ViewModelAnimList_Attack << P99_SHOOT;
 		priAttack->ViewModelAnimList_AttackEmpty << P99_SHOOT_EMPTY;
-		priAttack->ViewModelBodyOverride = P99BODY_UNSILENCED;
+		priAttack->ViewModelBodyOverride = P99_BODY_UNSILENCED;
 
 		priAttack->AttackSounds.MinVolume = 0.82f;
 		priAttack->AttackSounds.MaxVolume = 0.9f;
@@ -139,7 +139,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		secAttack->Volume = QUIET_GUN_VOLUME;
 		secAttack->MuzzleFlashBrightness = DIM_GUN_FLASH;
 
-		secAttack->ViewModelBodyOverride = P99BODY_SILENCED;
+		secAttack->ViewModelBodyOverride = P99_BODY_SILENCED;
 
 		secAttack->AttackSounds.MinVolume = 0.76f;
 		secAttack->AttackSounds.MaxVolume = 0.8f;

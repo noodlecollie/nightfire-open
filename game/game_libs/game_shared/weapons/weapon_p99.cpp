@@ -24,8 +24,8 @@ CWeaponP99::CWeaponP99() :
 	m_pAttackSilenced(nullptr),
 	m_bSilenced(false)
 {
-	m_pAttackSilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_SILENCED);
-	m_pAttackUnsilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_UNSILENCED);
+	m_pAttackSilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_SILENCED);
+	m_pAttackUnsilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_UNSILENCED);
 	SetPrimaryAttackMode(m_pAttackUnsilenced);
 }
 
@@ -39,10 +39,10 @@ void CWeaponP99::SecondaryAttack()
 	const int anim = m_bSilenced ? P99_REMOVE_SILENCER : P99_ADD_SILENCER;
 
 	// We must animate using the silenced body group in either case, so we can see the silencer.
-	SendWeaponAnim(anim, P99BODY_SILENCED);
+	SendWeaponAnim(anim, P99_BODY_SILENCED);
 
 	m_bSilenced = !m_bSilenced;
-	SetViewModelBody(m_bSilenced ? P99BODY_SILENCED : P99BODY_UNSILENCED);
+	SetViewModelBody(m_bSilenced ? P99_BODY_SILENCED : P99_BODY_UNSILENCED);
 	SetPrimaryAttackMode(m_bSilenced ? m_pAttackSilenced : m_pAttackUnsilenced);
 
 	DelayPendingActions(ViewModelAnimationDuration(anim));
@@ -61,7 +61,7 @@ bool CWeaponP99::ReadPredictionData(const weapon_data_t* from)
 		m_bSilenced = newSilencedState;
 
 		// The silenced state has changed, so immediately update the viewmodel body to be accurate.
-		SetViewModelBody(m_bSilenced ? P99BODY_SILENCED : P99BODY_UNSILENCED, true);
+		SetViewModelBody(m_bSilenced ? P99_BODY_SILENCED : P99_BODY_UNSILENCED, true);
 	}
 
 	return true;
