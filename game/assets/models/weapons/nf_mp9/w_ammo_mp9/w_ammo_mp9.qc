@@ -1,6 +1,6 @@
 $cd .
 $cdtexture "../../../../../content/nfopen/textures/mdl"
-$modelname "w_ammo_grenadelauncher.mdl"
+$modelname "w_ammo_mp9.mdl"
 
 $root "ammo"
 
@@ -14,9 +14,9 @@ $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
 $bodygroup "studio"
 {
-	studio "w_ammo_grenadelauncher_REFERENCE_ref"
+	studio "w_ammo_mp9_REFERENCE_ref"
 }
 
-$hbox 0 "ammo" -3.360000 -4.220000 -0.010000 3.370000 4.330000 8.540000
+$hbox 0 "ammo" -0.990000 -5.290000 -0.030000 1.050000 5.470000 1.000000
 
 $sequence "idle1" "idle1_ani"

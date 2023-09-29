@@ -1,8 +1,8 @@
 $cd .
 $cdtexture "../../../../../content/nfopen/textures/mdl"
-$modelname "w_ammo_grenadelauncher.mdl"
+$modelname "w_mp9.mdl"
 
-$root "ammo"
+$root "W_GUN"
 
 // No embedded textures
 $flags 2048
@@ -14,9 +14,9 @@ $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
 $bodygroup "studio"
 {
-	studio "w_ammo_grenadelauncher_REFERENCE_ref"
+	studio "W_MP9_reference_ref"
 }
 
-$hbox 0 "ammo" -3.360000 -4.220000 -0.010000 3.370000 4.330000 8.540000
+$hbox 0 "W_GUN" -0.450000 -10.030000 -7.890000 1.540000 8.240000 3.710000
 
-$sequence "idle1" "idle1_ani"
+$sequence "idle" "idle_ani"
