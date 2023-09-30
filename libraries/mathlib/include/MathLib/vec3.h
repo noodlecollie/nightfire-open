@@ -396,12 +396,12 @@ public:
 
 		if ( outSize >= 2 )
 		{
-			out[1] = x;
+			out[1] = y;
 		}
 
 		if ( outSize >= 3 )
 		{
-			out[2] = x;
+			out[2] = z;
 		}
 	}
 
