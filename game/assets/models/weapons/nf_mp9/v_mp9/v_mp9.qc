@@ -33,18 +33,16 @@ $sequence "2handed_idle2" "2handed_idle2_ani" fps 15
 $sequence "2handed_idle3" "2handed_idle3_ani" fps 15
 $sequence "2handed_fire" "2handed_fire_ani" {
 	event 5001 0 "21"
-	event 5004 0 "weapons/weapon_mp9/mp9_fire1.wav"
 }
 $sequence "2handed_alt_fire" "2handed_alt_fire_ani"
 $sequence "2handed_reload_full" "2handed_reload_full_ani" fps 45 {
-	event 5004 0 "weapons/weapon_mp9/mp9_reload.wav"
+	event 5005 0 "weapons/weapon_mp9/mp9_reload.wav"
 }
 $sequence "2handed_reload_empty" "2handed_reload_empty_ani" fps 45 {
-	event 5004 0 "weapons/weapon_mp9/mp9_reload_empty.wav"
-	event 5004 80 "weapons/weapon_mp9/mp9_slideback.wav"
+	event 5005 0 "weapons/weapon_mp9/mp9_reload_empty.wav"
 }
 $sequence "2handed_draw" "2handed_draw_ani" {
-	event 5004 0 "weapons/weapon_mp9/mp9_draw.wav"
+	event 5005 0 "weapons/weapon_mp9/mp9_draw.wav"
 }
 $sequence "2handed_holster" "2handed_holster_ani"
 $sequence "idle1" "idle1_ani" fps 15
@@ -57,13 +55,12 @@ $sequence "alt_fire" "alt_fire_ani" fps 15 {
 	event 1 0 ""
 }
 $sequence "reload_full" "reload_full_ani" fps 45 {
-	event 5004 0 "weapons/weapon_mp9/mp9_reload.wav"
+	event 5005 0 "weapons/weapon_mp9/mp9_reload.wav"
 }
 $sequence "reload_empty" "reload_empty_ani" fps 45 {
-	event 5004 0 "weapons/weapon_mp9/mp9_reload_empty.wav"
-	event 5004 81 "weapons/weapon_mp9/mp9_slideback.wav"
+	event 5005 0 "weapons/weapon_mp9/mp9_reload_empty.wav"
 }
 $sequence "draw" "draw_ani" {
-	event 5004 0 "weapons/weapon_mp9/mp9_draw.wav"
+	event 5005 0 "weapons/weapon_mp9/mp9_draw.wav"
 }
 $sequence "holster" "holster_ani" fps 15

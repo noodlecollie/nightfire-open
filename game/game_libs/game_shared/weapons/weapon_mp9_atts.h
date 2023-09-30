@@ -54,7 +54,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAAmmoDef& ammo = obj.Ammo;
 		ammo.PrimaryAmmo = &Ammo_MP9;
-		ammo.MaxClip = 16;
+		ammo.MaxClip = 32;
 		ammo.PrimaryAmmoOnFirstPickup = ammo.MaxClip;
 
 		WAViewModel& vm = obj.ViewModel;
