@@ -34,7 +34,8 @@ void CWeaponMP9::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
 	// NFTODO: Tune this properly
 	fightStyle.SetSecondaryFire(false);
 	fightStyle.RandomizeAimAtHead(50);
-	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 0.7f);
+	fightStyle.SetHoldDownAttack(true);
+	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.1f, 0.2f);
 }
 #endif
 

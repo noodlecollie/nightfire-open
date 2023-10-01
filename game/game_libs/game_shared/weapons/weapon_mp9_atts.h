@@ -33,7 +33,7 @@ enum MP9AttackMode_e
 };
 
 // Rounds per second:
-static constexpr float MP9_FIRE_RATE = 12.0f;
+static constexpr float MP9_FIRE_RATE = 13.0f;
 
 static constexpr CAmmoDef Ammo_MP9 = {
 	"ammo_mp9",  // ClassName
@@ -89,29 +89,27 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->ViewPunchY = -2.0f;
 		priAttack->ShellModelName = "models/shell.mdl";
 
-		// NFTODO: Calibrate the attributes below
+		AccuracyParameters& accuracy = priAttack->Accuracy;
+		accuracy.RestValue = 0.12f;
+		accuracy.RestSpread = Vector2D(0.007f, 0.007f);
+		accuracy.RunValue = 0.4f;
+		accuracy.RunSpread = Vector2D(0.04f, 0.04f);
+		accuracy.CrouchShift = -0.08f;
+		accuracy.AirShift = 0.06f;
+		accuracy.FallShift = 0.06f;
+		accuracy.AttackCoefficient = 0.2f;
+		accuracy.DecayCoefficient = 0.2f;
+		accuracy.FireImpulse = 0.02f;
+		accuracy.FireImpulseCeiling = 0.3f;
+		accuracy.FireImpulseHoldTime = 0.1f;
+		accuracy.FireImpulseDecayWindow = 0.0f;
+		accuracy.FireImpulseDecayMod = 1.0f;
 
-		// AccuracyParameters& accuracy = priAttack->Accuracy;
-		// accuracy.RestValue = 0.12f;
-		// accuracy.RestSpread = Vector2D(0.007f, 0.007f);
-		// accuracy.RunValue = 0.4f;
-		// accuracy.RunSpread = Vector2D(0.03f, 0.03f);
-		// accuracy.CrouchShift = -0.08f;
-		// accuracy.AirShift = 0.06f;
-		// accuracy.FallShift = 0.06f;
-		// accuracy.AttackCoefficient = 0.3f;
-		// accuracy.DecayCoefficient = 0.3f;
-		// accuracy.FireImpulse = 0.02f;
-		// accuracy.FireImpulseCeiling = 0.2f;
-		// accuracy.FireImpulseHoldTime = 0.2f;
-		// accuracy.FireImpulseDecayWindow = 0.0f;
-		// accuracy.FireImpulseDecayMod = 1.0f;
-
-		// CrosshairParameters& crosshair = priAttack->Crosshair;
-		// crosshair.BarScaleMin = 0.02f;
-		// crosshair.BarScaleMax = 0.02f;
-		// crosshair.RadiusMin = 0.01f;
-		// crosshair.RadiusMax = 0.02f;
+		CrosshairParameters& crosshair = priAttack->Crosshair;
+		crosshair.BarScaleMin = 0.02f;
+		crosshair.BarScaleMax = 0.02f;
+		crosshair.RadiusMin = 0.01f;
+		crosshair.RadiusMax = 0.025f;
 
 		priAttack->ViewModelAnimList_Attack << MP9_2HANDED_FIRE;
 
