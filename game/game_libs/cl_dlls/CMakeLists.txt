@@ -119,9 +119,12 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/weapon_l96a1.cpp
 	../game_shared/weapons/weapon_l96a1_atts.h
 	../game_shared/weapons/weapon_l96a1.h
-	../game_shared/weapons/weapon_p99.cpp
+	../game_shared/weapons/weapon_mp9_atts.h
+	../game_shared/weapons/weapon_mp9.h
+	../game_shared/weapons/weapon_mp9.cpp
 	../game_shared/weapons/weapon_p99_atts.h
 	../game_shared/weapons/weapon_p99.h
+	../game_shared/weapons/weapon_p99.cpp
 	../game_shared/weapons/weapon_pref_weights.h
 	../game_shared/weapons/weapon_raptor_atts.h
 	../game_shared/weapons/weapon_raptor.h

@@ -1,6 +1,6 @@
 $cd .
-$cdtexture "../../../../../nfopen/textures"
-$modelname "w_ammo_shotgun.mdl"
+$cdtexture "../../../../../content/nfopen/textures"
+$modelname "w_ammo_frinesi.mdl"
 
 $root "ammo"
 

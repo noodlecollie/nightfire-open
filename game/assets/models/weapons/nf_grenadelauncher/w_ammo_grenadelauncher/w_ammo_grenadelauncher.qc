@@ -1,5 +1,5 @@
 $cd .
-$cdtexture "../../../../../nfopen/textures"
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "w_ammo_grenadelauncher.mdl"
 
 $root "ammo"

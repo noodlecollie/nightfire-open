@@ -1,5 +1,5 @@
 $cd .
-$cdtexture "../../../../../nfopen/textures"
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "p_grenadelauncher.mdl"
 
 $root "Bip01"

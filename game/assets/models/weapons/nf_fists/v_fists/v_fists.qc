@@ -1,5 +1,5 @@
 $cd .
-$cdtexture "../../../../../nfopen/textures"
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "v_fists.mdl"
 
 $root "Bip01"

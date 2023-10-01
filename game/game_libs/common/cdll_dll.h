@@ -26,7 +26,7 @@
 #define MAX_ITEM_TYPES 6  // hud item selection slots
 
 // this is the max number of items in each bucket
-#define MAX_WEAPON_POSITIONS MAX_WEAPON_SLOTS
+#define MAX_WEAPON_POSITIONS 8
 
 #define MAX_ITEMS 5  // hard coded item types
 

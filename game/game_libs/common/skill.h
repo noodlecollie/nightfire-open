@@ -139,6 +139,7 @@ struct skilldata_t
 
 	// Nightfire weapon damage
 	float plrDmgP99;
+	float plrDmgMP9;
 	float plrDmgFrinesiAuto;
 	float plrDmgFrinesiPump;
 	float plrDmgRaptor;

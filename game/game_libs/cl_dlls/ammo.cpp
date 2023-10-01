@@ -106,7 +106,11 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 	client_sprite_t* pList = SPR_GetList(sz, &i);
 
 	if ( !pList )
+	{
+		gEngfuncs.Con_Printf("Error: %s does not exist for weapon %s\n", sz, pWeapon->szName);
+		ASSERTSZ(false, "Missing HUD sprites file for weapon");
 		return;
+	}
 
 	client_sprite_t* p;
 

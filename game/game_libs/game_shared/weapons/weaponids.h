@@ -9,6 +9,7 @@ enum class WeaponId_e
 	WeaponRaptor,
 	WeaponFists,
 	WeaponL96A1,
+	WeaponMP9,
 
 	// Debugging weapons
 	WeaponSilent
