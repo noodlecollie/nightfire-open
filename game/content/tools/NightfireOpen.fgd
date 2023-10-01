@@ -1630,14 +1630,14 @@
 
 @PointClass base(Targetname) = info_null : "info_null (spotlight target)" []
 
-@PointClass base(PlayerClass) model({ "path": "models/3rd_person.mdl" }) = info_player_coop : "Player cooperative start" []
-@PointClass base(PlayerClass, Sequence) model({ "path": "models/3rd_person.mdl" }) = info_player_deathmatch : "Player deathmatch start"
+@PointClass base(PlayerClass) size(-16 -16 -36, 16 16 36) = info_player_coop : "Player cooperative start" []
+@PointClass base(PlayerClass, Sequence) size(-16 -16 -36, 16 16 36) = info_player_deathmatch : "Player deathmatch start"
 [
 	target(target_destination) : "Target"
 	master(string) : "Master"
 ]
 
-@PointClass base(PlayerClass, Sequence) model({ "path": "models/3rd_person.mdl" }) = info_player_start : "Player 1 start" []
+@PointClass base(PlayerClass, Sequence) size(-16 -16 -36, 16 16 36) = info_player_start : "Player 1 start" []
 
 @PointClass base(Targetname) size(-4 -4 -4, 4 4 4) color(200 100 50) = info_target : "Beam Target" []
 @PointClass size(-8 -8 0, 8 8 16) base(PlayerClass, Targetname) = info_teleport_destination : "Teleport destination" []
@@ -2167,7 +2167,7 @@
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_p99/w_ammo_p99.mdl" }) = ammo_p99 : "P99 Pistol Ammo" []
 
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frinesi/w_frinesi.mdl" }) = weapon_frinesi : "Frinesi Shotgun" []
-@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frinesi/w_ammo_shotgun.mdl" }) = ammo_frinesi : "Frinesi Shotgun Ammo" []
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frinesi/w_ammo_frinesi.mdl" }) = ammo_frinesi : "Frinesi Shotgun Ammo" []
 
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_grenadelauncher/w_grenadelauncher.mdl" }) = weapon_grenadelauncher : "Militek Grenade Launcher" []
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_grenadelauncher/w_ammo_grenadelauncher.mdl" }) = ammo_grenadelauncher : "Militek Grenade Launcher Ammo" []
@@ -2177,3 +2177,6 @@
 
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_raptor/w_raptor.mdl" }) = weapon_raptor : "Raptor Magnum" []
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_raptor/w_ammo_raptor.mdl" }) = ammo_raptor : "Raptor Magnum Ammo" []
+
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_mp9/w_mp9.mdl" }) = weapon_mp9 : "Storm MP9" []
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_mp9/w_ammo_mp9.mdl" }) = ammo_mp9 : "Storm MP9 Ammo" []

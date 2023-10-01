@@ -1,4 +1,4 @@
 For now, these binaries are not kept alongside the game as they would just be a waste of space in the Git repo.
 
-Download the Windows map editor here: https://www.mediafire.com/file/t6nit0os8isqzpo/2021-04-15-TrenchBroom-x64-nfopen-4f2a50cdadd0f47031943d5970ed918b4e36bd8a.zip/file
-Download the Linux map editor here: https://www.mediafire.com/file/hm8kmx4bng38fmw/TrenchBroom-nfopen-Linux-4f2a50cdadd0f47031943d5970ed918b4e36bd8a.zip/file
+Download the Windows map editor here: https://www.mediafire.com/file/tzs52bmffmu9sli/2021-04-15-TrenchBroom-x64-nfopen-4f2a50cdadd0f47031943d5970ed918b4e36bd8a.zip/file
+Download the Linux map editor here: https://www.mediafire.com/file/lbl6jjz9rrhvyhw/TrenchBroom-nfopen-Linux-4f2a50cdadd0f47031943d5970ed918b4e36bd8a.zip/file
