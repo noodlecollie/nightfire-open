@@ -1949,6 +1949,27 @@ void NET_SendPacket(netsrc_t sock, size_t length, const void* data, netadr_t to)
 	NET_SendPacketEx(sock, length, data, to, 0);
 }
 
+static const char* FamilyName(int family)
+{
+	switch ( family )
+	{
+		case AF_INET:
+		{
+			return "AF_INET";
+		}
+
+		case AF_INET6:
+		{
+			return "AF_INET6";
+		}
+
+		default:
+		{
+			return "UNKNOWN";
+		}
+	}
+}
+
 /*
 ====================
 NET_IPSocket
@@ -1962,6 +1983,8 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 	dword _true = 1;
 	int pfamily = PF_INET;
 
+	Con_DPrintf("NET_IPSocket: Opening socket for %s:%d (%s)\n", net_iface, port, FamilyName(family));
+
 	if ( family == AF_INET6 )
 	{
 		pfamily = PF_INET6;
@@ -1972,9 +1995,14 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 	if ( NET_IsSocketError(net_socket) )
 	{
 		err = WSAGetLastError();
+
 		if ( err != WSAEAFNOSUPPORT )
 		{
-			Con_DPrintf(S_WARN "NET_UDPSocket: port: %d socket: %s\n", port, NET_ErrorString());
+			Con_DPrintf(
+				S_ERROR "NET_IPSocket: Could not open UDP socket %s:%d: %s\n",
+				net_iface,
+				port,
+				NET_ErrorString());
 		}
 
 		return INVALID_SOCKET;
@@ -1984,7 +2012,12 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 	{
 		struct timeval timeout;
 
-		Con_DPrintf(S_WARN "NET_UDPSocket: port: %d ioctl FIONBIO: %s\n", port, NET_ErrorString());
+		Con_DPrintf(
+			S_WARN "NET_IPSocket: Failed to set FIONBIO for UDP socket %s:%d: %s\n",
+			net_iface,
+			port,
+			NET_ErrorString());
+
 		// try timeout instead of NBIO
 		timeout.tv_sec = timeout.tv_usec = 0;
 		setsockopt(net_socket, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
@@ -1993,12 +2026,21 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 	// make it broadcast capable
 	if ( NET_IsSocketError(setsockopt(net_socket, SOL_SOCKET, SO_BROADCAST, (char*)&_true, sizeof(_true))) )
 	{
-		Con_DPrintf(S_WARN "NET_UDPSocket: port: %d setsockopt SO_BROADCAST: %s\n", port, NET_ErrorString());
+		Con_DPrintf(
+			S_WARN "NET_IPSocket: Failed to set SO_BROADCAST for UDP socket %s:%d: %s\n",
+			net_iface,
+			port,
+			NET_ErrorString());
 	}
 
 	if ( NET_IsSocketError(setsockopt(net_socket, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(optval))) )
 	{
-		Con_DPrintf(S_WARN "NET_UDPSocket: port: %d setsockopt SO_REUSEADDR: %s\n", port, NET_ErrorString());
+		Con_DPrintf(
+			S_ERROR "NET_IPSocket: Failed to set SO_REUSEADDR for UDP socket %s:%d: %s\n",
+			net_iface,
+			port,
+			NET_ErrorString());
+
 		closesocket(net_socket);
 		return INVALID_SOCKET;
 	}
@@ -2013,7 +2055,12 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 	{
 		if ( NET_IsSocketError(setsockopt(net_socket, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&_true, sizeof(_true))) )
 		{
-			Con_DPrintf(S_WARN "NET_UDPSocket: port: %d setsockopt IPV6_V6ONLY: %s\n", port, NET_ErrorString());
+			Con_DPrintf(
+				S_ERROR "NET_IPSocket: Failed to set IPV6_V6ONLY for UDP socket %s:%d: %s\n",
+				net_iface,
+				port,
+				NET_ErrorString());
+
 			closesocket(net_socket);
 			return INVALID_SOCKET;
 		}
@@ -2022,25 +2069,41 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 		{
 			if ( NET_IsSocketError(
 					 setsockopt(net_socket, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, (char*)&_true, sizeof(_true))) )
+			{
 				Con_DPrintf(
-					S_WARN "NET_UDPSocket: port %d setsockopt IPV6_MULTICAST_LOOP: %s\n",
+					S_WARN "NET_IPSocket: Failed to set IPV6_MULTICAST_LOOP for UDP socket %s:%d: %s\n",
+					net_iface,
 					port,
 					NET_ErrorString());
+			}
 		}
 
 		if ( COM_CheckStringEmpty(net_iface) && Q_stricmp(net_iface, "localhost") )
+		{
 			NET_StringToSockaddr(net_iface, &addr, false, AF_INET6);
+		}
 		else
+		{
 			memcpy(((struct sockaddr_in6*)&addr)->sin6_addr.s6_addr, &in6addr_any, sizeof(struct in6_addr));
+		}
 
 		if ( port == PORT_ANY )
+		{
 			((struct sockaddr_in6*)&addr)->sin6_port = 0;
+		}
 		else
+		{
 			((struct sockaddr_in6*)&addr)->sin6_port = htons((short)port);
+		}
 
 		if ( NET_IsSocketError(bind(net_socket, (struct sockaddr*)&addr, sizeof(struct sockaddr_in6))) )
 		{
-			Con_DPrintf(S_WARN "NET_UDPSocket: port: %d bind6: %s\n", port, NET_ErrorString());
+			Con_DPrintf(
+				S_ERROR "NET_IPSocket: Failed to bind IPv6 UDP socket %s:%d: %s\n",
+				net_iface,
+				port,
+				NET_ErrorString());
+
 			closesocket(net_socket);
 			return INVALID_SOCKET;
 		}
@@ -2055,8 +2118,16 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 			if ( NET_IsSocketError(setsockopt(net_socket, IPPROTO_IP, IP_TOS, (const char*)&optval, sizeof(optval))) )
 			{
 				err = WSAGetLastError();
+
 				if ( err != WSAENOPROTOOPT )
-					Con_Printf(S_WARN "NET_UDPSocket: port: %d  setsockopt IP_TOS: %s\n", port, NET_ErrorString());
+				{
+					Con_Printf(
+						S_ERROR "NET_IPSocket: Failed to set IP_TOS for UDP socket %s:%d: %s\n",
+						net_iface,
+						port,
+						NET_ErrorString());
+				}
+
 				closesocket(net_socket);
 				return INVALID_SOCKET;
 			}
@@ -2068,7 +2139,8 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 					 setsockopt(net_socket, IPPROTO_IP, IP_MULTICAST_LOOP, (char*)&_true, sizeof(_true))) )
 			{
 				Con_DPrintf(
-					S_WARN "NET_UDPSocket: port %d setsockopt IP_MULTICAST_LOOP: %s\n",
+					S_WARN "NET_IPSocket: Failed to set IP_MULTICAST_LOOP for UDP socket %s:%d: %s\n",
+					net_iface,
 					port,
 					NET_ErrorString());
 			}
@@ -2094,7 +2166,12 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 
 		if ( NET_IsSocketError(bind(net_socket, (struct sockaddr*)&addr, sizeof(struct sockaddr_in))) )
 		{
-			Con_DPrintf(S_WARN "NET_UDPSocket: port: %d bind: %s\n", port, NET_ErrorString());
+			Con_DPrintf(
+				S_WARN "NET_IPSocket: Failed to bind IPv4 UDP socket %s:%d: %s\n",
+				net_iface,
+				port,
+				NET_ErrorString());
+
 			closesocket(net_socket);
 			return INVALID_SOCKET;
 		}
