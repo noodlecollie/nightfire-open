@@ -2519,9 +2519,9 @@ void NET_Init(void)
 	net_address =
 		Cvar_Get("net_address", "0", FCVAR_PRIVILEGED | FCVAR_READ_ONLY, "contain local address of current client");
 	net_ipname = Cvar_Get("ip", "localhost", FCVAR_PRIVILEGED, "network ip address");
-	net_iphostport = Cvar_Get("ip_hostport", "0", FCVAR_READ_ONLY, "network ip host port");
+	net_iphostport = Cvar_Get("ip_hostport", "0", FCVAR_PRIVILEGED, "network ip host port");
 	net_hostport = Cvar_Getf("hostport", FCVAR_READ_ONLY, "network default host port", "%i", PORT_SERVER);
-	net_ipclientport = Cvar_Get("ip_clientport", "0", FCVAR_READ_ONLY, "network ip client port");
+	net_ipclientport = Cvar_Get("ip_clientport", "0", FCVAR_PRIVILEGED, "network ip client port");
 	net_clientport = Cvar_Getf("clientport", FCVAR_READ_ONLY, "network default client port", "%i", PORT_CLIENT);
 	net_fakelag =
 		Cvar_Get("fakelag", "0", FCVAR_PRIVILEGED, "lag all incoming network data (including loopback) by xxx ms.");
@@ -2529,8 +2529,8 @@ void NET_Init(void)
 
 	// cvar equivalents for IPv6
 	net_ip6name = Cvar_Get("ip6", "localhost", FCVAR_PRIVILEGED, "network ip6 address");
-	net_ip6hostport = Cvar_Get("ip6_hostport", "0", FCVAR_READ_ONLY, "network ip6 host port");
-	net_ip6clientport = Cvar_Get("ip6_clientport", "0", FCVAR_READ_ONLY, "network ip6 client port");
+	net_ip6hostport = Cvar_Get("ip6_hostport", "0", FCVAR_PRIVILEGED, "network ip6 host port");
+	net_ip6clientport = Cvar_Get("ip6_clientport", "0", FCVAR_PRIVILEGED, "network ip6 client port");
 	net6_address = Cvar_Get(
 		"net6_address",
 		"0",
