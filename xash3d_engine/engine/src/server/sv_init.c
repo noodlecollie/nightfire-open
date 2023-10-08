@@ -775,40 +775,49 @@ determine the game type and prepare clients
 */
 void SV_SetupClients(void)
 {
-	qboolean changed_maxclients = false;
-
 	// check if clients count was really changed
-	if ( svs.maxclients != (int)sv_maxclients->value )
-		changed_maxclients = true;
-
-	if ( !changed_maxclients )
+	if ( svs.maxclients == (int)sv_maxclients->value )
+	{
 		return;  // nothing to change
+	}
 
 	// if clients count was changed we need to run full shutdown procedure
 	if ( svs.maxclients )
+	{
 		Host_ShutdownServer();
+	}
 
 	// copy the actual value from cvar
 	svs.maxclients = (int)sv_maxclients->value;
 
-	// dedicated servers are can't be single player and are usually DM
+	// dedicated servers can't be single player and are usually DM
 	if ( Host_IsDedicated() )
+	{
 		svs.maxclients = bound(4, svs.maxclients, MAX_CLIENTS);
+	}
 	else
+	{
 		svs.maxclients = bound(1, svs.maxclients, MAX_CLIENTS);
+	}
 
-	if ( svs.maxclients == 1 )
+	if ( svs.maxclients < 2 )
+	{
 		Cvar_SetValue("deathmatch", 0.0f);
+	}
 	else
+	{
 		Cvar_SetValue("deathmatch", 1.0f);
+	}
 
-	// make cvars consistant
+	// make cvars consistent
 	if ( coop.value )
+	{
 		Cvar_SetValue("deathmatch", 0.0f);
+	}
 
 	// feedback for cvar
 	Cvar_FullSet("maxplayers", va("%d", svs.maxclients), FCVAR_LATCH);
-	SV_UPDATE_BACKUP = (svs.maxclients == 1) ? SINGLEPLAYER_BACKUP : MULTIPLAYER_BACKUP;
+	SV_UPDATE_BACKUP = (svs.maxclients < 2) ? SINGLEPLAYER_BACKUP : MULTIPLAYER_BACKUP;
 
 	svs.clients = Z_Realloc(svs.clients, sizeof(sv_client_t) * svs.maxclients);
 	svs.num_client_entities = svs.maxclients * SV_UPDATE_BACKUP * NUM_PACKET_ENTITIES;
@@ -818,7 +827,7 @@ void SV_SetupClients(void)
 		Q_memprint((float)(sizeof(entity_state_t) * svs.num_client_entities)));
 
 	// init network stuff
-	NET_Config((svs.maxclients > 1), true);
+	NET_ConfigureSockets(svs.maxclients > 1 ? NET_CONFIG_ALL_SOCKETS : NET_CONFIG_NO_SOCKETS, true);
 	svgame.numEntities = svs.maxclients + 1;  // clients + world
 	ClearBits(sv_maxclients->flags, FCVAR_CHANGED);
 }

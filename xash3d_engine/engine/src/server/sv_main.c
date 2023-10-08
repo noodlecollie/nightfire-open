@@ -1183,25 +1183,33 @@ void SV_Shutdown(const char* finalmsg)
 	{
 		// drop the client if want to load a new map
 		if ( CL_IsPlaybackDemo() )
+		{
 			CL_Drop();
+		}
 
 		SV_UnloadProgs();
 		return;
 	}
 
 	if ( COM_CheckString(finalmsg) )
+	{
 		Con_Printf("%s", finalmsg);
+	}
 
 	// rcon will be disconnected
 	SV_EndRedirect();
 
 	if ( svs.clients )
+	{
 		SV_FinalMessage(finalmsg, false);
+	}
 
 	if ( public_server.value && svs.maxclients != 1 )
+	{
 		NET_MasterShutdown();
+	}
 
-	NET_Config(false, false);
+	NET_CloseAllSockets();
 	SV_UnloadProgs();
 	CL_Drop();
 
