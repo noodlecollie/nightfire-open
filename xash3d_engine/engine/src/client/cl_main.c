@@ -2367,7 +2367,7 @@ void CL_LocalServers_f(void)
 {
 	netadr_t adr;
 
-	Con_Printf("Scanning for servers on the local network area...\n");
+	Con_Printf("Scanning for servers on the local network (port %d)...\n", PORT_SERVER);
 	NET_Config(true, true);  // allow remote
 
 	// send a broadcast packet
@@ -2419,7 +2419,7 @@ void CL_InternetServers_f(void)
 
 	len = CL_BuildMasterServerScanRequest(fullquery, sizeof(fullquery), nat);
 
-	Con_Printf("Scanning for servers on the internet area...\n");
+	Con_Printf("Scanning for servers on the internet...\n");
 
 	NET_Config(true, true);  // allow remote
 
