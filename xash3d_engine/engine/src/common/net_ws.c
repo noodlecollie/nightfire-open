@@ -2406,8 +2406,8 @@ void NET_ConfigureSockets(net_config_sockets_t socketSet, qboolean changeport)
 		// validate sockets for dedicated
 		if ( Host_IsDedicated() )
 		{
-			const qboolean nov4 = net.allow_ip && ip4ServerSocketOpened;
-			const qboolean nov6 = net.allow_ip6 && ip6ServerSocketOpened;
+			const qboolean nov4 = net.allow_ip && !ip4ServerSocketOpened;
+			const qboolean nov6 = net.allow_ip6 && !ip6ServerSocketOpened;
 
 			if ( nov4 && nov6 )
 			{
