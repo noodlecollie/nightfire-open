@@ -195,9 +195,12 @@ Informs all masters that this server is going down
 */
 void NET_MasterShutdown(void)
 {
-	NET_Config(true, false);  // allow remote
+	NET_ConfigureSockets(NET_CurrentOpenSockets() | NET_CONFIG_SERVER_SOCKET, false);  // allow remote
+
 	while ( NET_SendToMasters(NS_SERVER, 2, "\x62\x0A") )
-		;
+	{
+		// Wait
+	}
 }
 
 /*
@@ -208,12 +211,12 @@ NET_GetMasterFromAdr
 */
 static master_t* NET_GetMasterFromAdr(netadr_t adr)
 {
-	master_t* master;
-
-	for ( master = ml.list; master; master = master->next )
+	for ( master_t* master = ml.list; master; master = master->next )
 	{
 		if ( NET_CompareAdr(adr, master->adr) )
+		{
 			return master;
+		}
 	}
 
 	return NULL;

@@ -2053,7 +2053,7 @@ void CL_Connect_f(void)
 		Host_ShutdownServer();
 	}
 
-	NET_Config(true, !CVAR_TO_BOOL(cl_nat));  // allow remote
+	NET_ConfigureSockets(NET_CurrentOpenSockets() | NET_CONFIG_CLIENT_SOCKET, !CVAR_TO_BOOL(cl_nat));  // allow remote
 
 	Con_Printf("server %s\n", server);
 	CL_Disconnect();
@@ -2100,7 +2100,7 @@ void CL_Rcon_f(void)
 	message[3] = (char)((unsigned char)0xFF);
 	message[4] = 0;
 
-	NET_Config(true, false);  // allow remote
+	NET_ConfigureSockets(NET_CurrentOpenSockets() | NET_CONFIG_CLIENT_SOCKET, false);  // allow remote
 
 	Q_strcat(message, sizeof(message), "rcon ");
 	Q_strcat(message, sizeof(message), rcon_password.string);
@@ -2126,8 +2126,11 @@ void CL_Rcon_f(void)
 		}
 
 		NET_StringToAdr(rcon_address->string, &to);
+
 		if ( to.port == 0 )
+		{
 			to.port = MSG_BigShort(PORT_SERVER);
+		}
 	}
 
 	NET_SendPacket(NS_CLIENT, strlen(message) + 1, message, to);
@@ -2371,7 +2374,7 @@ void CL_LocalServers_f(void)
 	netadr_t adr;
 
 	Con_Printf("Scanning for servers on the local network (port %d)...\n", PORT_SERVER);
-	NET_Config(true, true);  // allow remote
+	NET_ConfigureSockets(NET_CurrentOpenSockets() | NET_CONFIG_CLIENT_SOCKET, true);  // allow remote
 
 	// send a broadcast packet
 	adr.ip.ip4.type = NA_BROADCAST;
@@ -2424,7 +2427,7 @@ void CL_InternetServers_f(void)
 
 	Con_Printf("Scanning for servers on the internet...\n");
 
-	NET_Config(true, true);  // allow remote
+	NET_ConfigureSockets(NET_CurrentOpenSockets() | NET_CONFIG_CLIENT_SOCKET, true);  // allow remote
 
 	cls.internetservers_wait = NET_SendToMasters(NS_CLIENT, len, fullquery);
 	cls.internetservers_pending = true;
@@ -3025,7 +3028,7 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 			}
 			else if ( clgame.request_type == NET_REQUEST_GAMEUI )
 			{
-				NET_Config(true, false);  // allow remote
+				NET_ConfigureSockets(NET_CurrentOpenSockets() | NET_CONFIG_CLIENT_SOCKET, false);  // allow remote
 				Netchan_OutOfBandPrint(NS_CLIENT, servadr, "info %i", PROTOCOL_VERSION);
 			}
 		}

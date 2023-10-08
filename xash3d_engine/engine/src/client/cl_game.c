@@ -3439,79 +3439,31 @@ int TriSpriteTexture(model_t* pSpriteModel, int frame)
 	return 1;
 }
 
-/*
-=================
-DemoApi implementation
-
-=================
-*/
-/*
-=================
-Demo_IsRecording
-
-=================
-*/
 static int GAME_EXPORT Demo_IsRecording(void)
 {
 	return cls.demorecording;
 }
 
-/*
-=================
-Demo_IsPlayingback
-
-=================
-*/
 static int GAME_EXPORT Demo_IsPlayingback(void)
 {
 	return cls.demoplayback;
 }
 
-/*
-=================
-Demo_IsTimeDemo
-
-=================
-*/
 static int GAME_EXPORT Demo_IsTimeDemo(void)
 {
 	return cls.timedemo;
 }
 
-/*
-=================
-Demo_WriteBuffer
-
-=================
-*/
 static void GAME_EXPORT Demo_WriteBuffer(int size, byte* buffer)
 {
 	CL_WriteDemoUserMessage(buffer, size);
 }
 
-/*
-=================
-NetworkApi implementation
-
-=================
-*/
-/*
-=================
-NetAPI_InitNetworking
-
-=================
-*/
 void GAME_EXPORT NetAPI_InitNetworking(void)
 {
-	NET_Config(true, false);  // allow remote
+	NET_ConfigureSockets(NET_CONFIG_ALL_SOCKETS, false);  // allow remote
 }
 
-/*
-=================
-NetAPI_InitNetworking
-
-=================
-*/
 void GAME_EXPORT NetAPI_Status(net_status_t* status)
 {
 	qboolean connected = false;
@@ -3534,12 +3486,6 @@ void GAME_EXPORT NetAPI_Status(net_status_t* status)
 	status->rate = rate->value;
 }
 
-/*
-=================
-NetAPI_SendRequest
-
-=================
-*/
 void GAME_EXPORT NetAPI_SendRequest(
 	int context,
 	int request,
@@ -3622,12 +3568,6 @@ void GAME_EXPORT NetAPI_SendRequest(
 	}
 }
 
-/*
-=================
-NetAPI_CancelRequest
-
-=================
-*/
 void GAME_EXPORT NetAPI_CancelRequest(int context)
 {
 	net_request_t* nr;
@@ -3661,12 +3601,6 @@ void GAME_EXPORT NetAPI_CancelRequest(int context)
 	}
 }
 
-/*
-=================
-NetAPI_CancelAllRequests
-
-=================
-*/
 void GAME_EXPORT NetAPI_CancelAllRequests(void)
 {
 	net_request_t* nr;
@@ -3688,67 +3622,31 @@ void GAME_EXPORT NetAPI_CancelAllRequests(void)
 	clgame.master_request = NULL;
 }
 
-/*
-=================
-NetAPI_AdrToString
-
-=================
-*/
 const char* NetAPI_AdrToString(netadr_t* a)
 {
 	return NET_AdrToString(*a);
 }
 
-/*
-=================
-NetAPI_CompareAdr
-
-=================
-*/
 int GAME_EXPORT NetAPI_CompareAdr(netadr_t* a, netadr_t* b)
 {
 	return NET_CompareAdr(*a, *b);
 }
 
-/*
-=================
-NetAPI_StringToAdr
-
-=================
-*/
 int GAME_EXPORT NetAPI_StringToAdr(char* s, netadr_t* a)
 {
 	return NET_StringToAdr(s, a);
 }
 
-/*
-=================
-NetAPI_ValueForKey
-
-=================
-*/
 const char* NetAPI_ValueForKey(const char* s, const char* key)
 {
 	return Info_ValueForKey(s, key);
 }
 
-/*
-=================
-NetAPI_RemoveKey
-
-=================
-*/
 void GAME_EXPORT NetAPI_RemoveKey(char* s, const char* key)
 {
 	Info_RemoveKey(s, key);
 }
 
-/*
-=================
-NetAPI_SetValueForKey
-
-=================
-*/
 void GAME_EXPORT NetAPI_SetValueForKey(char* s, const char* key, const char* value, int maxsize)
 {
 	if ( key[0] == '*' )
@@ -3756,52 +3654,21 @@ void GAME_EXPORT NetAPI_SetValueForKey(char* s, const char* key, const char* val
 	Info_SetValueForStarKey(s, key, value, maxsize);
 }
 
-/*
-=================
-IVoiceTweak implementation
-
-TODO: implement
-=================
-*/
-/*
-=================
-Voice_StartVoiceTweakMode
-
-=================
-*/
 int GAME_EXPORT Voice_StartVoiceTweakMode(void)
 {
 	return 0;
 }
 
-/*
-=================
-Voice_EndVoiceTweakMode
-
-=================
-*/
 void GAME_EXPORT Voice_EndVoiceTweakMode(void)
 {
 }
 
-/*
-=================
-Voice_SetControlFloat
-
-=================
-*/
 void GAME_EXPORT Voice_SetControlFloat(VoiceTweakControl iControl, float value)
 {
 	(void)iControl;
 	(void)value;
 }
 
-/*
-=================
-Voice_GetControlFloat
-
-=================
-*/
 float GAME_EXPORT Voice_GetControlFloat(VoiceTweakControl iControl)
 {
 	(void)iControl;

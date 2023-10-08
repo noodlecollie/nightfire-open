@@ -129,6 +129,8 @@ static convar_t* net_ip6hostport;
 static convar_t* net_ip6clientport;
 static convar_t* net6_address;
 
+static net_config_sockets_t g_CurrentOpenSockets = NET_CONFIG_NO_SOCKETS;
+
 /*
 ====================
 NET_ErrorString
@@ -2180,23 +2182,17 @@ static int NET_IPSocket(const char* net_iface, int port, int family)
 	return net_socket;
 }
 
-/*
-====================
-NET_OpenIP
-====================
-*/
-static void
-NET_OpenIP(qboolean change_port, int* sockets, const char* net_iface, int hostport, int clientport, int family)
+static qboolean NET_OpenServerIP(qboolean change_port, int* sockets, const char* net_iface, int hostport, int family)
 {
-	int port;
 	qboolean sv_nat = Cvar_VariableInteger("sv_nat");
-	qboolean cl_nat = Cvar_VariableInteger("cl_nat");
 
 	if ( change_port && (FBitSet(net_hostport->flags, FCVAR_CHANGED) || sv_nat) )
 	{
 		// reopen socket to set random port
 		if ( NET_IsSocketValid(sockets[NS_SERVER]) )
+		{
 			closesocket(sockets[NS_SERVER]);
+		}
 
 		sockets[NS_SERVER] = INVALID_SOCKET;
 		ClearBits(net_hostport->flags, FCVAR_CHANGED);
@@ -2204,30 +2200,27 @@ NET_OpenIP(qboolean change_port, int* sockets, const char* net_iface, int hostpo
 
 	if ( !NET_IsSocketValid(sockets[NS_SERVER]) )
 	{
-		port = hostport;
-		if ( !port )
+		if ( !hostport )
 		{
-			port = sv_nat ? PORT_ANY : (int)net_hostport->value;
+			hostport = sv_nat ? PORT_ANY : (int)net_hostport->value;
 
-			if ( !port )
+			if ( !hostport )
 			{
-				port = PORT_SERVER;  // forcing to default
+				hostport = PORT_SERVER;  // forcing to default
 			}
 		}
 
-		Con_DPrintf("NET_OpenIP: Attempting to open \"server\" socket\n");
+		Con_DPrintf("Net_OpenServerIP: Attempting to open server socket on port %d\n", hostport);
 
-		sockets[NS_SERVER] = NET_IPSocket(net_iface, port, family);
-
-		if ( !NET_IsSocketValid(sockets[NS_SERVER]) && Host_IsDedicated() )
-		{
-			return;
-		}
+		sockets[NS_SERVER] = NET_IPSocket(net_iface, hostport, family);
 	}
 
-	// dedicated servers don't need client ports
-	if ( Host_IsDedicated() )
-		return;
+	return NET_IsSocketValid(sockets[NS_SERVER]) && !NET_IsSocketError(sockets[NS_SERVER]);
+}
+
+static qboolean NET_OpenClientIP(qboolean change_port, int* sockets, const char* net_iface, int clientport, int family)
+{
+	qboolean cl_nat = Cvar_VariableInteger("cl_nat");
 
 	if ( change_port && (FBitSet(net_clientport->flags, FCVAR_CHANGED) || cl_nat) )
 	{
@@ -2243,29 +2236,29 @@ NET_OpenIP(qboolean change_port, int* sockets, const char* net_iface, int hostpo
 
 	if ( !NET_IsSocketValid(sockets[NS_CLIENT]) )
 	{
-		port = clientport;
-		if ( !port )
+		if ( !clientport )
 		{
-			port = cl_nat ? PORT_ANY : (int)net_clientport->value;
+			clientport = cl_nat ? PORT_ANY : (int)net_clientport->value;
 
-			if ( !port )
+			if ( !clientport )
 			{
-				port = PORT_ANY;  // forcing to default
+				clientport = PORT_ANY;  // forcing to default
 			}
 		}
 
-		Con_DPrintf("NET_OpenIP: Attempting to open \"client\" socket\n");
+		Con_DPrintf("Net_OpenClientIP: Attempting to open client socket on port %d\n", clientport);
 
-		sockets[NS_CLIENT] = NET_IPSocket(net_iface, port, family);
+		sockets[NS_CLIENT] = NET_IPSocket(net_iface, clientport, family);
 
 		if ( !NET_IsSocketValid(sockets[NS_CLIENT]) )
 		{
-			Con_DPrintf("NET_OpenIP: Failed to open \"client\" socket, trying again with flexible port assignment\n");
+			Con_DPrintf("Net_OpenClientIP: Failed to open client socket, trying again with flexible port assignment\n");
+
 			sockets[NS_CLIENT] = NET_IPSocket(net_ipname->string, PORT_ANY, family);
 		}
 	}
 
-	return;
+	return NET_IsSocketValid(sockets[NS_CLIENT]) && !NET_IsSocketError(sockets[NS_CLIENT]);
 }
 
 /*
@@ -2368,95 +2361,158 @@ void NET_GetLocalAddress(void)
 
 /*
 ====================
-NET_Config
+NET_ConfigureSockets
 
 A single player game will only use the loopback code
 ====================
 */
-void NET_Config(qboolean multiplayer, qboolean changeport)
+void NET_ConfigureSockets(net_config_sockets_t socketSet, qboolean changeport)
 {
-	static qboolean bFirst = true;
-	static qboolean old_config;
+	static qboolean firstTimeServerSocketIsOpened = true;
 
 	if ( !net.initialized )
 	{
 		return;
 	}
 
-	if ( old_config == multiplayer )
+	if ( socketSet == g_CurrentOpenSockets )
 	{
 		return;
 	}
 
-	old_config = multiplayer;
-
-	if ( multiplayer )
+	if ( socketSet & NET_CONFIG_SERVER_SOCKET )
 	{
-		// open sockets
+		// Open server sockets
+
+		qboolean ip4ServerSocketOpened = false;
+		qboolean ip6ServerSocketOpened = false;
+
 		if ( net.allow_ip )
-			NET_OpenIP(
-				changeport,
-				net.ip_sockets,
-				net_ipname->string,
-				(int)net_iphostport->value,
-				(int)net_ipclientport->value,
-				AF_INET);
+		{
+			ip4ServerSocketOpened =
+				NET_OpenServerIP(changeport, net.ip_sockets, net_ipname->string, (int)net_iphostport->value, AF_INET);
+		}
 
 		if ( net.allow_ip6 )
-			NET_OpenIP(
+		{
+			ip6ServerSocketOpened = NET_OpenServerIP(
 				changeport,
 				net.ip6_sockets,
 				net_ip6name->string,
 				(int)net_ip6hostport->value,
-				(int)net_ip6clientport->value,
 				AF_INET6);
+		}
 
 		// validate sockets for dedicated
 		if ( Host_IsDedicated() )
 		{
-			qboolean nov4, nov6;
-			nov4 = net.allow_ip && NET_IsSocketError(net.ip_sockets[NS_SERVER]);
-			nov6 = net.allow_ip6 && NET_IsSocketError(net.ip6_sockets[NS_SERVER]);
+			const qboolean nov4 = net.allow_ip && ip4ServerSocketOpened;
+			const qboolean nov6 = net.allow_ip6 && ip6ServerSocketOpened;
 
 			if ( nov4 && nov6 )
-				Host_Error("Couldn't allocate IPv4 and IPv6 server ports.");
+			{
+				Host_Error("Couldn't open IPv4 or IPv6 server ports.");
+			}
 			else if ( nov4 && !nov6 )
-				Con_Printf(S_ERROR "Couldn't allocate IPv4 server port");
+			{
+				Con_Printf(S_ERROR "Couldn't open IPv4 server port.");
+			}
 			else if ( !nov4 && nov6 )
-				Con_Printf(S_ERROR "Couldn't allocate IPv6 server_port");
+			{
+				Con_Printf(S_ERROR "Couldn't open IPv6 server port.");
+			}
 		}
 
-		// get our local address, if possible
-		if ( bFirst )
+		if ( ip4ServerSocketOpened || ip6ServerSocketOpened )
 		{
-			NET_GetLocalAddress();
-			bFirst = false;
+			g_CurrentOpenSockets |= NET_CONFIG_SERVER_SOCKET;
+
+			if ( firstTimeServerSocketIsOpened )
+			{
+				// get our local address, if possible
+				NET_GetLocalAddress();
+				firstTimeServerSocketIsOpened = false;
+			}
 		}
 	}
 	else
 	{
-		int i;
+		// Close server sockets
 
-		// shut down any existing sockets
-		for ( i = 0; i < NS_COUNT; i++ )
+		if ( NET_IsSocketValid(net.ip_sockets[NS_SERVER]) )
 		{
-			if ( NET_IsSocketValid(net.ip_sockets[i]) )
-			{
-				closesocket(net.ip_sockets[i]);
-				net.ip_sockets[i] = INVALID_SOCKET;
-			}
-
-			if ( NET_IsSocketValid(net.ip6_sockets[i]) )
-			{
-				closesocket(net.ip6_sockets[i]);
-				net.ip6_sockets[i] = INVALID_SOCKET;
-			}
+			closesocket(net.ip_sockets[NS_SERVER]);
+			net.ip_sockets[NS_SERVER] = INVALID_SOCKET;
 		}
+
+		if ( NET_IsSocketValid(net.ip6_sockets[NS_SERVER]) )
+		{
+			closesocket(net.ip6_sockets[NS_SERVER]);
+			net.ip6_sockets[NS_SERVER] = INVALID_SOCKET;
+		}
+
+		g_CurrentOpenSockets &= ~NET_CONFIG_SERVER_SOCKET;
+	}
+
+	if ( (socketSet & NET_CONFIG_CLIENT_SOCKET) && !Host_IsDedicated() )
+	{
+		// Open client sockets
+
+		qboolean ip4ClientSocketOpened = false;
+		qboolean ip6ClientSocketOpened = false;
+
+		if ( net.allow_ip )
+		{
+			ip4ClientSocketOpened =
+				NET_OpenClientIP(changeport, net.ip_sockets, net_ipname->string, (int)net_ipclientport->value, AF_INET);
+		}
+
+		if ( net.allow_ip6 )
+		{
+			ip6ClientSocketOpened = NET_OpenClientIP(
+				changeport,
+				net.ip6_sockets,
+				net_ip6name->string,
+				(int)net_ip6clientport->value,
+				AF_INET6);
+		}
+
+		if ( ip4ClientSocketOpened || ip6ClientSocketOpened )
+		{
+			g_CurrentOpenSockets |= NET_CONFIG_CLIENT_SOCKET;
+		}
+	}
+	else
+	{
+		// Close client sockets
+
+		if ( NET_IsSocketValid(net.ip_sockets[NS_CLIENT]) )
+		{
+			closesocket(net.ip_sockets[NS_CLIENT]);
+			net.ip_sockets[NS_CLIENT] = INVALID_SOCKET;
+		}
+
+		if ( NET_IsSocketValid(net.ip6_sockets[NS_CLIENT]) )
+		{
+			closesocket(net.ip6_sockets[NS_CLIENT]);
+			net.ip6_sockets[NS_CLIENT] = INVALID_SOCKET;
+		}
+
+		g_CurrentOpenSockets &= ~NET_CONFIG_CLIENT_SOCKET;
 	}
 
 	NET_ClearLoopback();
+	net.configured = socketSet != NET_CONFIG_NO_SOCKETS;
+}
 
-	net.configured = multiplayer ? true : false;
+void NET_CloseAllSockets(void)
+{
+	NET_ConfigureSockets(NET_CONFIG_NO_SOCKETS, false);
+}
+
+net_config_sockets_t NET_CurrentOpenSockets(void)
+{
+	return g_CurrentOpenSockets;
 }
 
 /*
@@ -2520,9 +2576,14 @@ clear fakelag list
 void NET_ClearLagData(qboolean bClient, qboolean bServer)
 {
 	if ( bClient )
+	{
 		NET_ClearLaggedList(&net.lagdata[NS_CLIENT]);
+	}
+
 	if ( bServer )
+	{
 		NET_ClearLaggedList(&net.lagdata[NS_SERVER]);
+	}
 }
 
 /*
@@ -2617,14 +2678,17 @@ NET_Shutdown
 void NET_Shutdown(void)
 {
 	if ( !net.initialized )
+	{
 		return;
+	}
 
 	NET_ClearLagData(true, true);
+	NET_CloseAllSockets();
 
-	NET_Config(false, false);
 #if XASH_WIN32()
 	WSACleanup();
 #endif
+
 	net.initialized = false;
 }
 

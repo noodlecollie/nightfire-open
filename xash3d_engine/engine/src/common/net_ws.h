@@ -30,6 +30,14 @@ typedef enum
 	NET_EAI_AGAIN = 2
 } net_gai_state_t;
 
+typedef enum
+{
+	NET_CONFIG_SERVER_SOCKET = (1 << 0),
+	NET_CONFIG_CLIENT_SOCKET = (1 << 1),
+	NET_CONFIG_ALL_SOCKETS = (NET_CONFIG_SERVER_SOCKET | NET_CONFIG_CLIENT_SOCKET),
+	NET_CONFIG_NO_SOCKETS = 0
+} net_config_sockets_t;
+
 // Max length of unreliable message
 #define MAX_DATAGRAM 16384
 
@@ -52,7 +60,9 @@ void NET_Shutdown(void);
 void NET_Sleep(int msec);
 qboolean NET_IsActive(void);
 qboolean NET_IsConfigured(void);
-void NET_Config(qboolean net_enable, qboolean changeport);
+void NET_ConfigureSockets(net_config_sockets_t socketSet, qboolean changeport);
+void NET_CloseAllSockets(void);
+net_config_sockets_t NET_CurrentOpenSockets(void);
 qboolean NET_IsLocalAddress(netadr_t adr);
 const char* NET_AdrToString(const netadr_t a);
 const char* NET_BaseAdrToString(const netadr_t a);
