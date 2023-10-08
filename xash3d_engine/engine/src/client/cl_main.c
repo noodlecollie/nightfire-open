@@ -2049,7 +2049,10 @@ void CL_Connect_f(void)
 
 	// if running a local server, kill it and reissue
 	if ( SV_Active() )
+	{
 		Host_ShutdownServer();
+	}
+
 	NET_Config(true, !CVAR_TO_BOOL(cl_nat));  // allow remote
 
 	Con_Printf("server %s\n", server);

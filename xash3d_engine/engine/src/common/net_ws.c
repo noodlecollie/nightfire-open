@@ -2216,6 +2216,7 @@ NET_OpenIP(qboolean change_port, int* sockets, const char* net_iface, int hostpo
 		}
 
 		Con_DPrintf("NET_OpenIP: Attempting to open \"server\" socket\n");
+
 		sockets[NS_SERVER] = NET_IPSocket(net_iface, port, family);
 
 		if ( !NET_IsSocketValid(sockets[NS_SERVER]) && Host_IsDedicated() )
@@ -2254,6 +2255,7 @@ NET_OpenIP(qboolean change_port, int* sockets, const char* net_iface, int hostpo
 		}
 
 		Con_DPrintf("NET_OpenIP: Attempting to open \"client\" socket\n");
+
 		sockets[NS_CLIENT] = NET_IPSocket(net_iface, port, family);
 
 		if ( !NET_IsSocketValid(sockets[NS_CLIENT]) )
@@ -2297,9 +2299,13 @@ void NET_GetLocalAddress(void)
 	{
 		// If we have changed the ip var from the command line, use that instead.
 		if ( Q_stricmp(net_ipname->string, "localhost") )
+		{
 			Q_strncpy(buff, net_ipname->string, sizeof(buff));
+		}
 		else
+		{
 			Q_strncpy(buff, hostname, sizeof(buff));
+		}
 
 		if ( NET_StringToAdrEx(buff, &net_local, AF_INET) )
 		{
@@ -2314,19 +2320,27 @@ void NET_GetLocalAddress(void)
 				Cvar_FullSet("net_address", net_addr_string, net_address->flags);
 			}
 			else
+			{
 				Con_DPrintf(S_ERROR "Could not get TCP/IPv4 address. Reason: %s\n", NET_ErrorString());
+			}
 		}
 		else
+		{
 			Con_DPrintf(S_ERROR "Could not get TCP/IPv4 address, Invalid hostname: '%s'\n", buff);
+		}
 	}
 
 	if ( net.allow_ip6 )
 	{
 		// If we have changed the ip var from the command line, use that instead.
 		if ( Q_stricmp(net_ip6name->string, "localhost") )
+		{
 			Q_strncpy(buff, net_ip6name->string, sizeof(buff));
+		}
 		else
+		{
 			Q_strncpy(buff, hostname, sizeof(buff));
+		}
 
 		if ( NET_StringToAdrEx(buff, &net6_local, AF_INET6) )
 		{
@@ -2341,10 +2355,14 @@ void NET_GetLocalAddress(void)
 				Cvar_FullSet("net6_address", net_addr_string, net6_address->flags);
 			}
 			else
+			{
 				Con_DPrintf(S_ERROR "Could not get TCP/IPv6 address. Reason: %s\n", NET_ErrorString());
+			}
 		}
 		else
+		{
 			Con_DPrintf(S_ERROR "Could not get TCP/IPv6 address, Invalid hostname: '%s'\n", buff);
+		}
 	}
 }
 
