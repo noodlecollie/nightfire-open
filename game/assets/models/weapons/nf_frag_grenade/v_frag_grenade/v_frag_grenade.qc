@@ -1,15 +1,16 @@
-$cd "C:\Users\Admin\Documents\GitRepos\nightfire-open\game\assets\models\weapons\nf_frag_grenade\v_frag_grenade"
+$cd .
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "v_frag_grenade.mdl"
 
 $root "Bip01"
 
-$flags 0 
+// No embedded textures
+$flags 2048
+
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
-
-
 
 $bodygroup "hands"
 {
@@ -19,8 +20,6 @@ $bodygroup "weapon"
 {
 	studio "v_frag_grenade_reference_ref"
 }
-
-
 
 $hbox 0 "Bip01 L Hand" -0.560000 -0.850000 -2.230000 3.879325 1.270000 1.600000
 $hbox 0 "Bip01 L Finger0" -0.090000 -0.780000 -0.820000 1.527039 1.060000 1.220000
