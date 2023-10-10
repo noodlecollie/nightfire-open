@@ -84,6 +84,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponattributes/weaponatts_viewmodel.h
 	../game_shared/weapons/ammodefs.h
 	../game_shared/weapons/ammodefs.cpp
+	../game_shared/weapons/basegrenadelauncher.h
+	../game_shared/weapons/basegrenadelauncher.cpp
 	../game_shared/weapons/crossbow.cpp
 	../game_shared/weapons/crowbar.cpp
 	../game_shared/weapons/egon.cpp
