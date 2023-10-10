@@ -11,16 +11,17 @@
 #include "bot.h"
 #endif
 
-// Grenade attributes
 static constexpr const char* GRENADELAUNCHER_GRENADE_MODEL = "models/weapon_grenadelauncher/w_grenade_projectile.mdl";
 static const Vector GRENADELAUNCHER_HALF_BBOX = Vector(4, 4, 4);
 static constexpr float GRENADELAUNCHER_GRENADE_FRICTION = 0.95f;
 static constexpr float GRENADELAUNCHER_GRENADE_GRAVITY = 1.4f;
 static constexpr unsigned char GRENADELAUNCHER_GRENADE_SPRITE_SCALE = 60;
-
-// Launcher attributes
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MIN = -100.0f;
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MAX = -500.0f;
+static constexpr float GRENADELAUNCHER_LAUNCH_SPEED = 1000.0f;
+static constexpr float GRENADELAUNCHER_EXPLOSION_RADIUS = 250.0f;
+static constexpr float GRENADELAUNCHER_FUSE_TIME = 4.0f;
+static constexpr float GRENADELAUNCHER_PITCH_ADJUST = 5;
 
 LINK_ENTITY_TO_CLASS(weapon_grenadelauncher, CWeaponGrenadeLauncher);
 
@@ -44,7 +45,7 @@ const WeaponAtts::WACollection& CWeaponGrenadeLauncher::WeaponAttributes() const
 
 void CWeaponGrenadeLauncher::Precache()
 {
-	CGenericProjectileWeapon::Precache();
+	CBaseGrenadeLauncher::Precache();
 
 	PRECACHE_MODEL(GRENADELAUNCHER_GRENADE_MODEL);
 }
@@ -52,13 +53,11 @@ void CWeaponGrenadeLauncher::Precache()
 #ifndef CLIENT_DLL
 float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity&, float distanceToEnemy) const
 {
-	const float explosionRadius = grenadelauncher_explosion_radius.value;
-
 	// Default, unmodified preference:
 	float pref = static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 
 	// If the enemy is close enough that we'd damage ourselves with the grenade, scale back the preference accordingly.
-	if ( distanceToEnemy > explosionRadius )
+	if ( distanceToEnemy > GRENADELAUNCHER_EXPLOSION_RADIUS )
 	{
 		return pref;
 	}
@@ -74,16 +73,17 @@ float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity&, f
 	// If there is no tolerance zone at all, return 0 if we touch the radius.
 	if ( explosionFringeToleranceFactor < std::numeric_limits<float>::min() )
 	{
-		return distanceToEnemy <= explosionRadius ? 0.0f : pref;
+		return distanceToEnemy <= GRENADELAUNCHER_EXPLOSION_RADIUS ? 0.0f : pref;
 	}
 
-	const float closestDistance = (1.0f - explosionFringeToleranceFactor) * explosionRadius;
+	const float closestDistance = (1.0f - explosionFringeToleranceFactor) * GRENADELAUNCHER_EXPLOSION_RADIUS;
 
 	// How does the distance to the enemy compare to these two radii?
 	// If <= closestDistance, we don't want to use the weapon.
 	// If >= furtherstDistance, we use the original weapon preference.
 	// Anything in-between is lerped.
-	const float prefModifier = (distanceToEnemy - closestDistance) / (explosionRadius - closestDistance);
+	const float prefModifier =
+		(distanceToEnemy - closestDistance) / (GRENADELAUNCHER_EXPLOSION_RADIUS - closestDistance);
 	return prefModifier * pref;
 }
 
@@ -98,7 +98,7 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponAtts::WAProjectileAtta
 {
 	const bool isPrimaryAttack = projectileAttack.Signature()->Index == 0;
 
-	CBaseGrenadeLauncher_Grenade* grenade = CreateGrenade(-grenadelauncher_launch_pitch_adjust.value, 16.0f);
+	CBaseGrenadeLauncher_Grenade* grenade = CreateGrenade(GRENADELAUNCHER_PITCH_ADJUST, 16.0f);
 
 	grenade->SetModelName(GRENADELAUNCHER_GRENADE_MODEL);
 	grenade->SetSize(GRENADELAUNCHER_HALF_BBOX);
@@ -110,8 +110,8 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponAtts::WAProjectileAtta
 	grenade->SetDamageOnExplode(gSkillData.plrDmgGrenadeLauncher);
 	grenade->SetPlayerContactDamageMultiplier(gSkillData.plrDmgMultGrenadelauncherHit);
 	grenade->SetOwnerDamageMultiplier(gSkillData.plrSelfDmgMultGrenadeLauncher);
-	grenade->SetSpeed(grenadelauncher_launch_speed.value);
-	grenade->SetFuseTime(isPrimaryAttack ? -1 : grenadelauncher_fuse_time.value);
+	grenade->SetSpeed(GRENADELAUNCHER_LAUNCH_SPEED);
+	grenade->SetFuseTime(isPrimaryAttack ? -1.0f : GRENADELAUNCHER_FUSE_TIME);
 }
 #endif
 

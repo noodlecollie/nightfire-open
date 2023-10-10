@@ -111,6 +111,9 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/weapon_fists_atts.h
 	../game_shared/weapons/weapon_fists.h
 	../game_shared/weapons/weapon_fists.cpp
+	../game_shared/weapons/weapon_frag_grenade_atts.h
+	../game_shared/weapons/weapon_frag_grenade.h
+	../game_shared/weapons/weapon_frag_grenade.cpp
 	../game_shared/weapons/weapon_frinesi_atts.h
 	../game_shared/weapons/weapon_frinesi.h
 	../game_shared/weapons/weapon_frinesi.cpp

@@ -24,14 +24,6 @@ enum GrenadeLauncherAttackMode_e
 // Grenades per second:
 static constexpr float GRENADELAUNCHER_FIRE_RATE = 1.0f / 0.8f;
 
-// Dynamic attributes for tuning purposes
-#define DEV_CVAR(name, value) static cvar_t name = {(char*)#name, (char*)value, FCVAR_SPONLY, 0.0f, NULL}
-DEV_CVAR(grenadelauncher_explosion_radius, "250");
-DEV_CVAR(grenadelauncher_fuse_time, "4");
-DEV_CVAR(grenadelauncher_launch_speed, "1000");
-DEV_CVAR(grenadelauncher_launch_pitch_adjust, "5");
-#undef DEV_CVAR
-
 static constexpr CAmmoDef Ammo_GrenadeLauncher = {
 	"ammo_grenadelauncher",  // ClassName
 	"ammodef_grenadelauncher",  // AmmoName
@@ -72,11 +64,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 			WASkillRecord("sk_plr_selfdmg_mult_grenadelauncher", &skilldata_t::plrSelfDmgMultGrenadeLauncher));
 		obj.SkillRecords.AddToTail(
 			WASkillRecord("sk_plr_dmg_mult_grenadelauncher_hit", &skilldata_t::plrDmgMultGrenadelauncherHit));
-
-		obj.CustomCvars.AddToTail(&grenadelauncher_explosion_radius);
-		obj.CustomCvars.AddToTail(&grenadelauncher_fuse_time);
-		obj.CustomCvars.AddToTail(&grenadelauncher_launch_speed);
-		obj.CustomCvars.AddToTail(&grenadelauncher_launch_pitch_adjust);
 
 		// Explode on contact
 		WAProjectileAttack* priAttack = new WAProjectileAttack();

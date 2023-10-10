@@ -46,5 +46,6 @@ const int WEAPON_HUD_SLOTS[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS] = {
 		WEAPON_SATCHEL,
 		WEAPON_TRIPMINE,
 		WEAPON_SNARK,
+		static_cast<int>(WeaponId_e::WeaponFragGrenade)
 	},
 };

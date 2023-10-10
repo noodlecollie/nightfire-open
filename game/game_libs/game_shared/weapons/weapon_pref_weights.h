@@ -11,6 +11,7 @@ enum WeaponPreferenceWeight
 
 	// Least preferable
 	WeaponPref_Fists = 1,
+	WeaponPref_FragGrenade,
 	WeaponPref_P99,
 	WeaponPref_MP9,
 	WeaponPref_Raptor,

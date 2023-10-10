@@ -50,7 +50,7 @@ Vector CBaseGrenadeLauncher::GetGrenadeLaunchAngles(float extraPitch) const
 		// If the player is looking horizontally, we want the grenade to be
 		// launched a little more upward; if they are looking straight up or
 		// down, we don't want any modification at all.
-		viewAngles[0] += cosf(UTIL_DegreesToRadians(viewAngles[0])) * extraPitch;
+		viewAngles[0] -= cosf(UTIL_DegreesToRadians(viewAngles[0])) * extraPitch;
 	}
 
 	if ( viewAngles[0] < -89.0f )
