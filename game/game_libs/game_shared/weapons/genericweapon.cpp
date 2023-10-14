@@ -235,11 +235,12 @@ bool CGenericWeapon::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtt
 		return false;
 	}
 
-	if ( (m_pPlayer->pev->waterlevel == 3 && !attackMode->FunctionsUnderwater) || !HasAmmo(attackMode) )
+	if ( (m_pPlayer->pev->waterlevel == 3 && !attackMode->FunctionsUnderwater) ||
+		 !HasAmmo(attackMode, 1, m_iClip >= 0) )
 	{
 		if ( m_fFireOnEmpty )
 		{
-			PlayEmptySound();
+			PlayEmptySoundIfAllowed(*attackMode);
 			DelayFiring(0.2f, false, type);
 		}
 
@@ -420,6 +421,14 @@ void CGenericWeapon::UpdateValuesPostFrame()
 	if ( IsActiveItem() )
 	{
 		m_pPlayer->m_flWeaponInaccuracy = m_flInaccuracy;
+	}
+}
+
+void CGenericWeapon::PlayEmptySoundIfAllowed(const WeaponAtts::WABaseAttack& attackMode)
+{
+	if ( attackMode.PlayDryFireSoundOnEmpty )
+	{
+		PlayEmptySound();
 	}
 }
 
@@ -733,8 +742,14 @@ bool CGenericWeapon::HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int min
 	{
 		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary:
 		{
-			return useClip ? (m_iClip >= minCount)
-						   : (m_iPrimaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] >= minCount);
+			if ( useClip )
+			{
+				return m_iClip >= minCount;
+			}
+			else
+			{
+				return m_iPrimaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] >= minCount;
+			}
 		}
 
 		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary:
@@ -764,6 +779,19 @@ bool CGenericWeapon::DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode, i
 	{
 		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary:
 		{
+			if ( m_iClip < 0 )
+			{
+				// Weapon doesn't use clips, so decrement ammo pool directly.
+
+				if ( m_iPrimaryAmmoType < 0 || m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] < decrement )
+				{
+					return false;
+				}
+
+				m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] -= decrement;
+				return true;
+			}
+
 			if ( m_iClip < decrement )
 			{
 				return false;

@@ -14,7 +14,7 @@ CBaseGrenadeLauncher::CreateGrenade(entvars_t* pevOwner, const Vector& location,
 	pGrenade->SetOwner(pevOwner);
 	pGrenade->SetGravity(1.4f);
 	pGrenade->SetFuseTime(-1.0f);
-	pGrenade->SetExplodeSpriteScale(50.0f);
+	pGrenade->SetExplodeSpriteScale(50);
 
 	return pGrenade;
 }

@@ -193,6 +193,7 @@ private:
 	void PerformReload();
 	bool ReloadUsableWeaponIfEmpty();
 	void UpdateValuesPostFrame();
+	void PlayEmptySoundIfAllowed(const WeaponAtts::WABaseAttack& attackMode);
 	bool ShouldSecondaryAttackThisFrame() const;
 	bool ShouldPrimaryAttackThisFrame() const;
 	void HandleNoButtonsDown_Server();
