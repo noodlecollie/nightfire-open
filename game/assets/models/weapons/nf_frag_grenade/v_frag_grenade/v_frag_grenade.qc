@@ -35,17 +35,17 @@ $sequence "idle1" "idle1_ani" fps 10
 $sequence "idle2" "idle2_ani" fps 10
 $sequence "idle3" "idle3_ani" fps 10
 $sequence "pull" "pull_ani" {
-	event 5004 17 "weapons/grenade_pin.wav"
+	event 5005 17 "weapons/weapon_frag_grenade/grenade_pin.wav"
 }
 $sequence "throw" "throw_ani" {
 	event 1 18 ""
-	event 5004 12 "weapons/grenade_throw.wav"
+	event 5005 12 "weapons/weapon_frag_grenade/grenade_throw.wav"
 }
 $sequence "throw_last" "throw_last_ani" {
 	event 1 18 ""
-	event 5004 12 "weapons/grenade_throw.wav"
+	event 5005 12 "weapons/weapon_frag_grenade/grenade_throw.wav"
 }
 $sequence "draw" "draw_ani" {
-	event 5004 0 "weapons/grenade_draw.wav"
+	event 5005 0 "weapons/weapon_frag_grenade/grenade_draw.wav"
 }
 $sequence "holster" "holster_ani" fps 15

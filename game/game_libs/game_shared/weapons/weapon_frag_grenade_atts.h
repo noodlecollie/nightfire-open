@@ -17,12 +17,6 @@ enum FragGrenadeAnimations_e
 	FRAGGRENADE_HOLSTER
 };
 
-enum FragGrenadeBody_e
-{
-	FRAGGRENADE_THROWN = 0,
-	FRAGGRENADE_HELD
-};
-
 enum FragGrenadeAttackMode_e
 {
 	ATTACKMODE_THROW,
@@ -68,7 +62,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		obj.SkillRecords.AddToTail(
 			WASkillRecord("sk_plr_selfdmg_mult_fraggrenade", &skilldata_t::plrSelfDmgMultFragGrenade));
 
-		// Explode on contact
 		WAProjectileAttack* priAttack = new WAProjectileAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
 

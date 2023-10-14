@@ -31,7 +31,6 @@ CWeaponFragGrenade::CWeaponFragGrenade() :
 	CBaseGrenadeLauncher()
 {
 	SetPrimaryAttackModeFromAttributes(ATTACKMODE_THROW);
-	SetViewModelBody(FRAGGRENADE_HELD, true);
 }
 
 const WeaponAtts::WACollection& CWeaponFragGrenade::WeaponAttributes() const
