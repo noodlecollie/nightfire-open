@@ -1,4 +1,7 @@
 add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
+	src/BufferedFileReader.h
+	src/BufferedFileReader.cpp
+	src/Exceptions.h
 	src/Main.cpp
 )
 
