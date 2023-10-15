@@ -1,15 +1,27 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <cstdint>
+#include <memory>
 #include <type_traits>
-#include <functional>
+#include <vector>
+
+class BufferedFile;
 
 class BufferedFileReader
 {
 public:
-	explicit BufferedFileReader(const std::string& filePath);
+	BufferedFileReader(const std::shared_ptr<BufferedFile>& bufferedFile, size_t offset, size_t length);
+	~BufferedFileReader();
+
+	BufferedFileReader CreateSubReader(size_t offset, size_t length);
+	BufferedFileReader CreateSubReader(size_t length);
+
+	const uint8_t* Data() const;
+	size_t Length() const;
+
+	// Utility for reading: ensure that the cursor is at the end
+	// of the block of data, indicating that all data in the
+	// reader was read.
+	void EnsureAtEnd() const;
 
 	size_t CurrentPosition() const;
 	bool PositionIsEOF() const;
@@ -122,7 +134,8 @@ public:
 private:
 	bool DeltaWouldExceedFile(size_t delta) const;
 
-	std::string m_FilePath;
-	std::vector<uint8_t> m_Data;
-	size_t m_CurrentPos = 0;
+	std::shared_ptr<BufferedFile> m_File;
+	size_t m_Base = 0;
+	size_t m_Length = 0;
+	size_t m_OffsetFromBase = 0;
 };

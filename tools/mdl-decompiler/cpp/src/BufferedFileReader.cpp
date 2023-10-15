@@ -1,40 +1,94 @@
-#include "BufferedFileReader.h"
 #include <fstream>
 #include <stdexcept>
 #include <limits>
+#include "BufferedFileReader.h"
+#include "BufferedFile.h"
 #include "Exceptions.h"
 
-BufferedFileReader::BufferedFileReader(const std::string& filePath) :
-	m_FilePath(filePath)
+static void ValidateOffsetAndLength(const std::string& filePath, size_t dataLength, size_t offset, size_t length)
 {
-	std::ifstream inStream(m_FilePath, std::ios_base::in | std::ios_base::binary);
-
-	if ( !inStream.is_open() )
+	if ( offset > dataLength )
 	{
-		throw FileIOException(m_FilePath, "Could not open file.");
+		throw FileIOException(
+			filePath,
+			"BufferedFileReader base offset of " + std::to_string(offset) + " bytes exceeded file length of " +
+				std::to_string(dataLength) + " bytes.");
 	}
 
-	inStream.seekg(0, std::ios_base::end);
-	const size_t size = inStream.tellg();
-	inStream.seekg(0, std::ios_base::beg);
-
-	m_Data.resize(size);
-	inStream.read(reinterpret_cast<char*>(m_Data.data()), m_Data.size());
-
-	if ( inStream.bad() )
+	// Done carefully so as not to overflow size_t:
+	if ( (dataLength - offset) < length )
 	{
-		throw FileIOException(m_FilePath, "Could not read contents of file.");
+		throw FileIOException(
+			filePath,
+			"BufferedFileReader file segment with offset of " + std::to_string(offset) + " bytes and length of " +
+				std::to_string(length) + " bytes exceeded bounds of file.");
+	}
+}
+
+BufferedFileReader::BufferedFileReader(const std::shared_ptr<BufferedFile>& bufferedFile, size_t offset, size_t length)
+{
+	if ( !bufferedFile )
+	{
+		throw std::invalid_argument("Cannot create BufferedFileReader from a null BufferedFile.");
+	}
+
+	ValidateOffsetAndLength(bufferedFile->FilePath(), bufferedFile->Length(), offset, length);
+
+	m_File = bufferedFile;
+	m_Base = offset;
+	m_Length = length;
+}
+
+BufferedFileReader::~BufferedFileReader()
+{
+}
+
+BufferedFileReader BufferedFileReader::CreateSubReader(size_t offset, size_t length)
+{
+	if ( length < 1 && offset <= m_Length )
+	{
+		length = m_Length - offset;
+	}
+
+	ValidateOffsetAndLength(m_File->FilePath(), m_Length, offset, length);
+
+	return BufferedFileReader(m_File, m_Base + offset, length);
+}
+
+BufferedFileReader BufferedFileReader::CreateSubReader(size_t length)
+{
+	return CreateSubReader(CurrentPosition(), length);
+}
+
+const uint8_t* BufferedFileReader::Data() const
+{
+	return m_File->Data() + m_Base;
+}
+
+size_t BufferedFileReader::Length() const
+{
+	return m_Length;
+}
+
+void BufferedFileReader::EnsureAtEnd() const
+{
+	if ( !PositionIsEOF() )
+	{
+		throw DataReadException(
+			m_File->FilePath(),
+			"Input file section (" + std::to_string(m_Base) + "," + std::to_string(m_Length) +
+				") was not fully consumed.");
 	}
 }
 
 size_t BufferedFileReader::CurrentPosition() const
 {
-	return m_CurrentPos;
+	return m_OffsetFromBase;
 }
 
 bool BufferedFileReader::PositionIsEOF() const
 {
-	return m_CurrentPos >= m_Data.size();
+	return CurrentPosition() >= Length();
 }
 
 void BufferedFileReader::Seek(int64_t delta)
@@ -54,51 +108,51 @@ void BufferedFileReader::SeekForward(size_t delta)
 	if ( DeltaWouldExceedFile(delta) )
 	{
 		throw FileIOException(
-			m_FilePath,
-			"Forward seek of (" + std::to_string(m_CurrentPos) + " + " + std::to_string(delta) +
-				") bytes exceeded file length of " + std::to_string(m_Data.size()) + " bytes.");
+			m_File->FilePath(),
+			"Forward seek of (" + std::to_string(CurrentPosition()) + " + " + std::to_string(delta) +
+				") bytes exceeded file length of " + std::to_string(Length()) + " bytes.");
 	}
 
-	SeekFromBeginning(m_CurrentPos + delta);
+	SeekFromBeginning(CurrentPosition() + delta);
 }
 
 void BufferedFileReader::SeekBackward(size_t delta)
 {
-	if ( delta > m_CurrentPos )
+	if ( delta > CurrentPosition() )
 	{
 		throw FileIOException(
-			m_FilePath,
-			"Backward seek of (" + std::to_string(m_CurrentPos) + " - " + std::to_string(delta) +
+			m_File->FilePath(),
+			"Backward seek of (" + std::to_string(CurrentPosition()) + " - " + std::to_string(delta) +
 				") bytes seeked back past beginning of file.");
 	}
 
-	SeekFromBeginning(m_CurrentPos - delta);
+	SeekFromBeginning(CurrentPosition() - delta);
 }
 
 void BufferedFileReader::SeekFromBeginning(size_t offset)
 {
-	if ( offset > m_Data.size() )
+	if ( offset > Length() )
 	{
 		throw FileIOException(
-			m_FilePath,
+			m_File->FilePath(),
 			"Seek to offset of " + std::to_string(offset) + " bytes exceeded file length of " +
-				std::to_string(m_Data.size()) + " bytes.");
+				std::to_string(Length()) + " bytes.");
 	}
 
-	m_CurrentPos = offset;
+	m_OffsetFromBase = offset;
 }
 
 void BufferedFileReader::SeekFromEnd(size_t offset)
 {
-	if ( offset > m_Data.size() )
+	if ( offset > Length() )
 	{
 		throw FileIOException(
-			m_FilePath,
-			"Reverse seek to offset of (" + std::to_string(m_Data.size()) + " - " + std::to_string(offset) +
+			m_File->FilePath(),
+			"Reverse seek to offset of (" + std::to_string(Length()) + " - " + std::to_string(offset) +
 				") bytes seeked back past beginning of file.");
 	}
 
-	SeekFromBeginning(m_Data.size() - offset);
+	SeekFromBeginning(Length() - offset);
 }
 
 void BufferedFileReader::GoToBeginning()
@@ -115,23 +169,24 @@ void BufferedFileReader::ReadBytes(void* buffer, size_t length)
 {
 	if ( !buffer )
 	{
-		throw FileIOException(m_FilePath, "Cannot read bytes into null buffer.");
+		throw FileIOException(m_File->FilePath(), "Cannot read bytes into null buffer.");
 	}
 
 	if ( length < 1 )
 	{
-		throw FileIOException(m_FilePath, "Cannot read zero bytes into buffer.");
+		throw FileIOException(m_File->FilePath(), "Cannot read zero bytes into buffer.");
 	}
 
 	if ( DeltaWouldExceedFile(length) )
 	{
 		throw FileIOException(
-			m_FilePath,
-			"Reading " + std::to_string(length) + " bytes from offset of " + std::to_string(m_CurrentPos) +
-				" exceeded file length of " + std::to_string(m_Data.size()) + " bytes.");
+			m_File->FilePath(),
+			"Reading " + std::to_string(length) + " bytes from offset of " + std::to_string(CurrentPosition()) +
+				" exceeded file length of " + std::to_string(Length()) + " bytes.");
 	}
 
-	std::memcpy(buffer, m_Data.data() + m_CurrentPos, length);
+	std::memcpy(buffer, Data() + CurrentPosition(), length);
+	m_OffsetFromBase += length;
 }
 
 std::string BufferedFileReader::ReadString(size_t numInputBytes)
@@ -160,5 +215,5 @@ std::string BufferedFileReader::ReadString(size_t numInputBytes)
 bool BufferedFileReader::DeltaWouldExceedFile(size_t delta) const
 {
 	// Done carefully to avoid the possibility of overflowing the size_t:
-	return (m_Data.size() - m_CurrentPos) < delta;
+	return (Length() - CurrentPosition()) < delta;
 }
