@@ -22,9 +22,10 @@ public:
 	void GoToEnd();
 
 	void ReadBytes(void* buffer, size_t length);
+	std::string ReadString(size_t numInputBytes);
 
-	template<typename TargetType, typename ContainerType = TargetType, typename ConverterFunctor>
-	TargetType ReadElement(const ConverterFunctor& converter)
+	template<typename TargetType, typename ContainerType, typename ConverterFunctor>
+	TargetType ReadAndConvertElement(const ConverterFunctor& converter)
 	{
 		static_assert(
 			std::is_trivial<ContainerType>::value,
@@ -36,8 +37,18 @@ public:
 		return converter(container);
 	}
 
-	template<typename TargetType, typename ContainerType = TargetType, typename ConverterFunctor>
-	std::vector<TargetType> ReadElements(size_t numElements, const ConverterFunctor& converter)
+	template<typename TargetType, typename ContainerType>
+	TargetType ReadElement()
+	{
+		return ReadAndConvertElement<TargetType, ContainerType, std::function<TargetType(const ContainerType&)>>(
+			[](const ContainerType& in) -> TargetType
+			{
+				return TargetType(in);
+			});
+	}
+
+	template<typename TargetType, typename ContainerType, typename ConverterFunctor>
+	std::vector<TargetType> ReadAndConvertElements(size_t numElements, const ConverterFunctor& converter)
 	{
 		static_assert(
 			std::is_trivial<ContainerType>::value,
@@ -62,17 +73,20 @@ public:
 		return outVector;
 	}
 
-	// Common use specialisations:
-
-	template<typename TargetType, typename ContainerType = TargetType>
-	TargetType ReadElement()
+	template<typename TargetType, typename ContainerType>
+	std::vector<TargetType> ReadElements(size_t numElements)
 	{
-		return ReadElement<TargetType, ContainerType, std::function<TargetType(const ContainerType&)>>(
-			[](const ContainerType& in) -> TargetType
+		return ReadAndConvertElements<
+			TargetType,
+			ContainerType,
+			std::function<TargetType(size_t, const ContainerType&)>>(
+			[](size_t, const ContainerType& in) -> TargetType
 			{
 				return TargetType(in);
 			});
 	}
+
+	// Common use specialisations:
 
 	template<typename TargetType>
 	TargetType ReadElement()
@@ -87,27 +101,12 @@ public:
 		return out;
 	}
 
-	template<typename TargetType, typename ContainerType = TargetType>
-	std::vector<TargetType> ReadElements(size_t numElements)
-	{
-		return ReadElements<TargetType, ContainerType, std::function<TargetType(size_t, const ContainerType&)>>(
-			[](size_t, const ContainerType& in)
-			{
-				return TargetType(in);
-			});
-	}
-
 	template<typename TargetType>
 	std::vector<TargetType> ReadElements(size_t numElements)
 	{
 		static_assert(
 			std::is_trivial<TargetType>::value,
 			"Target type must be trivial for a safe memcpy to take place.");
-
-		if ( !array )
-		{
-			throw FileIOException(m_FilePath, "Cannot read elements into null buffer.");
-		}
 
 		if ( numElements < 1 )
 		{
