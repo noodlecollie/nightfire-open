@@ -45,6 +45,24 @@ void CWeaponFragGrenade::Precache()
 	PRECACHE_MODEL(GRENADE_MODEL);
 }
 
+void CWeaponFragGrenade::WeaponTick()
+{
+	if ( !(m_pPlayer->pev->button & IN_ATTACK) )
+	{
+		if ( m_bGrenadePrimed )
+		{
+			CBaseGrenadeLauncher::PrimaryAttack();
+		}
+
+		m_bGrenadePrimed = false;
+	}
+}
+
+void CWeaponFragGrenade::PrimaryAttack()
+{
+	m_bGrenadePrimed = true;
+}
+
 #ifndef CLIENT_DLL
 float CWeaponFragGrenade::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {

@@ -20,6 +20,7 @@ enum FragGrenadeAnimations_e
 enum FragGrenadeAttackMode_e
 {
 	ATTACKMODE_THROW,
+	ATTACKMODE_ROLL
 };
 
 // Grenades per second:
