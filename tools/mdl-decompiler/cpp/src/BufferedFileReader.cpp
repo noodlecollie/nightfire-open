@@ -134,6 +134,29 @@ void BufferedFileReader::ReadBytes(void* buffer, size_t length)
 	std::memcpy(buffer, m_Data.data() + m_CurrentPos, length);
 }
 
+std::string BufferedFileReader::ReadString(size_t numInputBytes)
+{
+	if ( numInputBytes < 1 )
+	{
+		return std::string();
+	}
+
+	std::vector<char> rawChars = ReadElements<char>(numInputBytes);
+
+	if ( rawChars.empty() )
+	{
+		return std::string();
+	}
+
+	// Ensure the array is terminated.
+	if ( rawChars.at(rawChars.size() - 1) != '\0' )
+	{
+		rawChars.emplace_back('\0');
+	}
+
+	return std::string(rawChars.data());
+}
+
 bool BufferedFileReader::DeltaWouldExceedFile(size_t delta) const
 {
 	// Done carefully to avoid the possibility of overflowing the size_t:
