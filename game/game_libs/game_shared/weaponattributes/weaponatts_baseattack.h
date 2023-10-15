@@ -42,6 +42,10 @@ namespace WeaponAtts
 		// The normal AttackSounds will be played to all other players.
 		WASoundSet ViewModelAttackSounds;
 
+		// If false, does not play the dry fire noise if the
+		// weapon is fired with no ammo.
+		bool PlayDryFireSoundOnEmpty = true;
+
 		virtual Classification Classify() const = 0;
 
 		virtual void Validate() const override

@@ -11,15 +11,17 @@
 #include "bot.h"
 #endif
 
-// Grenade attributes
 static constexpr const char* GRENADELAUNCHER_GRENADE_MODEL = "models/weapon_grenadelauncher/w_grenade_projectile.mdl";
 static const Vector GRENADELAUNCHER_HALF_BBOX = Vector(4, 4, 4);
 static constexpr float GRENADELAUNCHER_GRENADE_FRICTION = 0.95f;
+static constexpr float GRENADELAUNCHER_GRENADE_GRAVITY = 1.4f;
 static constexpr unsigned char GRENADELAUNCHER_GRENADE_SPRITE_SCALE = 60;
-
-// Launcher attributes
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MIN = -100.0f;
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MAX = -500.0f;
+static constexpr float GRENADELAUNCHER_LAUNCH_SPEED = 1000.0f;
+static constexpr float GRENADELAUNCHER_EXPLOSION_RADIUS = 250.0f;
+static constexpr float GRENADELAUNCHER_FUSE_TIME = 4.0f;
+static constexpr float GRENADELAUNCHER_PITCH_ADJUST = 5;
 
 LINK_ENTITY_TO_CLASS(weapon_grenadelauncher, CWeaponGrenadeLauncher);
 
@@ -30,7 +32,7 @@ LINK_ENTITY_TO_CLASS(weapon_rocketlauncher, CWeaponGrenadeLauncher)
 #endif
 
 CWeaponGrenadeLauncher::CWeaponGrenadeLauncher() :
-	CGenericProjectileWeapon()
+	CBaseGrenadeLauncher()
 {
 	SetPrimaryAttackModeFromAttributes(ATTACKMODE_CONTACT);
 	SetSecondaryAttackModeFromAttributes(ATTACKMODE_TIMED);
@@ -43,7 +45,7 @@ const WeaponAtts::WACollection& CWeaponGrenadeLauncher::WeaponAttributes() const
 
 void CWeaponGrenadeLauncher::Precache()
 {
-	CGenericProjectileWeapon::Precache();
+	CBaseGrenadeLauncher::Precache();
 
 	PRECACHE_MODEL(GRENADELAUNCHER_GRENADE_MODEL);
 }
@@ -51,13 +53,11 @@ void CWeaponGrenadeLauncher::Precache()
 #ifndef CLIENT_DLL
 float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity&, float distanceToEnemy) const
 {
-	const float explosionRadius = grenadelauncher_explosion_radius.value;
-
 	// Default, unmodified preference:
 	float pref = static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 
 	// If the enemy is close enough that we'd damage ourselves with the grenade, scale back the preference accordingly.
-	if ( distanceToEnemy > explosionRadius )
+	if ( distanceToEnemy > GRENADELAUNCHER_EXPLOSION_RADIUS )
 	{
 		return pref;
 	}
@@ -73,16 +73,17 @@ float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity&, f
 	// If there is no tolerance zone at all, return 0 if we touch the radius.
 	if ( explosionFringeToleranceFactor < std::numeric_limits<float>::min() )
 	{
-		return distanceToEnemy <= explosionRadius ? 0.0f : pref;
+		return distanceToEnemy <= GRENADELAUNCHER_EXPLOSION_RADIUS ? 0.0f : pref;
 	}
 
-	const float closestDistance = (1.0f - explosionFringeToleranceFactor) * explosionRadius;
+	const float closestDistance = (1.0f - explosionFringeToleranceFactor) * GRENADELAUNCHER_EXPLOSION_RADIUS;
 
 	// How does the distance to the enemy compare to these two radii?
 	// If <= closestDistance, we don't want to use the weapon.
 	// If >= furtherstDistance, we use the original weapon preference.
 	// Anything in-between is lerped.
-	const float prefModifier = (distanceToEnemy - closestDistance) / (explosionRadius - closestDistance);
+	const float prefModifier =
+		(distanceToEnemy - closestDistance) / (GRENADELAUNCHER_EXPLOSION_RADIUS - closestDistance);
 	return prefModifier * pref;
 }
 
@@ -97,122 +98,20 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponAtts::WAProjectileAtta
 {
 	const bool isPrimaryAttack = projectileAttack.Signature()->Index == 0;
 
-	UTIL_MakeVectors(GetGrenadeLaunchAngles());
-	const Vector forward(gpGlobals->v_forward);
-	const Vector location = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs) + forward * 16.0f;
+	CBaseGrenadeLauncher_Grenade* grenade = CreateGrenade(GRENADELAUNCHER_PITCH_ADJUST, 16.0f);
 
-	CWeaponGrenadeLauncher_Grenade* grenade = CreateGrenade(m_pPlayer->pev, location, forward);
-
+	grenade->SetModelName(GRENADELAUNCHER_GRENADE_MODEL);
+	grenade->SetSize(GRENADELAUNCHER_HALF_BBOX);
+	grenade->SetFriction(GRENADELAUNCHER_GRENADE_FRICTION);
+	grenade->SetGravity(GRENADELAUNCHER_GRENADE_GRAVITY);
+	grenade->SetExplodeSpriteScale(GRENADELAUNCHER_GRENADE_SPRITE_SCALE);
 	grenade->SetExplodeOnContact(isPrimaryAttack);
 	grenade->SetRandomTumbleAngVel(GRENADELAUNCHER_TUMBLEVEL_MIN, GRENADELAUNCHER_TUMBLEVEL_MAX);
 	grenade->SetDamageOnExplode(gSkillData.plrDmgGrenadeLauncher);
 	grenade->SetPlayerContactDamageMultiplier(gSkillData.plrDmgMultGrenadelauncherHit);
 	grenade->SetOwnerDamageMultiplier(gSkillData.plrSelfDmgMultGrenadeLauncher);
-	grenade->SetSpeed(grenadelauncher_launch_speed.value);
-	grenade->SetFuseTime(isPrimaryAttack ? -1 : grenadelauncher_fuse_time.value);
-}
-
-CWeaponGrenadeLauncher_Grenade*
-CWeaponGrenadeLauncher::CreateGrenade(entvars_t* pevOwner, const Vector& location, const Vector& launchDir)
-{
-	CWeaponGrenadeLauncher_Grenade* pGrenade = GetClassPtr<CWeaponGrenadeLauncher_Grenade>(NULL);
-	pGrenade->Spawn();
-
-	UTIL_SetOrigin(pGrenade->pev, location);
-	launchDir.CopyToArray(pGrenade->pev->velocity);
-	UTIL_VecToAngles(pGrenade->pev->velocity).CopyToArray(pGrenade->pev->angles);
-	pGrenade->pev->owner = ENT(pevOwner);
-	pGrenade->pev->gravity = 1.4f;
-	pGrenade->SetFuseTime(-1.0f);
-	pGrenade->SetExplodeSpriteScale(GRENADELAUNCHER_GRENADE_SPRITE_SCALE);
-
-	return pGrenade;
-}
-
-Vector CWeaponGrenadeLauncher::GetGrenadeLaunchAngles() const
-{
-	Vector viewAngles = Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle);
-
-	// Add some more pitch depending on the cosine of the original pitch.
-	// If the player is looking horizontally, we want the grenade to be
-	// launched a little more upward; if they are looking straight up or
-	// down, we don't want any modification at all.
-	float extraPitch = -grenadelauncher_launch_pitch_adjust.value;
-	viewAngles[0] += cosf(UTIL_DegreesToRadians(viewAngles[0])) * extraPitch;
-
-	if ( viewAngles[0] < -89.0f )
-	{
-		viewAngles[0] = -89.0f;
-	}
-	else if ( viewAngles[0] > 89.0f )
-	{
-		viewAngles[0] = 89.0f;
-	}
-
-	return viewAngles;
-}
-#endif
-
-void CWeaponGrenadeLauncher_Grenade::Spawn()
-{
-	CGrenade::Spawn();
-	SET_MODEL(ENT(pev), GRENADELAUNCHER_GRENADE_MODEL);
-	UTIL_SetSize(pev, -GRENADELAUNCHER_HALF_BBOX, GRENADELAUNCHER_HALF_BBOX);
-	pev->friction = GRENADELAUNCHER_GRENADE_FRICTION;
-}
-
-#ifndef CLIENT_DLL
-void CWeaponGrenadeLauncher_Grenade::SetExplodeOnContact(bool explodeOnContact)
-{
-	SetTouch(explodeOnContact ? &CGrenade::ExplodeTouch : &CGrenade::BounceTouch);
-}
-
-void CWeaponGrenadeLauncher_Grenade::SetTumbleAngVel(float vel)
-{
-	pev->avelocity[VEC3_X] = vel;
-}
-
-void CWeaponGrenadeLauncher_Grenade::SetRandomTumbleAngVel(float min, float max)
-{
-	SetTumbleAngVel(RANDOM_FLOAT(min, max));
-}
-
-void CWeaponGrenadeLauncher_Grenade::SetDamageOnExplode(float damage)
-{
-	pev->dmg = damage;
-}
-
-void CWeaponGrenadeLauncher_Grenade::SetSpeed(float speed)
-{
-	Vector vel(pev->velocity);
-
-	if ( vel.Length() == 0.0f )
-	{
-		return;
-	}
-
-	(vel.Normalize() * speed).CopyToArray(pev->velocity);
-}
-
-void CWeaponGrenadeLauncher_Grenade::SetFuseTime(float fuseTime)
-{
-	if ( fuseTime < 0.0f )
-	{
-		SetThink(&CGrenade::DangerSoundThink);
-		pev->nextthink = gpGlobals->time;
-		return;
-	}
-
-	SetThink(&CGrenade::TumbleThink);
-
-	pev->dmgtime = gpGlobals->time + fuseTime;
-	pev->nextthink = gpGlobals->time + 0.1f;
-
-	if ( fuseTime < 0.1 )
-	{
-		pev->nextthink = gpGlobals->time;
-		VectorClear(pev->velocity);
-	}
+	grenade->SetSpeed(GRENADELAUNCHER_LAUNCH_SPEED);
+	grenade->SetFuseTime(isPrimaryAttack ? -1.0f : GRENADELAUNCHER_FUSE_TIME);
 }
 #endif
 

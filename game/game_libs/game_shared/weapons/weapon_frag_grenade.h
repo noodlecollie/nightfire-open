@@ -4,13 +4,15 @@
 #include "weapons/basegrenadelauncher.h"
 #include "weapons.h"
 
-class CWeaponGrenadeLauncher : public CBaseGrenadeLauncher
+class CWeaponFragGrenade : public CBaseGrenadeLauncher
 {
 public:
-	CWeaponGrenadeLauncher();
+	CWeaponFragGrenade();
 
 	const WeaponAtts::WACollection& WeaponAttributes() const override;
 	void Precache() override;
+	void WeaponTick() override;
+	void PrimaryAttack() override;
 
 #ifndef CLIENT_DLL
 	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
@@ -19,10 +21,13 @@ public:
 protected:
 	void CreateProjectile(const WeaponAtts::WAProjectileAttack& projectileAttack) override;
 #endif
+
+private:
+	bool m_bGrenadePrimed = false;
 };
 
 namespace WeaponAtts
 {
 	template<>
-	const WACollection& StaticWeaponAttributes<CWeaponGrenadeLauncher>();
+	const WACollection& StaticWeaponAttributes<CWeaponFragGrenade>();
 }
