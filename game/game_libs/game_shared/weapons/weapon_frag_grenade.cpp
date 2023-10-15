@@ -22,10 +22,15 @@ static constexpr float LAUNCH_SPEED = 1000.0f;
 static constexpr float FUSE_TIME = 4.0f;
 static constexpr float PITCH_ADJUST = 5;
 
+// Need to investigate more about why the grenade view model
+// is broken. Until then, this guard stops the weapon from
+// being accessible in the game.
+#ifdef NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 LINK_ENTITY_TO_CLASS(weapon_frag_grenade, CWeaponFragGrenade);
 
 // For Nightfire compatibility:
 LINK_ENTITY_TO_CLASS(weapon_fraggrenade, CWeaponFragGrenade);
+#endif  // NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 
 CWeaponFragGrenade::CWeaponFragGrenade() :
 	CBaseGrenadeLauncher()
@@ -115,7 +120,9 @@ public:
 	}
 };
 
+#ifdef NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 LINK_ENTITY_TO_CLASS(ammo_frag_grenade, CAmmoFragGrenade)
 
 // For Nightfire compatibility:
 LINK_ENTITY_TO_CLASS(ammo_fraggrenade, CAmmoFragGrenade)
+#endif  // NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
