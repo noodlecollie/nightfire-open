@@ -6,7 +6,11 @@ void MDLFileV14::Clear()
 	m_Data = Data{};
 }
 
-void MDLFileV14::ReadComponentData(BufferedFileReader& data)
+size_t MDLFileV14::ReadComponentData(BufferedFileReader& data)
 {
-	m_Data.header.ReadComponentData(data);
+	Clear();
+
+	data.SeekForward(m_Data.header.ReadComponentData(data));
+
+	return data.CurrentPosition();
 }

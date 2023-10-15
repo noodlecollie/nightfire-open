@@ -28,7 +28,7 @@ private:
 class FileIOException : public BaseException
 {
 public:
-	explicit FileIOException(std::string filePath, std::string description) :
+	FileIOException(std::string filePath, std::string description) :
 		m_FilePath(std::move(filePath)),
 		m_Description(std::move(description))
 	{
@@ -53,4 +53,13 @@ protected:
 private:
 	std::string m_FilePath;
 	std::string m_Description;
+};
+
+class DataReadException : public FileIOException
+{
+public:
+	DataReadException(std::string filePath, std::string description) :
+		FileIOException(filePath, description)
+	{
+	}
 };
