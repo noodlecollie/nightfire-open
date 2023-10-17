@@ -22,7 +22,7 @@ public:
 			return m_ParentReader.CreateSubReader(offset, length);
 		}
 
-		BufferedFileReader CreateSubReader(size_t length)
+		BufferedFileReader CreateSubReader(size_t length = 0)
 		{
 			return m_ParentReader.CreateSubReader(length);
 		}
