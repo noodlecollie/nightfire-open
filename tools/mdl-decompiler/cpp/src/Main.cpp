@@ -1,5 +1,20 @@
 #include <iostream>
 #include "args/args.hxx"
+#include "Exceptions.h"
+#include "BufferedFile.h"
+#include "MDLv14/ComponentReader.h"
+
+static void ProcessFile(const std::string& path)
+{
+	std::cout << "Decompiling: " << path << std::endl;
+
+	std::shared_ptr<BufferedFile> inputFile = BufferedFile::OpenFile(path);
+
+	BufferedFileReader fileReader = inputFile->CreateReader();
+	MDLv14::ComponentReader componentReader;
+	MDLv14::Header header = componentReader.ReadComponent<MDLv14::Header>(fileReader);
+	(void)header;
+}
 
 int main(int argc, char** argv)
 {
@@ -9,6 +24,7 @@ int main(int argc, char** argv)
 
 	args::HelpFlag help(parser, "help", "Display this help menu.", {'h', "help"});
 	args::Positional<std::string> inputFileArg(parser, "input_file", "MDLv14 file to decompile.");
+	args::ValueFlag<std::string> outputDirArg(parser, "output_dir", "Directory in which to place output. If this does not exist, it is created.", {'o'});
 
 	try
 	{
@@ -37,9 +53,25 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	// TODO
-	std::string inputFilePath = args::get(inputFileArg);
-	std::cout << "Decompiling: " << inputFilePath << std::endl;
+	try
+	{
+		ProcessFile(args::get(inputFileArg));
+	}
+	catch ( const FileIOException& ex )
+	{
+		std::cerr << ex.FilePath() << ": " << ex.Description() << std::endl;
+		return 1;
+	}
+	catch ( const std::exception& ex )
+	{
+		std::cerr << "An unexpected error occurred. " << ex.what() << std::endl;
+		return 1;
+	}
+	catch ( ... )
+	{
+		std::cerr << "An unhandled error occurred." << std::endl;
+		return 1;
+	}
 
 	return 0;
 }
