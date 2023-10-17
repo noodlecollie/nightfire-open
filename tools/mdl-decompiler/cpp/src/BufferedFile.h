@@ -6,8 +6,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <functional>
-
-class BufferedFileReader;
+#include "BufferedFileReader.h"
 
 class BufferedFile : public std::enable_shared_from_this<BufferedFile>
 {

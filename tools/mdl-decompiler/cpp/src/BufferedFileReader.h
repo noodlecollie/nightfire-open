@@ -9,8 +9,33 @@ class BufferedFile;
 class BufferedFileReader
 {
 public:
+	class Ref
+	{
+	public:
+		explicit Ref(BufferedFileReader& parent) :
+			m_ParentReader(parent)
+		{
+		}
+
+		BufferedFileReader CreateSubReader(size_t offset, size_t length)
+		{
+			return m_ParentReader.CreateSubReader(offset, length);
+		}
+
+		BufferedFileReader CreateSubReader(size_t length)
+		{
+			return m_ParentReader.CreateSubReader(length);
+		}
+
+	private:
+		BufferedFileReader& m_ParentReader;
+	};
+
 	BufferedFileReader(const std::shared_ptr<BufferedFile>& bufferedFile, size_t offset, size_t length);
 	~BufferedFileReader();
+
+	BufferedFileReader(BufferedFileReader&& other);
+	BufferedFileReader& operator =(BufferedFileReader&& other);
 
 	BufferedFileReader CreateSubReader(size_t offset, size_t length);
 	BufferedFileReader CreateSubReader(size_t length);
@@ -23,6 +48,7 @@ public:
 	// reader was read.
 	void EnsureAtEnd() const;
 
+	size_t BaseInFile() const;
 	size_t CurrentPosition() const;
 	bool PositionIsEOF() const;
 	void Seek(int64_t delta);

@@ -43,6 +43,21 @@ BufferedFileReader::~BufferedFileReader()
 {
 }
 
+BufferedFileReader::BufferedFileReader(BufferedFileReader&& other)
+{
+	*this = std::move(other);
+}
+
+BufferedFileReader& BufferedFileReader::operator =(BufferedFileReader&& other)
+{
+	m_File = std::move(other.m_File);
+	m_Base = std::move(other.m_Base);
+	m_OffsetFromBase = std::move(other.m_OffsetFromBase);
+	m_Length = std::move(other.m_Length);
+
+	return *this;
+}
+
 BufferedFileReader BufferedFileReader::CreateSubReader(size_t offset, size_t length)
 {
 	if ( length < 1 && offset <= m_Length )
@@ -79,6 +94,11 @@ void BufferedFileReader::EnsureAtEnd() const
 			"Input file section (" + std::to_string(m_Base) + "," + std::to_string(m_Length) +
 				") was not fully consumed.");
 	}
+}
+
+size_t BufferedFileReader::BaseInFile() const
+{
+	return m_Base;
 }
 
 size_t BufferedFileReader::CurrentPosition() const
