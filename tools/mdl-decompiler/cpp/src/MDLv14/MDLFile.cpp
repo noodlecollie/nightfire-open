@@ -10,7 +10,13 @@ namespace MDLv14
 		MDLv14::ComponentReader componentReader;
 
 		m_Header = componentReader.ReadComponent<MDLv14::Header>(fileReader);
+
 		m_Bones =
 			componentReader.ReadComponentArray<MDLv14::Bone>(fileReader, m_Header.bones.count, m_Header.bones.offset);
+
+		m_BoneControllers = componentReader.ReadComponentArray<MDLv14::BoneController>(
+			fileReader,
+			m_Header.boneControllers.count,
+			m_Header.boneControllers.offset);
 	}
 }  // namespace MDLv14

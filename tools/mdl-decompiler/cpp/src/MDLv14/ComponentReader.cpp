@@ -9,6 +9,7 @@ namespace MDLv14
 	static constexpr size_t EYEPOSITION_READ_SIZE = 3 * 4;
 	static constexpr size_t BOUNDINGBOX_READ_SIZE = 2 * VEC3D_READ_SIZE;
 	static constexpr size_t BONE_READ_SIZE = 32 + (20 * 4);
+	static constexpr size_t BONE_CONTROLLER_READ_SIZE = 6 * 4;
 
 	// TODO: Update to make this less opaque
 	static constexpr size_t HEADER_READ_SIZE = 484;  // From original code
@@ -118,6 +119,20 @@ namespace MDLv14
 		ReadNestedComponent(subReader, component.rotation);
 		ReadNestedComponent(subReader, component.scalePosition);
 		ReadNestedComponent(subReader, component.scaleRotation);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, BoneController& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(BONE_CONTROLLER_READ_SIZE);
+
+		component.bone = subReader.ReadElement<int32_t>();
+		component.motionFlags = subReader.ReadElement<int32_t>();
+		component.start = subReader.ReadElement<float>();
+		component.end = subReader.ReadElement<float>();
+		component.rest = subReader.ReadElement<int32_t>();
+		component.index = subReader.ReadElement<int32_t>();
 
 		return subReader;
 	}

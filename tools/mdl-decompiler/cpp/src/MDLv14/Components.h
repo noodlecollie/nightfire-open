@@ -6,6 +6,46 @@
 
 namespace MDLv14
 {
+	enum TypeFlag
+	{
+		Vehicle = 512,
+		Water = 2048,
+		MultiplayerCharacter = 8192,
+		NonPlayableCharacter = 16384
+	};
+
+	enum LevelOfDetailFlag
+	{
+		NoLevelOfDetailFlags = 0,
+		TimesOne = 1,
+		TimesTwo = 2,
+		TimesFive = 4,
+		PlusOne = 256,
+		PlusTwo = 512,
+		PlusFour = 1024
+	};
+
+	enum MotionFlag
+	{
+		InvalidMotionFlags = -1,
+		NoMotionFlags = 0,
+		X = 0x00000001,
+		Y = 0x00000002,
+		Z = 0x00000004,
+		XR = 0x00000008,
+		YR = 0x00000010,
+		ZR = 0x00000020,
+		LX = 0x00000040,
+		LY = 0x00000080,
+		LZ = 0x00000100,
+		AX = 0x00000200,
+		AY = 0x00000400,
+		AZ = 0x00000800,
+		AXR = 0x00001000,
+		AYR = 0x00002000,
+		AZR = 0x00004000,
+	};
+
 	struct CountOffsetPair
 	{
 		int32_t count = 0;
@@ -39,7 +79,7 @@ namespace MDLv14
 		EyePosition eyePosition;
 		BoundingBox boundingBox;
 		BoundingBox clippingBox;
-		uint32_t typeFlags = 0;  // TODO: Proper type
+		uint32_t typeFlags = 0;
 		CountOffsetPair bones;
 		CountOffsetPair boneControllers;
 		CountOffsetPair hitBoxes;
@@ -57,7 +97,7 @@ namespace MDLv14
 		int32_t transitionsCount = 0;
 		int32_t transitionFlagsOffset = 0;
 		int32_t transitionsOffset = 0;
-		uint32_t levelOfDetailFlags = 0;  // TODO: Proper type
+		uint32_t levelOfDetailFlags = 0;
 		int32_t modelCount = 0;
 		int32_t vertexCount = 0;
 		int32_t triangleCount = 0;
@@ -75,12 +115,22 @@ namespace MDLv14
 	struct Bone
 	{
 		std::string name;
-		int32_t parent = 0;
+		int32_t parent = -1;
 		uint32_t flags = 0;
 		std::vector<int32_t> controllers;
 		Vec3D position;
 		Vec3D rotation;
 		Vec3D scalePosition;
 		Vec3D scaleRotation;
+	};
+
+	struct BoneController
+	{
+		int32_t bone = -1;
+		int32_t motionFlags = NoMotionFlags;
+		float start;
+		float end;
+		int32_t rest = 0;
+		int32_t index = 0;
 	};
 }  // namespace MDLv14

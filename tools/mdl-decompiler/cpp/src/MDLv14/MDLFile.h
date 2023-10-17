@@ -14,5 +14,6 @@ namespace MDLv14
 	private:
 		Header m_Header {};
 		std::vector<Bone> m_Bones;
+		std::vector<BoneController> m_BoneControllers;
 	};
 }
