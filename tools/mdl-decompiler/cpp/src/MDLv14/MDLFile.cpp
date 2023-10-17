@@ -18,5 +18,10 @@ namespace MDLv14
 			fileReader,
 			m_Header.boneControllers.count,
 			m_Header.boneControllers.offset);
+
+		m_HitBoxes = componentReader.ReadComponentArray<MDLv14::HitBox>(
+			fileReader,
+			m_Header.hitBoxes.count,
+			m_Header.hitBoxes.offset);
 	}
 }  // namespace MDLv14

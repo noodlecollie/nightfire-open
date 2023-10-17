@@ -133,4 +133,12 @@ namespace MDLv14
 		int32_t rest = 0;
 		int32_t index = 0;
 	};
+
+	struct HitBox
+	{
+		int32_t bone = -1;
+		int32_t group = 0;
+		Vec3D min;
+		Vec3D max;
+	};
 }  // namespace MDLv14
