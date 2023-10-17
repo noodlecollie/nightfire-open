@@ -66,5 +66,8 @@ namespace MDLv14
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Bone& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BoneController& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, HitBox& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Event& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Pivot& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Sequence& component);
 	};
 }  // namespace MDLv14

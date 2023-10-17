@@ -23,5 +23,26 @@ namespace MDLv14
 			fileReader,
 			m_Header.hitBoxes.count,
 			m_Header.hitBoxes.offset);
+
+		m_Sequences = componentReader.ReadComponentArray<MDLv14::Sequence>(
+			fileReader,
+			m_Header.sequences.count,
+			m_Header.sequences.offset);
+
+		for ( Sequence& sequence : m_Sequences )
+		{
+			sequence.eventCollection = componentReader.ReadComponentArray<MDLv14::Event>(
+				fileReader,
+				sequence.events.count,
+				sequence.events.offset);
+		}
+
+		for ( Sequence& sequence : m_Sequences )
+		{
+			sequence.pivotCollection = componentReader.ReadComponentArray<MDLv14::Pivot>(
+				fileReader,
+				sequence.pivots.count,
+				sequence.pivots.offset);
+		}
 	}
 }  // namespace MDLv14

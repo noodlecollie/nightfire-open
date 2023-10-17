@@ -16,5 +16,6 @@ namespace MDLv14
 		std::vector<Bone> m_Bones;
 		std::vector<BoneController> m_BoneControllers;
 		std::vector<HitBox> m_HitBoxes;
+		std::vector<Sequence> m_Sequences;
 	};
 }

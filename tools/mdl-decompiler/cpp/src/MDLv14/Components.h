@@ -8,42 +8,52 @@ namespace MDLv14
 {
 	enum TypeFlag
 	{
-		Vehicle = 512,
-		Water = 2048,
-		MultiplayerCharacter = 8192,
-		NonPlayableCharacter = 16384
+		TypeFlag_Vehicle = 512,
+		TypeFlag_Water = 2048,
+		TypeFlag_MultiplayerCharacter = 8192,
+		TypeFlag_NonPlayableCharacter = 16384
 	};
 
 	enum LevelOfDetailFlag
 	{
-		NoLevelOfDetailFlags = 0,
-		TimesOne = 1,
-		TimesTwo = 2,
-		TimesFive = 4,
-		PlusOne = 256,
-		PlusTwo = 512,
-		PlusFour = 1024
+		LevelOfDetailFlag_None = 0,
+		LevelOfDetailFlagTimesOne = 1,
+		LevelOfDetailFlagTimesTwo = 2,
+		LevelOfDetailFlagTimesFive = 4,
+		LevelOfDetailFlagPlusOne = 256,
+		LevelOfDetailFlagPlusTwo = 512,
+		LevelOfDetailFlagPlusFour = 1024
 	};
 
 	enum MotionFlag
 	{
-		InvalidMotionFlags = -1,
-		NoMotionFlags = 0,
-		X = 0x00000001,
-		Y = 0x00000002,
-		Z = 0x00000004,
-		XR = 0x00000008,
-		YR = 0x00000010,
-		ZR = 0x00000020,
-		LX = 0x00000040,
-		LY = 0x00000080,
-		LZ = 0x00000100,
-		AX = 0x00000200,
-		AY = 0x00000400,
-		AZ = 0x00000800,
-		AXR = 0x00001000,
-		AYR = 0x00002000,
-		AZR = 0x00004000,
+		MotionFlag_Invalid = -1,
+		MotionFlag_None = 0,
+		MotionFlag_X = 0x00000001,
+		MotionFlag_Y = 0x00000002,
+		MotionFlag_Z = 0x00000004,
+		MotionFlag_XR = 0x00000008,
+		MotionFlag_YR = 0x00000010,
+		MotionFlag_ZR = 0x00000020,
+		MotionFlag_LX = 0x00000040,
+		MotionFlag_LY = 0x00000080,
+		MotionFlag_LZ = 0x00000100,
+		MotionFlag_AX = 0x00000200,
+		MotionFlag_AY = 0x00000400,
+		MotionFlag_AZ = 0x00000800,
+		MotionFlag_AXR = 0x00001000,
+		MotionFlag_AYR = 0x00002000,
+		MotionFlag_AZR = 0x00004000,
+	};
+
+	enum SequenceFlag
+	{
+		SequenceFlag_Looping = 1
+	};
+
+	enum NodeFlag
+	{
+		NodeFlag_Reverse = 1
 	};
 
 	struct CountOffsetPair
@@ -127,7 +137,7 @@ namespace MDLv14
 	struct BoneController
 	{
 		int32_t bone = -1;
-		int32_t motionFlags = NoMotionFlags;
+		int32_t motionFlags = MotionFlag_None;
 		float start;
 		float end;
 		int32_t rest = 0;
@@ -140,5 +150,59 @@ namespace MDLv14
 		int32_t group = 0;
 		Vec3D min;
 		Vec3D max;
+	};
+
+	struct Event
+	{
+		int32_t frame = 0;
+		int32_t event = 0;
+		int32_t type = 0;
+		std::string options;
+	};
+
+	struct Pivot
+	{
+		Vec3D position;
+		int32_t start;
+		int32_t end;
+	};
+
+	struct Sequence
+	{
+		std::string name;
+		float framesPerSecond = 0.0f;
+		uint32_t flags = 0;
+		int32_t activity = 0;
+		int32_t activityWeight = 0;
+		CountOffsetPair events;
+		int32_t frameCount = 0;
+		CountOffsetPair pivots;
+		uint32_t motionType;
+		int32_t motionBone;
+		Vec3D linearMovement;
+		int32_t automovePositionIndex = 0;
+		int32_t automoveAngleIndex = 0;
+		BoundingBox boundingBox;
+		int32_t blendCount = 0;
+		int32_t animationOffset = 0;
+		uint32_t blendType0 = 0;
+		uint32_t blendType1 = 0;
+		float blendStart0 = 0.0f;
+		float blendStart1 = 0.0f;
+		float blendEnd0 = 0.0f;
+		float blendEnd1 = 0.0f;
+		int32_t blendParent = -1;
+		int32_t sequenceGroupIndex = 0;
+		int32_t nodeEntry = 0;
+		int32_t nodeExit = 0;
+		uint32_t nodeFlags = 0;
+		int32_t unused0 = 0;
+		int32_t unused1 = 0;
+		int32_t unused2 = 0;
+		int32_t unused3 = 0;
+
+		// Deferred reading:
+		std::vector<Event> eventCollection;
+		std::vector<Pivot> pivotCollection;
 	};
 }  // namespace MDLv14
