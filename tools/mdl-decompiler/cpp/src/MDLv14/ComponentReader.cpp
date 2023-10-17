@@ -11,6 +11,15 @@ namespace MDLv14
 	static constexpr size_t BONE_READ_SIZE = 32 + (20 * 4);
 	static constexpr size_t BONECONTROLLER_READ_SIZE = 6 * 4;
 	static constexpr size_t HITBOX_READ_SIZE = (2 * 4) + (6 * 4);
+	static constexpr size_t EVENT_READ_SIZE = (3 * 4) + 64;
+	static constexpr size_t PIVOT_READ_SIZE = 5 * 4;
+
+	static constexpr size_t SEQUENCE_READ_SIZE = //
+		32 + // strings
+		(5 * 4) + // floats
+		(21 * 4) + // ints
+		(4 * 4) + // count-offset pairs
+		(9 * 4); // Vec3Ds
 
 	static constexpr size_t HEADER_READ_SIZE =  //
 		68 +  // strings
@@ -150,6 +159,68 @@ namespace MDLv14
 		component.group = subReader.ReadElement<int32_t>();
 		ReadNestedComponent(subReader, component.min);
 		ReadNestedComponent(subReader, component.max);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Event& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(EVENT_READ_SIZE);
+
+		component.frame = subReader.ReadElement<int32_t>();
+		component.event = subReader.ReadElement<int32_t>();
+		component.type = subReader.ReadElement<int32_t>();
+		component.options = subReader.ReadString(64);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Pivot& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(PIVOT_READ_SIZE);
+
+		ReadNestedComponent(subReader, component.position);
+		component.start = subReader.ReadElement<int32_t>();
+		component.end = subReader.ReadElement<int32_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Sequence& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(SEQUENCE_READ_SIZE);
+
+		component.name = subReader.ReadString(32);
+		component.framesPerSecond = subReader.ReadElement<float>();
+		component.flags = subReader.ReadElement<uint32_t>();
+		component.activity = subReader.ReadElement<int32_t>();
+		component.activityWeight = subReader.ReadElement<int32_t>();
+		ReadNestedComponent(subReader, component.events);
+		component.frameCount = subReader.ReadElement<int32_t>();
+		ReadNestedComponent(subReader, component.pivots);
+		component.motionType = subReader.ReadElement<uint32_t>();
+		component.motionBone = subReader.ReadElement<int32_t>();
+		ReadNestedComponent(subReader, component.linearMovement);
+		component.automovePositionIndex = subReader.ReadElement<int32_t>();
+		component.automoveAngleIndex = subReader.ReadElement<int32_t>();
+		ReadNestedComponent(subReader, component.boundingBox);
+		component.blendCount = subReader.ReadElement<int32_t>();
+		component.animationOffset = subReader.ReadElement<int32_t>();
+		component.blendType0 = subReader.ReadElement<uint32_t>();
+		component.blendType1 = subReader.ReadElement<uint32_t>();
+		component.blendStart0 = subReader.ReadElement<float>();
+		component.blendStart1 = subReader.ReadElement<float>();
+		component.blendEnd0 = subReader.ReadElement<float>();
+		component.blendEnd1 = subReader.ReadElement<float>();
+		component.blendParent = subReader.ReadElement<int32_t>();
+		component.sequenceGroupIndex = subReader.ReadElement<int32_t>();
+		component.nodeEntry = subReader.ReadElement<int32_t>();
+		component.nodeExit = subReader.ReadElement<int32_t>();
+		component.nodeFlags = subReader.ReadElement<uint32_t>();
+		component.unused0 = subReader.ReadElement<int32_t>();
+		component.unused1 = subReader.ReadElement<int32_t>();
+		component.unused2 = subReader.ReadElement<int32_t>();
+		component.unused3 = subReader.ReadElement<int32_t>();
 
 		return subReader;
 	}
