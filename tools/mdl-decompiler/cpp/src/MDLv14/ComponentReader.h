@@ -38,6 +38,7 @@ namespace MDLv14
 
 		// Per-component implementation:
 
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, CountOffsetPair& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Vec3D& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BoundingBox& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, EyePosition& component);
