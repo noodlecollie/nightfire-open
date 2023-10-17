@@ -39,18 +39,26 @@ namespace MDLv14
 			return ReadComponentArray<T>(reader, elementCount);
 		}
 
+		// The outer reader is not modified here, since the data access is fairly random.
+		// Make sure to manually seek the outer reader forward after calling this function.
+		AnimationDataHolder
+		ReadAnimationData(BufferedFileReader::Ref readerRef, size_t blendCount, size_t boneCount, int32_t frameCount)
+		{
+			AnimationDataHolder anims(blendCount, boneCount);
+			ReadInternal(readerRef, anims, frameCount);
+			return anims;
+		}
+
 	private:
 		// Helpers:
 
-		template<typename T>
-		void ReadNestedComponent(BufferedFileReader& reader, T& component, bool mustReadEntireChunk = true)
+		template<typename T, typename... ARGS>
+		void ReadNestedComponent(BufferedFileReader& reader, T& component, ARGS&&... args)
 		{
-			BufferedFileReader subReader = ReadInternal(BufferedFileReader::Ref(reader), component);
+			BufferedFileReader subReader =
+				ReadInternal(BufferedFileReader::Ref(reader), component, std::forward<ARGS>(args)...);
 
-			if ( mustReadEntireChunk )
-			{
-				subReader.EnsureAtEnd();
-			}
+			subReader.EnsureAtEnd();
 
 			const size_t delta = subReader.CurrentPosition();
 			reader.SeekForward(delta);
@@ -69,5 +77,8 @@ namespace MDLv14
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Event& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Pivot& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Sequence& component);
+
+		BufferedFileReader
+		ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount);
 	};
 }  // namespace MDLv14

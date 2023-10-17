@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include "MDLv14/AnimationDataHolder.h"
 
 namespace MDLv14
 {
@@ -204,5 +205,23 @@ namespace MDLv14
 		// Deferred reading:
 		std::vector<Event> eventCollection;
 		std::vector<Pivot> pivotCollection;
+		AnimationDataHolder animationCollection;
+	};
+
+	struct AnimationValue
+	{
+		struct ValidOfTotal
+		{
+			uint8_t valid;
+			uint8_t total;
+		};
+
+		union ValueUnion
+		{
+			int16_t value;
+			ValidOfTotal validOfTotal;
+		};
+
+		ValueUnion u;
 	};
 }  // namespace MDLv14

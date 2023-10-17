@@ -14,12 +14,12 @@ namespace MDLv14
 	static constexpr size_t EVENT_READ_SIZE = (3 * 4) + 64;
 	static constexpr size_t PIVOT_READ_SIZE = 5 * 4;
 
-	static constexpr size_t SEQUENCE_READ_SIZE = //
-		32 + // strings
-		(5 * 4) + // floats
-		(21 * 4) + // ints
-		(4 * 4) + // count-offset pairs
-		(9 * 4); // Vec3Ds
+	static constexpr size_t SEQUENCE_READ_SIZE =  //
+		32 +  // strings
+		(5 * 4) +  // floats
+		(21 * 4) +  // ints
+		(4 * 4) +  // count-offset pairs
+		(9 * 4);  // Vec3Ds
 
 	static constexpr size_t HEADER_READ_SIZE =  //
 		68 +  // strings
@@ -221,6 +221,61 @@ namespace MDLv14
 		component.unused1 = subReader.ReadElement<int32_t>();
 		component.unused2 = subReader.ReadElement<int32_t>();
 		component.unused3 = subReader.ReadElement<int32_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader
+	ComponentReader::ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader();
+
+		for ( size_t blendIndex = 0; blendIndex < component.BlendCount(); ++blendIndex )
+		{
+			for ( size_t boneIndex = 0; boneIndex < component.BoneCount(); ++boneIndex )
+			{
+				size_t rowOffset = subReader.CurrentPosition();
+
+				for ( size_t axisIndex = 0; axisIndex < AnimationDataHolder::AXIS_COUNT; ++axisIndex )
+				{
+					uint16_t offsetIntoRow = subReader.ReadElement<uint16_t>();
+
+					if ( offsetIntoRow > 0 )
+					{
+						size_t columnOffset = subReader.CurrentPosition();
+						subReader.SeekFromBeginning(rowOffset + offsetIntoRow);
+
+						int32_t numFramesHandled = 0;
+
+						while ( numFramesHandled < frameCount )
+						{
+							AnimationValue frameRange {};
+							frameRange.u.value = subReader.ReadElement<int16_t>();
+
+							const uint8_t& valid = frameRange.u.validOfTotal.valid;
+							const uint8_t& total = frameRange.u.validOfTotal.total;
+
+							numFramesHandled += total;
+
+							int16_t valueToAdd = 0;
+
+							for ( uint8_t frameIndex = 0; frameIndex < valid; ++frameIndex )
+							{
+								valueToAdd = subReader.ReadElement<int16_t>();
+								component.GetDataArray(blendIndex, boneIndex, axisIndex).emplace_back(valueToAdd);
+							}
+
+							for ( uint8_t frameIndex = valid; frameIndex < total; ++frameIndex )
+							{
+								component.GetDataArray(blendIndex, boneIndex, axisIndex).emplace_back(valueToAdd);
+							}
+						}
+
+						subReader.SeekFromBeginning(columnOffset);
+					}
+				}
+			}
+		}
 
 		return subReader;
 	}

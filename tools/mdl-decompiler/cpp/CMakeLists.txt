@@ -1,6 +1,8 @@
 include(compiler_settings)
 
 add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
+	src/MDLv14/AnimationDataHolder.h
+	src/MDLv14/AnimationDataHolder.cpp
 	src/MDLv14/ComponentReader.h
 	src/MDLv14/ComponentReader.cpp
 	src/MDLv14/Components.h
