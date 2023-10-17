@@ -31,11 +31,11 @@ public:
 		BufferedFileReader& m_ParentReader;
 	};
 
-	BufferedFileReader(const std::shared_ptr<BufferedFile>& bufferedFile, size_t offset, size_t length);
+	BufferedFileReader(const std::shared_ptr<const BufferedFile>& bufferedFile, size_t offset, size_t length);
 	~BufferedFileReader();
 
 	BufferedFileReader(BufferedFileReader&& other);
-	BufferedFileReader& operator =(BufferedFileReader&& other);
+	BufferedFileReader& operator=(BufferedFileReader&& other);
 
 	BufferedFileReader CreateSubReader(size_t offset, size_t length);
 	BufferedFileReader CreateSubReader(size_t length);
@@ -160,7 +160,7 @@ public:
 private:
 	bool DeltaWouldExceedFile(size_t delta) const;
 
-	std::shared_ptr<BufferedFile> m_File;
+	std::shared_ptr<const BufferedFile> m_File;
 	size_t m_Base = 0;
 	size_t m_Length = 0;
 	size_t m_OffsetFromBase = 0;

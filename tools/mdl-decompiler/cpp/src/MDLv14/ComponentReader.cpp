@@ -8,6 +8,7 @@ namespace MDLv14
 	static constexpr size_t VEC3D_READ_SIZE = 3 * 4;
 	static constexpr size_t EYEPOSITION_READ_SIZE = 3 * 4;
 	static constexpr size_t BOUNDINGBOX_READ_SIZE = 2 * VEC3D_READ_SIZE;
+	static constexpr size_t BONE_READ_SIZE = 32 + (20 * 4);
 
 	// TODO: Update to make this less opaque
 	static constexpr size_t HEADER_READ_SIZE = 484;  // From original code
@@ -68,7 +69,7 @@ namespace MDLv14
 		ReadNestedComponent(subReader, component.eyePosition);
 		ReadNestedComponent(subReader, component.boundingBox);
 		ReadNestedComponent(subReader, component.clippingBox);
-		component.typeFlags = subReader.ReadElement<int32_t>();
+		component.typeFlags = subReader.ReadElement<uint32_t>();
 		ReadNestedComponent(subReader, component.bones);
 		ReadNestedComponent(subReader, component.boneControllers);
 		ReadNestedComponent(subReader, component.hitBoxes);
@@ -86,7 +87,7 @@ namespace MDLv14
 		component.transitionsCount = subReader.ReadElement<int32_t>();
 		component.transitionFlagsOffset = subReader.ReadElement<int32_t>();
 		component.transitionsOffset = subReader.ReadElement<int32_t>();
-		component.levelOfDetailFlags = subReader.ReadElement<int32_t>();
+		component.levelOfDetailFlags = subReader.ReadElement<uint32_t>();
 		component.modelCount = subReader.ReadElement<int32_t>();
 		component.vertexCount = subReader.ReadElement<int32_t>();
 		component.triangleCount = subReader.ReadElement<int32_t>();
@@ -99,6 +100,24 @@ namespace MDLv14
 		component.blendingOffset = subReader.ReadElement<int32_t>();
 		component.boneFixUpOffset = subReader.ReadElement<int32_t>();
 		component.modelOffsets = subReader.ReadElements<int32_t>(NUM_MODEL_OFFSETS);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Bone& component)
+	{
+		static constexpr size_t NUM_BONE_CONTROLLERS = 6;
+
+		BufferedFileReader subReader = ref.CreateSubReader(BONE_READ_SIZE);
+
+		component.name = subReader.ReadString(32);
+		component.parent = subReader.ReadElement<int32_t>();
+		component.flags = subReader.ReadElement<uint32_t>();
+		component.controllers = subReader.ReadElements<int32_t>(NUM_BONE_CONTROLLERS);
+		ReadNestedComponent(subReader, component.position);
+		ReadNestedComponent(subReader, component.rotation);
+		ReadNestedComponent(subReader, component.scalePosition);
+		ReadNestedComponent(subReader, component.scaleRotation);
 
 		return subReader;
 	}

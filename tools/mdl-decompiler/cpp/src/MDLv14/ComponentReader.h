@@ -19,6 +19,26 @@ namespace MDLv14
 			return component;
 		}
 
+		template<typename T>
+		std::vector<T> ReadComponentArray(BufferedFileReader& reader, size_t elementCount)
+		{
+			std::vector<T> out;
+
+			for ( size_t index = 0; index < elementCount; ++index )
+			{
+				out.emplace_back(ReadComponent<T>(reader));
+			}
+
+			return out;
+		}
+
+		template<typename T>
+		std::vector<T> ReadComponentArray(BufferedFileReader& reader, size_t elementCount, size_t beginByteOffset)
+		{
+			reader.SeekFromBeginning(beginByteOffset);
+			return ReadComponentArray<T>(reader, elementCount);
+		}
+
 	private:
 		// Helpers:
 
@@ -43,5 +63,6 @@ namespace MDLv14
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BoundingBox& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, EyePosition& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Header& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Bone& component);
 	};
 }  // namespace MDLv14

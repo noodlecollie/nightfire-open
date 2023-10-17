@@ -39,7 +39,7 @@ namespace MDLv14
 		EyePosition eyePosition;
 		BoundingBox boundingBox;
 		BoundingBox clippingBox;
-		int32_t typeFlags = 0;  // TODO: Proper type
+		uint32_t typeFlags = 0;  // TODO: Proper type
 		CountOffsetPair bones;
 		CountOffsetPair boneControllers;
 		CountOffsetPair hitBoxes;
@@ -57,7 +57,7 @@ namespace MDLv14
 		int32_t transitionsCount = 0;
 		int32_t transitionFlagsOffset = 0;
 		int32_t transitionsOffset = 0;
-		int32_t levelOfDetailFlags = 0;  // TODO: Proper type
+		uint32_t levelOfDetailFlags = 0;  // TODO: Proper type
 		int32_t modelCount = 0;
 		int32_t vertexCount = 0;
 		int32_t triangleCount = 0;
@@ -70,5 +70,17 @@ namespace MDLv14
 		int32_t blendingOffset = 0;
 		int32_t boneFixUpOffset = 0;
 		std::vector<int32_t> modelOffsets;
+	};
+
+	struct Bone
+	{
+		std::string name;
+		int32_t parent = 0;
+		uint32_t flags = 0;
+		std::vector<int32_t> controllers;
+		Vec3D position;
+		Vec3D rotation;
+		Vec3D scalePosition;
+		Vec3D scaleRotation;
 	};
 }  // namespace MDLv14
