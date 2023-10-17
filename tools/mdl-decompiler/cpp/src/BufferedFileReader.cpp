@@ -25,7 +25,10 @@ static void ValidateOffsetAndLength(const std::string& filePath, size_t dataLeng
 	}
 }
 
-BufferedFileReader::BufferedFileReader(const std::shared_ptr<BufferedFile>& bufferedFile, size_t offset, size_t length)
+BufferedFileReader::BufferedFileReader(
+	const std::shared_ptr<const BufferedFile>& bufferedFile,
+	size_t offset,
+	size_t length)
 {
 	if ( !bufferedFile )
 	{
@@ -48,7 +51,7 @@ BufferedFileReader::BufferedFileReader(BufferedFileReader&& other)
 	*this = std::move(other);
 }
 
-BufferedFileReader& BufferedFileReader::operator =(BufferedFileReader&& other)
+BufferedFileReader& BufferedFileReader::operator=(BufferedFileReader&& other)
 {
 	m_File = std::move(other.m_File);
 	m_Base = std::move(other.m_Base);

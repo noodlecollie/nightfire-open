@@ -17,7 +17,7 @@ public:
 	const uint8_t* Data() const;
 	size_t Length() const;
 
-	BufferedFileReader CreateReader(size_t offset = 0, size_t length = 0);
+	BufferedFileReader CreateReader(size_t offset = 0, size_t length = 0) const;
 
 private:
 	explicit BufferedFile(const std::string& filePath);

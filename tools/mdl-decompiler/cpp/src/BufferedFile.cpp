@@ -56,7 +56,7 @@ size_t BufferedFile::Length() const
 	return m_Data.size();
 }
 
-BufferedFileReader BufferedFile::CreateReader(size_t offset, size_t length)
+BufferedFileReader BufferedFile::CreateReader(size_t offset, size_t length) const
 {
 	if ( length < 1 && offset <= Length() )
 	{
