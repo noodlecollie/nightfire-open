@@ -12,6 +12,7 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/BufferedFileReader.cpp
 	src/Exceptions.h
 	src/Main.cpp
+	src/Utils.h
 )
 
 target_include_directories(${TARGETNAME_EXE_MDL14_DECOMPILER} PRIVATE
