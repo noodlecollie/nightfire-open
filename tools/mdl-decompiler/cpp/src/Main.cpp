@@ -2,18 +2,14 @@
 #include "args/args.hxx"
 #include "Exceptions.h"
 #include "BufferedFile.h"
-#include "MDLv14/ComponentReader.h"
+#include "MDLv14/MDLFile.h"
 
 static void ProcessFile(const std::string& path)
 {
 	std::cout << "Decompiling: " << path << std::endl;
 
 	std::shared_ptr<BufferedFile> inputFile = BufferedFile::OpenFile(path);
-
-	BufferedFileReader fileReader = inputFile->CreateReader();
-	MDLv14::ComponentReader componentReader;
-	MDLv14::Header header = componentReader.ReadComponent<MDLv14::Header>(fileReader);
-	(void)header;
+	MDLv14::MDLFile mdlFile(*inputFile);
 }
 
 int main(int argc, char** argv)
@@ -24,7 +20,11 @@ int main(int argc, char** argv)
 
 	args::HelpFlag help(parser, "help", "Display this help menu.", {'h', "help"});
 	args::Positional<std::string> inputFileArg(parser, "input_file", "MDLv14 file to decompile.");
-	args::ValueFlag<std::string> outputDirArg(parser, "output_dir", "Directory in which to place output. If this does not exist, it is created.", {'o'});
+	args::ValueFlag<std::string> outputDirArg(
+		parser,
+		"output_dir",
+		"Directory in which to place output. If this does not exist, it is created.",
+		{'o'});
 
 	try
 	{

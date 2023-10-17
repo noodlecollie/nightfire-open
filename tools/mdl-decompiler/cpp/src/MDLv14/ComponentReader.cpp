@@ -9,10 +9,15 @@ namespace MDLv14
 	static constexpr size_t EYEPOSITION_READ_SIZE = 3 * 4;
 	static constexpr size_t BOUNDINGBOX_READ_SIZE = 2 * VEC3D_READ_SIZE;
 	static constexpr size_t BONE_READ_SIZE = 32 + (20 * 4);
-	static constexpr size_t BONE_CONTROLLER_READ_SIZE = 6 * 4;
+	static constexpr size_t BONECONTROLLER_READ_SIZE = 6 * 4;
+	static constexpr size_t HITBOX_READ_SIZE = (2 * 4) + (6 * 4);
 
-	// TODO: Update to make this less opaque
-	static constexpr size_t HEADER_READ_SIZE = 484;  // From original code
+	static constexpr size_t HEADER_READ_SIZE =  //
+		68 +  // strings
+		(23 * 4) +  // ints
+		(9 * 2 * 4) +  // count-offset pairs
+		(15 * 4) +  // Vec3Ds
+		(48 * 4);  // model offsets
 
 	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, CountOffsetPair& component)
 	{
@@ -125,7 +130,7 @@ namespace MDLv14
 
 	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, BoneController& component)
 	{
-		BufferedFileReader subReader = ref.CreateSubReader(BONE_CONTROLLER_READ_SIZE);
+		BufferedFileReader subReader = ref.CreateSubReader(BONECONTROLLER_READ_SIZE);
 
 		component.bone = subReader.ReadElement<int32_t>();
 		component.motionFlags = subReader.ReadElement<int32_t>();
@@ -133,6 +138,18 @@ namespace MDLv14
 		component.end = subReader.ReadElement<float>();
 		component.rest = subReader.ReadElement<int32_t>();
 		component.index = subReader.ReadElement<int32_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, HitBox& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(HITBOX_READ_SIZE);
+
+		component.bone = subReader.ReadElement<int32_t>();
+		component.group = subReader.ReadElement<int32_t>();
+		ReadNestedComponent(subReader, component.min);
+		ReadNestedComponent(subReader, component.max);
 
 		return subReader;
 	}
