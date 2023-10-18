@@ -16,12 +16,12 @@ namespace MDLv14
 		size_t BlendCount() const;
 		size_t BoneCount() const;
 		bool IsValid() const;
+		void Clear();
 
 		std::vector<uint16_t>& GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex);
 		const std::vector<uint16_t>& GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex) const;
 
 	private:
-		void ClearDataArrays();
 		size_t LinearIndex(size_t blendIndex, size_t boneIndex, size_t axisIndex) const;
 
 		size_t m_BlendCount = 0;

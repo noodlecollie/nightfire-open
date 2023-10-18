@@ -16,7 +16,7 @@ namespace MDLv14
 			throw std::invalid_argument("AnimationDataHolder: Number of blends and bones must be greater than zero.");
 		}
 
-		ClearDataArrays();
+		Clear();
 	}
 
 	size_t AnimationDataHolder::BlendCount() const
@@ -34,6 +34,16 @@ namespace MDLv14
 		return m_BlendCount > 0 && m_BoneCount > 0;
 	}
 
+	void AnimationDataHolder::Clear()
+	{
+		m_DataArrays.clear();
+
+		if ( IsValid() )
+		{
+			m_DataArrays.resize(m_BlendCount * m_BoneCount * AXIS_COUNT);
+		}
+	}
+
 	std::vector<uint16_t>& AnimationDataHolder::GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex)
 	{
 		return m_DataArrays[LinearIndex(blendIndex, boneIndex, axisIndex)];
@@ -43,16 +53,6 @@ namespace MDLv14
 	AnimationDataHolder::GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex) const
 	{
 		return m_DataArrays[LinearIndex(blendIndex, boneIndex, axisIndex)];
-	}
-
-	void AnimationDataHolder::ClearDataArrays()
-	{
-		m_DataArrays.clear();
-
-		if ( IsValid() )
-		{
-			m_DataArrays.resize(m_BlendCount * m_BoneCount * AXIS_COUNT);
-		}
 	}
 
 	size_t AnimationDataHolder::LinearIndex(size_t blendIndex, size_t boneIndex, size_t axisIndex) const

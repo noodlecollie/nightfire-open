@@ -3,6 +3,7 @@
 #include <functional>
 #include <type_traits>
 #include "MDLv14/Components.h"
+#include "MDLv14/SkinDataHolder.h"
 #include "BufferedFileReader.h"
 
 namespace MDLv14
@@ -45,8 +46,25 @@ namespace MDLv14
 		ReadAnimationData(BufferedFileReader::Ref readerRef, size_t blendCount, size_t boneCount, int32_t frameCount)
 		{
 			AnimationDataHolder anims(blendCount, boneCount);
-			ReadInternal(readerRef, anims, frameCount);
+
+			if ( anims.IsValid() )
+			{
+				ReadInternal(readerRef, anims, frameCount);
+			}
+
 			return anims;
+		}
+
+		SkinDataHolder ReadSkinData(BufferedFileReader& reader, size_t numSkinFamilies, size_t numSkinReferences)
+		{
+			SkinDataHolder skinData(numSkinFamilies, numSkinReferences);
+
+			if ( skinData.IsValid() )
+			{
+				ReadNestedComponent<SkinDataHolder>(reader, skinData);
+			}
+
+			return skinData;
 		}
 
 	private:
@@ -83,5 +101,7 @@ namespace MDLv14
 
 		BufferedFileReader
 		ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount);
+
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, SkinDataHolder& component);
 	};
 }  // namespace MDLv14

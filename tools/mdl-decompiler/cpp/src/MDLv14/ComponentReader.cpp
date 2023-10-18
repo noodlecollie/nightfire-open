@@ -268,6 +268,7 @@ namespace MDLv14
 	ComponentReader::ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount)
 	{
 		BufferedFileReader subReader = ref.CreateSubReader();
+		component.Clear();
 
 		for ( size_t blendIndex = 0; blendIndex < component.BlendCount(); ++blendIndex )
 		{
@@ -313,6 +314,24 @@ namespace MDLv14
 						subReader.SeekFromBeginning(columnOffset);
 					}
 				}
+			}
+		}
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, SkinDataHolder& component)
+	{
+		BufferedFileReader subReader =
+			ref.CreateSubReader(component.SkinFamilyCount() * component.SkinReferenceCount() * 2);
+
+		component.Clear();
+
+		for ( size_t skinFamilyIndex = 0; skinFamilyIndex < component.SkinFamilyCount(); ++skinFamilyIndex )
+		{
+			for ( size_t skinRefIndex = 0; skinRefIndex < component.SkinReferenceCount(); ++skinRefIndex )
+			{
+				component.GetEntry(skinFamilyIndex, skinRefIndex) = subReader.ReadElement<int16_t>();
 			}
 		}
 
