@@ -14,6 +14,7 @@ namespace MDLv14
 	static constexpr size_t EVENT_READ_SIZE = (3 * 4) + 64;
 	static constexpr size_t PIVOT_READ_SIZE = 5 * 4;
 	static constexpr size_t SEQUENCEGROUP_READ_SIZE = 32 + 64 + (2 * 4);
+	static constexpr size_t LEVELOFDETAIL_READ_SIZE = 5 * 4;
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -234,6 +235,18 @@ namespace MDLv14
 		component.fileName = subReader.ReadString(64);
 		component.cache = subReader.ReadElement<int32_t>();
 		component.data = subReader.ReadElement<int32_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, LevelOfDetail& component)
+	{
+		static constexpr size_t NUM_DISTANCES = 4;
+
+		BufferedFileReader subReader = ref.CreateSubReader(LEVELOFDETAIL_READ_SIZE);
+
+		component.levels = subReader.ReadElement<int32_t>();
+		component.distance = subReader.ReadElements<int32_t>(NUM_DISTANCES);
 
 		return subReader;
 	}

@@ -78,6 +78,7 @@ namespace MDLv14
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Pivot& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Sequence& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, SequenceGroup& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, LevelOfDetail& component);
 
 		BufferedFileReader
 		ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount);
