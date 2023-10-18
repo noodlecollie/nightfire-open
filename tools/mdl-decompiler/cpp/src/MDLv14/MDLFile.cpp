@@ -73,5 +73,10 @@ namespace MDLv14
 				fileReader,
 				MDLv14::LODFlagsToLODLevels(m_Header.levelOfDetailFlags));
 		}
+
+		m_Textures = componentReader.ReadComponentArray<MDLv14::Texture>(
+			fileReader,
+			IntToSizeT(m_Header.textures.count),
+			IntToSizeT(m_Header.textures.offset));
 	}
 }  // namespace MDLv14
