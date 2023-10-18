@@ -19,5 +19,6 @@ namespace MDLv14
 		std::vector<Sequence> m_Sequences;
 		std::vector<SequenceGroup> m_SequenceGroups;
 		std::vector<LevelOfDetail> m_LevelsOfDetail;
+		std::vector<Texture> m_Textures;
 	};
 }

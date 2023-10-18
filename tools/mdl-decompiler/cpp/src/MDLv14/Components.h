@@ -238,4 +238,12 @@ namespace MDLv14
 		int32_t levels = 0;
 		std::vector<int32_t> distance;
 	};
+
+	struct Texture
+	{
+		std::string materialName;
+		std::string textureName;
+		int32_t referenceCount = 0;
+		int32_t unused = 0;
+	};
 }  // namespace MDLv14
