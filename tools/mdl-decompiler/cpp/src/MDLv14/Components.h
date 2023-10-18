@@ -18,12 +18,12 @@ namespace MDLv14
 	enum LevelOfDetailFlag
 	{
 		LevelOfDetailFlag_None = 0,
-		LevelOfDetailFlagTimesOne = 1,
-		LevelOfDetailFlagTimesTwo = 2,
-		LevelOfDetailFlagTimesFive = 4,
-		LevelOfDetailFlagPlusOne = 256,
-		LevelOfDetailFlagPlusTwo = 512,
-		LevelOfDetailFlagPlusFour = 1024
+		LevelOfDetailFlag_TimesOne = 1,
+		LevelOfDetailFlag_TimesTwo = 2,
+		LevelOfDetailFlag_TimesFive = 4,
+		LevelOfDetailFlag_PlusOne = 256,
+		LevelOfDetailFlag_PlusTwo = 512,
+		LevelOfDetailFlag_PlusFour = 1024
 	};
 
 	enum MotionFlag
@@ -212,13 +212,13 @@ namespace MDLv14
 	{
 		struct ValidOfTotal
 		{
-			uint8_t valid;
-			uint8_t total;
+			uint8_t valid = 0;
+			uint8_t total = 0;
 		};
 
 		union ValueUnion
 		{
-			int16_t value;
+			int16_t value = 0;
 			ValidOfTotal validOfTotal;
 		};
 
@@ -231,5 +231,11 @@ namespace MDLv14
 		std::string fileName;
 		int32_t cache = 0;
 		int32_t data = 0;
+	};
+
+	struct LevelOfDetail
+	{
+		int32_t levels = 0;
+		std::vector<int32_t> distance;
 	};
 }  // namespace MDLv14

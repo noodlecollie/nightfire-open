@@ -18,5 +18,6 @@ namespace MDLv14
 		std::vector<HitBox> m_HitBoxes;
 		std::vector<Sequence> m_Sequences;
 		std::vector<SequenceGroup> m_SequenceGroups;
+		std::vector<LevelOfDetail> m_LevelsOfDetail;
 	};
 }

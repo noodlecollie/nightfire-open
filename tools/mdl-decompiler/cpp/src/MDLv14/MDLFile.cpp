@@ -1,6 +1,7 @@
 #include "MDLv14/MDLFile.h"
 #include "BufferedFileReader.h"
 #include "MDLv14/ComponentReader.h"
+#include "MDLv14/ComponentUtils.h"
 #include "Utils.h"
 
 namespace MDLv14
@@ -63,5 +64,14 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.sequenceGroups.count),
 			IntToSizeT(m_Header.sequenceGroups.offset));
+
+		if ( m_Header.levelOfDetailFlags != LevelOfDetailFlag_None )
+		{
+			fileReader.SeekForward(DistToNextMultiple(fileReader.CurrentPosition(), 16));
+
+			m_LevelsOfDetail = componentReader.ReadComponentArray<MDLv14::LevelOfDetail>(
+				fileReader,
+				MDLv14::LODFlagsToLODLevels(m_Header.levelOfDetailFlags));
+		}
 	}
 }  // namespace MDLv14
