@@ -58,5 +58,10 @@ namespace MDLv14
 				IntToSizeT(m_Header.bones.count),
 				sequence.frameCount);
 		}
+
+		m_SequenceGroups = componentReader.ReadComponentArray<MDLv14::SequenceGroup>(
+			fileReader,
+			IntToSizeT(m_Header.sequenceGroups.count),
+			IntToSizeT(m_Header.sequenceGroups.offset));
 	}
 }  // namespace MDLv14
