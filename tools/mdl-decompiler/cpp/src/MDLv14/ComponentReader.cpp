@@ -13,6 +13,7 @@ namespace MDLv14
 	static constexpr size_t HITBOX_READ_SIZE = (2 * 4) + (6 * 4);
 	static constexpr size_t EVENT_READ_SIZE = (3 * 4) + 64;
 	static constexpr size_t PIVOT_READ_SIZE = 5 * 4;
+	static constexpr size_t SEQUENCEGROUP_READ_SIZE = 32 + 64 + (2 * 4);
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -221,6 +222,18 @@ namespace MDLv14
 		component.unused1 = subReader.ReadElement<int32_t>();
 		component.unused2 = subReader.ReadElement<int32_t>();
 		component.unused3 = subReader.ReadElement<int32_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, SequenceGroup& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(SEQUENCEGROUP_READ_SIZE);
+
+		component.label = subReader.ReadString(32);
+		component.fileName = subReader.ReadString(64);
+		component.cache = subReader.ReadElement<int32_t>();
+		component.data = subReader.ReadElement<int32_t>();
 
 		return subReader;
 	}

@@ -224,4 +224,12 @@ namespace MDLv14
 
 		ValueUnion u;
 	};
+
+	struct SequenceGroup
+	{
+		std::string label;
+		std::string fileName;
+		int32_t cache = 0;
+		int32_t data = 0;
+	};
 }  // namespace MDLv14
