@@ -78,5 +78,8 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.textures.count),
 			IntToSizeT(m_Header.textures.offset));
+
+		fileReader.SeekFromBeginning(m_Header.skinsOffset);
+		m_SkinData = componentReader.ReadSkinData(fileReader, m_Header.skinFamilies, m_Header.skinReferences);
 	}
 }  // namespace MDLv14

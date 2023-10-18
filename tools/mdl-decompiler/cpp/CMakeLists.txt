@@ -8,6 +8,8 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/MDLv14/Components.h
 	src/MDLv14/MDLFile.h
 	src/MDLv14/MDLFile.cpp
+	src/MDLv14/SkinDataHolder.h
+	src/MDLv14/SkinDataHolder.cpp
 	src/BufferedFile.h
 	src/BufferedFile.cpp
 	src/BufferedFileReader.h
