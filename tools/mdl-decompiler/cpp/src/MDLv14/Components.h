@@ -212,17 +212,17 @@ namespace MDLv14
 	{
 		struct ValidOfTotal
 		{
-			uint8_t valid = 0;
-			uint8_t total = 0;
+			uint8_t valid;
+			uint8_t total;
 		};
 
 		union ValueUnion
 		{
-			int16_t value = 0;
+			int16_t value;
 			ValidOfTotal validOfTotal;
 		};
 
-		ValueUnion u;
+		ValueUnion u {};
 	};
 
 	struct SequenceGroup

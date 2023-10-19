@@ -1,6 +1,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <limits>
+#include <cstring>
 #include "BufferedFileReader.h"
 #include "BufferedFile.h"
 #include "Exceptions.h"
