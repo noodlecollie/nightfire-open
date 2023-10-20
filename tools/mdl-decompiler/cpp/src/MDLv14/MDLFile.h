@@ -24,5 +24,6 @@ namespace MDLv14
 		std::vector<LevelOfDetail> m_LevelsOfDetail;
 		std::vector<Texture> m_Textures;
 		SkinDataHolder m_SkinData;
+		std::vector<BodyGroup> m_BodyGroups;
 	};
 }
