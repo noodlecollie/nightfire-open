@@ -12,7 +12,7 @@ static void ValidateOffsetAndLength(const std::string& filePath, size_t dataLeng
 	{
 		throw FileIOException(
 			filePath,
-			"BufferedFileReader base offset of " + std::to_string(offset) + " bytes exceeded file length of " +
+			"BufferedFileReader base offset of " + std::to_string(offset) + " bytes exceeded buffer length of " +
 				std::to_string(dataLength) + " bytes.");
 	}
 
@@ -22,7 +22,8 @@ static void ValidateOffsetAndLength(const std::string& filePath, size_t dataLeng
 		throw FileIOException(
 			filePath,
 			"BufferedFileReader file segment with offset of " + std::to_string(offset) + " bytes and length of " +
-				std::to_string(length) + " bytes exceeded bounds of file.");
+				std::to_string(length) + " bytes exceeded " + std::to_string(dataLength - offset) +
+				" bytes of data in buffer.");
 	}
 }
 

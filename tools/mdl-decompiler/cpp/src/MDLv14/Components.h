@@ -281,6 +281,12 @@ namespace MDLv14
 
 	struct TriangleMap
 	{
-		uint16_t vertexIndex;
+		uint16_t vertexIndex = 0;
+	};
+
+	struct Vertex
+	{
+		Vec3D position;
+		float scale = 0.0f;
 	};
 }  // namespace MDLv14
