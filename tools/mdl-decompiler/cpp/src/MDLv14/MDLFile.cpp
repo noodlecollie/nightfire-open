@@ -86,6 +86,11 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.bodyGroups.count),
 			IntToSizeT(m_Header.bodyGroups.offset));
+
+		m_Attachments = componentReader.ReadComponentArray<MDLv14::Attachment>(
+			fileReader,
+			IntToSizeT(m_Header.attachments.count),
+			IntToSizeT(m_Header.attachments.offset));
 	}
 
 	const Header& MDLFile::GetHeader() const
