@@ -18,6 +18,8 @@ namespace MDLv14
 	static constexpr size_t TEXTURE_READ_SIZE = (2 * 64) + (2 * 4);
 	static constexpr size_t BODYGROUP_READ_SIZE = 64 + (3 * 4);
 	static constexpr size_t ATTACHMENT_READ_SIZE = 32 + (2 * 4) + (12 * 4);
+	static constexpr size_t SOUNDGROUP_READ_SIZE = 32 + 4;
+	static constexpr size_t SOUNDS_READ_SIZE = 4 + (10 * 64);
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -280,7 +282,7 @@ namespace MDLv14
 
 	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Attachment& component)
 	{
-		BufferedFileReader subReader = ref.CreateSubReader(BODYGROUP_READ_SIZE);
+		BufferedFileReader subReader = ref.CreateSubReader(ATTACHMENT_READ_SIZE);
 
 		component.name = subReader.ReadString(32);
 		component.type = subReader.ReadElement<int32_t>();
@@ -289,6 +291,28 @@ namespace MDLv14
 		ReadNestedComponent(subReader, component.vector1);
 		ReadNestedComponent(subReader, component.vector2);
 		ReadNestedComponent(subReader, component.vector3);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, SoundGroup& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(SOUNDGROUP_READ_SIZE);
+
+		component.name = subReader.ReadString(32);
+		component.offset = subReader.ReadElement<int32_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Sounds& component)
+	{
+		static constexpr size_t NUM_NAMES = 10;
+
+		BufferedFileReader subReader = ref.CreateSubReader(SOUNDS_READ_SIZE);
+
+		component.unused = subReader.ReadElement<int32_t>();
+		component.soundNames = subReader.ReadStrings(NUM_NAMES, 64);
 
 		return subReader;
 	}

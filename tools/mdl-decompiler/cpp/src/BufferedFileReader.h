@@ -62,6 +62,7 @@ public:
 
 	void ReadBytes(void* buffer, size_t length);
 	std::string ReadString(size_t numInputBytes);
+	std::vector<std::string> ReadStrings(size_t numStrings, size_t numBytesPerString);
 
 	template<typename TargetType, typename ContainerType, typename ConverterFunctor>
 	TargetType ReadAndConvertElement(const ConverterFunctor& converter)

@@ -236,6 +236,19 @@ std::string BufferedFileReader::ReadString(size_t numInputBytes)
 	return std::string(rawChars.data());
 }
 
+std::vector<std::string> BufferedFileReader::ReadStrings(size_t numStrings, size_t numBytesPerString)
+{
+	std::vector<std::string> out;
+	out.reserve(numStrings);
+
+	for ( size_t index = 0; index < numStrings; ++index )
+	{
+		out.emplace_back(ReadString(numBytesPerString));
+	}
+
+	return out;
+}
+
 bool BufferedFileReader::DeltaWouldExceedFile(size_t delta) const
 {
 	// Done carefully to avoid the possibility of overflowing the size_t:

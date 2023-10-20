@@ -100,6 +100,8 @@ namespace MDLv14
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Texture& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BodyGroup& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Attachment& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, SoundGroup& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Sounds& component);
 
 		BufferedFileReader
 		ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount);
