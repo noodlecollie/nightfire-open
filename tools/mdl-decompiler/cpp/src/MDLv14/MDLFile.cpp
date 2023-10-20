@@ -91,6 +91,19 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.attachments.count),
 			IntToSizeT(m_Header.attachments.offset));
+
+		m_SoundGroups = componentReader.ReadComponentArray<MDLv14::SoundGroup>(
+			fileReader,
+			IntToSizeT(m_Header.soundGroups.count),
+			IntToSizeT(m_Header.soundGroups.offset));
+
+		const size_t endOfSoundGroupLump = fileReader.CurrentPosition();
+
+		for ( SoundGroup& soundGroup : m_SoundGroups )
+		{
+			fileReader.SeekFromBeginning(endOfSoundGroupLump + IntToSizeT(soundGroup.offset));
+			soundGroup.sounds = componentReader.ReadComponent<MDLv14::Sounds>(fileReader);
+		}
 	}
 
 	const Header& MDLFile::GetHeader() const

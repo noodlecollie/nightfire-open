@@ -265,4 +265,17 @@ namespace MDLv14
 		Vec3D vector2;
 		Vec3D vector3;
 	};
+
+	struct Sounds
+	{
+		int32_t unused;
+		std::vector<std::string> soundNames;
+	};
+
+	struct SoundGroup
+	{
+		std::string name;
+		int32_t offset = 0;
+		Sounds sounds;
+	};
 }  // namespace MDLv14

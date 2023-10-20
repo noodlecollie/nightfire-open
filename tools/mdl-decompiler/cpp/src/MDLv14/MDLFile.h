@@ -26,5 +26,6 @@ namespace MDLv14
 		SkinDataHolder m_SkinData;
 		std::vector<BodyGroup> m_BodyGroups;
 		std::vector<Attachment> m_Attachments;
+		std::vector<SoundGroup> m_SoundGroups;
 	};
 }
