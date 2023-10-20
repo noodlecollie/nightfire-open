@@ -16,6 +16,7 @@ namespace MDLv14
 	static constexpr size_t SEQUENCEGROUP_READ_SIZE = 32 + 64 + (2 * 4);
 	static constexpr size_t LEVELOFDETAIL_READ_SIZE = 5 * 4;
 	static constexpr size_t TEXTURE_READ_SIZE = (2 * 64) + (2 * 4);
+	static constexpr size_t BODYGROUP_READ_SIZE = 64 + (3 * 4);
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -260,6 +261,18 @@ namespace MDLv14
 		component.textureName = subReader.ReadString(64);
 		component.referenceCount = subReader.ReadElement<int32_t>();
 		component.unused = subReader.ReadElement<int32_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, BodyGroup& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(BODYGROUP_READ_SIZE);
+
+		component.name = subReader.ReadString(64);
+		component.modelCount = subReader.ReadElement<int32_t>();
+		component.bodyCount = subReader.ReadElement<int32_t>();
+		component.modelOffset = subReader.ReadElement<int32_t>();
 
 		return subReader;
 	}

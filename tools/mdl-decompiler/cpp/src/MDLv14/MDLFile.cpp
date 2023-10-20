@@ -81,6 +81,11 @@ namespace MDLv14
 
 		fileReader.SeekFromBeginning(m_Header.skinsOffset);
 		m_SkinData = componentReader.ReadSkinData(fileReader, m_Header.skinFamilies, m_Header.skinReferences);
+
+		m_BodyGroups = componentReader.ReadComponentArray<MDLv14::BodyGroup>(
+			fileReader,
+			IntToSizeT(m_Header.bodyGroups.count),
+			IntToSizeT(m_Header.bodyGroups.offset));
 	}
 
 	const Header& MDLFile::GetHeader() const

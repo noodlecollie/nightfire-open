@@ -246,4 +246,12 @@ namespace MDLv14
 		int32_t referenceCount = 0;
 		int32_t unused = 0;
 	};
+
+	struct BodyGroup
+	{
+		std::string name;
+		int32_t modelCount = 0;
+		int32_t bodyCount = 0;
+		int32_t modelOffset = 0;
+	};
 }  // namespace MDLv14
