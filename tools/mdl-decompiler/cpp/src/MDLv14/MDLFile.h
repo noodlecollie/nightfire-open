@@ -33,5 +33,6 @@ namespace MDLv14
 		std::vector<TextureCoOrdinate> m_TextureCoOrdinates;
 		std::vector<BlendingScales> m_BlendingScales;
 		std::vector<Blending> m_Blends;
+		std::vector<BoneFixUp> m_BoneFixUps;
 	};
 }
