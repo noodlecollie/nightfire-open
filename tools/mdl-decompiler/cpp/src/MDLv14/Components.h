@@ -278,4 +278,9 @@ namespace MDLv14
 		int32_t offset = 0;
 		Sounds sounds;
 	};
+
+	struct TriangleMap
+	{
+		uint16_t vertexIndex;
+	};
 }  // namespace MDLv14
