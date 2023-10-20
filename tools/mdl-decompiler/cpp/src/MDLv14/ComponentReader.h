@@ -109,6 +109,7 @@ namespace MDLv14
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BlendingScales& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Blending& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BoneFixUp& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Model& component);
 
 		BufferedFileReader
 		ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount);

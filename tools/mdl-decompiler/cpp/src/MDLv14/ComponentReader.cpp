@@ -27,6 +27,7 @@ namespace MDLv14
 	static constexpr size_t BLENDINGSCALES_READ_SIZE = 4 * 4;
 	static constexpr size_t BLENDING_READ_SIZE = 4;
 	static constexpr size_t BONEFIXUP_READ_SIZE = 12 * 4;
+	static constexpr size_t MODEL_READ_SIZE = 32 + (25 * 4);
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -403,6 +404,19 @@ namespace MDLv14
 		component.zSkewY = subReader.ReadElement<float>();
 		component.zScale = subReader.ReadElement<float>();
 		component.zPosition = subReader.ReadElement<float>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Model& component)
+	{
+		static constexpr size_t NUM_MODEL_INFOS = 24;
+
+		BufferedFileReader subReader = ref.CreateSubReader(MODEL_READ_SIZE);
+
+		component.name = subReader.ReadString(32);
+		component.index = subReader.ReadElement<int32_t>();
+		component.modelInfoOffsets = subReader.ReadElements<int32_t>(NUM_MODEL_INFOS);
 
 		return subReader;
 	}

@@ -34,5 +34,6 @@ namespace MDLv14
 		std::vector<BlendingScales> m_BlendingScales;
 		std::vector<Blending> m_Blends;
 		std::vector<BoneFixUp> m_BoneFixUps;
+		std::vector<Model> m_Models;
 	};
 }
