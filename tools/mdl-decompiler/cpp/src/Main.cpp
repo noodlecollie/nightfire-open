@@ -10,36 +10,41 @@
 #include "cppfs/fs.h"
 #include "cppfs/FileHandle.h"
 
-static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const std::string& outputDir)
+static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 {
-	cppfs::FilePath qcPath(outputDir + "/" + mdlFile.GetHeader().name + ".qc");
-	cppfs::FileHandle outQc = cppfs::fs::open(qcPath.path());
+	return cppfs::FilePath(GetCurrentDirectory()).resolve(path);
+}
 
-	if ( !outQc.isFile() )
-	{
-		throw FileIOException(qcPath.path(), "Could not open QC file for writing.");
-	}
+static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& outputDirPath)
+{
+	cppfs::FilePath qcPath = outputDirPath.resolve(mdlFile.GetHeader().name + ".qc");
+	cppfs::FileHandle outQc = cppfs::fs::open(qcPath.toNative());
 
 	std::unique_ptr<std::ostream> outStream = outQc.createOutputStream();
+
+	if ( !outStream )
+	{
+		throw FileIOException(qcPath.toNative(), "Could not open QC file for writing.");
+	}
 
 	QCv14::QCFile qcFile;
 	qcFile.SetModelName({mdlFile.GetHeader().name});
 	qcFile.Write(*outStream);
 }
 
-static void ProcessFile(const std::string& path, const std::string& outputDir)
+static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath)
 {
-	std::cout << "Decompiling: " << path << std::endl;
+	std::cout << "Decompiling: " << mdlPath.toNative() << std::endl;
 
-	std::shared_ptr<BufferedFile> inputFile = BufferedFile::OpenFile(path);
+	std::shared_ptr<BufferedFile> inputFile = BufferedFile::OpenFile(mdlPath.toNative());
 	MDLv14::MDLFile mdlFile(*inputFile);
 
-	if ( !outputDir.empty() && !MakeDirectoryRecursive(outputDir) )
+	if ( !MakeDirectoryRecursive(outputDirPath.toNative()) )
 	{
-		throw FileIOException(outputDir, "Could not create output directory.");
+		throw FileIOException(outputDirPath.toNative(), "Could not create output directory.");
 	}
 
-	WriteOutputFiles(mdlFile, outputDir);
+	WriteOutputFiles(mdlFile, outputDirPath);
 }
 
 int main(int argc, char** argv)
@@ -85,7 +90,7 @@ int main(int argc, char** argv)
 
 	try
 	{
-		ProcessFile(args::get(inputFileArg), args::get(outputDirArg));
+		ProcessFile(GetPathFromCurrentDirectory(args::get(inputFileArg)), GetPathFromCurrentDirectory(args::get(outputDirArg)));
 	}
 	catch ( const FileIOException& ex )
 	{

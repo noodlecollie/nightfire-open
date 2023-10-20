@@ -4,6 +4,8 @@
 #include <string>
 #include <sys/stat.h>  // stat
 #include <errno.h>  // errno, ENOENT, EEXIST
+#include <unistd.h>
+#include <limits.h>
 
 #if defined(_WIN32)
 #include <direct.h>  // _mkdir
@@ -110,4 +112,24 @@ bool MakeDirectoryRecursive(const std::string& path)
 			return false;
 		}
 	}
+}
+
+std::string GetCurrentDirectory()
+{
+	char cwd[PATH_MAX];
+	cwd[0] = '\0';
+
+#if defined(_WIN32)
+	if ( !_getcwd(cwd, sizeof(cwd)) )
+	{
+		cwd[0] = '\0';
+	}
+#else
+	if ( !getcwd(cwd, sizeof(cwd)) )
+	{
+		cwd[0] = '\0';
+	}
+#endif
+
+	return std::string(cwd);
 }
