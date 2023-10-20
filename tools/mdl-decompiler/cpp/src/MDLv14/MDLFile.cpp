@@ -109,6 +109,11 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.triangleCount),
 			IntToSizeT(m_Header.triangleMapOffset));
+
+		m_Vertices = componentReader.ReadComponentArray<MDLv14::Vertex>(
+			fileReader,
+			IntToSizeT(m_Header.vertexCount),
+			IntToSizeT(m_Header.verticesOffset));
 	}
 
 	const Header& MDLFile::GetHeader() const
