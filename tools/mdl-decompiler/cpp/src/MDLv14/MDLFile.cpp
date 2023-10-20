@@ -119,6 +119,11 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.normalsOffset));
+
+		m_TextureCoOrdinates = componentReader.ReadComponentArray<MDLv14::TextureCoOrdinate>(
+			fileReader,
+			IntToSizeT(m_Header.vertexCount),
+			IntToSizeT(m_Header.textureCoOrdsOffset));
 	}
 
 	const Header& MDLFile::GetHeader() const

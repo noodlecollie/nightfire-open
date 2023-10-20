@@ -23,6 +23,7 @@ namespace MDLv14
 	static constexpr size_t TRIANGLEMAP_READ_SIZE = 2;
 	static constexpr size_t VERTEX_READ_SIZE = 4 * 4;
 	static constexpr size_t NORMAL_READ_SIZE = 4 * 4;
+	static constexpr size_t TEXTURECOORDINATE_READ_SIZE = 2 * 4;
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -345,6 +346,16 @@ namespace MDLv14
 
 		ReadNestedComponent(subReader, component.position);
 		component.scale = subReader.ReadElement<float>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, TextureCoOrdinate& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(TEXTURECOORDINATE_READ_SIZE);
+
+		component.u = subReader.ReadElement<float>();
+		component.v = subReader.ReadElement<float>();
 
 		return subReader;
 	}
