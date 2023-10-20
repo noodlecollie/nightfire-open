@@ -333,4 +333,11 @@ namespace MDLv14
 		float zScale = 0.0f;
 		float zPosition = 0.0f;
 	};
+
+	struct Model
+	{
+		std::string name;
+		int32_t index = 0;
+		std::vector<int32_t> modelInfoOffsets;
+	};
 }  // namespace MDLv14

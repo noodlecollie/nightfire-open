@@ -139,6 +139,16 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.bones.count),
 			IntToSizeT(m_Header.boneFixUpOffset));
+
+		m_Models.clear();
+
+		for ( size_t modelIndex = 0;
+			  modelIndex < IntToSizeT(m_Header.modelCount) && modelIndex < m_Header.modelOffsets.size();
+			  ++modelIndex )
+		{
+			fileReader.SeekFromBeginning(m_Header.modelOffsets[modelIndex]);
+			m_Models.emplace_back(componentReader.ReadComponent<MDLv14::Model>(fileReader));
+		}
 	}
 
 	const Header& MDLFile::GetHeader() const
