@@ -25,6 +25,7 @@ namespace MDLv14
 	static constexpr size_t NORMAL_READ_SIZE = 4 * 4;
 	static constexpr size_t TEXTURECOORDINATE_READ_SIZE = 2 * 4;
 	static constexpr size_t BLENDINGSCALES_READ_SIZE = 4 * 4;
+	static constexpr size_t BLENDING_READ_SIZE = 4;
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -369,6 +370,18 @@ namespace MDLv14
 		component.val1 = subReader.ReadElement<float>();
 		component.val2 = subReader.ReadElement<float>();
 		component.val3 = subReader.ReadElement<float>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Blending& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(BLENDINGSCALES_READ_SIZE);
+
+		component.val0 = subReader.ReadElement<int8_t>();
+		component.val1 = subReader.ReadElement<int8_t>();
+		component.val2 = subReader.ReadElement<int8_t>();
+		component.val3 = subReader.ReadElement<int8_t>();
 
 		return subReader;
 	}
