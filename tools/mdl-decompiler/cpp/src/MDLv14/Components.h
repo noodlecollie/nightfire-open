@@ -254,4 +254,15 @@ namespace MDLv14
 		int32_t bodyCount = 0;
 		int32_t modelOffset = 0;
 	};
+
+	struct Attachment
+	{
+		std::string name;
+		int32_t type = 0;
+		int32_t bone = -1;
+		Vec3D position;
+		Vec3D vector1;
+		Vec3D vector2;
+		Vec3D vector3;
+	};
 }  // namespace MDLv14
