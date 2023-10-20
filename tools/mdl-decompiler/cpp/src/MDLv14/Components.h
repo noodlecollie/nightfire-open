@@ -301,4 +301,12 @@ namespace MDLv14
 		float u = 0.0f;
 		float v = 0.0f;
 	};
+
+	struct BlendingScales
+	{
+		float val0 = 0.0f;
+		float val1 = 0.0f;
+		float val2 = 0.0f;
+		float val3 = 0.0f;
+	};
 }  // namespace MDLv14
