@@ -309,4 +309,12 @@ namespace MDLv14
 		float val2 = 0.0f;
 		float val3 = 0.0f;
 	};
+
+	struct Blending
+	{
+		int8_t val0 = 0;
+		int8_t val1 = 0;
+		int8_t val2 = 0;
+		int8_t val3 = 0;
+	};
 }  // namespace MDLv14

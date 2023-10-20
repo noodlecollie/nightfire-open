@@ -32,5 +32,6 @@ namespace MDLv14
 		std::vector<Normal> m_Normals;
 		std::vector<TextureCoOrdinate> m_TextureCoOrdinates;
 		std::vector<BlendingScales> m_BlendingScales;
+		std::vector<Blending> m_Blends;
 	};
 }
