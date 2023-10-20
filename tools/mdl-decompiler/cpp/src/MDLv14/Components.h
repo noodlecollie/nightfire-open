@@ -295,4 +295,10 @@ namespace MDLv14
 		Vec3D position;
 		float scale = 0.0f;
 	};
+
+	struct TextureCoOrdinate
+	{
+		float u = 0.0f;
+		float v = 0.0f;
+	};
 }  // namespace MDLv14

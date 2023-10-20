@@ -30,5 +30,6 @@ namespace MDLv14
 		std::vector<TriangleMap> m_TriangleMaps;
 		std::vector<Vertex> m_Vertices;
 		std::vector<Normal> m_Normals;
+		std::vector<TextureCoOrdinate> m_TextureCoOrdinates;
 	};
 }
