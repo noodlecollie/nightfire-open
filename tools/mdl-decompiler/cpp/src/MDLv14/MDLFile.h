@@ -12,6 +12,8 @@ namespace MDLv14
 	public:
 		explicit MDLFile(const BufferedFile& file);
 
+		const Header& GetHeader() const;
+
 	private:
 		Header m_Header {};
 		std::vector<Bone> m_Bones;
