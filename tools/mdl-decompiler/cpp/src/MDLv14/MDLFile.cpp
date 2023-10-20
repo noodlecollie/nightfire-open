@@ -124,6 +124,11 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.textureCoOrdsOffset));
+
+		m_BlendingScales = componentReader.ReadComponentArray<MDLv14::BlendingScales>(
+			fileReader,
+			IntToSizeT(m_Header.vertexCount),
+			IntToSizeT(m_Header.blendingScalesOffset));
 	}
 
 	const Header& MDLFile::GetHeader() const
