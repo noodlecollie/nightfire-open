@@ -20,6 +20,7 @@ namespace MDLv14
 	static constexpr size_t ATTACHMENT_READ_SIZE = 32 + (2 * 4) + (12 * 4);
 	static constexpr size_t SOUNDGROUP_READ_SIZE = 32 + 4;
 	static constexpr size_t SOUNDS_READ_SIZE = 4 + (10 * 64);
+	static constexpr size_t TRIANGLEMAP_READ_SIZE = 2;
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -313,6 +314,15 @@ namespace MDLv14
 
 		component.unused = subReader.ReadElement<int32_t>();
 		component.soundNames = subReader.ReadStrings(NUM_NAMES, 64);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, TriangleMap& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(TRIANGLEMAP_READ_SIZE);
+
+		component.vertexIndex = subReader.ReadElement<uint16_t>();
 
 		return subReader;
 	}

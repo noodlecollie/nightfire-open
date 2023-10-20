@@ -104,6 +104,11 @@ namespace MDLv14
 			fileReader.SeekFromBeginning(endOfSoundGroupLump + IntToSizeT(soundGroup.offset));
 			soundGroup.sounds = componentReader.ReadComponent<MDLv14::Sounds>(fileReader);
 		}
+
+		m_TriangleMaps = componentReader.ReadComponentArray<MDLv14::TriangleMap>(
+			fileReader,
+			IntToSizeT(m_Header.triangleCount),
+			IntToSizeT(m_Header.triangleMapOffset));
 	}
 
 	const Header& MDLFile::GetHeader() const

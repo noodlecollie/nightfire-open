@@ -27,5 +27,6 @@ namespace MDLv14
 		std::vector<BodyGroup> m_BodyGroups;
 		std::vector<Attachment> m_Attachments;
 		std::vector<SoundGroup> m_SoundGroups;
+		std::vector<TriangleMap> m_TriangleMaps;
 	};
 }

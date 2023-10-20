@@ -206,7 +206,7 @@ void BufferedFileReader::ReadBytes(void* buffer, size_t length)
 		throw FileIOException(
 			m_File->FilePath(),
 			"Reading " + std::to_string(length) + " bytes from offset of " + std::to_string(CurrentPosition()) +
-				" exceeded file length of " + std::to_string(Length()) + " bytes.");
+				" exceeded data buffer length of " + std::to_string(Length()) + " bytes.");
 	}
 
 	std::memcpy(buffer, Data() + CurrentPosition(), length);
