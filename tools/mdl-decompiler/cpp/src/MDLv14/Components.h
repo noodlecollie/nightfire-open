@@ -317,4 +317,20 @@ namespace MDLv14
 		int8_t val2 = 0;
 		int8_t val3 = 0;
 	};
+
+	struct BoneFixUp
+	{
+		float xScale = 0.0f;
+		float xSkewY = 0.0f;
+		float xSkewZ = 0.0f;
+		float xPosition = 0.0f;
+		float ySkewX = 0.0f;
+		float yScale = 0.0f;
+		float ySkewZ = 0.0f;
+		float yPosition = 0.0f;
+		float zSkewX = 0.0f;
+		float zSkewY = 0.0f;
+		float zScale = 0.0f;
+		float zPosition = 0.0f;
+	};
 }  // namespace MDLv14

@@ -26,6 +26,7 @@ namespace MDLv14
 	static constexpr size_t TEXTURECOORDINATE_READ_SIZE = 2 * 4;
 	static constexpr size_t BLENDINGSCALES_READ_SIZE = 4 * 4;
 	static constexpr size_t BLENDING_READ_SIZE = 4;
+	static constexpr size_t BONEFIXUP_READ_SIZE = 12 * 4;
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -376,12 +377,32 @@ namespace MDLv14
 
 	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Blending& component)
 	{
-		BufferedFileReader subReader = ref.CreateSubReader(BLENDINGSCALES_READ_SIZE);
+		BufferedFileReader subReader = ref.CreateSubReader(BLENDING_READ_SIZE);
 
 		component.val0 = subReader.ReadElement<int8_t>();
 		component.val1 = subReader.ReadElement<int8_t>();
 		component.val2 = subReader.ReadElement<int8_t>();
 		component.val3 = subReader.ReadElement<int8_t>();
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, BoneFixUp& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(BONEFIXUP_READ_SIZE);
+
+		component.xScale = subReader.ReadElement<float>();
+		component.xSkewY = subReader.ReadElement<float>();;
+		component.xSkewZ = subReader.ReadElement<float>();
+		component.xPosition = subReader.ReadElement<float>();
+		component.ySkewX = subReader.ReadElement<float>();
+		component.yScale = subReader.ReadElement<float>();
+		component.ySkewZ = subReader.ReadElement<float>();
+		component.yPosition = subReader.ReadElement<float>();
+		component.zSkewX = subReader.ReadElement<float>();
+		component.zSkewY = subReader.ReadElement<float>();
+		component.zScale = subReader.ReadElement<float>();
+		component.zPosition = subReader.ReadElement<float>();
 
 		return subReader;
 	}

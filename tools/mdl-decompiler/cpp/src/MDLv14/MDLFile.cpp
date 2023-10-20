@@ -134,6 +134,11 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.blendingOffset));
+
+		m_BoneFixUps = componentReader.ReadComponentArray<MDLv14::BoneFixUp>(
+			fileReader,
+			IntToSizeT(m_Header.bones.count),
+			IntToSizeT(m_Header.boneFixUpOffset));
 	}
 
 	const Header& MDLFile::GetHeader() const
