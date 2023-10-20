@@ -289,4 +289,10 @@ namespace MDLv14
 		Vec3D position;
 		float scale = 0.0f;
 	};
+
+	struct Normal
+	{
+		Vec3D position;
+		float scale = 0.0f;
+	};
 }  // namespace MDLv14

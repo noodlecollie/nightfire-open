@@ -104,6 +104,7 @@ namespace MDLv14
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Sounds& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, TriangleMap& component);
 		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Vertex& component);
+		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Normal& component);
 
 		BufferedFileReader
 		ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount);
