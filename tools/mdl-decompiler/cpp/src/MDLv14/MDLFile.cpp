@@ -114,6 +114,11 @@ namespace MDLv14
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.verticesOffset));
+
+		m_Normals = componentReader.ReadComponentArray<MDLv14::Normal>(
+			fileReader,
+			IntToSizeT(m_Header.vertexCount),
+			IntToSizeT(m_Header.normalsOffset));
 	}
 
 	const Header& MDLFile::GetHeader() const

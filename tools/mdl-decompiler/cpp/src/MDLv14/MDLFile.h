@@ -29,5 +29,6 @@ namespace MDLv14
 		std::vector<SoundGroup> m_SoundGroups;
 		std::vector<TriangleMap> m_TriangleMaps;
 		std::vector<Vertex> m_Vertices;
+		std::vector<Normal> m_Normals;
 	};
 }
