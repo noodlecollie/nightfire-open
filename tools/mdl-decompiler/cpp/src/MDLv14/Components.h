@@ -334,10 +334,30 @@ namespace MDLv14
 		float zPosition = 0.0f;
 	};
 
+	struct Mesh
+	{
+		std::vector<int8_t> boneMappings;
+		uint16_t triangleIndex = 0;
+		uint16_t triangleCount = 0;
+		uint16_t vertexIndexFrom = 0;
+		uint16_t vertexIndexTo = 0;
+	};
+
+	struct ModelInfo
+	{
+		int32_t skinReference = 0;
+		CountOffsetPair meshes;
+
+		std::vector<Mesh> meshList;
+	};
+
 	struct Model
 	{
 		std::string name;
 		int32_t index = 0;
 		std::vector<int32_t> modelInfoOffsets;
+
+		std::vector<ModelInfo> modelInfos;
 	};
+
 }  // namespace MDLv14
