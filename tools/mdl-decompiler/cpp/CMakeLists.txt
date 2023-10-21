@@ -13,6 +13,8 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/QCv14/Commands.h
 	src/QCv14/CommandWriter.h
 	src/QCv14/CommandWriter.cpp
+	src/QCv14/QCEFile.h
+	src/QCv14/QCEFile.cpp
 	src/QCv14/QCFile.h
 	src/QCv14/QCFile.cpp
 	src/BufferedFile.h

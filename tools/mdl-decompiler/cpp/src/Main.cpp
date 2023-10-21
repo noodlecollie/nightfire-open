@@ -5,6 +5,7 @@
 #include "BufferedFile.h"
 #include "MDLv14/MDLFile.h"
 #include "QCv14/QCFile.h"
+#include "QCv14/QCEFile.h"
 #include "Filesystem.h"
 #include "cppfs/FilePath.h"
 #include "cppfs/fs.h"
@@ -15,21 +16,40 @@ static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 	return cppfs::FilePath(GetCurrentDirectory()).resolve(path);
 }
 
+static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, QCv14::QCFile& /* qceFile */)
+{
+	qcFile.SetModelName({mdlFile.GetHeader().name});
+}
+
 static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& outputDirPath)
 {
 	cppfs::FilePath qcPath = outputDirPath.resolve(mdlFile.ModelName() + ".qc");
 	cppfs::FileHandle outQc = cppfs::fs::open(qcPath.toNative());
 
-	std::unique_ptr<std::ostream> outStream = outQc.createOutputStream();
+	std::unique_ptr<std::ostream> qcStream = outQc.createOutputStream();
 
-	if ( !outStream )
+	if ( !qcStream )
 	{
 		throw FileIOException(qcPath.toNative(), "Could not open QC file for writing.");
 	}
 
+	cppfs::FilePath qcePath = outputDirPath.resolve(mdlFile.ModelName() + ".qce");
+	cppfs::FileHandle outQce = cppfs::fs::open(qcePath.toNative());
+
+	std::unique_ptr<std::ostream> qceStream = outQce.createOutputStream();
+
+	if ( !qceStream )
+	{
+		throw FileIOException(qcePath.toNative(), "Could not open QCE file for writing.");
+	}
+
 	QCv14::QCFile qcFile;
-	qcFile.SetModelName({mdlFile.GetHeader().name});
-	qcFile.Write(*outStream);
+	QCv14::QCFile qceFile;
+
+	SetUpQCFiles(mdlFile, qcFile, qceFile);
+
+	qcFile.Write(*qcStream);
+	qceFile.Write(*qceStream);
 }
 
 static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath)
