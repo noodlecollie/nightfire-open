@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include "Common/Math.h"
 #include "MDLv14/AnimationDataHolder.h"
 
 namespace MDLv14
@@ -61,13 +62,6 @@ namespace MDLv14
 	{
 		int32_t count = 0;
 		int32_t offset = 0;
-	};
-
-	struct Vec3D
-	{
-		float x = 0;
-		float y = 0;
-		float z = 0;
 	};
 
 	struct BoundingBox

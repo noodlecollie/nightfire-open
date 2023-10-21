@@ -20,6 +20,8 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCEVersion& command);
 		void WriteInternal(std::ostream& stream, const QCEReplaceActivity& command);
 
+		void WriteInternal(std::ostream& stream, const Vec3D& position);
 		void WriteInternal(std::ostream& stream, const QCModelName& command);
+		void WriteInternal(std::ostream& stream, const QCAttachment& command);
 	};
 }

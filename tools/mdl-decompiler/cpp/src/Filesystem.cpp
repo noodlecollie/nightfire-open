@@ -4,11 +4,12 @@
 #include <string>
 #include <sys/stat.h>  // stat
 #include <errno.h>  // errno, ENOENT, EEXIST
-#include <unistd.h>
 #include <limits.h>
 
 #if defined(_WIN32)
 #include <direct.h>  // _mkdir
+#else
+#include <unistd.h>
 #endif
 
 static size_t FindFinalPathSeparator(const std::string& path)
@@ -116,20 +117,25 @@ bool MakeDirectoryRecursive(const std::string& path)
 
 std::string GetCurrentDirectory()
 {
-	char cwd[PATH_MAX];
+#if defined(_WIN32)
+	char cwd[_MAX_PATH];
 	cwd[0] = '\0';
 
-#if defined(_WIN32)
 	if ( !_getcwd(cwd, sizeof(cwd)) )
 	{
 		cwd[0] = '\0';
 	}
+
+	return std::string(cwd);
 #else
+	char cwd[PATH_MAX];
+	cwd[0] = '\0';
+
 	if ( !getcwd(cwd, sizeof(cwd)) )
 	{
 		cwd[0] = '\0';
 	}
-#endif
 
 	return std::string(cwd);
+#endif
 }

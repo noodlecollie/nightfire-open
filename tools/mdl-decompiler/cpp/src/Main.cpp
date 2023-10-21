@@ -21,6 +21,12 @@ static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, 
 	qceFile.SetVersion(QCv14::QCEVersion(QCv14::QCEGame::HalfLife, 10, 1, 0));
 
 	qcFile.SetModelName({mdlFile.GetHeader().name});
+
+	for ( const MDLv14::Attachment& attachment : mdlFile.GetAttachments() )
+	{
+		qcFile.AddAttachment(
+			QCv14::QCAttachment(attachment.name, mdlFile.GetBones()[attachment.bone].name, attachment.position));
+	}
 }
 
 static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& outputDirPath)
@@ -112,7 +118,9 @@ int main(int argc, char** argv)
 
 	try
 	{
-		ProcessFile(GetPathFromCurrentDirectory(args::get(inputFileArg)), GetPathFromCurrentDirectory(args::get(outputDirArg)));
+		ProcessFile(
+			GetPathFromCurrentDirectory(args::get(inputFileArg)),
+			GetPathFromCurrentDirectory(args::get(outputDirArg)));
 	}
 	catch ( const FileIOException& ex )
 	{

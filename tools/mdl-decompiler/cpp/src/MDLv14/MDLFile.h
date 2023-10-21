@@ -16,6 +16,8 @@ namespace MDLv14
 		std::string ModelName() const;
 
 		const Header& GetHeader() const;
+		const std::vector<Attachment>& GetAttachments() const;
+		const std::vector<Bone>& GetBones() const;
 
 	private:
 		Header m_Header {};

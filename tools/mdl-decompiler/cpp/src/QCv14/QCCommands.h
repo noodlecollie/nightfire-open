@@ -1,25 +1,10 @@
 #pragma once
 
 #include <string>
+#include "Common/Math.h"
 
 namespace QCv14
 {
-	struct QCVec3D
-	{
-		float x = 0;
-		float y = 0;
-		float z = 0;
-
-		QCVec3D() = default;
-
-		QCVec3D(float inX, float inY, float inZ) :
-			x(inX),
-			y(inY),
-			z(inZ)
-		{
-		}
-	};
-
 	struct QCModelName
 	{
 		std::string name;
@@ -36,11 +21,11 @@ namespace QCv14
 	{
 		std::string name;
 		std::string bone;
-		QCVec3D position;
+		Vec3D position;
 
 		QCAttachment() = default;
 
-		QCAttachment(const std::string& inName, const std::string& inBone, const QCVec3D& inPosition) :
+		QCAttachment(const std::string& inName, const std::string& inBone, const Vec3D& inPosition) :
 			name(inName),
 			bone(inBone),
 			position(inPosition)
