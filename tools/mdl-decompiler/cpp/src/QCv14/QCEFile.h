@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include "QCv14/QCECommands.h"
 
 namespace QCv14
 {
@@ -8,5 +9,11 @@ namespace QCv14
 	{
 	public:
 		void Write(std::ostream& stream) const;
+
+		const QCEVersion& GetVersion() const;
+		void SetVersion(const QCEVersion& version);
+
+	private:
+		QCEVersion m_Version;
 	};
 }

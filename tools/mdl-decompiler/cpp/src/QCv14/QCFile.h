@@ -1,18 +1,18 @@
 #pragma once
 
 #include <ostream>
-#include "QCv14/Commands.h"
+#include "QCv14/QCCommands.h"
 
 namespace QCv14
 {
 	class QCFile
 	{
 	public:
-		void SetModelName(const ModelName& modelName);
+		void SetModelName(const QCModelName& modelName);
 
 		void Write(std::ostream& stream) const;
 
 	private:
-		ModelName m_ModelName;
+		QCModelName m_ModelName;
 	};
 }
