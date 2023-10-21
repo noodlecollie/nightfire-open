@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <cmath>
 #include "QCv14/CommandWriter.h"
 
 namespace QCv14

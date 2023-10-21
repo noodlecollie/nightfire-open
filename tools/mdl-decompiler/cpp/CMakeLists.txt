@@ -6,6 +6,7 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/MDLv14/AnimationDataHolder.cpp
 	src/MDLv14/ComponentReader.h
 	src/MDLv14/ComponentReader.cpp
+	src/MDLv14/ComponentReflection.h
 	src/MDLv14/Components.h
 	src/MDLv14/MDLFile.h
 	src/MDLv14/MDLFile.cpp
@@ -13,11 +14,16 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/MDLv14/SkinDataHolder.cpp
 	src/QCv14/CommandWriter.h
 	src/QCv14/CommandWriter.cpp
+	src/QCv14/QCCommandReflection.h
+	src/QCv14/QCCommandReflection.h
 	src/QCv14/QCCommands.h
+	src/QCv14/QCECommandReflection.h
+	src/QCv14/QCECommands.h
 	src/QCv14/QCEFile.h
 	src/QCv14/QCEFile.cpp
 	src/QCv14/QCFile.h
 	src/QCv14/QCFile.cpp
+	src/Traits/Reflection.h
 	src/BufferedFile.h
 	src/BufferedFile.cpp
 	src/BufferedFileReader.h
