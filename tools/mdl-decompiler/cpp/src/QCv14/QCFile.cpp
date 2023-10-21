@@ -27,8 +27,26 @@ namespace QCv14
 	{
 		CommandWriter writer;
 
-		writer.WriteCommand(stream, m_ModelName);
+		writer.WriteBanner(stream, [this](std::ostream& stream)
+		{
+			stream << "# Model: " << m_ModelName.name;
+		});
 
-		// TODO: Write attachments
+		stream << std::endl;
+
+		writer.WriteCommand(stream, m_ModelName);
+		stream << std::endl;
+
+		writer.WriteBanner(stream, [this](std::ostream& stream)
+		{
+			stream << "# " << m_Attachments.size() << " attachments";
+		});
+
+		for ( const QCAttachment& attachment : m_Attachments )
+		{
+			writer.WriteCommand(stream, attachment);
+		}
+
+		stream << std::endl;
 	}
 }  // namespace QCv14

@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include "Common/Math.h"
+#include "Common/Container.h"
 #include "MDLv14/AnimationDataHolder.h"
 
 namespace MDLv14
@@ -114,7 +115,7 @@ namespace MDLv14
 		int32_t blendingScalesOffset = 0;
 		int32_t blendingOffset = 0;
 		int32_t boneFixUpOffset = 0;
-		std::vector<int32_t> modelOffsets;
+		Container<int32_t> modelOffsets;
 	};
 
 	struct Bone
@@ -122,7 +123,7 @@ namespace MDLv14
 		std::string name;
 		int32_t parent = -1;
 		uint32_t flags = 0;
-		std::vector<int32_t> controllers;
+		Container<int32_t> controllers;
 		Vec3D position;
 		Vec3D rotation;
 		Vec3D scalePosition;
@@ -197,8 +198,8 @@ namespace MDLv14
 		int32_t unused3 = 0;
 
 		// Deferred reading:
-		std::vector<Event> eventCollection;
-		std::vector<Pivot> pivotCollection;
+		Container<Event> eventCollection;
+		Container<Pivot> pivotCollection;
 		AnimationDataHolder animationCollection;
 	};
 
@@ -230,7 +231,7 @@ namespace MDLv14
 	struct LevelOfDetail
 	{
 		int32_t levels = 0;
-		std::vector<int32_t> distance;
+		Container<int32_t> distance;
 	};
 
 	struct Texture
@@ -263,7 +264,7 @@ namespace MDLv14
 	struct Sounds
 	{
 		int32_t unused;
-		std::vector<std::string> soundNames;
+		Container<std::string> soundNames;
 	};
 
 	struct SoundGroup
@@ -330,7 +331,7 @@ namespace MDLv14
 
 	struct Mesh
 	{
-		std::vector<int8_t> boneMappings;
+		Container<int8_t> boneMappings;
 		uint16_t triangleIndex = 0;
 		uint16_t triangleCount = 0;
 		uint16_t vertexIndexFrom = 0;
@@ -342,15 +343,15 @@ namespace MDLv14
 		int32_t skinReference = 0;
 		CountOffsetPair meshes;
 
-		std::vector<Mesh> meshList;
+		Container<Mesh> meshList;
 	};
 
 	struct Model
 	{
 		std::string name;
 		int32_t index = 0;
-		std::vector<int32_t> modelInfoOffsets;
+		Container<int32_t> modelInfoOffsets;
 
-		std::vector<ModelInfo> modelInfos;
+		Container<ModelInfo> modelInfos;
 	};
 }  // namespace MDLv14

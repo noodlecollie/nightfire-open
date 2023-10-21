@@ -4,6 +4,7 @@
 #include "Exceptions.h"
 #include "BufferedFile.h"
 #include "MDLv14/MDLFile.h"
+#include "MDLv14/ComponentReflection.h"
 #include "QCv14/QCFile.h"
 #include "QCv14/QCEFile.h"
 #include "Filesystem.h"
@@ -24,8 +25,10 @@ static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, 
 
 	for ( const MDLv14::Attachment& attachment : mdlFile.GetAttachments() )
 	{
-		qcFile.AddAttachment(
-			QCv14::QCAttachment(attachment.name, mdlFile.GetBones()[attachment.bone].name, attachment.position));
+		qcFile.AddAttachment(QCv14::QCAttachment(
+			attachment.name,
+			mdlFile.GetBones().GetElementChecked(attachment.bone).name,
+			attachment.position));
 	}
 }
 

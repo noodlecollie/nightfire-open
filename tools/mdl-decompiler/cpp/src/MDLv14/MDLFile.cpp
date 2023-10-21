@@ -205,12 +205,12 @@ namespace MDLv14
 		return m_Header;
 	}
 
-	const std::vector<Attachment>& MDLFile::GetAttachments() const
+	const Container<Attachment>& MDLFile::GetAttachments() const
 	{
 		return m_Attachments;
 	}
 
-	const std::vector<Bone>& MDLFile::GetBones() const
+	const Container<Bone>& MDLFile::GetBones() const
 	{
 		return m_Bones;
 	}
