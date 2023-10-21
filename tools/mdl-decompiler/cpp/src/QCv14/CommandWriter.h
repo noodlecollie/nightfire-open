@@ -13,7 +13,20 @@ namespace QCv14
 		void WriteCommand(std::ostream& stream, const T& command)
 		{
 			WriteInternal(stream, command);
-			stream << "\n";
+			stream << std::endl;
+		}
+
+		template<typename CB>
+		void WriteBanner(std::ostream& stream, const CB& callback)
+		{
+			static constexpr const char* const BANNER = "########################################";
+
+			stream << BANNER << std::endl;
+
+			callback(stream);
+			stream << std::endl;
+
+			stream << BANNER << std::endl;
 		}
 
 	private:
