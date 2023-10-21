@@ -18,6 +18,7 @@ namespace QCv14
 
 	private:
 		void WriteInternal(std::ostream& stream, const QCEVersion& command);
+		void WriteInternal(std::ostream& stream, const QCEReplaceActivity& command);
 
 		void WriteInternal(std::ostream& stream, const QCModelName& command);
 	};
