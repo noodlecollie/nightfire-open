@@ -3,7 +3,7 @@
 
 namespace QCv14
 {
-	void QCFile::SetModelName(const ModelName& modelName)
+	void QCFile::SetModelName(const QCModelName& modelName)
 	{
 		m_ModelName = modelName;
 	}

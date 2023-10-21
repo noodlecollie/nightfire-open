@@ -16,8 +16,10 @@ static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 	return cppfs::FilePath(GetCurrentDirectory()).resolve(path);
 }
 
-static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, QCv14::QCFile& /* qceFile */)
+static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, QCv14::QCEFile& qceFile)
 {
+	qceFile.SetVersion(QCv14::QCEVersion(QCv14::QCEGame::HalfLife, 10, 1, 0));
+
 	qcFile.SetModelName({mdlFile.GetHeader().name});
 }
 
@@ -44,7 +46,7 @@ static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePa
 	}
 
 	QCv14::QCFile qcFile;
-	QCv14::QCFile qceFile;
+	QCv14::QCEFile qceFile;
 
 	SetUpQCFiles(mdlFile, qcFile, qceFile);
 

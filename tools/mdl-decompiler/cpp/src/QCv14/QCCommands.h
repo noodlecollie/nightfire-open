@@ -1,11 +1,10 @@
 #pragma once
 
 #include <string>
-#include <sstream>
 
 namespace QCv14
 {
-	struct ModelName
+	struct QCModelName
 	{
 		std::string name;
 	};
