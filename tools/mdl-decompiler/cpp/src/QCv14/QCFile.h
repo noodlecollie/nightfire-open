@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ostream>
+#include <vector>
 #include "QCv14/QCCommands.h"
 
 namespace QCv14
@@ -10,9 +11,14 @@ namespace QCv14
 	public:
 		void SetModelName(const QCModelName& modelName);
 
+		const std::vector<QCAttachment> GetAttachments() const;
+		void ClearAttachments();
+		void AddAttachment(const QCAttachment& attachment);
+
 		void Write(std::ostream& stream) const;
 
 	private:
 		QCModelName m_ModelName;
+		std::vector<QCAttachment> m_Attachments;
 	};
 }
