@@ -26,4 +26,18 @@ namespace QCv14
 		{
 		}
 	};
+
+	struct QCEReplaceActivity
+	{
+		std::string sequenceName;
+		std::string activity;
+
+		QCEReplaceActivity() = default;
+
+		QCEReplaceActivity(const std::string& inSequenceName, const std::string& inActivity) :
+			sequenceName(inSequenceName),
+			activity(inActivity)
+		{
+		}
+	};
 }  // namespace QCv14

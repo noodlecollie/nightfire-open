@@ -8,6 +8,11 @@ namespace QCv14
 			   << command.versionMajor << "." << command.versionMinor;
 	}
 
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCEReplaceActivity& command)
+	{
+		stream << "$replaceactivity \"" << command.sequenceName << "\" " << command.activity;
+	}
+
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCModelName& command)
 	{
 		stream << "$modelname \"" << command.name << "\"";
