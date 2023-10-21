@@ -353,5 +353,4 @@ namespace MDLv14
 
 		std::vector<ModelInfo> modelInfos;
 	};
-
 }  // namespace MDLv14
