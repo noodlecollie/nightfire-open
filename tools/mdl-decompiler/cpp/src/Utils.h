@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 template<typename T, size_t SIZE>
 static inline constexpr size_t SizeOfArray(const T (&)[SIZE])
