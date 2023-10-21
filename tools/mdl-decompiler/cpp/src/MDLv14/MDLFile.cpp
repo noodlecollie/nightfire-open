@@ -1,3 +1,5 @@
+#include <cctype>
+#include <algorithm>
 #include "MDLv14/MDLFile.h"
 #include "BufferedFileReader.h"
 #include "MDLv14/ComponentReader.h"
@@ -171,6 +173,31 @@ namespace MDLv14
 					modelInfo.meshes.offset);
 			}
 		}
+	}
+
+	std::string MDLFile::ModelName() const
+	{
+		std::string name = m_Header.name;
+
+		if ( name.length() < 4 )
+		{
+			return name;
+		}
+
+		std::for_each(
+			name.begin() + name.length() - 3,
+			name.end(),
+			[](std::string::value_type& ch)
+			{
+				ch = static_cast<std::string::value_type>(std::tolower(ch));
+			});
+
+		if ( name.substr(name.length() - 4) == ".mdl" )
+		{
+			return name.substr(0, name.length() - 4);
+		}
+
+		return name;
 	}
 
 	const Header& MDLFile::GetHeader() const

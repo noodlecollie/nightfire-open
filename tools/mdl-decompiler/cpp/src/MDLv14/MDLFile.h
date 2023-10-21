@@ -12,6 +12,9 @@ namespace MDLv14
 	public:
 		explicit MDLFile(const BufferedFile& file);
 
+		// Without the .mdl extension
+		std::string ModelName() const;
+
 		const Header& GetHeader() const;
 
 	private:
