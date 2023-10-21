@@ -17,7 +17,7 @@ static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 
 static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& outputDirPath)
 {
-	cppfs::FilePath qcPath = outputDirPath.resolve(mdlFile.GetHeader().name + ".qc");
+	cppfs::FilePath qcPath = outputDirPath.resolve(mdlFile.ModelName() + ".qc");
 	cppfs::FileHandle outQc = cppfs::fs::open(qcPath.toNative());
 
 	std::unique_ptr<std::ostream> outStream = outQc.createOutputStream();
