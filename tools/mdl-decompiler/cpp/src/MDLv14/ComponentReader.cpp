@@ -28,6 +28,8 @@ namespace MDLv14
 	static constexpr size_t BLENDING_READ_SIZE = 4;
 	static constexpr size_t BONEFIXUP_READ_SIZE = 12 * 4;
 	static constexpr size_t MODEL_READ_SIZE = 32 + (25 * 4);
+	static constexpr size_t MODELINFO_READ_SIZE = 3 * 4;
+	static constexpr size_t MESH_READ_SIZE = 24 + (4 * 2);
 
 	static constexpr size_t SEQUENCE_READ_SIZE =  //
 		32 +  // strings
@@ -417,6 +419,31 @@ namespace MDLv14
 		component.name = subReader.ReadString(32);
 		component.index = subReader.ReadElement<int32_t>();
 		component.modelInfoOffsets = subReader.ReadElements<int32_t>(NUM_MODEL_INFOS);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, ModelInfo& component)
+	{
+		BufferedFileReader subReader = ref.CreateSubReader(MODELINFO_READ_SIZE);
+
+		component.skinReference = subReader.ReadElement<int32_t>();
+		ReadNestedComponent(subReader, component.meshes);
+
+		return subReader;
+	}
+
+	BufferedFileReader ComponentReader::ReadInternal(BufferedFileReader::Ref ref, Mesh& component)
+	{
+		static constexpr size_t NUM_BONE_MAPPINGS = 24;
+
+		BufferedFileReader subReader = ref.CreateSubReader(MESH_READ_SIZE);
+
+		component.boneMappings = subReader.ReadElements<int8_t>(NUM_BONE_MAPPINGS);
+		component.triangleIndex = subReader.ReadElement<uint16_t>();
+		component.triangleCount = subReader.ReadElement<uint16_t>();
+		component.vertexIndexFrom = subReader.ReadElement<uint16_t>();
+		component.vertexIndexTo = subReader.ReadElement<uint16_t>();
 
 		return subReader;
 	}

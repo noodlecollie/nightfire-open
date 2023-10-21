@@ -9,33 +9,33 @@ namespace MDLv14
 	MDLFile::MDLFile(const BufferedFile& file)
 	{
 		BufferedFileReader fileReader = file.CreateReader();
-		MDLv14::ComponentReader componentReader;
+		ComponentReader componentReader;
 
-		m_Header = componentReader.ReadComponent<MDLv14::Header>(fileReader);
+		m_Header = componentReader.ReadComponent<Header>(fileReader);
 
-		m_Bones = componentReader.ReadComponentArray<MDLv14::Bone>(
+		m_Bones = componentReader.ReadComponentArray<Bone>(
 			fileReader,
 			IntToSizeT(m_Header.bones.count),
 			IntToSizeT(m_Header.bones.offset));
 
-		m_BoneControllers = componentReader.ReadComponentArray<MDLv14::BoneController>(
+		m_BoneControllers = componentReader.ReadComponentArray<BoneController>(
 			fileReader,
 			IntToSizeT(m_Header.boneControllers.count),
 			IntToSizeT(m_Header.boneControllers.offset));
 
-		m_HitBoxes = componentReader.ReadComponentArray<MDLv14::HitBox>(
+		m_HitBoxes = componentReader.ReadComponentArray<HitBox>(
 			fileReader,
 			IntToSizeT(m_Header.hitBoxes.count),
 			IntToSizeT(m_Header.hitBoxes.offset));
 
-		m_Sequences = componentReader.ReadComponentArray<MDLv14::Sequence>(
+		m_Sequences = componentReader.ReadComponentArray<Sequence>(
 			fileReader,
 			IntToSizeT(m_Header.sequences.count),
 			IntToSizeT(m_Header.sequences.offset));
 
 		for ( Sequence& sequence : m_Sequences )
 		{
-			sequence.eventCollection = componentReader.ReadComponentArray<MDLv14::Event>(
+			sequence.eventCollection = componentReader.ReadComponentArray<Event>(
 				fileReader,
 				IntToSizeT(sequence.events.count),
 				IntToSizeT(sequence.events.offset));
@@ -43,7 +43,7 @@ namespace MDLv14
 
 		for ( Sequence& sequence : m_Sequences )
 		{
-			sequence.pivotCollection = componentReader.ReadComponentArray<MDLv14::Pivot>(
+			sequence.pivotCollection = componentReader.ReadComponentArray<Pivot>(
 				fileReader,
 				IntToSizeT(sequence.pivots.count),
 				IntToSizeT(sequence.pivots.offset));
@@ -60,7 +60,7 @@ namespace MDLv14
 				sequence.frameCount);
 		}
 
-		m_SequenceGroups = componentReader.ReadComponentArray<MDLv14::SequenceGroup>(
+		m_SequenceGroups = componentReader.ReadComponentArray<SequenceGroup>(
 			fileReader,
 			IntToSizeT(m_Header.sequenceGroups.count),
 			IntToSizeT(m_Header.sequenceGroups.offset));
@@ -69,12 +69,12 @@ namespace MDLv14
 		{
 			fileReader.SeekForward(DistToNextMultiple(fileReader.CurrentPosition(), 16));
 
-			m_LevelsOfDetail = componentReader.ReadComponentArray<MDLv14::LevelOfDetail>(
+			m_LevelsOfDetail = componentReader.ReadComponentArray<LevelOfDetail>(
 				fileReader,
 				MDLv14::LODFlagsToLODLevels(m_Header.levelOfDetailFlags));
 		}
 
-		m_Textures = componentReader.ReadComponentArray<MDLv14::Texture>(
+		m_Textures = componentReader.ReadComponentArray<Texture>(
 			fileReader,
 			IntToSizeT(m_Header.textures.count),
 			IntToSizeT(m_Header.textures.offset));
@@ -82,17 +82,17 @@ namespace MDLv14
 		fileReader.SeekFromBeginning(m_Header.skinsOffset);
 		m_SkinData = componentReader.ReadSkinData(fileReader, m_Header.skinFamilies, m_Header.skinReferences);
 
-		m_BodyGroups = componentReader.ReadComponentArray<MDLv14::BodyGroup>(
+		m_BodyGroups = componentReader.ReadComponentArray<BodyGroup>(
 			fileReader,
 			IntToSizeT(m_Header.bodyGroups.count),
 			IntToSizeT(m_Header.bodyGroups.offset));
 
-		m_Attachments = componentReader.ReadComponentArray<MDLv14::Attachment>(
+		m_Attachments = componentReader.ReadComponentArray<Attachment>(
 			fileReader,
 			IntToSizeT(m_Header.attachments.count),
 			IntToSizeT(m_Header.attachments.offset));
 
-		m_SoundGroups = componentReader.ReadComponentArray<MDLv14::SoundGroup>(
+		m_SoundGroups = componentReader.ReadComponentArray<SoundGroup>(
 			fileReader,
 			IntToSizeT(m_Header.soundGroups.count),
 			IntToSizeT(m_Header.soundGroups.offset));
@@ -102,40 +102,40 @@ namespace MDLv14
 		for ( SoundGroup& soundGroup : m_SoundGroups )
 		{
 			fileReader.SeekFromBeginning(endOfSoundGroupLump + IntToSizeT(soundGroup.offset));
-			soundGroup.sounds = componentReader.ReadComponent<MDLv14::Sounds>(fileReader);
+			soundGroup.sounds = componentReader.ReadComponent<Sounds>(fileReader);
 		}
 
-		m_TriangleMaps = componentReader.ReadComponentArray<MDLv14::TriangleMap>(
+		m_TriangleMaps = componentReader.ReadComponentArray<TriangleMap>(
 			fileReader,
 			IntToSizeT(m_Header.triangleCount),
 			IntToSizeT(m_Header.triangleMapOffset));
 
-		m_Vertices = componentReader.ReadComponentArray<MDLv14::Vertex>(
+		m_Vertices = componentReader.ReadComponentArray<Vertex>(
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.verticesOffset));
 
-		m_Normals = componentReader.ReadComponentArray<MDLv14::Normal>(
+		m_Normals = componentReader.ReadComponentArray<Normal>(
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.normalsOffset));
 
-		m_TextureCoOrdinates = componentReader.ReadComponentArray<MDLv14::TextureCoOrdinate>(
+		m_TextureCoOrdinates = componentReader.ReadComponentArray<TextureCoOrdinate>(
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.textureCoOrdsOffset));
 
-		m_BlendingScales = componentReader.ReadComponentArray<MDLv14::BlendingScales>(
+		m_BlendingScales = componentReader.ReadComponentArray<BlendingScales>(
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.blendingScalesOffset));
 
-		m_Blends = componentReader.ReadComponentArray<MDLv14::Blending>(
+		m_Blends = componentReader.ReadComponentArray<Blending>(
 			fileReader,
 			IntToSizeT(m_Header.vertexCount),
 			IntToSizeT(m_Header.blendingOffset));
 
-		m_BoneFixUps = componentReader.ReadComponentArray<MDLv14::BoneFixUp>(
+		m_BoneFixUps = componentReader.ReadComponentArray<BoneFixUp>(
 			fileReader,
 			IntToSizeT(m_Header.bones.count),
 			IntToSizeT(m_Header.boneFixUpOffset));
@@ -147,7 +147,29 @@ namespace MDLv14
 			  ++modelIndex )
 		{
 			fileReader.SeekFromBeginning(m_Header.modelOffsets[modelIndex]);
-			m_Models.emplace_back(componentReader.ReadComponent<MDLv14::Model>(fileReader));
+			m_Models.emplace_back(componentReader.ReadComponent<Model>(fileReader));
+		}
+
+		for ( Model& model : m_Models )
+		{
+			for ( int32_t modelInfoOffset : model.modelInfoOffsets )
+			{
+				if ( modelInfoOffset == 0 )
+				{
+					continue;
+				}
+
+				fileReader.SeekFromBeginning(modelInfoOffset);
+				model.modelInfos.emplace_back(componentReader.ReadComponent<ModelInfo>(fileReader));
+			}
+
+			for ( ModelInfo& modelInfo : model.modelInfos )
+			{
+				modelInfo.meshList = componentReader.ReadComponentArray<Mesh>(
+					fileReader,
+					modelInfo.meshes.count,
+					modelInfo.meshes.offset);
+			}
 		}
 	}
 
