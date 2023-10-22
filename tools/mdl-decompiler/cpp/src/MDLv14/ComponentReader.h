@@ -4,8 +4,10 @@
 #include <type_traits>
 #include "Common/Container.h"
 #include "MDLv14/Components.h"
+#include "MDLv14/ComponentReflection.h"
 #include "MDLv14/SkinDataHolder.h"
 #include "BufferedFileReader.h"
+#include "Traits/Reflection.h"
 
 namespace MDLv14
 {
@@ -50,7 +52,8 @@ namespace MDLv14
 
 			if ( anims.IsValid() )
 			{
-				ReadInternal(readerRef, anims, frameCount);
+				BufferedFileReader subReader = readerRef.CreateSubReader();
+				ReadInternal(subReader, anims, frameCount);
 			}
 
 			return anims;
@@ -62,7 +65,7 @@ namespace MDLv14
 
 			if ( skinData.IsValid() )
 			{
-				ReadNestedComponent<SkinDataHolder>(reader, skinData);
+				ReadInternal(reader, skinData);
 			}
 
 			return skinData;
@@ -74,9 +77,8 @@ namespace MDLv14
 		template<typename T, typename... ARGS>
 		void ReadNestedComponent(BufferedFileReader& reader, T& component, ARGS&&... args)
 		{
-			BufferedFileReader subReader =
-				ReadInternal(BufferedFileReader::Ref(reader), component, std::forward<ARGS>(args)...);
-
+			BufferedFileReader subReader = reader.CreateSubReader(Reflection::ReadSize<T>());
+			ReadInternal(subReader, component, std::forward<ARGS>(args)...);
 			subReader.EnsureAtEnd();
 
 			const size_t delta = subReader.CurrentPosition();
@@ -85,38 +87,35 @@ namespace MDLv14
 
 		// Per-component implementation:
 
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, CountOffsetPair& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Vec3D& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BoundingBox& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, EyePosition& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Header& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Bone& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BoneController& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, HitBox& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Event& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Pivot& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Sequence& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, SequenceGroup& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, LevelOfDetail& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Texture& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BodyGroup& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Attachment& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, SoundGroup& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Sounds& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, TriangleMap& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Vertex& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Normal& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, TextureCoOrdinate& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BlendingScales& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Blending& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, BoneFixUp& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Model& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, ModelInfo& component);
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, Mesh& component);
-
-		BufferedFileReader
-		ReadInternal(BufferedFileReader::Ref ref, AnimationDataHolder& component, int32_t frameCount);
-
-		BufferedFileReader ReadInternal(BufferedFileReader::Ref ref, SkinDataHolder& component);
+		void ReadInternal(BufferedFileReader& subReader, CountOffsetPair& component);
+		void ReadInternal(BufferedFileReader& subReader, Vec3D& component);
+		void ReadInternal(BufferedFileReader& subReader, BoundingBox& component);
+		void ReadInternal(BufferedFileReader& subReader, EyePosition& component);
+		void ReadInternal(BufferedFileReader& subReader, Header& component);
+		void ReadInternal(BufferedFileReader& subReader, Bone& component);
+		void ReadInternal(BufferedFileReader& subReader, BoneController& component);
+		void ReadInternal(BufferedFileReader& subReader, HitBox& component);
+		void ReadInternal(BufferedFileReader& subReader, Event& component);
+		void ReadInternal(BufferedFileReader& subReader, Pivot& component);
+		void ReadInternal(BufferedFileReader& subReader, Sequence& component);
+		void ReadInternal(BufferedFileReader& subReader, SequenceGroup& component);
+		void ReadInternal(BufferedFileReader& subReader, LevelOfDetail& component);
+		void ReadInternal(BufferedFileReader& subReader, Texture& component);
+		void ReadInternal(BufferedFileReader& subReader, BodyGroup& component);
+		void ReadInternal(BufferedFileReader& subReader, Attachment& component);
+		void ReadInternal(BufferedFileReader& subReader, SoundGroup& component);
+		void ReadInternal(BufferedFileReader& subReader, Sounds& component);
+		void ReadInternal(BufferedFileReader& subReader, TriangleMap& component);
+		void ReadInternal(BufferedFileReader& subReader, Vertex& component);
+		void ReadInternal(BufferedFileReader& subReader, Normal& component);
+		void ReadInternal(BufferedFileReader& subReader, TextureCoOrdinate& component);
+		void ReadInternal(BufferedFileReader& subReader, BlendingScales& component);
+		void ReadInternal(BufferedFileReader& subReader, Blending& component);
+		void ReadInternal(BufferedFileReader& subReader, BoneFixUp& component);
+		void ReadInternal(BufferedFileReader& subReader, Model& component);
+		void ReadInternal(BufferedFileReader& subReader, ModelInfo& component);
+		void ReadInternal(BufferedFileReader& subReader, Mesh& component);
+		void ReadInternal(BufferedFileReader& subReader, AnimationDataHolder& component, int32_t frameCount);
+		void ReadInternal(BufferedFileReader& subReader, SkinDataHolder& component);
 	};
 }  // namespace MDLv14

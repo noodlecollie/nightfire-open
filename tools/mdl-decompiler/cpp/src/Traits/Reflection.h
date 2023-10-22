@@ -16,12 +16,14 @@ namespace Reflection
 	struct Traits<int8_t>
 	{
 		static constexpr const char* const QUALIFIED_TYPE_NAME = "int8_t";
+		static constexpr size_t READ_SIZE = 1;
 	};
 
 	template<>
 	struct Traits<int32_t>
 	{
 		static constexpr const char* const QUALIFIED_TYPE_NAME = "int32_t";
+		static constexpr size_t READ_SIZE = 4;
 	};
 
 	template<>
@@ -31,7 +33,7 @@ namespace Reflection
 	};
 
 	template<typename T>
-	static inline std::string QualifiedTypeName()
+	static inline constexpr const char* QualifiedTypeName()
 	{
 		return Traits<T>::QUALIFIED_TYPE_NAME;
 	}
@@ -43,5 +45,11 @@ namespace Reflection
 		const size_t lastSep = qualifiedTypeName.rfind("::");
 
 		return lastSep != std::string::npos ? qualifiedTypeName.substr(lastSep + 2) : qualifiedTypeName;
+	}
+
+	template<typename T>
+	static inline constexpr size_t ReadSize()
+	{
+		return Traits<T>::READ_SIZE;
 	}
 }  // namespace Reflection
