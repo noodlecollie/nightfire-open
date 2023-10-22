@@ -57,7 +57,8 @@ namespace QCv14
 			stream,
 			[this](std::ostream& stream)
 			{
-				stream << "# Model: " << m_ModelName.name;
+				stream << "# Model: " << m_ModelName.name << std::endl;
+				stream << "# Decompiled with " EXECUTABLE_NAME;
 			});
 
 		stream << std::endl;

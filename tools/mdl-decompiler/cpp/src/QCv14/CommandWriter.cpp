@@ -36,16 +36,16 @@ namespace QCv14
 	void CommandWriter::WriteInternal(std::ostream& stream, const Vec3D& position)
 	{
 		const auto defaultPrecision = stream.precision();
-		stream << std::setprecision(6) << IndentString();
+		stream << IndentString();
 
 		float val = std::isnan(position.x) ? 0.0f : position.x;
-		stream << val;
+		stream << std::setprecision(6) << val;
 
 		val = std::isnan(position.y) ? 0.0f : position.y;
-		stream << " " << val;
+		stream << " " << std::setprecision(6) << val;
 
 		val = std::isnan(position.z) ? 0.0f : position.z;
-		stream << " " << val;
+		stream << " " << std::setprecision(6) << val;
 
 		stream << std::setprecision(defaultPrecision);
 	}
