@@ -41,6 +41,7 @@ public:
 	BufferedFileReader CreateSubReader(size_t offset, size_t length);
 	BufferedFileReader CreateSubReader(size_t length);
 
+	std::string FilePath() const;
 	const uint8_t* Data() const;
 	size_t Length() const;
 

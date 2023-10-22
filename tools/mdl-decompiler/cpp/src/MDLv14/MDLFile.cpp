@@ -4,6 +4,7 @@
 #include "BufferedFileReader.h"
 #include "MDLv14/ComponentReader.h"
 #include "MDLv14/ComponentUtils.h"
+#include "Exceptions.h"
 #include "Utils.h"
 
 namespace MDLv14
@@ -11,6 +12,8 @@ namespace MDLv14
 	MDLFile::MDLFile(const BufferedFile& file)
 	{
 		BufferedFileReader fileReader = file.CreateReader();
+		ValidateBeforeRead(BufferedFileReader::Ref(fileReader));
+
 		ComponentReader componentReader;
 
 		m_Header = componentReader.ReadComponent<Header>(fileReader);
@@ -175,6 +178,14 @@ namespace MDLv14
 		}
 	}
 
+	void MDLFile::Validate() const
+	{
+		if ( m_Header.name.empty() )
+		{
+			throw ValidationException("MDLFile", "No embedded MDL name was present.");
+		}
+	}
+
 	std::string MDLFile::ModelName() const
 	{
 		std::string name = m_Header.name;
@@ -213,5 +224,31 @@ namespace MDLv14
 	const Container<Bone>& MDLFile::GetBones() const
 	{
 		return m_Bones;
+	}
+
+	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
+	{
+		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";
+		static constexpr int32_t EXPECTED_VERSION = 14;
+
+		BufferedFileReader reader = ref.CreateSubReader(8);
+		std::string identifier = reader.ReadString(4);
+
+		if ( identifier != EXPECTED_IDENTIFIER )
+		{
+			throw ValidationException(
+				reader.FilePath(),
+				"Expected MDL identifier \"" + std::string(EXPECTED_IDENTIFIER) + "\" but got \"" + identifier + "\"");
+		}
+
+		int32_t version = reader.ReadElement<int32_t>();
+
+		if ( version != EXPECTED_VERSION )
+		{
+			throw ValidationException(
+				reader.FilePath(),
+				"Expected MDL version \"" + std::to_string(EXPECTED_VERSION) + "\" but got \"" +
+					std::to_string(version) + "\"");
+		}
 	}
 }  // namespace MDLv14

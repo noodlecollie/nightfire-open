@@ -42,4 +42,12 @@ namespace QCv14
 		stream << "$attachment \"" << command.name << "\" \"" << command.bone << "\" ";
 		WriteInternal(stream, command.position);
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCBBox& command)
+	{
+		stream << "$bbox ";
+		WriteInternal(stream, command.min);
+		stream << " ";
+		WriteInternal(stream, command.max);
+	}
 }  // namespace QCv14

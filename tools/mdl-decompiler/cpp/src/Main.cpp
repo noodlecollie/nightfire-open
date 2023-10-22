@@ -30,6 +30,8 @@ static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, 
 			mdlFile.GetBones().GetElementChecked(attachment.bone).name,
 			attachment.position));
 	}
+
+	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
 }
 
 static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& outputDirPath)
@@ -124,11 +126,6 @@ int main(int argc, char** argv)
 		ProcessFile(
 			GetPathFromCurrentDirectory(args::get(inputFileArg)),
 			GetPathFromCurrentDirectory(args::get(outputDirArg)));
-	}
-	catch ( const FileIOException& ex )
-	{
-		std::cerr << ex.FilePath() << ": " << ex.Description() << std::endl;
-		return 1;
 	}
 	catch ( BaseException& ex )
 	{

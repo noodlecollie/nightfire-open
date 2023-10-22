@@ -63,3 +63,33 @@ public:
 	{
 	}
 };
+
+class ValidationException : public BaseException
+{
+public:
+	ValidationException(std::string component, std::string description) :
+		m_Component(std::move(component)),
+		m_Description(std::move(description))
+	{
+	}
+
+	std::string Component() const
+	{
+		return m_Component;
+	}
+
+	std::string Description() const
+	{
+		return m_Description;
+	}
+
+protected:
+	std::string BuildErrorString() const noexcept override
+	{
+		return m_Component + ": " + m_Description;
+	}
+
+private:
+	std::string m_Component;
+	std::string m_Description;
+};

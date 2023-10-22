@@ -13,6 +13,8 @@ namespace MDLv14
 	public:
 		explicit MDLFile(const BufferedFile& file);
 
+		void Validate() const;
+
 		// Without the .mdl extension
 		std::string ModelName() const;
 
@@ -21,6 +23,8 @@ namespace MDLv14
 		const Container<Bone>& GetBones() const;
 
 	private:
+		void ValidateBeforeRead(BufferedFileReader::Ref ref) const;
+
 		Header m_Header {};
 		Container<Bone> m_Bones;
 		Container<BoneController> m_BoneControllers;
