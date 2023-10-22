@@ -1,5 +1,6 @@
 #include "QCv14/QCFile.h"
 #include "QCv14/CommandWriter.h"
+#include "Exceptions.h"
 
 namespace QCv14
 {
@@ -23,30 +24,80 @@ namespace QCv14
 		m_Attachments.emplace_back(attachment);
 	}
 
+	void QCFile::SetBBox(const QCBBox& bbox)
+	{
+		m_BBox = bbox;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
 
-		writer.WriteBanner(stream, [this](std::ostream& stream)
+		if ( m_ModelName.name.empty() )
 		{
-			stream << "# Model: " << m_ModelName.name;
-		});
+			throw ValidationException("QCFile", "No model name was set.");
+		}
+
+		writer.WriteBanner(
+			stream,
+			[this](std::ostream& stream)
+			{
+				stream << "# Model: " << m_ModelName.name;
+			});
 
 		stream << std::endl;
+
+		// cd
+		// cdtexture
+		// clip to textures
+		// External textures
 
 		writer.WriteCommand(stream, m_ModelName);
 		stream << std::endl;
 
-		writer.WriteBanner(stream, [this](std::ostream& stream)
-		{
-			stream << "# " << m_Attachments.size() << " attachments";
-		});
+		// root
+		// pivot
+		// mirror bone
+		// rename bone
 
-		for ( const QCAttachment& attachment : m_Attachments )
+		// gamma
+		// scale
+		// flags
+		// origin
+		// eye position
+		if ( m_BBox.IsValid() )
 		{
-			writer.WriteCommand(stream, attachment);
+			writer.WriteCommand(stream, m_BBox);
+		}
+		// cbox
+
+		// texture group
+
+		// bodies
+
+		// body groups
+
+		if ( !m_Attachments.empty() )
+		{
+			writer.WriteBanner(
+				stream,
+				[this](std::ostream& stream)
+				{
+					stream << "# " << m_Attachments.size() << " attachments";
+				});
+
+			for ( const QCAttachment& attachment : m_Attachments )
+			{
+				writer.WriteCommand(stream, attachment);
+			}
+
+			stream << std::endl;
 		}
 
-		stream << std::endl;
+		// controllers
+
+		// hboxes
+
+		// Sequences
 	}
 }  // namespace QCv14

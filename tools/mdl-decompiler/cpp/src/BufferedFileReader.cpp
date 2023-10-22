@@ -80,6 +80,11 @@ BufferedFileReader BufferedFileReader::CreateSubReader(size_t length)
 	return CreateSubReader(CurrentPosition(), length);
 }
 
+std::string BufferedFileReader::FilePath() const
+{
+	return m_File->FilePath();
+}
+
 const uint8_t* BufferedFileReader::Data() const
 {
 	return m_File->Data() + m_Base;

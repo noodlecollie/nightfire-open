@@ -15,10 +15,13 @@ namespace QCv14
 		void ClearAttachments();
 		void AddAttachment(const QCAttachment& attachment);
 
+		void SetBBox(const QCBBox& bbox);
+
 		void Write(std::ostream& stream) const;
 
 	private:
 		QCModelName m_ModelName;
 		std::vector<QCAttachment> m_Attachments;
+		QCBBox m_BBox;
 	};
 }

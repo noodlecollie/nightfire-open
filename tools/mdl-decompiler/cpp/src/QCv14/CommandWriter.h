@@ -36,5 +36,6 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const Vec3D& position);
 		void WriteInternal(std::ostream& stream, const QCModelName& command);
 		void WriteInternal(std::ostream& stream, const QCAttachment& command);
+		void WriteInternal(std::ostream& stream, const QCBBox& command);
 	};
 }

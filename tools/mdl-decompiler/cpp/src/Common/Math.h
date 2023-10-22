@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 struct Vec3D
 {
 	float x = 0;
@@ -13,5 +15,17 @@ struct Vec3D
 		y(inY),
 		z(inZ)
 	{
+	}
+
+	bool IsNAN() const
+	{
+		return std::isnan(x) && std::isnan(y) && std::isnan(z);
+	}
+
+	void SetNAN()
+	{
+		x = NAN;
+		y = NAN;
+		z = NAN;
 	}
 };
