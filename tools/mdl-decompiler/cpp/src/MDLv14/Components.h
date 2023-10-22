@@ -59,6 +59,16 @@ namespace MDLv14
 		NodeFlag_Reverse = 1
 	};
 
+	struct MDLVec3D : public Vec3D
+	{
+		MDLVec3D() = default;
+
+		MDLVec3D(float inX, float inY, float inZ) :
+			Vec3D(inX, inY, inZ)
+		{
+		}
+	};
+
 	struct CountOffsetPair
 	{
 		int32_t count = 0;
@@ -67,13 +77,13 @@ namespace MDLv14
 
 	struct BoundingBox
 	{
-		Vec3D min;
-		Vec3D max;
+		MDLVec3D min;
+		MDLVec3D max;
 	};
 
 	struct EyePosition
 	{
-		Vec3D pos;
+		MDLVec3D pos;
 	};
 
 	struct Header
@@ -124,10 +134,10 @@ namespace MDLv14
 		int32_t parent = -1;
 		uint32_t flags = 0;
 		Container<int32_t> controllers;
-		Vec3D position;
-		Vec3D rotation;
-		Vec3D scalePosition;
-		Vec3D scaleRotation;
+		MDLVec3D position;
+		MDLVec3D rotation;
+		MDLVec3D scalePosition;
+		MDLVec3D scaleRotation;
 	};
 
 	struct BoneController
@@ -144,8 +154,8 @@ namespace MDLv14
 	{
 		int32_t bone = -1;
 		int32_t group = 0;
-		Vec3D min;
-		Vec3D max;
+		MDLVec3D min;
+		MDLVec3D max;
 	};
 
 	struct Event
@@ -158,7 +168,7 @@ namespace MDLv14
 
 	struct Pivot
 	{
-		Vec3D position;
+		MDLVec3D position;
 		int32_t start;
 		int32_t end;
 	};
@@ -175,7 +185,7 @@ namespace MDLv14
 		CountOffsetPair pivots;
 		uint32_t motionType;
 		int32_t motionBone;
-		Vec3D linearMovement;
+		MDLVec3D linearMovement;
 		int32_t automovePositionIndex = 0;
 		int32_t automoveAngleIndex = 0;
 		BoundingBox boundingBox;
@@ -255,10 +265,10 @@ namespace MDLv14
 		std::string name;
 		int32_t type = 0;
 		int32_t bone = -1;
-		Vec3D position;
-		Vec3D vector1;
-		Vec3D vector2;
-		Vec3D vector3;
+		MDLVec3D position;
+		MDLVec3D vector1;
+		MDLVec3D vector2;
+		MDLVec3D vector3;
 	};
 
 	struct Sounds
@@ -281,13 +291,13 @@ namespace MDLv14
 
 	struct Vertex
 	{
-		Vec3D position;
+		MDLVec3D position;
 		float scale = 0.0f;
 	};
 
 	struct Normal
 	{
-		Vec3D position;
+		MDLVec3D position;
 		float scale = 0.0f;
 	};
 

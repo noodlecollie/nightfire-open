@@ -29,7 +29,12 @@ namespace QCv14
 			stream << BANNER << std::endl;
 		}
 
+		void IncreaseIndent();
+		void DecreaseIndent();
+
 	private:
+		std::string IndentString() const;
+
 		void WriteInternal(std::ostream& stream, const QCEVersion& command);
 		void WriteInternal(std::ostream& stream, const QCEReplaceActivity& command);
 
@@ -37,5 +42,9 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCModelName& command);
 		void WriteInternal(std::ostream& stream, const QCAttachment& command);
 		void WriteInternal(std::ostream& stream, const QCBBox& command);
+		void WriteInternal(std::ostream& stream, const QCBodyGroupItem& command);
+		void WriteInternal(std::ostream& stream, const QCBodyGroup& command);
+
+		size_t m_Indent = 0;
 	};
 }

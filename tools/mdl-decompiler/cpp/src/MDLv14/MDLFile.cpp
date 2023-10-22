@@ -226,6 +226,11 @@ namespace MDLv14
 		return m_Bones;
 	}
 
+	const Container<BodyGroup>& MDLFile::GetBodyGroups() const
+	{
+		return m_BodyGroups;
+	}
+
 	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
 	{
 		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";
@@ -250,5 +255,31 @@ namespace MDLv14
 				"Expected MDL version \"" + std::to_string(EXPECTED_VERSION) + "\" but got \"" +
 					std::to_string(version) + "\"");
 		}
+	}
+
+	const Model* MDLFile::FindModelByOffset(int32_t offset) const
+	{
+		for ( size_t index = 0; index < IntToSizeT(m_Header.modelCount); ++index )
+		{
+			if ( m_Header.modelOffsets[index] == offset )
+			{
+				return &m_Models.GetElementChecked(index);
+			}
+		}
+
+		return nullptr;
+	}
+
+	const Model* MDLFile::FindModelByName(const std::string& name) const
+	{
+		for ( const Model& model : m_Models )
+		{
+			if ( model.name == name )
+			{
+				return &model;
+			}
+		}
+
+		return nullptr;
 	}
 }  // namespace MDLv14

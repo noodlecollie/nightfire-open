@@ -9,7 +9,7 @@ namespace QCv14
 		m_ModelName = modelName;
 	}
 
-	const std::vector<QCAttachment> QCFile::GetAttachments() const
+	const Container<QCAttachment> QCFile::GetAttachments() const
 	{
 		return m_Attachments;
 	}
@@ -22,6 +22,21 @@ namespace QCv14
 	void QCFile::AddAttachment(const QCAttachment& attachment)
 	{
 		m_Attachments.emplace_back(attachment);
+	}
+
+	const Container<QCBodyGroup> QCFile::GetBodyGroups() const
+	{
+		return m_BodyGroups;
+	}
+
+	void QCFile::ClearBodyGroups()
+	{
+		m_BodyGroups.clear();
+	}
+
+	void QCFile::AddBodyGroup(const QCBodyGroup& bodyGroup)
+	{
+		m_BodyGroups.emplace_back(bodyGroup);
 	}
 
 	void QCFile::SetBBox(const QCBBox& bbox)
@@ -51,14 +66,16 @@ namespace QCv14
 		// cdtexture
 		// clip to textures
 		// External textures
-
 		writer.WriteCommand(stream, m_ModelName);
+
 		stream << std::endl;
 
 		// root
 		// pivot
 		// mirror bone
 		// rename bone
+
+		stream << std::endl;
 
 		// gamma
 		// scale
@@ -71,11 +88,35 @@ namespace QCv14
 		}
 		// cbox
 
+		stream << std::endl;
+
 		// texture group
+
+		stream << std::endl;
 
 		// bodies
 
-		// body groups
+		stream << std::endl;
+
+		if ( !m_BodyGroups.empty() )
+		{
+			writer.WriteBanner(
+				stream,
+				[this](std::ostream& stream)
+				{
+					stream << "# " << m_BodyGroups.size() << " body groups";
+				});
+
+			stream << std::endl;
+
+			for ( const QCBodyGroup& bodyGroup : m_BodyGroups )
+			{
+				writer.WriteCommand(stream, bodyGroup);
+				stream << std::endl;
+			}
+		}
+
+		stream << std::endl;
 
 		if ( !m_Attachments.empty() )
 		{
@@ -86,18 +127,26 @@ namespace QCv14
 					stream << "# " << m_Attachments.size() << " attachments";
 				});
 
+			stream << std::endl;
+
 			for ( const QCAttachment& attachment : m_Attachments )
 			{
 				writer.WriteCommand(stream, attachment);
 			}
-
-			stream << std::endl;
 		}
+
+		stream << std::endl;
 
 		// controllers
 
+		stream << std::endl;
+
 		// hboxes
 
+		stream << std::endl;
+
 		// Sequences
+
+		stream << std::endl;
 	}
 }  // namespace QCv14

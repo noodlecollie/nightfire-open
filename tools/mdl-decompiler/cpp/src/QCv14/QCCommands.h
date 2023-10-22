@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Common/Math.h"
+#include "Common/Container.h"
 
 namespace QCv14
 {
@@ -70,6 +71,44 @@ namespace QCv14
 		bool IsValid() const override
 		{
 			return !min.IsNAN() && !max.IsNAN();
+		}
+	};
+
+	struct QCBodyGroupItem : public QCBaseCommand
+	{
+		std::string name;
+		std::string file;
+
+		QCBodyGroupItem() = default;
+
+		QCBodyGroupItem(const std::string inName, const std::string& inFile = std::string()) :
+			name(inName),
+			file(inFile)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !name.empty() && !file.empty();
+		}
+	};
+
+	struct QCBodyGroup : public QCBaseCommand
+	{
+		std::string name;
+		Container<QCBodyGroupItem> bodies;
+
+		QCBodyGroup() = default;
+
+		QCBodyGroup(const std::string& inName, Container<QCBodyGroupItem>&& inBodies) :
+			name(inName),
+			bodies(std::move(inBodies))
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !name.empty();
 		}
 	};
 }  // namespace QCv14

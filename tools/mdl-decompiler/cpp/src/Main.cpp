@@ -12,6 +12,7 @@
 #include "cppfs/FilePath.h"
 #include "cppfs/fs.h"
 #include "cppfs/FileHandle.h"
+#include "Utils.h"
 
 static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 {
@@ -30,6 +31,37 @@ static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, 
 			attachment.name,
 			mdlFile.GetBones().GetElementChecked(attachment.bone).name,
 			attachment.position));
+	}
+
+	for ( const MDLv14::BodyGroup& mdlBodyGroup : mdlFile.GetBodyGroups() )
+	{
+		QCv14::QCBodyGroup qcBodyGroup;
+		qcBodyGroup.name = mdlBodyGroup.name;
+
+		for ( size_t index = 0; index < IntToSizeT(mdlBodyGroup.modelCount); ++index )
+		{
+			const MDLv14::Model* model =
+				mdlFile.FindModelByOffset(mdlBodyGroup.modelOffset + (index * Reflection::ReadSize<MDLv14::Model>()));
+
+			if ( !model )
+			{
+				throw ValidationException(
+					"MDLFile",
+					"Body group " + mdlBodyGroup.name + " model " + std::to_string(index) + " (offset " +
+						std::to_string(mdlBodyGroup.modelOffset) + " bytes) could not be mapped to a model component.");
+			}
+
+			if ( model->name == "blank" )
+			{
+				qcBodyGroup.bodies.emplace_back(QCv14::QCBodyGroupItem("blank"));
+			}
+			else
+			{
+				qcBodyGroup.bodies.emplace_back(QCv14::QCBodyGroupItem("studio", "TODO: Parse model and dump as SMD"));
+			}
+		}
+
+		qcFile.AddBodyGroup(qcBodyGroup);
 	}
 
 	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
@@ -80,18 +112,27 @@ static void DumpHeader(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& ou
 
 	stream << std::setw(COL_WIDTH) << std::left << "Type flags: " << std::setw(0) << header.typeFlags << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Bones: " << std::setw(0) << header.bones.count << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Bone controllers: " << std::setw(0) << header.boneControllers.count << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Bone controllers: " << std::setw(0) << header.boneControllers.count
+		   << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Hitboxes: " << std::setw(0) << header.hitBoxes.count << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Sequences: " << std::setw(0) << header.sequences.count << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Sequence groups: " << std::setw(0) << header.sequenceGroups.count << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Sequence groups: " << std::setw(0) << header.sequenceGroups.count
+		   << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Textures: " << std::setw(0) << header.textures.count << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Skin references: " << std::setw(0) << header.skinReferences << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Skin families: " << std::setw(0) << header.skinFamilies << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Body groups: " << std::setw(0) << header.bodyGroups.count << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Attachments: " << std::setw(0) << header.attachments.count << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Sound groups: " << std::setw(0) << header.soundGroups.count << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "Transitions: " << std::setw(0) << header.transitionsCount << std::endl;
-	stream << std::setw(COL_WIDTH) << std::left << "LOD flags: " << std::setw(0) << header.levelOfDetailFlags << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Skin references: " << std::setw(0) << header.skinReferences
+		   << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Skin families: " << std::setw(0) << header.skinFamilies
+		   << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Body groups: " << std::setw(0) << header.bodyGroups.count
+		   << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Attachments: " << std::setw(0) << header.attachments.count
+		   << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Sound groups: " << std::setw(0) << header.soundGroups.count
+		   << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "Transitions: " << std::setw(0) << header.transitionsCount
+		   << std::endl;
+	stream << std::setw(COL_WIDTH) << std::left << "LOD flags: " << std::setw(0) << header.levelOfDetailFlags
+		   << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Models: " << std::setw(0) << header.modelCount << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Vertices: " << std::setw(0) << header.vertexCount << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Triangles: " << std::setw(0) << header.triangleCount << std::endl;

@@ -3,6 +3,7 @@
 #include <ostream>
 #include <vector>
 #include "QCv14/QCCommands.h"
+#include "Common/Container.h"
 
 namespace QCv14
 {
@@ -10,18 +11,22 @@ namespace QCv14
 	{
 	public:
 		void SetModelName(const QCModelName& modelName);
+		void SetBBox(const QCBBox& bbox);
 
-		const std::vector<QCAttachment> GetAttachments() const;
+		const Container<QCAttachment> GetAttachments() const;
 		void ClearAttachments();
 		void AddAttachment(const QCAttachment& attachment);
 
-		void SetBBox(const QCBBox& bbox);
+		const Container<QCBodyGroup> GetBodyGroups() const;
+		void ClearBodyGroups();
+		void AddBodyGroup(const QCBodyGroup& bodyGroup);
 
 		void Write(std::ostream& stream) const;
 
 	private:
 		QCModelName m_ModelName;
-		std::vector<QCAttachment> m_Attachments;
+		Container<QCAttachment> m_Attachments;
 		QCBBox m_BBox;
+		Container<QCBodyGroup> m_BodyGroups;
 	};
 }
