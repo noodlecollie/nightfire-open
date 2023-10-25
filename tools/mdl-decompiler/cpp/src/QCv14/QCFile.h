@@ -12,6 +12,7 @@ namespace QCv14
 	public:
 		void SetModelName(const QCModelName& modelName);
 		void SetBBox(const QCBBox& bbox);
+		void SetCBox(const QCCBox& cbox);
 
 		const Container<QCAttachment> GetAttachments() const;
 		void ClearAttachments();
@@ -27,6 +28,7 @@ namespace QCv14
 		QCModelName m_ModelName;
 		Container<QCAttachment> m_Attachments;
 		QCBBox m_BBox;
+		QCCBox m_CBox;
 		Container<QCBodyGroup> m_BodyGroups;
 	};
 }

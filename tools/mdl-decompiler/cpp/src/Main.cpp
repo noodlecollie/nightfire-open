@@ -65,6 +65,7 @@ static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, 
 	}
 
 	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
+	qcFile.SetCBox(QCv14::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
 }
 
 static std::ostream& DumpVector(std::ostream& stream, const Vec3D& vec)
