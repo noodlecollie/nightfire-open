@@ -69,6 +69,14 @@ namespace QCv14
 		WriteInternal(stream, command.max);
 	}
 
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCCBox& command)
+	{
+		stream << IndentString() << "$cbox ";
+		WriteInternal(stream, command.min);
+		stream << " ";
+		WriteInternal(stream, command.max);
+	}
+
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBodyGroupItem& command)
 	{
 		stream << IndentString();

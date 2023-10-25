@@ -111,4 +111,27 @@ namespace QCv14
 			return !name.empty();
 		}
 	};
+
+	struct QCCBox : public QCBaseCommand
+	{
+		Vec3D min;
+		Vec3D max;
+
+		QCCBox()
+		{
+			min.SetNAN();
+			max.SetNAN();
+		}
+
+		QCCBox(const Vec3D& inMin, const Vec3D& inMax) :
+			min(inMin),
+			max(inMax)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !min.IsNAN() && !max.IsNAN();
+		}
+	};
 }  // namespace QCv14

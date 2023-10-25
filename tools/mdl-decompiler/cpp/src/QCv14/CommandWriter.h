@@ -42,6 +42,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCModelName& command);
 		void WriteInternal(std::ostream& stream, const QCAttachment& command);
 		void WriteInternal(std::ostream& stream, const QCBBox& command);
+		void WriteInternal(std::ostream& stream, const QCCBox& command);
 		void WriteInternal(std::ostream& stream, const QCBodyGroupItem& command);
 		void WriteInternal(std::ostream& stream, const QCBodyGroup& command);
 

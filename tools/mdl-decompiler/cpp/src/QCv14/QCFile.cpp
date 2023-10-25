@@ -44,6 +44,11 @@ namespace QCv14
 		m_BBox = bbox;
 	}
 
+	void QCFile::SetCBox(const QCCBox& cbox)
+	{
+		m_CBox = cbox;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -87,7 +92,11 @@ namespace QCv14
 		{
 			writer.WriteCommand(stream, m_BBox);
 		}
-		// cbox
+
+		if ( m_CBox.IsValid() )
+		{
+			writer.WriteCommand(stream, m_CBox);
+		}
 
 		stream << std::endl;
 
