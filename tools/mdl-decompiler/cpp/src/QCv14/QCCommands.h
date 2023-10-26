@@ -134,4 +134,42 @@ namespace QCv14
 			return !min.IsNAN() && !max.IsNAN();
 		}
 	};
+
+	struct QCCD : public QCBaseCommand
+	{
+		std::string path;
+
+		QCCD()
+		{
+		}
+
+		QCCD(const std::string& inPath) :
+			path(inPath)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !path.empty();
+		}
+	};
+
+	struct QCCDTexture : public QCBaseCommand
+	{
+		std::string path;
+
+		QCCDTexture()
+		{
+		}
+
+		QCCDTexture(const std::string& inPath) :
+			path(inPath)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !path.empty();
+		}
+	};
 }  // namespace QCv14

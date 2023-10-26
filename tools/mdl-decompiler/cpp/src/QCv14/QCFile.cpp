@@ -4,6 +4,16 @@
 
 namespace QCv14
 {
+	void QCFile::SetDirectory(const QCCD& dir)
+	{
+		m_CD = dir;
+	}
+
+	void QCFile::SetTextureDirectory(const QCCDTexture& textureDir)
+	{
+		m_CDTexture = textureDir;
+	}
+
 	void QCFile::SetModelName(const QCModelName& modelName)
 	{
 		m_ModelName = modelName;
@@ -53,7 +63,7 @@ namespace QCv14
 	{
 		CommandWriter writer;
 
-		if ( m_ModelName.name.empty() )
+		if ( !m_ModelName.IsValid() )
 		{
 			throw ValidationException("QCFile", "No model name was set.");
 		}
@@ -68,8 +78,16 @@ namespace QCv14
 
 		stream << std::endl;
 
-		// cd
-		// cdtexture
+		if ( m_CD.IsValid() )
+		{
+			writer.WriteCommand(stream, m_CD);
+		}
+
+		if ( m_CDTexture.IsValid() )
+		{
+			writer.WriteCommand(stream, m_CDTexture);
+		}
+
 		// clip to textures
 		// External textures
 		writer.WriteCommand(stream, m_ModelName);

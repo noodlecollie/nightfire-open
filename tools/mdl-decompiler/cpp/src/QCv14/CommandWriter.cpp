@@ -112,4 +112,14 @@ namespace QCv14
 
 		stream << IndentString() << "}";
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCCD& command)
+	{
+		stream << IndentString() << "$cd \"" << command.path << "\"";
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCCDTexture& command)
+	{
+		stream << IndentString() << "$cdtexture \"" << command.path << "\"";
+	}
 }  // namespace QCv14
