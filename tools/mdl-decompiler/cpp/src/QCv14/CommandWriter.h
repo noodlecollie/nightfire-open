@@ -45,6 +45,8 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCCBox& command);
 		void WriteInternal(std::ostream& stream, const QCBodyGroupItem& command);
 		void WriteInternal(std::ostream& stream, const QCBodyGroup& command);
+		void WriteInternal(std::ostream& stream, const QCCD& command);
+		void WriteInternal(std::ostream& stream, const QCCDTexture& command);
 
 		size_t m_Indent = 0;
 	};

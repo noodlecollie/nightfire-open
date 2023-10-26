@@ -19,11 +19,18 @@ static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 	return cppfs::FilePath(GetCurrentDirectory()).resolve(path);
 }
 
-static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, QCv14::QCEFile& qceFile)
+static void SetUpQCFiles(
+	const MDLv14::MDLFile& mdlFile,
+	QCv14::QCFile& qcFile,
+	QCv14::QCEFile& qceFile,
+	const cppfs::FilePath& outputDirPath)
 {
 	qceFile.SetVersion(QCv14::QCEVersion(QCv14::QCEGame::HalfLife, 10, 1, 0));
 
+	qcFile.SetDirectory(outputDirPath.toNative());
 	qcFile.SetModelName({mdlFile.GetHeader().name});
+	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
+	qcFile.SetCBox(QCv14::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
 
 	for ( const MDLv14::Attachment& attachment : mdlFile.GetAttachments() )
 	{
@@ -63,9 +70,6 @@ static void SetUpQCFiles(const MDLv14::MDLFile& mdlFile, QCv14::QCFile& qcFile, 
 
 		qcFile.AddBodyGroup(qcBodyGroup);
 	}
-
-	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
-	qcFile.SetCBox(QCv14::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
 }
 
 static std::ostream& DumpVector(std::ostream& stream, const Vec3D& vec)
@@ -164,7 +168,7 @@ static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePa
 	QCv14::QCFile qcFile;
 	QCv14::QCEFile qceFile;
 
-	SetUpQCFiles(mdlFile, qcFile, qceFile);
+	SetUpQCFiles(mdlFile, qcFile, qceFile, outputDirPath);
 
 	qcFile.Write(*qcStream);
 	qceFile.Write(*qceStream);

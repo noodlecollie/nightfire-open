@@ -10,6 +10,8 @@ namespace QCv14
 	class QCFile
 	{
 	public:
+		void SetDirectory(const QCCD& dir);
+		void SetTextureDirectory(const QCCDTexture& textureDir);
 		void SetModelName(const QCModelName& modelName);
 		void SetBBox(const QCBBox& bbox);
 		void SetCBox(const QCCBox& cbox);
@@ -25,6 +27,8 @@ namespace QCv14
 		void Write(std::ostream& stream) const;
 
 	private:
+		QCCD m_CD;
+		QCCDTexture m_CDTexture;
 		QCModelName m_ModelName;
 		Container<QCAttachment> m_Attachments;
 		QCBBox m_BBox;
