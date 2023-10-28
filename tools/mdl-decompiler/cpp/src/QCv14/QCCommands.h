@@ -172,4 +172,61 @@ namespace QCv14
 			return !path.empty();
 		}
 	};
+
+	struct QCClipToTextures : public QCBaseCommand
+	{
+		bool enabled = false;
+
+		QCClipToTextures()
+		{
+		}
+
+		QCClipToTextures(bool inEnabled) :
+			enabled(inEnabled)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return enabled;
+		}
+	};
+
+	struct QCExternalTextures : public QCBaseCommand
+	{
+		bool enabled = false;
+
+		QCExternalTextures()
+		{
+		}
+
+		QCExternalTextures(bool inEnabled) :
+			enabled(inEnabled)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return enabled;
+		}
+	};
+
+	struct QCRoot : public QCBaseCommand
+	{
+		std::string bone;
+
+		QCRoot()
+		{
+		}
+
+		QCRoot(const std::string& inBone) :
+			bone(inBone)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !bone.empty();
+		}
+	};
 }  // namespace QCv14

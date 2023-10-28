@@ -59,6 +59,21 @@ namespace QCv14
 		m_CBox = cbox;
 	}
 
+	void QCFile::SetClipToTextures(const QCClipToTextures& clipToTextures)
+	{
+		m_ClipToTextures = clipToTextures;
+	}
+
+	void QCFile::SetExternalTextures(const QCExternalTextures& externalTextures)
+	{
+		m_ExternalTextures = externalTextures;
+	}
+
+	void QCFile::SetRoot(const QCRoot root)
+	{
+		m_Root = root;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -78,6 +93,8 @@ namespace QCv14
 
 		stream << std::endl;
 
+		//////////////////////////////////////////////////////////////
+
 		if ( m_CD.IsValid() )
 		{
 			writer.WriteCommand(stream, m_CD);
@@ -88,13 +105,27 @@ namespace QCv14
 			writer.WriteCommand(stream, m_CDTexture);
 		}
 
-		// clip to textures
-		// External textures
+		if ( m_ClipToTextures.IsValid() )
+		{
+			writer.WriteCommand(stream, m_ClipToTextures);
+		}
+
+		if ( m_ExternalTextures.IsValid() )
+		{
+			writer.WriteCommand(stream, m_ExternalTextures);
+		}
+
 		writer.WriteCommand(stream, m_ModelName);
 
 		stream << std::endl;
 
-		// root
+		//////////////////////////////////////////////////////////////
+
+		if ( m_Root.IsValid() )
+		{
+			writer.WriteCommand(stream, m_Root);
+		}
+
 		// pivot
 		// mirror bone
 		// rename bone

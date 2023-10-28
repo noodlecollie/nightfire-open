@@ -122,4 +122,25 @@ namespace QCv14
 	{
 		stream << IndentString() << "$cdtexture \"" << command.path << "\"";
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCClipToTextures& command)
+	{
+		if ( command.enabled )
+		{
+			stream << IndentString() << "$cliptotextures";
+		}
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCExternalTextures& command)
+	{
+		if ( command.enabled )
+		{
+			stream << IndentString() << "$externaltextures";
+		}
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCRoot& command)
+	{
+		stream << "$root \"" << command.bone << "\"";
+	}
 }  // namespace QCv14
