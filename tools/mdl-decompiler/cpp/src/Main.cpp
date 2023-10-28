@@ -32,6 +32,15 @@ static void SetUpQCFiles(
 	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
 	qcFile.SetCBox(QCv14::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
 
+	for ( const MDLv14::Bone& bone : mdlFile.GetBones() )
+	{
+		if ( bone.parent == -1 )
+		{
+			qcFile.SetRoot(QCv14::QCRoot(bone.name));
+			break;
+		}
+	}
+
 	for ( const MDLv14::Attachment& attachment : mdlFile.GetAttachments() )
 	{
 		qcFile.AddAttachment(QCv14::QCAttachment(
@@ -47,8 +56,8 @@ static void SetUpQCFiles(
 
 		for ( size_t index = 0; index < IntToSizeT(mdlBodyGroup.modelCount); ++index )
 		{
-			const MDLv14::Model* model =
-				mdlFile.FindModelByOffset(mdlBodyGroup.modelOffset + (index * Reflection::ReadSize<MDLv14::Model>()));
+			const MDLv14::Model* model = mdlFile.FindModelByOffset(
+				mdlBodyGroup.modelOffset + static_cast<int32_t>((index * Reflection::ReadSize<MDLv14::Model>())));
 
 			if ( !model )
 			{
