@@ -19,7 +19,7 @@ namespace QCv14
 		m_ModelName = modelName;
 	}
 
-	const Container<QCAttachment> QCFile::GetAttachments() const
+	const Container<QCAttachment>& QCFile::GetAttachments() const
 	{
 		return m_Attachments;
 	}
@@ -34,7 +34,7 @@ namespace QCv14
 		m_Attachments.emplace_back(attachment);
 	}
 
-	const Container<QCBodyGroup> QCFile::GetBodyGroups() const
+	const Container<QCBodyGroup>& QCFile::GetBodyGroups() const
 	{
 		return m_BodyGroups;
 	}
@@ -47,6 +47,21 @@ namespace QCv14
 	void QCFile::AddBodyGroup(const QCBodyGroup& bodyGroup)
 	{
 		m_BodyGroups.emplace_back(bodyGroup);
+	}
+
+	const Container<QCBoneController>& QCFile::GetControllers() const
+	{
+		return m_BoneControllers;
+	}
+
+	void QCFile::ClearControllers()
+	{
+		m_BoneControllers.clear();
+	}
+
+	void QCFile::AddController(const QCBoneController& controller)
+	{
+		m_BoneControllers.emplace_back(controller);
 	}
 
 	void QCFile::SetBBox(const QCBBox& bbox)
@@ -83,126 +98,94 @@ namespace QCv14
 			throw ValidationException("QCFile", "No model name was set.");
 		}
 
-		writer.WriteBanner(
-			stream,
-			[this](std::ostream& stream)
-			{
-				stream << "# Model: " << m_ModelName.name << std::endl;
-				stream << "# Decompiled with " EXECUTABLE_NAME;
-			});
+		stream << "########################################" << std::endl;
+		stream << "# QC for: " << m_ModelName.name << std::endl;
+		stream << "# Decompiled with " EXECUTABLE_NAME << std::endl;
+		stream << "#" << std::endl;
+		stream << "# " << m_BodyGroups.size() << " body groups" << std::endl;
+		stream << "# " << m_Attachments.size() << " attachments" << std::endl;
+		stream << "# " << m_BoneControllers.size() << " bone controllers" << std::endl;
+		stream << "########################################" << std::endl;
+		stream << std::endl;
+
+		//////////////////////////////////////////////////////////////
+
+		writer.WriteQCCommand(stream, m_CD);
+		writer.WriteQCCommand(stream, m_CDTexture);
+		writer.WriteQCCommand(stream, m_ClipToTextures);
+		writer.WriteQCCommand(stream, m_ExternalTextures);
+		writer.WriteQCCommand(stream, m_ModelName);
 
 		stream << std::endl;
 
 		//////////////////////////////////////////////////////////////
 
-		if ( m_CD.IsValid() )
-		{
-			writer.WriteCommand(stream, m_CD);
-		}
-
-		if ( m_CDTexture.IsValid() )
-		{
-			writer.WriteCommand(stream, m_CDTexture);
-		}
-
-		if ( m_ClipToTextures.IsValid() )
-		{
-			writer.WriteCommand(stream, m_ClipToTextures);
-		}
-
-		if ( m_ExternalTextures.IsValid() )
-		{
-			writer.WriteCommand(stream, m_ExternalTextures);
-		}
-
-		writer.WriteCommand(stream, m_ModelName);
-
-		stream << std::endl;
-
-		//////////////////////////////////////////////////////////////
-
-		if ( m_Root.IsValid() )
-		{
-			writer.WriteCommand(stream, m_Root);
-		}
-
+		writer.WriteQCCommand(stream, m_Root);
 		// pivot
 		// mirror bone
 		// rename bone
 
 		stream << std::endl;
 
+		//////////////////////////////////////////////////////////////
+
 		// gamma
 		// scale
 		// flags
 		// origin
 		// eye position
-		if ( m_BBox.IsValid() )
-		{
-			writer.WriteCommand(stream, m_BBox);
-		}
-
-		if ( m_CBox.IsValid() )
-		{
-			writer.WriteCommand(stream, m_CBox);
-		}
+		writer.WriteQCCommand(stream, m_BBox);
+		writer.WriteQCCommand(stream, m_CBox);
 
 		stream << std::endl;
+
+		//////////////////////////////////////////////////////////////
 
 		// texture group
 
 		stream << std::endl;
 
+		//////////////////////////////////////////////////////////////
+
 		// bodies
 
 		stream << std::endl;
 
-		if ( !m_BodyGroups.empty() )
+		//////////////////////////////////////////////////////////////
+
+		for ( const QCBodyGroup& bodyGroup : m_BodyGroups )
 		{
-			writer.WriteBanner(
-				stream,
-				[this](std::ostream& stream)
-				{
-					stream << "# " << m_BodyGroups.size() << " body groups";
-				});
-
+			writer.WriteQCCommand(stream, bodyGroup);
 			stream << std::endl;
-
-			for ( const QCBodyGroup& bodyGroup : m_BodyGroups )
-			{
-				writer.WriteCommand(stream, bodyGroup);
-				stream << std::endl;
-			}
 		}
 
 		stream << std::endl;
 
-		if ( !m_Attachments.empty() )
+		//////////////////////////////////////////////////////////////
+
+		for ( const QCAttachment& attachment : m_Attachments )
 		{
-			writer.WriteBanner(
-				stream,
-				[this](std::ostream& stream)
-				{
-					stream << "# " << m_Attachments.size() << " attachments";
-				});
-
-			stream << std::endl;
-
-			for ( const QCAttachment& attachment : m_Attachments )
-			{
-				writer.WriteCommand(stream, attachment);
-			}
+			writer.WriteQCCommand(stream, attachment);
 		}
 
 		stream << std::endl;
 
-		// controllers
+		//////////////////////////////////////////////////////////////
+
+		for ( const QCBoneController& controller : m_BoneControllers )
+		{
+			writer.WriteQCCommand(stream, controller);
+		}
 
 		stream << std::endl;
+
+		//////////////////////////////////////////////////////////////
 
 		// hboxes
 
 		stream << std::endl;
+
+		//////////////////////////////////////////////////////////////
 
 		// Sequences
 

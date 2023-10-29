@@ -143,4 +143,10 @@ namespace QCv14
 	{
 		stream << "$root \"" << command.bone << "\"";
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCBoneController& command)
+	{
+		stream << "$controller " << command.index << " \"" << command.bone << "\" " << command.motionFlags << " "
+			   << command.start << " " << command.end;
+	}
 }  // namespace QCv14

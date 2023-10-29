@@ -19,13 +19,17 @@ namespace QCv14
 		void SetExternalTextures(const QCExternalTextures& externalTextures);
 		void SetRoot(const QCRoot root);
 
-		const Container<QCAttachment> GetAttachments() const;
+		const Container<QCAttachment>& GetAttachments() const;
 		void ClearAttachments();
 		void AddAttachment(const QCAttachment& attachment);
 
-		const Container<QCBodyGroup> GetBodyGroups() const;
+		const Container<QCBodyGroup>& GetBodyGroups() const;
 		void ClearBodyGroups();
 		void AddBodyGroup(const QCBodyGroup& bodyGroup);
+
+		const Container<QCBoneController>& GetControllers() const;
+		void ClearControllers();
+		void AddController(const QCBoneController& controller);
 
 		void Write(std::ostream& stream) const;
 
@@ -35,10 +39,11 @@ namespace QCv14
 		QCClipToTextures m_ClipToTextures;
 		QCExternalTextures m_ExternalTextures;
 		QCModelName m_ModelName;
-		Container<QCAttachment> m_Attachments;
 		QCBBox m_BBox;
 		QCCBox m_CBox;
-		Container<QCBodyGroup> m_BodyGroups;
 		QCRoot m_Root;
+		Container<QCAttachment> m_Attachments;
+		Container<QCBodyGroup> m_BodyGroups;
+		Container<QCBoneController> m_BoneControllers;
 	};
 }

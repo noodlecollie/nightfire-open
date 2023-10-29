@@ -229,4 +229,22 @@ namespace QCv14
 			return !bone.empty();
 		}
 	};
+
+	struct QCBoneController : public QCBaseCommand
+	{
+		int32_t index = -1;
+		std::string bone;
+		uint32_t motionFlags = 0;
+		float start = 0;
+		float end = 0;
+
+		QCBoneController()
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return index >= 0 && !bone.empty();
+		}
+	};
 }  // namespace QCv14

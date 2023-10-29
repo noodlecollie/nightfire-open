@@ -17,6 +17,6 @@ namespace QCv14
 	{
 		CommandWriter writer;
 
-		writer.WriteCommand(stream, m_Version);
+		writer.Write(stream, m_Version);
 	}
 }  // namespace QCv14
