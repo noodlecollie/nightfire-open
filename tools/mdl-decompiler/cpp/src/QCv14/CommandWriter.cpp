@@ -141,12 +141,20 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCRoot& command)
 	{
-		stream << "$root \"" << command.bone << "\"";
+		stream << IndentString() << "$root \"" << command.bone << "\"";
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBoneController& command)
 	{
-		stream << "$controller " << command.index << " \"" << command.bone << "\" " << command.motionFlags << " "
-			   << command.start << " " << command.end;
+		stream << IndentString() << "$controller " << command.index << " \"" << command.bone << "\" "
+			   << command.motionFlags << " " << command.start << " " << command.end;
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCHitBox& command)
+	{
+		stream << IndentString() << "$hbox " << command.group << " \"" << command.bone << "\" ";
+		WriteInternal(stream, command.min);
+		stream << " ";
+		WriteInternal(stream, command.max);
 	}
 }  // namespace QCv14

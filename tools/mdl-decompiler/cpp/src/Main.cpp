@@ -92,6 +92,15 @@ static void SetUpQCFiles(
 
 		qcFile.AddController(qcController);
 	}
+
+	for ( const MDLv14::HitBox& hitBox : mdlFile.GetHitBoxes() )
+	{
+		qcFile.AddHitBox(QCv14::QCHitBox(
+			hitBox.group,
+			mdlFile.GetBones().GetElementChecked(hitBox.bone).name,
+			hitBox.min,
+			hitBox.max));
+	}
 }
 
 static std::ostream& DumpVector(std::ostream& stream, const Vec3D& vec)

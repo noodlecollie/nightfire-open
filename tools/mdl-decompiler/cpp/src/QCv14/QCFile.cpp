@@ -64,6 +64,21 @@ namespace QCv14
 		m_BoneControllers.emplace_back(controller);
 	}
 
+	const Container<QCHitBox>& QCFile::GetHitBoxes() const
+	{
+		return m_HitBoxes;
+	}
+
+	void QCFile::ClearHitBoxes()
+	{
+		m_HitBoxes.clear();
+	}
+
+	void QCFile::AddHitBox(const QCHitBox& hitbox)
+	{
+		m_HitBoxes.emplace_back(hitbox);
+	}
+
 	void QCFile::SetBBox(const QCBBox& bbox)
 	{
 		m_BBox = bbox;
@@ -105,6 +120,7 @@ namespace QCv14
 		stream << "# " << m_BodyGroups.size() << " body groups" << std::endl;
 		stream << "# " << m_Attachments.size() << " attachments" << std::endl;
 		stream << "# " << m_BoneControllers.size() << " bone controllers" << std::endl;
+		stream << "# " << m_HitBoxes.size() << " hit boxes" << std::endl;
 		stream << "########################################" << std::endl;
 		stream << std::endl;
 
@@ -181,7 +197,10 @@ namespace QCv14
 
 		//////////////////////////////////////////////////////////////
 
-		// hboxes
+		for ( const QCHitBox& hitBox : m_HitBoxes )
+		{
+			writer.WriteQCCommand(stream, hitBox);
+		}
 
 		stream << std::endl;
 

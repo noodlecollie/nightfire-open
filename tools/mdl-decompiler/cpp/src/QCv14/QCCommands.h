@@ -247,4 +247,31 @@ namespace QCv14
 			return index >= 0 && !bone.empty();
 		}
 	};
+
+	struct QCHitBox : public QCBaseCommand
+	{
+		int32_t group = 0;
+		std::string bone;
+		Vec3D min;
+		Vec3D max;
+
+		QCHitBox()
+		{
+			min.SetNAN();
+			max.SetNAN();
+		}
+
+		QCHitBox(int32_t inGroup, const std::string& inBone, const Vec3D& inMin, const Vec3D& inMax) :
+			group(inGroup),
+			bone(inBone),
+			min(inMin),
+			max(inMax)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !bone.empty() && !min.IsNAN() && !max.IsNAN();
+		}
+	};
 }  // namespace QCv14

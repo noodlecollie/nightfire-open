@@ -31,6 +31,10 @@ namespace QCv14
 		void ClearControllers();
 		void AddController(const QCBoneController& controller);
 
+		const Container<QCHitBox>& GetHitBoxes() const;
+		void ClearHitBoxes();
+		void AddHitBox(const QCHitBox& hitbox);
+
 		void Write(std::ostream& stream) const;
 
 	private:
@@ -45,5 +49,6 @@ namespace QCv14
 		Container<QCAttachment> m_Attachments;
 		Container<QCBodyGroup> m_BodyGroups;
 		Container<QCBoneController> m_BoneControllers;
+		Container<QCHitBox> m_HitBoxes;
 	};
 }

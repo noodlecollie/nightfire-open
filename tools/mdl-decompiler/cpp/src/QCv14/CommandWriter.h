@@ -51,6 +51,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCExternalTextures& command);
 		void WriteInternal(std::ostream& stream, const QCRoot& command);
 		void WriteInternal(std::ostream& stream, const QCBoneController& command);
+		void WriteInternal(std::ostream& stream, const QCHitBox& command);
 
 		size_t m_Indent = 0;
 	};
