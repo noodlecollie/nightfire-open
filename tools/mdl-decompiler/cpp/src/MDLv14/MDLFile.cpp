@@ -231,6 +231,11 @@ namespace MDLv14
 		return m_BodyGroups;
 	}
 
+	const Container<BoneController>& MDLFile::GetBoneControllers() const
+	{
+		return m_BoneControllers;
+	}
+
 	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
 	{
 		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";

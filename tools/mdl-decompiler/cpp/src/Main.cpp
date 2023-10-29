@@ -79,6 +79,19 @@ static void SetUpQCFiles(
 
 		qcFile.AddBodyGroup(qcBodyGroup);
 	}
+
+	for ( const MDLv14::BoneController& controller : mdlFile.GetBoneControllers() )
+	{
+		QCv14::QCBoneController qcController {};
+
+		qcController.index = controller.index;
+		qcController.bone = mdlFile.GetBones().GetElementChecked(controller.bone).name;
+		qcController.motionFlags = controller.motionFlags;
+		qcController.start = controller.start;
+		qcController.end = controller.end;
+
+		qcFile.AddController(qcController);
+	}
 }
 
 static std::ostream& DumpVector(std::ostream& stream, const Vec3D& vec)

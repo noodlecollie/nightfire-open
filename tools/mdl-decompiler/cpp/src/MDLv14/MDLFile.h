@@ -22,6 +22,7 @@ namespace MDLv14
 		const Container<Attachment>& GetAttachments() const;
 		const Container<Bone>& GetBones() const;
 		const Container<BodyGroup>& GetBodyGroups() const;
+		const Container<BoneController>& GetBoneControllers() const;
 
 		const Model* FindModelByOffset(int32_t offset) const;
 		const Model* FindModelByName(const std::string& name) const;
