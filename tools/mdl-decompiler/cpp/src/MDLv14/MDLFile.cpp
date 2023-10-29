@@ -236,6 +236,11 @@ namespace MDLv14
 		return m_BoneControllers;
 	}
 
+	const Container<HitBox>& MDLFile::GetHitBoxes() const
+	{
+		return m_HitBoxes;
+	}
+
 	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
 	{
 		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";
