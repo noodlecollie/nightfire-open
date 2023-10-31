@@ -109,6 +109,21 @@ namespace QCv14
 		m_EyePosition = eyePosition;
 	}
 
+	void QCFile::SetPivot(const QCPivot& pivot)
+	{
+		m_Pivot = pivot;
+	}
+
+	void QCFile::SetMirrorBone(const QCMirrorBone& mirrorBone)
+	{
+		m_MirrorBone = mirrorBone;
+	}
+
+	void QCFile::SetRenameBone(const QCRenameBone& renameBone)
+	{
+		m_RenameBone = renameBone;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -142,9 +157,9 @@ namespace QCv14
 		//////////////////////////////////////////////////////////////
 
 		writer.WriteQCCommand(stream, m_Root);
-		// pivot
-		// mirror bone
-		// rename bone
+		writer.WriteQCCommand(stream, m_Pivot);
+		writer.WriteQCCommand(stream, m_MirrorBone);
+		writer.WriteQCCommand(stream, m_RenameBone);
 
 		stream << std::endl;
 

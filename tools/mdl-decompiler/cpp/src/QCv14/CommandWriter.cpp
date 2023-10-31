@@ -159,4 +159,19 @@ namespace QCv14
 		stream << "$eyeposition ";
 		WriteInternal(stream, Vec3D(command.position.y, command.position.x, command.position.z));
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCPivot& command)
+	{
+		stream << "$pivot " << command.index << " \"" << command.bone << "\"";
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCMirrorBone& command)
+	{
+		stream << "$mirrorbone \"" << command.bone << "\"";
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCRenameBone& command)
+	{
+		stream << "$renamebone \"" << command.oldName << "\" \"" << command.newName << "\"";
+	}
 }  // namespace QCv14
