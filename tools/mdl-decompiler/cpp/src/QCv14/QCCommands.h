@@ -294,4 +294,65 @@ namespace QCv14
 			return !position.IsNAN();
 		}
 	};
+
+	struct QCPivot : public QCBaseCommand
+	{
+		int32_t index = 0;
+		std::string bone;
+
+		QCPivot()
+		{
+		}
+
+		QCPivot(int32_t inIndex, const std::string& inBone) :
+			index(inIndex),
+			bone(inBone)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !bone.empty();
+		}
+	};
+
+	struct QCMirrorBone : public QCBaseCommand
+	{
+		std::string bone;
+
+		QCMirrorBone()
+		{
+		}
+
+		QCMirrorBone(const std::string& inBone) :
+			bone(inBone)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !bone.empty();
+		}
+	};
+
+	struct QCRenameBone : public QCBaseCommand
+	{
+		std::string oldName;
+		std::string newName;
+
+		QCRenameBone()
+		{
+		}
+
+		QCRenameBone(const std::string& inOldName, const std::string& inNewName) :
+			oldName(inOldName),
+			newName(inNewName)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !oldName.empty() && !newName.empty();
+		}
+	};
 }  // namespace QCv14

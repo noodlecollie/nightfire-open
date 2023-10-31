@@ -59,6 +59,9 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCBoneController& command);
 		void WriteInternal(std::ostream& stream, const QCHitBox& command);
 		void WriteInternal(std::ostream& stream, const QCEyePosition& command);
+		void WriteInternal(std::ostream& stream, const QCPivot& command);
+		void WriteInternal(std::ostream& stream, const QCMirrorBone& command);
+		void WriteInternal(std::ostream& stream, const QCRenameBone& command);
 
 		size_t m_Indent = 0;
 	};
