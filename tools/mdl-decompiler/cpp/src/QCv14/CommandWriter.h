@@ -13,8 +13,7 @@ namespace QCv14
 		template<typename T>
 		void Write(std::ostream& stream, const T& command)
 		{
-			WriteInternal(stream, command);
-			stream << std::endl;
+			WriteLine(stream, command);
 		}
 
 		template<typename T>
@@ -24,8 +23,7 @@ namespace QCv14
 		{
 			if ( command.IsValid() )
 			{
-				WriteInternal(stream, command);
-				stream << std::endl;
+				WriteLine(stream, command);
 			}
 		}
 
@@ -34,6 +32,14 @@ namespace QCv14
 
 	private:
 		std::string IndentString() const;
+
+		template<typename T>
+		void WriteLine(std::ostream& stream, const T& command)
+		{
+			stream << IndentString();
+			WriteInternal(stream, command);
+			stream << std::endl;
+		}
 
 		void WriteInternal(std::ostream& stream, const QCEVersion& command);
 		void WriteInternal(std::ostream& stream, const QCEReplaceActivity& command);
@@ -52,6 +58,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCRoot& command);
 		void WriteInternal(std::ostream& stream, const QCBoneController& command);
 		void WriteInternal(std::ostream& stream, const QCHitBox& command);
+		void WriteInternal(std::ostream& stream, const QCEyePosition& command);
 
 		size_t m_Indent = 0;
 	};

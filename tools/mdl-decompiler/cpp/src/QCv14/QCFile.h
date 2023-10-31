@@ -18,6 +18,7 @@ namespace QCv14
 		void SetClipToTextures(const QCClipToTextures& clipToTextures);
 		void SetExternalTextures(const QCExternalTextures& externalTextures);
 		void SetRoot(const QCRoot root);
+		void SetEyePosition(const QCEyePosition& eyePosition);
 
 		const Container<QCAttachment>& GetAttachments() const;
 		void ClearAttachments();
@@ -46,6 +47,7 @@ namespace QCv14
 		QCBBox m_BBox;
 		QCCBox m_CBox;
 		QCRoot m_Root;
+		QCEyePosition m_EyePosition;
 		Container<QCAttachment> m_Attachments;
 		Container<QCBodyGroup> m_BodyGroups;
 		Container<QCBoneController> m_BoneControllers;

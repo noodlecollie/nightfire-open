@@ -274,4 +274,24 @@ namespace QCv14
 			return !bone.empty() && !min.IsNAN() && !max.IsNAN();
 		}
 	};
+
+	struct QCEyePosition : public QCBaseCommand
+	{
+		Vec3D position;
+
+		QCEyePosition()
+		{
+			position.SetNAN();
+		}
+
+		QCEyePosition(const Vec3D& inPosition) :
+			position(inPosition)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !position.IsNAN();
+		}
+	};
 }  // namespace QCv14
