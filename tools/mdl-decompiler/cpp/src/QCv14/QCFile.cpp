@@ -124,6 +124,11 @@ namespace QCv14
 		m_RenameBone = renameBone;
 	}
 
+	void QCFile::SetGamma(const QCGamma& gamma)
+	{
+		m_Gamma = gamma;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -165,7 +170,7 @@ namespace QCv14
 
 		//////////////////////////////////////////////////////////////
 
-		// gamma
+		writer.WriteQCCommand(stream, m_Gamma);
 		// scale
 		// flags
 		// origin

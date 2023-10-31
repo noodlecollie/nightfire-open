@@ -355,4 +355,23 @@ namespace QCv14
 			return !oldName.empty() && !newName.empty();
 		}
 	};
+
+	struct QCGamma : public QCBaseCommand
+	{
+		float value = 0.0f;
+
+		QCGamma()
+		{
+		}
+
+		QCGamma(float inValue) :
+			value(inValue)
+		{
+		}
+
+		bool IsValid() const
+		{
+			return value >= 0.0f;
+		}
+	};
 }  // namespace QCv14

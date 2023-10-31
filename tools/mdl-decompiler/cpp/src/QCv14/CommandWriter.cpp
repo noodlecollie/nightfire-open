@@ -33,20 +33,19 @@ namespace QCv14
 		stream << "$replaceactivity \"" << command.sequenceName << "\" " << command.activity;
 	}
 
+	void WriteInternal(std::ostream& stream, const float value)
+	{
+		const std::streamsize defaultPrecision = stream.precision();
+		stream << std::setprecision(6) << (std::isnan(value) ? 0.0f : value) << std::setprecision(defaultPrecision);
+	}
+
 	void CommandWriter::WriteInternal(std::ostream& stream, const Vec3D& position)
 	{
-		const auto defaultPrecision = stream.precision();
-
-		float val = std::isnan(position.x) ? 0.0f : position.x;
-		stream << std::setprecision(6) << val;
-
-		val = std::isnan(position.y) ? 0.0f : position.y;
-		stream << " " << std::setprecision(6) << val;
-
-		val = std::isnan(position.z) ? 0.0f : position.z;
-		stream << " " << std::setprecision(6) << val;
-
-		stream << std::setprecision(defaultPrecision);
+		WriteInternal(stream, position.x);
+		stream << " ";
+		WriteInternal(stream, position.y);
+		stream << " ";
+		WriteInternal(stream, position.z);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCModelName& command)
@@ -173,5 +172,11 @@ namespace QCv14
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCRenameBone& command)
 	{
 		stream << "$renamebone \"" << command.oldName << "\" \"" << command.newName << "\"";
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCGamma& command)
+	{
+		stream << "$gamma ";
+		WriteInternal(stream, command.value);
 	}
 }  // namespace QCv14
