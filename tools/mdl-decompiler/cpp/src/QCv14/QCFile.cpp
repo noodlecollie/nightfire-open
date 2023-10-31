@@ -104,6 +104,11 @@ namespace QCv14
 		m_Root = root;
 	}
 
+	void QCFile::SetEyePosition(const QCEyePosition& eyePosition)
+	{
+		m_EyePosition = eyePosition;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -149,7 +154,7 @@ namespace QCv14
 		// scale
 		// flags
 		// origin
-		// eye position
+		writer.WriteQCCommand(stream, m_EyePosition);
 		writer.WriteQCCommand(stream, m_BBox);
 		writer.WriteQCCommand(stream, m_CBox);
 

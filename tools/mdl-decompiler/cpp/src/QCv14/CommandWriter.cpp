@@ -24,19 +24,18 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCEVersion& command)
 	{
-		stream << IndentString() << "$qceversion " << static_cast<int32_t>(command.game) << "." << command.version
+		stream << "$qceversion " << static_cast<int32_t>(command.game) << "." << command.version
 			   << "." << command.versionMajor << "." << command.versionMinor;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCEReplaceActivity& command)
 	{
-		stream << IndentString() << "$replaceactivity \"" << command.sequenceName << "\" " << command.activity;
+		stream << "$replaceactivity \"" << command.sequenceName << "\" " << command.activity;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const Vec3D& position)
 	{
 		const auto defaultPrecision = stream.precision();
-		stream << IndentString();
 
 		float val = std::isnan(position.x) ? 0.0f : position.x;
 		stream << std::setprecision(6) << val;
@@ -52,18 +51,18 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCModelName& command)
 	{
-		stream << IndentString() << "$modelname \"" << command.name << "\"";
+		stream << "$modelname \"" << command.name << "\"";
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCAttachment& command)
 	{
-		stream << IndentString() << "$attachment \"" << command.name << "\" \"" << command.bone << "\" ";
+		stream << "$attachment \"" << command.name << "\" \"" << command.bone << "\" ";
 		WriteInternal(stream, command.position);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBBox& command)
 	{
-		stream << IndentString() << "$bbox ";
+		stream << "$bbox ";
 		WriteInternal(stream, command.min);
 		stream << " ";
 		WriteInternal(stream, command.max);
@@ -71,7 +70,7 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCCBox& command)
 	{
-		stream << IndentString() << "$cbox ";
+		stream << "$cbox ";
 		WriteInternal(stream, command.min);
 		stream << " ";
 		WriteInternal(stream, command.max);
@@ -79,8 +78,6 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBodyGroupItem& command)
 	{
-		stream << IndentString();
-
 		if ( command.name == "studio" )
 		{
 			stream << "studio \"" << command.file << "\"";
@@ -97,15 +94,14 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBodyGroup& command)
 	{
-		stream << IndentString() << "$bodygroup \"" << command.name << "\"" << std::endl;
+		stream << "$bodygroup \"" << command.name << "\"" << std::endl;
 		stream << IndentString() << "{" << std::endl;
 
 		IncreaseIndent();
 
 		for ( const QCBodyGroupItem& body : command.bodies )
 		{
-			WriteInternal(stream, body);
-			stream << std::endl;
+			WriteQCCommand(stream, body);
 		}
 
 		DecreaseIndent();
@@ -115,19 +111,19 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCCD& command)
 	{
-		stream << IndentString() << "$cd \"" << command.path << "\"";
+		stream << "$cd \"" << command.path << "\"";
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCCDTexture& command)
 	{
-		stream << IndentString() << "$cdtexture \"" << command.path << "\"";
+		stream << "$cdtexture \"" << command.path << "\"";
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCClipToTextures& command)
 	{
 		if ( command.enabled )
 		{
-			stream << IndentString() << "$cliptotextures";
+			stream << "$cliptotextures";
 		}
 	}
 
@@ -135,26 +131,32 @@ namespace QCv14
 	{
 		if ( command.enabled )
 		{
-			stream << IndentString() << "$externaltextures";
+			stream << "$externaltextures";
 		}
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCRoot& command)
 	{
-		stream << IndentString() << "$root \"" << command.bone << "\"";
+		stream << "$root \"" << command.bone << "\"";
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBoneController& command)
 	{
-		stream << IndentString() << "$controller " << command.index << " \"" << command.bone << "\" "
+		stream << "$controller " << command.index << " \"" << command.bone << "\" "
 			   << command.motionFlags << " " << command.start << " " << command.end;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCHitBox& command)
 	{
-		stream << IndentString() << "$hbox " << command.group << " \"" << command.bone << "\" ";
+		stream << "$hbox " << command.group << " \"" << command.bone << "\" ";
 		WriteInternal(stream, command.min);
 		stream << " ";
 		WriteInternal(stream, command.max);
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCEyePosition& command)
+	{
+		stream << "$eyeposition ";
+		WriteInternal(stream, Vec3D(command.position.y, command.position.x, command.position.z));
 	}
 }  // namespace QCv14
