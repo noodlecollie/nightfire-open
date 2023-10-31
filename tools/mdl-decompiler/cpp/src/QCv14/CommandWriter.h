@@ -44,6 +44,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCEVersion& command);
 		void WriteInternal(std::ostream& stream, const QCEReplaceActivity& command);
 
+		void WriteInternal(std::ostream& stream, const float value);
 		void WriteInternal(std::ostream& stream, const Vec3D& position);
 		void WriteInternal(std::ostream& stream, const QCModelName& command);
 		void WriteInternal(std::ostream& stream, const QCAttachment& command);
@@ -62,6 +63,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCPivot& command);
 		void WriteInternal(std::ostream& stream, const QCMirrorBone& command);
 		void WriteInternal(std::ostream& stream, const QCRenameBone& command);
+		void WriteInternal(std::ostream& stream, const QCGamma& command);
 
 		size_t m_Indent = 0;
 	};
