@@ -25,6 +25,7 @@ namespace QCv14
 		void SetGamma(const QCGamma& gamma);
 		void SetScale(const QCScale& scale);
 		void SetTypeFlags(const QCTypeFlags& typeFlags);
+		void SetOrigin(const QCOrigin& origin);
 
 		const Container<QCAttachment>& GetAttachments() const;
 		void ClearAttachments();
@@ -56,6 +57,7 @@ namespace QCv14
 		QCPivot m_Pivot;
 		QCGamma m_Gamma;
 		QCScale m_Scale;
+		QCOrigin m_Origin;
 		QCTypeFlags m_TypeFlags;
 		QCMirrorBone m_MirrorBone;
 		QCRenameBone m_RenameBone;

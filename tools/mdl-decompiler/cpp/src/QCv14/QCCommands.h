@@ -412,4 +412,24 @@ namespace QCv14
 			return true;
 		}
 	};
+
+	struct QCOrigin : public QCBaseCommand
+	{
+		Vec3D pos;
+
+		QCOrigin()
+		{
+			pos.SetNAN();
+		}
+
+		QCOrigin(const Vec3D& inPos) :
+			pos(inPos)
+		{
+		}
+
+		bool IsValid() const
+		{
+			return !pos.IsNAN();
+		}
+	};
 }  // namespace QCv14

@@ -33,6 +33,7 @@ static void SetUpQCFiles(
 	qcFile.SetCBox(QCv14::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
 	qcFile.SetEyePosition(QCv14::QCEyePosition(mdlFile.GetHeader().eyePosition.pos));
 	qcFile.SetTypeFlags(QCv14::QCTypeFlags(mdlFile.GetHeader().typeFlags));
+	qcFile.SetOrigin(QCv14::QCOrigin(Vec3D()));
 
 	for ( const MDLv14::Bone& bone : mdlFile.GetBones() )
 	{
