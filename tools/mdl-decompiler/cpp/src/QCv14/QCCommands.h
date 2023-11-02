@@ -393,4 +393,23 @@ namespace QCv14
 			return value != 0.0f;
 		}
 	};
+
+	struct QCTypeFlags : public QCBaseCommand
+	{
+		uint32_t flags = 0.0f;
+
+		QCTypeFlags()
+		{
+		}
+
+		QCTypeFlags(uint32_t inFlags) :
+			flags(inFlags)
+		{
+		}
+
+		bool IsValid() const
+		{
+			return true;
+		}
+	};
 }  // namespace QCv14

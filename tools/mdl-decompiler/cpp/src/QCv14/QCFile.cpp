@@ -129,6 +129,16 @@ namespace QCv14
 		m_Gamma = gamma;
 	}
 
+	void QCFile::SetScale(const QCScale& scale)
+	{
+		m_Scale = scale;
+	}
+
+	void QCFile::SetTypeFlags(const QCTypeFlags& typeFlags)
+	{
+		m_TypeFlags = typeFlags;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -172,7 +182,7 @@ namespace QCv14
 
 		writer.WriteQCCommand(stream, m_Gamma);
 		writer.WriteQCCommand(stream, m_Scale);
-		// flags
+		writer.WriteQCCommand(stream, m_TypeFlags);
 		// origin
 		writer.WriteQCCommand(stream, m_EyePosition);
 		writer.WriteQCCommand(stream, m_BBox);
