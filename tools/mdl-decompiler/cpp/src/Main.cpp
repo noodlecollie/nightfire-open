@@ -32,6 +32,7 @@ static void SetUpQCFiles(
 	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
 	qcFile.SetCBox(QCv14::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
 	qcFile.SetEyePosition(QCv14::QCEyePosition(mdlFile.GetHeader().eyePosition.pos));
+	qcFile.SetTypeFlags(QCv14::QCTypeFlags(mdlFile.GetHeader().typeFlags));
 
 	for ( const MDLv14::Bone& bone : mdlFile.GetBones() )
 	{

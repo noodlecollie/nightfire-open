@@ -185,4 +185,9 @@ namespace QCv14
 		stream << "$scale ";
 		WriteInternal(stream, command.value);
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCTypeFlags& command)
+	{
+		stream << "$flags " << command.flags;
+	}
 }  // namespace QCv14
