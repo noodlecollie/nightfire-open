@@ -139,6 +139,11 @@ namespace QCv14
 		m_TypeFlags = typeFlags;
 	}
 
+	void QCFile::SetOrigin(const QCOrigin& origin)
+	{
+		m_Origin = origin;
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -183,7 +188,7 @@ namespace QCv14
 		writer.WriteQCCommand(stream, m_Gamma);
 		writer.WriteQCCommand(stream, m_Scale);
 		writer.WriteQCCommand(stream, m_TypeFlags);
-		// origin
+		writer.WriteQCCommand(stream, m_Origin);
 		writer.WriteQCCommand(stream, m_EyePosition);
 		writer.WriteQCCommand(stream, m_BBox);
 		writer.WriteQCCommand(stream, m_CBox);

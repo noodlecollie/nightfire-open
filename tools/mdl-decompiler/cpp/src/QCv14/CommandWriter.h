@@ -66,6 +66,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCGamma& command);
 		void WriteInternal(std::ostream& stream, const QCScale& command);
 		void WriteInternal(std::ostream& stream, const QCTypeFlags& command);
+		void WriteInternal(std::ostream& stream, const QCOrigin& command);
 
 		size_t m_Indent = 0;
 	};

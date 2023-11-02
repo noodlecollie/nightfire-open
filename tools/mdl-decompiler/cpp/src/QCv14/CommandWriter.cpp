@@ -190,4 +190,10 @@ namespace QCv14
 	{
 		stream << "$flags " << command.flags;
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCOrigin& command)
+	{
+		stream << "$origin ";
+		WriteInternal(stream, command.pos);
+	}
 }  // namespace QCv14
