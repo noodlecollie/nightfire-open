@@ -24,6 +24,8 @@ namespace MDLv14
 		const Container<BodyGroup>& GetBodyGroups() const;
 		const Container<BoneController>& GetBoneControllers() const;
 		const Container<HitBox>& GetHitBoxes() const;
+		const SkinDataHolder& GetSkinData() const;
+		const Container<Texture>& GetTextures() const;
 
 		const Model* FindModelByOffset(int32_t offset) const;
 		const Model* FindModelByName(const std::string& name) const;

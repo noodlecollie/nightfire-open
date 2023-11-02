@@ -24,8 +24,8 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCEVersion& command)
 	{
-		stream << "$qceversion " << static_cast<int32_t>(command.game) << "." << command.version
-			   << "." << command.versionMajor << "." << command.versionMinor;
+		stream << "$qceversion " << static_cast<int32_t>(command.game) << "." << command.version << "."
+			   << command.versionMajor << "." << command.versionMinor;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCEReplaceActivity& command)
@@ -141,8 +141,8 @@ namespace QCv14
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBoneController& command)
 	{
-		stream << "$controller " << command.index << " \"" << command.bone << "\" "
-			   << command.motionFlags << " " << command.start << " " << command.end;
+		stream << "$controller " << command.index << " \"" << command.bone << "\" " << command.motionFlags << " "
+			   << command.start << " " << command.end;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCHitBox& command)
@@ -195,5 +195,34 @@ namespace QCv14
 	{
 		stream << "$origin ";
 		WriteInternal(stream, command.pos);
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCTextureGroup& command)
+	{
+		stream << "$texturegroup \"" << command.name << "\"" << std::endl;
+		stream << IndentString() << "{" << std::endl;
+
+		IncreaseIndent();
+
+		for ( const Container<std::string>& list : command.skins )
+		{
+			stream << "{ ";
+
+			for ( size_t index = 0; index < list.size(); ++index )
+			{
+				if ( index > 0 )
+				{
+					stream << ", ";
+				}
+
+				stream << list.GetElementChecked(index);
+			}
+
+			stream << " }";
+		}
+
+		DecreaseIndent();
+
+		stream << IndentString() << "}";
 	}
 }  // namespace QCv14

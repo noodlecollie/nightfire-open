@@ -432,4 +432,25 @@ namespace QCv14
 			return !pos.IsNAN();
 		}
 	};
+
+	struct QCTextureGroup : public QCBaseCommand
+	{
+		std::string name;
+		Container<Container<std::string>> skins;
+
+		QCTextureGroup()
+		{
+		}
+
+		QCTextureGroup(const std::string& inName, Container<Container<std::string>>&& inSkins) :
+			name(inName),
+			skins(std::move(inSkins))
+		{
+		}
+
+		bool IsValid() const
+		{
+			return !name.empty();
+		}
+	};
 }  // namespace QCv14

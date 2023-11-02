@@ -241,6 +241,16 @@ namespace MDLv14
 		return m_HitBoxes;
 	}
 
+	const SkinDataHolder& MDLFile::GetSkinData() const
+	{
+		return m_SkinData;
+	}
+
+	const Container<Texture>& MDLFile::GetTextures() const
+	{
+		return m_Textures;
+	}
+
 	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
 	{
 		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";
