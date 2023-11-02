@@ -171,7 +171,7 @@ namespace QCv14
 		//////////////////////////////////////////////////////////////
 
 		writer.WriteQCCommand(stream, m_Gamma);
-		// scale
+		writer.WriteQCCommand(stream, m_Scale);
 		// flags
 		// origin
 		writer.WriteQCCommand(stream, m_EyePosition);
