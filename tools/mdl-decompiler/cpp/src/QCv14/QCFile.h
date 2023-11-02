@@ -26,6 +26,7 @@ namespace QCv14
 		void SetScale(const QCScale& scale);
 		void SetTypeFlags(const QCTypeFlags& typeFlags);
 		void SetOrigin(const QCOrigin& origin);
+		void SetTextureGroup(QCTextureGroup&& textureGroup);
 
 		const Container<QCAttachment>& GetAttachments() const;
 		void ClearAttachments();
@@ -62,6 +63,7 @@ namespace QCv14
 		QCMirrorBone m_MirrorBone;
 		QCRenameBone m_RenameBone;
 		QCEyePosition m_EyePosition;
+		QCTextureGroup m_TextureGroup;
 		Container<QCAttachment> m_Attachments;
 		Container<QCBodyGroup> m_BodyGroups;
 		Container<QCBoneController> m_BoneControllers;

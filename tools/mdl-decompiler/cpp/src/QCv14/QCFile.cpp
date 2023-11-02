@@ -144,6 +144,11 @@ namespace QCv14
 		m_Origin = origin;
 	}
 
+	void QCFile::SetTextureGroup(QCTextureGroup&& textureGroup)
+	{
+		m_TextureGroup = std::move(textureGroup);
+	}
+
 	void QCFile::Write(std::ostream& stream) const
 	{
 		CommandWriter writer;
@@ -197,7 +202,7 @@ namespace QCv14
 
 		//////////////////////////////////////////////////////////////
 
-		// texture group
+		writer.WriteQCCommand(stream, m_TextureGroup);
 
 		stream << std::endl;
 

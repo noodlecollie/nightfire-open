@@ -104,6 +104,36 @@ static void SetUpQCFiles(
 			hitBox.min,
 			hitBox.max));
 	}
+
+	const MDLv14::SkinDataHolder& skins = mdlFile.GetSkinData();
+
+	if ( skins.SkinFamilyCount() > 1 )
+	{
+		const Container<MDLv14::Texture>& textures = mdlFile.GetTextures();
+		QCv14::QCTextureGroup texGroup;
+
+		texGroup.name = "Skins";
+		texGroup.skins.reserve(skins.SkinFamilyCount());
+
+		for ( size_t familyIndex = 0; familyIndex < skins.SkinFamilyCount(); ++familyIndex )
+		{
+			Container<std::string> textureNames;
+			textureNames.reserve(skins.SkinReferenceCount());
+
+			for ( size_t refIndex = 0; refIndex < skins.SkinReferenceCount(); ++refIndex )
+			{
+				const int16_t& textureIndex = skins.GetEntry(familyIndex, refIndex);
+				const std::string& textureName =
+					textures.GetElementChecked(static_cast<size_t>(textureIndex)).textureName;
+
+				textureNames.emplace_back(textureName);
+			}
+
+			texGroup.skins.emplace_back(std::move(textureNames));
+		}
+
+		qcFile.SetTextureGroup(std::move(texGroup));
+	}
 }
 
 static std::ostream& DumpVector(std::ostream& stream, const Vec3D& vec)
