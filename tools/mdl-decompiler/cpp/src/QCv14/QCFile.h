@@ -23,6 +23,7 @@ namespace QCv14
 		void SetMirrorBone(const QCMirrorBone& mirrorBone);
 		void SetRenameBone(const QCRenameBone& renameBone);
 		void SetGamma(const QCGamma& gamma);
+		void SetScale(const QCScale& gamma);
 
 		const Container<QCAttachment>& GetAttachments() const;
 		void ClearAttachments();
@@ -53,6 +54,7 @@ namespace QCv14
 		QCRoot m_Root;
 		QCPivot m_Pivot;
 		QCGamma m_Gamma;
+		QCScale m_Scale;
 		QCMirrorBone m_MirrorBone;
 		QCRenameBone m_RenameBone;
 		QCEyePosition m_EyePosition;

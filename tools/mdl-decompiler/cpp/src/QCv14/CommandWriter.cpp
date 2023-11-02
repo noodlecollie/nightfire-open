@@ -33,7 +33,7 @@ namespace QCv14
 		stream << "$replaceactivity \"" << command.sequenceName << "\" " << command.activity;
 	}
 
-	void WriteInternal(std::ostream& stream, const float value)
+	void CommandWriter::WriteInternal(std::ostream& stream, const float value)
 	{
 		const std::streamsize defaultPrecision = stream.precision();
 		stream << std::setprecision(6) << (std::isnan(value) ? 0.0f : value) << std::setprecision(defaultPrecision);
@@ -177,6 +177,12 @@ namespace QCv14
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCGamma& command)
 	{
 		stream << "$gamma ";
+		WriteInternal(stream, command.value);
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCScale& command)
+	{
+		stream << "$scale ";
 		WriteInternal(stream, command.value);
 	}
 }  // namespace QCv14

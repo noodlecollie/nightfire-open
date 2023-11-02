@@ -64,6 +64,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCMirrorBone& command);
 		void WriteInternal(std::ostream& stream, const QCRenameBone& command);
 		void WriteInternal(std::ostream& stream, const QCGamma& command);
+		void WriteInternal(std::ostream& stream, const QCScale& command);
 
 		size_t m_Indent = 0;
 	};

@@ -374,4 +374,23 @@ namespace QCv14
 			return value >= 0.0f;
 		}
 	};
+
+	struct QCScale : public QCBaseCommand
+	{
+		float value = 0.0f;
+
+		QCScale()
+		{
+		}
+
+		QCScale(float inValue) :
+			value(inValue)
+		{
+		}
+
+		bool IsValid() const
+		{
+			return value != 0.0f;
+		}
+	};
 }  // namespace QCv14
