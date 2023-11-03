@@ -26,6 +26,7 @@ namespace MDLv14
 		const Container<HitBox>& GetHitBoxes() const;
 		const SkinDataHolder& GetSkinData() const;
 		const Container<Texture>& GetTextures() const;
+		const Container<Sequence>& GetSequences() const;
 
 		const Model* FindModelByOffset(int32_t offset) const;
 		const Model* FindModelByName(const std::string& name) const;

@@ -230,4 +230,9 @@ namespace QCv14
 	{
 		stream << "$body \"" << command.name << "\" \"" << command.file << "\"";
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCSequence& /* command */)
+	{
+		stream << "$sequence";
+	}
 }  // namespace QCv14

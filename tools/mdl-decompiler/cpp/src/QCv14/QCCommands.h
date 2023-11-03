@@ -446,4 +446,16 @@ namespace QCv14
 			return !name.empty() && !file.empty();
 		}
 	};
+
+	struct QCSequence : public QCBaseCommand
+	{
+		std::string name;
+
+		QCSequence() = default;
+
+		bool IsValid() const override
+		{
+			return !name.empty();
+		}
+	};
 }  // namespace QCv14

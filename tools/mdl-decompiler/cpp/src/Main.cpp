@@ -105,6 +105,15 @@ static void SetUpQCFiles(
 			hitBox.max));
 	}
 
+	for ( const MDLv14::Sequence& sequence : mdlFile.GetSequences() )
+	{
+		QCv14::QCSequence qcSeq {};
+
+		qcSeq.name = sequence.name;
+
+		qcFile.AddSequence(std::move(qcSeq));
+	}
+
 	const MDLv14::SkinDataHolder& skins = mdlFile.GetSkinData();
 
 	if ( skins.SkinFamilyCount() > 1 )
