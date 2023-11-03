@@ -253,6 +253,11 @@ namespace MDLv14
 		return m_Textures;
 	}
 
+	const Container<Sequence>& MDLFile::GetSequences() const
+	{
+		return m_Sequences;
+	}
+
 	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
 	{
 		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";

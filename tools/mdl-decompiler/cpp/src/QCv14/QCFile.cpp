@@ -94,6 +94,21 @@ namespace QCv14
 		m_HitBoxes.emplace_back(hitbox);
 	}
 
+	const Container<QCSequence>& QCFile::GetSequences() const
+	{
+		return m_Sequences;
+	}
+
+	void QCFile::ClearSequences()
+	{
+		m_Sequences.clear();
+	}
+
+	void QCFile::AddSequence(const QCSequence& sequence)
+	{
+		m_Sequences.emplace_back(sequence);
+	}
+
 	void QCFile::SetBBox(const QCBBox& bbox)
 	{
 		m_BBox = bbox;
@@ -269,7 +284,10 @@ namespace QCv14
 
 		//////////////////////////////////////////////////////////////
 
-		// Sequences
+		for ( const QCSequence& sequence : m_Sequences )
+		{
+			writer.WriteQCCommand(stream, sequence);
+		}
 
 		stream << std::endl;
 	}

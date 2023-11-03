@@ -48,6 +48,10 @@ namespace QCv14
 		void ClearHitBoxes();
 		void AddHitBox(const QCHitBox& hitbox);
 
+		const Container<QCSequence>& GetSequences() const;
+		void ClearSequences();
+		void AddSequence(const QCSequence& sequence);
+
 		void Write(std::ostream& stream) const;
 
 	private:
@@ -73,5 +77,6 @@ namespace QCv14
 		Container<QCBody> m_Bodies;
 		Container<QCBoneController> m_BoneControllers;
 		Container<QCHitBox> m_HitBoxes;
+		Container<QCSequence> m_Sequences;
 	};
 }
