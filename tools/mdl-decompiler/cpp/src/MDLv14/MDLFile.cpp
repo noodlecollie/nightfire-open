@@ -176,6 +176,8 @@ namespace MDLv14
 					modelInfo.meshes.offset);
 			}
 		}
+
+		PerformPostReadFixUp();
 	}
 
 	void MDLFile::Validate() const
@@ -274,6 +276,22 @@ namespace MDLv14
 				reader.FilePath(),
 				"Expected MDL version \"" + std::to_string(EXPECTED_VERSION) + "\" but got \"" +
 					std::to_string(version) + "\"");
+		}
+	}
+
+	void MDLFile::PerformPostReadFixUp()
+	{
+		// To "repair" airfield_radar2.mdl and missile_container.mdl
+		if ( m_BodyGroups.size() < 1 )
+		{
+			BodyGroup bg {};
+
+			bg.name = "studio";
+			bg.bodyCount = 0;
+			bg.modelCount = 1;
+			bg.modelOffset = m_Header.modelOffsets.GetElementChecked(0);
+
+			m_BodyGroups.emplace_back(std::move(bg));
 		}
 	}
 

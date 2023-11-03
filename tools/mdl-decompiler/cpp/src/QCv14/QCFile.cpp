@@ -49,6 +49,21 @@ namespace QCv14
 		m_BodyGroups.emplace_back(bodyGroup);
 	}
 
+	const Container<QCBody>& QCFile::GetBodies() const
+	{
+		return m_Bodies;
+	}
+
+	void QCFile::ClearBodies()
+	{
+		m_Bodies.clear();
+	}
+
+	void QCFile::AddBody(const QCBody& body)
+	{
+		m_Bodies.emplace_back(body);
+	}
+
 	const Container<QCBoneController>& QCFile::GetControllers() const
 	{
 		return m_BoneControllers;
@@ -208,7 +223,10 @@ namespace QCv14
 
 		//////////////////////////////////////////////////////////////
 
-		// bodies
+		for ( const QCBody& body : m_Bodies )
+		{
+			writer.WriteQCCommand(stream, body);
+		}
 
 		stream << std::endl;
 
