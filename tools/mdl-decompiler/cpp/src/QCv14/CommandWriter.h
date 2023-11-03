@@ -68,6 +68,7 @@ namespace QCv14
 		void WriteInternal(std::ostream& stream, const QCTypeFlags& command);
 		void WriteInternal(std::ostream& stream, const QCOrigin& command);
 		void WriteInternal(std::ostream& stream, const QCTextureGroup& command);
+		void WriteInternal(std::ostream& stream, const QCBody& command);
 
 		size_t m_Indent = 0;
 	};

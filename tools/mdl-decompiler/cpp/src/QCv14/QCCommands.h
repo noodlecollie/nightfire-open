@@ -139,9 +139,7 @@ namespace QCv14
 	{
 		std::string path;
 
-		QCCD()
-		{
-		}
+		QCCD() = default;
 
 		QCCD(const std::string& inPath) :
 			path(inPath)
@@ -158,9 +156,7 @@ namespace QCv14
 	{
 		std::string path;
 
-		QCCDTexture()
-		{
-		}
+		QCCDTexture() = default;
 
 		QCCDTexture(const std::string& inPath) :
 			path(inPath)
@@ -177,9 +173,7 @@ namespace QCv14
 	{
 		bool enabled = false;
 
-		QCClipToTextures()
-		{
-		}
+		QCClipToTextures() = default;
 
 		QCClipToTextures(bool inEnabled) :
 			enabled(inEnabled)
@@ -196,9 +190,7 @@ namespace QCv14
 	{
 		bool enabled = false;
 
-		QCExternalTextures()
-		{
-		}
+		QCExternalTextures() = default;
 
 		QCExternalTextures(bool inEnabled) :
 			enabled(inEnabled)
@@ -215,9 +207,7 @@ namespace QCv14
 	{
 		std::string bone;
 
-		QCRoot()
-		{
-		}
+		QCRoot() = default;
 
 		QCRoot(const std::string& inBone) :
 			bone(inBone)
@@ -238,9 +228,7 @@ namespace QCv14
 		float start = 0;
 		float end = 0;
 
-		QCBoneController()
-		{
-		}
+		QCBoneController() = default;
 
 		bool IsValid() const override
 		{
@@ -300,9 +288,7 @@ namespace QCv14
 		int32_t index = 0;
 		std::string bone;
 
-		QCPivot()
-		{
-		}
+		QCPivot() = default;
 
 		QCPivot(int32_t inIndex, const std::string& inBone) :
 			index(inIndex),
@@ -320,9 +306,7 @@ namespace QCv14
 	{
 		std::string bone;
 
-		QCMirrorBone()
-		{
-		}
+		QCMirrorBone() = default;
 
 		QCMirrorBone(const std::string& inBone) :
 			bone(inBone)
@@ -340,9 +324,7 @@ namespace QCv14
 		std::string oldName;
 		std::string newName;
 
-		QCRenameBone()
-		{
-		}
+		QCRenameBone() = default;
 
 		QCRenameBone(const std::string& inOldName, const std::string& inNewName) :
 			oldName(inOldName),
@@ -360,9 +342,7 @@ namespace QCv14
 	{
 		float value = 0.0f;
 
-		QCGamma()
-		{
-		}
+		QCGamma() = default;
 
 		QCGamma(float inValue) :
 			value(inValue)
@@ -379,9 +359,7 @@ namespace QCv14
 	{
 		float value = 0.0f;
 
-		QCScale()
-		{
-		}
+		QCScale() = default;
 
 		QCScale(float inValue) :
 			value(inValue)
@@ -396,11 +374,9 @@ namespace QCv14
 
 	struct QCTypeFlags : public QCBaseCommand
 	{
-		uint32_t flags = 0.0f;
+		uint32_t flags = 0;
 
-		QCTypeFlags()
-		{
-		}
+		QCTypeFlags() = default;
 
 		QCTypeFlags(uint32_t inFlags) :
 			flags(inFlags)
@@ -438,9 +414,7 @@ namespace QCv14
 		std::string name;
 		Container<Container<std::string>> skins;
 
-		QCTextureGroup()
-		{
-		}
+		QCTextureGroup() = default;
 
 		QCTextureGroup(const std::string& inName, Container<Container<std::string>>&& inSkins) :
 			name(inName),
@@ -451,6 +425,25 @@ namespace QCv14
 		bool IsValid() const
 		{
 			return !name.empty();
+		}
+	};
+
+	struct QCBody : public QCBaseCommand
+	{
+		std::string name;
+		std::string file;
+
+		QCBody() = default;
+
+		QCBody(const std::string inName, const std::string& inFile = std::string()) :
+			name(inName),
+			file(inFile)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return !name.empty() && !file.empty();
 		}
 	};
 }  // namespace QCv14

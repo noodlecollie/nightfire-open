@@ -225,4 +225,9 @@ namespace QCv14
 
 		stream << IndentString() << "}";
 	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCBody& command)
+	{
+		stream << "$body \"" << command.name << "\" \"" << command.file << "\"";
+	}
 }  // namespace QCv14

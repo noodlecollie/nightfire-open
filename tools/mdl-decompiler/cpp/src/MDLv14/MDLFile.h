@@ -32,6 +32,7 @@ namespace MDLv14
 
 	private:
 		void ValidateBeforeRead(BufferedFileReader::Ref ref) const;
+		void PerformPostReadFixUp();
 
 		Header m_Header {};
 		Container<Bone> m_Bones;

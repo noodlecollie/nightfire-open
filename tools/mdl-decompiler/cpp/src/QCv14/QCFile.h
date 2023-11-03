@@ -36,6 +36,10 @@ namespace QCv14
 		void ClearBodyGroups();
 		void AddBodyGroup(const QCBodyGroup& bodyGroup);
 
+		const Container<QCBody>& GetBodies() const;
+		void ClearBodies();
+		void AddBody(const QCBody& body);
+
 		const Container<QCBoneController>& GetControllers() const;
 		void ClearControllers();
 		void AddController(const QCBoneController& controller);
@@ -66,6 +70,7 @@ namespace QCv14
 		QCTextureGroup m_TextureGroup;
 		Container<QCAttachment> m_Attachments;
 		Container<QCBodyGroup> m_BodyGroups;
+		Container<QCBody> m_Bodies;
 		Container<QCBoneController> m_BoneControllers;
 		Container<QCHitBox> m_HitBoxes;
 	};
