@@ -2,10 +2,10 @@
 
 #include <ostream>
 #include <vector>
-#include "QCv14/QCCommands.h"
+#include "QCv10/QCCommands.h"
 #include "Common/Container.h"
 
-namespace QCv14
+namespace QCv10
 {
 	class QCFile
 	{

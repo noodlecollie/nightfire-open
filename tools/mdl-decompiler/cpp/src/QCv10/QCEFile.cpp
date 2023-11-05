@@ -1,7 +1,7 @@
-#include "QCv14/QCEFile.h"
-#include "QCv14/CommandWriter.h"
+#include "QCv10/QCEFile.h"
+#include "QCv10/CommandWriter.h"
 
-namespace QCv14
+namespace QCv10
 {
 	const QCEVersion& QCEFile::GetVersion() const
 	{
@@ -19,4 +19,4 @@ namespace QCv14
 
 		writer.Write(stream, m_Version);
 	}
-}  // namespace QCv14
+}  // namespace QCv10

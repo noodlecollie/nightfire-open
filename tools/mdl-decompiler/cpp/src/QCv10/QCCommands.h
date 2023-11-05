@@ -4,7 +4,7 @@
 #include "Common/Math.h"
 #include "Common/Container.h"
 
-namespace QCv14
+namespace QCv10
 {
 	struct QCBaseCommand
 	{
@@ -458,4 +458,4 @@ namespace QCv14
 			return !name.empty();
 		}
 	};
-}  // namespace QCv14
+}  // namespace QCv10

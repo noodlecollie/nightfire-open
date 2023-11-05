@@ -2,10 +2,10 @@
 
 #include <ostream>
 #include <type_traits>
-#include "QCv14/QCCommands.h"
-#include "QCv14/QCECommands.h"
+#include "QCv10/QCCommands.h"
+#include "QCv10/QCECommands.h"
 
-namespace QCv14
+namespace QCv10
 {
 	class CommandWriter
 	{
@@ -73,4 +73,4 @@ namespace QCv14
 
 		size_t m_Indent = 0;
 	};
-}  // namespace QCv14
+}  // namespace QCv10

@@ -1,8 +1,8 @@
-#include "QCv14/QCFile.h"
-#include "QCv14/CommandWriter.h"
+#include "QCv10/QCFile.h"
+#include "QCv10/CommandWriter.h"
 #include "Exceptions.h"
 
-namespace QCv14
+namespace QCv10
 {
 	void QCFile::SetDirectory(const QCCD& dir)
 	{
@@ -291,4 +291,4 @@ namespace QCv14
 
 		stream << std::endl;
 	}
-}  // namespace QCv14
+}  // namespace QCv10

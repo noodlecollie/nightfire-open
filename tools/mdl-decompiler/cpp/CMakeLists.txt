@@ -13,17 +13,17 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/MDLv14/MDLFile.cpp
 	src/MDLv14/SkinDataHolder.h
 	src/MDLv14/SkinDataHolder.cpp
-	src/QCv14/CommandWriter.h
-	src/QCv14/CommandWriter.cpp
-	src/QCv14/QCCommandReflection.h
-	src/QCv14/QCCommandReflection.h
-	src/QCv14/QCCommands.h
-	src/QCv14/QCECommandReflection.h
-	src/QCv14/QCECommands.h
-	src/QCv14/QCEFile.h
-	src/QCv14/QCEFile.cpp
-	src/QCv14/QCFile.h
-	src/QCv14/QCFile.cpp
+	src/QCv10/CommandWriter.h
+	src/QCv10/CommandWriter.cpp
+	src/QCv10/QCCommandReflection.h
+	src/QCv10/QCCommandReflection.h
+	src/QCv10/QCCommands.h
+	src/QCv10/QCECommandReflection.h
+	src/QCv10/QCECommands.h
+	src/QCv10/QCEFile.h
+	src/QCv10/QCEFile.cpp
+	src/QCv10/QCFile.h
+	src/QCv10/QCFile.cpp
 	src/Traits/Reflection.h
 	src/BufferedFile.h
 	src/BufferedFile.cpp

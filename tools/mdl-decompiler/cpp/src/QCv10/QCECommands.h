@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace QCv14
+namespace QCv10
 {
 	enum class QCEGame
 	{
@@ -40,4 +40,4 @@ namespace QCv14
 		{
 		}
 	};
-}  // namespace QCv14
+}  // namespace QCv10

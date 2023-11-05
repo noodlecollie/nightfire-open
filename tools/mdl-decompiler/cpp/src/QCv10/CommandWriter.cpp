@@ -1,8 +1,8 @@
 #include <iomanip>
 #include <cmath>
-#include "QCv14/CommandWriter.h"
+#include "QCv10/CommandWriter.h"
 
-namespace QCv14
+namespace QCv10
 {
 	void CommandWriter::IncreaseIndent()
 	{
@@ -235,4 +235,4 @@ namespace QCv14
 	{
 		stream << "$sequence";
 	}
-}  // namespace QCv14
+}  // namespace QCv10

@@ -6,8 +6,8 @@
 #include "BufferedFile.h"
 #include "MDLv14/MDLFile.h"
 #include "MDLv14/ComponentReflection.h"
-#include "QCv14/QCFile.h"
-#include "QCv14/QCEFile.h"
+#include "QCv10/QCFile.h"
+#include "QCv10/QCEFile.h"
 #include "Filesystem.h"
 #include "cppfs/FilePath.h"
 #include "cppfs/fs.h"
@@ -21,32 +21,32 @@ static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 
 static void SetUpQCFiles(
 	const MDLv14::MDLFile& mdlFile,
-	QCv14::QCFile& qcFile,
-	QCv14::QCEFile& qceFile,
+	QCv10::QCFile& qcFile,
+	QCv10::QCEFile& qceFile,
 	const cppfs::FilePath& outputDirPath)
 {
-	qceFile.SetVersion(QCv14::QCEVersion(QCv14::QCEGame::HalfLife, 10, 1, 0));
+	qceFile.SetVersion(QCv10::QCEVersion(QCv10::QCEGame::HalfLife, 10, 1, 0));
 
 	qcFile.SetDirectory(outputDirPath.toNative());
 	qcFile.SetModelName({mdlFile.GetHeader().name});
-	qcFile.SetBBox(QCv14::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
-	qcFile.SetCBox(QCv14::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
-	qcFile.SetEyePosition(QCv14::QCEyePosition(mdlFile.GetHeader().eyePosition.pos));
-	qcFile.SetTypeFlags(QCv14::QCTypeFlags(mdlFile.GetHeader().typeFlags));
-	qcFile.SetOrigin(QCv14::QCOrigin(Vec3D()));
+	qcFile.SetBBox(QCv10::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
+	qcFile.SetCBox(QCv10::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
+	qcFile.SetEyePosition(QCv10::QCEyePosition(mdlFile.GetHeader().eyePosition.pos));
+	qcFile.SetTypeFlags(QCv10::QCTypeFlags(mdlFile.GetHeader().typeFlags));
+	qcFile.SetOrigin(QCv10::QCOrigin(Vec3D()));
 
 	for ( const MDLv14::Bone& bone : mdlFile.GetBones() )
 	{
 		if ( bone.parent == -1 )
 		{
-			qcFile.SetRoot(QCv14::QCRoot(bone.name));
+			qcFile.SetRoot(QCv10::QCRoot(bone.name));
 			break;
 		}
 	}
 
 	for ( const MDLv14::Attachment& attachment : mdlFile.GetAttachments() )
 	{
-		qcFile.AddAttachment(QCv14::QCAttachment(
+		qcFile.AddAttachment(QCv10::QCAttachment(
 			attachment.name,
 			mdlFile.GetBones().GetElementChecked(attachment.bone).name,
 			attachment.position));
@@ -54,7 +54,7 @@ static void SetUpQCFiles(
 
 	for ( const MDLv14::BodyGroup& mdlBodyGroup : mdlFile.GetBodyGroups() )
 	{
-		QCv14::QCBodyGroup qcBodyGroup;
+		QCv10::QCBodyGroup qcBodyGroup;
 		qcBodyGroup.name = mdlBodyGroup.name;
 
 		for ( size_t index = 0; index < IntToSizeT(mdlBodyGroup.modelCount); ++index )
@@ -72,11 +72,11 @@ static void SetUpQCFiles(
 
 			if ( model->name == "blank" )
 			{
-				qcBodyGroup.bodies.emplace_back(QCv14::QCBodyGroupItem("blank"));
+				qcBodyGroup.bodies.emplace_back(QCv10::QCBodyGroupItem("blank"));
 			}
 			else
 			{
-				qcBodyGroup.bodies.emplace_back(QCv14::QCBodyGroupItem("studio", "TODO: Parse model and dump as SMD"));
+				qcBodyGroup.bodies.emplace_back(QCv10::QCBodyGroupItem("studio", "TODO: Parse model and dump as SMD"));
 			}
 		}
 
@@ -85,7 +85,7 @@ static void SetUpQCFiles(
 
 	for ( const MDLv14::BoneController& controller : mdlFile.GetBoneControllers() )
 	{
-		QCv14::QCBoneController qcController {};
+		QCv10::QCBoneController qcController {};
 
 		qcController.index = controller.index;
 		qcController.bone = mdlFile.GetBones().GetElementChecked(controller.bone).name;
@@ -98,7 +98,7 @@ static void SetUpQCFiles(
 
 	for ( const MDLv14::HitBox& hitBox : mdlFile.GetHitBoxes() )
 	{
-		qcFile.AddHitBox(QCv14::QCHitBox(
+		qcFile.AddHitBox(QCv10::QCHitBox(
 			hitBox.group,
 			mdlFile.GetBones().GetElementChecked(hitBox.bone).name,
 			hitBox.min,
@@ -107,7 +107,7 @@ static void SetUpQCFiles(
 
 	for ( const MDLv14::Sequence& sequence : mdlFile.GetSequences() )
 	{
-		QCv14::QCSequence qcSeq {};
+		QCv10::QCSequence qcSeq {};
 
 		qcSeq.name = sequence.name;
 
@@ -119,7 +119,7 @@ static void SetUpQCFiles(
 	if ( skins.SkinFamilyCount() > 1 )
 	{
 		const Container<MDLv14::Texture>& textures = mdlFile.GetTextures();
-		QCv14::QCTextureGroup texGroup;
+		QCv10::QCTextureGroup texGroup;
 
 		texGroup.name = "Skins";
 		texGroup.skins.reserve(skins.SkinFamilyCount());
@@ -238,8 +238,8 @@ static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePa
 		throw FileIOException(qcePath.toNative(), "Could not open QCE file for writing.");
 	}
 
-	QCv14::QCFile qcFile;
-	QCv14::QCEFile qceFile;
+	QCv10::QCFile qcFile;
+	QCv10::QCEFile qceFile;
 
 	SetUpQCFiles(mdlFile, qcFile, qceFile, outputDirPath);
 
