@@ -1,9 +1,9 @@
 #pragma once
 
 #include <ostream>
-#include "QCv14/QCECommands.h"
+#include "QCv10/QCECommands.h"
 
-namespace QCv14
+namespace QCv10
 {
 	class QCEFile
 	{
