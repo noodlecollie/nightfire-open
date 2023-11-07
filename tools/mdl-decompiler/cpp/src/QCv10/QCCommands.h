@@ -534,9 +534,16 @@ namespace QCv10
 		}
 	};
 
+	struct QCOptionActivity
+	{
+		Activity activity = ACT_INVALID;
+		float weight = 0.0f;
+	};
+
 	struct QCSequence : public QCBaseCommand
 	{
 		std::string name;
+		QCOptionActivity activity;
 
 		QCSequence() = default;
 

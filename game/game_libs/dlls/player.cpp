@@ -3190,11 +3190,11 @@ void CSprayCan::Think(void)
 class CBloodSplat : public CBaseEntity
 {
 public:
-	void Spawn(entvars_t* pevOwner);
+	void SpawnWithOwner(entvars_t* pevOwner);
 	void Spray(void);
 };
 
-void CBloodSplat::Spawn(entvars_t* pevOwner)
+void CBloodSplat::SpawnWithOwner(entvars_t* pevOwner)
 {
 	VectorAdd(pevOwner->origin, Vector(0, 0, 32), pev->origin);
 	VectorCopy(pevOwner->v_angle, pev->angles);
@@ -3581,7 +3581,7 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 			{
 				// line hit something, so paint a decal
 				CBloodSplat* pBlood = GetClassPtr<CBloodSplat>();
-				pBlood->Spawn(pev);
+				pBlood->SpawnWithOwner(pev);
 			}
 			break;
 		case 203:

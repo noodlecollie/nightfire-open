@@ -5,16 +5,14 @@
 template<typename T>
 using Pair = std::pair<const char*, T>;
 
-static const Pair<MDLv14::Activity> MDLV14_ACTIVITY_STRING_TO_VALUE[] =
-{
-#define LIST_ITEM(constant, value) { #constant, MDLv14::constant },
+static const Pair<MDLv14::Activity> MDLV14_ACTIVITY_STRING_TO_VALUE[] = {
+#define LIST_ITEM(constant, value) {#constant, MDLv14::constant},
 	MDLV14_ACTIVITY_LIST
 #undef LIST_ITEM
 };
 
-static const Pair<QCv10::Activity> QCV10_ACTIVITY_STRING_TO_VALUE[] =
-{
-#define LIST_ITEM(constant, value) { #constant, QCv10::constant },
+static const Pair<QCv10::Activity> QCV10_ACTIVITY_STRING_TO_VALUE[] = {
+#define LIST_ITEM(constant, value) {#constant, QCv10::constant},
 	QCV10_ACTIVITY_LIST
 #undef LIST_ITEM
 };
@@ -34,17 +32,47 @@ static const Pair<T>* FindByString(const Pair<T> (&array)[SIZE], const char* str
 }
 
 template<typename T, size_t SIZE>
-static const Pair<T>* FindByValue(const Pair<T> (&array)[SIZE], T value)
+static const Pair<T>* FindByValue(const Pair<T> (&array)[SIZE], int32_t value)
 {
 	for ( size_t index = 0; index < SIZE; ++index )
 	{
-		if ( array[index].second == value )
+		if ( static_cast<int32_t>(array[index].second) == value )
 		{
 			return &array[index];
 		}
 	}
 
 	return nullptr;
+}
+
+template<typename T, size_t SIZE>
+static const char* GetActivityName(const Pair<T> (&array)[SIZE], int32_t value)
+{
+	const Pair<T>* pair = FindByValue(array, value);
+	return pair ? pair->first : "ACT_UNKNOWN";
+}
+
+const char* ActivityName(MDLv14::Activity activity)
+{
+	return GetActivityName(MDLV14_ACTIVITY_STRING_TO_VALUE, activity);
+}
+
+const char* ActivityName(QCv10::Activity activity)
+{
+	return GetActivityName(QCV10_ACTIVITY_STRING_TO_VALUE, activity);
+}
+
+bool ConvertActivity_IntToV14(int32_t inActivity, MDLv14::Activity& outActivity)
+{
+	const Pair<MDLv14::Activity>* found = FindByValue(MDLV14_ACTIVITY_STRING_TO_VALUE, inActivity);
+
+	if ( !found )
+	{
+		return false;
+	}
+
+	outActivity = found->second;
+	return true;
 }
 
 // The original C# code did an output enum parse based on the string of the input enum constant.

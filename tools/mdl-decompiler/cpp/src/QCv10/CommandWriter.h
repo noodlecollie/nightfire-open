@@ -70,6 +70,7 @@ namespace QCv10
 		void WriteInternal(std::ostream& stream, const QCTextureGroup& command);
 		void WriteInternal(std::ostream& stream, const QCBody& command);
 		void WriteInternal(std::ostream& stream, const QCSequence& command);
+		void WriteInternal(std::ostream& stream, const QCOptionActivity& command);
 
 		size_t m_Indent = 0;
 	};
