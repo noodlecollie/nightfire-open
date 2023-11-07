@@ -8,6 +8,7 @@
 #include "MDLv14/ComponentReflection.h"
 #include "QCv10/QCFile.h"
 #include "QCv10/QCEFile.h"
+#include "Conversions/Activity.h"
 #include "Filesystem.h"
 #include "cppfs/FilePath.h"
 #include "cppfs/fs.h"
@@ -17,6 +18,49 @@
 static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 {
 	return cppfs::FilePath(GetCurrentDirectory()).resolve(path);
+}
+
+static void ReadActivity(
+	const MDLv14::MDLFile& mdlFile,
+	QCv10::QCEFile& qceFile,
+	QCv10::QCSequence& qcSequence,
+	size_t seqIndex)
+{
+	const MDLv14::Sequence& sequence = mdlFile.GetSequences().GetElementChecked(seqIndex);
+
+	if ( sequence.activity == 0 )
+	{
+		return;
+	}
+
+	MDLv14::Activity activity = MDLv14::ACT_INVALID;
+
+	if ( !ConvertActivity_IntToV14(sequence.activity, activity) )
+	{
+		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity value " << sequence.activity
+				  << " could not be mapped to a known activity." << std::endl;
+
+		return;
+	}
+
+	QCv10::Activity qcActivity = QCv10::ACT_INVALID;
+
+	if ( !ConvertActivity_V14ToV10(activity, qcActivity) )
+	{
+		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity " << ActivityName(activity)
+				  << " could not be mapped to a QCv10 activity." << std::endl;
+
+		return;
+	}
+
+	qcSequence.activity.activity = qcActivity;
+	qcSequence.activity.weight = sequence.activityWeight;
+
+	if ( !StartsWith(ActivityName(qcActivity), "ACT_") )
+	{
+		qceFile.AddReplaceActivity(QCv10::QCEReplaceActivity(qcSequence.name, ActivityName(activity)));
+		qcSequence.activity.activity = QCv10::ACT_INVALID;
+	}
 }
 
 static void SetUpQCFiles(
@@ -105,13 +149,19 @@ static void SetUpQCFiles(
 			hitBox.max));
 	}
 
-	for ( const MDLv14::Sequence& sequence : mdlFile.GetSequences() )
+	if ( !mdlFile.GetBones().empty() )
 	{
-		QCv10::QCSequence qcSeq {};
+		for ( size_t seqIndex = 0; seqIndex < mdlFile.GetSequences().size(); ++seqIndex )
+		{
+			const MDLv14::Sequence& sequence = mdlFile.GetSequences().GetElementChecked(seqIndex);
+			QCv10::QCSequence qcSeq;
 
-		qcSeq.name = sequence.name;
+			qcSeq.name = sequence.name;
 
-		qcFile.AddSequence(std::move(qcSeq));
+			ReadActivity(mdlFile, qceFile, qcSeq, seqIndex);
+
+			qcFile.AddSequence(std::move(qcSeq));
+		}
 	}
 
 	const MDLv14::SkinDataHolder& skins = mdlFile.GetSkinData();
@@ -243,7 +293,10 @@ static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePa
 
 	SetUpQCFiles(mdlFile, qcFile, qceFile, outputDirPath);
 
+	std::cout << "Writing " << qcPath.toNative() << std::endl;
 	qcFile.Write(*qcStream);
+
+	std::cout << "Writing " << qcePath.toNative() << std::endl;
 	qceFile.Write(*qceStream);
 }
 

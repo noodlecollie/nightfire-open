@@ -1,6 +1,7 @@
 #include <iomanip>
 #include <cmath>
 #include "QCv10/CommandWriter.h"
+#include "Conversions/Activity.h"
 
 namespace QCv10
 {
@@ -231,8 +232,15 @@ namespace QCv10
 		stream << "$body \"" << command.name << "\" \"" << command.file << "\"";
 	}
 
-	void CommandWriter::WriteInternal(std::ostream& stream, const QCSequence& /* command */)
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCSequence& command)
 	{
-		stream << "$sequence";
+		stream << "$sequence ";
+		WriteInternal(stream, command.activity);
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionActivity& command)
+	{
+		stream << ActivityName(command.activity) << " ";
+		WriteInternal(stream, command.weight);
 	}
 }  // namespace QCv10
