@@ -20,9 +20,9 @@ namespace Reflection
 	};
 
 	template<>
-	struct Traits<MDLv14::MotionFlag>
+	struct Traits<CommonTypes::MotionFlag>
 	{
-		static constexpr const char* const QUALIFIED_TYPE_NAME = "MDLv14::MotionFlag";
+		static constexpr const char* const QUALIFIED_TYPE_NAME = "CommonTypes::MotionFlag";
 		static constexpr size_t READ_SIZE = 4;
 	};
 

@@ -5,6 +5,7 @@
 #include <vector>
 #include "Common/Math.h"
 #include "Common/Container.h"
+#include "Common/Types.h"
 #include "MDLv14/AnimationDataHolder.h"
 
 namespace MDLv14
@@ -126,27 +127,6 @@ namespace MDLv14
 		LevelOfDetailFlag_PlusFour = 1024
 	};
 
-	enum MotionFlag
-	{
-		MotionFlag_Invalid = -1,
-		MotionFlag_None = 0,
-		MotionFlag_X = 0x00000001,
-		MotionFlag_Y = 0x00000002,
-		MotionFlag_Z = 0x00000004,
-		MotionFlag_XR = 0x00000008,
-		MotionFlag_YR = 0x00000010,
-		MotionFlag_ZR = 0x00000020,
-		MotionFlag_LX = 0x00000040,
-		MotionFlag_LY = 0x00000080,
-		MotionFlag_LZ = 0x00000100,
-		MotionFlag_AX = 0x00000200,
-		MotionFlag_AY = 0x00000400,
-		MotionFlag_AZ = 0x00000800,
-		MotionFlag_AXR = 0x00001000,
-		MotionFlag_AYR = 0x00002000,
-		MotionFlag_AZR = 0x00004000,
-	};
-
 	enum SequenceFlag
 	{
 		SequenceFlag_Looping = 1
@@ -241,7 +221,7 @@ namespace MDLv14
 	struct BoneController
 	{
 		int32_t bone = -1;
-		int32_t motionFlags = MotionFlag_None;
+		CommonTypes::MotionFlag motionType = CommonTypes::MotionFlag_None;
 		float start;
 		float end;
 		int32_t rest = 0;
@@ -281,7 +261,7 @@ namespace MDLv14
 		CountOffsetPair events;
 		int32_t frameCount = 0;
 		CountOffsetPair pivots;
-		uint32_t motionType;
+		CommonTypes::MotionFlag motionType = CommonTypes::MotionFlag_Invalid;
 		int32_t motionBone;
 		MDLVec3D linearMovement;
 		int32_t automovePositionIndex = 0;
@@ -289,8 +269,8 @@ namespace MDLv14
 		BoundingBox boundingBox;
 		int32_t blendCount = 0;
 		int32_t animationOffset = 0;
-		uint32_t blendType0 = 0;
-		uint32_t blendType1 = 0;
+		CommonTypes::MotionFlag blendType0 = CommonTypes::MotionFlag_Invalid;
+		CommonTypes::MotionFlag blendType1 = CommonTypes::MotionFlag_Invalid;
 		float blendStart0 = 0.0f;
 		float blendStart1 = 0.0f;
 		float blendEnd0 = 0.0f;

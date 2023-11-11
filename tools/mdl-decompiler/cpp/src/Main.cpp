@@ -20,11 +20,8 @@ static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 	return cppfs::FilePath(GetCurrentDirectory()).resolve(path);
 }
 
-static void ReadActivity(
-	const MDLv14::MDLFile& mdlFile,
-	QCv10::QCEFile& qceFile,
-	QCv10::QCSequence& qcSequence,
-	size_t seqIndex)
+static void
+ReadActivity(const MDLv14::MDLFile& mdlFile, QCv10::QCEFile& qceFile, QCv10::QCSequence& qcSequence, size_t seqIndex)
 {
 	const MDLv14::Sequence& sequence = mdlFile.GetSequences().GetElementChecked(seqIndex);
 
@@ -35,30 +32,38 @@ static void ReadActivity(
 
 	MDLv14::Activity activity = MDLv14::ACT_INVALID;
 
-	if ( !ConvertActivity_IntToV14(sequence.activity, activity) )
+	try
 	{
-		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity value " << sequence.activity
-				  << " could not be mapped to a known activity." << std::endl;
+		activity = Conversion::ConvertActivity_IntToV14(sequence.activity);
+	}
+	catch ( const std::invalid_argument& ex )
+	{
+		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity could not be read. " << ex.what()
+				  << std::endl;
 
 		return;
 	}
 
 	QCv10::Activity qcActivity = QCv10::ACT_INVALID;
 
-	if ( !ConvertActivity_V14ToV10(activity, qcActivity) )
+	try
 	{
-		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity " << ActivityName(activity)
-				  << " could not be mapped to a QCv10 activity." << std::endl;
+		qcActivity = Conversion::ConvertActivity_V14ToV10(activity);
+	}
+	catch ( const std::invalid_argument& ex )
+	{
+		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity could not be converted. "
+				  << ex.what() << std::endl;
 
 		return;
 	}
 
 	qcSequence.activity.activity = qcActivity;
-	qcSequence.activity.weight = sequence.activityWeight;
+	qcSequence.activity.weight = static_cast<float>(sequence.activityWeight);
 
-	if ( !StartsWith(ActivityName(qcActivity), "ACT_") )
+	if ( !StartsWith(Conversion::ActivityName(qcActivity), "ACT_") )
 	{
-		qceFile.AddReplaceActivity(QCv10::QCEReplaceActivity(qcSequence.name, ActivityName(activity)));
+		qceFile.AddReplaceActivity(QCv10::QCEReplaceActivity(qcSequence.name, Conversion::ActivityName(activity)));
 		qcSequence.activity.activity = QCv10::ACT_INVALID;
 	}
 }
@@ -133,7 +138,7 @@ static void SetUpQCFiles(
 
 		qcController.index = controller.index;
 		qcController.bone = mdlFile.GetBones().GetElementChecked(controller.bone).name;
-		qcController.motionFlags = controller.motionFlags;
+		qcController.motionFlags = controller.motionType;
 		qcController.start = controller.start;
 		qcController.end = controller.end;
 
@@ -157,6 +162,18 @@ static void SetUpQCFiles(
 			QCv10::QCSequence qcSeq;
 
 			qcSeq.name = sequence.name;
+
+			if ( sequence.blendType0 != CommonTypes::MotionFlag_None )
+			{
+				qcSeq.blends.emplace_back(
+					QCv10::QCOptionBlend(sequence.blendType0, sequence.blendStart0, sequence.blendEnd0));
+			}
+
+			if ( sequence.blendType1 != CommonTypes::MotionFlag_None )
+			{
+				qcSeq.blends.emplace_back(
+					QCv10::QCOptionBlend(sequence.blendType1, sequence.blendStart1, sequence.blendEnd1));
+			}
 
 			ReadActivity(mdlFile, qceFile, qcSeq, seqIndex);
 

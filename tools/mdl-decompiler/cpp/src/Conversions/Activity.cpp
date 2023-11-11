@@ -1,98 +1,76 @@
-#include <utility>
 #include <cstring>
+#include "Conversions/ConversionHelpers.h"
 #include "Conversions/Activity.h"
 
-template<typename T>
-using Pair = std::pair<const char*, T>;
-
-static const Pair<MDLv14::Activity> MDLV14_ACTIVITY_STRING_TO_VALUE[] = {
+namespace Conversion
+{
+	static const Pair<MDLv14::Activity> MDLV14_ACTIVITY_STRING_TO_VALUE[] = {
 #define LIST_ITEM(constant, value) {#constant, MDLv14::constant},
-	MDLV14_ACTIVITY_LIST
+		MDLV14_ACTIVITY_LIST
 #undef LIST_ITEM
-};
+	};
 
-static const Pair<QCv10::Activity> QCV10_ACTIVITY_STRING_TO_VALUE[] = {
+	static const Pair<QCv10::Activity> QCV10_ACTIVITY_STRING_TO_VALUE[] = {
 #define LIST_ITEM(constant, value) {#constant, QCv10::constant},
-	QCV10_ACTIVITY_LIST
+		QCV10_ACTIVITY_LIST
 #undef LIST_ITEM
-};
+	};
 
-template<typename T, size_t SIZE>
-static const Pair<T>* FindByString(const Pair<T> (&array)[SIZE], const char* str)
-{
-	for ( size_t index = 0; index < SIZE; ++index )
+	template<typename T, size_t SIZE>
+	static const char* GetActivityName(const Pair<T> (&array)[SIZE], int32_t value)
 	{
-		if ( strcmp(str, array[index].first) == 0 )
+		const Pair<T>* pair = FindByValue(array, value);
+
+		if ( !pair )
 		{
-			return &array[index];
+			throw std::invalid_argument("Unknown activity value " + std::to_string(value));
 		}
+
+		return pair->first;
 	}
 
-	return nullptr;
-}
-
-template<typename T, size_t SIZE>
-static const Pair<T>* FindByValue(const Pair<T> (&array)[SIZE], int32_t value)
-{
-	for ( size_t index = 0; index < SIZE; ++index )
+	const char* ActivityName(MDLv14::Activity activity)
 	{
-		if ( static_cast<int32_t>(array[index].second) == value )
+		return GetActivityName(MDLV14_ACTIVITY_STRING_TO_VALUE, activity);
+	}
+
+	const char* ActivityName(QCv10::Activity activity)
+	{
+		return GetActivityName(QCV10_ACTIVITY_STRING_TO_VALUE, activity);
+	}
+
+	MDLv14::Activity ConvertActivity_IntToV14(int32_t activity)
+	{
+		const Pair<MDLv14::Activity>* found = FindByValue(MDLV14_ACTIVITY_STRING_TO_VALUE, activity);
+
+		if ( !found )
 		{
-			return &array[index];
+			throw std::invalid_argument("Unknown activity value " + std::to_string(activity));
 		}
+
+		return found->second;
 	}
 
-	return nullptr;
-}
-
-template<typename T, size_t SIZE>
-static const char* GetActivityName(const Pair<T> (&array)[SIZE], int32_t value)
-{
-	const Pair<T>* pair = FindByValue(array, value);
-	return pair ? pair->first : "ACT_UNKNOWN";
-}
-
-const char* ActivityName(MDLv14::Activity activity)
-{
-	return GetActivityName(MDLV14_ACTIVITY_STRING_TO_VALUE, activity);
-}
-
-const char* ActivityName(QCv10::Activity activity)
-{
-	return GetActivityName(QCV10_ACTIVITY_STRING_TO_VALUE, activity);
-}
-
-bool ConvertActivity_IntToV14(int32_t inActivity, MDLv14::Activity& outActivity)
-{
-	const Pair<MDLv14::Activity>* found = FindByValue(MDLV14_ACTIVITY_STRING_TO_VALUE, inActivity);
-
-	if ( !found )
+	// The original C# code did an output enum parse based on the string of the input enum constant.
+	// We replicate this method here.
+	QCv10::Activity ConvertActivity_V14ToV10(MDLv14::Activity activity)
 	{
-		return false;
+		const Pair<MDLv14::Activity>* inActivityPair = FindByValue(MDLV14_ACTIVITY_STRING_TO_VALUE, activity);
+
+		if ( !inActivityPair )
+		{
+			throw std::invalid_argument("Unknown activity value " + std::to_string(activity));
+		}
+
+		const Pair<QCv10::Activity>* outActivityPair =
+			FindByString(QCV10_ACTIVITY_STRING_TO_VALUE, inActivityPair->first);
+
+		if ( !outActivityPair )
+		{
+			throw std::invalid_argument(
+				"MDL activity " + std::string(inActivityPair->first) + " does not have a corresponding QC activity");
+		}
+
+		return outActivityPair->second;
 	}
-
-	outActivity = found->second;
-	return true;
-}
-
-// The original C# code did an output enum parse based on the string of the input enum constant.
-// We replicate this method here.
-bool ConvertActivity_V14ToV10(MDLv14::Activity inActivity, QCv10::Activity& outActivity)
-{
-	const Pair<MDLv14::Activity>* inActivityPair = FindByValue(MDLV14_ACTIVITY_STRING_TO_VALUE, inActivity);
-
-	if ( !inActivityPair )
-	{
-		return false;
-	}
-
-	const Pair<QCv10::Activity>* outActivityPair = FindByString(QCV10_ACTIVITY_STRING_TO_VALUE, inActivityPair->first);
-
-	if ( !outActivityPair )
-	{
-		return false;
-	}
-
-	outActivity = outActivityPair->second;
-	return true;
-}
+}  // namespace Conversion

@@ -3,6 +3,7 @@
 #include <string>
 #include "Common/Math.h"
 #include "Common/Container.h"
+#include "Common/Types.h"
 
 namespace QCv10
 {
@@ -540,10 +541,27 @@ namespace QCv10
 		float weight = 0.0f;
 	};
 
+	struct QCOptionBlend
+	{
+		CommonTypes::MotionFlag motionFlags = CommonTypes::MotionFlag_Invalid;
+		float start = 0.0f;
+		float end = 0.0f;
+
+		QCOptionBlend() = default;
+
+		QCOptionBlend(CommonTypes::MotionFlag inMotionFlags, float inStart, float inEnd) :
+			motionFlags(inMotionFlags),
+			start(inStart),
+			end(inEnd)
+		{
+		}
+	};
+
 	struct QCSequence : public QCBaseCommand
 	{
 		std::string name;
 		QCOptionActivity activity;
+		Container<QCOptionBlend> blends;
 
 		QCSequence() = default;
 
