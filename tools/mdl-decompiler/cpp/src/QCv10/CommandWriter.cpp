@@ -2,6 +2,7 @@
 #include <cmath>
 #include "QCv10/CommandWriter.h"
 #include "Conversions/Activity.h"
+#include "Conversions/MotionFlags.h"
 
 namespace QCv10
 {
@@ -236,11 +237,25 @@ namespace QCv10
 	{
 		stream << "$sequence ";
 		WriteInternal(stream, command.activity);
+
+		for ( QCv10::QCOptionBlend blend : command.blends )
+		{
+			stream << " ";
+			WriteInternal(stream, blend);
+		}
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionActivity& command)
 	{
-		stream << ActivityName(command.activity) << " ";
+		stream << Conversion::ActivityName(command.activity) << " ";
 		WriteInternal(stream, command.weight);
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionBlend& command)
+	{
+		stream << "blend " << Conversion::MotionFlagName(command.motionFlags) << " ";
+		WriteInternal(stream, command.start);
+		stream << " ";
+		WriteInternal(stream, command.end);
 	}
 }  // namespace QCv10

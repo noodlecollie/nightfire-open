@@ -1,6 +1,9 @@
 #include "MDLv14/ComponentReader.h"
 #include "BufferedFileReader.h"
+#include "Conversions/MotionFlags.h"
+#include "Traits/Reflection.h"
 #include "Utils.h"
+#include "Exceptions.h"
 
 namespace MDLv14
 {
@@ -92,7 +95,16 @@ namespace MDLv14
 	void ComponentReader::ReadInternal(BufferedFileReader& subReader, BoneController& component)
 	{
 		component.bone = subReader.ReadElement<int32_t>();
-		component.motionFlags = subReader.ReadElement<int32_t>();
+
+		int32_t motionType = subReader.ReadElement<int32_t>();
+
+		if ( !Conversion::IsValidMotionFlag(motionType) )
+		{
+			throw ValidationException(Reflection::TypeName<Sequence>(), "Bone controller has invalid motion type.");
+		}
+
+		component.motionType = static_cast<CommonTypes::MotionFlag>(motionType);
+
 		component.start = subReader.ReadElement<float>();
 		component.end = subReader.ReadElement<float>();
 		component.rest = subReader.ReadElement<int32_t>();
@@ -132,7 +144,16 @@ namespace MDLv14
 		ReadNestedComponent(subReader, component.events);
 		component.frameCount = subReader.ReadElement<int32_t>();
 		ReadNestedComponent(subReader, component.pivots);
-		component.motionType = subReader.ReadElement<uint32_t>();
+
+		int32_t motionType = subReader.ReadElement<int32_t>();
+
+		if ( !Conversion::IsValidMotionFlag(motionType) )
+		{
+			throw ValidationException(Reflection::TypeName<Sequence>(), "Sequence has invalid motion type.");
+		}
+
+		component.motionType = static_cast<CommonTypes::MotionFlag>(motionType);
+
 		component.motionBone = subReader.ReadElement<int32_t>();
 		ReadNestedComponent(subReader, component.linearMovement);
 		component.automovePositionIndex = subReader.ReadElement<int32_t>();
@@ -140,8 +161,25 @@ namespace MDLv14
 		ReadNestedComponent(subReader, component.boundingBox);
 		component.blendCount = subReader.ReadElement<int32_t>();
 		component.animationOffset = subReader.ReadElement<int32_t>();
-		component.blendType0 = subReader.ReadElement<uint32_t>();
-		component.blendType1 = subReader.ReadElement<uint32_t>();
+
+		int32_t blendType0 = subReader.ReadElement<uint32_t>();
+
+		if ( !Conversion::IsValidMotionFlag(blendType0) )
+		{
+			throw ValidationException(Reflection::TypeName<Sequence>(), "Sequence blend 0 has invalid motion type.");
+		}
+
+		component.blendType0 = static_cast<CommonTypes::MotionFlag>(blendType0);
+
+		int32_t blendType1 = subReader.ReadElement<uint32_t>();
+
+		if ( !Conversion::IsValidMotionFlag(blendType1) )
+		{
+			throw ValidationException(Reflection::TypeName<Sequence>(), "Sequence blend 1 has invalid motion type.");
+		}
+
+		component.blendType1 = static_cast<CommonTypes::MotionFlag>(blendType1);
+
 		component.blendStart0 = subReader.ReadElement<float>();
 		component.blendStart1 = subReader.ReadElement<float>();
 		component.blendEnd0 = subReader.ReadElement<float>();
@@ -256,7 +294,8 @@ namespace MDLv14
 	void ComponentReader::ReadInternal(BufferedFileReader& subReader, BoneFixUp& component)
 	{
 		component.xScale = subReader.ReadElement<float>();
-		component.xSkewY = subReader.ReadElement<float>();;
+		component.xSkewY = subReader.ReadElement<float>();
+		;
 		component.xSkewZ = subReader.ReadElement<float>();
 		component.xPosition = subReader.ReadElement<float>();
 		component.ySkewX = subReader.ReadElement<float>();

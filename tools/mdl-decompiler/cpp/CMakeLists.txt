@@ -3,8 +3,11 @@ include(compiler_settings)
 add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/Common/Container.h
 	src/Common/Math.h
+	src/Common/Types.h
 	src/Conversions/Activity.h
 	src/Conversions/Activity.cpp
+	src/Conversions/MotionFlags.h
+	src/Conversions/MotionFlags.cpp
 	src/MDLv14/AnimationDataHolder.h
 	src/MDLv14/AnimationDataHolder.cpp
 	src/MDLv14/ComponentReader.h
