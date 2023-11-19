@@ -807,7 +807,8 @@ void CBaseDoor::Blocked(CBaseEntity* pOther)
 
 					if ( pDoor->m_flWait >= 0 )
 					{
-						if ( pDoor->pev->velocity == pev->velocity && pDoor->pev->avelocity == pev->velocity )
+						if ( Vector(pDoor->pev->velocity) == Vector(pev->velocity) &&
+							 Vector(pDoor->pev->avelocity) == Vector(pev->velocity) )
 						{
 							// this is the most hacked, evil, bastardized thing I've ever seen. kjb
 							if ( FClassnameIs(pentTarget, "func_door") )
