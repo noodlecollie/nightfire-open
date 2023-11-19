@@ -43,7 +43,7 @@ char *strupper (char *in);
 char *strlower (char *in);
 int Q_strncasecmp (char *s1, char *s2, int n);
 int Q_strcasecmp (char *s1, char *s2);
-void Q_getwd (char *out);
+void Q_getwd (char *out, size_t length);
 qboolean CDECL FORMAT_PRINTF(3,4) safe_snprintf(char* const dest, const size_t count, const char* const args, ...);
 qboolean safe_strncpy(char* const dest, const char* const src, const size_t count);
 qboolean safe_strncat(char* const dest, const char* const src, const size_t count);
