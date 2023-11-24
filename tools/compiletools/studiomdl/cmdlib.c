@@ -290,7 +290,6 @@ void Q_getwd(char* out, size_t length)
 	strncat(out, "\\", length);
 	out[length - 1] = '\0';
 #else
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 	getcwd(out, length);
 #endif
 }
