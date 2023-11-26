@@ -581,6 +581,7 @@ namespace QCv10
 		CommonTypes::MotionFlag controlFlags = CommonTypes::MotionFlag_Invalid;
 		Container<QCOptionEvent> events;
 		float framesPerSecond = 30.0f;
+		bool loop = false;
 
 		QCSequence() = default;
 

@@ -164,6 +164,7 @@ static void SetUpQCFiles(
 			qcSeq.name = sequence.name;
 			qcSeq.controlFlags = sequence.motionType;
 			qcSeq.framesPerSecond = sequence.framesPerSecond;
+			qcSeq.loop = (sequence.flags & MDLv14::SequenceFlag_Looping) != 0;
 
 			if ( sequence.blendType0 != CommonTypes::MotionFlag_None )
 			{
