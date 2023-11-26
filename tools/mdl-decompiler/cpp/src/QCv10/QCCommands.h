@@ -580,6 +580,7 @@ namespace QCv10
 		Container<QCOptionBlend> blends;
 		CommonTypes::MotionFlag controlFlags = CommonTypes::MotionFlag_Invalid;
 		Container<QCOptionEvent> events;
+		float framesPerSecond = 30.0f;
 
 		QCSequence() = default;
 

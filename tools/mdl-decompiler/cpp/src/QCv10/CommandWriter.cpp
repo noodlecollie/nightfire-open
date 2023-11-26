@@ -255,7 +255,9 @@ namespace QCv10
 			WriteInternal(stream, command.controlFlags);
 		}
 
-		// TODO: FPS
+		stream << " fps ";
+		WriteInternal(stream, command.framesPerSecond);
+
 		// TODO: Frame
 		// TODO: Loop
 		// TODO: Node
