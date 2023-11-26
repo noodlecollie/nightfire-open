@@ -176,6 +176,11 @@ static void SetUpQCFiles(
 					QCv10::QCOptionBlend(sequence.blendType1, sequence.blendStart1, sequence.blendEnd1));
 			}
 
+			for ( const MDLv14::Event& event : sequence.eventCollection )
+			{
+				qcSeq.events.emplace_back(QCv10::QCOptionEvent(event.event, event.frame, event.options));
+			}
+
 			ReadActivity(mdlFile, qceFile, qcSeq, seqIndex);
 
 			qcFile.AddSequence(std::move(qcSeq));
