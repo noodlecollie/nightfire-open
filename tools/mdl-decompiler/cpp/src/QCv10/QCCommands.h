@@ -562,6 +562,7 @@ namespace QCv10
 		std::string name;
 		QCOptionActivity activity;
 		Container<QCOptionBlend> blends;
+		CommonTypes::MotionFlag controlFlags = CommonTypes::MotionFlag_Invalid;
 
 		QCSequence() = default;
 
