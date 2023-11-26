@@ -163,6 +163,7 @@ static void SetUpQCFiles(
 
 			qcSeq.name = sequence.name;
 			qcSeq.controlFlags = sequence.motionType;
+			qcSeq.framesPerSecond = sequence.framesPerSecond;
 
 			if ( sequence.blendType0 != CommonTypes::MotionFlag_None )
 			{
