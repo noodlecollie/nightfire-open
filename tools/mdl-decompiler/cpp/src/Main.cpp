@@ -162,6 +162,7 @@ static void SetUpQCFiles(
 			QCv10::QCSequence qcSeq;
 
 			qcSeq.name = sequence.name;
+			qcSeq.controlFlags = sequence.motionType;
 
 			if ( sequence.blendType0 != CommonTypes::MotionFlag_None )
 			{

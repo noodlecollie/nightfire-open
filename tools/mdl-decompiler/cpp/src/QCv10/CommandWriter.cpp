@@ -236,13 +236,36 @@ namespace QCv10
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCSequence& command)
 	{
 		stream << "$sequence ";
+
+		// TODO: Files
+
 		WriteInternal(stream, command.activity);
+
+		// TODO: Animation
 
 		for ( QCv10::QCOptionBlend blend : command.blends )
 		{
 			stream << " ";
 			WriteInternal(stream, blend);
 		}
+
+		if ( command.controlFlags != CommonTypes::MotionFlag_None )
+		{
+			stream << " ";
+			WriteInternal(stream, command.controlFlags);
+		}
+
+		// TODO: Control flags
+		// TODO: FPS
+		// TODO: Frame
+		// TODO: Loop
+		// TODO: Node
+		// TODO: Rotate
+		// TODO: RTransition
+		// TODO: Scale
+		// TODO: Transition
+		// TODO: Pivots
+		// TODO: Events
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionActivity& command)
@@ -257,5 +280,10 @@ namespace QCv10
 		WriteInternal(stream, command.start);
 		stream << " ";
 		WriteInternal(stream, command.end);
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const CommonTypes::MotionFlag& flag)
+	{
+		stream << Conversion::MotionFlagShortName(flag);
 	}
 }  // namespace QCv10

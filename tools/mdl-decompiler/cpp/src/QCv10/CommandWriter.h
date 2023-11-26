@@ -73,6 +73,8 @@ namespace QCv10
 		void WriteInternal(std::ostream& stream, const QCOptionActivity& command);
 		void WriteInternal(std::ostream& stream, const QCOptionBlend& command);
 
+		void WriteInternal(std::ostream& stream, const CommonTypes::MotionFlag& flag);
+
 		size_t m_Indent = 0;
 	};
 }  // namespace QCv10

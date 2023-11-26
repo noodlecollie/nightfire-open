@@ -10,6 +10,13 @@ static inline constexpr size_t SizeOfArray(const T (&)[SIZE])
 	return SIZE;
 }
 
+template<size_t SIZE>
+static constexpr size_t LiteralStrLen(const char (&)[SIZE])
+{
+	static_assert(SIZE > 0, "String literal cannot have size of 0");
+	return SIZE - 1;
+}
+
 static inline size_t IntToSizeT(int32_t value)
 {
 	return value > 0 ? static_cast<size_t>(value) : 0;
