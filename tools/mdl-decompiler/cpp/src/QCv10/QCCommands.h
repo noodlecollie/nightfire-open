@@ -557,12 +557,29 @@ namespace QCv10
 		}
 	};
 
+	struct QCOptionEvent
+	{
+		int32_t value = 0;
+		int32_t frame = 0;
+		std::string options;
+
+		QCOptionEvent() = default;
+
+		QCOptionEvent(int32_t inValue, int32_t inFrame, const std::string& inOptions) :
+			value(inValue),
+			frame(inFrame),
+			options(inOptions)
+		{
+		}
+	};
+
 	struct QCSequence : public QCBaseCommand
 	{
 		std::string name;
 		QCOptionActivity activity;
 		Container<QCOptionBlend> blends;
 		CommonTypes::MotionFlag controlFlags = CommonTypes::MotionFlag_Invalid;
+		Container<QCOptionEvent> events;
 
 		QCSequence() = default;
 

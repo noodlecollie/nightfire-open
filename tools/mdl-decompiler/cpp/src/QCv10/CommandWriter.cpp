@@ -243,7 +243,7 @@ namespace QCv10
 
 		// TODO: Animation
 
-		for ( QCv10::QCOptionBlend blend : command.blends )
+		for ( const QCv10::QCOptionBlend& blend : command.blends )
 		{
 			stream << " ";
 			WriteInternal(stream, blend);
@@ -255,7 +255,6 @@ namespace QCv10
 			WriteInternal(stream, command.controlFlags);
 		}
 
-		// TODO: Control flags
 		// TODO: FPS
 		// TODO: Frame
 		// TODO: Loop
@@ -265,7 +264,22 @@ namespace QCv10
 		// TODO: Scale
 		// TODO: Transition
 		// TODO: Pivots
-		// TODO: Events
+
+		if ( !command.events.empty() )
+		{
+			stream << IndentString() << " {" << std::endl;
+			IncreaseIndent();
+
+			for ( const QCv10::QCOptionEvent& event : command.events )
+			{
+				stream << IndentString();
+				WriteInternal(stream, event);
+				stream << std::endl;
+			}
+
+			DecreaseIndent();
+			stream << IndentString() << "}";
+		}
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionActivity& command)
@@ -280,6 +294,11 @@ namespace QCv10
 		WriteInternal(stream, command.start);
 		stream << " ";
 		WriteInternal(stream, command.end);
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionEvent& command)
+	{
+		stream << "event " << command.value << " " << command.frame << " " << command.options;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const CommonTypes::MotionFlag& flag)
