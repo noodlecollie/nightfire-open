@@ -258,8 +258,11 @@ namespace QCv10
 		stream << " fps ";
 		WriteInternal(stream, command.framesPerSecond);
 
-		// TODO: Frame
-		// TODO: Loop
+		if ( command.loop )
+		{
+			stream << " loop";
+		}
+
 		// TODO: Node
 		// TODO: Rotate
 		// TODO: RTransition
