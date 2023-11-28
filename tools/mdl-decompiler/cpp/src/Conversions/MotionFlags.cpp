@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cstring>
 #include "Conversions/ConversionHelpers.h"
 #include "Conversions/Activity.h"
 #include "Utils.h"
