@@ -192,6 +192,14 @@ static void SetUpQCFiles(
 				}
 			}
 
+			if ( sequence.nodeExit > 0 )
+			{
+				qcSeq.transition = QCv10::QCOptionTransition(
+					sequence.nodeEntry,
+					sequence.nodeExit,
+					sequence.nodeFlags & MDLv14::NodeFlag_Reverse);
+			}
+
 			for ( const MDLv14::Event& event : sequence.eventCollection )
 			{
 				qcSeq.events.emplace_back(QCv10::QCOptionEvent(event.event, event.frame, event.options));

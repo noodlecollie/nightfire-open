@@ -573,6 +573,27 @@ namespace QCv10
 		}
 	};
 
+	struct QCOptionTransition
+	{
+		int32_t sourceBone = -1;
+		int32_t targetBone = -1;
+		bool reverse = false;
+
+		QCOptionTransition() = default;
+
+		QCOptionTransition(int32_t inSource, int32_t inTarget, bool inReverse = false) :
+			sourceBone(inSource),
+			targetBone(inTarget),
+			reverse(inReverse)
+		{
+		}
+
+		bool IsValid() const
+		{
+			return sourceBone >= 0 && targetBone >= 0;
+		}
+	};
+
 	struct QCSequence : public QCBaseCommand
 	{
 		std::string name;
@@ -583,6 +604,7 @@ namespace QCv10
 		float framesPerSecond = 30.0f;
 		bool loop = false;
 		int8_t nodeEntryBone = -1;
+		QCOptionTransition transition;
 
 		QCSequence() = default;
 
