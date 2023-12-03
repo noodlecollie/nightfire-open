@@ -263,7 +263,11 @@ namespace QCv10
 			stream << " loop";
 		}
 
-		// TODO: Node
+		if ( command.nodeEntryBone >= 0 )
+		{
+			stream << " node " << static_cast<in32_t>(command.nodeEntryBone);
+		}
+
 		// TODO: Rotate
 		// TODO: RTransition
 		// TODO: Scale

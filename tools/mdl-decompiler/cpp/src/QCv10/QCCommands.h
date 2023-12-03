@@ -582,6 +582,7 @@ namespace QCv10
 		Container<QCOptionEvent> events;
 		float framesPerSecond = 30.0f;
 		bool loop = false;
+		int8_t nodeEntryBone = -1;
 
 		QCSequence() = default;
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include "args/args.hxx"
 #include "Exceptions.h"
 #include "BufferedFile.h"
@@ -176,6 +177,19 @@ static void SetUpQCFiles(
 			{
 				qcSeq.blends.emplace_back(
 					QCv10::QCOptionBlend(sequence.blendType1, sequence.blendStart1, sequence.blendEnd1));
+			}
+
+			if ( sequence.nodeEntry > 0 )
+			{
+				if ( sequence.nodeEntry <= std::numeric_limits<int8_t>::max() )
+				{
+					qcSeq.nodeEntryBone = static_cast<int8_t>(sequence.nodeEntry);
+				}
+				else
+				{
+					throw std::invalid_argument(
+						"MDL sequence " + std::to_string(seqIndex) + " entry node bone was out of acceptable range");
+				}
 			}
 
 			for ( const MDLv14::Event& event : sequence.eventCollection )
