@@ -200,9 +200,21 @@ static void SetUpQCFiles(
 					sequence.nodeFlags & MDLv14::NodeFlag_Reverse);
 			}
 
+			qcSeq.events.reserve(sequence.eventCollection.size());
+
 			for ( const MDLv14::Event& event : sequence.eventCollection )
 			{
 				qcSeq.events.emplace_back(QCv10::QCOptionEvent(event.event, event.frame, event.options));
+			}
+
+			qcSeq.pivots.reserve(sequence.pivotCollection.size());
+
+			for ( size_t index = 0; index < sequence.pivotCollection.size(); ++index )
+			{
+				qcSeq.pivots.emplace_back(QCv10::QCOptionPivot(
+					static_cast<int32_t>(index),
+					static_cast<float>(sequence.pivotCollection[index].start),
+					static_cast<float>(sequence.pivotCollection[index].end)));
 			}
 
 			ReadActivity(mdlFile, qceFile, qcSeq, seqIndex);
