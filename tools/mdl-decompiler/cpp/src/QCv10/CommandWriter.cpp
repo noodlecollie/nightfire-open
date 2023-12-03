@@ -265,13 +265,16 @@ namespace QCv10
 
 		if ( command.nodeEntryBone >= 0 )
 		{
-			stream << " node " << static_cast<in32_t>(command.nodeEntryBone);
+			stream << " node " << static_cast<int32_t>(command.nodeEntryBone);
 		}
 
-		// TODO: Rotate
-		// TODO: RTransition
+		if ( command.transition.IsValid() )
+		{
+			stream << " " << (command.transition.reverse ? "rtransition" : "transition") << " "
+				   << command.transition.sourceBone << " " << command.transition.targetBone;
+		}
+
 		// TODO: Scale
-		// TODO: Transition
 		// TODO: Pivots
 
 		if ( !command.events.empty() )
