@@ -594,6 +594,22 @@ namespace QCv10
 		}
 	};
 
+	struct QCOptionPivot
+	{
+		int32_t index = 0;
+		float start = 0.0f;
+		float end = 0.0f;
+
+		QCOptionPivot() = default;
+
+		QCOptionPivot(int32_t inIndex, float inStart, float inEnd) :
+			index(inIndex),
+			start(inStart),
+			end(inEnd)
+		{
+		}
+	};
+
 	struct QCSequence : public QCBaseCommand
 	{
 		std::string name;
@@ -605,6 +621,7 @@ namespace QCv10
 		bool loop = false;
 		int8_t nodeEntryBone = -1;
 		QCOptionTransition transition;
+		Container<QCOptionPivot> pivots;
 
 		QCSequence() = default;
 

@@ -270,12 +270,18 @@ namespace QCv10
 
 		if ( command.transition.IsValid() )
 		{
-			stream << " " << (command.transition.reverse ? "rtransition" : "transition") << " "
-				   << command.transition.sourceBone << " " << command.transition.targetBone;
+			stream << " ";
+			WriteInternal(stream, command.transition);
 		}
 
-		// TODO: Scale
-		// TODO: Pivots
+		if ( !command.pivots.empty() )
+		{
+			for ( const QCv10::QCOptionPivot& pivot : command.pivots )
+			{
+				stream << " ";
+				WriteInternal(stream, pivot);
+			}
+		}
 
 		if ( !command.events.empty() )
 		{
@@ -311,6 +317,20 @@ namespace QCv10
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionEvent& command)
 	{
 		stream << "event " << command.value << " " << command.frame << " " << command.options;
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionTransition& command)
+	{
+		stream << (command.reverse ? "rtransition" : "transition") << " " << command.sourceBone << " "
+			   << command.targetBone;
+	}
+
+	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionPivot& command)
+	{
+		stream << "pivot " << command.index << " ";
+		WriteInternal(stream, command.start);
+		stream << " ";
+		WriteInternal(stream, command.end);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const CommonTypes::MotionFlag& flag)
