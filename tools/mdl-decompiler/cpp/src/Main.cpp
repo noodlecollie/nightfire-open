@@ -15,243 +15,11 @@
 #include "cppfs/fs.h"
 #include "cppfs/FileHandle.h"
 #include "Utils.h"
+#include "QCv10/QCFilePopulator.h"
 
 static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 {
 	return cppfs::FilePath(GetCurrentDirectory()).resolve(path);
-}
-
-static void
-ReadActivity(const MDLv14::MDLFile& mdlFile, QCv10::QCEFile& qceFile, QCv10::QCSequence& qcSequence, size_t seqIndex)
-{
-	const MDLv14::Sequence& sequence = mdlFile.GetSequences().GetElementChecked(seqIndex);
-
-	if ( sequence.activity == 0 )
-	{
-		return;
-	}
-
-	MDLv14::Activity activity = MDLv14::ACT_INVALID;
-
-	try
-	{
-		activity = Conversion::ConvertActivity_IntToV14(sequence.activity);
-	}
-	catch ( const std::invalid_argument& ex )
-	{
-		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity could not be read. " << ex.what()
-				  << std::endl;
-
-		return;
-	}
-
-	QCv10::Activity qcActivity = QCv10::ACT_INVALID;
-
-	try
-	{
-		qcActivity = Conversion::ConvertActivity_V14ToV10(activity);
-	}
-	catch ( const std::invalid_argument& ex )
-	{
-		std::cerr << mdlFile.ModelName() << ": sequence " << seqIndex << " activity could not be converted. "
-				  << ex.what() << std::endl;
-
-		return;
-	}
-
-	qcSequence.activity.activity = qcActivity;
-	qcSequence.activity.weight = static_cast<float>(sequence.activityWeight);
-
-	if ( !StartsWith(Conversion::ActivityName(qcActivity), "ACT_") )
-	{
-		qceFile.AddReplaceActivity(QCv10::QCEReplaceActivity(qcSequence.name, Conversion::ActivityName(activity)));
-		qcSequence.activity.activity = QCv10::ACT_INVALID;
-	}
-}
-
-static void SetUpQCFiles(
-	const MDLv14::MDLFile& mdlFile,
-	QCv10::QCFile& qcFile,
-	QCv10::QCEFile& qceFile,
-	const cppfs::FilePath& outputDirPath)
-{
-	qceFile.SetVersion(QCv10::QCEVersion(QCv10::QCEGame::HalfLife, 10, 1, 0));
-
-	qcFile.SetDirectory(outputDirPath.toNative());
-	qcFile.SetModelName({mdlFile.GetHeader().name});
-	qcFile.SetBBox(QCv10::QCBBox(mdlFile.GetHeader().boundingBox.min, mdlFile.GetHeader().boundingBox.max));
-	qcFile.SetCBox(QCv10::QCCBox(mdlFile.GetHeader().clippingBox.min, mdlFile.GetHeader().clippingBox.max));
-	qcFile.SetEyePosition(QCv10::QCEyePosition(mdlFile.GetHeader().eyePosition.pos));
-	qcFile.SetTypeFlags(QCv10::QCTypeFlags(mdlFile.GetHeader().typeFlags));
-	qcFile.SetOrigin(QCv10::QCOrigin(Vec3D()));
-
-	for ( const MDLv14::Bone& bone : mdlFile.GetBones() )
-	{
-		if ( bone.parent == -1 )
-		{
-			qcFile.SetRoot(QCv10::QCRoot(bone.name));
-			break;
-		}
-	}
-
-	for ( const MDLv14::Attachment& attachment : mdlFile.GetAttachments() )
-	{
-		qcFile.AddAttachment(QCv10::QCAttachment(
-			attachment.name,
-			mdlFile.GetBones().GetElementChecked(attachment.bone).name,
-			attachment.position));
-	}
-
-	for ( const MDLv14::BodyGroup& mdlBodyGroup : mdlFile.GetBodyGroups() )
-	{
-		QCv10::QCBodyGroup qcBodyGroup;
-		qcBodyGroup.name = mdlBodyGroup.name;
-
-		for ( size_t index = 0; index < IntToSizeT(mdlBodyGroup.modelCount); ++index )
-		{
-			const MDLv14::Model* model = mdlFile.FindModelByOffset(
-				mdlBodyGroup.modelOffset + static_cast<int32_t>((index * Reflection::ReadSize<MDLv14::Model>())));
-
-			if ( !model )
-			{
-				throw ValidationException(
-					"MDLFile",
-					"Body group " + mdlBodyGroup.name + " model " + std::to_string(index) + " (offset " +
-						std::to_string(mdlBodyGroup.modelOffset) + " bytes) could not be mapped to a model component.");
-			}
-
-			if ( model->name == "blank" )
-			{
-				qcBodyGroup.bodies.emplace_back(QCv10::QCBodyGroupItem("blank"));
-			}
-			else
-			{
-				qcBodyGroup.bodies.emplace_back(QCv10::QCBodyGroupItem("studio", "TODO: Parse model and dump as SMD"));
-			}
-		}
-
-		qcFile.AddBodyGroup(qcBodyGroup);
-	}
-
-	for ( const MDLv14::BoneController& controller : mdlFile.GetBoneControllers() )
-	{
-		QCv10::QCBoneController qcController {};
-
-		qcController.index = controller.index;
-		qcController.bone = mdlFile.GetBones().GetElementChecked(controller.bone).name;
-		qcController.motionFlags = controller.motionType;
-		qcController.start = controller.start;
-		qcController.end = controller.end;
-
-		qcFile.AddController(qcController);
-	}
-
-	for ( const MDLv14::HitBox& hitBox : mdlFile.GetHitBoxes() )
-	{
-		qcFile.AddHitBox(QCv10::QCHitBox(
-			hitBox.group,
-			mdlFile.GetBones().GetElementChecked(hitBox.bone).name,
-			hitBox.min,
-			hitBox.max));
-	}
-
-	if ( !mdlFile.GetBones().empty() )
-	{
-		for ( size_t seqIndex = 0; seqIndex < mdlFile.GetSequences().size(); ++seqIndex )
-		{
-			const MDLv14::Sequence& sequence = mdlFile.GetSequences().GetElementChecked(seqIndex);
-			QCv10::QCSequence qcSeq;
-
-			qcSeq.name = sequence.name;
-			qcSeq.controlFlags = sequence.motionType;
-			qcSeq.framesPerSecond = sequence.framesPerSecond;
-			qcSeq.loop = (sequence.flags & MDLv14::SequenceFlag_Looping) != 0;
-
-			if ( sequence.blendType0 != CommonTypes::MotionFlag_None )
-			{
-				qcSeq.blends.emplace_back(
-					QCv10::QCOptionBlend(sequence.blendType0, sequence.blendStart0, sequence.blendEnd0));
-			}
-
-			if ( sequence.blendType1 != CommonTypes::MotionFlag_None )
-			{
-				qcSeq.blends.emplace_back(
-					QCv10::QCOptionBlend(sequence.blendType1, sequence.blendStart1, sequence.blendEnd1));
-			}
-
-			if ( sequence.nodeEntry > 0 )
-			{
-				if ( sequence.nodeEntry <= std::numeric_limits<int8_t>::max() )
-				{
-					qcSeq.nodeEntryBone = static_cast<int8_t>(sequence.nodeEntry);
-				}
-				else
-				{
-					throw std::invalid_argument(
-						"MDL sequence " + std::to_string(seqIndex) + " entry node bone was out of acceptable range");
-				}
-			}
-
-			if ( sequence.nodeExit > 0 )
-			{
-				qcSeq.transition = QCv10::QCOptionTransition(
-					sequence.nodeEntry,
-					sequence.nodeExit,
-					sequence.nodeFlags & MDLv14::NodeFlag_Reverse);
-			}
-
-			qcSeq.events.reserve(sequence.eventCollection.size());
-
-			for ( const MDLv14::Event& event : sequence.eventCollection )
-			{
-				qcSeq.events.emplace_back(QCv10::QCOptionEvent(event.event, event.frame, event.options));
-			}
-
-			qcSeq.pivots.reserve(sequence.pivotCollection.size());
-
-			for ( size_t index = 0; index < sequence.pivotCollection.size(); ++index )
-			{
-				qcSeq.pivots.emplace_back(QCv10::QCOptionPivot(
-					static_cast<int32_t>(index),
-					static_cast<float>(sequence.pivotCollection[index].start),
-					static_cast<float>(sequence.pivotCollection[index].end)));
-			}
-
-			ReadActivity(mdlFile, qceFile, qcSeq, seqIndex);
-
-			qcFile.AddSequence(std::move(qcSeq));
-		}
-	}
-
-	const MDLv14::SkinDataHolder& skins = mdlFile.GetSkinData();
-
-	if ( skins.SkinFamilyCount() > 1 )
-	{
-		const Container<MDLv14::Texture>& textures = mdlFile.GetTextures();
-		QCv10::QCTextureGroup texGroup;
-
-		texGroup.name = "Skins";
-		texGroup.skins.reserve(skins.SkinFamilyCount());
-
-		for ( size_t familyIndex = 0; familyIndex < skins.SkinFamilyCount(); ++familyIndex )
-		{
-			Container<std::string> textureNames;
-			textureNames.reserve(skins.SkinReferenceCount());
-
-			for ( size_t refIndex = 0; refIndex < skins.SkinReferenceCount(); ++refIndex )
-			{
-				const int16_t& textureIndex = skins.GetEntry(familyIndex, refIndex);
-				const std::string& textureName =
-					textures.GetElementChecked(static_cast<size_t>(textureIndex)).textureName;
-
-				textureNames.emplace_back(textureName);
-			}
-
-			texGroup.skins.emplace_back(std::move(textureNames));
-		}
-
-		qcFile.SetTextureGroup(std::move(texGroup));
-	}
 }
 
 static std::ostream& DumpVector(std::ostream& stream, const Vec3D& vec)
@@ -325,9 +93,9 @@ static void DumpHeader(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& ou
 	stream << std::setw(COL_WIDTH) << std::left << "Triangles: " << std::setw(0) << header.triangleCount << std::endl;
 }
 
-static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& outputDirPath)
+static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, const cppfs::FilePath& outputDirPath)
 {
-	cppfs::FilePath qcPath = outputDirPath.resolve(mdlFile.ModelName() + ".qc");
+	cppfs::FilePath qcPath = outputDirPath.resolve(mdlFile->ModelName() + ".qc");
 	cppfs::FileHandle outQc = cppfs::fs::open(qcPath.toNative());
 
 	std::unique_ptr<std::ostream> qcStream = outQc.createOutputStream();
@@ -337,7 +105,7 @@ static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePa
 		throw FileIOException(qcPath.toNative(), "Could not open QC file for writing.");
 	}
 
-	cppfs::FilePath qcePath = outputDirPath.resolve(mdlFile.ModelName() + ".qce");
+	cppfs::FilePath qcePath = outputDirPath.resolve(mdlFile->ModelName() + ".qce");
 	cppfs::FileHandle outQce = cppfs::fs::open(qcePath.toNative());
 
 	std::unique_ptr<std::ostream> qceStream = outQce.createOutputStream();
@@ -347,16 +115,22 @@ static void WriteOutputFiles(const MDLv14::MDLFile& mdlFile, const cppfs::FilePa
 		throw FileIOException(qcePath.toNative(), "Could not open QCE file for writing.");
 	}
 
-	QCv10::QCFile qcFile;
-	QCv10::QCEFile qceFile;
+	std::shared_ptr<QCv10::QCFile> qcFile = std::make_shared<QCv10::QCFile>();
+	std::shared_ptr<QCv10::QCEFile> qceFile = std::make_shared<QCv10::QCEFile>();
 
-	SetUpQCFiles(mdlFile, qcFile, qceFile, outputDirPath);
+	QCv10::QCFilePopulator populator(
+		mdlFile,
+		qcFile,
+		qceFile,
+		outputDirPath.toNative());
+
+	populator.Populate();
 
 	std::cout << "Writing " << qcPath.toNative() << std::endl;
-	qcFile.Write(*qcStream);
+	qcFile->Write(*qcStream);
 
 	std::cout << "Writing " << qcePath.toNative() << std::endl;
-	qceFile.Write(*qceStream);
+	qceFile->Write(*qceStream);
 }
 
 static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath, bool dumpHeader)
@@ -364,7 +138,7 @@ static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& ou
 	std::cout << "Decompiling: " << mdlPath.toNative() << std::endl;
 
 	std::shared_ptr<BufferedFile> inputFile = BufferedFile::OpenFile(mdlPath.toNative());
-	MDLv14::MDLFile mdlFile(*inputFile);
+	std::shared_ptr<MDLv14::MDLFile> mdlFile = std::make_shared<MDLv14::MDLFile>(*inputFile);
 
 	if ( !MakeDirectoryRecursive(outputDirPath.toNative()) )
 	{
@@ -373,7 +147,7 @@ static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& ou
 
 	if ( dumpHeader )
 	{
-		DumpHeader(mdlFile, outputDirPath);
+		DumpHeader(*mdlFile, outputDirPath);
 	}
 
 	WriteOutputFiles(mdlFile, outputDirPath);

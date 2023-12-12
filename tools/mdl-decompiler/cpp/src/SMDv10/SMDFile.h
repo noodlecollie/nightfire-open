@@ -9,6 +9,8 @@ namespace SMDv10
 	{
 	public:
 		void AddTriangle(const Triangle& triangle);
+		void AddNode(const Node& node);
+		void AddFrame(const Frame& frame);
 
 	private:
 		Container<Triangle> m_Triangles;
