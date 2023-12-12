@@ -29,6 +29,9 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/QCv10/QCEFile.cpp
 	src/QCv10/QCFile.h
 	src/QCv10/QCFile.cpp
+	src/SMDv10/Components.h
+	src/SMDv10/SMDFile.h
+	src/SMDv10/SMDFile.cpp
 	src/Traits/Reflection.h
 	src/BufferedFile.h
 	src/BufferedFile.cpp
