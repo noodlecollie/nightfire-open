@@ -9,6 +9,7 @@
 #include "MDLv14/ComponentReflection.h"
 #include "QCv10/QCFile.h"
 #include "QCv10/QCEFile.h"
+#include "SMDv10/SMDFile.h"
 #include "Conversions/Activity.h"
 #include "Filesystem.h"
 #include "cppfs/FilePath.h"
@@ -93,6 +94,67 @@ static void DumpHeader(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& ou
 	stream << std::setw(COL_WIDTH) << std::left << "Triangles: " << std::setw(0) << header.triangleCount << std::endl;
 }
 
+static void WriteSMDFiles(
+	const std::shared_ptr<MDLv14::MDLFile>& mdlFile,
+	const cppfs::FilePath& outputDirPath,
+	const std::unordered_map<std::string, std::string>& modelNameMap)
+{
+	const Container<MDLv14::TriangleMap>& triangleMap = mdlFile->GetTriangleMap();
+	const Container<MDLv14::Vertex>& vertices = mdlFile->GetVertices();
+	const Container<MDLv14::Normal>& normals = mdlFile->GetNormals();
+	const Container<MDLv14::TextureCoOrdinate> texCoOrds = mdlFile->GetTextureCoOrdinates();
+
+	for ( const auto& it : modelNameMap )
+	{
+		SMDv10::SMDFile smdFile;
+
+		const MDLv14::Model* submodel = mdlFile->FindModelByName(it.first);
+
+		if ( !submodel )
+		{
+			// Should never happen
+			throw std::runtime_error("Lookup failed for submodel " + it.first);
+		}
+
+		for ( const MDLv14::ModelInfo& modelInfo : submodel->modelInfos )
+		{
+			for ( const MDLv14::Mesh& mesh : modelInfo.meshList )
+			{
+				for ( size_t base = 0; base < mesh.triangleCount; base += 3 )
+				{
+					// NOTE: If we want to retain multi-blends in the decompiled models (because
+					// the Xash model compiler should support that), this is the place to do it.
+					// In the original decompiler code, only blend 0 was used and assigned to
+					// the vertices generated here, and this behaviour has been retained for now.
+
+					const auto createVertex = [&](size_t triangleMapIndex) -> SMDv10::Vertex
+					{
+						SMDv10::Vertex vertex;
+
+						uint16_t vIndex = triangleMap.GetElementChecked(triangleMapIndex).vertexIndex;
+						vertex.position = vertices.GetElementChecked(vIndex).position;
+						vertex.normal = normals.GetElementChecked(vIndex).position;
+						vertex.bone = mdlFile->GetBoneIndicesUsedByMeshVertex(mesh, vIndex).GetElementChecked(0);
+						vertex.texU = texCoOrds.GetElementChecked(vIndex).u;
+						vertex.texV = texCoOrds.GetElementChecked(vIndex).v;
+
+						return vertex;
+					};
+
+					SMDv10::Vertex v0 = createVertex(mesh.triangleIndex + base + 1);
+					SMDv10::Vertex v1 = createVertex(mesh.triangleIndex + base + 0);
+					SMDv10::Vertex v2 = createVertex(mesh.triangleIndex + base + 2);
+
+					smdFile.AddTriangle(SMDv10::Triangle(std::move(v0), std::move(v1), std::move(v2)));
+				}
+			}
+		}
+
+		// TODO: Other aspects of SMD, and output
+		(void)outputDirPath;
+	}
+}
+
 static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, const cppfs::FilePath& outputDirPath)
 {
 	cppfs::FilePath qcPath = outputDirPath.resolve(mdlFile->ModelName() + ".qc");
@@ -134,6 +196,8 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 
 	std::cout << "Writing " << qcePath.toNative() << std::endl;
 	qceFile->Write(*qceStream);
+
+	WriteSMDFiles(mdlFile, outputDirPath, populator.GetReferencedModelNames());
 }
 
 static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath, bool dumpHeader)

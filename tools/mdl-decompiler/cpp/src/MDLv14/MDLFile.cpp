@@ -258,6 +258,26 @@ namespace MDLv14
 		return m_Sequences;
 	}
 
+	const Container<TriangleMap>& MDLFile::GetTriangleMap() const
+	{
+		return m_TriangleMaps;
+	}
+
+	const Container<Vertex>& MDLFile::GetVertices() const
+	{
+		return m_Vertices;
+	}
+
+	const Container<Normal>& MDLFile::GetNormals() const
+	{
+		return m_Normals;
+	}
+
+	const Container<TextureCoOrdinate>& MDLFile::GetTextureCoOrdinates() const
+	{
+		return m_TextureCoOrdinates;
+	}
+
 	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
 	{
 		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";
@@ -324,5 +344,54 @@ namespace MDLv14
 		}
 
 		return nullptr;
+	}
+
+	Container<int8_t> MDLFile::GetBoneIndicesUsedByMeshVertex(const Mesh& mesh, size_t vertexIndex) const
+	{
+		Container<int8_t> boneIndices;
+		const MDLv14::Blending& blend = m_Blends.GetElementChecked(vertexIndex);
+
+		for ( size_t index = 0; index < 4; ++index )
+		{
+			int8_t blendVal = -1;
+
+			switch ( index )
+			{
+				case 1:
+				{
+					blendVal = blend.val1;
+					break;
+				}
+
+				case 2:
+				{
+					blendVal = blend.val2;
+					break;
+				}
+
+				case 3:
+				{
+					blendVal = blend.val3;
+					break;
+				}
+
+				default:
+				{
+					blendVal = blend.val0;
+					break;
+				}
+			}
+
+			if ( blendVal < 0 )
+			{
+				boneIndices.emplace_back(-1);
+			}
+			else
+			{
+				boneIndices.emplace_back(mesh.boneMappings.GetElementChecked(blendVal));
+			}
+		}
+
+		return boneIndices;
 	}
 }  // namespace MDLv14

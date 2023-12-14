@@ -74,11 +74,11 @@ namespace SMDv10
 
 		Triangle() = default;
 
-		Triangle(const Vertex& v0, const Vertex& v1, const Vertex& v2)
+		Triangle(Vertex v0, Vertex v1, Vertex v2)
 		{
-			vertices[0] = v0;
-			vertices[1] = v1;
-			vertices[2] = v2;
+			vertices[0] = std::move(v0);
+			vertices[1] = std::move(v1);
+			vertices[2] = std::move(v2);
 		}
 
 		void Flip()
