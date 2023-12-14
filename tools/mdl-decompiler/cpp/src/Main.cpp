@@ -108,14 +108,17 @@ static void WriteSMDFiles(
 
 	for ( const auto& it : modelNameMap )
 	{
-		SMDv10::SMDFile smdFile;
+		const std::string& modelName = it.first;
+		const std::string& modelFileName = it.second;
 
-		const MDLv14::Model* submodel = mdlFile->FindModelByName(it.first);
+		SMDv10::SMDFile smdFile(SMDv10::SMDFile::Type::Reference);
+
+		const MDLv14::Model* submodel = mdlFile->FindModelByName(modelName);
 
 		if ( !submodel )
 		{
 			// Should never happen
-			throw std::runtime_error("Lookup failed for submodel " + it.first);
+			throw std::runtime_error("Lookup failed for submodel " + modelName);
 		}
 
 		for ( const MDLv14::ModelInfo& modelInfo : submodel->modelInfos )
@@ -168,8 +171,18 @@ static void WriteSMDFiles(
 
 		smdFile.AddFrame(SMDv10::Frame(0, std::move(boneFrameValues)));
 
-		// TODO: Output
-		(void)outputDirPath;
+		cppfs::FilePath outSMDPath = outputDirPath.resolve(modelFileName + ".smd");
+		cppfs::FileHandle outSMD = cppfs::fs::open(outSMDPath.toNative());
+
+		std::unique_ptr<std::ostream> smdStream = outSMD.createOutputStream();
+
+		if ( !smdStream )
+		{
+			throw FileIOException(outSMDPath.toNative(), "Could not open SMD file for writing.");
+		}
+
+		std::cout << "Writing " << outSMDPath.toNative() << std::endl;
+		smdFile.Write(*smdStream);
 	}
 }
 
