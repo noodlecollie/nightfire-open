@@ -103,6 +103,8 @@ static void WriteSMDFiles(
 	const Container<MDLv14::Vertex>& vertices = mdlFile->GetVertices();
 	const Container<MDLv14::Normal>& normals = mdlFile->GetNormals();
 	const Container<MDLv14::TextureCoOrdinate> texCoOrds = mdlFile->GetTextureCoOrdinates();
+	const Container<MDLv14::Bone>& bones = mdlFile->GetBones();
+	const Container<MDLv14::Texture>& textures = mdlFile->GetTextures();
 
 	for ( const auto& it : modelNameMap )
 	{
@@ -145,12 +147,28 @@ static void WriteSMDFiles(
 					SMDv10::Vertex v1 = createVertex(mesh.triangleIndex + base + 0);
 					SMDv10::Vertex v2 = createVertex(mesh.triangleIndex + base + 2);
 
-					smdFile.AddTriangle(SMDv10::Triangle(std::move(v0), std::move(v1), std::move(v2)));
+					smdFile.AddTriangle(SMDv10::Triangle(
+						textures.GetElementChecked(modelInfo.skinReference).textureName,
+						std::move(v0),
+						std::move(v1),
+						std::move(v2)));
 				}
 			}
 		}
 
-		// TODO: Other aspects of SMD, and output
+		Container<SMDv10::NodeFrame> boneFrameValues;
+
+		for ( size_t boneIndex = 0; boneIndex < bones.size(); ++boneIndex )
+		{
+			const MDLv14::Bone& bone = bones.GetElementChecked(boneIndex);
+
+			smdFile.AddNode(SMDv10::Node(static_cast<int8_t>(boneIndex), bone.name, bone.parent));
+			boneFrameValues.emplace_back(SMDv10::NodeFrame(boneIndex, bone.position, bone.rotation));
+		}
+
+		smdFile.AddFrame(SMDv10::Frame(0, std::move(boneFrameValues)));
+
+		// TODO: Output
 		(void)outputDirPath;
 	}
 }
