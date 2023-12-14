@@ -27,9 +27,18 @@ namespace MDLv14
 		const SkinDataHolder& GetSkinData() const;
 		const Container<Texture>& GetTextures() const;
 		const Container<Sequence>& GetSequences() const;
+		const Container<TriangleMap>& GetTriangleMap() const;
+		const Container<Vertex>& GetVertices() const;
+		const Container<Normal>& GetNormals() const;
+		const Container<TextureCoOrdinate>& GetTextureCoOrdinates() const;
 
 		const Model* FindModelByOffset(int32_t offset) const;
 		const Model* FindModelByName(const std::string& name) const;
+
+		// Each mesh vertex may be affected by up to 4 different bones (called "blending").
+		// Given a mesh and the index of a vertex, this function computes and returns the
+		// indices of the actual bones in the model that are used by the vertex.
+		Container<int8_t> GetBoneIndicesUsedByMeshVertex(const Mesh& mesh, size_t vertexIndex) const;
 
 	private:
 		void ValidateBeforeRead(BufferedFileReader::Ref ref) const;
