@@ -32,3 +32,10 @@ static inline bool StartsWith(const std::string& str, const std::string& prefix)
 {
 	return prefix.length() <= str.length() && str.substr(0, prefix.length()) == prefix;
 }
+
+// This was written into the original code as finding the last segment of the path after any slash.
+static inline std::string GoodFileName(const std::string input)
+{
+	const size_t index = input.find_last_of("\\/");
+	return index != std::string::npos ? input.substr(index + 1) : input;
+}

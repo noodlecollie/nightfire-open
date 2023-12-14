@@ -118,13 +118,16 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 	std::shared_ptr<QCv10::QCFile> qcFile = std::make_shared<QCv10::QCFile>();
 	std::shared_ptr<QCv10::QCEFile> qceFile = std::make_shared<QCv10::QCEFile>();
 
-	QCv10::QCFilePopulator populator(
-		mdlFile,
-		qcFile,
-		qceFile,
-		outputDirPath.toNative());
+	QCv10::QCFilePopulator populator(mdlFile, qcFile, qceFile, outputDirPath.toNative());
 
 	populator.Populate();
+
+	std::cout << "MDL file references " << populator.GetReferencedModelNames().size() << " submodels:" << std::endl;
+
+	for ( const auto& it : populator.GetReferencedModelNames() )
+	{
+		std::cout << "  " << it.first << std::endl;
+	}
 
 	std::cout << "Writing " << qcPath.toNative() << std::endl;
 	qcFile->Write(*qcStream);
