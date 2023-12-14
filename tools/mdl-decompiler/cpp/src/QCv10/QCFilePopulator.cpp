@@ -38,6 +38,8 @@ namespace QCv10
 
 	void QCFilePopulator::Populate()
 	{
+		m_ReferencedModelNames.clear();
+
 		BaseSetup();
 		PopulateBones();
 		PopulateAttachments();
@@ -46,6 +48,11 @@ namespace QCv10
 		PopulateHitBoxes();
 		PopulateSequences();
 		PopulateSkins();
+	}
+
+	const QCFilePopulator::ModelNameMap& QCFilePopulator::GetReferencedModelNames() const
+	{
+		return m_ReferencedModelNames;
 	}
 
 	void QCFilePopulator::BaseSetup()
@@ -113,8 +120,10 @@ namespace QCv10
 				}
 				else
 				{
-					qcBodyGroup.bodies.emplace_back(
-						QCv10::QCBodyGroupItem("studio", "TODO: Parse model and dump as SMD"));
+					const std::string smdFileName = GoodFileName(model->name) + "_ref";
+					m_ReferencedModelNames.insert({model->name, smdFileName});
+
+					qcBodyGroup.bodies.emplace_back(QCv10::QCBodyGroupItem("studio", smdFileName));
 				}
 			}
 
