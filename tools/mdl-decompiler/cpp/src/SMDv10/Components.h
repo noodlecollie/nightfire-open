@@ -44,6 +44,12 @@ namespace SMDv10
 		Container<NodeFrame> bones;
 
 		Frame() = default;
+
+		Frame(int32_t inValue, Container<NodeFrame> inBones) :
+			value(inValue),
+			bones(std::move(inBones))
+		{
+		}
 	};
 
 	struct Vertex
@@ -70,12 +76,14 @@ namespace SMDv10
 	{
 		static constexpr size_t NUM_VERTICES = 3;
 
+		std::string texture;
 		Vertex vertices[NUM_VERTICES] = {};
 
 		Triangle() = default;
 
-		Triangle(Vertex v0, Vertex v1, Vertex v2)
+		Triangle(std::string inTexture, Vertex v0, Vertex v1, Vertex v2)
 		{
+			texture = std::move(inTexture);
 			vertices[0] = std::move(v0);
 			vertices[1] = std::move(v1);
 			vertices[2] = std::move(v2);
