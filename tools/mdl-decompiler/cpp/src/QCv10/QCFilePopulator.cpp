@@ -3,6 +3,7 @@
 #include <iostream>
 #include "MDLv14/ComponentReflection.h"
 #include "QCv10/QCFilePopulator.h"
+#include "SMDv10/SMDReferencePopulator.h"
 #include "Conversions/Activity.h"
 #include "Conversions/MotionFlags.h"
 #include "Exceptions.h"
@@ -38,7 +39,7 @@ namespace QCv10
 
 	void QCFilePopulator::Populate()
 	{
-		m_ReferencedModelNames.clear();
+		m_SubmodelReferences.clear();
 
 		BaseSetup();
 		PopulateBones();
@@ -50,9 +51,9 @@ namespace QCv10
 		PopulateSkins();
 	}
 
-	const QCFilePopulator::ModelNameMap& QCFilePopulator::GetReferencedModelNames() const
+	const std::vector<SMDv10::SMDReference>& QCFilePopulator::GetSubmodelReferences() const
 	{
-		return m_ReferencedModelNames;
+		return m_SubmodelReferences;
 	}
 
 	void QCFilePopulator::BaseSetup()
@@ -121,7 +122,7 @@ namespace QCv10
 				else
 				{
 					const std::string smdFileName = GoodFileName(model->name) + "_ref";
-					m_ReferencedModelNames.insert({model->name, smdFileName});
+					m_SubmodelReferences.emplace_back(SMDv10::SMDReference(model->name, smdFileName));
 
 					qcBodyGroup.bodies.emplace_back(QCv10::QCBodyGroupItem("studio", smdFileName));
 				}

@@ -37,6 +37,8 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/SMDv10/SMDFile.cpp
 	src/SMDv10/SMDFileWriter.h
 	src/SMDv10/SMDFileWriter.cpp
+	src/SMDv10/SMDReferencePopulator.h
+	src/SMDv10/SMDReferencePopulator.cpp
 	src/Traits/Reflection.h
 	src/BufferedFile.h
 	src/BufferedFile.cpp

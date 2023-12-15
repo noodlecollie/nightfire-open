@@ -78,5 +78,6 @@ namespace QCv10
 		Container<QCBoneController> m_BoneControllers;
 		Container<QCHitBox> m_HitBoxes;
 		Container<QCSequence> m_Sequences;
+		std::vector<std::string> m_ReferencedModelNames;
 	};
 }
