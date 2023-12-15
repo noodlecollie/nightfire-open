@@ -10,6 +10,7 @@
 #include "QCv10/QCFile.h"
 #include "QCv10/QCEFile.h"
 #include "SMDv10/SMDFile.h"
+#include "SMDv10/SMDFileWriter.h"
 #include "Conversions/Activity.h"
 #include "Filesystem.h"
 #include "cppfs/FilePath.h"
@@ -111,7 +112,7 @@ static void WriteSMDFiles(
 		const std::string& modelName = it.first;
 		const std::string& modelFileName = it.second;
 
-		SMDv10::SMDFile smdFile(SMDv10::SMDFile::Type::Reference);
+		std::shared_ptr<SMDv10::SMDFile> smdFile = std::make_shared<SMDv10::SMDFile>(SMDv10::SMDFile::Type::Reference);
 
 		const MDLv14::Model* submodel = mdlFile->FindModelByName(modelName);
 
@@ -150,7 +151,7 @@ static void WriteSMDFiles(
 					SMDv10::Vertex v1 = createVertex(mesh.triangleIndex + base + 0);
 					SMDv10::Vertex v2 = createVertex(mesh.triangleIndex + base + 2);
 
-					smdFile.AddTriangle(SMDv10::Triangle(
+					smdFile->AddTriangle(SMDv10::Triangle(
 						textures.GetElementChecked(modelInfo.skinReference).textureName,
 						std::move(v0),
 						std::move(v1),
@@ -165,11 +166,11 @@ static void WriteSMDFiles(
 		{
 			const MDLv14::Bone& bone = bones.GetElementChecked(boneIndex);
 
-			smdFile.AddNode(SMDv10::Node(static_cast<int8_t>(boneIndex), bone.name, bone.parent));
+			smdFile->AddNode(SMDv10::Node(static_cast<int8_t>(boneIndex), bone.name, bone.parent));
 			boneFrameValues.emplace_back(SMDv10::NodeFrame(boneIndex, bone.position, bone.rotation));
 		}
 
-		smdFile.AddFrame(SMDv10::Frame(0, std::move(boneFrameValues)));
+		smdFile->AddFrame(SMDv10::Frame(0, std::move(boneFrameValues)));
 
 		cppfs::FilePath outSMDPath = outputDirPath.resolve(modelFileName + ".smd");
 		cppfs::FileHandle outSMD = cppfs::fs::open(outSMDPath.toNative());
@@ -182,7 +183,9 @@ static void WriteSMDFiles(
 		}
 
 		std::cout << "Writing " << outSMDPath.toNative() << std::endl;
-		smdFile.Write(*smdStream);
+
+		SMDv10::SMDFileWriter writer(smdFile);
+		writer.Write(*smdStream);
 	}
 }
 

@@ -3,6 +3,7 @@
 #include "QCv10/CommandWriter.h"
 #include "Conversions/Activity.h"
 #include "Conversions/MotionFlags.h"
+#include "Common/StreamHelpers.h"
 
 namespace QCv10
 {
@@ -35,19 +36,14 @@ namespace QCv10
 		stream << "$replaceactivity \"" << command.sequenceName << "\" " << command.activity;
 	}
 
-	void CommandWriter::WriteInternal(std::ostream& stream, const float value)
+	void CommandWriter::WriteInternal(std::ostream& stream, const float& value)
 	{
-		const std::streamsize defaultPrecision = stream.precision();
-		stream << std::setprecision(6) << (std::isnan(value) ? 0.0f : value) << std::setprecision(defaultPrecision);
+		WriteFloat(stream, value);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const Vec3D& position)
 	{
-		WriteInternal(stream, position.x);
-		stream << " ";
-		WriteInternal(stream, position.y);
-		stream << " ";
-		WriteInternal(stream, position.z);
+		WriteVec3D(stream, position);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCModelName& command)
