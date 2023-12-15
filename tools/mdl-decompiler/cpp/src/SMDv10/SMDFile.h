@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ostream>
 #include "Common/Container.h"
 #include "SMDv10/Components.h"
 
@@ -21,7 +20,10 @@ namespace SMDv10
 		void AddNode(const Node& node);
 		void AddFrame(const Frame& frame);
 
-		void Write(std::ostream& stream) const;
+		Type GetType() const;
+		const Container<Triangle>& GetTriangles() const;
+		const Container<Node>& GetNodes() const;
+		const Container<Frame>& GetFrames() const;
 
 	private:
 		Type m_Type = Type::Reference;

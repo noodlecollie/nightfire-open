@@ -22,65 +22,23 @@ namespace SMDv10
 		m_Frames.emplace_back(frame);
 	}
 
-	void SMDFile::Write(std::ostream& stream) const
+	SMDFile::Type SMDFile::GetType() const
 	{
-		// StreamWriter streamWriter = new StreamWriter(file);
-		// streamWriter.WriteLine("version 1");
-		// streamWriter.WriteLine("nodes");
-		// foreach (Node node in this._NodeCollection)
-		// 	streamWriter.WriteLine(node.ToString());
-		// streamWriter.WriteLine("end");
-		// streamWriter.Flush();
-		// streamWriter.WriteLine("skeleton");
-		// foreach (Frame time in this._TimeCollection)
-		// 	streamWriter.WriteLine(time.ToString());
-		// streamWriter.WriteLine("end");
-		// streamWriter.Flush();
-		// if (this._Reference)
-		// {
-		// 	streamWriter.WriteLine("triangles");
-		// 	foreach (Triangle<VertexV10> triangle in this._TriangleCollection)
-		// 	{
-		// 	streamWriter.WriteLine(triangle.Texture + ".bmp");
-		// 	foreach (VertexV10 vertex in triangle.Vertices)
-		// 		streamWriter.WriteLine(vertex.ToString());
-		// 	streamWriter.Flush();
-		// 	}
-		// 	streamWriter.WriteLine("end");
-		// 	streamWriter.Flush();
-		// }
-		// streamWriter.Close();
+		return m_Type;
+	}
 
-		stream << "version 1" << std::endl;
+	const Container<Triangle>& SMDFile::GetTriangles() const
+	{
+		return m_Triangles;
+	}
 
-		stream << "nodes" << std::endl;
+	const Container<Node>& SMDFile::GetNodes() const
+	{
+		return m_Nodes;
+	}
 
-		for ( const Node& node : m_Nodes )
-		{
-			// TODO
-		}
-
-		stream << "end" << std::endl;
-
-		stream << "skeleton" << std::endl;
-
-		for ( const Frame& frame : m_Frames )
-		{
-			// TODO
-		}
-
-		stream << "end" << std::endl;
-
-		if ( m_Type == Type::Reference )
-		{
-			stream << "triangles" << std::endl;
-
-			for ( const Triangle& triangle : m_Triangles )
-			{
-				// TODO
-			}
-
-			stream << "end" << std::endl;
-		}
+	const Container<Frame>& SMDFile::GetFrames() const
+	{
+		return m_Frames;
 	}
 }

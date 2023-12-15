@@ -3,6 +3,7 @@ include(compiler_settings)
 add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/Common/Container.h
 	src/Common/Math.h
+	src/Common/StreamHelpers.h
 	src/Common/Types.h
 	src/Conversions/Activity.h
 	src/Conversions/Activity.cpp
@@ -34,6 +35,8 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/SMDv10/Components.h
 	src/SMDv10/SMDFile.h
 	src/SMDv10/SMDFile.cpp
+	src/SMDv10/SMDFileWriter.h
+	src/SMDv10/SMDFileWriter.cpp
 	src/Traits/Reflection.h
 	src/BufferedFile.h
 	src/BufferedFile.cpp

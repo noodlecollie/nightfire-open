@@ -8,14 +8,14 @@ namespace SMDv10
 {
 	struct Node
 	{
-		int8_t index = 0;
+		int8_t boneIndex = -1;
 		std::string name;
 		int8_t parent = -1;
 
 		Node() = default;
 
-		Node(int8_t inIndex, const std::string& inName, int8_t inParent) :
-			index(inIndex),
+		Node(int8_t inBoneIndex, const std::string& inName, int8_t inParent) :
+			boneIndex(inBoneIndex),
 			name(inName),
 			parent(inParent)
 		{
@@ -24,14 +24,14 @@ namespace SMDv10
 
 	struct NodeFrame
 	{
-		size_t node = 0;
+		int8_t boneIndex = -1;
 		Vec3D position;
 		Vec3D rotation;
 
 		NodeFrame() = default;
 
-		NodeFrame(size_t inNode, const Vec3D& inPosition, const Vec3D& inRotation) :
-			node(inNode),
+		NodeFrame(int8_t inBoneIndex, const Vec3D& inPosition, const Vec3D& inRotation) :
+			boneIndex(inBoneIndex),
 			position(inPosition),
 			rotation(inRotation)
 		{
