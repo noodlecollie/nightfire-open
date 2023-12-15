@@ -7,14 +7,14 @@
 
 namespace SMDv10
 {
-	struct SMDReference
+	struct SMDName
 	{
 		std::string nameInMDL;
 		std::string outputNameOnDisk;
 
-		SMDReference() = default;
+		SMDName() = default;
 
-		SMDReference(std::string inNameInMDL, std::string inOutputNameOnDisk) :
+		SMDName(std::string inNameInMDL, std::string inOutputNameOnDisk) :
 			nameInMDL(std::move(inNameInMDL)),
 			outputNameOnDisk(std::move(inOutputNameOnDisk))
 		{
