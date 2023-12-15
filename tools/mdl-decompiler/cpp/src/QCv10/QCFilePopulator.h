@@ -9,7 +9,7 @@
 
 namespace SMDv10
 {
-	struct SMDReference;
+	struct SMDName;
 }
 
 namespace QCv10
@@ -25,7 +25,8 @@ namespace QCv10
 
 		void Populate();
 
-		const std::vector<SMDv10::SMDReference>& GetSubmodelReferences() const;
+		const std::vector<SMDv10::SMDName>& GetReferenceSMDNames() const;
+		const std::vector<SMDv10::SMDName>& GetAnimationSMDNames() const;
 
 	private:
 		void BaseSetup();
@@ -37,11 +38,14 @@ namespace QCv10
 		void PopulateSequences();
 		void PopulateSkins();
 		void ReadActivity(QCv10::QCSequence& qcSequence, size_t seqIndex);
+		void RecordAnimationName(const std::string& baseName);
+		void RecordAnimationName(const std::string& baseName, int32_t blendIndex);
 
 		std::shared_ptr<MDLv14::MDLFile> m_MDLFile;
 		std::shared_ptr<QCv10::QCFile> m_QCFile;
 		std::shared_ptr<QCv10::QCEFile> m_QCEFile;
 		std::string m_OutputDir;
-		std::vector<SMDv10::SMDReference> m_SubmodelReferences;
+		std::vector<SMDv10::SMDName> m_ReferenceSMDs;
+		std::vector<SMDv10::SMDName> m_AnimationSMDs;
 	};
 }  // namespace QCv10

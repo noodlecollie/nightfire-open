@@ -39,7 +39,8 @@ namespace QCv10
 
 	void QCFilePopulator::Populate()
 	{
-		m_SubmodelReferences.clear();
+		m_ReferenceSMDs.clear();
+		m_AnimationSMDs.clear();
 
 		BaseSetup();
 		PopulateBones();
@@ -51,9 +52,14 @@ namespace QCv10
 		PopulateSkins();
 	}
 
-	const std::vector<SMDv10::SMDReference>& QCFilePopulator::GetSubmodelReferences() const
+	const std::vector<SMDv10::SMDName>& QCFilePopulator::GetReferenceSMDNames() const
 	{
-		return m_SubmodelReferences;
+		return m_ReferenceSMDs;
+	}
+
+	const std::vector<SMDv10::SMDName>& QCFilePopulator::GetAnimationSMDNames() const
+	{
+		return m_AnimationSMDs;
 	}
 
 	void QCFilePopulator::BaseSetup()
@@ -122,7 +128,7 @@ namespace QCv10
 				else
 				{
 					const std::string smdFileName = GoodFileName(model->name) + "_ref";
-					m_SubmodelReferences.emplace_back(SMDv10::SMDReference(model->name, smdFileName));
+					m_ReferenceSMDs.emplace_back(SMDv10::SMDName(model->name, smdFileName));
 
 					qcBodyGroup.bodies.emplace_back(QCv10::QCBodyGroupItem("studio", smdFileName));
 				}
@@ -227,6 +233,13 @@ namespace QCv10
 
 				ReadActivity(qcSeq, seqIndex);
 
+				RecordAnimationName(sequence.name);
+
+				for ( int32_t blendIndex = 1; blendIndex < sequence.blendCount; ++blendIndex )
+				{
+					RecordAnimationName(sequence.name, blendIndex);
+				}
+
 				m_QCFile->AddSequence(std::move(qcSeq));
 			}
 		}
@@ -311,5 +324,20 @@ namespace QCv10
 				QCv10::QCEReplaceActivity(qcSequence.name, Conversion::ActivityName(activity)));
 			qcSequence.activity.activity = QCv10::ACT_INVALID;
 		}
+	}
+
+	void QCFilePopulator::RecordAnimationName(const std::string& baseName)
+	{
+		m_AnimationSMDs.emplace_back(SMDv10::SMDName(baseName, GoodFileName(baseName) + "_ani"));
+	}
+
+	void QCFilePopulator::RecordAnimationName(const std::string& baseName, int32_t blendIndex)
+	{
+		if ( blendIndex < 1 )
+		{
+			throw std::invalid_argument("Expected blend index to be greater than zero");
+		}
+
+		RecordAnimationName(baseName + "_blend" + std::to_string(blendIndex));
 	}
 }  // namespace QCv10

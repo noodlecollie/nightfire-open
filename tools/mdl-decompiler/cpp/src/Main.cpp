@@ -99,9 +99,9 @@ static void DumpHeader(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& ou
 static void WriteSMDFiles(
 	const std::shared_ptr<MDLv14::MDLFile>& mdlFile,
 	const cppfs::FilePath& outputDirPath,
-	const std::vector<SMDv10::SMDReference>& submodels)
+	const std::vector<SMDv10::SMDName>& submodels)
 {
-	for ( const SMDv10::SMDReference& ref : submodels )
+	for ( const SMDv10::SMDName& ref : submodels )
 	{
 		SMDv10::SMDReferencePopulator populator(mdlFile, ref.nameInMDL);
 		std::shared_ptr<SMDv10::SMDFile> smdFile = populator.Populate();
@@ -152,11 +152,18 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 
 	populator.Populate();
 
-	std::cout << "MDL file references " << populator.GetSubmodelReferences().size() << " submodels:" << std::endl;
+	std::cout << "MDL file references " << populator.GetReferenceSMDNames().size() << " submodels:" << std::endl;
 
-	for ( const SMDv10::SMDReference& ref : populator.GetSubmodelReferences() )
+	for ( const SMDv10::SMDName& ref : populator.GetReferenceSMDNames() )
 	{
 		std::cout << "  " << ref.nameInMDL << std::endl;
+	}
+
+	std::cout << "MDL file contains " << populator.GetAnimationSMDNames().size() << " animations:" << std::endl;
+
+	for ( const SMDv10::SMDName& anim : populator.GetAnimationSMDNames() )
+	{
+		std::cout << "  " << anim.nameInMDL << std::endl;
 	}
 
 	std::cout << "Writing " << qcPath.toNative() << std::endl;
@@ -165,7 +172,7 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 	std::cout << "Writing " << qcePath.toNative() << std::endl;
 	qceFile->Write(*qceStream);
 
-	WriteSMDFiles(mdlFile, outputDirPath, populator.GetSubmodelReferences());
+	WriteSMDFiles(mdlFile, outputDirPath, populator.GetReferenceSMDNames());
 }
 
 static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath, bool dumpHeader)
