@@ -2,18 +2,21 @@
 
 #include <string>
 #include <memory>
-#include <unordered_map>
+#include <vector>
 #include "MDLv14/MDLFile.h"
 #include "QCv10/QCFile.h"
 #include "QCv10/QCEFile.h"
+
+namespace SMDv10
+{
+	struct SMDReference;
+}
 
 namespace QCv10
 {
 	class QCFilePopulator
 	{
 	public:
-		using ModelNameMap = std::unordered_map<std::string, std::string>;
-
 		QCFilePopulator(
 			const std::shared_ptr<MDLv14::MDLFile>& mdlFile,
 			const std::shared_ptr<QCv10::QCFile>& qcFile,
@@ -22,7 +25,7 @@ namespace QCv10
 
 		void Populate();
 
-		const ModelNameMap& GetReferencedModelNames() const;
+		const std::vector<SMDv10::SMDReference>& GetSubmodelReferences() const;
 
 	private:
 		void BaseSetup();
@@ -39,6 +42,6 @@ namespace QCv10
 		std::shared_ptr<QCv10::QCFile> m_QCFile;
 		std::shared_ptr<QCv10::QCEFile> m_QCEFile;
 		std::string m_OutputDir;
-		ModelNameMap m_ReferencedModelNames;
+		std::vector<SMDv10::SMDReference> m_SubmodelReferences;
 	};
 }  // namespace QCv10

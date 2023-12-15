@@ -11,6 +11,7 @@
 #include "QCv10/QCEFile.h"
 #include "SMDv10/SMDFile.h"
 #include "SMDv10/SMDFileWriter.h"
+#include "SMDv10/SMDReferencePopulator.h"
 #include "Conversions/Activity.h"
 #include "Filesystem.h"
 #include "cppfs/FilePath.h"
@@ -98,81 +99,14 @@ static void DumpHeader(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& ou
 static void WriteSMDFiles(
 	const std::shared_ptr<MDLv14::MDLFile>& mdlFile,
 	const cppfs::FilePath& outputDirPath,
-	const std::unordered_map<std::string, std::string>& modelNameMap)
+	const std::vector<SMDv10::SMDReference>& submodels)
 {
-	const Container<MDLv14::TriangleMap>& triangleMap = mdlFile->GetTriangleMap();
-	const Container<MDLv14::Vertex>& vertices = mdlFile->GetVertices();
-	const Container<MDLv14::Normal>& normals = mdlFile->GetNormals();
-	const Container<MDLv14::TextureCoOrdinate> texCoOrds = mdlFile->GetTextureCoOrdinates();
-	const Container<MDLv14::Bone>& bones = mdlFile->GetBones();
-	const Container<MDLv14::Texture>& textures = mdlFile->GetTextures();
-
-	for ( const auto& it : modelNameMap )
+	for ( const SMDv10::SMDReference& ref : submodels )
 	{
-		const std::string& modelName = it.first;
-		const std::string& modelFileName = it.second;
+		SMDv10::SMDReferencePopulator populator(mdlFile, ref.nameInMDL);
+		std::shared_ptr<SMDv10::SMDFile> smdFile = populator.Populate();
 
-		std::shared_ptr<SMDv10::SMDFile> smdFile = std::make_shared<SMDv10::SMDFile>(SMDv10::SMDFile::Type::Reference);
-
-		const MDLv14::Model* submodel = mdlFile->FindModelByName(modelName);
-
-		if ( !submodel )
-		{
-			// Should never happen
-			throw std::runtime_error("Lookup failed for submodel " + modelName);
-		}
-
-		for ( const MDLv14::ModelInfo& modelInfo : submodel->modelInfos )
-		{
-			for ( const MDLv14::Mesh& mesh : modelInfo.meshList )
-			{
-				for ( size_t base = 0; base < mesh.triangleCount; base += 3 )
-				{
-					// NOTE: If we want to retain multi-blends in the decompiled models (because
-					// the Xash model compiler should support that), this is the place to do it.
-					// In the original decompiler code, only blend 0 was used and assigned to
-					// the vertices generated here, and this behaviour has been retained for now.
-
-					const auto createVertex = [&](size_t triangleMapIndex) -> SMDv10::Vertex
-					{
-						SMDv10::Vertex vertex;
-
-						uint16_t vIndex = triangleMap.GetElementChecked(triangleMapIndex).vertexIndex;
-						vertex.position = vertices.GetElementChecked(vIndex).position;
-						vertex.normal = normals.GetElementChecked(vIndex).position;
-						vertex.bone = mdlFile->GetBoneIndicesUsedByMeshVertex(mesh, vIndex).GetElementChecked(0);
-						vertex.texU = texCoOrds.GetElementChecked(vIndex).u;
-						vertex.texV = texCoOrds.GetElementChecked(vIndex).v;
-
-						return vertex;
-					};
-
-					SMDv10::Vertex v0 = createVertex(mesh.triangleIndex + base + 1);
-					SMDv10::Vertex v1 = createVertex(mesh.triangleIndex + base + 0);
-					SMDv10::Vertex v2 = createVertex(mesh.triangleIndex + base + 2);
-
-					smdFile->AddTriangle(SMDv10::Triangle(
-						textures.GetElementChecked(modelInfo.skinReference).textureName,
-						std::move(v0),
-						std::move(v1),
-						std::move(v2)));
-				}
-			}
-		}
-
-		Container<SMDv10::NodeFrame> boneFrameValues;
-
-		for ( size_t boneIndex = 0; boneIndex < bones.size(); ++boneIndex )
-		{
-			const MDLv14::Bone& bone = bones.GetElementChecked(boneIndex);
-
-			smdFile->AddNode(SMDv10::Node(static_cast<int8_t>(boneIndex), bone.name, bone.parent));
-			boneFrameValues.emplace_back(SMDv10::NodeFrame(boneIndex, bone.position, bone.rotation));
-		}
-
-		smdFile->AddFrame(SMDv10::Frame(0, std::move(boneFrameValues)));
-
-		cppfs::FilePath outSMDPath = outputDirPath.resolve(modelFileName + ".smd");
+		cppfs::FilePath outSMDPath = outputDirPath.resolve(ref.outputNameOnDisk + ".smd");
 		cppfs::FileHandle outSMD = cppfs::fs::open(outSMDPath.toNative());
 
 		std::unique_ptr<std::ostream> smdStream = outSMD.createOutputStream();
@@ -218,11 +152,11 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 
 	populator.Populate();
 
-	std::cout << "MDL file references " << populator.GetReferencedModelNames().size() << " submodels:" << std::endl;
+	std::cout << "MDL file references " << populator.GetSubmodelReferences().size() << " submodels:" << std::endl;
 
-	for ( const auto& it : populator.GetReferencedModelNames() )
+	for ( const SMDv10::SMDReference& ref : populator.GetSubmodelReferences() )
 	{
-		std::cout << "  " << it.first << std::endl;
+		std::cout << "  " << ref.nameInMDL << std::endl;
 	}
 
 	std::cout << "Writing " << qcPath.toNative() << std::endl;
@@ -231,7 +165,7 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 	std::cout << "Writing " << qcePath.toNative() << std::endl;
 	qceFile->Write(*qceStream);
 
-	WriteSMDFiles(mdlFile, outputDirPath, populator.GetReferencedModelNames());
+	WriteSMDFiles(mdlFile, outputDirPath, populator.GetSubmodelReferences());
 }
 
 static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath, bool dumpHeader)
@@ -295,6 +229,8 @@ int main(int argc, char** argv)
 		std::cerr << parser;
 		return 1;
 	}
+
+	std::cout << EXECUTABLE_NAME << " - Based on original code by Ford & UltimateSniper" << std::endl;
 
 	if ( !inputFileArg )
 	{
