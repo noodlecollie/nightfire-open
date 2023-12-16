@@ -67,9 +67,9 @@ namespace SMDv10
 		stream << " ";
 		WriteVec3D(stream, vertex.normal);
 		stream << " ";
-		WriteFloat(stream, vertex.texU);
+		WriteFixedFloat(stream, vertex.texU);
 		stream << " ";
-		WriteFloat(stream, vertex.texV);
+		WriteFixedFloat(stream, vertex.texV);
 		stream << std::endl;
 	}
 
