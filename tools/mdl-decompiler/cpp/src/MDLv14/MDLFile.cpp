@@ -384,7 +384,7 @@ namespace MDLv14
 
 			if ( blendVal < 0 )
 			{
-				boneIndices.emplace_back(-1);
+				boneIndices.emplace_back(static_cast<int8_t>(-1));
 			}
 			else
 			{
