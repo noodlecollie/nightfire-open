@@ -79,8 +79,9 @@ namespace SMDv10
 		{
 			const MDLv14::Bone& bone = bones.GetElementChecked(boneIndex);
 
-			smdFile->AddNode(SMDv10::Node(static_cast<int8_t>(boneIndex), bone.name, bone.parent));
-			boneFrameValues.emplace_back(SMDv10::NodeFrame(boneIndex, bone.position, bone.rotation));
+			smdFile->AddNode(SMDv10::Node(static_cast<int8_t>(boneIndex), bone.name, static_cast<int8_t>(bone.parent)));
+			boneFrameValues.emplace_back(
+				SMDv10::NodeFrame(static_cast<int8_t>(boneIndex), bone.position, bone.rotation));
 		}
 
 		smdFile->AddFrame(SMDv10::Frame(0, std::move(boneFrameValues)));
