@@ -36,16 +36,6 @@ namespace QCv10
 		stream << "$replaceactivity \"" << command.sequenceName << "\" " << command.activity;
 	}
 
-	void CommandWriter::WriteInternal(std::ostream& stream, const float& value)
-	{
-		WriteFloat(stream, value);
-	}
-
-	void CommandWriter::WriteInternal(std::ostream& stream, const Vec3D& position)
-	{
-		WriteVec3D(stream, position);
-	}
-
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCModelName& command)
 	{
 		stream << "$modelname \"" << command.name << "\"";
@@ -54,23 +44,23 @@ namespace QCv10
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCAttachment& command)
 	{
 		stream << "$attachment \"" << command.name << "\" \"" << command.bone << "\" ";
-		WriteInternal(stream, command.position);
+		WriteVec3D(stream, command.position);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBBox& command)
 	{
 		stream << "$bbox ";
-		WriteInternal(stream, command.min);
+		WriteVec3D(stream, command.min);
 		stream << " ";
-		WriteInternal(stream, command.max);
+		WriteVec3D(stream, command.max);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCCBox& command)
 	{
 		stream << "$cbox ";
-		WriteInternal(stream, command.min);
+		WriteVec3D(stream, command.min);
 		stream << " ";
-		WriteInternal(stream, command.max);
+		WriteVec3D(stream, command.max);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBodyGroupItem& command)
@@ -146,15 +136,15 @@ namespace QCv10
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCHitBox& command)
 	{
 		stream << "$hbox " << command.group << " \"" << command.bone << "\" ";
-		WriteInternal(stream, command.min);
+		WriteVec3D(stream, command.min);
 		stream << " ";
-		WriteInternal(stream, command.max);
+		WriteVec3D(stream, command.max);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCEyePosition& command)
 	{
 		stream << "$eyeposition ";
-		WriteInternal(stream, Vec3D(command.position.y, command.position.x, command.position.z));
+		WriteVec3D(stream, Vec3D(command.position.y, command.position.x, command.position.z));
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCPivot& command)
@@ -174,14 +164,12 @@ namespace QCv10
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCGamma& command)
 	{
-		stream << "$gamma ";
-		WriteInternal(stream, command.value);
+		stream << "$gamma " << command.value;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCScale& command)
 	{
-		stream << "$scale ";
-		WriteInternal(stream, command.value);
+		stream << "$scale " << command.value;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCTypeFlags& command)
@@ -192,7 +180,7 @@ namespace QCv10
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOrigin& command)
 	{
 		stream << "$origin ";
-		WriteInternal(stream, command.pos);
+		WriteVec3D(stream, command.pos);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCTextureGroup& command)
@@ -251,8 +239,7 @@ namespace QCv10
 			WriteInternal(stream, command.controlFlags);
 		}
 
-		stream << " fps ";
-		WriteInternal(stream, command.framesPerSecond);
+		stream << " fps " << command.framesPerSecond;
 
 		if ( command.loop )
 		{
@@ -299,15 +286,15 @@ namespace QCv10
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionActivity& command)
 	{
 		stream << Conversion::ActivityName(command.activity) << " ";
-		WriteInternal(stream, command.weight);
+		WriteFixedFloat(stream, command.weight);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionBlend& command)
 	{
 		stream << "blend " << Conversion::MotionFlagName(command.motionFlags) << " ";
-		WriteInternal(stream, command.start);
+		WriteFixedFloat(stream, command.start);
 		stream << " ";
-		WriteInternal(stream, command.end);
+		WriteFixedFloat(stream, command.end);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionEvent& command)
@@ -324,9 +311,9 @@ namespace QCv10
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionPivot& command)
 	{
 		stream << "pivot " << command.index << " ";
-		WriteInternal(stream, command.start);
+		WriteFixedFloat(stream, command.start);
 		stream << " ";
-		WriteInternal(stream, command.end);
+		WriteFixedFloat(stream, command.end);
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const CommonTypes::MotionFlag& flag)
