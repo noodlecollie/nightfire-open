@@ -53,7 +53,7 @@ namespace SMDv10
 						uint16_t vIndex = triangleMap.GetElementChecked(triangleMapIndex).vertexIndex;
 						vertex.position = vertices.GetElementChecked(vIndex).position;
 						vertex.normal = normals.GetElementChecked(vIndex).position;
-						vertex.bone = m_MDLFile->GetBoneIndicesUsedByMeshVertex(mesh, vIndex).GetElementChecked(0);
+						vertex.bone = m_MDLFile->GetBoneIndicesUsedByMeshVertex(mesh, vIndex)[0];
 						vertex.texU = texCoOrds.GetElementChecked(vIndex).u;
 						vertex.texV = texCoOrds.GetElementChecked(vIndex).v;
 
