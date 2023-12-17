@@ -346,6 +346,56 @@ namespace MDLv14
 		return nullptr;
 	}
 
+	const Sequence* MDLFile::FindSequenceByName(const std::string& name, uint8_t* outBlend) const
+	{
+		constexpr size_t BLEND_SUFFIX_LENGTH = 7;
+
+		if ( outBlend )
+		{
+			*outBlend = 0;
+		}
+
+		std::string trimmedName = name;
+
+		if ( name.length() > BLEND_SUFFIX_LENGTH &&
+			 name.substr(name.length() - BLEND_SUFFIX_LENGTH, BLEND_SUFFIX_LENGTH - 1) == "_blend" )
+		{
+			if ( outBlend )
+			{
+				const char last = name[name.length() - 1];
+
+				switch ( last )
+				{
+					case '1':
+					case '2':
+					case '3':
+					{
+						*outBlend = last - '0';
+						break;
+					}
+
+					default:
+					{
+						// Unsupported
+						break;
+					}
+				}
+			}
+
+			trimmedName = name.substr(0, name.length() - BLEND_SUFFIX_LENGTH);
+		}
+
+		for ( const Sequence& seq : m_Sequences )
+		{
+			if ( seq.name == trimmedName )
+			{
+				return &seq;
+			}
+		}
+
+		return nullptr;
+	}
+
 	Container<int8_t> MDLFile::GetBoneIndicesUsedByMeshVertex(const Mesh& mesh, size_t vertexIndex) const
 	{
 		Container<int8_t> boneIndices;

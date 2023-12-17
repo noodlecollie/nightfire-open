@@ -34,6 +34,7 @@ namespace MDLv14
 
 		const Model* FindModelByOffset(int32_t offset) const;
 		const Model* FindModelByName(const std::string& name) const;
+		const Sequence* FindSequenceByName(const std::string& name, uint8_t* outBlend) const;
 
 		// Each mesh vertex may be affected by up to 4 different bones (called "blending").
 		// Given a mesh and the index of a vertex, this function computes and returns the
