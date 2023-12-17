@@ -162,11 +162,6 @@ namespace QCv10
 		stream << "$renamebone \"" << command.oldName << "\" \"" << command.newName << "\"";
 	}
 
-	void CommandWriter::WriteInternal(std::ostream& stream, const QCGamma& command)
-	{
-		stream << "$gamma " << command.value;
-	}
-
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCScale& command)
 	{
 		stream << "$scale " << command.value;
@@ -219,13 +214,18 @@ namespace QCv10
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCSequence& command)
 	{
-		stream << "$sequence ";
+		stream << "$sequence \"" + command.name + "\"";
 
-		// TODO: Files
+		for ( const std::string& file : command.files )
+		{
+			stream << " \"" << file << "\"";
+		}
 
-		WriteInternal(stream, command.activity);
-
-		// TODO: Animation
+		if ( command.activity.IsValid() )
+		{
+			stream << " ";
+			WriteInternal(stream, command.activity);
+		}
 
 		for ( const QCv10::QCOptionBlend& blend : command.blends )
 		{
@@ -299,7 +299,7 @@ namespace QCv10
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionEvent& command)
 	{
-		stream << "event " << command.value << " " << command.frame << " " << command.options;
+		stream << "event " << command.value << " " << command.frame << " \"" << command.options << "\"";
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCOptionTransition& command)

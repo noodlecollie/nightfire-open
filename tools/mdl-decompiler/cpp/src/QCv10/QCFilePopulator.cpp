@@ -9,6 +9,9 @@
 #include "Exceptions.h"
 #include "Utils.h"
 
+// REMOVE ME
+#include <iostream>
+
 namespace QCv10
 {
 	QCFilePopulator::QCFilePopulator(
@@ -233,11 +236,11 @@ namespace QCv10
 
 				ReadActivity(qcSeq, seqIndex);
 
-				RecordAnimationName(sequence.name);
+				qcSeq.files.emplace_back(RecordAnimationName(sequence.name));
 
 				for ( int32_t blendIndex = 1; blendIndex < sequence.blendCount; ++blendIndex )
 				{
-					RecordAnimationName(sequence.name, blendIndex);
+					qcSeq.files.emplace_back(RecordAnimationName(sequence.name, blendIndex));
 				}
 
 				m_QCFile->AddSequence(std::move(qcSeq));
@@ -326,18 +329,19 @@ namespace QCv10
 		}
 	}
 
-	void QCFilePopulator::RecordAnimationName(const std::string& baseName)
+	std::string QCFilePopulator::RecordAnimationName(const std::string& baseName)
 	{
 		m_AnimationSMDs.emplace_back(SMDv10::SMDName(baseName, GoodFileName(baseName) + "_ani"));
+		return m_AnimationSMDs.back().outputNameOnDisk;
 	}
 
-	void QCFilePopulator::RecordAnimationName(const std::string& baseName, int32_t blendIndex)
+	std::string QCFilePopulator::RecordAnimationName(const std::string& baseName, int32_t blendIndex)
 	{
 		if ( blendIndex < 1 )
 		{
 			throw std::invalid_argument("Expected blend index to be greater than zero");
 		}
 
-		RecordAnimationName(baseName + "_blend" + std::to_string(blendIndex));
+		return RecordAnimationName(baseName + "_blend" + std::to_string(blendIndex));
 	}
 }  // namespace QCv10

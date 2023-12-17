@@ -154,11 +154,6 @@ namespace QCv10
 		m_RenameBone = renameBone;
 	}
 
-	void QCFile::SetGamma(const QCGamma& gamma)
-	{
-		m_Gamma = gamma;
-	}
-
 	void QCFile::SetScale(const QCScale& scale)
 	{
 		m_Scale = scale;
@@ -220,7 +215,6 @@ namespace QCv10
 
 		//////////////////////////////////////////////////////////////
 
-		writer.WriteQCCommand(stream, m_Gamma);
 		writer.WriteQCCommand(stream, m_Scale);
 		writer.WriteQCCommand(stream, m_TypeFlags);
 		writer.WriteQCCommand(stream, m_Origin);
