@@ -12,6 +12,7 @@
 #include "SMDv10/SMDFile.h"
 #include "SMDv10/SMDFileWriter.h"
 #include "SMDv10/SMDReferencePopulator.h"
+#include "SMDv10/SMDAnimationPopulator.h"
 #include "Conversions/Activity.h"
 #include "Filesystem.h"
 #include "cppfs/FilePath.h"
@@ -96,7 +97,7 @@ static void DumpHeader(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& ou
 	stream << std::setw(COL_WIDTH) << std::left << "Triangles: " << std::setw(0) << header.triangleCount << std::endl;
 }
 
-static void WriteSMDFiles(
+static void WriteSMDReferenceFiles(
 	const std::shared_ptr<MDLv14::MDLFile>& mdlFile,
 	const cppfs::FilePath& outputDirPath,
 	const std::vector<SMDv10::SMDName>& submodels)
@@ -107,6 +108,33 @@ static void WriteSMDFiles(
 		std::shared_ptr<SMDv10::SMDFile> smdFile = populator.Populate();
 
 		cppfs::FilePath outSMDPath = outputDirPath.resolve(ref.outputNameOnDisk + ".smd");
+		cppfs::FileHandle outSMD = cppfs::fs::open(outSMDPath.toNative());
+
+		std::unique_ptr<std::ostream> smdStream = outSMD.createOutputStream();
+
+		if ( !smdStream )
+		{
+			throw FileIOException(outSMDPath.toNative(), "Could not open SMD file for writing.");
+		}
+
+		std::cout << "Writing " << outSMDPath.toNative() << std::endl;
+
+		SMDv10::SMDFileWriter writer(smdFile);
+		writer.Write(*smdStream);
+	}
+}
+
+static void WriteSMDAnimationFiles(
+	const std::shared_ptr<MDLv14::MDLFile>& mdlFile,
+	const cppfs::FilePath& outputDirPath,
+	const std::vector<SMDv10::SMDName>& animations)
+{
+	for ( const SMDv10::SMDName& anim : animations )
+	{
+		SMDv10::SMDAnimationPopulator populator(mdlFile, anim.nameInMDL);
+		std::shared_ptr<SMDv10::SMDFile> smdFile = populator.Populate();
+
+		cppfs::FilePath outSMDPath = outputDirPath.resolve(anim.outputNameOnDisk + ".smd");
 		cppfs::FileHandle outSMD = cppfs::fs::open(outSMDPath.toNative());
 
 		std::unique_ptr<std::ostream> smdStream = outSMD.createOutputStream();
@@ -158,7 +186,8 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 	std::cout << "Writing " << qcePath.toNative() << std::endl;
 	qceFile->Write(*qceStream);
 
-	WriteSMDFiles(mdlFile, outputDirPath, populator.GetReferenceSMDNames());
+	WriteSMDReferenceFiles(mdlFile, outputDirPath, populator.GetReferenceSMDNames());
+	WriteSMDAnimationFiles(mdlFile, outputDirPath, populator.GetAnimationSMDNames());
 }
 
 static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath, bool dumpHeader)

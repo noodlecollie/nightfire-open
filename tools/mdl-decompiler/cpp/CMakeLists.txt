@@ -32,6 +32,7 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/QCv10/QCFile.cpp
 	src/QCv10/QCFilePopulator.h
 	src/QCv10/QCFilePopulator.cpp
+	src/SMDv10/ComponentReflection.h
 	src/SMDv10/Components.h
 	src/SMDv10/SMDAnimationPopulator.h
 	src/SMDv10/SMDAnimationPopulator.cpp
