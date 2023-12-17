@@ -20,8 +20,6 @@ namespace SMDv10
 	void SMDFileWriter::Write(std::ostream& stream)
 	{
 		stream << "version 1" << std::endl;
-		stream << std::endl;
-
 		stream << "nodes" << std::endl;
 
 		for ( const Node& node : m_SMDFile->GetNodes() )
@@ -30,8 +28,6 @@ namespace SMDv10
 		}
 
 		stream << "end" << std::endl;
-		stream << std::endl;
-
 		stream << "skeleton" << std::endl;
 
 		for ( const Frame& frame : m_SMDFile->GetFrames() )
@@ -40,8 +36,6 @@ namespace SMDv10
 		}
 
 		stream << "end" << std::endl;
-		stream << std::endl;
-
 		if ( m_SMDFile->GetType() == SMDFile::Type::Reference )
 		{
 			stream << "triangles" << std::endl;

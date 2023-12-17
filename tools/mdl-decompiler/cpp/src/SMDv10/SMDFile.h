@@ -25,7 +25,7 @@ namespace SMDv10
 		const Container<Node>& GetNodes() const;
 		const Container<Frame>& GetFrames() const;
 
-		void Rotate(float degrees);
+		void RotateAroundZAxis(float degrees);
 
 	private:
 		Type m_Type = Type::Reference;
