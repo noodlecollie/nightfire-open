@@ -22,7 +22,6 @@ namespace QCv10
 		void SetPivot(const QCPivot& pivot);
 		void SetMirrorBone(const QCMirrorBone& mirrorBone);
 		void SetRenameBone(const QCRenameBone& renameBone);
-		void SetGamma(const QCGamma& gamma);
 		void SetScale(const QCScale& scale);
 		void SetTypeFlags(const QCTypeFlags& typeFlags);
 		void SetOrigin(const QCOrigin& origin);
@@ -64,7 +63,6 @@ namespace QCv10
 		QCCBox m_CBox;
 		QCRoot m_Root;
 		QCPivot m_Pivot;
-		QCGamma m_Gamma;
 		QCScale m_Scale;
 		QCOrigin m_Origin;
 		QCTypeFlags m_TypeFlags;

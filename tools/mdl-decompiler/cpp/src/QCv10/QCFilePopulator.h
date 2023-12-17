@@ -38,8 +38,8 @@ namespace QCv10
 		void PopulateSequences();
 		void PopulateSkins();
 		void ReadActivity(QCv10::QCSequence& qcSequence, size_t seqIndex);
-		void RecordAnimationName(const std::string& baseName);
-		void RecordAnimationName(const std::string& baseName, int32_t blendIndex);
+		std::string RecordAnimationName(const std::string& baseName);
+		std::string RecordAnimationName(const std::string& baseName, int32_t blendIndex);
 
 		std::shared_ptr<MDLv14::MDLFile> m_MDLFile;
 		std::shared_ptr<QCv10::QCFile> m_QCFile;

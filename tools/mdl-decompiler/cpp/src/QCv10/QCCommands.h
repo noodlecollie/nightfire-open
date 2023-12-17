@@ -426,23 +426,6 @@ namespace QCv10
 		}
 	};
 
-	struct QCGamma : public QCBaseCommand
-	{
-		float value = 0.0f;
-
-		QCGamma() = default;
-
-		QCGamma(float inValue) :
-			value(inValue)
-		{
-		}
-
-		bool IsValid() const
-		{
-			return value >= 0.0f;
-		}
-	};
-
 	struct QCScale : public QCBaseCommand
 	{
 		float value = 0.0f;
@@ -535,13 +518,26 @@ namespace QCv10
 		}
 	};
 
-	struct QCOptionActivity
+	struct QCOptionActivity : public QCBaseCommand
 	{
 		Activity activity = ACT_INVALID;
 		float weight = 0.0f;
+
+		QCOptionActivity() = default;
+
+		QCOptionActivity(Activity inActivity, float inWeight) :
+			activity(inActivity),
+			weight(inWeight)
+		{
+		}
+
+		bool IsValid() const override
+		{
+			return activity != ACT_INVALID;
+		}
 	};
 
-	struct QCOptionBlend
+	struct QCOptionBlend : public QCBaseCommand
 	{
 		CommonTypes::MotionFlag motionFlags = CommonTypes::MotionFlag_Invalid;
 		float start = 0.0f;
@@ -555,9 +551,14 @@ namespace QCv10
 			end(inEnd)
 		{
 		}
+
+		bool IsValid() const override
+		{
+			return motionFlags != CommonTypes::MotionFlag_Invalid;
+		}
 	};
 
-	struct QCOptionEvent
+	struct QCOptionEvent : public QCBaseCommand
 	{
 		int32_t value = 0;
 		int32_t frame = 0;
@@ -571,9 +572,14 @@ namespace QCv10
 			options(inOptions)
 		{
 		}
+
+		bool IsValid() const override
+		{
+			return value > 0;
+		}
 	};
 
-	struct QCOptionTransition
+	struct QCOptionTransition : public QCBaseCommand
 	{
 		int32_t sourceBone = -1;
 		int32_t targetBone = -1;
@@ -588,13 +594,13 @@ namespace QCv10
 		{
 		}
 
-		bool IsValid() const
+		bool IsValid() const override
 		{
 			return sourceBone >= 0 && targetBone >= 0;
 		}
 	};
 
-	struct QCOptionPivot
+	struct QCOptionPivot : public QCBaseCommand
 	{
 		int32_t index = 0;
 		float start = 0.0f;
@@ -608,11 +614,17 @@ namespace QCv10
 			end(inEnd)
 		{
 		}
+
+		bool IsValid() const override
+		{
+			return true;
+		}
 	};
 
 	struct QCSequence : public QCBaseCommand
 	{
 		std::string name;
+		std::vector<std::string> files;
 		QCOptionActivity activity;
 		Container<QCOptionBlend> blends;
 		CommonTypes::MotionFlag controlFlags = CommonTypes::MotionFlag_Invalid;

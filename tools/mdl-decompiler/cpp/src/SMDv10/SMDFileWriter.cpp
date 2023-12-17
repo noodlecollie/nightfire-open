@@ -8,7 +8,7 @@ namespace SMDv10
 {
 	class SMDFile;
 
-	SMDFileWriter::SMDFileWriter(const std::shared_ptr<SMDFile> smdFile) :
+	SMDFileWriter::SMDFileWriter(const std::shared_ptr<SMDFile>& smdFile) :
 		m_SMDFile(smdFile)
 	{
 		if ( !m_SMDFile )

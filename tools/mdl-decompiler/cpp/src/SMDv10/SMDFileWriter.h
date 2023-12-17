@@ -13,7 +13,7 @@ namespace SMDv10
 	class SMDFileWriter
 	{
 	public:
-		SMDFileWriter(const std::shared_ptr<SMDFile> smdFile);
+		SMDFileWriter(const std::shared_ptr<SMDFile>& smdFile);
 
 		void Write(std::ostream& stream);
 
