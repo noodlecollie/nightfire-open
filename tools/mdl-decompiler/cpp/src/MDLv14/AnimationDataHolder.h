@@ -18,14 +18,14 @@ namespace MDLv14
 		bool IsValid() const;
 		void Clear();
 
-		std::vector<uint16_t>& GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex);
-		const std::vector<uint16_t>& GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex) const;
+		std::vector<int16_t>& GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex);
+		const std::vector<int16_t>& GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex) const;
 
 	private:
 		size_t LinearIndex(size_t blendIndex, size_t boneIndex, size_t axisIndex) const;
 
 		size_t m_BlendCount = 0;
 		size_t m_BoneCount = 0;
-		std::vector<std::vector<uint16_t>> m_DataArrays;
+		std::vector<std::vector<int16_t>> m_DataArrays;
 	};
 }

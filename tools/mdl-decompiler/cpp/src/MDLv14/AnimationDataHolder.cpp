@@ -44,12 +44,12 @@ namespace MDLv14
 		}
 	}
 
-	std::vector<uint16_t>& AnimationDataHolder::GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex)
+	std::vector<int16_t>& AnimationDataHolder::GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex)
 	{
 		return m_DataArrays[LinearIndex(blendIndex, boneIndex, axisIndex)];
 	}
 
-	const std::vector<uint16_t>&
+	const std::vector<int16_t>&
 	AnimationDataHolder::GetDataArray(size_t blendIndex, size_t boneIndex, size_t axisIndex) const
 	{
 		return m_DataArrays[LinearIndex(blendIndex, boneIndex, axisIndex)];

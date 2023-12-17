@@ -54,7 +54,7 @@ namespace SMDv10
 
 				for ( size_t axis = 0; axis < 6; ++axis )
 				{
-					const std::vector<uint16_t>& animData =
+					const std::vector<int16_t>& animData =
 						mdlSeq->animationCollection.GetDataArray(static_cast<size_t>(blend), boneIndex, axis);
 
 					if ( animData.empty() )
@@ -70,7 +70,7 @@ namespace SMDv10
 							m_SequenceName + "\"");
 					}
 
-					const uint16_t animValue = animData[frameIndex];
+					const int16_t animValue = animData[frameIndex];
 
 					switch ( axis )
 					{
@@ -131,7 +131,7 @@ namespace SMDv10
 			smdFile->AddFrame(SMDv10::Frame(0, defaultBoneFrameValues));
 		}
 
-		smdFile->Rotate(-90.0f);
+		smdFile->RotateAroundZAxis(-90.0f);
 
 		return smdFile;
 	}

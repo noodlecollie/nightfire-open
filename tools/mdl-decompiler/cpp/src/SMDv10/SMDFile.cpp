@@ -44,7 +44,7 @@ namespace SMDv10
 		return m_Frames;
 	}
 
-	void SMDFile::Rotate(float degrees)
+	void SMDFile::RotateAroundZAxis(float degrees)
 	{
 		const float radians = DegreesToRadians(degrees);
 
@@ -52,8 +52,7 @@ namespace SMDv10
 		{
 			for ( NodeFrame& bone : frame.bones )
 			{
-				const int8_t boneIndex = bone.boneIndex;
-				const int8_t parentBoneIndex = m_Nodes.GetElementChecked(boneIndex).parent;
+				const int8_t parentBoneIndex = m_Nodes.GetElementChecked(bone.boneIndex).parent;
 
 				// Only manipulate root bones.
 				if ( parentBoneIndex >= 0 )
@@ -63,17 +62,17 @@ namespace SMDv10
 
 				bone.rotation.z += radians;
 
-				const int xSign = bone.position.x < 0.0f ? -1 : (bone.position.x > 0.0f ? 1 : 0);
+				const bool requiresFlip = bone.position.x < 0.0f;
 
-				const float sqrtOfXSquaredPlusYSquared = sqrtf(
+				const float xyDistance = sqrtf(
 					(bone.position.x * bone.position.x) + (bone.position.y * bone.position.y));
 
-				const float ratioOfYOverXPlusNewRotation = atanf(bone.position.y / bone.position.x) + radians;
+				const float desiredAngle = atanf(bone.position.y / bone.position.x) + radians;
 
-				bone.position.x = cosf(ratioOfYOverXPlusNewRotation) * sqrtOfXSquaredPlusYSquared;
-				bone.position.y = sinf(ratioOfYOverXPlusNewRotation) * sqrtOfXSquaredPlusYSquared;
+				bone.position.x = cosf(desiredAngle) * xyDistance;
+				bone.position.y = sinf(desiredAngle) * xyDistance;
 
-				if ( xSign == -1 )
+				if ( requiresFlip )
 				{
 					bone.position.x *= -1.0f;
 					bone.position.y *= -1.0f;
