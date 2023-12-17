@@ -43,6 +43,7 @@ add_executable(${TARGETNAME_EXE_MDL14_DECOMPILER}
 	src/SMDv10/SMDReferencePopulator.h
 	src/SMDv10/SMDReferencePopulator.cpp
 	src/Traits/Reflection.h
+	src/AnalysisOptions.h
 	src/BufferedFile.h
 	src/BufferedFile.cpp
 	src/BufferedFileReader.h

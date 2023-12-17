@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <limits>
+#include <set>
 #include "args/args.hxx"
 #include "Exceptions.h"
 #include "BufferedFile.h"
@@ -20,6 +21,7 @@
 #include "cppfs/FileHandle.h"
 #include "Utils.h"
 #include "QCv10/QCFilePopulator.h"
+#include "AnalysisOptions.h"
 
 static cppfs::FilePath GetPathFromCurrentDirectory(const std::string path)
 {
@@ -95,6 +97,110 @@ static void DumpHeader(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& ou
 	stream << std::setw(COL_WIDTH) << std::left << "Models: " << std::setw(0) << header.modelCount << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Vertices: " << std::setw(0) << header.vertexCount << std::endl;
 	stream << std::setw(COL_WIDTH) << std::left << "Triangles: " << std::setw(0) << header.triangleCount << std::endl;
+}
+
+static bool IsMultiBlendList(const std::vector<int8_t>& boneIndices)
+{
+	int8_t referencedBone = -1;
+
+	for ( int8_t boneIndex : boneIndices )
+	{
+		if ( boneIndex < 0 )
+		{
+			continue;
+		}
+
+		if ( referencedBone < 0 )
+		{
+			referencedBone = boneIndex;
+			continue;
+		}
+
+		if ( referencedBone != boneIndex )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static std::string BuildMultiBlendGroupName(const MDLv14::MDLFile& mdlFile, const std::vector<int8_t>& boneIndices)
+{
+	std::string out;
+
+	for ( int8_t boneIndex : boneIndices )
+	{
+		if ( boneIndex < 0 )
+		{
+			continue;
+		}
+
+		if ( !out.empty() )
+		{
+			out += ", ";
+		}
+
+		out += mdlFile.GetBones().GetElementChecked(boneIndex).name;
+	}
+
+	if ( out.empty() )
+	{
+		out = "<none>";
+	}
+
+	return out;
+}
+
+static void DumpMultiBlends(const MDLv14::MDLFile& mdlFile, const cppfs::FilePath& outputDirPath)
+{
+	cppfs::FilePath dumpPath = outputDirPath.resolve("blends.txt");
+	cppfs::FileHandle dumpFile = cppfs::fs::open(dumpPath.toNative());
+	std::unique_ptr<std::ostream> dumpStream = dumpFile.createOutputStream();
+
+	if ( !dumpStream )
+	{
+		throw FileIOException(dumpPath.toNative(), "Could not open file for writing.");
+	}
+
+	std::ostream& stream = *dumpStream;
+	std::set<std::string> multiBlendGroupsFound;
+
+	for ( const MDLv14::Model& model : mdlFile.GetModels() )
+	{
+		for ( const MDLv14::ModelInfo& modelInfo : model.modelInfos )
+		{
+			for ( const MDLv14::Mesh& mesh : modelInfo.meshList )
+			{
+				for ( size_t triangleIndex = 0; triangleIndex < mesh.triangleCount; ++triangleIndex )
+				{
+					const uint16_t vIndex =
+						mdlFile.GetTriangleMap().GetElementChecked(mesh.triangleIndex + triangleIndex).vertexIndex;
+
+					std::vector<int8_t> boneIndices = mdlFile.GetBoneIndicesUsedByMeshVertex(mesh, vIndex);
+
+					if ( IsMultiBlendList(boneIndices) )
+					{
+						multiBlendGroupsFound.insert(BuildMultiBlendGroupName(mdlFile, boneIndices));
+					}
+				}
+			}
+		}
+	}
+
+	if ( multiBlendGroupsFound.empty() )
+	{
+		stream << "No multi-blend vertices found." << std::endl;
+		return;
+	}
+
+	stream << multiBlendGroupsFound.size() << " unique groups of bones were found that affected multi-blend vertices:"
+		   << std::endl;
+
+	for ( const std::string& group : multiBlendGroupsFound )
+	{
+		stream << "  " << group << std::endl;
+	}
 }
 
 static void WriteSMDReferenceFiles(
@@ -190,7 +296,8 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 	WriteSMDAnimationFiles(mdlFile, outputDirPath, populator.GetAnimationSMDNames());
 }
 
-static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath, bool dumpHeader)
+static void
+ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& outputDirPath, const AnalysisOptions& analysisOptions)
 {
 	std::cout << "Decompiling: " << mdlPath.toNative() << std::endl;
 
@@ -202,9 +309,14 @@ static void ProcessFile(const cppfs::FilePath mdlPath, const cppfs::FilePath& ou
 		throw FileIOException(outputDirPath.toNative(), "Could not create output directory.");
 	}
 
-	if ( dumpHeader )
+	if ( analysisOptions.dumpHeader )
 	{
 		DumpHeader(*mdlFile, outputDirPath);
+	}
+
+	if ( analysisOptions.dumpMultiBlends )
+	{
+		DumpMultiBlends(*mdlFile, outputDirPath);
 	}
 
 	WriteOutputFiles(mdlFile, outputDirPath);
@@ -224,6 +336,13 @@ int main(int argc, char** argv)
 		"dump_header",
 		"If set, dumps details from the MDL header to header.txt in the output directory.",
 		{"dump-header"});
+
+	args::Flag dumpMultiBlendsArg(
+		parser,
+		"dump_multi_blends",
+		"If set, dumps details about whether the model uses blending on vertices to blends.txt in the output "
+		"directory.",
+		{"dump-multi-blends"});
 
 	args::ValueFlag<std::string> outputDirArg(
 		parser,
@@ -262,10 +381,15 @@ int main(int argc, char** argv)
 
 	try
 	{
+		AnalysisOptions analysisOptions {};
+
+		analysisOptions.dumpHeader = dumpHeaderArg;
+		analysisOptions.dumpMultiBlends = dumpMultiBlendsArg;
+
 		ProcessFile(
 			GetPathFromCurrentDirectory(args::get(inputFileArg)),
 			GetPathFromCurrentDirectory(args::get(outputDirArg)),
-			dumpHeaderArg);
+			analysisOptions);
 	}
 	catch ( BaseException& ex )
 	{

@@ -278,6 +278,11 @@ namespace MDLv14
 		return m_TextureCoOrdinates;
 	}
 
+	const Container<Model>& MDLFile::GetModels() const
+	{
+		return m_Models;
+	}
+
 	void MDLFile::ValidateBeforeRead(BufferedFileReader::Ref ref) const
 	{
 		static constexpr const char* const EXPECTED_IDENTIFIER = "MDLZ";
@@ -396,9 +401,9 @@ namespace MDLv14
 		return nullptr;
 	}
 
-	Container<int8_t> MDLFile::GetBoneIndicesUsedByMeshVertex(const Mesh& mesh, size_t vertexIndex) const
+	std::vector<int8_t> MDLFile::GetBoneIndicesUsedByMeshVertex(const Mesh& mesh, size_t vertexIndex) const
 	{
-		Container<int8_t> boneIndices;
+		std::vector<int8_t> boneIndices;
 		const MDLv14::Blending& blend = m_Blends.GetElementChecked(vertexIndex);
 
 		for ( size_t index = 0; index < 4; ++index )
