@@ -152,20 +152,6 @@ static void WriteOutputFiles(const std::shared_ptr<MDLv14::MDLFile>& mdlFile, co
 
 	populator.Populate();
 
-	std::cout << "MDL file references " << populator.GetReferenceSMDNames().size() << " submodels:" << std::endl;
-
-	for ( const SMDv10::SMDName& ref : populator.GetReferenceSMDNames() )
-	{
-		std::cout << "  " << ref.nameInMDL << std::endl;
-	}
-
-	std::cout << "MDL file contains " << populator.GetAnimationSMDNames().size() << " animations:" << std::endl;
-
-	for ( const SMDv10::SMDName& anim : populator.GetAnimationSMDNames() )
-	{
-		std::cout << "  " << anim.nameInMDL << std::endl;
-	}
-
 	std::cout << "Writing " << qcPath.toNative() << std::endl;
 	qcFile->Write(*qcStream);
 
