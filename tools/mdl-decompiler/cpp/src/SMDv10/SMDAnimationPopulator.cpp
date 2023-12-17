@@ -131,7 +131,7 @@ namespace SMDv10
 			smdFile->AddFrame(SMDv10::Frame(0, defaultBoneFrameValues));
 		}
 
-		// TODO: Rotate SMD -90 degrees!
+		smdFile->Rotate(-90.0f);
 
 		return smdFile;
 	}

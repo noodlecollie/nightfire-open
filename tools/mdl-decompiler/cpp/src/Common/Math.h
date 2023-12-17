@@ -29,3 +29,8 @@ struct Vec3D
 		z = NAN;
 	}
 };
+
+static inline constexpr float DegreesToRadians(float degrees)
+{
+	return (degrees * static_cast<float>(M_PI)) / 180.0f;
+}
