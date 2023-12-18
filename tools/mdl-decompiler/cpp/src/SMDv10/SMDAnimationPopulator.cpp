@@ -123,7 +123,7 @@ namespace SMDv10
 				boneFrameValues.emplace_back(SMDv10::NodeFrame(static_cast<int8_t>(boneIndex), bonePos, boneRot));
 			}
 
-			smdFile->AddFrame(SMDv10::Frame(frameIndex, boneFrameValues));
+			smdFile->AddFrame(SMDv10::Frame(static_cast<int32_t>(frameIndex), boneFrameValues));
 		}
 
 		if ( smdFile->GetFrames().empty() )
