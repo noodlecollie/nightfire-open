@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Users\Admin\Documents\GitRepos\nightfire-open\game\utils\binaries\Nightfire_Workshop_1_0_12\JbnLib.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3F8BBD57-8E9D-4446-85B2-8FC55D0BB603}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>JbnLib</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <ApplicationVersion>1.0.12.40333</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>JbnLib</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FreeImageNET">
+      <HintPath>lib\FreeImageNET.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ListViewColumnSorter.cs" />
+    <Compile Include="Simple.cs" />
+    <Compile Include="Spz\SpzFile.cs" />
+    <Compile Include="Spz\SpriteZType.cs" />
+    <Compile Include="Spz\SpriteZTexture.cs" />
+    <Compile Include="Smd\SmdFileV10.cs" />
+    <Compile Include="Smd\VertexV10.cs" />
+    <Compile Include="Smd\BlendV11.cs" />
+    <Compile Include="Smd\SmdFileV11.cs" />
+    <Compile Include="Smd\VertexV11.cs" />
+    <Compile Include="Smd\LinkV44.cs" />
+    <Compile Include="Smd\SmdFileV44.cs" />
+    <Compile Include="Smd\VertexV44.cs" />
+    <Compile Include="Smd\SmdType.cs" />
+    <Compile Include="Smd\Frame.cs" />
+    <Compile Include="Smd\Node.cs" />
+    <Compile Include="Smd\NodeComparer.cs" />
+    <Compile Include="Smd\SmdFile.cs" />
+    <Compile Include="Smd\Time.cs" />
+    <Compile Include="Smd\Triangle`1.cs" />
+    <Compile Include="Wrappers\Bsp.cs" />
+    <Compile Include="Wrappers\BspArgs.cs" />
+    <Compile Include="Wrappers\SharedArgs.cs" />
+    <Compile Include="Wrappers\Bond.cs" />
+    <Compile Include="Wrappers\BondArgs.cs" />
+    <Compile Include="Wrappers\BondDed.cs" />
+    <Compile Include="Wrappers\BondDedArgs.cs" />
+    <Compile Include="Wrappers\Rad.cs" />
+    <Compile Include="Wrappers\RadArgs.cs" />
+    <Compile Include="Wrappers\Vis.cs" />
+    <Compile Include="Wrappers\VisArgs.cs" />
+    <Compile Include="Wrappers\StudioMdl.cs" />
+    <Compile Include="Wrappers\StudioMdlArgs.cs" />
+    <Compile Include="Spr\Color24bit.cs" />
+    <Compile Include="Spr\SpriteType.cs" />
+    <Compile Include="Spr\SpriteTexture.cs" />
+    <Compile Include="Spr\SyncType.cs" />
+    <Compile Include="Spr\SpriteFrameType.cs" />
+    <Compile Include="Spr\Frame.cs" />
+    <Compile Include="Spr\Group.cs" />
+    <Compile Include="Spr\HeaderV1.cs" />
+    <Compile Include="Spr\HeaderV2.cs" />
+    <Compile Include="Spr\SprFile.cs" />
+    <Compile Include="Spr\SprFileV1.cs" />
+    <Compile Include="Spr\SprFileV2.cs" />
+    <Compile Include="Spr\SprFileV32.cs" />
+    <Compile Include="Sp2\Frame.cs" />
+    <Compile Include="Sp2\Sp2File.cs" />
+    <Compile Include="Qc\CommandAnimation.cs" />
+    <Compile Include="Qc\CommandAttachment.cs" />
+    <Compile Include="Qc\CommandBBox.cs" />
+    <Compile Include="Qc\CommandBody.cs" />
+    <Compile Include="Qc\CommandBodyGroup.cs" />
+    <Compile Include="Qc\BodyGroupItem.cs" />
+    <Compile Include="Qc\CommandCBox.cs" />
+    <Compile Include="Qc\CommandCd.cs" />
+    <Compile Include="Qc\CommandCdTexture.cs" />
+    <Compile Include="Qc\CommandClipToTextures.cs" />
+    <Compile Include="Qc\CommandController.cs" />
+    <Compile Include="Qc\CommandExternalTextures.cs" />
+    <Compile Include="Qc\CommandEyePosition.cs" />
+    <Compile Include="Qc\CommandFlags.cs" />
+    <Compile Include="Qc\CommandGamma.cs" />
+    <Compile Include="Qc\CommandHBox.cs" />
+    <Compile Include="Qc\CommandInclude.cs" />
+    <Compile Include="Qc\CommandLodFlags.cs" />
+    <Compile Include="Qc\CommandLodTemp.cs" />
+    <Compile Include="Qc\CommandMirrorBone.cs" />
+    <Compile Include="Qc\CommandModel.cs" />
+    <Compile Include="Qc\CommandModelName.cs" />
+    <Compile Include="Qc\CommandOrigin.cs" />
+    <Compile Include="Qc\CommandPivot.cs" />
+    <Compile Include="Qc\CommandQceVersion.cs" />
+    <Compile Include="Qc\QceGame.cs" />
+    <Compile Include="Qc\CommandRenameBone.cs" />
+    <Compile Include="Qc\CommandReplaceActivity.cs" />
+    <Compile Include="Qc\CommandRoot.cs" />
+    <Compile Include="Qc\CommandScale.cs" />
+    <Compile Include="Qc\CommandSequenceV10.cs" />
+    <Compile Include="Qc\CommandSequenceV11.cs" />
+    <Compile Include="Qc\CommandSequenceV44.cs" />
+    <Compile Include="Qc\CommandSoundGroup.cs" />
+    <Compile Include="Qc\CommandTexture.cs" />
+    <Compile Include="Qc\CommandTextureGroup.cs" />
+    <Compile Include="Qc\OptionActivityV10.cs" />
+    <Compile Include="Qc\ActivityV10.cs" />
+    <Compile Include="Qc\OptionActivityV11.cs" />
+    <Compile Include="Qc\ActivityV11.cs" />
+    <Compile Include="Qc\ActivityV14.cs" />
+    <Compile Include="Qc\OptionActivityV44.cs" />
+    <Compile Include="Qc\ActivityV44.cs" />
+    <Compile Include="Qc\OptionAnimation.cs" />
+    <Compile Include="Qc\OptionBlend.cs" />
+    <Compile Include="Qc\OptionBlendWidth.cs" />
+    <Compile Include="Qc\OptionControl.cs" />
+    <Compile Include="Qc\OptionEvent.cs" />
+    <Compile Include="Qc\OptionFps.cs" />
+    <Compile Include="Qc\OptionFrame.cs" />
+    <Compile Include="Qc\OptionLoop.cs" />
+    <Compile Include="Qc\OptionNodeV10.cs" />
+    <Compile Include="Qc\OptionNodeV44.cs" />
+    <Compile Include="Qc\OptionPivot.cs" />
+    <Compile Include="Qc\OptionRotate.cs" />
+    <Compile Include="Qc\OptionRTransition.cs" />
+    <Compile Include="Qc\OptionScale.cs" />
+    <Compile Include="Qc\OptionTransition.cs" />
+    <Compile Include="Qc\OmittedCommand.cs" />
+    <Compile Include="Qc\QcFile.cs" />
+    <Compile Include="Qc\Qce.cs" />
+    <Compile Include="Qc\QcFileV10.cs" />
+    <Compile Include="Qc\QcFileV11.cs" />
+    <Compile Include="Qc\QcFileV44.cs" />
+    <Compile Include="Interfaces\IStructure.cs" />
+    <Compile Include="Cqcc\SmdProcessedHandler.cs" />
+    <Compile Include="Cqcc\CascadingQuakeCConverter.cs" />
+    <Compile Include="Cqcc\SmdProcessedEventArgs.cs" />
+    <Compile Include="Shared\AmbientColor.cs" />
+    <Compile Include="Shared\AmbientColorConverter.cs" />
+    <Compile Include="Shared\AmbientColorEditor.cs" />
+    <Compile Include="Shared\Quaternion.cs" />
+    <Compile Include="Shared\Vector2D.cs" />
+    <Compile Include="Shared\GetVersion.cs" />
+    <Compile Include="Shared\MemoryTokenizer.cs" />
+    <Compile Include="Shared\Plane3D.cs" />
+    <Compile Include="Shared\CountOffsetPair.cs" />
+    <Compile Include="Shared\FileTokenizer.cs" />
+    <Compile Include="Shared\OffsetLengthPair.cs" />
+    <Compile Include="Shared\OffsetLengthPairComparer.cs" />
+    <Compile Include="Shared\WorldMaterial.cs" />
+    <Compile Include="Shared\ModelMaterial.cs" />
+    <Compile Include="Shared\SpriteMaterial.cs" />
+    <Compile Include="Shared\HudMaterial.cs" />
+    <Compile Include="Shared\Point.cs" />
+    <Compile Include="Shared\Point3D.cs" />
+    <Compile Include="Shared\StaticMethods.cs" />
+    <Compile Include="Shared\ValueCountPair.cs" />
+    <Compile Include="Shared\Vector3D.cs" />
+    <Compile Include="Shared\Matrix.cs" />
+    <Compile Include="Network\EncType.cs" />
+    <Compile Include="Network\ServerQueryRefreshedHandler.cs" />
+    <Compile Include="Network\ServerQuery.cs" />
+    <Compile Include="Network\GameSpy.cs" />
+    <Compile Include="Network\BusyServerRedial.cs" />
+    <Compile Include="Network\IPPort.cs" />
+    <Compile Include="Network\RemoteConsole.cs" />
+    <Compile Include="Network\ServerStatus.cs" />
+    <Compile Include="Network\ServerStatusPlayer.cs" />
+    <Compile Include="Multi\ConversionFailedEventArgs.cs" />
+    <Compile Include="Multi\ConversionCompletedEventArgs.cs" />
+    <Compile Include="Multi\ConversionStartedEventArgs.cs" />
+    <Compile Include="Multi\MessageEventArgs.cs" />
+    <Compile Include="Multi\ErrorAddedHandler.cs" />
+    <Compile Include="Multi\WarningAddedHandler.cs" />
+    <Compile Include="Multi\ConversionStartedHandler.cs" />
+    <Compile Include="Multi\ConversionCompletedHandler.cs" />
+    <Compile Include="Multi\ConversionFailedHandler.cs" />
+    <Compile Include="Multi\MultiV14ToV11.cs" />
+    <Compile Include="Multi\QueueItem.cs" />
+    <Compile Include="Mdl\BodyV11.cs" />
+    <Compile Include="Mdl\LodVertices.cs" />
+    <Compile Include="Mdl\LodVertex.cs" />
+    <Compile Include="Mdl\LevelOfDetailV11.cs" />
+    <Compile Include="Mdl\LodPosition.cs" />
+    <Compile Include="Mdl\IHeader.cs" />
+    <Compile Include="Mdl\IStudioModel.cs" />
+    <Compile Include="Mdl\BodyGroupV11.cs" />
+    <Compile Include="Mdl\HeaderV11.cs" />
+    <Compile Include="Mdl\MdlFileV11.cs" />
+    <Compile Include="Mdl\MeshV11.cs" />
+    <Compile Include="Mdl\ModelHeaderV11.cs" />
+    <Compile Include="Mdl\ModelInfoV11.cs" />
+    <Compile Include="Mdl\ModelV11.cs" />
+    <Compile Include="Mdl\BodyGroupV14.cs" />
+    <Compile Include="Mdl\HeaderV14.cs" />
+    <Compile Include="Mdl\MdlFileV14.cs" />
+    <Compile Include="Mdl\MeshV14.cs" />
+    <Compile Include="Mdl\ModelInfoV14.cs" />
+    <Compile Include="Mdl\ModelV14.cs" />
+    <Compile Include="Mdl\Animation.cs" />
+    <Compile Include="Mdl\AnimationValue.cs" />
+    <Compile Include="Mdl\Attachment.cs" />
+    <Compile Include="Mdl\Blending.cs" />
+    <Compile Include="Mdl\BlendingScales.cs" />
+    <Compile Include="Mdl\Bone.cs" />
+    <Compile Include="Mdl\BoneController.cs" />
+    <Compile Include="Mdl\BoneFixUp.cs" />
+    <Compile Include="Mdl\Enumerators.cs" />
+    <Compile Include="Mdl\LevelOfDetailFlags.cs" />
+    <Compile Include="Mdl\Events.cs" />
+    <Compile Include="Mdl\MotionFlags.cs" />
+    <Compile Include="Mdl\NodeFlags.cs" />
+    <Compile Include="Mdl\SequenceFlags.cs" />
+    <Compile Include="Mdl\TypeFlag.cs" />
+    <Compile Include="Mdl\Event.cs" />
+    <Compile Include="Mdl\EyePosition.cs" />
+    <Compile Include="Mdl\Header.cs" />
+    <Compile Include="Mdl\HitBox.cs" />
+    <Compile Include="Mdl\LevelOfDetail.cs" />
+    <Compile Include="Mdl\MdlFile.cs" />
+    <Compile Include="Mdl\Normal.cs" />
+    <Compile Include="Mdl\Pivot.cs" />
+    <Compile Include="Mdl\Sequence.cs" />
+    <Compile Include="Mdl\SequenceGroup.cs" />
+    <Compile Include="Mdl\SkinCollection.cs" />
+    <Compile Include="Mdl\SoundGroup.cs" />
+    <Compile Include="Mdl\Sounds.cs" />
+    <Compile Include="Mdl\Texture.cs" />
+    <Compile Include="Mdl\TextureCoordinate.cs" />
+    <Compile Include="Mdl\TriangleMap.cs" />
+    <Compile Include="Mdl\Vertex.cs" />
+    <Compile Include="Map\BrushV220.cs" />
+    <Compile Include="Map\BrushV510.cs" />
+    <Compile Include="Map\EntityV510.cs" />
+    <Compile Include="Map\SurfaceFlags.cs" />
+    <Compile Include="Map\IBrush.cs" />
+    <Compile Include="Map\IEntity.cs" />
+    <Compile Include="Map\IMapFile.cs" />
+    <Compile Include="Map\ISide.cs" />
+    <Compile Include="Map\MapFileV510.cs" />
+    <Compile Include="Map\EntityV220.cs" />
+    <Compile Include="Map\MapFileV220.cs" />
+    <Compile Include="Map\SideV44.cs" />
+    <Compile Include="Map\Lightmap.cs" />
+    <Compile Include="Map\SideV220.cs" />
+    <Compile Include="Map\SideV510.cs" />
+    <Compile Include="Map\TextureAxis.cs" />
+    <Compile Include="Log\LogFile.cs" />
+    <Compile Include="Log\ServerShutdownHandler.cs" />
+    <Compile Include="Log\MapChangedHandler.cs" />
+    <Compile Include="Log\MapChangedEventArgs.cs" />
+    <Compile Include="Log\Team.cs" />
+    <Compile Include="Log\PowerUp.cs" />
+    <Compile Include="Log\HtmlOutput.cs" />
+    <Compile Include="Log\Types\ScoreThresholdConverter.cs" />
+    <Compile Include="Log\Types\VariableConverter.cs" />
+    <Compile Include="Log\Types\Player.cs" />
+    <Compile Include="Log\Types\PlayerCollectionAlteredHandler.cs" />
+    <Compile Include="Log\Types\PlayerCollection.cs" />
+    <Compile Include="Log\Types\RCon.cs" />
+    <Compile Include="Log\Types\Score.cs" />
+    <Compile Include="Log\Types\ScoreConverter.cs" />
+    <Compile Include="Log\Types\ScoreThreshold.cs" />
+    <Compile Include="Log\Types\Variable.cs" />
+    <Compile Include="Log\Types\VariableChanged.cs" />
+    <Compile Include="Log\Types\Say\Say.cs" />
+    <Compile Include="Log\Types\Say\SayGeneral.cs" />
+    <Compile Include="Log\Types\Say\SayMI6.cs" />
+    <Compile Include="Log\Types\Say\SayPhoenix.cs" />
+    <Compile Include="Log\Types\Say\SayServer.cs" />
+    <Compile Include="Log\Types\DateID\ChangedName.cs" />
+    <Compile Include="Log\Types\DateID\ChangedRole.cs" />
+    <Compile Include="Log\Types\DateID\Connected.cs" />
+    <Compile Include="Log\Types\DateID\DateID.cs" />
+    <Compile Include="Log\Types\DateID\Disconnected.cs" />
+    <Compile Include="Log\Types\DateID\EnteredGame.cs" />
+    <Compile Include="Log\Types\DateID\Suicide.cs" />
+    <Compile Include="Log\Types\DateIDTeam\DateIDTeam.cs" />
+    <Compile Include="Log\Types\DateIDTeam\JoinedTeam.cs" />
+    <Compile Include="Log\Types\DateIDTeam\Killed.cs" />
+    <Compile Include="Log\Types\DateIDTeam\TriggeredAgainstEvent.cs" />
+    <Compile Include="Log\Types\DateIDTeam\TriggeredEvent.cs" />
+    <Compile Include="Log\Types\DateData\DateData.cs" />
+    <Compile Include="Log\Types\DateData\WorldTriggered.cs" />
+    <Compile Include="Log\Collections\PropertyComparer`1.cs" />
+    <Compile Include="Log\Collections\SortableBindingList`1.cs" />
+    <Compile Include="Lang\Messages.cs" />
+    <Compile Include="Fgd\FgdFile.cs" />
+    <Compile Include="Fgd\Types\BaseClass.cs" />
+    <Compile Include="Fgd\Types\Choice.cs" />
+    <Compile Include="Fgd\Types\Choices.cs" />
+    <Compile Include="Fgd\Types\ClassIconSprite.cs" />
+    <Compile Include="Fgd\Types\ClassSprite.cs" />
+    <Compile Include="Fgd\Types\Color.cs" />
+    <Compile Include="Fgd\Types\Color255.cs" />
+    <Compile Include="Fgd\Types\Flag.cs" />
+    <Compile Include="Fgd\Types\Flags.cs" />
+    <Compile Include="Fgd\Types\Integer.cs" />
+    <Compile Include="Fgd\Types\Point3D.cs" />
+    <Compile Include="Fgd\Types\PointClass.cs" />
+    <Compile Include="Fgd\Types\Size.cs" />
+    <Compile Include="Fgd\Types\SolidClass.cs" />
+    <Compile Include="Fgd\Types\Sound.cs" />
+    <Compile Include="Fgd\Types\Sprite.cs" />
+    <Compile Include="Fgd\Types\String.cs" />
+    <Compile Include="Fgd\Types\Studio.cs" />
+    <Compile Include="Fgd\Types\TargetDestination.cs" />
+    <Compile Include="Fgd\Types\TargetSource.cs" />
+    <Compile Include="Fgd\Interfaces\IChoice.cs" />
+    <Compile Include="Fgd\Interfaces\IChoices.cs" />
+    <Compile Include="Fgd\Interfaces\IFlag.cs" />
+    <Compile Include="Fgd\Interfaces\IFlags.cs" />
+    <Compile Include="Fgd\Interfaces\IInteger.cs" />
+    <Compile Include="Fgd\Interfaces\INameText.cs" />
+    <Compile Include="Fgd\Interfaces\INameTextValue.cs" />
+    <Compile Include="Dat\DatCellSize.cs" />
+    <Compile Include="Dat\DatCharacter.cs" />
+    <Compile Include="Dat\DatFile.cs" />
+    <Compile Include="Bsp\BspV42.cs" />
+    <Compile Include="Bsp\BrushSideV42.cs" />
+    <Compile Include="Bsp\BrushV42.cs" />
+    <Compile Include="Bsp\LumelV42.cs" />
+    <Compile Include="Bsp\TextureMapV42.cs" />
+    <Compile Include="Bsp\ModelV42.cs" />
+    <Compile Include="Bsp\LeafBrushV42.cs" />
+    <Compile Include="Bsp\LeafSurfaceV42.cs" />
+    <Compile Include="Bsp\LeafV42.cs" />
+    <Compile Include="Bsp\SurfaceV42.cs" />
+    <Compile Include="Bsp\NodeV42.cs" />
+    <Compile Include="Bsp\VisibilityV42.cs" />
+    <Compile Include="Bsp\DrawIndexV42.cs" />
+    <Compile Include="Bsp\ZeroVertexV42.cs" />
+    <Compile Include="Bsp\VertexV42.cs" />
+    <Compile Include="Bsp\FogV42.cs" />
+    <Compile Include="Bsp\ShaderV42.cs" />
+    <Compile Include="Bsp\PlaneV42.cs" />
+    <Compile Include="Assets\ArchiveTaskChangedHandler.cs" />
+    <Compile Include="Assets\Archive.cs" />
+    <Compile Include="Assets\ArchiveTask.cs" />
+    <Compile Include="Assets\ArchiveTaskChangedEventArgs.cs" />
+    <Compile Include="Assets\ExtractTaskChangedHandler.cs" />
+    <Compile Include="Assets\ExtractTask.cs" />
+    <Compile Include="Assets\ExtractTaskChangedEventArgs.cs" />
+    <Compile Include="Assets\Extract.cs" />
+    <Compile Include="Assets\DirNode.cs" />
+    <Compile Include="Assets\FileNode.cs" />
+    <Compile Include="Assets\FileProgressChangedEventArgs.cs" />
+    <Compile Include="Assets\FileProgressChangedHandler.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

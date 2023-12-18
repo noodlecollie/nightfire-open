@@ -286,8 +286,9 @@ double I_FloatTime(void)
 void Q_getwd(char* out, size_t length)
 {
 #ifdef WIN32
-	_getcwd(out, 256);
-	strcat(out, "\\");
+	_getcwd(out, length);
+	strncat(out, "\\", length);
+	out[length - 1] = '\0';
 #else
 	getcwd(out, length);
 #endif

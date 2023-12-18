@@ -67,6 +67,8 @@ set(TARGETNAME_LIB_MINIZ miniz)
 set(TARGETNAME_LIB_MATHLIB mathlib)
 set(TARGETNAME_LIB_IDENTITY identity)
 set(TARGETNAME_LIB_WHEREAMI whereami)
+set(TARGETNAME_LIB_ARGS argparse)
+set(TARGETNAME_LIB_CPPFS cppfs)
 
 # Only supported on Linux
 set(TARGETNAME_LIB_SAFESTRING safestring_static)
@@ -77,3 +79,4 @@ set(TARGETNAME_EXE_NFBSP nfbsp)
 set(TARGETNAME_EXE_NFVIS nfvis)
 set(TARGETNAME_EXE_NFRAD nfrad)
 set(TARGETNAME_EXE_STUDIOMDL studiomdl)
+set(TARGETNAME_EXE_MDL14_DECOMPILER mdlv14decompiler)

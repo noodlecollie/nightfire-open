@@ -1,0 +1,4 @@
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+option(OPTION_BUILD_TESTS "" OFF)
+
+add_subdirectory(cppfs-f41f06a2cfb83c009e31f88adf58fdaf848d720a EXCLUDE_FROM_ALL)
