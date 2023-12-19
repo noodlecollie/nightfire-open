@@ -25,12 +25,12 @@ static constexpr float PITCH_ADJUST = 5;
 // Need to investigate more about why the grenade view model
 // is broken. Until then, this guard stops the weapon from
 // being accessible in the game.
-#ifdef NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
+// #ifdef NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 LINK_ENTITY_TO_CLASS(weapon_frag_grenade, CWeaponFragGrenade);
 
 // For Nightfire compatibility:
 LINK_ENTITY_TO_CLASS(weapon_fraggrenade, CWeaponFragGrenade);
-#endif  // NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
+// #endif  // NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 
 CWeaponFragGrenade::CWeaponFragGrenade() :
 	CBaseGrenadeLauncher()
