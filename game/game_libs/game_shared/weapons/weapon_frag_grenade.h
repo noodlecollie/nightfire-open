@@ -23,7 +23,14 @@ protected:
 #endif
 
 private:
-	bool m_bGrenadePrimed = false;
+	enum class ThrowState
+	{
+		Idle,
+		Primed,
+		Throwing
+	};
+
+	ThrowState m_ThrowState = ThrowState::Idle;
 };
 
 namespace WeaponAtts
