@@ -47,20 +47,50 @@ void CWeaponFragGrenade::Precache()
 
 void CWeaponFragGrenade::WeaponTick()
 {
-	if ( !(m_pPlayer->pev->button & IN_ATTACK) )
+	switch ( m_ThrowState )
 	{
-		if ( m_bGrenadePrimed )
+		case ThrowState::Primed:
 		{
-			CBaseGrenadeLauncher::PrimaryAttack();
+			// Keep pushing next primary attack into future
+			SetNextPrimaryAttack(1.0f);
+
+			if ( !(m_pPlayer->pev->button & IN_ATTACK) )
+			{
+				pev->fuser1 = UTIL_WeaponTimeBase() + 0.5f;
+				m_ThrowState = ThrowState::Throwing;
+			}
+
+			break;
 		}
 
-		m_bGrenadePrimed = false;
+		case ThrowState::Throwing:
+		{
+			if ( pev->fuser1 > UTIL_WeaponTimeBase() )
+			{
+				// Keep pushing next primary attack into future
+				SetNextPrimaryAttack(1.0f);
+			}
+			else
+			{
+				CBaseGrenadeLauncher::PrimaryAttack();
+				SetNextPrimaryAttack(0.5f);
+				m_ThrowState = ThrowState::Idle;
+			}
+
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
 	}
 }
 
 void CWeaponFragGrenade::PrimaryAttack()
 {
-	m_bGrenadePrimed = true;
+	SendWeaponAnim(FRAGGRENADE_PULL);
+	m_ThrowState = ThrowState::Primed;
 }
 
 #ifndef CLIENT_DLL
