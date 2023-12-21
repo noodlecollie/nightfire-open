@@ -939,11 +939,7 @@ void CGenericWeapon::FindWeaponSlotInfo()
 
 #ifndef CLIENT_DLL
 TYPEDESCRIPTION CGenericWeapon::m_SaveData[] = {
-#if defined(CLIENT_WEAPONS)
 	DEFINE_FIELD(CGenericWeapon, m_flInaccuracy, FIELD_FLOAT),
-#else  // CLIENT_WEAPONS
-	DEFINE_FIELD(CGenericWeapon, m_flInaccuracy, FIELD_TIME)
-#endif  // CLIENT_WEAPONS
 };
 
 IMPLEMENT_SAVERESTORE(CGenericWeapon, CBasePlayerWeapon)
