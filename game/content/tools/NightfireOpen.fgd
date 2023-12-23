@@ -2180,3 +2180,6 @@
 
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_mp9/w_mp9.mdl" }) = weapon_mp9 : "Storm MP9" []
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_mp9/w_ammo_mp9.mdl" }) = ammo_mp9 : "Storm MP9 Ammo" []
+
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frag_grenade/w_frag_grenade.mdl" }) = weapon_frag_grenade : "Frag Grenade" []
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frag_grenade/w_ammo_frag_grenade.mdl" }) = ammo_frag_grenade : "Frag Grenade Ammo" []

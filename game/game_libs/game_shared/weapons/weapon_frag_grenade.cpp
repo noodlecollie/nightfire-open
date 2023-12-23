@@ -4,6 +4,7 @@
 #include "gamerules.h"
 #include "weapon_pref_weights.h"
 #include "weapons/weapon_frag_grenade_atts.h"
+#include "PlatformDefs/decorators.h"
 
 #ifndef CLIENT_DLL
 #include <limits>
@@ -22,15 +23,10 @@ static constexpr float LAUNCH_SPEED = 1000.0f;
 static constexpr float FUSE_TIME = 4.0f;
 static constexpr float PITCH_ADJUST = 5;
 
-// Need to investigate more about why the grenade view model
-// is broken. Until then, this guard stops the weapon from
-// being accessible in the game.
-#ifdef NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 LINK_ENTITY_TO_CLASS(weapon_frag_grenade, CWeaponFragGrenade);
 
 // For Nightfire compatibility:
 LINK_ENTITY_TO_CLASS(weapon_fraggrenade, CWeaponFragGrenade);
-#endif  // NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 
 CWeaponFragGrenade::CWeaponFragGrenade() :
 	CBaseGrenadeLauncher()
@@ -52,32 +48,100 @@ void CWeaponFragGrenade::Precache()
 
 void CWeaponFragGrenade::WeaponTick()
 {
-	if ( !(m_pPlayer->pev->button & IN_ATTACK) )
+	CBaseGrenadeLauncher::WeaponTick();
+
+	switch ( m_ThrowState )
 	{
-		if ( m_bGrenadePrimed )
+		case ThrowState::Primed:
 		{
-			CBaseGrenadeLauncher::PrimaryAttack();
+			if ( m_pPlayer->pev->button & IN_ATTACK )
+			{
+				// Still holding the button
+				break;
+			}
+
+			m_ThrowState = ThrowState::Released;
+			DELIBERATE_FALL_THROUGH
 		}
 
-		m_bGrenadePrimed = false;
+		case ThrowState::Released:
+		{
+			if ( !CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) )
+			{
+				break;
+			}
+
+			CBaseGrenadeLauncher::PrimaryAttack();
+			SetNextPrimaryAttack(1.0f);
+			m_ThrowState = ThrowState::Idle;
+			break;
+		}
+
+		default:
+		{
+			if ( CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) &&
+				 !HasAmmo(GetPrimaryAttackMode(), 1, false) )
+			{
+				RetireWeapon();
+			}
+
+			break;
+		}
 	}
 }
 
 void CWeaponFragGrenade::PrimaryAttack()
 {
-	m_bGrenadePrimed = true;
+	if ( !CGenericWeapon::InvokeWithAttackMode(WeaponAttackType::Primary, GetPrimaryAttackMode()) ||
+		 m_ThrowState != ThrowState::Idle )
+	{
+		return;
+	}
+
+	SendWeaponAnim(FRAGGRENADE_PULL);
+
+	// Set minimum time we have to wait until grenade can be thrown.
+	SetNextPrimaryAttack(1.0f);
+
+	m_ThrowState = ThrowState::Primed;
+}
+
+bool CWeaponFragGrenade::ReadPredictionData(const weapon_data_t* from)
+{
+	if ( !CBaseGrenadeLauncher::ReadPredictionData(from) )
+	{
+		return false;
+	}
+
+	m_ThrowState = static_cast<ThrowState>(pev->iuser1);
+	return true;
+}
+
+bool CWeaponFragGrenade::WritePredictionData(weapon_data_t* to)
+{
+	if ( !CBaseGrenadeLauncher::WritePredictionData(to) )
+	{
+		return false;
+	}
+
+	pev->iuser1 = static_cast<int>(m_ThrowState);
+	return true;
 }
 
 #ifndef CLIENT_DLL
+TYPEDESCRIPTION CWeaponFragGrenade::m_SaveData[] = {
+	DEFINE_FIELD(CWeaponFragGrenade, m_ThrowState, FIELD_INTEGER),
+};
+
+IMPLEMENT_SAVERESTORE(CWeaponFragGrenade, CBaseGrenadeLauncher)
+
 float CWeaponFragGrenade::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
-	// TODO
-	return 0.0f;
+	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 }
 
 void CWeaponFragGrenade::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
 {
-	// TODO
 	fightStyle.SetSecondaryFire(false);
 	fightStyle.SetAimAt(AIM_SPLASH);
 	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 2.0f);
