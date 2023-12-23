@@ -14,6 +14,7 @@
  ****/
 #if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
 
+#include <limits>
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -236,7 +237,7 @@ void CEgon::Attack(void)
 
 				event.Send();
 
-				pev->fuser1 = 1000;
+				pev->fuser1 = std::numeric_limits<float>::max();
 			}
 
 			if ( !HasAmmo() )

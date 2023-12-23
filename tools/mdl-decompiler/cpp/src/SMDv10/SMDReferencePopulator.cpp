@@ -55,7 +55,7 @@ namespace SMDv10
 						vertex.normal = normals.GetElementChecked(vIndex).position;
 						vertex.bone = m_MDLFile->GetBoneIndicesUsedByMeshVertex(mesh, vIndex)[0];
 						vertex.texU = texCoOrds.GetElementChecked(vIndex).u;
-						vertex.texV = texCoOrds.GetElementChecked(vIndex).v;
+						vertex.texV = texCoOrds.GetElementChecked(vIndex).v * -1.0f;
 
 						return vertex;
 					};

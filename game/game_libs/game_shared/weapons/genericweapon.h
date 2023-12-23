@@ -97,6 +97,7 @@ protected:
 	void DelayFiring(float secs, bool allowIfEarlier = false, WeaponAttackType attackType = WeaponAttackType::None);
 	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
 	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode, int decrement);
+	int AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const;
 	bool CanReload() const;
 
 	int GetEventIDForAttackMode(const WeaponAtts::WABaseAttack* attack) const;
@@ -113,6 +114,8 @@ protected:
 		return dynamic_cast<const T*>(m_pSecondaryAttackMode);
 	}
 
+	const WeaponAtts::WABaseAttack* GetPrimaryAttackMode() const;
+	const WeaponAtts::WABaseAttack* GetSecondaryAttackMode() const;
 	void SetPrimaryAttackMode(const WeaponAtts::WABaseAttack* mode);
 	void SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode);
 
