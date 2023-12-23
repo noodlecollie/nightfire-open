@@ -47,41 +47,43 @@ void CWeaponFragGrenade::Precache()
 
 void CWeaponFragGrenade::WeaponTick()
 {
+	CBaseGrenadeLauncher::WeaponTick();
+
 	switch ( m_ThrowState )
 	{
 		case ThrowState::Primed:
 		{
-			// Keep pushing next primary attack into future
-			SetNextPrimaryAttack(1.0f);
-
-			if ( !(m_pPlayer->pev->button & IN_ATTACK) )
+			if ( m_pPlayer->pev->button & IN_ATTACK )
 			{
-				pev->fuser1 = UTIL_WeaponTimeBase() + 0.5f;
-				m_ThrowState = ThrowState::Throwing;
+				// Still holding the button
+				break;
 			}
 
-			break;
+			m_ThrowState = ThrowState::Released;
+			// Deliberate fall-through
 		}
 
-		case ThrowState::Throwing:
+		case ThrowState::Released:
 		{
-			if ( pev->fuser1 > UTIL_WeaponTimeBase() )
+			if ( !CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) )
 			{
-				// Keep pushing next primary attack into future
-				SetNextPrimaryAttack(1.0f);
-			}
-			else
-			{
-				CBaseGrenadeLauncher::PrimaryAttack();
-				SetNextPrimaryAttack(0.5f);
-				m_ThrowState = ThrowState::Idle;
+				break;
 			}
 
+			CBaseGrenadeLauncher::PrimaryAttack();
+			SetNextPrimaryAttack(1.0f);
+			m_ThrowState = ThrowState::Idle;
 			break;
 		}
 
 		default:
 		{
+			if ( CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) &&
+				 !HasAmmo(GetPrimaryAttackMode(), 1, false) )
+			{
+				RetireWeapon();
+			}
+
 			break;
 		}
 	}
@@ -89,11 +91,49 @@ void CWeaponFragGrenade::WeaponTick()
 
 void CWeaponFragGrenade::PrimaryAttack()
 {
+	if ( !CGenericWeapon::InvokeWithAttackMode(WeaponAttackType::Primary, GetPrimaryAttackMode()) ||
+		 m_ThrowState != ThrowState::Idle )
+	{
+		return;
+	}
+
 	SendWeaponAnim(FRAGGRENADE_PULL);
+
+	// Set minimum time we have to wait until grenade can be thrown.
+	SetNextPrimaryAttack(1.0f);
+
 	m_ThrowState = ThrowState::Primed;
 }
 
+bool CWeaponFragGrenade::ReadPredictionData(const weapon_data_t* from)
+{
+	if ( !CBaseGrenadeLauncher::ReadPredictionData(from) )
+	{
+		return false;
+	}
+
+	m_ThrowState = static_cast<ThrowState>(pev->iuser1);
+	return true;
+}
+
+bool CWeaponFragGrenade::WritePredictionData(weapon_data_t* to)
+{
+	if ( !CBaseGrenadeLauncher::WritePredictionData(to) )
+	{
+		return false;
+	}
+
+	pev->iuser1 = static_cast<int>(m_ThrowState);
+	return true;
+}
+
 #ifndef CLIENT_DLL
+TYPEDESCRIPTION CWeaponFragGrenade::m_SaveData[] = {
+	DEFINE_FIELD(CWeaponFragGrenade, m_ThrowState, FIELD_INTEGER),
+};
+
+IMPLEMENT_SAVERESTORE(CWeaponFragGrenade, CBaseGrenadeLauncher)
+
 float CWeaponFragGrenade::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	// TODO
