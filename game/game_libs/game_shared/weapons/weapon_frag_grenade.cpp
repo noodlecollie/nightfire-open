@@ -60,7 +60,7 @@ void CWeaponFragGrenade::WeaponTick()
 			}
 
 			m_ThrowState = ThrowState::Released;
-			// Deliberate fall-through
+			// fall through
 		}
 
 		case ThrowState::Released:
