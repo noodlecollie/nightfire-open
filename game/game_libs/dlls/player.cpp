@@ -20,6 +20,7 @@
 
 */
 
+#include <limits>
 #include "extdll.h"
 #include "util.h"
 
@@ -2668,12 +2669,12 @@ pt_end:
 					gun->m_flLastPrimaryAttack = Q_max(gun->m_flLastPrimaryAttack - gpGlobals->frametime, -10.0f);
 					gun->m_flLastSecondaryAttack = Q_max(gun->m_flLastSecondaryAttack - gpGlobals->frametime, -10.0f);
 
-					if ( gun->m_flTimeWeaponIdle != 1000 )
+					if ( gun->m_flTimeWeaponIdle != std::numeric_limits<float>::max() )
 					{
 						gun->m_flTimeWeaponIdle = Q_max(gun->m_flTimeWeaponIdle - gpGlobals->frametime, -0.001f);
 					}
 
-					if ( gun->pev->fuser1 != 1000 )
+					if ( gun->pev->fuser1 != std::numeric_limits<float>::max() )
 					{
 						gun->pev->fuser1 = Q_max(gun->pev->fuser1 - gpGlobals->frametime, -0.001f);
 					}

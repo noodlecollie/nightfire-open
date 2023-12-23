@@ -820,6 +820,53 @@ bool CGenericWeapon::DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode, i
 	}
 }
 
+int CGenericWeapon::AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const
+{
+	const WeaponAtts::WAAmmoBasedAttack* ammoAttack = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(attackMode);
+
+	if ( !ammoAttack )
+	{
+		// Treat as an infinite pool.
+		return -1;
+	}
+
+	switch ( ammoAttack->UsesAmmoPool )
+	{
+		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary:
+		{
+			if ( m_iClip < 0 )
+			{
+				// Weapon doesn't use clips, so decrement ammo pool directly.
+
+				if ( m_iPrimaryAmmoType < 0 )
+				{
+					return -1;
+				}
+
+				return m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType];
+			}
+
+			return m_iClip;
+		}
+
+		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary:
+		{
+			if ( m_iSecondaryAmmoType < 0 )
+			{
+				return -1;
+			}
+
+			return m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType];
+		}
+
+		default:
+		{
+			// Treat as an infinite pool.
+			return -1;
+		}
+	}
+}
+
 bool CGenericWeapon::CanReload() const
 {
 	const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
@@ -847,6 +894,16 @@ int CGenericWeapon::GetEventIDForAttackMode(const WeaponAtts::WABaseAttack* atta
 	return (attack && attack->Signature()->Index < static_cast<uint32_t>(m_AttackModeEvents.Count()))
 		? m_AttackModeEvents[attack->Signature()->Index]
 		: -1;
+}
+
+const WeaponAtts::WABaseAttack* CGenericWeapon::GetPrimaryAttackMode() const
+{
+	return m_pPrimaryAttackMode;
+}
+
+const WeaponAtts::WABaseAttack* CGenericWeapon::GetSecondaryAttackMode() const
+{
+	return m_pSecondaryAttackMode;
 }
 
 void CGenericWeapon::SetPrimaryAttackMode(const WeaponAtts::WABaseAttack* mode)

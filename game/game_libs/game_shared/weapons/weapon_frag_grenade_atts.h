@@ -75,6 +75,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->MuzzleFlashBrightness = BRIGHT_GUN_FLASH;
 		priAttack->ViewPunchY = -4.0f;
 		priAttack->PlayDryFireSoundOnEmpty = false;
+		priAttack->projectileDelay = 0.5f;
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);
