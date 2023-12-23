@@ -136,13 +136,11 @@ IMPLEMENT_SAVERESTORE(CWeaponFragGrenade, CBaseGrenadeLauncher)
 
 float CWeaponFragGrenade::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
-	// TODO
-	return 0.0f;
+	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
 }
 
 void CWeaponFragGrenade::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
 {
-	// TODO
 	fightStyle.SetSecondaryFire(false);
 	fightStyle.SetAimAt(AIM_SPLASH);
 	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 2.0f);
