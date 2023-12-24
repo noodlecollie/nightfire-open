@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/typedefs.h"
 
 typedef struct dlight_s

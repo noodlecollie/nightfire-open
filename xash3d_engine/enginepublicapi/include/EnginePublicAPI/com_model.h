@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/engine_limits.h"
 #include "EnginePublicAPI/bspfile.h"
 #include "EnginePublicAPI/typedefs.h"

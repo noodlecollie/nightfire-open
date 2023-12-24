@@ -22,9 +22,9 @@ GNU General Public License for more details.
 #include <stddef.h>
 #include <stdio.h>
 #include "Filesystem/libexport.h"
-#include "PlatformDefs/decorators.h"
-#include "PlatformDefs/typedefs.h"
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/Decorators.h"
+#include "BuildPlatform/Typedefs.h"
+#include "BuildPlatform/PlatformID.h"
 #include "EnginePublicAPI/engine_limits.h"
 #include "EngineInternalAPI/mempool.h"
 

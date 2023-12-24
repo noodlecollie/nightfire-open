@@ -1,0 +1,4 @@
+#pragma once
+
+#define VCS_TAG_ID "@VCS_TAG_ID@"
+#define VCS_COMMIT_ID "@VCS_COMMIT_ID@"

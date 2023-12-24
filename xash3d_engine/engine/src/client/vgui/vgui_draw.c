@@ -22,8 +22,8 @@ GNU General Public License for more details.
 #include "client/ref_common.h"
 #include "client/input.h"
 #include "platform/platform.h"
-#include "PlatformDefs/libnames.h"
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/LibNames.h"
+#include "BuildPlatform/PlatformID.h"
 #include "common/fscallback.h"
 
 #if XASH_WIN32()

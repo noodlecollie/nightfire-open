@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "MathLib/vec3.h"
 
 // ref_viewpass_t->flags

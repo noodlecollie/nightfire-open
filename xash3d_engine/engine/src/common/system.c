@@ -38,7 +38,7 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/menu_int.h"  // _UPDATE_PAGE macro
 
 #include "common/library.h"
-#include "WhereAmI/whereami.h"
+#include "PlatformLib/System.h"
 
 /*
 ================
@@ -616,9 +616,9 @@ qboolean Sys_NewInstance(const char* gamedir)
 	newargs[i++] = PlatformLib_StrDup("-changegame");
 	newargs[i] = NULL;
 
-	exelen = wai_getExecutablePath(NULL, 0, NULL);
+	exelen = PlatformLib_GetExecutablePath(NULL, 0, NULL);
 	exe = malloc(exelen + 1);
-	wai_getExecutablePath(exe, (int)exelen, NULL);
+	PlatformLib_GetExecutablePath(exe, (int)exelen, NULL);
 	exe[exelen] = 0;
 
 	Host_Shutdown();

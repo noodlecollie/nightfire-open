@@ -15,8 +15,8 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
-#include "PlatformDefs/utils.h"
+#include "BuildPlatform/Typedefs.h"
+#include "BuildPlatform/Utils.h"
 #include "EnginePublicAPI/trace.h"
 #include "EnginePublicAPI/edict.h"
 #include "EnginePublicAPI/link.h"

@@ -47,7 +47,7 @@ CBaseEntity
 #include "MathLib/vec3.h"
 #include "saverestore.h"
 #include "schedule.h"
-#include "PlatformDefs/utils.h"
+#include "BuildPlatform/Utils.h"
 
 #ifndef MONSTEREVENT_H
 #include "monsterevent.h"

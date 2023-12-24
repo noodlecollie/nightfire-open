@@ -1,9 +1,9 @@
 #pragma once
 
 #include <assert.h>
-#include "PlatformDefs/typedefs.h"
-#include "PlatformDefs/utils.h"
-#include "PlatformDefs/static_assert.h"
+#include "BuildPlatform/Typedefs.h"
+#include "BuildPlatform/Utils.h"
+#include "BuildPlatform/StaticAssert.h"
 #include "MathLib/mathdefs.h"
 
 #ifdef __cplusplus

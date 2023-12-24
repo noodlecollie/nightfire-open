@@ -16,7 +16,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/studio_event.h"
 #include "MathLib/vec3.h"
 #include "MathLib/vec4.h"

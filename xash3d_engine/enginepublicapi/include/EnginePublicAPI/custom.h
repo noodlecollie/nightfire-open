@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/const.h"
 
 #define RES_FATALIFMISSING (1 << 0)  // Disconnect if we can't get this file.

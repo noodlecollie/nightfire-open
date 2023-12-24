@@ -4,7 +4,7 @@
 #include "gamerules.h"
 #include "weapon_pref_weights.h"
 #include "weapons/weapon_frag_grenade_atts.h"
-#include "PlatformDefs/decorators.h"
+#include "BuildPlatform/Decorators.h"
 
 #ifndef CLIENT_DLL
 #include <limits>

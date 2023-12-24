@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "MathLib/quaternion.h"
 #include "MathLib/vec3.h"
 
