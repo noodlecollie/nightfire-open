@@ -9,9 +9,10 @@
  ****/
 
 #include <cstdio>
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "MathLib/utils.h"
 #include "conprint.h"
+#include "cmdlibnew.h"
 
 #define NO_THREAD_NAMES
 #include "threads.h"
@@ -66,7 +67,10 @@ void EndPacifier(double total)
 	Msg(" (%.2f secs)\n", total);
 }
 
-#if XASH_WIN32
+#if XASH_WIN32()
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 #define THREAD_STACK_SIZE (4096 * 1024)  // 4 Mb
 
@@ -264,7 +268,7 @@ void RunThreadsOnIncremental(int workcnt, bool showpacifier, pfnRunThreads func)
 	RunThreadsOn(workcnt, showpacifier, func);
 }
 
-#elif XASH_POSIX
+#elif XASH_POSIX()
 #define Error COM_FatalError
 
 static pfnThreadWork g_workfunction;
