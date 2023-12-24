@@ -2,6 +2,7 @@
 #include <process.h>
 #include <direct.h>
 #include <vector>
+#include "whereami/whereami.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -43,6 +44,16 @@ const char* PlatformLib_GetEnv(const char* envVarName)
 	result = getenv_s(&requiredSize, cachedValue.data(), cachedValue.size(), envVarName);
 
 	return (result == 0 && requiredSize > 0) ? cachedValue.data() : nullptr;
+}
+
+int PlatformLib_GetExecutablePath(char* out, int capacity, int* dirname_length)
+{
+	return wai_getExecutablePath(out, capacity, dirname_length);
+}
+
+int PlatformLib_GetModulePath(char* out, int capacity, int* dirname_length)
+{
+	return wai_getModulePath(out, capacity, dirname_length);
 }
 
 #ifdef __cplusplus

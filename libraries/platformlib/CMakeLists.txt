@@ -27,6 +27,8 @@ add_library(${TARGETNAME_LIB_PLATFORMLIB} STATIC
 	include/PlatformLib/System.h
 	include/PlatformLib/Time.h
 	${SOURCES}
+	src/whereami/whereami.h
+	src/whereami/whereami.c
 )
 
 target_include_directories(${TARGETNAME_LIB_PLATFORMLIB}
