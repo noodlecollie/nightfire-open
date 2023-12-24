@@ -15,10 +15,11 @@ GNU General Public License for more details.
 
 #include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/Time.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "common/common.h"
 #include "server/server.h"
 #include "common/fscallback.h"
+#include "common/buildnum.h"
 
 void Log_Open(void)
 {

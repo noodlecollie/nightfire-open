@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlatformDefs/utils.h"
+#include "BuildPlatform/Utils.h"
 
 // These codes are Xash-specific - see sys_con.c
 #define S_COL_BLACK 0

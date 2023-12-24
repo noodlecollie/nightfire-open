@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include <errno.h>
 #include <string.h>
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>
@@ -35,7 +35,7 @@ GNU General Public License for more details.
 #include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"
 #include "MathLib/utils.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "common/base_cmd.h"
@@ -49,6 +49,7 @@ GNU General Public License for more details.
 #include "common/tests.h"
 #include "common/fscallback.h"
 #include "common/engine_builddefs.h"
+#include "common/buildnum.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms
@@ -1305,9 +1306,9 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		"detailed info about this build",
 		"%i " XASH_VERSION " %s %s %s",
 		Q_buildnum(),
-		Q_buildos(),
-		Q_buildarch(),
-		Q_buildcommit());
+		BuildPlatform_PlatformString(),
+		BuildPlatform_ArchitectureString(),
+		BuildPlatform_CommitString());
 
 	Mod_Init();
 	NET_Init();

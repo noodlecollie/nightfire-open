@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 //
 // Misc utility code

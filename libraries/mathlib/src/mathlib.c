@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include "MathLib/quaternion.h"
 #include "MathLib/plane.h"
 #include "MathLib/utils.h"
-#include "PlatformDefs/utils.h"
+#include "BuildPlatform/Utils.h"
 
 const int boxpnt[6][4] = {
 	{0, 4, 6, 2},  // +X

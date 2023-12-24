@@ -5,7 +5,7 @@
 
 // in case you want to #include "whereami.c" in a larger compilation unit
 #if !defined(WHEREAMI_H)
-#include "WhereAmI/whereami.h"
+#include "whereami/whereami.h"
 #endif
 
 #include "PlatformLib/File.h"

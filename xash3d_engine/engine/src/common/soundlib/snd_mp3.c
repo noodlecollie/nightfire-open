@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/static_assert.h"
+#include "BuildPlatform/StaticAssert.h"
 #include "CRTLib/bitdefs.h"
 #include "libmpg/libmpg.h"
 #include "common/soundlib/soundlib.h"

@@ -16,9 +16,9 @@
 #pragma once
 
 #include <stdint.h>
-#include "PlatformDefs/platformid.h"
-#include "PlatformDefs/static_assert.h"
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/PlatformID.h"
+#include "BuildPlatform/StaticAssert.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/com_model.h"
 
 /*

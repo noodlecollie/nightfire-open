@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include <stdint.h>
 #include <limits.h>
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 #if XASH_POSIX()
 #include <unistd.h>

@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 
 #define FFADE_IN 0x0000  // Just here so we don't pass 0 into the function
 #define FFADE_OUT 0x0001  // Fade out (not in)

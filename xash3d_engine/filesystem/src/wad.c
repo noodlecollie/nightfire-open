@@ -22,7 +22,7 @@ GNU General Public License for more details.
 #include <errno.h>
 #include <stddef.h>
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 #include "PlatformLib/String.h"
 
 #if XASH_POSIX()

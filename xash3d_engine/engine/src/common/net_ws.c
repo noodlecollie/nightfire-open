@@ -15,17 +15,18 @@ GNU General Public License for more details.
 
 #include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 #include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/Net.h"
 #include "PlatformLib/String.h"
 #include "MathLib/mathlib.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "common/common.h"
 #include "client/client.h"  // ConnectionProgress
 #include "common/netchan.h"
 #include "common/ipv6text.h"
 #include "common/fscallback.h"
+#include "common/buildnum.h"
 
 #if XASH_WIN32()
 #include "platform/win32/net.h"
@@ -3146,10 +3147,10 @@ void HTTP_Run(void)
 					"%s/%s (%s-%s; build %d; %s)",
 					XASH_ENGINE_NAME,
 					XASH_VERSION,
-					Q_buildos(),
-					Q_buildarch(),
+					BuildPlatform_PlatformString(),
+					BuildPlatform_ArchitectureString(),
 					Q_buildnum(),
-					Q_buildcommit());
+					BuildPlatform_CommitString());
 			}
 			else
 			{

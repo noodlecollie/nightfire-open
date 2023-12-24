@@ -17,7 +17,7 @@ GNU General Public License for more details.
 #include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "EnginePublicAPI/engine_version.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "CRCLib/crclib.h"
 #include "common/common.h"
 #include "client/client.h"
@@ -34,6 +34,7 @@ GNU General Public License for more details.
 #include "common/bsp/generic/viscompress.h"
 #include "client/net_functions.h"
 #include "common/fscallback.h"
+#include "common/buildnum.h"
 
 #if defined XASH_SDL
 #include <SDL.h>
@@ -1808,8 +1809,8 @@ void CL_SendConnectPacket(void)
 		Info_SetValueForKeyf(protinfo, "d", sizeof(protinfo), "%d", input_devices);
 		Info_SetValueForKey(protinfo, "v", XASH_VERSION, sizeof(protinfo));
 		Info_SetValueForKeyf(protinfo, "b", sizeof(protinfo), "%d", Q_buildnum());
-		Info_SetValueForKey(protinfo, "o", Q_buildos(), sizeof(protinfo));
-		Info_SetValueForKey(protinfo, "a", Q_buildarch(), sizeof(protinfo));
+		Info_SetValueForKey(protinfo, "o", BuildPlatform_PlatformString(), sizeof(protinfo));
+		Info_SetValueForKey(protinfo, "a", BuildPlatform_ArchitectureString(), sizeof(protinfo));
 	}
 
 	if ( cls.legacymode )

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "EnginePublicAPI/engine_version.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "CRCLib/crclib.h"
 #include "common/common.h"
 #include "EnginePublicAPI/const.h"
@@ -26,6 +26,7 @@ GNU General Public License for more details.
 #include "common/net_encode.h"
 #include "common/net_api.h"
 #include "common/fscallback.h"
+#include "common/buildnum.h"
 
 typedef void (*RedirectFlushFunc)(netadr_t adr, rdtype_t target, char* buffer);
 
@@ -2219,9 +2220,9 @@ static qboolean SV_SendBuildInfo_f(sv_client_t* cl)
 		cl,
 		"Server running " XASH_ENGINE_NAME " " XASH_VERSION " (build %i-%s, %s-%s)\n",
 		Q_buildnum(),
-		Q_buildcommit(),
-		Q_buildos(),
-		Q_buildarch());
+		BuildPlatform_CommitString(),
+		BuildPlatform_PlatformString(),
+		BuildPlatform_ArchitectureString());
 	return true;
 }
 

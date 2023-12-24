@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 
 typedef struct dllfunc_s
 {

@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/String.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "common/common.h"
 #include "client/client.h"
 #include "EnginePublicAPI/keydefs.h"
@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/wadfile.h"
 #include "client/input.h"
 #include "common/fscallback.h"
+#include "common/buildnum.h"
 
 convar_t* con_notifytime;
 convar_t* scr_conspeed;
@@ -2002,8 +2003,8 @@ void Con_DrawSolidConsole(int lines)
 		MAX_STRING,
 		XASH_ENGINE_NAME " %i/" XASH_VERSION " (%s-%s build %i)",
 		PROTOCOL_VERSION,
-		Q_buildos(),
-		Q_buildarch(),
+		BuildPlatform_PlatformString(),
+		BuildPlatform_ArchitectureString(),
 		Q_buildnum());
 
 	Con_DrawStringLen(curbuild, &stringLen, &charH);
@@ -2169,8 +2170,8 @@ void Con_DrawVersion(void)
 			MAX_STRING,
 			XASH_ENGINE_NAME " v%i/" XASH_VERSION " (%s-%s build %i)",
 			PROTOCOL_VERSION,
-			Q_buildos(),
-			Q_buildarch(),
+			BuildPlatform_PlatformString(),
+			BuildPlatform_ArchitectureString(),
 			Q_buildnum());
 	else
 		Q_snprintf(
@@ -2178,8 +2179,8 @@ void Con_DrawVersion(void)
 			MAX_STRING,
 			"v%i/" XASH_VERSION " (%s-%s build %i)",
 			PROTOCOL_VERSION,
-			Q_buildos(),
-			Q_buildarch(),
+			BuildPlatform_PlatformString(),
+			BuildPlatform_ArchitectureString(),
 			Q_buildnum());
 
 	Con_DrawStringLen(curbuild, &stringLen, &charH);

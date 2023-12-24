@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 #pragma once
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 // This header defines the enumeration values that can be passed to Q_build*
 // functions and get current value through XASH_PLATFORM, XASH_ARCHITECTURE and

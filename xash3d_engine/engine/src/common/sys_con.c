@@ -28,8 +28,9 @@ GNU General Public License for more details.
 #include "PlatformLib/File.h"
 #include "PlatformLib/String.h"
 #include "PlatformLib/Time.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "common/engine_builddefs.h"
+#include "common/buildnum.h"
 
 #if !XASH_WIN32()
 #define XASH_COLORIZE_CONSOLE true

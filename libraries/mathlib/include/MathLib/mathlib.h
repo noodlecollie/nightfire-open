@@ -22,8 +22,8 @@ GNU General Public License for more details.
 #include <tgmath.h>
 #endif
 
-#include "PlatformDefs/platformid.h"
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/PlatformID.h"
+#include "BuildPlatform/Typedefs.h"
 #include "MathLib/mathdefs.h"
 
 #ifdef __cplusplus
