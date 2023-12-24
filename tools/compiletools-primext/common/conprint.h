@@ -14,23 +14,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#ifndef CONPRINT_H
-#define CONPRINT_H
+#pragma once
 
-#define DEFAULT_DEVELOPER		D_ERROR
+#include "loglevel.h"
 
-void Msg(const char *pMsg, ...);
-void MsgDev(int level, const char *pMsg, ...);
-void MsgAnim(int level, const char *pMsg, ...);
+#define DEFAULT_DEVELOPER D_ERROR
+
+void Msg(const char* pMsg, ...);
+void MsgDev(int level, const char* pMsg, ...);
+void MsgAnim(int level, const char* pMsg, ...);
 void SetDeveloperLevel(int level);
 int GetDeveloperLevel(void);
-void Sys_InitLog(const char *logname);
-void Sys_InitLogAppend(const char *logname);
+void Sys_InitLog(const char* logname);
+void Sys_InitLogAppend(const char* logname);
 void Sys_CloseLog(void);
-void Sys_PrintLog(const char *pMsg);
+void Sys_PrintLog(const char* pMsg);
 void Sys_IgnoreLog(bool ignore);
-void Sys_Print(const char *pMsg);
+void Sys_Print(const char* pMsg);
 void Sys_Sleep(unsigned int msec);
 void Sys_WaitForKeyInput();
-
-#endif // CONPRINT_H

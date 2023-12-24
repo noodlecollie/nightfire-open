@@ -1,6 +1,10 @@
+/////////////////////////////////////////////
+// NFTODO: REMOVE THIS AND STRINGLIB.CPP
+/////////////////////////////////////////////
+
 //=======================================================================
 //			Copyright (C) XashXT Group 2011
-//		         stringlib.h - safety string routines 
+//		         stringlib.h - safety string routines
 //=======================================================================
 #ifndef STRINGLIB_H
 #define STRINGLIB_H
