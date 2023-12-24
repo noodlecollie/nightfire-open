@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "PlatformLib/Time.h"
 #include "BuildPlatform/Arch.h"
 #include "common/common.h"
+#include "common/buildnum.h"
 
 #if defined XASH_SDL
 #include <SDL.h>
@@ -457,9 +458,9 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 		sizeof(message),
 		"Ver: " XASH_ENGINE_NAME " " XASH_VERSION " (build %i-%s, %s-%s)\n",
 		Q_buildnum(),
-		Q_buildcommit(),
-		Q_buildos(),
-		Q_buildarch());
+		BuildPlatform_CommitString(),
+		BuildPlatform_PlatformString(),
+		BuildPlatform_ArchitectureString());
 
 	len += Q_snprintf(
 		message + len,
