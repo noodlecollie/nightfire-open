@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include <time.h>
 #include <stdarg.h>
 #include "conprint.h"
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 #include "CRTLib/crtlib.h"
 #include "vastring.h"
 #include "MathLib/mathdefs.h"

@@ -67,7 +67,7 @@ set(TARGETNAME_LIB_MINIZ miniz)
 set(TARGETNAME_LIB_MATHLIB mathlib)
 set(TARGETNAME_LIB_ARGS argparse)
 set(TARGETNAME_LIB_CPPFS cppfs)
-set(TARGETNAME_LIB_COMPILETOOLS libcompiletools)
+set(TARGETNAME_LIB_COMPILETOOLS compiletoolslib)
 
 # Only supported on Linux
 set(TARGETNAME_LIB_SAFESTRING safestring_static)
