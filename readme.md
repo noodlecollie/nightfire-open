@@ -1,6 +1,8 @@
 Nightfire Open
 ==============
 
+![DM Power](/resources/img/dm_power.png "DM Power")
+
 ![Tests](https://github.com/noodlecollie/nightfire-open/actions/workflows/CI-Game.yaml/badge.svg)
 ![Releases](https://github.com/noodlecollie/nightfire-open/actions/workflows/Release.yaml/badge.svg)
 
@@ -30,7 +32,10 @@ For a basic debug build of the game client, follow these steps:
 
 ``` bash
 # Clone the repo to your hard drive and enter the directory.
-git clone https://github.com/noodlecollie/nightfire-open.git && cd nightfire-open
+# Note that without passing --recursive, vcpkg will not function
+# properly on Windows. To fix this for an existing clone,
+# run git submodule update --init --recursive
+git clone --recursive https://github.com/noodlecollie/nightfire-open.git && cd nightfire-open
 
 # Configure and run a build with CMake.
 cmake -DCMAKE_INSTALL_PREFIX:STRING=install -S . -B build
