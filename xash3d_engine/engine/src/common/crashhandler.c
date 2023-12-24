@@ -19,7 +19,7 @@ GNU General Public License for more details.
 
 #include "EnginePublicAPI/engine_version.h"
 #include "PlatformLib/Time.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "common/common.h"
 
 #if defined XASH_SDL
@@ -245,7 +245,7 @@ static void Sys_GetMinidumpFileName(const char* processName, char* mdmpFileName,
 		bufferSize,
 		"%s_%s_crash_%d%.2d%.2d_%.2d%.2d%.2d.mdmp",
 		processName,
-		Q_buildcommit(),
+		BuildPlatform_CommitString(),
 		currentLocalTime->tm_year + 1900,
 		currentLocalTime->tm_mon + 1,
 		currentLocalTime->tm_mday,

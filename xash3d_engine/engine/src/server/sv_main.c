@@ -14,13 +14,14 @@ GNU General Public License for more details.
 */
 
 #include "EnginePublicAPI/engine_version.h"
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "CRTLib/bitdefs.h"
 #include "common/common.h"
 #include "server/server.h"
 #include "common/net_encode.h"
 #include "platform/platform.h"
 #include "common/fscallback.h"
+#include "common/buildnum.h"
 
 // server cvars
 CVAR_DEFINE_AUTO(
@@ -1076,9 +1077,9 @@ void SV_Init(void)
 		versionString,
 		sizeof(versionString),
 		XASH_ENGINE_NAME ": " XASH_VERSION "-%s(%s-%s),%i,%i",
-		Q_buildcommit(),
-		Q_buildos(),
-		Q_buildarch(),
+		BuildPlatform_CommitString(),
+		BuildPlatform_PlatformString(),
+		BuildPlatform_ArchitectureString(),
 		PROTOCOL_VERSION,
 		Q_buildnum());
 

@@ -18,8 +18,8 @@ GNU General Public License for more details.
 #include "Filesystem/filesystem.h"
 #include "server/server.h"
 #include <ctype.h>
-#include "Identity/arch.h"
-#include "PlatformDefs/libnames.h"
+#include "BuildPlatform/Arch.h"
+#include "BuildPlatform/LibNames.h"
 #include "common/fscallback.h"
 
 static char s_szLastError[1024] = "";
@@ -140,9 +140,9 @@ static void COM_GenerateCommonLibraryName(const char* name, const char* ext, cha
 #if ( XASH_WIN32() || XASH_LINUX() ) && XASH_X86()
 	Q_snprintf(out, size, "%s.%s", name, ext);
 #elif (XASH_WIN32() || XASH_LINUX())
-	Q_snprintf(out, size, "%s_%s.%s", name, Q_buildarch(), ext);
+	Q_snprintf(out, size, "%s_%s.%s", name, BuildPlatform_ArchitectureString(), ext);
 #else
-	Q_snprintf(out, size, "%s_%s_%s.%s", name, Q_buildos(), Q_buildarch(), ext);
+	Q_snprintf(out, size, "%s_%s_%s.%s", name, BuildPlatform_PlatformString(), BuildPlatform_ArchitectureString(), ext);
 #endif
 }
 

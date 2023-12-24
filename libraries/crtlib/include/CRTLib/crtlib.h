@@ -17,9 +17,9 @@ GNU General Public License for more details.
 
 #include <string.h>
 #include <stdarg.h>
-#include "PlatformDefs/platformid.h"
-#include "PlatformDefs/decorators.h"
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/PlatformID.h"
+#include "BuildPlatform/Decorators.h"
+#include "BuildPlatform/Typedefs.h"
 
 #ifdef __cplusplus
 extern "C"

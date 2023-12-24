@@ -1,7 +1,7 @@
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
-#include "PlatformDefs/decorators.h"
+#include "BuildPlatform/Typedefs.h"
+#include "BuildPlatform/Decorators.h"
 #include "MathLib/vec3.h"
 
 #ifdef __cplusplus

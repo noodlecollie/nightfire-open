@@ -36,7 +36,7 @@ XASH SPECIFIC			- sort of hack that works only in Xash3D not in GoldSrc
 ===================================================================================================================================
 */
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 #if XASH_WIN32()
 #define HSPRITE WINAPI_HSPRITE

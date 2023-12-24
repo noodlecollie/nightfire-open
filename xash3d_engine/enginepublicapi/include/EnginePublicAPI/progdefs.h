@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/typedefs.h"
 #include "MathLib/vec3.h"
 

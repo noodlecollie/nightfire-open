@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/pm_info.h"
 #include "EnginePublicAPI/pmtrace.h"
 #include "EnginePublicAPI/com_model.h"

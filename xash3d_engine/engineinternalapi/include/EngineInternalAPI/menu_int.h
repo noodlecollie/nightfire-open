@@ -16,8 +16,8 @@ GNU General Public License for more details.
 #pragma once
 
 #include <stddef.h>
-#include "PlatformDefs/decorators.h"
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Decorators.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EngineInternalAPI/gameinfo.h"
 #include "EnginePublicAPI/netadr.h"
 

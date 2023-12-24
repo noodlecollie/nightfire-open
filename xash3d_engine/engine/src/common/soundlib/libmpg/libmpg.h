@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include <stddef.h>
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 
 #ifdef __cplusplus
 extern "C"

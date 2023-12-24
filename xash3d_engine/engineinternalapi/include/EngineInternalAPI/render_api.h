@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/typedefs.h"
 #include "EngineInternalAPI/lightstyle.h"
 #include "EnginePublicAPI/dlight.h"

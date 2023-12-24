@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 
 // movevars_t                  // Physics variables.
 typedef struct movevars_s movevars_t;

@@ -57,6 +57,8 @@ set(ENGINE_SOURCES
 	src/common/backends.h
 	src/common/base_cmd.h
 	src/common/base_cmd.c
+	src/common/buildnum.h
+	src/common/buildnum.c
 	src/common/cfgscript.c
 	src/common/cmd.c
 	src/common/common.h
@@ -274,7 +276,6 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE}
 	${TARGETNAME_LIB_MATHLIB}
 	${TARGETNAME_LIB_CRTLIB}
 	${TARGETNAME_LIB_PLATFORMLIB}
-	${TARGETNAME_LIB_IDENTITY}
 	${TARGETNAME_LIB_WHEREAMI}
 	${TARGETNAME_LIB_ENGINEPUBLICAPI}
 	${TARGETNAME_LIB_ENGINEINTERNALAPI}

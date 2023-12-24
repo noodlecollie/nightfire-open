@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "common/mod_local.h"
 #include "MathLib/vec3.h"
 #include "common/world.h"
-#include "PlatformDefs/utils.h"
+#include "BuildPlatform/Utils.h"
 
 #define MAX_CLIPNODE_DEPTH 256  // should never exceed
 
