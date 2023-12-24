@@ -1,3 +1,4 @@
+add_subdirectory(buildplatform)
 add_subdirectory(platformlib)
 add_subdirectory(thirdparty)
 add_subdirectory(platformdefs)
