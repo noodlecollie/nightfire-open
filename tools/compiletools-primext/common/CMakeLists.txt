@@ -5,10 +5,13 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	conprint.cpp
 	crashhandler.h
 	crashhandler.cpp
+	loglevel.h
 	threads.h
 	threads.cpp
 	vastring.h
 	vastring.cpp
+	zone.h
+	zone.cpp
 )
 
 target_link_libraries(${TARGETNAME_LIB_COMPILETOOLS} PUBLIC
