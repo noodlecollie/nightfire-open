@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "PlatformDefs/platformid.h"
 #include "buildenums.h"
+#include "Identity/vcs.h"
 
 static const char* date = __DATE__;
 static const char* mon[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -253,22 +254,7 @@ const char* Q_buildarch(void)
 	);
 }
 
-/*
-=============
-Q_buildcommit
-
-Returns a short hash of current commit in VCS as string.
-XASH_BUILD_COMMIT must be passed in quotes
-
-if XASH_BUILD_COMMIT is not defined,
-Q_buildcommit will identify this build as "notset"
-=============
-*/
 const char* Q_buildcommit(void)
 {
-#ifdef XASH_BUILD_COMMIT
-	return XASH_BUILD_COMMIT;
-#else
-	return "notset";
-#endif
+	return VCS_COMMIT_ID;
 }
