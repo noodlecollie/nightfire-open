@@ -1,5 +1,5 @@
 #include "EngineInternalAPI/ref_api.h"
-#include "PlatformDefs/decorators.h"
+#include "BuildPlatform/Decorators.h"
 
 static ref_api_t g_ImportedEngineFunctions;
 static ref_globals_t* g_ImportedEngineGlobals;

@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "EnginePublicAPI/entity_state.h"
 #include "EnginePublicAPI/event_args.h"
 #include "EnginePublicAPI/const.h"

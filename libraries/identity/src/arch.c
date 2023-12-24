@@ -14,10 +14,10 @@ GNU General Public License for more details.
 */
 
 #include <assert.h>
-#include "Identity/arch.h"
+#include "BuildPlatform/Arch.h"
 #include "CRTLib/crtlib.h"
 #include "CRTLib/bitdefs.h"
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 #include "buildenums.h"
 #include "Identity/vcs.h"
 

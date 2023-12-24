@@ -21,7 +21,7 @@ GNU General Public License for more details.
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 #if XASH_POSIX()
 #include <unistd.h>

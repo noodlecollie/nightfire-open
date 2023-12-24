@@ -19,7 +19,7 @@
 #pragma once
 
 #include <fstream>
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 typedef short int NAV_ARRAY_TYPE;
 constexpr int NAV_GRIDBOX_SIZE = 32;

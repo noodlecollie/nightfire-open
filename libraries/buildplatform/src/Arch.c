@@ -78,7 +78,7 @@ const char* BuildPlatform_ArchitectureStringByID(const int arch, const uint abi,
 			if ( endianness == ENDIANNESS_LITTLE )
 			{
 				const int ver = (abi >> ARCHITECTURE_ARM_VER_SHIFT) & ARCHITECTURE_ARM_VER_MASK;
-				const qboolean hardfp = FBitSet(abi, ARCHITECTURE_ARM_HARDFP);
+				const qboolean hardfp = (abi & ARCHITECTURE_ARM_HARDFP);
 
 				if ( is64 )
 				{

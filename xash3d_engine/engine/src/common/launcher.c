@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 #include "common/common.h"
 #include "PlatformLib/System.h"
 

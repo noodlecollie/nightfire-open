@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlatformDefs/platformid.h"
+#include "BuildPlatform/PlatformID.h"
 
 #if XASH_WIN32()
 #define OS_LIB_PREFIX ""

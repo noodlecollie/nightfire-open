@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include <stddef.h>
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 
 // Functions return false if a truncation occurred, or the operation was generally unsuccessful.
 

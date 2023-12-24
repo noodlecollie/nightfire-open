@@ -16,8 +16,8 @@
 #pragma once
 
 #include <stdint.h>
-#include "PlatformDefs/platformid.h"
-#include "PlatformDefs/static_assert.h"
+#include "BuildPlatform/PlatformID.h"
+#include "BuildPlatform/StaticAssert.h"
 
 typedef enum
 {

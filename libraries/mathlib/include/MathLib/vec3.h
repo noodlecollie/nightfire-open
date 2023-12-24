@@ -1,7 +1,7 @@
 #pragma once
 
 #include <assert.h>
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "MathLib/mathdefs.h"
 #include "MathLib/mathlib.h"
 #include "MathLib/vec2.h"

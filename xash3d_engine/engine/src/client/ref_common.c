@@ -7,7 +7,7 @@
 #include "client/vid_common.h"
 #include "client/cl_bytenormals.h"
 #include "common/mod_local.h"
-#include "PlatformDefs/libnames.h"
+#include "BuildPlatform/LibNames.h"
 #include "common/fscallback.h"
 
 struct ref_state_s ref;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PlatformDefs/Typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 
 #ifdef __cplusplus
 extern "C"

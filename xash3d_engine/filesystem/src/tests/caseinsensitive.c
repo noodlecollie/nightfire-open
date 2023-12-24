@@ -1,5 +1,5 @@
-#include "PlatformDefs/platformid.h"
-#include "PlatformDefs/libnames.h"
+#include "BuildPlatform/PlatformID.h"
+#include "BuildPlatform/LibNames.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>

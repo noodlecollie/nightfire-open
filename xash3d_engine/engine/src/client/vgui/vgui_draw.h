@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 #include "common/common.h"
 
 //

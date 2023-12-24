@@ -2,7 +2,7 @@
 #include <string.h>
 #include "common/ipv6text.h"
 #include "PlatformLib/String.h"
-#include "PlatformDefs/typedefs.h"
+#include "BuildPlatform/Typedefs.h"
 
 void IPv6IPToString(char* pszOutText, const unsigned char* ip)
 {
