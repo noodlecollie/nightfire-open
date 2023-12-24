@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "port.h"
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <windows.h>
 #include <direct.h>
 //#include <io.h>
@@ -159,7 +159,7 @@ void stringlistsort( stringlist_t *list )
 
 void listdirectory( stringlist_s *list, const char *path, bool lowercase )
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	char pattern[4096];
 	struct _finddata_t n_file;
 	intptr_t hFile;
@@ -168,12 +168,12 @@ void listdirectory( stringlist_s *list, const char *path, bool lowercase )
 	struct dirent *entry;
 #endif
 
-#if XASH_WIN32
+#if XASH_WIN32()
 	Q_snprintf( pattern, sizeof( pattern ), "%s*", path );
 
 	// ask for the directory listing handle
 	hFile = _findfirst( pattern, &n_file );
-	if (hFile == -1) 
+	if (hFile == -1)
 		return;
 
 	// start a new chain with the the first name
@@ -339,7 +339,7 @@ byte *COM_LoadFile( const char *filepath, size_t *filesize, bool safe )
 	close( handle );
 
 	if( filesize ) *filesize = size;
-	return buf;	
+	return buf;
 }
 
 bool COM_SaveFile( const char *filepath, void *buffer, size_t filesize, bool safe )
@@ -383,7 +383,7 @@ void COM_CreatePath( char *path )
 			// create the directory
 			save = *ofs;
 			*ofs = 0;
-#if XASH_WIN32
+#if XASH_WIN32()
 			mkdir( path );
 #else
 			mkdir( path, 0755);
@@ -400,7 +400,7 @@ COM_FileExists
 */
 bool COM_FileExists( const char *path )
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	int desc;
 
 	if(( desc = open( path, O_RDONLY|O_BINARY, 0666 )) < 0 )
@@ -559,13 +559,13 @@ void COM_FileBase( const char *in, char *out )
 
 	len = Q_strlen( in );
 	if( !len ) return;
-	
+
 	// scan backward for '.'
 	end = len - 1;
 
 	while( end && in[end] != '.' && in[end] != '/' && in[end] != '\\' )
 		end--;
-	
+
 	if( in[end] != '.' )
 		end = len-1; // no '.', copy to end
 	else end--; // found ',', copy to left of '.'
@@ -595,11 +595,11 @@ COM_FolderExists
 */
 bool COM_FolderExists( const char *path )
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	DWORD	dwFlags = GetFileAttributes( path );
 
 	return ( dwFlags != -1 ) && ( dwFlags & FILE_ATTRIBUTE_DIRECTORY );
-#elif XASH_POSIX
+#elif XASH_POSIX()
 	DIR *dir = opendir( path );
 
 	if( dir )
@@ -631,7 +631,7 @@ Internal function used to determine filetime
 int COM_FileTime( const char *filename )
 {
 	struct stat buf;
-	
+
 	if( stat( filename, &buf ) == -1 )
 		return -1;
 

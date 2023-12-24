@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -106,7 +106,7 @@ typedef half	hvec3_t[3];
 #define Vector2Set(v, x, y) ((v)[0]=(x),(v)[1]=(y))
 #define Vector2Scale(in, scale, out) ((out)[0] = (in)[0] * (scale),(out)[1] = (in)[1] * (scale))
 #define Vector2Copy(a,b) ((b)[0]=(a)[0],(b)[1]=(a)[1])
-#define VectorIsNAN(v) (IS_NAN(v[0]) || IS_NAN(v[1]) || IS_NAN(v[2]))	
+#define VectorIsNAN(v) (IS_NAN(v[0]) || IS_NAN(v[1]) || IS_NAN(v[2]))
 #define DotProduct(x,y) ((x)[0]*(y)[0]+(x)[1]*(y)[1]+(x)[2]*(y)[2])
 #define DotProductAbs(x,y) (abs((x)[0]*(y)[0])+abs((x)[1]*(y)[1])+abs((x)[2]*(y)[2]))
 #define DotProductFabs(x,y) (fabs((x)[0]*(y)[0])+fabs((x)[1]*(y)[1])+fabs((x)[2]*(y)[2]))
@@ -142,7 +142,7 @@ typedef half	hvec3_t[3];
 #define VectorMAM( scale1, b1, scale2, b2, c ) ((c)[0] = (scale1) * (b1)[0] + (scale2) * (b2)[0],(c)[1] = (scale1) * (b1)[1] + (scale2) * (b2)[1],(c)[2] = (scale1) * (b1)[2] + (scale2) * (b2)[2])
 #define VectorIsNull( v ) ((v)[0] == 0.0 && (v)[1] == 0.0 && (v)[2] == 0.0)
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #define VectorIsFinite( v ) ( _finite( (v)[0] ) && _finite( (v)[1] ) && _finite((v)[2] ))
 #else
 #define VectorIsFinite( v ) ( finite( (v)[0] ) && finite( (v)[1] ) && finite((v)[2] ))
@@ -210,11 +210,11 @@ inline vec_t VectorNormalize( vec3_t v )
 	return length;
 }
 
-#if XASH_WIN32
+#if XASH_WIN32()
 // disabled declaration for linux to avoid conflict
 _forceinline int ffsl( uint32_t mask )
 {
-	if (mask == 0) 
+	if (mask == 0)
 		return 0;
 
 	int	bit;

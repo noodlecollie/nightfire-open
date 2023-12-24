@@ -95,7 +95,7 @@ char			fs_rootdir[MAX_SYSPATH];	// engine root directory
 char			fs_basedir[MAX_SYSPATH];	// base directory of game
 char			fs_gamedir[MAX_SYSPATH];	// game current directory
 char			fs_falldir[MAX_SYSPATH];	// game falling directory
-bool			fs_ext_path = false;	// attempt to read\write from ./ or ../ pathes 
+bool			fs_ext_path = false;	// attempt to read\write from ./ or ../ pathes
 
 static searchpath_t *FS_FindFile(const char *name, int *index, bool gamedironly);
 static dpackfile_t *FS_AddFileToPack(const char *name, pack_t *pack, int offset, int size);
@@ -271,7 +271,7 @@ static bool FS_AddWad_Fullpath( const char *wadfile, bool *already_loaded, int f
 			return true; // already loaded
 		}
 	}
-          
+
 	if( already_loaded ) *already_loaded = false;
 	if( !Q_stricmp( ext, "wad" )) wad = W_Open( wadfile, "rb", &errorcode, fs_ext_path );
 	else MsgDev( D_ERROR, "\"%s\" doesn't have a wad extension\n", wadfile );
@@ -315,7 +315,7 @@ static bool FS_AddPak_Fullpath( const char *pakfile, bool *already_loaded, int f
 	pack_t		*pak = NULL;
 	const char	*ext = COM_FileExtension( pakfile );
 	int		i, errorcode = PAK_LOAD_COULDNT_OPEN;
-	
+
 	for( search = fs_searchpaths; search; search = search->next )
 	{
 		if( search->pack && !Q_stricmp( search->pack->filename, pakfile ))
@@ -447,7 +447,7 @@ void FS_ClearSearchPath( void )
 
 		if( search->pack )
 		{
-			if( search->pack->files ) 
+			if( search->pack->files )
 				Mem_Free( search->pack->files, C_FILESYSTEM );
 			Mem_Free( search->pack, C_FILESYSTEM );
 		}
@@ -473,7 +473,7 @@ static bool FS_ParseLiblistGam( const char *filename, const char *gamedir )
 
 	afile = (char *)FS_LoadFile( filename, NULL, false );
 	if( !afile ) return false;
-	
+
 	Q_strncpy( fs_basedir, "valve", sizeof( fs_basedir ));
 	COM_FileBase( gamedir, fs_gamedir );
 
@@ -751,7 +751,7 @@ Check, using system API, is specified directory exists or not
 */
 static bool FS_SysDirectoryExists(const char *filepath)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	DWORD dwAttrib = GetFileAttributes(filepath);
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #else
@@ -854,14 +854,14 @@ static searchpath_t *FS_FindFile( const char *name, int *index, bool gamedironly
 		}
 		else if( search->wad )
 		{
-			dlumpinfo_t	*lump;	
+			dlumpinfo_t	*lump;
 			int			type = W_TypeFromExt( name );
 			bool		anywadname = true;
 			string		wadname, wadfolder;
 			string		shortname;
 
 			// quick reject by filetype
-			if( type == TYP_NONE ) 
+			if( type == TYP_NONE )
 				continue;
 
 			COM_ExtractFilePath( name, wadname );
@@ -947,7 +947,7 @@ file_t *FS_OpenReadFile( const char *filename, const char *mode, bool gamedironl
 
 	// not found?
 	if( search == NULL )
-		return NULL; 
+		return NULL;
 
 	if( search->pack )
 		return FS_OpenPackedFile( search->pack, pack_ind );
@@ -960,7 +960,7 @@ file_t *FS_OpenReadFile( const char *filename, const char *mode, bool gamedironl
 		// found in the filesystem?
 		Q_sprintf( path, "%s%s", search->filename, filename );
 		return FS_SysOpen( path, mode );
-	} 
+	}
 
 	return NULL;
 }
@@ -982,7 +982,7 @@ Open a file. The syntax is the same as fopen
 file_t *FS_Open( const char *filepath, const char *mode, bool gamedironly )
 {
 	// some stupid mappers used leading '/' or '\' in path to models or sounds
-#if XASH_WIN32 // schizophrenia
+#if XASH_WIN32() // schizophrenia
 	if( filepath[0] == '/' || filepath[0] == '\\' )
 		filepath++;
 
@@ -1000,7 +1000,7 @@ file_t *FS_Open( const char *filepath, const char *mode, bool gamedironly )
 		COM_CreatePath( real_path );// Create directories up to the file
 		return FS_SysOpen( real_path, mode );
 	}
-	
+
 	// else, we look at the various search paths and open the file in read-only mode
 	return FS_OpenReadFile( filepath, mode, gamedironly );
 }
@@ -1036,7 +1036,7 @@ size_t FS_Read( file_t *file, void *buffer, size_t buffersize )
 	int	nb;
 
 	// nothing to copy
-	if( buffersize == 0 ) 
+	if( buffersize == 0 )
 		return 1;
 
 	// Get rid of the ungetc character
@@ -1128,10 +1128,10 @@ int FS_Seek( file_t *file, int64_t offset, int whence )
 	case SEEK_END:
 		offset += file->real_length;
 		break;
-	default: 
+	default:
 		return -1;
 	}
-	
+
 	if( offset < 0 || offset > file->real_length )
 		return -1;
 
@@ -1377,7 +1377,7 @@ int FS_FileTime( const char *filename, bool gamedironly )
 {
 	searchpath_t	*search;
 	int		pack_ind;
-	
+
 	search = FS_FindFile( filename, &pack_ind, gamedironly );
 	if( !search ) return -1; // doesn't exist
 
@@ -1490,7 +1490,7 @@ search_t *FS_Search( const char *pattern, int caseinsensitive, int gamedironly )
 			string wadfolder;
 
 			// quick reject by filetype
-			if( type == TYP_NONE ) 
+			if( type == TYP_NONE )
 				continue;
 
 			COM_ExtractFilePath( pattern, wadname );
@@ -1642,6 +1642,6 @@ static byte *W_LoadFile( const char *path, size_t *lumpsizeptr, bool gamedironly
 
 	search = FS_FindFile( path, &index, gamedironly );
 	if( search && search->wad )
-		return W_ReadLump( search->wad, &search->wad->lumps[index], lumpsizeptr ); 
+		return W_ReadLump( search->wad, &search->wad->lumps[index], lumpsizeptr );
 	return NULL;
 }

@@ -6,8 +6,13 @@
 #include "conprint.h"
 
 #if XASH_WIN32()
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <direct.h>
+#include <io.h>
+#include <winbase.h>
+#else
+#include <time.h>
 #endif
 
 NORETURN void COM_FatalError(const char* error, ...)

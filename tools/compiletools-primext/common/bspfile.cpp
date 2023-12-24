@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -19,7 +19,7 @@
 #include "file_system.h"
 #include "stringlib.h"
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <io.h>
 #endif
 
@@ -112,7 +112,7 @@ int		wadfile;
 char		g_wadpath[1024];	// path to wads may be empty
 
 // can be overrided from hlcsg
-vec3_t g_hull_size[MAX_MAP_HULLS][2] = 
+vec3_t g_hull_size[MAX_MAP_HULLS][2] =
 {
 { // 0x0x0
 {  0,   0,  0  },	{  0,  0,  0 }
@@ -147,7 +147,7 @@ void CheckHullFile( const char *filename )
 	if( !f )
 	{
 		MsgDev( D_WARN, "couldn't open hullfile %s, using default hulls", filename );
-		return; 
+		return;
 	}
 	else
 	{
@@ -461,7 +461,7 @@ Swaps the bsp file in place, so it should not be referenced again
 =============
 */
 void WriteBSPFile( const char *filename )
-{		
+{
 	dextrahdr_t	outextrahdr;
 	dextrahdr_t	*extrahdr;
 
@@ -469,11 +469,11 @@ void WriteBSPFile( const char *filename )
 	memset( header, 0, sizeof( dheader_t ));
 	extrahdr = &outextrahdr;
 	memset( extrahdr, 0, sizeof( dextrahdr_t ));
-	
+
 	header->version = BSPVERSION;
 	extrahdr->id = IDEXTRAHEADER;
 	extrahdr->version = EXTRA_VERSION;
-	
+
 	wadfile = SafeOpenWrite( filename );
 	SafeWrite( wadfile, header, sizeof( dheader_t ));		// overwritten later
 	SafeWrite( wadfile, extrahdr, sizeof( dextrahdr_t ));	// overwritten later
@@ -510,7 +510,7 @@ void WriteBSPFile( const char *filename )
 	SafeWrite( wadfile, header, sizeof( dheader_t ));
 	SafeWrite( wadfile, extrahdr, sizeof( dextrahdr_t ));
 
-	close( wadfile );	
+	close( wadfile );
 
 	if( g_dvislightdata ) Mem_Free( g_dvislightdata );
 	if( g_dlightdata ) Mem_Free( g_dlightdata );
@@ -1123,7 +1123,7 @@ epair_t *ParseEpair( void )
 		COM_FatalError( "ParseEpair: 'value' token too long\n" );
 	ext = COM_FileExtension( token );
 
-	if( !Q_stricmp( ext, "wav" ) || !Q_stricmp( ext, "mdl" ) || !Q_stricmp( ext, "bsp" )) 
+	if( !Q_stricmp( ext, "wav" ) || !Q_stricmp( ext, "mdl" ) || !Q_stricmp( ext, "bsp" ))
 		COM_FixSlashes( token );
 	e->value = copystring( token );
 
@@ -1527,30 +1527,30 @@ areanode_t *CreateAreaNode( aabb_tree_t *tree, int depth, int maxdepth, vec3_t m
 	vec3_t		mins2, maxs2;
 	areanode_t	*anode;
 	vec3_t		size;
- 
+
 	anode = &tree->areanodes[tree->numareanodes];
 	tree->numareanodes++;
 
 	ClearLink( &anode->solid_edicts );
-	
+
 	if( depth == Q_min( maxdepth, AREA_MAX_DEPTH ))
 	{
 		anode->axis = -1;
 		anode->children[0] = anode->children[1] = NULL;
 		return anode;
 	}
-	
+
 	VectorSubtract( maxs, mins, size );
 	if( size[0] > size[1] )
 		anode->axis = 0;
 	else anode->axis = 1;
-	
+
 	anode->dist = 0.5f * ( maxs[anode->axis] + mins[anode->axis] );
-	VectorCopy( mins, mins1 );	
-	VectorCopy( mins, mins2 );	
-	VectorCopy( maxs, maxs1 );	
-	VectorCopy( maxs, maxs2 );	
-	
+	VectorCopy( mins, mins1 );
+	VectorCopy( mins, mins2 );
+	VectorCopy( maxs, maxs1 );
+	VectorCopy( maxs, maxs2 );
+
 	maxs1[anode->axis] = mins2[anode->axis] = anode->dist;
 	anode->children[0] = CreateAreaNode( tree, depth+1, maxdepth, mins2, maxs2 );
 	anode->children[1] = CreateAreaNode( tree, depth+1, maxdepth, mins1, maxs1 );
