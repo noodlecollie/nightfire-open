@@ -13,27 +13,27 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "cmdlib.h"
-#include "threads.h"
-#include "stringlib.h"
-#include "mathlib.h"
-#include "conprint.h"
 #include <new>
+#include <string>
+#include "BuildPlatform/Typedefs.h"
+#include "zone.h"
+#include "threads.h"
+#include "conprint.h"
+#include "cmdlibnew.h"
 
 #define ZONE_ATTEMPT_CALLOC
 #define ZONE_OVERRIDE_ALLOC_OPS
-//#define ZONE_DEBUG
+// #define ZONE_DEBUG
 
-static int	c_alloc[C_MAXSTAT] = { 0 };
-static size_t	total_active, total_peakactive;
+static int c_alloc[C_MAXSTAT] = {0};
+static size_t total_active, total_peakactive;
 
 typedef struct memhdr_s
 {
-	size_t	size;
+	size_t size;
 } memhdr_t;
 
-const char *c_stats[] =
-{
+const char* c_stats[] = {
 	"Common",
 	"Temporary",
 	"Template",
@@ -52,19 +52,19 @@ const char *c_stats[] =
 
 // some platforms have a malloc that returns NULL but succeeds later
 // (Windows growing its swapfile for example)
-static void *attempt_calloc( size_t size )
+static void* attempt_calloc(size_t size)
 {
-	uint	attempts = 600;
+	size_t attempts = 600;
 
 	// one minute before completely failed
-	while( attempts-- )
+	while ( attempts-- )
 	{
-		void	*base;
-		
-		if(( base = (void *)calloc( size, 1 )) != NULL )
+		void* base;
+
+		if ( (base = (void*)calloc(size, 1)) != NULL )
 			return base;
 		// try for half a second or so
-		Sys_Sleep( 100 );
+		Sys_Sleep(100);
 	}
 	return NULL;
 }
@@ -76,108 +76,118 @@ Mem_Alloc
 allocate mem
 =============
 */
-void *Mem_Alloc( size_t size, unsigned int target )
+void* Mem_Alloc(size_t size, MemAllocZone target)
 {
 	// return nullptr if trying to allocate null size hunk
 	// some code depends on this behavior, therefore we should do this
-	if (size == 0) {
+	if ( size == 0 )
+	{
 		return nullptr;
 	}
 
 #ifdef ZONE_ATTEMPT_CALLOC
-	void *mem = attempt_calloc(sizeof(memhdr_t) + size);
+	void* mem = attempt_calloc(sizeof(memhdr_t) + size);
 #else
-	void *mem = calloc(sizeof(memhdr_t) + size, 1);
+	void* mem = calloc(sizeof(memhdr_t) + size, 1);
 #endif
-	if (!mem)
+	if ( !mem )
 	{
-		if (target == C_SAFEALLOC) {
+		if ( target == C_SAFEALLOC )
+		{
 			return nullptr;
 		}
 		COM_FatalError("out of memory!\n");
 		return nullptr;
 	}
 
-	memhdr_t *memhdr = (memhdr_t *)mem;
+	memhdr_t* memhdr = (memhdr_t*)mem;
 	memhdr->size = size;
 #ifdef ZONE_DEBUG
 	ThreadLock();
 	total_active += size;
-	total_peakactive = Q_max( total_peakactive, total_active );
+	total_peakactive = Q_max(total_peakactive, total_active);
 	c_alloc[target]++;
 	ThreadUnlock();
 #endif
-	return (void *)((uint8_t *)mem + sizeof(memhdr_t));
+	return (void*)((uint8_t*)mem + sizeof(memhdr_t));
 }
 
-void *Mem_Realloc( void *ptr, size_t size, unsigned int target )
+void* Mem_Realloc(void* ptr, size_t size, MemAllocZone target)
 {
-	void		*mem;
-	memhdr_t	*memhdr = NULL;
+	void* mem;
+	memhdr_t* memhdr = NULL;
 
-	if( size <= 0 ) 
-		return ptr; // no need to reallocate
+	if ( size <= 0 )
+		return ptr;  // no need to reallocate
 
-	if( ptr )
+	if ( ptr )
 	{
-		memhdr = (memhdr_t *)((byte *)ptr - sizeof( memhdr_t ));
-		if( size == memhdr->size ) 
+		memhdr = (memhdr_t*)((byte*)ptr - sizeof(memhdr_t));
+		if ( size == memhdr->size )
 			return ptr;
 	}
 
-	mem = Mem_Alloc( size, target );
+	mem = Mem_Alloc(size, target);
 
-	if( ptr ) // first allocate?
+	if ( ptr )  // first allocate?
 	{
-		size_t newsize = memhdr->size < size ? memhdr->size : size; // upper data can be trucnated!
-		memcpy( mem, ptr, newsize );
-		Mem_Free( ptr, target ); // free unused old block
+		size_t newsize = memhdr->size < size ? memhdr->size : size;  // upper data can be trucnated!
+		memcpy(mem, ptr, newsize);
+		Mem_Free(ptr, target);  // free unused old block
 	}
 
 	return mem;
 }
 
-void Mem_Free( void *ptr, unsigned int target )
+void Mem_Free(void* ptr, MemAllocZone target)
 {
-	memhdr_t	*chunk;
+	(void)target;
+	memhdr_t* chunk;
 
-	if( !ptr ) return;
+	if ( !ptr )
+	{
+		return;
+	}
 
-	chunk = (memhdr_t *)((byte *)ptr - sizeof( memhdr_t ));
+	chunk = (memhdr_t*)((byte*)ptr - sizeof(memhdr_t));
 #ifdef ZONE_DEBUG
 	ThreadLock();
 	total_active -= chunk->size;
 	c_alloc[target]--;
 	ThreadUnlock();
 #endif
-	free( chunk );
+	free(chunk);
 }
 
-void Mem_Check( void )
+void Mem_Check(void)
 {
 #ifdef ZONE_DEBUG
-	MsgDev( D_INFO, "active memory %s, peak memory %s\n", Q_memprint( total_active ), Q_memprint( total_peakactive ));
-	for( int i = 0; i < C_MAXSTAT; i++ )
+	MsgDev(D_INFO, "active memory %s, peak memory %s\n", Q_memprint(total_active), Q_memprint(total_peakactive));
+	for ( int i = 0; i < C_MAXSTAT; i++ )
 	{
-		if( c_alloc[i] ) MsgDev( D_REPORT, "%s memory allocations leaks count: %d\n", c_stats[i], c_alloc[i] );
+		if ( c_alloc[i] )
+		{
+			MsgDev(D_REPORT, "%s memory allocations leaks count: %d\n", c_stats[i], c_alloc[i]);
+		}
 	}
 #endif
 }
 
-void Mem_Peak( void )
+void Mem_Peak(void)
 {
 #ifdef ZONE_DEBUG
-	MsgDev( D_INFO, "active memory %s, peak memory %s\n", Q_memprint( total_active ), Q_memprint( total_peakactive ));
+	MsgDev(D_INFO, "active memory %s, peak memory %s\n", Q_memprint(total_active), Q_memprint(total_peakactive));
 #endif
 }
 
-size_t Mem_Size( void *ptr )
+size_t Mem_Size(void* ptr)
 {
-	memhdr_t	*chunk;
+	memhdr_t* chunk;
 
-	if( !ptr ) return 0;
+	if ( !ptr )
+		return 0;
 
-	chunk = (memhdr_t *)((byte *)ptr - sizeof( memhdr_t ));
+	chunk = (memhdr_t*)((byte*)ptr - sizeof(memhdr_t));
 
 	return chunk->size;
 }
@@ -187,7 +197,8 @@ void* operator new(std::size_t n)
 {
 	return Mem_Alloc(n);
 }
-void operator delete(void *p)
+
+void operator delete(void* p)
 {
 	Mem_Free(p);
 }
@@ -196,7 +207,8 @@ void* operator new[](std::size_t s)
 {
 	return Mem_Alloc(s);
 }
-void operator delete[](void *p)
+
+void operator delete[](void* p)
 {
 	Mem_Free(p);
 }
