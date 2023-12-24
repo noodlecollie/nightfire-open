@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "port.h"
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
@@ -156,7 +156,7 @@ NO_RETURN void COM_Assert( const char *error, ... )
 void Q_getwd( char *out, size_t size )
 {
 	getcwd( out, size );
-#if XASH_WIN32
+#if XASH_WIN32()
 	Q_strncat( out, "\\", size );
 #else
 	Q_strncat( out, "/", size );
@@ -249,7 +249,7 @@ g-cont. the prefix 'I' was come from Doom code heh
 
 double GAME_EXPORT I_FloatTime( void )
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	static LARGE_INTEGER g_PerformanceFrequency;
 	static LARGE_INTEGER g_ClockStart;
 	LARGE_INTEGER CurrentTime;
@@ -262,7 +262,7 @@ double GAME_EXPORT I_FloatTime( void )
 
 	QueryPerformanceCounter( &CurrentTime );
 	return (double)( CurrentTime.QuadPart - g_ClockStart.QuadPart ) / (double)( g_PerformanceFrequency.QuadPart );
-#elif XASH_POSIX
+#elif XASH_POSIX()
 	static int64 g_PerformanceFrequency;
 	static int64 g_ClockStart;
 	int64 CurrentTime;
@@ -283,7 +283,7 @@ double GAME_EXPORT I_FloatTime( void )
 
 void COM_SetClipboardText(const char *text)
 {
-#if XASH_WIN32
+#if XASH_WIN32()
 	size_t length = Q_strlen(text);
 	LPTSTR clipboardString = nullptr;
 	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, length + 1);
@@ -301,4 +301,3 @@ void COM_SetClipboardText(const char *text)
 	// TODO implement this for other platforms
 #endif
 }
-

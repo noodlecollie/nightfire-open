@@ -27,7 +27,7 @@ GNU General Public License for more details.
 #include <stdio.h>
 #include <miniz.h>
 
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
@@ -141,14 +141,14 @@ rgbdata_t *Image_Alloc( int width, int height, bool paletted )
 	size_t palette_size = paletted ? 1024 : 0;
 	size_t pic_size = sizeof(rgbdata_t) + (width * height * pixel_size) + palette_size;
 	rgbdata_t *pic = (rgbdata_t *)Mem_Alloc(pic_size);
-	
-	if (!pic) 
+
+	if (!pic)
 	{
 		MsgDev(D_ERROR, "Image_Alloc: failed to allocate image (%ix%i, %zu bytes)\n", width, height, pic_size);
 		return nullptr;
 	}
 
-	pic->buffer = ((byte *)pic) + sizeof(rgbdata_t); 
+	pic->buffer = ((byte *)pic) + sizeof(rgbdata_t);
 	if (paletted)
 	{
 		pic->palette = ((byte *)pic) + sizeof(rgbdata_t) + width * height * pixel_size;
@@ -192,7 +192,7 @@ rgbdata_t *Image_AllocCubemap( int width, int height )
 	size_t pic_size = sizeof( rgbdata_t ) + (width * height * 4 * 6);
 	rgbdata_t	*pic = (rgbdata_t *)Mem_Alloc( pic_size );
 
-	pic->buffer = ((byte *)pic) + sizeof( rgbdata_t ); 
+	pic->buffer = ((byte *)pic) + sizeof( rgbdata_t );
 	pic->size = (width * height * 4 * 6);
 	pic->width = width;
 	pic->height = height;
@@ -213,7 +213,7 @@ rgbdata_t *Image_AllocSkybox( int width, int height )
 	size_t pic_size = sizeof( rgbdata_t ) + (width * height * 4 * 6);
 	rgbdata_t	*pic = (rgbdata_t *)Mem_Alloc( pic_size );
 
-	pic->buffer = ((byte *)pic) + sizeof( rgbdata_t ); 
+	pic->buffer = ((byte *)pic) + sizeof( rgbdata_t );
 	pic->size = (width * height * 4 * 6);
 	pic->width = width;
 	pic->height = height;
@@ -237,7 +237,7 @@ rgbdata_t *Image_Copy( rgbdata_t *src )
 	if (FBitSet(src->flags, IMAGE_QUANTIZED) && src->palette) {
 		memcpy(dst->palette, src->palette, 1024); // copy palette if it's presented
 	}
-	
+
 	dst->size = src->size;
 	dst->width = src->width;
 	dst->height = src->height;
@@ -305,7 +305,7 @@ const imgtype_t *Image_ImageTypeFromHint( char value )
 void Image_PackRGB( float flColor[3], uint32_t &icolor )
 {
 	byte	rgba[4];
-	
+
 	rgba[0] = LinearToTexture( flColor[0] );
 	rgba[1] = LinearToTexture( flColor[1] );
 	rgba[2] = LinearToTexture( flColor[2] );
@@ -597,7 +597,7 @@ rgbdata_t *Image_LoadBMP( const char *name, const byte *buffer, size_t filesize 
 	{
 		MsgDev( D_ERROR, "Image_LoadBMP: only Windows-style BMP files supported (%s)\n", name );
 		return NULL;
-	} 
+	}
 
 	if (bhdr.bitmapHeaderSize != 40 && bhdr.bitmapHeaderSize != 108 && bhdr.bitmapHeaderSize != 124)
 	{
@@ -611,9 +611,9 @@ rgbdata_t *Image_LoadBMP( const char *name, const byte *buffer, size_t filesize 
 		// Sweet Half-Life issues. splash.bmp have bogus filesize
 		MsgDev( D_WARN, "Image_LoadBMP: %s have incorrect file size %i should be %i\n", name, filesize, bhdr.fileSize );
     }
-          
+
 	// bogus compression?  Only non-compressed supported.
-	if( bhdr.compression != BI_RGB ) 
+	if( bhdr.compression != BI_RGB )
 	{
 		MsgDev( D_ERROR, "Image_LoadBMP: only uncompressed BMP files supported (%s)\n", name );
 		return NULL;
@@ -623,7 +623,7 @@ rgbdata_t *Image_LoadBMP( const char *name, const byte *buffer, size_t filesize 
 	rows = abs( bhdr.height );
 
 	if( !Image_ValidSize( name, columns, rows ))
-		return NULL;          
+		return NULL;
 
 	pic = Image_Alloc( columns, rows, (bhdr.bitsPerPixel == 4 || bhdr.bitsPerPixel == 8));
 
@@ -870,7 +870,7 @@ rgbdata_t *Image_LoadMIP( const char *name, const byte *buffer, size_t filesize 
 	if (numcolors != 256) {
 		MsgDev(D_WARN, "Image_LoadMIP: %s invalid palette num colors %i\n", name, numcolors);
 	}
-	pal += sizeof(int16_t); // skip colorsize 
+	pal += sizeof(int16_t); // skip colorsize
 
 	// expand palette
 	for (int i = 0; i < 256; i++)
@@ -926,7 +926,7 @@ rgbdata_t *Image_LoadLMP( const char *name, const byte *buffer, size_t filesize 
 	if (numcolors != 256) {
 		MsgDev(D_WARN, "Image_LoadLMP: %s invalid palette num colors %i\n", name, numcolors);
 	}
-	pal += sizeof(int16_t); // skip colorsize 
+	pal += sizeof(int16_t); // skip colorsize
 
 	// expand palette
 	for (int i = 0; i < 256; i++)
@@ -1559,7 +1559,7 @@ bool Image_SaveTGA( const char *name, rgbdata_t *pix )
 		buffer[17] = 0; // ???
 	}
 
-	Q_strncpy( (char *)(buffer + 18), comment, Q_strlen( comment )); 
+	Q_strncpy( (char *)(buffer + 18), comment, Q_strlen( comment ));
 	out = buffer + 18 + Q_strlen( comment );
 
 	// store palette, swapping rgb to bgr
@@ -1631,11 +1631,11 @@ bool Image_SaveBMP( const char *name, rgbdata_t *pix )
 	if (FBitSet(pix->flags, IMAGE_QUANTIZED)) {
 		pixelSize = 1;
 	}
-	else 
+	else
 	{
 		if (FBitSet(pix->flags, IMAGE_HAS_ALPHA))
 			pixelSize = 4;
-		else 
+		else
 			pixelSize = 3;
 	}
 
@@ -1647,7 +1647,7 @@ bool Image_SaveBMP( const char *name, rgbdata_t *pix )
 	}
 
 	// NOTE: align transparency column will successfully removed
-	// after create sprite or lump image, it's just standard requirements 
+	// after create sprite or lump image, it's just standard requirements
 	size_t biTrueWidth = ((pix->width + 3) & ~3);
 	size_t cbBmpBits = biTrueWidth * pix->height * pixelSize;
 	if (pixelSize == 1) {
@@ -2164,7 +2164,7 @@ Image_Resample
 */
 rgbdata_t *Image_Resample( rgbdata_t *pic, int new_width, int new_height )
 {
-	if (!pic) 
+	if (!pic)
 		return NULL;
 
 	// nothing to resample ?
@@ -2206,7 +2206,7 @@ bool Image_ApplyAlphaMask(rgbdata_t *pic, rgbdata_t *alphaMask, float alphaThres
 	}
 
 	if (!FBitSet(pic->flags, IMAGE_QUANTIZED)) {
-		return false; 
+		return false;
 	}
 
 	if (pic->width != alphaMask->width || pic->height != alphaMask->height) {
@@ -2564,9 +2564,9 @@ void Image_ConvertBumpStalker( rgbdata_t *bump, rgbdata_t *spec )
 		VectorAdd( normal, error, normal );
 		normal[0] -= 1.0f;
 		normal[1] -= 1.0f;
-		normal[2] -= 1.0f;		
+		normal[2] -= 1.0f;
 
-		VectorNormalize( normal );		
+		VectorNormalize( normal );
 
 		// store back to byte
 		temp[0] = (byte)(normal[0] * 127.0f + 128.0f);
@@ -2575,7 +2575,7 @@ void Image_ConvertBumpStalker( rgbdata_t *bump, rgbdata_t *spec )
 		temp[3] = 0;
 
 		// put transformed pixel back to the buffer
-		memcpy( bump->buffer + (i * 4), temp, sizeof( temp ));		
+		memcpy( bump->buffer + (i * 4), temp, sizeof( temp ));
 
 		// store glossiness
 		temp[0] = bump_rgba[0];
@@ -2584,6 +2584,6 @@ void Image_ConvertBumpStalker( rgbdata_t *bump, rgbdata_t *spec )
 		temp[3] = spec_rgba[3]; // store heightmap into alpha
 
 		// put transformed pixel back to the buffer
-		memcpy( spec->buffer + (i * 4), temp, sizeof( temp ));	
+		memcpy( spec->buffer + (i * 4), temp, sizeof( temp ));
 	}
 }

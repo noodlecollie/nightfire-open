@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "port.h"
-#if XASH_WIN32
+#if XASH_WIN32()
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
@@ -52,7 +52,7 @@ vfile_t *VFS_Create( const byte *buffer, size_t buffsize )
 		buffsize = FILE_BUFF_SIZE; // empty file
 
 	file->length = file->buffsize = buffsize;
-	file->buff = (byte *)Mem_Alloc( file->buffsize );	
+	file->buff = (byte *)Mem_Alloc( file->buffsize );
 	if( buffer ) memcpy( file->buff, buffer, buffsize );
 	file->offset = 0;
 
@@ -105,7 +105,7 @@ Write to the virtual file
 */
 size_t VFS_Write( vfile_t *file, const void *buf, size_t size )
 {
-	if (!file) 
+	if (!file)
 		return -1;
 
 	if(( file->offset + size ) >= file->buffsize )
@@ -124,7 +124,7 @@ size_t VFS_Write( vfile_t *file, const void *buf, size_t size )
 	if( buf ) memcpy( file->buff + file->offset, buf, size );
 	file->offset += size;
 
-	if( file->offset > file->length ) 
+	if( file->offset > file->length )
 		file->length = file->offset;
 
 	return size;
@@ -169,7 +169,7 @@ size_t VFS_Insert( vfile_t *file, const void *buf, size_t size )
 	memcpy( file->buff + file->offset, backup, rp_size );
 	Mem_Free( backup );
 
-	if(( file->offset + rp_size ) > file->length ) 
+	if(( file->offset + rp_size ) > file->length )
 		file->length = file->offset + rp_size;
 
 	return file->length;
@@ -264,7 +264,7 @@ size_t VFS_VPrintf( vfile_t *file, const char *format, va_list ap )
 	int	len;
 	char *tempbuff;
 	int	buff_size = MAX_TOKEN;
-	
+
 	while (1)
 	{
 		tempbuff = (char *)Mem_Alloc(buff_size);
@@ -294,7 +294,7 @@ size_t VFS_VIPrintf( vfile_t *file, const char *format, va_list ap )
 	int	len;
 	char *tempbuff;
 	int	buff_size = MAX_TOKEN;
-	
+
 	while (1)
 	{
 		tempbuff = (char *)Mem_Alloc(buff_size);
