@@ -30,6 +30,7 @@ GNU General Public License for more details.
 #include "client/ref_common.h"
 #include "common/textureproperties.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #define MIPTEX_CUSTOM_PALETTE_SIZE_BYTES (sizeof(int16_t) + 768)
 

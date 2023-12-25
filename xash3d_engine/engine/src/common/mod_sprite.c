@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "EngineInternalAPI/sprite.h"
 #include "EnginePublicAPI/studio.h"
+#include "common/engine_mempool.h"
 
 #if !XASH_DEDICATED()
 #include "client/ref_common.h"

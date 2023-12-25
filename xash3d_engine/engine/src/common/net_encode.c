@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "server/server.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #define DELTA_PATH "delta.lst"
 

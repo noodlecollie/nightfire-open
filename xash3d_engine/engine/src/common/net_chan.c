@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/protocol.h"
 #include "common/net_byteswap.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #define MAKE_FRAGID(id, count) (((id & 0xffff) << 16) | (count & 0xffff))
 #define FRAG_GETID(fragid) ((fragid >> 16) & 0xffff)

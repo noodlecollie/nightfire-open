@@ -486,31 +486,6 @@ void Cmd_ForwardToServer(void);
 void Cmd_Escape(char* newCommand, const char* oldCommand, int len);
 
 //
-// zone.c
-//
-void Memory_Init(void);
-void* _Mem_Realloc(poolhandle_t poolptr, void* memptr, size_t size, qboolean clear, const char* filename, int fileline);
-void* _Mem_Alloc(poolhandle_t poolptr, size_t size, qboolean clear, const char* filename, int fileline);
-poolhandle_t _Mem_AllocPool(const char* name, const char* filename, int fileline);
-void _Mem_FreePool(poolhandle_t* poolptr, const char* filename, int fileline);
-void _Mem_EmptyPool(poolhandle_t poolptr, const char* filename, int fileline);
-void _Mem_Free(void* data, const char* filename, int fileline);
-void _Mem_Check(const char* filename, int fileline);
-qboolean Mem_IsAllocatedExt(poolhandle_t poolptr, void* data);
-void Mem_PrintList(size_t minallocationsize);
-void Mem_PrintStats(void);
-
-#define Mem_Malloc(pool, size) _Mem_Alloc(pool, size, false, __FILE__, __LINE__)
-#define Mem_Calloc(pool, size) _Mem_Alloc(pool, size, true, __FILE__, __LINE__)
-#define Mem_Realloc(pool, ptr, size) _Mem_Realloc(pool, ptr, size, true, __FILE__, __LINE__)
-#define Mem_Free(mem) _Mem_Free(mem, __FILE__, __LINE__)
-#define Mem_AllocPool(name) _Mem_AllocPool(name, __FILE__, __LINE__)
-#define Mem_FreePool(pool) _Mem_FreePool(pool, __FILE__, __LINE__)
-#define Mem_EmptyPool(pool) _Mem_EmptyPool(pool, __FILE__, __LINE__)
-#define Mem_IsAllocated(mem) Mem_IsAllocatedExt(NULL, mem)
-#define Mem_Check() _Mem_Check(__FILE__, __LINE__)
-
-//
 // imagelib
 //
 #include "EngineInternalAPI/com_image.h"
@@ -720,12 +695,7 @@ void pfnResetTutorMessageDecayData(void);
 
 ==============================================================
 */
-#define Z_Malloc(size) Mem_Malloc(host.mempool, size)
-#define Z_Calloc(size) Mem_Calloc(host.mempool, size)
-#define Z_Realloc(ptr, size) Mem_Realloc(host.mempool, ptr, size)
-#define Z_Free(ptr) \
-	if ( ptr != NULL ) \
-	Mem_Free(ptr)
+
 
 //
 // con_utils.c

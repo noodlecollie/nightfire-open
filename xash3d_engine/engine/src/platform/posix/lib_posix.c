@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "Filesystem/filesystem.h"
 #include "server/server.h"
+#include "common/engine_mempool.h"
 #include <dlfcn.h>
 
 #ifdef XASH_DLL_LOADER  // wine-based dll loader
