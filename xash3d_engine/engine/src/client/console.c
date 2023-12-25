@@ -30,6 +30,7 @@ GNU General Public License for more details.
 #include "client/input.h"
 #include "common/fscallback.h"
 #include "common/buildnum.h"
+#include "common/engine_mempool.h"
 
 convar_t* con_notifytime;
 convar_t* scr_conspeed;

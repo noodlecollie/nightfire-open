@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "common/net_encode.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #define dem_unknown 0  // unknown command
 #define dem_norewind 1  // startup message

@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "PlatformLib/Net.h"
 #include "CRCLib/crclib.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #if !XASH_WIN32()
 #include <netinet/in.h>

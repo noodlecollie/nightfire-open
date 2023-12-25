@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "BuildPlatform/LibNames.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 fs_api_t g_fsapi;
 fs_globals_t* FI;
@@ -44,11 +45,11 @@ static fs_interface_t fs_memfuncs = {
 	Con_Reportf,
 	Sys_Error,
 
-	_Mem_AllocPool,
-	_Mem_FreePool,
-	_Mem_Alloc,
-	_Mem_Realloc,
-	_Mem_Free,
+	MemPool_AllocPool,
+	MemPool_FreePool,
+	MemPool_Alloc,
+	MemPool_Realloc,
+	MemPool_Free,
 };
 
 static void FS_UnloadProgs(void)

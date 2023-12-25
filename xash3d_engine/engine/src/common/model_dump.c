@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "MathLib/vec3.h"
 #include "EnginePublicAPI/eiface.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 // For utility:
 #define MAX_INDENT 31

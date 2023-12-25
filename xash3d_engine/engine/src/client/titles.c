@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "common/common.h"
 #include "client/client.h"
+#include "common/engine_mempool.h"
 
 #define MAX_MESSAGES 2048
 

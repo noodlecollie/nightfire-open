@@ -26,6 +26,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "common/library.h"
 #include "common/sequence.h"
+#include "common/engine_mempool.h"
 
 static const char* file_exts[] = {
 	"cfg",
@@ -1152,7 +1153,7 @@ char* _copystring(poolhandle_t mempool, const char* s, const char* filename, int
 
 	length = Q_strlen(s) + 1;
 
-	b = _Mem_Alloc(mempool, length, false, filename, fileline);
+	b = MemPool_Alloc(mempool, length, false, filename, fileline);
 	Q_strcpy(b, length, s);
 
 	return b;

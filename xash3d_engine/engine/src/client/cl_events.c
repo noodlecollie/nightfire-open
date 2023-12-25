@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/event_flags.h"
 #include "common/net_encode.h"
 #include "EnginePublicAPI/con_nprint.h"
+#include "common/engine_mempool.h"
 
 /*
 ===============

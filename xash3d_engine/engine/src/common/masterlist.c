@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "common/netchan.h"
 #include "server/server.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 typedef struct master_s
 {

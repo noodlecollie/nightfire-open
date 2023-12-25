@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "common/pm_local.h"
 #include "common/sequence.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 int SV_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 

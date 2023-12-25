@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "PlatformLib/System.h"
 #include "CRCLib/crclib.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 static char id_md5[33];
 static char id_customid[MAX_STRING];

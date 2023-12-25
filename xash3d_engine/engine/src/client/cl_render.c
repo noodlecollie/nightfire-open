@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "platform/platform.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 int R_FatPVS(const vec3_t org, float radius, byte* visbuffer, qboolean merge, qboolean fullvis)
 {
@@ -40,14 +41,17 @@ const ref_overview_t* GL_GetOverviewParms(void)
 
 static void* R_Mem_Alloc(size_t cb, const char* filename, const int fileline)
 {
-	return _Mem_Alloc(cls.mempool, cb, true, filename, fileline);
+	return MemPool_Alloc(cls.mempool, cb, true, filename, fileline);
 }
 
 static void R_Mem_Free(void* mem, const char* filename, const int fileline)
 {
 	if ( !mem )
+	{
 		return;
-	_Mem_Free(mem, filename, fileline);
+	}
+
+	MemPool_Free(mem, filename, fileline);
 }
 
 /*
