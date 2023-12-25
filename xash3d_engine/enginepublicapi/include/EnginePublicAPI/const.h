@@ -20,6 +20,8 @@
 // This header file included by engine files and DLL files.
 // Most came from server.h
 
+#define EPSILON_VECTORS_EQUAL 0.1f
+
 // edict->flags
 #define FL_FLY (1U << 0)  // Changes the SV_Movestep() behavior to not need to be on ground
 #define FL_SWIM (1U << 1)  // Changes the SV_Movestep() behavior to not need to be on ground (but stay in water)

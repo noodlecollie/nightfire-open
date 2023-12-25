@@ -134,7 +134,7 @@ void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, ve
 	pitch = -asinf(forward[2]);
 	cpitch = cosf(pitch);
 
-	if ( fabsf(cpitch) > EQUAL_EPSILON )  // gimball lock?
+	if ( fabsf(cpitch) > MATH_FLOAT_EQUAL_EPSILON )  // gimball lock?
 	{
 		cpitch = 1.0f / cpitch;
 		pitch = RAD2DEGF(pitch);

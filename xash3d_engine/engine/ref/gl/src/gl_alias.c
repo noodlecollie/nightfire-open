@@ -1243,7 +1243,7 @@ void R_AliasLerpMovement(cl_entity_t* e)
 	// Con_Printf( "%4.2f %.2f %.2f\n", f, e->curstate.animtime, g_alias.time );
 	VectorLerp(e->latched.prevorigin, f, e->curstate.origin, e->origin);
 
-	if ( !VectorCompareEpsilon(e->curstate.angles, e->latched.prevangles, ON_EPSILON) )
+	if ( !VectorCompareEpsilon(e->curstate.angles, e->latched.prevangles, EPSILON_VECTORS_EQUAL) )
 	{
 		vec4_t q, q1, q2;
 
