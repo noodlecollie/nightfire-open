@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "common/net_encode.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 qboolean CL_CheckFile(sizebuf_t* msg, resource_t* pResource)
 {

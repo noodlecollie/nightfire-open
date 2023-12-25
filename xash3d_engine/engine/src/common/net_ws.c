@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "common/ipv6text.h"
 #include "common/fscallback.h"
 #include "common/buildnum.h"
+#include "common/engine_mempool.h"
 
 #if XASH_WIN32()
 #include "platform/win32/net.h"

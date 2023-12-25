@@ -34,6 +34,7 @@ GNU General Public License for more details.
 #include "client/sound.h"  // SND_STOP_LOOPING
 #include "platform/platform.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>

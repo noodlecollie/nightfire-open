@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #include <math.h>
 #include "common/imagelib/imagelib.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 // global image variables
 imglib_t image;
@@ -621,7 +622,7 @@ void Test_RunImagelib(void)
 	{ \
 		rgbdata_t* rgb; \
 		host.type = HOST_NORMAL; \
-		Memory_Init(); \
+		MemPool_SetMessageCallback(&Mem_MessageFunc); \
 		Image_Init(); \
 		if ( target("#internal", Data, (fs_offset_t)Size) ) \
 		{ \

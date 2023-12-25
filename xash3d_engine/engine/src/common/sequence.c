@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/eiface.h"
 #include "common/sequence.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 sequenceCommandLine_s g_fileScopeDefaults;
 sequenceCommandLine_s g_blockScopeDefaults;

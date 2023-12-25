@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "common/pm_local.h"
 #include "platform/platform.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #define SND_CLIP_DISTANCE 1000.0f
 

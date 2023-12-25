@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/const.h"
 #include "common/kbutton.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 extern convar_t* con_gamemaps;
 

@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "client/sound.h"
+#include "common/engine_mempool.h"
 
 #define MAX_DELAY 0.4f
 #define MAX_ROOM_TYPES SIZE_OF_ARRAY(rgsxpre)

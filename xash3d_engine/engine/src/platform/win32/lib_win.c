@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include "common/common.h"
+#include "common/engine_mempool.h"
 
 #if XASH_LIB == LIB_WIN32
 #include "platform/win32/lib_win.h"

@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "MathLib/mathlib.h"
 #include "img_bmp.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 /*
 =============

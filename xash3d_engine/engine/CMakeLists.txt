@@ -70,6 +70,8 @@ set(ENGINE_SOURCES
 	src/common/cvar.c
 	$<$<BOOL:${NF_DEDICATED_SERVER}>:src/common/dedicated.c>
 	src/common/engine_builddefs.h
+	src/common/engine_mempool.h
+	src/common/engine_mempool.c
 	src/common/filesystem_engine.c
 	src/common/fscallback.h
 	src/common/gamma.c
@@ -120,7 +122,6 @@ set(ENGINE_SOURCES
 	src/common/textureproperties.c
 	src/common/world.h
 	src/common/world.c
-	src/common/zone.c
 	src/server/server.h
 	src/server/sv_client.c
 	src/server/sv_cmds.c
@@ -278,6 +279,7 @@ target_link_libraries(${TARGETNAME_LIB_ENGINE}
 	${TARGETNAME_LIB_PLATFORMLIB}
 	${TARGETNAME_LIB_ENGINEPUBLICAPI}
 	${TARGETNAME_LIB_ENGINEINTERNALAPI}
+	${TARGETNAME_LIB_MEMPOOL}
 
 	$<$<BOOL:${CLIENT_SUPPORT}>:${TARGETNAME_LIB_REF_OPENGL}>
 	$<$<AND:$<BOOL:${CLIENT_SUPPORT}>,$<BOOL:${NF_EXPERIMENTAL_RENDERER}>>:${TARGETNAME_LIB_REF_OPENGL_EXPERIMENTAL}>

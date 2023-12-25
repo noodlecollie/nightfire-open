@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "common/soundlib/soundlib.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 // global sound variables
 sndlib_t sound;
@@ -292,7 +293,7 @@ void FS_FreeStream(stream_t* stream)
 	{ \
 		wavdata_t* wav; \
 		host.type = HOST_NORMAL; \
-		Memory_Init(); \
+		MemPool_SetMessageCallback(&Mem_MessageFunc); \
 		Sound_Init(); \
 		if ( target("#internal", Data, (fs_offset_t)Size) ) \
 		{ \

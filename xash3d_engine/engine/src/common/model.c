@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "client/client.h"
 #include "server/server.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 static model_info_t mod_crcinfo[MAX_MODELS];
 static model_t mod_known[MAX_MODELS];
