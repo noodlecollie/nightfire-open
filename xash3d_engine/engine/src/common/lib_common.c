@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "BuildPlatform/Arch.h"
 #include "BuildPlatform/LibNames.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 static char s_szLastError[1024] = "";
 

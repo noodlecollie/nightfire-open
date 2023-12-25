@@ -50,6 +50,7 @@ GNU General Public License for more details.
 #include "common/fscallback.h"
 #include "common/engine_builddefs.h"
 #include "common/buildnum.h"
+#include "common/engine_mempool.h"
 
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms
@@ -992,7 +993,8 @@ void Host_InitCommon(int argc, char** argv, const char* progname, qboolean bChan
 	host.config_executed = false;
 	host.status = HOST_INIT;  // initialzation started
 
-	Memory_Init();  // init memory subsystem
+	// init memory subsystem
+	MemPool_SetMessageCallback(&Mem_MessageFunc);
 
 	host.mempool = Mem_AllocPool("Zone Engine");
 

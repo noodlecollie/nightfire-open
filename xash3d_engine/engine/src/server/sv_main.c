@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #include "common/fscallback.h"
 #include "common/buildnum.h"
+#include "common/engine_mempool.h"
 
 // server cvars
 CVAR_DEFINE_AUTO(

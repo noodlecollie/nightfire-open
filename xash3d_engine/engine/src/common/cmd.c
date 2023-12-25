@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "server/server.h"
 #include "common/base_cmd.h"
 #include "common/engine_builddefs.h"
+#include "common/engine_mempool.h"
 
 #define MAX_CMD_BUFFER 32768
 #define MAX_CMD_LINE 2048

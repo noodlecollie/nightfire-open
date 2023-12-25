@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/custom.h"
 #include "client/ref_common.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 static rgbdata_t* CustomDecal_LoadImage(const char* path, void* raw, int size)
 {

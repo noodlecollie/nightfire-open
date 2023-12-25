@@ -17,7 +17,7 @@ typedef enum MemPool_ErrorLevel
 	MEMPOOL_MESSAGE
 } MemPool_ErrorLevel;
 
-typedef void (*MemPool_MessageCallback)(MemPool_ErrorLevel /*erorLevel*/, const char* /*msg*/);
+typedef void (*MemPool_MessageCallback)(MemPool_ErrorLevel /*errorLevel*/, const char* /*msg*/);
 
 void MemPool_SetMessageCallback(MemPool_MessageCallback errorHandler);
 void* MemPool_Realloc(
@@ -36,7 +36,6 @@ void MemPool_Check(const char* filename, int fileline);
 qboolean MemPool_IsAllocatedExt(MemPool_Handle poolptr, void* data);
 void MemPool_PrintList(size_t minallocationsize);
 void MemPool_PrintStats(void);
-void MemPool_SizeAsString(char* buffer, size_t bufferSize, float sizeInBytes, size_t digitsAfterDecimal);
 
 #define MEMPOOL_MALLOC(pool, size) MemPool_Alloc(pool, size, false, __FILE__, __LINE__)
 #define MEMPOOL_CALLOC(pool, size) MemPool_Alloc(pool, size, true, __FILE__, __LINE__)

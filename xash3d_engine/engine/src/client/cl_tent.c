@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/studio.h"
 #include "client/sound.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 /*
 ==============================================================

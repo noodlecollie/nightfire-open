@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include <limits.h>
 #include "common/imagelib/imagelib.h"
+#include "common/engine_mempool.h"
 
 #define netsize 256  // number of colours used
 #define prime1 499

@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "client/vid_common.h"
 #include "platform/sdl/events.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 static vidmode_t* vidmodes = NULL;
 static int num_vidmodes = 0;

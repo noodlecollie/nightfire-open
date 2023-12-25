@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "server/server.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 void SV_CreateCustomizationList(sv_client_t* cl)
 {

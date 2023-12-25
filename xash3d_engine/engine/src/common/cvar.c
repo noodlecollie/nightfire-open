@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/eiface.h"  // SIZE_OF_ARRAY
 #include "common/fscallback.h"
 #include "PlatformLib/String.h"
+#include "common/engine_mempool.h"
 
 convar_t* cvar_vars = NULL;  // head of list
 convar_t* cmd_scripting;

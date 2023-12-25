@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"
 #include "common/mod_local.h"
+#include "common/engine_mempool.h"
 
 #define LERPBYTE(i) \
 	r = resamplerow1[i]; \

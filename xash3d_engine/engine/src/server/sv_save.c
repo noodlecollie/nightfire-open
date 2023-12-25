@@ -25,6 +25,7 @@ GNU General Public License for more details.
 #include "client/ref_common.h"  // decals
 #include "PlatformLib/Time.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 /*
 ==============================================================================

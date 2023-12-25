@@ -5,6 +5,7 @@
 #include <math.h>
 #include "BuildPlatform/PlatformID.h"
 #include "MemPool/MemPool.h"
+#include "CRTLib/crtlib.h"
 
 #define MEMPOOL_MAX_MESSAGE_LENGTH 1024
 #define MEMPOOL_MAX_FILE_NAME_LENGTH 256
@@ -53,56 +54,6 @@ static mempool_t* g_PoolChain = NULL;
 // But! Mempools are handled through linked list so we can't index them safely
 static MemPool_Handle g_Lastidx = 0;
 
-static void LocalVsnprintf(char* dest, size_t destSize, const char* format, va_list args)
-{
-	if ( !dest || destSize < 1 )
-	{
-		return;
-	}
-
-	int result = vsnprintf(dest, destSize, format, args);
-
-	if ( result < 0 )
-	{
-		dest[0] = '\0';
-	}
-	else if ( (size_t)result >= destSize )
-	{
-		// Overflow
-		dest[destSize - 1] = '\0';
-	}
-}
-
-static void LocalSnprintf(char* dest, size_t destSize, const char* format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	LocalVsnprintf(dest, destSize, format, args);
-	va_end(args);
-}
-
-static void LocalStrcpy(char* dest, size_t destSize, const char* src)
-{
-	if ( !dest || destSize < 1 )
-	{
-		return;
-	}
-
-	if ( !src )
-	{
-		dest[destSize] = '\0';
-		return;
-	}
-
-	while ( *src && destSize > 1 )
-	{
-		*(dest++) = *(src++);
-		--destSize;
-	}
-
-	*dest = '\0';
-}
-
 static void EmitMessage(MemPool_ErrorLevel level, const char* format, ...)
 {
 	if ( !g_MessageCallback )
@@ -114,7 +65,7 @@ static void EmitMessage(MemPool_ErrorLevel level, const char* format, ...)
 
 	va_list args;
 	va_start(args, format);
-	LocalVsnprintf(message, sizeof(message), format, args);
+	Q_vsnprintf(message, sizeof(message), format, args);
 	va_end(args);
 
 	g_MessageCallback(level, message);
@@ -421,7 +372,7 @@ MemPool_Handle MemPool_AllocPool(const char* name, const char* filename, int fil
 	pool->chain = NULL;
 	pool->totalsize = 0;
 	pool->realsize = sizeof(mempool_t);
-	LocalStrcpy(pool->name, sizeof(pool->name), name);
+	Q_strcpy(pool->name, sizeof(pool->name), name);
 	pool->next = g_PoolChain;
 	g_PoolChain = pool;
 
@@ -589,13 +540,8 @@ void MemPool_PrintStats(void)
 		realsize += pool->realsize;
 	}
 
-	char memAsStr[32];
-
-	MemPool_SizeAsString(memAsStr, sizeof(memAsStr), (float)size, 2);
-	EMIT_MESSAGE(MEMPOOL_MESSAGE, "^3%lu^7 memory pools, totalling: ^1%s\n", count, memAsStr);
-
-	MemPool_SizeAsString(memAsStr, sizeof(memAsStr), (float)realsize, 2);
-	EMIT_MESSAGE(MEMPOOL_MESSAGE, "total allocated size: ^1%s\n", memAsStr);
+	EMIT_MESSAGE(MEMPOOL_MESSAGE, "^3%lu^7 memory pools, totalling: ^1%s\n", count, Q_memprint((float)size));
+	EMIT_MESSAGE(MEMPOOL_MESSAGE, "total allocated size: ^1%s\n", Q_memprint((float)realsize));
 }
 
 void MemPool_PrintList(size_t minallocationsize)
@@ -611,32 +557,28 @@ void MemPool_PrintList(size_t minallocationsize)
 	{
 		long changed_size = (long)pool->totalsize - (long)pool->lastchecksize;
 
-		char totalSize[32];
-		MemPool_SizeAsString(totalSize, sizeof(totalSize), (float)pool->totalsize, 2);
-
-		char realSize[32];
-		MemPool_SizeAsString(realSize, sizeof(realSize), (float)pool->realsize, 2);
-
 		// poolnames can contain color symbols, make sure what color is reset
 		if ( changed_size != 0 )
 		{
 			char sign = (changed_size < 0) ? '-' : '+';
 
-			char changedSize[32];
-			MemPool_SizeAsString(changedSize, sizeof(changedSize), (float)abs((int)changed_size), 2);
-
 			EMIT_MESSAGE(
 				MEMPOOL_MESSAGE,
 				"%10s (%10s actual) %s (^7%c%s change)\n",
-				totalSize,
-				realSize,
+				Q_memprint((float)pool->totalsize),
+				Q_memprint((float)pool->realsize),
 				pool->name,
 				sign,
-				changedSize);
+				Q_memprint((float)abs((int)changed_size)));
 		}
 		else
 		{
-			EMIT_MESSAGE(MEMPOOL_MESSAGE, "%5s (%5s actual) %s\n", totalSize, realSize, pool->name);
+			EMIT_MESSAGE(
+				MEMPOOL_MESSAGE,
+				"%5s (%5s actual) %s\n",
+				Q_memprint((float)pool->totalsize),
+				Q_memprint((float)pool->realsize),
+				pool->name);
 		}
 
 		pool->lastchecksize = pool->totalsize;
@@ -645,99 +587,13 @@ void MemPool_PrintList(size_t minallocationsize)
 		{
 			if ( mem->size >= minallocationsize )
 			{
-				char memSize[32];
-				MemPool_SizeAsString(memSize, sizeof(memSize), (float)mem->size, 2);
-
-				EMIT_MESSAGE(MEMPOOL_MESSAGE, "%10s allocated at %s:%i\n", memSize, mem->filename, mem->fileline);
+				EMIT_MESSAGE(
+					MEMPOOL_MESSAGE,
+					"%10s allocated at %s:%i\n",
+					Q_memprint((float)mem->size),
+					mem->filename,
+					mem->fileline);
 			}
 		}
 	}
-}
-
-void MemPool_SizeAsString(char* buffer, size_t bufferSize, float sizeInBytes, size_t digitsAfterDecimal)
-{
-#define ONE_KB (1024.0f)
-#define ONE_MB (1024.0f * ONE_KB)
-
-	if ( !buffer || bufferSize < 1 )
-	{
-		return;
-	}
-
-	char suffix[8];
-
-	// first figure out which bin to use
-	if ( sizeInBytes > ONE_MB )
-	{
-		sizeInBytes /= ONE_MB;
-		LocalStrcpy(suffix, sizeof(suffix), " Mb");
-	}
-	else if ( sizeInBytes > ONE_KB )
-	{
-		sizeInBytes /= ONE_KB;
-		LocalStrcpy(suffix, sizeof(suffix), " Kb");
-	}
-	else
-	{
-		LocalStrcpy(suffix, sizeof(suffix), " bytes");
-	}
-
-	char val[32];
-
-	// if it's basically integral, don't do any decimals
-	if ( fabsf(sizeInBytes - (int)sizeInBytes) < 0.00001f )
-	{
-		LocalSnprintf(val, sizeof(val), "%i%s", (int)sizeInBytes, suffix);
-	}
-	else
-	{
-		char fmt[32];
-
-		// otherwise, create a format string for the decimals
-		LocalSnprintf(fmt, sizeof(fmt), "%%.%if%s", digitsAfterDecimal, suffix);
-		LocalSnprintf(val, sizeof(val), fmt, sizeInBytes);
-	}
-
-	// copy from in to out
-	char* in = val;
-	char* out = buffer;
-
-	// search for decimal or if it was integral, find the space after the raw number
-	char* dot = strchr(in, '.');
-
-	if ( !dot )
-	{
-		dot = strchr(in, ' ');
-	}
-
-	int pos = (int)(dot - in);  // compute position of dot
-	pos -= 3;  // don't put a comma if it's <= 3 long
-
-	while ( *in && bufferSize > 1 )
-	{
-		// if pos is still valid then insert a comma every third digit, except if we would be
-		// putting one in the first spot
-		if ( pos >= 0 && !(pos % 3) )
-		{
-			// never in first spot
-			if ( out != buffer )
-			{
-				*(out++) = ',';
-				--bufferSize;
-
-				if ( bufferSize <= 1 )
-				{
-					break;
-				}
-			}
-		}
-
-		--pos;  // count down comma position
-		*(out++) = *(in++);  // copy rest of data as normal
-	}
-
-	*out = '\0';  // terminate
-
-#undef ONE_KB
-#undef ONE_MB
 }
