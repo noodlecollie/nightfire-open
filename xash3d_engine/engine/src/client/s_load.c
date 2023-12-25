@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include "client/sound.h"
 #include "CRCLib/crclib.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 // during registration it is possible to have more sounds
 // than could actually be referenced during gameplay,

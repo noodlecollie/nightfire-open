@@ -25,6 +25,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/hltv.h"
 #include "client/input.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #define STAT_HEALTH 0
 #define STAT_FRAGS 1

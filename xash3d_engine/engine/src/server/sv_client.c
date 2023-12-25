@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "common/net_api.h"
 #include "common/fscallback.h"
 #include "common/buildnum.h"
+#include "common/engine_mempool.h"
 
 typedef void (*RedirectFlushFunc)(netadr_t adr, rdtype_t target, char* buffer);
 

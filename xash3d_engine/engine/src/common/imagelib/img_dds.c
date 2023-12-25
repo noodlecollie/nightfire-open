@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "CRTLib/bitdefs.h"
 #include "common/imagelib/imagelib.h"
 #include "img_dds.h"
+#include "common/engine_mempool.h"
 
 qboolean Image_CheckDXT3Alpha(dds_t* hdr, byte* fin)
 {

@@ -26,6 +26,7 @@ GNU General Public License for more details.
 #include "client/input.h"
 #include "CRCLib/crclib.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 int CL_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 

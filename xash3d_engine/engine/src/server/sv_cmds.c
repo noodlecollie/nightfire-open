@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "server/server.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 extern convar_t* con_gamemaps;
 

@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include "common/soundlib/soundlib.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 /*
 =============================================================================

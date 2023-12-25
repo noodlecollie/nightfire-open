@@ -30,6 +30,7 @@ GNU General Public License for more details.
 #include "EngineInternalAPI/render_api.h"  // modelstate_t
 #include "client/ref_common.h"  // decals
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #define ENTVARS_COUNT SIZE_OF_ARRAY(gEntvarsDescription)
 

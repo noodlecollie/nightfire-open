@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "client/vid_common.h"
 #include <limits.h>
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 static void UI_UpdateUserinfo(void);
 
@@ -932,7 +933,7 @@ pfnMemAlloc
 */
 static void* pfnMemAlloc(size_t cb, const char* filename, const int fileline)
 {
-	return _Mem_Alloc(gameui.mempool, cb, true, filename, fileline);
+	return MemPool_Alloc(gameui.mempool, cb, true, filename, fileline);
 }
 
 /*
@@ -943,7 +944,7 @@ pfnMemFree
 */
 static void GAME_EXPORT pfnMemFree(void* mem, const char* filename, const int fileline)
 {
-	_Mem_Free(mem, filename, fileline);
+	MemPool_Free(mem, filename, fileline);
 }
 
 /*
@@ -986,7 +987,9 @@ static char** GAME_EXPORT pfnGetFilesList(const char* pattern, int* numFiles, in
 	static search_t* t = NULL;
 
 	if ( t )
+	{
 		Mem_Free(t);  // release prev search
+	}
 
 	t = FS_Search(pattern, true, gamedironly);
 	if ( !t )

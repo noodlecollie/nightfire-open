@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/triangleapi.h"
 #include "client/ref_common.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 typedef int (*PHYSICAPI)(int, server_physics_api_t*, physics_interface_t*);
 
@@ -1968,14 +1969,17 @@ static char** pfnGetFilesList(const char* pattern, int* numFiles, int gamedironl
 
 static void* pfnMem_Alloc(size_t cb, const char* filename, const int fileline)
 {
-	return _Mem_Alloc(svgame.mempool, cb, true, filename, fileline);
+	return MemPool_Alloc(svgame.mempool, cb, true, filename, fileline);
 }
 
 static void pfnMem_Free(void* mem, const char* filename, const int fileline)
 {
 	if ( !mem )
+	{
 		return;
-	_Mem_Free(mem, filename, fileline);
+	}
+
+	MemPool_Free(mem, filename, fileline);
 }
 
 /*
