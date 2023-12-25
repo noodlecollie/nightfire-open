@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/studio.h"
 #include "EngineInternalAPI/sprite.h"
 #include "common/qfont.h"
+#include "common/engine_mempool.h"
 
 static inline byte AverageRGB(rgba_t rgba)
 {

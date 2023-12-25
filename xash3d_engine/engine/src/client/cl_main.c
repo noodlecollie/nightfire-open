@@ -35,6 +35,7 @@ GNU General Public License for more details.
 #include "client/net_functions.h"
 #include "common/fscallback.h"
 #include "common/buildnum.h"
+#include "common/engine_mempool.h"
 
 #if defined XASH_SDL
 #include <SDL.h>

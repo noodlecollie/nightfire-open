@@ -11,6 +11,7 @@
 #include "client/cl_bytenormals.h"
 #include "common/fscallback.h"
 #include "EnginePublicAPI/surfaceprops.h"
+#include "common/engine_mempool.h"
 
 #define PART_SIZE Q_max(0.5f, cl_draw_particles->value)
 

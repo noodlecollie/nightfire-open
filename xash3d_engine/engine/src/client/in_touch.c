@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "client/vgui/vgui_draw.h"
 #include "EnginePublicAPI/mobility_int.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 #if defined XASH_SDL
 #include <SDL.h>

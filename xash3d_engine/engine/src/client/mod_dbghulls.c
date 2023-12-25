@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "MathLib/vec3.h"
 #include "common/world.h"
 #include "BuildPlatform/Utils.h"
+#include "common/engine_mempool.h"
 
 #define MAX_CLIPNODE_DEPTH 256  // should never exceed
 

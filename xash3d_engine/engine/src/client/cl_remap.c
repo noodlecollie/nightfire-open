@@ -17,6 +17,7 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "client/client.h"
 #include "EnginePublicAPI/studio.h"
+#include "common/engine_mempool.h"
 
 /*
 ====================

@@ -9,6 +9,7 @@
 #include "common/mod_local.h"
 #include "BuildPlatform/LibNames.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 struct ref_state_s ref;
 ref_globals_t refState;
@@ -366,11 +367,11 @@ static ref_api_t gEngfuncs = {
 	Mod_Calloc,
 	pfnGetStudioModelInterface,
 
-	_Mem_AllocPool,
-	_Mem_FreePool,
-	_Mem_Alloc,
-	_Mem_Realloc,
-	_Mem_Free,
+	MemPool_AllocPool,
+	MemPool_FreePool,
+	MemPool_Alloc,
+	MemPool_Realloc,
+	MemPool_Free,
 
 	COM_LoadLibrary,
 	COM_FreeLibrary,

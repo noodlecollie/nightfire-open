@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "client/input.h"
 #include "common/library.h"
 #include "common/fscallback.h"
+#include "common/engine_mempool.h"
 
 convar_t* scr_centertime;
 convar_t* scr_loading;
