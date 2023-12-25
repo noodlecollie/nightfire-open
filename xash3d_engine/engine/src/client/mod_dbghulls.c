@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "BuildPlatform/Utils.h"
 
 #define MAX_CLIPNODE_DEPTH 256  // should never exceed
+#define WINDING_BOGUS_RANGE ((vec_t)114032.64)  // world.size * 1.74
 
 #define list_entry(ptr, type, member) ((type*)((char*)(ptr) - (size_t)(&((type*)0)->member)))
 
@@ -156,7 +157,7 @@ static winding_t* winding_for_plane(const mplane_t* p)
 	winding_t* w;
 
 	// find the major axis
-	max = -BOGUS_RANGE;
+	max = -WINDING_BOGUS_RANGE;
 	axis = -1;
 
 	for ( i = 0; i < 3; i++ )
@@ -189,8 +190,8 @@ static winding_t* winding_for_plane(const mplane_t* p)
 	VectorNormalize(vup);
 	VectorScale(p->normal, p->dist, org);
 	CrossProduct(vup, p->normal, vright);
-	VectorScale(vup, BOGUS_RANGE, vup);
-	VectorScale(vright, BOGUS_RANGE, vright);
+	VectorScale(vup, WINDING_BOGUS_RANGE, vup);
+	VectorScale(vright, WINDING_BOGUS_RANGE, vright);
 
 	// project a really big axis aligned box onto the plane
 	w = winding_alloc(4);

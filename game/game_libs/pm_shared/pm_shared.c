@@ -42,6 +42,8 @@
 #define PM_VERBOSE(...)
 #endif
 
+#define VELOCITY_STOP_EPSILON 0.1f
+
 int g_bhopcap = 1;
 
 #ifdef CLIENT_DLL
@@ -382,10 +384,16 @@ int PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 	angle = normal[2];
 
 	blocked = 0x00;  // Assume unblocked.
+
 	if ( angle > 0 )  // If the plane that is blocking us has a positive z component, then assume it's a floor.
+	{
 		blocked |= 0x01;
+	}
+
 	if ( !angle )  // If the plane has no Z, it is vertical (wall/step)
+	{
 		blocked |= 0x02;
+	}
 
 	// Determine how far along plane to slide based on incoming direction.
 	// Scale by overbounce factor.
@@ -395,9 +403,12 @@ int PM_ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 	{
 		change = normal[i] * backoff;
 		out[i] = in[i] - change;
+
 		// If out velocity is too small, zero it out.
-		if ( out[i] > -STOP_EPSILON && out[i] < STOP_EPSILON )
+		if ( out[i] > -VELOCITY_STOP_EPSILON && out[i] < VELOCITY_STOP_EPSILON )
+		{
 			out[i] = 0;
+		}
 	}
 
 	// Return blocking flags.
