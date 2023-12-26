@@ -240,6 +240,7 @@ static inline qboolean VectorIsNull(const vec3_t v)
 	return v[0] == 0.0f && v[1] == 0.0f && v[2] == 0.0f;
 }
 
+qboolean VectorIsOnAxis(const vec3_t v);
 float VectorNormalizeLength(const vec3_t v, vec3_t out);
 qboolean VectorCompareEpsilon(const vec3_t vec1, const vec3_t vec2, vec_t epsilon);
 void VectorVectors(const vec3_t forward, vec3_t right, vec3_t up);

@@ -39,6 +39,7 @@ void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean
 
 void RoundUpHullSize(vec3_t size);
 void ClearBounds(vec3_t mins, vec3_t maxs);
+qboolean BoundsAreCleared(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
 
 qboolean BoundsIntersect(const vec3_t mins1, const vec3_t maxs1, const vec3_t mins2, const vec3_t maxs2);
