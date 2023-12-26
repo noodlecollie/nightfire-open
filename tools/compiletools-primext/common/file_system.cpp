@@ -423,29 +423,6 @@ bool COM_FileExists( const char *path )
 
 /*
 ============
-COM_FileWithoutPath
-============
-*/
-const char *COM_FileWithoutPath( const char *in )
-{
-	const char *separator, *backslash, *colon;
-
-	separator = Q_strrchr( in, '/' );
-	backslash = Q_strrchr( in, '\\' );
-
-	if( !separator || separator < backslash )
-		separator = backslash;
-
-	colon = Q_strrchr( in, ':' );
-
-	if( !separator || separator < colon )
-		separator = colon;
-
-	return separator ? separator + 1 : in;
-}
-
-/*
-============
 COM_ExtractFilePath
 ============
 */
@@ -466,34 +443,6 @@ void COM_ExtractFilePath( const char *path, char *dest )
 }
 
 /*
-============
-COM_FileExtension
-============
-*/
-const char *COM_FileExtension( const char *in )
-{
-	const char *separator, *backslash, *colon, *dot;
-
-	separator = Q_strrchr( in, '/' );
-	backslash = Q_strrchr( in, '\\' );
-
-	if( !separator || separator < backslash )
-		separator = backslash;
-
-	colon = Q_strrchr( in, ':' );
-
-	if( !separator || separator < colon )
-		separator = colon;
-
-	dot = Q_strrchr( in, '.' );
-
-	if( dot == NULL || ( separator && ( dot < separator )))
-		return "";
-
-	return dot + 1;
-}
-
-/*
 ==================
 COM_DefaultExtension
 ==================
@@ -511,28 +460,6 @@ void COM_DefaultExtension(char *path, const char *extension)
 		src--;
 	}
 	Q_strcat(path, extension);
-}
-
-/*
-============
-COM_StripExtension
-============
-*/
-void COM_StripExtension( char *path )
-{
-	size_t	length;
-
-	length = Q_strlen( path ) - 1;
-
-	while( length > 0 && path[length] != '.' )
-	{
-		length--;
-
-		if( path[length] == '/' || path[length] == '\\' || path[length] == ':' )
-			return; // no extension
-	}
-
-	if( length ) path[length] = 0;
 }
 
 /*

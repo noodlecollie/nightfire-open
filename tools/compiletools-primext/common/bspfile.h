@@ -1,12 +1,28 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
+
+/*
+==============================================================================
+
+BRUSH MODELS
+
+.bsp contain level static geometry with including PVS and lightning info
+==============================================================================
+*/
+
+#pragma once
+
+#include <stdint.h>
+#include "engine/bspfile.h"
+#include "MathLib/vec3.h"
+#include "CRTLib/bitdefs.h"
 
 // comiple-time settings
 #define BSPVERSION			HLBSP_VERSION
@@ -31,17 +47,6 @@
 #define CHECKVISBIT( vis, b )		((b) >= 0 ? (byte)((vis)[(b) >> 3] & (1 << ((b) & 7))) : (byte)false )
 #define SETVISBIT( vis, b )( void )	((b) >= 0 ? (byte)((vis)[(b) >> 3] |= (1 << ((b) & 7))) : (byte)false )
 #define CLEARVISBIT( vis, b )( void )	((b) >= 0 ? (byte)((vis)[(b) >> 3] &= ~(1 << ((b) & 7))) : (byte)false )
-
-/*
-==============================================================================
-
-BRUSH MODELS
-
-.bsp contain level static geometry with including PVS and lightning info
-==============================================================================
-*/
-#include "../../common/bspfile.h"
-#include <stdint.h>
 
 // header
 #define Q1BSP_VERSION		29	// quake1 regular version (beta is 28)

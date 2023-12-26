@@ -1,10 +1,17 @@
 include(compiler_settings)
 
 add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
+	engine/bspfile.h
+	engine/color24.h
+	engine/wadfile.h
+	basefs.h
+	basefs.cpp
+	bspfile.h
 	conprint.h
 	conprint.cpp
 	crashhandler.h
 	crashhandler.cpp
+	file_system.h
 	loglevel.h
 	threads.h
 	threads.cpp
