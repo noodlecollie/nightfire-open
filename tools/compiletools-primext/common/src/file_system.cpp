@@ -29,16 +29,16 @@ GNU General Public License for more details.
 
 #include <fcntl.h>
 #include <stdio.h>
-#include "CompileTools/conprint.h"
-#include "CompileTools/file_system.h"
 #include <sys/stat.h>
 #include "CRTLib/crtlib.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/file_system.h"
 #include "CompileTools/zone.h"
 #include "CompileTools/cmdlib.h"
+#include "CompileTools/wadfileoperations.h"
 #include "PlatformLib/System.h"
 #include "PlatformLib/File.h"
 #include "MathLib/mathdefs.h"
-#include "wadfileoperations.h"
 
 /*
 =============================================================================

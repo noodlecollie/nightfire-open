@@ -15,6 +15,8 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	include/CompileTools/scriptlib.h
 	include/CompileTools/shaders.h
 	include/CompileTools/threads.h
+	include/CompileTools/vastring.h
+	include/CompileTools/wadfileoperations.h
 	include/CompileTools/zone.h
 	src/basefs.cpp
 	src/bspfile.cpp
@@ -27,10 +29,8 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	src/scriptlib.cpp
 	src/shaders.cpp
 	src/threads.cpp
-	src/vastring.h
 	src/vastring.cpp
 	src/virtualfs.cpp
-	src/wadfileoperations.h
 	src/wadfileoperations.cpp
 	src/zone.cpp
 )

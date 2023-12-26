@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include "CompileTools/conprint.h"
 #include "CompileTools/cmdlib.h"
 #include "CompileTools/file_system.h"
-#include "wadfileoperations.h"
+#include "CompileTools/wadfileoperations.h"
 #include "CompileTools/zone.h"
 #include "CRTLib/crtlib.h"
 #include "CRTLib/bitdefs.h"

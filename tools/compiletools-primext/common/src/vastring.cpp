@@ -1,5 +1,5 @@
 #include <stdarg.h>
-#include "vastring.h"
+#include "CompileTools/vastring.h"
 #include "CRTLib/crtlib.h"
 
 char* va(const char* format, ...)

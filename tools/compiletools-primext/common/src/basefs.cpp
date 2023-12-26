@@ -21,9 +21,9 @@ GNU General Public License for more details.
 #include "CRTLib/crtlib.h"
 #include "PlatformLib/File.h"
 #include "CompileTools/zone.h"
-#include "vastring.h"
+#include "CompileTools/vastring.h"
 #include "CompileTools/basefs.h"
-#include "wadfileoperations.h"
+#include "CompileTools/wadfileoperations.h"
 
 #if !XASH_WIN32()
 #include <sys/types.h>
