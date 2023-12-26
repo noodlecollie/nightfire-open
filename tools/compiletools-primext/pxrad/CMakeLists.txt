@@ -53,21 +53,20 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	"${CMAKE_SOURCE_DIR}/game_shared"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	IGNORE_SEARCH_IN_WADS=1
-	ALLOW_WADS_IN_PACKS=1
 	PXBSP_COMPILING=1 # to avoid header hell because of another mathlib implementation
 )
 
 # pxrad compile-time settings
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	HLRAD_COMPRESS_TRANSFERS=1	# saves 80% memory
 	HLRAD_RIGHTROUND=1			# when you go down, when you go down-down!
 	HLRAD_TestLine_EDGE_FIX=1	# remove shadow artifacts in some cases
 )
 
 if(COMPATIBILITY_TYPE STREQUAL "p2")
-	target_compile_definitions(${PROJECT_NAME} PRIVATE 
+	target_compile_definitions(${PROJECT_NAME} PRIVATE
 		HLRAD_PSAVIOR=1
 		HLRAD_REFLECTIVITY=1
 		HLRAD_DELUXEMAPPING=1			# store deluxe vectors for bump-mapping
@@ -81,14 +80,14 @@ if(COMPATIBILITY_TYPE STREQUAL "p2")
 		HLRAD_RAYTRACE=1				# TESTTEST
 	)
 elseif(COMPATIBILITY_TYPE STREQUAL "p1")
-	target_compile_definitions(${PROJECT_NAME} PRIVATE 
+	target_compile_definitions(${PROJECT_NAME} PRIVATE
 		HLRAD_PARANOIA=1
 		HLRAD_PARANOIA_BUMP=1			# compute Paranoia-style bump (three lightstyles)
 		HLRAD_DELUXEMAPPING=1			# store deluxe vectors for bump-mapping
 		HLRAD_VERTEXLIGHTING=1			# vertex lighting for static models
 	)
 elseif(COMPATIBILITY_TYPE STREQUAL "goldsrc")
-	target_compile_definitions(${PROJECT_NAME} PRIVATE 
+	target_compile_definitions(${PROJECT_NAME} PRIVATE
 		HLRAD_GOLDSRC=1
 		HLRAD_REFLECTIVITY=1
 		HLRAD_VERTEXLIGHTING=1			# vertex lighting for static models
@@ -115,7 +114,7 @@ if(MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/Od>) # disable optimizing at all
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/ZI>) # enable "Edit and Continue" MSVC feature
 	target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:
-		/INCREMENTAL 
+		/INCREMENTAL
 		/SAFESEH:NO
 	>)
 
@@ -166,5 +165,5 @@ install(TARGETS ${PROJECT_NAME}
 	DESTINATION "${GAMEDIR}/${UTILS_INSTALL_DIR}/"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE 
+		WORLD_READ WORLD_EXECUTE
 )

@@ -46,15 +46,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	"../../game_shared"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	DOUBLEVEC_T=1
 	IGNORE_SEARCH_IN_WADS=1
-	ALLOW_WADS_IN_PACKS=1
 	PXBSP_COMPILING=1 # hack to avoid header hell
 )
 
 # pxcsg compile-time settings
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	HLCSG_SKYFIXEDSTYLE=1	# P2:Savior used to differentiate sky light from other light sources
 )
 
@@ -77,7 +76,7 @@ if(MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/Od>) # disable optimizing at all
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/ZI>) # enable "Edit and Continue" MSVC feature
 	target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:
-		/INCREMENTAL 
+		/INCREMENTAL
 		/SAFESEH:NO
 	>)
 
@@ -123,5 +122,5 @@ install(TARGETS ${PROJECT_NAME}
 	DESTINATION "${GAMEDIR}/${UTILS_INSTALL_DIR}/"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE 
+		WORLD_READ WORLD_EXECUTE
 )
