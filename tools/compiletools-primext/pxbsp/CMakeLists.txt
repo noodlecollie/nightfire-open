@@ -44,9 +44,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	"../../common"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	DOUBLEVEC_T=1
-	IGNORE_SEARCH_IN_WADS=1
 	PXBSP_COMPILING=1 # to avoid header hell because pxbsp uses another mathlib implementation
 )
 
@@ -69,7 +68,7 @@ if(MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/Od>) # disable optimizing at all
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/ZI>) # enable "Edit and Continue" MSVC feature
 	target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:
-		/INCREMENTAL 
+		/INCREMENTAL
 		/SAFESEH:NO
 	>)
 
@@ -115,5 +114,5 @@ install(TARGETS ${PROJECT_NAME}
 	DESTINATION "${GAMEDIR}/${UTILS_INSTALL_DIR}/"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE 
+		WORLD_READ WORLD_EXECUTE
 )

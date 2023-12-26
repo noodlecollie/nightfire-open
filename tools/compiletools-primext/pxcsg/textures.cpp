@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -41,7 +41,7 @@ static std::unordered_map<int32_t, std::string> g_hashToMiptexName;
 char	g_pszWadInclude[MAX_TEXFILES][64];
 int		g_nWadInclude;
 
-void TEX_LoadTextures( CUtlArray<mapent_t> *entities, bool merge )
+void TEX_LoadTextures( CUtlVector<mapent_t> *entities, bool merge )
 {
 	char	wadstring[MAX_VALUE];
 	char	tmpWadName[64];
@@ -238,7 +238,7 @@ int32_t TEX_AddMiptexNameToHashTable(const char *name)
 {
 	uint32_t hash, i;
 	size_t length = std::strlen(name);
-	
+
 	for (hash = i = 0; i < length; ++i)
 	{
 		hash += static_cast<uint8_t>(std::tolower(name[i]));
@@ -336,7 +336,7 @@ void AddAnimatingTextures( void )
 {
 	int	base = g_nummiptex;
 	char	name[64];
-	
+
 	for( int i = 0; i < base; i++ )
 	{
 		if( g_miptex[i].name[0] != '+' && g_miptex[i].name[0] != '-' )
@@ -356,7 +356,7 @@ void AddAnimatingTextures( void )
 			}
 		}
 	}
-	
+
 	if( g_nummiptex - base )
 		MsgDev( D_REPORT, "added %i additional animating textures.\n", g_nummiptex - base );
 }
@@ -400,7 +400,7 @@ static void FixSkyMiptex(dmiptexlump_t *miptexLump)
 	for (size_t i = 0; i < miptexLump->nummiptex; ++i)
 	{
 		miptex_t *miptex = reinterpret_cast<miptex_t*>(miptexLumpAddress + miptexLump->dataofs[i]);
-		if (!Q_strnicmp(miptex->name, "sky", 3)) 
+		if (!Q_strnicmp(miptex->name, "sky", 3))
 		{
 			size_t length = std::strlen(miptex->name);
 			for (size_t i = 0; i < length; ++i) {
@@ -589,7 +589,7 @@ TextureAxisFromPlane
 */
 void TextureAxisFromNormal( vec3_t normal, vec3_t xv, vec3_t yv, bool brush_primitive )
 {
-	vec_t	dot, best = 0.0;	
+	vec_t	dot, best = 0.0;
 	int	bestaxis = 0;
 
 	if( brush_primitive )

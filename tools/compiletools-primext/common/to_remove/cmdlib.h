@@ -20,7 +20,7 @@ GNU General Public License for more details.
 
 #include <basetypes.h>
 #include <cstddef>
-#include "conprint.h"
+#include "CompileTools/conprint.h"
 
 // bit routines
 #define BIT( n )			(1<<( n ))

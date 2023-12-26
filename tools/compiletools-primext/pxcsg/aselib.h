@@ -20,33 +20,43 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-#include "cmdlib.h"
-#include "mathlib.h"
+#pragma once
+
+#include "CompileTools/cmdlib.h"
+#include "MathLib/vec2.h"
+#include "MathLib/vec3.h"
 
 typedef struct
 {
-	vec3_t	point;
-	vec2_t	coord;
+	vec3_t point;
+	vec2_t coord;
 } trivert_t;
 
 typedef struct
 {
-	trivert_t	verts[3];
+	trivert_t verts[3];
 } poly_t;
 
 typedef struct
 {
-	char	name[100];
-	char	materialname[100];
-	poly_t	*triangles;
-	int	numtriangles;
+	char name[100];
+	char materialname[100];
+	poly_t* triangles;
+	int numtriangles;
 } polyset_t;
 
-bool ASE_Load( const char *filename, bool meshanims );
-int ASE_GetNumSurfaces( void );
-polyset_t	*ASE_GetSurfaceAnimation( int ndx, int *numFrames, int skipFrameStart, int skipFrameEnd, int maxFrames );
-const char *ASE_GetSurfaceName( int ndx );
-void ASE_Free( void );
+bool ASE_Load(const char* filename, bool meshanims);
+int ASE_GetNumSurfaces(void);
+polyset_t* ASE_GetSurfaceAnimation(int ndx, int* numFrames, int skipFrameStart, int skipFrameEnd, int maxFrames);
+const char* ASE_GetSurfaceName(int ndx);
+void ASE_Free(void);
 
-bool MakeBrushFor3Points( mapent_t *mapent, side_t *mainSide, short entindex, trivert_t *a, trivert_t *b, trivert_t *c );
-bool MakeBrushFor4Points( mapent_t *mapent, side_t *mainSide, short entindex, trivert_t *a, trivert_t *b, trivert_t *c, trivert_t *d );
+bool MakeBrushFor3Points(mapent_t* mapent, side_t* mainSide, short entindex, trivert_t* a, trivert_t* b, trivert_t* c);
+bool MakeBrushFor4Points(
+	mapent_t* mapent,
+	side_t* mainSide,
+	short entindex,
+	trivert_t* a,
+	trivert_t* b,
+	trivert_t* c,
+	trivert_t* d);

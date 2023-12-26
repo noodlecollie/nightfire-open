@@ -479,13 +479,12 @@ void SetLightStyles(void)
 		// if no custom style specified
 		if ( !t[0] )
 		{
-#ifdef HLCSG_SKYFIXEDSTYLE
 			if ( BoolForKey((entity_t*)e, "_sky") || !Q_strcmp(classname, "light_environment") )
 			{
 				Q_snprintf(value, sizeof(value), "%i", LS_SKY);
 				SetKeyValue((entity_t*)e, "style", value);
 			}
-#endif
+
 			continue;
 		}
 

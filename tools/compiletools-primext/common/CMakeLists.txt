@@ -1,38 +1,45 @@
 include(compiler_settings)
 
 add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
-	engine/bspfile.h
-	engine/color24.h
-	engine/wadfile.h
-	basefs.h
-	basefs.cpp
-	bspfile.h
-	bspfile.cpp
-	cmdlib.h
-	cmdlib.cpp
-	compatibility_mode.h
-	conprint.h
-	conprint.cpp
-	crashhandler.h
-	crashhandler.cpp
-	file_system.h
-	file_system.cpp
-	loglevel.h
-	polylib.h
-	polylib.cpp
-	scriptlib.h
-	scriptlib.cpp
-	shaders.h
-	shaders.cpp
-	threads.h
-	threads.cpp
-	vastring.h
-	vastring.cpp
-	virtualfs.cpp
-	wadfileoperations.h
-	wadfileoperations.cpp
-	zone.h
-	zone.cpp
+	include/CompileTools/engine/bspfile.h
+	include/CompileTools/engine/color24.h
+	include/CompileTools/engine/wadfile.h
+	include/CompileTools/basefs.h
+	include/CompileTools/bspfile.h
+	include/CompileTools/cmdlib.h
+	include/CompileTools/conprint.h
+	include/CompileTools/file_system.h
+	include/CompileTools/loglevel.h
+	include/CompileTools/polylib.h
+	include/CompileTools/scriptlib.h
+	include/CompileTools/shaders.h
+	include/CompileTools/threads.h
+	include/CompileTools/zone.h
+	src/basefs.cpp
+	src/bspfile.cpp
+	src/cmdlib.cpp
+	src/conprint.cpp
+	src/crashhandler.h
+	src/crashhandler.cpp
+	src/file_system.cpp
+	src/polylib.cpp
+	src/scriptlib.cpp
+	src/shaders.cpp
+	src/threads.cpp
+	src/vastring.h
+	src/vastring.cpp
+	src/virtualfs.cpp
+	src/wadfileoperations.h
+	src/wadfileoperations.cpp
+	src/zone.cpp
+)
+
+target_include_directories(${TARGETNAME_LIB_COMPILETOOLS}
+	PUBLIC
+	include
+
+	PRIVATE
+	src
 )
 
 target_link_libraries(${TARGETNAME_LIB_COMPILETOOLS} PUBLIC
@@ -40,7 +47,11 @@ target_link_libraries(${TARGETNAME_LIB_COMPILETOOLS} PUBLIC
 	${TARGETNAME_LIB_PLATFORMLIB}
 	${TARGETNAME_LIB_MATHLIB}
 	${TARGETNAME_LIB_CRTLIB}
+
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:DBGHELP>
+
+	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:pthread>
+	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:dl>
 )
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_COMPILETOOLS})

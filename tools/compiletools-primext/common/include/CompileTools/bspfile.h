@@ -20,7 +20,7 @@ BRUSH MODELS
 #pragma once
 
 #include <stdint.h>
-#include "engine/bspfile.h"
+#include "CompileTools/engine/bspfile.h"
 #include "MathLib/vec3.h"
 #include "CRTLib/bitdefs.h"
 

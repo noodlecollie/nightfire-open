@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -12,7 +12,7 @@
 #include "compatibility_mode.h"
 #include "build_info.h"
 
-CUtlArray<mapent_t>	g_mapentities;
+CUtlVector<mapent_t>	g_mapentities;
 brush_t		g_mapbrushes[MAX_MAP_BRUSHES];
 int		g_nummapbrushes;
 int		g_numparsedentities;
@@ -74,7 +74,7 @@ AllocEntity
 allocate a new entity
 =================
 */
-int AllocEntity( CUtlArray<mapent_t> *entities )
+int AllocEntity( CUtlVector<mapent_t> *entities )
 {
 	int	index = entities->AddToTail();
 	mapent_t	*mapent = &entities->Element( index );
@@ -137,7 +137,7 @@ MoveBrushesToEntity
 copy all the brushes into another entity
 ================
 */
-void MoveBrushesToEntity( CUtlArray<mapent_t> *entities, mapent_t *dst, mapent_t *src )
+void MoveBrushesToEntity( CUtlVector<mapent_t> *entities, mapent_t *dst, mapent_t *src )
 {
 	int oldcount = dst->brushes.Count();
 	// add the brushes to the tail of local array
@@ -542,7 +542,7 @@ static void SetupTextureVectors( mapent_t *mapent, brush_t *brush, side_t *side,
 		GetToken( false );
 		tex_vects.shift[1] = atof( token );
 		GetToken( false );
-		tex_vects.rotate = atof( token );	
+		tex_vects.rotate = atof( token );
 		GetToken( false );
 		tex_vects.scale[0] = atof( token );
 		GetToken( false );
@@ -660,7 +660,7 @@ static void SetupTextureVectors( mapent_t *mapent, brush_t *brush, side_t *side,
 			else if( axis[1][1] )
 				tv = 1;
 			else tv = 2;
-			
+
 			for( i = 0; i < 2; i++ )
 			{
 				ns = cosv * axis[i][sv] - sinv * axis[i][tv];
@@ -1003,7 +1003,7 @@ short GetFaceInfoForEntity( mapent_t *mapent )
 ParseMapEntity
 ================
 */
-bool ParseMapEntity( CUtlArray<mapent_t> *entities, bool external = false )
+bool ParseMapEntity( CUtlVector<mapent_t> *entities, bool external = false )
 {
 	short	brush_type;
 	short	faceinfo = -1;
@@ -1197,9 +1197,9 @@ bool ParseMapEntity( CUtlArray<mapent_t> *entities, bool external = false )
 
 		// save off cubemap positions
 		dcubemap_t *pCubemap = &g_dcubemaps[g_numcubemaps];
-		pCubemap->origin[0] = (short)mapent->origin[0];	
-		pCubemap->origin[1] = (short)mapent->origin[1];	
-		pCubemap->origin[2] = (short)mapent->origin[2];	
+		pCubemap->origin[0] = (short)mapent->origin[0];
+		pCubemap->origin[1] = (short)mapent->origin[1];
+		pCubemap->origin[2] = (short)mapent->origin[2];
 		pCubemap->size = (short)IntForKey( (entity_t *)mapent, "cubemapsize" );
 		FreeMapEntity( mapent ); // throw all key-value pairs
 		entities->Remove( index );
@@ -1216,7 +1216,7 @@ bool ParseMapEntity( CUtlArray<mapent_t> *entities, bool external = false )
 
 		for( e = mapent->epairs; e; e = e->next )
 		{
-			if( !Q_strcmp( e->key, "mode" )) 
+			if( !Q_strcmp( e->key, "mode" ))
 				continue;	// ignore mode
 
 			// only change if value is 0
@@ -1234,7 +1234,7 @@ bool ParseMapEntity( CUtlArray<mapent_t> *entities, bool external = false )
 	{
 		if( Q_strncmp( classname, "light", 5 ))
 		{
-			MsgDev( D_WARN, "Entity %i (classname \"%s\"): origin outside +/-%.0f: (%.0f,%.0f,%.0f)", 
+			MsgDev( D_WARN, "Entity %i (classname \"%s\"): origin outside +/-%.0f: (%.0f,%.0f,%.0f)",
 			g_numparsedentities, classname, (double)WORLD_MAXS, mapent->origin[0], mapent->origin[1], mapent->origin[2] );
 		}
 	}
@@ -1247,14 +1247,14 @@ bool ParseMapEntity( CUtlArray<mapent_t> *entities, bool external = false )
 IncludeMapFile
 ================
 */
-bool IncludeMapFile( const char *filename, CUtlArray<mapent_t> *entities, int index, bool external_map )
-{		
+bool IncludeMapFile( const char *filename, CUtlVector<mapent_t> *entities, int index, bool external_map )
+{
 	mapent_t		*mapent = &entities->Element( index );
 	const char	*ext = COM_FileExtension( filename );
 	int		oldentitynum = g_numparsedentities;
 	int		oldbrushtype = g_brushtype;
 	mapent_t		*localworld, *target;
-	CUtlArray<mapent_t>	localents;
+	CUtlVector<mapent_t>	localents;
 	char		path[256];
 	int		i;
 
@@ -1474,7 +1474,7 @@ LoadMapFile
 ================
 */
 void LoadMapFile( const char *filename )
-{		
+{
 	LoadScriptFile( filename );
 	g_numparsedentities = 0;
 	g_mapentities.Purge();
@@ -1522,7 +1522,7 @@ mapent_t *MapEntityForModel( const int modnum )
 FindTargetEntity
 ==================
 */
-mapent_t *FindTargetMapEntity( CUtlArray<mapent_t> *entities, const char *target )
+mapent_t *FindTargetMapEntity( CUtlVector<mapent_t> *entities, const char *target )
 {
 	for( int i = 0; i < entities->Count(); i++ )
 	{

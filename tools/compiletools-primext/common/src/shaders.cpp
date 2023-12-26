@@ -13,13 +13,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-#include "cmdlib.h"
-#include "file_system.h"
-#include "shaders.h"
-#include "scriptlib.h"
-#include "bspfile.h"
-#include "zone.h"
-#include "conprint.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/file_system.h"
+#include "CompileTools/shaders.h"
+#include "CompileTools/scriptlib.h"
+#include "CompileTools/bspfile.h"
+#include "CompileTools/zone.h"
+#include "CompileTools/conprint.h"
 #include "CRTLib/crtlib.h"
 
 shaderInfo_t* shaderInfo = NULL;

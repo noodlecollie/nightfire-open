@@ -10,12 +10,12 @@
 
 #include <limits>
 #include <string.h>
-#include "cmdlib.h"
-#include "polylib.h"
-#include "threads.h"
-#include "bspfile.h"
-#include "conprint.h"
-#include "zone.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/polylib.h"
+#include "CompileTools/threads.h"
+#include "CompileTools/bspfile.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/zone.h"
 #include "MathLib/utils.h"
 
 void pw(winding_t* w)
