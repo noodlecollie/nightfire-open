@@ -6,6 +6,8 @@ add_executable(${TARGETNAME_EXE_NFCSG}_new
 	csg.h
 	csg4.cpp
 	map.cpp
+	patch.cpp
+	plane.h
 	vecutils.h
 )
 
