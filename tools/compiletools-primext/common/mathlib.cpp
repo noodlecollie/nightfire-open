@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -36,10 +36,10 @@ static int m_iv[NTAB];
 static int GenerateRandomNumber( void )
 {
 	int	j, k;
-	
+
 	if( m_idum <= 0 || !m_iy )
 	{
-		if( -(m_idum) < 1 ) 
+		if( -(m_idum) < 1 )
 			m_idum = 1;
 		else  m_idum = -(m_idum);
 
@@ -48,7 +48,7 @@ static int GenerateRandomNumber( void )
 			k = (m_idum) / IQ;
 			m_idum = IA * (m_idum - k * IQ) - IR * k;
 
-			if( m_idum < 0 ) 
+			if( m_idum < 0 )
 				m_idum += IM;
 
 			if( j < NTAB )
@@ -61,12 +61,12 @@ static int GenerateRandomNumber( void )
 	k = (m_idum) / IQ;
 	m_idum = IA * (m_idum - k * IQ) - IR * k;
 
-	if( m_idum < 0 ) 
+	if( m_idum < 0 )
 		m_idum += IM;
 	j = m_iy / NDIV;
 
-	// We're seeing some strange memory corruption in the contents of s_pUniformStream. 
-	// Perhaps it's being caused by something writing past the end of this array? 
+	// We're seeing some strange memory corruption in the contents of s_pUniformStream.
+	// Perhaps it's being caused by something writing past the end of this array?
 	// Bounds-check in release to see if that's the case.
 	if( j >= NTAB || j < 0 )
 	{
@@ -193,7 +193,7 @@ SinCos
 */
 void SinCos( float radians, float *sine, float *cosine )
 {
-#if _GNU_SOURCE && !XASH_ANDROID
+#if _GNU_SOURCE && !XASH_ANDROID()
 	sincosf(radians, sine, cosine);
 #else
 	*sine = sinf(radians);
@@ -913,7 +913,7 @@ bool Matrix3x4_Invert_Full( matrix3x4 out, const matrix3x4 in )
 	VectorScale( normalaxis, -faceplane[3], texorg );
 	VectorMA( texorg, -texplanes[0][3], texaxis[0], texorg );
 	VectorMA( texorg, -texplanes[1][3], texaxis[1], texorg );
-	
+
 	VectorCopy( texaxis[0], out[0] );
 	VectorCopy( texaxis[1], out[1] );
 	VectorCopy( normalaxis, out[2] );
@@ -1004,7 +1004,7 @@ bool Matrix4x4_Invert_Full( matrix4x4 out, const matrix4x4 in1 )
 	r[3][4] =	0.0f;
 	r[3][5] =	0.0f;
 	r[3][6] = 0.0f;
-	r[3][7] = 1.0f;	
+	r[3][7] = 1.0f;
 
 	if( fabs( r[3][0] ) > fabs( r[2][0] ))
 	{

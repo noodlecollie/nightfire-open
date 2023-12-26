@@ -40,9 +40,7 @@ GNU General Public License for more details.
 #include <ctime>
 #include <string>
 
-#ifndef XASH_SDL
 typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
-#endif
 
 static bool g_writeMinidump = true;
 static LPTOP_LEVEL_EXCEPTION_FILTER g_oldFilter;
@@ -374,24 +372,6 @@ void CrashHandler::Restore()
 #define ALIGN(x, y) (((uintptr_t)(x) + ((y)-1)) & ~((y)-1))
 
 static struct sigaction g_oldFilter;
-
-#ifdef XASH_DYNAMIC_DLADDR
-static int d_dladdr(void* sym, Dl_info* info)
-{
-	static int (*dladdr_real)(void* sym, Dl_info* info);
-
-	if ( !dladdr_real )
-		dladdr_real = dlsym((void*)(size_t)(-1), "dladdr");
-
-	memset(info, 0, sizeof(*info));
-
-	if ( !dladdr_real )
-		return -1;
-
-	return dladdr_real(sym, info);
-}
-#define dladdr d_dladdr
-#endif
 
 static int Sys_PrintFrame(char* buf, int len, int i, void* addr)
 {
