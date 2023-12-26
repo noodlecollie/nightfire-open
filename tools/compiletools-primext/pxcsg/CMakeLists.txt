@@ -1,5 +1,8 @@
 add_executable(${TARGETNAME_EXE_NFCSG}_new
+	aselib.h
 	aselib.cpp
+	csg.h
+	csg4.cpp
 )
 
 target_include_directories(${TARGETNAME_EXE_NFCSG}_new PRIVATE

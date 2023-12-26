@@ -136,8 +136,6 @@ inline void AssertMsg(int pred, const char* fmt, ...)
 #define PlatformSecureZeroMemory(ptr, len) SecureZeroMemory(ptr, len)
 #endif
 
-#define Msg printf
-
 inline void Error(const char* msg)
 {
 	puts(msg);
