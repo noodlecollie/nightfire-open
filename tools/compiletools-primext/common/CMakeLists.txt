@@ -7,6 +7,9 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	basefs.h
 	basefs.cpp
 	bspfile.h
+	cmdlib.h
+	cmdlib.cpp
+	compatibility_mode.h
 	conprint.h
 	conprint.cpp
 	crashhandler.h
@@ -18,6 +21,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	threads.cpp
 	vastring.h
 	vastring.cpp
+	virtualfs.cpp
 	zone.h
 	zone.cpp
 )

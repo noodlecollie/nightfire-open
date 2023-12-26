@@ -139,7 +139,7 @@ size_t VFS_VPrintf(vfile_t* file, const char* format, va_list ap);
 size_t VFS_VIPrintf(vfile_t* file, const char* format, va_list ap);
 size_t VFS_Printf(vfile_t* file, const char* format, ...);
 size_t VFS_IPrintf(vfile_t* file, const char* format, ...);
-int VFS_Seek(vfile_t* file, size_t offset, int whence);
+int VFS_Seek(vfile_t* file, int64_t offset, int whence);
 char VFS_Getc(vfile_t* file);
 int VFS_Gets(vfile_t* file, byte* string, size_t bufsize);
 void VFS_Close(vfile_t* file);

@@ -34,7 +34,7 @@ GNU General Public License for more details.
 #include <sys/stat.h>
 #include "CRTLib/crtlib.h"
 #include "zone.h"
-#include "cmdlibnew.h"
+#include "cmdlib.h"
 #include "PlatformLib/System.h"
 #include "PlatformLib/File.h"
 #include "MathLib/mathdefs.h"
@@ -239,10 +239,10 @@ search_t* COM_Search(const char* pattern, int caseinsensitive, wfile_t* source_w
 	int numchars;
 	int resultlistindex;
 	int dirlistindex;
-	const char *slash;
-	const char *backslash;
-	const char *colon;
-	const char *separator;
+	const char* slash;
+	const char* backslash;
+	const char* colon;
+	const char* separator;
 	char temp[1024];
 	char root[1024];
 	stringlist_t resultlist;
