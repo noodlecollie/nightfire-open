@@ -18,6 +18,11 @@ static inline float Vector2DotProduct(const vec2_t x, const vec2_t y)
 	return (x[0] * y[0]) + (x[1] * y[1]);
 }
 
+static inline float Vector2Cross(const vec2_t x, const vec2_t y)
+{
+	return (x[0] * y[1]) - (x[1] * y[0]);
+}
+
 static inline void Vector2Add(const vec2_t a, const vec2_t b, vec2_t c)
 {
 	c[0] = a[0] + b[0];
