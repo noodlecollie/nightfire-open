@@ -12,6 +12,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	crashhandler.h
 	crashhandler.cpp
 	file_system.h
+	file_system.cpp
 	loglevel.h
 	threads.h
 	threads.cpp
