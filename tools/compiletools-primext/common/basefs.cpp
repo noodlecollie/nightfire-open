@@ -501,7 +501,7 @@ static bool FS_ParseLiblistGam(const char* filename, const char* gamedir)
 		return false;
 
 	Q_strncpy(fs_basedir, "valve", sizeof(fs_basedir));
-	COM_FileBase(gamedir, fs_gamedir);
+	COM_FileBase(gamedir, fs_gamedir, sizeof(fs_gamedir));
 
 	pfile = afile;
 
@@ -548,7 +548,7 @@ static bool FS_ParseGameInfo(const char* filename, const char* gamedir)
 		return false;
 
 	// setup default values
-	COM_FileBase(gamedir, fs_gamedir);
+	COM_FileBase(gamedir, fs_gamedir, sizeof(fs_gamedir));
 
 	pfile = afile;
 
@@ -674,8 +674,8 @@ void FS_Init(const char* source)
 	FS_ReadGameInfo(fs_rootdir);
 
 	MsgDev(D_REPORT, "gamedir: %s, basedir %s, falldir %s\n", fs_gamedir, fs_basedir, fs_falldir);
-	COM_ExtractFilePath(fs_rootdir, fs_rootdir);
-	COM_FileBase(source, mapfile);
+	COM_ExtractFilePath(fs_rootdir, fs_rootdir, sizeof(fs_rootdir));
+	COM_FileBase(source, mapfile, sizeof(mapfile));
 
 	if ( !Q_strcmp(fs_rootdir, "") )
 		Q_strncpy(fs_rootdir, "../", sizeof(fs_rootdir));
@@ -916,27 +916,28 @@ static searchpath_t* FS_FindFile(const char* name, int* index, bool gamedironly)
 			dlumpinfo_t* lump;
 			int type = W_TypeFromExt(name);
 			bool anywadname = true;
-			string wadname, wadfolder;
+			string wadname;
+			string wadfolder;
 			string shortname;
 
 			// quick reject by filetype
 			if ( type == TYP_NONE )
 				continue;
 
-			COM_ExtractFilePath(name, wadname);
+			COM_ExtractFilePath(name, wadname, sizeof(wadname));
 			wadfolder[0] = '\0';
 
 			if ( Q_strlen(wadname) )
 			{
-				COM_FileBase(wadname, wadname);
+				COM_FileBase(wadname, wadname, sizeof(wadname));
 				Q_strncpy(wadfolder, wadname, sizeof(wadfolder));
-				COM_DefaultExtension(wadname, ".wad");
+				COM_DefaultExtension(wadname, sizeof(wadname), ".wad");
 				anywadname = false;
 			}
 
 			// make wadname from wad fullpath
-			COM_FileBase(search->wad->filename, shortname);
-			COM_DefaultExtension(shortname, ".wad");
+			COM_FileBase(search->wad->filename, shortname, sizeof(shortname));
+			COM_DefaultExtension(shortname, sizeof(shortname), ".wad");
 
 			// quick reject by wadname
 			if ( !anywadname && Q_stricmp(wadname, shortname) )
@@ -944,7 +945,7 @@ static searchpath_t* FS_FindFile(const char* name, int* index, bool gamedironly)
 
 			// NOTE: we can't using long names for wad,
 			// because we using original wad names[16];
-			COM_FileBase(name, shortname);
+			COM_FileBase(name, shortname, sizeof(shortname));
 
 			lump = W_FindLump(search->wad, shortname, type);
 
@@ -1623,7 +1624,9 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 		}
 		else if ( searchpath->wad )
 		{
-			string wadpattern, wadname, temp2;
+			string wadpattern;
+			string wadname;
+			string temp2;
 			int type = W_TypeFromExt(pattern);
 			qboolean anywadname = true;
 			string wadfolder;
@@ -1632,21 +1635,21 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 			if ( type == TYP_NONE )
 				continue;
 
-			COM_ExtractFilePath(pattern, wadname);
-			COM_FileBase(pattern, wadpattern);
+			COM_ExtractFilePath(pattern, wadname, sizeof(wadname));
+			COM_FileBase(pattern, wadpattern, sizeof(wadpattern));
 			wadfolder[0] = '\0';
 
 			if ( Q_strlen(wadname) )
 			{
-				COM_FileBase(wadname, wadname);
+				COM_FileBase(wadname, wadname, sizeof(wadname));
 				Q_strncpy(wadfolder, wadname, sizeof(wadfolder));
-				COM_DefaultExtension(wadname, ".wad");
+				COM_DefaultExtension(wadname, sizeof(wadname), ".wad");
 				anywadname = false;
 			}
 
 			// make wadname from wad fullpath
-			COM_FileBase(searchpath->wad->filename, temp2);
-			COM_DefaultExtension(temp2, ".wad");
+			COM_FileBase(searchpath->wad->filename, temp2, sizeof(temp2));
+			COM_DefaultExtension(temp2, sizeof(temp2), ".wad");
 
 			// quick reject by wadname
 			if ( !anywadname && Q_stricmp(wadname, temp2) )
@@ -1678,7 +1681,7 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 						{
 							// build path: wadname/lumpname.ext
 							Q_snprintf(temp2, sizeof(temp2), "%s/%s", wadfolder, temp);
-							COM_DefaultExtension(temp2, va(".%s", W_ExtFromType(wad->lumps[i].type)));
+							COM_DefaultExtension(temp2, sizeof(temp2), va(".%s", W_ExtFromType(wad->lumps[i].type)));
 							stringlistappend(&resultlist, temp2);
 						}
 					}

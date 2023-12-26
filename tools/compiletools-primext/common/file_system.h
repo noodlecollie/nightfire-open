@@ -123,10 +123,6 @@ int COM_FileTime(const char* filename);
 bool COM_FolderExists(const char* path);
 bool COM_FileExists(const char* path);
 void COM_CreatePath(char* path);
-void COM_FileBase(const char* in, char* out);
-void COM_DefaultExtension(char* path, const char* extension);
-void COM_ExtractFilePath(const char* path, char* dest);
-void COM_ReplaceExtension(char* path, const char* extension);
 
 // virtual filesystem
 vfile_t* VFS_Create(const byte* buffer = NULL, size_t buffsize = 0);
