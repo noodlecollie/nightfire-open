@@ -31,15 +31,15 @@ BRUSH MODELS
 #define VERSIONSTRING "^5v.0.90^7"
 
 // epsilon values (critical stuff)
-#define NORMAL_EPSILON 1e-5
-#define DIR_EPSILON 1e-4
-#define DIST_EPSILON 4e-2
-#define EQUAL_EPSILON 4e-3
-#define ON_EPSILON 4e-2
-#define POINT_EPSILON (ON_EPSILON * 0.5)
+#define NORMAL_EPSILON 1e-5f
+#define DIR_EPSILON 1e-4f
+#define DIST_EPSILON 4e-2f
+#define EQUAL_EPSILON 4e-3f
+#define ON_EPSILON 4e-2f
+#define POINT_EPSILON (ON_EPSILON * 0.5f)
 #define CSGCHOP_EPSILON ON_EPSILON
 #define PRTCHOP_EPSILON ON_EPSILON
-#define MICROVOLUME 0.1
+#define MICROVOLUME 0.1f
 #define T_EPSILON ON_EPSILON
 #define HULL_VISIBLE 0
 
