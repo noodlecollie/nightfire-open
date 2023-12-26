@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "zone.h"
 #include "vastring.h"
 #include "basefs.h"
+#include "wadfileoperations.h"
 
 #if !XASH_WIN32()
 #include <sys/types.h>

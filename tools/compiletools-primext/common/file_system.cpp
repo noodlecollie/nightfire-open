@@ -38,6 +38,7 @@ GNU General Public License for more details.
 #include "PlatformLib/System.h"
 #include "PlatformLib/File.h"
 #include "MathLib/mathdefs.h"
+#include "wadfileoperations.h"
 
 /*
 =============================================================================
@@ -224,132 +225,6 @@ FILESYSTEM PUBLIC BASE FUNCTIONS
 
 =============================================================================
 */
-/*
-===========
-FS_Search
-
-Allocate and fill a search structure with information on matching filenames.
-===========
-*/
-search_t* COM_Search(const char* pattern, int caseinsensitive, wfile_t* source_wad)
-{
-	search_t* search = NULL;
-	int i;
-	int numfiles;
-	int numchars;
-	int resultlistindex;
-	int dirlistindex;
-	const char* slash;
-	const char* backslash;
-	const char* colon;
-	const char* separator;
-	char temp[1024];
-	char root[1024];
-	stringlist_t resultlist;
-	stringlist_t dirlist;
-	char* basepath;
-	size_t basepathlength;
-
-	// Unused for some reason
-	(void)caseinsensitive;
-
-	for ( i = 0; pattern[i] == '.' || pattern[i] == ':' || pattern[i] == '/' || pattern[i] == '\\'; i++ )
-	{
-		// Skip
-	}
-
-	if ( i > 0 )
-	{
-		MsgDev(D_ERROR, "COM_Search: don't use punctuation at the beginning of a search pattern!\n");
-		return NULL;
-	}
-
-	PlatformLib_GetCWD(root, sizeof(root));
-
-	if ( root[0] == '\0' )
-	{
-		MsgDev(D_ERROR, "couldn't determine current directory\n");
-		return NULL;
-	}
-
-	stringlistinit(&resultlist);
-	stringlistinit(&dirlist);
-
-	slash = Q_strrchr(pattern, '/');
-	backslash = Q_strrchr(pattern, '\\');
-	colon = Q_strrchr(pattern, ':');
-	separator = Q_max(slash, backslash);
-	separator = Q_max(separator, colon);
-	basepathlength = separator ? (separator + 1 - pattern) : 0;
-	basepath = (char*)Mem_Alloc(basepathlength + 1);
-
-	if ( basepathlength )
-	{
-		memcpy(basepath, pattern, basepathlength);
-	}
-
-	basepath[basepathlength] = 0;
-
-#ifndef IGNORE_SEARCH_IN_WADS
-	W_SearchForFile(source_wad, pattern, &resultlist);
-#endif
-	// get a directory listing and look at each name
-	stringlistinit(&dirlist);
-	listdirectory(&dirlist, basepath);
-
-	for ( dirlistindex = 0; dirlistindex < dirlist.numstrings; dirlistindex++ )
-	{
-		Q_snprintf(temp, sizeof(temp), "%s%s", basepath, dirlist.strings[dirlistindex]);
-
-		if ( matchpattern(temp, (char*)pattern, true) )
-		{
-			for ( resultlistindex = 0; resultlistindex < resultlist.numstrings; resultlistindex++ )
-			{
-				if ( !Q_strcmp(resultlist.strings[resultlistindex], temp) )
-				{
-					break;
-				}
-			}
-
-			if ( resultlistindex == resultlist.numstrings )
-			{
-				stringlistappend(&resultlist, temp);
-			}
-		}
-	}
-
-	stringlistfreecontents(&dirlist);
-
-	if ( resultlist.numstrings )
-	{
-		stringlistsort(&resultlist);
-		numfiles = resultlist.numstrings;
-		numchars = 0;
-
-		for ( resultlistindex = 0; resultlistindex < resultlist.numstrings; resultlistindex++ )
-			numchars += (int)Q_strlen(resultlist.strings[resultlistindex]) + 1;
-
-		search = (search_t*)Mem_Alloc(sizeof(search_t) + numchars + numfiles * sizeof(char*));
-		search->filenames = (char**)((char*)search + sizeof(search_t));
-		search->filenamesbuffer = (char*)((char*)search + sizeof(search_t) + numfiles * sizeof(char*));
-		search->numfilenames = (int)numfiles;
-		numfiles = numchars = 0;
-
-		for ( resultlistindex = 0; resultlistindex < resultlist.numstrings; resultlistindex++ )
-		{
-			search->filenames[numfiles] = search->filenamesbuffer + numchars;
-			size_t textlen = Q_strlen(resultlist.strings[resultlistindex]) + 1;
-			memcpy(search->filenames[numfiles], resultlist.strings[resultlistindex], textlen);
-			numchars += (int)textlen;
-			numfiles++;
-		}
-	}
-
-	stringlistfreecontents(&resultlist);
-	Mem_Free(basepath);
-
-	return search;
-}
 
 byte* COM_LoadFile(const char* filepath, size_t* filesize, bool safe)
 {

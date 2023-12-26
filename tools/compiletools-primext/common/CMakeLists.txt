@@ -22,6 +22,8 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	vastring.h
 	vastring.cpp
 	virtualfs.cpp
+	wadfileoperations.h
+	wadfileoperations.cpp
 	zone.h
 	zone.cpp
 )
