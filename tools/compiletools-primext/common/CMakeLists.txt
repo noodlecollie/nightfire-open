@@ -7,6 +7,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	include/CompileTools/basefs.h
 	include/CompileTools/bspfile.h
 	include/CompileTools/cmdlib.h
+	include/CompileTools/compatibility_mode.h
 	include/CompileTools/conprint.h
 	include/CompileTools/file_system.h
 	include/CompileTools/loglevel.h

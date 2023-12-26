@@ -5,6 +5,7 @@ add_executable(${TARGETNAME_EXE_NFCSG}_new
 	brush.cpp
 	csg.h
 	csg4.cpp
+	map.cpp
 	vecutils.h
 )
 
