@@ -5,6 +5,7 @@
 #include "PlatformLib/System.h"
 #include "cmdlib.h"
 #include "conprint.h"
+#include "zone.h"
 
 #if XASH_WIN32()
 #define WIN32_LEAN_AND_MEAN
@@ -78,4 +79,23 @@ double I_FloatTime(void)
 #else
 #error "Implement me!"
 #endif
+}
+
+char* copystring(const char* str)
+{
+	if ( !str )
+	{
+		return NULL;
+	}
+
+	const size_t length = Q_strlen(str) + 1;
+	char* newString = (char*)Mem_Alloc(length, C_STRING);
+	Q_strcpy(newString, length, str);
+
+	return newString;
+}
+
+void freestring(char* str)
+{
+	Mem_Free(str, C_STRING);
 }
