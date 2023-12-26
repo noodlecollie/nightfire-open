@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include "zone.h"
 #include "threads.h"
 #include "conprint.h"
-#include "cmdlibnew.h"
+#include "cmdlib.h"
 
 #define ZONE_ATTEMPT_CALLOC
 #define ZONE_OVERRIDE_ALLOC_OPS

@@ -14,7 +14,7 @@ GNU General Public License for more details.
 */
 
 #include <fcntl.h>
-#include "cmdlibnew.h"
+#include "cmdlib.h"
 #include "file_system.h"
 #include "bspfile.h"
 #include "conprint.h"

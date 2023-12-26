@@ -12,7 +12,7 @@
 #include "BuildPlatform/Typedefs.h"
 #include "MathLib/utils.h"
 #include "conprint.h"
-#include "cmdlibnew.h"
+#include "cmdlib.h"
 
 #define NO_THREAD_NAMES
 #include "threads.h"
