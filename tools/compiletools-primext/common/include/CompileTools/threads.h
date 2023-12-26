@@ -8,6 +8,8 @@
  *
  ****/
 
+#pragma once
+
 extern int g_numthreads;
 
 #define MAX_THREADS 128
