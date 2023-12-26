@@ -359,7 +359,8 @@ void CrashHandler::Restore()
 	}
 }
 
-#elif  XASH_LINUX()
+#elif XASH_LINUX()
+#include <dlfcn.h>
 #include <ucontext.h>
 #include <signal.h>
 #include <sys/mman.h>
@@ -421,10 +422,10 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 		message,
 		sizeof(message),
 		"PrimeXT (%s, commit %s, architecture %s, platform %s)\n",
-		BuildInfo::GetDate(),
-		BuildInfo::GetCommitHash(),
-		BuildInfo::GetArchitecture(),
-		BuildInfo::GetPlatform());
+		__DATE__,
+		BuildPlatform_CommitString(),
+		BuildPlatform_ArchitectureString(),
+		BuildPlatform_PlatformString());
 
 	len += Q_snprintf(
 		message + len,
@@ -497,7 +498,7 @@ static void Sys_Crash(int signal, siginfo_t* si, void* context)
 
 void CrashHandler::Setup()
 {
-	struct sigaction act = {0};
+	struct sigaction act = {};
 	act.sa_sigaction = Sys_Crash;
 	act.sa_flags = SA_SIGINFO | SA_ONSTACK;
 	sigaction(SIGSEGV, &act, &g_oldFilter);
@@ -559,5 +560,7 @@ void CrashHandler::ToggleMinidumpWrite(bool status)
 {
 #if XASH_WIN32()
 	g_writeMinidump = status;
+#else
+	(void)status;
 #endif
 }

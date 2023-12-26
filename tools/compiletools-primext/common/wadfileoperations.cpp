@@ -435,7 +435,7 @@ byte* W_ReadLump(wfile_t* wad, dlumpinfo_t* lump, size_t* lumpsizeptr)
 
 	oldpos = LocalTell(*wad);  // don't forget restore original position
 
-	if ( LocalSeek(*wad, lump->filepos, SEEK_SET) == -1 )
+	if ( LocalSeek(*wad, lump->filepos, SEEK_SET) == (size_t)-1 )
 	{
 		MsgDev(D_ERROR, "W_ReadLump: %s is corrupted\n", lump->name);
 		LocalSeek(*wad, oldpos, SEEK_SET);
@@ -445,7 +445,7 @@ byte* W_ReadLump(wfile_t* wad, dlumpinfo_t* lump, size_t* lumpsizeptr)
 	buf = (byte*)Mem_Alloc(lump->disksize, C_FILESYSTEM);
 	size = LocalRead(*wad, buf, lump->disksize);
 
-	if ( size < lump->disksize )
+	if ( size < (size_t)lump->disksize )
 	{
 		MsgDev(D_WARN, "W_ReadLump: %s is probably corrupted\n", lump->name);
 		LocalSeek(*wad, oldpos, SEEK_SET);
@@ -661,7 +661,7 @@ wfile_t* W_Open(const char* filename, const char* mode, int* error, qboolean ext
 
 		wad->infotableofs = header.infotableofs;  // save infotableofs position
 
-		if ( LocalSeek(*wad, wad->infotableofs, SEEK_SET) == -1 )
+		if ( LocalSeek(*wad, wad->infotableofs, SEEK_SET) == (size_t)-1 )
 		{
 			MsgDev(D_ERROR, "W_Open: %s can't find lump allocation table\n", filename);
 			if ( error )
@@ -830,7 +830,7 @@ int W_SaveLump(wfile_t* wad, const char* lump, const void* data, size_t datasize
 					return -1;
 				}
 
-				if ( datasize != find->size )
+				if ( datasize != (size_t)find->size )
 				{
 					MsgDev(
 						D_ERROR,
@@ -843,14 +843,14 @@ int W_SaveLump(wfile_t* wad, const char* lump, const void* data, size_t datasize
 
 				oldpos = LocalTell(*wad);  // don't forget restore original position
 
-				if ( LocalSeek(*wad, find->filepos, SEEK_SET) == -1 )
+				if ( LocalSeek(*wad, find->filepos, SEEK_SET) == (size_t)-1 )
 				{
 					MsgDev(D_ERROR, "W_ReplaceLump: %s is corrupted\n", find->name);
 					LocalSeek(*wad, oldpos, SEEK_SET);
 					return -1;
 				}
 
-				if ( LocalWrite(*wad, data, datasize) != find->disksize )
+				if ( LocalWrite(*wad, data, datasize) != (size_t)find->disksize )
 				{
 					MsgDev(D_WARN, "W_ReplaceLump: %s probably replaced with errors\n", find->name);
 				}

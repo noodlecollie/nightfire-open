@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 #include <new>
 #include <string>
+#include <cstring>
 #include "BuildPlatform/Typedefs.h"
 #include "zone.h"
 #include "threads.h"
@@ -25,8 +26,10 @@ GNU General Public License for more details.
 #define ZONE_OVERRIDE_ALLOC_OPS
 // #define ZONE_DEBUG
 
+#ifdef ZONE_DEBUG
 static int c_alloc[C_MAXSTAT] = {0};
 static size_t total_active, total_peakactive;
+#endif  // ZONE_DEBUG
 
 typedef struct memhdr_s
 {

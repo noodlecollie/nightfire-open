@@ -15,9 +15,10 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "engine/wadfile.h"
 #include <time.h>
 #include <stdint.h>
+#include <stdarg.h>
+#include "engine/wadfile.h"
 #include "BuildPlatform/Typedefs.h"
 #include "basefs.h"
 
