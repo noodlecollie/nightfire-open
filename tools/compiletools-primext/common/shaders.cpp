@@ -16,7 +16,7 @@ GNU General Public License for more details.
 #include "cmdlib.h"
 #include "file_system.h"
 #include "shaders.h"
-#include "scriplib.h"
+#include "scriptlib.h"
 #include "bspfile.h"
 #include "zone.h"
 #include "conprint.h"
@@ -243,6 +243,11 @@ static void ParseShaderFile(const char* filename)
 	shaderInfo_t* si = NULL;
 	char* suffix;
 
+	// NoodleCollie: This is currently horrible because this code appends
+	// to this buffer using strcat, which will essentially call strlen
+	// many times on a string that could be enormous. I won't touch this
+	// now because I don't want to break anything that was already here,
+	// but I do want to register my displeasure.
 	shaderText = (char*)Mem_Alloc(SHADER_TEXT_MAX_LENGTH, C_STRING);
 
 	if ( !shaderText )
@@ -284,7 +289,7 @@ static void ParseShaderFile(const char* filename)
 		}
 
 		/* handle { } section */
-		if ( !GetTokenAppend(shaderText, true) )
+		if ( !GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, true) )
 		{
 			break;
 		}
@@ -308,7 +313,7 @@ static void ParseShaderFile(const char* filename)
 
 		while ( 1 )
 		{
-			if ( !GetTokenAppend(shaderText, true) )
+			if ( !GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, true) )
 			{
 				break;
 			}
@@ -327,7 +332,7 @@ static void ParseShaderFile(const char* filename)
 			{
 				while ( 1 )
 				{
-					if ( !GetTokenAppend(shaderText, true) )
+					if ( !GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, true) )
 					{
 						break;
 					}
@@ -343,10 +348,11 @@ static void ParseShaderFile(const char* filename)
 						// skip one token for animated stages
 						if ( !Q_stricmp(token, "animMap") )
 						{
-							GetTokenAppend(shaderText, false);
+							GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
 						}
 
-						GetTokenAppend(shaderText, false);
+						GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
+
 						if ( token[0] != '*' && token[0] != '$' )
 						{
 							Q_strcpy(si->implicitImagePath, sizeof(si->implicitImagePath), token);
@@ -361,7 +367,8 @@ static void ParseShaderFile(const char* filename)
 			// -----------------------------------------------------------------
 			else if ( !Q_stricmp(token, "surfaceparm") )
 			{
-				GetTokenAppend(shaderText, false);
+				GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
+
 				if ( !ApplySurfaceParm(token, &si->contents, &si->flags) )
 				{
 					MsgDev(D_WARN, "unknown surfaceparm: \"%s\"\n", token);
@@ -375,7 +382,8 @@ static void ParseShaderFile(const char* filename)
 			// qer_editorimage <image>
 			else if ( !Q_stricmp(token, "qer_editorImage") )
 			{
-				GetTokenAppend(shaderText, false);
+				GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
+
 				Q_strcpy(si->editorImagePath, sizeof(si->editorImagePath), token);
 				COM_DefaultExtension(si->editorImagePath, sizeof(si->editorImagePath), ".tga");
 			}
@@ -383,7 +391,8 @@ static void ParseShaderFile(const char* filename)
 			// q3map_lightimage <image>
 			else if ( !Q_stricmp(token, "q3map_lightImage") )
 			{
-				GetTokenAppend(shaderText, false);
+				GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
+
 				Q_strcpy(si->lightImagePath, sizeof(si->lightImagePath), token);
 				COM_DefaultExtension(si->lightImagePath, sizeof(si->lightImagePath), ".tga");
 			}
@@ -391,7 +400,7 @@ static void ParseShaderFile(const char* filename)
 			// skyparms <outer image> <cloud height> <inner image>
 			else if ( !Q_stricmp(token, "skyParms") )
 			{
-				GetTokenAppend(shaderText, false);
+				GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
 
 				if ( Q_stricmp(token, "-") && Q_stricmp(token, "full") )
 				{
@@ -405,8 +414,8 @@ static void ParseShaderFile(const char* filename)
 				}
 
 				// skip rest of line
-				GetTokenAppend(shaderText, false);
-				GetTokenAppend(shaderText, false);
+				GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
+				GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false);
 			}
 
 			// -----------------------------------------------------------------
@@ -414,7 +423,7 @@ static void ParseShaderFile(const char* filename)
 			// -----------------------------------------------------------------
 
 			// ignore all other tokens on the line
-			while ( TokenAvailable() && GetTokenAppend(shaderText, false) )
+			while ( TokenAvailable() && GetTokenAppend(shaderText, SHADER_TEXT_MAX_LENGTH, false) )
 			{
 				// Skip
 			}

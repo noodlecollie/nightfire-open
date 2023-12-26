@@ -17,6 +17,8 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	file_system.h
 	file_system.cpp
 	loglevel.h
+	scriptlib.h
+	scriptlib.cpp
 	shaders.h
 	shaders.cpp
 	threads.h
