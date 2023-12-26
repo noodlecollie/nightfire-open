@@ -181,6 +181,56 @@ void Matrix3x4_CreateFromEntity(matrix3x4 out, const vec3_t angles, const vec3_t
 	}
 }
 
+void Matrix3x4_CreateFromEntityScale3f(matrix3x4 out, const vec3_t angles, const vec3_t origin, const vec3_t scale)
+{
+	float sr, sp, sy, cr, cp, cy;
+
+	SinCos(DEG2RADF(angles[YAW]), &sy, &cy);
+	SinCos(DEG2RADF(angles[PITCH]), &sp, &cp);
+	SinCos(DEG2RADF(angles[ROLL]), &sr, &cr);
+
+	out[0][0] = (cp * cy) * scale[0];
+	out[1][0] = (sr * sp * cy + cr * -sy) * scale[1];
+	out[2][0] = (cr * sp * cy + -sr * -sy) * scale[2];
+	out[3][0] = origin[0];
+	out[0][1] = (cp * sy) * scale[0];
+	out[1][1] = (sr * sp * sy + cr * cy) * scale[1];
+	out[2][1] = (cr * sp * sy + -sr * cy) * scale[2];
+	out[3][1] = origin[1];
+	out[0][2] = (-sp) * scale[0];
+	out[1][2] = (sr * cp) * scale[1];
+	out[2][2] = (cr * cp) * scale[2];
+	out[3][2] = origin[2];
+}
+
+void Matrix3x4_MatrixToEntityScale3f(const matrix3x4 in, vec3_t origin, vec3_t angles, vec3_t scale)
+{
+	float xyDist = sqrtf(in[0][0] * in[0][0] + in[0][1] * in[0][1]);
+
+	if ( xyDist > 0.001f )
+	{
+		// enough here to get angles?
+		angles[0] = RAD2DEGF(atan2(-in[0][2], xyDist));
+		angles[1] = RAD2DEGF(atan2(in[0][1], in[0][0]));
+		angles[2] = RAD2DEGF(atan2(in[1][2], in[2][2]));
+	}
+	else
+	{
+		// forward is mostly Z, gimbal lock
+		angles[0] = RAD2DEGF(atan2(-in[0][2], xyDist));
+		angles[1] = RAD2DEGF(atan2(-in[1][0], in[1][1]));
+		angles[2] = 0.0f;
+	}
+
+	origin[0] = in[3][0];
+	origin[1] = in[3][1];
+	origin[2] = in[3][2];
+
+	scale[0] = VectorLength(in[0]);
+	scale[1] = VectorLength(in[1]);
+	scale[2] = VectorLength(in[2]);
+}
+
 void Matrix3x4_TransformAABB(const matrix3x4 world, const vec3_t mins, const vec3_t maxs, vec3_t absmin, vec3_t absmax)
 {
 	vec3_t localCenter, localExtents;
