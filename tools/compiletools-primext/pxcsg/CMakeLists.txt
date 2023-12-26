@@ -8,6 +8,7 @@ add_executable(${TARGETNAME_EXE_NFCSG}_new
 	map.cpp
 	patch.cpp
 	plane.h
+	textures.cpp
 	vecutils.h
 )
 

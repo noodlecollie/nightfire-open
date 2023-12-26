@@ -20,7 +20,7 @@ GNU General Public License for more details.
 #include "CompileTools/conprint.h"
 #include "BuildPlatform/PlatformID.h"
 #include "CRTLib/crtlib.h"
-#include "vastring.h"
+#include "CompileTools/vastring.h"
 #include "MathLib/mathdefs.h"
 #include "PlatformLib/File.h"
 #include "PlatformLib/Time.h"
