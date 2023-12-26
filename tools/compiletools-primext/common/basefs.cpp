@@ -838,8 +838,10 @@ file_t* FS_OpenPackedFile(pack_t* pack, int pack_ind)
 
 	pfile = &pack->files[pack_ind];
 
-	if ( PlatformLib_LSeek(pack->handle, pfile->filepos, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(pack->handle, pfile->filepos, SEEK_SET) == (size_t)-1 )
+	{
 		return NULL;
+	}
 
 	dup_handle = PlatformLib_Dup(pack->handle);
 
@@ -1227,7 +1229,7 @@ int FS_Seek(file_t* file, int64_t offset, int whence)
 	// Purge cached data
 	FS_Purge(file);
 
-	if ( PlatformLib_LSeek(file->handle, file->offset + offset, SEEK_SET) == -1 )
+	if ( PlatformLib_LSeek(file->handle, file->offset + offset, SEEK_SET) == (size_t)-1 )
 	{
 		return -1;
 	}
@@ -1296,7 +1298,8 @@ Same as fgets
 */
 int FS_Gets(file_t* file, byte* string, size_t bufsize)
 {
-	int c, end = 0;
+	int c;
+	size_t end = 0;
 
 	while ( 1 )
 	{

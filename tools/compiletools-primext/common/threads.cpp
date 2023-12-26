@@ -13,6 +13,7 @@
 #include "MathLib/utils.h"
 #include "conprint.h"
 #include "cmdlib.h"
+#include "zone.h"
 
 #define NO_THREAD_NAMES
 #include "threads.h"
@@ -406,13 +407,13 @@ void RunThreadsOn(int workcnt, bool showpacifier, pfnRunThreads func)
 	if ( pthread_attr_setstacksize(&attrib, 0x100000) == -1 )
 		Error("pthread_attr_setstacksize failed");
 
-	for ( i = 0; i < g_numthreads; i++ )
+	for ( i = 0; i < (size_t)g_numthreads; i++ )
 	{
 		if ( pthread_create(&work_threads[i], &attrib, ThreadRunFunction, (void*)i) == -1 )
 			Error("pthread_create failed");
 	}
 
-	for ( i = 0; i < g_numthreads; i++ )
+	for ( i = 0; i < (size_t)g_numthreads; i++ )
 	{
 		if ( pthread_join(work_threads[i], &status) == -1 )
 			Error("pthread_join failed");

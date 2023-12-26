@@ -443,7 +443,8 @@ Get the newline
 */
 int VFS_Gets(vfile_t* file, byte* string, size_t bufsize)
 {
-	int c, end = 0;
+	int c;
+	size_t end = 0;
 
 	while ( 1 )
 	{

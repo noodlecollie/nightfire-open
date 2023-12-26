@@ -675,7 +675,6 @@ static void DoAllocBlock(lightmapblock_t* blocks, int w, int h)
 	for ( lightmapblock_t* block = blocks; block; block = block->next )
 	{
 		int x = 0;
-		int y = 0;
 		int best = BLOCK_HEIGHT_GOLDSRC;
 
 		for ( int i = 0; i < BLOCK_WIDTH_GOLDSRC - w; i++ )
@@ -699,7 +698,7 @@ static void DoAllocBlock(lightmapblock_t* blocks, int w, int h)
 			if ( j == w )
 			{
 				x = i;
-				y = best = best2;
+				best = best2;
 			}
 		}
 
@@ -1477,6 +1476,12 @@ void SetKeyValue(entity_t* ent, const char* key, const char* value)
 
 char* ValueForKey(entity_t* ent, const char* key, bool check)
 {
+	// This is 32 bytes long just in case someone tries to write to it.
+	// There's no way to actually know how long the entity_t value is,
+	// which is dumb anyway, so we can't choose a length in a more
+	// principlied way.
+	static char dummy[32] = "";
+
 	epair_t* ep;
 
 	for ( ep = ent->epairs; ep; ep = ep->next )
@@ -1487,7 +1492,8 @@ char* ValueForKey(entity_t* ent, const char* key, bool check)
 
 	if ( check )
 		return NULL;
-	return "";
+
+	return dummy;
 }
 
 vec_t FloatForKey(entity_t* ent, const char* key)

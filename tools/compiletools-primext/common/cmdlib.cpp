@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "CRTLib/crtlib.h"
 #include "BuildPlatform/PlatformID.h"
 #include "PlatformLib/System.h"
@@ -76,17 +77,18 @@ double I_FloatTime(void)
 	QueryPerformanceCounter(&CurrentTime);
 	return (double)(CurrentTime.QuadPart - g_ClockStart.QuadPart) / (double)(g_PerformanceFrequency.QuadPart);
 #elif XASH_POSIX()
-	static int64 g_PerformanceFrequency;
-	static int64 g_ClockStart;
-	int64 CurrentTime;
+	static int64_t g_PerformanceFrequency;
 	struct timespec ts;
 
 	if ( !g_PerformanceFrequency )
 	{
 		struct timespec res;
 		if ( !clock_getres(CLOCK_MONOTONIC, &res) )
+		{
 			g_PerformanceFrequency = 1000000000LL / res.tv_nsec;
+		}
 	}
+
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
 #else

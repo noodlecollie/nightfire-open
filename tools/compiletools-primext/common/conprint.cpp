@@ -325,13 +325,15 @@ void MsgDev(int level, const char* pMsg, ...)
 
 void MsgAnim(int level, const char* pMsg, ...)
 {
-	int j;
+	size_t j;
 	va_list argptr;
 	char text[1024];
 	char empty[1024];
 
 	if ( devloper_level < level )
+	{
 		return;
+	}
 
 	va_start(argptr, pMsg);
 	Q_vsnprintf(text, sizeof(text), pMsg, argptr);
@@ -342,6 +344,7 @@ void MsgAnim(int level, const char* pMsg, ...)
 	{
 		empty[j] = ' ';
 	}
+
 	empty[j] = '\r';
 	empty[j + 1] = '\0';
 

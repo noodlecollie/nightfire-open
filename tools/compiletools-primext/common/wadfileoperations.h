@@ -43,7 +43,7 @@ typedef struct wfile_s
 
 typedef struct wadtype_s
 {
-	char* ext;
+	const char* ext;
 	int type;
 } wadtype_t;
 
