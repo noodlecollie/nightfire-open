@@ -112,3 +112,11 @@ void listdirectory(stringlist_t* list, const char* path, bool tolower = false);
 // replace lumps protect
 void SetReplaceLevel(int level);
 int GetReplaceLevel(void);
+
+int SafeOpenWrite(const char* filename);
+int SafeOpenRead(const char* filename);
+void SafeReadExt(int handle, void* buffer, int count, const char* file, const int line);
+void SafeWriteExt(int handle, void* buffer, int count, const char* file, const int line);
+
+#define SafeRead(file, buffer, count) SafeReadExt(file, buffer, count, __FILE__, __LINE__)
+#define SafeWrite(file, buffer, count) SafeWriteExt(file, buffer, count, __FILE__, __LINE__)

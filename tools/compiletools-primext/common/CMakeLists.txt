@@ -7,6 +7,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	basefs.h
 	basefs.cpp
 	bspfile.h
+	bspfile.cpp
 	cmdlib.h
 	cmdlib.cpp
 	compatibility_mode.h

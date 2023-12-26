@@ -17,6 +17,19 @@
 #include <time.h>
 #endif
 
+NORETURN void COM_Assert(const char* file, int line, const char* error, ...)
+{
+	static char message[8192];
+	va_list argptr;
+
+	va_start(argptr, error);
+	Q_vsnprintf(message, sizeof(message), error, argptr);
+	va_end(argptr);
+
+	Msg("^1assert failed at:^7 %s:%d: %s", (file ? file : "<unknown>"), line, message);
+	exit(1);
+}
+
 NORETURN void COM_FatalError(const char* error, ...)
 {
 	static char message[8192];
