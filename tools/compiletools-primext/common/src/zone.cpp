@@ -17,10 +17,10 @@ GNU General Public License for more details.
 #include <string>
 #include <cstring>
 #include "BuildPlatform/Typedefs.h"
-#include "zone.h"
-#include "threads.h"
-#include "conprint.h"
-#include "cmdlib.h"
+#include "CompileTools/zone.h"
+#include "CompileTools/threads.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/cmdlib.h"
 
 #define ZONE_ATTEMPT_CALLOC
 #define ZONE_OVERRIDE_ALLOC_OPS

@@ -24,10 +24,10 @@ GNU General Public License for more details.
 #include <stdarg.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include "conprint.h"
-#include "cmdlib.h"
-#include "file_system.h"
-#include "zone.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/file_system.h"
+#include "CompileTools/zone.h"
 #include "CRTLib/crtlib.h"
 
 #define MAX_TOKEN 2048  // parse token length

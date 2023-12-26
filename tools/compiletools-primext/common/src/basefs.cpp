@@ -14,15 +14,15 @@ GNU General Public License for more details.
 */
 
 #include <fcntl.h>
-#include "cmdlib.h"
-#include "file_system.h"
-#include "bspfile.h"
-#include "conprint.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/file_system.h"
+#include "CompileTools/bspfile.h"
+#include "CompileTools/conprint.h"
 #include "CRTLib/crtlib.h"
 #include "PlatformLib/File.h"
-#include "zone.h"
+#include "CompileTools/zone.h"
 #include "vastring.h"
-#include "basefs.h"
+#include "CompileTools/basefs.h"
 #include "wadfileoperations.h"
 
 #if !XASH_WIN32()

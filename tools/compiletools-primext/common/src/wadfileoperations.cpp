@@ -15,11 +15,11 @@ GNU General Public License for more details.
 
 #include <fcntl.h>
 #include <stdio.h>
-#include "conprint.h"
-#include "cmdlib.h"
-#include "file_system.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/file_system.h"
 #include "wadfileoperations.h"
-#include "zone.h"
+#include "CompileTools/zone.h"
 #include "CRTLib/crtlib.h"
 #include "CRTLib/bitdefs.h"
 #include "PlatformLib/File.h"

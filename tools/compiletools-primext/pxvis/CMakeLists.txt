@@ -36,13 +36,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 	"../../common"
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
-	IGNORE_SEARCH_IN_WADS=1
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	PXBSP_COMPILING=1 # to avoid header hell because of another mathlib implementation
 )
 
 # pxvis compile-time settings
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	HLVIS_SORT_PORTALS=1	# sort portals before flow
 	#HLVIS_MERGE_PORTALS=1	# merge visibility between portals (disabled because causes lighting artifacts)
 	HLVIS_ENABLE_CHECK_STACK=1 # enables CheckStack() call
@@ -66,7 +65,7 @@ if(MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/Od>) # disable optimizing at all
 	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/ZI>) # enable "Edit and Continue" MSVC feature
 	target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:
-		/INCREMENTAL 
+		/INCREMENTAL
 		/SAFESEH:NO
 	>)
 
@@ -112,5 +111,5 @@ install(TARGETS ${PROJECT_NAME}
 	DESTINATION "${GAMEDIR}/${UTILS_INSTALL_DIR}/"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE 
+		WORLD_READ WORLD_EXECUTE
 )

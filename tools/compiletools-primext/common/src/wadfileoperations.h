@@ -1,8 +1,8 @@
 #pragma once
 
 #include "BuildPlatform/Typedefs.h"
-#include "basefs.h"
-#include "engine/wadfile.h"
+#include "CompileTools/basefs.h"
+#include "CompileTools/engine/wadfile.h"
 
 #define WAD3_NAMELEN 16
 

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include <time.h>
 #include <stdint.h>
 #include <stdarg.h>
-#include "engine/wadfile.h"
+#include "CompileTools/engine/wadfile.h"
 #include "BuildPlatform/Typedefs.h"
 #include "basefs.h"
 

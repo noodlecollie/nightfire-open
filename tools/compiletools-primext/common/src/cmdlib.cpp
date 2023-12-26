@@ -4,9 +4,9 @@
 #include "CRTLib/crtlib.h"
 #include "BuildPlatform/PlatformID.h"
 #include "PlatformLib/System.h"
-#include "cmdlib.h"
-#include "conprint.h"
-#include "zone.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/zone.h"
 
 #if XASH_WIN32()
 #define WIN32_LEAN_AND_MEAN

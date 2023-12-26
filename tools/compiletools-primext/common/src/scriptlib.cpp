@@ -21,12 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <stdarg.h>
-#include "cmdlib.h"
-#include "scriptlib.h"
-#include "file_system.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/scriptlib.h"
+#include "CompileTools/file_system.h"
 #include "CRTLib/crtlib.h"
-#include "zone.h"
-#include "conprint.h"
+#include "CompileTools/zone.h"
+#include "CompileTools/conprint.h"
 
 /*
 =============================================================================

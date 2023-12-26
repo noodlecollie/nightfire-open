@@ -19,7 +19,7 @@ GNU General Public License for more details.
 #include <stdarg.h>  // va
 
 #include "crashhandler.h"
-#include "conprint.h"
+#include "CompileTools/conprint.h"
 #include "BuildPlatform/PlatformID.h"
 #include "BuildPlatform/Arch.h"
 #include "PlatformLib/Time.h"

@@ -11,12 +11,12 @@
 #include <cstdio>
 #include "BuildPlatform/Typedefs.h"
 #include "MathLib/utils.h"
-#include "conprint.h"
-#include "cmdlib.h"
-#include "zone.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/cmdlib.h"
+#include "CompileTools/zone.h"
 
 #define NO_THREAD_NAMES
-#include "threads.h"
+#include "CompileTools/threads.h"
 
 #define PACIFIER_STEP 40
 #define PACIFIER_REM (PACIFIER_STEP / 10)
