@@ -39,7 +39,7 @@ GNU General Public License for more details.
 
 #define BI_SIZE 40 // size of bitmap info header.
 
-#if !XASH_WIN32
+#if !XASH_WIN32()
 
 #define BI_RGB 0
 
