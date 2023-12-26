@@ -28,6 +28,23 @@ NORETURN void COM_FatalError(const char* error, ...)
 	exit(1);
 }
 
+char* COM_ExpandArg(const char* path)
+{
+	static char full[1024];
+
+	if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' )
+	{
+		Q_getwd(full, sizeof(full));
+		Q_strncat(full, path, sizeof(full));
+	}
+	else
+	{
+		Q_strncpy(full, path, sizeof(full));
+	}
+
+	return full;
+}
+
 double I_FloatTime(void)
 {
 #if XASH_WIN32()
