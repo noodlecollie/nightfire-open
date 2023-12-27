@@ -14,14 +14,15 @@
 
 static constexpr const char* GRENADE_MODEL = "models/weapon_frag_grenade/w_frag_grenade.mdl";
 static const Vector HALF_BBOX = Vector(4, 4, 4);
-static constexpr float FRICTION = 0.95f;
+static constexpr float FRICTION = 0.7f;
 static constexpr float GRAVITY = 1.4f;
 static constexpr unsigned char SPRITE_SCALE = 60;
 static constexpr float TUMBLEVEL_MIN = -100.0f;
 static constexpr float TUMBLEVEL_MAX = -500.0f;
 static constexpr float LAUNCH_SPEED = 1000.0f;
-static constexpr float FUSE_TIME = 4.0f;
+static constexpr float FUSE_TIME = 2.0f;
 static constexpr float PITCH_ADJUST = 5;
+static constexpr float PULL_DURATION_SECS = 0.75f;
 
 LINK_ENTITY_TO_CLASS(weapon_frag_grenade, CWeaponFragGrenade);
 
@@ -72,7 +73,7 @@ void CWeaponFragGrenade::WeaponTick()
 			}
 
 			CBaseGrenadeLauncher::PrimaryAttack();
-			SetNextPrimaryAttack(1.0f);
+			SetNextPrimaryAttack(1.0f / GetPrimaryAttackMode()->AttackRate);
 			m_ThrowState = ThrowState::Idle;
 			break;
 		}
@@ -101,7 +102,7 @@ void CWeaponFragGrenade::PrimaryAttack()
 	SendWeaponAnim(FRAGGRENADE_PULL);
 
 	// Set minimum time we have to wait until grenade can be thrown.
-	SetNextPrimaryAttack(1.0f);
+	SetNextPrimaryAttack(PULL_DURATION_SECS);
 
 	m_ThrowState = ThrowState::Primed;
 }
