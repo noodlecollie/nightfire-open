@@ -10,6 +10,7 @@ add_executable(${TARGETNAME_EXE_NFBSP}_new
 	solidbsp.cpp
 	surfaces.cpp
 	tjunc.cpp
+	tree.cpp
 )
 
 target_include_directories(${TARGETNAME_EXE_NFBSP}_new PRIVATE
