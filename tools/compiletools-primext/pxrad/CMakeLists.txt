@@ -1,71 +1,24 @@
-cmake_minimum_required(VERSION 2.8.12)
+# No options other than goldsrc are currently supported
+set(COMPATIBILITY_TYPE "goldsrc")
 
-project(pxrad)
-set(COMPATIBILITY_TYPE "p2" CACHE STRING "Compatibility type of pxrad (available values: 'p2', 'p1', 'goldsrc')")
-include(CompilerRuntime)
-
-# find and add source files
-list(APPEND DIR_SOURCES
-	"../common/basefs.cpp"
-	"../common/bspfile.cpp"
-	"../common/cmdlib.cpp"
-	"../common/conprint.cpp"
-	"../common/file_system.cpp"
-	"../common/mathlib.cpp"
-	"../common/polylib.cpp"
-	"../common/scriplib.cpp"
-	"../common/stringlib.cpp"
-	"../common/threads.cpp"
-	"../common/virtualfs.cpp"
-	"../common/wadfile.cpp"
-	"../common/zone.cpp"
-	"../common/crashhandler.cpp"
-	"${CMAKE_SOURCE_DIR}/public/crclib.cpp"
-	"alias.cpp"
-	"ambientcube.cpp"
-	"dirtmap.cpp"
-	"facepos.cpp"
-	"lerp.cpp"
-	"lightmap.cpp"
-	"model_lightmaps.cpp"
-	"qrad.cpp"
-	"raytracer.cpp"
-	"studio.cpp"
-	"textures.cpp"
-	"trace.cpp"
-	"vertexlight.cpp"
+add_executable(${TARGETNAME_EXE_NFRAD}_new
+	$<$<STREQUAL:"${COMPATIBILITY_TYPE}","p2">:raytracer.h>
+	$<$<STREQUAL:"${COMPATIBILITY_TYPE}","p2">:raytracer.cpp>
 )
 
-# add version info
-if(MSVC)
-	list(APPEND DIR_SOURCES
-		"pxrad.rc"
-	)
-endif()
-
-add_executable(${PROJECT_NAME} ${DIR_SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE
-	"."
-	"../common"
-	"../common/imagelib"
-	"${CMAKE_SOURCE_DIR}/public"
-	"${CMAKE_SOURCE_DIR}/common"
-	"${CMAKE_SOURCE_DIR}/game_shared"
-)
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-	PXBSP_COMPILING=1 # to avoid header hell because of another mathlib implementation
+target_include_directories(${TARGETNAME_EXE_NFRAD}_new PRIVATE
+	.
 )
 
 # pxrad compile-time settings
-target_compile_definitions(${PROJECT_NAME} PRIVATE
+target_compile_definitions(${TARGETNAME_EXE_NFRAD}_new PRIVATE
 	HLRAD_COMPRESS_TRANSFERS=1	# saves 80% memory
-	HLRAD_RIGHTROUND=1			# when you go down, when you go down-down!
+	HLRAD_RIGHTROUND=1			# round decimals to higher magnitudes
 	HLRAD_TestLine_EDGE_FIX=1	# remove shadow artifacts in some cases
 )
 
 if(COMPATIBILITY_TYPE STREQUAL "p2")
-	target_compile_definitions(${PROJECT_NAME} PRIVATE
+	target_compile_definitions(${TARGETNAME_EXE_NFRAD}_new PRIVATE
 		HLRAD_PSAVIOR=1
 		HLRAD_REFLECTIVITY=1
 		HLRAD_DELUXEMAPPING=1			# store deluxe vectors for bump-mapping
@@ -79,14 +32,14 @@ if(COMPATIBILITY_TYPE STREQUAL "p2")
 		HLRAD_RAYTRACE=1				# TESTTEST
 	)
 elseif(COMPATIBILITY_TYPE STREQUAL "p1")
-	target_compile_definitions(${PROJECT_NAME} PRIVATE
+	target_compile_definitions(${TARGETNAME_EXE_NFRAD}_new PRIVATE
 		HLRAD_PARANOIA=1
 		HLRAD_PARANOIA_BUMP=1			# compute Paranoia-style bump (three lightstyles)
 		HLRAD_DELUXEMAPPING=1			# store deluxe vectors for bump-mapping
 		HLRAD_VERTEXLIGHTING=1			# vertex lighting for static models
 	)
 elseif(COMPATIBILITY_TYPE STREQUAL "goldsrc")
-	target_compile_definitions(${PROJECT_NAME} PRIVATE
+	target_compile_definitions(${TARGETNAME_EXE_NFRAD}_new PRIVATE
 		HLRAD_GOLDSRC=1
 		HLRAD_REFLECTIVITY=1
 		HLRAD_VERTEXLIGHTING=1			# vertex lighting for static models
@@ -95,74 +48,22 @@ elseif(COMPATIBILITY_TYPE STREQUAL "goldsrc")
 endif()
 
 if(NOT MSVC)
-	target_compile_options(${PROJECT_NAME} PRIVATE -fno-exceptions) # GCC/Clang flag
-	target_compile_options(${PROJECT_NAME} PRIVATE -Wno-write-strings) # GCC/Clang flag
-	target_compile_options(${PROJECT_NAME} PRIVATE -fvisibility=hidden) # GCC/Clang flag
-	target_compile_definitions(${PROJECT_NAME} PRIVATE _LINUX=1 LINUX=1) # It seems enough for all non-Win32 systems
-	target_compile_definitions(${PROJECT_NAME} PRIVATE stricmp=strcasecmp strnicmp=strncasecmp)
-	if(NOT MINGW)
-		target_compile_definitions(${PROJECT_NAME} PRIVATE _snprintf=snprintf _vsnprintf=vsnprintf)
-	endif()
-else()
-	target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS=1 _CRT_NONSTDC_NO_DEPRECATE=1) # disable annoying CRT warnings
-	target_compile_definitions(${PROJECT_NAME} PRIVATE DBGHELP=1)
-endif()
-
-if(MSVC)
-	# debug mode compiler flags
-	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/Od>) # disable optimizing at all
-	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:/ZI>) # enable "Edit and Continue" MSVC feature
-	target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:
-		/INCREMENTAL
-		/SAFESEH:NO
-	>)
-
-	# release mode compiler flags
-	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Release,RelWithDebInfo>:/O2>) # enable optimizing to maximize speed
-	target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Release,RelWithDebInfo>:/GL>) # enable whole program optimization
+	target_compile_options(${TARGETNAME_EXE_NFRAD}_new PRIVATE
+		-fno-exceptions
+	)
 endif()
 
 if(ENABLE_MAP_COMPILERS_AVX2)
 	if(MSVC)
-		target_compile_options(${PROJECT_NAME} PRIVATE /arch:AVX2)
+		target_compile_options(${TARGETNAME_EXE_NFRAD}_new PRIVATE
+			/arch:AVX2
+		)
 	else()
 		message(WARNING "AVX2 support parameters not implemented for this compiler")
 	endif()
 endif()
 
-# set static compiler runtime
-if(ENABLE_STATIC_CRT_LINKING)
-	set_compiler_runtime(${PROJECT_NAME} STATIC)
-endif()
-
-# link dependency libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE
-	imagelib
-)
-
-# link platform-specific depedency libraries
-if(NOT XASH_WIN32)
-	target_link_libraries(${PROJECT_NAME} PRIVATE
-		pthread
-		dl
-	)
-else()
-	target_link_libraries(${PROJECT_NAME} PRIVATE
-		dbghelp
-	)
-endif()
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-	POSITION_INDEPENDENT_CODE 1)
-
-# copy .pdb files to install directory too
-if(MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION "${GAMEDIR}/${UTILS_INSTALL_DIR}/")
-endif()
-
-install(TARGETS ${PROJECT_NAME}
-	DESTINATION "${GAMEDIR}/${UTILS_INSTALL_DIR}/"
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE
+target_link_libraries(${TARGETNAME_EXE_NFRAD}_new PRIVATE
+	${TARGETNAME_LIB_COMPILETOOLS}
+	${TARGETNAME_LIB_MINIUTL}
 )

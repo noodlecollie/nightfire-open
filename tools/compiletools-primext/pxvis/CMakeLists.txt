@@ -18,13 +18,17 @@ target_compile_definitions(${TARGETNAME_EXE_NFVIS}_new PRIVATE
 	HLVIS_ENABLE_CHECK_STACK=1 # enables CheckStack() call
 )
 
-if(NOT MSVC)
-	target_compile_options(${TARGETNAME_EXE_NFVIS}_new PRIVATE -fno-exceptions) # GCC/Clang flag
+if(NOT "${HOST_COMPILER}" STREQUAL "MSVC")
+	target_compile_options(${TARGETNAME_EXE_NFVIS}_new PRIVATE
+		-fno-exceptions
+	)
 endif()
 
 if(ENABLE_MAP_COMPILERS_AVX2)
-	if(MSVC)
-		target_compile_options(${TARGETNAME_EXE_NFVIS}_new PRIVATE /arch:AVX2)
+	if("${HOST_COMPILER}" STREQUAL "MSVC")
+		target_compile_options(${TARGETNAME_EXE_NFVIS}_new PRIVATE
+			/arch:AVX2
+		)
 	else()
 		message(WARNING "AVX2 support parameters not implemented for this compiler")
 	endif()

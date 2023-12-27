@@ -44,6 +44,12 @@ target_include_directories(${TARGETNAME_LIB_COMPILETOOLS}
 	src
 )
 
+if(NOT "${HOST_COMPILER}" STREQUAL "MSVC")
+	target_compile_options(${TARGETNAME_LIB_COMPILETOOLS} PRIVATE
+		-fno-exceptions
+	)
+endif()
+
 target_link_libraries(${TARGETNAME_LIB_COMPILETOOLS} PUBLIC
 	${TARGETNAME_LIB_BUILDPLATFORM}
 	${TARGETNAME_LIB_PLATFORMLIB}
