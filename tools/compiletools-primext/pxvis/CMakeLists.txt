@@ -1,6 +1,8 @@
 add_executable(${TARGETNAME_EXE_NFVIS}_new
+	app_info.h
 	flow.cpp
 	qvis.h
+	qvis.cpp
 	soundpvs.cpp
 	winding.cpp
 )
@@ -30,4 +32,8 @@ endif()
 
 target_link_libraries(${TARGETNAME_EXE_NFVIS}_new PRIVATE
 	${TARGETNAME_LIB_COMPILETOOLS}
+)
+
+install(TARGETS ${TARGETNAME_EXE_NFVIS}_new
+	RUNTIME DESTINATION ${TOOLS_INSTALL_ROOT}
 )
