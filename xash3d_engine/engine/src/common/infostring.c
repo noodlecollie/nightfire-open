@@ -400,9 +400,9 @@ qboolean Info_IsKeyImportant(const char* key)
 		return true;
 	if ( !Q_strcmp(key, "cl_updaterate") )
 		return true;
-	if ( !Q_strcmp(key, "cl_lw") )
+	if ( !Q_strcmp(key, "cl_weapon_prediction") )
 		return true;
-	if ( !Q_strcmp(key, "cl_lc") )
+	if ( !Q_strcmp(key, "cl_lag_compensation") )
 		return true;
 	if ( !Q_strcmp(key, "cl_nopred") )
 		return true;

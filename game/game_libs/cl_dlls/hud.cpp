@@ -36,7 +36,7 @@ float g_hud_text_color[3];
 extern client_sprite_t* GetSpriteList(client_sprite_t* pList, const char* psz, int iRes, int iCount);
 
 extern cvar_t* sensitivity;
-cvar_t* cl_lw = NULL;
+cvar_t* cl_weapon_prediction = NULL;
 cvar_t* cl_viewbob = NULL;
 
 void ShutdownInput(void);
@@ -202,7 +202,7 @@ void CHud::Init(void)
 	default_fov = CL_CvarCreate("default_fov", "90", 0);
 	m_pCvarStealMouse = CL_CvarCreate("hud_capturemouse", "1", FCVAR_ARCHIVE);
 	m_pCvarDraw = CL_CvarCreate("hud_draw", "1", FCVAR_ARCHIVE);
-	cl_lw = gEngfuncs.pfnGetCvarPointer("cl_lw");
+	cl_weapon_prediction = gEngfuncs.pfnGetCvarPointer("cl_weapon_prediction");
 	cl_viewbob = CL_CvarCreate("cl_viewbob", "0", FCVAR_ARCHIVE);
 
 	m_pSpriteList = NULL;

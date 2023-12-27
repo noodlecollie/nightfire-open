@@ -1025,7 +1025,10 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		pto->m_flTimeWeaponIdle -= cmd->msec / 1000.0f;
 		pto->m_flLastPrimaryAttack -= cmd->msec / 1000.0f;
 		pto->m_flLastSecondaryAttack -= cmd->msec / 1000.0f;
-		pto->fuser1 -= cmd->msec / 1000.0f;
+		pto->tuser1 -= cmd->msec / 1000.0f;
+		pto->tuser2 -= cmd->msec / 1000.0f;
+		pto->tuser3 -= cmd->msec / 1000.0f;
+		pto->tuser4 -= cmd->msec / 1000.0f;
 
 		to->client.vuser3[2] = static_cast<float>(pCurrent->m_iSecondaryAmmoType);
 		to->client.vuser4[0] = static_cast<float>(pCurrent->m_iPrimaryAmmoType);
@@ -1067,9 +1070,24 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 			pto->m_flNextReload = -0.001f;
 		}
 
-		if ( pto->fuser1 < -0.001f )
+		if ( pto->tuser1 < -0.001f )
 		{
-			pto->fuser1 = -0.001f;
+			pto->tuser1 = -0.001f;
+		}
+
+		if ( pto->tuser2 < -0.001f )
+		{
+			pto->tuser2 = -0.001f;
+		}
+
+		if ( pto->tuser3 < -0.001f )
+		{
+			pto->tuser3 = -0.001f;
+		}
+
+		if ( pto->tuser4 < -0.001f )
+		{
+			pto->tuser4 = -0.001f;
 		}
 	}
 
@@ -1121,7 +1139,7 @@ void _DLLEXPORT HUD_PostRunCmd(
 	g_runfuncs = runfuncs;
 
 #if defined(CLIENT_WEAPONS)
-	if ( cl_lw && cl_lw->value )
+	if ( cl_weapon_prediction && cl_weapon_prediction->value )
 	{
 		HUD_WeaponsPostThink(from, to, cmd, time, random_seed);
 	}

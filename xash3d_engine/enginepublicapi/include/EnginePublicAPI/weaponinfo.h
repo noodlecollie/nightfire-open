@@ -46,4 +46,8 @@ typedef struct weapon_data_s
 	float fuser2;
 	float fuser3;
 	float fuser4;
+	float tuser1;
+	float tuser2;
+	float tuser3;
+	float tuser4;
 } weapon_data_t;

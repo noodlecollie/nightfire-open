@@ -920,7 +920,7 @@ void Cmd_If_f(void)
 		Con_Printf("else\n");
 		Con_Printf(":<action3>\n");
 		Con_Printf("operands are string or float values\n");
-		Con_Printf("and substituted cvars like '$cl_lw'\n");
+		Con_Printf("and substituted cvars like '$cl_weapon_prediction'\n");
 		Con_Printf("operator is '='', '==', '>', '<', '>=', '<=' or '!='\n");
 		return;
 	}
