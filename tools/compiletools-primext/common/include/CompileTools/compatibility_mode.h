@@ -25,7 +25,7 @@ namespace CompatibilityMode
 		GoldSrc,
 	};
 
-	constexpr const char* GetString(int mode)
+	static inline const char* GetString(int mode)
 	{
 		switch ( mode )
 		{
