@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -64,7 +64,7 @@ unsigned short StoreNormal( const vec3_t normal )
 		dnormal_t	*dv = &g_dnormals[i];
 
 		if( DotProduct( dv->normal, normal ) > g_normal_blend )
-			return i;		
+			return i;
 	}
 
 	// normals limit don't stop the compilation, just show non-fatal error
@@ -257,7 +257,7 @@ static bool TranslateTexToTex( int facenum1, int edgenum, int facenum2, matrix3x
 	}
 
 	VectorCopy( face1_axis[0], edgetotex1[0] );	// / v[0][0] v[1][0] \ is a rotation (possibly with a reflection by the edge)
-	VectorCopy( face1_axis[1], edgetotex1[1] );	// \ v[0][1] v[1][1] / 
+	VectorCopy( face1_axis[1], edgetotex1[1] );	// \ v[0][1] v[1][1] /
 	VectorScale( v_up, len1, edgetotex1[2] );	// encode the length into the 3rd value of the matrix
 	VectorCopy( face1_vert[0], edgetotex1[3] );	// map (0,0) into the origin point
 
@@ -370,7 +370,7 @@ void BuildFaceNeighbors( void )
 				if( tmpneighbor[m] == facenum2 )
 					break;
 			}
-				
+
 			if( m >= numneighbors )
 			{
 				// add to neighbor list
@@ -772,7 +772,7 @@ void CalcFaceExtents( lightinfo_t *l )
 	vec_t		val;
 	dvertex_t		*v;
 	dface_t		*s;
-	
+
 	s = l->face;
 
 	mins[0] = mins[1] =  999999;
@@ -784,13 +784,13 @@ void CalcFaceExtents( lightinfo_t *l )
 	int texture_step = GetTextureStep( tex );
 
 	LightMatrixFromTexMatrix( tex, lmvecs );
-	
+
 	for( i = 0; i < s->numedges; i++ )
 	{
 		e = g_dsurfedges[s->firstedge+i];
 		if( e >= 0 ) v = g_dvertexes + g_dedges[e].v[0];
 		else v = g_dvertexes + g_dedges[-e].v[1];
-		
+
 		for( j = 0; j < 2; j++ )
 		{
 			/* The following calculation is sensitive to floating-point
@@ -818,7 +818,7 @@ void CalcFaceExtents( lightinfo_t *l )
 	}
 
 	for( i = 0; i < 2; i++ )
-	{	
+	{
 		l->exactmins[i] = mins[i];
 		l->exactmaxs[i] = maxs[i];
 
@@ -879,7 +879,7 @@ void CalcFaceVectors( lightinfo_t *l )
 	tex = &g_texinfo[l->face->texinfo];
 
 	LightMatrixFromTexMatrix( tex, lmvecs );
-	
+
 	// convert from float to double
 	for( i = 0; i < 2; i++ )
 	{
@@ -906,7 +906,7 @@ void CalcFaceVectors( lightinfo_t *l )
 	{
 		VectorNegate( texnormal, texnormal );
 		distscale = -distscale;
-	}	
+	}
 
 	// distscale is the ratio of the distance along the texture normal to
 	// the distance along the plane normal
@@ -928,7 +928,7 @@ void CalcFaceVectors( lightinfo_t *l )
 	VectorMA( l->texorg, -dist, texnormal, l->texorg );
 
 	// compensate for org'd bmodels
-	VectorAdd( l->texorg, g_face_offset[l->surfnum], l->texorg );	
+	VectorAdd( l->texorg, g_face_offset[l->surfnum], l->texorg );
 }
 
 /*
@@ -970,7 +970,7 @@ typedef struct
 	vec3_t	point1;		// start point
 	vec3_t	point2;		// end point
 	vec3_t	direction;	// normalized; from point1 to point2
-	
+
 	bool	noseam;
 	vec_t	distance;		// distance from origin
 	vec_t	distancereduction;
@@ -1103,7 +1103,7 @@ void ChopFrag( samplefrag_t *frag )
 		vec_t		dot0, dot1, dot2;
 		vec3_t		tmp, v, normal;
 		vec_t		edgelen;
-		
+
 		e = &frag->edges[frag->numedges];
 
 		// some basic info
@@ -1271,7 +1271,7 @@ static samplefrag_t *GrowSingleFrag( const samplefraginfo_t *info, samplefrag_t 
 	}
 
 	// do overlap test
-	numclipplanes = 0;	
+	numclipplanes = 0;
 	overlap = false;
 
 	for( x = 0; x < frag->winding->numpoints; x++ )
@@ -1518,7 +1518,7 @@ static bool CalcSamplePoint( vec3_t point, vec3_t position, int *surface, const 
 			bestt = t;
 		}
 	}
-	
+
 	if( found )
 	{
 		matrix3x4	worldtotex, textoworld;
@@ -1546,7 +1546,7 @@ static bool CalcSamplePoint( vec3_t point, vec3_t position, int *surface, const 
 	}
 
 	DeleteSampleFrag( fraginfo );
-	
+
 	return outside;
 }
 
@@ -1620,7 +1620,7 @@ emittype_t GetLightType( entity_t *e )
 		return emit_ignored; // already handled
 
 	// check for skylight or sunlight
-	if( BoolForKey( e, "_sky" ) || CheckKey( e, "_sunlight" ) || !Q_strcmp( name, "light_environment" )) 
+	if( BoolForKey( e, "_sky" ) || CheckKey( e, "_sunlight" ) || !Q_strcmp( name, "light_environment" ))
 		return emit_skylight;
 
 	// check for spotlight
@@ -1754,7 +1754,7 @@ void ParseLightDirection( entity_t *e, directlight_t *dl )
 	vec3_t	vAngles;
 
 	if( target[0] )
-	{	
+	{
 		// point towards target
 		entity_t	*e2 = FindTargetEntity( target );
 		vec3_t	dest;
@@ -1913,7 +1913,7 @@ void ParseSpotLight( entity_t *e, directlight_t *dl )
 		dl->stopdot2 = Q_max( dl->stopdot, dl->stopdot2 );
 		dl->stopdot = (float)cos( DEG2RAD( dl->stopdot * 0.5 ));
 		dl->stopdot2 = (float)cos( DEG2RAD( dl->stopdot2 * 0.5 ));
-	}	
+	}
 	else
 	{
 		// Half-Life spotlights
@@ -1946,7 +1946,7 @@ void ParseSkyLight( entity_t *e, directlight_t *dl )
 	}
 	else if( CheckKey( e, "_sunlight2" ))
 	{
-		if( CheckKey( e, "_sunlight2_color" )) 
+		if( CheckKey( e, "_sunlight2_color" ))
 			pLight = va( "%s %s", ValueForKey( e, "_sunlight2_color" ), ValueForKey( e, "_sunlight2" ));
 		else pLight = ValueForKey( e, "_sunlight2" );
 		ParseLightIntensity( pLight, dl->diffuse_intensity, 1.0 );
@@ -2071,7 +2071,7 @@ int BuildVisForDLight( directlight_t *dl )
 
 				if( FBitSet( tex->flags, TEX_SPECIAL ))
 				{
-					if( !Q_strnicmp( GetTextureByTexinfo( surf->texinfo ), "sky", 3 ))			
+					if( !Q_strnicmp( GetTextureByTexinfo( surf->texinfo ), "sky", 3 ))
 					{
 						MergeDLightVis( dl, leafnum + 1 );
 						break; // no reason to check all faces, go to next leaf
@@ -2173,7 +2173,7 @@ void CreateDirectLights( void )
 	{
 		vec_t	value;
 
-		if( !VectorIsNull( p->reflectivity )) 
+		if( !VectorIsNull( p->reflectivity ))
 			value = DotProduct( p->baselight, p->reflectivity ) / 3.0;
 		else value = VectorAvg( p->baselight );
 
@@ -2539,7 +2539,7 @@ vec3_t *s_light, vec3_t *s_dir, vec_t *s_occ, byte *styles, byte *vislight, bool
 				continue;
 			}
 
-			// allocate a new one					
+			// allocate a new one
 			if( styles[style_index] == 255 )
 				styles[style_index] = dl->style;
 
@@ -2723,7 +2723,7 @@ static void CalcLightmap( int thread, lightinfo_t *l, facelight_t *fl )
 	for( i = 0; i < fl->numsamples; i++ )
 	{
 		VectorCopy( l->surfpt[i].point, fl->samples[i].pos );
-		fl->samples[i].occluded = l->surfpt[i].occluded; 
+		fl->samples[i].occluded = l->surfpt[i].occluded;
 		fl->samples[i].surface = l->surfpt[i].surface;
 	}
 
@@ -3325,10 +3325,10 @@ void PrecompLightmapOffsets( void )
 	}
 
 	if( overflow_styles_onface > 0 )
-		Msg( "^3Warning:^7 too many light styles on a face (%i faces overflowed)\n", overflow_styles_onface ); 
+		Msg( "^3Warning:^7 too many light styles on a face (%i faces overflowed)\n", overflow_styles_onface );
 
 	if( overflow_styles_onpatch > 0 )
-		Msg( "^3Warning:^7 too many light styles on a patch (%i patches overflowed)\n", overflow_styles_onpatch ); 
+		Msg( "^3Warning:^7 too many light styles on a patch (%i patches overflowed)\n", overflow_styles_onpatch );
 }
 #endif
 
@@ -3674,9 +3674,9 @@ void FinalLightFace( int facenum, int threadnum )
 //		VectorNegate( directionnormals[1], directionnormals[1] );
 
 		// prepare four styles
-		VectorScale( samp->light[STYLE_ORIGINAL_LIGHT], g_direct_scale, original_light ); 
-		VectorScale( samp->light[STYLE_BUMPED_LIGHT], g_direct_scale, light_diffuse ); 
-		VectorScale( samp->light[STYLE_INDIRECT_LIGHT], g_direct_scale, light_indirect ); 
+		VectorScale( samp->light[STYLE_ORIGINAL_LIGHT], g_direct_scale, original_light );
+		VectorScale( samp->light[STYLE_BUMPED_LIGHT], g_direct_scale, light_diffuse );
+		VectorScale( samp->light[STYLE_INDIRECT_LIGHT], g_direct_scale, light_indirect );
 		VectorScale( samp->deluxe[STYLE_BUMPED_LIGHT], g_direct_scale, direction );
 		VectorNegate( direction, direction ); // let the direction point from face sample to light source
 		VectorNormalize( direction );
@@ -3773,7 +3773,7 @@ void FinalLightFace( int facenum, int threadnum )
 			}
 			VectorNegate( directionnormals[1], directionnormals[1] );
 #endif
-			VectorCopy( samp->light[k], lb ); 
+			VectorCopy( samp->light[k], lb );
 #ifdef HLRAD_DELUXEMAPPING
 			VectorCopy( samp->deluxe[k], direction );
 			vec_t avg = VectorAvg( lb );
@@ -3799,7 +3799,7 @@ void FinalLightFace( int facenum, int threadnum )
 			lb[1] = (float)pow( lb[1] / 256.0f, g_gamma ) * 256.0f;
 			lb[2] = (float)pow( lb[2] / 256.0f, g_gamma ) * 256.0f;
 
-#ifdef HLRAD_RIGHTROUND	// when you go down, when you go down down!
+#ifdef HLRAD_RIGHTROUND
 			g_dlightdata[f->lightofs + k * fl->numsamples * 3 + j * 3 + 0] = Q_rint( lb[0] );
 			g_dlightdata[f->lightofs + k * fl->numsamples * 3 + j * 3 + 1] = Q_rint( lb[1] );
 			g_dlightdata[f->lightofs + k * fl->numsamples * 3 + j * 3 + 2] = Q_rint( lb[2] );

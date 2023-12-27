@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -94,7 +94,7 @@ static void CalcLightmapAxis( tmesh_t *mesh, lface_t *face, trivert_t *a, triver
 		VectorScale( face->lmvecs[0], (float)(MAX_STUDIO_LIGHTMAP_SIZE - 1.0f) / face->extents[0], face->lmvecs[0] );
 		face->extents[0] = MAX_STUDIO_LIGHTMAP_SIZE - 1;
 	}
-	
+
 	if( face->extents[1] > ( MAX_STUDIO_LIGHTMAP_SIZE - 1 ))
 	{
 		VectorScale( face->lmvecs[1], (float)(MAX_STUDIO_LIGHTMAP_SIZE - 1.0f) / face->extents[1], face->lmvecs[1] );
@@ -276,7 +276,7 @@ bool GetTrianglePhongNormal( lightinfo_t *l, const vec3_t spot, vec3_t phongnorm
 	// now, check 3 edges
 	float hitc1 = spot[face->pcoord0] + ( -phongnormal[face->pcoord0] );
 	float hitc2 = spot[face->pcoord1] + ( -phongnormal[face->pcoord1] );
-					
+
 	// do barycentric coordinate check
 	v = face->edge1[0] * hitc1 + face->edge1[1] * hitc2 + face->edge1[2];
 	if( v < -TRI_BORDER ) return false;
@@ -437,7 +437,7 @@ static void CalcModelLightmap( int thread, lightinfo_t *l, facelight_t *fl )
 	for( i = 0; i < fl->numsamples; i++ )
 	{
 		VectorCopy( l->surfpt[i].point, fl->samples[i].pos );
-		fl->samples[i].occluded = l->surfpt[i].occluded; 
+		fl->samples[i].occluded = l->surfpt[i].occluded;
 		fl->samples[i].surface = l->surfpt[i].surface;
 	}
 
@@ -629,7 +629,7 @@ static void CalcModelLightmap( int thread, lightinfo_t *l, facelight_t *fl )
 #ifdef HLRAD_DELUXEMAPPING
 				VectorScale( adelux, 1.0f / count, fl->samples[pos0].deluxe[k] );
 #ifdef HLRAD_SHADOWMAPPING
-				fl->samples[pos0].shadow[k] = ashadow * (1.0f / count);				
+				fl->samples[pos0].shadow[k] = ashadow * (1.0f / count);
 #endif
 #endif
 			}
@@ -664,10 +664,10 @@ void BuildModelLightmaps( int indexnum, int thread = -1 )
 
 	mesh = (tmesh_t *)mapent->cache;
 	if( !mesh->verts || mesh->numverts <= 0 )
-		return; 
+		return;
 
 	if( !mesh->faces || mesh->numfaces <= 0 )
-		return; 
+		return;
 
 	if( !FBitSet( mesh->flags, FMESH_SELF_SHADOW ))
 		ignoreent = mapent;
@@ -1046,7 +1046,7 @@ void FinalModelLightFace( int indexnum, int threadnum )
 				VectorNormalize( directionnormals[side] );
 			}
 #endif
-			VectorCopy( samp->light[k], lb ); 
+			VectorCopy( samp->light[k], lb );
 #ifdef HLRAD_DELUXEMAPPING
 			VectorCopy( samp->deluxe[k], direction );
 			vec_t avg = VectorAvg( lb );
@@ -1072,7 +1072,7 @@ void FinalModelLightFace( int indexnum, int threadnum )
 			lb[1] = (float)pow( lb[1] / 256.0f, g_gamma ) * 256.0f;
 			lb[2] = (float)pow( lb[2] / 256.0f, g_gamma ) * 256.0f;
 
-#ifdef HLRAD_RIGHTROUND	// when you go down, when you go down down!
+#ifdef HLRAD_RIGHTROUND
 			g_dlightdata[f->lightofs + k * fl->numsamples * 3 + j * 3 + 0] = Q_rint( lb[0] );
 			g_dlightdata[f->lightofs + k * fl->numsamples * 3 + j * 3 + 1] = Q_rint( lb[1] );
 			g_dlightdata[f->lightofs + k * fl->numsamples * 3 + j * 3 + 2] = Q_rint( lb[2] );
@@ -1157,7 +1157,7 @@ void ReduceModelLightmap( byte *oldlightdata, byte *olddeluxdata, byte *oldshado
 
 		mesh = (tmesh_t *)mapent->cache;
 		f = mesh->faces[facenum].light;
-		if (!f) 
+		if (!f)
 			continue;
 		fl = &f->facelight;
 
@@ -1256,10 +1256,10 @@ static void GenerateLightCacheNumbers( void )
 			continue;
 
 		if( !mesh->verts || mesh->numverts <= 0 )
-			continue; 
+			continue;
 
 		if( !mesh->faces || mesh->numfaces <= 0 )
-			continue; 
+			continue;
 
 		if( !FBitSet( mesh->flags, FMESH_MODEL_LIGHTMAPS ))
 			continue;
@@ -1315,7 +1315,7 @@ static int ModelSize( tmesh_t *mesh )
 	if( !mesh ) return 0;
 
 	if( !mesh->faces || mesh->numfaces <= 0 )
-		return 0; 
+		return 0;
 
 	int lightstyles;
 	for( lightstyles = 0; lightstyles < MAXLIGHTMAPS; lightstyles++ )
