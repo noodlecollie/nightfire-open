@@ -216,7 +216,7 @@ void CEgon::Attack(void)
 
 			m_pPlayer->m_iWeaponVolume = EGON_PRIMARY_VOLUME;
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 0.1f;
-			pev->fuser1 = UTIL_WeaponTimeBase() + 2;
+			pev->tuser1 = UTIL_WeaponTimeBase() + 2;
 
 			pev->dmgtime = gpGlobals->time + GetPulseInterval();
 			m_fireState = FIRE_CHARGE;
@@ -227,7 +227,7 @@ void CEgon::Attack(void)
 			Fire(vecSrc, vecAiming);
 			m_pPlayer->m_iWeaponVolume = EGON_PRIMARY_VOLUME;
 
-			if ( pev->fuser1 <= UTIL_WeaponTimeBase() )
+			if ( pev->tuser1 <= UTIL_WeaponTimeBase() )
 			{
 				using namespace EventConstructor;
 				CEventConstructor event;
@@ -237,7 +237,7 @@ void CEgon::Attack(void)
 
 				event.Send();
 
-				pev->fuser1 = std::numeric_limits<float>::max();
+				pev->tuser1 = std::numeric_limits<float>::max();
 			}
 
 			if ( !HasAmmo() )
@@ -573,7 +573,7 @@ bool CEgon::ReadPredictionData(const weapon_data_t* from)
 		return false;
 	}
 
-	pev->fuser1 = from->fuser1;
+	pev->tuser1 = from->tuser1;
 	m_fireState = from->iuser1;
 	return true;
 }
@@ -585,7 +585,7 @@ bool CEgon::WritePredictionData(weapon_data_t* to)
 		return false;
 	}
 
-	to->fuser1 = pev->fuser1;
+	to->tuser1 = pev->tuser1;
 	to->iuser1 = m_fireState;
 	return true;
 }

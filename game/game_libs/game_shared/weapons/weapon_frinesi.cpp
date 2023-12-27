@@ -1,4 +1,5 @@
 #include <cmath>
+#include <limits>
 #include "weapon_frinesi.h"
 #include "EnginePublicAPI/weaponinfo.h"
 #include "skill.h"
@@ -33,10 +34,10 @@ LINK_ENTITY_TO_CLASS(weapon_commando, CWeaponFrinesi)
 LINK_ENTITY_TO_CLASS(weapon_minigun, CWeaponFrinesi)
 #endif
 
+static constexpr float INVALID_TIME = std::numeric_limits<float>::max();
+
 CWeaponFrinesi::CWeaponFrinesi() :
-	CGenericHitscanWeapon(),
-	m_flNextPumpSoundTime(0.0f),
-	m_flNextReloadSoundTime(0.0f)
+	CGenericHitscanWeapon()
 {
 	m_pAutoAttackMode = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_AUTO);
 	m_pPumpAttackMode = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_PUMP);
@@ -49,6 +50,14 @@ void CWeaponFrinesi::Precache()
 {
 	CGenericHitscanWeapon::Precache();
 	PRECACHE_SOUND(FRINESI_COCK_SOUND);
+}
+
+void CWeaponFrinesi::Spawn()
+{
+	CGenericHitscanWeapon::Spawn();
+
+	NextReloadSoundTime() = INVALID_TIME;
+	NextPumpSoundTime() = INVALID_TIME;
 }
 
 bool CWeaponFrinesi::InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType type, const WeaponAtts::WABaseAttack*)
@@ -69,7 +78,7 @@ bool CWeaponFrinesi::InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType
 
 	if ( invokeResult && type == WeaponAttackType::Secondary )
 	{
-		m_flNextPumpSoundTime = gpGlobals->time + FRINESI_PUMP_SOUND_OFFSET_AFTER_FIRING;
+		NextPumpSoundTime() = UTIL_WeaponTimeBase() + FRINESI_PUMP_SOUND_OFFSET_AFTER_FIRING;
 	}
 
 	return invokeResult;
@@ -91,16 +100,16 @@ void CWeaponFrinesi::WeaponTick()
 		m_pPlayer->pev->button &= ~(IN_ATTACK | IN_ATTACK2);
 	}
 
-	if ( m_flNextPumpSoundTime != 0.0f && m_flNextPumpSoundTime < gpGlobals->time )
+	if ( NextPumpSoundTime() != INVALID_TIME && NextPumpSoundTime() < UTIL_WeaponTimeBase() )
 	{
 		PlayPumpSound();
-		m_flNextPumpSoundTime = 0.0f;
+		NextPumpSoundTime() = INVALID_TIME;
 	}
 
-	if ( m_flNextReloadSoundTime != 0.0f && m_flNextReloadSoundTime < gpGlobals->time )
+	if ( NextReloadSoundTime() != INVALID_TIME && NextReloadSoundTime() < UTIL_WeaponTimeBase() )
 	{
 		PlaySound(WeaponAttributes().ViewModel.ReloadSounds, CHAN_ITEM);
-		m_flNextReloadSoundTime = 0.0f;
+		NextReloadSoundTime() = INVALID_TIME;
 	}
 }
 
@@ -122,8 +131,8 @@ int CWeaponFrinesi::HandleSpecialReload(int currentState)
 	{
 		case RELOAD_IDLE:
 		{
-			m_flNextReloadSoundTime = 0.0f;
-			m_flNextPumpSoundTime = 0.0f;
+			NextReloadSoundTime() = INVALID_TIME;
+			NextPumpSoundTime() = INVALID_TIME;
 			SendWeaponAnim(FRINESI_START_RELOAD);
 
 			// Set both our next firing times to be now.
@@ -149,15 +158,15 @@ int CWeaponFrinesi::HandleSpecialReload(int currentState)
 				 m_iClip >= WeaponAttributes().Ammo.MaxClip || m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] < 1 )
 			{
 				// Reloading has finished. Do a pump and delay any further activity until it's finished.
-				m_flNextReloadSoundTime = 0.0f;
-				m_flNextPumpSoundTime = gpGlobals->time + FRINESI_PUMP_SOUND_OFFSET_WHEN_RELOADING;
+				NextReloadSoundTime() = INVALID_TIME;
+				NextPumpSoundTime() = UTIL_WeaponTimeBase() + FRINESI_PUMP_SOUND_OFFSET_WHEN_RELOADING;
 				SendWeaponAnim(FRINESI_PUMP);
 				DelayPendingActions(FRINESI_PUMP_DELAY, true);
 
 				return NextReloadState(0, RELOAD_IDLE);
 			}
 
-			m_flNextReloadSoundTime = gpGlobals->time + FRINESI_RELOAD_SOUND_OFFSET;
+			NextReloadSoundTime() = UTIL_WeaponTimeBase() + FRINESI_RELOAD_SOUND_OFFSET;
 			SendWeaponAnim(FRINESI_RELOAD);
 
 			// Go into the increment clip state once this animation has finished.
@@ -183,6 +192,26 @@ int CWeaponFrinesi::HandleSpecialReload(int currentState)
 	};
 }
 
+float& CWeaponFrinesi::NextPumpSoundTime()
+{
+	return pev->tuser2;
+}
+
+const float& CWeaponFrinesi::NextPumpSoundTime() const
+{
+	return pev->tuser2;
+}
+
+float& CWeaponFrinesi::NextReloadSoundTime()
+{
+	return pev->tuser1;
+}
+
+const float& CWeaponFrinesi::NextReloadSoundTime() const
+{
+	return pev->tuser1;
+}
+
 void CWeaponFrinesi::PlayPumpSound()
 {
 	EMIT_SOUND_DYN(
@@ -202,8 +231,8 @@ bool CWeaponFrinesi::ReadPredictionData(const weapon_data_t* from)
 		return false;
 	}
 
-	m_flNextPumpSoundTime = from->fuser1;
-	m_flNextReloadSoundTime = from->fuser2;
+	NextReloadSoundTime() = from->tuser1;
+	NextPumpSoundTime() = from->tuser2;
 	return true;
 }
 
@@ -214,8 +243,8 @@ bool CWeaponFrinesi::WritePredictionData(weapon_data_t* to)
 		return false;
 	}
 
-	to->fuser1 = m_flNextPumpSoundTime;
-	to->fuser2 = m_flNextReloadSoundTime;
+	to->tuser1 = NextReloadSoundTime();
+	to->tuser2 = NextPumpSoundTime();
 	return true;
 }
 
@@ -225,12 +254,6 @@ const WeaponAtts::WACollection& CWeaponFrinesi::WeaponAttributes() const
 }
 
 #ifndef CLIENT_DLL
-TYPEDESCRIPTION CWeaponFrinesi::m_SaveData[] = {
-	DEFINE_FIELD(CWeaponFrinesi, m_flNextPumpSoundTime, FIELD_FLOAT),
-	DEFINE_FIELD(CWeaponFrinesi, m_flNextReloadSoundTime, FIELD_FLOAT)};
-
-IMPLEMENT_SAVERESTORE(CWeaponFrinesi, CGenericHitscanWeapon)
-
 float CWeaponFrinesi::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
