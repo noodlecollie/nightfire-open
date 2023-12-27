@@ -13,7 +13,7 @@
 #include "utlvector.h"
 #include "qrad.h"
 
-#define TRIANGLE_SHAPE_THRESHOLD DEG2RAD(115.0)
+#define TRIANGLE_SHAPE_THRESHOLD DEG2RADF(115.0f)
 
 struct interpolation_t
 {
