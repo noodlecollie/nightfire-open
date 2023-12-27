@@ -33,19 +33,19 @@ void SetupDirt(void)
 		return;
 
 	// calculate angular steps
-	vec_t angleStep = DEG2RAD(360.0f / DIRT_NUM_ANGLE_STEPS);
-	vec_t elevationStep = DEG2RAD(DIRT_CONE_ANGLE / DIRT_NUM_ELEVATION_STEPS);
+	vec_t angleStep = DEG2RADF(360.0f / DIRT_NUM_ANGLE_STEPS);
+	vec_t elevationStep = DEG2RADF(DIRT_CONE_ANGLE / DIRT_NUM_ELEVATION_STEPS);
 	vec_t angle = 0.0f;
 
 	for ( int i = 0; i < DIRT_NUM_ANGLE_STEPS; i++, angle += angleStep )
 	{
-		vec_t elevation = elevationStep * 0.5;
+		vec_t elevation = elevationStep * 0.5f;
 
 		for ( int j = 0; j < DIRT_NUM_ELEVATION_STEPS; j++, elevation += elevationStep )
 		{
-			g_dirtvecs[g_num_dirtvecs][0] = sin(elevation) * cos(angle);
-			g_dirtvecs[g_num_dirtvecs][1] = sin(elevation) * sin(angle);
-			g_dirtvecs[g_num_dirtvecs][2] = cos(elevation);
+			g_dirtvecs[g_num_dirtvecs][0] = sinf(elevation) * cosf(angle);
+			g_dirtvecs[g_num_dirtvecs][1] = sinf(elevation) * sinf(angle);
+			g_dirtvecs[g_num_dirtvecs][2] = cosf(elevation);
 			g_num_dirtvecs++;
 		}
 	}
@@ -62,6 +62,8 @@ float GatherSampleDirt(int threadnum, int fn, const vec3_t pos, const vec3_t nor
 	vec_t dirtGain = 2.0;
 	vec3_t vecSrc, vecEnd;
 	trace_t trace;
+
+	(void)ignoreent;
 
 	if ( !g_dirtmapping )
 		return 1.0f;  // early out
@@ -114,7 +116,7 @@ float GatherSampleDirt(int threadnum, int fn, const vec3_t pos, const vec3_t nor
 		return 1.0f;
 
 	// apply gain (does this even do much? heh)
-	outDirt = pow(gatherDirt / (g_num_dirtvecs + 1), dirtGain) * dirtScale;
+	outDirt = powf(gatherDirt / (g_num_dirtvecs + 1), dirtGain) * dirtScale;
 	if ( outDirt > 1.0f )
 		outDirt = 1.0f;
 

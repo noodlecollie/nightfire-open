@@ -45,22 +45,22 @@
 #define ANGLE_UP -1
 #define ANGLE_DOWN -2
 
-#define DIRECT_SCALE 0.1
-#define DEFAULT_HUNT_OFFSET 0.5
-#define DEFAULT_EDGE_WIDTH 0.8
+#define DIRECT_SCALE 0.1f
+#define DEFAULT_HUNT_OFFSET 0.5f
+#define DEFAULT_EDGE_WIDTH 0.8f
 #define HUNT_WALL_EPSILON (ON_EPSILON * 3)
-#define DIFFUSE_DIRECTION_SCALE (2.0 / 3.0)
+#define DIFFUSE_DIRECTION_SCALE (2.0f / 3.0f)
 #define MINIMUM_PATCH_DISTANCE ON_EPSILON
-#define ACCURATEBOUNCE_THRESHOLD 4.0  // If the receiver patch is closer to emitter patch than
+#define ACCURATEBOUNCE_THRESHOLD 4.0f  // If the receiver patch is closer to emitter patch than
 // EXACTBOUNCE_THRESHOLD * emitter_patch->radius, calculate the exact visibility amount.
 #define ACCURATEBOUNCE_DEFAULT_SKYLEVEL 5  // sample 1026 normals
 #define SKYLEVELMAX 8
 #define SKYLEVEL_SOFTSKYON 7
 #define SKYLEVEL_SOFTSKYOFF 4
 #define SUNSPREAD_SKYLEVEL 7
-#define SUNSPREAD_THRESHOLD 15.0
+#define SUNSPREAD_THRESHOLD 15.0f
 #define NUMVERTEXNORMALS 162
-#define LF_SCALE 128.0  // TyrUtils magic value
+#define LF_SCALE 128.0f  // TyrUtils magic value
 #define DEFAULT_GAMMAMODE 0
 #define FRAC_EPSILON (1.0f / 32.0f)
 
