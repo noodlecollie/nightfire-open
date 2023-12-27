@@ -34,7 +34,7 @@ $hbox 0 "grenade" -1.710000 -1.700000 -1.670000 1.700000 1.710000 3.770000
 $sequence "idle1" "idle1_ani" fps 10
 $sequence "idle2" "idle2_ani" fps 10
 $sequence "idle3" "idle3_ani" fps 10
-$sequence "pull" "pull_ani" {
+$sequence "pull" "pull_ani" fps 40 {
 	event 5005 17 "weapons/weapon_frag_grenade/grenade_pin.wav"
 }
 $sequence "throw" "throw_ani" {
