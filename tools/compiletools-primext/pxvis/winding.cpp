@@ -39,13 +39,18 @@ FreeStackWinding
 */
 static void FreeStackWinding(winding_t* w, pstack_t* stack)
 {
-	int i = w - stack->windings;
+	int i = static_cast<int>(w - stack->windings);
 
 	if ( i < 0 || i > 2 )
+	{
 		return;  // not from local
+	}
 
 	if ( stack->freewindings[i] )
+	{
 		COM_FatalError("FreeStackWinding: allready free\n");
+	}
+
 	stack->freewindings[i] = 1;
 }
 

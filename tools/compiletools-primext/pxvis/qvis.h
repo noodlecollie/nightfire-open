@@ -106,7 +106,7 @@ extern byte* g_uncompressed;
 extern int g_bitbytes;
 extern int g_bitlongs;
 extern vec_t g_farplane;
-extern size_t g_compatibility_mode;
+extern int g_compatibility_mode;
 
 void LeafFlow(int leafnum);
 void BasePortalVis(int threadnum);

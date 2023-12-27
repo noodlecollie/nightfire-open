@@ -401,6 +401,7 @@ inline static void RecursiveLeafFlow(int leafnum, threaddata_t* thread, pstack_t
 	}
 }
 
+#ifdef HLVIS_MERGE_PORTALS
 /*
 =============
 UpdateMightSee
@@ -415,7 +416,7 @@ Called with the lock held.
 */
 static void UpdateMightsee(const leaf_t* source, const leaf_t* dest)
 {
-	int leafnum = dest - g_leafs;
+	int leafnum = static_cast<int>(dest - g_leafs);
 	portal_t* p;
 
 	for ( int i = 0; i < source->numportals; i++ )
@@ -502,6 +503,7 @@ static void PortalCompleted(portal_t* completed)
 
 	ThreadUnlock();
 }
+#endif  // HLVIS_MERGE_PORTALS
 
 /*
 ===============
@@ -513,6 +515,8 @@ void PortalFlow(int portalnum, int threadnum)
 {
 	threaddata_t data;
 	portal_t* p;
+
+	(void)threadnum;
 
 	p = g_sorted_portals[portalnum];
 	p->status = stat_working;
@@ -614,6 +618,8 @@ void BasePortalVis(int threadnum)
 	portal_t *tp, *p;
 	winding_t* w;
 	float d;
+
+	(void)threadnum;
 
 	while ( 1 )
 	{
