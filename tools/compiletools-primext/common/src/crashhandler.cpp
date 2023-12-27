@@ -18,7 +18,7 @@ GNU General Public License for more details.
 #include <stdlib.h>  // rand, adbs
 #include <stdarg.h>  // va
 
-#include "crashhandler.h"
+#include "CompileTools/crashhandler.h"
 #include "CompileTools/conprint.h"
 #include "BuildPlatform/PlatformID.h"
 #include "BuildPlatform/Arch.h"

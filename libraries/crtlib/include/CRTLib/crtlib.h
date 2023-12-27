@@ -75,6 +75,7 @@ int Q_snprintf(char* buffer, size_t buffersize, const char* format, ...) _format
 void COM_StripColors(const char* in, char* out, size_t outBufferLength);
 #define Q_memprint(val) Q_pretifymem(val, 2)
 char* Q_pretifymem(float value, int digitsafterdecimal);
+void Q_timestring(int seconds, char* msg, size_t size);
 void COM_FileBase(const char* in, char* out, size_t outBufferSize);
 const char* COM_FileExtension(const char* in);
 void COM_DefaultExtension(char* path, size_t pathBufferLength, const char* extension);

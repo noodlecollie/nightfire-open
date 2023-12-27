@@ -8,12 +8,17 @@
  *
  ****/
 
+#include "BuildPlatform/Arch.h"
+#include "CRTLib/crtlib.h"
+#include "MathLib/utils.h"
+#include "CompileTools/crashhandler.h"
+#include "CompileTools/compatibility_mode.h"
+#include "CompileTools/wadfileoperations.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/vastring.h"
+#include "CompileTools/zone.h"
 #include "csg.h"
-#include "crashhandler.h"
-#include "compatibility_mode.h"
 #include "app_info.h"
-#include "build_info.h"
-#include "wadfileoperations.h"
 
 // default compiler settings
 #define DEFAULT_ONLYENTS false
@@ -195,13 +200,21 @@ void WriteMapFace(bface_t* f)
 		valve.scale[0] = valve.scale[1] = 1.0f;
 
 		if ( FBitSet(f->flags, FSIDE_SKIP) )
-			Q_strcpy(texname, "SKIP");
+		{
+			Q_strcpy(texname, sizeof(texname), "SKIP");
+		}
 		else if ( FBitSet(f->flags, FSIDE_SOLIDHINT) )
-			Q_strcpy(texname, "SOLIDHINT");
+		{
+			Q_strcpy(texname, sizeof(texname), "SOLIDHINT");
+		}
 		else if ( FBitSet(f->flags, FSIDE_HINT) )
-			Q_strcpy(texname, "HINT");
+		{
+			Q_strcpy(texname, sizeof(texname), "HINT");
+		}
 		else
-			Q_strcpy(texname, "NULL");  // fallback
+		{
+			Q_strcpy(texname, sizeof(texname), "NULL");  // fallback
+		}
 	}
 
 	fprintf(test_mapfile, "%s [ ", texname);
@@ -767,7 +780,7 @@ int main(int argc, char** argv)
 		}
 		else if ( !Q_strcmp(argv[i], "-wadinclude") )
 		{
-			COM_FileBase(argv[i + 1], g_pszWadInclude[g_nWadInclude]);
+			COM_FileBase(argv[i + 1], g_pszWadInclude[g_nWadInclude], sizeof(g_pszWadInclude[g_nWadInclude]));
 			g_nWadInclude++;
 			i++;
 		}
@@ -819,17 +832,17 @@ int main(int argc, char** argv)
 	{
 		char temp[1024];
 
-		COM_ExtractFilePath(mapname, temp);
-		COM_ExtractFilePath(temp, g_wadpath);
+		COM_ExtractFilePath(mapname, temp, sizeof(temp));
+		COM_ExtractFilePath(temp, g_wadpath, sizeof(g_wadpath));
 	}
 
 	Msg("\n%s %s (%s, commit %s, arch %s, platform %s)\n\n",
 		TOOLNAME,
 		VERSIONSTRING,
-		BuildInfo::GetDate(),
-		BuildInfo::GetCommitHash(),
-		BuildInfo::GetArchitecture(),
-		BuildInfo::GetPlatform());
+		__DATE__,
+		BuildPlatform_CommitString(),
+		BuildPlatform_ArchitectureString(),
+		BuildPlatform_PlatformString);
 
 	PrintCsgSettings();
 
@@ -890,7 +903,7 @@ int main(int argc, char** argv)
 	Mem_Check();
 
 	end = I_FloatTime();
-	Q_timestring((int)(end - start), str);
+	Q_timestring((int)(end - start), str, sizeof(str));
 	Msg("%s elapsed\n", str);
 
 	return 0;
