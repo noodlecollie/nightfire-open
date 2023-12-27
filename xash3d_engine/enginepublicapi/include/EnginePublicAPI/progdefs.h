@@ -210,6 +210,10 @@ typedef struct entvars_s
 	float fuser2;
 	float fuser3;
 	float fuser4;
+	float tuser1;
+	float tuser2;
+	float tuser3;
+	float tuser4;
 	vec3_t vuser1;
 	vec3_t vuser2;
 	vec3_t vuser3;

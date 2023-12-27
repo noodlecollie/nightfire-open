@@ -64,7 +64,7 @@ extern engine_studio_api_t IEngineStudio;
 void V_PunchAxis(int axis, float punch);
 void VectorAngles(const float* forward, float* angles);
 
-extern cvar_t* cl_lw;
+extern cvar_t* cl_weapon_prediction;
 
 void EV_HLDM_Init()
 {
@@ -1771,7 +1771,8 @@ void EV_EgonFire(event_args_t* args)
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(g_fireAnims1[gEngfuncs.pfnRandomLong(0, 3)], 1);
 
 	if ( iStartup == 1 && EV_IsLocal(idx) && !(pBeam || pBeam2 || pFlare) &&
-		 cl_lw->value )  // Adrian: Added the cl_lw check for those lital people that hate weapon prediction.
+		 cl_weapon_prediction->value )  // Adrian: Added the cl_weapon_prediction check for those lital people that hate
+										// weapon prediction.
 	{
 		vec3_t vecSrc, vecEnd, angles, forward, right, up;
 		pmtrace_t tr;

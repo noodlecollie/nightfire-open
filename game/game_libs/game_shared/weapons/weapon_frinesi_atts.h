@@ -37,7 +37,7 @@ static constexpr const char* FRINESI_COCK_SOUND = "weapons/weapon_frinesi/frines
 // now hard-coded so that gameplay doesn't change if the player
 // changes the length of their viewmodel animations.
 static constexpr float FRINESI_RELOAD_START_DELAY = 0.33f;
-static constexpr float FRINESI_SHELL_RELOAD_DELAY = 0.55f;
+static constexpr float FRINESI_SHELL_RELOAD_DELAY = 0.48f;
 static constexpr float FRINESI_PUMP_DELAY = 0.875f;
 
 static constexpr float FRINESI_RELOAD_SOUND_OFFSET = 0.1f;

@@ -247,7 +247,7 @@ bool CHandGrenade::ReadPredictionData(const weapon_data_t* from)
 		return false;
 	}
 
-	m_flStartThrow = from->fuser1;
+	m_flStartThrow = from->tuser1;
 	m_flReleaseThrow = from->fuser2;
 
 	return true;
@@ -260,7 +260,7 @@ bool CHandGrenade::WritePredictionData(weapon_data_t* to)
 		return false;
 	}
 
-	to->fuser1 = m_flStartThrow;
+	to->tuser1 = m_flStartThrow;
 	to->fuser2 = m_flReleaseThrow;
 
 	return true;
