@@ -149,6 +149,11 @@ static inline void VectorSet(vec3_t v, vec_t x, vec_t y, vec_t z)
 	v[2] = z;
 }
 
+static inline void VectorFill(vec3_t v, vec_t val)
+{
+	VectorSet(v, val, val, val);
+}
+
 static inline void VectorClear(vec3_t v)
 {
 	VectorSet(v, 0.0f, 0.0f, 0.0f);
