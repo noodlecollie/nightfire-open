@@ -49,8 +49,8 @@ private:
 	CMenuSpinControl maxFPS;
 	// CMenuCheckBox	hand;
 	CMenuCheckBox allowDownload;
-	CMenuCheckBox cl_predict;
-	CMenuCheckBox cl_lw;
+	CMenuCheckBox cl_nopred;
+	CMenuCheckBox cl_weapon_prediction;
 
 	CMenuSpinControl maxpacket, maxpayload, cmdrate, updaterate, rate;
 	CMenuAction networkMode;
@@ -96,8 +96,8 @@ void CMenuGameOptions::SaveCb()
 	rate.WriteCvar();
 	split.WriteCvar();
 	compress.WriteCvar();
-	cl_predict.WriteCvar();
-	cl_lw.WriteCvar();
+	cl_nopred.WriteCvar();
+	cl_weapon_prediction.WriteCvar();
 
 	SaveAndPopMenu();
 }
@@ -114,8 +114,8 @@ void CMenuGameOptions::Restore()
 	rate.DiscardChanges();
 	split.DiscardChanges();
 	compress.DiscardChanges();
-	cl_lw.DiscardChanges();
-	cl_predict.DiscardChanges();
+	cl_weapon_prediction.DiscardChanges();
+	cl_nopred.DiscardChanges();
 }
 
 void CMenuGameOptions::RestoreCb()
@@ -146,13 +146,13 @@ void CMenuGameOptions::_Init(void)
 	allowDownload.LinkCvar("sv_allow_download");
 	allowDownload.SetCoord(240, 315);
 
-	cl_predict.SetNameAndStatus(L("Disable predicting"), L("Disable player movement prediction"));
-	cl_predict.LinkCvar("cl_nopred");
-	cl_predict.SetCoord(240, 365);
+	cl_nopred.SetNameAndStatus(L("Disable predicting"), L("Disable player movement prediction"));
+	cl_nopred.LinkCvar("cl_nopred");
+	cl_nopred.SetCoord(240, 365);
 
-	cl_lw.SetNameAndStatus(L("Local weapons"), L("Enable local weapons"));
-	cl_lw.LinkCvar("cl_lw");
-	cl_lw.SetCoord(240, 415);
+	cl_weapon_prediction.SetNameAndStatus(L("Weapon Prediction"), L("Enable local weapon prediction"));
+	cl_weapon_prediction.LinkCvar("cl_weapon_prediction");
+	cl_weapon_prediction.SetCoord(240, 415);
 
 	maxpacket.SetRect(650, 270, 200, 32);
 	maxpacket.Setup(150, 1550, 50);
@@ -264,8 +264,8 @@ void CMenuGameOptions::_Init(void)
 	// AddItem( hand );
 
 	AddItem(allowDownload);
-	AddItem(cl_predict);
-	AddItem(cl_lw);
+	AddItem(cl_nopred);
+	AddItem(cl_weapon_prediction);
 	AddItem(maxpacket);
 	AddItem(maxpayload);
 	AddItem(cmdrate);
