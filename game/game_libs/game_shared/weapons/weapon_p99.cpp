@@ -79,7 +79,9 @@ bool CWeaponP99::WritePredictionData(weapon_data_t* to)
 }
 
 #ifndef CLIENT_DLL
-TYPEDESCRIPTION CWeaponP99::m_SaveData[] = {DEFINE_FIELD(CWeaponP99, m_bSilenced, FIELD_BOOLEAN)};
+TYPEDESCRIPTION CWeaponP99::m_SaveData[] = {
+	DEFINE_FIELD(CWeaponP99, m_bSilenced, FIELD_BOOLEAN),
+};
 
 IMPLEMENT_SAVERESTORE(CWeaponP99, CGenericHitscanWeapon)
 

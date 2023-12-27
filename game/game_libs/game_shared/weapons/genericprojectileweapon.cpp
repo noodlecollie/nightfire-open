@@ -11,7 +11,7 @@ void CGenericProjectileWeapon::Precache()
 
 void CGenericProjectileWeapon::WeaponTick()
 {
-	if ( m_EnqueuedProjectileAttack && pev->fuser1 <= UTIL_WeaponTimeBase() )
+	if ( m_EnqueuedProjectileAttack && pev->tuser1 <= UTIL_WeaponTimeBase() )
 	{
 		CreateProjectileAndDecrementAmmo(*m_EnqueuedProjectileAttack);
 		m_EnqueuedProjectileAttack = nullptr;
@@ -56,7 +56,7 @@ bool CGenericProjectileWeapon::InvokeWithAttackMode(WeaponAttackType type, const
 	else
 	{
 		m_EnqueuedProjectileAttack = projectileAttack;
-		pev->fuser1 = UTIL_WeaponTimeBase() + projectileAttack->projectileDelay;
+		pev->tuser1 = UTIL_WeaponTimeBase() + projectileAttack->projectileDelay;
 	}
 
 	const int eventID = GetEventIDForAttackMode(projectileAttack);
@@ -123,7 +123,7 @@ bool CGenericProjectileWeapon::ReadPredictionData(const weapon_data_t* from)
 		return false;
 	}
 
-	pev->fuser1 = from->fuser1;
+	pev->tuser1 = from->tuser1;
 	return true;
 }
 
@@ -134,6 +134,6 @@ bool CGenericProjectileWeapon::WritePredictionData(weapon_data_t* to)
 		return false;
 	}
 
-	to->fuser1 = pev->fuser1;
+	to->tuser1 = pev->tuser1;
 	return true;
 }

@@ -1771,7 +1771,10 @@ int GetWeaponData(struct edict_s* player, struct weapon_data_s* info)
 						item->m_fInSpecialReload = gun->m_fInSpecialReload;
 
 						gun->WritePredictionData(item);
-						item->fuser1 = Q_max(item->fuser1, -0.001f);
+						item->tuser1 = Q_max(item->tuser1, -0.001f);
+						item->tuser2 = Q_max(item->tuser2, -0.001f);
+						item->tuser3 = Q_max(item->tuser3, -0.001f);
+						item->tuser4 = Q_max(item->tuser4, -0.001f);
 					}
 				}
 				pPlayerItem = pPlayerItem->m_pNext;

@@ -1883,13 +1883,13 @@ void SV_UserinfoChanged(sv_client_t* cl)
 		SetBits(cl->flags, FCL_PREDICT_MOVEMENT);
 
 	// lag compensation
-	if ( Q_atoi(Info_ValueForKey(cl->userinfo, "cl_lc")) )
+	if ( Q_atoi(Info_ValueForKey(cl->userinfo, "cl_lag_compensation")) )
 		SetBits(cl->flags, FCL_LAG_COMPENSATION);
 	else
 		ClearBits(cl->flags, FCL_LAG_COMPENSATION);
 
 	// weapon perdiction
-	if ( Q_atoi(Info_ValueForKey(cl->userinfo, "cl_lw")) )
+	if ( Q_atoi(Info_ValueForKey(cl->userinfo, "cl_weapon_prediction")) )
 		SetBits(cl->flags, FCL_LOCAL_WEAPONS);
 	else
 		ClearBits(cl->flags, FCL_LOCAL_WEAPONS);

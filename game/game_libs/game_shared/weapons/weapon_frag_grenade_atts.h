@@ -20,11 +20,11 @@ enum FragGrenadeAnimations_e
 enum FragGrenadeAttackMode_e
 {
 	ATTACKMODE_THROW,
-	ATTACKMODE_ROLL
 };
 
-// Grenades per second:
-static constexpr float FRAGGRENADE_FIRE_RATE = 1.0f / 2.0f;
+// Delay between throwing one grenade and being able
+// to pull the pin on the next one.
+static constexpr float FRAGGRENADE_REFIRE_DELAY_SECS = 1.1f;
 
 static constexpr CAmmoDef Ammo_FragGrenade = {
 	"ammo_frag_grenade",  // ClassName
@@ -70,7 +70,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->FunctionsUnderwater = true;
 		priAttack->IsContinuous = false;
 		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
-		priAttack->AttackRate = FRAGGRENADE_FIRE_RATE;
+		priAttack->AttackRate = 1.0f / FRAGGRENADE_REFIRE_DELAY_SECS;
 		priAttack->Volume = LOUD_GUN_VOLUME;
 		priAttack->MuzzleFlashBrightness = BRIGHT_GUN_FLASH;
 		priAttack->ViewPunchY = -4.0f;
