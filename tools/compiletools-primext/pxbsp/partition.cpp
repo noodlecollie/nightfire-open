@@ -8,14 +8,15 @@
  *
  ****/
 
+#include <limits>
 #include "MathLib/utils.h"
 #include "MathLib/plane.h"
 #include "CompileTools/zone.h"
 #include "CompileTools/conprint.h"
 #include "bsp5.h"
 
-#define MINSPLIT_EPSILON	0.002f
-#define MAXSPLIT_EPSILON	0.2f
+#define MINSPLIT_EPSILON 0.002f
+#define MAXSPLIT_EPSILON 0.2f
 
 #define MarkFacesCount(mf) ((mf) ? mf->count : 0)
 
@@ -158,9 +159,9 @@ void BuildSurfaceTree_r(surftree_t* tree, surfnode_t* node)
 	vec_t dist, dist1, dist2;
 
 	node->isleaf = false;
-	dist = (node->mins[bestaxis] + node->maxs[bestaxis]) * 0.5;
-	dist1 = (3 * node->mins[bestaxis] + node->maxs[bestaxis]) * 0.25;
-	dist2 = (node->mins[bestaxis] + 3 * node->maxs[bestaxis]) * 0.25;
+	dist = (node->mins[bestaxis] + node->maxs[bestaxis]) * 0.5f;
+	dist1 = (3 * node->mins[bestaxis] + node->maxs[bestaxis]) * 0.25f;
+	dist2 = (node->mins[bestaxis] + 3 * node->maxs[bestaxis]) * 0.25f;
 
 	// each child node is at most 3/4 the size of the parent node.
 	// Most faces should be passed to a child node, faces left in the
@@ -450,7 +451,7 @@ surface_t* ChooseMidPlaneFromList(surface_t* surfaces, const vec3_t mins, const 
 
 	// pick the plane that splits the least
 	bestsurface = NULL;
-	bestvalue = 9e30;
+	bestvalue = std::numeric_limits<vec_t>::max();
 
 	for ( p = surfaces; p != NULL; p = p->next )
 	{
@@ -475,10 +476,10 @@ surface_t* ChooseMidPlaneFromList(surface_t* surfaces, const vec3_t mins, const 
 		if ( maxs[l] - dist < g_maxnode_size / 2.0 - ON_EPSILON || dist - mins[l] < g_maxnode_size / 2.0 - ON_EPSILON )
 			continue;
 
-		double crosscount = 0;
-		double frontcount = 0;
-		double backcount = 0;
-		double coplanarcount = 0;
+		size_t crosscount = 0;
+		size_t frontcount = 0;
+		size_t backcount = 0;
+		size_t coplanarcount = 0;
 
 		TestSurfaceTree(surfacetree, plane);
 		frontcount += surfacetree->frontsize;
@@ -489,7 +490,9 @@ surface_t* ChooseMidPlaneFromList(surface_t* surfaces, const vec3_t mins, const 
 			f = *fp;
 
 			if ( f->facestyle == face_discardable )
+			{
 				continue;
+			}
 
 			if ( f->planenum == p->planenum || f->planenum == (p->planenum ^ 1) )
 			{
@@ -500,28 +503,39 @@ surface_t* ChooseMidPlaneFromList(surface_t* surfaces, const vec3_t mins, const 
 			switch ( FaceSide(f, plane) )
 			{
 				case SIDE_FRONT:
+				{
 					frontcount++;
 					break;
+				}
+
 				case SIDE_BACK:
+				{
 					backcount++;
 					break;
+				}
+
 				case SIDE_ON:
+				{
 					crosscount++;
 					break;
+				}
 			}
 		}
 
-		double frontsize = frontcount + 0.5 * coplanarcount + 0.5 * crosscount;
-		double frontfrac = (maxs[l] - dist) / (maxs[l] - mins[l]);
-		double backsize = backcount + 0.5 * coplanarcount + 0.5 * crosscount;
-		double backfrac = (dist - mins[l]) / (maxs[l] - mins[l]);
+		vec_t frontsize = frontcount + 0.5f * static_cast<vec_t>(coplanarcount) + 0.5f * static_cast<vec_t>(crosscount);
+		vec_t frontfrac = (maxs[l] - dist) / (maxs[l] - mins[l]);
+		vec_t backsize = backcount + 0.5f * static_cast<vec_t>(coplanarcount) + 0.5f * static_cast<vec_t>(crosscount);
+		vec_t backfrac = (dist - mins[l]) / (maxs[l] - mins[l]);
 
-		value = crosscount + 0.1 * (frontsize * (log(frontfrac) / log(2.0)) + backsize * (log(backfrac) / log(2.0)));
+		value = static_cast<vec_t>(crosscount) +
+			0.1f * (frontsize * (logf(frontfrac) / logf(2.0f)) + backsize * (logf(backfrac) / logf(2.0f)));
 		// the first part is how the split will increase the number of faces
 		// the second part is how the split will increase the average depth of the bsp tree
 
 		if ( value > bestvalue )
+		{
 			continue;
+		}
 
 		// currently the best!
 		bestvalue = value;
@@ -551,11 +565,14 @@ surface_t* ChoosePlaneFromList(surface_t* surfaces, const vec3_t mins, const vec
 	plane_t* plane;
 	face_t *f, **fp;
 
+	(void)mins;
+	(void)maxs;
+
 	planecount = totalsplit = 0;
 	surfacetree = BuildSurfaceTree(surfaces, BSPCHOP_EPSILON);
 
 	// pick the plane that splits the least
-	bestvalue = 9e30;
+	bestvalue = std::numeric_limits<vec_t>::max();
 	bestsurface = NULL;
 
 	for ( p = surfaces; p != NULL; p = p->next )
@@ -613,9 +630,12 @@ surface_t* ChoosePlaneFromList(surface_t* surfaces, const vec3_t mins, const vec
 			}
 		}
 
-		value = crosscount - sqrt(coplanarcount);  // Not optimized. --vluzacn
+		value = static_cast<vec_t>(crosscount - sqrt(coplanarcount));  // Not optimized. --vluzacn
+
 		if ( coplanarcount == 0 )
+		{
 			crosscount += 1;
+		}
 
 		// This is the most efficient code among what I have ever tested:
 		// (1) BSP file is small, despite possibility of slowing down vis and rad
@@ -626,9 +646,12 @@ surface_t* ChoosePlaneFromList(surface_t* surfaces, const vec3_t mins, const vec
 		double ent = 0.0;
 
 		if ( frac > 0.0001 && frac < 0.9999 )
+		{
 			ent = (-frac * log(frac) / log(2.0) - (1.0 - frac) * log(1.0 - frac) / log(2.0));
+		}
+
 		g_splitvalue[p->planenum][1] = crosscount * (1.0 - ent);
-		value += epsilonsplit * 10000;
+		value += static_cast<vec_t>(epsilonsplit * 10000);
 		g_splitvalue[p->planenum][0] = value;
 	}
 
@@ -639,7 +662,7 @@ surface_t* ChoosePlaneFromList(surface_t* surfaces, const vec3_t mins, const vec
 		if ( p->onnode || p->detaillevel != detaillevel )
 			continue;
 
-		value = g_splitvalue[p->planenum][0] + avesplit * g_splitvalue[p->planenum][1];
+		value = static_cast<vec_t>(g_splitvalue[p->planenum][0] + avesplit * g_splitvalue[p->planenum][1]);
 
 		if ( value < bestvalue )
 		{

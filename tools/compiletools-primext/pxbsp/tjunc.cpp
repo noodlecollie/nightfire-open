@@ -76,7 +76,7 @@ void InitTjuncHash(void)
 
 	volume = size[0] * size[1];
 
-	scale = sqrt(volume / NUM_HASH);
+	scale = sqrtf(volume / NUM_HASH);
 
 	h_numslots[0] = (int)floor(size[0] / scale);
 	h_numslots[1] = (int)floor(size[1] / scale);

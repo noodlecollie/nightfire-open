@@ -300,21 +300,6 @@ makesurfs:
 
 /*
 ==================
-DivideNodeBounds
-==================
-*/
-static void DivideNodeBounds(node_t* node, plane_t* split)
-{
-	node_t* front = node->children[0];
-	node_t* back = node->children[1];
-
-	ASSERT(front && back);
-
-	DivideBounds(node->mins, node->maxs, split, front->mins, front->maxs, back->mins, back->maxs);
-}
-
-/*
-==================
 SplitNodeSurfaces
 ==================
 */
@@ -480,7 +465,7 @@ void MakeNodePortal(node_t* node)
 {
 	portal_t *new_portal, *p;
 	plane_t* plane;
-	plane_t* clipplane;
+	plane_t* clipplane = nullptr;
 	int side = 0;
 	winding_t* w;
 
@@ -504,7 +489,9 @@ void MakeNodePortal(node_t* node)
 			side = 1;
 		}
 		else
+		{
 			COM_FatalError("MakeNodePortal: mislinked portal\n");
+		}
 
 		if ( !ChopWindingInPlace(&w, clipplane->normal, clipplane->dist, g_prtepsilon) )
 		{
@@ -613,33 +600,44 @@ completely enclose the node.
 bool CalcNodeBounds(node_t* node, vec3_t validmins, vec3_t validmaxs)
 {
 	portal_t *p, *next_portal;
-	int i, side;
+	int i;
+	int side = 0;
 
 	if ( FBitSet(node->flags, FNODE_DETAIL) )
+	{
 		return false;
+	}
 
 	ClearBounds(node->mins, node->maxs);
 
 	for ( p = node->portals; p != NULL; p = next_portal )
 	{
 		if ( p->nodes[0] == node )
+		{
 			side = 0;
+		}
 		else if ( p->nodes[1] == node )
+		{
 			side = 1;
+		}
 		else
+		{
 			COM_FatalError("CalcNodeBounds: mislinked portal\n");
+		}
 
 		next_portal = p->next[side];
 		WindingBounds(p->winding, node->mins, node->maxs, true);
 	}
 
 	if ( FBitSet(node->flags, FNODE_LEAFPORTAL) )
+	{
 		return false;
+	}
 
 	for ( i = 0; i < 3; i++ )
 	{
-		validmins[i] = Q_max(node->mins[i], -(32768.0 + g_maxnode_size));
-		validmaxs[i] = Q_min(node->maxs[i], (32768.0 + g_maxnode_size));
+		validmins[i] = Q_max(node->mins[i], -(32768.0f + g_maxnode_size));
+		validmaxs[i] = Q_min(node->maxs[i], (32768.0f + g_maxnode_size));
 	}
 
 	for ( i = 0; i < 3; i++ )
@@ -991,13 +989,13 @@ void BuildBspTree_r(node_t* node, bool subdivide)
 			{
 				// front child
 				VectorCopy(g_mapplanes[split->planenum].normal, p.normal);
-				p.dist = g_mapplanes[split->planenum].dist - BOUNDS_EXPANSION;
+				p.dist = static_cast<vec_t>(g_mapplanes[split->planenum].dist - BOUNDS_EXPANSION);
 			}
 			else
 			{
 				// back child
 				VectorNegate(g_mapplanes[split->planenum].normal, p.normal);
-				p.dist = -g_mapplanes[split->planenum].dist - BOUNDS_EXPANSION;
+				p.dist = static_cast<vec_t>(-g_mapplanes[split->planenum].dist - BOUNDS_EXPANSION);
 			}
 
 			copy = NewBrushFromBrush(node->boundsbrush);
@@ -1043,8 +1041,8 @@ void SolidBSP(tree_t* tree, int modnum, int hullnum)
 {
 	vec3_t brushmins, brushmaxs, size;
 	bool report = (modnum == 0);
-	double start, end;
-	int flags = 0;
+	double start = 0.0;
+	double end = 0.0;
 	vec_t maxnode;
 
 	MsgDev(D_REPORT, "----- SolidBSP ----- (hull %i, model %i)\n", hullnum, modnum);
@@ -1056,7 +1054,7 @@ void SolidBSP(tree_t* tree, int modnum, int hullnum)
 		maxnode = VectorMax(size) / 8.0f;  // 8192 / 8 = 1024
 		maxnode = Q_roundup(maxnode, 1024.0f);
 		MsgDev(D_REPORT, "max node size %g\n", maxnode);
-		g_maxnode_size = maxnode;
+		g_maxnode_size = static_cast<int>(maxnode);
 	}
 
 	tree->headnode = AllocNode();
@@ -1128,10 +1126,16 @@ void SolidBSP(tree_t* tree, int modnum, int hullnum)
 	{
 		end = I_FloatTime();
 		EndPacifier(end - start);
+
 		if ( c_clipped_portals )
+		{
 			MsgDev(D_WARN, "%i portals was clipped away\n", c_clipped_portals);
+		}
+
 		if ( c_unsplitted_faces )
+		{
 			MsgDev(D_WARN, "%i faces can't be a split\n", c_unsplitted_faces);
+		}
 	}
 
 	MsgDev(D_REPORT, "%5i split nodes\n", c_splitnodes);

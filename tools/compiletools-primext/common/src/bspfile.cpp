@@ -196,7 +196,7 @@ void CheckHullFile(const char* filename)
 		memcpy(g_hull_size, new_hulls, 2 * MAX_MAP_HULLS * sizeof(vec3_t));
 	}
 
-	fclose(f);
+	PlatformLib_FClose(f);
 }
 
 /*

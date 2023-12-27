@@ -39,7 +39,7 @@
 #define Q_floor(a) ((float)(int)(a))
 #define Q_ceil(a) ((float)(int)((a) + 1))
 #define Q_round(x, y) (floorf(x / y + 0.5f) * y)
-#define Q_roundsimple(a) (floorf((a) + 0.5))
+#define Q_roundsimple(a) (floorf((a) + 0.5f))
 #define Q_rint(x) ((x) < 0.0f ? ((int)((x)-0.5f)) : ((int)((x) + 0.5f)))
 #define Q_rounddn(x, y) (floorf(x / y + 0.5f) * y)
 #define Q_roundup(x, y) (ceilf(x / y) * y)

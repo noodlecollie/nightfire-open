@@ -281,7 +281,7 @@ extern bool g_forcevis;
 extern int g_maxnode_size;
 extern int g_merge_level;
 extern vec_t g_prtepsilon;
-extern size_t g_compatibility_mode;
+extern int g_compatibility_mode;
 
 extern int valid;
 extern int c_splitnodes;

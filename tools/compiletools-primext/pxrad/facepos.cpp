@@ -403,7 +403,7 @@ void FreeFacePositions(void)
 				}
 			}
 
-			fclose(f);
+			PlatformLib_FClose(f);
 			Msg("OK.\n");
 		}
 		else

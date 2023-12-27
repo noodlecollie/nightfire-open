@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -27,6 +28,21 @@ int PlatformLib_Read(int fileHandle, void* dstBuf, unsigned int maxCharCount);
 int PlatformLib_Write(int fileHandle, const void* buf, unsigned int maxCharCount);
 int PlatformLib_FileNo(FILE* file);
 int PlatformLib_MkDir(const char* path);
+int PlatformLib_Unlink(const char* filename);
+
+// This is known to be unsafe, but some of the code uses it and it'd be a pain to
+// rip out right now. Should be refactored in future.
+int PlatformLib_VFScanF(FILE* stream, const char* format, va_list args);
+
+static inline int PlatformLib_FScanF(FILE* stream, const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	const int result = PlatformLib_VFScanF(stream, format, args);
+	va_end(args);
+
+	return result;
+}
 
 #ifdef __cplusplus
 }  // extern "C"

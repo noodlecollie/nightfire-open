@@ -9,6 +9,7 @@
  ****/
 
 #include "MathLib/utils.h"
+#include "PlatformLib/File.h"
 #include "CompileTools/zone.h"
 #include "bsp5.h"
 
@@ -231,14 +232,18 @@ brush_t* ReadBrushes(FILE* file)
 
 	while ( 1 )
 	{
-		r = fscanf(file, "%i\n", &brushinfo);
+		r = PlatformLib_FScanF(file, "%i\n", &brushinfo);
 
 		if ( r == 0 || r == -1 )
 		{
 			if ( brushes == NULL )
+			{
 				COM_FatalError("ReadBrushes: no more models\n");
+			}
 			else
+			{
 				COM_FatalError("ReadBrushes: file end\n");
+			}
 		}
 
 		if ( brushinfo == -1 )
@@ -253,9 +258,12 @@ brush_t* ReadBrushes(FILE* file)
 
 		while ( 1 )
 		{
-			r = fscanf(file, "%i %u\n", &planenum, &numpoints);
+			r = PlatformLib_FScanF(file, "%i %u\n", &planenum, &numpoints);
+
 			if ( r != 2 )
+			{
 				COM_FatalError("ReadBrushes: get side failed\n");
+			}
 
 			if ( planenum == -1 )
 				break;  // end of brushes description
@@ -268,13 +276,16 @@ brush_t* ReadBrushes(FILE* file)
 			for ( int x = 0; x < numpoints; x++ )
 			{
 				double v[3];
-				r = fscanf(file, "%lf %lf %lf\n", &v[0], &v[1], &v[2]);
-				if ( r != 3 )
-					COM_FatalError("ReadBrushes: get point failed\n");
+				r = PlatformLib_FScanF(file, "%lf %lf %lf\n", &v[0], &v[1], &v[2]);
 
-				s->w->p[numpoints - 1 - x][0] = v[0];
-				s->w->p[numpoints - 1 - x][1] = v[1];
-				s->w->p[numpoints - 1 - x][2] = v[2];
+				if ( r != 3 )
+				{
+					COM_FatalError("ReadBrushes: get point failed\n");
+				}
+
+				s->w->p[numpoints - 1 - x][0] = static_cast<vec_t>(v[0]);
+				s->w->p[numpoints - 1 - x][1] = static_cast<vec_t>(v[1]);
+				s->w->p[numpoints - 1 - x][2] = static_cast<vec_t>(v[2]);
 			}
 
 			s->next = NULL;

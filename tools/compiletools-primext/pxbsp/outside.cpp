@@ -8,6 +8,7 @@
  *
  ****/
 
+#include "PlatformLib/File.h"
 #include "CompileTools/zone.h"
 #include "CompileTools/conprint.h"
 #include "bsp5.h"
@@ -98,13 +99,24 @@ void MarkLeakTrail(portal_t* n2)
 
 	// NOTE: create only if there was a leak.
 	if ( !pointfile )
-		pointfile = fopen(g_pointfilename, "w");
+	{
+		pointfile = PlatformLib_FOpen(g_pointfilename, "w");
+	}
+
 	if ( !pointfile )
+	{
 		COM_FatalError("couldn't open %s\n", g_pointfilename);
+	}
+
 	if ( !linefile )
-		linefile = fopen(g_linefilename, "w");
+	{
+		linefile = PlatformLib_FOpen(g_linefilename, "w");
+	}
+
 	if ( !linefile )
+	{
 		COM_FatalError("couldn't open %s\n", g_linefilename);
+	}
 
 	fprintf(linefile, "%f %f %f - %f %f %f\n", p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
 	fprintf(pointfile, "%f %f %f\n", p1[0], p1[1], p1[2]);
@@ -402,9 +414,15 @@ bool FillOutside(tree_t* tree, int hullnum, bool leakfile)
 	if ( RecursiveFillOutside(g_outside_node.portals->nodes[s], false, leakfile) )
 	{
 		if ( pointfile )
-			fclose(pointfile);
+		{
+			PlatformLib_FClose(pointfile);
+		}
+
 		if ( linefile )
-			fclose(linefile);
+		{
+			PlatformLib_FClose(linefile);
+		}
+
 		pointfile = linefile = NULL;
 		leaked = true;
 

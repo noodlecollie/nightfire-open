@@ -347,8 +347,8 @@ void ProcessModels(const char* source)
 	// close surface and detail files
 	for ( i = 0; i < MAX_MAP_HULLS; i++ )
 	{
-		fclose(out_surfaces[i]);
-		fclose(out_detbrush[i]);
+		PlatformLib_FClose(out_surfaces[i]);
+		PlatformLib_FClose(out_detbrush[i]);
 	}
 
 	if ( test_mapfile )
@@ -393,7 +393,7 @@ void WriteHullSizes(const char* source)
 		fprintf(f, "%g %g %g %g %g %g\n", x1, y1, z1, x2, y2, z2);
 	}
 
-	fclose(f);
+	PlatformLib_FClose(f);
 }
 
 /*
@@ -422,7 +422,7 @@ void WriteMapPlanes(const char* source)
 		COM_FatalError("failed to store mapplanes\n");
 	}
 
-	fclose(f);
+	PlatformLib_FClose(f);
 }
 
 //======================================================================

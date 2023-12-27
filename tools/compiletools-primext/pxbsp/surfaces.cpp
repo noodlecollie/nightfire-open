@@ -8,6 +8,7 @@
  *
  ****/
 
+#include <limits>
 #include "bsp5.h"
 
 /*
@@ -65,8 +66,8 @@ void SubdivideFace(face_t* f, face_t** prevptr)
 	{
 		while ( 1 )
 		{
-			mins = 999999;
-			maxs = -999999;
+			mins = std::numeric_limits<vec_t>::max();
+			maxs = std::numeric_limits<vec_t>::min();
 
 			for ( int i = 0; i < f->w->numpoints; i++ )
 			{
@@ -75,7 +76,7 @@ void SubdivideFace(face_t* f, face_t** prevptr)
 				maxs = Q_max(v, maxs);
 			}
 
-			extent = ceil(maxs) - floor(mins);
+			extent = ceilf(maxs) - floorf(mins);
 			//			extent = maxs - mins;
 
 			if ( extent <= subdivide_size )
@@ -167,7 +168,7 @@ void InitHash(void)
 	VectorFill(size, 16000);
 
 	volume = size[0] * size[1];
-	scale = sqrt(volume / MAX_HASH);
+	scale = sqrtf(volume / MAX_HASH);
 
 	h_numslots[0] = (int)floor(size[0] / scale);
 	h_numslots[1] = (int)floor(size[1] / scale);
@@ -341,13 +342,16 @@ int GetEdge(vec3_t p1, vec3_t p2, face_t* f)
 
 	// emit an edge
 	if ( g_numedges >= MAX_MAP_EDGES )
+	{
 		COM_FatalError("MAX_MAP_EDGES limit exceeded\n");
+	}
+
 	edge = &g_dedges[g_numedges];
 	g_numedges++;
 
 	g_edgefaces[i][0] = f;
-	edge->v[0] = v1;
-	edge->v[1] = v2;
+	edge->v[0] = static_cast<uint16_t>(v1);
+	edge->v[1] = static_cast<uint16_t>(v2);
 
 	return i;
 }
