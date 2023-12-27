@@ -11,6 +11,7 @@ add_executable(${TARGETNAME_EXE_NFBSP}_new
 	surfaces.cpp
 	tjunc.cpp
 	tree.cpp
+	writebsp.cpp
 )
 
 target_include_directories(${TARGETNAME_EXE_NFBSP}_new PRIVATE

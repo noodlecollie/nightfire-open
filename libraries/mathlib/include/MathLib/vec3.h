@@ -245,6 +245,20 @@ static inline qboolean VectorIsNull(const vec3_t v)
 	return v[0] == 0.0f && v[1] == 0.0f && v[2] == 0.0f;
 }
 
+static inline void VectorCompareMax(const vec3_t a, const vec3_t b, vec3_t c)
+{
+	c[0] = Q_max(a[0], b[0]);
+	c[1] = Q_max(a[1], b[1]);
+	c[2] = Q_max(a[2], b[2]);
+};
+
+static inline void VectorCompareMin(const vec3_t a, const vec3_t b, vec3_t c)
+{
+	c[0] = Q_min(a[0], b[0]);
+	c[1] = Q_min(a[1], b[1]);
+	c[2] = Q_min(a[2], b[2]);
+};
+
 qboolean VectorIsOnAxis(const vec3_t v);
 float VectorNormalizeLength(const vec3_t v, vec3_t out);
 qboolean VectorCompareEpsilon(const vec3_t vec1, const vec3_t vec2, vec_t epsilon);
