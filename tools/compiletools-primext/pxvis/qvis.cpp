@@ -10,12 +10,18 @@
 
 // qvis.c
 
+#include "BuildPlatform/Arch.h"
+#include "MathLib/utils.h"
+#include "CRTLib/crtlib.h"
+#include "PlatformLib/File.h"
+#include "CompileTools/threads.h"
+#include "CompileTools/wadfileoperations.h"
+#include "CompileTools/crashhandler.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/zone.h"
+#include "CompileTools/vastring.h"
 #include "qvis.h"
-#include "threads.h"
-#include "crashhandler.h"
 #include "app_info.h"
-#include "build_info.h"
-#include "wadfileoperations.h"
 
 int g_numportals;
 int g_portalleafs;
@@ -399,18 +405,25 @@ static void LoadPortals(const char* name)
 	FILE* f;
 	winding_t* w;
 
-	f = fopen(name, "r");
+	f = PlatformLib_FOpen(name, "r");
+
 	if ( !f )
+	{
 		COM_FatalError("couldn't read %s\nno vis performed\n", name);
+	}
 
 	if ( fscanf(f, "%i\n%i\n", &g_portalleafs, &g_numportals) != 2 )
+	{
 		COM_FatalError("LoadPortals: failed to read header\n");
+	}
 
 	Msg("%4i portalleafs\n", g_portalleafs);
 	Msg("%4i numportals\n", g_numportals);
 
 	if ( g_numportals > MAX_MAP_PORTALS )
+	{
 		COM_FatalError("MAX_MAP_PORTALS limit exceeded\n");
+	}
 
 	// these counts should take advantage of 64 bit systems automatically
 	g_bitbytes = ((g_portalleafs + 63) & ~63) >> 3;
@@ -454,13 +467,19 @@ static void LoadPortals(const char* name)
 	for ( i = 0, p = g_portals; i < g_numportals; i++ )
 	{
 		if ( fscanf(f, "%i %i %i ", &numpoints, &leafnums[0], &leafnums[1]) != 3 )
+		{
 			COM_FatalError("LoadPortals: reading portal %i\n", i);
+		}
 
 		if ( numpoints > MAX_POINTS_ON_WINDING )
+		{
 			COM_FatalError("LoadPortals: portal %i has too many points\n", i);
+		}
 
 		if ( (uint)leafnums[0] > g_portalleafs || (uint)leafnums[1] > g_portalleafs )
+		{
 			COM_FatalError("LoadPortals: reading portal %i\n", i);
+		}
 
 		w = p->winding = AllocWinding(numpoints);
 		w->numpoints = numpoints;
@@ -471,8 +490,13 @@ static void LoadPortals(const char* name)
 
 			// scanf into double, then assign to vec_t
 			if ( fscanf(f, "(%lf %lf %lf ) ", &v[0], &v[1], &v[2]) != 3 )
+			{
 				COM_FatalError("LoadPortals: reading portal %i\n", i);
-			VectorCopy(v, w->p[j]);
+			}
+
+			w->p[j][0] = v[0];
+			w->p[j][1] = v[1];
+			w->p[j][2] = v[2];
 		}
 		fscanf(f, "\n");
 
@@ -516,14 +540,20 @@ static void LoadPortals(const char* name)
 		p++;
 	}
 
-	fclose(f);
+	PlatformLib_FClose(f);
 
 	if ( maxportals > 60 )
+	{
 		Msg("^1%d peak portals on a leaf^7\n", maxportals);
+	}
 	else if ( maxportals > 40 )
+	{
 		Msg("^3%d peak portals on a leaf^7\n", maxportals);
+	}
 	else
+	{
 		Msg("^2%d peak portals on a leaf^7\n", maxportals);
+	}
 }
 
 /*
@@ -602,9 +632,13 @@ checks should be parameter ignored or not
 static bool CheckDeprecatedParameter(const char* name)
 {
 	if ( !Q_strcmp(name, "-full") )
+	{
 		return true;
+	}
 	else
+	{
 		return false;
+	}
 }
 
 /*
@@ -704,18 +738,18 @@ int main(int argc, char** argv)
 	Msg("\n%s %s (%s, commit %s, arch %s, platform %s)\n\n",
 		TOOLNAME,
 		VERSIONSTRING,
-		BuildInfo::GetDate(),
-		BuildInfo::GetCommitHash(),
-		BuildInfo::GetArchitecture(),
-		BuildInfo::GetPlatform());
+		__DATE__,
+		BuildPlatform_CommitString(),
+		BuildPlatform_ArchitectureString(),
+		BuildPlatform_PlatformString());
 
 	PrintVisSettings();
 
 	ThreadSetDefault();
 
 	Q_strncpy(portalfile, source, sizeof(portalfile));
-	COM_DefaultExtension(portalfile, ".prt");
-	COM_DefaultExtension(source, ".bsp");
+	COM_DefaultExtension(portalfile, sizeof(portalfile), ".prt");
+	COM_DefaultExtension(source, sizeof(source), ".bsp");
 
 	LoadBSPFile(source);
 	LoadPortals(portalfile);
@@ -754,7 +788,7 @@ int main(int argc, char** argv)
 	Mem_Check();
 
 	end = I_FloatTime();
-	Q_timestring((int)(end - start), str);
+	Q_timestring((int)(end - start), str, sizeof(str));
 	Msg("%s elapsed\n", str);
 
 	return 0;
