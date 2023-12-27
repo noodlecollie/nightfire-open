@@ -111,7 +111,7 @@ void Sys_CloseLog(void)
 		return;
 	}
 
-	fclose(logfile);
+	PlatformLib_FClose(logfile);
 	logfile = NULL;
 }
 

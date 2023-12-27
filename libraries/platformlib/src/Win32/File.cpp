@@ -1,3 +1,6 @@
+// For vfscanf:
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "PlatformLib/File.h"
 #include <io.h>
 #include <sys/stat.h>
@@ -71,6 +74,16 @@ int PlatformLib_FileNo(FILE* file)
 int PlatformLib_MkDir(const char* path)
 {
 	return _mkdir(path);
+}
+
+int PlatformLib_Unlink(const char* filename)
+{
+	return _unlink(filename);
+}
+
+int PlatformLib_VFScanF(FILE* stream, const char* format, va_list args)
+{
+	return vfscanf(stream, format, args);
 }
 
 #ifdef __cplusplus

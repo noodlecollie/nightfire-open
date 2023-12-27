@@ -9,6 +9,7 @@
  ****/
 
 #include "BuildPlatform/Arch.h"
+#include "PlatformLib/File.h"
 #include "CRTLib/crtlib.h"
 #include "MathLib/utils.h"
 #include "CompileTools/crashhandler.h"
@@ -30,7 +31,7 @@ bool g_forcevis = DEFAULT_FORCEVIS;
 int g_maxnode_size = DEFAULT_MAXNODE_SIZE;
 int g_merge_level = DEFAULT_MERGE_LEVEL;
 vec_t g_prtepsilon = PRTCHOP_EPSILON;
-size_t g_compatibility_mode = DEFAULT_COMPAT_MODE;
+int g_compatibility_mode = DEFAULT_COMPAT_MODE;
 
 char g_pointfilename[1024];
 char g_linefilename[1024];
@@ -49,7 +50,8 @@ void ReadMapPlanes(const char* source)
 	FILE* f;
 
 	Q_snprintf(path, sizeof(path), "%s.pln", source);
-	f = fopen(path, "rb");
+	f = PlatformLib_FOpen(path, "rb");
+
 	if ( !f )
 	{
 		COM_FatalError("couldn't open %s\n", path);
@@ -61,17 +63,23 @@ void ReadMapPlanes(const char* source)
 	fseek(f, 0, SEEK_SET);
 
 	if ( filelen > sizeof(g_mapplanes) )
+	{
 		COM_FatalError("insufficient MAX_INTERNAL_MAP_PLANES size\n");
+	}
 
 	if ( filelen % sizeof(plane_t) )
+	{
 		COM_FatalError("msimatch plane_t struct between csg and bsp\n");
+	}
 
 	if ( fread(g_mapplanes, 1, filelen, f) != filelen )
+	{
 		COM_FatalError("failed to read mapplanes\n");
+	}
 
 	g_nummapplanes = static_cast<int>(filelen / sizeof(plane_t));
 
-	fclose(f);
+	PlatformLib_FClose(f);
 
 	// clear out hash_chain, now is output planenum!
 	for ( int i = 0; i < g_nummapplanes; i++ )
@@ -91,15 +99,21 @@ void ReadHullSizes(const char* source)
 	FILE* f;
 
 	Q_snprintf(path, sizeof(path), "%s.hsz", source);
-	f = fopen(path, "rb");
+	f = PlatformLib_FOpen(path, "rb");
+
 	if ( !f )
+	{
 		return;  // just use predefined sizes
+	}
 
 	for ( int i = 0; i < MAX_MAP_HULLS; i++ )
 	{
-		int count = fscanf(f, "%f %f %f %f %f %f\n", &x1, &y1, &z1, &x2, &y2, &z2);
+		int count = PlatformLib_FScanF(f, "%f %f %f %f %f %f\n", &x1, &y1, &z1, &x2, &y2, &z2);
+
 		if ( count != 6 )
+		{
 			COM_FatalError("Load hull size (line %i): scanf failure", i + 1);
+		}
 
 		g_hull_size[i][0][0] = x1;
 		g_hull_size[i][0][1] = y1;
@@ -109,7 +123,7 @@ void ReadHullSizes(const char* source)
 		g_hull_size[i][1][2] = z2;
 	}
 
-	fclose(f);
+	PlatformLib_FClose(f);
 }
 
 //===========================================================================
@@ -401,7 +415,8 @@ void CreateSingleHull(const char* source, int hullnum)
 	Msg("CreateHull: %i\n", hullnum);
 
 	Q_snprintf(name, sizeof(name), "%s.p%i", source, hullnum);
-	polyfile = fopen(name, "r");
+	polyfile = PlatformLib_FOpen(name, "r");
+
 	if ( !polyfile )
 	{
 		COM_FatalError("Can't open %s", name);
@@ -409,7 +424,8 @@ void CreateSingleHull(const char* source, int hullnum)
 	}
 
 	Q_snprintf(name, sizeof(name), "%s.b%i", source, hullnum);
-	brushfile = fopen(name, "r");
+	brushfile = PlatformLib_FOpen(name, "r");
+
 	if ( !brushfile )
 	{
 		COM_FatalError("Can't open %s", name);
@@ -430,12 +446,12 @@ void CreateSingleHull(const char* source, int hullnum)
 	}
 
 	Q_snprintf(name, sizeof(name), "%s.p%i", source, hullnum);
-	fclose(polyfile);
-	unlink(name);
+	PlatformLib_FClose(polyfile);
+	PlatformLib_Unlink(name);
 
 	Q_snprintf(name, sizeof(name), "%s.b%i", source, hullnum);
-	fclose(brushfile);
-	unlink(name);
+	PlatformLib_FClose(brushfile);
+	PlatformLib_Unlink(name);
 }
 
 /*
@@ -484,10 +500,10 @@ void ProcessFile(const char* source)
 	FinishBSPFile(bspfilename);
 
 	Q_snprintf(name, sizeof(name), "%s.pln", source);
-	unlink(name);
+	PlatformLib_Unlink(name);
 
 	Q_snprintf(name, sizeof(name), "%s.hsz", source);
-	unlink(name);
+	PlatformLib_Unlink(name);
 }
 
 //=========================================
@@ -631,7 +647,7 @@ int main(int argc, char** argv)
 		}
 		else if ( !Q_strcmp(argv[i], "-epsilon") )
 		{
-			g_prtepsilon = atof(argv[i + 1]);
+			g_prtepsilon = static_cast<float>(atof(argv[i + 1]));
 			i++;
 		}
 		else if ( argv[i][0] == '-' )

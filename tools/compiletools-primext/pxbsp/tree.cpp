@@ -8,6 +8,7 @@
  *
  ****/
 
+#include "PlatformLib/File.h"
 #include "CRTLib/crtlib.h"
 #include "MathLib/utils.h"
 #include "CompileTools/zone.h"
@@ -153,39 +154,55 @@ tree_t* MakeTreeFromHullFaces(FILE* polyfile, FILE* brushfile)
 	tree_t* tree = NULL;
 	bool skipface;
 	int line = 0;
-	face_t* f;
+	face_t* f = nullptr;
 
 	// read in the polygons
 	while ( 1 )
 	{
-		r = fscanf(polyfile, "%i %i %i %i %i\n", &detaillevel, &planenum, &texinfo, &contents, &numpoints);
+		r = PlatformLib_FScanF(polyfile, "%i %i %i %i %i\n", &detaillevel, &planenum, &texinfo, &contents, &numpoints);
 		skipface = false;
 		line++;
 
 		if ( r == 0 || r == -1 )
+		{
 			return NULL;
+		}
 
 		// alloc a new tree for model
 		if ( !tree )
+		{
 			tree = AllocTree();
+		}
 
 		if ( planenum == -1 )  // end of model
+		{
 			break;
+		}
 
 		if ( r != 5 )
+		{
 			COM_FatalError("ReadSurfs (line %i): scanf failure %d != 5\n", line, r);
+		}
 
 		if ( planenum > g_nummapplanes )
+		{
 			COM_FatalError("ReadSurfs (line %i): %i > numplanes\n", line, planenum);
+		}
 
 		if ( texinfo > g_numtexinfo )
+		{
 			COM_FatalError("ReadSurfs (line %i): %i > numtexinfo\n", line, texinfo);
+		}
 
 		if ( detaillevel < 0 )
+		{
 			COM_FatalError("ReadSurfs (line %i): detaillevel %i < 0", line, detaillevel);
+		}
 
 		if ( !Q_stricmp(GetTextureByTexinfo(texinfo), "SKIP") )
+		{
 			skipface = true;
+		}
 
 		if ( !skipface )
 		{
@@ -205,19 +222,19 @@ tree_t* MakeTreeFromHullFaces(FILE* polyfile, FILE* brushfile)
 		for ( int i = 0; i < numpoints; i++ )
 		{
 			double v[3];
-			r = fscanf(polyfile, "%lf %lf %lf\n", &v[0], &v[1], &v[2]);
+			r = PlatformLib_FScanF(polyfile, "%lf %lf %lf\n", &v[0], &v[1], &v[2]);
 
 			if ( !skipface )
 			{
-				f->w->p[i][0] = v[0];
-				f->w->p[i][1] = v[1];
-				f->w->p[i][2] = v[2];
+				f->w->p[i][0] = static_cast<vec_t>(v[0]);
+				f->w->p[i][1] = static_cast<vec_t>(v[1]);
+				f->w->p[i][2] = static_cast<vec_t>(v[2]);
 			}
 
 			line++;
 		}
 
-		fscanf(polyfile, "\n");
+		PlatformLib_FScanF(polyfile, "\n");
 		line++;
 	}
 

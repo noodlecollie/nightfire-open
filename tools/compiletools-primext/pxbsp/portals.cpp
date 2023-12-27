@@ -8,6 +8,7 @@
  *
  ****/
 
+#include "PlatformLib/File.h"
 #include "CRTLib/crtlib.h"
 #include "MathLib/utils.h"
 #include "CompileTools/conprint.h"
@@ -400,9 +401,12 @@ void WritePortalfile(tree_t* tree, bool leaked)
 		MsgDev(D_INFO, "^2BSP generation successful, writing portal file:^7 %s.prt\n", shortname);
 	}
 
-	pf = fopen(g_portfilename, "w");
+	pf = PlatformLib_FOpen(g_portfilename, "w");
+
 	if ( !pf )
+	{
 		COM_FatalError("error opening %s\n", g_portfilename);
+	}
 
 	fprintf(pf, "%i\n", num_visleafs);
 	fprintf(pf, "%i\n", num_visportals);
@@ -410,7 +414,7 @@ void WritePortalfile(tree_t* tree, bool leaked)
 	WriteLeafCount_r(tree->headnode);
 	WritePortalFile_r(tree->headnode);
 
-	fclose(pf);
+	PlatformLib_FClose(pf);
 
 	MsgDev(D_REPORT, "%i colinear portals\n", c_colinear_portals);
 	MsgDev(D_REPORT, "%i backward portals\n", c_backward_portals);

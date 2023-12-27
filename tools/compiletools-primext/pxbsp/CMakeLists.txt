@@ -39,6 +39,8 @@ target_link_libraries(${TARGETNAME_EXE_NFBSP}_new PRIVATE
 	${TARGETNAME_LIB_COMPILETOOLS}
 )
 
+set_common_library_compiler_settings(${TARGETNAME_EXE_NFBSP}_new)
+
 install(TARGETS ${TARGETNAME_EXE_NFBSP}_new
 	RUNTIME DESTINATION ${TOOLS_INSTALL_ROOT}
 )

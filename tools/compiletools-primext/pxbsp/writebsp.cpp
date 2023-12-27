@@ -72,7 +72,9 @@ static int CreateNewFloatPlane(const vec3_t srcnormal, vec_t dist)
 	// only snap distance if the normal is an axis. Otherwise there
 	// is nothing "natural" about snapping the distance to an integer.
 	if ( VectorIsOnAxis(normal) && fabs(dist - Q_rint(dist)) < DIST_EPSILON )
-		dist = Q_rint(dist);  // catch -0.0
+	{
+		dist = static_cast<vec_t>(Q_rint(dist));  // catch -0.0
+	}
 
 	VectorCopy(normal, p0->normal);
 	VectorNegate(normal, p1->normal);
@@ -114,7 +116,9 @@ int FindFloatPlane(const vec3_t normal, vec_t dist)
 		p = &g_mapplanes[i];
 
 		if ( PlaneEqual(p, normal, dist) )
-			return p - g_mapplanes;
+		{
+			return static_cast<int>(p - g_mapplanes);
+		}
 	}
 
 	// allocate a new two opposite planes
@@ -284,7 +288,7 @@ static int EmitLeaf(node_t* node, const node_t* portalleaf)
 	}
 
 	// write the marksurfaces
-	leaf_p->firstmarksurface = g_nummarksurfaces;
+	leaf_p->firstmarksurface = static_cast<uint16_t>(g_nummarksurfaces);
 
 	for ( fp = node->markfaces; *fp != NULL; fp++ )
 	{
@@ -295,12 +299,15 @@ static int EmitLeaf(node_t* node, const node_t* portalleaf)
 
 			// grab tjunction split faces
 			if ( g_nummarksurfaces == MAX_MAP_MARKSURFACES )
+			{
 				COM_FatalError("MAX_MAP_MARKSURFACES limit exceeded\n");
-			g_dmarksurfaces[g_nummarksurfaces++] = f->outputnumber;  // emit a marksurface
+			}
+
+			g_dmarksurfaces[g_nummarksurfaces++] = static_cast<dmarkface_t>(f->outputnumber);  // emit a marksurface
 		}
 	}
 
-	leaf_p->nummarksurfaces = g_nummarksurfaces - leaf_p->firstmarksurface;
+	leaf_p->nummarksurfaces = static_cast<uint16_t>(g_nummarksurfaces - leaf_p->firstmarksurface);
 
 	return leafnum;
 }
@@ -338,7 +345,6 @@ WriteFace
 static void WriteFace(face_t* f)
 {
 	dface_t* df;
-	winding_t* w = f->w;
 	int i, e;
 
 	if ( CheckNullFace(f) )
@@ -352,14 +358,17 @@ static void WriteFace(face_t* f)
 	df = &g_dfaces[g_numfaces];
 
 	if ( g_numfaces >= MAX_MAP_FACES )
+	{
 		COM_FatalError("MAX_MAP_FACES limit exceeded\n");
+	}
+
 	g_numfaces++;
 
-	df->planenum = EmitPlane(f->planenum, true);
+	df->planenum = static_cast<word>(EmitPlane(f->planenum, true));
 	df->side = f->planenum & 1;  // odd-even
 	df->firstedge = g_numsurfedges;
-	df->numedges = f->numedges;
-	df->texinfo = EmitTexinfo(f->texturenum);
+	df->numedges = static_cast<int16_t>(f->numedges);
+	df->texinfo = static_cast<int16_t>(EmitTexinfo(f->texturenum));
 
 	for ( i = 0; i < f->numedges; i++ )
 	{
@@ -437,16 +446,18 @@ static int EmitDrawNodes_r(node_t* node, const node_t* portalleaf)
 		COM_FatalError("EmitDrawNodes_r: odd planenum\n");
 
 	n->planenum = EmitPlane(node->planenum, true);
-	n->firstface = g_numfaces;
+	n->firstface = static_cast<uint16_t>(g_numfaces);
 
 	for ( f = node->faces; f != NULL; f = f->next )
 		WriteFace(f);
 
-	n->numfaces = g_numfaces - n->firstface;
+	n->numfaces = static_cast<uint16_t>(g_numfaces - n->firstface);
 
 	// recursively output the other nodes
 	for ( int i = 0; i < 2; i++ )
-		n->children[i] = EmitDrawNodes_r(node->children[i], portalleaf);
+	{
+		n->children[i] = static_cast<int16_t>(EmitDrawNodes_r(node->children[i], portalleaf));
+	}
 
 	return nodenum;
 }
@@ -519,7 +530,7 @@ static void CalcModelBoundBox(dmodel_t* bmod, tree_t* tree, int hullnum, int mod
 		{
 			if ( mins[i] > maxs[i] )
 			{
-				vec_t tmp = (mins[i] + maxs[i]) * 0.5;
+				vec_t tmp = (mins[i] + maxs[i]) * 0.5f;
 				mins[i] = maxs[i] = tmp;
 			}
 		}
