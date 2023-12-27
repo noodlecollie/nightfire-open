@@ -2,6 +2,7 @@
 set(COMPATIBILITY_TYPE "goldsrc")
 
 add_executable(${TARGETNAME_EXE_NFRAD}_new
+	lerp.cpp
 	$<$<STREQUAL:"${COMPATIBILITY_TYPE}","p2">:raytracer.h>
 	$<$<STREQUAL:"${COMPATIBILITY_TYPE}","p2">:raytracer.cpp>
 )
