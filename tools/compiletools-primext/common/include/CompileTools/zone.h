@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 enum MemAllocZone
 {
 	C_COMMON = 0,
