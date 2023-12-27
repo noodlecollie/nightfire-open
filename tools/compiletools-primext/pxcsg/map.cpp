@@ -100,7 +100,7 @@ copy specified brush into new one
 */
 static brush_t* CopyBrush(mapent_t* entity, const brush_t* brush)
 {
-	int brushidx = brush - entity->brushes.Base();
+	int brushidx = static_cast<int>(brush - entity->brushes.Base());
 	brush_t* newb = AllocBrush(entity);
 
 	// maybe array is changed so we need to refresh pointer to source brush
@@ -125,7 +125,7 @@ delete brush from local array
 */
 static void DeleteBrush(mapent_t* entity, const brush_t* brush)
 {
-	int brushidx = brush - entity->brushes.Base();
+	int brushidx = static_cast<int>(brush - entity->brushes.Base());
 
 	if ( brushidx < 0 || brushidx >= entity->brushes.Count() )
 		COM_FatalError("DeleteBrush: invalid brush index %d\n", brushidx);
@@ -148,7 +148,7 @@ void MoveBrushesToEntity(CUtlVector<mapent_t>* entities, mapent_t* dst, mapent_t
 	int oldcount = dst->brushes.Count();
 	// add the brushes to the tail of local array
 	dst->brushes.AddMultipleToTail(src->brushes.Count());
-	int entnum = dst - entities->Base();
+	int entnum = static_cast<int>(dst - entities->Base());
 
 	for ( int i = 0; i < src->brushes.Count(); i++ )
 	{
@@ -484,7 +484,9 @@ static void SetupTextureVectors(mapent_t* mapent, brush_t* brush, side_t* side, 
 	texvecs_t tex_vects;
 
 	if ( brush_type == BRUSH_RADIANT )
-		Parse2DMatrix(2, 3, (vec_t*)tex_vects.matrix);
+	{
+		Parse2DMatrix(2, 3, (vec_t*)tex_vects.radiant.matrix);
+	}
 
 	// read the texturedef
 	GetToken(false);
@@ -505,13 +507,13 @@ static void SetupTextureVectors(mapent_t* mapent, brush_t* brush, side_t* side, 
 			COM_FatalError("missing '[' in texturedef (U) at line %i\n", scriptline);
 
 		GetToken(false);
-		tex_vects.UAxis[0] = atof(token);
+		tex_vects.worldcraft.UAxis[0] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.UAxis[1] = atof(token);
+		tex_vects.worldcraft.UAxis[1] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.UAxis[2] = atof(token);
+		tex_vects.worldcraft.UAxis[2] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.shift[0] = atof(token);
+		tex_vects.worldcraft.shift[0] = static_cast<float>(atof(token));
 		GetToken(false);
 
 		if ( Q_strcmp(token, "]") )
@@ -524,40 +526,42 @@ static void SetupTextureVectors(mapent_t* mapent, brush_t* brush, side_t* side, 
 			COM_FatalError("missing '[' in texturedef (V) at line %i\n", scriptline);
 
 		GetToken(false);
-		tex_vects.VAxis[0] = atof(token);
+		tex_vects.worldcraft.VAxis[0] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.VAxis[1] = atof(token);
+		tex_vects.worldcraft.VAxis[1] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.VAxis[2] = atof(token);
+		tex_vects.worldcraft.VAxis[2] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.shift[1] = atof(token);
+		tex_vects.worldcraft.shift[1] = static_cast<float>(atof(token));
 		GetToken(false);
 
 		if ( Q_strcmp(token, "]") )
+		{
 			COM_FatalError("missing ']' in texturedef (V) at line %i\n", scriptline);
+		}
 
 		// texture rotation is implicit in U/V axes.
 		GetToken(false);
-		tex_vects.rotate = 0.0;
+		tex_vects.worldcraft.rotate = 0.0;
 
 		// texure scale
 		GetToken(false);
-		tex_vects.scale[0] = atof(token);
+		tex_vects.worldcraft.scale[0] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.scale[1] = atof(token);
+		tex_vects.worldcraft.scale[1] = static_cast<float>(atof(token));
 	}
 	else if ( brush_type == BRUSH_WORLDCRAFT_21 || brush_type == BRUSH_QUARK )
 	{
 		// worldcraft 2.1-, old Radiant, QuArK
-		tex_vects.shift[0] = atof(token);
+		tex_vects.worldcraft.shift[0] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.shift[1] = atof(token);
+		tex_vects.worldcraft.shift[1] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.rotate = atof(token);
+		tex_vects.worldcraft.rotate = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.scale[0] = atof(token);
+		tex_vects.worldcraft.scale[0] = static_cast<float>(atof(token));
 		GetToken(false);
-		tex_vects.scale[1] = atof(token);
+		tex_vects.worldcraft.scale[1] = static_cast<float>(atof(token));
 	}
 
 	// can't read it here because we're unfinished detecting map type
@@ -626,10 +630,15 @@ static void SetupTextureVectors(mapent_t* mapent, brush_t* brush, side_t* side, 
 		if ( brush_type == BRUSH_WORLDCRAFT_21 )
 			TextureAxisFromSide(side, axis[0], axis[1], false);
 
-		if ( !tex_vects.scale[0] )
-			tex_vects.scale[0] = 1.0;
-		if ( !tex_vects.scale[1] )
-			tex_vects.scale[1] = 1.0;
+		if ( !tex_vects.worldcraft.scale[0] )
+		{
+			tex_vects.worldcraft.scale[0] = 1.0f;
+		}
+
+		if ( !tex_vects.worldcraft.scale[1] )
+		{
+			tex_vects.worldcraft.scale[1] = 1.0f;
+		}
 
 		if ( brush_type == BRUSH_WORLDCRAFT_21 )
 		{
@@ -638,32 +647,32 @@ static void SetupTextureVectors(mapent_t* mapent, brush_t* brush, side_t* side, 
 			int sv, tv;
 
 			// rotate axis
-			if ( tex_vects.rotate == 0.0 )
+			if ( tex_vects.worldcraft.rotate == 0.0 )
 			{
 				sinv = 0.0;
 				cosv = 1.0;
 			}
-			else if ( tex_vects.rotate == 90.0 )
+			else if ( tex_vects.worldcraft.rotate == 90.0 )
 			{
 				sinv = 1.0;
 				cosv = 0.0;
 			}
-			else if ( tex_vects.rotate == 180.0 )
+			else if ( tex_vects.worldcraft.rotate == 180.0 )
 			{
 				sinv = 0.0;
 				cosv = -1.0;
 			}
-			else if ( tex_vects.rotate == 270.0 )
+			else if ( tex_vects.worldcraft.rotate == 270.0 )
 			{
 				sinv = -1.0;
 				cosv = 0.0;
 			}
 			else
 			{
-				vec_t ang = DEG2RAD(tex_vects.rotate);
+				vec_t ang = DEG2RADF(tex_vects.worldcraft.rotate);
 
-				sinv = sin(ang);
-				cosv = cos(ang);
+				sinv = sinf(ang);
+				cosv = cosf(ang);
 			}
 
 			if ( axis[0][0] )
@@ -692,20 +701,25 @@ static void SetupTextureVectors(mapent_t* mapent, brush_t* brush, side_t* side, 
 			{
 				for ( j = 0; j < 3; j++ )
 				{
-					side->vecs[i][j] = axis[i][j] / tex_vects.scale[i];
+					side->vecs[i][j] = axis[i][j] / tex_vects.worldcraft.scale[i];
 				}
 			}
 		}
 		else if ( brush_type == BRUSH_WORLDCRAFT_22 )
 		{
 			for ( j = 0; j < 3; j++ )
-				side->vecs[0][j] = tex_vects.UAxis[j] / tex_vects.scale[0];
+			{
+				side->vecs[0][j] = tex_vects.worldcraft.UAxis[j] / tex_vects.worldcraft.scale[0];
+			}
+
 			for ( j = 0; j < 3; j++ )
-				side->vecs[1][j] = tex_vects.VAxis[j] / tex_vects.scale[1];
+			{
+				side->vecs[1][j] = tex_vects.worldcraft.VAxis[j] / tex_vects.worldcraft.scale[1];
+			}
 		}
 
-		side->vecs[0][3] = tex_vects.shift[0];
-		side->vecs[1][3] = tex_vects.shift[1];
+		side->vecs[0][3] = tex_vects.worldcraft.shift[0];
+		side->vecs[1][3] = tex_vects.worldcraft.shift[1];
 	}
 	else if ( brush_type == BRUSH_RADIANT )
 	{
@@ -715,15 +729,21 @@ static void SetupTextureVectors(mapent_t* mapent, brush_t* brush, side_t* side, 
 		TEX_GetSize(side->shader->imagePath, &width, &height);
 		TextureAxisFromSide(side, axis[0], axis[1], true);
 
-		side->vecs[0][0] = width * ((axis[0][0] * tex_vects.matrix[0][0]) + (axis[1][0] * tex_vects.matrix[0][1]));
-		side->vecs[0][1] = width * ((axis[0][1] * tex_vects.matrix[0][0]) + (axis[1][1] * tex_vects.matrix[0][1]));
-		side->vecs[0][2] = width * ((axis[0][2] * tex_vects.matrix[0][0]) + (axis[1][2] * tex_vects.matrix[0][1]));
-		side->vecs[0][3] = width * tex_vects.matrix[0][2];
+		side->vecs[0][0] =
+			width * ((axis[0][0] * tex_vects.radiant.matrix[0][0]) + (axis[1][0] * tex_vects.radiant.matrix[0][1]));
+		side->vecs[0][1] =
+			width * ((axis[0][1] * tex_vects.radiant.matrix[0][0]) + (axis[1][1] * tex_vects.radiant.matrix[0][1]));
+		side->vecs[0][2] =
+			width * ((axis[0][2] * tex_vects.radiant.matrix[0][0]) + (axis[1][2] * tex_vects.radiant.matrix[0][1]));
+		side->vecs[0][3] = width * tex_vects.radiant.matrix[0][2];
 
-		side->vecs[1][0] = height * ((axis[0][0] * tex_vects.matrix[1][0]) + (axis[1][0] * tex_vects.matrix[1][1]));
-		side->vecs[1][1] = height * ((axis[0][1] * tex_vects.matrix[1][0]) + (axis[1][1] * tex_vects.matrix[1][1]));
-		side->vecs[1][2] = height * ((axis[0][2] * tex_vects.matrix[1][0]) + (axis[1][2] * tex_vects.matrix[1][1]));
-		side->vecs[1][3] = height * tex_vects.matrix[1][2];
+		side->vecs[1][0] =
+			height * ((axis[0][0] * tex_vects.radiant.matrix[1][0]) + (axis[1][0] * tex_vects.radiant.matrix[1][1]));
+		side->vecs[1][1] =
+			height * ((axis[0][1] * tex_vects.radiant.matrix[1][0]) + (axis[1][1] * tex_vects.radiant.matrix[1][1]));
+		side->vecs[1][2] =
+			height * ((axis[0][2] * tex_vects.radiant.matrix[1][0]) + (axis[1][2] * tex_vects.radiant.matrix[1][1]));
+		side->vecs[1][3] = height * tex_vects.radiant.matrix[1][2];
 	}
 
 	// Quake3 detail brushes or Volatile3D detail brushes
@@ -790,7 +810,7 @@ static void ParseBrush(mapent_t* mapent, short entindex, short faceinfo, short& 
 	brush->entitynum = entindex;
 
 	// read ZHLT settings for this brush
-	brush->detaillevel = Q_max(IntForKey((entity_t*)mapent, "zhlt_detaillevel"), 0);
+	brush->detaillevel = static_cast<int8_t>(Q_max(IntForKey((entity_t*)mapent, "zhlt_detaillevel"), 0));
 
 	if ( BoolForKey((entity_t*)mapent, "zhlt_noclip") )
 		SetBits(brush->flags, FBRUSH_NOCLIP);
@@ -929,7 +949,7 @@ short GetFaceInfoForEntity(mapent_t* mapent)
 	int texture_step = GetDefaultTextureStep(mapent);
 	int max_extent = GetDefaultSurfaceExtent(mapent);
 	int global_texture_step = TEXTURE_STEP, global_max_extent = MAX_SURFACE_EXTENT;
-	int lmscale = TEXTURE_STEP * Q_max(0, FloatForKey((entity_t*)mapent, "_lmscale"));
+	int lmscale = static_cast<int>(TEXTURE_STEP * Q_max(0, FloatForKey((entity_t*)mapent, "_lmscale")));
 	short faceinfo = -1;
 
 	if ( g_compatibility_mode != CompatibilityMode::GoldSrc )
@@ -1089,7 +1109,7 @@ bool ParseMapEntity(CUtlVector<mapent_t>* entities, bool external = false)
 			if ( !Q_strcmp(token, "patchDef2") )
 			{
 				// NOTE: patchDef may be combined with old brush descripton
-				ParsePatch(mapent, index, faceinfo, brush_type);
+				ParsePatch(mapent, static_cast<short>(index), faceinfo, brush_type);
 				g_numparsedbrushes++;
 			}
 			else if ( !Q_strcmp(token, "terrainDef") )
@@ -1100,7 +1120,7 @@ bool ParseMapEntity(CUtlVector<mapent_t>* entities, bool external = false)
 			else if ( !Q_strcmp(token, "brushDef") )
 			{
 				brush_type = BRUSH_RADIANT;
-				ParseBrush(mapent, index, faceinfo, brush_type);  // parse brush primitive
+				ParseBrush(mapent, static_cast<short>(index), faceinfo, brush_type);  // parse brush primitive
 				g_numparsedbrushes++;
 			}
 			else
@@ -1111,7 +1131,7 @@ bool ParseMapEntity(CUtlVector<mapent_t>* entities, bool external = false)
 
 				// QuArK or WorldCraft map
 				UnGetToken();
-				ParseBrush(mapent, index, faceinfo, brush_type);
+				ParseBrush(mapent, static_cast<short>(index), faceinfo, brush_type);
 				g_numparsedbrushes++;
 			}
 		}
@@ -1311,16 +1331,19 @@ bool IncludeMapFile(const char* filename, CUtlVector<mapent_t>* entities, int in
 
 	int spawnflags = IntForKey((entity_t*)mapent, "spawnflags");
 
-	if ( InsertASEModel(filename, mapent, index, -1) )
+	if ( InsertASEModel(filename, mapent, static_cast<short>(index), -1) )
 	{
 		MsgDev(D_INFO, "include: %s\n", filename);
 
-		for ( int i = 0; i < mapent->brushes.Count(); i++ )
+		for ( int brushIndex = 0; brushIndex < mapent->brushes.Count(); ++brushIndex )
 		{
-			brush_t* b = &mapent->brushes[i];
+			brush_t* b = &mapent->brushes[brushIndex];
 
 			if ( !FBitSet(spawnflags, 2) )
+			{
 				SetBits(b->flags, FBRUSH_NOCLIP);
+			}
+
 			SetBits(b->flags, FBRUSH_NOCSG);
 		}
 
@@ -1654,7 +1677,7 @@ void UnparseMapEntities(void)
 		}
 	}
 
-	g_entdatasize = end - buf + 1;  // write term
+	g_entdatasize = static_cast<int>(end - buf + 1);  // write term
 }
 
 /*

@@ -39,6 +39,8 @@ bool PlaneEqual(const plane_t* p, const vec3_t normal, const vec3_t origin, vec_
 {
 	vec_t t;
 
+	(void)dist;
+
 	if ( -DIR_EPSILON < (t = normal[0] - p->normal[0]) && t < DIR_EPSILON &&
 		 -DIR_EPSILON < (t = normal[1] - p->normal[1]) && t < DIR_EPSILON &&
 		 -DIR_EPSILON < (t = normal[2] - p->normal[2]) && t < DIR_EPSILON )
@@ -62,7 +64,7 @@ void AddPlaneToHash(plane_t* p)
 
 	hash = (PLANE_HASHES - 1) & (int)fabs(p->dist);
 	p->hash_chain = g_planehash[hash];
-	g_planehash[hash] = p - g_mapplanes + 1;
+	g_planehash[hash] = static_cast<int>(p - g_mapplanes + 1);
 }
 
 /*
@@ -97,7 +99,9 @@ int CreateNewFloatPlane(const vec3_t srcnormal, const vec3_t origin)
 	// only snap distance if the normal is an axis. Otherwise there
 	// is nothing "natural" about snapping the distance to an integer.
 	if ( VectorIsOnAxis(normal) && fabsf(dist - Q_rint(dist)) < DIST_EPSILON )
-		dist = Q_rint(dist);  // catch -0.0
+	{
+		dist = static_cast<vec_t>(Q_rint(dist));  // catch -0.0
+	}
 
 	VectorCopy(origin, p0->origin);
 	VectorCopy(normal, p0->normal);
@@ -156,7 +160,7 @@ int FindFloatPlane(const vec3_t normal, const vec3_t origin)
 			if ( PlaneEqual(p, normal, origin, dist) )
 			{
 				ThreadUnlock();
-				return p - g_mapplanes;
+				return static_cast<int>(p - g_mapplanes);
 			}
 		}
 	}
@@ -216,9 +220,13 @@ find_plane:
 		for ( int i = 0; i < 3; i++ )
 		{
 			if ( i == p->type )
-				p->normal[i] = p->normal[i] > 0 ? 1 : -1;
+			{
+				p->normal[i] = p->normal[i] > 0 ? 1.0f : -1.0f;
+			}
 			else
+			{
 				p->normal[i] = 0;
+			}
 		}
 	}
 
@@ -287,6 +295,8 @@ void BrushCheckSides(mapent_t* mapent, brush_t* b)
 	int skip_faces = 0;
 	int hint_faces = 0;
 	side_t* s;
+
+	(void)mapent;
 
 	// never apply this for a patches!
 	if ( FBitSet(b->flags, FBRUSH_PATCH) )
@@ -774,7 +784,7 @@ void ExpandBrush2(brush_t* b, int hullnum)
 		{
 			// add the plane
 			VectorClear(normal);
-			normal[x] = s;
+			normal[x] = static_cast<vec_t>(s);
 
 			if ( s == -1 )
 				VectorAdd(b->hull[0].mins, g_hull_size[hullnum][0], origin);
@@ -963,7 +973,7 @@ void ExpandBrush(brush_t* b, int hullnum)
 				{
 					// pick direction of bevel edge by looking at normal of existing planes
 					VectorClear(bevel_edge);
-					bevel_edge[dir] = (plane->normal[dir] > 0) ? -1 : 1;
+					bevel_edge[dir] = (plane->normal[dir] > 0) ? -1.0f : 1.0f;
 
 					// find normal by taking normalized cross of the edge vector and the bevel edge
 					CrossProduct(edge, bevel_edge, normal);
@@ -1085,7 +1095,7 @@ void SortHullFaces(brushhull_t* h)
 	for ( i = 0; i < numfaces; i++ )
 	{
 		int bestaxial = -1;
-		int bestside;
+		int bestside = 0;
 
 		for ( j = 0; j < numfaces; j++ )
 		{
@@ -1188,7 +1198,7 @@ restart:
 			for ( j = 0; j < 3; j++ )
 			{
 				point[j] = w->p[i][j];
-				v = Q_rint(point[j]);
+				v = static_cast<vec_t>(Q_rint(point[j]));
 
 				if ( fabs(point[j] - v) < DIR_EPSILON )
 					w->p[i][j] = v;
@@ -1383,6 +1393,7 @@ multi-thread version
 */
 void CreateBrush(int brushnum, int threadnum)
 {
+	(void)threadnum;
 	CreateBrushFaces(&g_mapbrushes[brushnum]);
 }
 

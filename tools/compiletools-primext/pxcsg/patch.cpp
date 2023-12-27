@@ -105,7 +105,7 @@ void TexMatFromPoints(vec3_t normal, vec3_t texMat[2], trivert_t* a, trivert_t* 
 			D2 = Det3x3(xyI[0], xyI[1], a->coord[i], xyJ[0], xyJ[1], b->coord[i], xyK[0], xyK[1], c->coord[i]);
 			texMat[i][0] = D0 / D;
 			texMat[i][1] = D1 / D;
-			texMat[i][2] = fmod(D2 / D, 1.0);
+			texMat[i][2] = fmodf(D2 / D, 1.0f);
 		}
 	}
 }
@@ -199,14 +199,14 @@ PlanePointsFromPlane
 static void PlanePointsFromPlane(const plane_t* plane, vec3_t planepts[3])
 {
 	vec3_t org, vright, vup;
-	vec_t max = 0.56;
+	vec_t max = 0.56f;
 	int x = -1;
 	vec_t v;
 
 	// find the major axis
 	for ( int i = 0; i < 3; i++ )
 	{
-		v = fabs(plane->normal[i]);
+		v = fabsf(plane->normal[i]);
 
 		if ( v > max )
 		{
@@ -601,16 +601,16 @@ void PutMeshOnCurve(patchmesh_t* in)
 		{
 			for ( l = 0; l < 3; l++ )
 			{
-				prev = (in->verts[j * in->width + i].point[l] + in->verts[(j + 1) * in->width + i].point[l]) * 0.5;
-				next = (in->verts[j * in->width + i].point[l] + in->verts[(j - 1) * in->width + i].point[l]) * 0.5;
-				in->verts[j * in->width + i].point[l] = (prev + next) * 0.5;
+				prev = (in->verts[j * in->width + i].point[l] + in->verts[(j + 1) * in->width + i].point[l]) * 0.5f;
+				next = (in->verts[j * in->width + i].point[l] + in->verts[(j - 1) * in->width + i].point[l]) * 0.5f;
+				in->verts[j * in->width + i].point[l] = (prev + next) * 0.5f;
 
 				if ( l >= 2 )
 					continue;
 
-				prev = (in->verts[j * in->width + i].coord[l] + in->verts[(j + 1) * in->width + i].coord[l]) * 0.5;
-				next = (in->verts[j * in->width + i].coord[l] + in->verts[(j - 1) * in->width + i].coord[l]) * 0.5;
-				in->verts[j * in->width + i].coord[l] = (prev + next) * 0.5;
+				prev = (in->verts[j * in->width + i].coord[l] + in->verts[(j + 1) * in->width + i].coord[l]) * 0.5f;
+				next = (in->verts[j * in->width + i].coord[l] + in->verts[(j - 1) * in->width + i].coord[l]) * 0.5f;
+				in->verts[j * in->width + i].coord[l] = (prev + next) * 0.5f;
 			}
 		}
 	}
@@ -621,16 +621,16 @@ void PutMeshOnCurve(patchmesh_t* in)
 		{
 			for ( l = 0; l < 3; l++ )
 			{
-				prev = (in->verts[j * in->width + i].point[l] + in->verts[j * in->width + i + 1].point[l]) * 0.5;
-				next = (in->verts[j * in->width + i].point[l] + in->verts[j * in->width + i - 1].point[l]) * 0.5;
-				in->verts[j * in->width + i].point[l] = (prev + next) * 0.5;
+				prev = (in->verts[j * in->width + i].point[l] + in->verts[j * in->width + i + 1].point[l]) * 0.5f;
+				next = (in->verts[j * in->width + i].point[l] + in->verts[j * in->width + i - 1].point[l]) * 0.5f;
+				in->verts[j * in->width + i].point[l] = (prev + next) * 0.5f;
 
 				if ( l >= 2 )
 					continue;
 
-				prev = (in->verts[j * in->width + i].coord[l] + in->verts[j * in->width + i + 1].coord[l]) * 0.5;
-				next = (in->verts[j * in->width + i].coord[l] + in->verts[j * in->width + i - 1].coord[l]) * 0.5;
-				in->verts[j * in->width + i].coord[l] = (prev + next) * 0.5;
+				prev = (in->verts[j * in->width + i].coord[l] + in->verts[j * in->width + i + 1].coord[l]) * 0.5f;
+				next = (in->verts[j * in->width + i].coord[l] + in->verts[j * in->width + i - 1].coord[l]) * 0.5f;
+				in->verts[j * in->width + i].coord[l] = (prev + next) * 0.5f;
 			}
 		}
 	}
@@ -803,7 +803,7 @@ static void ExpandMaxIterations(int* maxIterations, int maxError, vec3_t a, vec3
 		{
 			prev[j] = points[i + 1][j] - points[i][j];
 			next[j] = points[i + 2][j] - points[i + 1][j];
-			mid[j] = (points[i][j] + points[i + 1][j] * 2.0 + points[i + 2][j]) * 0.25;
+			mid[j] = (points[i][j] + points[i + 1][j] * 2.0f + points[i + 2][j]) * 0.25f;
 		}
 
 		// see if this midpoint is off far enough to subdivide
@@ -816,9 +816,9 @@ static void ExpandMaxIterations(int* maxIterations, int maxError, vec3_t a, vec3
 
 		for ( j = 0; j < 3; j++ )
 		{
-			prev[j] = 0.5 * (points[i][j] + points[i + 1][j]);
-			next[j] = 0.5 * (points[i + 1][j] + points[i + 2][j]);
-			mid[j] = 0.5 * (prev[j] + next[j]);
+			prev[j] = 0.5f * (points[i][j] + points[i + 1][j]);
+			next[j] = 0.5f * (points[i + 1][j] + points[i + 2][j]);
+			mid[j] = 0.5f * (prev[j] + next[j]);
 		}
 
 		for ( j = numPoints - 1; j > i + 3; j-- )
@@ -836,9 +836,9 @@ static void ExpandMaxIterations(int* maxIterations, int maxError, vec3_t a, vec3
 	{
 		for ( j = 0; j < 3; j++ )
 		{
-			prev[j] = 0.5 * (points[i][j] + points[i + 1][j]);
-			next[j] = 0.5 * (points[i][j] + points[i - 1][j]);
-			points[i][j] = 0.5 * (prev[j] + next[j]);
+			prev[j] = 0.5f * (points[i][j] + points[i + 1][j]);
+			next[j] = 0.5f * (points[i][j] + points[i - 1][j]);
+			points[i][j] = 0.5f * (prev[j] + next[j]);
 		}
 	}
 
@@ -901,13 +901,13 @@ void ExpandLongestCurveAndMaxIterations(
 		m->verts[(i + 2) * m->width + j].point);
 	ExpandMaxIterations(
 		maxIterations,
-		sub,
+		static_cast<int>(sub),
 		m->verts[i * m->width + j].point,
 		m->verts[i * m->width + (j + 1)].point,
 		m->verts[i * m->width + (j + 2)].point);
 	ExpandMaxIterations(
 		maxIterations,
-		sub,
+		static_cast<int>(sub),
 		m->verts[i * m->width + j].point,
 		m->verts[(i + 1) * m->width + j].point,
 		m->verts[(i + 2) * m->width + j].point);
@@ -928,7 +928,7 @@ int IterationsForCurve(vec_t len, int subdivisions)
 	// calculate the number of subdivisions
 	for ( iterations = 0; iterations < 3; iterations++ )
 	{
-		facets = subdivisions * 16 * pow(2, iterations);
+		facets = static_cast<int>(subdivisions * 16.0f * powf(2.0f, static_cast<float>(iterations)));
 		if ( facets >= len )
 			break;
 	}
@@ -1053,7 +1053,7 @@ void ParsePatch(mapent_t* mapent, short entindex, short faceinfo, short& brush_t
 		}
 	}
 
-	int iterations = IterationsForCurve(longestCurve, PATCH_SUBDIVISION);
+	// int iterations = IterationsForCurve(longestCurve, PATCH_SUBDIVISION);
 	patchmesh_t* subdivided = SubdivideMesh(patchMesh, maxIterations /* iterations */);
 	patchmesh_t* finalMesh;
 	int stitch = 0;

@@ -113,7 +113,7 @@ bface_t* CopyFacesToOutside(brush_t* b, int num)
 	{
 		newf = CopyFace(f);
 		WindingBounds(newf->w, newf->mins, newf->maxs);
-		newf->contents[1] = b->contents;
+		newf->contents[1] = static_cast<int8_t>(b->contents);
 		newf->next = outside;
 		outside = newf;
 	}
@@ -223,7 +223,7 @@ static void SaveOutside(brush_t* b, int hull, bface_t* outside)
 			}
 		}
 
-		f->contents[0] = frontcontents;
+		f->contents[0] = static_cast<int8_t>(frontcontents);
 		f->texinfo = frontnull ? -1 : texinfo;
 
 		// save front face
@@ -235,7 +235,7 @@ static void SaveOutside(brush_t* b, int hull, bface_t* outside)
 		// filp face
 		f->planenum ^= 1;  // reverse side
 		f->plane = &g_mapplanes[f->planenum];
-		f->contents[0] = backcontents;
+		f->contents[0] = static_cast<int8_t>(backcontents);
 		f->texinfo = backnull ? -1 : texinfo;
 		ReverseWinding(&f->w);
 
@@ -264,6 +264,8 @@ static void CSGBrush(int brushnum, int threadnum = -1)
 	bface_t* outside;
 	vec_t area;
 	mapent_t* e;
+
+	(void)threadnum;
 
 	brushnum = g_firstbrush + brushnum;
 	b1 = &g_mapbrushes[brushnum];
@@ -485,7 +487,7 @@ static void CSGBrush(int brushnum, int threadnum = -1)
 					f = NULL;
 				}
 
-				area = f ? WindingArea(f->w) : 0.0;
+				area = f ? WindingArea(f->w) : 0.0f;
 
 				if ( f && area <= 0.0 )
 				{
@@ -533,10 +535,14 @@ static void CSGBrush(int brushnum, int threadnum = -1)
 						}
 
 						if ( onfront && f->contents[0] < b2->contents )
-							f->contents[0] = b2->contents;
+						{
+							f->contents[0] = static_cast<int8_t>(b2->contents);
+						}
 
 						if ( onback && f->contents[1] < b2->contents )
-							f->contents[1] = b2->contents;
+						{
+							f->contents[1] = static_cast<int8_t>(b2->contents);
+						}
 
 						if ( f->contents[0] == CONTENTS_SOLID && f->contents[1] == CONTENTS_SOLID &&
 							 FBitSet(f->flags, FSIDE_SOLIDHINT) )
@@ -555,7 +561,7 @@ static void CSGBrush(int brushnum, int threadnum = -1)
 						 (b1->contents == b2->contents && FBitSet(f->flags, FSIDE_SOLIDHINT)) )
 					{
 						// inside a water brush
-						f->contents[0] = b2->contents;
+						f->contents[0] = static_cast<int8_t>(b2->contents);
 						f->next = outside;
 						outside = f;
 					}
