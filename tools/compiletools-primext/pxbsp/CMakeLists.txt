@@ -4,6 +4,7 @@ add_executable(${TARGETNAME_EXE_NFBSP}_new
 	detail.cpp
 	merge.cpp
 	outside.cpp
+	partition.cpp
 	plane.h
 )
 
