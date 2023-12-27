@@ -32,7 +32,10 @@ PointInLeaf
 node_t* PointInLeaf(node_t* node, const vec3_t point)
 {
 	while ( !FBitSet(node->flags, FNODE_LEAFPORTAL) )
+	{
 		node = node->children[PlaneDiff(point, &g_mapplanes[node->planenum]) <= 0];
+	}
+
 	return node;
 }
 
