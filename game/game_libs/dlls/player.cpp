@@ -2674,9 +2674,24 @@ pt_end:
 						gun->m_flTimeWeaponIdle = Q_max(gun->m_flTimeWeaponIdle - gpGlobals->frametime, -0.001f);
 					}
 
-					if ( gun->pev->fuser1 != std::numeric_limits<float>::max() )
+					if ( gun->pev->tuser1 != std::numeric_limits<float>::max() )
 					{
-						gun->pev->fuser1 = Q_max(gun->pev->fuser1 - gpGlobals->frametime, -0.001f);
+						gun->pev->tuser1 = Q_max(gun->pev->tuser1 - gpGlobals->frametime, -0.001f);
+					}
+
+					if ( gun->pev->tuser2 != std::numeric_limits<float>::max() )
+					{
+						gun->pev->tuser2 = Q_max(gun->pev->tuser2 - gpGlobals->frametime, -0.001f);
+					}
+
+					if ( gun->pev->tuser3 != std::numeric_limits<float>::max() )
+					{
+						gun->pev->tuser3 = Q_max(gun->pev->tuser3 - gpGlobals->frametime, -0.001f);
+					}
+
+					if ( gun->pev->tuser4 != std::numeric_limits<float>::max() )
+					{
+						gun->pev->tuser4 = Q_max(gun->pev->tuser4 - gpGlobals->frametime, -0.001f);
 					}
 				}
 

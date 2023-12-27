@@ -86,7 +86,7 @@ convar_t* cl_nointerp;
 convar_t* cl_dlmax;
 convar_t* cl_upmax;
 
-convar_t* cl_lw;
+convar_t* cl_weapon_prediction;
 convar_t* cl_charset;
 convar_t* cl_trace_messages;
 convar_t* cl_nat;
@@ -3466,7 +3466,7 @@ void CL_SetInfo_f(void)
 		return;
 	}
 
-	// NOTE: some userinfo comed from cvars, e.g. cl_lw but we can call "setinfo cl_lw 1"
+	// NOTE: some userinfo came from cvars, e.g. cl_weapon_prediction but we can call "setinfo cl_weapon_prediction 1"
 	// without real cvar changing. So we need to lookup for cvar first to make sure what
 	// our key is not linked with console variable
 	var = Cvar_FindVar(Cmd_Argv(1));
@@ -3738,8 +3738,8 @@ void CL_InitLocal(void)
 	rate = Cvar_Get("rate", "3500", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_FILTERABLE, "player network rate");
 	topcolor = Cvar_Get("topcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player top color");
 	bottomcolor = Cvar_Get("bottomcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player bottom color");
-	cl_lw = Cvar_Get("cl_lw", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon predicting");
-	Cvar_Get("cl_lc", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable lag compensation");
+	cl_weapon_prediction = Cvar_Get("cl_weapon_prediction", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon prediction");
+	Cvar_Get("cl_lag_compensation", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable lag compensation");
 	Cvar_Get("password", "", FCVAR_USERINFO, "server password");
 	Cvar_Get("team", "", FCVAR_USERINFO, "player team");
 	Cvar_Get("skin", "", FCVAR_USERINFO, "player skin");

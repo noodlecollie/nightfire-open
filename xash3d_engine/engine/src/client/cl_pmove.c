@@ -1179,8 +1179,11 @@ void CL_PredictMovement(qboolean repredicting)
 		else
 			cl.local.onground = -1;
 
-		if ( !repredicting || !CVAR_TO_BOOL(cl_lw) )
+		if ( !repredicting || !CVAR_TO_BOOL(cl_weapon_prediction) )
+		{
 			cl.local.viewmodel = to->client.viewmodel;
+		}
+
 		cl.local.repredicting = false;
 		cl.local.moving = false;
 		return;
@@ -1217,8 +1220,10 @@ void CL_PredictMovement(qboolean repredicting)
 
 	cl.local.waterlevel = to->client.waterlevel;
 	cl.local.usehull = to->playerstate.usehull;
-	if ( !repredicting || !CVAR_TO_BOOL(cl_lw) )
+	if ( !repredicting || !CVAR_TO_BOOL(cl_weapon_prediction) )
+	{
 		cl.local.viewmodel = to->client.viewmodel;
+	}
 
 	if ( FBitSet(to->client.flags, FL_ONGROUND) )
 	{

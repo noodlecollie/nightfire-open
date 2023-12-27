@@ -8,6 +8,7 @@ class CWeaponFrinesi : public CGenericHitscanWeapon
 public:
 	CWeaponFrinesi();
 	void Precache() override;
+	void Spawn() override;
 	void Holster(int skipLocal = 0) override;
 	void WeaponTick() override;
 
@@ -19,9 +20,6 @@ public:
 #ifndef CLIENT_DLL
 	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
 	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
-	int Save(CSave& save) override;
-	int Restore(CRestore& restore) override;
-	static TYPEDESCRIPTION m_SaveData[];
 #endif
 
 protected:
@@ -31,13 +29,17 @@ protected:
 		const WeaponAtts::WABaseAttack* attackMode) override;
 
 private:
+	float& NextPumpSoundTime();
+	const float& NextPumpSoundTime() const;
+
+	float& NextReloadSoundTime();
+	const float& NextReloadSoundTime() const;
+
 	void PlayPumpSound();
 	bool FlagReloadInterrupt();
 
 	const WeaponAtts::WABaseAttack* m_pAutoAttackMode = nullptr;
 	const WeaponAtts::WABaseAttack* m_pPumpAttackMode = nullptr;
-	float m_flNextPumpSoundTime;
-	float m_flNextReloadSoundTime;
 };
 
 namespace WeaponAtts
