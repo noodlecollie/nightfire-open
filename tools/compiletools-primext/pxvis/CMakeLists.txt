@@ -2,6 +2,7 @@ add_executable(${TARGETNAME_EXE_NFVIS}_new
 	flow.cpp
 	qvis.h
 	soundpvs.cpp
+	winding.cpp
 )
 
 target_include_directories(${TARGETNAME_EXE_NFVIS}_new PRIVATE

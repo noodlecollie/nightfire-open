@@ -14,6 +14,7 @@
 #include "CompileTools/bspfile.h"
 #include "CompileTools/file_system.h"
 #include "CompileTools/compatibility_mode.h"
+#include "CompileTools/polylib.h"
 
 #define DEFAULT_FASTVIS false
 #define DEFAULT_TESTLEVEL 2
@@ -30,16 +31,9 @@ typedef struct
 	float dist;
 } plane_t;
 
-#define MAX_POINTS_ON_WINDING 64
 #define MAX_POINTS_ON_STACK_WINDING 24
 #define MAX_PORTALS_ON_LEAF 256
 #define MAX_SEPERATORS MAX_POINTS_ON_WINDING
-
-typedef struct
-{
-	int numpoints;
-	vec3_t p[MAX_POINTS_ON_STACK_WINDING];  // variable sized
-} winding_t;
 
 typedef enum
 {
@@ -120,10 +114,4 @@ void PortalFlow(int portalnum, int threadnum = -1);
 void PortalFlow(portal_t* p);
 void CalcAmbientSounds(void);
 
-//
-// winding.c
-//
-winding_t* AllocWinding(int points);
-void FreeWinding(winding_t* w);
 winding_t* ChopWindingEpsilon(winding_t* in, pstack_t* stack, plane_t* split, vec_t epsilon);
-void WindingPlane(winding_t* w, vec3_t normal, vec_t* dist);
