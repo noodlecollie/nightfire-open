@@ -7,6 +7,7 @@ add_executable(${TARGETNAME_EXE_NFBSP}_new
 	partition.cpp
 	plane.h
 	portals.cpp
+	qbsp.cpp
 	solidbsp.cpp
 	surfaces.cpp
 	tjunc.cpp
@@ -34,5 +35,8 @@ endif()
 
 target_link_libraries(${TARGETNAME_EXE_NFBSP}_new PRIVATE
 	${TARGETNAME_LIB_COMPILETOOLS}
-	# ${TARGETNAME_LIB_MINIUTL}
+)
+
+install(TARGETS ${TARGETNAME_EXE_NFBSP}_new
+	RUNTIME DESTINATION ${TOOLS_INSTALL_ROOT}
 )

@@ -8,13 +8,16 @@
  *
  ****/
 
-// qbsp.c
-
+#include "BuildPlatform/Arch.h"
+#include "CRTLib/crtlib.h"
+#include "MathLib/utils.h"
+#include "CompileTools/crashhandler.h"
+#include "CompileTools/wadfileoperations.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/zone.h"
+#include "CompileTools/vastring.h"
 #include "bsp5.h"
-#include "crashhandler.h"
 #include "app_info.h"
-#include "build_info.h"
-#include "wadfileoperations.h"
 
 //
 // command line flags
@@ -224,7 +227,9 @@ void AddFaceToBounds(face_t* f, vec3_t mins, vec3_t maxs)
 	winding_t* w = f->w;
 
 	for ( int i = 0; i < w->numpoints; i++ )
+	{
 		AddPointToBounds(w->p[i], mins, maxs);
+	}
 }
 
 /*
@@ -496,7 +501,10 @@ print node size
 const char* GetNodeSize(int nodesize)
 {
 	if ( nodesize == DEFAULT_MAXNODE_SIZE )
+	{
 		return va("%s", "Auto");
+	}
+
 	return va("%d", nodesize);
 }
 
@@ -661,10 +669,10 @@ int main(int argc, char** argv)
 	Msg("\n%s %s (%s, commit %s, arch %s, platform %s)\n\n",
 		TOOLNAME,
 		VERSIONSTRING,
-		BuildInfo::GetDate(),
-		BuildInfo::GetCommitHash(),
-		BuildInfo::GetArchitecture(),
-		BuildInfo::GetPlatform());
+		__DATE__,
+		BuildPlatform_CommitString(),
+		BuildPlatform_ArchitectureString(),
+		BuildPlatform_PlatformString());
 
 	PrintBspSettings();
 	ThreadSetDefault();
@@ -677,7 +685,7 @@ int main(int argc, char** argv)
 	Mem_Check();
 
 	end = I_FloatTime();
-	Q_timestring((int)(end - start), str);
+	Q_timestring((int)(end - start), str, sizeof(str));
 	Msg("%s elapsed\n", str);
 
 	return 0;
