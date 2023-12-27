@@ -47,7 +47,7 @@ bool g_fastvis = DEFAULT_FASTVIS;
 bool g_nosort = DEFAULT_NOSORT;
 int g_testlevel = DEFAULT_TESTLEVEL;
 vec_t g_farplane = DEFAULT_FARPLANE;
-size_t g_compatibility_mode = DEFAULT_COMPAT_MODE;
+int g_compatibility_mode = DEFAULT_COMPAT_MODE;
 
 //=============================================================================
 void prl(leaf_t* l)
@@ -109,6 +109,7 @@ portal_t* GetNextPortal(void)
 	return p;
 }
 
+#ifndef HLVIS_SORT_PORTALS
 /*
 ==============
 LeafThread
@@ -125,6 +126,7 @@ static void LeafThread(int thread)
 		PortalFlow(p);
 	};
 }
+#endif  // HLVIS_SORT_PORTALS
 
 //=============================================================================
 /*
@@ -278,7 +280,7 @@ void LeafFlow(int leafnum)
 
 	for ( j = 0; j < g_leafcounts[leafnum]; j++ )
 	{
-		g_dleafs[g_leafstarts[leafnum] + j + 1].visofs = dest - vismap;
+		g_dleafs[g_leafstarts[leafnum] + j + 1].visofs = static_cast<int32_t>(dest - vismap);
 	}
 
 	memcpy(dest, compressed, i);
@@ -376,8 +378,11 @@ void SetPortalSphere(portal_t* p)
 	w = p->winding;
 
 	for ( i = 0; i < w->numpoints; i++ )
+	{
 		VectorAdd(center, w->p[i], center);
-	VectorScale(center, (1.0 / w->numpoints), center);
+	}
+
+	VectorScale(center, (1.0f / w->numpoints), center);
 
 	for ( i = 0; i < w->numpoints; i++ )
 	{
@@ -412,7 +417,7 @@ static void LoadPortals(const char* name)
 		COM_FatalError("couldn't read %s\nno vis performed\n", name);
 	}
 
-	if ( fscanf(f, "%i\n%i\n", &g_portalleafs, &g_numportals) != 2 )
+	if ( PlatformLib_FScanF(f, "%i\n%i\n", &g_portalleafs, &g_numportals) != 2 )
 	{
 		COM_FatalError("LoadPortals: failed to read header\n");
 	}
@@ -452,8 +457,11 @@ static void LoadPortals(const char* name)
 
 	for ( i = 0; i < g_portalleafs; i++ )
 	{
-		if ( fscanf(f, "%i\n", &g_leafcounts[i]) != 1 )
+		if ( PlatformLib_FScanF(f, "%i\n", &g_leafcounts[i]) != 1 )
+		{
 			COM_FatalError("LoadPortals: read leaf %i failed\n", i);
+		}
+
 		g_leafstarts[i] = g_leafcount_all;
 		g_leafcount_all += g_leafcounts[i];
 	}
@@ -466,7 +474,7 @@ static void LoadPortals(const char* name)
 
 	for ( i = 0, p = g_portals; i < g_numportals; i++ )
 	{
-		if ( fscanf(f, "%i %i %i ", &numpoints, &leafnums[0], &leafnums[1]) != 3 )
+		if ( PlatformLib_FScanF(f, "%i %i %i ", &numpoints, &leafnums[0], &leafnums[1]) != 3 )
 		{
 			COM_FatalError("LoadPortals: reading portal %i\n", i);
 		}
@@ -476,7 +484,7 @@ static void LoadPortals(const char* name)
 			COM_FatalError("LoadPortals: portal %i has too many points\n", i);
 		}
 
-		if ( (uint)leafnums[0] > g_portalleafs || (uint)leafnums[1] > g_portalleafs )
+		if ( (uint)leafnums[0] > (uint)g_portalleafs || (uint)leafnums[1] > (uint)g_portalleafs )
 		{
 			COM_FatalError("LoadPortals: reading portal %i\n", i);
 		}
@@ -489,16 +497,17 @@ static void LoadPortals(const char* name)
 			double v[3];
 
 			// scanf into double, then assign to vec_t
-			if ( fscanf(f, "(%lf %lf %lf ) ", &v[0], &v[1], &v[2]) != 3 )
+			if ( PlatformLib_FScanF(f, "(%lf %lf %lf ) ", &v[0], &v[1], &v[2]) != 3 )
 			{
 				COM_FatalError("LoadPortals: reading portal %i\n", i);
 			}
 
-			w->p[j][0] = v[0];
-			w->p[j][1] = v[1];
-			w->p[j][2] = v[2];
+			w->p[j][0] = static_cast<vec_t>(v[0]);
+			w->p[j][1] = static_cast<vec_t>(v[1]);
+			w->p[j][2] = static_cast<vec_t>(v[2]);
 		}
-		fscanf(f, "\n");
+
+		PlatformLib_FScanF(f, "\n");
 
 		// calc plane
 		WindingPlane(w, plane.normal, &plane.dist);
@@ -686,8 +695,8 @@ int main(int argc, char** argv)
 		}
 		else if ( !Q_strcmp(argv[i], "-maxdistance") )
 		{
-			g_farplane = atof(argv[i + 1]);
-			g_farplane = bound(64.0, g_farplane, 65536.0 * 1.73);
+			g_farplane = static_cast<float>(atof(argv[i + 1]));
+			g_farplane = bound(64.0f, g_farplane, 65536.0f * 1.73f);
 			i++;
 		}
 		else if ( !Q_strcmp(argv[i], "-compat") )
@@ -759,27 +768,30 @@ int main(int argc, char** argv)
 	CalcVis();
 
 	MsgDev(D_REPORT, "c_chains: %i\n", c_chains);
-	g_visdatasize = vismap_p - g_dvisdata;
+	g_visdatasize = static_cast<int>(vismap_p - g_dvisdata);
 
 	if ( originalvismapsize < g_visdatasize )
 		MsgDev(
 			D_INFO,
 			"visdatasize: ^1%s expanded from %s^7\n",
-			Q_memprint(g_visdatasize),
-			Q_memprint(originalvismapsize));
+			Q_memprint(static_cast<float>(g_visdatasize)),
+			Q_memprint(static_cast<float>(originalvismapsize)));
 	else
 		MsgDev(
 			D_INFO,
 			"visdatasize: ^2%s compressed from %s^7\n",
-			Q_memprint(g_visdatasize),
-			Q_memprint(originalvismapsize));
+			Q_memprint(static_cast<float>(g_visdatasize)),
+			Q_memprint(static_cast<float>(originalvismapsize)));
 
 	CalcAmbientSounds();
 
 	WriteBSPFile(source);
 
 	if ( !g_fastvis )
-		unlink(portalfile);
+	{
+		PlatformLib_Unlink(portalfile);
+	}
+
 	Mem_Free(g_uncompressed);
 	FreePortals();
 

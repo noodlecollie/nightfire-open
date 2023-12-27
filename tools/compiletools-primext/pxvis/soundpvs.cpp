@@ -62,6 +62,8 @@ static void CalcAmbientSounds(int leafnum, int threadnum = -1)
 	vec3_t mins, maxs;
 	dface_t* surf;
 
+	(void)threadnum;
+
 	leaf = &g_dleafs[leafnum + 1];
 
 	// clear ambients
@@ -122,11 +124,17 @@ static void CalcAmbientSounds(int leafnum, int threadnum = -1)
 			for ( l = 0; l < 3; l++ )
 			{
 				if ( mins[l] > leaf->maxs[l] )
+				{
 					d = mins[l] - leaf->maxs[l];
+				}
 				else if ( maxs[l] < leaf->mins[l] )
+				{
 					d = leaf->mins[l] - mins[l];
+				}
 				else
+				{
 					d = 0;
+				}
 
 				maxd = Q_max(d, maxd);
 			}
@@ -146,10 +154,11 @@ static void CalcAmbientSounds(int leafnum, int threadnum = -1)
 		}
 		else
 		{
-			vol = 1.0 - dists[j] * 0.002;
-			vol = bound(0.0, vol, 1.0);
+			vol = 1.0f - dists[j] * 0.002f;
+			vol = bound(0.0f, vol, 1.0f);
 		}
-		leaf->ambient_level[j] = vol * 255;
+
+		leaf->ambient_level[j] = static_cast<uint8_t>(vol * 255);
 	}
 }
 
