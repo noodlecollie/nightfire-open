@@ -62,7 +62,7 @@ BRUSH MODELS
 #define LS_UNUSED 0xFE
 #define LS_NONE 0xFF
 
-#define VERTEXNORMAL_CONE_INNER_ANGLE DEG2RAD(7.275)
+#define VERTEXNORMAL_CONE_INNER_ANGLE DEG2RADF(7.275f)
 
 #define MAX_MAP_MODELS 8192  // default limit is 1024
 #define MAX_MAP_ENTITIES 32768  // can be increased up to 32768 if needed

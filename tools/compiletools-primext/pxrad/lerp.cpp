@@ -8,6 +8,7 @@
  *
  ****/
 
+#include <limits>
 #include "MathLib/utils.h"
 #include "CompileTools/conprint.h"
 #include "utlvector.h"
@@ -166,7 +167,7 @@ static vec_t GetAngle(const vec3_t leftdirection, const vec3_t rightdirection, c
 	vec3_t v;
 
 	CrossProduct(rightdirection, leftdirection, v);
-	angle = atan2(DotProduct(v, normal), DotProduct(rightdirection, leftdirection));
+	angle = atan2f(DotProduct(v, normal), DotProduct(rightdirection, leftdirection));
 
 	return angle;
 }
@@ -176,7 +177,10 @@ static vec_t GetAngleDiff(vec_t angle, vec_t base)
 	vec_t diff = angle - base;
 
 	if ( diff < 0 )
-		diff += 2 * M_PI;
+	{
+		diff += 2 * M_PI_F;
+	}
+
 	return diff;
 }
 
@@ -264,7 +268,7 @@ static bool CalcWeight(const localtrian_t* lt, const vec3_t spot, vec_t* weight_
 
 	frac = GetFrac(hp1->spot, hp2->spot, direction, lt->normal);
 
-	len = (1.0 - frac) * DotProduct(hp1->spot, direction) + frac * DotProduct(hp2->spot, direction);
+	len = (1.0f - frac) * DotProduct(hp1->spot, direction) + frac * DotProduct(hp2->spot, direction);
 	dist = DotProduct(spot, direction);
 
 	if ( len <= ON_EPSILON / 4 || dist > len + 2 * ON_EPSILON )
@@ -347,7 +351,7 @@ static void CalcInterpolation_Square(const localtrian_t* lt, int i, const vec3_t
 	}
 	else
 	{
-		frac_near = (frac * dot2) / ((1.0 - frac) * dot1 + frac * dot2);
+		frac_near = (frac * dot2) / ((1.0f - frac) * dot1 + frac * dot2);
 	}
 
 	VectorScale(w3->leftspot, frac_near, mid_near);
@@ -367,12 +371,12 @@ static void CalcInterpolation_Square(const localtrian_t* lt, int i, const vec3_t
 		frac_far = (frac * dot2) / ((1 - frac) * dot1 + frac * dot2);
 	}
 
-	VectorScale(w1->leftspot, 1.0 - frac_far, mid_far);
+	VectorScale(w1->leftspot, 1.0f - frac_far, mid_far);
 	VectorMA(mid_far, frac_far, w2->leftspot, mid_far);
 	CrossProduct(lt->normal, w3->leftdirection, normal);
 	VectorNormalize(normal);
 	dot = DotProduct(spot, normal) - 0;
-	dot1 = (1.0 - frac_far) * DotProduct(w1->leftspot, normal) + frac_far * DotProduct(w2->leftspot, normal) - 0;
+	dot1 = (1.0f - frac_far) * DotProduct(w1->leftspot, normal) + frac_far * DotProduct(w2->leftspot, normal) - 0;
 
 	if ( dot <= NORMAL_EPSILON )
 	{
@@ -388,17 +392,17 @@ static void CalcInterpolation_Square(const localtrian_t* lt, int i, const vec3_t
 		ratio = bound(0, ratio, 1);
 	}
 
-	VectorScale(mid_near, 1.0 - ratio, test);
+	VectorScale(mid_near, 1.0f - ratio, test);
 	VectorMA(test, ratio, mid_far, test);
 	VectorSubtract(test, spot, test);
 
 	if ( g_drawlerp && VectorLength(test) > 4 * ON_EPSILON )
 		MsgDev(D_REPORT, "Debug: triangulation: internal error 12.\n");
 
-	weights[0] += 0.5 * (1.0 - ratio) * (1.0 - frac_near);
-	weights[3] += 0.5 * (1.0 - ratio) * frac_near;
-	weights[1] += 0.5 * ratio * (1.0 - frac_far);
-	weights[2] += 0.5 * ratio * frac_far;
+	weights[0] += 0.5f * (1.0f - ratio) * (1.0f - frac_near);
+	weights[3] += 0.5f * (1.0f - ratio) * frac_near;
+	weights[1] += 0.5f * ratio * (1.0f - frac_far);
+	weights[2] += 0.5f * ratio * frac_far;
 
 	// find mid_near on (o,p1), mid_far on (p2,p3), spot on (mid_near,mid_far)
 	CrossProduct(lt->normal, w3->leftdirection, normal1);
@@ -435,7 +439,7 @@ static void CalcInterpolation_Square(const localtrian_t* lt, int i, const vec3_t
 	}
 	else
 	{
-		frac_near = (frac * dot2) / ((1.0 - frac) * dot1 + frac * dot2);
+		frac_near = (frac * dot2) / ((1.0f - frac) * dot1 + frac * dot2);
 	}
 
 	VectorScale(w1->leftspot, frac_near, mid_near);
@@ -452,15 +456,15 @@ static void CalcInterpolation_Square(const localtrian_t* lt, int i, const vec3_t
 	}
 	else
 	{
-		frac_far = (frac * dot2) / ((1.0 - frac) * dot1 + frac * dot2);
+		frac_far = (frac * dot2) / ((1.0f - frac) * dot1 + frac * dot2);
 	}
 
-	VectorScale(w3->leftspot, 1.0 - frac_far, mid_far);
+	VectorScale(w3->leftspot, 1.0f - frac_far, mid_far);
 	VectorMA(mid_far, frac_far, w2->leftspot, mid_far);
 	CrossProduct(w1->leftdirection, lt->normal, normal);
 	VectorNormalize(normal);
 	dot = DotProduct(spot, normal) - 0;
-	dot1 = (1.0 - frac_far) * DotProduct(w3->leftspot, normal) + frac_far * DotProduct(w2->leftspot, normal) - 0;
+	dot1 = (1.0f - frac_far) * DotProduct(w3->leftspot, normal) + frac_far * DotProduct(w2->leftspot, normal) - 0;
 
 	if ( dot <= NORMAL_EPSILON )
 	{
@@ -476,17 +480,17 @@ static void CalcInterpolation_Square(const localtrian_t* lt, int i, const vec3_t
 		ratio = bound(0, ratio, 1);
 	}
 
-	VectorScale(mid_near, 1.0 - ratio, test);
+	VectorScale(mid_near, 1.0f - ratio, test);
 	VectorMA(test, ratio, mid_far, test);
 	VectorSubtract(test, spot, test);
 
 	if ( g_drawlerp && VectorLength(test) > 4 * ON_EPSILON )
 		MsgDev(D_REPORT, "Debug: triangulation: internal error 13.\n");
 
-	weights[0] += 0.5 * (1 - ratio) * (1 - frac_near);
-	weights[1] += 0.5 * (1 - ratio) * frac_near;
-	weights[3] += 0.5 * ratio * (1 - frac_far);
-	weights[2] += 0.5 * ratio * frac_far;
+	weights[0] += 0.5f * (1 - ratio) * (1 - frac_near);
+	weights[1] += 0.5f * (1 - ratio) * frac_near;
+	weights[3] += 0.5f * ratio * (1 - frac_far);
+	weights[2] += 0.5f * ratio * frac_far;
 
 	interp->isbiased = false;
 	interp->totalweight = 1.0;
@@ -560,7 +564,7 @@ static void CalcInterpolation(const localtrian_t* lt, const vec3_t spot, interpo
 		case localtrian_t::Wedge::eTriangular:
 			// w->wedgenormal is undefined
 			frac = GetFrac(w->leftspot, wnext->leftspot, direction, lt->normal);
-			len = (1.0 - frac) * DotProduct(w->leftspot, direction) + frac * DotProduct(wnext->leftspot, direction);
+			len = (1.0f - frac) * DotProduct(w->leftspot, direction) + frac * DotProduct(wnext->leftspot, direction);
 			dist = DotProduct(spot, direction);
 
 			if ( len <= ON_EPSILON / 4 || dist > len + 2 * ON_EPSILON )
@@ -586,18 +590,18 @@ static void CalcInterpolation(const localtrian_t* lt, const vec3_t spot, interpo
 				interp->totalweight = 1.0;
 				interp->points.SetCount(2);
 				interp->points[0].patchnum = w->leftpatchnum;
-				interp->points[0].weight = 1.0 - frac;
+				interp->points[0].weight = 1.0f - frac;
 				interp->points[1].patchnum = wnext->leftpatchnum;
 				interp->points[1].weight = frac;
 			}
 			else if ( w->shape == localtrian_t::Wedge::eSquareLeft )
 			{
-				i = w - &lt->sortedwedges[0];
+				i = static_cast<int>(w - &lt->sortedwedges[0]);
 				CalcInterpolation_Square(lt, i, spot, interp);
 			}
 			else if ( w->shape == localtrian_t::Wedge::eSquareRight )
 			{
-				i = w - &lt->sortedwedges[0];
+				i = static_cast<int>(w - &lt->sortedwedges[0]);
 				i = (i - 1 + lt->sortedwedges.Count()) % lt->sortedwedges.Count();
 				CalcInterpolation_Square(lt, i, spot, interp);
 			}
@@ -607,9 +611,9 @@ static void CalcInterpolation(const localtrian_t* lt, const vec3_t spot, interpo
 				interp->totalweight = 1.0;
 				interp->points.SetCount(3);
 				interp->points[0].patchnum = lt->patchnum;
-				interp->points[0].weight = 1.0 - ratio;
+				interp->points[0].weight = 1.0f - ratio;
 				interp->points[1].patchnum = w->leftpatchnum;
-				interp->points[1].weight = ratio * (1.0 - frac);
+				interp->points[1].weight = ratio * (1.0f - frac);
 				interp->points[2].patchnum = wnext->leftpatchnum;
 				interp->points[2].weight = ratio * frac;
 			}
@@ -705,7 +709,7 @@ static void CalcInterpolation(const localtrian_t* lt, const vec3_t spot, interpo
 					interp->totalweight = 1.0;
 					interp->points.SetCount(2);
 					interp->points[0].patchnum = lt->patchnum;
-					interp->points[0].weight = 1.0 - ratio;
+					interp->points[0].weight = 1.0f - ratio;
 					interp->points[1].patchnum = w->leftpatchnum;
 					interp->points[1].weight = ratio;
 				}
@@ -803,7 +807,8 @@ void InterpolateSampleLight(
 	vec3_t* outs,
 	vec3_t* outs_dir)
 {
-	vec_t dot, bestdist;
+	vec_t dot;
+	vec_t bestdist = std::numeric_limits<vec_t>::max();
 	vec_t weight, dist;
 	CUtlVector<vec_t> localweights;
 	CUtlVector<interpolation_t*> localinterps;
@@ -878,7 +883,7 @@ void InterpolateSampleLight(
 
 			if ( FBitSet(g_patches[localinterps[i]->points[j].patchnum].flags, PATCH_OUTSIDE) )
 			{
-				weight *= 0.01;
+				weight *= 0.01f;
 			}
 
 			n = maininterp->points.AddToTail();
@@ -899,7 +904,7 @@ void InterpolateSampleLight(
 				// white or yellow
 				outs[j][0] = 100;
 				outs[j][1] = 100;
-				outs[j][2] = (maininterp->isbiased ? 0 : 100);
+				outs[j][2] = static_cast<vec_t>((maininterp->isbiased ? 0 : 100));
 			}
 		}
 	}
@@ -923,7 +928,7 @@ void InterpolateSampleLight(
 
 				if ( FBitSet(g_patches[localinterps[i]->points[j].patchnum].flags, PATCH_OUTSIDE) )
 				{
-					weight *= 0.01;
+					weight *= 0.01f;
 				}
 
 				n = maininterp->points.AddToTail();
@@ -944,7 +949,7 @@ void InterpolateSampleLight(
 					// red
 					outs[j][0] = 100;
 					outs[j][1] = 0;
-					outs[j][2] = (maininterp->isbiased ? 0 : 100);
+					outs[j][2] = static_cast<vec_t>(maininterp->isbiased ? 0 : 100);
 				}
 			}
 		}
@@ -982,7 +987,7 @@ void InterpolateSampleLight(
 				{
 					if ( FBitSet(g_patches[maininterp->points[j].patchnum].flags, PATCH_OUTSIDE) )
 					{
-						maininterp->points[j].weight *= 0.01;
+						maininterp->points[j].weight *= 0.01f;
 					}
 					maininterp->totalweight += maininterp->points[j].weight;
 				}
@@ -996,7 +1001,7 @@ void InterpolateSampleLight(
 						// green
 						outs[j][0] = 0;
 						outs[j][1] = 100;
-						outs[j][2] = (maininterp->isbiased ? 0 : 100);
+						outs[j][2] = static_cast<vec_t>(maininterp->isbiased ? 0 : 100);
 					}
 				}
 			}
@@ -1124,7 +1129,7 @@ static void GatherPatches(localtrian_t* lt, const facetriangulation_t* facetrian
 
 		for ( patch2 = g_face_patches[facenum2]; patch2 != NULL; patch2 = patch2->next )
 		{
-			patchnum2 = patch2 - g_patches;
+			patchnum2 = static_cast<int>(patch2 - g_patches);
 
 			point.leftpatchnum = patchnum2;
 			VectorMA(patch2->origin, -DEFAULT_HUNT_OFFSET, dp2->normal, v);
@@ -1352,7 +1357,7 @@ static void PlaceHullPoints(localtrian_t* lt)
 
 		if ( lt->sortedwedges.Count() == 1 )
 		{
-			angle = M_PI2;
+			angle = M_PI2_F;
 		}
 		else
 		{
@@ -1398,7 +1403,7 @@ static void PlaceHullPoints(localtrian_t* lt)
 				{
 					frac =
 						GetFrac(arc_spots[prev[j]].spot, arc_spots[next[j]].spot, arc_spots[j].direction, lt->normal);
-					len = (1.0 - frac) * DotProduct(arc_spots[prev[j]].spot, arc_spots[j].direction) +
+					len = (1.0f - frac) * DotProduct(arc_spots[prev[j]].spot, arc_spots[j].direction) +
 						frac * DotProduct(arc_spots[next[j]].spot, arc_spots[j].direction);
 					dist = DotProduct(arc_spots[j].spot, arc_spots[j].direction);
 
@@ -1550,7 +1555,7 @@ static localtrian_t* CreateLocalTriangulation(const facetriangulation_t* facetri
 		angle = GetAngleDiff(angle, 0);
 		if ( lt->sortedwedges.Count() == 1 )
 		{
-			angle = M_PI2;
+			angle = M_PI2_F;
 		}
 		total += angle;
 
@@ -1622,7 +1627,7 @@ static void FindNeighbors(facetriangulation_t* facetrian)
 			continue;
 
 		f2 = es->faces[e > 0 ? 1 : 0];
-		facenum2 = f2 - g_dfaces;
+		facenum2 = static_cast<int>(f2 - g_dfaces);
 		dp2 = GetPlaneFromFace(f2);
 
 		if ( DotProduct(dp1->normal, dp2->normal) < -NORMAL_EPSILON )
@@ -1744,6 +1749,8 @@ void CreateTriangulations(int facenum, int threadnum)
 	const patch_t* patch;
 	localtrian_t* lt;
 
+	(void)threadnum;
+
 	g_facetriangulations[facenum] = new facetriangulation_t;
 	facetrian = g_facetriangulations[facenum];
 
@@ -1760,7 +1767,7 @@ void CreateTriangulations(int facenum, int threadnum)
 
 	for ( patch = g_face_patches[facenum]; patch; patch = patch->next )
 	{
-		patchnum = patch - g_patches;
+		patchnum = static_cast<int>(patch - g_patches);
 		lt = CreateLocalTriangulation(facetrian, patchnum);
 		facetrian->localtriangulations.AddToTail(lt);
 	}

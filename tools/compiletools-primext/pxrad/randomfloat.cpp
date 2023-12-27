@@ -11,9 +11,9 @@
 
 // fran1 -- return a random floating-point number on the interval [0,1)
 //
-#define AM (1.0 / IM)
-#define EPS 1.2e-7
-#define RNMX (1.0 - EPS)
+#define AM (1.0f / IM)
+#define EPS 1.2e-7f
+#define RNMX (1.0f - EPS)
 
 static int m_idum = 0;
 static int m_iy = 0;
@@ -81,7 +81,7 @@ static int GenerateRandomNumber(void)
 float RandomFloat(float flLow, float flHigh)
 {
 	// float in [0,1)
-	float fl = AM * GenerateRandomNumber();
+	float fl = AM * static_cast<float>(GenerateRandomNumber());
 
 	if ( fl > RNMX )
 	{

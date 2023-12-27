@@ -135,12 +135,17 @@ static vec_t LightDistanceFalloff(const dworldlight_t* wl, const vec3_t delta)
 	if ( wl->radius != 0 )
 	{
 		if ( radius > (wl->radius * wl->radius) )
+		{
 			return 0.0f;
+		}
 	}
 
 	if ( radius < 1.0 )
+	{
 		return 1.0;
-	return 1.0 / radius;
+	}
+
+	return 1.0f / radius;
 }
 
 static void AddEmitSurfaceLights(int threadnum, const vec3_t vStart, vec3_t lightBoxColor[6])
@@ -174,7 +179,7 @@ static void AddEmitSurfaceLights(int threadnum, const vec3_t vStart, vec3_t ligh
 		VectorCopy(vDelta, vDeltaNorm);
 		VectorMA(vDeltaNorm, -DEFAULT_HUNT_OFFSET * 0.5, wl->normal, vDeltaNorm);
 		float dist = VectorNormalize(vDeltaNorm);
-		dist = Q_max(dist, 1.0);
+		dist = Q_max(dist, 1.0f);
 
 		float flAngleScale = LightAngle(wl, wl->normal, vDeltaNorm, vDeltaNorm, dist);
 
@@ -359,8 +364,8 @@ ComputeLightmapColorFromPoint(lightpoint_t* info, dworldlight_t* pSkylight, floa
 	{
 		if ( pSkylight )
 		{
-			VectorScale(pSkylight->intensity, scale * 0.5, color);
-			VectorScale(pSkylight->intensity, (1.0 / 255.0), color);
+			VectorScale(pSkylight->intensity, scale * 0.5f, color);
+			VectorScale(pSkylight->intensity, (1.0f / 255.0f), color);
 			VectorAdd(radcolor, color, radcolor);
 		}
 		return;
@@ -369,9 +374,13 @@ ComputeLightmapColorFromPoint(lightpoint_t* info, dworldlight_t* pSkylight, floa
 	if ( info->surf != NULL )
 	{
 		if ( average )
+		{
 			VectorScale(info->average, scale, color);
+		}
 		else
+		{
 			VectorScale(info->diffuse, scale, color);
+		}
 #if 0
 		vec3_t	light, reflectivity;
 
@@ -441,13 +450,13 @@ static void CalcRayAmbientLighting(
 static void ComputeAmbientFromSphericalSamples(int threadnum, const vec3_t p1, vec3_t lightBoxColor[6])
 {
 	// Figure out the color that rays hit when shot out from this position.
-	float tanTheta = tan(VERTEXNORMAL_CONE_INNER_ANGLE);
+	float tanTheta = tanf(VERTEXNORMAL_CONE_INNER_ANGLE);
 	dworldlight_t* pSkyLight = FindAmbientSkyLight();
 	vec3_t radcolor[NUMVERTEXNORMALS], p2;
 
 	for ( int i = 0; i < NUMVERTEXNORMALS; i++ )
 	{
-		VectorMA(p1, (65536.0 * 1.74), g_anorms[i], p2);
+		VectorMA(p1, (65536.0 * 1.74f), g_anorms[i], p2);
 
 		// Now that we've got a ray, see what surface we've hit
 		CalcRayAmbientLighting(p1, p2, pSkyLight, tanTheta, radcolor[i]);
@@ -471,7 +480,7 @@ static void ComputeAmbientFromSphericalSamples(int threadnum, const vec3_t p1, v
 			}
 		}
 
-		VectorScale(lightBoxColor[j], (1.0 / t), lightBoxColor[j]);
+		VectorScale(lightBoxColor[j], (1.0f / t), lightBoxColor[j]);
 	}
 
 	// Now add direct light from the emit_surface lights. These go in the ambient cube because
@@ -649,7 +658,7 @@ void AddSampleToList(ambientlocallist_t* list, const vec3_t samplePosition, vec3
 				// color delta is computed per-component, per cube side
 				for ( int s = 0; s < 3; s++ )
 				{
-					float dc = fabs(oldlist.samples[i].cube[k][s] - oldlist.samples[j].cube[k][s]);
+					float dc = fabsf(oldlist.samples[i].cube[k][s] - oldlist.samples[j].cube[k][s]);
 					maxDC = Q_max(maxDC, dc);
 				}
 
@@ -712,8 +721,8 @@ int CubeDeltaColor(vec3_t pCube0[6], vec3_t pCube1[6])
 	{
 		for ( int j = 0; j < 3; j++ )
 		{
-			int val0 = pCube0[i][j];
-			int val1 = pCube1[i][j];
+			int val0 = static_cast<int>(pCube0[i][j]);
+			int val1 = static_cast<int>(pCube1[i][j]);
 			int delta = abs(val0 - val1);
 
 			if ( delta > maxDelta )
@@ -806,11 +815,17 @@ void ComputeAmbientForLeaf(int threadnum, int leafID, ambientlocallist_t* list)
 	int volumeCount = xSize * ySize * zSize;
 
 	if ( g_fastmode )
-		volumeCount *= 0.01;
+	{
+		volumeCount = static_cast<int>(static_cast<float>(volumeCount) * 0.01f);
+	}
 	else if ( !g_extra )
-		volumeCount *= 0.05;
+	{
+		volumeCount = static_cast<int>(static_cast<float>(volumeCount) * 0.05f);
+	}
 	else
-		volumeCount *= 0.1;
+	{
+		volumeCount = static_cast<int>(static_cast<float>(volumeCount) * 0.1f);
+	}
 
 	int sampleCount = bound(MIN_LOCAL_SAMPLES, volumeCount, MAX_LOCAL_SAMPLES);
 
@@ -885,7 +900,7 @@ void ComputeLeafAmbientLighting(void)
 			nInAmbientCube++;
 	}
 
-	srand(time(NULL));  // init random generator
+	srand(static_cast<unsigned int>(time(NULL)));  // init random generator
 	MakeParents(0, -1);
 
 	MsgDev(
@@ -910,22 +925,27 @@ void ComputeLeafAmbientLighting(void)
 			continue;
 
 		// compute the samples in disk format.  Encode the positions in 8-bits using leaf bounds fractions
-		for ( int i = 0; i < list->numSamples; i++ )
+		for ( int sampleIndex = 0; sampleIndex < list->numSamples; ++sampleIndex )
 		{
 			if ( g_numleaflights == MAX_MAP_LEAFLIGHTS )
+			{
 				COM_FatalError("MAX_MAP_LEAFLIGHTS limit exceeded\n");
+			}
 
 			dleafsample_t* sample = &g_dleaflights[g_numleaflights];
 
 			for ( int j = 0; j < 3; j++ )
-				sample->origin[j] = (short)bound(-32767, (int)list->samples[i].pos[j], 32767);
-			sample->leafnum = leafID;
+			{
+				sample->origin[j] = (short)bound(-32767, (int)list->samples[sampleIndex].pos[j], 32767);
+			}
+
+			sample->leafnum = static_cast<int16_t>(leafID);
 
 			for ( int side = 0; side < 6; side++ )
 			{
-				sample->ambient.color[side][0] = bound(0, list->samples[i].cube[side][0] * 255, 255);
-				sample->ambient.color[side][1] = bound(0, list->samples[i].cube[side][1] * 255, 255);
-				sample->ambient.color[side][2] = bound(0, list->samples[i].cube[side][2] * 255, 255);
+				sample->ambient.color[side][0] = static_cast<uint8_t>(bound(0, list->samples[sampleIndex].cube[side][0] * 255, 255));
+				sample->ambient.color[side][1] = static_cast<uint8_t>(bound(0, list->samples[sampleIndex].cube[side][1] * 255, 255));
+				sample->ambient.color[side][2] = static_cast<uint8_t>(bound(0, list->samples[sampleIndex].cube[side][2] * 255, 255));
 			}
 			g_numleaflights++;
 		}
