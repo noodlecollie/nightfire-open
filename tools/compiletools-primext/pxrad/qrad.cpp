@@ -69,12 +69,12 @@ bool g_nomodelshadow = false;
 bool g_lightbalance = false;
 bool g_onlylights = false;
 float g_smoothing_threshold;  // cosine of smoothing angle(in radians)
-char source[MAX_PATH] = "";
+char source[RAD_MAX_PATH] = "";
 uint g_gammamode = DEFAULT_GAMMAMODE;
 size_t g_compatibility_mode = DEFAULT_COMPAT_MODE;
 
-static char global_lights[MAX_PATH] = "";
-static char level_lights[MAX_PATH] = "";
+static char global_lights[RAD_MAX_PATH] = "";
+static char level_lights[RAD_MAX_PATH] = "";
 
 // pre-quantized table normals from Quake1
 vec_t g_anorms[NUMVERTEXNORMALS][3] = {
