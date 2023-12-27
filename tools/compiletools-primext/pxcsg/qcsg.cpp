@@ -11,6 +11,7 @@
 #include "BuildPlatform/Arch.h"
 #include "CRTLib/crtlib.h"
 #include "MathLib/utils.h"
+#include "PlatformLib/File.h"
 #include "CompileTools/crashhandler.h"
 #include "CompileTools/compatibility_mode.h"
 #include "CompileTools/wadfileoperations.h"
@@ -34,7 +35,7 @@ bool g_wadtextures = DEFAULT_WADTEXTURES;
 bool g_nullifytrigger = DEFAULT_NULLIFYTRIGGER;
 bool g_noclip = DEFAULT_NOCLIP;
 vec_t g_csgepsilon = CSGCHOP_EPSILON;
-size_t g_compatibility_mode = DEFAULT_COMPAT_MODE;
+int g_compatibility_mode = DEFAULT_COMPAT_MODE;
 
 static FILE* out_surfaces[MAX_MAP_HULLS];
 static FILE* out_detbrush[MAX_MAP_HULLS];
@@ -179,25 +180,34 @@ void WriteMapFace(bface_t* f)
 			length = VectorNormalize(axis);
 
 			// avoid division by 0
-			if ( length != 0.0 )
-				valve.scale[i] = 1.0 / length;
+			if ( length != 0.0f )
+			{
+				valve.worldcraft.scale[i] = 1.0f / length;
+			}
 			else
-				valve.scale[i] = 0.0;
+			{
+				valve.worldcraft.scale[i] = 0.0f;
+			}
 
-			valve.shift[i] = tx->vecs[i][3];
+			valve.worldcraft.shift[i] = tx->vecs[i][3];
+
 			if ( !i )
-				VectorCopy(axis, valve.UAxis);
+			{
+				VectorCopy(axis, valve.worldcraft.UAxis);
+			}
 			else
-				VectorCopy(axis, valve.VAxis);
+			{
+				VectorCopy(axis, valve.worldcraft.VAxis);
+			}
 		}
 
 		Q_strncpy(texname, TEX_GetMiptexNameByHash(tx->miptex), sizeof(texname));
 	}
 	else
 	{
-		TextureAxisFromNormal(f->plane->normal, valve.UAxis, valve.VAxis, false);
-		valve.shift[0] = valve.shift[1] = 0.0f;
-		valve.scale[0] = valve.scale[1] = 1.0f;
+		TextureAxisFromNormal(f->plane->normal, valve.worldcraft.UAxis, valve.worldcraft.VAxis, false);
+		valve.worldcraft.shift[0] = valve.worldcraft.shift[1] = 0.0f;
+		valve.worldcraft.scale[0] = valve.worldcraft.scale[1] = 1.0f;
 
 		if ( FBitSet(f->flags, FSIDE_SKIP) )
 		{
@@ -218,18 +228,18 @@ void WriteMapFace(bface_t* f)
 	}
 
 	fprintf(test_mapfile, "%s [ ", texname);
-	fprintf(test_mapfile, "%g ", valve.UAxis[0]);
-	fprintf(test_mapfile, "%g ", valve.UAxis[1]);
-	fprintf(test_mapfile, "%g ", valve.UAxis[2]);
-	fprintf(test_mapfile, "%g ", valve.shift[0]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.UAxis[0]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.UAxis[1]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.UAxis[2]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.shift[0]);
 	fprintf(test_mapfile, "] [ ");
-	fprintf(test_mapfile, "%g ", valve.VAxis[0]);
-	fprintf(test_mapfile, "%g ", valve.VAxis[1]);
-	fprintf(test_mapfile, "%g ", valve.VAxis[2]);
-	fprintf(test_mapfile, "%g ", valve.shift[1]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.VAxis[0]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.VAxis[1]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.VAxis[2]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.shift[1]);
 	fprintf(test_mapfile, "] 0 ");  // rotate (unused)
-	fprintf(test_mapfile, "%g ", valve.scale[0]);
-	fprintf(test_mapfile, "%g ", valve.scale[1]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.scale[0]);
+	fprintf(test_mapfile, "%g ", valve.worldcraft.scale[1]);
 	fprintf(test_mapfile, "\n");
 }
 
@@ -242,7 +252,7 @@ test.map brushes
 */
 void WriteMapBrushes(brush_t* b, bface_t* outside)
 {
-	//	outside = b->hull[0].faces;
+	(void)b;
 
 	if ( !outside || !test_mapfile )
 		return;  // no faces?
@@ -280,20 +290,26 @@ void ProcessModels(const char* source)
 	for ( i = 0; i < MAX_MAP_HULLS; i++ )
 	{
 		Q_snprintf(name, sizeof(name), "%s.p%i", source, i);
-		out_surfaces[i] = fopen(name, "w");
+		out_surfaces[i] = PlatformLib_FOpen(name, "w");
+
 		if ( !out_surfaces[i] )
+		{
 			COM_FatalError("couldn't open %s\n", name);
+		}
 
 		Q_snprintf(name, sizeof(name), "%s.b%i", source, i);
-		out_detbrush[i] = fopen(name, "w");
+		out_detbrush[i] = PlatformLib_FOpen(name, "w");
+
 		if ( !out_detbrush[i] )
+		{
 			COM_FatalError("couldn't open %s\n", name);
+		}
 	}
 
 	// DEBUG: write test map
 	Q_snprintf(name, sizeof(name), "%s_csg.map", source);
 #ifdef ENABLE_TESTMAP
-	test_mapfile = fopen(name, "w");
+	test_mapfile = PlatformLib_FOpen(name, "w");
 #endif
 
 	for ( i = 0; i < g_mapentities.Count(); i++ )
@@ -336,7 +352,10 @@ void ProcessModels(const char* source)
 	}
 
 	if ( test_mapfile )
-		fclose(test_mapfile);
+	{
+		PlatformLib_FClose(test_mapfile);
+	}
+
 	EmitPlanes();  // VHLT compatible (P2 compilers will be ignore it)
 
 	Msg("\n");
@@ -355,9 +374,12 @@ void WriteHullSizes(const char* source)
 	FILE* f;
 
 	Q_snprintf(path, sizeof(path), "%s.hsz", source);
-	f = fopen(path, "w");
+	f = PlatformLib_FOpen(path, "w");
+
 	if ( !f )
+	{
 		COM_FatalError("couldn't open %s\n", path);
+	}
 
 	// g-cont. may be better store these sizes as keyvalues in worldspawn so engine can read them too
 	for ( int i = 0; i < MAX_MAP_HULLS; i++ )
@@ -386,14 +408,19 @@ void WriteMapPlanes(const char* source)
 	FILE* f;
 
 	Q_snprintf(path, sizeof(path), "%s.pln", source);
-	f = fopen(path, "wb");
+	f = PlatformLib_FOpen(path, "wb");
+
 	if ( !f )
+	{
 		COM_FatalError("couldn't open %s\n", path);
+	}
 
 	len = g_nummapplanes * sizeof(plane_t);
 
 	if ( fwrite(g_mapplanes, 1, len, f) != len )
+	{
 		COM_FatalError("failed to store mapplanes\n");
+	}
 
 	fclose(f);
 }
@@ -790,7 +817,7 @@ int main(int argc, char** argv)
 		}
 		else if ( !Q_strcmp(argv[i], "-epsilon") )
 		{
-			g_csgepsilon = atof(argv[i + 1]);
+			g_csgepsilon = static_cast<float>(atof(argv[i + 1]));
 			i++;
 		}
 		else if ( argv[i][0] == '-' )

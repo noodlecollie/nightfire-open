@@ -91,8 +91,11 @@ void TEX_LoadTextures(CUtlVector<mapent_t>* entities, bool merge)
 		Q_strcat(wadstring, sizeof(wadstring), ";");
 	}
 
-	// parse wad pathes
-	for ( pszWadFile = strtok(wadstring, ";"); pszWadFile != NULL; pszWadFile = strtok(NULL, ";") )
+	// parse wad paths
+	char* wadstringContext = nullptr;
+	size_t wadstringSize = sizeof(wadstring);
+	for ( pszWadFile = PlatformLib_StrTok(wadstring, &wadstringSize, ";", &wadstringContext); pszWadFile != NULL;
+		  pszWadFile = PlatformLib_StrTok(NULL, &wadstringSize, ";", &wadstringContext) )
 	{
 		COM_FixSlashes(pszWadFile);
 		COM_FileBase(pszWadFile, tmpWadName, sizeof(tmpWadName));
@@ -369,9 +372,13 @@ void AddAnimatingTextures(void)
 		for ( int j = 0; j < 20; j++ )
 		{
 			if ( j < 10 )
-				name[1] = '0' + j;
+			{
+				name[1] = static_cast<char>('0' + j);
+			}
 			else
-				name[1] = 'A' + j - 10;  // alternate animation
+			{
+				name[1] = static_cast<char>('A' + j - 10);  // alternate animation
+			}
 
 			// see if this name exists in the wadfile
 			if ( TEX_CheckMiptex(name) )
@@ -428,9 +435,10 @@ static void FixSkyMiptex(dmiptexlump_t* miptexLump)
 		if ( !Q_strnicmp(miptex->name, "sky", 3) )
 		{
 			size_t length = std::strlen(miptex->name);
-			for ( size_t i = 0; i < length; ++i )
+
+			for ( size_t charIndex = 0; charIndex < length; ++charIndex )
 			{
-				miptex->name[i] = std::tolower(miptex->name[i]);
+				miptex->name[charIndex] = static_cast<char>(std::tolower(miptex->name[charIndex]));
 			}
 		}
 	}
@@ -475,7 +483,7 @@ void WriteMiptex(void)
 		totaldatasize += len;
 	}
 
-	Msg("total texture data %s\n", Q_memprint(totaldatasize));
+	Msg("total texture data %s\n", Q_memprint(static_cast<float>(totaldatasize)));
 	g_dtexdata = (byte*)Mem_Alloc(totaldatasize);
 
 	if ( totaldatasize > MAX_MAP_MIPTEX )
@@ -488,14 +496,14 @@ void WriteMiptex(void)
 
 	for ( i = 0; i < g_nummiptex; i++ )
 	{
-		l->dataofs[i] = data - (byte*)l;
+		l->dataofs[i] = static_cast<int32_t>(data - (byte*)l);
 		len = LoadLump(g_miptex + i, data);
 		if ( !len )
 			l->dataofs[i] = -1;  // didn't find the texture
 		data += len;
 	}
 
-	g_texdatasize = data - g_dtexdata;
+	g_texdatasize = static_cast<int>(data - g_dtexdata);
 
 	if ( totaldatasize != g_texdatasize )
 		COM_FatalError("WriteMiptex: memory corrupted\n");
@@ -539,8 +547,8 @@ void WriteMiptex(void)
 // =====================================================================================
 short FaceinfoForTexinfo(const char* landname, const int in_texture_step, const int in_max_extent, const int groupid)
 {
-	byte texture_step = bound(MIN_CUSTOM_TEXTURE_STEP, in_texture_step, MAX_CUSTOM_TEXTURE_STEP);
-	byte max_extent = bound(MIN_CUSTOM_SURFACE_EXTENT, in_max_extent, MAX_CUSTOM_SURFACE_EXTENT);
+	byte texture_step = static_cast<byte>(bound(MIN_CUSTOM_TEXTURE_STEP, in_texture_step, MAX_CUSTOM_TEXTURE_STEP));
+	byte max_extent = static_cast<byte>(bound(MIN_CUSTOM_SURFACE_EXTENT, in_max_extent, MAX_CUSTOM_SURFACE_EXTENT));
 	dfaceinfo_t* fi = g_dfaceinfo;
 	int i;
 
@@ -549,19 +557,27 @@ short FaceinfoForTexinfo(const char* landname, const int in_texture_step, const 
 	for ( i = 0; i < g_numfaceinfo; i++, fi++ )
 	{
 		if ( Q_stricmp(landname, fi->landname) )
+		{
 			continue;
+		}
 
 		if ( fi->texture_step != texture_step )
+		{
 			continue;
+		}
 
 		if ( fi->max_extent != max_extent )
+		{
 			continue;
+		}
 
 		if ( fi->groupid != groupid )
+		{
 			continue;
+		}
 
 		ThreadUnlock();
-		return i;
+		return static_cast<short>(i);
 	}
 
 	if ( g_numfaceinfo == MAX_MAP_FACEINFO )
@@ -571,12 +587,12 @@ short FaceinfoForTexinfo(const char* landname, const int in_texture_step, const 
 	Q_strncpy(fi->landname, landname, sizeof(fi->landname));
 	fi->texture_step = texture_step;
 	fi->max_extent = max_extent;
-	fi->groupid = groupid;
+	fi->groupid = static_cast<int16_t>(groupid);
 	g_numfaceinfo++;
 
 	ThreadUnlock();
 
-	return i;
+	return static_cast<short>(i);
 }
 
 /*
@@ -665,6 +681,8 @@ int TexinfoForSide(plane_t* plane, side_t* s, const vec3_t origin)
 	dtexinfo_t tx, *tc;
 	int i, j, k;
 
+	(void)plane;
+
 	if ( FBitSet(s->flags, FSIDE_NODRAW | FSIDE_SKIP) )
 		return -1;
 
@@ -674,24 +692,36 @@ int TexinfoForSide(plane_t* plane, side_t* s, const vec3_t origin)
 	tx.faceinfo = s->faceinfo;
 
 	if ( FBitSet(s->flags, FSIDE_NOLIGHTMAP) )
+	{
 		SetBits(tx.flags, TEX_SPECIAL);
+	}
 
 	if ( FBitSet(s->flags, FSIDE_NOSHADOW) )
+	{
 		SetBits(tx.flags, TEX_NOSHADOW);
+	}
 
 	if ( FBitSet(s->flags, FSIDE_NODIRT) )
+	{
 		SetBits(tx.flags, TEX_NODIRT);
+	}
 
 	if ( FBitSet(s->flags, FSIDE_SCROLL) )
+	{
 		SetBits(tx.flags, TEX_SCROLL);
+	}
 
 	if ( !FBitSet(s->flags, FSIDE_PATCH) )
 	{
 		if ( g_world_luxels >= 1 )
+		{
 			SetBits(tx.flags, TEX_WORLD_LUXELS);
+		}
 
 		if ( g_world_luxels >= 2 )
+		{
 			SetBits(tx.flags, TEX_AXIAL_LUXELS);
+		}
 	}
 
 	// prepare the source vecs

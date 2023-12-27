@@ -73,7 +73,7 @@ typedef struct
 
 typedef union
 {
-	struct
+	struct WorldcraftFormat
 	{
 		vec_t UAxis[3];
 		vec_t VAxis[3];
@@ -82,14 +82,19 @@ typedef union
 		vec_t rotate;
 	};  // Worldcraft, Hammer
 
-	struct
+	struct QuarkFormat
 	{
 		vec_t vecs[2][4];
 	};  // QuArK
-	struct
+
+	struct RadiantFormat
 	{
 		vec_t matrix[2][3];
 	};  // Radiant (brush primitives)
+
+	WorldcraftFormat worldcraft;
+	QuarkFormat quark;
+	RadiantFormat radiant;
 } texvecs_t;
 
 typedef struct side_s
@@ -133,9 +138,9 @@ typedef struct brush_s
 	int flags;  // brush settings
 	int8_t detaillevel;
 	int contents;
-	int csg_detaillevel(int hull) const
+	int csg_detaillevel(int inHull) const
 	{
-		return (hull == 0) ? detaillevel : 0;
+		return (inHull == 0) ? detaillevel : 0;
 	}
 
 	CUtlVector<side_t> sides;  // source data
@@ -180,7 +185,7 @@ extern bool g_wadtextures;
 extern bool g_nullifytrigger;
 extern bool g_onlyents;
 extern vec_t g_csgepsilon;
-extern size_t g_compatibility_mode;
+extern int g_compatibility_mode;
 
 extern char g_pszWadInclude[MAX_TEXFILES][64];
 extern int g_nWadInclude;
