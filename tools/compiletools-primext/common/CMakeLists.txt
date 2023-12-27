@@ -14,6 +14,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	include/CompileTools/polylib.h
 	include/CompileTools/scriptlib.h
 	include/CompileTools/shaders.h
+	include/CompileTools/tga.h
 	include/CompileTools/threads.h
 	include/CompileTools/vastring.h
 	include/CompileTools/wadfileoperations.h

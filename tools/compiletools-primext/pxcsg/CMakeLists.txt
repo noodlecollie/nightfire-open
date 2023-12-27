@@ -9,6 +9,7 @@ add_executable(${TARGETNAME_EXE_NFCSG}_new
 	patch.cpp
 	plane.h
 	textures.cpp
+	utils.cpp
 	vecutils.h
 )
 
