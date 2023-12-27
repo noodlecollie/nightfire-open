@@ -7,6 +7,7 @@ add_executable(${TARGETNAME_EXE_NFBSP}_new
 	partition.cpp
 	plane.h
 	portals.cpp
+	solidbsp.cpp
 )
 
 target_include_directories(${TARGETNAME_EXE_NFBSP}_new PRIVATE

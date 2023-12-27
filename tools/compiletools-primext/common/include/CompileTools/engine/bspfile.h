@@ -48,7 +48,7 @@ BRUSH MODELS
 #define WORLD_MINS -32768
 #define WORLD_MAXS 32768
 #define WORLD_SIZE (WORLD_MAXS - WORLD_MINS)
-#define BOGUS_RANGE WORLD_SIZE * 1.74  // half-diagonal
+#define BOGUS_RANGE WORLD_SIZE * 1.74f  // half-diagonal
 
 // these are for entity key:value pairs
 #define MAX_KEY 64
