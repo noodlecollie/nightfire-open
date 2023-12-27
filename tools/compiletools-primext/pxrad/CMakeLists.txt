@@ -3,6 +3,8 @@ set(COMPATIBILITY_TYPE "goldsrc")
 
 add_executable(${TARGETNAME_EXE_NFRAD}_new
 	$<$<OR:$<STREQUAL:"${COMPATIBILITY_TYPE}","p2">,$<STREQUAL:"${COMPATIBILITY_TYPE}","goldsrc">>:ambientcube.cpp>
+	app_info.h
+	dirtmap.cpp
 	lerp.cpp
 	randomfloat.h
 	randomfloat.cpp
