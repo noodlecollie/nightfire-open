@@ -88,15 +88,17 @@ void AddScriptToStack(const char* filename)
 IncludeScriptFile
 ==============
 */
-#ifdef ALLOW_WADS_IN_PACKS
 void IncludeScriptFile(const char* filename)
 {
 	size_t size;
 
 	script++;
 	if ( script == &scriptstack[MAX_INCLUDES] )
+	{
 		COM_FatalError("script file exceeded MAX_INCLUDES\n");
-	Q_strcpy(script->filename, filename);
+	}
+
+	Q_strcpy(script->filename, sizeof(script->filename), filename);
 	MsgDev(D_REPORT, "entering the script %s\n", script->filename);
 	script->buffer = (char*)FS_LoadFile(script->filename, &size, false);
 
@@ -105,7 +107,6 @@ void IncludeScriptFile(const char* filename)
 	script->end_p = script->buffer + size;
 	script->separate_stack = true;
 }
-#endif
 
 /*
 ==============

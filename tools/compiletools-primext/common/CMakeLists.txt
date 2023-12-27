@@ -9,6 +9,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	include/CompileTools/cmdlib.h
 	include/CompileTools/compatibility_mode.h
 	include/CompileTools/conprint.h
+	include/CompileTools/crashhandler.h
 	include/CompileTools/file_system.h
 	include/CompileTools/loglevel.h
 	include/CompileTools/polylib.h
@@ -23,7 +24,6 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	src/bspfile.cpp
 	src/cmdlib.cpp
 	src/conprint.cpp
-	src/crashhandler.h
 	src/crashhandler.cpp
 	src/file_system.cpp
 	src/polylib.cpp
