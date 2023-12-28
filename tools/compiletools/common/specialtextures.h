@@ -1,8 +1,8 @@
 #ifndef SPECIAL_TEXTURES_H
 #define SPECIAL_TEXTURES_H
 
-#ifdef ZHLT_AFTERBURNER
-#include "specialtextures_afterburner.h"
+#ifdef ZHLT_NFOPEN
+#include "specialtextures_nfopen.h"
 #else
 #include "specialtextures_halflife.h"
 #endif

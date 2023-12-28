@@ -116,8 +116,8 @@ set(COMMON_SOURCE_FILES
 	../common/scriplib.cpp
 	../common/scriplib.h
 	../common/specialtextures.h
-	../common/specialtextures_afterburner.h
 	../common/specialtextures_halflife.h
+	../common/specialtextures_nfopen.h
 	../common/stb_image.cpp
 	../common/stb_image.h
 	../common/stringlib.cpp

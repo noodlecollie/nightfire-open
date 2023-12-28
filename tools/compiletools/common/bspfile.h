@@ -4,7 +4,7 @@
 #include "mathlib.h"
 #include "specialtextures.h"
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 #include "texturecollection.h"
 #include "texturedirectorylisting.h"
 #endif
@@ -124,7 +124,7 @@
 
 #if defined(ZHLT_XASH2)
 #define BSPVERSION		31
-#elif defined(ZHLT_AFTERBURNER)
+#elif defined(ZHLT_NFOPEN)
 #define BSPVERSION		43	// Nightfire BSP format was 42
 #else
 #define BSPVERSION		30
@@ -132,7 +132,7 @@
 
 #define TOOLVERSION		2
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 #define MAX_TEXTURE_NAME_LENGTH 80
 #else
 #define MAX_TEXTURE_NAME_LENGTH 16
@@ -327,7 +327,7 @@ typedef struct texinfo_s
 #endif
 } texinfo_t;
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 // This header begins the texture lump.
 // After it there are pngCount consecutive dpngtexturepath_t items,
 // and then miptexCount consective miptex offsets and textures,
