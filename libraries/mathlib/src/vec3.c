@@ -3,6 +3,22 @@
 
 const vec3_t vec3_origin = {0, 0, 0};
 
+qboolean VectorIsOnAxis(const vec3_t v)
+{
+	size_t count = 0;
+
+	for ( size_t i = 0; i < 3; i++ )
+	{
+		if ( fabsf(v[i]) < 0.0000001f )
+		{
+			count++;
+		}
+	}
+
+	// the zero vector will be on axis.
+	return count > 1;
+}
+
 float VectorNormalizeLength(const vec3_t v, vec3_t out)
 {
 	float length, ilength;

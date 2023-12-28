@@ -822,7 +822,7 @@ trace_t SV_PushEntity(edict_t* ent, const vec3_t lpush, const vec3_t apush, int*
 	{
 		// more accuracy blocking code
 		if ( monsterBlock )
-			*blocked = !VectorCompareEpsilon(ent->v.origin, end, ON_EPSILON);  // can't move full distance
+			*blocked = !VectorCompareEpsilon(ent->v.origin, end, EPSILON_VECTORS_EQUAL);  // can't move full distance
 		else
 			*blocked = true;
 	}

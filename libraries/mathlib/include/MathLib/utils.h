@@ -19,6 +19,19 @@ static inline float RemapVal(float val, float A, float B, float C, float D)
 	return C + (D - C) * (val - A) / (B - A);
 }
 
+static inline float RemapValClamped(float val, float A, float B, float C, float D)
+{
+	if ( A == B )
+	{
+		return val >= B ? D : C;
+	}
+
+	float cVal = (val - A) / (B - A);
+	cVal = bound(0.0f, cVal, 1.0f);
+
+	return C + (D - C) * cVal;
+}
+
 void VectorAngles(const vec3_t forward, vec3_t angles);
 void AngleVectors(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void AngleVectorsTranspose(const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
@@ -39,6 +52,7 @@ void V_AdjustFov(float* fov_x, float* fov_y, float width, float height, qboolean
 
 void RoundUpHullSize(vec3_t size);
 void ClearBounds(vec3_t mins, vec3_t maxs);
+qboolean BoundsAreCleared(vec3_t mins, vec3_t maxs);
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs);
 
 qboolean BoundsIntersect(const vec3_t mins1, const vec3_t maxs1, const vec3_t mins2, const vec3_t maxs2);
