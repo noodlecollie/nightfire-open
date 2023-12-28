@@ -185,7 +185,10 @@ typedef struct
 #define LUMP_EDGES		12
 #define LUMP_SURFEDGES	13
 #define LUMP_MODELS		14
-#ifdef ZHLT_XASH2
+#ifdef ZHLT_NFOPEN
+#define LUMP_CLIENTENTS 15 // NFOpen clientside-only entities
+#define HEADER_LUMPS	16
+#elif ZHLT_XASH2
 #define LUMP_CLIPNODES2	15
 #define LUMP_CLIPNODES3	16
 #define HEADER_LUMPS	17
@@ -202,11 +205,7 @@ typedef struct
 #define LUMP_WORLDLIGHTS		5	// list of all the virtual and real lights (used to relight models in-game)
 #define LUMP_COLLISION		6	// physics engine collision hull dump
 #define LUMP_AINODEGRAPH		7	// node graph that stored into the bsp
-#ifdef ZHLT_NFOPEN
-#define LUMP_CLIENTENTS 8 // NFOpen clientside-only entities
-#else
 #define LUMP_UNUSED0		8	// one lump reserved for me
-#endif
 #define LUMP_UNUSED1		9	// one lump reserved for me
 #define LUMP_UNUSED2		10	// one lump reserved for me
 #define LUMP_UNUSED3		11	// one lump reserved for me
@@ -603,6 +602,7 @@ extern int      g_dleaflights_checksum;
 extern int      g_numworldlights;
 extern dworldlight_t g_dworldlights[MAX_MAP_WORLDLIGHTS];
 extern int      g_dworldlights_checksum;
+#endif  // ZHLT_PARANOIA_BSP
 
 #ifdef ZHLT_NFOPEN
 extern size_t g_numclientmodels;
@@ -613,7 +613,6 @@ extern size_t g_numclientsounds;
 extern dclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
 extern int g_clientsounds_checksum;
 #endif  // ZHLT_NFOPEN
-#endif  // ZHLT_PARANOIA_BSP
 
 extern vec3_t   g_hull_size[MAX_MAP_HULLS][2];
 
