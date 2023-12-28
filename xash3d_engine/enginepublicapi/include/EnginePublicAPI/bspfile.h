@@ -32,7 +32,7 @@ BRUSH MODELS
 #define Q1BSP_VERSION 29  // quake1 regular version (beta is 28)
 #define HLBSP_VERSION 30  // half-life regular version
 #define QBSP2_VERSION (('B' << 0) | ('S' << 8) | ('P' << 16) | ('2' << 24))
-#define ABBSP_VERSION 43
+#define NFOPENBSP_VERSION 43
 
 #define IDEXTRAHEADER (('H' << 24) + ('S' << 16) + ('A' << 8) + 'X')  // little-endian "XASH"
 #define EXTRA_VERSION \
@@ -104,7 +104,8 @@ BRUSH MODELS
 #define LUMP_EDGES 12
 #define LUMP_SURFEDGES 13
 #define LUMP_MODELS 14  // internal submodels
-#define HEADER_LUMPS 15
+#define LUMP_CLIENTENTS 15
+#define HEADER_LUMPS 16
 
 // extra lump ordering
 #define LUMP_LIGHTVECS 0  // deluxemap data
@@ -313,9 +314,13 @@ typedef struct
 	int lightofs;  // start of [numstyles*surfsize] samples
 } dface32_t;
 
-// The following are structures for Afterburner-specific BSPs:
+// The following are structures for Nightfire Open-specific BSPs:
 
-#define AB_MAX_TEXTURE_NAME_LENGTH 80
+#define NFOPEN_MAX_TEXTURE_NAME_LENGTH 80
+#define NFOPEN_CLIENT_ENT_HEADER_VERSION 1
+#define NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH ((size_t)80)
+#define NFOPEN_CLIENT_ENT_MAX_MODELS ((size_t)2048)
+#define NFOPEN_CLIENT_ENT_MAX_SOUNDS ((size_t)2048)
 
 // This header begins the texture lump.
 // After it there are pngCount consecutive dpngtexturepath_t items,
@@ -329,5 +334,37 @@ typedef struct
 
 typedef struct
 {
-	char path[AB_MAX_TEXTURE_NAME_LENGTH];
+	char path[NFOPEN_MAX_TEXTURE_NAME_LENGTH];
 } dpngtexturepath_t;
+
+typedef struct
+{
+	uint32_t version;
+	uint32_t modelCount;
+	uint32_t modelOffsetFromBeginningOfHeader;
+	uint32_t soundCount;
+	uint32_t soundOffsetFromBeginningOfHeader;
+} dclientents_header_t;
+
+typedef struct
+{
+	char model[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float angles[3];
+	uint32_t animation;
+	uint32_t skin;
+} dclientents_model_t;
+
+typedef struct
+{
+	char sound[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float minRetriggerDelaySecs;
+	float maxRetriggerDelaySecs;
+	uint8_t volume;
+} dclientents_sound_t;
+
+#define NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE \
+	(sizeof(dclientents_header_t) + \
+	(NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dclientents_model_t)) + \
+	(NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dclientents_sound_t)))

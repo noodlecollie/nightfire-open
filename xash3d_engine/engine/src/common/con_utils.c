@@ -184,7 +184,7 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 						break;
 				}
 				break;
-			case ABBSP_VERSION:
+			case NFOPENBSP_VERSION:
 				Q_strncpy(version_description, "Nightfire Open", sizeof(version_description));
 				break;
 			default:
