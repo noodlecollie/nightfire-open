@@ -185,10 +185,7 @@ typedef struct
 #define LUMP_EDGES		12
 #define LUMP_SURFEDGES	13
 #define LUMP_MODELS		14
-#ifdef ZHLT_NFOPEN
-#define LUMP_CLIENTENTS 15 // NFOpen clientside-only entities
-#define HEADER_LUMPS	16
-#elif ZHLT_XASH2
+#ifdef ZHLT_XASH2
 #define LUMP_CLIPNODES2	15
 #define LUMP_CLIPNODES3	16
 #define HEADER_LUMPS	17
@@ -331,10 +328,35 @@ typedef struct texinfo_s
 } texinfo_t;
 
 #ifdef ZHLT_NFOPEN
+#define NFOPEN_EXTRAHEADER_ID (('X' << 24) + ('O' << 16) + ('F' << 8) + 'N')
+#define NFOPEN_EXTRAHEADER_VERSION 1
+
+typedef enum
+{
+	NFOPEN_LUMP_CLIENTENTS = 0,
+} dnfopenextralumpid_e;
+
+typedef struct
+{
+	uint32_t id;
+	uint32_t version;
+	uint32_t dataLength;
+	uint32_t numLumps;
+} dnfopenextraheader_t;
+
+typedef struct
+{
+	uint32_t lumpIndex;
+	uint32_t offsetFromBeginningOfExtraData;
+	uint32_t dataLength;
+} dnfopenextralump_t;
+
 // This header begins the texture lump.
 // After it there are pngCount consecutive dpngtexturepath_t items,
 // and then miptexCount consective miptex offsets and textures,
 // as per the normal Half Life spec.
+// NFTODO: Make this a custom lump, as it currently piggy-backs
+// on the Half Life texture lump.
 typedef struct
 {
 	uint32_t pngCount;
@@ -358,7 +380,7 @@ typedef struct
 	uint32_t modelOffsetFromBeginningOfHeader;
 	uint32_t soundCount;
 	uint32_t soundOffsetFromBeginningOfHeader;
-} dclientents_header_t;
+} dnfopenclientents_header_t;
 
 typedef struct
 {
@@ -367,7 +389,7 @@ typedef struct
 	float angles[3];
 	uint32_t animation;
 	uint32_t skin;
-} dclientents_model_t;
+} dnfopenclientents_model_t;
 
 typedef struct
 {
@@ -376,12 +398,12 @@ typedef struct
 	float minRetriggerDelaySecs;
 	float maxRetriggerDelaySecs;
 	uint8_t volume;
-} dclientents_sound_t;
+} dnfopenclientents_sound_t;
 
 #define NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE \
-	(sizeof(dclientents_header_t) + \
-	(NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dclientents_model_t)) + \
-	(NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dclientents_sound_t)))
+	(sizeof(dnfopenclientents_header_t) + \
+	(NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dnfopenclientents_model_t)) + \
+	(NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dnfopenclientents_sound_t)))
 #endif
 
 #define TEX_SPECIAL		1		// sky or slime or null, no lightmap or 256 subdivision
@@ -606,11 +628,11 @@ extern int      g_dworldlights_checksum;
 
 #ifdef ZHLT_NFOPEN
 extern size_t g_numclientmodels;
-extern dclientents_model_t g_clientmodels[NFOPEN_CLIENT_ENT_MAX_MODELS];
+extern dnfopenclientents_model_t g_clientmodels[NFOPEN_CLIENT_ENT_MAX_MODELS];
 extern int g_clientmodels_checksum;
 
 extern size_t g_numclientsounds;
-extern dclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
+extern dnfopenclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
 extern int g_clientsounds_checksum;
 #endif  // ZHLT_NFOPEN
 

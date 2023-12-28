@@ -109,6 +109,8 @@ set(COMMON_SOURCE_FILES
 	../common/messages.h
 	../common/miptexwrapper.cpp
 	../common/miptexwrapper.h
+	../common/nfopenheader.cpp
+	../common/nfopenheader.h
 	../common/pngtexturepath.cpp
 	../common/pngtexturepath.h
 	../common/resourcelock.cpp
