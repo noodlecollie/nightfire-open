@@ -117,7 +117,17 @@ int		g_dleaflights_checksum;
 int		g_numworldlights;
 dworldlight_t	g_dworldlights[MAX_MAP_WORLDLIGHTS];
 int		g_dworldlights_checksum;
-#endif
+
+#ifdef ZHLT_NFOPEN
+size_t g_numclientmodels = 0;
+dclientents_model_t g_clientmodels[NFOPEN_CLIENT_ENT_MAX_MODELS];
+int g_clientmodels_checksum = 0;
+
+size_t g_numclientsounds = 0;
+dclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
+int g_clientsounds_checksum = 0;
+#endif  // ZHLT_NFOPEN
+#endif  // ZHLT_PARANOIA_BSP
 
 // can be overrided from hlcsg
 vec3_t g_hull_size[MAX_MAP_HULLS][2] =
@@ -135,6 +145,126 @@ vec3_t g_hull_size[MAX_MAP_HULLS][2] =
 	{-16, -16, -18 },	{ 16, 16, 18 }
 	}
 };
+
+static const void* CompileClientEntitiesLump(size_t& numBytes, bool force = false)
+{
+	static uint8_t data[NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE];
+	static size_t dataLength = 0;
+
+	if ( dataLength > 0 && !force )
+	{
+		numBytes = dataLength;
+		return data;
+	}
+
+	numBytes = 0;
+
+	if ( g_numclientmodels > NFOPEN_CLIENT_ENT_MAX_MODELS )
+	{
+		Error("%zu client models exceeded max of %zu\n", g_numclientmodels, NFOPEN_CLIENT_ENT_MAX_MODELS);
+		return nullptr;
+	}
+
+	if ( g_numclientsounds > NFOPEN_CLIENT_ENT_MAX_SOUNDS )
+	{
+		Error("%zu client sounds exceeded max of %zu\n", g_numclientsounds, NFOPEN_CLIENT_ENT_MAX_SOUNDS);
+		return nullptr;
+	}
+
+	uint8_t* cursor = data;
+
+	dclientents_header_t* header = reinterpret_cast<dclientents_header_t*>(cursor);
+	header->version = NFOPEN_CLIENT_ENT_HEADER_VERSION;
+	cursor += sizeof(*header);
+
+	header->modelOffsetFromBeginningOfHeader = static_cast<uint32_t>(cursor - data);
+	header->modelCount = static_cast<uint32_t>(g_numclientmodels);
+
+	for ( size_t index = 0; index < g_numclientmodels; ++index )
+	{
+		dclientents_model_t* model = reinterpret_cast<dclientents_model_t*>(cursor);
+		*model = g_clientmodels[index];
+		cursor += sizeof(*model);
+	}
+
+	header->soundOffsetFromBeginningOfHeader = static_cast<uint32_t>(cursor - data);
+	header->soundCount = static_cast<uint32_t>(g_numclientsounds);
+
+	for ( size_t index = 0; index < g_numclientsounds; ++index )
+	{
+		dclientents_sound_t* sound = reinterpret_cast<dclientents_sound_t*>(cursor);
+		*sound = g_clientsounds[index];
+		cursor += sizeof(*sound);
+	}
+
+	dataLength = static_cast<size_t>(cursor - data);
+	numBytes = dataLength;
+	return data;
+}
+
+static void ReadClientEntitiesLump(const void* inData, size_t inLength)
+{
+	if ( inLength < sizeof(dclientents_header_t) )
+	{
+		Error("Client entities lump was too short to read\n");
+		return;
+	}
+
+	const dclientents_header_t* header = reinterpret_cast<const dclientents_header_t*>(inData);
+
+	if ( header->version != NFOPEN_CLIENT_ENT_HEADER_VERSION )
+	{
+		Error("Expected client entities lump version %u but got %u\n", NFOPEN_CLIENT_ENT_HEADER_VERSION, header->version);
+		return;
+	}
+
+	const size_t totalSize = sizeof(dclientents_header_t) +
+		(header->modelCount * sizeof(dclientents_model_t)) +
+		(header->soundCount * sizeof(dclientents_sound_t));
+
+	if ( inLength < totalSize )
+	{
+		Error("Expected client entities lump length to be %zu but got %zu\n", totalSize, inLength);
+		return;
+	}
+
+	if ( header->modelOffsetFromBeginningOfHeader + (header->modelCount * sizeof(dclientents_model_t)) > inLength )
+	{
+		Error("Client entities lump corrupted: models exceeded available data\n");
+		return;
+	}
+
+	if ( header->soundOffsetFromBeginningOfHeader + (header->soundCount * sizeof(dclientents_sound_t)) > inLength )
+	{
+		Error("Client entities lump corrupted: sounds exceeded available data\n");
+		return;
+	}
+
+	if ( inLength > totalSize )
+	{
+		Warning("Expected client entities lump length to be %zu but got %zu, ignoring extra data\n", totalSize, inLength);
+	}
+
+	g_numclientmodels = static_cast<size_t>(header->modelCount);
+
+	const dclientents_model_t* modelsBase = reinterpret_cast<const dclientents_model_t*>(
+		static_cast<const uint8_t*>(inData) + header->modelOffsetFromBeginningOfHeader);
+
+	for ( size_t index = 0; index < g_numclientmodels; ++index )
+	{
+		g_clientmodels[index] = modelsBase[index];
+	}
+
+	g_numclientsounds = static_cast<size_t>(header->soundCount);
+
+	const dclientents_sound_t* soundsBase = reinterpret_cast<const dclientents_sound_t*>(
+		static_cast<const uint8_t*>(inData) + header->soundOffsetFromBeginningOfHeader);
+
+	for ( size_t index = 0; index < g_numclientsounds; ++index )
+	{
+		g_clientsounds[index] = soundsBase[index];
+	}
+}
 
 /*
  * ===============
@@ -638,6 +768,21 @@ void LoadBSPImage( dheader_t* const header )
 		g_numfaceinfo = CopyExtraLump( LUMP_FACEINFO, g_dfaceinfo, sizeof( dfaceinfo_t ), header );
 		g_numleaflights = CopyExtraLump( LUMP_LEAF_LIGHTING, g_dleaflights, sizeof( dleafsample_t ), header );
 		g_numworldlights = CopyExtraLump( LUMP_WORLDLIGHTS, g_dworldlights, sizeof( dworldlight_t ), header );
+
+#ifdef ZHLT_NFOPEN
+		{
+			const dextrahdr_t* extrahdr = (const dextrahdr_t*)((const byte*)header + sizeof(dheader_t));
+			int length = extrahdr->lumps[LUMP_CLIENTENTS].filelen;
+			int ofs = extrahdr->lumps[LUMP_CLIENTENTS].fileofs;
+
+			if ( length < 0 )
+			{
+				length = 0;
+			}
+
+			ReadClientEntitiesLump(reinterpret_cast<const byte*>(header) + ofs, static_cast<size_t>(length));
+		}
+#endif  // ZHLT_NFOPEN
 	}
 #endif
 	Free( header );	// everything has been copied out
@@ -680,6 +825,11 @@ void LoadBSPImage( dheader_t* const header )
 		g_dfaceinfo_checksum = FastChecksum( g_dfaceinfo, g_numfaceinfo * sizeof( g_dfaceinfo[0] ));
 		g_dleaflights_checksum = FastChecksum( g_dleaflights, g_numleaflights * sizeof( g_dleaflights[0] ));
 		g_dworldlights_checksum = FastChecksum( g_dworldlights, g_numworldlights * sizeof( g_dworldlights[0] ));
+
+#ifdef ZHLT_NFOPEN
+		g_clientmodels_checksum = FastChecksum( g_clientmodels, g_numclientmodels * sizeof( g_clientmodels[0] ));
+		g_clientsounds_checksum = FastChecksum( g_clientsounds, g_numclientsounds * sizeof( g_clientsounds[0] ));
+#endif
 	}
 #endif
 }
@@ -808,7 +958,15 @@ void WriteBSPFile( const char* const filename )
 	AddExtraLump( LUMP_FACEINFO,     g_dfaceinfo,     g_numfaceinfo * sizeof( dfaceinfo_t ),      extrahdr, bspfile );
 	AddExtraLump( LUMP_LEAF_LIGHTING,g_dleaflights,   g_numleaflights * sizeof( dleafsample_t ),  extrahdr, bspfile );
 	AddExtraLump( LUMP_WORLDLIGHTS,  g_dworldlights,  g_numworldlights * sizeof( dworldlight_t ), extrahdr, bspfile );
-#endif
+#ifdef ZHLT_NFOPEN
+	{
+		size_t dataLength = 0;
+		const void* data = CompileClientEntitiesLump(dataLength, true);
+		AddExtraLump(LUMP_CLIENTENTS, data, dataLength, extrahdr, bspfile);
+	}
+#endif  // ZHLT_NFOPEN
+#endif  // ZHLT_PARANOIA_BSP
+
 	fseek( bspfile, 0, SEEK_SET );
 	SafeWrite( bspfile, header, sizeof( dheader_t ));
 
@@ -1379,6 +1537,14 @@ void PrintBSPFileSizes( void )
 		totalmemory += ArrayUsage( "faceinfo", g_numfaceinfo, ENTRIES( g_dfaceinfo ), ENTRYSIZE( g_dfaceinfo ));
 		totalmemory += ArrayUsage( "ambient cubes", g_numleaflights, ENTRIES( g_dleaflights ), ENTRYSIZE( g_dleaflights ));
 		totalmemory += ArrayUsage( "direct lights", g_numworldlights, ENTRIES( g_dworldlights ), ENTRYSIZE( g_dworldlights ));
+
+#ifdef ZHLT_NFOPEN
+		{
+			size_t numBytes = 0;
+			CompileClientEntitiesLump(numBytes);
+			totalmemory += GlobUsage("entdata", numBytes, NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE);
+		}
+#endif  // ZHLT_NFOPEN
 	}
 #endif
 	Log( "%i textures referenced\n", numtextures );
@@ -1759,6 +1925,97 @@ bool ParseEntity( void )
 	return true;
 }
 
+#if defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+void MakeClientEntity_Model(const entity_t& entity)
+{
+	if ( g_numclientmodels >= NFOPEN_CLIENT_ENT_MAX_MODELS )
+	{
+		Error("Exceeded max number of client models (%zu)\n", NFOPEN_CLIENT_ENT_MAX_MODELS);
+		return;
+	}
+
+	dclientents_model_t* outModel = &g_clientmodels[g_numclientmodels++];
+
+	VectorCopy(entity.origin, outModel->origin);
+	safe_strncpy(outModel->model, ValueForKey(&entity, "model"), sizeof(outModel->model));
+
+	if ( sscanf(ValueForKey(&entity, "angles"), "%f %f %f", &outModel->angles[0], &outModel->angles[1], &outModel->angles[2]) != 3 )
+	{
+		VectorClear(outModel->angles);
+	}
+
+	int animation = IntForKey(&entity, "animation");
+
+	if ( animation < 0 )
+	{
+		animation = 0;
+	}
+
+	outModel->animation = static_cast<uint32_t>(animation);
+
+	int skin = IntForKey(&entity, "skin");
+
+	if ( skin < 0 )
+	{
+		skin = 0;
+	}
+
+	outModel->skin = static_cast<uint32_t>(skin);
+}
+
+void MakeClientEntity_Sound(const entity_t& entity)
+{
+	if ( g_numclientsounds >= NFOPEN_CLIENT_ENT_MAX_SOUNDS )
+	{
+		Error("Exceeded max number of client sounds (%zu)\n", NFOPEN_CLIENT_ENT_MAX_SOUNDS);
+		return;
+	}
+
+	dclientents_sound_t* outSound = &g_clientsounds[g_numclientsounds++];
+
+	VectorCopy(entity.origin, outSound->origin);
+	safe_strncpy(outSound->sound, ValueForKey(&entity, "sound"), sizeof(outSound->sound));
+
+	float minDelay = FloatForKey(&entity, "mindelay");
+
+	if ( minDelay < 0.0f )
+	{
+		minDelay = 0.0f;
+	}
+
+	outSound->minRetriggerDelaySecs = minDelay;
+
+	float maxDelay = FloatForKey(&entity, "maxdelay");
+
+	if ( maxDelay < 0.0f )
+	{
+		maxDelay = 0.0f;
+	}
+
+	outSound->maxRetriggerDelaySecs = maxDelay;
+
+	if ( ValueForKey(&entity, "volume", true) )
+	{
+		float volume = FloatForKey(&entity, "volume") * 255.0f;
+
+		if ( volume < 0.0f )
+		{
+			volume = 0.0f;
+		}
+		else if ( volume > 255.0f )
+		{
+			volume = 255.0f;
+		}
+
+		outSound->volume = static_cast<uint8_t>(volume);
+	}
+	else
+	{
+		outSound->volume = 255;
+	}
+}
+#endif  // defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+
 // =====================================================================================
 //  ParseEntities
 //      Parses the dentdata string into entities
@@ -1975,6 +2232,27 @@ void            UnparseEntities()
 	}
 #endif
 #endif
+
+#if defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+	// Wow, this function is pretty horrible. Let's just stick
+	// another entities pass in here, the code's too dirty to fix up.
+	for (i = 0; i < g_numentities; i++)
+	{
+		entity_t* mapent = &g_entities[i];
+
+		if ( strcmp(ValueForKey(mapent, "classname"), "client_model") == 0 )
+		{
+			MakeClientEntity_Model(*mapent);
+			DeleteAllKeys(mapent);
+		}
+		else if ( strcmp(ValueForKey(mapent, "classname"), "client_sound") == 0 )
+		{
+			MakeClientEntity_Sound(*mapent);
+			DeleteAllKeys(mapent);
+		}
+	}
+#endif  // defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+
     for (i = 0; i < g_numentities; i++)
     {
         ep = g_entities[i].epairs;
@@ -2022,6 +2300,23 @@ void			DeleteKey(entity_t* ent, const char* const key)
 			Free(ep);
 			return;
 		}
+	}
+}
+
+void DeleteAllKeys(entity_t* ent)
+{
+	epair_t* pair = ent->epairs;
+	ent->epairs = nullptr;
+
+	while ( pair )
+	{
+		epair_t* next = pair->next;
+
+		Free(pair->key);
+		Free(pair->value);
+		Free(pair);
+
+		pair = next;
 	}
 }
 #endif
