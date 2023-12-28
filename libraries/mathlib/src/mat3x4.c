@@ -231,6 +231,17 @@ void Matrix3x4_MatrixToEntityScale3f(const matrix3x4 in, vec3_t origin, vec3_t a
 	scale[2] = VectorLength(in[2]);
 }
 
+vec_t Matrix3x4_CalcSign(const matrix3x4 in)
+{
+	vec3_t out;
+
+	out[0] = (in[0][1] * in[1][2]) - (in[0][2] * in[1][1]);
+	out[1] = (in[0][2] * in[1][0]) - (in[0][0] * in[1][2]);
+	out[2] = (in[0][0] * in[1][1]) - (in[0][1] * in[1][0]);
+
+	return (out[0] * in[2][0]) + (out[1] * in[2][1]) + (out[2] * in[2][2]);
+}
+
 void Matrix3x4_TransformAABB(const matrix3x4 world, const vec3_t mins, const vec3_t maxs, vec3_t absmin, vec3_t absmax)
 {
 	vec3_t localCenter, localExtents;

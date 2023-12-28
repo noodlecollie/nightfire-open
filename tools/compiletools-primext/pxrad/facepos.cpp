@@ -8,23 +8,32 @@
  *
  ****/
 
+#include <limits>
+#include "PlatformLib/File.h"
+#include "CRTLib/crtlib.h"
+#include "MathLib/vec3.h"
+#include "MathLib/mat3x4.h"
+#include "CompileTools/conprint.h"
+#include "CompileTools/zone.h"
 #include "qrad.h"
+#include "mat3x4_extra.h"
 
 #define MAX_NUDGES 12
 
 static const vec3_t g_nudgelist[MAX_NUDGES] = {
-	{0.1, 0.0, 0.0},
-	{-0.1, 0.0, 0.0},
-	{0.0, 0.1, 0.0},
-	{0.0, -0.1, 0.0},
-	{0.3, 0.0, 0.0},
-	{-0.3, 0.0, 0.0},
-	{0.0, 0.3, 0.0},
-	{0.0, -0.3, 0.0},
-	{0.3, 0.3, 0.0},
-	{-0.3, 0.3, 0.0},
-	{-0.3, -0.3, 0.0},
-	{0.3, -0.3, 0.0}};
+	{0.1f, 0.0f, 0.0f},
+	{-0.1f, 0.0f, 0.0f},
+	{0.0f, 0.1f, 0.0f},
+	{0.0f, -0.1f, 0.0f},
+	{0.3f, 0.0f, 0.0f},
+	{-0.3f, 0.0f, 0.0f},
+	{0.0f, 0.3f, 0.0f},
+	{0.0f, -0.3f, 0.0f},
+	{0.3f, 0.3f, 0.0f},
+	{-0.3f, 0.3f, 0.0f},
+	{-0.3f, -0.3f, 0.0f},
+	{0.3f, -0.3f, 0.0f},
+};
 
 typedef struct
 {
@@ -70,7 +79,7 @@ static bool IsPositionValid(
 	bool edgetest = true)
 {
 	vec3_t pos, pos_normal;
-	vec_t hunt_scale = 0.2;
+	vec_t hunt_scale = 0.2f;
 	int hunt_size = 2;
 	vec_t hunt_offset;
 
@@ -164,8 +173,8 @@ static void CalcSinglePosition(int threadnum, positionmap_t* map, int is, int it
 		vec3_t original_st;
 		vec3_t test_st;
 
-		original_st[0] = map->start[0] + (is + 0.5) * map->step[0];
-		original_st[1] = map->start[1] + (it + 0.5) * map->step[1];
+		original_st[0] = map->start[0] + (is + 0.5f) * map->step[0];
+		original_st[1] = map->start[1] + (it + 0.5f) * map->step[1];
 		original_st[2] = 0.0;
 		p->valid = false;
 
@@ -283,7 +292,10 @@ void FindFacePositions(int facenum, int threadnum)
 	VectorCopy(v_up, map->texplane.normal);
 
 	if ( Matrix3x4_CalcSign(map->worldtotex) < 0.0 )
+	{
 		map->texplane.normal[2] *= -1.0;
+	}
+
 	map->texplane.dist = 0.0;
 
 	if ( map->texwinding->numpoints == 0 )
@@ -337,8 +349,8 @@ void FindFacePositions(int facenum, int threadnum)
 		imaxs[k] = (int)ceil(texmaxs[k] / map->step[k] - 0.5 + ON_EPSILON);
 	}
 
-	map->start[0] = (imins[0] - 0.5) * map->step[0];
-	map->start[1] = (imins[1] - 0.5) * map->step[1];
+	map->start[0] = (imins[0] - 0.5f) * map->step[0];
+	map->start[1] = (imins[1] - 0.5f) * map->step[1];
 	map->start[2] = 0.0;
 	map->w = imaxs[0] - imins[0] + 1;
 	map->h = imaxs[1] - imins[1] + 1;
@@ -380,7 +392,7 @@ void FreeFacePositions(void)
 		Q_snprintf(name, sizeof(name), "%s.pts", path);
 		Msg("Writing '%s' ...\n", name);
 
-		FILE* f = fopen(name, "w");
+		FILE* f = PlatformLib_FOpen(name, "w");
 
 		if ( f )
 		{
@@ -407,7 +419,9 @@ void FreeFacePositions(void)
 			Msg("OK.\n");
 		}
 		else
+		{
 			Msg("Error.\n");
+		}
 	}
 
 	for ( int facenum = 0; facenum < g_numfaces; facenum++ )
@@ -445,9 +459,9 @@ bool FindNearestPosition(
 	const vec3_t v_t = {0, 1, 0};
 	vec3_t original_st;
 	int x, is, it;
-	int best_is;
-	int best_it;
-	vec_t best_dist;
+	int best_is = 0;
+	int best_it = 0;
+	vec_t best_dist = std::numeric_limits<vec_t>::max();
 	bool found;
 	positionmap_t* map;
 	vec3_t v;
@@ -594,13 +608,15 @@ void CalcPositionsSize(void)
 		positionmap_t* map = &g_face_positions[facenum];
 
 		if ( !map->valid )
+		{
 			continue;
+		}
 
 		total_size += map->w * map->h * sizeof(position_t);
-		total_size += WindingSize(map->facewindingwithoffset);
-		total_size += WindingSize(map->facewinding);
-		total_size += WindingSize(map->texwinding);
+		total_size += static_cast<int>(WindingSize(map->facewindingwithoffset));
+		total_size += static_cast<int>(WindingSize(map->facewinding));
+		total_size += static_cast<int>(WindingSize(map->texwinding));
 	}
 
-	MsgDev(D_INFO, "position maps: %s\n", Q_memprint(total_size));
+	MsgDev(D_INFO, "position maps: %s\n", Q_memprint(static_cast<float>(total_size)));
 }
