@@ -202,7 +202,11 @@ typedef struct
 #define LUMP_WORLDLIGHTS		5	// list of all the virtual and real lights (used to relight models in-game)
 #define LUMP_COLLISION		6	// physics engine collision hull dump
 #define LUMP_AINODEGRAPH		7	// node graph that stored into the bsp
+#ifdef ZHLT_NFOPEN
+#define LUMP_CLIENTENTS 8 // NFOpen clientside-only entities
+#else
 #define LUMP_UNUSED0		8	// one lump reserved for me
+#endif
 #define LUMP_UNUSED1		9	// one lump reserved for me
 #define LUMP_UNUSED2		10	// one lump reserved for me
 #define LUMP_UNUSED3		11	// one lump reserved for me
@@ -342,6 +346,43 @@ typedef struct
 {
 	char path[MAX_TEXTURE_NAME_LENGTH];
 } dpngtexturepath_t;
+
+#define NFOPEN_CLIENT_ENT_HEADER_VERSION 1
+#define NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH ((size_t)80)
+#define NFOPEN_CLIENT_ENT_MAX_MODELS ((size_t)2048)
+#define NFOPEN_CLIENT_ENT_MAX_SOUNDS ((size_t)2048)
+
+typedef struct
+{
+	uint32_t version;
+	uint32_t modelCount;
+	uint32_t modelOffsetFromBeginningOfHeader;
+	uint32_t soundCount;
+	uint32_t soundOffsetFromBeginningOfHeader;
+} dclientents_header_t;
+
+typedef struct
+{
+	char model[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float angles[3];
+	uint32_t animation;
+	uint32_t skin;
+} dclientents_model_t;
+
+typedef struct
+{
+	char sound[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float minRetriggerDelaySecs;
+	float maxRetriggerDelaySecs;
+	uint8_t volume;
+} dclientents_sound_t;
+
+#define NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE \
+	(sizeof(dclientents_header_t) + \
+	(NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dclientents_model_t)) + \
+	(NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dclientents_sound_t)))
 #endif
 
 #define TEX_SPECIAL		1		// sky or slime or null, no lightmap or 256 subdivision
@@ -562,7 +603,17 @@ extern int      g_dleaflights_checksum;
 extern int      g_numworldlights;
 extern dworldlight_t g_dworldlights[MAX_MAP_WORLDLIGHTS];
 extern int      g_dworldlights_checksum;
-#endif
+
+#ifdef ZHLT_NFOPEN
+extern size_t g_numclientmodels;
+extern dclientents_model_t g_clientmodels[NFOPEN_CLIENT_ENT_MAX_MODELS];
+extern int g_clientmodels_checksum;
+
+extern size_t g_numclientsounds;
+extern dclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
+extern int g_clientsounds_checksum;
+#endif  // ZHLT_NFOPEN
+#endif  // ZHLT_PARANOIA_BSP
 
 extern vec3_t   g_hull_size[MAX_MAP_HULLS][2];
 
@@ -616,6 +667,7 @@ extern void UnparseEntities();
 
 #ifdef ZHLT_DELETEKEY
 extern void DeleteKey(entity_t* ent, const char* const key);
+extern void DeleteAllKeys(entity_t* ent);
 #endif
 extern void SetKeyValue(entity_t* ent, const char* const key, const char* const value);
 extern const char* ValueForKey( const entity_t* const ent, const char* const key, bool check = false );
