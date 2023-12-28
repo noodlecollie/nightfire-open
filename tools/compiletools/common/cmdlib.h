@@ -85,7 +85,7 @@
 #define ZHLT_CHART_AllocBlock //--vluzacn
 #define ZHLT_TEXNAME_CHARSET //--vluzacn
 #define ZHLT_STUDIOSHADOWS // g-cont. cast shadows from studio models
-#define ZHLT_PARANOIA_BSP // write extra lumps
+// #define ZHLT_PARANOIA_BSP // write extra lumps
 /*#define ZHLT_XASH // build the compiler for Xash engine //--vluzacn
 	#ifdef ZHLT_XASH
 #define ZHLT_XASH2 // build the compiler for Xash engine with change in bsp format //--vluzacn
@@ -597,11 +597,15 @@
 #ifdef ZHLT_NFOPEN
 // These are all the options that Nightfire Open support depends on.
 #if !defined(HLRAD_TEXTURE)
-#error "Missing required features to support Nightfire Open BSPs."
+#error Missing required features to support Nightfire Open BSPs
 #endif
 
 #if defined(WORDS_BIGENDIAN)
-#error "Big-endian mode is not currently supported."
+#error Big-endian mode is not currently supported
+#endif
+
+#ifdef ZHLT_PARANOIA_BSP
+#error Cannot use Paranoia BSP format with Nightfire Open
 #endif
 #endif // ZHLT_NFOPEN
 //=====================================================================

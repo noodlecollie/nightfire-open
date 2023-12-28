@@ -3424,7 +3424,7 @@ static void Mod_LoadClientEntities(const dbspmodel_t* bmod)
 	Mod_LoadClientSounds(bmod);
 
 	Con_DPrintf(
-		"Mod_LoadClientEntities: Map has %zu client models and %zu client sounds\n",
+		"Mod_LoadClientEntities: Loaded %zu client models and %zu client sounds\n",
 		loadmodel->clientEntities->modelCount,
 		loadmodel->clientEntities->soundCount);
 }
