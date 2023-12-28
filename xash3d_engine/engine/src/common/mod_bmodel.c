@@ -142,6 +142,9 @@ typedef struct
 	byte* entdata;
 	size_t entdatasize;
 
+	byte* cliententdata;
+	size_t cliententdatasize;
+
 	// lumps that required personal handler
 	dmiptexlump_t* textures;
 	size_t texdatasize;
@@ -340,6 +343,15 @@ static mlumpinfo_t srclumps[HEADER_LUMPS] = {
 	 CHECK_OVERFLOW,
 	 (const void**)&srcmodel.submodels,
 	 &srcmodel.numsubmodels},
+	{LUMP_CLIENTENTS,
+	 0,
+	 NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE,
+	 sizeof(byte),
+	 -1,
+	 "clientents",
+	 0,
+	 (const void**)&srcmodel.cliententdata,
+	 &srcmodel.cliententdatasize},
 };
 
 static mlumpinfo_t extlumps[EXTRA_LUMPS] = {
@@ -2085,10 +2097,10 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 
 				wadStringLength = strlen(wadstring);
 
-					// parse wad paths
-					for ( pszWadFile = PlatformLib_StrTok(wadstring, &wadStringLength, ";", strtokContext);
-						  pszWadFile != NULL;
-						  pszWadFile = PlatformLib_StrTok(NULL, &wadStringLength, ";", strtokContext) )
+				// parse wad paths
+				for ( pszWadFile = PlatformLib_StrTok(wadstring, &wadStringLength, ";", strtokContext);
+					  pszWadFile != NULL;
+					  pszWadFile = PlatformLib_StrTok(NULL, &wadStringLength, ";", strtokContext) )
 				{
 					COM_FixSlashes(pszWadFile);
 					COM_FileBase(pszWadFile, token, sizeof(token));
@@ -2781,7 +2793,7 @@ static void Mod_LoadTextures(dbspmodel_t* bmod)
 	loadmodel->textures = (texture_t**)Mem_Calloc(loadmodel->mempool, lump->nummiptex * sizeof(texture_t*));
 	loadmodel->numtextures = lump->nummiptex;
 
-	if ( bmod->version == ABBSP_VERSION )
+	if ( bmod->version == NFOPENBSP_VERSION )
 	{
 		LoadAfterburnerBSPTextures(bmod);
 	}
@@ -2915,7 +2927,7 @@ static void Mod_LoadSurfaces(dbspmodel_t* bmod)
 
 		tex = out->texinfo->texture;
 
-		if ( (bmod->version == ABBSP_VERSION && Q_strcmp(tex->name, AFTERBURNER_TEXPATH_SKY) == 0) ||
+		if ( (bmod->version == NFOPENBSP_VERSION && Q_strcmp(tex->name, AFTERBURNER_TEXPATH_SKY) == 0) ||
 			 Q_strncmp(tex->name, HALFLIFE_TEXPATH_SKY, sizeof(HALFLIFE_TEXPATH_SKY) - 1) == 0 )
 		{
 			SetBits(out->flags, SURF_DRAWSKY);
@@ -3322,6 +3334,101 @@ static void Mod_LoadLighting(dbspmodel_t* bmod)
 	}
 }
 
+static void Mod_LoadClientModels(const dbspmodel_t* bmod)
+{
+	const dclientents_header_t* header = (const dclientents_header_t*)bmod->cliententdata;
+
+	if ( header->modelOffsetFromBeginningOfHeader + (header->modelCount * sizeof(dclientents_model_t)) >
+		 bmod->cliententdatasize )
+	{
+		Con_Printf(S_ERROR "Cannot load client models from BSP: not enough data in lump\n");
+		return;
+	}
+
+	loadmodel->clientEntities->modelCount = (size_t)header->modelCount;
+	loadmodel->clientEntities->models = (mclientents_model_t*)Mem_Malloc(
+		loadmodel->mempool,
+		loadmodel->clientEntities->modelCount * sizeof(*loadmodel->clientEntities->models));
+
+	const dclientents_model_t* inModelBase =
+		(const dclientents_model_t*)(bmod->cliententdata + header->modelOffsetFromBeginningOfHeader);
+
+	for ( size_t modelIndex = 0; modelIndex < loadmodel->clientEntities->modelCount; ++modelIndex )
+	{
+		const dclientents_model_t* inModel = &inModelBase[modelIndex];
+		mclientents_model_t* outModel = &loadmodel->clientEntities->models[modelIndex];
+
+		Q_strcpy(outModel->model, sizeof(outModel->model), inModel->model);
+		VectorCopy(inModel->origin, outModel->origin);
+		VectorCopy(inModel->angles, outModel->angles);
+		outModel->animation = inModel->animation;
+		outModel->skin = inModel->skin;
+	}
+}
+
+static void Mod_LoadClientSounds(const dbspmodel_t* bmod)
+{
+	const dclientents_header_t* header = (const dclientents_header_t*)bmod->cliententdata;
+
+	if ( header->soundOffsetFromBeginningOfHeader + (header->soundCount * sizeof(dclientents_sound_t)) >
+		 bmod->cliententdatasize )
+	{
+		Con_Printf(S_ERROR "Cannot load client sounds from BSP: not enough data in lump\n");
+		return;
+	}
+
+	loadmodel->clientEntities->soundCount = (size_t)header->soundCount;
+	loadmodel->clientEntities->sounds = (mclientents_sound_t*)Mem_Malloc(
+		loadmodel->mempool,
+		loadmodel->clientEntities->soundCount * sizeof(*loadmodel->clientEntities->sounds));
+
+	const dclientents_sound_t* inSoundBase =
+		(const dclientents_sound_t*)(bmod->cliententdata + header->soundOffsetFromBeginningOfHeader);
+
+	for ( size_t soundIndex = 0; soundIndex < loadmodel->clientEntities->soundCount; ++soundIndex )
+	{
+		const dclientents_sound_t* inSound = &inSoundBase[soundIndex];
+		mclientents_sound_t* outSound = &loadmodel->clientEntities->sounds[soundIndex];
+
+		Q_strcpy(outSound->sound, sizeof(outSound->sound), inSound->sound);
+		VectorCopy(inSound->origin, outSound->origin);
+		outSound->minRetriggerDelaySecs = inSound->minRetriggerDelaySecs;
+		outSound->maxRetriggerDelaySecs = inSound->maxRetriggerDelaySecs;
+		outSound->volume = inSound->volume;
+	}
+}
+
+static void Mod_LoadClientEntities(const dbspmodel_t* bmod)
+{
+	if ( !bmod->cliententdata || bmod->cliententdatasize < sizeof(dclientents_header_t) )
+	{
+		Con_Printf(S_ERROR "Cannot load client entities from BSP: not enough data in lump\n");
+		return;
+	}
+
+	const dclientents_header_t* header = (const dclientents_header_t*)bmod->cliententdata;
+
+	if ( header->version != NFOPEN_CLIENT_ENT_HEADER_VERSION )
+	{
+		Con_Printf(
+			S_ERROR "Cannot load client entities from BSP: expected client entity header version %u but got %u\n",
+			NFOPEN_CLIENT_ENT_HEADER_VERSION,
+			header->version);
+
+		return;
+	}
+
+	loadmodel->clientEntities = (mclientents_t*)Mem_Calloc(loadmodel->mempool, sizeof(*loadmodel->clientEntities));
+
+	Mod_LoadClientModels(bmod);
+	Mod_LoadClientSounds(bmod);
+
+	Con_DPrintf(
+		"Mod_LoadClientEntities: Map has %zu client models and %zu client sounds\n",
+		loadmodel->clientEntities->modelCount,
+		loadmodel->clientEntities->soundCount);
+}
+
 /*
 =================
 Mod_LumpLooksLikeEntities
@@ -3389,7 +3496,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 			}
 			// fall through
 		case Q1BSP_VERSION:
-		case ABBSP_VERSION:
+		case NFOPENBSP_VERSION:
 			// everything else
 			srclumps[0].lumpnumber = LUMP_ENTITIES;
 			srclumps[1].lumpnumber = LUMP_PLANES;
@@ -3411,11 +3518,15 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 
 	// loading base lumps
 	for ( i = 0; i < SIZE_OF_ARRAY(srclumps); i++ )
+	{
 		Mod_LoadLump(mod_base, &srclumps[i], &worldstats[i], flags);
+	}
 
 	// loading extralumps
 	for ( i = 0; i < SIZE_OF_ARRAY(extlumps); i++ )
+	{
 		Mod_LoadLump(mod_base, &extlumps[i], &worldstats[SIZE_OF_ARRAY(srclumps) + i], flags);
+	}
 
 	if ( !bmod->isworld && loadstat.numerrors )
 	{
@@ -3424,10 +3535,13 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 			isworld ? "World" : "Brush",
 			loadstat.numerrors,
 			loadstat.numwarnings);
+
 		return false;  // there were errors, we can't load this map
 	}
 	else if ( !bmod->isworld && loadstat.numwarnings )
+	{
 		Con_DPrintf("Mod_Load%s: %i warning(s)\n", isworld ? "World" : "Brush", loadstat.numwarnings);
+	}
 
 	// load into heap
 	Mod_LoadEntities(bmod);
@@ -3445,6 +3559,11 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 	Mod_LoadLeafs(bmod);
 	Mod_LoadNodes(bmod);
 	Mod_LoadClipnodes(bmod);
+
+	if ( header->version == NFOPENBSP_VERSION )
+	{
+		Mod_LoadClientEntities(bmod);
+	}
 
 	// preform some post-initalization
 	Mod_MakeHull0();
@@ -3576,7 +3695,7 @@ qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, 
 			}
 			// fall through
 		case Q1BSP_VERSION:
-		case ABBSP_VERSION:
+		case NFOPENBSP_VERSION:
 			// everything else
 			*entities = header->lumps[LUMP_ENTITIES];
 
