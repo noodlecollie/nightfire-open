@@ -197,12 +197,12 @@ loc1:
 	for ( i = 0, v = vecs; i < nump; i++, v += 3 )
 	{
 		d = DotProduct(v, norm);
-		if ( d > ON_EPSILON )
+		if ( d > EPSILON_VECTORS_EQUAL )
 		{
 			front = true;
 			sides[i] = SIDE_FRONT;
 		}
-		else if ( d < -ON_EPSILON )
+		else if ( d < -EPSILON_VECTORS_EQUAL )
 		{
 			back = true;
 			sides[i] = SIDE_BACK;

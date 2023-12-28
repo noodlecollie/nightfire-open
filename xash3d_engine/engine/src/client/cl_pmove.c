@@ -172,10 +172,10 @@ void CL_SetIdealPitch(void)
 	for ( j = 1; j < i; j++ )
 	{
 		step = (int)(z[j] - z[j - 1]);
-		if ( step > -ON_EPSILON && step < ON_EPSILON )
+		if ( step > -EPSILON_VECTORS_EQUAL && step < EPSILON_VECTORS_EQUAL )
 			continue;
 
-		if ( dir && (step - dir > ON_EPSILON || step - dir < -ON_EPSILON) )
+		if ( dir && (step - dir > EPSILON_VECTORS_EQUAL || step - dir < -EPSILON_VECTORS_EQUAL) )
 			return;  // mixed changes
 
 		steps++;

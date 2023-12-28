@@ -63,6 +63,16 @@ int PlatformLib_MkDir(const char* path)
 	return mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
+int PlatformLib_Unlink(const char* filename)
+{
+	return unlink(filename);
+}
+
+int PlatformLib_VFScanF(FILE* stream, const char* format, va_list args)
+{
+	return vfscanf(stream, format, args);
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

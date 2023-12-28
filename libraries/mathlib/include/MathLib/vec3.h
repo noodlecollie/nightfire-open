@@ -54,6 +54,13 @@ static inline void CrossProduct(const vec3_t a, const vec3_t b, vec3_t c)
 	c[2] = (a[0] * b[1]) - (a[1] * b[0]);
 }
 
+static inline void VectorMultiply(const vec3_t a, const vec3_t b, vec3_t c)
+{
+	c[0] = a[0] * b[0];
+	c[1] = a[1] * b[1];
+	c[2] = a[2] * b[2];
+}
+
 static inline void VectorAdd(const vec3_t a, const vec3_t b, vec3_t c)
 {
 	c[0] = a[0] + b[0];
@@ -149,6 +156,11 @@ static inline void VectorSet(vec3_t v, vec_t x, vec_t y, vec_t z)
 	v[2] = z;
 }
 
+static inline void VectorFill(vec3_t v, vec_t val)
+{
+	VectorSet(v, val, val, val);
+}
+
 static inline void VectorClear(vec3_t v)
 {
 	VectorSet(v, 0.0f, 0.0f, 0.0f);
@@ -240,6 +252,21 @@ static inline qboolean VectorIsNull(const vec3_t v)
 	return v[0] == 0.0f && v[1] == 0.0f && v[2] == 0.0f;
 }
 
+static inline void VectorCompareMax(const vec3_t a, const vec3_t b, vec3_t c)
+{
+	c[0] = Q_max(a[0], b[0]);
+	c[1] = Q_max(a[1], b[1]);
+	c[2] = Q_max(a[2], b[2]);
+};
+
+static inline void VectorCompareMin(const vec3_t a, const vec3_t b, vec3_t c)
+{
+	c[0] = Q_min(a[0], b[0]);
+	c[1] = Q_min(a[1], b[1]);
+	c[2] = Q_min(a[2], b[2]);
+};
+
+qboolean VectorIsOnAxis(const vec3_t v);
 float VectorNormalizeLength(const vec3_t v, vec3_t out);
 qboolean VectorCompareEpsilon(const vec3_t vec1, const vec3_t vec2, vec_t epsilon);
 void VectorVectors(const vec3_t forward, vec3_t right, vec3_t up);

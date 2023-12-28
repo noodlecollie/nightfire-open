@@ -18,6 +18,7 @@
 
 #include <utlbuffer.h>
 #include <bitstring.h>
+#include <cstdio>
 
 //-----------------------------------------------------------------------------
 // Init static vars
@@ -47,10 +48,10 @@ void DebugPrintBitStringBits(const int* pInts, int nInts)
 	{
 		for ( int j = 0; j < BITS_PER_INT; j++ )
 		{
-			Msg("%d", (pInts[i] & (1 << j)) ? 1 : 0);
+			printf("%d", (pInts[i] & (1 << j)) ? 1 : 0);
 		}
 	}
-	Msg("\n");
+	printf("\n");
 }
 
 //-----------------------------------------------------------------------------

@@ -940,7 +940,7 @@ void SV_RestoreMoveInterpolant(sv_client_t* cl)
 
 		oldlerp = &svgame.interp[i];
 
-		if ( VectorCompareEpsilon(oldlerp->oldpos, oldlerp->newpos, ON_EPSILON) )
+		if ( VectorCompareEpsilon(oldlerp->oldpos, oldlerp->newpos, EPSILON_VECTORS_EQUAL) )
 			continue;  // they didn't actually move.
 
 		if ( !oldlerp->moving || !oldlerp->active )

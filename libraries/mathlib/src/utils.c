@@ -134,7 +134,7 @@ void VectorsAngles(const vec3_t forward, const vec3_t right, const vec3_t up, ve
 	pitch = -asinf(forward[2]);
 	cpitch = cosf(pitch);
 
-	if ( fabsf(cpitch) > EQUAL_EPSILON )  // gimball lock?
+	if ( fabsf(cpitch) > MATH_FLOAT_EQUAL_EPSILON )  // gimball lock?
 	{
 		cpitch = 1.0f / cpitch;
 		pitch = RAD2DEGF(pitch);
@@ -209,7 +209,7 @@ void GenerateBasisVectors(const vec3_t forward, vec3_t right, vec3_t up)
 		return;
 	}
 
-	const vec3_t pointingUpwards = { 0.0f, 0.0f, 1.0f };
+	const vec3_t pointingUpwards = {0.0f, 0.0f, 1.0f};
 
 	CrossProduct(forward, pointingUpwards, right);
 	VectorNormalize(right);
@@ -418,9 +418,18 @@ void RoundUpHullSize(vec3_t size)
 
 void ClearBounds(vec3_t mins, vec3_t maxs)
 {
-	// make bogus range
 	mins[0] = mins[1] = mins[2] = FLT_MAX;
 	maxs[0] = maxs[1] = maxs[2] = FLT_MIN;
+}
+
+qboolean BoundsAreCleared(vec3_t mins, vec3_t maxs)
+{
+	if ( mins[0] <= maxs[0] || mins[1] <= maxs[1] || mins[2] <= maxs[2] )
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void AddPointToBounds(const vec3_t v, vec3_t mins, vec3_t maxs)
