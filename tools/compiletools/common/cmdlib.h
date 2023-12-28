@@ -16,7 +16,7 @@
 //#define MODIFICATIONS_STRING "Submit detailed bug reports to (merlinis@bigpond.net.au)\n"
 //#define MODIFICATIONS_STRING "Submit detailed bug reports to (amckern@yahoo.com)\n"
 //#define MODIFICATIONS_STRING "Submit detailed bug reports to (vluzacn@163.com)\n" //--vluzacn
-#define MODIFICATIONS_STRING "Submit bug reports via https://github.com/x6herbius/afterburner-compiletools/issues\n"
+#define MODIFICATIONS_STRING "Submit bug reports via https://github.com/noodlecollie/nightfire-open/issues\n"
 
 #ifdef _DEBUG
 #define ZHLT_VERSIONSTRING "v3.5 dbg"
@@ -90,7 +90,7 @@
 	#ifdef ZHLT_XASH
 #define ZHLT_XASH2 // build the compiler for Xash engine with change in bsp format //--vluzacn
 	#endif*/
-#define ZHLT_AFTERBURNER // Holy #define hell, Batman! For the record, the only reason I'm not rewriting these tools in C++ is that it'd take forever.
+#define ZHLT_NFOPEN // Holy #define hell, Batman! For the record, the only reason I'm not rewriting these tools in C++ is that it'd take forever.
 #define ZHLT_WRITE_MODEL_ORIGIN // g-cont. store into dmodel_t their real origins
 #define ZHLT_CALC_AMBIENT_SOUNDS // g-cont. calc auto-ambient sounds like Quake1
 //#define ZHLT_TRANSLUCENT_WORLD_WATER // g-cont. allow to make world water is translucency (disabled because invoke crash somewhere into TestLine_r)
@@ -594,16 +594,16 @@
 #endif
 #endif
 
-#ifdef ZHLT_AFTERBURNER
-// These are all the options that Afterburner support depends on.
+#ifdef ZHLT_NFOPEN
+// These are all the options that Nightfire Open support depends on.
 #if !defined(HLRAD_TEXTURE)
-#error "Missing required features to support Afterburner BSPs."
+#error "Missing required features to support Nightfire Open BSPs."
 #endif
 
 #if defined(WORDS_BIGENDIAN)
 #error "Big-endian mode is not currently supported."
 #endif
-#endif // ZHLT_AFTERBURNER
+#endif // ZHLT_NFOPEN
 //=====================================================================
 
 #if _MSC_VER <1400

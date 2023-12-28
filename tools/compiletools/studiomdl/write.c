@@ -565,7 +565,7 @@ void WriteFile (void)
 		modelouthandle = SafeOpenWrite (texname);
 
 		phdr = (studiohdr_t *)pStart;
-		phdr->ident = AFTERBURNER_HEADER;
+		phdr->ident = NFOPEN_HEADER;
 		phdr->version = STUDIO_VERSION;
 
 		pData = (byte *)phdr + sizeof( studiohdr_t );
@@ -593,7 +593,7 @@ void WriteFile (void)
 
 	phdr = (studiohdr_t *)pStart;
 
-	phdr->ident = AFTERBURNER_HEADER;
+	phdr->ident = NFOPEN_HEADER;
 	phdr->version = STUDIO_VERSION;
 	strcpy( phdr->name, outname );
 	VectorCopy( eyeposition, phdr->eyeposition );

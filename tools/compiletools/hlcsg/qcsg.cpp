@@ -1837,8 +1837,8 @@ static void     Usage()
 #ifdef HLCSG_SCALESIZE
 	Log("    -scale #         : Scale the world. Use at your own risk.\n");
 #endif
-#ifdef ZHLT_AFTERBURNER
-    Log("    -texturedir      : Directory in which to find PNG textures for Afterburner maps.\n");
+#ifdef ZHLT_NFOPEN
+    Log("    -texturedir      : Directory in which to find PNG textures for Nightfire Open maps.\n");
 #endif
     Log("    mapfile          : The mapfile to compile\n\n");
 
@@ -2311,7 +2311,7 @@ int             main(const int argc, char** argv)
 			g_nullifytrigger = false;
 		}
 #endif
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
         else if ( strcasecmp(argv[i], "-texturedir") == 0 )
         {
             if (i + 1 < argc)

@@ -3,7 +3,7 @@
 // little-endian "IDST"
 #define IDSTUDIOSEQHEADER	(('Q'<<24)+('S'<<16)+('D'<<8)+'I')
 // little-endian "IDSQ"
-#define AFTERBURNER_HEADER (('B'<<24)+('T'<<16)+('F'<<8)+'A')
+#define NFOPEN_HEADER (('B'<<24)+('T'<<16)+('F'<<8)+'A')
 
 #ifndef EXTERN
 #define EXTERN extern
