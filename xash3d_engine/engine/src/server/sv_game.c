@@ -3007,7 +3007,7 @@ this is low-res angle
 */
 void GAME_EXPORT pfnWriteAngle(float flValue)
 {
-	int iAngle = ((int)((flValue)*256 / 360) & 255);
+	int iAngle = ((int)((flValue) * 256 / 360) & 255);
 
 	MSG_WriteChar(&sv.multicast, iAngle);
 	if ( svgame.msg_trace )
@@ -5208,7 +5208,8 @@ static enginefuncs_t gEngfuncs = {
 	pfnModelSequenceDuration,
 	pfnGetHitboxCount,
 	pfnGetTransformedHitboxPoints,
-	pfnGetHitboxHitGroup};
+	pfnGetHitboxHitGroup,
+};
 
 /*
 ====================
