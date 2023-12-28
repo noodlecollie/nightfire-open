@@ -2,12 +2,15 @@
 set(COMPATIBILITY_TYPE "goldsrc")
 
 add_executable(${TARGETNAME_EXE_NFRAD}_new
+	alias.cpp
 	$<$<OR:$<STREQUAL:"${COMPATIBILITY_TYPE}","p2">,$<STREQUAL:"${COMPATIBILITY_TYPE}","goldsrc">>:ambientcube.cpp>
 	app_info.h
 	dirtmap.cpp
 	facepos.cpp
 	lerp.cpp
 	mat3x4_extra.h
+	model_trace.h
+	qrad.h
 	randomfloat.h
 	randomfloat.cpp
 	$<$<STREQUAL:"${COMPATIBILITY_TYPE}","p2">:raytracer.h>

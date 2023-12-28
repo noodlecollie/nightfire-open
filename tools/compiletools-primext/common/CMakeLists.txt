@@ -11,6 +11,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	include/CompileTools/conprint.h
 	include/CompileTools/crashhandler.h
 	include/CompileTools/file_system.h
+	include/CompileTools/half_float.h
 	include/CompileTools/loglevel.h
 	include/CompileTools/polylib.h
 	include/CompileTools/scriptlib.h
@@ -26,6 +27,7 @@ add_library(${TARGETNAME_LIB_COMPILETOOLS} STATIC
 	src/conprint.cpp
 	src/crashhandler.cpp
 	src/file_system.cpp
+	src/half_float.cpp
 	src/polylib.cpp
 	src/scriptlib.cpp
 	src/shaders.cpp

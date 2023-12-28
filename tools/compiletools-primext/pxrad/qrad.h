@@ -8,6 +8,8 @@
  *
  ****/
 
+#pragma once
+
 #include <fcntl.h>
 #include "MathLib/mat3x4.h"
 #include "CompileTools/compatibility_mode.h"
