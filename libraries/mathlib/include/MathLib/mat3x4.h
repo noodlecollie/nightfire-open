@@ -33,6 +33,8 @@ void Matrix3x4_VectorIRotate(const matrix3x4 in, const vec3_t v, vec3_t out);
 
 void Matrix3x4_MatrixToEntityScale3f(const matrix3x4 in, vec3_t origin, vec3_t angles, vec3_t scale);
 
+vec_t Matrix3x4_CalcSign(const matrix3x4 in);
+
 static inline void Matrix3x4_LoadIdentity(matrix3x4 mat)
 {
 	Matrix3x4_Copy(mat, m_matrix3x4_identity);
