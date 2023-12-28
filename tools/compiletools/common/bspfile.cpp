@@ -117,6 +117,7 @@ int		g_dleaflights_checksum;
 int		g_numworldlights;
 dworldlight_t	g_dworldlights[MAX_MAP_WORLDLIGHTS];
 int		g_dworldlights_checksum;
+#endif  // ZHLT_PARANOIA_BSP
 
 #ifdef ZHLT_NFOPEN
 size_t g_numclientmodels = 0;
@@ -127,7 +128,6 @@ size_t g_numclientsounds = 0;
 dclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
 int g_clientsounds_checksum = 0;
 #endif  // ZHLT_NFOPEN
-#endif  // ZHLT_PARANOIA_BSP
 
 // can be overrided from hlcsg
 vec3_t g_hull_size[MAX_MAP_HULLS][2] =
@@ -743,6 +743,21 @@ void LoadBSPImage( dheader_t* const header )
 	g_visdatasize = CopyLump( LUMP_VISIBILITY, g_dvisdata, 1, header );
 	g_lightdatasize = CopyLump( LUMP_LIGHTING, g_dlightdata, 1, header );
 	g_entdatasize = CopyLump( LUMP_ENTITIES, g_dentdata, 1, header );
+
+#ifdef ZHLT_NFOPEN
+	{
+		int length = header->lumps[LUMP_CLIENTENTS].filelen;
+		int ofs = header->lumps[LUMP_CLIENTENTS].fileofs;
+
+		if ( length < 0 )
+		{
+			length = 0;
+		}
+
+		ReadClientEntitiesLump(reinterpret_cast<const byte*>(header) + ofs, static_cast<size_t>(length));
+	}
+#endif  // ZHLT_NFOPEN
+
 #ifdef ZHLT_PARANOIA_BSP
 	dextrahdr_t*    extrahdr = (dextrahdr_t *)((byte *)header + sizeof( dheader_t ));
 
@@ -768,23 +783,9 @@ void LoadBSPImage( dheader_t* const header )
 		g_numfaceinfo = CopyExtraLump( LUMP_FACEINFO, g_dfaceinfo, sizeof( dfaceinfo_t ), header );
 		g_numleaflights = CopyExtraLump( LUMP_LEAF_LIGHTING, g_dleaflights, sizeof( dleafsample_t ), header );
 		g_numworldlights = CopyExtraLump( LUMP_WORLDLIGHTS, g_dworldlights, sizeof( dworldlight_t ), header );
-
-#ifdef ZHLT_NFOPEN
-		{
-			const dextrahdr_t* extrahdr = (const dextrahdr_t*)((const byte*)header + sizeof(dheader_t));
-			int length = extrahdr->lumps[LUMP_CLIENTENTS].filelen;
-			int ofs = extrahdr->lumps[LUMP_CLIENTENTS].fileofs;
-
-			if ( length < 0 )
-			{
-				length = 0;
-			}
-
-			ReadClientEntitiesLump(reinterpret_cast<const byte*>(header) + ofs, static_cast<size_t>(length));
-		}
-#endif  // ZHLT_NFOPEN
 	}
 #endif
+
 	Free( header );	// everything has been copied out
 
 	//
@@ -816,6 +817,11 @@ void LoadBSPImage( dheader_t* const header )
 	g_dlightdata_checksum = FastChecksum( g_dlightdata, g_lightdatasize * sizeof( g_dlightdata[0] ));
 	g_dentdata_checksum = FastChecksum( g_dentdata, g_entdatasize * sizeof( g_dentdata[0] ));
 
+#ifdef ZHLT_NFOPEN
+	g_clientmodels_checksum = FastChecksum( g_clientmodels, g_numclientmodels * sizeof( g_clientmodels[0] ));
+	g_clientsounds_checksum = FastChecksum( g_clientsounds, g_numclientsounds * sizeof( g_clientsounds[0] ));
+#endif
+
 #ifdef ZHLT_PARANOIA_BSP
 	if( g_found_extradata )
 	{
@@ -825,11 +831,6 @@ void LoadBSPImage( dheader_t* const header )
 		g_dfaceinfo_checksum = FastChecksum( g_dfaceinfo, g_numfaceinfo * sizeof( g_dfaceinfo[0] ));
 		g_dleaflights_checksum = FastChecksum( g_dleaflights, g_numleaflights * sizeof( g_dleaflights[0] ));
 		g_dworldlights_checksum = FastChecksum( g_dworldlights, g_numworldlights * sizeof( g_dworldlights[0] ));
-
-#ifdef ZHLT_NFOPEN
-		g_clientmodels_checksum = FastChecksum( g_clientmodels, g_numclientmodels * sizeof( g_clientmodels[0] ));
-		g_clientsounds_checksum = FastChecksum( g_clientsounds, g_numclientsounds * sizeof( g_clientsounds[0] ));
-#endif
 	}
 #endif
 }
@@ -947,6 +948,14 @@ void WriteBSPFile( const char* const filename )
 	AddLump( LUMP_ENTITIES,     g_dentdata,      g_entdatasize,                          header, bspfile );
 	AddLump( LUMP_TEXTURES, writer.exportedData().data(), writer.exportedData().size(),  header, bspfile );
 
+#ifdef ZHLT_NFOPEN
+	{
+		size_t dataLength = 0;
+		const void* data = CompileClientEntitiesLump(dataLength, true);
+		AddLump(LUMP_CLIENTENTS, data, dataLength, header, bspfile);
+	}
+#endif  // ZHLT_NFOPEN
+
 #ifdef ZHLT_PARANOIA_BSP
 //    Log( "num extra faces %i, num faces %i, num worldlights %i, num ambient lights %i, num extra leafs %i, num leafs %i\n",
 //    g_numfaces_extra, g_numfaces, g_numworldlights, g_numleaflights, g_numleafdata, g_numleafs );
@@ -958,13 +967,6 @@ void WriteBSPFile( const char* const filename )
 	AddExtraLump( LUMP_FACEINFO,     g_dfaceinfo,     g_numfaceinfo * sizeof( dfaceinfo_t ),      extrahdr, bspfile );
 	AddExtraLump( LUMP_LEAF_LIGHTING,g_dleaflights,   g_numleaflights * sizeof( dleafsample_t ),  extrahdr, bspfile );
 	AddExtraLump( LUMP_WORLDLIGHTS,  g_dworldlights,  g_numworldlights * sizeof( dworldlight_t ), extrahdr, bspfile );
-#ifdef ZHLT_NFOPEN
-	{
-		size_t dataLength = 0;
-		const void* data = CompileClientEntitiesLump(dataLength, true);
-		AddExtraLump(LUMP_CLIENTENTS, data, dataLength, extrahdr, bspfile);
-	}
-#endif  // ZHLT_NFOPEN
 #endif  // ZHLT_PARANOIA_BSP
 
 	fseek( bspfile, 0, SEEK_SET );
@@ -1528,6 +1530,14 @@ void PrintBSPFileSizes( void )
 #endif
 #endif
 
+#ifdef ZHLT_NFOPEN
+	{
+		size_t numBytes = 0;
+		CompileClientEntitiesLump(numBytes);
+		totalmemory += GlobUsage("cliententdata", numBytes, NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE);
+	}
+#endif  // ZHLT_NFOPEN
+
 #ifdef ZHLT_PARANOIA_BSP
 	if( g_found_extradata )
 	{
@@ -1537,14 +1547,6 @@ void PrintBSPFileSizes( void )
 		totalmemory += ArrayUsage( "faceinfo", g_numfaceinfo, ENTRIES( g_dfaceinfo ), ENTRYSIZE( g_dfaceinfo ));
 		totalmemory += ArrayUsage( "ambient cubes", g_numleaflights, ENTRIES( g_dleaflights ), ENTRYSIZE( g_dleaflights ));
 		totalmemory += ArrayUsage( "direct lights", g_numworldlights, ENTRIES( g_dworldlights ), ENTRYSIZE( g_dworldlights ));
-
-#ifdef ZHLT_NFOPEN
-		{
-			size_t numBytes = 0;
-			CompileClientEntitiesLump(numBytes);
-			totalmemory += GlobUsage("entdata", numBytes, NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE);
-		}
-#endif  // ZHLT_NFOPEN
 	}
 #endif
 	Log( "%i textures referenced\n", numtextures );
@@ -1925,7 +1927,7 @@ bool ParseEntity( void )
 	return true;
 }
 
-#if defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+#if defined(ZHLT_NFOPEN)
 void MakeClientEntity_Model(const entity_t& entity)
 {
 	if ( g_numclientmodels >= NFOPEN_CLIENT_ENT_MAX_MODELS )
@@ -2014,7 +2016,7 @@ void MakeClientEntity_Sound(const entity_t& entity)
 		outSound->volume = 255;
 	}
 }
-#endif  // defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+#endif  // defined(ZHLT_NFOPEN)
 
 // =====================================================================================
 //  ParseEntities
@@ -2233,7 +2235,7 @@ void            UnparseEntities()
 #endif
 #endif
 
-#if defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+#if defined(ZHLT_NFOPEN)
 	// Wow, this function is pretty horrible. Let's just stick
 	// another entities pass in here, the code's too dirty to fix up.
 	for (i = 0; i < g_numentities; i++)
@@ -2251,7 +2253,7 @@ void            UnparseEntities()
 			DeleteAllKeys(mapent);
 		}
 	}
-#endif  // defined(ZHLT_NFOPEN) && defined(ZHLT_PARANOIA_BSP)
+#endif  // defined(ZHLT_NFOPEN)
 
     for (i = 0; i < g_numentities; i++)
     {
