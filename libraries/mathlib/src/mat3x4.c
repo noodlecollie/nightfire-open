@@ -181,34 +181,6 @@ void Matrix3x4_CreateFromEntityScale3f(matrix3x4 out, const vec3_t angles, const
 	}
 }
 
-void Matrix3x4_MatrixToEntityScale3f(const matrix3x4 in, vec3_t origin, vec3_t angles, vec3_t scale)
-{
-	float xyDist = sqrtf(in[0][0] * in[0][0] + in[0][1] * in[0][1]);
-
-	if ( xyDist > 0.001f )
-	{
-		// enough here to get angles?
-		angles[0] = RAD2DEGF(atan2(-in[0][2], xyDist));
-		angles[1] = RAD2DEGF(atan2(in[0][1], in[0][0]));
-		angles[2] = RAD2DEGF(atan2(in[1][2], in[2][2]));
-	}
-	else
-	{
-		// forward is mostly Z, gimbal lock
-		angles[0] = RAD2DEGF(atan2(-in[0][2], xyDist));
-		angles[1] = RAD2DEGF(atan2(-in[1][0], in[1][1]));
-		angles[2] = 0.0f;
-	}
-
-	origin[0] = in[3][0];
-	origin[1] = in[3][1];
-	origin[2] = in[3][2];
-
-	scale[0] = VectorLength(in[0]);
-	scale[1] = VectorLength(in[1]);
-	scale[2] = VectorLength(in[2]);
-}
-
 vec_t Matrix3x4_CalcSign(const matrix3x4 in)
 {
 	vec3_t out;
