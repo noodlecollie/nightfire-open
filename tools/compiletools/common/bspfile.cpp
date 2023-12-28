@@ -779,7 +779,7 @@ void LoadBSPImage( dheader_t* const header )
 		dnfopenextralump_t* lump = NFOpen::LookUpLump(nfHeader, NFOPEN_LUMP_CLIENTENTS);
 
 		ReadClientEntitiesLump(
-			reinterpret_cast<const byte*>(nfHeader) + lump->offsetFromBeginningOfExtraData,
+			reinterpret_cast<const byte*>(nfHeader) + lump->offsetFromBeginningOfExtraHeader,
 			static_cast<size_t>(lump->dataLength));
 	}
 #endif  // ZHLT_NFOPEN
@@ -860,14 +860,14 @@ static void AddExtraLump( int lumpnum, const void* data, int len, dextrahdr_t* h
 #endif
 
 #ifdef ZHLT_NFOPEN
-static void AddExtraLump(uint32_t lumpnum, const void* data, uint32_t len, dnfopenextraheader_t* header, size_t headerOffset, FILE* bspfile)
+static void WriteLumpDescriptor(const dnfopenextralump_t& lump, FILE* bspfile)
 {
-	dnfopenextralump_t* lump = NFOpen::LookUpLump(header, lumpnum);
-	lump->offsetFromBeginningOfExtraData = LittleLong(ftell(bspfile) - headerOffset);
-	lump->dataLength = LittleLong(len);
-	SafeWrite(bspfile, data, (len + 3) & ~3);
+	SafeWrite(bspfile, &lump, sizeof(lump));
+}
 
-	++header->numLumps;
+static void WriteLumpData(const void* data, uint32_t len, FILE* bspfile)
+{
+	SafeWrite(bspfile, data, (len + 3) & ~3);
 }
 #endif  // ZHLT_NFOPEN
 
@@ -943,6 +943,7 @@ void WriteBSPFile( const char* const filename )
 #ifdef ZHLT_NFOPEN
 	const size_t nfHeaderOffset = ftell(bspfile);
 	SafeWrite(bspfile, nfHeader, sizeof(*nfHeader)); // overwritten later
+	WriteLumpDescriptor({NFOPEN_LUMP_CLIENTENTS, 0, 0}, bspfile); // overwritten later
 #endif  // ZHLT_NFOPEN
 
 	//       LUMP TYPE          DATA             LENGTH                                  HEADER  BSPFILE
@@ -995,16 +996,11 @@ void WriteBSPFile( const char* const filename )
 #endif  // ZHLT_PARANOIA_BSP
 
 #ifdef ZHLT_NFOPEN
-	{
-		const size_t beginNFData = ftell(bspfile);
-
-		size_t dataLength = 0;
-		const void* data = CompileClientEntitiesLump(dataLength, true);
-		AddExtraLump(NFOPEN_LUMP_CLIENTENTS, data, static_cast<uint32_t>(dataLength), nfHeader, nfHeaderOffset, bspfile);
-
-		const size_t endNFData = ftell(bspfile);
-		nfHeader->dataLength = static_cast<uint32_t>(endNFData - beginNFData);
-	}
+	const size_t beginClientEntData = ftell(bspfile) - nfHeaderOffset;
+	size_t clientEntDataLength = 0;
+	const void* clientEntData = CompileClientEntitiesLump(clientEntDataLength, true);
+	WriteLumpData(clientEntData, static_cast<uint32_t>(clientEntDataLength), bspfile);
+	++nfHeader->numLumps;
 #endif  // ZHLT_NFOPEN
 
 	fseek( bspfile, 0, SEEK_SET );
@@ -1015,7 +1011,8 @@ void WriteBSPFile( const char* const filename )
 #endif
 
 #ifdef ZHLT_NFOPEN
-	SafeWrite(bspfile, nfHeader, sizeof(*nfHeader)); // overwritten later
+	SafeWrite(bspfile, nfHeader, sizeof(*nfHeader));
+	WriteLumpDescriptor({NFOPEN_LUMP_CLIENTENTS, static_cast<uint32_t>(beginClientEntData), static_cast<uint32_t>(clientEntDataLength)}, bspfile);
 #endif  // ZHLT_NFOPEN
 
 	fclose( bspfile );

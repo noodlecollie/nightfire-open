@@ -26,7 +26,7 @@ namespace NFOpen
 			}
 		}
 
-		Error("NFOpen::LookUpLump: Could not find lumo with ID %u\n", lumpID);
+		Error("NFOpen::LookUpLump: Could not find lump with ID %u\n", lumpID);
 		return nullptr;
 	}
 }  // namespace NFOpen

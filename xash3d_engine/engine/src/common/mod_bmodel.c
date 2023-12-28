@@ -206,183 +206,226 @@ static dbspmodel_t srcmodel;
 static loadstat_t loadstat;
 static model_t* worldmodel;
 static byte g_visdata[(MAX_MAP_LEAFS + 7) / 8];  // intermediate buffer
-static mlumpstat_t worldstats[HEADER_LUMPS + EXTRA_LUMPS];
+
 static mlumpinfo_t srclumps[HEADER_LUMPS] = {
-	{LUMP_ENTITIES,
-	 32,
-	 MAX_MAP_ENTSTRING,
-	 sizeof(byte),
-	 -1,
-	 "entities",
-	 0,
-	 (const void**)&srcmodel.entdata,
-	 &srcmodel.entdatasize},
-	{LUMP_PLANES,
-	 1,
-	 MAX_MAP_PLANES,
-	 sizeof(dplane_t),
-	 -1,
-	 "planes",
-	 0,
-	 (const void**)&srcmodel.planes,
-	 &srcmodel.numplanes},
-	{LUMP_TEXTURES,
-	 1,
-	 MAX_MAP_MIPTEX,
-	 sizeof(byte),
-	 -1,
-	 "textures",
-	 0,
-	 (const void**)&srcmodel.textures,
-	 &srcmodel.texdatasize},
-	{LUMP_VERTEXES,
-	 0,
-	 MAX_MAP_VERTS,
-	 sizeof(dvertex_t),
-	 -1,
-	 "vertexes",
-	 0,
-	 (const void**)&srcmodel.vertexes,
-	 &srcmodel.numvertexes},
-	{LUMP_VISIBILITY,
-	 0,
-	 MAX_MAP_VISIBILITY,
-	 sizeof(byte),
-	 -1,
-	 "visibility",
-	 0,
-	 (const void**)&srcmodel.visdata,
-	 &srcmodel.visdatasize},
-	{LUMP_NODES,
-	 1,
-	 MAX_MAP_NODES,
-	 sizeof(dnode_t),
-	 sizeof(dnode32_t),
-	 "nodes",
-	 CHECK_OVERFLOW,
-	 (const void**)&srcmodel.nodes,
-	 &srcmodel.numnodes},
-	{LUMP_TEXINFO,
-	 0,
-	 MAX_MAP_TEXINFO,
-	 sizeof(dtexinfo_t),
-	 -1,
-	 "texinfo",
-	 CHECK_OVERFLOW,
-	 (const void**)&srcmodel.texinfo,
-	 &srcmodel.numtexinfo},
-	{LUMP_FACES,
-	 0,
-	 MAX_MAP_FACES,
-	 sizeof(dface_t),
-	 sizeof(dface32_t),
-	 "faces",
-	 CHECK_OVERFLOW,
-	 (const void**)&srcmodel.surfaces,
-	 &srcmodel.numsurfaces},
-	{LUMP_LIGHTING,
-	 0,
-	 MAX_MAP_LIGHTING,
-	 sizeof(byte),
-	 -1,
-	 "lightmaps",
-	 0,
-	 (const void**)&srcmodel.lightdata,
-	 &srcmodel.lightdatasize},
-	{LUMP_CLIPNODES,
-	 0,
-	 MAX_MAP_CLIPNODES,
-	 sizeof(dclipnode_t),
-	 sizeof(dclipnode32_t),
-	 "clipnodes",
-	 0,
-	 (const void**)&srcmodel.clipnodes,
-	 &srcmodel.numclipnodes},
-	{LUMP_LEAFS,
-	 1,
-	 MAX_MAP_LEAFS,
-	 sizeof(dleaf_t),
-	 sizeof(dleaf32_t),
-	 "leafs",
-	 CHECK_OVERFLOW,
-	 (const void**)&srcmodel.leafs,
-	 &srcmodel.numleafs},
-	{LUMP_MARKSURFACES,
-	 0,
-	 MAX_MAP_MARKSURFACES,
-	 sizeof(dmarkface_t),
-	 sizeof(dmarkface32_t),
-	 "markfaces",
-	 0,
-	 (const void**)&srcmodel.markfaces,
-	 &srcmodel.nummarkfaces},
-	{LUMP_EDGES,
-	 0,
-	 MAX_MAP_EDGES,
-	 sizeof(dedge_t),
-	 sizeof(dedge32_t),
-	 "edges",
-	 0,
-	 (const void**)&srcmodel.edges,
-	 &srcmodel.numedges},
-	{LUMP_SURFEDGES,
-	 0,
-	 MAX_MAP_SURFEDGES,
-	 sizeof(dsurfedge_t),
-	 -1,
-	 "surfedges",
-	 0,
-	 (const void**)&srcmodel.surfedges,
-	 &srcmodel.numsurfedges},
-	{LUMP_MODELS,
-	 1,
-	 MAX_MAP_MODELS,
-	 sizeof(dmodel_t),
-	 -1,
-	 "models",
-	 CHECK_OVERFLOW,
-	 (const void**)&srcmodel.submodels,
-	 &srcmodel.numsubmodels},
-	{LUMP_CLIENTENTS,
-	 0,
-	 NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE,
-	 sizeof(byte),
-	 -1,
-	 "clientents",
-	 0,
-	 (const void**)&srcmodel.cliententdata,
-	 &srcmodel.cliententdatasize},
+	{
+		LUMP_ENTITIES,
+		32,
+		MAX_MAP_ENTSTRING,
+		sizeof(byte),
+		-1,
+		"entities",
+		0,
+		(const void**)&srcmodel.entdata,
+		&srcmodel.entdatasize,
+	},
+	{
+		LUMP_PLANES,
+		1,
+		MAX_MAP_PLANES,
+		sizeof(dplane_t),
+		-1,
+		"planes",
+		0,
+		(const void**)&srcmodel.planes,
+		&srcmodel.numplanes,
+	},
+	{
+		LUMP_TEXTURES,
+		1,
+		MAX_MAP_MIPTEX,
+		sizeof(byte),
+		-1,
+		"textures",
+		0,
+		(const void**)&srcmodel.textures,
+		&srcmodel.texdatasize,
+	},
+	{
+		LUMP_VERTEXES,
+		0,
+		MAX_MAP_VERTS,
+		sizeof(dvertex_t),
+		-1,
+		"vertexes",
+		0,
+		(const void**)&srcmodel.vertexes,
+		&srcmodel.numvertexes,
+	},
+	{
+		LUMP_VISIBILITY,
+		0,
+		MAX_MAP_VISIBILITY,
+		sizeof(byte),
+		-1,
+		"visibility",
+		0,
+		(const void**)&srcmodel.visdata,
+		&srcmodel.visdatasize,
+	},
+	{
+		LUMP_NODES,
+		1,
+		MAX_MAP_NODES,
+		sizeof(dnode_t),
+		sizeof(dnode32_t),
+		"nodes",
+		CHECK_OVERFLOW,
+		(const void**)&srcmodel.nodes,
+		&srcmodel.numnodes,
+	},
+	{
+		LUMP_TEXINFO,
+		0,
+		MAX_MAP_TEXINFO,
+		sizeof(dtexinfo_t),
+		-1,
+		"texinfo",
+		CHECK_OVERFLOW,
+		(const void**)&srcmodel.texinfo,
+		&srcmodel.numtexinfo,
+	},
+	{
+		LUMP_FACES,
+		0,
+		MAX_MAP_FACES,
+		sizeof(dface_t),
+		sizeof(dface32_t),
+		"faces",
+		CHECK_OVERFLOW,
+		(const void**)&srcmodel.surfaces,
+		&srcmodel.numsurfaces,
+	},
+	{
+		LUMP_LIGHTING,
+		0,
+		MAX_MAP_LIGHTING,
+		sizeof(byte),
+		-1,
+		"lightmaps",
+		0,
+		(const void**)&srcmodel.lightdata,
+		&srcmodel.lightdatasize,
+	},
+	{
+		LUMP_CLIPNODES,
+		0,
+		MAX_MAP_CLIPNODES,
+		sizeof(dclipnode_t),
+		sizeof(dclipnode32_t),
+		"clipnodes",
+		0,
+		(const void**)&srcmodel.clipnodes,
+		&srcmodel.numclipnodes,
+	},
+	{
+		LUMP_LEAFS,
+		1,
+		MAX_MAP_LEAFS,
+		sizeof(dleaf_t),
+		sizeof(dleaf32_t),
+		"leafs",
+		CHECK_OVERFLOW,
+		(const void**)&srcmodel.leafs,
+		&srcmodel.numleafs,
+	},
+	{
+		LUMP_MARKSURFACES,
+		0,
+		MAX_MAP_MARKSURFACES,
+		sizeof(dmarkface_t),
+		sizeof(dmarkface32_t),
+		"markfaces",
+		0,
+		(const void**)&srcmodel.markfaces,
+		&srcmodel.nummarkfaces,
+	},
+	{
+		LUMP_EDGES,
+		0,
+		MAX_MAP_EDGES,
+		sizeof(dedge_t),
+		sizeof(dedge32_t),
+		"edges",
+		0,
+		(const void**)&srcmodel.edges,
+		&srcmodel.numedges,
+	},
+	{
+		LUMP_SURFEDGES,
+		0,
+		MAX_MAP_SURFEDGES,
+		sizeof(dsurfedge_t),
+		-1,
+		"surfedges",
+		0,
+		(const void**)&srcmodel.surfedges,
+		&srcmodel.numsurfedges,
+	},
+	{
+		LUMP_MODELS,
+		1,
+		MAX_MAP_MODELS,
+		sizeof(dmodel_t),
+		-1,
+		"models",
+		CHECK_OVERFLOW,
+		(const void**)&srcmodel.submodels,
+		&srcmodel.numsubmodels,
+	},
 };
 
 static mlumpinfo_t extlumps[EXTRA_LUMPS] = {
-	{LUMP_LIGHTVECS,
-	 0,
-	 MAX_MAP_LIGHTING,
-	 sizeof(byte),
-	 -1,
-	 "deluxmaps",
-	 USE_EXTRAHEADER,
-	 (const void**)&srcmodel.deluxdata,
-	 &srcmodel.deluxdatasize},
-	{LUMP_FACEINFO,
-	 0,
-	 MAX_MAP_FACEINFO,
-	 sizeof(dfaceinfo_t),
-	 -1,
-	 "faceinfos",
-	 CHECK_OVERFLOW | USE_EXTRAHEADER,
-	 (const void**)&srcmodel.faceinfo,
-	 &srcmodel.numfaceinfo},
-	{LUMP_SHADOWMAP,
-	 0,
-	 MAX_MAP_LIGHTING / 3,
-	 sizeof(byte),
-	 -1,
-	 "shadowmap",
-	 USE_EXTRAHEADER,
-	 (const void**)&srcmodel.shadowdata,
-	 &srcmodel.shadowdatasize},
+	{
+		LUMP_LIGHTVECS,
+		0,
+		MAX_MAP_LIGHTING,
+		sizeof(byte),
+		-1,
+		"deluxmaps",
+		USE_EXTRAHEADER,
+		(const void**)&srcmodel.deluxdata,
+		&srcmodel.deluxdatasize,
+	},
+	{
+		LUMP_FACEINFO,
+		0,
+		MAX_MAP_FACEINFO,
+		sizeof(dfaceinfo_t),
+		-1,
+		"faceinfos",
+		CHECK_OVERFLOW | USE_EXTRAHEADER,
+		(const void**)&srcmodel.faceinfo,
+		&srcmodel.numfaceinfo,
+	},
+	{
+		LUMP_SHADOWMAP,
+		0,
+		MAX_MAP_LIGHTING / 3,
+		sizeof(byte),
+		-1,
+		"shadowmap",
+		USE_EXTRAHEADER,
+		(const void**)&srcmodel.shadowdata,
+		&srcmodel.shadowdatasize,
+	},
 };
+
+static const mlumpinfo_t nfopenExtraLumps[] = {
+	{
+		NFOPEN_LUMP_CLIENTENTS,
+		0,
+		NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE,
+		sizeof(byte),
+		-1,
+		"clientents",
+		USE_EXTRAHEADER,
+		(const void**)&srcmodel.cliententdata,
+		&srcmodel.cliententdatasize,
+	},
+};
+
+static mlumpstat_t worldstats[SIZE_OF_ARRAY(srclumps) + SIZE_OF_ARRAY(extlumps) + SIZE_OF_ARRAY(nfopenExtraLumps)];
 
 static inline qboolean StringIsTerminated(const char* str, size_t maxLength)
 {
@@ -413,6 +456,69 @@ static inline qboolean StringIsTerminated(const char* str, size_t maxLength)
 
 ===============================================================================
 */
+
+static qboolean
+Mod_ValidateLumpExtents(const char* description, const dlump_t* lumps, size_t numLumps, size_t dataLength)
+{
+	qboolean success = true;
+
+	for ( size_t index = 0; index < numLumps; ++index )
+	{
+		const dlump_t* lump = &lumps[index];
+
+		// Casting to size_t protects against negative integer values being set in these lumps.
+		if ( (size_t)lump->fileofs >= dataLength || (size_t)lump->fileofs + (size_t)lump->filelen > dataLength )
+		{
+			Con_Printf(
+				S_ERROR "Map %s %s lump %zu exceeds bounds of file (offset %d, length %d, file length %zu)\n",
+				loadstat.name,
+				description,
+				index,
+				lump->fileofs,
+				lump->filelen,
+				dataLength);
+
+			success = false;
+		}
+	}
+
+	return success;
+}
+
+static qboolean
+Mod_ValidateNFOpenLumpExtents(const dnfopenextraheader_t* header, size_t headerOffset, size_t dataLength)
+{
+	if ( headerOffset + sizeof(*header) + (header->numLumps * sizeof(dnfopenextralump_t)) > dataLength )
+	{
+		Con_Printf(
+			S_ERROR
+			"Map %s nfopen lump header exeeds bounds of file (offset %zu, length %zu, num lumps %u, file length %zu)\n",
+			loadstat.name,
+			headerOffset,
+			header->numLumps * sizeof(dnfopenextralump_t),
+			header->numLumps,
+			dataLength);
+
+		return false;
+	}
+
+	qboolean success = true;
+	const dnfopenextralump_t* base = (const dnfopenextralump_t*)((const byte*)header + sizeof(*header));
+
+	for ( uint32_t index = 0; index < header->numLumps; ++index )
+	{
+		const dnfopenextralump_t* lump = &base[index];
+
+		if ( headerOffset + (size_t)lump->offsetFromBeginningOfExtraHeader >= dataLength ||
+			 headerOffset + (size_t)lump->offsetFromBeginningOfExtraHeader + (size_t)lump->dataLength > dataLength )
+		{
+			Con_Printf(S_ERROR "Map %s nfopen lump %u exceeds bounds of file\n", loadstat.name, index);
+			success = false;
+		}
+	}
+
+	return success;
+}
 
 static mip_t* Mod_GetMipTexForTexture(dbspmodel_t* bmod, int i)
 {
@@ -541,6 +647,22 @@ static void Mod_CreateDefaultTexture(texture_t** texture)
 
 ===============================================================================
 */
+
+static const dnfopenextralump_t* LoadNFOpenExtraLump(const dnfopenextraheader_t* header, uint32_t lumpIndex)
+{
+	const dnfopenextralump_t* base = (const dnfopenextralump_t*)((const byte*)header + sizeof(*header));
+
+	for ( uint32_t index = 0; index < header->numLumps; ++index )
+	{
+		if ( base[index].lumpIndex == lumpIndex )
+		{
+			return &base[index];
+		}
+	}
+
+	return NULL;
+}
+
 /*
 =================
 Mod_LoadLump
@@ -548,19 +670,70 @@ Mod_LoadLump
 generic loader
 =================
 */
-static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, int flags)
+static void Mod_LoadLump(const byte* in, const mlumpinfo_t* info, mlumpstat_t* stat, int flags)
 {
 	int version = ((dheader_t*)in)->version;
-	size_t numelems, real_entrysize;
-	char msg1[32], msg2[32];
-	dlump_t* l = NULL;
+	size_t numelems;
+	size_t real_entrysize;
+	char msg1[32];
+	char msg2[32];
+	dlump_t localLump;
+	const dlump_t* l = NULL;
 
 	if ( FBitSet(info->flags, USE_EXTRAHEADER) )
 	{
-		dextrahdr_t* header = (dextrahdr_t*)((byte*)in + sizeof(dheader_t));
-		if ( header->id != IDEXTRAHEADER || header->version != EXTRA_VERSION )
-			return;
-		l = &header->lumps[info->lumpnumber];
+		if ( version == NFOPENBSP_VERSION )
+		{
+			const dnfopenextraheader_t* header = (const dnfopenextraheader_t*)(in + sizeof(dheader_t));
+
+			if ( header->id != NFOPEN_EXTRAHEADER_ID )
+			{
+				Con_DPrintf(S_ERROR, "Map ^2%s^7 nfopen extraheader ID does not match expected value\n", loadstat.name);
+				return;
+			}
+
+			if ( header->version != NFOPEN_EXTRAHEADER_VERSION )
+			{
+				Con_DPrintf(
+					S_ERROR,
+					"Map ^2%s^7 nfopen extraheader version %u does not match expected value %u\n",
+					loadstat.name,
+					header->version,
+					NFOPEN_EXTRAHEADER_VERSION);
+
+				return;
+			}
+
+			const dnfopenextralump_t* nfLump = LoadNFOpenExtraLump(header, (uint32_t)info->lumpnumber);
+
+			if ( !nfLump )
+			{
+				Con_DPrintf(
+					S_ERROR,
+					"Map ^2%s^7 nfopen lump %d could not be located\n",
+					loadstat.name,
+					info->lumpnumber);
+
+				return;
+			}
+
+			memset(&localLump, 0, sizeof(localLump));
+			localLump.fileofs = (int)((const byte*)header - in) + (int)nfLump->offsetFromBeginningOfExtraHeader;
+			localLump.filelen = (int)nfLump->dataLength;
+
+			l = &localLump;
+		}
+		else
+		{
+			const dextrahdr_t* header = (const dextrahdr_t*)(in + sizeof(dheader_t));
+
+			if ( header->id != IDEXTRAHEADER || header->version != EXTRA_VERSION )
+			{
+				return;
+			}
+
+			l = &header->lumps[info->lumpnumber];
+		}
 	}
 	else
 	{
@@ -570,7 +743,9 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 
 	// lump is unused by engine for some reasons ?
 	if ( !l || info->entrysize <= 0 || info->maxcount <= 0 )
+	{
 		return;
+	}
 
 	real_entrysize = info->entrysize;  // default
 
@@ -586,7 +761,9 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 
 	// bmodels not required the visibility
 	if ( !FBitSet(flags, LUMP_TESTONLY) && !world.loading && info->lumpnumber == LUMP_VISIBILITY )
+	{
 		SetBits(flags, LUMP_SILENT);  // shut up warning
+	}
 
 	// fill the stats for world
 	if ( FBitSet(flags, LUMP_SAVESTATS) )
@@ -594,8 +771,11 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 		stat->lumpname = info->loadname;
 		stat->entrysize = real_entrysize;
 		stat->maxcount = info->maxcount;
+
 		if ( real_entrysize != 0 )
+		{
 			stat->count = l->filelen / real_entrysize;
+		}
 	}
 
 	Q_strncpy(msg1, info->loadname, sizeof(msg1));
@@ -606,14 +786,14 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 	if ( l->filelen <= 0 )
 	{
 		// don't warn about extra lumps - it's optional
-		if ( !FBitSet(info->flags, USE_EXTRAHEADER) )
+		if ( !FBitSet(info->flags, USE_EXTRAHEADER) || version == NFOPENBSP_VERSION )
 		{
 			// some data array that may be optional
 			if ( real_entrysize == sizeof(byte) )
 			{
 				if ( !FBitSet(flags, LUMP_SILENT) )
 				{
-					Con_DPrintf(S_WARN "map ^2%s^7 has no %s\n", loadstat.name, msg1);
+					Con_DPrintf(S_WARN "Map ^2%s^7 has no %s\n", loadstat.name, msg1);
 					loadstat.numwarnings++;
 				}
 			}
@@ -621,21 +801,28 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 			{
 				// it has the mincount and the lump is completely missed!
 				if ( !FBitSet(flags, LUMP_SILENT) )
-					Con_DPrintf(S_ERROR "map ^2%s^7 has no %s\n", loadstat.name, msg1);
+				{
+					Con_DPrintf(S_ERROR "Map ^2%s^7 has no %s\n", loadstat.name, msg1);
+				}
+
 				loadstat.numerrors++;
 			}
 		}
+
 		return;
 	}
 
 	if ( l->filelen % real_entrysize )
 	{
 		if ( !FBitSet(flags, LUMP_SILENT) )
+		{
 			Con_DPrintf(
 				S_ERROR "Mod_Load%s: Lump size %d was not a multiple of %zu bytes\n",
 				msg2,
 				l->filelen,
 				real_entrysize);
+		}
+
 		loadstat.numerrors++;
 		return;
 	}
@@ -646,7 +833,10 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 	{
 		// it has the mincount and it's smaller than this limit
 		if ( !FBitSet(flags, LUMP_SILENT) )
-			Con_DPrintf(S_ERROR "map ^2%s^7 has no %s\n", loadstat.name, msg1);
+		{
+			Con_DPrintf(S_ERROR "Map ^2%s^7 has no %s\n", loadstat.name, msg1);
+		}
+
 		loadstat.numerrors++;
 		return;
 	}
@@ -657,26 +847,33 @@ static void Mod_LoadLump(const byte* in, mlumpinfo_t* info, mlumpstat_t* stat, i
 		if ( FBitSet(info->flags, CHECK_OVERFLOW) )
 		{
 			if ( !FBitSet(flags, LUMP_SILENT) )
-				Con_DPrintf(S_ERROR "map ^2%s^7 has too many %s\n", loadstat.name, msg1);
+				Con_DPrintf(S_ERROR "Map ^2%s^7 has too many %s\n", loadstat.name, msg1);
 			loadstat.numerrors++;
 			return;
 		}
 		else if ( !FBitSet(flags, LUMP_SILENT) )
 		{
 			// just throw warning
-			Con_DPrintf(S_WARN "map ^2%s^7 has too many %s\n", loadstat.name, msg1);
+			Con_DPrintf(S_WARN "Map ^2%s^7 has too many %s\n", loadstat.name, msg1);
 			loadstat.numwarnings++;
 		}
 	}
 
 	if ( FBitSet(flags, LUMP_TESTONLY) )
+	{
 		return;  // don't fill the intermediate struct
+	}
 
 	// all checks are passed, store pointers
 	if ( info->dataptr )
-		*info->dataptr = (void*)(in + l->fileofs);
+	{
+		*info->dataptr = (const void*)(in + l->fileofs);
+	}
+
 	if ( info->count )
+	{
 		*info->count = numelems;
+	}
 }
 
 /*
@@ -3449,16 +3646,18 @@ Mod_LoadBmodelLumps
 loading and processing bmodel
 =================
 */
-qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
+qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean isworld)
 {
-	const dheader_t* header = (const dheader_t*)mod_base;
-	const dextrahdr_t* extrahdr = (const dextrahdr_t*)(mod_base + sizeof(dheader_t));
+	const dheader_t* header = NULL;
+	const dextrahdr_t* extrahdr = NULL;
+	const dnfopenextraheader_t* nfopenHeader = NULL;
 	dbspmodel_t* bmod = &srcmodel;
 	model_t* mod = loadmodel;
 	char wadvalue[2048];
 	size_t len = 0;
 	size_t i;
-	int ret, flags = 0;
+	int ret;
+	int flags = 0;
 
 	// always reset the intermediate struct
 	memset(bmod, 0, sizeof(dbspmodel_t));
@@ -3467,20 +3666,86 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 	Q_strncpy(loadstat.name, loadmodel->name, sizeof(loadstat.name));
 	wadvalue[0] = '\0';
 
+	if ( length < sizeof(dheader_t) )
+	{
+		Con_Printf(S_ERROR "%s contained no data\n", loadmodel->name);
+		return false;
+	}
+
+	header = (const dheader_t*)mod_base;
+
 	if ( header->version == QBSP2_VERSION )
 	{
 		Con_Printf(S_ERROR "%s is a QBSP2-format level, which is not supported\n", loadmodel->name);
 		return false;
 	}
 
+	// Validate lumps in standard header
+	if ( !Mod_ValidateLumpExtents("standard", header->lumps, SIZE_OF_ARRAY(header->lumps), length) )
+	{
+		return false;
+	}
+
+	// Validate lumps in extra header if we detected one.
+	if ( sizeof(dheader_t) + sizeof(dextrahdr_t) <= length )
+	{
+		const dextrahdr_t* localHeader = (const dextrahdr_t*)(mod_base + sizeof(dheader_t));
+
+		if ( localHeader->id == IDEXTRAHEADER && localHeader->version == EXTRA_VERSION &&
+			 !Mod_ValidateLumpExtents("extra", localHeader->lumps, SIZE_OF_ARRAY(localHeader->lumps), length) )
+		{
+			return false;
+		}
+
+		extrahdr = localHeader;
+	}
+
+	// Validate Nightfire Open lumps if we need to.
+	if ( header->version == NFOPENBSP_VERSION )
+	{
+		if ( sizeof(dheader_t) + sizeof(dnfopenextraheader_t) > length )
+		{
+			Con_Printf(S_ERROR "%s was not large enough to accommodate nfopen header\n", loadmodel->name);
+			return false;
+		}
+
+		const dnfopenextraheader_t* localHeader =
+			(const dnfopenextraheader_t*)(mod_base + sizeof(dheader_t));
+
+		if ( localHeader->id != NFOPEN_EXTRAHEADER_ID )
+		{
+			Con_Printf(S_ERROR "%s nfopen header ID did not match expected value\n", loadmodel->name);
+			return false;
+		}
+
+		if ( localHeader->version != NFOPEN_EXTRAHEADER_VERSION )
+		{
+			Con_Printf(
+				S_ERROR "%s nfopen header version %u did not match expected value %u\n",
+				loadmodel->name,
+				localHeader->version,
+				NFOPEN_EXTRAHEADER_VERSION);
+
+			return false;
+		}
+
+		if ( !Mod_ValidateNFOpenLumpExtents(localHeader, (const byte*)localHeader - mod_base, length) )
+		{
+			return false;
+		}
+
+		nfopenHeader = localHeader;
+	}
+
 	switch ( header->version )
 	{
 		case HLBSP_VERSION:
-			if ( extrahdr->id == IDEXTRAHEADER )
+		{
+			if ( extrahdr && extrahdr->id == IDEXTRAHEADER )
 			{
 				SetBits(flags, LUMP_BSP30EXT);
 			}
-			// only relevant for half-life maps
+
 			else if (
 				!Mod_LumpLooksLikeEntities(
 					(const char*)(mod_base + header->lumps[LUMP_ENTITIES].fileofs),
@@ -3489,43 +3754,68 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, qboolean isworld)
 					(const char*)(mod_base + header->lumps[LUMP_PLANES].fileofs),
 					header->lumps[LUMP_PLANES].filelen) )
 			{
+				// only relevant for half-life maps:
 				// blue-shift swapped lumps
 				srclumps[0].lumpnumber = LUMP_PLANES;
 				srclumps[1].lumpnumber = LUMP_ENTITIES;
 				break;
 			}
 			// fall through
+		}
+
 		case Q1BSP_VERSION:
 		case NFOPENBSP_VERSION:
+		{
 			// everything else
 			srclumps[0].lumpnumber = LUMP_ENTITIES;
 			srclumps[1].lumpnumber = LUMP_PLANES;
 			break;
+		}
+
 		default:
+		{
 			Con_Printf(S_ERROR "%s has unrecognised version number %i\n", loadmodel->name, header->version);
 			loadstat.numerrors++;
 			return false;
+		}
 	}
 
 	bmod->version = header->version;  // share up global
+
 	if ( isworld )
 	{
 		world.flags = 0;  // clear world settings
 		SetBits(flags, LUMP_SAVESTATS | LUMP_SILENT);
 	}
+
 	bmod->isworld = isworld;
 	bmod->isbsp30ext = FBitSet(flags, LUMP_BSP30EXT);
 
-	// loading base lumps
+	// Load base lumps
 	for ( i = 0; i < SIZE_OF_ARRAY(srclumps); i++ )
 	{
 		Mod_LoadLump(mod_base, &srclumps[i], &worldstats[i], flags);
 	}
 
-	// loading extralumps
-	for ( i = 0; i < SIZE_OF_ARRAY(extlumps); i++ )
+	// Load extra lumps
+	if ( extrahdr )
 	{
-		Mod_LoadLump(mod_base, &extlumps[i], &worldstats[SIZE_OF_ARRAY(srclumps) + i], flags);
+		for ( i = 0; i < SIZE_OF_ARRAY(extlumps); i++ )
+		{
+			Mod_LoadLump(mod_base, &extlumps[i], &worldstats[SIZE_OF_ARRAY(srclumps) + i], flags);
+		}
+	}
+
+	if ( header->version == NFOPENBSP_VERSION )
+	{
+		for ( size_t index = 0; index < SIZE_OF_ARRAY(nfopenExtraLumps); ++index )
+		{
+			Mod_LoadLump(
+				mod_base,
+				&nfopenExtraLumps[index],
+				&worldstats[SIZE_OF_ARRAY(srclumps) + SIZE_OF_ARRAY(extlumps) + index],
+				flags);
+		}
 	}
 
 	if ( !bmod->isworld && loadstat.numerrors )
@@ -3738,27 +4028,35 @@ qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, 
 Mod_LoadBrushModel
 =================
 */
-void Mod_LoadBrushModel(model_t* mod, const void* buffer, qboolean* loaded)
+void Mod_LoadBrushModel(model_t* mod, const void* buffer, size_t length, qboolean* loaded)
 {
 	char poolname[MAX_VA_STRING];
 
 	Q_snprintf(poolname, sizeof(poolname), "^2%s^7", loadmodel->name);
 
 	if ( loaded )
+	{
 		*loaded = false;
+	}
 
 	loadmodel->mempool = Mem_AllocPool(poolname);
 	loadmodel->type = mod_brush;
 
 	// loading all the lumps into heap
-	if ( !Mod_LoadBmodelLumps(buffer, world.loading) )
+	if ( !Mod_LoadBmodelLumps(buffer, length, world.loading) )
+	{
 		return;  // there were errors
+	}
 
 	if ( world.loading )
+	{
 		worldmodel = mod;
+	}
 
 	if ( loaded )
+	{
 		*loaded = true;  // all done
+	}
 }
 
 /*

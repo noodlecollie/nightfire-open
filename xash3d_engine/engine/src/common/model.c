@@ -293,9 +293,13 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 		memset(mod, 0, sizeof(model_t));
 
 		if ( crash )
+		{
 			Host_Error("Could not load model %s from disk\n", tempname);
+		}
 		else
+		{
 			Con_Printf(S_ERROR "Could not load model %s from disk\n", tempname);
+		}
 
 		return NULL;
 	}
@@ -323,7 +327,7 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 		case HLBSP_VERSION:
 		case QBSP2_VERSION:
 		case NFOPENBSP_VERSION:  // TODO: This will need to be routed elsewhere soon
-			Mod_LoadBrushModel(mod, buf, &loaded);
+			Mod_LoadBrushModel(mod, buf, (size_t)length, &loaded);
 			// ref.dllFuncs.Mod_LoadModel( mod_brush, mod, buf, &loaded, 0 );
 			break;
 		default:

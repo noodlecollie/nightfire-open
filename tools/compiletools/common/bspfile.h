@@ -340,14 +340,13 @@ typedef struct
 {
 	uint32_t id;
 	uint32_t version;
-	uint32_t dataLength;
-	uint32_t numLumps;
+	uint32_t numLumps;  // This number of dnfopenextralump_t entries follow
 } dnfopenextraheader_t;
 
 typedef struct
 {
 	uint32_t lumpIndex;
-	uint32_t offsetFromBeginningOfExtraData;
+	uint32_t offsetFromBeginningOfExtraHeader;
 	uint32_t dataLength;
 } dnfopenextralump_t;
 

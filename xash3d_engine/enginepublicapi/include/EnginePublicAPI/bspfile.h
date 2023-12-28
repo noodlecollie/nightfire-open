@@ -104,8 +104,7 @@ BRUSH MODELS
 #define LUMP_EDGES 12
 #define LUMP_SURFEDGES 13
 #define LUMP_MODELS 14  // internal submodels
-#define LUMP_CLIENTENTS 15
-#define HEADER_LUMPS 16
+#define HEADER_LUMPS 15
 
 // extra lump ordering
 #define LUMP_LIGHTVECS 0  // deluxemap data
@@ -316,16 +315,41 @@ typedef struct
 
 // The following are structures for Nightfire Open-specific BSPs:
 
-#define NFOPEN_MAX_TEXTURE_NAME_LENGTH 80
+#define NFOPEN_EXTRAHEADER_ID (('X' << 24) + ('O' << 16) + ('F' << 8) + 'N')
+#define NFOPEN_EXTRAHEADER_VERSION 1
+
 #define NFOPEN_CLIENT_ENT_HEADER_VERSION 1
 #define NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH ((size_t)80)
 #define NFOPEN_CLIENT_ENT_MAX_MODELS ((size_t)2048)
 #define NFOPEN_CLIENT_ENT_MAX_SOUNDS ((size_t)2048)
 
+#define NFOPEN_MAX_TEXTURE_NAME_LENGTH 80
+
+typedef enum
+{
+	NFOPEN_LUMP_CLIENTENTS = 0,
+} dnfopenextralumpid_e;
+
+typedef struct
+{
+	uint32_t id;
+	uint32_t version;
+	uint32_t numLumps;  // This number of dnfopenextralump_t entries follow
+} dnfopenextraheader_t;
+
+typedef struct
+{
+	uint32_t lumpIndex;
+	uint32_t offsetFromBeginningOfExtraHeader;
+	uint32_t dataLength;
+} dnfopenextralump_t;
+
 // This header begins the texture lump.
 // After it there are pngCount consecutive dpngtexturepath_t items,
 // and then miptexCount consective miptex offsets and textures,
 // as per the normal Half Life spec.
+// NFTODO: Make this a custom lump, as it currently piggy-backs
+// on the Half Life texture lump.
 typedef struct
 {
 	uint32_t pngCount;
@@ -365,6 +389,5 @@ typedef struct
 } dclientents_sound_t;
 
 #define NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE \
-	(sizeof(dclientents_header_t) + \
-	(NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dclientents_model_t)) + \
-	(NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dclientents_sound_t)))
+	(sizeof(dclientents_header_t) + (NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dclientents_model_t)) + \
+	 (NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dclientents_sound_t)))
