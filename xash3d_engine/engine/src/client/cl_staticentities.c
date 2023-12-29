@@ -55,7 +55,7 @@ qboolean StaticEntities_CreateModel(const mclientents_model_t* staticModel)
 	ent->prevstate = state;
 	ent->curstate = state;
 	ent->index = 0;
-	ent->model = staticModel->modelName
+	ent->model = staticModel->modelPtr;
 	VectorCopy(ent->curstate.origin, ent->origin);
 	VectorCopy(ent->curstate.angles, ent->angles);
 	ent->curstate.framerate = 1.0f;
