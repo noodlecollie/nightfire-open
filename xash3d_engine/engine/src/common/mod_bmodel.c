@@ -688,15 +688,14 @@ static void Mod_LoadLump(const byte* in, const mlumpinfo_t* info, mlumpstat_t* s
 
 			if ( header->id != NFOPEN_EXTRAHEADER_ID )
 			{
-				Con_DPrintf(S_ERROR, "Map ^2%s^7 nfopen extraheader ID does not match expected value\n", loadstat.name);
+				Con_DPrintf(S_ERROR "Map ^2%s^7 nfopen extraheader ID does not match expected value\n", loadstat.name);
 				return;
 			}
 
 			if ( header->version != NFOPEN_EXTRAHEADER_VERSION )
 			{
 				Con_DPrintf(
-					S_ERROR,
-					"Map ^2%s^7 nfopen extraheader version %u does not match expected value %u\n",
+					S_ERROR "Map ^2%s^7 nfopen extraheader version %u does not match expected value %u\n",
 					loadstat.name,
 					header->version,
 					NFOPEN_EXTRAHEADER_VERSION);
@@ -709,8 +708,7 @@ static void Mod_LoadLump(const byte* in, const mlumpinfo_t* info, mlumpstat_t* s
 			if ( !nfLump )
 			{
 				Con_DPrintf(
-					S_ERROR,
-					"Map ^2%s^7 nfopen lump %d could not be located\n",
+					S_ERROR "Map ^2%s^7 nfopen lump %d could not be located\n",
 					loadstat.name,
 					info->lumpnumber);
 
@@ -3709,8 +3707,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 			return false;
 		}
 
-		const dnfopenextraheader_t* localHeader =
-			(const dnfopenextraheader_t*)(mod_base + sizeof(dheader_t));
+		const dnfopenextraheader_t* localHeader = (const dnfopenextraheader_t*)(mod_base + sizeof(dheader_t));
 
 		if ( localHeader->id != NFOPEN_EXTRAHEADER_ID )
 		{
@@ -3741,7 +3738,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 	{
 		case HLBSP_VERSION:
 		{
-			if ( extrahdr && extrahdr->id == IDEXTRAHEADER )
+			if ( extrahdr )
 			{
 				SetBits(flags, LUMP_BSP30EXT);
 			}
@@ -3760,7 +3757,8 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 				srclumps[1].lumpnumber = LUMP_ENTITIES;
 				break;
 			}
-			// fall through
+
+			DELIBERATE_FALL_THROUGH
 		}
 
 		case Q1BSP_VERSION:
@@ -3806,7 +3804,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 		}
 	}
 
-	if ( header->version == NFOPENBSP_VERSION )
+	if ( nfopenHeader )
 	{
 		for ( size_t index = 0; index < SIZE_OF_ARRAY(nfopenExtraLumps); ++index )
 		{
@@ -3850,7 +3848,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 	Mod_LoadNodes(bmod);
 	Mod_LoadClipnodes(bmod);
 
-	if ( header->version == NFOPENBSP_VERSION )
+	if ( nfopenHeader )
 	{
 		Mod_LoadClientEntities(bmod);
 	}
