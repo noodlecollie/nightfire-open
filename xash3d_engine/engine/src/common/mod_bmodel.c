@@ -201,6 +201,13 @@ typedef struct
 	size_t* count;
 } mlumpinfo_t;
 
+typedef struct bspheaders_s
+{
+	const dheader_t* basicHeader;
+	const dextrahdr_t* extraHeader;
+	const dnfopenextraheader_t* nfopenHeader;
+} bspheaders_t;
+
 world_static_t world;
 static dbspmodel_t srcmodel;
 static loadstat_t loadstat;
@@ -518,6 +525,120 @@ Mod_ValidateNFOpenLumpExtents(const dnfopenextraheader_t* header, size_t headerO
 	}
 
 	return success;
+}
+
+// Get headers, doing data length checks along the way.
+static bspheaders_t Mod_QueryBSPHeaders(const byte* data, size_t length)
+{
+	bspheaders_t headers;
+
+	memset(&headers, 0, sizeof(headers));
+
+	if ( !data || length < sizeof(dheader_t) )
+	{
+		return headers;
+	}
+
+	headers.basicHeader = (const dheader_t*)data;
+
+	if ( sizeof(dheader_t) + sizeof(dextrahdr_t) <= length )
+	{
+		const dextrahdr_t* extraHeader = (const dextrahdr_t*)(data + sizeof(dheader_t));
+
+		if ( extraHeader->id == IDEXTRAHEADER && extraHeader->version == EXTRA_VERSION )
+		{
+			// Extra header is valid.
+			headers.extraHeader = extraHeader;
+		}
+	}
+
+	if ( headers.basicHeader->version == NFOPENBSP_VERSION &&
+		 sizeof(dheader_t) + sizeof(dnfopenextraheader_t) <= length )
+	{
+		const dnfopenextraheader_t* nfopenHeader = (const dnfopenextraheader_t*)(data + sizeof(dheader_t));
+
+		if ( nfopenHeader->id == NFOPEN_EXTRAHEADER_ID && nfopenHeader->version == NFOPEN_EXTRAHEADER_VERSION )
+		{
+			headers.nfopenHeader = nfopenHeader;
+		}
+	}
+
+	return headers;
+}
+
+static qboolean Mod_VerifyBSPHeaders(const bspheaders_t* headers)
+{
+	if ( !headers )
+	{
+		return false;
+	}
+
+	if ( !headers->basicHeader )
+	{
+		Con_Printf(S_ERROR "%s did not contain enough data to read header\n", loadstat.name);
+		return false;
+	}
+
+	if ( headers->basicHeader->version == QBSP2_VERSION )
+	{
+		Con_Printf(S_ERROR "%s is a QBSP2-format level, which is not supported\n", loadstat.name);
+		return false;
+	}
+
+	if ( headers->nfopenHeader )
+	{
+		if ( headers->nfopenHeader->id != NFOPEN_EXTRAHEADER_ID )
+		{
+			Con_Printf(S_ERROR "%s nfopen header ID did not match expected value\n", loadstat.name);
+			return false;
+		}
+
+		if ( headers->nfopenHeader->version != NFOPEN_EXTRAHEADER_VERSION )
+		{
+			Con_Printf(
+				S_ERROR "%s nfopen header version %u did not match expected value %u\n",
+				loadstat.name,
+				headers->nfopenHeader->version,
+				NFOPEN_EXTRAHEADER_VERSION);
+
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static qboolean Mod_ValidateAllLumpExtents(const bspheaders_t* headers, const byte* data, size_t length)
+{
+	// Validate lumps in standard header
+	if ( !Mod_ValidateLumpExtents(
+			 "standard",
+			 headers->basicHeader->lumps,
+			 SIZE_OF_ARRAY(headers->basicHeader->lumps),
+			 length) )
+	{
+		return false;
+	}
+
+	// Validate lumps in extra header if we detected one.
+	if ( headers->extraHeader &&
+		 !Mod_ValidateLumpExtents(
+			 "extra",
+			 headers->extraHeader->lumps,
+			 SIZE_OF_ARRAY(headers->extraHeader->lumps),
+			 length) )
+	{
+		return false;
+	}
+
+	// Validate Nightfire Open lumps if we need to.
+	if ( headers->nfopenHeader &&
+		 !Mod_ValidateNFOpenLumpExtents(headers->nfopenHeader, (const byte*)headers->nfopenHeader - data, length) )
+	{
+		return false;
+	}
+
+	return true;
 }
 
 static mip_t* Mod_GetMipTexForTexture(dbspmodel_t* bmod, int i)
@@ -3637,6 +3758,36 @@ static int Mod_LumpLooksLikeEntities(const char* lump, const size_t lumplen)
 																												   : 0;
 }
 
+static void Mod_LoadAllLumps(const bspheaders_t* headers, const byte* data, int flags)
+{
+	// Load base lumps
+	for ( size_t lumpIndex = 0; lumpIndex < SIZE_OF_ARRAY(srclumps); ++lumpIndex )
+	{
+		Mod_LoadLump(data, &srclumps[lumpIndex], &worldstats[lumpIndex], flags);
+	}
+
+	// Load extra lumps
+	if ( headers->extraHeader )
+	{
+		for ( size_t lumpIndex = 0; lumpIndex < SIZE_OF_ARRAY(extlumps); ++lumpIndex )
+		{
+			Mod_LoadLump(data, &extlumps[lumpIndex], &worldstats[SIZE_OF_ARRAY(srclumps) + lumpIndex], flags);
+		}
+	}
+
+	if ( headers->nfopenHeader )
+	{
+		for ( size_t lumpIndex = 0; lumpIndex < SIZE_OF_ARRAY(nfopenExtraLumps); ++lumpIndex )
+		{
+			Mod_LoadLump(
+				data,
+				&nfopenExtraLumps[lumpIndex],
+				&worldstats[SIZE_OF_ARRAY(srclumps) + SIZE_OF_ARRAY(extlumps) + lumpIndex],
+				flags);
+		}
+	}
+}
+
 /*
 =================
 Mod_LoadBmodelLumps
@@ -3646,9 +3797,6 @@ loading and processing bmodel
 */
 qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean isworld)
 {
-	const dheader_t* header = NULL;
-	const dextrahdr_t* extrahdr = NULL;
-	const dnfopenextraheader_t* nfopenHeader = NULL;
 	dbspmodel_t* bmod = &srcmodel;
 	model_t* mod = loadmodel;
 	char wadvalue[2048];
@@ -3656,6 +3804,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 	size_t i;
 	int ret;
 	int flags = 0;
+	bspheaders_t headers;
 
 	// always reset the intermediate struct
 	memset(bmod, 0, sizeof(dbspmodel_t));
@@ -3664,92 +3813,28 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 	Q_strncpy(loadstat.name, loadmodel->name, sizeof(loadstat.name));
 	wadvalue[0] = '\0';
 
-	if ( length < sizeof(dheader_t) )
-	{
-		Con_Printf(S_ERROR "%s contained no data\n", loadmodel->name);
-		return false;
-	}
+	headers = Mod_QueryBSPHeaders(mod_base, length);
 
-	header = (const dheader_t*)mod_base;
-
-	if ( header->version == QBSP2_VERSION )
-	{
-		Con_Printf(S_ERROR "%s is a QBSP2-format level, which is not supported\n", loadmodel->name);
-		return false;
-	}
-
-	// Validate lumps in standard header
-	if ( !Mod_ValidateLumpExtents("standard", header->lumps, SIZE_OF_ARRAY(header->lumps), length) )
+	if ( !Mod_VerifyBSPHeaders(&headers) || !Mod_ValidateAllLumpExtents(&headers, mod_base, length) )
 	{
 		return false;
 	}
 
-	// Validate lumps in extra header if we detected one.
-	if ( sizeof(dheader_t) + sizeof(dextrahdr_t) <= length )
-	{
-		const dextrahdr_t* localHeader = (const dextrahdr_t*)(mod_base + sizeof(dheader_t));
-
-		if ( localHeader->id == IDEXTRAHEADER && localHeader->version == EXTRA_VERSION &&
-			 !Mod_ValidateLumpExtents("extra", localHeader->lumps, SIZE_OF_ARRAY(localHeader->lumps), length) )
-		{
-			return false;
-		}
-
-		extrahdr = localHeader;
-	}
-
-	// Validate Nightfire Open lumps if we need to.
-	if ( header->version == NFOPENBSP_VERSION )
-	{
-		if ( sizeof(dheader_t) + sizeof(dnfopenextraheader_t) > length )
-		{
-			Con_Printf(S_ERROR "%s was not large enough to accommodate nfopen header\n", loadmodel->name);
-			return false;
-		}
-
-		const dnfopenextraheader_t* localHeader = (const dnfopenextraheader_t*)(mod_base + sizeof(dheader_t));
-
-		if ( localHeader->id != NFOPEN_EXTRAHEADER_ID )
-		{
-			Con_Printf(S_ERROR "%s nfopen header ID did not match expected value\n", loadmodel->name);
-			return false;
-		}
-
-		if ( localHeader->version != NFOPEN_EXTRAHEADER_VERSION )
-		{
-			Con_Printf(
-				S_ERROR "%s nfopen header version %u did not match expected value %u\n",
-				loadmodel->name,
-				localHeader->version,
-				NFOPEN_EXTRAHEADER_VERSION);
-
-			return false;
-		}
-
-		if ( !Mod_ValidateNFOpenLumpExtents(localHeader, (const byte*)localHeader - mod_base, length) )
-		{
-			return false;
-		}
-
-		nfopenHeader = localHeader;
-	}
-
-	switch ( header->version )
+	switch ( headers.basicHeader->version )
 	{
 		case HLBSP_VERSION:
 		{
-			if ( extrahdr )
+			if ( headers.extraHeader )
 			{
 				SetBits(flags, LUMP_BSP30EXT);
 			}
-
 			else if (
 				!Mod_LumpLooksLikeEntities(
-					(const char*)(mod_base + header->lumps[LUMP_ENTITIES].fileofs),
-					header->lumps[LUMP_ENTITIES].filelen) &&
+					(const char*)(mod_base + headers.basicHeader->lumps[LUMP_ENTITIES].fileofs),
+					headers.basicHeader->lumps[LUMP_ENTITIES].filelen) &&
 				Mod_LumpLooksLikeEntities(
-					(const char*)(mod_base + header->lumps[LUMP_PLANES].fileofs),
-					header->lumps[LUMP_PLANES].filelen) )
+					(const char*)(mod_base + headers.basicHeader->lumps[LUMP_PLANES].fileofs),
+					headers.basicHeader->lumps[LUMP_PLANES].filelen) )
 			{
 				// only relevant for half-life maps:
 				// blue-shift swapped lumps
@@ -3772,13 +3857,16 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 
 		default:
 		{
-			Con_Printf(S_ERROR "%s has unrecognised version number %i\n", loadmodel->name, header->version);
-			loadstat.numerrors++;
+			Con_Printf(
+				S_ERROR "%s has unrecognised version number %i\n",
+				loadmodel->name,
+				headers.basicHeader->version);
+
 			return false;
 		}
 	}
 
-	bmod->version = header->version;  // share up global
+	bmod->version = headers.basicHeader->version;  // share up global
 
 	if ( isworld )
 	{
@@ -3789,32 +3877,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 	bmod->isworld = isworld;
 	bmod->isbsp30ext = FBitSet(flags, LUMP_BSP30EXT);
 
-	// Load base lumps
-	for ( i = 0; i < SIZE_OF_ARRAY(srclumps); i++ )
-	{
-		Mod_LoadLump(mod_base, &srclumps[i], &worldstats[i], flags);
-	}
-
-	// Load extra lumps
-	if ( extrahdr )
-	{
-		for ( i = 0; i < SIZE_OF_ARRAY(extlumps); i++ )
-		{
-			Mod_LoadLump(mod_base, &extlumps[i], &worldstats[SIZE_OF_ARRAY(srclumps) + i], flags);
-		}
-	}
-
-	if ( nfopenHeader )
-	{
-		for ( size_t index = 0; index < SIZE_OF_ARRAY(nfopenExtraLumps); ++index )
-		{
-			Mod_LoadLump(
-				mod_base,
-				&nfopenExtraLumps[index],
-				&worldstats[SIZE_OF_ARRAY(srclumps) + SIZE_OF_ARRAY(extlumps) + index],
-				flags);
-		}
-	}
+	Mod_LoadAllLumps(&headers, mod_base, flags);
 
 	if ( !bmod->isworld && loadstat.numerrors )
 	{
@@ -3848,7 +3911,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 	Mod_LoadNodes(bmod);
 	Mod_LoadClipnodes(bmod);
 
-	if ( nfopenHeader )
+	if ( headers.nfopenHeader )
 	{
 		Mod_LoadClientEntities(bmod);
 	}
@@ -3870,13 +3933,18 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 	for ( i = 0; i < (size_t)bmod->wadlist.count; i++ )
 	{
 		if ( !bmod->wadlist.wadusage[i] )
+		{
 			continue;
+		}
+
 		ret = Q_snprintf(&wadvalue[len], sizeof(wadvalue), "%s.wad; ", bmod->wadlist.wadnames[i]);
+
 		if ( ret == -1 )
 		{
 			Con_DPrintf(S_WARN "Too many wad files for output!\n");
 			break;
 		}
+
 		len += ret;
 	}
 
@@ -3916,7 +3984,6 @@ static int Mod_LumpLooksLikeEntitiesFile(file_t* f, const dlump_t* l, int flags,
 	return ret;
 }
 
-// NFTODO: Add custom Nightfire lump checking into here as well!!
 /*
 =================
 Mod_TestBmodelLumps
@@ -3925,11 +3992,15 @@ check for possible errors
 return real entities lump (for bshift swapped lumps)
 =================
 */
-qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, qboolean silent, dlump_t* entities)
+qboolean Mod_TestBmodelLumps(
+	file_t* f,
+	const char* name,
+	const byte* mod_base,
+	size_t length,
+	qboolean silent,
+	dlump_t* entities)
 {
-	const dheader_t* header = (const dheader_t*)mod_base;
-	const dextrahdr_t* extrahdr = (const dextrahdr_t*)(mod_base + sizeof(dheader_t));
-	size_t i;
+	bspheaders_t headers;
 	int flags = LUMP_TESTONLY;
 
 	// always reset the intermediate struct
@@ -3943,38 +4014,45 @@ qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, 
 		SetBits(flags, LUMP_SILENT);
 	}
 
-	if ( header->version == QBSP2_VERSION )
-	{
-		if ( !FBitSet(flags, LUMP_SILENT) )
-		{
-			Con_Printf(S_ERROR "%s is a QBSP2-format level, which is not supported\n", loadmodel->name);
-		}
+	headers = Mod_QueryBSPHeaders(mod_base, length);
 
+	if ( !Mod_VerifyBSPHeaders(&headers) || !Mod_ValidateAllLumpExtents(&headers, mod_base, length) )
+	{
 		return false;
 	}
 
-	switch ( header->version )
+	switch ( headers.basicHeader->version )
 	{
 		case HLBSP_VERSION:
-			if ( extrahdr->id == IDEXTRAHEADER )
+		{
+			if ( headers.extraHeader )
 			{
 				SetBits(flags, LUMP_BSP30EXT);
 			}
 			else
 			{
 				// only relevant for half-life maps
-				int ret = Mod_LumpLooksLikeEntitiesFile(f, &header->lumps[LUMP_ENTITIES], flags, "entities");
+				int ret =
+					Mod_LumpLooksLikeEntitiesFile(f, &headers.basicHeader->lumps[LUMP_ENTITIES], flags, "entities");
+
 				if ( ret < 0 )
+				{
 					return false;
+				}
+
 				if ( !ret )
 				{
-					ret = Mod_LumpLooksLikeEntitiesFile(f, &header->lumps[LUMP_PLANES], flags, "planes");
+					ret = Mod_LumpLooksLikeEntitiesFile(f, &headers.basicHeader->lumps[LUMP_PLANES], flags, "planes");
+
 					if ( ret < 0 )
+					{
 						return false;
+					}
+
 					if ( ret )
 					{
 						// blue-shift swapped lumps
-						*entities = header->lumps[LUMP_PLANES];
+						*entities = headers.basicHeader->lumps[LUMP_PLANES];
 
 						srclumps[0].lumpnumber = LUMP_PLANES;
 						srclumps[1].lumpnumber = LUMP_ENTITIES;
@@ -3982,41 +4060,51 @@ qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, 
 					}
 				}
 			}
-			// fall through
+
+			DELIBERATE_FALL_THROUGH
+		}
+
 		case Q1BSP_VERSION:
 		case NFOPENBSP_VERSION:
+		{
 			// everything else
-			*entities = header->lumps[LUMP_ENTITIES];
+			*entities = headers.basicHeader->lumps[LUMP_ENTITIES];
 
 			srclumps[0].lumpnumber = LUMP_ENTITIES;
 			srclumps[1].lumpnumber = LUMP_PLANES;
 			break;
+		}
+
 		default:
+		{
 			// don't early out: let me analyze errors
 			if ( !FBitSet(flags, LUMP_SILENT) )
-				Con_Printf(S_ERROR "%s has unrecognised version number %i\n", name, header->version);
+			{
+				Con_Printf(S_ERROR "%s has unrecognised version number %i\n", name, headers.basicHeader->version);
+			}
+
 			loadstat.numerrors++;
 			break;
+		}
 	}
 
-	// loading base lumps
-	for ( i = 0; i < SIZE_OF_ARRAY(srclumps); i++ )
-		Mod_LoadLump(mod_base, &srclumps[i], &worldstats[i], flags);
-
-	// loading extralumps
-	for ( i = 0; i < SIZE_OF_ARRAY(extlumps); i++ )
-		Mod_LoadLump(mod_base, &extlumps[i], &worldstats[SIZE_OF_ARRAY(srclumps) + i], flags);
+	Mod_LoadAllLumps(&headers, mod_base, flags);
 
 	if ( loadstat.numerrors )
 	{
 		if ( !FBitSet(flags, LUMP_SILENT) )
+		{
 			Con_Printf("Mod_LoadWorld: %i error(s), %i warning(s)\n", loadstat.numerrors, loadstat.numwarnings);
+		}
+
 		return false;  // there were errors, we can't load this map
 	}
 	else if ( loadstat.numwarnings )
 	{
 		if ( !FBitSet(flags, LUMP_SILENT) )
+		{
 			Con_Printf("Mod_LoadWorld: %i warning(s)\n", loadstat.numwarnings);
+		}
 	}
 
 	return true;

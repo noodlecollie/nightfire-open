@@ -51,7 +51,13 @@ void Mod_FreeUnused(void);
 // mod_bmodel.c
 //
 void Mod_LoadBrushModel(model_t* mod, const void* buffer, size_t length, qboolean* loaded);
-qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, qboolean silent, dlump_t* entities);
+qboolean Mod_TestBmodelLumps(
+	file_t* f,
+	const char* name,
+	const byte* mod_base,
+	size_t length,
+	qboolean silent,
+	dlump_t* entities);
 qboolean Mod_HeadnodeVisible(mnode_t* node, const byte* visbits, int* lastleaf);
 int Mod_FatPVS(const vec3_t org, float radius, byte* visbuffer, int visbytes, qboolean merge, qboolean fullvis);
 qboolean Mod_BoxVisible(const vec3_t mins, const vec3_t maxs, const byte* visbits);
