@@ -60,10 +60,13 @@ Cmd_ListMaps
 */
 int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 {
-	byte buf[MAX_SYSPATH];  // 1 kb
 	file_t* f;
-	int i, nummaps;
-	string mapname, message, compiler, generator;
+	int i;
+	int nummaps;
+	string mapname;
+	string message;
+	string compiler;
+	string generator;
 
 	for ( i = 0, nummaps = 0; i < t->numfilenames; i++ )
 	{
@@ -75,7 +78,10 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 		string version_description;
 
 		if ( Q_stricmp(ext, "bsp") )
+		{
 			continue;
+		}
+
 		Q_strncpy(message, "^1error^7", sizeof(message));
 		compiler[0] = '\0';
 		generator[0] = '\0';
@@ -88,22 +94,30 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 			dextrahdr_t* hdrext;
 			dlump_t entities;
 
-			memset(buf, 0, sizeof(buf));
-			FS_Read(f, buf, sizeof(buf));
-			header = (dheader_t*)buf;
+			FS_Seek(f, 0, SEEK_END);
+			fs_offset_t fileSize = FS_Tell(f);
+			FS_Seek(f, 0, SEEK_SET);
+
+			byte* fileData = (byte*)Z_Malloc((size_t)fileSize);
+			fs_offset_t bytesRead = FS_Read(f, fileData, fileSize);
+
+			header = (dheader_t*)fileData;
 			ver = header->version;
 
 			// check all the lumps and some other errors
-			if ( Mod_TestBmodelLumps(f, t->filenames[i], buf, true, &entities) )
+			if ( Mod_TestBmodelLumps(f, t->filenames[i], fileData, (size_t)bytesRead, true, &entities) )
 			{
 				lumpofs = entities.fileofs;
 				lumplen = entities.filelen;
 				ver = header->version;
 			}
 
-			hdrext = (dextrahdr_t*)((byte*)buf + sizeof(dheader_t));
+			hdrext = (dextrahdr_t*)(fileData + sizeof(dheader_t));
+
 			if ( hdrext->id == IDEXTRAHEADER )
+			{
 				version = hdrext->version;
+			}
 
 			Q_strncpy(entfilename, t->filenames[i], sizeof(entfilename));
 			COM_StripExtension(entfilename);
@@ -112,9 +126,9 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 
 			if ( !ents && lumplen >= 10 )
 			{
-				FS_Seek(f, lumpofs, SEEK_SET);
-				ents = (char*)Mem_Calloc(host.mempool, lumplen + 1);
-				FS_Read(f, ents, lumplen);
+				ents = (char*)Z_Malloc(lumplen + 1);
+				memcpy(ents, fileData + lumpofs, lumplen);
+				ents[lumplen] = '\0';
 			}
 
 			if ( ents )
@@ -129,9 +143,13 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 				while ( (pfile = COM_ParseFile(pfile, token, sizeof(token))) != NULL )
 				{
 					if ( !Q_strcmp(token, "{") )
+					{
 						continue;
+					}
 					else if ( !Q_strcmp(token, "}") )
+					{
 						break;
+					}
 					else if ( !Q_strcmp(token, "message") )
 					{
 						// get the message contents
@@ -148,8 +166,11 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 						pfile = COM_ParseFile(pfile, generator, sizeof(generator));
 					}
 				}
-				Mem_Free(ents);
+
+				Z_Free(ents);
 			}
+
+			Z_Free(fileData);
 		}
 
 		if ( f )
@@ -162,34 +183,59 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 		switch ( ver )
 		{
 			case Q1BSP_VERSION:
+			{
 				Q_strncpy(version_description, "Quake", sizeof(version_description));
 				break;
+			}
+
 			case QBSP2_VERSION:
+			{
 				Q_strncpy(version_description, "Darkplaces BSP2", sizeof(version_description));
 				break;
+			}
+
 			case HLBSP_VERSION:
+			{
 				switch ( version )
 				{
 					case 1:
+					{
 						Q_strncpy(version_description, "XashXT old format", sizeof(version_description));
 						break;
+					}
+
 					case 2:
+					{
 						Q_strncpy(version_description, "Paranoia 2: Savior", sizeof(version_description));
 						break;
+					}
+
 					case 4:
+					{
 						Q_strncpy(version_description, "Half-Life extended", sizeof(version_description));
 						break;
+					}
+
 					default:
+					{
 						Q_strncpy(version_description, "Half-Life", sizeof(version_description));
 						break;
+					}
 				}
+
 				break;
+			}
 			case NFOPENBSP_VERSION:
+			{
 				Q_strncpy(version_description, "Nightfire Open", sizeof(version_description));
 				break;
+			}
+
 			default:
+			{
 				Q_strncpy(version_description, "??", sizeof(version_description));
 				break;
+			}
 		}
 
 		Con_Printf("%16s (%s) ^3%s^7 ^2%s %s^7\n", mapname, version_description, message, compiler, generator);
@@ -197,7 +243,9 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 	}
 
 	if ( lastmapname && len )
+	{
 		Q_strncpy(lastmapname, mapname, len);
+	}
 
 	return nummaps;
 }
@@ -956,7 +1004,6 @@ qboolean Cmd_GetCDList(const char* s, char* completedname, int length)
 qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 {
 	qboolean use_filter = false;
-	byte buf[MAX_SYSPATH];
 	string mpfilter;
 	char* buffer;
 	string result;
@@ -966,7 +1013,9 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	file_t* f;
 
 	if ( FS_FileSize("maps.lst", onlyingamedir) > 0 && !fRefresh )
+	{
 		return true;  // exist
+	}
 
 	// setup mpfilter
 	size = Q_snprintf(mpfilter, sizeof(mpfilter), "maps/%s", GI->mp_filter);
@@ -979,6 +1028,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 			// mod doesn't contain any maps (probably this is a bot)
 			return Cmd_CheckMapsList_R(fRefresh, false);
 		}
+
 		return false;
 	}
 
@@ -993,10 +1043,14 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 		string mapname, message, entfilename;
 
 		if ( Q_stricmp(COM_FileExtension(t->filenames[i]), "bsp") )
+		{
 			continue;
+		}
 
 		if ( use_filter && Q_stristr(t->filenames[i], mpfilter) )
+		{
 			continue;
+		}
 
 		f = FS_Open(t->filenames[i], "rb", onlyingamedir);
 		COM_FileBase(t->filenames[i], mapname, sizeof(mapname));
@@ -1006,17 +1060,22 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 			int num_spawnpoints = 0;
 			dlump_t entities;
 
-			memset(buf, 0, MAX_SYSPATH);
-			FS_Read(f, buf, MAX_SYSPATH);
+			FS_Seek(f, 0, SEEK_END);
+			fs_offset_t fileSize = FS_Tell(f);
+			FS_Seek(f, 0, SEEK_SET);
+
+			byte* fileData = (byte*)Z_Malloc((size_t)fileSize);
+			fs_offset_t bytesRead = FS_Read(f, fileData, MAX_SYSPATH);
 
 			// check all the lumps and some other errors
-			if ( !Mod_TestBmodelLumps(f, t->filenames[i], buf, true, &entities) )
+			if ( !Mod_TestBmodelLumps(f, t->filenames[i], fileData, (size_t)bytesRead, true, &entities) )
 			{
+				Z_Free(fileData);
 				FS_Close(f);
 				continue;
 			}
 
-			// after call Mod_TestBmodelLumps we gurantee what map is valid
+			// after call Mod_TestBmodelLumps we gurantee that map is valid
 			lumpofs = entities.fileofs;
 			lumplen = entities.filelen;
 
@@ -1027,9 +1086,13 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 
 			if ( !ents && lumplen >= 10 )
 			{
-				FS_Seek(f, lumpofs, SEEK_SET);
-				ents = Z_Calloc(lumplen + 1);
-				FS_Read(f, ents, lumplen);
+				// FS_Seek(f, lumpofs, SEEK_SET);
+				// ents = Z_Calloc(lumplen + 1);
+				// FS_Read(f, ents, lumplen);
+
+				ents = Z_Malloc(lumplen + 1);
+				memcpy(ents, fileData + lumpofs, lumplen);
+				ents[lumplen] = '\0';
 			}
 
 			if ( ents )
@@ -1056,8 +1119,11 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 					else if ( !Q_strcmp(token, "classname") )
 					{
 						pfile = COM_ParseFile(pfile, token, sizeof(token));
+
 						if ( !Q_strcmp(token, GI->mp_entity) || use_filter )
+						{
 							num_spawnpoints++;
+						}
 					}
 
 					if ( num_spawnpoints )
@@ -1065,8 +1131,11 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 						break;  // valid map
 					}
 				}
+
 				Mem_Free(ents);
 			}
+
+			Mem_Free(fileData);
 
 			if ( f )
 			{
