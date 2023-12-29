@@ -995,7 +995,7 @@ qboolean Delta_CompareField(delta_t* pField, void* from, void* to, double timeba
 
 		if ( !Q_equal(pField->multiplier, 1.0) )
 		{
-			fromF = (int)(fromF *pField->multiplier);
+			fromF = (int)(fromF * pField->multiplier);
 		}
 
 		if ( !Q_equal(pField->multiplier, 1.0) )

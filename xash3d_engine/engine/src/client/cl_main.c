@@ -3542,7 +3542,7 @@ qboolean CL_PrecacheResources(void)
 	if ( cls.state != ca_active )
 		S_BeginRegistration();
 
-	// precache all the remaining resources where order is doesn't matter
+	// precache all the remaining resources where order doesn't matter
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
