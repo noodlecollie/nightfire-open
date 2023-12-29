@@ -289,7 +289,8 @@ struct msurface_s
 
 typedef struct mclientents_model_s
 {
-	char model[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	char modelName[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	struct model_s* modelPtr;
 	vec3_t origin;
 	vec3_t angles;
 	uint32_t animation;

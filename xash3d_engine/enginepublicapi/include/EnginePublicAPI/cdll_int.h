@@ -19,6 +19,7 @@
 #include "EnginePublicAPI/const.h"
 #include "EnginePublicAPI/wrect.h"
 #include "MathLib/vec3.h"
+#include "EnginePublicAPI/con_nprint.h"
 
 #ifdef __cplusplus
 extern "C"

@@ -17,6 +17,7 @@ GNU General Public License for more details.
 
 #include "EngineInternalAPI/enginefeatures.h"
 #include "BuildPlatform/Typedefs.h"
+#include "common/common.h"
 
 /*
 ==============================================================================

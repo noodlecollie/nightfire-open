@@ -224,9 +224,13 @@ model_t* Mod_FindName(const char* filename, qboolean trackCRC)
 		if ( !Q_stricmp(mod->name, modname) )
 		{
 			if ( mod->mempool || mod->name[0] == '*' )
+			{
 				mod->needload = NL_PRESENT;
+			}
 			else
+			{
 				mod->needload = NL_NEEDS_LOADED;
+			}
 
 			return mod;
 		}
@@ -234,8 +238,12 @@ model_t* Mod_FindName(const char* filename, qboolean trackCRC)
 
 	// find a free model slot spot
 	for ( i = 0, mod = mod_known; i < mod_numknown; i++, mod++ )
+	{
 		if ( !COM_CheckStringEmpty(mod->name) )
+		{
 			break;  // this is a valid spot
+		}
+	}
 
 	if ( i == mod_numknown )
 	{
@@ -314,34 +322,56 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 	{
 		case IDSTUDIOHEADER:
 		case AFTERBURNER_HEADER:
+		{
 			Mod_LoadStudioModel(mod, buf, &loaded);
 			break;
+		}
+
 		case IDSPRITEHEADER:
+		{
 			Mod_LoadSpriteModel(mod, buf, &loaded, 0);
 			break;
+		}
+
 		case IDALIASHEADER:
+		{
 			// REFTODO: move server-related code here
 			loaded = true;
 			break;
+		}
+
 		case Q1BSP_VERSION:
 		case HLBSP_VERSION:
 		case QBSP2_VERSION:
-		case NFOPENBSP_VERSION:  // TODO: This will need to be routed elsewhere soon
+		case NFOPENBSP_VERSION:
+		{
 			Mod_LoadBrushModel(mod, buf, (size_t)length, &loaded);
 			// ref.dllFuncs.Mod_LoadModel( mod_brush, mod, buf, &loaded, 0 );
 			break;
+		}
+
 		default:
+		{
 			Mem_Free(buf);
+
 			if ( crash )
+			{
 				Host_Error("%s has unknown format\n", tempname);
+			}
 			else
+			{
 				Con_Printf(S_ERROR "%s has unknown format\n", tempname);
+			}
+
 			return NULL;
+		}
 	}
 	if ( loaded )
 	{
 		if ( world.loading )
+		{
 			SetBits(mod->flags, MODEL_WORLD);  // mark worldmodel
+		}
 
 		if ( Host_IsDedicated() )
 		{
@@ -365,9 +395,13 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 		Mem_Free(buf);
 
 		if ( crash )
+		{
 			Host_Error("Could not load model %s\n", tempname);
+		}
 		else
+		{
 			Con_Printf(S_ERROR "Could not load model %s\n", tempname);
+		}
 
 		return NULL;
 	}
@@ -386,7 +420,9 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 		if ( FBitSet(p->flags, FCRC_CHECKSUM_DONE) )
 		{
 			if ( currentCRC != p->initialCRC )
+			{
 				Host_Error("%s has a bad checksum\n", tempname);
+			}
 		}
 		else
 		{
@@ -394,8 +430,8 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 			p->initialCRC = currentCRC;
 		}
 	}
-	Mem_Free(buf);
 
+	Mem_Free(buf);
 	return mod;
 }
 
