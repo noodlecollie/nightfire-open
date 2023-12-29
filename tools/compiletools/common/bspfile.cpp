@@ -1981,7 +1981,12 @@ void MakeClientEntity_Model(const entity_t& entity)
 	VectorCopy(entity.origin, outModel->origin);
 	safe_strncpy(outModel->model, ValueForKey(&entity, "model"), sizeof(outModel->model));
 
-	if ( sscanf(ValueForKey(&entity, "angles"), "%f %f %f", &outModel->angles[0], &outModel->angles[1], &outModel->angles[2]) != 3 )
+	if ( sscanf(ValueForKey(&entity, "angles"), "%f %f %f", &outModel->angles[0], &outModel->angles[1], &outModel->angles[2]) == 3 )
+	{
+		// Invert pitch, so that the model points in the expected direction in the engine.
+		outModel->angles[0] *= -1.0f;
+	}
+	else
 	{
 		VectorClear(outModel->angles);
 	}
