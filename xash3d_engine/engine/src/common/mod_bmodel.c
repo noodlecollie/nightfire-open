@@ -3555,7 +3555,7 @@ static void Mod_LoadClientModels(const dbspmodel_t* bmod)
 		const dclientents_model_t* inModel = &inModelBase[modelIndex];
 		mclientents_model_t* outModel = &loadmodel->clientEntities->models[modelIndex];
 
-		Q_strcpy(outModel->model, sizeof(outModel->model), inModel->model);
+		Q_strcpy(outModel->modelName, sizeof(outModel->modelName), inModel->model);
 		VectorCopy(inModel->origin, outModel->origin);
 		VectorCopy(inModel->angles, outModel->angles);
 		outModel->animation = inModel->animation;
@@ -3918,6 +3918,7 @@ static int Mod_LumpLooksLikeEntitiesFile(file_t* f, const dlump_t* l, int flags,
 	return ret;
 }
 
+// NFTODO: Add custom Nightfire lump checking into here as well!!
 /*
 =================
 Mod_TestBmodelLumps

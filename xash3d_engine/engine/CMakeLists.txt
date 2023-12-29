@@ -193,6 +193,8 @@ if(CLIENT_SUPPORT)
 		src/client/s_mix.c
 		src/client/s_mouth.c
 		src/client/sound.h
+		src/client/cl_staticentities.h
+		src/client/cl_staticentities.c
 		src/client/s_stream.c
 		src/client/s_utils.c
 		src/client/s_vox.c

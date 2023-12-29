@@ -982,7 +982,7 @@ static char* SV_ReadEntityScript(const char* filename, int* flags)
 		return NULL;
 	}
 
-	// after call Mod_TestBmodelLumps we gurantee what map is valid
+	// after call Mod_TestBmodelLumps we gurantee that map is valid
 	lumpofs = entities.fileofs;
 	lumplen = entities.filelen;
 
