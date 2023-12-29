@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "CRCLib/crclib.h"
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
+#include "client/cl_cliententities.h"
 
 int CL_UPDATE_BACKUP = SINGLEPLAYER_BACKUP;
 
@@ -1665,19 +1666,33 @@ void CL_RegisterResources(sizebuf_t* msg)
 			// tell rendering system we have a new set of models.
 			ref.dllFuncs.R_NewMap();
 
+			// Initialise client-only entities here.
+			// The server has no knowledge of these whatsoever.
+			// Not sure if there's a better place to put this -
+			// it requires the ability to load in models, and
+			// can't go in the BSP loading code since that's
+			// not re-entrant. Here appears to work for now?
+			// Maybe keep an eye on the location of this call
+			// if things start to go wrong.
+			ClientEntities_LoadForBSP(cl.worldmodel);
+
 			CL_SetupOverviewParams();
 
 			// release unused SpriteTextures
 			for ( i = 1, mod = clgame.sprites; i < MAX_CLIENT_SPRITES; i++, mod++ )
 			{
 				if ( mod->needload == NL_UNREFERENCED && COM_CheckString(mod->name) )
+				{
 					Mod_FreeModel(mod);
+				}
 			}
 
 			Mod_FreeUnused();
 
 			if ( host_developer.value <= DEV_NONE )
+			{
 				Con_ClearNotify();  // clear any lines of console text
+			}
 
 			// done with all resources, issue prespawn command.
 			// Include server count in case server disconnects and changes level during d/l
