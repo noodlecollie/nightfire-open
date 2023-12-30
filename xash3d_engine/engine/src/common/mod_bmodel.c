@@ -3677,7 +3677,8 @@ static void Mod_LoadClientModels(const dbspmodel_t* bmod)
 		Q_strcpy(outModel->modelName, sizeof(outModel->modelName), inModel->model);
 		VectorCopy(inModel->origin, outModel->origin);
 		VectorCopy(inModel->angles, outModel->angles);
-		outModel->animation = inModel->animation;
+		Q_strcpy(outModel->sequenceName, sizeof(outModel->sequenceName), inModel->sequenceName);
+		outModel->body = inModel->body;
 		outModel->skin = inModel->skin;
 	}
 }
