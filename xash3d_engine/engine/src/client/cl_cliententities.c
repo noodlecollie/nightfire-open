@@ -3,6 +3,7 @@
 #include "CRTLib/bitdefs.h"
 #include "client/cl_cliententities.h"
 #include "client/client.h"
+#include "MathLib/angles.h"
 
 static void SetUpModelBaseState(entity_state_t* state, const mclientents_model_t* staticModel)
 {
@@ -20,6 +21,17 @@ static void SetUpModelBaseState(entity_state_t* state, const mclientents_model_t
 
 	VectorCopy(staticModel->origin, state->origin);
 	VectorCopy(staticModel->angles, state->angles);
+
+	// I genuinely don't know if this is the best place to put this.
+	// For some reason the pitch of the model in game is opposite to
+	// what it should be according to the map editor. I'm not sure
+	// whether the compile tools or the engine should be rectifying
+	// this, but for now I've just copied the code that exists
+	// elsewhere in the engine to flip the pitch.
+	if ( !FBitSet(host.features, ENGINE_COMPENSATE_QUAKE_BUG) )
+	{
+		state->angles[PITCH] = -state->angles[PITCH];
+	}
 
 	state->sequence = (int)staticModel->animation;
 	state->skin = (short)staticModel->skin;
