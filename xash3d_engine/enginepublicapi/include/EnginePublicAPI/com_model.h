@@ -293,8 +293,9 @@ typedef struct mclientents_model_s
 	struct model_s* modelPtr;
 	vec3_t origin;
 	vec3_t angles;
-	uint32_t animation;
-	uint32_t skin;
+	char sequenceName[32];
+	int body;
+	int skin;
 } mclientents_model_t;
 
 typedef struct mclientents_sound_s

@@ -5,7 +5,7 @@
 #include "client/client.h"
 #include "MathLib/angles.h"
 
-static void SetUpModelBaseState(entity_state_t* state, const mclientents_model_t* staticModel)
+static void SetUpModelBaseState(entity_state_t* state, const mclientents_model_t* staticModel, model_t* model)
 {
 	if ( !state )
 	{
@@ -33,8 +33,20 @@ static void SetUpModelBaseState(entity_state_t* state, const mclientents_model_t
 		state->angles[PITCH] = -state->angles[PITCH];
 	}
 
-	state->sequence = (int)staticModel->animation;
-	state->skin = (short)staticModel->skin;
+	state->body = staticModel->body;
+	state->skin = staticModel->skin;
+
+	if ( model && COM_StringIsTerminated(staticModel->sequenceName, sizeof(staticModel->sequenceName)) )
+	{
+		int sequenceIndex = Mod_LookUpStudioSequence(model, staticModel->sequenceName);
+
+		if ( sequenceIndex < 0 )
+		{
+			sequenceIndex = 0;
+		}
+
+		state->sequence = sequenceIndex;
+	}
 }
 
 // Most of this is based on CL_ParseStaticEntity.
@@ -46,23 +58,24 @@ qboolean CreateModel(const mclientents_model_t* staticModel)
 	}
 
 	cl_entity_t* ent = &clgame.static_entities[clgame.numStatics++];
+	memset(ent, 0, sizeof(*ent));
+
+	ent->model = Mod_ForName(staticModel->modelName, false, true);
 
 	entity_state_t state;
-	SetUpModelBaseState(&state, staticModel);
-
-	memset(ent, 0, sizeof(*ent));
+	SetUpModelBaseState(&state, staticModel, ent->model);
 
 	ent->baseline = state;
 	ent->prevstate = state;
 	ent->curstate = state;
+
 	ent->index = 0;
-	ent->model = Mod_ForName(staticModel->modelName, false, true);
 	VectorCopy(ent->curstate.origin, ent->origin);
 	VectorCopy(ent->curstate.angles, ent->angles);
 	ent->curstate.framerate = 1.0f;
 	CL_ResetLatchedVars(ent, true);
 
-	if ( ent->curstate.rendermode == kRenderNormal && ent->model != NULL )
+	if ( ent->curstate.rendermode == kRenderNormal && ent->model )
 	{
 		if ( FBitSet(ent->model->flags, MODEL_TRANSPARENT) && Host_IsQuakeCompatible() )
 		{

@@ -1986,14 +1986,16 @@ void MakeClientEntity_Model(const entity_t& entity)
 		VectorClear(outModel->angles);
 	}
 
-	int animation = IntForKey(&entity, "animation");
+	safe_strncpy(outModel->sequenceName, ValueForKey(&entity, "sequencename"), sizeof(outModel->sequenceName));
 
-	if ( animation < 0 )
+	int body = IntForKey(&entity, "body");
+
+	if ( body < 0 )
 	{
-		animation = 0;
+		body = 0;
 	}
 
-	outModel->animation = static_cast<uint32_t>(animation);
+	outModel->body = body;
 
 	int skin = IntForKey(&entity, "skin");
 
@@ -2002,7 +2004,7 @@ void MakeClientEntity_Model(const entity_t& entity)
 		skin = 0;
 	}
 
-	outModel->skin = static_cast<uint32_t>(skin);
+	outModel->skin = skin;
 }
 
 void MakeClientEntity_Sound(const entity_t& entity)

@@ -386,8 +386,9 @@ typedef struct
 	char model[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
 	float origin[3];
 	float angles[3];
-	uint32_t animation;
-	uint32_t skin;
+	char sequenceName[32];
+	int body;
+	int skin;
 } dnfopenclientents_model_t;
 
 typedef struct
