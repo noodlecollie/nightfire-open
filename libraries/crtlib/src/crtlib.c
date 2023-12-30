@@ -1246,6 +1246,26 @@ int matchpattern_with_separator(
 	return 1;  // success
 }
 
+qboolean COM_StringIsTerminated(const char* str, size_t maxLength)
+{
+	if ( !str )
+	{
+		return false;
+	}
+
+	const char* end = str + maxLength;
+
+	for ( ; str < end; ++str )
+	{
+		if ( !(*str) )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 int Q_strcmp(const char* s1, const char* s2)
 {
 	return unlikely(!s1) ? (!s2 ? 0 : -1) : (unlikely(!s2) ? 1 : strcmp(s1, s2));

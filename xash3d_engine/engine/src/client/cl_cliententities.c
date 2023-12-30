@@ -76,17 +76,47 @@ qboolean CreateModel(const mclientents_model_t* staticModel)
 	return true;
 }
 
+qboolean CreateSound(const mclientents_sound_t* staticSound)
+{
+	// TODO: This will overflow the number of static sound channels rather quickly
+	// if the client-side sounds are used in earnest for soundscapes and the like,
+	// which is what they're intended for. We need a better implementation that
+	// would support this properly. For now, we just do nothing. This should be
+	// properly implemented later. The original code is left as a reference below.
+
+#if 0
+	if ( !staticSound )
+	{
+		return false;
+	}
+
+	sound_t soundHandle = S_RegisterSound(staticSound->sound);
+
+	if ( soundHandle < 0 )
+	{
+		Con_Printf(S_ERROR "Could not load client-side sound %s\n", staticSound->sound);
+		return false;
+	}
+
+	S_AmbientSound(staticSound->origin, 0, soundHandle, (float)staticSound->volume / 255.0f, 0.5f, 100, 0);
+	return true;
+#else
+	(void)staticSound;
+	return false;
+#endif
+}
+
 void ClientEntities_LoadForBSP(model_t* model)
 {
 	if ( !model )
 	{
-		Con_Printf("StaticEntities_LoadForBSP: Passed BSP model was null\n");
+		Con_Printf(S_ERROR "StaticEntities_LoadForBSP: Passed BSP model was null\n");
 		return;
 	}
 
 	if ( model->type != mod_brush )
 	{
-		Con_Printf("StaticEntities_LoadForBSP: Passed model was not a BSP\n");
+		Con_Printf(S_ERROR "StaticEntities_LoadForBSP: Passed model was not a BSP\n");
 		return;
 	}
 
@@ -96,11 +126,25 @@ void ClientEntities_LoadForBSP(model_t* model)
 		return;
 	}
 
+	size_t modelsLoaded = 0;
+	size_t soundsLoaded = 0;
+
 	if ( model->clientEntities->models )
 	{
 		for ( size_t index = 0; index < model->clientEntities->modelCount; ++index )
 		{
-			if ( !CreateModel(&model->clientEntities->models[index]) )
+			const mclientents_model_t* staticModel = &model->clientEntities->models[index];
+
+			if ( !COM_StringIsTerminated(staticModel->modelName, sizeof(staticModel->modelName)) )
+			{
+				Con_Printf(
+					S_WARN "ClientEntities_LoadForBSP: Client-side model at index %zu had invalid model name\n",
+					index);
+
+				continue;
+			}
+
+			if ( !CreateModel(staticModel) )
 			{
 				Con_Printf(
 					S_ERROR
@@ -111,6 +155,32 @@ void ClientEntities_LoadForBSP(model_t* model)
 
 				break;
 			}
+
+			++modelsLoaded;
 		}
 	}
+
+	if ( model->clientEntities->sounds )
+	{
+		for ( size_t index = 0; index < model->clientEntities->soundCount; ++index )
+		{
+			const mclientents_sound_t* staticSound = &model->clientEntities->sounds[index];
+
+			if ( !COM_StringIsTerminated(staticSound->sound, sizeof(staticSound->sound)) )
+			{
+				Con_Printf(
+					S_WARN "ClientEntities_LoadForBSP: Client-side sound at index %zu had invalid sound name\n",
+					index);
+
+				continue;
+			}
+
+			if ( CreateSound(staticSound) )
+			{
+				++soundsLoaded;
+			}
+		}
+	}
+
+	Con_DPrintf("ClientEntities_LoadForBSP: Loaded %zu models and %zu sounds\n", modelsLoaded, soundsLoaded);
 }
