@@ -99,6 +99,9 @@ int matchpattern_with_separator(
 	const char* separators,
 	qboolean wildcard_least_one);
 
+// String pointer must be valid.
+qboolean COM_StringIsTerminated(const char* str, size_t maxLength);
+
 // libc implementations
 int Q_strcmp(const char* s1, const char* s2);
 int Q_strncmp(const char* s1, const char* s2, size_t n);
