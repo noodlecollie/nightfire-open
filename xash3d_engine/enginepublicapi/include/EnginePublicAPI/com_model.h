@@ -293,6 +293,7 @@ typedef struct mclientents_model_s
 	struct model_s* modelPtr;
 	vec3_t origin;
 	vec3_t angles;
+	uint8_t fixedLightColour[3];
 	char sequenceName[32];
 	int body;
 	int skin;

@@ -3680,6 +3680,10 @@ static void Mod_LoadClientModels(const dbspmodel_t* bmod)
 		Q_strcpy(outModel->sequenceName, sizeof(outModel->sequenceName), inModel->sequenceName);
 		outModel->body = inModel->body;
 		outModel->skin = inModel->skin;
+
+		outModel->fixedLightColour[0] = inModel->fixedLightColour[0];
+		outModel->fixedLightColour[1] = inModel->fixedLightColour[1];
+		outModel->fixedLightColour[2] = inModel->fixedLightColour[2];
 	}
 }
 

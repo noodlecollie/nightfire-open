@@ -375,6 +375,7 @@ typedef struct
 	char model[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
 	float origin[3];
 	float angles[3];
+	uint8_t fixedLightColour[3];
 	char sequenceName[32];
 	int body;
 	int skin;
