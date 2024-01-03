@@ -99,7 +99,7 @@ int Cmd_ListMaps(search_t* t, char* lastmapname, size_t len)
 			FS_Seek(f, 0, SEEK_SET);
 
 			byte* fileData = (byte*)Z_Malloc((size_t)fileSize);
-			fs_offset_t bytesRead = FS_Read(f, fileData, fileSize);
+			fs_offset_t bytesRead = FS_Read(f, fileData, (size_t)fileSize);
 
 			header = (dheader_t*)fileData;
 			ver = header->version;
@@ -1065,7 +1065,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 			FS_Seek(f, 0, SEEK_SET);
 
 			byte* fileData = (byte*)Z_Malloc((size_t)fileSize);
-			fs_offset_t bytesRead = FS_Read(f, fileData, MAX_SYSPATH);
+			fs_offset_t bytesRead = FS_Read(f, fileData, (size_t)fileSize);
 
 			// check all the lumps and some other errors
 			if ( !Mod_TestBmodelLumps(f, t->filenames[i], fileData, (size_t)bytesRead, true, &entities) )
