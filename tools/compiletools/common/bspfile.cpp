@@ -1986,6 +1986,15 @@ void MakeClientEntity_Model(const entity_t& entity)
 		VectorClear(outModel->angles);
 	}
 
+	int fixedLightColour[3];
+
+	if ( sscanf(ValueForKey(&entity, "fixedlight"), "%d %d %d", &fixedLightColour[0], &fixedLightColour[1], &fixedLightColour[2]) != 3 )
+	{
+		outModel->fixedLightColour[0] = static_cast<uint8_t>(bound(0, fixedLightColour[0], 255));
+		outModel->fixedLightColour[1] = static_cast<uint8_t>(bound(0, fixedLightColour[1], 255));
+		outModel->fixedLightColour[2] = static_cast<uint8_t>(bound(0, fixedLightColour[2], 255));
+	}
+
 	safe_strncpy(outModel->sequenceName, ValueForKey(&entity, "sequencename"), sizeof(outModel->sequenceName));
 
 	int body = IntForKey(&entity, "body");

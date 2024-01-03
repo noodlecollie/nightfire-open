@@ -1424,7 +1424,9 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 	dlight_t* dl;
 
 	if ( !plight || !ent || !ent->model )
+	{
 		return;
+	}
 
 	if ( !RI.drawWorld || r_fullbright->value || FBitSet(ent->curstate.effects, EF_FULLBRIGHT) )
 	{
@@ -1438,9 +1440,13 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 
 	// determine plane to get lightvalues from: ceil or floor
 	if ( FBitSet(ent->curstate.effects, EF_INVLIGHT) )
+	{
 		VectorSet(lightDir, 0.0f, 0.0f, 1.0f);
+	}
 	else
+	{
 		VectorSet(lightDir, 0.0f, 0.0f, -1.0f);
+	}
 
 	VectorCopy(ent->origin, origin);
 
@@ -1466,10 +1472,15 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 		}
 
 		trace = gEngfuncs.CL_TraceLine(vecSrc, vecEnd, PM_WORLD_ONLY);
+
 		if ( trace.ent > 0 )
+		{
 			psurf = gEngfuncs.EV_TraceSurface(trace.ent, vecSrc, vecEnd);
+		}
 		else
+		{
 			psurf = gEngfuncs.EV_TraceSurface(0, vecSrc, vecEnd);
+		}
 
 		if ( FBitSet(ent->model->flags, STUDIO_FORCE_SKYLIGHT) || (psurf && FBitSet(psurf->flags, SURF_DRAWSKY)) )
 		{
@@ -1533,8 +1544,11 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 	ent->cvFloorColor = light;
 
 	total = (float)Q_max(Q_max(light.r, light.g), light.b);
+
 	if ( total == 0.0f )
+	{
 		total = 1.0f;
+	}
 
 	// scale lightdir by light intentsity
 	VectorScale(lightDir, total, lightDir);
@@ -1544,7 +1558,9 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 		dl = gEngfuncs.GetDynamicLight(lnum);
 
 		if ( dl->die < g_studio.time || !r_dynamic->value )
+		{
 			continue;
+		}
 
 		VectorSubtract(ent->origin, dl->origin, dist);
 
@@ -1556,9 +1572,13 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 			total += add;
 
 			if ( radius > 1.0f )
+			{
 				VectorScale(dist, (add / radius), dist);
+			}
 			else
+			{
 				VectorScale(dist, add, dist);
+				}
 
 			VectorAdd(lightDir, dist, lightDir);
 
@@ -1569,9 +1589,13 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 	}
 
 	if ( FBitSet(ent->model->flags, STUDIO_AMBIENT_LIGHT) )
+	{
 		add = 0.6f;
+	}
 	else
+	{
 		add = 0.9f;
+	}
 
 	VectorScale(lightDir, add, lightDir);
 
@@ -1587,13 +1611,19 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 		plight->color[2] = finalLight[2] * (1.0f / total);
 	}
 	else
+	{
 		VectorSet(plight->color, 1.0f, 1.0f, 1.0f);
+	}
 
 	if ( plight->ambientlight > 128 )
+	{
 		plight->ambientlight = 128;
+	}
 
 	if ( plight->ambientlight + plight->shadelight > 255 )
+	{
 		plight->shadelight = 255 - plight->ambientlight;
+	}
 
 	VectorNormalize2(lightDir, plight->plightvec);
 }
