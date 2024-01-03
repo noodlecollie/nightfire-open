@@ -1324,7 +1324,7 @@ int Mod_LookUpStudioSequence(model_t* model, const char* name)
 {
 	if ( !model || model->type != mod_studio || !name || !(*name) )
 	{
-		return 0.0f;
+		return -1;
 	}
 
 	studiohdr_t* header = (studiohdr_t*)Mod_StudioExtradata(model);
