@@ -6,3 +6,6 @@
 *.lin
 */autosave/*
 */compile/*
+*-crash.log
+*-crash.map
+*-crash.txt
