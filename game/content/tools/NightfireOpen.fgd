@@ -2163,6 +2163,15 @@
 	]
 ]
 
+@PointClass base(Angles, RenderFxChoices) studio() = client_model : "Client-side static model"
+[
+	model(studio) : "Model"
+	fixedlight(color255) : "Fixed lighting colour" : "0 0 0"
+	sequencename(string) : "Sequence name" : "idle"
+	body(integer) : "Body" : 0
+	skin(integer) : "Skin" : 0
+]
+
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_p99/w_p99.mdl" }) = weapon_p99 : "P99 Pistol" []
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_p99/w_ammo_p99.mdl" }) = ammo_p99 : "P99 Pistol Ammo" []
 
