@@ -50,8 +50,14 @@ void Mod_FreeUnused(void);
 //
 // mod_bmodel.c
 //
-void Mod_LoadBrushModel(model_t* mod, const void* buffer, qboolean* loaded);
-qboolean Mod_TestBmodelLumps(file_t* f, const char* name, const byte* mod_base, qboolean silent, dlump_t* entities);
+void Mod_LoadBrushModel(model_t* mod, const void* buffer, size_t length, qboolean* loaded);
+qboolean Mod_TestBmodelLumps(
+	file_t* f,
+	const char* name,
+	const byte* mod_base,
+	size_t length,
+	qboolean silent,
+	dlump_t* entities);
 qboolean Mod_HeadnodeVisible(mnode_t* node, const byte* visbits, int* lastleaf);
 int Mod_FatPVS(const vec3_t org, float radius, byte* visbuffer, int visbytes, qboolean merge, qboolean fullvis);
 qboolean Mod_BoxVisible(const vec3_t mins, const vec3_t maxs, const byte* visbits);
@@ -80,6 +86,7 @@ void Mod_InitStudioAPI(void);
 void Mod_InitStudioHull(void);
 void Mod_ResetStudioAPI(void);
 const char* Mod_StudioTexName(const char* modname);
+int Mod_LookUpStudioSequence(model_t* model, const char* name);
 qboolean Mod_GetStudioBounds(const char* name, vec3_t mins, vec3_t maxs);
 void Mod_StudioGetAttachment(const edict_t* e, int iAttachment, float* org, float* ang);
 void Mod_GetBonePosition(const edict_t* e, int iBone, float* org, float* ang);

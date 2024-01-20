@@ -150,7 +150,7 @@ typedef struct
 #ifdef ZHLT_PARANOIA_BSP
 	short		faceinfo;           // terrain stuff
 #endif
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 	uint32_t faceFlags;
 	char materialName[MAX_TEXTURE_NAME_LENGTH];
 	float lightmapScale;

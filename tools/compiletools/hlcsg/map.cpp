@@ -282,7 +282,7 @@ static bool CheckForInvisible( entity_t* mapent )
 }
 #endif
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 static void CheckForBrushFlags(brush_t* brush)
 {
 	// Nightfire .map files have some special (but ugly) syntax for brushes.
@@ -450,7 +450,7 @@ static contents_t ParseBrush( entity_t* mapent, short faceinfo )
 			break;
 		}
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 		CheckForBrushFlags(b);
 #endif
 
@@ -508,7 +508,7 @@ static contents_t ParseBrush( entity_t* mapent, short faceinfo )
 		// read the texturedef
 		GetToken( false );
 
-#ifndef ZHLT_AFTERBURNER
+#ifndef ZHLT_NFOPEN
 		_strupr( g_token );
 #endif
 
@@ -638,7 +638,7 @@ static contents_t ParseBrush( entity_t* mapent, short faceinfo )
 			side->td.vects.valve.scale[1] = atof( g_token );
 		}
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 		// Nightfire - read:
 		// - Face flags as an integer
 		// - Material name as a string
@@ -679,7 +679,7 @@ static contents_t ParseBrush( entity_t* mapent, short faceinfo )
 #endif
 					b->numsides, g_token );
 		}
-#endif // ZHLT_AFTERBURNER
+#endif // ZHLT_NFOPEN
 
 		ok = GetToken( true );	// Done with line, this reads the first item from the next line
 

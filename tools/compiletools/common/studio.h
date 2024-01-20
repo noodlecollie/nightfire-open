@@ -29,7 +29,7 @@ Studio models are position independent, so the cache manager can move them.
 #define STUDIO_VERSION	10
 #define IDSTUDIOHEADER	(('T'<<24)+('S'<<16)+('D'<<8)+'I') // little-endian "IDST"
 #define IDSEQGRPHEADER	(('Q'<<24)+('S'<<16)+('D'<<8)+'I') // little-endian "IDSQ"
-#define AFTERBURNER_HEADER (('B'<<24)+('T'<<16)+('F'<<8)+'A')
+#define NFOPEN_HEADER (('B'<<24)+('T'<<16)+('F'<<8)+'A')
 
 // studio limits
 #define MAXSTUDIOTRIANGLES		65535	// max triangles per model

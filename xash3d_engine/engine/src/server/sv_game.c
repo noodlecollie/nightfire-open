@@ -905,8 +905,8 @@ Create entity patch for selected map
 */
 void SV_WriteEntityPatch(const char* filename)
 {
-	int lumpofs = 0, lumplen = 0;
-	byte buf[MAX_TOKEN];  // 1 kb
+	int lumpofs = 0;
+	int lumplen = 0;
 	string bspfilename;
 	dlump_t entities;
 	file_t* f;
@@ -914,15 +914,23 @@ void SV_WriteEntityPatch(const char* filename)
 	Q_snprintf(bspfilename, sizeof(bspfilename), "maps/%s.bsp", filename);
 
 	f = FS_Open(bspfilename, "rb", false);
-	if ( !f )
-		return;
 
-	memset(buf, 0, MAX_TOKEN);
-	FS_Read(f, buf, MAX_TOKEN);
+	if ( !f )
+	{
+		return;
+	}
+
+	FS_Seek(f, 0, SEEK_END);
+	fs_offset_t fileSize = FS_Tell(f);
+	FS_Seek(f, 0, SEEK_SET);
+
+	byte* fileData = (byte*)Z_Malloc((size_t)fileSize);
+	fs_offset_t bytesRead = FS_Read(f, fileData, (size_t)fileSize);
 
 	// check all the lumps and some other errors
-	if ( !Mod_TestBmodelLumps(f, bspfilename, buf, true, &entities) )
+	if ( !Mod_TestBmodelLumps(f, bspfilename, fileData, (size_t)bytesRead, true, &entities) )
 	{
+		Z_Free(fileData);
 		FS_Close(f);
 		return;
 	}
@@ -932,16 +940,16 @@ void SV_WriteEntityPatch(const char* filename)
 
 	if ( lumplen >= 10 )
 	{
-		char* entData = NULL;
+		char* entData = (char*)Z_Malloc(lumplen + 1);
+		memcpy(entData, fileData + lumpofs, lumplen);
+		entData[lumplen] = '\0';
 
-		FS_Seek(f, lumpofs, SEEK_SET);
-		entData = (char*)Z_Calloc(lumplen + 1);
-		FS_Read(f, entData, lumplen);
 		FS_WriteFile(va("maps/%s.ent", filename), entData, lumplen);
 		Con_Printf("Write 'maps/%s.ent'\n", filename);
-		Mem_Free(entData);
+		Z_Free(entData);
 	}
 
+	Z_Free(fileData);
 	FS_Close(f);
 }
 
@@ -954,12 +962,14 @@ pfnMapIsValid use this
 */
 static char* SV_ReadEntityScript(const char* filename, int* flags)
 {
-	string bspfilename, entfilename;
-	int lumpofs = 0, lumplen = 0;
-	byte buf[MAX_TOKEN];
+	string bspfilename;
+	string entfilename;
+	int lumpofs = 0;
+	int lumplen = 0;
 	char* ents = NULL;
 	dlump_t entities;
-	size_t ft1, ft2;
+	size_t ft1;
+	size_t ft2;
 	file_t* f;
 
 	*flags = 0;
@@ -967,22 +977,31 @@ static char* SV_ReadEntityScript(const char* filename, int* flags)
 	Q_snprintf(bspfilename, sizeof(bspfilename), "maps/%s.bsp", filename);
 
 	f = FS_Open(bspfilename, "rb", false);
+
 	if ( !f )
+	{
 		return NULL;
+	}
 
 	SetBits(*flags, MAP_IS_EXIST);
-	memset(buf, 0, MAX_TOKEN);
-	FS_Read(f, buf, MAX_TOKEN);
+
+	FS_Seek(f, 0, SEEK_END);
+	fs_offset_t fileSize = FS_Tell(f);
+	FS_Seek(f, 0, SEEK_SET);
+
+	byte* fileData = (byte*)Z_Malloc((size_t)fileSize);
+	fs_offset_t bytesRead = FS_Read(f, fileData, (size_t)fileSize);
 
 	// check all the lumps and some other errors
-	if ( !Mod_TestBmodelLumps(f, bspfilename, buf, (host_developer.value) ? false : true, &entities) )
+	if ( !Mod_TestBmodelLumps(f, bspfilename, fileData, bytesRead, (host_developer.value) ? false : true, &entities) )
 	{
 		SetBits(*flags, MAP_INVALID_VERSION);
+		Z_Free(fileData);
 		FS_Close(f);
 		return NULL;
 	}
 
-	// after call Mod_TestBmodelLumps we gurantee what map is valid
+	// after call Mod_TestBmodelLumps we gurantee that map is valid
 	lumpofs = entities.fileofs;
 	lumplen = entities.filelen;
 
@@ -1003,10 +1022,12 @@ static char* SV_ReadEntityScript(const char* filename, int* flags)
 	// for correct spawn the level
 	if ( !ents && lumplen >= 32 )
 	{
-		FS_Seek(f, lumpofs, SEEK_SET);
-		ents = Z_Calloc(lumplen + 1);
-		FS_Read(f, ents, lumplen);
+		ents = Z_Malloc(lumplen + 1);
+		memcpy(ents, fileData + lumpofs, lumplen);
+		ents[lumplen] = '\0';
 	}
+
+	Z_Free(fileData);
 	FS_Close(f);  // all done
 
 	return ents;
@@ -3007,7 +3028,7 @@ this is low-res angle
 */
 void GAME_EXPORT pfnWriteAngle(float flValue)
 {
-	int iAngle = ((int)((flValue)*256 / 360) & 255);
+	int iAngle = ((int)((flValue) * 256 / 360) & 255);
 
 	MSG_WriteChar(&sv.multicast, iAngle);
 	if ( svgame.msg_trace )
@@ -5208,7 +5229,8 @@ static enginefuncs_t gEngfuncs = {
 	pfnModelSequenceDuration,
 	pfnGetHitboxCount,
 	pfnGetTransformedHitboxPoints,
-	pfnGetHitboxHitGroup};
+	pfnGetHitboxHitGroup,
+};
 
 /*
 ====================

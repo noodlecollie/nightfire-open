@@ -32,7 +32,7 @@ BRUSH MODELS
 #define Q1BSP_VERSION 29  // quake1 regular version (beta is 28)
 #define HLBSP_VERSION 30  // half-life regular version
 #define QBSP2_VERSION (('B' << 0) | ('S' << 8) | ('P' << 16) | ('2' << 24))
-#define ABBSP_VERSION 43
+#define NFOPENBSP_VERSION 43
 
 #define IDEXTRAHEADER (('H' << 24) + ('S' << 16) + ('A' << 8) + 'X')  // little-endian "XASH"
 #define EXTRA_VERSION \
@@ -313,14 +313,43 @@ typedef struct
 	int lightofs;  // start of [numstyles*surfsize] samples
 } dface32_t;
 
-// The following are structures for Afterburner-specific BSPs:
+// The following are structures for Nightfire Open-specific BSPs:
 
-#define AB_MAX_TEXTURE_NAME_LENGTH 80
+#define NFOPEN_EXTRAHEADER_ID (('X' << 24) + ('O' << 16) + ('F' << 8) + 'N')
+#define NFOPEN_EXTRAHEADER_VERSION 1
+
+#define NFOPEN_CLIENT_ENT_HEADER_VERSION 1
+#define NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH ((size_t)80)
+#define NFOPEN_CLIENT_ENT_MAX_MODELS ((size_t)2048)
+#define NFOPEN_CLIENT_ENT_MAX_SOUNDS ((size_t)2048)
+
+#define NFOPEN_MAX_TEXTURE_NAME_LENGTH 80
+
+typedef enum
+{
+	NFOPEN_LUMP_CLIENTENTS = 0,
+} dnfopenextralumpid_e;
+
+typedef struct
+{
+	uint32_t id;
+	uint32_t version;
+	uint32_t numLumps;  // This number of dnfopenextralump_t entries follow
+} dnfopenextraheader_t;
+
+typedef struct
+{
+	uint32_t lumpIndex;
+	uint32_t offsetFromBeginningOfExtraHeader;
+	uint32_t dataLength;
+} dnfopenextralump_t;
 
 // This header begins the texture lump.
 // After it there are pngCount consecutive dpngtexturepath_t items,
 // and then miptexCount consective miptex offsets and textures,
 // as per the normal Half Life spec.
+// NFTODO: Make this a custom lump, as it currently piggy-backs
+// on the Half Life texture lump.
 typedef struct
 {
 	uint32_t pngCount;
@@ -329,5 +358,38 @@ typedef struct
 
 typedef struct
 {
-	char path[AB_MAX_TEXTURE_NAME_LENGTH];
+	char path[NFOPEN_MAX_TEXTURE_NAME_LENGTH];
 } dpngtexturepath_t;
+
+typedef struct
+{
+	uint32_t version;
+	uint32_t modelCount;
+	uint32_t modelOffsetFromBeginningOfHeader;
+	uint32_t soundCount;
+	uint32_t soundOffsetFromBeginningOfHeader;
+} dclientents_header_t;
+
+typedef struct
+{
+	char model[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float angles[3];
+	uint8_t fixedLightColour[3];
+	char sequenceName[32];
+	int body;
+	int skin;
+} dclientents_model_t;
+
+typedef struct
+{
+	char sound[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float minRetriggerDelaySecs;
+	float maxRetriggerDelaySecs;
+	uint8_t volume;
+} dclientents_sound_t;
+
+#define NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE \
+	(sizeof(dclientents_header_t) + (NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dclientents_model_t)) + \
+	 (NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dclientents_sound_t)))

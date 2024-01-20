@@ -5733,7 +5733,7 @@ int             main(const int argc, char** argv)
 		}
 #endif
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
         else if ( strcasecmp(argv[i], "-texturedir") == 0 )
         {
             if (i + 1 < argc)
