@@ -4,5 +4,8 @@
 *.ext
 *.prt
 *.lin
-*/autosave/*
-*/compile/*
+**/autosave/*
+**/compile/*
+*-crash.log
+*-crash.map
+*-crash.txt

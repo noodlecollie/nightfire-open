@@ -666,8 +666,8 @@ void Banner()
 	Log ("Special edition for Xash with change in BSP format\n");
 #elif defined(ZHLT_XASH)
 	Log("Special edition for Xash\n");
-#elif defined(ZHLT_AFTERBURNER)
-	Log ("Special edition for Afterburner with change in BSP format\n");
+#elif defined(ZHLT_NFOPEN)
+	Log ("Special edition for Nightfire Open with change in BSP format\n");
 #endif
 
 	Log("Zoner's Half-Life Compilation Tools -- Custom Build\n"

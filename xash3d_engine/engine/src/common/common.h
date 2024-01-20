@@ -140,7 +140,7 @@ typedef enum
 #define CIN_LOGO 1
 
 #define MAX_DECALS 512  // touching TE_DECAL messages, etc
-#define MAX_STATIC_ENTITIES 3096  // static entities that moved on the client when level is spawned
+#define MAX_STATIC_ENTITIES 4096  // static entities that moved on the client when level is spawned
 
 #define GameState (&host.game)
 

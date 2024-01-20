@@ -287,6 +287,36 @@ struct msurface_s
 	decal_t* pdecals;
 };
 
+typedef struct mclientents_model_s
+{
+	char modelName[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	struct model_s* modelPtr;
+	vec3_t origin;
+	vec3_t angles;
+	uint8_t fixedLightColour[3];
+	char sequenceName[32];
+	int body;
+	int skin;
+} mclientents_model_t;
+
+typedef struct mclientents_sound_s
+{
+	char sound[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	vec3_t origin;
+	float minRetriggerDelaySecs;
+	float maxRetriggerDelaySecs;
+	uint8_t volume;
+} mclientents_sound_t;
+
+typedef struct mclientents_s
+{
+	mclientents_model_t* models;
+	size_t modelCount;
+
+	mclientents_sound_t* sounds;
+	size_t soundCount;
+} mclientents_t;
+
 typedef struct hull_s
 {
 	mclipnode_t* clipnodes;
@@ -365,6 +395,9 @@ typedef struct model_s
 
 	color24* lightdata;
 	char* entities;
+
+	mclientents_t* clientEntities;
+
 	//
 	// additional model data
 	//

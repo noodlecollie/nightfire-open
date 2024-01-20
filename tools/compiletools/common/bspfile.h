@@ -4,7 +4,7 @@
 #include "mathlib.h"
 #include "specialtextures.h"
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 #include "texturecollection.h"
 #include "texturedirectorylisting.h"
 #endif
@@ -124,7 +124,7 @@
 
 #if defined(ZHLT_XASH2)
 #define BSPVERSION		31
-#elif defined(ZHLT_AFTERBURNER)
+#elif defined(ZHLT_NFOPEN)
 #define BSPVERSION		43	// Nightfire BSP format was 42
 #else
 #define BSPVERSION		30
@@ -132,7 +132,7 @@
 
 #define TOOLVERSION		2
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
 #define MAX_TEXTURE_NAME_LENGTH 80
 #else
 #define MAX_TEXTURE_NAME_LENGTH 16
@@ -327,11 +327,35 @@ typedef struct texinfo_s
 #endif
 } texinfo_t;
 
-#ifdef ZHLT_AFTERBURNER
+#ifdef ZHLT_NFOPEN
+#define NFOPEN_EXTRAHEADER_ID (('X' << 24) + ('O' << 16) + ('F' << 8) + 'N')
+#define NFOPEN_EXTRAHEADER_VERSION 1
+
+typedef enum
+{
+	NFOPEN_LUMP_CLIENTENTS = 0,
+} dnfopenextralumpid_e;
+
+typedef struct
+{
+	uint32_t id;
+	uint32_t version;
+	uint32_t numLumps;  // This number of dnfopenextralump_t entries follow
+} dnfopenextraheader_t;
+
+typedef struct
+{
+	uint32_t lumpIndex;
+	uint32_t offsetFromBeginningOfExtraHeader;
+	uint32_t dataLength;
+} dnfopenextralump_t;
+
 // This header begins the texture lump.
 // After it there are pngCount consecutive dpngtexturepath_t items,
 // and then miptexCount consective miptex offsets and textures,
 // as per the normal Half Life spec.
+// NFTODO: Make this a custom lump, as it currently piggy-backs
+// on the Half Life texture lump.
 typedef struct
 {
 	uint32_t pngCount;
@@ -342,6 +366,45 @@ typedef struct
 {
 	char path[MAX_TEXTURE_NAME_LENGTH];
 } dpngtexturepath_t;
+
+#define NFOPEN_CLIENT_ENT_HEADER_VERSION 1
+#define NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH ((size_t)80)
+#define NFOPEN_CLIENT_ENT_MAX_MODELS ((size_t)2048)
+#define NFOPEN_CLIENT_ENT_MAX_SOUNDS ((size_t)2048)
+
+typedef struct
+{
+	uint32_t version;
+	uint32_t modelCount;
+	uint32_t modelOffsetFromBeginningOfHeader;
+	uint32_t soundCount;
+	uint32_t soundOffsetFromBeginningOfHeader;
+} dnfopenclientents_header_t;
+
+typedef struct
+{
+	char model[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float angles[3];
+	uint8_t fixedLightColour[3];
+	char sequenceName[32];
+	int body;
+	int skin;
+} dnfopenclientents_model_t;
+
+typedef struct
+{
+	char sound[NFOPEN_CLIENT_ENT_MAX_PATH_LENGTH];
+	float origin[3];
+	float minRetriggerDelaySecs;
+	float maxRetriggerDelaySecs;
+	uint8_t volume;
+} dnfopenclientents_sound_t;
+
+#define NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE \
+	(sizeof(dnfopenclientents_header_t) + \
+	(NFOPEN_CLIENT_ENT_MAX_MODELS * sizeof(dnfopenclientents_model_t)) + \
+	(NFOPEN_CLIENT_ENT_MAX_SOUNDS * sizeof(dnfopenclientents_sound_t)))
 #endif
 
 #define TEX_SPECIAL		1		// sky or slime or null, no lightmap or 256 subdivision
@@ -562,7 +625,17 @@ extern int      g_dleaflights_checksum;
 extern int      g_numworldlights;
 extern dworldlight_t g_dworldlights[MAX_MAP_WORLDLIGHTS];
 extern int      g_dworldlights_checksum;
-#endif
+#endif  // ZHLT_PARANOIA_BSP
+
+#ifdef ZHLT_NFOPEN
+extern size_t g_numclientmodels;
+extern dnfopenclientents_model_t g_clientmodels[NFOPEN_CLIENT_ENT_MAX_MODELS];
+extern int g_clientmodels_checksum;
+
+extern size_t g_numclientsounds;
+extern dnfopenclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
+extern int g_clientsounds_checksum;
+#endif  // ZHLT_NFOPEN
 
 extern vec3_t   g_hull_size[MAX_MAP_HULLS][2];
 
@@ -616,6 +689,7 @@ extern void UnparseEntities();
 
 #ifdef ZHLT_DELETEKEY
 extern void DeleteKey(entity_t* ent, const char* const key);
+extern void DeleteAllKeys(entity_t* ent);
 #endif
 extern void SetKeyValue(entity_t* ent, const char* const key, const char* const value);
 extern const char* ValueForKey( const entity_t* const ent, const char* const key, bool check = false );

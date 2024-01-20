@@ -1320,6 +1320,27 @@ const char* Mod_StudioTexName(const char* modname)
 	return texname;
 }
 
+int Mod_LookUpStudioSequence(model_t* model, const char* name)
+{
+	if ( !model || model->type != mod_studio || !name || !(*name) )
+	{
+		return -1;
+	}
+
+	studiohdr_t* header = (studiohdr_t*)Mod_StudioExtradata(model);
+	mstudioseqdesc_t* seqDesc = (mstudioseqdesc_t*)((byte*)header + header->seqindex);
+
+	for ( int i = 0; i < header->numseq; i++ )
+	{
+		if ( Q_strcmp(seqDesc[i].label, name) == 0 )
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 float Mod_StudioGetSequenceDuration(model_t* model, int anim)
 {
 	studiohdr_t* header = NULL;

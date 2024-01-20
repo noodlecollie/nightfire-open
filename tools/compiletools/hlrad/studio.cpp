@@ -125,7 +125,7 @@ void LoadStudioModels( void )
 	if( g_nostudioshadow ) return;
 
 	// Removed for now, because if there's a "maps" in the working directory path
-	// (as there is in the path to tha Afterburner map sources), the code assumes
+	// (as there is in the path to the Nightfire Open map sources), the code assumes
 	// that it can initialise a game filesystem. This causes it to crash.
 	// We need to take a proper look at this, but until then I've removed it.
 	//FS_Init();

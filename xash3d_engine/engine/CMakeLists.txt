@@ -149,6 +149,8 @@ if(CLIENT_SUPPORT)
 		src/client/cdll_exp.h
 		src/client/cl_bytenormals.h
 		src/client/cl_bytenormals.c
+		src/client/cl_cliententities.h
+		src/client/cl_cliententities.c
 		src/client/cl_cmds.c
 		src/client/cl_custom.c
 		src/client/cl_debug.c

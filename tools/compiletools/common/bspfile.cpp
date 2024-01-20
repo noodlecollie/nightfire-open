@@ -13,6 +13,7 @@
 #include "texturecollectionwriter.h"
 #include "texturedirectorylisting.h"
 #include "miptexwrapper.h"
+#include "nfopenheader.h"
 
 //=============================================================================
 
@@ -117,7 +118,17 @@ int		g_dleaflights_checksum;
 int		g_numworldlights;
 dworldlight_t	g_dworldlights[MAX_MAP_WORLDLIGHTS];
 int		g_dworldlights_checksum;
-#endif
+#endif  // ZHLT_PARANOIA_BSP
+
+#ifdef ZHLT_NFOPEN
+size_t g_numclientmodels = 0;
+dnfopenclientents_model_t g_clientmodels[NFOPEN_CLIENT_ENT_MAX_MODELS];
+int g_clientmodels_checksum = 0;
+
+size_t g_numclientsounds = 0;
+dnfopenclientents_sound_t g_clientsounds[NFOPEN_CLIENT_ENT_MAX_SOUNDS];
+int g_clientsounds_checksum = 0;
+#endif  // ZHLT_NFOPEN
 
 // can be overrided from hlcsg
 vec3_t g_hull_size[MAX_MAP_HULLS][2] =
@@ -135,6 +146,126 @@ vec3_t g_hull_size[MAX_MAP_HULLS][2] =
 	{-16, -16, -18 },	{ 16, 16, 18 }
 	}
 };
+
+static const void* CompileClientEntitiesLump(size_t& numBytes, bool force = false)
+{
+	static uint8_t data[NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE];
+	static size_t dataLength = 0;
+
+	if ( dataLength > 0 && !force )
+	{
+		numBytes = dataLength;
+		return data;
+	}
+
+	numBytes = 0;
+
+	if ( g_numclientmodels > NFOPEN_CLIENT_ENT_MAX_MODELS )
+	{
+		Error("%zu client models exceeded max of %zu\n", g_numclientmodels, NFOPEN_CLIENT_ENT_MAX_MODELS);
+		return nullptr;
+	}
+
+	if ( g_numclientsounds > NFOPEN_CLIENT_ENT_MAX_SOUNDS )
+	{
+		Error("%zu client sounds exceeded max of %zu\n", g_numclientsounds, NFOPEN_CLIENT_ENT_MAX_SOUNDS);
+		return nullptr;
+	}
+
+	uint8_t* cursor = data;
+
+	dnfopenclientents_header_t* header = reinterpret_cast<dnfopenclientents_header_t*>(cursor);
+	header->version = NFOPEN_CLIENT_ENT_HEADER_VERSION;
+	cursor += sizeof(*header);
+
+	header->modelOffsetFromBeginningOfHeader = static_cast<uint32_t>(cursor - data);
+	header->modelCount = static_cast<uint32_t>(g_numclientmodels);
+
+	for ( size_t index = 0; index < g_numclientmodels; ++index )
+	{
+		dnfopenclientents_model_t* model = reinterpret_cast<dnfopenclientents_model_t*>(cursor);
+		*model = g_clientmodels[index];
+		cursor += sizeof(*model);
+	}
+
+	header->soundOffsetFromBeginningOfHeader = static_cast<uint32_t>(cursor - data);
+	header->soundCount = static_cast<uint32_t>(g_numclientsounds);
+
+	for ( size_t index = 0; index < g_numclientsounds; ++index )
+	{
+		dnfopenclientents_sound_t* sound = reinterpret_cast<dnfopenclientents_sound_t*>(cursor);
+		*sound = g_clientsounds[index];
+		cursor += sizeof(*sound);
+	}
+
+	dataLength = static_cast<size_t>(cursor - data);
+	numBytes = dataLength;
+	return data;
+}
+
+static void ReadClientEntitiesLump(const void* inData, size_t inLength)
+{
+	if ( inLength < sizeof(dnfopenclientents_header_t) )
+	{
+		Error("Client entities lump was too short to read\n");
+		return;
+	}
+
+	const dnfopenclientents_header_t* header = reinterpret_cast<const dnfopenclientents_header_t*>(inData);
+
+	if ( header->version != NFOPEN_CLIENT_ENT_HEADER_VERSION )
+	{
+		Error("Expected client entities lump version %u but got %u\n", NFOPEN_CLIENT_ENT_HEADER_VERSION, header->version);
+		return;
+	}
+
+	const size_t totalSize = sizeof(dnfopenclientents_header_t) +
+		(header->modelCount * sizeof(dnfopenclientents_model_t)) +
+		(header->soundCount * sizeof(dnfopenclientents_sound_t));
+
+	if ( inLength < totalSize )
+	{
+		Error("Expected client entities lump length to be %zu but got %zu\n", totalSize, inLength);
+		return;
+	}
+
+	if ( header->modelOffsetFromBeginningOfHeader + (header->modelCount * sizeof(dnfopenclientents_model_t)) > inLength )
+	{
+		Error("Client entities lump corrupted: models exceeded available data\n");
+		return;
+	}
+
+	if ( header->soundOffsetFromBeginningOfHeader + (header->soundCount * sizeof(dnfopenclientents_sound_t)) > inLength )
+	{
+		Error("Client entities lump corrupted: sounds exceeded available data\n");
+		return;
+	}
+
+	if ( inLength > totalSize )
+	{
+		Warning("Expected client entities lump length to be %zu but got %zu, ignoring extra data\n", totalSize, inLength);
+	}
+
+	g_numclientmodels = static_cast<size_t>(header->modelCount);
+
+	const dnfopenclientents_model_t* modelsBase = reinterpret_cast<const dnfopenclientents_model_t*>(
+		static_cast<const uint8_t*>(inData) + header->modelOffsetFromBeginningOfHeader);
+
+	for ( size_t index = 0; index < g_numclientmodels; ++index )
+	{
+		g_clientmodels[index] = modelsBase[index];
+	}
+
+	g_numclientsounds = static_cast<size_t>(header->soundCount);
+
+	const dnfopenclientents_sound_t* soundsBase = reinterpret_cast<const dnfopenclientents_sound_t*>(
+		static_cast<const uint8_t*>(inData) + header->soundOffsetFromBeginningOfHeader);
+
+	for ( size_t index = 0; index < g_numclientsounds; ++index )
+	{
+		g_clientsounds[index] = soundsBase[index];
+	}
+}
 
 /*
  * ===============
@@ -613,6 +744,7 @@ void LoadBSPImage( dheader_t* const header )
 	g_visdatasize = CopyLump( LUMP_VISIBILITY, g_dvisdata, 1, header );
 	g_lightdatasize = CopyLump( LUMP_LIGHTING, g_dlightdata, 1, header );
 	g_entdatasize = CopyLump( LUMP_ENTITIES, g_dentdata, 1, header );
+
 #ifdef ZHLT_PARANOIA_BSP
 	dextrahdr_t*    extrahdr = (dextrahdr_t *)((byte *)header + sizeof( dheader_t ));
 
@@ -640,6 +772,18 @@ void LoadBSPImage( dheader_t* const header )
 		g_numworldlights = CopyExtraLump( LUMP_WORLDLIGHTS, g_dworldlights, sizeof( dworldlight_t ), header );
 	}
 #endif
+
+#ifdef ZHLT_NFOPEN
+	{
+		dnfopenextraheader_t* nfHeader = NFOpen::GetHeader(header);
+		dnfopenextralump_t* lump = NFOpen::LookUpLump(nfHeader, NFOPEN_LUMP_CLIENTENTS);
+
+		ReadClientEntitiesLump(
+			reinterpret_cast<const byte*>(nfHeader) + lump->offsetFromBeginningOfExtraHeader,
+			static_cast<size_t>(lump->dataLength));
+	}
+#endif  // ZHLT_NFOPEN
+
 	Free( header );	// everything has been copied out
 
 	//
@@ -670,6 +814,11 @@ void LoadBSPImage( dheader_t* const header )
 	g_dvisdata_checksum = FastChecksum( g_dvisdata, g_visdatasize * sizeof( g_dvisdata[0] ));
 	g_dlightdata_checksum = FastChecksum( g_dlightdata, g_lightdatasize * sizeof( g_dlightdata[0] ));
 	g_dentdata_checksum = FastChecksum( g_dentdata, g_entdatasize * sizeof( g_dentdata[0] ));
+
+#ifdef ZHLT_NFOPEN
+	g_clientmodels_checksum = FastChecksum( g_clientmodels, g_numclientmodels * sizeof( g_clientmodels[0] ));
+	g_clientsounds_checksum = FastChecksum( g_clientsounds, g_numclientsounds * sizeof( g_clientsounds[0] ));
+#endif
 
 #ifdef ZHLT_PARANOIA_BSP
 	if( g_found_extradata )
@@ -710,6 +859,18 @@ static void AddExtraLump( int lumpnum, const void* data, int len, dextrahdr_t* h
 }
 #endif
 
+#ifdef ZHLT_NFOPEN
+static void WriteLumpDescriptor(const dnfopenextralump_t& lump, FILE* bspfile)
+{
+	SafeWrite(bspfile, &lump, sizeof(lump));
+}
+
+static void WriteLumpData(const void* data, uint32_t len, FILE* bspfile)
+{
+	SafeWrite(bspfile, data, (len + 3) & ~3);
+}
+#endif  // ZHLT_NFOPEN
+
 // =====================================================================================
 //  WriteBSPFile
 //      Swaps the bsp file in place, so it should not be referenced again
@@ -722,6 +883,12 @@ void WriteBSPFile( const char* const filename )
 	dextrahdr_t	outextrahdr;
 	dextrahdr_t*	extrahdr;
 #endif
+
+#ifdef ZHLT_NFOPEN
+	dnfopenextraheader_t outNfHeader;
+	dnfopenextraheader_t* nfHeader = &outNfHeader;
+#endif  // ZHLT_NFOPEN
+
 	FILE*		bspfile;
 
 	// Do this here, before the file gets byte-swapped.
@@ -747,19 +914,37 @@ void WriteBSPFile( const char* const filename )
 	extrahdr = &outextrahdr;
 	memset( extrahdr, 0, sizeof( dextrahdr_t ));
 #endif
+
+#ifdef ZHLT_NFOPEN
+	memset(&outNfHeader, 0, sizeof(outNfHeader));
+#endif  // ZHLT_NFOPEN
+
 	SwapBSPFile( true );
 
 	header->version = LittleLong( BSPVERSION );
+
 #ifdef ZHLT_PARANOIA_BSP
 	extrahdr->id = LittleLong( IDEXTRAHEADER );
 	extrahdr->version = LittleLong( EXTRA_VERSION );
 #endif
 
+#ifdef ZHLT_NFOPEN
+	nfHeader->id = LittleLong(NFOPEN_EXTRAHEADER_ID);
+	nfHeader->version = LittleLong(NFOPEN_EXTRAHEADER_VERSION);
+#endif  // ZHLT_NFOPEN
+
 	bspfile = SafeOpenWrite( filename );
 	SafeWrite( bspfile, header, sizeof( dheader_t ));		// overwritten later
+
 #ifdef ZHLT_PARANOIA_BSP
 	SafeWrite( bspfile, extrahdr, sizeof( dextrahdr_t ));	// overwritten later
 #endif
+
+#ifdef ZHLT_NFOPEN
+	const size_t nfHeaderOffset = ftell(bspfile);
+	SafeWrite(bspfile, nfHeader, sizeof(*nfHeader)); // overwritten later
+	WriteLumpDescriptor({NFOPEN_LUMP_CLIENTENTS, 0, 0}, bspfile); // overwritten later
+#endif  // ZHLT_NFOPEN
 
 	//       LUMP TYPE          DATA             LENGTH                                  HEADER  BSPFILE
 	AddLump( LUMP_PLANES,       g_dplanes,       g_numplanes * sizeof( dplane_t ),       header, bspfile );
@@ -808,13 +993,28 @@ void WriteBSPFile( const char* const filename )
 	AddExtraLump( LUMP_FACEINFO,     g_dfaceinfo,     g_numfaceinfo * sizeof( dfaceinfo_t ),      extrahdr, bspfile );
 	AddExtraLump( LUMP_LEAF_LIGHTING,g_dleaflights,   g_numleaflights * sizeof( dleafsample_t ),  extrahdr, bspfile );
 	AddExtraLump( LUMP_WORLDLIGHTS,  g_dworldlights,  g_numworldlights * sizeof( dworldlight_t ), extrahdr, bspfile );
-#endif
+#endif  // ZHLT_PARANOIA_BSP
+
+#ifdef ZHLT_NFOPEN
+	const size_t beginClientEntData = ftell(bspfile) - nfHeaderOffset;
+	size_t clientEntDataLength = 0;
+	const void* clientEntData = CompileClientEntitiesLump(clientEntDataLength, true);
+	WriteLumpData(clientEntData, static_cast<uint32_t>(clientEntDataLength), bspfile);
+	++nfHeader->numLumps;
+#endif  // ZHLT_NFOPEN
+
 	fseek( bspfile, 0, SEEK_SET );
 	SafeWrite( bspfile, header, sizeof( dheader_t ));
 
 #ifdef ZHLT_PARANOIA_BSP
 	SafeWrite( bspfile, extrahdr, sizeof( dextrahdr_t ));
 #endif
+
+#ifdef ZHLT_NFOPEN
+	SafeWrite(bspfile, nfHeader, sizeof(*nfHeader));
+	WriteLumpDescriptor({NFOPEN_LUMP_CLIENTENTS, static_cast<uint32_t>(beginClientEntData), static_cast<uint32_t>(clientEntDataLength)}, bspfile);
+#endif  // ZHLT_NFOPEN
+
 	fclose( bspfile );
 }
 
@@ -1370,6 +1570,14 @@ void PrintBSPFileSizes( void )
 #endif
 #endif
 
+#ifdef ZHLT_NFOPEN
+	{
+		size_t numBytes = 0;
+		CompileClientEntitiesLump(numBytes);
+		totalmemory += GlobUsage("cliententdata", numBytes, NFOPEN_CLIENT_ENT_LUMP_MAX_SIZE);
+	}
+#endif  // ZHLT_NFOPEN
+
 #ifdef ZHLT_PARANOIA_BSP
 	if( g_found_extradata )
 	{
@@ -1759,6 +1967,108 @@ bool ParseEntity( void )
 	return true;
 }
 
+#if defined(ZHLT_NFOPEN)
+void MakeClientEntity_Model(const entity_t& entity)
+{
+	if ( g_numclientmodels >= NFOPEN_CLIENT_ENT_MAX_MODELS )
+	{
+		Error("Exceeded max number of client models (%zu)\n", NFOPEN_CLIENT_ENT_MAX_MODELS);
+		return;
+	}
+
+	dnfopenclientents_model_t* outModel = &g_clientmodels[g_numclientmodels++];
+
+	VectorCopy(entity.origin, outModel->origin);
+	safe_strncpy(outModel->model, ValueForKey(&entity, "model"), sizeof(outModel->model));
+
+	if ( sscanf(ValueForKey(&entity, "angles"), "%f %f %f", &outModel->angles[0], &outModel->angles[1], &outModel->angles[2]) != 3 )
+	{
+		VectorClear(outModel->angles);
+	}
+
+	int fixedLightColour[3];
+
+	if ( sscanf(ValueForKey(&entity, "fixedlight"), "%d %d %d", &fixedLightColour[0], &fixedLightColour[1], &fixedLightColour[2]) != 3 )
+	{
+		outModel->fixedLightColour[0] = static_cast<uint8_t>(bound(0, fixedLightColour[0], 255));
+		outModel->fixedLightColour[1] = static_cast<uint8_t>(bound(0, fixedLightColour[1], 255));
+		outModel->fixedLightColour[2] = static_cast<uint8_t>(bound(0, fixedLightColour[2], 255));
+	}
+
+	safe_strncpy(outModel->sequenceName, ValueForKey(&entity, "sequencename"), sizeof(outModel->sequenceName));
+
+	int body = IntForKey(&entity, "body");
+
+	if ( body < 0 )
+	{
+		body = 0;
+	}
+
+	outModel->body = body;
+
+	int skin = IntForKey(&entity, "skin");
+
+	if ( skin < 0 )
+	{
+		skin = 0;
+	}
+
+	outModel->skin = skin;
+}
+
+void MakeClientEntity_Sound(const entity_t& entity)
+{
+	if ( g_numclientsounds >= NFOPEN_CLIENT_ENT_MAX_SOUNDS )
+	{
+		Error("Exceeded max number of client sounds (%zu)\n", NFOPEN_CLIENT_ENT_MAX_SOUNDS);
+		return;
+	}
+
+	dnfopenclientents_sound_t* outSound = &g_clientsounds[g_numclientsounds++];
+
+	VectorCopy(entity.origin, outSound->origin);
+	safe_strncpy(outSound->sound, ValueForKey(&entity, "sound"), sizeof(outSound->sound));
+
+	float minDelay = FloatForKey(&entity, "mindelay");
+
+	if ( minDelay < 0.0f )
+	{
+		minDelay = 0.0f;
+	}
+
+	outSound->minRetriggerDelaySecs = minDelay;
+
+	float maxDelay = FloatForKey(&entity, "maxdelay");
+
+	if ( maxDelay < 0.0f )
+	{
+		maxDelay = 0.0f;
+	}
+
+	outSound->maxRetriggerDelaySecs = maxDelay;
+
+	if ( ValueForKey(&entity, "volume", true) )
+	{
+		float volume = FloatForKey(&entity, "volume") * 255.0f;
+
+		if ( volume < 0.0f )
+		{
+			volume = 0.0f;
+		}
+		else if ( volume > 255.0f )
+		{
+			volume = 255.0f;
+		}
+
+		outSound->volume = static_cast<uint8_t>(volume);
+	}
+	else
+	{
+		outSound->volume = 255;
+	}
+}
+#endif  // defined(ZHLT_NFOPEN)
+
 // =====================================================================================
 //  ParseEntities
 //      Parses the dentdata string into entities
@@ -1975,6 +2285,27 @@ void            UnparseEntities()
 	}
 #endif
 #endif
+
+#if defined(ZHLT_NFOPEN)
+	// Wow, this function is pretty horrible. Let's just stick
+	// another entities pass in here, the code's too dirty to fix up.
+	for (i = 0; i < g_numentities; i++)
+	{
+		entity_t* mapent = &g_entities[i];
+
+		if ( strcmp(ValueForKey(mapent, "classname"), "client_model") == 0 )
+		{
+			MakeClientEntity_Model(*mapent);
+			DeleteAllKeys(mapent);
+		}
+		else if ( strcmp(ValueForKey(mapent, "classname"), "client_sound") == 0 )
+		{
+			MakeClientEntity_Sound(*mapent);
+			DeleteAllKeys(mapent);
+		}
+	}
+#endif  // defined(ZHLT_NFOPEN)
+
     for (i = 0; i < g_numentities; i++)
     {
         ep = g_entities[i].epairs;
@@ -2022,6 +2353,23 @@ void			DeleteKey(entity_t* ent, const char* const key)
 			Free(ep);
 			return;
 		}
+	}
+}
+
+void DeleteAllKeys(entity_t* ent)
+{
+	epair_t* pair = ent->epairs;
+	ent->epairs = nullptr;
+
+	while ( pair )
+	{
+		epair_t* next = pair->next;
+
+		Free(pair->key);
+		Free(pair->value);
+		Free(pair);
+
+		pair = next;
 	}
 }
 #endif
