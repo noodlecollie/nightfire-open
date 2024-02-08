@@ -381,28 +381,35 @@ pmtrace_t PM_PlayerTraceExt(
 		pe = &ents[i];
 
 		if ( i != 0 && (flags & PM_WORLD_ONLY) )
+		{
 			break;
+		}
 
 		// run custom user filter
-		if ( pmFilter != NULL )
+		if ( pmFilter && pmFilter(pe) )
 		{
-			if ( pmFilter(pe) )
-				continue;
+			continue;
 		}
-		else if ( ignore_pe != -1 )
+
+		if ( ignore_pe != -1 && i == ignore_pe )
 		{
-			if ( i == ignore_pe )
-				continue;
+			continue;
 		}
 
 		if ( pe->model != NULL && pe->solid == SOLID_NOT && pe->skin != CONTENTS_NONE )
+		{
 			continue;
+		}
 
 		if ( (flags & PM_GLASS_IGNORE) && pe->rendermode != kRenderNormal )
+		{
 			continue;
+		}
 
 		if ( (flags & PM_CUSTOM_IGNORE) && pe->solid == SOLID_CUSTOM )
+		{
 			continue;
+		}
 
 		hullcount = 1;
 
@@ -421,7 +428,9 @@ pmtrace_t PM_PlayerTraceExt(
 			if ( pe->studiomodel )
 			{
 				if ( FBitSet(flags, PM_STUDIO_IGNORE) )
+				{
 					continue;
+				}
 
 				if ( PM_AllowHitBoxTrace(pe->studiomodel, pmove->usehull) && !FBitSet(flags, PM_STUDIO_BOX) )
 				{
@@ -448,26 +457,40 @@ pmtrace_t PM_PlayerTraceExt(
 		}
 
 		if ( pe->solid == SOLID_BSP && !VectorIsNull(pe->angles) )
+		{
 			rotated = true;
+		}
 		else
+		{
 			rotated = false;
+		}
 
 		if ( FBitSet(host.features, ENGINE_PHYSICS_PUSHER_EXT) )
 		{
 			if ( (check_angles(pe->angles[0]) || check_angles(pe->angles[2])) && pmove->usehull != 2 )
+			{
 				transform_bbox = true;
+			}
 			else
+			{
 				transform_bbox = false;
+			}
 		}
 		else
+		{
 			transform_bbox = false;
+		}
 
 		if ( rotated )
 		{
 			if ( transform_bbox )
+			{
 				Matrix4x4_CreateFromEntity(matrix, pe->angles, pe->origin, 1.0f);
+			}
 			else
+			{
 				Matrix4x4_CreateFromEntity(matrix, pe->angles, offset, 1.0f);
+			}
 
 			Matrix4x4_VectorITransform(matrix, start, start_l);
 			Matrix4x4_VectorITransform(matrix, end, end_l);
@@ -480,18 +503,28 @@ pmtrace_t PM_PlayerTraceExt(
 					pmove->player_maxs[pmove->usehull],
 					mins,
 					maxs);
+
 				VectorSubtract(hull->clip_mins, mins, offset);  // calc new local offset
 
 				for ( j = 0; j < 3; j++ )
 				{
 					if ( start_l[j] >= 0.0f )
+					{
 						start_l[j] -= offset[j];
+					}
 					else
+					{
 						start_l[j] += offset[j];
+					}
+
 					if ( end_l[j] >= 0.0f )
+					{
 						end_l[j] -= offset[j];
+					}
 					else
+					{
 						end_l[j] += offset[j];
+					}
 				}
 			}
 		}
@@ -545,7 +578,9 @@ pmtrace_t PM_PlayerTraceExt(
 						trace_bbox.startsolid = true;
 					}
 					else
+					{
 						trace_bbox = trace_hitbox;
+					}
 
 					last_hitgroup = j;
 				}
@@ -555,10 +590,14 @@ pmtrace_t PM_PlayerTraceExt(
 		}
 
 		if ( trace_bbox.allsolid )
+		{
 			trace_bbox.startsolid = true;
+		}
 
 		if ( trace_bbox.startsolid )
+		{
 			trace_bbox.fraction = 0.0f;
+		}
 
 		if ( !trace_bbox.startsolid )
 		{
