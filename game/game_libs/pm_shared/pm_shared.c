@@ -1236,7 +1236,10 @@ void PM_CatagorizePosition(void)
 	point[1] = pmove->origin[1];
 	point[2] = pmove->origin[2] - 2;
 
-	if ( pmove->velocity[2] > 180 )  // Shooting up really fast.  Definitely not on ground.
+	// Shooting up really fast. Definitely not on ground.
+	const qboolean movingUpwardsFast = pmove->velocity[2] > 180;
+
+	if ( movingUpwardsFast || pmove->movetype == MOVETYPE_NOCLIP )
 	{
 		pmove->onground = -1;
 	}
