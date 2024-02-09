@@ -370,14 +370,14 @@ bool RadTexture::isPowerOfTwo(uint32_t num)
 bool RadTexture::isSpecialTexturePath(const std::string& path)
 {
 	// This is super icky, but yeah. This entire codebase is ugly anyway.
-#define PATH_BEGINS_WITH(specialName) (strcasecmp(path.c_str(), (specialName)) == 0)
-#define PATH_IS_EQUAL(specialName) (strncasecmp(path.c_str(), (specialName), sizeof(specialName) - 1) == 0)
+#define PATH_IS_EQUAL(specialName) (strcasecmp(path.c_str(), (specialName)) == 0)
+#define PATH_BEGINS_WITH(specialName) (strncasecmp(path.c_str(), (specialName), sizeof(specialName) - 1) == 0)
 
 	return
-		PATH_IS_EQUAL(SPECIALTEX_LIQUID_LAVA) ||
-		PATH_IS_EQUAL(SPECIALTEX_LIQUID_SLIME) ||
-		PATH_IS_EQUAL(SPECIALTEX_LIQUID_WATER) ||
-		PATH_IS_EQUAL(SPECIALTEX_LIQUID_LASER) ||
+		PATH_BEGINS_WITH(SPECIALTEX_LIQUID_LAVA) ||
+		PATH_BEGINS_WITH(SPECIALTEX_LIQUID_SLIME) ||
+		PATH_BEGINS_WITH(SPECIALTEX_LIQUID_WATER) ||
+		PATH_BEGINS_WITH(SPECIALTEX_LIQUID_LASER) ||
 		PATH_IS_EQUAL(SPECIALTEX_LIQUID_CURRENT_0) ||
 		PATH_IS_EQUAL(SPECIALTEX_LIQUID_CURRENT_90) ||
 		PATH_IS_EQUAL(SPECIALTEX_LIQUID_CURRENT_180) ||
