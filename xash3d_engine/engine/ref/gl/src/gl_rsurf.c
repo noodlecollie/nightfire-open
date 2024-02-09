@@ -96,7 +96,14 @@ static void SubdividePolygon_r(msurface_t* warpface, int numverts, float* verts)
 	model_t* loadmodel = gEngfuncs.Mod_GetCurrentLoadingModel();
 
 	if ( numverts > (SUBDIVIDE_SIZE - 4) )
+	{
 		gEngfuncs.Host_Error("Mod_SubdividePolygon: too many vertexes on face ( %i )\n", numverts);
+	}
+
+	if ( numverts < 1 )
+	{
+		gEngfuncs.Host_Error("Mod_SubdividePolygon: no vertices on face\n");
+	}
 
 	sample_size = (float)gEngfuncs.Mod_SampleSizeForFace(warpface);
 	BoundPoly(numverts, verts, mins, maxs);
