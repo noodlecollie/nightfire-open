@@ -1236,7 +1236,10 @@ void PM_CatagorizePosition(void)
 	point[1] = pmove->origin[1];
 	point[2] = pmove->origin[2] - 2;
 
-	if ( pmove->velocity[2] > 180 )  // Shooting up really fast.  Definitely not on ground.
+	// Shooting up really fast. Definitely not on ground.
+	const qboolean movingUpwardsFast = pmove->velocity[2] > 180;
+
+	if ( movingUpwardsFast || pmove->movetype == MOVETYPE_NOCLIP )
 	{
 		pmove->onground = -1;
 	}
@@ -1244,20 +1247,28 @@ void PM_CatagorizePosition(void)
 	{
 		// Try and move down.
 		tr = pmove->PM_PlayerTrace(pmove->origin, point, PM_NORMAL, -1);
+
 		// If we hit a steep plane, we are not on ground
 		if ( tr.plane.normal[2] < 0.7 )
+		{
 			pmove->onground = -1;  // too steep
+		}
 		else
+		{
 			pmove->onground = tr.ent;  // Otherwise, point to index of ent under us.
+		}
 
 		// If we are on something...
 		if ( pmove->onground != -1 )
 		{
 			// Then we are not in water jump sequence
 			pmove->waterjumptime = 0;
+
 			// If we could make the move, drop us down that 1 pixel
 			if ( pmove->waterlevel < 2 && !tr.startsolid && !tr.allsolid )
+			{
 				VectorCopy(tr.endpos, pmove->origin);
+			}
 		}
 
 		// Standing on an entity other than the world

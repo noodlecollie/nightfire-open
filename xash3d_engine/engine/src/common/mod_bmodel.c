@@ -2401,7 +2401,7 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 			{
 				char* pszWadFile;
 				size_t wadStringLength = 0;
-				char** strtokContext = NULL;
+				char* strtokContext = NULL;
 
 				Q_strncpy(wadstring, token, MAX_TOKEN - 2);
 				wadstring[MAX_TOKEN - 2] = 0;
@@ -2414,9 +2414,9 @@ static void Mod_LoadEntities(dbspmodel_t* bmod)
 				wadStringLength = strlen(wadstring);
 
 				// parse wad paths
-				for ( pszWadFile = PlatformLib_StrTok(wadstring, &wadStringLength, ";", strtokContext);
+				for ( pszWadFile = PlatformLib_StrTok(wadstring, &wadStringLength, ";", &strtokContext);
 					  pszWadFile != NULL;
-					  pszWadFile = PlatformLib_StrTok(NULL, &wadStringLength, ";", strtokContext) )
+					  pszWadFile = PlatformLib_StrTok(NULL, &wadStringLength, ";", &strtokContext) )
 				{
 					COM_FixSlashes(pszWadFile);
 					COM_FileBase(pszWadFile, token, sizeof(token));
