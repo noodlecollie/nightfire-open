@@ -870,8 +870,11 @@ void CBasePlayerWeapon::SendWeaponAnim(int iAnim, int body)
 
 #if defined(CLIENT_WEAPONS)
 	if ( UseDecrement() && ENGINE_CANSKIP(m_pPlayer->edict()) )
+	{
 		return;
+	}
 #endif
+
 	MESSAGE_BEGIN(MSG_ONE, SVC_WEAPONANIM, NULL, m_pPlayer->pev);
 	WRITE_BYTE(iAnim);  // sequence number
 	WRITE_BYTE(body);  // weaponmodel bodygroup.
@@ -997,7 +1000,9 @@ BOOL CBasePlayerWeapon::DefaultDeploy(
 	int body)
 {
 	if ( !CanDeploy() )
+	{
 		return FALSE;
+	}
 
 	m_pPlayer->pev->viewmodel = MAKE_STRING(szViewModel);
 	m_pPlayer->pev->weaponmodel = MAKE_STRING(szWeaponModel);

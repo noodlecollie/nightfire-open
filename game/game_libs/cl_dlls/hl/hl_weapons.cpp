@@ -759,10 +759,30 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 	weapon_data_t* pto;
 	static int lasthealth;
 
+	// This is a bit of a hack, since we don't have a good way here to store
+	// state from the previous frame. If the player picks up a weapon, their
+	// active weapon will change without there being a weapon change command
+	// sent (because the weapon change is automatic, rather than being
+	// invoked by the player). If we only call Deploy() on the new weapon
+	// only on a weapon change event, the deploy animation will not be played
+	// when the user picks up a new weapon. Therefore, we have to keep track
+	// of the last weapon the player was holding, and call Deploy() if that
+	// changes.
+	static int lastWeaponID = -1;
+	static double lastTime = 0.0f;
+
 	HUD_InitClientWeapons();
 
 	// Get current clock
 	gpGlobals->time = static_cast<float>(time);
+
+	if ( gpGlobals->time < lastTime )
+	{
+		// Assume that the previous run of prediction has come to an end,
+		// so reset values.
+		lasthealth = 0;
+		lastWeaponID = -1;
+	}
 
 	const WeaponAtts::WACollection* atts = CWeaponRegistry::StaticInstance().Get(from->client.m_iId);
 	if ( atts )
@@ -843,7 +863,11 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 
 	// We are not predicting the current weapon, just bow out here.
 	if ( !pWeapon )
+	{
+		lastWeaponID = from->client.m_iId;
+		lastTime = time;
 		return;
+	}
 
 	for ( i = 0; i < MAX_LOCAL_WEAPONS; i++ )
 	{
@@ -930,18 +954,46 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 	// Assume that we are not going to switch weapons
 	to->client.m_iId = from->client.m_iId;
 
-	// Now see if we issued a changeweapon command ( and we're not dead )
-	if ( cmd->weaponselect && (player.pev->deadflag != (DEAD_DISCARDBODY + 1)) )
+	// NFTODO: The following is ugly. The prediction system really needs to
+	// be refactored to make it less icky, but for now we do the following:
+
+	// Assume the next weapon is not different (signified by -1).
+	int nextWeaponID = -1;
+
+	if ( cmd->weaponselect )
+	{
+		// Old method:
+		// We explicitly got a weapon select command, so take
+		// the next weapon ID from this.
+		nextWeaponID = cmd->weaponselect;
+	}
+	else if ( lastWeaponID != from->client.m_iId )
+	{
+		// New method:
+		// The last weapon was different to the current one,
+		// so we may need to call Deploy().
+		nextWeaponID = from->client.m_iId;
+	}
+
+	// Now see if we need to deal with this weapon, and we're not dead.
+	if ( nextWeaponID >= 0 && player.pev->deadflag != (DEAD_DISCARDBODY + 1) )
 	{
 		// Switched to a different weapon?
-		if ( from->weapondata[cmd->weaponselect].m_iId == cmd->weaponselect )
+		if ( from->weapondata[nextWeaponID].m_iId == nextWeaponID )
 		{
-			CBasePlayerWeapon* pNew = g_pWpns[cmd->weaponselect];
-			if ( pNew && (pNew != pWeapon) )
+			CBasePlayerWeapon* pNew = g_pWpns[nextWeaponID];
+
+			// This used to check pNew != pWeapon, but that check will fail
+			// if a weapon select command has not been issued, as pWeapon
+			// is already set to the current weapon. Instead, we now check
+			// against the last cached weapon ID.
+			if ( pNew && lastWeaponID != from->client.m_iId )
 			{
 				// Put away old weapon
 				if ( player.m_pActiveItem )
+				{
 					player.m_pActiveItem->Holster();
+				}
 
 				player.m_pLastItem = player.m_pActiveItem;
 				player.m_pActiveItem = pNew;
@@ -953,7 +1005,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 				}
 
 				// Update weapon id so we can predict things correctly.
-				to->client.m_iId = cmd->weaponselect;
+				to->client.m_iId = nextWeaponID;
 			}
 		}
 	}
@@ -1115,6 +1167,9 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 
 	// Wipe it so we can't use it after this frame
 	g_finalstate = NULL;
+
+	lastWeaponID = to->client.m_iId;
+	lastTime = time;
 }
 
 /*
