@@ -3,6 +3,7 @@ import sys
 import argparse
 import subprocess
 import shutil
+import signal
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 STUDIOMDL_EXE = "studiomdl.exe" if sys.platform == "win32" else "studiomdl"
@@ -11,18 +12,41 @@ MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", ".
 
 QC_COMMAND_MODELNAME = "$modelname"
 
+Aborted = False
+
+def sigintHandler(signal, frame):
+	global Aborted
+	Aborted = True
+
 def parseArguments():
 	parser = argparse.ArgumentParser(description="Compiles the given weapons and copies the models to the game content folder.")
 
 	parser.add_argument("dirs",
 						nargs="+",
-						help="Subdirectories within which to look for model QC files.")
+						help="Subdirectories within which to look for model QC files. Use * to compile all subdirectories.")
 
 	return parser.parse_args()
 
 def ensureExists(dirPath : str):
 	if not os.path.isdir(dirPath):
 		raise OSError(f"Directory {dirPath} does not exist.")
+
+def shouldCompileSubdir(subdir:str):
+	if subdir == "." or subdir == "..":
+		return False
+
+	fullPath = os.path.join(SCRIPT_DIR, subdir)
+
+	if not os.path.isdir(fullPath):
+		return False
+
+	# Don't compile weapon models from here, since they'll
+	# be moved over to the actual weapons directory when
+	# it's time to make a weapon out of them.
+	if subdir.startswith("p_") or subdir.startswith("v_") or subdir.startswith("w_"):
+		return False
+
+	return True
 
 def fetchModelNameFromQC(qcFilePath : str):
 	with open(qcFilePath, "r") as inFile:
@@ -89,7 +113,11 @@ def compileModel(path : str):
 		if os.path.splitext(item)[1] == ".qc":
 			compileAndCopyToOutput(newPath)
 
+# TODO: Threading like in compile-all.py
+# Then we can remove that file
 def main():
+	signal.signal(signal.SIGINT, sigintHandler)
+
 	if not os.path.isfile(STUDIOMDL_PATH):
 		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
 		sys.exit(1)
@@ -98,7 +126,16 @@ def main():
 	totalDirs = len(args.dirs)
 	successfulDirs = 0
 
-	for subdir in args.dirs:
+	dirsToCompile = args.dirs
+
+	if "*" in dirsToCompile:
+		print("Encountered wildcard '*', compiling all models in all subdirectories.")
+		dirsToCompile = [subdir for subdir in os.listdir(SCRIPT_DIR) if shouldCompileSubdir(subdir)]
+
+	for subdir in dirsToCompile:
+		if Aborted:
+			break
+
 		try:
 			print("Compiling model:", subdir)
 			compileModel(os.path.join(SCRIPT_DIR, subdir))
