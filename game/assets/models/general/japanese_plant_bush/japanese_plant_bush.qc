@@ -10,7 +10,8 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
-
+$texrendermode mdl/round_bush_cross.png masked
+$texrendermode mdl/round_bush_sphere.png masked
 
 $bodygroup "plants"
 {
