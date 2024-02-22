@@ -3184,7 +3184,7 @@ void Cmd_TexRenderMode(void)
 	}
 	else if(!strcmp(token, "masked"))
 	{
-		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_TRANSPARENT;
+		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_MASKED;
 	}
 	else if(!strcmp(token, "fullbright"))
 	{
