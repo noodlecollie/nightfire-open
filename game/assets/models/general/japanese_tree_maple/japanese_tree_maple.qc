@@ -10,7 +10,9 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
-
+$texrendermode mdl/japanese_maple_orange_01.png masked
+$texrendermode mdl/japanese_maple_orange_02.png masked
+$texrendermode mdl/japanese_maple_orange_03.png masked
 
 $bodygroup "studio"
 {

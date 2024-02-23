@@ -711,12 +711,36 @@
 // Rendering constants
 enum
 {
-	kRenderNormal,  // src
-	kRenderTransColor,  // c*a+dest*(1-a)
-	kRenderTransTexture,  // src*a+dest*(1-a)
-	kRenderGlow,  // src*a+dest -- No Z buffer checks
-	kRenderTransAlpha,  // src*srca+dest*(1-srca)
-	kRenderTransAdd,  // src*a+dest
+	// Draw the exact colour and alpha of every source pixel.
+	kRenderNormal,
+
+	// Blends the source pixel colour with its alpha, and
+	// then combines this inversely proportionally with
+	// the destination pixel colour.
+	// pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	kRenderTransColor,
+
+	// Blends the source pixel colour with its alpha, and
+	// then combines this inversely proportionally with
+	// the destination pixel colour.
+	// pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	kRenderTransTexture,
+
+	// Blends the source pixel colour with its alpha, and
+	// adds it straight to the destination pixel without
+	// modulating the destination colour at all.
+	// pglBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	kRenderGlow,
+
+	// Does not perform any colour blending, but does
+	// do an alpha test.
+	kRenderTransAlpha,
+
+	// Blends the source pixel colour with its alpha, and
+	// adds it straight to the destination pixel without
+	// modulating the destination colour at all.
+	// pglBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	kRenderTransAdd,
 };
 
 enum
