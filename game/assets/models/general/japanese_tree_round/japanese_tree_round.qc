@@ -10,7 +10,10 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
-
+$texrendermode mdl/japanese_tree_round_02.png masked
+$texrendermode mdl/japanese_tree_round_03.png masked
+$texrendermode mdl/japanese_tree_round_04.png masked
+$texrendermode mdl/japanese_tree_round_05.png masked
 
 $bodygroup "trees"
 {

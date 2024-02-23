@@ -1578,7 +1578,7 @@ void R_StudioDynamicLight(cl_entity_t* ent, alight_t* plight)
 			else
 			{
 				VectorScale(dist, add, dist);
-				}
+			}
 
 			VectorAdd(lightDir, dist, lightDir);
 
@@ -2467,7 +2467,9 @@ static void R_StudioDrawPoints(void)
 		g_studio.meshes[j].mesh = &pmesh[j];
 
 		if ( FBitSet(g_nFaceFlags, STUDIO_NF_MASKED | STUDIO_NF_ADDITIVE) )
+		{
 			need_sort = true;
+		}
 
 		if ( RI.currententity->curstate.rendermode == kRenderTransAdd )
 		{

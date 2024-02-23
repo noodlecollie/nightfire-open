@@ -10,7 +10,7 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
-
+$texrendermode mdl/japanese_plant_fern.png masked
 
 $bodygroup "fern"
 {

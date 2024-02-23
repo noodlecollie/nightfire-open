@@ -36,6 +36,8 @@ static void SetUpModelBaseState(entity_state_t* state, const mclientents_model_t
 	state->body = staticModel->body;
 	state->skin = (short)staticModel->skin;
 
+	state->rendermode = kRenderNormal;
+	state->renderamt = 255;
 	state->rendercolor.r = staticModel->fixedLightColour[0];
 	state->rendercolor.g = staticModel->fixedLightColour[1];
 	state->rendercolor.b = staticModel->fixedLightColour[2];
