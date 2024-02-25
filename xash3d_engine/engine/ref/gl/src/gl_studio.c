@@ -3955,9 +3955,6 @@ static void R_StudioLoadTextureFromDisk(mstudiotexture_t* ptexture)
 	int32_t flags = 0;
 	int32_t textureIndex = 0;
 
-	(void)mod;
-	(void)phdr;
-
 	if ( FBitSet(ptexture->flags, STUDIO_NF_NORMALMAP) )
 	{
 		SetBits(flags, TF_NORMALMAP);
@@ -4101,33 +4098,32 @@ Mod_StudioLoadTextures
 void Mod_StudioLoadTextures(model_t* mod, void* data)
 {
 	studiohdr_t* phdr = (studiohdr_t*)data;
-	mstudiotexture_t* ptexture;
-	int i;
 
 	if ( !phdr )
 	{
 		return;
 	}
 
-	ptexture = (mstudiotexture_t*)(((byte*)phdr) + phdr->textureindex);
+	nfmdlheader_t* nfHeader = (nfmdlheader_t*)(((byte*)data) + sizeof(studiohdr_t));
+
+	// If this is a Nightfire Open MDL, we should load textures externally
+	// rather than expecting them to be embedded.
+	const qboolean loadExternalTextures = NFMDL_SupportsExternalTextures(nfHeader);
+
+	mstudiotexture_t* ptexture = (mstudiotexture_t*)(((byte*)phdr) + phdr->textureindex);
 
 	if ( phdr->textureindex > 0 && phdr->numtextures <= MAXSTUDIOSKINS )
 	{
-		for ( i = 0; i < phdr->numtextures; i++ )
+		for ( int i = 0; i < phdr->numtextures; i++ )
 		{
-			R_StudioLoadTexture(mod, phdr, &ptexture[i]);
-		}
-	}
-
-	const nfmdlheader_t* nfHeader = ((byte*)data) + sizeof(studiohdr_t);
-
-	if ( NFMDL_SupportsExternalTextures(nfHeader) )
-	{
-		ptexture = (mstudiotexture_t*)(((byte*)data) + nfHeader->externalTextureListIndex);
-
-		for ( uint32_t index = 0; index < nfHeader->externalTextureListCount; ++index )
-		{
-			R_StudioLoadTextureFromDisk(&ptexture[i]);
+			if ( loadExternalTextures )
+			{
+				R_StudioLoadTextureFromDisk(&ptexture[i]);
+			}
+			else
+			{
+				R_StudioLoadTexture(mod, phdr, &ptexture[i]);
+			}
 		}
 	}
 }

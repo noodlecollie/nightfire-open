@@ -1546,7 +1546,7 @@ void TextureCoordRanges( s_mesh_t *pmesh, s_texture_t *ptexture  )
 
 	// find the range
 	// Only do this if textures are being embedded.
-	if (!clip_texcoords && !(gflags & STUDIO_NO_EMBEDDED_TEXTURES))
+	if (!clip_texcoords && !noEmbeddedTextures)
 	{
 		for (i=0 ; i<pmesh->numtris ; i++)
 		{
@@ -1621,7 +1621,7 @@ void ResizeTexture( s_texture_t *ptexture )
     byte	*pdest;
 	int		srcadjwidth;
 
-	if ( gflags & STUDIO_NO_EMBEDDED_TEXTURES )
+	if ( noEmbeddedTextures )
 	{
 		// Don't resize if we're not embedding.
 		return;
@@ -1736,7 +1736,7 @@ void Grab_Skin ( s_texture_t *ptexture )
 	}
 	else if ( stricmp("png", extension) == 0 )
 	{
-		if ( !(gflags & STUDIO_NO_EMBEDDED_TEXTURES) )
+		if ( !noEmbeddedTextures )
 		{
 			Error("PNG files are not supported if embedding textures into the MDL. Use the -e option to compile without embedding textures.\n");
 		}
@@ -2278,11 +2278,6 @@ void Cmd_Flags (void)
 {
 	GetToken (false);
 	gflags = atoi (token);
-
-	if ( noEmbeddedTextures )
-	{
-		gflags |= STUDIO_NO_EMBEDDED_TEXTURES;
-	}
 }
 
 void Cmd_Modelname (void)
@@ -3233,6 +3228,10 @@ void ParseScript (void)
 				strcpy (cdtexture[cdtextureset], ExpandPath(token));
 				cdtextureset++;
 			}
+		}
+		else if ( !strcmp (token, "$noembeddedtextures") )
+		{
+			noEmbeddedTextures = 1;
 		}
 		else if (!strcmp (token, "$scale"))
 		{
