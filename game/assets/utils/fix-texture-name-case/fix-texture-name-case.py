@@ -70,8 +70,11 @@ def main():
 	print("Fixing", len(pathsToFix), "paths")
 
 	iterateInBatches(pathsToFix, BATCH_SIZE, gitRemoveFiles)
+	runGitCommand(["commit", "-m", f'"Removing {len(pathsToFix)} textures to rename them"'])
+
 	newFilePaths = iterateInBatches(pathsToFix, BATCH_SIZE, renameFiles)
 	iterateInBatches(newFilePaths, BATCH_SIZE, gitAddFiles)
+	runGitCommand(["commit", "-m", f'"Re-added {len(pathsToFix)} fixed textures"'])
 
 if __name__ == "__main__":
 	main()
