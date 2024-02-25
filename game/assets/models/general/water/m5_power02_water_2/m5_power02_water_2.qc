@@ -4,7 +4,7 @@ $modelname "m5_power02_water_2.mdl"
 
 $root "Root"
 
-$flags 2048
+$flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
