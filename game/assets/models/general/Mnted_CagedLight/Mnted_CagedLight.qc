@@ -1,10 +1,10 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "Mnted_CagedLight.mdl"
+$noembeddedtextures
 
 $root "Mnted_Light"
 
-$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

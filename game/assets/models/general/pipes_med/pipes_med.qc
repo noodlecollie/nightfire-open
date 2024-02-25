@@ -1,10 +1,10 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "pipes_med.mdl"
+$noembeddedtextures
 
 $root "pipe"
 
-$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

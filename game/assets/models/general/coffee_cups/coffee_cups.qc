@@ -1,10 +1,10 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "coffee_cups.mdl"
+$noembeddedtextures
 
 $root "full_coffee"
 
-$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

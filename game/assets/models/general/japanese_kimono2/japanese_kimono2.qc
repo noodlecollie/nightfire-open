@@ -1,10 +1,10 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "japanese_kimono2.mdl"
+$noembeddedtextures
 
 $root "kimono2"
 
-$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

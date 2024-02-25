@@ -1,10 +1,10 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "Shuttle_Half.mdl"
+$noembeddedtextures
 
 $root "Half Shuttle Cargo Door 01"
 
-$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

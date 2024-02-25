@@ -94,11 +94,6 @@ class FileProcessor():
 					smdName = segments[1].strip('"') + ".smd"
 					self.logMsg("Found reference SMD:", smdName)
 					referenceSmds.append(smdName)
-			elif len(segments) == 2 and segments[0] == "$flags":
-				# Make sure "no embedded textures" property is always set.
-				# We need to put it somewhere, so just before the flags
-				# is as good a place as any.
-				modifiedLines.append("$noembeddedtextures")
 			elif len(segments) == 2 and segments[0] == "$modelname":
 					# Make sure the QC model name matches the model we decompiled.
 					# Sometimes the name embedded in the model is different, but we
@@ -113,6 +108,11 @@ class FileProcessor():
 
 					line = f'$modelname "{self.inputModelName}"'
 					modelNameReplaced = True
+					# Make sure "no embedded textures" property is always set.
+					# We should always be encountering the $modelname property,
+					# so this should be a good place.
+					modifiedLines.append(line)
+					line = "$noembeddedtextures"
 			elif len(segments) > 0 and (segments[0] == "$cd" or segments[0] == "$cdtexture"):
 					# We set these manually, so kill off any others.
 					line = None

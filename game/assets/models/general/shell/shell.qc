@@ -1,6 +1,7 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "shell.mdl"
+$noembeddedtextures
 
 $root "SHELL"
 
