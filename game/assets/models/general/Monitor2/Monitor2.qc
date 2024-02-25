@@ -4,6 +4,7 @@ $modelname "Monitor2.mdl"
 
 $root "Monitor 2 Sides"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

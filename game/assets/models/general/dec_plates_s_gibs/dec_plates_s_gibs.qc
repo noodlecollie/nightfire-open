@@ -4,6 +4,7 @@ $modelname "dec_plates_s_gibs.mdl"
 
 $root "Object06"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

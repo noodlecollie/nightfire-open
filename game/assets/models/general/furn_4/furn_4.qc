@@ -4,6 +4,7 @@ $modelname "furn_4.mdl"
 
 $root "furn_4"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

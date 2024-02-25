@@ -4,6 +4,7 @@ $modelname "sackdown.mdl"
 
 $root "Box01"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

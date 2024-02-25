@@ -4,6 +4,7 @@ $modelname "sky_dome_missile02.mdl"
 
 $root "Cylinder02"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

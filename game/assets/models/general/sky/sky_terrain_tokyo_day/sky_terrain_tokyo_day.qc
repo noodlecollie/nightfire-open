@@ -4,6 +4,7 @@ $modelname "sky_terrain_tokyo_day.mdl"
 
 $root "Mesh01"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
