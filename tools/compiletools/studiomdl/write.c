@@ -608,6 +608,8 @@ void WriteFile(void)
 	nfHeader->id = IDNFMDLHEADER;
 	nfHeader->version = NFMDLHEADER_VERSION_LATEST;
 
+	pData += sizeof(*nfHeader);
+
 	WriteBoneInfo();
 	printf("bones     %6ld bytes (%d)\n", pData - pStart - total, numbones);
 	total = pData - pStart;
