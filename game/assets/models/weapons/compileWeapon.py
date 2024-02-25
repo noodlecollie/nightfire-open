@@ -20,7 +20,7 @@ def parseArguments():
 
 	parser.add_argument("dirs",
 						nargs="+",
-						help="Subdirectories within which to look for model QC files.")
+						help="Subdirectories within which to look for model QC files. Use * to compile all subdirectories.")
 
 	return parser.parse_args()
 
@@ -118,30 +118,43 @@ def compileRecursive(path: str, weaponName: str):
 		elif os.path.splitext(item)[1] == ".qc":
 			compileAndCopyToOutput(newPath, weaponName)
 
+def shouldCompileSubdir(subdir:str):
+	print(subdir)
+	if subdir == "." or subdir == "..":
+		return False
+
+	fullPath = os.path.join(SCRIPT_DIR, subdir)
+
+	if not os.path.isdir(fullPath):
+		return False
+
+	return True
+
 def main():
 	if not os.path.isfile(STUDIOMDL_PATH):
 		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
 		sys.exit(1)
 
 	args = parseArguments()
-	totalDirs = len(args.dirs)
+	dirsToCompile = [path for path in args.dirs if shouldCompileSubdir(path)]
+
+	totalDirs = len(dirsToCompile)
 	successfulDirs = 0
+	failedPaths = []
 
-	for subdir in args.dirs:
+	for subdir in dirsToCompile:
 		try:
-			weaponName = str(subdir)
-			matchResult = REGEX_FOLDER_PREFIX.match(weaponName)
-
-			if matchResult:
-				weaponName = weaponName[len(matchResult.group(0)):]
-
-			print(f"Compiling weapon models in subdirectory \"{subdir}\" (weapon name \"{weaponName}\")")
-			compileRecursive(os.path.join(SCRIPT_DIR, subdir), weaponName)
+			print("Compiling weapon models in subdirectory:", subdir)
+			compileRecursive(os.path.join(SCRIPT_DIR, subdir), subdir)
 			successfulDirs += 1
 		except Exception as ex:
 			print(f"Failed to compile model '{subdir}': {str(ex)}")
+			failedPaths.append(subdir)
 
 	print("Successfully compiled", successfulDirs, "of", totalDirs, "weapons.")
+
+	if failedPaths:
+		print("Failed:", ", ".join(failedPaths))
 
 if __name__ == "__main__":
 	main()

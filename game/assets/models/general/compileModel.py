@@ -123,14 +123,10 @@ def main():
 		sys.exit(1)
 
 	args = parseArguments()
-	totalDirs = len(args.dirs)
+	dirsToCompile = [subdir for subdir in os.listdir(SCRIPT_DIR) if shouldCompileSubdir(subdir)]
+	totalDirs = len(dirsToCompile)
 	successfulDirs = 0
-
-	dirsToCompile = args.dirs
-
-	if "*" in dirsToCompile:
-		print("Encountered wildcard '*', compiling all models in all subdirectories.")
-		dirsToCompile = [subdir for subdir in os.listdir(SCRIPT_DIR) if shouldCompileSubdir(subdir)]
+	failedPaths = []
 
 	for subdir in dirsToCompile:
 		if Aborted:
@@ -142,8 +138,12 @@ def main():
 			successfulDirs += 1
 		except Exception as ex:
 			print(f"Failed to compile model '{subdir}': {str(ex)}")
+			failedPaths.append(subdir)
 
 	print("Successfully compiled", successfulDirs, "of", totalDirs, "weapons.")
+
+	if failedPaths:
+		print("Failed:", ", ".join(failedPaths))
 
 if __name__ == "__main__":
 	main()
