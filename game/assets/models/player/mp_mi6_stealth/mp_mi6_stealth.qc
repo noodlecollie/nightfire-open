@@ -3,6 +3,7 @@ $cdtexture "../../../../content/nfopen/textures"
 $modelname "mp_mi6_stealth.mdl"
 
 $root "Bip01"
+$noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
@@ -14,7 +15,7 @@ $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
 $bodygroup "studio"
 {
-	studio "mp_MI6_stealth_ref"
+	studio "mp_mi6_stealth_ref"
 }
 
 $attachment "" "Bip01 R Hand" 34.700000 3.000000 1.800000
