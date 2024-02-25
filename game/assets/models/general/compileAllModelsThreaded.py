@@ -17,7 +17,8 @@ MDL_OUTPUT_DIR = os.path.join(GAME_CONTENT_DIR, "models")
 TEXTURE_DIR = os.path.join(GAME_CONTENT_DIR, "textures")
 TEXTURE_SUBDIR_NAME = "mdl"
 
-STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "build", "install", "nightfire-open", "tools", "studiomdl.exe"))
+STUDIOMDL_EXE = "studiomdl.exe" if sys.platform == "win32" else "studiomdl"
+STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "build", "install", "nightfire-open", "tools", STUDIOMDL_EXE))
 ERROR_SUMMARY_PATH = os.path.join(SCRIPT_DIR, "errors.log")
 
 Aborted = False
@@ -94,9 +95,10 @@ class FileProcessor():
 					self.logMsg("Found reference SMD:", smdName)
 					referenceSmds.append(smdName)
 			elif len(segments) == 2 and segments[0] == "$flags":
-				# Ensure that flags always prohibit embedded textures
-				flagsInt = int(segments[1]) | 2048
-				line = f"$flags {flagsInt}"
+				# Make sure "no embedded textures" property is always set.
+				# We need to put it somewhere, so just before the flags
+				# is as good a place as any.
+				modifiedLines.append("$noembeddedtextures")
 			elif len(segments) == 2 and segments[0] == "$modelname":
 					# Make sure the QC model name matches the model we decompiled.
 					# Sometimes the name embedded in the model is different, but we
@@ -113,6 +115,9 @@ class FileProcessor():
 					modelNameReplaced = True
 			elif len(segments) > 0 and (segments[0] == "$cd" or segments[0] == "$cdtexture"):
 					# We set these manually, so kill off any others.
+					line = None
+			elif len(segments) > 0 and segments[0] == "$noembeddedtextures":
+					# This is always added manually, so skip any line that was already in the file.
 					line = None
 
 			if line is not None:
@@ -179,7 +184,7 @@ class FileProcessor():
 		self.logMsg("*** Running command:", *args)
 
 		with open(self.currentLog, "a+") as stdOut:
-				result = subprocess.run(args, shell=True, stdout=stdOut, cwd=cwd)
+				result = subprocess.run(args, stdout=stdOut, cwd=cwd)
 
 		if result.returncode != 0:
 			raise RuntimeError(f"Command {' '.join(args)} returned error code {result.returncode}")
