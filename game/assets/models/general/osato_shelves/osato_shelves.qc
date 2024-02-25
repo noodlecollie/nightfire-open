@@ -4,7 +4,7 @@ $modelname "osato_shelves.mdl"
 
 $root "shelves_base"
 
-$flags 2048
+$flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000

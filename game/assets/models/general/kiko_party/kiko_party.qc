@@ -4,7 +4,7 @@ $modelname "kiko_party.mdl"
 
 $root "Bip01"
 
-$flags 18432
+$flags 16384
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 65.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000

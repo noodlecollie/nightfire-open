@@ -4,7 +4,7 @@ $modelname "japanese_tree_larch.mdl"
 
 $root "TRUNK01"
 
-$flags 2048
+$flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
