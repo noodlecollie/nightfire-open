@@ -4,6 +4,7 @@ $modelname "japanese_diningchair.mdl"
 
 $root "ergo_chair"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

@@ -4,6 +4,7 @@ $modelname "small_plantv03.mdl"
 
 $root "smallplantv03"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

@@ -4,6 +4,7 @@ $modelname "round_ac_vent.mdl"
 
 $root "ac_vent"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

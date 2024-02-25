@@ -4,6 +4,7 @@ $modelname "osato_gunship.mdl"
 
 $root "Master"
 
+$noembeddedtextures
 $flags 512
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

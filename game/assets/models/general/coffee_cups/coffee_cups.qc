@@ -4,6 +4,7 @@ $modelname "coffee_cups.mdl"
 
 $root "full_coffee"
 
+$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
