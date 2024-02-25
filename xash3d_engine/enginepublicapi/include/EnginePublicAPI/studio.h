@@ -35,7 +35,16 @@ Studio models are position independent, so the cache manager can move them.
 #define STUDIO_VERSION 10
 #define IDSTUDIOHEADER (('T' << 24) + ('S' << 16) + ('D' << 8) + 'I')  // little-endian "IDST"
 #define IDSEQGRPHEADER (('Q' << 24) + ('S' << 16) + ('D' << 8) + 'I')  // little-endian "IDSQ"
-#define AFTERBURNER_HEADER (('B' << 24) + ('T' << 16) + ('F' << 8) + 'A')
+#define IDNFMDLHEADER (('P' << 24) + ('O' << 16) + ('F' << 8) + 'N')  // little-endian "NFOP"
+
+#define NFMDLHEADER_VERSION_INVALID 0
+#define NFMDLHEADER_VERSION_1 1
+#define NFMDLHEADER_VERSION_LATEST NFMDLHEADER_VERSION_1
+
+// Definitions specifying minimum and maximum versions
+// where certain features are supported.
+#define NFMDL_MINVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_1
+#define NFMDL_MAXVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_LATEST
 
 // studio limits
 #define MAXSTUDIOVERTS 16384  // max vertices per submodel
@@ -66,7 +75,6 @@ Studio models are position independent, so the cache manager can move them.
 #define STUDIO_AMBIENT_LIGHT (1U << 8)  // force to use ambient shading
 #define STUDIO_TRACE_HITBOX (1U << 9)  // always use hitbox trace instead of bbox
 #define STUDIO_FORCE_SKYLIGHT (1U << 10)  // always grab lightvalues from the sky settings (even if sky is invisible)
-#define STUDIO_NO_EMBEDDED_TEXTURES (1U << 11)  // Uses PNG textures from disk, not embedded in model.
 
 #define STUDIO_HAS_BUMP (1U << 16)  // loadtime set
 #define STUDIO_STATIC_PROP (1U << 29)  // hint for engine
@@ -295,6 +303,28 @@ typedef struct studiohdr_s
 	// offset to the first sequence transition
 	int32_t transitionindex;
 } studiohdr_t;
+
+typedef struct nfmdlheader_s
+{
+	// Expected to be equal to IDNFMDLHEADER
+	uint32_t id;
+
+	// Version of this struct.
+	uint32_t version;
+
+	// Index into the MDL file where the external texture list starts.
+	uint32_t externalTextureListIndex;
+
+	// Number of external textures referenced.
+	uint32_t externalTextureListCount;
+} nfmdlheader_t;
+
+// Convenience functions for features:
+static inline qboolean NFMDL_SupportsExternalTextures(const nfmdlheader_t* header)
+{
+	return header && header->id == IDNFMDLHEADER && header->version >= NFMDL_MINVER_EXTERNAL_TEXTURES &&
+		header->version <= NFMDL_MAXVER_EXTERNAL_TEXTURES;
+}
 
 // extra header to hold more offsets
 typedef struct

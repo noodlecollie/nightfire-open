@@ -3949,7 +3949,7 @@ void R_DrawViewModel(void)
 	}
 }
 
-static void R_StudioLoadTextureFromDisk(model_t* mod, studiohdr_t* phdr, mstudiotexture_t* ptexture)
+static void R_StudioLoadTextureFromDisk(mstudiotexture_t* ptexture)
 {
 	char fullPath[MAX_OSPATH];
 	int32_t flags = 0;
@@ -4105,7 +4105,9 @@ void Mod_StudioLoadTextures(model_t* mod, void* data)
 	int i;
 
 	if ( !phdr )
+	{
 		return;
+	}
 
 	ptexture = (mstudiotexture_t*)(((byte*)phdr) + phdr->textureindex);
 
@@ -4113,14 +4115,19 @@ void Mod_StudioLoadTextures(model_t* mod, void* data)
 	{
 		for ( i = 0; i < phdr->numtextures; i++ )
 		{
-			if ( phdr->ident == AFTERBURNER_HEADER && phdr->flags & STUDIO_NO_EMBEDDED_TEXTURES )
-			{
-				R_StudioLoadTextureFromDisk(mod, phdr, &ptexture[i]);
-			}
-			else
-			{
-				R_StudioLoadTexture(mod, phdr, &ptexture[i]);
-			}
+			R_StudioLoadTexture(mod, phdr, &ptexture[i]);
+		}
+	}
+
+	const nfmdlheader_t* nfHeader = ((byte*)data) + sizeof(studiohdr_t);
+
+	if ( NFMDL_SupportsExternalTextures(nfHeader) )
+	{
+		ptexture = (mstudiotexture_t*)(((byte*)data) + nfHeader->externalTextureListIndex);
+
+		for ( uint32_t index = 0; index < nfHeader->externalTextureListCount; ++index )
+		{
+			R_StudioLoadTextureFromDisk(&ptexture[i]);
 		}
 	}
 }

@@ -60,7 +60,6 @@ Studio models are position independent, so the cache manager can move them.
 #define STUDIO_TRACER3		0x0080	// purple trail
 #define STUDIO_DYNAMIC_LIGHT		0x0100	// dynamically get lighting from floor or ceil (flying monsters)
 #define STUDIO_TRACE_HITBOX		0x0200	// always use hitbox trace instead of bbox
-#define STUDIO_NO_EMBEDDED_TEXTURES (1U<<11) // Uses PNG textures from disk, not embedded in model.
 
 #define STUDIO_HAS_BUMP		(1<<16)	// loadtime set
 
