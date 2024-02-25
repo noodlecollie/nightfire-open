@@ -321,7 +321,6 @@ model_t* Mod_LoadModel(model_t* mod, qboolean crash)
 	switch ( *(uint*)buf )
 	{
 		case IDSTUDIOHEADER:
-		case AFTERBURNER_HEADER:
 		{
 			Mod_LoadStudioModel(mod, buf, &loaded);
 			break;

@@ -386,6 +386,4 @@ typedef struct
 #define RAD_TO_STUDIO		(32768.0/M_PI)
 #define STUDIO_TO_RAD		(M_PI/32768.0)
 
-#define STUDIO_NO_EMBEDDED_TEXTURES (1U<<11) // Uses PNG textures from disk, not embedded in model.
-
 #endif

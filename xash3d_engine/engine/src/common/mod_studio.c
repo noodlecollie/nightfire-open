@@ -1290,7 +1290,7 @@ qboolean Mod_GetStudioBounds(const char* name, vec3_t mins, vec3_t maxs)
 	if ( !f )
 		return false;
 
-	if ( *(uint*)f == IDSTUDIOHEADER || *(uint*)f == AFTERBURNER_HEADER )
+	if ( *(uint*)f == IDSTUDIOHEADER )
 	{
 		VectorClear(mins);
 		VectorClear(maxs);
