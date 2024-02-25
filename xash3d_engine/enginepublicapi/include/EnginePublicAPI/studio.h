@@ -311,12 +311,6 @@ typedef struct nfmdlheader_s
 
 	// Version of this struct.
 	uint32_t version;
-
-	// Index into the MDL file where the external texture list starts.
-	uint32_t externalTextureListIndex;
-
-	// Number of external textures referenced.
-	uint32_t externalTextureListCount;
 } nfmdlheader_t;
 
 // Convenience functions for features:

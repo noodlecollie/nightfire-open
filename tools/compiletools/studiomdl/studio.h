@@ -28,10 +28,10 @@ Studio models are position independent, so the cache manager can move them.
 */
 
 // header
-#define STUDIO_VERSION	10
-#define IDSTUDIOHEADER	(('T'<<24)+('S'<<16)+('D'<<8)+'I') // little-endian "IDST"
-#define IDSEQGRPHEADER	(('Q'<<24)+('S'<<16)+('D'<<8)+'I') // little-endian "IDSQ"
-#define NFOPEN_HEADER (('B'<<24)+('T'<<16)+('F'<<8)+'A')
+#define STUDIO_VERSION 10
+#define IDSTUDIOHEADER (('T' << 24) + ('S' << 16) + ('D' << 8) + 'I')  // little-endian "IDST"
+#define IDSTUDIOSEQHEADER (('Q' << 24) + ('S' << 16) + ('D' << 8) + 'I')  // little-endian "IDSQ"
+#define IDNFMDLHEADER (('P' << 24) + ('O' << 16) + ('F' << 8) + 'N')  // little-endian "NFOP"
 
 // #define MAXSTUDIOTRIANGLES	20000	// TODO: tune this
 // #define MAXSTUDIOVERTS		2048	// TODO: tune this
@@ -119,6 +119,21 @@ typedef struct
 	int					numtransitions;		// animation node to animation node transition graph
 	int					transitionindex;
 } studiohdr_t;
+
+// NFTODO: It'd be nicer if this structure was shared with the engine,
+// rather than duplicated.
+#define NFMDLHEADER_VERSION_INVALID 0
+#define NFMDLHEADER_VERSION_1 1
+#define NFMDLHEADER_VERSION_LATEST NFMDLHEADER_VERSION_1
+
+typedef struct nfmdlheader_s
+{
+	// Expected to be equal to IDNFMDLHEADER
+	uint32_t id;
+
+	// Version of this struct.
+	uint32_t version;
+} nfmdlheader_t;
 
 // header for demand loaded sequence group data
 typedef struct
