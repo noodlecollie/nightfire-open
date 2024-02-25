@@ -3,6 +3,7 @@ import sys
 import argparse
 import subprocess
 import shutil
+import re
 
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 STUDIOMDL_EXE = "studiomdl.exe" if sys.platform == "win32" else "studiomdl"
@@ -11,6 +12,8 @@ MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", ".
 
 QC_COMMAND_MODELNAME = "$modelname"
 EXPECTED_MODELNAME_PREFIXES = [ "p_", "v_", "w_", "w_ammo_" ]
+
+REGEX_FOLDER_PREFIX = re.compile(r"^[A-Za-z0-9]+_")
 
 def parseArguments():
 	parser = argparse.ArgumentParser(description="Compiles the given weapons and copies the models to the game content folder.")
@@ -69,12 +72,12 @@ def runStudioMDL(qcFilePath : str):
 	else:
 		print("StudioMDL completed successfully.")
 
-def compileAndCopyToOutput(qcFilePath : list):
+def compileAndCopyToOutput(qcFilePath: str, weaponName: str):
 	print("Found QC file:", qcFilePath)
 
 	localDir = os.path.dirname(qcFilePath)
 	weaponModelName = fetchWeaponModelNameFromQC(qcFilePath)
-	weaponName = modelNameWithoutPrefix(weaponModelName)
+
 	outputDir = outputDirForWeapon(weaponName)
 
 	print("  Weapon model name:", weaponModelName)
@@ -104,16 +107,16 @@ def compileAndCopyToOutput(qcFilePath : list):
 	print("Complete.")
 	print()
 
-def compileRecursive(path : str):
+def compileRecursive(path: str, weaponName: str):
 	ensureExists(path)
 
 	for item in os.listdir(path):
 		newPath = os.path.join(path, item)
 
 		if os.path.isdir(newPath):
-			compileRecursive(newPath)
+			compileRecursive(newPath, weaponName)
 		elif os.path.splitext(item)[1] == ".qc":
-			compileAndCopyToOutput(newPath)
+			compileAndCopyToOutput(newPath, weaponName)
 
 def main():
 	if not os.path.isfile(STUDIOMDL_PATH):
@@ -126,8 +129,14 @@ def main():
 
 	for subdir in args.dirs:
 		try:
-			print("Compiling weapon models in subdirectory:", subdir)
-			compileRecursive(os.path.join(SCRIPT_DIR, subdir))
+			weaponName = str(subdir)
+			matchResult = REGEX_FOLDER_PREFIX.match(weaponName)
+
+			if matchResult:
+				weaponName = weaponName[len(matchResult.group(0)):]
+
+			print(f"Compiling weapon models in subdirectory \"{subdir}\" (weapon name \"{weaponName}\")")
+			compileRecursive(os.path.join(SCRIPT_DIR, subdir), weaponName)
 			successfulDirs += 1
 		except Exception as ex:
 			print(f"Failed to compile model '{subdir}': {str(ex)}")

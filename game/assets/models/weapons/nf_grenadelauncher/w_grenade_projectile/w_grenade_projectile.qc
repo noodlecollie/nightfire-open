@@ -4,8 +4,7 @@ $modelname "w_grenade_projectile.mdl"
 
 $root "shell"
 
-// No embedded textures
-$flags 2048
+$noembeddedtextures
 
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
