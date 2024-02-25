@@ -1,10 +1,10 @@
 $cdtexture "../../../../../content/nfopen/textures"
 $cd "."
 $modelname "sky_dome_island03.mdl"
+$noembeddedtextures
 
 $root "Cylinder01"
 
-$noembeddedtextures
 $flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

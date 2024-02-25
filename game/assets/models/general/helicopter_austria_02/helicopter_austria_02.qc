@@ -1,10 +1,10 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "helicopter_austria_02.mdl"
+$noembeddedtextures
 
 $root "Master"
 
-$noembeddedtextures
 $flags 512
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000

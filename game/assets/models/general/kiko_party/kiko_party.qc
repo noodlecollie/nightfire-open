@@ -1,10 +1,10 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "kiko_party.mdl"
+$noembeddedtextures
 
 $root "Bip01"
 
-$noembeddedtextures
 $flags 16384
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 65.000000
