@@ -1,6 +1,6 @@
 cd "."
 $cdtexture "../../../../content/nfopen/textures"
-$modelname "mp_MI6_tux.mdl"
+$modelname "mp_mi6_tux.mdl"
 
 $root "Bip01"
 $noembeddedtextures
