@@ -10,6 +10,8 @@
 #include "mathlib.h"
 #include "studio.h"
 #include "studiomdl.h"
+#include "cJSON.h"
+#include "bonetags.h"
 
 int totalframes = 0;
 float totalseconds = 0;
@@ -508,6 +510,45 @@ void WriteModel()
 	}
 }
 
+static void WriteBoneTags(nfmdlheader_t* nfHeader)
+{
+	byte* boneTagStart = pData;
+	nfHeader->boneTagsIndex = (int)(boneTagStart - pStart);
+
+	cJSON* rootArray = cJSON_CreateArray();
+
+	for ( int boneIndex = 0; boneIndex < numbones; ++boneIndex )
+	{
+		cJSON* tagsArray = cJSON_CreateArray();
+		const bonetag_t* boneTag = GetBoneTags(bonetable[boneIndex].name);
+
+		while ( boneTag )
+		{
+			cJSON_AddItemToArray(tagsArray, cJSON_CreateString(boneTag->name));
+			boneTag = boneTag->next;
+		}
+
+		cJSON_AddItemToArray(rootArray, tagsArray);
+	}
+
+	char* serialisedArray = cJSON_PrintUnformatted(rootArray);
+	size_t serialisedLength = strlen(serialisedArray) + 1;
+
+	memcpy(pData, serialisedArray, serialisedLength);
+	pData += serialisedLength;
+
+	byte* aligned = pData;
+	ALIGN(aligned);
+
+	if ( aligned > pData )
+	{
+		memset(pData, 0, aligned - pData);
+		pData = aligned;
+	}
+
+	nfHeader->boneTagsLength = (int32_t)(pData - boneTagStart);
+}
+
 #define FILEBUFFER (16 * 1024 * 1024)
 
 void WriteFile(void)
@@ -634,6 +675,8 @@ void WriteFile(void)
 		WriteTextures();
 		printf("textures  %6ld bytes\n", pData - pStart - total);
 	}
+
+	WriteBoneTags(nfHeader);
 
 	phdr->length = pData - pStart;
 
