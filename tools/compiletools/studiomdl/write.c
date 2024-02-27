@@ -510,43 +510,48 @@ void WriteModel()
 	}
 }
 
-static void WriteBoneTags(nfmdlheader_t* nfHeader)
+static const int32_t* ComputeBoneIndicesForGait(int32_t* numBones)
 {
-	byte* boneTagStart = pData;
-	nfHeader->boneTagsIndex = (int)(boneTagStart - pStart);
+	static int32_t boneIndices[MAXSTUDIOSRCBONES];
 
-	cJSON* rootArray = cJSON_CreateArray();
+	int32_t count = 0;
+	memset(boneIndices, 0, sizeof(boneIndices));
 
-	for ( int boneIndex = 0; boneIndex < numbones; ++boneIndex )
+	for ( int32_t boneIndex = 0; boneIndex < MAXSTUDIOSRCBONES; ++boneIndex )
 	{
-		cJSON* tagsArray = cJSON_CreateArray();
-		const bonetag_t* boneTag = GetBoneTags(bonetable[boneIndex].name);
+		const s_bonetable_t* srcBone = &bonetable[boneIndex];
 
-		while ( boneTag )
+		if ( srcBone->name[0] == '\0' || !HasBoneTag(srcBone->name, BONE_TAG_APPLY_GAIT) )
 		{
-			cJSON_AddItemToArray(tagsArray, cJSON_CreateString(boneTag->name));
-			boneTag = boneTag->next;
+			continue;
 		}
 
-		cJSON_AddItemToArray(rootArray, tagsArray);
+		boneIndices[count++] = boneIndex;
 	}
 
-	char* serialisedArray = cJSON_PrintUnformatted(rootArray);
-	size_t serialisedLength = strlen(serialisedArray) + 1;
-
-	memcpy(pData, serialisedArray, serialisedLength);
-	pData += serialisedLength;
-
-	byte* aligned = pData;
-	ALIGN(aligned);
-
-	if ( aligned > pData )
+	if ( numBones )
 	{
-		memset(pData, 0, aligned - pData);
-		pData = aligned;
+		*numBones = count;
 	}
 
-	nfHeader->boneTagsLength = (int32_t)(pData - boneTagStart);
+	return boneIndices;
+}
+
+static void WriteGaitBones(nfmdlheader_t* nfHeader)
+{
+	byte* sectionStart = pData;
+	nfHeader->gaitBonesIndex = (int32_t)(sectionStart - pStart);
+
+	int32_t numIndices = 0;
+	const int32_t* boneIndices = ComputeBoneIndicesForGait(&numIndices);
+
+	for ( int32_t index = 0; index < numIndices; ++index )
+	{
+		*((int32_t*)pData) = boneIndices[index];
+		pData += sizeof(int32_t);
+	}
+
+	nfHeader->gaitBonesLength = (int32_t)(pData - sectionStart);
 }
 
 #define FILEBUFFER (16 * 1024 * 1024)
@@ -670,13 +675,21 @@ void WriteFile(void)
 	printf("models    %6ld bytes\n", pData - pStart - total);
 	total = pData - pStart;
 
+	// Any custom NF stuff MUST go before the textures, since
+	// the game may truncate the model data once imported so
+	// as not to waste memory on embedded textures.
+	// Even though we don't embed texture data in NF models,
+	// we want to avoid any possibility that data we need
+	// ends up being truncated.
+	WriteGaitBones(nfHeader);
+	printf("gaitbones %6ld bytes\n", pData - pStart - total);
+	total = pData - pStart;
+
 	if ( !shouldSplitTextures )
 	{
 		WriteTextures();
 		printf("textures  %6ld bytes\n", pData - pStart - total);
 	}
-
-	WriteBoneTags(nfHeader);
 
 	phdr->length = pData - pStart;
 

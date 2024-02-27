@@ -45,6 +45,8 @@ Studio models are position independent, so the cache manager can move them.
 // where certain features are supported.
 #define NFMDL_MINVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_1
 #define NFMDL_MAXVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_LATEST
+#define NFMDL_MINVER_GAITBONES NFMDLHEADER_VERSION_1
+#define NFMDL_MAXVER_GAITBONES NFMDLHEADER_VERSION_LATEST
 
 // studio limits
 #define MAXSTUDIOVERTS 16384  // max vertices per submodel
@@ -311,6 +313,10 @@ typedef struct nfmdlheader_s
 
 	// Version of this struct.
 	uint32_t version;
+
+	// Offset and length of the gait bones section.
+	int32_t gaitBonesIndex;
+	int32_t gaitBonesLength;
 } nfmdlheader_t;
 
 // Convenience functions for features:
@@ -318,6 +324,12 @@ static inline qboolean NFMDL_SupportsExternalTextures(const nfmdlheader_t* heade
 {
 	return header && header->id == IDNFMDLHEADER && header->version >= NFMDL_MINVER_EXTERNAL_TEXTURES &&
 		header->version <= NFMDL_MAXVER_EXTERNAL_TEXTURES;
+}
+
+static inline qboolean NFMDL_SupportsGaitBones(const nfmdlheader_t* header)
+{
+	return header && header->id == IDNFMDLHEADER && header->version >= NFMDL_MINVER_GAITBONES &&
+		header->version <= NFMDL_MAXVER_GAITBONES;
 }
 
 // extra header to hold more offsets
