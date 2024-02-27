@@ -199,3 +199,20 @@ const bonetag_t* GetBoneTags(const char* boneName)
 	bonetaglist_t* list = FindBoneTagListByBoneName(boneName);
 	return list ? list->tags : NULL;
 }
+
+qboolean HasBoneTag(const char* boneName, const char* tagName)
+{
+	if ( !boneName || !(*boneName) || !tagName || !(*tagName) )
+	{
+		return false;
+	}
+
+	bonetaglist_t* list = FindBoneTagListByBoneName(boneName);
+
+	if ( !list )
+	{
+		return false;
+	}
+
+	return TagExistsInChain(list->tags, tagName);
+}
