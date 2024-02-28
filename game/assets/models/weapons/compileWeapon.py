@@ -136,7 +136,12 @@ def main():
 		sys.exit(1)
 
 	args = parseArguments()
-	dirsToCompile = [path for path in args.dirs if shouldCompileSubdir(path)]
+	dirsToCompile = list(args.dirs)
+
+	if "*" in dirsToCompile:
+		dirsToCompile = os.listdir(SCRIPT_DIR)
+
+	dirsToCompile = [path for path in dirsToCompile if shouldCompileSubdir(path)]
 
 	totalDirs = len(dirsToCompile)
 	successfulDirs = 0
