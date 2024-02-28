@@ -63,7 +63,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_raptor/p_raptor.mdl";
 		pm.WorldModelName = "models/weapon_raptor/w_raptor.mdl";
-		pm.PlayerAnimExtension = "python";
+		pm.PlayerAnimExtension = "pistol";
 
 		obj.Prediction.SetUpPrediction<CWeaponRaptor>();
 

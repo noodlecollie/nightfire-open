@@ -34,7 +34,8 @@ static constexpr const char* L96A1_ZOOM_OUT_SOUND = "weapons/weapon_l96a1/l96a1_
 static constexpr float L96A1_ZOOM_LEVELS[] = {
 	0.0f,  // Default
 	40.0f,
-	15.0f};
+	15.0f,
+};
 
 static constexpr size_t L96A1_ZOOM_LEVEL_COUNT = CoreUtil::ArraySize(L96A1_ZOOM_LEVELS);
 
@@ -70,7 +71,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_l96a1/p_l96a1.mdl";
 		pm.WorldModelName = "models/weapon_l96a1/w_l96a1.mdl";
-		pm.PlayerAnimExtension = "bow";
+		pm.PlayerAnimExtension = "sniper_rifle";
 
 		obj.Prediction.SetUpPrediction<CWeaponL96A1>();
 
