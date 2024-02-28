@@ -49,7 +49,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_p99/p_p99.mdl";
 		pm.WorldModelName = "models/weapon_p99/w_p99.mdl";
-		pm.PlayerAnimExtension = "onehanded";
+		pm.PlayerAnimExtension = "pistol";
 
 		obj.Prediction.SetUpPrediction<CWeaponSilent>();
 
