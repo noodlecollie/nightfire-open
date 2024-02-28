@@ -678,9 +678,6 @@ void WriteFile(void)
 	// Any custom NF stuff MUST go before the textures, since
 	// the game may truncate the model data once imported so
 	// as not to waste memory on embedded textures.
-	// Even though we don't embed texture data in NF models,
-	// we want to avoid any possibility that data we need
-	// ends up being truncated.
 	WriteGaitBones(nfHeader);
 	printf("gaitbones %6ld bytes\n", pData - pStart - total);
 	total = pData - pStart;
