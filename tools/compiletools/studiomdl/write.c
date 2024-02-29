@@ -22,6 +22,39 @@ byte* pStart;
 studiohdr_t* phdr;
 studioseqhdr_t* pseqhdr;
 
+// Create a placeholder so that we don't crash
+// asset loaders that expect textures to be present.
+// This is the minimum we can get away with - a 4x1 bitmap.
+// The width is 4 because being a multiple of 4 is
+// required by some hardware, according to code in
+// ResizeTexture(), and we want to be backwards-compatible.
+// When external textures are loaded by the engine,
+// the width and height should be determined by the file
+// that is loaded, so the dimensions of the dummy
+// texture embedded in the model should be ignored.
+static void SetPlaceholderBMP(s_texture_t* texture)
+{
+	if ( !texture )
+	{
+		return;
+	}
+
+	if ( texture->ppal )
+	{
+		free(texture->ppal);
+	}
+
+	if ( texture->ppicture )
+	{
+		free(texture->ppicture);
+	}
+
+	texture->srcwidth = 4;
+	texture->srcheight = 1;
+	texture->ppal = (rgb_t*)calloc(768, sizeof(byte));
+	texture->ppicture = (byte*)calloc(1, sizeof(byte));
+}
+
 #define ALIGN(a) a = (byte*)((uint64_t)((byte*)a + 3) & ~3)
 void WriteBoneInfo()
 {
@@ -337,14 +370,7 @@ void WriteTextures()
 	pData = (byte*)pref;
 	ALIGN(pData);
 
-	if ( !noEmbeddedTextures )
-	{
-		phdr->texturedataindex = (pData - pStart);  // must be the end of the file!
-	}
-	else
-	{
-		phdr->texturedataindex = 0;
-	}
+	phdr->texturedataindex = (pData - pStart);  // must be the end of the file!
 
 	for ( i = 0; i < numtextures; i++ )
 	{
@@ -353,16 +379,9 @@ void WriteTextures()
 		ptexture[i].width = texture[i].skinwidth;
 		ptexture[i].height = texture[i].skinheight;
 
-		if ( !noEmbeddedTextures )
-		{
-			ptexture[i].index = (pData - pStart);
-			memcpy(pData, texture[i].pdata, texture[i].size);
-			pData += texture[i].size;
-		}
-		else
-		{
-			ptexture[i].index = 0;
-		}
+		ptexture[i].index = (pData - pStart);
+		memcpy(pData, texture[i].pdata, texture[i].size);
+		pData += texture[i].size;
 	}
 	ALIGN(pData);
 }
@@ -539,19 +558,17 @@ static const int32_t* ComputeBoneIndicesForGait(int32_t* numBones)
 
 static void WriteGaitBones(nfmdlheader_t* nfHeader)
 {
-	byte* sectionStart = pData;
-	nfHeader->gaitBonesIndex = (int32_t)(sectionStart - pStart);
+	nfHeader->gaitBonesIndex = (int32_t)(pData - pStart);
 
 	int32_t numIndices = 0;
 	const int32_t* boneIndices = ComputeBoneIndicesForGait(&numIndices);
+	nfHeader->gaitBonesCount = numIndices;
 
 	for ( int32_t index = 0; index < numIndices; ++index )
 	{
 		*((int32_t*)pData) = boneIndices[index];
 		pData += sizeof(int32_t);
 	}
-
-	nfHeader->gaitBonesLength = (int32_t)(pData - sectionStart);
 }
 
 #define FILEBUFFER (16 * 1024 * 1024)

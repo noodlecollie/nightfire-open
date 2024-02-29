@@ -134,9 +134,11 @@ typedef struct nfmdlheader_s
 	// Version of this struct.
 	uint32_t version;
 
-	// Offset and length of the gait bones section.
+	// Offset of gait bones section.
 	int32_t gaitBonesIndex;
-	int32_t gaitBonesLength;
+
+	// Number of gait bone entries.
+	int32_t gaitBonesCount;
 } nfmdlheader_t;
 
 // header for demand loaded sequence group data
