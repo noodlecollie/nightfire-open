@@ -34,6 +34,8 @@ studioseqhdr_t* pseqhdr;
 // texture embedded in the model should be ignored.
 static void SetPlaceholderBMP(s_texture_t* texture)
 {
+	static const size_t PALETTE_SIZE_BYTES = 256 * 3;
+
 	if ( !texture )
 	{
 		return;
@@ -51,8 +53,15 @@ static void SetPlaceholderBMP(s_texture_t* texture)
 
 	texture->srcwidth = 4;
 	texture->srcheight = 1;
-	texture->ppal = (rgb_t*)calloc(768, sizeof(byte));
-	texture->ppicture = (byte*)calloc(1, sizeof(byte));
+	texture->skinwidth = texture->srcwidth;
+	texture->skinheight = texture->srcheight;
+	texture->skintop = 0;
+	texture->skinleft = 0;
+	texture->size = PALETTE_SIZE_BYTES + (texture->skinwidth * texture->skinheight);
+
+	// Zero everything - every colour in the palette is black,
+	// and every pixel references the first palette colour.
+	texture->pdata = (byte*)calloc(texture->size, sizeof(byte));
 }
 
 #define ALIGN(a) a = (byte*)((uint64_t)((byte*)a + 3) & ~3)
@@ -374,6 +383,14 @@ void WriteTextures()
 
 	for ( i = 0; i < numtextures; i++ )
 	{
+		if ( noEmbeddedTextures )
+		{
+			// Reset the texture to be a placeholder,
+			// so as not to crash asset readers that
+			// expect valid texture data.
+			SetPlaceholderBMP(&texture[i]);
+		}
+
 		strcpy(ptexture[i].name, texture[i].name);
 		ptexture[i].flags = texture[i].flags;
 		ptexture[i].width = texture[i].skinwidth;
