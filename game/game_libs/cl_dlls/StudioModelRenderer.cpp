@@ -841,9 +841,8 @@ bool CStudioModelRenderer::UseBoneForGait(const nfmdlheader_t* header, int32_t b
 
 	const int32_t* list =
 		reinterpret_cast<const int32_t*>(reinterpret_cast<const byte*>(m_pStudioHeader) + header->gaitBonesIndex);
-	const int32_t numGaitBones = header->gaitBonesLength / sizeof(int32_t);
 
-	for ( int32_t index = 0; index < numGaitBones; ++index )
+	for ( int32_t index = 0; index < header->gaitBonesCount; ++index )
 	{
 		if ( list[index] == boneIndex )
 		{
