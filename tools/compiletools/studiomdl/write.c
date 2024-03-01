@@ -22,6 +22,9 @@ byte* pStart;
 studiohdr_t* phdr;
 studioseqhdr_t* pseqhdr;
 
+#define PLACEHOLDER_TEXTURE_WIDTH 4
+#define PLACEHOLDER_TEXTURE_HEIGHT 1
+
 // Create a placeholder so that we don't crash
 // asset loaders that expect textures to be present.
 // This is the minimum we can get away with - a 4x1 bitmap.
@@ -51,8 +54,8 @@ static void SetPlaceholderBMP(s_texture_t* texture)
 		free(texture->ppicture);
 	}
 
-	texture->srcwidth = 4;
-	texture->srcheight = 1;
+	texture->srcwidth = PLACEHOLDER_TEXTURE_WIDTH;
+	texture->srcheight = PLACEHOLDER_TEXTURE_HEIGHT;
 	texture->skinwidth = texture->srcwidth;
 	texture->skinheight = texture->srcheight;
 	texture->skintop = 0;

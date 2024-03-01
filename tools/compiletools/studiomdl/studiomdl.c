@@ -1398,6 +1398,11 @@ void TextureCoordRanges(s_mesh_t* pmesh, s_texture_t* ptexture)
 		ptexture->skinwidth = (ptexture->srcwidth + 3) & ~3;
 		ptexture->skinheight = ptexture->srcheight;
 
+		ptexture->max_s = 63;
+		ptexture->min_s = 0;
+		ptexture->max_t = 63;
+		ptexture->min_t = 0;
+
 		for ( i = 0; i < pmesh->numtris; i++ )
 		{
 			for ( j = 0; j < 3; j++ )
@@ -1405,10 +1410,6 @@ void TextureCoordRanges(s_mesh_t* pmesh, s_texture_t* ptexture)
 				pmesh->triangle[i][j].s = 0;
 				pmesh->triangle[i][j].t = 0;
 			}
-			ptexture->max_s = 63;
-			ptexture->min_s = 0;
-			ptexture->max_t = 63;
-			ptexture->min_t = 0;
 		}
 		return;
 	}
@@ -1985,8 +1986,8 @@ void Grab_Triangles(s_model_t* pmodel)
 	int ncount = 0;
 	vec3_t vmin, vmax;
 
-	vmin[0] = vmin[1] = vmin[2] = 99999;
-	vmax[0] = vmax[1] = vmax[2] = -99999;
+	vmin[0] = vmin[1] = vmin[2] = FLT_MAX;
+	vmax[0] = vmax[1] = vmax[2] = FLT_MIN;
 
 	Build_Reference(pmodel);
 
