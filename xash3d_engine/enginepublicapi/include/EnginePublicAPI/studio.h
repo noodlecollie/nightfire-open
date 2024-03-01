@@ -306,6 +306,7 @@ typedef struct studiohdr_s
 	int32_t transitionindex;
 } studiohdr_t;
 
+#pragma pack(push,1)
 typedef struct nfmdlheader_s
 {
 	// Expected to be equal to IDNFMDLHEADER
@@ -319,7 +320,24 @@ typedef struct nfmdlheader_s
 
 	// Number of gait bone entries.
 	int32_t gaitBonesCount;
+
+	// Offset of texture timensions section.
+	// The number of texture dimensions is the
+	// same as the number of textures.
+	int32_t textureDimsIndex;
 } nfmdlheader_t;
+
+// Dimensions of a texture originally included in the model,
+// before it was replaced by a placeholder.
+typedef struct nfmdltexturedim_s
+{
+	// Original width of the texture.
+	int32_t width;
+
+	// Original height of the texture.
+	int32_t height;
+} nfmdltexturedim_t;
+#pragma pack(pop)
 
 // Convenience functions for features:
 static inline qboolean NFMDL_SupportsExternalTextures(const nfmdlheader_t* header)

@@ -22,6 +22,8 @@ byte* pStart;
 studiohdr_t* phdr;
 studioseqhdr_t* pseqhdr;
 
+static nfmdltexturedim_t textureDimensions[MAXSTUDIOSKINS];
+
 #define PLACEHOLDER_TEXTURE_WIDTH 4
 #define PLACEHOLDER_TEXTURE_HEIGHT 1
 
@@ -591,6 +593,21 @@ static void WriteGaitBones(nfmdlheader_t* nfHeader)
 	}
 }
 
+static void WriteTextureDimensions(nfmdlheader_t* nfHeader)
+{
+	nfHeader->textureDimsIndex = (int32_t)(pData - pStart);
+
+	for ( int textureIndex = 0; textureIndex < numtextures; ++textureIndex )
+	{
+		nfmdltexturedim_t* texDim = (nfmdltexturedim_t*)pData;
+
+		texDim->width = texture[textureIndex].srcwidth;
+		texDim->height = texture[textureIndex].srcheight;
+
+		pData += sizeof(nfmdltexturedim_t);
+	}
+}
+
 #define FILEBUFFER (16 * 1024 * 1024)
 
 void WriteFile(void)
@@ -721,6 +738,10 @@ void WriteFile(void)
 
 	if ( !shouldSplitTextures )
 	{
+		WriteTextureDimensions(nfHeader);
+		printf("texdims   %6ld bytes\n", pData - pStart - total);
+		total = pData - pStart;
+
 		WriteTextures();
 		printf("textures  %6ld bytes\n", pData - pStart - total);
 	}
