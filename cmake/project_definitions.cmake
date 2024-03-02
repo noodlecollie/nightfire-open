@@ -69,7 +69,6 @@ set(TARGETNAME_LIB_ARGS argparse)
 set(TARGETNAME_LIB_CPPFS cppfs)
 set(TARGETNAME_LIB_MEMPOOL mempoollib)
 set(TARGETNAME_LIB_COMPILETOOLS compiletoolslib)
-set(TARGETNAME_LIB_CJSON cJSON)
 
 # Only supported on Linux
 set(TARGETNAME_LIB_SAFESTRING safestring_static)
