@@ -19,7 +19,7 @@ def sigintHandler(signal, frame):
 	Aborted = True
 
 def parseArguments():
-	parser = argparse.ArgumentParser(description="Compiles the given weapons and copies the models to the game content folder.")
+	parser = argparse.ArgumentParser(description="Compiles the given models and copies them to the game content folder.")
 
 	parser.add_argument("dirs",
 						nargs="+",
@@ -113,8 +113,6 @@ def compileModel(path : str):
 		if os.path.splitext(item)[1] == ".qc":
 			compileAndCopyToOutput(newPath)
 
-# TODO: Threading like in compile-all.py
-# Then we can remove that file
 def main():
 	signal.signal(signal.SIGINT, sigintHandler)
 
@@ -123,14 +121,16 @@ def main():
 		sys.exit(1)
 
 	args = parseArguments()
-	totalDirs = len(args.dirs)
-	successfulDirs = 0
-
-	dirsToCompile = args.dirs
+	dirsToCompile = list(args.dirs)
 
 	if "*" in dirsToCompile:
-		print("Encountered wildcard '*', compiling all models in all subdirectories.")
-		dirsToCompile = [subdir for subdir in os.listdir(SCRIPT_DIR) if shouldCompileSubdir(subdir)]
+		dirsToCompile = os.listdir(SCRIPT_DIR)
+
+	dirsToCompile = [path for path in dirsToCompile if shouldCompileSubdir(path)]
+
+	totalDirs = len(dirsToCompile)
+	successfulDirs = 0
+	failedPaths = []
 
 	for subdir in dirsToCompile:
 		if Aborted:
@@ -142,8 +142,12 @@ def main():
 			successfulDirs += 1
 		except Exception as ex:
 			print(f"Failed to compile model '{subdir}': {str(ex)}")
+			failedPaths.append(subdir)
 
-	print("Successfully compiled", successfulDirs, "of", totalDirs, "weapons.")
+	print("Successfully compiled", successfulDirs, "of", totalDirs, "models.")
+
+	if failedPaths:
+		print("Failed:", ", ".join(failedPaths))
 
 if __name__ == "__main__":
 	main()

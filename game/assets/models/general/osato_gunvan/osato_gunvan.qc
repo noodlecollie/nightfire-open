@@ -1,10 +1,11 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "osato_gunvan.mdl"
+$noembeddedtextures
 
 $root "Master"
 
-$flags 2560
+$flags 512
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000

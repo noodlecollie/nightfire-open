@@ -3,6 +3,7 @@ $cdtexture "../../../../content/nfopen/textures"
 $modelname "mp_mi6_stealth.mdl"
 
 $root "Bip01"
+$noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
@@ -14,7 +15,7 @@ $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
 $bodygroup "studio"
 {
-	studio "mp_MI6_stealth_ref"
+	studio "mp_mi6_stealth_ref"
 }
 
 $attachment "" "Bip01 R Hand" 34.700000 3.000000 1.800000
@@ -47,6 +48,15 @@ $hbox 11 "Bip01 L Hand" 0.000000 -1.000000 -2.000000 6.000000 2.000000 2.000000
 $hbox 6 "Bip01 R UpperArm" -2.000000 -3.000000 -2.000000 11.000000 2.000000 2.000000
 $hbox 7 "Bip01 R Forearm" 0.000000 -3.000000 -2.000000 11.000000 2.000000 2.000000
 $hbox 8 "Bip01 R Hand" 0.000000 -1.000000 -2.000000 6.000000 2.000000 2.000000
+
+$bonetag "Bip01" applygait
+$bonetag "Bip01 Pelvis" applygait
+$bonetag "Bip01 L Thigh" applygait
+$bonetag "Bip01 L Calf" applygait
+$bonetag "Bip01 L Foot" applygait
+$bonetag "Bip01 R Thigh" applygait
+$bonetag "Bip01 R Calf" applygait
+$bonetag "Bip01 R Foot" applygait
 
 $sequence "look_idle" "look_idle_ani" ACT_IDLE 2 fps 15 loop
 $sequence "idle" "idle_ani" ACT_IDLE 5 fps 15 loop

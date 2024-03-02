@@ -2,6 +2,8 @@ add_executable(${TARGETNAME_EXE_STUDIOMDL}
 	monsters/activity.h
 	monsters/activitymap.h
 	bmpread.c
+	bonetags.h
+	bonetags.c
 	cmdlib.h
 	cmdlib.c
 	dirent_win32.h

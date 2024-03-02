@@ -55,7 +55,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_grenadelauncher/p_grenadelauncher.mdl";
 		pm.WorldModelName = "models/weapon_grenadelauncher/w_grenadelauncher.mdl";
-		pm.PlayerAnimExtension = "gauss";
+		pm.PlayerAnimExtension = "grenadelauncher";
 
 		obj.Prediction.SetUpPrediction<CWeaponGrenadeLauncher>();
 

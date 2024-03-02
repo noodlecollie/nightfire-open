@@ -28,10 +28,10 @@ Studio models are position independent, so the cache manager can move them.
 */
 
 // header
-#define STUDIO_VERSION	10
-#define IDSTUDIOHEADER	(('T'<<24)+('S'<<16)+('D'<<8)+'I') // little-endian "IDST"
-#define IDSEQGRPHEADER	(('Q'<<24)+('S'<<16)+('D'<<8)+'I') // little-endian "IDSQ"
-#define NFOPEN_HEADER (('B'<<24)+('T'<<16)+('F'<<8)+'A')
+#define STUDIO_VERSION 10
+#define IDSTUDIOHEADER (('T' << 24) + ('S' << 16) + ('D' << 8) + 'I')  // little-endian "IDST"
+#define IDSTUDIOSEQHEADER (('Q' << 24) + ('S' << 16) + ('D' << 8) + 'I')  // little-endian "IDSQ"
+#define IDNFMDLHEADER (('P' << 24) + ('O' << 16) + ('F' << 8) + 'N')  // little-endian "NFOP"
 
 // #define MAXSTUDIOTRIANGLES	20000	// TODO: tune this
 // #define MAXSTUDIOVERTS		2048	// TODO: tune this
@@ -119,6 +119,45 @@ typedef struct
 	int					numtransitions;		// animation node to animation node transition graph
 	int					transitionindex;
 } studiohdr_t;
+
+// NFTODO: It'd be nicer if this structure was shared with the engine,
+// rather than duplicated.
+#define NFMDLHEADER_VERSION_INVALID 0
+#define NFMDLHEADER_VERSION_1 1
+#define NFMDLHEADER_VERSION_LATEST NFMDLHEADER_VERSION_1
+
+#pragma pack(push,1)
+typedef struct nfmdlheader_s
+{
+	// Expected to be equal to IDNFMDLHEADER
+	uint32_t id;
+
+	// Version of this struct.
+	uint32_t version;
+
+	// Offset of gait bones section.
+	int32_t gaitBonesIndex;
+
+	// Number of gait bone entries.
+	int32_t gaitBonesCount;
+
+	// Offset of texture timensions section.
+	// The number of texture dimensions is the
+	// same as the number of textures.
+	int32_t textureDimsIndex;
+} nfmdlheader_t;
+
+// Dimensions of a texture originally included in the model,
+// before it was replaced by a placeholder.
+typedef struct nfmdltexturedim_s
+{
+	// Original width of the texture.
+	int32_t width;
+
+	// Original height of the texture.
+	int32_t height;
+} nfmdltexturedim_t;
+#pragma pack(pop)
 
 // header for demand loaded sequence group data
 typedef struct
@@ -385,7 +424,5 @@ typedef struct
 
 #define RAD_TO_STUDIO		(32768.0/M_PI)
 #define STUDIO_TO_RAD		(M_PI/32768.0)
-
-#define STUDIO_NO_EMBEDDED_TEXTURES (1U<<11) // Uses PNG textures from disk, not embedded in model.
 
 #endif

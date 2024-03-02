@@ -55,7 +55,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_frag_grenade/p_frag_grenade.mdl";
 		pm.WorldModelName = "models/weapon_frag_grenade/w_frag_grenade.mdl";
-		pm.PlayerAnimExtension = "crowbar";
+		pm.PlayerAnimExtension = "grenade";
 
 		obj.Prediction.SetUpPrediction<CWeaponFragGrenade>();
 

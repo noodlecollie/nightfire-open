@@ -1290,7 +1290,7 @@ qboolean Mod_GetStudioBounds(const char* name, vec3_t mins, vec3_t maxs)
 	if ( !f )
 		return false;
 
-	if ( *(uint*)f == IDSTUDIOHEADER || *(uint*)f == AFTERBURNER_HEADER )
+	if ( *(uint*)f == IDSTUDIOHEADER )
 	{
 		VectorClear(mins);
 		VectorClear(maxs);
@@ -1491,11 +1491,12 @@ void Mod_LoadStudioModel(model_t* mod, const void* buffer, qboolean* loaded)
 			loadmodel->cache.data = Mem_Calloc(loadmodel->mempool, phdr->length);
 			memcpy(loadmodel->cache.data, buffer, phdr->length);
 			phdr = (studiohdr_t*)loadmodel->cache.data;  // get the new pointer on studiohdr
+
 #if !XASH_DEDICATED()
 			ref.dllFuncs.Mod_StudioLoadTextures(mod, phdr);
 #endif
 
-			// NOTE: we wan't keep raw textures in memory. just cutoff model pointer above texture base
+			// NOTE: we dont't want to keep raw textures in memory. just cutoff model pointer above texture base
 			loadmodel->cache.data = Mem_Realloc(loadmodel->mempool, loadmodel->cache.data, phdr->texturedataindex);
 			phdr = (studiohdr_t*)loadmodel->cache.data;  // get the new pointer on studiohdr
 			phdr->length = phdr->texturedataindex;  // update model size
