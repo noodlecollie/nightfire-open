@@ -406,7 +406,7 @@ void            WritePortalfile(node_t* headnode)
 	}
 #endif
 
-    fprintf(pf, "PRT1-AB\n");
+    fprintf(pf, "PRT1-NFO\n");
     fprintf(pf, "%i\n", num_visleafs);
     fprintf(pf, "%i\n", num_visportals);
 

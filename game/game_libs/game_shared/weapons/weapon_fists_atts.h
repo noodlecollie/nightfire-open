@@ -41,7 +41,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		vm.AnimList_Idle << FISTS_IDLE1;
 
 		WAPlayerModel& pm = obj.PlayerModel;
-		pm.PlayerAnimExtension = "crowbar";
+		pm.PlayerAnimExtension = "dukes";
 
 		obj.Prediction.SetUpPrediction<CWeaponFists>();
 

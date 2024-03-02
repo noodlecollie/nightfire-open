@@ -3,6 +3,7 @@ $cdtexture "../../../../content/nfopen/textures/mdl"
 $modelname "fallback.mdl"
 
 $root "Bip01"
+$noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000

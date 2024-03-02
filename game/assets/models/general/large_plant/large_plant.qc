@@ -1,10 +1,11 @@
 $cdtexture "../../../../content/nfopen/textures"
 $cd "."
 $modelname "large_plant.mdl"
+$noembeddedtextures
 
 $root "large_plant"
 
-$flags 2048
+$flags 0
 $origin 0.000000 0.000000 0.000000
 $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000

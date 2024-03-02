@@ -185,6 +185,10 @@ public:
 	// Concatenated bone and light transforms
 	float (*m_pbonetransform)[MAXSTUDIOBONES][3][4];
 	float (*m_plighttransform)[MAXSTUDIOBONES][3][4];
+
+private:
+	static bool UseBoneForGait(const char* boneName);
+	bool UseBoneForGait(const nfmdlheader_t* header, int32_t boneIndex);
 };
 
 #endif  // STUDIOMODELRENDERER_H

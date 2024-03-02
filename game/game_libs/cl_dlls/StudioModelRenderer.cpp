@@ -37,18 +37,6 @@ engine_studio_api_t IEngineStudio;
 
 /////////////////////
 // Implementation of CStudioModelRenderer.h
-#define LEGS_BONES_COUNT 8
-
-// enumerate all the bones that used for gait animation
-const char* legs_bones[] = {
-	"Bip01",
-	"Bip01 Pelvis",
-	"Bip01 L Leg",
-	"Bip01 L Leg1",
-	"Bip01 L Foot",
-	"Bip01 R Leg",
-	"Bip01 R Leg1",
-	"Bip01 R Foot"};
 
 /*
 ====================
@@ -813,6 +801,58 @@ float CStudioModelRenderer::StudioEstimateFrame(mstudioseqdesc_t* pseqdesc)
 	return static_cast<float>(f);
 }
 
+bool CStudioModelRenderer::UseBoneForGait(const char* boneName)
+{
+	// enumerate all the bones that used for gait animation
+	static constexpr size_t LEGS_BONES_COUNT = 8;
+	static const char* const LEG_BONES[LEGS_BONES_COUNT] = {
+		"Bip01",
+		"Bip01 Pelvis",
+		"Bip01 L Leg",
+		"Bip01 L Leg1",
+		"Bip01 L Foot",
+		"Bip01 R Leg",
+		"Bip01 R Leg1",
+		"Bip01 R Foot",
+	};
+
+	if ( !boneName || !(*boneName) )
+	{
+		return false;
+	}
+
+	for ( size_t index = 0; index < LEGS_BONES_COUNT; ++index )
+	{
+		if ( strcmp(boneName, LEG_BONES[index]) == 0 )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CStudioModelRenderer::UseBoneForGait(const nfmdlheader_t* header, int32_t boneIndex)
+{
+	if ( !header || boneIndex < 0 )
+	{
+		return false;
+	}
+
+	const int32_t* list =
+		reinterpret_cast<const int32_t*>(reinterpret_cast<const byte*>(m_pStudioHeader) + header->gaitBonesIndex);
+
+	for ( int32_t index = 0; index < header->gaitBonesCount; ++index )
+	{
+		if ( list[index] == boneIndex )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /*
 ====================
 StudioSetupBones
@@ -821,7 +861,7 @@ StudioSetupBones
 */
 void CStudioModelRenderer::StudioSetupBones(void)
 {
-	int i, j;
+	int i;
 	double f;
 
 	mstudiobone_t* pbones;
@@ -956,16 +996,18 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		panim = StudioGetAnim(m_pRenderModel, pseqdesc);
 		StudioCalcRotations(pos2, q2, pseqdesc, panim, m_pPlayerInfo->gaitframe);
 
+		const nfmdlheader_t* nfHeader = reinterpret_cast<const nfmdlheader_t*>(
+			reinterpret_cast<const byte*>(m_pStudioHeader) + sizeof(*m_pStudioHeader));
+
+		const bool usesGaitBones = NFMDL_SupportsGaitBones(nfHeader);
+
 		for ( i = 0; i < m_pStudioHeader->numbones; i++ )
 		{
-			for ( j = 0; j < LEGS_BONES_COUNT; j++ )
+			if ( (!usesGaitBones && !UseBoneForGait(pbones[i].name)) ||
+				 (usesGaitBones && !UseBoneForGait(nfHeader, i)) )
 			{
-				if ( !strcmp(pbones[i].name, legs_bones[j]) )
-					break;
-			}
-
-			if ( j == LEGS_BONES_COUNT )
 				continue;  // not used for legs
+			}
 
 			memcpy(pos[i], pos2[i], sizeof(pos[i]));
 			memcpy(q[i], q2[i], sizeof(q[i]));

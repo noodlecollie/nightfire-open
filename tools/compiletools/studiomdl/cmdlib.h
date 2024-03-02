@@ -109,7 +109,7 @@ char *COM_Parse (char *data);
 extern	char		com_token[1024];
 extern	qboolean	com_eof;
 
-char *copystring(char *s);
+char *copystring(const char *s);
 
 
 void CRC_Init(unsigned short *crcvalue);

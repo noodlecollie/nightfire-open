@@ -1116,7 +1116,7 @@ static void     LoadPortals(char* portal_image)
 
     token = strtok(portal_image, seperators);
     CheckNullToken(token);
-    if (strcmp(token, "PRT1-AB") != 0)
+    if (strcmp(token, "PRT1-NFO") != 0)
     {
         Error("LoadPortals: failed to read header: identifier");
     }

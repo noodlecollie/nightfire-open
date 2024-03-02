@@ -3949,14 +3949,11 @@ void R_DrawViewModel(void)
 	}
 }
 
-static void R_StudioLoadTextureFromDisk(model_t* mod, studiohdr_t* phdr, mstudiotexture_t* ptexture)
+static void R_StudioLoadTextureFromDisk(mstudiotexture_t* ptexture)
 {
 	char fullPath[MAX_OSPATH];
 	int32_t flags = 0;
 	int32_t textureIndex = 0;
-
-	(void)mod;
-	(void)phdr;
 
 	if ( FBitSet(ptexture->flags, STUDIO_NF_NORMALMAP) )
 	{
@@ -4101,21 +4098,27 @@ Mod_StudioLoadTextures
 void Mod_StudioLoadTextures(model_t* mod, void* data)
 {
 	studiohdr_t* phdr = (studiohdr_t*)data;
-	mstudiotexture_t* ptexture;
-	int i;
 
 	if ( !phdr )
+	{
 		return;
+	}
 
-	ptexture = (mstudiotexture_t*)(((byte*)phdr) + phdr->textureindex);
+	nfmdlheader_t* nfHeader = (nfmdlheader_t*)(((byte*)data) + sizeof(studiohdr_t));
+
+	// If this is a Nightfire Open MDL, we should load textures externally
+	// rather than expecting them to be embedded.
+	const qboolean loadExternalTextures = NFMDL_SupportsExternalTextures(nfHeader);
+
+	mstudiotexture_t* ptexture = (mstudiotexture_t*)(((byte*)phdr) + phdr->textureindex);
 
 	if ( phdr->textureindex > 0 && phdr->numtextures <= MAXSTUDIOSKINS )
 	{
-		for ( i = 0; i < phdr->numtextures; i++ )
+		for ( int i = 0; i < phdr->numtextures; i++ )
 		{
-			if ( phdr->ident == AFTERBURNER_HEADER && phdr->flags & STUDIO_NO_EMBEDDED_TEXTURES )
+			if ( loadExternalTextures )
 			{
-				R_StudioLoadTextureFromDisk(mod, phdr, &ptexture[i]);
+				R_StudioLoadTextureFromDisk(&ptexture[i]);
 			}
 			else
 			{

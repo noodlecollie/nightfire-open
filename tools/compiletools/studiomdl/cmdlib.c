@@ -250,10 +250,14 @@ char* ExpandPathAndArchive(char* path)
 	return expanded;
 }
 
-char* copystring(char* s)
+char* copystring(const char* s)
 {
-	char* b;
-	b = (char*)malloc(strlen(s) + 1);
+	if ( !s )
+	{
+		return NULL;
+	}
+
+	char* b = (char*)malloc(strlen(s) + 1);
 	strcpy(b, s);
 	return b;
 }
