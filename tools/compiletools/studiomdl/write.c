@@ -10,7 +10,6 @@
 #include "mathlib.h"
 #include "studio.h"
 #include "studiomdl.h"
-#include "cJSON.h"
 #include "bonetags.h"
 
 int totalframes = 0;
