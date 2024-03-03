@@ -404,7 +404,7 @@ qboolean Info_IsKeyImportant(const char* key)
 		return true;
 	if ( !Q_strcmp(key, "cl_lag_compensation") )
 		return true;
-	if ( !Q_strcmp(key, "cl_nopred") )
+	if ( !Q_strcmp(key, "cl_disable_movement_prediction") )
 		return true;
 	return false;
 }

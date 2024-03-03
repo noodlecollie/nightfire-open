@@ -91,7 +91,7 @@ CL_IsPredicted
 */
 qboolean CL_IsPredicted(void)
 {
-	if ( cl_nopred->value || cl.intermission )
+	if ( cl_disable_movement_prediction->value || cl.intermission )
 		return false;
 
 	// never predict the quake demos
