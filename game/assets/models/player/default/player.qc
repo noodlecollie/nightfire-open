@@ -1,6 +1,6 @@
 $cd "."
 $cdtexture "../../../../content/nfopen/textures/mdl"
-$modelname "fallback.mdl"
+$modelname "_fallback.mdl"
 
 $root "Bip01"
 $noembeddedtextures
