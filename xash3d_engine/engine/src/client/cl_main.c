@@ -60,7 +60,7 @@ CVAR_DEFINE_AUTO(cl_logoext, "bmp", FCVAR_ARCHIVE, "temporary cvar to tell engin
 CVAR_DEFINE_AUTO(cl_test_bandwidth, "1", FCVAR_ARCHIVE, "test network bandwith before connection");
 convar_t* rcon_address;
 convar_t* cl_timeout;
-convar_t* cl_nopred;
+convar_t* cl_disable_movement_prediction;
 convar_t* cl_nodelta;
 convar_t* cl_crosshair;
 convar_t* cl_cmdbackup;
@@ -3728,7 +3728,7 @@ void CL_InitLocal(void)
 		"enable message names tracing (good for developers)");
 
 	// userinfo
-	cl_nopred = Cvar_Get("cl_nopred", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "disable client movement prediction");
+	cl_disable_movement_prediction = Cvar_Get("cl_disable_movement_prediction", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "disable client movement prediction");
 	name = Cvar_Get("name", Sys_GetCurrentUser(), FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_PRINTABLEONLY, "player name");
 	model = Cvar_Get("model", "", FCVAR_USERINFO | FCVAR_ARCHIVE, "player model ('player' is a singleplayer model)");
 	cl_updaterate = Cvar_Get("cl_updaterate", "20", FCVAR_USERINFO | FCVAR_ARCHIVE, "refresh rate of server messages");
