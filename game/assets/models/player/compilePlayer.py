@@ -99,11 +99,12 @@ def compileRecursive(path : str):
 			compileAndCopyToOutput(newPath)
 
 def main():
+	args = parseArguments()
+
 	if not os.path.isfile(STUDIOMDL_PATH):
 		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
 		sys.exit(1)
 
-	args = parseArguments()
 	totalDirs = len(args.dirs)
 	successfulDirs = 0
 
