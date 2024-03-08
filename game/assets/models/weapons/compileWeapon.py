@@ -119,7 +119,6 @@ def compileRecursive(path: str, weaponName: str):
 			compileAndCopyToOutput(newPath, weaponName)
 
 def shouldCompileSubdir(subdir:str):
-	print(subdir)
 	if subdir == "." or subdir == "..":
 		return False
 
@@ -131,11 +130,12 @@ def shouldCompileSubdir(subdir:str):
 	return True
 
 def main():
+	args = parseArguments()
+
 	if not os.path.isfile(STUDIOMDL_PATH):
 		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
 		sys.exit(1)
 
-	args = parseArguments()
 	dirsToCompile = list(args.dirs)
 
 	if "*" in dirsToCompile:

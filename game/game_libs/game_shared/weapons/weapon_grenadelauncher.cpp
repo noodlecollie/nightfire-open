@@ -20,7 +20,7 @@ static constexpr float GRENADELAUNCHER_TUMBLEVEL_MIN = -100.0f;
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MAX = -500.0f;
 static constexpr float GRENADELAUNCHER_LAUNCH_SPEED = 1000.0f;
 static constexpr float GRENADELAUNCHER_EXPLOSION_RADIUS = 250.0f;
-static constexpr float GRENADELAUNCHER_FUSE_TIME = 4.0f;
+static constexpr float GRENADELAUNCHER_FUSE_TIME = 2.0f;
 static constexpr float GRENADELAUNCHER_PITCH_ADJUST = 5;
 
 LINK_ENTITY_TO_CLASS(weapon_grenadelauncher, CWeaponGrenadeLauncher);

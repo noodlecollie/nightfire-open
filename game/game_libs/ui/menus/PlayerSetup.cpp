@@ -190,6 +190,12 @@ void CMenuPlayerSetup::CModelListModel::Update(void)
 	for ( i = 0; i < numFiles; i++ )
 	{
 		COM_FileBase(filenames[i], modelName, sizeof(modelName));
+
+		if ( modelName[0] == '_' )
+		{
+			continue;
+		}
+
 		Q_strncpy(models[m_iCount], modelName, sizeof(models[0]));
 
 		// check if the path is a valid model

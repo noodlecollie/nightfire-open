@@ -1877,7 +1877,7 @@ void SV_UserinfoChanged(sv_client_t* cl)
 		cl->netchan.rate = DEFAULT_RATE;
 
 	// movement prediction
-	if ( Q_atoi(Info_ValueForKey(cl->userinfo, "cl_nopred")) )
+	if ( Q_atoi(Info_ValueForKey(cl->userinfo, "cl_disable_movement_prediction")) )
 		ClearBits(cl->flags, FCL_PREDICT_MOVEMENT);
 	else
 		SetBits(cl->flags, FCL_PREDICT_MOVEMENT);
