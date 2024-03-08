@@ -22,7 +22,7 @@ TrenchBroom compilation profiles are saved to `.TrenchBroom/games/Nightfire Open
 					"type": "tool"
 				},
 				{
-					"parameters": "-chart -viewporal \"${WORK_DIR_PATH}/compile/${MAP_BASE_NAME}.bsp\"",
+					"parameters": "-chart -viewportal \"${WORK_DIR_PATH}/compile/${MAP_BASE_NAME}.bsp\"",
 					"tool": "${GAME_DIR_PATH}/tools/nfbsp",
 					"treatNonZeroResultCodeAsError": true,
 					"type": "tool"
@@ -135,7 +135,7 @@ TrenchBroom compilation profiles are saved to `.TrenchBroom/games/Nightfire Open
 		{
 			"name": "Default",
 			"parameters": "-dev 5 -windowed -width 1920 -height 1080 +map ${MAP_BASE_NAME}",
-			"path": "${GAME_DIR_PATH}/bond.sh"
+			"path": "/path/to/bond.sh"
 		}
 	],
 	"version": 1
