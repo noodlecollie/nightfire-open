@@ -3738,7 +3738,7 @@ void CL_InitLocal(void)
 	rate = Cvar_Get("rate", "3500", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_FILTERABLE, "player network rate");
 	topcolor = Cvar_Get("topcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player top color");
 	bottomcolor = Cvar_Get("bottomcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player bottom color");
-	cl_weapon_prediction = Cvar_Get("cl_weapon_prediction", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon prediction");
+	cl_weapon_prediction = Cvar_Get("cl_weapon_prediction", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon prediction");
 	Cvar_Get("cl_lag_compensation", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable lag compensation");
 	Cvar_Get("password", "", FCVAR_USERINFO, "server password");
 	Cvar_Get("team", "", FCVAR_USERINFO, "player team");
