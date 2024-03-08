@@ -60,7 +60,7 @@ CVAR_DEFINE_AUTO(cl_logoext, "bmp", FCVAR_ARCHIVE, "temporary cvar to tell engin
 CVAR_DEFINE_AUTO(cl_test_bandwidth, "1", FCVAR_ARCHIVE, "test network bandwith before connection");
 convar_t* rcon_address;
 convar_t* cl_timeout;
-convar_t* cl_nopred;
+convar_t* cl_disable_movement_prediction;
 convar_t* cl_nodelta;
 convar_t* cl_crosshair;
 convar_t* cl_cmdbackup;
@@ -3728,7 +3728,7 @@ void CL_InitLocal(void)
 		"enable message names tracing (good for developers)");
 
 	// userinfo
-	cl_nopred = Cvar_Get("cl_nopred", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "disable client movement prediction");
+	cl_disable_movement_prediction = Cvar_Get("cl_disable_movement_prediction", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "disable client movement prediction");
 	name = Cvar_Get("name", Sys_GetCurrentUser(), FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_PRINTABLEONLY, "player name");
 	model = Cvar_Get("model", "", FCVAR_USERINFO | FCVAR_ARCHIVE, "player model ('player' is a singleplayer model)");
 	cl_updaterate = Cvar_Get("cl_updaterate", "20", FCVAR_USERINFO | FCVAR_ARCHIVE, "refresh rate of server messages");
@@ -3738,7 +3738,7 @@ void CL_InitLocal(void)
 	rate = Cvar_Get("rate", "3500", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_FILTERABLE, "player network rate");
 	topcolor = Cvar_Get("topcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player top color");
 	bottomcolor = Cvar_Get("bottomcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player bottom color");
-	cl_weapon_prediction = Cvar_Get("cl_weapon_prediction", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon prediction");
+	cl_weapon_prediction = Cvar_Get("cl_weapon_prediction", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon prediction");
 	Cvar_Get("cl_lag_compensation", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable lag compensation");
 	Cvar_Get("password", "", FCVAR_USERINFO, "server password");
 	Cvar_Get("team", "", FCVAR_USERINFO, "player team");

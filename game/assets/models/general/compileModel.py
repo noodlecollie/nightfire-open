@@ -114,13 +114,14 @@ def compileModel(path : str):
 			compileAndCopyToOutput(newPath)
 
 def main():
+	args = parseArguments()
+
 	signal.signal(signal.SIGINT, sigintHandler)
 
 	if not os.path.isfile(STUDIOMDL_PATH):
 		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
 		sys.exit(1)
 
-	args = parseArguments()
 	dirsToCompile = list(args.dirs)
 
 	if "*" in dirsToCompile:
