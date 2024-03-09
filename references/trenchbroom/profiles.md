@@ -1,7 +1,13 @@
-# Compilation Profiles
-TrenchBroom compilation profiles are saved to `.TrenchBroom/games/Nightfire Open/CompilationProfiles.cfg` on Linux. **TODO:** Confirm location on Windows - put a breakpoint on `common/src/Model/GameFactory.cpp:448` in `GameFactory::writeCompilationConfig()`.
+TrenchBroom profiles are saved to:
+
+* `.TrenchBroom/games/Nightfire Open` on Linux.
+* `C:\Users\YourUser\AppData\Roaming\TrenchBroom\games\Nightfire Open` on Windows.
 
 # Example Profiles
+
+Some example profiles for compiling and running maps are below. These profiles copy the compiled map to both the game content directory in the repo and the executable game directory, assumed to be located in `build/install`.
+
+The paths are taken from Linux - change the path separators as appropriate on Windows. You can run a find and replace on all `/` characters to swap them to `\\`.
 
 ## CompilationProfiles.cfg
 
@@ -128,6 +134,8 @@ TrenchBroom compilation profiles are saved to `.TrenchBroom/games/Nightfire Open
 ```
 
 ## GameEngineProfiles.cfg
+
+Replace the `path` value with the path to the game executable or launch script on your system. This must (I think) be an absolute path.
 
 ```json
 {
