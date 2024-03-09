@@ -1,4 +1,2 @@
-For now, these binaries are not kept alongside the game as they would just be a waste of space in the Git repo.
-
-Download the Windows map editor here: https://www.mediafire.com/file/cy3e9pteoqm2ps9/2021-04-15-TrenchBroom-x64-nfopen-4f2a50cdadd0f47031943d5970ed918b4e36bd8a.zip/file
-Download the Linux map editor here: https://www.mediafire.com/file/lq3ui3h511wth9o/TrenchBroom-nfopen-Linux-4f2a50cdadd0f47031943d5970ed918b4e36bd8a.tar.gz/file
+Nightfire Open uses a modified fork of the TrenchBroom map editor.
+Latest CI builds can be downloaded from https://github.com/noodlecollie/nightfire-open-editor/actions/workflows/ci.yml
