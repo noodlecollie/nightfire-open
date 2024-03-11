@@ -126,7 +126,7 @@ typedef struct ui_enginefuncs_s
 	void (*pfnSetConsoleDefaultColor)(int r, int g, int b);  // color must came from colors.lst
 
 	// custom rendering (for playermodel preview)
-	struct cl_entity_s* (*pfnGetPlayerModel)(void);  // for drawing playermodel previews
+	struct cl_entity_s* (*pfnGetModel)(void);  // for drawing playermodel previews
 	void (*pfnSetModel)(struct cl_entity_s* ed, const char* path);
 	void (*pfnClearScene)(void);
 	void (*pfnRenderScene)(const struct ref_viewpass_s* rvp);

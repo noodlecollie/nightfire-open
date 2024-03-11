@@ -103,7 +103,9 @@ typedef struct ref_viewpass_s
 	vec3_t vieworigin;  // view origin
 	vec3_t viewangles;  // view angles
 	int viewentity;  // entitynum (P2: Savior uses this)
-	float fov_x, fov_y;  // vertical & horizontal FOV
-	float viewmodelfov_x, viewmodelfov_y;
+	float fov_x;
+	float fov_y;  // vertical & horizontal FOV
+	float viewmodelfov_x;
+	float viewmodelfov_y;
 	int flags;  // if !=0 nothing is drawn by the engine except clientDraw functions
 } ref_viewpass_t;

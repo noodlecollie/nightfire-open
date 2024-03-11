@@ -296,6 +296,11 @@ namespace UI
 			return key == K_MOUSE1;
 		}
 
+		inline bool IsRightMouse(int key)
+		{
+			return key == K_MOUSE2;
+		}
+
 		inline bool IsMouse(int key)
 		{
 			switch ( key )
