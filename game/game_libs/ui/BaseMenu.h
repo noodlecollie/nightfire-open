@@ -426,6 +426,8 @@ void UI_InputDevices_Menu(void);
 
 void UI_OpenUpdatePage(bool engine, bool preferstore);
 
+void UI_ModelViewer_Menu(void);
+
 //
 //-----------------------------------------------------
 //

@@ -23,7 +23,6 @@ CMenuPlayerModelView::CMenuPlayerModelView() :
 	memset(&refdef, 0, sizeof(refdef));
 
 	ent = NULL;
-	mouseYawControl = false;
 	prevCursorX = 0;
 	prevCursorY = 0;
 	hPlayerImage = 0;
@@ -51,7 +50,7 @@ void CMenuPlayerModelView::VidInit()
 	refdef.viewport[3] = m_scSize.h;
 	CalcFov();
 
-	ent = EngFuncs::GetPlayerModel();
+	ent = EngFuncs::GetModel();
 
 	memset(ent, 0, sizeof(cl_entity_t));
 
@@ -83,10 +82,17 @@ void CMenuPlayerModelView::VidInit()
 bool CMenuPlayerModelView::KeyUp(int key)
 {
 	if ( !ent )
+	{
 		return true;
+	}
 
-	if ( UI::Key::IsLeftMouse(key) && mouseYawControl )
-		mouseYawControl = false;
+	const bool stopDrag = (UI::Key::IsLeftMouse(key) && dragMode == DragMode::LeftButton) ||
+		(UI::Key::IsRightMouse(key) && dragMode == DragMode::RightButton);
+
+	if ( stopDrag )
+	{
+		dragMode = DragMode::None;
+	}
 
 	return false;
 }
@@ -94,30 +100,47 @@ bool CMenuPlayerModelView::KeyUp(int key)
 bool CMenuPlayerModelView::KeyDown(int key)
 {
 	if ( !ent )
-		return true;
-
-	if ( UI::Key::IsLeftMouse(key) && UI_CursorInRect(m_scPos, m_scSize) && !mouseYawControl )
 	{
-		mouseYawControl = true;
-		prevCursorX = uiStatic.cursorX;
-		prevCursorY = uiStatic.cursorY;
+		return true;
+	}
+
+	if ( UI_CursorInRect(m_scPos, m_scSize) && dragMode == DragMode::None )
+	{
+		if ( UI::Key::IsLeftMouse(key) || UI::Key::IsRightMouse(key) )
+		{
+			dragMode = UI::Key::IsLeftMouse(key) ? DragMode::LeftButton : DragMode::RightButton;
+			prevCursorX = uiStatic.cursorX;
+			prevCursorY = uiStatic.cursorY;
+		}
 	}
 
 	float yaw = ent->angles[1];
 
 	if ( UI::Key::IsLeftArrow(key) )
+	{
 		yaw -= 10.0f;
+	}
 	else if ( UI::Key::IsRightArrow(key) )
+	{
 		yaw += 10.0f;
+	}
 	else if ( UI::Key::IsEnter(key) )
+	{
 		ent->curstate.sequence++;
+	}
 	else
+	{
 		return CMenuBaseItem::KeyDown(key);
+	}
 
 	if ( yaw > 180.0f )
+	{
 		yaw -= 360.0f;
+	}
 	else if ( yaw < -180.0f )
+	{
 		yaw += 360.0f;
+	}
 
 	ent->angles[1] = ent->curstate.angles[1] = yaw;
 
@@ -132,9 +155,13 @@ void CMenuPlayerModelView::Draw()
 
 	// draw the rectangle
 	if ( eFocusAnimation == QM_HIGHLIGHTIFFOCUS && IsCurrentSelected() )
+	{
 		UI_DrawRectangleExt(m_scPos, m_scSize, colorFocus, iStrokeWidth);
+	}
 	else
+	{
 		UI_DrawRectangleExt(m_scPos, m_scSize, colorStroke, iStrokeWidth);
+	}
 
 	if ( (eOverrideMode == PMV_DONTCARE && !ui_showmodels->value) ||  // controlled by engine cvar
 		 (eOverrideMode == PMV_SHOWIMAGE) )  // controlled by menucode
@@ -148,64 +175,49 @@ void CMenuPlayerModelView::Draw()
 		{
 			UI_DrawString(font, m_scPos, m_scSize, "No preview", colorBase, m_scChSize, QM_CENTER, ETF_SHADOW);
 		}
+
+		return;
+	}
+
+	EngFuncs::ClearScene();
+
+	if ( uiStatic.enableAlphaFactor )
+	{
+		ent->curstate.rendermode = kRenderTransTexture;
+		ent->curstate.renderamt = static_cast<int>(uiStatic.alphaFactor * 255);
 	}
 	else
 	{
-		EngFuncs::ClearScene();
-
-		if ( uiStatic.enableAlphaFactor )
-		{
-			ent->curstate.rendermode = kRenderTransTexture;
-			ent->curstate.renderamt = static_cast<int>(uiStatic.alphaFactor * 255);
-		}
-		else
-		{
-			ent->curstate.rendermode = kRenderNormal;
-			ent->curstate.renderamt = 255;
-		}
-
-		if ( mouseYawControl )
-		{
-			float diffX = static_cast<float>(uiStatic.cursorX - prevCursorX);
-
-			if ( diffX )
-			{
-				float yaw = ent->angles[1];
-
-				yaw += diffX / uiStatic.scaleX;
-
-				if ( yaw > 180.0f )
-					yaw -= 360.0f;
-				else if ( yaw < -180.0f )
-					yaw += 360.0f;
-				ent->angles[1] = ent->curstate.angles[1] = yaw;
-			}
-
-			prevCursorX = uiStatic.cursorX;
-#if 0  // Disabled. Pitch changing is ugly
-			float diffY = uiStatic.cursorY - prevCursorY;
-			if( diffY )
-			{
-				float pitch = refdef.viewangles[2];
-
-				pitch += diffY / uiStatic.scaleY;
-
-				if( pitch > 180.0f )
-					pitch -= 360.0f;
-				else if( pitch < -180.0f )
-					pitch += 360.0f;
-				refdef.viewangles[2] = pitch;
-				ent->angles[2] = ent->curstate.angles[2] = -pitch;
-			}
-#endif
-
-			prevCursorY = uiStatic.cursorY;
-		}
-
-		// draw the player model
-		EngFuncs::CL_CreateVisibleEntity(ET_NORMAL, ent);
-		EngFuncs::RenderScene(&refdef);
+		ent->curstate.rendermode = kRenderNormal;
+		ent->curstate.renderamt = 255;
 	}
+
+	switch ( dragMode )
+	{
+		case DragMode::LeftButton:
+		{
+			HandleLeftMouseDragUpdate();
+			break;
+		}
+
+		case DragMode::RightButton:
+		{
+			HandleRightMouseDragUpdate();
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+
+	prevCursorX = uiStatic.cursorX;
+	prevCursorY = uiStatic.cursorY;
+
+	// draw the player model
+	EngFuncs::CL_CreateVisibleEntity(ET_NORMAL, ent);
+	EngFuncs::RenderScene(&refdef);
 }
 
 /*
@@ -220,4 +232,82 @@ void CMenuPlayerModelView::CalcFov()
 	float x = refdef.viewport[2] / tanf(DEG2RADF(refdef.fov_x) * 0.5f);
 	float half_fov_y = atanf(refdef.viewport[3] / x);
 	refdef.fov_y = RAD2DEGF(half_fov_y) * 2;
+}
+
+void CMenuPlayerModelView::SetModel(const char* path)
+{
+	if ( !ent )
+	{
+		return;
+	}
+
+	if ( path && *path )
+	{
+		EngFuncs::SetModel(ent, path);
+	}
+}
+
+void CMenuPlayerModelView::SetAllowPitchRotation(bool allow)
+{
+	allowPitchRotation = allow;
+}
+
+void CMenuPlayerModelView::SetAllowRightButtonZoom(bool allow)
+{
+	allowRightButtonZoom = allow;
+}
+
+void CMenuPlayerModelView::HandleLeftMouseDragUpdate()
+{
+	float diffX = static_cast<float>(uiStatic.cursorX - prevCursorX);
+
+	if ( diffX )
+	{
+		float yaw = ent->angles[1];
+
+		yaw += diffX / uiStatic.scaleX;
+
+		if ( yaw > 180.0f )
+		{
+			yaw -= 360.0f;
+		}
+		else if ( yaw < -180.0f )
+		{
+			yaw += 360.0f;
+		}
+
+		ent->angles[1] = ent->curstate.angles[1] = yaw;
+	}
+
+	if ( allowPitchRotation )
+	{
+		float diffY = static_cast<float>(uiStatic.cursorY - prevCursorY);
+
+		if ( diffY )
+		{
+			float pitch = ent->angles[2];
+
+			pitch += diffY / uiStatic.scaleY;
+
+			if ( pitch > 180.0f )
+			{
+				pitch -= 360.0f;
+			}
+			else if ( pitch < -180.0f )
+			{
+				pitch += 360.0f;
+			}
+
+			ent->angles[2] = ent->curstate.angles[2] = pitch;
+		}
+	}
+}
+
+void CMenuPlayerModelView::HandleRightMouseDragUpdate()
+{
+	if ( allowRightButtonZoom )
+	{
+		float diffY = static_cast<float>(uiStatic.cursorY - prevCursorY);
+		refdef.vieworigin[0] += diffY;
+	}
 }

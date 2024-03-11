@@ -799,24 +799,24 @@ static void GAME_EXPORT UI_DrawSetTextColor(int r, int g, int b, int alpha)
 
 /*
 ====================
-pfnGetPlayerModel
+pfnGetModel
 
 for drawing playermodel previews
 ====================
 */
-static cl_entity_t* GAME_EXPORT pfnGetPlayerModel(void)
+static cl_entity_t* GAME_EXPORT pfnGetModel(void)
 {
 	return &gameui.playermodel;
 }
 
 /*
 ====================
-pfnSetPlayerModel
+pfnSetModel
 
 for drawing playermodel previews
 ====================
 */
-static void GAME_EXPORT pfnSetPlayerModel(cl_entity_t* ent, const char* path)
+static void GAME_EXPORT pfnSetModel(cl_entity_t* ent, const char* path)
 {
 	ent->model = Mod_ForName(path, false, false);
 	ent->curstate.modelindex = MAX_MODELS;  // unreachable index
@@ -1172,8 +1172,8 @@ static ui_enginefuncs_t gEngfuncs = {
 	UI_DrawSetTextColor,
 	Con_DrawStringLen,
 	Con_DefaultColor,
-	pfnGetPlayerModel,
-	pfnSetPlayerModel,
+	pfnGetModel,
+	pfnSetModel,
 	pfnClearScene,
 	pfnRenderScene,
 	pfnAddEntity,

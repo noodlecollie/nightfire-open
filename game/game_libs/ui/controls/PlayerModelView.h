@@ -52,12 +52,29 @@ public:
 	CColor backgroundColor;
 	CColor outlineFocusColor;
 
+	void SetModel(const char* path);
+	void SetAllowPitchRotation(bool allow);
+	void SetAllowRightButtonZoom(bool allow);
+
 private:
+	enum class DragMode
+	{
+		None,
+		LeftButton,
+		RightButton
+	};
+
+	void HandleLeftMouseDragUpdate();
+	void HandleRightMouseDragUpdate();
+
 	cl_entity_t ent2;
 
-	bool mouseYawControl;
+	int prevCursorX;
+	int prevCursorY;
 
-	int prevCursorX, prevCursorY;
+	DragMode dragMode = DragMode::None;
+	bool allowPitchRotation = false;
+	bool allowRightButtonZoom = false;
 };
 
 #endif  // CMENUPLAYERMODELVIEW_H

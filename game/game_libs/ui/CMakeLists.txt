@@ -142,6 +142,7 @@ set(SOURCES_UI
 	menus/InputDevices.cpp
 	menus/LoadGame.cpp
 	menus/Main.cpp
+	menus/ModelViewer.cpp
 	menus/Multiplayer.cpp
 	menus/NewGame.cpp
 	menus/PlayerIntroduceDialog.h
