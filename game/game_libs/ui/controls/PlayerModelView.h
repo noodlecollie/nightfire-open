@@ -55,6 +55,7 @@ public:
 	void SetModel(const char* path);
 	void SetAllowPitchRotation(bool allow);
 	void SetAllowRightButtonZoom(bool allow);
+	void ResetOrientation();
 
 private:
 	enum class DragMode

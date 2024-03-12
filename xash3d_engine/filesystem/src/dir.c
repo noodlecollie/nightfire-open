@@ -309,7 +309,7 @@ qboolean FS_FixFileCase(dir_t* dir, const char* path, char* dst, const size_t le
 	}
 
 	// Keep iterating over the input path looking for separators.
-	for ( prev = path, next = Q_strchrnul(prev, '/');; prev = next + 1, next = Q_strchrnul(prev, '/') )
+	for ( prev = path, next = Q_strchrnul(prev, '/'); /*No check*/; prev = next + 1, next = Q_strchrnul(prev, '/') )
 	{
 		qboolean uptodate = false;  // do not run second scan if we're just updated our directory list
 		size_t temp;
@@ -455,8 +455,12 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 
 	basepathlength = (int)(separator ? (separator + 1 - pattern) : 0);
 	basepath = Mem_Calloc(fs_mempool, basepathlength + 1);
+
 	if ( basepathlength )
+	{
 		memcpy(basepath, pattern, basepathlength);
+	}
+
 	basepath[basepathlength] = '\0';
 
 	if ( !FS_FixFileCase(search->pkg.dir, basepath, netpath, sizeof(netpath), false) )
@@ -479,11 +483,15 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 			for ( resultlistindex = 0; resultlistindex < list->numstrings; resultlistindex++ )
 			{
 				if ( !Q_strcmp(list->strings[resultlistindex], temp) )
+				{
 					break;
+				}
 			}
 
 			if ( resultlistindex == list->numstrings )
+			{
 				stringlistappend(list, temp);
+			}
 		}
 	}
 

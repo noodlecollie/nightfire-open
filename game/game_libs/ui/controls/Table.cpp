@@ -393,17 +393,29 @@ bool CMenuTable::KeyDown(int key)
 	bool noscroll = false;
 
 	if ( UI::Key::IsUpArrow(key) )
+	{
 		sound = MoveCursor(-1) ? uiStatic.sounds[SND_MOVE] : 0;
+	}
 	else if ( UI::Key::IsDownArrow(key) )
+	{
 		sound = MoveCursor(1) ? uiStatic.sounds[SND_MOVE] : 0;
+	}
 	else if ( key == K_MWHEELUP )
+	{
 		sound = MoveCursor(-1) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( key == K_MWHEELDOWN )
+	{
 		sound = MoveCursor(1) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( UI::Key::IsPageUp(key) )
+	{
 		sound = MoveCursor(-2) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( UI::Key::IsPageDown(key) )
+	{
 		sound = MoveCursor(2) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( UI::Key::IsHome(key) )
 	{
 		sound = iCurItem > 0 ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
@@ -418,9 +430,13 @@ bool CMenuTable::KeyDown(int key)
 	else if ( UI::Key::IsDelete(key) )
 	{
 		if ( m_pModel->GetRows() )
+		{
 			m_pModel->OnDeleteEntry(iCurItem);  // allow removing entries on repeating
+		}
 		else
+		{
 			sound = uiStatic.sounds[SND_BUZZ];
+		}
 	}
 	else if ( UI::Key::IsLeftMouse(key) )
 	{
@@ -430,26 +446,41 @@ bool CMenuTable::KeyDown(int key)
 		{
 			// test for scrollbar
 			if ( UI_CursorInRect(sbarPos, sbarSize) )
+			{
 				iScrollBarSliding = true;
+			}
 		}
 	}
 
 	if ( !noscroll )
 	{
 		if ( iCurItem < iTopItem )
+		{
 			iTopItem = iCurItem;
+		}
+
 		if ( iCurItem > iTopItem + iNumRows - 1 )
+		{
 			iTopItem = iCurItem - iNumRows + 1;
+		}
+
 		if ( iTopItem > m_pModel->GetRows() - iNumRows )
+		{
 			iTopItem = m_pModel->GetRows() - iNumRows;
+		}
+
 		if ( iTopItem < 0 )
+		{
 			iTopItem = 0;
+		}
 	}
 
 	if ( sound )
 	{
 		if ( sound != uiStatic.sounds[SND_BUZZ] )
+		{
 			_Event(QM_CHANGED);
+		}
 
 		PlayLocalSound(sound);
 	}

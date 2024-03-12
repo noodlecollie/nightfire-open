@@ -992,15 +992,22 @@ static char** GAME_EXPORT pfnGetFilesList(const char* pattern, int* numFiles, in
 	}
 
 	t = FS_Search(pattern, true, gamedironly);
+
 	if ( !t )
 	{
 		if ( numFiles )
+		{
 			*numFiles = 0;
+		}
+
 		return NULL;
 	}
 
 	if ( numFiles )
+	{
 		*numFiles = t->numfilenames;
+	}
+
 	return t->filenames;
 }
 

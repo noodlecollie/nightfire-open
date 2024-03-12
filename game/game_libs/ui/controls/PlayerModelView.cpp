@@ -257,6 +257,17 @@ void CMenuPlayerModelView::SetAllowRightButtonZoom(bool allow)
 	allowRightButtonZoom = allow;
 }
 
+void CMenuPlayerModelView::ResetOrientation()
+{
+	memset(refdef.vieworigin, 0, sizeof(refdef.vieworigin));
+
+	if ( ent )
+	{
+		memset(ent->angles, 0, sizeof(ent->angles));
+		memset(ent->curstate.angles, 0, sizeof(ent->curstate.angles));
+	}
+}
+
 void CMenuPlayerModelView::HandleLeftMouseDragUpdate()
 {
 	float diffX = static_cast<float>(uiStatic.cursorX - prevCursorX);
