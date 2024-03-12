@@ -2712,7 +2712,9 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 	stringlist_t resultlist;
 
 	if ( pattern[0] == '.' || pattern[0] == ':' || pattern[0] == '/' || pattern[0] == '\\' )
+	{
 		return NULL;  // punctuation issues
+	}
 
 	stringlistinit(&resultlist);
 
@@ -2720,7 +2722,9 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 	for ( searchpath = fs_searchpaths; searchpath; searchpath = searchpath->next )
 	{
 		if ( gamedironly && !FBitSet(searchpath->flags, FS_GAMEDIRONLY_SEARCH_FLAGS) )
+		{
 			continue;
+		}
 
 		searchpath->pfnSearch(searchpath, &resultlist, pattern, caseinsensitive);
 	}
@@ -2732,7 +2736,10 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 		numchars = 0;
 
 		for ( i = 0; i < resultlist.numstrings; i++ )
+		{
 			numchars += (int)Q_strlen(resultlist.strings[i]) + 1;
+		}
+
 		search = Mem_Calloc(fs_mempool, sizeof(search_t) + numchars + numfiles * sizeof(char*));
 		search->filenames = (char**)((char*)search + sizeof(search_t));
 		search->filenamesbuffer = (char*)((char*)search + sizeof(search_t) + numfiles * sizeof(char*));

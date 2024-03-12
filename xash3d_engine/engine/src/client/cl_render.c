@@ -65,19 +65,27 @@ static char** pfnGetFilesList(const char* pattern, int* numFiles, int gamedironl
 	static search_t* t = NULL;
 
 	if ( t )
+	{
 		Mem_Free(t);  // release prev search
+	}
 
 	t = FS_Search(pattern, true, gamedironly);
 
 	if ( !t )
 	{
 		if ( numFiles )
+		{
 			*numFiles = 0;
+		}
+
 		return NULL;
 	}
 
 	if ( numFiles )
+	{
 		*numFiles = t->numfilenames;
+	}
+
 	return t->filenames;
 }
 

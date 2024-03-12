@@ -1,6 +1,8 @@
 #include "Framework.h"
 #include "PlayerModelView.h"
 
+static void OnSelectedModel(bool success);
+
 class CMenuModelViewer : public CMenuFramework
 {
 public:
@@ -17,7 +19,7 @@ private:
 		AddItem(background);
 		AddItem(banner);
 
-		AddButton(L("Select"), L("Select test model"), PC_OK, VoidCb(&CMenuModelViewer::SelectTestModel));
+		AddButton(L("Select"), L("Select test model"), PC_CUSTOMIZE, VoidCb(&CMenuModelViewer::SelectModel));
 		AddButton(L("Back"), L("Return to main menu"), PC_DONE, VoidCb(&CMenuModelViewer::Hide));
 
 		view.SetRect(660, 50, 600, 600);
@@ -26,9 +28,23 @@ private:
 		AddItem(view);
 	}
 
-	void SelectTestModel()
+	void SelectModel()
 	{
-		view.SetModel("models/acunit.mdl");
+		FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
+
+		globalData.ClearPatterns();
+		globalData.SetResultHasPreview(false);
+
+		// TODO: Look up all subfolders
+		globalData.AddPattern("models/*.mdl");
+
+		globalData.SetResultCallback([this](const char* result)
+		{
+			view.SetModel(result);
+			view.ResetOrientation();
+		});
+
+		UI_FileDialog_Menu();
 	}
 
 	CMenuPlayerModelView view;

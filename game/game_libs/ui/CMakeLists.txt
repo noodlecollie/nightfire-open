@@ -184,6 +184,7 @@ set(SOURCES_UI
 	EventSystem.h
 	EventSystem.cpp
 	extdll_menu.h
+	FileDialogStaticData.cpp
 	Image.h
 	menufont.h
 	MenuStrings.h

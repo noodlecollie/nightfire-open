@@ -382,6 +382,11 @@ direction is negative for wheel down, otherwise wheel up
 */
 void IN_MWheelEvent(int y)
 {
+	if ( y == 0 )
+	{
+		return;
+	}
+
 	int b = y > 0 ? K_MWHEELUP : K_MWHEELDOWN;
 
 	VGui_MWheelEvent(y);
