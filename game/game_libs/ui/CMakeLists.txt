@@ -160,6 +160,8 @@ set(SOURCES_UI
 	menus/Zoo.cpp
 	model/BaseArrayModel.h
 	model/BaseModel.h
+	model/DynamicStringArrayModel.h
+	model/DynamicStringArrayModel.cpp
 	model/StringArrayModel.h
 	model/StringVectorModel.h
 	projectInterface_mainui/fileLoaders_mainui.h

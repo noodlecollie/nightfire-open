@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Table.h"
 #include "StringArrayModel.h"
 #include "PicButton.h"
+#include "DynamicStringArrayModel.h"
 
 #define ART_BANNER "gfx/shell/head_touchoptions"
 #define ART_GAMMA "gfx/shell/gamma"
@@ -37,6 +38,19 @@ public:
 	}
 
 private:
+	class CFileListModel : public CDynamicStringArrayModel
+	{
+	public:
+		void Update() override;
+	};
+
+	class CPreview : public CMenuAction
+	{
+	public:
+		void Draw() override;
+		HIMAGE image;
+	};
+
 	void _Init(void) override;
 	void _VidInit(void) override;
 	void SaveAndPopMenu() override;
@@ -44,28 +58,9 @@ private:
 	void ApplyChanges(const char* fileName);
 	void UpdateExtra();
 
-	class CFileListModel : public CStringArrayModel
-	{
-	public:
-		CFileListModel() :
-			CStringArrayModel((const char*)filePath, 95, UI_MAXGAMES)
-		{
-		}
-		void Update() override;
-
-	private:
-		// TODO: Make this dynamic
-		char filePath[UI_MAXGAMES][95];
-	} model;
-
+	CFileListModel model;
 	CMenuTable fileList;
-
-	class CPreview : public CMenuAction
-	{
-	public:
-		void Draw() override;
-		HIMAGE image;
-	} preview;
+	CPreview preview;
 };
 
 void CMenuFileDialog::CPreview::Draw()
@@ -79,25 +74,21 @@ void CMenuFileDialog::CPreview::Draw()
 void CMenuFileDialog::CFileListModel::Update(void)
 {
 	FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
-	int i = 0, numFiles, j;
+
+	Clear();
 
 	for ( size_t patternIndex = 0; patternIndex < globalData.PatternCount(); ++patternIndex )
 	{
 		const char* pattern = globalData.GetPattern(patternIndex);
-		char** filenames = EngFuncs::GetFilesList(pattern, &numFiles, TRUE);
 
-		for ( j = 0; j < numFiles; i++, j++ )
+		int numFiles = 0;
+		const char* const* fileNames = EngFuncs::GetFilesList(pattern, &numFiles, TRUE);
+
+		if ( numFiles > 0 )
 		{
-			if ( i >= UI_MAXGAMES )
-			{
-				break;
-			}
-
-			Q_strncpy(filePath[i], filenames[j], sizeof(filePath[0]));
+			AddRows(fileNames, static_cast<size_t>(numFiles));
 		}
 	}
-
-	m_iCount = i;
 }
 
 void CMenuFileDialog::ApplyChanges(const char* fileName)
