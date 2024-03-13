@@ -141,6 +141,7 @@ static void FS_PopulateDirEntries(dir_t* dir, const char* path)
 
 	stringlistinit(&list);
 	listdirectory(&list, path);
+
 	if ( !list.numstrings )
 	{
 		dir->numentries = DIRENTRY_EMPTY_DIRECTORY;
@@ -150,6 +151,7 @@ static void FS_PopulateDirEntries(dir_t* dir, const char* path)
 	{
 		FS_InitDirEntries(dir, &list);
 	}
+
 	stringlistfreecontents(&list);
 }
 
@@ -170,14 +172,21 @@ static int FS_FindDirEntry(dir_t* dir, const char* name)
 
 		// found it
 		if ( !diff )
+		{
 			return middle;
+		}
 
 		// if we're too far in the list
 		if ( diff > 0 )
+		{
 			right = middle - 1;
+		}
 		else
+		{
 			left = middle + 1;
+		}
 	}
+
 	return -1;
 }
 
@@ -226,13 +235,13 @@ static void FS_MergeDirEntries(dir_t* dir, const stringlist_t* list)
 	dir->entries = temp.entries;
 }
 
-static int FS_MaybeUpdateDirEntries(dir_t* dir, const char* path, const char* entryname)
+static int FS_UpdateStaleDirectoryDataAndFindEntry(dir_t* dir, const char* directoryOnDisk, const char* entryname)
 {
 	stringlist_t list;
 	int ret;
 
 	stringlistinit(&list);
-	listdirectory(&list, path);
+	listdirectory(&list, directoryOnDisk);
 
 	if ( list.numstrings == 0 )  // empty directory
 	{
@@ -252,22 +261,29 @@ static int FS_MaybeUpdateDirEntries(dir_t* dir, const char* path, const char* en
 	}
 	else
 	{
-		// do heavy compare if directory now have an entry we need
+		// The path on disk had entries in it, and the number of
+		// entries was the same as the number that the struct contains.
+		// Do heavy compare in case the disk now has an entry we need.
+
 		int i;
 
 		for ( i = 0; i < list.numstrings; i++ )
 		{
 			if ( !Q_stricmp(list.strings[i], entryname) )
+			{
 				break;
+			}
 		}
 
-		if ( i != list.numstrings )
+		if ( i < list.numstrings )
 		{
 			FS_MergeDirEntries(dir, &list);
 			ret = FS_FindDirEntry(dir, entryname);
 		}
 		else
+		{
 			ret = -1;
+		}
 	}
 
 	stringlistfreecontents(&list);
@@ -287,118 +303,205 @@ FS_AppendToPath(char* dst, size_t* pi, const size_t len, const char* src, const 
 		Con_Printf(S_ERROR "FS_FixFileCase: overflow while searching %s (%s)\n", path, err);
 		return false;
 	}
+
 	return true;
 }
 
-qboolean FS_FixFileCase(dir_t* dir, const char* path, char* dst, const size_t len, qboolean createpath)
+// This is a somewhat obscure function, but is critically important for files to be able
+// to be found when running searches. Hopefully exhaustively commenting the behaviour
+// here will make it easier to follow.
+//   dir              - Directory in tree to use as the root.
+//   inPath           - Path to evaluate. This is treated as relative to the root.
+//   outPath          - Buffer to receive the evaluated and fixed path.
+//   outPathMaxLength - Size of the output path buffer.
+qboolean
+FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t outPathMaxLength, qboolean createpath)
 {
-	const char* prev;
-	const char* next;
-	size_t i = 0;
+	size_t computedPathLength = 0;
 
 	// Append the base directory name to the destination buffer to start off with.
-	if ( !FS_AppendToPath(dst, &i, len, dir->name, path, "init") )
+	if ( !FS_AppendToPath(outPath, &computedPathLength, outPathMaxLength, dir->name, inPath, "init") )
 	{
 		return false;
 	}
 
-	if ( !(*path) )
+	if ( !(*inPath) )
 	{
 		// Nothing to fix.
 		return true;
 	}
 
-	// Keep iterating over the input path looking for separators.
-	for ( prev = path, next = Q_strchrnul(prev, '/'); /*No check*/; prev = next + 1, next = Q_strchrnul(prev, '/') )
+	// Keep iterating over the input path looking for directory separators.
+	// Each time this loop is run, the outPath buffer holds the directory
+	// prefix that we're currently concerned with.
+	for ( const char* prev = inPath, *next = Q_strchrnul(prev, '/');  //
+		  /*No check - we break manually*/;  //
+		  prev = next + 1, next = Q_strchrnul(prev, '/') )
 	{
-		qboolean uptodate = false;  // do not run second scan if we're just updated our directory list
-		size_t temp;
-		char entryname[MAX_SYSPATH];
-		int ret;
+		// Start by assuming that we will not update the struct's internal data.
+		qboolean dirEntriesRefreshed = false;
 
 		if ( dir->numentries == DIRENTRY_NOT_SCANNED )
 		{
-			// read directory first time
-			FS_PopulateDirEntries(dir, dst);
-			uptodate = true;
+			// Lazy initialisation. The dir struct does not yet hold
+			// info from the actual filesystem, so refresh it and record
+			// that we did so.
+			FS_PopulateDirEntries(dir, outPath);
+			dirEntriesRefreshed = true;
 		}
 
 		// If this subdirectory is case insensitive, we don't need to fix any casing.
 		// Add the rest of the path to the destination buffer, we can quit early here.
 		if ( dir->numentries == DIRENTRY_CASEINSENSITIVE )
 		{
-			if ( !FS_AppendToPath(dst, &i, len, prev, path, "caseinsensitive entry") )
+			// Make sure the append succeeded.
+			if ( !FS_AppendToPath(
+					 outPath,
+					 &computedPathLength,
+					 outPathMaxLength,
+					 prev,
+					 inPath,
+					 "caseinsensitive entry") )
 			{
 				return false;
 			}
 
-			// Make sure the full path does actually exist.
+			// Now make sure the full path does actually exist.
 			// If we're creating it, we know it will exist.
-			return createpath ? true : FS_SysFileOrFolderExists(dst);
+			if ( createpath )
+			{
+				return true;
+			}
+
+			// If we're not creating the path, it must actually exist on disk.
+			return FS_SysFileOrFolderExists(outPath);
 		}
 
-		// Get the entry name (the name of the current subdirectory we're looking at,
-		// without the final separator).
-		Q_strncpy(entryname, prev, next - prev + 1);
+		// Next, prepare a buffer which holds the name of the next segment in
+		// the path. This represents a subdirectory under the parent.
+		char currentSubdirName[MAX_SYSPATH];
+		Q_strncpy(currentSubdirName, prev, next - prev + 1);
 
-		// Check if this subdirectory exists in the parent on the filesystem.
-		ret = FS_FindDirEntry(dir, entryname);
+		// Check if this subdirectory exists as an entry in the list that's
+		// held in the struct.
+		int dirEntryIndex = FS_FindDirEntry(dir, currentSubdirName);
 
-		// If it doesn't exist:
-		if ( ret < 0 )
+		// If the subdirectory doesn't exist in the struct, we need to make
+		// sure that this is actually the case on the filesystem itself,
+		// because the struct data could be stale. We do this below.
+		if ( dirEntryIndex < 0 )
 		{
-			// If we're creating files or folders, we don't care that the path doesn't exist,
-			// so copy everything that's left and exit without an error.
-
-			if ( !uptodate )
+			// If we had scanned the directory on disk earlier, we consider
+			// its data up-to-date. However, if we didn't scan it earlier
+			// then the list in the struct might be stale.
+			if ( !dirEntriesRefreshed )
 			{
-				ret = FS_MaybeUpdateDirEntries(dir, dst, entryname);
+				// Do a combined, optimised operation: update the list of entries
+				// in the struct, and then subsequently check to see if the
+				// subdirectory we're looking for is in there.
+				dirEntryIndex = FS_UpdateStaleDirectoryDataAndFindEntry(dir, outPath, currentSubdirName);
 			}
 
-			if ( uptodate || ret < 0 )
+			// If we really couldn't find the entry we were looking for:
+			if ( dirEntryIndex < 0 )
 			{
-				return createpath ? FS_AppendToPath(dst, &i, len, prev, path, "create path") : false;
+				// If we're creating a path, the success condition just becomes
+				// the result of the append operation below.
+				if ( createpath )
+				{
+					return FS_AppendToPath(outPath, &computedPathLength, outPathMaxLength, prev, inPath, "create path");
+				}
+
+				// If we're not creating a path, return false because the item
+				// we just checked for could not be found.
+				return false;
 			}
 
-			uptodate = true;
+			// If we get here, the directory data in the struct was updated,
+			// so set the flag indicating that it's live.
+			dirEntriesRefreshed = true;
 		}
 
-		dir = &dir->entries[ret];
-		temp = i;
+		// Set the struct pointer to the new entry we now know exists.
+		dir = &dir->entries[dirEntryIndex];
 
-		if ( !FS_AppendToPath(dst, &temp, len, dir->name, path, "case fix") )
+		// Store the path length in a new variable.
+		// FS_AppendToPath() modifies the length passed to it as a result
+		// of the append, but we don't want to modify the official length just yet
+		// as we re-use it below in some checks.
+		size_t proposedNewPathLength = computedPathLength;
+
+		// Append the name of this new directory to the output, and make sure it succeeds.
+		if ( !FS_AppendToPath(outPath, &proposedNewPathLength, outPathMaxLength, dir->name, inPath, "case fix") )
 		{
 			return false;
 		}
 
-		if ( !uptodate && !FS_SysFileOrFolderExists(dst) )  // file not found, rescan...
+		// If we did not have to refresh the entries from earlier,
+		// and the new path we just computed does not actually exist
+		// on disk, we need to re-run the update process for the
+		// struct's internal data.
+		if ( !dirEntriesRefreshed && !FS_SysFileOrFolderExists(outPath) )  // file not found, rescan...
 		{
-			dst[i] = 0;  // strip failed part
+			// Get rid of the subdirectory we just appended to the path.
+			// We supply the path and subdirectory as two separate arguments below.
+			outPath[computedPathLength] = '\0';
 
-			// if we're creating files or folders, we don't care if path doesn't exist
-			// so copy everything that's left and exit without an error
-			if ( (ret = FS_MaybeUpdateDirEntries(dir, dst, entryname)) < 0 )
+			// Do a combined, optimised operation: update the list of entries
+			// in the struct, and then subsequently check to see if the
+			// subdirectory we're looking for is in there.
+			dirEntryIndex = FS_UpdateStaleDirectoryDataAndFindEntry(dir, outPath, currentSubdirName);
+
+			// If the subdirectory was not present:
+			if ( dirEntryIndex < 0 )
 			{
-				return createpath ? FS_AppendToPath(dst, &i, len, prev, path, "create path rescan") : false;
+				// If we're creating the path, it's fine if it doesn't exist.
+				// Construct the entire path and return success based on that operation.
+				if ( createpath )
+				{
+					return FS_AppendToPath(
+						outPath,
+						&computedPathLength,
+						outPathMaxLength,
+						prev,
+						inPath,
+						"create path rescan");
+				}
+
+				// Return a failure because the path does not exist.
+				return false;
 			}
 
-			dir = &dir->entries[ret];
+			// Now we know that the subdirectory exists.
+			// Update the struct pointer to use it.
+			dir = &dir->entries[dirEntryIndex];
 
-			if ( !FS_AppendToPath(dst, &temp, len, dir->name, path, "case fix rescan") )
+			// Update the full path too, and make sure the operation succeeds.
+			if ( !FS_AppendToPath(
+					 outPath,
+					 &proposedNewPathLength,
+					 outPathMaxLength,
+					 dir->name,
+					 inPath,
+					 "case fix rescan") )
 			{
 				return false;
 			}
 		}
 
-		i = temp;
+		// We confirmed that the new path exists, so update the main
+		// path length variable to represent the new path.
+		computedPathLength = proposedNewPathLength;
 
-		// end of string, found file, return
+		// If we reached the path terminator (either a null, or a
+		// separator followed by a null), we're done.
 		if ( next[0] == '\0' || (next[0] == '/' && next[1] == '\0') )
 		{
 			break;
 		}
 
-		if ( !FS_AppendToPath(dst, &i, len, "/", path, "path separator") )
+		// On to the next section - append a separator and go round the loop again.
+		if ( !FS_AppendToPath(outPath, &computedPathLength, outPathMaxLength, "/", inPath, "path separator") )
 		{
 			return false;
 		}
