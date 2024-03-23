@@ -314,10 +314,16 @@ FS_AppendToPath(char* dst, size_t* pi, const size_t len, const char* src, const 
 //   inPath           - Path to evaluate. This is treated as relative to the root.
 //   outPath          - Buffer to receive the evaluated and fixed path.
 //   outPathMaxLength - Size of the output path buffer.
-qboolean
-FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t outPathMaxLength, qboolean createpath)
+//   operation        - Type of operation this path fix is needed for.
+qboolean FS_FixFileCase(
+	dir_t* dir,
+	const char* inPath,
+	char* outPath,
+	const size_t outPathMaxLength,
+	DirectoryOperation_e operation)
 {
 	size_t computedPathLength = 0;
+	const qboolean requiresExistenceCheck = operation == DIROP_ACCESS;
 
 	// Append the base directory name to the destination buffer to start off with.
 	if ( !FS_AppendToPath(outPath, &computedPathLength, outPathMaxLength, dir->name, inPath, "init") )
@@ -334,7 +340,7 @@ FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t outPa
 	// Keep iterating over the input path looking for directory separators.
 	// Each time this loop is run, the outPath buffer holds the directory
 	// prefix that we're currently concerned with.
-	for ( const char* prev = inPath, *next = Q_strchrnul(prev, '/');  //
+	for ( const char *prev = inPath, *next = Q_strchrnul(prev, '/');  //
 		  /*No check - we break manually*/;  //
 		  prev = next + 1, next = Q_strchrnul(prev, '/') )
 	{
@@ -366,9 +372,8 @@ FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t outPa
 				return false;
 			}
 
-			// Now make sure the full path does actually exist.
-			// If we're creating it, we know it will exist.
-			if ( createpath )
+			// If we don't care whether the path exists or not, just return true.
+			if ( !requiresExistenceCheck )
 			{
 				return true;
 			}
@@ -405,9 +410,9 @@ FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t outPa
 			// If we really couldn't find the entry we were looking for:
 			if ( dirEntryIndex < 0 )
 			{
-				// If we're creating a path, the success condition just becomes
-				// the result of the append operation below.
-				if ( createpath )
+				// If we don't need to check for existence, we only need
+				// to report if the append was successful.
+				if ( !requiresExistenceCheck )
 				{
 					return FS_AppendToPath(outPath, &computedPathLength, outPathMaxLength, prev, inPath, "create path");
 				}
@@ -455,9 +460,9 @@ FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t outPa
 			// If the subdirectory was not present:
 			if ( dirEntryIndex < 0 )
 			{
-				// If we're creating the path, it's fine if it doesn't exist.
-				// Construct the entire path and return success based on that operation.
-				if ( createpath )
+				// If we don't need to check for existence, we only need
+				// to report if the append was successful.
+				if ( !requiresExistenceCheck )
 				{
 					return FS_AppendToPath(
 						outPath,
@@ -525,14 +530,19 @@ static int FS_FindFile_DIR(searchpath_t* search, const char* path, char* fixedna
 {
 	char netpath[MAX_SYSPATH];
 
-	if ( !FS_FixFileCase(search->pkg.dir, path, netpath, sizeof(netpath), false) )
+	if ( !FS_FixFileCase(search->pkg.dir, path, netpath, sizeof(netpath), DIROP_ACCESS) )
+	{
 		return -1;
+	}
 
 	if ( FS_SysFileExists(netpath) )
 	{
 		// return fixed case file name only local for that searchpath
 		if ( fixedname )
+		{
 			Q_strncpy(fixedname, netpath + Q_strlen(search->filename), len);
+		}
+
 		return 0;
 	}
 
@@ -566,7 +576,7 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 
 	basepath[basepathlength] = '\0';
 
-	if ( !FS_FixFileCase(search->pkg.dir, basepath, netpath, sizeof(netpath), false) )
+	if ( !FS_FixFileCase(search->pkg.dir, basepath, netpath, sizeof(netpath), DIROP_ACCESS) )
 	{
 		Mem_Free(basepath);
 		return;

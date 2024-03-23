@@ -1898,7 +1898,7 @@ file_t* FS_Open(const char* filepath, const char* mode, qboolean gamedironly)
 		char real_path[MAX_SYSPATH];
 
 		// open the file on disk directly
-		if ( !FS_FixFileCase(fs_writepath->pkg.dir, filepath, real_path, sizeof(real_path), true) )
+		if ( !FS_FixFileCase(fs_writepath->pkg.dir, filepath, real_path, sizeof(real_path), DIROP_CREATE) )
 			return NULL;
 
 		FS_CreatePath(real_path);  // Create directories up to the file
@@ -2602,11 +2602,11 @@ qboolean FS_Rename(const char* oldname, const char* newname)
 	COM_FixSlashes(newname2);
 
 	// file does not exist
-	if ( !FS_FixFileCase(fs_writepath->pkg.dir, oldname2, oldpath, sizeof(oldpath), false) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, oldname2, oldpath, sizeof(oldpath), DIROP_ACCESS) )
 		return false;
 
 	// exit if overflowed
-	if ( !FS_FixFileCase(fs_writepath->pkg.dir, newname2, newpath, sizeof(newpath), true) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, newname2, newpath, sizeof(newpath), DIROP_CREATE) )
 		return false;
 
 	ret = rename(oldpath, newpath);
@@ -2644,7 +2644,7 @@ qboolean GAME_EXPORT FS_Delete(const char* path)
 	Q_strncpy(path2, path, sizeof(path2));
 	COM_FixSlashes(path2);
 
-	if ( !FS_FixFileCase(fs_writepath->pkg.dir, path2, real_path, sizeof(real_path), true) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, path2, real_path, sizeof(real_path), DIROP_CREATE) )
 		return true;
 
 	ret = remove(real_path);

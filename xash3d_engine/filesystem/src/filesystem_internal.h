@@ -219,8 +219,15 @@ qboolean FS_AddZip_Fullpath(const char* zipfile, qboolean* already_loaded, int f
 //
 // dir.c
 //
+typedef enum DirectoryOperation_e
+{
+	DIROP_ACCESS = 0,
+	DIROP_CREATE
+} DirectoryOperation_e;
+
 searchpath_t* FS_AddDir_Fullpath(const char* path, qboolean* already_loaded, int flags);
-qboolean FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t len, qboolean createpath);
+qboolean
+FS_FixFileCase(dir_t* dir, const char* inPath, char* outPath, const size_t len, DirectoryOperation_e operation);
 void FS_InitDirectorySearchpath(searchpath_t* search, const char* path, int flags);
 
 #ifdef __cplusplus
