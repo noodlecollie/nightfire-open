@@ -359,9 +359,12 @@ static int DirectoryCount(const char* pPath)
 	int count;
 	search_t* t;
 
-	t = FS_Search(pPath, true, true);  // lookup only in gamedir
+	t = FS_SearchAll(pPath, true, true);  // lookup only in gamedir
+
 	if ( !t )
+	{
 		return 0;  // empty
+	}
 
 	count = t->numfilenames;
 	Mem_Free(t);
@@ -491,12 +494,17 @@ static void ClearSaveDir(void)
 	int i;
 
 	// just delete all HL? files
-	t = FS_Search(DEFAULT_SAVE_DIRECTORY "*.HL?", true, true);
+	t = FS_SearchFiles(DEFAULT_SAVE_DIRECTORY "*.HL?", true, true);
+
 	if ( !t )
+	{
 		return;  // already empty
+	}
 
 	for ( i = 0; i < t->numfilenames; i++ )
+	{
 		FS_Delete(t->filenames[i]);
+	}
 
 	Mem_Free(t);
 }
@@ -641,9 +649,12 @@ static void DirectoryCopy(const char* pPath, file_t* pFile)
 	file_t* pCopy;
 	search_t* t;
 
-	t = FS_Search(pPath, true, true);
+	t = FS_SearchFiles(pPath, true, true);
+
 	if ( !t )
+	{
 		return;  // nothing to copy ?
+	}
 
 	for ( i = 0; i < t->numfilenames; i++ )
 	{
@@ -2272,8 +2283,12 @@ const char* SV_GetLatestSave(void)
 	int i, found = 0;
 	search_t* t;
 
-	if ( (t = FS_Search(DEFAULT_SAVE_DIRECTORY "*.sav", true, true)) == NULL )
+	t = FS_SearchFiles(DEFAULT_SAVE_DIRECTORY "*.sav", true, true);
+
+	if ( !t )
+	{
 		return NULL;
+	}
 
 	for ( i = 0; i < t->numfilenames; i++ )
 	{

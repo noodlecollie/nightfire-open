@@ -1,7 +1,8 @@
 #include "Framework.h"
 #include "PlayerModelView.h"
 
-static void OnSelectedModel(bool success);
+// REMOVE ME
+#include "enginecallback_menu.h"
 
 class CMenuModelViewer : public CMenuFramework
 {
@@ -30,21 +31,25 @@ private:
 
 	void SelectModel()
 	{
-		FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
+		// FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
 
-		globalData.ClearPatterns();
-		globalData.SetResultHasPreview(false);
+		// globalData.ClearPatterns();
+		// globalData.SetResultHasPreview(false);
 
-		// TODO: Look up all subfolders
-		globalData.AddPattern("models/*.mdl");
+		// // TODO: Look up all subfolders
+		// globalData.AddPattern("models/*.mdl");
 
-		globalData.SetResultCallback([this](const char* result)
-		{
-			view.SetModel(result);
-			view.ResetOrientation();
-		});
+		// globalData.SetResultCallback([this](const char* result)
+		// {
+		// 	view.SetModel(result);
+		// 	view.ResetOrientation();
+		// });
 
-		UI_FileDialog_Menu();
+		// UI_FileDialog_Menu();
+
+		int num = 0;
+		char** dirs = EngFuncs::GetDirectoriesList("models", &num, true);
+		(void)dirs;
 	}
 
 	CMenuPlayerModelView view;

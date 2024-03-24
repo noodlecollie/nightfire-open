@@ -69,7 +69,7 @@ static char** pfnGetFilesList(const char* pattern, int* numFiles, int gamedironl
 		Mem_Free(t);  // release prev search
 	}
 
-	t = FS_Search(pattern, true, gamedironly);
+	t = FS_SearchAll(pattern, true, gamedironly);
 
 	if ( !t )
 	{
@@ -94,7 +94,9 @@ static uint pfnFileBufferCRC32(const void* buffer, const int length)
 	uint modelCRC = 0;
 
 	if ( !buffer || length <= 0 )
+	{
 		return modelCRC;
+	}
 
 	CRC32_Init(&modelCRC);
 	CRC32_ProcessBuffer(&modelCRC, buffer, length);

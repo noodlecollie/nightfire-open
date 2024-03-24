@@ -625,14 +625,14 @@ void Host_InitDecals(void)
 	memset(host.draw_decals, 0, sizeof(host.draw_decals));
 
 	// lookup all the decals in decals.wad (basedir, gamedir, falldir)
-	t = FS_Search("decals.wad/*.*", true, false);
+	t = FS_SearchFiles("decals.wad/*.*", true, false);
 	numOldDecals = RegisterOldDecalList(t);
 	if ( t )
 	{
 		Mem_Free(t);
 	}
 
-	t = FS_Search("textures/decals/*.*", true, false);
+	t = FS_SearchFiles("textures/decals/*.*", true, false);
 	numNewDecals = RegisterNewDecalList(t);
 	if ( t )
 	{
@@ -923,9 +923,12 @@ void Host_Userconfigd_f(void)
 	search_t* t;
 	int i;
 
-	t = FS_Search("userconfig.d/*.cfg", true, false);
+	t = FS_SearchFiles("userconfig.d/*.cfg", true, false);
+
 	if ( !t )
+	{
 		return;
+	}
 
 	for ( i = 0; i < t->numfilenames; i++ )
 	{

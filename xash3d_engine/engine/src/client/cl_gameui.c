@@ -991,7 +991,39 @@ static char** GAME_EXPORT pfnGetFilesList(const char* pattern, int* numFiles, in
 		Mem_Free(t);  // release prev search
 	}
 
-	t = FS_Search(pattern, true, gamedironly);
+	t = FS_SearchAll(pattern, true, gamedironly);
+
+	if ( !t )
+	{
+		if ( numFiles )
+		{
+			*numFiles = 0;
+		}
+
+		return NULL;
+	}
+
+	if ( numFiles )
+	{
+		*numFiles = t->numfilenames;
+	}
+
+	return t->filenames;
+}
+
+static char** GAME_EXPORT pfnGetDirectoriesList(const char* parentDir, int* numFiles, int gamedironly)
+{
+	static search_t* t = NULL;
+
+	if ( t )
+	{
+		Mem_Free(t);  // release prev search
+	}
+
+	string dirPath;
+	Q_snprintf(dirPath, sizeof(dirPath), "%s/", parentDir);
+
+	t = FS_SearchDirs(dirPath, true, gamedironly);
 
 	if ( !t )
 	{
@@ -1207,6 +1239,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	pfnGetGameInfo,
 	pfnGetGamesList,
 	pfnGetFilesList,
+	pfnGetDirectoriesList,
 	SV_GetSaveComment,
 	CL_GetDemoComment,
 	pfnCheckGameDll,
