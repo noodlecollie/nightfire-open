@@ -11,6 +11,7 @@
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
 #include "nuklear/nuklear.h"
 
 #ifdef _MSC_VER

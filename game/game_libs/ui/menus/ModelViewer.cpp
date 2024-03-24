@@ -21,10 +21,10 @@ private:
 		AddButton(L("Select"), L("Select test model"), PC_CUSTOMIZE, VoidCb(&CMenuModelViewer::SelectModel));
 		AddButton(L("Back"), L("Return to main menu"), PC_DONE, VoidCb(&CMenuModelViewer::Hide));
 
-		view.SetRect(660, 50, 600, 600);
-		view.SetAllowPitchRotation(true);
-		view.SetAllowRightButtonZoom(true);
-		AddItem(view);
+		m_View.SetRect(660, 50, 600, 600);
+		m_View.SetAllowPitchRotation(true);
+		m_View.SetAllowRightButtonZoom(true);
+		AddItem(m_View);
 	}
 
 	void SelectModel()
@@ -37,8 +37,8 @@ private:
 		globalData.SetResultCallback(
 			[this](const char* result)
 			{
-				view.SetModel(result);
-				view.ResetOrientation();
+				m_View.SetModel(result);
+				m_View.ResetOrientation();
 			});
 
 		UI_FileDialog_Menu();
@@ -78,7 +78,7 @@ private:
 		while ( globalData.PatternCount() > numDirsChecked );
 	}
 
-	CMenuPlayerModelView view;
+	CMenuPlayerModelView m_View;
 };
 
 ADD_MENU(menu_modelviewer, CMenuModelViewer, UI_ModelViewer_Menu);
