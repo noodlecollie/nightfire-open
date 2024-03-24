@@ -1,8 +1,6 @@
 #include "Framework.h"
 #include "PlayerModelView.h"
-
-// REMOVE ME
-#include "enginecallback_menu.h"
+#include "utlstring.h"
 
 class CMenuModelViewer : public CMenuFramework
 {
@@ -31,25 +29,53 @@ private:
 
 	void SelectModel()
 	{
-		// FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
+		FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
 
-		// globalData.ClearPatterns();
-		// globalData.SetResultHasPreview(false);
+		globalData.SetResultHasPreview(false);
+		LookUpModelSubdirsRecursively();
 
-		// // TODO: Look up all subfolders
-		// globalData.AddPattern("models/*.mdl");
+		globalData.SetResultCallback(
+			[this](const char* result)
+			{
+				view.SetModel(result);
+				view.ResetOrientation();
+			});
 
-		// globalData.SetResultCallback([this](const char* result)
-		// {
-		// 	view.SetModel(result);
-		// 	view.ResetOrientation();
-		// });
+		UI_FileDialog_Menu();
+	}
 
-		// UI_FileDialog_Menu();
+	void LookUpModelSubdirsRecursively()
+	{
+		FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
 
-		int num = 0;
-		char** dirs = EngFuncs::GetDirectoriesList("models", &num, true);
-		(void)dirs;
+		globalData.ClearPatterns();
+		size_t numDirsChecked = 0;
+
+		// Add the first directory to search
+		globalData.AddPattern("models/*.mdl");
+
+		// Keep checking until we found no new directories.
+		do
+		{
+			CUtlString dirPath(globalData.GetPattern(numDirsChecked));
+			dirPath.Replace("/*.mdl", "");
+
+			int numSubdirs = 0;
+			char** subdirs = EngFuncs::GetDirectoriesList(dirPath.Get(), &numSubdirs, true);
+
+			if ( subdirs && numSubdirs > 0 )
+			{
+				for ( int index = 0; index < numSubdirs; ++index )
+				{
+					CUtlString newPattern;
+					newPattern.Format("%s/*.mdl", subdirs[index]);
+					globalData.AddPattern(newPattern.Get());
+				}
+			}
+
+			++numDirsChecked;
+		}
+		while ( globalData.PatternCount() > numDirsChecked );
 	}
 
 	CMenuPlayerModelView view;
