@@ -1021,7 +1021,7 @@ static char** GAME_EXPORT pfnGetDirectoriesList(const char* parentDir, int* numF
 	}
 
 	string dirPath;
-	Q_snprintf(dirPath, sizeof(dirPath), "%s/", parentDir);
+	Q_snprintf(dirPath, sizeof(dirPath), "%s/*", parentDir);
 
 	t = FS_SearchDirs(dirPath, true, gamedironly);
 
