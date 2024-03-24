@@ -164,6 +164,8 @@ set(SOURCES_UI
 	model/DynamicStringArrayModel.cpp
 	model/StringArrayModel.h
 	model/StringVectorModel.h
+	nuklear_impl/nuklear_renderer.h
+	nuklear_impl/nuklear_renderer.cpp
 	nuklear_impl/nuklear_ui.h
 	nuklear_impl/nuklear_ui.c
 	projectInterface_mainui/fileLoaders_mainui.h
