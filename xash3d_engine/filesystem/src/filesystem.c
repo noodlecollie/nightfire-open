@@ -242,8 +242,8 @@ void listdirectory(stringlist_t* list, const char* path, uint32_t flags)
 	// iterate through the directory
 	while ( (entry = readdir(dir)) )
 	{
-		if ( ((flags & FS_SEARCHFLAG_DIRECTORIES) && entry.d_type == DT_DIR) ||
-			 ((flags & FS_SEARCHFLAG_FILES) && entry.d_type == DT_REG) )
+		if ( ((flags & FS_SEARCHFLAG_DIRECTORIES) && entry->d_type == DT_DIR) ||
+			 ((flags & FS_SEARCHFLAG_FILES) && entry->d_type == DT_REG) )
 		{
 			stringlistappend(list, entry->d_name);
 		}
