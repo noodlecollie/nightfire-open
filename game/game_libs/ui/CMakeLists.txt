@@ -164,6 +164,8 @@ set(SOURCES_UI
 	model/DynamicStringArrayModel.cpp
 	model/StringArrayModel.h
 	model/StringVectorModel.h
+	nuklear_impl/nuklear_ui.h
+	nuklear_impl/nuklear_ui.c
 	projectInterface_mainui/fileLoaders_mainui.h
 	projectInterface_mainui/fileLoaders_mainui.cpp
 	projectInterface_mainui/logInterface_mainui.h
@@ -232,6 +234,7 @@ target_link_libraries(${TARGETNAME_LIB_UI} PRIVATE
 	${TARGETNAME_LIB_BUILDPLATFORM}
 	${TARGETNAME_LIB_ENGINEPUBLICAPI}
 	${TARGETNAME_LIB_ENGINEINTERNALAPI}
+	${TARGETNAME_LIB_NUKLEAR}
 
 	# Windows
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:USER32>
