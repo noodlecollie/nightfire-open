@@ -145,6 +145,7 @@ set(SOURCES_UI
 	menus/ModelViewer.cpp
 	menus/Multiplayer.cpp
 	menus/NewGame.cpp
+	menus/NuklearUITest.cpp
 	menus/PlayerIntroduceDialog.h
 	menus/PlayerIntroduceDialog.cpp
 	menus/PlayerSetup.cpp
