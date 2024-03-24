@@ -252,7 +252,8 @@ FS_Search_PAK
 
 ===========
 */
-static void FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* pattern, int caseinsensitive)
+static void
+FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* pattern, int caseinsensitive, uint32_t flags)
 {
 	string temp;
 	const char *slash, *backslash, *colon, *separator;
@@ -262,7 +263,13 @@ static void FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* 
 
 	for ( i = 0; i < search->pkg.pack->numfiles; i++ )
 	{
+		// We assume the path starts off being a file,
+		// and when we progressively trim it later, it
+		// represents a directory.
+		qboolean pathIsFile = true;
+
 		Q_strncpy(temp, search->pkg.pack->files[i].name, sizeof(temp));
+
 		while ( temp[0] )
 		{
 			if ( matchpattern(temp, pattern, true) )
@@ -270,11 +277,19 @@ static void FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* 
 				for ( j = 0; j < list->numstrings; j++ )
 				{
 					if ( !Q_strcmp(list->strings[j], temp) )
+					{
 						break;
+					}
 				}
 
 				if ( j == list->numstrings )
-					stringlistappend(list, temp);
+				{
+					if ( (pathIsFile && (flags & FS_SEARCHFLAG_FILES)) ||
+						 (!pathIsFile && (flags & FS_SEARCHFLAG_DIRECTORIES)) )
+					{
+						stringlistappend(list, temp);
+					}
+				}
 			}
 
 			// strip off one path element at a time until empty
@@ -283,13 +298,31 @@ static void FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* 
 			backslash = Q_strrchr(temp, '\\');
 			colon = Q_strrchr(temp, ':');
 			separator = temp;
+
 			if ( separator < slash )
+			{
 				separator = slash;
+			}
+
 			if ( separator < backslash )
+			{
 				separator = backslash;
+			}
+
 			if ( separator < colon )
+			{
 				separator = colon;
+			}
+
 			*((char*)separator) = 0;
+			pathIsFile = false;
+
+			// Since the path will now always refer to a directory,
+			// we can quit if we're not searching for those.
+			if ( !(flags & FS_SEARCHFLAG_DIRECTORIES) )
+			{
+				break;
+			}
 		}
 	}
 }

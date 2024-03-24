@@ -89,7 +89,13 @@ typedef struct searchpath_s
 	file_t* (*pfnOpenFile)(struct searchpath_s* search, const char* filename, const char* mode, int pack_ind);
 	int (*pfnFileTime)(struct searchpath_s* search, const char* filename);
 	int (*pfnFindFile)(struct searchpath_s* search, const char* path, char* fixedname, size_t len);
-	void (*pfnSearch)(struct searchpath_s* search, stringlist_t* list, const char* pattern, int caseinsensitive);
+
+	void (*pfnSearch)(
+		struct searchpath_s* search,
+		stringlist_t* list,
+		const char* pattern,
+		int caseinsensitive,
+		uint32_t flags);
 } searchpath_t;
 
 extern fs_globals_t FI;
@@ -133,7 +139,7 @@ void FS_ClearSearchPath(void);
 void FS_AllowDirectPaths(qboolean enable);
 void FS_AddGameDirectory(const char* dir, uint flags);
 void FS_AddGameHierarchy(const char* dir, uint flags);
-search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly);
+search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly, uint32_t flags);
 int FS_SetCurrentDirectory(const char* path);
 void FS_Path_f(void);
 
@@ -172,7 +178,7 @@ void stringlistinit(stringlist_t* list);
 void stringlistfreecontents(stringlist_t* list);
 void stringlistappend(stringlist_t* list, char* text);
 void stringlistsort(stringlist_t* list);
-void listdirectory(stringlist_t* list, const char* path);
+void listdirectory(stringlist_t* list, const char* path, uint32_t flags);
 
 // filesystem ops
 int FS_FileExists(const char* filename, int gamedironly);

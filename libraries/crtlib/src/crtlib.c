@@ -1246,6 +1246,7 @@ int matchpattern_with_separator(
 
 				break;
 			}
+
 			default:
 			{
 				if ( *in != *pattern )
@@ -1281,8 +1282,12 @@ int matchpattern_with_separator(
 			}
 		}
 	}
+
 	if ( *in )
+	{
 		return 0;  // reached end of pattern but not end of input
+	}
+
 	return 1;  // success
 }
 

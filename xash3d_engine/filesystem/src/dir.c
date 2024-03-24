@@ -140,7 +140,7 @@ static void FS_PopulateDirEntries(dir_t* dir, const char* path)
 	}
 
 	stringlistinit(&list);
-	listdirectory(&list, path);
+	listdirectory(&list, path, FS_SEARCHFLAG_DIRECTORIES | FS_SEARCHFLAG_FILES);
 
 	if ( !list.numstrings )
 	{
@@ -241,7 +241,7 @@ static int FS_UpdateStaleDirectoryDataAndFindEntry(dir_t* dir, const char* direc
 	int ret;
 
 	stringlistinit(&list);
-	listdirectory(&list, directoryOnDisk);
+	listdirectory(&list, directoryOnDisk, FS_SEARCHFLAG_DIRECTORIES | FS_SEARCHFLAG_FILES);
 
 	if ( list.numstrings == 0 )  // empty directory
 	{
@@ -549,7 +549,8 @@ static int FS_FindFile_DIR(searchpath_t* search, const char* path, char* fixedna
 	return -1;
 }
 
-static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* pattern, int caseinsensitive)
+static void
+FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* pattern, int caseinsensitive, uint32_t flags)
 {
 	string netpath, temp;
 	stringlist_t dirlist;
@@ -583,7 +584,7 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 	}
 
 	stringlistinit(&dirlist);
-	listdirectory(&dirlist, netpath);
+	listdirectory(&dirlist, netpath, flags);
 
 	Q_strncpy(temp, basepath, sizeof(temp));
 
@@ -591,7 +592,7 @@ static void FS_Search_DIR(searchpath_t* search, stringlist_t* list, const char* 
 	{
 		Q_strncpy(&temp[basepathlength], dirlist.strings[dirlistindex], sizeof(temp) - basepathlength);
 
-		if ( matchpattern(temp, (char*)pattern, true) )
+		if ( matchpattern(temp, pattern, true) )
 		{
 			for ( resultlistindex = 0; resultlistindex < list->numstrings; resultlistindex++ )
 			{

@@ -36,7 +36,13 @@ extern fs_globals_t* FI;
 #define FS_AllowDirectPaths (*g_fsapi.AllowDirectPaths)
 #define FS_AddGameDirectory (*g_fsapi.AddGameDirectory)
 #define FS_AddGameHierarchy (*g_fsapi.AddGameHierarchy)
-#define FS_Search (*g_fsapi.Search)
+#define FS_Search(...) (*g_fsapi.Search)(__VA_ARGS__)
+#define FS_SearchFiles(pattern, caseSensitive, gameDirOnly) \
+	FS_Search(pattern, caseSensitive, gameDirOnly, FS_SEARCHFLAG_FILES)
+#define FS_SearchDirs(pattern, caseSensitive, gameDirOnly) \
+	FS_Search(pattern, caseSensitive, gameDirOnly, FS_SEARCHFLAG_DIRECTORIES)
+#define FS_SearchAll(pattern, caseSensitive, gameDirOnly) \
+	FS_Search(pattern, caseSensitive, gameDirOnly, FS_SEARCHFLAG_FILES | FS_SEARCHFLAG_DIRECTORIES)
 #define FS_SetCurrentDirectory (*g_fsapi.SetCurrentDirectory)
 #define FS_Path_f (*g_fsapi.Path_f)
 

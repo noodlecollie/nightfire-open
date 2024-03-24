@@ -166,6 +166,7 @@ typedef struct ui_enginefuncs_s
 	int (*pfnGetGameInfo)(struct GAMEINFO_S* pgameinfo);
 	struct GAMEINFO_S** (*pfnGetGamesList)(int* numGames);  // collect info about all mods
 	char** (*pfnGetFilesList)(const char* pattern, int* numFiles, int gamedironly);  // find in files
+	char** (*pfnGetDirectoriesList)(const char* parentDir, int* numFiles, int gamedironly);
 	int (*pfnGetSaveComment)(const char* savename, char* comment);
 	int (*pfnGetDemoComment)(const char* demoname, char* comment);
 	int (*pfnCheckGameDll)(void);  // returns false if hl.dll is missed or invalid

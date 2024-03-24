@@ -263,16 +263,24 @@ qboolean Cmd_GetMapList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, nummaps;
 
-	t = FS_Search(va("maps/%s*.bsp", s), true, (int)con_gamemaps->value);
+	t = FS_SearchFiles(va("maps/%s*.bsp", s), true, (int)con_gamemaps->value);
 
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	nummaps = Cmd_ListMaps(t, matchbuf, sizeof(matchbuf));
 
@@ -284,8 +292,11 @@ qboolean Cmd_GetMapList(const char* s, char* completedname, int length)
 	for ( i = 0; matchbuf[i]; i++ )
 	{
 		if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+		{
 			completedname[i] = 0;
+		}
 	}
+
 	return true;
 }
 
@@ -303,20 +314,31 @@ qboolean Cmd_GetDemoList(const char* s, char* completedname, int length)
 	int i, numdems;
 
 	// lookup only in gamedir
-	t = FS_Search(va("%s*.dem", s), true, true);
+	t = FS_SearchFiles(va("%s*.dem", s), true, true);
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, numdems = 0; i < t->numfilenames; i++ )
 	{
 		if ( Q_stricmp(COM_FileExtension(t->filenames[i]), "dem") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], matchbuf, sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -351,20 +373,31 @@ qboolean Cmd_GetMovieList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, nummovies;
 
-	t = FS_Search(va("media/%s*.avi", s), true, false);
+	t = FS_SearchFiles(va("media/%s*.avi", s), true, false);
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, nummovies = 0; i < t->numfilenames; i++ )
 	{
 		if ( Q_stricmp(COM_FileExtension(t->filenames[i]), "avi") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], matchbuf, sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -380,7 +413,9 @@ qboolean Cmd_GetMovieList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 
@@ -400,22 +435,33 @@ qboolean Cmd_GetMusicList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, numtracks;
 
-	t = FS_Search(va("media/%s*.*", s), true, false);
+	t = FS_SearchFiles(va("media/%s*.*", s), true, false);
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, numtracks = 0; i < t->numfilenames; i++ )
 	{
 		const char* ext = COM_FileExtension(t->filenames[i]);
 
 		if ( Q_stricmp(ext, "wav") && Q_stricmp(ext, "mp3") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], matchbuf, sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -431,7 +477,9 @@ qboolean Cmd_GetMusicList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 	return true;
@@ -450,20 +498,31 @@ qboolean Cmd_GetSavesList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, numsaves;
 
-	t = FS_Search(va(DEFAULT_SAVE_DIRECTORY "%s*.sav", s), true, true);  // lookup only in gamedir
+	t = FS_SearchFiles(va(DEFAULT_SAVE_DIRECTORY "%s*.sav", s), true, true);  // lookup only in gamedir
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, numsaves = 0; i < t->numfilenames; i++ )
 	{
 		if ( Q_stricmp(COM_FileExtension(t->filenames[i]), "sav") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], matchbuf, sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -479,7 +538,9 @@ qboolean Cmd_GetSavesList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 
@@ -499,20 +560,31 @@ qboolean Cmd_GetConfigList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, numconfigs;
 
-	t = FS_Search(va("%s*.cfg", s), true, false);
+	t = FS_SearchFiles(va("%s*.cfg", s), true, false);
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, numconfigs = 0; i < t->numfilenames; i++ )
 	{
 		if ( Q_stricmp(COM_FileExtension(t->filenames[i]), "cfg") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], matchbuf, sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -528,7 +600,9 @@ qboolean Cmd_GetConfigList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 
@@ -548,23 +622,34 @@ qboolean Cmd_GetSoundList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, numsounds;
 
-	t = FS_Search(va("%s%s*.*", DEFAULT_SOUNDPATH, s), true, false);
+	t = FS_SearchFiles(va("%s%s*.*", DEFAULT_SOUNDPATH, s), true, false);
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	Q_strncpy(matchbuf, t->filenames[0] + sizeof(DEFAULT_SOUNDPATH) - 1, MAX_STRING);
 	COM_StripExtension(matchbuf);
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, numsounds = 0; i < t->numfilenames; i++ )
 	{
 		const char* ext = COM_FileExtension(t->filenames[i]);
 
 		if ( Q_stricmp(ext, "wav") && Q_stricmp(ext, "mp3") )
+		{
 			continue;
+		}
 
 		Q_strncpy(matchbuf, t->filenames[i] + sizeof(DEFAULT_SOUNDPATH) - 1, MAX_STRING);
 		COM_StripExtension(matchbuf);
@@ -581,7 +666,9 @@ qboolean Cmd_GetSoundList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 
@@ -603,21 +690,35 @@ qboolean Cmd_GetItemsList(const char* s, char* completedname, int length)
 	int i, numitems;
 
 	if ( !clgame.itemspath[0] )
+	{
 		return false;  // not in game yet
-	t = FS_Search(va("%s/%s*.txt", clgame.itemspath, s), true, false);
+	}
+
+	t = FS_SearchFiles(va("%s/%s*.txt", clgame.itemspath, s), true, false);
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, numitems = 0; i < t->numfilenames; i++ )
 	{
 		if ( Q_stricmp(COM_FileExtension(t->filenames[i]), "txt") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], matchbuf, sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -633,9 +734,12 @@ qboolean Cmd_GetItemsList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
+
 	return true;
 }
 
@@ -820,20 +924,31 @@ qboolean Cmd_GetCustomList(const char* s, char* completedname, int length)
 	string matchbuf;
 	int i, numitems;
 
-	t = FS_Search(va("%s*.hpk", s), true, false);
+	t = FS_SearchFiles(va("%s*.hpk", s), true, false);
+
 	if ( !t )
+	{
 		return false;
+	}
 
 	COM_FileBase(t->filenames[0], matchbuf, sizeof(matchbuf));
+
 	if ( completedname && length )
+	{
 		Q_strncpy(completedname, matchbuf, length);
+	}
+
 	if ( t->numfilenames == 1 )
+	{
 		return true;
+	}
 
 	for ( i = 0, numitems = 0; i < t->numfilenames; i++ )
 	{
 		if ( Q_stricmp(COM_FileExtension(t->filenames[i]), "hpk") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], matchbuf, sizeof(matchbuf));
 		Con_Printf("%16s\n", matchbuf);
@@ -849,7 +964,9 @@ qboolean Cmd_GetCustomList(const char* s, char* completedname, int length)
 		for ( i = 0; matchbuf[i]; i++ )
 		{
 			if ( Q_tolower(completedname[i]) != Q_tolower(matchbuf[i]) )
+			{
 				completedname[i] = 0;
+			}
 		}
 	}
 	return true;
@@ -1019,7 +1136,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 
 	// setup mpfilter
 	size = Q_snprintf(mpfilter, sizeof(mpfilter), "maps/%s", GI->mp_filter);
-	t = FS_Search("maps/*.bsp", false, onlyingamedir);
+	t = FS_SearchFiles("maps/*.bsp", false, onlyingamedir);
 
 	if ( !t )
 	{

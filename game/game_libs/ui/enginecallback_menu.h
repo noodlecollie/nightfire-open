@@ -399,6 +399,11 @@ public:
 		return engfuncs.pfnGetFilesList(pattern, numFiles, gamedironly);
 	}
 
+	static inline char** GetDirectoriesList(const char* parentDir, int* numFiles, int gamedironly)
+	{
+		return engfuncs.pfnGetDirectoriesList(parentDir, numFiles, gamedironly);
+	}
+
 	static inline int GetSaveComment(const char* savename, char* comment)
 	{
 		return engfuncs.pfnGetSaveComment(savename, comment);
