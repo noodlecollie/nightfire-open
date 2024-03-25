@@ -1,7 +1,7 @@
 #include "Framework.h"
 #include "StudioModelView.h"
 #include "Table.h"
-#include "DynamicStringArrayModel.h"
+#include "StringVectorModel.h"
 #include "utlstring.h"
 
 class CMenuModelViewer : public CMenuFramework
@@ -66,12 +66,11 @@ private:
 		m_View.ResetOrientation();
 
 		int numSequences = EngFuncs::GetModelSequenceCount(m_View.ent);
-		m_Model.Clear();
+		m_Model.Purge();
 
 		for ( int index = 0; index < numSequences; ++index )
 		{
-			m_Model.AddRow();
-			m_Model.SetText(index, EngFuncs::GetModelSequenceName(m_View.ent, index));
+			m_Model.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(m_View.ent, index)));
 		}
 
 		m_View.FitModelToViewVertically();
@@ -138,7 +137,7 @@ private:
 
 	CMenuStudioModelView m_View;
 	CMenuTable m_SequenceTable;
-	CDynamicStringArrayModel m_Model;
+	CStringVectorModel m_Model;
 };
 
 ADD_MENU(menu_modelviewer, CMenuModelViewer, UI_ModelViewer_Menu);
