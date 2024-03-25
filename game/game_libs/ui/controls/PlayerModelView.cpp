@@ -20,6 +20,11 @@ GNU General Public License for more details.
 void CMenuPlayerModelView::VidInit()
 {
 	CMenuStudioModelView::VidInit();
+
+	ent->curstate.number = 1;  // IMPORTANT: always set playerindex to 1
+	ent->origin[0] = ent->curstate.origin[0] = 45.0f / tanf(DEG2RADF(refdef.fov_y / 2.0f));
+	ent->origin[2] = ent->curstate.origin[2] = 2.0f;
+	ent->angles[1] = ent->curstate.angles[1] = 180.0f;
 	ent->player = true;  // yes, draw me as playermodel
 }
 

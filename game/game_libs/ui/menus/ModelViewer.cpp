@@ -80,7 +80,6 @@ private:
 		if ( m_View.ent )
 		{
 			m_View.ent->curstate.sequence = m_SequenceTable.GetCurrentIndex();
-			m_View.ent->curstate.animtime = 0.0f;
 		}
 	}
 
