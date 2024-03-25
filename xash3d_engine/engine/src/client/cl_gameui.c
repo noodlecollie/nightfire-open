@@ -848,6 +848,11 @@ static void GAME_EXPORT pfnClearScene(void)
 	ref.dllFuncs.R_ClearScene();
 }
 
+static void GAME_EXPORT pfnUpdateScene(void)
+{
+	CL_TempEntUpdate();
+}
+
 /*
 ====================
 pfnRenderScene
@@ -861,7 +866,9 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 
 	// to avoid division by zero
 	if ( !rvp || rvp->fov_x <= 0.0f || rvp->fov_y <= 0.0f )
+	{
 		return;
+	}
 
 	copy = *rvp;
 
@@ -1229,6 +1236,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	pfnGetModelSequenceCount,
 	pfnGetModelSequenceName,
 	pfnClearScene,
+	pfnUpdateScene,
 	pfnRenderScene,
 	pfnAddEntity,
 	Host_Error,

@@ -39,6 +39,7 @@ private:
 
 		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, itemWidth, itemHeight);
 		m_SequenceTable.SetModel(&m_Model);
+		m_SequenceTable.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceChanged);
 		AddItem(m_SequenceTable);
 
 		m_View.SetRect(LEFT_MARGIN + itemWidth + PADDING, TOP_MARGIN, itemWidth, itemHeight);
@@ -75,6 +76,15 @@ private:
 		{
 			m_Model.AddRow();
 			m_Model.SetText(index, EngFuncs::GetModelSequenceName(m_View.ent, index));
+		}
+	}
+
+	void HandleSequenceChanged()
+	{
+		if ( m_View.ent )
+		{
+			m_View.ent->curstate.sequence = m_SequenceTable.GetCurrentIndex();
+			m_View.ent->curstate.animtime = 0.0f;
 		}
 	}
 

@@ -621,7 +621,7 @@ void CMenuTable::DrawLine(Point p, const char** psz, size_t lineSize, uint textC
 			psz[i],
 			textColor,
 			m_scChSize,
-			m_pModel ? m_pModel->GetAlignmentForColumn(static_cast<int>(i)) : QM_LEFT,
+			m_pModel ? m_pModel->GetAlignmentForColumn(static_cast<int>(i)) : static_cast<int>(QM_LEFT),
 			textflags);
 	}
 }
@@ -694,7 +694,7 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 					str,
 					textColor,
 					m_scChSize,
-					m_pModel ? m_pModel->GetAlignmentForColumn(i) : QM_LEFT,
+					m_pModel ? m_pModel->GetAlignmentForColumn(i) : static_cast<int>(QM_LEFT),
 					textflags | ((m_pModel && m_pModel->IsCellTextWrapped(line, i)) ? 0 : ETF_NOSIZELIMIT));
 				break;
 			case CELL_IMAGE_ADDITIVE:

@@ -180,6 +180,7 @@ void CMenuPlayerModelView::Draw()
 	}
 
 	EngFuncs::ClearScene();
+	EngFuncs::UpdateScene();
 
 	if ( uiStatic.enableAlphaFactor )
 	{
