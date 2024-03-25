@@ -221,6 +221,29 @@ void CMenuStudioModelView::ResetOrientation()
 	}
 }
 
+void CMenuStudioModelView::FitModelToViewVertically()
+{
+	memset(refdef.vieworigin, 0, sizeof(refdef.vieworigin));
+
+	if ( !ent || !ent->model )
+	{
+		return;
+	}
+
+	const float negDelta = fabsf(ent->model->mins[2]);
+	const float posDelta = fabsf(ent->model->maxs[2]);
+	const float maxDelta = negDelta > posDelta ? negDelta : posDelta;
+
+	if ( maxDelta <= 0.0f )
+	{
+		return;
+	}
+
+	const float dist = maxDelta / tanf(DEG2RADF(refdef.fov_y) / 2.0f);
+
+	refdef.vieworigin[0] = -dist;
+}
+
 void CMenuStudioModelView::HandleLeftMouseDragUpdate()
 {
 	float diffX = static_cast<float>(uiStatic.cursorX - prevCursorX);

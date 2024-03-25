@@ -28,6 +28,7 @@ public:
 	void SetAllowPitchRotation(bool allow);
 	void SetAllowRightButtonZoom(bool allow);
 	void ResetOrientation();
+	void FitModelToViewVertically();
 
 private:
 	enum class DragMode
