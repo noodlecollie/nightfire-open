@@ -30,8 +30,7 @@ private:
 		AddButton(L("Select"), L("Select model"), PC_CUSTOMIZE, VoidCb(&CMenuModelViewer::SelectModel));
 		AddButton(L("Back"), L("Return to main menu"), PC_DONE, VoidCb(&CMenuModelViewer::Hide));
 
-		m_SceneModel.Clear();
-		m_SceneModel.AddEntData();
+		SetUpSceneModel();
 
 		const int itemWidth =
 			(static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - PADDING) / 2;
@@ -46,6 +45,7 @@ private:
 		m_View.SetAllowPitchRotation(true);
 		m_View.SetAllowRightButtonZoom(true);
 		m_View.SetModel(&m_SceneModel);
+		m_View.SetCameraDistFromOrigin(96.0f);
 		AddItem(m_View);
 	}
 
@@ -67,35 +67,31 @@ private:
 
 	void HandleNewModelPicked(const char* path)
 	{
-		cl_entity_t* ent = m_SceneModel.GetEntData(0);
-
-		if ( !ent )
+		if ( !m_MainStudioModel )
 		{
 			return;
 		}
 
-		EngFuncs::SetModel(ent, path);
+		EngFuncs::SetModel(m_MainStudioModel, path);
 		m_View.ResetCamera();
 
-		int numSequences = EngFuncs::GetModelSequenceCount(ent);
+		int numSequences = EngFuncs::GetModelSequenceCount(m_MainStudioModel);
 		m_Model.Purge();
 
 		for ( int index = 0; index < numSequences; ++index )
 		{
-			m_Model.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(ent, index)));
+			m_Model.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(m_MainStudioModel, index)));
 		}
 	}
 
 	void HandleSequenceChanged()
 	{
-		cl_entity_t* ent = m_SceneModel.GetEntData(0);
-
-		if ( !ent )
+		if ( !m_MainStudioModel )
 		{
 			return;
 		}
 
-		ent->curstate.sequence = m_SequenceTable.GetCurrentIndex();
+		m_MainStudioModel->curstate.sequence = m_SequenceTable.GetCurrentIndex();
 	}
 
 	void LookUpModelSubdirsRecursively()
@@ -149,10 +145,25 @@ private:
 		}
 	}
 
+	void SetUpSceneModel()
+	{
+		m_SceneModel.Clear();
+
+		m_OriginMarker = m_SceneModel.AddEntData();
+		EngFuncs::SetModel(m_OriginMarker, "models/origin_marker.mdl");
+		m_OriginMarker->curstate.rendermode = kRenderTransTexture;
+		m_OriginMarker->curstate.renderamt = 255;
+
+		m_MainStudioModel = m_SceneModel.AddEntData();
+	}
+
 	CStudioSceneModel m_SceneModel;
 	CMenuStudioSceneView m_View;
 	CMenuTable m_SequenceTable;
 	CStringVectorModel m_Model;
+
+	cl_entity_t* m_OriginMarker = nullptr;
+	cl_entity_t* m_MainStudioModel = nullptr;
 };
 
 ADD_MENU(menu_modelviewer, CMenuModelViewer, UI_ModelViewer_Menu);
