@@ -1,5 +1,5 @@
 #include "Framework.h"
-#include "PlayerModelView.h"
+#include "StudioModelView.h"
 #include "Table.h"
 #include "DynamicStringArrayModel.h"
 #include "utlstring.h"
@@ -13,10 +13,6 @@ public:
 	}
 
 private:
-	class CSequenceDataModel : public CDynamicStringArrayModel
-	{
-	};
-
 	virtual void _Init() override
 	{
 		static constexpr int TOP_MARGIN = 50;
@@ -139,9 +135,9 @@ private:
 		}
 	}
 
-	CMenuPlayerModelView m_View;
+	CMenuStudioModelView m_View;
 	CMenuTable m_SequenceTable;
-	CSequenceDataModel m_Model;
+	CDynamicStringArrayModel m_Model;
 };
 
 ADD_MENU(menu_modelviewer, CMenuModelViewer, UI_ModelViewer_Menu);
