@@ -809,7 +809,7 @@ for drawing playermodel previews
 */
 static cl_entity_t* GAME_EXPORT pfnGetModel(void)
 {
-	return &gameui.playermodel;
+	return &gameui.uiSceneModels[0].entData;
 }
 
 /*

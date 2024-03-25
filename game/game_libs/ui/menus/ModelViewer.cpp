@@ -73,6 +73,8 @@ private:
 			m_Model.AddRow();
 			m_Model.SetText(index, EngFuncs::GetModelSequenceName(m_View.ent, index));
 		}
+
+		m_View.FitModelToViewVertically();
 	}
 
 	void HandleSequenceChanged()
