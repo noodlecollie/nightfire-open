@@ -151,7 +151,7 @@ private:
 					g_FontMgr->GetTextWideScaled(uiStatic.hConsoleFont, text, static_cast<int>(height)));
 			};
 
-			m_NkFontCfg.height = g_FontMgr->GetFontTall(uiStatic.hConsoleFont);
+			m_NkFontCfg.height = static_cast<float>(g_FontMgr->GetFontTall(uiStatic.hConsoleFont));
 			m_NkFontCfg.userdata.ptr = nullptr;
 
 			nk_init_default(&m_NkCtx, &m_NkFontCfg);
