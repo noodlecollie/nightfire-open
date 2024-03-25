@@ -163,10 +163,10 @@ set(SOURCES_UI
 	menus/Zoo.cpp
 	model/BaseArrayModel.h
 	model/BaseModel.h
-	model/DynamicStringArrayModel.h
-	model/DynamicStringArrayModel.cpp
 	model/StringArrayModel.h
 	model/StringVectorModel.h
+	model/StudioSceneModel.h
+	model/StudioSceneModel.cpp
 	nuklear_impl/nuklear_renderer.h
 	nuklear_impl/nuklear_renderer.cpp
 	nuklear_impl/nuklear_ui.h

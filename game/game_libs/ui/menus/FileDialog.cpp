@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Table.h"
 #include "StringArrayModel.h"
 #include "PicButton.h"
-#include "DynamicStringArrayModel.h"
+#include "StringVectorModel.h"
 
 #define ART_BANNER "gfx/shell/head_touchoptions"
 #define ART_GAMMA "gfx/shell/gamma"
@@ -38,7 +38,7 @@ public:
 	}
 
 private:
-	class CFileListModel : public CDynamicStringArrayModel
+	class CFileListModel : public CStringVectorModel
 	{
 	public:
 		void Update() override;
@@ -75,7 +75,7 @@ void CMenuFileDialog::CFileListModel::Update(void)
 {
 	FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
 
-	Clear();
+	Purge();
 
 	for ( size_t patternIndex = 0; patternIndex < globalData.PatternCount(); ++patternIndex )
 	{
@@ -86,7 +86,10 @@ void CMenuFileDialog::CFileListModel::Update(void)
 
 		if ( numFiles > 0 )
 		{
-			AddRows(fileNames, static_cast<size_t>(numFiles));
+			for ( int fileIndex = 0; fileIndex < numFiles; ++fileIndex )
+			{
+				AddToTail(CUtlString(fileNames[fileIndex]));
+			}
 		}
 	}
 }
