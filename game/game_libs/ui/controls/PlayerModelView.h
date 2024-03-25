@@ -12,35 +12,18 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#ifndef CMENUPLAYERMODELVIEW_H
-#define CMENUPLAYERMODELVIEW_H
 
-// HLSDK includes
-#include "EnginePublicAPI/const.h"
-#include "EnginePublicAPI/keydefs.h"
-#include "EnginePublicAPI/ref_params.h"
-#include "EnginePublicAPI/cl_entity.h"
-#include "EnginePublicAPI/com_model.h"
-#include "EnginePublicAPI/entity_types.h"
-// HLSDK includes end
-#include "BaseItem.h"
+#pragma once
 
-class CMenuPlayerModelView : public CMenuBaseItem
+#include "StudioModelView.h"
+
+class CMenuPlayerModelView : public CMenuStudioModelView
 {
 public:
-	CMenuPlayerModelView();
 	void VidInit() override;
 	void Draw() override;
-	bool KeyDown(int key) override;
-	bool KeyUp(int key) override;
-	void CalcFov();
 
 	HIMAGE hPlayerImage;
-
-	ref_viewpass_t refdef;
-	cl_entity_t* ent;
-
-	bool bDrawAsPlayer;
 
 	enum
 	{
@@ -48,34 +31,4 @@ public:
 		PMV_SHOWMODEL,
 		PMV_SHOWIMAGE
 	} eOverrideMode;
-
-	CColor backgroundColor;
-	CColor outlineFocusColor;
-
-	void SetModel(const char* path);
-	void SetAllowPitchRotation(bool allow);
-	void SetAllowRightButtonZoom(bool allow);
-	void ResetOrientation();
-
-private:
-	enum class DragMode
-	{
-		None,
-		LeftButton,
-		RightButton
-	};
-
-	void HandleLeftMouseDragUpdate();
-	void HandleRightMouseDragUpdate();
-
-	cl_entity_t ent2;
-
-	int prevCursorX;
-	int prevCursorY;
-
-	DragMode dragMode = DragMode::None;
-	bool allowPitchRotation = false;
-	bool allowRightButtonZoom = false;
 };
-
-#endif  // CMENUPLAYERMODELVIEW_H
