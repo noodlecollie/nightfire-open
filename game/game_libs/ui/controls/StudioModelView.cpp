@@ -41,7 +41,6 @@ void CMenuStudioModelView::VidInit()
 	// adjust entity params
 	ent->index = 0;
 	ent->curstate.body = 0;
-	ent->curstate.number = 1;  // IMPORTANT: always set playerindex to 1
 	ent->curstate.animtime = gpGlobals->time;  // start animation
 	ent->curstate.sequence = 1;
 	ent->curstate.scale = 1.0f;
@@ -56,9 +55,6 @@ void CMenuStudioModelView::VidInit()
 	ent->latched.prevcontroller[1] = 127;
 	ent->latched.prevcontroller[2] = 127;
 	ent->latched.prevcontroller[3] = 127;
-	ent->origin[0] = ent->curstate.origin[0] = 45.0f / tanf(DEG2RADF(refdef.fov_y / 2.0f));
-	ent->origin[2] = ent->curstate.origin[2] = 2.0f;
-	ent->angles[1] = ent->curstate.angles[1] = 180.0f;
 	ent->player = false;
 }
 
