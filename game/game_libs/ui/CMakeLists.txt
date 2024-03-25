@@ -98,6 +98,8 @@ set(SOURCES_UI
 	controls/SpinControl.cpp
 	controls/StudioModelView.h
 	controls/StudioModelView.cpp
+	controls/StudioSceneView.h
+	controls/StudioSceneView.cpp
 	controls/Switch.h
 	controls/Switch.cpp
 	controls/Table.h
