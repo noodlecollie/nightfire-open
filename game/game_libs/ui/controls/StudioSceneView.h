@@ -27,7 +27,14 @@ public:
 
 	void SetAllowPitchRotation(bool allow);
 	void SetAllowRightButtonZoom(bool allow);
+
+	float GetCameraDistFromOrigin() const;
+	void SetCameraDistFromOrigin(float dist);
 	void ResetCamera();
+
+protected:
+	ref_viewpass_t m_RefDef {};
+	CStudioSceneModel* m_Model = nullptr;
 
 private:
 	enum class DragMode
@@ -40,8 +47,6 @@ private:
 	void HandleLeftMouseDragUpdate();
 	void HandleRightMouseDragUpdate();
 
-	CStudioSceneModel* m_Model = nullptr;
-	ref_viewpass_t m_RefDef {};
 	int m_PrevCursorX = 0;
 	int m_PrevCursorY = 0;
 

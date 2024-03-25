@@ -258,11 +258,6 @@ public:
 	}
 
 	// custom rendering (for playermodel preview)
-	static inline struct cl_entity_s* GetModel(void)  // for drawing playermodel previews
-	{
-		return engfuncs.pfnGetModel();
-	}
-
 	static inline void SetModel(struct cl_entity_s* ed, const char* path)
 	{
 		engfuncs.pfnSetModel(ed, path);

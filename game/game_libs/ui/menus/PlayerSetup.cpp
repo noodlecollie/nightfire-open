@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "StringVectorModel.h"
 #include "EnginePublicAPI/com_strings.h"
 #include "PlatformLib/String.h"
+#include "StudioSceneModel.h"
+#include "StudioSceneView.h"
 
 #define ART_BANNER "gfx/shell/head_customize"
 
@@ -112,6 +114,7 @@ public:
 	} logosModel;
 
 	CMenuPlayerModelView view;
+	CStudioSceneModel sceneModel;
 
 	CMenuCheckBox showModels;
 	CMenuCheckBox hiModels;
@@ -310,9 +313,11 @@ void CMenuPlayerSetup::UpdateModel()
 		PlatformLib_SNPrintF(image, sizeof(image), "models/player/%s/%s.mdl", mdl, mdl);
 	}
 
-	if ( view.ent )
+	cl_entity_t* ent = sceneModel.GetEntData(0);
+
+	if ( ent )
 	{
-		EngFuncs::SetModel(view.ent, image);
+		EngFuncs::SetModel(ent, image);
 	}
 }
 
@@ -440,7 +445,9 @@ void CMenuPlayerSetup::_Init(void)
 
 	// disable playermodel preview for HLRally to prevent crash
 	if ( !PlatformLib_StrCaseCmp(gMenu.m_gameinfo.gamefolder, "hlrally") )
+	{
 		hideModels = true;
+	}
 
 	if ( gMenu.m_gameinfo.flags & GFL_NOMODELS )
 	{
@@ -505,8 +512,12 @@ void CMenuPlayerSetup::_Init(void)
 	hiModels.onCvarChange = CMenuEditable::WriteCvarCb;
 	hiModels.SetCoord(340, 430);
 
+	sceneModel.Clear();
+	sceneModel.AddEntData();
+
 	view.iFlags |= addFlags;
 	view.SetRect(660, 260, 260, 320);
+	view.SetModel(&sceneModel);
 
 	msgBox.SetMessage(L("Please, choose another player name"));
 	msgBox.Link(this);
@@ -585,9 +596,14 @@ void CMenuPlayerSetup::_Init(void)
 void CMenuPlayerSetup::Reload()
 {
 	if ( !hideLogos )
+	{
 		UpdateLogo();
+	}
+
 	if ( !hideModels )
+	{
 		UpdateModel();
+	}
 }
 
 ADD_MENU(menu_playersetup, CMenuPlayerSetup, UI_PlayerSetup_Menu);

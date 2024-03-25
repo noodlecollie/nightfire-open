@@ -499,14 +499,6 @@ typedef struct
 	qboolean client_dll_uses_sdl;
 } clgame_static_t;
 
-#define GAMEUI_MAX_SCENE_MODELS 32
-
-typedef struct gameui_scenemodel_s
-{
-	qboolean inUse;
-	cl_entity_t entData;
-} gameui_scenemodel_t;
-
 typedef struct
 {
 	void* hInstance;  // pointer to client.dll
@@ -514,7 +506,6 @@ typedef struct
 	UI_EXTENDED_FUNCTIONS dllFuncs2;  // fwgs extension
 	poolhandle_t mempool;  // client edicts pool
 
-	gameui_scenemodel_t uiSceneModels[GAMEUI_MAX_SCENE_MODELS];
 	player_info_t playerinfo;  // local playerinfo
 
 	gameui_draw_t ds;  // draw2d stuff (menu images)

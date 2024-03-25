@@ -176,10 +176,21 @@ void CMenuStudioSceneView::SetAllowRightButtonZoom(bool allow)
 	m_AllowRightButtonZoom = allow;
 }
 
+float CMenuStudioSceneView::GetCameraDistFromOrigin() const
+{
+	return m_DistFromOrigin;
+}
+
+void CMenuStudioSceneView::SetCameraDistFromOrigin(float dist)
+{
+	m_DistFromOrigin = dist;
+}
+
 void CMenuStudioSceneView::ResetCamera()
 {
 	memset(m_RefDef.vieworigin, 0, sizeof(m_RefDef.vieworigin));
 	memset(m_RefDef.viewangles, 0, sizeof(m_RefDef.viewangles));
+	m_DistFromOrigin = 0.0f;
 }
 
 void CMenuStudioSceneView::HandleLeftMouseDragUpdate()
