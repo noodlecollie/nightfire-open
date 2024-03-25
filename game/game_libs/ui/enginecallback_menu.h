@@ -268,6 +268,16 @@ public:
 		engfuncs.pfnSetModel(ed, path);
 	}
 
+	static inline int GetModelSequenceCount(struct cl_entity_s* ent)
+	{
+		return engfuncs.pfnGetModelSequenceCount(ent);
+	}
+
+	static inline const char* GetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
+	{
+		return engfuncs.pfnGetModelSequenceName(ent, sequenceIndex);
+	}
+
 	static inline void ClearScene(void)
 	{
 		engfuncs.pfnClearScene();
