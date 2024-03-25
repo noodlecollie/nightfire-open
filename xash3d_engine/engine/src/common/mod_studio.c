@@ -1341,23 +1341,57 @@ int Mod_LookUpStudioSequence(model_t* model, const char* name)
 	return -1;
 }
 
+int Mod_StudioGetSequenceCount(model_t* model)
+{
+	const studiohdr_t* header = NULL;
+
+	if ( !model || model->type != mod_studio )
+	{
+		return 0;
+	}
+
+	header = (const studiohdr_t*)Mod_StudioExtradata(model);
+	return header ? header->numseq : 0;
+}
+
+const char* Mod_StudioGetSequenceName(model_t* model, int anim)
+{
+	const studiohdr_t* header = NULL;
+	const mstudioseqdesc_t* sequence = NULL;
+
+	if ( !model || model->type != mod_studio || anim < 0 )
+	{
+		return NULL;
+	}
+
+	header = (const studiohdr_t*)Mod_StudioExtradata(model);
+
+	if ( !header || anim >= header->numseq )
+	{
+		return NULL;
+	}
+
+	sequence = (const mstudioseqdesc_t*)((const byte*)header + header->seqindex) + anim;
+	return sequence->label;
+}
+
 float Mod_StudioGetSequenceDuration(model_t* model, int anim)
 {
-	studiohdr_t* header = NULL;
-	mstudioseqdesc_t* sequence = NULL;
+	const studiohdr_t* header = NULL;
+	const mstudioseqdesc_t* sequence = NULL;
 
 	if ( !model || model->type != mod_studio || anim < 0 )
 	{
 		return 0.0f;
 	}
 
-	header = (studiohdr_t*)Mod_StudioExtradata(model);
+	header = (const studiohdr_t*)Mod_StudioExtradata(model);
 	if ( !header || anim >= header->numseq )
 	{
 		return 0.0f;
 	}
 
-	sequence = (mstudioseqdesc_t*)((byte*)header + header->seqindex) + anim;
+	sequence = (const mstudioseqdesc_t*)((const byte*)header + header->seqindex) + anim;
 
 	if ( sequence->fps <= 0.0f || sequence->numframes < 1 )
 	{

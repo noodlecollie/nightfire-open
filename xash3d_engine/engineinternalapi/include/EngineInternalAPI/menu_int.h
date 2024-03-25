@@ -128,6 +128,8 @@ typedef struct ui_enginefuncs_s
 	// custom rendering (for playermodel preview)
 	struct cl_entity_s* (*pfnGetModel)(void);  // for drawing playermodel previews
 	void (*pfnSetModel)(struct cl_entity_s* ed, const char* path);
+	int (*pfnGetModelSequenceCount)(struct cl_entity_s* ent);
+	const char* (*pfnGetModelSequenceName)(struct cl_entity_s* ent, int sequenceIndex);
 	void (*pfnClearScene)(void);
 	void (*pfnRenderScene)(const struct ref_viewpass_s* rvp);
 	int (*CL_CreateVisibleEntity)(int type, struct cl_entity_s* ent);

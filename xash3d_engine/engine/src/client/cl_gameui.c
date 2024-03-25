@@ -825,6 +825,16 @@ static void GAME_EXPORT pfnSetModel(cl_entity_t* ent, const char* path)
 	ent->curstate.modelindex = MAX_MODELS;  // unreachable index
 }
 
+int pfnGetModelSequenceCount(struct cl_entity_s* ent)
+{
+	return ent ? Mod_StudioGetSequenceCount(ent->model) : 0;
+}
+
+const char* pfnGetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
+{
+	return ent ? Mod_StudioGetSequenceName(ent->model, sequenceIndex) : NULL;
+}
+
 /*
 ====================
 pfnClearScene
@@ -1216,6 +1226,8 @@ static ui_enginefuncs_t gEngfuncs = {
 	Con_DefaultColor,
 	pfnGetModel,
 	pfnSetModel,
+	pfnGetModelSequenceCount,
+	pfnGetModelSequenceName,
 	pfnClearScene,
 	pfnRenderScene,
 	pfnAddEntity,
