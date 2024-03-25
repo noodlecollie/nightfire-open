@@ -96,8 +96,6 @@ set(SOURCES_UI
 	controls/Slider.cpp
 	controls/SpinControl.h
 	controls/SpinControl.cpp
-	controls/StudioModelView.h
-	controls/StudioModelView.cpp
 	controls/StudioSceneView.h
 	controls/StudioSceneView.cpp
 	controls/Switch.h

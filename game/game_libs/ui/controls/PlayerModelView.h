@@ -15,13 +15,14 @@ GNU General Public License for more details.
 
 #pragma once
 
-#include "StudioModelView.h"
+#include "StudioSceneView.h"
 
-class CMenuPlayerModelView : public CMenuStudioModelView
+class CMenuPlayerModelView : public CMenuStudioSceneView
 {
 public:
 	void VidInit() override;
 	void Draw() override;
+	bool KeyDown(int key) override;
 
 	HIMAGE hPlayerImage;
 

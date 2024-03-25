@@ -19,28 +19,12 @@ GNU General Public License for more details.
 
 void CMenuPlayerModelView::VidInit()
 {
-	CMenuStudioModelView::VidInit();
-
-	ent->curstate.number = 1;  // IMPORTANT: always set playerindex to 1
-	ent->origin[0] = ent->curstate.origin[0] = 45.0f / tanf(DEG2RADF(refdef.fov_y / 2.0f));
-	ent->origin[2] = ent->curstate.origin[2] = 2.0f;
-	ent->angles[1] = ent->curstate.angles[1] = 180.0f;
-	ent->player = true;  // yes, draw me as playermodel
+	CMenuStudioSceneView::VidInit();
+	SetCameraDistFromOrigin(45.0f / tanf(DEG2RADF(m_RefDef.fov_y / 2.0f)));
 }
 
 void CMenuPlayerModelView::Draw()
 {
-	if ( uiStatic.enableAlphaFactor )
-	{
-		ent->curstate.rendermode = kRenderTransTexture;
-		ent->curstate.renderamt = static_cast<int>(uiStatic.alphaFactor * 255);
-	}
-	else
-	{
-		ent->curstate.rendermode = kRenderNormal;
-		ent->curstate.renderamt = 255;
-	}
-
 	if ( (eOverrideMode == PMV_DONTCARE && !ui_showmodels->value) ||  // controlled by engine cvar
 		 (eOverrideMode == PMV_SHOWIMAGE) )  // controlled by menucode
 	{
@@ -71,5 +55,54 @@ void CMenuPlayerModelView::Draw()
 		return;
 	}
 
-	CMenuStudioModelView::Draw();
+	if ( m_Model )
+	{
+		cl_entity_t* ent = m_Model->GetEntData(0);
+
+		if ( ent )
+		{
+			if ( uiStatic.enableAlphaFactor )
+			{
+				ent->curstate.rendermode = kRenderTransTexture;
+				ent->curstate.renderamt = static_cast<int>(uiStatic.alphaFactor * 255);
+			}
+			else
+			{
+				ent->curstate.rendermode = kRenderNormal;
+				ent->curstate.renderamt = 255;
+			}
+
+			ent->curstate.number = 1;  // IMPORTANT: always set playerindex to 1
+			ent->origin[2] = ent->curstate.origin[2] = 2.0f;
+			ent->angles[1] = ent->curstate.angles[1] = 180.0f;
+			ent->player = true;  // yes, draw me as playermodel
+		}
+	}
+
+	CMenuStudioSceneView::Draw();
+}
+
+bool CMenuPlayerModelView::KeyDown(int key)
+{
+	if ( UI::Key::IsEnter(key) )
+	{
+		if ( m_Model )
+		{
+			cl_entity_t* ent = m_Model->GetEntData(0);
+
+			if ( ent )
+			{
+				++ent->curstate.sequence;
+
+				if ( ent->curstate.sequence >= EngFuncs::GetModelSequenceCount(ent) )
+				{
+					ent->curstate.sequence = 0;
+				}
+			}
+
+			return true;
+		}
+	}
+
+	return CMenuStudioSceneView::KeyDown(key);
 }

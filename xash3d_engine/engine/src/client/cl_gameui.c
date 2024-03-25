@@ -800,25 +800,6 @@ static void GAME_EXPORT UI_DrawSetTextColor(int r, int g, int b, int alpha)
 	gameui.ds.textColor[3] = (byte)alpha;
 }
 
-/*
-====================
-pfnGetModel
-
-for drawing playermodel previews
-====================
-*/
-static cl_entity_t* GAME_EXPORT pfnGetModel(void)
-{
-	return &gameui.uiSceneModels[0].entData;
-}
-
-/*
-====================
-pfnSetModel
-
-for drawing playermodel previews
-====================
-*/
 static void GAME_EXPORT pfnSetModel(cl_entity_t* ent, const char* path)
 {
 	ent->model = Mod_ForName(path, false, false);
@@ -1231,7 +1212,6 @@ static ui_enginefuncs_t gEngfuncs = {
 	UI_DrawSetTextColor,
 	Con_DrawStringLen,
 	Con_DefaultColor,
-	pfnGetModel,
 	pfnSetModel,
 	pfnGetModelSequenceCount,
 	pfnGetModelSequenceName,
