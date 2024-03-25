@@ -149,12 +149,12 @@ void CMenuStudioSceneView::Draw()
 	EngFuncs::RenderScene(&m_RefDef);
 }
 
-const CStudioSceneModel* CMenuStudioSceneView::GetModel() const
+CStudioSceneModel* CMenuStudioSceneView::GetModel() const
 {
 	return m_Model;
 }
 
-void CMenuStudioSceneView::SetModel(const CStudioSceneModel* model)
+void CMenuStudioSceneView::SetModel(CStudioSceneModel* model)
 {
 	m_Model = model;
 }

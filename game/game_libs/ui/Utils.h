@@ -21,6 +21,7 @@ GNU General Public License for more details.
 
 #include "enginecallback_menu.h"
 #include "EngineInternalAPI/gameinfo.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "FontManager.h"
 #include "BMPUtils.h"
 #include "miniutl.h"

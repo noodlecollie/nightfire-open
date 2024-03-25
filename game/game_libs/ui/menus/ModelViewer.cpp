@@ -1,5 +1,6 @@
 #include "Framework.h"
-#include "StudioModelView.h"
+#include "StudioSceneModel.h"
+#include "StudioSceneView.h"
 #include "Table.h"
 #include "StringVectorModel.h"
 #include "utlstring.h"
@@ -29,6 +30,9 @@ private:
 		AddButton(L("Select"), L("Select model"), PC_CUSTOMIZE, VoidCb(&CMenuModelViewer::SelectModel));
 		AddButton(L("Back"), L("Return to main menu"), PC_DONE, VoidCb(&CMenuModelViewer::Hide));
 
+		m_SceneModel.Clear();
+		m_SceneModel.AddEntData();
+
 		const int itemWidth =
 			(static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - PADDING) / 2;
 		const int itemHeight = static_cast<int>(ScreenHeight / uiStatic.scaleY) - TOP_MARGIN - BOTTOM_MARGIN;
@@ -41,6 +45,7 @@ private:
 		m_View.SetRect(LEFT_MARGIN + itemWidth + PADDING, TOP_MARGIN, itemWidth, itemHeight);
 		m_View.SetAllowPitchRotation(true);
 		m_View.SetAllowRightButtonZoom(true);
+		m_View.SetModel(&m_SceneModel);
 		AddItem(m_View);
 	}
 
@@ -62,26 +67,35 @@ private:
 
 	void HandleNewModelPicked(const char* path)
 	{
-		m_View.SetModel(path);
-		m_View.ResetOrientation();
+		cl_entity_t* ent = m_SceneModel.GetEntData(0);
 
-		int numSequences = EngFuncs::GetModelSequenceCount(m_View.ent);
+		if ( !ent )
+		{
+			return;
+		}
+
+		EngFuncs::SetModel(ent, path);
+		m_View.ResetCamera();
+
+		int numSequences = EngFuncs::GetModelSequenceCount(ent);
 		m_Model.Purge();
 
 		for ( int index = 0; index < numSequences; ++index )
 		{
-			m_Model.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(m_View.ent, index)));
+			m_Model.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(ent, index)));
 		}
-
-		m_View.FitModelToViewVertically();
 	}
 
 	void HandleSequenceChanged()
 	{
-		if ( m_View.ent )
+		cl_entity_t* ent = m_SceneModel.GetEntData(0);
+
+		if ( !ent )
 		{
-			m_View.ent->curstate.sequence = m_SequenceTable.GetCurrentIndex();
+			return;
 		}
+
+		ent->curstate.sequence = m_SequenceTable.GetCurrentIndex();
 	}
 
 	void LookUpModelSubdirsRecursively()
@@ -135,7 +149,8 @@ private:
 		}
 	}
 
-	CMenuStudioModelView m_View;
+	CStudioSceneModel m_SceneModel;
+	CMenuStudioSceneView m_View;
 	CMenuTable m_SequenceTable;
 	CStringVectorModel m_Model;
 };
