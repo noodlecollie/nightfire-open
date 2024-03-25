@@ -42,7 +42,7 @@ namespace Nuklear
 			text->w, text->h,
 			text->string,
 			nk_color_u32(text->foreground),
-			text->font->height,
+			static_cast<int>(text->font->height),
 			QM_TOPLEFT);
 	}
 
