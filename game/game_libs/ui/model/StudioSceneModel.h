@@ -11,8 +11,12 @@ public:
 	const char* GetText(int line) final override;
 	int GetRows() const final override;
 
-	cl_entity_t* GetEntData(int index) const;
+	cl_entity_t* AddEntData();
+	cl_entity_t* GetEntData(int index);
+	void Clear();
 
 private:
-	CUtlVector<cl_entity_t*> m_Entities;
+	static void DefaultInitialiseEntData(cl_entity_t* ent);
+
+	CUtlVector<cl_entity_t> m_Entities;
 };

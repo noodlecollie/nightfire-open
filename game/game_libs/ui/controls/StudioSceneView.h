@@ -22,8 +22,8 @@ public:
 	CColor backgroundColor;
 	CColor outlineFocusColor;
 
-	const CStudioSceneModel* GetModel() const;
-	void SetModel(const CStudioSceneModel* model);
+	CStudioSceneModel* GetModel() const;
+	void SetModel(CStudioSceneModel* model);
 
 	void SetAllowPitchRotation(bool allow);
 	void SetAllowRightButtonZoom(bool allow);
@@ -40,7 +40,7 @@ private:
 	void HandleLeftMouseDragUpdate();
 	void HandleRightMouseDragUpdate();
 
-	const CStudioSceneModel* m_Model = nullptr;
+	CStudioSceneModel* m_Model = nullptr;
 	ref_viewpass_t m_RefDef {};
 	int m_PrevCursorX = 0;
 	int m_PrevCursorY = 0;
