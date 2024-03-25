@@ -21,12 +21,7 @@ int CStudioSceneModel::GetRows() const
 	return m_Entities.Count();
 }
 
-cl_entity_t* CStudioSceneModel::GetEntData(int index)
-{
-	return (index >= 0 && index < m_Entities.Count()) ? m_Entities[index] : nullptr;
-}
-
-const cl_entity_t* CStudioSceneModel::GetEntData(int index) const
+cl_entity_t* CStudioSceneModel::GetEntData(int index) const
 {
 	return (index >= 0 && index < m_Entities.Count()) ? m_Entities[index] : nullptr;
 }
