@@ -282,10 +282,17 @@ public:
 	{
 		engfuncs.pfnClearScene();
 	}
+
+	static inline void UpdateScene(void)
+	{
+		engfuncs.pfnUpdateScene();
+	}
+
 	static inline void RenderScene(const struct ref_viewpass_s* fd)
 	{
 		engfuncs.pfnRenderScene(fd);
 	}
+
 	static inline int CL_CreateVisibleEntity(int type, struct cl_entity_s* ent)
 	{
 		return engfuncs.CL_CreateVisibleEntity(type, ent);

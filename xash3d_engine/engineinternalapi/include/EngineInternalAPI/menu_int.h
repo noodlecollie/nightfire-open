@@ -131,6 +131,7 @@ typedef struct ui_enginefuncs_s
 	int (*pfnGetModelSequenceCount)(struct cl_entity_s* ent);
 	const char* (*pfnGetModelSequenceName)(struct cl_entity_s* ent, int sequenceIndex);
 	void (*pfnClearScene)(void);
+	void (*pfnUpdateScene)(void);
 	void (*pfnRenderScene)(const struct ref_viewpass_s* rvp);
 	int (*CL_CreateVisibleEntity)(int type, struct cl_entity_s* ent);
 
