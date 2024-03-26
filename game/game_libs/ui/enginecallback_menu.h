@@ -258,24 +258,47 @@ public:
 	}
 
 	// custom rendering (for playermodel preview)
-	static inline struct cl_entity_s* GetPlayerModel(void)  // for drawing playermodel previews
-	{
-		return engfuncs.pfnGetPlayerModel();
-	}
-
 	static inline void SetModel(struct cl_entity_s* ed, const char* path)
 	{
 		engfuncs.pfnSetModel(ed, path);
+	}
+
+	static inline int GetModelSequenceCount(struct cl_entity_s* ent)
+	{
+		return engfuncs.pfnGetModelSequenceCount(ent);
+	}
+
+	static inline const char* GetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
+	{
+		return engfuncs.pfnGetModelSequenceName(ent, sequenceIndex);
+	}
+
+	static inline qboolean
+	pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
+	{
+		return engfuncs.pfnGetModelSequenceBounds(ent, sequenceIndex, outVec3Mins, outVec3Maxs);
 	}
 
 	static inline void ClearScene(void)
 	{
 		engfuncs.pfnClearScene();
 	}
+
+	static inline void UpdateScene(void)
+	{
+		engfuncs.pfnUpdateScene();
+	}
+
 	static inline void RenderScene(const struct ref_viewpass_s* fd)
 	{
 		engfuncs.pfnRenderScene(fd);
 	}
+
+	static inline void StoreLine(const float* vec3Begin, const float* vec3End, uint32_t colourRGBA)
+	{
+		engfuncs.pfnStoreLine(vec3Begin, vec3End, colourRGBA);
+	}
+
 	static inline int CL_CreateVisibleEntity(int type, struct cl_entity_s* ent)
 	{
 		return engfuncs.CL_CreateVisibleEntity(type, ent);
@@ -397,6 +420,11 @@ public:
 	static inline char** GetFilesList(const char* pattern, int* numFiles, int gamedironly)  // find in files
 	{
 		return engfuncs.pfnGetFilesList(pattern, numFiles, gamedironly);
+	}
+
+	static inline char** GetDirectoriesList(const char* parentDir, int* numFiles, int gamedironly)
+	{
+		return engfuncs.pfnGetDirectoriesList(parentDir, numFiles, gamedironly);
 	}
 
 	static inline int GetSaveComment(const char* savename, char* comment)

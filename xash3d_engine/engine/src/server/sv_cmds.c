@@ -258,7 +258,7 @@ void SV_Maps_f(void)
 		return;
 	}
 
-	mapList = FS_Search(va("maps/*%s*.bsp", argStr), true, true);
+	mapList = FS_SearchFiles(va("maps/*%s*.bsp", argStr), true, true);
 
 	if ( !mapList )
 	{
@@ -316,7 +316,7 @@ void SV_MapBackground_f(void)
 ==================
 SV_NextMap_f
 
-Change map for next in alpha-bethical ordering
+Change map for next in alphabetical ordering
 For development work
 ==================
 */
@@ -326,9 +326,12 @@ void SV_NextMap_f(void)
 	int i, next;
 	search_t* t;
 
-	t = FS_Search("maps\\*.bsp", true, CVAR_TO_BOOL(con_gamemaps));  // only in gamedir
+	t = FS_SearchFiles("maps\\*.bsp", true, CVAR_TO_BOOL(con_gamemaps));  // only in gamedir
+
 	if ( !t )
-		t = FS_Search("maps/*.bsp", true, CVAR_TO_BOOL(con_gamemaps));  // only in gamedir
+	{
+		t = FS_SearchFiles("maps/*.bsp", true, CVAR_TO_BOOL(con_gamemaps));  // only in gamedir
+	}
 
 	if ( !t )
 	{
@@ -341,11 +344,16 @@ void SV_NextMap_f(void)
 		const char* ext = COM_FileExtension(t->filenames[i]);
 
 		if ( Q_stricmp(ext, "bsp") )
+		{
 			continue;
+		}
 
 		COM_FileBase(t->filenames[i], nextmap, sizeof(nextmap));
+
 		if ( Q_stricmp(sv_hostmap->string, nextmap) )
+		{
 			continue;
+		}
 
 		next = (i + 1) % t->numfilenames;
 		COM_FileBase(t->filenames[next], nextmap, sizeof(nextmap));

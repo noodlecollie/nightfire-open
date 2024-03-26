@@ -33,6 +33,17 @@ static void UI_UpdateUserinfo(void);
 
 gameui_static_t gameui;
 
+typedef struct Line3D_s
+{
+	vec3_t begin;
+	vec3_t end;
+	uint32_t colourRGBA;
+} Line3D_t;
+
+#define MAX_3D_LINES 1024
+static Line3D_t g3DLines[MAX_3D_LINES];
+static size_t g3DLineCount = 0;
+
 void UI_UpdateMenu(float realtime)
 {
 	if ( !gameui.hInstance )
@@ -667,8 +678,10 @@ static void GAME_EXPORT pfnFillRGBA(int x, int y, int width, int height, int r, 
 	g = bound(0, g, 255);
 	b = bound(0, b, 255);
 	a = bound(0, a, 255);
+
 	ref.dllFuncs.Color4ub((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 	ref.dllFuncs.GL_SetRenderMode(kRenderTransTexture);
+
 	ref.dllFuncs.R_DrawStretchPic(
 		(float)x,
 		(float)y,
@@ -679,6 +692,7 @@ static void GAME_EXPORT pfnFillRGBA(int x, int y, int width, int height, int r, 
 		1,
 		1,
 		R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);
 }
 
@@ -797,29 +811,25 @@ static void GAME_EXPORT UI_DrawSetTextColor(int r, int g, int b, int alpha)
 	gameui.ds.textColor[3] = (byte)alpha;
 }
 
-/*
-====================
-pfnGetPlayerModel
-
-for drawing playermodel previews
-====================
-*/
-static cl_entity_t* GAME_EXPORT pfnGetPlayerModel(void)
-{
-	return &gameui.playermodel;
-}
-
-/*
-====================
-pfnSetPlayerModel
-
-for drawing playermodel previews
-====================
-*/
-static void GAME_EXPORT pfnSetPlayerModel(cl_entity_t* ent, const char* path)
+static void GAME_EXPORT pfnSetModel(cl_entity_t* ent, const char* path)
 {
 	ent->model = Mod_ForName(path, false, false);
 	ent->curstate.modelindex = MAX_MODELS;  // unreachable index
+}
+
+int pfnGetModelSequenceCount(struct cl_entity_s* ent)
+{
+	return ent ? Mod_StudioGetSequenceCount(ent->model) : 0;
+}
+
+const char* pfnGetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
+{
+	return ent ? Mod_StudioGetSequenceName(ent->model, sequenceIndex) : NULL;
+}
+
+qboolean pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
+{
+	return ent ? Mod_StudioGetSequenceBounds(ent->model, sequenceIndex, outVec3Mins, outVec3Maxs) : false;
 }
 
 /*
@@ -833,6 +843,12 @@ static void GAME_EXPORT pfnClearScene(void)
 {
 	ref.dllFuncs.R_PushScene();
 	ref.dllFuncs.R_ClearScene();
+	g3DLineCount = 0;
+}
+
+static void GAME_EXPORT pfnUpdateScene(void)
+{
+	CL_TempEntUpdate();
 }
 
 /*
@@ -848,7 +864,9 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 
 	// to avoid division by zero
 	if ( !rvp || rvp->fov_x <= 0.0f || rvp->fov_y <= 0.0f )
+	{
 		return;
+	}
 
 	copy = *rvp;
 
@@ -857,8 +875,51 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 
 	ref.dllFuncs.R_Set2DMode(false);
 	GL_RenderFrame(&copy);
+
+	if ( g3DLineCount > 0 )
+	{
+		ref.dllFuncs.GL_Bind(XASH_TEXTURE0, R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+		ref.dllFuncs.TriRenderMode(kRenderNormal);
+		ref.dllFuncs.Begin(TRI_LINES);
+
+		for ( size_t index = 0; index < g3DLineCount; ++index )
+		{
+			const Line3D_t* line = &g3DLines[index];
+
+			uint8_t rgba[4] = {
+				(uint8_t)((line->colourRGBA & 0xFF000000) >> 24),
+				(uint8_t)((line->colourRGBA & 0x00FF0000) >> 16),
+				(uint8_t)((line->colourRGBA & 0x0000FF00) >> 8),
+				(uint8_t)(line->colourRGBA & 0x000000FF),
+			};
+
+			ref.dllFuncs.Color4ub(rgba[0], rgba[1], rgba[2], rgba[3]);
+
+			ref.dllFuncs.TexCoord2f(0.0f, 0.0f);
+			ref.dllFuncs.Vertex3fv(line->begin);
+
+			ref.dllFuncs.TexCoord2f(0.0f, 0.0f);
+			ref.dllFuncs.Vertex3fv(line->end);
+		}
+
+		ref.dllFuncs.End();
+	}
+
 	ref.dllFuncs.R_Set2DMode(true);
 	ref.dllFuncs.R_PopScene();
+}
+
+void pfnStoreLine(const float* vec3Begin, const float* vec3End, uint32_t colourRGBA)
+{
+	if ( g3DLineCount >= MAX_3D_LINES || !vec3Begin || !vec3End )
+	{
+		return;
+	}
+
+	Line3D_t* line = &g3DLines[g3DLineCount++];
+	VectorCopy(vec3Begin, line->begin);
+	VectorCopy(vec3End, line->end);
+	line->colourRGBA = colourRGBA;
 }
 
 /*
@@ -870,9 +931,7 @@ adding player model into visible list
 */
 static int GAME_EXPORT pfnAddEntity(int entityType, cl_entity_t* ent)
 {
-	if ( !ref.dllFuncs.R_AddEntity(ent, entityType) )
-		return false;
-	return true;
+	return ref.dllFuncs.R_AddEntity(ent, entityType);
 }
 
 /*
@@ -991,16 +1050,55 @@ static char** GAME_EXPORT pfnGetFilesList(const char* pattern, int* numFiles, in
 		Mem_Free(t);  // release prev search
 	}
 
-	t = FS_Search(pattern, true, gamedironly);
+	t = FS_SearchAll(pattern, true, gamedironly);
+
 	if ( !t )
 	{
 		if ( numFiles )
+		{
 			*numFiles = 0;
+		}
+
 		return NULL;
 	}
 
 	if ( numFiles )
+	{
 		*numFiles = t->numfilenames;
+	}
+
+	return t->filenames;
+}
+
+static char** GAME_EXPORT pfnGetDirectoriesList(const char* parentDir, int* numFiles, int gamedironly)
+{
+	static search_t* t = NULL;
+
+	if ( t )
+	{
+		Mem_Free(t);  // release prev search
+	}
+
+	string dirPath;
+	Q_snprintf(dirPath, sizeof(dirPath), "%s/*", parentDir);
+
+	t = FS_SearchDirs(dirPath, true, gamedironly);
+
+	if ( !t )
+	{
+		if ( numFiles )
+		{
+			*numFiles = 0;
+		}
+
+		return NULL;
+	}
+
+	if ( numFiles )
+	{
+		*numFiles = t->numfilenames;
+	}
+
 	return t->filenames;
 }
 
@@ -1172,10 +1270,14 @@ static ui_enginefuncs_t gEngfuncs = {
 	UI_DrawSetTextColor,
 	Con_DrawStringLen,
 	Con_DefaultColor,
-	pfnGetPlayerModel,
-	pfnSetPlayerModel,
+	pfnSetModel,
+	pfnGetModelSequenceCount,
+	pfnGetModelSequenceName,
+	pfnGetModelSequenceBounds,
 	pfnClearScene,
+	pfnUpdateScene,
 	pfnRenderScene,
+	pfnStoreLine,
 	pfnAddEntity,
 	Host_Error,
 	pfnFileExists,
@@ -1200,6 +1302,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	pfnGetGameInfo,
 	pfnGetGamesList,
 	pfnGetFilesList,
+	pfnGetDirectoriesList,
 	SV_GetSaveComment,
 	CL_GetDemoComment,
 	pfnCheckGameDll,

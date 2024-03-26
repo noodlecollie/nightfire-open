@@ -197,7 +197,7 @@ void stringlistsort(stringlist_t* list)
 	}
 }
 
-void listdirectory(stringlist_t* list, const char* path)
+void listdirectory(stringlist_t* list, const char* path, uint32_t flags)
 {
 #if XASH_WIN32()
 	char pattern[4096];
@@ -213,22 +213,42 @@ void listdirectory(stringlist_t* list, const char* path)
 
 	// ask for the directory listing handle
 	hFile = _findfirst(pattern, &n_file);
+
 	if ( hFile == -1 )
+	{
 		return;
+	}
 
 	// start a new chain with the the first name
 	stringlistappend(list, n_file.name);
+
 	// iterate through the directory
 	while ( _findnext(hFile, &n_file) == 0 )
-		stringlistappend(list, n_file.name);
+	{
+		if ( ((flags & FS_SEARCHFLAG_DIRECTORIES) && (n_file.attrib & _A_SUBDIR)) ||
+			 ((flags & FS_SEARCHFLAG_FILES) && !(n_file.attrib & _A_SUBDIR)) )
+		{
+			stringlistappend(list, n_file.name);
+		}
+	}
+
 	_findclose(hFile);
 #else
 	if ( !(dir = opendir(path)) )
+	{
 		return;
+	}
 
 	// iterate through the directory
 	while ( (entry = readdir(dir)) )
-		stringlistappend(list, entry->d_name);
+	{
+		if ( ((flags & FS_SEARCHFLAG_DIRECTORIES) && entry->d_type == DT_DIR) ||
+			 ((flags & FS_SEARCHFLAG_FILES) && entry->d_type == DT_REG) )
+		{
+			stringlistappend(list, entry->d_name);
+		}
+	}
+
 	closedir(dir);
 #endif
 }
@@ -315,7 +335,7 @@ void FS_AddGameDirectory(const char* dir, uint flags)
 	int i;
 
 	stringlistinit(&list);
-	listdirectory(&list, dir);
+	listdirectory(&list, dir, FS_SEARCHFLAG_FILES);
 	stringlistsort(&list);
 
 	// add archives in specific order PAK -> PK3 -> WAD
@@ -1417,7 +1437,7 @@ FS_InitStdio(qboolean caseinsensitive, const char* rootdir, const char* basedir,
 		}
 
 		stringlistinit(&dirs);
-		listdirectory(&dirs, fs_rodir);
+		listdirectory(&dirs, fs_rodir, FS_SEARCHFLAG_DIRECTORIES);
 		stringlistsort(&dirs);
 
 		for ( i = 0; i < dirs.numstrings; i++ )
@@ -1445,7 +1465,7 @@ FS_InitStdio(qboolean caseinsensitive, const char* rootdir, const char* basedir,
 
 	// validate directories
 	stringlistinit(&dirs);
-	listdirectory(&dirs, "./");
+	listdirectory(&dirs, "./", FS_SEARCHFLAG_DIRECTORIES);
 	stringlistsort(&dirs);
 
 	for ( i = 0; i < dirs.numstrings; i++ )
@@ -1898,7 +1918,7 @@ file_t* FS_Open(const char* filepath, const char* mode, qboolean gamedironly)
 		char real_path[MAX_SYSPATH];
 
 		// open the file on disk directly
-		if ( !FS_FixFileCase(fs_writepath->pkg.dir, filepath, real_path, sizeof(real_path), true) )
+		if ( !FS_FixFileCase(fs_writepath->pkg.dir, filepath, real_path, sizeof(real_path), DIROP_CREATE) )
 			return NULL;
 
 		FS_CreatePath(real_path);  // Create directories up to the file
@@ -2602,11 +2622,11 @@ qboolean FS_Rename(const char* oldname, const char* newname)
 	COM_FixSlashes(newname2);
 
 	// file does not exist
-	if ( !FS_FixFileCase(fs_writepath->pkg.dir, oldname2, oldpath, sizeof(oldpath), false) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, oldname2, oldpath, sizeof(oldpath), DIROP_ACCESS) )
 		return false;
 
 	// exit if overflowed
-	if ( !FS_FixFileCase(fs_writepath->pkg.dir, newname2, newpath, sizeof(newpath), true) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, newname2, newpath, sizeof(newpath), DIROP_CREATE) )
 		return false;
 
 	ret = rename(oldpath, newpath);
@@ -2644,7 +2664,7 @@ qboolean GAME_EXPORT FS_Delete(const char* path)
 	Q_strncpy(path2, path, sizeof(path2));
 	COM_FixSlashes(path2);
 
-	if ( !FS_FixFileCase(fs_writepath->pkg.dir, path2, real_path, sizeof(real_path), true) )
+	if ( !FS_FixFileCase(fs_writepath->pkg.dir, path2, real_path, sizeof(real_path), DIROP_CREATE) )
 		return true;
 
 	ret = remove(real_path);
@@ -2704,7 +2724,7 @@ FS_Search
 Allocate and fill a search structure with information on matching filenames.
 ===========
 */
-search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
+search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly, uint32_t flags)
 {
 	search_t* search = NULL;
 	searchpath_t* searchpath;
@@ -2712,7 +2732,9 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 	stringlist_t resultlist;
 
 	if ( pattern[0] == '.' || pattern[0] == ':' || pattern[0] == '/' || pattern[0] == '\\' )
+	{
 		return NULL;  // punctuation issues
+	}
 
 	stringlistinit(&resultlist);
 
@@ -2720,9 +2742,12 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 	for ( searchpath = fs_searchpaths; searchpath; searchpath = searchpath->next )
 	{
 		if ( gamedironly && !FBitSet(searchpath->flags, FS_GAMEDIRONLY_SEARCH_FLAGS) )
+		{
 			continue;
+		}
 
-		searchpath->pfnSearch(searchpath, &resultlist, pattern, caseinsensitive);
+		searchpath
+			->pfnSearch(searchpath, &resultlist, pattern, caseinsensitive, flags);
 	}
 
 	if ( resultlist.numstrings )
@@ -2732,7 +2757,10 @@ search_t* FS_Search(const char* pattern, int caseinsensitive, int gamedironly)
 		numchars = 0;
 
 		for ( i = 0; i < resultlist.numstrings; i++ )
+		{
 			numchars += (int)Q_strlen(resultlist.strings[i]) + 1;
+		}
+
 		search = Mem_Calloc(fs_mempool, sizeof(search_t) + numchars + numfiles * sizeof(char*));
 		search->filenames = (char**)((char*)search + sizeof(search_t));
 		search->filenamesbuffer = (char*)((char*)search + sizeof(search_t) + numfiles * sizeof(char*));

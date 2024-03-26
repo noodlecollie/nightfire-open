@@ -126,10 +126,15 @@ typedef struct ui_enginefuncs_s
 	void (*pfnSetConsoleDefaultColor)(int r, int g, int b);  // color must came from colors.lst
 
 	// custom rendering (for playermodel preview)
-	struct cl_entity_s* (*pfnGetPlayerModel)(void);  // for drawing playermodel previews
 	void (*pfnSetModel)(struct cl_entity_s* ed, const char* path);
+	int (*pfnGetModelSequenceCount)(struct cl_entity_s* ent);
+	const char* (*pfnGetModelSequenceName)(struct cl_entity_s* ent, int sequenceIndex);
+	qboolean (
+		*pfnGetModelSequenceBounds)(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs);
 	void (*pfnClearScene)(void);
+	void (*pfnUpdateScene)(void);
 	void (*pfnRenderScene)(const struct ref_viewpass_s* rvp);
+	void (*pfnStoreLine)(const float* vec3Begin, const float* vec3End, uint32_t colourRGBA);
 	int (*CL_CreateVisibleEntity)(int type, struct cl_entity_s* ent);
 
 	// misc handlers
@@ -166,6 +171,7 @@ typedef struct ui_enginefuncs_s
 	int (*pfnGetGameInfo)(struct GAMEINFO_S* pgameinfo);
 	struct GAMEINFO_S** (*pfnGetGamesList)(int* numGames);  // collect info about all mods
 	char** (*pfnGetFilesList)(const char* pattern, int* numFiles, int gamedironly);  // find in files
+	char** (*pfnGetDirectoriesList)(const char* parentDir, int* numFiles, int gamedironly);
 	int (*pfnGetSaveComment)(const char* savename, char* comment);
 	int (*pfnGetDemoComment)(const char* demoname, char* comment);
 	int (*pfnCheckGameDll)(void);  // returns false if hl.dll is missed or invalid

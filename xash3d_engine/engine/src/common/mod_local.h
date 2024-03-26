@@ -123,7 +123,10 @@ void* R_StudioGetAnim(studiohdr_t* m_pStudioHeader, model_t* m_pSubModel, mstudi
 void Mod_StudioComputeBounds(void* buffer, vec3_t mins, vec3_t maxs, qboolean ignore_sequences);
 int Mod_HitgroupForStudioHull(int index);
 void Mod_ClearStudioCache(void);
+int Mod_StudioGetSequenceCount(model_t* model);
+const char* Mod_StudioGetSequenceName(model_t* model, int anim);
 float Mod_StudioGetSequenceDuration(model_t* model, int anim);
+qboolean Mod_StudioGetSequenceBounds(model_t* model, int anim, vec3_t outVecMins, vec3_t outVecMaxs);
 void Mod_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitch);
 void Mod_PrecacheEventSounds(model_t* model);
 

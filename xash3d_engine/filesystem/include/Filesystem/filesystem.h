@@ -63,6 +63,12 @@ enum
 	FS_GAMEDIRONLY_SEARCH_FLAGS = FS_GAMEDIR_PATH | FS_CUSTOM_PATH | FS_GAMERODIR_PATH
 };
 
+enum
+{
+	FS_SEARCHFLAG_FILES = (1 << 0),
+	FS_SEARCHFLAG_DIRECTORIES = (1 << 1)
+};
+
 typedef struct
 {
 	int numfilenames;
@@ -159,7 +165,7 @@ typedef struct fs_api_t
 	void (*AllowDirectPaths)(qboolean enable);
 	void (*AddGameDirectory)(const char* dir, uint flags);
 	void (*AddGameHierarchy)(const char* dir, uint flags);
-	search_t* (*Search)(const char* pattern, int caseinsensitive, int gamedironly);
+	search_t* (*Search)(const char* pattern, int caseinsensitive, int gamedironly, uint32_t flags);
 	int (*SetCurrentDirectory)(const char* path);
 	qboolean (*FindLibrary)(const char* dllname, qboolean directpath, fs_dllinfo_t* dllinfo);
 	void (*Path_f)(void);

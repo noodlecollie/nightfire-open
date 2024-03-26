@@ -24,11 +24,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Table.h"
 #include "StringArrayModel.h"
 #include "PicButton.h"
+#include "StringVectorModel.h"
 
 #define ART_BANNER "gfx/shell/head_touchoptions"
 #define ART_GAMMA "gfx/shell/gamma"
-
-uiFileDialogGlobal_t uiFileDialogGlobal;
 
 class CMenuFileDialog : public CMenuFramework
 {
@@ -39,6 +38,19 @@ public:
 	}
 
 private:
+	class CFileListModel : public CStringVectorModel
+	{
+	public:
+		void Update() override;
+	};
+
+	class CPreview : public CMenuAction
+	{
+	public:
+		void Draw() override;
+		HIMAGE image;
+	};
+
 	void _Init(void) override;
 	void _VidInit(void) override;
 	void SaveAndPopMenu() override;
@@ -46,27 +58,9 @@ private:
 	void ApplyChanges(const char* fileName);
 	void UpdateExtra();
 
-	class CFileListModel : public CStringArrayModel
-	{
-	public:
-		CFileListModel() :
-			CStringArrayModel((const char*)filePath, 95, UI_MAXGAMES)
-		{
-		}
-		void Update() override;
-
-	private:
-		char filePath[UI_MAXGAMES][95];
-	} model;
-
+	CFileListModel model;
 	CMenuTable fileList;
-
-	class CPreview : public CMenuAction
-	{
-	public:
-		void Draw() override;
-		HIMAGE image;
-	} preview;
+	CPreview preview;
 };
 
 void CMenuFileDialog::CPreview::Draw()
@@ -79,29 +73,31 @@ void CMenuFileDialog::CPreview::Draw()
 
 void CMenuFileDialog::CFileListModel::Update(void)
 {
-	char** filenames;
-	int i = 0, numFiles, j, k;
+	FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
 
-	for ( k = 0; k < uiFileDialogGlobal.npatterns; k++ )
+	Purge();
+
+	for ( size_t patternIndex = 0; patternIndex < globalData.PatternCount(); ++patternIndex )
 	{
-		filenames = EngFuncs::GetFilesList(uiFileDialogGlobal.patterns[k], &numFiles, TRUE);
-		for ( j = 0; j < numFiles; i++, j++ )
+		const char* pattern = globalData.GetPattern(patternIndex);
+
+		int numFiles = 0;
+		const char* const* fileNames = EngFuncs::GetFilesList(pattern, &numFiles, TRUE);
+
+		if ( numFiles > 0 )
 		{
-			if ( i >= UI_MAXGAMES )
-				break;
-			Q_strncpy(filePath[i], filenames[j], sizeof(filePath[0]));
+			for ( int fileIndex = 0; fileIndex < numFiles; ++fileIndex )
+			{
+				AddToTail(CUtlString(fileNames[fileIndex]));
+			}
 		}
 	}
-
-	m_iCount = i;
 }
 
 void CMenuFileDialog::ApplyChanges(const char* fileName)
 {
-	Q_strncpy(uiFileDialogGlobal.result, fileName, sizeof(uiFileDialogGlobal.result));
-	uiFileDialogGlobal.result[255] = 0;
-	uiFileDialogGlobal.valid = false;
-	uiFileDialogGlobal.callback(fileName[0] != 0);
+	FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
+	globalData.SetResultAndCallCallback(fileName);
 }
 
 void CMenuFileDialog::RejectChanges()
@@ -120,8 +116,11 @@ void CMenuFileDialog::SaveAndPopMenu()
 void CMenuFileDialog::UpdateExtra()
 {
 	const char* fileName = model.GetText(fileList.GetCurrentIndex());
-	if ( uiFileDialogGlobal.preview )
+
+	if ( FileDialogGlobals::GlobalData().ResultHasPreview() )
+	{
 		preview.image = EngFuncs::PIC_Load(fileName);
+	}
 }
 
 /*
@@ -151,7 +150,7 @@ void CMenuFileDialog::_Init(void)
 
 void CMenuFileDialog::_VidInit()
 {
-	preview.SetVisibility(uiFileDialogGlobal.preview);
+	preview.SetVisibility(FileDialogGlobals::GlobalData().ResultHasPreview());
 }
 
 ADD_MENU(menu_filedialog, CMenuFileDialog, UI_FileDialog_Menu);

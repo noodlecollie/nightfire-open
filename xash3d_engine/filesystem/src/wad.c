@@ -529,7 +529,8 @@ FS_Search_WAD
 
 ===========
 */
-static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* pattern, int caseinsensitive)
+static void
+FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* pattern, int caseinsensitive, uint32_t flags)
 {
 	string wadpattern, wadname, temp2;
 	signed char type = W_TypeFromExt(pattern);
@@ -543,7 +544,9 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 
 	// quick reject by filetype
 	if ( type == TYP_NONE )
+	{
 		return;
+	}
 
 	COM_ExtractFilePath(pattern, wadname, sizeof(wadname));
 	COM_FileBase(pattern, wadpattern, sizeof(wadpattern));
@@ -565,13 +568,22 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 
 	// quick reject by wadname
 	if ( !anywadname && Q_stricmp(wadname, temp2) )
+	{
 		return;
+	}
 
 	for ( i = 0; i < search->pkg.wad->numlumps; i++ )
 	{
+		// We assume the path starts off being a file,
+		// and when we progressively trim it later, it
+		// represents a directory.
+		qboolean pathIsFile = true;
+
 		// if type not matching, we already have no chance ...
 		if ( type != TYP_ANY && search->pkg.wad->lumps[i].type != type )
+		{
 			continue;
+		}
 
 		// build the lumpname with image suffix (if present)
 		Q_strncpy(temp, search->pkg.wad->lumps[i].name, sizeof(temp));
@@ -583,16 +595,22 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 				for ( j = 0; j < list->numstrings; j++ )
 				{
 					if ( !Q_strcmp(list->strings[j], temp) )
+					{
 						break;
+					}
 				}
 
 				if ( j == list->numstrings )
 				{
-					// build path: wadname/lumpname.ext
-					Q_snprintf(temp2, sizeof(temp2), "%s/%s", wadfolder, temp);
-					Q_snprintf(buf, sizeof(buf), ".%s", W_ExtFromType(search->pkg.wad->lumps[i].type));
-					COM_DefaultExtension(temp2, sizeof(temp2), buf);
-					stringlistappend(list, temp2);
+					if ( (pathIsFile && (flags & FS_SEARCHFLAG_FILES)) ||
+						 (!pathIsFile && (flags & FS_SEARCHFLAG_DIRECTORIES)) )
+					{
+						// build path: wadname/lumpname.ext
+						Q_snprintf(temp2, sizeof(temp2), "%s/%s", wadfolder, temp);
+						Q_snprintf(buf, sizeof(buf), ".%s", W_ExtFromType(search->pkg.wad->lumps[i].type));
+						COM_DefaultExtension(temp2, sizeof(temp2), buf);
+						stringlistappend(list, temp2);
+					}
 				}
 			}
 
@@ -602,13 +620,31 @@ static void FS_Search_WAD(searchpath_t* search, stringlist_t* list, const char* 
 			backslash = Q_strrchr(temp, '\\');
 			colon = Q_strrchr(temp, ':');
 			separator = temp;
+
 			if ( separator < slash )
+			{
 				separator = slash;
+			}
+
 			if ( separator < backslash )
+			{
 				separator = backslash;
+			}
+
 			if ( separator < colon )
+			{
 				separator = colon;
+			}
+
 			*((char*)separator) = 0;
+			pathIsFile = false;
+
+			// Since the path will now always refer to a directory,
+			// we can quit if we're not searching for those.
+			if ( !(flags & FS_SEARCHFLAG_DIRECTORIES) )
+			{
+				break;
+			}
 		}
 	}
 }

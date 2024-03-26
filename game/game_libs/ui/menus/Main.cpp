@@ -187,15 +187,24 @@ void CMenuMain::HazardCourseCb()
 
 void CMenuMain::_Init(void)
 {
-	if ( gMenu.m_gameinfo.trainmap[0] && PlatformLib_StrCaseCmp(gMenu.m_gameinfo.trainmap, gMenu.m_gameinfo.startmap) != 0 )
+	if ( gMenu.m_gameinfo.trainmap[0] &&
+		 PlatformLib_StrCaseCmp(gMenu.m_gameinfo.trainmap, gMenu.m_gameinfo.startmap) != 0 )
+	{
 		bTrainMap = true;
+	}
 	else
+	{
 		bTrainMap = false;
+	}
 
 	if ( EngFuncs::GetCvarFloat("host_allow_changegame") )
+	{
 		bCustomGame = true;
+	}
 	else
+	{
 		bCustomGame = false;
+	}
 
 	// console
 	console.SetNameAndStatus(L("GameUI_Console"), L("Show console"));
@@ -267,10 +276,14 @@ void CMenuMain::_Init(void)
 	minimizeBtn.onReleased.SetCommand(FALSE, "minimize\n");
 
 	if ( gMenu.m_gameinfo.gamemode == GAME_MULTIPLAYER_ONLY || gMenu.m_gameinfo.startmap[0] == 0 )
+	{
 		newGame.SetGrayed(true);
+	}
 
 	if ( gMenu.m_gameinfo.gamemode == GAME_SINGLEPLAYER_ONLY )
+	{
 		multiPlayer.SetGrayed(true);
+	}
 
 	if ( gMenu.m_gameinfo.gamemode == GAME_MULTIPLAYER_ONLY )
 	{
@@ -298,23 +311,30 @@ void CMenuMain::_Init(void)
 	AddItem(banner);
 
 	if ( gpGlobals->developer )
+	{
 		AddItem(console);
+	}
 
 	AddItem(disconnect);
 	AddItem(resumeGame);
 	AddItem(newGame);
 
 	if ( bTrainMap )
+	{
 		AddItem(hazardCourse);
+	}
 
 	AddItem(saveRestore);
 	AddItem(configuration);
 	AddItem(multiPlayer);
 
 	if ( bCustomGame )
+	{
 		AddItem(customGame);
+	}
 
 	AddItem(previews);
+
 	AddItem(quit);
 	AddItem(minimizeBtn);
 	AddItem(quitButton);

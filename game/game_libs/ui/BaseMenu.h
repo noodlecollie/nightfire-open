@@ -27,6 +27,7 @@ GNU General Public License for more details.
 #include "BtnsBMPTable.h"
 #include "WindowSystem.h"
 #include "Image.h"
+#include <functional>
 
 #define UI_MAX_MENUDEPTH 64
 #define UI_MAX_MENUITEMS 64
@@ -426,6 +427,8 @@ void UI_InputDevices_Menu(void);
 
 void UI_OpenUpdatePage(bool engine, bool preferstore);
 
+void UI_ModelViewer_Menu(void);
+
 //
 //-----------------------------------------------------
 //
@@ -436,17 +439,38 @@ public:
 	GAMEINFO m_gameinfo;
 };
 
-typedef struct
+class FileDialogGlobals
 {
-	char patterns[32][256];
-	int npatterns;
-	char result[256];
-	bool valid;
-	void (*callback)(bool success);
-	bool preview;
-} uiFileDialogGlobal_t;
+public:
+	FileDialogGlobals();
+	~FileDialogGlobals();
 
-extern uiFileDialogGlobal_t uiFileDialogGlobal;
+	static FileDialogGlobals& GlobalData();
+
+	size_t PatternCount() const;
+	void ClearPatterns();
+	void AddPattern(const char* pattern);
+	const char* GetPattern(size_t index) const;
+
+	void SetResultCallback(std::function<void(const char*)> resultCallback);
+	void ClearResultCallback();
+
+	// TODO: Put this somewhere else? It's very specific to browsing for textures.
+	bool ResultHasPreview() const;
+	void SetResultHasPreview(bool preview);
+
+	bool HasResult() const;
+	const char* GetResult() const;
+	void SetResultAndCallCallback(const char* result);
+
+private:
+	struct Impl;
+
+	Impl& GetImpl();
+	const Impl& GetImpl() const;
+
+	Impl* m_Impl = nullptr;
+};
 
 extern CMenu gMenu;
 

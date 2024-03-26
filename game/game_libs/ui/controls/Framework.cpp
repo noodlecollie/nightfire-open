@@ -59,7 +59,10 @@ void CMenuFramework::Draw()
 	if ( item != lastItem )
 	{
 		if ( item )
+		{
 			item->m_iLastFocusTime = uiStatic.realTime;
+		}
+
 		statusFadeTime = uiStatic.realTime;
 
 		lastItem = item;
@@ -81,7 +84,9 @@ void CMenuFramework::Draw()
 		EngFuncs::DrawConsoleString(x, static_cast<int>(uiStatic.yOffset + 720 * uiStatic.scaleY), statusText);
 	}
 	else
+	{
 		statusFadeTime = uiStatic.realTime;
+	}
 }
 
 void CMenuFramework::Hide()

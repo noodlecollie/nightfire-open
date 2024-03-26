@@ -12,35 +12,19 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
-#ifndef CMENUPLAYERMODELVIEW_H
-#define CMENUPLAYERMODELVIEW_H
 
-// HLSDK includes
-#include "EnginePublicAPI/const.h"
-#include "EnginePublicAPI/keydefs.h"
-#include "EnginePublicAPI/ref_params.h"
-#include "EnginePublicAPI/cl_entity.h"
-#include "EnginePublicAPI/com_model.h"
-#include "EnginePublicAPI/entity_types.h"
-// HLSDK includes end
-#include "BaseItem.h"
+#pragma once
 
-class CMenuPlayerModelView : public CMenuBaseItem
+#include "StudioSceneView.h"
+
+class CMenuPlayerModelView : public CMenuStudioSceneView
 {
 public:
-	CMenuPlayerModelView();
 	void VidInit() override;
 	void Draw() override;
 	bool KeyDown(int key) override;
-	bool KeyUp(int key) override;
-	void CalcFov();
 
 	HIMAGE hPlayerImage;
-
-	ref_viewpass_t refdef;
-	cl_entity_t* ent;
-
-	bool bDrawAsPlayer;
 
 	enum
 	{
@@ -48,16 +32,4 @@ public:
 		PMV_SHOWMODEL,
 		PMV_SHOWIMAGE
 	} eOverrideMode;
-
-	CColor backgroundColor;
-	CColor outlineFocusColor;
-
-private:
-	cl_entity_t ent2;
-
-	bool mouseYawControl;
-
-	int prevCursorX, prevCursorY;
 };
-
-#endif  // CMENUPLAYERMODELVIEW_H

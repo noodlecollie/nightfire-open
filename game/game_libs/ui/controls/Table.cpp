@@ -61,38 +61,55 @@ void CMenuTable::VidInit()
 	iStrokeFocusedColor.SetDefault(uiInputTextColor);
 
 	if ( iStrokeWidth == 0 )
+	{
 		iStrokeWidth = uiStatic.outlineWidth;
+	}
 
 	iNumRows = (m_scSize.h - iStrokeWidth * 2) / m_scChSize - 1;
 
 	if ( !iCurItem )
 	{
 		if ( iCurItem < iTopItem )
+		{
 			iTopItem = iCurItem;
+		}
+
 		if ( iCurItem > iTopItem + iNumRows - 1 )
+		{
 			iTopItem = iCurItem - iNumRows + 1;
-		if ( iTopItem > m_pModel->GetRows() - iNumRows )
-			iTopItem = m_pModel->GetRows() - iNumRows;
+		}
+
+		if ( iTopItem > GetModelRows() - iNumRows )
+		{
+			iTopItem = GetModelRows() - iNumRows;
+		}
+
 		if ( iTopItem < 0 )
+		{
 			iTopItem = 0;
+		}
 	}
 
 	flFixedSumm = 0.0f;
 	flDynamicSumm = 0.0f;
 
-	for ( int i = 0; i < m_pModel->GetColumns(); i++ )
+	for ( int i = 0; i < GetModelColumns(); i++ )
 	{
 		// this isn't valid behaviour, but still enough for tables without
 		// set columns width
 		if ( !columns[i].flWidth )
 		{
-			SetColumnWidth(i, 1.0f / static_cast<float>(m_pModel->GetColumns()), false);
+			SetColumnWidth(i, 1.0f / static_cast<float>(GetModelColumns()), false);
 		}
 
 		if ( columns[i].fStaticWidth )
+		{
 			flFixedSumm += columns[i].flWidth;
+		}
 		else
+		{
 			flDynamicSumm += columns[i].flWidth;
+		}
 	}
 
 	flFixedSumm *= uiStatic.scaleX;
@@ -165,7 +182,7 @@ bool CMenuTable::MouseMove(int, int)
 			}
 		}
 
-		iTopItem = bound(0, iTopItem, m_pModel->GetRows() - iNumRows);
+		iTopItem = bound(0, iTopItem, GetModelRows() - iNumRows);
 	}
 
 	if ( iScrollBarSliding )
@@ -173,11 +190,11 @@ bool CMenuTable::MouseMove(int, int)
 		int dist = uiStatic.cursorY - sbarPos.y - (sbarSize.h / 2);
 
 		if ( (((dist / 2) > (m_scChSize / 2)) || ((dist / 2) < (m_scChSize / 2))) &&
-			 iTopItem <= (m_pModel->GetRows() - iNumRows) && iTopItem >= 0 )
+			 iTopItem <= (GetModelRows() - iNumRows) && iTopItem >= 0 )
 		{
 			//_Event( QM_CHANGED );
 
-			if ( (dist / 2) > (m_scChSize / 2) && iTopItem < (m_pModel->GetRows() - iNumRows - 1) )
+			if ( (dist / 2) > (m_scChSize / 2) && iTopItem < (GetModelRows() - iNumRows - 1) )
 			{
 				iTopItem++;
 			}
@@ -191,8 +208,8 @@ bool CMenuTable::MouseMove(int, int)
 		// iTopItem = iCurItem - iNumRows + 1;
 		if ( iTopItem < 0 )
 			iTopItem = 0;
-		if ( iTopItem > (m_pModel->GetRows() - iNumRows - 1) )
-			iTopItem = m_pModel->GetRows() - iNumRows - 1;
+		if ( iTopItem > (GetModelRows() - iNumRows - 1) )
+			iTopItem = GetModelRows() - iNumRows - 1;
 	}
 
 	return true;
@@ -207,12 +224,17 @@ bool CMenuTable::MoveView(int delta)
 		iTopItem = 0;
 		return false;
 	}
-	else if ( iTopItem > m_pModel->GetRows() - iNumRows )
+	else if ( iTopItem > GetModelRows() - iNumRows )
 	{
-		if ( m_pModel->GetRows() - iNumRows < 0 )
+		if ( GetModelRows() - iNumRows < 0 )
+		{
 			iTopItem = 0;
+		}
 		else
-			iTopItem = m_pModel->GetRows() - iNumRows;
+		{
+			iTopItem = GetModelRows() - iNumRows;
+		}
+
 		return false;
 	}
 
@@ -228,9 +250,9 @@ bool CMenuTable::MoveCursor(int delta)
 		iCurItem = 0;
 		return false;
 	}
-	else if ( iCurItem > m_pModel->GetRows() - 1 )
+	else if ( iCurItem > GetModelRows() - 1 )
 	{
-		iCurItem = m_pModel->GetRows() - 1;
+		iCurItem = GetModelRows() - 1;
 		return false;
 	}
 	return true;
@@ -238,18 +260,29 @@ bool CMenuTable::MoveCursor(int delta)
 
 void CMenuTable::SetCurrentIndex(int idx)
 {
-	iCurItem = bound(0, idx, m_pModel->GetRows());
+	iCurItem = bound(0, idx, GetModelRows());
 
 	if ( iCurItem < iTopItem )
+	{
 		iTopItem = iCurItem;
+	}
+
 	if ( iNumRows )  // check if already vidinit
 	{
 		if ( iCurItem > iTopItem + iNumRows - 1 )
+		{
 			iTopItem = iCurItem - iNumRows + 1;
-		if ( iTopItem > m_pModel->GetRows() - iNumRows )
-			iTopItem = m_pModel->GetRows() - iNumRows;
+		}
+
+		if ( iTopItem > GetModelRows() - iNumRows )
+		{
+			iTopItem = GetModelRows() - iNumRows;
+		}
+
 		if ( iTopItem < 0 )
+		{
 			iTopItem = 0;
+		}
 	}
 	else
 	{
@@ -260,7 +293,7 @@ void CMenuTable::SetCurrentIndex(int idx)
 float CMenuTable::Step()
 {
 	float step =
-		(m_pModel->GetRows() <= 1) ? 1 : (downArrow.y - upArrow.y - arrow.h) / (float)(m_pModel->GetRows() - 1);
+		(GetModelRows() <= 1) ? 1 : (downArrow.y - upArrow.y - arrow.h) / (float)(GetModelRows() - 1);
 
 	return step;
 }
@@ -283,34 +316,46 @@ bool CMenuTable::KeyUp(int key)
 			if ( UI_CursorInRect(upArrow, arrow) )
 			{
 				if ( MoveView(-5) )
+				{
 					sound = uiStatic.sounds[SND_MOVE];
+				}
 				else
+				{
 					sound = uiStatic.sounds[SND_BUZZ];
+				}
 			}
 			else if ( UI_CursorInRect(downArrow, arrow) )
 			{
 				if ( MoveView(5) )
+				{
 					sound = uiStatic.sounds[SND_MOVE];
+				}
 				else
+				{
 					sound = uiStatic.sounds[SND_BUZZ];
+				}
 			}
 			else if ( UI_CursorInRect(boxPos, boxSize) )
 			{
 				// test for item select
 				int starty = boxPos.y + iStrokeWidth;
 				int endy = starty + iNumRows * m_scChSize;
+
 				if ( uiStatic.cursorY > starty && uiStatic.cursorY < endy )
 				{
 					int offsety = uiStatic.cursorY - starty;
 					int newCur = iTopItem + offsety / m_scChSize;
 
-					if ( newCur < m_pModel->GetRows() )
+					if ( newCur < GetModelRows() )
 					{
 						if ( newCur == iCurItem )
 						{
 							if ( uiStatic.realTime - m_iLastItemMouseChange < 200 )  // 200 msec to double click
 							{
-								m_pModel->OnActivateEntry(iCurItem);
+								if ( m_pModel )
+								{
+									m_pModel->OnActivateEntry(iCurItem);
+								}
 							}
 						}
 						else
@@ -329,7 +374,7 @@ bool CMenuTable::KeyUp(int key)
 				Size sz;
 				sz.h = headerSize.h;
 
-				for ( i = 0; i < m_pModel->GetColumns(); i++, p.x += sz.w )
+				for ( i = 0; i < GetModelColumns(); i++, p.x += sz.w )
 				{
 					if ( columns[i].fStaticWidth )
 					{
@@ -358,28 +403,45 @@ bool CMenuTable::KeyUp(int key)
 	}
 	else if ( UI::Key::IsEnter(key) )
 	{
-		if ( m_pModel->GetRows() )
+		if ( GetModelRows() > 0 )
+		{
 			m_pModel->OnActivateEntry(iCurItem);  // activate only on release
+		}
 		else
+		{
 			sound = uiStatic.sounds[SND_BUZZ];  // list is empty, can't activate anything
+		}
 	}
 
 	if ( !noscroll )
 	{
 		if ( iCurItem < iTopItem )
+		{
 			iTopItem = iCurItem;
+		}
+
 		if ( iCurItem > iTopItem + iNumRows - 1 )
+		{
 			iTopItem = iCurItem - iNumRows + 1;
-		if ( iTopItem > m_pModel->GetRows() - iNumRows )
-			iTopItem = m_pModel->GetRows() - iNumRows;
+		}
+
+		if ( iTopItem > GetModelRows() - iNumRows )
+		{
+			iTopItem = GetModelRows() - iNumRows;
+		}
+
 		if ( iTopItem < 0 )
+		{
 			iTopItem = 0;
+		}
 	}
 
 	if ( sound )
 	{
 		if ( sound != uiStatic.sounds[SND_BUZZ] )
+		{
 			_Event(QM_CHANGED);
+		}
 
 		PlayLocalSound(sound);
 	}
@@ -393,17 +455,29 @@ bool CMenuTable::KeyDown(int key)
 	bool noscroll = false;
 
 	if ( UI::Key::IsUpArrow(key) )
+	{
 		sound = MoveCursor(-1) ? uiStatic.sounds[SND_MOVE] : 0;
+	}
 	else if ( UI::Key::IsDownArrow(key) )
+	{
 		sound = MoveCursor(1) ? uiStatic.sounds[SND_MOVE] : 0;
+	}
 	else if ( key == K_MWHEELUP )
+	{
 		sound = MoveCursor(-1) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( key == K_MWHEELDOWN )
+	{
 		sound = MoveCursor(1) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( UI::Key::IsPageUp(key) )
+	{
 		sound = MoveCursor(-2) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( UI::Key::IsPageDown(key) )
+	{
 		sound = MoveCursor(2) ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
+	}
 	else if ( UI::Key::IsHome(key) )
 	{
 		sound = iCurItem > 0 ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
@@ -411,16 +485,20 @@ bool CMenuTable::KeyDown(int key)
 	}
 	else if ( UI::Key::IsEnd(key) )
 	{
-		int lastItem = Q_min(m_pModel->GetRows() - 1, 0);
+		int lastItem = Q_min(GetModelRows() - 1, 0);
 		sound = iCurItem < lastItem ? uiStatic.sounds[SND_MOVE] : uiStatic.sounds[SND_BUZZ];
 		iCurItem = lastItem;
 	}
 	else if ( UI::Key::IsDelete(key) )
 	{
-		if ( m_pModel->GetRows() )
+		if ( GetModelRows() )
+		{
 			m_pModel->OnDeleteEntry(iCurItem);  // allow removing entries on repeating
+		}
 		else
+		{
 			sound = uiStatic.sounds[SND_BUZZ];
+		}
 	}
 	else if ( UI::Key::IsLeftMouse(key) )
 	{
@@ -430,26 +508,41 @@ bool CMenuTable::KeyDown(int key)
 		{
 			// test for scrollbar
 			if ( UI_CursorInRect(sbarPos, sbarSize) )
+			{
 				iScrollBarSliding = true;
+			}
 		}
 	}
 
 	if ( !noscroll )
 	{
 		if ( iCurItem < iTopItem )
+		{
 			iTopItem = iCurItem;
+		}
+
 		if ( iCurItem > iTopItem + iNumRows - 1 )
+		{
 			iTopItem = iCurItem - iNumRows + 1;
-		if ( iTopItem > m_pModel->GetRows() - iNumRows )
-			iTopItem = m_pModel->GetRows() - iNumRows;
+		}
+
+		if ( iTopItem > GetModelRows() - iNumRows )
+		{
+			iTopItem = GetModelRows() - iNumRows;
+		}
+
 		if ( iTopItem < 0 )
+		{
 			iTopItem = 0;
+		}
 	}
 
 	if ( sound )
 	{
 		if ( sound != uiStatic.sounds[SND_BUZZ] )
+		{
 			_Event(QM_CHANGED);
+		}
 
 		PlayLocalSound(sound);
 	}
@@ -511,7 +604,9 @@ void CMenuTable::DrawLine(Point p, const char** psz, size_t lineSize, uint textC
 				picPos.y += g_FontMgr->GetFontAscent(font);
 
 				if ( IsAscend() )
+				{
 					picPos.y -= picSize.h;
+				}
 
 				EngFuncs::PIC_Set(hPic, 255, 255, 255);
 				EngFuncs::PIC_DrawAdditive(picPos, picSize);
@@ -526,7 +621,7 @@ void CMenuTable::DrawLine(Point p, const char** psz, size_t lineSize, uint textC
 			psz[i],
 			textColor,
 			m_scChSize,
-			m_pModel->GetAlignmentForColumn(static_cast<int>(i)),
+			m_pModel ? m_pModel->GetAlignmentForColumn(static_cast<int>(i)) : static_cast<int>(QM_LEFT),
 			textflags);
 	}
 }
@@ -538,12 +633,15 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 
 	sz.h = m_scChSize;
 
-	unsigned int newFillColor;
+	unsigned int newFillColor = 0;
 	bool forceFillColor = false;
-	if ( m_pModel->GetLineColor(line, newFillColor, forceFillColor) )
+
+	if ( m_pModel && m_pModel->GetLineColor(line, newFillColor, forceFillColor) )
 	{
 		if ( !fillColor || forceFillColor )
+		{
 			fillColor = newFillColor;
+		}
 	}
 
 	if ( fillColor )
@@ -552,7 +650,7 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 		UI_FillRect(p, sz, fillColor);
 	}
 
-	for ( i = 0; i < m_pModel->GetColumns(); i++, p.x += sz.w )
+	for ( i = 0; i < GetModelColumns(); i++, p.x += sz.w )
 	{
 		uint textflags = 0;
 
@@ -567,13 +665,15 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 			sz.w = static_cast<int>(((float)boxSize.w - flFixedSumm) * columns[i].flWidth / flDynamicSumm);
 		}
 
-		const char* str = m_pModel->GetCellText(line, i);
-		const ECellType type = m_pModel->GetCellType(line, i);
+		const char* str = m_pModel ? m_pModel->GetCellText(line, i) : "";
+		const ECellType type = m_pModel ? m_pModel->GetCellType(line, i) : CELL_TEXT;
 
 		if ( !str /* && type != CELL_ITEM  */ )  // headers may be null, cells too
+		{
 			continue;
+		}
 
-		bool useCustomColors = m_pModel->GetCellColors(line, i, newFillColor, forceFillColor);
+		bool useCustomColors = m_pModel && m_pModel->GetCellColors(line, i, newFillColor, forceFillColor);
 
 		if ( useCustomColors )
 		{
@@ -594,8 +694,8 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 					str,
 					textColor,
 					m_scChSize,
-					m_pModel->GetAlignmentForColumn(i),
-					textflags | (m_pModel->IsCellTextWrapped(line, i) ? 0 : ETF_NOSIZELIMIT));
+					m_pModel ? m_pModel->GetAlignmentForColumn(i) : static_cast<int>(QM_LEFT),
+					textflags | ((m_pModel && m_pModel->IsCellTextWrapped(line, i)) ? 0 : ETF_NOSIZELIMIT));
 				break;
 			case CELL_IMAGE_ADDITIVE:
 			case CELL_IMAGE_DEFAULT:
@@ -613,16 +713,27 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 
 				picSize = picSize * scale;
 
-				switch ( m_pModel->GetAlignmentForColumn(i) )
+				if ( m_pModel )
 				{
-					case QM_RIGHT:
-						picPos.x += (sz.w - picSize.w);
-						break;
-					case QM_CENTER:
-						picPos.x += (sz.w - picSize.w) / 2;
-						break;
-					default:
-						break;
+					switch ( m_pModel->GetAlignmentForColumn(i) )
+					{
+						case QM_RIGHT:
+						{
+							picPos.x += (sz.w - picSize.w);
+							break;
+						}
+
+						case QM_CENTER:
+						{
+							picPos.x += (sz.w - picSize.w) / 2;
+							break;
+						}
+
+						default:
+						{
+							break;
+						}
+					}
 				}
 
 				if ( useCustomColors )
@@ -639,19 +750,33 @@ void CMenuTable::DrawLine(Point p, int line, uint textColor, bool forceCol, uint
 				switch ( type )
 				{
 					case CELL_IMAGE_ADDITIVE:
+					{
 						EngFuncs::PIC_DrawAdditive(picPos, picSize);
 						break;
+					}
+
 					case CELL_IMAGE_DEFAULT:
+					{
 						EngFuncs::PIC_Draw(picPos, picSize);
 						break;
+					}
+
 					case CELL_IMAGE_HOLES:
+					{
 						EngFuncs::PIC_DrawHoles(picPos, picSize);
 						break;
+					}
+
 					case CELL_IMAGE_TRANS:
+					{
 						EngFuncs::PIC_DrawTrans(picPos, picSize);
 						break;
+					}
+
 					default:
+					{
 						break;  // shouldn't happen
+					}
 				}
 
 				break;
@@ -668,20 +793,29 @@ void CMenuTable::Draw()
 
 	// HACKHACK: recalc iNumRows, to be not greater than iNumItems
 	iNumRows = (m_scSize.h - iStrokeWidth * 2) / m_scChSize - 1;
-	if ( iNumRows > m_pModel->GetRows() )
-		iNumRows = m_pModel->GetRows();
+
+	if ( iNumRows > GetModelRows() )
+	{
+		iNumRows = GetModelRows();
+	}
 
 	if ( UI_CursorInRect(boxPos, boxSize) )
 	{
 		int newCur = iTopItem + (uiStatic.cursorY - boxPos.y) / m_scChSize;
 
-		if ( newCur < m_pModel->GetRows() )
+		if ( newCur < GetModelRows() )
+		{
 			iHighlight = newCur;
+		}
 		else
+		{
 			iHighlight = -1;
+		}
 	}
 	else
+	{
 		iHighlight = -1;
+	}
 
 	if ( szBackground )
 	{
@@ -700,7 +834,7 @@ void CMenuTable::Draw()
 		}
 	}
 
-	int cols = Q_min(m_pModel->GetColumns(), MAX_TABLE_COLUMNS);
+	int cols = Q_min(GetModelColumns(), MAX_TABLE_COLUMNS);
 
 	DrawLine(m_scPos, szHeaderTexts, cols, iHeaderColor, true);
 
@@ -709,9 +843,13 @@ void CMenuTable::Draw()
 		int color;
 
 		if ( eFocusAnimation == QM_HIGHLIGHTIFFOCUS && iFlags & QMF_HASKEYBOARDFOCUS )
+		{
 			color = iStrokeFocusedColor;
+		}
 		else
+		{
 			color = colorStroke;
+		}
 
 		if ( bFramedHintText )
 		{
@@ -719,7 +857,9 @@ void CMenuTable::Draw()
 		}
 
 		if ( bDrawStroke )
+		{
 			UI_DrawRectangleExt(boxPos, boxSize, color, iStrokeWidth);
+		}
 	}
 
 	sbarPos.x = static_cast<int>(upArrow.x + arrow.w * 0.125f);
@@ -727,14 +867,14 @@ void CMenuTable::Draw()
 
 	float step = Step();
 
-	if ( ((downArrow.y - upArrow.y - arrow.h) - (((m_pModel->GetRows() - 1) * m_scChSize) / 2)) < 2 )
+	if ( ((downArrow.y - upArrow.y - arrow.h) - (((GetModelRows() - 1) * m_scChSize) / 2)) < 2 )
 	{
-		sbarSize.h = static_cast<int>((downArrow.y - upArrow.y - arrow.h) - (step * (m_pModel->GetRows() - iNumRows)));
+		sbarSize.h = static_cast<int>((downArrow.y - upArrow.y - arrow.h) - (step * (GetModelRows() - iNumRows)));
 		sbarPos.y = static_cast<int>(upArrow.y + arrow.h + (step * iTopItem));
 	}
 	else
 	{
-		sbarSize.h = downArrow.y - upArrow.y - arrow.h - (((m_pModel->GetRows() - iNumRows) * m_scChSize) / 2);
+		sbarSize.h = downArrow.y - upArrow.y - arrow.h - (((GetModelRows() - iNumRows) * m_scChSize) / 2);
 		sbarPos.y = upArrow.y + arrow.h + (((iTopItem)*m_scChSize) / 2);
 	}
 
@@ -804,7 +944,7 @@ void CMenuTable::Draw()
 	UI::Scissor::PushScissor(boxPos, boxSize);
 	y = boxPos.y;
 
-	for ( i = iTopItem; i < m_pModel->GetRows() && i < iNumRows + iTopItem; i++, y += m_scChSize )
+	for ( i = iTopItem; i < GetModelRows() && i < iNumRows + iTopItem; i++, y += m_scChSize )
 	{
 		int color = colorBase;  // predict state
 		bool forceCol = false;
@@ -842,4 +982,14 @@ void CMenuTable::Draw()
 	}
 
 	UI::Scissor::PopScissor();
+}
+
+int CMenuTable::GetModelRows() const
+{
+	return m_pModel ? m_pModel->GetRows() : 0;
+}
+
+int CMenuTable::GetModelColumns() const
+{
+	return m_pModel ? m_pModel->GetColumns() : 0;
 }

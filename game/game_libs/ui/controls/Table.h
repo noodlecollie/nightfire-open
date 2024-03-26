@@ -152,6 +152,9 @@ private:
 	void DrawLine(Point p, const char** psz, size_t size, uint textColor, bool forceCol, uint fillColor = 0);
 	void DrawLine(Point p, int line, uint textColor, bool forceCol, uint fillColor = 0);
 
+	int GetModelRows() const;
+	int GetModelColumns() const;
+
 	const char* szHeaderTexts[MAX_TABLE_COLUMNS];
 	struct
 	{

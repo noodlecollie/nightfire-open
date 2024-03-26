@@ -59,9 +59,6 @@ public:
 	void UpdateFields();
 
 	static void ExitMenuCb(CMenuBaseItem* pSelf, void* pExtra);
-	// Use an event system here!
-	// Don't make this static method cry.
-	static void FileDialogCallback(bool success);
 
 	HIMAGE textureid;
 	char selectedName[256];
@@ -245,30 +242,43 @@ void CMenuTouchButtons::UpdateFields()
 
 void CMenuTouchButtons::OpenFileDialog()
 {
-	// TODO: Remove uiFileDialogGlobal
-	// TODO: Make uiFileDialog menu globally known
-	// TODO: Make FileDialogCallback as event
-	uiFileDialogGlobal.npatterns = 7;
-	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[0], sizeof(uiFileDialogGlobal.patterns[0]), "touch/*");
-	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[1], sizeof(uiFileDialogGlobal.patterns[1]), "touch_default/*");
-	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[2], sizeof(uiFileDialogGlobal.patterns[2]), "gfx/touch/*");
-	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[3], sizeof(uiFileDialogGlobal.patterns[3]), "gfx/vgui/*");
-	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[4], sizeof(uiFileDialogGlobal.patterns[4]), "gfx/shell/*");
-	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[5], sizeof(uiFileDialogGlobal.patterns[5]), "*.tga");
-	PlatformLib_StrCpy(uiFileDialogGlobal.patterns[6], sizeof(uiFileDialogGlobal.patterns[6]), "*.png");
-	uiFileDialogGlobal.preview = true;
-	uiFileDialogGlobal.valid = true;
-	uiFileDialogGlobal.callback = CMenuTouchButtons::FileDialogCallback;
+	FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
+
+	globalData.ClearPatterns();
+	globalData.AddPattern("touch/*");
+	globalData.AddPattern("touch_default/*");
+	globalData.AddPattern("gfx/touch/*");
+	globalData.AddPattern("gfx/vgui/*");
+	globalData.AddPattern("gfx/shell/*");
+	globalData.AddPattern("*.tga");
+	globalData.AddPattern("*.png");
+
+	globalData.SetResultCallback([this](const char* result)
+	{
+		if ( result )
+		{
+			texture.SetBuffer(result);
+			UpdateTexture();
+		}
+	});
+
+	globalData.SetResultHasPreview(true);
+
 	UI_FileDialog_Menu();
 }
 
 void CMenuTouchButtons::UpdateTexture()
 {
 	const char* buf = texture.GetBuffer();
+
 	if ( buf[0] && buf[0] != '#' )
+	{
 		preview.textureId = EngFuncs::PIC_Load(buf);
+	}
 	else
+	{
 		preview.textureId = 0;
+	}
 }
 
 void CMenuTouchButtons::UpdateSP()
@@ -559,15 +569,6 @@ void CMenuTouchButtons::_VidInit()
 }
 
 ADD_MENU3(menu_touchbuttons, CMenuTouchButtons, UI_TouchButtons_Menu);
-
-void CMenuTouchButtons::FileDialogCallback(bool success)
-{
-	if ( success )
-	{
-		menu_touchbuttons->texture.SetBuffer(uiFileDialogGlobal.result);
-		menu_touchbuttons->UpdateTexture();
-	}
-}
 
 /*
 =================

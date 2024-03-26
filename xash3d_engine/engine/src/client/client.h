@@ -506,7 +506,6 @@ typedef struct
 	UI_EXTENDED_FUNCTIONS dllFuncs2;  // fwgs extension
 	poolhandle_t mempool;  // client edicts pool
 
-	cl_entity_t playermodel;  // uiPlayerSetup drawing model
 	player_info_t playerinfo;  // local playerinfo
 
 	gameui_draw_t ds;  // draw2d stuff (menu images)

@@ -21,6 +21,7 @@ GNU General Public License for more details.
 
 #include "enginecallback_menu.h"
 #include "EngineInternalAPI/gameinfo.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "FontManager.h"
 #include "BMPUtils.h"
 #include "miniutl.h"
@@ -294,6 +295,11 @@ namespace UI
 		inline bool IsLeftMouse(int key)
 		{
 			return key == K_MOUSE1;
+		}
+
+		inline bool IsRightMouse(int key)
+		{
+			return key == K_MOUSE2;
 		}
 
 		inline bool IsMouse(int key)

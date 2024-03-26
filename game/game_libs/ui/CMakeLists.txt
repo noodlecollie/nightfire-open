@@ -74,6 +74,8 @@ set(SOURCES_UI
 	controls/Bitmap.cpp
 	controls/CheckBox.h
 	controls/CheckBox.cpp
+	controls/DeveloperStudioSceneView.h
+	controls/DeveloperStudioSceneView.cpp
 	controls/Editable.h
 	controls/Editable.cpp
 	controls/Field.h
@@ -96,6 +98,8 @@ set(SOURCES_UI
 	controls/Slider.cpp
 	controls/SpinControl.h
 	controls/SpinControl.cpp
+	controls/StudioSceneView.h
+	controls/StudioSceneView.cpp
 	controls/Switch.h
 	controls/Switch.cpp
 	controls/Table.h
@@ -142,8 +146,10 @@ set(SOURCES_UI
 	menus/InputDevices.cpp
 	menus/LoadGame.cpp
 	menus/Main.cpp
+	menus/ModelViewer.cpp
 	menus/Multiplayer.cpp
 	menus/NewGame.cpp
+	menus/NuklearUITest.cpp
 	menus/PlayerIntroduceDialog.h
 	menus/PlayerIntroduceDialog.cpp
 	menus/PlayerSetup.cpp
@@ -161,6 +167,12 @@ set(SOURCES_UI
 	model/BaseModel.h
 	model/StringArrayModel.h
 	model/StringVectorModel.h
+	model/StudioSceneModel.h
+	model/StudioSceneModel.cpp
+	nuklear_impl/nuklear_renderer.h
+	nuklear_impl/nuklear_renderer.cpp
+	nuklear_impl/nuklear_ui.h
+	nuklear_impl/nuklear_ui.c
 	projectInterface_mainui/fileLoaders_mainui.h
 	projectInterface_mainui/fileLoaders_mainui.cpp
 	projectInterface_mainui/logInterface_mainui.h
@@ -183,6 +195,7 @@ set(SOURCES_UI
 	EventSystem.h
 	EventSystem.cpp
 	extdll_menu.h
+	FileDialogStaticData.cpp
 	Image.h
 	menufont.h
 	MenuStrings.h
@@ -228,6 +241,7 @@ target_link_libraries(${TARGETNAME_LIB_UI} PRIVATE
 	${TARGETNAME_LIB_BUILDPLATFORM}
 	${TARGETNAME_LIB_ENGINEPUBLICAPI}
 	${TARGETNAME_LIB_ENGINEINTERNALAPI}
+	${TARGETNAME_LIB_NUKLEAR}
 
 	# Windows
 	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:USER32>

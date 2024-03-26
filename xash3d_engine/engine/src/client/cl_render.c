@@ -65,19 +65,27 @@ static char** pfnGetFilesList(const char* pattern, int* numFiles, int gamedironl
 	static search_t* t = NULL;
 
 	if ( t )
+	{
 		Mem_Free(t);  // release prev search
+	}
 
-	t = FS_Search(pattern, true, gamedironly);
+	t = FS_SearchAll(pattern, true, gamedironly);
 
 	if ( !t )
 	{
 		if ( numFiles )
+		{
 			*numFiles = 0;
+		}
+
 		return NULL;
 	}
 
 	if ( numFiles )
+	{
 		*numFiles = t->numfilenames;
+	}
+
 	return t->filenames;
 }
 
@@ -86,7 +94,9 @@ static uint pfnFileBufferCRC32(const void* buffer, const int length)
 	uint modelCRC = 0;
 
 	if ( !buffer || length <= 0 )
+	{
 		return modelCRC;
+	}
 
 	CRC32_Init(&modelCRC);
 	CRC32_ProcessBuffer(&modelCRC, buffer, length);

@@ -40,16 +40,17 @@ TEMPENTS MANAGEMENT
 #define SHARD_VOLUME 12.0f  // on shard ever n^3 units
 #define MAX_MUZZLEFLASH 3
 
-TEMPENTITY* cl_active_tents;
-TEMPENTITY* cl_free_tents;
-TEMPENTITY* cl_tempents = NULL;  // entities pool
+static TEMPENTITY* cl_active_tents = NULL;
+static TEMPENTITY* cl_free_tents = NULL;
+static TEMPENTITY* cl_tempents = NULL;  // entities pool
 
-model_t* cl_sprite_muzzleflash[MAX_MUZZLEFLASH];  // muzzle flashes
 model_t* cl_sprite_dot = NULL;
-model_t* cl_sprite_ricochet = NULL;
 model_t* cl_sprite_shell = NULL;
-model_t* cl_sprite_glow = NULL;
-model_t* cl_sprite_hitpuff = NULL;
+
+static model_t* cl_sprite_muzzleflash[MAX_MUZZLEFLASH];  // muzzle flashes
+static model_t* cl_sprite_ricochet = NULL;
+static model_t* cl_sprite_glow = NULL;
+static model_t* cl_sprite_hitpuff = NULL;
 
 const char* cl_default_sprites[] = {
 	// built-in sprites
@@ -92,7 +93,7 @@ INTERNAL RESOURCE
 */
 void CL_LoadClientSprites(void)
 {
-	// TODO: This is disgusting, refactor.
+	// TODO: Refactor.
 	cl_sprite_muzzleflash[0] = CL_LoadClientSprite(cl_default_sprites[0]);
 	cl_sprite_muzzleflash[1] = CL_LoadClientSprite(cl_default_sprites[1]);
 	cl_sprite_muzzleflash[2] = CL_LoadClientSprite(cl_default_sprites[2]);
