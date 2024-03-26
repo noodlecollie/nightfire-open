@@ -67,6 +67,7 @@ private:
 	{
 		const int areaTop = GetControlAreaTop();
 		const int col2Left = LEFT_MARGIN + GetFirstColumnWidth() + PADDING;
+		const int controlCol2Left = col2Left + (GetSecondColumnWidth() / 2) + BOTTOM_CONTROL_AREA_PADDING;
 
 		m_CheckEnableOriginMarker.SetCoord(col2Left, areaTop);
 		m_CheckEnableOriginMarker.bChecked = m_SceneView.GetDrawOriginMarker();
@@ -76,6 +77,15 @@ private:
 			L("Enable or disable drawing marker at model origin"));
 
 		AddItem(m_CheckEnableOriginMarker);
+
+		m_CheckEnableModelBBox.SetCoord(controlCol2Left, areaTop);
+		m_CheckEnableModelBBox.bChecked = m_SceneView.GetDrawBoundingBoxes();
+		m_CheckEnableModelBBox.onChanged = VoidCb(&CMenuModelViewer::HandleModelBBoxCheckBoxChanged);
+		m_CheckEnableModelBBox.SetNameAndStatus(
+			L("Model Bounds"),
+			L("Enable or disable drawing bounds of overall model"));
+
+		AddItem(m_CheckEnableModelBBox);
 	}
 
 	void SelectModel()
@@ -179,6 +189,11 @@ private:
 		m_SceneView.SetDrawOriginMarker(m_CheckEnableOriginMarker.bChecked);
 	}
 
+	void HandleModelBBoxCheckBoxChanged()
+	{
+		m_SceneView.SetDrawBoundingBoxes(m_CheckEnableModelBBox.bChecked);
+	}
+
 	static int GetTotalColumnWidth()
 	{
 		return static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - PADDING;
@@ -212,6 +227,7 @@ private:
 	CMenuDeveloperStudioSceneView m_SceneView;
 	CMenuTable m_SequenceTable;
 	CMenuCheckBox m_CheckEnableOriginMarker;
+	CMenuCheckBox m_CheckEnableModelBBox;
 
 	cl_entity_t* m_MainStudioModel = nullptr;
 };
