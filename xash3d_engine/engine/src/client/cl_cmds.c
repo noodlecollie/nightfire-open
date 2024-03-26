@@ -154,7 +154,7 @@ void CL_PlayCDTrack_f(void)
 CL_ScreenshotGetName
 ==================
 */
-qboolean CL_ScreenshotGetName(int lastnum, char* filename, size_t bufferSize)
+static qboolean CL_ScreenshotGetName(int lastnum, char* filename, size_t bufferSize)
 {
 	if ( lastnum < 0 || lastnum > 9999 )
 	{
@@ -162,7 +162,7 @@ qboolean CL_ScreenshotGetName(int lastnum, char* filename, size_t bufferSize)
 		return false;
 	}
 
-	Q_snprintf(filename, bufferSize, "scrshots/%s_shot%04d.png", clgame.mapname, lastnum);
+	Q_snprintf(filename, bufferSize, "scrshots/%s_screenshot%04d.png", clgame.mapname, lastnum);
 
 	return true;
 }
@@ -172,16 +172,19 @@ qboolean CL_ScreenshotGetName(int lastnum, char* filename, size_t bufferSize)
 CL_SnapshotGetName
 ==================
 */
-qboolean CL_SnapshotGetName(int lastnum, char* filename, size_t bufferSize)
+static qboolean CL_SnapshotGetName(int lastnum, char* filename, size_t bufferSize)
 {
 	if ( lastnum < 0 || lastnum > 9999 )
 	{
 		Con_Printf(S_ERROR "Unable to write snapshot: index %d was out of range\n", lastnum);
-		FS_AllowDirectPaths(false);
 		return false;
 	}
 
-	Q_snprintf(filename, bufferSize, "../%s_%04d.png", clgame.mapname, lastnum);
+	// This used to go up one directory and save there,
+	// but the search path functions don't support going
+	// out past their root. Instead, we use the screenshots
+	// directory and just name our images differently.
+	Q_snprintf(filename, bufferSize, "scrshots/%s_snapshot%04d.png", clgame.mapname, lastnum);
 
 	return true;
 }
@@ -217,10 +220,14 @@ void CL_ScreenShot_f(void)
 		for ( i = 0; i < 9999; i++ )
 		{
 			if ( !CL_ScreenshotGetName(i, checkname, sizeof(checkname)) )
+			{
 				return;  // no namespace
+			}
 
 			if ( !FS_FileExists(checkname, false) )
+			{
 				break;
+			}
 		}
 
 		Q_strncpy(cls.shotname, checkname, sizeof(cls.shotname));
@@ -251,19 +258,20 @@ void CL_SnapShot_f(void)
 	}
 	else
 	{
-		FS_AllowDirectPaths(true);
-
 		// scan for a free filename
 		for ( i = 0; i < 9999; i++ )
 		{
 			if ( !CL_SnapshotGetName(i, checkname, sizeof(checkname)) )
+			{
 				return;  // no namespace
+			}
 
 			if ( !FS_FileExists(checkname, false) )
+			{
 				break;
+			}
 		}
 
-		FS_AllowDirectPaths(false);
 		Q_strncpy(cls.shotname, checkname, sizeof(cls.shotname));
 		cls.scrshot_action = scrshot_snapshot;  // build new frame for screenshot
 	}
@@ -344,16 +352,20 @@ void CL_LevelShot_f(void)
 	{
 		Q_snprintf(cls.shotname, sizeof(cls.shotname), "levelshots/%s_%s.bmp", clgame.mapname, refState.wideScreen ? "16x9" : "4x3");
 
-		// make sure what levelshot is newer than bsp
+		// make sure that levelshot is newer than bsp
 		ft1 = FS_FileTime(cl.worldmodel->name, false);
 		ft2 = FS_FileTime(cls.shotname, true);
 	}
 
 	// missing levelshot or level never than levelshot
 	if ( ft2 == (size_t)-1 || ft1 > ft2 )
+	{
 		cls.scrshot_action = scrshot_plaque;  // build new frame for levelshot
+	}
 	else
+	{
 		cls.scrshot_action = scrshot_inactive;  // disable - not needs
+	}
 }
 
 /*

@@ -8,7 +8,7 @@ This release contains:
 	* MI6 Stealth
 	* MI6 Suit
 	* MI6 Tux
-* Six weapons:
+* Eight weapons:
 	* Fists
 	* Frinesi (shotgun)
 	* Militek (grenade launcher)

@@ -473,8 +473,14 @@ const envmap_t r_skyBoxInfo[6] = {
 	{{0, 180, 180}, IMAGE_FLIP_X},
 };
 
-const envmap_t r_envMapInfo[6] =
-	{{{0, 0, 90}, 0}, {{0, 180, -90}, 0}, {{0, 90, 0}, 0}, {{0, 270, 180}, 0}, {{-90, 180, -90}, 0}, {{90, 0, 90}, 0}};
+const envmap_t r_envMapInfo[6] = {
+	{{0, 0, 90}, 0},
+	{{0, 180, -90}, 0},
+	{{0, 90, 0}, 0},
+	{{0, 270, 180}, 0},
+	{{-90, 180, -90}, 0},
+	{{90, 0, 90}, 0},
+};
 
 qboolean VID_ScreenShot(const char* filename, int shot_type)
 {
