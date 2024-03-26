@@ -33,6 +33,17 @@ static void UI_UpdateUserinfo(void);
 
 gameui_static_t gameui;
 
+typedef struct Line3D_s
+{
+	vec3_t begin;
+	vec3_t end;
+	uint32_t colourRGBA;
+} Line3D_t;
+
+#define MAX_3D_LINES 1024
+static Line3D_t g3DLines[MAX_3D_LINES];
+static size_t g3DLineCount = 0;
+
 void UI_UpdateMenu(float realtime)
 {
 	if ( !gameui.hInstance )
@@ -827,6 +838,7 @@ static void GAME_EXPORT pfnClearScene(void)
 {
 	ref.dllFuncs.R_PushScene();
 	ref.dllFuncs.R_ClearScene();
+	g3DLineCount = 0;
 }
 
 static void GAME_EXPORT pfnUpdateScene(void)
@@ -858,8 +870,46 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 
 	ref.dllFuncs.R_Set2DMode(false);
 	GL_RenderFrame(&copy);
+
+	if ( g3DLineCount > 0 )
+	{
+		ref.dllFuncs.TriRenderMode(kRenderNormal);
+		ref.dllFuncs.Begin(TRI_LINES);
+
+		for ( size_t index = 0; index < g3DLineCount; ++index )
+		{
+			const Line3D_t* line = &g3DLines[index];
+
+			uint8_t rgba[4] = {
+				(uint8_t)((line->colourRGBA & 0xFF000000) >> 24),
+				(uint8_t)((line->colourRGBA & 0x00FF0000) >> 16),
+				(uint8_t)((line->colourRGBA & 0x0000FF00) >> 8),
+				(uint8_t)(line->colourRGBA & 0x000000FF),
+			};
+
+			ref.dllFuncs.Color4ub(rgba[0], rgba[1], rgba[2], rgba[3]);
+			ref.dllFuncs.Vertex3fv(line->begin);
+			ref.dllFuncs.Vertex3fv(line->end);
+		}
+
+		ref.dllFuncs.End();
+	}
+
 	ref.dllFuncs.R_Set2DMode(true);
 	ref.dllFuncs.R_PopScene();
+}
+
+void pfnStoreLine(const float* vec3Begin, const float* vec3End, uint32_t colourRGBA)
+{
+	if ( g3DLineCount >= MAX_3D_LINES || !vec3Begin || !vec3End )
+	{
+		return;
+	}
+
+	Line3D_t* line = &g3DLines[g3DLineCount++];
+	VectorCopy(vec3Begin, line->begin);
+	VectorCopy(vec3End, line->end);
+	line->colourRGBA = colourRGBA;
 }
 
 /*
@@ -871,9 +921,7 @@ adding player model into visible list
 */
 static int GAME_EXPORT pfnAddEntity(int entityType, cl_entity_t* ent)
 {
-	if ( !ref.dllFuncs.R_AddEntity(ent, entityType) )
-		return false;
-	return true;
+	return ref.dllFuncs.R_AddEntity(ent, entityType);
 }
 
 /*
@@ -1218,6 +1266,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	pfnClearScene,
 	pfnUpdateScene,
 	pfnRenderScene,
+	pfnStoreLine,
 	pfnAddEntity,
 	Host_Error,
 	pfnFileExists,

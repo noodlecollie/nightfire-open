@@ -132,6 +132,7 @@ typedef struct ui_enginefuncs_s
 	void (*pfnClearScene)(void);
 	void (*pfnUpdateScene)(void);
 	void (*pfnRenderScene)(const struct ref_viewpass_s* rvp);
+	void (*pfnStoreLine)(const float* vec3Begin, const float* vec3End, uint32_t colourRGBA);
 	int (*CL_CreateVisibleEntity)(int type, struct cl_entity_s* ent);
 
 	// misc handlers
