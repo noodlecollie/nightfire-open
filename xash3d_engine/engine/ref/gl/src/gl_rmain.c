@@ -242,34 +242,52 @@ R_AddEntity
 qboolean R_AddEntity(struct cl_entity_s* clent, int type)
 {
 	if ( !r_drawentities->value )
-		return false;  // not allow to drawing
+	{
+		return false;  // not allow to draw
+	}
 
 	if ( !clent || !clent->model )
+	{
 		return false;  // if set to invisible, skip
+	}
 
 	if ( FBitSet(clent->curstate.effects, EF_NODRAW) )
+	{
 		return false;  // done
+	}
 
 	if ( !R_ModelOpaque(clent->curstate.rendermode) && CL_FxBlend(clent) <= 0 )
+	{
 		return true;  // invisible
+	}
 
 	switch ( type )
 	{
 		case ET_FRAGMENTED:
+		{
 			r_stats.c_client_ents++;
 			break;
+		}
+
 		case ET_TEMPENTITY:
+		{
 			r_stats.c_active_tents_count++;
 			break;
+		}
+
 		default:
+		{
 			break;
+		}
 	}
 
 	if ( R_OpaqueEntity(clent) )
 	{
 		// opaque
 		if ( tr.draw_list->num_solid_entities >= MAX_VISIBLE_PACKET )
+		{
 			return false;
+		}
 
 		tr.draw_list->solid_entities[tr.draw_list->num_solid_entities] = clent;
 		tr.draw_list->num_solid_entities++;
@@ -278,7 +296,9 @@ qboolean R_AddEntity(struct cl_entity_s* clent, int type)
 	{
 		// translucent
 		if ( tr.draw_list->num_trans_entities >= MAX_VISIBLE_PACKET )
+		{
 			return false;
+		}
 
 		tr.draw_list->trans_entities[tr.draw_list->num_trans_entities] = clent;
 		tr.draw_list->num_trans_entities++;

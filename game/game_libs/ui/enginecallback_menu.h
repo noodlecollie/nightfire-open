@@ -288,6 +288,11 @@ public:
 		engfuncs.pfnRenderScene(fd);
 	}
 
+	static inline void StoreLine(const float* vec3Begin, const float* vec3End, uint32_t colourRGBA)
+	{
+		engfuncs.pfnStoreLine(vec3Begin, vec3End, colourRGBA);
+	}
+
 	static inline int CL_CreateVisibleEntity(int type, struct cl_entity_s* ent)
 	{
 		return engfuncs.CL_CreateVisibleEntity(type, ent);

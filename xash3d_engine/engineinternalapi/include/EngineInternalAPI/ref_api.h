@@ -621,7 +621,7 @@ typedef struct ref_interface_s
 	qboolean (*R_SpeedsMessage)(char* out, size_t size);
 	// get visdata for current frame from custom renderer
 	byte* (*Mod_GetCurrentVis)(void);
-	// tell the renderer what new map is started
+	// tell the renderer that new map is started
 	void (*R_NewMap)(void);
 	// clear the render entities before each frame
 	void (*R_ClearScene)(void);
