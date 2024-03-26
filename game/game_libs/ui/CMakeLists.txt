@@ -74,6 +74,8 @@ set(SOURCES_UI
 	controls/Bitmap.cpp
 	controls/CheckBox.h
 	controls/CheckBox.cpp
+	controls/DeveloperStudioSceneView.h
+	controls/DeveloperStudioSceneView.cpp
 	controls/Editable.h
 	controls/Editable.cpp
 	controls/Field.h
