@@ -73,7 +73,6 @@ private:
 	CMenuPicButton multiPlayer;
 	CMenuPicButton customGame;
 	CMenuPicButton previews;
-	CMenuPicButton modelViewer;
 	CMenuPicButton quit;
 
 	// buttons on top right. Maybe should be drawn if fullscreen == 1?
@@ -261,11 +260,6 @@ void CMenuMain::_Init(void)
 	previews.iFlags |= QMF_NOTIFY;
 	SET_EVENT(previews.onReleased, EngFuncs::ShellExecute(MenuStrings[IDS_MEDIA_PREVIEWURL], NULL, false));
 
-	modelViewer.SetNameAndStatus(L("Model Viewer"), L("View Studio models"));
-	modelViewer.SetPicture(PC_ADV_OPT);
-	modelViewer.iFlags |= QMF_NOTIFY;
-	modelViewer.onReleased = UI_ModelViewer_Menu;
-
 	quit.SetNameAndStatus(L("GameUI_GameMenu_Quit"), L("GameUI_QuitConfirmationText"));
 	quit.SetPicture(PC_QUIT);
 	quit.iFlags |= QMF_NOTIFY;
@@ -341,11 +335,6 @@ void CMenuMain::_Init(void)
 
 	AddItem(previews);
 
-	if ( gpGlobals->developer )
-	{
-		AddItem(modelViewer);
-	}
-
 	AddItem(quit);
 	AddItem(minimizeBtn);
 	AddItem(quitButton);
@@ -410,9 +399,6 @@ void CMenuMain::VidInit(bool connected)
 	customGame.SetCoord(72, bTrainMap ? 530 : 480);
 	previews.SetCoord(72, (bCustomGame) ? (bTrainMap ? 580 : 530) : (bTrainMap ? 530 : 480));
 	quit.SetCoord(72, (bCustomGame) ? (bTrainMap ? 630 : 580) : (bTrainMap ? 580 : 530));
-
-	// FIXME
-	modelViewer.SetCoord(72, (bCustomGame) ? (bTrainMap ? 680 : 6300) : (bTrainMap ? 630 : 580));
 }
 
 void CMenuMain::_VidInit()
