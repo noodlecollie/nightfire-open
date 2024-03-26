@@ -5,7 +5,7 @@
 class CMenuDeveloperStudioSceneView : public CMenuStudioSceneView
 {
 public:
-	bool DrawOriginMarker() const;
+	bool GetDrawOriginMarker() const;
 	void SetDrawOriginMarker(bool draw);
 
 protected:
