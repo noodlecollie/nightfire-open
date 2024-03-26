@@ -273,6 +273,12 @@ public:
 		return engfuncs.pfnGetModelSequenceName(ent, sequenceIndex);
 	}
 
+	static inline qboolean
+	pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
+	{
+		return engfuncs.pfnGetModelSequenceBounds(ent, sequenceIndex, outVec3Mins, outVec3Maxs);
+	}
+
 	static inline void ClearScene(void)
 	{
 		engfuncs.pfnClearScene();
