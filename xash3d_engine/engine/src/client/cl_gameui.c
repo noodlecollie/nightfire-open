@@ -827,6 +827,11 @@ const char* pfnGetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
 	return ent ? Mod_StudioGetSequenceName(ent->model, sequenceIndex) : NULL;
 }
 
+qboolean pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
+{
+	return ent ? Mod_StudioGetSequenceBounds(ent->model, sequenceIndex, outVec3Mins, outVec3Maxs) : false;
+}
+
 /*
 ====================
 pfnClearScene
@@ -873,7 +878,6 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 
 	if ( g3DLineCount > 0 )
 	{
-
 		ref.dllFuncs.GL_Bind(XASH_TEXTURE0, R_GetBuiltinTexture(REF_WHITE_TEXTURE));
 		ref.dllFuncs.TriRenderMode(kRenderNormal);
 		ref.dllFuncs.Begin(TRI_LINES);
@@ -1269,6 +1273,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	pfnSetModel,
 	pfnGetModelSequenceCount,
 	pfnGetModelSequenceName,
+	pfnGetModelSequenceBounds,
 	pfnClearScene,
 	pfnUpdateScene,
 	pfnRenderScene,

@@ -11,8 +11,9 @@ static constexpr int LEFT_MARGIN = 300;
 static constexpr int RIGHT_MARGIN = 50;
 static constexpr int BOTTOM_MARGIN = 50;
 static constexpr int PADDING = 30;
-static constexpr int BOTTOM_CONTROL_AREA_HEIGHT = 200;
+static constexpr int BOTTOM_CONTROL_AREA_HEIGHT = 100;
 static constexpr int BOTTOM_CONTROL_AREA_PADDING = 15;
+static constexpr int BOTTOM_CONTROL_ROW_HEIGHT = 40;
 
 static constexpr float COL1_FACTOR = 0.4f;
 static constexpr float COL2_FACTOR = 1.0f - COL1_FACTOR;
@@ -69,7 +70,18 @@ private:
 		const int col2Left = LEFT_MARGIN + GetFirstColumnWidth() + PADDING;
 		const int controlCol2Left = col2Left + (GetSecondColumnWidth() / 2) + BOTTOM_CONTROL_AREA_PADDING;
 
-		m_CheckEnableOriginMarker.SetCoord(col2Left, areaTop);
+		int rowOffset = 0;
+
+		m_CheckEnableModelBBox.SetCoord(col2Left, areaTop + rowOffset);
+		m_CheckEnableModelBBox.bChecked = m_SceneView.GetDrawModelBoundingBoxes();
+		m_CheckEnableModelBBox.onChanged = VoidCb(&CMenuModelViewer::HandleModelBBoxCheckBoxChanged);
+		m_CheckEnableModelBBox.SetNameAndStatus(
+			L("Model Bounds"),
+			L("Enable or disable drawing bounds of overall model"));
+
+		AddItem(m_CheckEnableModelBBox);
+
+		m_CheckEnableOriginMarker.SetCoord(controlCol2Left, areaTop + rowOffset);
 		m_CheckEnableOriginMarker.bChecked = m_SceneView.GetDrawOriginMarker();
 		m_CheckEnableOriginMarker.onChanged = VoidCb(&CMenuModelViewer::HandleOriginMarkerCheckBoxChanged);
 		m_CheckEnableOriginMarker.SetNameAndStatus(
@@ -78,14 +90,16 @@ private:
 
 		AddItem(m_CheckEnableOriginMarker);
 
-		m_CheckEnableModelBBox.SetCoord(controlCol2Left, areaTop);
-		m_CheckEnableModelBBox.bChecked = m_SceneView.GetDrawBoundingBoxes();
-		m_CheckEnableModelBBox.onChanged = VoidCb(&CMenuModelViewer::HandleModelBBoxCheckBoxChanged);
-		m_CheckEnableModelBBox.SetNameAndStatus(
-			L("Model Bounds"),
-			L("Enable or disable drawing bounds of overall model"));
+		rowOffset += BOTTOM_CONTROL_ROW_HEIGHT;
 
-		AddItem(m_CheckEnableModelBBox);
+		m_CheckEnableSequenceBBox.SetCoord(col2Left, areaTop + rowOffset);
+		m_CheckEnableSequenceBBox.bChecked = m_SceneView.GetDrawSequenceBoundingBoxes();
+		m_CheckEnableSequenceBBox.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceBBoxCheckBoxChanged);
+		m_CheckEnableSequenceBBox.SetNameAndStatus(
+			L("Sequence Bounds"),
+			L("Enable or disable drawing bounds of current animation sequence"));
+
+		AddItem(m_CheckEnableSequenceBBox);
 	}
 
 	void SelectModel()
@@ -191,7 +205,12 @@ private:
 
 	void HandleModelBBoxCheckBoxChanged()
 	{
-		m_SceneView.SetDrawBoundingBoxes(m_CheckEnableModelBBox.bChecked);
+		m_SceneView.SetDrawModelBoundingBoxes(m_CheckEnableModelBBox.bChecked);
+	}
+
+	void HandleSequenceBBoxCheckBoxChanged()
+	{
+		m_SceneView.SetDrawSequenceBoundingBoxes(m_CheckEnableSequenceBBox.bChecked);
 	}
 
 	static int GetTotalColumnWidth()
@@ -228,6 +247,7 @@ private:
 	CMenuTable m_SequenceTable;
 	CMenuCheckBox m_CheckEnableOriginMarker;
 	CMenuCheckBox m_CheckEnableModelBBox;
+	CMenuCheckBox m_CheckEnableSequenceBBox;
 
 	cl_entity_t* m_MainStudioModel = nullptr;
 };
