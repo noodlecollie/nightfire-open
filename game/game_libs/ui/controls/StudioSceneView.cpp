@@ -131,6 +131,13 @@ void CMenuStudioSceneView::Draw()
 	m_PrevCursorX = uiStatic.cursorX;
 	m_PrevCursorY = uiStatic.cursorY;
 
+	vec3_t fwd;
+	AngleVectors(m_RefDef.viewangles, fwd, nullptr, nullptr);
+	VectorScale(fwd, -1.0f * m_DistFromOrigin, fwd);
+	VectorCopy(fwd, m_RefDef.vieworigin);
+
+	PreDrawModels();
+
 	if ( m_Model )
 	{
 		int numEnts = m_Model->GetRows();
@@ -141,12 +148,12 @@ void CMenuStudioSceneView::Draw()
 		}
 	}
 
-	vec3_t fwd;
-	AngleVectors(m_RefDef.viewangles, fwd, nullptr, nullptr);
-	VectorScale(fwd, -1.0f * m_DistFromOrigin, fwd);
-	VectorCopy(fwd, m_RefDef.vieworigin);
-
 	EngFuncs::RenderScene(&m_RefDef);
+}
+
+void CMenuStudioSceneView::PreDrawModels()
+{
+	// Nothing here - for subclasses to override.
 }
 
 CStudioSceneModel* CMenuStudioSceneView::GetModel() const
@@ -199,7 +206,7 @@ void CMenuStudioSceneView::HandleLeftMouseDragUpdate()
 
 	if ( diffX )
 	{
-		float yaw = m_RefDef.viewangles[1];
+		float yaw = m_RefDef.viewangles[YAW];
 
 		yaw -= diffX / uiStatic.scaleX;
 
@@ -212,7 +219,7 @@ void CMenuStudioSceneView::HandleLeftMouseDragUpdate()
 			yaw += 360.0f;
 		}
 
-		m_RefDef.viewangles[1] = yaw;
+		m_RefDef.viewangles[YAW] = yaw;
 	}
 
 	if ( m_AllowPitchRotation )
@@ -221,20 +228,20 @@ void CMenuStudioSceneView::HandleLeftMouseDragUpdate()
 
 		if ( diffY )
 		{
-			float pitch = m_RefDef.viewangles[2];
+			float pitch = m_RefDef.viewangles[PITCH];
 
-			pitch -= diffY / uiStatic.scaleY;
+			pitch += diffY / uiStatic.scaleY;
 
-			if ( pitch > 180.0f )
+			if ( pitch > 89.0f )
 			{
-				pitch -= 360.0f;
+				pitch = 89.0f;
 			}
-			else if ( pitch < -180.0f )
+			else if ( pitch < -89.0f )
 			{
-				pitch += 360.0f;
+				pitch = -89.0f;
 			}
 
-			m_RefDef.viewangles[2] = pitch;
+			m_RefDef.viewangles[PITCH] = pitch;
 		}
 	}
 }

@@ -33,6 +33,8 @@ public:
 	void ResetCamera();
 
 protected:
+	virtual void PreDrawModels();
+
 	ref_viewpass_t m_RefDef {};
 	CStudioSceneModel* m_Model = nullptr;
 

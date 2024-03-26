@@ -873,6 +873,8 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 
 	if ( g3DLineCount > 0 )
 	{
+
+		ref.dllFuncs.GL_Bind(XASH_TEXTURE0, R_GetBuiltinTexture(REF_WHITE_TEXTURE));
 		ref.dllFuncs.TriRenderMode(kRenderNormal);
 		ref.dllFuncs.Begin(TRI_LINES);
 
@@ -888,7 +890,11 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 			};
 
 			ref.dllFuncs.Color4ub(rgba[0], rgba[1], rgba[2], rgba[3]);
+
+			ref.dllFuncs.TexCoord2f(0.0f, 0.0f);
 			ref.dllFuncs.Vertex3fv(line->begin);
+
+			ref.dllFuncs.TexCoord2f(0.0f, 0.0f);
 			ref.dllFuncs.Vertex3fv(line->end);
 		}
 

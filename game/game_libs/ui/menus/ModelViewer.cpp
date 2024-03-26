@@ -1,6 +1,6 @@
 #include "Framework.h"
 #include "StudioSceneModel.h"
-#include "StudioSceneView.h"
+#include "DeveloperStudioSceneView.h"
 #include "Table.h"
 #include "StringVectorModel.h"
 #include "utlstring.h"
@@ -30,7 +30,8 @@ private:
 		AddButton(L("Select"), L("Select model"), PC_CUSTOMIZE, VoidCb(&CMenuModelViewer::SelectModel));
 		AddButton(L("Back"), L("Return to main menu"), PC_DONE, VoidCb(&CMenuModelViewer::Hide));
 
-		SetUpSceneModel();
+		m_SceneModel.Clear();
+		m_MainStudioModel = m_SceneModel.AddEntData();
 
 		const int itemWidth =
 			(static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - PADDING) / 2;
@@ -145,24 +146,11 @@ private:
 		}
 	}
 
-	void SetUpSceneModel()
-	{
-		m_SceneModel.Clear();
-
-		m_OriginMarker = m_SceneModel.AddEntData();
-		EngFuncs::SetModel(m_OriginMarker, "models/origin_marker.mdl");
-		m_OriginMarker->curstate.rendermode = kRenderTransTexture;
-		m_OriginMarker->curstate.renderamt = 255;
-
-		m_MainStudioModel = m_SceneModel.AddEntData();
-	}
-
 	CStudioSceneModel m_SceneModel;
-	CMenuStudioSceneView m_View;
+	CMenuDeveloperStudioSceneView m_View;
 	CMenuTable m_SequenceTable;
 	CStringVectorModel m_Model;
 
-	cl_entity_t* m_OriginMarker = nullptr;
 	cl_entity_t* m_MainStudioModel = nullptr;
 };
 
