@@ -3,7 +3,19 @@
 #include "DeveloperStudioSceneView.h"
 #include "Table.h"
 #include "StringVectorModel.h"
+#include "CheckBox.h"
 #include "utlstring.h"
+
+static constexpr int TOP_MARGIN = 50;
+static constexpr int LEFT_MARGIN = 300;
+static constexpr int RIGHT_MARGIN = 50;
+static constexpr int BOTTOM_MARGIN = 50;
+static constexpr int PADDING = 30;
+static constexpr int BOTTOM_CONTROL_AREA_HEIGHT = 200;
+static constexpr int BOTTOM_CONTROL_AREA_PADDING = 15;
+
+static constexpr float COL1_FACTOR = 0.4f;
+static constexpr float COL2_FACTOR = 1.0f - COL1_FACTOR;
 
 class CMenuModelViewer : public CMenuFramework
 {
@@ -16,12 +28,6 @@ public:
 private:
 	virtual void _Init() override
 	{
-		static constexpr int TOP_MARGIN = 50;
-		static constexpr int LEFT_MARGIN = 300;
-		static constexpr int RIGHT_MARGIN = 100;
-		static constexpr int BOTTOM_MARGIN = 50;
-		static constexpr int PADDING = 30;
-
 		banner.SetPicture("gfx/shell/head_blank");
 
 		AddItem(background);
@@ -33,21 +39,43 @@ private:
 		m_SceneModel.Clear();
 		m_MainStudioModel = m_SceneModel.AddEntData();
 
-		const int itemWidth =
-			(static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - PADDING) / 2;
-		const int itemHeight = static_cast<int>(ScreenHeight / uiStatic.scaleY) - TOP_MARGIN - BOTTOM_MARGIN;
+		AddMainViews();
+		AddBottomControls();
+	}
 
-		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, itemWidth, itemHeight);
-		m_SequenceTable.SetModel(&m_Model);
+	void AddMainViews()
+	{
+		const int viewHeight = GetViewAreaHeight();
+		const int col1Width = GetFirstColumnWidth();
+		const int col2Width = GetSecondColumnWidth();
+		const int col2Left = LEFT_MARGIN + col1Width + PADDING;
+
+		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, col1Width, viewHeight);
+		m_SequenceTable.SetModel(&m_SequenceModel);
 		m_SequenceTable.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceChanged);
 		AddItem(m_SequenceTable);
 
-		m_View.SetRect(LEFT_MARGIN + itemWidth + PADDING, TOP_MARGIN, itemWidth, itemHeight);
-		m_View.SetAllowPitchRotation(true);
-		m_View.SetAllowRightButtonZoom(true);
-		m_View.SetModel(&m_SceneModel);
-		m_View.SetCameraDistFromOrigin(96.0f);
-		AddItem(m_View);
+		m_SceneView.SetRect(col2Left, TOP_MARGIN, col2Width, viewHeight);
+		m_SceneView.SetAllowPitchRotation(true);
+		m_SceneView.SetAllowRightButtonZoom(true);
+		m_SceneView.SetModel(&m_SceneModel);
+		m_SceneView.SetCameraDistFromOrigin(96.0f);
+		AddItem(m_SceneView);
+	}
+
+	void AddBottomControls()
+	{
+		const int areaTop = GetControlAreaTop();
+		const int col2Left = LEFT_MARGIN + GetFirstColumnWidth() + PADDING;
+
+		m_CheckEnableOriginMarker.SetCoord(col2Left, areaTop);
+		m_CheckEnableOriginMarker.bChecked = m_SceneView.GetDrawOriginMarker();
+		m_CheckEnableOriginMarker.onChanged = VoidCb(&CMenuModelViewer::HandleOriginMarkerCheckBoxChanged);
+		m_CheckEnableOriginMarker.SetNameAndStatus(
+			L("Origin Marker"),
+			L("Enable or disable drawing marker at model origin"));
+
+		AddItem(m_CheckEnableOriginMarker);
 	}
 
 	void SelectModel()
@@ -74,14 +102,14 @@ private:
 		}
 
 		EngFuncs::SetModel(m_MainStudioModel, path);
-		m_View.ResetCamera();
+		m_SceneView.ResetCamera();
 
 		int numSequences = EngFuncs::GetModelSequenceCount(m_MainStudioModel);
-		m_Model.Purge();
+		m_SequenceModel.Purge();
 
 		for ( int index = 0; index < numSequences; ++index )
 		{
-			m_Model.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(m_MainStudioModel, index)));
+			m_SequenceModel.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(m_MainStudioModel, index)));
 		}
 	}
 
@@ -146,10 +174,44 @@ private:
 		}
 	}
 
+	void HandleOriginMarkerCheckBoxChanged()
+	{
+		m_SceneView.SetDrawOriginMarker(m_CheckEnableOriginMarker.bChecked);
+	}
+
+	static int GetTotalColumnWidth()
+	{
+		return static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - PADDING;
+	}
+
+	static int GetFirstColumnWidth()
+	{
+		return static_cast<int>(static_cast<float>(GetTotalColumnWidth()) * COL1_FACTOR);
+	}
+
+	static int GetSecondColumnWidth()
+	{
+		return static_cast<int>(static_cast<float>(GetTotalColumnWidth()) * COL2_FACTOR);
+	}
+
+	static int GetViewAreaHeight()
+	{
+		return static_cast<int>(ScreenHeight / uiStatic.scaleY) - TOP_MARGIN - BOTTOM_MARGIN -
+			BOTTOM_CONTROL_AREA_HEIGHT;
+	}
+
+	static int GetControlAreaTop()
+	{
+		return static_cast<int>(ScreenHeight / uiStatic.scaleY) - BOTTOM_MARGIN - BOTTOM_CONTROL_AREA_HEIGHT +
+			BOTTOM_CONTROL_AREA_PADDING;
+	}
+
 	CStudioSceneModel m_SceneModel;
-	CMenuDeveloperStudioSceneView m_View;
+	CStringVectorModel m_SequenceModel;
+
+	CMenuDeveloperStudioSceneView m_SceneView;
 	CMenuTable m_SequenceTable;
-	CStringVectorModel m_Model;
+	CMenuCheckBox m_CheckEnableOriginMarker;
 
 	cl_entity_t* m_MainStudioModel = nullptr;
 };

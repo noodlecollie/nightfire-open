@@ -1,6 +1,6 @@
 #include "DeveloperStudioSceneView.h"
 
-bool CMenuDeveloperStudioSceneView::DrawOriginMarker() const
+bool CMenuDeveloperStudioSceneView::GetDrawOriginMarker() const
 {
 	return m_DrawOriginMarker;
 }
