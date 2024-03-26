@@ -109,7 +109,7 @@ void Sys_PrintUsage(void)
 #endif
 
 #if !XASH_DEDICATED()
-		"   -toconsole         run engine witn console open\n"
+		"   -toconsole         run engine with console open\n"
 		"   -width <n>         set window width\n"
 		"   -height <n>        set window height\n"
 		"   -oldfont           enable unused Quake font in Half-Life\n"
