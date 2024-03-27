@@ -21,6 +21,7 @@
 #include "win32fix.h"
 #include "fcaseopen.h"
 #include "bonetags.h"
+#include "tags.h"
 
 #ifdef min
 #undef min
@@ -3317,6 +3318,30 @@ void Cmd_AddBoneTag()
 	AddBoneTag(boneName, tagName);
 }
 
+void Cmd_AddMDLTag()
+{
+	while ( TokenAvailable() )
+	{
+		GetToken(false);
+
+		if ( strlen(token) >= NFMDL_MAX_TAG_LENGTH )
+		{
+			Error("Tag \"%s\" exceeds maximum length of %zu characters", token, NFMDL_MAX_TAG_LENGTH - 1);
+			return;
+		}
+
+		if ( !Tag_ExistsInChain(mdlTags, token) )
+		{
+			tagitem_t* newTag = Tag_AppendToChain(mdlTags, token);
+
+			if ( !mdlTags )
+			{
+				mdlTags = newTag;
+			}
+		}
+	}
+}
+
 void ParseScript(void)
 {
 	while ( 1 )
@@ -3471,6 +3496,10 @@ void ParseScript(void)
 		{
 			Cmd_AddBoneTag();
 		}
+		else if ( !strcmp(token, "$tag") )
+		{
+			Cmd_AddMDLTag();
+		}
 		else
 		{
 			Error("bad command %s\n", token);
@@ -3582,6 +3611,8 @@ int main(int argc, char** argv)
 	WriteFile();
 
 	ClearAllBoneTags();
+	Tag_DeleteChain(mdlTags);
+	mdlTags = NULL;
 
 	return 0;
 }

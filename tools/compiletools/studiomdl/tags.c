@@ -55,6 +55,11 @@ tagitem_t* Tag_AppendToChain(tagitem_t* chain, const char* tagName)
 
 	if ( chain )
 	{
+		while ( chain->next )
+		{
+			chain = chain->next;
+		}
+
 		chain->next = next;
 	}
 
@@ -79,4 +84,27 @@ qboolean Tag_ExistsInChain(const tagitem_t* chain, const char* tagName)
 const char* Tag_GetName(const tagitem_t* item)
 {
 	return item ? item->name : NULL;
+}
+
+size_t Tag_Count(const tagitem_t* chain)
+{
+	size_t count = 0;
+
+	while ( chain )
+	{
+		++count;
+		chain = chain->next;
+	}
+
+	return count;
+}
+
+tagitem_t* Tag_GetNext(tagitem_t* item)
+{
+	return (tagitem_t*)Tag_ConstGetNext(item);
+}
+
+const tagitem_t* Tag_ConstGetNext(const tagitem_t* item)
+{
+	return item ? item->next : NULL;
 }

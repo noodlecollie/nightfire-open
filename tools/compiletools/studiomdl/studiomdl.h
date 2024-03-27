@@ -1,5 +1,7 @@
 #pragma once
 
+#include "tags.h"
+
 #ifndef EXTERN
 #define EXTERN extern
 #endif
@@ -352,6 +354,8 @@ typedef struct
 
 EXTERN int numbodyparts;
 EXTERN s_bodypart_t bodypart[MAXSTUDIOBODYPARTS];
+
+EXTERN tagitem_t* mdlTags;
 
 extern int BuildTris(s_trianglevert_t (*x)[3], s_mesh_t* y, byte** ppdata);
 int LoadBMP(const char* szFile, byte** ppbBits, byte** ppbPalette, int* width, int* height);
