@@ -188,7 +188,7 @@ public:
 
 private:
 	static bool UseBoneForGait(const char* boneName);
-	bool UseBoneForGait(const nfmdlheader_t* header, int32_t boneIndex);
+	bool UseBoneForGait(const nfmdlheader_v1_t* header, int32_t boneIndex);
 };
 
 #endif  // STUDIOMODELRENDERER_H

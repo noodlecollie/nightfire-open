@@ -832,7 +832,7 @@ bool CStudioModelRenderer::UseBoneForGait(const char* boneName)
 	return false;
 }
 
-bool CStudioModelRenderer::UseBoneForGait(const nfmdlheader_t* header, int32_t boneIndex)
+bool CStudioModelRenderer::UseBoneForGait(const nfmdlheader_v1_t* header, int32_t boneIndex)
 {
 	if ( !header || boneIndex < 0 )
 	{
@@ -1004,7 +1004,7 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		for ( i = 0; i < m_pStudioHeader->numbones; i++ )
 		{
 			if ( (!usesGaitBones && !UseBoneForGait(pbones[i].name)) ||
-				 (usesGaitBones && !UseBoneForGait(nfHeader, i)) )
+				 (usesGaitBones && !UseBoneForGait(NFMDL_GetV1Header(nfHeader), i)) )
 			{
 				continue;  // not used for legs
 			}
