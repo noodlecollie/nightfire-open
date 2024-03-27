@@ -663,38 +663,59 @@ StudioEstimateFrame
 */
 float R_StudioEstimateFrame(cl_entity_t* e, mstudioseqdesc_t* pseqdesc, double time)
 {
-	double dfdt, f;
+	double dfdt = 0.0;
+	double f = 0.0;
 
 	if ( g_studio.interpolate )
 	{
 		if ( time < e->curstate.animtime )
+		{
 			dfdt = 0.0;
+		}
 		else
+		{
 			dfdt = (time - e->curstate.animtime) * e->curstate.framerate * pseqdesc->fps;
+		}
 	}
 	else
+	{
 		dfdt = 0;
+	}
 
 	if ( pseqdesc->numframes <= 1 )
+	{
 		f = 0.0;
+	}
 	else
+	{
 		f = (e->curstate.frame * (pseqdesc->numframes - 1)) / 256.0f;
+	}
 
 	f += dfdt;
 
 	if ( pseqdesc->flags & STUDIO_LOOPING )
 	{
 		if ( pseqdesc->numframes > 1 )
+		{
 			f -= (int)(f / (pseqdesc->numframes - 1)) * (pseqdesc->numframes - 1);
+		}
+
 		if ( f < 0 )
+		{
 			f += (pseqdesc->numframes - 1);
+		}
 	}
 	else
 	{
 		if ( f >= pseqdesc->numframes - 1.001 )
+		{
 			f = pseqdesc->numframes - 1.001;
+		}
+
 		if ( f < 0.0 )
+		{
 			f = 0.0;
+		}
 	}
 
 	return (float)f;

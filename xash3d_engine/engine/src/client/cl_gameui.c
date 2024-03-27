@@ -832,6 +832,11 @@ qboolean pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, f
 	return ent ? Mod_StudioGetSequenceBounds(ent->model, sequenceIndex, outVec3Mins, outVec3Maxs) : false;
 }
 
+float pfnGetModelSequenceDuration(struct cl_entity_s* ent, int sequenceIndex)
+{
+	return ent ? Mod_StudioGetSequenceDuration(ent->model, sequenceIndex) : 0.0f;
+}
+
 /*
 ====================
 pfnClearScene
@@ -1274,6 +1279,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	pfnGetModelSequenceCount,
 	pfnGetModelSequenceName,
 	pfnGetModelSequenceBounds,
+	pfnGetModelSequenceDuration,
 	pfnClearScene,
 	pfnUpdateScene,
 	pfnRenderScene,

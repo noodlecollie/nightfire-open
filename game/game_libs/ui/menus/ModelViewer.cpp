@@ -27,7 +27,7 @@ public:
 	}
 
 private:
-	virtual void _Init() override
+	void _Init() override
 	{
 		banner.SetPicture("gfx/shell/head_blank");
 
@@ -42,6 +42,12 @@ private:
 
 		AddMainViews();
 		AddBottomControls();
+	}
+
+	void Draw() override
+	{
+		UpdateAnimationTime(m_MainStudioModel);
+		CMenuFramework::Draw();
 	}
 
 	void AddMainViews()
@@ -136,6 +142,8 @@ private:
 		{
 			m_SequenceModel.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(m_MainStudioModel, index)));
 		}
+
+		m_MainStudioModel->curstate.animtime = gpGlobals->time;
 	}
 
 	void HandleSequenceChanged()
@@ -146,6 +154,7 @@ private:
 		}
 
 		m_MainStudioModel->curstate.sequence = m_SequenceTable.GetCurrentIndex();
+		m_MainStudioModel->curstate.animtime = gpGlobals->time;
 	}
 
 	void LookUpModelSubdirsRecursively()
@@ -196,6 +205,33 @@ private:
 			CUtlString& pattern = patternList[index];
 			pattern.Append("/*.mdl");
 			globalData.AddPattern(pattern.Get());
+		}
+	}
+
+	// Update animtime (the time at which the animation began playing)
+	// so that animations will loop properly.
+	void UpdateAnimationTime(cl_entity_t* ent)
+	{
+		if ( !ent || !ent->model )
+		{
+			return;
+		}
+
+		float duration = EngFuncs::GetModelSequenceDuration(ent, ent->curstate.sequence);
+
+		if ( duration <= 0.0f || ent->curstate.framerate == 0.0f )
+		{
+			return;
+		}
+
+		duration /= ent->curstate.framerate;
+
+		float timeDiff = gpGlobals->time - ent->curstate.animtime;
+
+		if ( timeDiff >= duration )
+		{
+			timeDiff = fmodf(timeDiff, duration);
+			ent->curstate.animtime = gpGlobals->time + timeDiff;
 		}
 	}
 
