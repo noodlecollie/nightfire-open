@@ -90,7 +90,7 @@ void CMenuDeveloperStudioSceneView::DrawSequenceBoundingBox(cl_entity_t* ent)
 	vec3_t mins = { 0.0f, 0.0f, 0.0f };
 	vec3_t maxs = { 0.0f, 0.0f, 0.0f };
 
-	if ( EngFuncs::pfnGetModelSequenceBounds(ent, ent->curstate.sequence, mins, maxs) )
+	if ( EngFuncs::GetModelSequenceBounds(ent, ent->curstate.sequence, mins, maxs) )
 	{
 		DrawBoundingBox(mins, maxs, 0x00FF00FF);
 	}

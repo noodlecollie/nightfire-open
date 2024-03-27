@@ -274,9 +274,14 @@ public:
 	}
 
 	static inline qboolean
-	pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
+	GetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
 	{
 		return engfuncs.pfnGetModelSequenceBounds(ent, sequenceIndex, outVec3Mins, outVec3Maxs);
+	}
+
+	static inline float GetModelSequenceDuration(struct cl_entity_s* ent, int sequenceIndex)
+	{
+		return engfuncs.pfnGetModelSequenceDuration(ent, sequenceIndex);
 	}
 
 	static inline void ClearScene(void)
