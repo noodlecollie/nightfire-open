@@ -996,9 +996,7 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		panim = StudioGetAnim(m_pRenderModel, pseqdesc);
 		StudioCalcRotations(pos2, q2, pseqdesc, panim, m_pPlayerInfo->gaitframe);
 
-		const nfmdlheader_t* nfHeader = reinterpret_cast<const nfmdlheader_t*>(
-			reinterpret_cast<const byte*>(m_pStudioHeader) + sizeof(*m_pStudioHeader));
-
+		const nfmdlheader_t* nfHeader = NFMDL_GetGeneralHeader(m_pStudioHeader);
 		const bool usesGaitBones = NFMDL_SupportsGaitBones(nfHeader);
 
 		for ( i = 0; i < m_pStudioHeader->numbones; i++ )

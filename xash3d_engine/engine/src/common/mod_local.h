@@ -129,6 +129,8 @@ float Mod_StudioGetSequenceDuration(model_t* model, int anim);
 qboolean Mod_StudioGetSequenceBounds(model_t* model, int anim, vec3_t outVecMins, vec3_t outVecMaxs);
 void Mod_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitch);
 void Mod_PrecacheEventSounds(model_t* model);
+int Mod_GetNumTags(model_t* model);
+void Mod_GetTag(model_t* model, int tagIndex, char* buffer, size_t length);
 
 //
 // mod_sprite.c

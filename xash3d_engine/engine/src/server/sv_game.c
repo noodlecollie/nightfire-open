@@ -1510,7 +1510,10 @@ int GAME_EXPORT pfnModelFrames(int modelIndex)
 	model_t* pmodel = SV_ModelHandle(modelIndex);
 
 	if ( pmodel != NULL )
+	{
 		return pmodel->numframes;
+	}
+
 	return 1;
 }
 
@@ -3857,6 +3860,16 @@ static int pfnGetHitboxHitGroup(const edict_t* edict, uint32_t hitboxIndex)
 	return Mod_GetHitboxHitGroup(edict, hitboxIndex);
 }
 
+static int pfnModelGetNumTags(int modelIndex)
+{
+	return Mod_GetNumTags(SV_ModelHandle(modelIndex));
+}
+
+static void pfnModelGetTag(int modelIndex, int tagIndex, char* buffer, size_t length)
+{
+	return Mod_GetTag(SV_ModelHandle(modelIndex), tagIndex, buffer, length);
+}
+
 /*
 =============
 pfnFunctionFromName
@@ -5230,6 +5243,8 @@ static enginefuncs_t gEngfuncs = {
 	pfnGetHitboxCount,
 	pfnGetTransformedHitboxPoints,
 	pfnGetHitboxHitGroup,
+	pfnModelGetNumTags,
+	pfnModelGetTag,
 };
 
 /*

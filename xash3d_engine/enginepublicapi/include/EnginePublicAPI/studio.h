@@ -384,6 +384,11 @@ static inline const void* NFMDL_HeaderCast(const nfmdlheader_t* header, uint32_t
 	return (const void*)((const byte*)header + localOffset);
 }
 
+static inline const nfmdlheader_t* NFMDL_GetGeneralHeader(const studiohdr_t* studiohdr)
+{
+	return studiohdr ? (const nfmdlheader_t*)((const byte*)studiohdr + sizeof(studiohdr_t)) : NULL;
+}
+
 static inline const nfmdlheader_v1_t* NFMDL_GetV1Header(const nfmdlheader_t* header)
 {
 	return (const nfmdlheader_v1_t*)NFMDL_HeaderCast(header, 1, NFMDLHEADER_LOCAL_OFFSET_V1);

@@ -654,6 +654,70 @@ void Mod_PrecacheEventSounds(model_t* model)
 	}
 }
 
+int Mod_GetNumTags(model_t* model)
+{
+	if ( !model )
+	{
+		return 0;
+	}
+
+	studiohdr_t* header = Mod_StudioExtradata(model);
+
+	if ( !header )
+	{
+		return 0;
+	}
+
+	const nfmdlheader_t* nfHeader = NFMDL_GetGeneralHeader(header);
+
+	if ( !NFMDL_SupportsMDLTags(nfHeader) )
+	{
+		return 0;
+	}
+
+	const nfmdlheader_v2_t* v2Header = NFMDL_GetV2Header(nfHeader);
+	return v2Header ? v2Header->mdlTagsCount : 0;
+}
+
+void Mod_GetTag(model_t* model, int tagIndex, char* buffer, size_t length)
+{
+	if ( !buffer || length < 1 )
+	{
+		return;
+	}
+
+	buffer[0] = '\0';
+
+	if ( !model || tagIndex < 0 )
+	{
+		return;
+	}
+
+	studiohdr_t* header = Mod_StudioExtradata(model);
+
+	if ( !header )
+	{
+		return;
+	}
+
+	const nfmdlheader_t* nfHeader = NFMDL_GetGeneralHeader(header);
+
+	if ( !NFMDL_SupportsMDLTags(nfHeader) )
+	{
+		return;
+	}
+
+	const nfmdlheader_v2_t* v2Header = NFMDL_GetV2Header(nfHeader);
+
+	if ( !v2Header || tagIndex >= v2Header->mdlTagsCount )
+	{
+		return;
+	}
+
+	const nfmdltag_t* tags = (const nfmdltag_t*)((const byte*)header + v2Header->mdlTagsIndex);
+	Q_strncpy(buffer, tags[tagIndex].name, length);
+}
+
 static void SetUpBones(const edict_t* edict, model_t* mod)
 {
 	studiohdr_t* pstudio;
