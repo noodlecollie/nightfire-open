@@ -21,6 +21,8 @@ add_executable(${TARGETNAME_EXE_STUDIOMDL}
 	studio.h
 	studiomdl.h
 	studiomdl.c
+	tags.h
+	tags.c
 	trilib.h
 	trilib.c
 	tristrip.c
