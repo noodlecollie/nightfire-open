@@ -119,13 +119,19 @@ void CMenuTable::VidInit()
 
 	// then determine arrow position and sizes
 	if ( bShowScrollBar )
+	{
 		arrow.w = arrow.h = 24;
+	}
 	else
+	{
 		arrow.w = arrow.h = 0;
+	}
+
 	arrow = arrow.Scale();
 	downArrow.x = upArrow.x = m_scPos.x + m_scSize.w - arrow.w + iStrokeWidth * 1;
 	upArrow.y = m_scPos.y - iStrokeWidth;
 	downArrow.y = upArrow.y + m_scSize.h - arrow.h + iStrokeWidth * 2;
+
 	if ( !bFramedHintText )
 	{
 		upArrow.y += headerSize.h;
@@ -143,6 +149,8 @@ void CMenuTable::VidInit()
 
 bool CMenuTable::MouseMove(int, int)
 {
+	int oldTopItem = iTopItem;
+
 	if ( !iScrollBarSliding && FBitSet(iFlags, QMF_HASMOUSEFOCUS) )
 	{
 		float step = Step();
@@ -207,9 +215,23 @@ bool CMenuTable::MouseMove(int, int)
 
 		// iTopItem = iCurItem - iNumRows + 1;
 		if ( iTopItem < 0 )
+		{
 			iTopItem = 0;
+		}
+
 		if ( iTopItem > (GetModelRows() - iNumRows - 1) )
+		{
 			iTopItem = GetModelRows() - iNumRows - 1;
+		}
+	}
+
+	if ( oldTopItem < iTopItem && iCurItem < iTopItem )
+	{
+		SetCurrentIndex(iTopItem);
+	}
+	else if ( oldTopItem > iTopItem && iCurItem >= iTopItem + iNumRows )
+	{
+		SetCurrentIndex(iTopItem +iNumRows - 1);
 	}
 
 	return true;
@@ -292,8 +314,7 @@ void CMenuTable::SetCurrentIndex(int idx)
 
 float CMenuTable::Step()
 {
-	float step =
-		(GetModelRows() <= 1) ? 1 : (downArrow.y - upArrow.y - arrow.h) / (float)(GetModelRows() - 1);
+	float step = (GetModelRows() <= 1) ? 1 : (downArrow.y - upArrow.y - arrow.h) / (float)(GetModelRows() - 1);
 
 	return step;
 }

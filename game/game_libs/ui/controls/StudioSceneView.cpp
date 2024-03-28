@@ -183,6 +183,16 @@ void CMenuStudioSceneView::SetAllowRightButtonZoom(bool allow)
 	m_AllowRightButtonZoom = allow;
 }
 
+float CMenuStudioSceneView::GetCameraYaw() const
+{
+	return m_RefDef.viewangles[YAW];
+}
+
+void CMenuStudioSceneView::SetCameraYaw(float degrees)
+{
+	m_RefDef.viewangles[YAW] = degrees;
+}
+
 float CMenuStudioSceneView::GetCameraDistFromOrigin() const
 {
 	return m_DistFromOrigin;

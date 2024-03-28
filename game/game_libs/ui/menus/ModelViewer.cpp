@@ -134,6 +134,7 @@ private:
 		EngFuncs::SetModel(m_MainStudioModel, path);
 		m_SceneView.ResetCamera();
 		m_SceneView.SetCameraDistFromOrigin(64.0f);
+		m_SceneView.SetCameraYaw(180.0f);
 
 		int numSequences = EngFuncs::GetModelSequenceCount(m_MainStudioModel);
 		m_SequenceModel.Purge();

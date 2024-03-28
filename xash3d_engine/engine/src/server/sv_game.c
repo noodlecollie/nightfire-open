@@ -3867,7 +3867,7 @@ static int pfnModelGetNumTags(int modelIndex)
 
 static void pfnModelGetTag(int modelIndex, int tagIndex, char* buffer, size_t length)
 {
-	return Mod_GetTag(SV_ModelHandle(modelIndex), tagIndex, buffer, length);
+	Mod_GetTag(SV_ModelHandle(modelIndex), tagIndex, buffer, length);
 }
 
 /*

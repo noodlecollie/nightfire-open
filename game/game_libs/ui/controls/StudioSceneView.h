@@ -28,6 +28,8 @@ public:
 	void SetAllowPitchRotation(bool allow);
 	void SetAllowRightButtonZoom(bool allow);
 
+	float GetCameraYaw() const;
+	void SetCameraYaw(float degrees);
 	float GetCameraDistFromOrigin() const;
 	void SetCameraDistFromOrigin(float dist);
 	void ResetCamera();
