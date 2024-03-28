@@ -525,7 +525,7 @@ edict_t* SV_FakeConnect(const char* netname)
 
 	// setup fake client params
 	Info_SetValueForKey(userinfo, "name", netname, MAX_INFO_STRING);
-	Info_SetValueForKey(userinfo, "model", "gordon", MAX_INFO_STRING);
+	Info_SetValueForKey(userinfo, "model", "_fallback", MAX_INFO_STRING);
 	Info_SetValueForKey(userinfo, "topcolor", "1", MAX_INFO_STRING);
 	Info_SetValueForKey(userinfo, "bottomcolor", "1", MAX_INFO_STRING);
 

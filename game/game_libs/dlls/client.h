@@ -12,9 +12,8 @@
  *   without written permission from Valve LLC.
  *
  ****/
+
 #pragma once
-#ifndef CLIENT_H
-#define CLIENT_H
 
 extern void respawn(entvars_t* pev, BOOL fCopyCorpse);
 extern BOOL ClientConnect(edict_t* pEntity, const char* pszName, const char* pszAddress, char szRejectReason[128]);
@@ -52,6 +51,7 @@ extern int AddToFullPack(
 	int hostflags,
 	int player,
 	unsigned char* pSet);
+
 extern void CreateBaseline(
 	int player,
 	int eindex,
@@ -60,6 +60,7 @@ extern void CreateBaseline(
 	int playermodelindex,
 	const vec3_t player_mins,
 	const vec3_t player_maxs);
+
 extern void RegisterEncoders(void);
 
 extern int GetWeaponData(struct edict_s* player, struct weapon_data_s* info);
@@ -82,4 +83,3 @@ InconsistentFile(const edict_t* player, const char* filename, char* disconnect_m
 
 extern int AllowLagCompensation(void);
 extern const char* GetRandomWaterTransitionSound(void);
-#endif  // CLIENT_H

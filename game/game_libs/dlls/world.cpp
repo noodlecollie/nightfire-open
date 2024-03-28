@@ -34,6 +34,7 @@
 #include "gamerules.h"
 #include "teamplay_gamerules.h"
 #include "physcallback.h"
+#include "gameresources/GameResources.h"
 
 extern CGraph WorldGraph;
 extern CSoundEnt* pSoundEnt;
@@ -340,7 +341,8 @@ int CGlobalState::Restore(CRestore& restore)
 
 	for ( i = 0; i < listCount; i++ )
 	{
-		if ( !restore.ReadFields("GENT", &tmpEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY_AS_INT(gGlobalEntitySaveData)) )
+		if ( !restore
+				  .ReadFields("GENT", &tmpEntity, gGlobalEntitySaveData, SIZE_OF_ARRAY_AS_INT(gGlobalEntitySaveData)) )
 			return 0;
 		EntityAdd(MAKE_STRING(tmpEntity.name), MAKE_STRING(tmpEntity.levelName), tmpEntity.state);
 	}
@@ -411,13 +413,8 @@ void CWorld::Spawn(void)
 
 void CWorld::Precache(void)
 {
-#if 1
-	CVAR_SET_STRING("sv_gravity", "800");  // 67ft/sec
+	CVAR_SET_STRING("sv_gravity", "800");
 	CVAR_SET_STRING("sv_stepsize", "18");
-#else
-	CVAR_SET_STRING("sv_gravity", "384");  // 32ft/sec
-	CVAR_SET_STRING("sv_stepsize", "24");
-#endif
 	CVAR_SET_STRING("room_type", "0");  // clear DSP
 
 	// Set up game rules
@@ -453,6 +450,11 @@ void CWorld::Precache(void)
 	W_Precache();  // get weapon precaches
 
 	ClientPrecache();
+
+	CGameResources::StaticInstance().Precache([](const char* modelPath) -> int
+	{
+		return PRECACHE_MODEL(modelPath);
+	});
 
 	// sounds used from C physics code
 	PRECACHE_SOUND("common/null.wav");  // clears sound channels

@@ -1429,7 +1429,9 @@ void CL_UpdateUserinfo(sizebuf_t* msg, qboolean legacy)
 	slot = MSG_ReadUBitLong(msg, MAX_CLIENT_BITS);
 
 	if ( slot >= MAX_CLIENTS )
+	{
 		Host_Error("CL_ParseServerMessage: svc_updateuserinfo >= MAX_CLIENTS\n");
+	}
 
 	if ( !legacy )
 	{

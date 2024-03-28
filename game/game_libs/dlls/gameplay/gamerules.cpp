@@ -361,7 +361,7 @@ CGameRules* InstallGameRules(void)
 	{
 		// generic half-life
 		g_teamplay = 0;
-		return new CHalfLifeRules;
+		return new CHalfLifeRules();
 	}
 	else
 	{
@@ -369,19 +369,20 @@ CGameRules* InstallGameRules(void)
 		{
 			// teamplay
 			g_teamplay = 1;
-			return new CHalfLifeTeamplay;
+			return new CHalfLifeTeamplay();
 		}
+
 		if ( (int)gpGlobals->deathmatch == 1 )
 		{
 			// vanilla deathmatch
 			g_teamplay = 0;
-			return new CHalfLifeMultiplay;
+			return new CHalfLifeMultiplay();
 		}
 		else
 		{
 			// vanilla deathmatch??
 			g_teamplay = 0;
-			return new CHalfLifeMultiplay;
+			return new CHalfLifeMultiplay();
 		}
 	}
 }
