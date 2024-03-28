@@ -546,7 +546,7 @@ void ClientCommand(edict_t* pEntity)
 
 static CharacterGender InferGenderFromModel(char* infobuffer)
 {
-	const char* modelName = g_engfuncs.pfnInfoKeyValue(infobuffer, "name");
+	const char* modelName = g_engfuncs.pfnInfoKeyValue(infobuffer, "model");
 
 	if ( !modelName || !(*modelName) )
 	{

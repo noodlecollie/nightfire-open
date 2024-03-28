@@ -13,5 +13,10 @@
 		"name": "mi6_tux",
 		"playerName": "MI6 Tux",
 		"skin": "mp_mi6_tux"
+	},
+	{
+		"name": "mp_alura_combat",
+		"playerName": "Alura",
+		"skin": "mp_alura_combat"
 	}
 ]

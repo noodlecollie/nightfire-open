@@ -267,8 +267,10 @@ void CBasePlayer::Pain(void)
 		return;
 	}
 
-	// TODO: Need to decide on subtype (male/female/bond).
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::PainMale);
+	const PlayerSoundId soundGender =
+		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::PainFemale : PlayerSoundId::PainMale;
+
+	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
 
 	m_flNextPainTime = gpGlobals->time + 0.45f;
@@ -360,8 +362,10 @@ int TrainSpeed(int iSpeed, int iMax)
 
 void CBasePlayer::DeathSound(void)
 {
-	// TODO: Need to decide on subtype (male/female/bond).
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::DieMale);
+	const PlayerSoundId soundGender =
+		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::DieFemale : PlayerSoundId::DieMale;
+
+	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
 
 	// play one of the suit death alarms
