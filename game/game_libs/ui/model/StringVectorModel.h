@@ -22,7 +22,9 @@ public:
 	const char* GetText(int line) final override
 	{
 		if ( line < 0 )
+		{
 			return NULL;
+		}
 
 		return Element(line).String();
 	}

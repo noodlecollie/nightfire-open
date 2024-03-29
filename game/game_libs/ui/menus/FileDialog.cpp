@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Bitmap.h"
 #include "Action.h"
 #include "Table.h"
+#include "Field.h"
 #include "StringArrayModel.h"
 #include "PicButton.h"
 #include "StringVectorModel.h"
@@ -61,6 +62,7 @@ private:
 	CFileListModel model;
 	CMenuTable fileList;
 	CPreview preview;
+	CMenuField filter;
 };
 
 void CMenuFileDialog::CPreview::Draw()
@@ -140,12 +142,17 @@ void CMenuFileDialog::_Init(void)
 
 	preview.SetRect(72, 380, 196, 196);
 
+	filter.SetRect(360, 220, -20, 20);
+	filter.eTextAlignment = QM_LEFT;
+	filter.SetNameAndStatus(L("Filter"), L("Filter listed files"));
+
 	AddItem(background);
 	// AddItem( banner );
 	AddButton(L("Done"), L("Use selected file"), PC_DONE, VoidCb(&CMenuFileDialog::SaveAndPopMenu));
 	AddButton(L("GameUI_Cancel"), L("Cancel file selection"), PC_CANCEL, VoidCb(&CMenuFileDialog::RejectChanges));
 	AddItem(preview);
 	AddItem(fileList);
+	AddItem(filter);
 }
 
 void CMenuFileDialog::_VidInit()

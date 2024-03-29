@@ -165,6 +165,8 @@ set(SOURCES_UI
 	menus/Zoo.cpp
 	model/BaseArrayModel.h
 	model/BaseModel.h
+	model/FilterableStringVectorModel.h
+	model/FilterableStringVectorModel.cpp
 	model/StringArrayModel.h
 	model/StringVectorModel.h
 	model/StudioSceneModel.h
