@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Field.h"
 #include "StringArrayModel.h"
 #include "PicButton.h"
-#include "StringVectorModel.h"
+#include "FilterableStringVectorModel.h"
 
 #define ART_BANNER "gfx/shell/head_touchoptions"
 #define ART_GAMMA "gfx/shell/gamma"
@@ -39,7 +39,7 @@ public:
 	}
 
 private:
-	class CFileListModel : public CStringVectorModel
+	class CFileListModel : public CFilterableStringVectorModel
 	{
 	public:
 		void Update() override;
@@ -52,17 +52,24 @@ private:
 		HIMAGE image;
 	};
 
+	class CFilterBox : public CMenuField
+	{
+	public:
+		bool KeyUp(int key) override;
+	};
+
 	void _Init(void) override;
 	void _VidInit(void) override;
 	void SaveAndPopMenu() override;
 	void RejectChanges();
 	void ApplyChanges(const char* fileName);
 	void UpdateExtra();
+	void ApplyListFilter();
 
 	CFileListModel model;
 	CMenuTable fileList;
 	CPreview preview;
-	CMenuField filter;
+	CFilterBox filter;
 };
 
 void CMenuFileDialog::CPreview::Draw()
@@ -77,7 +84,8 @@ void CMenuFileDialog::CFileListModel::Update(void)
 {
 	FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
 
-	Purge();
+	Clear();
+	SetFilter("");
 
 	for ( size_t patternIndex = 0; patternIndex < globalData.PatternCount(); ++patternIndex )
 	{
@@ -90,10 +98,23 @@ void CMenuFileDialog::CFileListModel::Update(void)
 		{
 			for ( int fileIndex = 0; fileIndex < numFiles; ++fileIndex )
 			{
-				AddToTail(CUtlString(fileNames[fileIndex]));
+				AddItem(CUtlString(fileNames[fileIndex]));
 			}
 		}
 	}
+
+	ApplyFilter();
+}
+
+bool CMenuFileDialog::CFilterBox::KeyUp(int key)
+{
+	if ( UI::Key::IsEnter(key) )
+	{
+		_Event(QM_RELEASED);
+		return true;
+	}
+
+	return CMenuField::KeyUp(key);
 }
 
 void CMenuFileDialog::ApplyChanges(const char* fileName)
@@ -145,6 +166,7 @@ void CMenuFileDialog::_Init(void)
 	filter.SetRect(360, 220, -20, 20);
 	filter.eTextAlignment = QM_LEFT;
 	filter.SetNameAndStatus(L("Filter"), L("Filter listed files"));
+	filter.onReleased = VoidCb(&CMenuFileDialog::ApplyListFilter);
 
 	AddItem(background);
 	// AddItem( banner );
@@ -158,6 +180,12 @@ void CMenuFileDialog::_Init(void)
 void CMenuFileDialog::_VidInit()
 {
 	preview.SetVisibility(FileDialogGlobals::GlobalData().ResultHasPreview());
+}
+
+void CMenuFileDialog::ApplyListFilter()
+{
+	model.SetFilter(filter.GetBuffer());
+	model.ApplyFilter();
 }
 
 ADD_MENU(menu_filedialog, CMenuFileDialog, UI_FileDialog_Menu);

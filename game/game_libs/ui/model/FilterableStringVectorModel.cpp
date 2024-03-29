@@ -13,16 +13,28 @@ void CFilterableStringVectorModel::SetFilter(const CUtlString& filterString)
 	}
 
 	m_FilterString = filterString;
-	Update();
 }
 
-void CFilterableStringVectorModel::Update()
+void CFilterableStringVectorModel::Clear()
+{
+	m_Model.Purge();
+	m_AllowedIndices.Purge();
+}
+
+void CFilterableStringVectorModel::AddItem(const CUtlString& item)
+{
+	m_Model.AddToTail(item);
+}
+
+void CFilterableStringVectorModel::ApplyFilter()
 {
 	if ( m_FilterString.IsEmpty() )
 	{
 		ClearAllFiltering();
 		return;
 	}
+
+	BuildAllowedIndices();
 }
 
 int CFilterableStringVectorModel::GetRows() const
@@ -58,7 +70,7 @@ void CFilterableStringVectorModel::ClearAllFiltering()
 	}
 }
 
-void CFilterableStringVectorModel::ApplyFiltering()
+void CFilterableStringVectorModel::BuildAllowedIndices()
 {
 	m_AllowedIndices.Purge();
 

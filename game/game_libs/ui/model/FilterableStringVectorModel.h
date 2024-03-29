@@ -10,15 +10,22 @@ public:
 	CUtlString GetFilter() const;
 	void SetFilter(const CUtlString& filterString);
 
-	void Update() override;
+	// Make sure to call ApplyFilter() after having added all items,
+	// so that the filter is correctly applied.
+	void Clear();
+	void AddItem(const CUtlString& item);
+	void ApplyFilter();
+
 	int GetRows() const override;
 	const char* GetText(int line) override;
 
+protected:
+	CUtlVector<CUtlString> m_Model;
+
 private:
 	void ClearAllFiltering();
-	void ApplyFiltering();
+	void BuildAllowedIndices();
 
-	CUtlVector<CUtlString> m_Model;
 	CUtlString m_FilterString;
 	CUtlVector<int> m_AllowedIndices;
 };
