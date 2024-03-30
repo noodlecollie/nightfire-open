@@ -279,6 +279,11 @@ public:
 		return engfuncs.pfnGetModelSequenceBounds(ent, sequenceIndex, outVec3Mins, outVec3Maxs);
 	}
 
+	static inline void GetModelEyePosition(struct cl_entity_s* ent, float* outVec3Pos)
+	{
+		return engfuncs.pfnGetModelEyePosition(ent, outVec3Pos);
+	}
+
 	static inline float GetModelSequenceDuration(struct cl_entity_s* ent, int sequenceIndex)
 	{
 		return engfuncs.pfnGetModelSequenceDuration(ent, sequenceIndex);

@@ -1465,6 +1465,23 @@ float Mod_StudioGetSequenceDuration(model_t* model, int anim)
 	return (float)sequence->numframes / sequence->fps;
 }
 
+void Mod_StudioGetEyePosition(model_t* model, float* outVec3Pos)
+{
+	if ( !model || !outVec3Pos )
+	{
+		return;
+	}
+
+	const studiohdr_t* header = (const studiohdr_t*)Mod_StudioExtradata(model);
+
+	if ( !header )
+	{
+		return;
+	}
+
+	VectorCopy(header->eyeposition, outVec3Pos);
+}
+
 qboolean Mod_StudioGetSequenceBounds(model_t* model, int anim, vec3_t outVecMins, vec3_t outVecMaxs)
 {
 	const studiohdr_t* header = NULL;

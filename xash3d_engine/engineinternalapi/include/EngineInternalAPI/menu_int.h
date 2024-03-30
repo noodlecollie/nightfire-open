@@ -131,6 +131,7 @@ typedef struct ui_enginefuncs_s
 	const char* (*pfnGetModelSequenceName)(struct cl_entity_s* ent, int sequenceIndex);
 	qboolean (
 		*pfnGetModelSequenceBounds)(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs);
+	void (*pfnGetModelEyePosition)(struct cl_entity_s* ent, float* outVec3Pos);
 	float (*pfnGetModelSequenceDuration)(struct cl_entity_s* ent, int sequenceIndex);
 	void (*pfnClearScene)(void);
 	void (*pfnUpdateScene)(void);

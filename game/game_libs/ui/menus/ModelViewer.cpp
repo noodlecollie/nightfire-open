@@ -106,6 +106,15 @@ private:
 			L("Enable or disable drawing bounds of current animation sequence"));
 
 		AddItem(m_CheckEnableSequenceBBox);
+
+		m_CheckEnableEyePositionMarker.SetCoord(controlCol2Left, areaTop + rowOffset);
+		m_CheckEnableEyePositionMarker.bChecked = m_SceneView.GetDrawEyePositionMarker();
+		m_CheckEnableEyePositionMarker.onChanged = VoidCb(&CMenuModelViewer::HandleEyePositionMarkerCheckBoxChanged);
+		m_CheckEnableEyePositionMarker.SetNameAndStatus(
+			L("Eye Position Marker"),
+			L("Enable or disable drawing marker at model eye position"));
+
+		AddItem(m_CheckEnableEyePositionMarker);
 	}
 
 	void SelectModel()
@@ -241,6 +250,11 @@ private:
 		m_SceneView.SetDrawOriginMarker(m_CheckEnableOriginMarker.bChecked);
 	}
 
+	void HandleEyePositionMarkerCheckBoxChanged()
+	{
+		m_SceneView.SetDrawEyePositionMarker(m_CheckEnableEyePositionMarker.bChecked);
+	}
+
 	void HandleModelBBoxCheckBoxChanged()
 	{
 		m_SceneView.SetDrawModelBoundingBoxes(m_CheckEnableModelBBox.bChecked);
@@ -284,6 +298,7 @@ private:
 	CMenuDeveloperStudioSceneView m_SceneView;
 	CMenuTable m_SequenceTable;
 	CMenuCheckBox m_CheckEnableOriginMarker;
+	CMenuCheckBox m_CheckEnableEyePositionMarker;
 	CMenuCheckBox m_CheckEnableModelBBox;
 	CMenuCheckBox m_CheckEnableSequenceBBox;
 

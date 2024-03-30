@@ -837,6 +837,14 @@ float pfnGetModelSequenceDuration(struct cl_entity_s* ent, int sequenceIndex)
 	return ent ? Mod_StudioGetSequenceDuration(ent->model, sequenceIndex) : 0.0f;
 }
 
+void pfnGetModelEyePosition(struct cl_entity_s* ent, float* outVec3Pos)
+{
+	if ( ent )
+	{
+		Mod_StudioGetEyePosition(ent->model, outVec3Pos);
+	}
+}
+
 /*
 ====================
 pfnClearScene
@@ -1279,6 +1287,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	pfnGetModelSequenceCount,
 	pfnGetModelSequenceName,
 	pfnGetModelSequenceBounds,
+	pfnGetModelEyePosition,
 	pfnGetModelSequenceDuration,
 	pfnClearScene,
 	pfnUpdateScene,
