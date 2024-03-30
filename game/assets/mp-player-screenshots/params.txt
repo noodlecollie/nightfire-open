@@ -1,0 +1,6 @@
+Good camera settings in the model viewer for the MI6 Stealth shots:
+- Centre at eyes
+- Reduce the whole number part of the Z position to 30
+- Set the camera distance to 32
+
+May need to play with these for other models.

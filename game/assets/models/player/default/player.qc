@@ -1,5 +1,5 @@
 $cd "."
-$cdtexture "../../../../content/nfopen/textures/mdl"
+$cdtexture "../../../../content/nfopen/textures"
 $modelname "_fallback.mdl"
 
 $root "Bip01"
@@ -7,7 +7,7 @@ $noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
-$eyeposition 0.000000 0.000000 0.000000
+$eyeposition 0.0 -4.968 33.46
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 

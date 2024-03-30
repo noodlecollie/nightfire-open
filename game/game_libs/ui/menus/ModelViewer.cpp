@@ -84,6 +84,7 @@ private:
 		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, GetFirstColumnWidth(), NEG_VIEW_BOTTOM);
 		m_SequenceTable.SetModel(&m_SequenceModel);
 		m_SequenceTable.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceChanged);
+		m_SequenceTable.SetNameAndStatus(L("Sequences"), L("Animation sequences in this model"));
 		AddItem(m_SequenceTable);
 
 		m_SceneView.SetRect(col2Left, TOP_MARGIN, NEG_VIEW_RIGHT, NEG_VIEW_BOTTOM);
@@ -355,7 +356,7 @@ private:
 
 	void SetCameraValuesFromUI()
 	{
-		vec3_t position = { 0.0f, 0.0f, 0.0f };
+		vec3_t position = {0.0f, 0.0f, 0.0f};
 
 		position[0] = strtof(m_FieldCameraPosX.GetBuffer(), nullptr);
 		position[1] = strtof(m_FieldCameraPosY.GetBuffer(), nullptr);
