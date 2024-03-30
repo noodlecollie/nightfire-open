@@ -20,7 +20,7 @@ GNU General Public License for more details.
 void CMenuPlayerModelView::VidInit()
 {
 	CMenuStudioSceneView::VidInit();
-	SetCameraDistFromOrigin(45.0f / tanf(DEG2RADF(m_RefDef.fov_y / 2.0f)));
+	SetCameraDistFromCentre(45.0f / tanf(DEG2RADF(m_RefDef.fov_y / 2.0f)));
 }
 
 void CMenuPlayerModelView::Draw()

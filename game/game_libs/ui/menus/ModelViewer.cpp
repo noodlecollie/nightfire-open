@@ -4,19 +4,32 @@
 #include "Table.h"
 #include "StringVectorModel.h"
 #include "CheckBox.h"
+#include "Field.h"
 #include "utlstring.h"
 
 static constexpr int TOP_MARGIN = 50;
 static constexpr int LEFT_MARGIN = 300;
 static constexpr int RIGHT_MARGIN = 50;
 static constexpr int BOTTOM_MARGIN = 50;
-static constexpr int PADDING = 30;
-static constexpr int BOTTOM_CONTROL_AREA_HEIGHT = 100;
-static constexpr int BOTTOM_CONTROL_AREA_PADDING = 15;
-static constexpr int BOTTOM_CONTROL_ROW_HEIGHT = 40;
+static constexpr int VIEW_PADDING = 30;
+static constexpr int INTER_AREA_PADDING = 10;
 
-static constexpr float COL1_FACTOR = 0.4f;
-static constexpr float COL2_FACTOR = 1.0f - COL1_FACTOR;
+static constexpr int NEG_VIEW_RIGHT = -1 * RIGHT_MARGIN;
+
+static constexpr int CTRLAREA_NUM_ROWS = 3;
+static constexpr int CTRLAREA_ROW_HEIGHT = 40;
+static constexpr int CTRLAREA_ROW_PADDING = 8;
+static constexpr int CTRLAREA_HEIGHT =
+	(CTRLAREA_NUM_ROWS * CTRLAREA_ROW_HEIGHT) + ((CTRLAREA_NUM_ROWS + 1) * CTRLAREA_ROW_PADDING);
+static constexpr int NEG_CTRLAREA_TOP = -1 * (BOTTOM_MARGIN + CTRLAREA_HEIGHT);
+static constexpr int NEG_CTRLAREA_ROW_START = NEG_CTRLAREA_TOP + CTRLAREA_ROW_PADDING;
+
+static constexpr int NEG_VIEW_BOTTOM = NEG_CTRLAREA_TOP - INTER_AREA_PADDING;
+
+static constexpr float VIEW_COL1_FACTOR = 0.4f;
+static constexpr float VIEW_COL2_FACTOR = 1.0f - VIEW_COL1_FACTOR;
+
+static constexpr int FIELD_PADDING = 15;
 
 class CMenuModelViewer : public CMenuFramework
 {
@@ -39,46 +52,104 @@ private:
 
 		m_SceneModel.Clear();
 		m_MainStudioModel = m_SceneModel.AddEntData();
+		ResetCameraToDefaultPosition();
 
 		AddMainViews();
-		AddBottomControls();
+		AddFineCameraControls();
+		AddViewToggles();
 	}
 
 	void Draw() override
 	{
+		if ( m_PendingCameraParamSet )
+		{
+			SetCameraValuesFromUI();
+			m_PendingCameraParamSet = false;
+		}
+
+		if ( !m_CameraParamsBeingEdited )
+		{
+			UpdateFineCameraControlValues();
+		}
+
 		UpdateAnimationTime(m_MainStudioModel);
 		CMenuFramework::Draw();
 	}
 
 	void AddMainViews()
 	{
-		const int viewHeight = GetViewAreaHeight();
 		const int col1Width = GetFirstColumnWidth();
-		const int col2Width = GetSecondColumnWidth();
-		const int col2Left = LEFT_MARGIN + col1Width + PADDING;
+		const int col2Left = LEFT_MARGIN + col1Width + VIEW_PADDING;
 
-		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, col1Width, viewHeight);
+		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, GetFirstColumnWidth(), NEG_VIEW_BOTTOM);
 		m_SequenceTable.SetModel(&m_SequenceModel);
 		m_SequenceTable.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceChanged);
 		AddItem(m_SequenceTable);
 
-		m_SceneView.SetRect(col2Left, TOP_MARGIN, col2Width, viewHeight);
+		m_SceneView.SetRect(col2Left, TOP_MARGIN, NEG_VIEW_RIGHT, NEG_VIEW_BOTTOM);
 		m_SceneView.SetAllowPitchRotation(true);
 		m_SceneView.SetAllowRightButtonZoom(true);
 		m_SceneView.SetModel(&m_SceneModel);
-		m_SceneView.SetCameraDistFromOrigin(96.0f);
+		m_SceneView.SetCameraDistFromCentre(96.0f);
 		AddItem(m_SceneView);
 	}
 
-	void AddBottomControls()
+	void AddFineCameraControls()
 	{
-		const int areaTop = GetControlAreaTop();
-		const int col2Left = LEFT_MARGIN + GetFirstColumnWidth() + PADDING;
-		const int controlCol2Left = col2Left + (GetSecondColumnWidth() / 2) + BOTTOM_CONTROL_AREA_PADDING;
+		const int col1Width = GetFirstColumnWidth();
+		const int fieldWidth = (col1Width - (2 * FIELD_PADDING)) / 3;
 
 		int rowOffset = 0;
 
-		m_CheckEnableModelBBox.SetCoord(col2Left, areaTop + rowOffset);
+		m_FieldCameraPosX.SetCoord(LEFT_MARGIN, NEG_CTRLAREA_ROW_START + rowOffset);
+		m_FieldCameraPosX.size.w = fieldWidth;
+		SetCommonFineUIParams(m_FieldCameraPosX);
+		AddItem(m_FieldCameraPosX);
+
+		m_FieldCameraPosY.SetCoord(
+			m_FieldCameraPosX.pos.x + m_FieldCameraPosX.size.w + FIELD_PADDING,
+			NEG_CTRLAREA_ROW_START + rowOffset);
+		m_FieldCameraPosY.size.w = fieldWidth;
+		SetCommonFineUIParams(m_FieldCameraPosY);
+		AddItem(m_FieldCameraPosY);
+
+		m_FieldCameraPosZ.SetCoord(
+			m_FieldCameraPosY.pos.x + m_FieldCameraPosY.size.w + FIELD_PADDING,
+			NEG_CTRLAREA_ROW_START + rowOffset);
+		m_FieldCameraPosZ.size.w = fieldWidth;
+		SetCommonFineUIParams(m_FieldCameraPosZ);
+		AddItem(m_FieldCameraPosZ);
+
+		rowOffset += CTRLAREA_ROW_HEIGHT + CTRLAREA_ROW_PADDING;
+
+		m_FieldCameraPitch.SetCoord(LEFT_MARGIN, NEG_CTRLAREA_ROW_START + rowOffset);
+		m_FieldCameraPitch.size.w = fieldWidth;
+		SetCommonFineUIParams(m_FieldCameraPitch);
+		AddItem(m_FieldCameraPitch);
+
+		m_FieldCameraYaw.SetCoord(
+			m_FieldCameraPitch.pos.x + m_FieldCameraPitch.size.w + FIELD_PADDING,
+			NEG_CTRLAREA_ROW_START + rowOffset);
+		m_FieldCameraYaw.size.w = fieldWidth;
+		SetCommonFineUIParams(m_FieldCameraYaw);
+		AddItem(m_FieldCameraYaw);
+
+		m_FieldCameraDist.SetCoord(
+			m_FieldCameraYaw.pos.x + m_FieldCameraYaw.size.w + FIELD_PADDING,
+			NEG_CTRLAREA_ROW_START + rowOffset);
+		m_FieldCameraDist.size.w = fieldWidth;
+		SetCommonFineUIParams(m_FieldCameraDist);
+		AddItem(m_FieldCameraDist);
+	}
+
+	void AddViewToggles()
+	{
+		const int col2Left = LEFT_MARGIN + GetFirstColumnWidth() + VIEW_PADDING;
+		const int controlCol2Left = col2Left + (GetSecondColumnWidth() / 2) + CTRLAREA_ROW_PADDING;
+
+		int rowOffset = 0;
+
+		m_CheckEnableModelBBox.SetCoord(col2Left, NEG_CTRLAREA_ROW_START + rowOffset);
 		m_CheckEnableModelBBox.bChecked = m_SceneView.GetDrawModelBoundingBoxes();
 		m_CheckEnableModelBBox.onChanged = VoidCb(&CMenuModelViewer::HandleModelBBoxCheckBoxChanged);
 		m_CheckEnableModelBBox.SetNameAndStatus(
@@ -87,7 +158,7 @@ private:
 
 		AddItem(m_CheckEnableModelBBox);
 
-		m_CheckEnableOriginMarker.SetCoord(controlCol2Left, areaTop + rowOffset);
+		m_CheckEnableOriginMarker.SetCoord(controlCol2Left, NEG_CTRLAREA_ROW_START + rowOffset);
 		m_CheckEnableOriginMarker.bChecked = m_SceneView.GetDrawOriginMarker();
 		m_CheckEnableOriginMarker.onChanged = VoidCb(&CMenuModelViewer::HandleOriginMarkerCheckBoxChanged);
 		m_CheckEnableOriginMarker.SetNameAndStatus(
@@ -96,9 +167,9 @@ private:
 
 		AddItem(m_CheckEnableOriginMarker);
 
-		rowOffset += BOTTOM_CONTROL_ROW_HEIGHT;
+		rowOffset += CTRLAREA_ROW_HEIGHT + CTRLAREA_ROW_PADDING;
 
-		m_CheckEnableSequenceBBox.SetCoord(col2Left, areaTop + rowOffset);
+		m_CheckEnableSequenceBBox.SetCoord(col2Left, NEG_CTRLAREA_ROW_START + rowOffset);
 		m_CheckEnableSequenceBBox.bChecked = m_SceneView.GetDrawSequenceBoundingBoxes();
 		m_CheckEnableSequenceBBox.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceBBoxCheckBoxChanged);
 		m_CheckEnableSequenceBBox.SetNameAndStatus(
@@ -107,7 +178,7 @@ private:
 
 		AddItem(m_CheckEnableSequenceBBox);
 
-		m_CheckEnableEyePositionMarker.SetCoord(controlCol2Left, areaTop + rowOffset);
+		m_CheckEnableEyePositionMarker.SetCoord(controlCol2Left, NEG_CTRLAREA_ROW_START + rowOffset);
 		m_CheckEnableEyePositionMarker.bChecked = m_SceneView.GetDrawEyePositionMarker();
 		m_CheckEnableEyePositionMarker.onChanged = VoidCb(&CMenuModelViewer::HandleEyePositionMarkerCheckBoxChanged);
 		m_CheckEnableEyePositionMarker.SetNameAndStatus(
@@ -115,6 +186,17 @@ private:
 			L("Enable or disable drawing marker at model eye position"));
 
 		AddItem(m_CheckEnableEyePositionMarker);
+
+		rowOffset += CTRLAREA_ROW_HEIGHT + CTRLAREA_ROW_PADDING;
+
+		m_CheckCentreAtEyes.SetCoord(col2Left, NEG_CTRLAREA_ROW_START + rowOffset);
+		m_CheckCentreAtEyes.bChecked = m_SceneView.GetDrawEyePositionMarker();
+		m_CheckCentreAtEyes.onChanged = VoidCb(&CMenuModelViewer::HandleCentreAtEyesChanged);
+		m_CheckCentreAtEyes.SetNameAndStatus(
+			L("Centre At Eyes"),
+			L("Centres the camera around the model eye position"));
+
+		AddItem(m_CheckCentreAtEyes);
 	}
 
 	void SelectModel()
@@ -141,9 +223,8 @@ private:
 		}
 
 		EngFuncs::SetModel(m_MainStudioModel, path);
-		m_SceneView.ResetCamera();
-		m_SceneView.SetCameraDistFromOrigin(64.0f);
-		m_SceneView.SetCameraYaw(180.0f);
+
+		ResetCameraToDefaultPosition();
 
 		int numSequences = EngFuncs::GetModelSequenceCount(m_MainStudioModel);
 		m_SequenceModel.Purge();
@@ -245,6 +326,51 @@ private:
 		}
 	}
 
+	void UpdateFineCameraControlValues()
+	{
+		static constexpr const char* const FLOAT_FORMAT = "%.02f";
+
+		const float* cameraCentre = m_SceneView.GetCameraCentre();
+
+		CUtlString value;
+
+		value.Format(FLOAT_FORMAT, cameraCentre[0]);
+		m_FieldCameraPosX.SetBuffer(value.Get());
+
+		value.Format(FLOAT_FORMAT, cameraCentre[1]);
+		m_FieldCameraPosY.SetBuffer(value.Get());
+
+		value.Format(FLOAT_FORMAT, cameraCentre[2]);
+		m_FieldCameraPosZ.SetBuffer(value.Get());
+
+		value.Format(FLOAT_FORMAT, m_SceneView.GetCameraPitch());
+		m_FieldCameraPitch.SetBuffer(value.Get());
+
+		value.Format(FLOAT_FORMAT, m_SceneView.GetCameraYaw());
+		m_FieldCameraYaw.SetBuffer(value.Get());
+
+		value.Format(FLOAT_FORMAT, m_SceneView.GetCameraDistFromCentre());
+		m_FieldCameraDist.SetBuffer(value.Get());
+	}
+
+	void SetCameraValuesFromUI()
+	{
+		vec3_t position = { 0.0f, 0.0f, 0.0f };
+
+		position[0] = strtof(m_FieldCameraPosX.GetBuffer(), nullptr);
+		position[1] = strtof(m_FieldCameraPosY.GetBuffer(), nullptr);
+		position[2] = strtof(m_FieldCameraPosZ.GetBuffer(), nullptr);
+
+		float pitch = strtof(m_FieldCameraPitch.GetBuffer(), nullptr);
+		float yaw = strtof(m_FieldCameraYaw.GetBuffer(), nullptr);
+		float dist = strtof(m_FieldCameraDist.GetBuffer(), nullptr);
+
+		m_SceneView.SetCameraCentre(position);
+		m_SceneView.SetCameraPitch(pitch);
+		m_SceneView.SetCameraYaw(yaw);
+		m_SceneView.SetCameraDistFromCentre(dist);
+	}
+
 	void HandleOriginMarkerCheckBoxChanged()
 	{
 		m_SceneView.SetDrawOriginMarker(m_CheckEnableOriginMarker.bChecked);
@@ -265,31 +391,83 @@ private:
 		m_SceneView.SetDrawSequenceBoundingBoxes(m_CheckEnableSequenceBBox.bChecked);
 	}
 
+	void HandleCentreAtEyesChanged()
+	{
+		ComputeAndSetCameraPosition();
+
+		if ( m_CheckCentreAtEyes.bChecked )
+		{
+			m_SceneView.SetCameraPitch(0.0f);
+			m_SceneView.SetCameraYaw(180.0f);
+			m_SceneView.SetCameraDistFromCentre(16.0f);
+		}
+		else
+		{
+			m_SceneView.SetCameraDistFromCentre(64.0f);
+		}
+	}
+
+	void HandleCameraFineUIGotFocus()
+	{
+		m_CameraParamsBeingEdited = true;
+	}
+
+	void HandleCameraFineUILostFocus()
+	{
+		m_CameraParamsBeingEdited = false;
+	}
+
+	void HandleCameraFineValueChanged()
+	{
+		m_PendingCameraParamSet = true;
+	}
+
+	void ComputeAndSetCameraPosition()
+	{
+		vec3_t cameraCentre = {0.0f, 0.0f, 0.0f};
+
+		if ( m_MainStudioModel && m_CheckCentreAtEyes.bChecked )
+		{
+			EngFuncs::GetModelEyePosition(m_MainStudioModel, cameraCentre);
+		}
+
+		m_SceneView.SetCameraCentre(cameraCentre);
+	}
+
+	void ResetCameraToDefaultPosition()
+	{
+		m_SceneView.ResetCamera();
+		ComputeAndSetCameraPosition();
+		m_SceneView.SetCameraYaw(180.0f);
+		m_SceneView.SetCameraDistFromCentre(64.0f);
+	}
+
+	void ResetCameraRotation()
+	{
+		m_SceneView.SetCameraYaw(180.0f);
+	}
+
+	static void SetCommonFineUIParams(CMenuField& field)
+	{
+		field.eTextAlignment = QM_CENTER;
+		field.onChanged = VoidCb(&CMenuModelViewer::HandleCameraFineValueChanged);
+		field.onGotFocus = VoidCb(&CMenuModelViewer::HandleCameraFineUIGotFocus);
+		field.onLostFocus = VoidCb(&CMenuModelViewer::HandleCameraFineUILostFocus);
+	}
+
 	static int GetTotalColumnWidth()
 	{
-		return static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - PADDING;
+		return static_cast<int>(ScreenWidth / uiStatic.scaleX) - LEFT_MARGIN - RIGHT_MARGIN - VIEW_PADDING;
 	}
 
 	static int GetFirstColumnWidth()
 	{
-		return static_cast<int>(static_cast<float>(GetTotalColumnWidth()) * COL1_FACTOR);
+		return static_cast<int>(static_cast<float>(GetTotalColumnWidth()) * VIEW_COL1_FACTOR);
 	}
 
 	static int GetSecondColumnWidth()
 	{
-		return static_cast<int>(static_cast<float>(GetTotalColumnWidth()) * COL2_FACTOR);
-	}
-
-	static int GetViewAreaHeight()
-	{
-		return static_cast<int>(ScreenHeight / uiStatic.scaleY) - TOP_MARGIN - BOTTOM_MARGIN -
-			BOTTOM_CONTROL_AREA_HEIGHT;
-	}
-
-	static int GetControlAreaTop()
-	{
-		return static_cast<int>(ScreenHeight / uiStatic.scaleY) - BOTTOM_MARGIN - BOTTOM_CONTROL_AREA_HEIGHT +
-			BOTTOM_CONTROL_AREA_PADDING;
+		return static_cast<int>(static_cast<float>(GetTotalColumnWidth()) * VIEW_COL2_FACTOR);
 	}
 
 	CStudioSceneModel m_SceneModel;
@@ -297,10 +475,21 @@ private:
 
 	CMenuDeveloperStudioSceneView m_SceneView;
 	CMenuTable m_SequenceTable;
+
+	CMenuField m_FieldCameraPosX;
+	CMenuField m_FieldCameraPosY;
+	CMenuField m_FieldCameraPosZ;
+	CMenuField m_FieldCameraPitch;
+	CMenuField m_FieldCameraYaw;
+	CMenuField m_FieldCameraDist;
+	bool m_PendingCameraParamSet = false;
+	bool m_CameraParamsBeingEdited = false;
+
 	CMenuCheckBox m_CheckEnableOriginMarker;
 	CMenuCheckBox m_CheckEnableEyePositionMarker;
 	CMenuCheckBox m_CheckEnableModelBBox;
 	CMenuCheckBox m_CheckEnableSequenceBBox;
+	CMenuCheckBox m_CheckCentreAtEyes;
 
 	cl_entity_t* m_MainStudioModel = nullptr;
 };

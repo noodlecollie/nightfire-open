@@ -113,18 +113,33 @@ void CMenuDeveloperStudioSceneView::DrawEyePositionMarker(cl_entity_t* ent)
 
 void CMenuDeveloperStudioSceneView::DrawAxisMarker(float x, float y, float z, float scale)
 {
+	// The model axes are not the same as the world axes,
+	// so we need to colour and flip them appropriately.
+	// Model X = World Y
+	// Model Y = World -X
+	// Model Z = World Z
+
+	static const float AXIS_DIRS[3] =
+	{
+		-1.0f,
+		1.0f,
+		1.0f,
+	};
+
+	static const uint32_t AXIS_COLOURS[3] =
+	{
+		0x00FF00FF,
+		0xFF0000FF,
+		0x0000FFFF,
+	};
+
 	for ( size_t axisIndex = 0; axisIndex < 3; ++axisIndex )
 	{
+		vec3_t base = { x, y, z };
 		vec3_t axis = { x, y, z };
-		axis[axisIndex] += scale;
+		axis[axisIndex] += AXIS_DIRS[axisIndex] * scale;
 
-		uint32_t colourMask = 0x0000FF00;
-		colourMask <<= (2 - axisIndex) * 8;
-
-		// Alpha should always be 255.
-		colourMask |= 0x000000FF;
-
-		EngFuncs::StoreLine(vec3_origin, axis, colourMask);
+		EngFuncs::StoreLine(base, axis, AXIS_COLOURS[axisIndex]);
 	}
 }
 

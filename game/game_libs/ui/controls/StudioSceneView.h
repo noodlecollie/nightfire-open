@@ -12,6 +12,12 @@
 class CMenuStudioSceneView : public CMenuBaseItem
 {
 public:
+	enum class CameraCentre
+	{
+		ORIGIN = 0,
+		EYES
+	};
+
 	CMenuStudioSceneView();
 	void VidInit() override;
 	void Draw() override;
@@ -28,10 +34,19 @@ public:
 	void SetAllowPitchRotation(bool allow);
 	void SetAllowRightButtonZoom(bool allow);
 
+	const float* GetCameraCentre() const;
+	void SetCameraCentre(float x, float y, float z);
+	void SetCameraCentre(const float* centre);
+
+	float GetCameraPitch() const;
+	void SetCameraPitch(float degrees);
 	float GetCameraYaw() const;
 	void SetCameraYaw(float degrees);
-	float GetCameraDistFromOrigin() const;
-	void SetCameraDistFromOrigin(float dist);
+
+	float GetCameraDistFromCentre() const;
+	void SetCameraDistFromCentre(float dist);
+
+	// Resets centre to origin, and resets angles and distance.
 	void ResetCamera();
 
 protected:
@@ -58,4 +73,5 @@ private:
 	bool m_AllowPitchRotation = false;
 	bool m_AllowRightButtonZoom = false;
 	float m_DistFromOrigin = 0.0f;
+	vec3_t m_CameraCentre;
 };

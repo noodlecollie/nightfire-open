@@ -16,7 +16,6 @@ public:
 
 	bool GetDrawSequenceBoundingBoxes() const;
 	void SetDrawSequenceBoundingBoxes(bool draw);
-
 protected:
 	void PreDrawModels() override;
 

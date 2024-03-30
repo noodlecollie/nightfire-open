@@ -58,6 +58,12 @@ private:
 		bool KeyUp(int key) override;
 	};
 
+	class CFileListTable : public CMenuTable
+	{
+	public:
+		bool KeyUp(int key) override;
+	};
+
 	void _Init(void) override;
 	void _VidInit(void) override;
 	void SaveAndPopMenu() override;
@@ -67,7 +73,7 @@ private:
 	void ApplyListFilter();
 
 	CFileListModel model;
-	CMenuTable fileList;
+	CFileListTable fileList;
 	CPreview preview;
 	CFilterBox filter;
 };
@@ -117,6 +123,17 @@ bool CMenuFileDialog::CFilterBox::KeyUp(int key)
 	return CMenuField::KeyUp(key);
 }
 
+bool CMenuFileDialog::CFileListTable::KeyUp(int key)
+{
+	if ( UI::Key::IsEnter(key) )
+	{
+		_Event(QM_RELEASED);
+		return true;
+	}
+
+	return CMenuTable::KeyUp(key);
+}
+
 void CMenuFileDialog::ApplyChanges(const char* fileName)
 {
 	FileDialogGlobals& globalData = FileDialogGlobals::GlobalData();
@@ -153,11 +170,10 @@ UI_FileDialog_Init
 */
 void CMenuFileDialog::_Init(void)
 {
-	// banner.SetPicture( ART_BANNER );
-
 	fileList.iFlags |= QMF_DROPSHADOW;
 	fileList.SetModel(&model);
 	fileList.onChanged = VoidCb(&CMenuFileDialog::UpdateExtra);
+	fileList.onReleased = VoidCb(&CMenuFileDialog::SaveAndPopMenu);
 	fileList.SetRect(360, 230, -20, 465);
 	UpdateExtra();
 
@@ -169,12 +185,11 @@ void CMenuFileDialog::_Init(void)
 	filter.onReleased = VoidCb(&CMenuFileDialog::ApplyListFilter);
 
 	AddItem(background);
-	// AddItem( banner );
 	AddButton(L("Done"), L("Use selected file"), PC_DONE, VoidCb(&CMenuFileDialog::SaveAndPopMenu));
 	AddButton(L("GameUI_Cancel"), L("Cancel file selection"), PC_CANCEL, VoidCb(&CMenuFileDialog::RejectChanges));
-	AddItem(preview);
-	AddItem(fileList);
 	AddItem(filter);
+	AddItem(fileList);
+	AddItem(preview);
 }
 
 void CMenuFileDialog::_VidInit()
