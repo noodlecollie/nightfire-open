@@ -25,8 +25,7 @@ void CMenuPlayerModelView::VidInit()
 
 void CMenuPlayerModelView::Draw()
 {
-	if ( (eOverrideMode == PMV_DONTCARE && !ui_showmodels->value) ||  // controlled by engine cvar
-		 (eOverrideMode == PMV_SHOWIMAGE) )  // controlled by menucode
+	if ( eOverrideMode == PMV_SHOWIMAGE )  // controlled by menucode
 	{
 		// draw the background
 		UI_FillRect(m_scPos, m_scSize, backgroundColor);

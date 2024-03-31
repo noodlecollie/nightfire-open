@@ -116,11 +116,6 @@ public:
 	CMenuPlayerModelView view;
 	CStudioSceneModel sceneModel;
 
-	CMenuCheckBox showModels;
-	CMenuCheckBox hiModels;
-	CMenuSlider topColor;
-	CMenuSlider bottomColor;
-
 	CMenuField name;
 	CMenuSpinControl model;
 
@@ -266,10 +261,6 @@ void CMenuPlayerSetup::SetConfig(void)
 {
 	name.WriteCvar();
 	model.WriteCvar();
-	topColor.WriteCvar();
-	bottomColor.WriteCvar();
-	hiModels.WriteCvar();
-	showModels.WriteCvar();
 	WriteNewLogo();
 }
 
@@ -475,43 +466,6 @@ void CMenuPlayerSetup::_Init(void)
 		model.SetRect(660, 580 + UI_OUTLINE_WIDTH, 260, 32);
 	}
 
-	topColor.iFlags |= addFlags;
-	topColor.SetNameAndStatus(L("GameUI_PrimaryColor"), L("Set a player model top color"));
-	topColor.Setup(0.0, 255, 1);
-	topColor.LinkCvar("topcolor");
-	topColor.onCvarChange = CMenuEditable::WriteCvarCb;
-	topColor.onChanged = VoidCb(&CMenuPlayerSetup::ApplyColorToImagePreview);
-	topColor.SetCoord(340, 520);
-	topColor.size.w = 300;
-
-	bottomColor.iFlags |= addFlags;
-	bottomColor.SetNameAndStatus(L("GameUI_SecondaryColor"), L("Set a player model bottom color"));
-	bottomColor.Setup(0.0, 255.0, 1);
-	bottomColor.LinkCvar("bottomcolor");
-	bottomColor.onCvarChange = CMenuEditable::WriteCvarCb;
-	bottomColor.onChanged = VoidCb(&CMenuPlayerSetup::ApplyColorToImagePreview);
-	;
-	bottomColor.SetCoord(340, 590);
-	bottomColor.size.w = 300;
-
-#ifdef MENU_AFTERBURNER
-	// These are weird and we don't support them.
-	topColor.iFlags |= QMF_INACTIVE;
-	bottomColor.iFlags |= QMF_INACTIVE;
-#endif
-
-	showModels.iFlags |= addFlags;
-	showModels.SetNameAndStatus(L("Show 3D preview"), L("Show 3D player models instead of preview thumbnails"));
-	showModels.LinkCvar("ui_showmodels");
-	showModels.onCvarChange = CMenuEditable::WriteCvarCb;
-	showModels.SetCoord(340, 380);
-
-	hiModels.iFlags |= addFlags;
-	hiModels.SetNameAndStatus(L("GameUI_HighModels"), L("Show HD models in multiplayer"));
-	hiModels.LinkCvar("cl_himodels");
-	hiModels.onCvarChange = CMenuEditable::WriteCvarCb;
-	hiModels.SetCoord(340, 430);
-
 	sceneModel.Clear();
 	sceneModel.AddEntData();
 
@@ -578,12 +532,6 @@ void CMenuPlayerSetup::_Init(void)
 
 	if ( !(gMenu.m_gameinfo.flags & GFL_NOMODELS) )
 	{
-#ifndef MENU_AFTERBURNER
-		AddItem(topColor);
-		AddItem(bottomColor);
-#endif
-		AddItem(showModels);
-		AddItem(hiModels);
 		AddItem(model);
 		// disable playermodel preview for HLRally to prevent crash
 		if ( !hideModels )

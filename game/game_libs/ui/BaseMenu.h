@@ -67,7 +67,6 @@ GNU General Public License for more details.
 extern IGameClientExports* g_pClient;
 #endif
 extern cvar_t* ui_precache;
-extern cvar_t* ui_showmodels;
 extern cvar_t* ui_show_window_stack;
 extern cvar_t* ui_borderclip;
 extern cvar_t* ui_language;
