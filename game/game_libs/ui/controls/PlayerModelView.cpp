@@ -25,35 +25,6 @@ void CMenuPlayerModelView::VidInit()
 
 void CMenuPlayerModelView::Draw()
 {
-	if ( eOverrideMode == PMV_SHOWIMAGE )  // controlled by menucode
-	{
-		// draw the background
-		UI_FillRect(m_scPos, m_scSize, backgroundColor);
-
-		// draw the rectangle
-		if ( eFocusAnimation == QM_HIGHLIGHTIFFOCUS && IsCurrentSelected() )
-		{
-			UI_DrawRectangleExt(m_scPos, m_scSize, colorFocus, iStrokeWidth);
-		}
-		else
-		{
-			UI_DrawRectangleExt(m_scPos, m_scSize, colorStroke, iStrokeWidth);
-		}
-
-		if ( hPlayerImage )
-		{
-			EngFuncs::PIC_Set(hPlayerImage, 255, 255, 255, 255);
-			EngFuncs::PIC_DrawTrans(m_scPos, m_scSize);
-		}
-		else
-		{
-			UI_DrawString(font, m_scPos, m_scSize, "No preview", colorBase, m_scChSize, QM_CENTER, ETF_SHADOW);
-		}
-
-		// Don't call through to the base class.
-		return;
-	}
-
 	if ( m_Model )
 	{
 		cl_entity_t* ent = m_Model->GetEntData(0);

@@ -16,7 +16,7 @@ CGameResources& CGameResources::StaticInstance()
 CUtlString CGameResources::MultiplayerModelFullPath(const CUtlString& modelName)
 {
 	CUtlString path("models/player/");
-	path.AppendFormat("%s/%s.mdl", modelName.String(), modelName.String());
+	path.AppendFormat("%s.mdl", modelName.String());
 	return path;
 }
 

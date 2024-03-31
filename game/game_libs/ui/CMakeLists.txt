@@ -122,8 +122,6 @@ set(SOURCES_UI
 	font/stb_truetype.h
 	font/WinAPIFont.cpp
 	font/WinAPIFont.h
-	menus/botsetup/BotProfileImage.h
-	menus/botsetup/BotProfileImage.cpp
 	menus/botsetup/BotProfileListModel.h
 	menus/botsetup/BotProfileListModel.cpp
 	menus/botsetup/BotSetup.h

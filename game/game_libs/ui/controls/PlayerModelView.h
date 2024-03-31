@@ -27,15 +27,6 @@ public:
 	bool GetAllowCyclingSequences() const;
 	void SetAllowCyclingSequences(bool allow);
 
-	HIMAGE hPlayerImage;
-
-	enum
-	{
-		PMV_DONTCARE = 0,
-		PMV_SHOWMODEL,
-		PMV_SHOWIMAGE
-	} eOverrideMode;
-
 private:
 	bool m_AllowCyclingSequences = true;
 };

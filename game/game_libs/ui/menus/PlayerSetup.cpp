@@ -177,13 +177,6 @@ void CMenuPlayerSetup::CModelListModel::Update(void)
 	// search in basedir too, because that's how GoldSrc does this
 	filenames = EngFuncs::GetFilesList("models/player/*", &numFiles, FALSE);
 
-#if 0
-	// add default singleplayer model
-	strcpy( models[num_models], "player" );
-	modelsPtr[num_models] = models[num_models];
-	num_models++;
-#endif
-
 	// build the model list
 	for ( i = 0; i < numFiles; i++ )
 	{
@@ -200,12 +193,13 @@ void CMenuPlayerSetup::CModelListModel::Update(void)
 		PlatformLib_SNPrintF(
 			modelName,
 			sizeof(modelName),
-			"models/player/%s/%s.mdl",
-			models[m_iCount],
+			"models/player/%s.mdl",
 			models[m_iCount]);
 
 		if ( !EngFuncs::FileExists(modelName) )
+		{
 			continue;
+		}
 
 		m_iCount++;
 	}
@@ -289,10 +283,6 @@ void CMenuPlayerSetup::UpdateModel()
 		return;
 	}
 
-	PlatformLib_SNPrintF(image, 256, "models/player/%s/%s.bmp", mdl, mdl);
-	view.hPlayerImage = EngFuncs::PIC_Load(image, PIC_KEEP_SOURCE);
-
-	ApplyColorToImagePreview();
 	EngFuncs::CvarSetString("model", mdl);
 
 	if ( !strcmp(mdl, "player") )
@@ -301,7 +291,7 @@ void CMenuPlayerSetup::UpdateModel()
 	}
 	else
 	{
-		PlatformLib_SNPrintF(image, sizeof(image), "models/player/%s/%s.mdl", mdl, mdl);
+		PlatformLib_SNPrintF(image, sizeof(image), "models/player/%s.mdl", mdl);
 	}
 
 	cl_entity_t* ent = sceneModel.GetEntData(0);
@@ -345,13 +335,6 @@ void CMenuPlayerSetup::UpdateLogo()
 
 	EngFuncs::CvarSetString("cl_logofile", logo.GetCurrentString());
 	logoColor.WriteCvar();
-}
-
-void CMenuPlayerSetup::ApplyColorToImagePreview()
-{
-#ifndef MENU_AFTERBURNER
-	EngFuncs::ProcessImage(view.hPlayerImage, -1, topColor.GetCurrentValue(), bottomColor.GetCurrentValue());
-#endif
 }
 
 void CMenuPlayerSetup::ApplyColorToLogoPreview()

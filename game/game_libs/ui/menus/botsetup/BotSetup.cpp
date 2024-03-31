@@ -4,7 +4,6 @@
 #include "BotProfileListModel.h"
 #include "InGameBotListModel.h"
 #include "Field.h"
-#include "BotProfileImage.h"
 #include "StudioSceneModel.h"
 #include "PlayerModelView.h"
 
@@ -29,10 +28,11 @@ private:
 	static constexpr int LIST_SPACING = 300;
 	static constexpr int LEFT_MARGIN = 200;
 	static constexpr int LIST_WIDTH = 250;
+	static constexpr int PREVIEW_WIDTH = 208;
 
 	static constexpr int CENTRAL_CONTROL_SPACING = 15;
 	static constexpr int PREVIEW_TOP_OFFSET = LIST_TOP_OFFSET + 32;
-	static constexpr int PREVIEW_LIST_LEFT_SPACING = (LIST_SPACING - CBotProfileImage::IMAGE_WIDTH) / 2;
+	static constexpr int PREVIEW_LIST_LEFT_SPACING = (LIST_SPACING - PREVIEW_WIDTH) / 2;
 	static constexpr int NAME_BOX_WIDTH = 208;
 	static constexpr int NAME_BOX_LEFT_SPACING = (LIST_SPACING - NAME_BOX_WIDTH) / 2;
 
@@ -203,7 +203,7 @@ void CMenuBotSetup::UpdateUIFromSelectedProfileData()
 		if ( !m_SelectedProfile.skin.IsEmpty() )
 		{
 			CUtlString modelPath;
-			modelPath.Format("models/player/%s/%s.mdl", m_SelectedProfile.skin.String(), m_SelectedProfile.skin.String());
+			modelPath.Format("models/player/%s.mdl", m_SelectedProfile.skin.String());
 			EngFuncs::SetModel(m_BotModelEnt, modelPath.String());
 		}
 		else

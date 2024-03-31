@@ -2841,15 +2841,21 @@ static model_t* R_StudioSetupPlayerModel(int index)
 			Q_strncpy(state->name, info->model, sizeof(state->name));
 			state->name[sizeof(state->name) - 1] = 0;
 
-			Q_snprintf(state->modelname, sizeof(state->modelname), "models/player/%s/%s.mdl", info->model, info->model);
+			Q_snprintf(state->modelname, sizeof(state->modelname), "models/player/%s.mdl", info->model);
 
 			if ( gEngfuncs.fsapi->FileExists(state->modelname, false) )
+			{
 				state->model = gEngfuncs.Mod_ForName(state->modelname, false, true);
+			}
 			else
+			{
 				state->model = NULL;
+			}
 
 			if ( !state->model )
+			{
 				state->model = RI.currententity->model;
+			}
 		}
 	}
 	else
