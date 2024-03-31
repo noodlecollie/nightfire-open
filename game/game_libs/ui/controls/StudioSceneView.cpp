@@ -22,6 +22,7 @@ CMenuStudioSceneView::CMenuStudioSceneView() :
 	CMenuBaseItem()
 {
 	memset(&m_RefDef, 0, sizeof(m_RefDef));
+	VectorCopy(vec3_origin, m_CameraCentre);
 
 	eFocusAnimation = QM_HIGHLIGHTIFFOCUS;
 
