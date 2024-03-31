@@ -83,7 +83,7 @@ void CMenuPlayerModelView::Draw()
 
 bool CMenuPlayerModelView::KeyDown(int key)
 {
-	if ( UI::Key::IsEnter(key) )
+	if ( UI::Key::IsEnter(key) && m_AllowCyclingSequences )
 	{
 		if ( m_Model )
 		{
@@ -104,4 +104,14 @@ bool CMenuPlayerModelView::KeyDown(int key)
 	}
 
 	return CMenuStudioSceneView::KeyDown(key);
+}
+
+bool CMenuPlayerModelView::GetAllowCyclingSequences() const
+{
+	return m_AllowCyclingSequences;
+}
+
+void CMenuPlayerModelView::SetAllowCyclingSequences(bool allow)
+{
+	m_AllowCyclingSequences = allow;
 }

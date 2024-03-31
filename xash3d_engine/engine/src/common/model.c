@@ -446,7 +446,9 @@ model_t* Mod_ForName(const char* name, qboolean crash, qboolean trackCRC)
 	model_t* mod;
 
 	if ( !COM_CheckString(name) )
+	{
 		return NULL;
+	}
 
 	mod = Mod_FindName(name, trackCRC);
 	return Mod_LoadModel(mod, crash);

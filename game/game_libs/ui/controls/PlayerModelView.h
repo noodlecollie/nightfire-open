@@ -24,6 +24,9 @@ public:
 	void Draw() override;
 	bool KeyDown(int key) override;
 
+	bool GetAllowCyclingSequences() const;
+	void SetAllowCyclingSequences(bool allow);
+
 	HIMAGE hPlayerImage;
 
 	enum
@@ -32,4 +35,7 @@ public:
 		PMV_SHOWMODEL,
 		PMV_SHOWIMAGE
 	} eOverrideMode;
+
+private:
+	bool m_AllowCyclingSequences = true;
 };

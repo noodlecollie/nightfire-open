@@ -5,6 +5,8 @@
 #include "InGameBotListModel.h"
 #include "Field.h"
 #include "BotProfileImage.h"
+#include "StudioSceneModel.h"
+#include "PlayerModelView.h"
 
 static CUtlVector<CInGameBotListModel::ListEntry> CachedInGameBotList;
 
@@ -54,13 +56,15 @@ private:
 
 	CMenuTable m_InGameBotList;
 	CInGameBotListModel m_InGameBotListModel;
-	CBotProfileImage m_SelectedBotImage;
+	CMenuPlayerModelView m_BotStudioView;
+	CStudioSceneModel m_BotStudioModel;
 	CMenuField m_SelectedBotName;
 	CMenuPicButton m_AddButton;
 	CMenuPicButton m_RemoveAllButton;
 
 	int m_iSidePadding;
 	CBotProfileTable::ProfileData m_SelectedProfile;
+	cl_entity_t* m_BotModelEnt = nullptr;
 };
 
 CMenuBotSetup::CMenuBotSetup() :
@@ -99,7 +103,10 @@ void CMenuBotSetup::_Init()
 	m_InGameBotList.SetModel(&m_InGameBotListModel);
 	AddItem(m_InGameBotList);
 
-	AddItem(m_SelectedBotImage);
+	m_BotModelEnt = m_BotStudioModel.AddEntData();
+	m_BotStudioView.SetModel(&m_BotStudioModel);
+	m_BotStudioView.SetAllowCyclingSequences(false);
+	AddItem(m_BotStudioView);
 
 	m_SelectedBotName.iMaxLength = MAX_BOT_NAME_LENGTH;
 	AddItem(m_SelectedBotName);
@@ -127,9 +134,10 @@ void CMenuBotSetup::_VidInit()
 		-BOTTOM_EDGE_MARGIN);
 
 	const int profileListRightEdge = m_BotProfileList.pos.x + m_BotProfileList.size.w;
-	m_SelectedBotImage.SetCoord(profileListRightEdge + PREVIEW_LIST_LEFT_SPACING, PREVIEW_TOP_OFFSET);
+	m_BotStudioView.SetCoord(profileListRightEdge + PREVIEW_LIST_LEFT_SPACING, PREVIEW_TOP_OFFSET);
+	m_BotStudioView.SetSize(208, 256);
 
-	const int botImageBottomEdge = m_SelectedBotImage.pos.y + m_SelectedBotImage.size.h;
+	const int botImageBottomEdge = m_BotStudioView.pos.y + m_BotStudioView.size.h;
 	m_SelectedBotName.SetRect(
 		profileListRightEdge + NAME_BOX_LEFT_SPACING,
 		botImageBottomEdge + CENTRAL_CONTROL_SPACING,
@@ -189,7 +197,20 @@ void CMenuBotSetup::UpdateSelectedProfileDataFromUI()
 void CMenuBotSetup::UpdateUIFromSelectedProfileData()
 {
 	m_SelectedBotName.SetBuffer(m_SelectedProfile.playerName.String());
-	m_SelectedBotImage.SetImage(m_SelectedProfile.skin);
+
+	if ( m_BotModelEnt )
+	{
+		if ( !m_SelectedProfile.skin.IsEmpty() )
+		{
+			CUtlString modelPath;
+			modelPath.Format("models/player/%s/%s.mdl", m_SelectedProfile.skin.String(), m_SelectedProfile.skin.String());
+			EngFuncs::SetModel(m_BotModelEnt, modelPath.String());
+		}
+		else
+		{
+			EngFuncs::SetModel(m_BotModelEnt, nullptr);
+		}
+	}
 }
 
 void CMenuBotSetup::UpdateButtonStates()

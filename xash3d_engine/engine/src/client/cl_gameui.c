@@ -817,27 +817,27 @@ static void GAME_EXPORT pfnSetModel(cl_entity_t* ent, const char* path)
 	ent->curstate.modelindex = MAX_MODELS;  // unreachable index
 }
 
-int pfnGetModelSequenceCount(struct cl_entity_s* ent)
+static int GAME_EXPORT pfnGetModelSequenceCount(struct cl_entity_s* ent)
 {
 	return ent ? Mod_StudioGetSequenceCount(ent->model) : 0;
 }
 
-const char* pfnGetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
+static const char* GAME_EXPORT pfnGetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
 {
 	return ent ? Mod_StudioGetSequenceName(ent->model, sequenceIndex) : NULL;
 }
 
-qboolean pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
+static qboolean GAME_EXPORT pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
 {
 	return ent ? Mod_StudioGetSequenceBounds(ent->model, sequenceIndex, outVec3Mins, outVec3Maxs) : false;
 }
 
-float pfnGetModelSequenceDuration(struct cl_entity_s* ent, int sequenceIndex)
+static float GAME_EXPORT pfnGetModelSequenceDuration(struct cl_entity_s* ent, int sequenceIndex)
 {
 	return ent ? Mod_StudioGetSequenceDuration(ent->model, sequenceIndex) : 0.0f;
 }
 
-void pfnGetModelEyePosition(struct cl_entity_s* ent, float* outVec3Pos)
+static void GAME_EXPORT pfnGetModelEyePosition(struct cl_entity_s* ent, float* outVec3Pos)
 {
 	if ( ent )
 	{
