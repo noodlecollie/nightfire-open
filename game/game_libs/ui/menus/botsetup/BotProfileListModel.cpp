@@ -86,7 +86,7 @@ void CBotProfileListModel::InitialiseProfileTable()
 		{
 			const CUtlString* strA = static_cast<const CUtlString*>(a);
 			const CUtlString* strB = static_cast<const CUtlString*>(b);
-			return strcmp(strA ? strA->String() : nullptr, strB ? strB->String() : nullptr);
+			return strcmp(strA ? strA->String() : "", strB ? strB->String() : "");
 		});
 }
 
