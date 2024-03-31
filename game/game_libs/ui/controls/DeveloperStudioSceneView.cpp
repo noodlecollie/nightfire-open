@@ -10,6 +10,16 @@ void CMenuDeveloperStudioSceneView::SetDrawOriginMarker(bool draw)
 	m_DrawOriginMarker = draw;
 }
 
+bool CMenuDeveloperStudioSceneView::GetDrawEyePositionMarker() const
+{
+	return m_DrawEyePositionMarker;
+}
+
+void CMenuDeveloperStudioSceneView::SetDrawEyePositionMarker(bool draw)
+{
+	m_DrawEyePositionMarker = draw;
+}
+
 bool CMenuDeveloperStudioSceneView::GetDrawModelBoundingBoxes() const
 {
 	return m_DrawModelBoundingBoxes;
@@ -34,22 +44,10 @@ void CMenuDeveloperStudioSceneView::PreDrawModels()
 {
 	if ( m_DrawOriginMarker )
 	{
-		for ( size_t axisIndex = 0; axisIndex < 3; ++axisIndex )
-		{
-			vec3_t axis = { 0.0f, 0.0f, 0.0f };
-			axis[axisIndex] = 16.0f;
-
-			uint32_t colourMask = 0x0000FF00;
-			colourMask <<= (2 - axisIndex) * 8;
-
-			// Alpha should always be 255.
-			colourMask |= 0x000000FF;
-
-			EngFuncs::StoreLine(vec3_origin, axis, colourMask);
-		}
+		DrawAxisMarker(0.0f, 0.0f, 0.0f, 16.0f);
 	}
 
-	if ( (m_DrawModelBoundingBoxes || m_DrawSequenceBoundingBoxes) && m_Model )
+	if ( m_Model )
 	{
 		int numEnts = m_Model->GetRows();
 
@@ -65,6 +63,11 @@ void CMenuDeveloperStudioSceneView::PreDrawModels()
 			if ( m_DrawSequenceBoundingBoxes )
 			{
 				DrawSequenceBoundingBox(studioModel);
+			}
+
+			if ( m_DrawEyePositionMarker )
+			{
+				DrawEyePositionMarker(studioModel);
 			}
 		}
 	}
@@ -93,6 +96,50 @@ void CMenuDeveloperStudioSceneView::DrawSequenceBoundingBox(cl_entity_t* ent)
 	if ( EngFuncs::GetModelSequenceBounds(ent, ent->curstate.sequence, mins, maxs) )
 	{
 		DrawBoundingBox(mins, maxs, 0x00FF00FF);
+	}
+}
+
+void CMenuDeveloperStudioSceneView::DrawEyePositionMarker(cl_entity_t* ent)
+{
+	if ( !ent || !ent->model )
+	{
+		return;
+	}
+
+	vec3_t pos;
+	EngFuncs::GetModelEyePosition(ent, pos);
+	DrawAxisMarker(pos[0], pos[1], pos[2], 4.0f);
+}
+
+void CMenuDeveloperStudioSceneView::DrawAxisMarker(float x, float y, float z, float scale)
+{
+	// The model axes are not the same as the world axes,
+	// so we need to colour and flip them appropriately.
+	// Model X = World Y
+	// Model Y = World -X
+	// Model Z = World Z
+
+	static const float AXIS_DIRS[3] =
+	{
+		-1.0f,
+		1.0f,
+		1.0f,
+	};
+
+	static const uint32_t AXIS_COLOURS[3] =
+	{
+		0x00FF00FF,
+		0xFF0000FF,
+		0x0000FFFF,
+	};
+
+	for ( size_t axisIndex = 0; axisIndex < 3; ++axisIndex )
+	{
+		vec3_t base = { x, y, z };
+		vec3_t axis = { x, y, z };
+		axis[axisIndex] += AXIS_DIRS[axisIndex] * scale;
+
+		EngFuncs::StoreLine(base, axis, AXIS_COLOURS[axisIndex]);
 	}
 }
 

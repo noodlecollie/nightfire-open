@@ -267,8 +267,10 @@ void CBasePlayer::Pain(void)
 		return;
 	}
 
-	// TODO: Need to decide on subtype (male/female/bond).
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::PainMale);
+	const PlayerSoundId soundGender =
+		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::PainFemale : PlayerSoundId::PainMale;
+
+	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
 
 	m_flNextPainTime = gpGlobals->time + 0.45f;
@@ -360,8 +362,10 @@ int TrainSpeed(int iSpeed, int iMax)
 
 void CBasePlayer::DeathSound(void)
 {
-	// TODO: Need to decide on subtype (male/female/bond).
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::DieMale);
+	const PlayerSoundId soundGender =
+		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::DieFemale : PlayerSoundId::DieMale;
+
+	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
 
 	// play one of the suit death alarms
@@ -2816,12 +2820,17 @@ void CBasePlayer::Spawn(void)
 	pev->sequence = LookupActivity(ACT_IDLE);
 
 	if ( FBitSet(pev->flags, FL_DUCKING) )
+	{
 		UTIL_SetSize(pev, VEC_DUCK_HULL_MIN, VEC_DUCK_HULL_MAX);
+	}
 	else
+	{
 		UTIL_SetSize(pev, VEC_HULL_MIN, VEC_HULL_MAX);
+	}
 
 	VectorCopy(VEC_VIEW, pev->view_ofs);
 	Precache();
+
 	m_HackedGunPos = Vector(0, 32, 0);
 
 	if ( m_iPlayerSound == SOUNDLIST_EMPTY )
@@ -2842,9 +2851,9 @@ void CBasePlayer::Spawn(void)
 	// reset all ammo values to 0
 	for ( int i = 0; i < MAX_AMMO_SLOTS; i++ )
 	{
+		// client ammo values also have to be reset  (the death hud clear messages does on the client side)
 		m_rgAmmo[i] = 0;
-		m_rgAmmoLast[i] =
-			0;  // client ammo values also have to be reset  (the death hud clear messages does on the client side)
+		m_rgAmmoLast[i] = 0;
 	}
 
 	m_lastx = m_lasty = 0;

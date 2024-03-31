@@ -16,18 +16,44 @@ CGameResources& CGameResources::StaticInstance()
 CUtlString CGameResources::MultiplayerModelFullPath(const CUtlString& modelName)
 {
 	CUtlString path("models/player/");
-	path.AppendFormat("%s/%s.mdl", modelName.String(), modelName.String());
+	path.AppendFormat("%s.mdl", modelName.String());
 	return path;
 }
 
-const CUtlVector<CUtlString>& CGameResources::MultiplayerModelList() const
+const CUtlVector<CGameResources::MultiplayerModel>& CGameResources::MultiplayerModelList() const
 {
 	return m_MultiplayerModelList;
+}
+
+int CGameResources::ModelIndex(const CUtlString& modelName) const
+{
+	FOR_EACH_VEC(m_MultiplayerModelList, index)
+	{
+		if ( m_MultiplayerModelList[index].modelName == modelName )
+		{
+			return m_MultiplayerModelList[index].modelIndex;
+		}
+	}
+
+	return -1;
 }
 
 void CGameResources::Initialise()
 {
 	InitMultiplayerModelList();
+}
+
+void CGameResources::Precache(const std::function<int(const char*)>& precacheCB)
+{
+	if ( !precacheCB )
+	{
+		return;
+	}
+
+	FOR_EACH_VEC(m_MultiplayerModelList, index)
+	{
+		m_MultiplayerModelList[index].modelIndex = precacheCB(m_MultiplayerModelList[index].modelFullPath.Get());
+	}
 }
 
 void CGameResources::InitMultiplayerModelList()
@@ -41,12 +67,15 @@ void CGameResources::InitMultiplayerModelList()
 	{
 		const DirectoryEntry& entry = entries[index];
 
-		// entry.FullPath() is the path to the subfolder.
-		// We need to add on the name of the model.
-		// TODO: Validate presence of file?
-		CUtlString fullPath(entry.FullPath());
-		fullPath.AppendFormat("/%s.mdl", entry.EntryName().String());
+		CUtlString entryName = entry.EntryName();
 
-		m_MultiplayerModelList.AddToTail(fullPath);
+		// Remove ".mdl"
+		if ( entryName.IndexOf(".mdl") == entryName.Length() - 4 )
+		{
+			entryName.Truncate(entryName.Length() - 4);
+		}
+
+		m_MultiplayerModelList.AddToTail(
+			MultiplayerModel {entryName, entry.FullPath(), -1});
 	}
 }

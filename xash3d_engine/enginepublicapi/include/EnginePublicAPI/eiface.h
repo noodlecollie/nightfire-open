@@ -350,6 +350,8 @@ typedef struct enginefuncs_s
 	qboolean (*pfnGetTransformedHitboxPoints)(const edict_t* edict, uint32_t hitboxIndex, float* points);
 
 	int (*pfnGetHitboxHitGroup)(const edict_t* edict, uint32_t hitboxIndex);
+	int (*pfnModelGetNumTags)(int modelIndex);
+	void (*pfnModelGetTag)(int modelIndex, int tagIndex, char* buffer, size_t length);
 } enginefuncs_t;
 // ONLY ADD NEW FUNCTIONS TO THE END OF THIS STRUCT.  INTERFACE VERSION IS FROZEN AT 138
 

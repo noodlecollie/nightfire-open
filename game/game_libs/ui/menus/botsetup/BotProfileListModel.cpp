@@ -76,13 +76,18 @@ void CBotProfileListModel::InitialiseProfileTable()
 		m_IndexToProfileName.CopyAndAddToTail(it.Key().String());
 	}
 
-	// Sort bot profiles by name.
-	auto compareFunc = [](const void* a, const void* b)
-	{
-		return CUtlStringList::SortFunc(static_cast<char* const*>(a), static_cast<char* const*>(b));
-	};
-
-	qsort(&m_IndexToProfileName.Head(), m_IndexToProfileName.Count(), sizeof(CUtlString), compareFunc);
+	// For now, we sort by profile name, instead of the
+	// human-readable bot name. This could be improved...
+	qsort(
+		&m_IndexToProfileName.Head(),
+		m_IndexToProfileName.Count(),
+		sizeof(CUtlString),
+		[](const void* a, const void* b)
+		{
+			const CUtlString* strA = static_cast<const CUtlString*>(a);
+			const CUtlString* strB = static_cast<const CUtlString*>(b);
+			return strcmp(strA ? strA->String() : "", strB ? strB->String() : "");
+		});
 }
 
 const CBotProfileTable::ProfileData* CBotProfileListModel::GetProfileData(int index) const

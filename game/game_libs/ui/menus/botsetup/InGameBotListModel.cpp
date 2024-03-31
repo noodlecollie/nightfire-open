@@ -40,9 +40,20 @@ bool CInGameBotListModel::AddEntry(const CUtlString& profileName, const CUtlStri
 	return true;
 }
 
-const CInGameBotListModel::ListEntry* CInGameBotListModel::Entry(uint32_t index) const
+bool CInGameBotListModel::RemoveEntryAt(int index)
 {
-	return index < static_cast<uint32_t>(m_BotList.Count()) ? &m_BotList[index] : nullptr;
+	if ( index < 0 || index >= m_BotList.Count() )
+	{
+		return false;
+	}
+
+	m_BotList.Remove(index);
+	return true;
+}
+
+const CInGameBotListModel::ListEntry* CInGameBotListModel::Entry(int index) const
+{
+	return (index >= 0 && index < m_BotList.Count()) ? &m_BotList[index] : nullptr;
 }
 
 void CInGameBotListModel::Clear()

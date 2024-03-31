@@ -36,7 +36,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "Scoreboard.h"
 #endif
 
-cvar_t* ui_showmodels;
 cvar_t* ui_show_window_stack;
 cvar_t* ui_borderclip;
 cvar_t* ui_language;
@@ -1174,7 +1173,6 @@ void UI_Init(void)
 	IProjectInterface::SetProjectInterfaceImpl(ProjectInterface_MainUI::StaticInstance());
 
 	// register our cvars and commands
-	ui_showmodels = EngFuncs::CvarRegister("ui_showmodels", "0", FCVAR_ARCHIVE);
 	ui_show_window_stack = EngFuncs::CvarRegister("ui_show_window_stack", "0", FCVAR_ARCHIVE);
 	ui_borderclip = EngFuncs::CvarRegister("ui_borderclip", "0", FCVAR_ARCHIVE);
 	ui_language = EngFuncs::CvarRegister("ui_language", "english", FCVAR_ARCHIVE);

@@ -122,8 +122,6 @@ set(SOURCES_UI
 	font/stb_truetype.h
 	font/WinAPIFont.cpp
 	font/WinAPIFont.h
-	menus/botsetup/BotProfileImage.h
-	menus/botsetup/BotProfileImage.cpp
 	menus/botsetup/BotProfileListModel.h
 	menus/botsetup/BotProfileListModel.cpp
 	menus/botsetup/BotSetup.h
@@ -165,6 +163,8 @@ set(SOURCES_UI
 	menus/Zoo.cpp
 	model/BaseArrayModel.h
 	model/BaseModel.h
+	model/FilterableStringVectorModel.h
+	model/FilterableStringVectorModel.cpp
 	model/StringArrayModel.h
 	model/StringVectorModel.h
 	model/StudioSceneModel.h

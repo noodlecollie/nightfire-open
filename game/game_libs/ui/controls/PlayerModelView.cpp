@@ -20,41 +20,11 @@ GNU General Public License for more details.
 void CMenuPlayerModelView::VidInit()
 {
 	CMenuStudioSceneView::VidInit();
-	SetCameraDistFromOrigin(45.0f / tanf(DEG2RADF(m_RefDef.fov_y / 2.0f)));
+	SetCameraDistFromCentre(45.0f / tanf(DEG2RADF(m_RefDef.fov_y / 2.0f)));
 }
 
 void CMenuPlayerModelView::Draw()
 {
-	if ( (eOverrideMode == PMV_DONTCARE && !ui_showmodels->value) ||  // controlled by engine cvar
-		 (eOverrideMode == PMV_SHOWIMAGE) )  // controlled by menucode
-	{
-		// draw the background
-		UI_FillRect(m_scPos, m_scSize, backgroundColor);
-
-		// draw the rectangle
-		if ( eFocusAnimation == QM_HIGHLIGHTIFFOCUS && IsCurrentSelected() )
-		{
-			UI_DrawRectangleExt(m_scPos, m_scSize, colorFocus, iStrokeWidth);
-		}
-		else
-		{
-			UI_DrawRectangleExt(m_scPos, m_scSize, colorStroke, iStrokeWidth);
-		}
-
-		if ( hPlayerImage )
-		{
-			EngFuncs::PIC_Set(hPlayerImage, 255, 255, 255, 255);
-			EngFuncs::PIC_DrawTrans(m_scPos, m_scSize);
-		}
-		else
-		{
-			UI_DrawString(font, m_scPos, m_scSize, "No preview", colorBase, m_scChSize, QM_CENTER, ETF_SHADOW);
-		}
-
-		// Don't call through to the base class.
-		return;
-	}
-
 	if ( m_Model )
 	{
 		cl_entity_t* ent = m_Model->GetEntData(0);
@@ -84,7 +54,7 @@ void CMenuPlayerModelView::Draw()
 
 bool CMenuPlayerModelView::KeyDown(int key)
 {
-	if ( UI::Key::IsEnter(key) )
+	if ( UI::Key::IsEnter(key) && m_AllowCyclingSequences )
 	{
 		if ( m_Model )
 		{
@@ -105,4 +75,14 @@ bool CMenuPlayerModelView::KeyDown(int key)
 	}
 
 	return CMenuStudioSceneView::KeyDown(key);
+}
+
+bool CMenuPlayerModelView::GetAllowCyclingSequences() const
+{
+	return m_AllowCyclingSequences;
+}
+
+void CMenuPlayerModelView::SetAllowCyclingSequences(bool allow)
+{
+	m_AllowCyclingSequences = allow;
 }

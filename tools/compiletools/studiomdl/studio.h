@@ -124,7 +124,7 @@ typedef struct
 // rather than duplicated.
 #define NFMDLHEADER_VERSION_INVALID 0
 #define NFMDLHEADER_VERSION_1 1
-#define NFMDLHEADER_VERSION_LATEST NFMDLHEADER_VERSION_1
+#define NFMDLHEADER_VERSION_2 2
 
 #pragma pack(push,1)
 typedef struct nfmdlheader_s
@@ -134,7 +134,10 @@ typedef struct nfmdlheader_s
 
 	// Version of this struct.
 	uint32_t version;
+} nfmdlheader_t;
 
+typedef struct nfmdlheader_v1_s
+{
 	// Offset of gait bones section.
 	int32_t gaitBonesIndex;
 
@@ -145,7 +148,26 @@ typedef struct nfmdlheader_s
 	// The number of texture dimensions is the
 	// same as the number of textures.
 	int32_t textureDimsIndex;
-} nfmdlheader_t;
+} nfmdlheader_v1_t;
+
+#define NFMDLHEADER_LOCAL_OFFSET_V1 (sizeof(nfmdlheader_t))
+
+typedef struct nfmdlheader_v2_s
+{
+	// Offset of MDL tags section
+	int32_t mdlTagsIndex;
+
+	// Number of MDL tag entries
+	int32_t mdlTagsCount;
+} nfmdlheader_v2_t;
+
+#define NFMDLHEADER_LOCAL_OFFSET_V2 (NFMDLHEADER_LOCAL_OFFSET_V1 + sizeof(nfmdlheader_v1_t))
+
+// Info about the latest supported format, providing a complete
+// set of features:
+#define NFMDLHEADER_VERSION_LATEST NFMDLHEADER_VERSION_2
+#define NFMDLHEADER_LOCAL_OFFSET_LATEST NFMDLHEADER_LOCAL_OFFSET_V2
+#define NFMDLHEADER_SIZE_LATEST (sizeof(nfmdlheader_v2_t))
 
 // Dimensions of a texture originally included in the model,
 // before it was replaced by a placeholder.
@@ -157,6 +179,14 @@ typedef struct nfmdltexturedim_s
 	// Original height of the texture.
 	int32_t height;
 } nfmdltexturedim_t;
+
+#define NFMDL_MAX_TAG_LENGTH 32
+
+typedef struct nfmdltag_s
+{
+	// Name of this tag.
+	char name[NFMDL_MAX_TAG_LENGTH];
+} nfmdltag_t;
 #pragma pack(pop)
 
 // header for demand loaded sequence group data

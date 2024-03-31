@@ -3,10 +3,26 @@
 #include "StudioSceneView.h"
 #include "MathLib/utils.h"
 
+static float BoundPitch(float pitch)
+{
+	return bound(-89.0f, pitch, 89.0f);
+}
+
+static float BoundYaw(float yaw)
+{
+	if ( yaw < 0 )
+	{
+		yaw = 360.0f - fmodf(-1.0f * yaw, 360.0f);
+	}
+
+	return fmodf((yaw + 180.0f), 360.0f) - 180.0f;
+}
+
 CMenuStudioSceneView::CMenuStudioSceneView() :
 	CMenuBaseItem()
 {
 	memset(&m_RefDef, 0, sizeof(m_RefDef));
+	VectorCopy(vec3_origin, m_CameraCentre);
 
 	eFocusAnimation = QM_HIGHLIGHTIFFOCUS;
 
@@ -134,7 +150,7 @@ void CMenuStudioSceneView::Draw()
 	vec3_t fwd;
 	AngleVectors(m_RefDef.viewangles, fwd, nullptr, nullptr);
 	VectorScale(fwd, -1.0f * m_DistFromOrigin, fwd);
-	VectorCopy(fwd, m_RefDef.vieworigin);
+	VectorAdd(m_CameraCentre, fwd, m_RefDef.vieworigin);
 
 	PreDrawModels();
 
@@ -183,65 +199,88 @@ void CMenuStudioSceneView::SetAllowRightButtonZoom(bool allow)
 	m_AllowRightButtonZoom = allow;
 }
 
-float CMenuStudioSceneView::GetCameraDistFromOrigin() const
+const float* CMenuStudioSceneView::GetCameraCentre() const
+{
+	return m_CameraCentre;
+}
+
+void CMenuStudioSceneView::SetCameraCentre(float x, float y, float z)
+{
+	m_CameraCentre[0] = x;
+	m_CameraCentre[1] = y;
+	m_CameraCentre[2] = z;
+}
+
+void CMenuStudioSceneView::SetCameraCentre(const float* centre)
+{
+	if ( centre )
+	{
+		SetCameraCentre(centre[0], centre[1], centre[2]);
+	}
+	else
+	{
+		SetCameraCentre(0.0f, 0.0f, 0.0f);
+	}
+}
+
+float CMenuStudioSceneView::GetCameraPitch() const
+{
+	return m_RefDef.viewangles[PITCH];
+}
+
+void CMenuStudioSceneView::SetCameraPitch(float degrees)
+{
+	m_RefDef.viewangles[PITCH] = BoundPitch(degrees);
+}
+
+float CMenuStudioSceneView::GetCameraYaw() const
+{
+	return m_RefDef.viewangles[YAW];
+}
+
+void CMenuStudioSceneView::SetCameraYaw(float degrees)
+{
+	m_RefDef.viewangles[YAW] = BoundYaw(degrees);
+}
+
+float CMenuStudioSceneView::GetCameraDistFromCentre() const
 {
 	return m_DistFromOrigin;
 }
 
-void CMenuStudioSceneView::SetCameraDistFromOrigin(float dist)
+void CMenuStudioSceneView::SetCameraDistFromCentre(float dist)
 {
 	m_DistFromOrigin = dist;
 }
 
 void CMenuStudioSceneView::ResetCamera()
 {
-	memset(m_RefDef.vieworigin, 0, sizeof(m_RefDef.vieworigin));
-	memset(m_RefDef.viewangles, 0, sizeof(m_RefDef.viewangles));
+	VectorCopy(vec3_origin, m_RefDef.vieworigin);
+	VectorCopy(vec3_origin, m_RefDef.viewangles);
+	VectorCopy(vec3_origin, m_CameraCentre);
 	m_DistFromOrigin = 0.0f;
 }
 
 void CMenuStudioSceneView::HandleLeftMouseDragUpdate()
 {
-	float diffX = static_cast<float>(uiStatic.cursorX - m_PrevCursorX);
+	int diffX = uiStatic.cursorX - m_PrevCursorX;
 
 	if ( diffX )
 	{
 		float yaw = m_RefDef.viewangles[YAW];
-
-		yaw -= diffX / uiStatic.scaleX;
-
-		if ( yaw > 180.0f )
-		{
-			yaw -= 360.0f;
-		}
-		else if ( yaw < -180.0f )
-		{
-			yaw += 360.0f;
-		}
-
-		m_RefDef.viewangles[YAW] = yaw;
+		yaw -= static_cast<float>(diffX) / uiStatic.scaleX;
+		m_RefDef.viewangles[YAW] = BoundYaw(yaw);
 	}
 
 	if ( m_AllowPitchRotation )
 	{
-		float diffY = static_cast<float>(uiStatic.cursorY - m_PrevCursorY);
+		int diffY = uiStatic.cursorY - m_PrevCursorY;
 
 		if ( diffY )
 		{
 			float pitch = m_RefDef.viewangles[PITCH];
-
-			pitch += diffY / uiStatic.scaleY;
-
-			if ( pitch > 89.0f )
-			{
-				pitch = 89.0f;
-			}
-			else if ( pitch < -89.0f )
-			{
-				pitch = -89.0f;
-			}
-
-			m_RefDef.viewangles[PITCH] = pitch;
+			pitch += static_cast<float>(diffY) / uiStatic.scaleY;
+			m_RefDef.viewangles[PITCH] = BoundPitch(pitch);
 		}
 	}
 }

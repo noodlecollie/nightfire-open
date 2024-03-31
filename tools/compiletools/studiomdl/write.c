@@ -579,11 +579,13 @@ static const int32_t* ComputeBoneIndicesForGait(int32_t* numBones)
 
 static void WriteGaitBones(nfmdlheader_t* nfHeader)
 {
-	nfHeader->gaitBonesIndex = (int32_t)(pData - pStart);
+	nfmdlheader_v1_t* v1Header = (nfmdlheader_v1_t*)((byte*)nfHeader + NFMDLHEADER_LOCAL_OFFSET_V1);
+
+	v1Header->gaitBonesIndex = (int32_t)(pData - pStart);
 
 	int32_t numIndices = 0;
 	const int32_t* boneIndices = ComputeBoneIndicesForGait(&numIndices);
-	nfHeader->gaitBonesCount = numIndices;
+	v1Header->gaitBonesCount = numIndices;
 
 	for ( int32_t index = 0; index < numIndices; ++index )
 	{
@@ -594,7 +596,9 @@ static void WriteGaitBones(nfmdlheader_t* nfHeader)
 
 static void WriteTextureDimensions(nfmdlheader_t* nfHeader)
 {
-	nfHeader->textureDimsIndex = (int32_t)(pData - pStart);
+	nfmdlheader_v1_t* v1Header = (nfmdlheader_v1_t*)((byte*)nfHeader + NFMDLHEADER_LOCAL_OFFSET_V1);
+
+	v1Header->textureDimsIndex = (int32_t)(pData - pStart);
 
 	for ( int textureIndex = 0; textureIndex < numtextures; ++textureIndex )
 	{
@@ -604,6 +608,26 @@ static void WriteTextureDimensions(nfmdlheader_t* nfHeader)
 		texDim->height = texture[textureIndex].srcheight;
 
 		pData += sizeof(nfmdltexturedim_t);
+	}
+}
+
+static void WriteMDLTags(nfmdlheader_t* nfHeader)
+{
+	nfmdlheader_v2_t* v2Header = (nfmdlheader_v2_t*)((byte*)nfHeader + NFMDLHEADER_LOCAL_OFFSET_V2);
+
+	v2Header->mdlTagsIndex = (int32_t)(pData - pStart);
+	v2Header->mdlTagsCount = Tag_Count(mdlTags);
+
+	const tagitem_t* src = mdlTags;
+
+	for ( int index = 0; index < v2Header->mdlTagsCount; ++index )
+	{
+		nfmdltag_t* dest = (nfmdltag_t*)pData;
+		strncpy(dest->name, Tag_GetName(src), sizeof(dest->name));
+		dest->name[sizeof(dest->name) - 1] = '\0';
+
+		pData += sizeof(nfmdltag_t);
+		src = Tag_ConstGetNext(src);
 	}
 }
 
@@ -707,7 +731,8 @@ void WriteFile(void)
 	nfHeader->id = IDNFMDLHEADER;
 	nfHeader->version = NFMDLHEADER_VERSION_LATEST;
 
-	pData += sizeof(*nfHeader);
+	// Data is zeroed, so we can just skip on.
+	pData += NFMDLHEADER_LOCAL_OFFSET_LATEST + NFMDLHEADER_SIZE_LATEST;
 
 	WriteBoneInfo();
 	printf("bones     %6ld bytes (%d)\n", pData - pStart - total, numbones);
@@ -744,6 +769,9 @@ void WriteFile(void)
 		WriteTextures();
 		printf("textures  %6ld bytes\n", pData - pStart - total);
 	}
+
+	WriteMDLTags(nfHeader);
+	printf("tags      %6ld bytes\n", pData - pStart - total);
 
 	phdr->length = pData - pStart;
 

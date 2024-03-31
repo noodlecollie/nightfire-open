@@ -7,7 +7,7 @@ import shutil
 SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
 STUDIOMDL_EXE = "studiomdl.exe" if sys.platform == "win32" else "studiomdl"
 STUDIOMDL_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "build", "install", "nightfire-open", "tools", STUDIOMDL_EXE))
-MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "content", "nfopen", "models"))
+MODEL_OUTPUT_ROOT_PATH = os.path.abspath(os.path.join(SCRIPT_DIR, "..", "..", "..", "content", "nfopen", "models", "player"))
 
 QC_COMMAND_MODELNAME = "$modelname"
 
@@ -16,7 +16,7 @@ def parseArguments():
 
 	parser.add_argument("dirs",
 						nargs="+",
-						help="Subdirectories within which to look for model QC files.")
+						help="Subdirectories within which to look for model QC files. Use * to compile all subdirectories.")
 
 	return parser.parse_args()
 
@@ -39,9 +39,6 @@ def fetchModelNameFromQC(qcFilePath : str):
 
 	raise ValueError(f"{qcFilePath}: Could not find a {QC_COMMAND_MODELNAME} line within this file.")
 
-def outputDirForModel(modelName : str):
-	return os.path.join(MODEL_OUTPUT_ROOT_PATH, "player", os.path.splitext(modelName)[0])
-
 def runStudioMDL(qcFilePath : str):
 	print("Running StudioMDL for", qcFilePath)
 
@@ -59,10 +56,9 @@ def compileAndCopyToOutput(qcFilePath : list):
 
 	localDir = os.path.dirname(qcFilePath)
 	modelName = fetchModelNameFromQC(qcFilePath)
-	outputDir = outputDirForModel(modelName)
 
 	print("  Player model name:", modelName)
-	print("  Output directory:", outputDir)
+	print("  Output directory:", MODEL_OUTPUT_ROOT_PATH)
 
 	runStudioMDL(qcFilePath)
 
@@ -72,12 +68,12 @@ def compileAndCopyToOutput(qcFilePath : list):
 	if not os.path.isfile(localModelPath):
 		raise OSError(f"Could not find compiled model {localModelPath}")
 
-	targetModelPath = os.path.join(outputDir, modelName)
+	targetModelPath = os.path.join(MODEL_OUTPUT_ROOT_PATH, modelName)
 
 	print("Copying compiled player model to", targetModelPath)
 
-	if not os.path.isdir(outputDir):
-		os.makedirs(outputDir)
+	if not os.path.isdir(MODEL_OUTPUT_ROOT_PATH):
+		os.makedirs(MODEL_OUTPUT_ROOT_PATH)
 
 	shutil.copyfile(localModelPath, targetModelPath)
 
@@ -105,10 +101,15 @@ def main():
 		print("Could not find", STUDIOMDL_PATH, "- make sure you have installed the game to build/install")
 		sys.exit(1)
 
-	totalDirs = len(args.dirs)
+	dirsToCompile = list(args.dirs)
+
+	if "*" in dirsToCompile:
+		dirsToCompile = os.listdir(SCRIPT_DIR)
+
+	totalDirs = len(dirsToCompile)
 	successfulDirs = 0
 
-	for subdir in args.dirs:
+	for subdir in dirsToCompile:
 		try:
 			print("Compiling player models in subdirectory:", subdir)
 			compileRecursive(os.path.join(SCRIPT_DIR, subdir))

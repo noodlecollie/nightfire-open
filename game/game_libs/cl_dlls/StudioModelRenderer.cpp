@@ -832,7 +832,7 @@ bool CStudioModelRenderer::UseBoneForGait(const char* boneName)
 	return false;
 }
 
-bool CStudioModelRenderer::UseBoneForGait(const nfmdlheader_t* header, int32_t boneIndex)
+bool CStudioModelRenderer::UseBoneForGait(const nfmdlheader_v1_t* header, int32_t boneIndex)
 {
 	if ( !header || boneIndex < 0 )
 	{
@@ -996,15 +996,13 @@ void CStudioModelRenderer::StudioSetupBones(void)
 		panim = StudioGetAnim(m_pRenderModel, pseqdesc);
 		StudioCalcRotations(pos2, q2, pseqdesc, panim, m_pPlayerInfo->gaitframe);
 
-		const nfmdlheader_t* nfHeader = reinterpret_cast<const nfmdlheader_t*>(
-			reinterpret_cast<const byte*>(m_pStudioHeader) + sizeof(*m_pStudioHeader));
-
+		const nfmdlheader_t* nfHeader = NFMDL_GetGeneralHeader(m_pStudioHeader);
 		const bool usesGaitBones = NFMDL_SupportsGaitBones(nfHeader);
 
 		for ( i = 0; i < m_pStudioHeader->numbones; i++ )
 		{
 			if ( (!usesGaitBones && !UseBoneForGait(pbones[i].name)) ||
-				 (usesGaitBones && !UseBoneForGait(nfHeader, i)) )
+				 (usesGaitBones && !UseBoneForGait(NFMDL_GetV1Header(nfHeader), i)) )
 			{
 				continue;  // not used for legs
 			}

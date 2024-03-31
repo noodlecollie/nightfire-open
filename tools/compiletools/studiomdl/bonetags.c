@@ -4,7 +4,7 @@
 typedef struct bonetaglist_s
 {
 	char* boneName;
-	bonetag_t* tags;
+	tagitem_t* tags;
 } bonetaglist_t;
 
 typedef struct bonetagtable_s
@@ -14,31 +14,6 @@ typedef struct bonetagtable_s
 } bonetagtable_t;
 
 bonetagtable_t g_Table;
-
-static void FreeBoneTag(bonetag_t* tag)
-{
-	if ( !tag )
-	{
-		return;
-	}
-
-	if ( tag->name )
-	{
-		free(tag->name);
-	}
-
-	free(tag);
-}
-
-static void FreeBoneTagChain(bonetag_t* tag)
-{
-	while ( tag )
-	{
-		bonetag_t* next = tag->next;
-		FreeBoneTag(tag);
-		tag = next;
-	}
-}
 
 static void FreeBoneTagList(bonetaglist_t* list)
 {
@@ -52,7 +27,7 @@ static void FreeBoneTagList(bonetaglist_t* list)
 		free(list->boneName);
 	}
 
-	FreeBoneTagChain(list->tags);
+	Tag_DeleteChain(list->tags);
 	free(list);
 }
 
@@ -92,41 +67,6 @@ static bonetaglist_t* CreateBoneTagList(const char* boneName)
 	return *list;
 }
 
-static bonetag_t* FindLastTagInChain(bonetag_t* tag)
-{
-	if ( !tag )
-	{
-		return NULL;
-	}
-
-	while ( tag->next )
-	{
-		tag = tag->next;
-	}
-
-	return tag;
-}
-
-static qboolean TagExistsInChain(bonetag_t* tag, const char* tagName)
-{
-	if ( !tagName || !(*tagName) )
-	{
-		return false;
-	}
-
-	while ( tag )
-	{
-		if ( strcmp(tag->name, tagName) == 0 )
-		{
-			return true;
-		}
-
-		tag = tag->next;
-	}
-
-	return false;
-}
-
 static void AddTagToList(bonetaglist_t* list, const char* tagName)
 {
 	if ( !list || !tagName || !(*tagName) )
@@ -134,20 +74,12 @@ static void AddTagToList(bonetaglist_t* list, const char* tagName)
 		return;
 	}
 
-	bonetag_t* tag = FindLastTagInChain(list->tags);
+	tagitem_t* item = Tag_AppendToChain(list->tags, tagName);
 
-	if ( tag )
+	if ( !list->tags )
 	{
-		bonetag_t* next = (bonetag_t*)calloc(1, sizeof(bonetag_t));
-		tag->next = next;
+		list->tags = item;
 	}
-	else
-	{
-		list->tags = (bonetag_t*)calloc(1, sizeof(bonetag_t));
-		tag = list->tags;
-	}
-
-	tag->name = copystring(tagName);
 }
 
 void ClearAllBoneTags(void)
@@ -180,7 +112,7 @@ void AddBoneTag(const char* boneName, const char* tagName)
 		list = CreateBoneTagList(boneName);
 	}
 
-	if ( TagExistsInChain(list->tags, tagName) )
+	if ( Tag_ExistsInChain(list->tags, tagName) )
 	{
 		// No duplicates allowed.
 		return;
@@ -189,7 +121,7 @@ void AddBoneTag(const char* boneName, const char* tagName)
 	AddTagToList(list, tagName);
 }
 
-const bonetag_t* GetBoneTags(const char* boneName)
+const tagitem_t* GetBoneTags(const char* boneName)
 {
 	if ( !boneName || !(*boneName) )
 	{
@@ -214,5 +146,5 @@ qboolean HasBoneTag(const char* boneName, const char* tagName)
 		return false;
 	}
 
-	return TagExistsInChain(list->tags, tagName);
+	return Tag_ExistsInChain(list->tags, tagName);
 }

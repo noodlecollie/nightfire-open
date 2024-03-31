@@ -37,17 +37,6 @@ Studio models are position independent, so the cache manager can move them.
 #define IDSEQGRPHEADER (('Q' << 24) + ('S' << 16) + ('D' << 8) + 'I')  // little-endian "IDSQ"
 #define IDNFMDLHEADER (('P' << 24) + ('O' << 16) + ('F' << 8) + 'N')  // little-endian "NFOP"
 
-#define NFMDLHEADER_VERSION_INVALID 0
-#define NFMDLHEADER_VERSION_1 1
-#define NFMDLHEADER_VERSION_LATEST NFMDLHEADER_VERSION_1
-
-// Definitions specifying minimum and maximum versions
-// where certain features are supported.
-#define NFMDL_MINVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_1
-#define NFMDL_MAXVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_LATEST
-#define NFMDL_MINVER_GAITBONES NFMDLHEADER_VERSION_1
-#define NFMDL_MAXVER_GAITBONES NFMDLHEADER_VERSION_LATEST
-
 // studio limits
 #define MAXSTUDIOVERTS 16384  // max vertices per submodel
 #define MAXSTUDIOSEQUENCES 256  // total animation sequences
@@ -306,6 +295,12 @@ typedef struct studiohdr_s
 	int32_t transitionindex;
 } studiohdr_t;
 
+// NFTODO: It'd be nicer if this structure was shared with the engine,
+// rather than duplicated.
+#define NFMDLHEADER_VERSION_INVALID 0
+#define NFMDLHEADER_VERSION_1 1
+#define NFMDLHEADER_VERSION_2 2
+
 #pragma pack(push,1)
 typedef struct nfmdlheader_s
 {
@@ -314,7 +309,10 @@ typedef struct nfmdlheader_s
 
 	// Version of this struct.
 	uint32_t version;
+} nfmdlheader_t;
 
+typedef struct nfmdlheader_v1_s
+{
 	// Offset of gait bones section.
 	int32_t gaitBonesIndex;
 
@@ -325,7 +323,26 @@ typedef struct nfmdlheader_s
 	// The number of texture dimensions is the
 	// same as the number of textures.
 	int32_t textureDimsIndex;
-} nfmdlheader_t;
+} nfmdlheader_v1_t;
+
+#define NFMDLHEADER_LOCAL_OFFSET_V1 (sizeof(nfmdlheader_t))
+
+typedef struct nfmdlheader_v2_s
+{
+	// Offset of MDL tags section
+	int32_t mdlTagsIndex;
+
+	// Number of MDL tag entries
+	int32_t mdlTagsCount;
+} nfmdlheader_v2_t;
+
+#define NFMDLHEADER_LOCAL_OFFSET_V2 (NFMDLHEADER_LOCAL_OFFSET_V1 + sizeof(nfmdlheader_v1_t))
+
+// Info about the latest supported format, providing a complete
+// set of features:
+#define NFMDLHEADER_VERSION_LATEST NFMDLHEADER_VERSION_2
+#define NFMDLHEADER_LOCAL_OFFSET_LATEST NFMDLHEADER_LOCAL_OFFSET_V2
+#define NFMDLHEADER_SIZE_LATEST (sizeof(nfmdlheader_v2_t))
 
 // Dimensions of a texture originally included in the model,
 // before it was replaced by a placeholder.
@@ -337,7 +354,50 @@ typedef struct nfmdltexturedim_s
 	// Original height of the texture.
 	int32_t height;
 } nfmdltexturedim_t;
+
+#define NFMDL_MAX_TAG_LENGTH 32
+
+typedef struct nfmdltag_s
+{
+	// Name of this tag.
+	char name[NFMDL_MAX_TAG_LENGTH];
+} nfmdltag_t;
 #pragma pack(pop)
+
+// Definitions specifying minimum and maximum versions
+// where certain features are supported.
+#define NFMDL_MINVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_1
+#define NFMDL_MAXVER_EXTERNAL_TEXTURES NFMDLHEADER_VERSION_LATEST
+#define NFMDL_MINVER_GAITBONES NFMDLHEADER_VERSION_1
+#define NFMDL_MAXVER_GAITBONES NFMDLHEADER_VERSION_LATEST
+#define NFMDL_MINVER_MDLTAGS NFMDLHEADER_VERSION_2
+#define NFMDL_MAXVER_MDLTAGS NFMDLHEADER_VERSION_LATEST
+
+// Convenience functions for headers:
+static inline const void* NFMDL_HeaderCast(const nfmdlheader_t* header, uint32_t version, size_t localOffset)
+{
+	if ( !header || header->id != IDNFMDLHEADER || header->version < version )
+	{
+		return NULL;
+	}
+
+	return (const void*)((const byte*)header + localOffset);
+}
+
+static inline const nfmdlheader_t* NFMDL_GetGeneralHeader(const studiohdr_t* studiohdr)
+{
+	return studiohdr ? (const nfmdlheader_t*)((const byte*)studiohdr + sizeof(studiohdr_t)) : NULL;
+}
+
+static inline const nfmdlheader_v1_t* NFMDL_GetV1Header(const nfmdlheader_t* header)
+{
+	return (const nfmdlheader_v1_t*)NFMDL_HeaderCast(header, 1, NFMDLHEADER_LOCAL_OFFSET_V1);
+}
+
+static inline const nfmdlheader_v2_t* NFMDL_GetV2Header(const nfmdlheader_t* header)
+{
+	return (const nfmdlheader_v2_t*)NFMDL_HeaderCast(header, 2, NFMDLHEADER_LOCAL_OFFSET_V2);
+}
 
 // Convenience functions for features:
 static inline qboolean NFMDL_SupportsExternalTextures(const nfmdlheader_t* header)
@@ -350,6 +410,12 @@ static inline qboolean NFMDL_SupportsGaitBones(const nfmdlheader_t* header)
 {
 	return header && header->id == IDNFMDLHEADER && header->version >= NFMDL_MINVER_GAITBONES &&
 		header->version <= NFMDL_MAXVER_GAITBONES;
+}
+
+static inline qboolean NFMDL_SupportsMDLTags(const nfmdlheader_t* header)
+{
+	return header && header->id == IDNFMDLHEADER && header->version >= NFMDL_MINVER_MDLTAGS &&
+		header->version <= NFMDL_MAXVER_MDLTAGS;
 }
 
 // extra header to hold more offsets

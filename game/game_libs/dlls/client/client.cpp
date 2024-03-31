@@ -544,6 +544,39 @@ void ClientCommand(edict_t* pEntity)
 	ClientPrint(pev, HUD_PRINTCONSOLE, msg);
 }
 
+static CharacterGender InferGenderFromModel(char* infobuffer)
+{
+	const char* modelName = g_engfuncs.pfnInfoKeyValue(infobuffer, "model");
+
+	if ( !modelName || !(*modelName) )
+	{
+		return CharacterGender::MALE;
+	}
+
+	int modelIndex = CGameResources::StaticInstance().ModelIndex(CUtlString(modelName));
+
+	if ( modelIndex < 0 )
+	{
+		return CharacterGender::MALE;
+	}
+
+	int numTags = g_engfuncs.pfnModelGetNumTags(modelIndex);
+
+	for ( int tagIndex = 0; tagIndex < numTags; ++tagIndex )
+	{
+		char tag[32];
+		g_engfuncs.pfnModelGetTag(modelIndex, tagIndex, tag, sizeof(tag));
+
+		// TODO: Define this tag name somewhere?
+		if ( strcmp(tag, "female_character") )
+		{
+			return CharacterGender::FEMALE;
+		}
+	}
+
+	return CharacterGender::MALE;
+}
+
 /*
 ========================
 ClientUserInfoChanged
@@ -569,11 +602,13 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 		sName[sizeof(sName) - 1] = '\0';
 
 		// First parse the name and remove any %'s
-		for ( char* pApersand = sName; pApersand != NULL && *pApersand != 0; pApersand++ )
+		for ( char* chPercent = sName; chPercent != NULL && *chPercent != 0; ++chPercent )
 		{
 			// Replace it with a space
-			if ( *pApersand == '%' )
-				*pApersand = ' ';
+			if ( *chPercent == '%' )
+			{
+				*chPercent = ' ';
+			}
 		}
 
 		// Set the name
@@ -616,6 +651,9 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 				g_engfuncs.pfnInfoKeyValue(infobuffer, "name"));
 		}
 	}
+
+	CBasePlayer* playerEnt = GetClassPtrFromEdict<CBasePlayer>(pEntity);
+	playerEnt->m_Gender = InferGenderFromModel(infobuffer);
 
 	g_pGameRules->ClientUserInfoChanged(GetClassPtrFromEdict<CBasePlayer>(pEntity), infobuffer);
 }
@@ -963,16 +1001,6 @@ void StartFrame(void)
 	}
 }
 
-static inline void PrecacheMultiplayerModels()
-{
-	const CUtlVector<CUtlString>& playerModelList = CGameResources::StaticInstance().MultiplayerModelList();
-
-	FOR_EACH_VEC(playerModelList, index)
-	{
-		PRECACHE_MODEL(playerModelList[index].String());
-	}
-}
-
 void ClientPrecache(void)
 {
 	// setup precaches always needed
@@ -998,8 +1026,6 @@ void ClientPrecache(void)
 
 	PRECACHE_MODEL(PLAYER_MODEL_PATH);
 
-	PrecacheMultiplayerModels();
-
 	// hud sounds
 	PRECACHE_SOUND("common/wpn_hudoff.wav");
 	PRECACHE_SOUND("common/wpn_hudon.wav");
@@ -1016,7 +1042,9 @@ void ClientPrecache(void)
 	PRECACHE_SOUND("player/geiger1.wav");
 
 	if ( giPrecacheGrunt )
+	{
 		UTIL_PrecacheOther("monster_human_grunt");
+	}
 }
 
 /*
@@ -1029,9 +1057,13 @@ Returns the descriptive name of this .dll.  E.g., Half-Life, or Team Fortress 2
 const char* GetGameDescription()
 {
 	if ( g_pGameRules )  // this function may be called before the world has spawned, and the game rules initialized
+	{
 		return g_pGameRules->GetGameDescription();
+	}
 	else
+	{
 		return "Nightfire Open";
+	}
 }
 
 /*

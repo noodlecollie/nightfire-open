@@ -45,36 +45,42 @@ public:
 	virtual void OnDeleteEntry(int)
 	{
 	}
+
 	virtual void OnActivateEntry(int)
 	{
 	}
+
 	virtual unsigned int GetAlignmentForColumn(int) const
 	{
 		return QM_LEFT;
 	}
+
 	virtual ECellType GetCellType(int, int)
 	{
 		return CELL_TEXT;
 	}
+
 	virtual bool GetLineColor(int, unsigned int&, bool&) const
 	{
 		return false;
 	}
+
 	virtual bool GetCellColors(int, int, unsigned int&, bool&) const
 	{
 		return false;
 	}
+
 	virtual bool IsCellTextWrapped(int, int)
 	{
 		return true;
 	}
-	// virtual CMenuBaseItem *GetCellItem( int line, int column ) { return NULL; }
 
 	// sorting
+	// false means no sorting support for column
 	virtual bool Sort(int, bool)
 	{
 		return false;
-	}  // false means no sorting support for column
+	}
 };
 
 #endif  // BASE_MODEL_H
