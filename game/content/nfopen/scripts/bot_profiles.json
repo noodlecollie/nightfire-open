@@ -15,8 +15,118 @@
 		"skin": "mp_mi6_tux"
 	},
 	{
-		"name": "mp_alura_combat",
+		"name": "alura_combat",
 		"playerName": "Alura",
 		"skin": "mp_alura_combat"
+	},
+	{
+		"name": "baron_samedi",
+		"playerName": "Baron Samedi",
+		"skin": "mp_baron_samedi"
+	},
+	{
+		"name": "castle_guard",
+		"playerName": "Castle Guard",
+		"skin": "mp_castle_guard"
+	},
+	{
+		"name": "christmas_jones",
+		"playerName": "Christmas Jones",
+		"skin": "mp_christmas_jones"
+	},
+	{
+		"name": "commando",
+		"playerName": "Phoenix Commando",
+		"skin": "mp_commando"
+	},
+	{
+		"name": "dominique",
+		"playerName": "Dominique",
+		"skin": "mp_dominique"
+	},
+	{
+		"name": "drake",
+		"playerName": "Drake",
+		"skin": "mp_drake"
+	},
+	{
+		"name": "elektra",
+		"playerName": "Elektra King",
+		"skin": "mp_elektra"
+	},
+	{
+		"name": "goldfinger",
+		"playerName": "Goldfinger",
+		"skin": "mp_goldfinger"
+	},
+	{
+		"name": "jaws",
+		"playerName": "Jaws",
+		"skin": "mp_jaws"
+	},
+	{
+		"name": "kiko",
+		"playerName": "Kiko",
+		"skin": "mp_kiko"
+	},
+	{
+		"name": "mayday",
+		"playerName": "Mayday",
+		"skin": "mp_mayday"
+	},
+	{
+		"name": "oddjob",
+		"playerName": "Oddjob",
+		"skin": "mp_oddjob"
+	},
+	{
+		"name": "pussy_galore",
+		"playerName": "Pussy Galore",
+		"skin": "mp_pussy_galore"
+	},
+	{
+		"name": "q",
+		"playerName": "Q",
+		"skin": "mp_q"
+	},
+	{
+		"name": "renard",
+		"playerName": "Renard",
+		"skin": "mp_renard"
+	},
+	{
+		"name": "rook",
+		"playerName": "Rook",
+		"skin": "mp_rook"
+	},
+	{
+		"name": "scaramanga",
+		"playerName": "Scaramanga",
+		"skin": "mp_scaramanga"
+	},
+	{
+		"name": "snowguard",
+		"playerName": "Snow Guard",
+		"skin": "mp_snowguard"
+	},
+	{
+		"name": "wai_lin",
+		"playerName": "Wai Lin",
+		"skin": "mp_wai_lin"
+	},
+	{
+		"name": "xenia",
+		"playerName": "Xenia",
+		"skin": "mp_xenia"
+	},
+	{
+		"name": "yakuza",
+		"playerName": "Yakuza",
+		"skin": "mp_yakuza"
+	},
+	{
+		"name": "zoe",
+		"playerName": "Zoe",
+		"skin": "mp_zoe"
 	}
 ]
