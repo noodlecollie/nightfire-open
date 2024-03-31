@@ -28,8 +28,8 @@ public:
 	virtual void OnDeleteEntry(int row) override;
 
 	bool AddEntry(const CUtlString& profileName, const CUtlString& playerName);
-	bool RemoveEntryAt(uint32_t index);
-	const ListEntry* Entry(uint32_t index) const;
+	bool RemoveEntryAt(int index);
+	const ListEntry* Entry(int index) const;
 	bool IsFull() const;
 	void Clear();
 

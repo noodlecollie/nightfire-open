@@ -39,6 +39,7 @@ private:
 	static constexpr int MAX_BOT_NAME_LENGTH = 32;
 
 	void AddButtonPressed();
+	void RemoveButtonPressed();
 	void RemoveAllButtonPressed();
 
 	void CacheCurrentInGameBotList();
@@ -60,6 +61,7 @@ private:
 	CStudioSceneModel m_BotStudioModel;
 	CMenuField m_SelectedBotName;
 	CMenuPicButton m_AddButton;
+	CMenuPicButton m_RemoveButton;
 	CMenuPicButton m_RemoveAllButton;
 
 	int m_iSidePadding;
@@ -115,6 +117,10 @@ void CMenuBotSetup::_Init()
 	m_AddButton.onReleased = VoidCb(&CMenuBotSetup::AddButtonPressed);
 	AddItem(m_AddButton);
 
+	m_RemoveButton.SetNameAndStatus(L("Remove"), L("Remove selected bot from the game."));
+	m_RemoveButton.onReleased = VoidCb(&CMenuBotSetup::RemoveButtonPressed);
+	AddItem(m_RemoveButton);
+
 	m_RemoveAllButton.SetNameAndStatus(L("Remove All"), L("Remove all currently added bots."));
 	m_RemoveAllButton.onReleased = VoidCb(&CMenuBotSetup::RemoveAllButtonPressed);
 	AddItem(m_RemoveAllButton);
@@ -147,7 +153,11 @@ void CMenuBotSetup::_VidInit()
 	const int botNameBottomEdge = m_SelectedBotName.pos.y + m_SelectedBotName.size.h;
 	m_AddButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 25, botNameBottomEdge + CENTRAL_CONTROL_SPACING);
 
-	m_RemoveAllButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 75, -BOTTOM_EDGE_MARGIN - 25);
+	m_RemoveButton.SetCoord(
+		profileListRightEdge + (LIST_SPACING / 2) - 45,
+		m_AddButton.pos.y + m_AddButton.size.h);
+
+	m_RemoveAllButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 65, -BOTTOM_EDGE_MARGIN - 25);
 
 	UpdateButtonStates();
 }
@@ -177,6 +187,18 @@ void CMenuBotSetup::AddButtonPressed()
 	{
 		m_InGameBotListModel.AddEntry(m_SelectedProfile.profileName, m_SelectedProfile.playerName);
 		m_InGameBotList.Reload();
+	}
+
+	UpdateButtonStates();
+}
+
+void CMenuBotSetup::RemoveButtonPressed()
+{
+	int currentIndex = m_InGameBotList.GetCurrentIndex();
+
+	if ( currentIndex >= 0 && currentIndex < m_InGameBotListModel.GetRows() )
+	{
+		m_InGameBotListModel.RemoveEntryAt(currentIndex);
 	}
 
 	UpdateButtonStates();
@@ -216,6 +238,10 @@ void CMenuBotSetup::UpdateUIFromSelectedProfileData()
 void CMenuBotSetup::UpdateButtonStates()
 {
 	m_AddButton.SetGrayed(m_SelectedProfile.profileName.Length() < 1 || m_InGameBotListModel.IsFull());
+
+	int inGameBotIndex = m_InGameBotList.GetCurrentIndex();
+	m_RemoveButton.SetGrayed(inGameBotIndex < 0 || inGameBotIndex >= m_InGameBotListModel.GetRows());
+
 	m_RemoveAllButton.SetGrayed(m_InGameBotListModel.GetRows() < 1);
 }
 
