@@ -67,7 +67,15 @@ void CGameResources::InitMultiplayerModelList()
 	{
 		const DirectoryEntry& entry = entries[index];
 
+		CUtlString entryName = entry.EntryName();
+
+		// Remove ".mdl"
+		if ( entryName.IndexOf(".mdl") == entryName.Length() - 4 )
+		{
+			entryName.Truncate(entryName.Length() - 4);
+		}
+
 		m_MultiplayerModelList.AddToTail(
-			MultiplayerModel {entry.EntryName(), MultiplayerModelFullPath(entry.EntryName()), -1});
+			MultiplayerModel {entryName, entry.FullPath(), -1});
 	}
 }
