@@ -10,6 +10,8 @@ $eyeposition 0.0 -3.248 30.61
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
+$texrendermode mdl/dominique_mp.png masked 0.6
+
 $bodygroup "studio"
 {
 	studio "mp_dominique_ref"
