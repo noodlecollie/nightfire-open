@@ -321,6 +321,7 @@ typedef struct ref_api_s
 	// studio models
 	void* (*R_StudioGetAnim)(studiohdr_t* m_pStudioHeader, model_t* m_pSubModel, mstudioseqdesc_t* pseqdesc);
 	void (*pfnStudioEvent)(const struct mstudioevent_s* event, const cl_entity_t* entity);
+	float (*R_GetTextureMaskThreshold)(model_t* model, int textureIndex);
 
 	// efx
 	void (*CL_DrawEFX)(float time, qboolean fTrans);

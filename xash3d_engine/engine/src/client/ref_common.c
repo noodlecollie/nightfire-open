@@ -86,6 +86,11 @@ static void pfnStudioEvent(const mstudioevent_t* event, const cl_entity_t* e)
 	clgame.dllFuncs.pfnStudioEvent(event, e);
 }
 
+static float R_GetTextureMaskThreshold(model_t* model, int textureIndex)
+{
+	return Mod_GetTextureMaskThreshold(model, textureIndex);
+}
+
 static model_t* pfnGetDefaultSprite(enum ref_defaultsprite_e spr)
 {
 	switch ( spr )
@@ -331,6 +336,7 @@ static ref_api_t gEngfuncs = {
 
 	R_StudioGetAnim,
 	pfnStudioEvent,
+	R_GetTextureMaskThreshold,
 
 	CL_DrawEFX,
 	CL_ThinkParticle,

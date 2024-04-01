@@ -334,6 +334,11 @@ typedef struct nfmdlheader_v2_s
 
 	// Number of MDL tag entries
 	int32_t mdlTagsCount;
+
+	// Offset of texture mask params section.
+	// The number of items is the same as
+	// the number of textures.
+	int32_t textureMaskParamsIndex;
 } nfmdlheader_v2_t;
 
 #define NFMDLHEADER_LOCAL_OFFSET_V2 (NFMDLHEADER_LOCAL_OFFSET_V1 + sizeof(nfmdlheader_v1_t))
@@ -362,6 +367,17 @@ typedef struct nfmdltag_s
 	// Name of this tag.
 	char name[NFMDL_MAX_TAG_LENGTH];
 } nfmdltag_t;
+
+typedef struct nfmdltexturemaskparam_s
+{
+	// Threshold between 0 and 255.
+	// Any texture pixel with an alpha value
+	// strictly greater than this threshold
+	// will be drawn; values less than or
+	// equal to this threshold will not
+	// be drawn.
+	uint8_t threshold;
+} nfmdltexturemaskparam_t;
 #pragma pack(pop)
 
 // Definitions specifying minimum and maximum versions
@@ -372,6 +388,8 @@ typedef struct nfmdltag_s
 #define NFMDL_MAXVER_GAITBONES NFMDLHEADER_VERSION_LATEST
 #define NFMDL_MINVER_MDLTAGS NFMDLHEADER_VERSION_2
 #define NFMDL_MAXVER_MDLTAGS NFMDLHEADER_VERSION_LATEST
+#define NFMDL_MINVER_TEXTUREMASKPARAMS NFMDLHEADER_VERSION_2
+#define NFMDL_MAXVER_TEXTUREMASKPARAMS NFMDLHEADER_VERSION_LATEST
 
 // Convenience functions for headers:
 static inline const void* NFMDL_HeaderCast(const nfmdlheader_t* header, uint32_t version, size_t localOffset)
@@ -416,6 +434,12 @@ static inline qboolean NFMDL_SupportsMDLTags(const nfmdlheader_t* header)
 {
 	return header && header->id == IDNFMDLHEADER && header->version >= NFMDL_MINVER_MDLTAGS &&
 		header->version <= NFMDL_MAXVER_MDLTAGS;
+}
+
+static inline qboolean NFMDL_SupportsTextureMaskParams(const nfmdlheader_t* header)
+{
+	return header && header->id == IDNFMDLHEADER && header->version >= NFMDL_MINVER_TEXTUREMASKPARAMS &&
+		header->version <= NFMDL_MAXVER_TEXTUREMASKPARAMS;
 }
 
 // extra header to hold more offsets

@@ -10,6 +10,8 @@ $eyeposition 0.0 -4.909 33.42
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
+$texrendermode mdl/q_mp.png masked 0.3
+
 $bodygroup "studio"
 {
 	studio "q_low_ref"

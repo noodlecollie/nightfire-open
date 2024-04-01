@@ -33,6 +33,7 @@ EXTERN vec3_t cbox[2];
 EXTERN int maxseqgroupsize;
 EXTERN int split_textures;
 EXTERN int clip_texcoords;
+EXTERN int nouvlimit;
 EXTERN qboolean keep_all_bones;
 EXTERN qboolean noEmbeddedTextures;
 
@@ -277,6 +278,7 @@ typedef struct
 	int size;
 	void* pdata;
 	int parent;
+	float maskThreshold;
 } s_texture_t;
 
 EXTERN s_texture_t texture[MAXSTUDIOSKINS];

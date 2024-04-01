@@ -2545,10 +2545,15 @@ static void R_StudioDrawPoints(void)
 		if ( FBitSet(g_nFaceFlags, STUDIO_NF_MASKED) )
 		{
 			pglEnable(GL_ALPHA_TEST);
-			pglAlphaFunc(GL_GREATER, 0.5f);
+			float maskThreshold =
+				gEngfuncs.R_GetTextureMaskThreshold(RI.currententity->model, (int)pskinref[pmesh->skinref]);
+			pglAlphaFunc(GL_GREATER, maskThreshold);
 			pglDepthMask(GL_TRUE);
+
 			if ( R_ModelOpaque(RI.currententity->curstate.rendermode) )
+			{
 				tr.blend = 1.0f;
+			}
 		}
 		else if ( FBitSet(g_nFaceFlags, STUDIO_NF_ADDITIVE) )
 		{
@@ -2560,7 +2565,9 @@ static void R_StudioDrawPoints(void)
 				R_AllowFog(false);
 			}
 			else
+			{
 				pglBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			}
 		}
 
 		R_StudioSetupSkin(m_pStudioHeader, pskinref[pmesh->skinref]);
@@ -2568,22 +2575,34 @@ static void R_StudioDrawPoints(void)
 		if ( CVAR_TO_BOOL(r_studio_drawelements) )
 		{
 			if ( FBitSet(g_nFaceFlags, STUDIO_NF_CHROME) )
+			{
 				R_StudioBuildArrayChromeMesh(ptricmds, pstudionorms, s, t, shellscale);
+			}
 			else if ( FBitSet(g_nFaceFlags, STUDIO_NF_UV_COORDS) )
+			{
 				R_StudioBuildArrayFloatMesh(ptricmds, pstudionorms);
+			}
 			else
+			{
 				R_StudioBuildArrayNormalMesh(ptricmds, pstudionorms, s, t);
+			}
 
 			R_StudioDrawArrays(startArrayVerts, startArrayElems);
 		}
 		else
 		{
 			if ( FBitSet(g_nFaceFlags, STUDIO_NF_CHROME) )
+			{
 				R_StudioDrawChromeMesh(ptricmds, pstudionorms, s, t, shellscale);
+			}
 			else if ( FBitSet(g_nFaceFlags, STUDIO_NF_UV_COORDS) )
+			{
 				R_StudioDrawFloatMesh(ptricmds, pstudionorms);
+			}
 			else
+			{
 				R_StudioDrawNormalMesh(ptricmds, pstudionorms, s, t);
+			}
 		}
 
 		if ( FBitSet(g_nFaceFlags, STUDIO_NF_MASKED) )

@@ -1416,28 +1416,31 @@ void TextureCoordRanges(s_mesh_t* pmesh, s_texture_t* ptexture)
 	}
 
 	// Clamp texture co-ords to range [-1 2]
-	for ( i = 0; i < pmesh->numtris; i++ )
+	if ( !nouvlimit )
 	{
-		for ( j = 0; j < 3; j++ )
+		for ( i = 0; i < pmesh->numtris; i++ )
 		{
-			if ( pmesh->triangle[i][j].u > 2.0 )
+			for ( j = 0; j < 3; j++ )
 			{
-				pmesh->triangle[i][j].u = 2.0;
-			}
+				if ( pmesh->triangle[i][j].u > 2.0 )
+				{
+					pmesh->triangle[i][j].u = 2.0;
+				}
 
-			if ( pmesh->triangle[i][j].u < -1.0 )
-			{
-				pmesh->triangle[i][j].u = -1.0;
-			}
+				if ( pmesh->triangle[i][j].u < -1.0 )
+				{
+					pmesh->triangle[i][j].u = -1.0;
+				}
 
-			if ( pmesh->triangle[i][j].v > 2.0 )
-			{
-				pmesh->triangle[i][j].v = 2.0;
-			}
+				if ( pmesh->triangle[i][j].v > 2.0 )
+				{
+					pmesh->triangle[i][j].v = 2.0;
+				}
 
-			if ( pmesh->triangle[i][j].v < -1.0 )
-			{
-				pmesh->triangle[i][j].v = -1.0;
+				if ( pmesh->triangle[i][j].v < -1.0 )
+				{
+					pmesh->triangle[i][j].v = -1.0;
+				}
 			}
 		}
 	}
@@ -3281,13 +3284,31 @@ void Cmd_TexRenderMode(void)
 	strcpy(tex_name, token);
 
 	GetToken(false);
+
 	if ( !strcmp(token, "additive") )
 	{
 		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_ADDITIVE;
 	}
 	else if ( !strcmp(token, "masked") )
 	{
-		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_MASKED;
+		s_texture_t* tex = &texture[lookup_texture(tex_name)];
+		tex->flags |= STUDIO_NF_MASKED;
+		tex->maskThreshold = 0.5f;
+
+		if ( TokenAvailable() )
+		{
+			GetToken(false);
+			tex->maskThreshold = atof(token);
+
+			if ( tex->maskThreshold < 0.0f )
+			{
+				tex->maskThreshold = 0.0f;
+			}
+			else if ( tex->maskThreshold > 1.0f )
+			{
+				tex->maskThreshold = 1.0f;
+			}
+		}
 	}
 	else if ( !strcmp(token, "fullbright") )
 	{
@@ -3483,6 +3504,10 @@ void ParseScript(void)
 		else if ( !strcmp(token, "$cliptotextures") )
 		{
 			clip_texcoords = 1;
+		}
+		else if ( !strcmp(token, "$nouvlimit") )
+		{
+			nouvlimit = 1;
 		}
 		else if ( !strcmp(token, "$renamebone") )
 		{

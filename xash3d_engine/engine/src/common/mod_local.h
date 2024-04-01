@@ -132,6 +132,7 @@ void Mod_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitc
 void Mod_PrecacheEventSounds(model_t* model);
 int Mod_GetNumTags(model_t* model);
 void Mod_GetTag(model_t* model, int tagIndex, char* buffer, size_t length);
+float Mod_GetTextureMaskThreshold(model_t* model, int textureIndex);
 
 //
 // mod_sprite.c

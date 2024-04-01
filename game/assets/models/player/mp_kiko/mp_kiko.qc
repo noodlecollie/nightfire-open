@@ -10,6 +10,12 @@ $eyeposition 0.0 -3.622 31.33
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
+// Some UVs are way outside the normal range, so inform studiomdl
+$nouvlimit
+
+$texrendermode mdl/kikohair1.png masked
+$texrendermode mdl/kikolonghair.png masked
+
 $bodygroup "studio"
 {
 	studio "mp_kiko_ref"

@@ -718,6 +718,47 @@ void Mod_GetTag(model_t* model, int tagIndex, char* buffer, size_t length)
 	Q_strncpy(buffer, tags[tagIndex].name, length);
 }
 
+float Mod_GetTextureMaskThreshold(model_t* model, int textureIndex)
+{
+	static const float DEFAULT_THRESHOLD = 0.5f;
+
+	if ( !model )
+	{
+		return DEFAULT_THRESHOLD;
+	}
+
+	studiohdr_t* header = Mod_StudioExtradata(model);
+
+	if ( !header )
+	{
+		return DEFAULT_THRESHOLD;
+	}
+
+	if ( textureIndex < 0 || textureIndex >= header->numtextures )
+	{
+		return DEFAULT_THRESHOLD;
+	}
+
+	const nfmdlheader_t* nfHeader = NFMDL_GetGeneralHeader(header);
+
+	if ( !NFMDL_SupportsTextureMaskParams(nfHeader) )
+	{
+		return DEFAULT_THRESHOLD;
+	}
+
+	const nfmdlheader_v2_t* v2Header = NFMDL_GetV2Header(nfHeader);
+
+	if ( !v2Header )
+	{
+		return DEFAULT_THRESHOLD;
+	}
+
+	const nfmdltexturemaskparam_t* maskParams =
+		(const nfmdltexturemaskparam_t*)((const byte*)header + v2Header->textureMaskParamsIndex);
+
+	return ((float)maskParams[textureIndex].threshold / 255.0f);
+}
+
 static void SetUpBones(const edict_t* edict, model_t* mod)
 {
 	studiohdr_t* pstudio;

@@ -159,6 +159,11 @@ typedef struct nfmdlheader_v2_s
 
 	// Number of MDL tag entries
 	int32_t mdlTagsCount;
+
+	// Offset of texture mask params section.
+	// The number of items is the same as
+	// the number of textures.
+	int32_t textureMaskParamsIndex;
 } nfmdlheader_v2_t;
 
 #define NFMDLHEADER_LOCAL_OFFSET_V2 (NFMDLHEADER_LOCAL_OFFSET_V1 + sizeof(nfmdlheader_v1_t))
@@ -187,6 +192,17 @@ typedef struct nfmdltag_s
 	// Name of this tag.
 	char name[NFMDL_MAX_TAG_LENGTH];
 } nfmdltag_t;
+
+typedef struct nfmdltexturemaskparam_s
+{
+	// Threshold between 0 and 255.
+	// Any texture pixel with an alpha value
+	// strictly greater than this threshold
+	// will be drawn; values less than or
+	// equal to this threshold will not
+	// be drawn.
+	uint8_t threshold;
+} nfmdltexturemaskparam_t;
 #pragma pack(pop)
 
 // header for demand loaded sequence group data

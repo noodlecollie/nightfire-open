@@ -10,6 +10,8 @@ $eyeposition 0.0 -4.002 30.81
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
+$texrendermode mdl/wai_lin_mp.png masked
+
 $bodygroup "studio"
 {
 	studio "mp_wai_lin_ref"
