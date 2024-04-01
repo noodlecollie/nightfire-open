@@ -1416,28 +1416,31 @@ void TextureCoordRanges(s_mesh_t* pmesh, s_texture_t* ptexture)
 	}
 
 	// Clamp texture co-ords to range [-1 2]
-	for ( i = 0; i < pmesh->numtris; i++ )
+	if ( !nouvlimit )
 	{
-		for ( j = 0; j < 3; j++ )
+		for ( i = 0; i < pmesh->numtris; i++ )
 		{
-			if ( pmesh->triangle[i][j].u > 2.0 )
+			for ( j = 0; j < 3; j++ )
 			{
-				pmesh->triangle[i][j].u = 2.0;
-			}
+				if ( pmesh->triangle[i][j].u > 2.0 )
+				{
+					pmesh->triangle[i][j].u = 2.0;
+				}
 
-			if ( pmesh->triangle[i][j].u < -1.0 )
-			{
-				pmesh->triangle[i][j].u = -1.0;
-			}
+				if ( pmesh->triangle[i][j].u < -1.0 )
+				{
+					pmesh->triangle[i][j].u = -1.0;
+				}
 
-			if ( pmesh->triangle[i][j].v > 2.0 )
-			{
-				pmesh->triangle[i][j].v = 2.0;
-			}
+				if ( pmesh->triangle[i][j].v > 2.0 )
+				{
+					pmesh->triangle[i][j].v = 2.0;
+				}
 
-			if ( pmesh->triangle[i][j].v < -1.0 )
-			{
-				pmesh->triangle[i][j].v = -1.0;
+				if ( pmesh->triangle[i][j].v < -1.0 )
+				{
+					pmesh->triangle[i][j].v = -1.0;
+				}
 			}
 		}
 	}
@@ -3483,6 +3486,10 @@ void ParseScript(void)
 		else if ( !strcmp(token, "$cliptotextures") )
 		{
 			clip_texcoords = 1;
+		}
+		else if ( !strcmp(token, "$nouvlimit") )
+		{
+			nouvlimit = 1;
 		}
 		else if ( !strcmp(token, "$renamebone") )
 		{
