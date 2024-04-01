@@ -13,6 +13,8 @@ $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 // Some UVs are way outside the normal range, so inform studiomdl
 $nouvlimit
 
+$texrendermode mdl/galore_hair.png masked 0.02
+
 $bodygroup "studio"
 {
 	studio "mp_pussy_galore_ref"
