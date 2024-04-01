@@ -611,6 +611,36 @@ static void WriteTextureDimensions(nfmdlheader_t* nfHeader)
 	}
 }
 
+static void WriteTextureMaskParams(nfmdlheader_t* nfHeader)
+{
+	nfmdlheader_v2_t* v2Header = (nfmdlheader_v2_t*)((byte*)nfHeader + NFMDLHEADER_LOCAL_OFFSET_V2);
+
+	v2Header->textureMaskParamsIndex = (int32_t)(pData - pStart);
+
+	for ( int textureIndex = 0; textureIndex < numtextures; ++textureIndex )
+	{
+		nfmdltexturemaskparam_t* maskParam = (nfmdltexturemaskparam_t*)pData;
+		const s_texture_t* tex = &texture[textureIndex];
+
+		float threshold = (tex->flags & STUDIO_NF_MASKED) ? tex->maskThreshold : 0.5f;
+
+		if ( threshold < 0.0f )
+		{
+			threshold = 0.0f;
+		}
+		else if ( threshold > 1.0f )
+		{
+			threshold = 1.0f;
+		}
+
+		maskParam->threshold = (uint8_t)(threshold * 255.0f);
+
+		pData += sizeof(nfmdltexturemaskparam_t);
+	}
+
+	ALIGN(pData);
+}
+
 static void WriteMDLTags(nfmdlheader_t* nfHeader)
 {
 	nfmdlheader_v2_t* v2Header = (nfmdlheader_v2_t*)((byte*)nfHeader + NFMDLHEADER_LOCAL_OFFSET_V2);
@@ -760,18 +790,23 @@ void WriteFile(void)
 	printf("gaitbones %6ld bytes\n", pData - pStart - total);
 	total = pData - pStart;
 
+	WriteMDLTags(nfHeader);
+	printf("tags      %6ld bytes\n", pData - pStart - total);
+	total = pData - pStart;
+
 	if ( !shouldSplitTextures )
 	{
 		WriteTextureDimensions(nfHeader);
 		printf("texdims   %6ld bytes\n", pData - pStart - total);
 		total = pData - pStart;
 
+		WriteTextureMaskParams(nfHeader);
+		printf("texmask   %6ld bytes\n", pData - pStart - total);
+		total = pData - pStart;
+
 		WriteTextures();
 		printf("textures  %6ld bytes\n", pData - pStart - total);
 	}
-
-	WriteMDLTags(nfHeader);
-	printf("tags      %6ld bytes\n", pData - pStart - total);
 
 	phdr->length = pData - pStart;
 

@@ -278,6 +278,7 @@ typedef struct
 	int size;
 	void* pdata;
 	int parent;
+	float maskThreshold;
 } s_texture_t;
 
 EXTERN s_texture_t texture[MAXSTUDIOSKINS];

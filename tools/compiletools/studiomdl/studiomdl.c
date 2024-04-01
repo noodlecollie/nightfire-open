@@ -3284,13 +3284,31 @@ void Cmd_TexRenderMode(void)
 	strcpy(tex_name, token);
 
 	GetToken(false);
+
 	if ( !strcmp(token, "additive") )
 	{
 		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_ADDITIVE;
 	}
 	else if ( !strcmp(token, "masked") )
 	{
-		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_MASKED;
+		s_texture_t* tex = &texture[lookup_texture(tex_name)];
+		tex->flags |= STUDIO_NF_MASKED;
+		tex->maskThreshold = 0.5f;
+
+		if ( TokenAvailable() )
+		{
+			GetToken(false);
+			tex->maskThreshold = atof(token);
+
+			if ( tex->maskThreshold < 0.0f )
+			{
+				tex->maskThreshold = 0.0f;
+			}
+			else if ( tex->maskThreshold > 1.0f )
+			{
+				tex->maskThreshold = 1.0f;
+			}
+		}
 	}
 	else if ( !strcmp(token, "fullbright") )
 	{
