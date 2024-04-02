@@ -8,10 +8,12 @@
 # 11 hit boxes
 ########################################
 
-$cd "/home/vesper/Desktop/temp/v_ronin"
+$cd .
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "v_ronin.mdl"
 
 $root "Bip01"
+$noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
@@ -67,4 +69,3 @@ $sequence "detonator_draw" "detonator_draw_ani" fps 30 {
 $sequence "detonator_holster" "detonator_holster_ani" fps 30 {
 	event 5004 0 "weapons/ronin_remote_draw.wav"
 }
-

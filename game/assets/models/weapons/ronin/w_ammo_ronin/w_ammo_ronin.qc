@@ -8,10 +8,12 @@
 # 1 hit boxes
 ########################################
 
-$cd "/home/vesper/Desktop/temp/w_ammo_ronin"
+$cd .
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "w_ammo_ronin.mdl"
 
 $root "case_01"
+$noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
@@ -32,4 +34,3 @@ $bodygroup "studio"
 $hbox 0 "case_01" -3.500000 -12.870000 -0.050000 3.650000 12.810000 24.360001
 
 $sequence "idle1" "idle1_ani" fps 30
-

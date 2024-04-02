@@ -8,10 +8,12 @@
 # 1 hit boxes
 ########################################
 
-$cd "/home/vesper/Desktop/temp/decompiled"
+$cd .
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "p_ronin.mdl"
 
 $root "Bip01"
+$noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
@@ -32,4 +34,3 @@ $bodygroup "studio"
 $hbox 0 "case_01" -2.910000 -10.730000 -19.629999 3.040000 10.680000 0.710000
 
 $sequence "idle1" "idle1_ani" fps 30
-

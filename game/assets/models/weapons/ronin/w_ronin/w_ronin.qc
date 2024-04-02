@@ -8,10 +8,12 @@
 # 6 hit boxes
 ########################################
 
-$cd "/home/vesper/Desktop/temp/w_ronin"
+$cd .
+$cdtexture "../../../../../content/nfopen/textures"
 $modelname "w_ronin.mdl"
 
 $root "Dummy01"
+$noembeddedtextures
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
@@ -43,4 +45,3 @@ $sequence "spin" "spin_ani" fps 30
 $sequence "deploy" "deploy_ani" fps 30
 $sequence "fire" "fire_ani" fps 30
 $sequence "deploy_idle" "deploy_idle_ani" fps 30
-
