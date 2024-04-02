@@ -456,9 +456,13 @@ void SV_CreateBaseline(void)
 	SV_WriteVoiceCodec(&sv.signon);
 
 	if ( FBitSet(host.features, ENGINE_QUAKE_COMPATIBLE) )
+	{
 		playermodel = SV_ModelIndex(DEFAULT_PLAYER_PATH_QUAKE);
+	}
 	else
-		playermodel = SV_ModelIndex(DEFAULT_PLAYER_PATH_HALFLIFE);
+	{
+		playermodel = SV_ModelIndex(PLAYER_MODEL_PATH);
+	}
 
 	memset(&nullstate, 0, sizeof(nullstate));
 
