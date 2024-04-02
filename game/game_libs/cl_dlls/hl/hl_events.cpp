@@ -37,6 +37,7 @@ void Game_HookEvents(void)
 {
 	EV_HLDM_Init();
 
+#ifdef HL_WEAPONS
 	gEngfuncs.pfnHookEvent("events/glock1.sc", EV_FireGlock1, NULL);
 	gEngfuncs.pfnHookEvent("events/glock2.sc", EV_FireGlock2, NULL);
 	gEngfuncs.pfnHookEvent("events/shotgun1.sc", EV_FireShotGunSingle, NULL);
@@ -56,6 +57,7 @@ void Game_HookEvents(void)
 	gEngfuncs.pfnHookEvent("events/firehornet.sc", EV_HornetGunFire, NULL);
 	gEngfuncs.pfnHookEvent("events/tripfire.sc", EV_TripmineFire, NULL);
 	gEngfuncs.pfnHookEvent("events/snarkfire.sc", EV_SnarkFire, NULL);
+#endif // HL_WEAPONS
 
 	// Hook up all registered weapons to generic event handlers for firing.
 	CWeaponRegistry::StaticInstance().ForEach(

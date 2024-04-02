@@ -66,6 +66,11 @@ void VectorAngles(const float* forward, float* angles);
 
 extern cvar_t* cl_weapon_prediction;
 
+// These are used elsewhere, apparently.
+BEAM* pBeam;
+BEAM* pBeam2;
+TEMPENTITY* pFlare;  // Vit_amiN: egon's beam flare
+
 void EV_HLDM_Init()
 {
 	CWeaponRegistry::StaticInstance().ForEach(
@@ -444,6 +449,8 @@ void EV_HLDM_FireBullets(
 		gEngfuncs.pEventAPI->EV_PopPMStates();
 	}
 }
+
+#ifdef HL_WEAPONS
 
 //======================
 //	    GLOCK START
@@ -1720,10 +1727,6 @@ enum EGON_FIREMODE
 #define EGON_SOUND_RUN "weapons/egon_run3.wav"
 #define EGON_SOUND_STARTUP "weapons/egon_windup2.wav"
 
-BEAM* pBeam;
-BEAM* pBeam2;
-TEMPENTITY* pFlare;  // Vit_amiN: egon's beam flare
-
 void EV_EgonFlareCallback(struct tempent_s* ent, float, float currenttime)
 {
 	float delta = currenttime - ent->tentOffset[2];  // time past since the last scale
@@ -2080,6 +2083,8 @@ void EV_SnarkFire(event_args_t* args)
 //======================
 //	   SQUEAK END
 //======================
+
+#endif  // HL_WEAPONS
 
 void EV_TrainPitchAdjust(event_args_t* args)
 {

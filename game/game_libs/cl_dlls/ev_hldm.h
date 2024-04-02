@@ -14,6 +14,7 @@ struct event_args_s;
 
 extern "C"
 {
+#ifdef HL_WEAPONS
 // HLDM
 void EV_FireGlock1(event_args_t* args);
 void EV_FireGlock2(event_args_t* args);
@@ -33,6 +34,7 @@ void EV_EgonStop(event_args_t* args);
 void EV_HornetGunFire(event_args_t* args);
 void EV_TripmineFire(event_args_t* args);
 void EV_SnarkFire(event_args_t* args);
+#endif  // HL_WEAPONS
 
 void EV_TrainPitchAdjust(event_args_t* args);
 

@@ -86,10 +86,6 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/ammodefs.cpp
 	../game_shared/weapons/basegrenadelauncher.h
 	../game_shared/weapons/basegrenadelauncher.cpp
-	../game_shared/weapons/crossbow.cpp
-	../game_shared/weapons/crowbar.cpp
-	../game_shared/weapons/egon.cpp
-	../game_shared/weapons/gauss.cpp
 	../game_shared/weapons/generichitscanweapon.h
 	../game_shared/weapons/generichitscanweapon.cpp
 	../game_shared/weapons/genericmeleeweapon.h
@@ -98,16 +94,6 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/genericprojectileweapon.cpp
 	../game_shared/weapons/genericweapon.h
 	../game_shared/weapons/genericweapon.cpp
-	../game_shared/weapons/glock.cpp
-	../game_shared/weapons/handgrenade.cpp
-	../game_shared/weapons/hornetgun.cpp
-	../game_shared/weapons/mp5.cpp
-	../game_shared/weapons/python.cpp
-	../game_shared/weapons/rpg.cpp
-	../game_shared/weapons/satchel.cpp
-	../game_shared/weapons/shotgun.cpp
-	../game_shared/weapons/squeakgrenade.cpp
-	../game_shared/weapons/tripmine.cpp
 	../game_shared/weapons/weapon_fists_atts.h
 	../game_shared/weapons/weapon_fists.h
 	../game_shared/weapons/weapon_fists.cpp

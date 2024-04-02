@@ -444,8 +444,8 @@ IMPLEMENT_SAVERESTORE(CBasePlayerWeapon, CBasePlayerItem)
 
 void CBasePlayerItem::SetObjectCollisionBox(void)
 {
-	 VectorAdd(pev->origin, Vector(-24, -24, 0), pev->absmin);
-	 VectorAdd(pev->origin, Vector(24, 24, 16), pev->absmax);
+	VectorAdd(pev->origin, Vector(-24, -24, 0), pev->absmin);
+	VectorAdd(pev->origin, Vector(24, 24, 16), pev->absmax);
 }
 
 //=========================================================
@@ -1248,7 +1248,7 @@ float CBasePlayerWeapon::GetNextAttackDelay(float delay)
 	// store it as m_flPrevPrimaryAttack.
 	m_flPrevPrimaryAttack = flNextAttack - UTIL_WeaponTimeBase();
 	// char szMsg[256];
-	//PlatformLib_SNPrintF( szMsg, sizeof(szMsg), "next attack time: %0.4f\n", gpGlobals->time + flNextAttack );
+	// PlatformLib_SNPrintF( szMsg, sizeof(szMsg), "next attack time: %0.4f\n", gpGlobals->time + flNextAttack );
 	// OutputDebugString( szMsg );
 	return flNextAttack;
 }
@@ -1638,6 +1638,7 @@ void CBasePlayerWeapon::PrintState(void)
 	ALERT(at_console, "m_iclip:  %i\n", m_iClip);
 }
 
+#ifdef HL_WEAPONS
 TYPEDESCRIPTION CRpg::m_SaveData[] = {
 	DEFINE_FIELD(CRpg, m_fSpotActive, FIELD_INTEGER),
 	DEFINE_FIELD(CRpg, m_cActiveRockets, FIELD_INTEGER),
@@ -1696,3 +1697,4 @@ TYPEDESCRIPTION CSatchel::m_SaveData[] = {
 };
 
 IMPLEMENT_SAVERESTORE(CSatchel, CBasePlayerWeapon)
+#endif  // HL_WEAPONS
