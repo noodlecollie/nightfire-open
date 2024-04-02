@@ -59,7 +59,7 @@ int g_irunninggausspred = 0;
 
 vec3_t previousorigin;
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 // HLDM Weapon placeholder entities.
 CGlock g_Glock;
 CCrowbar g_Crowbar;
@@ -75,7 +75,7 @@ CHandGrenade g_HandGren;
 CSatchel g_Satchel;
 CTripmine g_Tripmine;
 CSqueak g_Snark;
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 
 /*
 ======================
@@ -681,7 +681,7 @@ void HUD_InitClientWeapons(void)
 			HUD_PrepEntity(predictionWeapon, &player);
 		});
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 	// Allocate slot(s) for each weapon that we are going to be predicting
 	HUD_PrepEntity(&g_Glock, &player);
 	HUD_PrepEntity(&g_Crowbar, &player);
@@ -697,7 +697,7 @@ void HUD_InitClientWeapons(void)
 	HUD_PrepEntity(&g_Satchel, &player);
 	HUD_PrepEntity(&g_Tripmine, &player);
 	HUD_PrepEntity(&g_Snark, &player);
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 }
 
 /*
@@ -784,7 +784,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		pWeapon = g_pWpns[static_cast<uint32_t>(atts->Core.Id)];
 	}
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 	if ( !pWeapon )
 	{
 		// NFTODO: Once all weapons use attributes, this can go.
@@ -834,7 +834,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 				break;
 		}
 	}
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 
 	// Store pointer to our destination entity_state_t so we can get our origin, etc. from it
 	//  for setting up events on the client
@@ -931,13 +931,13 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		player.m_pActiveItem = g_pWpns[from->client.m_iId];
 	}
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 	if ( player.m_pActiveItem->m_iId == WEAPON_RPG )
 	{
 		((CRpg*)player.m_pActiveItem)->m_fSpotActive = (int)from->client.vuser2[1];
 		((CRpg*)player.m_pActiveItem)->m_cActiveRockets = (int)from->client.vuser2[2];
 	}
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 
 	// Don't go firing anything if we have died.
 	// Or if we don't have a weapon model deployed
@@ -1019,7 +1019,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 	to->client.fuser3 = player.m_flAmmoStartCharge;
 	to->client.maxspeed = player.pev->maxspeed;
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 	if ( player.m_pActiveItem->m_iId == WEAPON_RPG )
 	{
 		from->client.vuser2[1] = static_cast<float>(((CRpg*)player.m_pActiveItem)->m_fSpotActive);
@@ -1044,7 +1044,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		// Force a fixed anim down to viewmodel
 		HUD_SendWeaponAnim(to->client.weaponanim, body, 1);
 	}
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 
 	for ( i = 0; i < MAX_LOCAL_WEAPONS; i++ )
 	{

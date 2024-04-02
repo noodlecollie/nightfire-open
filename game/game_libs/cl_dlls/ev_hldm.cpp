@@ -450,7 +450,7 @@ void EV_HLDM_FireBullets(
 	}
 }
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 
 //======================
 //	    GLOCK START
@@ -2084,7 +2084,7 @@ void EV_SnarkFire(event_args_t* args)
 //	   SQUEAK END
 //======================
 
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 
 void EV_TrainPitchAdjust(event_args_t* args)
 {

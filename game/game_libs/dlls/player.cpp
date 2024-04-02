@@ -850,12 +850,12 @@ void CBasePlayer::RemoveAllItems(BOOL removeSuit)
 	for ( i = 0; i < MAX_AMMO_SLOTS; i++ )
 		m_rgAmmo[i] = 0;
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 	if ( satchelfix.value )
 	{
 		DeactivateSatchels(this);
 	}
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 
 	UpdateClientData();
 

@@ -527,7 +527,7 @@ typedef struct
 
 extern MULTIDAMAGE gMultiDamage;
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 
 #define WEAPON_CROWBAR 1
 #define WEAPON_GLOCK 2
@@ -1177,4 +1177,4 @@ private:
 	unsigned short m_usSnarkFire;
 };
 
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT

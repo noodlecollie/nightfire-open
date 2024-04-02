@@ -1914,13 +1914,13 @@ void UpdateClientData(const struct edict_s* ent, int sendweapons, struct clientd
 					cd->vuser4[1] = static_cast<float>(pl->m_rgAmmo[gun->m_iPrimaryAmmoType]);
 					cd->vuser4[2] = static_cast<float>(pl->m_rgAmmo[gun->m_iSecondaryAmmoType]);
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 					if ( pl->m_pActiveItem->m_iId == WEAPON_RPG )
 					{
 						cd->vuser2[1] = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_fSpotActive);
 						cd->vuser2[2] = static_cast<float>(((CRpg*)pl->m_pActiveItem)->m_cActiveRockets);
 					}
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
 				}
 			}
 		}

@@ -1638,7 +1638,7 @@ void CBasePlayerWeapon::PrintState(void)
 	ALERT(at_console, "m_iclip:  %i\n", m_iClip);
 }
 
-#ifdef HL_WEAPONS
+#ifdef HL_CONTENT
 TYPEDESCRIPTION CRpg::m_SaveData[] = {
 	DEFINE_FIELD(CRpg, m_fSpotActive, FIELD_INTEGER),
 	DEFINE_FIELD(CRpg, m_cActiveRockets, FIELD_INTEGER),
@@ -1697,4 +1697,4 @@ TYPEDESCRIPTION CSatchel::m_SaveData[] = {
 };
 
 IMPLEMENT_SAVERESTORE(CSatchel, CBasePlayerWeapon)
-#endif  // HL_WEAPONS
+#endif  // HL_CONTENT
