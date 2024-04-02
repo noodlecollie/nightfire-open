@@ -79,15 +79,6 @@ cvar_t* g_footsteps = NULL;
 
 // CVARS FOR SKILL LEVEL SETTINGS
 
-// Leech
-cvar_t sk_leech_health1 = CREATE_CVAR("sk_leech_health1", "0", 0, 0.0f, nullptr);
-cvar_t sk_leech_health2 = CREATE_CVAR("sk_leech_health2", "0", 0, 0.0f, nullptr);
-cvar_t sk_leech_health3 = CREATE_CVAR("sk_leech_health3", "0", 0, 0.0f, nullptr);
-
-cvar_t sk_leech_dmg_bite1 = CREATE_CVAR("sk_leech_dmg_bite1", "0", 0, 0.0f, nullptr);
-cvar_t sk_leech_dmg_bite2 = CREATE_CVAR("sk_leech_dmg_bite2", "0", 0, 0.0f, nullptr);
-cvar_t sk_leech_dmg_bite3 = CREATE_CVAR("sk_leech_dmg_bite3", "0", 0, 0.0f, nullptr);
-
 // Turret
 cvar_t sk_turret_health1 = CREATE_CVAR("sk_turret_health1", "0", 0, 0.0f, nullptr);
 cvar_t sk_turret_health2 = CREATE_CVAR("sk_turret_health2", "0", 0, 0.0f, nullptr);
@@ -210,15 +201,6 @@ void GameDLLInit(void)
 	CVAR_REGISTER(&mp_chattime);
 
 	// REGISTER CVARS FOR SKILL LEVEL STUFF
-
-	// Leech
-	CVAR_REGISTER(&sk_leech_health1);  // {"sk_leech_health1","0");
-	CVAR_REGISTER(&sk_leech_health2);  // {"sk_leech_health2","0");
-	CVAR_REGISTER(&sk_leech_health3);  // {"sk_leech_health3","0");
-
-	CVAR_REGISTER(&sk_leech_dmg_bite1);  // {"sk_leech_dmg_bite1","0");
-	CVAR_REGISTER(&sk_leech_dmg_bite2);  // {"sk_leech_dmg_bite2","0");
-	CVAR_REGISTER(&sk_leech_dmg_bite3);  // {"sk_leech_dmg_bite3","0");
 
 	// Turret
 	CVAR_REGISTER(&sk_turret_health1);  // {"sk_turret_health1","0");

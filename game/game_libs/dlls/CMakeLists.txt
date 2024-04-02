@@ -308,7 +308,6 @@ set(SOURCES_SERVER
 	healthkit.cpp
 	items.h
 	items.cpp
-	leech.cpp
 	lights.cpp
 	maprules.h
 	maprules.cpp

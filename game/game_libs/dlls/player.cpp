@@ -51,6 +51,7 @@
 #include "EnginePublicAPI/com_strings.h"
 #include "PlatformLib/String.h"
 #include "MathLib/angles.h"
+#include "weapons/weaponregistry.h"
 
 // #define DUCKFIX
 
@@ -2132,18 +2133,6 @@ void CBasePlayer::CheckTimeBasedDamage()
 
 			if ( m_rgbTimeBasedDamage[i] )
 			{
-				// use up an antitoxin on poison or nervegas after a few seconds of damage
-				if ( ((i == itbd_NerveGas) && (m_rgbTimeBasedDamage[i] < NERVEGAS_DURATION)) ||
-					 ((i == itbd_Poison) && (m_rgbTimeBasedDamage[i] < POISON_DURATION)) )
-				{
-					if ( m_rgItems[ITEM_ANTIDOTE] )
-					{
-						m_rgbTimeBasedDamage[i] = 0;
-						m_rgItems[ITEM_ANTIDOTE]--;
-						SetSuitUpdate("!HEV_HEAL4", FALSE, SUIT_REPEAT_OK);
-					}
-				}
-
 				// decrement damage duration, detect when done.
 				if ( !m_rgbTimeBasedDamage[i] || --m_rgbTimeBasedDamage[i] == 0 )
 				{
@@ -3471,30 +3460,10 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 			gEvilImpulse101 = TRUE;
 			GiveNamedItem("item_suit");
 			GiveNamedItem("item_battery");
-			GiveNamedItem("weapon_crowbar");
-			GiveNamedItem("weapon_9mmhandgun");
-			GiveNamedItem("ammo_9mmclip");
-			GiveNamedItem("weapon_shotgun");
-			GiveNamedItem("ammo_buckshot");
-			GiveNamedItem("weapon_9mmAR");
-			GiveNamedItem("ammo_9mmAR");
-			GiveNamedItem("ammo_ARgrenades");
-			GiveNamedItem("weapon_handgrenade");
-			GiveNamedItem("weapon_tripmine");
-#ifndef OEM_BUILD
-			GiveNamedItem("weapon_357");
-			GiveNamedItem("ammo_357");
-			GiveNamedItem("weapon_crossbow");
-			GiveNamedItem("ammo_crossbow");
-			GiveNamedItem("weapon_egon");
-			GiveNamedItem("weapon_gauss");
-			GiveNamedItem("ammo_gaussclip");
-			GiveNamedItem("weapon_rpg");
-			GiveNamedItem("ammo_rpgclip");
-			GiveNamedItem("weapon_satchel");
-			GiveNamedItem("weapon_snark");
-			GiveNamedItem("weapon_hornetgun");
-#endif
+			CWeaponRegistry::StaticInstance().ForEach([this](const WeaponAtts::WACollection& atts)
+			{
+				GiveNamedItem(atts.Core.Classname);
+			});
 			gEvilImpulse101 = FALSE;
 			break;
 		case 102:

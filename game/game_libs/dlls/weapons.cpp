@@ -322,69 +322,12 @@ void W_Precache(void)
 	UTIL_PrecacheOther("item_suit");
 	UTIL_PrecacheOther("item_healthkit");
 	UTIL_PrecacheOther("item_battery");
-	UTIL_PrecacheOther("item_antidote");
-	UTIL_PrecacheOther("item_security");
-	UTIL_PrecacheOther("item_longjump");
-
-	// shotgun
-	UTIL_PrecacheOtherWeapon("weapon_shotgun");
-	UTIL_PrecacheOther("ammo_buckshot");
-
-	// crowbar
-	UTIL_PrecacheOtherWeapon("weapon_crowbar");
-
-	// glock
-	UTIL_PrecacheOtherWeapon("weapon_9mmhandgun");
-	UTIL_PrecacheOther("ammo_9mmclip");
-
-	// mp5
-	UTIL_PrecacheOtherWeapon("weapon_9mmAR");
-	UTIL_PrecacheOther("ammo_9mmAR");
-	UTIL_PrecacheOther("ammo_ARgrenades");
-
-	// 9mm ammo box
-	UTIL_PrecacheOther("ammo_9mmbox");
-
-#if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
-	// python
-	UTIL_PrecacheOtherWeapon("weapon_357");
-	UTIL_PrecacheOther("ammo_357");
-
-	// gauss
-	UTIL_PrecacheOtherWeapon("weapon_gauss");
-	UTIL_PrecacheOther("ammo_gaussclip");
-
-	// rpg
-	UTIL_PrecacheOtherWeapon("weapon_rpg");
-	UTIL_PrecacheOther("ammo_rpgclip");
-
-	// crossbow
-	UTIL_PrecacheOtherWeapon("weapon_crossbow");
-	UTIL_PrecacheOther("ammo_crossbow");
-
-	// egon
-	UTIL_PrecacheOtherWeapon("weapon_egon");
-#endif
-	// tripmine
-	UTIL_PrecacheOtherWeapon("weapon_tripmine");
-#if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
-	// satchel charge
-	UTIL_PrecacheOtherWeapon("weapon_satchel");
-#endif
-	// hand grenade
-	UTIL_PrecacheOtherWeapon("weapon_handgrenade");
-#if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
-	// squeak grenade
-	UTIL_PrecacheOtherWeapon("weapon_snark");
-
-	// hornetgun
-	UTIL_PrecacheOtherWeapon("weapon_hornetgun");
 
 	if ( g_pGameRules->IsDeathmatch() )
 	{
 		UTIL_PrecacheOther("weaponbox");  // container for dropped deathmatch weapons
 	}
-#endif
+
 	g_sModelIndexFireball = static_cast<short>(PRECACHE_MODEL("sprites/zerogxplode.spr"));  // fireball
 	g_sModelIndexWExplosion = static_cast<short>(PRECACHE_MODEL("sprites/WXplo1.spr"));  // underwater fireball
 	g_sModelIndexSmoke = static_cast<short>(PRECACHE_MODEL("sprites/steam1.spr"));  // smoke

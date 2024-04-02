@@ -185,9 +185,7 @@ public:
 	}
 };
 
-#ifdef NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS
 LINK_ENTITY_TO_CLASS(ammo_frag_grenade, CAmmoFragGrenade)
 
 // For Nightfire compatibility:
 LINK_ENTITY_TO_CLASS(ammo_fraggrenade, CAmmoFragGrenade)
-#endif  // NFOPEN_GAMEPLAY_UNFINISHED_WEAPONS

@@ -23,7 +23,7 @@ static constexpr const char* const MalePain[] = {
 	"player/male_pain7.wav",
 	"player/male_pain8.wav",
 	"player/male_pain9.wav",
-	"player/male_pain10.wav"
+	"player/male_pain10.wav",
 	"player/male_pain11.wav",
 	"player/male_pain12.wav",
 	"player/male_pain13.wav",

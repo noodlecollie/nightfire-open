@@ -39,8 +39,6 @@ extern DLL_GLOBAL short g_sModelIndexBloodSpray;  // holds the sprite index for 
 
 // constant items
 #define ITEM_HEALTHKIT 1
-#define ITEM_ANTIDOTE 2
-#define ITEM_SECURITY 3
 #define ITEM_BATTERY 4
 
 #define WEAPON_NONE 0

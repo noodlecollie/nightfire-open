@@ -840,6 +840,16 @@ void CGamePlayerEquip::KeyValue(KeyValueData* pkvd)
 
 				UTIL_StripToken(pkvd->szKeyName, tmp);
 
+				if ( strcmp(tmp, "default_weapon") == 0 )
+				{
+					// TODO: We should set the default weapon
+					// that the player will equip on spawn.
+					// For now, just avoid doing anything
+					// until we implement this feature.
+					pkvd->fHandled = TRUE;
+					break;
+				}
+
 				m_weaponNames[i] = ALLOC_STRING(tmp);
 				m_weaponCount[i] = atoi(pkvd->szValue);
 				m_weaponCount[i] = Q_max(1, m_weaponCount[i]);
@@ -871,12 +881,17 @@ void CGamePlayerEquip::EquipPlayer(CBaseEntity* pEntity)
 	}
 
 	if ( !pPlayer )
+	{
 		return;
+	}
 
 	for ( int i = 0; i < MAX_EQUIP; i++ )
 	{
 		if ( !m_weaponNames[i] )
+		{
 			break;
+		}
+
 		for ( int j = 0; j < m_weaponCount[i]; j++ )
 		{
 			pPlayer->GiveNamedItem(STRING(m_weaponNames[i]));
