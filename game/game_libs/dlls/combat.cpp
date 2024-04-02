@@ -1432,10 +1432,13 @@ void CBaseEntity::FireBullets(
 	entvars_t* pevAttacker)
 {
 	static int tracerCount;
-	int tracer;
 	TraceResult tr;
 	Vector vecRight = gpGlobals->v_right;
 	Vector vecUp = gpGlobals->v_up;
+
+#ifdef HL_CONTENT
+	int tracer;
+#endif  // HL_CONTENT
 
 	if ( pevAttacker == NULL )
 		pevAttacker = pev;  // the default attacker is ourselves
@@ -1461,7 +1464,10 @@ void CBaseEntity::FireBullets(
 		vecEnd = vecSrc + vecDir * flDistance;
 		UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(pev) /*pentIgnore*/, &tr);
 
+#ifdef HL_CONTENT
 		tracer = 0;
+#endif  // HL_CONTENT
+
 		if ( iTracerFreq != 0 && (tracerCount++ % iTracerFreq) == 0 )
 		{
 			Vector vecTracerSrc;
@@ -1477,12 +1483,12 @@ void CBaseEntity::FireBullets(
 				vecTracerSrc = vecSrc;
 			}
 
+#ifdef HL_CONTENT
 			if ( iTracerFreq != 1 )  // guns that always trace also always decal
 			{
 				tracer = 1;
 			}
 
-#ifdef HL_CONTENT
 			switch ( iBulletType )
 			{
 				case BULLET_MONSTER_MP5:
