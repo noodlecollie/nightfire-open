@@ -273,24 +273,16 @@ set(SOURCES_SERVER
 	weapondebugevents/weapondebugeventsource.h
 	weapondebugevents/weapondebugeventsource.cpp
 	activitymap.h
-	aflock.cpp
-	agrunt.cpp
 	airtank.cpp
 	animating.cpp
 	animation.h
 	animation.cpp
-	apache.cpp
-	barnacle.cpp
-	barney.cpp
-	bigmomma.cpp
 	bloater.cpp
 	bmodels.cpp
-	bullsquid.cpp
 	buttons.cpp
 	cbase.cpp
 	client.h
 	combat.cpp
-	controller.cpp
 	decals.h
 	defaultai.h
 	defaultai.cpp
@@ -305,24 +297,15 @@ set(SOURCES_SERVER
 	func_break.cpp
 	func_tank.cpp
 	game.cpp
-	gargantua.cpp
 	genericmonster.cpp
 	ggrenade.cpp
 	globals.cpp
-	gman.cpp
 	h_ai.cpp
 	h_battery.cpp
 	h_cine.cpp
 	h_cycler.cpp
 	h_export.cpp
-	hassassin.cpp
-	headcrab.cpp
 	healthkit.cpp
-	hgrunt.cpp
-	hornet.cpp
-	houndeye.cpp
-	ichthyosaur.cpp
-	islave.cpp
 	items.h
 	items.cpp
 	leech.cpp
@@ -332,13 +315,10 @@ set(SOURCES_SERVER
 	monstermaker.cpp
 	monsters.cpp
 	monsterstate.cpp
-	mortar.cpp
 	multiplay_gamerules.cpp
-	nihilanth.cpp
 	nodes_compat.h
 	nodes.cpp
 	observer.cpp
-	osprey.cpp
 	pathcorner.cpp
 	plane.h
 	plane.cpp
@@ -350,7 +330,6 @@ set(SOURCES_SERVER
 	rat.cpp
 	roach.cpp
 	schedule.cpp
-	scientist.cpp
 	scripted.h
 	scripted.cpp
 	singleplay_gamerules.cpp
@@ -368,14 +347,11 @@ set(SOURCES_SERVER
 	teamplay_gamerules.h
 	teamplay_gamerules.cpp
 	tempmonster.cpp
-	tentacle.cpp
 	trains.h
 	triggers.cpp
 	turret.cpp
 	weapons.cpp
 	world.cpp
-	xen.cpp
-	zombie.cpp
 )
 
 if(TARGET_IS_64BIT)
