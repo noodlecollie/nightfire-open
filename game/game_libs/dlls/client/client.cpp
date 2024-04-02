@@ -52,7 +52,6 @@ extern DLL_GLOBAL BOOL g_fGameOver;
 extern DLL_GLOBAL int g_iSkillLevel;
 extern DLL_GLOBAL ULONG g_ulFrameCount;
 
-extern int giPrecacheGrunt;
 extern int gmsgSayText;
 extern int gmsgBhopcap;
 
@@ -1006,18 +1005,6 @@ void ClientPrecache(void)
 	// setup precaches always needed
 	PRECACHE_SOUND("player/sprayer.wav");  // spray paint sound for PreAlpha
 
-	PRECACHE_SOUND("debris/wood1.wav");  // hit wood texture
-	PRECACHE_SOUND("debris/wood2.wav");
-	PRECACHE_SOUND("debris/wood3.wav");
-
-	PRECACHE_SOUND("plats/train_use1.wav");  // use a train
-
-	PRECACHE_SOUND("buttons/spark5.wav");  // hit computer texture
-	PRECACHE_SOUND("buttons/spark6.wav");
-	PRECACHE_SOUND("debris/glass1.wav");
-	PRECACHE_SOUND("debris/glass2.wav");
-	PRECACHE_SOUND("debris/glass3.wav");
-
 	PRECACHE_SOUND(SOUND_FLASHLIGHT_ON);
 	PRECACHE_SOUND(SOUND_FLASHLIGHT_OFF);
 
@@ -1040,11 +1027,6 @@ void ClientPrecache(void)
 	PRECACHE_SOUND("player/geiger3.wav");
 	PRECACHE_SOUND("player/geiger2.wav");
 	PRECACHE_SOUND("player/geiger1.wav");
-
-	if ( giPrecacheGrunt )
-	{
-		UTIL_PrecacheOther("monster_human_grunt");
-	}
 }
 
 /*
