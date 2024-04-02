@@ -312,7 +312,7 @@ namespace QCv10
 	{
 		int32_t index = -1;
 		std::string bone;
-		uint32_t motionFlags = 0;
+		CommonTypes::MotionFlag motionType = CommonTypes::MotionFlag_None;
 		float start = 0;
 		float end = 0;
 
