@@ -322,69 +322,12 @@ void W_Precache(void)
 	UTIL_PrecacheOther("item_suit");
 	UTIL_PrecacheOther("item_healthkit");
 	UTIL_PrecacheOther("item_battery");
-	UTIL_PrecacheOther("item_antidote");
-	UTIL_PrecacheOther("item_security");
-	UTIL_PrecacheOther("item_longjump");
-
-	// shotgun
-	UTIL_PrecacheOtherWeapon("weapon_shotgun");
-	UTIL_PrecacheOther("ammo_buckshot");
-
-	// crowbar
-	UTIL_PrecacheOtherWeapon("weapon_crowbar");
-
-	// glock
-	UTIL_PrecacheOtherWeapon("weapon_9mmhandgun");
-	UTIL_PrecacheOther("ammo_9mmclip");
-
-	// mp5
-	UTIL_PrecacheOtherWeapon("weapon_9mmAR");
-	UTIL_PrecacheOther("ammo_9mmAR");
-	UTIL_PrecacheOther("ammo_ARgrenades");
-
-	// 9mm ammo box
-	UTIL_PrecacheOther("ammo_9mmbox");
-
-#if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
-	// python
-	UTIL_PrecacheOtherWeapon("weapon_357");
-	UTIL_PrecacheOther("ammo_357");
-
-	// gauss
-	UTIL_PrecacheOtherWeapon("weapon_gauss");
-	UTIL_PrecacheOther("ammo_gaussclip");
-
-	// rpg
-	UTIL_PrecacheOtherWeapon("weapon_rpg");
-	UTIL_PrecacheOther("ammo_rpgclip");
-
-	// crossbow
-	UTIL_PrecacheOtherWeapon("weapon_crossbow");
-	UTIL_PrecacheOther("ammo_crossbow");
-
-	// egon
-	UTIL_PrecacheOtherWeapon("weapon_egon");
-#endif
-	// tripmine
-	UTIL_PrecacheOtherWeapon("weapon_tripmine");
-#if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
-	// satchel charge
-	UTIL_PrecacheOtherWeapon("weapon_satchel");
-#endif
-	// hand grenade
-	UTIL_PrecacheOtherWeapon("weapon_handgrenade");
-#if !defined(OEM_BUILD) && !defined(HLDEMO_BUILD)
-	// squeak grenade
-	UTIL_PrecacheOtherWeapon("weapon_snark");
-
-	// hornetgun
-	UTIL_PrecacheOtherWeapon("weapon_hornetgun");
 
 	if ( g_pGameRules->IsDeathmatch() )
 	{
 		UTIL_PrecacheOther("weaponbox");  // container for dropped deathmatch weapons
 	}
-#endif
+
 	g_sModelIndexFireball = static_cast<short>(PRECACHE_MODEL("sprites/zerogxplode.spr"));  // fireball
 	g_sModelIndexWExplosion = static_cast<short>(PRECACHE_MODEL("sprites/WXplo1.spr"));  // underwater fireball
 	g_sModelIndexSmoke = static_cast<short>(PRECACHE_MODEL("sprites/steam1.spr"));  // smoke
@@ -444,8 +387,8 @@ IMPLEMENT_SAVERESTORE(CBasePlayerWeapon, CBasePlayerItem)
 
 void CBasePlayerItem::SetObjectCollisionBox(void)
 {
-	 VectorAdd(pev->origin, Vector(-24, -24, 0), pev->absmin);
-	 VectorAdd(pev->origin, Vector(24, 24, 16), pev->absmax);
+	VectorAdd(pev->origin, Vector(-24, -24, 0), pev->absmin);
+	VectorAdd(pev->origin, Vector(24, 24, 16), pev->absmax);
 }
 
 //=========================================================
@@ -1248,7 +1191,7 @@ float CBasePlayerWeapon::GetNextAttackDelay(float delay)
 	// store it as m_flPrevPrimaryAttack.
 	m_flPrevPrimaryAttack = flNextAttack - UTIL_WeaponTimeBase();
 	// char szMsg[256];
-	//PlatformLib_SNPrintF( szMsg, sizeof(szMsg), "next attack time: %0.4f\n", gpGlobals->time + flNextAttack );
+	// PlatformLib_SNPrintF( szMsg, sizeof(szMsg), "next attack time: %0.4f\n", gpGlobals->time + flNextAttack );
 	// OutputDebugString( szMsg );
 	return flNextAttack;
 }
@@ -1638,6 +1581,7 @@ void CBasePlayerWeapon::PrintState(void)
 	ALERT(at_console, "m_iclip:  %i\n", m_iClip);
 }
 
+#ifdef HL_CONTENT
 TYPEDESCRIPTION CRpg::m_SaveData[] = {
 	DEFINE_FIELD(CRpg, m_fSpotActive, FIELD_INTEGER),
 	DEFINE_FIELD(CRpg, m_cActiveRockets, FIELD_INTEGER),
@@ -1696,3 +1640,4 @@ TYPEDESCRIPTION CSatchel::m_SaveData[] = {
 };
 
 IMPLEMENT_SAVERESTORE(CSatchel, CBasePlayerWeapon)
+#endif  // HL_CONTENT

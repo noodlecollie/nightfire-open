@@ -1432,10 +1432,13 @@ void CBaseEntity::FireBullets(
 	entvars_t* pevAttacker)
 {
 	static int tracerCount;
-	int tracer;
 	TraceResult tr;
 	Vector vecRight = gpGlobals->v_right;
 	Vector vecUp = gpGlobals->v_up;
+
+#ifdef HL_CONTENT
+	int tracer;
+#endif  // HL_CONTENT
 
 	if ( pevAttacker == NULL )
 		pevAttacker = pev;  // the default attacker is ourselves
@@ -1461,7 +1464,10 @@ void CBaseEntity::FireBullets(
 		vecEnd = vecSrc + vecDir * flDistance;
 		UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(pev) /*pentIgnore*/, &tr);
 
+#ifdef HL_CONTENT
 		tracer = 0;
+#endif  // HL_CONTENT
+
 		if ( iTracerFreq != 0 && (tracerCount++ % iTracerFreq) == 0 )
 		{
 			Vector vecTracerSrc;
@@ -1477,8 +1483,12 @@ void CBaseEntity::FireBullets(
 				vecTracerSrc = vecSrc;
 			}
 
+#ifdef HL_CONTENT
 			if ( iTracerFreq != 1 )  // guns that always trace also always decal
+			{
 				tracer = 1;
+			}
+
 			switch ( iBulletType )
 			{
 				case BULLET_MONSTER_MP5:
@@ -1496,6 +1506,7 @@ void CBaseEntity::FireBullets(
 					MESSAGE_END();
 					break;
 			}
+#endif  // HL_CONTENT
 		}
 		// do damage, paint decals
 		if ( tr.flFraction != 1.0 )
@@ -1514,6 +1525,7 @@ void CBaseEntity::FireBullets(
 				TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
 				DecalGunshot(&tr, iBulletType);
 			}
+#ifdef HL_CONTENT
 			else
 				switch ( iBulletType )
 				{
@@ -1549,6 +1561,7 @@ void CBaseEntity::FireBullets(
 
 						break;
 				}
+#endif  // HL_CONTENT
 		}
 		// make bullet trails
 		UTIL_BubbleTrail(vecSrc, tr.vecEndPos, (int)((flDistance * tr.flFraction) / 64.0));
@@ -1621,6 +1634,7 @@ Vector CBaseEntity::FireBulletsPlayer(
 				TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
 				DecalGunshot(&tr, iBulletType);
 			}
+#ifdef HL_CONTENT
 			else
 				switch ( iBulletType )
 				{
@@ -1649,6 +1663,7 @@ Vector CBaseEntity::FireBulletsPlayer(
 
 						break;
 				}
+#endif  // HL_CONTENT
 		}
 		// make bullet trails
 		UTIL_BubbleTrail(vecSrc, tr.vecEndPos, (int)((flDistance * tr.flFraction) / 64.0));
@@ -1716,7 +1731,12 @@ void CBaseEntity::TraceBleed(float flDamage, Vector vecDir, const TraceResult* p
 		vecTraceDir.y += RANDOM_FLOAT(-flNoise, flNoise);
 		vecTraceDir.z += RANDOM_FLOAT(-flNoise, flNoise);
 
-		UTIL_TraceLine(ptr->vecEndPos, Vector(ptr->vecEndPos) + vecTraceDir * -172, ignore_monsters, ENT(pev), &Bloodtr);
+		UTIL_TraceLine(
+			ptr->vecEndPos,
+			Vector(ptr->vecEndPos) + vecTraceDir * -172,
+			ignore_monsters,
+			ENT(pev),
+			&Bloodtr);
 
 		if ( Bloodtr.flFraction != 1.0 )
 		{

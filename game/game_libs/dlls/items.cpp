@@ -63,12 +63,6 @@ void CWorldItem::Spawn(void)
 		case 44:  // ITEM_BATTERY:
 			pEntity = CBaseEntity::Create("item_battery", pev->origin, pev->angles);
 			break;
-		case 42:  // ITEM_ANTIDOTE:
-			pEntity = CBaseEntity::Create("item_antidote", pev->origin, pev->angles);
-			break;
-		case 43:  // ITEM_SECURITY:
-			pEntity = CBaseEntity::Create("item_security", pev->origin, pev->angles);
-			break;
 		case 45:  // ITEM_SUIT:
 			pEntity = CBaseEntity::Create("item_suit", pev->origin, pev->angles);
 			break;
@@ -264,85 +258,3 @@ LINK_ENTITY_TO_CLASS(item_battery, CItemBattery)
 #ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 LINK_ENTITY_TO_CLASS(item_armor_plate, CItemBattery)
 #endif
-
-class CItemAntidote : public CItem
-{
-	void Spawn(void)
-	{
-		Precache();
-		SET_MODEL(ENT(pev), "models/w_antidote.mdl");
-		CItem::Spawn();
-	}
-	void Precache(void)
-	{
-		PRECACHE_MODEL("models/w_antidote.mdl");
-	}
-	BOOL MyTouch(CBasePlayer* pPlayer)
-	{
-		pPlayer->SetSuitUpdate("!HEV_DET4", FALSE, SUIT_NEXT_IN_1MIN);
-
-		pPlayer->m_rgItems[ITEM_ANTIDOTE] += 1;
-		return TRUE;
-	}
-};
-
-LINK_ENTITY_TO_CLASS(item_antidote, CItemAntidote)
-
-class CItemSecurity : public CItem
-{
-	void Spawn(void)
-	{
-		Precache();
-		SET_MODEL(ENT(pev), "models/w_security.mdl");
-		CItem::Spawn();
-	}
-	void Precache(void)
-	{
-		PRECACHE_MODEL("models/w_security.mdl");
-	}
-	BOOL MyTouch(CBasePlayer* pPlayer)
-	{
-		pPlayer->m_rgItems[ITEM_SECURITY] += 1;
-		return TRUE;
-	}
-};
-
-LINK_ENTITY_TO_CLASS(item_security, CItemSecurity)
-
-class CItemLongJump : public CItem
-{
-	void Spawn(void)
-	{
-		Precache();
-		SET_MODEL(ENT(pev), "models/w_longjump.mdl");
-		CItem::Spawn();
-	}
-	void Precache(void)
-	{
-		PRECACHE_MODEL("models/w_longjump.mdl");
-	}
-	BOOL MyTouch(CBasePlayer* pPlayer)
-	{
-		if ( pPlayer->m_fLongJump )
-		{
-			return FALSE;
-		}
-
-		if ( (pPlayer->pev->weapons & (1 << WEAPON_SUIT)) )
-		{
-			pPlayer->m_fLongJump = TRUE;  // player now has longjump module
-
-			g_engfuncs.pfnSetPhysicsKeyValue(pPlayer->edict(), "slj", "1");
-
-			MESSAGE_BEGIN(MSG_ONE, gmsgItemPickup, NULL, pPlayer->pev);
-			WRITE_STRING(STRING(pev->classname));
-			MESSAGE_END();
-
-			EMIT_SOUND_SUIT(pPlayer->edict(), "!HEV_A1");  // Play the longjump sound UNDONE: Kelly? correct sound?
-			return TRUE;
-		}
-		return FALSE;
-	}
-};
-
-LINK_ENTITY_TO_CLASS(item_longjump, CItemLongJump)
