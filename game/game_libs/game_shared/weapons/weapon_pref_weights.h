@@ -16,6 +16,7 @@ enum WeaponPreferenceWeight
 	WeaponPref_MP9,
 	WeaponPref_Raptor,
 	WeaponPref_Frinesi,
+	WeaponPref_Ronin,
 	WeaponPref_GrenadeLauncher,
 	WeaponPref_L96A1,
 	WeaponPref_Max = WeaponPref_L96A1
