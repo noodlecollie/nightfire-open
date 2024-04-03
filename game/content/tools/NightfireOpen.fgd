@@ -2171,3 +2171,6 @@
 
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frag_grenade/w_frag_grenade.mdl" }) = weapon_frag_grenade : "Frag Grenade" []
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frag_grenade/w_ammo_frag_grenade.mdl" }) = ammo_frag_grenade : "Frag Grenade Ammo" []
+
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_ronin/w_ronin.mdl" }) = weapon_ronin : "Ronin Briefcase Turret" []
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_ronin/w_ammo_ronin.mdl" }) = ammo_frag_grenade : "Ronin Briefcase Turret Ammo" []

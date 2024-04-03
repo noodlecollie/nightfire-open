@@ -57,47 +57,30 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		obj.Prediction.SetUpPrediction<CWeaponRonin>();
 
-		// obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_grenadelauncher", &skilldata_t::plrDmgGrenadeLauncher));
-		// obj.SkillRecords.AddToTail(
-		// 	WASkillRecord("sk_plr_selfdmg_mult_grenadelauncher", &skilldata_t::plrSelfDmgMultGrenadeLauncher));
-		// obj.SkillRecords.AddToTail(
-		// 	WASkillRecord("sk_plr_dmg_mult_grenadelauncher_hit", &skilldata_t::plrDmgMultGrenadelauncherHit));
+		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_ronin_bullet", &skilldata_t::plrDmgRoninBullet));
+		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_ronin_explosion", &skilldata_t::plrDmgRoninExplosion));
 
-		// // Explode on contact
-		// WAProjectileAttack* priAttack = new WAProjectileAttack();
-		// obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
+		WAProjectileAttack* priAttack = new WAProjectileAttack();
+		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
 
-		// priAttack->EventScript = "events/weapon_grenadelauncher/fire_impact.sc";
-		// priAttack->FunctionsUnderwater = true;
-		// priAttack->IsContinuous = false;
-		// priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
-		// priAttack->AttackRate = GRENADELAUNCHER_FIRE_RATE;
-		// priAttack->Volume = LOUD_GUN_VOLUME;
-		// priAttack->MuzzleFlashBrightness = BRIGHT_GUN_FLASH;
-		// priAttack->ViewPunchY = -4.0f;
+		priAttack->EventScript = "events/weapon_ronin/throw.sc";
+		priAttack->FunctionsUnderwater = true;
+		priAttack->IsContinuous = false;
+		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
+		priAttack->AttackRate = 1.0f;
+		priAttack->Volume = QUIET_GUN_VOLUME;
+		priAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
+		priAttack->ViewPunchY = 0.0f;
+		priAttack->PlayDryFireSoundOnEmpty = false;
+		priAttack->projectileDelay = 0.5f;
 
-		// AccuracyParameters& accuracy = priAttack->Accuracy;
-		// accuracy.RestSpread = Vector2D(0.1f, 0.1f);
-		// accuracy.RunSpread = Vector2D(0.1f, 0.1f);
+		AccuracyParameters& accuracy = priAttack->Accuracy;
+		accuracy.RestSpread = Vector2D(0.0f, 0.0f);
+		accuracy.RunSpread = Vector2D(0.0f, 0.0f);
 
-		// CrosshairParameters& crosshair = priAttack->Crosshair;
-		// crosshair.RenderStyle = CrosshairStyle::Circle;
-		// crosshair.RadiusMin = 0.07f;
-		// crosshair.RadiusMax = 0.07f;
+		CrosshairParameters& crosshair = priAttack->Crosshair;
+		crosshair.RenderStyle = CrosshairStyle::None;
 
-		// priAttack->ViewModelAnimList_Attack << GRENADELAUNCHER_FIRE;
-
-		// priAttack->AttackSounds.MinVolume = 0.9f;
-		// priAttack->AttackSounds.MaxVolume = 0.9f;
-		// priAttack->AttackSounds.MinPitch = 96;
-		// priAttack->AttackSounds.MaxPitch = 100;
-		// priAttack->AttackSounds.SoundNames << "weapons/weapon_grenadelauncher/grenade_launcher_fire.wav";
-
-		// // Explode after delay
-		// WAProjectileAttack* secAttack = new WAProjectileAttack();
-		// obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(secAttack));
-
-		// // Base off primary attack
-		// *secAttack = *priAttack;
-		// secAttack->EventScript = "events/weapon_grenadelauncher/fire_timed.sc";
+		priAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
+		priAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
 	});

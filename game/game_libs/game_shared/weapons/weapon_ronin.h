@@ -1,14 +1,13 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "genericprojectileweapon.h"
+#include "basegrenadelauncher.h"
 
-class CWeaponRonin : public CGenericProjectileWeapon
+class CWeaponRonin : public CBaseGrenadeLauncher
 {
 public:
 	CWeaponRonin();
 	const WeaponAtts::WACollection& WeaponAttributes() const override;
-	void Precache() override;
 
 #ifndef CLIENT_DLL
 	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;

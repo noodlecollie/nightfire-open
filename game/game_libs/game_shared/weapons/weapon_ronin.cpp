@@ -3,7 +3,7 @@
 #include "skill.h"
 #include "gamerules.h"
 #include "weapon_pref_weights.h"
-#include "weapon_grenadelauncher_atts.h"
+#include "weapon_ronin_atts.h"
 
 #ifndef CLIENT_DLL
 #include <limits>
@@ -14,7 +14,7 @@
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
 
 CWeaponRonin::CWeaponRonin() :
-	CBaseProjectileWeapon()
+	CBaseGrenadeLauncher()
 {
 	// SetPrimaryAttackModeFromAttributes(ATTACKMODE_CONTACT);
 	// SetSecondaryAttackModeFromAttributes(ATTACKMODE_TIMED);
@@ -23,13 +23,6 @@ CWeaponRonin::CWeaponRonin() :
 const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const
 {
 	return WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
-}
-
-void CWeaponRonin::Precache()
-{
-	CBaseProjectileWeapon::Precache();
-
-	// PRECACHE_MODEL(GRENADELAUNCHER_GRENADE_MODEL);
 }
 
 #ifndef CLIENT_DLL

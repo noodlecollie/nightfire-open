@@ -71,9 +71,9 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->IsContinuous = false;
 		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
 		priAttack->AttackRate = 1.0f / FRAGGRENADE_REFIRE_DELAY_SECS;
-		priAttack->Volume = LOUD_GUN_VOLUME;
-		priAttack->MuzzleFlashBrightness = BRIGHT_GUN_FLASH;
-		priAttack->ViewPunchY = -4.0f;
+		priAttack->Volume = QUIET_GUN_VOLUME;
+		priAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
+		priAttack->ViewPunchY = 0.0f;
 		priAttack->PlayDryFireSoundOnEmpty = false;
 		priAttack->projectileDelay = 0.5f;
 

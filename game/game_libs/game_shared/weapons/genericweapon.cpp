@@ -976,7 +976,7 @@ void CGenericWeapon::FindWeaponSlotInfo()
 		return;
 	}
 
-	const int id = static_cast<int>(WeaponAttributes().Core.Id);
+	const WeaponId_e id = WeaponAttributes().Core.Id;
 
 	for ( int slot = 0; slot < MAX_WEAPON_SLOTS; ++slot )
 	{

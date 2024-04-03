@@ -27,7 +27,6 @@ LINK_ENTITY_TO_CLASS(weapon_grenadelauncher, CWeaponGrenadeLauncher);
 
 #ifdef NFOPEN_GAMEPLAY_PLACEHOLDERS
 // To make weapons less sparse for testing, map some other known weapons to this one.
-LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponGrenadeLauncher)
 LINK_ENTITY_TO_CLASS(weapon_rocketlauncher, CWeaponGrenadeLauncher)
 #endif
 
