@@ -233,9 +233,13 @@ void COM_GetCommonLibraryPath(ECommonLibraryType eLibType, char* out, size_t siz
 	switch ( eLibType )
 	{
 		case LIBRARY_GAMEUI:
+		{
 			COM_GenerateClientLibraryPath("menu", out, size);
 			break;
+		}
+
 		case LIBRARY_CLIENT:
+		{
 			if ( SI.clientlib[0] )
 			{
 				Q_strncpy(out, SI.clientlib, size);
@@ -244,8 +248,12 @@ void COM_GetCommonLibraryPath(ECommonLibraryType eLibType, char* out, size_t siz
 			{
 				COM_GenerateClientLibraryPath("client", out, size);
 			}
+
 			break;
+		}
+
 		case LIBRARY_SERVER:
+		{
 			if ( SI.gamedll[0] )
 			{
 				Q_strncpy(out, SI.gamedll, size);
@@ -254,11 +262,16 @@ void COM_GetCommonLibraryPath(ECommonLibraryType eLibType, char* out, size_t siz
 			{
 				COM_GenerateServerLibraryPath(out, size);
 			}
+
 			break;
+		}
+
 		default:
+		{
 			ASSERT(0);
 			out[0] = 0;
 			break;
+		}
 	}
 }
 
