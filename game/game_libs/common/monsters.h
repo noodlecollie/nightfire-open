@@ -45,7 +45,7 @@
 #define SF_MONSTER_GAG 2  // no idle noises from this monster
 #define SF_MONSTER_HITMONSTERCLIP 4
 //										8
-#define SF_MONSTER_PRISONER 16  // monster won't attack anyone, no one will attacke him.
+#define SF_MONSTER_PRISONER 16  // monster won't attack anyone, no one will attack him.
 //										32
 //										64
 #define SF_MONSTER_WAIT_FOR_SCRIPT \

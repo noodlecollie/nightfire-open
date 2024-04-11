@@ -254,6 +254,8 @@ set(SOURCES_SERVER
 	messages/baseMessageWriter.h
 	messages/baseMessageWriter.cpp
 	messages/messageRegistrationHelper.h
+	npc/npc_ronin_turret.h
+	npc/npc_ronin_turret.cpp
 	projectInterface_server/fileLoaders_server.h
 	projectInterface_server/fileLoaders_server.cpp
 	projectInterface_server/logInterface_server.h
