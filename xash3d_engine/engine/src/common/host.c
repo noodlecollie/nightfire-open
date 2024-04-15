@@ -347,7 +347,7 @@ void Host_ChangeGame_f(void)
 
 	if ( i == FI->numgames )
 	{
-		Con_Printf("%s not exist\n", Cmd_Argv(1));
+		Con_Printf("%s does not exist\n", Cmd_Argv(1));
 	}
 	else if ( !Q_stricmp(GI->gamefolder, Cmd_Argv(1)) )
 	{
