@@ -14,6 +14,7 @@ $modelname "w_ronin.mdl"
 
 $root "Dummy01"
 $noembeddedtextures
+$texrendermode mdl/w_ronin.png masked
 
 $flags 0
 $origin 0.000000 0.000000 0.000000
