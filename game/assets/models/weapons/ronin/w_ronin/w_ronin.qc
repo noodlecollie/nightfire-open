@@ -29,7 +29,7 @@ $bodygroup "studio"
 	studio "w_ronin_reference_ref"
 }
 
-
+$attachment "attachment_0" "barrel" 0.000000 1.000000 9.300000
 
 $controller 0 "gun_yaw" LZR 0 360
 $controller 1 "gun_pitch" YR 0 30
