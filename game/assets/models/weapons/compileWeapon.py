@@ -113,7 +113,7 @@ def compileRecursive(path: str, weaponName: str):
 	for item in os.listdir(path):
 		newPath = os.path.join(path, item)
 
-		if os.path.isdir(newPath):
+		if os.path.isdir(newPath) and not item.startswith("_"):
 			compileRecursive(newPath, weaponName)
 		elif os.path.splitext(item)[1] == ".qc":
 			compileAndCopyToOutput(newPath, weaponName)
