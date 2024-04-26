@@ -2184,3 +2184,5 @@
 [
 	// TODO
 ]
+
+@PointClass base(Targetname) size(-4 -4 -4, 4 4 4) color(200 100 50) = info_ronin_target : "Ronin Target" []

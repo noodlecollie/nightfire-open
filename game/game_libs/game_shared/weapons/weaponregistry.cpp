@@ -59,15 +59,7 @@ void CWeaponRegistry::RegisterCvars()
 	ForEach(
 		[](const WeaponAtts::WACollection& atts)
 		{
-			FOR_EACH_VEC(atts.SkillRecords, index)
-			{
-				atts.SkillRecords[index].RegisterCvars();
-			}
-
-			FOR_EACH_VEC(atts.CustomCvars, index)
-			{
-				CVAR_REGISTER(atts.CustomCvars[index]);
-			}
+			atts.RegisterCvars();
 		});
 }
 

@@ -39,11 +39,13 @@ private:
 		UNDEPLOYING
 	};
 
-	static constexpr float THINK_INTERVAL_DEPLOYING = 0.25f;
 	static constexpr float DEPLOY_DURATION = 1.0f;
 	static constexpr float UNDEPLOY_DURATION = 0.5f;
+	static constexpr float ACTIVE_THINK_INTERVAL = 0.1f;
 
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
+
+	void ActiveThink();
 
 	void BeginDeploy();
 	void DeployFinished();
@@ -51,6 +53,10 @@ private:
 	void UndeployFinished();
 
 	void SetSequence(NPCRoninTurretAnimations_e index);
+	CBaseEntity* FindBestTarget();
+
+	static float GetSearchRange();
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
+	EHANDLE m_hEnemy;
 };

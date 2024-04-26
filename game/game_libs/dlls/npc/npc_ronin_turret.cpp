@@ -1,7 +1,17 @@
 #include "npc/npc_ronin_turret.h"
 #include "monsters.h"
+#include <limits>
 
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
+static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
+
+static bool IsRoninTarget(CBaseEntity* ent)
+{
+	return ent && FClassnameIs(ent->pev, INFO_RONIN_TARGET);
+}
+
+// Helper entity - if this is within a Ronin's range, the Ronin will shoot at it.
+LINK_ENTITY_TO_CLASS(info_ronin_target, CPointEntity)
 
 LINK_ENTITY_TO_CLASS(npc_ronin_turret, CNPCRoninTurret)
 
@@ -118,6 +128,21 @@ void CNPCRoninTurret::UndeployNow()
 	}
 }
 
+void CNPCRoninTurret::ActiveThink()
+{
+	CBaseEntity* enemy = FindBestTarget();
+
+	if ( m_hEnemy != enemy )
+	{
+		// REMOVE ME
+		ALERT(at_console, "Ronin found new enemy: %s\n", enemy ? STRING(enemy->pev->classname) : "NULL");
+
+		m_hEnemy = enemy;
+	}
+
+	pev->nextthink = gpGlobals->time + ACTIVE_THINK_INTERVAL;
+}
+
 void CNPCRoninTurret::BeginDeploy()
 {
 	m_DeployState = DeployState::DEPLOYING;
@@ -132,7 +157,9 @@ void CNPCRoninTurret::DeployFinished()
 {
 	m_DeployState = DeployState::DEPLOYED;
 	SetSequence(NPCRONIN_DEPLOY_IDLE);
-	SetThink(nullptr);
+
+	SetThink(&CNPCRoninTurret::ActiveThink);
+	pev->nextthink = gpGlobals->time + ACTIVE_THINK_INTERVAL;
 }
 
 void CNPCRoninTurret::BeginUndeploy()
@@ -159,4 +186,59 @@ void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
 {
 	pev->sequence = index;
 	ResetSequenceInfo();
+}
+
+CBaseEntity* CNPCRoninTurret::FindBestTarget()
+{
+	const float radius = 2048.0f;  // GetSearchRange();
+
+	CBaseEntity* bestTarget = nullptr;
+	float bestRange = std::numeric_limits<float>::max();
+
+	for ( CBaseEntity* ent = UTIL_FindEntityInSphere(nullptr, pev->origin, radius); ent;
+		  ent = UTIL_FindEntityInSphere(ent, pev->origin, radius) )
+	{
+		bool foundNewBestTarget = false;
+		float distance = (Vector(ent->pev->origin) - Vector(pev->origin)).Length();
+
+		if ( IsRoninTarget(ent) )
+		{
+			// info_ronin_target always takes precedence over players
+			if ( !bestTarget || bestTarget->IsPlayer() || distance < bestRange )
+			{
+				foundNewBestTarget = true;
+			}
+		}
+		else if ( ent->IsPlayer() && !IsRoninTarget(bestTarget) )
+		{
+			// Choose if:
+			// - The player is alive, AND
+			// - The player is closer than the last one we encountered
+			if ( ent->IsAlive() && distance < bestRange )
+			{
+				foundNewBestTarget = true;
+			}
+		}
+
+		if ( foundNewBestTarget )
+		{
+			bestTarget = ent;
+			bestRange = distance;
+		}
+	}
+
+	return bestTarget;
+}
+
+float CNPCRoninTurret::GetSearchRange()
+{
+	static cvar_t* rangeCvar = nullptr;
+
+	if ( !rangeCvar )
+	{
+		rangeCvar = CVAR_GET_POINTER("ronin_search_range");
+		ASSERTSZ(rangeCvar, "Could not get ronin_search_range cvar");
+	}
+
+	return rangeCvar ? rangeCvar->value : 300.0f;
 }

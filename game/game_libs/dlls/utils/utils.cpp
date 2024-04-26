@@ -543,14 +543,21 @@ CBaseEntity* UTIL_FindEntityInSphere(CBaseEntity* pStartEntity, const Vector& ve
 	edict_t* pentEntity;
 
 	if ( pStartEntity )
+	{
 		pentEntity = pStartEntity->edict();
+	}
 	else
+	{
 		pentEntity = NULL;
+	}
 
 	pentEntity = FIND_ENTITY_IN_SPHERE(pentEntity, vecCenter, flRadius);
 
 	if ( !FNullEnt(pentEntity) )
+	{
 		return CBaseEntity::Instance(pentEntity);
+	}
+
 	return NULL;
 }
 

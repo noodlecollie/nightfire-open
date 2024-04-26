@@ -11,6 +11,7 @@
 #include "weaponatts_ammodef.h"
 #include "weaponatts_baseattack.h"
 #include "weaponatts_prediction.h"
+#include "weaponatts_customcvar.h"
 #include "utlvector.h"
 
 namespace WeaponAtts
@@ -25,7 +26,7 @@ namespace WeaponAtts
 		WACore Core;
 		WAAmmoDef Ammo;
 		CUtlVector<WASkillRecord> SkillRecords;
-		CUtlVector<cvar_t*> CustomCvars;
+		CUtlVector<WACustomCvar> CustomCvars;
 		CUtlVector<std::shared_ptr<WABaseAttack>> AttackModes;
 
 		WAViewModel ViewModel;
@@ -40,6 +41,9 @@ namespace WeaponAtts
 		void Register() const;
 		void Validate() const;
 		void GenerateAttackModeSignatures() const;
+
+		mutable CUtlVector<cvar_t> m_CustomCvarObjects;
+		mutable bool m_CvarsRegistered = false;
 	};
 
 	template<typename T>

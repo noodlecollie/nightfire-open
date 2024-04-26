@@ -34,6 +34,7 @@
 #include "soundent.h"
 #include "gamerules.h"
 #include "MathLib/angles.h"
+#include <limits>
 
 #define MONSTER_CUT_CORNER_DIST 8  // 8 means the monster's bounding box is contained without the box of the node in WC
 
@@ -2457,7 +2458,7 @@ CBaseEntity* CBaseMonster::BestVisibleEnemy(void)
 	int iDist;
 	int iBestRelationship;
 
-	iNearest = 8192;  // so first visible entity will become the closest.
+	iNearest = std::numeric_limits<int>::max();  // so first visible entity will become the closest.
 	pNextEnt = m_pLink;
 	pReturn = NULL;
 	iBestRelationship = R_NO;
