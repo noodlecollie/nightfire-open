@@ -88,8 +88,7 @@ void CNPCRoninTurret::BeginDeploy()
 {
 	m_DeployState = DeployState::DEPLOYING;
 
-	pev->sequence = NPCRONIN_DEPLOY;
-	ResetSequenceInfo();
+	SetSequence(NPCRONIN_DEPLOY);
 
 	SetThink(&CNPCRoninTurret::DeployFinished);
 	pev->nextthink = gpGlobals->time + DEPLOY_DURATION;
@@ -98,20 +97,32 @@ void CNPCRoninTurret::BeginDeploy()
 void CNPCRoninTurret::DeployFinished()
 {
 	m_DeployState = DeployState::DEPLOYED;
-
-	pev->sequence = NPCRONIN_DEPLOY_IDLE;
-	ResetSequenceInfo();
-
+	SetSequence(NPCRONIN_DEPLOY_IDLE);
 	SetThink(nullptr);
 }
 
 void CNPCRoninTurret::BeginUndeploy()
 {
-	// TODO: Proper undeploy
+	m_DeployState = DeployState::UNDEPLOYING;
+
+	// We don't currently have an undeploy animation,
+	// but blending back to the idle animation works
+	// well enough for now.
+	SetSequence(NPCRONIN_IDLE1);
+
+	SetThink(&CNPCRoninTurret::UndeployFinished);
+	pev->nextthink = gpGlobals->time + UNDEPLOY_DURATION;
+}
+
+void CNPCRoninTurret::UndeployFinished()
+{
 	m_DeployState = DeployState::NOT_DEPLOYED;
-
-	pev->sequence = NPCRONIN_IDLE1;
-	ResetSequenceInfo();
-
+	SetSequence(NPCRONIN_IDLE1);
 	SetThink(nullptr);
+}
+
+void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
+{
+	pev->sequence = index;
+	ResetSequenceInfo();
 }

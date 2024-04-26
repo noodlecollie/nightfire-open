@@ -35,12 +35,16 @@ private:
 
 	static constexpr float THINK_INTERVAL_DEPLOYING = 0.25f;
 	static constexpr float DEPLOY_DURATION = 1.0f;
+	static constexpr float UNDEPLOY_DURATION = 0.5f;
 
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 
 	void BeginDeploy();
 	void DeployFinished();
 	void BeginUndeploy();
+	void UndeployFinished();
+
+	void SetSequence(NPCRoninTurretAnimations_e index);
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
 };
