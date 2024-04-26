@@ -822,6 +822,11 @@ static int GAME_EXPORT pfnGetModelSequenceCount(struct cl_entity_s* ent)
 	return ent ? Mod_StudioGetSequenceCount(ent->model) : 0;
 }
 
+static int GAME_EXPORT pfnGetModelSkinCount(struct cl_entity_s* ent)
+{
+	return ent ? Mod_StudioGetSkinCount(ent->model) : 0;
+}
+
 static const char* GAME_EXPORT pfnGetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
 {
 	return ent ? Mod_StudioGetSequenceName(ent->model, sequenceIndex) : NULL;
@@ -1285,6 +1290,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	Con_DefaultColor,
 	pfnSetModel,
 	pfnGetModelSequenceCount,
+	pfnGetModelSkinCount,
 	pfnGetModelSequenceName,
 	pfnGetModelSequenceBounds,
 	pfnGetModelEyePosition,

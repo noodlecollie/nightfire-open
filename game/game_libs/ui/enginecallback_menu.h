@@ -289,6 +289,11 @@ public:
 		return engfuncs.pfnGetModelSequenceDuration(ent, sequenceIndex);
 	}
 
+	static inline int GetModelSkinCount(struct cl_entity_s* ent)
+	{
+		return engfuncs.pfnGetModelSkinCount(ent);
+	}
+
 	static inline void ClearScene(void)
 	{
 		engfuncs.pfnClearScene();

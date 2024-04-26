@@ -1459,6 +1459,19 @@ int Mod_StudioGetSequenceCount(model_t* model)
 	return header ? header->numseq : 0;
 }
 
+int Mod_StudioGetSkinCount(model_t* model)
+{
+	const studiohdr_t* header = NULL;
+
+	if ( !model || model->type != mod_studio )
+	{
+		return 0;
+	}
+
+	header = (const studiohdr_t*)Mod_StudioExtradata(model);
+	return header ? header->numskinfamilies : 0;
+}
+
 const char* Mod_StudioGetSequenceName(model_t* model, int anim)
 {
 	const studiohdr_t* header = NULL;
