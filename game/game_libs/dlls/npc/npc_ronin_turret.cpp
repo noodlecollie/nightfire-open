@@ -48,6 +48,19 @@ void CNPCRoninTurret::Spawn(void)
 	SetUse(&CNPCRoninTurret::RoninUse);
 
 	ResetSequenceInfo();
+
+	// If the saved state was during a deploy or undeploy,
+	// re-initiate the action.
+	if ( m_DeployState == DeployState::DEPLOYING )
+	{
+		m_DeployState = DeployState::NOT_DEPLOYED;
+		DeployNow();
+	}
+	else if ( m_DeployState == DeployState::UNDEPLOYING )
+	{
+		m_DeployState = DeployState::DEPLOYED;
+		UndeployNow();
+	}
 }
 
 void CNPCRoninTurret::Precache(void)
@@ -61,6 +74,11 @@ void CNPCRoninTurret::RoninUse(
 	CBaseEntity* /* pCaller */,
 	USE_TYPE /* useType */,
 	float /* value */)
+{
+	ToggleDeploy();
+}
+
+void CNPCRoninTurret::ToggleDeploy()
 {
 	switch ( m_DeployState )
 	{
@@ -81,6 +99,22 @@ void CNPCRoninTurret::RoninUse(
 			// Don't interfere if we're between states.
 			return;
 		}
+	}
+}
+
+void CNPCRoninTurret::DeployNow()
+{
+	if ( m_DeployState == DeployState::NOT_DEPLOYED )
+	{
+		BeginDeploy();
+	}
+}
+
+void CNPCRoninTurret::UndeployNow()
+{
+	if ( m_DeployState == DeployState::DEPLOYED )
+	{
+		BeginUndeploy();
 	}
 }
 

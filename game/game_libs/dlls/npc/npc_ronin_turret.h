@@ -24,6 +24,12 @@ public:
 
 	static TYPEDESCRIPTION m_SaveData[];
 
+	// These functions do nothing if the Ronin is not
+	// in the correct state for the action to begin.
+	void ToggleDeploy();
+	void DeployNow();
+	void UndeployNow();
+
 private:
 	enum class DeployState
 	{
