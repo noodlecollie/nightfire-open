@@ -166,44 +166,44 @@ namespace MDLv14
 
 	struct Header
 	{
-		std::string identifier;
-		int32_t version = 0;
-		std::string name;
-		int32_t length = 0;
-		EyePosition eyePosition;
-		BoundingBox boundingBox;
-		BoundingBox clippingBox;
-		uint32_t typeFlags = 0;
-		CountOffsetPair bones;
-		CountOffsetPair boneControllers;
-		CountOffsetPair hitBoxes;
-		CountOffsetPair sequences;
-		CountOffsetPair sequenceGroups;
-		CountOffsetPair textures;
-		int32_t textureInfo = 0;
-		int32_t skinReferences = 0;
-		int32_t skinFamilies = 0;
-		int32_t skinsOffset = 0;
-		CountOffsetPair bodyGroups;
-		CountOffsetPair attachments;
-		CountOffsetPair soundGroups;
-		int32_t soundsOffset = 0;
-		int32_t transitionsCount = 0;
-		int32_t transitionFlagsOffset = 0;
-		int32_t transitionsOffset = 0;
-		uint32_t levelOfDetailFlags = 0;
-		int32_t modelCount = 0;
-		int32_t vertexCount = 0;
-		int32_t triangleCount = 0;
-		int32_t triangleMapOffset = 0;
-		int32_t verticesOffset = 0;
-		int32_t normalsOffset = 0;
-		int32_t textureCoOrdsOffset = 0;
-		int32_t unusedOffset = 0;
-		int32_t blendingScalesOffset = 0;
-		int32_t blendingOffset = 0;
-		int32_t boneFixUpOffset = 0;
-		Container<int32_t> modelOffsets;
+		std::string identifier;  // 0
+		int32_t version = 0;  // 4
+		std::string name;  // 8
+		int32_t length = 0;  // 72
+		EyePosition eyePosition;  // 76
+		BoundingBox boundingBox;  // 88
+		BoundingBox clippingBox;  // 112
+		uint32_t typeFlags = 0;  // 136
+		CountOffsetPair bones;  // 140
+		CountOffsetPair boneControllers;  // 148
+		CountOffsetPair hitBoxes;  // 156
+		CountOffsetPair sequences;  // 164
+		CountOffsetPair sequenceGroups;  // 172
+		CountOffsetPair textures;  // 180
+		int32_t textureInfo = 0;  // 188
+		int32_t skinReferences = 0;  // 192
+		int32_t skinFamilies = 0;  // 196
+		int32_t skinsOffset = 0;  // 200
+		CountOffsetPair bodyGroups;  // 204
+		CountOffsetPair attachments;  // 212
+		CountOffsetPair soundGroups;  // 220
+		int32_t soundsOffset = 0;  // 228
+		int32_t transitionsCount = 0;  // 232
+		int32_t transitionFlagsOffset = 0;  // 236
+		int32_t transitionsOffset = 0;  // 240
+		uint32_t levelOfDetailFlags = 0;  // 244
+		int32_t modelCount = 0;  // 248
+		int32_t vertexCount = 0;  // 252
+		int32_t triangleCount = 0;  // 256
+		int32_t triangleMapOffset = 0;  // 260
+		int32_t verticesOffset = 0;  // 264
+		int32_t normalsOffset = 0;  // 268
+		int32_t textureCoOrdsOffset = 0;  // 272
+		int32_t unusedOffset = 0;  // 276
+		int32_t blendingScalesOffset = 0;  // 280
+		int32_t blendingOffset = 0;  // 284
+		int32_t boneFixUpOffset = 0;  // 288
+		Container<int32_t> modelOffsets;  // 292
 	};
 
 	struct Bone
