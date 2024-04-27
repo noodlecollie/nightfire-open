@@ -17,7 +17,14 @@ $noembeddedtextures
 $texrendermode mdl/w_ronin.png masked
 
 $flags 0
-$origin 0.000000 0.000000 0.000000
+
+# For some reason the Ronin model is oriented on local X,
+# when in the engine the conversion to world space means
+# the gun points along world Y. In a cool addition to
+# $origin that I was not aware of, you can provide a Z
+# rotation as a fourth argument.
+$origin 0 0 0 -90
+
 $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
