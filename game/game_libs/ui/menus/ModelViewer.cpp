@@ -274,7 +274,7 @@ private:
 			return;
 		}
 
-		m_MainStudioModel->curstate.skin = m_SkinTable.GetCurrentIndex();
+		m_MainStudioModel->curstate.skin = static_cast<short>(m_SkinTable.GetCurrentIndex());
 	}
 
 	void LookUpModelSubdirsRecursively()
