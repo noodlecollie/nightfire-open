@@ -46,14 +46,18 @@ float CBaseAnimating::StudioFrameAdvance(float flInterval)
 	if ( flInterval == 0.0 )
 	{
 		flInterval = gpGlobals->time - pev->animtime;
+
 		if ( flInterval <= 0.001 )
 		{
 			pev->animtime = gpGlobals->time;
 			return 0.0;
 		}
 	}
+
 	if ( !pev->animtime )
+	{
 		flInterval = 0.0;
+	}
 
 	pev->frame += flInterval * m_flFrameRate * pev->framerate;
 	pev->animtime = gpGlobals->time;
@@ -61,9 +65,14 @@ float CBaseAnimating::StudioFrameAdvance(float flInterval)
 	if ( pev->frame < 0.0 || pev->frame >= 256.0 )
 	{
 		if ( m_fSequenceLoops )
+		{
 			pev->frame -= (int)(pev->frame / 256.0f) * 256.0f;
+		}
 		else
+		{
 			pev->frame = (pev->frame < 0.0) ? 0.0f : 255.0f;
+		}
+
 		m_fSequenceFinished = TRUE;  // just in case it wasn't caught in GetEvents
 	}
 

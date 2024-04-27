@@ -54,6 +54,8 @@ private:
 
 	void SetSequence(NPCRoninTurretAnimations_e index);
 	CBaseEntity* FindBestTarget();
+	void AttackTarget();
+	Vector GetEyePos() const;
 
 	static float GetSearchRange();
 

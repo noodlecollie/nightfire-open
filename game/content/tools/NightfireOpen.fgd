@@ -2178,6 +2178,7 @@
 @BaseClass base(Target, Targetname, RenderFields, Angles) color(0 200 200) = BaseTurret
 [
 	health(integer) : "Health (<= 0 implies indestructable)" : 100
+	fov(integer) : "Field of view, in degrees (<= 0 implies seeing everywhere)" : 90
 ]
 
 @PointClass base(BaseTurret) size(-14 -12 0, 14 12 8) model({ "path": "models/weapon_ronin/w_ronin.mdl" }) = npc_ronin_turret : "Ronin Turret NPC"

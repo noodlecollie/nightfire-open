@@ -54,9 +54,13 @@ void CNPCRoninTurret::Spawn(void)
 	pev->solid = SOLID_SLIDEBOX;
 	pev->takedamage = static_cast<float>(pev->health > 0.0f ? DAMAGE_AIM : DAMAGE_NO);
 
+	// TODO: Make configurable?
+	m_flFieldOfView = 0.5f;
+
 	SetBits(pev->flags, FL_MONSTER);
 	SetUse(&CNPCRoninTurret::RoninUse);
 
+	m_hEnemy = nullptr;
 	ResetSequenceInfo();
 
 	// If the saved state was during a deploy or undeploy,
@@ -130,14 +134,13 @@ void CNPCRoninTurret::UndeployNow()
 
 void CNPCRoninTurret::ActiveThink()
 {
-	CBaseEntity* enemy = FindBestTarget();
+	StudioFrameAdvance();
 
-	if ( m_hEnemy != enemy )
+	m_hEnemy = FindBestTarget();
+
+	if ( m_hEnemy )
 	{
-		// REMOVE ME
-		ALERT(at_console, "Ronin found new enemy: %s\n", enemy ? STRING(enemy->pev->classname) : "NULL");
-
-		m_hEnemy = enemy;
+		AttackTarget();
 	}
 
 	pev->nextthink = gpGlobals->time + ACTIVE_THINK_INTERVAL;
@@ -158,6 +161,7 @@ void CNPCRoninTurret::DeployFinished()
 	m_DeployState = DeployState::DEPLOYED;
 	SetSequence(NPCRONIN_DEPLOY_IDLE);
 
+	m_hEnemy = nullptr;
 	SetThink(&CNPCRoninTurret::ActiveThink);
 	pev->nextthink = gpGlobals->time + ACTIVE_THINK_INTERVAL;
 }
@@ -190,7 +194,7 @@ void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
 
 CBaseEntity* CNPCRoninTurret::FindBestTarget()
 {
-	const float radius = 2048.0f;  // GetSearchRange();
+	const float radius = GetSearchRange();
 
 	CBaseEntity* bestTarget = nullptr;
 	float bestRange = std::numeric_limits<float>::max();
@@ -198,6 +202,12 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 	for ( CBaseEntity* ent = UTIL_FindEntityInSphere(nullptr, pev->origin, radius); ent;
 		  ent = UTIL_FindEntityInSphere(ent, pev->origin, radius) )
 	{
+		// Quick filters first:
+		if ( FBitSet(ent->pev->flags, FL_NOTARGET) || !FInViewCone(ent) || !FVisible(ent) )
+		{
+			continue;
+		}
+
 		bool foundNewBestTarget = false;
 		float distance = (Vector(ent->pev->origin) - Vector(pev->origin)).Length();
 
@@ -211,9 +221,6 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 		}
 		else if ( ent->IsPlayer() && !IsRoninTarget(bestTarget) )
 		{
-			// Choose if:
-			// - The player is alive, AND
-			// - The player is closer than the last one we encountered
 			if ( ent->IsAlive() && distance < bestRange )
 			{
 				foundNewBestTarget = true;
@@ -230,6 +237,29 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 	return bestTarget;
 }
 
+void CNPCRoninTurret::AttackTarget()
+{
+	if ( !m_hEnemy )
+	{
+		return;
+	}
+
+	// TODO
+	ALERT(at_console, "%f: Attacking %s (angles: %f %f %f, FOV: %f)\n",
+		gpGlobals->time,
+		STRING(m_hEnemy->pev->classname),
+		pev->angles[0],
+		pev->angles[1],
+		pev->angles[2],
+		m_flFieldOfView);
+}
+
+Vector CNPCRoninTurret::GetEyePos() const
+{
+	return Vector(pev->origin) + Vector(pev->view_ofs);
+}
+
+// TODO: Should probably keep the cvar_t* in the weapon attributes...
 float CNPCRoninTurret::GetSearchRange()
 {
 	static cvar_t* rangeCvar = nullptr;
