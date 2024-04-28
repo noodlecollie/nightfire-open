@@ -1441,7 +1441,9 @@ void CBaseEntity::FireBullets(
 #endif  // HL_CONTENT
 
 	if ( pevAttacker == NULL )
+	{
 		pevAttacker = pev;  // the default attacker is ourselves
+	}
 
 	ClearMultiDamage();
 	gMultiDamage.type = DMG_BULLET | DMG_NEVERGIB;
@@ -1488,6 +1490,7 @@ void CBaseEntity::FireBullets(
 			{
 				tracer = 1;
 			}
+#endif  // HL_CONTENT
 
 			switch ( iBulletType )
 			{
@@ -1506,7 +1509,6 @@ void CBaseEntity::FireBullets(
 					MESSAGE_END();
 					break;
 			}
-#endif  // HL_CONTENT
 		}
 		// do damage, paint decals
 		if ( tr.flFraction != 1.0 )
@@ -1515,6 +1517,7 @@ void CBaseEntity::FireBullets(
 
 			if ( iDamage )
 			{
+				// TODO: Remove the check here for gibbing, it should be calculated somewhere else
 				pEntity->TraceAttack(
 					pevAttacker,
 					static_cast<float>(iDamage),

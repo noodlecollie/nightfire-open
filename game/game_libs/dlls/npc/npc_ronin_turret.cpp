@@ -1,7 +1,9 @@
-#include "npc/npc_ronin_turret.h"
-#include "monsters.h"
 #include <limits>
 #include <cmath>
+#include "npc/npc_ronin_turret.h"
+#include "monsters.h"
+#include "weapons.h"
+#include "genericweapon.h"
 
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
 static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
@@ -250,7 +252,7 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 		  ent = UTIL_FindEntityInSphere(ent, pev->origin, radius) )
 	{
 		// Quick filters first:
-		if ( FBitSet(ent->pev->flags, FL_NOTARGET) || !FInViewCone(ent) || !FVisible(ent) )
+		if ( FBitSet(ent->pev->flags, FL_NOTARGET) || !FInViewCone(ent) || !EnemyVisible(ent) )
 		{
 			continue;
 		}
@@ -291,16 +293,109 @@ void CNPCRoninTurret::AttackTarget()
 		return;
 	}
 
-	// TODO
-	ALERT(
-		at_console,
-		"%f: Attacking %s (angles: %f %f %f, FOV: %f)\n",
-		gpGlobals->time,
-		STRING(m_hEnemy->pev->classname),
-		pev->angles[0],
-		pev->angles[1],
-		pev->angles[2],
-		m_flFieldOfView);
+	Vector gunPos = GetEyePos();
+	Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
+
+	// TODO: We want to fire along the Ronin's LOS if the target
+	// is within the shooting FOV, rather than firing directly at the target.
+	// TODO: Allow setting spread
+	// TODO: Allow setting damage
+	// TODO: Use NF bullet type, not BULLET_MONSTER_MP5
+	FireBullets(
+		1,
+		gunPos,
+		targetPos - gunPos,
+		Vector(0, 0, 0),
+		CGenericWeapon::DEFAULT_BULLET_TRACE_DISTANCE,
+		BULLET_MONSTER_MP5,
+		1,
+		10);
+
+	pev->effects = pev->effects | EF_MUZZLEFLASH;
+}
+
+bool CNPCRoninTurret::EnemyVisible(CBaseEntity* ent) const
+{
+	if ( !ent || !ent->pev || FBitSet(ent->pev->flags, FL_NOTARGET) )
+	{
+		return false;
+	}
+
+	// Don't look through water
+	if ( (pev->waterlevel != 3 && ent->pev->waterlevel == 3) || (pev->waterlevel == 3 && ent->pev->waterlevel == 0) )
+	{
+		return false;
+	}
+
+	Vector eyePos = GetEyePos();
+	Vector targetPos = ent->BodyTarget(eyePos);
+
+	TraceResult tr;
+	UTIL_TraceLine(eyePos, targetPos, ignore_monsters, ignore_glass, ENT(pev), &tr);
+
+	return tr.flFraction >= 1.0f;
+}
+
+Vector CNPCRoninTurret::GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const
+{
+	if ( !m_hEnemy )
+	{
+		return Vector();
+	}
+
+	Vector eyePos = GetEyePos();
+	Vector targetPos = m_hEnemy->BodyTarget(eyePos);
+	Vector ray = targetPos - eyePos;
+	Vector up(0, 0, 1);
+
+	Vector horizAxis;
+	CrossProduct(ray, up, horizAxis);
+
+	if ( !VectorIsNull(horizAxis) )
+	{
+		horizAxis.Normalize();
+	}
+
+	for ( size_t attempt = 0; attempt < 5; ++attempt )
+	{
+		Vector currentTarget = targetPos;
+		float devDirection = static_cast<float>((attempt % 2) * -1);
+
+		switch ( attempt )
+		{
+			// Deviate horizontally
+			case 1:
+			case 2:
+			{
+				currentTarget += horizAxis * devDirection * RANDOM_FLOAT(minUnitsDevFromTarget, maxUnitsDevFromTarget);
+				break;
+			}
+
+			// Deviate vertically
+			case 3:
+			case 4:
+			{
+				currentTarget += up * devDirection * RANDOM_FLOAT(minUnitsDevFromTarget, maxUnitsDevFromTarget);
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
+		}
+
+		TraceResult tr;
+		UTIL_TraceLine(eyePos, currentTarget, ignore_monsters, ignore_glass, ENT(pev), &tr);
+
+		if ( tr.flFraction == 1.0 )
+		{
+			return currentTarget;
+		}
+	}
+
+	// Couldn't hit on any ray that we tested, so just shoot straight down the line.
+	return targetPos;
 }
 
 Vector CNPCRoninTurret::GetEyePos() const
@@ -308,7 +403,8 @@ Vector CNPCRoninTurret::GetEyePos() const
 	return Vector(pev->origin) + Vector(pev->view_ofs);
 }
 
-// TODO: Should probably keep the cvar_t* in the weapon attributes...
+// TODO: Get this from the entity properties, and allow functions to set
+// various attributes on the entity for when it's spawned via a weapon.
 float CNPCRoninTurret::GetSearchRange()
 {
 	static cvar_t* rangeCvar = nullptr;
