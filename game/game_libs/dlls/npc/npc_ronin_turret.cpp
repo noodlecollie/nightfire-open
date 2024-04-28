@@ -1,6 +1,7 @@
 #include "npc/npc_ronin_turret.h"
 #include "monsters.h"
 #include <limits>
+#include <cmath>
 
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
 static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
@@ -8,6 +9,22 @@ static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
 static bool IsRoninTarget(CBaseEntity* ent)
 {
 	return ent && FClassnameIs(ent->pev, INFO_RONIN_TARGET);
+}
+
+static float CalculateFOVDotProduct(float degrees)
+{
+	if ( degrees > 0.0f && degrees < 360.0f )
+	{
+		return cosf(DEG2RADF(degrees) / 2.0f);
+	}
+	else
+	{
+		// The view calculations check whether the dot product
+		// is strictly greater than the entity's FOV.
+		// To avoid boundary conditions, set this value to be
+		// more negative than any view calculation result.
+		return std::numeric_limits<float>::min();
+	}
 }
 
 // Helper entity - if this is within a Ronin's range, the Ronin will shoot at it.
@@ -39,6 +56,25 @@ int CNPCRoninTurret::ObjectCaps(void)
 	return CBaseMonster::ObjectCaps() | FCAP_IMPULSE_USE;
 }
 
+void CNPCRoninTurret::KeyValue(KeyValueData* data)
+{
+	if ( FStrEq(data->szKeyName, "sightfov") )
+	{
+		m_KVSightFOV = CalculateFOVDotProduct(static_cast<float>(atof(data->szValue)));
+		data->fHandled = true;
+		return;
+	}
+
+	if ( FStrEq(data->szKeyName, "shootfov") )
+	{
+		m_ShootFOV = CalculateFOVDotProduct(static_cast<float>(atof(data->szValue)));
+		data->fHandled = true;
+		return;
+	}
+
+	CBaseMonster::KeyValue(data);
+}
+
 void CNPCRoninTurret::Spawn(void)
 {
 	CBaseMonster::Spawn();
@@ -52,13 +88,24 @@ void CNPCRoninTurret::Spawn(void)
 	pev->sequence = NPCRONIN_IDLE1;
 	pev->frame = 0;
 	pev->solid = SOLID_SLIDEBOX;
-	pev->takedamage = static_cast<float>(pev->health > 0.0f ? DAMAGE_AIM : DAMAGE_NO);
-
-	// TODO: Make configurable?
-	m_flFieldOfView = 0.5f;
+	pev->takedamage = static_cast<float>(pev->max_health > 0.0f ? DAMAGE_AIM : DAMAGE_NO);
 
 	SetBits(pev->flags, FL_MONSTER);
 	SetUse(&CNPCRoninTurret::RoninUse);
+
+	if ( !std::isnan(m_KVSightFOV) )
+	{
+		m_flFieldOfView = m_KVSightFOV;
+	}
+	else
+	{
+		m_flFieldOfView = CalculateFOVDotProduct(90.0f);
+	}
+
+	if ( std::isnan(m_ShootFOV) )
+	{
+		m_ShootFOV = CalculateFOVDotProduct(30.0f);
+	}
 
 	m_hEnemy = nullptr;
 	ResetSequenceInfo();
@@ -245,7 +292,9 @@ void CNPCRoninTurret::AttackTarget()
 	}
 
 	// TODO
-	ALERT(at_console, "%f: Attacking %s (angles: %f %f %f, FOV: %f)\n",
+	ALERT(
+		at_console,
+		"%f: Attacking %s (angles: %f %f %f, FOV: %f)\n",
 		gpGlobals->time,
 		STRING(m_hEnemy->pev->classname),
 		pev->angles[0],

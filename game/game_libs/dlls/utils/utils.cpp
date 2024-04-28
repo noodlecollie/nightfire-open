@@ -2057,6 +2057,8 @@ void CSave::WriteFunction(const char* pname, void** data, int)
 		ALERT(at_error, "Invalid function pointer in entity!\n");
 }
 
+// This is where the default keyvalue resolution happens,
+// for common keys like "health".
 void EntvarsKeyvalue(entvars_t* pev, KeyValueData* pkvd)
 {
 	int i;

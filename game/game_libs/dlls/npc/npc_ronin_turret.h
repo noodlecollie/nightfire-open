@@ -18,6 +18,7 @@ public:
 	void GibMonster(void) override;
 	int Classify(void) override;
 	int ObjectCaps(void) override;
+	void KeyValue(KeyValueData* data) override;
 
 	void Spawn(void) override;
 	void Precache(void) override;
@@ -58,6 +59,12 @@ private:
 	Vector GetEyePos() const;
 
 	static float GetSearchRange();
+
+	// Exists separately from normal FOV member, so that we can tell
+	// if we parsed a KV value or not.
+	float m_KVSightFOV = NAN;
+
+	float m_ShootFOV = NAN;
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
 	EHANDLE m_hEnemy;
