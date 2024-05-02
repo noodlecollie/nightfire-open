@@ -594,6 +594,10 @@
 // coord (origin)
 // coord (origin)
 
+#define TE_BULLET_TRACER 129  // tracer specifically for bullets
+// coord, coord, coord (start)
+// coord, coord, coord (end)
+
 #define MSG_BROADCAST 0  // unreliable to all
 #define MSG_ONE 1  // reliable to one (msg_entity)
 #define MSG_ALL 2  // reliable to all

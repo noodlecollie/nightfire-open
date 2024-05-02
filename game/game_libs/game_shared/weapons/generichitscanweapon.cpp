@@ -5,18 +5,7 @@
 #include "eventConstructor/eventConstructor.h"
 #include "gameplay/inaccuracymodifiers.h"
 #include "gameplay/spreadPatterns.h"
-
-#ifndef CLIENT_DLL
-#include "weaponregistry.h"
-#include "weapondebugevents/weapondebugevent_hitscanfire.h"
-#endif
-
-CGenericHitscanWeapon::~CGenericHitscanWeapon()
-{
-#ifndef CLIENT_DLL
-	Debug_DeleteHitscanEvent();
-#endif
-}
+#include "gameplay/hitscancomponent.h"
 
 void CGenericHitscanWeapon::WeaponIdle()
 {
@@ -92,7 +81,24 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(
 		vecAiming = gpGlobals->v_forward;
 	}
 
-	FireBulletsPlayer(*hitscanAttack, vecSrc, vecAiming);
+	CHitscanComponent hitscanComponent;
+
+	hitscanComponent.SetGunPos(vecSrc);
+	hitscanComponent.SetShootDir(vecAiming);
+	hitscanComponent.SetRightDir(gpGlobals->v_right);
+	hitscanComponent.SetUpDir(gpGlobals->v_up);
+	hitscanComponent.SetAttacker(m_pPlayer->pev);
+	hitscanComponent.SetInflictor(pev);
+	hitscanComponent.SetRandomSeed(m_pPlayer->random_seed);
+	hitscanComponent.SetWeapon(this);
+	hitscanComponent.SetBulletsPerShot(hitscanAttack->BulletsPerShot);
+	hitscanComponent.SetBaseDamagePerShot(hitscanAttack->BaseDamagePerShot);
+	hitscanComponent.SetSpreadPattern(hitscanAttack->Accuracy.FireSpreadPattern);
+	hitscanComponent.SetSpread(hitscanAttack->Accuracy, GetInaccuracy());
+	hitscanComponent.SetSendTracerMessage(false);
+
+	hitscanComponent.FireBullets();
+
 	const int eventID = GetEventIDForAttackMode(hitscanAttack);
 
 	if ( eventID >= 0 )
@@ -118,154 +124,3 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(
 	SetNextIdleTime(5, true);
 	return true;
 }
-
-Vector CGenericHitscanWeapon::FireBulletsPlayer(
-	const WeaponAtts::WAHitscanAttack& hitscanAttack,
-	const Vector& vecSrc,
-	const Vector& vecDirShooting)
-{
-#ifdef CLIENT_DLL
-	(void)vecSrc;
-	(void)vecDirShooting;
-
-	// The client doesn't actually do any bullet simulation, we just make sure that
-	// the generated random vectors match up.
-	return FireBulletsPlayer_Client(hitscanAttack);
-#else
-	TraceResult tr;
-	Vector vecRight = gpGlobals->v_right;
-	Vector vecUp = gpGlobals->v_up;
-	Vector2D modifiedSpread;
-
-	WeaponAtts::AccuracyParameters accuracyParams(hitscanAttack.Accuracy);
-
-	if ( InaccuracyModifiers::IsInaccuracyDebuggingEnabled() )
-	{
-		InaccuracyModifiers::GetInaccuracyValuesFromDebugCvars(accuracyParams);
-	}
-
-	const Vector2D baseSpread = InaccuracyModifiers::GetInterpolatedSpread(accuracyParams, GetInaccuracy());
-
-	entvars_t* const pevAttacker = m_pPlayer->pev;
-
-	ClearMultiDamage();
-	gMultiDamage.type = DMG_BULLET | DMG_NEVERGIB;
-
-	SpreadPatternArgs spreadArgs {};
-
-	spreadArgs.pattern = accuracyParams.FireSpreadPattern;
-	spreadArgs.baseSpread = baseSpread;
-	spreadArgs.randomSeed = m_pPlayer->random_seed;
-	spreadArgs.totalShots = hitscanAttack.BulletsPerShot;
-
-	for ( spreadArgs.shotNumber = 0; spreadArgs.shotNumber < spreadArgs.totalShots; ++spreadArgs.shotNumber )
-	{
-		float damagePerShot = 0.0f;
-		const WeaponAtts::WASkillRecord::SkillDataEntryPtr dmgPtr = hitscanAttack.BaseDamagePerShot;
-
-		if ( dmgPtr )
-		{
-			damagePerShot = gSkillData.*dmgPtr;
-		}
-
-		modifiedSpread = CalculateSpread(spreadArgs);
-
-		Vector vecDir = vecDirShooting + (modifiedSpread.x * vecRight) + (modifiedSpread.y * vecUp);
-		Vector vecEnd = vecSrc + (vecDir * DEFAULT_BULLET_TRACE_DISTANCE);
-		UTIL_TraceLine(vecSrc, vecEnd, dont_ignore_monsters, ENT(pev), &tr);
-
-		Debug_HitscanBulletFired(vecSrc, tr);
-
-		// do damage, paint decals
-		if ( tr.flFraction != 1.0 )
-		{
-			CBaseEntity* pEntity = CBaseEntity::Instance(tr.pHit);
-
-			pEntity->TraceAttack(pevAttacker, damagePerShot, vecDir, &tr, DMG_BULLET);
-			TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, BULLET_GENERIC);
-		}
-
-		// make bullet trails
-		// TODO: This should be clientside in the event playback.
-		UTIL_BubbleTrail(vecSrc, tr.vecEndPos, (int)((DEFAULT_BULLET_TRACE_DISTANCE * tr.flFraction) / 64.0));
-	}
-
-	Debug_FinaliseHitscanEvent();
-	ApplyMultiDamage(pev, pevAttacker);
-
-	return Vector(modifiedSpread.x, modifiedSpread.y, 0.0);
-#endif
-}
-
-////////////////////////////////////////////
-// SERVER
-////////////////////////////////////////////
-#ifndef CLIENT_DLL
-void CGenericHitscanWeapon::Debug_HitscanBulletFired(const Vector& start, const TraceResult& tr)
-{
-	CWeaponDebugEventSource& evSource = CWeaponRegistry::StaticInstance().DebugEventSource();
-
-	if ( !evSource.EventHasSubscribers(CWeaponDebugEvent_Base::EventType::Event_HitscanFire) )
-	{
-		return;
-	}
-
-	if ( !m_pHitscanFireEvent )
-	{
-		m_pHitscanFireEvent = new CWeaponDebugEvent_HitscanFire(*this);
-	}
-
-	m_pHitscanFireEvent->AddTrace(start, tr);
-}
-
-void CGenericHitscanWeapon::Debug_FinaliseHitscanEvent()
-{
-	if ( !m_pHitscanFireEvent )
-	{
-		return;
-	}
-
-	// The hitscan fire event will only have been created if we had event subscribers in the first place,
-	// so no need to check this.
-	CWeaponDebugEventSource& evSource = CWeaponRegistry::StaticInstance().DebugEventSource();
-	evSource.FireEvent(m_pHitscanFireEvent);
-
-	Debug_DeleteHitscanEvent();
-}
-
-void CGenericHitscanWeapon::Debug_DeleteHitscanEvent()
-{
-	delete m_pHitscanFireEvent;
-	m_pHitscanFireEvent = nullptr;
-}
-#endif
-
-////////////////////////////////////////////
-// CLIENT
-////////////////////////////////////////////
-#ifdef CLIENT_DLL
-Vector CGenericHitscanWeapon::FireBulletsPlayer_Client(const WeaponAtts::WAHitscanAttack& hitscanAttack)
-{
-	WeaponAtts::AccuracyParameters accuracyParams(hitscanAttack.Accuracy);
-
-	if ( InaccuracyModifiers::IsInaccuracyDebuggingEnabled() )
-	{
-		InaccuracyModifiers::GetInaccuracyValuesFromDebugCvars(accuracyParams);
-	}
-
-	const Vector2D baseSpread = InaccuracyModifiers::GetInterpolatedSpread(accuracyParams, GetInaccuracy());
-
-	SpreadPatternArgs spreadArgs {};
-
-	spreadArgs.pattern = accuracyParams.FireSpreadPattern;
-	spreadArgs.baseSpread = baseSpread;
-	spreadArgs.randomSeed = m_pPlayer->random_seed;
-	spreadArgs.totalShots = hitscanAttack.BulletsPerShot;
-	spreadArgs.shotNumber = spreadArgs.totalShots - 1;
-
-	// Just return the last vector we would have generated.
-	const Vector2D spread = CalculateSpread(spreadArgs);
-
-	return Vector(spread.x, spread.y, 0.0);
-}
-#endif

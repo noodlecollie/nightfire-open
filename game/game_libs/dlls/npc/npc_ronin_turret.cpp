@@ -3,7 +3,8 @@
 #include "npc/npc_ronin_turret.h"
 #include "monsters.h"
 #include "weapons.h"
-#include "genericweapon.h"
+#include "gameplay/hitscancomponent.h"
+#include "weaponregistry.h"
 
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
 static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
@@ -293,23 +294,26 @@ void CNPCRoninTurret::AttackTarget()
 		return;
 	}
 
+	// TODO: We want to fire along the Ronin's LOS if the target
+	// is within the shooting FOV, rather than firing directly at the target.
 	Vector gunPos = GetEyePos();
 	Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
 
-	// TODO: We want to fire along the Ronin's LOS if the target
-	// is within the shooting FOV, rather than firing directly at the target.
-	// TODO: Allow setting spread
-	// TODO: Allow setting damage
-	// TODO: Use NF bullet type, not BULLET_MONSTER_MP5
-	FireBullets(
-		1,
-		gunPos,
-		targetPos - gunPos,
-		Vector(0, 0, 0),
-		CGenericWeapon::DEFAULT_BULLET_TRACE_DISTANCE,
-		BULLET_MONSTER_MP5,
-		1,
-		10);
+	CHitscanComponent hitscanComponent;
+
+	hitscanComponent.SetGunPos(gunPos);
+	hitscanComponent.SetShootDir(targetPos - gunPos);
+	hitscanComponent.SetInflictor(pev);
+	hitscanComponent.SetRandomSeed(0);
+	hitscanComponent.SetRightDir(gpGlobals->v_right);
+	hitscanComponent.SetUpDir(gpGlobals->v_up);
+	hitscanComponent.SetAttacker(pev /*TODO: Ronin's owner*/);
+	hitscanComponent.SetBulletsPerShot(1);
+	hitscanComponent.SetBaseDamagePerShot(10 /*TODO: Make skill-based*/);
+	hitscanComponent.SetSpread(Vector2D(0.1f, 0.1f /*TODO: Make configurable*/));
+	hitscanComponent.SetSendTracerMessage(true);
+
+	hitscanComponent.FireBullets();
 
 	pev->effects = pev->effects | EF_MUZZLEFLASH;
 }
