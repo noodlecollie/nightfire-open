@@ -9,6 +9,8 @@
 #include <limits>
 #include <algorithm>
 #include "bot.h"
+#include "npc/npc_ronin_turret.h"
+#include "MathLib/utils.h"
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
@@ -16,8 +18,8 @@ LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
 CWeaponRonin::CWeaponRonin() :
 	CBaseGrenadeLauncher()
 {
-	// SetPrimaryAttackModeFromAttributes(ATTACKMODE_CONTACT);
-	// SetSecondaryAttackModeFromAttributes(ATTACKMODE_TIMED);
+	// TODO: Enum for index
+	SetPrimaryAttackModeFromAttributes(0);
 }
 
 const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const
@@ -39,8 +41,22 @@ void CWeaponRonin::Bot_SetFightStyle(CBaseBotFightStyle&) const
 
 void CWeaponRonin::CreateProjectile(const WeaponAtts::WAProjectileAttack& projectileAttack)
 {
-	// TODO
 	(void)projectileAttack;
+
+	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
+	turret->Spawn();
+
+	Vector forward;
+	AngleVectors(GetGrenadeLaunchAngles(0.0f), forward, nullptr, nullptr);
+
+	const Vector location = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs) + (forward * 64.0f);
+
+	UTIL_SetOrigin(turret->pev, location);
+	forward.CopyToArray(turret->pev->velocity);
+
+	turret->pev->angles[PITCH] = 0.0f;
+	turret->pev->angles[YAW] = UTIL_VecToAngles(forward)[YAW];
+	turret->pev->angles[ROLL] = 0.0f;
 }
 #endif
 
