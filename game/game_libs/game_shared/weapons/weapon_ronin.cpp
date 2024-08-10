@@ -45,11 +45,22 @@ void CWeaponRonin::CreateProjectile(const WeaponAtts::WAProjectileAttack& projec
 
 	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
 	turret->Spawn();
+	turret->pev->owner = m_pPlayer->edict();
 
 	Vector forward;
 	AngleVectors(GetGrenadeLaunchAngles(0.0f), forward, nullptr, nullptr);
 
-	const Vector location = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs) + (forward * 64.0f);
+	// TODO: This is very rough and it's easy to get the Ronin stuck in-game.
+	// Should be replaced with more robust checks once we actually allow
+	// projectile motion.
+	const Vector traceBegin = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs);
+	const Vector traceEnd = traceBegin + (forward * 64.0f);
+
+	TraceResult tr {};
+	UTIL_TraceLine(traceBegin, traceEnd, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+
+	Vector location = tr.flFraction < 1.0f ? Vector(tr.vecEndPos) : traceEnd;
+	location -= (traceEnd - traceBegin).Normalize() * 32.0f;
 
 	UTIL_SetOrigin(turret->pev, location);
 	forward.CopyToArray(turret->pev->velocity);

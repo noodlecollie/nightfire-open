@@ -9,7 +9,7 @@
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
 static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
 
-static bool IsRoninTarget(CBaseEntity* ent)
+static bool IsInfoRoninTarget(CBaseEntity* ent)
 {
 	return ent && FClassnameIs(ent->pev, INFO_RONIN_TARGET);
 }
@@ -258,10 +258,16 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 			continue;
 		}
 
+		// Don't shoot at our owner
+		if ( pev->owner && ent->edict() == pev->owner )
+		{
+			continue;
+		}
+
 		bool foundNewBestTarget = false;
 		float distance = (Vector(ent->pev->origin) - Vector(pev->origin)).Length();
 
-		if ( IsRoninTarget(ent) )
+		if ( IsInfoRoninTarget(ent) )
 		{
 			// info_ronin_target always takes precedence over players
 			if ( !bestTarget || bestTarget->IsPlayer() || distance < bestRange )
@@ -269,7 +275,7 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 				foundNewBestTarget = true;
 			}
 		}
-		else if ( ent->IsPlayer() && !IsRoninTarget(bestTarget) )
+		else if ( ent->IsPlayer() && !IsInfoRoninTarget(bestTarget) )
 		{
 			if ( ent->IsAlive() && distance < bestRange )
 			{
