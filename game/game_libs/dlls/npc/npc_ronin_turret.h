@@ -42,7 +42,7 @@ private:
 
 	static constexpr float DEPLOY_DURATION = 1.0f;
 	static constexpr float UNDEPLOY_DURATION = 0.5f;
-	static constexpr float ACTIVE_THINK_INTERVAL = 0.1f;
+	static constexpr float MAX_ACTIVE_THINK_INTERVAL = 0.1f;
 
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 
@@ -59,6 +59,7 @@ private:
 	bool EnemyVisible(CBaseEntity* ent) const;
 	Vector GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const;
 	Vector GetEyePos() const;
+	float GetBestThinkInterval() const;
 
 	static float GetSearchRange();
 

@@ -193,7 +193,7 @@ void CNPCRoninTurret::ActiveThink()
 		AttackTarget();
 	}
 
-	pev->nextthink = gpGlobals->time + ACTIVE_THINK_INTERVAL;
+	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
 }
 
 void CNPCRoninTurret::BeginDeploy()
@@ -213,7 +213,7 @@ void CNPCRoninTurret::DeployFinished()
 
 	m_hEnemy = nullptr;
 	SetThink(&CNPCRoninTurret::ActiveThink);
-	pev->nextthink = gpGlobals->time + ACTIVE_THINK_INTERVAL;
+	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
 }
 
 void CNPCRoninTurret::BeginUndeploy()
@@ -411,6 +411,15 @@ Vector CNPCRoninTurret::GetBestTargetPosition(float minUnitsDevFromTarget, float
 Vector CNPCRoninTurret::GetEyePos() const
 {
 	return Vector(pev->origin) + Vector(pev->view_ofs);
+}
+
+float CNPCRoninTurret::GetBestThinkInterval() const
+{
+	// TODO: Once we add the fire rate variable, this should return
+	// an interval which is at least quick enough to cater
+	// for this fire rate, or MAX_ACTIVE_THINK_INTERVAL
+	// if the fire rate is slow.
+	return MAX_ACTIVE_THINK_INTERVAL;
 }
 
 // TODO: Get this from the entity properties, and allow functions to set
