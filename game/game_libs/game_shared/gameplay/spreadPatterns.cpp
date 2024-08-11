@@ -36,7 +36,7 @@ static Vector2D SegmentedCircleSpread(const SpreadPatternArgs& args)
 {
 	static constexpr int NUM_SHARED_CALLS = 3;
 
-	// We split the circle of potential spread into  equal segments
+	// We split the circle of potential spread into equal segments
 	// based on the number of shots we have, so that each shot will
 	// live somewhere within the segment. We then apply variance to
 	// where that shot actually lands within the segment.

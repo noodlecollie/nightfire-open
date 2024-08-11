@@ -100,6 +100,24 @@ void CNPCRoninTurret::KeyValue(KeyValueData* data)
 		return;
 	}
 
+	if ( FStrEq(data->szKeyName, "bulletspread") )
+	{
+		float degrees = static_cast<float>(atof(data->szValue)) / 2.0f;
+
+		if ( degrees < 0.0f )
+		{
+			degrees = 0.0f;
+		}
+		else if ( degrees > MAX_HALF_BULLET_SPREAD_DEGREES )
+		{
+			degrees = MAX_HALF_BULLET_SPREAD_DEGREES;
+		}
+
+		m_SpreadCone = std::tanf(DEG2RADF(degrees));
+		data->fHandled = true;
+		return;
+	}
+
 	CBaseMonster::KeyValue(data);
 }
 
@@ -335,6 +353,7 @@ void CNPCRoninTurret::AttackTarget()
 	// is within the shooting FOV, rather than firing directly at the target.
 	Vector gunPos = GetEyePos();
 	Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
+	const float spread = GetSpreadCone();
 
 	CHitscanComponent hitscanComponent;
 
@@ -344,10 +363,10 @@ void CNPCRoninTurret::AttackTarget()
 	hitscanComponent.SetRandomSeed(0);
 	hitscanComponent.SetRightDir(gpGlobals->v_right);
 	hitscanComponent.SetUpDir(gpGlobals->v_up);
-	hitscanComponent.SetAttacker(pev /*TODO: Ronin's owner*/);
+	hitscanComponent.SetAttacker(VARS(pev->owner));
 	hitscanComponent.SetBulletsPerShot(1);
 	hitscanComponent.SetBaseDamagePerShot(10 /*TODO: Make skill-based*/);
-	hitscanComponent.SetSpread(Vector2D(0.1f, 0.1f /*TODO: Make configurable*/));
+	hitscanComponent.SetSpread(Vector2D(spread, spread));
 	hitscanComponent.SetSendTracerMessage(true);
 
 	hitscanComponent.FireBullets();
@@ -459,4 +478,9 @@ float CNPCRoninTurret::GetSearchRange() const
 float CNPCRoninTurret::GetFireInterval() const
 {
 	return !std::isnan(m_FireInterval) ? m_FireInterval : (1.0f / DEFAULT_FIRE_RATE);
+}
+
+float CNPCRoninTurret::GetSpreadCone() const
+{
+	return !std::isnan(m_SpreadCone) ? m_SpreadCone : 0.0f;
 }
