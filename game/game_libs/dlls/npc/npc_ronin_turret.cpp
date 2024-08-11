@@ -75,6 +75,13 @@ void CNPCRoninTurret::KeyValue(KeyValueData* data)
 		return;
 	}
 
+	if ( FStrEq(data->szKeyName, "searchrange") )
+	{
+		m_SearchRange = static_cast<float>(atof(data->szValue));
+		data->fHandled = true;
+		return;
+	}
+
 	CBaseMonster::KeyValue(data);
 }
 
@@ -245,6 +252,12 @@ void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
 CBaseEntity* CNPCRoninTurret::FindBestTarget()
 {
 	const float radius = GetSearchRange();
+
+	if ( radius <= 0.0f )
+	{
+		// Don't search
+		return nullptr;
+	}
 
 	CBaseEntity* bestTarget = nullptr;
 	float bestRange = std::numeric_limits<float>::max();
@@ -422,17 +435,7 @@ float CNPCRoninTurret::GetBestThinkInterval() const
 	return MAX_ACTIVE_THINK_INTERVAL;
 }
 
-// TODO: Get this from the entity properties, and allow functions to set
-// various attributes on the entity for when it's spawned via a weapon.
 float CNPCRoninTurret::GetSearchRange()
 {
-	static cvar_t* rangeCvar = nullptr;
-
-	if ( !rangeCvar )
-	{
-		rangeCvar = CVAR_GET_POINTER("ronin_search_range");
-		ASSERTSZ(rangeCvar, "Could not get ronin_search_range cvar");
-	}
-
-	return rangeCvar ? rangeCvar->value : 300.0f;
+	return !std::isnan(m_SearchRange) ? m_SearchRange : DEFAULT_SEARCH_RANGE;
 }

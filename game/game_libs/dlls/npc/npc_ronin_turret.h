@@ -14,6 +14,8 @@ enum NPCRoninTurretAnimations_e
 class CNPCRoninTurret : public CBaseMonster
 {
 public:
+	static constexpr float DEFAULT_SEARCH_RANGE = 300;
+
 	int BloodColor(void) override;
 	void GibMonster(void) override;
 	int Classify(void) override;
@@ -60,14 +62,14 @@ private:
 	Vector GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const;
 	Vector GetEyePos() const;
 	float GetBestThinkInterval() const;
-
-	static float GetSearchRange();
+	float GetSearchRange();
 
 	// Exists separately from normal FOV member, so that we can tell
 	// if we parsed a KV value or not.
 	float m_KVSightFOV = NAN;
 
 	float m_ShootFOV = NAN;
+	float m_SearchRange = NAN;
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
 	EHANDLE m_hEnemy;

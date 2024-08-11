@@ -60,8 +60,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_ronin_bullet", &skilldata_t::plrDmgRoninBullet));
 		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_ronin_explosion", &skilldata_t::plrDmgRoninExplosion));
 
-		obj.CustomCvars.AddToTail(WACustomCvar::Number("ronin_search_range", "300"));
-
 		WAProjectileAttack* priAttack = new WAProjectileAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
 
