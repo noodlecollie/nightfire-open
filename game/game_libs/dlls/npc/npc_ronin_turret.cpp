@@ -82,6 +82,24 @@ void CNPCRoninTurret::KeyValue(KeyValueData* data)
 		return;
 	}
 
+	if ( FStrEq(data->szKeyName, "firerate") )
+	{
+		float fireRate = static_cast<float>(atof(data->szValue));
+
+		if ( fireRate != 0.0f )
+		{
+			if ( fireRate > MAX_FIRE_RATE )
+			{
+				fireRate = MAX_FIRE_RATE;
+			}
+
+			m_FireInterval = 1.0f / fireRate;
+		}
+
+		data->fHandled = true;
+		return;
+	}
+
 	CBaseMonster::KeyValue(data);
 }
 
@@ -428,14 +446,17 @@ Vector CNPCRoninTurret::GetEyePos() const
 
 float CNPCRoninTurret::GetBestThinkInterval() const
 {
-	// TODO: Once we add the fire rate variable, this should return
-	// an interval which is at least quick enough to cater
-	// for this fire rate, or MAX_ACTIVE_THINK_INTERVAL
-	// if the fire rate is slow.
-	return MAX_ACTIVE_THINK_INTERVAL;
+	// We think at least twice as often as we need to fire, to facilitate tracking enemies.
+	const float thinkInterval = GetFireInterval() / 2.0f;
+	return thinkInterval < MAX_ACTIVE_THINK_INTERVAL ? thinkInterval : MAX_ACTIVE_THINK_INTERVAL;
 }
 
-float CNPCRoninTurret::GetSearchRange()
+float CNPCRoninTurret::GetSearchRange() const
 {
 	return !std::isnan(m_SearchRange) ? m_SearchRange : DEFAULT_SEARCH_RANGE;
+}
+
+float CNPCRoninTurret::GetFireInterval() const
+{
+	return !std::isnan(m_FireInterval) ? m_FireInterval : (1.0f / DEFAULT_FIRE_RATE);
 }

@@ -2182,6 +2182,7 @@
 	sightfov(integer) : "Field of view within which enemies will be targeted. Values <= 0 imply any direction." : 90
 	shootfov(integer) : "Cone around line of sight, within which enemies will trigger the the Ronin to fire" : 30
 	searchrange(integer) : "Range within which enemies will be targeted. Values <= 0 stop the Ronin from finding targts." : 300
+	firerate(integer) : "Number of bullets fired per second." : 8
 ]
 
 @PointClass base(Targetname) size(-4 -4 -4, 4 4 4) color(200 100 50) = info_ronin_target : "Ronin Target" []

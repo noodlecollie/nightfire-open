@@ -16,6 +16,10 @@ class CNPCRoninTurret : public CBaseMonster
 public:
 	static constexpr float DEFAULT_SEARCH_RANGE = 300;
 
+	// Bullets per second
+	static constexpr float DEFAULT_FIRE_RATE = 8.0f;
+	static constexpr float MAX_FIRE_RATE = 20.0f;
+
 	int BloodColor(void) override;
 	void GibMonster(void) override;
 	int Classify(void) override;
@@ -44,6 +48,9 @@ private:
 
 	static constexpr float DEPLOY_DURATION = 1.0f;
 	static constexpr float UNDEPLOY_DURATION = 0.5f;
+
+	// Don't allow us to think less frequently than this,
+	// or enemy tracking would suffer.
 	static constexpr float MAX_ACTIVE_THINK_INTERVAL = 0.1f;
 
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
@@ -62,7 +69,8 @@ private:
 	Vector GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const;
 	Vector GetEyePos() const;
 	float GetBestThinkInterval() const;
-	float GetSearchRange();
+	float GetSearchRange() const;
+	float GetFireInterval() const;
 
 	// Exists separately from normal FOV member, so that we can tell
 	// if we parsed a KV value or not.
@@ -70,6 +78,7 @@ private:
 
 	float m_ShootFOV = NAN;
 	float m_SearchRange = NAN;
+	float m_FireInterval = NAN;
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
 	EHANDLE m_hEnemy;
