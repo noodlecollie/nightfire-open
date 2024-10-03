@@ -88,5 +88,4 @@ private:
 	float m_SpreadCone = NAN;
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
-	EHANDLE m_hEnemy;
 };

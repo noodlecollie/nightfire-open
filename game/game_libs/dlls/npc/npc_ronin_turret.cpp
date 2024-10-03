@@ -363,7 +363,7 @@ void CNPCRoninTurret::AttackTarget()
 	hitscanComponent.SetRandomSeed(0);
 	hitscanComponent.SetRightDir(gpGlobals->v_right);
 	hitscanComponent.SetUpDir(gpGlobals->v_up);
-	hitscanComponent.SetAttacker(VARS(pev->owner));
+	hitscanComponent.SetAttacker(pev->owner ? VARS(pev->owner) : pev);
 	hitscanComponent.SetBulletsPerShot(1);
 	hitscanComponent.SetBaseDamagePerShot(10 /*TODO: Make skill-based*/);
 	hitscanComponent.SetSpread(Vector2D(spread, spread));
