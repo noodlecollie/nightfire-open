@@ -37,6 +37,11 @@ LINK_ENTITY_TO_CLASS(npc_ronin_turret, CNPCRoninTurret)
 
 TYPEDESCRIPTION CNPCRoninTurret::m_SaveData[] = {
 	DEFINE_FIELD(CNPCRoninTurret, m_DeployState, FIELD_INTEGER),
+	DEFINE_FIELD(CNPCRoninTurret, m_KVSightFOV, FIELD_FLOAT),
+	DEFINE_FIELD(CNPCRoninTurret, m_ShootFOV, FIELD_FLOAT),
+	DEFINE_FIELD(CNPCRoninTurret, m_SearchRange, FIELD_FLOAT),
+	DEFINE_FIELD(CNPCRoninTurret, m_FireInterval, FIELD_FLOAT),
+	DEFINE_FIELD(CNPCRoninTurret, m_SpreadCone, FIELD_FLOAT),
 };
 
 int CNPCRoninTurret::BloodColor(void)
