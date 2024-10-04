@@ -530,7 +530,7 @@ float CBaseAnimating::SetBlending(int, float)
 void CBaseAnimating::GetBonePosition(int, Vector&, Vector&)
 {
 }
-void CBaseAnimating::GetAttachment(int, Vector&, Vector&)
+void CBaseAnimating::GetAttachment(int, Vector&, Vector&) const
 {
 }
 int CBaseAnimating::FindTransition(int, int, int*)

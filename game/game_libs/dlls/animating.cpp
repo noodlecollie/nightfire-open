@@ -209,7 +209,7 @@ void CBaseAnimating::GetBonePosition(int iBone, Vector& origin, Vector& angles)
 
 //=========================================================
 //=========================================================
-void CBaseAnimating::GetAttachment(int iAttachment, Vector& origin, Vector& angles)
+void CBaseAnimating::GetAttachment(int iAttachment, Vector& origin, Vector& angles) const
 {
 	GET_ATTACHMENT(ENT(pev), iAttachment, origin, angles);
 }
