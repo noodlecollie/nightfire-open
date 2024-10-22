@@ -5,9 +5,12 @@
 #include "weapons.h"
 #include "gameplay/hitscancomponent.h"
 #include "weaponregistry.h"
+#include "MathLib/utils.h"
 
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
 static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
+
+static constexpr int DEFAULT_RANDOM_SEED = 0x1B7F23DE;
 
 static bool IsInfoRoninTarget(CBaseEntity* ent)
 {
@@ -42,6 +45,7 @@ TYPEDESCRIPTION CNPCRoninTurret::m_SaveData[] = {
 	DEFINE_FIELD(CNPCRoninTurret, m_SearchRange, FIELD_FLOAT),
 	DEFINE_FIELD(CNPCRoninTurret, m_FireInterval, FIELD_FLOAT),
 	DEFINE_FIELD(CNPCRoninTurret, m_SpreadCone, FIELD_FLOAT),
+	DEFINE_FIELD(CNPCRoninTurret, m_CurrentGunAngles, FIELD_FLOAT),
 };
 
 int CNPCRoninTurret::BloodColor(void)
@@ -354,18 +358,28 @@ void CNPCRoninTurret::AttackTarget()
 		return;
 	}
 
-	// TODO: We want to fire along the Ronin's LOS if the target
-	// is within the shooting FOV, rather than firing directly at the target.
-	Vector gunPos = GetEyePos();
-	Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
+	CBasePlayer* playerOwner = pev->owner ? GetClassPtr<CBasePlayer>(VARS(pev->owner)) : nullptr;
+
+	Vector gunPos = GetGunBarrelPos();
 	const float spread = GetSpreadCone();
+
+	// TODO: Incorporate this into the tracking (ie. changing
+	// the gun angles to move towards this point).
+	// Here for posterity.
+	// Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
+
+	Vector shootAngles(pev->angles);
+	shootAngles += m_CurrentGunAngles;
+
+	Vector shootDir;
+	AngleVectors(shootAngles, shootDir, nullptr, nullptr);
 
 	CHitscanComponent hitscanComponent;
 
 	hitscanComponent.SetGunPos(gunPos);
-	hitscanComponent.SetShootDir(targetPos - gunPos);
+	hitscanComponent.SetShootDir(shootDir);
 	hitscanComponent.SetInflictor(pev);
-	hitscanComponent.SetRandomSeed(0);
+	hitscanComponent.SetRandomSeed(playerOwner ? playerOwner->random_seed : DEFAULT_RANDOM_SEED);
 	hitscanComponent.SetRightDir(gpGlobals->v_right);
 	hitscanComponent.SetUpDir(gpGlobals->v_up);
 	hitscanComponent.SetAttacker(pev->owner ? VARS(pev->owner) : pev);
@@ -466,6 +480,14 @@ Vector CNPCRoninTurret::GetBestTargetPosition(float minUnitsDevFromTarget, float
 Vector CNPCRoninTurret::GetEyePos() const
 {
 	return Vector(pev->origin) + Vector(pev->view_ofs);
+}
+
+Vector CNPCRoninTurret::GetGunBarrelPos() const
+{
+	Vector out;
+	Vector dummyAngles;
+	GetAttachment(0, out, dummyAngles);
+	return out;
 }
 
 float CNPCRoninTurret::GetBestThinkInterval() const

@@ -73,6 +73,7 @@ private:
 	bool EnemyVisible(CBaseEntity* ent) const;
 	Vector GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const;
 	Vector GetEyePos() const;
+	Vector GetGunBarrelPos() const;
 	float GetBestThinkInterval() const;
 	float GetSearchRange() const;
 	float GetFireInterval() const;
@@ -88,4 +89,7 @@ private:
 	float m_SpreadCone = NAN;
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
+
+	// Gun angles, relative to the overall entity angles
+	Vector m_CurrentGunAngles;
 };

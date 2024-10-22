@@ -198,7 +198,7 @@ inline edict_t* INDEXENT(int iEdictNum)
 }
 inline void MESSAGE_BEGIN(int msg_dest, int msg_type, const float* pOrigin, entvars_t* ent)
 {
-	(*g_engfuncs.pfnMessageBegin)(msg_dest, msg_type, pOrigin, ENT(ent));
+	(*g_engfuncs.pfnMessageBegin)(msg_dest, msg_type, pOrigin, ent ? ENT(ent) : nullptr);
 }
 
 // Testing the three types of "entity" for nullity
