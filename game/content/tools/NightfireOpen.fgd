@@ -2175,7 +2175,7 @@
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_ronin/w_ronin.mdl" }) = weapon_ronin : "Ronin Briefcase Turret" []
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_ronin/w_ammo_ronin.mdl" }) = ammo_frag_grenade : "Ronin Briefcase Turret Ammo" []
 
-@PointClass base(Target, Targetname, RenderFields, Angles) size(-14 -12 0, 14 12 8) model({ "path": "models/weapon_ronin/w_ronin.mdl" }) = npc_ronin_turret : "Ronin Turret NPC"
+@PointClass base(Targetname, RenderFields, Angles) size(-14 -12 0, 14 12 8) model({ "path": "models/weapon_ronin/w_ronin.mdl" }) = npc_ronin_turret : "Ronin Turret NPC"
 [
 	health(integer) : "Health" : 100
 	maxhealth(integer) : "Max health (<= 0 implies indestructable)" : 100

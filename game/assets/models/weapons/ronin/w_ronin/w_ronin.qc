@@ -42,7 +42,7 @@ $texturegroup activityskin
 
 $attachment "" "barrel" 0.000000 1.000000 9.300000
 
-$controller 0 "gun_yaw" LZR 0 360
+$controller 0 "gun_yaw" ZR 0 360
 $controller 1 "gun_pitch" YR 0 30
 
 $hbox 0 "case_01" -12.820000 -1.450000 0.000000 12.870000 1.353852 21.260000

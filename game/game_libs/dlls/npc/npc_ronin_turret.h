@@ -16,6 +16,7 @@ class CNPCRoninTurret : public CBaseMonster
 public:
 	static constexpr float DEFAULT_SEARCH_RANGE = 300.0f;
 	static constexpr float DEFAULT_BULLET_SPREAD_DEGREES = 10.0f;
+	static constexpr float DEFAULT_ROT_DEGREES_PER_SECOND = 360.0f;
 
 	// Bullets per second
 	static constexpr float DEFAULT_FIRE_RATE = 8.0f;
@@ -58,6 +59,9 @@ private:
 	// or enemy tracking would suffer.
 	static constexpr float MAX_ACTIVE_THINK_INTERVAL = 0.1f;
 
+	// Maximum amount of pitch that can be applied to the gun barrel.
+	static constexpr float MAX_PITCH_DEVIATION = 15.0f;
+
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 
 	void ActiveThink();
@@ -68,7 +72,9 @@ private:
 	void UndeployFinished();
 
 	void SetSequence(NPCRoninTurretAnimations_e index);
+	void UpdateModelControllerValues();
 	CBaseEntity* FindBestTarget();
+	void RotateTowardsTarget();
 	void AttackTarget();
 	bool EnemyVisible(CBaseEntity* ent) const;
 	Vector GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const;
@@ -78,6 +84,7 @@ private:
 	float GetSearchRange() const;
 	float GetFireInterval() const;
 	float GetSpreadCone() const;
+	float GetRotationSpeed() const;
 
 	// Exists separately from normal FOV member, so that we can tell
 	// if we parsed a KV value or not.
@@ -87,9 +94,11 @@ private:
 	float m_SearchRange = NAN;
 	float m_FireInterval = NAN;
 	float m_SpreadCone = NAN;
+	float m_RotationSpeed = NAN;
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
 
 	// Gun angles, relative to the overall entity angles
 	Vector m_CurrentGunAngles;
+	float m_LastAngleUpdate = NAN;
 };

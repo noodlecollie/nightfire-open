@@ -45,7 +45,8 @@ TYPEDESCRIPTION CNPCRoninTurret::m_SaveData[] = {
 	DEFINE_FIELD(CNPCRoninTurret, m_SearchRange, FIELD_FLOAT),
 	DEFINE_FIELD(CNPCRoninTurret, m_FireInterval, FIELD_FLOAT),
 	DEFINE_FIELD(CNPCRoninTurret, m_SpreadCone, FIELD_FLOAT),
-	DEFINE_FIELD(CNPCRoninTurret, m_CurrentGunAngles, FIELD_FLOAT),
+	DEFINE_FIELD(CNPCRoninTurret, m_CurrentGunAngles, FIELD_VECTOR),
+	DEFINE_FIELD(CNPCRoninTurret, m_LastAngleUpdate, FIELD_TIME),
 };
 
 int CNPCRoninTurret::BloodColor(void)
@@ -123,6 +124,19 @@ void CNPCRoninTurret::KeyValue(KeyValueData* data)
 		}
 
 		m_SpreadCone = std::tanf(DEG2RADF(degrees));
+		data->fHandled = true;
+		return;
+	}
+
+	if ( FStrEq(data->szKeyName, "rotationspeed") )
+	{
+		m_RotationSpeed = static_cast<float>(atof(data->szValue));
+
+		if ( m_RotationSpeed < 1.0f )
+		{
+			m_RotationSpeed = 1.0f;
+		}
+
 		data->fHandled = true;
 		return;
 	}
@@ -236,15 +250,22 @@ void CNPCRoninTurret::UndeployNow()
 
 void CNPCRoninTurret::ActiveThink()
 {
+	if ( std::isnan(m_LastAngleUpdate) )
+	{
+		m_LastAngleUpdate = gpGlobals->time;
+	}
+
 	StudioFrameAdvance();
 
 	m_hEnemy = FindBestTarget();
 
 	if ( m_hEnemy )
 	{
+		RotateTowardsTarget();
 		AttackTarget();
 	}
 
+	m_LastAngleUpdate = gpGlobals->time;
 	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
 }
 
@@ -262,8 +283,10 @@ void CNPCRoninTurret::DeployFinished()
 {
 	m_DeployState = DeployState::DEPLOYED;
 	SetSequence(NPCRONIN_DEPLOY_IDLE);
+	UpdateModelControllerValues();
 
 	m_hEnemy = nullptr;
+	m_LastAngleUpdate = NAN;
 	SetThink(&CNPCRoninTurret::ActiveThink);
 	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
 }
@@ -277,6 +300,7 @@ void CNPCRoninTurret::BeginUndeploy()
 	// well enough for now.
 	SetSequence(NPCRONIN_IDLE1);
 
+	m_LastAngleUpdate = NAN;
 	SetThink(&CNPCRoninTurret::UndeployFinished);
 	pev->nextthink = gpGlobals->time + UNDEPLOY_DURATION;
 }
@@ -292,6 +316,12 @@ void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
 {
 	pev->sequence = index;
 	ResetSequenceInfo();
+}
+
+void CNPCRoninTurret::UpdateModelControllerValues()
+{
+	SetBoneController(0, m_CurrentGunAngles[YAW]);
+	SetBoneController(1, m_CurrentGunAngles[PITCH]);
 }
 
 CBaseEntity* CNPCRoninTurret::FindBestTarget()
@@ -351,6 +381,82 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 	return bestTarget;
 }
 
+void CNPCRoninTurret::RotateTowardsTarget()
+{
+	if ( !m_hEnemy || std::isnan(m_LastAngleUpdate) )
+	{
+		return;
+	}
+
+	const float timeDelta = gpGlobals->time - m_LastAngleUpdate;
+
+	if ( timeDelta <= 0.0f )
+	{
+		return;
+	}
+
+	Vector gunPos = GetGunBarrelPos();
+	Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
+	Vector targetDir = (targetPos - gunPos).Normalize();
+
+	Vector anglesToTarget;
+	VectorAngles(targetDir, anglesToTarget);
+	anglesToTarget[PITCH] *= -1.0f;
+
+	Vector currentAngles(pev->angles);
+	currentAngles += m_CurrentGunAngles;
+	NormalizeAngles(currentAngles);
+	currentAngles[ROLL] = 0.0f;
+
+	Vector angleDelta = anglesToTarget - currentAngles;
+	NormalizeAngles(angleDelta);
+
+	// Turn angles past 180 degrees into negative angles.
+	if ( angleDelta[PITCH] > 180.0f )
+	{
+		angleDelta[PITCH] -= 360.0f;
+	}
+
+	if ( angleDelta[YAW] > 180.0f )
+	{
+		angleDelta[YAW] -= 360.0f;
+	}
+
+	const float maxRotSpeed = GetRotationSpeed() * timeDelta;
+
+	if ( angleDelta[PITCH] > maxRotSpeed )
+	{
+		angleDelta[PITCH] = maxRotSpeed;
+	}
+	else if ( angleDelta[PITCH] < -maxRotSpeed )
+	{
+		angleDelta[PITCH] = -maxRotSpeed;
+	}
+
+	if ( angleDelta[YAW] > maxRotSpeed )
+	{
+		angleDelta[YAW] = maxRotSpeed;
+	}
+	else if ( angleDelta[YAW] < -maxRotSpeed )
+	{
+		angleDelta[YAW] = -maxRotSpeed;
+	}
+
+	m_CurrentGunAngles += angleDelta;
+	NormalizeAngles(m_CurrentGunAngles);
+
+	if ( m_CurrentGunAngles[PITCH] > MAX_PITCH_DEVIATION )
+	{
+		m_CurrentGunAngles[PITCH] = MAX_PITCH_DEVIATION;
+	}
+	else if ( m_CurrentGunAngles[PITCH] < -MAX_PITCH_DEVIATION )
+	{
+		m_CurrentGunAngles[PITCH] = -MAX_PITCH_DEVIATION;
+	}
+
+	SetBoneController(0, m_CurrentGunAngles[YAW]);
+}
+
 void CNPCRoninTurret::AttackTarget()
 {
 	if ( !m_hEnemy )
@@ -363,13 +469,9 @@ void CNPCRoninTurret::AttackTarget()
 	Vector gunPos = GetGunBarrelPos();
 	const float spread = GetSpreadCone();
 
-	// TODO: Incorporate this into the tracking (ie. changing
-	// the gun angles to move towards this point).
-	// Here for posterity.
-	// Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
-
 	Vector shootAngles(pev->angles);
 	shootAngles += m_CurrentGunAngles;
+	NormalizeAngles(shootAngles);
 
 	Vector shootDir;
 	AngleVectors(shootAngles, shootDir, nullptr, nullptr);
@@ -510,4 +612,9 @@ float CNPCRoninTurret::GetFireInterval() const
 float CNPCRoninTurret::GetSpreadCone() const
 {
 	return !std::isnan(m_SpreadCone) ? m_SpreadCone : 0.0f;
+}
+
+float CNPCRoninTurret::GetRotationSpeed() const
+{
+	return !std::isnan(m_RotationSpeed) ? m_RotationSpeed : DEFAULT_ROT_DEGREES_PER_SECOND;
 }
