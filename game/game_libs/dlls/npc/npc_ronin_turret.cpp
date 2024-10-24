@@ -330,7 +330,7 @@ void CNPCRoninTurret::SetCurrentGunAngles(const Vector& angles)
 void CNPCRoninTurret::UpdateModelControllerValues()
 {
 	SetBoneController(0, m_CurrentGunAngles[YAW]);
-	SetBoneController(1, m_CurrentGunAngles[PITCH]);
+	SetBoneController(1, -m_CurrentGunAngles[PITCH]);
 }
 
 CBaseEntity* CNPCRoninTurret::FindBestTarget()
@@ -352,6 +352,9 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 		// Quick filters first:
 		if ( FBitSet(ent->pev->flags, FL_NOTARGET) || !FInViewCone(ent) || !EnemyVisible(ent) )
 		{
+			// TODO: We also want to filter out if the enemy is
+			// too high or low. The Ronin gun barrel allows a
+			// 30 degree upward tilt from horizontal.
 			continue;
 		}
 
@@ -454,13 +457,13 @@ void CNPCRoninTurret::RotateTowardsTarget()
 	Vector newGunAngles = m_CurrentGunAngles + angleDelta;
 	NormalizeAngles(newGunAngles);
 
-	if ( newGunAngles[PITCH] > MAX_PITCH_DEVIATION )
+	if ( newGunAngles[PITCH] < -MAX_BARREL_UPWARD_PITCH )
 	{
-		newGunAngles[PITCH] = MAX_PITCH_DEVIATION;
+		newGunAngles[PITCH] = -MAX_BARREL_UPWARD_PITCH;
 	}
-	else if ( newGunAngles[PITCH] < -MAX_PITCH_DEVIATION )
+	else if ( newGunAngles[PITCH] > 0 )
 	{
-		newGunAngles[PITCH] = -MAX_PITCH_DEVIATION;
+		newGunAngles[PITCH] = 0;
 	}
 
 	SetCurrentGunAngles(newGunAngles);

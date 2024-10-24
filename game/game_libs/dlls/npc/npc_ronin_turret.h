@@ -60,7 +60,7 @@ private:
 	static constexpr float MAX_ACTIVE_THINK_INTERVAL = 0.1f;
 
 	// Maximum amount of pitch that can be applied to the gun barrel.
-	static constexpr float MAX_PITCH_DEVIATION = 15.0f;
+	static constexpr float MAX_BARREL_UPWARD_PITCH = 30.0f;
 
 	static constexpr float DEFAULT_SIGHT_FOV = 150.0f;
 	static constexpr float DEFAULT_SHOOT_FOV = 20.0f;
