@@ -168,12 +168,12 @@ void CNPCRoninTurret::Spawn(void)
 	}
 	else
 	{
-		m_flFieldOfView = CalculateFOVDotProduct(90.0f);
+		m_flFieldOfView = CalculateFOVDotProduct(DEFAULT_SIGHT_FOV);
 	}
 
 	if ( std::isnan(m_ShootFOV) )
 	{
-		m_ShootFOV = CalculateFOVDotProduct(30.0f);
+		m_ShootFOV = CalculateFOVDotProduct(DEFAULT_SHOOT_FOV);
 	}
 
 	m_hEnemy = nullptr;
@@ -273,7 +273,9 @@ void CNPCRoninTurret::BeginDeploy()
 {
 	m_DeployState = DeployState::DEPLOYING;
 
+	SetCurrentGunAngles(Vector());
 	SetSequence(NPCRONIN_DEPLOY);
+	pev->frame = 0;
 
 	SetThink(&CNPCRoninTurret::DeployFinished);
 	pev->nextthink = gpGlobals->time + DEPLOY_DURATION;
@@ -283,7 +285,6 @@ void CNPCRoninTurret::DeployFinished()
 {
 	m_DeployState = DeployState::DEPLOYED;
 	SetSequence(NPCRONIN_DEPLOY_IDLE);
-	UpdateModelControllerValues();
 
 	m_hEnemy = nullptr;
 	m_LastAngleUpdate = NAN;
@@ -294,6 +295,8 @@ void CNPCRoninTurret::DeployFinished()
 void CNPCRoninTurret::BeginUndeploy()
 {
 	m_DeployState = DeployState::UNDEPLOYING;
+
+	SetCurrentGunAngles(Vector());
 
 	// We don't currently have an undeploy animation,
 	// but blending back to the idle animation works
@@ -316,6 +319,12 @@ void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
 {
 	pev->sequence = index;
 	ResetSequenceInfo();
+}
+
+void CNPCRoninTurret::SetCurrentGunAngles(const Vector& angles)
+{
+	m_CurrentGunAngles = angles;
+	UpdateModelControllerValues();
 }
 
 void CNPCRoninTurret::UpdateModelControllerValues()
@@ -442,19 +451,19 @@ void CNPCRoninTurret::RotateTowardsTarget()
 		angleDelta[YAW] = -maxRotSpeed;
 	}
 
-	m_CurrentGunAngles += angleDelta;
-	NormalizeAngles(m_CurrentGunAngles);
+	Vector newGunAngles = m_CurrentGunAngles + angleDelta;
+	NormalizeAngles(newGunAngles);
 
-	if ( m_CurrentGunAngles[PITCH] > MAX_PITCH_DEVIATION )
+	if ( newGunAngles[PITCH] > MAX_PITCH_DEVIATION )
 	{
-		m_CurrentGunAngles[PITCH] = MAX_PITCH_DEVIATION;
+		newGunAngles[PITCH] = MAX_PITCH_DEVIATION;
 	}
-	else if ( m_CurrentGunAngles[PITCH] < -MAX_PITCH_DEVIATION )
+	else if ( newGunAngles[PITCH] < -MAX_PITCH_DEVIATION )
 	{
-		m_CurrentGunAngles[PITCH] = -MAX_PITCH_DEVIATION;
+		newGunAngles[PITCH] = -MAX_PITCH_DEVIATION;
 	}
 
-	SetBoneController(0, m_CurrentGunAngles[YAW]);
+	SetCurrentGunAngles(newGunAngles);
 }
 
 void CNPCRoninTurret::AttackTarget()

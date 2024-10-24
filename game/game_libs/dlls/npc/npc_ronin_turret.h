@@ -16,7 +16,7 @@ class CNPCRoninTurret : public CBaseMonster
 public:
 	static constexpr float DEFAULT_SEARCH_RANGE = 300.0f;
 	static constexpr float DEFAULT_BULLET_SPREAD_DEGREES = 10.0f;
-	static constexpr float DEFAULT_ROT_DEGREES_PER_SECOND = 360.0f;
+	static constexpr float DEFAULT_ROT_DEGREES_PER_SECOND = 130.0f;
 
 	// Bullets per second
 	static constexpr float DEFAULT_FIRE_RATE = 8.0f;
@@ -48,7 +48,7 @@ private:
 		UNDEPLOYING
 	};
 
-	static constexpr float DEPLOY_DURATION = 1.0f;
+	static constexpr float DEPLOY_DURATION = 1.8f;
 	static constexpr float UNDEPLOY_DURATION = 0.5f;
 
 	// Not allowed to go all the way to 90 degrees spread,
@@ -62,6 +62,9 @@ private:
 	// Maximum amount of pitch that can be applied to the gun barrel.
 	static constexpr float MAX_PITCH_DEVIATION = 15.0f;
 
+	static constexpr float DEFAULT_SIGHT_FOV = 150.0f;
+	static constexpr float DEFAULT_SHOOT_FOV = 20.0f;
+
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 
 	void ActiveThink();
@@ -72,6 +75,7 @@ private:
 	void UndeployFinished();
 
 	void SetSequence(NPCRoninTurretAnimations_e index);
+	void SetCurrentGunAngles(const Vector& angles);
 	void UpdateModelControllerValues();
 	CBaseEntity* FindBestTarget();
 	void RotateTowardsTarget();
