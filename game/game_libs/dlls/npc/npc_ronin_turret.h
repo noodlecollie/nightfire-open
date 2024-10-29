@@ -78,12 +78,15 @@ private:
 	void SetCurrentGunAngles(const Vector& angles);
 	void UpdateModelControllerValues();
 	CBaseEntity* FindBestTarget();
-	void RotateTowardsTarget();
-	void AttackTarget();
+	void RotateTowardsTarget(const Vector& targetPos);
+	void FireGun();
+	bool TargetIsInShootFOV(const Vector& targetPos) const;
 	bool EnemyVisible(CBaseEntity* ent) const;
+	TraceResult TraceSightToEnemy(CBaseEntity* ent) const;
 	Vector GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const;
 	Vector GetEyePos() const;
 	Vector GetGunBarrelPos() const;
+	Vector GetGunBarrelAngles() const;
 	float GetBestThinkInterval() const;
 	float GetSearchRange() const;
 	float GetFireInterval() const;
@@ -105,4 +108,5 @@ private:
 	// Gun angles, relative to the overall entity angles
 	Vector m_CurrentGunAngles;
 	float m_LastAngleUpdate = NAN;
+	float m_GunBarrelMinZOffset = 0.0f;
 };

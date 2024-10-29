@@ -47,6 +47,7 @@ TYPEDESCRIPTION CNPCRoninTurret::m_SaveData[] = {
 	DEFINE_FIELD(CNPCRoninTurret, m_SpreadCone, FIELD_FLOAT),
 	DEFINE_FIELD(CNPCRoninTurret, m_CurrentGunAngles, FIELD_VECTOR),
 	DEFINE_FIELD(CNPCRoninTurret, m_LastAngleUpdate, FIELD_TIME),
+	DEFINE_FIELD(CNPCRoninTurret, m_GunBarrelMinZOffset, FIELD_FLOAT),
 };
 
 int CNPCRoninTurret::BloodColor(void)
@@ -261,8 +262,13 @@ void CNPCRoninTurret::ActiveThink()
 
 	if ( m_hEnemy )
 	{
-		RotateTowardsTarget();
-		AttackTarget();
+		const Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
+		RotateTowardsTarget(targetPos);
+
+		if ( TargetIsInShootFOV(targetPos) )
+		{
+			FireGun();
+		}
 	}
 
 	m_LastAngleUpdate = gpGlobals->time;
@@ -285,6 +291,11 @@ void CNPCRoninTurret::DeployFinished()
 {
 	m_DeployState = DeployState::DEPLOYED;
 	SetSequence(NPCRONIN_DEPLOY_IDLE);
+
+	// Cache the gun barrel's Z delta from the origin,
+	// so that we can use it for enemy search calculations.
+	SetCurrentGunAngles(Vector());
+	m_GunBarrelMinZOffset = (GetGunPosition() - Vector(pev->origin)).z;
 
 	m_hEnemy = nullptr;
 	m_LastAngleUpdate = NAN;
@@ -345,21 +356,20 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 
 	CBaseEntity* bestTarget = nullptr;
 	float bestRange = std::numeric_limits<float>::max();
+	const edict_t* thisObject = edict();
 
 	for ( CBaseEntity* ent = UTIL_FindEntityInSphere(nullptr, pev->origin, radius); ent;
 		  ent = UTIL_FindEntityInSphere(ent, pev->origin, radius) )
 	{
-		// Quick filters first:
-		if ( FBitSet(ent->pev->flags, FL_NOTARGET) || !FInViewCone(ent) || !EnemyVisible(ent) )
-		{
-			// TODO: We also want to filter out if the enemy is
-			// too high or low. The Ronin gun barrel allows a
-			// 30 degree upward tilt from horizontal.
-			continue;
-		}
+		const edict_t* otherObject = ent->edict();
 
-		// Don't shoot at our owner
-		if ( pev->owner && ent->edict() == pev->owner )
+		// Quick checks before the more involved checks:
+		if ( otherObject == thisObject ||  //
+			 ent->Classify() == CLASS_NONE ||  //
+			 FBitSet(ent->pev->flags, FL_NOTARGET) ||  //
+			 (pev->owner && otherObject == pev->owner) ||  //
+			 !FInViewCone(ent) ||  //
+			 !EnemyVisible(ent) )
 		{
 			continue;
 		}
@@ -393,7 +403,7 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 	return bestTarget;
 }
 
-void CNPCRoninTurret::RotateTowardsTarget()
+void CNPCRoninTurret::RotateTowardsTarget(const Vector& targetPos)
 {
 	if ( !m_hEnemy || std::isnan(m_LastAngleUpdate) )
 	{
@@ -408,16 +418,13 @@ void CNPCRoninTurret::RotateTowardsTarget()
 	}
 
 	Vector gunPos = GetGunBarrelPos();
-	Vector targetPos = GetBestTargetPosition(0.0f, 8.0f);
 	Vector targetDir = (targetPos - gunPos).Normalize();
 
 	Vector anglesToTarget;
 	VectorAngles(targetDir, anglesToTarget);
 	anglesToTarget[PITCH] *= -1.0f;
 
-	Vector currentAngles(pev->angles);
-	currentAngles += m_CurrentGunAngles;
-	NormalizeAngles(currentAngles);
+	Vector currentAngles = GetGunBarrelAngles();
 	currentAngles[ROLL] = 0.0f;
 
 	Vector angleDelta = anglesToTarget - currentAngles;
@@ -469,24 +476,15 @@ void CNPCRoninTurret::RotateTowardsTarget()
 	SetCurrentGunAngles(newGunAngles);
 }
 
-void CNPCRoninTurret::AttackTarget()
+void CNPCRoninTurret::FireGun()
 {
-	if ( !m_hEnemy )
-	{
-		return;
-	}
-
 	CBasePlayer* playerOwner = pev->owner ? GetClassPtr<CBasePlayer>(VARS(pev->owner)) : nullptr;
 
 	Vector gunPos = GetGunBarrelPos();
 	const float spread = GetSpreadCone();
 
-	Vector shootAngles(pev->angles);
-	shootAngles += m_CurrentGunAngles;
-	NormalizeAngles(shootAngles);
-
 	Vector shootDir;
-	AngleVectors(shootAngles, shootDir, nullptr, nullptr);
+	AngleVectors(GetGunBarrelAngles(), shootDir, nullptr, nullptr);
 
 	CHitscanComponent hitscanComponent;
 
@@ -507,26 +505,75 @@ void CNPCRoninTurret::AttackTarget()
 	pev->effects = pev->effects | EF_MUZZLEFLASH;
 }
 
+bool CNPCRoninTurret::TargetIsInShootFOV(const Vector& targetPos) const
+{
+	Vector shootDir;
+	AngleVectors(GetGunBarrelAngles(), shootDir, nullptr, nullptr);
+	Vector2D shootDir2D = shootDir.Make2D().Normalize();
+
+	Vector targetDelta = targetPos - Vector(pev->origin);
+	Vector2D targetDir2D = targetDelta.Make2D().Normalize();
+
+	float dotProduct = Vector2DotProduct(targetDir2D, shootDir2D);
+
+	return dotProduct > m_ShootFOV;
+}
+
 bool CNPCRoninTurret::EnemyVisible(CBaseEntity* ent) const
 {
-	if ( !ent || !ent->pev || FBitSet(ent->pev->flags, FL_NOTARGET) )
+	const TraceResult result = TraceSightToEnemy(ent);
+
+	if ( !result.pHit )
 	{
 		return false;
+	}
+
+	const float top = ent->pev->origin[VEC3_Z] + ent->pev->maxs[VEC3_Z];
+
+	if ( top < pev->origin[VEC3_Z] + m_GunBarrelMinZOffset )
+	{
+		// Target is too low.
+		return false;
+	}
+
+	const Vector bottom = Vector(ent->pev->origin) + Vector(0, 0, ent->pev->mins[VEC3_Z]);
+	const Vector gunBase = Vector(pev->origin) + Vector(0, 0, m_GunBarrelMinZOffset);
+	const Vector delta = bottom - gunBase;
+
+	Vector angles;
+	VectorAngles(delta, angles);
+	NormalizeAngles(angles);
+
+	if ( angles[PITCH] > MAX_BARREL_UPWARD_PITCH )
+	{
+		// Target is too high.
+		return false;
+	}
+
+	return true;
+}
+
+TraceResult CNPCRoninTurret::TraceSightToEnemy(CBaseEntity* ent) const
+{
+	TraceResult result;
+	memset(&result, 0, sizeof(result));
+
+	if ( !ent || !ent->pev || FBitSet(ent->pev->flags, FL_NOTARGET) )
+	{
+		return result;
 	}
 
 	// Don't look through water
 	if ( (pev->waterlevel != 3 && ent->pev->waterlevel == 3) || (pev->waterlevel == 3 && ent->pev->waterlevel == 0) )
 	{
-		return false;
+		return result;
 	}
 
 	Vector eyePos = GetEyePos();
 	Vector targetPos = ent->BodyTarget(eyePos);
+	UTIL_TraceLine(eyePos, targetPos, ignore_monsters, ignore_glass, ENT(pev), &result);
 
-	TraceResult tr;
-	UTIL_TraceLine(eyePos, targetPos, ignore_monsters, ignore_glass, ENT(pev), &tr);
-
-	return tr.flFraction >= 1.0f;
+	return result;
 }
 
 Vector CNPCRoninTurret::GetBestTargetPosition(float minUnitsDevFromTarget, float maxUnitsDevFromTarget) const
@@ -602,6 +649,14 @@ Vector CNPCRoninTurret::GetGunBarrelPos() const
 	Vector dummyAngles;
 	GetAttachment(0, out, dummyAngles);
 	return out;
+}
+
+Vector CNPCRoninTurret::GetGunBarrelAngles() const
+{
+	Vector currentAngles(pev->angles);
+	currentAngles += m_CurrentGunAngles;
+	NormalizeAngles(currentAngles);
+	return currentAngles;
 }
 
 float CNPCRoninTurret::GetBestThinkInterval() const
