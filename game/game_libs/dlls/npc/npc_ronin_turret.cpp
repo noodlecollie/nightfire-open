@@ -282,7 +282,7 @@ void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, co
 	ResetSequenceInfo();
 
 	// If the Ronin is tossed, it can search anywhere.
-	m_flFieldOfView = CalculateFOVDotProduct(360.0f);
+	m_flFieldOfView = FOV_SEARCH_ANYWHERE;
 
 	m_LastTossedPos = pev->origin;
 	m_LastTossedTime = gpGlobals->time;
@@ -812,7 +812,8 @@ float CNPCRoninTurret::GetFireInterval() const
 
 float CNPCRoninTurret::GetSpreadCone() const
 {
-	return !std::isnan(m_SpreadCone) ? m_SpreadCone : 0.0f;
+	static const float defaultValue = std::tanf(DEG2RADF(DEFAULT_SPREAD_CONE));
+	return !std::isnan(m_SpreadCone) ? m_SpreadCone : defaultValue;
 }
 
 float CNPCRoninTurret::GetRotationSpeed() const

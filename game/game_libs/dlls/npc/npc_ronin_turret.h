@@ -72,6 +72,10 @@ private:
 
 	static constexpr float DEFAULT_SIGHT_FOV = 150.0f;
 	static constexpr float DEFAULT_SHOOT_FOV = 20.0f;
+	static constexpr float DEFAULT_SPREAD_CONE = 10.0f;
+
+	// A value less than any other dot product we should encounter.
+	static constexpr float FOV_SEARCH_ANYWHERE = -2.0f;
 
 	// Movement
 	static constexpr int MOVETYPE_IN_TOSS = MOVETYPE_BOUNCE;
