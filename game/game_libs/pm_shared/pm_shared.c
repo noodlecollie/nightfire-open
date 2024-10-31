@@ -1909,9 +1909,13 @@ void PM_AddGravity(void)
 	float ent_gravity;
 
 	if ( pmove->gravity )
+	{
 		ent_gravity = pmove->gravity;
+	}
 	else
+	{
 		ent_gravity = 1.0;
+	}
 
 	// Add gravity incorrectly
 	pmove->velocity[2] -= (ent_gravity * pmove->movevars->gravity * pmove->frametime);
@@ -1963,13 +1967,17 @@ void PM_Physics_Toss(void)
 	PM_CheckWater();
 
 	if ( pmove->velocity[2] > 0 )
+	{
 		pmove->onground = -1;
+	}
 
 	// If on ground and not moving, return.
 	if ( pmove->onground != -1 )
 	{
 		if ( VectorCompare(pmove->basevelocity, vec3_origin) && VectorCompare(pmove->velocity, vec3_origin) )
+		{
 			return;
+		}
 	}
 
 	PM_CheckVelocity();
@@ -1977,7 +1985,9 @@ void PM_Physics_Toss(void)
 	// add gravity
 	if ( pmove->movetype != MOVETYPE_FLY && pmove->movetype != MOVETYPE_BOUNCEMISSILE &&
 		 pmove->movetype != MOVETYPE_FLYMISSILE )
+	{
 		PM_AddGravity();
+	}
 
 	// move origin
 	// Base velocity is not properly accounted for since this entity will move again after the bounce without
@@ -1988,7 +1998,7 @@ void PM_Physics_Toss(void)
 	VectorScale(pmove->velocity, pmove->frametime, move);
 	VectorSubtract(pmove->velocity, pmove->basevelocity, pmove->velocity);
 
-	trace = PM_PushEntity(move);  // Should this clear basevelocity
+	trace = PM_PushEntity(move);  // Should this clear basevelocity?
 
 	PM_CheckVelocity();
 
@@ -2007,18 +2017,23 @@ void PM_Physics_Toss(void)
 	}
 
 	if ( pmove->movetype == MOVETYPE_BOUNCE )
+	{
 		backoff = 2.0f - pmove->friction;
+	}
 	else if ( pmove->movetype == MOVETYPE_BOUNCEMISSILE )
+	{
 		backoff = 2.0f;
+	}
 	else
+	{
 		backoff = 1;
+	}
 
 	PM_ClipVelocity(pmove->velocity, trace.plane.normal, pmove->velocity, backoff);
 
 	// stop if on ground
-	if ( trace.plane.normal[2] > 0.7 )
+	if ( trace.plane.normal[2] > 0.7f )
 	{
-		float vel;
 		vec3_t base;
 
 		VectorClear(base);
@@ -2029,10 +2044,7 @@ void PM_Physics_Toss(void)
 			pmove->velocity[2] = 0;
 		}
 
-		vel = DotProduct(pmove->velocity, pmove->velocity);
-
-		// Con_DPrintf( "%f %f: %.0f %.0f %.0f\n", vel, trace.fraction, ent->velocity[0], ent->velocity[1],
-		// ent->velocity[2] );
+		float vel = DotProduct(pmove->velocity, pmove->velocity);
 
 		if ( vel < (30 * 30) || (pmove->movetype != MOVETYPE_BOUNCE && pmove->movetype != MOVETYPE_BOUNCEMISSILE) )
 		{
@@ -2044,6 +2056,7 @@ void PM_Physics_Toss(void)
 			VectorScale(pmove->velocity, (1.0f - trace.fraction) * pmove->frametime * 0.9f, move);
 			trace = PM_PushEntity(move);
 		}
+
 		VectorSubtract(pmove->velocity, base, pmove->velocity);
 	}
 
