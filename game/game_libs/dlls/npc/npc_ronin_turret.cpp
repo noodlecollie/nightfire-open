@@ -365,7 +365,6 @@ CBaseEntity* CNPCRoninTurret::FindBestTarget()
 
 		// Quick checks before the more involved checks:
 		if ( otherObject == thisObject ||  //
-			 ent->Classify() == CLASS_NONE ||  //
 			 FBitSet(ent->pev->flags, FL_NOTARGET) ||  //
 			 (pev->owner && otherObject == pev->owner) ||  //
 			 !FInViewCone(ent) ||  //

@@ -44,8 +44,8 @@ void CWeaponRonin::CreateProjectile(const WeaponAtts::WAProjectileAttack& projec
 	(void)projectileAttack;
 
 	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
-	turret->Spawn();
 	turret->pev->owner = m_pPlayer->edict();
+	turret->Spawn();
 
 	Vector forward;
 	AngleVectors(GetGrenadeLaunchAngles(0.0f), forward, nullptr, nullptr);
