@@ -656,8 +656,9 @@ bool CNPCRoninTurret::EnemyVisible(CBaseEntity* ent) const
 {
 	const TraceResult result = TraceSightToEnemy(ent);
 
-	if ( !result.pHit )
+	if ( result.flFraction < 1.0f && result.pHit != ent->edict() )
 	{
+		// Something was in the way
 		return false;
 	}
 
