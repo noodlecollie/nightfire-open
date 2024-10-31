@@ -53,7 +53,6 @@ private:
 		DEPLOYING,
 		DEPLOYED,
 		UNDEPLOYING,
-		IN_TOSS
 	};
 
 	// Deploy/undeploy
@@ -127,4 +126,7 @@ private:
 	Vector m_CurrentGunAngles;
 	float m_LastAngleUpdate = NAN;
 	float m_GunBarrelMinZOffset = 0.0f;
+
+	Vector m_LastTossedPos;
+	float m_LastTossedTime = 0.0f;
 };

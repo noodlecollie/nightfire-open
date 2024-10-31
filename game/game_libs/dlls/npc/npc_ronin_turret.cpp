@@ -51,6 +51,8 @@ TYPEDESCRIPTION CNPCRoninTurret::m_SaveData[] = {
 	DEFINE_FIELD(CNPCRoninTurret, m_CurrentGunAngles, FIELD_VECTOR),
 	DEFINE_FIELD(CNPCRoninTurret, m_LastAngleUpdate, FIELD_TIME),
 	DEFINE_FIELD(CNPCRoninTurret, m_GunBarrelMinZOffset, FIELD_FLOAT),
+	DEFINE_FIELD(CNPCRoninTurret, m_LastTossedPos, FIELD_VECTOR),
+	DEFINE_FIELD(CNPCRoninTurret, m_LastTossedTime, FIELD_TIME),
 };
 
 int CNPCRoninTurret::BloodColor(void)
@@ -156,7 +158,7 @@ void CNPCRoninTurret::Spawn(void)
 	Precache();
 
 	SET_MODEL(ENT(pev), RONIN_MODEL);
-	UTIL_SetSize(pev, Vector(-14, -12, 0), Vector(14, 12, 24));
+	UTIL_SetSize(pev, Vector(-14, -12, 0), Vector(14, 12, 16));
 
 	pev->solid = SOLID_BBOX;
 	pev->movetype = MOVETYPE_NONE;
@@ -275,13 +277,15 @@ void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, co
 	pev->angles[YAW] = UTIL_VecToAngles(velocity.Normalize())[YAW];
 	pev->angles[ROLL] = 0.0f;
 
-	m_DeployState = DeployState::IN_TOSS;
 	pev->sequence = NPCRONIN_IDLE1;
 	pev->frame = 0;
 	ResetSequenceInfo();
 
 	// If the Ronin is tossed, it can search anywhere.
 	m_flFieldOfView = CalculateFOVDotProduct(360.0f);
+
+	m_LastTossedPos = pev->origin;
+	m_LastTossedTime = gpGlobals->time;
 }
 
 void CNPCRoninTurret::MainThink()
@@ -440,29 +444,38 @@ void CNPCRoninTurret::UpdateVelocity()
 		return;
 	}
 
-	const float speed = Vector(pev->velocity).Length();
-
-	if ( speed < REST_SPEED_THRESHOLD )
+	if ( pev->flags & FL_ONGROUND )
 	{
-		pev->movetype = MOVETYPE_NONE;
-		pev->gravity = 1.0f;
+		// If we've stopped, reset to stable values.
+		// Unfortunately pev->velocity is not updated to be accurate if we've
+		// made contact with a wall, so we have to track our actual velocity manually.
+		if ( m_LastTossedTime < gpGlobals->time )
+		{
+			const float timeDelta = gpGlobals->time - m_LastTossedTime;
+			const float speed = (Vector(pev->origin) - m_LastTossedPos).Length() / timeDelta;
 
-		VectorCopy(vec3_origin, pev->velocity);
-		VectorCopy(vec3_origin, pev->avelocity);
+			if ( speed < REST_SPEED_THRESHOLD )
+			{
+				pev->movetype = MOVETYPE_NONE;
+				pev->gravity = 1.0f;
 
-		m_DeployState = DeployState::NOT_DEPLOYED;
+				VectorCopy(vec3_origin, pev->velocity);
+				VectorCopy(vec3_origin, pev->avelocity);
 
-		return;
+				m_LastTossedPos = Vector();
+				m_LastTossedTime = 0.0f;
+
+				return;
+			}
+		}
+
+		// Manually apply some friction
+		VectorScale(pev->velocity, sv_ronin_slide_friction.value, pev->velocity);
+		VectorScale(pev->avelocity, sv_ronin_slide_friction.value * 0.9f, pev->avelocity);
 	}
 
-	if ( !(pev->flags & FL_ONGROUND) )
-	{
-		return;
-	}
-
-	// Manually apply some friction
-	VectorScale(pev->velocity, sv_ronin_slide_friction.value, pev->velocity);
-	VectorScale(pev->avelocity, sv_ronin_slide_friction.value * 0.9f, pev->avelocity);
+	m_LastTossedPos = pev->origin;
+	m_LastTossedTime = gpGlobals->time;
 }
 
 CBaseEntity* CNPCRoninTurret::FindBestTarget()
