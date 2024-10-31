@@ -60,14 +60,9 @@ void CWeaponRonin::CreateProjectile(const WeaponAtts::WAProjectileAttack& projec
 	UTIL_TraceLine(traceBegin, traceEnd, dont_ignore_monsters, m_pPlayer->edict(), &tr);
 
 	Vector location = tr.flFraction < 1.0f ? Vector(tr.vecEndPos) : traceEnd;
-	location -= (traceEnd - traceBegin).Normalize() * 32.0f;
+	location -= forward * 32.0f;
 
-	UTIL_SetOrigin(turret->pev, location);
-	forward.CopyToArray(turret->pev->velocity);
-
-	turret->pev->angles[PITCH] = 0.0f;
-	turret->pev->angles[YAW] = UTIL_VecToAngles(forward)[YAW];
-	turret->pev->angles[ROLL] = 0.0f;
+	turret->StartToss(location, forward * 200.0f, Vector(/*TODO: Angular velocity*/));
 }
 #endif
 

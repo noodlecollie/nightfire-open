@@ -154,10 +154,11 @@ void CNPCRoninTurret::Spawn(void)
 	SET_MODEL(ENT(pev), RONIN_MODEL);
 	UTIL_SetSize(pev, Vector(-14, -12, 0), Vector(14, 12, 24));
 
-	pev->movetype = MOVETYPE_TOSS;
+	pev->solid = SOLID_BBOX;
+	pev->movetype = MOVETYPE_BOUNCE;
+	pev->friction = 1.0f;
 	pev->sequence = NPCRONIN_IDLE1;
 	pev->frame = 0;
-	pev->solid = SOLID_SLIDEBOX;
 	pev->takedamage = static_cast<float>(pev->max_health > 0.0f ? DAMAGE_AIM : DAMAGE_NO);
 
 	SetBits(pev->flags, FL_MONSTER);
@@ -247,6 +248,26 @@ void CNPCRoninTurret::UndeployNow()
 	{
 		BeginUndeploy();
 	}
+}
+
+void CNPCRoninTurret::StartToss(const Vector& velocity, const Vector& angularVelocity)
+{
+	StartToss(pev->origin, velocity, angularVelocity);
+}
+
+void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, const Vector& angularVelocity)
+{
+	UTIL_SetOrigin(pev, origin);
+	velocity.CopyToArray(pev->velocity);
+	angularVelocity.CopyToArray(pev->avelocity);
+
+	pev->angles[PITCH] = 0.0f;
+	pev->angles[YAW] = UTIL_VecToAngles(velocity.Normalize())[YAW];
+	pev->angles[ROLL] = 0.0f;
+
+	pev->sequence = NPCRONIN_TOSS_SPIN;
+	pev->frame = 0;
+	ResetSequenceInfo();
 }
 
 void CNPCRoninTurret::ActiveThink()

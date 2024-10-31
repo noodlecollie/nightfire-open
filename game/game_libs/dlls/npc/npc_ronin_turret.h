@@ -5,7 +5,7 @@
 enum NPCRoninTurretAnimations_e
 {
 	NPCRONIN_IDLE1,
-	NPCRONIN_SPIN,
+	NPCRONIN_TOSS_SPIN,
 	NPCRONIN_DEPLOY,
 	NPCRONIN_FIRE,
 	NPCRONIN_DEPLOY_IDLE,
@@ -38,6 +38,9 @@ public:
 	void ToggleDeploy();
 	void DeployNow();
 	void UndeployNow();
+
+	void StartToss(const Vector& velocity, const Vector& angularVelocity);
+	void StartToss(const Vector& origin, const Vector& velocity, const Vector& angularVelocity);
 
 private:
 	enum class DeployState
