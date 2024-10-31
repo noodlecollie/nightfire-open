@@ -450,6 +450,8 @@ void CNPCRoninTurret::UpdateVelocity()
 		VectorCopy(vec3_origin, pev->velocity);
 		VectorCopy(vec3_origin, pev->avelocity);
 
+		m_DeployState = DeployState::NOT_DEPLOYED;
+
 		return;
 	}
 
