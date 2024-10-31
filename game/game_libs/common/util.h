@@ -358,6 +358,7 @@ extern void UTIL_TraceLine(
 	IGNORE_MONSTERS igmon,
 	edict_t* pentIgnore,
 	TraceResult* ptr);
+
 extern void UTIL_TraceLine(
 	const Vector& vecStart,
 	const Vector& vecEnd,

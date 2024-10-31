@@ -152,6 +152,7 @@ void CNPCRoninTurret::Spawn(void)
 {
 	CBaseMonster::Spawn();
 
+	pev->classname = MAKE_STRING("npc_ronin_turret");
 	Precache();
 
 	SET_MODEL(ENT(pev), RONIN_MODEL);
@@ -285,6 +286,12 @@ void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, co
 
 void CNPCRoninTurret::MainThink()
 {
+	if ( !IsInWorld() )
+	{
+		UTIL_Remove(this);
+		return;
+	}
+
 	UpdateVelocity();
 
 	switch ( m_DeployState )
