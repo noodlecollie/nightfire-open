@@ -38,8 +38,11 @@ LINK_ENTITY_TO_CLASS(info_ronin_target, CPointEntity)
 
 LINK_ENTITY_TO_CLASS(npc_ronin_turret, CNPCRoninTurret)
 
+cvar_t sv_ronin_slide_friction = CONSTRUCT_CVAR_T("sv_ronin_slide_friction", 0.88, FCVAR_SERVER);
+
 TYPEDESCRIPTION CNPCRoninTurret::m_SaveData[] = {
 	DEFINE_FIELD(CNPCRoninTurret, m_DeployState, FIELD_INTEGER),
+	DEFINE_FIELD(CNPCRoninTurret, m_DeploySequenceEnd, FIELD_TIME),
 	DEFINE_FIELD(CNPCRoninTurret, m_KVSightFOV, FIELD_FLOAT),
 	DEFINE_FIELD(CNPCRoninTurret, m_ShootFOV, FIELD_FLOAT),
 	DEFINE_FIELD(CNPCRoninTurret, m_SearchRange, FIELD_FLOAT),
@@ -155,7 +158,7 @@ void CNPCRoninTurret::Spawn(void)
 	UTIL_SetSize(pev, Vector(-14, -12, 0), Vector(14, 12, 24));
 
 	pev->solid = SOLID_BBOX;
-	pev->movetype = MOVETYPE_BOUNCE;
+	pev->movetype = MOVETYPE_NONE;
 	pev->friction = 1.0f;
 	pev->sequence = NPCRONIN_IDLE1;
 	pev->frame = 0;
@@ -180,6 +183,9 @@ void CNPCRoninTurret::Spawn(void)
 
 	m_hEnemy = nullptr;
 	ResetSequenceInfo();
+
+	SetThink(&CNPCRoninTurret::MainThink);
+	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
 
 	// If the saved state was during a deploy or undeploy,
 	// re-initiate the action.
@@ -257,6 +263,9 @@ void CNPCRoninTurret::StartToss(const Vector& velocity, const Vector& angularVel
 
 void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, const Vector& angularVelocity)
 {
+	pev->movetype = MOVETYPE_IN_TOSS;
+	pev->gravity = 0.75f;
+
 	UTIL_SetOrigin(pev, origin);
 	velocity.CopyToArray(pev->velocity);
 	angularVelocity.CopyToArray(pev->avelocity);
@@ -265,9 +274,62 @@ void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, co
 	pev->angles[YAW] = UTIL_VecToAngles(velocity.Normalize())[YAW];
 	pev->angles[ROLL] = 0.0f;
 
-	pev->sequence = NPCRONIN_TOSS_SPIN;
+	m_DeployState = DeployState::IN_TOSS;
+	pev->sequence = NPCRONIN_IDLE1;
 	pev->frame = 0;
 	ResetSequenceInfo();
+
+	// If the Ronin is tossed, it can search anywhere.
+	m_flFieldOfView = CalculateFOVDotProduct(360.0f);
+}
+
+void CNPCRoninTurret::MainThink()
+{
+	UpdateVelocity();
+
+	switch ( m_DeployState )
+	{
+		case DeployState::DEPLOYING:
+		{
+			DeployingThink();
+			break;
+		}
+
+		case DeployState::DEPLOYED:
+		{
+			ActiveThink();
+			break;
+		}
+
+		case DeployState::UNDEPLOYING:
+		{
+			UndeployingThink();
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+
+	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
+}
+
+void CNPCRoninTurret::DeployingThink()
+{
+	if ( std::isnan(m_DeploySequenceEnd) || m_DeploySequenceEnd <= gpGlobals->time )
+	{
+		DeployFinished();
+	}
+}
+
+void CNPCRoninTurret::UndeployingThink()
+{
+	if ( std::isnan(m_DeploySequenceEnd) || m_DeploySequenceEnd <= gpGlobals->time )
+	{
+		UndeployFinished();
+	}
 }
 
 void CNPCRoninTurret::ActiveThink()
@@ -304,12 +366,12 @@ void CNPCRoninTurret::BeginDeploy()
 	SetSequence(NPCRONIN_DEPLOY);
 	pev->frame = 0;
 
-	SetThink(&CNPCRoninTurret::DeployFinished);
-	pev->nextthink = gpGlobals->time + DEPLOY_DURATION;
+	m_DeploySequenceEnd = gpGlobals->time + DEPLOY_DURATION;
 }
 
 void CNPCRoninTurret::DeployFinished()
 {
+	m_DeploySequenceEnd = NAN;
 	m_DeployState = DeployState::DEPLOYED;
 	SetSequence(NPCRONIN_DEPLOY_IDLE);
 
@@ -320,8 +382,6 @@ void CNPCRoninTurret::DeployFinished()
 
 	m_hEnemy = nullptr;
 	m_LastAngleUpdate = NAN;
-	SetThink(&CNPCRoninTurret::ActiveThink);
-	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
 }
 
 void CNPCRoninTurret::BeginUndeploy()
@@ -336,15 +396,14 @@ void CNPCRoninTurret::BeginUndeploy()
 	SetSequence(NPCRONIN_IDLE1);
 
 	m_LastAngleUpdate = NAN;
-	SetThink(&CNPCRoninTurret::UndeployFinished);
-	pev->nextthink = gpGlobals->time + UNDEPLOY_DURATION;
+	m_DeploySequenceEnd = gpGlobals->time + UNDEPLOY_DURATION;
 }
 
 void CNPCRoninTurret::UndeployFinished()
 {
+	m_DeploySequenceEnd = NAN;
 	m_DeployState = DeployState::NOT_DEPLOYED;
 	SetSequence(NPCRONIN_IDLE1);
-	SetThink(nullptr);
 }
 
 void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
@@ -363,6 +422,38 @@ void CNPCRoninTurret::UpdateModelControllerValues()
 {
 	SetBoneController(0, m_CurrentGunAngles[YAW]);
 	SetBoneController(1, -m_CurrentGunAngles[PITCH]);
+}
+
+void CNPCRoninTurret::UpdateVelocity()
+{
+	static constexpr float REST_SPEED_THRESHOLD = 5.0f;
+
+	if ( pev->movetype != MOVETYPE_IN_TOSS )
+	{
+		return;
+	}
+
+	const float speed = Vector(pev->velocity).Length();
+
+	if ( speed < REST_SPEED_THRESHOLD )
+	{
+		pev->movetype = MOVETYPE_NONE;
+		pev->gravity = 1.0f;
+
+		VectorCopy(vec3_origin, pev->velocity);
+		VectorCopy(vec3_origin, pev->avelocity);
+
+		return;
+	}
+
+	if ( !(pev->flags & FL_ONGROUND) )
+	{
+		return;
+	}
+
+	// Manually apply some friction
+	VectorScale(pev->velocity, sv_ronin_slide_friction.value, pev->velocity);
+	VectorScale(pev->avelocity, sv_ronin_slide_friction.value * 0.9f, pev->avelocity);
 }
 
 CBaseEntity* CNPCRoninTurret::FindBestTarget()

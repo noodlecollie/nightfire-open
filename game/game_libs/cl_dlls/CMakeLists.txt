@@ -75,7 +75,6 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponattributes/weaponatts_collection.h
 	../game_shared/weaponattributes/weaponatts_collection.cpp
 	../game_shared/weaponattributes/weaponatts_core.h
-	../game_shared/weaponattributes/weaponatts_customcvar.h
 	../game_shared/weaponattributes/weaponatts_hitscanattack.h
 	../game_shared/weaponattributes/weaponatts_meleeattack.h
 	../game_shared/weaponattributes/weaponatts_playermodel.h

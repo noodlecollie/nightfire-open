@@ -35,21 +35,9 @@ namespace WeaponAtts
 			SkillRecords[index].RegisterCvars();
 		}
 
-		m_CustomCvarObjects.Purge();
-		m_CustomCvarObjects.SetCount(CustomCvars.Count());
-
 		FOR_EACH_VEC(CustomCvars, index)
 		{
-			const WACustomCvar& cvarDef = CustomCvars[index];
-			cvar_t& cvar = m_CustomCvarObjects[index];
-
-			cvar.name = const_cast<char*>(cvarDef.Name);
-			cvar.string = const_cast<char*>(cvarDef.DefaultValue);
-			cvar.value = cvarDef.IsNumerical ? static_cast<float>(atof(cvar.string)) : 0.0f;
-			cvar.flags = 0;
-			cvar.next = nullptr;
-
-			CVAR_REGISTER(&cvar);
+			CVAR_REGISTER(CustomCvars[index]);
 		}
 
 		m_CvarsRegistered = true;

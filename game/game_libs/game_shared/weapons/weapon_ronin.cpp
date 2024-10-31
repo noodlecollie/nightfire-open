@@ -62,7 +62,12 @@ void CWeaponRonin::CreateProjectile(const WeaponAtts::WAProjectileAttack& projec
 	Vector location = tr.flFraction < 1.0f ? Vector(tr.vecEndPos) : traceEnd;
 	location -= forward * 32.0f;
 
-	turret->StartToss(location, forward * 200.0f, Vector(/*TODO: Angular velocity*/));
+	Vector velocity = (200.0f * forward) + (150.0f * Vector(0, 0, 1));
+
+	const float rotDir = RANDOM_LONG(0, 1) ? 1.0f : -1.0f;
+	Vector avelocity(0, RANDOM_FLOAT(360.0f * rotDir, 540.0f * rotDir), 0);
+
+	turret->StartToss(location, velocity, avelocity);
 }
 #endif
 

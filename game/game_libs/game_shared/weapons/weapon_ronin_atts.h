@@ -5,6 +5,10 @@
 #include "weapon_pref_weights.h"
 #include "weaponatts_projectileattack.h"
 
+#ifndef CLIENT_DLL
+#include "npc/npc_ronin_turret.h"
+#endif
+
 enum VRoninAnimations_e
 {
 	VRONIN_CASE_IDLE1 = 0,
@@ -59,6 +63,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_ronin_bullet", &skilldata_t::plrDmgRoninBullet));
 		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_ronin_explosion", &skilldata_t::plrDmgRoninExplosion));
+
+#ifndef CLIENT_DLL
+		obj.CustomCvars.AddToTail(&sv_ronin_slide_friction);
+#endif
 
 		WAProjectileAttack* priAttack = new WAProjectileAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));

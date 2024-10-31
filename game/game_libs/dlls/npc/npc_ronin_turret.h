@@ -2,6 +2,8 @@
 
 #include "standard_includes.h"
 
+extern cvar_t sv_ronin_slide_friction;
+
 enum NPCRoninTurretAnimations_e
 {
 	NPCRONIN_IDLE1,
@@ -21,6 +23,8 @@ public:
 	// Bullets per second
 	static constexpr float DEFAULT_FIRE_RATE = 8.0f;
 	static constexpr float MAX_FIRE_RATE = 20.0f;
+
+	static void RegisterCvars();
 
 	int BloodColor(void) override;
 	void GibMonster(void) override;
@@ -48,9 +52,11 @@ private:
 		NOT_DEPLOYED,
 		DEPLOYING,
 		DEPLOYED,
-		UNDEPLOYING
+		UNDEPLOYING,
+		IN_TOSS
 	};
 
+	// Deploy/undeploy
 	static constexpr float DEPLOY_DURATION = 1.8f;
 	static constexpr float UNDEPLOY_DURATION = 0.5f;
 
@@ -68,8 +74,15 @@ private:
 	static constexpr float DEFAULT_SIGHT_FOV = 150.0f;
 	static constexpr float DEFAULT_SHOOT_FOV = 20.0f;
 
+	// Movement
+	static constexpr int MOVETYPE_IN_TOSS = MOVETYPE_BOUNCE;
+	static constexpr float DEFAULT_FRICTION = 0.9f;
+
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 
+	void MainThink();
+	void DeployingThink();
+	void UndeployingThink();
 	void ActiveThink();
 
 	void BeginDeploy();
@@ -80,6 +93,7 @@ private:
 	void SetSequence(NPCRoninTurretAnimations_e index);
 	void SetCurrentGunAngles(const Vector& angles);
 	void UpdateModelControllerValues();
+	void UpdateVelocity();
 	CBaseEntity* FindBestTarget();
 	void RotateTowardsTarget(const Vector& targetPos);
 	void FireGun();
@@ -107,6 +121,7 @@ private:
 	float m_RotationSpeed = NAN;
 
 	DeployState m_DeployState = DeployState::NOT_DEPLOYED;
+	float m_DeploySequenceEnd = NAN;
 
 	// Gun angles, relative to the overall entity angles
 	Vector m_CurrentGunAngles;
