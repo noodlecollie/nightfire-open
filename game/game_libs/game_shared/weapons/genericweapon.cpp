@@ -81,6 +81,11 @@ void CGenericWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMo
 	PrecacheSoundSet(attackMode.AttackSounds);
 	PrecacheSoundSet(attackMode.ViewModelAttackSounds);
 
+	if ( attackMode.OverrideAnimations )
+	{
+		PrecacheSoundSet(attackMode.OverrideAnimations->ReloadSounds);
+	}
+
 	const uint32_t index = attackMode.Signature()->Index;
 
 	if ( static_cast<uint32_t>(m_AttackModeEvents.Count()) < index + 1 )
@@ -191,11 +196,12 @@ int CGenericWeapon::AddToPlayer(CBasePlayer* pPlayer)
 BOOL CGenericWeapon::Deploy()
 {
 	const WeaponAtts::WACollection& atts = WeaponAttributes();
+	const WeaponAtts::ViewModelAnimationSet& anims = GetViewModelAnimationSet();
 
 	return DefaultDeploy(
 		atts.ViewModel.ModelName,
 		atts.PlayerModel.PlayerModelName,
-		atts.ViewModel.Animations.Anim_Draw,
+		anims.Anim_Draw,
 		atts.PlayerModel.PlayerAnimExtension,
 		m_iViewModelBody);
 }
@@ -278,7 +284,7 @@ void CGenericWeapon::Reload()
 		return;
 	}
 
-	const WeaponAtts::ViewModelAnimationSet& anims = atts.ViewModel.Animations;
+	const WeaponAtts::ViewModelAnimationSet& anims = GetViewModelAnimationSet();
 
 	const WeightedValueList<int>* reloadAnimList =
 		m_iClip < 1 ? &anims.AnimList_ReloadEmpty : &anims.AnimList_Reload;
@@ -636,8 +642,7 @@ bool CGenericWeapon::IdleProcess_CheckSpecialReload()
 
 void CGenericWeapon::IdleProcess_PlayIdleAnimation()
 {
-	const WeaponAtts::WAViewModel& vm = WeaponAttributes().ViewModel;
-	const WeaponAtts::ViewModelAnimationSet& anims = vm.Animations;
+	const WeaponAtts::ViewModelAnimationSet& anims = GetViewModelAnimationSet();
 	const WeightedValueList<int>* animList = m_iClip < 1 ? &anims.AnimList_IdleEmpty : &anims.AnimList_Idle;
 
 	if ( m_iClip < 1 && animList->Count() < 1 )
@@ -920,6 +925,16 @@ void CGenericWeapon::SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode
 	m_pSecondaryAttackMode = mode;
 }
 
+void CGenericWeapon::SetViewModelAnimationOverride(const WeaponAtts::WABaseAttack* mode)
+{
+	if ( !mode )
+	{
+		m_pViewModelAnims = nullptr;
+	}
+
+	m_pViewModelAnims = mode->OverrideAnimations.get();
+}
+
 float CGenericWeapon::GetInaccuracy() const
 {
 	return m_flInaccuracy;
@@ -953,6 +968,16 @@ const WeaponAtts::AccuracyParameters* CGenericWeapon::GetWeaponAccuracyParams() 
 	const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
 		dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
 	return ammoAttack ? &ammoAttack->Accuracy : nullptr;
+}
+
+const WeaponAtts::ViewModelAnimationSet& CGenericWeapon::GetViewModelAnimationSet() const
+{
+	if ( m_pViewModelAnims )
+	{
+		return *m_pViewModelAnims;
+	}
+
+	return WeaponAttributes().ViewModel.Animations;
 }
 
 const char* CGenericWeapon::PickupSound() const

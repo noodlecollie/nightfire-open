@@ -120,6 +120,10 @@ protected:
 	void SetPrimaryAttackMode(const WeaponAtts::WABaseAttack* mode);
 	void SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode);
 
+	// Override the view model animations based on those used
+	// for an attack mode. Pass null to reset.
+	void SetViewModelAnimationOverride(const WeaponAtts::WABaseAttack* mode);
+
 	// T can be used to validate the type of attack expected to be set,
 	// but can be omitted if this is not required.
 	template<typename T = WeaponAtts::WABaseAttack>
@@ -192,6 +196,7 @@ private:
 
 	void FindWeaponSlotInfo();
 	const WeaponAtts::AccuracyParameters* GetWeaponAccuracyParams() const;
+	const WeaponAtts::ViewModelAnimationSet& GetViewModelAnimationSet() const;
 
 	void RunAttackLogic();
 	void PerformReload();
@@ -209,6 +214,7 @@ private:
 
 	const WeaponAtts::WABaseAttack* m_pPrimaryAttackMode = nullptr;
 	const WeaponAtts::WABaseAttack* m_pSecondaryAttackMode = nullptr;
+	const WeaponAtts::ViewModelAnimationSet* m_pViewModelAnims = nullptr;
 
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;

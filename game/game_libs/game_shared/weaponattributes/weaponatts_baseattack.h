@@ -1,8 +1,10 @@
 #pragma once
 
+#include <memory>
 #include "weaponatts_base.h"
 #include "weightedvaluelist.h"
 #include "weaponatts_soundset.h"
+#include "weaponatts_viewmodel.h"
 #include "weaponids.h"
 #include "weapons.h"
 
@@ -78,6 +80,10 @@ namespace WeaponAtts
 		// If false, does not play the dry fire noise if the
 		// weapon is fired with no ammo.
 		bool PlayDryFireSoundOnEmpty = true;
+
+		// If set, these animations will override the default ones specified
+		// in the view model attributes when this attack mode is used.
+		std::shared_ptr<ViewModelAnimationSet> OverrideAnimations;
 
 		CrosshairParameters Crosshair;
 
