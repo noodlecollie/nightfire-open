@@ -37,8 +37,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_fists/v_fists.mdl";
-		vm.Anim_Draw = FISTS_IDLE1;
-		vm.AnimList_Idle << FISTS_IDLE1;
+		vm.Animations.Anim_Draw = FISTS_IDLE1;
+		vm.Animations.AnimList_Idle << FISTS_IDLE1;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerAnimExtension = "dukes";

@@ -59,10 +59,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_mp9/v_mp9.mdl";
-		vm.Anim_Draw = MP9_2HANDED_DRAW;
-		vm.AnimList_Idle << MP9_2HANDED_IDLE1 << MP9_2HANDED_IDLE2 << MP9_2HANDED_IDLE3;
-		vm.AnimList_Reload << MP9_2HANDED_RELOAD_NOT_EMPTY;
-		vm.AnimList_ReloadEmpty << MP9_2HANDED_RELOAD_EMPTY;
+		vm.Animations.Anim_Draw = MP9_2HANDED_DRAW;
+		vm.Animations.AnimList_Idle << MP9_2HANDED_IDLE1 << MP9_2HANDED_IDLE2 << MP9_2HANDED_IDLE3;
+		vm.Animations.AnimList_Reload << MP9_2HANDED_RELOAD_NOT_EMPTY;
+		vm.Animations.AnimList_ReloadEmpty << MP9_2HANDED_RELOAD_EMPTY;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_mp9/p_mp9.mdl";

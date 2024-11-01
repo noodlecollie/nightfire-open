@@ -7,9 +7,8 @@
 
 namespace WeaponAtts
 {
-	struct WAViewModel : public WABase
+	struct ViewModelAnimationSet
 	{
-		const char* ModelName = NULL;
 		int Anim_Draw = -1;
 
 		WeightedValueList<int> AnimList_Idle;
@@ -22,10 +21,21 @@ namespace WeaponAtts
 
 		WASoundSet ReloadSounds;
 
+		void Validate() const
+		{
+			ASSERTSZ_Q(AnimList_Idle.Count() > 0, "At least one idle animation must be specified.");
+		}
+	};
+
+	struct WAViewModel : public WABase
+	{
+		const char* ModelName = NULL;
+		ViewModelAnimationSet Animations;
+
 		virtual void Validate() const override
 		{
 			ASSERTSZ_Q(ModelName, "View model must be specified.");
-			ASSERTSZ_Q(AnimList_Idle.Count() > 0, "At least one idle animation must be specified.");
+			Animations.Validate();
 		}
 	};
 }  // namespace WeaponAtts

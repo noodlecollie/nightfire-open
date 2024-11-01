@@ -58,8 +58,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_ronin/v_ronin.mdl";
-		vm.Anim_Draw = VRONIN_CASE_DRAW;
-		vm.AnimList_Idle << VRONIN_CASE_IDLE1 << VRONIN_CASE_IDLE2 << VRONIN_CASE_IDLE3;
+		vm.Animations.Anim_Draw = VRONIN_CASE_DRAW;
+		vm.Animations.AnimList_Idle << VRONIN_CASE_IDLE1 << VRONIN_CASE_IDLE2 << VRONIN_CASE_IDLE3;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_ronin/p_ronin.mdl";

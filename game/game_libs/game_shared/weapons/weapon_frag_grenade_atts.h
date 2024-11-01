@@ -49,8 +49,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_frag_grenade/v_frag_grenade.mdl";
-		vm.Anim_Draw = FRAGGRENADE_DRAW;
-		vm.AnimList_Idle << FRAGGRENADE_IDLE1 << FRAGGRENADE_IDLE2 << FRAGGRENADE_IDLE3;
+		vm.Animations.Anim_Draw = FRAGGRENADE_DRAW;
+		vm.Animations.AnimList_Idle << FRAGGRENADE_IDLE1 << FRAGGRENADE_IDLE2 << FRAGGRENADE_IDLE3;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_frag_grenade/p_frag_grenade.mdl";

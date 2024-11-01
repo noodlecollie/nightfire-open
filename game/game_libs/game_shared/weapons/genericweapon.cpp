@@ -118,7 +118,7 @@ void CGenericWeapon::PrecacheViewModel(const WeaponAtts::WAViewModel& viewModel)
 		StudioGetAnimationDurations(m_iViewModelIndex, m_ViewAnimDurations);
 	}
 
-	PrecacheSoundSet(viewModel.ReloadSounds);
+	PrecacheSoundSet(viewModel.Animations.ReloadSounds);
 }
 
 void CGenericWeapon::PrecachePlayerModel(const WeaponAtts::WAPlayerModel& playerModel)
@@ -195,7 +195,7 @@ BOOL CGenericWeapon::Deploy()
 	return DefaultDeploy(
 		atts.ViewModel.ModelName,
 		atts.PlayerModel.PlayerModelName,
-		atts.ViewModel.Anim_Draw,
+		atts.ViewModel.Animations.Anim_Draw,
 		atts.PlayerModel.PlayerAnimExtension,
 		m_iViewModelBody);
 }
@@ -278,12 +278,14 @@ void CGenericWeapon::Reload()
 		return;
 	}
 
+	const WeaponAtts::ViewModelAnimationSet& anims = atts.ViewModel.Animations;
+
 	const WeightedValueList<int>* reloadAnimList =
-		m_iClip < 1 ? &atts.ViewModel.AnimList_ReloadEmpty : &atts.ViewModel.AnimList_Reload;
+		m_iClip < 1 ? &anims.AnimList_ReloadEmpty : &anims.AnimList_Reload;
 
 	if ( m_iClip < 1 && reloadAnimList->Count() < 1 )
 	{
-		reloadAnimList = &atts.ViewModel.AnimList_Reload;
+		reloadAnimList = &anims.AnimList_Reload;
 	}
 
 	int anim = reloadAnimList->Count() > 0
@@ -294,7 +296,8 @@ void CGenericWeapon::Reload()
 
 	if ( DefaultReload(maxClip, anim, animDuration, m_iViewModelBody) )
 	{
-		PlaySound(atts.ViewModel.ReloadSounds);
+		PlaySound(anims.ReloadSounds);
+
 		m_flTimeWeaponIdle =
 			UTIL_WeaponTimeBase() + animDuration + UTIL_SharedRandomFloat(m_pPlayer->random_seed, 0, 1);
 	}
@@ -634,11 +637,12 @@ bool CGenericWeapon::IdleProcess_CheckSpecialReload()
 void CGenericWeapon::IdleProcess_PlayIdleAnimation()
 {
 	const WeaponAtts::WAViewModel& vm = WeaponAttributes().ViewModel;
-	const WeightedValueList<int>* animList = m_iClip < 1 ? &vm.AnimList_IdleEmpty : &vm.AnimList_Idle;
+	const WeaponAtts::ViewModelAnimationSet& anims = vm.Animations;
+	const WeightedValueList<int>* animList = m_iClip < 1 ? &anims.AnimList_IdleEmpty : &anims.AnimList_Idle;
 
 	if ( m_iClip < 1 && animList->Count() < 1 )
 	{
-		animList = &vm.AnimList_Idle;
+		animList = &anims.AnimList_Idle;
 	}
 
 	if ( animList->Count() < 1 )

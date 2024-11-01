@@ -48,9 +48,9 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_grenadelauncher/v_grenadelauncher.mdl";
-		vm.Anim_Draw = GRENADELAUNCHER_DRAW;
-		vm.AnimList_Idle << GRENADELAUNCHER_IDLE1 << GRENADELAUNCHER_IDLE2;
-		vm.AnimList_Reload << GRENADELAUNCHER_RELOAD;
+		vm.Animations.Anim_Draw = GRENADELAUNCHER_DRAW;
+		vm.Animations.AnimList_Idle << GRENADELAUNCHER_IDLE1 << GRENADELAUNCHER_IDLE2;
+		vm.Animations.AnimList_Reload << GRENADELAUNCHER_RELOAD;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_grenadelauncher/p_grenadelauncher.mdl";
