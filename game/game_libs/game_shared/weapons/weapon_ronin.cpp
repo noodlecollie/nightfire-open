@@ -19,6 +19,7 @@ CWeaponRonin::CWeaponRonin() :
 	CBaseGrenadeLauncher()
 {
 	SetPrimaryAttackModeFromAttributes(VRONIN_ATTACKMODE_TOSS);
+	SetViewModelAnimationSource(WeaponAttackType::Primary);
 }
 
 const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const

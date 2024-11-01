@@ -98,4 +98,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		throwAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
 		throwAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
+
+		throwAttack->OverrideAnimations = std::make_shared<ViewModelAnimationSet>();
+		*throwAttack->OverrideAnimations = vm.Animations;
 	});
