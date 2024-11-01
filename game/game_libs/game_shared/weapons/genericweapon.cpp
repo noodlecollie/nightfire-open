@@ -773,15 +773,17 @@ bool CGenericWeapon::HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int min
 	}
 }
 
-bool CGenericWeapon::DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode, int decrement)
+bool CGenericWeapon::DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode)
 {
 	const WeaponAtts::WAAmmoBasedAttack* ammoAttack = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(attackMode);
 
-	if ( !ammoAttack )
+	if ( !ammoAttack || ammoAttack->AmmoDecrement < 1 )
 	{
 		// Treat as an infinite pool.
 		return true;
 	}
+
+	const int decrement = ammoAttack->AmmoDecrement;
 
 	switch ( ammoAttack->UsesAmmoPool )
 	{

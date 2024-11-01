@@ -97,7 +97,7 @@ protected:
 	void DelayPendingActions(float secs, bool allowIfEarlier = false);
 	void DelayFiring(float secs, bool allowIfEarlier = false, WeaponAttackType attackType = WeaponAttackType::None);
 	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
-	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode, int decrement);
+	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
 	int AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const;
 	bool CanReload() const;
 

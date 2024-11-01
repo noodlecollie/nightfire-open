@@ -59,7 +59,7 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(
 		return false;
 	}
 
-	DecrementAmmo(hitscanAttack, 1);
+	DecrementAmmo(hitscanAttack);
 
 	m_pPlayer->pev->effects = (int)(m_pPlayer->pev->effects) | EF_MUZZLEFLASH;
 

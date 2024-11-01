@@ -134,6 +134,7 @@ namespace WeaponAtts
 		static constexpr size_t AMMO_POOL_COUNT = 2;
 
 		AmmoPool UsesAmmoPool = AmmoPool::None;
+		uint8_t AmmoDecrement = 1;
 		AccuracyParameters Accuracy;
 		int MuzzleFlashBrightness = NORMAL_GUN_FLASH;
 		float ViewPunchY = 0.0f;
