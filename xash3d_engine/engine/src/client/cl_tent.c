@@ -2014,13 +2014,22 @@ void CL_ParseTempEntity(sizebuf_t* msg)
 			R_Sprite_Smoke(pTemp, scale);
 			break;
 		case TE_TRACER:
+		case TE_BULLET_TRACER:
 			pos[0] = MSG_ReadCoord(&buf);
 			pos[1] = MSG_ReadCoord(&buf);
 			pos[2] = MSG_ReadCoord(&buf);
 			pos2[0] = MSG_ReadCoord(&buf);
 			pos2[1] = MSG_ReadCoord(&buf);
 			pos2[2] = MSG_ReadCoord(&buf);
-			R_TracerEffect(pos, pos2);
+
+			if ( type == TE_BULLET_TRACER )
+			{
+				R_BulletTracerEffect(pos, pos2);
+			}
+			else
+			{
+				R_TracerEffect(pos, pos2);
+			}
 			break;
 		case TE_SPARKS:
 			pos[0] = MSG_ReadCoord(&buf);

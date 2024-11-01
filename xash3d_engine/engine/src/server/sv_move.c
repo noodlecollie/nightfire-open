@@ -468,29 +468,47 @@ void SV_NewChaseDir(edict_t* actor, vec3_t destination, float dist)
 	deltay = destination[1] - actor->v.origin[1];
 
 	if ( deltax > 10.0f )
+	{
 		d[1] = 0.0f;
+	}
 	else if ( deltax < -10.0f )
+	{
 		d[1] = 180.0f;
+	}
 	else
+	{
 		d[1] = -1;
+	}
 
 	if ( deltay < -10.0f )
+	{
 		d[2] = 270.0f;
+	}
 	else if ( deltay > 10.0f )
+	{
 		d[2] = 90.0f;
+	}
 	else
+	{
 		d[2] = -1.0f;
+	}
 
 	// try direct route
 	if ( d[1] != -1.0f && d[2] != -1.0f )
 	{
 		if ( d[1] == 0.0f )
+		{
 			tempdir = (d[2] == 90.0f) ? 45.0f : 315.0f;
+		}
 		else
+		{
 			tempdir = (d[2] == 90.0f) ? 135.0f : 215.0f;
+		}
 
 		if ( tempdir != turnaround && SV_StepDirection(actor, tempdir, dist) )
+		{
 			return;
+		}
 	}
 
 	// try other directions
@@ -502,14 +520,20 @@ void SV_NewChaseDir(edict_t* actor, vec3_t destination, float dist)
 	}
 
 	if ( d[1] != -1.0f && d[1] != turnaround && SV_StepDirection(actor, d[1], dist) )
+	{
 		return;
+	}
 
 	if ( d[2] != -1.0f && d[2] != turnaround && SV_StepDirection(actor, d[2], dist) )
+	{
 		return;
+	}
 
 	// there is no direct path to the player, so pick another direction
 	if ( olddir != -1.0f && SV_StepDirection(actor, olddir, dist) )
+	{
 		return;
+	}
 
 	// fine, just run somewhere.
 	if ( COM_RandomLong(0, 1) != 1 )
@@ -517,7 +541,9 @@ void SV_NewChaseDir(edict_t* actor, vec3_t destination, float dist)
 		for ( tempdir = 0; tempdir <= 315.0f; tempdir += 45.0f )
 		{
 			if ( tempdir != turnaround && SV_StepDirection(actor, tempdir, dist) )
+			{
 				return;
+			}
 		}
 	}
 	else
@@ -525,13 +551,17 @@ void SV_NewChaseDir(edict_t* actor, vec3_t destination, float dist)
 		for ( tempdir = 315.0f; tempdir >= 0.0f; tempdir -= 45.0f )
 		{
 			if ( tempdir != turnaround && SV_StepDirection(actor, tempdir, dist) )
+			{
 				return;
+			}
 		}
 	}
 
 	// we tried. run backwards. that ought to work...
 	if ( turnaround != -1.0f && SV_StepDirection(actor, turnaround, dist) )
+	{
 		return;
+	}
 
 	// well, we're stuck somehow.
 	actor->v.ideal_yaw = olddir;

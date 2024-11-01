@@ -55,8 +55,6 @@ public:
 	static TYPEDESCRIPTION m_SaveData[];
 #endif
 
-	static constexpr float DEFAULT_BULLET_TRACE_DISTANCE = 8192;
-
 protected:
 	enum class WeaponAttackType
 	{
@@ -96,7 +94,7 @@ protected:
 	void DelayPendingActions(float secs, bool allowIfEarlier = false);
 	void DelayFiring(float secs, bool allowIfEarlier = false, WeaponAttackType attackType = WeaponAttackType::None);
 	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
-	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode, int decrement);
+	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
 	int AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const;
 	bool CanReload() const;
 
@@ -118,6 +116,11 @@ protected:
 	const WeaponAtts::WABaseAttack* GetSecondaryAttackMode() const;
 	void SetPrimaryAttackMode(const WeaponAtts::WABaseAttack* mode);
 	void SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode);
+
+	// Override the view model animations based on those used
+	// for an attack mode.
+	WeaponAttackType GetViewModelAnimationSource();
+	void SetViewModelAnimationSource(WeaponAttackType source);
 
 	// T can be used to validate the type of attack expected to be set,
 	// but can be omitted if this is not required.
@@ -191,6 +194,7 @@ private:
 
 	void FindWeaponSlotInfo();
 	const WeaponAtts::AccuracyParameters* GetWeaponAccuracyParams() const;
+	const WeaponAtts::ViewModelAnimationSet& GetViewModelAnimationSet() const;
 
 	void RunAttackLogic();
 	void PerformReload();
@@ -208,6 +212,11 @@ private:
 
 	const WeaponAtts::WABaseAttack* m_pPrimaryAttackMode = nullptr;
 	const WeaponAtts::WABaseAttack* m_pSecondaryAttackMode = nullptr;
+
+	// If set to something other than none, the view model animations
+	// are taken from the specified attack mode, rather than the default
+	// view model attributes.
+	WeaponAttackType m_ViewModelAnimationSource = WeaponAttackType::None;
 
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;

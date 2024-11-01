@@ -543,14 +543,21 @@ CBaseEntity* UTIL_FindEntityInSphere(CBaseEntity* pStartEntity, const Vector& ve
 	edict_t* pentEntity;
 
 	if ( pStartEntity )
+	{
 		pentEntity = pStartEntity->edict();
+	}
 	else
+	{
 		pentEntity = NULL;
+	}
 
 	pentEntity = FIND_ENTITY_IN_SPHERE(pentEntity, vecCenter, flRadius);
 
 	if ( !FNullEnt(pentEntity) )
+	{
 		return CBaseEntity::Instance(pentEntity);
+	}
+
 	return NULL;
 }
 
@@ -2050,6 +2057,8 @@ void CSave::WriteFunction(const char* pname, void** data, int)
 		ALERT(at_error, "Invalid function pointer in entity!\n");
 }
 
+// This is where the default keyvalue resolution happens,
+// for common keys like "health".
 void EntvarsKeyvalue(entvars_t* pev, KeyValueData* pkvd)
 {
 	int i;

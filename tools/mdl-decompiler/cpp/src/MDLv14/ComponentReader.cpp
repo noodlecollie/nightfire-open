@@ -100,7 +100,7 @@ namespace MDLv14
 
 		if ( !Conversion::IsValidMotionFlag(motionType) )
 		{
-			throw ValidationException(Reflection::TypeName<Sequence>(), "Bone controller has invalid motion type.");
+			throw ValidationException(Reflection::TypeName<BoneController>(), "Bone controller has invalid motion type \"" + std::to_string(motionType) + "\".");
 		}
 
 		component.motionType = static_cast<CommonTypes::MotionFlag>(motionType);

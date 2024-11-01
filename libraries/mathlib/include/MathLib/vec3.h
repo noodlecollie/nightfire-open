@@ -288,7 +288,7 @@ public:
 		y(0.0f),
 		z(0.0f)
 	{
-		static_assert(sizeof(*this) == SIZE_BYTES, "Expected class to match the size of vec2_t");
+		static_assert(sizeof(*this) == SIZE_BYTES, "Expected class to match the size of vec3_t");
 	}
 
 	constexpr Vector(vec_t inX, vec_t inY, vec_t inZ) :

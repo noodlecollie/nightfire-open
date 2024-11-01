@@ -68,18 +68,18 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_frinesi/v_frinesi.mdl";
-		vm.Anim_Draw = FRINESI_DRAW;
-		vm.AnimList_Idle << FRINESI_IDLE1 << FRINESI_IDLE2 << FRINESI_IDLE3 << FRINESI_IDLE4;
-		vm.AnimList_Reload << FRINESI_START_RELOAD;
+		vm.Animations.Anim_Draw = FRINESI_DRAW;
+		vm.Animations.AnimList_Idle << FRINESI_IDLE1 << FRINESI_IDLE2 << FRINESI_IDLE3 << FRINESI_IDLE4;
+		vm.Animations.AnimList_Reload << FRINESI_START_RELOAD;
 
-		vm.ReloadSounds.MinVolume = 0.9f;
-		vm.ReloadSounds.MaxVolume = 0.9f;
-		vm.ReloadSounds.MinPitch = 98;
-		vm.ReloadSounds.MaxPitch = 102;
-		vm.ReloadSounds.SoundNames << "weapons/weapon_frinesi/frinesi_reload1.wav"
-								   << "weapons/weapon_frinesi/frinesi_reload2.wav"
-								   << "weapons/weapon_frinesi/frinesi_reload3.wav"
-								   << "weapons/weapon_frinesi/frinesi_reload4.wav";
+		vm.Animations.ReloadSounds.MinVolume = 0.9f;
+		vm.Animations.ReloadSounds.MaxVolume = 0.9f;
+		vm.Animations.ReloadSounds.MinPitch = 98;
+		vm.Animations.ReloadSounds.MaxPitch = 102;
+		vm.Animations.ReloadSounds.SoundNames << "weapons/weapon_frinesi/frinesi_reload1.wav"
+											  << "weapons/weapon_frinesi/frinesi_reload2.wav"
+											  << "weapons/weapon_frinesi/frinesi_reload3.wav"
+											  << "weapons/weapon_frinesi/frinesi_reload4.wav";
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_frinesi/p_frinesi.mdl";

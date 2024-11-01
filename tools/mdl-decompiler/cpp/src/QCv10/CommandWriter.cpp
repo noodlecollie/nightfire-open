@@ -129,8 +129,8 @@ namespace QCv10
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCBoneController& command)
 	{
-		stream << "$controller " << command.index << " \"" << command.bone << "\" " << command.motionFlags << " "
-			   << command.start << " " << command.end;
+		stream << "$controller " << command.index << " \"" << command.bone << "\" "
+			   << Conversion::MotionFlagShortName(command.motionType) << " " << command.start << " " << command.end;
 	}
 
 	void CommandWriter::WriteInternal(std::ostream& stream, const QCHitBox& command)
@@ -187,19 +187,19 @@ namespace QCv10
 
 		for ( const Container<std::string>& list : command.skins )
 		{
-			stream << "{ ";
+			stream << IndentString() << "{ ";
 
 			for ( size_t index = 0; index < list.size(); ++index )
 			{
 				if ( index > 0 )
 				{
-					stream << ", ";
+					stream << " ";
 				}
 
-				stream << list.GetElementChecked(index);
+				stream << "\"" << list.GetElementChecked(index) << "\"";
 			}
 
-			stream << " }";
+			stream << " }" << std::endl;
 		}
 
 		DecreaseIndent();

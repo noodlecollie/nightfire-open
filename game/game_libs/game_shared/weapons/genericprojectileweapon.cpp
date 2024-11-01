@@ -101,7 +101,7 @@ bool CGenericProjectileWeapon::AmmoDecrementWillEmptyWeaponClip(
 
 void CGenericProjectileWeapon::CreateProjectileAndDecrementAmmo(const WeaponAtts::WAProjectileAttack& projectileAttack)
 {
-	DecrementAmmo(&projectileAttack, 1);
+	DecrementAmmo(&projectileAttack);
 
 #ifndef CLIENT_DLL
 	// Only create the actual projectile on the server.

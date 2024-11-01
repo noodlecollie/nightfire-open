@@ -30,7 +30,7 @@
 
 #define SF_FUNNEL_REVERSE 1  // funnel effect repels particles instead of attracting them.
 
-// Lightning target, just alias landmark
+// Lighting target, just alias landmark
 LINK_ENTITY_TO_CLASS(info_target, CPointEntity)
 
 class CBubbling : public CBaseEntity

@@ -20,7 +20,7 @@ namespace WeaponAtts
 
 		virtual void Validate() const override
 		{
-			WABaseAttack::Validate();
+			WAAmmoBasedAttack::Validate();
 
 			ASSERTSZ_Q(BaseDamagePerShot, "Skill entry for base damage per shot must be specified.");
 		}

@@ -11,6 +11,7 @@ enum class WeaponId_e
 	WeaponL96A1,
 	WeaponMP9,
 	WeaponFragGrenade,
+	WeaponRonin,
 
 	// Debugging weapons
 	WeaponSilent

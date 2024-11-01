@@ -8,11 +8,6 @@
 #include "ui/crosshair/spreadVisualiser.h"
 #include "ui/crosshair/BaseCrosshairRenderer.h"
 
-namespace WeaponAtts
-{
-	struct WAAmmoBasedAttack;
-}
-
 class CHudCrosshair : public CHudBase
 {
 public:
@@ -26,7 +21,6 @@ public:
 private:
 	bool UpdateParameters();
 	void UpdateParametersFromDebugCvars();
-	const WeaponAtts::WAAmmoBasedAttack* GetAttackMode(const WEAPON& weapon) const;
 
 	cvar_t* m_CheatsCvar = nullptr;
 	cvar_t* m_CrosshairCvar = nullptr;

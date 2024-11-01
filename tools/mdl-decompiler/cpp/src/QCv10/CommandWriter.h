@@ -4,12 +4,20 @@
 #include <type_traits>
 #include "QCv10/QCCommands.h"
 #include "QCv10/QCECommands.h"
+#include "QCv10/QCCommandReflection.h"
+#include "QCv10/QCECommandReflection.h"
 
 namespace QCv10
 {
 	class CommandWriter
 	{
 	public:
+		enum class WarnIfInvalid
+		{
+			No = 0,
+			Yes
+		};
+
 		template<typename T>
 		void Write(std::ostream& stream, const T& command)
 		{
@@ -17,13 +25,17 @@ namespace QCv10
 		}
 
 		template<typename T>
-		typename std::enable_if<std::is_base_of<QCBaseCommand, T>::value, void>::type WriteQCCommand(
-			std::ostream& stream,
-			const T& command)
+		typename std::enable_if<std::is_base_of<QCBaseCommand, T>::value, void>::type
+		WriteQCCommand(std::ostream& stream, const T& command, WarnIfInvalid warnIfInvalid = WarnIfInvalid::No)
 		{
 			if ( command.IsValid() )
 			{
 				WriteLine(stream, command);
+			}
+			else if ( warnIfInvalid == WarnIfInvalid::Yes )
+			{
+				stream << IndentString() << "// <WARNING: Encountered invalid " << Reflection::TypeName<T>()
+					   << " data!>" << std::endl;
 			}
 		}
 

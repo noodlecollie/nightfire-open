@@ -822,12 +822,18 @@ static int GAME_EXPORT pfnGetModelSequenceCount(struct cl_entity_s* ent)
 	return ent ? Mod_StudioGetSequenceCount(ent->model) : 0;
 }
 
+static int GAME_EXPORT pfnGetModelSkinCount(struct cl_entity_s* ent)
+{
+	return ent ? Mod_StudioGetSkinCount(ent->model) : 0;
+}
+
 static const char* GAME_EXPORT pfnGetModelSequenceName(struct cl_entity_s* ent, int sequenceIndex)
 {
 	return ent ? Mod_StudioGetSequenceName(ent->model, sequenceIndex) : NULL;
 }
 
-static qboolean GAME_EXPORT pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
+static qboolean GAME_EXPORT
+pfnGetModelSequenceBounds(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs)
 {
 	return ent ? Mod_StudioGetSequenceBounds(ent->model, sequenceIndex, outVec3Mins, outVec3Maxs) : false;
 }
@@ -1285,6 +1291,7 @@ static ui_enginefuncs_t gEngfuncs = {
 	Con_DefaultColor,
 	pfnSetModel,
 	pfnGetModelSequenceCount,
+	pfnGetModelSkinCount,
 	pfnGetModelSequenceName,
 	pfnGetModelSequenceBounds,
 	pfnGetModelEyePosition,
@@ -1335,7 +1342,8 @@ static ui_enginefuncs_t gEngfuncs = {
 	COM_CompareFileTime,
 	VID_GetModeString,
 	COM_SaveFile,
-	pfnDelete};
+	pfnDelete,
+};
 
 static void pfnEnableTextInput(int enable)
 {

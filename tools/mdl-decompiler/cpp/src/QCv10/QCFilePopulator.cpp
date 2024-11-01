@@ -149,7 +149,7 @@ namespace QCv10
 
 			qcController.index = controller.index;
 			qcController.bone = m_MDLFile->GetBones().GetElementChecked(controller.bone).name;
-			qcController.motionFlags = controller.motionType;
+			qcController.motionType = controller.motionType;
 			qcController.start = controller.start;
 			qcController.end = controller.end;
 

@@ -37,8 +37,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_fists/v_fists.mdl";
-		vm.Anim_Draw = FISTS_IDLE1;
-		vm.AnimList_Idle << FISTS_IDLE1;
+		vm.Animations.Anim_Draw = FISTS_IDLE1;
+		vm.Animations.AnimList_Idle << FISTS_IDLE1;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerAnimExtension = "dukes";
@@ -60,6 +60,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->Strikes.AddToTail(0.1f);
 		priAttack->Volume = 128;
 		priAttack->ViewModelAnimList_Attack << FISTS_JAB;
+		priAttack->Crosshair.RenderStyle = CrosshairStyle::None;
 
 		priAttack->WorldHitSounds.MinPitch = 97;
 		priAttack->WorldHitSounds.MaxPitch = 103;

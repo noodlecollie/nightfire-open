@@ -2467,14 +2467,19 @@ static int GAME_EXPORT pfnTraceMonsterHull(
 	trace_t trace;
 
 	if ( !SV_IsValidEdict(pEdict) )
+	{
 		return 0;
+	}
 
 	monsterClip = FBitSet(pEdict->v.flags, FL_MONSTERCLIP) ? true : false;
 	trace = SV_Move(v1, pEdict->v.mins, pEdict->v.maxs, v2, fNoMonsters, pentToSkip, monsterClip);
 	SV_ConvertTrace(ptr, &trace);
 
 	if ( trace.allsolid || trace.fraction != 1.0f )
+	{
 		return true;
+	}
+
 	return false;
 }
 

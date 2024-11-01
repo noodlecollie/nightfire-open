@@ -63,10 +63,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_l96a1/v_l96a1.mdl";
-		vm.Anim_Draw = L96A1_DRAW;
-		vm.AnimList_Idle << L96A1_IDLE1 << L96A1_IDLE2;
-		vm.AnimList_Reload << L96A1_RELOAD;
-		vm.AnimList_ReloadEmpty << L96A1_RELOAD_CHARGE;
+		vm.Animations.Anim_Draw = L96A1_DRAW;
+		vm.Animations.AnimList_Idle << L96A1_IDLE1 << L96A1_IDLE2;
+		vm.Animations.AnimList_Reload << L96A1_RELOAD;
+		vm.Animations.AnimList_ReloadEmpty << L96A1_RELOAD_CHARGE;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_l96a1/p_l96a1.mdl";

@@ -97,6 +97,19 @@ namespace MDLv14
 			IntToSizeT(m_Header.attachments.count),
 			IntToSizeT(m_Header.attachments.offset));
 
+		// Sometimes attachments don't have names in the MDL file for some reason.
+		// So that we can identify them, and so that the attachment component is
+		// considered valid, assign a name based on the index.
+		for ( size_t index = 0; index < m_Attachments.size(); ++index )
+		{
+			Attachment& attachment = m_Attachments[index];
+
+			if ( attachment.name.empty() )
+			{
+				attachment.name = "attachment_" + std::to_string(index);
+			}
+		}
+
 		m_SoundGroups = componentReader.ReadComponentArray<SoundGroup>(
 			fileReader,
 			IntToSizeT(m_Header.soundGroups.count),

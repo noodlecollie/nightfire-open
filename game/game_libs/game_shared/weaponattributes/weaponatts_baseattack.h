@@ -1,13 +1,48 @@
 #pragma once
 
+#include <memory>
 #include "weaponatts_base.h"
 #include "weightedvaluelist.h"
 #include "weaponatts_soundset.h"
+#include "weaponatts_viewmodel.h"
 #include "weaponids.h"
 #include "weapons.h"
 
 namespace WeaponAtts
 {
+	enum class CrosshairStyle
+	{
+		None = 0,
+		QuadLine,
+		Circle
+	};
+
+	struct CrosshairParameters
+	{
+		// The type of crosshair to use.
+		CrosshairStyle RenderStyle = CrosshairStyle::QuadLine;
+
+		// To modify these settings while debugging/testing, see the list of convars
+		// in game_libs/cl_dll/gameplay/crosshairCvars.cpp
+
+		// The radius is how far away from the centre of the screen each
+		// crosshair bar is. A value of 1 means the length of the shortest
+		// screen dimension. Minimum radius is when the weapon is at
+		// rest spread, and maximum radius is when it is at run spread.
+		float RadiusMin = 0.0f;
+		float RadiusMax = 0.5f;
+
+		// These scales specify how long the crosshair bars are at minimum
+		// and maximum inaccuracy. A value of 1 means the bar is the length
+		// of the shortest screen dimension. Minimum scale is when the weapon
+		// is at rest spread, and maximum scale is when it is at run spread.
+		float BarScaleMin = 0.04f;
+		float BarScaleMax = 0.03f;
+
+		// This is the thickness of the crosshair lines, in pixels.
+		float Thickness = 2.0f;
+	};
+
 	struct WABaseAttack : public WABase
 	{
 		enum class Classification
@@ -45,6 +80,12 @@ namespace WeaponAtts
 		// If false, does not play the dry fire noise if the
 		// weapon is fired with no ammo.
 		bool PlayDryFireSoundOnEmpty = true;
+
+		// If set, these animations will override the default ones specified
+		// in the view model attributes when this attack mode is used.
+		std::shared_ptr<ViewModelAnimationSet> OverrideAnimations;
+
+		CrosshairParameters Crosshair;
 
 		virtual Classification Classify() const = 0;
 

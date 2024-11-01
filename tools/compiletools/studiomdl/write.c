@@ -164,6 +164,7 @@ void WriteBoneInfo()
 
 	for ( i = 0; i < numattachments; i++ )
 	{
+		safe_strncpy(pattachment[i].name, attachment[i].name, sizeof(pattachment[i].name));
 		pattachment[i].bone = attachment[i].bone;
 		VectorCopy(attachment[i].org, pattachment[i].org);
 	}

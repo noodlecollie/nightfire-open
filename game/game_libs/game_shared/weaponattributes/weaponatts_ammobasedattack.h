@@ -7,13 +7,6 @@
 
 namespace WeaponAtts
 {
-	enum class CrosshairStyle
-	{
-		None = 0,
-		QuadLine,
-		Circle
-	};
-
 	enum class SpreadPattern
 	{
 		Gaussian = 0,
@@ -129,32 +122,6 @@ namespace WeaponAtts
 		}
 	};
 
-	struct CrosshairParameters
-	{
-		// The type of crosshair to use.
-		CrosshairStyle RenderStyle = CrosshairStyle::QuadLine;
-
-		// To modify these settings while debugging/testing, see the list of convars
-		// in game_libs/cl_dll/gameplay/crosshairCvars.cpp
-
-		// The radius is how far away from the centre of the screen each
-		// crosshair bar is. A value of 1 means the length of the shortest
-		// screen dimension. Minimum radius is when the weapon is at
-		// rest spread, and maximum radius is when it is at run spread.
-		float RadiusMin = 0.0f;
-		float RadiusMax = 0.5f;
-
-		// These scales specify how long the crosshair bars are at minimum
-		// and maximum inaccuracy. A value of 1 means the bar is the length
-		// of the shortest screen dimension. Minimum scale is when the weapon
-		// is at rest spread, and maximum scale is when it is at run spread.
-		float BarScaleMin = 0.04f;
-		float BarScaleMax = 0.03f;
-
-		// This is the thickness of the crosshair lines, in pixels.
-		float Thickness = 2.0f;
-	};
-
 	struct WAAmmoBasedAttack : public WABaseAttack
 	{
 		enum class AmmoPool
@@ -167,8 +134,8 @@ namespace WeaponAtts
 		static constexpr size_t AMMO_POOL_COUNT = 2;
 
 		AmmoPool UsesAmmoPool = AmmoPool::None;
+		uint8_t AmmoDecrement = 1;
 		AccuracyParameters Accuracy;
-		CrosshairParameters Crosshair;
 		int MuzzleFlashBrightness = NORMAL_GUN_FLASH;
 		float ViewPunchY = 0.0f;
 		const char* ShellModelName = nullptr;

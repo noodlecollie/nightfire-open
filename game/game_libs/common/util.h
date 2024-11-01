@@ -198,7 +198,7 @@ inline edict_t* INDEXENT(int iEdictNum)
 }
 inline void MESSAGE_BEGIN(int msg_dest, int msg_type, const float* pOrigin, entvars_t* ent)
 {
-	(*g_engfuncs.pfnMessageBegin)(msg_dest, msg_type, pOrigin, ENT(ent));
+	(*g_engfuncs.pfnMessageBegin)(msg_dest, msg_type, pOrigin, ent ? ENT(ent) : nullptr);
 }
 
 // Testing the three types of "entity" for nullity
@@ -227,10 +227,10 @@ inline BOOL FStringNull(int iString)
 #define cchMapNameMost 32
 
 // Dot products for view cone checking
-#define VIEW_FIELD_FULL (float)-1.0  // +-180 degrees
-#define VIEW_FIELD_WIDE (float)-0.7  // +-135 degrees 0.1 // +-85 degrees, used for full FOV checks
-#define VIEW_FIELD_NARROW (float)0.7  // +-45 degrees, more narrow check used to set up ranged attacks
-#define VIEW_FIELD_ULTRA_NARROW (float)0.9  // +-25 degrees, more narrow check used to set up ranged attacks
+#define VIEW_FIELD_FULL -1.0f  // +-180 degrees
+#define VIEW_FIELD_WIDE -0.7f  // +-135 degrees 0.1 // +-85 degrees, used for full FOV checks
+#define VIEW_FIELD_NARROW 0.7f  // +-45 degrees, more narrow check used to set up ranged attacks
+#define VIEW_FIELD_ULTRA_NARROW 0.9f  // +-25 degrees, more narrow check used to set up ranged attacks
 
 // All monsters need this data
 #define DONT_BLEED -1
@@ -358,6 +358,7 @@ extern void UTIL_TraceLine(
 	IGNORE_MONSTERS igmon,
 	edict_t* pentIgnore,
 	TraceResult* ptr);
+
 extern void UTIL_TraceLine(
 	const Vector& vecStart,
 	const Vector& vecEnd,

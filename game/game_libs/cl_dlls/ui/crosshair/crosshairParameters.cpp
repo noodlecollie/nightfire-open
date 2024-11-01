@@ -153,17 +153,9 @@ const WeaponAtts::CrosshairParameters* CCrosshairParameters::CrosshairParamsForA
 
 	std::shared_ptr<WeaponAtts::WABaseAttack> baseAttackMode = atts->AttackModes[static_cast<int>(index)];
 
-	if ( !baseAttackMode )
-	{
-		return nullptr;
-	}
-
-	std::shared_ptr<WeaponAtts::WAAmmoBasedAttack> ammoBasedAttack =
-		std::dynamic_pointer_cast<WeaponAtts::WAAmmoBasedAttack>(baseAttackMode);
-
 	// I know this is technically returning a raw pointer from shared pointer contents,
 	// but the shared object's lifetime is static so it's OK.
-	return ammoBasedAttack ? &ammoBasedAttack->Crosshair : nullptr;
+	return baseAttackMode ? &baseAttackMode->Crosshair : nullptr;
 }
 
 float CCrosshairParameters::InterpolateBetweenRestAndRun(

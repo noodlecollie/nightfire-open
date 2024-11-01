@@ -57,6 +57,8 @@ struct skilldata_t
 	float plrDmgFists;
 	float plrDmgFistsAlt;
 	float plrDmgL96A1;
+	float plrDmgRoninBullet;
+	float plrDmgRoninExplosion;
 
 	float plrDmgGrenadeLauncher;
 	float plrSelfDmgMultGrenadeLauncher;

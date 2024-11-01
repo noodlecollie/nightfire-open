@@ -22,6 +22,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/sharedDefs.cpp
 	../game_shared/eventConstructor/eventConstructor.h
 	../game_shared/eventConstructor/eventConstructor.cpp
+	../game_shared/gameplay/hitscancomponent.h
+	../game_shared/gameplay/hitscancomponent.cpp
 	../game_shared/gameplay/inaccuracyCvars.h
 	../game_shared/gameplay/inaccuracymodifiers.h
 	../game_shared/gameplay/inaccuracymodifiers.cpp
@@ -120,6 +122,9 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/weapon_raptor_atts.h
 	../game_shared/weapons/weapon_raptor.h
 	../game_shared/weapons/weapon_raptor.cpp
+	../game_shared/weapons/weapon_ronin_atts.h
+	../game_shared/weapons/weapon_ronin.h
+	../game_shared/weapons/weapon_ronin.cpp
 	../game_shared/weapons/weaponregistry.h
 	../game_shared/weapons/weaponregistry.cpp
 	../game_shared/weapons/weapons.h

@@ -40,6 +40,8 @@ namespace WeaponAtts
 		void Register() const;
 		void Validate() const;
 		void GenerateAttackModeSignatures() const;
+
+		mutable bool m_CvarsRegistered = false;
 	};
 
 	template<typename T>

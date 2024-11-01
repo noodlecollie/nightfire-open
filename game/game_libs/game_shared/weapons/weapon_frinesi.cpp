@@ -108,7 +108,7 @@ void CWeaponFrinesi::WeaponTick()
 
 	if ( NextReloadSoundTime() != INVALID_TIME && NextReloadSoundTime() < UTIL_WeaponTimeBase() )
 	{
-		PlaySound(WeaponAttributes().ViewModel.ReloadSounds, CHAN_ITEM);
+		PlaySound(WeaponAttributes().ViewModel.Animations.ReloadSounds, CHAN_ITEM);
 		NextReloadSoundTime() = INVALID_TIME;
 	}
 }

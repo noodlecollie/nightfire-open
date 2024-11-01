@@ -27,6 +27,7 @@
 #include "resources/SoundResources.h"
 #include "gameplay/weaponInaccuracyCvars.h"
 
+// NFTODO: Replace with CONSTRUCT_CVAR_T
 #define CREATE_CVAR(name, valstr, flags, valfloat, next) \
 	{ \
 		const_cast<char*>(name), const_cast<char*>(valstr), flags, valfloat, next \

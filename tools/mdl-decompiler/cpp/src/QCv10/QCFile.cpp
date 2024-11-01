@@ -4,6 +4,12 @@
 
 namespace QCv10
 {
+	template<typename T>
+	static void WriteCountComment(std::ostream& stream, const std::string& title, const Container<T>& container)
+	{
+		stream << "// " << title << ": " << container.size() << std::endl;
+	}
+
 	void QCFile::SetDirectory(const QCCD& dir)
 	{
 		m_CD = dir;
@@ -232,18 +238,20 @@ namespace QCv10
 
 		//////////////////////////////////////////////////////////////
 
+		WriteCountComment(stream, "Bodies", m_Bodies);
 		for ( const QCBody& body : m_Bodies )
 		{
-			writer.WriteQCCommand(stream, body);
+			writer.WriteQCCommand(stream, body, CommandWriter::WarnIfInvalid::Yes);
 		}
 
 		stream << std::endl;
 
 		//////////////////////////////////////////////////////////////
 
+		WriteCountComment(stream, "Body groups", m_BodyGroups);
 		for ( const QCBodyGroup& bodyGroup : m_BodyGroups )
 		{
-			writer.WriteQCCommand(stream, bodyGroup);
+			writer.WriteQCCommand(stream, bodyGroup, CommandWriter::WarnIfInvalid::Yes);
 			stream << std::endl;
 		}
 
@@ -251,36 +259,40 @@ namespace QCv10
 
 		//////////////////////////////////////////////////////////////
 
+		WriteCountComment(stream, "Attachments", m_Attachments);
 		for ( const QCAttachment& attachment : m_Attachments )
 		{
-			writer.WriteQCCommand(stream, attachment);
+			writer.WriteQCCommand(stream, attachment, CommandWriter::WarnIfInvalid::Yes);
 		}
 
 		stream << std::endl;
 
 		//////////////////////////////////////////////////////////////
 
+		WriteCountComment(stream, "Bone controllers", m_BoneControllers);
 		for ( const QCBoneController& controller : m_BoneControllers )
 		{
-			writer.WriteQCCommand(stream, controller);
+			writer.WriteQCCommand(stream, controller, CommandWriter::WarnIfInvalid::Yes);
 		}
 
 		stream << std::endl;
 
 		//////////////////////////////////////////////////////////////
 
+		WriteCountComment(stream, "Hit boxes", m_HitBoxes);
 		for ( const QCHitBox& hitBox : m_HitBoxes )
 		{
-			writer.WriteQCCommand(stream, hitBox);
+			writer.WriteQCCommand(stream, hitBox, CommandWriter::WarnIfInvalid::Yes);
 		}
 
 		stream << std::endl;
 
 		//////////////////////////////////////////////////////////////
 
+		WriteCountComment(stream, "Sequences", m_Sequences);
 		for ( const QCSequence& sequence : m_Sequences )
 		{
-			writer.WriteQCCommand(stream, sequence);
+			writer.WriteQCCommand(stream, sequence, CommandWriter::WarnIfInvalid::Yes);
 		}
 
 		stream << std::endl;

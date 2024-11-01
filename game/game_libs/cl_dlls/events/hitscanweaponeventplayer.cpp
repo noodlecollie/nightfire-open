@@ -17,6 +17,7 @@
 #include "eventCommands.h"
 #include "gameplay/inaccuracymodifiers.h"
 #include "gameplay/spreadPatterns.h"
+#include "gameplay/hitscancomponent.h"
 
 namespace
 {
@@ -82,7 +83,7 @@ void HitscanWeaponEventPlayer::CreateBulletTracers()
 	{
 		Vector2D spread = CalculateSpread(spreadArgs);
 		Vector shotDir = m_vecFwd + (spread.x * m_vecRight) + (spread.y * m_vecUp);
-		Vector traceEnd = m_vecGunPosition + (CGenericWeapon::DEFAULT_BULLET_TRACE_DISTANCE * shotDir);
+		Vector traceEnd = m_vecGunPosition + (DEFAULT_BULLET_TRACE_DISTANCE * shotDir);
 
 		gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
 

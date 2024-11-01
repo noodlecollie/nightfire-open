@@ -10,7 +10,7 @@ CBaseGrenadeLauncher::CreateGrenade(entvars_t* pevOwner, const Vector& location,
 
 	UTIL_SetOrigin(pGrenade->pev, location);
 	launchDir.CopyToArray(pGrenade->pev->velocity);
-	UTIL_VecToAngles(pGrenade->pev->velocity).CopyToArray(pGrenade->pev->angles);
+	UTIL_VecToAngles(launchDir).CopyToArray(pGrenade->pev->angles);
 	pGrenade->SetOwner(pevOwner);
 	pGrenade->SetGravity(1.4f);
 	pGrenade->SetFuseTime(-1.0f);

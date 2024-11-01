@@ -80,12 +80,20 @@ private:
 	{
 		const int col1Width = GetFirstColumnWidth();
 		const int col2Left = LEFT_MARGIN + col1Width + VIEW_PADDING;
+		const int tableHeight = (GetViewAreaHeight() - VIEW_PADDING) / 2;
 
-		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, GetFirstColumnWidth(), NEG_VIEW_BOTTOM);
+		m_SequenceTable.SetRect(LEFT_MARGIN, TOP_MARGIN, GetFirstColumnWidth(), tableHeight);
 		m_SequenceTable.SetModel(&m_SequenceModel);
 		m_SequenceTable.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceChanged);
 		m_SequenceTable.SetNameAndStatus(L("Sequences"), L("Animation sequences in this model"));
 		AddItem(m_SequenceTable);
+
+		m_SkinTable
+			.SetRect(LEFT_MARGIN, TOP_MARGIN + tableHeight + VIEW_PADDING, GetFirstColumnWidth(), tableHeight);
+		m_SkinTable.SetModel(&m_SkinModel);
+		m_SkinTable.onChanged = VoidCb(&CMenuModelViewer::HandleSkinChanged);
+		m_SkinTable.SetNameAndStatus(L("Skins"), L("Texture skins in this model"));
+		AddItem(m_SkinTable);
 
 		m_SceneView.SetRect(col2Left, TOP_MARGIN, NEG_VIEW_RIGHT, NEG_VIEW_BOTTOM);
 		m_SceneView.SetAllowPitchRotation(true);
@@ -235,6 +243,16 @@ private:
 			m_SequenceModel.AddToTail(CUtlString(EngFuncs::GetModelSequenceName(m_MainStudioModel, index)));
 		}
 
+		int numSkins = EngFuncs::GetModelSkinCount(m_MainStudioModel);
+		m_SkinModel.Purge();
+
+		for ( int index = 0; index < numSkins; ++index )
+		{
+			CUtlString indexStr;
+			indexStr.Format("%d", index);
+			m_SkinModel.AddToTail(indexStr);
+		}
+
 		m_MainStudioModel->curstate.animtime = gpGlobals->time;
 	}
 
@@ -247,6 +265,16 @@ private:
 
 		m_MainStudioModel->curstate.sequence = m_SequenceTable.GetCurrentIndex();
 		m_MainStudioModel->curstate.animtime = gpGlobals->time;
+	}
+
+	void HandleSkinChanged()
+	{
+		if ( !m_MainStudioModel )
+		{
+			return;
+		}
+
+		m_MainStudioModel->curstate.skin = static_cast<short>(m_SkinTable.GetCurrentIndex());
 	}
 
 	void LookUpModelSubdirsRecursively()
@@ -471,11 +499,18 @@ private:
 		return static_cast<int>(static_cast<float>(GetTotalColumnWidth()) * VIEW_COL2_FACTOR);
 	}
 
+	static int GetViewAreaHeight()
+	{
+		return static_cast<int>(ScreenHeight / uiStatic.scaleY) - TOP_MARGIN + NEG_VIEW_BOTTOM;
+	}
+
 	CStudioSceneModel m_SceneModel;
 	CStringVectorModel m_SequenceModel;
+	CStringVectorModel m_SkinModel;
 
 	CMenuDeveloperStudioSceneView m_SceneView;
 	CMenuTable m_SequenceTable;
+	CMenuTable m_SkinTable;
 
 	CMenuField m_FieldCameraPosX;
 	CMenuField m_FieldCameraPosY;

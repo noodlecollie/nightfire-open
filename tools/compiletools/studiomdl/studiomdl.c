@@ -3148,14 +3148,25 @@ int Cmd_TextureGroup()
 	int index = 0;
 	int group = 0;
 
-	if ( numtextures == 0 )
+	// Just checking the number of textures here creates a bug,
+	// because numtextures being > 0 doesn't necessarily mean
+	// models have been loaded - parsing $texrendermode modifies
+	// this count too. We check numbodyparts to make sure that
+	// bodies have actually been parsed.
+	if ( numtextures < 1 || numbodyparts < 1 )
+	{
 		Error("texturegroups must follow model loading\n");
+	}
 
 	if ( !GetToken(false) )
+	{
 		return 0;
+	}
 
 	if ( numskinref == 0 )
+	{
 		numskinref = numtextures;
+	}
 
 	while ( 1 )
 	{
@@ -3172,6 +3183,7 @@ int Cmd_TextureGroup()
 			}
 			return 1;
 		}
+
 		if ( token[0] == '{' )
 		{
 			depth++;
@@ -3188,8 +3200,12 @@ int Cmd_TextureGroup()
 		{
 			i = lookup_texture(token);
 			texturegroup[numtexturegroups][group][index] = i;
+
 			if ( group != 0 )
+			{
 				texture[i].parent = texturegroup[numtexturegroups][0][index];
+			}
+
 			index++;
 			numtexturereps[numtexturegroups] = index;
 			numtexturelayers[numtexturegroups] = group + 1;

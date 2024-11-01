@@ -52,6 +52,7 @@ extern DLL_GLOBAL short g_sModelIndexBloodSpray;  // holds the sprite index for 
 #define BRIGHT_GUN_FLASH 512
 #define NORMAL_GUN_FLASH 256
 #define DIM_GUN_FLASH 128
+#define NO_GUN_FLASH 0
 
 #define BIG_EXPLOSION_VOLUME 2048
 #define NORMAL_EXPLOSION_VOLUME 1024

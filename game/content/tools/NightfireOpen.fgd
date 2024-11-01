@@ -2171,3 +2171,19 @@
 
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frag_grenade/w_frag_grenade.mdl" }) = weapon_frag_grenade : "Frag Grenade" []
 @PointClass base(Weapon, Targetx) model({ "path": "models/weapon_frag_grenade/w_ammo_frag_grenade.mdl" }) = ammo_frag_grenade : "Frag Grenade Ammo" []
+
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_ronin/w_ronin.mdl" }) = weapon_ronin : "Ronin Briefcase Turret" []
+@PointClass base(Weapon, Targetx) model({ "path": "models/weapon_ronin/w_ammo_ronin.mdl" }) = ammo_frag_grenade : "Ronin Briefcase Turret Ammo" []
+
+@PointClass base(Targetname, RenderFields, Angles) size(-14 -12 0, 14 12 8) model({ "path": "models/weapon_ronin/w_ronin.mdl" }) = npc_ronin_turret : "Ronin Turret NPC"
+[
+	health(integer) : "Health" : 100
+	maxhealth(integer) : "Max health (<= 0 implies indestructable)" : 100
+	sightfov(integer) : "Field of view within which enemies will be targeted. Values <= 0 imply any direction." : 150
+	shootfov(integer) : "Cone around line of sight, within which enemies will trigger the the Ronin to fire" : 20
+	searchrange(integer) : "Range within which enemies will be targeted. Values <= 0 stop the Ronin from finding targts." : 300
+	firerate(integer) : "Number of bullets fired per second." : 8
+	bulletspread(integer) : "Width of inaccuracy cone when firing bullets, between 0 and 178 degrees." : 10
+]
+
+@PointClass base(Targetname) size(-4 -4 -4, 4 4 4) color(200 100 50) = info_ronin_target : "Ronin Target" []

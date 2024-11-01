@@ -55,10 +55,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_raptor/v_raptor.mdl";
-		vm.Anim_Draw = RAPTOR_DRAW;
-		vm.AnimList_Idle << RAPTOR_IDLE1 << RAPTOR_IDLE2 << RAPTOR_IDLE3 << RAPTOR_IDLE4;
-		vm.AnimList_Reload << RAPTOR_RELOAD_NOT_EMPTY;
-		vm.AnimList_ReloadEmpty << RAPTOR_RELOAD_EMPTY;
+		vm.Animations.Anim_Draw = RAPTOR_DRAW;
+		vm.Animations.AnimList_Idle << RAPTOR_IDLE1 << RAPTOR_IDLE2 << RAPTOR_IDLE3 << RAPTOR_IDLE4;
+		vm.Animations.AnimList_Reload << RAPTOR_RELOAD_NOT_EMPTY;
+		vm.Animations.AnimList_ReloadEmpty << RAPTOR_RELOAD_EMPTY;
 
 		WAPlayerModel& pm = obj.PlayerModel;
 		pm.PlayerModelName = "models/weapon_raptor/p_raptor.mdl";

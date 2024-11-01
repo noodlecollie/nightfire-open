@@ -50,3 +50,5 @@ typedef struct cvar_s
 	float value;
 	struct cvar_s* next;
 } cvar_t;
+
+#define CONSTRUCT_CVAR_T(name, value, flags) { (char*)name, (char*)#value, flags, (float)value, 0 }

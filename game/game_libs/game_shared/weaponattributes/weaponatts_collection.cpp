@@ -28,6 +28,8 @@ namespace WeaponAtts
 
 	void WACollection::RegisterCvars() const
 	{
+		ASSERTSZ(!m_CvarsRegistered, "Cvars were already registered");
+
 		FOR_EACH_VEC(SkillRecords, index)
 		{
 			SkillRecords[index].RegisterCvars();
@@ -37,6 +39,8 @@ namespace WeaponAtts
 		{
 			CVAR_REGISTER(CustomCvars[index]);
 		}
+
+		m_CvarsRegistered = true;
 	}
 
 	void WACollection::GenerateAttackModeSignatures() const
