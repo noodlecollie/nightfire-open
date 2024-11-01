@@ -121,8 +121,9 @@ protected:
 	void SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode);
 
 	// Override the view model animations based on those used
-	// for an attack mode. Pass null to reset.
-	void SetViewModelAnimationOverride(const WeaponAtts::WABaseAttack* mode);
+	// for an attack mode.
+	WeaponAttackType GetViewModelAnimationSource();
+	void SetViewModelAnimationSource(WeaponAttackType source);
 
 	// T can be used to validate the type of attack expected to be set,
 	// but can be omitted if this is not required.
@@ -214,7 +215,11 @@ private:
 
 	const WeaponAtts::WABaseAttack* m_pPrimaryAttackMode = nullptr;
 	const WeaponAtts::WABaseAttack* m_pSecondaryAttackMode = nullptr;
-	const WeaponAtts::ViewModelAnimationSet* m_pViewModelAnims = nullptr;
+
+	// If set to something other than none, the view model animations
+	// are taken from the specified attack mode, rather than the default
+	// view model attributes.
+	WeaponAttackType m_ViewModelAnimationSource = WeaponAttackType::None;
 
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;

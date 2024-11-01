@@ -286,8 +286,7 @@ void CGenericWeapon::Reload()
 
 	const WeaponAtts::ViewModelAnimationSet& anims = GetViewModelAnimationSet();
 
-	const WeightedValueList<int>* reloadAnimList =
-		m_iClip < 1 ? &anims.AnimList_ReloadEmpty : &anims.AnimList_Reload;
+	const WeightedValueList<int>* reloadAnimList = m_iClip < 1 ? &anims.AnimList_ReloadEmpty : &anims.AnimList_Reload;
 
 	if ( m_iClip < 1 && reloadAnimList->Count() < 1 )
 	{
@@ -925,14 +924,14 @@ void CGenericWeapon::SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode
 	m_pSecondaryAttackMode = mode;
 }
 
-void CGenericWeapon::SetViewModelAnimationOverride(const WeaponAtts::WABaseAttack* mode)
+CGenericWeapon::WeaponAttackType CGenericWeapon::GetViewModelAnimationSource()
 {
-	if ( !mode )
-	{
-		m_pViewModelAnims = nullptr;
-	}
+	return m_ViewModelAnimationSource;
+}
 
-	m_pViewModelAnims = mode->OverrideAnimations.get();
+void CGenericWeapon::SetViewModelAnimationSource(WeaponAttackType source)
+{
+	m_ViewModelAnimationSource = source;
 }
 
 float CGenericWeapon::GetInaccuracy() const
@@ -972,9 +971,15 @@ const WeaponAtts::AccuracyParameters* CGenericWeapon::GetWeaponAccuracyParams() 
 
 const WeaponAtts::ViewModelAnimationSet& CGenericWeapon::GetViewModelAnimationSet() const
 {
-	if ( m_pViewModelAnims )
+	if ( m_ViewModelAnimationSource != WeaponAttackType::None )
 	{
-		return *m_pViewModelAnims;
+		const WeaponAtts::WABaseAttack* attackMode =
+		m_ViewModelAnimationSource == WeaponAttackType::Secondary ? m_pSecondaryAttackMode : m_pPrimaryAttackMode;
+
+		if ( attackMode && attackMode->OverrideAnimations )
+		{
+			return *attackMode->OverrideAnimations;
+		}
 	}
 
 	return WeaponAttributes().ViewModel.Animations;
