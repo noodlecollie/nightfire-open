@@ -33,10 +33,13 @@ static float CalculateFOVDotProduct(float degrees)
 	}
 }
 
+// NFTODO: Disabled until we've refactored the weapons framework.
+#ifdef RONIN_IS_COMPLETED
 // Helper entity - if this is within a Ronin's range, the Ronin will shoot at it.
 LINK_ENTITY_TO_CLASS(info_ronin_target, CPointEntity)
 
 LINK_ENTITY_TO_CLASS(npc_ronin_turret, CNPCRoninTurret)
+#endif
 
 cvar_t sv_ronin_slide_friction = CONSTRUCT_CVAR_T("sv_ronin_slide_friction", 0.88, FCVAR_SERVER);
 

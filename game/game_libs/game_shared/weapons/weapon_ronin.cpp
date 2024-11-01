@@ -13,7 +13,10 @@
 #include "MathLib/utils.h"
 #endif
 
+// NFTODO: Disabled until we've refactored the weapons framework.
+#ifdef RONIN_IS_COMPLETED
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
+#endif
 
 CWeaponRonin::CWeaponRonin() :
 	CBaseGrenadeLauncher()
