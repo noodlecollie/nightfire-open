@@ -132,7 +132,7 @@ void CNPCRoninTurret::KeyValue(KeyValueData* data)
 			degrees = MAX_HALF_BULLET_SPREAD_DEGREES;
 		}
 
-		m_SpreadCone = std::tanf(DEG2RADF(degrees));
+		m_SpreadCone = tanf(DEG2RADF(degrees));
 		data->fHandled = true;
 		return;
 	}
@@ -815,7 +815,7 @@ float CNPCRoninTurret::GetFireInterval() const
 
 float CNPCRoninTurret::GetSpreadCone() const
 {
-	static const float defaultValue = std::tanf(DEG2RADF(DEFAULT_SPREAD_CONE));
+	static const float defaultValue = tanf(DEG2RADF(DEFAULT_SPREAD_CONE));
 	return !std::isnan(m_SpreadCone) ? m_SpreadCone : defaultValue;
 }
 
