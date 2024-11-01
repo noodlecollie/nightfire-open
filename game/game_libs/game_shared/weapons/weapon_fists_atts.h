@@ -60,6 +60,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->Strikes.AddToTail(0.1f);
 		priAttack->Volume = 128;
 		priAttack->ViewModelAnimList_Attack << FISTS_JAB;
+		priAttack->Crosshair.RenderStyle = CrosshairStyle::None;
 
 		priAttack->WorldHitSounds.MinPitch = 97;
 		priAttack->WorldHitSounds.MaxPitch = 103;

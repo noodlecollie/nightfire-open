@@ -14,6 +14,43 @@ enum CrosshairDisplayMode
 	DisplayDynamicCrosshair = 2
 };
 
+struct ParamsTuple
+{
+	const WeaponAtts::CrosshairParameters* Crosshair = nullptr;
+	WeaponAtts::AccuracyParameters Accuracy;
+};
+
+static ParamsTuple GetParams(WeaponId_e id, int attackMode)
+{
+	CWeaponRegistry& registry = CWeaponRegistry::StaticInstance();
+	const WeaponAtts::WACollection* atts = registry.Get(id);
+
+	if ( !atts || attackMode >= atts->AttackModes.Count() )
+	{
+		return {};
+	}
+
+	const WeaponAtts::WABaseAttack* baseAttack = atts->AttackModes[attackMode].get();
+
+	if ( !baseAttack )
+	{
+		return {};
+	}
+
+	ParamsTuple outParams {};
+	outParams.Crosshair = &baseAttack->Crosshair;
+
+	const WeaponAtts::WAAmmoBasedAttack* ammoBasedAttack =
+		dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(baseAttack);
+
+	if ( ammoBasedAttack )
+	{
+		outParams.Accuracy = ammoBasedAttack->Accuracy;
+	}
+
+	return outParams;
+}
+
 int CHudCrosshair::Init()
 {
 	m_iFlags |= HUD_ACTIVE;
@@ -103,28 +140,29 @@ bool CHudCrosshair::UpdateParameters()
 	}
 
 	m_Params.SetWeaponID(static_cast<WeaponId_e>(weapon->iId));
-	const WeaponAtts::WAAmmoBasedAttack* ammoAttack = GetAttackMode(*weapon);
+	m_Params.SetWeaponAttackMode(weapon->iPriAttackMode);
 
-	if ( !ammoAttack )
+	const ParamsTuple paramsTuple = GetParams(m_Params.WeaponID(), m_Params.WeaponAttackMode());
+
+	if ( !paramsTuple.Crosshair )
 	{
 		return false;
 	}
 
-	const WeaponAtts::CrosshairParameters* m_CrosshairParams = &ammoAttack->Crosshair;
+	const WeaponAtts::CrosshairParameters* m_CrosshairParams = paramsTuple.Crosshair;
 
 	m_Params.SetCrosshairStyle(m_CrosshairParams->RenderStyle);
 	m_Params.SetWeaponInaccuracy(gHUD.m_flWeaponInaccuracy);
-	m_Params.SetWeaponAttackMode(weapon->iPriAttackMode);
 
 	float radius = CCrosshairParameters::ComputeCrosshairRadius(
-		ammoAttack->Accuracy,
+		paramsTuple.Accuracy,
 		m_Params.WeaponInaccuracy(),
 		*m_CrosshairParams);
 
 	m_Params.SetRadius(radius);
 
 	float barLength = CCrosshairParameters::ComputeCrosshairBarLength(
-		ammoAttack->Accuracy,
+		paramsTuple.Accuracy,
 		m_Params.WeaponInaccuracy(),
 		*m_CrosshairParams);
 
@@ -168,35 +206,16 @@ void CHudCrosshair::UpdateParametersFromDebugCvars()
 		m_Params.SetWeaponAttackMode(weapon->iPriAttackMode);
 	}
 
-	const WeaponAtts::WAAmmoBasedAttack* ammoAttack = GetAttackMode(*weapon);
-
-	if ( !ammoAttack )
-	{
-		return;
-	}
+	const ParamsTuple paramsTuple = GetParams(m_Params.WeaponID(), m_Params.WeaponAttackMode());
 
 	float radius =
-		CCrosshairParameters::ComputeCrosshairRadiusFromDebugCvars(ammoAttack->Accuracy, m_Params.WeaponInaccuracy());
+		CCrosshairParameters::ComputeCrosshairRadiusFromDebugCvars(paramsTuple.Accuracy, m_Params.WeaponInaccuracy());
 
 	m_Params.SetRadius(radius);
 
 	float barLength = CCrosshairParameters::ComputeCrosshairBarLengthFromDebugCvars(
-		ammoAttack->Accuracy,
+		paramsTuple.Accuracy,
 		m_Params.WeaponInaccuracy());
 
 	m_Params.SetBarLength(barLength);
-}
-
-const WeaponAtts::WAAmmoBasedAttack* CHudCrosshair::GetAttackMode(const WEAPON& weapon) const
-{
-	CWeaponRegistry& registry = CWeaponRegistry::StaticInstance();
-	const WeaponAtts::WACollection* atts = registry.Get(m_Params.WeaponID());
-
-	if ( !atts || weapon.iPriAttackMode >= atts->AttackModes.Count() )
-	{
-		return nullptr;
-	}
-
-	const WeaponAtts::WABaseAttack* baseAttack = atts->AttackModes[weapon.iPriAttackMode].get();
-	return dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(baseAttack);
 }

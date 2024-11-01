@@ -7,6 +7,9 @@
 class CNPCRoninTurret;
 #endif
 
+// NFTODO: Make a common base class from the frag grenade and use the
+// same logic here. It'd be nice to be able to scale the toss velocity
+// based on how long the button is held down for.
 class CWeaponRonin : public CBaseGrenadeLauncher
 {
 public:

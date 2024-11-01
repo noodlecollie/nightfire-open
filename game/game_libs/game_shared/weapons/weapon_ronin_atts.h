@@ -27,6 +27,13 @@ enum VRoninAnimations_e
 	VRONIN_DETONATOR_HOLSTER
 };
 
+enum VRoninAttackMode_e
+{
+	VRONIN_ATTACKMODE_TOSS = 0,
+	VRONIN_ATTACKMODE_DEPLOY,
+	VRONIN_ATTACKMODE_DETONATE,
+};
+
 static constexpr CAmmoDef Ammo_Ronin = {
 	"ammo_ronin",  // ClassName
 	"ammodef_ronin",  // AmmoName
@@ -68,27 +75,27 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		obj.CustomCvars.AddToTail(&sv_ronin_slide_friction);
 #endif
 
-		WAProjectileAttack* priAttack = new WAProjectileAttack();
-		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
+		WAProjectileAttack* throwAttack = new WAProjectileAttack();
+		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(throwAttack));
 
-		priAttack->EventScript = "events/weapon_ronin/throw.sc";
-		priAttack->FunctionsUnderwater = true;
-		priAttack->IsContinuous = false;
-		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
-		priAttack->AttackRate = 1.0f;
-		priAttack->Volume = QUIET_GUN_VOLUME;
-		priAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
-		priAttack->ViewPunchY = 0.0f;
-		priAttack->PlayDryFireSoundOnEmpty = false;
-		priAttack->projectileDelay = 0.5f;
+		throwAttack->EventScript = "events/weapon_ronin/throw.sc";
+		throwAttack->FunctionsUnderwater = true;
+		throwAttack->IsContinuous = false;
+		throwAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
+		throwAttack->AttackRate = 1.0f;
+		throwAttack->Volume = QUIET_GUN_VOLUME;
+		throwAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
+		throwAttack->ViewPunchY = 0.0f;
+		throwAttack->PlayDryFireSoundOnEmpty = false;
+		throwAttack->projectileDelay = 0.5f;
 
-		AccuracyParameters& accuracy = priAttack->Accuracy;
+		AccuracyParameters& accuracy = throwAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.0f, 0.0f);
 		accuracy.RunSpread = Vector2D(0.0f, 0.0f);
 
-		CrosshairParameters& crosshair = priAttack->Crosshair;
+		CrosshairParameters& crosshair = throwAttack->Crosshair;
 		crosshair.RenderStyle = CrosshairStyle::None;
 
-		priAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
-		priAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
+		throwAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
+		throwAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
 	});

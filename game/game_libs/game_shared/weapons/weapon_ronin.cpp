@@ -18,8 +18,7 @@ LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
 CWeaponRonin::CWeaponRonin() :
 	CBaseGrenadeLauncher()
 {
-	// TODO: Enum for index
-	SetPrimaryAttackModeFromAttributes(0);
+	SetPrimaryAttackModeFromAttributes(VRONIN_ATTACKMODE_TOSS);
 }
 
 const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const
