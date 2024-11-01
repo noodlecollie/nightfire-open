@@ -55,9 +55,6 @@ public:
 	static TYPEDESCRIPTION m_SaveData[];
 #endif
 
-	// TODO: Move this to a common header?
-	static constexpr float DEFAULT_BULLET_TRACE_DISTANCE = 8192;
-
 protected:
 	enum class WeaponAttackType
 	{
