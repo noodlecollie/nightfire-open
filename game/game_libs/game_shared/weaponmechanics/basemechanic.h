@@ -12,6 +12,7 @@ namespace WeaponMechanics
 	{
 	public:
 		explicit CBaseMechanic(const WeaponAtts::WABaseAttack* attackMode);
+		virtual ~CBaseMechanic() = default;
 
 		virtual void Precache();
 

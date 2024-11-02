@@ -7,6 +7,7 @@
 namespace
 {
 #ifndef CLIENT_DLL
+	// NFTODO: Move this somewhere re-usable
 	void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, float* mins, float* maxs, edict_t* pEntity)
 	{
 		float* minmaxs[2] = {mins, maxs};

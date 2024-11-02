@@ -7,6 +7,7 @@ namespace WeaponMechanics
 	CBaseMechanic::CBaseMechanic(const WeaponAtts::WABaseAttack* attackMode) :
 		m_BaseAttackMode(attackMode)
 	{
+		ASSERT(m_BaseAttackMode);
 	}
 
 	void CBaseMechanic::Precache()
