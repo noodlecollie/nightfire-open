@@ -1,5 +1,7 @@
 #pragma once
 
+#include <limits>
+
 namespace WeaponAtts
 {
 	struct WABaseAttack;
@@ -8,13 +10,20 @@ namespace WeaponAtts
 
 namespace WeaponMechanics
 {
+	static constexpr float THINK_CANCELLED = std::numeric_limits<float>::min();
+
 	class CBaseMechanic
 	{
 	public:
-		explicit CBaseMechanic(const WeaponAtts::WABaseAttack* attackMode);
+
+		explicit CBaseMechanic(const WeaponAtts::WABaseAttack& attackMode);
 		virtual ~CBaseMechanic() = default;
 
 		virtual void Precache();
+
+		// Returns the time point for the next think, or THINK_CANCELLED
+		// if no new think should take place.
+		virtual float Think();
 
 		int EventIndex() const;
 

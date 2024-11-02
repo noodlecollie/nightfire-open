@@ -4,10 +4,9 @@
 
 namespace WeaponMechanics
 {
-	CBaseMechanic::CBaseMechanic(const WeaponAtts::WABaseAttack* attackMode) :
-		m_BaseAttackMode(attackMode)
+	CBaseMechanic::CBaseMechanic(const WeaponAtts::WABaseAttack& attackMode) :
+		m_BaseAttackMode(&attackMode)
 	{
-		ASSERT(m_BaseAttackMode);
 	}
 
 	void CBaseMechanic::Precache()
@@ -21,6 +20,11 @@ namespace WeaponMechanics
 		}
 
 		m_EventIndex = PRECACHE_EVENT(1, m_BaseAttackMode->EventScript);
+	}
+
+	float CBaseMechanic::Think()
+	{
+		return THINK_CANCELLED;
 	}
 
 	int CBaseMechanic::EventIndex() const

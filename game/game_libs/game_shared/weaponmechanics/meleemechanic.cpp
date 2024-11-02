@@ -4,7 +4,7 @@
 
 namespace WeaponMechanics
 {
-	CMeleeMechanic::CMeleeMechanic(const WeaponAtts::WAMeleeAttack* attackMode) :
+	CMeleeMechanic::CMeleeMechanic(const WeaponAtts::WAMeleeAttack& attackMode) :
 		CBaseMechanic(attackMode)
 	{
 	}
