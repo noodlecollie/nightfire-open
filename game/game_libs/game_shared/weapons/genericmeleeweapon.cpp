@@ -3,6 +3,7 @@
 #include "weaponatts_meleeattack.h"
 #include "gamerules.h"
 #include "eventConstructor/eventConstructor.h"
+#include "MathLib/utils.h"
 
 namespace
 {
@@ -129,61 +130,9 @@ void CGenericMeleeWeapon::AttackStrike()
 
 	InitTraceVecs(m_pCachedAttack);
 
-	TraceResult tr;
-	bool madeContact = CheckForContact(m_pCachedAttack, tr);
-
-	const WeaponAtts::WASoundSet* bodyHitSounds = &m_pCachedAttack->BodyHitSounds;
-	const WeaponAtts::WASoundSet* worldHitSounds = &m_pCachedAttack->WorldHitSounds;
-
-	if ( bodyHitSounds->SoundNames.Count() < 1 )
-	{
-		bodyHitSounds = worldHitSounds;
-	}
-
-	if ( madeContact )
-	{
 #ifndef CLIENT_DLL
-		CBaseEntity* pEntity = CBaseEntity::Instance(tr.pHit);
-		const bool hitBody = pEntity && pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE;
-
-		if ( pEntity )
-		{
-			ClearMultiDamage();
-
-			float damagePerShot = 1.0f;
-			const WeaponAtts::WASkillRecord::SkillDataEntryPtr dmgPtr = m_pCachedAttack->BaseDamagePerHit;
-
-			if ( dmgPtr )
-			{
-				damagePerShot = gSkillData.*dmgPtr;
-			}
-
-			pEntity->TraceAttack(m_pPlayer->pev, damagePerShot, gpGlobals->v_forward, &tr, DMG_CLUB);
-
-			ApplyMultiDamage(m_pPlayer->pev, m_pPlayer->pev);
-		}
-
-		if ( hitBody )
-		{
-			PlaySound(*bodyHitSounds, CHAN_ITEM);
-			m_pPlayer->m_iWeaponVolume = m_pCachedAttack->Volume;
-		}
-		else
-		{
-			Vector traceEnd = m_vecAttackTraceStart + ((m_vecContactPointOnSurface - m_vecAttackTraceStart) * 2);
-
-			TEXTURETYPE_PlaySound(&tr, m_vecAttackTraceStart, traceEnd, BULLET_MELEE);
-
-			PlaySound(*worldHitSounds, CHAN_ITEM, 1.0f);
-			m_pPlayer->m_iWeaponVolume = m_pCachedAttack->Volume;
-		}
-
-		if ( m_pCachedAttack->DecalOnImpact )
-		{
-			DecalGunshot(&tr, BULLET_MELEE);
-		}
+	AttackStrike_Server();
 #endif
-	}
 
 	if ( m_iStrikeIndex >= m_pCachedAttack->Strikes.Count() - 1 )
 	{
@@ -201,6 +150,65 @@ void CGenericMeleeWeapon::AttackStrike()
 	}
 }
 
+#ifndef CLIENT_DLL
+void CGenericMeleeWeapon::AttackStrike_Server()
+{
+	TraceResult tr;
+
+	if ( !CheckForContact(m_pCachedAttack, tr) )
+	{
+		return;
+	}
+
+	const WeaponAtts::WASoundSet* bodyHitSounds = &m_pCachedAttack->BodyHitSounds;
+	const WeaponAtts::WASoundSet* worldHitSounds = &m_pCachedAttack->WorldHitSounds;
+
+	if ( bodyHitSounds->SoundNames.Count() < 1 )
+	{
+		bodyHitSounds = worldHitSounds;
+	}
+
+	CBaseEntity* pEntity = CBaseEntity::Instance(tr.pHit);
+	const bool hitBody = pEntity && pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE;
+
+	if ( pEntity )
+	{
+		ClearMultiDamage();
+
+		float damagePerShot = 1.0f;
+		const WeaponAtts::WASkillRecord::SkillDataEntryPtr dmgPtr = m_pCachedAttack->BaseDamagePerHit;
+
+		if ( dmgPtr )
+		{
+			damagePerShot = gSkillData.*dmgPtr;
+		}
+
+		pEntity->TraceAttack(m_pPlayer->pev, damagePerShot, gpGlobals->v_forward, &tr, DMG_CLUB);
+
+		ApplyMultiDamage(m_pPlayer->pev, m_pPlayer->pev);
+	}
+
+	if ( hitBody )
+	{
+		PlaySound(*bodyHitSounds, CHAN_ITEM);
+		m_pPlayer->m_iWeaponVolume = m_pCachedAttack->Volume;
+	}
+	else
+	{
+		Vector traceEnd = m_vecAttackTraceStart + ((m_vecContactPointOnSurface - m_vecAttackTraceStart) * 2);
+
+		TEXTURETYPE_PlaySound(&tr, m_vecAttackTraceStart, traceEnd, BULLET_MELEE);
+
+		PlaySound(*worldHitSounds, CHAN_ITEM, 1.0f);
+		m_pPlayer->m_iWeaponVolume = m_pCachedAttack->Volume;
+	}
+
+	if ( m_pCachedAttack->DecalOnImpact )
+	{
+		DecalGunshot(&tr, BULLET_MELEE);
+	}
+}
+
 bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* meleeAttack, TraceResult& tr)
 {
 	(void)meleeAttack;
@@ -212,7 +220,6 @@ bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* melee
 		ENT(m_pPlayer->pev),
 		&tr);
 
-#ifndef CLIENT_DLL
 	if ( tr.flFraction >= 1.0f )
 	{
 		// Line didn't hit - try more expensive hull check instead.
@@ -244,10 +251,10 @@ bool CGenericMeleeWeapon::CheckForContact(const WeaponAtts::WAMeleeAttack* melee
 				tr.vecEndPos;  // This is the point on the actual surface (the hull could have hit space)
 		}
 	}
-#endif
 
 	return tr.flFraction < 1.0f;
 }
+#endif
 
 void CGenericMeleeWeapon::FireEvent(const WeaponAtts::WAMeleeAttack* meleeAttack)
 {
@@ -270,8 +277,10 @@ void CGenericMeleeWeapon::FireEvent(const WeaponAtts::WAMeleeAttack* meleeAttack
 
 void CGenericMeleeWeapon::InitTraceVecs(const WeaponAtts::WAMeleeAttack* meleeAttack)
 {
-	UTIL_MakeVectors(Vector(m_pPlayer->pev->v_angle));
+	Vector forward;
+	AngleVectors(m_pPlayer->pev->v_angle, forward, nullptr, nullptr);
+
 	m_vecAttackTraceStart = m_pPlayer->GetGunPosition();
-	m_vecAttackTraceEnd = m_vecAttackTraceStart + (Vector(gpGlobals->v_forward) * meleeAttack->Reach);
+	m_vecAttackTraceEnd = m_vecAttackTraceStart + (forward * meleeAttack->Reach);
 	m_vecContactPointOnSurface = Vector();
 }

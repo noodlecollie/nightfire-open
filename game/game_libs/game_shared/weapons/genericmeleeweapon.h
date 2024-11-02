@@ -23,8 +23,12 @@ protected:
 private:
 	void AttackStrike();
 	void InitTraceVecs(const WeaponAtts::WAMeleeAttack* meleeAttack);
-	bool CheckForContact(const WeaponAtts::WAMeleeAttack* meleeAttack, TraceResult& tr);
 	void FireEvent(const WeaponAtts::WAMeleeAttack* meleeAttack);
+
+#ifndef CLIENT_DLL
+	void AttackStrike_Server();
+	bool CheckForContact(const WeaponAtts::WAMeleeAttack* meleeAttack, TraceResult& tr);
+#endif
 
 	const WeaponAtts::WAMeleeAttack* m_pCachedAttack;
 	int m_iStrikeIndex;
