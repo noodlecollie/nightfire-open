@@ -24,6 +24,19 @@ const WeaponAtts::WACollection& CWeaponFists::WeaponAttributes() const
 	return WeaponAtts::StaticWeaponAttributes<CWeaponFists>();
 }
 
+BOOL CWeaponFists::Deploy()
+{
+	if ( !CGenericMeleeWeapon::Deploy() )
+	{
+		return FALSE;
+	}
+
+	// Ensure we always start on the first attack.
+	SetPrimaryAttackMode(m_pPunchAttack);
+
+	return TRUE;
+}
+
 bool CWeaponFists::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode)
 {
 	if ( !CGenericMeleeWeapon::InvokeWithAttackMode(type, attackMode) )

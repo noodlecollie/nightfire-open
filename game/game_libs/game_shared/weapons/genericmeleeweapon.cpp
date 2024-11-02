@@ -8,7 +8,6 @@
 namespace
 {
 #ifndef CLIENT_DLL
-	// NFTODO: Move this somewhere re-usable
 	void FindHullIntersection(const Vector& vecSrc, TraceResult& tr, float* mins, float* maxs, edict_t* pEntity)
 	{
 		float* minmaxs[2] = {mins, maxs};
@@ -65,6 +64,15 @@ CGenericMeleeWeapon::CGenericMeleeWeapon() :
 void CGenericMeleeWeapon::Precache()
 {
 	CGenericWeapon::Precache();
+}
+
+void CGenericMeleeWeapon::Holster(int)
+{
+	CGenericWeapon::Holster();
+
+	m_pCachedAttack = nullptr;
+	m_iStrikeIndex = 0;
+	ResetThink();
 }
 
 void CGenericMeleeWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode)

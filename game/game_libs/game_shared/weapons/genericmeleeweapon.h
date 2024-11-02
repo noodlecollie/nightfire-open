@@ -13,8 +13,8 @@ class CGenericMeleeWeapon : public CGenericWeapon
 public:
 	CGenericMeleeWeapon();
 
-	// Required so that derived classes can call through.
-	virtual void Precache() override;
+	void Precache() override;
+	void Holster(int skiplocal = 0) override;
 
 protected:
 	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode) override;
