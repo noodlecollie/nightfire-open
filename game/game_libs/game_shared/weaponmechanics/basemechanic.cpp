@@ -1,12 +1,17 @@
 #include "standard_includes.h"
 #include "weaponmechanics/basemechanic.h"
 #include "weaponattributes/weaponatts_baseattack.h"
+#include "weaponattributes/weaponatts_ammobasedattack.h"
+#include "weapons/genericweapon.h"
 
 namespace WeaponMechanics
 {
-	CBaseMechanic::CBaseMechanic(const WeaponAtts::WABaseAttack& attackMode) :
-		m_BaseAttackMode(&attackMode)
+	CBaseMechanic::CBaseMechanic(CGenericWeapon* weapon, const WeaponAtts::WABaseAttack* attackMode) :
+		m_Weapon(weapon),
+		m_BaseAttackMode(attackMode)
 	{
+		ASSERT(m_Weapon);
+		ASSERT(m_BaseAttackMode);
 	}
 
 	void CBaseMechanic::Precache()
@@ -22,14 +27,33 @@ namespace WeaponMechanics
 		m_EventIndex = PRECACHE_EVENT(1, m_BaseAttackMode->EventScript);
 	}
 
-	float CBaseMechanic::Think()
+	InvocationResult CBaseMechanic::Invoke()
 	{
-		return THINK_CANCELLED;
+		return InvocationResult::Rejected();
 	}
 
-	int CBaseMechanic::EventIndex() const
+	int CBaseMechanic::GetEventIndex() const
 	{
 		return m_EventIndex;
+	}
+
+	int CBaseMechanic::DefaultEventFlags()
+	{
+#ifdef CLIENT_WEAPONS
+		return FEV_NOTHOST;
+#else
+		return 0;
+#endif
+	}
+
+	CGenericWeapon* CBaseMechanic::GetWeapon() const
+	{
+		return m_Weapon;
+	}
+
+	CBasePlayer* CBaseMechanic::GetPlayer() const
+	{
+		return m_Weapon->m_pPlayer;
 	}
 
 	void CBaseMechanic::PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds)
@@ -41,4 +65,18 @@ namespace WeaponMechanics
 			PRECACHE_SOUND(soundList.Value(index));
 		}
 	}
-}
+
+	bool CBaseMechanic::HasAmmo(int minCount, bool useClip) const
+	{
+		const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
+			dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_BaseAttackMode);
+
+		if ( !ammoAttack )
+		{
+			// Treat as an infinite pool.
+			return true;
+		}
+
+		return m_Weapon->HasAmmo(ammoAttack->UsesAmmoPool, minCount, useClip);
+	}
+}  // namespace WeaponMechanics

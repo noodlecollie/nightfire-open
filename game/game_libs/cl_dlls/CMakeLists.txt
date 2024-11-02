@@ -86,6 +86,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponattributes/weaponatts_viewmodel.h
 	../game_shared/weaponmechanics/basemechanic.h
 	../game_shared/weaponmechanics/basemechanic.cpp
+	../game_shared/weaponmechanics/hitscanmechanic.h
+	../game_shared/weaponmechanics/hitscanmechanic.cpp
 	../game_shared/weaponmechanics/meleemechanic.h
 	../game_shared/weaponmechanics/meleemechanic.cpp
 	../game_shared/weapons/ammodefs.h

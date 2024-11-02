@@ -20,6 +20,13 @@ public:
 		SF_DontDrop = (1 << 0)
 	};
 
+	enum class WeaponAttackType
+	{
+		None = -1,
+		Primary = 0,
+		Secondary = 1
+	};
+
 	CGenericWeapon();
 	virtual ~CGenericWeapon();
 	virtual void Spawn() override;
@@ -42,6 +49,23 @@ public:
 	float GetInaccuracy() const;
 	byte GetPrimaryAttackModeIndex() const;
 
+	// NFTODO: Remove
+	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
+	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
+
+	bool HasAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int minCount = 1, bool useClip = true) const;
+	bool DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int decrement);
+	void DelayFiring(float secs, bool allowIfEarlier = false, WeaponAttackType attackType = WeaponAttackType::None);
+
+	inline void SetNextIdleTime(float secsInFuture, bool allowIfEarlier = false)
+	{
+		const float delay = UTIL_WeaponTimeBase() + secsInFuture;
+		if ( allowIfEarlier || delay > m_flTimeWeaponIdle )
+		{
+			m_flTimeWeaponIdle = delay;
+		}
+	}
+
 #ifndef CLIENT_DLL
 	// Don't know if this is the best place to put these?
 	// Currently refactoring weapon attributes and didn't like putting
@@ -56,13 +80,6 @@ public:
 #endif
 
 protected:
-	enum class WeaponAttackType
-	{
-		None = -1,
-		Primary = 0,
-		Secondary = 1
-	};
-
 	template<typename T>
 	const T* GetAttackModeFromAttributes(uint32_t index) const
 	{
@@ -92,9 +109,6 @@ protected:
 	void PlaySound(const WeaponAtts::WASoundSet& sound, int channel = CHAN_WEAPON, float volModifier = 1.0f);
 
 	void DelayPendingActions(float secs, bool allowIfEarlier = false);
-	void DelayFiring(float secs, bool allowIfEarlier = false, WeaponAttackType attackType = WeaponAttackType::None);
-	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
-	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
 	int AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const;
 	bool CanReload() const;
 
@@ -157,15 +171,6 @@ protected:
 		if ( allowIfEarlier || delay > m_flNextSecondaryAttack )
 		{
 			m_flNextSecondaryAttack = delay;
-		}
-	}
-
-	inline void SetNextIdleTime(float secsInFuture, bool allowIfEarlier = false)
-	{
-		const float delay = UTIL_WeaponTimeBase() + secsInFuture;
-		if ( allowIfEarlier || delay > m_flTimeWeaponIdle )
-		{
-			m_flTimeWeaponIdle = delay;
 		}
 	}
 

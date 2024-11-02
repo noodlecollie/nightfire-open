@@ -746,7 +746,12 @@ bool CGenericWeapon::HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int min
 		return true;
 	}
 
-	switch ( ammoAttack->UsesAmmoPool )
+	return HasAmmo(ammoAttack->UsesAmmoPool, minCount, useClip);
+}
+
+bool CGenericWeapon::HasAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int minCount, bool useClip) const
+{
+	switch ( pool )
 	{
 		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary:
 		{
@@ -783,9 +788,12 @@ bool CGenericWeapon::DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode)
 		return true;
 	}
 
-	const int decrement = ammoAttack->AmmoDecrement;
+	return DecrementAmmo(ammoAttack->UsesAmmoPool, ammoAttack->AmmoDecrement);
+}
 
-	switch ( ammoAttack->UsesAmmoPool )
+bool CGenericWeapon::DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int decrement)
+{
+	switch ( pool )
 	{
 		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary:
 		{
