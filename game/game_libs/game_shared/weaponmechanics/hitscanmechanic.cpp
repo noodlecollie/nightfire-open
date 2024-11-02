@@ -33,18 +33,18 @@ namespace WeaponMechanics
 			return InvocationResult::Rejected();
 		}
 
+		{
+			const InvocationResult result = CBaseMechanic::Invoke();
+
+			if ( result.result > InvocationResult::INCOMPLETE )
+			{
+				return result;
+			}
+		}
+
 		CBasePlayer* player = GetPlayer();
 		CGenericWeapon* weapon = GetWeapon();
 
-		if ( player->pev->waterlevel == 3 && !hitscanAttack->FunctionsUnderwater )
-		{
-			return InvocationResult::Rejected(InvocationResult::REJECTED_CANNOT_ATTACK_UNDERWATER);
-		}
-
-		if ( !HasAmmo(1, weapon->m_iClip >= 0) )
-		{
-			return InvocationResult::Rejected(InvocationResult::REJECTED_NO_AMMO);
-		}
 
 		weapon->DecrementAmmo(hitscanAttack);
 

@@ -62,6 +62,7 @@ namespace WeaponMechanics
 
 		virtual void Precache();
 		virtual InvocationResult Invoke();
+		virtual void Reset();
 
 		int GetEventIndex() const;
 
@@ -82,6 +83,9 @@ namespace WeaponMechanics
 		void PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds);
 
 		bool HasAmmo(int minCount, bool useClip) const;
+		bool IsUnderwaterAndCannotFire() const;
+
+		void PlaySound(const WeaponAtts::WASoundSet& sound, int channel, float volModifier = 1.0f);
 
 	private:
 		CGenericWeapon* m_Weapon = nullptr;

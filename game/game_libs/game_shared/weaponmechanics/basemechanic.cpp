@@ -29,7 +29,21 @@ namespace WeaponMechanics
 
 	InvocationResult CBaseMechanic::Invoke()
 	{
-		return InvocationResult::Rejected();
+		if ( IsUnderwaterAndCannotFire() )
+		{
+			return InvocationResult::Rejected(InvocationResult::REJECTED_CANNOT_ATTACK_UNDERWATER);
+		}
+
+		if ( !HasAmmo(1, m_Weapon->m_iClip >= 0) )
+		{
+			return InvocationResult::Rejected(InvocationResult::REJECTED_NO_AMMO);
+		}
+
+		return InvocationResult::Complete();
+	}
+
+	void CBaseMechanic::Reset()
+	{
 	}
 
 	int CBaseMechanic::GetEventIndex() const
@@ -78,5 +92,38 @@ namespace WeaponMechanics
 		}
 
 		return m_Weapon->HasAmmo(ammoAttack->UsesAmmoPool, minCount, useClip);
+	}
+
+	bool CBaseMechanic::IsUnderwaterAndCannotFire() const
+	{
+		return GetPlayer()->pev->waterlevel == 3 && !m_BaseAttackMode->FunctionsUnderwater;
+	}
+
+	void CBaseMechanic::PlaySound(const WeaponAtts::WASoundSet& sound, int channel, float volModifier)
+	{
+		if ( sound.SoundNames.Count() < 1 )
+		{
+			return;
+		}
+
+		CBasePlayer* player = GetPlayer();
+
+		const float flRand = UTIL_SharedRandomFloat(player->random_seed, 0.0, 1.0);
+		const char* soundName = sound.SoundNames.ItemByProbabilisticValue(flRand);
+		const float volume = (sound.MinVolume < sound.MaxVolume)
+			? UTIL_SharedRandomFloat(player->random_seed, sound.MinVolume, sound.MaxVolume)
+			: sound.MaxVolume;
+		const int pitch = (sound.MinPitch < sound.MaxPitch)
+			? UTIL_SharedRandomLong(player->random_seed, sound.MinPitch, sound.MaxPitch)
+			: sound.MaxPitch;
+
+		EMIT_SOUND_DYN(
+			ENT(player->pev),
+			channel,
+			soundName,
+			volume * volModifier,
+			sound.Attenuation,
+			sound.Flags,
+			pitch);
 	}
 }  // namespace WeaponMechanics
