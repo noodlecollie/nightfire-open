@@ -37,6 +37,11 @@ namespace WeaponMechanics
 		Result result = REJECTED_UNKNOWN_REASON;
 		float nextInvocationTime = 0.0f;
 
+		bool WasRejected() const
+		{
+			return result > INCOMPLETE;
+		}
+
 		static InvocationResult Rejected(Result reason = REJECTED_UNKNOWN_REASON)
 		{
 			return { reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON };
@@ -64,8 +69,6 @@ namespace WeaponMechanics
 		virtual InvocationResult Invoke();
 		virtual void Reset();
 
-		int GetEventIndex() const;
-
 	protected:
 		// Assumes that the subclass knows what the original attack mode
 		// type actually was.
@@ -77,6 +80,7 @@ namespace WeaponMechanics
 
 		static int DefaultEventFlags();
 
+		int GetEventIndex() const;
 		CGenericWeapon* GetWeapon() const;
 		CBasePlayer* GetPlayer() const;
 
