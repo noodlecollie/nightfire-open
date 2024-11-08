@@ -15,6 +15,8 @@
 // Implementation in UTIL.CPP
 #pragma once
 
+#include "BuildPlatform/Utils.h"
+
 class CBaseEntity;
 
 class CSaveRestoreBuffer
