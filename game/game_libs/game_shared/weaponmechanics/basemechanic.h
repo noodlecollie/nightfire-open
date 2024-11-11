@@ -1,6 +1,7 @@
 #pragma once
 
 #include <limits>
+#include "weaponattributes/weaponatts_ammobasedattack.h"
 
 class CGenericWeapon;
 
@@ -8,7 +9,7 @@ namespace WeaponAtts
 {
 	struct WABaseAttack;
 	struct WASoundSet;
-}
+}  // namespace WeaponAtts
 
 namespace WeaponMechanics
 {
@@ -44,24 +45,23 @@ namespace WeaponMechanics
 
 		static InvocationResult Rejected(Result reason = REJECTED_UNKNOWN_REASON)
 		{
-			return { reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON };
+			return {reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON};
 		}
 
 		static InvocationResult Incomplete(float nextTime)
 		{
-			return { INCOMPLETE, nextTime };
+			return {INCOMPLETE, nextTime};
 		}
 
 		static InvocationResult Complete()
 		{
-			return { COMPLETE };
+			return {COMPLETE};
 		}
 	};
 
 	class CBaseMechanic
 	{
 	public:
-
 		CBaseMechanic(CGenericWeapon* weapon, const WeaponAtts::WABaseAttack* attackMode);
 		virtual ~CBaseMechanic() = default;
 
@@ -90,10 +90,18 @@ namespace WeaponMechanics
 		bool IsUnderwaterAndCannotFire() const;
 
 		void PlaySound(const WeaponAtts::WASoundSet& sound, int channel, float volModifier = 1.0f);
+		bool DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int decrement);
+		bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
+		void SetNextIdleTime(float secsInFuture, bool allowIfEarlier = false);
+
+		void DelayFiring(
+			float secs,
+			bool allowIfEarlier = false,
+			WeaponAtts::AttackMode attackMode = WeaponAtts::AttackMode::None);
 
 	private:
 		CGenericWeapon* m_Weapon = nullptr;
 		const WeaponAtts::WABaseAttack* m_BaseAttackMode = nullptr;
 		int m_EventIndex = -1;
 	};
-}
+}  // namespace WeaponMechanics

@@ -45,8 +45,7 @@ namespace WeaponMechanics
 		CBasePlayer* player = GetPlayer();
 		CGenericWeapon* weapon = GetWeapon();
 
-
-		weapon->DecrementAmmo(hitscanAttack);
+		DecrementAmmo(hitscanAttack);
 
 		player->pev->effects |= EF_MUZZLEFLASH;
 
@@ -98,7 +97,7 @@ namespace WeaponMechanics
 			event.Send();
 		}
 
-		weapon->DelayFiring(1.0f / hitscanAttack->AttackRate);
+		DelayFiring(1.0f / hitscanAttack->AttackRate);
 
 		if ( !HasAmmo(1, true) && !HasAmmo(1, false) )
 		{
@@ -107,7 +106,7 @@ namespace WeaponMechanics
 		}
 
 		// NFTODO: Is there a better value than just 5 here?
-		weapon->SetNextIdleTime(5, true);
+		SetNextIdleTime(5, true);
 
 		return InvocationResult::Complete();
 	}

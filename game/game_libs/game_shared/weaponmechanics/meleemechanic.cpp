@@ -35,13 +35,12 @@ namespace WeaponMechanics
 
 		const WeaponAtts::WAMeleeAttack* meleeAttack = MeleeAttackMode();
 		CBasePlayer* player = GetPlayer();
-		CGenericWeapon* weapon = GetWeapon();
 
 		FireEvent();
 		player->SetAnimation(PLAYER_ATTACK1);
 
-		weapon->DelayFiring(1.0f / meleeAttack->AttackRate);
-		weapon->SetNextIdleTime(5, true);
+		DelayFiring(1.0f / meleeAttack->AttackRate);
+		SetNextIdleTime(5, true);
 
 		m_iStrikeIndex = 0;
 

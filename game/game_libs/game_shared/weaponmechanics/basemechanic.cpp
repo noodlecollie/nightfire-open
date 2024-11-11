@@ -126,4 +126,33 @@ namespace WeaponMechanics
 			sound.Flags,
 			pitch);
 	}
+
+	bool CBaseMechanic::DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int decrement)
+	{
+		return m_Weapon->DecrementAmmo(pool, decrement);
+	}
+
+	bool CBaseMechanic::DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode)
+	{
+		const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
+			dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(attackMode);
+
+		if ( !ammoAttack || ammoAttack->AmmoDecrement < 1 )
+		{
+			// Treat as an infinite pool.
+			return true;
+		}
+
+		return DecrementAmmo(ammoAttack->UsesAmmoPool, ammoAttack->AmmoDecrement);
+	}
+
+	void CBaseMechanic::SetNextIdleTime(float secsInFuture, bool allowIfEarlier)
+	{
+		m_Weapon->SetNextIdleTime(secsInFuture, allowIfEarlier);
+	}
+
+	void CBaseMechanic::DelayFiring(float secs, bool allowIfEarlier, WeaponAtts::AttackMode attackMode)
+	{
+		m_Weapon->DelayFiring(secs, allowIfEarlier, attackMode);
+	}
 }  // namespace WeaponMechanics
