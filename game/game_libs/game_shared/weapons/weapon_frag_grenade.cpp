@@ -93,7 +93,7 @@ void CWeaponFragGrenade::WeaponTick()
 
 void CWeaponFragGrenade::PrimaryAttack()
 {
-	if ( !CGenericWeapon::InvokeWithAttackMode(WeaponAttackType::Primary, GetPrimaryAttackMode()) ||
+	if ( !CGenericWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode::Primary, GetPrimaryAttackMode()) ||
 		 m_ThrowState != ThrowState::Idle )
 	{
 		return;

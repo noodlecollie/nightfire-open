@@ -37,14 +37,14 @@ BOOL CWeaponFists::Deploy()
 	return TRUE;
 }
 
-bool CWeaponFists::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode)
+bool CWeaponFists::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack)
 {
-	if ( !CGenericMeleeWeapon::InvokeWithAttackMode(type, attackMode) )
+	if ( !CGenericMeleeWeapon::InvokeWithAttackMode(mode, attack) )
 	{
 		return false;
 	}
 
-	if ( type == WeaponAttackType::Primary )
+	if ( mode == WeaponAtts::AttackMode::Primary )
 	{
 		// Alternate between modes.
 		const WeaponAtts::WAMeleeAttack* currentMode = GetPrimaryAttackMode<WeaponAtts::WAMeleeAttack>();

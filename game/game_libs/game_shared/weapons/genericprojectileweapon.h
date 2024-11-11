@@ -14,7 +14,7 @@ public:
 	bool WritePredictionData(weapon_data_t* to) override;
 
 protected:
-	virtual bool InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode) override;
+	virtual bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack) override;
 
 #ifndef CLIENT_DLL
 	virtual void CreateProjectile(const WeaponAtts::WAProjectileAttack& projectileAttack) = 0;

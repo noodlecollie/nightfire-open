@@ -19,17 +19,17 @@ void CGenericHitscanWeapon::WeaponIdle()
 	CGenericWeapon::WeaponIdle();
 }
 
-void CGenericHitscanWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode)
+void CGenericHitscanWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack)
 {
-	CGenericWeapon::PrecacheAttackMode(attackMode);
+	CGenericWeapon::PrecacheAttackMode(attack);
 
-	if ( attackMode.Classify() != WeaponAtts::WABaseAttack::Classification::Hitscan )
+	if ( attack.Classify() != WeaponAtts::WABaseAttack::Classification::Hitscan )
 	{
 		ASSERT(false);
 		return;
 	}
 
-	const WeaponAtts::WAHitscanAttack& hitscanAttack = static_cast<const WeaponAtts::WAHitscanAttack&>(attackMode);
+	const WeaponAtts::WAHitscanAttack& hitscanAttack = static_cast<const WeaponAtts::WAHitscanAttack&>(attack);
 
 	if ( hitscanAttack.ShellModelName )
 	{
@@ -37,16 +37,14 @@ void CGenericHitscanWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& a
 	}
 }
 
-bool CGenericHitscanWeapon::InvokeWithAttackMode(
-	const CGenericWeapon::WeaponAttackType type,
-	const WeaponAtts::WABaseAttack* attackMode)
+bool CGenericHitscanWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack)
 {
-	if ( !attackMode || attackMode->Classify() != WeaponAtts::WABaseAttack::Classification::Hitscan )
+	if ( !attack || attack->Classify() != WeaponAtts::WABaseAttack::Classification::Hitscan )
 	{
 		return false;
 	}
 
-	const WeaponAtts::WAHitscanAttack* hitscanAttack = static_cast<const WeaponAtts::WAHitscanAttack*>(attackMode);
+	const WeaponAtts::WAHitscanAttack* hitscanAttack = static_cast<const WeaponAtts::WAHitscanAttack*>(attack);
 
 	if ( hitscanAttack->AttackRate <= 0.0f || hitscanAttack->BulletsPerShot < 1 )
 	{
@@ -54,7 +52,7 @@ bool CGenericHitscanWeapon::InvokeWithAttackMode(
 	}
 
 	// Check base class allows the attack:
-	if ( !CGenericWeapon::InvokeWithAttackMode(type, hitscanAttack) )
+	if ( !CGenericWeapon::InvokeWithAttackMode(mode, hitscanAttack) )
 	{
 		return false;
 	}

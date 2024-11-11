@@ -14,8 +14,6 @@ public:
 	virtual void WeaponIdle() override;
 
 protected:
-	void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode) override;
-	bool InvokeWithAttackMode(
-		const CGenericWeapon::WeaponAttackType type,
-		const WeaponAtts::WABaseAttack* attackMode) override;
+	void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack) override;
+	bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack) override;
 };

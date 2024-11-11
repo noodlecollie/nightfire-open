@@ -76,24 +76,24 @@ void CGenericWeapon::Precache()
 	}
 }
 
-void CGenericWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode)
+void CGenericWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack)
 {
-	PrecacheSoundSet(attackMode.AttackSounds);
-	PrecacheSoundSet(attackMode.ViewModelAttackSounds);
+	PrecacheSoundSet(attack.AttackSounds);
+	PrecacheSoundSet(attack.ViewModelAttackSounds);
 
-	if ( attackMode.OverrideAnimations )
+	if ( attack.OverrideAnimations )
 	{
-		PrecacheSoundSet(attackMode.OverrideAnimations->ReloadSounds);
+		PrecacheSoundSet(attack.OverrideAnimations->ReloadSounds);
 	}
 
-	const uint32_t index = attackMode.Signature()->Index;
+	const uint32_t index = attack.Signature()->Index;
 
 	if ( static_cast<uint32_t>(m_AttackModeEvents.Count()) < index + 1 )
 	{
 		m_AttackModeEvents.SetCount(index + 1);
 	}
 
-	m_AttackModeEvents[index] = PRECACHE_EVENT(1, attackMode.EventScript);
+	m_AttackModeEvents[index] = PRECACHE_EVENT(1, attack.EventScript);
 }
 
 void CGenericWeapon::PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds)
@@ -208,7 +208,7 @@ BOOL CGenericWeapon::Deploy()
 
 void CGenericWeapon::PrimaryAttack()
 {
-	if ( InvokeAttack(WeaponAttackType::Primary) )
+	if ( InvokeAttack(WeaponAtts::AttackMode::Primary) )
 	{
 		m_bPrimaryAttackThisFrame = true;
 	}
@@ -216,38 +216,38 @@ void CGenericWeapon::PrimaryAttack()
 
 void CGenericWeapon::SecondaryAttack()
 {
-	if ( InvokeAttack(WeaponAttackType::Secondary) )
+	if ( InvokeAttack(WeaponAtts::AttackMode::Secondary) )
 	{
 		m_bSecondaryAttackThisFrame = true;
 	}
 }
 
-bool CGenericWeapon::InvokeAttack(WeaponAttackType type)
+bool CGenericWeapon::InvokeAttack(WeaponAtts::AttackMode mode)
 {
-	if ( type == WeaponAttackType::None )
+	if ( mode == WeaponAtts::AttackMode::None )
 	{
 		return false;
 	}
 
 	return InvokeWithAttackMode(
-		type,
-		type == WeaponAttackType::Primary ? m_pPrimaryAttackMode : m_pSecondaryAttackMode);
+		mode,
+		mode == WeaponAtts::AttackMode::Primary ? m_pPrimaryAttackMode : m_pSecondaryAttackMode);
 }
 
-bool CGenericWeapon::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode)
+bool CGenericWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack)
 {
-	if ( type == WeaponAttackType::None || !attackMode )
+	if ( mode == WeaponAtts::AttackMode::None || !attack )
 	{
 		return false;
 	}
 
-	if ( (m_pPlayer->pev->waterlevel == 3 && !attackMode->FunctionsUnderwater) ||
-		 !HasAmmo(attackMode, 1, m_iClip >= 0) )
+	if ( (m_pPlayer->pev->waterlevel == 3 && !attack->FunctionsUnderwater) ||
+		 !HasAmmo(attack, 1, m_iClip >= 0) )
 	{
 		if ( m_fFireOnEmpty )
 		{
-			PlayEmptySoundIfAllowed(*attackMode);
-			DelayFiring(0.2f, false, type);
+			PlayEmptySoundIfAllowed(*attack);
+			DelayFiring(0.2f, false, mode);
 		}
 
 		return false;
@@ -721,15 +721,15 @@ void CGenericWeapon::DelayPendingActions(float secs, bool allowIfEarlier)
 	SetNextIdleTime(secs, allowIfEarlier);
 }
 
-void CGenericWeapon::DelayFiring(float secs, bool allowIfEarlier, WeaponAttackType type)
+void CGenericWeapon::DelayFiring(float secs, bool allowIfEarlier, WeaponAtts::AttackMode mode)
 {
-	if ( type == WeaponAttackType::None || type == WeaponAttackType::Primary )
+	if ( mode == WeaponAtts::AttackMode::None || mode == WeaponAtts::AttackMode::Primary )
 	{
 		SetNextPrimaryAttack(secs, allowIfEarlier);
 		m_flLastPrimaryAttack = UTIL_WeaponTimeBase();
 	}
 
-	if ( type == WeaponAttackType::None || type == WeaponAttackType::Secondary )
+	if ( mode == WeaponAtts::AttackMode::None || mode == WeaponAtts::AttackMode::Secondary )
 	{
 		SetNextSecondaryAttack(secs, allowIfEarlier);
 		m_flLastSecondaryAttack = UTIL_WeaponTimeBase();
@@ -934,12 +934,12 @@ void CGenericWeapon::SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode
 	m_pSecondaryAttackMode = mode;
 }
 
-CGenericWeapon::WeaponAttackType CGenericWeapon::GetViewModelAnimationSource()
+WeaponAtts::AttackMode CGenericWeapon::GetViewModelAnimationSource()
 {
 	return m_ViewModelAnimationSource;
 }
 
-void CGenericWeapon::SetViewModelAnimationSource(WeaponAttackType source)
+void CGenericWeapon::SetViewModelAnimationSource(WeaponAtts::AttackMode source)
 {
 	m_ViewModelAnimationSource = source;
 }
@@ -981,10 +981,10 @@ const WeaponAtts::AccuracyParameters* CGenericWeapon::GetWeaponAccuracyParams() 
 
 const WeaponAtts::ViewModelAnimationSet& CGenericWeapon::GetViewModelAnimationSet() const
 {
-	if ( m_ViewModelAnimationSource != WeaponAttackType::None )
+	if ( m_ViewModelAnimationSource != WeaponAtts::AttackMode::None )
 	{
 		const WeaponAtts::WABaseAttack* attackMode =
-		m_ViewModelAnimationSource == WeaponAttackType::Secondary ? m_pSecondaryAttackMode : m_pPrimaryAttackMode;
+		m_ViewModelAnimationSource == WeaponAtts::AttackMode::Secondary ? m_pSecondaryAttackMode : m_pPrimaryAttackMode;
 
 		if ( attackMode && attackMode->OverrideAnimations )
 		{

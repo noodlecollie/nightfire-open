@@ -75,35 +75,35 @@ void CGenericMeleeWeapon::Holster(int)
 	ResetThink();
 }
 
-void CGenericMeleeWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode)
+void CGenericMeleeWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack)
 {
-	CGenericWeapon::PrecacheAttackMode(attackMode);
+	CGenericWeapon::PrecacheAttackMode(attack);
 
-	if ( attackMode.Classify() != WeaponAtts::WABaseAttack::Classification::Melee )
+	if ( attack.Classify() != WeaponAtts::WABaseAttack::Classification::Melee )
 	{
 		ASSERT(false);
 		return;
 	}
 
-	const WeaponAtts::WAMeleeAttack& hitscanAttack = static_cast<const WeaponAtts::WAMeleeAttack&>(attackMode);
+	const WeaponAtts::WAMeleeAttack& hitscanAttack = static_cast<const WeaponAtts::WAMeleeAttack&>(attack);
 
 	PrecacheSoundSet(hitscanAttack.BodyHitSounds);
 	PrecacheSoundSet(hitscanAttack.WorldHitSounds);
 }
 
-bool CGenericMeleeWeapon::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode)
+bool CGenericMeleeWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack)
 {
-	if ( !attackMode || attackMode->Classify() != WeaponAtts::WABaseAttack::Classification::Melee )
+	if ( !attack || attack->Classify() != WeaponAtts::WABaseAttack::Classification::Melee )
 	{
 		return false;
 	}
 
-	if ( !CGenericWeapon::InvokeWithAttackMode(type, attackMode) )
+	if ( !CGenericWeapon::InvokeWithAttackMode(mode, attack) )
 	{
 		return false;
 	}
 
-	const WeaponAtts::WAMeleeAttack* meleeAttack = static_cast<const WeaponAtts::WAMeleeAttack*>(attackMode);
+	const WeaponAtts::WAMeleeAttack* meleeAttack = static_cast<const WeaponAtts::WAMeleeAttack*>(attack);
 
 	FireEvent(meleeAttack);
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);

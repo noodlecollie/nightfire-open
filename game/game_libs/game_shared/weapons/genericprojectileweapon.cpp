@@ -18,22 +18,22 @@ void CGenericProjectileWeapon::WeaponTick()
 	}
 }
 
-bool CGenericProjectileWeapon::InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode)
+bool CGenericProjectileWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack)
 {
-	if ( !attackMode || attackMode->Classify() != WeaponAtts::WABaseAttack::Classification::Projectile )
+	if ( !attack || attack->Classify() != WeaponAtts::WABaseAttack::Classification::Projectile )
 	{
 		return false;
 	}
 
 	const WeaponAtts::WAProjectileAttack* projectileAttack =
-		static_cast<const WeaponAtts::WAProjectileAttack*>(attackMode);
+		static_cast<const WeaponAtts::WAProjectileAttack*>(attack);
 
 	if ( projectileAttack->AttackRate <= 0.0f )
 	{
 		return false;
 	}
 
-	if ( !CGenericWeapon::InvokeWithAttackMode(type, projectileAttack) )
+	if ( !CGenericWeapon::InvokeWithAttackMode(mode, projectileAttack) )
 	{
 		return false;
 	}
@@ -47,7 +47,7 @@ bool CGenericProjectileWeapon::InvokeWithAttackMode(WeaponAttackType type, const
 	// player "shoot" animation
 	m_pPlayer->SetAnimation(PLAYER_ATTACK1);
 
-	const bool willBeEmpty = AmmoDecrementWillEmptyWeaponClip(attackMode, 1);
+	const bool willBeEmpty = AmmoDecrementWillEmptyWeaponClip(attack, 1);
 
 	if ( projectileAttack->projectileDelay <= 0.0f )
 	{

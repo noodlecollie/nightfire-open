@@ -17,8 +17,8 @@ public:
 	void Holster(int skiplocal = 0) override;
 
 protected:
-	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode) override;
-	virtual bool InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode) override;
+	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack) override;
+	virtual bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack) override;
 
 private:
 	void AttackStrike();

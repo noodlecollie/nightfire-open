@@ -17,7 +17,7 @@ public:
 #endif
 
 protected:
-	bool InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode) override;
+	bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack) override;
 
 private:
 	const WeaponAtts::WAMeleeAttack* m_pPunchAttack;

@@ -20,13 +20,6 @@ public:
 		SF_DontDrop = (1 << 0)
 	};
 
-	enum class WeaponAttackType
-	{
-		None = -1,
-		Primary = 0,
-		Secondary = 1
-	};
-
 	CGenericWeapon();
 	virtual ~CGenericWeapon();
 	virtual void Spawn() override;
@@ -55,7 +48,11 @@ public:
 
 	bool HasAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int minCount = 1, bool useClip = true) const;
 	bool DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int decrement);
-	void DelayFiring(float secs, bool allowIfEarlier = false, WeaponAttackType attackType = WeaponAttackType::None);
+
+	void DelayFiring(
+		float secs,
+		bool allowIfEarlier = false,
+		WeaponAtts::AttackMode attackMode = WeaponAtts::AttackMode::None);
 
 	inline void SetNextIdleTime(float secsInFuture, bool allowIfEarlier = false)
 	{
@@ -100,8 +97,8 @@ protected:
 	virtual const char* PickupSound() const override;
 
 	// Overridable functions for attack modes:
-	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode);
-	virtual bool InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode);
+	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack);
+	virtual bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack);
 
 	void PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds);
 	void SetViewModelBody(int body, bool immediate = false);
@@ -133,8 +130,8 @@ protected:
 
 	// Override the view model animations based on those used
 	// for an attack mode.
-	WeaponAttackType GetViewModelAnimationSource();
-	void SetViewModelAnimationSource(WeaponAttackType source);
+	WeaponAtts::AttackMode GetViewModelAnimationSource();
+	void SetViewModelAnimationSource(WeaponAtts::AttackMode source);
 
 	// T can be used to validate the type of attack expected to be set,
 	// but can be omitted if this is not required.
@@ -189,7 +186,7 @@ private:
 	void PrecacheViewModel(const WeaponAtts::WAViewModel& viewModel);
 	void PrecachePlayerModel(const WeaponAtts::WAPlayerModel& playerModel);
 
-	bool InvokeAttack(WeaponAttackType type);
+	bool InvokeAttack(WeaponAtts::AttackMode mode);
 	void SetFireOnEmptyState(const WeaponAtts::WABaseAttack* attackMode);
 
 	// Return true if reload action occurred, or false otherwise.
@@ -221,7 +218,7 @@ private:
 	// If set to something other than none, the view model animations
 	// are taken from the specified attack mode, rather than the default
 	// view model attributes.
-	WeaponAttackType m_ViewModelAnimationSource = WeaponAttackType::None;
+	WeaponAtts::AttackMode m_ViewModelAnimationSource = WeaponAtts::AttackMode::None;
 
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;
