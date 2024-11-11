@@ -12,6 +12,11 @@ namespace WeaponMechanics
 	{
 	}
 
+	CMeleeMechanic::CMeleeMechanic(CGenericWeapon* weapon, uint32_t attackIndex) :
+		CBaseMechanic(weapon, weapon->GetAttackModeFromAttributes<WeaponAtts::WAMeleeAttack>(attackIndex))
+	{
+	}
+
 	void CMeleeMechanic::Precache()
 	{
 		CBaseMechanic::Precache();

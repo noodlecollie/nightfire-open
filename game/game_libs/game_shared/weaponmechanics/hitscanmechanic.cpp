@@ -12,6 +12,11 @@ namespace WeaponMechanics
 	{
 	}
 
+	CHitscanMechanic::CHitscanMechanic(CGenericWeapon* weapon, uint32_t attackIndex) :
+		CBaseMechanic(weapon, weapon->GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(attackIndex))
+	{
+	}
+
 	void CHitscanMechanic::Precache()
 	{
 		CBaseMechanic::Precache();

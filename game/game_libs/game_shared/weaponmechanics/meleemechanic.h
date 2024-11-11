@@ -12,7 +12,8 @@ namespace WeaponMechanics
 	class CMeleeMechanic : public CBaseMechanic
 	{
 	public:
-		explicit CMeleeMechanic(CGenericWeapon* weapon, const WeaponAtts::WAMeleeAttack* attackMode);
+		CMeleeMechanic(CGenericWeapon* weapon, const WeaponAtts::WAMeleeAttack* attackMode);
+		CMeleeMechanic(CGenericWeapon* weapon, uint32_t attackIndex);
 
 		void Precache() override;
 		InvocationResult Invoke() override;

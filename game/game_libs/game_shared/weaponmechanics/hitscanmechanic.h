@@ -12,7 +12,8 @@ namespace WeaponMechanics
 	class CHitscanMechanic : public CBaseMechanic
 	{
 	public:
-		explicit CHitscanMechanic(CGenericWeapon* weapon, const WeaponAtts::WAHitscanAttack* attackMode);
+		CHitscanMechanic(CGenericWeapon* weapon, const WeaponAtts::WAHitscanAttack* attackMode);
+		CHitscanMechanic(CGenericWeapon* weapon, uint32_t attackIndex);
 
 		void Precache() override;
 		InvocationResult Invoke() override;

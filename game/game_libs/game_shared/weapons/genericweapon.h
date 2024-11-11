@@ -49,20 +49,6 @@ public:
 	float GetInaccuracy() const;
 	byte GetPrimaryAttackModeIndex() const;
 
-#ifndef CLIENT_DLL
-	// Don't know if this is the best place to put these?
-	// Currently refactoring weapon attributes and didn't like putting
-	// non-static behaviour like this into static attributes.
-	// Evaluate whether this should be moved elsewhere - possibly
-	// make bot weapon profiles local to bot code?
-	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const = 0;
-	virtual void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const = 0;
-	virtual int Save(CSave& save) override;
-	virtual int Restore(CRestore& restore) override;
-	static TYPEDESCRIPTION m_SaveData[];
-#endif
-
-protected:
 	template<typename T>
 	const T* GetAttackModeFromAttributes(uint32_t index) const
 	{
@@ -80,6 +66,20 @@ protected:
 		return attackMode;
 	}
 
+#ifndef CLIENT_DLL
+	// Don't know if this is the best place to put these?
+	// Currently refactoring weapon attributes and didn't like putting
+	// non-static behaviour like this into static attributes.
+	// Evaluate whether this should be moved elsewhere - possibly
+	// make bot weapon profiles local to bot code?
+	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const = 0;
+	virtual void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const = 0;
+	virtual int Save(CSave& save) override;
+	virtual int Restore(CRestore& restore) override;
+	static TYPEDESCRIPTION m_SaveData[];
+#endif
+
+protected:
 	virtual const char* PickupSound() const override;
 
 	// Overridable functions for attack modes:
