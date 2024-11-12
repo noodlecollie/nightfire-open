@@ -115,4 +115,14 @@ namespace WeaponMechanics
 
 		return InvocationResult::Complete();
 	}
+
+	void CHitscanMechanic::WeaponIdle()
+	{
+		if ( GetAttackModeInWeapon() == WeaponAtts::AttackMode::Primary )
+		{
+			GetPlayer()->GetAutoaimVector(GetAttackMode<WeaponAtts::WAHitscanAttack>()->AutoAim);
+		}
+
+		CBaseMechanic::WeaponIdle();
+	}
 }  // namespace WeaponMechanics

@@ -17,6 +17,7 @@ namespace WeaponMechanics
 
 		void Precache() override;
 		InvocationResult Invoke() override;
+		void WeaponIdle() override;
 
 	private:
 		const WeaponAtts::WAHitscanAttack* HitscanAttackMode() const

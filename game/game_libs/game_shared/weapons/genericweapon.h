@@ -97,10 +97,11 @@ protected:
 		bool allowIfEarlier = false,
 		WeaponAtts::AttackMode attackMode = WeaponAtts::AttackMode::None);
 	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
-	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
 	bool HasAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int minCount = 1, bool useClip = true) const;
+	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
 	bool DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int decrement);
 	int AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const;
+	int AmmoLeft(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool) const;
 	bool CanReload() const;
 
 	int GetEventIDForAttackMode(const WeaponAtts::WABaseAttack* attack) const;
@@ -183,6 +184,21 @@ protected:
 #endif
 	}
 
+	//////////////////////////////////////////////
+	// MECHANICS
+	//////////////////////////////////////////////
+	template<typename T, typename Attack>
+	T* AddMechanic(const Attack* attack)
+	{
+		T* mechanic = new T(this, attack);
+		m_Mechanics.AddToTail(mechanic);
+		return mechanic;
+	}
+
+	void SetPrimaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	void SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	bool HasAttackMechanics() const;
+
 private:
 	// TODO: Should these be delegated somewhere else, a la aggregate programming model?
 	void PrecacheCore(const WeaponAtts::WACore& core);
@@ -191,6 +207,7 @@ private:
 
 	bool InvokeAttack(WeaponAtts::AttackMode mode);
 	void SetFireOnEmptyState(const WeaponAtts::WABaseAttack* attackMode);
+	void SetFireOnEmptyState(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool);
 
 	// Return true if reload action occurred, or false otherwise.
 	bool IdleProcess_CheckReload();
@@ -215,6 +232,9 @@ private:
 	CUtlVector<float> m_ViewAnimDurations;
 	CWeaponInaccuracyCalculator m_InaccuracyCalculator;
 
+	//////////////////////////////////////////////
+	// MECHANICS: Remove these once done
+	//////////////////////////////////////////////
 	const WeaponAtts::WABaseAttack* m_pPrimaryAttackMode = nullptr;
 	const WeaponAtts::WABaseAttack* m_pSecondaryAttackMode = nullptr;
 
@@ -222,6 +242,13 @@ private:
 	// are taken from the specified attack mode, rather than the default
 	// view model attributes.
 	WeaponAtts::AttackMode m_ViewModelAnimationSource = WeaponAtts::AttackMode::None;
+
+	//////////////////////////////////////////////
+	// MECHANICS: Keep these
+	//////////////////////////////////////////////
+	CUtlVector<WeaponMechanics::CBaseMechanic*> m_Mechanics;
+	WeaponMechanics::CBaseMechanic* m_PrimaryAttackMechanic = nullptr;
+	WeaponMechanics::CBaseMechanic* m_SecondaryAttackMechanic = nullptr;
 
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;

@@ -1,9 +1,14 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "generichitscanweapon.h"
+#include "genericweapon.h"
 
-class CWeaponP99 : public CGenericHitscanWeapon
+namespace WeaponMechanics
+{
+	class CBaseMechanic;
+}
+
+class CWeaponP99 : public CGenericWeapon
 {
 public:
 	CWeaponP99();
@@ -23,8 +28,8 @@ public:
 #endif
 
 private:
-	const WeaponAtts::WAHitscanAttack* m_pAttackUnsilenced = nullptr;
-	const WeaponAtts::WAHitscanAttack* m_pAttackSilenced = nullptr;
+	WeaponMechanics::CBaseMechanic* m_UnsilencedAttack = nullptr;
+	WeaponMechanics::CBaseMechanic* m_SilencedAttack = nullptr;
 	bool m_bSilenced = false;
 };
 

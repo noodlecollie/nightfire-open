@@ -46,6 +46,20 @@ namespace WeaponMechanics
 	{
 	}
 
+	void CBaseMechanic::WeaponIdle()
+	{
+	}
+
+	const WeaponAtts::WABaseAttack* CBaseMechanic::GetAttackMode() const
+	{
+		return m_BaseAttackMode;
+	}
+
+	const WeaponAtts::WAAmmoBasedAttack* CBaseMechanic::GetAmmoBasedAttackMode() const
+	{
+		return dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_BaseAttackMode);
+	}
+
 	int CBaseMechanic::GetEventIndex() const
 	{
 		return m_EventIndex;
@@ -68,6 +82,21 @@ namespace WeaponMechanics
 	CBasePlayer* CBaseMechanic::GetPlayer() const
 	{
 		return m_Weapon->m_pPlayer;
+	}
+
+	WeaponAtts::AttackMode CBaseMechanic::GetAttackModeInWeapon() const
+	{
+		if ( m_Weapon->m_PrimaryAttackMechanic == this )
+		{
+			return WeaponAtts::AttackMode::Primary;
+		}
+
+		if ( m_Weapon->m_SecondaryAttackMechanic == this )
+		{
+			return WeaponAtts::AttackMode::Secondary;
+		}
+
+		return WeaponAtts::AttackMode::None;
 	}
 
 	void CBaseMechanic::PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds)

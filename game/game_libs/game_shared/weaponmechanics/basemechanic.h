@@ -9,6 +9,7 @@ namespace WeaponAtts
 {
 	struct WABaseAttack;
 	struct WASoundSet;
+	struct AccuracyParameters;
 }  // namespace WeaponAtts
 
 namespace WeaponMechanics
@@ -68,6 +69,13 @@ namespace WeaponMechanics
 		virtual void Precache();
 		virtual InvocationResult Invoke();
 		virtual void Reset();
+		virtual void WeaponIdle();
+
+		const WeaponAtts::WABaseAttack* GetAttackMode() const;
+
+		// Convenience, since we need to check for this a lot.
+		// Performs a dynamic cast, so may return null.
+		const WeaponAtts::WAAmmoBasedAttack* GetAmmoBasedAttackMode() const;
 
 	protected:
 		// Assumes that the subclass knows what the original attack mode
@@ -83,6 +91,11 @@ namespace WeaponMechanics
 		int GetEventIndex() const;
 		CGenericWeapon* GetWeapon() const;
 		CBasePlayer* GetPlayer() const;
+
+		// Returns the current attack mode that this mechanic is acting
+		// as in the weapon, or WeaponAtts::AttackMode::None if it is
+		// neither primary nor secondary.
+		WeaponAtts::AttackMode GetAttackModeInWeapon() const;
 
 		void PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds);
 

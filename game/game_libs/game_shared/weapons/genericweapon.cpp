@@ -6,6 +6,7 @@
 #include "EnginePublicAPI/weaponinfo.h"
 #include "util/extramath.h"
 #include "util/cvarFuncs.h"
+#include "weaponmechanics/basemechanic.h"
 
 #ifdef CLIENT_DLL
 #include "cl_dll.h"
@@ -26,7 +27,9 @@ CGenericWeapon::CGenericWeapon() :
 
 CGenericWeapon::~CGenericWeapon()
 {
-	// Default implementation of blank virtual destructor.
+	m_PrimaryAttackMechanic = nullptr;
+	m_SecondaryAttackMechanic = nullptr;
+	m_Mechanics.PurgeAndDeleteElements();
 }
 
 void CGenericWeapon::Spawn()
@@ -73,6 +76,11 @@ void CGenericWeapon::Precache()
 	{
 		ASSERT(atts.AttackModes[index].get());
 		PrecacheAttackMode(*atts.AttackModes[index]);
+	}
+
+	FOR_EACH_VEC(m_Mechanics, index)
+	{
+		m_Mechanics[index]->Precache();
 	}
 }
 
@@ -229,6 +237,39 @@ bool CGenericWeapon::InvokeAttack(WeaponAtts::AttackMode mode)
 		return false;
 	}
 
+	if ( !m_Mechanics.IsEmpty() )
+	{
+		WeaponMechanics::InvocationResult result = WeaponMechanics::InvocationResult::Rejected();
+
+		switch ( mode )
+		{
+			case WeaponAtts::AttackMode::Primary:
+			{
+				if ( m_PrimaryAttackMechanic )
+				{
+					result = m_PrimaryAttackMechanic->Invoke();
+					break;
+				}
+			}
+
+			case WeaponAtts::AttackMode::Secondary:
+			{
+				if ( m_SecondaryAttackMechanic )
+				{
+					result = m_SecondaryAttackMechanic->Invoke();
+					break;
+				}
+			}
+
+			default:
+			{
+				break;
+			}
+		}
+
+		return !result.WasRejected();
+	}
+
 	return InvokeWithAttackMode(
 		mode,
 		mode == WeaponAtts::AttackMode::Primary ? m_pPrimaryAttackMode : m_pSecondaryAttackMode);
@@ -241,8 +282,7 @@ bool CGenericWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const Wea
 		return false;
 	}
 
-	if ( (m_pPlayer->pev->waterlevel == 3 && !attack->FunctionsUnderwater) ||
-		 !HasAmmo(attack, 1, m_iClip >= 0) )
+	if ( (m_pPlayer->pev->waterlevel == 3 && !attack->FunctionsUnderwater) || !HasAmmo(attack, 1, m_iClip >= 0) )
 	{
 		if ( m_fFireOnEmpty )
 		{
@@ -259,13 +299,28 @@ bool CGenericWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const Wea
 // TODO: Allow this to handle secondary too? Do we need this?
 void CGenericWeapon::Reload()
 {
+	// REMOVE ME
+	if ( m_iId == (int)WeaponId_e::WeaponP99 )
+	{
+		volatile bool stop = true;
+		(void)stop;
+	}
+
 	if ( !CanReload() )
 	{
 		return;
 	}
 
-	const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
-		dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	const WeaponAtts::WAAmmoBasedAttack* ammoAttack = nullptr;
+
+	if ( HasAttackMechanics() )
+	{
+		ammoAttack = m_PrimaryAttackMechanic ? m_PrimaryAttackMechanic->GetAmmoBasedAttackMode() : nullptr;
+	}
+	else
+	{
+		ammoAttack = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	}
 
 	if ( !ammoAttack )
 	{
@@ -354,13 +409,33 @@ void CGenericWeapon::RunAttackLogic()
 
 	if ( ShouldSecondaryAttackThisFrame() )
 	{
-		SetFireOnEmptyState(m_pSecondaryAttackMode);
+		if ( HasAttackMechanics() )
+		{
+			if ( m_SecondaryAttackMechanic )
+			{
+				SetFireOnEmptyState(m_SecondaryAttackMechanic->GetAttackMode());
+			}
+		}
+		else
+		{
+			SetFireOnEmptyState(m_pSecondaryAttackMode);
+		}
 		SecondaryAttack();
 		m_bSecondaryAttackHeldDown = true;
 	}
 	else if ( ShouldPrimaryAttackThisFrame() )
 	{
-		SetFireOnEmptyState(m_pPrimaryAttackMode);
+		if ( HasAttackMechanics() )
+		{
+			if ( m_PrimaryAttackMechanic )
+			{
+				SetFireOnEmptyState(m_PrimaryAttackMechanic->GetAttackMode());
+			}
+		}
+		else
+		{
+			SetFireOnEmptyState(m_pPrimaryAttackMode);
+		}
 		PrimaryAttack();
 		m_bPrimaryAttackHeldDown = true;
 	}
@@ -444,7 +519,12 @@ bool CGenericWeapon::ShouldSecondaryAttackThisFrame() const
 {
 	const bool buttonDown = m_pPlayer->pev->button & IN_ATTACK2;
 	const bool canAttack = CanAttack(m_flNextSecondaryAttack, gpGlobals->time, UseDecrement());
-	const bool secAttackIsContinuous = m_pSecondaryAttackMode && m_pSecondaryAttackMode->IsContinuous;
+
+	const WeaponAtts::WABaseAttack* mode = HasAttackMechanics()
+		? (m_SecondaryAttackMechanic ? m_SecondaryAttackMechanic->GetAttackMode() : nullptr)
+		: m_pSecondaryAttackMode;
+
+	const bool secAttackIsContinuous = mode && mode->IsContinuous;
 
 	return buttonDown && canAttack && (secAttackIsContinuous || !m_bSecondaryAttackHeldDown);
 }
@@ -453,7 +533,12 @@ bool CGenericWeapon::ShouldPrimaryAttackThisFrame() const
 {
 	const bool buttonDown = m_pPlayer->pev->button & IN_ATTACK;
 	const bool canAttack = CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement());
-	const bool priAttackIsContinuous = m_pPrimaryAttackMode && m_pPrimaryAttackMode->IsContinuous;
+
+	const WeaponAtts::WABaseAttack* mode = HasAttackMechanics()
+		? (m_PrimaryAttackMechanic ? m_PrimaryAttackMechanic->GetAttackMode() : nullptr)
+		: m_pPrimaryAttackMode;
+
+	const bool priAttackIsContinuous = mode && mode->IsContinuous;
 
 	return buttonDown && canAttack && (priAttackIsContinuous || !m_bPrimaryAttackHeldDown);
 }
@@ -557,10 +642,15 @@ void CGenericWeapon::SetFireOnEmptyState(const WeaponAtts::WABaseAttack* attackM
 		return;
 	}
 
+	SetFireOnEmptyState(ammoAttack->UsesAmmoPool);
+}
+
+void CGenericWeapon::SetFireOnEmptyState(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool)
+{
 	const char* ammoName = nullptr;
 	int ammoIndex = -1;
 
-	switch ( ammoAttack->UsesAmmoPool )
+	switch ( pool )
 	{
 		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary:
 		{
@@ -595,6 +685,11 @@ int CGenericWeapon::HandleSpecialReload(int)
 
 void CGenericWeapon::WeaponIdle()
 {
+	FOR_EACH_VEC(m_Mechanics, index)
+	{
+		m_Mechanics[index]->WeaponIdle();
+	}
+
 	ResetEmptySound();
 
 	if ( m_flTimeWeaponIdle > UTIL_WeaponTimeBase() )
@@ -602,8 +697,16 @@ void CGenericWeapon::WeaponIdle()
 		return;
 	}
 
-	const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
-		dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	const WeaponAtts::WAAmmoBasedAttack* ammoAttack = nullptr;
+
+	if ( HasAttackMechanics() )
+	{
+		ammoAttack = m_PrimaryAttackMechanic ? m_PrimaryAttackMechanic->GetAmmoBasedAttackMode() : nullptr;
+	}
+	else
+	{
+		ammoAttack = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	}
 
 	if ( (ammoAttack && ammoAttack->SpecialReload) ? IdleProcess_CheckSpecialReload() : IdleProcess_CheckReload() )
 	{
@@ -616,8 +719,17 @@ void CGenericWeapon::WeaponIdle()
 
 bool CGenericWeapon::IdleProcess_CheckReload()
 {
-	const WeaponAtts::WAAmmoBasedAttack* attackMode =
-		dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	const WeaponAtts::WAAmmoBasedAttack* attackMode = nullptr;
+
+	if ( HasAttackMechanics() )
+	{
+		attackMode = m_PrimaryAttackMechanic ? m_PrimaryAttackMechanic->GetAmmoBasedAttackMode() : nullptr;
+	}
+	else
+	{
+		attackMode = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	}
+
 	if ( attackMode && attackMode->AutoReload && m_iClip < 1 && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] > 0 )
 	{
 		Reload();
@@ -848,7 +960,12 @@ int CGenericWeapon::AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const
 		return -1;
 	}
 
-	switch ( ammoAttack->UsesAmmoPool )
+	return AmmoLeft(ammoAttack->UsesAmmoPool);
+}
+
+int CGenericWeapon::AmmoLeft(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool) const
+{
+	switch ( pool )
 	{
 		case WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary:
 		{
@@ -887,8 +1004,16 @@ int CGenericWeapon::AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const
 
 bool CGenericWeapon::CanReload() const
 {
-	const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
-		dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	const WeaponAtts::WAAmmoBasedAttack* ammoAttack = nullptr;
+
+	if ( HasAttackMechanics() )
+	{
+		ammoAttack = m_PrimaryAttackMechanic ? m_PrimaryAttackMechanic->GetAmmoBasedAttackMode() : nullptr;
+	}
+	else
+	{
+		ammoAttack = dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+	}
 
 	if ( !ammoAttack )
 	{
@@ -934,6 +1059,33 @@ void CGenericWeapon::SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode
 	m_pSecondaryAttackMode = mode;
 }
 
+void CGenericWeapon::SetPrimaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic)
+{
+	if ( mechanic && m_Mechanics.Find(mechanic) < 0 )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	m_PrimaryAttackMechanic = mechanic;
+}
+
+void CGenericWeapon::SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic)
+{
+	if ( mechanic && m_Mechanics.Find(mechanic) < 0 )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	m_SecondaryAttackMechanic = mechanic;
+}
+
+bool CGenericWeapon::HasAttackMechanics() const
+{
+	return !m_Mechanics.IsEmpty();
+}
+
 WeaponAtts::AttackMode CGenericWeapon::GetViewModelAnimationSource()
 {
 	return m_ViewModelAnimationSource;
@@ -974,8 +1126,21 @@ byte CGenericWeapon::GetPrimaryAttackModeIndex() const
 const WeaponAtts::AccuracyParameters* CGenericWeapon::GetWeaponAccuracyParams() const
 {
 	// For now, base this off the primary attack mode only.
+
+	if ( HasAttackMechanics() )
+	{
+		if ( !m_PrimaryAttackMechanic )
+		{
+			return nullptr;
+		}
+
+		const WeaponAtts::WAAmmoBasedAttack* ammoAttack = m_PrimaryAttackMechanic->GetAmmoBasedAttackMode();
+		return ammoAttack ? &ammoAttack->Accuracy : nullptr;
+	}
+
 	const WeaponAtts::WAAmmoBasedAttack* ammoAttack =
 		dynamic_cast<const WeaponAtts::WAAmmoBasedAttack*>(m_pPrimaryAttackMode);
+
 	return ammoAttack ? &ammoAttack->Accuracy : nullptr;
 }
 
@@ -983,8 +1148,21 @@ const WeaponAtts::ViewModelAnimationSet& CGenericWeapon::GetViewModelAnimationSe
 {
 	if ( m_ViewModelAnimationSource != WeaponAtts::AttackMode::None )
 	{
-		const WeaponAtts::WABaseAttack* attackMode =
-		m_ViewModelAnimationSource == WeaponAtts::AttackMode::Secondary ? m_pSecondaryAttackMode : m_pPrimaryAttackMode;
+		const WeaponAtts::WABaseAttack* attackMode = nullptr;
+
+		if ( HasAttackMechanics() )
+		{
+			const WeaponMechanics::CBaseMechanic* mechanic =
+				m_ViewModelAnimationSource == WeaponAtts::AttackMode::Secondary ? m_SecondaryAttackMechanic
+																				: m_PrimaryAttackMechanic;
+
+			attackMode = mechanic ? mechanic->GetAttackMode() : nullptr;
+		}
+		else
+		{
+			attackMode = m_ViewModelAnimationSource == WeaponAtts::AttackMode::Secondary ? m_pSecondaryAttackMode
+																						 : m_pPrimaryAttackMode;
+		}
 
 		if ( attackMode && attackMode->OverrideAnimations )
 		{
