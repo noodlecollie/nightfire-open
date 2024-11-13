@@ -31,15 +31,15 @@ namespace WeaponMechanics
 	{
 		if ( IsUnderwaterAndCannotFire() )
 		{
-			return InvocationResult::Rejected(InvocationResult::REJECTED_CANNOT_ATTACK_UNDERWATER);
+			return InvocationResult::Rejected(*this, InvocationResult::REJECTED_CANNOT_ATTACK_UNDERWATER);
 		}
 
 		if ( !HasAmmo(1, m_Weapon->m_iClip >= 0) )
 		{
-			return InvocationResult::Rejected(InvocationResult::REJECTED_NO_AMMO);
+			return InvocationResult::Rejected(*this, InvocationResult::REJECTED_NO_AMMO);
 		}
 
-		return InvocationResult::Complete();
+		return InvocationResult::Complete(*this);
 	}
 
 	void CBaseMechanic::Reset()

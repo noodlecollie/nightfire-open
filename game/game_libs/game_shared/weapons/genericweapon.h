@@ -195,7 +195,16 @@ protected:
 		return mechanic;
 	}
 
+	// Helper so that the types can be inferred
+	template<typename T, typename Attack>
+	void AddMechanic(const Attack* inAttack, T*& outMode)
+	{
+		outMode = AddMechanic<T, Attack>(inAttack);
+	}
+
+	WeaponMechanics::CBaseMechanic* GetPrimaryAttackMechanic() const;
 	void SetPrimaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	WeaponMechanics::CBaseMechanic* GetSecondaryAttackMechanic() const;
 	void SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
 	bool HasAttackMechanics() const;
 

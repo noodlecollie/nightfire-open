@@ -2,11 +2,7 @@
 
 #include "standard_includes.h"
 #include "genericweapon.h"
-
-namespace WeaponMechanics
-{
-	class CBaseMechanic;
-}
+#include "weaponmechanics/hitscanmechanic.h"
 
 class CWeaponP99 : public CGenericWeapon
 {
@@ -28,8 +24,8 @@ public:
 #endif
 
 private:
-	WeaponMechanics::CBaseMechanic* m_UnsilencedAttack = nullptr;
-	WeaponMechanics::CBaseMechanic* m_SilencedAttack = nullptr;
+	WeaponMechanics::CHitscanMechanic* m_UnsilencedAttack = nullptr;
+	WeaponMechanics::CHitscanMechanic* m_SilencedAttack = nullptr;
 	bool m_bSilenced = false;
 };
 

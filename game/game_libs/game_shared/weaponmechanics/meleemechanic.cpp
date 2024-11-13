@@ -53,7 +53,7 @@ namespace WeaponMechanics
 
 		if ( strikeTime > 0.0f )
 		{
-			return InvocationResult::Incomplete(gpGlobals->time + strikeTime);
+			return InvocationResult::Incomplete(*this, gpGlobals->time + strikeTime);
 		}
 
 		return AttackStrike();
@@ -65,11 +65,16 @@ namespace WeaponMechanics
 		m_iStrikeIndex = -1;
 	}
 
+	const WeaponAtts::WAMeleeAttack* CMeleeMechanic::MeleeAttackMode() const
+	{
+		return GetAttackMode<WeaponAtts::WAMeleeAttack>();
+	}
+
 	InvocationResult CMeleeMechanic::AttackStrike()
 	{
 		if ( m_iStrikeIndex < 0 )
 		{
-			return InvocationResult::Complete();
+			return InvocationResult::Complete(*this);
 		}
 
 		InitTraceVecs();
@@ -84,12 +89,12 @@ namespace WeaponMechanics
 		{
 			++m_iStrikeIndex;
 			float nextStrikeTime = meleeAttack->Strikes[m_iStrikeIndex];
-			return InvocationResult::Incomplete(gpGlobals->time + nextStrikeTime);
+			return InvocationResult::Incomplete(*this, gpGlobals->time + nextStrikeTime);
 		}
 
 		// End of strike sequence.
 		m_iStrikeIndex = -1;
-		return InvocationResult::Complete();
+		return InvocationResult::Complete(*this);
 	}
 
 	void CMeleeMechanic::FireEvent()
@@ -258,7 +263,7 @@ namespace WeaponMechanics
 			if ( tr.flFraction < 1.0f )
 			{
 				// Calculate the point of intersection of the line (or hull) and the object we hit
-				// This is and approximation of the "best" intersection
+				// This is an approximation of the "best" intersection
 				CBaseEntity* pHit = CBaseEntity::Instance(tr.pHit);
 
 				if ( !pHit || pHit->IsBSPModel() )
@@ -271,8 +276,8 @@ namespace WeaponMechanics
 						player->edict());
 				}
 
-				m_vecContactPointOnSurface =
-					tr.vecEndPos;  // This is the point on the actual surface (the hull could have hit space)
+				// This is the point on the actual surface (the hull could have hit space)
+				m_vecContactPointOnSurface = tr.vecEndPos;
 			}
 		}
 

@@ -35,7 +35,7 @@ namespace WeaponMechanics
 
 		if ( hitscanAttack->AttackRate <= 0.0f || hitscanAttack->BulletsPerShot < 1 )
 		{
-			return InvocationResult::Rejected();
+			return InvocationResult::Rejected(*this);
 		}
 
 		{
@@ -113,7 +113,7 @@ namespace WeaponMechanics
 		// NFTODO: Is there a better value than just 5 here?
 		SetNextIdleTime(5, true);
 
-		return InvocationResult::Complete();
+		return InvocationResult::Complete(*this);
 	}
 
 	void CHitscanMechanic::WeaponIdle()
@@ -124,5 +124,10 @@ namespace WeaponMechanics
 		}
 
 		CBaseMechanic::WeaponIdle();
+	}
+
+	const WeaponAtts::WAHitscanAttack* CHitscanMechanic::HitscanAttackMode() const
+	{
+		return GetAttackMode<WeaponAtts::WAHitscanAttack>();
 	}
 }  // namespace WeaponMechanics

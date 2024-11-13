@@ -16,6 +16,8 @@ namespace WeaponMechanics
 {
 	static constexpr float INVOCATION_COMPLETED = std::numeric_limits<float>::min();
 
+	class CBaseMechanic;
+
 	struct InvocationResult
 	{
 		enum Result
@@ -36,6 +38,7 @@ namespace WeaponMechanics
 			REJECTED_NO_AMMO,
 		};
 
+		CBaseMechanic* mechanic = nullptr;
 		Result result = REJECTED_UNKNOWN_REASON;
 		float nextInvocationTime = 0.0f;
 
@@ -44,19 +47,24 @@ namespace WeaponMechanics
 			return result > INCOMPLETE;
 		}
 
-		static InvocationResult Rejected(Result reason = REJECTED_UNKNOWN_REASON)
+		bool WasIncomplete() const
 		{
-			return {reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON};
+			return mechanic && result == INCOMPLETE;
 		}
 
-		static InvocationResult Incomplete(float nextTime)
+		static InvocationResult Rejected(CBaseMechanic& mechanic, Result reason = REJECTED_UNKNOWN_REASON)
 		{
-			return {INCOMPLETE, nextTime};
+			return {&mechanic, reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON};
 		}
 
-		static InvocationResult Complete()
+		static InvocationResult Incomplete(CBaseMechanic& mechanic, float nextTime)
 		{
-			return {COMPLETE};
+			return {&mechanic, INCOMPLETE, nextTime};
+		}
+
+		static InvocationResult Complete(CBaseMechanic& mechanic)
+		{
+			return {&mechanic, COMPLETE};
 		}
 	};
 

@@ -5,7 +5,6 @@
 #include "gamerules.h"
 #include "weapon_pref_weights.h"
 #include "weapon_p99_atts.h"
-#include "weaponmechanics/hitscanmechanic.h"
 
 #ifndef CLIENT_DLL
 #include "bot.h"
@@ -25,11 +24,11 @@ CWeaponP99::CWeaponP99() :
 {
 	const WeaponAtts::WAHitscanAttack* silencedAttack =
 		GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_SILENCED);
-	m_SilencedAttack = AddMechanic<WeaponMechanics::CHitscanMechanic>(silencedAttack);
+	AddMechanic(silencedAttack, m_SilencedAttack);
 
 	const WeaponAtts::WAHitscanAttack* unsilencedAttack =
 		GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_UNSILENCED);
-	m_UnsilencedAttack = AddMechanic<WeaponMechanics::CHitscanMechanic>(unsilencedAttack);
+	AddMechanic(unsilencedAttack, m_UnsilencedAttack);
 
 	SetPrimaryAttackMechanic(m_UnsilencedAttack);
 }

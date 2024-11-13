@@ -20,11 +20,7 @@ namespace WeaponMechanics
 		void Reset() override;
 
 	private:
-		const WeaponAtts::WAMeleeAttack* MeleeAttackMode() const
-		{
-			return GetAttackMode<WeaponAtts::WAMeleeAttack>();
-		}
-
+		const WeaponAtts::WAMeleeAttack* MeleeAttackMode() const;
 		InvocationResult AttackStrike();
 		void InitTraceVecs();
 		void FireEvent();

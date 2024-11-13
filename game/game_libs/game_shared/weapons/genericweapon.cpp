@@ -239,7 +239,7 @@ bool CGenericWeapon::InvokeAttack(WeaponAtts::AttackMode mode)
 
 	if ( !m_Mechanics.IsEmpty() )
 	{
-		WeaponMechanics::InvocationResult result = WeaponMechanics::InvocationResult::Rejected();
+		WeaponMechanics::InvocationResult result {};
 
 		switch ( mode )
 		{
@@ -299,13 +299,6 @@ bool CGenericWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const Wea
 // TODO: Allow this to handle secondary too? Do we need this?
 void CGenericWeapon::Reload()
 {
-	// REMOVE ME
-	if ( m_iId == (int)WeaponId_e::WeaponP99 )
-	{
-		volatile bool stop = true;
-		(void)stop;
-	}
-
 	if ( !CanReload() )
 	{
 		return;
@@ -1059,6 +1052,11 @@ void CGenericWeapon::SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode
 	m_pSecondaryAttackMode = mode;
 }
 
+WeaponMechanics::CBaseMechanic* CGenericWeapon::GetPrimaryAttackMechanic() const
+{
+	return m_PrimaryAttackMechanic;
+}
+
 void CGenericWeapon::SetPrimaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic)
 {
 	if ( mechanic && m_Mechanics.Find(mechanic) < 0 )
@@ -1068,6 +1066,11 @@ void CGenericWeapon::SetPrimaryAttackMechanic(WeaponMechanics::CBaseMechanic* me
 	}
 
 	m_PrimaryAttackMechanic = mechanic;
+}
+
+WeaponMechanics::CBaseMechanic* CGenericWeapon::GetSecondaryAttackMechanic() const
+{
+	return m_SecondaryAttackMechanic;
 }
 
 void CGenericWeapon::SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic)

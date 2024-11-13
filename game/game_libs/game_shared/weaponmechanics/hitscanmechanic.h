@@ -20,9 +20,6 @@ namespace WeaponMechanics
 		void WeaponIdle() override;
 
 	private:
-		const WeaponAtts::WAHitscanAttack* HitscanAttackMode() const
-		{
-			return GetAttackMode<WeaponAtts::WAHitscanAttack>();
-		}
+		const WeaponAtts::WAHitscanAttack* HitscanAttackMode() const;
 	};
 }
