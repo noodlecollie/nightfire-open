@@ -1,9 +1,10 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "generichitscanweapon.h"
+#include "genericweapon.h"
+#include "weaponmechanics/hitscanmechanic.h"
 
-class CWeaponL96A1 : public CGenericHitscanWeapon
+class CWeaponL96A1 : public CGenericWeapon
 {
 public:
 	CWeaponL96A1();
@@ -31,8 +32,8 @@ private:
 	void PlayZoomSound();
 
 	uint32_t m_iZoomLevel = 0;
-	const WeaponAtts::WAHitscanAttack* m_pAttackUnscoped;
-	const WeaponAtts::WAHitscanAttack* m_pAttackScoped;
+	WeaponMechanics::CHitscanMechanic* m_AttackUnscoped = nullptr;
+	WeaponMechanics::CHitscanMechanic* m_AttackScoped = nullptr;
 };
 
 namespace WeaponAtts

@@ -11,13 +11,13 @@
 LINK_ENTITY_TO_CLASS(weapon_l96a1, CWeaponL96A1)
 
 CWeaponL96A1::CWeaponL96A1() :
-	CGenericHitscanWeapon(),
+	CGenericWeapon(),
 	m_iZoomLevel(0)
 {
-	m_pAttackUnscoped = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_UNSCOPED);
-	m_pAttackScoped = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_SCOPED);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(ATTACKMODE_UNSCOPED, m_AttackUnscoped);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(ATTACKMODE_SCOPED, m_AttackScoped);
 
-	SetPrimaryAttackMode(m_pAttackUnscoped);
+	SetPrimaryAttackMechanic(m_AttackUnscoped);
 }
 
 const WeaponAtts::WACollection& CWeaponL96A1::WeaponAttributes() const
@@ -27,7 +27,7 @@ const WeaponAtts::WACollection& CWeaponL96A1::WeaponAttributes() const
 
 void CWeaponL96A1::Precache()
 {
-	CGenericHitscanWeapon::Precache();
+	CGenericWeapon::Precache();
 
 	PRECACHE_SOUND(L96A1_ZOOM_IN_SOUND);
 	PRECACHE_SOUND(L96A1_ZOOM_OUT_SOUND);
@@ -54,12 +54,12 @@ void CWeaponL96A1::Reload()
 		PlayZoomSound();
 	}
 
-	CGenericHitscanWeapon::Reload();
+	CGenericWeapon::Reload();
 }
 
-void CWeaponL96A1::Holster(int)
+void CWeaponL96A1::Holster(int skiplocal)
 {
-	CGenericHitscanWeapon::Holster();
+	CGenericWeapon::Holster(skiplocal);
 	SetZoomLevel(0);
 }
 
@@ -87,14 +87,14 @@ void CWeaponL96A1::SetZoomLevel(uint32_t level)
 			m_pPlayer->SetScreenOverlay(ScreenOverlays::OverlayId::Overlay_SniperScope);
 			m_pPlayer->SetFOV(L96A1_ZOOM_LEVELS[m_iZoomLevel]);
 			m_pPlayer->pev->effects |= EF_HIDEVIEWMODEL;
-			SetPrimaryAttackMode(m_pAttackScoped);
+			SetPrimaryAttackMechanic(m_AttackScoped);
 		}
 		else
 		{
 			m_pPlayer->SetScreenOverlay(ScreenOverlays::OverlayId::Overlay_None);
 			m_pPlayer->ResetFOV();
 			m_pPlayer->pev->effects &= ~EF_HIDEVIEWMODEL;
-			SetPrimaryAttackMode(m_pAttackUnscoped);
+			SetPrimaryAttackMechanic(m_AttackUnscoped);
 		}
 	}
 }
@@ -113,7 +113,7 @@ void CWeaponL96A1::PlayZoomSound()
 
 bool CWeaponL96A1::ReadPredictionData(const weapon_data_t* from)
 {
-	if ( !CGenericHitscanWeapon::ReadPredictionData(from) )
+	if ( !CGenericWeapon::ReadPredictionData(from) )
 	{
 		return false;
 	}
@@ -125,7 +125,7 @@ bool CWeaponL96A1::ReadPredictionData(const weapon_data_t* from)
 
 bool CWeaponL96A1::WritePredictionData(weapon_data_t* to)
 {
-	if ( !CGenericHitscanWeapon::WritePredictionData(to) )
+	if ( !CGenericWeapon::WritePredictionData(to) )
 	{
 		return false;
 	}
