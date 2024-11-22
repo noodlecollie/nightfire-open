@@ -22,13 +22,8 @@ CWeaponP99::CWeaponP99() :
 	CGenericWeapon(),
 	m_bSilenced(false)
 {
-	const WeaponAtts::WAHitscanAttack* silencedAttack =
-		GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_SILENCED);
-	AddMechanic(silencedAttack, m_SilencedAttack);
-
-	const WeaponAtts::WAHitscanAttack* unsilencedAttack =
-		GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_UNSILENCED);
-	AddMechanic(unsilencedAttack, m_UnsilencedAttack);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_SILENCED, m_SilencedAttack);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_UNSILENCED, m_UnsilencedAttack);
 
 	SetPrimaryAttackMechanic(m_UnsilencedAttack);
 }

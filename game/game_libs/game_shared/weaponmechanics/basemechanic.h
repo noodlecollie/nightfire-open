@@ -52,14 +52,19 @@ namespace WeaponMechanics
 			return mechanic && result == INCOMPLETE;
 		}
 
+		bool WasComplete() const
+		{
+			return result == COMPLETE;
+		}
+
 		static InvocationResult Rejected(CBaseMechanic& mechanic, Result reason = REJECTED_UNKNOWN_REASON)
 		{
 			return {&mechanic, reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON};
 		}
 
-		static InvocationResult Incomplete(CBaseMechanic& mechanic, float nextTime)
+		static InvocationResult Incomplete(CBaseMechanic& mechanic, float nextTimeDelta)
 		{
-			return {&mechanic, INCOMPLETE, nextTime};
+			return {&mechanic, INCOMPLETE, UTIL_WeaponTimeBase() + nextTimeDelta};
 		}
 
 		static InvocationResult Complete(CBaseMechanic& mechanic)

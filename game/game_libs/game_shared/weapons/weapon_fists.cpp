@@ -10,13 +10,14 @@ LINK_ENTITY_TO_CLASS(weapon_fists, CWeaponFists);
 LINK_ENTITY_TO_CLASS(weapon_dukes, CWeaponFists);  // For NF compatibility
 
 CWeaponFists::CWeaponFists() :
-	CGenericMeleeWeapon()
+	CGenericWeapon()
 {
-	m_pPunchAttack = GetAttackModeFromAttributes<WeaponAtts::WAMeleeAttack>(ATTACKMODE_PUNCH);
-	m_pPunchComboAttack = GetAttackModeFromAttributes<WeaponAtts::WAMeleeAttack>(ATTACKMODE_PUNCH_COMBO);
+	AddMechanicByAttributeIndex<WeaponAtts::WAMeleeAttack>(ATTACKMODE_PUNCH, m_PunchAttack);
+	AddMechanicByAttributeIndex<WeaponAtts::WAMeleeAttack>(ATTACKMODE_PUNCH_COMBO, m_PunchComboAttack);
+	AddMechanicByAttributeIndex<WeaponAtts::WAMeleeAttack>(ATTACKMODE_KARATE_CHOP, m_KarateChopAttack);
 
-	SetPrimaryAttackMode(m_pPunchAttack);
-	SetSecondaryAttackModeFromAttributes(ATTACKMODE_KARATE_CHOP);
+	SetPrimaryAttackMechanic(m_PunchAttack);
+	SetSecondaryAttackMechanic(m_KarateChopAttack);
 }
 
 const WeaponAtts::WACollection& CWeaponFists::WeaponAttributes() const
@@ -26,34 +27,26 @@ const WeaponAtts::WACollection& CWeaponFists::WeaponAttributes() const
 
 BOOL CWeaponFists::Deploy()
 {
-	if ( !CGenericMeleeWeapon::Deploy() )
+	if ( !CGenericWeapon::Deploy() )
 	{
 		return FALSE;
 	}
 
 	// Ensure we always start on the first attack.
-	SetPrimaryAttackMode(m_pPunchAttack);
+	SetPrimaryAttackMechanic(m_PunchAttack);
 
 	return TRUE;
 }
 
-bool CWeaponFists::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack)
+void CWeaponFists::AttackInvoked(const WeaponMechanics::InvocationResult& result)
 {
-	if ( !CGenericMeleeWeapon::InvokeWithAttackMode(mode, attack) )
+	if ( result.WasComplete() && result.mechanic == GetPrimaryAttackMechanic() )
 	{
-		return false;
-	}
+		WeaponMechanics::CMeleeMechanic* nextAttack =
+			result.mechanic == m_PunchAttack ? m_PunchComboAttack : m_PunchAttack;
 
-	if ( mode == WeaponAtts::AttackMode::Primary )
-	{
-		// Alternate between modes.
-		const WeaponAtts::WAMeleeAttack* currentMode = GetPrimaryAttackMode<WeaponAtts::WAMeleeAttack>();
-		const WeaponAtts::WAMeleeAttack* newMode =
-			(currentMode == m_pPunchAttack ? m_pPunchComboAttack : m_pPunchAttack);
-		SetPrimaryAttackMode(newMode);
+		SetPrimaryAttackMechanic(nextAttack);
 	}
-
-	return true;
 }
 
 #ifndef CLIENT_DLL

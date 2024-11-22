@@ -159,7 +159,7 @@ static const delta_field_t wd_fields[] = {
 	{WPDT_DEF(m_fNextAimBonus)},
 	{WPDT_DEF(m_fInZoom)},
 	{WPDT_DEF(m_iWeaponState)},
-	{WPDT_DEF(m_iInaccuracy)},
+	{WPDT_DEF(m_flInaccuracy)},
 	{WPDT_DEF(iuser1)},
 	{WPDT_DEF(iuser2)},
 	{WPDT_DEF(iuser3)},

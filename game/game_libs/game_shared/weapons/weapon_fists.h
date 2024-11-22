@@ -1,9 +1,10 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "genericmeleeweapon.h"
+#include "weapons/genericweapon.h"
+#include "weaponmechanics/meleemechanic.h"
 
-class CWeaponFists : public CGenericMeleeWeapon
+class CWeaponFists : public CGenericWeapon
 {
 public:
 	CWeaponFists();
@@ -17,11 +18,12 @@ public:
 #endif
 
 protected:
-	bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack) override;
+	void AttackInvoked(const WeaponMechanics::InvocationResult& result) override;
 
 private:
-	const WeaponAtts::WAMeleeAttack* m_pPunchAttack;
-	const WeaponAtts::WAMeleeAttack* m_pPunchComboAttack;
+	WeaponMechanics::CMeleeMechanic* m_PunchAttack = nullptr;
+	WeaponMechanics::CMeleeMechanic* m_PunchComboAttack = nullptr;
+	WeaponMechanics::CMeleeMechanic* m_KarateChopAttack = nullptr;
 };
 
 namespace WeaponAtts

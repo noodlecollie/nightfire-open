@@ -86,17 +86,7 @@ namespace WeaponMechanics
 
 	WeaponAtts::AttackMode CBaseMechanic::GetAttackModeInWeapon() const
 	{
-		if ( m_Weapon->m_PrimaryAttackMechanic == this )
-		{
-			return WeaponAtts::AttackMode::Primary;
-		}
-
-		if ( m_Weapon->m_SecondaryAttackMechanic == this )
-		{
-			return WeaponAtts::AttackMode::Secondary;
-		}
-
-		return WeaponAtts::AttackMode::None;
+		return m_Weapon->GetAttackModeForMechanic(this);
 	}
 
 	void CBaseMechanic::PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds)

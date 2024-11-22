@@ -21,7 +21,6 @@ namespace WeaponMechanics
 
 	private:
 		const WeaponAtts::WAMeleeAttack* MeleeAttackMode() const;
-		InvocationResult AttackStrike();
 		void InitTraceVecs();
 		void FireEvent();
 

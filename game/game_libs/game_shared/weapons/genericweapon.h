@@ -13,6 +13,7 @@ class CBaseBotFightStyle;
 namespace WeaponMechanics
 {
 	class CBaseMechanic;
+	struct InvocationResult;
 }
 
 // Build on top of CBasePlayerWeapon, because this is so tied into the engine
@@ -34,6 +35,7 @@ public:
 	virtual int GetItemInfo(ItemInfo* p) override;
 	virtual int AddToPlayer(CBasePlayer* pPlayer) override;
 	virtual BOOL Deploy() override;
+	virtual void Holster(int skiplocal = 0) override;
 	virtual void PrimaryAttack() override;
 	virtual void SecondaryAttack() override;
 	virtual void Reload() override;
@@ -187,26 +189,35 @@ protected:
 	//////////////////////////////////////////////
 	// MECHANICS
 	//////////////////////////////////////////////
-	template<typename T, typename Attack>
-	T* AddMechanic(const Attack* attack)
+	template<typename Attack, typename Mechanic>
+	Mechanic* AddMechanic(const Attack* attack)
 	{
-		T* mechanic = new T(this, attack);
+		Mechanic* mechanic = new Mechanic(this, attack);
 		m_Mechanics.AddToTail(mechanic);
 		return mechanic;
 	}
 
 	// Helper so that the types can be inferred
-	template<typename T, typename Attack>
-	void AddMechanic(const Attack* inAttack, T*& outMode)
+	template<typename Attack, typename Mechanic>
+	void AddMechanic(const Attack* inAttack, Mechanic*& outMode)
 	{
-		outMode = AddMechanic<T, Attack>(inAttack);
+		outMode = AddMechanic<Attack, Mechanic>(inAttack);
+	}
+
+	// Helper that allows choosing an attack via index
+	template<typename Attack, typename Mechanic>
+	void AddMechanicByAttributeIndex(uint32_t index, Mechanic*& outMode)
+	{
+		AddMechanic<Attack, Mechanic>(GetAttackModeFromAttributes<Attack>(index), outMode);
 	}
 
 	WeaponMechanics::CBaseMechanic* GetPrimaryAttackMechanic() const;
 	void SetPrimaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
 	WeaponMechanics::CBaseMechanic* GetSecondaryAttackMechanic() const;
 	void SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	WeaponMechanics::CBaseMechanic* GetAttackMechanic(WeaponAtts::AttackMode mode) const;
 	bool HasAttackMechanics() const;
+	virtual void AttackInvoked(const WeaponMechanics::InvocationResult& result);
 
 private:
 	// TODO: Should these be delegated somewhere else, a la aggregate programming model?
@@ -256,8 +267,16 @@ private:
 	// MECHANICS: Keep these
 	//////////////////////////////////////////////
 	CUtlVector<WeaponMechanics::CBaseMechanic*> m_Mechanics;
-	WeaponMechanics::CBaseMechanic* m_PrimaryAttackMechanic = nullptr;
-	WeaponMechanics::CBaseMechanic* m_SecondaryAttackMechanic = nullptr;
+	int m_PrimaryAttackMechanicIndex = -1;
+	int m_SecondaryAttackMechanicIndex = -1;
+	int m_EnqueuedMechanicIndex = -1;
+	bool InvokeMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	WeaponMechanics::CBaseMechanic* GetMechanicByIndex(int index) const;
+	void SetMechanicIndex(WeaponMechanics::CBaseMechanic* mechanic, int& outIndex);
+	WeaponMechanics::CBaseMechanic* GetEnqueuedMechanic() const;
+	void SetEnqueuedMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	bool IsValidMechanicIndex(int index) const;
+	WeaponAtts::AttackMode GetAttackModeForMechanic(const WeaponMechanics::CBaseMechanic* mechanic) const;
 
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;

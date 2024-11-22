@@ -68,6 +68,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 											 << "weapons/weapon_fists/impact2.wav"
 											 << "weapons/weapon_fists/impact3.wav";
 
+		// TODO: Move the sounds into the model itself, so they can be
+		// played on the appropriate frames.
 		priAttack->AttackSounds.MinPitch = 97;
 		priAttack->AttackSounds.MaxPitch = 103;
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_fists/swing1.wav"
@@ -97,7 +99,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		secAttack->BaseDamagePerHit = &skilldata_t::plrDmgFistsAlt;
 
 		secAttack->Strikes.Purge();
-		secAttack->Strikes.AddToTail(0.5f);
+		secAttack->Strikes.AddToTail(0.45f);
 
 		secAttack->ViewModelAnimList_Attack.Clear();
 		secAttack->ViewModelAnimList_Attack << FISTS_KARATE_CHOP;

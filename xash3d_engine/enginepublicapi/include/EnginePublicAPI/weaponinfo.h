@@ -36,7 +36,10 @@ typedef struct weapon_data_s
 	float m_fNextAimBonus;
 	int m_fInZoom;
 	int m_iWeaponState;
-	float m_iInaccuracy;
+	float m_flInaccuracy;
+	int m_PrimaryAttackMechanicIndex;
+	int m_SecondaryAttackMechanicIndex;
+	int m_EnqueuedMechanicIndex;
 
 	int iuser1;
 	int iuser2;

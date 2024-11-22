@@ -29,34 +29,68 @@ namespace WeaponMechanics
 
 	InvocationResult CMeleeMechanic::Invoke()
 	{
-		{
-			const InvocationResult result = CBaseMechanic::Invoke();
+		const InvocationResult result = CBaseMechanic::Invoke();
 
-			if ( result.result > InvocationResult::INCOMPLETE )
-			{
-				return result;
-			}
+		if ( result.WasRejected() )
+		{
+			return result;
+		}
+
+		ASSERT(m_iStrikeIndex >= -1);
+
+		if ( m_iStrikeIndex < -1 )
+		{
+			return InvocationResult::Rejected(*this);
 		}
 
 		const WeaponAtts::WAMeleeAttack* meleeAttack = MeleeAttackMode();
 		CBasePlayer* player = GetPlayer();
+		const bool isFirstInvocation = m_iStrikeIndex < 0;
 
-		FireEvent();
-		player->SetAnimation(PLAYER_ATTACK1);
-
-		DelayFiring(1.0f / meleeAttack->AttackRate);
-		SetNextIdleTime(5, true);
-
-		m_iStrikeIndex = 0;
-
-		float strikeTime = meleeAttack->Strikes.Count() > 0 ? meleeAttack->Strikes[m_iStrikeIndex] : 0.0f;
-
-		if ( strikeTime > 0.0f )
+		if ( isFirstInvocation )
 		{
-			return InvocationResult::Incomplete(*this, gpGlobals->time + strikeTime);
+			FireEvent();
+			player->SetAnimation(PLAYER_ATTACK1);
+			DelayFiring(1.0f / meleeAttack->AttackRate);
 		}
 
-		return AttackStrike();
+		const CUtlVector<float>& strikes = meleeAttack->Strikes;
+
+		// If this is the first invocation in a chain, check the first strike time.
+		// It could either be now (ie. zero), or it could be at some point
+		// in the future. If it's in the future, don't run an attack strike
+		// on this invocation, because this implies the first strike should
+		// be actioned after a delay.
+		const bool shouldSkipStrike = isFirstInvocation && !strikes.IsEmpty() && strikes[0] > 0.0f;
+
+		if ( !shouldSkipStrike )
+		{
+			InitTraceVecs();
+
+#ifndef CLIENT_DLL
+			AttackStrike_Server();
+#endif
+		}
+
+		SetNextIdleTime(5, true);
+
+		if ( isFirstInvocation && !shouldSkipStrike )
+		{
+			// We just catered for the first strike in the chain,
+			// so make sure we skip to the next one below.
+			m_iStrikeIndex = 0;
+		}
+
+		if ( m_iStrikeIndex < strikes.Count() - 1 )
+		{
+			++m_iStrikeIndex;
+			float nextStrikeTime = strikes[m_iStrikeIndex];
+			return InvocationResult::Incomplete(*this, nextStrikeTime);
+		}
+
+		// End of strike sequence.
+		m_iStrikeIndex = -1;
+		return InvocationResult::Complete(*this);
 	}
 
 	void CMeleeMechanic::Reset()
@@ -68,33 +102,6 @@ namespace WeaponMechanics
 	const WeaponAtts::WAMeleeAttack* CMeleeMechanic::MeleeAttackMode() const
 	{
 		return GetAttackMode<WeaponAtts::WAMeleeAttack>();
-	}
-
-	InvocationResult CMeleeMechanic::AttackStrike()
-	{
-		if ( m_iStrikeIndex < 0 )
-		{
-			return InvocationResult::Complete(*this);
-		}
-
-		InitTraceVecs();
-
-#ifndef CLIENT_DLL
-		AttackStrike_Server();
-#endif
-
-		const WeaponAtts::WAMeleeAttack* meleeAttack = MeleeAttackMode();
-
-		if ( m_iStrikeIndex < meleeAttack->Strikes.Count() - 1 )
-		{
-			++m_iStrikeIndex;
-			float nextStrikeTime = meleeAttack->Strikes[m_iStrikeIndex];
-			return InvocationResult::Incomplete(*this, gpGlobals->time + nextStrikeTime);
-		}
-
-		// End of strike sequence.
-		m_iStrikeIndex = -1;
-		return InvocationResult::Complete(*this);
 	}
 
 	void CMeleeMechanic::FireEvent()
