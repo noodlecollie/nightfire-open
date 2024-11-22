@@ -13,9 +13,10 @@
 LINK_ENTITY_TO_CLASS(weapon_mp9, CWeaponMP9)
 
 CWeaponMP9::CWeaponMP9() :
-	CGenericHitscanWeapon()
+	CGenericWeapon()
 {
-	SetPrimaryAttackModeFromAttributes(MP9_ATTACKMODE_NORMAL);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(MP9_ATTACKMODE_NORMAL, m_PrimaryMechanic);
+	SetPrimaryAttackMechanic(m_PrimaryMechanic);
 }
 
 const WeaponAtts::WACollection& CWeaponMP9::WeaponAttributes() const
