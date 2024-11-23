@@ -56,7 +56,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->IsContinuous = true;
 		priAttack->AttackRate = FISTS_PUNCH_RATE_SINGLE;
 		priAttack->BaseDamagePerHit = &skilldata_t::plrDmgFists;
-		priAttack->DecalOnImpact = true;
+		priAttack->DecalOnImpact = false;
 		priAttack->Strikes.AddToTail(0.1f);
 		priAttack->Volume = 128;
 		priAttack->ViewModelAnimList_Attack << FISTS_JAB;
@@ -68,8 +68,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 											 << "weapons/weapon_fists/impact2.wav"
 											 << "weapons/weapon_fists/impact3.wav";
 
-		// TODO: Move the sounds into the model itself, so they can be
-		// played on the appropriate frames.
 		priAttack->AttackSounds.MinPitch = 97;
 		priAttack->AttackSounds.MaxPitch = 103;
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_fists/swing1.wav"
@@ -85,10 +83,13 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		priDoubleAttack->Strikes.Purge();
 		priDoubleAttack->Strikes.AddToTail(0.1f);
-		priDoubleAttack->Strikes.AddToTail(0.4f);
+		priDoubleAttack->Strikes.AddToTail(0.3f);
 
 		priDoubleAttack->ViewModelAnimList_Attack.Clear();
 		priDoubleAttack->ViewModelAnimList_Attack << FISTS_COMBO;
+
+		priDoubleAttack->AttackSounds.SoundNames.Clear();
+		priDoubleAttack->AttackSounds.SoundNames << "weapons/weapon_fists/swing_double.wav";
 
 		WAMeleeAttack* secAttack = new WAMeleeAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(secAttack));
@@ -99,7 +100,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		secAttack->BaseDamagePerHit = &skilldata_t::plrDmgFistsAlt;
 
 		secAttack->Strikes.Purge();
-		secAttack->Strikes.AddToTail(0.45f);
+		secAttack->Strikes.AddToTail(0.35f);
 
 		secAttack->ViewModelAnimList_Attack.Clear();
 		secAttack->ViewModelAnimList_Attack << FISTS_KARATE_CHOP;
