@@ -12,7 +12,6 @@
 #include "bot.h"
 #endif
 
-static constexpr const char* GRENADE_MODEL = "models/weapon_frag_grenade/w_frag_grenade.mdl";
 static const Vector HALF_BBOX = Vector(4, 4, 4);
 static constexpr float FRICTION = 0.7f;
 static constexpr float GRAVITY = 1.4f;
@@ -44,7 +43,7 @@ void CWeaponFragGrenade::Precache()
 {
 	CBaseGrenadeLauncher::Precache();
 
-	PRECACHE_MODEL(GRENADE_MODEL);
+	PRECACHE_MODEL(GetPrimaryAttackMode<WeaponAtts::WAProjectileAttack>()->ProjectileModelName);
 }
 
 void CWeaponFragGrenade::WeaponTick()
@@ -148,11 +147,11 @@ void CWeaponFragGrenade::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
 	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 2.0f);
 }
 
-void CWeaponFragGrenade::CreateProjectile(const WeaponAtts::WAProjectileAttack&)
+void CWeaponFragGrenade::CreateProjectile(const WeaponAtts::WAProjectileAttack& attackMode)
 {
 	CBaseGrenadeLauncher_Grenade* grenade = CreateGrenade(PITCH_ADJUST, 16.0f);
 
-	grenade->SetModelName(GRENADE_MODEL);
+	grenade->SetModelName(attackMode.ProjectileModelName);
 	grenade->SetSize(HALF_BBOX);
 	grenade->SetFriction(FRICTION);
 	grenade->SetGravity(GRAVITY);

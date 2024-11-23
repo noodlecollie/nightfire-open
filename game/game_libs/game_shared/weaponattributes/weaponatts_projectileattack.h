@@ -6,7 +6,8 @@ namespace WeaponAtts
 {
 	struct WAProjectileAttack : public WAAmmoBasedAttack
 	{
-		float projectileDelay = 0.0f;
+		float ProjectileDelay = 0.0f;
+		const char* ProjectileModelName = nullptr;
 
 		virtual WABaseAttack::Classification Classify() const override
 		{

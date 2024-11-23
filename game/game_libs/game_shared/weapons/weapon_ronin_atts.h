@@ -87,7 +87,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		throwAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
 		throwAttack->ViewPunchY = 0.0f;
 		throwAttack->PlayDryFireSoundOnEmpty = false;
-		throwAttack->projectileDelay = 0.5f;
+		throwAttack->ProjectileDelay = 0.5f;
 
 		AccuracyParameters& accuracy = throwAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.0f, 0.0f);

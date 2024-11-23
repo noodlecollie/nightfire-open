@@ -49,14 +49,14 @@ bool CGenericProjectileWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode,
 
 	const bool willBeEmpty = AmmoDecrementWillEmptyWeaponClip(attack, 1);
 
-	if ( projectileAttack->projectileDelay <= 0.0f )
+	if ( projectileAttack->ProjectileDelay <= 0.0f )
 	{
 		CreateProjectileAndDecrementAmmo(*projectileAttack);
 	}
 	else
 	{
 		m_EnqueuedProjectileAttack = projectileAttack;
-		pev->tuser1 = UTIL_WeaponTimeBase() + projectileAttack->projectileDelay;
+		pev->tuser1 = UTIL_WeaponTimeBase() + projectileAttack->ProjectileDelay;
 	}
 
 	const int eventID = GetEventIDForAttackMode(projectileAttack);

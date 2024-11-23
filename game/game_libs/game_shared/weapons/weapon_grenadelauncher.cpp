@@ -11,7 +11,6 @@
 #include "bot.h"
 #endif
 
-static constexpr const char* GRENADELAUNCHER_GRENADE_MODEL = "models/weapon_grenadelauncher/w_grenade_projectile.mdl";
 static const Vector GRENADELAUNCHER_HALF_BBOX = Vector(4, 4, 4);
 static constexpr float GRENADELAUNCHER_GRENADE_FRICTION = 0.95f;
 static constexpr float GRENADELAUNCHER_GRENADE_GRAVITY = 1.4f;
@@ -46,7 +45,7 @@ void CWeaponGrenadeLauncher::Precache()
 {
 	CBaseGrenadeLauncher::Precache();
 
-	PRECACHE_MODEL(GRENADELAUNCHER_GRENADE_MODEL);
+	PRECACHE_MODEL(GetPrimaryAttackMode<WeaponAtts::WAProjectileAttack>()->ProjectileModelName);
 }
 
 #ifndef CLIENT_DLL
@@ -99,7 +98,7 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponAtts::WAProjectileAtta
 
 	CBaseGrenadeLauncher_Grenade* grenade = CreateGrenade(GRENADELAUNCHER_PITCH_ADJUST, 16.0f);
 
-	grenade->SetModelName(GRENADELAUNCHER_GRENADE_MODEL);
+	grenade->SetModelName(projectileAttack.ProjectileModelName);
 	grenade->SetSize(GRENADELAUNCHER_HALF_BBOX);
 	grenade->SetFriction(GRENADELAUNCHER_GRENADE_FRICTION);
 	grenade->SetGravity(GRENADELAUNCHER_GRENADE_GRAVITY);
