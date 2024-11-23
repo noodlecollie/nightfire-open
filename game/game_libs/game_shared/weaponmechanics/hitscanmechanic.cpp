@@ -29,7 +29,7 @@ namespace WeaponMechanics
 		}
 	}
 
-	InvocationResult CHitscanMechanic::Invoke()
+	InvocationResult CHitscanMechanic::Invoke(uint32_t step)
 	{
 		const WeaponAtts::WAHitscanAttack* hitscanAttack = HitscanAttackMode();
 
@@ -39,7 +39,7 @@ namespace WeaponMechanics
 		}
 
 		{
-			const InvocationResult result = CBaseMechanic::Invoke();
+			const InvocationResult result = CBaseMechanic::Invoke(step);
 
 			if ( result.result > InvocationResult::INCOMPLETE )
 			{

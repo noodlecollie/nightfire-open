@@ -16,13 +16,13 @@ namespace WeaponMechanics
 		CMeleeMechanic(CGenericWeapon* weapon, uint32_t attackIndex);
 
 		void Precache() override;
-		InvocationResult Invoke() override;
-		void Reset() override;
+		InvocationResult Invoke(uint32_t step) override;
 
 	private:
 		const WeaponAtts::WAMeleeAttack* MeleeAttackMode() const;
 		void InitTraceVecs();
 		void FireEvent();
+		float GetDelayFromPreviousStrike(uint32_t index) const;
 
 #ifndef CLIENT_DLL
 		static void
@@ -32,7 +32,6 @@ namespace WeaponMechanics
 		bool CheckForContact(TraceResult& tr);
 #endif
 
-		int m_iStrikeIndex = -1;
 		Vector m_vecAttackTraceStart;
 		Vector m_vecAttackTraceEnd;
 		Vector m_vecContactPointOnSurface;

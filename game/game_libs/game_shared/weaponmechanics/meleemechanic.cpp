@@ -27,41 +27,27 @@ namespace WeaponMechanics
 		PrecacheSoundSet(attackMode->WorldHitSounds);
 	}
 
-	InvocationResult CMeleeMechanic::Invoke()
+	InvocationResult CMeleeMechanic::Invoke(uint32_t step)
 	{
-		const InvocationResult result = CBaseMechanic::Invoke();
+		const InvocationResult result = CBaseMechanic::Invoke(step);
 
 		if ( result.WasRejected() )
 		{
 			return result;
 		}
 
-		ASSERT(m_iStrikeIndex >= -1);
-
-		if ( m_iStrikeIndex < -1 )
-		{
-			return InvocationResult::Rejected(*this);
-		}
-
 		const WeaponAtts::WAMeleeAttack* meleeAttack = MeleeAttackMode();
-		CBasePlayer* player = GetPlayer();
-		const bool isFirstInvocation = m_iStrikeIndex < 0;
 
-		if ( isFirstInvocation )
+		if ( step == 0 )
 		{
 			FireEvent();
-			player->SetAnimation(PLAYER_ATTACK1);
+			GetPlayer()->SetAnimation(PLAYER_ATTACK1);
 			DelayFiring(1.0f / meleeAttack->AttackRate);
 		}
 
 		const CUtlVector<float>& strikes = meleeAttack->Strikes;
-
-		// If this is the first invocation in a chain, check the first strike time.
-		// It could either be now (ie. zero), or it could be at some point
-		// in the future. If it's in the future, don't run an attack strike
-		// on this invocation, because this implies the first strike should
-		// be actioned after a delay.
-		const bool shouldSkipStrike = isFirstInvocation && !strikes.IsEmpty() && strikes[0] > 0.0f;
+		const bool firstStrikeIsDelayed = !strikes.IsEmpty() && strikes[0] > 0.0f;
+		const bool shouldSkipStrike = step == 0 && firstStrikeIsDelayed;
 
 		if ( !shouldSkipStrike )
 		{
@@ -72,31 +58,19 @@ namespace WeaponMechanics
 #endif
 		}
 
+		// TODO: Is there a more intelligent value than 5 here?
 		SetNextIdleTime(5, true);
 
-		if ( isFirstInvocation && !shouldSkipStrike )
-		{
-			// We just catered for the first strike in the chain,
-			// so make sure we skip to the next one below.
-			m_iStrikeIndex = 0;
-		}
+		const uint32_t nextStrikeIndex = firstStrikeIsDelayed ? step : (step + 1);
 
-		if ( m_iStrikeIndex < strikes.Count() - 1 )
+		if ( nextStrikeIndex < static_cast<uint32_t>(strikes.Count()) )
 		{
-			++m_iStrikeIndex;
-			float nextStrikeTime = strikes[m_iStrikeIndex];
-			return InvocationResult::Incomplete(*this, nextStrikeTime);
+			const float delay = GetDelayFromPreviousStrike(nextStrikeIndex);
+			return InvocationResult::Incomplete(*this, delay);
 		}
 
 		// End of strike sequence.
-		m_iStrikeIndex = -1;
 		return InvocationResult::Complete(*this);
-	}
-
-	void CMeleeMechanic::Reset()
-	{
-		CBaseMechanic::Reset();
-		m_iStrikeIndex = -1;
 	}
 
 	const WeaponAtts::WAMeleeAttack* CMeleeMechanic::MeleeAttackMode() const
@@ -132,6 +106,25 @@ namespace WeaponMechanics
 		m_vecAttackTraceStart = player->GetGunPosition();
 		m_vecAttackTraceEnd = m_vecAttackTraceStart + (forward * meleeAttack->Reach);
 		m_vecContactPointOnSurface = Vector();
+	}
+
+	float CMeleeMechanic::GetDelayFromPreviousStrike(uint32_t index) const
+	{
+		const CUtlVector<float>& strikes = MeleeAttackMode()->Strikes;
+
+		if ( index >= static_cast<uint32_t>(strikes.Count()) )
+		{
+			return 0.0f;
+		}
+
+		float delay = strikes[static_cast<int>(index)];
+
+		if ( index == 0 )
+		{
+			return delay;
+		}
+
+		return delay - strikes[static_cast<int>(index - 1)];
 	}
 
 #ifndef CLIENT_DLL

@@ -40,6 +40,8 @@ typedef struct weapon_data_s
 	int m_PrimaryAttackMechanicIndex;
 	int m_SecondaryAttackMechanicIndex;
 	int m_EnqueuedMechanicIndex;
+	int m_EnqueuedAttackMode;
+	int m_NextEnqueuedAttackStep;
 
 	int iuser1;
 	int iuser2;

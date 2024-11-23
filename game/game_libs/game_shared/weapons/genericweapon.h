@@ -272,11 +272,12 @@ private:
 	int m_SecondaryAttackMechanicIndex = -1;
 	int m_EnqueuedMechanicIndex = -1;
 	int m_EnqueuedAttackMode = static_cast<int>(WeaponAtts::AttackMode::None);
-	bool InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic);
+	int m_NextEnqueuedAttackStep = 0;
+	bool InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int step);
 	WeaponMechanics::CBaseMechanic* GetMechanicByIndex(int index) const;
 	void SetMechanicIndex(WeaponMechanics::CBaseMechanic* mechanic, int& outIndex);
 	WeaponMechanics::CBaseMechanic* GetEnqueuedMechanic() const;
-	void SetEnqueuedMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic);
+	void SetEnqueuedMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int nextStep);
 	bool IsValidMechanicIndex(int index) const;
 	WeaponAtts::AttackMode GetAttackModeForMechanic(const WeaponMechanics::CBaseMechanic* mechanic) const;
 

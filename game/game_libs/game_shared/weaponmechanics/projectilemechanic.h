@@ -16,7 +16,7 @@ namespace WeaponMechanics
 		CProjectileMechanic(CGenericWeapon* weapon, uint32_t attackIndex);
 
 		void Precache() override;
-		InvocationResult Invoke() override;
+		InvocationResult Invoke(uint32_t step) override;
 
 	private:
 		const WeaponAtts::WAProjectileAttack* ProjectileAttackMode() const;

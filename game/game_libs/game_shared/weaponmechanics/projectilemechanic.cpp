@@ -27,7 +27,7 @@ namespace WeaponMechanics
 		}
 	}
 
-	InvocationResult CProjectileMechanic::Invoke()
+	InvocationResult CProjectileMechanic::Invoke(uint32_t)
 	{
 		// TODO
 		return InvocationResult::Rejected(*this);

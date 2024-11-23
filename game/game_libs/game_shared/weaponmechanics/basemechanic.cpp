@@ -27,7 +27,7 @@ namespace WeaponMechanics
 		m_EventIndex = PRECACHE_EVENT(1, m_BaseAttackMode->EventScript);
 	}
 
-	InvocationResult CBaseMechanic::Invoke()
+	InvocationResult CBaseMechanic::Invoke(uint32_t)
 	{
 		if ( IsUnderwaterAndCannotFire() )
 		{

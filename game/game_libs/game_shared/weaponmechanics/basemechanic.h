@@ -92,7 +92,7 @@ namespace WeaponMechanics
 		virtual ~CBaseMechanic() = default;
 
 		virtual void Precache();
-		virtual InvocationResult Invoke();
+		virtual InvocationResult Invoke(uint32_t step);
 		virtual void Reset();
 		virtual void WeaponIdle();
 

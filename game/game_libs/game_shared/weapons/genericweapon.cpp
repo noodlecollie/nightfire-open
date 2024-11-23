@@ -223,7 +223,7 @@ void CGenericWeapon::Holster(int skiplocal)
 	if ( enqueuedMechanic )
 	{
 		enqueuedMechanic->Reset();
-		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr);
+		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr, 0);
 	}
 }
 
@@ -264,7 +264,7 @@ bool CGenericWeapon::InvokeAttack(WeaponAtts::AttackMode mode)
 			return false;
 		}
 
-		return InvokeMechanic(mode, mechanic);
+		return InvokeMechanic(mode, mechanic, 0);
 	}
 
 	return InvokeWithAttackMode(
@@ -384,7 +384,10 @@ void CGenericWeapon::RunAttackLogic()
 
 	if ( enqueuedMechanic && pev->tuser1 <= UTIL_WeaponTimeBase() )
 	{
-		InvokeMechanic(static_cast<WeaponAtts::AttackMode>(m_EnqueuedAttackMode), enqueuedMechanic);
+		InvokeMechanic(
+			static_cast<WeaponAtts::AttackMode>(m_EnqueuedAttackMode),
+			enqueuedMechanic,
+			m_NextEnqueuedAttackStep);
 	}
 
 	WeaponTick();
@@ -589,6 +592,7 @@ bool CGenericWeapon::ReadPredictionData(const weapon_data_t* from)
 	m_PrimaryAttackMechanicIndex = from->m_PrimaryAttackMechanicIndex;
 	m_SecondaryAttackMechanicIndex = from->m_SecondaryAttackMechanicIndex;
 	m_EnqueuedMechanicIndex = from->m_EnqueuedMechanicIndex;
+	m_NextEnqueuedAttackStep = from->m_NextEnqueuedAttackStep;
 	pev->tuser1 = from->tuser1;
 	return true;
 }
@@ -604,6 +608,7 @@ bool CGenericWeapon::WritePredictionData(weapon_data_t* to)
 	to->m_PrimaryAttackMechanicIndex = m_PrimaryAttackMechanicIndex;
 	to->m_SecondaryAttackMechanicIndex = m_SecondaryAttackMechanicIndex;
 	to->m_EnqueuedMechanicIndex = m_EnqueuedMechanicIndex;
+	to->m_NextEnqueuedAttackStep = m_NextEnqueuedAttackStep;
 	to->tuser1 = pev->tuser1;
 	return true;
 }
@@ -1265,7 +1270,7 @@ void CGenericWeapon::FindWeaponSlotInfo()
 	ASSERTSZ(false, "No slot/position found for this weapon.");
 }
 
-bool CGenericWeapon::InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic)
+bool CGenericWeapon::InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int step)
 {
 	const int invokeIndex = m_Mechanics.Find(mechanic);
 
@@ -1273,27 +1278,27 @@ bool CGenericWeapon::InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics
 	{
 		// We're invoking a new attack, so reset the old one that wasn't finished.
 		GetEnqueuedMechanic()->Reset();
-		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr);
+		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr, 0);
 	}
 
 	if ( !mechanic || !IsValidMechanicIndex(invokeIndex) )
 	{
-		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr);
+		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr, 0);
 		return false;
 	}
 
-	const WeaponMechanics::InvocationResult result = mechanic->Invoke();
+	const WeaponMechanics::InvocationResult result = mechanic->Invoke(step);
 
 	if ( result.result == WeaponMechanics::InvocationResult::INCOMPLETE )
 	{
-		SetEnqueuedMechanic(mode, mechanic);
+		SetEnqueuedMechanic(mode, mechanic, step + 1);
 
 		// TODO: Make a proper timing var instead of using this one
 		pev->tuser1 = result.nextInvocationTime;
 	}
 	else
 	{
-		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr);
+		SetEnqueuedMechanic(WeaponAtts::AttackMode::None, nullptr, 0);
 	}
 
 	AttackInvoked(mode, result);
@@ -1324,10 +1329,14 @@ WeaponMechanics::CBaseMechanic* CGenericWeapon::GetEnqueuedMechanic() const
 	return GetMechanicByIndex(m_EnqueuedMechanicIndex);
 }
 
-void CGenericWeapon::SetEnqueuedMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic)
+void CGenericWeapon::SetEnqueuedMechanic(
+	WeaponAtts::AttackMode mode,
+	WeaponMechanics::CBaseMechanic* mechanic,
+	int nextStep)
 {
 	SetMechanicIndex(mechanic, m_EnqueuedMechanicIndex);
 	m_EnqueuedAttackMode = static_cast<int>(mechanic ? mode : WeaponAtts::AttackMode::None);
+	m_NextEnqueuedAttackStep = std::max<int>(nextStep, 0);
 
 	if ( !mechanic )
 	{
@@ -1365,6 +1374,7 @@ TYPEDESCRIPTION CGenericWeapon::m_SaveData[] = {
 	DEFINE_FIELD(CGenericWeapon, m_SecondaryAttackMechanicIndex, FIELD_INTEGER),
 	DEFINE_FIELD(CGenericWeapon, m_EnqueuedMechanicIndex, FIELD_INTEGER),
 	DEFINE_FIELD(CGenericWeapon, m_EnqueuedAttackMode, FIELD_INTEGER),
+	DEFINE_FIELD(CGenericWeapon, m_NextEnqueuedAttackStep, FIELD_INTEGER),
 };
 
 IMPLEMENT_SAVERESTORE(CGenericWeapon, CBasePlayerWeapon)
