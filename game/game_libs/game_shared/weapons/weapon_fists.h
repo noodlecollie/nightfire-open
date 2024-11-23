@@ -18,7 +18,7 @@ public:
 #endif
 
 protected:
-	void AttackInvoked(const WeaponMechanics::InvocationResult& result) override;
+	void AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result) override;
 
 private:
 	WeaponMechanics::CMeleeMechanic* m_PunchAttack = nullptr;

@@ -38,7 +38,7 @@ BOOL CWeaponFists::Deploy()
 	return TRUE;
 }
 
-void CWeaponFists::AttackInvoked(const WeaponMechanics::InvocationResult& result)
+void CWeaponFists::AttackInvoked(WeaponAtts::AttackMode, const WeaponMechanics::InvocationResult& result)
 {
 	if ( result.WasComplete() && result.mechanic == GetPrimaryAttackMechanic() )
 	{

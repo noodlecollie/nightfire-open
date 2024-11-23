@@ -217,7 +217,8 @@ protected:
 	void SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
 	WeaponMechanics::CBaseMechanic* GetAttackMechanic(WeaponAtts::AttackMode mode) const;
 	bool HasAttackMechanics() const;
-	virtual void AttackInvoked(const WeaponMechanics::InvocationResult& result);
+	virtual bool PrepareToInvokeAttack(WeaponAtts::AttackMode mode);
+	virtual void AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result);
 
 private:
 	// TODO: Should these be delegated somewhere else, a la aggregate programming model?
@@ -270,11 +271,12 @@ private:
 	int m_PrimaryAttackMechanicIndex = -1;
 	int m_SecondaryAttackMechanicIndex = -1;
 	int m_EnqueuedMechanicIndex = -1;
-	bool InvokeMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	int m_EnqueuedAttackMode = static_cast<int>(WeaponAtts::AttackMode::None);
+	bool InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic);
 	WeaponMechanics::CBaseMechanic* GetMechanicByIndex(int index) const;
 	void SetMechanicIndex(WeaponMechanics::CBaseMechanic* mechanic, int& outIndex);
 	WeaponMechanics::CBaseMechanic* GetEnqueuedMechanic() const;
-	void SetEnqueuedMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	void SetEnqueuedMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic);
 	bool IsValidMechanicIndex(int index) const;
 	WeaponAtts::AttackMode GetAttackModeForMechanic(const WeaponMechanics::CBaseMechanic* mechanic) const;
 
