@@ -113,6 +113,16 @@ namespace WeaponMechanics
 		return m_Weapon->HasAmmo(ammoAttack->UsesAmmoPool, minCount, useClip);
 	}
 
+	int CBaseMechanic::AmmoLeft(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool) const
+	{
+		return m_Weapon->AmmoLeft(pool);
+	}
+
+	int CBaseMechanic::AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const
+	{
+		return m_Weapon->AmmoLeft(attackMode);
+	}
+
 	bool CBaseMechanic::IsUnderwaterAndCannotFire() const
 	{
 		return GetPlayer()->pev->waterlevel == 3 && !m_BaseAttackMode->FunctionsUnderwater;

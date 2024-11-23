@@ -125,6 +125,8 @@ namespace WeaponMechanics
 		void PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds);
 
 		bool HasAmmo(int minCount, bool useClip) const;
+		int AmmoLeft(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool) const;
+		int AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const;
 		bool IsUnderwaterAndCannotFire() const;
 
 		void PlaySound(const WeaponAtts::WASoundSet& sound, int channel, float volModifier = 1.0f);

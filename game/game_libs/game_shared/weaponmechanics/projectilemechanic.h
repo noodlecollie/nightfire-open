@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "weaponmechanics/basemechanic.h"
 
 namespace WeaponAtts
@@ -12,13 +13,23 @@ namespace WeaponMechanics
 	class CProjectileMechanic : public CBaseMechanic
 	{
 	public:
+		using CreateProjectileCallback = std::function<void(CBaseMechanic&)>;
+
 		CProjectileMechanic(CGenericWeapon* weapon, const WeaponAtts::WAProjectileAttack* attackMode);
 		CProjectileMechanic(CGenericWeapon* weapon, uint32_t attackIndex);
+
+		const WeaponAtts::WAProjectileAttack* ProjectileAttackMode() const;
+		void SetCreateProjectileCallback(CreateProjectileCallback callback);
 
 		void Precache() override;
 		InvocationResult Invoke(uint32_t step) override;
 
 	private:
-		const WeaponAtts::WAProjectileAttack* ProjectileAttackMode() const;
+		void InitialWeaponFire();
+		void CreateProjectileAndDecrementAmmo();
+		void FireEvent();
+		bool AmmoDecrementWillEmptyWeaponClip(int decrement) const;
+
+		CreateProjectileCallback m_CreateProjectileCallback;
 	};
 }  // namespace WeaponMechanics

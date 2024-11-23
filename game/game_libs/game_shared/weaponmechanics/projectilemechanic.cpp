@@ -1,7 +1,9 @@
 #include "weaponmechanics/projectilemechanic.h"
 #include "weaponattributes/weaponatts_projectileattack.h"
 #include "weapons.h"
+#include "soundent.h"
 #include "weapons/genericweapon.h"
+#include "eventConstructor/eventConstructor.h"
 
 namespace WeaponMechanics
 {
@@ -13,6 +15,16 @@ namespace WeaponMechanics
 	CProjectileMechanic::CProjectileMechanic(CGenericWeapon* weapon, uint32_t attackIndex) :
 		CBaseMechanic(weapon, weapon->GetAttackModeFromAttributes<WeaponAtts::WAProjectileAttack>(attackIndex))
 	{
+	}
+
+	const WeaponAtts::WAProjectileAttack* CProjectileMechanic::ProjectileAttackMode() const
+	{
+		return GetAttackMode<WeaponAtts::WAProjectileAttack>();
+	}
+
+	void CProjectileMechanic::SetCreateProjectileCallback(CreateProjectileCallback callback)
+	{
+		m_CreateProjectileCallback = std::move(callback);
 	}
 
 	void CProjectileMechanic::Precache()
@@ -27,14 +39,105 @@ namespace WeaponMechanics
 		}
 	}
 
-	InvocationResult CProjectileMechanic::Invoke(uint32_t)
+	InvocationResult CProjectileMechanic::Invoke(uint32_t step)
 	{
-		// TODO
-		return InvocationResult::Rejected(*this);
+		const InvocationResult result = CBaseMechanic::Invoke(step);
+
+		if ( result.WasRejected() )
+		{
+			return result;
+		}
+
+		// We expect only two steps.
+		if ( step > 1 )
+		{
+			ASSERT(false);
+			return InvocationResult::Rejected(*this);
+		}
+
+		if ( step == 0 )
+		{
+			InitialWeaponFire();
+		}
+
+		const WeaponAtts::WAProjectileAttack* attackMode = ProjectileAttackMode();
+
+		if ( step == 0 && attackMode->ProjectileDelay > 0.0f )
+		{
+			// Defer to the next step.
+			return InvocationResult::Incomplete(*this, attackMode->ProjectileDelay);
+		}
+
+		CreateProjectileAndDecrementAmmo();
+		return InvocationResult::Complete(*this);
 	}
 
-	const WeaponAtts::WAProjectileAttack* CProjectileMechanic::ProjectileAttackMode() const
+	void CProjectileMechanic::InitialWeaponFire()
 	{
-		return GetAttackMode<WeaponAtts::WAProjectileAttack>();
+		const WeaponAtts::WAProjectileAttack* attackMode = ProjectileAttackMode();
+		CBasePlayer* player = GetPlayer();
+
+		player->m_iWeaponVolume = attackMode->Volume;
+		player->m_iWeaponFlash = attackMode->MuzzleFlashBrightness;
+
+		player->m_iExtraSoundTypes = bits_SOUND_DANGER;
+		player->m_flStopExtraSoundTime = UTIL_WeaponTimeBase() + 0.2f;
+
+		player->SetAnimation(PLAYER_ATTACK1);
+
+		FireEvent();
+		DelayFiring(1.0f / attackMode->AttackRate);
+		SetNextIdleTime(5, true);
+	}
+
+	void CProjectileMechanic::CreateProjectileAndDecrementAmmo()
+	{
+		DecrementAmmo(GetAttackMode());
+
+		ASSERT(m_CreateProjectileCallback.operator bool());
+
+		if ( m_CreateProjectileCallback )
+		{
+			m_CreateProjectileCallback(*this);
+		}
+
+		if ( !HasAmmo(1, true) && !HasAmmo(1, false) )
+		{
+			// HEV suit - indicate out of ammo condition
+			GetPlayer()->SetSuitUpdate("!HEV_AMO0", FALSE, 0);
+		}
+	}
+
+	void CProjectileMechanic::FireEvent()
+	{
+		using namespace EventConstructor;
+
+		if ( GetEventIndex() < 0 )
+		{
+			return;
+		}
+
+		CBasePlayer* player = GetPlayer();
+		CGenericWeapon* weapon = GetWeapon();
+		const bool willBeEmpty = AmmoDecrementWillEmptyWeaponClip(1);
+
+		CEventConstructor event;
+		event << Flags(DefaultEventFlags()) << Invoker(player->edict())
+			  << EventIndex(static_cast<unsigned short>(GetEventIndex())) << IntParam1(player->random_seed)
+			  << BoolParam1(willBeEmpty) << FloatParam1(weapon->GetInaccuracy());
+
+		event.Send();
+	}
+
+	bool CProjectileMechanic::AmmoDecrementWillEmptyWeaponClip(int decrement) const
+	{
+		const int ammoLeft = AmmoLeft(GetAttackMode());
+
+		if ( ammoLeft < 0 )
+		{
+			return false;
+		}
+
+		return decrement >= ammoLeft;
 	}
 }  // namespace WeaponMechanics
