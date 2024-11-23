@@ -38,9 +38,19 @@ namespace WeaponMechanics
 			REJECTED_NO_AMMO,
 		};
 
-		CBaseMechanic* mechanic = nullptr;
-		Result result = REJECTED_UNKNOWN_REASON;
-		float nextInvocationTime = 0.0f;
+		CBaseMechanic* mechanic;
+		Result result;
+		float nextInvocationTime;
+
+		InvocationResult(
+			CBaseMechanic* inMechanic = nullptr,
+			Result inResult = REJECTED_UNKNOWN_REASON,
+			float inTime = 0.0f) :
+			mechanic(inMechanic),
+			result(inResult),
+			nextInvocationTime(inTime)
+		{
+		}
 
 		bool WasRejected() const
 		{
@@ -59,17 +69,19 @@ namespace WeaponMechanics
 
 		static InvocationResult Rejected(CBaseMechanic& mechanic, Result reason = REJECTED_UNKNOWN_REASON)
 		{
-			return {&mechanic, reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON};
+			return InvocationResult(
+				&mechanic,
+				reason > REJECTED_UNKNOWN_REASON ? reason : REJECTED_UNKNOWN_REASON);
 		}
 
 		static InvocationResult Incomplete(CBaseMechanic& mechanic, float nextTimeDelta)
 		{
-			return {&mechanic, INCOMPLETE, UTIL_WeaponTimeBase() + nextTimeDelta};
+			return InvocationResult(&mechanic, INCOMPLETE, UTIL_WeaponTimeBase() + nextTimeDelta);
 		}
 
 		static InvocationResult Complete(CBaseMechanic& mechanic)
 		{
-			return {&mechanic, COMPLETE};
+			return InvocationResult(&mechanic, COMPLETE);
 		}
 	};
 
