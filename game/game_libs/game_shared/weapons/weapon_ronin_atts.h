@@ -99,6 +99,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		throwAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
 		throwAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
 
-		throwAttack->OverrideAnimations = std::make_shared<ViewModelAnimationSet>();
+		// This can't be make_shared() because calling that causes a very weird
+		// crash on Linux *only* when starting a multiplayer game.
+		// Yes, this was very annoying to track down, and no I don't know why
+		// it does that.
+		throwAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(new ViewModelAnimationSet());
 		*throwAttack->OverrideAnimations = vm.Animations;
 	});
