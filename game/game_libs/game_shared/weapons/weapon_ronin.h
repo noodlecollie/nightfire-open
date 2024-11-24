@@ -1,7 +1,8 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "basegrenadelauncher.h"
+#include "genericweapon.h"
+#include "weaponmechanics/projectilemechanic.h"
 
 #ifndef CLIENT_DLL
 class CNPCRoninTurret;
@@ -10,7 +11,7 @@ class CNPCRoninTurret;
 // NFTODO: Make a common base class from the frag grenade and use the
 // same logic here. It'd be nice to be able to scale the toss velocity
 // based on how long the button is held down for.
-class CWeaponRonin : public CBaseGrenadeLauncher
+class CWeaponRonin : public CGenericWeapon
 {
 public:
 	CWeaponRonin();
@@ -23,7 +24,7 @@ public:
 
 protected:
 #ifndef CLIENT_DLL
-	void CreateProjectile(const WeaponAtts::WAProjectileAttack& projectileAttack) override;
+	void LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
 #endif
 
 private:
@@ -32,6 +33,8 @@ private:
 #ifndef CLIENT_DLL
 	bool SelectRoninSpawnLocation(CNPCRoninTurret& turret, const Vector& forward, Vector& outLocation) const;
 #endif
+
+	WeaponMechanics::CProjectileMechanic* m_ThrowMechanic = nullptr;
 };
 
 namespace WeaponAtts

@@ -19,9 +19,18 @@ LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
 #endif
 
 CWeaponRonin::CWeaponRonin() :
-	CBaseGrenadeLauncher()
+	CGenericWeapon()
 {
-	SetPrimaryAttackModeFromAttributes(VRONIN_ATTACKMODE_TOSS);
+	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(VRONIN_ATTACKMODE_TOSS, m_ThrowMechanic);
+
+#ifndef CLIENT_DLL
+	m_ThrowMechanic->SetCreateProjectileCallback([this](WeaponMechanics::CProjectileMechanic& mechanic)
+	{
+		LaunchThrownTurret(mechanic);
+	});
+#endif
+
+	SetPrimaryAttackMechanic(m_ThrowMechanic);
 	SetViewModelAnimationSource(WeaponAtts::AttackMode::Primary);
 }
 
@@ -42,16 +51,14 @@ void CWeaponRonin::Bot_SetFightStyle(CBaseBotFightStyle&) const
 	// TODO
 }
 
-void CWeaponRonin::CreateProjectile(const WeaponAtts::WAProjectileAttack& projectileAttack)
+void CWeaponRonin::LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
 {
-	(void)projectileAttack;
-
 	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
 	turret->pev->owner = m_pPlayer->edict();
 	turret->Spawn();
 
 	Vector forward;
-	AngleVectors(GetGrenadeLaunchAngles(0.0f), forward, nullptr, nullptr);
+	AngleVectors(mechanic.GetProjectileLaunchAngles(0.0f), forward, nullptr, nullptr);
 
 	Vector spawnLocation;
 
