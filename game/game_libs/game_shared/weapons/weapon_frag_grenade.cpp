@@ -54,6 +54,8 @@ void CWeaponFragGrenade::WeaponTick()
 {
 	CGenericWeapon::WeaponTick();
 
+	const WeaponAtts::WAProjectileAttack* attackMode = m_ThrowMechanic->ProjectileAttackMode();
+
 	switch ( m_ThrowState )
 	{
 		case ThrowState::Primed:
@@ -76,7 +78,7 @@ void CWeaponFragGrenade::WeaponTick()
 			}
 
 			PrimaryAttack();
-			SetNextPrimaryAttack(1.0f / GetPrimaryAttackMode()->AttackRate);
+			SetNextPrimaryAttack(1.0f / attackMode->AttackRate);
 			m_ThrowState = ThrowState::Idle;
 			break;
 		}
@@ -84,7 +86,7 @@ void CWeaponFragGrenade::WeaponTick()
 		default:
 		{
 			if ( CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) &&
-				 !HasAmmo(GetPrimaryAttackMode(), 1, false) )
+				 !HasAmmo(attackMode, 1, false) )
 			{
 				RetireWeapon();
 			}
