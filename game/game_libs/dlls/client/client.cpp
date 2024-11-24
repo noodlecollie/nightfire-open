@@ -567,7 +567,7 @@ static CharacterGender InferGenderFromModel(char* infobuffer)
 		g_engfuncs.pfnModelGetTag(modelIndex, tagIndex, tag, sizeof(tag));
 
 		// TODO: Define this tag name somewhere?
-		if ( strcmp(tag, "female_character") )
+		if ( strcmp(tag, "female_character") == 0 )
 		{
 			return CharacterGender::FEMALE;
 		}
