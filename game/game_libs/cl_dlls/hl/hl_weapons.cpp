@@ -881,6 +881,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		pCurrent->m_flNextPrimaryAttack = pfrom->m_flNextPrimaryAttack;
 		pCurrent->m_flNextSecondaryAttack = pfrom->m_flNextSecondaryAttack;
 		pCurrent->m_flTimeWeaponIdle = pfrom->m_flTimeWeaponIdle;
+		pCurrent->m_flEnqueuedMechanicInvocationTime = pfrom->m_flEnqueuedMechanicInvocationTime;
 		pCurrent->m_flLastPrimaryAttack = pfrom->m_flLastPrimaryAttack;
 		pCurrent->m_flLastSecondaryAttack = pfrom->m_flLastSecondaryAttack;
 
@@ -1064,6 +1065,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		pto->m_flNextPrimaryAttack = pCurrent->m_flNextPrimaryAttack;
 		pto->m_flNextSecondaryAttack = pCurrent->m_flNextSecondaryAttack;
 		pto->m_flTimeWeaponIdle = pCurrent->m_flTimeWeaponIdle;
+		pto->m_flEnqueuedMechanicInvocationTime = pCurrent->m_flEnqueuedMechanicInvocationTime;
 		pto->m_flLastPrimaryAttack = pCurrent->m_flLastPrimaryAttack;
 		pto->m_flLastSecondaryAttack = pCurrent->m_flLastSecondaryAttack;
 
@@ -1075,6 +1077,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		pto->m_flNextPrimaryAttack -= cmd->msec / 1000.0f;
 		pto->m_flNextSecondaryAttack -= cmd->msec / 1000.0f;
 		pto->m_flTimeWeaponIdle -= cmd->msec / 1000.0f;
+		pto->m_flEnqueuedMechanicInvocationTime -= cmd->msec / 1000.0f;
 		pto->m_flLastPrimaryAttack -= cmd->msec / 1000.0f;
 		pto->m_flLastSecondaryAttack -= cmd->msec / 1000.0f;
 		pto->tuser1 -= cmd->msec / 1000.0f;
@@ -1105,6 +1108,11 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 		if ( pto->m_flTimeWeaponIdle < -0.001f )
 		{
 			pto->m_flTimeWeaponIdle = -0.001f;
+		}
+
+		if ( pto->m_flEnqueuedMechanicInvocationTime < -0.001f )
+		{
+			pto->m_flEnqueuedMechanicInvocationTime = -0.001f;
 		}
 
 		if ( pto->m_flLastPrimaryAttack < -10.0f )

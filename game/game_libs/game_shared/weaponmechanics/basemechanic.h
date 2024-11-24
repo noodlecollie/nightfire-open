@@ -14,8 +14,6 @@ namespace WeaponAtts
 
 namespace WeaponMechanics
 {
-	static constexpr float INVOCATION_COMPLETED = std::numeric_limits<float>::min();
-
 	class CBaseMechanic;
 
 	struct InvocationResult

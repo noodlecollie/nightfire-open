@@ -197,22 +197,22 @@ int CWeaponFrinesi::HandleSpecialReload(int currentState)
 
 float& CWeaponFrinesi::NextPumpSoundTime()
 {
-	return pev->tuser3;
+	return pev->tuser2;
 }
 
 const float& CWeaponFrinesi::NextPumpSoundTime() const
 {
-	return pev->tuser3;
+	return pev->tuser2;
 }
 
 float& CWeaponFrinesi::NextReloadSoundTime()
 {
-	return pev->tuser2;
+	return pev->tuser1;
 }
 
 const float& CWeaponFrinesi::NextReloadSoundTime() const
 {
-	return pev->tuser2;
+	return pev->tuser1;
 }
 
 void CWeaponFrinesi::PlayPumpSound()
@@ -234,8 +234,8 @@ bool CWeaponFrinesi::ReadPredictionData(const weapon_data_t* from)
 		return false;
 	}
 
-	NextReloadSoundTime() = from->tuser2;
-	NextPumpSoundTime() = from->tuser3;
+	NextReloadSoundTime() = from->tuser1;
+	NextPumpSoundTime() = from->tuser2;
 	return true;
 }
 
@@ -246,8 +246,8 @@ bool CWeaponFrinesi::WritePredictionData(weapon_data_t* to)
 		return false;
 	}
 
-	to->tuser2 = NextReloadSoundTime();
-	to->tuser3 = NextPumpSoundTime();
+	to->tuser1 = NextReloadSoundTime();
+	to->tuser2 = NextPumpSoundTime();
 	return true;
 }
 

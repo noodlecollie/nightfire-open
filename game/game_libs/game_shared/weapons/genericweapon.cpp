@@ -365,7 +365,7 @@ void CGenericWeapon::RunAttackLogic()
 {
 	WeaponMechanics::CBaseMechanic* enqueuedMechanic = GetEnqueuedMechanic();
 
-	if ( enqueuedMechanic && pev->tuser1 <= UTIL_WeaponTimeBase() )
+	if ( enqueuedMechanic && m_flEnqueuedMechanicInvocationTime <= UTIL_WeaponTimeBase() )
 	{
 		InvokeMechanic(
 			static_cast<WeaponAtts::AttackMode>(m_EnqueuedAttackMode),
@@ -558,7 +558,7 @@ bool CGenericWeapon::ReadPredictionData(const weapon_data_t* from)
 	m_SecondaryAttackMechanicIndex = from->m_SecondaryAttackMechanicIndex;
 	m_EnqueuedMechanicIndex = from->m_EnqueuedMechanicIndex;
 	m_NextEnqueuedAttackStep = from->m_NextEnqueuedAttackStep;
-	pev->tuser1 = from->tuser1;
+	m_flEnqueuedMechanicInvocationTime = from->m_flEnqueuedMechanicInvocationTime;
 	return true;
 }
 
@@ -574,7 +574,7 @@ bool CGenericWeapon::WritePredictionData(weapon_data_t* to)
 	to->m_SecondaryAttackMechanicIndex = m_SecondaryAttackMechanicIndex;
 	to->m_EnqueuedMechanicIndex = m_EnqueuedMechanicIndex;
 	to->m_NextEnqueuedAttackStep = m_NextEnqueuedAttackStep;
-	to->tuser1 = pev->tuser1;
+	to->m_flEnqueuedMechanicInvocationTime = m_flEnqueuedMechanicInvocationTime;
 	return true;
 }
 
@@ -1186,9 +1186,7 @@ bool CGenericWeapon::InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics
 	if ( result.result == WeaponMechanics::InvocationResult::INCOMPLETE )
 	{
 		SetEnqueuedMechanic(mode, mechanic, step + 1);
-
-		// TODO: Make a proper timing var instead of using this one
-		pev->tuser1 = result.nextInvocationTime;
+		m_flEnqueuedMechanicInvocationTime = result.nextInvocationTime;
 	}
 	else
 	{
@@ -1234,7 +1232,7 @@ void CGenericWeapon::SetEnqueuedMechanic(
 
 	if ( !mechanic )
 	{
-		pev->tuser1 = 0.0f;
+		m_flEnqueuedMechanicInvocationTime = 0.0f;
 	}
 }
 
