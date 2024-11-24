@@ -37,9 +37,9 @@ CWeaponGrenadeLauncher::CWeaponGrenadeLauncher() :
 	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(ATTACKMODE_TIMED, m_TimedGrenadeAttack);
 
 #ifndef CLIENT_DLL
-	const auto createProjectile = [this](WeaponMechanics::CBaseMechanic& mechanic)
+	const auto createProjectile = [this](WeaponMechanics::CProjectileMechanic& mechanic)
 	{
-		CreateProjectile(static_cast<WeaponMechanics::CProjectileMechanic&>(mechanic));
+		CreateProjectile(mechanic);
 	};
 
 	m_ContactGrenadeAttack->SetCreateProjectileCallback(createProjectile);
