@@ -4,6 +4,7 @@
 #include "gamerules.h"
 #include "weapon_pref_weights.h"
 #include "weapon_grenadelauncher_atts.h"
+#include "weapons/genericgrenade.h"
 
 #ifndef CLIENT_DLL
 #include <limits>
@@ -30,22 +31,28 @@ LINK_ENTITY_TO_CLASS(weapon_rocketlauncher, CWeaponGrenadeLauncher)
 #endif
 
 CWeaponGrenadeLauncher::CWeaponGrenadeLauncher() :
-	CBaseGrenadeLauncher()
+	CGenericWeapon()
 {
-	SetPrimaryAttackModeFromAttributes(ATTACKMODE_CONTACT);
-	SetSecondaryAttackModeFromAttributes(ATTACKMODE_TIMED);
+	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(ATTACKMODE_CONTACT, m_ContactGrenadeAttack);
+	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(ATTACKMODE_TIMED, m_TimedGrenadeAttack);
+
+#ifndef CLIENT_DLL
+	const auto createProjectile = [this](WeaponMechanics::CBaseMechanic& mechanic)
+	{
+		CreateProjectile(static_cast<WeaponMechanics::CProjectileMechanic&>(mechanic));
+	};
+
+	m_ContactGrenadeAttack->SetCreateProjectileCallback(createProjectile);
+	m_TimedGrenadeAttack->SetCreateProjectileCallback(createProjectile);
+#endif
+
+	SetPrimaryAttackMechanic(m_ContactGrenadeAttack);
+	SetSecondaryAttackMechanic(m_TimedGrenadeAttack);
 }
 
 const WeaponAtts::WACollection& CWeaponGrenadeLauncher::WeaponAttributes() const
 {
 	return WeaponAtts::StaticWeaponAttributes<CWeaponGrenadeLauncher>();
-}
-
-void CWeaponGrenadeLauncher::Precache()
-{
-	CBaseGrenadeLauncher::Precache();
-
-	PRECACHE_MODEL(GetPrimaryAttackMode<WeaponAtts::WAProjectileAttack>()->ProjectileModelName);
 }
 
 #ifndef CLIENT_DLL
@@ -92,24 +99,27 @@ void CWeaponGrenadeLauncher::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) c
 	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 2.0f);
 }
 
-void CWeaponGrenadeLauncher::CreateProjectile(const WeaponAtts::WAProjectileAttack& projectileAttack)
+void CWeaponGrenadeLauncher::CreateProjectile(const WeaponMechanics::CProjectileMechanic& mechanic)
 {
-	const bool isPrimaryAttack = projectileAttack.Signature()->Index == 0;
+	CGenericGrenade* grenade = CGenericGrenade::CreateGrenade(
+		m_pPlayer,
+		mechanic.GetProjectileLaunchAngles(GRENADELAUNCHER_PITCH_ADJUST),
+		16.0f);
 
-	CBaseGrenadeLauncher_Grenade* grenade = CreateGrenade(GRENADELAUNCHER_PITCH_ADJUST, 16.0f);
+	const bool explodeOnContact = &mechanic == m_ContactGrenadeAttack;
 
-	grenade->SetModelName(projectileAttack.ProjectileModelName);
+	grenade->SetModelName(mechanic.ProjectileAttackMode()->ProjectileModelName);
 	grenade->SetSize(GRENADELAUNCHER_HALF_BBOX);
 	grenade->SetFriction(GRENADELAUNCHER_GRENADE_FRICTION);
 	grenade->SetGravity(GRENADELAUNCHER_GRENADE_GRAVITY);
 	grenade->SetExplodeSpriteScale(GRENADELAUNCHER_GRENADE_SPRITE_SCALE);
-	grenade->SetExplodeOnContact(isPrimaryAttack);
+	grenade->SetExplodeOnContact(explodeOnContact);
 	grenade->SetRandomTumbleAngVel(GRENADELAUNCHER_TUMBLEVEL_MIN, GRENADELAUNCHER_TUMBLEVEL_MAX);
 	grenade->SetDamageOnExplode(gSkillData.plrDmgGrenadeLauncher);
 	grenade->SetPlayerContactDamageMultiplier(gSkillData.plrDmgMultGrenadelauncherHit);
 	grenade->SetOwnerDamageMultiplier(gSkillData.plrSelfDmgMultGrenadeLauncher);
 	grenade->SetSpeed(GRENADELAUNCHER_LAUNCH_SPEED);
-	grenade->SetFuseTime(isPrimaryAttack ? -1.0f : GRENADELAUNCHER_FUSE_TIME);
+	grenade->SetFuseTime(explodeOnContact ? -1.0f : GRENADELAUNCHER_FUSE_TIME);
 }
 #endif
 

@@ -90,10 +90,14 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponmechanics/hitscanmechanic.cpp
 	../game_shared/weaponmechanics/meleemechanic.h
 	../game_shared/weaponmechanics/meleemechanic.cpp
+	../game_shared/weaponmechanics/projectilemechanic.h
+	../game_shared/weaponmechanics/projectilemechanic.cpp
 	../game_shared/weapons/ammodefs.h
 	../game_shared/weapons/ammodefs.cpp
 	../game_shared/weapons/basegrenadelauncher.h
 	../game_shared/weapons/basegrenadelauncher.cpp
+	../game_shared/weapons/genericgrenade.h
+	../game_shared/weapons/genericgrenade.cpp
 	../game_shared/weapons/generichitscanweapon.h
 	../game_shared/weapons/generichitscanweapon.cpp
 	../game_shared/weapons/genericmeleeweapon.h

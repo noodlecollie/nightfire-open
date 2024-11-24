@@ -27,6 +27,33 @@ namespace WeaponMechanics
 		m_CreateProjectileCallback = std::move(callback);
 	}
 
+	Vector CProjectileMechanic::GetProjectileLaunchAngles(float extraPitch) const
+	{
+		CBasePlayer* player = GetPlayer();
+
+		Vector viewAngles = Vector(player->pev->v_angle) + Vector(player->pev->punchangle);
+
+		if ( extraPitch != 0.0f )
+		{
+			// Add some more pitch depending on the cosine of the original pitch.
+			// If the player is looking horizontally, we want the grenade to be
+			// launched a little more upward; if they are looking straight up or
+			// down, we don't want any modification at all.
+			viewAngles[0] -= cosf(UTIL_DegreesToRadians(viewAngles[0])) * extraPitch;
+		}
+
+		if ( viewAngles[0] < -89.0f )
+		{
+			viewAngles[0] = -89.0f;
+		}
+		else if ( viewAngles[0] > 89.0f )
+		{
+			viewAngles[0] = 89.0f;
+		}
+
+		return viewAngles;
+	}
+
 	void CProjectileMechanic::Precache()
 	{
 		CBaseMechanic::Precache();
@@ -94,8 +121,7 @@ namespace WeaponMechanics
 	{
 		DecrementAmmo(GetAttackMode());
 
-		ASSERT(m_CreateProjectileCallback.operator bool());
-
+		// Need to check this, as it should only be set on the server.
 		if ( m_CreateProjectileCallback )
 		{
 			m_CreateProjectileCallback(*this);

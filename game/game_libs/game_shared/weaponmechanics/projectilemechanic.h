@@ -21,6 +21,8 @@ namespace WeaponMechanics
 		const WeaponAtts::WAProjectileAttack* ProjectileAttackMode() const;
 		void SetCreateProjectileCallback(CreateProjectileCallback callback);
 
+		Vector GetProjectileLaunchAngles(float extraPitch) const;
+
 		void Precache() override;
 		InvocationResult Invoke(uint32_t step) override;
 
