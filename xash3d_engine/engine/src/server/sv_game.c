@@ -1447,14 +1447,18 @@ int GAME_EXPORT pfnPrecacheModel(const char* s)
 	}
 
 	if ( (i = SV_ModelIndex(s)) == 0 )
+	{
 		return 0;
+	}
 
 	sv.models[i] = Mod_ForName(sv.model_precache[i], false, true);
 
 	Mod_PrecacheEventSounds(sv.models[i]);
 
 	if ( !optional )
+	{
 		SetBits(sv.model_precache_flags[i], RES_FATALIFMISSING);
+	}
 
 	return i;
 }
