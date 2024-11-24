@@ -108,43 +108,10 @@ protected:
 
 	int GetEventIDForAttackMode(const WeaponAtts::WABaseAttack* attack) const;
 
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline const T* GetPrimaryAttackMode() const
-	{
-		return dynamic_cast<const T*>(m_pPrimaryAttackMode);
-	}
-
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline const T* GetSecondaryAttackMode() const
-	{
-		return dynamic_cast<const T*>(m_pSecondaryAttackMode);
-	}
-
-	const WeaponAtts::WABaseAttack* GetPrimaryAttackMode() const;
-	const WeaponAtts::WABaseAttack* GetSecondaryAttackMode() const;
-	void SetPrimaryAttackMode(const WeaponAtts::WABaseAttack* mode);
-	void SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode);
-
 	// Override the view model animations based on those used
 	// for an attack mode.
 	WeaponAtts::AttackMode GetViewModelAnimationSource();
 	void SetViewModelAnimationSource(WeaponAtts::AttackMode source);
-
-	// T can be used to validate the type of attack expected to be set,
-	// but can be omitted if this is not required.
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline void SetPrimaryAttackModeFromAttributes(uint32_t modeIndex)
-	{
-		SetPrimaryAttackMode(GetAttackModeFromAttributes<T>(modeIndex));
-	}
-
-	// T can be used to validate the type of attack expected to be set,
-	// but can be omitted if this is not required.
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline void SetSecondaryAttackModeFromAttributes(uint32_t modeIndex)
-	{
-		SetSecondaryAttackMode(GetAttackModeFromAttributes<T>(modeIndex));
-	}
 
 	// Return the value to set m_fInSpecialReload to next.
 	virtual int HandleSpecialReload(int currentState);
@@ -186,9 +153,6 @@ protected:
 #endif
 	}
 
-	//////////////////////////////////////////////
-	// MECHANICS
-	//////////////////////////////////////////////
 	template<typename Attack, typename Mechanic>
 	Mechanic* AddMechanic(const Attack* attack)
 	{
@@ -216,7 +180,7 @@ protected:
 	WeaponMechanics::CBaseMechanic* GetSecondaryAttackMechanic() const;
 	void SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
 	WeaponMechanics::CBaseMechanic* GetAttackMechanic(WeaponAtts::AttackMode mode) const;
-	bool HasAttackMechanics() const;
+
 	virtual bool PrepareToInvokeAttack(WeaponAtts::AttackMode mode);
 	virtual void AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result);
 
@@ -226,7 +190,17 @@ private:
 	void PrecacheViewModel(const WeaponAtts::WAViewModel& viewModel);
 	void PrecachePlayerModel(const WeaponAtts::WAPlayerModel& playerModel);
 
+	WeaponMechanics::CBaseMechanic* GetMechanicByIndex(int index) const;
+	void SetMechanicIndex(WeaponMechanics::CBaseMechanic* mechanic, int& outIndex);
+	bool IsValidMechanicIndex(int index) const;
+	WeaponAtts::AttackMode GetAttackModeForMechanic(const WeaponMechanics::CBaseMechanic* mechanic) const;
+	const WeaponAtts::WAAmmoBasedAttack* GetPrimaryAmmoBasedAttackMode() const;
+
+	WeaponMechanics::CBaseMechanic* GetEnqueuedMechanic() const;
+	void SetEnqueuedMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int nextStep);
+
 	bool InvokeAttack(WeaponAtts::AttackMode mode);
+	bool InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int step);
 	void SetFireOnEmptyState(const WeaponAtts::WABaseAttack* attackMode);
 	void SetFireOnEmptyState(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool);
 
@@ -253,34 +227,17 @@ private:
 	CUtlVector<float> m_ViewAnimDurations;
 	CWeaponInaccuracyCalculator m_InaccuracyCalculator;
 
-	//////////////////////////////////////////////
-	// MECHANICS: Remove these once done
-	//////////////////////////////////////////////
-	const WeaponAtts::WABaseAttack* m_pPrimaryAttackMode = nullptr;
-	const WeaponAtts::WABaseAttack* m_pSecondaryAttackMode = nullptr;
-
 	// If set to something other than none, the view model animations
 	// are taken from the specified attack mode, rather than the default
 	// view model attributes.
 	WeaponAtts::AttackMode m_ViewModelAnimationSource = WeaponAtts::AttackMode::None;
 
-	//////////////////////////////////////////////
-	// MECHANICS: Keep these
-	//////////////////////////////////////////////
 	CUtlVector<WeaponMechanics::CBaseMechanic*> m_Mechanics;
 	int m_PrimaryAttackMechanicIndex = -1;
 	int m_SecondaryAttackMechanicIndex = -1;
 	int m_EnqueuedMechanicIndex = -1;
 	int m_EnqueuedAttackMode = static_cast<int>(WeaponAtts::AttackMode::None);
 	int m_NextEnqueuedAttackStep = 0;
-	bool InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int step);
-	WeaponMechanics::CBaseMechanic* GetMechanicByIndex(int index) const;
-	void SetMechanicIndex(WeaponMechanics::CBaseMechanic* mechanic, int& outIndex);
-	WeaponMechanics::CBaseMechanic* GetEnqueuedMechanic() const;
-	void SetEnqueuedMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int nextStep);
-	bool IsValidMechanicIndex(int index) const;
-	WeaponAtts::AttackMode GetAttackModeForMechanic(const WeaponMechanics::CBaseMechanic* mechanic) const;
-
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;
 	int m_iWeaponSlot = -1;
@@ -310,18 +267,6 @@ inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetAttackModeFromAttribut
 	}
 
 	return atts.AttackModes[index].get();
-}
-
-template<>
-inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetPrimaryAttackMode() const
-{
-	return m_pPrimaryAttackMode;
-}
-
-template<>
-inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetSecondaryAttackMode() const
-{
-	return m_pSecondaryAttackMode;
 }
 
 class CGenericAmmo : public CBasePlayerAmmo
