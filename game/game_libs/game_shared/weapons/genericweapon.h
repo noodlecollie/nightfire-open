@@ -10,10 +10,18 @@
 class CBaseBot;
 class CBaseBotFightStyle;
 
+namespace WeaponMechanics
+{
+	class CBaseMechanic;
+	struct InvocationResult;
+}
+
 // Build on top of CBasePlayerWeapon, because this is so tied into the engine
 // already it'd be a pain to replace it (at least at this stage).
 class CGenericWeapon : public CBasePlayerWeapon
 {
+	friend class WeaponMechanics::CBaseMechanic;
+
 public:
 	enum SpawnFlag
 	{
@@ -27,6 +35,7 @@ public:
 	virtual int GetItemInfo(ItemInfo* p) override;
 	virtual int AddToPlayer(CBasePlayer* pPlayer) override;
 	virtual BOOL Deploy() override;
+	virtual void Holster(int skiplocal = 0) override;
 	virtual void PrimaryAttack() override;
 	virtual void SecondaryAttack() override;
 	virtual void Reload() override;
@@ -41,27 +50,6 @@ public:
 
 	float GetInaccuracy() const;
 	byte GetPrimaryAttackModeIndex() const;
-
-#ifndef CLIENT_DLL
-	// Don't know if this is the best place to put these?
-	// Currently refactoring weapon attributes and didn't like putting
-	// non-static behaviour like this into static attributes.
-	// Evaluate whether this should be moved elsewhere - possibly
-	// make bot weapon profiles local to bot code?
-	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const = 0;
-	virtual void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const = 0;
-	virtual int Save(CSave& save) override;
-	virtual int Restore(CRestore& restore) override;
-	static TYPEDESCRIPTION m_SaveData[];
-#endif
-
-protected:
-	enum class WeaponAttackType
-	{
-		None = -1,
-		Primary = 0,
-		Secondary = 1
-	};
 
 	template<typename T>
 	const T* GetAttackModeFromAttributes(uint32_t index) const
@@ -80,11 +68,25 @@ protected:
 		return attackMode;
 	}
 
+#ifndef CLIENT_DLL
+	// Don't know if this is the best place to put these?
+	// Currently refactoring weapon attributes and didn't like putting
+	// non-static behaviour like this into static attributes.
+	// Evaluate whether this should be moved elsewhere - possibly
+	// make bot weapon profiles local to bot code?
+	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const = 0;
+	virtual void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const = 0;
+	virtual int Save(CSave& save) override;
+	virtual int Restore(CRestore& restore) override;
+	static TYPEDESCRIPTION m_SaveData[];
+#endif
+
+protected:
 	virtual const char* PickupSound() const override;
 
 	// Overridable functions for attack modes:
-	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attackMode);
-	virtual bool InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode);
+	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack);
+	virtual bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack);
 
 	void PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds);
 	void SetViewModelBody(int body, bool immediate = false);
@@ -92,51 +94,24 @@ protected:
 	void PlaySound(const WeaponAtts::WASoundSet& sound, int channel = CHAN_WEAPON, float volModifier = 1.0f);
 
 	void DelayPendingActions(float secs, bool allowIfEarlier = false);
-	void DelayFiring(float secs, bool allowIfEarlier = false, WeaponAttackType attackType = WeaponAttackType::None);
+	void DelayFiring(
+		float secs,
+		bool allowIfEarlier = false,
+		WeaponAtts::AttackMode attackMode = WeaponAtts::AttackMode::None);
 	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
+	bool HasAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int minCount = 1, bool useClip = true) const;
 	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
+	bool DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int decrement);
 	int AmmoLeft(const WeaponAtts::WABaseAttack* attackMode) const;
+	int AmmoLeft(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool) const;
 	bool CanReload() const;
 
 	int GetEventIDForAttackMode(const WeaponAtts::WABaseAttack* attack) const;
 
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline const T* GetPrimaryAttackMode() const
-	{
-		return dynamic_cast<const T*>(m_pPrimaryAttackMode);
-	}
-
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline const T* GetSecondaryAttackMode() const
-	{
-		return dynamic_cast<const T*>(m_pSecondaryAttackMode);
-	}
-
-	const WeaponAtts::WABaseAttack* GetPrimaryAttackMode() const;
-	const WeaponAtts::WABaseAttack* GetSecondaryAttackMode() const;
-	void SetPrimaryAttackMode(const WeaponAtts::WABaseAttack* mode);
-	void SetSecondaryAttackMode(const WeaponAtts::WABaseAttack* mode);
-
 	// Override the view model animations based on those used
 	// for an attack mode.
-	WeaponAttackType GetViewModelAnimationSource();
-	void SetViewModelAnimationSource(WeaponAttackType source);
-
-	// T can be used to validate the type of attack expected to be set,
-	// but can be omitted if this is not required.
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline void SetPrimaryAttackModeFromAttributes(uint32_t modeIndex)
-	{
-		SetPrimaryAttackMode(GetAttackModeFromAttributes<T>(modeIndex));
-	}
-
-	// T can be used to validate the type of attack expected to be set,
-	// but can be omitted if this is not required.
-	template<typename T = WeaponAtts::WABaseAttack>
-	inline void SetSecondaryAttackModeFromAttributes(uint32_t modeIndex)
-	{
-		SetSecondaryAttackMode(GetAttackModeFromAttributes<T>(modeIndex));
-	}
+	WeaponAtts::AttackMode GetViewModelAnimationSource();
+	void SetViewModelAnimationSource(WeaponAtts::AttackMode source);
 
 	// Return the value to set m_fInSpecialReload to next.
 	virtual int HandleSpecialReload(int currentState);
@@ -178,14 +153,56 @@ protected:
 #endif
 	}
 
+	template<typename Attack, typename Mechanic>
+	Mechanic* AddMechanic(const Attack* attack)
+	{
+		Mechanic* mechanic = new Mechanic(this, attack);
+		m_Mechanics.AddToTail(mechanic);
+		return mechanic;
+	}
+
+	// Helper so that the types can be inferred
+	template<typename Attack, typename Mechanic>
+	void AddMechanic(const Attack* inAttack, Mechanic*& outMode)
+	{
+		outMode = AddMechanic<Attack, Mechanic>(inAttack);
+	}
+
+	// Helper that allows choosing an attack via index
+	template<typename Attack, typename Mechanic>
+	void AddMechanicByAttributeIndex(uint32_t index, Mechanic*& outMode)
+	{
+		AddMechanic<Attack, Mechanic>(GetAttackModeFromAttributes<Attack>(index), outMode);
+	}
+
+	WeaponMechanics::CBaseMechanic* GetPrimaryAttackMechanic() const;
+	void SetPrimaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	WeaponMechanics::CBaseMechanic* GetSecondaryAttackMechanic() const;
+	void SetSecondaryAttackMechanic(WeaponMechanics::CBaseMechanic* mechanic);
+	WeaponMechanics::CBaseMechanic* GetAttackMechanic(WeaponAtts::AttackMode mode) const;
+
+	virtual bool PrepareToInvokeAttack(WeaponAtts::AttackMode mode);
+	virtual void AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result);
+
 private:
 	// TODO: Should these be delegated somewhere else, a la aggregate programming model?
 	void PrecacheCore(const WeaponAtts::WACore& core);
 	void PrecacheViewModel(const WeaponAtts::WAViewModel& viewModel);
 	void PrecachePlayerModel(const WeaponAtts::WAPlayerModel& playerModel);
 
-	bool InvokeAttack(WeaponAttackType type);
+	WeaponMechanics::CBaseMechanic* GetMechanicByIndex(int index) const;
+	void SetMechanicIndex(WeaponMechanics::CBaseMechanic* mechanic, int& outIndex);
+	bool IsValidMechanicIndex(int index) const;
+	WeaponAtts::AttackMode GetAttackModeForMechanic(const WeaponMechanics::CBaseMechanic* mechanic) const;
+	const WeaponAtts::WAAmmoBasedAttack* GetPrimaryAmmoBasedAttackMode() const;
+
+	WeaponMechanics::CBaseMechanic* GetEnqueuedMechanic() const;
+	void SetEnqueuedMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int nextStep);
+
+	bool InvokeAttack(WeaponAtts::AttackMode mode);
+	bool InvokeMechanic(WeaponAtts::AttackMode mode, WeaponMechanics::CBaseMechanic* mechanic, int step);
 	void SetFireOnEmptyState(const WeaponAtts::WABaseAttack* attackMode);
+	void SetFireOnEmptyState(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool);
 
 	// Return true if reload action occurred, or false otherwise.
 	bool IdleProcess_CheckReload();
@@ -210,14 +227,17 @@ private:
 	CUtlVector<float> m_ViewAnimDurations;
 	CWeaponInaccuracyCalculator m_InaccuracyCalculator;
 
-	const WeaponAtts::WABaseAttack* m_pPrimaryAttackMode = nullptr;
-	const WeaponAtts::WABaseAttack* m_pSecondaryAttackMode = nullptr;
-
 	// If set to something other than none, the view model animations
 	// are taken from the specified attack mode, rather than the default
 	// view model attributes.
-	WeaponAttackType m_ViewModelAnimationSource = WeaponAttackType::None;
+	WeaponAtts::AttackMode m_ViewModelAnimationSource = WeaponAtts::AttackMode::None;
 
+	CUtlVector<WeaponMechanics::CBaseMechanic*> m_Mechanics;
+	int m_PrimaryAttackMechanicIndex = -1;
+	int m_SecondaryAttackMechanicIndex = -1;
+	int m_EnqueuedMechanicIndex = -1;
+	int m_EnqueuedAttackMode = static_cast<int>(WeaponAtts::AttackMode::None);
+	int m_NextEnqueuedAttackStep = 0;
 	int m_iViewModelIndex = 0;
 	int m_iViewModelBody = 0;
 	int m_iWeaponSlot = -1;
@@ -247,18 +267,6 @@ inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetAttackModeFromAttribut
 	}
 
 	return atts.AttackModes[index].get();
-}
-
-template<>
-inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetPrimaryAttackMode() const
-{
-	return m_pPrimaryAttackMode;
-}
-
-template<>
-inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetSecondaryAttackMode() const
-{
-	return m_pSecondaryAttackMode;
 }
 
 class CGenericAmmo : public CBasePlayerAmmo

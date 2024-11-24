@@ -108,6 +108,14 @@ void CMenuBotSetup::_Init()
 	m_BotModelEnt = m_BotStudioModel.AddEntData();
 	m_BotStudioView.SetModel(&m_BotStudioModel);
 	m_BotStudioView.SetAllowCyclingSequences(false);
+
+	// If we don't do this, all models will be forced to be
+	// drawn as players in the engine. This means that if the
+	// menu is open while an existing match is running, the
+	// local player's model would always be drawn, instead
+	// of the bot models, so we set this property to false.
+	m_BotStudioView.SetForceDrawPlayerModel(false);
+
 	AddItem(m_BotStudioView);
 
 	m_SelectedBotName.iMaxLength = MAX_BOT_NAME_LENGTH;

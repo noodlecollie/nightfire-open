@@ -365,12 +365,14 @@ TYPEDESCRIPTION CBasePlayerWeapon::m_SaveData[] = {
 	DEFINE_FIELD(CBasePlayerWeapon, m_flNextPrimaryAttack, FIELD_FLOAT),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flNextSecondaryAttack, FIELD_FLOAT),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flTimeWeaponIdle, FIELD_FLOAT),
+	DEFINE_FIELD(CBasePlayerWeapon, m_flEnqueuedMechanicInvocationTime, FIELD_FLOAT),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flLastPrimaryAttack, FIELD_FLOAT),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flLastSecondaryAttack, FIELD_FLOAT),
 #else  // CLIENT_WEAPONS
 	DEFINE_FIELD(CBasePlayerWeapon, m_flNextPrimaryAttack, FIELD_TIME),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flNextSecondaryAttack, FIELD_TIME),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flTimeWeaponIdle, FIELD_TIME),
+	DEFINE_FIELD(CBasePlayerWeapon, m_flEnqueuedMechanicInvocationTime, FIELD_TIME),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flLastPrimaryAttack, FIELD_TIME),
 	DEFINE_FIELD(CBasePlayerWeapon, m_flLastSecondaryAttack, FIELD_TIME),
 #endif  // CLIENT_WEAPONS
@@ -954,6 +956,7 @@ BOOL CBasePlayerWeapon::DefaultDeploy(
 
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 1.0f;
+	m_flEnqueuedMechanicInvocationTime = UTIL_WeaponTimeBase();
 	m_flLastFireTime = 0.0f;
 
 	return TRUE;

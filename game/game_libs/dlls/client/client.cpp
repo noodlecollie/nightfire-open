@@ -567,7 +567,7 @@ static CharacterGender InferGenderFromModel(char* infobuffer)
 		g_engfuncs.pfnModelGetTag(modelIndex, tagIndex, tag, sizeof(tag));
 
 		// TODO: Define this tag name somewhere?
-		if ( strcmp(tag, "female_character") )
+		if ( strcmp(tag, "female_character") == 0 )
 		{
 			return CharacterGender::FEMALE;
 		}
@@ -1777,6 +1777,7 @@ int GetWeaponData(struct edict_s* player, struct weapon_data_s* info)
 						item->m_iClip = gun->m_iClip;
 
 						item->m_flTimeWeaponIdle = Q_max(gun->m_flTimeWeaponIdle, -0.001f);
+						item->m_flEnqueuedMechanicInvocationTime = Q_max(gun->m_flEnqueuedMechanicInvocationTime, -0.001f);
 						item->m_flNextPrimaryAttack = Q_max(gun->m_flNextPrimaryAttack, -0.001f);
 						item->m_flNextSecondaryAttack = Q_max(gun->m_flNextSecondaryAttack, -0.001f);
 						item->m_flLastPrimaryAttack = Q_max(gun->m_flLastPrimaryAttack, -10.0f);

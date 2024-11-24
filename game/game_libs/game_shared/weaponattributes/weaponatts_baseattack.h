@@ -17,6 +17,13 @@ namespace WeaponAtts
 		Circle
 	};
 
+	enum class AttackMode
+	{
+		None = -1,
+		Primary = 0,
+		Secondary = 1
+	};
+
 	struct CrosshairParameters
 	{
 		// The type of crosshair to use.

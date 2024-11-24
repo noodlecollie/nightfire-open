@@ -15,9 +15,10 @@ LINK_ENTITY_TO_CLASS(weapon_pdw90, CWeaponRaptor)
 #endif
 
 CWeaponRaptor::CWeaponRaptor() :
-	CGenericHitscanWeapon()
+	CGenericWeapon()
 {
-	SetPrimaryAttackModeFromAttributes(ATTACKMODE_NORMAL);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(ATTACKMODE_NORMAL, m_PrimaryMechanic);
+	SetPrimaryAttackMechanic(m_PrimaryMechanic);
 }
 
 const WeaponAtts::WACollection& CWeaponRaptor::WeaponAttributes() const

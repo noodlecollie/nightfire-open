@@ -45,7 +45,7 @@ void CMenuPlayerModelView::Draw()
 			ent->curstate.number = 1;  // IMPORTANT: always set playerindex to 1
 			ent->origin[2] = ent->curstate.origin[2] = 2.0f;
 			ent->angles[1] = ent->curstate.angles[1] = 180.0f;
-			ent->player = true;  // yes, draw me as playermodel
+			ent->player = m_ForceDrawPlayerModel;
 		}
 	}
 
@@ -85,4 +85,14 @@ bool CMenuPlayerModelView::GetAllowCyclingSequences() const
 void CMenuPlayerModelView::SetAllowCyclingSequences(bool allow)
 {
 	m_AllowCyclingSequences = allow;
+}
+
+bool CMenuPlayerModelView::ForceDrawPlayerModel() const
+{
+	return m_ForceDrawPlayerModel;
+}
+
+void CMenuPlayerModelView::SetForceDrawPlayerModel(bool force)
+{
+	m_ForceDrawPlayerModel = force;
 }

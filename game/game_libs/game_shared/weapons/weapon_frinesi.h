@@ -1,9 +1,10 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "generichitscanweapon.h"
+#include "genericweapon.h"
+#include "weaponmechanics/hitscanmechanic.h"
 
-class CWeaponFrinesi : public CGenericHitscanWeapon
+class CWeaponFrinesi : public CGenericWeapon
 {
 public:
 	CWeaponFrinesi();
@@ -24,9 +25,8 @@ public:
 
 protected:
 	int HandleSpecialReload(int currentState) override;
-	bool InvokeWithAttackMode(
-		const CGenericWeapon::WeaponAttackType type,
-		const WeaponAtts::WABaseAttack* attackMode) override;
+	bool PrepareToInvokeAttack(WeaponAtts::AttackMode mode) override;
+	void AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result) override;
 
 private:
 	float& NextPumpSoundTime();
@@ -38,8 +38,8 @@ private:
 	void PlayPumpSound();
 	bool FlagReloadInterrupt();
 
-	const WeaponAtts::WABaseAttack* m_pAutoAttackMode = nullptr;
-	const WeaponAtts::WABaseAttack* m_pPumpAttackMode = nullptr;
+	WeaponMechanics::CHitscanMechanic* m_AutoAttackMode = nullptr;
+	WeaponMechanics::CHitscanMechanic* m_PumpAttackMode = nullptr;
 };
 
 namespace WeaponAtts

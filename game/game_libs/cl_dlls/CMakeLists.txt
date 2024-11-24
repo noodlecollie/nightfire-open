@@ -84,16 +84,18 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponattributes/weaponatts_skillrecord.cpp
 	../game_shared/weaponattributes/weaponatts_soundset.h
 	../game_shared/weaponattributes/weaponatts_viewmodel.h
+	../game_shared/weaponmechanics/basemechanic.h
+	../game_shared/weaponmechanics/basemechanic.cpp
+	../game_shared/weaponmechanics/hitscanmechanic.h
+	../game_shared/weaponmechanics/hitscanmechanic.cpp
+	../game_shared/weaponmechanics/meleemechanic.h
+	../game_shared/weaponmechanics/meleemechanic.cpp
+	../game_shared/weaponmechanics/projectilemechanic.h
+	../game_shared/weaponmechanics/projectilemechanic.cpp
 	../game_shared/weapons/ammodefs.h
 	../game_shared/weapons/ammodefs.cpp
-	../game_shared/weapons/basegrenadelauncher.h
-	../game_shared/weapons/basegrenadelauncher.cpp
-	../game_shared/weapons/generichitscanweapon.h
-	../game_shared/weapons/generichitscanweapon.cpp
-	../game_shared/weapons/genericmeleeweapon.h
-	../game_shared/weapons/genericmeleeweapon.cpp
-	../game_shared/weapons/genericprojectileweapon.h
-	../game_shared/weapons/genericprojectileweapon.cpp
+	../game_shared/weapons/genericgrenade.h
+	../game_shared/weapons/genericgrenade.cpp
 	../game_shared/weapons/genericweapon.h
 	../game_shared/weapons/genericweapon.cpp
 	../game_shared/weapons/weapon_fists_atts.h

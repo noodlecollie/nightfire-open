@@ -10,9 +10,9 @@
 #include <limits>
 #include <algorithm>
 #include "bot.h"
+#include "genericgrenade.h"
 #endif
 
-static constexpr const char* GRENADE_MODEL = "models/weapon_frag_grenade/w_frag_grenade.mdl";
 static const Vector HALF_BBOX = Vector(4, 4, 4);
 static constexpr float FRICTION = 0.7f;
 static constexpr float GRAVITY = 1.4f;
@@ -30,9 +30,19 @@ LINK_ENTITY_TO_CLASS(weapon_frag_grenade, CWeaponFragGrenade);
 LINK_ENTITY_TO_CLASS(weapon_fraggrenade, CWeaponFragGrenade);
 
 CWeaponFragGrenade::CWeaponFragGrenade() :
-	CBaseGrenadeLauncher()
+	CGenericWeapon()
 {
-	SetPrimaryAttackModeFromAttributes(ATTACKMODE_THROW);
+	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(ATTACKMODE_THROW, m_ThrowMechanic);
+
+#ifndef CLIENT_DLL
+	m_ThrowMechanic->SetCreateProjectileCallback(
+		[this](WeaponMechanics::CProjectileMechanic& mechanic)
+		{
+			CreateProjectile(mechanic);
+		});
+#endif
+
+	SetPrimaryAttackMechanic(m_ThrowMechanic);
 }
 
 const WeaponAtts::WACollection& CWeaponFragGrenade::WeaponAttributes() const
@@ -40,16 +50,11 @@ const WeaponAtts::WACollection& CWeaponFragGrenade::WeaponAttributes() const
 	return WeaponAtts::StaticWeaponAttributes<CWeaponFragGrenade>();
 }
 
-void CWeaponFragGrenade::Precache()
-{
-	CBaseGrenadeLauncher::Precache();
-
-	PRECACHE_MODEL(GRENADE_MODEL);
-}
-
 void CWeaponFragGrenade::WeaponTick()
 {
-	CBaseGrenadeLauncher::WeaponTick();
+	CGenericWeapon::WeaponTick();
+
+	const WeaponAtts::WAProjectileAttack* attackMode = m_ThrowMechanic->ProjectileAttackMode();
 
 	switch ( m_ThrowState )
 	{
@@ -72,8 +77,8 @@ void CWeaponFragGrenade::WeaponTick()
 				break;
 			}
 
-			CBaseGrenadeLauncher::PrimaryAttack();
-			SetNextPrimaryAttack(1.0f / GetPrimaryAttackMode()->AttackRate);
+			PrimaryAttack();
+			SetNextPrimaryAttack(1.0f / attackMode->AttackRate);
 			m_ThrowState = ThrowState::Idle;
 			break;
 		}
@@ -81,7 +86,7 @@ void CWeaponFragGrenade::WeaponTick()
 		default:
 		{
 			if ( CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) &&
-				 !HasAmmo(GetPrimaryAttackMode(), 1, false) )
+				 !HasAmmo(attackMode, 1, false) )
 			{
 				RetireWeapon();
 			}
@@ -91,25 +96,31 @@ void CWeaponFragGrenade::WeaponTick()
 	}
 }
 
-void CWeaponFragGrenade::PrimaryAttack()
+bool CWeaponFragGrenade::PrepareToInvokeAttack(WeaponAtts::AttackMode mode)
 {
-	if ( !CGenericWeapon::InvokeWithAttackMode(WeaponAttackType::Primary, GetPrimaryAttackMode()) ||
-		 m_ThrowState != ThrowState::Idle )
+	if ( !CGenericWeapon::PrepareToInvokeAttack(mode) )
 	{
-		return;
+		return false;
 	}
 
-	SendWeaponAnim(FRAGGRENADE_PULL);
+	if ( m_ThrowState == ThrowState::Idle )
+	{
+		SendWeaponAnim(FRAGGRENADE_PULL);
 
-	// Set minimum time we have to wait until grenade can be thrown.
-	SetNextPrimaryAttack(PULL_DURATION_SECS);
+		// Set minimum time we have to wait until grenade can be thrown.
+		SetNextPrimaryAttack(PULL_DURATION_SECS);
 
-	m_ThrowState = ThrowState::Primed;
+		m_ThrowState = ThrowState::Primed;
+	}
+
+	// Only actually allow the invocation of the projectile mechanic
+	// once WeaponTick() has put us into the Released state.
+	return m_ThrowState == ThrowState::Released;
 }
 
 bool CWeaponFragGrenade::ReadPredictionData(const weapon_data_t* from)
 {
-	if ( !CBaseGrenadeLauncher::ReadPredictionData(from) )
+	if ( !CGenericWeapon::ReadPredictionData(from) )
 	{
 		return false;
 	}
@@ -120,7 +131,7 @@ bool CWeaponFragGrenade::ReadPredictionData(const weapon_data_t* from)
 
 bool CWeaponFragGrenade::WritePredictionData(weapon_data_t* to)
 {
-	if ( !CBaseGrenadeLauncher::WritePredictionData(to) )
+	if ( !CGenericWeapon::WritePredictionData(to) )
 	{
 		return false;
 	}
@@ -134,7 +145,7 @@ TYPEDESCRIPTION CWeaponFragGrenade::m_SaveData[] = {
 	DEFINE_FIELD(CWeaponFragGrenade, m_ThrowState, FIELD_INTEGER),
 };
 
-IMPLEMENT_SAVERESTORE(CWeaponFragGrenade, CBaseGrenadeLauncher)
+IMPLEMENT_SAVERESTORE(CWeaponFragGrenade, CGenericWeapon)
 
 float CWeaponFragGrenade::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
@@ -148,11 +159,12 @@ void CWeaponFragGrenade::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
 	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 2.0f);
 }
 
-void CWeaponFragGrenade::CreateProjectile(const WeaponAtts::WAProjectileAttack&)
+void CWeaponFragGrenade::CreateProjectile(const WeaponMechanics::CProjectileMechanic& mechanic)
 {
-	CBaseGrenadeLauncher_Grenade* grenade = CreateGrenade(PITCH_ADJUST, 16.0f);
+	CGenericGrenade* grenade =
+		CGenericGrenade::CreateGrenade(m_pPlayer, mechanic.GetProjectileLaunchAngles(PITCH_ADJUST), 16.0f);
 
-	grenade->SetModelName(GRENADE_MODEL);
+	grenade->SetModelName(mechanic.ProjectileAttackMode()->ProjectileModelName);
 	grenade->SetSize(HALF_BBOX);
 	grenade->SetFriction(FRICTION);
 	grenade->SetGravity(GRAVITY);

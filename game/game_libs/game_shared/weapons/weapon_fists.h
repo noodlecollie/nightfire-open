@@ -1,13 +1,16 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "genericmeleeweapon.h"
+#include "weapons/genericweapon.h"
+#include "weaponmechanics/meleemechanic.h"
 
-class CWeaponFists : public CGenericMeleeWeapon
+class CWeaponFists : public CGenericWeapon
 {
 public:
 	CWeaponFists();
 	const WeaponAtts::WACollection& WeaponAttributes() const override;
+
+	BOOL Deploy() override;
 
 #ifndef CLIENT_DLL
 	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
@@ -15,11 +18,12 @@ public:
 #endif
 
 protected:
-	bool InvokeWithAttackMode(WeaponAttackType type, const WeaponAtts::WABaseAttack* attackMode) override;
+	void AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result) override;
 
 private:
-	const WeaponAtts::WAMeleeAttack* m_pPunchAttack;
-	const WeaponAtts::WAMeleeAttack* m_pPunchComboAttack;
+	WeaponMechanics::CMeleeMechanic* m_PunchAttack = nullptr;
+	WeaponMechanics::CMeleeMechanic* m_PunchComboAttack = nullptr;
+	WeaponMechanics::CMeleeMechanic* m_KarateChopAttack = nullptr;
 };
 
 namespace WeaponAtts

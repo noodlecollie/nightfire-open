@@ -56,8 +56,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->IsContinuous = true;
 		priAttack->AttackRate = FISTS_PUNCH_RATE_SINGLE;
 		priAttack->BaseDamagePerHit = &skilldata_t::plrDmgFists;
-		priAttack->DecalOnImpact = true;
-		priAttack->Strikes.AddToTail(0.1f);
+		priAttack->DecalOnImpact = false;
+		priAttack->Strikes.AddToTail(7.0f/40.0f);
 		priAttack->Volume = 128;
 		priAttack->ViewModelAnimList_Attack << FISTS_JAB;
 		priAttack->Crosshair.RenderStyle = CrosshairStyle::None;
@@ -88,6 +88,9 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priDoubleAttack->ViewModelAnimList_Attack.Clear();
 		priDoubleAttack->ViewModelAnimList_Attack << FISTS_COMBO;
 
+		priDoubleAttack->AttackSounds.SoundNames.Clear();
+		priDoubleAttack->AttackSounds.SoundNames << "weapons/weapon_fists/swing_double.wav";
+
 		WAMeleeAttack* secAttack = new WAMeleeAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(secAttack));
 
@@ -97,7 +100,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		secAttack->BaseDamagePerHit = &skilldata_t::plrDmgFistsAlt;
 
 		secAttack->Strikes.Purge();
-		secAttack->Strikes.AddToTail(0.5f);
+		secAttack->Strikes.AddToTail(0.35f);
 
 		secAttack->ViewModelAnimList_Attack.Clear();
 		secAttack->ViewModelAnimList_Attack << FISTS_KARATE_CHOP;

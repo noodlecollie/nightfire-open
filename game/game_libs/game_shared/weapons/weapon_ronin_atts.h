@@ -87,7 +87,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		throwAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
 		throwAttack->ViewPunchY = 0.0f;
 		throwAttack->PlayDryFireSoundOnEmpty = false;
-		throwAttack->projectileDelay = 0.5f;
+		throwAttack->ProjectileDelay = 0.5f;
 
 		AccuracyParameters& accuracy = throwAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.0f, 0.0f);
@@ -99,6 +99,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		throwAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
 		throwAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
 
-		throwAttack->OverrideAnimations = std::make_shared<ViewModelAnimationSet>();
+		// This can't be make_shared() because calling that causes a very weird
+		// crash on Linux *only* when starting a multiplayer game.
+		// Yes, this was very annoying to track down, and no I don't know why
+		// it does that.
+		throwAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(new ViewModelAnimationSet());
 		*throwAttack->OverrideAnimations = vm.Animations;
 	});

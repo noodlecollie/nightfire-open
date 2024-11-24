@@ -37,56 +37,59 @@ LINK_ENTITY_TO_CLASS(weapon_minigun, CWeaponFrinesi)
 static constexpr float INVALID_TIME = std::numeric_limits<float>::max();
 
 CWeaponFrinesi::CWeaponFrinesi() :
-	CGenericHitscanWeapon()
+	CGenericWeapon()
 {
-	m_pAutoAttackMode = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_AUTO);
-	m_pPumpAttackMode = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(ATTACKMODE_PUMP);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(ATTACKMODE_AUTO, m_AutoAttackMode);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(ATTACKMODE_PUMP, m_PumpAttackMode);
 
-	SetPrimaryAttackMode(m_pAutoAttackMode);
-	SetSecondaryAttackMode(m_pPumpAttackMode);
+	SetPrimaryAttackMechanic(m_AutoAttackMode);
+	SetSecondaryAttackMechanic(m_PumpAttackMode);
 }
 
 void CWeaponFrinesi::Precache()
 {
-	CGenericHitscanWeapon::Precache();
+	CGenericWeapon::Precache();
 	PRECACHE_SOUND(FRINESI_COCK_SOUND);
 }
 
 void CWeaponFrinesi::Spawn()
 {
-	CGenericHitscanWeapon::Spawn();
+	CGenericWeapon::Spawn();
 
 	NextReloadSoundTime() = INVALID_TIME;
 	NextPumpSoundTime() = INVALID_TIME;
 }
 
-bool CWeaponFrinesi::InvokeWithAttackMode(const CGenericWeapon::WeaponAttackType type, const WeaponAtts::WABaseAttack*)
+bool CWeaponFrinesi::PrepareToInvokeAttack(WeaponAtts::AttackMode mode)
 {
 	if ( FlagReloadInterrupt() )
 	{
 		return false;
 	}
 
-	// We set the primary attack mode based on the type.
-	// This allows us to continue to use weapon inaccuracy properly,
-	// as this only acts on the primary attack.
-	const WeaponAtts::WABaseAttack* overrideMode =
-		type == WeaponAttackType::Secondary ? m_pPumpAttackMode : m_pAutoAttackMode;
-	SetPrimaryAttackMode(overrideMode);
+	// Regardless of whether we're invoking a primary or secondary attack,
+	// we always want to set the primary attack mechanic to this attack,
+	// because weapon inaccuracy is based off the primary mechanic.
+	WeaponMechanics::CHitscanMechanic* overrideMode =
+		mode == WeaponAtts::AttackMode::Secondary ? m_PumpAttackMode : m_AutoAttackMode;
+	SetPrimaryAttackMechanic(overrideMode);
 
-	const bool invokeResult = CGenericHitscanWeapon::InvokeWithAttackMode(WeaponAttackType::Primary, overrideMode);
+	return CGenericWeapon::PrepareToInvokeAttack(mode);
+}
 
-	if ( invokeResult && type == WeaponAttackType::Secondary )
+void CWeaponFrinesi::AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result)
+{
+	CGenericWeapon::AttackInvoked(mode, result);
+
+	if ( result.WasComplete() && mode == WeaponAtts::AttackMode::Secondary )
 	{
 		NextPumpSoundTime() = UTIL_WeaponTimeBase() + FRINESI_PUMP_SOUND_OFFSET_AFTER_FIRING;
 	}
-
-	return invokeResult;
 }
 
 void CWeaponFrinesi::Holster(int skipLocal)
 {
-	CGenericHitscanWeapon::Holster(skipLocal);
+	CGenericWeapon::Holster(skipLocal);
 	DelayPendingActions(0.1f, true);
 }
 
@@ -226,7 +229,7 @@ void CWeaponFrinesi::PlayPumpSound()
 
 bool CWeaponFrinesi::ReadPredictionData(const weapon_data_t* from)
 {
-	if ( !CGenericHitscanWeapon::ReadPredictionData(from) )
+	if ( !CGenericWeapon::ReadPredictionData(from) )
 	{
 		return false;
 	}
@@ -238,7 +241,7 @@ bool CWeaponFrinesi::ReadPredictionData(const weapon_data_t* from)
 
 bool CWeaponFrinesi::WritePredictionData(weapon_data_t* to)
 {
-	if ( !CGenericHitscanWeapon::WritePredictionData(to) )
+	if ( !CGenericWeapon::WritePredictionData(to) )
 	{
 		return false;
 	}

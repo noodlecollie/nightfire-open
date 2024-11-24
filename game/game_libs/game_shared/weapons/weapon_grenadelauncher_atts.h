@@ -77,6 +77,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->Volume = LOUD_GUN_VOLUME;
 		priAttack->MuzzleFlashBrightness = BRIGHT_GUN_FLASH;
 		priAttack->ViewPunchY = -4.0f;
+		priAttack->ProjectileModelName = "models/weapon_grenadelauncher/w_grenade_projectile.mdl";
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);

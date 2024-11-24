@@ -27,6 +27,10 @@ public:
 	bool GetAllowCyclingSequences() const;
 	void SetAllowCyclingSequences(bool allow);
 
+	bool ForceDrawPlayerModel() const;
+	void SetForceDrawPlayerModel(bool force);
+
 private:
 	bool m_AllowCyclingSequences = true;
+	bool m_ForceDrawPlayerModel = true;
 };

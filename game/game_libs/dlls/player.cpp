@@ -2670,6 +2670,11 @@ pt_end:
 						gun->m_flTimeWeaponIdle = Q_max(gun->m_flTimeWeaponIdle - gpGlobals->frametime, -0.001f);
 					}
 
+					if ( gun->m_flEnqueuedMechanicInvocationTime != std::numeric_limits<float>::max() )
+					{
+						gun->m_flEnqueuedMechanicInvocationTime = Q_max(gun->m_flEnqueuedMechanicInvocationTime - gpGlobals->frametime, -0.001f);
+					}
+
 					if ( gun->pev->tuser1 != std::numeric_limits<float>::max() )
 					{
 						gun->pev->tuser1 = Q_max(gun->pev->tuser1 - gpGlobals->frametime, -0.001f);

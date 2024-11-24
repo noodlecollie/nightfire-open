@@ -75,7 +75,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
 		priAttack->ViewPunchY = 0.0f;
 		priAttack->PlayDryFireSoundOnEmpty = false;
-		priAttack->projectileDelay = 0.5f;
+		priAttack->ProjectileDelay = 0.5f;
+		priAttack->ProjectileModelName = "models/weapon_frag_grenade/w_frag_grenade.mdl";
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);

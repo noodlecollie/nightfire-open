@@ -1,9 +1,10 @@
 #pragma once
 
 #include "standard_includes.h"
-#include "generichitscanweapon.h"
+#include "genericweapon.h"
+#include "weaponmechanics/hitscanmechanic.h"
 
-class CWeaponSilent : public CGenericHitscanWeapon
+class CWeaponSilent : public CGenericWeapon
 {
 public:
 	CWeaponSilent();
@@ -13,6 +14,9 @@ public:
 	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
 	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
 #endif
+
+private:
+	WeaponMechanics::CHitscanMechanic* m_PrimaryMechanic = nullptr;
 };
 
 namespace WeaponAtts

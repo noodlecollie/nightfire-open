@@ -19,14 +19,13 @@ LINK_ENTITY_TO_CLASS(weapon_kowloon, CWeaponP99)
 #endif
 
 CWeaponP99::CWeaponP99() :
-	CGenericHitscanWeapon(),
-	m_pAttackUnsilenced(nullptr),
-	m_pAttackSilenced(nullptr),
+	CGenericWeapon(),
 	m_bSilenced(false)
 {
-	m_pAttackSilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_SILENCED);
-	m_pAttackUnsilenced = GetAttackModeFromAttributes<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_UNSILENCED);
-	SetPrimaryAttackMode(m_pAttackUnsilenced);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_SILENCED, m_SilencedAttack);
+	AddMechanicByAttributeIndex<WeaponAtts::WAHitscanAttack>(P99_ATTACKMODE_UNSILENCED, m_UnsilencedAttack);
+
+	SetPrimaryAttackMechanic(m_UnsilencedAttack);
 }
 
 const WeaponAtts::WACollection& CWeaponP99::WeaponAttributes() const
@@ -43,14 +42,14 @@ void CWeaponP99::SecondaryAttack()
 
 	m_bSilenced = !m_bSilenced;
 	SetViewModelBody(m_bSilenced ? P99_BODY_SILENCED : P99_BODY_UNSILENCED);
-	SetPrimaryAttackMode(m_bSilenced ? m_pAttackSilenced : m_pAttackUnsilenced);
+	SetPrimaryAttackMechanic(m_bSilenced ? m_SilencedAttack : m_UnsilencedAttack);
 
 	DelayPendingActions(ViewModelAnimationDuration(anim));
 }
 
 bool CWeaponP99::ReadPredictionData(const weapon_data_t* from)
 {
-	if ( !CGenericHitscanWeapon::ReadPredictionData(from) )
+	if ( !CGenericWeapon::ReadPredictionData(from) )
 	{
 		return false;
 	}
@@ -62,6 +61,7 @@ bool CWeaponP99::ReadPredictionData(const weapon_data_t* from)
 
 		// The silenced state has changed, so immediately update the viewmodel body to be accurate.
 		SetViewModelBody(m_bSilenced ? P99_BODY_SILENCED : P99_BODY_UNSILENCED, true);
+		SetPrimaryAttackMechanic(m_bSilenced ? m_SilencedAttack : m_UnsilencedAttack);
 	}
 
 	return true;
@@ -69,7 +69,7 @@ bool CWeaponP99::ReadPredictionData(const weapon_data_t* from)
 
 bool CWeaponP99::WritePredictionData(weapon_data_t* to)
 {
-	if ( !CGenericHitscanWeapon::WritePredictionData(to) )
+	if ( !CGenericWeapon::WritePredictionData(to) )
 	{
 		return false;
 	}
@@ -83,7 +83,7 @@ TYPEDESCRIPTION CWeaponP99::m_SaveData[] = {
 	DEFINE_FIELD(CWeaponP99, m_bSilenced, FIELD_BOOLEAN),
 };
 
-IMPLEMENT_SAVERESTORE(CWeaponP99, CGenericHitscanWeapon)
+IMPLEMENT_SAVERESTORE(CWeaponP99, CGenericWeapon)
 
 float CWeaponP99::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
