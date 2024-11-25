@@ -55,7 +55,7 @@ void DBG_AssertFunction(bool fExpr, const char* szExpr, const char* szFile, int 
 		PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)", szExpr, szFile, szLine);
 	}
 
-	Host_Error(szOut);
+	Host_Error("%s", szOut);
 }
 #endif  // DEBUG
 

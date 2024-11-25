@@ -30,6 +30,7 @@ This file contains "stubs" of class member implementations so that we can predic
 #include "nodes.h"
 #include "soundent.h"
 #include "skill.h"
+#include "cl_dll.h"
 
 // Globals used by game logic
 const Vector g_vecZero = Vector(0, 0, 0);
@@ -129,8 +130,46 @@ edict_t* DBG_EntOfVars(const entvars_t*)
 {
 	return NULL;
 }
-void DBG_AssertFunction(bool, const char*, const char*, int, const char*, bool)
+void DBG_AssertFunction(
+	bool fExpr,
+	const char* szExpr,
+	const char* szFile,
+	int szLine,
+	const char* szMessage,
+	bool showAlert)
 {
+	if ( fExpr )
+	{
+		return;
+	}
+
+	if ( showAlert )
+	{
+		char szOut[512];
+		if ( szMessage != NULL )
+		{
+			PlatformLib_SNPrintF(
+				szOut,
+				sizeof(szOut),
+				"ASSERT FAILED:\n %s \n(%s@%d)\n%s",
+				szExpr,
+				szFile,
+				szLine,
+				szMessage);
+		}
+		else
+		{
+			PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)", szExpr, szFile, szLine);
+		}
+
+		gEngfuncs.Con_Printf("%s", szOut);
+		assert(false);
+	}
+	else
+	{
+		// Engine not set up yet - just fail a standard assertion so that we can see.
+		assert(false);
+	}
 }
 
 // UTIL_* Stubs
@@ -1087,13 +1126,6 @@ const char* CBasePlayerItem::PickupSound() const
 void CSoundEnt::InsertSound(int, const Vector&, int, float)
 {
 }
-void RadiusDamage(
-	Vector,
-	entvars_t*,
-	entvars_t*,
-	float,
-	float,
-	int,
-	int)
+void RadiusDamage(Vector, entvars_t*, entvars_t*, float, float, int, int)
 {
 }

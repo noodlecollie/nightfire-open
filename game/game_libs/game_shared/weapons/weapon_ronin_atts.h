@@ -4,6 +4,7 @@
 #include "weaponatts_collection.h"
 #include "weapon_pref_weights.h"
 #include "weaponatts_projectileattack.h"
+#include "weaponatts_eventattack.h"
 
 #ifndef CLIENT_DLL
 #include "npc/npc_ronin_turret.h"
@@ -75,34 +76,60 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		obj.CustomCvars.AddToTail(&sv_ronin_slide_friction);
 #endif
 
-		WAProjectileAttack* throwAttack = new WAProjectileAttack();
-		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(throwAttack));
+		{
+			WAProjectileAttack* throwAttack = new WAProjectileAttack();
+			obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(throwAttack));
 
-		throwAttack->EventScript = "events/weapon_ronin/throw.sc";
-		throwAttack->FunctionsUnderwater = true;
-		throwAttack->IsContinuous = false;
-		throwAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
-		throwAttack->AttackRate = 1.0f;
-		throwAttack->Volume = QUIET_GUN_VOLUME;
-		throwAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
-		throwAttack->ViewPunchY = 0.0f;
-		throwAttack->PlayDryFireSoundOnEmpty = false;
-		throwAttack->ProjectileDelay = 0.5f;
+			throwAttack->EventScript = "events/weapon_ronin/throw.sc";
+			throwAttack->FunctionsUnderwater = true;
+			throwAttack->IsContinuous = false;
+			throwAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::Primary;
+			throwAttack->AttackRate = 1.0f;
+			throwAttack->Volume = QUIET_GUN_VOLUME;
+			throwAttack->MuzzleFlashBrightness = NO_GUN_FLASH;
+			throwAttack->ViewPunchY = 0.0f;
+			throwAttack->PlayDryFireSoundOnEmpty = false;
+			throwAttack->ProjectileDelay = 0.5f;
 
-		AccuracyParameters& accuracy = throwAttack->Accuracy;
-		accuracy.RestSpread = Vector2D(0.0f, 0.0f);
-		accuracy.RunSpread = Vector2D(0.0f, 0.0f);
+			AccuracyParameters& accuracy = throwAttack->Accuracy;
+			accuracy.RestSpread = Vector2D(0.0f, 0.0f);
+			accuracy.RunSpread = Vector2D(0.0f, 0.0f);
 
-		CrosshairParameters& crosshair = throwAttack->Crosshair;
-		crosshair.RenderStyle = CrosshairStyle::None;
+			CrosshairParameters& crosshair = throwAttack->Crosshair;
+			crosshair.RenderStyle = CrosshairStyle::None;
 
-		throwAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
-		throwAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
+			throwAttack->ViewModelAnimList_Attack << VRONIN_CASE_THROW;
+			throwAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_THROW;
 
-		// This can't be make_shared() because calling that causes a very weird
-		// crash on Linux *only* when starting a multiplayer game.
-		// Yes, this was very annoying to track down, and no I don't know why
-		// it does that.
-		throwAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(new ViewModelAnimationSet());
-		*throwAttack->OverrideAnimations = vm.Animations;
+			// This can't be make_shared() because calling that causes a very weird
+			// crash on Linux *only* when starting a multiplayer game.
+			// Yes, this was very annoying to track down, and no I don't know why
+			// it does that.
+			throwAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(new ViewModelAnimationSet());
+			*throwAttack->OverrideAnimations = vm.Animations;
+		}
+
+		{
+			WAEventAttack* deployAttack = new WAEventAttack();
+			obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(deployAttack));
+
+			deployAttack->EventScript = "events/weapon_ronin/deploy.sc";
+			deployAttack->FunctionsUnderwater = true;
+			deployAttack->IsContinuous = false;
+			deployAttack->Volume = QUIET_GUN_VOLUME;
+			deployAttack->PlayDryFireSoundOnEmpty = false;
+			deployAttack->AttackRate = 0.5f;
+
+			CrosshairParameters& crosshair = deployAttack->Crosshair;
+			crosshair.RenderStyle = CrosshairStyle::None;
+
+			deployAttack->ViewModelAnimList_Attack << VRONIN_DETONATOR_FIRE_SENTRY;
+			deployAttack->ViewModelAnimList_AttackEmpty << VRONIN_DETONATOR_FIRE_SENTRY;
+
+			ViewModelAnimationSet* overrideAnimations = new ViewModelAnimationSet();
+			deployAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(overrideAnimations);
+
+			overrideAnimations->Anim_Draw = VRONIN_DETONATOR_DRAW;
+			overrideAnimations->AnimList_Idle << VRONIN_DETONATOR_IDLE1 << VRONIN_DETONATOR_IDLE2;
+		}
 	});

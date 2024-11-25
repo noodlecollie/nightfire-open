@@ -30,5 +30,7 @@ function(set_common_library_compiler_settings targetname)
 		target_link_options(${targetname} PRIVATE
 			-Wl,--no-undefined
 		)
+
+		target_compile_definitions(${targetname} PRIVATE $<$<CONFIG:Debug>:_DEBUG=1>)
 	endif()
 endfunction()

@@ -3,6 +3,7 @@
 #include "standard_includes.h"
 #include "genericweapon.h"
 #include "weaponmechanics/projectilemechanic.h"
+#include "weaponmechanics/delegatedmechanic.h"
 
 #ifndef CLIENT_DLL
 class CNPCRoninTurret;
@@ -22,19 +23,22 @@ public:
 	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
 #endif
 
-protected:
-#ifndef CLIENT_DLL
-	void LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
-#endif
-
 private:
 	static constexpr float PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER = 32.0f;
 
+	void ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
+	WeaponMechanics::InvocationResult ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
+	void SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& mechanic);
+
 #ifndef CLIENT_DLL
+	void LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
 	bool SelectRoninSpawnLocation(CNPCRoninTurret& turret, const Vector& forward, Vector& outLocation) const;
+	void ActivateThrownTurret();
 #endif
 
 	WeaponMechanics::CProjectileMechanic* m_ThrowMechanic = nullptr;
+	WeaponMechanics::CDelegatedMechanic* m_DeployMechanic = nullptr;
+	EHANDLE m_Turret;
 };
 
 namespace WeaponAtts

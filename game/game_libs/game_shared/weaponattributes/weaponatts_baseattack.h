@@ -56,7 +56,8 @@ namespace WeaponAtts
 		{
 			Melee = 0,
 			Hitscan,
-			Projectile
+			Projectile,
+			Event
 		};
 
 		struct AttackModeSignature

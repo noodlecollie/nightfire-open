@@ -4,6 +4,7 @@
 #include "gamerules.h"
 #include "weapon_pref_weights.h"
 #include "weapon_ronin_atts.h"
+#include "eventConstructor/eventConstructor.h"
 
 #ifndef CLIENT_DLL
 #include <limits>
@@ -13,22 +14,25 @@
 #include "MathLib/utils.h"
 #endif
 
-// NFTODO: Disabled until we've refactored the weapons framework.
-#ifdef RONIN_IS_COMPLETED
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
-#endif
 
 CWeaponRonin::CWeaponRonin() :
 	CGenericWeapon()
 {
 	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(VRONIN_ATTACKMODE_TOSS, m_ThrowMechanic);
+	AddMechanicByAttributeIndex<WeaponAtts::WAEventAttack>(VRONIN_ATTACKMODE_DEPLOY, m_DeployMechanic);
 
-#ifndef CLIENT_DLL
-	m_ThrowMechanic->SetCreateProjectileCallback([this](WeaponMechanics::CProjectileMechanic& mechanic)
-	{
-		LaunchThrownTurret(mechanic);
-	});
-#endif
+	m_ThrowMechanic->SetCreateProjectileCallback(
+		[this](WeaponMechanics::CProjectileMechanic& mechanic)
+		{
+			ThrowTurret(mechanic);
+		});
+
+	m_DeployMechanic->SetCallback(
+		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
+		{
+			return ActivateTurret(mechanic, step);
+		});
 
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
 	SetViewModelAnimationSource(WeaponAtts::AttackMode::Primary);
@@ -37,6 +41,41 @@ CWeaponRonin::CWeaponRonin() :
 const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const
 {
 	return WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
+}
+
+void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
+{
+	(void)mechanic;
+
+#ifndef CLIENT_DLL
+	LaunchThrownTurret(mechanic);
+#endif
+
+	SetPrimaryAttackMechanic(m_DeployMechanic);
+}
+
+WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t)
+{
+#ifndef CLIENT_DLL
+	ActivateThrownTurret();
+#endif
+
+	SendDeployEvent(mechanic);
+	return WeaponMechanics::InvocationResult::Complete(mechanic);
+}
+
+void CWeaponRonin::SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& mechanic)
+{
+	if ( mechanic.GetEventIndex() >= 0 )
+	{
+		using namespace EventConstructor;
+		CEventConstructor event;
+
+		event << Flags(DefaultEventFlags()) << Invoker(m_pPlayer->edict())
+			  << EventIndex(static_cast<unsigned short>(mechanic.GetEventIndex())) << IntParam1(m_pPlayer->random_seed);
+
+		event.Send();
+	}
 }
 
 #ifndef CLIENT_DLL
@@ -54,6 +93,7 @@ void CWeaponRonin::Bot_SetFightStyle(CBaseBotFightStyle&) const
 void CWeaponRonin::LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
 {
 	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
+	m_Turret = turret;
 	turret->pev->owner = m_pPlayer->edict();
 	turret->Spawn();
 
@@ -135,6 +175,17 @@ bool CWeaponRonin::SelectRoninSpawnLocation(CNPCRoninTurret& turret, const Vecto
 
 	outLocation = location;
 	return true;
+}
+
+void CWeaponRonin::ActivateThrownTurret()
+{
+	if ( !m_Turret )
+	{
+		return;
+	}
+
+	CNPCRoninTurret* roninTurret = m_Turret.StaticCast<CNPCRoninTurret>();
+	roninTurret->DeployNow();
 }
 #endif
 

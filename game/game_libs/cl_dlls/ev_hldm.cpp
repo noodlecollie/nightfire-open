@@ -83,6 +83,7 @@ void EV_HLDM_Init()
 			{
 				if ( static_cast<size_t>(attackModeIndex) >= WeaponAtts::WACollection::MAX_ATTACK_MODES )
 				{
+					ASSERTSZ(false, "Attack mode out of range");
 					break;
 				}
 
@@ -90,6 +91,7 @@ void EV_HLDM_Init()
 
 				if ( !baseAttack->EventScript )
 				{
+					ASSERTSZ(false, "No script specified for attack mode");
 					ALERT(
 						at_error,
 						"EV_HLDM_Init: Weapon '%s' does not specify an event script for attack mode %u!\n",
@@ -123,6 +125,7 @@ void EV_HLDM_Init()
 
 					default:
 					{
+						ASSERTSZ(false, "Unknown attack mode classification");
 						gEngfuncs.Con_Printf(
 							"EV_HLDM_Init: No event handler for fire mode mechanic ID %u!\n",
 							atts.Core.Classname,

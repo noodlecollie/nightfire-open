@@ -84,10 +84,6 @@ public:
 protected:
 	virtual const char* PickupSound() const override;
 
-	// Overridable functions for attack modes:
-	virtual void PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack);
-	virtual bool InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack);
-
 	void PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds);
 	void SetViewModelBody(int body, bool immediate = false);
 	float ViewModelAnimationDuration(int anim) const;

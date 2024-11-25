@@ -793,7 +793,7 @@ void S_Interpolate2xCubic(portable_samplepair_t* pbuffer, portable_samplepair_t*
 		// write out interpolated sample, increment output counter
 		temppaintbuffer[outpos++].right = a / 8 + b / 4 + c / 2 + x0;
 
-		Assert(outpos <= (sizeof(temppaintbuffer) / sizeof(temppaintbuffer[0])));
+		Assert(outpos <= (int)(sizeof(temppaintbuffer) / sizeof(temppaintbuffer[0])));
 	}
 
 	Assert(cfltmem >= 3);

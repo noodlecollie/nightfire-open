@@ -94,6 +94,7 @@ namespace WeaponMechanics
 		virtual void Reset();
 		virtual void WeaponIdle();
 
+		int GetEventIndex() const;
 		const WeaponAtts::WABaseAttack* GetAttackMode() const;
 
 		// Convenience, since we need to check for this a lot.
@@ -111,7 +112,6 @@ namespace WeaponMechanics
 
 		static int DefaultEventFlags();
 
-		int GetEventIndex() const;
 		CGenericWeapon* GetWeapon() const;
 		CBasePlayer* GetPlayer() const;
 

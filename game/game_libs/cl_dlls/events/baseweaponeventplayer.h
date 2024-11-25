@@ -7,7 +7,6 @@
 #include "resources/ShellImpactSoundResources.h"
 
 typedef struct event_args_s event_args_t;
-class CGenericWeaponAtts_HitscanFireMechanic;
 
 class BaseWeaponEventPlayer
 {

@@ -75,6 +75,7 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponattributes/weaponatts_collection.h
 	../game_shared/weaponattributes/weaponatts_collection.cpp
 	../game_shared/weaponattributes/weaponatts_core.h
+	../game_shared/weaponattributes/weaponatts_eventattack.h
 	../game_shared/weaponattributes/weaponatts_hitscanattack.h
 	../game_shared/weaponattributes/weaponatts_meleeattack.h
 	../game_shared/weaponattributes/weaponatts_playermodel.h
@@ -86,6 +87,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponattributes/weaponatts_viewmodel.h
 	../game_shared/weaponmechanics/basemechanic.h
 	../game_shared/weaponmechanics/basemechanic.cpp
+	../game_shared/weaponmechanics/delegatedmechanic.h
+	../game_shared/weaponmechanics/delegatedmechanic.cpp
 	../game_shared/weaponmechanics/hitscanmechanic.h
 	../game_shared/weaponmechanics/hitscanmechanic.cpp
 	../game_shared/weaponmechanics/meleemechanic.h

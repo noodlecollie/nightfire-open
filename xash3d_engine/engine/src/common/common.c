@@ -45,12 +45,18 @@ static const char* file_exts[] = {
 void DBG_AssertFunction(qboolean fExpr, const char* szExpr, const char* szFile, int szLine, const char* szMessage)
 {
 	if ( fExpr )
+	{
 		return;
+	}
 
 	if ( szMessage != NULL )
+	{
 		Con_DPrintf(S_ERROR "ASSERT FAILED:\n %s \n(%s@%d)\n%s\n", szExpr, szFile, szLine, szMessage);
+	}
 	else
+	{
 		Con_DPrintf(S_ERROR "ASSERT FAILED:\n %s \n(%s@%d)\n", szExpr, szFile, szLine);
+	}
 }
 #endif  // DEBUG
 

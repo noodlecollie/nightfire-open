@@ -19,7 +19,9 @@ namespace WeaponAtts
 
 	void WACollection::Validate() const
 	{
-		ASSERTSZ_Q(AttackModes.Count() <= WeaponAtts::WACollection::MAX_ATTACK_MODES, "Attack mode limit exceeded.");
+		ASSERTSZ_Q(
+			static_cast<size_t>(AttackModes.Count()) <= WeaponAtts::WACollection::MAX_ATTACK_MODES,
+			"Attack mode limit exceeded.");
 
 		Core.Validate();
 		ViewModel.Validate();

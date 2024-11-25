@@ -72,36 +72,10 @@ void CGenericWeapon::Precache()
 	PrecacheViewModel(atts.ViewModel);
 	PrecachePlayerModel(atts.PlayerModel);
 
-	FOR_EACH_VEC(atts.AttackModes, index)
-	{
-		ASSERT(atts.AttackModes[index].get());
-		PrecacheAttackMode(*atts.AttackModes[index]);
-	}
-
 	FOR_EACH_VEC(m_Mechanics, index)
 	{
 		m_Mechanics[index]->Precache();
 	}
-}
-
-void CGenericWeapon::PrecacheAttackMode(const WeaponAtts::WABaseAttack& attack)
-{
-	PrecacheSoundSet(attack.AttackSounds);
-	PrecacheSoundSet(attack.ViewModelAttackSounds);
-
-	if ( attack.OverrideAnimations )
-	{
-		PrecacheSoundSet(attack.OverrideAnimations->ReloadSounds);
-	}
-
-	const uint32_t index = attack.Signature()->Index;
-
-	if ( static_cast<uint32_t>(m_AttackModeEvents.Count()) < index + 1 )
-	{
-		m_AttackModeEvents.SetCount(index + 1);
-	}
-
-	m_AttackModeEvents[index] = PRECACHE_EVENT(1, attack.EventScript);
 }
 
 void CGenericWeapon::PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds)
@@ -263,27 +237,6 @@ bool CGenericWeapon::InvokeAttack(WeaponAtts::AttackMode mode)
 	}
 
 	return InvokeMechanic(mode, mechanic, 0);
-}
-
-bool CGenericWeapon::InvokeWithAttackMode(WeaponAtts::AttackMode mode, const WeaponAtts::WABaseAttack* attack)
-{
-	if ( mode == WeaponAtts::AttackMode::None || !attack )
-	{
-		return false;
-	}
-
-	if ( (m_pPlayer->pev->waterlevel == 3 && !attack->FunctionsUnderwater) || !HasAmmo(attack, 1, m_iClip >= 0) )
-	{
-		if ( m_fFireOnEmpty )
-		{
-			PlayEmptySoundIfAllowed(*attack);
-			DelayFiring(0.2f, false, mode);
-		}
-
-		return false;
-	}
-
-	return true;
 }
 
 // TODO: Allow this to handle secondary too? Do we need this?
