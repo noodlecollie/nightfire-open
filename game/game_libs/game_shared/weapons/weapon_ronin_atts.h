@@ -91,6 +91,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 			throwAttack->PlayDryFireSoundOnEmpty = false;
 			throwAttack->ProjectileDelay = 0.5f;
 
+			throwAttack->ViewModelAttackSounds.MinPitch = 98;
+			throwAttack->ViewModelAttackSounds.MinPitch = 102;
+			throwAttack->ViewModelAttackSounds.SoundNames << "weapons/weapon_ronin/toss.wav";
+
 			AccuracyParameters& accuracy = throwAttack->Accuracy;
 			accuracy.RestSpread = Vector2D(0.0f, 0.0f);
 			accuracy.RunSpread = Vector2D(0.0f, 0.0f);
@@ -119,6 +123,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 			deployAttack->Volume = QUIET_GUN_VOLUME;
 			deployAttack->PlayDryFireSoundOnEmpty = false;
 			deployAttack->AttackRate = 0.5f;
+
+			deployAttack->ViewModelAttackSounds.MinPitch = 100;
+			deployAttack->ViewModelAttackSounds.MinPitch = 100;
+			deployAttack->ViewModelAttackSounds.SoundNames << "weapons/weapon_ronin/remote_activate.wav";
 
 			CrosshairParameters& crosshair = deployAttack->Crosshair;
 			crosshair.RenderStyle = CrosshairStyle::None;

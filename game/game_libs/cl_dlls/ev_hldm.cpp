@@ -46,6 +46,7 @@
 #include "hitscanweaponeventplayer.h"
 #include "projectileweaponeventplayer.h"
 #include "meleeweaponeventplayer.h"
+#include "animationweaponeventplayer.h"
 #include "resources/SoundResources.h"
 #include "resources/SurfaceAttributes.h"
 #include "sound/ClientSoundInstance.h"
@@ -120,6 +121,12 @@ void EV_HLDM_Init()
 					case WeaponAtts::WABaseAttack::Classification::Melee:
 					{
 						eventPlayer = new MeleeWeaponEventPlayer();
+						break;
+					}
+
+					case WeaponAtts::WABaseAttack::Classification::Event:
+					{
+						eventPlayer = new AnimationWeaponEventPlayer();
 						break;
 					}
 

@@ -220,6 +220,8 @@ set(SOURCES_CLIENT
 	customGeometry/messageReader.cpp
 	events/debugging/hitscanweapondebugging.h
 	events/debugging/hitscanweapondebugging.cpp
+	events/animationweaponeventplayer.h
+	events/animationweaponeventplayer.cpp
 	events/baseweaponeventplayer.h
 	events/baseweaponeventplayer.cpp
 	events/eventCommands.h

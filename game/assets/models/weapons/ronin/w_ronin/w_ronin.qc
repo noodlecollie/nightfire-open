@@ -15,6 +15,8 @@ $modelname "w_ronin.mdl"
 $root "Dummy01"
 $noembeddedtextures
 $texrendermode mdl/w_ronin.png masked
+$texrendermode mdl/ronin_scan.png additivealpha
+$texrendermode mdl/ronin_scan_off.png additivealpha
 
 $flags 0
 
@@ -36,8 +38,8 @@ $bodygroup "studio"
 
 $texturegroup activityskin
 {
-	{ "mdl/w_ronin.png" "mdl/ronin_light_red.png" }
-	{ "mdl/w_ronin.png" "mdl/ronin_light_off.png" }
+	{ "mdl/w_ronin.png" "mdl/ronin_light_red.png" "mdl/ronin_scan.png" }
+	{ "mdl/w_ronin.png" "mdl/ronin_light_off.png" "mdl/ronin_scan_off.png" }
 }
 
 $attachment "" "barrel" 0.000000 1.000000 9.300000

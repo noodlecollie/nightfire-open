@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 ****/
@@ -124,8 +124,8 @@ static void StudioRelinkFace( aabb_tree_t *tree, tface_t *face )
 			node = node->children[1];
 		else break; // crosses the node
 	}
-	
-	// link it in	
+
+	// link it in
 	InsertLinkBefore( &face->area, &node->solid_edicts );
 }
 
@@ -235,7 +235,7 @@ static int StudioCreateMeshFromTriangles( entity_t *ent, studiohdr_t *phdr, cons
 		fsubmodels[k].surface_offset = numFaces;
 
 		// build all the light vertices because we should include all the bodies into the buffer
-		for( j = 0; j < psubmodel->nummesh; j++ ) 
+		for( j = 0; j < psubmodel->nummesh; j++ )
 		{
 			mstudiomesh_t	*pmesh = (mstudiomesh_t *)((byte *)phdr + psubmodel->meshindex) + j;
 			float	s = 1.0f / (float)ptexture[pskinref[pmesh->skinref]].width;
@@ -274,7 +274,7 @@ static int StudioCreateMeshFromTriangles( entity_t *ent, studiohdr_t *phdr, cons
 							break;
 						case 2:
 							tf->b = numVerts;
-							break;						
+							break;
 						case 3:
 							tf->c = numVerts;
 							numFaces++;
@@ -366,7 +366,7 @@ static int StudioCreateMeshFromTriangles( entity_t *ent, studiohdr_t *phdr, cons
 		Q_snprintf( diffuse, sizeof( diffuse ), "textures/%s/%s", mdlname, texname );
 
 #ifdef HLRAD_EXTERNAL_TEXTURES
-		if (FBitSet(tex->flags, STUDIO_NF_ADDITIVE | STUDIO_NF_MASKED))
+		if (FBitSet(tex->flags, STUDIO_NF_ADDITIVE | STUDIO_NF_ADDITIVEALPHA | STUDIO_NF_MASKED))
 		{
 			rgbdata_t *test = COM_LoadImage(diffuse, false, FS_LoadFile);
 
@@ -530,7 +530,7 @@ bool StudioConstructMesh( entity_t *ent, void *extradata, const char *modname, u
 	int		numFaces;
 	vec3_t		xform;
 	float		scale;
-	
+
 	if( phdr->numbones < 1 )
 		return false;
 
@@ -567,19 +567,19 @@ bool StudioConstructMesh( entity_t *ent, void *extradata, const char *modname, u
 	static vec3_t	pos[MAXSTUDIOBONES];
 	static vec4_t	q[MAXSTUDIOBONES];
 
-	for( i = 0; i < phdr->numbones; i++, pbone++, panim++ ) 
+	for( i = 0; i < phdr->numbones; i++, pbone++, panim++ )
 		StudioCalcBoneTransform( 0, pbone, panim, pos[i], q[i] );
 	pbone = (mstudiobone_t *)((byte *)phdr + phdr->boneindex);
 	matrix3x4	transform, bonematrix, bonetransform[MAXSTUDIOBONES];
 	Matrix3x4_CreateFromEntityScale3f( transform, angles, origin, xform );
 
 	// compute bones for default anim
-	for( i = 0; i < phdr->numbones; i++ ) 
+	for( i = 0; i < phdr->numbones; i++ )
 	{
 		// initialize bonematrix
 		Matrix3x4_FromOriginQuat( bonematrix, q[i], pos[i] );
 
-		if( pbone[i].parent == -1 ) 
+		if( pbone[i].parent == -1 )
 			Matrix3x4_ConcatTransforms( bonetransform[i], transform, bonematrix );
 		else Matrix3x4_ConcatTransforms( bonetransform[i], bonetransform[pbone[i].parent], bonematrix );
 	}

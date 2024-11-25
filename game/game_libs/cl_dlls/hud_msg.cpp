@@ -32,11 +32,8 @@ extern float g_lastFOV;  // Vit_amiN
 
 /// USER-DEFINED SERVER MESSAGE HANDLERS
 
-int CHud::MsgFunc_ResetHUD(const char*, int iSize, void*)
+int CHud::MsgFunc_ResetHUD(const char*, int, void*)
 {
-	(void)iSize;
-	ASSERT(iSize == 0);
-
 	// clear all hud data
 	HUDLIST* pList = m_pHudList;
 

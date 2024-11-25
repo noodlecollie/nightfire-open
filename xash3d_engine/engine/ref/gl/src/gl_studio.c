@@ -2559,7 +2559,7 @@ static void R_StudioDrawPoints(void)
 		{
 			if ( R_ModelOpaque(RI.currententity->curstate.rendermode) )
 			{
-				pglBlendFunc(GL_ONE, GL_ONE);
+				pglBlendFunc(FBitSet(g_nFaceFlags, STUDIO_NF_ADDITIVEALPHA) ? GL_SRC_ALPHA : GL_ONE, GL_ONE);
 				pglDepthMask(GL_FALSE);
 				pglEnable(GL_BLEND);
 				R_AllowFog(false);
@@ -2928,9 +2928,13 @@ int R_GetEntityRenderMode(cl_entity_t* ent)
 	{
 		// ignore chrome & additive it's just a specular-like effect
 		if ( FBitSet(ptexture->flags, STUDIO_NF_ADDITIVE) && !FBitSet(ptexture->flags, STUDIO_NF_CHROME) )
+		{
 			trans++;
+		}
 		else
+		{
 			opaque++;
+		}
 	}
 
 	// if model is more additive than opaque

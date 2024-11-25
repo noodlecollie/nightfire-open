@@ -77,7 +77,7 @@ Studio models are position independent, so the cache manager can move them.
 #define STUDIO_NF_CHROME 0x0002
 #define STUDIO_NF_FULLBRIGHT 0x0004
 #define STUDIO_NF_NOMIPS 0x0008  // ignore mip-maps
-#define STUDIO_NF_SMOOTH 0x0010  // smooth tangent space
+#define STUDIO_NF_ADDITIVEALPHA 0x0010
 #define STUDIO_NF_ADDITIVE 0x0020  // rendering with additive mode
 #define STUDIO_NF_MASKED 0x0040  // use texture with alpha channel
 #define STUDIO_NF_NORMALMAP 0x0080  // indexed normalmap
@@ -301,7 +301,7 @@ typedef struct studiohdr_s
 #define NFMDLHEADER_VERSION_1 1
 #define NFMDLHEADER_VERSION_2 2
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 typedef struct nfmdlheader_s
 {
 	// Expected to be equal to IDNFMDLHEADER

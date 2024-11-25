@@ -3305,6 +3305,10 @@ void Cmd_TexRenderMode(void)
 	{
 		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_ADDITIVE;
 	}
+	else if ( !strcmp(token, "additivealpha") )
+	{
+		texture[lookup_texture(tex_name)].flags |= STUDIO_NF_ADDITIVE | STUDIO_NF_ADDITIVEALPHA;
+	}
 	else if ( !strcmp(token, "masked") )
 	{
 		s_texture_t* tex = &texture[lookup_texture(tex_name)];

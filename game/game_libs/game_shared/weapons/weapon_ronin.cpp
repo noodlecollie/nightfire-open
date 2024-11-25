@@ -54,14 +54,36 @@ void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 	SetPrimaryAttackMechanic(m_DeployMechanic);
 }
 
-WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t)
+WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
+	WeaponMechanics::CDelegatedMechanic& mechanic,
+	uint32_t step)
 {
+	if ( step == 0 )
+	{
 #ifndef CLIENT_DLL
-	ActivateThrownTurret();
+		ActivateThrownTurret();
 #endif
 
-	SendDeployEvent(mechanic);
-	return WeaponMechanics::InvocationResult::Complete(mechanic);
+		SendDeployEvent(mechanic);
+
+		const float delay = 1.0f / mechanic.GetAttackMode()->AttackRate;
+		DelayFiring(delay);
+		SetNextIdleTime(delay + 1.0f);
+		return WeaponMechanics::InvocationResult::Incomplete(mechanic, delay);
+	}
+	else if ( step == 1 )
+	{
+		// We get the decrement from the deploy attack, since the other attack
+		// is only an event and doesn't store that information.
+		DecrementAmmo(m_DeployMechanic->GetAmmoBasedAttackMode());
+		RetireWeapon();
+
+		return WeaponMechanics::InvocationResult::Complete(mechanic);
+	}
+	else
+	{
+		return WeaponMechanics::InvocationResult::Rejected(mechanic);
+	}
 }
 
 void CWeaponRonin::SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& mechanic)

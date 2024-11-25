@@ -21,15 +21,10 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
-
-
 $bodygroup "studio"
 {
 	studio "v_ronin_reference_ref"
 }
-
-
-
 
 $hbox 0 "Bip01 L Hand" -0.860000 -0.850000 -2.430000 3.879326 1.310000 1.590000
 $hbox 0 "Bip01 L Finger0" -0.070000 -0.750000 -0.890000 1.527036 1.070000 1.550000
@@ -48,11 +43,11 @@ $sequence "case_idle2" "case_idle2_ani" fps 15
 $sequence "case_idle3" "case_idle3_ani" fps 15
 $sequence "case_pull" "case_pull_ani" fps 30
 $sequence "case_throw" "case_throw_ani" fps 30 {
-	event 5004 0 "weapons/ronin_fire.wav"
+	event 5005 30 "weapons/weapon_ronin/remote_draw1.wav"
 }
 $sequence "case_deploy" "case_deploy_ani" fps 30
 $sequence "case_draw" "case_draw_ani" fps 30 {
-	event 5004 0 "weapons/ronin_draw.wav"
+	event 5005 0 "weapons/weapon_ronin/draw.wav"
 }
 $sequence "case_holster" "case_holster_ani" fps 30
 $sequence "detonator_idle1" "detonator_idle1_ani" fps 15
