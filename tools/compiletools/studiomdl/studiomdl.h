@@ -287,7 +287,7 @@ EXTERN int numtextures;
 EXTERN float texgamma;
 EXTERN int numskinref;
 EXTERN int numskinfamilies;
-EXTERN int skinref[256][MAXSTUDIOSKINS];  // [skin][skinref], returns texture index
+EXTERN int skinref[MAXSTUDIOSKINS][MAXSTUDIOSKINS];  // [skin][skinref], returns texture index
 EXTERN int numtexturegroups;
 EXTERN int numtexturelayers[32];
 EXTERN int numtexturereps[32];

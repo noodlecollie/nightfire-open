@@ -13,6 +13,13 @@ enum NPCRoninTurretAnimations_e
 	NPCRONIN_DEPLOY_IDLE,
 };
 
+enum NPCRoninTurretBodyGroups_e
+{
+	NPCRONIN_BODY_ALL_LIGHTS,
+	NPCRONIN_BODY_FRONT_LIGHTS,
+	NPCRONIN_BODY_NO_LIGHTS,
+};
+
 class CNPCRoninTurret : public CBaseMonster
 {
 public:

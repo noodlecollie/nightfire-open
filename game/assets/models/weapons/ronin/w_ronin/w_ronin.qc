@@ -15,8 +15,9 @@ $modelname "w_ronin.mdl"
 $root "Dummy01"
 $noembeddedtextures
 $texrendermode mdl/w_ronin.png masked
-$texrendermode mdl/ronin_scan.png additivealpha
-$texrendermode mdl/ronin_scan_off.png additivealpha
+$texrendermode mdl/ronin_light_accent_red.png additivealpha
+$texrendermode mdl/ronin_light_accent_orange.png additivealpha
+$texrendermode mdl/ronin_light_accent_off.png additivealpha
 
 $flags 0
 
@@ -31,15 +32,38 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
+# 0. All lights
+# 1. Front lights only
+# 2. No lights
 $bodygroup "studio"
 {
 	studio "w_ronin_reference_ref"
+	#studio "w_ronin_reference_ref"
+	#studio "w_ronin_reference_ref"
 }
 
+$bodygroup "front_lights"
+{
+	studio "ronin_front_lights"
+	studio "ronin_front_lights"
+	blank
+}
+
+$bodygroup "rear_lights"
+{
+	studio "ronin_rear_lights"
+	blank
+	blank
+}
+
+# NOTE ON TEXTURE GROUPS: The first row MUST correspond to the textures you used
+# in the reference SMDs! Later rows say what this first row of textures will remap to.
+# I just wasted hours of my life trying to work out what was going wrong.
 $texturegroup activityskin
 {
-	{ "mdl/w_ronin.png" "mdl/ronin_light_red.png" "mdl/ronin_scan.png" }
-	{ "mdl/w_ronin.png" "mdl/ronin_light_off.png" "mdl/ronin_scan_off.png" }
+	{ "mdl/w_ronin.png" "mdl/ronin_light_red.png" "mdl/ronin_light_accent_red.png" }
+	{ "mdl/w_ronin.png" "mdl/ronin_light_orange.png" "mdl/ronin_light_accent_orange.png" }
+	{ "mdl/w_ronin.png" "mdl/ronin_light_off.png" "mdl/ronin_light_accent_off.png" }
 }
 
 $attachment "" "barrel" 0.000000 1.000000 9.300000

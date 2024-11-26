@@ -1916,7 +1916,10 @@ void SetSkinValues()
 	{
 		for ( j = 0; j < numtexturereps[0]; j++ )
 		{
-			skinref[i][texturegroup[0][0][j]] = texturegroup[0][i][j];
+			int originalTextureIndex = texturegroup[0][0][j];
+			int remappedTextureIndex = texturegroup[0][i][j];
+
+			skinref[i][originalTextureIndex] = remappedTextureIndex;
 		}
 	}
 
@@ -3143,10 +3146,9 @@ void Cmd_Gamma(void)
 
 int Cmd_TextureGroup()
 {
-	int i;
 	int depth = 0;
-	int index = 0;
-	int group = 0;
+	int row = 0;
+	int column = 0;
 
 	// Just checking the number of textures here creates a bug,
 	// because numtextures being > 0 doesn't necessarily mean
@@ -3191,24 +3193,28 @@ int Cmd_TextureGroup()
 		else if ( token[0] == '}' )
 		{
 			depth--;
+
 			if ( depth == 0 )
+			{
 				break;
-			group++;
-			index = 0;
+			}
+
+			row++;
+			column = 0;
 		}
 		else if ( depth == 2 )
 		{
-			i = lookup_texture(token);
-			texturegroup[numtexturegroups][group][index] = i;
+			const int textureIndex = lookup_texture(token);
+			texturegroup[numtexturegroups][row][column] = textureIndex;
 
-			if ( group != 0 )
+			if ( row != 0 )
 			{
-				texture[i].parent = texturegroup[numtexturegroups][0][index];
+				texture[textureIndex].parent = texturegroup[numtexturegroups][0][column];
 			}
 
-			index++;
-			numtexturereps[numtexturegroups] = index;
-			numtexturelayers[numtexturegroups] = group + 1;
+			column++;
+			numtexturereps[numtexturegroups] = column;
+			numtexturelayers[numtexturegroups] = row + 1;
 		}
 	}
 

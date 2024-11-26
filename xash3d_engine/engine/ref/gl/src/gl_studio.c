@@ -1942,21 +1942,34 @@ static void R_StudioSetupSkin(studiohdr_t* ptexturehdr, int index)
 	mstudiotexture_t* ptexture = NULL;
 
 	if ( FBitSet(g_nForceFaceFlags, STUDIO_NF_CHROME) )
+	{
 		return;
+	}
 
 	if ( ptexturehdr == NULL )
+	{
 		return;
+	}
 
 	// NOTE: user may ignore to call StudioRemapColors and remap_info will be unavailable
 	if ( m_fDoRemap )
+	{
 		ptexture = gEngfuncs.CL_GetRemapInfoForEntity(RI.currententity)->ptexture;
+	}
+
 	if ( !ptexture )
+	{
 		ptexture = (mstudiotexture_t*)((byte*)ptexturehdr + ptexturehdr->textureindex);  // fallback
+	}
 
 	if ( r_lightmap->value && !r_fullbright->value )
+	{
 		GL_Bind(XASH_TEXTURE0, tr.whiteTexture);
+	}
 	else
+	{
 		GL_Bind(XASH_TEXTURE0, ptexture[index].index);
+	}
 }
 
 static void R_StudioSetupSkinAdapter(void* ptexturehdr, int index)
