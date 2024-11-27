@@ -1425,13 +1425,20 @@ void EMIT_SOUND_DYN(
 	if ( sample && *sample == '!' )
 	{
 		char name[32];
+
 		if ( SENTENCEG_Lookup(sample, name, sizeof(name)) >= 0 )
+		{
 			EMIT_SOUND_DYN2(entity, channel, name, volume, attenuation, flags, pitch);
+		}
 		else
+		{
 			ALERT(at_aiconsole, "Unable to find %s in sentences.txt\n", sample);
+		}
 	}
 	else
+	{
 		EMIT_SOUND_DYN2(entity, channel, sample, volume, attenuation, flags, pitch);
+	}
 }
 
 // play a specific sentence over the HEV suit speaker - just pass player entity, and !sentencename

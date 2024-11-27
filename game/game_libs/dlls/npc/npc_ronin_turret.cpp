@@ -9,6 +9,7 @@
 
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
 static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
+static constexpr const char* const FIRE_SOUND = "weapons/weapon_ronin/fire.wav";
 
 static constexpr int DEFAULT_RANDOM_SEED = 0x1B7F23DE;
 
@@ -33,13 +34,10 @@ static float CalculateFOVDotProduct(float degrees)
 	}
 }
 
-// NFTODO: Disabled until we've refactored the weapons framework.
-#ifdef RONIN_IS_COMPLETED
 // Helper entity - if this is within a Ronin's range, the Ronin will shoot at it.
 LINK_ENTITY_TO_CLASS(info_ronin_target, CPointEntity)
 
 LINK_ENTITY_TO_CLASS(npc_ronin_turret, CNPCRoninTurret)
-#endif
 
 cvar_t sv_ronin_slide_friction = CONSTRUCT_CVAR_T("sv_ronin_slide_friction", 0.88, FCVAR_SERVER);
 
@@ -189,20 +187,21 @@ void CNPCRoninTurret::Spawn(void)
 
 	m_hEnemy = nullptr;
 	ResetSequenceInfo();
+	UpdateBodyAndSkin();
 
 	SetThink(&CNPCRoninTurret::MainThink);
-	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
+	pev->nextthink = gpGlobals->time + THINK_INTERVAL;
 
 	// If the saved state was during a deploy or undeploy,
 	// re-initiate the action.
 	if ( m_DeployState == DeployState::DEPLOYING )
 	{
-		m_DeployState = DeployState::NOT_DEPLOYED;
+		SetDeployState(DeployState::NOT_DEPLOYED);
 		DeployNow();
 	}
 	else if ( m_DeployState == DeployState::UNDEPLOYING )
 	{
-		m_DeployState = DeployState::DEPLOYED;
+		SetDeployState(DeployState::DEPLOYED);
 		UndeployNow();
 	}
 }
@@ -211,6 +210,7 @@ void CNPCRoninTurret::Precache(void)
 {
 	CBaseMonster::Precache();
 	PRECACHE_MODEL(RONIN_MODEL);
+	PRECACHE_SOUND(FIRE_SOUND);
 }
 
 void CNPCRoninTurret::RoninUse(
@@ -287,6 +287,9 @@ void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, co
 	// If the Ronin is tossed, it can search anywhere.
 	m_flFieldOfView = FOV_SEARCH_ANYWHERE;
 
+	SetCurrentGunAngles(Vector());
+	SetDeployState(DeployState::NOT_DEPLOYED);
+
 	m_LastTossedPos = pev->origin;
 	m_LastTossedTime = gpGlobals->time;
 }
@@ -327,7 +330,7 @@ void CNPCRoninTurret::MainThink()
 		}
 	}
 
-	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
+	pev->nextthink = gpGlobals->time + THINK_INTERVAL;
 }
 
 void CNPCRoninTurret::DeployingThink()
@@ -369,12 +372,12 @@ void CNPCRoninTurret::ActiveThink()
 	}
 
 	m_LastAngleUpdate = gpGlobals->time;
-	pev->nextthink = gpGlobals->time + GetBestThinkInterval();
+	pev->nextthink = gpGlobals->time + THINK_INTERVAL;
 }
 
 void CNPCRoninTurret::BeginDeploy()
 {
-	m_DeployState = DeployState::DEPLOYING;
+	SetDeployState(DeployState::DEPLOYING);
 
 	SetCurrentGunAngles(Vector());
 	SetSequence(NPCRONIN_DEPLOY);
@@ -385,8 +388,7 @@ void CNPCRoninTurret::BeginDeploy()
 
 void CNPCRoninTurret::DeployFinished()
 {
-	m_DeploySequenceEnd = NAN;
-	m_DeployState = DeployState::DEPLOYED;
+	SetDeployState(DeployState::DEPLOYED);
 	SetSequence(NPCRONIN_DEPLOY_IDLE);
 
 	// Cache the gun barrel's Z delta from the origin,
@@ -400,7 +402,7 @@ void CNPCRoninTurret::DeployFinished()
 
 void CNPCRoninTurret::BeginUndeploy()
 {
-	m_DeployState = DeployState::UNDEPLOYING;
+	SetDeployState(DeployState::UNDEPLOYING);
 
 	SetCurrentGunAngles(Vector());
 
@@ -415,8 +417,7 @@ void CNPCRoninTurret::BeginUndeploy()
 
 void CNPCRoninTurret::UndeployFinished()
 {
-	m_DeploySequenceEnd = NAN;
-	m_DeployState = DeployState::NOT_DEPLOYED;
+	SetDeployState(DeployState::NOT_DEPLOYED);
 	SetSequence(NPCRONIN_IDLE1);
 }
 
@@ -639,6 +640,40 @@ void CNPCRoninTurret::FireGun()
 	hitscanComponent.FireBullets();
 
 	pev->effects = pev->effects | EF_MUZZLEFLASH;
+
+	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, FIRE_SOUND, 1, 0.6f, 0, RANDOM_LONG(94, 102));
+}
+
+void CNPCRoninTurret::UpdateBodyAndSkin()
+{
+	if ( m_DeployState != DeployState::DEPLOYED )
+	{
+		pev->body = NPCRONIN_BODY_NO_LIGHTS;
+		pev->skin = NPCRONIN_SKIN_NO_LIGHTS;
+		return;
+	}
+
+	if ( m_flFieldOfView < 0.0f )
+	{
+		pev->body = NPCRONIN_BODY_ALL_LIGHTS;
+		pev->skin = NPCRONIN_SKIN_ORANGE_LIGHTS;
+		return;
+	}
+
+	pev->body = NPCRONIN_BODY_FRONT_LIGHTS;
+	pev->skin = NPCRONIN_SKIN_RED_LIGHTS;
+}
+
+void CNPCRoninTurret::SetDeployState(DeployState state)
+{
+	m_DeployState = state;
+
+	if ( m_DeployState == DeployState::NOT_DEPLOYED || m_DeployState == DeployState::DEPLOYED )
+	{
+		m_DeploySequenceEnd = NAN;
+	}
+
+	UpdateBodyAndSkin();
 }
 
 bool CNPCRoninTurret::TargetIsInShootFOV(const Vector& targetPos) const
@@ -681,7 +716,7 @@ bool CNPCRoninTurret::EnemyVisible(CBaseEntity* ent) const
 	VectorAngles(delta, angles);
 	NormalizeAngles(angles);
 
-	if ( angles[PITCH] > MAX_BARREL_UPWARD_PITCH )
+	if ( angles[PITCH] > MAX_SEARCH_UPWARD_PITCH )
 	{
 		// Target is too high.
 		return false;
@@ -794,13 +829,6 @@ Vector CNPCRoninTurret::GetGunBarrelAngles() const
 	currentAngles += m_CurrentGunAngles;
 	NormalizeAngles(currentAngles);
 	return currentAngles;
-}
-
-float CNPCRoninTurret::GetBestThinkInterval() const
-{
-	// We think at least twice as often as we need to fire, to facilitate tracking enemies.
-	const float thinkInterval = GetFireInterval() / 2.0f;
-	return thinkInterval < MAX_ACTIVE_THINK_INTERVAL ? thinkInterval : MAX_ACTIVE_THINK_INTERVAL;
 }
 
 float CNPCRoninTurret::GetSearchRange() const

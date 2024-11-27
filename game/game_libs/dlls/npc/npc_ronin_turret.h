@@ -20,6 +20,13 @@ enum NPCRoninTurretBodyGroups_e
 	NPCRONIN_BODY_NO_LIGHTS,
 };
 
+enum NPCRoninTurretSkin_e
+{
+	NPCRONIN_SKIN_RED_LIGHTS,
+	NPCRONIN_SKIN_ORANGE_LIGHTS,
+	NPCRONIN_SKIN_NO_LIGHTS,
+};
+
 class CNPCRoninTurret : public CBaseMonster
 {
 public:
@@ -70,16 +77,21 @@ private:
 	// since the spread is calculated using tan().
 	static constexpr float MAX_HALF_BULLET_SPREAD_DEGREES = 89.0f;
 
-	// Don't allow us to think less frequently than this,
-	// or enemy tracking would suffer.
-	static constexpr float MAX_ACTIVE_THINK_INTERVAL = 0.1f;
+	// Think frequency
+	static constexpr float THINK_INTERVAL = 0.1f;
 
 	// Maximum amount of pitch that can be applied to the gun barrel.
 	static constexpr float MAX_BARREL_UPWARD_PITCH = 30.0f;
 
+	// Maximum amount of pitch that will be used to track enemies.
+	// This is different to the barrel's max pitch, because it looks
+	// more natural if the Ronin still fires at targets that are
+	// slightly too high for it to actually reach.
+	static constexpr float MAX_SEARCH_UPWARD_PITCH = 60.0f;
+
 	static constexpr float DEFAULT_SIGHT_FOV = 150.0f;
 	static constexpr float DEFAULT_SHOOT_FOV = 20.0f;
-	static constexpr float DEFAULT_SPREAD_CONE = 10.0f;
+	static constexpr float DEFAULT_SPREAD_CONE = 5.0f;
 
 	// A value less than any other dot product we should encounter.
 	static constexpr float FOV_SEARCH_ANYWHERE = -2.0f;
@@ -107,6 +119,8 @@ private:
 	CBaseEntity* FindBestTarget();
 	void RotateTowardsTarget(const Vector& targetPos);
 	void FireGun();
+	void UpdateBodyAndSkin();
+	void SetDeployState(DeployState state);
 	bool TargetIsInShootFOV(const Vector& targetPos) const;
 	bool EnemyVisible(CBaseEntity* ent) const;
 	TraceResult TraceSightToEnemy(CBaseEntity* ent) const;
@@ -114,7 +128,6 @@ private:
 	Vector GetEyePos() const;
 	Vector GetGunBarrelPos() const;
 	Vector GetGunBarrelAngles() const;
-	float GetBestThinkInterval() const;
 	float GetSearchRange() const;
 	float GetFireInterval() const;
 	float GetSpreadCone() const;
