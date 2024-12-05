@@ -2184,6 +2184,11 @@
 	searchrange(integer) : "Range within which enemies will be targeted. Values <= 0 stop the Ronin from finding targts." : 300
 	firerate(integer) : "Number of bullets fired per second." : 8
 	bulletspread(integer) : "Width of inaccuracy cone when firing bullets, between 0 and 178 degrees." : 10
+
+	spawnflags(flags) =
+	[
+		1: "Allow pickup when undeployed" : 0
+	]
 ]
 
 @PointClass base(Targetname) size(-4 -4 -4, 4 4 4) color(200 100 50) = info_ronin_target : "Ronin Target" []

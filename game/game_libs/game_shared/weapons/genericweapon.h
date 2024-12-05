@@ -81,9 +81,9 @@ public:
 	static TYPEDESCRIPTION m_SaveData[];
 #endif
 
-protected:
 	virtual const char* PickupSound() const override;
 
+protected:
 	void PrecacheSoundSet(const WeaponAtts::WASoundSet& sounds);
 	void SetViewModelBody(int body, bool immediate = false);
 	float ViewModelAnimationDuration(int anim) const;

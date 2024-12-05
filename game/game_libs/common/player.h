@@ -317,6 +317,7 @@ public:
 	BOOL HasPlayerItem(CBasePlayerItem* pCheckItem);
 	BOOL HasNamedPlayerItem(const char* pszItemName);
 	BOOL HasWeapons(void);  // do I have ANY weapons?
+	CBasePlayerItem* GetNamedItem(const char* name);
 	void SelectPrevItem(int iItem);
 	void SelectNextItem(int iItem);
 	void SelectLastItem(void);

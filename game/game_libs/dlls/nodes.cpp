@@ -3112,7 +3112,7 @@ void CGraph::BuildRegionTables(void)
 	for ( i = 0; i < 3; i++ )
 	{
 		m_RegionMin[i] = std::numeric_limits<float>::max();
-		m_RegionMax[i] = std::numeric_limits<float>::min();
+		m_RegionMax[i] = std::numeric_limits<float>::lowest();
 	}
 
 	for ( i = 0; i < m_cNodes; i++ )

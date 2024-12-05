@@ -844,6 +844,10 @@ BOOL CBasePlayer::HasWeapons(void)
 {
 	return FALSE;
 }
+CBasePlayerItem* CBasePlayer::GetNamedItem(const char*)
+{
+	return nullptr;
+}
 void CBasePlayer::SelectPrevItem(int)
 {
 }

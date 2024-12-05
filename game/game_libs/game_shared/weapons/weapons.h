@@ -256,7 +256,6 @@ public:
 	// int		m_iIdPrimary;										// Unique Id for primary ammo
 	// int		m_iIdSecondary;										// Unique Id for secondary ammo
 
-protected:
 	// Slight hack until we merge CBasePlayerItem and CGenericWeapon better.
 	virtual const char* PickupSound() const;
 };

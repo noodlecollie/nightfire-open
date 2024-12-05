@@ -6,6 +6,8 @@
 #include "gameplay/hitscancomponent.h"
 #include "weaponregistry.h"
 #include "MathLib/utils.h"
+#include "weapons/weapon_ronin.h"
+#include "gamerules.h"
 
 static constexpr const char* const RONIN_MODEL = "models/weapon_ronin/w_ronin.mdl";
 static constexpr const char* const INFO_RONIN_TARGET = "info_ronin_target";
@@ -30,7 +32,7 @@ static float CalculateFOVDotProduct(float degrees)
 		// is strictly greater than the entity's FOV.
 		// To avoid boundary conditions, set this value to be
 		// more negative than any view calculation result.
-		return std::numeric_limits<float>::min();
+		return std::numeric_limits<float>::lowest();
 	}
 }
 
@@ -161,15 +163,18 @@ void CNPCRoninTurret::Spawn(void)
 	SET_MODEL(ENT(pev), RONIN_MODEL);
 	UTIL_SetSize(pev, Vector(-14, -12, 0), Vector(14, 12, 16));
 
-	pev->solid = SOLID_BBOX;
+	pev->solid = SOLID_TRIGGER;
 	pev->movetype = MOVETYPE_NONE;
 	pev->friction = 1.0f;
 	pev->sequence = NPCRONIN_IDLE1;
 	pev->frame = 0;
 	pev->takedamage = static_cast<float>(pev->max_health > 0.0f ? DAMAGE_AIM : DAMAGE_NO);
 
+	m_AllowPickupWhenUndeployed = (pev->spawnflags & SF_ALLOW_PICKUP) != 0;
+
 	SetBits(pev->flags, FL_MONSTER);
 	SetUse(&CNPCRoninTurret::RoninUse);
+	SetTouch(&CNPCRoninTurret::OnTouch);
 
 	if ( !std::isnan(m_KVSightFOV) )
 	{
@@ -213,13 +218,32 @@ void CNPCRoninTurret::Precache(void)
 	PRECACHE_SOUND(FIRE_SOUND);
 }
 
+bool CNPCRoninTurret::AllowsPickupWhenUndeployed() const
+{
+	return m_AllowPickupWhenUndeployed;
+}
+
+void CNPCRoninTurret::SetAllowsPickupWhenUndeployed(bool allow)
+{
+	m_AllowPickupWhenUndeployed = allow;
+}
+
 void CNPCRoninTurret::RoninUse(
-	CBaseEntity* /* pActivator */,
+	CBaseEntity* pActivator,
 	CBaseEntity* /* pCaller */,
 	USE_TYPE /* useType */,
 	float /* value */)
 {
-	ToggleDeploy();
+	if ( m_DeployState == DeployState::DEPLOYED )
+	{
+		BeginUndeploy();
+		return;
+	}
+
+	if ( CanTryToPickUp(pActivator) && AddRoninToPlayer(dynamic_cast<CBasePlayer*>(pActivator), true) )
+	{
+		UTIL_Remove(this);
+	}
 }
 
 void CNPCRoninTurret::ToggleDeploy()
@@ -260,6 +284,11 @@ void CNPCRoninTurret::UndeployNow()
 	{
 		BeginUndeploy();
 	}
+}
+
+bool CNPCRoninTurret::IsUndeployed() const
+{
+	return m_DeployState == DeployState::NOT_DEPLOYED;
 }
 
 void CNPCRoninTurret::StartToss(const Vector& velocity, const Vector& angularVelocity)
@@ -421,6 +450,20 @@ void CNPCRoninTurret::UndeployFinished()
 	SetSequence(NPCRONIN_IDLE1);
 }
 
+void CNPCRoninTurret::OnTouch(CBaseEntity* other)
+{
+	if ( !other || other->Classify() != CLASS_PLAYER )
+	{
+		return;
+	}
+
+	if ( CanTryToPickUp(other) && AddRoninToPlayer(dynamic_cast<CBasePlayer*>(other), false) )
+	{
+		UTIL_Remove(this);
+		return;
+	}
+}
+
 void CNPCRoninTurret::SetSequence(NPCRoninTurretAnimations_e index)
 {
 	pev->sequence = index;
@@ -480,6 +523,62 @@ void CNPCRoninTurret::UpdateVelocity()
 
 	m_LastTossedPos = pev->origin;
 	m_LastTossedTime = gpGlobals->time;
+}
+
+bool CNPCRoninTurret::CanTryToPickUp(CBaseEntity* activator) const
+{
+	return m_AllowPickupWhenUndeployed && activator && activator->Classify() == CLASS_PLAYER &&
+		m_DeployState == DeployState::NOT_DEPLOYED && pev->movetype != MOVETYPE_IN_TOSS;
+}
+
+bool CNPCRoninTurret::AddRoninToPlayer(CBasePlayer* player, bool isPickupFromUse)
+{
+	if ( !player )
+	{
+		return false;
+	}
+
+	// Not allowed to add if the player isn't alive.
+	if ( player->pev->deadflag != DEAD_NO )
+	{
+		return false;
+	}
+
+	const WeaponAtts::WACollection& roninWeaponAtts = WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
+	CWeaponRonin* playerWeapon = static_cast<CWeaponRonin*>(player->GetNamedItem(roninWeaponAtts.Core.Classname));
+
+	if ( !playerWeapon )
+	{
+		// The player doesn't have a ronin weapon, so add one.
+		return AddRoninWeaponToPlayer(player);
+	}
+
+	return playerWeapon->PickUpUndeployedTurret(
+		this,
+		isPickupFromUse ? CWeaponRonin::TurretPickupType::ON_USE : CWeaponRonin::TurretPickupType::ON_TOUCH);
+}
+
+bool CNPCRoninTurret::AddRoninWeaponToPlayer(CBasePlayer* player)
+{
+	CWeaponRonin* weapon = GetClassPtr<CWeaponRonin>(nullptr);
+	weapon->Spawn();
+
+	if ( !g_pGameRules->CanHavePlayerItem(player, weapon) )
+	{
+		UTIL_Remove(weapon);
+		return false;
+	}
+
+	if ( !player->AddPlayerItem(weapon) )
+	{
+		UTIL_Remove(weapon);
+		return false;
+	}
+
+	weapon->AttachToPlayer(player);
+	EMIT_SOUND(ENT(player->pev), CHAN_ITEM, weapon->PickupSound(), 1, ATTN_NORM);
+	SUB_UseTargets(player, USE_TOGGLE, 0);
+	return true;
 }
 
 CBaseEntity* CNPCRoninTurret::FindBestTarget()

@@ -35,11 +35,18 @@ enum VRoninAttackMode_e
 	VRONIN_ATTACKMODE_DETONATE,
 };
 
-static constexpr CAmmoDef Ammo_Ronin = {
-	"ammo_ronin",  // ClassName
-	"ammodef_ronin",  // AmmoName
+static constexpr CAmmoDef Ammo_RoninThrow = {
+	"ammo_ronin_throw",  // ClassName
+	"ammodef_ronin_throw",  // AmmoName
 	1,  // MaxCarry
 	1  // AmmoBoxGive
+};
+
+static constexpr CAmmoDef Ammo_RoninDeploy = {
+	"ammo_ronin_deploy",  // ClassName
+	"ammodef_ronin_deploy",  // AmmoName
+	1,  // MaxCarry
+	0  // AmmoBoxGive
 };
 
 static const WeaponAtts::WACollection StaticWeaponAttributes(
@@ -53,9 +60,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		core.SwitchWeight = WeaponPref_Ronin;
 
 		WAAmmoDef& ammo = obj.Ammo;
-		ammo.PrimaryAmmo = &Ammo_Ronin;
-		ammo.MaxClip = 1;
-		ammo.PrimaryAmmoOnFirstPickup = ammo.MaxClip;
+		ammo.PrimaryAmmo = &Ammo_RoninThrow;
+		ammo.SecondaryAmmo = &Ammo_RoninDeploy;
+		ammo.MaxClip = -1;
+		ammo.PrimaryAmmoOnFirstPickup = 1;
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_ronin/v_ronin.mdl";

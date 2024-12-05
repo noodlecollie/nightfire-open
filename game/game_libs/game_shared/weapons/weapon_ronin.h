@@ -19,6 +19,14 @@ public:
 	const WeaponAtts::WACollection& WeaponAttributes() const override;
 
 #ifndef CLIENT_DLL
+	enum class TurretPickupType
+	{
+		ON_TOUCH,
+		ON_USE
+	};
+
+	CNPCRoninTurret* GetTurret() const;
+	bool PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupType pickupType);
 	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
 	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
 #endif

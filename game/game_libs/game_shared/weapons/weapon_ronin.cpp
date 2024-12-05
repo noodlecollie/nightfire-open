@@ -35,6 +35,8 @@ CWeaponRonin::CWeaponRonin() :
 		});
 
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
+
+	// Base the view model animations on whatever mechanic is set to be primary.
 	SetViewModelAnimationSource(WeaponAtts::AttackMode::Primary);
 }
 
@@ -50,6 +52,15 @@ void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 #ifndef CLIENT_DLL
 	LaunchThrownTurret(mechanic);
 #endif
+
+	uint8_t decrement = mechanic.GetAmmoBasedAttackMode()->AmmoDecrement;
+	DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary, decrement);
+
+	ASSERT(m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0);
+
+	const WeaponAtts::WACollection& roninWeaponAtts = WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
+	const CAmmoDef* secAmmo = roninWeaponAtts.Ammo.SecondaryAmmo;
+	m_pPlayer->GiveAmmo(1, secAmmo->AmmoName, secAmmo->MaxCarry);
 
 	SetPrimaryAttackMechanic(m_DeployMechanic);
 }
@@ -73,11 +84,11 @@ WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
 	}
 	else if ( step == 1 )
 	{
-		// We get the decrement from the deploy attack, since the other attack
-		// is only an event and doesn't store that information.
-		DecrementAmmo(m_DeployMechanic->GetAmmoBasedAttackMode());
-		RetireWeapon();
+		ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 1);
+		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, 1);
+		ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0);
 
+		RetireWeapon();
 		return WeaponMechanics::InvocationResult::Complete(mechanic);
 	}
 	else
@@ -101,6 +112,84 @@ void CWeaponRonin::SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& me
 }
 
 #ifndef CLIENT_DLL
+CNPCRoninTurret* CWeaponRonin::GetTurret() const
+{
+	return m_Turret.StaticCast<CNPCRoninTurret>();
+}
+
+bool CWeaponRonin::PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupType pickupType)
+{
+	if ( !turret )
+	{
+		return false;
+	}
+
+	const WeaponAtts::WACollection& roninWeaponAtts = WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
+	const CAmmoDef* priAmmo = roninWeaponAtts.Ammo.PrimaryAmmo;
+	ASSERT(m_iPrimaryAmmoType >= 0 && m_iSecondaryAmmoType >= 0);
+
+	// If the player is holding a Ronin, they can't pick up another.
+	if ( m_pPlayer->AmmoInventory(m_iPrimaryAmmoType) > 0 )
+	{
+		return false;
+	}
+
+	// The player can only pick up a turret if it's undeployed.
+	if ( !turret->IsUndeployed() )
+	{
+		return false;
+	}
+
+	const bool newTurretIsOwnTurret = m_Turret && m_Turret.StaticCast<CNPCRoninTurret>() == turret;
+
+	// The player can't pick up someone else's turret while they still have one active.
+	if ( m_Turret && !newTurretIsOwnTurret && !GetTurret()->IsUndeployed() )
+	{
+		return false;
+	}
+
+	// If the player has thrown a Ronin but hasn't deployed it,
+	// they may only pick up a new turret if they +use it.
+	if ( m_pPlayer->AmmoInventory(m_iSecondaryAmmoType) > 0 && pickupType != TurretPickupType::ON_USE )
+	{
+		return false;
+	}
+
+	// Set weapon state to throwable.
+	ASSERT(m_iPrimaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == 0);
+	m_pPlayer->GiveAmmo(m_ThrowMechanic->GetAmmoBasedAttackMode()->AmmoDecrement, priAmmo->AmmoName, priAmmo->MaxCarry);
+
+	ASSERT(
+		m_iPrimaryAmmoType >= 0 &&
+		m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == m_ThrowMechanic->GetAmmoBasedAttackMode()->AmmoDecrement);
+
+	ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 1);
+	DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, 1);
+	ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0);
+
+	// If we had an existing turret, disconnect it from us.
+	if ( m_Turret && !newTurretIsOwnTurret )
+	{
+		GetTurret()->pev->owner = nullptr;
+	}
+
+	m_Turret = nullptr;
+	SetPrimaryAttackMechanic(m_ThrowMechanic);
+
+	if ( m_pPlayer->m_pActiveItem == this )
+	{
+		// Replay deploy amimation.
+		Deploy();
+		DelayPendingActions(0.75f);
+	}
+	else if ( g_pGameRules->FShouldSwitchWeapon(m_pPlayer, this) )
+	{
+		m_pPlayer->SwitchWeapon(this);
+	}
+
+	return true;
+}
+
 float CWeaponRonin::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
 {
 	// TODO
@@ -118,6 +207,7 @@ void CWeaponRonin::LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic
 	m_Turret = turret;
 	turret->pev->owner = m_pPlayer->edict();
 	turret->Spawn();
+	turret->SetAllowsPickupWhenUndeployed(true);
 
 	Vector forward;
 	AngleVectors(mechanic.GetProjectileLaunchAngles(0.0f), forward, nullptr, nullptr);
@@ -224,7 +314,7 @@ class CAmmoRonin : public CGenericAmmo
 {
 public:
 	CAmmoRonin() :
-		CGenericAmmo("models/weapon_ronin/w_ammo_ronin.mdl", Ammo_Ronin)
+		CGenericAmmo("models/weapon_ronin/w_ammo_ronin.mdl", Ammo_RoninThrow)
 	{
 	}
 };

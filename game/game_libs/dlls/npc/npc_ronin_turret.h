@@ -49,6 +49,9 @@ public:
 	void Spawn(void) override;
 	void Precache(void) override;
 
+	bool AllowsPickupWhenUndeployed() const;
+	void SetAllowsPickupWhenUndeployed(bool allow);
+
 	static TYPEDESCRIPTION m_SaveData[];
 
 	// These functions do nothing if the Ronin is not
@@ -56,6 +59,8 @@ public:
 	void ToggleDeploy();
 	void DeployNow();
 	void UndeployNow();
+
+	bool IsUndeployed() const;
 
 	void StartToss(const Vector& velocity, const Vector& angularVelocity);
 	void StartToss(const Vector& origin, const Vector& velocity, const Vector& angularVelocity);
@@ -100,6 +105,9 @@ private:
 	static constexpr int MOVETYPE_IN_TOSS = MOVETYPE_BOUNCE;
 	static constexpr float DEFAULT_FRICTION = 0.9f;
 
+	// Spawn flags
+	static constexpr int SF_ALLOW_PICKUP = (1 << 0);
+
 	void EXPORT RoninUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
 
 	void MainThink();
@@ -112,10 +120,15 @@ private:
 	void BeginUndeploy();
 	void UndeployFinished();
 
+	void OnTouch(CBaseEntity* other);
+
 	void SetSequence(NPCRoninTurretAnimations_e index);
 	void SetCurrentGunAngles(const Vector& angles);
 	void UpdateModelControllerValues();
 	void UpdateVelocity();
+	bool CanTryToPickUp(CBaseEntity* activator) const;
+	bool AddRoninToPlayer(CBasePlayer* player, bool isPickupFromUse);
+	bool AddRoninWeaponToPlayer(CBasePlayer* player);
 	CBaseEntity* FindBestTarget();
 	void RotateTowardsTarget(const Vector& targetPos);
 	void FireGun();
@@ -153,4 +166,5 @@ private:
 
 	Vector m_LastTossedPos;
 	float m_LastTossedTime = 0.0f;
+	bool m_AllowPickupWhenUndeployed = false;
 };

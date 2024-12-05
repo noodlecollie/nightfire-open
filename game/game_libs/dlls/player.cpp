@@ -3124,6 +3124,31 @@ BOOL CBasePlayer::HasWeapons(void)
 	return FALSE;
 }
 
+CBasePlayerItem* CBasePlayer::GetNamedItem(const char* name)
+{
+	if ( !name || !(*name) )
+	{
+		return nullptr;
+	}
+
+	for ( int i = 0; i < MAX_ITEM_TYPES; ++i )
+	{
+		CBasePlayerItem* pItem = m_rgpPlayerItems[i];
+
+		while ( pItem )
+		{
+			if ( strcmp(name, STRING(pItem->pev->classname)) == 0 )
+			{
+				return pItem;
+			}
+
+			pItem = pItem->m_pNext;
+		}
+	}
+
+	return nullptr;
+}
+
 void CBasePlayer::SelectPrevItem(int)
 {
 }
@@ -3607,8 +3632,11 @@ int CBasePlayer::AddPlayerItem(CBasePlayerItem* pItem)
 
 				// ugly hack to update clip w/o an update clip message
 				pInsert->UpdateItemInfo();
+
 				if ( m_pActiveItem )
+				{
 					m_pActiveItem->UpdateItemInfo();
+				}
 
 				pItem->Kill();
 			}
@@ -3790,7 +3818,7 @@ void CBasePlayer::ItemPostFrame()
 
 int CBasePlayer::AmmoInventory(int iAmmoIndex)
 {
-	if ( iAmmoIndex == -1 )
+	if ( iAmmoIndex < 0 )
 	{
 		return -1;
 	}
