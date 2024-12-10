@@ -5,13 +5,13 @@
 #include "weapon_pref_weights.h"
 #include "weapon_ronin_atts.h"
 #include "eventConstructor/eventConstructor.h"
+#include "MathLib/utils.h"
 
 #ifndef CLIENT_DLL
 #include <limits>
 #include <algorithm>
 #include "bot.h"
 #include "npc/npc_ronin_turret.h"
-#include "MathLib/utils.h"
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
@@ -47,10 +47,25 @@ const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const
 
 void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
 {
-	(void)mechanic;
+	Vector forward;
+	AngleVectors(mechanic.GetProjectileLaunchAngles(0.0f), forward, nullptr, nullptr);
+
+	Vector spawnLocation;
+
+	if ( !SelectRoninSpawnLocation(forward, spawnLocation) )
+	{
+		ALERT(
+			at_aiconsole,
+			"Failed to find spawn location for Ronin near player origin (%f, %f, %f)\n",
+			m_pPlayer->pev->origin[VEC3_X],
+			m_pPlayer->pev->origin[VEC3_Y],
+			m_pPlayer->pev->origin[VEC3_Z]);
+
+		return;
+	}
 
 #ifndef CLIENT_DLL
-	LaunchThrownTurret(mechanic);
+	LaunchThrownTurret(forward, spawnLocation);
 #endif
 
 	uint8_t decrement = mechanic.GetAmmoBasedAttackMode()->AmmoDecrement;
@@ -111,6 +126,74 @@ void CWeaponRonin::SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& me
 	}
 }
 
+bool CWeaponRonin::IsHoldingRonin() const
+{
+	return m_pPlayer->AmmoInventory(m_iPrimaryAmmoType) > 0;
+}
+
+bool CWeaponRonin::HasThrownButUndeployedRonin() const
+{
+	return m_pPlayer->AmmoInventory(m_iSecondaryAmmoType) > 0;
+}
+
+bool CWeaponRonin::SelectRoninSpawnLocation(const Vector& forward, Vector& outLocation) const
+{
+	const Vector eyePos = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs);
+	const Vector deltaToIdealLocation = forward * PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER;
+	Vector location = eyePos + deltaToIdealLocation;
+
+	{
+		TraceResult tr {};
+		UTIL_TraceLine(eyePos, location, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+
+		if ( tr.flFraction < 1.0f )
+		{
+			location = eyePos + (tr.flFraction * deltaToIdealLocation);
+		}
+	}
+
+	for ( size_t axis = 0; axis < 3; ++axis )
+	{
+		bool haveAdjustedOnThisAxis = false;
+
+		for ( size_t iteration = 0; iteration < 2; ++iteration )
+		{
+			const int polarity = iteration == 0 ? 1 : -1;
+
+			Vector basis;
+			basis[axis] = static_cast<float>(polarity);
+
+			const float scale = iteration == 0 ? RONIN_TURRET_MAXS[axis] : -RONIN_TURRET_MINS[axis];
+			const Vector delta = basis * scale;
+
+			TraceResult tr {};
+			UTIL_TraceLine(eyePos, location + delta, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+
+			if ( tr.flFraction >= 1.0f && !tr.fAllSolid && !tr.fStartSolid )
+			{
+				continue;
+			}
+
+			if ( haveAdjustedOnThisAxis )
+			{
+				// A collision + adjustment in one direction resulted in
+				// another collision in the other direction, so there
+				// is not space to spawn the Ronin here.
+				return false;
+			}
+
+			// We hit something, so adjust our location accordingly.
+			// Recede a little more from the surface in addition to the
+			// computed contact point.
+			location = Vector(tr.vecEndPos) - delta - basis;
+			haveAdjustedOnThisAxis = true;
+		}
+	}
+
+	outLocation = location;
+	return true;
+}
+
 #ifndef CLIENT_DLL
 CNPCRoninTurret* CWeaponRonin::GetTurret() const
 {
@@ -129,7 +212,7 @@ bool CWeaponRonin::PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupT
 	ASSERT(m_iPrimaryAmmoType >= 0 && m_iSecondaryAmmoType >= 0);
 
 	// If the player is holding a Ronin, they can't pick up another.
-	if ( m_pPlayer->AmmoInventory(m_iPrimaryAmmoType) > 0 )
+	if ( IsHoldingRonin() )
 	{
 		return false;
 	}
@@ -150,7 +233,7 @@ bool CWeaponRonin::PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupT
 
 	// If the player has thrown a Ronin but hasn't deployed it,
 	// they may only pick up a new turret if they +use it.
-	if ( m_pPlayer->AmmoInventory(m_iSecondaryAmmoType) > 0 && pickupType != TurretPickupType::ON_USE )
+	if ( HasThrownButUndeployedRonin() && pickupType != TurretPickupType::ON_USE )
 	{
 		return false;
 	}
@@ -201,7 +284,7 @@ void CWeaponRonin::Bot_SetFightStyle(CBaseBotFightStyle&) const
 	// TODO
 }
 
-void CWeaponRonin::LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
+void CWeaponRonin::LaunchThrownTurret(const Vector& forward, const Vector& spawnLocation)
 {
 	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
 	m_Turret = turret;
@@ -209,84 +292,12 @@ void CWeaponRonin::LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic
 	turret->Spawn();
 	turret->SetAllowsPickupWhenUndeployed(true);
 
-	Vector forward;
-	AngleVectors(mechanic.GetProjectileLaunchAngles(0.0f), forward, nullptr, nullptr);
-
-	Vector spawnLocation;
-
-	if ( !SelectRoninSpawnLocation(*turret, forward, spawnLocation) )
-	{
-		// TODO: Handle this case properly.
-		// We actually want to cancel the fire action.
-		ALERT(at_aiconsole, "Failed to find spawn location for %s\n", STRING(turret->pev->classname));
-		UTIL_Remove(turret);
-		return;
-	}
-
 	Vector velocity = Vector(m_pPlayer->pev->velocity) + (200.0f * forward) + (150.0f * Vector(0, 0, 1));
 
 	const float rotDir = RANDOM_LONG(0, 1) ? 1.0f : -1.0f;
 	Vector avelocity(0, RANDOM_FLOAT(360.0f * rotDir, 540.0f * rotDir), 0);
 
 	turret->StartToss(spawnLocation, velocity, avelocity);
-}
-
-bool CWeaponRonin::SelectRoninSpawnLocation(CNPCRoninTurret& turret, const Vector& forward, Vector& outLocation) const
-{
-	const Vector eyePos = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs);
-	const Vector deltaToIdealLocation = forward * PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER;
-	Vector location = eyePos + deltaToIdealLocation;
-
-	{
-		TraceResult tr {};
-		UTIL_TraceLine(eyePos, location, dont_ignore_monsters, m_pPlayer->edict(), &tr);
-
-		if ( tr.flFraction < 1.0f )
-		{
-			location = eyePos + (tr.flFraction * deltaToIdealLocation);
-		}
-	}
-
-	for ( size_t axis = 0; axis < 3; ++axis )
-	{
-		bool haveAdjustedOnThisAxis = false;
-
-		for ( size_t iteration = 0; iteration < 2; ++iteration )
-		{
-			const int polarity = iteration == 0 ? 1 : -1;
-
-			Vector basis;
-			basis[axis] = static_cast<float>(polarity);
-
-			const float scale = iteration == 0 ? turret.pev->maxs[axis] : -turret.pev->mins[axis];
-			const Vector delta = basis * scale;
-
-			TraceResult tr {};
-			UTIL_TraceLine(eyePos, location + delta, dont_ignore_monsters, m_pPlayer->edict(), &tr);
-
-			if ( tr.flFraction >= 1.0f && !tr.fAllSolid && !tr.fStartSolid )
-			{
-				continue;
-			}
-
-			if ( haveAdjustedOnThisAxis )
-			{
-				// A collision + adjustment in one direction resulted in
-				// another collision in the other direction, so there
-				// is not space to spawn the Ronin here.
-				return false;
-			}
-
-			// We hit something, so adjust our location accordingly.
-			// Recede a little more from the surface in addition to the
-			// computed contact point.
-			location = Vector(tr.vecEndPos) - delta - basis;
-			haveAdjustedOnThisAxis = true;
-		}
-	}
-
-	outLocation = location;
-	return true;
 }
 
 void CWeaponRonin::ActivateThrownTurret()

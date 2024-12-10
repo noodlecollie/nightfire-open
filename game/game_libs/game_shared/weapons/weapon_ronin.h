@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "standard_includes.h"
 #include "genericweapon.h"
 #include "weaponmechanics/projectilemechanic.h"
@@ -8,6 +9,9 @@
 #ifndef CLIENT_DLL
 class CNPCRoninTurret;
 #endif
+
+static const vec3_t RONIN_TURRET_MINS = {-14, -12, 0};
+static const vec3_t RONIN_TURRET_MAXS = {14, 12, 16};
 
 // NFTODO: Make a common base class from the frag grenade and use the
 // same logic here. It'd be nice to be able to scale the toss velocity
@@ -37,10 +41,12 @@ private:
 	void ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
 	WeaponMechanics::InvocationResult ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
 	void SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& mechanic);
+	bool IsHoldingRonin() const;
+	bool HasThrownButUndeployedRonin() const;
+	bool SelectRoninSpawnLocation(const Vector& forward, Vector& outLocation) const;
 
 #ifndef CLIENT_DLL
-	void LaunchThrownTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
-	bool SelectRoninSpawnLocation(CNPCRoninTurret& turret, const Vector& forward, Vector& outLocation) const;
+	void LaunchThrownTurret(const Vector& forward, const Vector& spawnLocation);
 	void ActivateThrownTurret();
 #endif
 

@@ -161,7 +161,7 @@ void CNPCRoninTurret::Spawn(void)
 	Precache();
 
 	SET_MODEL(ENT(pev), RONIN_MODEL);
-	UTIL_SetSize(pev, Vector(-14, -12, 0), Vector(14, 12, 16));
+	UTIL_SetSize(pev, RONIN_TURRET_MINS, RONIN_TURRET_MAXS);
 
 	pev->solid = SOLID_TRIGGER;
 	pev->movetype = MOVETYPE_NONE;
