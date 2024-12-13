@@ -31,6 +31,7 @@ enum VRoninAnimations_e
 enum VRoninAttackMode_e
 {
 	VRONIN_ATTACKMODE_TOSS = 0,
+	VRONIN_ATTACKMODE_PLACE,
 	VRONIN_ATTACKMODE_DEPLOY,
 	VRONIN_ATTACKMODE_DETONATE,
 };
@@ -49,6 +50,8 @@ static constexpr CAmmoDef Ammo_RoninDeploy = {
 	0  // AmmoBoxGive
 };
 
+static constexpr uint8_t RONIN_HOLD_AMMO = 1;
+
 static const WeaponAtts::WACollection StaticWeaponAttributes(
 	[](WeaponAtts::WACollection& obj)
 	{
@@ -63,7 +66,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		ammo.PrimaryAmmo = &Ammo_RoninThrow;
 		ammo.SecondaryAmmo = &Ammo_RoninDeploy;
 		ammo.MaxClip = -1;
-		ammo.PrimaryAmmoOnFirstPickup = 1;
+		ammo.PrimaryAmmoOnFirstPickup = RONIN_HOLD_AMMO;
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_ronin/v_ronin.mdl";
@@ -119,6 +122,31 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 			// it does that.
 			throwAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(new ViewModelAnimationSet());
 			*throwAttack->OverrideAnimations = vm.Animations;
+		}
+
+		{
+			WAEventAttack* placeAttack = new WAEventAttack();
+			obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(placeAttack));
+
+			placeAttack->EventScript = "events/weapon_ronin/place.sc";
+			placeAttack->FunctionsUnderwater = true;
+			placeAttack->IsContinuous = false;
+			placeAttack->Volume = QUIET_GUN_VOLUME;
+			placeAttack->PlayDryFireSoundOnEmpty = false;
+			placeAttack->AttackRate = 3.0f;
+
+			// deployAttack->ViewModelAttackSounds.MinPitch = 100;
+			// deployAttack->ViewModelAttackSounds.MinPitch = 100;
+			// deployAttack->ViewModelAttackSounds.SoundNames << "weapons/weapon_ronin/remote_activate.wav";
+
+			CrosshairParameters& crosshair = placeAttack->Crosshair;
+			crosshair.RenderStyle = CrosshairStyle::None;
+
+			placeAttack->ViewModelAnimList_Attack << VRONIN_CASE_DEPLOY;
+			placeAttack->ViewModelAnimList_AttackEmpty << VRONIN_CASE_DEPLOY;
+
+			placeAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(new ViewModelAnimationSet());
+			*placeAttack->OverrideAnimations = vm.Animations;
 		}
 
 		{

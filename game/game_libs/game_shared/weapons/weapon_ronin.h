@@ -37,20 +37,28 @@ public:
 
 private:
 	static constexpr float PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER = 32.0f;
+	static constexpr float TURRET_PLACE_DIST_IN_FRONT_OF_PLAYER = 96.0f;
 
 	void ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
+	WeaponMechanics::InvocationResult PlaceTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
 	WeaponMechanics::InvocationResult ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
-	void SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& mechanic);
+	void SendEvent(const WeaponMechanics::CDelegatedMechanic& mechanic);
 	bool IsHoldingRonin() const;
 	bool HasThrownButUndeployedRonin() const;
-	bool SelectRoninSpawnLocation(const Vector& forward, Vector& outLocation) const;
+	bool SelectRoninThrowSpawnLocation(const Vector& forward, Vector& outLocation) const;
+	bool SelectRoninPlaceSpawnLocation(Vector& outLocation) const;
+	bool FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation) const;
+	void PostCreateTurret();
 
 #ifndef CLIENT_DLL
 	void LaunchThrownTurret(const Vector& forward, const Vector& spawnLocation);
+	void PlaceTurret(const Vector& spawnLocation);
+	CNPCRoninTurret* CreateTurret();
 	void ActivateThrownTurret();
 #endif
 
 	WeaponMechanics::CProjectileMechanic* m_ThrowMechanic = nullptr;
+	WeaponMechanics::CDelegatedMechanic* m_PlaceMechanic = nullptr;
 	WeaponMechanics::CDelegatedMechanic* m_DeployMechanic = nullptr;
 	EHANDLE m_Turret;
 };

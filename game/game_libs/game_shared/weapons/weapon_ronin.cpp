@@ -16,16 +16,35 @@
 
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
 
+// Sanity helpers:
+#define ASSERT_HAS_PRI_AMMO() \
+	ASSERT(m_iPrimaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == RONIN_HOLD_AMMO)
+#define ASSERT_HAS_NO_PRI_AMMO() ASSERT(m_iPrimaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == 0)
+#define ASSERT_HAS_SEC_AMMO() \
+	ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == RONIN_HOLD_AMMO)
+#define ASSERT_HAS_NO_SEC_AMMO() ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0)
+
 CWeaponRonin::CWeaponRonin() :
 	CGenericWeapon()
 {
 	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(VRONIN_ATTACKMODE_TOSS, m_ThrowMechanic);
+	AddMechanicByAttributeIndex<WeaponAtts::WAEventAttack>(VRONIN_ATTACKMODE_PLACE, m_PlaceMechanic);
 	AddMechanicByAttributeIndex<WeaponAtts::WAEventAttack>(VRONIN_ATTACKMODE_DEPLOY, m_DeployMechanic);
 
 	m_ThrowMechanic->SetCreateProjectileCallback(
 		[this](WeaponMechanics::CProjectileMechanic& mechanic)
 		{
+			// TODO: Do we need to allow this to return a value
+			// and cancel the entire action? If spawning the
+			// turret fails, I don't think the view model animation
+			// will be cancelled.
 			ThrowTurret(mechanic);
+		});
+
+	m_PlaceMechanic->SetCallback(
+		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
+		{
+			return PlaceTurret(mechanic, step);
 		});
 
 	m_DeployMechanic->SetCallback(
@@ -35,6 +54,7 @@ CWeaponRonin::CWeaponRonin() :
 		});
 
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
+	SetSecondaryAttackMechanic(m_PlaceMechanic);
 
 	// Base the view model animations on whatever mechanic is set to be primary.
 	SetViewModelAnimationSource(WeaponAtts::AttackMode::Primary);
@@ -52,7 +72,7 @@ void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 
 	Vector spawnLocation;
 
-	if ( !SelectRoninSpawnLocation(forward, spawnLocation) )
+	if ( !SelectRoninThrowSpawnLocation(forward, spawnLocation) )
 	{
 		ALERT(
 			at_aiconsole,
@@ -68,16 +88,58 @@ void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 	LaunchThrownTurret(forward, spawnLocation);
 #endif
 
-	uint8_t decrement = mechanic.GetAmmoBasedAttackMode()->AmmoDecrement;
-	DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary, decrement);
+	PostCreateTurret();
+}
 
-	ASSERT(m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0);
+WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
+	WeaponMechanics::CDelegatedMechanic& mechanic,
+	uint32_t step)
+{
+	if ( step == 0 )
+	{
+		// Play animation and delay for a bit.
+		SendEvent(mechanic);
 
-	const WeaponAtts::WACollection& roninWeaponAtts = WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
-	const CAmmoDef* secAmmo = roninWeaponAtts.Ammo.SecondaryAmmo;
-	m_pPlayer->GiveAmmo(1, secAmmo->AmmoName, secAmmo->MaxCarry);
+		const float delay = 1.0f / mechanic.GetAttackMode()->AttackRate;
+		DelayFiring(delay);
+		SetNextIdleTime(delay + 1.0f);
+		return WeaponMechanics::InvocationResult::Incomplete(mechanic, delay);
+	}
+	else if ( step == 1 )
+	{
+		Vector location;
 
-	SetPrimaryAttackMechanic(m_DeployMechanic);
+		if ( !SelectRoninPlaceSpawnLocation(location) )
+		{
+			ALERT(
+				at_aiconsole,
+				"Failed to find placement location for Ronin near player origin (%f, %f, %f)\n",
+				m_pPlayer->pev->origin[VEC3_X],
+				m_pPlayer->pev->origin[VEC3_Y],
+				m_pPlayer->pev->origin[VEC3_Z]);
+
+			// TODO: Reset view model
+
+			return WeaponMechanics::InvocationResult::Rejected(mechanic);
+		}
+
+#ifndef CLIENT_DLL
+		PlaceTurret(location);
+#endif
+
+		// We have to do this here, because this attack mechanic
+		// won't do it for us.
+		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary, RONIN_HOLD_AMMO);
+
+		// TODO: Play draw animation for remote
+
+		PostCreateTurret();
+		return WeaponMechanics::InvocationResult::Complete(mechanic);
+	}
+	else
+	{
+		return WeaponMechanics::InvocationResult::Rejected(mechanic);
+	}
 }
 
 WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
@@ -90,7 +152,7 @@ WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
 		ActivateThrownTurret();
 #endif
 
-		SendDeployEvent(mechanic);
+		SendEvent(mechanic);
 
 		const float delay = 1.0f / mechanic.GetAttackMode()->AttackRate;
 		DelayFiring(delay);
@@ -99,9 +161,13 @@ WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
 	}
 	else if ( step == 1 )
 	{
-		ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 1);
+		ASSERT_HAS_NO_PRI_AMMO();
+		ASSERT_HAS_SEC_AMMO();
+
 		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, 1);
-		ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0);
+
+		ASSERT_HAS_NO_PRI_AMMO();
+		ASSERT_HAS_NO_SEC_AMMO();
 
 		RetireWeapon();
 		return WeaponMechanics::InvocationResult::Complete(mechanic);
@@ -112,7 +178,7 @@ WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
 	}
 }
 
-void CWeaponRonin::SendDeployEvent(const WeaponMechanics::CDelegatedMechanic& mechanic)
+void CWeaponRonin::SendEvent(const WeaponMechanics::CDelegatedMechanic& mechanic)
 {
 	if ( mechanic.GetEventIndex() >= 0 )
 	{
@@ -136,22 +202,55 @@ bool CWeaponRonin::HasThrownButUndeployedRonin() const
 	return m_pPlayer->AmmoInventory(m_iSecondaryAmmoType) > 0;
 }
 
-bool CWeaponRonin::SelectRoninSpawnLocation(const Vector& forward, Vector& outLocation) const
+bool CWeaponRonin::SelectRoninThrowSpawnLocation(const Vector& forward, Vector& outLocation) const
 {
 	const Vector eyePos = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs);
-	const Vector deltaToIdealLocation = forward * PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER;
-	Vector location = eyePos + deltaToIdealLocation;
+	return FitRoninAtLocation(eyePos, forward * PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER, outLocation);
+}
+
+bool CWeaponRonin::SelectRoninPlaceSpawnLocation(Vector& outLocation) const
+{
+	const Vector eyePos = Vector(m_pPlayer->pev->origin) + Vector(m_pPlayer->pev->view_ofs);
+
+	Vector viewVec;
+	AngleVectors(m_pPlayer->pev->v_angle, viewVec, nullptr, nullptr);
+
+	const Vector furthestSpawnPos = viewVec * TURRET_PLACE_DIST_IN_FRONT_OF_PLAYER;
+
+	TraceResult tr {};
+	UTIL_TraceLine(eyePos, furthestSpawnPos, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+
+	if ( tr.flFraction >= 1.0f )
+	{
+		// Contact surface is too far to spawn on.
+		return false;
+	}
+
+	// TODO: We also need to trace downwards here, in case this trace hit a wall.
+	// The process should be:
+	// - Check the current spawn location, and return false if not valid.
+	// - Trace hull downwards a maximum distance.
+	// - Return the location from this downward trace.
+
+	return FitRoninAtLocation(eyePos, viewVec, outLocation);
+}
+
+bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation)
+	const
+{
+	Vector location = traceBegin + deltaToIdealLocation;
 
 	{
 		TraceResult tr {};
-		UTIL_TraceLine(eyePos, location, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+		UTIL_TraceLine(traceBegin, location, dont_ignore_monsters, m_pPlayer->edict(), &tr);
 
 		if ( tr.flFraction < 1.0f )
 		{
-			location = eyePos + (tr.flFraction * deltaToIdealLocation);
+			location = traceBegin + (tr.flFraction * deltaToIdealLocation);
 		}
 	}
 
+	// Check all axes to see if the bounding box actually fits in this location.
 	for ( size_t axis = 0; axis < 3; ++axis )
 	{
 		bool haveAdjustedOnThisAxis = false;
@@ -167,7 +266,7 @@ bool CWeaponRonin::SelectRoninSpawnLocation(const Vector& forward, Vector& outLo
 			const Vector delta = basis * scale;
 
 			TraceResult tr {};
-			UTIL_TraceLine(eyePos, location + delta, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+			UTIL_TraceLine(traceBegin, location + delta, dont_ignore_monsters, m_pPlayer->edict(), &tr);
 
 			if ( tr.flFraction >= 1.0f && !tr.fAllSolid && !tr.fStartSolid )
 			{
@@ -194,6 +293,22 @@ bool CWeaponRonin::SelectRoninSpawnLocation(const Vector& forward, Vector& outLo
 	return true;
 }
 
+void CWeaponRonin::PostCreateTurret()
+{
+	ASSERT_HAS_NO_PRI_AMMO();
+	ASSERT_HAS_NO_SEC_AMMO();
+
+	const WeaponAtts::WACollection& roninWeaponAtts = WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
+	const CAmmoDef* secAmmo = roninWeaponAtts.Ammo.SecondaryAmmo;
+	m_pPlayer->GiveAmmo(RONIN_HOLD_AMMO, secAmmo->AmmoName, secAmmo->MaxCarry);
+
+	ASSERT_HAS_NO_PRI_AMMO();
+	ASSERT_HAS_SEC_AMMO();
+
+	SetPrimaryAttackMechanic(m_DeployMechanic);
+	SetSecondaryAttackMechanic(nullptr);  // TODO: Detonate
+}
+
 #ifndef CLIENT_DLL
 CNPCRoninTurret* CWeaponRonin::GetTurret() const
 {
@@ -209,7 +324,6 @@ bool CWeaponRonin::PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupT
 
 	const WeaponAtts::WACollection& roninWeaponAtts = WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
 	const CAmmoDef* priAmmo = roninWeaponAtts.Ammo.PrimaryAmmo;
-	ASSERT(m_iPrimaryAmmoType >= 0 && m_iSecondaryAmmoType >= 0);
 
 	// If the player is holding a Ronin, they can't pick up another.
 	if ( IsHoldingRonin() )
@@ -238,26 +352,26 @@ bool CWeaponRonin::PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupT
 		return false;
 	}
 
-	// Set weapon state to throwable.
-	ASSERT(m_iPrimaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == 0);
+	// Set weapon state to throwable by topping up primary ammo.
+	ASSERT_HAS_NO_PRI_AMMO();
 	m_pPlayer->GiveAmmo(m_ThrowMechanic->GetAmmoBasedAttackMode()->AmmoDecrement, priAmmo->AmmoName, priAmmo->MaxCarry);
+	ASSERT_HAS_PRI_AMMO();
 
-	ASSERT(
-		m_iPrimaryAmmoType >= 0 &&
-		m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] == m_ThrowMechanic->GetAmmoBasedAttackMode()->AmmoDecrement);
-
-	ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 1);
-	DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, 1);
-	ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0);
-
-	// If we had an existing turret, disconnect it from us.
+	// If we had a thrown but undeployed turret, disconnect it from us.
 	if ( m_Turret && !newTurretIsOwnTurret )
 	{
 		GetTurret()->pev->owner = nullptr;
+
+		ASSERT_HAS_SEC_AMMO();
+		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, RONIN_HOLD_AMMO);
+		ASSERT_HAS_NO_SEC_AMMO();
 	}
 
+	ASSERT_HAS_NO_SEC_AMMO();
 	m_Turret = nullptr;
+
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
+	SetSecondaryAttackMechanic(m_PlaceMechanic);
 
 	if ( m_pPlayer->m_pActiveItem == this )
 	{
@@ -286,11 +400,7 @@ void CWeaponRonin::Bot_SetFightStyle(CBaseBotFightStyle&) const
 
 void CWeaponRonin::LaunchThrownTurret(const Vector& forward, const Vector& spawnLocation)
 {
-	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
-	m_Turret = turret;
-	turret->pev->owner = m_pPlayer->edict();
-	turret->Spawn();
-	turret->SetAllowsPickupWhenUndeployed(true);
+	CNPCRoninTurret* turret = CreateTurret();
 
 	Vector velocity = Vector(m_pPlayer->pev->velocity) + (200.0f * forward) + (150.0f * Vector(0, 0, 1));
 
@@ -298,6 +408,23 @@ void CWeaponRonin::LaunchThrownTurret(const Vector& forward, const Vector& spawn
 	Vector avelocity(0, RANDOM_FLOAT(360.0f * rotDir, 540.0f * rotDir), 0);
 
 	turret->StartToss(spawnLocation, velocity, avelocity);
+}
+
+void CWeaponRonin::PlaceTurret(const Vector& spawnLocation)
+{
+	CNPCRoninTurret* turret = CreateTurret();
+	turret->StartToss(spawnLocation, Vector(), Vector());
+}
+
+CNPCRoninTurret* CWeaponRonin::CreateTurret()
+{
+	CNPCRoninTurret* turret = GetClassPtr<CNPCRoninTurret>(nullptr);
+	m_Turret = turret;
+	turret->pev->owner = m_pPlayer->edict();
+	turret->Spawn();
+	turret->SetAllowsPickupWhenUndeployed(true);
+
+	return turret;
 }
 
 void CWeaponRonin::ActivateThrownTurret()
