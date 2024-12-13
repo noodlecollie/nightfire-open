@@ -1043,6 +1043,18 @@ void UTIL_TraceHull(
 	TRACE_HULL(vecStart, vecEnd, (igmon == ignore_monsters ? TRUE : FALSE), hullNumber, pentIgnore, ptr);
 }
 
+void UTIL_TraceHull(
+	const Vector& vecStart,
+	const Vector& vecEnd,
+	IGNORE_MONSTERS igmon,
+	const Vector& mins,
+	const Vector& maxs,
+	edict_t* pentIgnore,
+	TraceResult* ptr)
+{
+	TRACE_CUSTOM_HULL(vecStart, vecEnd, (igmon == ignore_monsters ? TRUE : FALSE), mins, maxs, pentIgnore, ptr);
+}
+
 void UTIL_TraceModel(const Vector& vecStart, const Vector& vecEnd, int hullNumber, edict_t* pentModel, TraceResult* ptr)
 {
 	g_engfuncs.pfnTraceModel(vecStart, vecEnd, hullNumber, pentModel, ptr);

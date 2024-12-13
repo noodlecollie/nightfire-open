@@ -156,6 +156,14 @@ typedef struct enginefuncs_s
 		int hullNumber,
 		edict_t* pentToSkip,
 		TraceResult* ptr);
+	void (*pfnTraceCustomHull)(
+		const float* v1,
+		const float* v2,
+		int fNoMonsters,
+		const float* mins,
+		const float* maxs,
+		edict_t* pentToSkip,
+		TraceResult* ptr);
 	void (*pfnTraceModel)(const float* v1, const float* v2, int hullNumber, edict_t* pent, TraceResult* ptr);
 	struct texture_s* (*pfnTraceTexture)(edict_t* pTextureEntity, const float* v1, const float* v2);
 	void (*pfnTraceSphere)(

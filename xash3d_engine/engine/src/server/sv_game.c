@@ -2453,6 +2453,29 @@ pfnTraceHull(const float* v1, const float* v2, int fNoMonsters, int hullNumber, 
 	SV_ConvertTrace(ptr, &trace);
 }
 
+static void GAME_EXPORT pfnTraceCustomHull(
+	const float* v1,
+	const float* v2,
+	int fNoMonsters,
+	const float* mins,
+	const float* maxs,
+	edict_t* pentToSkip,
+	TraceResult* ptr)
+{
+	trace_t trace;
+
+	trace = SV_Move(
+		v1,
+		mins,
+		maxs,
+		v2,
+		fNoMonsters,
+		pentToSkip,
+		false);
+
+	SV_ConvertTrace(ptr, &trace);
+}
+
 /*
 =============
 pfnTraceMonsterHull
@@ -5124,6 +5147,7 @@ static enginefuncs_t gEngfuncs = {
 	pfnTraceToss,
 	pfnTraceMonsterHull,
 	pfnTraceHull,
+	pfnTraceCustomHull,
 	pfnTraceModel,
 	pfnTraceTexture,
 	pfnTraceSphere,

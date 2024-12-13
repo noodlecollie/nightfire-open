@@ -382,6 +382,16 @@ extern void UTIL_TraceHull(
 	int hullNumber,
 	edict_t* pentIgnore,
 	TraceResult* ptr);
+
+extern void UTIL_TraceHull(
+	const Vector& vecStart,
+	const Vector& vecEnd,
+	IGNORE_MONSTERS igmon,
+	const Vector& mins,
+	const Vector& maxs,
+	edict_t* pentIgnore,
+	TraceResult* ptr);
+
 extern TraceResult UTIL_GetGlobalTrace(void);
 extern void
 UTIL_TraceModel(const Vector& vecStart, const Vector& vecEnd, int hullNumber, edict_t* pentModel, TraceResult* ptr);

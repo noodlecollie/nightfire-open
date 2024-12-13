@@ -7,6 +7,11 @@
 #include "weaponmechanics/delegatedmechanic.h"
 
 #ifndef CLIENT_DLL
+namespace CustomGeometry
+{
+	class CMessageWriter;
+}
+
 class CNPCRoninTurret;
 
 extern cvar_t debug_ronin_placement;
@@ -57,7 +62,7 @@ private:
 	void PlaceTurret(const Vector& spawnLocation);
 	CNPCRoninTurret* CreateTurret();
 	void ActivateThrownTurret();
-	void DrawDebugCrosshair(const Vector& location, float scale = 8.0f) const;
+	void DrawDebugBounds(CustomGeometry::CMessageWriter* writer, const Vector& location, uint32_t colour) const;
 #endif
 
 	WeaponMechanics::CProjectileMechanic* m_ThrowMechanic = nullptr;

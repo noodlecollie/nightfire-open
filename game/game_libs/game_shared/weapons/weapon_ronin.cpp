@@ -13,6 +13,7 @@
 #include "bot.h"
 #include "npc/npc_ronin_turret.h"
 #include "customGeometry/constructors/crosshair3DConstructor.h"
+#include "customGeometry/constructors/aabboxConstructor.h"
 #include "customGeometry/messageWriter.h"
 
 cvar_t debug_ronin_placement = CONSTRUCT_CVAR_T("debug_ronin_placement", 0, FCVAR_CHEAT);
@@ -230,67 +231,81 @@ bool CWeaponRonin::SelectRoninPlaceSpawnLocation(Vector& outLocation) const
 	return FitRoninAtLocation(eyePos, idealSpawnPos - eyePos, outLocation);
 }
 
+// TODO: Make another version of this where the beginning point is adjusted if the trace fails.
 bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation)
 	const
 {
-	Vector location = traceBegin + deltaToIdealLocation;
-
-	{
-		TraceResult tr {};
-		UTIL_TraceLine(traceBegin, location, dont_ignore_monsters, m_pPlayer->edict(), &tr);
-
-		if ( tr.flFraction < 1.0f )
-		{
-			location = traceBegin + (tr.flFraction * deltaToIdealLocation);
-		}
-	}
-
-	// Check all axes to see if the bounding box actually fits in this location.
-	for ( size_t axis = 0; axis < 3; ++axis )
-	{
-		bool haveAdjustedOnThisAxis = false;
-
-		for ( size_t iteration = 0; iteration < 2; ++iteration )
-		{
-			const int polarity = iteration == 0 ? 1 : -1;
-
-			Vector basis;
-			basis[axis] = static_cast<float>(polarity);
-
-			const float scale = iteration == 0 ? RONIN_TURRET_MAXS[axis] : -RONIN_TURRET_MINS[axis];
-			const Vector delta = basis * scale;
-
-			TraceResult tr {};
-			UTIL_TraceLine(traceBegin, location + delta, dont_ignore_monsters, m_pPlayer->edict(), &tr);
-
-			if ( tr.flFraction >= 1.0f && !tr.fAllSolid && !tr.fStartSolid )
-			{
-				continue;
-			}
-
-			if ( haveAdjustedOnThisAxis )
-			{
-				// A collision + adjustment in one direction resulted in
-				// another collision in the other direction, so there
-				// is not space to spawn the Ronin here.
-				return false;
-			}
-
-			// We hit something, so adjust our location accordingly.
-			// Recede a little more from the surface in addition to the
-			// computed contact point.
-			location = Vector(tr.vecEndPos) - delta - basis;
-			haveAdjustedOnThisAxis = true;
-		}
-	}
-
-	outLocation = location;
-
 #ifndef CLIENT_DLL
-	DrawDebugCrosshair(location);
+	static constexpr uint32_t RED = 0xFF0000FF;
+	static constexpr uint32_t YELLOW = 0xFFD800FF;
+	static constexpr uint32_t GREEN = 0x00FF00FF;
+
+	std::unique_ptr<CustomGeometry::CMessageWriter> debugMsg;
+
+	if ( debug_ronin_placement.value != 0.0f )
+	{
+		debugMsg.reset(new CustomGeometry::CMessageWriter(CustomGeometry::Category::RoninDebugging));
+		debugMsg->SetTargetClient(m_pPlayer);
+		debugMsg->WriteClearMessage();
+	}
 #endif
 
-	return true;
+	Vector location = traceBegin + deltaToIdealLocation;
+
+	TraceResult tr {};
+	UTIL_TraceHull(
+		traceBegin,
+		location,
+		dont_ignore_monsters,
+		RONIN_TURRET_MINS,
+		RONIN_TURRET_MAXS,
+		m_pPlayer->edict(),
+		&tr);
+
+	bool success = !tr.fStartSolid && tr.flFraction > 0.0f;
+
+	if ( !success )
+	{
+		// Try again - we might have hit some awkward bit of brushwork.
+		const Vector newStart = traceBegin - (4.0f * deltaToIdealLocation.Normalize());
+		tr = TraceResult {};
+
+		UTIL_TraceHull(
+			newStart,
+			location,
+			dont_ignore_monsters,
+			RONIN_TURRET_MINS,
+			RONIN_TURRET_MAXS,
+			m_pPlayer->edict(),
+			&tr);
+
+		success = !tr.fStartSolid && tr.flFraction > 0.0f;
+	}
+
+	if ( tr.flFraction < 1.0f )
+	{
+		location = tr.vecEndPos;
+	}
+
+#ifndef CLIENT_DLL
+	DrawDebugBounds(debugMsg.get(), traceBegin, success ? YELLOW : RED);
+
+	uint32_t endColour = GREEN;
+
+	if ( !success )
+	{
+		endColour = RED;
+	}
+	else if ( tr.flFraction < 1.0f )
+	{
+		endColour = YELLOW;
+	}
+
+	DrawDebugBounds(debugMsg.get(), location, endColour);
+#endif
+
+	outLocation = location;
+	return success;
 }
 
 void CWeaponRonin::PostCreateTurret()
@@ -441,23 +456,30 @@ void CWeaponRonin::ActivateThrownTurret()
 	roninTurret->DeployNow();
 }
 
-void CWeaponRonin::DrawDebugCrosshair(const Vector& location, float scale) const
+void CWeaponRonin::DrawDebugBounds(CustomGeometry::CMessageWriter* writer, const Vector& location, uint32_t colour)
+	const
 {
-	if ( debug_ronin_placement.value == 0.0f )
+	if ( !writer )
 	{
 		return;
 	}
 
-	CustomGeometry::CCrosshair3DConstructor constructor;
-	constructor.SetOrigin(location);
-	constructor.SetScale(scale);
+	CustomGeometry::CCrosshair3DConstructor origin;
+	origin.SetOrigin(location);
+	origin.SetScale(4.0f);
 
-	CustomGeometry::GeometryItemPtr_t geom = constructor.Construct();
-	geom->SetColour(0xFF3FFBFF);
+	CustomGeometry::GeometryItemPtr_t geom = origin.Construct();
+	geom->SetColour(colour);
 
-	CustomGeometry::CMessageWriter writer(CustomGeometry::Category::RoninDebugging);
-	writer.WriteClearMessage();
-	writer.WriteMessage(*geom);
+	writer->WriteMessage(*geom);
+
+	CustomGeometry::CAABBoxConstructor bbox;
+	bbox.SetBounds(location + Vector(RONIN_TURRET_MINS), location + Vector(RONIN_TURRET_MAXS));
+
+	geom = bbox.Construct();
+	geom->SetColour(colour);
+
+	writer->WriteMessage(*geom);
 }
 #endif
 

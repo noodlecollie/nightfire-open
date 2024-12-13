@@ -56,6 +56,7 @@ extern enginefuncs_t g_engfuncs;
 #define TRACE_TOSS (*g_engfuncs.pfnTraceToss)
 #define TRACE_MONSTER_HULL (*g_engfuncs.pfnTraceMonsterHull)
 #define TRACE_HULL (*g_engfuncs.pfnTraceHull)
+#define TRACE_CUSTOM_HULL (*g_engfuncs.pfnTraceCustomHull)
 #define GET_AIM_VECTOR (*g_engfuncs.pfnGetAimVector)
 #define SERVER_COMMAND (*g_engfuncs.pfnServerCommand)
 #define SERVER_EXECUTE (*g_engfuncs.pfnServerExecute)

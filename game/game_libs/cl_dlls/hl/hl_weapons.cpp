@@ -543,6 +543,31 @@ void UTIL_TraceLine(const Vector&, const Vector&, IGNORE_MONSTERS, edict_t*, Tra
 	ptr->flFraction = 1.0;
 }
 
+void UTIL_TraceHull(
+	const Vector&,
+	const Vector&,
+	IGNORE_MONSTERS,
+	int,
+	edict_t*,
+	TraceResult* ptr)
+{
+	*ptr = TraceResult {};
+	ptr->flFraction = 1.0;
+}
+
+void UTIL_TraceHull(
+	const Vector&,
+	const Vector&,
+	IGNORE_MONSTERS,
+	const Vector&,
+	const Vector&,
+	edict_t*,
+	TraceResult* ptr)
+{
+	*ptr = TraceResult {};
+	ptr->flFraction = 1.0;
+}
+
 /*
 =====================
 UTIL_ParticleBox
