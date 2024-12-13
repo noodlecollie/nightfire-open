@@ -8,6 +8,8 @@
 
 #ifndef CLIENT_DLL
 class CNPCRoninTurret;
+
+extern cvar_t debug_ronin_placement;
 #endif
 
 static const vec3_t RONIN_TURRET_MINS = {-14, -12, 0};
@@ -37,7 +39,7 @@ public:
 
 private:
 	static constexpr float PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER = 32.0f;
-	static constexpr float TURRET_PLACE_DIST_IN_FRONT_OF_PLAYER = 96.0f;
+	static constexpr float TURRET_PLACE_HDIST = 32.0f;
 
 	void ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
 	WeaponMechanics::InvocationResult PlaceTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
@@ -55,6 +57,7 @@ private:
 	void PlaceTurret(const Vector& spawnLocation);
 	CNPCRoninTurret* CreateTurret();
 	void ActivateThrownTurret();
+	void DrawDebugCrosshair(const Vector& location, float scale = 8.0f) const;
 #endif
 
 	WeaponMechanics::CProjectileMechanic* m_ThrowMechanic = nullptr;

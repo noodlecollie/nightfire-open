@@ -16,6 +16,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/constructors/baseConstructor.h
 	../game_shared/customGeometry/constructors/circle2DConstructor.h
 	../game_shared/customGeometry/constructors/circle2DConstructor.cpp
+	../game_shared/customGeometry/constructors/crosshair3DConstructor.h
+	../game_shared/customGeometry/constructors/crosshair3DConstructor.cpp
 	../game_shared/customGeometry/geometryItem.h
 	../game_shared/customGeometry/geometryItem.cpp
 	../game_shared/customGeometry/sharedDefs.h

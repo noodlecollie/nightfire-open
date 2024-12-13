@@ -44,10 +44,17 @@ namespace CustomGeometry
 			return;
 		}
 
-		const CUtlVector<Vector>& points = item.GetPoints();
-
-		if ( points.Count() < 1 )
+		if ( item.GetPoints().Count() < 1 )
 		{
+			ASSERT(false);
+			gEngfuncs.Con_Printf("CGeometryRenderer: Attempt to render geometry with no vertices\n");
+			return;
+		}
+
+		if ( item.GetIndices().Count() < 1 )
+		{
+			ASSERT(false);
+			gEngfuncs.Con_Printf("CGeometryRenderer: Attempt to render geometry with no indices\n");
 			return;
 		}
 

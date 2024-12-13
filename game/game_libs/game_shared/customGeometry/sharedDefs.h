@@ -16,7 +16,8 @@ namespace CustomGeometry
 	LIST_ITEM(None = 0, "None") /* Sending this on a clear message clears all geometry. */ \
 	LIST_ITEM(DebugPlayerBounds, "Player Bounds") \
 	LIST_ITEM(HitboxDebugging, "Hitbox Debugging") \
-	LIST_ITEM(HitscanEvents, "Hitscan Events") /* TODO: Should this be client only? */
+	LIST_ITEM(HitscanEvents, "Hitscan Events") /* TODO: Should this be client only? */ \
+	LIST_ITEM(RoninDebugging, "Ronin Debugging")
 
 #define LIST_ITEM(value, name) value,
 	enum class Category

@@ -12,6 +12,10 @@
 #include <algorithm>
 #include "bot.h"
 #include "npc/npc_ronin_turret.h"
+#include "customGeometry/constructors/crosshair3DConstructor.h"
+#include "customGeometry/messageWriter.h"
+
+cvar_t debug_ronin_placement = CONSTRUCT_CVAR_T("debug_ronin_placement", 0, FCVAR_CHEAT);
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
@@ -215,24 +219,15 @@ bool CWeaponRonin::SelectRoninPlaceSpawnLocation(Vector& outLocation) const
 	Vector viewVec;
 	AngleVectors(m_pPlayer->pev->v_angle, viewVec, nullptr, nullptr);
 
-	const Vector furthestSpawnPos = viewVec * TURRET_PLACE_DIST_IN_FRONT_OF_PLAYER;
+	// Do an initial trace to find an ideal spawn pos,
+	// then adjust later for the bounding box.
+	Vector idealSpawnPos = eyePos + (viewVec * TURRET_PLACE_HDIST);
 
 	TraceResult tr {};
-	UTIL_TraceLine(eyePos, furthestSpawnPos, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+	UTIL_TraceLine(eyePos, idealSpawnPos, dont_ignore_monsters, m_pPlayer->edict(), &tr);
+	idealSpawnPos = eyePos + (tr.flFraction * (idealSpawnPos - eyePos));
 
-	if ( tr.flFraction >= 1.0f )
-	{
-		// Contact surface is too far to spawn on.
-		return false;
-	}
-
-	// TODO: We also need to trace downwards here, in case this trace hit a wall.
-	// The process should be:
-	// - Check the current spawn location, and return false if not valid.
-	// - Trace hull downwards a maximum distance.
-	// - Return the location from this downward trace.
-
-	return FitRoninAtLocation(eyePos, viewVec, outLocation);
+	return FitRoninAtLocation(eyePos, idealSpawnPos - eyePos, outLocation);
 }
 
 bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation)
@@ -290,6 +285,11 @@ bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& de
 	}
 
 	outLocation = location;
+
+#ifndef CLIENT_DLL
+	DrawDebugCrosshair(location);
+#endif
+
 	return true;
 }
 
@@ -357,14 +357,17 @@ bool CWeaponRonin::PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupT
 	m_pPlayer->GiveAmmo(m_ThrowMechanic->GetAmmoBasedAttackMode()->AmmoDecrement, priAmmo->AmmoName, priAmmo->MaxCarry);
 	ASSERT_HAS_PRI_AMMO();
 
-	// If we had a thrown but undeployed turret, disconnect it from us.
+	// If we had a thrown but undeployed turret, and are picking up a new one,
+	// disconnect the old one from us.
 	if ( m_Turret && !newTurretIsOwnTurret )
 	{
 		GetTurret()->pev->owner = nullptr;
+	}
 
-		ASSERT_HAS_SEC_AMMO();
+	// Make sure we specify that we no longer have an undeployed turret out.
+	if ( HasThrownButUndeployedRonin() )
+	{
 		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, RONIN_HOLD_AMMO);
-		ASSERT_HAS_NO_SEC_AMMO();
 	}
 
 	ASSERT_HAS_NO_SEC_AMMO();
@@ -436,6 +439,25 @@ void CWeaponRonin::ActivateThrownTurret()
 
 	CNPCRoninTurret* roninTurret = m_Turret.StaticCast<CNPCRoninTurret>();
 	roninTurret->DeployNow();
+}
+
+void CWeaponRonin::DrawDebugCrosshair(const Vector& location, float scale) const
+{
+	if ( debug_ronin_placement.value == 0.0f )
+	{
+		return;
+	}
+
+	CustomGeometry::CCrosshair3DConstructor constructor;
+	constructor.SetOrigin(location);
+	constructor.SetScale(scale);
+
+	CustomGeometry::GeometryItemPtr_t geom = constructor.Construct();
+	geom->SetColour(0xFF3FFBFF);
+
+	CustomGeometry::CMessageWriter writer(CustomGeometry::Category::RoninDebugging);
+	writer.WriteClearMessage();
+	writer.WriteMessage(*geom);
 }
 #endif
 
