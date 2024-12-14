@@ -64,6 +64,7 @@ public:
 
 	void StartToss(const Vector& velocity, const Vector& angularVelocity);
 	void StartToss(const Vector& origin, const Vector& velocity, const Vector& angularVelocity);
+	void Place(const Vector& origin, const Vector& angles, float fov);
 
 private:
 	enum class DeployState

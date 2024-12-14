@@ -15,10 +15,11 @@ namespace CustomGeometry
 class CNPCRoninTurret;
 
 extern cvar_t debug_ronin_placement;
+extern cvar_t sv_ronin_place_fov;
 #endif
 
-static const vec3_t RONIN_TURRET_MINS = {-14, -12, 0};
-static const vec3_t RONIN_TURRET_MAXS = {14, 12, 16};
+extern const vec3_t RONIN_TURRET_MINS;
+extern const vec3_t RONIN_TURRET_MAXS;
 
 // NFTODO: Make a common base class from the frag grenade and use the
 // same logic here. It'd be nice to be able to scale the toss velocity

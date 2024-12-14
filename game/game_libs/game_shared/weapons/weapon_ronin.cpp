@@ -17,9 +17,13 @@
 #include "customGeometry/messageWriter.h"
 
 cvar_t debug_ronin_placement = CONSTRUCT_CVAR_T("debug_ronin_placement", 0, FCVAR_CHEAT);
+cvar_t sv_ronin_place_fov = CONSTRUCT_CVAR_T("sv_ronin_place_fov", 170.0f, FCVAR_SERVER);
 #endif
 
 LINK_ENTITY_TO_CLASS(weapon_ronin, CWeaponRonin);
+
+const vec3_t RONIN_TURRET_MINS = {-14, -12, 0};
+const vec3_t RONIN_TURRET_MAXS = {14, 12, 16};
 
 // Sanity helpers:
 #define ASSERT_HAS_PRI_AMMO() \
@@ -129,9 +133,11 @@ WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
 		PlaceTurret(location);
 #endif
 
-		// TODO: Play draw animation for remote
-
 		PostCreateTurret(true);
+
+		// Play the deploy animation again.
+		Redeploy();
+
 		return WeaponMechanics::InvocationResult::Complete(mechanic);
 	}
 	else
@@ -435,10 +441,27 @@ void CWeaponRonin::LaunchThrownTurret(const Vector& forward, const Vector& spawn
 	turret->StartToss(spawnLocation, velocity, avelocity);
 }
 
+// TODO: Lights doesn't look right even though the body index was set to the correct value - why?
 void CWeaponRonin::PlaceTurret(const Vector& spawnLocation)
 {
 	CNPCRoninTurret* turret = CreateTurret();
-	turret->StartToss(spawnLocation, Vector(), Vector());
+
+	Vector angles(m_pPlayer->pev->v_angle);
+	angles[PITCH] = 0.0f;
+	angles[ROLL] = 0.0f;
+
+	float fov = sv_ronin_place_fov.value;
+
+	if ( fov > 360.0f )
+	{
+		fov = 360.0f;
+	}
+	else if ( fov < 1.0f )
+	{
+		fov = 1.0f;
+	}
+
+	turret->Place(spawnLocation, angles, fov);
 }
 
 CNPCRoninTurret* CWeaponRonin::CreateTurret()

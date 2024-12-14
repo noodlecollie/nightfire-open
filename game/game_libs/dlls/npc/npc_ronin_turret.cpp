@@ -323,6 +323,13 @@ void CNPCRoninTurret::StartToss(const Vector& origin, const Vector& velocity, co
 	m_LastTossedTime = gpGlobals->time;
 }
 
+void CNPCRoninTurret::Place(const Vector& origin, const Vector& angles, float fov)
+{
+	StartToss(origin, Vector(), Vector());
+	m_flFieldOfView = CalculateFOVDotProduct(fov);
+	angles.CopyToArray(pev->angles);
+}
+
 void CNPCRoninTurret::MainThink()
 {
 	if ( !IsInWorld() )

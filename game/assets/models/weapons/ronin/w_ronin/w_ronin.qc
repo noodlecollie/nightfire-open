@@ -38,8 +38,8 @@ $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $bodygroup "studio"
 {
 	studio "w_ronin_reference_ref"
-	#studio "w_ronin_reference_ref"
-	#studio "w_ronin_reference_ref"
+	studio "w_ronin_reference_ref"
+	studio "w_ronin_reference_ref"
 }
 
 $bodygroup "front_lights"

@@ -85,6 +85,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 #ifndef CLIENT_DLL
 		obj.CustomCvars.AddToTail(&sv_ronin_slide_friction);
+		obj.CustomCvars.AddToTail(&sv_ronin_place_fov);
 		obj.CustomCvars.AddToTail(&debug_ronin_placement);
 #endif
 
