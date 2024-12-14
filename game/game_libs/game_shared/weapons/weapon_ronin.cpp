@@ -90,7 +90,7 @@ bool CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 	LaunchThrownTurret(forward, spawnLocation);
 #endif
 
-	PostCreateTurret();
+	PostCreateTurret(false);
 	return true;
 }
 
@@ -129,13 +129,9 @@ WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
 		PlaceTurret(location);
 #endif
 
-		// We have to do this here, because this attack mechanic
-		// won't do it for us.
-		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary, RONIN_HOLD_AMMO);
-
 		// TODO: Play draw animation for remote
 
-		PostCreateTurret();
+		PostCreateTurret(true);
 		return WeaponMechanics::InvocationResult::Complete(mechanic);
 	}
 	else
@@ -166,7 +162,7 @@ WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
 		ASSERT_HAS_NO_PRI_AMMO();
 		ASSERT_HAS_SEC_AMMO();
 
-		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, 1);
+		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, RONIN_HOLD_AMMO);
 
 		ASSERT_HAS_NO_PRI_AMMO();
 		ASSERT_HAS_NO_SEC_AMMO();
@@ -258,7 +254,11 @@ bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& de
 		m_pPlayer->edict(),
 		&tr);
 
-	bool success = !tr.fStartSolid && tr.flFraction > 0.0f;
+	// Note that the trace is OK if it started solid - the hull could have been
+	// intersecting with something around the player's head, for example, while
+	// the actual end point is free. The bad case is if the trace was all solid,
+	// which means that there was no free space anywhere.
+	bool success = !tr.fAllSolid && tr.flFraction > 0.0f;
 
 	if ( !success )
 	{
@@ -275,7 +275,7 @@ bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& de
 			m_pPlayer->edict(),
 			&tr);
 
-		success = !tr.fStartSolid && tr.flFraction > 0.0f;
+		success = !tr.fAllSolid && tr.flFraction > 0.0f;
 	}
 
 	if ( tr.flFraction < 1.0f )
@@ -304,16 +304,23 @@ bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& de
 	return success;
 }
 
-void CWeaponRonin::PostCreateTurret()
+void CWeaponRonin::PostCreateTurret(bool decrementPrimaryAmmo)
 {
-	ASSERT_HAS_NO_PRI_AMMO();
+	// If this is not passed, it means that the primary ammo
+	// will be decremented elsewhere (ie. in the weapon mechanic).
+	if ( decrementPrimaryAmmo )
+	{
+		ASSERT_HAS_PRI_AMMO();
+		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Primary, RONIN_HOLD_AMMO);
+		ASSERT_HAS_NO_PRI_AMMO();
+	}
+
 	ASSERT_HAS_NO_SEC_AMMO();
 
 	const WeaponAtts::WACollection& roninWeaponAtts = WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
 	const CAmmoDef* secAmmo = roninWeaponAtts.Ammo.SecondaryAmmo;
 	m_pPlayer->GiveAmmo(RONIN_HOLD_AMMO, secAmmo->AmmoName, secAmmo->MaxCarry);
 
-	ASSERT_HAS_NO_PRI_AMMO();
 	ASSERT_HAS_SEC_AMMO();
 
 	SetPrimaryAttackMechanic(m_DeployMechanic);

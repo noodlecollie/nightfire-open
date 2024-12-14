@@ -742,7 +742,8 @@ void CNPCRoninTurret::FireGun()
 
 	EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, FIRE_SOUND, 1, 0.6f, 0, RANDOM_LONG(94, 102));
 
-	// TODO: Play turret shoot animation
+	SetSequence(NPCRONIN_FIRE);
+	pev->frame = 0;
 }
 
 void CNPCRoninTurret::UpdateBodyAndSkin()

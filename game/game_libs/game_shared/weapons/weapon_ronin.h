@@ -55,7 +55,7 @@ private:
 	bool SelectRoninThrowSpawnLocation(const Vector& forward, Vector& outLocation) const;
 	bool SelectRoninPlaceSpawnLocation(Vector& outLocation) const;
 	bool FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation) const;
-	void PostCreateTurret();
+	void PostCreateTurret(bool decrementPrimaryAmmo);
 	void Redeploy();
 
 #ifndef CLIENT_DLL
