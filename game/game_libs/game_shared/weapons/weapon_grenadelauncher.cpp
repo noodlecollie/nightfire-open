@@ -40,6 +40,7 @@ CWeaponGrenadeLauncher::CWeaponGrenadeLauncher() :
 	const auto createProjectile = [this](WeaponMechanics::CProjectileMechanic& mechanic)
 	{
 		CreateProjectile(mechanic);
+		return true;
 	};
 
 	m_ContactGrenadeAttack->SetCreateProjectileCallback(createProjectile);

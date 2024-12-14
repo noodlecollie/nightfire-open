@@ -119,13 +119,13 @@ namespace WeaponMechanics
 
 	void CProjectileMechanic::CreateProjectileAndDecrementAmmo()
 	{
-		DecrementAmmo(GetAttackMode());
-
 		// Need to check this, as it should only be set on the server.
-		if ( m_CreateProjectileCallback )
+		if ( m_CreateProjectileCallback && !m_CreateProjectileCallback(*this) )
 		{
-			m_CreateProjectileCallback(*this);
+			return;
 		}
+
+		DecrementAmmo(GetAttackMode());
 
 		if ( !HasAmmo(1, true) && !HasAmmo(1, false) )
 		{

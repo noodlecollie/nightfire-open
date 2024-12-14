@@ -39,11 +39,7 @@ CWeaponRonin::CWeaponRonin() :
 	m_ThrowMechanic->SetCreateProjectileCallback(
 		[this](WeaponMechanics::CProjectileMechanic& mechanic)
 		{
-			// TODO: Do we need to allow this to return a value
-			// and cancel the entire action? If spawning the
-			// turret fails, I don't think the view model animation
-			// will be cancelled.
-			ThrowTurret(mechanic);
+			return ThrowTurret(mechanic);
 		});
 
 	m_PlaceMechanic->SetCallback(
@@ -70,7 +66,7 @@ const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const
 	return WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
 }
 
-void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
+bool CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
 {
 	Vector forward;
 	AngleVectors(mechanic.GetProjectileLaunchAngles(0.0f), forward, nullptr, nullptr);
@@ -86,7 +82,8 @@ void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 			m_pPlayer->pev->origin[VEC3_Y],
 			m_pPlayer->pev->origin[VEC3_Z]);
 
-		return;
+		Redeploy();
+		return false;
 	}
 
 #ifndef CLIENT_DLL
@@ -94,6 +91,7 @@ void CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 #endif
 
 	PostCreateTurret();
+	return true;
 }
 
 WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
@@ -123,8 +121,7 @@ WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
 				m_pPlayer->pev->origin[VEC3_Y],
 				m_pPlayer->pev->origin[VEC3_Z]);
 
-			// TODO: Reset view model
-
+			Redeploy();
 			return WeaponMechanics::InvocationResult::Rejected(mechanic);
 		}
 
@@ -231,7 +228,6 @@ bool CWeaponRonin::SelectRoninPlaceSpawnLocation(Vector& outLocation) const
 	return FitRoninAtLocation(eyePos, idealSpawnPos - eyePos, outLocation);
 }
 
-// TODO: Make another version of this where the beginning point is adjusted if the trace fails.
 bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation)
 	const
 {
@@ -324,6 +320,12 @@ void CWeaponRonin::PostCreateTurret()
 	SetSecondaryAttackMechanic(nullptr);  // TODO: Detonate
 }
 
+void CWeaponRonin::Redeploy()
+{
+	Deploy();
+	DelayPendingActions(0.75f);
+}
+
 #ifndef CLIENT_DLL
 CNPCRoninTurret* CWeaponRonin::GetTurret() const
 {
@@ -393,9 +395,7 @@ bool CWeaponRonin::PickUpUndeployedTurret(CNPCRoninTurret* turret, TurretPickupT
 
 	if ( m_pPlayer->m_pActiveItem == this )
 	{
-		// Replay deploy amimation.
-		Deploy();
-		DelayPendingActions(0.75f);
+		Redeploy();
 	}
 	else if ( g_pGameRules->FShouldSwitchWeapon(m_pPlayer, this) )
 	{

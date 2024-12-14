@@ -46,7 +46,7 @@ private:
 	static constexpr float PROJECTILE_SPAWN_DIST_IN_FRONT_OF_PLAYER = 32.0f;
 	static constexpr float TURRET_PLACE_HDIST = 32.0f;
 
-	void ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
+	bool ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
 	WeaponMechanics::InvocationResult PlaceTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
 	WeaponMechanics::InvocationResult ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
 	void SendEvent(const WeaponMechanics::CDelegatedMechanic& mechanic);
@@ -56,6 +56,7 @@ private:
 	bool SelectRoninPlaceSpawnLocation(Vector& outLocation) const;
 	bool FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation) const;
 	void PostCreateTurret();
+	void Redeploy();
 
 #ifndef CLIENT_DLL
 	void LaunchThrownTurret(const Vector& forward, const Vector& spawnLocation);

@@ -39,6 +39,7 @@ CWeaponFragGrenade::CWeaponFragGrenade() :
 		[this](WeaponMechanics::CProjectileMechanic& mechanic)
 		{
 			CreateProjectile(mechanic);
+			return true;
 		});
 #endif
 

@@ -13,7 +13,7 @@ namespace WeaponMechanics
 	class CProjectileMechanic : public CBaseMechanic
 	{
 	public:
-		using CreateProjectileCallback = std::function<void(CProjectileMechanic&)>;
+		using CreateProjectileCallback = std::function<bool(CProjectileMechanic&)>;
 
 		CProjectileMechanic(CGenericWeapon* weapon, const WeaponAtts::WAProjectileAttack* attackMode);
 		CProjectileMechanic(CGenericWeapon* weapon, uint32_t attackIndex);
