@@ -125,6 +125,7 @@ int Mod_HitgroupForStudioHull(int index);
 void Mod_ClearStudioCache(void);
 int Mod_StudioGetSequenceCount(model_t* model);
 int Mod_StudioGetSkinCount(model_t* model);
+int Mod_StudioGetBodyGroupCount(model_t* model);
 const char* Mod_StudioGetSequenceName(model_t* model, int anim);
 float Mod_StudioGetSequenceDuration(model_t* model, int anim);
 void Mod_StudioGetEyePosition(model_t* model, float* outVec3Pos);

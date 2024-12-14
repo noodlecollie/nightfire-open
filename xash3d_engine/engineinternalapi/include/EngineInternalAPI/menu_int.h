@@ -129,6 +129,7 @@ typedef struct ui_enginefuncs_s
 	void (*pfnSetModel)(struct cl_entity_s* ed, const char* path);
 	int (*pfnGetModelSequenceCount)(struct cl_entity_s* ent);
 	int (*pfnGetModelSkinCount)(struct cl_entity_s* ent);
+	int (*pfnGetModelBodyGroupCount)(struct cl_entity_s* ent);
 	const char* (*pfnGetModelSequenceName)(struct cl_entity_s* ent, int sequenceIndex);
 	qboolean (
 		*pfnGetModelSequenceBounds)(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs);

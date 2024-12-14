@@ -88,12 +88,23 @@ private:
 		m_SequenceTable.SetNameAndStatus(L("Sequences"), L("Animation sequences in this model"));
 		AddItem(m_SequenceTable);
 
-		m_SkinTable
-			.SetRect(LEFT_MARGIN, TOP_MARGIN + tableHeight + VIEW_PADDING, GetFirstColumnWidth(), tableHeight);
+		const int halfColWidth = (col1Width / 2) - INTER_AREA_PADDING;
+
+		m_SkinTable.SetRect(LEFT_MARGIN, TOP_MARGIN + tableHeight + VIEW_PADDING, halfColWidth, tableHeight);
 		m_SkinTable.SetModel(&m_SkinModel);
 		m_SkinTable.onChanged = VoidCb(&CMenuModelViewer::HandleSkinChanged);
 		m_SkinTable.SetNameAndStatus(L("Skins"), L("Texture skins in this model"));
 		AddItem(m_SkinTable);
+
+		m_BodyTable.SetRect(
+			LEFT_MARGIN + halfColWidth + INTER_AREA_PADDING,
+			TOP_MARGIN + tableHeight + VIEW_PADDING,
+			halfColWidth,
+			tableHeight);
+		m_BodyTable.SetModel(&m_BodyModel);
+		m_BodyTable.onChanged = VoidCb(&CMenuModelViewer::HandleBodyChanged);
+		m_BodyTable.SetNameAndStatus(L("Body Groups"), L("Body groups in this model"));
+		AddItem(m_BodyTable);
 
 		m_SceneView.SetRect(col2Left, TOP_MARGIN, NEG_VIEW_RIGHT, NEG_VIEW_BOTTOM);
 		m_SceneView.SetAllowPitchRotation(true);
@@ -249,8 +260,18 @@ private:
 		for ( int index = 0; index < numSkins; ++index )
 		{
 			CUtlString indexStr;
-			indexStr.Format("%d", index);
+			indexStr.Format("Skin %d", index);
 			m_SkinModel.AddToTail(indexStr);
+		}
+
+		int numBodyGroups = EngFuncs::GetModelBodyGroupCount(m_MainStudioModel);
+		m_BodyModel.Purge();
+
+		for ( int index = 0; index < numBodyGroups; ++index )
+		{
+			CUtlString indexStr;
+			indexStr.Format("Body %d", index);
+			m_BodyModel.AddToTail(indexStr);
 		}
 
 		m_MainStudioModel->curstate.animtime = gpGlobals->time;
@@ -275,6 +296,16 @@ private:
 		}
 
 		m_MainStudioModel->curstate.skin = static_cast<short>(m_SkinTable.GetCurrentIndex());
+	}
+
+	void HandleBodyChanged()
+	{
+		if ( !m_MainStudioModel )
+		{
+			return;
+		}
+
+		m_MainStudioModel->curstate.body = static_cast<short>(m_BodyTable.GetCurrentIndex());
 	}
 
 	void LookUpModelSubdirsRecursively()
@@ -507,10 +538,12 @@ private:
 	CStudioSceneModel m_SceneModel;
 	CStringVectorModel m_SequenceModel;
 	CStringVectorModel m_SkinModel;
+	CStringVectorModel m_BodyModel;
 
 	CMenuDeveloperStudioSceneView m_SceneView;
 	CMenuTable m_SequenceTable;
 	CMenuTable m_SkinTable;
+	CMenuTable m_BodyTable;
 
 	CMenuField m_FieldCameraPosX;
 	CMenuField m_FieldCameraPosY;
