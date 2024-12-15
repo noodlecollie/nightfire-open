@@ -1331,8 +1331,6 @@ void Mod_StudioComputeBounds(void* buffer, vec3_t mins, vec3_t maxs, qboolean ig
 	pstudiohdr = (studiohdr_t*)buffer;
 	pbodypart = (mstudiobodyparts_t*)((byte*)pstudiohdr + pstudiohdr->bodypartindex);
 
-	// each body part has nummodels variations so there are as many total variations as there
-	// are in a matrix of each part by each other part
 	for ( i = 0; i < pstudiohdr->numbodyparts; i++ )
 		bodyCount += pbodypart[i].nummodels;
 
@@ -1588,22 +1586,27 @@ Mod_StudioBodyVariations
 calc studio body variations
 ================
 */
-static int Mod_StudioBodyVariations(model_t* mod)
+int Mod_StudioBodyVariations(model_t* mod)
 {
 	studiohdr_t* pstudiohdr;
 	mstudiobodyparts_t* pbodypart;
-	int i, count = 1;
-
 	pstudiohdr = (studiohdr_t*)Mod_StudioExtradata(mod);
+
 	if ( !pstudiohdr )
+	{
 		return 0;
+	}
 
 	pbodypart = (mstudiobodyparts_t*)((byte*)pstudiohdr + pstudiohdr->bodypartindex);
 
 	// each body part has nummodels variations so there are as many total variations as there
-	// are in a matrix of each part by each other part
-	for ( i = 0; i < pstudiohdr->numbodyparts; i++ )
-		count = count * pbodypart[i].nummodels;
+	// are in a matrix of each part by each other part.
+	int count = 1;
+
+	for ( int i = 0; i < pstudiohdr->numbodyparts; i++ )
+	{
+		count *= pbodypart[i].nummodels;
+	}
 
 	return count;
 }

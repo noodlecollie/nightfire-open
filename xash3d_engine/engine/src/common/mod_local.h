@@ -130,6 +130,7 @@ const char* Mod_StudioGetSequenceName(model_t* model, int anim);
 float Mod_StudioGetSequenceDuration(model_t* model, int anim);
 void Mod_StudioGetEyePosition(model_t* model, float* outVec3Pos);
 qboolean Mod_StudioGetSequenceBounds(model_t* model, int anim, vec3_t outVecMins, vec3_t outVecMaxs);
+int Mod_StudioBodyVariations(model_t* model);
 void Mod_StudioPlayerBlend(mstudioseqdesc_t* pseqdesc, int* pBlend, float* pPitch);
 void Mod_PrecacheEventSounds(model_t* model);
 int Mod_GetNumTags(model_t* model);

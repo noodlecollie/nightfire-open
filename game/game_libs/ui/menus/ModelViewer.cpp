@@ -264,10 +264,10 @@ private:
 			m_SkinModel.AddToTail(indexStr);
 		}
 
-		int numBodyGroups = EngFuncs::GetModelBodyGroupCount(m_MainStudioModel);
+		int numBodyVariations = EngFuncs::GetModelBodyVariationCount(m_MainStudioModel);
 		m_BodyModel.Purge();
 
-		for ( int index = 0; index < numBodyGroups; ++index )
+		for ( int index = 0; index < numBodyVariations; ++index )
 		{
 			CUtlString indexStr;
 			indexStr.Format("Body %d", index);

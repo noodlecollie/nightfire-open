@@ -32,27 +32,23 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
-# 0. All lights
-# 1. Front lights only
-# 2. No lights
+# We always want the main body
 $bodygroup "studio"
 {
 	studio "w_ronin_reference_ref"
-	studio "w_ronin_reference_ref"
-	studio "w_ronin_reference_ref"
 }
 
+# Allow us to show or hide the front lights
 $bodygroup "front_lights"
 {
 	studio "ronin_front_lights"
-	studio "ronin_front_lights"
 	blank
 }
 
+# Allow us to show or hide the rear lights
 $bodygroup "rear_lights"
 {
 	studio "ronin_rear_lights"
-	blank
 	blank
 }
 

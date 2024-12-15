@@ -294,9 +294,9 @@ public:
 		return engfuncs.pfnGetModelSkinCount(ent);
 	}
 
-	static inline int GetModelBodyGroupCount(struct cl_entity_s* ent)
+	static inline int GetModelBodyVariationCount(struct cl_entity_s* ent)
 	{
-		return engfuncs.pfnGetModelBodyGroupCount(ent);
+		return engfuncs.pfnGetModelBodyVariationCount(ent);
 	}
 
 	static inline void ClearScene(void)

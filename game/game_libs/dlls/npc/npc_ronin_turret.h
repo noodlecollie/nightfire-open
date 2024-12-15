@@ -13,9 +13,10 @@ enum NPCRoninTurretAnimations_e
 	NPCRONIN_DEPLOY_IDLE,
 };
 
-enum NPCRoninTurretBodyGroups_e
+enum NPCRoninTurretBody_e
 {
 	NPCRONIN_BODY_ALL_LIGHTS,
+	NPCRONIN_BODY_REAR_LIGHTS,
 	NPCRONIN_BODY_FRONT_LIGHTS,
 	NPCRONIN_BODY_NO_LIGHTS,
 };
@@ -97,7 +98,7 @@ private:
 
 	static constexpr float DEFAULT_SIGHT_FOV = 150.0f;
 	static constexpr float DEFAULT_SHOOT_FOV = 20.0f;
-	static constexpr float DEFAULT_SPREAD_CONE = 5.0f;
+	static constexpr float DEFAULT_SPREAD_CONE = 1.0f;
 
 	// A value less than any other dot product we should encounter.
 	static constexpr float FOV_SEARCH_ANYWHERE = -2.0f;

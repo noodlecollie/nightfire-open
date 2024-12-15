@@ -11,6 +11,23 @@ $eyeposition 0.000000 0.000000 0.000000
 $bbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 $cbox 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
 
+# For reference, since I keep coming back to this model as
+# a demonstration of how body groups work:
+# - Each $bodygroup is one "body part" in the model (affects
+#   the header's numbodyparts count)
+# - For each body group, there are one or more "submodels"
+#   (affects the number of models held in the body group).
+#   This is limited overall to MAXSTUDIOMODELS (48), which
+#   includes "blank" models.
+# - The number of combinations is the multiplication of all
+#   available submodels. This is *not* the same as the
+#   number of body groups!
+# - The body value in an entity is a value that indexes into
+#   each body part. The body part has a "base" value which
+#   acts as a divisor, and later body parts have larger base
+#   values. This means that as the body value increases,
+#   earlier body groups have their parts cycled through more
+#   quickly than later body groups.
 $bodygroup "studio"
 {
 	studio "v_p99_reference_ref"
@@ -23,7 +40,6 @@ $bodygroup "silencer"
 $bodygroup "hands"
 {
 	studio "v_hands_reference_ref"
-	blank
 }
 
 $attachment "" "R_GUN" 0.000000 -7.500000 3.500000
