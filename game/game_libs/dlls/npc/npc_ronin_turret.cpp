@@ -727,7 +727,9 @@ void CNPCRoninTurret::FireGun()
 	const float spread = GetSpreadCone();
 
 	Vector shootDir;
-	AngleVectors(GetGunBarrelAngles(), shootDir, nullptr, nullptr);
+	Vector rightDir;
+	Vector upDir;
+	AngleVectors(GetGunBarrelAngles(), shootDir, rightDir, upDir);
 
 	CHitscanComponent hitscanComponent;
 
@@ -735,11 +737,11 @@ void CNPCRoninTurret::FireGun()
 	hitscanComponent.SetShootDir(shootDir);
 	hitscanComponent.SetInflictor(pev);
 	hitscanComponent.SetRandomSeed(playerOwner ? playerOwner->random_seed : DEFAULT_RANDOM_SEED);
-	hitscanComponent.SetRightDir(gpGlobals->v_right);
-	hitscanComponent.SetUpDir(gpGlobals->v_up);
+	hitscanComponent.SetRightDir(rightDir);
+	hitscanComponent.SetUpDir(upDir);
 	hitscanComponent.SetAttacker(pev->owner ? VARS(pev->owner) : pev);
 	hitscanComponent.SetBulletsPerShot(1);
-	hitscanComponent.SetBaseDamagePerShot(10 /*TODO: Make skill-based*/);
+	hitscanComponent.SetBaseDamagePerShot(&skilldata_t::plrDmgRoninBullet);
 	hitscanComponent.SetSpread(Vector2D(spread, spread));
 	hitscanComponent.SetSendTracerMessage(true);
 

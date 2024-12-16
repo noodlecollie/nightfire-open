@@ -441,7 +441,6 @@ void CWeaponRonin::LaunchThrownTurret(const Vector& forward, const Vector& spawn
 	turret->StartToss(spawnLocation, velocity, avelocity);
 }
 
-// TODO: Lights doesn't look right even though the body index was set to the correct value - why?
 void CWeaponRonin::PlaceTurret(const Vector& spawnLocation)
 {
 	CNPCRoninTurret* turret = CreateTurret();
