@@ -3,7 +3,7 @@
 #include "npc/npc_ronin_turret.h"
 #include "monsters.h"
 #include "weapons.h"
-#include "gameplay/hitscancomponent.h"
+#include "gameplay/hitscanaction.h"
 #include "weaponregistry.h"
 #include "MathLib/utils.h"
 #include "weapons/weapon_ronin.h"
@@ -731,21 +731,21 @@ void CNPCRoninTurret::FireGun()
 	Vector upDir;
 	AngleVectors(GetGunBarrelAngles(), shootDir, rightDir, upDir);
 
-	CHitscanComponent hitscanComponent;
+	CHitscanAction hitscanAction;
 
-	hitscanComponent.SetGunPos(gunPos);
-	hitscanComponent.SetShootDir(shootDir);
-	hitscanComponent.SetInflictor(pev);
-	hitscanComponent.SetRandomSeed(playerOwner ? playerOwner->random_seed : DEFAULT_RANDOM_SEED);
-	hitscanComponent.SetRightDir(rightDir);
-	hitscanComponent.SetUpDir(upDir);
-	hitscanComponent.SetAttacker(pev->owner ? VARS(pev->owner) : pev);
-	hitscanComponent.SetBulletsPerShot(1);
-	hitscanComponent.SetBaseDamagePerShot(&skilldata_t::plrDmgRoninBullet);
-	hitscanComponent.SetSpread(Vector2D(spread, spread));
-	hitscanComponent.SetSendTracerMessage(true);
+	hitscanAction.SetGunPos(gunPos);
+	hitscanAction.SetShootDir(shootDir);
+	hitscanAction.SetInflictor(pev);
+	hitscanAction.SetRandomSeed(playerOwner ? playerOwner->random_seed : DEFAULT_RANDOM_SEED);
+	hitscanAction.SetRightDir(rightDir);
+	hitscanAction.SetUpDir(upDir);
+	hitscanAction.SetAttacker(pev->owner ? VARS(pev->owner) : pev);
+	hitscanAction.SetBulletsPerShot(1);
+	hitscanAction.SetBaseDamagePerShot(&skilldata_t::plrDmgRoninBullet);
+	hitscanAction.SetSpread(Vector2D(spread, spread));
+	hitscanAction.SetSendTracerMessage(true);
 
-	hitscanComponent.FireBullets();
+	hitscanAction.FireBullets();
 
 	pev->effects = pev->effects | EF_MUZZLEFLASH;
 

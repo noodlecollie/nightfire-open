@@ -274,8 +274,11 @@ void ExplosionCreate(const Vector& center, const Vector& angles, edict_t* pOwner
 	kvd.szKeyName = (char*)"iMagnitude";
 	kvd.szValue = buf;
 	pExplosion->KeyValue(&kvd);
+
 	if ( !doDamage )
+	{
 		pExplosion->pev->spawnflags |= SF_ENVEXPLOSION_NODAMAGE;
+	}
 
 	pExplosion->Spawn();
 	pExplosion->Use(NULL, NULL, USE_TOGGLE, 0);

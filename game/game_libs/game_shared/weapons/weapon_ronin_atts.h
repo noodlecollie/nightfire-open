@@ -137,9 +137,11 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 			placeAttack->PlayDryFireSoundOnEmpty = false;
 			placeAttack->AttackRate = 3.0f;
 
-			// deployAttack->ViewModelAttackSounds.MinPitch = 100;
-			// deployAttack->ViewModelAttackSounds.MinPitch = 100;
-			// deployAttack->ViewModelAttackSounds.SoundNames << "weapons/weapon_ronin/remote_activate.wav";
+			placeAttack->ViewModelAttackSounds.MinPitch = 100;
+			placeAttack->ViewModelAttackSounds.MinPitch = 100;
+			placeAttack->ViewModelAttackSounds.MinVolume = 0.6f;
+			placeAttack->ViewModelAttackSounds.MaxVolume = 0.6f;
+			placeAttack->ViewModelAttackSounds.SoundNames << "weapons/weapon_ronin/holster.wav";
 
 			CrosshairParameters& crosshair = placeAttack->Crosshair;
 			crosshair.RenderStyle = CrosshairStyle::None;
@@ -160,7 +162,9 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 			deployAttack->IsContinuous = false;
 			deployAttack->Volume = QUIET_GUN_VOLUME;
 			deployAttack->PlayDryFireSoundOnEmpty = false;
-			deployAttack->AttackRate = 0.5f;
+
+			// 1 / time this attack takes to execute
+			deployAttack->AttackRate = 1.0f / 2.0f;
 
 			deployAttack->ViewModelAttackSounds.MinPitch = 100;
 			deployAttack->ViewModelAttackSounds.MinPitch = 100;
@@ -174,6 +178,38 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 			ViewModelAnimationSet* overrideAnimations = new ViewModelAnimationSet();
 			deployAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(overrideAnimations);
+
+			overrideAnimations->Anim_Draw = VRONIN_DETONATOR_DRAW;
+			overrideAnimations->AnimList_Idle << VRONIN_DETONATOR_IDLE1 << VRONIN_DETONATOR_IDLE2;
+		}
+
+		{
+			WAEventAttack* detonateAttack = new WAEventAttack();
+			obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(detonateAttack));
+
+			detonateAttack->EventScript = "events/weapon_ronin/detonate.sc";
+			detonateAttack->FunctionsUnderwater = true;
+			detonateAttack->IsContinuous = false;
+			detonateAttack->Volume = QUIET_GUN_VOLUME;
+			detonateAttack->PlayDryFireSoundOnEmpty = false;
+
+			// 1 / time this attack takes to execute
+			detonateAttack->AttackRate = 1.0f / 3.3f;
+
+			// TODO: Move most of the components of this sound to MDL events.
+			// We want the beep to be global, and the rest to be client-side.
+			detonateAttack->ViewModelAttackSounds.MinPitch = 100;
+			detonateAttack->ViewModelAttackSounds.MinPitch = 100;
+			detonateAttack->ViewModelAttackSounds.SoundNames << "weapons/weapon_ronin/remote_detonate.wav";
+
+			CrosshairParameters& crosshair = detonateAttack->Crosshair;
+			crosshair.RenderStyle = CrosshairStyle::None;
+
+			detonateAttack->ViewModelAnimList_Attack << VRONIN_DETONATOR_FIRE_EXPLODE;
+			detonateAttack->ViewModelAnimList_AttackEmpty << VRONIN_DETONATOR_FIRE_EXPLODE;
+
+			ViewModelAnimationSet* overrideAnimations = new ViewModelAnimationSet();
+			detonateAttack->OverrideAnimations = std::shared_ptr<ViewModelAnimationSet>(overrideAnimations);
 
 			overrideAnimations->Anim_Draw = VRONIN_DETONATOR_DRAW;
 			overrideAnimations->AnimList_Idle << VRONIN_DETONATOR_IDLE1 << VRONIN_DETONATOR_IDLE2;

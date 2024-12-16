@@ -24,8 +24,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/sharedDefs.cpp
 	../game_shared/eventConstructor/eventConstructor.h
 	../game_shared/eventConstructor/eventConstructor.cpp
-	../game_shared/gameplay/hitscancomponent.h
-	../game_shared/gameplay/hitscancomponent.cpp
+	../game_shared/gameplay/hitscanaction.h
+	../game_shared/gameplay/hitscanaction.cpp
 	../game_shared/gameplay/inaccuracyCvars.h
 	../game_shared/gameplay/inaccuracymodifiers.h
 	../game_shared/gameplay/inaccuracymodifiers.cpp

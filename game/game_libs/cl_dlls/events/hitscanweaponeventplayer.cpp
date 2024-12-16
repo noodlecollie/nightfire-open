@@ -17,7 +17,7 @@
 #include "eventCommands.h"
 #include "gameplay/inaccuracymodifiers.h"
 #include "gameplay/spreadPatterns.h"
-#include "gameplay/hitscancomponent.h"
+#include "gameplay/hitscanaction.h"
 
 namespace
 {

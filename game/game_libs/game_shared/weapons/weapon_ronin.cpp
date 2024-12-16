@@ -15,6 +15,7 @@
 #include "customGeometry/constructors/crosshair3DConstructor.h"
 #include "customGeometry/constructors/aabboxConstructor.h"
 #include "customGeometry/messageWriter.h"
+#include "explode.h"
 
 cvar_t debug_ronin_placement = CONSTRUCT_CVAR_T("debug_ronin_placement", 0, FCVAR_CHEAT);
 cvar_t sv_ronin_place_fov = CONSTRUCT_CVAR_T("sv_ronin_place_fov", 170.0f, FCVAR_SERVER);
@@ -33,12 +34,15 @@ const vec3_t RONIN_TURRET_MAXS = {14, 12, 16};
 	ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == RONIN_HOLD_AMMO)
 #define ASSERT_HAS_NO_SEC_AMMO() ASSERT(m_iSecondaryAmmoType >= 0 && m_pPlayer->m_rgAmmo[m_iSecondaryAmmoType] == 0)
 
+// TODO: We still need to fix the idle animations not being played properly
+// when the Ronin is held. This might be to do with view model override animations?
 CWeaponRonin::CWeaponRonin() :
 	CGenericWeapon()
 {
 	AddMechanicByAttributeIndex<WeaponAtts::WAProjectileAttack>(VRONIN_ATTACKMODE_TOSS, m_ThrowMechanic);
 	AddMechanicByAttributeIndex<WeaponAtts::WAEventAttack>(VRONIN_ATTACKMODE_PLACE, m_PlaceMechanic);
 	AddMechanicByAttributeIndex<WeaponAtts::WAEventAttack>(VRONIN_ATTACKMODE_DEPLOY, m_DeployMechanic);
+	AddMechanicByAttributeIndex<WeaponAtts::WAEventAttack>(VRONIN_ATTACKMODE_DETONATE, m_DetonateMechanic);
 
 	m_ThrowMechanic->SetCreateProjectileCallback(
 		[this](WeaponMechanics::CProjectileMechanic& mechanic)
@@ -58,6 +62,12 @@ CWeaponRonin::CWeaponRonin() :
 			return ActivateTurret(mechanic, step);
 		});
 
+	m_DetonateMechanic->SetCallback(
+		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
+		{
+			return DetonateTurret(mechanic, step);
+		});
+
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
 	SetSecondaryAttackMechanic(m_PlaceMechanic);
 
@@ -68,6 +78,22 @@ CWeaponRonin::CWeaponRonin() :
 const WeaponAtts::WACollection& CWeaponRonin::WeaponAttributes() const
 {
 	return WeaponAtts::StaticWeaponAttributes<CWeaponRonin>();
+}
+
+void CWeaponRonin::Holster(int skiplocal)
+{
+#ifndef CLIENT_DLL
+	// We may have been holstered while an event attack was pending its finish.
+	// Make sure there is no secondary ammo left over when there shouldn't be.
+	CNPCRoninTurret* turret = m_Turret.StaticCast<CNPCRoninTurret>();
+
+	if ( !turret || !turret->IsUndeployed() )
+	{
+		ClearSecondaryAmmo();
+	}
+#endif
+
+	CGenericWeapon::Holster(skiplocal);
 }
 
 bool CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic)
@@ -154,6 +180,42 @@ WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
 	{
 #ifndef CLIENT_DLL
 		ActivateThrownTurret();
+#endif
+
+		SendEvent(mechanic);
+
+		const float delay = 1.0f / mechanic.GetAttackMode()->AttackRate;
+		DelayFiring(delay);
+		SetNextIdleTime(delay + 1.0f);
+		return WeaponMechanics::InvocationResult::Incomplete(mechanic, delay);
+	}
+	else if ( step == 1 )
+	{
+		ASSERT_HAS_NO_PRI_AMMO();
+		ASSERT_HAS_SEC_AMMO();
+
+		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, RONIN_HOLD_AMMO);
+
+		ASSERT_HAS_NO_PRI_AMMO();
+		ASSERT_HAS_NO_SEC_AMMO();
+
+		RetireWeapon();
+		return WeaponMechanics::InvocationResult::Complete(mechanic);
+	}
+	else
+	{
+		return WeaponMechanics::InvocationResult::Rejected(mechanic);
+	}
+}
+
+WeaponMechanics::InvocationResult CWeaponRonin::DetonateTurret(
+	WeaponMechanics::CDelegatedMechanic& mechanic,
+	uint32_t step)
+{
+	if ( step == 0 )
+	{
+#ifndef CLIENT_DLL
+		DetonateThrownTurret();
 #endif
 
 		SendEvent(mechanic);
@@ -330,13 +392,25 @@ void CWeaponRonin::PostCreateTurret(bool decrementPrimaryAmmo)
 	ASSERT_HAS_SEC_AMMO();
 
 	SetPrimaryAttackMechanic(m_DeployMechanic);
-	SetSecondaryAttackMechanic(nullptr);  // TODO: Detonate
+	SetSecondaryAttackMechanic(m_DetonateMechanic);
 }
 
 void CWeaponRonin::Redeploy()
 {
 	Deploy();
 	DelayPendingActions(0.75f);
+}
+
+void CWeaponRonin::ClearSecondaryAmmo()
+{
+	int secAmmo = m_pPlayer->AmmoInventory(m_iSecondaryAmmoType);
+
+	if ( secAmmo > 0 )
+	{
+		ASSERT_HAS_SEC_AMMO();
+		DecrementAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool::Secondary, secAmmo);
+		ASSERT_HAS_NO_SEC_AMMO();
+	}
 }
 
 #ifndef CLIENT_DLL
@@ -483,6 +557,26 @@ void CWeaponRonin::ActivateThrownTurret()
 
 	CNPCRoninTurret* roninTurret = m_Turret.StaticCast<CNPCRoninTurret>();
 	roninTurret->DeployNow();
+}
+
+void CWeaponRonin::DetonateThrownTurret()
+{
+	if ( !m_Turret )
+	{
+		return;
+	}
+
+	CNPCRoninTurret* turret = m_Turret.StaticCast<CNPCRoninTurret>();
+
+	ExplosionCreate(
+		turret->pev->origin,
+		Vector(),
+		m_pPlayer->edict(),
+		static_cast<int>(gSkillData.plrDmgRoninExplosion),
+		TRUE);
+
+	UTIL_Remove(turret);
+	m_Turret = nullptr;
 }
 
 void CWeaponRonin::DrawDebugBounds(CustomGeometry::CMessageWriter* writer, const Vector& location, uint32_t colour)

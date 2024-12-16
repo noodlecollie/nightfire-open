@@ -1,4 +1,4 @@
-#include "gameplay/hitscancomponent.h"
+#include "gameplay/hitscanaction.h"
 #include "gameplay/inaccuracymodifiers.h"
 #include "gameplay/inaccuracyCvars.h"
 #include "gameplay/spreadPatterns.h"
@@ -8,102 +8,102 @@
 #include "weapondebugevents/weapondebugeventsource.h"
 #endif
 
-CHitscanComponent::~CHitscanComponent()
+CHitscanAction::~CHitscanAction()
 {
 	// Required for using std::unique_ptr with a forward-declared type.
 }
 
-Vector CHitscanComponent::GetGunPos() const
+Vector CHitscanAction::GetGunPos() const
 {
 	return m_GunPos;
 }
 
-void CHitscanComponent::SetGunPos(const Vector& pos)
+void CHitscanAction::SetGunPos(const Vector& pos)
 {
 	m_GunPos = pos;
 }
 
-Vector CHitscanComponent::GetShootDir() const
+Vector CHitscanAction::GetShootDir() const
 {
 	return m_ShootDir;
 }
 
-void CHitscanComponent::SetShootDir(const Vector& dir)
+void CHitscanAction::SetShootDir(const Vector& dir)
 {
 	m_ShootDir = dir;
 }
 
-Vector CHitscanComponent::GetRightDir() const
+Vector CHitscanAction::GetRightDir() const
 {
 	return m_RightDir;
 }
 
-void CHitscanComponent::SetRightDir(const Vector& dir)
+void CHitscanAction::SetRightDir(const Vector& dir)
 {
 	m_RightDir = dir;
 }
 
-Vector CHitscanComponent::GetUpDir() const
+Vector CHitscanAction::GetUpDir() const
 {
 	return m_UpDir;
 }
 
-void CHitscanComponent::SetUpDir(const Vector& dir)
+void CHitscanAction::SetUpDir(const Vector& dir)
 {
 	m_UpDir = dir;
 }
 
-int CHitscanComponent::GetRandomSeed() const
+int CHitscanAction::GetRandomSeed() const
 {
 	return m_RandomSeed;
 }
 
-void CHitscanComponent::SetRandomSeed(int seed)
+void CHitscanAction::SetRandomSeed(int seed)
 {
 	m_RandomSeed = seed;
 }
 
-CGenericWeapon* CHitscanComponent::GetWeapon() const
+CGenericWeapon* CHitscanAction::GetWeapon() const
 {
 	return m_Weapon;
 }
 
-void CHitscanComponent::SetWeapon(CGenericWeapon* weapon)
+void CHitscanAction::SetWeapon(CGenericWeapon* weapon)
 {
 	m_Weapon = weapon;
 }
 
-uint32_t CHitscanComponent::GetBulletsPerShot() const
+uint32_t CHitscanAction::GetBulletsPerShot() const
 {
 	return m_BulletsPerShot;
 }
 
-void CHitscanComponent::SetBulletsPerShot(uint32_t bulletsPerShot)
+void CHitscanAction::SetBulletsPerShot(uint32_t bulletsPerShot)
 {
 	m_BulletsPerShot = bulletsPerShot;
 }
 
-WeaponAtts::SpreadPattern CHitscanComponent::GetSpreadPattern() const
+WeaponAtts::SpreadPattern CHitscanAction::GetSpreadPattern() const
 {
 	return m_SpreadPattern;
 }
 
-void CHitscanComponent::SetSpreadPattern(WeaponAtts::SpreadPattern pattern)
+void CHitscanAction::SetSpreadPattern(WeaponAtts::SpreadPattern pattern)
 {
 	m_SpreadPattern = pattern;
 }
 
-bool CHitscanComponent::GetSendTracerMessage() const
+bool CHitscanAction::GetSendTracerMessage() const
 {
 	return m_SendTracerMessage;
 }
 
-void CHitscanComponent::SetSendTracerMessage(bool send)
+void CHitscanAction::SetSendTracerMessage(bool send)
 {
 	m_SendTracerMessage = send;
 }
 
-void CHitscanComponent::SetSpread(const WeaponAtts::AccuracyParameters& params, float inaccuracy)
+void CHitscanAction::SetSpread(const WeaponAtts::AccuracyParameters& params, float inaccuracy)
 {
 	WeaponAtts::AccuracyParameters localAccuracyParams(params);
 
@@ -115,42 +115,42 @@ void CHitscanComponent::SetSpread(const WeaponAtts::AccuracyParameters& params, 
 	m_BaseSpread = InaccuracyModifiers::GetInterpolatedSpread(localAccuracyParams, inaccuracy);
 }
 
-void CHitscanComponent::SetSpread(const Vector2D& spread)
+void CHitscanAction::SetSpread(const Vector2D& spread)
 {
 	m_BaseSpread = spread;
 }
 
-void CHitscanComponent::SetBaseDamagePerShot(WeaponAtts::WASkillRecord::SkillDataEntryPtr ptr)
+void CHitscanAction::SetBaseDamagePerShot(WeaponAtts::WASkillRecord::SkillDataEntryPtr ptr)
 {
 	m_BaseDamagePerShot = ptr ? gSkillData.*ptr : 0.0f;
 }
 
-void CHitscanComponent::SetBaseDamagePerShot(float damage)
+void CHitscanAction::SetBaseDamagePerShot(float damage)
 {
 	m_BaseDamagePerShot = damage;
 }
 
-entvars_t* CHitscanComponent::GetInflictor() const
+entvars_t* CHitscanAction::GetInflictor() const
 {
 	return m_pevInflictor;
 }
 
-void CHitscanComponent::SetInflictor(entvars_t* inflictor)
+void CHitscanAction::SetInflictor(entvars_t* inflictor)
 {
 	m_pevInflictor = inflictor;
 }
 
-entvars_t* CHitscanComponent::GetAttacker() const
+entvars_t* CHitscanAction::GetAttacker() const
 {
 	return m_pevAttacker;
 }
 
-void CHitscanComponent::SetAttacker(entvars_t* attacker)
+void CHitscanAction::SetAttacker(entvars_t* attacker)
 {
 	m_pevAttacker = attacker;
 }
 
-Vector CHitscanComponent::FireBullets()
+Vector CHitscanAction::FireBullets()
 {
 	// Sanity checks:
 	if ( VectorIsNull(m_ShootDir) || VectorIsNull(m_RightDir) || VectorIsNull(m_UpDir) || !m_pevInflictor )
@@ -168,7 +168,7 @@ Vector CHitscanComponent::FireBullets()
 }
 
 #ifdef CLIENT_DLL
-Vector CHitscanComponent::FireBullets_Client()
+Vector CHitscanAction::FireBullets_Client()
 {
 	SpreadPatternArgs spreadArgs {};
 
@@ -186,7 +186,7 @@ Vector CHitscanComponent::FireBullets_Client()
 
 #else
 
-Vector CHitscanComponent::FireBullets_Server()
+Vector CHitscanAction::FireBullets_Server()
 {
 	TraceResult tr;
 	Vector2D modifiedSpread;
@@ -244,7 +244,7 @@ Vector CHitscanComponent::FireBullets_Server()
 	return Vector(modifiedSpread.x, modifiedSpread.y, 0.0);
 }
 
-void CHitscanComponent::Debug_HitscanBulletFired(const Vector& start, const TraceResult& tr)
+void CHitscanAction::Debug_HitscanBulletFired(const Vector& start, const TraceResult& tr)
 {
 	if ( !m_Weapon )
 	{
@@ -263,7 +263,7 @@ void CHitscanComponent::Debug_HitscanBulletFired(const Vector& start, const Trac
 	m_HitscanFireEvent->AddTrace(start, tr);
 }
 
-void CHitscanComponent::Debug_FinaliseHitscanEvent()
+void CHitscanAction::Debug_FinaliseHitscanEvent()
 {
 	if ( !m_HitscanFireEvent )
 	{

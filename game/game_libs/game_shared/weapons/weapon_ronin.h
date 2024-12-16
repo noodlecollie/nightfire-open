@@ -29,6 +29,7 @@ class CWeaponRonin : public CGenericWeapon
 public:
 	CWeaponRonin();
 	const WeaponAtts::WACollection& WeaponAttributes() const override;
+	void Holster(int skiplocal = 0) override;
 
 #ifndef CLIENT_DLL
 	enum class TurretPickupType
@@ -50,6 +51,7 @@ private:
 	bool ThrowTurret(const WeaponMechanics::CProjectileMechanic& mechanic);
 	WeaponMechanics::InvocationResult PlaceTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
 	WeaponMechanics::InvocationResult ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
+	WeaponMechanics::InvocationResult DetonateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step);
 	void SendEvent(const WeaponMechanics::CDelegatedMechanic& mechanic);
 	bool IsHoldingRonin() const;
 	bool HasThrownButUndeployedRonin() const;
@@ -58,18 +60,21 @@ private:
 	bool FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation) const;
 	void PostCreateTurret(bool decrementPrimaryAmmo);
 	void Redeploy();
+	void ClearSecondaryAmmo();
 
 #ifndef CLIENT_DLL
 	void LaunchThrownTurret(const Vector& forward, const Vector& spawnLocation);
 	void PlaceTurret(const Vector& spawnLocation);
 	CNPCRoninTurret* CreateTurret();
 	void ActivateThrownTurret();
+	void DetonateThrownTurret();
 	void DrawDebugBounds(CustomGeometry::CMessageWriter* writer, const Vector& location, uint32_t colour) const;
 #endif
 
 	WeaponMechanics::CProjectileMechanic* m_ThrowMechanic = nullptr;
 	WeaponMechanics::CDelegatedMechanic* m_PlaceMechanic = nullptr;
 	WeaponMechanics::CDelegatedMechanic* m_DeployMechanic = nullptr;
+	WeaponMechanics::CDelegatedMechanic* m_DetonateMechanic = nullptr;
 	EHANDLE m_Turret;
 };
 

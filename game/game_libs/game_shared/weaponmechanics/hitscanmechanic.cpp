@@ -1,7 +1,7 @@
 #include "standard_includes.h"
 #include "weaponmechanics/hitscanmechanic.h"
 #include "weaponattributes/weaponatts_hitscanattack.h"
-#include "gameplay/hitscancomponent.h"
+#include "gameplay/hitscanaction.h"
 #include "weapons/genericweapon.h"
 #include "eventConstructor/eventConstructor.h"
 
@@ -72,23 +72,23 @@ namespace WeaponMechanics
 			vecAiming = gpGlobals->v_forward;
 		}
 
-		CHitscanComponent hitscanComponent;
+		CHitscanAction hitscanAction;
 
-		hitscanComponent.SetGunPos(vecSrc);
-		hitscanComponent.SetShootDir(vecAiming);
-		hitscanComponent.SetRightDir(gpGlobals->v_right);
-		hitscanComponent.SetUpDir(gpGlobals->v_up);
-		hitscanComponent.SetAttacker(player->pev);
-		hitscanComponent.SetInflictor(weapon->pev);
-		hitscanComponent.SetRandomSeed(player->random_seed);
-		hitscanComponent.SetWeapon(weapon);
-		hitscanComponent.SetBulletsPerShot(hitscanAttack->BulletsPerShot);
-		hitscanComponent.SetBaseDamagePerShot(hitscanAttack->BaseDamagePerShot);
-		hitscanComponent.SetSpreadPattern(hitscanAttack->Accuracy.FireSpreadPattern);
-		hitscanComponent.SetSpread(hitscanAttack->Accuracy, weapon->GetInaccuracy());
-		hitscanComponent.SetSendTracerMessage(false);
+		hitscanAction.SetGunPos(vecSrc);
+		hitscanAction.SetShootDir(vecAiming);
+		hitscanAction.SetRightDir(gpGlobals->v_right);
+		hitscanAction.SetUpDir(gpGlobals->v_up);
+		hitscanAction.SetAttacker(player->pev);
+		hitscanAction.SetInflictor(weapon->pev);
+		hitscanAction.SetRandomSeed(player->random_seed);
+		hitscanAction.SetWeapon(weapon);
+		hitscanAction.SetBulletsPerShot(hitscanAttack->BulletsPerShot);
+		hitscanAction.SetBaseDamagePerShot(hitscanAttack->BaseDamagePerShot);
+		hitscanAction.SetSpreadPattern(hitscanAttack->Accuracy.FireSpreadPattern);
+		hitscanAction.SetSpread(hitscanAttack->Accuracy, weapon->GetInaccuracy());
+		hitscanAction.SetSendTracerMessage(false);
 
-		hitscanComponent.FireBullets();
+		hitscanAction.FireBullets();
 
 		if ( GetEventIndex() >= 0 )
 		{

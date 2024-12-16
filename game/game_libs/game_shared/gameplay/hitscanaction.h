@@ -12,10 +12,10 @@ class CGenericWeapon;
 
 static constexpr float DEFAULT_BULLET_TRACE_DISTANCE = 8192;
 
-class CHitscanComponent
+class CHitscanAction
 {
 public:
-	~CHitscanComponent();
+	~CHitscanAction();
 
 	Vector GetGunPos() const;
 	void SetGunPos(const Vector& pos);
