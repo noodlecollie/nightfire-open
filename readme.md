@@ -6,20 +6,30 @@ Nightfire Open
 ![Tests](https://github.com/noodlecollie/nightfire-open/actions/workflows/CI-Game.yaml/badge.svg)
 ![Releases](https://github.com/noodlecollie/nightfire-open/actions/workflows/Release.yaml/badge.svg)
 
+<a href="https://www.moddb.com/games/nightfire-open" title="View Nightfire Open on ModDB"><img src="https://button.moddb.com/rating/medium/games/72301.png" alt="Nightfire Open"></a>
+
 Nightfire Open is an open source reboot of [James Bond 007: Nightfire](https://en.wikipedia.org/wiki/James_Bond_007:_Nightfire) as a Half Life mod, which runs on Windows and Linux.
 
 ## Downloads
 
-The latest downloads for the game and dedicated server can be found on the [releases page](https://github.com/noodlecollie/nightfire-open/releases). Note that at present the game is in a relatively minimal playable state, so the experience will not be representative of what is planned for the future.
+The latest downloads for the game and dedicated server can be found on the [releases page](https://github.com/noodlecollie/nightfire-open/releases), or on the [ModDB page](https://www.moddb.com/games/nightfire-open/downloads). As this repo is a refresh after the game content was moved elsewhere (see [Note Regarding Game Content](#note-regarding-game-content)), releases up to v6 are available only on ModDB.
+
+Note that at present the game is in a relatively minimal playable state, so the experience may not be representative of what is planned for the future.
 
 To run the game:
 
 * Run `bond.exe` on Windows
-* Execute `bond.sh` on Linux.
+* Run `bond` on Linux.
 
 ## Building
 
-Ensure you have [Git LFS](https://git-lfs.com/) installed, as the repo uses this to manage the game content.
+### Note Regarding Game Content
+
+The game's binary content and assets (maps, models, textures, etc.) is hosted in a private repository. This is because something (likely AI crawlers) was hitting the repo very regularly and exhausing all the Git LFS bandwidth. Until those robots can learn to play nice, the content will not be accessible publicly.
+
+If you require access to the game content for development, please get in touch to discuss. Otherwise, the game should be buildable without access to the content, and files from an existing release of the game may be placed manually alongside the build. The `nfopen` directory (which contains file such as `gameinfo.txt`) should be placed in the same directory as the main `bond` executable.
+
+### Build Instructions
 
 [CMake](https://cmake.org/download/) 3.21 or greater is required to build the game. Compilation has been tested with Visual Studio 2022 on Windows, and GCC 11.4 on Linux.
 On Windows, dependencies should be managed by the embedded `vcpkg` install. On Linux, you will need at least the following:
@@ -67,7 +77,7 @@ Nightfire Open is built with the [Xash3D FWGS](https://github.com/FWGS/xash3d-fw
 * It's close in principle to the genuine PC Nightfire engine (itself a heavily modified version of GoldSrc).
 * Developing on a more limited engine doesn't come with the expectation that the game will be photorealistic. I don't have the time or the energy as a single hobbyist to be working on some sort of HD photorealistic remake.
 
-The original repo used for development was [afterburner-game](https://github.com/noodlecollie/afterburner-game), but it became clear that being tied to the upstream engine repo was detrimental. This project's coding standards were different to the upstream; it needed more flexibility than the engine was able to offer on its own; the Git subrepository architecture was consistently a pain to work with; and the Waf build system was complex, esoteric and poorly documented. Consequently, it was decided to take a hard fork of the Xash3D engine and migrate everything to this new CMake-based repository instead, for full customisability.
+The original repo used for development was [afterburner-game](https://github.com/noodlecollie/afterburner-game), but the objectives of this repo and the Xash3D repo became quite different, and were not well-aligned. Consequently, it was decided to take a hard fork of the Xash3D engine and migrate everything to this new CMake-based repository instead, for full control over the codebase.
 
 ## Credits
 
