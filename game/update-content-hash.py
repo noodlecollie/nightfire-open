@@ -42,17 +42,27 @@ def main():
 	if not content_path:
 		raise RuntimeError("Provided content path was empty")
 
+	local_branch = content_cmd(content_path, ["git", "branch", "--show-current"]).strip()
+
+	if local_branch != "master":
+		raise RuntimeError(f"Local branch is {local_branch} not master, refusing to update content hash")
+
 	if content_has_staged_files(content_path):
 		raise RuntimeError("Content repo has staged files - please commit these first")
 
 	if content_has_unstaged_files(content_path):
 		raise RuntimeError("Content repo has unstaged files - please commit these first")
 
-	content_hash_output = content_cmd(content_path, ["git", "rev-parse", "origin/master"])
-	content_hash_match = re.match(r"^([0-9a-f]{40})$", content_hash_output)
+	local_master_rev = content_cmd(content_path, ["git", "rev-parse", "master"]).strip()
+	origin_master_rev = content_cmd(content_path, ["git", "rev-parse", "origin/master"]).strip()
+
+	if local_master_rev != origin_master_rev:
+		raise RuntimeError(f"Local revision {local_master_rev} did not match origin revision {origin_master_rev} - make sure your local branch is up to date")
+
+	content_hash_match = re.match(r"^([0-9a-f]{40})$", origin_master_rev)
 
 	if not content_hash_match:
-		raise RuntimeError(f"Could not parse content hash from git rev-parse. Output:\n{content_hash_output}")
+		raise RuntimeError(f"Could not parse content hash from git rev-parse. Output:\n{origin_master_rev}")
 
 	content_hash = content_hash_match.group(1)
 
