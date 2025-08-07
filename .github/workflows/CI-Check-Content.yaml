@@ -1,0 +1,32 @@
+name: CI Check Content
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  build-linux:
+    name: Build on Ubuntu
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y python3
+
+    - name: Check out code repo
+      uses: actions/checkout@v4
+      with:
+        path: nightfire-open
+
+    - name: Check out content repo
+      uses: actions/checkout@v4
+      with:
+        repository: noodlecollie/nightfire-open-content
+        path: nightfire-open-content
+        ssh-key: ${{ secrets.ACTIONS_SSH_PRIVATE_KEY }}
+        filter: tree:0
+
+    - name: Check content hash
+      run: python3 "${{runner.workspace}}/nightfire-open/nightfire-open/game/check-content-hash.py" "${{runner.workspace}}/nightfire-open/nightfire-open-content"

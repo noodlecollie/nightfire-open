@@ -1,0 +1,47 @@
+name: CI Dedicated Server
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-linux:
+    name: Build on Ubuntu
+    runs-on: ubuntu-22.04
+
+    steps:
+    # This does not use LFS because it's only for compiling code.
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y libsdl2-dev
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: gcc
+        cxx: g++
+        build-type: MinSizeRel
+        configure-options: -DNF_DEDICATED_SERVER=YES -DNF_ENABLE_TOOLS=NO -DNF_AUTO_UPDATE_CONTENT_HASH=OFF
+
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-2022
+
+    steps:
+    # This does not use LFS because it's only for compiling code.
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: cl
+        cxx: cl
+        build-type: MinSizeRel
+        configure-options: -DNF_DEDICATED_SERVER=YES -DNF_ENABLE_TOOLS=NO -DNF_AUTO_UPDATE_CONTENT_HASH=OFF

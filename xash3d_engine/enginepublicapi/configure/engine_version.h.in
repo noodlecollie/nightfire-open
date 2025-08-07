@@ -1,0 +1,6 @@
+#pragma once
+
+#define XASH_VERSION "@VCS_TAG_ID@"
+
+#define XASH_ENGINE_NAME "Nightfire Open Engine (Xash3D FWGS fork)"
+#define XASH_COMPAT_VERSION "0.99"

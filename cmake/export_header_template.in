@@ -1,0 +1,78 @@
+/**
+ * Custom generated header according to this library's build configuration.
+ * Exported public functions in this library are declared like so:
+ *
+ * @uppercaseTargetName@_PUBLIC(int) MyExportedFunction(int in);
+ */
+
+#pragma once
+
+// Only defined if this target is a shared library
+@sharedLibDefLine@
+
+////////////////////////////////////////////
+// Extern c
+////////////////////////////////////////////
+
+#ifdef __cplusplus
+// C++ needs extern C annotation
+#define @uppercaseTargetName@_EXTERNC extern "C"
+#else
+// C does not need this annotation
+#define @uppercaseTargetName@_EXTERNC
+#endif  // __cplusplus
+
+#ifdef _MSC_VER
+
+////////////////////////////////////////////
+// Begin Windows
+////////////////////////////////////////////
+
+// Windows supports specifying the cdecl calling convention
+#define @uppercaseTargetName@_CDECL __cdecl
+
+#ifdef @uppercaseTargetName@_SHARED_LIBRARY
+#ifdef @uppercaseTargetName@_PRODUCER
+// Shared library is being built, so mark functions for export
+#define @uppercaseTargetName@_EXPORT __declspec(dllexport)
+#else
+// Shared library is being used, so mark functions for import
+#define @uppercaseTargetName@_EXPORT __declspec(dllimport)
+#endif  // @uppercaseTargetName@_PRODUCER
+#else
+// Library is static, so functions do not need import/export annotations
+#define @uppercaseTargetName@_EXPORT
+#endif  // @uppercaseTargetName@_LIBRARY
+
+////////////////////////////////////////////
+// End Windows
+////////////////////////////////////////////
+
+#elif __GNUC__
+
+////////////////////////////////////////////
+// Begin Linux
+////////////////////////////////////////////
+
+// Not on Windows, so cdecl is not required
+#define @uppercaseTargetName@_CDECL
+
+#ifdef @uppercaseTargetName@_SHARED_LIBRARY
+// Shared library is being built, so mark exported functions as visible
+#define @uppercaseTargetName@_EXPORT __attribute__((visibility("default")))
+#else
+// Library is static, so functions do not need import/export annotations
+#define @uppercaseTargetName@_EXPORT
+#endif  // @uppercaseTargetName@_SHARED_LIBRARY
+
+////////////////////////////////////////////
+// End Linux
+////////////////////////////////////////////
+
+#else
+#error Unsupported compiler!
+#endif
+
+// Now combine all of these switches into a macro that exposes a function in the library's public API:
+#define @uppercaseTargetName@_PUBLIC(returnType) @uppercaseTargetName@_EXTERNC \
+	@uppercaseTargetName@_EXPORT returnType @uppercaseTargetName@_CDECL

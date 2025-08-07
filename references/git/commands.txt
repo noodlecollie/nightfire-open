@@ -1,0 +1,2 @@
+Fix files which were not properly picked up by Git LFS: https://stackoverflow.com/a/57820265/2054335
+`git lfs migrate import --no-rewrite "broken file.jpg" "another broken file.png" ...`

@@ -1,0 +1,41 @@
+include(compiler_settings)
+
+add_executable(${TARGETNAME_EXE_GAME_LAUNCHER}
+	game.cpp
+)
+
+set_target_properties(${TARGETNAME_EXE_GAME_LAUNCHER} PROPERTIES OUTPUT_NAME ${GAME_EXECUTABLE})
+
+target_compile_definitions(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
+	XASH_DISABLE_MENU_CHANGEGAME=1
+)
+
+target_link_libraries(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
+	${TARGETNAME_LIB_ENGINE}
+	${TARGETNAME_LIB_PLATFORMLIB}
+)
+
+if(WIN32)
+	target_link_libraries(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
+		USER32
+		SHELL32
+	)
+
+	target_link_options(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
+		# Use WinMain() instead of main()
+		/ENTRY:WinMainCRTStartup
+		/SUBSYSTEM:WINDOWS
+	)
+else()
+	target_link_libraries(${TARGETNAME_EXE_GAME_LAUNCHER} PRIVATE
+		dl
+	)
+endif()
+
+set_common_library_compiler_settings(${TARGETNAME_EXE_GAME_LAUNCHER})
+
+install(TARGETS ${TARGETNAME_EXE_GAME_LAUNCHER}
+	ARCHIVE DESTINATION ${INSTALL_ROOT}
+	LIBRARY DESTINATION ${INSTALL_ROOT}
+	RUNTIME DESTINATION ${INSTALL_ROOT}
+)

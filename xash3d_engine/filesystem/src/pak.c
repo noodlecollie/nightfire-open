@@ -1,0 +1,446 @@
+/*
+pak.c - PAK support for filesystem
+Copyright (C) 2003-2006 Mathieu Olivier
+Copyright (C) 2000-2007 DarkPlaces contributors
+Copyright (C) 2007 Uncle Mike
+Copyright (C) 2015-2023 Xash3D FWGS contributors
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+*/
+
+#include "BuildPlatform/PlatformID.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#if XASH_POSIX()
+#include <unistd.h>
+#endif
+
+#include <errno.h>
+#include <stddef.h>
+#include "CRTLib/crtlib.h"
+#include "PlatformLib/File.h"
+#include "PlatformLib/String.h"
+#include "EngineInternalAPI/log_strings.h"
+#include "filesystem_internal.h"
+
+/*
+========================================================================
+PAK FILES
+
+The .pak files are just a linear collapse of a directory tree
+========================================================================
+*/
+// header
+#define IDPACKV1HEADER (('K' << 24) + ('C' << 16) + ('A' << 8) + 'P')  // little-endian "PACK"
+
+#define MAX_FILES_IN_PACK 65536  // pak
+
+typedef struct
+{
+	int ident;
+	int dirofs;
+	int dirlen;
+} dpackheader_t;
+
+typedef struct
+{
+	char name[56];  // total 64 bytes
+	int filepos;
+	int filelen;
+} dpackfile_t;
+
+// PAK errors
+#define PAK_LOAD_OK 0
+#define PAK_LOAD_COULDNT_OPEN 1
+#define PAK_LOAD_BAD_HEADER 2
+#define PAK_LOAD_BAD_FOLDERS 3
+#define PAK_LOAD_TOO_MANY_FILES 4
+#define PAK_LOAD_NO_FILES 5
+#define PAK_LOAD_CORRUPTED 6
+
+struct pack_s
+{
+	int handle;
+	int numfiles;
+	time_t filetime;  // common for all packed files
+	dpackfile_t files[1];  // flexible
+};
+
+/*
+====================
+FS_SortPak
+
+====================
+*/
+static int FS_SortPak(const void* _a, const void* _b)
+{
+	const dpackfile_t *a = _a, *b = _b;
+
+	return Q_stricmp(a->name, b->name);
+}
+
+/*
+=================
+FS_LoadPackPAK
+
+Takes an explicit (not game tree related) path to a pak file.
+
+Loads the header and directory, adding the files at the beginning
+of the list so they override previous pack files.
+=================
+*/
+static pack_t* FS_LoadPackPAK(const char* packfile, int* error)
+{
+	dpackheader_t header;
+	int packhandle;
+	int numpackfiles;
+	pack_t* pack;
+	fs_size_t c;
+
+	packhandle = PlatformLib_Open(packfile, O_RDONLY | O_BINARY);
+
+	if ( packhandle < 0 )
+	{
+		Con_Reportf("%s couldn't open: %s\n", packfile, PlatformLib_StrError(errno));
+		if ( error )
+			*error = PAK_LOAD_COULDNT_OPEN;
+		return NULL;
+	}
+
+	c = PlatformLib_Read(packhandle, (void*)&header, sizeof(header));
+
+	if ( c != sizeof(header) || header.ident != IDPACKV1HEADER )
+	{
+		Con_Reportf("%s is not a packfile. Ignored.\n", packfile);
+		if ( error )
+			*error = PAK_LOAD_BAD_HEADER;
+		PlatformLib_Close(packhandle);
+		return NULL;
+	}
+
+	if ( header.dirlen % sizeof(dpackfile_t) )
+	{
+		Con_Reportf(S_ERROR "%s has an invalid directory size. Ignored.\n", packfile);
+		if ( error )
+			*error = PAK_LOAD_BAD_FOLDERS;
+		PlatformLib_Close(packhandle);
+		return NULL;
+	}
+
+	numpackfiles = header.dirlen / sizeof(dpackfile_t);
+
+	if ( numpackfiles > MAX_FILES_IN_PACK )
+	{
+		Con_Reportf(S_ERROR "%s has too many files ( %i ). Ignored.\n", packfile, numpackfiles);
+		if ( error )
+			*error = PAK_LOAD_TOO_MANY_FILES;
+		PlatformLib_Close(packhandle);
+		return NULL;
+	}
+
+	if ( numpackfiles <= 0 )
+	{
+		Con_Reportf("%s has no files. Ignored.\n", packfile);
+		if ( error )
+			*error = PAK_LOAD_NO_FILES;
+		PlatformLib_Close(packhandle);
+		return NULL;
+	}
+
+	pack = (pack_t*)Mem_Calloc(fs_mempool, sizeof(pack_t) + sizeof(dpackfile_t) * (numpackfiles - 1));
+	PlatformLib_LSeek(packhandle, header.dirofs, SEEK_SET);
+
+	if ( header.dirlen != PlatformLib_Read(packhandle, (void*)pack->files, header.dirlen) )
+	{
+		Con_Reportf("%s is an incomplete PAK, not loading\n", packfile);
+		if ( error )
+			*error = PAK_LOAD_CORRUPTED;
+		PlatformLib_Close(packhandle);
+		Mem_Free(pack);
+		return NULL;
+	}
+
+	// TODO: validate directory?
+
+	pack->filetime = FS_SysFileTime(packfile);
+	pack->handle = packhandle;
+	pack->numfiles = numpackfiles;
+	qsort(pack->files, pack->numfiles, sizeof(pack->files[0]), FS_SortPak);
+
+#ifdef XASH_REDUCE_FD
+	// will reopen when needed
+	PlatformLib_Close(pack->handle);
+	pack->handle = -1;
+#endif
+
+	if ( error )
+		*error = PAK_LOAD_OK;
+
+	return pack;
+}
+
+/*
+===========
+FS_OpenPackedFile
+
+Open a packed file using its package file descriptor
+===========
+*/
+static file_t* FS_OpenFile_PAK(searchpath_t* search, const char* filename, const char* mode, int pack_ind)
+{
+	(void)filename;
+	(void)mode;
+
+	dpackfile_t* pfile;
+
+	pfile = &search->pkg.pack->files[pack_ind];
+
+	return FS_OpenHandle(search->filename, search->pkg.pack->handle, pfile->filepos, pfile->filelen);
+}
+
+/*
+===========
+FS_FindFile_PAK
+
+===========
+*/
+static int FS_FindFile_PAK(searchpath_t* search, const char* path, char* fixedname, size_t len)
+{
+	int left, right, middle;
+
+	// look for the file (binary search)
+	left = 0;
+	right = search->pkg.pack->numfiles - 1;
+	while ( left <= right )
+	{
+		int diff;
+
+		middle = (left + right) / 2;
+		diff = Q_stricmp(search->pkg.pack->files[middle].name, path);
+
+		// Found it
+		if ( !diff )
+		{
+			if ( fixedname )
+				Q_strncpy(fixedname, search->pkg.pack->files[middle].name, len);
+			return middle;
+		}
+
+		// if we're too far in the list
+		if ( diff > 0 )
+			right = middle - 1;
+		else
+			left = middle + 1;
+	}
+
+	return -1;
+}
+
+/*
+===========
+FS_Search_PAK
+
+===========
+*/
+static void
+FS_Search_PAK(searchpath_t* search, stringlist_t* list, const char* pattern, int caseinsensitive, uint32_t flags)
+{
+	string temp;
+	const char *slash, *backslash, *colon, *separator;
+	int j, i;
+
+	(void)caseinsensitive;
+
+	for ( i = 0; i < search->pkg.pack->numfiles; i++ )
+	{
+		// We assume the path starts off being a file,
+		// and when we progressively trim it later, it
+		// represents a directory.
+		qboolean pathIsFile = true;
+
+		Q_strncpy(temp, search->pkg.pack->files[i].name, sizeof(temp));
+
+		while ( temp[0] )
+		{
+			if ( matchpattern(temp, pattern, true) )
+			{
+				for ( j = 0; j < list->numstrings; j++ )
+				{
+					if ( !Q_strcmp(list->strings[j], temp) )
+					{
+						break;
+					}
+				}
+
+				if ( j == list->numstrings )
+				{
+					if ( (pathIsFile && (flags & FS_SEARCHFLAG_FILES)) ||
+						 (!pathIsFile && (flags & FS_SEARCHFLAG_DIRECTORIES)) )
+					{
+						stringlistappend(list, temp);
+					}
+				}
+			}
+
+			// strip off one path element at a time until empty
+			// this way directories are added to the listing if they match the pattern
+			slash = Q_strrchr(temp, '/');
+			backslash = Q_strrchr(temp, '\\');
+			colon = Q_strrchr(temp, ':');
+			separator = temp;
+
+			if ( separator < slash )
+			{
+				separator = slash;
+			}
+
+			if ( separator < backslash )
+			{
+				separator = backslash;
+			}
+
+			if ( separator < colon )
+			{
+				separator = colon;
+			}
+
+			*((char*)separator) = 0;
+			pathIsFile = false;
+
+			// Since the path will now always refer to a directory,
+			// we can quit if we're not searching for those.
+			if ( !(flags & FS_SEARCHFLAG_DIRECTORIES) )
+			{
+				break;
+			}
+		}
+	}
+}
+
+/*
+===========
+FS_FileTime_PAK
+
+===========
+*/
+static int FS_FileTime_PAK(searchpath_t* search, const char* filename)
+{
+	(void)filename;
+	return (int)(search->pkg.pack->filetime);
+}
+
+/*
+===========
+FS_PrintInfo_PAK
+
+===========
+*/
+static void FS_PrintInfo_PAK(searchpath_t* search, char* dst, size_t size)
+{
+	Q_snprintf(dst, size, "%s (%i files)", search->filename, search->pkg.pack->numfiles);
+}
+
+/*
+===========
+FS_Close_PAK
+
+===========
+*/
+static void FS_Close_PAK(searchpath_t* search)
+{
+	if ( search->pkg.pack->handle >= 0 )
+	{
+		PlatformLib_Close(search->pkg.pack->handle);
+	}
+
+	Mem_Free(search->pkg.pack);
+}
+
+/*
+================
+FS_AddPak_Fullpath
+
+Adds the given pack to the search path.
+The pack type is autodetected by the file extension.
+
+Returns true if the file was successfully added to the
+search path or if it was already included.
+
+If keep_plain_dirs is set, the pack will be added AFTER the first sequence of
+plain directories.
+================
+*/
+qboolean FS_AddPak_Fullpath(const char* pakfile, qboolean* already_loaded, int flags)
+{
+	searchpath_t* search;
+	pack_t* pak = NULL;
+	const char* ext = COM_FileExtension(pakfile);
+	int i, errorcode = PAK_LOAD_COULDNT_OPEN;
+
+	for ( search = fs_searchpaths; search; search = search->next )
+	{
+		if ( search->type == SEARCHPATH_PAK && !Q_stricmp(search->filename, pakfile) )
+		{
+			if ( already_loaded )
+				*already_loaded = true;
+			return true;  // already loaded
+		}
+	}
+
+	if ( already_loaded )
+		*already_loaded = false;
+
+	if ( !Q_stricmp(ext, "pak") )
+		pak = FS_LoadPackPAK(pakfile, &errorcode);
+
+	if ( pak )
+	{
+		search = (searchpath_t*)Mem_Calloc(fs_mempool, sizeof(searchpath_t));
+		Q_strncpy(search->filename, pakfile, sizeof(search->filename));
+		search->pkg.pack = pak;
+		search->type = SEARCHPATH_PAK;
+		search->next = fs_searchpaths;
+		search->flags = flags;
+
+		search->pfnPrintInfo = FS_PrintInfo_PAK;
+		search->pfnClose = FS_Close_PAK;
+		search->pfnOpenFile = FS_OpenFile_PAK;
+		search->pfnFileTime = FS_FileTime_PAK;
+		search->pfnFindFile = FS_FindFile_PAK;
+		search->pfnSearch = FS_Search_PAK;
+
+		fs_searchpaths = search;
+
+		Con_Reportf("Adding pakfile: %s (%i files)\n", pakfile, pak->numfiles);
+
+		// time to add in search list all the wads that contains in current pakfile (if do)
+		for ( i = 0; i < pak->numfiles; i++ )
+		{
+			if ( !Q_stricmp(COM_FileExtension(pak->files[i].name), "wad") )
+			{
+				char fullpath[MAX_SYSPATH];
+
+				Q_snprintf(fullpath, sizeof(fullpath), "%s/%s", pakfile, pak->files[i].name);
+				FS_AddWad_Fullpath(fullpath, NULL, flags);
+			}
+		}
+
+		return true;
+	}
+	else
+	{
+		if ( errorcode != PAK_LOAD_NO_FILES )
+			Con_Reportf(S_ERROR "FS_AddPak_Fullpath: unable to load pak \"%s\"\n", pakfile);
+		return false;
+	}
+}

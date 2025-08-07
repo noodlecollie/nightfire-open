@@ -1,0 +1,61 @@
+name: CI Game
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  build-linux:
+    name: Build on Ubuntu
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y libsdl2-dev
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: gcc
+        cxx: g++
+        build-type: MinSizeRel
+        target: install
+        configure-options: -DNF_ENABLE_TESTS=YES -DCMAKE_INSTALL_PREFIX=install -DNF_AUTO_UPDATE_CONTENT_HASH=OFF
+
+    - name: Run tests
+      shell: bash
+      run: |
+        cd ${{runner.workspace}}/nightfire-open/install/nightfire-open
+        LD_LIBRARY_PATH=. ./bond -runtests
+
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-2022
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{runner.workspace}}/build
+        cc: cl
+        cxx: cl
+        build-type: MinSizeRel
+        target: install
+        configure-options: -DNF_ENABLE_TESTS=YES -DCMAKE_INSTALL_PREFIX=install -DNF_AUTO_UPDATE_CONTENT_HASH=OFF
+
+    - name: Run tests
+      shell: cmd
+      run: |
+        cd ${{runner.workspace}}/nightfire-open/install/nightfire-open
+        bond.exe -runtests

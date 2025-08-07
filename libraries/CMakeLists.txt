@@ -1,0 +1,8 @@
+add_subdirectory(buildplatform)
+add_subdirectory(platformlib)
+add_subdirectory(thirdparty)
+add_subdirectory(crclib)
+add_subdirectory(crtlib)
+add_subdirectory(mathlib)
+add_subdirectory(miniutl)
+add_subdirectory(mempool)

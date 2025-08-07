@@ -1,0 +1,3 @@
+On Linux, run ${workspaceFolder}/build/app/trenchbroom. This will automatically pick up the game configurations
+in the co-located games directory, since the application has a specific search path for this. Building the
+CMake install target is not required.

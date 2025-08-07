@@ -1,0 +1,519 @@
+include(compiler_settings)
+
+set(SOURCES_PM_SHARED
+	../pm_shared/pm_debug.h
+	../pm_shared/pm_debug.c
+	../pm_shared/pm_info.h
+	../pm_shared/pm_materials.h
+	../pm_shared/pm_movevars.h
+	../pm_shared/pm_shared.h
+	../pm_shared/pm_shared.c
+)
+
+set(SOURCES_GAME_SHARED
+	../game_shared/customGeometry/constructors/aabboxConstructor.h
+	../game_shared/customGeometry/constructors/aabboxConstructor.cpp
+	../game_shared/customGeometry/constructors/baseConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.h
+	../game_shared/customGeometry/constructors/circle2DConstructor.cpp
+	../game_shared/customGeometry/constructors/crosshair3DConstructor.h
+	../game_shared/customGeometry/constructors/crosshair3DConstructor.cpp
+	../game_shared/customGeometry/geometryItem.h
+	../game_shared/customGeometry/geometryItem.cpp
+	../game_shared/customGeometry/sharedDefs.h
+	../game_shared/customGeometry/sharedDefs.cpp
+	../game_shared/eventConstructor/eventConstructor.h
+	../game_shared/eventConstructor/eventConstructor.cpp
+	../game_shared/gameplay/hitscanaction.h
+	../game_shared/gameplay/hitscanaction.cpp
+	../game_shared/gameplay/inaccuracyCvars.h
+	../game_shared/gameplay/inaccuracymodifiers.h
+	../game_shared/gameplay/inaccuracymodifiers.cpp
+	../game_shared/gameplay/radialdamage.h
+	../game_shared/gameplay/radialdamage.cpp
+	../game_shared/gameplay/spreadPatterns.h
+	../game_shared/gameplay/spreadPatterns.cpp
+	../game_shared/gameplay/weaponInaccuracyCalculator.h
+	../game_shared/gameplay/weaponInaccuracyCalculator.cpp
+	../game_shared/resources/BaseResourceCollection.h
+	../game_shared/resources/FootstepSoundResources.h
+	../game_shared/resources/FootstepSoundResources.cpp
+	../game_shared/resources/ItemSoundResources.h
+	../game_shared/resources/ItemSoundResources.cpp
+	../game_shared/resources/IterableResourceCollection.h
+	../game_shared/resources/MaterialBreakSoundResources.h
+	../game_shared/resources/MaterialBreakSoundResources.cpp
+	../game_shared/resources/PlayerMoveResources.h
+	../game_shared/resources/PlayerMoveResources.cpp
+	../game_shared/resources/PlayerSoundResources.h
+	../game_shared/resources/PlayerSoundResources.cpp
+	../game_shared/resources/ShellImpactSoundResources.h
+	../game_shared/resources/ShellImpactSoundResources.cpp
+	../game_shared/resources/SoundResources.h
+	../game_shared/resources/SoundResources.cpp
+	../game_shared/resources/SurfaceAttributes.h
+	../game_shared/resources/SurfaceAttributes.cpp
+	../game_shared/resources/SurfaceDecalResources.h
+	../game_shared/resources/SurfaceDecalResources.cpp
+	../game_shared/resources/SurfaceSoundResources.h
+	../game_shared/resources/SurfaceSoundResources.cpp
+	../game_shared/resources/TextureResources.h
+	../game_shared/resources/TextureResources.cpp
+	../game_shared/resources/WeaponSoundResources.h
+	../game_shared/resources/WeaponSoundResources.cpp
+	../game_shared/screenOverlays/screenOverlayIds.h
+	../game_shared/sound/SoundInstance.h
+	../game_shared/sound/SoundInstance.cpp
+	../game_shared/util/cvarFuncs.h
+	../game_shared/util/cvarFuncs.cpp
+	../game_shared/util/debugLogger.h
+	../game_shared/util/debugLogger.cpp
+	../game_shared/util/extramath.h
+	../game_shared/util/weightedvaluelist.h
+	../game_shared/weaponattributes/weaponatts_ammobasedattack.h
+	../game_shared/weaponattributes/weaponatts_ammodef.h
+	../game_shared/weaponattributes/weaponatts_baseattack.h
+	../game_shared/weaponattributes/weaponatts_base.h
+	../game_shared/weaponattributes/weaponatts_collection.h
+	../game_shared/weaponattributes/weaponatts_collection.cpp
+	../game_shared/weaponattributes/weaponatts_core.h
+	../game_shared/weaponattributes/weaponatts_eventattack.h
+	../game_shared/weaponattributes/weaponatts_hitscanattack.h
+	../game_shared/weaponattributes/weaponatts_meleeattack.h
+	../game_shared/weaponattributes/weaponatts_playermodel.h
+	../game_shared/weaponattributes/weaponatts_precache.h
+	../game_shared/weaponattributes/weaponatts_prediction.h
+	../game_shared/weaponattributes/weaponatts_projectileattack.h
+	../game_shared/weaponattributes/weaponatts_skillrecord.h
+	../game_shared/weaponattributes/weaponatts_skillrecord.cpp
+	../game_shared/weaponattributes/weaponatts_soundset.h
+	../game_shared/weaponattributes/weaponatts_viewmodel.h
+	../game_shared/weaponmechanics/basemechanic.h
+	../game_shared/weaponmechanics/basemechanic.cpp
+	../game_shared/weaponmechanics/delegatedmechanic.h
+	../game_shared/weaponmechanics/delegatedmechanic.cpp
+	../game_shared/weaponmechanics/hitscanmechanic.h
+	../game_shared/weaponmechanics/hitscanmechanic.cpp
+	../game_shared/weaponmechanics/meleemechanic.h
+	../game_shared/weaponmechanics/meleemechanic.cpp
+	../game_shared/weaponmechanics/projectilemechanic.h
+	../game_shared/weaponmechanics/projectilemechanic.cpp
+	../game_shared/weapons/ammodefs.h
+	../game_shared/weapons/ammodefs.cpp
+	../game_shared/weapons/genericgrenade.h
+	../game_shared/weapons/genericgrenade.cpp
+	../game_shared/weapons/genericweapon.h
+	../game_shared/weapons/ronin_common_defs.h
+	../game_shared/weapons/genericweapon.cpp
+	../game_shared/weapons/weapon_fists_atts.h
+	../game_shared/weapons/weapon_fists.h
+	../game_shared/weapons/weapon_fists.cpp
+	../game_shared/weapons/weapon_frag_grenade_atts.h
+	../game_shared/weapons/weapon_frag_grenade.h
+	../game_shared/weapons/weapon_frag_grenade.cpp
+	../game_shared/weapons/weapon_frinesi_atts.h
+	../game_shared/weapons/weapon_frinesi.h
+	../game_shared/weapons/weapon_frinesi.cpp
+	../game_shared/weapons/weapon_grenadelauncher_atts.h
+	../game_shared/weapons/weapon_grenadelauncher.h
+	../game_shared/weapons/weapon_grenadelauncher.cpp
+	../game_shared/weapons/weaponids.h
+	../game_shared/weapons/weapon_l96a1.cpp
+	../game_shared/weapons/weapon_l96a1_atts.h
+	../game_shared/weapons/weapon_l96a1.h
+	../game_shared/weapons/weapon_mp9_atts.h
+	../game_shared/weapons/weapon_mp9.h
+	../game_shared/weapons/weapon_mp9.cpp
+	../game_shared/weapons/weapon_p99_atts.h
+	../game_shared/weapons/weapon_p99.h
+	../game_shared/weapons/weapon_p99.cpp
+	../game_shared/weapons/weapon_pref_weights.h
+	../game_shared/weapons/weapon_raptor_atts.h
+	../game_shared/weapons/weapon_raptor.h
+	../game_shared/weapons/weapon_raptor.cpp
+	../game_shared/weapons/weapon_ronin_atts.h
+	../game_shared/weapons/weapon_ronin.h
+	../game_shared/weapons/weapon_ronin.cpp
+	../game_shared/weapons/weaponregistry.h
+	../game_shared/weapons/weaponregistry.cpp
+	../game_shared/weapons/weapons.h
+	../game_shared/weapons/weapon_silent_atts.h
+	../game_shared/weapons/weapon_silent.h
+	../game_shared/weapons/weapon_silent.cpp
+	../game_shared/weapons/weaponslots.h
+	../game_shared/weapons/weaponslots.cpp
+	../game_shared/studio_utils_shared.h
+	../game_shared/studio_utils_shared.cpp
+
+	# NFTODO: Other game_shared files in the root of the directory
+	# (apart from voice_gamemgr.cpp) don't appear to be used.
+	# Remove them and see if anything breaks.
+)
+
+# NFTODO: Make a proper library out of this
+set(SOURCES_GAME_MENU_SHARED
+	../game_menu_shared/botprofiles/botprofileparser.h
+	../game_menu_shared/botprofiles/botprofileparser.cpp
+	../game_menu_shared/botprofiles/botprofiletable.h
+	../game_menu_shared/botprofiles/botprofiletable.cpp
+	../game_menu_shared/coreutil/coreutil.h
+	../game_menu_shared/filesystemops/FileSystemOps.h
+	../game_menu_shared/filesystemops/FileSystemOps.cpp
+	../game_menu_shared/gameresources/GameResources.h
+	../game_menu_shared/gameresources/GameResources.cpp
+	../game_menu_shared/iterators/utlhashmapconstiterator.h
+	../game_menu_shared/projectInterface/fixedSizeMessageBuffer.h
+	../game_menu_shared/projectInterface/IFileLoader.h
+	../game_menu_shared/projectInterface/ILogInterface.h
+	../game_menu_shared/projectInterface/IProjectInterface.h
+	../game_menu_shared/projectInterface/IProjectInterface.cpp
+	../game_menu_shared/projectInterface/IRNG.h
+
+	# NFTODO: Make a proper library out of these
+	../game_menu_shared/rapidjson/error/en.h
+	../game_menu_shared/rapidjson/error/error.h
+	../game_menu_shared/rapidjson/internal/biginteger.h
+	../game_menu_shared/rapidjson/internal/diyfp.h
+	../game_menu_shared/rapidjson/internal/dtoa.h
+	../game_menu_shared/rapidjson/internal/ieee754.h
+	../game_menu_shared/rapidjson/internal/itoa.h
+	../game_menu_shared/rapidjson/internal/meta.h
+	../game_menu_shared/rapidjson/internal/pow10.h
+	../game_menu_shared/rapidjson/internal/regex.h
+	../game_menu_shared/rapidjson/internal/stack.h
+	../game_menu_shared/rapidjson/internal/strfunc.h
+	../game_menu_shared/rapidjson/internal/strtod.h
+	../game_menu_shared/rapidjson/internal/swap.h
+	../game_menu_shared/rapidjson/msinttypes/inttypes.h
+	../game_menu_shared/rapidjson/msinttypes/stdint.h
+	../game_menu_shared/rapidjson/allocators.h
+	../game_menu_shared/rapidjson/document.h
+	../game_menu_shared/rapidjson/encodedstream.h
+	../game_menu_shared/rapidjson/encodings.h
+	../game_menu_shared/rapidjson/filereadstream.h
+	../game_menu_shared/rapidjson/filewritestream.h
+	../game_menu_shared/rapidjson/fwd.h
+	../game_menu_shared/rapidjson/istreamwrapper.h
+	../game_menu_shared/rapidjson/memorybuffer.h
+	../game_menu_shared/rapidjson/memorystream.h
+	../game_menu_shared/rapidjson/ostreamwrapper.h
+	../game_menu_shared/rapidjson/pointer.h
+	../game_menu_shared/rapidjson/prettywriter.h
+	../game_menu_shared/rapidjson/rapidjson.h
+	../game_menu_shared/rapidjson/reader.h
+	../game_menu_shared/rapidjson/schema.h
+	../game_menu_shared/rapidjson/stream.h
+	../game_menu_shared/rapidjson/stringbuffer.h
+	../game_menu_shared/rapidjson/writer.h
+	../game_menu_shared/rapidjson_helpers/rapidjson_helpers.h
+	../game_menu_shared/rapidjson_helpers/rapidjson_helpers.cpp
+)
+
+set(SOURCES_SERVER
+	botrix/good/aatree.h
+	botrix/good/astar.h
+	botrix/good/bitmatrix.h
+	botrix/good/bitset.h
+	botrix/good/circular_buffer.h
+	botrix/good/defines.h
+	botrix/good/file.h
+	botrix/good/file.cpp
+	botrix/good/graph.h
+	botrix/good/heap.h
+	botrix/good/ini_file.h
+	botrix/good/ini_file.cpp
+	botrix/good/list.h
+	botrix/good/log.h
+	botrix/good/log.cpp
+	botrix/good/map.h
+	botrix/good/memory.h
+	botrix/good/mutex.h
+	botrix/good/mutex.cpp
+	botrix/good/priority_queue.h
+	botrix/good/process.h
+	botrix/good/process.cpp
+	botrix/good/set.h
+	botrix/good/string_buffer.h
+	botrix/good/string_utils.h
+	botrix/good/string.h
+	botrix/good/thread.h
+	botrix/good/thread.cpp
+	botrix/good/utility.h
+	botrix/good/vector.h
+	botrix/bot.h
+	botrix/bot.cpp
+	botrix/botrixconfig.h
+	botrix/botrixconfig.cpp
+	botrix/botrixgamerulesinterface.h
+	botrix/botrixgamerulesinterface.cpp
+	botrix/botrixmod.h
+	botrix/botrixmod.cpp
+	botrix/botrixplayerinfo.h
+	botrix/botrixplayerinfo.cpp
+	botrix/botrixserverentity.h
+	botrix/botrixserverentity.cpp
+	botrix/clients.h
+	botrix/clients.cpp
+	botrix/console_commands.h
+	botrix/console_commands.cpp
+	botrix/defines.h
+	botrix/engine_util.h
+	botrix/engine_util.cpp
+	botrix/item.h
+	botrix/item.cpp
+	botrix/logbuffer.h
+	botrix/logbuffer.cpp
+	botrix/movecmd.h
+	botrix/players.h
+	botrix/players.cpp
+	botrix/server_plugin.h
+	botrix/server_plugin.cpp
+	botrix/type2string.h
+	botrix/type2string.cpp
+	botrix/types.h
+	botrix/waypoint_navigator.h
+	botrix/waypoint_navigator.cpp
+	botrix/waypoint.h
+	botrix/waypoint.cpp
+	botrix/weapon.h
+	botrix/weapon.cpp
+	bots/input/botuserinputsimulator.h
+	bots/input/botuserinputsimulator.cpp
+	bots/itemattributes/botweaponattributes.h
+	bots/bot_ai.cpp
+	bots/bot_commands.h
+	bots/bot_commands.cpp
+	bots/bot_cvars.h
+	bots/bot_cvars.cpp
+	bots/bot_fightstyle.cpp
+	bots/bot_memory.cpp
+	bots/bot_misc.h
+	bots/bot_misc.cpp
+	bots/bot_move.cpp
+	bots/bot_nav.cpp
+	bots/bot_stats.cpp
+	bots/bot.h
+	bots/botfactory.h
+	bots/botfactory.cpp
+	bots/botgamerulesinterface.h
+	bots/botgamerulesinterface.cpp
+	bots/botregister.h
+	bots/botregister.cpp
+	bots/ibotgamerulesinterface.h
+	client/client.cpp
+	client/clientCommandRegister.h
+	client/clientCommandRegister.cpp
+	customGeometry/commands.h
+	customGeometry/commands.cpp
+	customGeometry/messageWriter.h
+	customGeometry/messageWriter.cpp
+	gameplay/gameplaySystems.h
+	gameplay/gameplaySystems.cpp
+	gameplay/gameplaySystemsBase.h
+	gameplay/gameplaySystemsBase.cpp
+	gameplay/gameplaySystemsMultiplayer.h
+	gameplay/gameplaySystemsMultiplayer.cpp
+	gameplay/gameplaySystemsSingleplayer.h
+	gameplay/gameplaySystemsSingleplayer.cpp
+	gameplay/gamerules.cpp
+	gameplay/spawnpointlist.h
+	gameplay/spawnpointlist.cpp
+	gameplay/spawnpointmanager.h
+	gameplay/spawnpointmanager.cpp
+	gameplay/weaponInaccuracyCvars.h
+	gameplay/weaponInaccuracyCvars.cpp
+	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.h
+	hitbox_debugging/geometryConstructors/hitboxGeometryConstructor.cpp
+	hitbox_debugging/hitbox_commands.h
+	hitbox_debugging/hitbox_commands.cpp
+	hitbox_debugging/hitbox_debugData.h
+	hitbox_debugging/hitbox_debugData.cpp
+	hitbox_debugging/hitbox_messageConstructor.h
+	hitbox_debugging/hitbox_messageConstructor.cpp
+	messages/baseMessageWriter.h
+	messages/baseMessageWriter.cpp
+	messages/messageRegistrationHelper.h
+	npc/npc_ronin_turret.h
+	npc/npc_ronin_turret.cpp
+	projectInterface_server/fileLoaders_server.h
+	projectInterface_server/fileLoaders_server.cpp
+	projectInterface_server/logInterface_server.h
+	projectInterface_server/logInterface_server.cpp
+	projectInterface_server/projectInterface_server.h
+	projectInterface_server/projectInterface_server.cpp
+	projectInterface_server/rng_server.h
+	projectInterface_server/rng_server.cpp
+	screenOverlays/messageWriter.h
+	screenOverlays/messageWriter.cpp
+	sound/ServerSoundInstance.h
+	sound/ServerSoundInstance.cpp
+	utils/mp_utils.h
+	utils/mp_utils.cpp
+	utils/utils.cpp
+	weapondebugevents/weapondebugevent_base.h
+	weapondebugevents/weapondebugevent_base.cpp
+	weapondebugevents/weapondebugevent_hitscanfire.h
+	weapondebugevents/weapondebugevent_hitscanfire.cpp
+	weapondebugevents/weapondebugeventsource.h
+	weapondebugevents/weapondebugeventsource.cpp
+	activitymap.h
+	airtank.cpp
+	animating.cpp
+	animation.h
+	animation.cpp
+	bloater.cpp
+	bmodels.cpp
+	buttons.cpp
+	cbase.cpp
+	client.h
+	combat.cpp
+	decals.h
+	defaultai.h
+	defaultai.cpp
+	doors.h
+	doors.cpp
+	effects.cpp
+	explode.h
+	explode.cpp
+	flyingmonster.h
+	flyingmonster.cpp
+	func_break.h
+	func_break.cpp
+	func_tank.cpp
+	game.cpp
+	genericmonster.cpp
+	ggrenade.cpp
+	globals.cpp
+	h_ai.cpp
+	h_battery.cpp
+	h_cine.cpp
+	h_cycler.cpp
+	h_export.cpp
+	healthkit.cpp
+	items.h
+	items.cpp
+	lights.cpp
+	maprules.h
+	maprules.cpp
+	monstermaker.cpp
+	monsters.cpp
+	monsterstate.cpp
+	multiplay_gamerules.cpp
+	nodes_compat.h
+	nodes.cpp
+	observer.cpp
+	pathcorner.cpp
+	plane.h
+	plane.cpp
+	plats.cpp
+	player.cpp
+	playermonster.cpp
+	prop_playercorpse.h
+	prop_playercorpse.cpp
+	rat.cpp
+	roach.cpp
+	schedule.cpp
+	scripted.h
+	scripted.cpp
+	singleplay_gamerules.cpp
+	skill.cpp
+	sound.cpp
+	soundent.cpp
+	spectator.h
+	spectator.cpp
+	squad.h
+	squadmonster.h
+	squadmonster.cpp
+	subs.cpp
+	talkmonster.h
+	talkmonster.cpp
+	teamplay_gamerules.h
+	teamplay_gamerules.cpp
+	tempmonster.cpp
+	trains.h
+	triggers.cpp
+	turret.cpp
+	weapons.cpp
+	world.cpp
+)
+
+if(TARGET_IS_64BIT)
+	set(DEF_FILE server_amd64.def)
+else()
+	set(DEF_FILE server.def)
+endif()
+
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+if(TARGET_IS_64BIT)
+	set(CMAKE_SHARED_LIBRARY_SUFFIX "_amd64${CMAKE_SHARED_LIBRARY_SUFFIX}")
+endif()
+
+add_library(${TARGETNAME_LIB_SERVER} SHARED
+	${SOURCES_PM_SHARED}
+	${SOURCES_GAME_SHARED}
+	${SOURCES_SERVER}
+	${SOURCES_GAME_MENU_SHARED}
+	${DEF_FILE}
+)
+
+target_link_libraries(${TARGETNAME_LIB_SERVER} PRIVATE
+	${TARGETNAME_LIB_MINIUTL}
+	${TARGETNAME_LIB_PLATFORMLIB}
+	${TARGETNAME_LIB_ENGINEPUBLICAPI}
+)
+
+# Since this library is looked up entirely at runtime,
+# it is not depended upon by anything else in this repo,
+# so all include paths are private.
+target_include_directories(${TARGETNAME_LIB_SERVER} PRIVATE
+	.
+	../common
+	../pm_shared
+	../game_shared
+	../shared_utils/cpp
+	../public
+	../game_shared/weapons
+	../game_shared/weaponattributes
+	../game_shared/util
+	../game_shared/gameplay
+	../game_menu_shared
+	../miniutl
+	bots
+	bots/profiles
+	bots/itemattributes
+	bots/input
+	botrix
+	projectInterface_server
+	gameplay
+	utils
+)
+
+target_compile_definitions(${TARGETNAME_LIB_SERVER} PRIVATE
+	GAME_LIBRARIES=1
+	NO_VOICEGAMEMGR=1 # NFTODO: This would require game_shared/voice_gamemgr.cpp
+	$<$<BOOL:${NF_CLIENT_WEAPON_PREDICTION}>:CLIENT_WEAPONS=1>
+
+	# Windows
+	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:_WIN32=1>
+	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:WIN32=1>
+	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:NOMINMAX=1>
+	$<$<STREQUAL:"${TARGET_PLATFORM}","WINDOWS">:_HAS_EXCEPTIONS=0>
+
+	# Linux
+	$<$<STREQUAL:"${TARGET_PLATFORM}","LINUX">:_LINUX=1>
+)
+
+target_compile_options(${TARGETNAME_LIB_SERVER} PRIVATE
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-fno-exceptions>
+
+	# This is used for networking entity properties
+	$<$<NOT:$<STREQUAL:"${HOST_COMPILER}","MSVC">>:-Wno-invalid-offsetof>
+)
+
+set_common_library_compiler_settings(${TARGETNAME_LIB_SERVER})
+
+install(TARGETS ${TARGETNAME_LIB_SERVER}
+	RUNTIME DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/dlls"
+	LIBRARY DESTINATION "${INSTALL_ROOT}/${GAME_FOLDER_NAME}/dlls"
+)

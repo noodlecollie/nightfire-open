@@ -1,0 +1,25 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations":
+	[
+		{
+			"name": "Debug Game (CPP VS Dbg)",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/install/nightfire-open/bond.exe",
+			"args":
+			[
+				"-width", "1920",
+				"-height", "1080",
+				"-dev", "5"
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceFolder}/build/install/nightfire-open",
+			"environment": [],
+			"console": "externalTerminal"
+		}
+	]
+}
