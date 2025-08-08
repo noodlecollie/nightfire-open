@@ -8,6 +8,8 @@
 #include "botrix/weapon.h"
 #include "botrix/bot.h"
 
+#include "PlatformLib/String.h"
+
 #include "standard_includes.h"
 
 #define MAIN_COMMAND "botrix"
@@ -114,7 +116,11 @@ int CConsoleCommand::AutoComplete(
 		if ( strncmp(m_sCommand.c_str(), partial, partialLength) == 0 )
 		{
 			// Autocomplete only command name.
-			strncpy(&commands[strIndex][charIndex], m_sCommand.c_str(), MIN2(maxLength, m_sCommand.size() + 1));
+			PlatformLib_StrNCpy(
+				&commands[strIndex][charIndex],
+				COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
+				m_sCommand.c_str(),
+				MIN2(maxLength, m_sCommand.size() + 1));
 			commands[strIndex + result][COMMAND_COMPLETION_ITEM_LENGTH - 1] = 0;
 			result++;
 		}
@@ -146,9 +152,14 @@ int CConsoleCommand::AutoComplete(
 								const good::string& arg = m_cAutoCompleteArguments[i];
 								if ( good::starts_with(arg, partArg) )
 								{
-									strncpy(&commands[strIndex + result][charIndex], partial, lastSpace);
-									strncpy(
+									PlatformLib_StrNCpy(
+										&commands[strIndex + result][charIndex],
+										COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
+										partial,
+										lastSpace);
+									PlatformLib_StrNCpy(
 										&commands[strIndex + result][charIndex + lastSpace],
+										COMMAND_COMPLETION_ITEM_LENGTH - (charIndex + lastSpace),
 										arg.c_str(),
 										MIN2(maxLength, arg.size() + 1));
 									commands[strIndex + result][COMMAND_COMPLETION_ITEM_LENGTH - 1] = 0;
@@ -380,7 +391,10 @@ int CConsoleCommandContainer::AutoComplete(
 	{
 		if ( strncmp(m_sCommand.c_str(), partial, partialLength) == 0 )
 		{
-			strcpy(&commands[strIndex][charIndex], m_sCommand.c_str());  // e.g. "way" -> "waypoint"
+			PlatformLib_StrCpy(
+				&commands[strIndex][charIndex],
+				COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
+				m_sCommand.c_str());  // e.g. "way" -> "waypoint"
 			result++;
 		}
 	}
@@ -403,7 +417,11 @@ int CConsoleCommandContainer::AutoComplete(
 				int count = m_aCommands[i]->AutoComplete(partial, partialLength, commands, strIndex, charIdx);
 				for ( int j = 0; j < count; j++ )
 				{
-					strncpy(&commands[strIndex][charIndex], m_sCommand.c_str(), command_size);
+					PlatformLib_StrNCpy(
+						&commands[strIndex][charIndex],
+						COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
+						m_sCommand.c_str(),
+						command_size);
 					commands[strIndex][charIndex + command_size] = ' ';
 					strIndex++;
 					result++;

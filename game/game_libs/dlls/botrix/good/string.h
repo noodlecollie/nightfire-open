@@ -11,6 +11,8 @@
 
 #include "good/memory.h"
 
+#include "PlatformLib/String.h"
+
 // Define this to see debug prints of string memory allocation and deallocation.
 // #define DEBUG_STRING_PRINT
 
@@ -336,7 +338,7 @@ namespace good
 		{
 			size_type len = m_iSize;
 			Char* buffer = m_cAlloc.allocate(len + 1);
-			strncpy(buffer, m_pBuffer, (len + 1) * sizeof(Char));
+			PlatformLib_StrCpy(buffer, (len + 1) * sizeof(Char), m_pBuffer);
 			return base_string(buffer, false, true, len);
 		}
 
@@ -399,7 +401,7 @@ namespace good
 			if ( bAlloc )
 			{
 				Char* buffer = m_cAlloc.allocate(iSize + 1);
-				strncpy(buffer, &m_pBuffer[iFrom], iSize);
+				PlatformLib_StrNCpy(buffer, (iSize + 1) * sizeof(Char), &m_pBuffer[iFrom], iSize);
 				buffer[iSize] = 0;
 				return base_string(buffer, false, true, iSize);
 			}
@@ -419,9 +421,17 @@ namespace good
 			size_type len3 = s1.m_iSize + s2.m_iSize;
 			Char* buffer = alloc_t().allocate(len3 + 1);
 			if ( s1.size() > 0 )
-				strncpy(buffer, s1.c_str(), s1.m_iSize * sizeof(Char));
+			{
+				PlatformLib_StrNCpy(buffer, (len3 + 1) * sizeof(Char), s1.c_str(), s1.m_iSize * sizeof(Char));
+			}
 			if ( s2.size() > 0 )
-				strncpy(&buffer[s1.m_iSize], s2.c_str(), s2.m_iSize * sizeof(Char));
+			{
+				PlatformLib_StrNCpy(
+					&buffer[s1.m_iSize],
+					(len3 + 1 - s1.m_iSize) * sizeof(Char),
+					s2.c_str(),
+					s2.m_iSize * sizeof(Char));
+			}
 			buffer[len3] = 0;
 			base_string result;
 			result.m_pBuffer = buffer;
@@ -454,7 +464,7 @@ namespace good
 		void copy_contents(const Char* szFrom)
 		{
 			m_pBuffer = m_cAlloc.allocate(m_iSize + 1);
-			strncpy(m_pBuffer, szFrom, m_iSize * sizeof(Char));
+			PlatformLib_StrCpy(m_pBuffer, (m_iSize + 1) * sizeof(Char), szFrom);
 			m_pBuffer[m_iSize] = 0;
 		}
 
@@ -465,8 +475,12 @@ namespace good
 		{
 			size_type len = m_iSize;
 			Char* buffer = m_cAlloc.allocate(len + iRightSize + 1);
-			strncpy(buffer, m_pBuffer, len * sizeof(Char));
-			strncpy(&buffer[m_iSize], szRight, (iRightSize + 1) * sizeof(Char));
+			PlatformLib_StrNCpy(buffer, (len + iRightSize + 1) * sizeof(Char), m_pBuffer, len * sizeof(Char));
+			PlatformLib_StrNCpy(
+				&buffer[m_iSize],
+				(iRightSize + 1) * sizeof(Char),
+				szRight,
+				(iRightSize + 1) * sizeof(Char));
 			return base_string(buffer, false, true);
 		}
 

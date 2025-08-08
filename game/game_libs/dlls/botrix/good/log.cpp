@@ -3,6 +3,8 @@
 
 #include "good/log.h"
 
+#include "PlatformLib/String.h"
+
 WIN_PRAGMA(warning(push))
 WIN_PRAGMA(warning(disable : 4996))
 
@@ -104,7 +106,7 @@ namespace good
 		good::lock cLock(m_cMutex);
 #endif
 		size_t iSize = strnlen(szPrefix, GOOD_LOG_MAX_MSG_SIZE - 1);
-		strncpy(szLogMessage, szPrefix, iSize);
+		PlatformLib_StrNCpy(szLogMessage, sizeof(szLogMessage), szPrefix, iSize);
 		szLogMessage[iSize] = 0;
 		iStartSize = iSize;
 		return true;
@@ -217,7 +219,7 @@ namespace good
 		if ( szOutput != szLogMessage )
 		{
 			size_t iSize = MAX2(iOutputSize, iStartSize);
-			strncpy(szOutput, szLogMessage, iSize);
+			PlatformLib_StrNCpy(szOutput, iOutputSize, szLogMessage, iSize);
 		}
 
 		if ( iStartSize >= iOutputSize )
@@ -229,7 +231,7 @@ namespace good
 			return iOutputSize;
 		}
 
-		size_t iTotal = vsnprintf(&szOutput[iStartSize], iOutputSize - iStartSize, szFmt, argptr);
+		size_t iTotal = PlatformLib_VSNPrintF(&szOutput[iStartSize], iOutputSize - iStartSize, szFmt, argptr);
 
 		iTotal += iStartSize;
 		if ( iTotal > iOutputSize )

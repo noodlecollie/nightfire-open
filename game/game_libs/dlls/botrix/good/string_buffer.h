@@ -260,7 +260,7 @@ namespace good
 					&this->m_pBuffer[pos + fromL],
 					&this->m_pBuffer[pos + toL],
 					(size - pos - fromL) * sizeof(Char));
-				strncpy(&this->m_pBuffer[pos], sTo.c_str());
+				PlatformLib_StrCpy(&this->m_pBuffer[pos], (this->m_iCapacity - pos) * sizeof(Char), sTo.c_str());
 				this->m_iSize += diff;
 				pos += toL;
 			}
@@ -318,7 +318,10 @@ namespace good
 				this->m_pBuffer[0] = 0;
 			}
 			else
+			{
 				this->m_pBuffer = NULL;
+			}
+
 			this->m_iCapacity = iCapacity;
 			this->m_iSize = 0;
 			this->m_iStatic = false;
@@ -331,7 +334,11 @@ namespace good
 		{
 			GoodAssert(iOtherLen >= 0 && pos >= 0);
 			GoodAssert(m_iCapacity >= pos + iOtherLen + 1);
-			PlatformLib_StrNCpy(&this->m_pBuffer[pos], this->m_iSize - pos, szOther, iOtherLen * sizeof(Char));
+			PlatformLib_StrNCpy(
+				&this->m_pBuffer[pos],
+				(this->m_iCapacity - pos) * sizeof(Char),
+				szOther,
+				iOtherLen * sizeof(Char));
 			this->m_iSize += iOtherLen;
 		}
 
