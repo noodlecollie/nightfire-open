@@ -1,18 +1,16 @@
 #ifdef WIN32
 
-#pragma warning(disable : 4533) // Disable warning about skipping inicialization of some variable, when using goto.
-
+#pragma warning(disable : 4533)  // Disable warning about skipping inicialization of some variable, when using goto.
 
 #include <windows.h>
 
 #include "good/file.h"
 #include "good/process.h"
 
-
 namespace good
 {
 
-	DWORD WINAPI process_impl_process_proc(LPVOID lpprocessParameter); // Forward declaration.
+	DWORD WINAPI process_impl_process_proc(LPVOID lpprocessParameter);  // Forward declaration.
 
 	//----------------------------------------------------------------------------------------------------------------
 	// process implementation.
@@ -20,7 +18,13 @@ namespace good
 	class process_impl
 	{
 	public:
-		inline process_impl(): m_hProcess(NULL), m_hWriteChildInput(NULL), m_hReadChildOutput(NULL), m_hReadChildError(NULL) {}
+		inline process_impl() :
+			m_hProcess(NULL),
+			m_hWriteChildInput(NULL),
+			m_hReadChildOutput(NULL),
+			m_hReadChildError(NULL)
+		{
+		}
 
 		inline virtual ~process_impl()
 		{
@@ -30,9 +34,10 @@ namespace good
 		//------------------------------------------------------------------------------------------------------------
 		// Set process parameters.
 		//------------------------------------------------------------------------------------------------------------
-		inline void set_params( const good::string& sExe, const good::string& sCmd, bool bRedirect, bool bChangeWorkingDir )
+		inline void
+		set_params(const good::string& sExe, const good::string& sCmd, bool bRedirect, bool bChangeWorkingDir)
 		{
-			GoodAssert( sExe.size() > 0 || sCmd.size() > 0 );
+			GoodAssert(sExe.size() > 0 || sCmd.size() > 0);
 			m_sExe.assign(sExe, true);
 			m_sCmd.assign(sCmd, true);
 
@@ -43,30 +48,34 @@ namespace good
 		}
 
 		//------------------------------------------------------------------------------------------------------------
-		// Execute process. 
+		// Execute process.
 		//------------------------------------------------------------------------------------------------------------
-		inline bool launch( bool bShowProcessWindow, bool bDaemon )
+		inline bool launch(bool bShowProcessWindow, bool bDaemon)
 		{
-			#define SET_LAUNCH_ERROR(error) { SetError(error, __LINE__-1); goto process_launch_error; }
+#define SET_LAUNCH_ERROR(error) \
+	{ \
+		SetError(error, __LINE__ - 1); \
+		goto process_launch_error; \
+	}
 
-			GoodAssert( m_sExe.size() > 0 );
+			GoodAssert(m_sExe.size() > 0);
 
-			m_szLastError[0] = 0; // No error.
+			m_szLastError[0] = 0;  // No error.
 			m_bDaemon = bDaemon;
 
 			HANDLE hChildInput = NULL, hChildOutput = NULL, hChildError = NULL;
 
 			// Set up the security attributes struct.
-			static SECURITY_ATTRIBUTES sa;// = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
+			static SECURITY_ATTRIBUTES sa;  // = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 			// Set up the security attributes struct.
 			sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 			sa.lpSecurityDescriptor = NULL;
 			sa.bInheritHandle = TRUE;
 
 			// Set up the start up info struct.
-			STARTUPINFO si;// = { sizeof(STARTUPINFO) };
+			STARTUPINFO si;  // = { sizeof(STARTUPINFO) };
 			DWORD dwFlags;
-			ZeroMemory(&si,sizeof(STARTUPINFO));
+			ZeroMemory(&si, sizeof(STARTUPINFO));
 			si.cb = sizeof(STARTUPINFO);
 			if ( m_bRedirect )
 				si.dwFlags |= STARTF_USESTDHANDLES;
@@ -107,7 +116,17 @@ namespace good
 			}
 
 			PROCESS_INFORMATION pi;
-			if ( !CreateProcess(m_sExe.c_str(), (LPTSTR)m_sCmd.c_str(), NULL, NULL, TRUE, dwFlags, NULL, m_sCurrentDir.size() > 0 ? m_sCurrentDir.c_str() : NULL, &si, &pi) )
+			if ( !CreateProcess(
+					 m_sExe.c_str(),
+					 (LPTSTR)m_sCmd.c_str(),
+					 NULL,
+					 NULL,
+					 TRUE,
+					 dwFlags,
+					 NULL,
+					 m_sCurrentDir.size() > 0 ? m_sCurrentDir.c_str() : NULL,
+					 &si,
+					 &pi) )
 				SET_LAUNCH_ERROR("CreateProcess");
 
 			// Set global child process handle to cause processs to exit.
@@ -117,8 +136,8 @@ namespace good
 			if ( !CloseHandle(pi.hThread) )
 				SET_LAUNCH_ERROR("CloseHandle");
 
-			// Close pipe handles (do not continue to modify the parent). You need to make sure that no handles 
-			// to the write end of the output pipe are maintained in this process or else the pipe will not close 
+			// Close pipe handles (do not continue to modify the parent). You need to make sure that no handles
+			// to the write end of the output pipe are maintained in this process or else the pipe will not close
 			// when the child process exits and the ReadFile will hang.
 			if ( hChildInput && !CloseHandle(hChildInput) )
 				SET_LAUNCH_ERROR("CloseHandle");
@@ -178,35 +197,37 @@ namespace good
 		//------------------------------------------------------------------------------------------------------------
 		// Join a process for a given time.
 		//------------------------------------------------------------------------------------------------------------
-		inline bool join( int iMSecs = TIME_INFINITE )
+		inline bool join(int iMSecs = TIME_INFINITE)
 		{
-			GoodAssert( m_hProcess );
+			GoodAssert(m_hProcess);
 			return WaitForSingleObject(m_hProcess, iMSecs) == WAIT_OBJECT_0;
 		}
-
 
 		//------------------------------------------------------------------------------------------------------------
 		// Terminate process.
 		//------------------------------------------------------------------------------------------------------------
 		inline void terminate()
 		{
-			GoodAssert( m_hProcess );
+			GoodAssert(m_hProcess);
 			TerminateProcess(m_hProcess, 1);
 		}
 
 		//------------------------------------------------------------------------------------------------------------
 		// Check if process was launched previously.
 		//------------------------------------------------------------------------------------------------------------
-		inline bool is_launched() { return m_hProcess != NULL; }
+		inline bool is_launched()
+		{
+			return m_hProcess != NULL;
+		}
 
 		//------------------------------------------------------------------------------------------------------------
 		// Check if process is finished.
 		//------------------------------------------------------------------------------------------------------------
 		inline bool is_finished()
 		{
-			GoodAssert( m_hProcess );
+			GoodAssert(m_hProcess);
 			DWORD iExitCode = 0;
-			GetExitCodeProcess(m_hProcess, &iExitCode); // TODO: Handle error.
+			GetExitCodeProcess(m_hProcess, &iExitCode);  // TODO: Handle error.
 			return iExitCode != STILL_ACTIVE;
 		}
 
@@ -215,17 +236,17 @@ namespace good
 		//------------------------------------------------------------------------------------------------------------
 		void close_stdin()
 		{
-			GoodAssert( m_hWriteChildInput );
-			CloseHandle( m_hWriteChildInput );
+			GoodAssert(m_hWriteChildInput);
+			CloseHandle(m_hWriteChildInput);
 			m_hWriteChildInput = NULL;
 		}
 
 		//----------------------------------------------------------------------------------------------------------------
 		// Write input for the process. Return false on error or when child exits.
 		//----------------------------------------------------------------------------------------------------------------
-		inline bool write_stdin( void* pBuffer, int iSize )
+		inline bool write_stdin(void* pBuffer, int iSize)
 		{
-			m_szLastError[0] = 0; // No error.
+			m_szLastError[0] = 0;  // No error.
 
 			GoodAssert(m_hWriteChildInput);
 			DWORD iTotal = 0;
@@ -234,7 +255,7 @@ namespace good
 				DWORD iWritten;
 				if ( !WriteFile(m_hWriteChildInput, (char*)pBuffer + iTotal, iSize, &iWritten, NULL) )
 				{
-					if ( GetLastError() != ERROR_NO_DATA ) // Pipe was closed (normal exit path).
+					if ( GetLastError() != ERROR_NO_DATA )  // Pipe was closed (normal exit path).
 						SetError("WriteFile", __LINE__ - 3);
 					CloseHandle(m_hWriteChildInput);
 					m_hWriteChildInput = NULL;
@@ -251,14 +272,14 @@ namespace good
 			GoodAssert(m_hReadChildOutput);
 			DWORD iBytesAvailable;
 			if ( !PeekNamedPipe(m_hReadChildOutput, NULL, 0, NULL, &iBytesAvailable, NULL) )
-				return true; // Force to read and thus fail.
+				return true;  // Force to read and thus fail.
 			return iBytesAvailable > 0;
 		}
 
 		// Read output of the process, returning true, if there is more output.
-		inline bool read_stdout( void* pBuffer, int iMaxSize, int& iReadSize )
+		inline bool read_stdout(void* pBuffer, int iMaxSize, int& iReadSize)
 		{
-			return read( m_hReadChildOutput, pBuffer, iMaxSize, iReadSize );
+			return read(m_hReadChildOutput, pBuffer, iMaxSize, iReadSize);
 		}
 
 		// Return true if child has data on stderr.
@@ -267,14 +288,14 @@ namespace good
 			GoodAssert(m_hReadChildError);
 			DWORD iBytesAvailable;
 			if ( !PeekNamedPipe(m_hReadChildError, NULL, 0, NULL, &iBytesAvailable, NULL) )
-				return true; // Force to read and thus fail.
+				return true;  // Force to read and thus fail.
 			return iBytesAvailable > 0;
 		}
 
 		// Read error of the process, returning true, if there is more output.
-		inline bool read_stderr( void* pBuffer, int iMaxSize, int& iReadSize )
+		inline bool read_stderr(void* pBuffer, int iMaxSize, int& iReadSize)
 		{
-			return read( m_hReadChildError, pBuffer, iMaxSize, iReadSize );
+			return read(m_hReadChildError, pBuffer, iMaxSize, iReadSize);
 		}
 
 		// Get last error.
@@ -285,11 +306,11 @@ namespace good
 
 	protected:
 		// Read handle.
-		bool read( HANDLE& hHandle, void* pBuffer, int iMaxSize, int& iReadSize )
+		bool read(HANDLE& hHandle, void* pBuffer, int iMaxSize, int& iReadSize)
 		{
 			GoodAssert(hHandle);
 
-			m_szLastError[0] = 0; // No error.
+			m_szLastError[0] = 0;  // No error.
 
 			DWORD dwReadSize;
 			bool result = (ReadFile(hHandle, pBuffer, iMaxSize, &dwReadSize, NULL) == TRUE);
@@ -298,29 +319,32 @@ namespace good
 			if ( !result || (dwReadSize == 0) )
 			{
 				if ( GetLastError() != ERROR_BROKEN_PIPE )
-					SetError("ReadFile", __LINE__ - 6); // Something bad happened.
+					SetError("ReadFile", __LINE__ - 6);  // Something bad happened.
 				CloseHandle(hHandle);
 				hHandle = NULL;
-				return false; // Error or pipe gone = child exited, no more data.
+				return false;  // Error or pipe gone = child exited, no more data.
 			}
 			return true;
 
 			// Display the character read on the screen.
-			//if ( !WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE),lpBuffer,nBytesRead,&nCharsWritten,NULL))
+			// if ( !WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE),lpBuffer,nBytesRead,&nCharsWritten,NULL))
 			//	SetError("WriteConsole");
 		}
 
 		// Displays the error number and corresponding message.
-		void SetError( char* szFunction, int iLine )
+		void SetError(char* szFunction, int iLine)
 		{
-			GoodAssert( GetLastError() != 0 );
+			GoodAssert(GetLastError() != 0);
 
 			LPVOID szError;
 			FormatMessageA(
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-				NULL, GetLastError(),
+				NULL,
+				GetLastError(),
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-				(LPTSTR)&szError, 0, NULL);
+				(LPTSTR)&szError,
+				0,
+				NULL);
 
 #if defined(DEBUG) || defined(_DEBUG)
 			wsprintf(m_szLastError, "Error %d from %s(), line %d: %s", GetLastError(), szFunction, iLine, szError);
@@ -339,9 +363,8 @@ namespace good
 		bool m_bRedirect;
 	};
 
-
 	//----------------------------------------------------------------------------------------------------------------
-	void process::exit( int iExitCode )
+	void process::exit(int iExitCode)
 	{
 		ExitProcess(iExitCode);
 	}
@@ -355,7 +378,7 @@ namespace good
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	process::process( const good::string& sExe, const good::string& sCmd, bool bRedirect, bool bChangeWorkingDir )
+	process::process(const good::string& sExe, const good::string& sCmd, bool bRedirect, bool bChangeWorkingDir)
 	{
 		m_pImpl = new process_impl();
 		set_params(sExe, sCmd, bRedirect, bChangeWorkingDir);
@@ -368,13 +391,13 @@ namespace good
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void process::set_params( const good::string& sExe, const good::string& sCmd, bool bRedirect, bool bChangeWorkingDir)
+	void process::set_params(const good::string& sExe, const good::string& sCmd, bool bRedirect, bool bChangeWorkingDir)
 	{
 		((process_impl*)m_pImpl)->set_params(sExe, sCmd, bRedirect, bChangeWorkingDir);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool process::launch( bool bShowProcessWindow, bool bDaemon )
+	bool process::launch(bool bShowProcessWindow, bool bDaemon)
 	{
 		return ((process_impl*)m_pImpl)->launch(bShowProcessWindow, bDaemon);
 	}
@@ -392,7 +415,7 @@ namespace good
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool process::join( int iMSecs )
+	bool process::join(int iMSecs)
 	{
 		return ((process_impl*)m_pImpl)->join(iMSecs);
 	}
@@ -410,7 +433,7 @@ namespace good
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool process::write_stdin( void* pBuffer, int iSize )
+	bool process::write_stdin(void* pBuffer, int iSize)
 	{
 		return ((process_impl*)m_pImpl)->write_stdin(pBuffer, iSize);
 	}
@@ -428,7 +451,7 @@ namespace good
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool process::read_stdout( void* pBuffer, int iMaxSize, int& iReadSize )
+	bool process::read_stdout(void* pBuffer, int iMaxSize, int& iReadSize)
 	{
 		return ((process_impl*)m_pImpl)->read_stdout(pBuffer, iMaxSize, iReadSize);
 	}
@@ -440,7 +463,7 @@ namespace good
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool process::read_stderr( void* pBuffer, int iMaxSize, int& iReadSize )
+	bool process::read_stderr(void* pBuffer, int iMaxSize, int& iReadSize)
 	{
 		return ((process_impl*)m_pImpl)->read_stderr(pBuffer, iMaxSize, iReadSize);
 	}
@@ -450,7 +473,6 @@ namespace good
 	{
 		return ((process_impl*)m_pImpl)->get_last_error();
 	}
-} // namespace good
+}  // namespace good
 
-
-#endif // WIN32
+#endif  // WIN32

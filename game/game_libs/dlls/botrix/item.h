@@ -59,9 +59,10 @@ public:
 	}
 
 	good::string sClassName;  ///< Entity class name (like "prop_physics_multiplayer" or "item_healthkit").
-	const char* szEngineName;  ///< Can compare this string with struct edict_s::GetClassName() only by pointer. Faster.
-	TItemFlags iFlags;  ///< Entity flags and argument (how much health/armor restore, or bullets gives etc.).
-	float fPickupDistanceSqr;  ///< Distance to entity to consider it can be picked up.
+	const char* szEngineName =
+		nullptr;  ///< Can compare this string with struct edict_s::GetClassName() only by pointer. Faster.
+	TItemFlags iFlags = 0;  ///< Entity flags and argument (how much health/armor restore, or bullets gives etc.).
+	float fPickupDistanceSqr = 0.0f;  ///< Distance to entity to consider it can be picked up.
 };
 
 //****************************************************************************************************************

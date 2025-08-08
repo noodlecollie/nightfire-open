@@ -468,8 +468,9 @@ int PM_FlyMove(void)
 	float d;
 	int numplanes;
 	vec3_t planes[MAX_CLIP_PLANES];
-	vec3_t primal_velocity, original_velocity;
-	vec3_t new_velocity;
+	vec3_t primal_velocity;
+	vec3_t original_velocity;
+	vec3_t new_velocity = {0.0f, 0.0f, 0.0f};
 	int i, j;
 	pmtrace_t trace;
 	vec3_t end;
