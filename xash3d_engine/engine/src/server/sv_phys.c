@@ -573,10 +573,20 @@ Returns the clipflags if the velocity was modified (hit something solid)
 */
 int SV_FlyMove(edict_t* ent, float time, trace_t* steptrace)
 {
-	int i, j, numplanes, bumpcount, blocked;
-	vec3_t dir, end, planes[MAX_CLIP_PLANES];
-	vec3_t primal_velocity, original_velocity, new_velocity;
-	float d, time_left, allFraction;
+	int i;
+	int j;
+	int numplanes;
+	int bumpcount;
+	int blocked;
+	vec3_t dir;
+	vec3_t end;
+	vec3_t planes[MAX_CLIP_PLANES];
+	vec3_t primal_velocity;
+	vec3_t original_velocity;
+	vec3_t new_velocity = {0.0f, 0.0f, 0.0f};
+	float d;
+	float time_left;
+	float allFraction;
 	qboolean monsterClip;
 	trace_t trace;
 

@@ -7,6 +7,7 @@
 #define __GOOD_STRING_BUFFER_H__
 
 #include "good/string.h"
+#include "PlatformLib/String.h"
 
 #define DEFAULT_STRING_BUFFER_ALLOC 0  ///< Size of string buffer allocated by default.
 
@@ -273,16 +274,33 @@ namespace good
 		void reserve(size_type iCapacity)
 		{
 			GoodAssert(iCapacity > 0);
+
 			if ( this->m_pBuffer && (this->m_iCapacity >= iCapacity) )
+			{
 				return;
+			}
+
 			if ( this->m_iStatic )
 			{
 				this->m_pBuffer = (Char*)malloc(iCapacity * sizeof(Char));
 				this->m_iStatic = false;
 			}
 			else
+			{
+				// This is protected by the m_iStatic check, however GCC gets confused by that.
+				// Sometimes this warning is triggered if a static string buffer is used.
+#ifndef _MSC_VER
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfree-nonheap-object"
+#endif
 				this->m_pBuffer = (Char*)realloc(this->m_pBuffer, iCapacity * sizeof(Char));
+#ifndef _MSC_VER
+#pragma GCC diagnostic pop
+#endif
+			}
+
 			m_iCapacity = iCapacity;
+
 #ifdef DEBUG_STRING_PRINT
 			printf("base_string_buffer reserve(): %d\n", m_iCapacity);
 #endif
@@ -313,7 +331,7 @@ namespace good
 		{
 			GoodAssert(iOtherLen >= 0 && pos >= 0);
 			GoodAssert(m_iCapacity >= pos + iOtherLen + 1);
-			strncpy(&this->m_pBuffer[pos], szOther, iOtherLen * sizeof(Char));
+			PlatformLib_StrNCpy(&this->m_pBuffer[pos], this->m_iSize - pos, szOther, iOtherLen * sizeof(Char));
 			this->m_iSize += iOtherLen;
 		}
 

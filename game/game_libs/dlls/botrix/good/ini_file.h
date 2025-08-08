@@ -120,8 +120,8 @@ namespace good
 			ini_string key;  ///< Key of this configuration.
 			ini_string value;  ///< Value of this configuration.
 			ini_string junk;  ///< Junk (comment, multiple ends of line, etc).
-			bool junkIsComment : 1;  ///< True if was read comment symbol (';' or '#') before junk of this config.
-			bool eolAterJunk : 1;  ///< If true then end of line is needed after junk.
+			bool junkIsComment;  ///< True if was read comment symbol (';' or '#') before junk of this config.
+			bool eolAterJunk;  ///< If true then end of line is needed after junk.
 		};
 
 		typedef good::list<struct config> configs;  ///< List of configurations of this ini file section.
@@ -131,7 +131,7 @@ namespace good
 	public:  // Members.
 		ini_string name;  ///< Section name (without brackets []).
 		ini_string junkAfterName;  ///< Comments and new lines after section name. "\n" by default.
-		bool eolAfterJunk;  ///< If true, then there is end of line after junk (for correct syntax).
+		bool eolAfterJunk = false;  ///< If true, then there is end of line after junk (for correct syntax).
 
 	public:  // Methods.
 		//--------------------------------------------------------------------------------------------------------
