@@ -22,6 +22,11 @@ CBaseEntity* CSpawnPointList::SpawnPointAtIndex(uint32_t index) const
 	return index < static_cast<uint32_t>(m_SpawnPoints.Count()) ? (CBaseEntity*)m_SpawnPoints[index] : nullptr;
 }
 
+CBaseEntity* CSpawnPointList::IndirectSpawnPointAtIndex(uint32_t index) const
+{
+	return index < static_cast<uint32_t>(m_Indices.Count()) ? (CBaseEntity*)m_SpawnPoints[m_Indices[index]] : nullptr;
+}
+
 void CSpawnPointList::Initialise(const CUtlString& className)
 {
 	m_SpawnPointClassName = className;
@@ -100,4 +105,9 @@ void CSpawnPointList::RandomiseIndices()
 	}
 
 	m_iNextSpawnPointIndex = 0;
+}
+
+const CUtlVector<uint32_t>& CSpawnPointList::Indices() const
+{
+	return m_Indices;
 }

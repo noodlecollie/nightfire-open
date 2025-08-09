@@ -17,6 +17,7 @@ public:
 	// Randomise means they will be returned in a random order.
 	void MakeIndicesSequential();
 	void RandomiseIndices();
+	const CUtlVector<uint32_t>& Indices() const;
 
 	// Returns the next spawn point and increments the index.
 	CBaseEntity* GetNextSpawnPoint();
@@ -25,6 +26,7 @@ public:
 	// not indirected via the indices list.
 	uint32_t NextSpawnPointIndex() const;
 	CBaseEntity* SpawnPointAtIndex(uint32_t index) const;
+	CBaseEntity* IndirectSpawnPointAtIndex(uint32_t index) const;
 
 	size_t SpawnPointCount() const;
 

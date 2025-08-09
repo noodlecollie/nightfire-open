@@ -252,7 +252,7 @@ void CHalfLifeMultiplay::Think(void)
 
 	if ( flFragLimit )
 	{
-		int bestfrags = 9999;
+		int bestfrags = std::numeric_limits<int>::max();
 		int remain;
 
 		// check if any player is over the frag limit
@@ -275,6 +275,7 @@ void CHalfLifeMultiplay::Think(void)
 				}
 			}
 		}
+
 		frags_remaining = bestfrags;
 	}
 

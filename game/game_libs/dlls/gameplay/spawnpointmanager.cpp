@@ -147,7 +147,8 @@ CBaseEntity* CSpawnPointManager::GetNextValidDeathmatchSpawnPoint(CBasePlayer* p
 			continue;
 		}
 
-		if ( (flags & Flag_AvoidDeathSite) && !spawnPointNearDeathSite && mp_respawn_avoid_radius.value > 0.0f )
+		if ( (flags & Flag_AvoidDeathSite) && !spawnPointNearDeathSite && mp_respawn_avoid_radius.value > 0.0f &&
+			 player->m_iDeaths > 0 )
 		{
 			Vector displacement = Vector(spawnPoint->pev->origin) - Vector(player->pev->origin);
 
