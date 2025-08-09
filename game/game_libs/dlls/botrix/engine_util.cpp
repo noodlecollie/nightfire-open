@@ -195,6 +195,7 @@ bool CBotrixEngineUtil::RayHitsEntity(edict_t* pEntity, const Vector& vSrc, cons
 }
 
 TReach CBotrixEngineUtil::GetReachableInfoFromTo(
+	TraceDirection direction,
 	const Vector& vSrc,
 	Vector& vDest,
 	bool& bCrouch,
@@ -202,14 +203,11 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	float fMaxDistanceSqr,
 	bool bShowHelp)
 {
-	static int iRandom = 0;  // This function may be called 2 times with (v1, v2) and (v2,v1)
-	iRandom = (iRandom + 1) % 4;  // so iRandom is to draw text higher / other color that previous time.
-
-	static int colors[4] = {0xFFFF00, 0xFFFFFF, 0xFF0000, 0x00FF00};
-	int color = colors[iRandom];
+	int color = direction == TraceDirection::EFirstToSecond ? 0xFF0000 : 0x00FF00;
 	unsigned char r = GET_3RD_BYTE(color), g = GET_2ND_BYTE(color), b = GET_1ST_BYTE(color);
 
-	Vector vOffset(iRandom / 4.0f, iRandom / 4.0f, 0);
+	Vector vOffset =
+		direction == TraceDirection::EFirstToSecond ? Vector(-0.25f, -0.25f, 0.0f) : Vector(0.25f, 0.25f, 0.0f);
 
 	if ( fDistanceSqr <= 0.0f )
 	{
@@ -306,6 +304,7 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		DrawLine(vDest + vOffset, vDestGround + vOffset, static_cast<float>(iTextTime), r, g, b);
 	}
 
+	// Start off by assuming the destination is reachable.
 	TReach iResult = EReachReachable;
 
 	// Need to trace several times to know if can jump up all obstacles.
@@ -319,8 +318,10 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	bool bHasStair = false;
 	int i = 0;
 
+	// Keep looping while we have attempts left, and while the hit point hasn't reached the destination.
 	for ( ; i < iMaxTraceRaysForReachable && !EqualVectors(vHit, vDestGround); ++i )
 	{
+		// Begin from where we last hit.
 		Vector vStart = vHit;
 
 		// Trace from hit point to the floor.
@@ -393,10 +394,12 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 
 	// Set text position.
 	Vector vText = (vSrcGround + vDestGround) / 2;
-	vText.z += iRandom * 10;
+	vText.z += direction == TraceDirection::EFirstToSecond ? 20 : 10;
 
 	if ( i == iMaxTraceRaysForReachable )
 	{
+		// We exhausted all our tries without our hit point reaching
+		// the destination, so assume not reachable.
 		iResult = EReachNotReachable;
 	}
 
@@ -508,11 +511,11 @@ Vector CBotrixEngineUtil::GetGroundVec(const Vector& vSrc)
 }
 
 //----------------------------------------------------------------------------------------------------------------
-// Returns true if can move forward when standing at vGround performing a jump (normal, with crouch o maybe just
-// walking). At return vHit contains new coord which is where player can get after jump.
+// Returns true if can move forward when standing at vGround performing a jump (normal, with crouch, or maybe just
+// walking). At return vGround contains new coord which is where player can get after jump.
 //----------------------------------------------------------------------------------------------------------------
 TReach
-CBotrixEngineUtil::CanPassOrJump(Vector& vGround, Vector& vDirectionInc, const Vector& vMins, const Vector& vMaxs)
+CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectionInc, const Vector& vMins, const Vector& vMaxs)
 {
 	// Try to walk unit.
 	Vector vHit = vGround + vDirectionInc;
@@ -527,8 +530,9 @@ CBotrixEngineUtil::CanPassOrJump(Vector& vGround, Vector& vDirectionInc, const V
 
 	if ( !EqualVectors(vGround, m_TraceResult.vecEndPos, 0.01f) )
 	{
-		vGround = m_TraceResult.vecEndPos;
-		return EReachReachable;  // Can walk from vGround to vHit.
+		// We hit something, but we can walk from the ground to this location.
+		vGround = GetHullGroundVec(m_TraceResult.vecEndPos);
+		return EReachReachable;
 	}
 
 	// Try to walk over (one stair step).
@@ -572,7 +576,7 @@ CBotrixEngineUtil::CanPassOrJump(Vector& vGround, Vector& vDirectionInc, const V
 		return EReachNeedJump;
 	}
 
-	vGround = m_TraceResult.vecEndPos;
+	vGround = GetHullGroundVec(m_TraceResult.vecEndPos);
 	// vGround = CUtil::GetHullGroundVec( CUtil::TraceResult().endpos );
 	return EReachNotReachable;  // Can't jump over.
 }

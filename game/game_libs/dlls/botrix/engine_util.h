@@ -32,6 +32,12 @@ typedef int TVisibility;  ///< Flags for CUtil::IsVisible() function.
 class CBotrixEngineUtil
 {
 public:
+	enum class TraceDirection
+	{
+		EFirstToSecond,
+		ESecondToFirst
+	};
+
 	static constexpr size_t MAX_PVS_DATA_LENGTH = (MAX_MAP_LEAFS + 7) / 8;
 
 	static good::TLogLevel iLogLevel;  /// Console log level. Info by default.
@@ -70,6 +76,7 @@ public:
 	static bool RayHitsEntity(edict_t* pDoor, const Vector& vSrc, const Vector& vDest);
 
 	static TReach GetReachableInfoFromTo(
+		TraceDirection direction,
 		const Vector& vSrc,
 		Vector& vDest,
 		bool& bCrouch,
@@ -128,6 +135,6 @@ public:  // Members.
 	static byte pvs[MAX_PVS_DATA_LENGTH];
 
 private:
-	static TReach CanPassOrJump(Vector& vGround, Vector& vDirectionInc, const Vector& vMins, const Vector& vMaxs);
+	static TReach CanPassOrJump(Vector& vGround, const Vector& vDirectionInc, const Vector& vMins, const Vector& vMaxs);
 	static TReach CanClimbSlope(const Vector& vSrc, const Vector& vDest);
 };
