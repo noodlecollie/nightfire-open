@@ -14,5 +14,6 @@ enum class WeaponId_e
 	WeaponRonin,
 
 	// Debugging weapons
-	WeaponSilent
+	WeaponSilent,
+	WeaponHullTrace,
 };

@@ -114,33 +114,11 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 
 	client_sprite_t* p;
 
-	const WeaponAtts::WACollection* atts = CWeaponRegistry::StaticInstance().GetByName(pWeapon->szName);
-
-	if ( atts )
-	{
-		// This is a Nightfire weapon - set the default crosshair.
-		// Once all the Half Life weapons are gone, we can remove the check
-		// and just do this for all weapons.
-		pWeapon->hCrosshair = SPR_Load("sprites/nfcrosshair.spr");
-		pWeapon->rcCrosshair.top = 0;
-		pWeapon->rcCrosshair.left = 0;
-		pWeapon->rcCrosshair.bottom = 0;
-		pWeapon->rcCrosshair.right = 0;
-	}
-	else
-	{
-		p = GetSpriteList(pList, "crosshair", iRes, i);
-		if ( p )
-		{
-			PlatformLib_SNPrintF(sz, sizeof(sz), "sprites/%s.spr", p->szSprite);
-			pWeapon->hCrosshair = SPR_Load(sz);
-			pWeapon->rcCrosshair = p->rc;
-		}
-		else
-		{
-			pWeapon->hCrosshair = 0;
-		}
-	}
+	pWeapon->hCrosshair = SPR_Load("sprites/nfcrosshair.spr");
+	pWeapon->rcCrosshair.top = 0;
+	pWeapon->rcCrosshair.left = 0;
+	pWeapon->rcCrosshair.bottom = 0;
+	pWeapon->rcCrosshair.right = 0;
 
 	p = GetSpriteList(pList, "autoaim", iRes, i);
 	if ( p )
@@ -150,7 +128,9 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 		pWeapon->rcAutoaim = p->rc;
 	}
 	else
+	{
 		pWeapon->hAutoaim = 0;
+	}
 
 	p = GetSpriteList(pList, "zoom", iRes, i);
 	if ( p )
@@ -188,7 +168,9 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 		gHR.iHistoryGap = Max(gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top);
 	}
 	else
+	{
 		pWeapon->hInactive = 0;
+	}
 
 	p = GetSpriteList(pList, "weapon_s", iRes, i);
 	if ( p )
@@ -198,7 +180,9 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 		pWeapon->rcActive = p->rc;
 	}
 	else
+	{
 		pWeapon->hActive = 0;
+	}
 
 	p = GetSpriteList(pList, "ammo", iRes, i);
 	if ( p )
@@ -210,7 +194,9 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 		gHR.iHistoryGap = Max(gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top);
 	}
 	else
+	{
 		pWeapon->hAmmo = 0;
+	}
 
 	p = GetSpriteList(pList, "ammo2", iRes, i);
 	if ( p )
@@ -222,7 +208,9 @@ void WeaponsResource::LoadWeaponSprites(WEAPON* pWeapon)
 		gHR.iHistoryGap = Max(gHR.iHistoryGap, pWeapon->rcActive.bottom - pWeapon->rcActive.top);
 	}
 	else
+	{
 		pWeapon->hAmmo2 = 0;
+	}
 }
 
 // Returns the first weapon for a given slot.
@@ -245,12 +233,16 @@ WEAPON* WeaponsResource::GetFirstPos(int iSlot)
 WEAPON* WeaponsResource::GetNextActivePos(int iSlot, int iSlotPos)
 {
 	if ( iSlotPos >= MAX_WEAPON_POSITIONS || iSlot >= MAX_WEAPON_SLOTS )
+	{
 		return NULL;
+	}
 
 	WEAPON* p = gWR.rgSlots[iSlot][iSlotPos + 1];
 
 	if ( !p || !gWR.HasAmmo(p) )
+	{
 		return GetNextActivePos(iSlot, iSlotPos + 1);
+	}
 
 	return p;
 }
@@ -458,16 +450,24 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, int iDirection)
 	}
 
 	if ( iSlot > MAX_WEAPON_SLOTS )
+	{
 		return;
+	}
 
 	if ( gHUD.m_fPlayerDead || gHUD.m_iHideHUDDisplay & (HIDEHUD_WEAPONS | HIDEHUD_ALL) )
+	{
 		return;
+	}
 
 	if ( !(gHUD.m_iWeaponBits & (1 << (WEAPON_SUIT))) )
+	{
 		return;
+	}
 
 	if ( !(gHUD.m_iWeaponBits & ~(1 << (WEAPON_SUIT))) )
+	{
 		return;
+	}
 
 	WEAPON* p = NULL;
 	bool fastSwitch = CL_CvarGetFloat("hud_fastswitch") != 0;
@@ -494,22 +494,34 @@ void WeaponsResource::SelectSlot(int iSlot, int fAdvance, int iDirection)
 	else
 	{
 		PlaySound("common/wpn_moveselect.wav", 1);
+
 		if ( gpActiveSel )
+		{
 			p = GetNextActivePos(gpActiveSel->iSlot, gpActiveSel->iSlotPos);
+		}
+
 		if ( !p )
+		{
 			p = GetFirstPos(iSlot);
+		}
 	}
 
 	if ( !p )  // no selection found
 	{
 		// just display the weapon list, unless fastswitch is on just ignore it
 		if ( !fastSwitch )
+		{
 			gpActiveSel = (WEAPON*)1;
+		}
 		else
+		{
 			gpActiveSel = NULL;
+		}
 	}
 	else
+	{
 		gpActiveSel = p;
+	}
 }
 
 //------------------------------------------------------------------------

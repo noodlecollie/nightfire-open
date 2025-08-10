@@ -1315,24 +1315,6 @@ void V_GetMapChasePosition(int target, float* cl_angles, float* origin, float* a
 
 int V_FindViewModelByWeaponModel(int weaponindex)
 {
-	static const char* modelmap[][2] = {
-		{"models/p_crossbow.mdl", "models/v_crossbow.mdl"},
-		{"models/p_crowbar.mdl", "models/v_crowbar.mdl"},
-		{"models/p_egon.mdl", "models/v_egon.mdl"},
-		{"models/p_gauss.mdl", "models/v_gauss.mdl"},
-		{"models/p_9mmhandgun.mdl", "models/v_9mmhandgun.mdl"},
-		{"models/p_grenade.mdl", "models/v_grenade.mdl"},
-		{"models/p_hgun.mdl", "models/v_hgun.mdl"},
-		{"models/p_9mmAR.mdl", "models/v_9mmAR.mdl"},
-		{"models/p_357.mdl", "models/v_357.mdl"},
-		{"models/p_rpg.mdl", "models/v_rpg.mdl"},
-		{"models/p_shotgun.mdl", "models/v_shotgun.mdl"},
-		{"models/p_squeak.mdl", "models/v_squeak.mdl"},
-		{"models/p_tripmine.mdl", "models/v_tripmine.mdl"},
-		{"models/p_satchel_radio.mdl", "models/v_satchel_radio.mdl"},
-		{"models/p_satchel.mdl", "models/v_satchel.mdl"},
-		{NULL, NULL}};
-
 	struct model_s* weaponModel = IEngineStudio.GetModelByIndex(weaponindex);
 	if ( !weaponModel )
 	{
@@ -1341,7 +1323,6 @@ int V_FindViewModelByWeaponModel(int weaponindex)
 
 	int len = static_cast<int>(strlen(weaponModel->name));
 
-	// Check generic weapons first.
 	CWeaponRegistry weaponRegistry = CWeaponRegistry::StaticInstance();
 	for ( int index = 0; index < MAX_WEAPONS; ++index )
 	{
@@ -1356,18 +1337,6 @@ int V_FindViewModelByWeaponModel(int weaponindex)
 		{
 			return gEngfuncs.pEventAPI->EV_FindModelIndex(atts->ViewModel.ModelName);
 		}
-	}
-
-	// Then the local table.
-	int i = 0;
-	while ( modelmap[i][0] != NULL )
-	{
-		if ( !PlatformLib_StrNCaseCmp(weaponModel->name, modelmap[i][0], len) )
-		{
-			return gEngfuncs.pEventAPI->EV_FindModelIndex(modelmap[i][1]);
-			break;
-		}
-		i++;
 	}
 
 	return 0;

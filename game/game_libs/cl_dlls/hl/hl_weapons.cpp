@@ -130,11 +130,8 @@ void HUD_PrepEntity(CBaseEntity* pEntity, CBasePlayer* pWeaponOwner)
 	if ( pWeaponOwner )
 	{
 		ItemInfo info;
-
 		((CBasePlayerWeapon*)pEntity)->m_pPlayer = pWeaponOwner;
-
 		((CBasePlayerWeapon*)pEntity)->GetItemInfo(&info);
-
 		g_pWpns[info.iId] = (CBasePlayerWeapon*)pEntity;
 	}
 }
@@ -543,13 +540,7 @@ void UTIL_TraceLine(const Vector&, const Vector&, IGNORE_MONSTERS, edict_t*, Tra
 	ptr->flFraction = 1.0;
 }
 
-void UTIL_TraceHull(
-	const Vector&,
-	const Vector&,
-	IGNORE_MONSTERS,
-	int,
-	edict_t*,
-	TraceResult* ptr)
+void UTIL_TraceHull(const Vector&, const Vector&, IGNORE_MONSTERS, int, edict_t*, TraceResult* ptr)
 {
 	*ptr = TraceResult {};
 	ptr->flFraction = 1.0;

@@ -4159,6 +4159,26 @@ static qboolean pfnPointInPvs(const float* vecPoint, const byte* pvs)
 	return CHECKVISBIT(pvs, leaf->cluster);
 }
 
+static qboolean pfnGetHullBounds(int hullIndex, float* vecMins, float* vecMaxs)
+{
+	if ( !sv.worldmodel || hullIndex < 0 || hullIndex >= SIZE_OF_ARRAY_AS_INT(sv.worldmodel->hulls) )
+	{
+		return false;
+	}
+
+	if ( vecMins )
+	{
+		VectorCopy(sv.worldmodel->hulls[hullIndex].clip_mins, vecMins);
+	}
+
+	if ( vecMaxs )
+	{
+		VectorCopy(sv.worldmodel->hulls[hullIndex].clip_maxs, vecMaxs);
+	}
+
+	return true;
+}
+
 /*
 =============
 pfnFunctionFromName
@@ -5561,6 +5581,7 @@ static enginefuncs_t gEngfuncs = {
 	pfnWriteElementsToFile,
 	pfnGetPvsForPoint,
 	pfnPointInPvs,
+	pfnGetHullBounds,
 };
 
 /*

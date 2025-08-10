@@ -5,6 +5,11 @@
 
 namespace WeaponAtts
 {
+	enum WeaponFlag_e
+	{
+		WeaponFlag_IsDebug = (1 << 0),
+	};
+
 	struct WACore : public WABase
 	{
 		WeaponId_e Id = WeaponId_e::WeaponNone;

@@ -15,6 +15,8 @@ namespace CustomGeometry
 		static constexpr const char* MESSAGE_NAME = CustomGeometry::MESSAGE_NAME;
 		static constexpr int MESSAGE_SIZE = -1;
 
+		static size_t CalcRawMessageBytes(size_t numPoints, size_t numIndices);
+
 		// Category must be greater than None and less than CategoryCount.
 		explicit CMessageWriter(Category category);
 

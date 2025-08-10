@@ -69,7 +69,7 @@ namespace WeaponMechanics
 		}
 		else
 		{
-			// NFTODO: Use pev->v_angles and make sure that this works as expected.
+			// NFTODO: Use Vector(pev->v_angle) + Vector(pev->punchangle).
 			// We should not be relying on the global vectors here!!
 			// Do this for other weapon mechanics as well.
 			vecAiming = gpGlobals->v_forward;

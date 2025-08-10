@@ -373,6 +373,7 @@ typedef struct enginefuncs_s
 
 	const byte* (*pfnGetPvsForPoint)(const float* vecPoint);
 	qboolean (*pfnPointInPvs)(const float* vecPoint, const byte* pvs);
+	qboolean (*pfnGetHullBounds)(int hullIndex, float* vecMins, float* vecMaxs);
 } enginefuncs_t;
 // ONLY ADD NEW FUNCTIONS TO THE END OF THIS STRUCT.  INTERFACE VERSION IS FROZEN AT 138
 

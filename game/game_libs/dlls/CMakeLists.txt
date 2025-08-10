@@ -117,6 +117,9 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/weapon_grenadelauncher_atts.h
 	../game_shared/weapons/weapon_grenadelauncher.h
 	../game_shared/weapons/weapon_grenadelauncher.cpp
+	../game_shared/weapons/weapon_hulltrace_atts.h
+	../game_shared/weapons/weapon_hulltrace.h
+	../game_shared/weapons/weapon_hulltrace.cpp
 	../game_shared/weapons/weaponids.h
 	../game_shared/weapons/weapon_l96a1.cpp
 	../game_shared/weapons/weapon_l96a1_atts.h

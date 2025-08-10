@@ -39,6 +39,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		core.Classname = "weapon_silent";
 		core.Id = WeaponId_e::WeaponSilent;
 		core.SwitchWeight = WeaponPref_Debug;
+		core.Flags = WeaponFlag_IsDebug;
 
 		WAViewModel& vm = obj.ViewModel;
 		vm.ModelName = "models/weapon_p99/v_p99.mdl";
@@ -56,7 +57,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		WAHitscanAttack* priAttack = new WAHitscanAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
 
-		priAttack->EventScript = "events/weapon_silent/fire.sc";
+		priAttack->EventScript = "events/debugweapon/fire.sc";
 		priAttack->FunctionsUnderwater = true;
 		priAttack->IsContinuous = false;
 		priAttack->UsesAmmoPool = WAAmmoBasedAttack::AmmoPool::None;

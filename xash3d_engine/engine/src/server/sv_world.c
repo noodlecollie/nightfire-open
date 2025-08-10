@@ -170,7 +170,9 @@ hull_t* SV_HullForBsp(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t
 	{
 		hull = svgame.physFuncs.SV_HullForBsp(ent, mins, maxs, offset);
 		if ( hull )
+		{
 			return hull;
+		}
 	}
 
 	// decide which clipping hull to use, based on the size
@@ -194,11 +196,17 @@ hull_t* SV_HullForBsp(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t
 	{
 		// alternate hull select for quake maps
 		if ( size[0] < 3.0f || ent->v.solid == SOLID_PORTAL )
+		{
 			hull = &model->hulls[0];
+		}
 		else if ( size[0] <= 32.0f )
+		{
 			hull = &model->hulls[1];
+		}
 		else
+		{
 			hull = &model->hulls[2];
+		}
 
 		VectorSubtract(hull->clip_mins, mins, offset);
 	}
@@ -214,12 +222,18 @@ hull_t* SV_HullForBsp(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t
 			if ( size[0] <= 36.0f )
 			{
 				if ( size[2] <= 36.0f )
+				{
 					hull = &model->hulls[3];
+				}
 				else
+				{
 					hull = &model->hulls[1];
+				}
 			}
 			else
+			{
 				hull = &model->hulls[2];
+			}
 
 			VectorSubtract(hull->clip_mins, mins, offset);
 		}
@@ -250,8 +264,11 @@ static hull_t* SV_HullForEntity(edict_t* ent, const vec3_t mins, const vec3_t ma
 		if ( ent->v.solid != SOLID_PORTAL )
 		{
 			if ( ent->v.movetype != MOVETYPE_PUSH && ent->v.movetype != MOVETYPE_PUSHSTEP )
+			{
 				Host_Error("'%s' has SOLID_BSP without MOVETYPE_PUSH or MOVETYPE_PUSHSTEP\n", SV_ClassName(ent));
+			}
 		}
+
 		hull = SV_HullForBsp(ent, mins, maxs, offset);
 	}
 	else

@@ -26,6 +26,24 @@ namespace CustomGeometry
 		return lifetimeSecs;
 	}
 
+	size_t CMessageWriter::CalcRawMessageBytes(size_t numPoints, size_t numIndices)
+	{
+		// A geometry message is:
+		// - Header
+		// - Colour (uint32)
+		// - Lifetime (10ths of second) (uint16)
+		// - Point count (uint16)
+		// - Points (float) [3 * point count]
+		// - Index count (uint16)
+		// - Indices (uint8) [index count]
+
+		const size_t beginDataLength = (2 * sizeof(uint8_t)) + sizeof(uint32_t) + sizeof(uint16_t);
+		const size_t pointsLength = sizeof(uint16_t) + (numPoints * 3 * sizeof(float));
+		const size_t indicesLength = sizeof(uint16_t) + (numIndices * sizeof(uint8_t));
+
+		return beginDataLength + pointsLength + indicesLength;
+	}
+
 	CMessageWriter::CMessageWriter(Category category) :
 		CBaseMessageWriter(MESSAGE_NAME, StaticUserMessageId()),
 		m_Category(Category::None),
