@@ -72,7 +72,7 @@ public:
 	static bool IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility iVisibility, bool bUsePVS = true);
 	static bool IsVisible(const Vector& vSrc, struct edict_s* pDest);
 	static bool TraceHitSomething();
-	static Vector GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt = nullptr);
+	static Vector GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt = nullptr, int hull = human_hull);
 	static bool RayHitsEntity(edict_t* pDoor, const Vector& vSrc, const Vector& vDest);
 
 	static TReach GetReachableInfoFromTo(
@@ -135,6 +135,7 @@ public:  // Members.
 	static byte pvs[MAX_PVS_DATA_LENGTH];
 
 private:
-	static TReach CanPassOrJump(Vector& vGround, const Vector& vDirectionInc, const Vector& vMins, const Vector& vMaxs);
+	static TReach CanPassOrJump(Vector& vGround, const Vector& vDirectionInc);
 	static TReach CanClimbSlope(const Vector& vSrc, const Vector& vDest);
+	static void HumanHullTrace(const Vector& vGround1, const Vector& vGround2, int hull = human_hull);
 };

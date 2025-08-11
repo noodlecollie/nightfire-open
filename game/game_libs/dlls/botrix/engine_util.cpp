@@ -163,12 +163,16 @@ bool CBotrixEngineUtil::TraceHitSomething()
 	return m_TraceResult.flFraction >= 0.0f && m_TraceResult.flFraction < 1.0f;
 }
 
-Vector CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt)
+Vector CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt, int hull)
 {
+	// NFTODO: Cache these somewhere when the map starts
+	Vector hullMins;
+	g_engfuncs.pfnGetHullBounds(hull, hullMins, nullptr);
+
 	Vector vDest = vSrc;
 	vDest.z = -iHalfMaxMapSize;
 
-	TRACE_HULL(vSrc, vDest, TRUE, 1, ignoreEnt, &m_TraceResult);
+	TRACE_HULL(vSrc - Vector(0.0f, 0.0f, hullMins.z), vDest, TRUE, hull, ignoreEnt, &m_TraceResult);
 
 	// This can sometimes happen if the source point is extremely close to the ground.
 	// In this case, the point is already on the ground.
@@ -184,7 +188,8 @@ Vector CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* i
 
 	// The returned point is the middle of the hull, so make sure we return the base.
 	Vector endPos = m_TraceResult.vecEndPos;
-	endPos.z -= 0.5f * CBotrixMod::GetVar(EModVarPlayerHeight);
+	endPos.z += hullMins.z;
+
 	return endPos;
 }
 
@@ -203,8 +208,12 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	float fMaxDistanceSqr,
 	bool bShowHelp)
 {
+	using namespace CustomGeometry;
+
 	int color = direction == TraceDirection::EFirstToSecond ? 0xFF0000 : 0x00FF00;
-	unsigned char r = GET_3RD_BYTE(color), g = GET_2ND_BYTE(color), b = GET_1ST_BYTE(color);
+	unsigned char r = GET_3RD_BYTE(color);
+	unsigned char g = GET_2ND_BYTE(color);
+	unsigned char b = GET_1ST_BYTE(color);
 
 	Vector vOffset =
 		direction == TraceDirection::EFirstToSecond ? Vector(-0.25f, -0.25f, 0.0f) : Vector(0.25f, 0.25f, 0.0f);
@@ -239,8 +248,6 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 
 	Vector vMinZ(0, 0, -iHalfMaxMapSize);
 
-	Vector vMins = CBotrixMod::vPlayerCollisionHullMins;
-	Vector vMaxs = CBotrixMod::vPlayerCollisionHullMaxs;
 	// Vector vGroundMaxs = CBotrixMod::vPlayerCollisionHullMaxsGround;
 	// vGroundMaxs.z = 1.0f;
 
@@ -254,7 +261,7 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 
 	Vector vDestGround = GetHullGroundVec(vDest);
 
-	if ( vDestGround.z == vMinZ.z )
+	if ( vDestGround.z <= vMinZ.z )
 	{
 		return EReachNotReachable;
 	}
@@ -279,7 +286,7 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		{
 			// Try to stand up.
 			vDest.z = vDestGround.z + fPlayerEye;
-			TRACE_HULL(vDest, vDestGround, TRUE, 1, nullptr, &m_TraceResult);
+			HumanHullTrace(vDestGround, vDest);
 			bCrouch = TraceHitSomething();
 		}
 
@@ -287,7 +294,7 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		{
 			// Try to stand up crouching.
 			vDest.z = vDestGround.z + fPlayerEyeCrouched;
-			TRACE_HULL(vDest, vDestGround, TRUE, 1, nullptr, &m_TraceResult);
+			HumanHullTrace(vDestGround, vDest, head_hull);
 
 			if ( TraceHitSomething() )
 			{
@@ -318,6 +325,41 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	bool bHasStair = false;
 	int i = 0;
 
+	GeometryItemPtr_t geom;
+	auto addLine = [&](const Vector& start, const Vector& end)
+	{
+		constexpr size_t NUM_LINES = 2;
+
+		// Max message size is actually 2048, but leave some headroom.
+		constexpr size_t MAX_MSG_LENGTH = 2000;
+
+		const size_t newPointCount = geom ? (static_cast<size_t>(geom->GetPoints().Count()) + (2 * NUM_LINES)) : 0;
+		const size_t newIndexCount = geom ? (static_cast<size_t>(geom->GetIndices().Count()) + (2 * NUM_LINES)) : 0;
+
+		const bool needsSend = newPointCount >= MAX_POINTS_PER_MSG || newIndexCount >= MAX_INDICES_PER_MSG ||
+			CMessageWriter::CalcRawMessageBytes(newPointCount, newIndexCount) > MAX_MSG_LENGTH;
+
+		if ( needsSend )
+		{
+			CMessageWriter(Category::WaypointVisualisation).WriteMessage(*geom);
+		}
+
+		if ( needsSend || !geom )
+		{
+			geom.reset(new CGeometryItem());
+			geom->SetColour(
+				(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
+				0x000000FF);
+			geom->SetDrawType(DrawType::Lines);
+			geom->SetLifetimeSecs(static_cast<float>(iTextTime));
+		}
+
+		geom->AddLine(start, end);
+
+		// Add a little tick at the end, so that we can see the segments
+		geom->AddLine(end, end + Vector(0.0f, 0.0f, 2.0f));
+	};
+
 	// Keep looping while we have attempts left, and while the hit point hasn't reached the destination.
 	for ( ; i < iMaxTraceRaysForReachable && !EqualVectors(vHit, vDestGround); ++i )
 	{
@@ -325,11 +367,11 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		Vector vStart = vHit;
 
 		// Trace from hit point to the floor.
-		TReach iReach = CanPassOrJump(vHit, vDirection, vMins, vMaxs);
+		TReach iReach = CanPassOrJump(vHit, vDirection);
 
 		if ( bShowHelp )
 		{
-			DrawLine(vStart + vOffset, vHit + vOffset, static_cast<float>(iTextTime), r, g, b);
+			addLine(vStart + vOffset, vHit + vOffset);
 		}
 
 		switch ( iReach )
@@ -390,6 +432,11 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 				break;
 			}
 		}
+	}
+
+	if ( bShowHelp && geom )
+	{
+		CMessageWriter(Category::WaypointVisualisation).WriteMessage(*geom);
 	}
 
 	// Set text position.
@@ -514,16 +561,16 @@ Vector CBotrixEngineUtil::GetGroundVec(const Vector& vSrc)
 // Returns true if can move forward when standing at vGround performing a jump (normal, with crouch, or maybe just
 // walking). At return vGround contains new coord which is where player can get after jump.
 //----------------------------------------------------------------------------------------------------------------
-TReach
-CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectionInc, const Vector& vMins, const Vector& vMaxs)
+TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectionInc)
 {
 	// Try to walk unit.
 	Vector vHit = vGround + vDirectionInc;
 
-	TRACE_CUSTOM_HULL(vGround, vHit, TRUE, vMins, vMaxs, nullptr, &m_TraceResult);
+	HumanHullTrace(vGround, vHit);
 
 	if ( !TraceHitSomething() )
 	{
+		// Make sure to get the ground, in case we need to fall down off an obstacle.
 		vGround = GetHullGroundVec(vHit);
 		return EReachReachable;
 	}
@@ -535,13 +582,14 @@ CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectionInc, c
 		return EReachReachable;
 	}
 
-	// Try to walk over (one stair step).
+	// We have butted up against an obstacle.
+	// Try to walk over (one stair height) to see if we can clear it.
 	float fMaxWalkHeight = CBotrixMod::GetVar(EModVarPlayerObstacleToJump);
 	Vector vStair = vGround;
 	vStair.z += fMaxWalkHeight;
 	vHit.z += fMaxWalkHeight;
 
-	TRACE_CUSTOM_HULL(vStair, vHit, TRUE, vMins, vMaxs, nullptr, &m_TraceResult);
+	HumanHullTrace(vStair, vHit);
 
 	if ( !TraceHitSomething() )
 	{
@@ -551,7 +599,7 @@ CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectionInc, c
 		if ( CanClimbSlope(vStair, vGround) )
 		{
 			// Check if can climb up without making the stair step.
-			TRACE_CUSTOM_HULL(vStair, vGround, TRUE, vMins, vMaxs, nullptr, &m_TraceResult);
+			HumanHullTrace(vStair, vGround);
 
 			if ( !TraceHitSomething() )
 			{
@@ -562,13 +610,12 @@ CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectionInc, c
 		return EReachStairs;
 	}
 
-	// Try to jump.
+	// We can't make it over the obstacle with a step, so try jumping.
 	float fJumpCrouched = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
 	vGround.z += fJumpCrouched;
 	vHit.z += fJumpCrouched - fMaxWalkHeight;  // We added previously fMaxWalkHeight.
 
-	TRACE_CUSTOM_HULL(vGround, vHit, TRUE, vMins, vMaxs, nullptr, &m_TraceResult);  // TODO: use vJumpMaxs instead of
-																					// vMaxs here.
+	HumanHullTrace(vGround, vHit);
 
 	if ( !TraceHitSomething() )  // We can stand on vHit after jump.
 	{
@@ -594,6 +641,26 @@ TReach CBotrixEngineUtil::CanClimbSlope(const Vector& vSrc, const Vector& vDest)
 
 	float fSlope = CBotrixMod::GetVar(EModVarSlopeGradientToSlideOff);
 	return CanPassSlope(ang.x, fSlope) ? EReachReachable : EReachNotReachable;
+}
+
+// Trace a hull between two points on the ground.
+// Because the hull trace expects the points provided to be at the centre
+// of the hull, we accommodate this here and reset the eventual
+// collision
+void CBotrixEngineUtil::HumanHullTrace(const Vector& vGround1, const Vector& vGround2, int hull)
+{
+	Vector hullMins;
+	g_engfuncs.pfnGetHullBounds(hull, hullMins, nullptr);
+
+	Vector begin = vGround1;
+	begin.z -= hullMins.z;
+
+	Vector end = vGround2;
+	end.z -= hullMins.z;
+
+	TRACE_HULL(begin, end, ignore_monsters, hull, nullptr, &m_TraceResult);
+
+	m_TraceResult.vecEndPos[VEC3_Z] += hullMins.z;
 }
 
 void CBotrixEngineUtil::DrawBeam(
