@@ -1644,7 +1644,7 @@ void CBotrixBot::EnemyAim()
 
 	if ( m_iIntelligence < EBotPro )
 	{
-		// Smart: -4..+4, normal -8..+8, stupied -12..+12, fool -16..+16.
+		// Smart: -4..+4, normal -8..+8, stupid -12..+12, fool -16..+16.
 		int iError = (EBotPro - m_iIntelligence) * 4;
 		m_vLook.x += iError - (rand() % (iError << 1));
 		m_vLook.y += iError - (rand() % (iError << 1));

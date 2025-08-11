@@ -694,8 +694,8 @@ public:
 		m_sCommand = "intelligence";
 		m_sHelp = "set min/max bot intelligence";
 		m_sDescription =
-			"Parameters: <min> (max). Can be one of: random fool stupied normal smart pro";  // TODO: intelligence flags
-																							 // to string.
+			"Parameters: <min> (max). Can be one of: random fool stupid normal smart pro";  // TODO: intelligence flags
+																							// to string.
 		m_iAccessLevel = FCommandAccessBot;
 
 		StringVector args;

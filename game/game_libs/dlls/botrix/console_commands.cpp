@@ -3399,7 +3399,7 @@ TCommandResult CConfigBotIntelligenceCommand::Execute(CClient* pClient, int argc
 		if ( (iIntelligenceMin == -1) || (iIntelligenceMax == -1) )
 		{
 			BULOG_W(pEdict, "Error, invalid intelligence: %s.", (iIntelligenceMin == -1) ? argv[0] : argv[1]);
-			BULOG_W(pEdict, "Can be one of: random fool stupied normal smart pro");
+			BULOG_W(pEdict, "Can be one of: random fool stupid normal smart pro");
 			return ECommandError;
 		}
 		else if ( iIntelligenceMin > iIntelligenceMax )

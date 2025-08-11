@@ -310,6 +310,8 @@ set(SOURCES_SERVER
 	customGeometry/commands.cpp
 	customGeometry/messageWriter.h
 	customGeometry/messageWriter.cpp
+	customGeometry/rollingMessageWriter.h
+	customGeometry/rollingMessageWriter.cpp
 	gameplay/gameplaySystems.h
 	gameplay/gameplaySystems.cpp
 	gameplay/gameplaySystemsBase.h

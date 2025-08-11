@@ -481,7 +481,7 @@ const good::string& CTypeToString::PreferenceToString(TBotIntelligence iPreferen
 //----------------------------------------------------------------------------------------------------------------
 good::string aIntelligences[EBotIntelligenceTotal] = {
 	"fool",
-	"stupied",
+	"stupid",
 	"normal",
 	"smart",
 	"pro",

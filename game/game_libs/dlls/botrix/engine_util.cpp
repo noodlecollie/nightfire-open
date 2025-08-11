@@ -10,6 +10,7 @@
 #include "customGeometry/messageWriter.h"
 #include "customGeometry/geometryItem.h"
 #include "customGeometry/constructors/aabboxConstructor.h"
+#include "customGeometry/rollingMessageWriter.h"
 
 good::TLogLevel CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
 int CBotrixEngineUtil::iTextTime = 20;  // Time in seconds to show text in CUtil::GetReachableInfoFromTo().
@@ -325,40 +326,20 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	bool bHasStair = false;
 	int i = 0;
 
-	GeometryItemPtr_t geom;
-	auto addLine = [&](const Vector& start, const Vector& end)
+	std::unique_ptr<CRollingMessageWriter> helperGeomWriter;
+	Vector lastDelta;
+
+	if ( bShowHelp )
 	{
-		constexpr size_t NUM_LINES = 2;
+		helperGeomWriter.reset(new CRollingMessageWriter(Category::WaypointVisualisation));
 
-		// Max message size is actually 2048, but leave some headroom.
-		constexpr size_t MAX_MSG_LENGTH = 2000;
-
-		const size_t newPointCount = geom ? (static_cast<size_t>(geom->GetPoints().Count()) + (2 * NUM_LINES)) : 0;
-		const size_t newIndexCount = geom ? (static_cast<size_t>(geom->GetIndices().Count()) + (2 * NUM_LINES)) : 0;
-
-		const bool needsSend = newPointCount >= MAX_POINTS_PER_MSG || newIndexCount >= MAX_INDICES_PER_MSG ||
-			CMessageWriter::CalcRawMessageBytes(newPointCount, newIndexCount) > MAX_MSG_LENGTH;
-
-		if ( needsSend )
-		{
-			CMessageWriter(Category::WaypointVisualisation).WriteMessage(*geom);
-		}
-
-		if ( needsSend || !geom )
-		{
-			geom.reset(new CGeometryItem());
-			geom->SetColour(
-				(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
-				0x000000FF);
-			geom->SetDrawType(DrawType::Lines);
-			geom->SetLifetimeSecs(static_cast<float>(iTextTime));
-		}
-
-		geom->AddLine(start, end);
-
-		// Add a little tick at the end, so that we can see the segments
-		geom->AddLine(end, end + Vector(0.0f, 0.0f, 2.0f));
-	};
+		helperGeomWriter->BeginGeometry(
+			DrawType::Lines,
+			(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
+				0x000000FF,
+			1.0f,
+			static_cast<float>(iTextTime));
+	}
 
 	// Keep looping while we have attempts left, and while the hit point hasn't reached the destination.
 	for ( ; i < iMaxTraceRaysForReachable && !EqualVectors(vHit, vDestGround); ++i )
@@ -371,7 +352,7 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 
 		if ( bShowHelp )
 		{
-			addLine(vStart + vOffset, vHit + vOffset);
+			helperGeomWriter->AddLine(vStart + vOffset, vHit + vOffset);
 		}
 
 		switch ( iReach )
@@ -434,9 +415,10 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		}
 	}
 
-	if ( bShowHelp && geom )
+	if ( bShowHelp )
 	{
-		CMessageWriter(Category::WaypointVisualisation).WriteMessage(*geom);
+		helperGeomWriter->Finalise();
+		helperGeomWriter.reset();
 	}
 
 	// Set text position.
