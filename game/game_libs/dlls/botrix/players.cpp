@@ -11,6 +11,7 @@
 #include "botrix/bot.h"
 #include "botrix/type2string.h"
 #include "PlatformLib/String.h"
+#include "client.h"
 
 //----------------------------------------------------------------------------------------------------------------
 bool CPlayers::bAddingBot = false;
@@ -328,6 +329,7 @@ CPlayer* CPlayers::AddBot(
 
 	bAddingBot = true;
 	CPlayer* pBot = CBotrixMod::pCurrentMod->AddBot(szName, iIntelligence, iTeam, iClass, argc, argv);
+	ClientPutInServer(pBot->GetEdict());
 	bAddingBot = false;
 
 	if ( pBot )
