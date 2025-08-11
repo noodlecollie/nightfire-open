@@ -61,7 +61,9 @@ CBotrixBot::CBotrixBot(edict_t* pEdict, TBotIntelligence iIntelligence, TClass i
 	{
 		int iSize = CItems::GetItems(i).size() >> 4;
 		if ( iSize == 0 )
+		{
 			iSize = 2;
+		}
 		m_aNearItems[i].reserve(iSize);
 		m_aNearestItems[i].reserve(16);
 	}
@@ -299,7 +301,9 @@ void CBotrixBot::Respawned()
 			const CItem* pItem = &aItems[i];
 
 			if ( pItem->IsFree() || !pItem->IsOnMap() )  // Item is picked or broken.
+			{
 				continue;
+			}
 
 			Vector vOrigin = pItem->CurrentPosition();
 			float fDistSqr = (vOrigin - vFoot).LengthSquared();
@@ -862,9 +866,13 @@ void CBotrixBot::ApplyPathFlags()
 		if ( iCurrentWaypoint == iNextWaypoint )  // Happens when bot stucks.
 		{
 			if ( CWaypoint::IsValid(m_iAfterNextWaypoint) )
+			{
 				m_vForward = CWaypoints::Get(m_iAfterNextWaypoint).vOrigin;
+			}
 			else
+			{
 				m_vForward = wNext.vOrigin;
+			}
 		}
 		else
 		{
@@ -872,12 +880,16 @@ void CBotrixBot::ApplyPathFlags()
 
 			CWaypointPath* pCurrentPath = CWaypoints::GetPath(iCurrentWaypoint, iNextWaypoint);
 			if ( !pCurrentPath )
+			{
 				return;  // TODO: check why it is happening sometimes?
+			}
 
 			m_bLadderMove = FLAG_ALL_SET(FPathLadder, pCurrentPath->iFlags);
 
 			if ( FLAG_ALL_SET(FPathStop, pCurrentPath->iFlags) )
+			{
 				m_bNeedStop = true;
+			}
 
 			// Door in the middle that is not locked, may need to USE to open it.
 			if ( pCurrentPath->IsDoor() && !pCurrentPath->HasButtonNumber() )
@@ -887,13 +899,19 @@ void CBotrixBot::ApplyPathFlags()
 			}
 
 			if ( FLAG_ALL_SET(FPathSprint, pCurrentPath->iFlags) )
+			{
 				m_bNeedSprint = true;
+			}
 
 			if ( FLAG_ALL_SET(FPathFlashlight, pCurrentPath->iFlags) )
+			{
 				m_bNeedFlashlight = true;
+			}
 
 			if ( FLAG_ALL_SET(FPathCrouch, pCurrentPath->iFlags) && !FLAG_ALL_SET(FPathJump, pCurrentPath->iFlags) )
+			{
 				m_bNeedDuck = true;  // Crouch only when not jumping.
+			}
 
 			// Dont use path aim if aim is locked.
 			m_bPathAim = !m_bEnemyAim &&
@@ -923,14 +941,20 @@ void CBotrixBot::DoPathAction()
 		BASSERT(pCurrentPath, return);
 
 		if ( FLAG_SOME_SET(FPathBreak, pCurrentPath->iFlags) )
+		{
 			m_bNeedAttack = true;
+		}
 
 		if ( FLAG_SOME_SET(FPathJump | FPathTotem, pCurrentPath->iFlags) )
+		{
 			m_bNeedJump = true;
+		}
 
 		if ( FLAG_SOME_SET(FPathCrouch | FPathJump, pCurrentPath->iFlags) ||
 			 FLAG_SOME_SET(FPathTotem, pCurrentPath->iFlags) )
+		{
 			m_bNeedJumpDuck = true;
+		}
 
 		if ( m_bNeedAttack || m_bNeedJump || m_bNeedJumpDuck )
 		{
@@ -939,8 +963,10 @@ void CBotrixBot::DoPathAction()
 			int iDuration =
 				pCurrentPath->ActionDuration();  // Action duration (duck for jump / attack for break) in deciseconds.
 			if ( iDuration == 0 )
+			{
 				iDuration = 10;  // Duration 1 second by default. Good for either duck while jumping or attack (to
 								 // break something).
+			}
 
 			m_fStartActionTime = CBotrixServerPlugin::GetTime() + (iStartTime / 10.0f);
 			m_fEndActionTime = m_fStartActionTime + iDuration / 10.0f;
@@ -956,20 +982,27 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 	switch ( iEntityType )
 	{
 		case EItemTypeHealth:
+		{
 			BotDebug(
 				"%s -> Picked %s. Health now %d.",
 				GetName(),
 				cItem.pItemClass->sClassName.c_str(),
 				m_PlayerInfo.GetHealth());
 			break;
+		}
+
 		case EItemTypeArmor:
+		{
 			BotDebug(
 				"%s -> Picked %s. Armor now %d.",
 				GetName(),
 				cItem.pItemClass->sClassName.c_str(),
 				m_PlayerInfo.GetArmorValue());
 			break;
+		}
+
 		case EItemTypeWeapon:
+		{
 			if ( m_bFeatureWeaponCheck )
 			{
 				TWeaponId iWeapon = CWeapons::AddWeapon(cItem.pItemClass, m_aWeapons);
@@ -987,19 +1020,26 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 					WeaponChoose();
 				}
 				else if ( CBotrixMod::aClassNames.size() )
+				{
 					BLOG_W(
 						"%s -> Picked weapon %s, but there is no such weapon for class %s.",
 						GetName(),
 						cItem.pItemClass->sClassName.c_str(),
 						CTypeToString::ClassToString(m_iClass).c_str());
+				}
 				else
+				{
 					BLOG_W(
 						"%s -> Picked weapon %s, but there is no such weapon.",
 						GetName(),
 						cItem.pItemClass->sClassName.c_str());
+				}
 			}
 			break;
+		}
+
 		case EItemTypeAmmo:
+		{
 			if ( m_bFeatureWeaponCheck )
 			{
 				if ( CWeapons::AddAmmo(cItem.pItemClass, m_aWeapons) )
@@ -1008,17 +1048,26 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 					WeaponChoose();
 				}
 				else
+				{
 					BLOG_W(
 						"%s -> Picked ammo %s, but bot doesn't have that weapon.",
 						GetName(),
 						cItem.pItemClass->sClassName.c_str());
+				}
 			}
 			break;
+		}
+
 		case EItemTypeObject:
+		{
 			BotDebug("%s -> Breaked object %s", GetName(), cItem.pItemClass->sClassName.c_str());
 			break;
+		}
+
 		default:
+		{
 			BASSERT(false);
+		}
 	}
 
 	if ( iEntityType != EItemTypeObject )
@@ -1116,7 +1165,9 @@ float CBotrixBot::GetEndLookTime()
 	BASSERT((iPitch <= iEndAimSize) && (iYaw <= iEndAimSize), return 0.0f);
 
 	if ( iPitch < iYaw )
+	{
 		iPitch = iYaw;  // iPitch = MAX2( iPitch, iYaw );
+	}
 
 	float fAimTime = aEndAimTime[m_iIntelligence][iPitch];
 	BASSERT(fAimTime < 2.0f, return 2.0f);
@@ -1131,7 +1182,9 @@ void CBotrixBot::WeaponCheckCurrent(bool bAddToBotWeapons)
 	// Check weapon bot has in hands.
 	const char* szCurrentWeapon = m_PlayerInfo.GetWeaponName();
 	if ( !szCurrentWeapon )
+	{
 		return;
+	}
 
 	GoodAssert(WeaponSearch(szCurrentWeapon) == EWeaponIdInvalid);
 
@@ -1190,11 +1243,17 @@ void CBotrixBot::WeaponCheckCurrent(bool bAddToBotWeapons)
 		m_aWeapons[iId].AddWeapon();
 
 		if ( !CWeapons::IsValid(m_iMeleeWeapon) && cNewWeapon.IsMelee() )
+		{
 			m_iMeleeWeapon = iId;
+		}
 		else if ( !CWeapons::IsValid(m_iPhyscannon) && cNewWeapon.IsPhysics() )
+		{
 			m_iPhyscannon = iId;
+		}
 		else if ( !CWeapons::IsValid(m_iBestWeapon) && cNewWeapon.IsRanged() )
+		{
 			m_iBestWeapon = iId;
+		}
 
 		ChangeWeapon(iId);  // As if just switching to this weapon.
 	}
@@ -1215,29 +1274,41 @@ void CBotrixBot::WeaponsScan()
 		{
 			m_aWeapons[i].AddWeapon();
 			if ( m_aWeapons[i].IsPhysics() )
+			{
 				m_iPhyscannon = i;
+			}
 			else if ( m_aWeapons[i].IsMelee() )
+			{
 				m_iMeleeWeapon = i;
+			}
 		}
 	}
 
 	// Set bot's best weapon.
 	m_iWeapon = CWeapons::GetBestWeapon(m_aWeapons);
 	if ( !CWeapons::IsValid(m_iWeapon) )
+	{
 		m_iWeapon = m_iMeleeWeapon;  // Get melee weapon.
+	}
 
 	m_iBestWeapon = m_iWeapon;
 	if ( CWeapons::IsValid(m_iWeapon) )
+	{
 		ChangeWeapon(m_iWeapon);
+	}
 	else
+	{
 		BLOG_W("%s -> No weapons available.", GetName());
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
 void CBotrixBot::UpdateWeapon()
 {
 	if ( !m_bFeatureWeaponCheck )
+	{
 		return;
+	}
 
 	const char* szCurrentWeapon = m_PlayerInfo.GetWeaponName();
 	if ( !szCurrentWeapon )
@@ -1250,13 +1321,17 @@ void CBotrixBot::UpdateWeapon()
 	{
 		// Happens when out of bullets automatically.
 		if ( CWeapons::IsValid(m_iWeapon) )
+		{
 			BLOG_W(
 				"%s -> Current weapon is %s, should be %s.",
 				GetName(),
 				szCurrentWeapon,
 				m_aWeapons[m_iWeapon].GetName().c_str());
+		}
 		else
+		{
 			BLOG_W("%s -> Current weapon is %s.", GetName(), szCurrentWeapon);
+		}
 
 		TWeaponId iCurrentWeapon = WeaponSearch(szCurrentWeapon);
 
@@ -1329,7 +1404,9 @@ void CBotrixBot::UpdateWorld()
 	{
 		const good::vector<CItem>& aItems = CItems::GetItems(iType);
 		if ( aItems.size() == 0 )
+		{
 			continue;
+		}
 
 		good::vector<TItemIndex>& aNearest = m_aNearestItems[iType];
 		int iNearestSize = aNearest.size();
@@ -1406,7 +1483,9 @@ void CBotrixBot::UpdateWorld()
 		// Check if bot becomes close to items to consider them near (m_iCheckEntitiesPerFrame items max).
 		int iCheckTo = m_iNextNearItem[iType] + m_iCheckEntitiesPerFrame;
 		if ( iCheckTo > aItems.size() )
+		{
 			iCheckTo = aItems.size();
+		}
 
 		for ( int i = m_iNextNearItem[iType]; i < iCheckTo; ++i )
 		{
@@ -1611,7 +1690,9 @@ void CBotrixBot::CheckAttackDuck(CPlayer* pPlayer)
 				EVisibilityBots);  // Duck, if enemy is visible while ducking.
 		}
 		else
+		{
 			m_bAttackDuck &= bInRangeDuck;  // Stop ducking if enemy is far.
+		}
 	}
 
 	m_bAttackDuck = m_bAttackDuck && !m_bFlee;  // Don't duck if fleeing.
@@ -1623,7 +1704,9 @@ void CBotrixBot::EnemyAim()
 	GoodAssert(m_pCurrentEnemy && !m_bDontAttack);
 
 	if ( m_bStuckUsePhyscannon || m_bStuckBreakObject )
+	{
 		return;
+	}
 
 	m_vLook = m_pCurrentEnemy->GetHead();
 	if ( CWeapons::IsValid(m_iWeapon) )
@@ -1640,7 +1723,9 @@ void CBotrixBot::EnemyAim()
 		}
 	}
 	else
+	{
 		m_pCurrentEnemy->GetCenter(m_vLook);
+	}
 
 	if ( m_iIntelligence < EBotPro )
 	{
@@ -1679,7 +1764,9 @@ void CBotrixBot::EnemyAim()
 void CBotrixBot::WeaponChoose()
 {
 	if ( m_bStuckBreakObject || m_bStuckUsePhyscannon )
+	{
 		return;
+	}
 
 	GoodAssert(CWeapons::IsValid(m_iWeapon));
 	CWeaponWithAmmo& cWeapon = m_aWeapons[m_iWeapon];
@@ -1688,13 +1775,17 @@ void CBotrixBot::WeaponChoose()
 		 (m_pCurrentEnemy &&
 		  (cWeapon.CanShoot(CWeapon::PRIMARY, m_fDistanceSqrToEnemy) ||
 		   cWeapon.CanShoot(CWeapon::SECONDARY, m_fDistanceSqrToEnemy))) )
+	{
 		return;  // Don't change weapon if enemy is close... TODO: sometimes using melee and not changing.
+	}
 
 	// If not engaging enemy, reload some weapons. Here cWeapon.CanUse() is true.
 	if ( (m_pCurrentEnemy == NULL) && m_bNeedReload )
 	{
 		if ( cWeapon.IsReloading() )
+		{
 			return;
+		}
 
 		if ( cWeapon.NeedReload(0) )
 		{
@@ -1704,14 +1795,18 @@ void CBotrixBot::WeaponChoose()
 
 		TWeaponId iIdx = EWeaponIdInvalid;
 		for ( int i = 0; i < m_aWeapons.size(); ++i )
+		{
 			if ( m_aWeapons[i].IsPresent() && m_aWeapons[i].NeedReload(CWeapon::PRIMARY) )
 			{
 				iIdx = i;
 				break;
 			}
+		}
 
 		if ( iIdx == EWeaponIdInvalid )
+		{
 			m_bNeedReload = false;  // Continue to select best weapon.
+		}
 		else
 		{
 			GoodAssert(iIdx != m_iWeapon);
@@ -1728,15 +1823,21 @@ void CBotrixBot::WeaponChoose()
 	if ( !CWeapons::IsValid(m_iBestWeapon) && CWeapons::IsValid(m_iMeleeWeapon) )
 	{
 		if ( m_aWeapons[m_iMeleeWeapon].IsPresent() )
+		{
 			m_iBestWeapon = m_iMeleeWeapon;
+		}
 		else
+		{
 			m_iMeleeWeapon = EWeaponIdInvalid;
+		}
 	}
 
 	if ( m_iBestWeapon == m_iWeapon )
 	{
 		if ( !m_aWeapons[m_iWeapon].HasAmmoInClip(0) )
+		{
 			m_bStayReloading = true;
+		}
 	}
 	else if ( CWeapons::IsValid(m_iBestWeapon) )
 	{
@@ -1745,7 +1846,9 @@ void CBotrixBot::WeaponChoose()
 		ChangeWeapon(m_iBestWeapon);
 	}
 	else
+	{
 		m_iBestWeapon = m_iWeapon;
+	}
 
 	m_bNeedSetWeapon = false;
 }
@@ -1775,7 +1878,9 @@ void CBotrixBot::ChangeWeapon(TWeaponId iIndex)
 
 	CWeaponWithAmmo* pOld = NULL;
 	if ( CWeapons::IsValid(m_iWeapon) )
+	{
 		pOld = &m_aWeapons[m_iWeapon];
+	}
 
 	CWeaponWithAmmo& cNew = m_aWeapons[iIndex];
 	// GoodAssert( cNew.IsPresent() ); // Happens when out of bullets & forbidden.
@@ -1793,11 +1898,19 @@ void CBotrixBot::ChangeWeapon(TWeaponId iIndex)
 			BLOG_W("%s -> Could not set weapon %s, not present?", GetName(), sWeaponName.c_str());
 			cNew.SetPresent(false);
 			if ( m_iMeleeWeapon == iIndex )
+			{
 				m_iMeleeWeapon = EWeaponIdInvalid;
+			}
+
 			if ( m_iPhyscannon == iIndex )
+			{
 				m_iPhyscannon = EWeaponIdInvalid;
+			}
+
 			if ( m_iBestWeapon == iIndex )
+			{
 				m_iBestWeapon = EWeaponIdInvalid;
+			}
 		}
 		else
 		{
@@ -1806,7 +1919,9 @@ void CBotrixBot::ChangeWeapon(TWeaponId iIndex)
 		}
 	}
 	else
+	{
 		BLOG_W("%s -> current weapon is null.", GetName());
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -2055,7 +2170,9 @@ bool CBotrixBot::ResolveStuckMove()
 			m_cNavigator.SetPreviousPathPosition();  // Previous -> current.
 			m_cNavigator.GetNextWaypoints(iNextWaypoint, m_iAfterNextWaypoint);
 			if ( iCurrentWaypoint == iNextWaypoint )
+			{
 				m_cNavigator.GetNextWaypoints(iNextWaypoint, m_iAfterNextWaypoint);
+			}
 		}
 
 		// Mark path as unreachable.
@@ -2208,7 +2325,9 @@ bool CBotrixBot::NavigatorMove()
 
 	// Check if bot arrived to destination. Set up new destination to next waypoint in path.
 	else if ( m_cNavigator.PathFound() )
+	{
 		return MoveBetweenWaypoints();
+	}
 
 	if ( !m_bMoveFailure )
 	{
@@ -2295,23 +2414,31 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 	}
 
 	if ( !m_bLastNeedMove && m_bNeedMove )  // Bot started to move just now, update stuck check time.
+	{
 		m_fStuckCheckTime = CBotrixServerPlugin::GetTime() + 1.0f;
+	}
 	m_bLastNeedMove = m_bNeedMove;
 
 	// Waypoint just changed from previous and valid waypoint.
 	bool bCurrentWaypointChanged = CWaypoint::IsValid(iPreviousWaypoint) && (iPreviousWaypoint != iCurrentWaypoint);
 	if ( bCurrentWaypointChanged )
+	{
 		CurrentWaypointJustChanged();
+	}
 
 	bool bArrived = false;  // Set to true if reached next waypoint in path or path searching just finished (then
 							// touched start waypoint).
 	if ( m_bNeedMove && !m_bMoveFailure )
+	{
 		bArrived = (m_bUseNavigatorToMove) ? NavigatorMove() : NormalMove();
+	}
 
 	bool bMove = m_bNeedMove && !m_bMoveFailure && !m_bStuckBreakObject && !m_bStuckUsePhyscannon &&
 		!m_bCommandStopped && !m_bAttackDuck;
 	if ( m_bUseNavigatorToMove && (!m_cNavigator.SearchEnded() || m_bLockNavigatorMove) )
+	{
 		bMove = false;  // Check if search is finished (m_bMoveFailure will be set if search fails).
+	}
 
 	// Check if need to look left/right/back/forward.
 	CheckSideLook(bMove, bArrived);
@@ -2532,7 +2659,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 			}
 		}
 		if ( !bFound )
+		{
 			pStuckObject = NULL;
+		}
 	}
 
 	//---------------------------------------------------------------
@@ -2575,21 +2704,31 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 							{
 								int iSec = pWeapon->Damage(CWeapon::PRIMARY) < pWeapon->Damage(CWeapon::SECONDARY);
 								if ( pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, iSec) )
+								{
 									WeaponShoot(iSec);
+								}
 								else if ( !m_bStuckBreakObject )
+								{
 									WeaponChoose();
+								}
 							}
 							// Prefer secondary attack.
 							else if (
 								pWeapon->HasAmmoInClip(CWeapon::SECONDARY) &&
 								pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, CWeapon::SECONDARY) )
+							{
 								WeaponShoot(CWeapon::SECONDARY);
+							}
 							else if (
 								pWeapon->HasAmmoInClip(CWeapon::PRIMARY) &&
 								pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, CWeapon::PRIMARY) )
+							{
 								WeaponShoot(CWeapon::PRIMARY);
+							}
 							else if ( !m_bStuckUsePhyscannon && pWeapon->IsPhysics() )
+							{
 								WeaponChoose();  // No more bullets, select another weapon.
+							}
 						}
 					}
 				}
@@ -2598,7 +2737,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 					WeaponShoot(CWeapon::PRIMARY);
 				}
 				else if ( (rand() % 4) == 0 )
+				{
 					WeaponShoot(CWeapon::SECONDARY);
+				}
 			}
 		}
 		else  // No enemy.
@@ -2607,9 +2748,13 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 			if ( pWeapon )
 			{
 				if ( pWeapon->IsSniper() && pWeapon->IsUsingZoom() && pWeapon->CanUse() )
+				{
 					WeaponToggleZoom();
+				}
 				else if ( m_bNeedReload && !pWeapon->IsReloading() && !m_bStuckUsePhyscannon && !m_bStuckBreakObject )
+				{
 					WeaponChoose();
+				}
 			}
 		}
 	}
@@ -2666,7 +2811,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 
 	// If bot is on ladder forwardmove and sidemove are not used, but IN_FORWARD & IN_BACK used instead.
 	if ( m_bLadderMove )
+	{
 		FLAG_SET(IN_FORWARD, m_cCmd.buttons);  // Should be looking at next waypoint.
+	}
 
 	// Jump only once.
 	if ( m_bNeedJump && (CBotrixServerPlugin::GetTime() >= m_fStartActionTime) )
@@ -2680,9 +2827,13 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 	{
 		// Stop holding duck for jump after m_fEndActionTime.
 		if ( CBotrixServerPlugin::GetTime() >= m_fEndActionTime )
+		{
 			m_bNeedJumpDuck = false;
+		}
 		else
+		{
 			FLAG_SET(IN_DUCK, m_cCmd.buttons);
+		}
 	}
 
 	// Start holding attack after m_fStartActionTime.
@@ -2692,7 +2843,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 		if ( (m_iWeapon != m_iMeleeWeapon) && CWeapons::IsValid(m_iMeleeWeapon) )
 		{
 			if ( m_aWeapons[m_iWeapon].CanChange() )
+			{
 				ChangeWeapon(m_iMeleeWeapon);
+			}
 		}
 		else
 		{
@@ -2706,7 +2859,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 			else if ( CBotrixServerPlugin::GetTime() < m_fEndActionTime )  // Stop attacking after m_fEndActionTime.
 			{
 				if ( CWeapons::IsValid(m_iWeapon) && m_aWeapons[m_iWeapon].CanUse() )
+				{
 					WeaponShoot();
+				}
 			}
 			else
 			{
@@ -2731,9 +2886,13 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 						ChangeWeapon(m_iPhyscannon);
 						float fPhyscannonUseTime = m_aWeapons[m_iPhyscannon].GetEndTime();
 						if ( fPhyscannonUseTime > m_fEndAimTime + 0.1f )
+						{
 							m_fEndAimTime = fPhyscannonUseTime - 0.1f;
+						}
 						else
+						{
 							fPhyscannonUseTime = m_fEndAimTime + 0.1f;
+						}
 						m_fStartActionTime = fPhyscannonUseTime;
 					}
 				}
@@ -2790,7 +2949,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 		{
 			// Bot should be holding object, throw it away.
 			if ( m_iWeapon == m_iPhyscannon )
+			{
 				WeaponShoot(CWeapon::PRIMARY);
+			}
 			m_bResolvingStuck = m_bStuckUsePhyscannon = m_bPathAim = false;
 			m_bNeedSetWeapon = true;
 		}
@@ -2820,7 +2981,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 					 !pStuckObject->IsExplosive() )  // Object still there.
 				{
 					if ( CWeapons::IsValid(m_iWeapon) && m_aWeapons[m_iWeapon].CanUse() )
+					{
 						WeaponShoot();
+					}
 
 					if ( (CBotrixServerPlugin::GetTime() >= m_fEndAimTime + 1.0f) )  // Maybe object moved.
 					{
@@ -2849,7 +3012,9 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 
 	// Duck until bot reaches next waypoint.
 	if ( m_bNeedDuck || m_bAttackDuck )
+	{
 		FLAG_SET(IN_DUCK, m_cCmd.buttons);
+	}
 
 #ifdef BOTRIX_TODO
 	// Sprint until bot reaches next waypoint. Not working.
@@ -2958,7 +3123,9 @@ void CBot_HL2DM::Think()
 	bool bForceNewTask = false;
 
 	if ( !m_bNeedMove && !m_bResolvingStuck && !m_pCurrentEnemy )
+	{
 		m_bMoveFailure = true;
+	}
 
 	// Check for move failure.
 	if ( m_bMoveFailure )
@@ -2966,7 +3133,9 @@ void CBot_HL2DM::Think()
 		if ( m_bUseNavigatorToMove )
 		{
 			if ( iCurrentWaypoint == m_iFailWaypoint )
+			{
 				m_iFailsCount++;
+			}
 			else
 			{
 				m_iFailWaypoint = iCurrentWaypoint;
@@ -2993,7 +3162,9 @@ void CBot_HL2DM::Think()
 			}
 		}
 		else
+		{
 			m_bNeedMove = false;  // As if we got to the needed destination.
+		}
 
 		m_bMoveFailure = m_bStuck = m_bResolvingStuck = false;
 	}
@@ -3013,7 +3184,9 @@ void CBot_HL2DM::Think()
 	}
 
 	if ( m_iCurrentTask == EBotTaskEngageEnemy )
+	{
 		CheckEngagedEnemy();
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -3154,11 +3327,15 @@ void CBot_HL2DM::CheckEngagedEnemy()
 	{
 		if ( m_bUseNavigatorToMove && CWeapons::IsValid(m_iWeapon) &&
 			 (!m_aWeapons[m_iWeapon].IsMelee() && !m_aWeapons[m_iWeapon].NeedsToBeCloser(m_fDistanceSqrToEnemy)) )
+		{
 			m_bNeedMove = m_bUseNavigatorToMove = false;  // Stop running and start moving randomly.
+		}
 		else if (
 			m_bChasing && (iCurrentWaypoint != m_pChasedEnemy->iCurrentWaypoint) &&
 			(CBotrixServerPlugin::GetTime() >= m_fChaseEnemyTime) )
+		{
 			ChaseEnemy();  // Recalculate route to enemy every 3 seconds.
+		}
 	}
 }
 
@@ -3346,7 +3523,9 @@ find_enemy:
 			if ( iItemToSearch == -1 )
 			{
 				if ( (m_iCurrentTask == EBotTaskFindWeapon) && (iWeapon != EWeaponIdInvalid) )
+				{
 					m_cSkipWeapons.set(iWeapon);
+				}
 				m_iCurrentTask = EBotTaskInvalid;
 				goto restart_find_task;
 			}
