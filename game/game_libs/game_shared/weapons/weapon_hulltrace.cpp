@@ -52,7 +52,7 @@ void CWeaponHullTrace::DoTrace_Server()
 	Vector gunPos = m_pPlayer->GetGunPosition();
 	Vector aimAngle = Vector(m_pPlayer->pev->v_angle) + Vector(m_pPlayer->pev->punchangle);
 	Vector dir;
-	AngleVectors(m_pPlayer->pev->v_angle, dir, nullptr, nullptr);
+	AngleVectors(aimAngle, dir, nullptr, nullptr);
 
 	TraceResult tr {};
 	g_engfuncs.pfnTraceHull(gunPos, gunPos + (128.0f * dir), ignore_monsters, human_hull, m_pPlayer->edict(), &tr);
