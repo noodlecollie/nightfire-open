@@ -1,5 +1,6 @@
 #pragma once
 
+#include "standard_includes.h"
 #include <good/string.h>
 
 struct edict_s;
@@ -30,6 +31,8 @@ public:
 	static const char* MapName();
 	static CBotrixCommand* GetConsoleCommandHandler();
 
+	static void UpdateLogLevel();
+
 private:
 	static void PrepareLevel();
 	static void ActivateLevel();
@@ -48,4 +51,5 @@ private:
 	static float m_fEngineTime;  ///< Current engine time.
 
 	static CBotrixCommand* m_pConsoleCommands;
+	static cvar_t m_TraceLogCvar;
 };

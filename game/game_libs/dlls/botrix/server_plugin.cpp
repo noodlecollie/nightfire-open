@@ -18,9 +18,12 @@ int CBotrixServerPlugin::m_iFPS = 60;
 float CBotrixServerPlugin::m_fTime = 0.0f;
 float CBotrixServerPlugin::m_fEngineTime = 0.0f;
 CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
+cvar_t CBotrixServerPlugin::m_TraceLogCvar = CONSTRUCT_CVAR_T("botrix_log_trace", 0, FCVAR_PRIVILEGED);
 
 void CBotrixServerPlugin::Init()
 {
+	CVAR_REGISTER(&m_TraceLogCvar);
+
 	good::log::bLogToStdOut = false;  // Disable log to stdout, Msg() will print there.
 	good::log::bLogToStdErr = false;  // Disable log to stderr, Warning() will print there.
 	good::log::iStdErrLevel = good::ELogLevelWarning;  // Log warnings and errors to stderr.
@@ -195,6 +198,8 @@ void CBotrixServerPlugin::ClientKilled(struct edict_s* victim, struct edict_s* k
 
 void CBotrixServerPlugin::Think()
 {
+	CBotrixServerPlugin::UpdateLogLevel();
+
 	if ( !m_bMapRunning )
 	{
 		return;
@@ -275,6 +280,41 @@ const char* CBotrixServerPlugin::MapName()
 CBotrixCommand* CBotrixServerPlugin::GetConsoleCommandHandler()
 {
 	return m_pConsoleCommands;
+}
+
+void CBotrixServerPlugin::UpdateLogLevel()
+{
+	static cvar_t* developerCvar = nullptr;
+
+	if ( !developerCvar )
+	{
+		developerCvar = CVAR_GET_POINTER("developer");
+	}
+
+	ASSERT(developerCvar);
+
+	const int devLevel = static_cast<int>(developerCvar->value);
+
+	switch ( devLevel )
+	{
+		case 4:
+		case 5:
+		{
+			CBotrixEngineUtil::iLogLevel = good::ELogLevelDebug;
+			break;
+		}
+
+		default:
+		{
+			CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
+			break;
+		}
+	}
+
+	if ( m_TraceLogCvar.value != 0.0f )
+	{
+		CBotrixEngineUtil::iLogLevel = good::ELogLevelTrace;
+	}
 }
 
 void CBotrixServerPlugin::PrepareLevel()
