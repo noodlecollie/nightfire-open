@@ -1095,9 +1095,9 @@ void InitInput(void)
 	cl_yawspeed = gEngfuncs.pfnRegisterVariable("cl_yawspeed", "210", 0);
 	cl_pitchspeed = gEngfuncs.pfnRegisterVariable("cl_pitchspeed", "225", 0);
 	cl_upspeed = gEngfuncs.pfnRegisterVariable("cl_upspeed", "320", 0);
-	cl_forwardspeed = gEngfuncs.pfnRegisterVariable("cl_forwardspeed", "400", FCVAR_ARCHIVE);
-	cl_backspeed = gEngfuncs.pfnRegisterVariable("cl_backspeed", "400", FCVAR_ARCHIVE);
-	cl_sidespeed = gEngfuncs.pfnRegisterVariable("cl_sidespeed", "400", 0);
+	cl_forwardspeed = gEngfuncs.pfnRegisterVariable("cl_forwardspeed", "250", FCVAR_ARCHIVE);
+	cl_backspeed = gEngfuncs.pfnRegisterVariable("cl_backspeed", "250", FCVAR_ARCHIVE);
+	cl_sidespeed = gEngfuncs.pfnRegisterVariable("cl_sidespeed", "215", 0);
 	cl_movespeedkey = gEngfuncs.pfnRegisterVariable("cl_movespeedkey", "0.3", 0);
 	cl_pitchup = gEngfuncs.pfnRegisterVariable("cl_pitchup", "89", 0);
 	cl_pitchdown = gEngfuncs.pfnRegisterVariable("cl_pitchdown", "89", 0);

@@ -83,9 +83,9 @@ bool CBotrixMod::LoadDefaults(TModId iModId)
 		/*player_eye = */ 64.0f,
 		/*player_eye_crouched = */ 36.0f,
 
-		/*velocity_crouch = */ 63.33f,
-		/*velocity_walk = */ 150.0f,
-		/*velocity_run = */ 190.0f,
+		/*velocity_crouch = */ 250.0f * 0.3f,
+		/*velocity_walk = */ 250.0f,
+		/*velocity_run = */ 250.0f,
 		/*velocity_sprint = */ 327.5f,
 
 		/*obstacle_height_no_jump = */ 18.0f,

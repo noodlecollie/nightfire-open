@@ -2562,6 +2562,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 		else
 		{
 			// m_bNeedSprint = true; // For DEBUG purposes.
+			// NFTODO: Replace these with cvars like cl_forwardspeed
 			fSpeed = CBotrixMod::GetVar(
 				m_bNeedSprint     ? EModVarPlayerVelocitySprint
 					: m_bNeedWalk ? EModVarPlayerVelocityWalk
