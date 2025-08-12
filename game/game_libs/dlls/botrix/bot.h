@@ -650,4 +650,8 @@ protected:  // Members.
 protected:  // Flags.
 	bool m_bNeedTaskCheck;  ///< True if there is need to check for new tasks.
 	bool m_bChasing;  ///< Currently chasing enemy out of sight.
+
+private:
+	TBotTask
+	ChooseNewTask(bool& bForce, const CWeapon*& pWeapon, TBotIntelligence& iWeaponPreference, bool& bSecondaryWeapon);
 };

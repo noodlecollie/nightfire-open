@@ -3,7 +3,7 @@
 
 namespace
 {
-	static constexpr float SPAWN_POINT_CLEAR_RADIUS = 128.0f;
+	static constexpr float SPAWN_POINT_CLEAR_RADIUS = 64.0f;
 
 	inline CBaseEntity* NullSpawnPoint()
 	{
@@ -14,7 +14,8 @@ namespace
 const char* const CSpawnPointManager::SpawnPointClassNames[SP__Count] = {
 	"info_player_start",
 	"info_player_deathmatch",
-	"info_player_coop"};
+	"info_player_coop",
+};
 
 void CSpawnPointManager::Initialise()
 {
@@ -72,6 +73,7 @@ CBaseEntity* CSpawnPointManager::GetNextSpawnPoint(CBasePlayer* player, SpawnPoi
 	if ( !spawnPoint )
 	{
 		ALERT(at_error, "Could not find any appropriate spawn points (%s) in map.\n", spawnPointClassName);
+		ASSERT(false);
 		spawnPoint = NullSpawnPoint();
 	}
 

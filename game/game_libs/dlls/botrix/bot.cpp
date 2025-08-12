@@ -559,16 +559,6 @@ void CBotrixBot::PreThink()
 	}
 #endif
 
-	if ( m_bAlive && CWaypoints::Size() <= 64 )
-	{
-		if ( !m_bSaidNoWaypoints )
-		{
-			m_bSaidNoWaypoints = true;
-			Say(false, "Please create more waypoints for me.");
-		}
-		return;
-	}
-
 	Vector vPrevOrigin = m_vHead;
 	int iPrevCurrWaypoint = iCurrentWaypoint;
 
@@ -3340,6 +3330,7 @@ void CBot_HL2DM::CheckEngagedEnemy()
 	}
 }
 
+#ifdef BOTRIX_OLD_TASK_CODE
 //----------------------------------------------------------------------------------------------------------------
 void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 {
@@ -3455,6 +3446,7 @@ restart_find_task:  // TODO: remove gotos.
 					break;
 				}
 			}
+
 			if ( pEntityClass == NULL )
 			{
 				// None found, search for worst weapons.
@@ -3468,11 +3460,13 @@ restart_find_task:  // TODO: remove gotos.
 					}
 				}
 			}
+
 			if ( pEntityClass == NULL )
 			{
 				bNeedWeapon = false;
 				goto restart_find_task;
 			}
+
 			break;
 		}
 
@@ -3498,6 +3492,7 @@ restart_find_task:  // TODO: remove gotos.
 				iNewTask = EBotTaskFindEnemy;  // Just find enemy.
 				pEntityClass = NULL;
 			}
+
 			break;
 		}
 
@@ -3580,6 +3575,294 @@ find_enemy:
 		}
 	}
 	m_cSkipWeapons.reset();
+}
+#else  // BOTRIX_OLD_TASK_CODE
+void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
+{
+	TBotTask iNewTask = EBotTaskInvalid;
+	bool bForce = bForceTaskChange || (m_iCurrentTask == EBotTaskInvalid);
+
+	const CWeapon* pWeapon =
+		(m_bFeatureWeaponCheck && CWeapons::IsValid(m_iBestWeapon)) ? m_aWeapons[m_iBestWeapon].GetBaseWeapon() : NULL;
+	TBotIntelligence iWeaponPreference = m_iIntelligence;
+
+	const bool bAlmostDead = CBotrixMod::HasMapItems(EItemTypeHealth) &&
+		(m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 5));
+	bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
+
+	TWeaponId iWeapon = EWeaponIdInvalid;
+	bool bSecondaryWeapon = false;
+
+	const CItemClass* pEntityClass = nullptr;  // Weapon or ammo class to search for.
+
+	if ( bAlmostDead )
+	{
+		m_bDontAttack = (m_iIntelligence <= EBotNormal);
+		m_bFlee = true;
+	}
+
+	size_t retries = 0;
+	const size_t maxretries = 5;
+
+	do
+	{
+		retries++;
+		const bool outOfRetries = retries >= maxretries;
+
+		if ( !outOfRetries )
+		{
+			iNewTask = ChooseNewTask(bForce, pWeapon, iWeaponPreference, bSecondaryWeapon);
+		}
+		else
+		{
+			iNewTask = EBotTaskFindEnemy;
+			pEntityClass = nullptr;
+		}
+
+		if ( !outOfRetries )
+		{
+			switch ( iNewTask )
+			{
+				case EBotTaskFindWeapon:
+				{
+					pEntityClass = nullptr;
+
+					// Get weapon entity class to search for. Search for better weapons that actually have.
+					for ( TBotIntelligence iPreference = iWeaponPreference; iPreference < EBotIntelligenceTotal;
+						  ++iPreference )
+					{
+						iWeapon = CWeapons::GetRandomWeapon(iPreference, m_cSkipWeapons);
+						if ( iWeapon != EWeaponIdInvalid )
+						{
+							pEntityClass = CWeapons::Get(iWeapon)->GetBaseWeapon()->pWeaponClass;
+							break;
+						}
+					}
+
+					if ( !pEntityClass )
+					{
+						// None found, search for worst weapons.
+						for ( TBotIntelligence iPreference = iWeaponPreference - 1; iPreference >= 0; --iPreference )
+						{
+							iWeapon = CWeapons::GetRandomWeapon(iPreference, m_cSkipWeapons);
+
+							if ( iWeapon != EWeaponIdInvalid )
+							{
+								pEntityClass = CWeapons::Get(iWeapon)->GetBaseWeapon()->pWeaponClass;
+								break;
+							}
+						}
+					}
+
+					if ( !pEntityClass )
+					{
+						bNeedWeapon = false;
+						continue;
+					}
+
+					break;
+				}
+
+				case EBotTaskFindAmmo:
+				{
+					// Get ammo entity class to search for.
+					iWeapon = m_iBestWeapon;
+
+					// Randomly search for weapon instead, as it gives same primary bullets.
+					if ( !bSecondaryWeapon && bNeedWeapon && CItems::ExistsOnMap(pWeapon->pWeaponClass) &&
+						 (rand() & 1) )
+					{
+						iNewTask = EBotTaskFindWeapon;
+						pEntityClass = pWeapon->pWeaponClass;
+					}
+					else
+					{
+						int iAmmoEntitiesSize = pWeapon->aAmmos[bSecondaryWeapon ? 1 : 0].size();
+						pEntityClass = (iAmmoEntitiesSize > 0)
+							? pWeapon->aAmmos[bSecondaryWeapon ? 1 : 0][rand() % iAmmoEntitiesSize]
+							: nullptr;
+					}
+
+					if ( !pEntityClass ||
+						 !CItems::ExistsOnMap(pEntityClass) )  // There are no such weapon/ammo on the map.
+					{
+						iNewTask = EBotTaskFindEnemy;  // Just find enemy.
+						pEntityClass = NULL;
+					}
+
+					break;
+				}
+
+				case EBotTaskFindHealth:
+				case EBotTaskFindArmor:
+				{
+					pEntityClass = CItems::GetRandomItemClass(EItemTypeHealth + (iNewTask - EBotTaskFindHealth));
+					break;
+				}
+			}
+
+			BASSERT(iNewTask != EBotTaskInvalid, return);
+		}
+
+		// Check if need task switch.
+		if ( bForce || (m_iCurrentTask != iNewTask) )
+		{
+			m_iCurrentTask = iNewTask;
+
+			if ( pEntityClass && !outOfRetries )  // Health, armor, weapon, ammo.
+			{
+				TItemType iType = EItemTypeHealth + (iNewTask - EBotTaskFindHealth);
+				TItemIndex iItemToSearch = CItems::GetNearestItem(iType, GetHead(), m_aPickedItems, pEntityClass);
+
+				if ( iItemToSearch == -1 )
+				{
+					if ( (m_iCurrentTask == EBotTaskFindWeapon) && (iWeapon != EWeaponIdInvalid) )
+					{
+						m_cSkipWeapons.set(iWeapon);
+					}
+
+					m_iCurrentTask = EBotTaskInvalid;
+
+					// Retry
+					continue;
+				}
+				else
+				{
+					m_iTaskDestination = CItems::GetItems(iType)[iItemToSearch].iWaypoint;
+					m_cItemToSearch.iType = iType;
+					m_cItemToSearch.iIndex = iItemToSearch;
+				}
+			}
+			else if ( m_iCurrentTask == EBotTaskFindEnemy )
+			{
+				// Just go to some random waypoint.
+				m_iTaskDestination = -1;
+				GoodAssert(CWaypoints::Size() >= 2);
+
+				do
+				{
+					m_iTaskDestination = rand() % CWaypoints::Size();
+				}
+				while ( m_iTaskDestination == iCurrentWaypoint );
+			}
+
+			// Check if waypoint to go to is valid.
+			if ( (m_iTaskDestination == EWaypointIdInvalid) || (m_iTaskDestination == iCurrentWaypoint) )
+			{
+				BotDebug(
+					"%s -> Task %s, invalid destination waypoint %d (current %d), recalculate task.",
+					GetName(),
+					CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
+					m_iTaskDestination,
+					iCurrentWaypoint);
+
+				m_iCurrentTask = -1;
+				m_bNeedTaskCheck = true;  // Check new task in next frame.
+				m_bNeedMove = m_bUseNavigatorToMove = m_bDestinationChanged = false;
+
+				// Bot searched for item at current waypoint, but item was not there. Add it to array of picked items.
+				TaskFinished();
+			}
+			else
+			{
+				BotDebug(
+					"%s -> New task: %s %s, waypoint %d (current %d).",
+					GetName(),
+					CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
+					pEntityClass ? pEntityClass->sClassName.c_str() : "",
+					m_iTaskDestination,
+					iCurrentWaypoint);
+
+				m_iDestinationWaypoint = m_iTaskDestination;
+				m_bNeedMove = m_bUseNavigatorToMove = m_bDestinationChanged = true;
+			}
+		}
+	}
+	while ( retries < maxretries );
+
+	m_cSkipWeapons.reset();
+}
+#endif  // BOTRIX_OLD_TASK_CODE
+
+TBotTask CBot_HL2DM::ChooseNewTask(
+	bool& bForce,
+	const CWeapon*& pWeapon,
+	TBotIntelligence& iWeaponPreference,
+	bool& bSecondaryWeapon)
+{
+	TBotTask iNewTask = EBotTaskInvalid;
+
+	const bool bNeedHealth = CBotrixMod::HasMapItems(EItemTypeHealth) &&
+		(m_PlayerInfo.GetHealth() < CBotrixMod::GetVar(EModVarPlayerMaxHealth));
+
+	const bool bNeedHealthBad =
+		bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 2));
+
+	const bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
+	const bool bNeedAmmo = pWeapon && CBotrixMod::HasMapItems(EItemTypeAmmo);
+
+	if ( bNeedHealthBad )  // Need health pretty much.
+	{
+		iNewTask = EBotTaskFindHealth;
+		bForce = true;
+	}
+	else if ( bNeedWeapon && (pWeapon->iBotPreference < iWeaponPreference) )  // Need some weapon with higher
+																			  // preference.
+	{
+		iNewTask = EBotTaskFindWeapon;
+	}
+	else if ( bNeedAmmo )
+	{
+		// Need ammunition.
+		bool bNeedAmmo0 =
+			(m_aWeapons[m_iBestWeapon].ExtraBullets(0) < pWeapon->iClipSize[0]);  // Has less than 1 extra clip.
+		bool bNeedAmmo1 =
+			m_aWeapons[m_iBestWeapon].HasSecondary() &&  // Has secondary function, but no secondary bullets.
+			!m_aWeapons[m_iBestWeapon].HasAmmoInClip(1) && !m_aWeapons[m_iBestWeapon].HasAmmoExtra(1);
+
+		if ( bNeedAmmo0 || bNeedAmmo1 )
+		{
+			iNewTask = EBotTaskFindAmmo;
+
+			// Prefer search for secondary ammo only if has extra bullets for primary.
+			bSecondaryWeapon = bNeedAmmo1 && (m_aWeapons[m_iBestWeapon].ExtraBullets(0) > 0);
+		}
+		else if ( bNeedHealth )  // Need health (but has more than 50%).
+		{
+			iNewTask = EBotTaskFindHealth;
+		}
+		else if (
+			CBotrixMod::HasMapItems(EItemTypeArmor) &&
+			(m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
+		{
+			iNewTask = EBotTaskFindArmor;
+		}
+		else if ( bNeedWeapon && (pWeapon->iBotPreference < EBotPro) )  // Check if can find a better weapon.
+		{
+			iNewTask = EBotTaskFindWeapon;
+			iWeaponPreference = pWeapon->iBotPreference + 1;
+		}
+		else if ( !m_aWeapons[m_iBestWeapon].HasFullAmmo(1) )  // Check if weapon needs secondary ammo.
+		{
+			iNewTask = EBotTaskFindAmmo;
+			bSecondaryWeapon = true;
+		}
+		else if ( !m_aWeapons[m_iBestWeapon].HasFullAmmo(0) )  // Check if weapon needs primary ammo.
+		{
+			iNewTask = EBotTaskFindAmmo;
+			bSecondaryWeapon = false;
+		}
+		else
+		{
+			iNewTask = EBotTaskFindEnemy;
+		}
+	}
+	else
+	{
+		iNewTask = EBotTaskFindEnemy;
+	}
+
+	return iNewTask;
 }
 
 //----------------------------------------------------------------------------------------------------------------
