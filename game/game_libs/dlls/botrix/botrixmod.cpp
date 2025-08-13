@@ -110,7 +110,8 @@ bool CBotrixMod::LoadDefaults(TModId iModId)
 //----------------------------------------------------------------------------------------------------------------
 void CBotrixMod::Prepare()
 {
-	float fWidth = m_aVars[EModVarPlayerWidth][0], fHalfWidth = fWidth / 2.0f;
+	float fWidth = m_aVars[EModVarPlayerWidth][0];
+	float fHalfWidth = fWidth / 2.0f;
 	float fHeight = m_aVars[EModVarPlayerHeight][0];
 	float fHeightCrouched = m_aVars[EModVarPlayerHeightCrouched][0];
 	float fJumpCrouched = m_aVars[EModVarPlayerJumpHeightCrouched][0];

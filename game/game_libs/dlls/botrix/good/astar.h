@@ -137,7 +137,9 @@ namespace good
 			if ( m_pGraph->size() > m_cANodes.size() )
 			{
 				if ( m_cANodes.capacity() >= m_pGraph->size() )
+				{
 					m_cANodes.resize(m_pGraph->size());
+				}
 				else
 				{
 					// We can't resize m_cANodes as this will realloc to new memory (and m_pQueue become invalid,
@@ -196,6 +198,7 @@ namespace good
 					}
 				}
 			}
+
 			return m_pQueue.empty();
 		}
 

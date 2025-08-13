@@ -13,6 +13,8 @@ set(SOURCES_PM_SHARED
 set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/constructors/aabboxConstructor.h
 	../game_shared/customGeometry/constructors/aabboxConstructor.cpp
+	../game_shared/customGeometry/constructors/arrowConstructor.h
+	../game_shared/customGeometry/constructors/arrowConstructor.cpp
 	../game_shared/customGeometry/constructors/baseConstructor.h
 	../game_shared/customGeometry/constructors/circle2DConstructor.h
 	../game_shared/customGeometry/constructors/circle2DConstructor.cpp

@@ -159,6 +159,9 @@ TModId CConfiguration::LoadProgrammatic()
 			}
 		});
 
+	// Very important!
+	CBotrixMod::Prepare();
+
 	// Return this for now
 	return EModId_HL2DM;
 }

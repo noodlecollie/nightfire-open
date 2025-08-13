@@ -1538,7 +1538,8 @@ void CBotrixBot::UpdateWorld()
 				// Check if players are not stuck with each other.
 				if ( m_bStuck && !m_bStuckTryingSide && (fDistSqr <= (SQR(CBotrixMod::iPlayerRadius) << 2)) )
 				{
-					Vector vNeeded(m_vDestination), vOther(pCheckPlayer->GetHead());
+					Vector vNeeded(m_vDestination);
+					Vector vOther(pCheckPlayer->GetHead());
 					vNeeded -= m_vHead;
 					vOther -= m_vHead;
 
@@ -2282,6 +2283,7 @@ bool CBotrixBot::MoveBetweenWaypoints()
 	}
 
 	bool bDoingAction = DoWaypointAction();
+
 	if ( m_bNeedMove && !bDoingAction )  // If not doing some waypoint action.
 	{
 		ApplyPathFlags();
@@ -2302,6 +2304,7 @@ bool CBotrixBot::NavigatorMove()
 		// Destination changed, make sure to start new path search.
 		m_bDestinationChanged = false;
 		m_cNavigator.Stop();
+
 		if ( iCurrentWaypoint == m_iDestinationWaypoint )
 		{
 			m_bNeedMove = false;
@@ -2312,9 +2315,8 @@ bool CBotrixBot::NavigatorMove()
 		m_bMoveFailure = !m_cNavigator.SearchSetup(iCurrentWaypoint, m_iDestinationWaypoint, m_aAvoidAreas);
 		iPrevWaypoint = iCurrentWaypoint;
 	}
-
-	// Check if bot arrived to destination. Set up new destination to next waypoint in path.
-	else if ( m_cNavigator.PathFound() )
+	else if ( m_cNavigator.PathFound() )  // Check if bot arrived to destination. Set up new destination to next
+										  // waypoint in path.
 	{
 		return MoveBetweenWaypoints();
 	}
@@ -2370,6 +2372,7 @@ bool CBotrixBot::NormalMove()
 {
 	GoodAssert(m_bNeedMove);
 	bool bArrived = false;
+
 	if ( m_bDestinationChanged && CWaypoint::IsValid(iNextWaypoint) )
 	{
 		GoodAssert(iNextWaypoint != iCurrentWaypoint);
@@ -2388,6 +2391,7 @@ bool CBotrixBot::NormalMove()
 														   CBotrixMod::iPointTouchSquaredXY);
 		m_bNeedMove = !bArrived;
 	}
+
 	return bArrived;
 }
 
@@ -2407,6 +2411,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 	{
 		m_fStuckCheckTime = CBotrixServerPlugin::GetTime() + 1.0f;
 	}
+
 	m_bLastNeedMove = m_bNeedMove;
 
 	// Waypoint just changed from previous and valid waypoint.
@@ -2418,6 +2423,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 
 	bool bArrived = false;  // Set to true if reached next waypoint in path or path searching just finished (then
 							// touched start waypoint).
+
 	if ( m_bNeedMove && !m_bMoveFailure )
 	{
 		bArrived = (m_bUseNavigatorToMove) ? NavigatorMove() : NormalMove();
@@ -2425,6 +2431,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 
 	bool bMove = m_bNeedMove && !m_bMoveFailure && !m_bStuckBreakObject && !m_bStuckUsePhyscannon &&
 		!m_bCommandStopped && !m_bAttackDuck;
+
 	if ( m_bUseNavigatorToMove && (!m_cNavigator.SearchEnded() || m_bLockNavigatorMove) )
 	{
 		bMove = false;  // Check if search is finished (m_bMoveFailure will be set if search fails).
@@ -2486,6 +2493,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 	if ( bMove )
 	{
 		float fDeltaTime = CBotrixServerPlugin::GetTime() - m_fPrevThinkTime;
+
 		if ( fDeltaTime == 0 )
 		{
 			fDeltaTime = 0.000001f;  // Should not happen, sometimes happens. TODO: don't think in PreThink()...
@@ -2519,6 +2527,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 			{
 				m_bNeedCheckStuck = true;
 				m_fStuckCheckTime = CBotrixServerPlugin::GetTime() + 5.0f;  // Try again in 5 secs.
+
 				if ( !ResolveStuckMove() )
 				{
 					return;
@@ -2533,7 +2542,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 
 		// m_vLastVelocity = vSpeed;
 		Vector vNeededVelocity(m_vDestination);
-		float fSpeed;
+		float fSpeed = 0.0f;
 
 		// Need to stop before next move.
 		if ( m_bNeedStop && (vSpeed.x == 0) && (vSpeed.y == 0) && (vSpeed.z == 0) )
@@ -2582,9 +2591,8 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 				}
 			}
 
-			vNeededVelocity.Normalize();
+			vNeededVelocity = vNeededVelocity.Normalize();
 			vNeededVelocity *= fSpeed;
-
 			vNeededVelocity -= vSpeed;
 		}
 
@@ -3140,6 +3148,7 @@ void CBot_HL2DM::Think()
 					GetName(),
 					m_iFailWaypoint,
 					m_iDestinationWaypoint);
+
 				TaskFinished();
 				m_bNeedTaskCheck = bForceNewTask = true;
 				m_iFailsCount = 0;

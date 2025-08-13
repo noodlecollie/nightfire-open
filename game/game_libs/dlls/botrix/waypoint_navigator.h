@@ -41,6 +41,7 @@ public:
 				m_iPathIndex = 0;
 			}
 		}
+
 		return m_bSearchEnded;
 	}
 

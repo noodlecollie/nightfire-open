@@ -60,8 +60,11 @@ public:
 	{
 		// return v2.DistToSqr(v1) < 40*40;
 		float zDiff = v1.z - v2.z;
+
 		if ( SQR(zDiff) >= iSqrDiffZ )  // First check if Z difference is too big.
+		{
 			return false;
+		}
 
 		Vector2D vDiff(v1.x - v2.x, v1.y - v2.y);
 		return (vDiff.LengthSquared() <= iSqrDiffXY);
