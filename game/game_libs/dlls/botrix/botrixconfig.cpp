@@ -11,6 +11,7 @@
 #include "botrix/engine_util.h"
 #include "botrix/item.h"
 #include "botrix/weapon.h"
+#include "botrix/server_plugin.h"
 #include "PlatformLib/String.h"
 #include "weapons/weaponregistry.h"
 #include "weaponattributes/weaponatts_collection.h"
@@ -120,25 +121,8 @@ TModId CConfiguration::LoadProgrammatic()
 	static const int respawnableFlags = CTypeToString::EntityClassFlagsFromString("respawnable");
 
 	m_bModified = false;
-	const int devLevel = static_cast<int>(CVAR_GET_FLOAT("developer"));
 
-	switch ( devLevel )
-	{
-		case 4:
-		case 5:
-		{
-			// Use the console to set trace mode, or we could set a cvar.
-			// I feel like enabling it by default might spam.
-			CBotrixEngineUtil::iLogLevel = good::ELogLevelDebug;
-			break;
-		}
-
-		default:
-		{
-			CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
-			break;
-		}
-	}
+	CBotrixServerPlugin::UpdateLogLevel();
 
 	// Start with HL2DM defaults.
 	CBotrixMod::LoadDefaults(EModId_HL2DM);
@@ -174,6 +158,9 @@ TModId CConfiguration::LoadProgrammatic()
 				}
 			}
 		});
+
+	// Very important!
+	CBotrixMod::Prepare();
 
 	// Return this for now
 	return EModId_HL2DM;
