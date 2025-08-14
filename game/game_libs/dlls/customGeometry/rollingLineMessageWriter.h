@@ -8,11 +8,11 @@
 
 namespace CustomGeometry
 {
-	class CRollingMessageWriter
+	class CRollingLineMessageWriter
 	{
 	public:
-		explicit CRollingMessageWriter(Category category);
-		~CRollingMessageWriter();
+		explicit CRollingLineMessageWriter(Category category);
+		~CRollingLineMessageWriter();
 
 		void BeginGeometry(DrawType drawType, uint32_t colour = 0xFFFFFFFF, float scale = 1.0f, float lifetime = NAN);
 		void Finalise();
@@ -28,6 +28,7 @@ namespace CustomGeometry
 		void CreateGeometryItem(DrawType drawType, uint32_t colour, float scale, float lifetime);
 		void EnsureCanAdd(size_t pointsToAdd, size_t indicesToAdd);
 		bool CanAdd(size_t pointsToAdd, size_t indicesToAdd) const;
+		bool ExtendsCurrentLine(const Vector& p0, const Vector& p1) const;
 
 		Category m_Category;
 		GeometryItemPtr_t m_CurrentGeometry;

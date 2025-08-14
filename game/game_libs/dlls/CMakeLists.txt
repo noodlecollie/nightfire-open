@@ -312,8 +312,8 @@ set(SOURCES_SERVER
 	customGeometry/commands.cpp
 	customGeometry/messageWriter.h
 	customGeometry/messageWriter.cpp
-	customGeometry/rollingMessageWriter.h
-	customGeometry/rollingMessageWriter.cpp
+	customGeometry/rollingLineMessageWriter.h
+	customGeometry/rollingLineMessageWriter.cpp
 	gameplay/gameplaySystems.h
 	gameplay/gameplaySystems.cpp
 	gameplay/gameplaySystemsBase.h

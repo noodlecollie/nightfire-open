@@ -10,7 +10,7 @@
 #include "customGeometry/messageWriter.h"
 #include "customGeometry/geometryItem.h"
 #include "customGeometry/constructors/aabboxConstructor.h"
-#include "customGeometry/rollingMessageWriter.h"
+#include "customGeometry/rollingLineMessageWriter.h"
 
 good::TLogLevel CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
 int CBotrixEngineUtil::iTextTime = 20;  // Time in seconds to show text in CUtil::GetReachableInfoFromTo().
@@ -326,12 +326,12 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	bool bHasStair = false;
 	int i = 0;
 
-	std::unique_ptr<CRollingMessageWriter> helperGeomWriter;
+	std::unique_ptr<CRollingLineMessageWriter> helperGeomWriter;
 	Vector lastDelta;
 
 	if ( bShowHelp )
 	{
-		helperGeomWriter.reset(new CRollingMessageWriter(Category::WaypointVisualisation));
+		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::WaypointVisualisation));
 
 		helperGeomWriter->BeginGeometry(
 			DrawType::Lines,

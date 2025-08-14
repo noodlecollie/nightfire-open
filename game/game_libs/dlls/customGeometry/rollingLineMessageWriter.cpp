@@ -1,26 +1,26 @@
-#include "customGeometry/rollingMessageWriter.h"
+#include "customGeometry/rollingLineMessageWriter.h"
 #include "customGeometry/messageWriter.h"
 
 namespace CustomGeometry
 {
-	CRollingMessageWriter::CRollingMessageWriter(Category category) :
+	CRollingLineMessageWriter::CRollingLineMessageWriter(Category category) :
 		m_Category(category)
 	{
 		WriteClearMessage();
 	}
 
-	CRollingMessageWriter::~CRollingMessageWriter()
+	CRollingLineMessageWriter::~CRollingLineMessageWriter()
 	{
 		Finalise();
 	}
 
-	void CRollingMessageWriter::BeginGeometry(DrawType drawType, uint32_t colour, float scale, float lifetime)
+	void CRollingLineMessageWriter::BeginGeometry(DrawType drawType, uint32_t colour, float scale, float lifetime)
 	{
 		Finalise();
 		CreateGeometryItem(drawType, colour, scale, lifetime);
 	}
 
-	void CRollingMessageWriter::Finalise()
+	void CRollingLineMessageWriter::Finalise()
 	{
 		if ( !m_CurrentGeometry )
 		{
@@ -31,7 +31,7 @@ namespace CustomGeometry
 		m_CurrentGeometry.reset();
 	}
 
-	bool CRollingMessageWriter::AddLine(const Vector& p0, const Vector& p1)
+	bool CRollingLineMessageWriter::AddLine(const Vector& p0, const Vector& p1)
 	{
 		ASSERT(m_CurrentGeometry.get() && m_CurrentGeometry->GetDrawType() == DrawType::Lines);
 
@@ -40,16 +40,23 @@ namespace CustomGeometry
 			return false;
 		}
 
+		if ( ExtendsCurrentLine(p0, p1) )
+		{
+			m_CurrentGeometry->GetPoint(m_CurrentGeometry->GetPointCount() - 1) = p1;
+			return true;
+		}
+
 		EnsureCanAdd(2, 2);
+
 		return m_CurrentGeometry->AddLine(p0, p1);
 	}
 
-	void CRollingMessageWriter::WriteClearMessage()
+	void CRollingLineMessageWriter::WriteClearMessage()
 	{
 		CMessageWriter(m_Category).WriteClearMessage();
 	}
 
-	void CRollingMessageWriter::WriteGeometryMessage()
+	void CRollingLineMessageWriter::WriteGeometryMessage()
 	{
 		ASSERT(m_CurrentGeometry.get());
 
@@ -62,7 +69,7 @@ namespace CustomGeometry
 		CMessageWriter(m_Category).WriteMessage(*m_CurrentGeometry);
 	}
 
-	void CRollingMessageWriter::CreateGeometryItem(DrawType drawType, uint32_t colour, float scale, float lifetime)
+	void CRollingLineMessageWriter::CreateGeometryItem(DrawType drawType, uint32_t colour, float scale, float lifetime)
 	{
 		m_CurrentGeometry.reset(new CGeometryItem());
 
@@ -72,7 +79,7 @@ namespace CustomGeometry
 		m_CurrentGeometry->SetLifetimeSecs(lifetime);
 	}
 
-	void CRollingMessageWriter::EnsureCanAdd(size_t pointsToAdd, size_t indicesToAdd)
+	void CRollingLineMessageWriter::EnsureCanAdd(size_t pointsToAdd, size_t indicesToAdd)
 	{
 		ASSERT(m_CurrentGeometry.get());
 
@@ -87,7 +94,7 @@ namespace CustomGeometry
 		}
 	}
 
-	bool CRollingMessageWriter::CanAdd(size_t pointsToAdd, size_t indicesToAdd) const
+	bool CRollingLineMessageWriter::CanAdd(size_t pointsToAdd, size_t indicesToAdd) const
 	{
 		ASSERT(m_CurrentGeometry.get());
 
@@ -110,6 +117,33 @@ namespace CustomGeometry
 		}
 
 		return true;
+	}
+
+	bool CRollingLineMessageWriter::ExtendsCurrentLine(const Vector& p0, const Vector& p1) const
+	{
+		if ( !m_CurrentGeometry )
+		{
+			return false;
+		}
+
+		const CUtlVector<Vector>& points = m_CurrentGeometry->GetPoints();
+		const int count = points.Count();
+
+		if ( count < 2 )
+		{
+			return false;
+		}
+
+		const Vector& lastPoint = points[count - 1];
+		const Vector& prevPoint = points[count - 2];
+		const Vector delta = (lastPoint - prevPoint).Normalize();
+		const Vector p0Delta = (p0 - prevPoint).Normalize();
+		const Vector p1Delta = (p1 - prevPoint).Normalize();
+
+		const bool p0OnLine = VectorCompareEpsilon(p0, lastPoint, 0.001f) || DotProduct(delta, p0Delta) >= 0.9999f;
+		const bool p1OnLine = DotProduct(delta, p1Delta) >= 0.9999f;
+
+		return p0OnLine && p1OnLine;
 	}
 
 }  // namespace CustomGeometry
