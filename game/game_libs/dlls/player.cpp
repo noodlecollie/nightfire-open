@@ -3520,7 +3520,10 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 			CWeaponRegistry::StaticInstance().ForEach(
 				[this](const WeaponAtts::WACollection& atts)
 				{
-					GiveNamedItem(atts.Core.Classname);
+					if ( !(atts.Core.Flags & WeaponAtts::WeaponFlag_IsDebug) )
+					{
+						GiveNamedItem(atts.Core.Classname);
+					}
 				});
 			gEvilImpulse101 = FALSE;
 			break;

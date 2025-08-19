@@ -24,8 +24,12 @@ namespace WeaponAtts
 			"Attack mode limit exceeded.");
 
 		Core.Validate();
+		Ammo.Validate();
 		ViewModel.Validate();
+		PlayerModel.Validate();
 		Prediction.Validate();
+		Precache.Validate();
+		BotInterface.Validate();
 	}
 
 	void WACollection::RegisterCvars() const

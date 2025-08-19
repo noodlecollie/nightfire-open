@@ -11,7 +11,7 @@ namespace WeaponAtts
 			return WABaseAttack::Classification::Event;
 		}
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			WABaseAttack::Validate();
 		}

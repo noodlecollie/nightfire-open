@@ -18,7 +18,7 @@ namespace WeaponAtts
 		int SwitchWeight = 0;
 		const char* PickupSoundOverride = nullptr;
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			ASSERTSZ_Q(Classname, "Weapon must have a classname.");
 			ASSERTSZ_Q(Id != WeaponId_e::WeaponNone, "Weapon must have a valid ID.");

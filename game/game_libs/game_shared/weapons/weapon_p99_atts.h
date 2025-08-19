@@ -95,6 +95,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->MuzzleFlashBrightness = NORMAL_GUN_FLASH;
 		priAttack->ViewPunchY = -2.0f;
 		priAttack->ShellModelName = "models/shell.mdl";
+		priAttack->ReloadDuration = 2.0f;
 
 		// Weapon play style: accurate, reliable sidearm which doesn't do
 		// a ton of damage.
@@ -150,4 +151,14 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		secAttack->AttackSounds.MaxVolume = 0.8f;
 		secAttack->AttackSounds.SoundNames.Clear();
 		secAttack->AttackSounds.SoundNames << "weapons/weapon_p99/p99_fire_sil1.wav";
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::HitscanSingleShot;
+		botIfc.Preference = BotWeaponPreference::Low;
+
+		WABotAttackMode* botAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botAttackMode);
+		botAttackMode->ApplyMode(priAttack);
+		botAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
 	});

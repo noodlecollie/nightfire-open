@@ -143,7 +143,10 @@ namespace WeaponAtts
 		bool AutoReload = true;
 		bool SpecialReload = false;
 
-		virtual void Validate() const override
+		// If < 0, time from reload animation is used;
+		float ReloadDuration = -1.0f;
+
+		void Validate() const override
 		{
 			Accuracy.Validate();
 		}

@@ -76,6 +76,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weaponattributes/weaponatts_ammodef.h
 	../game_shared/weaponattributes/weaponatts_baseattack.h
 	../game_shared/weaponattributes/weaponatts_base.h
+	../game_shared/weaponattributes/weaponatts_botinterface.h
+	../game_shared/weaponattributes/weaponatts_botinterface.cpp
 	../game_shared/weaponattributes/weaponatts_collection.h
 	../game_shared/weaponattributes/weaponatts_collection.cpp
 	../game_shared/weaponattributes/weaponatts_core.h

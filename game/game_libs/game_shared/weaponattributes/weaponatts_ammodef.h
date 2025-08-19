@@ -19,7 +19,7 @@ namespace WeaponAtts
 			memset(PickupClassnames, 0, sizeof(PickupClassnames));
 		}
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			ASSERTSZ_Q(PrimaryAmmoOnFirstPickup >= 0, "Amount of primary ammo on pickup must be positive.");
 		}

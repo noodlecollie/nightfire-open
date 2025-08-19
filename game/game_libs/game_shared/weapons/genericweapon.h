@@ -14,7 +14,7 @@ namespace WeaponMechanics
 {
 	class CBaseMechanic;
 	struct InvocationResult;
-}
+}  // namespace WeaponMechanics
 
 // Build on top of CBasePlayerWeapon, because this is so tied into the engine
 // already it'd be a pain to replace it (at least at this stage).

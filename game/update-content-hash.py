@@ -47,11 +47,8 @@ def main():
 	if local_branch != "master":
 		raise RuntimeError(f"Local branch is {local_branch} not master, refusing to update content hash")
 
-	if content_has_staged_files(content_path):
-		raise RuntimeError("Content repo has staged files - please commit these first")
-
-	if content_has_unstaged_files(content_path):
-		raise RuntimeError("Content repo has unstaged files - please commit these first")
+	has_staged_files = content_has_staged_files(content_path)
+	has_unstaged_files = content_has_unstaged_files(content_path)
 
 	local_master_rev = content_cmd(content_path, ["git", "rev-parse", "master"]).strip()
 	origin_master_rev = content_cmd(content_path, ["git", "rev-parse", "origin/master"]).strip()
@@ -66,8 +63,17 @@ def main():
 
 	content_hash = content_hash_match.group(1)
 
+	# If we detected uncommitted files, add this to the hash when it's written.
+	# This should at least show up in the content hash file and make it obvious
+	# that we've forgotten to commit.
+	if has_staged_files or has_unstaged_files:
+		content_hash += "-dirty"
+
 	with open(os.path.join(SCRIPT_DIR, "content-hash.txt"), "w") as out_file:
 		out_file.write(content_hash + "\n")
+
+	if has_staged_files or has_unstaged_files:
+		raise RuntimeError(f"Content repo has {'staged' if has_staged_files else 'unstaged'} files - please commit these first")
 
 	print("Updated local content hash to:", content_hash)
 

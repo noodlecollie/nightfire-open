@@ -76,7 +76,7 @@ namespace WeaponAtts
 			return m_WeaponHelper ? m_WeaponHelper->GetWeapon() : nullptr;
 		}
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			// Force std::function to bool.
 			ASSERTSZ_Q(!!m_FactoryFunc, "Weapon must have prediction set up.");

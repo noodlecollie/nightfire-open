@@ -277,7 +277,12 @@ void CGenericWeapon::Reload()
 		? reloadAnimList->ItemByProbabilisticValue(UTIL_SharedRandomFloat(m_pPlayer->random_seed, 0, 1))
 		: -1;
 
-	const float animDuration = anim >= 0 ? ViewModelAnimationDuration(anim) : 0;
+	float animDuration = ammoAttack->ReloadDuration;
+
+	if ( animDuration < 0.0f )
+	{
+		animDuration = anim >= 0 ? ViewModelAnimationDuration(anim) : 0;
+	};
 
 	if ( DefaultReload(maxClip, anim, animDuration, m_iViewModelBody) )
 	{

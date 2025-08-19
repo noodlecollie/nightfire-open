@@ -12,6 +12,7 @@
 #include "weaponatts_baseattack.h"
 #include "weaponatts_prediction.h"
 #include "weaponatts_precache.h"
+#include "weaponatts_botinterface.h"
 #include "utlvector.h"
 
 namespace WeaponAtts
@@ -33,6 +34,7 @@ namespace WeaponAtts
 		WAPlayerModel PlayerModel;
 		WAPrediction Prediction;
 		WAPrecache Precache;
+		WABotInterface BotInterface;
 
 		WACollection(const std::function<void(WACollection&)>& initialiser);
 

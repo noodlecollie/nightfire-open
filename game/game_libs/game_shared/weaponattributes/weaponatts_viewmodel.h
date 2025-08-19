@@ -32,7 +32,7 @@ namespace WeaponAtts
 		const char* ModelName = NULL;
 		ViewModelAnimationSet Animations;
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			ASSERTSZ_Q(ModelName, "View model must be specified.");
 			Animations.Validate();

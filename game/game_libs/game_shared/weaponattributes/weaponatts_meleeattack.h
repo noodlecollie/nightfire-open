@@ -27,7 +27,7 @@ namespace WeaponAtts
 			return WABaseAttack::Classification::Melee;
 		}
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			WABaseAttack::Validate();
 

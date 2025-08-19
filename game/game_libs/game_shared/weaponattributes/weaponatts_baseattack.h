@@ -97,7 +97,7 @@ namespace WeaponAtts
 
 		virtual Classification Classify() const = 0;
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			ASSERTSZ_Q(EventScript, "Event script must be specified.");
 			ASSERTSZ_Q(AttackRate > 0.0f, "Attack rate must be positive.");
