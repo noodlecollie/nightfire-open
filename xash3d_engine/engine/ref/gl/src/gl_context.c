@@ -117,20 +117,34 @@ void Mod_UnloadTextures(model_t* mod)
 	switch ( mod->type )
 	{
 		case mod_studio:
+		{
 			Mod_StudioUnloadTextures(mod->cache.data);
 			break;
+		}
+
 		case mod_alias:
+		{
 			Mod_AliasUnloadTextures(mod->cache.data);
 			break;
+		}
+
 		case mod_brush:
+		{
 			Mod_BrushUnloadTextures(mod);
 			break;
+		}
+
 		case mod_sprite:
+		{
 			Mod_SpriteUnloadTextures(mod->cache.data);
 			break;
+		}
+
 		default:
+		{
 			ASSERT(0);
 			break;
+		}
 	}
 }
 
@@ -143,27 +157,45 @@ qboolean Mod_ProcessRenderData(model_t* mod, qboolean create, const byte* buf)
 		switch ( mod->type )
 		{
 			case mod_studio:
+			{
 				// Mod_LoadStudioModel( mod, buf, loaded );
 				break;
+			}
+
 			case mod_sprite:
+			{
 				Mod_LoadSpriteModel(mod, buf, &loaded, mod->numtexinfo);
 				break;
+			}
+
 			case mod_alias:
+			{
 				Mod_LoadAliasModel(mod, buf, &loaded);
 				break;
+			}
+
 			case mod_brush:
+			{
 				// Mod_LoadBrushModel( mod, buf, loaded );
 				break;
+			}
+
 			default:
+			{
 				gEngfuncs.Host_Error("Mod_LoadModel: unsupported type %d\n", mod->type);
+			}
 		}
 	}
 
 	if ( loaded && gEngfuncs.drawFuncs->Mod_ProcessUserData )
+	{
 		gEngfuncs.drawFuncs->Mod_ProcessUserData(mod, create, buf);
+	}
 
 	if ( !create )
+	{
 		Mod_UnloadTextures(mod);
+	}
 
 	return loaded;
 }

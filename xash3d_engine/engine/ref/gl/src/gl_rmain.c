@@ -20,6 +20,7 @@ GNU General Public License for more details.
 #include "EnginePublicAPI/beamdef.h"
 #include "EnginePublicAPI/particledef.h"
 #include "EnginePublicAPI/entity_types.h"
+#include <float.h>
 
 #define IsLiquidContents(cnt) (cnt == CONTENTS_WATER || cnt == CONTENTS_SLIME || cnt == CONTENTS_LAVA)
 
@@ -57,15 +58,11 @@ void R_AllowFog(qboolean allowed)
 /*
 ===============
 R_OpaqueEntity
-
-Opaque entity can be brush or studio model but sprite
 ===============
 */
 static qboolean R_OpaqueEntity(cl_entity_t* ent)
 {
-	if ( R_GetEntityRenderMode(ent) == kRenderNormal )
-		return true;
-	return false;
+	return R_GetEntityRenderMode(ent) == kRenderNormal;
 }
 
 /*
@@ -97,7 +94,9 @@ static int R_TransEntityCompare(const void* a, const void* b)
 		dist1 = DotProduct(vecLen, vecLen);
 	}
 	else
-		dist1 = 1000000000;
+	{
+		dist1 = FLT_MAX;
+	}
 
 	if ( ent2->model->type != mod_brush || rendermode2 != kRenderTransAlpha )
 	{
@@ -107,18 +106,30 @@ static int R_TransEntityCompare(const void* a, const void* b)
 		dist2 = DotProduct(vecLen, vecLen);
 	}
 	else
-		dist2 = 1000000000;
+	{
+		dist2 = FLT_MAX;
+	}
 
 	if ( dist1 > dist2 )
+	{
 		return -1;
+	}
+
 	if ( dist1 < dist2 )
+	{
 		return 1;
+	}
 
 	// then sort by rendermode
 	if ( R_RankForRenderMode(rendermode1) > R_RankForRenderMode(rendermode2) )
+	{
 		return 1;
+	}
+
 	if ( R_RankForRenderMode(rendermode1) < R_RankForRenderMode(rendermode2) )
+	{
 		return -1;
+	}
 
 	return 0;
 }
@@ -844,13 +855,21 @@ R_DrawFog
 void R_DrawFog(void)
 {
 	if ( !RI.fogEnabled )
+	{
 		return;
+	}
 
 	pglEnable(GL_FOG);
+
 	if ( ENGINE_GET_PARM(PARM_QUAKE_COMPATIBLE) )
+	{
 		pglFogi(GL_FOG_MODE, GL_EXP2);
+	}
 	else
+	{
 		pglFogi(GL_FOG_MODE, GL_EXP);
+	}
+
 	pglFogf(GL_FOG_DENSITY, RI.fogDensity);
 	pglFogfv(GL_FOG_COLOR, RI.fogColor);
 	pglHint(GL_FOG_HINT, GL_NICEST);
@@ -880,16 +899,27 @@ void R_DrawEntitiesOnList(void)
 		switch ( RI.currentmodel->type )
 		{
 			case mod_brush:
+			{
 				R_DrawBrushModel(RI.currententity);
 				break;
+			}
+
 			case mod_alias:
+			{
 				R_DrawAliasModel(RI.currententity);
 				break;
+			}
+
 			case mod_studio:
+			{
 				R_DrawStudioModel(RI.currententity);
 				break;
+			}
+
 			default:
+			{
 				break;
+			}
 		}
 	}
 
@@ -925,7 +955,9 @@ void R_DrawEntitiesOnList(void)
 	GL_CheckForErrors();
 
 	if ( RI.drawWorld )
+	{
 		gEngfuncs.pfnDrawNormalTriangles();
+	}
 
 	GL_CheckForErrors();
 
@@ -937,12 +969,18 @@ void R_DrawEntitiesOnList(void)
 
 		// handle studiomodels with custom rendermodes on texture
 		if ( RI.currententity->curstate.rendermode != kRenderNormal )
+		{
 			tr.blend = CL_FxBlend(RI.currententity) / 255.0f;
+		}
 		else
+		{
 			tr.blend = 1.0f;  // draw as solid but sorted by distance
+		}
 
 		if ( tr.blend <= 0.0f )
+		{
 			continue;
+		}
 
 		Assert(RI.currententity != NULL);
 		Assert(RI.currentmodel != NULL);
@@ -950,19 +988,33 @@ void R_DrawEntitiesOnList(void)
 		switch ( RI.currentmodel->type )
 		{
 			case mod_brush:
+			{
 				R_DrawBrushModel(RI.currententity);
 				break;
+			}
+
 			case mod_alias:
+			{
 				R_DrawAliasModel(RI.currententity);
 				break;
+			}
+
 			case mod_studio:
+			{
 				R_DrawStudioModel(RI.currententity);
 				break;
+			}
+
 			case mod_sprite:
+			{
 				R_DrawSpriteModel(RI.currententity);
 				break;
+			}
+
 			default:
+			{
 				break;
+			}
 		}
 	}
 
@@ -988,7 +1040,10 @@ void R_DrawEntitiesOnList(void)
 	pglDisable(GL_BLEND);  // Trinity Render issues
 
 	if ( !RI.onlyClientDraw )
+	{
 		R_DrawViewModel();
+	}
+
 	gEngfuncs.CL_ExtraUpdate();
 
 	GL_CheckForErrors();

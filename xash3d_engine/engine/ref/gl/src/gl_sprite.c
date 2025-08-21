@@ -846,7 +846,9 @@ void R_DrawSpriteModel(cl_entity_t* e)
 	vec3_t origin, color, color2 = {0.0f};
 
 	if ( RI.params & RP_ENVVIEW )
+	{
 		return;
+	}
 
 	model = e->model;
 	psprite = (msprite_t*)model->cache.data;
@@ -867,45 +869,67 @@ void R_DrawSpriteModel(cl_entity_t* e)
 				VectorCopy(parent->attachment[num - 1], origin);
 			}
 			else
+			{
 				VectorCopy(parent->origin, origin);
+			}
 		}
 	}
 
 	scale = e->curstate.scale;
 	if ( !scale )
+	{
 		scale = 1.0f;
+	}
 
 	if ( R_SpriteOccluded(e, origin, &scale) )
+	{
 		return;  // sprite culled
+	}
 
 	r_stats.c_sprite_models_drawn++;
 
 	if ( e->curstate.rendermode == kRenderGlow || e->curstate.rendermode == kRenderTransAdd )
+	{
 		R_AllowFog(false);
+	}
 
 	// select properly rendermode
 	switch ( e->curstate.rendermode )
 	{
 		case kRenderTransAlpha:
+		{
 			pglDepthMask(GL_FALSE);
 			// fallthrough
+		}
+
 		case kRenderTransColor:
 		case kRenderTransTexture:
+		{
 			pglEnable(GL_BLEND);
 			pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			break;
+		}
+
 		case kRenderGlow:
+		{
 			pglDisable(GL_DEPTH_TEST);
 			// fallthrough
+		}
+
 		case kRenderTransAdd:
+		{
 			pglEnable(GL_BLEND);
 			pglBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			pglDepthMask(GL_FALSE);
 			break;
+		}
+
 		case kRenderNormal:
 		default:
+		{
 			pglDisable(GL_BLEND);
 			break;
+		}
 	}
 
 	// all sprites can have color
@@ -950,29 +974,44 @@ void R_DrawSpriteModel(cl_entity_t* e)
 
 	// automatically roll parallel sprites if requested
 	if ( e->angles[ROLL] != 0.0f && type == SPR_FWD_PARALLEL )
+	{
 		type = SPR_FWD_PARALLEL_ORIENTED;
+	}
 
 	switch ( type )
 	{
 		case SPR_ORIENTED:
+		{
 			AngleVectors(e->angles, v_forward, v_right, v_up);
 			VectorScale(v_forward, 0.01f, v_forward);  // to avoid z-fighting
 			VectorSubtract(origin, v_forward, origin);
 			break;
+		}
+
 		case SPR_FACING_UPRIGHT:
+		{
 			VectorSet(v_right, origin[1] - RI.vieworg[1], -(origin[0] - RI.vieworg[0]), 0.0f);
 			VectorSet(v_up, 0.0f, 0.0f, 1.0f);
 			VectorNormalize(v_right);
 			break;
+		}
+
 		case SPR_FWD_PARALLEL_UPRIGHT:
+		{
 			dot = RI.vforward[2];
 			if ( (dot > 0.999848f) || (dot < -0.999848f) )  // cos(1 degree) = 0.999848
+			{
 				return;  // invisible
+			}
+
 			VectorSet(v_up, 0.0f, 0.0f, 1.0f);
 			VectorSet(v_right, RI.vforward[1], -RI.vforward[0], 0.0f);
 			VectorNormalize(v_right);
 			break;
+		}
+
 		case SPR_FWD_PARALLEL_ORIENTED:
+		{
 			angle = e->angles[ROLL] * (M_PI2_F / 360.0f);
 			SinCos(angle, &sr, &cr);
 			for ( i = 0; i < 3; i++ )
@@ -981,15 +1020,21 @@ void R_DrawSpriteModel(cl_entity_t* e)
 				v_up[i] = RI.vright[i] * -sr + RI.vup[i] * cr;
 			}
 			break;
+		}
+
 		case SPR_FWD_PARALLEL:  // normal sprite
 		default:
+		{
 			VectorCopy(RI.vright, v_right);
 			VectorCopy(RI.vup, v_up);
 			break;
+		}
 	}
 
 	if ( psprite->facecull == SPR_CULL_NONE )
+	{
 		GL_Cull(GL_NONE);
+	}
 
 	if ( oldframe == frame )
 	{
@@ -1023,9 +1068,14 @@ void R_DrawSpriteModel(cl_entity_t* e)
 	if ( R_SpriteHasLightmap(e, psprite->texFormat) )
 	{
 		if ( !r_lightmap->value )
+		{
 			pglEnable(GL_BLEND);
+		}
 		else
+		{
 			pglDisable(GL_BLEND);
+		}
+
 		pglDepthFunc(GL_EQUAL);
 		pglDisable(GL_ALPHA_TEST);
 		pglBlendFunc(GL_ZERO, GL_SRC_COLOR);
@@ -1039,13 +1089,17 @@ void R_DrawSpriteModel(cl_entity_t* e)
 	}
 
 	if ( psprite->facecull == SPR_CULL_NONE )
+	{
 		GL_Cull(GL_FRONT);
+	}
 
 	pglDisable(GL_ALPHA_TEST);
 	pglDepthMask(GL_TRUE);
 
 	if ( e->curstate.rendermode == kRenderGlow || e->curstate.rendermode == kRenderTransAdd )
+	{
 		R_AllowFog(true);
+	}
 
 	if ( e->curstate.rendermode != kRenderNormal )
 	{

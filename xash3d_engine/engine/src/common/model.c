@@ -626,7 +626,10 @@ Mod_StudioExtradata
 void* Mod_StudioExtradata(model_t* mod)
 {
 	if ( mod && mod->type == mod_studio )
+	{
 		return mod->cache.data;
+	}
+
 	return NULL;
 }
 

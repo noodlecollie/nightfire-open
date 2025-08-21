@@ -878,7 +878,8 @@ void GAME_EXPORT R_BloodSprite(const vec3_t org, int colorIndex, int modelIndex,
 			pTemp->entity.baseline.renderamt = pTemp->entity.curstate.renderamt = 250;
 
 			pTemp->entity.curstate.framerate = pTemp->frameMax * 4.0f;  // Finish in 0.250 seconds
-			pTemp->die = (float)cl.time + (pTemp->frameMax / pTemp->entity.curstate.framerate);  // play the whole thing once
+			pTemp->die =
+				(float)cl.time + (pTemp->frameMax / pTemp->entity.curstate.framerate);  // play the whole thing once
 
 			pTemp->entity.curstate.frame = 0;
 			pTemp->bounceFactor = 0;
@@ -2871,9 +2872,14 @@ void CL_AddModelEffects(cl_entity_t* ent)
 	{
 		case mod_alias:
 		case mod_studio:
+		{
 			break;
+		}
+
 		default:
+		{
 			return;
+		}
 	}
 
 	if ( cls.demoplayback == DEMO_QUAKE1 )

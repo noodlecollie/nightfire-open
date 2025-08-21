@@ -16,17 +16,6 @@ namespace
 	{
 		gEngfuncs.pTriAPI->TexCoord2f(0.0f, 0.0f);
 	}
-
-	template<size_t CHANNEL>
-	static unsigned char ColChannel(uint32_t colour)
-	{
-		static_assert(CHANNEL < 4, "Expected channel in range [0 3]");
-
-		constexpr uint32_t MASK = 0xFF000000 >> (CHANNEL * 8);
-		constexpr size_t END_SHIFT = (3 - CHANNEL) * 8;
-
-		return static_cast<unsigned char>((colour & MASK) >> END_SHIFT);
-	}
 }  // namespace
 
 namespace CustomGeometry
@@ -150,31 +139,7 @@ namespace CustomGeometry
 			return;
 		}
 
-		// This will be in the range (-1, -1) to (1, 1).
-		Vector locationOnScreen;
-		const bool isBehind = gEngfuncs.pTriAPI->WorldToScreen(item.GetPoint(0), locationOnScreen);
-
-		if ( isBehind )
-		{
-			// No point drawing.
-			return;
-		}
-
-		const CUtlString& text = item.GetText();
-		const uint32_t colour = item.GetColour();
-		const Vector2D screenDim(static_cast<float>(gHUD.m_scrinfo.iWidth), static_cast<float>(gHUD.m_scrinfo.iHeight));
-		const Vector2D halfScreenDim = screenDim / 2.0f;
-		int x = static_cast<int>(halfScreenDim.x + (locationOnScreen.x * halfScreenDim.x));
-		int y = static_cast<int>(halfScreenDim.y - (locationOnScreen.y * halfScreenDim.y));
-
-		int lineWidth = 0;
-		int lineHeight = 0;
-		gEngfuncs.pfnDrawStringLen(text.Get(), &lineWidth, &lineHeight);
-
-		x -= lineWidth / 2;
-		y += item.GetTextLineOffset() * lineHeight;
-
-		gEngfuncs.pfnDrawString(x, y, text.Get(), ColChannel<0>(colour), ColChannel<1>(colour), ColChannel<2>(colour));
+		RenderTextAtWorldLocation(item.GetPoint(0), item.GetText().Get(), item.GetColour(), item.GetTextLineOffset());
 	}
 
 	void CGeometryRenderer::DrawLines(const CGeometryItem& item)
