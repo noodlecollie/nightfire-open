@@ -14,10 +14,10 @@ namespace CustomGeometry
 		Finalise();
 	}
 
-	void CRollingLineMessageWriter::BeginGeometry(DrawType drawType, uint32_t colour, float scale, float lifetime)
+	void CRollingLineMessageWriter::BeginGeometry(uint32_t colour, float scale, float lifetime)
 	{
 		Finalise();
-		CreateGeometryItem(drawType, colour, scale, lifetime);
+		CreateGeometryItem(colour, scale, lifetime);
 	}
 
 	void CRollingLineMessageWriter::Finalise()
@@ -69,11 +69,11 @@ namespace CustomGeometry
 		CMessageWriter(m_Category).WriteMessage(*m_CurrentGeometry);
 	}
 
-	void CRollingLineMessageWriter::CreateGeometryItem(DrawType drawType, uint32_t colour, float scale, float lifetime)
+	void CRollingLineMessageWriter::CreateGeometryItem(uint32_t colour, float scale, float lifetime)
 	{
 		m_CurrentGeometry.reset(new CGeometryItem());
 
-		m_CurrentGeometry->SetDrawType(drawType);
+		m_CurrentGeometry->SetDrawType(DrawType::Lines);
 		m_CurrentGeometry->SetColour(colour);
 		m_CurrentGeometry->SetScale(scale);
 		m_CurrentGeometry->SetLifetimeSecs(lifetime);
@@ -87,7 +87,6 @@ namespace CustomGeometry
 		{
 			WriteGeometryMessage();
 			CreateGeometryItem(
-				m_CurrentGeometry->GetDrawType(),
 				m_CurrentGeometry->GetColour(),
 				m_CurrentGeometry->GetScale(),
 				m_CurrentGeometry->GetLifetimeSecs());

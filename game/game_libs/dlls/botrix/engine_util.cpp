@@ -334,7 +334,6 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::WaypointVisualisation));
 
 		helperGeomWriter->BeginGeometry(
-			DrawType::Lines,
 			(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
 				0x000000FF,
 			1.0f,

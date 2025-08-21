@@ -119,4 +119,16 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->AttackSounds.MinPitch = 98;
 		priAttack->AttackSounds.MaxPitch = 104;
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_mp9/mp9_fire1.wav";
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::HitscanContinuous;
+		botIfc.Preference = BotWeaponPreference::Normal;
+
+		WABotAttackMode* botAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botAttackMode);
+		botAttackMode->ApplyMode(priAttack);
+		botAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
+		botAttackMode->MinEffectiveRange = 0.0f;
+		botAttackMode->MaxEffectiveRange = 1024.0f;
 	});

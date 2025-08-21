@@ -8,6 +8,7 @@ namespace WeaponAtts
 	{
 		float ProjectileDelay = 0.0f;
 		const char* ProjectileModelName = nullptr;
+		float LaunchSpeed = 1000.0f;
 
 		virtual WABaseAttack::Classification Classify() const override
 		{

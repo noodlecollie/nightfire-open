@@ -18,7 +18,6 @@ static constexpr float GRENADELAUNCHER_GRENADE_GRAVITY = 1.4f;
 static constexpr unsigned char GRENADELAUNCHER_GRENADE_SPRITE_SCALE = 60;
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MIN = -100.0f;
 static constexpr float GRENADELAUNCHER_TUMBLEVEL_MAX = -500.0f;
-static constexpr float GRENADELAUNCHER_LAUNCH_SPEED = 1000.0f;
 static constexpr float GRENADELAUNCHER_EXPLOSION_RADIUS = 250.0f;
 static constexpr float GRENADELAUNCHER_FUSE_TIME = 2.0f;
 static constexpr float GRENADELAUNCHER_PITCH_ADJUST = 5;
@@ -119,7 +118,7 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponMechanics::CProjectile
 	grenade->SetDamageOnExplode(gSkillData.plrDmgGrenadeLauncher);
 	grenade->SetPlayerContactDamageMultiplier(gSkillData.plrDmgMultGrenadelauncherHit);
 	grenade->SetOwnerDamageMultiplier(gSkillData.plrSelfDmgMultGrenadeLauncher);
-	grenade->SetSpeed(GRENADELAUNCHER_LAUNCH_SPEED);
+	grenade->SetSpeed(mechanic.ProjectileAttackMode()->LaunchSpeed);
 	grenade->SetFuseTime(explodeOnContact ? -1.0f : GRENADELAUNCHER_FUSE_TIME);
 }
 #endif

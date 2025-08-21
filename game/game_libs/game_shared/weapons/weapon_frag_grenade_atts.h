@@ -81,6 +81,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->PlayDryFireSoundOnEmpty = false;
 		priAttack->ProjectileDelay = 0.5f;
 		priAttack->ProjectileModelName = "models/weapon_frag_grenade/w_frag_grenade.mdl";
+		priAttack->LaunchSpeed = 1000.0f;
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);
@@ -91,4 +92,16 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		priAttack->ViewModelAnimList_Attack << FRAGGRENADE_THROW;
 		priAttack->ViewModelAnimList_AttackEmpty << FRAGGRENADE_THROW_LAST;
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::Grenade;
+		botIfc.Preference = BotWeaponPreference::Low;
+
+		WABotAttackMode* botAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botAttackMode);
+		botAttackMode->ApplyMode(priAttack);
+		botAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botAttackMode->EnemyAimAt = BotEnemyAimAt::Foot;
+		botAttackMode->MinEffectiveRange = 320.0f;
+		botAttackMode->MaxEffectiveRange = 1152.0f;
 	});

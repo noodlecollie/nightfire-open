@@ -11,6 +11,7 @@ const WeaponId_e WEAPON_HUD_SLOTS[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS] = {
 		// Debug weapons
 		WeaponId_e::WeaponSilent,
 		WeaponId_e::WeaponHullTrace,
+		WeaponId_e::WeaponProjectileTrace,
 	},
 
 	// Slot 2

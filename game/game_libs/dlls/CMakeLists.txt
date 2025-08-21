@@ -71,6 +71,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/util/debugLogger.h
 	../game_shared/util/debugLogger.cpp
 	../game_shared/util/extramath.h
+	../game_shared/util/projectilemotion.h
+	../game_shared/util/projectilemotion.cpp
 	../game_shared/util/weightedvaluelist.h
 	../game_shared/weaponattributes/weaponatts_ammobasedattack.h
 	../game_shared/weaponattributes/weaponatts_ammodef.h
@@ -135,6 +137,9 @@ set(SOURCES_GAME_SHARED
 	../game_shared/weapons/weapon_p99.h
 	../game_shared/weapons/weapon_p99.cpp
 	../game_shared/weapons/weapon_pref_weights.h
+	../game_shared/weapons/weapon_projectiletrace_atts.h
+	../game_shared/weapons/weapon_projectiletrace.h
+	../game_shared/weapons/weapon_projectiletrace.cpp
 	../game_shared/weapons/weapon_raptor_atts.h
 	../game_shared/weapons/weapon_raptor.h
 	../game_shared/weapons/weapon_raptor.cpp

@@ -93,7 +93,7 @@ namespace WeaponAtts
 		PerShot,
 	};
 
-	struct WABotAttackMode : public WABase
+	struct WABotAttackMode
 	{
 		BotEnemyAimAt EnemyAimAt = BotEnemyAimAt::Body;
 		BotWeaponReloadStyle ReloadStyle = BotWeaponReloadStyle::PerClip;
@@ -129,14 +129,18 @@ namespace WeaponAtts
 		void ApplyMode(const WABaseAttack* mode);
 		void ApplyAmmo(const CAmmoDef& ammoDef, int defaultAmmo, int maxClip);
 
-		void Validate() const override
+		void Validate(bool needsAmmo) const
 		{
 			ASSERTSZ_Q(AttackRate > 0, "Expected attack rate > 0");
 			ASSERTSZ_Q(BaseDamagePerShot, "Expected base damage ptr");
-			ASSERTSZ_Q(AmmoClassName > 0, "Expected ammo class name");
-			ASSERTSZ_Q(MaxAmmo > 0, "Expected max ammo > 0");
-			ASSERTSZ_Q(AmmoGivenOnPickup > 0, "Expected ammo given on pickup > 0");
 			ASSERTSZ_Q(AttackButtonPressTime > 0.0f, "Expected attack button press time > 0");
+
+			if ( needsAmmo )
+			{
+				ASSERTSZ_Q(AmmoClassName > 0, "Expected ammo class name");
+				ASSERTSZ_Q(MaxAmmo > 0, "Expected max ammo > 0");
+				ASSERTSZ_Q(AmmoGivenOnPickup > 0, "Expected ammo given on pickup > 0");
+			}
 		}
 	};
 
@@ -155,12 +159,12 @@ namespace WeaponAtts
 
 			if ( PrimaryAttackMode )
 			{
-				PrimaryAttackMode->Validate();
+				PrimaryAttackMode->Validate(Type != BotWeaponType::Melee);
 			}
 
 			if ( SecondaryAttackMode )
 			{
-				SecondaryAttackMode->Validate();
+				SecondaryAttackMode->Validate(Type != BotWeaponType::Melee);
 			}
 		}
 	};
