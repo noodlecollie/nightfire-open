@@ -59,8 +59,6 @@ void CWeaponProjectileTrace::DoTrace_Server()
 	Vector launchVel;
 	AngleVectors(aimAngle, launchVel, nullptr, nullptr);
 
-	ALERT(at_console, "%f %f %f\n", aimAngle.x, aimAngle.y, aimAngle.z);
-
 	launchVel *= debug_projectiletrace_launch_speed.value;
 
 	CMessageWriter(Category::HitscanEvents).WriteClearMessage();
@@ -109,46 +107,25 @@ void CWeaponProjectileTrace::DoTrace_Server()
 		CMessageWriter(Category::HitscanEvents).WriteMessage(*item);
 	}
 
-	// TraceResult tr {};
-	// g_engfuncs.pfnTraceHull(gunPos, gunPos + (128.0f * dir), ignore_monsters, human_hull, m_pPlayer->edict(), &tr);
+	float groundContactDist = CalculateProjectileDistanceAtGroundContact(
+		gunPos.z,
+		aimAngle[PITCH],
+		debug_projectiletrace_launch_speed.value,
+		debug_projectiletrace_gravity.value);
 
-	// Vector hullMins;
-	// Vector hullMaxs;
-	// g_engfuncs.pfnGetHullBounds(human_hull, hullMins, hullMaxs);
+	if ( groundContactDist > 0.0f )
+	{
+		Vector delta = Vector(launchVel.x, launchVel.y, 0.0f).Normalize() * groundContactDist;
 
-	// CMessageWriter(Category::HitscanEvents).WriteClearMessage();
+		CCrosshair3DConstructor constructor;
+		constructor.SetOrigin(gunPos + Vector(delta.x, delta.y, -gunPos.z));
+		constructor.SetScale(16.0f);
 
-	// {
-	// 	CAABBoxConstructor constructor;
-	// 	constructor.SetBounds(gunPos + hullMins, gunPos + hullMaxs);
+		GeometryItemPtr_t item = constructor.Construct();
+		item->SetColour(0xFF0000FF);
 
-	// 	GeometryItemPtr_t geom = constructor.Construct();
-	// 	geom->SetDrawType(CustomGeometry::DrawType::Lines);
-	// 	geom->SetColour(0xFFFFFFFF);
-
-	// 	CMessageWriter(Category::HitscanEvents).WriteMessage(*geom);
-	// }
-
-	// {
-	// 	Vector endPos(tr.vecEndPos);
-	// 	CAABBoxConstructor constructor;
-	// 	constructor.SetBounds(endPos + hullMins, endPos + hullMaxs);
-
-	// 	GeometryItemPtr_t geom = constructor.Construct();
-	// 	geom->SetDrawType(CustomGeometry::DrawType::Lines);
-	// 	geom->SetColour(0xFFFFFFFF);
-
-	// 	CMessageWriter(Category::HitscanEvents).WriteMessage(*geom);
-	// }
-
-	// {
-	// 	CGeometryItem geom;
-	// 	geom.AddLine(gunPos, tr.vecEndPos);
-	// 	geom.SetDrawType(CustomGeometry::DrawType::Lines);
-	// 	geom.SetColour(0xFFD800FF);
-
-	// 	CMessageWriter(Category::HitscanEvents).WriteMessage(geom);
-	// }
+		CMessageWriter(Category::HitscanEvents).WriteMessage(*item);
+	}
 }
 #endif
 
