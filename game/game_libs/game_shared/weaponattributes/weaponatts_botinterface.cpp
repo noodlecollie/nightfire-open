@@ -1,12 +1,26 @@
 #include "weaponatts_botinterface.h"
+#include "hulldefs.h"
 #include "weaponatts_hitscanattack.h"
 #include "weaponatts_meleeattack.h"
 #include "weaponatts_projectileattack.h"
 #include "weaponatts_ammodef.h"
 #include "ammodefs.h"
+#include "util/projectileMotion.h"
 
 namespace WeaponAtts
 {
+	static float CalcParabolicDistance(float launchPitch, float launchSpeed)
+	{
+		static constexpr float DEFAULT_GRAVITY = 800.0f;
+		static constexpr float DEFAULT_EYE_OFFSET_FROM_GROUND = VEC_VIEW.z - VEC_HULL_MIN.z;
+
+		return CalculateProjectileDistanceAtGroundContact(
+			DEFAULT_EYE_OFFSET_FROM_GROUND,
+			launchPitch,
+			launchSpeed,
+			DEFAULT_GRAVITY);
+	}
+
 	void WABotAttackMode::ApplyMode(const WABaseAttack* mode)
 	{
 		ASSERTSZ_Q(mode, "Expected a valid attack mode");
@@ -35,6 +49,8 @@ namespace WeaponAtts
 
 				AmmoDecrementPerAttackCycle = projectile->AmmoDecrement;
 				ReloadDuration = projectile->ReloadDuration;
+				ParabolicDistanceAt0Degrees = CalcParabolicDistance(0.0f, projectile->LaunchSpeed);
+				ParabolicDistanceAt45Degrees = CalcParabolicDistance(-45.0f, projectile->LaunchSpeed);
 
 				break;
 			}

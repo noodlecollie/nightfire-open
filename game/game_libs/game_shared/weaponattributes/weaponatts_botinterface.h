@@ -100,16 +100,12 @@ namespace WeaponAtts
 		float ZoomDistance = 0.0f;
 		float ZoomTime = 0.0f;
 		float ReloadStartDelay = 0.0f;
+		float ParabolicDistanceAt0Degrees = 0.0f;
+		float ParabolicDistanceAt45Degrees = 0.0f;
 
 		// Max range <= 0 implies no max range.
 		float MinEffectiveRange = 0.0f;
 		float MaxEffectiveRange = 0.0f;
-
-		// TODO: Auto-calculate based on launch velocity?
-		// Need to have this velocity provided on the
-		// attack mode in order to do this.
-		float ParabolicDistanceAt0Degrees = 0.0f;
-		float ParabolicDistanceAt45Degrees = 0.0f;
 
 		// Set by ApplyMode():
 		float AttackRate = 0.0f;

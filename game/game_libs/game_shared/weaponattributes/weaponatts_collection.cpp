@@ -29,7 +29,7 @@ namespace WeaponAtts
 		PlayerModel.Validate();
 		Prediction.Validate();
 		Precache.Validate();
-		BotInterface.Validate();
+		// BotInterface.Validate();
 	}
 
 	void WACollection::RegisterCvars() const
