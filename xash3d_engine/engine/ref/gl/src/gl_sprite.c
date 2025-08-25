@@ -899,8 +899,7 @@ void R_DrawSpriteModel(cl_entity_t* e)
 		case kRenderTransAlpha:
 		{
 			pglDepthMask(GL_FALSE);
-			// fallthrough
-		}
+		}  // fallthrough
 
 		case kRenderTransColor:
 		case kRenderTransTexture:
@@ -913,8 +912,7 @@ void R_DrawSpriteModel(cl_entity_t* e)
 		case kRenderGlow:
 		{
 			pglDisable(GL_DEPTH_TEST);
-			// fallthrough
-		}
+		}  // fallthrough
 
 		case kRenderTransAdd:
 		{

@@ -71,8 +71,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/util/debugLogger.h
 	../game_shared/util/debugLogger.cpp
 	../game_shared/util/extramath.h
-	../game_shared/util/projectilemotion.h
-	../game_shared/util/projectilemotion.cpp
+	../game_shared/util/projectileMotion.h
+	../game_shared/util/projectileMotion.cpp
 	../game_shared/util/weightedvaluelist.h
 	../game_shared/weaponattributes/weaponatts_ammobasedattack.h
 	../game_shared/weaponattributes/weaponatts_ammodef.h
