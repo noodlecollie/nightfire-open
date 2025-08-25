@@ -1,5 +1,6 @@
 #include "weaponatts_botinterface.h"
 #include "hulldefs.h"
+#include "skill.h"
 #include "weaponatts_hitscanattack.h"
 #include "weaponatts_meleeattack.h"
 #include "weaponatts_projectileattack.h"
@@ -18,7 +19,8 @@ namespace WeaponAtts
 			DEFAULT_EYE_OFFSET_FROM_GROUND,
 			launchPitch,
 			launchSpeed,
-			DEFAULT_GRAVITY);
+			DEFAULT_GRAVITY
+		);
 	}
 
 	void WABotAttackMode::ApplyMode(const WABaseAttack* mode)
@@ -84,7 +86,6 @@ namespace WeaponAtts
 
 	void WABotAttackMode::ApplyAmmo(const CAmmoDef& ammoDef, int defaultAmmo, int maxClip)
 	{
-		AmmoClassName = ammoDef.ClassName;
 		MaxAmmo = ammoDef.MaxCarry;
 		AmmoGivenOnPickup = ammoDef.AmmoBoxGive;
 		ClipSize = maxClip;

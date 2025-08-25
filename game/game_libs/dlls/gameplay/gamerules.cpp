@@ -201,9 +201,10 @@ void CGameRules::RefreshSkillData(void)
 		{
 			FOR_EACH_VEC(atts.SkillRecords, index)
 			{
-				atts.SkillRecords[index].UpdateSkillValue(&gSkillData);
+				atts.SkillRecords[index].UpdateSkillValue(gSkillData);
 			}
-		});
+		}
+	);
 }
 
 //=========================================================

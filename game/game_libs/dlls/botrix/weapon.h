@@ -6,6 +6,7 @@
 #include "botrix/types.h"
 #include "botrix/item.h"
 #include "botrix/engine_util.h"
+#include <memory>
 
 //****************************************************************************************************************
 /// Weapon abstract class. Used to get needed angles to aim.
@@ -88,10 +89,19 @@ class CWeaponWithAmmo
 {
 public:
 	/// Constructor.
+	CWeaponWithAmmo(good::unique_ptr<const CWeapon> pWeapon)
+	{
+		m_pWeapon = std::move(pWeapon);
+	}
+
+	CWeaponWithAmmo(good::unique_ptr<CWeapon> pWeapon)
+	{
+		m_pWeapon.reset(pWeapon.release());
+	}
+
 	CWeaponWithAmmo(const CWeapon* pWeapon)
 	{
-		memset(this, 0, sizeof(CWeaponWithAmmo));
-		m_pWeapon = pWeapon;
+		m_pWeapon.reset(pWeapon);
 	}
 
 	/// Game frame.
@@ -100,7 +110,7 @@ public:
 	/// Return base weapon.
 	inline const CWeapon* GetBaseWeapon() const
 	{
-		return m_pWeapon;
+		return m_pWeapon.get();
 	}
 
 	/// Return weapon's entity name.
@@ -403,12 +413,12 @@ protected:
 	// End using weapon function.
 	void EndShoot();
 
-	const CWeapon* m_pWeapon;  ///< Weapon itself.
-	int m_iBulletsInClip[2];  ///< Bullets in current clip (inside weapon).
-	int m_iBulletsExtra[2];  ///< Amount of bullets extra.
-	int m_iSecondary;  ///< Reloading / shooting secondary ammo or using zoom.
+	good::unique_ptr<const CWeapon> m_pWeapon;  ///< Weapon itself.
+	int m_iBulletsInClip[2] = {0, 0};  ///< Bullets in current clip (inside weapon).
+	int m_iBulletsExtra[2] = {0, 0};  ///< Amount of bullets extra.
+	int m_iSecondary = 0;  ///< Reloading / shooting secondary ammo or using zoom.
 
-	float m_fEndTime;  ///< Time to end reloading/shooting.
+	float m_fEndTime = 0.0f;  ///< Time to end reloading/shooting.
 
 	bool m_bWeaponPresent = false;  ///< True, if weapon is present, false if only ammo is present.
 	bool m_bReloadingStart = false;  ///< True, if started to reload weapon.
@@ -446,7 +456,7 @@ public:
 	}
 
 	/// Add weapon.
-	static TWeaponId Add(CWeaponWithAmmo& cWeapon)
+	static TWeaponId Add(const CWeaponWithAmmo& cWeapon)
 	{
 		m_aWeapons.push_back(cWeapon);
 		return m_aWeapons.size() - 1;

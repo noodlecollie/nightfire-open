@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BuildPlatform/Utils.h"
 #include "weaponatts_base.h"
 #include "ammodefs.h"
 #include "weapons.h"
@@ -17,6 +18,26 @@ namespace WeaponAtts
 		WAAmmoDef()
 		{
 			memset(PickupClassnames, 0, sizeof(PickupClassnames));
+		}
+
+		bool GivenByPickup(const char* classname) const
+		{
+			if ( !classname || !(*classname) )
+			{
+				return false;
+			}
+
+			for ( size_t index = 0; index < SIZE_OF_ARRAY(PickupClassnames); ++index )
+			{
+				const char* candidate = PickupClassnames[index];
+
+				if ( candidate && *candidate && strcmp(candidate, classname) == 0 )
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		void Validate() const override

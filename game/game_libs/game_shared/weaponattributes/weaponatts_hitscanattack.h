@@ -7,7 +7,7 @@ namespace WeaponAtts
 {
 	struct WAHitscanAttack : public WAAmmoBasedAttack
 	{
-		typedef WASkillRecord::SkillDataEntryPtr SkillDataEntryPtr;
+		using SkillDataEntryPtr = WASkillRecord::SkillDataEntryPtr;
 
 		uint8_t BulletsPerShot = 1;
 		SkillDataEntryPtr BaseDamagePerShot = nullptr;

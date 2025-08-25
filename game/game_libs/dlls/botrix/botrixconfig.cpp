@@ -5,6 +5,7 @@
 #include <good/string_utils.h>
 
 #include "botrix/botrixconfig.h"
+#include "BuildPlatform/Utils.h"
 #include "botrix/defines.h"
 #include "botrix/botrixmod.h"
 #include "botrix/type2string.h"
@@ -13,8 +14,102 @@
 #include "botrix/weapon.h"
 #include "botrix/server_plugin.h"
 #include "PlatformLib/String.h"
+#include "debug_assert.h"
+#include "good/memory.h"
+#include "skill.h"
+#include "types.h"
+#include "weaponatts_botinterface.h"
 #include "weapons/weaponregistry.h"
 #include "weaponattributes/weaponatts_collection.h"
+
+static constexpr const char* const TEAM_NAME_UNASSIGNED = "unassigned";
+static constexpr const char* const TEAM_NAME_SPECTATOR = "spectator";
+static constexpr const char* const TEAM_NAME_MI6 = "mi6";
+static constexpr const char* const TEAM_NAME_PHOENIX = "phoenix";
+
+static TWeaponType BotWeaponTypeToBotrixWeaponType(WeaponAtts::BotWeaponType weaponType)
+{
+	switch ( weaponType )
+	{
+		case WeaponAtts::BotWeaponType::Melee:
+		{
+			return EWeaponMelee;
+		}
+
+		case WeaponAtts::BotWeaponType::GrenadeProjectile:
+		{
+			return EWeaponGrenade;
+		}
+
+		case WeaponAtts::BotWeaponType::RemoteDetonation:
+		{
+			return EWeaponRemoteDetonation;
+		}
+
+		case WeaponAtts::BotWeaponType::HitscanSingleShot:
+		{
+			return EWeaponPistol;
+		}
+
+		case WeaponAtts::BotWeaponType::HitscanContinuous:
+		{
+			return EWeaponRifle;
+		}
+
+		case WeaponAtts::BotWeaponType::Shotgun:
+		{
+			return EWeaponShotgun;
+		}
+
+		case WeaponAtts::BotWeaponType::RocketProjectile:
+		{
+			return EWeaponRocket;
+		}
+
+		default:
+		{
+			ASSERT(false);
+			return EWeaponIdInvalid;
+		}
+	}
+}
+
+static int BotWeaponPreferenceToBotrixWeaponPreference(WeaponAtts::BotWeaponPreference weaponPreference)
+{
+	const int ret = static_cast<int>(weaponPreference) - static_cast<int>(WeaponAtts::BotWeaponPreference::Lowest);
+	ASSERTSZ(ret < EBotIntelligenceTotal, "Expected preference to be within range of bot intelligence level");
+	return ret;
+}
+
+static int BotWeaponTeamRestrictionToBotrixTeamIndex(WeaponAtts::BotWeaponTeamRestriction weaponTeamRestriction)
+{
+	int teamIndex = -1;
+
+	switch ( weaponTeamRestriction )
+	{
+		case WeaponAtts::BotWeaponTeamRestriction::MI6:
+		{
+			teamIndex = CBotrixMod::GetTeamIndex(TEAM_NAME_MI6);
+			break;
+		}
+
+		case WeaponAtts::BotWeaponTeamRestriction::Phoenix:
+		{
+			teamIndex = CBotrixMod::GetTeamIndex(TEAM_NAME_PHOENIX);
+			break;
+		}
+
+		default:
+		{
+			ASSERT(false);
+			teamIndex = CBotrixMod::GetTeamIndex(TEAM_NAME_UNASSIGNED);
+			break;
+		}
+	}
+
+	ASSERT(teamIndex >= 0);
+	return teamIndex;
+}
 
 //------------------------------------------------------------------------------------------------------------
 good::ini_file CConfiguration::m_iniFile;  // Ini file.
@@ -48,7 +143,8 @@ TModId CConfiguration::Load(const good::string& sGameDir, const good::string& sM
 		BLOG_E(
 			"  There is no mod that matches current game (%s) & mod (%s) folders.",
 			sGameDir.c_str(),
-			sModDir.c_str());
+			sModDir.c_str()
+		);
 		BLOG_E("  Using default mod 'HalfLife2Deathmatch'.");
 		CBotrixMod::sModName = "HalfLife2Deathmatch";
 		iModId = EModId_HL2DM;
@@ -125,12 +221,16 @@ TModId CConfiguration::LoadProgrammatic()
 	CBotrixServerPlugin::UpdateLogLevel();
 
 	// Start with HL2DM defaults.
+	// TODO: Pull these values out and set them in a readable way.
 	CBotrixMod::LoadDefaults(EModId_HL2DM);
 
-	CBotrixMod::aTeamsNames.push_back("unassigned");
-	CBotrixMod::aTeamsNames.push_back("spectator");
-	CBotrixMod::aTeamsNames.push_back("mi6");
-	CBotrixMod::aTeamsNames.push_back("phoenix");
+	CBotrixMod::aTeamsNames.push_back(TEAM_NAME_UNASSIGNED);
+	CBotrixMod::aTeamsNames.push_back(TEAM_NAME_SPECTATOR);
+	CBotrixMod::aTeamsNames.push_back(TEAM_NAME_MI6);
+	CBotrixMod::aTeamsNames.push_back(TEAM_NAME_PHOENIX);
+
+	CBotrixMod::iUnassignedTeam = CBotrixMod::GetTeamIndex(TEAM_NAME_UNASSIGNED);
+	CBotrixMod::iSpectatorTeam = CBotrixMod::GetTeamIndex(TEAM_NAME_SPECTATOR);
 
 	CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_deathmatch", 0));
 	CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_coop", 0));
@@ -138,26 +238,7 @@ TModId CConfiguration::LoadProgrammatic()
 	CItems::AddItemClassFor(EItemTypeArmor, CItemClass("item_battery", respawnableFlags));
 	CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_healthkit", respawnableFlags));
 
-	CWeaponRegistry::StaticInstance().ForEach(
-		[](const WeaponAtts::WACollection& atts)
-		{
-			// TODO: We don't load weapons yet. There are a lot of attributes that bots need
-			// to know about, and many of these could be hooked up to the weapon attributes
-			// system. This will need proper reviewing, potentially to be moved to its own
-			// separate task.
-
-			const WeaponAtts::WAAmmoDef& ammo = atts.Ammo;
-
-			for ( size_t ammoIndex = 0; ammoIndex < SIZE_OF_ARRAY(ammo.PickupClassnames); ++ammoIndex )
-			{
-				const char* ammoPickupClassName = ammo.PickupClassnames[ammoIndex];
-
-				if ( ammoPickupClassName && *ammoPickupClassName )
-				{
-					CItems::AddItemClassFor(EItemTypeAmmo, CItemClass(ammoPickupClassName, respawnableFlags));
-				}
-			}
-		});
+	CWeaponRegistry::StaticInstance().ForEach(&LoadWeapon);
 
 	// Very important!
 	CBotrixMod::Prepare();
@@ -497,7 +578,8 @@ void CConfiguration::LoadModVars()
 				"File \"%s\", section [%s], no such variable \"%s\".",
 				m_iniFile.name.c_str(),
 				it->name.c_str(),
-				itemIt->key.c_str());
+				itemIt->key.c_str()
+			);
 			continue;
 		}
 
@@ -515,7 +597,8 @@ void CConfiguration::LoadModVars()
 				m_iniFile.name.c_str(),
 				it->name.c_str(),
 				itemIt->key.c_str(),
-				itemIt->value.c_str());
+				itemIt->value.c_str()
+			);
 			continue;
 		}
 
@@ -528,7 +611,8 @@ void CConfiguration::LoadModVars()
 				BLOG_W(
 					"  Invalid argument %s for %s, should be float value.",
 					aArguments[i].c_str(),
-					itemIt->key.c_str());
+					itemIt->key.c_str()
+				);
 			}
 			else
 			{
@@ -545,7 +629,8 @@ void CConfiguration::LoadModVars()
 				"File \"%s\", section [%s]: missing var %s, using default.",
 				m_iniFile.name.c_str(),
 				it->name.c_str(),
-				CTypeToString::ModVarToString(i).c_str());
+				CTypeToString::ModVarToString(i).c_str()
+			);
 		}
 	}
 
@@ -739,7 +824,8 @@ void CConfiguration::LoadWeapons(good::ini_file::const_iterator it)
 					{
 						case EWeaponMelee:
 						case EWeaponPhysics:
-							pWeapon->iAttackBullets[0] = pWeapon->iAttackBullets[1] = 0;
+							pWeapon->iAttackBullets[0] = 0;
+							pWeapon->iAttackBullets[1] = 0;
 							break;
 						case EWeaponRocket:
 						case EWeaponGrenade:
@@ -786,7 +872,8 @@ void CConfiguration::LoadWeapons(good::ini_file::const_iterator it)
 							"   Weapon %s, invalid number: %s for parameter %s.",
 							itemIt->key.c_str(),
 							aCurrent[1].c_str(),
-							aCurrent[0].c_str());
+							aCurrent[0].c_str()
+						);
 						bError = true;
 						break;
 					}
@@ -867,7 +954,8 @@ void CConfiguration::LoadWeapons(good::ini_file::const_iterator it)
 							"  Weapon %s, invalid parameter for '%s' ammo's count: %s.",
 							itemIt->key.c_str(),
 							aCurrent[1].c_str(),
-							aCurrent[2].c_str());
+							aCurrent[2].c_str()
+						);
 						bError = true;
 						break;
 					}
@@ -923,7 +1011,8 @@ void CConfiguration::LoadWeapons(good::ini_file::const_iterator it)
 				BLOG_W(
 					"  Weapon %s, unknown keyword %s or invalid parameters, skipping.",
 					itemIt->key.c_str(),
-					aCurrent[0].c_str());
+					aCurrent[0].c_str()
+				);
 			}
 		}
 
@@ -990,7 +1079,8 @@ void CConfiguration::LoadWeapons(good::ini_file::const_iterator it)
 					BLOG_D(
 						"    ammo %s (%u bullets)",
 						pWeapon->aAmmos[iSec][i]->sClassName.c_str(),
-						pWeapon->aAmmoBullets[iSec][i]);
+						pWeapon->aAmmoBullets[iSec][i]
+					);
 				}
 			}
 
@@ -998,4 +1088,164 @@ void CConfiguration::LoadWeapons(good::ini_file::const_iterator it)
 			CWeapons::Add(cWeapon);
 		}
 	}
+}
+
+void CConfiguration::LoadWeapon(const WeaponAtts::WACollection& atts)
+{
+	static const int respawnableFlags = CTypeToString::EntityClassFlagsFromString("respawnable");
+
+	const WeaponAtts::WABotInterface& botIfc = atts.BotInterface;
+
+	if ( botIfc.Preference == WeaponAtts::BotWeaponPreference::Never )
+	{
+		// Ignore this weapon.
+		return;
+	}
+
+	good::unique_ptr<CWeapon> pWeapon(new CWeapon());
+
+	// Ignore all class restrictions since we don't support them.
+	pWeapon->iClass = ~0;
+
+	pWeapon->iId = CWeapons::Size();
+	pWeapon->iType = BotWeaponTypeToBotrixWeaponType(botIfc.Type);
+	pWeapon->iBotPreference = BotWeaponPreferenceToBotrixWeaponPreference(botIfc.Preference);
+	pWeapon->fHolsterTime = 0.0f;  // Currently unused
+
+	int teamIndex = -1;
+
+	if ( botIfc.TeamRestriction != WeaponAtts::BotWeaponTeamRestriction::None )
+	{
+		teamIndex = BotWeaponTeamRestrictionToBotrixTeamIndex(botIfc.TeamRestriction);
+	}
+
+	if ( teamIndex >= 0 )
+	{
+		// Make sure the unassigned (deathmatch) team can always use the weapon.
+		pWeapon->iTeam = (1 << teamIndex) | (1 << CBotrixMod::iUnassignedTeam);
+	}
+	else
+	{
+		pWeapon->iTeam = ~0;
+	}
+
+	// Deal with ammo first, so that it's present for the attack modes.
+	const WeaponAtts::WAAmmoDef& ammo = atts.Ammo;
+
+	for ( size_t ammoIndex = 0; ammoIndex < SIZE_OF_ARRAY(ammo.PickupClassnames); ++ammoIndex )
+	{
+		const char* ammoPickupClassName = ammo.PickupClassnames[ammoIndex];
+
+		if ( ammoPickupClassName && *ammoPickupClassName && !CItems::GetItemClass(EItemTypeAmmo, ammoPickupClassName) )
+		{
+			CItems::AddItemClassFor(EItemTypeAmmo, CItemClass(ammoPickupClassName, respawnableFlags));
+		}
+	}
+
+	for ( size_t modeIndex = 0; modeIndex < 2; ++modeIndex )
+	{
+		const WeaponAtts::WABotAttackMode* attackMode =
+			modeIndex == 0 ? botIfc.PrimaryAttackMode.get() : botIfc.SecondaryAttackMode.get();
+
+		// Mode 0 must be valid.
+		ASSERT(attackMode || modeIndex != 0);
+
+		if ( !attackMode )
+		{
+			continue;
+		}
+
+		pWeapon->iClipSize[modeIndex] = attackMode->ClipSize;
+		pWeapon->fDamage[modeIndex] = gSkillData.*(attackMode->BaseDamagePerShot);
+
+		// Hold time: amount of time to hold the button down for.
+		// Shot time: amount of time after releasing to wait before pressing again.
+		const float delayPerShot = 1.0f / attackMode->AttackRate;
+
+		if ( attackMode->AttackButtonPressTime > 0.9f * delayPerShot )
+		{
+			pWeapon->fHoldTime[modeIndex] = 0.9f * delayPerShot;
+			pWeapon->fShotTime[modeIndex] = 0.1f * delayPerShot;
+		}
+		else
+		{
+			pWeapon->fHoldTime[modeIndex] = attackMode->AttackButtonPressTime;
+			pWeapon->fShotTime[modeIndex] = delayPerShot - attackMode->AttackButtonPressTime;
+		}
+
+		pWeapon->iReloadBy[modeIndex] =
+			attackMode->ReloadStyle == WeaponAtts::BotWeaponReloadStyle::PerClip ? attackMode->ClipSize : 1;
+
+		pWeapon->fReloadTime[modeIndex] = attackMode->ReloadDuration;
+		pWeapon->fReloadStartTime[modeIndex] = attackMode->ReloadStartDelay;
+		pWeapon->iDefaultAmmo[modeIndex] = attackMode->DefaultAmmoOnFirstPickup;
+		pWeapon->iMaxAmmo[modeIndex] = attackMode->MaxAmmo;
+		pWeapon->iAttackBullets[modeIndex] = attackMode->AmmoDecrementPerAttackCycle;
+		pWeapon->fMinDistanceSqr[modeIndex] = attackMode->MinEffectiveRange * attackMode->MinEffectiveRange;
+		pWeapon->fMaxDistanceSqr[modeIndex] = attackMode->MaxEffectiveRange * attackMode->MaxEffectiveRange;
+		pWeapon->iParabolicDistance0[modeIndex] = static_cast<int>(attackMode->ParabolicDistanceAt0Degrees);
+		pWeapon->iParabolicDistance45[modeIndex] = static_cast<int>(attackMode->ParabolicDistanceAt45Degrees);
+
+		if ( pWeapon->fMaxDistanceSqr[modeIndex] <= 0.0f )
+		{
+			pWeapon->fMaxDistanceSqr[modeIndex] = CBotrixEngineUtil::iMaxMapSizeSqr;
+		}
+		else if ( pWeapon->fMaxDistanceSqr[modeIndex] <= pWeapon->fMinDistanceSqr[modeIndex] )
+		{
+			pWeapon->fMaxDistanceSqr[modeIndex] = pWeapon->fMinDistanceSqr[modeIndex];
+		}
+
+		// NFTODO: Support separate ammo for secondary attack mode?
+		for ( size_t index = 0; index < SIZE_OF_ARRAY(ammo.PickupClassnames); ++index )
+		{
+			const char* pickupClassname = ammo.PickupClassnames[index];
+
+			if ( !pickupClassname || !(*pickupClassname) )
+			{
+				continue;
+			}
+
+			const CItemClass* pAmmoClass = CItems::GetItemClass(EItemTypeAmmo, pickupClassname);
+			ASSERT(pAmmoClass);
+
+			pWeapon->aAmmos[modeIndex].push_back(pAmmoClass);
+			pWeapon->aAmmoBullets[modeIndex].push_back(attackMode->AmmoGivenOnPickup);
+		}
+	}
+
+	if ( botIfc.PrimaryAttackMode && botIfc.SecondaryAttackMode )
+	{
+		pWeapon->iFlags[1] |= FWeaponSameBullets;
+	}
+
+	// Sanity:
+	switch ( pWeapon->iType )
+	{
+		case EWeaponMelee:
+		case EWeaponPhysics:
+		{
+			pWeapon->iAttackBullets[0] = 0;
+			pWeapon->iAttackBullets[1] = 0;
+			break;
+		}
+
+		case EWeaponRocket:
+		case EWeaponGrenade:
+		case EWeaponRemoteDetonation:
+		{
+			pWeapon->iClipSize[0] = 1;
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+
+	CItemClass cEntityClass;
+	cEntityClass.sClassName = atts.Core.Classname;
+	pWeapon->pWeaponClass = CItems::AddItemClassFor(EItemTypeWeapon, cEntityClass);
+
+	CWeapons::Add(CWeaponWithAmmo(std::move(pWeapon)));
 }

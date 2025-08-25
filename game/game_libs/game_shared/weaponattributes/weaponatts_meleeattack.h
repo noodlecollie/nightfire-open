@@ -8,7 +8,7 @@ namespace WeaponAtts
 {
 	struct WAMeleeAttack : public WABaseAttack
 	{
-		typedef WASkillRecord::SkillDataEntryPtr SkillDataEntryPtr;
+		using SkillDataEntryPtr = WASkillRecord::SkillDataEntryPtr;
 
 		float Reach = 32.0f;  // Defaults to crowbar's reach
 		SkillDataEntryPtr BaseDamagePerHit = nullptr;

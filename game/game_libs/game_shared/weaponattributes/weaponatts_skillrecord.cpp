@@ -41,19 +41,20 @@ namespace WeaponAtts
 		}
 	}
 
-	void WASkillRecord::UpdateSkillValue(skilldata_t* instance) const
+	void WASkillRecord::UpdateSkillValue(skilldata_t& instance) const
 	{
 		ASSERTSZ_Q(instance, "skilldata_t instance is not valid.");
 		ASSERTSZ_Q(
 			instance->iSkillLevel > 0 && instance->iSkillLevel <= TOTAL_SKILL_LEVELS,
-			"Skill level is not valid.");
+			"Skill level is not valid."
+		);
 
-		if ( !instance || instance->iSkillLevel < 1 || instance->iSkillLevel > TOTAL_SKILL_LEVELS )
+		if ( instance.iSkillLevel < 1 || instance.iSkillLevel > TOTAL_SKILL_LEVELS )
 		{
 			return;
 		}
 
-		float value = m_Cvars[instance->iSkillLevel].value;
+		float value = m_Cvars[instance.iSkillLevel].value;
 
 		if ( value <= 0.0f )
 		{
@@ -62,10 +63,23 @@ namespace WeaponAtts
 				"UpdateSkillValue: Got invalid value of %f for %s at skill level %d.\n",
 				value,
 				m_BaseName.String(),
-				instance->iSkillLevel);
+				instance.iSkillLevel
+			);
 			value = 0.0f;
 		}
 
-		instance->*m_Entry = value;
+		instance.*m_Entry = value;
+	}
+
+	float WASkillRecord::GetValue(int skillLevel) const
+	{
+		ASSERTSZ_Q(skillLevel > 0 && skillLevel <= TOTAL_SKILL_LEVELS, "Skill level is not valid.");
+
+		if ( skillLevel < 1 || skillLevel > TOTAL_SKILL_LEVELS )
+		{
+			return 0.0f;
+		}
+
+		return m_Cvars[skillLevel].value;
 	}
 }  // namespace WeaponAtts
