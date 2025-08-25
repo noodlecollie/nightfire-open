@@ -156,9 +156,12 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		botIfc.Type = BotWeaponType::HitscanSingleShot;
 		botIfc.Preference = BotWeaponPreference::Low;
 
-		WABotAttackMode* botAttackMode = new WABotAttackMode();
-		botIfc.PrimaryAttackMode.reset(botAttackMode);
-		botAttackMode->ApplyMode(priAttack);
-		botAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
-		botAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
-	});
+		WABotAttackMode* botPrimaryAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botPrimaryAttackMode);
+		botPrimaryAttackMode->ApplyMode(priAttack);
+		botPrimaryAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botPrimaryAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
+		botPrimaryAttackMode->MinEffectiveRange = 0.0f;
+		botPrimaryAttackMode->MaxEffectiveRange = 1536.0f;
+	}
+);

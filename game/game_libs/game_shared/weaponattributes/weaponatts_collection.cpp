@@ -21,7 +21,8 @@ namespace WeaponAtts
 	{
 		ASSERTSZ_Q(
 			static_cast<size_t>(AttackModes.Count()) <= WeaponAtts::WACollection::MAX_ATTACK_MODES,
-			"Attack mode limit exceeded.");
+			"Attack mode limit exceeded."
+		);
 
 		Core.Validate();
 		Ammo.Validate();
@@ -29,7 +30,7 @@ namespace WeaponAtts
 		PlayerModel.Validate();
 		Prediction.Validate();
 		Precache.Validate();
-		// BotInterface.Validate();
+		BotInterface.Validate();
 	}
 
 	void WACollection::RegisterCvars() const

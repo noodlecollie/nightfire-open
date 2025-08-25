@@ -54,7 +54,8 @@ public:
 	float fMinDistanceSqr[2] = {0.0f, 0.0f};  ///< Minimum distance to enemy to safely use this weapon (0 by default).
 	float fMaxDistanceSqr[2] = {
 		0.0f,
-		0.0f};  ///< Maximum distance to enemy to be able to use this weapon (0 by default).
+		0.0f
+	};  ///< Maximum distance to enemy to be able to use this weapon (0 by default).
 	float fHolsterTime = 0.0f;  ///< Time from change weapon to be able to shoot.
 	float fHoldTime[2] = {0.0f, 0.0f};  ///< Time to hold down attack button. Useful for grenades.
 	float fShotTime[2] = {0.0f, 0.0f};  ///< Duration of shoot (primary and secondary).
@@ -66,7 +67,8 @@ public:
 	unsigned char iDefaultAmmo[2] = {0, 0};  ///< Count of bullets this weapon gives by default.
 	unsigned char iMaxAmmo[2] = {
 		0,
-		0};  ///< Count of max bullets this weapon can have (besides the clip in the weapon).
+		0
+	};  ///< Count of max bullets this weapon can have (besides the clip in the weapon).
 	unsigned char iAttackBullets[2] = {0, 0};  ///< How many bullets are used in attack.
 	unsigned char iReloadBy[2] = {0, 0};  ///< Bullets are used in one reload time.
 	int iParabolicDistance0[2] = {0, 0};  ///< Distance that bullet does in straight line until falls.
@@ -373,7 +375,8 @@ public:
 		const CPlayer* pTo,
 		TBotIntelligence iIntelligence,
 		int iSecondary,
-		Vector& vResult) const;
+		Vector& vResult
+	) const;
 
 	/**
 	 * @brief Get vector to aim to.
@@ -387,7 +390,8 @@ public:
 		float fDistanceSqr,
 		TBotIntelligence iBotIntelligence,
 		int iSecondary,
-		Vector& vResult) const;
+		Vector& vResult
+	) const;
 
 protected:
 	// End reloading weapon.
@@ -406,13 +410,13 @@ protected:
 
 	float m_fEndTime;  ///< Time to end reloading/shooting.
 
-	bool m_bWeaponPresent;  ///< True, if weapon is present, false if only ammo is present.
-	bool m_bReloadingStart;  ///< True, if started to reload weapon.
-	bool m_bReloading;  ///< True, if continuing to reload weapon.
-	bool m_bHolding;  ///< True, if currently holding attack button.
-	bool m_bShooting;  ///< True, if currently shooting.
-	bool m_bChanging;  ///< True, if started to change weapon.
-	bool m_bUsingZoom;  ///< True, if started to zoom in / zoom out.
+	bool m_bWeaponPresent = false;  ///< True, if weapon is present, false if only ammo is present.
+	bool m_bReloadingStart = false;  ///< True, if started to reload weapon.
+	bool m_bReloading = false;  ///< True, if continuing to reload weapon.
+	bool m_bHolding = false;  ///< True, if currently holding attack button.
+	bool m_bShooting = false;  ///< True, if currently shooting.
+	bool m_bChanging = false;  ///< True, if started to change weapon.
+	bool m_bUsingZoom = false;  ///< True, if started to zoom in / zoom out.
 };
 
 typedef good::unique_ptr<CWeaponWithAmmo> CWeaponWithAmmoPtr;  ///< Unique pointer for weapon with ammo.
