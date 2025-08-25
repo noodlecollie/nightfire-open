@@ -55,12 +55,12 @@ namespace WeaponAtts
 	enum class BotWeaponType
 	{
 		Melee,
-		Grenade,
+		GrenadeProjectile,
 		RemoteDetonation,
 		HitscanSingleShot,  // "Pistol" in Botrix
 		HitscanContinuous,  // "Rifle" in Botrix
 		Shotgun,
-		Rocket,
+		RocketProjectile,
 	};
 
 	enum class BotWeaponPreference
@@ -100,8 +100,6 @@ namespace WeaponAtts
 		float ZoomDistance = 0.0f;
 		float ZoomTime = 0.0f;
 		float ReloadStartDelay = 0.0f;
-		float ParabolicDistanceAt0Degrees = 0.0f;
-		float ParabolicDistanceAt45Degrees = 0.0f;
 
 		// Max range <= 0 implies no max range.
 		float MinEffectiveRange = 0.0f;
@@ -113,6 +111,8 @@ namespace WeaponAtts
 		WASkillRecord::SkillDataEntryPtr BaseDamagePerShot = nullptr;
 		float AttackButtonPressTime = 0.0f;
 		float ReloadDuration = 0.0f;
+		float ParabolicDistanceAt0Degrees = 0.0f;
+		float ParabolicDistanceAt45Degrees = 0.0f;
 
 		// Set by ApplyAmmo():
 		const char* AmmoClassName = nullptr;
@@ -151,7 +151,15 @@ namespace WeaponAtts
 
 		void Validate() const override
 		{
-			ASSERTSZ_Q(PrimaryAttackMode.get(), "Expeted to have a primary attack mode");
+			if ( Preference == BotWeaponPreference::Never )
+			{
+				ASSERTSZ_Q(!PrimaryAttackMode.get(), "Expeted no primary attack mode");
+				ASSERTSZ_Q(!SecondaryAttackMode.get(), "Expeted no secondary attack mode");
+			}
+			else
+			{
+				ASSERTSZ_Q(PrimaryAttackMode.get(), "Expeted to have a primary attack mode");
+			}
 
 			if ( PrimaryAttackMode )
 			{

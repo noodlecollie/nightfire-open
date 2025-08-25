@@ -109,10 +109,11 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		botIfc.Type = BotWeaponType::Melee;
 		botIfc.Preference = BotWeaponPreference::Lowest;
 
-		WABotAttackMode* botAttackMode = new WABotAttackMode();
-		botIfc.PrimaryAttackMode.reset(botAttackMode);
-		botAttackMode->ApplyMode(priAttack);
-		botAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
-		botAttackMode->MinEffectiveRange = 0.0f;
-		botAttackMode->MaxEffectiveRange = 32.0f;
-	});
+		WABotAttackMode* botPriAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botPriAttackMode);
+		botPriAttackMode->ApplyMode(priAttack);
+		botPriAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
+		botPriAttackMode->MinEffectiveRange = 0.0f;
+		botPriAttackMode->MaxEffectiveRange = 32.0f;
+	}
+);

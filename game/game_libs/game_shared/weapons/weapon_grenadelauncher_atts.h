@@ -66,9 +66,11 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_grenadelauncher", &skilldata_t::plrDmgGrenadeLauncher));
 		obj.SkillRecords.AddToTail(
-			WASkillRecord("sk_plr_selfdmg_mult_grenadelauncher", &skilldata_t::plrSelfDmgMultGrenadeLauncher));
+			WASkillRecord("sk_plr_selfdmg_mult_grenadelauncher", &skilldata_t::plrSelfDmgMultGrenadeLauncher)
+		);
 		obj.SkillRecords.AddToTail(
-			WASkillRecord("sk_plr_dmg_mult_grenadelauncher_hit", &skilldata_t::plrDmgMultGrenadelauncherHit));
+			WASkillRecord("sk_plr_dmg_mult_grenadelauncher_hit", &skilldata_t::plrDmgMultGrenadelauncherHit)
+		);
 
 		// Explode on contact
 		WAProjectileAttack* priAttack = new WAProjectileAttack();
@@ -109,4 +111,17 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		// Base off primary attack
 		*secAttack = *priAttack;
 		secAttack->EventScript = "events/weapon_grenadelauncher/fire_timed.sc";
-	});
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::GrenadeProjectile;
+		botIfc.Preference = BotWeaponPreference::Highest;
+
+		WABotAttackMode* botPriAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botPriAttackMode);
+		botPriAttackMode->ApplyMode(priAttack);
+		botPriAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botPriAttackMode->EnemyAimAt = BotEnemyAimAt::Foot;
+		botPriAttackMode->MinEffectiveRange = 384.0f;
+		botPriAttackMode->MaxEffectiveRange = 896.0f;
+	}
+);
