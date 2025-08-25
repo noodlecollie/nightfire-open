@@ -19,8 +19,6 @@ namespace WeaponAtts
 		void RegisterCvars() const;
 		void UpdateSkillValue(skilldata_t& instance) const;
 
-		float GetValue(int skillLevel) const;
-
 	private:
 		SkillDataEntryPtr m_Entry;
 		CUtlString m_BaseName;

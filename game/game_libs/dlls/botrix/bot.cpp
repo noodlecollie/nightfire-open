@@ -649,7 +649,8 @@ void CBotrixBot::PreThink()
 							fDrawNearObjectsTime,
 							0xFF,
 							0xFF,
-							0xFF);
+							0xFF
+						);
 					}
 
 					for ( int i = 0; i < m_aNearestItems[iType].size(); ++i )  // Draw nearest items with red color.
@@ -662,7 +663,8 @@ void CBotrixBot::PreThink()
 							fDrawNearObjectsTime,
 							0xFF,
 							0x00,
-							0x00);
+							0x00
+						);
 					}
 				}
 			}
@@ -670,7 +672,8 @@ void CBotrixBot::PreThink()
 	}
 
 	GoodAssert(
-		static_cast<size_t>(gpGlobals->frametime * 1000.0f) <= static_cast<size_t>(std::numeric_limits<byte>::max()));
+		static_cast<size_t>(gpGlobals->frametime * 1000.0f) <= static_cast<size_t>(std::numeric_limits<byte>::max())
+	);
 
 	g_engfuncs.pfnRunPlayerMove(
 		m_pEdict,
@@ -680,7 +683,8 @@ void CBotrixBot::PreThink()
 		m_cCmd.upmove,
 		static_cast<unsigned short>(m_cCmd.buttons),
 		m_cCmd.impulse,
-		static_cast<byte>(gpGlobals->frametime * 1000.0f));
+		static_cast<byte>(gpGlobals->frametime * 1000.0f)
+	);
 
 #ifdef BOTRIX_SOURCE_ENGINE_2006
 	m_pController->PostClientMessagesSent();
@@ -907,7 +911,8 @@ void CBotrixBot::ApplyPathFlags()
 			m_bPathAim = !m_bEnemyAim &&
 				FLAG_SOME_SET(
 					FPathDoor | FPathJump | FPathBreak | FPathSprint | FPathLadder | FPathStop,
-					pCurrentPath->iFlags);
+					pCurrentPath->iFlags
+				);
 		}
 	}
 
@@ -977,7 +982,8 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 				"%s -> Picked %s. Health now %d.",
 				GetName(),
 				cItem.pItemClass->sClassName.c_str(),
-				m_PlayerInfo.GetHealth());
+				m_PlayerInfo.GetHealth()
+			);
 			break;
 		}
 
@@ -987,7 +993,8 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 				"%s -> Picked %s. Armor now %d.",
 				GetName(),
 				cItem.pItemClass->sClassName.c_str(),
-				m_PlayerInfo.GetArmorValue());
+				m_PlayerInfo.GetArmorValue()
+			);
 			break;
 		}
 
@@ -1006,7 +1013,8 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 						cWeapon.Bullets(CWeapon::PRIMARY),
 						cWeapon.ExtraBullets(CWeapon::PRIMARY),
 						cWeapon.Bullets(CWeapon::SECONDARY),
-						cWeapon.ExtraBullets(CWeapon::SECONDARY));
+						cWeapon.ExtraBullets(CWeapon::SECONDARY)
+					);
 					WeaponChoose();
 				}
 				else if ( CBotrixMod::aClassNames.size() )
@@ -1015,14 +1023,16 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 						"%s -> Picked weapon %s, but there is no such weapon for class %s.",
 						GetName(),
 						cItem.pItemClass->sClassName.c_str(),
-						CTypeToString::ClassToString(m_iClass).c_str());
+						CTypeToString::ClassToString(m_iClass).c_str()
+					);
 				}
 				else
 				{
 					BLOG_W(
 						"%s -> Picked weapon %s, but there is no such weapon.",
 						GetName(),
-						cItem.pItemClass->sClassName.c_str());
+						cItem.pItemClass->sClassName.c_str()
+					);
 				}
 			}
 			break;
@@ -1042,7 +1052,8 @@ void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex 
 					BLOG_W(
 						"%s -> Picked ammo %s, but bot doesn't have that weapon.",
 						GetName(),
-						cItem.pItemClass->sClassName.c_str());
+						cItem.pItemClass->sClassName.c_str()
+					);
 				}
 			}
 			break;
@@ -1197,7 +1208,8 @@ void CBotrixBot::WeaponCheckCurrent(bool bAddToBotWeapons)
 			"%s -> Adding new weapon %s, %s.",
 			GetName(),
 			szCurrentWeapon,
-			bAssumeUnknownWeaponManual ? "melee" : "ranged");
+			bAssumeUnknownWeaponManual ? "melee" : "ranged"
+		);
 		CWeapon* pNewWeapon = new CWeapon();
 		pNewWeapon->pWeaponClass = pClass;
 
@@ -1316,7 +1328,8 @@ void CBotrixBot::UpdateWeapon()
 				"%s -> Current weapon is %s, should be %s.",
 				GetName(),
 				szCurrentWeapon,
-				m_aWeapons[m_iWeapon].GetName().c_str());
+				m_aWeapons[m_iWeapon].GetName().c_str()
+			);
 		}
 		else
 		{
@@ -1678,7 +1691,8 @@ void CBotrixBot::CheckAttackDuck(CPlayer* pPlayer)
 			m_bAttackDuck = CBotrixEngineUtil::IsVisible(
 				vSrc,
 				m_pCurrentEnemy->GetHead(),
-				EVisibilityBots);  // Duck, if enemy is visible while ducking.
+				EVisibilityBots
+			);  // Duck, if enemy is visible while ducking.
 		}
 		else
 		{
@@ -1935,7 +1949,8 @@ void CBotrixBot::WeaponShoot(int iSecondary)
 			(iSecondary) ? "secondary" : "primary",
 			cWeapon.GetName().c_str(),
 			cWeapon.Bullets(iSecondary),
-			cWeapon.ExtraBullets(iSecondary));
+			cWeapon.ExtraBullets(iSecondary)
+		);
 
 		cWeapon.Shoot(iSecondary);
 		m_bNeedReload = cWeapon.IsRanged();
@@ -2132,7 +2147,8 @@ bool CBotrixBot::ResolveStuckMove()
 				BotDebug(
 					"%s -> Stuck, will jump on object %s.",
 					GetName(),
-					pStuckObject->pItemClass->sClassName.c_str());
+					pStuckObject->pItemClass->sClassName.c_str()
+				);
 
 				m_bNeedJump = m_bNeedJumpDuck = true;
 				m_fStartActionTime = CBotrixServerPlugin::GetTime();
@@ -2195,7 +2211,8 @@ bool CBotrixBot::ResolveStuckMove()
 					"%s -> Stuck, will go to previous waypoint %d (from %d).",
 					GetName(),
 					iNextWaypoint,
-					iCurrentWaypoint);
+					iCurrentWaypoint
+				);
 			}
 			else
 			{
@@ -2388,7 +2405,8 @@ bool CBotrixBot::NormalMove()
 														   m_vHead,
 														   m_vDestination,
 														   CBotrixMod::iPointTouchSquaredZ,
-														   CBotrixMod::iPointTouchSquaredXY);
+														   CBotrixMod::iPointTouchSquaredXY
+													   );
 		m_bNeedMove = !bArrived;
 	}
 
@@ -2565,7 +2583,8 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 			fSpeed = CBotrixMod::GetVar(
 				m_bNeedSprint     ? EModVarPlayerVelocitySprint
 					: m_bNeedWalk ? EModVarPlayerVelocityWalk
-								  : EModVarPlayerVelocityRun);
+								  : EModVarPlayerVelocityRun
+			);
 
 			vNeededVelocity -= m_vHead;  // Destination - head (absolute vector).
 
@@ -2712,15 +2731,13 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 								}
 							}
 							// Prefer secondary attack.
-							else if (
-								pWeapon->HasAmmoInClip(CWeapon::SECONDARY) &&
-								pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, CWeapon::SECONDARY) )
+							else if ( pWeapon->HasAmmoInClip(CWeapon::SECONDARY) &&
+									  pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, CWeapon::SECONDARY) )
 							{
 								WeaponShoot(CWeapon::SECONDARY);
 							}
-							else if (
-								pWeapon->HasAmmoInClip(CWeapon::PRIMARY) &&
-								pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, CWeapon::PRIMARY) )
+							else if ( pWeapon->HasAmmoInClip(CWeapon::PRIMARY) &&
+									  pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, CWeapon::PRIMARY) )
 							{
 								WeaponShoot(CWeapon::PRIMARY);
 							}
@@ -3077,7 +3094,8 @@ void CBot_HL2DM::ChangeModel(TTeam iTeam)
 				ENTINDEX(m_pEdict),
 				g_engfuncs.pfnGetInfoKeyBuffer(m_pEdict),
 				"model",
-				(char*)pModel->c_str());
+				(char*)pModel->c_str()
+			);
 		}
 	}
 }
@@ -3147,7 +3165,8 @@ void CBot_HL2DM::Think()
 					"%s -> Failed to find a path from %d to %d 3 times, marking task as finished.",
 					GetName(),
 					m_iFailWaypoint,
-					m_iDestinationWaypoint);
+					m_iDestinationWaypoint
+				);
 
 				TaskFinished();
 				m_bNeedTaskCheck = bForceNewTask = true;
@@ -3279,9 +3298,8 @@ void CBot_HL2DM::CheckEngagedEnemy()
 				}
 				return;
 			}
-			else if (
-				CWaypoints::bValidVisibilityTable && CWaypoint::IsValid(m_pCurrentEnemy->iCurrentWaypoint) &&
-				(m_iIntelligence >= EBotNormal) )
+			else if ( CWaypoints::bValidVisibilityTable && CWaypoint::IsValid(m_pCurrentEnemy->iCurrentWaypoint) &&
+					  (m_iIntelligence >= EBotNormal) )
 			{
 				bool bNeedComeCloser =
 					m_aWeapons[m_iWeapon].IsMelee() || m_aWeapons[m_iWeapon].NeedsToBeCloser(m_fDistanceSqrToEnemy);
@@ -3296,12 +3314,12 @@ void CBot_HL2DM::CheckEngagedEnemy()
 						"%s -> Moving to nearest waypoint %d (current %d)",
 						GetName(),
 						iNextWaypoint,
-						iCurrentWaypoint);
+						iCurrentWaypoint
+					);
 					return;
 				}
-				else if (
-					FLAG_SOME_SET(FFightStrategyRunAwayIfNear, CBotrixBot::iDefaultFightStrategy) &&
-					(m_fDistanceSqrToEnemy <= CBotrixBot::fNearDistanceSqr) )
+				else if ( FLAG_SOME_SET(FFightStrategyRunAwayIfNear, CBotrixBot::iDefaultFightStrategy) &&
+						  (m_fDistanceSqrToEnemy <= CBotrixBot::fNearDistanceSqr) )
 				{
 					// Try to run away a little.
 					iNextWaypoint =
@@ -3310,7 +3328,8 @@ void CBot_HL2DM::CheckEngagedEnemy()
 						"%s -> Moving to farest waypoint %d (current %d)",
 						GetName(),
 						iNextWaypoint,
-						iCurrentWaypoint);
+						iCurrentWaypoint
+					);
 					return;
 				}
 			}
@@ -3321,7 +3340,8 @@ void CBot_HL2DM::CheckEngagedEnemy()
 			"%s -> Moving to random neighbour waypoint %d (current %d)",
 			GetName(),
 			iNextWaypoint,
-			iCurrentWaypoint);
+			iCurrentWaypoint
+		);
 	}
 	else if ( m_pCurrentEnemy )
 	{
@@ -3330,9 +3350,8 @@ void CBot_HL2DM::CheckEngagedEnemy()
 		{
 			m_bNeedMove = m_bUseNavigatorToMove = false;  // Stop running and start moving randomly.
 		}
-		else if (
-			m_bChasing && (iCurrentWaypoint != m_pChasedEnemy->iCurrentWaypoint) &&
-			(CBotrixServerPlugin::GetTime() >= m_fChaseEnemyTime) )
+		else if ( m_bChasing && (iCurrentWaypoint != m_pChasedEnemy->iCurrentWaypoint) &&
+				  (CBotrixServerPlugin::GetTime() >= m_fChaseEnemyTime) )
 		{
 			ChaseEnemy();  // Recalculate route to enemy every 3 seconds.
 		}
@@ -3408,9 +3427,8 @@ restart_find_task:  // TODO: remove gotos.
 		{
 			iNewTask = EBotTaskFindHealth;
 		}
-		else if (
-			CBotrixMod::HasMapItems(EItemTypeArmor) &&
-			(m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
+		else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
+				  (m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
 		{
 			iNewTask = EBotTaskFindArmor;
 		}
@@ -3561,7 +3579,8 @@ find_enemy:
 				GetName(),
 				CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
 				m_iTaskDestination,
-				iCurrentWaypoint);
+				iCurrentWaypoint
+			);
 			m_iCurrentTask = -1;
 			m_bNeedTaskCheck = true;  // Check new task in next frame.
 			m_bNeedMove = m_bUseNavigatorToMove = m_bDestinationChanged = false;
@@ -3577,7 +3596,8 @@ find_enemy:
 				CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
 				pEntityClass ? pEntityClass->sClassName.c_str() : "",
 				m_iTaskDestination,
-				iCurrentWaypoint);
+				iCurrentWaypoint
+			);
 
 			m_iDestinationWaypoint = m_iTaskDestination;
 			m_bNeedMove = m_bUseNavigatorToMove = m_bDestinationChanged = true;
@@ -3763,7 +3783,8 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 					GetName(),
 					CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
 					m_iTaskDestination,
-					iCurrentWaypoint);
+					iCurrentWaypoint
+				);
 
 				m_iCurrentTask = -1;
 				m_bNeedTaskCheck = true;  // Check new task in next frame.
@@ -3780,7 +3801,8 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 					CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
 					pEntityClass ? pEntityClass->sClassName.c_str() : "",
 					m_iTaskDestination,
-					iCurrentWaypoint);
+					iCurrentWaypoint
+				);
 
 				m_iDestinationWaypoint = m_iTaskDestination;
 				m_bNeedMove = m_bUseNavigatorToMove = m_bDestinationChanged = true;
@@ -3797,7 +3819,8 @@ TBotTask CBot_HL2DM::ChooseNewTask(
 	bool& bForce,
 	const CWeapon*& pWeapon,
 	TBotIntelligence& iWeaponPreference,
-	bool& bSecondaryWeapon)
+	bool& bSecondaryWeapon
+)
 {
 	TBotTask iNewTask = EBotTaskInvalid;
 
@@ -3840,9 +3863,8 @@ TBotTask CBot_HL2DM::ChooseNewTask(
 		{
 			iNewTask = EBotTaskFindHealth;
 		}
-		else if (
-			CBotrixMod::HasMapItems(EItemTypeArmor) &&
-			(m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
+		else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
+				  (m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
 		{
 			iNewTask = EBotTaskFindArmor;
 		}

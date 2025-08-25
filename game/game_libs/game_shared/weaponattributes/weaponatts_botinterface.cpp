@@ -53,6 +53,7 @@ namespace WeaponAtts
 				ReloadDuration = projectile->ReloadDuration;
 				ParabolicDistanceAt0Degrees = CalcParabolicDistance(0.0f, projectile->LaunchSpeed);
 				ParabolicDistanceAt45Degrees = CalcParabolicDistance(-45.0f, projectile->LaunchSpeed);
+				BaseDamagePerShot = projectile->BaseExplosionDamage;
 
 				break;
 			}

@@ -7,6 +7,10 @@
 #include "standard_includes.h"
 #include <good/string_utils.h>
 #include "botrix/console_commands.h"
+#include "types.h"
+#include "weapon.h"
+#include "weaponregistry.h"
+#include "weaponattributes/weaponatts_collection.h"
 
 float CBotrixServerPlugin::m_fFpsEnd = 0.0f;
 int CBotrixServerPlugin::m_iFramesCount = 0;
@@ -250,7 +254,8 @@ void CBotrixServerPlugin::Think()
 			"Botrix think time in %d frames (%.0f seconds): %.5f msecs",
 			iCount,
 			fInterval,
-			fSum / (float)iCount * 1000.0f);
+			fSum / (float)iCount * 1000.0f
+		);
 		fStart = fSum = 0.0f;
 		iCount = 0;
 	}
@@ -332,6 +337,8 @@ void CBotrixServerPlugin::ActivateLevel()
 
 	const float maxPlayers = CVAR_GET_FLOAT("maxplayers");
 	CPlayers::Init(static_cast<int>(maxPlayers));
+
+	CConfiguration::RefreshWeaponConfig();
 
 	// Waypoints should be loaded after CPlayers::Size() is known.
 	if ( CWaypoints::Load() )

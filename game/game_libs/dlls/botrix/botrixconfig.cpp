@@ -15,6 +15,7 @@
 #include "botrix/server_plugin.h"
 #include "PlatformLib/String.h"
 #include "debug_assert.h"
+#include "good/defines.h"
 #include "good/memory.h"
 #include "skill.h"
 #include "types.h"
@@ -238,13 +239,19 @@ TModId CConfiguration::LoadProgrammatic()
 	CItems::AddItemClassFor(EItemTypeArmor, CItemClass("item_battery", respawnableFlags));
 	CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_healthkit", respawnableFlags));
 
-	CWeaponRegistry::StaticInstance().ForEach(&LoadWeapon);
+	RefreshWeaponConfig();
 
 	// Very important!
 	CBotrixMod::Prepare();
 
 	// Return this for now
 	return EModId_HL2DM;
+}
+
+void CConfiguration::RefreshWeaponConfig()
+{
+	CWeapons::Clear();
+	CWeaponRegistry::StaticInstance().ForEach(&LoadWeapon);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1104,10 +1111,21 @@ void CConfiguration::LoadWeapon(const WeaponAtts::WACollection& atts)
 
 	good::unique_ptr<CWeapon> pWeapon(new CWeapon());
 
+	pWeapon->iId = CWeapons::Size();
+	pWeapon->pWeaponClass = CItems::GetItemClass(EItemTypeWeapon, atts.Core.Classname);
+
+	if ( !pWeapon->pWeaponClass )
+	{
+		CItemClass cEntityClass;
+		cEntityClass.sClassName = atts.Core.Classname;
+		pWeapon->pWeaponClass = CItems::AddItemClassFor(EItemTypeWeapon, cEntityClass);
+	}
+
+	GoodAssert(pWeapon->pWeaponClass);
+
 	// Ignore all class restrictions since we don't support them.
 	pWeapon->iClass = ~0;
 
-	pWeapon->iId = CWeapons::Size();
 	pWeapon->iType = BotWeaponTypeToBotrixWeaponType(botIfc.Type);
 	pWeapon->iBotPreference = BotWeaponPreferenceToBotrixWeaponPreference(botIfc.Preference);
 	pWeapon->fHolsterTime = 0.0f;  // Currently unused
@@ -1243,9 +1261,5 @@ void CConfiguration::LoadWeapon(const WeaponAtts::WACollection& atts)
 		}
 	}
 
-	CItemClass cEntityClass;
-	cEntityClass.sClassName = atts.Core.Classname;
-	pWeapon->pWeaponClass = CItems::AddItemClassFor(EItemTypeWeapon, cEntityClass);
-
-	CWeapons::Add(CWeaponWithAmmo(std::move(pWeapon)));
+	CWeapons::Add(CWeaponWithAmmo(pWeapon.release()));
 }

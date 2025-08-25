@@ -8,6 +8,11 @@
 #include "botrix/engine_util.h"
 #include <memory>
 
+namespace WeaponAtts
+{
+	struct WACollection;
+};
+
 //****************************************************************************************************************
 /// Weapon abstract class. Used to get needed angles to aim.
 //****************************************************************************************************************
@@ -89,16 +94,6 @@ class CWeaponWithAmmo
 {
 public:
 	/// Constructor.
-	CWeaponWithAmmo(good::unique_ptr<const CWeapon> pWeapon)
-	{
-		m_pWeapon = std::move(pWeapon);
-	}
-
-	CWeaponWithAmmo(good::unique_ptr<CWeapon> pWeapon)
-	{
-		m_pWeapon.reset(pWeapon.release());
-	}
-
 	CWeaponWithAmmo(const CWeapon* pWeapon)
 	{
 		m_pWeapon.reset(pWeapon);
@@ -413,7 +408,7 @@ protected:
 	// End using weapon function.
 	void EndShoot();
 
-	good::unique_ptr<const CWeapon> m_pWeapon;  ///< Weapon itself.
+	good::shared_ptr<const CWeapon> m_pWeapon;  ///< Weapon itself.
 	int m_iBulletsInClip[2] = {0, 0};  ///< Bullets in current clip (inside weapon).
 	int m_iBulletsExtra[2] = {0, 0};  ///< Amount of bullets extra.
 	int m_iSecondary = 0;  ///< Reloading / shooting secondary ammo or using zoom.
@@ -465,11 +460,6 @@ public:
 	/// Clear all weapons.
 	static void Clear()
 	{
-		m_aWeapons.reserve(16);
-		for ( int i = 0; i < m_aWeapons.size(); ++i )
-		{
-			delete m_aWeapons[i].GetBaseWeapon();
-		}
 		m_aWeapons.clear();
 	}
 
@@ -536,6 +526,8 @@ public:
 
 	/// Get random weapon, based on bot intelligence.
 	static TWeaponId GetRandomWeapon(TBotIntelligence iIntelligence, const good::bitset& cSkipWeapons);
+
+	static void UpdateDamage(const WeaponAtts::WACollection& atts);
 
 protected:
 	static good::vector<CWeaponWithAmmo> m_aWeapons;  // Array of available weapons for this mod.

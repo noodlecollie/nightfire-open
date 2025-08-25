@@ -83,6 +83,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->ProjectileDelay = 0.5f;
 		priAttack->ProjectileModelName = "models/weapon_frag_grenade/w_frag_grenade.mdl";
 		priAttack->LaunchSpeed = 1000.0f;
+		priAttack->BaseExplosionDamage = &skilldata_t::plrDmgFragGrenade;
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);

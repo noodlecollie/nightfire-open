@@ -2,6 +2,7 @@
 
 #include "standard_includes.h"
 #include "weapons.h"
+#include "weaponattributes/weaponatts_skillrecord.h"
 
 class CGenericGrenade : public CGrenade
 {
@@ -21,6 +22,7 @@ public:
 	void SetTumbleAngVel(float vel);
 	void SetRandomTumbleAngVel(float min, float max);
 	void SetDamageOnExplode(float damage);
+	void SetDamageOnExplode(WeaponAtts::WASkillRecord::SkillDataEntryPtr ptr);
 	void SetSpeed(float speed);
 	void SetFuseTime(float fuseTime);
 #endif

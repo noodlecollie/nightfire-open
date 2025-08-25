@@ -85,6 +85,11 @@ void CGenericGrenade::SetDamageOnExplode(float damage)
 	pev->dmg = damage;
 }
 
+void CGenericGrenade::SetDamageOnExplode(WeaponAtts::WASkillRecord::SkillDataEntryPtr ptr)
+{
+	pev->dmg = ptr ? gSkillData.*ptr : 0.0f;
+}
+
 void CGenericGrenade::SetSpeed(float speed)
 {
 	Vector vel(pev->velocity);

@@ -104,7 +104,8 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponMechanics::CProjectile
 	CGenericGrenade* grenade = CGenericGrenade::CreateGrenade(
 		m_pPlayer,
 		mechanic.GetProjectileLaunchAngles(GRENADELAUNCHER_PITCH_ADJUST),
-		16.0f);
+		16.0f
+	);
 
 	const bool explodeOnContact = &mechanic == m_ContactGrenadeAttack;
 
@@ -115,7 +116,7 @@ void CWeaponGrenadeLauncher::CreateProjectile(const WeaponMechanics::CProjectile
 	grenade->SetExplodeSpriteScale(GRENADELAUNCHER_GRENADE_SPRITE_SCALE);
 	grenade->SetExplodeOnContact(explodeOnContact);
 	grenade->SetRandomTumbleAngVel(GRENADELAUNCHER_TUMBLEVEL_MIN, GRENADELAUNCHER_TUMBLEVEL_MAX);
-	grenade->SetDamageOnExplode(gSkillData.plrDmgGrenadeLauncher);
+	grenade->SetDamageOnExplode(mechanic.ProjectileAttackMode()->BaseExplosionDamage);
 	grenade->SetPlayerContactDamageMultiplier(gSkillData.plrDmgMultGrenadelauncherHit);
 	grenade->SetOwnerDamageMultiplier(gSkillData.plrSelfDmgMultGrenadeLauncher);
 	grenade->SetSpeed(mechanic.ProjectileAttackMode()->LaunchSpeed);

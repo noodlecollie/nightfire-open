@@ -30,6 +30,7 @@ public:  // Methods.
 	static TModId Load(const good::string& sGameDir, const good::string& sModDir);
 
 	static TModId LoadProgrammatic();
+	static void RefreshWeaponConfig();
 
 	/// Save configuration file (must be loaded first).
 	static void Save()

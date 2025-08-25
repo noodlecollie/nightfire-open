@@ -5,6 +5,10 @@
 #include "botrix/botrixmod.h"
 #include "EnginePublicAPI/const.h"
 #include "MathLib/mathlib.h"
+#include "good/defines.h"
+#include "skill.h"
+#include "types.h"
+#include "weaponattributes/weaponatts_collection.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #define WEAPON_TRACE(...) BLOG_T(__VA_ARGS__)
@@ -79,7 +83,8 @@ void CWeaponWithAmmo::Shoot(int iSecondary)
 	GoodAssert(
 		CanUse() &&
 		(HasAmmoInClip(iSecondary) || IsMelee() || IsPhysics() ||
-		 FLAG_SOME_SET(FWeaponHasSecondary, m_pWeapon->iFlags[iSecondary])));
+		 FLAG_SOME_SET(FWeaponHasSecondary, m_pWeapon->iFlags[iSecondary]))
+	);
 
 	m_bReloading = m_bReloadingStart = false;  // Stop reloading if weapon time is shotgun-like.
 	m_iSecondary = iSecondary;
@@ -224,7 +229,8 @@ void CWeaponWithAmmo::GetLook(
 	const CPlayer* pTo,
 	TBotIntelligence iIntelligence,
 	int iSecondary,
-	Vector& vResult) const
+	Vector& vResult
+) const
 {
 	// Assume we can see enemy head.
 	switch ( m_pWeapon->iAim[iSecondary] )
@@ -277,7 +283,8 @@ bool CWeaponWithAmmo::GetLook(
 	float fDistanceSqr,
 	TBotIntelligence iBotIntelligence,
 	int iSecondary,
-	Vector& vResult) const
+	Vector& vResult
+) const
 {
 	GoodAssert(IsDistanceSafe(fDistanceSqr, iSecondary));
 

@@ -39,7 +39,8 @@ CWeaponFragGrenade::CWeaponFragGrenade() :
 		{
 			CreateProjectile(mechanic);
 			return true;
-		});
+		}
+	);
 #endif
 
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
@@ -170,7 +171,7 @@ void CWeaponFragGrenade::CreateProjectile(const WeaponMechanics::CProjectileMech
 	grenade->SetExplodeSpriteScale(SPRITE_SCALE);
 	grenade->SetExplodeOnContact(false);
 	grenade->SetRandomTumbleAngVel(TUMBLEVEL_MIN, TUMBLEVEL_MAX);
-	grenade->SetDamageOnExplode(gSkillData.plrDmgFragGrenade);
+	grenade->SetDamageOnExplode(mechanic.ProjectileAttackMode()->BaseExplosionDamage);
 	grenade->SetPlayerContactDamageMultiplier(1.0f);
 	grenade->SetOwnerDamageMultiplier(gSkillData.plrSelfDmgMultFragGrenade);
 	grenade->SetSpeed(mechanic.ProjectileAttackMode()->LaunchSpeed);

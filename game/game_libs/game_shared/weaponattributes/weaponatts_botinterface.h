@@ -132,8 +132,6 @@ namespace WeaponAtts
 
 			if ( needsAmmo )
 			{
-				ASSERTSZ_Q(AmmoClassName > 0, "Expected ammo class name");
-				ASSERTSZ_Q(AmmoName > 0, "Expected ammo name");
 				ASSERTSZ_Q(MaxAmmo > 0, "Expected max ammo > 0");
 				ASSERTSZ_Q(AmmoGivenOnPickup > 0, "Expected ammo given on pickup > 0");
 			}
