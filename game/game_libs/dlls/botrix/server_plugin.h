@@ -36,6 +36,7 @@ public:
 private:
 	static void PrepareLevel();
 	static void ActivateLevel();
+	static void SpawnBotsInRegister();
 
 	static float m_fFpsEnd;  ///< Time of ending counting frames to calculate fps.
 	static int m_iFramesCount;  ///< Count of frames since m_fFpsStart.
@@ -52,4 +53,6 @@ private:
 
 	static CBotrixCommand* m_pConsoleCommands;
 	static cvar_t m_TraceLogCvar;
+
+	static bool m_bSpawnedRegisterBots;
 };

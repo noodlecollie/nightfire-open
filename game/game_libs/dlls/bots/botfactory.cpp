@@ -119,7 +119,8 @@ void CBotFactory::SetBotSkin(CBaseBot* bot, const CUtlString& skin)
 		bot->entindex(),
 		g_engfuncs.pfnGetInfoKeyBuffer(bot->edict()),
 		"model",
-		(char*)CUtlString(skin).String());
+		(char*)CUtlString(skin).String()
+	);
 }
 
 void CBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t count)

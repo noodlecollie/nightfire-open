@@ -233,7 +233,8 @@ void CBotrixMod::Think()
 			BLOG_E(
 				"Player with index %d is not present to receive event %d.",
 				m_aFrameEvents[i].second,
-				m_aFrameEvents[i].first);
+				m_aFrameEvents[i].first
+			);
 		}
 		else
 		{
@@ -329,7 +330,8 @@ CPlayer* CBotrixModDetail::AddBot(
 	TTeam iTeam,
 	TClass /*iClass*/,
 	int iParamsCount,
-	const char** aParams)
+	const char** aParams
+)
 {
 	if ( iParamsCount > 0 )
 	{
