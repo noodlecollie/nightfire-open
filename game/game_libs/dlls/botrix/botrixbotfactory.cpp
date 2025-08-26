@@ -1,16 +1,17 @@
 #include <algorithm>
 #include <random>
-#include "botfactory.h"
+#include "botrix/botrixbotfactory.h"
+#include "botrixmod.h"
 #include "standard_includes.h"
-#include "bot.h"
 #include "util.h"
 #include "EnginePublicAPI/eiface.h"
-#include "cbase.h"
 #include "client.h"
 #include "botprofiles/botprofileparser.h"
 #include "mp_utils.h"
+#include "botrix/players.h"
+#include "player.h"
 
-void CBotFactory::LoadBotProfiles()
+void CBotrixBotFactory::LoadBotProfiles()
 {
 	const char* fileName = CVAR_GET_STRING("bot_profile_file");
 
@@ -31,7 +32,7 @@ void CBotFactory::LoadBotProfiles()
 	}
 }
 
-void CBotFactory::CreateBots(uint32_t num)
+void CBotrixBotFactory::CreateBots(uint32_t num)
 {
 	CUtlVector<CUtlString> randomProfileNameList;
 	RandomProfileNameList(randomProfileNameList, num);
@@ -53,7 +54,7 @@ void CBotFactory::CreateBots(uint32_t num)
 	}
 }
 
-bool CBotFactory::TryCreateBot(const CUtlString& profileName, const CUtlString& playerName)
+bool CBotrixBotFactory::TryCreateBot(const CUtlString& profileName, const CUtlString& playerName)
 {
 	if ( !m_ProfileTable.ProfileExists(profileName) )
 	{
@@ -64,7 +65,7 @@ bool CBotFactory::TryCreateBot(const CUtlString& profileName, const CUtlString& 
 	return CreateBot(m_ProfileTable.GetProfile(profileName), playerName);
 }
 
-bool CBotFactory::CreateBot(const CBotProfileTable::ProfileData* profile, const CUtlString& playerName)
+bool CBotrixBotFactory::CreateBot(const CBotProfileTable::ProfileData* profile, const CUtlString& playerName)
 {
 	CUtlString name("Bot");
 
@@ -78,25 +79,29 @@ bool CBotFactory::CreateBot(const CBotProfileTable::ProfileData* profile, const 
 	}
 
 	name = MPUtils::SanitisePlayerNetName(name);
-	edict_t* bot = g_engfuncs.pfnCreateFakeClient(name.String());
+	CPlayer* pBot = CPlayers::AddBot(name.Get(), CBotrixMod::iUnassignedTeam, -1, -1, 0, nullptr);
 
-	if ( !bot )
+	if ( !pBot )
 	{
-		ALERT(at_error, "No free player slots to create new bot.\n");
+		ALERT(at_error, "%s\n", CPlayers::GetLastError().c_str());
 		return false;
 	}
 
-	// Run the bot through the standard connection functions.
-	// It'll eventually get passed back through this class.
-	ClientPutInServer(bot);
+	CBasePlayer* basePlayer = dynamic_cast<CBasePlayer*>(CBaseEntity::Instance(pBot->GetEdict()));
+	ASSERT(basePlayer);
 
-	// Now that the bot is registered with us, set up profile-specific things.
-	SetBotAttributesViaProfile(dynamic_cast<CBaseBot*>(CBaseEntity::Instance(bot)), profile);
-	ALERT(at_console, "Added bot '%s'\n", STRING(bot->v.netname));
+	if ( !basePlayer )
+	{
+		ALERT(at_error, "Bot %s was not a CBasePlayer!\n", name.Get());
+	}
+
+	SetBotAttributesViaProfile(basePlayer, profile);
+
+	ALERT(at_console, "Added bot '%s'\n", STRING(pBot->GetEdict()->v.netname));
 	return true;
 }
 
-void CBotFactory::SetBotAttributesViaProfile(CBaseBot* bot, const CBotProfileTable::ProfileData* profile)
+void CBotrixBotFactory::SetBotAttributesViaProfile(CBasePlayer* bot, const CBotProfileTable::ProfileData* profile)
 {
 	if ( !bot || !profile )
 	{
@@ -106,7 +111,7 @@ void CBotFactory::SetBotAttributesViaProfile(CBaseBot* bot, const CBotProfileTab
 	SetBotSkin(bot, profile->skin);
 }
 
-void CBotFactory::SetBotSkin(CBaseBot* bot, const CUtlString& skin)
+void CBotrixBotFactory::SetBotSkin(CBasePlayer* bot, const CUtlString& skin)
 {
 	if ( !bot )
 	{
@@ -123,7 +128,7 @@ void CBotFactory::SetBotSkin(CBaseBot* bot, const CUtlString& skin)
 	);
 }
 
-void CBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t count)
+void CBotrixBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t count)
 {
 	list.Purge();
 

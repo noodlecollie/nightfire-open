@@ -2,6 +2,7 @@
 
 #include "standard_includes.h"
 #include <good/string.h>
+#include "botrix/botrixbotfactory.h"
 
 struct edict_s;
 class CBasePlayer;
@@ -55,4 +56,5 @@ private:
 	static cvar_t m_TraceLogCvar;
 
 	static bool m_bSpawnedRegisterBots;
+	static CBotrixBotFactory m_BotFactory;
 };

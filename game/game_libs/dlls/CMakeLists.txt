@@ -254,6 +254,8 @@ set(SOURCES_SERVER
 	botrix/good/vector.h
 	botrix/bot.h
 	botrix/bot.cpp
+	botrix/botrixbotfactory.h
+	botrix/botrixbotfactory.cpp
 	botrix/botrixconfig.h
 	botrix/botrixconfig.cpp
 	botrix/botrixgamerulesinterface.h

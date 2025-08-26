@@ -171,12 +171,6 @@ namespace BotCommands
 
 	void Bot_Register_Add()
 	{
-		if ( !UsingRhoBotBackend() )
-		{
-			ALERT(at_error, "Rho-bot command not supported for bot backend \"%s\"\n", bot_backend.string);
-			return;
-		}
-
 		int numArgs = CMD_ARGC();
 
 		if ( numArgs < 2 )
@@ -198,23 +192,11 @@ namespace BotCommands
 
 	void Bot_Register_Clear()
 	{
-		if ( !UsingRhoBotBackend() )
-		{
-			ALERT(at_error, "Rho-bot command not supported for bot backend \"%s\"\n", bot_backend.string);
-			return;
-		}
-
 		CBotRegister::StaticInstance().Clear();
 	}
 
 	void Bot_Register_List()
 	{
-		if ( !UsingRhoBotBackend() )
-		{
-			ALERT(at_error, "Rho-bot command not supported for bot backend \"%s\"\n", bot_backend.string);
-			return;
-		}
-
 		CBotRegister& reg = CBotRegister::StaticInstance();
 
 		if ( reg.Count() < 1 )

@@ -26,6 +26,7 @@ float CBotrixServerPlugin::m_fEngineTime = 0.0f;
 CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
 cvar_t CBotrixServerPlugin::m_TraceLogCvar = CONSTRUCT_CVAR_T("botrix_log_trace", 0, FCVAR_PRIVILEGED);
 bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
+CBotrixBotFactory CBotrixServerPlugin::m_BotFactory;
 
 void CBotrixServerPlugin::Init()
 {
@@ -399,6 +400,6 @@ void CBotrixServerPlugin::SpawnBotsInRegister()
 		const CUtlString profileName = reg.ProfileName(index);
 		const CUtlString customName = reg.CustomName(index);
 
-		// TODO: Spawn bot via bot factory
+		m_BotFactory.TryCreateBot(profileName, customName);
 	}
 }

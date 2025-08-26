@@ -489,7 +489,8 @@ void SV_ConnectClient(netadr_t from)
 		newcl->name,
 		newcl->userid,
 		i,
-		NET_AdrToString(newcl->netchan.remote_address));
+		NET_AdrToString(newcl->netchan.remote_address)
+	);
 
 	if ( count == 1 || count == svs.maxclients )
 		NET_MasterClear();
@@ -509,17 +510,23 @@ edict_t* SV_FakeConnect(const char* netname)
 	sv_client_t* cl;
 
 	if ( !COM_CheckString(netname) )
+	{
 		netname = "Bot";
+	}
 
 	// find a client slot
 	for ( i = 0, cl = svs.clients; i < svs.maxclients; i++, cl++ )
 	{
 		if ( cl->state == cs_free )
+		{
 			break;
+		}
 	}
 
 	if ( i == svs.maxclients )
+	{
 		return NULL;  // server is full
+	}
 
 	userinfo[0] = '\0';
 
@@ -534,7 +541,10 @@ edict_t* SV_FakeConnect(const char* netname)
 	sv.current_client = cl;
 
 	if ( cl->frames )
-		Mem_Free(cl->frames);  // fakeclients doesn't have frames
+	{
+		Mem_Free(cl->frames);  // fakeclients don't have frames
+	}
+
 	memset(cl, 0, sizeof(sv_client_t));
 
 	cl->edict = EDICT_NUM((int)(cl - svs.clients) + 1);
@@ -550,8 +560,13 @@ edict_t* SV_FakeConnect(const char* netname)
 	// if this was the first client on the server, or the last client
 	// the server can hold, send a heartbeat to the master.
 	for ( i = 0, cl = svs.clients; i < svs.maxclients; i++, cl++ )
+	{
 		if ( cl->state >= cs_connected )
+		{
 			count++;
+		}
+	}
+
 	cl = sv.current_client;
 
 	Log_Printf("\"%s<%i><%i><>\" connected, address \"local\"\n", cl->name, cl->userid, i);
@@ -561,7 +576,9 @@ edict_t* SV_FakeConnect(const char* netname)
 	cl->state = cs_spawned;
 
 	if ( count == 1 || count == svs.maxclients )
+	{
 		NET_MasterClear();
+	}
 
 	return cl->edict;
 }
@@ -987,7 +1004,8 @@ void SV_BuildNetAnswer(netadr_t from)
 					count,
 					svs.clients[i].name,
 					(int)ed->v.frags,
-					time);
+					time
+				);
 
 				if ( ret == -1 )
 				{
@@ -1617,7 +1635,8 @@ void SV_SendServerdata(sizebuf_t* msg, sv_client_t* cl)
 			"\n^3BUILD %d SERVER (%i CRC)\nServer #%i\n",
 			Q_buildnum(),
 			sv.progsCRC,
-			svs.spawncount);
+			svs.spawncount
+		);
 		MSG_WriteString(msg, message);
 	}
 
@@ -2223,7 +2242,8 @@ static qboolean SV_SendBuildInfo_f(sv_client_t* cl)
 		Q_buildnum(),
 		BuildPlatform_CommitString(),
 		BuildPlatform_PlatformString(),
-		BuildPlatform_ArchitectureString());
+		BuildPlatform_ArchitectureString()
+	);
 	return true;
 }
 
@@ -2531,7 +2551,8 @@ static qboolean SV_EntFire_f(sv_client_t* cl)
 		SV_ClientPrintf(
 			cl,
 			"Use ent_fire <index||pattern> <command> [<values>]\n"
-			"Use ent_fire 0 help to get command list\n");
+			"Use ent_fire 0 help to get command list\n"
+		);
 		return false;
 	}
 
@@ -2824,7 +2845,8 @@ static qboolean SV_EntFire_f(sv_client_t* cl)
 				"    setflag\n"
 				"    clearflag\n"
 				"    setspawnflag\n"
-				"    clearspawnflag\n");
+				"    clearspawnflag\n"
+			);
 			return true;
 		}
 		else
@@ -2860,7 +2882,8 @@ static void SV_EntSendVars(sv_client_t* cl, edict_t* ent)
 		"set ent_last_origin \"%f %f %f\"\n",
 		ent->v.origin[0],
 		ent->v.origin[1],
-		ent->v.origin[2]);
+		ent->v.origin[2]
+	);
 	MSG_WriteByte(&cl->netchan.message, svc_stufftext);
 	MSG_WriteStringf(&cl->netchan.message, "set ent_last_class \"%s\"\n", STRING(ent->v.classname));
 	MSG_WriteByte(&cl->netchan.message, svc_stufftext);
@@ -3062,7 +3085,8 @@ ucmd_t ucmds[] = {
 	{"disconnect", SV_Disconnect_f},
 	{"userinfo", SV_UpdateUserinfo_f},
 	{"_sv_build_info", SV_SendBuildInfo_f},
-	{NULL, NULL}};
+	{NULL, NULL}
+};
 
 ucmd_t enttoolscmds[] = {
 	{"ent_list", SV_EntList_f},
@@ -3070,7 +3094,8 @@ ucmd_t enttoolscmds[] = {
 	{"ent_fire", SV_EntFire_f},
 	{"ent_create", SV_EntCreate_f},
 	{"ent_getvars", SV_EntGetVars_f},
-	{NULL, NULL}};
+	{NULL, NULL}
+};
 
 /*
 ==================
@@ -3107,7 +3132,8 @@ void SV_ExecuteClientCommand(sv_client_t* cl, const char* s)
 					Info_ValueForKey(cl->userinfo, "name"),
 					cl->userid,
 					SV_GetClientIDString(cl),
-					s);
+					s
+				);
 
 				if ( u->func )
 					u->func(cl);
@@ -3257,7 +3283,8 @@ void SV_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(
 				  pcmd,
 				  "T"
-				  "Source") )
+				  "Source"
+			  ) )
 		SV_TSourceEngineQuery(from);
 	else if ( !Q_strcmp(pcmd, "i") )
 		NET_SendPacket(NS_SERVER, 5, "\xFF\xFF\xFF\xFFj", from);  // A2A_PING
