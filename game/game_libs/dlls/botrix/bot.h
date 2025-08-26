@@ -301,7 +301,9 @@ protected:  // Methods.
 	bool FollowEnemy(CPlayer* pEnemy)
 	{
 		if ( !pEnemy->IsAlive() || !CWaypoint::IsValid(pEnemy->iCurrentWaypoint) )
+		{
 			return false;
+		}
 
 		BotDebug("%s -> Follow enemy %s.", GetName(), pEnemy->GetName());
 		m_iDestinationWaypoint = pEnemy->iCurrentWaypoint;
@@ -616,6 +618,7 @@ protected:
 	void ChaseEnemy()
 	{
 		m_bChasing = FollowEnemy(m_pChasedEnemy);
+
 		if ( m_bChasing )
 		{
 			m_fChaseEnemyTime = CBotrixServerPlugin::GetTime() + (EBotPro - m_iIntelligence) + 0.5f;

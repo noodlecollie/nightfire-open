@@ -185,6 +185,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		botPriAttackMode->ReloadStyle = BotWeaponReloadStyle::PerShot;
 		botPriAttackMode->MinEffectiveRange = 0.0f;
 		botPriAttackMode->MaxEffectiveRange = 640.0f;
+		botPriAttackMode->MinExtraDelayBetweenShots = 0.33f;
 
 		WABotAttackMode* botSecAttackMode = new WABotAttackMode();
 		botIfc.SecondaryAttackMode.reset(botSecAttackMode);
@@ -194,5 +195,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		botSecAttackMode->ReloadStyle = BotWeaponReloadStyle::PerShot;
 		botSecAttackMode->MinEffectiveRange = 0.0f;
 		botSecAttackMode->MaxEffectiveRange = 384.0f;
+		botSecAttackMode->MinExtraDelayBetweenShots = 0.4f;
 	}
 );

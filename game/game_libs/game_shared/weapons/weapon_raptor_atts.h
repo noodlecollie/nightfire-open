@@ -122,7 +122,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		WABotInterface& botIfc = obj.BotInterface;
 		botIfc.Type = BotWeaponType::HitscanSingleShot;
-		botIfc.Preference = BotWeaponPreference::Low;
+		botIfc.Preference = BotWeaponPreference::High;
 
 		WABotAttackMode* botPrimaryAttackMode = new WABotAttackMode();
 		botIfc.PrimaryAttackMode.reset(botPrimaryAttackMode);
@@ -131,5 +131,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		botPrimaryAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
 		botPrimaryAttackMode->MinEffectiveRange = 0.0f;
 		botPrimaryAttackMode->MaxEffectiveRange = 1280.0f;
+		botPrimaryAttackMode->MinExtraDelayBetweenShots = 0.25f;
 	}
 );

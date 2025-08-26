@@ -6,7 +6,9 @@
 #include <good/string_buffer.h>
 
 #include "botrix/bot.h"
+#include "EnginePublicAPI/eiface.h"
 #include "botrix/type2string.h"
+#include "engine_util.h"
 #include "standard_includes.h"
 #include "MathLib/utils.h"
 
@@ -1152,8 +1154,12 @@ bool CBotrixBot::IsVisible(CPlayer* pPlayer, bool bViewCone) const
 		bViewCone = true;  // Assume enemy is in view cone.
 	}
 
-	// CBotrixEngineUtil::IsVisible( m_vHead, vAim, FVisibilityAll );
-	return bViewCone ? CBotrixEngineUtil::IsVisible(m_vHead, pPlayer->GetEdict()) : false;
+	if ( !bViewCone )
+	{
+		return false;
+	}
+
+	return CBotrixEngineUtil::IsVisible(m_vHead, pPlayer->GetEdict());
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -1968,7 +1974,7 @@ void CBotrixBot::WeaponShoot(int iSecondary)
 		GoodAssert(cWeapon.CanUse());
 
 		BotDebug(
-			"%s -> Shoot %s %s, ammo %d/%d.",
+			"%s -> Shoot %s %s, ammo %d with %d extra.",
 			GetName(),
 			(iSecondary) ? "secondary" : "primary",
 			cWeapon.GetName().c_str(),
@@ -3810,7 +3816,7 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 					iCurrentWaypoint
 				);
 
-				m_iCurrentTask = -1;
+				m_iCurrentTask = EBotTaskInvalid;
 				m_bNeedTaskCheck = true;  // Check new task in next frame.
 				m_bNeedMove = m_bUseNavigatorToMove = m_bDestinationChanged = false;
 
@@ -3820,10 +3826,10 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 			else
 			{
 				BotDebug(
-					"%s -> New task: %s %s, waypoint %d (current %d).",
+					"%s -> New task: %s <%s>, waypoint %d (current %d).",
 					GetName(),
 					CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
-					pEntityClass ? pEntityClass->sClassName.c_str() : "",
+					pEntityClass ? pEntityClass->sClassName.c_str() : "null",
 					m_iTaskDestination,
 					iCurrentWaypoint
 				);

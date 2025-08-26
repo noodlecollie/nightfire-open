@@ -100,6 +100,7 @@ namespace WeaponAtts
 		float ZoomDistance = 0.0f;
 		float ZoomTime = 0.0f;
 		float ReloadStartDelay = 0.0f;
+		float MinExtraDelayBetweenShots = 0.0f;  // To limit how fast bots can refire
 
 		// Max range <= 0 implies no max range.
 		float MinEffectiveRange = 0.0f;
@@ -129,6 +130,7 @@ namespace WeaponAtts
 			ASSERTSZ_Q(AttackRate > 0, "Expected attack rate > 0");
 			ASSERTSZ_Q(BaseDamagePerShot, "Expected base damage ptr");
 			ASSERTSZ_Q(AttackButtonPressTime > 0.0f, "Expected attack button press time > 0");
+			ASSERTSZ_Q(MinExtraDelayBetweenShots >= 0.0f, "Expected min extra delay between shots >= 0");
 
 			if ( needsAmmo )
 			{

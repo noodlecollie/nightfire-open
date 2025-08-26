@@ -1178,7 +1178,7 @@ void CConfiguration::LoadWeapon(const WeaponAtts::WACollection& atts)
 
 		// Hold time: amount of time to hold the button down for.
 		// Shot time: amount of time after releasing to wait before pressing again.
-		const float delayPerShot = 1.0f / attackMode->AttackRate;
+		const float delayPerShot = (1.0f / attackMode->AttackRate);
 
 		if ( attackMode->AttackButtonPressTime > 0.9f * delayPerShot )
 		{
@@ -1190,6 +1190,9 @@ void CConfiguration::LoadWeapon(const WeaponAtts::WACollection& atts)
 			pWeapon->fHoldTime[modeIndex] = attackMode->AttackButtonPressTime;
 			pWeapon->fShotTime[modeIndex] = delayPerShot - attackMode->AttackButtonPressTime;
 		}
+
+		// Add some extra delay so the bot doesn't refire inhumanly fast.
+		pWeapon->fShotTime[modeIndex] += attackMode->MinExtraDelayBetweenShots;
 
 		pWeapon->iReloadBy[modeIndex] =
 			attackMode->ReloadStyle == WeaponAtts::BotWeaponReloadStyle::PerClip ? attackMode->ClipSize : 1;

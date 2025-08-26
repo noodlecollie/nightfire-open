@@ -141,5 +141,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		// TODO: Need to support multiple zoom levels before we can allow bot use.
 		// NB. Max range for deepest zoom is probably around 3000.
+		// Min extra refire delay = 1.5s
 	}
 );

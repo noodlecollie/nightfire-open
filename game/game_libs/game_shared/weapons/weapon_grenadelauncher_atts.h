@@ -125,5 +125,6 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		botPriAttackMode->EnemyAimAt = BotEnemyAimAt::Foot;
 		botPriAttackMode->MinEffectiveRange = 384.0f;
 		botPriAttackMode->MaxEffectiveRange = 896.0f;
+		botPriAttackMode->MinExtraDelayBetweenShots = 0.5f;
 	}
 );
