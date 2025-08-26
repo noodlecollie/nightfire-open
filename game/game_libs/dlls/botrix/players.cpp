@@ -1,6 +1,7 @@
 #include <good/string_buffer.h>
 #include <good/string_utils.h>
 #include <good/vector.h>
+#include <cstddef>
 
 #include "botrix/players.h"
 #include "botrix/server_plugin.h"
@@ -12,6 +13,7 @@
 #include "botrix/type2string.h"
 #include "PlatformLib/String.h"
 #include "client.h"
+#include "engine_util.h"
 
 //----------------------------------------------------------------------------------------------------------------
 bool CPlayers::bAddingBot = false;
@@ -288,7 +290,8 @@ CPlayer* CPlayers::AddBot(
 	TClass iClass,
 	TBotIntelligence iIntelligence,
 	int argc,
-	const char** argv)
+	const char** argv
+)
 {
 	if ( !CBotrixServerPlugin::MapIsRunning() )
 	{

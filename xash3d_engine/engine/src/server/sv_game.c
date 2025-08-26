@@ -662,7 +662,8 @@ void SV_CreateDecal(
 	int entityIndex,
 	int modelIndex,
 	int flags,
-	float scale)
+	float scale
+)
 {
 	if ( msg == &sv.signon && sv.state != ss_loading )
 		return;
@@ -792,7 +793,8 @@ void SV_RestartAmbientSounds(void)
 			si->volume,
 			si->attenuation,
 			0,
-			si->pitch);
+			si->pitch
+		);
 	}
 
 #if !XASH_DEDICATED()  // TODO: ???
@@ -866,7 +868,8 @@ void SV_RestartDecals(void)
 				entry->entityIndex,
 				modelIndex,
 				entry->flags,
-				entry->scale);
+				entry->scale
+			);
 	}
 
 	Z_Free(host.decalList);
@@ -940,7 +943,8 @@ void SV_QueueChangeLevel(const char* level, const char* landname)
 			Con_Printf(
 				S_WARN "changelevel: %s doesn't contain landmark [%s]. smooth transition was disabled\n",
 				mapname,
-				landname);
+				landname
+			);
 			smooth = false;
 		}
 	}
@@ -2270,7 +2274,8 @@ int SV_BuildSoundMsg(
 	float attn,
 	int flags,
 	int pitch,
-	const vec3_t pos)
+	const vec3_t pos
+)
 {
 	int entityIndex;
 	int sound_idx;
@@ -2572,7 +2577,8 @@ pfnTraceHull(const float* v1, const float* v2, int fNoMonsters, int hullNumber, 
 		v2,
 		fNoMonsters,
 		pentToSkip,
-		false);
+		false
+	);
 	SV_ConvertTrace(ptr, &trace);
 }
 
@@ -2583,7 +2589,8 @@ static void GAME_EXPORT pfnTraceCustomHull(
 	const float* mins,
 	const float* maxs,
 	edict_t* pentToSkip,
-	TraceResult* ptr)
+	TraceResult* ptr
+)
 {
 	trace_t trace;
 
@@ -2604,7 +2611,8 @@ static int GAME_EXPORT pfnTraceMonsterHull(
 	const float* v2,
 	int fNoMonsters,
 	edict_t* pentToSkip,
-	TraceResult* ptr)
+	TraceResult* ptr
+)
 {
 	qboolean monsterClip;
 	trace_t trace;
@@ -3058,7 +3066,8 @@ void GAME_EXPORT pfnMessageEnd(void)
 				S_ERROR "SV_Multicast: %s expected %i bytes, but %i were written. Ignored.\n",
 				name,
 				expsize,
-				svgame.msg_realsize);
+				svgame.msg_realsize
+			);
 			MSG_Clear(&sv.multicast);
 			return;
 		}
@@ -3392,7 +3401,8 @@ void GAME_EXPORT pfnBuildSoundMsg(
 	int msg_dest,
 	int msg_type,
 	const float* pOrigin,
-	edict_t* pSend)
+	edict_t* pSend
+)
 {
 	pfnMessageBegin(msg_dest, msg_type, pOrigin, pSend);
 	SV_BuildSoundMsg(&sv.multicast, pSource, chan, samp, (int)(fvol * 255.0f), attn, fFlags, pitch, pOrigin);
@@ -4082,7 +4092,8 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 		Log_Printf(
 			S_ERROR "pfnWriteElementsToFile: Invalid file wrapper pointer, refusing to write %zux %zu bytes\n",
 			elementCount,
-			elementSize);
+			elementSize
+		);
 
 		return false;
 	}
@@ -4092,7 +4103,8 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 		Log_Printf(
 			S_ERROR "pfnWriteElementsToFile: Invalid inner file pointer, refusing to write %zux %zu bytes\n",
 			elementCount,
-			elementSize);
+			elementSize
+		);
 
 		return false;
 	}
@@ -4104,7 +4116,8 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 		Log_Printf(
 			S_ERROR "pfnWriteElementsToFile: Ignoring request to write %zux %zu bytes\n",
 			elementCount,
-			elementSize);
+			elementSize
+		);
 
 		return false;
 	}
@@ -4121,7 +4134,8 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 			bytesToWrite,
 			elementCount,
 			elementSize,
-			bytesWritten);
+			bytesWritten
+		);
 	}
 
 	return success;
@@ -4131,7 +4145,7 @@ static const byte* pfnGetPvsForPoint(const float* vecPoint)
 {
 	if ( !vecPoint )
 	{
-		return false;
+		return NULL;
 	}
 
 	return Mod_GetPVSForPoint(vecPoint);
@@ -4456,7 +4470,8 @@ void GAME_EXPORT pfnRunPlayerMove(
 	float upmove,
 	word buttons,
 	byte impulse,
-	byte msec)
+	byte msec
+)
 {
 	sv_client_t *cl, *oldcl;
 	usercmd_t cmd;
@@ -4781,7 +4796,8 @@ void GAME_EXPORT SV_PlaybackEventFull(const struct event_fire_args_s* inArgs)
 	{
 		Con_DPrintf(
 			S_ERROR "%s: not a FEV_GLOBAL event missing origin. Ignored.\n",
-			sv.event_precache[inArgs->eventIndex]);
+			sv.event_precache[inArgs->eventIndex]
+		);
 		return;
 	}
 
@@ -5982,7 +5998,8 @@ qboolean SV_LoadProgs(const char* name)
 				Con_Printf(
 					S_WARN "SV_LoadProgs: new interface version %i should be %i\n",
 					NEW_DLL_FUNCTIONS_VERSION,
-					version);
+					version
+				);
 			memset(&svgame.dllFuncs2, 0, sizeof(svgame.dllFuncs2));
 		}
 	}

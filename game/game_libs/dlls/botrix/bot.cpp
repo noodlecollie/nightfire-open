@@ -686,6 +686,30 @@ void CBotrixBot::PreThink()
 		static_cast<byte>(gpGlobals->frametime * 1000.0f)
 	);
 
+	VectorCopy(m_cCmd.viewangles, m_pEdict->v.v_angle);
+
+	// Not great that this needs to be inserted wantonly into the code.
+	// Really things should be tidied up so that this is done
+	// in one canonical place.
+	// Taken from Rho-Bot code.
+
+	// Scott: SDK 2.x fix for body direction. From botman's HPB Bot
+	if ( m_pEdict->v.v_angle[YAW] > 180 )
+	{
+		m_pEdict->v.v_angle[YAW] -= 360;
+	}
+
+	if ( m_pEdict->v.v_angle[PITCH] > 180 )
+	{
+		m_pEdict->v.v_angle[PITCH] -= 360;
+	}
+
+	m_pEdict->v.angles[PITCH] = m_pEdict->v.v_angle[PITCH] / 3;
+	m_pEdict->v.angles[YAW] = m_pEdict->v.v_angle[YAW];
+	m_pEdict->v.angles[ROLL] = 0.0;
+	m_pEdict->v.v_angle[PITCH] = -m_pEdict->v.v_angle[PITCH];  // invert this dimension for engine
+	// End Fix
+
 #ifdef BOTRIX_SOURCE_ENGINE_2006
 	m_pController->PostClientMessagesSent();
 #endif

@@ -394,7 +394,8 @@ void CBasePlayer::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	if ( pev->takedamage )
 	{
@@ -819,7 +820,8 @@ void CBasePlayer::PackDeadPlayerItems(void)
 	{
 		pWeaponBox->PackAmmo(
 			MAKE_STRING(CBasePlayerItem::AmmoInfoArray[iPackAmmo[iPA]].pszName),
-			m_rgAmmo[iPackAmmo[iPA]]);
+			m_rgAmmo[iPackAmmo[iPA]]
+		);
 		iPA++;
 	}
 
@@ -1950,7 +1952,8 @@ void CBasePlayer::PreThink(void)
 				Vector(pev->origin) + Vector(0, 0, -38),
 				ignore_monsters,
 				ENT(pev),
-				&trainTrace);
+				&trainTrace
+			);
 
 			// HACKHACK - Just look for the func_tracktrain classname
 			if ( trainTrace.flFraction != 1.0 && trainTrace.pHit )
@@ -1964,9 +1967,8 @@ void CBasePlayer::PreThink(void)
 				return;
 			}
 		}
-		else if (
-			!FBitSet(pev->flags, FL_ONGROUND) || FBitSet(pTrain->pev->spawnflags, SF_TRACKTRAIN_NOCONTROL) ||
-			(pev->button & (IN_MOVELEFT | IN_MOVERIGHT)) )
+		else if ( !FBitSet(pev->flags, FL_ONGROUND) || FBitSet(pTrain->pev->spawnflags, SF_TRACKTRAIN_NOCONTROL) ||
+				  (pev->button & (IN_MOVELEFT | IN_MOVERIGHT)) )
 		{
 			// Turn off the train if you jump, strafe, or the train controls go dead
 			m_afPhysicsFlags &= ~PFLAG_ONTRAIN;
@@ -3253,7 +3255,8 @@ void CSprayCan::Think(void)
 		Vector(pev->origin) + Vector(gpGlobals->v_forward) * 128,
 		ignore_monsters,
 		pev->owner,
-		&tr);
+		&tr
+	);
 
 	// No customization present.
 	if ( nFrames == -1 )
@@ -3303,7 +3306,8 @@ void CBloodSplat::Spray(void)
 			Vector(pev->origin) + Vector(gpGlobals->v_forward) * 128,
 			ignore_monsters,
 			pev->owner,
-			&tr);
+			&tr
+		);
 
 		UTIL_BloodDecalTrace(&tr, BLOOD_COLOR_RED);
 	}
@@ -3339,7 +3343,8 @@ CBaseEntity* FindEntityForward(CBaseEntity* pMe)
 		Vector(pMe->pev->origin) + Vector(pMe->pev->view_ofs) + Vector(gpGlobals->v_forward) * 8192,
 		dont_ignore_monsters,
 		pMe->edict(),
-		&tr);
+		&tr
+	);
 
 	if ( tr.flFraction != 1.0 && !FNullEnt(tr.pHit) )
 	{
@@ -3479,7 +3484,8 @@ void CBasePlayer::ImpulseCommands()
 				Vector(pev->origin) + Vector(pev->view_ofs) + Vector(gpGlobals->v_forward) * 128,
 				ignore_monsters,
 				ENT(pev),
-				&tr);
+				&tr
+			);
 
 			if ( tr.flFraction != 1.0 )
 			{
@@ -3524,7 +3530,8 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 					{
 						GiveNamedItem(atts.Core.Classname);
 					}
-				});
+				}
+			);
 			gEvilImpulse101 = FALSE;
 			break;
 		case 102:
@@ -3634,7 +3641,8 @@ void CBasePlayer::CheatImpulseCommands(int iImpulse)
 				Vector(pev->origin) + Vector(pev->view_ofs) + Vector(gpGlobals->v_forward) * 128,
 				ignore_monsters,
 				ENT(pev),
-				&tr);
+				&tr
+			);
 
 			if ( tr.flFraction != 1.0 )
 			{
@@ -4617,7 +4625,8 @@ void CBasePlayer::DropPlayerItem(const char* pszItemName)
 				"weaponbox",
 				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 10,
 				pev->angles,
-				edict());
+				edict()
+			);
 
 			pWeaponBox->pev->angles[PITCH] = 0;
 			pWeaponBox->pev->angles[ROLL] = 0;
@@ -4808,7 +4817,8 @@ TYPEDESCRIPTION CRevertSaved::m_SaveData[] = {
 	DEFINE_FIELD(
 		CRevertSaved,
 		m_messageTime,
-		FIELD_FLOAT),  // These are not actual times, but durations, so save as floats
+		FIELD_FLOAT
+	),  // These are not actual times, but durations, so save as floats
 	DEFINE_FIELD(CRevertSaved, m_loadTime, FIELD_FLOAT),
 };
 
