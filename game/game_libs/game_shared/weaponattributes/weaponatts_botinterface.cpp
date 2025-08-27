@@ -65,6 +65,14 @@ namespace WeaponAtts
 
 				BaseDamagePerShot = melee->BaseDamagePerHit;
 
+				// Cater for the hull bounds of a player here, since the enemy
+				// distance is calculated from the centre of the hull.
+				// Add a couple of units of padding too.
+				const float hullDim = VEC_HULL_MAX.x + 2;
+				const float radius = sqrtf(2.0f * hullDim * hullDim);
+				MinEffectiveRange = 0.0f;
+				MaxEffectiveRange = melee->Reach + radius;
+
 				break;
 			}
 

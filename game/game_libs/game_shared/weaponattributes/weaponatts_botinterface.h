@@ -102,10 +102,6 @@ namespace WeaponAtts
 		float ReloadStartDelay = 0.0f;
 		float MinExtraDelayBetweenShots = 0.0f;  // To limit how fast bots can refire
 
-		// Max range <= 0 implies no max range.
-		float MinEffectiveRange = 0.0f;
-		float MaxEffectiveRange = 0.0f;
-
 		// Set by ApplyMode():
 		float AttackRate = 0.0f;
 		size_t AmmoDecrementPerAttackCycle = 1;
@@ -114,6 +110,12 @@ namespace WeaponAtts
 		float ReloadDuration = 0.0f;
 		float ParabolicDistanceAt0Degrees = 0.0f;
 		float ParabolicDistanceAt45Degrees = 0.0f;
+
+		// Set by ApplyMode() only for melee.
+		// Other attack types will need these set manually.
+		// Max range <= 0 implies no max range.
+		float MinEffectiveRange = 0.0f;
+		float MaxEffectiveRange = 0.0f;
 
 		// Set by ApplyAmmo():
 		int MaxAmmo = 0;

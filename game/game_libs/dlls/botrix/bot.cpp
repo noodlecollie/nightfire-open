@@ -2781,6 +2781,7 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 							if ( pWeapon->IsMelee() )
 							{
 								int iSec = pWeapon->Damage(CWeapon::PRIMARY) < pWeapon->Damage(CWeapon::SECONDARY);
+
 								if ( pWeapon->IsDistanceSafe(m_fDistanceSqrToEnemy, iSec) )
 								{
 									WeaponShoot(iSec);

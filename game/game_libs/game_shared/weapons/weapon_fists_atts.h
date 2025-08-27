@@ -57,6 +57,7 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->AttackRate = FISTS_PUNCH_RATE_SINGLE;
 		priAttack->BaseDamagePerHit = &skilldata_t::plrDmgFists;
 		priAttack->DecalOnImpact = false;
+		priAttack->Reach = 32.0f;
 		priAttack->Strikes.AddToTail(7.0f / 40.0f);
 		priAttack->Volume = 128;
 		priAttack->ViewModelAnimList_Attack << FISTS_JAB;
@@ -109,11 +110,10 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		botIfc.Type = BotWeaponType::Melee;
 		botIfc.Preference = BotWeaponPreference::Lowest;
 
+		// Effective range is calculated in ApplyMode(), so no need to set here.
 		WABotAttackMode* botPriAttackMode = new WABotAttackMode();
 		botIfc.PrimaryAttackMode.reset(botPriAttackMode);
 		botPriAttackMode->ApplyMode(priAttack);
 		botPriAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
-		botPriAttackMode->MinEffectiveRange = 0.0f;
-		botPriAttackMode->MaxEffectiveRange = 32.0f;
 	}
 );
