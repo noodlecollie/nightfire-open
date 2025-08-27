@@ -1173,7 +1173,7 @@ void CConfiguration::LoadWeapon(const WeaponAtts::WACollection& atts)
 			continue;
 		}
 
-		pWeapon->iClipSize[modeIndex] = attackMode->ClipSize;
+		pWeapon->iClipSize[modeIndex] = static_cast<unsigned char>(attackMode->ClipSize);
 		pWeapon->fDamage[modeIndex] = gSkillData.*(attackMode->BaseDamagePerShot);
 
 		// Hold time: amount of time to hold the button down for.
@@ -1194,14 +1194,15 @@ void CConfiguration::LoadWeapon(const WeaponAtts::WACollection& atts)
 		// Add some extra delay so the bot doesn't refire inhumanly fast.
 		pWeapon->fShotTime[modeIndex] += attackMode->MinExtraDelayBetweenShots;
 
-		pWeapon->iReloadBy[modeIndex] =
-			attackMode->ReloadStyle == WeaponAtts::BotWeaponReloadStyle::PerClip ? attackMode->ClipSize : 1;
+		pWeapon->iReloadBy[modeIndex] = attackMode->ReloadStyle == WeaponAtts::BotWeaponReloadStyle::PerClip
+			? static_cast<unsigned char>(attackMode->ClipSize)
+			: 1;
 
 		pWeapon->fReloadTime[modeIndex] = attackMode->ReloadDuration;
 		pWeapon->fReloadStartTime[modeIndex] = attackMode->ReloadStartDelay;
-		pWeapon->iDefaultAmmo[modeIndex] = attackMode->DefaultAmmoOnFirstPickup;
-		pWeapon->iMaxAmmo[modeIndex] = attackMode->MaxAmmo;
-		pWeapon->iAttackBullets[modeIndex] = attackMode->AmmoDecrementPerAttackCycle;
+		pWeapon->iDefaultAmmo[modeIndex] = static_cast<unsigned char>(attackMode->DefaultAmmoOnFirstPickup);
+		pWeapon->iMaxAmmo[modeIndex] = static_cast<unsigned char>(attackMode->MaxAmmo);
+		pWeapon->iAttackBullets[modeIndex] = static_cast<unsigned char>(attackMode->AmmoDecrementPerAttackCycle);
 		pWeapon->fMinDistanceSqr[modeIndex] = attackMode->MinEffectiveRange * attackMode->MinEffectiveRange;
 		pWeapon->fMaxDistanceSqr[modeIndex] = attackMode->MaxEffectiveRange * attackMode->MaxEffectiveRange;
 		pWeapon->iParabolicDistance0[modeIndex] = static_cast<int>(attackMode->ParabolicDistanceAt0Degrees);
