@@ -131,7 +131,7 @@ bool CBotrixEngineUtil::IsVisiblePVS(const Vector& v)
 	return g_engfuncs.pfnPointInPvs(v, pvs);
 }
 
-bool CBotrixEngineUtil::IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility iVisibility, bool bUsePVS)
+bool CBotrixEngineUtil::IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility /* iVisibility */, bool bUsePVS)
 {
 	if ( bUsePVS )
 	{
@@ -146,7 +146,7 @@ bool CBotrixEngineUtil::IsVisible(const Vector& vSrc, const Vector& vDest, TVisi
 	// NFTODO: We currently don't have the same trace filtering granularity as
 	// the Source engine. We need to implement this in future for Ronin
 	// collisions anyway, so this should be updated when that happens.
-	TRACE_LINE(vSrc, vDest, iVisibility == EVisibilityBots, nullptr, &m_TraceResult);
+	TRACE_LINE(vSrc, vDest, TRUE, nullptr, &m_TraceResult);
 
 	return !TraceHitSomething();
 }
