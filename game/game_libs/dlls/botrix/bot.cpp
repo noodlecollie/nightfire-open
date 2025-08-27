@@ -27,18 +27,12 @@ float CBotrixBot::fInvalidWaypointSuicideTime = 10.0f;
 float CBotrixBot::m_fTimeIntervalCheckUsingMachines = 0.5f;
 int CBotrixBot::m_iCheckEntitiesPerFrame = 4;
 
-#define BotNotifyUnexpectedBehaviourAndThen(exp, ...) \
+#define NotifyIfFailed(exp, ...) \
 	GOOD_SCOPE_START \
 	if ( !(exp) ) \
 	{ \
-		BLOG_E( \
-			"Unexpected behavioural failure: (" #exp "); in %s(), file %s, line %d\n", \
-			__FUNCTION__, \
-			__FILE__, \
-			__LINE__ \
-		); \
+		BLOG_E(__VA_ARGS__); \
 		BreakDebugger(); \
-		__VA_ARGS__; \
 	} \
 	GOOD_SCOPE_END
 
@@ -974,7 +968,18 @@ void CBotrixBot::DoPathAction()
 	if ( CWaypoint::IsValid(iNextWaypoint) && (iCurrentWaypoint != iNextWaypoint) )
 	{
 		CWaypointPath* pCurrentPath = CWaypoints::GetPath(iCurrentWaypoint, iNextWaypoint);
-		BotNotifyUnexpectedBehaviourAndThen(pCurrentPath, return);
+
+		NotifyIfFailed(
+			pCurrentPath,
+			"Expected valid path from waypoint %d to waypoint %d\n",
+			iCurrentWaypoint,
+			iNextWaypoint
+		);
+
+		if ( !pCurrentPath )
+		{
+			return;
+		}
 
 		if ( FLAG_SOME_SET(FPathBreak, pCurrentPath->iFlags) )
 		{
@@ -2437,7 +2442,17 @@ bool CBotrixBot::NormalMove()
 
 	if ( m_bDestinationChanged && CWaypoint::IsValid(iNextWaypoint) )
 	{
-		BotNotifyUnexpectedBehaviourAndThen(iNextWaypoint != iCurrentWaypoint, return true);
+		NotifyIfFailed(
+			iNextWaypoint != iCurrentWaypoint,
+			"Expected next waypoint %d to be different to current waypoint\n",
+			iNextWaypoint
+		);
+
+		if ( iNextWaypoint == iCurrentWaypoint )
+		{
+			return true;
+		}
+
 		m_vDestination = CWaypoints::Get(iNextWaypoint).vOrigin;
 		DoPathAction();
 		m_bDestinationChanged = false;
