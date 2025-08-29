@@ -3694,7 +3694,7 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 	size_t retries = 0;
 	const size_t maxretries = 5;
 
-	do
+	while ( retries < maxretries )
 	{
 		retries++;
 		const bool outOfRetries = retries >= maxretries;
@@ -3869,8 +3869,10 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 				m_bNeedMove = m_bUseNavigatorToMove = m_bDestinationChanged = true;
 			}
 		}
+
+		// If we got here, everything was OK.
+		break;
 	}
-	while ( retries < maxretries );
 
 	m_cSkipWeapons.reset();
 }
