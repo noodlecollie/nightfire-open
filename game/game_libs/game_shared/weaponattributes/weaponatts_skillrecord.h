@@ -9,7 +9,7 @@ namespace WeaponAtts
 {
 	struct WASkillRecord
 	{
-		typedef float skilldata_t::*SkillDataEntryPtr;
+		typedef float skilldata_t::* SkillDataEntryPtr;
 
 		WASkillRecord(const char* cvarBaseName, SkillDataEntryPtr entry);
 		WASkillRecord(const WASkillRecord& other);
@@ -17,7 +17,7 @@ namespace WeaponAtts
 		// After registring cvars, the instance of the class must persist until shutdown.
 		// This class is designed to be used statically, so it should be OK.
 		void RegisterCvars() const;
-		void UpdateSkillValue(skilldata_t* instance) const;
+		void UpdateSkillValue(skilldata_t& instance) const;
 
 	private:
 		SkillDataEntryPtr m_Entry;

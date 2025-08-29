@@ -12,11 +12,9 @@
  *   without written permission from Valve LLC.
  *
  ****/
-//
-// cl_util.h
-//
-#ifndef CL_UTIL_H
-#define CL_UTIL_H
+
+#pragma once
+
 #include "exportdef.h"
 #include "EnginePublicAPI/cvardef.h"
 
@@ -26,6 +24,17 @@
 #define TRUE 1
 #define FALSE 0
 #endif
+
+template<size_t CHANNEL>
+static unsigned char ColChannel(uint32_t colour)
+{
+	static_assert(CHANNEL < 4, "Expected channel in range [0 3]");
+
+	constexpr uint32_t MASK = 0xFF000000 >> (CHANNEL * 8);
+	constexpr size_t END_SHIFT = (3 - CHANNEL) * 8;
+
+	return static_cast<unsigned char>((colour & MASK) >> END_SHIFT);
+}
 
 // Macros to hook function calls into the HUD object
 
@@ -211,4 +220,5 @@ HSPRITE LoadSprite(const char* pszName);
 
 bool HUD_MessageBox(const char* msg);
 bool IsXashFWGS();
-#endif
+
+void RenderTextAtWorldLocation(const Vector& position, const char* text, uint32_t colour, int lineOffset = 0);

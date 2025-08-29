@@ -8,7 +8,7 @@ namespace WeaponAtts
 {
 	struct WAMeleeAttack : public WABaseAttack
 	{
-		typedef WASkillRecord::SkillDataEntryPtr SkillDataEntryPtr;
+		using SkillDataEntryPtr = WASkillRecord::SkillDataEntryPtr;
 
 		float Reach = 32.0f;  // Defaults to crowbar's reach
 		SkillDataEntryPtr BaseDamagePerHit = nullptr;
@@ -27,7 +27,7 @@ namespace WeaponAtts
 			return WABaseAttack::Classification::Melee;
 		}
 
-		virtual void Validate() const override
+		void Validate() const override
 		{
 			WABaseAttack::Validate();
 

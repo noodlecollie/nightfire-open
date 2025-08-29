@@ -5,6 +5,10 @@
 #include "botrix/botrixmod.h"
 #include "EnginePublicAPI/const.h"
 #include "MathLib/mathlib.h"
+#include "good/defines.h"
+#include "skill.h"
+#include "types.h"
+#include "weaponattributes/weaponatts_collection.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #define WEAPON_TRACE(...) BLOG_T(__VA_ARGS__)
@@ -30,7 +34,12 @@ void CWeaponWithAmmo::GameFrame(int& iButtons)
 		}
 		else if ( m_bReloadingStart )
 		{
-			WEAPON_TRACE("%.5f end reload start.", CBotrixServerPlugin::GetTime());
+			WEAPON_TRACE(
+				"[%.5f %s] end reload start",
+				CBotrixServerPlugin::GetTime(),
+				m_pWeapon->pWeaponClass->sClassName.c_str()
+			);
+
 			m_bReloadingStart = false;
 			m_bReloading = true;
 			m_fEndTime = CBotrixServerPlugin::GetTime() + m_pWeapon->fReloadTime[m_iSecondary];
@@ -79,7 +88,8 @@ void CWeaponWithAmmo::Shoot(int iSecondary)
 	GoodAssert(
 		CanUse() &&
 		(HasAmmoInClip(iSecondary) || IsMelee() || IsPhysics() ||
-		 FLAG_SOME_SET(FWeaponHasSecondary, m_pWeapon->iFlags[iSecondary])));
+		 FLAG_SOME_SET(FWeaponHasSecondary, m_pWeapon->iFlags[iSecondary]))
+	);
 
 	m_bReloading = m_bReloadingStart = false;  // Stop reloading if weapon time is shotgun-like.
 	m_iSecondary = iSecondary;
@@ -87,7 +97,14 @@ void CWeaponWithAmmo::Shoot(int iSecondary)
 	float fHold = m_pWeapon->fHoldTime[iSecondary];
 	if ( fHold )
 	{
-		WEAPON_TRACE("%.5f hold %d.", CBotrixServerPlugin::GetTime(), iSecondary);
+		WEAPON_TRACE(
+			"[%.5f %s] hold %s attack for %fs",
+			CBotrixServerPlugin::GetTime(),
+			m_pWeapon->pWeaponClass->sClassName.c_str(),
+			iSecondary ? "secondary" : "primary",
+			fHold
+		);
+
 		m_bHolding = true;
 		m_fEndTime = CBotrixServerPlugin::GetTime() + fHold;
 	}
@@ -114,7 +131,14 @@ void CWeaponWithAmmo::EndHold()
 
 	if ( fShotTime )
 	{
-		WEAPON_TRACE("Time %.5f shoot %d.", CBotrixServerPlugin::GetTime(), m_iSecondary);
+		WEAPON_TRACE(
+			"[%.5f %s] shoot %s for %fs",
+			CBotrixServerPlugin::GetTime(),
+			m_pWeapon->pWeaponClass->sClassName.c_str(),
+			m_iSecondary ? "secondary" : "primary",
+			fShotTime
+		);
+
 		m_bShooting = true;
 		m_fEndTime = CBotrixServerPlugin::GetTime() + fShotTime;
 	}
@@ -125,16 +149,24 @@ void CWeaponWithAmmo::Reload(int iSecondary)
 {
 	GoodAssert(!IsReloading() && CanUse() && NeedReload(iSecondary));
 	m_iSecondary = iSecondary;
+
 	if ( m_pWeapon->fReloadStartTime[iSecondary] )
 	{
-		WEAPON_TRACE("%.5f reload start.", CBotrixServerPlugin::GetTime());
+		WEAPON_TRACE(
+			"[%.5f %s] reload start",
+			CBotrixServerPlugin::GetTime(),
+			m_pWeapon->pWeaponClass->sClassName.c_str()
+		);
+
 		m_bReloadingStart = true;
 		m_fEndTime = CBotrixServerPlugin::GetTime() + m_pWeapon->fReloadStartTime[iSecondary];
 	}
 	else
 	{
-		WEAPON_TRACE("%.5f reload.", CBotrixServerPlugin::GetTime());
+		WEAPON_TRACE("[%.5f %s] reload", CBotrixServerPlugin::GetTime(), m_pWeapon->pWeaponClass->sClassName.c_str());
+
 		m_bReloading = true;
+
 		if ( m_pWeapon->fReloadTime[iSecondary] )
 		{
 			m_fEndTime = CBotrixServerPlugin::GetTime() + m_pWeapon->fReloadTime[iSecondary];
@@ -199,6 +231,7 @@ void CWeaponWithAmmo::EndReload()
 	int iClipSize = m_pWeapon->iClipSize[m_iSecondary];
 	int iReloadBy = MIN2(m_pWeapon->iReloadBy[m_iSecondary], m_iBulletsExtra[m_iSecondary]);
 	int iLeft = iClipSize - m_iBulletsInClip[m_iSecondary];
+
 	if ( iReloadBy > iLeft )
 	{
 		iReloadBy = iLeft;
@@ -206,14 +239,27 @@ void CWeaponWithAmmo::EndReload()
 
 	m_iBulletsInClip[m_iSecondary] += iReloadBy;
 	m_iBulletsExtra[m_iSecondary] -= iReloadBy;
+
 	if ( (m_iBulletsInClip[m_iSecondary] < iClipSize) && m_iBulletsExtra[m_iSecondary] )
 	{
-		WEAPON_TRACE("%.5f end partial reload by %d.", CBotrixServerPlugin::GetTime(), iReloadBy);
+		WEAPON_TRACE(
+			"[%.5f %s] end partial reload by ammo delta of %d",
+			CBotrixServerPlugin::GetTime(),
+			m_pWeapon->pWeaponClass->sClassName.c_str(),
+			iReloadBy
+		);
+
 		m_fEndTime = CBotrixServerPlugin::GetTime() + m_pWeapon->fReloadTime[m_iSecondary];  // Do next reload.
 	}
 	else
 	{
-		WEAPON_TRACE("%.5f end reload by %d.", CBotrixServerPlugin::GetTime(), iReloadBy);
+		WEAPON_TRACE(
+			"[%.5f %s] end reload by ammo delta of %d",
+			CBotrixServerPlugin::GetTime(),
+			m_pWeapon->pWeaponClass->sClassName.c_str(),
+			iReloadBy
+		);
+
 		m_bReloading = false;
 	}
 }
@@ -224,7 +270,8 @@ void CWeaponWithAmmo::GetLook(
 	const CPlayer* pTo,
 	TBotIntelligence iIntelligence,
 	int iSecondary,
-	Vector& vResult) const
+	Vector& vResult
+) const
 {
 	// Assume we can see enemy head.
 	switch ( m_pWeapon->iAim[iSecondary] )
@@ -277,7 +324,8 @@ bool CWeaponWithAmmo::GetLook(
 	float fDistanceSqr,
 	TBotIntelligence iBotIntelligence,
 	int iSecondary,
-	Vector& vResult) const
+	Vector& vResult
+) const
 {
 	GoodAssert(IsDistanceSafe(fDistanceSqr, iSecondary));
 

@@ -3,6 +3,7 @@
 #include "gamerules.h"
 #include "weapons.h"
 #include "botrix/engine_util.h"
+#include "botrix/botrixmod.h"
 
 CBotrixPlayerInfo::CBotrixPlayerInfo(struct edict_s* player) :
 	m_pPlayer(player)
@@ -59,6 +60,12 @@ int CBotrixPlayerInfo::GetTeamIndex() const
 	if ( !player )
 	{
 		return -1;
+	}
+
+	if ( !g_pGameRules->IsTeamplay() )
+	{
+		// Return the deathmatch team
+		return CBotrixMod::iUnassignedTeam;
 	}
 
 	return g_pGameRules->GetTeamIndex(player->TeamID());

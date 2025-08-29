@@ -301,7 +301,9 @@ protected:  // Methods.
 	bool FollowEnemy(CPlayer* pEnemy)
 	{
 		if ( !pEnemy->IsAlive() || !CWaypoint::IsValid(pEnemy->iCurrentWaypoint) )
+		{
 			return false;
+		}
 
 		BotDebug("%s -> Follow enemy %s.", GetName(), pEnemy->GetName());
 		m_iDestinationWaypoint = pEnemy->iCurrentWaypoint;
@@ -316,8 +318,13 @@ protected:  // Methods.
 	TWeaponId WeaponSearch(const char* szWeapon)
 	{
 		for ( TWeaponId i = 0; i < m_aWeapons.size(); ++i )
+		{
 			if ( m_aWeapons[i].GetName() == szWeapon )
+			{
 				return i;
+			}
+		}
+
 		return EWeaponIdInvalid;
 	}
 
@@ -343,7 +350,8 @@ protected:  // Methods.
 			"%s -> Zoom %s: %s.",
 			GetName(),
 			m_aWeapons[m_iWeapon].GetName().c_str(),
-			cWeapon.IsUsingZoom() ? "true" : "false");
+			cWeapon.IsUsingZoom() ? "true" : "false"
+		);
 		FLAG_SET(IN_ATTACK2, m_cCmd.buttons);
 	}
 
@@ -610,6 +618,7 @@ protected:
 	void ChaseEnemy()
 	{
 		m_bChasing = FollowEnemy(m_pChasedEnemy);
+
 		if ( m_bChasing )
 		{
 			m_fChaseEnemyTime = CBotrixServerPlugin::GetTime() + (EBotPro - m_iIntelligence) + 0.5f;

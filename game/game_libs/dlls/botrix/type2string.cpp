@@ -428,7 +428,8 @@ good::string aWeaponFlags[EWeaponFlagsTotal] = {
 	"same_ammo",
 	"dont_add_clip",
 	"default_empty",
-	"bg_reload"};
+	"bg_reload",
+};
 
 TWeaponFlags CTypeToString::WeaponFlagsFromString(const good::string& sType)
 {

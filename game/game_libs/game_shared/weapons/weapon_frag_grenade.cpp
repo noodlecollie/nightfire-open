@@ -19,7 +19,6 @@ static constexpr float GRAVITY = 1.4f;
 static constexpr unsigned char SPRITE_SCALE = 60;
 static constexpr float TUMBLEVEL_MIN = -100.0f;
 static constexpr float TUMBLEVEL_MAX = -500.0f;
-static constexpr float LAUNCH_SPEED = 1000.0f;
 static constexpr float FUSE_TIME = 2.0f;
 static constexpr float PITCH_ADJUST = 5;
 static constexpr float PULL_DURATION_SECS = 0.75f;
@@ -40,7 +39,8 @@ CWeaponFragGrenade::CWeaponFragGrenade() :
 		{
 			CreateProjectile(mechanic);
 			return true;
-		});
+		}
+	);
 #endif
 
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
@@ -86,8 +86,7 @@ void CWeaponFragGrenade::WeaponTick()
 
 		default:
 		{
-			if ( CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) &&
-				 !HasAmmo(attackMode, 1, false) )
+			if ( CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) && !HasAmmo(attackMode, 1, false) )
 			{
 				RetireWeapon();
 			}
@@ -172,10 +171,10 @@ void CWeaponFragGrenade::CreateProjectile(const WeaponMechanics::CProjectileMech
 	grenade->SetExplodeSpriteScale(SPRITE_SCALE);
 	grenade->SetExplodeOnContact(false);
 	grenade->SetRandomTumbleAngVel(TUMBLEVEL_MIN, TUMBLEVEL_MAX);
-	grenade->SetDamageOnExplode(gSkillData.plrDmgFragGrenade);
+	grenade->SetDamageOnExplode(mechanic.ProjectileAttackMode()->BaseExplosionDamage);
 	grenade->SetPlayerContactDamageMultiplier(1.0f);
 	grenade->SetOwnerDamageMultiplier(gSkillData.plrSelfDmgMultFragGrenade);
-	grenade->SetSpeed(LAUNCH_SPEED);
+	grenade->SetSpeed(mechanic.ProjectileAttackMode()->LaunchSpeed);
 	grenade->SetFuseTime(FUSE_TIME);
 }
 #endif

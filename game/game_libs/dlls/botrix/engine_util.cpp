@@ -131,7 +131,7 @@ bool CBotrixEngineUtil::IsVisiblePVS(const Vector& v)
 	return g_engfuncs.pfnPointInPvs(v, pvs);
 }
 
-bool CBotrixEngineUtil::IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility iVisibility, bool bUsePVS)
+bool CBotrixEngineUtil::IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility /* iVisibility */, bool bUsePVS)
 {
 	if ( bUsePVS )
 	{
@@ -146,7 +146,7 @@ bool CBotrixEngineUtil::IsVisible(const Vector& vSrc, const Vector& vDest, TVisi
 	// NFTODO: We currently don't have the same trace filtering granularity as
 	// the Source engine. We need to implement this in future for Ronin
 	// collisions anyway, so this should be updated when that happens.
-	TRACE_LINE(vSrc, vDest, iVisibility != EVisibilityBots, nullptr, &m_TraceResult);
+	TRACE_LINE(vSrc, vDest, TRUE, nullptr, &m_TraceResult);
 
 	return !TraceHitSomething();
 }
@@ -207,7 +207,8 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	bool& bCrouch,
 	float fDistanceSqr,
 	float fMaxDistanceSqr,
-	bool bShowHelp)
+	bool bShowHelp
+)
 {
 	using namespace CustomGeometry;
 
@@ -334,11 +335,11 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::WaypointVisualisation));
 
 		helperGeomWriter->BeginGeometry(
-			DrawType::Lines,
 			(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
 				0x000000FF,
 			1.0f,
-			static_cast<float>(iTextTime));
+			static_cast<float>(iTextTime)
+		);
 	}
 
 	// Keep looping while we have attempts left, and while the hit point hasn't reached the destination.
@@ -652,7 +653,8 @@ void CBotrixEngineUtil::DrawBeam(
 	float fDrawTime,
 	unsigned char r,
 	unsigned char g,
-	unsigned char b)
+	unsigned char b
+)
 {
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BEAMPOINTS);
@@ -682,7 +684,8 @@ void CBotrixEngineUtil::DrawLine(
 	float fDrawTime,
 	unsigned char r,
 	unsigned char g,
-	unsigned char b)
+	unsigned char b
+)
 {
 	using namespace CustomGeometry;
 
@@ -705,7 +708,8 @@ void CBotrixEngineUtil::DrawBox(
 	float fDrawTime,
 	unsigned char r,
 	unsigned char g,
-	unsigned char b)
+	unsigned char b
+)
 {
 	using namespace CustomGeometry;
 
@@ -733,7 +737,8 @@ void CBotrixEngineUtil::DrawTextAtLocation(
 	unsigned char r,
 	unsigned char g,
 	unsigned char b,
-	const char* szText)
+	const char* szText
+)
 {
 	using namespace CustomGeometry;
 

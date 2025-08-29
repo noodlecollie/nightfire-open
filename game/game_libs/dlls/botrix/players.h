@@ -7,9 +7,10 @@
 #include "botrix/types.h"
 #include "botrix/server_plugin.h"
 
-#if defined(DEBUG) || defined(_DEBUG)
-#define DRAW_PLAYER_HULL
-#endif
+// TODO: Make this a convar instead
+// #if defined(DEBUG) || defined(_DEBUG)
+// #define DRAW_PLAYER_HULL
+// #endif
 
 class CClient;  // Forward declaration.
 class CBasePlayer;
@@ -279,7 +280,8 @@ public:
 		TClass iClass = -1,
 		TBotIntelligence iIntelligence = -1,
 		int argc = 0,
-		const char** argv = NULL);
+		const char** argv = NULL
+	);
 
 	/// Kick given bot.
 	static void KickBot(CPlayer* pPlayer);

@@ -7,6 +7,12 @@
 #include "standard_includes.h"
 #include <good/string_utils.h>
 #include "botrix/console_commands.h"
+#include "types.h"
+#include "weapon.h"
+#include "weaponregistry.h"
+#include "weaponattributes/weaponatts_collection.h"
+#include "utils/mp_utils.h"
+#include "bots/botregister.h"
 
 float CBotrixServerPlugin::m_fFpsEnd = 0.0f;
 int CBotrixServerPlugin::m_iFramesCount = 0;
@@ -19,6 +25,8 @@ float CBotrixServerPlugin::m_fTime = 0.0f;
 float CBotrixServerPlugin::m_fEngineTime = 0.0f;
 CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
 cvar_t CBotrixServerPlugin::m_TraceLogCvar = CONSTRUCT_CVAR_T("botrix_log_trace", 0, FCVAR_PRIVILEGED);
+bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
+CBotrixBotFactory CBotrixServerPlugin::m_BotFactory;
 
 void CBotrixServerPlugin::Init()
 {
@@ -78,6 +86,7 @@ void CBotrixServerPlugin::ServerDeactivate()
 	m_bMapRunning = false;
 	m_MapName = "";
 	m_bTeamPlay = false;
+	m_bSpawnedRegisterBots = false;
 }
 
 void CBotrixServerPlugin::ClientDisconnect(struct edict_s* entity)
@@ -228,6 +237,29 @@ void CBotrixServerPlugin::Think()
 	m_fTime += fDiff;
 #endif
 
+	// We do this here for now, as if a real player is in the game then we know it's safe
+	// to spawn bots. If we find a way of determining when it's safe otherwise, move this
+	// logic there instead.
+	if ( !m_bSpawnedRegisterBots )
+	{
+		for ( int clientIndex = 1; clientIndex <= gpGlobals->maxClients; ++clientIndex )
+		{
+			CBasePlayer* player = MPUtils::CBasePlayerFromIndex(clientIndex);
+
+			if ( !player )
+			{
+				continue;
+			}
+
+			if ( player->IsNetClient() && player->IsAlive() )
+			{
+				SpawnBotsInRegister();
+				m_bSpawnedRegisterBots = true;
+				break;
+			}
+		}
+	}
+
 	CBotrixMod::Think();
 
 	CItems::Update();
@@ -250,7 +282,8 @@ void CBotrixServerPlugin::Think()
 			"Botrix think time in %d frames (%.0f seconds): %.5f msecs",
 			iCount,
 			fInterval,
-			fSum / (float)iCount * 1000.0f);
+			fSum / (float)iCount * 1000.0f
+		);
 		fStart = fSum = 0.0f;
 		iCount = 0;
 	}
@@ -324,6 +357,9 @@ void CBotrixServerPlugin::PrepareLevel()
 
 	const float teamplay = CVAR_GET_FLOAT("mp_teamplay");
 	m_bTeamPlay = teamplay != 0.0f;
+
+	m_bSpawnedRegisterBots = false;
+	m_BotFactory.LoadBotProfiles();
 }
 
 void CBotrixServerPlugin::ActivateLevel()
@@ -332,6 +368,8 @@ void CBotrixServerPlugin::ActivateLevel()
 
 	const float maxPlayers = CVAR_GET_FLOAT("maxplayers");
 	CPlayers::Init(static_cast<int>(maxPlayers));
+
+	CConfiguration::RefreshWeaponConfig();
 
 	// Waypoints should be loaded after CPlayers::Size() is known.
 	if ( CWaypoints::Load() )
@@ -350,5 +388,18 @@ void CBotrixServerPlugin::ActivateLevel()
 	if ( CWaypoints::Size() <= CWaypoint::iWaypointsMaxCountToAnalyzeMap )
 	{
 		CWaypoints::Analyze(NULL, false);
+	}
+}
+
+void CBotrixServerPlugin::SpawnBotsInRegister()
+{
+	CBotRegister& reg = CBotRegister::StaticInstance();
+
+	for ( uint32_t index = 0; index < reg.Count(); ++index )
+	{
+		const CUtlString profileName = reg.ProfileName(index);
+		const CUtlString customName = reg.CustomName(index);
+
+		m_BotFactory.TryCreateBot(profileName, customName);
 	}
 }

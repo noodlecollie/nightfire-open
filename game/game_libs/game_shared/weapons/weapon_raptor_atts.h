@@ -119,4 +119,18 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->AttackSounds.MinPitch = 95;
 		priAttack->AttackSounds.MaxPitch = 100;
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_raptor/raptor_fire1.wav";
-	});
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::HitscanSingleShot;
+		botIfc.Preference = BotWeaponPreference::High;
+
+		WABotAttackMode* botPrimaryAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botPrimaryAttackMode);
+		botPrimaryAttackMode->ApplyMode(priAttack);
+		botPrimaryAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botPrimaryAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
+		botPrimaryAttackMode->MinEffectiveRange = 0.0f;
+		botPrimaryAttackMode->MaxEffectiveRange = 1280.0f;
+		botPrimaryAttackMode->MinExtraDelayBetweenShots = 0.25f;
+	}
+);

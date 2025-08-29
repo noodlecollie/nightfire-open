@@ -6,6 +6,12 @@
 #include "botrix/types.h"
 #include "botrix/item.h"
 #include "botrix/engine_util.h"
+#include <memory>
+
+namespace WeaponAtts
+{
+	struct WACollection;
+};
 
 //****************************************************************************************************************
 /// Weapon abstract class. Used to get needed angles to aim.
@@ -54,7 +60,8 @@ public:
 	float fMinDistanceSqr[2] = {0.0f, 0.0f};  ///< Minimum distance to enemy to safely use this weapon (0 by default).
 	float fMaxDistanceSqr[2] = {
 		0.0f,
-		0.0f};  ///< Maximum distance to enemy to be able to use this weapon (0 by default).
+		0.0f
+	};  ///< Maximum distance to enemy to be able to use this weapon (0 by default).
 	float fHolsterTime = 0.0f;  ///< Time from change weapon to be able to shoot.
 	float fHoldTime[2] = {0.0f, 0.0f};  ///< Time to hold down attack button. Useful for grenades.
 	float fShotTime[2] = {0.0f, 0.0f};  ///< Duration of shoot (primary and secondary).
@@ -66,7 +73,8 @@ public:
 	unsigned char iDefaultAmmo[2] = {0, 0};  ///< Count of bullets this weapon gives by default.
 	unsigned char iMaxAmmo[2] = {
 		0,
-		0};  ///< Count of max bullets this weapon can have (besides the clip in the weapon).
+		0
+	};  ///< Count of max bullets this weapon can have (besides the clip in the weapon).
 	unsigned char iAttackBullets[2] = {0, 0};  ///< How many bullets are used in attack.
 	unsigned char iReloadBy[2] = {0, 0};  ///< Bullets are used in one reload time.
 	int iParabolicDistance0[2] = {0, 0};  ///< Distance that bullet does in straight line until falls.
@@ -88,8 +96,7 @@ public:
 	/// Constructor.
 	CWeaponWithAmmo(const CWeapon* pWeapon)
 	{
-		memset(this, 0, sizeof(CWeaponWithAmmo));
-		m_pWeapon = pWeapon;
+		m_pWeapon.reset(pWeapon);
 	}
 
 	/// Game frame.
@@ -98,7 +105,7 @@ public:
 	/// Return base weapon.
 	inline const CWeapon* GetBaseWeapon() const
 	{
-		return m_pWeapon;
+		return m_pWeapon.get();
 	}
 
 	/// Return weapon's entity name.
@@ -373,7 +380,8 @@ public:
 		const CPlayer* pTo,
 		TBotIntelligence iIntelligence,
 		int iSecondary,
-		Vector& vResult) const;
+		Vector& vResult
+	) const;
 
 	/**
 	 * @brief Get vector to aim to.
@@ -387,7 +395,8 @@ public:
 		float fDistanceSqr,
 		TBotIntelligence iBotIntelligence,
 		int iSecondary,
-		Vector& vResult) const;
+		Vector& vResult
+	) const;
 
 protected:
 	// End reloading weapon.
@@ -399,20 +408,20 @@ protected:
 	// End using weapon function.
 	void EndShoot();
 
-	const CWeapon* m_pWeapon;  ///< Weapon itself.
-	int m_iBulletsInClip[2];  ///< Bullets in current clip (inside weapon).
-	int m_iBulletsExtra[2];  ///< Amount of bullets extra.
-	int m_iSecondary;  ///< Reloading / shooting secondary ammo or using zoom.
+	good::shared_ptr<const CWeapon> m_pWeapon;  ///< Weapon itself.
+	int m_iBulletsInClip[2] = {0, 0};  ///< Bullets in current clip (inside weapon).
+	int m_iBulletsExtra[2] = {0, 0};  ///< Amount of bullets extra.
+	int m_iSecondary = 0;  ///< Reloading / shooting secondary ammo or using zoom.
 
-	float m_fEndTime;  ///< Time to end reloading/shooting.
+	float m_fEndTime = 0.0f;  ///< Time to end reloading/shooting.
 
-	bool m_bWeaponPresent;  ///< True, if weapon is present, false if only ammo is present.
-	bool m_bReloadingStart;  ///< True, if started to reload weapon.
-	bool m_bReloading;  ///< True, if continuing to reload weapon.
-	bool m_bHolding;  ///< True, if currently holding attack button.
-	bool m_bShooting;  ///< True, if currently shooting.
-	bool m_bChanging;  ///< True, if started to change weapon.
-	bool m_bUsingZoom;  ///< True, if started to zoom in / zoom out.
+	bool m_bWeaponPresent = false;  ///< True, if weapon is present, false if only ammo is present.
+	bool m_bReloadingStart = false;  ///< True, if started to reload weapon.
+	bool m_bReloading = false;  ///< True, if continuing to reload weapon.
+	bool m_bHolding = false;  ///< True, if currently holding attack button.
+	bool m_bShooting = false;  ///< True, if currently shooting.
+	bool m_bChanging = false;  ///< True, if started to change weapon.
+	bool m_bUsingZoom = false;  ///< True, if started to zoom in / zoom out.
 };
 
 typedef good::unique_ptr<CWeaponWithAmmo> CWeaponWithAmmoPtr;  ///< Unique pointer for weapon with ammo.
@@ -442,7 +451,7 @@ public:
 	}
 
 	/// Add weapon.
-	static TWeaponId Add(CWeaponWithAmmo& cWeapon)
+	static TWeaponId Add(const CWeaponWithAmmo& cWeapon)
 	{
 		m_aWeapons.push_back(cWeapon);
 		return m_aWeapons.size() - 1;
@@ -451,11 +460,6 @@ public:
 	/// Clear all weapons.
 	static void Clear()
 	{
-		m_aWeapons.reserve(16);
-		for ( int i = 0; i < m_aWeapons.size(); ++i )
-		{
-			delete m_aWeapons[i].GetBaseWeapon();
-		}
 		m_aWeapons.clear();
 	}
 
@@ -522,6 +526,8 @@ public:
 
 	/// Get random weapon, based on bot intelligence.
 	static TWeaponId GetRandomWeapon(TBotIntelligence iIntelligence, const good::bitset& cSkipWeapons);
+
+	static void UpdateDamage(const WeaponAtts::WACollection& atts);
 
 protected:
 	static good::vector<CWeaponWithAmmo> m_aWeapons;  // Array of available weapons for this mod.

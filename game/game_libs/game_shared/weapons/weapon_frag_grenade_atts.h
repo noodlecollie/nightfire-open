@@ -65,7 +65,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_fraggrenade", &skilldata_t::plrDmgFragGrenade));
 		obj.SkillRecords.AddToTail(
-			WASkillRecord("sk_plr_selfdmg_mult_fraggrenade", &skilldata_t::plrSelfDmgMultFragGrenade));
+			WASkillRecord("sk_plr_selfdmg_mult_fraggrenade", &skilldata_t::plrSelfDmgMultFragGrenade)
+		);
 
 		WAProjectileAttack* priAttack = new WAProjectileAttack();
 		obj.AttackModes.AddToTail(std::shared_ptr<WABaseAttack>(priAttack));
@@ -81,6 +82,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->PlayDryFireSoundOnEmpty = false;
 		priAttack->ProjectileDelay = 0.5f;
 		priAttack->ProjectileModelName = "models/weapon_frag_grenade/w_frag_grenade.mdl";
+		priAttack->LaunchSpeed = 1000.0f;
+		priAttack->BaseExplosionDamage = &skilldata_t::plrDmgFragGrenade;
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);
@@ -91,4 +94,17 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		priAttack->ViewModelAnimList_Attack << FRAGGRENADE_THROW;
 		priAttack->ViewModelAnimList_AttackEmpty << FRAGGRENADE_THROW_LAST;
-	});
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::GrenadeProjectile;
+		botIfc.Preference = BotWeaponPreference::Low;
+
+		WABotAttackMode* botPriAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botPriAttackMode);
+		botPriAttackMode->ApplyMode(priAttack);
+		botPriAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botPriAttackMode->EnemyAimAt = BotEnemyAimAt::Foot;
+		botPriAttackMode->MinEffectiveRange = 320.0f;
+		botPriAttackMode->MaxEffectiveRange = 1152.0f;
+	}
+);

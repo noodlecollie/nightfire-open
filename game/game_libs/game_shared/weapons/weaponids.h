@@ -16,4 +16,5 @@ enum class WeaponId_e
 	// Debugging weapons
 	WeaponSilent,
 	WeaponHullTrace,
+	WeaponProjectileTrace,
 };

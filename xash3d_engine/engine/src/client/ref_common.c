@@ -110,15 +110,27 @@ static void* pfnMod_Extradata(int type, model_t* m)
 	switch ( type )
 	{
 		case mod_alias:
+		{
 			return Mod_AliasExtradata(m);
+		}
+
 		case mod_studio:
+		{
 			return Mod_StudioExtradata(m);
+		}
+
 		case mod_sprite:  // fallthrough
 		case mod_brush:
+		{
 			return NULL;
+		}
+
 		default:
+		{
 			Host_Error("Mod_Extradata: unknown type %d\n", type);
+		}
 	}
+
 	return NULL;
 }
 

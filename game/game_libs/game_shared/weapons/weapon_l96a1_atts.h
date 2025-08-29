@@ -138,4 +138,9 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		scopedAttack->Accuracy.RestSpread = Vector2D(0.0f, 0.0f);
 		scopedAttack->Accuracy.RunSpread = Vector2D(0.02f, 0.02f);
 		scopedAttack->ViewPunchY = -3.0f;
-	});
+
+		// TODO: Need to support multiple zoom levels before we can allow bot use.
+		// NB. Max range for deepest zoom is probably around 3000.
+		// Min extra refire delay = 1.5s
+	}
+);

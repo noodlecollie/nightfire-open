@@ -153,6 +153,13 @@ namespace good
 			m_pPtr = p;
 		}
 
+		T* release()
+		{
+			T* out = m_pPtr;
+			m_pPtr = nullptr;
+			return out;
+		}
+
 		//--------------------------------------------------------------------------------------------------------
 		/// Perform operation on pointer. Assertion is used to ensure that pointer is valid.
 		//--------------------------------------------------------------------------------------------------------

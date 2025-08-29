@@ -1,6 +1,7 @@
 #pragma once
 
 #include "weapon_frinesi.h"
+#include "weaponatts_botinterface.h"
 #include "weaponatts_collection.h"
 #include "weapon_pref_weights.h"
 #include "weaponatts_hitscanattack.h"
@@ -171,4 +172,29 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		secAttack->AttackSounds.MinPitch = 90;
 		secAttack->AttackSounds.MaxPitch = 94;
-	});
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::Shotgun;
+		botIfc.Preference = BotWeaponPreference::High;
+
+		WABotAttackMode* botPriAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botPriAttackMode);
+		botPriAttackMode->ApplyMode(priAttack);
+		botPriAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botPriAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
+		botPriAttackMode->ReloadStyle = BotWeaponReloadStyle::PerShot;
+		botPriAttackMode->MinEffectiveRange = 0.0f;
+		botPriAttackMode->MaxEffectiveRange = 640.0f;
+		botPriAttackMode->MinExtraDelayBetweenShots = 0.33f;
+
+		WABotAttackMode* botSecAttackMode = new WABotAttackMode();
+		botIfc.SecondaryAttackMode.reset(botSecAttackMode);
+		botSecAttackMode->ApplyMode(secAttack);
+		botSecAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botSecAttackMode->EnemyAimAt = BotEnemyAimAt::Body;
+		botSecAttackMode->ReloadStyle = BotWeaponReloadStyle::PerShot;
+		botSecAttackMode->MinEffectiveRange = 0.0f;
+		botSecAttackMode->MaxEffectiveRange = 384.0f;
+		botSecAttackMode->MinExtraDelayBetweenShots = 0.4f;
+	}
+);

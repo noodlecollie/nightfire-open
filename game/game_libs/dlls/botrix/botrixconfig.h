@@ -4,6 +4,11 @@
 
 #include <good/ini_file.h>
 
+namespace WeaponAtts
+{
+	struct WACollection;
+}
+
 //****************************************************************************************************************
 /// Class for storing configuration in ini file format.
 //****************************************************************************************************************
@@ -25,6 +30,7 @@ public:  // Methods.
 	static TModId Load(const good::string& sGameDir, const good::string& sModDir);
 
 	static TModId LoadProgrammatic();
+	static void RefreshWeaponConfig();
 
 	/// Save configuration file (must be loaded first).
 	static void Save()
@@ -72,6 +78,8 @@ protected:  // Members.
 
 	/// Process section [<mod-name>.weapons].
 	static void LoadWeapons(good::ini_file::const_iterator itSection);
+
+	static void LoadWeapon(const WeaponAtts::WACollection& atts);
 
 	friend class CBotrixPlugin;  ///< Access to m_iniFile. TODO: something better.
 

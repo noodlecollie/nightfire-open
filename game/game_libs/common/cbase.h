@@ -78,13 +78,15 @@ extern void SaveWriteFields(
 	const char* pname,
 	void* pBaseData,
 	TYPEDESCRIPTION* pFields,
-	int fieldCount);
+	int fieldCount
+);
 extern void SaveReadFields(
 	SAVERESTOREDATA* pSaveData,
 	const char* pname,
 	void* pBaseData,
 	TYPEDESCRIPTION* pFields,
-	int fieldCount);
+	int fieldCount
+);
 extern void SaveGlobalState(SAVERESTOREDATA* pSaveData);
 extern void RestoreGlobalState(SAVERESTOREDATA* pSaveData);
 extern void ResetGlobalState(void);
@@ -383,7 +385,8 @@ public:
 		int iBulletType,
 		int iTracerFreq = 4,
 		int iDamage = 0,
-		entvars_t* pevAttacker = NULL);
+		entvars_t* pevAttacker = NULL
+	);
 	Vector FireBulletsPlayer(
 		ULONG cShots,
 		Vector vecSrc,
@@ -394,7 +397,8 @@ public:
 		int iTracerFreq = 4,
 		int iDamage = 0,
 		entvars_t* pevAttacker = NULL,
-		int shared_rand = 0);
+		int shared_rand = 0
+	);
 
 	virtual CBaseEntity* Respawn(void)
 	{
@@ -414,7 +418,10 @@ public:
 	static CBaseEntity* Instance(edict_t* pent)
 	{
 		if ( !pent )
+		{
 			pent = ENT(0);
+		}
+
 		CBaseEntity* pEnt = (CBaseEntity*)GET_PRIVATE(pent);
 		return pEnt;
 	}
@@ -553,9 +560,10 @@ public:
 #define SetTouch(a) TouchSet(static_cast<void (CBaseEntity::*)(CBaseEntity*)>(a), #a)
 #define SetUse(a) \
 	UseSet( \
-		static_cast<void ( \
-			CBaseEntity::*)(CBaseEntity * pActivator, CBaseEntity * pCaller, USE_TYPE useType, float value)>(a), \
-		#a)
+		static_cast< \
+			void (CBaseEntity::*)(CBaseEntity * pActivator, CBaseEntity * pCaller, USE_TYPE useType, float value)>(a), \
+		#a \
+	)
 #define SetBlocked(a) BlockedSet(static_cast<void (CBaseEntity::*)(CBaseEntity*)>(a), #a)
 
 #else
@@ -566,14 +574,14 @@ public:
 // and this is set BEFORE calling UTIL_SetSize().
 #define SetTouch(a) m_pfnTouch = static_cast<void (CBaseEntity::*)(CBaseEntity*)>(a)
 #define SetUse(a) \
-	m_pfnUse = static_cast<void ( \
-		CBaseEntity::*)(CBaseEntity * pActivator, CBaseEntity * pCaller, USE_TYPE useType, float value)>(a)
+	m_pfnUse = static_cast< \
+		void (CBaseEntity::*)(CBaseEntity * pActivator, CBaseEntity * pCaller, USE_TYPE useType, float value)>(a)
 #define SetBlocked(a) m_pfnBlocked = static_cast<void (CBaseEntity::*)(CBaseEntity*)>(a)
 #define ResetThink() m_pfnThink = static_cast<void (CBaseEntity::*)(void)>(NULL)
 #define ResetTouch() m_pfnTouch = static_cast<void (CBaseEntity::*)(CBaseEntity*)>(NULL)
 #define ResetUse() \
-	m_pfnUse = static_cast<void ( \
-		CBaseEntity::*)(CBaseEntity * pActivator, CBaseEntity * pCaller, USE_TYPE useType, float value)>(NULL)
+	m_pfnUse = static_cast< \
+		void (CBaseEntity::*)(CBaseEntity * pActivator, CBaseEntity * pCaller, USE_TYPE useType, float value)>(NULL)
 #define ResetBlocked() m_pfnBlocked = static_cast<void (CBaseEntity::*)(CBaseEntity*)>(NULL)
 
 #endif
@@ -666,7 +674,8 @@ public:
 
 	// Basic Monster Animation functions
 	float StudioFrameAdvance(
-		float flInterval = 0.0);  // accumulate animation frame time from last time called until now
+		float flInterval = 0.0
+	);  // accumulate animation frame time from last time called until now
 	int GetSequenceFlags(void);
 	int LookupActivity(int activity);
 	int LookupActivityHeaviest(int activity);

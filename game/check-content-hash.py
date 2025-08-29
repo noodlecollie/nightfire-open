@@ -26,12 +26,15 @@ def main():
 	content_path = sys.argv[1]
 
 	content_hash_output = content_cmd(content_path, ["git", "rev-parse", "origin/master"])
-	content_hash_match = re.match(r"^([0-9a-f]{40})$", content_hash_output)
+	content_hash_match = re.match(r"^([0-9a-f]{40})(-dirty)?$", content_hash_output)
 
 	if not content_hash_match:
 		raise RuntimeError(f"Could not parse content hash from git rev-parse. Output:\n{content_hash_output}")
 
 	content_hash = content_hash_match.group(1)
+
+	if content_hash_match.group(2):
+		raise RuntimeError(f"Content hash {content_hash} was last updated with uncommitted files present!")
 
 	with open(os.path.join(SCRIPT_DIR, "content-hash.txt"), "r") as in_file:
 		local_content_hash = in_file.read().strip()
@@ -39,11 +42,17 @@ def main():
 	if content_hash != local_content_hash:
 		content_commit_output = content_cmd(content_path, ["git", "log", "-1", "--format=%an (%cd): %s"], shell=False)
 
-		raise RuntimeError(
-			f"Content hash mismatch.\n"
-			f"  This repo: {local_content_hash}\n"
-			f"  Content repo master branch: {content_hash}\n"
-			f"  Content repo last commit: {content_commit_output}")
+		error_message = \
+		f"Content hash mismatch.\n"
+		f"  This repo: {local_content_hash}\n"
+		f"  Content repo master branch: {content_hash}\n"
+		f"  Content repo last commit: {content_commit_output}"
+
+		# Make it obvious if we'd forgotten to commit when the hash was updated.
+		if local_content_hash.endswith("-dirty"):
+			error_message += "\n  Hash was last updated with uncommitted files present!"
+
+		raise RuntimeError(error_message)
 
 	print(f"Content hash {local_content_hash} matches content repo master branch")
 

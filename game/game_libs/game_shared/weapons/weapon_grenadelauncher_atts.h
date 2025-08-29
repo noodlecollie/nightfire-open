@@ -1,5 +1,6 @@
 #pragma once
 
+#include "skill.h"
 #include "weapon_grenadelauncher.h"
 #include "weaponatts_collection.h"
 #include "weapon_pref_weights.h"
@@ -66,9 +67,11 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 
 		obj.SkillRecords.AddToTail(WASkillRecord("sk_plr_dmg_grenadelauncher", &skilldata_t::plrDmgGrenadeLauncher));
 		obj.SkillRecords.AddToTail(
-			WASkillRecord("sk_plr_selfdmg_mult_grenadelauncher", &skilldata_t::plrSelfDmgMultGrenadeLauncher));
+			WASkillRecord("sk_plr_selfdmg_mult_grenadelauncher", &skilldata_t::plrSelfDmgMultGrenadeLauncher)
+		);
 		obj.SkillRecords.AddToTail(
-			WASkillRecord("sk_plr_dmg_mult_grenadelauncher_hit", &skilldata_t::plrDmgMultGrenadelauncherHit));
+			WASkillRecord("sk_plr_dmg_mult_grenadelauncher_hit", &skilldata_t::plrDmgMultGrenadelauncherHit)
+		);
 
 		// Explode on contact
 		WAProjectileAttack* priAttack = new WAProjectileAttack();
@@ -83,6 +86,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->MuzzleFlashBrightness = BRIGHT_GUN_FLASH;
 		priAttack->ViewPunchY = -4.0f;
 		priAttack->ProjectileModelName = "models/weapon_grenadelauncher/w_grenade_projectile.mdl";
+		priAttack->LaunchSpeed = 1000.0f;
+		priAttack->BaseExplosionDamage = &skilldata_t::plrDmgGrenadeLauncher;
 
 		AccuracyParameters& accuracy = priAttack->Accuracy;
 		accuracy.RestSpread = Vector2D(0.1f, 0.1f);
@@ -108,4 +113,18 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		// Base off primary attack
 		*secAttack = *priAttack;
 		secAttack->EventScript = "events/weapon_grenadelauncher/fire_timed.sc";
-	});
+
+		WABotInterface& botIfc = obj.BotInterface;
+		botIfc.Type = BotWeaponType::GrenadeProjectile;
+		botIfc.Preference = BotWeaponPreference::Highest;
+
+		WABotAttackMode* botPriAttackMode = new WABotAttackMode();
+		botIfc.PrimaryAttackMode.reset(botPriAttackMode);
+		botPriAttackMode->ApplyMode(priAttack);
+		botPriAttackMode->ApplyAmmo(*ammo.PrimaryAmmo, ammo.PrimaryAmmoOnFirstPickup, ammo.MaxClip);
+		botPriAttackMode->EnemyAimAt = BotEnemyAimAt::Foot;
+		botPriAttackMode->MinEffectiveRange = 384.0f;
+		botPriAttackMode->MaxEffectiveRange = 896.0f;
+		botPriAttackMode->MinExtraDelayBetweenShots = 0.5f;
+	}
+);

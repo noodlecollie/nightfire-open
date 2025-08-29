@@ -4014,14 +4014,22 @@ void R_DrawViewModel(void)
 	switch ( RI.currententity->model->type )
 	{
 		case mod_alias:
+		{
 			R_DrawAliasModel(RI.currententity);
 			break;
+		}
+
 		case mod_studio:
+		{
 			R_StudioSetupTimings();
 			R_StudioDrawModelInternal(RI.currententity, STUDIO_RENDER);
 			break;
+		}
+
 		default:
+		{
 			break;
+		}
 	}
 
 	// restore depth range

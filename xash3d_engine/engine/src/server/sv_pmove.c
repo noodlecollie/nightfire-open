@@ -392,7 +392,8 @@ static pmtrace_t GAME_EXPORT pfnPlayerTrace(float* start, float* end, int traceF
 		svgame.pmove->numphysent,
 		svgame.pmove->physents,
 		ignore_pe,
-		NULL);
+		NULL
+	);
 }
 
 static pmtrace_t* pfnTraceLine(float* start, float* end, int flags, int usehull, int ignore_pe)
@@ -476,7 +477,8 @@ static pmtrace_t GAME_EXPORT pfnPlayerTraceEx(float* start, float* end, int trac
 		svgame.pmove->numphysent,
 		svgame.pmove->physents,
 		-1,
-		pmFilter);
+		pmFilter
+	);
 }
 
 static int GAME_EXPORT pfnTestPlayerPositionEx(float* pos, pmtrace_t* ptrace, pfnIgnore pmFilter)
@@ -522,7 +524,8 @@ void SV_InitClientMove(void)
 				host.player_mins[i][2],
 				host.player_maxs[i][0],
 				host.player_maxs[i][1],
-				host.player_maxs[i][2]);
+				host.player_maxs[i][2]
+			);
 	}
 
 	memcpy(svgame.pmove->player_mins, host.player_mins, sizeof(host.player_mins));
@@ -1015,8 +1018,11 @@ void SV_RunCmd(sv_client_t* cl, usercmd_t* ucmd, int random_seed)
 	// copy player buttons
 	clent->v.button = ucmd->buttons;
 	clent->v.light_level = ucmd->lightlevel;
+
 	if ( ucmd->impulse )
+	{
 		clent->v.impulse = ucmd->impulse;
+	}
 
 	if ( ucmd->impulse == 204 )
 	{
@@ -1030,7 +1036,9 @@ void SV_RunCmd(sv_client_t* cl, usercmd_t* ucmd, int random_seed)
 
 	// If conveyor, or think, set basevelocity, then send to client asap too.
 	if ( !VectorIsNull(clent->v.basevelocity) )
+	{
 		VectorCopy(clent->v.basevelocity, clent->v.clbasevelocity);
+	}
 
 	// setup playermove state
 	SV_SetupPMove(svgame.pmove, cl, ucmd, cl->physinfo);
