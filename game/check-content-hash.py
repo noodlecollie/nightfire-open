@@ -26,7 +26,7 @@ def main():
 	content_path = sys.argv[1]
 
 	content_hash_output = content_cmd(content_path, ["git", "rev-parse", "origin/master"])
-	content_hash_match = re.match(r"^([0-9a-f]{40})$", content_hash_output)
+	content_hash_match = re.match(r"^([0-9a-f]{40})(-dirty)?$", content_hash_output)
 
 	if not content_hash_match:
 		raise RuntimeError(f"Could not parse content hash from git rev-parse. Output:\n{content_hash_output}")
