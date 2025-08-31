@@ -41,6 +41,7 @@
 
 #define FORCEINLINE	__forceinline //--vluzacn
 #define FORMAT_PRINTF(STRING_INDEX,FIRST_TO_CHECK) //--vluzacn
+#define NORETURN __declspec(noreturn)
 
 #endif
 /////////////////////////////
@@ -71,6 +72,7 @@
 
 #define FORCEINLINE __inline__ __attribute__((always_inline))  //--vluzacn
 #define FORMAT_PRINTF(STRING_INDEX,FIRST_TO_CHECK) __attribute__((format (printf, STRING_INDEX, FIRST_TO_CHECK))) //--vluzacn
+#define NORETURN __attribute__((noreturn))
 
 #endif
 /////////////////////////////
