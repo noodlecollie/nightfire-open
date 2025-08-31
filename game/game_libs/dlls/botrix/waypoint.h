@@ -217,7 +217,8 @@ public:  // Methods.
 			vOrigin,
 			v,
 			bOnLadder ? CBotrixMod::iPointTouchLadderSquaredZ : CBotrixMod::iPointTouchSquaredZ,
-			CBotrixMod::iPointTouchSquaredXY);
+			CBotrixMod::iPointTouchSquaredXY
+		);
 	}
 
 	/// Get color of waypoint.
@@ -236,7 +237,8 @@ private:
 		float fDrawTime,
 		unsigned char r,
 		unsigned char g,
-		unsigned char b) const;
+		unsigned char b
+	) const;
 };
 
 //****************************************************************************************************************
@@ -451,14 +453,16 @@ public:  // Methods.
 		TWaypointId iWaypoint2,
 		bool bIsCrouched,
 		int iMaxDistance = CWaypoint::iDefaultDistance,
-		bool bShowHelp = true);
+		bool bShowHelp = true
+	);
 
 	/// Create waypoint paths to nearests waypoints.
 	static void CreateAutoPaths(
 		TWaypointId id,
 		bool bIsCrouched,
 		float fMaxDistance = CWaypoint::iDefaultDistance,
-		bool bShowHelp = true);
+		bool bShowHelp = true
+	);
 
 	/// Get nearest waypoint to given position.
 	static TWaypointId GetNearestWaypoint(
@@ -466,13 +470,15 @@ public:  // Methods.
 		const good::bitset* aOmit = NULL,
 		bool bNeedVisible = true,
 		float fMaxDistance = CWaypoint::MAX_RANGE,
-		TWaypointFlags iFlags = FWaypointNone);
+		TWaypointFlags iFlags = FWaypointNone
+	);
 
 	static void GetNearestWaypoints(
 		good::vector<TWaypointId>& aResult,
 		const Vector& vOrigin,
 		bool bNeedVisible,
-		float fMaxDistance);
+		float fMaxDistance
+	);
 
 	/// Get any waypoint with some of the given flags set.
 	static TWaypointId GetAnyWaypoint(TWaypointFlags iFlags = FWaypointNone);
@@ -571,19 +577,26 @@ public:  // Methods.
 protected:
 	friend class CWaypointNavigator;  // Get access to m_cGraph (for A* search implementation).
 
-// NFTODO: We need a way to encode the orientation of a ladder.
-// The easiest way might be to assign a single face with a ladder texture,
-// and then add a lump to the BSP that contains the extents/useful points
-// relating to this.
-#ifdef BOTRIX_TODO
+#ifdef BOTRIX_OLD_LADDER_CODE
 	// Add ladder dismounts waypoints.
 	static void AddLadderDismounts(
 		ICollideable* pLadder,
 		float fPlayerWidth,
 		float fPlayerEye,
 		TWaypointId iBottom,
-		TWaypointId iTop);
-#endif  // BOTRIX_TODO
+		TWaypointId iTop
+	);
+#else
+	static void AddLadderDismounts(
+		edict_t* ladderEnt,
+		float fPlayerWidth,
+		float fPlayerEye,
+		TWaypointId iBottom,
+		TWaypointId iTop,
+		edict_t* dismountBottom,
+		edict_t* dismountTop
+	);
+#endif  // BOTRIX_OLD_LADDER_CODE
 
 	// Analyze one waypoint (for AnalyzeStep()). Return true, if waypoint has nearby waypoints or new waypoint is added.
 	static bool AnalyzeWaypoint(
@@ -594,7 +607,8 @@ protected:
 		float fAnalyzeDistance,
 		float fAnalyzeDistanceExtra,
 		float fAnalyzeDistanceExtraSqr,
-		float fHalfPlayerWidth);
+		float fHalfPlayerWidth
+	);
 
 	// Get path color.
 	static void GetPathColor(TPathFlags iFlags, unsigned char& r, unsigned char& g, unsigned char& b);

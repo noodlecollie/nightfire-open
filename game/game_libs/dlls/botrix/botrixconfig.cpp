@@ -239,6 +239,8 @@ TModId CConfiguration::LoadProgrammatic()
 	CItems::AddItemClassFor(EItemTypeArmor, CItemClass("item_battery", respawnableFlags));
 	CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_healthkit", respawnableFlags));
 
+	CItems::AddItemClassFor(EItemTypeLadder, CItemClass("func_ladder", FEntityNone));
+
 	RefreshWeaponConfig();
 
 	// Very important!

@@ -184,6 +184,38 @@ void CWaypoint::GetColor(unsigned char& r, unsigned char& g, unsigned char& b) c
 	}
 }
 
+static void FindLadderDismounts(const char* ladderName, CUtlVector<edict_t*>& out)
+{
+	out.Purge();
+
+	for ( edict_t* ent = FIND_ENTITY_BY_TARGET(nullptr, ladderName); !FNullEnt(ent);
+		  ent = FIND_ENTITY_BY_TARGET(ent, ladderName) )
+	{
+		if ( FClassnameIs(&ent->v, "info_ladder_dismount") )
+		{
+			out.AddToTail(ent);
+		}
+	}
+
+	// Ensure lower dismounts come before upper ones.
+	out.Sort(
+		[](edict_t* const* a, edict_t* const* b) -> int
+		{
+			if ( (*a)->v.origin[VEC3_Z] < (*b)->v.origin[VEC3_Z] )
+			{
+				return -1;
+			}
+
+			if ( (*a)->v.origin[VEC3_Z] > (*b)->v.origin[VEC3_Z] )
+			{
+				return 1;
+			}
+
+			return 0;
+		}
+	);
+}
+
 //----------------------------------------------------------------------------------------------------------------
 void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, float fDrawTime) const
 {
@@ -207,7 +239,8 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 		Vector vBoxOrigin(
 			vOrigin.x - CBotrixMod::GetVar(EModVarPlayerWidth) / 2,
 			vOrigin.y - CBotrixMod::GetVar(EModVarPlayerWidth) / 2,
-			vOrigin.z - CBotrixMod::GetVar(EModVarPlayerEye));
+			vOrigin.z - CBotrixMod::GetVar(EModVarPlayerEye)
+		);
 
 		CBotrixEngineUtil::DrawBox(vBoxOrigin, Vector(), CBotrixMod::vPlayerCollisionHull, fDrawTime, r, g, b);
 	}
@@ -232,7 +265,8 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 				0xFF,
 				0xFF,
 				0xFF,
-				CWaypoints::GetAreas()[iAreaId].c_str());
+				CWaypoints::GetAreas()[iAreaId].c_str()
+			);
 		}
 
 		if ( FLAG_SOME_SET(FWaypointButton | FWaypointSeeButton, iFlags) )
@@ -241,7 +275,8 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 				buffer,
 				sizeof(buffer),
 				FLAG_SOME_SET(FWaypointSeeButton, iFlags) ? "see button %d" : "button %d",
-				CWaypoint::GetButton(iArgument));
+				CWaypoint::GetButton(iArgument)
+			);
 
 			CBotrixEngineUtil::DrawTextAtLocation(v, i++, fDrawTime, 0xFF, 0xFF, 0xFF, buffer);
 
@@ -249,7 +284,8 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 				buffer,
 				sizeof(buffer),
 				FLAG_SOME_SET(FWaypointElevator, iFlags) ? "for elevator %d" : "for door %d",
-				CWaypoint::GetDoor(iArgument));
+				CWaypoint::GetDoor(iArgument)
+			);
 
 			CBotrixEngineUtil::DrawTextAtLocation(v, i++, fDrawTime, 0xFF, 0xFF, 0xFF, buffer);
 		}
@@ -262,7 +298,8 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 				0xFF,
 				0xFF,
 				0xFF,
-				CTypeToString::WaypointFlagsToString(iFlags, false).c_str());
+				CTypeToString::WaypointFlagsToString(iFlags, false).c_str()
+			);
 		}
 	}
 }
@@ -273,7 +310,8 @@ void CWaypoint::DrawLines(
 	float fDrawTime,
 	unsigned char r,
 	unsigned char g,
-	unsigned char b) const
+	unsigned char b
+) const
 {
 	using namespace CustomGeometry;
 
@@ -355,7 +393,8 @@ bool CWaypoints::Save()
 				outFile,
 				&arcIt->edge.iArgument,
 				sizeof(TPathArgument),
-				1);  // Save path arguments.
+				1
+			);  // Save path arguments.
 		}
 	}
 
@@ -391,7 +430,8 @@ bool CWaypoints::Save()
 				cVisibles.set(
 					j,
 					CBotrixEngineUtil::IsVisiblePVS(vTo) ||
-						CBotrixEngineUtil::IsVisible(vFrom, vTo, EVisibilityWorld, false));
+						CBotrixEngineUtil::IsVisible(vFrom, vTo, EVisibilityWorld, false)
+				);
 			}
 			else
 			{
@@ -512,7 +552,8 @@ bool CWaypoints::Load()
 		success = Read(cursor, end, iNumPaths);
 		BASSERT(
 			success && (0 <= iNumPaths) && (iNumPaths < header.iNumWaypoints), Clear(); FREE_FILE(fileData);
-			return false);
+			return false
+		);
 
 		m_cGraph[i].neighbours.reserve(iNumPaths);
 
@@ -521,7 +562,8 @@ bool CWaypoints::Load()
 			success = Read(cursor, end, iPathTo);
 			BASSERT(
 				success && (0 <= iPathTo) && (iPathTo < header.iNumWaypoints), Clear(); FREE_FILE(fileData);
-				return false);
+				return false
+			);
 
 			success = Read(cursor, end, iPathFlags);
 			BASSERT(success, Clear(); FREE_FILE(fileData); return false);
@@ -626,7 +668,8 @@ bool CWaypoints::Load()
 			BLOG_D(
 				"Object id %d: %s.",
 				aItems[i * 2],
-				CTypeToString::EntityClassFlagsToString(aItems[i * 2 + 1]).c_str());
+				CTypeToString::EntityClassFlagsToString(aItems[i * 2 + 1]).c_str()
+			);
 		}
 
 		CItems::SetObjectsFlags(aItems);
@@ -831,7 +874,8 @@ void CWaypoints::CreatePathsWithAutoFlags(
 	TWaypointId iWaypoint2,
 	bool bIsCrouched,
 	int iMaxDistance,
-	bool bShowHelp)
+	bool bShowHelp
+)
 {
 	BASSERT(CWaypoints::IsValid(iWaypoint1) && CWaypoints::IsValid(iWaypoint2), return);
 
@@ -854,14 +898,16 @@ void CWaypoints::CreatePathsWithAutoFlags(
 		bCrouch,
 		0,
 		static_cast<float>(iMaxDistance * iMaxDistance),
-		bShowHelp);
+		bShowHelp
+	);
 
 	if ( iReach != EReachNotReachable )
 	{
 		TPathFlags iFlags = static_cast<TPathFlags>(
 			(iReach == EReachNeedJump)         ? FPathJump
 				: (iReach == EReachFallDamage) ? FPathDamage
-											   : FPathNone);
+											   : FPathNone
+		);
 
 		if ( bIsCrouched )
 		{
@@ -878,14 +924,16 @@ void CWaypoints::CreatePathsWithAutoFlags(
 		bCrouch,
 		0,
 		static_cast<float>(iMaxDistance * iMaxDistance),
-		bShowHelp);
+		bShowHelp
+	);
 
 	if ( iReach != EReachNotReachable )
 	{
 		TPathFlags iFlags = static_cast<TPathFlags>(
 			(iReach == EReachNeedJump)         ? FPathJump
 				: (iReach == EReachFallDamage) ? FPathDamage
-											   : FPathNone);
+											   : FPathNone
+		);
 
 		if ( bIsCrouched )
 		{
@@ -968,7 +1016,8 @@ TWaypointId CWaypoints::GetNearestWaypoint(
 	const good::bitset* aOmit,
 	bool bNeedVisible,
 	float fMaxDistance,
-	TWaypointFlags iFlags)
+	TWaypointFlags iFlags
+)
 {
 	TWaypointId result = EWaypointIdInvalid;
 
@@ -1034,7 +1083,8 @@ void CWaypoints::GetNearestWaypoints(
 	good::vector<TWaypointId>& aResult,
 	const Vector& vOrigin,
 	bool bNeedVisible,
-	float fMaxDistance)
+	float fMaxDistance
+)
 {
 	float fMaxDistSqr = SQR(fMaxDistance);
 
@@ -1290,14 +1340,15 @@ void CWaypoints::MarkUnreachablePath(TWaypointId iWaypointFrom, TWaypointId iWay
 	m_aUnreachablePaths.push_back(cPath);
 }
 
-#ifdef BOTRIX_TODO
+#ifdef BOTRIX_OLD_LADDER_CODE
 //----------------------------------------------------------------------------------------------------------------
 void CWaypoints::AddLadderDismounts(
 	ICollideable* pLadder,
 	float fPlayerWidth,
 	float fPlayerEye,
 	TWaypointId iBottom,
-	TWaypointId iTop)
+	TWaypointId iTop
+)
 {
 	float fMaxHeight = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
 	float fPlayerHalfWidth = fPlayerWidth / 2.0f;
@@ -1349,7 +1400,8 @@ void CWaypoints::AddLadderDismounts(
 				CBotrixMod::vPlayerCollisionHullMins,
 				CBotrixMod::vPlayerCollisionHullMaxs,
 				iTracer.iTraceFlags,
-				&iTracer);
+				&iTracer
+			);
 
 			if ( CBotrixEngineUtil::IsTraceHitSomething() )
 			{
@@ -1370,7 +1422,8 @@ void CWaypoints::AddLadderDismounts(
 					i == 0 ? "bottom" : "top",
 					vPos.x,
 					vPos.y,
-					vPos.z);
+					vPos.z
+				);
 			}
 
 			AddPath(iWaypoints[i], iDismount, 0.0f, FPathLadder | FPathJump);
@@ -1385,7 +1438,104 @@ void CWaypoints::AddLadderDismounts(
 		}
 	}
 }
-#endif  // BOTRIX_TODO
+#else
+void CWaypoints::AddLadderDismounts(
+	edict_t* ladderEnt,
+	float fPlayerWidth,
+	float fPlayerEye,
+	TWaypointId iBottom,
+	TWaypointId iTop,
+	edict_t* dismountBottom,
+	edict_t* dismountTop
+)
+{
+	const char* ladderName = STRING(ladderEnt->v.targetname);
+	ASSERT(ladderName && *ladderName);
+
+	float fMaxHeight = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
+	Vector groundPoints[2];
+
+	for ( int index = 0; index < 2; ++index )
+	{
+		edict_t* dismount = index == 0 ? dismountBottom : dismountTop;
+		Vector location(dismount->v.origin);
+
+		Vector ground(CBotrixEngineUtil::GetGroundVec(dismount->v.origin));
+
+		if ( location.z - ground.z > fMaxHeight )
+		{
+			BULOG_W(
+				m_pAnalyzer,
+				"info_ladder_dismount at (%f %f %f) was too far away from ground.",
+				location.x,
+				location.y,
+				location.z
+			);
+
+			continue;
+		}
+
+		TWaypointId waypointID = index == 0 ? iBottom : iTop;
+		Vector waypointLocation(Get(waypointID).vOrigin);
+
+		if ( !CBotrixEngineUtil::IsVisible(waypointLocation, ground, EVisibilityWaypoints, false) )
+		{
+			BULOG_W(
+				m_pAnalyzer,
+				"info_ladder_dismount at (%f %f %f) was not accessible from waypoint %d (%f %f %f)",
+				location.x,
+				location.y,
+				location.z,
+				waypointID,
+				waypointLocation.x,
+				waypointLocation.y,
+				waypointLocation.z
+			);
+
+			continue;
+		}
+
+		groundPoints[index] = ground;
+	}
+
+	if ( VectorIsNull(groundPoints[0]) && VectorIsNull(groundPoints[1]) )
+	{
+		BULOG_W(m_pAnalyzer, "Failed to compute dismount points for ladder %s", ladderName);
+		return;
+	}
+
+	for ( int index = 0; index < 2; ++index )
+	{
+		Vector eyePoint = groundPoints[index];
+		eyePoint.z += fPlayerEye;
+
+		TWaypointId iDismount = CWaypoints::GetNearestWaypoint(eyePoint, NULL, false, fPlayerWidth / 2.0f);
+
+		if ( iDismount != EWaypointIdInvalid )
+		{
+			TWaypointId waypointID = index == 0 ? iBottom : iTop;
+			AddPath(waypointID, iDismount, 0.0f, FPathLadder | FPathJump);
+			AddPath(iDismount, waypointID, 0.0f, FPathLadder);
+		}
+		else
+		{
+			iDismount = Add(eyePoint);
+
+			BULOG_D(
+				m_pAnalyzer,
+				"  added waypoint %d (%s ladder dismount) at (%.0f, %.0f, %.0f)",
+				iDismount,
+				index == 0 ? "bottom" : "top",
+				eyePoint.x,
+				eyePoint.y,
+				eyePoint.z
+			);
+		}
+	}
+
+	BULOG_D(m_pAnalyzer, "Created dismount points for ladder %s", ladderName);
+}
+#endif  // BOTRIX_OLD_LADDER_CODE
 
 //----------------------------------------------------------------------------------------------------------------
 void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
@@ -1397,7 +1547,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 	m_iCurrentAnalyzeWaypoint = 0;
 	m_fAnalyzeWaypointsForNextFrame = 0;
 
-	BULOG_W(pClient, "Started to analyze waypoints.");
+	BULOG_W(pClient, "Started analyzing waypoints.");
 
 	static const TItemType aItemTypes[] = {
 		EItemTypePlayerSpawn,
@@ -1506,14 +1656,14 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 					vOrigin.z,
 					vPos.x,
 					vPos.y,
-					vPos.z);
+					vPos.z
+				);
 			}
 
 			CreateAutoPaths(iWaypoint, false, fAnalyzeDistanceExtra, false);
 		}
 	}
 
-#ifdef BOTRIX_TODO
 	// Add ladder waypoints.
 	const good::vector<CItem>& items = CItems::GetItems(EItemTypeLadder);
 	for ( TItemIndex i = 0; i < items.size(); ++i )
@@ -1523,59 +1673,95 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 			continue;
 		}
 
-		ICollideable* pCollideable = items[i].pEdict->GetCollideable();
-		Vector vMins, vMaxs;
-		pCollideable->WorldSpaceSurroundingBounds(&vMins, &vMaxs);
+		const CItem& item = items[i];
+		Vector vMins(item.pEdict->v.mins);
+		Vector vMaxs(item.pEdict->v.maxs);
 
-		vMins.x = (vMins.x + vMaxs.x) / 2.0f;
-		vMins.y = (vMins.y + vMaxs.y) / 2.0f;
+		const char* ladderName = STRING(item.pEdict->v.targetname);
 
-		vMaxs.x = vMins.x;
-		vMaxs.y = vMins.y;
+		if ( !ladderName || !(*ladderName) )
+		{
+			Vector centre = vMins + ((vMaxs - vMins) / 2.0f);
 
-		vMins.z += fPlayerEye;
-		vMins = CBotrixEngineUtil::GetHullGroundVec(vMins);
-		vMins.z += fPlayerEye + 2.0f;
+			BULOG_W(
+				m_pAnalyzer,
+				"Cannot create ladder dismount waypoints for ladder at (%f %f %f) with no targetname!",
+				centre[0],
+				centre[1],
+				centre[2]
+			);
 
-		vMaxs.z += -fPlayerHeight + fPlayerEye - 2.0f;
+			continue;
+		}
 
-		TWaypointId w1 = CWaypoints::GetNearestWaypoint(vMins, NULL, false, fPlayerHalfWidth);
+		CUtlVector<edict_t*> dismountPoints;
+		FindLadderDismounts(ladderName, dismountPoints);
+
+		if ( dismountPoints.Count() != 2 )
+		{
+			BULOG_W(
+				m_pAnalyzer,
+				"Expected 2 info_ladder_dismount entities for ladder %s, but found %d",
+				ladderName,
+				dismountPoints.Count()
+			);
+
+			continue;
+		}
+
+		// Currently, we assume that the lower dismount position is where the player
+		// hull will start from when climbing the ladder.
+		Vector ladderBottom(dismountPoints[0]->v.origin);
+		Vector ladderTop = ladderBottom;
+		ladderTop.z = dismountPoints[1]->v.origin[VEC3_Z];
+
+		ladderBottom.z += fPlayerEye;
+		ladderBottom = CBotrixEngineUtil::GetHullGroundVec(ladderBottom);
+		ladderBottom.z += fPlayerEye + 2.0f;
+
+		ladderTop.z += -fPlayerHeight + fPlayerEye - 2.0f;
+
+		TWaypointId w1 = CWaypoints::GetNearestWaypoint(ladderBottom, NULL, false, fPlayerHalfWidth);
+
 		if ( w1 == EWaypointIdInvalid )
 		{
-			w1 = Add(vMins, FWaypointLadder);
+			w1 = Add(ladderBottom, FWaypointLadder);
 			BULOG_D(
 				m_pAnalyzer,
 				"  added waypoint %d (bottom ladder %d) at (%.0f, %.0f, %.0f)",
 				w1,
 				i,
-				vMins.x,
-				vMins.y,
-				vMins.z);
+				ladderBottom.x,
+				ladderBottom.y,
+				ladderBottom.z
+			);
 		}
 		else
 		{
 			FLAG_SET(FWaypointLadder, Get(w1).iFlags);
 		}
 
-		TWaypointId w2 = CWaypoints::GetNearestWaypoint(vMaxs, NULL, false, fPlayerHalfWidth);
+		TWaypointId w2 = CWaypoints::GetNearestWaypoint(ladderTop, NULL, false, fPlayerHalfWidth);
+
 		if ( w2 == EWaypointIdInvalid )
 		{
-			w2 = Add(vMaxs, FWaypointLadder);
+			w2 = Add(ladderTop, FWaypointLadder);
 			BULOG_D(
 				m_pAnalyzer,
 				"  added waypoint %d (top ladder %d) at (%.0f, %.0f, %.0f)",
 				w2,
 				i,
-				vMaxs.x,
-				vMaxs.y,
-				vMaxs.z);
+				ladderTop.x,
+				ladderTop.y,
+				ladderTop.z
+			);
 		}
 		else
 		{
 			FLAG_SET(FWaypointLadder, Get(w2).iFlags);
 		}
 
-		float fDist = vMaxs.DistTo(vMins);
+		float fDist = (ladderTop - ladderBottom).Length();
 
 		if ( HasPath(w1, w2) )
 		{
@@ -1598,9 +1784,8 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		CreateAutoPaths(w1, false, fAnalyzeDistanceExtra, false);
 		CreateAutoPaths(w2, false, fAnalyzeDistanceExtra, false);
 
-		AddLadderDismounts(pCollideable, fPlayerWidth, fPlayerEye, w1, w2);
+		AddLadderDismounts(item.pEdict, fPlayerWidth, fPlayerEye, w1, w2, dismountPoints[0], dismountPoints[1]);
 	}
-#endif  // BOTRIX_TODO
 
 	BULOG_I(pClient, "Adding waypoints at added positions ('botrix waypoint analyze add').");
 	good::vector<Vector>& aAdded = m_aWaypointsToAddOmitInAnalyze[EAnalyzeWaypointsAdd];
@@ -1723,7 +1908,8 @@ void CWaypoints::AnalyzeStep()
 								 fHalfPlayerWidth,
 								 fAnalyzeDistance,
 								 fAnalyzeDistanceExtra,
-								 fAnalyzeDistanceExtraSqr) )
+								 fAnalyzeDistanceExtraSqr
+							 ) )
 							neighbours.a[x + 1][y + 1] =
 								true;  // Position is already occupied or new waypoint is added.
 					}
@@ -1755,7 +1941,8 @@ void CWaypoints::AnalyzeStep()
 									 fHalfPlayerWidth,
 									 fAnalyzeDistance,
 									 fAnalyzeDistanceExtra,
-									 fAnalyzeDistanceExtraSqr) )
+									 fAnalyzeDistanceExtraSqr
+								 ) )
 								neighbours.a[x + 1][y + 1] = true;
 						}
 
@@ -1775,7 +1962,8 @@ void CWaypoints::AnalyzeStep()
 									 fHalfPlayerWidth,
 									 fAnalyzeDistance,
 									 fAnalyzeDistanceExtra,
-									 fAnalyzeDistanceExtraSqr) )
+									 fAnalyzeDistanceExtraSqr
+								 ) )
 							{
 								neighbours.a[x + 1][y + 1] = true;
 							}
@@ -1866,7 +2054,8 @@ bool CWaypoints::AnalyzeWaypoint(
 	float fHalfPlayerWidth,
 	float fAnalyzeDistance,
 	float fAnalyzeDistanceExtra,
-	float fAnalyzeDistanceExtraSqr)
+	float fAnalyzeDistanceExtraSqr
+)
 {
 	static good::vector<TWaypointId> aNearWaypoints(16);
 
@@ -1966,7 +2155,8 @@ bool CWaypoints::AnalyzeWaypoint(
 		bCrouch,
 		0.0f,
 		fAnalyzeDistanceExtraSqr,
-		showHelp);
+		showHelp
+	);
 
 	if ( reach != EReachFallDamage && reach != EReachNotReachable )
 	{
@@ -1978,7 +2168,8 @@ bool CWaypoints::AnalyzeWaypoint(
 			iWaypoint,
 			vGround.x,
 			vGround.y,
-			vGround.z);
+			vGround.z
+		);
 
 		m_bIsAnalyzeStepAddedWaypoints = true;
 
@@ -1988,7 +2179,8 @@ bool CWaypoints::AnalyzeWaypoint(
 			iWaypoint,
 			iNew,
 			0,
-			static_cast<TPathFlags>(iFlags | (reach == EReachNeedJump ? FPathJump : FPathNone)));
+			static_cast<TPathFlags>(iFlags | (reach == EReachNeedJump ? FPathJump : FPathNone))
+		);
 
 		bool bDestCrouch = false;
 		reach = CBotrixEngineUtil::GetReachableInfoFromTo(
@@ -1998,7 +2190,8 @@ bool CWaypoints::AnalyzeWaypoint(
 			bDestCrouch,
 			0,
 			fAnalyzeDistanceExtraSqr,
-			showHelp);
+			showHelp
+		);
 
 		if ( reach != EReachFallDamage && reach != EReachNotReachable )
 		{
@@ -2008,7 +2201,8 @@ bool CWaypoints::AnalyzeWaypoint(
 				iNew,
 				iWaypoint,
 				0,
-				static_cast<TPathFlags>(iFlags | (reach == EReachNeedJump ? FPathJump : FPathNone)));
+				static_cast<TPathFlags>(iFlags | (reach == EReachNeedJump ? FPathJump : FPathNone))
+			);
 		}
 
 		CreateAutoPaths(iNew, bCrouch, fAnalyzeDistanceExtra, showHelp);
@@ -2115,7 +2309,8 @@ void CWaypoints::DrawWaypointPaths(TWaypointId id, TPathDrawFlags iPathDrawFlags
 				fDrawTime,
 				r,
 				g,
-				b);
+				b
+			);
 
 		if ( FLAG_SOME_SET(FPathDrawLine, iPathDrawFlags) )
 		{
@@ -2149,7 +2344,8 @@ void CWaypoints::DrawVisiblePaths(TWaypointId id, TPathDrawFlags iPathDrawFlags)
 					fDrawTime,
 					r,
 					g,
-					b);
+					b
+				);
 			}
 
 			if ( FLAG_SOME_SET(FPathDrawLine, iPathDrawFlags) )

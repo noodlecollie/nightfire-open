@@ -828,7 +828,8 @@ void CTriggerHurt::Spawn(void)
 
 	if ( FBitSet(
 			 pev->spawnflags,
-			 SF_TRIGGER_HURT_START_OFF) )  // if flagged to Start Turned Off, make trigger nonsolid.
+			 SF_TRIGGER_HURT_START_OFF
+		 ) )  // if flagged to Start Turned Off, make trigger nonsolid.
 		pev->solid = SOLID_NOT;
 
 	UTIL_SetOrigin(pev, pev->origin);  // Link into the list
@@ -1345,7 +1346,8 @@ public:
 		int listCount,
 		const char* pMapName,
 		const char* pLandmarkName,
-		edict_t* pentLandmark);
+		edict_t* pentLandmark
+	);
 	static int InTransitionVolume(CBaseEntity* pEntity, char* pVolumeName);
 
 	virtual int Save(CSave& save);
@@ -1544,7 +1546,8 @@ int CChangeLevel::AddTransitionToList(
 	int listCount,
 	const char* pMapName,
 	const char* pLandmarkName,
-	edict_t* pentLandmark)
+	edict_t* pentLandmark
+)
 {
 	int i;
 
@@ -1639,7 +1642,8 @@ int CChangeLevel::ChangeList(LEVELLIST* pLevelList, int maxList)
 						 count,
 						 pTrigger->m_szMapName,
 						 pTrigger->m_szLandmarkName,
-						 pentLandmark) )
+						 pentLandmark
+					 ) )
 				{
 					count++;
 					if ( count >= maxList )  // FULL!!
@@ -1792,6 +1796,12 @@ void CLadder::Spawn(void)
 	pev->movetype = MOVETYPE_PUSH;
 }
 
+class CLadderDismount : public CPointEntity
+{
+};
+
+LINK_ENTITY_TO_CLASS(info_ladder_dismount, CLadderDismount)
+
 // ========================== A TRIGGER THAT PUSHES YOU ===============================
 
 class CTriggerPush : public CBaseTrigger
@@ -1835,7 +1845,8 @@ void CTriggerPush::Spawn()
 
 	if ( FBitSet(
 			 pev->spawnflags,
-			 SF_TRIGGER_PUSH_START_OFF) )  // if flagged to Start Turned Off, make trigger nonsolid.
+			 SF_TRIGGER_PUSH_START_OFF
+		 ) )  // if flagged to Start Turned Off, make trigger nonsolid.
 	{
 		pev->solid = SOLID_NOT;
 	}

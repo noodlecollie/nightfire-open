@@ -372,7 +372,7 @@ void            CheckFatal()
 //  Error
 //      for formatted error messages, fatals out
 // =====================================================================================
-void CDECL NORETURN FORMAT_PRINTF(1,2)      Error(const char* const error, ...)
+NORETURN void CDECL FORMAT_PRINTF(1,2)      Error(const char* const error, ...)
 {
 	char            message[MAX_ERROR];
 	char            message2[MAX_ERROR];

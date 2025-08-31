@@ -71,7 +71,7 @@ extern void CDECL FORMAT_PRINTF(1,2) PrintConsole(const char* const message, ...
 #endif
 extern void CDECL FORMAT_PRINTF(1,2) Verbose(const char* const message, ...);
 extern void CDECL FORMAT_PRINTF(1,2) Log(const char* const message, ...);
-extern void CDECL FORMAT_PRINTF(1,2) Error(const char* const error, ...);
+extern NORETURN void CDECL FORMAT_PRINTF(1,2) Error(const char* const error, ...);
 extern void CDECL FORMAT_PRINTF(2,3) Fatal(assume_msgs msgid, const char* const error, ...);
 extern void CDECL FORMAT_PRINTF(1,2) Warning(const char* const warning, ...);
 
