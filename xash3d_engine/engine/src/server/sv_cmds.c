@@ -610,13 +610,27 @@ void SV_Kick_f(void)
 	param = Cmd_Argv(1);
 
 	if ( *param == '#' && Q_isdigit(param + 1) )
-		cl = SV_ClientById(Q_atoi(param + 1));
+	{
+		int inId = Q_atoi(param + 1);
+		cl = SV_ClientById(inId);
+
+		if ( !cl )
+		{
+			Con_Printf("Client #%d is not on the server\n", inId);
+		}
+	}
 	else
+	{
 		cl = SV_ClientByName(param);
+
+		if ( !cl )
+		{
+			Con_Printf("Client \"%s\" is not on the server\n", param);
+		}
+	}
 
 	if ( !cl )
 	{
-		Con_Printf("Client is not on the server\n");
 		return;
 	}
 
@@ -637,7 +651,8 @@ void SV_Kick_f(void)
 			cl->name,
 			cl->userid,
 			clientId,
-			param);
+			param
+		);
 		SV_BroadcastPrintf(cl, "%s was kicked with message: \"%s\"\n", cl->name, param);
 		SV_ClientPrintf(cl, "You were kicked from the game with message: \"%s\"\n", param);
 	}
@@ -651,13 +666,18 @@ void SV_Kick_f(void)
 	if ( cl->useragent[0] )
 	{
 		if ( *param )
+		{
 			Netchan_OutOfBandPrint(
 				NS_SERVER,
 				cl->netchan.remote_address,
 				"errormsg\nKicked with message:\n%s\n",
-				param);
+				param
+			);
+		}
 		else
+		{
 			Netchan_OutOfBandPrint(NS_SERVER, cl->netchan.remote_address, "errormsg\nYou were kicked from the game\n");
+		}
 	}
 
 	SV_DropClient(cl, false);
@@ -707,8 +727,8 @@ void SV_Status_f(void)
 	}
 
 	Con_Printf("map: %s\n", sv.name);
-	Con_Printf("num score ping    name            lastmsg address               port \n");
-	Con_Printf("--- ----- ------- --------------- ------- --------------------- ------\n");
+	Con_Printf("userid score ping    name            lastmsg address               port \n");
+	Con_Printf("------ ----- ------- --------------- ------- --------------------- ------\n");
 
 	for ( i = 0, cl = svs.clients; i < svs.maxclients; i++, cl++ )
 	{
@@ -716,30 +736,59 @@ void SV_Status_f(void)
 		const char* s;
 
 		if ( !cl->state )
+		{
 			continue;
+		}
 
-		Con_Printf("%3i ", i);
+		// num
+		Con_Printf("%6i ", cl->userid);
+
+		// score
 		Con_Printf("%5i ", (int)cl->edict->v.frags);
 
+		// Ping
 		if ( cl->state == cs_connected )
+		{
 			Con_Printf("Connect");
+		}
 		else if ( cl->state == cs_zombie )
+		{
 			Con_Printf("Zombie ");
+		}
 		else if ( FBitSet(cl->flags, FCL_FAKECLIENT) )
+		{
 			Con_Printf("Bot   ");
+		}
 		else
+		{
 			Con_Printf("%7i ", SV_CalcPing(cl));
+		}
 
+		// Name
 		Con_Printf("%s", cl->name);
+
 		l = 24 - (int)Q_strlen(cl->name);
+
 		for ( j = 0; j < l; j++ )
+		{
 			Con_Printf(" ");
+		}
+
+		// lastmsg
 		Con_Printf("%g ", (host.realtime - cl->netchan.last_received));
+
+		// address
 		s = NET_BaseAdrToString(cl->netchan.remote_address);
 		Con_Printf("%s", s);
+
 		l = 22 - (int)Q_strlen(s);
+
 		for ( j = 0; j < l; j++ )
+		{
 			Con_Printf(" ");
+		}
+
+		// port
 		Con_Printf("%5i", cl->netchan.qport);
 		Con_Printf("\n");
 	}

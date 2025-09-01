@@ -50,7 +50,8 @@ public:
 		int partialLength,
 		char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH],
 		int strIndex,
-		int charIndex);
+		int charIndex
+	);
 #else
 	virtual int AutoComplete(good::string& partial, CUtlVector<CUtlString>& cCommands, int charIndex);
 #endif
@@ -92,7 +93,8 @@ public:
 		int partialLength,
 		char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH],
 		int strIndex,
-		int charIndex);
+		int charIndex
+	);
 #else
 	virtual int AutoComplete(good::string& partial, CUtlVector<CUtlString>& commands, int charIndex);
 #endif
@@ -354,6 +356,13 @@ class CWaypointVisibilityCommand : public CConsoleCommand
 {
 public:
 	CWaypointVisibilityCommand();
+	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+};
+
+class CWaypointConnectionCommand : public CConsoleCommand
+{
+public:
+	CWaypointConnectionCommand();
 	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
 };
 
@@ -1193,6 +1202,7 @@ public:
 		Add(new CWaypointResetCommand);
 		Add(new CWaypointSaveCommand);
 		Add(new CWaypointVisibilityCommand);
+		Add(new CWaypointConnectionCommand);
 	}
 };
 

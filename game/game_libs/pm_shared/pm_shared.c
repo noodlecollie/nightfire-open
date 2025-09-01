@@ -349,7 +349,8 @@ void PM_CheckVelocity(void)
 				"Got a velocity too high on axis %i. Velocity: %d, Max: %d\n",
 				i,
 				pmove->velocity[i],
-				pmove->movevars->maxvelocity);
+				pmove->movevars->maxvelocity
+			);
 			pmove->velocity[i] = pmove->movevars->maxvelocity;
 		}
 		else if ( pmove->velocity[i] < -pmove->movevars->maxvelocity )
@@ -358,7 +359,8 @@ void PM_CheckVelocity(void)
 				"Got a velocity too low on axis %i. Velocity: %d, Max: %d\n",
 				i,
 				pmove->velocity[i],
-				pmove->movevars->maxvelocity);
+				pmove->movevars->maxvelocity
+			);
 			pmove->velocity[i] = -pmove->movevars->maxvelocity;
 		}
 	}
@@ -583,7 +585,8 @@ int PM_FlyMove(void)
 						original_velocity,
 						planes[i],
 						new_velocity,
-						1.0f + pmove->movevars->bounce * (1 - pmove->friction));
+						1.0f + pmove->movevars->bounce * (1 - pmove->friction)
+					);
 			}
 
 			VectorCopy(new_velocity, pmove->velocity);
@@ -1204,7 +1207,8 @@ qboolean PM_CheckWater(void)
 				pmove->basevelocity,
 				50.0f * pmove->waterlevel,
 				current_table[CONTENTS_CURRENT_0 - truecont],
-				pmove->basevelocity);
+				pmove->basevelocity
+			);
 		}
 	}
 
@@ -1821,7 +1825,11 @@ void PM_LadderMove(physent_t* pLadder)
 		}
 		else if ( forward != 0 || right != 0 )
 		{
-			vec3_t velocity, perp, cross, lateral, tmp;
+			vec3_t velocity;
+			vec3_t perp;
+			vec3_t cross;
+			vec3_t lateral;
+			vec3_t tmp;
 			float normal;
 
 			// ALERT( at_console, "pev %.2f %.2f %.2f - ",
@@ -2680,7 +2688,8 @@ void PM_PlayerMove(qboolean server)
 			PM_DPRINTF(
 				"Unrecognised pmove player movetype %i on %s\n",
 				pmove->movetype,
-				pmove->server == 1 ? "server" : "client");
+				pmove->server == 1 ? "server" : "client"
+			);
 			break;
 		case MOVETYPE_NONE:
 			break;
@@ -2944,7 +2953,7 @@ void PM_CreateStuckTable(void)
 }
 
 /*
-This modume implements the shared player physics code between any particular game and
+This module implements the shared player physics code between any particular game and
 the engine.  The same PM_Move routine is built into the game .dll and the client .dll and is
 invoked by each side as appropriate.  There should be no distinction, internally, between server
 and client.  This will ensure that prediction behaves appropriately.

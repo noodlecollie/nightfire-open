@@ -372,7 +372,7 @@ void            CheckFatal()
 //  Error
 //      for formatted error messages, fatals out
 // =====================================================================================
-void CDECL FORMAT_PRINTF(1,2)      Error(const char* const error, ...)
+NORETURN void CDECL FORMAT_PRINTF(1,2)      Error(const char* const error, ...)
 {
 	char            message[MAX_ERROR];
 	char            message2[MAX_ERROR];
@@ -411,7 +411,8 @@ void CDECL FORMAT_PRINTF(1,2)      Error(const char* const error, ...)
 	LogError(message2);
 
 	fatal = 1;
-	CheckFatal();
+	hlassert(false);
+	exit(1);
 }
 
 // =====================================================================================
