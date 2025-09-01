@@ -1,0 +1,2 @@
+@ECHO OFF
+"@Python3_EXECUTABLE_WINPATH@" "@CMAKE_CURRENT_SOURCE_DIR_WINPATH@\content-copyback-monitor.py" --game-dir "@GAME_DIR_WINPATH@" --repo-dir "@NF_FULL_CONTENT_PATH_WINPATH@" %*
