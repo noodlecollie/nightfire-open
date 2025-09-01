@@ -2440,7 +2440,7 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 	}
 	else if ( argc == 2 )
 	{
-		iPathTo = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
+		iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 		iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
 	}
 
