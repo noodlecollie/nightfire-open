@@ -85,7 +85,8 @@ public:
 		bool& bCrouch,
 		float fDistanceSqr,
 		float fMaxDistanceSqr,
-		bool bShowHelp = false);
+		bool bShowHelp = false
+	);
 
 	static inline bool EqualVectors(const Vector& v1, const Vector& v2, float fEpsilon = 1.0f)
 	{
@@ -97,6 +98,7 @@ public:
 	static bool CanPassSlope(float fAngle, float fMaxSlope);
 	static void GetAngleDifference(Vector const& angOrigin, Vector const& angDestination, Vector& angDiff);
 	static Vector GetGroundVec(const Vector& vSrc);
+	static void HumanHullTrace(const Vector& vGround1, const Vector& vGround2, int hull = human_hull);
 
 	static void DrawBeam(
 		const Vector& v1,
@@ -105,7 +107,8 @@ public:
 		float fDrawTime,
 		unsigned char r,
 		unsigned char g,
-		unsigned char b);
+		unsigned char b
+	);
 
 	static void
 	DrawLine(const Vector& v1, const Vector& v2, float fDrawTime, unsigned char r, unsigned char g, unsigned char b);
@@ -117,7 +120,8 @@ public:
 		float fDrawTime,
 		unsigned char r,
 		unsigned char g,
-		unsigned char b);
+		unsigned char b
+	);
 
 	static void DrawTextAtLocation(
 		const Vector& vOrigin,
@@ -126,7 +130,8 @@ public:
 		unsigned char r,
 		unsigned char g,
 		unsigned char b,
-		const char* szText);
+		const char* szText
+	);
 
 public:  // Members.
 	static constexpr int iMaxMapSize = 32768;  ///< This is max map size for HL2 (-16384..16383).
@@ -140,5 +145,4 @@ public:  // Members.
 private:
 	static TReach CanPassOrJump(Vector& vGround, const Vector& vDirectionInc);
 	static TReach CanClimbSlope(const Vector& vSrc, const Vector& vDest);
-	static void HumanHullTrace(const Vector& vGround1, const Vector& vGround2, int hull = human_hull);
 };

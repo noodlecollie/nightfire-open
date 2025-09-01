@@ -406,7 +406,7 @@ public:  // Methods.
 	static TWaypointId GetNearestNeighbour(TWaypointId iWaypoint, TWaypointId iTo, bool bVisible);
 
 	/// Get farest neighbour to given waypoint.
-	static TWaypointId GetFarestNeighbour(TWaypointId iWaypoint, TWaypointId iTo, bool bVisible);
+	static TWaypointId GetFurthestNeighbour(TWaypointId iWaypoint, TWaypointId iTo, bool bVisible);
 
 	/// Return true if there is a path from waypoint source to waypoint dest.
 	static inline bool HasPath(TWaypointId source, TWaypointId dest)
@@ -577,26 +577,14 @@ public:  // Methods.
 protected:
 	friend class CWaypointNavigator;  // Get access to m_cGraph (for A* search implementation).
 
-#ifdef BOTRIX_OLD_LADDER_CODE
 	// Add ladder dismounts waypoints.
 	static void AddLadderDismounts(
-		ICollideable* pLadder,
+		const Vector& ladderNormal,
 		float fPlayerWidth,
 		float fPlayerEye,
 		TWaypointId iBottom,
 		TWaypointId iTop
 	);
-#else
-	static void AddLadderDismounts(
-		edict_t* ladderEnt,
-		float fPlayerWidth,
-		float fPlayerEye,
-		TWaypointId iBottom,
-		TWaypointId iTop,
-		edict_t* dismountBottom,
-		edict_t* dismountTop
-	);
-#endif  // BOTRIX_OLD_LADDER_CODE
 
 	// Analyze one waypoint (for AnalyzeStep()). Return true, if waypoint has nearby waypoints or new waypoint is added.
 	static bool AnalyzeWaypoint(

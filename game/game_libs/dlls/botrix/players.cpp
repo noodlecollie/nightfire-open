@@ -354,7 +354,7 @@ void CPlayers::KickBot(CPlayer* pPlayer)
 {
 	BASSERT(pPlayer && pPlayer->IsBot());
 	char szCommand[16];
-	PlatformLib_SNPrintF(szCommand, sizeof(szCommand), "kickid %d\n", pPlayer->GetPlayerInfo()->GetUserID());
+	PlatformLib_SNPrintF(szCommand, sizeof(szCommand), "kick #%d\n", pPlayer->GetPlayerInfo()->GetUserID());
 	SERVER_COMMAND(szCommand);
 }
 

@@ -73,7 +73,7 @@ static const char* IndentString(size_t indent)
 	return buffer;
 }
 
-#define ANALIZE_WAYPOINTS_CHECK() \
+#define ANALYZE_WAYPOINTS_CHECK() \
 	if ( CWaypoints::IsAnalyzing() ) \
 	{ \
 		BLOG_W("You can't use this command while map is being analyzed for waypoints."); \
@@ -103,7 +103,8 @@ int CConsoleCommand::AutoComplete(
 	int partialLength,
 	char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH],
 	int strIndex,
-	int charIndex)
+	int charIndex
+)
 {
 	if ( charIndex + partialLength >= COMMAND_COMPLETION_ITEM_LENGTH || strIndex >= COMMAND_COMPLETION_ITEM_LENGTH - 1 )
 		return 0;  // Check bounds.
@@ -120,7 +121,8 @@ int CConsoleCommand::AutoComplete(
 				&commands[strIndex][charIndex],
 				COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
 				m_sCommand.c_str(),
-				MIN2(maxLength, m_sCommand.size() + 1));
+				MIN2(maxLength, m_sCommand.size() + 1)
+			);
 			commands[strIndex + result][COMMAND_COMPLETION_ITEM_LENGTH - 1] = 0;
 			result++;
 		}
@@ -156,12 +158,14 @@ int CConsoleCommand::AutoComplete(
 										&commands[strIndex + result][charIndex],
 										COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
 										partial,
-										lastSpace);
+										lastSpace
+									);
 									PlatformLib_StrNCpy(
 										&commands[strIndex + result][charIndex + lastSpace],
 										COMMAND_COMPLETION_ITEM_LENGTH - (charIndex + lastSpace),
 										arg.c_str(),
-										MIN2(maxLength, arg.size() + 1));
+										MIN2(maxLength, arg.size() + 1)
+									);
 									commands[strIndex + result][COMMAND_COMPLETION_ITEM_LENGTH - 1] = 0;
 									result++;
 									if ( strIndex + result >= COMMAND_COMPLETION_ITEM_LENGTH - 1 )
@@ -295,7 +299,8 @@ int CConsoleCommand::AutoComplete(good::string& partial, CUtlVector<CUtlString>&
 					CPlayers::GetNames(
 						completionValues,
 						argType != EConsoleAutoCompleteArgUsers && argType != EConsoleAutoCompleteArgUsersForever,
-						argType != EConsoleAutoCompleteArgBots && argType != EConsoleAutoCompleteArgBotsForever);
+						argType != EConsoleAutoCompleteArgBots && argType != EConsoleAutoCompleteArgBotsForever
+					);
 					completion = &completionValues;
 					for ( int i = 1; i < completionValues.size(); ++i )
 					{
@@ -382,7 +387,8 @@ int CConsoleCommandContainer::AutoComplete(
 	int partialLength,
 	char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH],
 	int strIndex,
-	int charIndex)
+	int charIndex
+)
 {
 	int result = 0;
 	int command_size = m_sCommand.size();
@@ -394,7 +400,8 @@ int CConsoleCommandContainer::AutoComplete(
 			PlatformLib_StrCpy(
 				&commands[strIndex][charIndex],
 				COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
-				m_sCommand.c_str());  // e.g. "way" -> "waypoint"
+				m_sCommand.c_str()
+			);  // e.g. "way" -> "waypoint"
 			result++;
 		}
 	}
@@ -421,7 +428,8 @@ int CConsoleCommandContainer::AutoComplete(
 						&commands[strIndex][charIndex],
 						COMMAND_COMPLETION_ITEM_LENGTH - charIndex,
 						m_sCommand.c_str(),
-						command_size);
+						command_size
+					);
 					commands[strIndex][charIndex + command_size] = ' ';
 					strIndex++;
 					result++;
@@ -628,7 +636,8 @@ TCommandResult CWaypointDrawFlagCommand::Execute(CClient* pClient, int argc, con
 				BULOG_E(
 					pClient->GetEdict(),
 					"Error, invalid draw flag(s). Can be 'none' / 'all' / 'next' or mix of: %s",
-					CTypeToString::WaypointDrawFlagsToString(FWaypointDrawAll).c_str());
+					CTypeToString::WaypointDrawFlagsToString(FWaypointDrawAll).c_str()
+				);
 
 				return ECommandError;
 			}
@@ -673,7 +682,7 @@ TCommandResult CWaypointCreateCommand::Execute(CClient* pClient, int argc, const
 		return ECommandError;
 	}
 
-	ANALIZE_WAYPOINTS_CHECK();
+	ANALYZE_WAYPOINTS_CHECK();
 
 	if ( !pClient->IsAlive() )
 	{
@@ -719,7 +728,9 @@ CWaypointRemoveCommand::CWaypointRemoveCommand()
 TCommandResult CWaypointRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
 		return ECommandPerformed;
+	}
 
 	if ( pClient == NULL )
 	{
@@ -727,7 +738,7 @@ TCommandResult CWaypointRemoveCommand::Execute(CClient* pClient, int argc, const
 		return ECommandError;
 	}
 
-	ANALIZE_WAYPOINTS_CHECK();
+	ANALYZE_WAYPOINTS_CHECK();
 
 	if ( argc > 1 )
 	{
@@ -736,6 +747,7 @@ TCommandResult CWaypointRemoveCommand::Execute(CClient* pClient, int argc, const
 	}
 
 	TWaypointId id = GetWaypointId(0, argc, argv, pClient, pClient->iCurrentWaypoint);
+
 	if ( !CWaypoints::IsValid(id) )
 	{
 		BULOG_W(pClient->GetEdict(), "Error, invalid given or current waypoint (move closer to some waypoint).");
@@ -776,7 +788,8 @@ TCommandResult CWaypointMoveCommand::Execute(CClient* pClient, int argc, const c
 		BULOG_W(
 			pClient->GetEdict(),
 			"Error, invalid waypoint %s (move closer to some waypoint).",
-			argc == 0 ? "current" : argv[0]);
+			argc == 0 ? "current" : argv[0]
+		);
 		return ECommandError;
 	}
 
@@ -788,7 +801,8 @@ TCommandResult CWaypointMoveCommand::Execute(CClient* pClient, int argc, const c
 		id,
 		(int)vOrigin.x,
 		(int)vOrigin.y,
-		(int)vOrigin.z);
+		(int)vOrigin.z
+	);
 
 	CItems::MapUnloaded();
 	CItems::MapLoaded(false);
@@ -811,11 +825,12 @@ TCommandResult CWaypointAutoCreateCommand::Execute(CClient* pClient, int argc, c
 	{
 		BULOG_I(
 			pClient->GetEdict(),
-			pClient->bAutoCreateWaypoints ? "Auto create waypoints is on." : "Auto create waypoints is off.");
+			pClient->bAutoCreateWaypoints ? "Auto create waypoints is on." : "Auto create waypoints is off."
+		);
 		return ECommandPerformed;
 	}
 
-	ANALIZE_WAYPOINTS_CHECK();
+	ANALYZE_WAYPOINTS_CHECK();
 
 	int iValue = -1;
 	if ( argc == 1 )
@@ -843,7 +858,7 @@ TCommandResult CWaypointClearCommand::Execute(CClient* pClient, int argc, const 
 		return ECommandError;
 	}
 
-	ANALIZE_WAYPOINTS_CHECK();
+	ANALYZE_WAYPOINTS_CHECK();
 
 	int iSize = CWaypoints::Size();
 	CWaypoints::Clear();
@@ -883,7 +898,8 @@ TCommandResult CWaypointAddTypeCommand::Execute(CClient* pClient, int argc, cons
 				pClient->GetEdict(),
 				"Error, invalid waypoint flag: %s. Can be one of: %s",
 				argv[i],
-				CTypeToString::WaypointFlagsToString(FWaypointAll).c_str());
+				CTypeToString::WaypointFlagsToString(FWaypointAll).c_str()
+			);
 			return ECommandError;
 		}
 		FLAG_SET(iAddFlag, iFlags);
@@ -894,7 +910,8 @@ TCommandResult CWaypointAddTypeCommand::Execute(CClient* pClient, int argc, cons
 		BULOG_E(
 			pClient->GetEdict(),
 			"Error, specify at least one waypoint type. Can be one of: %s.",
-			CTypeToString::WaypointFlagsToString(FWaypointAll).c_str());
+			CTypeToString::WaypointFlagsToString(FWaypointAll).c_str()
+		);
 		return ECommandError;
 	}
 	else
@@ -904,7 +921,8 @@ TCommandResult CWaypointAddTypeCommand::Execute(CClient* pClient, int argc, cons
 		bool bAngle1 = FLAG_SOME_SET(
 			FWaypointCamper | FWaypointSniper | FWaypointArmorMachine | FWaypointHealthMachine | FWaypointButton |
 				FWaypointUse,
-			w.iFlags);
+			w.iFlags
+		);
 		bool bAngle2 = FLAG_SOME_SET(FWaypointCamper | FWaypointSniper, w.iFlags);
 
 		bool bWeapon = FLAG_SOME_SET(FWaypointAmmo | FWaypointWeapon, w.iFlags);
@@ -924,7 +942,8 @@ TCommandResult CWaypointAddTypeCommand::Execute(CClient* pClient, int argc, cons
 			"Types %s (%d) added to waypoint %d.",
 			CTypeToString::WaypointFlagsToString(iFlags).c_str(),
 			iFlags,
-			pClient->iCurrentWaypoint);
+			pClient->iCurrentWaypoint
+		);
 		return ECommandPerformed;
 	}
 }
@@ -958,7 +977,8 @@ TCommandResult CWaypointAnalyzeToggleCommand::Execute(CClient* pClient, int argc
 				BULOG_W(
 					pEdict,
 					"Someone (%s) is auto-creating waypoints, you can't mix it with analyze command.",
-					botClient->GetName());
+					botClient->GetName()
+				);
 
 				return ECommandError;
 			}
@@ -1224,7 +1244,8 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 		BULOG_I(pClient->GetEdict(), "You can add next arguments:");
 		BULOG_I(
 			pClient->GetEdict(),
-			" - 'angle1': set your current angles as waypoint first angles (use, button, chargers, camper, sniper).");
+			" - 'angle1': set your current angles as waypoint first angles (use, button, chargers, camper, sniper)."
+		);
 		BULOG_I(pClient->GetEdict(), " - 'angle2': set your current angles as second angles (camper, sniper).");
 		if ( CBotrixMod::GetModId() == EModId_Invalid )
 		{
@@ -1256,7 +1277,8 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 	bool bAngle1 = FLAG_SOME_SET(
 		FWaypointCamper | FWaypointSniper | FWaypointArmorMachine | FWaypointHealthMachine | FWaypointUse |
 			FWaypointButton | FWaypointSeeButton,
-		w.iFlags);
+		w.iFlags
+	);
 	bool bAngle2 = FLAG_SOME_SET(FWaypointCamper | FWaypointSniper, w.iFlags);
 
 	bool bWeapon = FLAG_SOME_SET(FWaypointAmmo | FWaypointWeapon, w.iFlags);
@@ -1285,7 +1307,8 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 						pClient->GetEdict(),
 						"Weapon ammo %s, secondary %s.",
 						aAmmos[iAmmo]->szEngineName,
-						bIsSecondary ? "yes" : "no");
+						bIsSecondary ? "yes" : "no"
+					);
 				else
 					BULOG_I(pClient->GetEdict(), "Weapon ammo invalid.");
 			}
@@ -1311,7 +1334,8 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 					info,
 					sizeof(info),
 					"elevator %d (-1 invalid).",
-					CWaypoint::GetElevator(w.iArgument));
+					CWaypoint::GetElevator(w.iArgument)
+				);
 			}
 			else
 			{
@@ -1389,7 +1413,8 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 				{
 					BULOG_W(
 						pClient->GetEdict(),
-						"Error, you must provide ammo name or Error, invalid parameters count.");
+						"Error, you must provide ammo name or Error, invalid parameters count."
+					);
 					return ECommandError;
 				}
 				if ( !FLAG_SOME_SET(FWaypointAmmo, w.iFlags) )
@@ -1425,14 +1450,16 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 			{
 				BULOG_W(
 					pClient->GetEdict(),
-					"Error, you must provide health amount or Error, invalid parameters count.");
+					"Error, you must provide health amount or Error, invalid parameters count."
+				);
 				return ECommandError;
 			}
 			if ( !bHealth )
 			{
 				BULOG_W(
 					pClient->GetEdict(),
-					"Error, first you need to set waypoint type accordingly (health/health-charger).");
+					"Error, first you need to set waypoint type accordingly (health/health-charger)."
+				);
 				return ECommandError;
 			}
 			if ( bAngle2 )
@@ -1459,14 +1486,16 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 			{
 				BULOG_W(
 					pClient->GetEdict(),
-					"Error, you must provide armor amount or Error, invalid parameters count.");
+					"Error, you must provide armor amount or Error, invalid parameters count."
+				);
 				return ECommandError;
 			}
 			if ( !bArmor )
 			{
 				BULOG_W(
 					pClient->GetEdict(),
-					"Error, first you need to set waypoint type accordingly (armor/armor-charger).");
+					"Error, first you need to set waypoint type accordingly (armor/armor-charger)."
+				);
 				return ECommandError;
 			}
 			if ( bAngle2 )
@@ -1601,7 +1630,8 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 			BULOG_W(
 				pClient->GetEdict(),
 				"Error, first you need to set waypoint type accordingly "
-				"(camper/sniper/armor-charger/health-charger/use/button/see-button).");
+				"(camper/sniper/armor-charger/health-charger/use/button/see-button)."
+			);
 			return ECommandError;
 		}
 
@@ -1666,7 +1696,9 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 TCommandResult CWaypointInfoCommand::Execute(CClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
 		return ECommandPerformed;
+	}
 
 	if ( pClient == NULL )
 	{
@@ -1678,11 +1710,13 @@ TCommandResult CWaypointInfoCommand::Execute(CClient* pClient, int argc, const c
 		pClient->GetEdict(),
 		"Total waypoints: %d, %s analyzing.",
 		CWaypoints::Size(),
-		CWaypoints::IsAnalyzing() ? "still" : "not");
+		CWaypoints::IsAnalyzing() ? "still" : "not"
+	);
 
 	for ( int arg = 0; arg < (argc > 0 ? argc : 1); ++arg )
 	{
 		TWaypointId id = GetWaypointId(arg, argc, argv, pClient, pClient->iCurrentWaypoint);
+
 		if ( CWaypoints::IsValid(id) )
 		{
 			CWaypoint& w = CWaypoints::Get(id);
@@ -1691,20 +1725,26 @@ TCommandResult CWaypointInfoCommand::Execute(CClient* pClient, int argc, const c
 				pClient->GetEdict(),
 				"Waypoint id %d: flags %s",
 				id,
-				(sFlags.size() > 0) ? sFlags.c_str() : sNone.c_str());
+				(sFlags.size() > 0) ? sFlags.c_str() : sNone.c_str()
+			);
 			BULOG_I(pClient->GetEdict(), "Origin: %.0f %.0f %.0f", w.vOrigin.x, w.vOrigin.y, w.vOrigin.z);
 		}
 		else
+		{
 			BULOG_W(
 				pClient->GetEdict(),
 				"Error, invalid waypoint %s (try to move closer to some waypoint).",
-				argc > 0 ? argv[arg] : "current");
+				argc > 0 ? argv[arg] : "current"
+			);
+		}
 	}
+
 	BULOG_I(
 		pClient->GetEdict(),
 		"Total waypoints: %d, %s analyzing.",
 		CWaypoints::Size(),
-		CWaypoints::IsAnalyzing() ? "still" : "not");
+		CWaypoints::IsAnalyzing() ? "still" : "not"
+	);
 
 	return ECommandPerformed;
 }
@@ -1761,7 +1801,7 @@ TCommandResult CWaypointSaveCommand::Execute(CClient* pClient, int argc, const c
 		return ECommandError;
 	}
 
-	ANALIZE_WAYPOINTS_CHECK();
+	ANALYZE_WAYPOINTS_CHECK();
 
 	bool bResult = CWaypoints::Save();
 
@@ -1791,7 +1831,7 @@ TCommandResult CWaypointLoadCommand::Execute(CClient* pClient, int argc, const c
 		return ECommandError;
 	}
 
-	ANALIZE_WAYPOINTS_CHECK();
+	ANALYZE_WAYPOINTS_CHECK();
 
 	bool result = CWaypoints::Load();
 	if ( result )
@@ -1800,7 +1840,8 @@ TCommandResult CWaypointLoadCommand::Execute(CClient* pClient, int argc, const c
 			pClient->GetEdict(),
 			"%d waypoints loaded for map %s.",
 			CWaypoints::Size(),
-			CBotrixServerPlugin::MapName());
+			CBotrixServerPlugin::MapName()
+		);
 	}
 	else
 	{
@@ -1821,21 +1862,18 @@ CWaypointVisibilityCommand::CWaypointVisibilityCommand()
 		good::string("Can be 'none' / 'all' / 'next' or mix of: ") + CTypeToString::PathDrawFlagsToString(FPathDrawAll);
 	m_iAccessLevel = FCommandAccessWaypoint;
 
-	StringVector args;
-	args.push_back(sNone);
-	args.push_back(sAll);
-	args.push_back(sNext);
-	for ( int i = 0; i < EPathDrawFlagTotal; ++i )
-		args.push_back(CTypeToString::PathDrawFlagsToString(1 << i).duplicate());
-
-	m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValuesForever);
-	m_cAutoCompleteValues.push_back(args);
+	m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgWaypoint);
+	m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgWaypoint);
+	m_cAutoCompleteValues.push_back(StringVector());
+	m_cAutoCompleteValues.push_back(StringVector());
 }
 
 TCommandResult CWaypointVisibilityCommand::Execute(CClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
 		return ECommandPerformed;
+	}
 
 	if ( pClient == NULL )
 	{
@@ -1862,7 +1900,9 @@ TCommandResult CWaypointVisibilityCommand::Execute(CClient* pClient, int argc, c
 			return ECommandPerformed;
 		}
 		else if ( sNone == argv[0] )
+		{
 			bFinished = true;
+		}
 		else if ( sAll == argv[0] )
 		{
 			iFlags = FPathDrawAll;
@@ -1881,20 +1921,101 @@ TCommandResult CWaypointVisibilityCommand::Execute(CClient* pClient, int argc, c
 		for ( int i = 0; i < argc; ++i )
 		{
 			int iAddFlag = CTypeToString::PathDrawFlagsFromString(argv[i]);
+
 			if ( iAddFlag == -1 )
 			{
 				BULOG_W(
 					pClient->GetEdict(),
 					"Error, invalid draw flag(s). Can be 'none' / 'all' / 'next' or mix of: %s.",
-					CTypeToString::PathDrawFlagsToString(FWaypointDrawAll).c_str());
+					CTypeToString::PathDrawFlagsToString(FWaypointDrawAll).c_str()
+				);
+
 				return ECommandError;
 			}
+
 			FLAG_SET(iAddFlag, iFlags);
 		}
 	}
 
 	pClient->iVisiblesDrawFlags = iFlags;
 	BULOG_I(pClient->GetEdict(), "Visible waypoints drawing is %s.", iFlags ? "on" : "off");
+	return ECommandPerformed;
+}
+
+CWaypointConnectionCommand::CWaypointConnectionCommand()
+{
+	m_sCommand = "connected";
+	m_sHelp = "return if there is a connection between two waypoints";
+	m_sDescription = "Specifying only one ID implies the current waypoint is the starting point";
+	m_iAccessLevel = FCommandAccessWaypoint;
+
+	StringVector args;
+	args.push_back(sNone);
+	args.push_back(sAll);
+	args.push_back(sNext);
+	for ( int i = 0; i < EPathDrawFlagTotal; ++i )
+	{
+		args.push_back(CTypeToString::PathDrawFlagsToString(1 << i).duplicate());
+	}
+
+	m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValuesForever);
+	m_cAutoCompleteValues.push_back(args);
+}
+
+TCommandResult CWaypointConnectionCommand::Execute(CClient* pClient, int argc, const char** argv)
+{
+	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
+		return ECommandPerformed;
+	}
+
+	if ( pClient == NULL )
+	{
+		BLOG_W("Please login to server to execute this command.");
+		return ECommandError;
+	}
+
+	if ( argc != 1 && argc != 2 )
+	{
+		BLOG_W("Error, invalid parameters count.");
+		return ECommandError;
+	}
+
+	TWaypointId startId = -1;
+	TWaypointId endId = -1;
+
+	if ( argc == 1 )
+	{
+		startId = pClient->iCurrentWaypoint;
+		PlatformLib_SScanF(argv[0], "%d", &endId);
+	}
+	else
+	{
+		PlatformLib_SScanF(argv[0], "%d", &startId);
+		PlatformLib_SScanF(argv[1], "%d", &endId);
+	}
+
+	const bool startValid = CWaypoints::IsValid(startId);
+	const bool endValid = CWaypoints::IsValid(endId);
+
+	if ( !startValid )
+	{
+		BLOG_W("Starting waypoint ID %d was not valid.", startId);
+	}
+
+	if ( !endValid )
+	{
+		BLOG_W("Ending waypoint ID %d was not valid.", endId);
+	}
+
+	if ( !startValid || !endValid )
+	{
+		return ECommandError;
+	}
+
+	const bool hasPath = CWaypoints::HasPath(startId, endId);
+	BLOG_I("Connection %s between waypoints %d and %d.", hasPath ? "exists" : "does not exist", startId, endId);
+
 	return ECommandPerformed;
 }
 
@@ -2013,7 +2134,8 @@ TCommandResult CWaypointAreaSetCommand::Execute(CClient* pClient, int argc, cons
 			"Waypoint %d is at area %s (%d).",
 			iWaypoint,
 			CWaypoints::GetAreas()[w.iAreaId].c_str(),
-			w.iAreaId);
+			w.iAreaId
+		);
 		return ECommandPerformed;
 	}
 
@@ -2281,7 +2403,8 @@ TCommandResult CPathDrawCommand::Execute(CClient* pClient, int argc, const char*
 				BULOG_W(
 					pClient->GetEdict(),
 					"Error, invalid draw flag(s). Can be 'none' / 'all' / 'next' or mix of: %s.",
-					CTypeToString::PathDrawFlagsToString(FWaypointDrawAll).c_str());
+					CTypeToString::PathDrawFlagsToString(FWaypointDrawAll).c_str()
+				);
 				return ECommandError;
 			}
 			FLAG_SET(iAddFlag, iFlags);
@@ -2346,7 +2469,8 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 			pClient->GetEdict(),
 			"Error creating path from %d to %d (exists or too big distance?).",
 			iPathFrom,
-			iPathTo);
+			iPathTo
+		);
 		return ECommandError;
 	}
 }
@@ -2413,7 +2537,8 @@ TCommandResult CPathAutoCreateCommand::Execute(CClient* pClient, int argc, const
 		BULOG_I(
 			pClient->GetEdict(),
 			"Waypoint's auto paths creation is: %s.",
-			CTypeToString::BoolToString(pClient->bAutoCreatePaths).c_str());
+			CTypeToString::BoolToString(pClient->bAutoCreatePaths).c_str()
+		);
 		return ECommandPerformed;
 	}
 
@@ -2431,7 +2556,8 @@ TCommandResult CPathAutoCreateCommand::Execute(CClient* pClient, int argc, const
 	BULOG_I(
 		pClient->GetEdict(),
 		"Waypoint's auto paths creation is: %s.",
-		CTypeToString::BoolToString(pClient->bAutoCreatePaths).c_str());
+		CTypeToString::BoolToString(pClient->bAutoCreatePaths).c_str()
+	);
 	return ECommandPerformed;
 }
 
@@ -2472,7 +2598,8 @@ TCommandResult CPathAddTypeCommand::Execute(CClient* pClient, int argc, const ch
 				pClient->GetEdict(),
 				"Error, invalid path flag: %s. Can be one of: %s",
 				argv[i],
-				CTypeToString::PathFlagsToString(FPathAll).c_str());
+				CTypeToString::PathFlagsToString(FPathAll).c_str()
+			);
 			return ECommandError;
 		}
 		FLAG_SET(iAddFlag, iFlags);
@@ -2483,7 +2610,8 @@ TCommandResult CPathAddTypeCommand::Execute(CClient* pClient, int argc, const ch
 		BULOG_W(
 			pClient->GetEdict(),
 			"Error, at least one path flag is needed. Can be one of: %s",
-			CTypeToString::PathFlagsToString(FPathAll).c_str());
+			CTypeToString::PathFlagsToString(FPathAll).c_str()
+		);
 		return ECommandError;
 	}
 
@@ -2496,7 +2624,8 @@ TCommandResult CPathAddTypeCommand::Execute(CClient* pClient, int argc, const ch
 			"Added path types %s (path from %d to %d).",
 			CTypeToString::PathFlagsToString(iFlags).c_str(),
 			iPathFrom,
-			iPathTo);
+			iPathTo
+		);
 		return ECommandPerformed;
 	}
 	else
@@ -2548,7 +2677,8 @@ TCommandResult CPathRemoveTypeCommand::Execute(CClient* pClient, int argc, const
 			pClient->GetEdict(),
 			"Removed all types for path from %d to %d.",
 			iPathFrom,
-			pClient->iDestinationWaypoint);
+			pClient->iDestinationWaypoint
+		);
 		return ECommandPerformed;
 	}
 	else
@@ -2592,7 +2722,8 @@ TCommandResult CPathArgumentCommand::Execute(CClient* pClient, int argc, const c
 			pClient->GetEdict(),
 			"Error, no path from %d to %d.",
 			pClient->iCurrentWaypoint,
-			pClient->iDestinationWaypoint);
+			pClient->iDestinationWaypoint
+		);
 		return ECommandError;
 	}
 
@@ -2610,7 +2741,8 @@ TCommandResult CPathArgumentCommand::Execute(CClient* pClient, int argc, const c
 			{
 				BULOG_W(
 					pClient->GetEdict(),
-					"Error, invalid parameters, should be valid door & button number or -1 to reset.");
+					"Error, invalid parameters, should be valid door & button number or -1 to reset."
+				);
 				return ECommandError;
 			}
 
@@ -2637,7 +2769,8 @@ TCommandResult CPathArgumentCommand::Execute(CClient* pClient, int argc, const c
 			pClient->iDestinationWaypoint,
 			FLAG_SOME_SET(FPathDoor, pPath->iFlags) ? "door" : "elevator",
 			pPath->GetDoorNumber(),
-			pPath->GetButtonNumber());
+			pPath->GetButtonNumber()
+		);
 	else
 		BULOG_I(
 			pClient->GetEdict(),
@@ -2645,7 +2778,8 @@ TCommandResult CPathArgumentCommand::Execute(CClient* pClient, int argc, const c
 			pClient->iCurrentWaypoint,
 			pClient->iDestinationWaypoint,
 			pPath->ActionTime(),
-			pPath->ActionDuration());
+			pPath->ActionDuration()
+		);
 	return ECommandPerformed;
 }
 
@@ -2692,7 +2826,8 @@ TCommandResult CPathInfoCommand::Execute(CClient* pClient, int argc, const char*
 				"Path (from %d to %d) has demo: id %d.",
 				iPathFrom,
 				iPathTo,
-				pPath->GetDemoNumber());
+				pPath->GetDemoNumber()
+			);
 		else
 		{
 			const good::string& sFlags = CTypeToString::PathFlagsToString(pPath->iFlags);
@@ -2701,7 +2836,8 @@ TCommandResult CPathInfoCommand::Execute(CClient* pClient, int argc, const char*
 				"Path (from %d to %d) has flags: %s.",
 				iPathFrom,
 				iPathTo,
-				(sFlags.size() > 0) ? sFlags.c_str() : sNone.c_str());
+				(sFlags.size() > 0) ? sFlags.c_str() : sNone.c_str()
+			);
 			if ( pPath->IsDoor() || pPath->IsElevator() )
 			{
 				char message[128];
@@ -2744,7 +2880,8 @@ TCommandResult CPathInfoCommand::Execute(CClient* pClient, int argc, const char*
 					pClient->GetEdict(),
 					"Path action time %d, action duration %d. Time in deciseconds.",
 					GET_1ST_BYTE(pPath->iArgument),
-					GET_2ND_BYTE(pPath->iArgument));
+					GET_2ND_BYTE(pPath->iArgument)
+				);
 			}
 		}
 
@@ -2876,7 +3013,8 @@ TCommandResult CConfigBotWeaponAllowCommand::Execute(CClient* pClient, int argc,
 				pEdict,
 				"%s is %s.",
 				pWeapon->pWeaponClass->sClassName.c_str(),
-				pWeapon->bForbidden ? "forbidden" : "allowed");
+				pWeapon->bForbidden ? "forbidden" : "allowed"
+			);
 		}
 
 		return ECommandPerformed;
@@ -3095,7 +3233,8 @@ TCommandResult CConfigBotWeaponUnknownCommand::Execute(CClient* pClient, int arg
 	BULOG_I(
 		pEdict,
 		"Unknown weapons are %s by default.",
-		CBotrixBot::bAssumeUnknownWeaponManual ? "manuals" : "ranged");
+		CBotrixBot::bAssumeUnknownWeaponManual ? "manuals" : "ranged"
+	);
 
 	return ECommandPerformed;
 }
@@ -3422,7 +3561,8 @@ TCommandResult CConfigBotIntelligenceCommand::Execute(CClient* pClient, int argc
 		pEdict,
 		"Bot's intelligence: min %s, max %s.",
 		CTypeToString::IntelligenceToString(CBotrixBot::iMinIntelligence).c_str(),
-		CTypeToString::IntelligenceToString(CBotrixBot::iMaxIntelligence).c_str());
+		CTypeToString::IntelligenceToString(CBotrixBot::iMaxIntelligence).c_str()
+	);
 	return iResult;
 }
 
@@ -3688,7 +3828,8 @@ TCommandResult CConfigBotStrategyFlagsCommand::Execute(CClient* pClient, int arg
 	BULOG_I(
 		pEdict,
 		"Bot's strategy flags: %s.",
-		CTypeToString::StrategyFlagsToString(CBotrixBot::iDefaultFightStrategy).c_str());
+		CTypeToString::StrategyFlagsToString(CBotrixBot::iDefaultFightStrategy).c_str()
+	);
 	return ECommandPerformed;
 }
 
@@ -3758,12 +3899,14 @@ TCommandResult CConfigBotStrategySetCommand::Execute(CClient* pClient, int argc,
 		pEdict,
 		"  %s = %d",
 		CTypeToString::StrategyArgToString(EFightStrategyArgNearDistance).c_str(),
-		(int)rsqrt(CBotrixBot::fNearDistanceSqr));
+		(int)rsqrt(CBotrixBot::fNearDistanceSqr)
+	);
 	BULOG_I(
 		pEdict,
 		"  %s = %d",
 		CTypeToString::StrategyArgToString(EFightStrategyArgFarDistance).c_str(),
-		(int)rsqrt(CBotrixBot::fFarDistanceSqr));
+		(int)rsqrt(CBotrixBot::fFarDistanceSqr)
+	);
 	return ECommandPerformed;
 }
 
@@ -3835,7 +3978,8 @@ TCommandResult CBotDrawPathCommand::Execute(CClient* pClient, int argc, const ch
 				BULOG_W(
 					pEdict,
 					"Error, invalid draw type(s). Can be 'none' / 'all' / 'next' or mix of: %s",
-					CTypeToString::PathDrawFlagsToString(FPathDrawAll).c_str());
+					CTypeToString::PathDrawFlagsToString(FPathDrawAll).c_str()
+				);
 				return ECommandError;
 			}
 			FLAG_SET(iAddFlag, iFlags);
@@ -3893,7 +4037,8 @@ TCommandResult CBotAllyCommand::Execute(CClient* pClient, int argc, const char**
 							"%s is %s for bot %s.",
 							pPlayer->GetName(),
 							bAlly ? "ally" : "enemy",
-							pBot->GetName());
+							pBot->GetName()
+						);
 					}
 				}
 			}
@@ -4091,7 +4236,8 @@ TCommandResult CBotProtectCommand::Execute(CClient* pClient, int argc, const cha
 		BULOG_W(
 			pClient->GetEdict(),
 			"Error, invalid parameter %s, should be 'forever' / 'off' / time-in-seconds.",
-			argv[0]);
+			argv[0]
+		);
 		return ECommandError;
 	}
 
@@ -4113,7 +4259,8 @@ TCommandResult CBotProtectCommand::Execute(CClient* pClient, int argc, const cha
 					pClient->GetEdict(),
 					"Player %s is now %s.",
 					pPlayer->GetName(),
-					time == 0.0 ? "unprotected" : "protected");
+					time == 0.0 ? "unprotected" : "protected"
+				);
 			}
 		}
 	}
@@ -4168,7 +4315,8 @@ TCommandResult CBotTestPathCommand::Execute(CClient* pClient, int argc, const ch
 			"Bot added: %s. Testing path from %d to %d.",
 			pPlayer->GetName(),
 			iPathFrom,
-			iPathTo);
+			iPathTo
+		);
 		return ECommandPerformed;
 	}
 	else
@@ -4256,7 +4404,8 @@ TCommandResult CItemDrawCommand::Execute(CClient* pClient, int argc, const char*
 				BULOG_W(
 					pClient->GetEdict(),
 					"Error, invalid item type(s). Can be 'none' / 'all' / 'next' or mix of: %s",
-					CTypeToString::EntityTypeFlagsToString(FItemTypeAll).c_str());
+					CTypeToString::EntityTypeFlagsToString(FItemTypeAll).c_str()
+				);
 				return ECommandError;
 			}
 			FLAG_SET(iAddFlag, iFlags);
@@ -4342,7 +4491,8 @@ TCommandResult CItemDrawTypeCommand::Execute(CClient* pClient, int argc, const c
 				BULOG_W(
 					pClient->GetEdict(),
 					"Error, invalid draw type(s). Can be 'none' / 'all' / 'next' or mix of: %s",
-					CTypeToString::ItemDrawFlagsToString(FItemDrawAll).c_str());
+					CTypeToString::ItemDrawFlagsToString(FItemDrawAll).c_str()
+				);
 				return ECommandError;
 			}
 			FLAG_SET(iAddFlag, iFlags);
@@ -4397,7 +4547,8 @@ TCommandResult CItemMarkCommand::Execute(CClient* pClient, int argc, const char*
 				pClient->GetEdict(),
 				"Object id %d: %s",
 				aItems[i],
-				CTypeToString::EntityClassFlagsToString(aItems[i + 1]).c_str());
+				CTypeToString::EntityClassFlagsToString(aItems[i + 1]).c_str()
+			);
 		BULOG_I(pClient->GetEdict(), "Total %d objects.", aItems.size());
 		return ECommandPerformed;
 	}
@@ -4424,7 +4575,8 @@ TCommandResult CItemMarkCommand::Execute(CClient* pClient, int argc, const char*
 			BULOG_W(
 				pClient->GetEdict(),
 				"Error, invalid object flag. Can be 'none' or mix of: %s",
-				CTypeToString::EntityClassFlagsToString(FEntityAll).c_str());
+				CTypeToString::EntityClassFlagsToString(FEntityAll).c_str()
+			);
 			return ECommandError;
 		}
 		FLAG_SET(iAddFlag, iFlags);
@@ -4530,7 +4682,8 @@ TCommandResult CConfigLogCommand::Execute(CClient* pClient, int argc, const char
 		BULOG_I(
 			pEdict,
 			"Console log level: %s.",
-			CTypeToString::LogLevelToString(CBotrixEngineUtil::iLogLevel).c_str());
+			CTypeToString::LogLevelToString(CBotrixEngineUtil::iLogLevel).c_str()
+		);
 		return ECommandPerformed;
 	}
 
@@ -4620,7 +4773,8 @@ TCommandResult CConfigWaypointAnalyzeMapChange::Execute(CClient* pClient, int ar
 	BULOG_I(
 		pEdict,
 		"Maximum waypoints count to analyze the map on map change: %d (-1 = disabled).",
-		CWaypoint::iWaypointsMaxCountToAnalyzeMap);
+		CWaypoint::iWaypointsMaxCountToAnalyzeMap
+	);
 	return ECommandPerformed;
 }
 
@@ -4715,7 +4869,9 @@ CConfigWaypointUnreachable::CConfigWaypointUnreachable()
 TCommandResult CConfigWaypointUnreachable::Execute(CClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
 		return ECommandPerformed;
+	}
 
 	edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
 
@@ -4724,13 +4880,18 @@ TCommandResult CConfigWaypointUnreachable::Execute(CClient* pClient, int argc, c
 		BULOG_I(pEdict, "Invalid parameters count.");
 		return ECommandError;
 	}
+
 	if ( argc == 1 )
 	{
 		int iAmount = -1;
 		if ( sOff == argv[0] )
+		{
 			iAmount = 0;
+		}
 		else if ( PlatformLib_SScanF(argv[0], "%d", &iAmount) != 1 )
+		{
 			iAmount = -1;
+		}
 
 		if ( iAmount < 0 )
 		{
@@ -4740,10 +4901,13 @@ TCommandResult CConfigWaypointUnreachable::Execute(CClient* pClient, int argc, c
 
 		CWaypoint::iUnreachablePathFailuresToDelete = iAmount;
 	}
+
 	BULOG_I(
 		pEdict,
 		"Number of failed tries of bots to delete waypoint path: %d (0 = off).",
-		CWaypoint::iUnreachablePathFailuresToDelete);
+		CWaypoint::iUnreachablePathFailuresToDelete
+	);
+
 	return ECommandPerformed;
 }
 
@@ -4829,6 +4993,7 @@ void CBotrixCommand::AcceptServerCommand()
 		BULOG_W(
 			listenServerClient ? listenServerClient->GetEdict() : nullptr,
 			"%s",
-			CTypeToString::ConsoleCommandResultToString(result).c_str());
+			CTypeToString::ConsoleCommandResultToString(result).c_str()
+		);
 	}
 }

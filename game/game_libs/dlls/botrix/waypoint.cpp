@@ -429,7 +429,7 @@ bool CWaypoints::Save()
 				Vector vTo = Get(j).vOrigin;
 				cVisibles.set(
 					j,
-					CBotrixEngineUtil::IsVisiblePVS(vTo) ||
+					CBotrixEngineUtil::IsVisiblePVS(vTo) &&
 						CBotrixEngineUtil::IsVisible(vFrom, vTo, EVisibilityWorld, false)
 				);
 			}
@@ -685,21 +685,31 @@ bool CWaypoints::Load()
 TWaypointId CWaypoints::GetRandomNeighbour(TWaypointId iWaypoint, TWaypointId iTo, bool bVisible)
 {
 	const WaypointNode::arcs_t& aNeighbours = GetNode(iWaypoint).neighbours;
+
 	if ( !aNeighbours.size() )
+	{
 		return EWaypointIdInvalid;
+	}
 
 	TWaypointId iResult = rand() % aNeighbours.size();
+
 	if ( bValidVisibilityTable && CWaypoint::IsValid(iTo) )
 	{
 		for ( int i = 0; i < aNeighbours.size(); ++i )
 		{
 			TWaypointId iNeighbour = aNeighbours[iResult].target;
 			if ( m_aVisTable[iNeighbour].test(iTo) == bVisible )
+			{
 				return iNeighbour;
+			}
+
 			if ( ++iResult == aNeighbours.size() )
+			{
 				iResult = 0;
+			}
 		}
 	}
+
 	return aNeighbours[iResult].target;
 }
 
@@ -745,7 +755,7 @@ TWaypointId CWaypoints::GetNearestNeighbour(TWaypointId iWaypoint, TWaypointId i
 }
 
 //----------------------------------------------------------------------------------------------------------------
-TWaypointId CWaypoints::GetFarestNeighbour(TWaypointId iWaypoint, TWaypointId iTo, bool bVisible)
+TWaypointId CWaypoints::GetFurthestNeighbour(TWaypointId iWaypoint, TWaypointId iTo, bool bVisible)
 {
 	GoodAssert(bValidVisibilityTable);
 	const WaypointNode::arcs_t& aNeighbours = GetNode(iWaypoint).neighbours;
@@ -1165,7 +1175,9 @@ TWaypointId CWaypoints::GetAimedWaypoint(const Vector& vOrigin, const Vector& an
 	float fLowestAngDiff = 180 + 90;  // Set to max angle difference.
 
 	for ( x = minX; x <= maxX; ++x )
+	{
 		for ( y = minY; y <= maxY; ++y )
+		{
 			for ( z = minZ; z <= maxZ; ++z )
 			{
 				Bucket& bucket = m_cBuckets[x][y][z];
@@ -1196,6 +1208,8 @@ TWaypointId CWaypoints::GetAimedWaypoint(const Vector& vOrigin, const Vector& an
 					}
 				}
 			}
+		}
+	}
 
 	return iResult;
 }
@@ -1340,10 +1354,9 @@ void CWaypoints::MarkUnreachablePath(TWaypointId iWaypointFrom, TWaypointId iWay
 	m_aUnreachablePaths.push_back(cPath);
 }
 
-#ifdef BOTRIX_OLD_LADDER_CODE
 //----------------------------------------------------------------------------------------------------------------
 void CWaypoints::AddLadderDismounts(
-	ICollideable* pLadder,
+	const Vector& ladderNormal,
 	float fPlayerWidth,
 	float fPlayerEye,
 	TWaypointId iBottom,
@@ -1352,14 +1365,19 @@ void CWaypoints::AddLadderDismounts(
 {
 	float fMaxHeight = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
 	float fPlayerHalfWidth = fPlayerWidth / 2.0f;
-	QAngle angles = pLadder->GetCollisionAngles();
 
 	Vector vZ(0, 0, 1);
-	Vector vDirection;
-	AngleVectors(angles, &vDirection);
+	Vector vDirection(ladderNormal);
 	vDirection.z = 0;
-	vDirection.NormalizeInPlace();
-	Vector vPerpendicular = vDirection.Cross(vZ);
+	vDirection = vDirection.Normalize();
+
+	if ( VectorIsNull(vDirection) )
+	{
+		BULOG_W(m_pAnalyzer, "2D ladder normal was null.");
+		return;
+	}
+
+	Vector vPerpendicular = CrossProduct(vDirection, vZ);
 
 	Vector vDirections[4];
 	vDirections[0] = vDirection * fPlayerWidth;
@@ -1368,53 +1386,51 @@ void CWaypoints::AddLadderDismounts(
 	vDirections[3] = -vPerpendicular * fPlayerWidth;
 
 	TWaypointId iWaypoints[2] = {iBottom, iTop};
-	CTraceFilterWithFlags& iTracer = CBotrixEngineUtil::GetTraceFilter(EVisibilityWaypoints);
 
 	for ( int i = 0; i < 2; ++i )
 	{
 		Vector vPos = Get(iWaypoints[i]).vOrigin;
-		Vector vPosGround = vPos;
-		vPosGround.z -= fPlayerEye;
+		Vector vLadderWaypointGround = vPos;
+		vLadderWaypointGround.z -= fPlayerEye;
 
 		bool bFound = false;
 		for ( int j = 0; j < 4; ++j )
 		{
 			Vector vNew = vPos + vDirections[j];
-			Vector vGround = CBotrixEngineUtil::GetGroundVec(vNew);  // Not hull ground.
-			vGround.z += fPlayerEye;
+			Vector vCandidate = CBotrixEngineUtil::GetGroundVec(vNew);  // Not hull ground.
+			vCandidate.z += fPlayerEye;
 
-			if ( vPos.z - vGround.z > fMaxHeight )  // Too high.
+			if ( vPos.z - vCandidate.z > fMaxHeight )  // Too high.
 			{
 				continue;
 			}
 
-			if ( !CBotrixEngineUtil::IsVisible(vPos, vGround, EVisibilityWaypoints, false) )
+			if ( !CBotrixEngineUtil::IsVisible(vPos, vCandidate, EVisibilityWaypoints, false) )
 			{
 				continue;
 			}
 
-			vGround = CBotrixEngineUtil::GetHullGroundVec(vNew);
-			CBotrixEngineUtil::TraceHull(
-				vPosGround,
-				vGround,
-				CBotrixMod::vPlayerCollisionHullMins,
-				CBotrixMod::vPlayerCollisionHullMaxs,
-				iTracer.iTraceFlags,
-				&iTracer
-			);
+			Vector vCandidateGround = CBotrixEngineUtil::GetHullGroundVec(vNew);
 
-			if ( CBotrixEngineUtil::IsTraceHitSomething() )
+			CBotrixEngineUtil::HumanHullTrace(vLadderWaypointGround, vCandidateGround);
+
+			if ( CBotrixEngineUtil::TraceHitSomething() )
 			{
 				continue;
 			}
 
-			vGround.z += fPlayerEye;
+			vCandidate = vCandidateGround;
+			vCandidate.z += fPlayerEye;
 
-			TWaypointId iDismount = CWaypoints::GetNearestWaypoint(vGround, NULL, false, fPlayerHalfWidth);
+			TWaypointId iDismount = CWaypoints::GetNearestWaypoint(vCandidate, NULL, false, fPlayerHalfWidth);
 
-			if ( iDismount == EWaypointIdInvalid )
+			if ( iDismount != EWaypointIdInvalid )
 			{
-				iDismount = Add(vGround);
+				BULOG_D(m_pAnalyzer, "Chose waypoint %d for %s ladder dismount", iDismount, i == 0 ? "bottom" : "top");
+			}
+			else
+			{
+				iDismount = Add(vCandidate);
 				BULOG_D(
 					m_pAnalyzer,
 					"  added waypoint %d (%s ladder dismount) at (%.0f, %.0f, %.0f)",
@@ -1434,108 +1450,15 @@ void CWaypoints::AddLadderDismounts(
 
 		if ( !bFound )
 		{
-			BULOG_W(m_pAnalyzer, "Ladder waypoint %d, couldn't create dismount waypoints.", iWaypoints[i]);
+			BULOG_W(
+				m_pAnalyzer,
+				"Ladder waypoint %d, couldn't create %s dismount waypoints.",
+				iWaypoints[i],
+				i == 0 ? "bottom" : "top"
+			);
 		}
 	}
 }
-#else
-void CWaypoints::AddLadderDismounts(
-	edict_t* ladderEnt,
-	float fPlayerWidth,
-	float fPlayerEye,
-	TWaypointId iBottom,
-	TWaypointId iTop,
-	edict_t* dismountBottom,
-	edict_t* dismountTop
-)
-{
-	const char* ladderName = STRING(ladderEnt->v.targetname);
-	ASSERT(ladderName && *ladderName);
-
-	float fMaxHeight = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
-	Vector groundPoints[2];
-
-	for ( int index = 0; index < 2; ++index )
-	{
-		edict_t* dismount = index == 0 ? dismountBottom : dismountTop;
-		Vector location(dismount->v.origin);
-
-		Vector ground(CBotrixEngineUtil::GetGroundVec(dismount->v.origin));
-
-		if ( location.z - ground.z > fMaxHeight )
-		{
-			BULOG_W(
-				m_pAnalyzer,
-				"info_ladder_dismount at (%f %f %f) was too far away from ground.",
-				location.x,
-				location.y,
-				location.z
-			);
-
-			continue;
-		}
-
-		TWaypointId waypointID = index == 0 ? iBottom : iTop;
-		Vector waypointLocation(Get(waypointID).vOrigin);
-
-		if ( !CBotrixEngineUtil::IsVisible(waypointLocation, ground, EVisibilityWaypoints, false) )
-		{
-			BULOG_W(
-				m_pAnalyzer,
-				"info_ladder_dismount at (%f %f %f) was not accessible from waypoint %d (%f %f %f)",
-				location.x,
-				location.y,
-				location.z,
-				waypointID,
-				waypointLocation.x,
-				waypointLocation.y,
-				waypointLocation.z
-			);
-
-			continue;
-		}
-
-		groundPoints[index] = ground;
-	}
-
-	if ( VectorIsNull(groundPoints[0]) && VectorIsNull(groundPoints[1]) )
-	{
-		BULOG_W(m_pAnalyzer, "Failed to compute dismount points for ladder %s", ladderName);
-		return;
-	}
-
-	for ( int index = 0; index < 2; ++index )
-	{
-		Vector eyePoint = groundPoints[index];
-		eyePoint.z += fPlayerEye;
-
-		TWaypointId iDismount = CWaypoints::GetNearestWaypoint(eyePoint, NULL, false, fPlayerWidth / 2.0f);
-
-		if ( iDismount != EWaypointIdInvalid )
-		{
-			TWaypointId waypointID = index == 0 ? iBottom : iTop;
-			AddPath(waypointID, iDismount, 0.0f, FPathLadder | FPathJump);
-			AddPath(iDismount, waypointID, 0.0f, FPathLadder);
-		}
-		else
-		{
-			iDismount = Add(eyePoint);
-
-			BULOG_D(
-				m_pAnalyzer,
-				"  added waypoint %d (%s ladder dismount) at (%.0f, %.0f, %.0f)",
-				iDismount,
-				index == 0 ? "bottom" : "top",
-				eyePoint.x,
-				eyePoint.y,
-				eyePoint.z
-			);
-		}
-	}
-
-	BULOG_D(m_pAnalyzer, "Created dismount points for ladder %s", ladderName);
-}
-#endif  // BOTRIX_OLD_LADDER_CODE
 
 //----------------------------------------------------------------------------------------------------------------
 void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
@@ -1676,13 +1599,12 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		const CItem& item = items[i];
 		Vector vMins(item.pEdict->v.mins);
 		Vector vMaxs(item.pEdict->v.maxs);
+		Vector centre = vMins + ((vMaxs - vMins) / 2.0f);
 
 		const char* ladderName = STRING(item.pEdict->v.targetname);
 
 		if ( !ladderName || !(*ladderName) )
 		{
-			Vector centre = vMins + ((vMaxs - vMins) / 2.0f);
-
 			BULOG_W(
 				m_pAnalyzer,
 				"Cannot create ladder dismount waypoints for ladder at (%f %f %f) with no targetname!",
@@ -1709,6 +1631,24 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 			continue;
 		}
 
+		Vector estimatedNormal = Vector(dismountPoints[0]->v.origin) - centre;
+		estimatedNormal.z = 0.0f;
+		estimatedNormal = estimatedNormal.Normalize();
+
+		Vector estimatedAngles;
+		VectorAngles(estimatedNormal, estimatedAngles);
+		NormalizeAngles(estimatedAngles);
+
+		if ( estimatedAngles.y < 0.0f )
+		{
+			estimatedAngles.y += 360.0f;
+		}
+
+		// Snap normal to one of 12 different possibilities.
+		int outOfTwelve = static_cast<int>((estimatedAngles.y / 360.0f) * 12.0f) % 12;
+		estimatedAngles.y = static_cast<float>(outOfTwelve) * (360.0f / 12.0f);
+		AngleVectors(Vector(0.0f, estimatedAngles.y, 0.0f), estimatedNormal, nullptr, nullptr);
+
 		// Currently, we assume that the lower dismount position is where the player
 		// hull will start from when climbing the ladder.
 		Vector ladderBottom(dismountPoints[0]->v.origin);
@@ -1719,13 +1659,15 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		ladderBottom = CBotrixEngineUtil::GetHullGroundVec(ladderBottom);
 		ladderBottom.z += fPlayerEye + 2.0f;
 
-		ladderTop.z += -fPlayerHeight + fPlayerEye - 2.0f;
+		ladderTop.z += fPlayerEye + 2.0f;
+		ladderTop = ladderTop - (fPlayerHalfWidth * estimatedNormal);
 
 		TWaypointId w1 = CWaypoints::GetNearestWaypoint(ladderBottom, NULL, false, fPlayerHalfWidth);
 
 		if ( w1 == EWaypointIdInvalid )
 		{
 			w1 = Add(ladderBottom, FWaypointLadder);
+
 			BULOG_D(
 				m_pAnalyzer,
 				"  added waypoint %d (bottom ladder %d) at (%.0f, %.0f, %.0f)",
@@ -1739,6 +1681,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		else
 		{
 			FLAG_SET(FWaypointLadder, Get(w1).iFlags);
+			BULOG_D(m_pAnalyzer, "Set ladder attribute for bottom ladder waypoint %d", w1);
 		}
 
 		TWaypointId w2 = CWaypoints::GetNearestWaypoint(ladderTop, NULL, false, fPlayerHalfWidth);
@@ -1746,6 +1689,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		if ( w2 == EWaypointIdInvalid )
 		{
 			w2 = Add(ladderTop, FWaypointLadder);
+
 			BULOG_D(
 				m_pAnalyzer,
 				"  added waypoint %d (top ladder %d) at (%.0f, %.0f, %.0f)",
@@ -1759,6 +1703,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		else
 		{
 			FLAG_SET(FWaypointLadder, Get(w2).iFlags);
+			BULOG_D(m_pAnalyzer, "Set ladder attribute for top ladder waypoint %d", w2);
 		}
 
 		float fDist = (ladderTop - ladderBottom).Length();
@@ -1766,25 +1711,29 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		if ( HasPath(w1, w2) )
 		{
 			FLAG_SET(FPathLadder, GetPath(w1, w2)->iFlags);
+			BULOG_D(m_pAnalyzer, "Marked existing path %d -> %d as ladder", w1, w2);
 		}
 		else
 		{
 			AddPath(w1, w2, fDist, FPathLadder);
+			BULOG_D(m_pAnalyzer, "Added %d -> %d as ladder path", w1, w2);
 		}
 
 		if ( HasPath(w2, w1) )
 		{
 			FLAG_SET(FPathLadder, GetPath(w2, w1)->iFlags);
+			BULOG_D(m_pAnalyzer, "Marked existing path %d -> %d as ladder", w2, w1);
 		}
 		else
 		{
 			AddPath(w2, w1, fDist, FPathLadder);
+			BULOG_D(m_pAnalyzer, "Added %d -> %d as ladder path", w2, w1);
 		}
 
 		CreateAutoPaths(w1, false, fAnalyzeDistanceExtra, false);
 		CreateAutoPaths(w2, false, fAnalyzeDistanceExtra, false);
 
-		AddLadderDismounts(item.pEdict, fPlayerWidth, fPlayerEye, w1, w2, dismountPoints[0], dismountPoints[1]);
+		AddLadderDismounts(estimatedNormal, fPlayerWidth, fPlayerEye, w1, w2);
 	}
 
 	BULOG_I(pClient, "Adding waypoints at added positions ('botrix waypoint analyze add').");
@@ -2280,8 +2229,8 @@ void CWaypoints::GetPathColor(TPathFlags iFlags, unsigned char& r, unsigned char
 	else
 	{
 		r = 0x00;
-		g = 0x7F;
-		b = 0x7F;  // Cyan effect, other flags.
+		g = 0xBB;
+		b = 0xFF;  // Cyan effect, other flags.
 	}
 }
 

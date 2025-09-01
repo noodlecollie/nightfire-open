@@ -792,10 +792,14 @@ sv_client_t* SV_ClientById(int id)
 	for ( i = 0, cl = svs.clients; i < svgame.globals->maxClients; i++, cl++ )
 	{
 		if ( !cl->state )
+		{
 			continue;
+		}
 
 		if ( cl->userid == id )
+		{
 			return cl;
+		}
 	}
 
 	return NULL;

@@ -189,8 +189,11 @@ void CBotrixBot::TestWaypoints(TWaypointId iFrom, TWaypointId iTo)
 	CWaypoint& wFrom = CWaypoints::Get(iFrom);
 
 	Vector vSetOrigin = wFrom.vOrigin;
-	vSetOrigin.z -=
-		CBotrixMod::GetVar(EModVarPlayerEye);  // Make bot appear on the ground (waypoints are at eye level).
+
+	// Make bot appear on the ground (waypoints are at eye level).
+	// The player's origin is the middle of their bbox.
+	vSetOrigin.z -= CBotrixMod::GetVar(EModVarPlayerEye);
+	vSetOrigin.z += (CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f) + 1;
 
 	vSetOrigin.CopyToArray(m_pEdict->v.origin);
 
@@ -721,17 +724,18 @@ void CBotrixBot::PreThink()
 	m_pEdict->v.v_angle[PITCH] = -m_pEdict->v.v_angle[PITCH];  // invert this dimension for engine
 	// End Fix
 
-#ifdef BOTRIX_SOURCE_ENGINE_2006
-	m_pController->PostClientMessagesSent();
-#endif
-
 	m_fPrevThinkTime = CBotrixServerPlugin::GetTime();
 
 	// Bot created for testing and couldn't find path or reached destination and finished using health/armor
 	// machine.
 	if ( m_bTest &&
-		 (/*m_bMoveFailure || */ (!m_bNeedMove && !m_bUsingButton && !m_bUsingHealthMachine && !m_bUsingArmorMachine)) )
+		 (m_bMoveFailure || (!m_bNeedMove && !m_bUsingButton && !m_bUsingHealthMachine && !m_bUsingArmorMachine)) )
 	{
+		if ( m_bMoveFailure )
+		{
+			BLOG_E("Kicking bot \"%s\" because of move failure", GetPlayerInfo()->GetName());
+		}
+
 		CPlayers::KickBot(this);
 	}
 }
@@ -3384,7 +3388,7 @@ void CBot_HL2DM::CheckEngagedEnemy()
 				{
 					// Try to run away a little.
 					iNextWaypoint =
-						CWaypoints::GetFarestNeighbour(iCurrentWaypoint, m_pCurrentEnemy->iCurrentWaypoint, true);
+						CWaypoints::GetFurthestNeighbour(iCurrentWaypoint, m_pCurrentEnemy->iCurrentWaypoint, true);
 					BotDebug(
 						"%s -> Moving to farest waypoint %d (current %d)",
 						GetName(),
