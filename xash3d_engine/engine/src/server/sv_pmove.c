@@ -996,7 +996,9 @@ void SV_RunCmd(sv_client_t* cl, usercmd_t* ucmd, int random_seed)
 	}
 
 	if ( !FBitSet(cl->flags, FCL_FAKECLIENT) )
+	{
 		SV_SetupMoveInterpolant(cl);
+	}
 
 	svgame.dllFuncs.pfnCmdStart(cl->edict, ucmd, random_seed);
 

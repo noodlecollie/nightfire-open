@@ -689,6 +689,24 @@ void CBotrixBot::PreThink()
 		static_cast<size_t>(gpGlobals->frametime * 1000.0f) <= static_cast<size_t>(std::numeric_limits<byte>::max())
 	);
 
+	// Not great that this needs to be inserted wantonly into the code.
+	// Really things should be tidied up so that this is done
+	// in one canonical place.
+	// Taken from Rho-Bot code.
+	// Scott: SDK 2.x fix for body direction. From botman's HPB Bot
+	if ( m_cCmd.viewangles[YAW] > 180 )
+	{
+		m_cCmd.viewangles[YAW] -= 360;
+	}
+
+	if ( m_cCmd.viewangles[PITCH] > 180 )
+	{
+		m_cCmd.viewangles[PITCH] -= 360;
+	}
+
+	m_cCmd.viewangles[PITCH] = -m_cCmd.viewangles[PITCH];  // invert this dimension for engine
+	// End Fix
+
 	g_engfuncs.pfnRunPlayerMove(
 		m_pEdict,
 		m_cCmd.viewangles,
@@ -706,23 +724,9 @@ void CBotrixBot::PreThink()
 	// Really things should be tidied up so that this is done
 	// in one canonical place.
 	// Taken from Rho-Bot code.
-
-	// Scott: SDK 2.x fix for body direction. From botman's HPB Bot
-	if ( m_pEdict->v.v_angle[YAW] > 180 )
-	{
-		m_pEdict->v.v_angle[YAW] -= 360;
-	}
-
-	if ( m_pEdict->v.v_angle[PITCH] > 180 )
-	{
-		m_pEdict->v.v_angle[PITCH] -= 360;
-	}
-
 	m_pEdict->v.angles[PITCH] = m_pEdict->v.v_angle[PITCH] / 3;
 	m_pEdict->v.angles[YAW] = m_pEdict->v.v_angle[YAW];
 	m_pEdict->v.angles[ROLL] = 0.0;
-	m_pEdict->v.v_angle[PITCH] = -m_pEdict->v.v_angle[PITCH];  // invert this dimension for engine
-	// End Fix
 
 	m_fPrevThinkTime = CBotrixServerPlugin::GetTime();
 
