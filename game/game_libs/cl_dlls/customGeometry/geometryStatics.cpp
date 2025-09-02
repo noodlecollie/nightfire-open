@@ -34,7 +34,8 @@ namespace CustomGeometry
 			CL_LOG().LogF(
 				ILogInterface::Level::Message,
 				"Received custom geometry clear message for category %s\n",
-				CustomGeometry::CategoryName(reader.GetGeometryCategory()));
+				CustomGeometry::CategoryName(reader.GetGeometryCategory())
+			);
 
 			collection->Clear();
 			return;
@@ -47,7 +48,8 @@ namespace CustomGeometry
 			"Received custom geometry for category %s (%d points, %d indices)\n",
 			CustomGeometry::CategoryName(reader.GetGeometryCategory()),
 			item->GetPoints().Count(),
-			item->GetIndices().Count());
+			item->GetIndices().Count()
+		);
 
 		collection->AddItem(item);
 	}
@@ -66,7 +68,8 @@ namespace CustomGeometry
 			log.LogF(
 				ILogInterface::Level::Error,
 				"Failed to parse custom geometry message. Error: %s\n",
-				reader.ErrorString().Get());
+				reader.ErrorString().Get()
+			);
 		}
 
 		return 1;
@@ -81,7 +84,7 @@ namespace CustomGeometry
 		manager.Initialise();
 		AdHocRenderer.reset(new CGeometryRenderer());
 
-		gEngfuncs.pfnHookUserMsg(MESSAGE_NAME, &HandleCustomGeometryMessage);
+		gEngfuncs.pfnHookUserMsg(CUSTOM_GEOMETRY_MESSAGE_NAME, &HandleCustomGeometryMessage);
 	}
 
 	void VidInit()

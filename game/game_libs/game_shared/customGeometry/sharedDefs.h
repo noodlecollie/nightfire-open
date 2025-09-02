@@ -5,7 +5,7 @@
 
 namespace CustomGeometry
 {
-	static constexpr const char* MESSAGE_NAME = "DrawCustomGeometry";
+	static constexpr const char* CUSTOM_GEOMETRY_MESSAGE_NAME = "DrawCustomGeometry";
 	static constexpr size_t MAX_POINTS_PER_MSG = std::numeric_limits<uint8_t>::max();
 	static constexpr size_t MAX_INDICES_PER_MSG = std::numeric_limits<uint8_t>::max();
 

@@ -45,9 +45,7 @@ namespace CustomGeometry
 	}
 
 	CMessageWriter::CMessageWriter(Category category) :
-		CBaseMessageWriter(MESSAGE_NAME, StaticUserMessageId()),
-		m_Category(Category::None),
-		m_pTargetClient(nullptr)
+		CBaseMessageWriter(MESSAGE_NAME, StaticUserMessageId())
 	{
 		SetCategory(category);
 	}
@@ -208,7 +206,8 @@ namespace CustomGeometry
 					at_error,
 					"Discarding custom geometry item with %d points (max points per message is %zu).\n",
 					points.Count(),
-					MAX_POINTS_PER_MSG);
+					MAX_POINTS_PER_MSG
+				);
 
 				return ValidationResult::Invalid;
 			}
@@ -225,7 +224,8 @@ namespace CustomGeometry
 					at_warning,
 					"Custom geometry message contained %u indices. This will be truncated to %zu indices.\n",
 					indices.Count(),
-					MAX_INDICES_PER_MSG);
+					MAX_INDICES_PER_MSG
+				);
 
 				result = ValidationResult::Truncated;
 			}
@@ -253,7 +253,8 @@ namespace CustomGeometry
 				ALERT(
 					at_warning,
 					"Custom geometry message contained text and more than one 3D point. The first point will be used "
-					"as a location.\n");
+					"as a location.\n"
+				);
 
 				result = ValidationResult::Truncated;
 			}
@@ -264,7 +265,8 @@ namespace CustomGeometry
 					at_warning,
 					"Custom geometry message contained %u text characters. This will be truncated to %zu characters.\n",
 					text.Length(),
-					MAX_TEXT_CHARS_PER_MSG);
+					MAX_TEXT_CHARS_PER_MSG
+				);
 
 				result = ValidationResult::Truncated;
 			}
@@ -276,7 +278,8 @@ namespace CustomGeometry
 					"Custom geometry text line offset of %d was outside the range [%d %d], it will be clamped.\n",
 					lineOffset,
 					MIN_TEXT_LINE_OFFSET,
-					MAX_TEXT_LINE_OFFSET);
+					MAX_TEXT_LINE_OFFSET
+				);
 
 				result = ValidationResult::Truncated;
 			}
