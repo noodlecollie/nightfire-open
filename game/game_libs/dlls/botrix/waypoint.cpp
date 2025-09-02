@@ -1222,7 +1222,7 @@ void CWaypoints::Draw(CClient* pClient)
 		return;
 	}
 
-	float fDrawTime = CWaypoint::DRAW_INTERVAL + (2.0f * gpGlobals->frametime);  // Add two frames to not flick.
+	float fDrawTime = CWaypoint::DRAW_INTERVAL + (2.0f * gpGlobals->frametime);  // Add two frames to not flicker.
 	fNextDrawWaypointsTime = CBotrixServerPlugin::GetTime() + CWaypoint::DRAW_INTERVAL;
 
 	if ( pClient->iWaypointDrawFlags != FWaypointDrawNone )
@@ -1286,6 +1286,28 @@ void CWaypoints::Draw(CClient* pClient)
 				{
 					CBotrixEngineUtil::DrawLine(posOrigin, vEnd, fDrawTime, r[j], g[j], b[j]);
 				}
+			}
+		}
+
+		Vector viewDir;
+		Vector eyeAngles;
+		pClient->GetEyeAngles(eyeAngles);
+		AngleVectors(eyeAngles, viewDir, nullptr, nullptr);
+
+		TraceResult tr {};
+		TRACE_LINE(pClient->GetHead(), pClient->GetHead() + (8192.0f * viewDir), TRUE, pClient->GetEdict(), &tr);
+
+		if ( tr.flFraction < 1.0f )
+		{
+			Vector hitPos(tr.vecEndPos);
+			CBotrixEngineUtil::DrawLine(hitPos - Vector(8, 0, 0), hitPos + Vector(8, 0, 0), fDrawTime, 255, 0, 0);
+			CBotrixEngineUtil::DrawLine(hitPos - Vector(0, 8, 0), hitPos + Vector(0, 8, 0), fDrawTime, 255, 0, 0);
+			CBotrixEngineUtil::DrawLine(hitPos - Vector(0, 0, 8), hitPos + Vector(0, 0, 8), fDrawTime, 255, 0, 0);
+
+			if ( CWaypoint::IsValid(pClient->iDestinationWaypoint) )
+			{
+				CWaypoint& w = CWaypoints::Get(pClient->iDestinationWaypoint);
+				CBotrixEngineUtil::DrawLine(hitPos, w.vOrigin, fDrawTime, 255, 0, 0);
 			}
 		}
 	}

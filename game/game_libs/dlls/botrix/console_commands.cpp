@@ -2427,7 +2427,10 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
-	TWaypointId iPathFrom = -1, iPathTo = -1;
+	TWaypointId iPathFrom = -1;
+	TWaypointId iPathTo = -1;
+	TPathFlags iFlags = FPathNone;
+
 	if ( argc == 0 )
 	{
 		iPathFrom = pClient->iCurrentWaypoint;
@@ -2438,10 +2441,33 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 		iPathFrom = pClient->iCurrentWaypoint;
 		iPathTo = GetWaypointId(0, argc, argv, pClient, pClient->iCurrentWaypoint);
 	}
-	else if ( argc == 2 )
+	else if ( argc >= 2 )
 	{
 		iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 		iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
+
+		if ( argc > 2 )
+		{
+			// Retrieve flags from string arguments.
+			for ( int i = 2; i < argc; ++i )
+			{
+				int iAddFlag = CTypeToString::PathFlagsFromString(argv[i]);
+
+				if ( iAddFlag == -1 )
+				{
+					BULOG_W(
+						pClient->GetEdict(),
+						"Error, invalid path flag: %s. Can be one of: %s",
+						argv[i],
+						CTypeToString::PathFlagsToString(FPathAll).c_str()
+					);
+
+					return ECommandError;
+				}
+
+				FLAG_SET(iAddFlag, iFlags);
+			}
+		}
 	}
 
 	if ( !CWaypoints::IsValid(iPathFrom) || !CWaypoints::IsValid(iPathTo) )
@@ -2450,12 +2476,13 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
-	TPathFlags iFlags = FPathNone;
-	if ( pClient->IsAlive() )
+	if ( pClient->IsAlive() && iFlags == FPathNone )
 	{
 		float fHeight = pClient->GetPlayerInfo()->GetPlayerMaxs().z - pClient->GetPlayerInfo()->GetPlayerMins().z + 1;
 		if ( fHeight < CBotrixMod::GetVar(EModVarPlayerHeight) )
+		{
 			iFlags = FPathCrouch;
+		}
 	}
 
 	if ( CWaypoints::AddPath(iPathFrom, iPathTo, 0, iFlags) )
