@@ -333,7 +333,7 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 
 	if ( bShowHelp )
 	{
-		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::WaypointVisualisation));
+		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::BotrixDebugging));
 
 		helperGeomWriter->BeginGeometry(
 			(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
@@ -696,7 +696,7 @@ void CBotrixEngineUtil::DrawLine(
 	geom.SetColour((r << 24) | (g << 16) | (b << 8) | 0xFF);
 	geom.SetLifetimeSecs(fDrawTime);
 
-	CMessageWriter(Category::WaypointVisualisation).WriteMessage(geom);
+	CMessageWriter(Category::BotrixDebugging).WriteMessage(geom);
 }
 
 void CBotrixEngineUtil::DrawWireBall(
@@ -710,8 +710,8 @@ void CBotrixEngineUtil::DrawWireBall(
 {
 	using namespace CustomGeometry;
 
-	CustomGeometry::CPrimitiveMessageWriter writer(CustomGeometry::Category::WaypointVisualisation);
-	CustomGeometry::WireBallPrimitive primitive {};
+	CPrimitiveMessageWriter writer(CustomGeometry::Category::BotrixDebugging);
+	WireBallPrimitive primitive {};
 	primitive.origin = location;
 	primitive.radius =
 		static_cast<uint16_t>(bound(1.0f, radius, static_cast<float>(std::numeric_limits<uint16_t>::max())));
@@ -719,9 +719,6 @@ void CBotrixEngineUtil::DrawWireBall(
 	writer.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
 }
 
-// NFTODO: This is quite an inefficient way to transmit an AABB,
-// since it transmits the full geometry rather than the bounds.
-// Create a primitive and use that instead.
 void CBotrixEngineUtil::DrawBox(
 	const Vector& vOrigin,
 	const Vector& vMins,
@@ -734,21 +731,11 @@ void CBotrixEngineUtil::DrawBox(
 {
 	using namespace CustomGeometry;
 
-	CAABBoxConstructor constructor;
-	constructor.SetBounds(vOrigin + vMins, vOrigin + vMaxs);
-
-	GeometryItemPtr_t geom = constructor.Construct();
-
-	// May happen if bounds were degenerate.
-	if ( geom->GetIndices().IsEmpty() )
-	{
-		return;
-	}
-
-	geom->SetColour((r << 24) | (g << 16) | (b << 8) | 0xFF);
-	geom->SetLifetimeSecs(fDrawTime);
-
-	CMessageWriter(Category::WaypointVisualisation).WriteMessage(*geom);
+	CPrimitiveMessageWriter writer(Category::BotrixDebugging);
+	AABBoxPrimitive primitive {};
+	primitive.mins = vOrigin + vMins;
+	primitive.maxs = vOrigin + vMaxs;
+	writer.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
 }
 
 void CBotrixEngineUtil::DrawTextAtLocation(
@@ -774,5 +761,5 @@ void CBotrixEngineUtil::DrawTextAtLocation(
 	item.SetColour((r << 24) | (g << 16) | (b << 8) | 0xFF);
 	item.SetText(vOrigin, CUtlString(szText), iLine);
 
-	CMessageWriter(Category::WaypointVisualisation).WriteMessage(item);
+	CMessageWriter(Category::BotrixDebugging).WriteMessage(item);
 }

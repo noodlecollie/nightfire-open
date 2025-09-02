@@ -3,22 +3,6 @@
 
 namespace CustomGeometry
 {
-	static float ClampLifetimeSecs(float lifetimeSecs)
-	{
-		static constexpr float MAX_LIFETIME_SECS = static_cast<float>(std::numeric_limits<uint16_t>::max()) * 0.1f;
-
-		if ( std::isnan(lifetimeSecs) || lifetimeSecs < 0.0f )
-		{
-			lifetimeSecs = 0.0f;
-		}
-		else if ( lifetimeSecs > MAX_LIFETIME_SECS )
-		{
-			lifetimeSecs = MAX_LIFETIME_SECS;
-		}
-
-		return lifetimeSecs;
-	}
-
 	CPrimitiveMessageWriter::CPrimitiveMessageWriter(Category category) :
 		CBaseMessageWriter(MESSAGE_NAME, StaticUserMessageId())
 	{
@@ -53,65 +37,32 @@ namespace CustomGeometry
 	}
 
 	// Message format:
-	// - Header
-	// - Colour (uint32)
-	// - Lifetime (10ths of second) (uint16)
-	// Then exactly `count` of:
-	// - Origin (vec3_t)
-	// - Radius (uint16)
-	// - Num divisions (uint8_t)
-	bool CPrimitiveMessageWriter::WriteMessage(
-		uint32_t colour,
-		float lifetimeSecs,
-		const WireBallPrimitive* primitives,
-		uint8_t count
-	)
-	{
-		if ( !CanWriteMessage() || !IsValidSpecificCategory(m_Category) )
-		{
-			ASSERT(false);
-			return false;
-		}
-
-		if ( !primitives || count < 1 )
-		{
-			ASSERT(false);
-			return false;
-		}
-
-		for ( size_t index = 0; index < static_cast<size_t>(count); ++index )
-		{
-			if ( !primitives[index].IsValid() )
-			{
-				ASSERT(false);
-				return false;
-			}
-		}
-
-		BeginMessage();
-		WriteMessageHeader(m_Category, WireBallPrimitive::TYPE, count);
-		WRITE_LONG(colour);
-		WRITE_SHORT(static_cast<uint16_t>(ClampLifetimeSecs(lifetimeSecs) * 10.0f));
-
-		for ( size_t index = 0; index < static_cast<size_t>(count); ++index )
-		{
-			const WireBallPrimitive& primitive = primitives[index];
-			WRITE_VEC_PRECISE(primitive.origin);
-			WRITE_SHORT(primitive.radius);
-			WRITE_BYTE(primitive.numDivisions);
-		}
-
-		EndMessage();
-		return true;
-	}
-
-	// Message format:
 	// - Header only; draw type is None.
 	void CPrimitiveMessageWriter::WriteClearMessageInternal(Category geomCategory)
 	{
 		BeginMessage();
 		WriteMessageHeader(geomCategory, PrimitiveType::None, 0);
 		EndMessage();
+	}
+
+	// Payload format:
+	// - Origin (vec3_t)
+	// - Radius (uint16)
+	// - Num divisions (uint8_t)
+	void CPrimitiveMessageWriter::WritePrimitive(const WireBallPrimitive& primitive)
+	{
+		WRITE_VEC_PRECISE(primitive.origin);
+		WRITE_SHORT(primitive.radius);
+		WRITE_BYTE(primitive.numDivisions);
+	}
+
+	// Payload format:
+	// - Mins (vec3_t)
+	// - Maxs (vec3_t)
+	void CPrimitiveMessageWriter::WritePrimitive(const AABBoxPrimitive& primitive)
+	{
+		WRITE_VEC_PRECISE(primitive.mins);
+		WRITE_VEC_PRECISE(primitive.maxs);
 	}
 
 	// Header format:
@@ -128,5 +79,21 @@ namespace CustomGeometry
 	bool CPrimitiveMessageWriter::IsValidSpecificCategory(Category geomCategory)
 	{
 		return geomCategory > Category::None && geomCategory < Category::CategoryCount;
+	}
+
+	float CPrimitiveMessageWriter::ClampLifetimeSecs(float lifetimeSecs)
+	{
+		static constexpr float MAX_LIFETIME_SECS = static_cast<float>(std::numeric_limits<uint16_t>::max()) * 0.1f;
+
+		if ( std::isnan(lifetimeSecs) || lifetimeSecs < 0.0f )
+		{
+			lifetimeSecs = 0.0f;
+		}
+		else if ( lifetimeSecs > MAX_LIFETIME_SECS )
+		{
+			lifetimeSecs = MAX_LIFETIME_SECS;
+		}
+
+		return lifetimeSecs;
 	}
 }  // namespace CustomGeometry

@@ -11,6 +11,7 @@ namespace CustomGeometry
 	{
 		None = 0,
 		WireBall,
+		AABBox
 	};
 
 	struct BasePrimitive
@@ -29,6 +30,19 @@ namespace CustomGeometry
 		bool IsValid() const override
 		{
 			return radius > 0 && numDivisions >= 3;
+		}
+	};
+
+	struct AABBoxPrimitive : public BasePrimitive
+	{
+		static constexpr PrimitiveType TYPE = PrimitiveType::AABBox;
+
+		Vector mins;
+		Vector maxs;
+
+		bool IsValid() const override
+		{
+			return !VectorCompare(mins, maxs);
 		}
 	};
 }  // namespace CustomGeometry

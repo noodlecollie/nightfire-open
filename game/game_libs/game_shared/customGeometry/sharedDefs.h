@@ -29,7 +29,7 @@ namespace CustomGeometry
 	LIST_ITEM(HitboxDebugging, "Hitbox Debugging") \
 	LIST_ITEM(HitscanEvents, "Hitscan Events") /* TODO: Should this be client only? */ \
 	LIST_ITEM(RoninDebugging, "Ronin Debugging") \
-	LIST_ITEM(WaypointVisualisation, "Waypoint Visualisation")
+	LIST_ITEM(BotrixDebugging, "Botrix Debugging")
 
 #define LIST_ITEM(value, name) value,
 	enum class Category

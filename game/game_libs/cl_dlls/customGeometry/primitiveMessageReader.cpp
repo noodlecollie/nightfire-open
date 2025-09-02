@@ -3,6 +3,7 @@
 #include "customGeometry/sharedDefs.h"
 #include "customGeometry/primitiveDefs.h"
 #include "customGeometry/constructors/wireBallConstructor.h"
+#include "customGeometry/constructors/aabboxConstructor.h"
 #include "parsemsg.h"
 #include "cl_dll.h"
 
@@ -66,6 +67,12 @@ namespace CustomGeometry
 				case PrimitiveType::WireBall:
 				{
 					item = CreateWireBall();
+					break;
+				}
+
+				case PrimitiveType::AABBox:
+				{
+					item = CreateAABBox();
 					break;
 				}
 
@@ -137,6 +144,24 @@ namespace CustomGeometry
 		if ( !constructor.IsValid() )
 		{
 			SetErrorString("Wire ball primitive was not valid.");
+			return nullptr;
+		}
+
+		return constructor.Construct();
+	}
+
+	GeometryItemPtr_t CPrimitiveMessageReader::CreateAABBox()
+	{
+		AABBoxPrimitive bbox {};
+		READ_VEC_PRECISE(bbox.mins);
+		READ_VEC_PRECISE(bbox.maxs);
+
+		CAABBoxConstructor constructor;
+		constructor.SetBounds(bbox.mins, bbox.maxs);
+
+		if ( !constructor.IsValid() )
+		{
+			SetErrorString("AABBox primitive was not valid.");
 			return nullptr;
 		}
 

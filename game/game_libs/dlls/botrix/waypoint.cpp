@@ -304,6 +304,7 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 	}
 }
 
+// NFTODO: Make a primitive for this
 void CWaypoint::DrawLines(
 	const Vector& start,
 	const Vector& end,
@@ -327,7 +328,7 @@ void CWaypoint::DrawLines(
 	geom.AddLine(start + Vector(4.0f, 0.0f, 0.0f), start - Vector(4.0f, 0.0f, 0.0f));
 	geom.AddLine(start + Vector(0.0f, 4.0f, 0.0f), start - Vector(0.0f, 4.0f, 0.0f));
 
-	CMessageWriter(Category::WaypointVisualisation).WriteMessage(geom);
+	CMessageWriter(Category::BotrixDebugging).WriteMessage(geom);
 }
 
 //********************************************************************************************************************
