@@ -4,6 +4,7 @@
 #include "customGeometry/primitiveDefs.h"
 #include "customGeometry/constructors/wireBallConstructor.h"
 #include "customGeometry/constructors/aabboxConstructor.h"
+#include "customGeometry/constructors/waypointMarkerConstructor.h"
 #include "parsemsg.h"
 #include "cl_dll.h"
 
@@ -73,6 +74,12 @@ namespace CustomGeometry
 				case PrimitiveType::AABBox:
 				{
 					item = CreateAABBox();
+					break;
+				}
+
+				case PrimitiveType::WaypointMarker:
+				{
+					item = CreateWaypointMarker();
 					break;
 				}
 
@@ -162,6 +169,23 @@ namespace CustomGeometry
 		if ( !constructor.IsValid() )
 		{
 			SetErrorString("AABBox primitive was not valid.");
+			return nullptr;
+		}
+
+		return constructor.Construct();
+	}
+
+	GeometryItemPtr_t CPrimitiveMessageReader::CreateWaypointMarker()
+	{
+		WaypointMarkerPrimitive waypoint {};
+		READ_VEC_PRECISE(waypoint.location);
+
+		CWaypointMarkerConstructor constructor;
+		constructor.SetWaypoint(waypoint);
+
+		if ( !constructor.IsValid() )
+		{
+			SetErrorString("Waypoint marker primitive was not valid.");
 			return nullptr;
 		}
 

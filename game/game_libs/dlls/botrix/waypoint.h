@@ -231,14 +231,7 @@ protected:
 	static const TWaypointFlags m_aFlagsForEntityType[EItemTypeCanPickTotal];
 
 private:
-	void DrawLines(
-		const Vector& start,
-		const Vector& end,
-		float fDrawTime,
-		unsigned char r,
-		unsigned char g,
-		unsigned char b
-	) const;
+	void DrawLines(const Vector& pos, float fDrawTime, unsigned char r, unsigned char g, unsigned char b) const;
 };
 
 //****************************************************************************************************************

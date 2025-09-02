@@ -22,6 +22,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/constructors/crosshair3DConstructor.cpp
 	../game_shared/customGeometry/constructors/geometryUtils.h
 	../game_shared/customGeometry/constructors/geometryUtils.cpp
+	../game_shared/customGeometry/constructors/waypointMarkerConstructor.h
+	../game_shared/customGeometry/constructors/waypointMarkerConstructor.cpp
 	../game_shared/customGeometry/constructors/wireBallConstructor.h
 	../game_shared/customGeometry/constructors/wireBallConstructor.cpp
 	../game_shared/customGeometry/geometryItem.h

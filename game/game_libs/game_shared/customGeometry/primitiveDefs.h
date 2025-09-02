@@ -11,7 +11,8 @@ namespace CustomGeometry
 	{
 		None = 0,
 		WireBall,
-		AABBox
+		AABBox,
+		WaypointMarker,
 	};
 
 	struct BasePrimitive
@@ -43,6 +44,19 @@ namespace CustomGeometry
 		bool IsValid() const override
 		{
 			return !VectorCompare(mins, maxs);
+		}
+	};
+
+	struct WaypointMarkerPrimitive : public BasePrimitive
+	{
+		static constexpr PrimitiveType TYPE = PrimitiveType::WaypointMarker;
+
+		// At player eye position, not ground
+		Vector location;
+
+		bool IsValid() const override
+		{
+			return true;
 		}
 	};
 }  // namespace CustomGeometry

@@ -84,6 +84,7 @@ namespace CustomGeometry
 
 		void WritePrimitive(const WireBallPrimitive& primitive);
 		void WritePrimitive(const AABBoxPrimitive& primitive);
+		void WritePrimitive(const WaypointMarkerPrimitive& primitive);
 
 		Category m_Category = Category::None;
 		CBasePlayer* m_pTargetClient = nullptr;

@@ -65,6 +65,13 @@ namespace CustomGeometry
 		WRITE_VEC_PRECISE(primitive.maxs);
 	}
 
+	// Payload format:
+	// - Location (vec3_t)
+	void CPrimitiveMessageWriter::WritePrimitive(const WaypointMarkerPrimitive& primitive)
+	{
+		WRITE_VEC_PRECISE(primitive.location);
+	}
+
 	// Header format:
 	// - Category (uint8)
 	// - Primitive type (uint8)

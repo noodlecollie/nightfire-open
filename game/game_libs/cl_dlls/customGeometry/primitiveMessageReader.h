@@ -21,6 +21,7 @@ namespace CustomGeometry
 		bool ReadGeometryCategory();
 		GeometryItemPtr_t CreateWireBall();
 		GeometryItemPtr_t CreateAABBox();
+		GeometryItemPtr_t CreateWaypointMarker();
 
 		CUtlVector<GeometryItemPtr_t> m_GeometryItems;
 		Category m_GeomCategory = Category::None;

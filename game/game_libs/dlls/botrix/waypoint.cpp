@@ -10,6 +10,7 @@
 #include "customGeometry/sharedDefs.h"
 #include "customGeometry/geometryItem.h"
 #include "customGeometry/messageWriter.h"
+#include "customGeometry/primitiveMessageWriter.h"
 
 //----------------------------------------------------------------------------------------------------------------
 // Waypoints file header.
@@ -231,7 +232,7 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 
 	if ( FLAG_ALL_SET_OR_0(FWaypointDrawLine, iDrawType) )
 	{
-		DrawLines(vOrigin, vEnd, fDrawTime, r, g, b);
+		DrawLines(vOrigin, fDrawTime, r, g, b);
 	}
 
 	if ( FLAG_ALL_SET_OR_0(FWaypointDrawBox, iDrawType) )
@@ -304,31 +305,14 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 	}
 }
 
-// NFTODO: Make a primitive for this
-void CWaypoint::DrawLines(
-	const Vector& start,
-	const Vector& end,
-	float fDrawTime,
-	unsigned char r,
-	unsigned char g,
-	unsigned char b
-) const
+void CWaypoint::DrawLines(const Vector& pos, float fDrawTime, unsigned char r, unsigned char g, unsigned char b) const
 {
 	using namespace CustomGeometry;
 
-	CGeometryItem geom;
-	geom.SetDrawType(DrawType::Lines);
-	geom.SetColour((r << 24) | (g << 16) | (b << 8) | 0xFF);
-	geom.SetLifetimeSecs(fDrawTime);
-
-	// Main waypoint line
-	geom.AddLine(start + Vector(0.0f, 0.0f, 4.0f), end);
-
-	// A cross of lines where the origin actually is, to make it more obvious
-	geom.AddLine(start + Vector(4.0f, 0.0f, 0.0f), start - Vector(4.0f, 0.0f, 0.0f));
-	geom.AddLine(start + Vector(0.0f, 4.0f, 0.0f), start - Vector(0.0f, 4.0f, 0.0f));
-
-	CMessageWriter(Category::BotrixDebugging).WriteMessage(geom);
+	WaypointMarkerPrimitive primitive {};
+	primitive.location = pos;
+	CPrimitiveMessageWriter(Category::BotrixDebugging)
+		.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
 }
 
 //********************************************************************************************************************
