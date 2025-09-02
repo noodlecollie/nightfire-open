@@ -11,6 +11,7 @@
 #include "customGeometry/geometryItem.h"
 #include "customGeometry/constructors/aabboxConstructor.h"
 #include "customGeometry/rollingLineMessageWriter.h"
+#include "customGeometry/primitiveMessageWriter.h"
 
 good::TLogLevel CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
 int CBotrixEngineUtil::iTextTime = 20;  // Time in seconds to show text in CUtil::GetReachableInfoFromTo().
@@ -698,9 +699,29 @@ void CBotrixEngineUtil::DrawLine(
 	CMessageWriter(Category::WaypointVisualisation).WriteMessage(geom);
 }
 
+void CBotrixEngineUtil::DrawWireBall(
+	const Vector& location,
+	float radius,
+	float fDrawTime,
+	unsigned char r,
+	unsigned char g,
+	unsigned char b
+)
+{
+	using namespace CustomGeometry;
+
+	CustomGeometry::CPrimitiveMessageWriter writer(CustomGeometry::Category::WaypointVisualisation);
+	CustomGeometry::WireBallPrimitive primitive {};
+	primitive.origin = location;
+	primitive.radius =
+		static_cast<uint16_t>(bound(1.0f, radius, static_cast<float>(std::numeric_limits<uint16_t>::max())));
+	primitive.numDivisions = 16;
+	writer.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
+}
+
 // NFTODO: This is quite an inefficient way to transmit an AABB,
 // since it transmits the full geometry rather than the bounds.
-// Potentially add a separate message type for this?
+// Create a primitive and use that instead.
 void CBotrixEngineUtil::DrawBox(
 	const Vector& vOrigin,
 	const Vector& vMins,

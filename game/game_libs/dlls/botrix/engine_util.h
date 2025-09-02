@@ -113,6 +113,15 @@ public:
 	static void
 	DrawLine(const Vector& v1, const Vector& v2, float fDrawTime, unsigned char r, unsigned char g, unsigned char b);
 
+	static void DrawWireBall(
+		const Vector& location,
+		float radius,
+		float fDrawTime,
+		unsigned char r,
+		unsigned char g,
+		unsigned char b
+	);
+
 	static void DrawBox(
 		const Vector& vOrigin,
 		const Vector& vMins,

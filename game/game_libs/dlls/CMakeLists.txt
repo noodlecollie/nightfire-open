@@ -26,6 +26,8 @@ set(SOURCES_GAME_SHARED
 	../game_shared/customGeometry/constructors/wireBallConstructor.cpp
 	../game_shared/customGeometry/geometryItem.h
 	../game_shared/customGeometry/geometryItem.cpp
+	../game_shared/customGeometry/geometryItemPtr.h
+	../game_shared/customGeometry/primitiveDefs.h
 	../game_shared/customGeometry/sharedDefs.h
 	../game_shared/customGeometry/sharedDefs.cpp
 	../game_shared/eventConstructor/eventConstructor.h
@@ -325,6 +327,8 @@ set(SOURCES_SERVER
 	customGeometry/commands.cpp
 	customGeometry/messageWriter.h
 	customGeometry/messageWriter.cpp
+	customGeometry/primitiveMessageWriter.h
+	customGeometry/primitiveMessageWriter.cpp
 	customGeometry/rollingLineMessageWriter.h
 	customGeometry/rollingLineMessageWriter.cpp
 	gameplay/gameplaySystems.h

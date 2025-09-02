@@ -1,6 +1,7 @@
 #pragma once
 
 #include "customGeometry/constructors/baseConstructor.h"
+#include "customGeometry/primitiveDefs.h"
 
 namespace CustomGeometry
 {
@@ -10,18 +11,10 @@ namespace CustomGeometry
 		bool IsValid() const override;
 		GeometryItemPtr_t Construct() const override;
 
-		Vector Origin() const;
-		void SetOrigin(const Vector& origin);
-
-		float Radius() const;
-		void SetRadius(float radius);
-
-		size_t NumDivisions() const;
-		void SetNumDivisions(size_t divisions);
+		const WireBallPrimitive& Primitive() const;
+		void SetPrimitive(const WireBallPrimitive& primitive);
 
 	private:
-		Vector m_Origin;
-		float m_Radius = 1.0f;
-		size_t m_NumDivisions = 8;
+		WireBallPrimitive m_Primitive {};
 	};
 }  // namespace CustomGeometry

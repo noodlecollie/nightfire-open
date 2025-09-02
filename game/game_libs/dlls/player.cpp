@@ -41,6 +41,7 @@
 #include "prop_playercorpse.h"
 #include "spawnpointmanager.h"
 #include "customGeometry/messageWriter.h"
+#include "customGeometry/primitiveMessageWriter.h"
 #include "gameplay/gameplaySystems.h"
 #include "gameplay/gameplaySystemsBase.h"
 #include "gameplay/spawnpointmanager.h"
@@ -253,6 +254,7 @@ void LinkUserMessages(void)
 	gmsgStatusValue = REG_USER_MSG("StatusValue", 3);
 
 	CustomGeometry::CMessageWriter::RegisterUserMessage();
+	CustomGeometry::CPrimitiveMessageWriter::RegisterUserMessage();
 	ScreenOverlays::CMessageWriter::RegisterUserMessage();
 
 	userMessagesRegistered = true;
