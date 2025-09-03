@@ -29,7 +29,8 @@ void CClient::Activated()
 		"User connected %s (steam id %s), access: %s.",
 		GetName(),
 		m_sSteamId.c_str(),
-		CTypeToString::AccessFlagsToString(iCommandAccessFlags).c_str());
+		CTypeToString::AccessFlagsToString(iCommandAccessFlags).c_str()
+	);
 
 	iWaypointDrawFlags = FWaypointDrawNone;
 	iPathDrawFlags = FPathDrawNone;

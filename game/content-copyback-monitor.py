@@ -16,6 +16,9 @@ SKIP_EXTS = [
 SKIP_RELPATHS = [
 	".xash_id",
 	"opengl.cfg",
+	"config.cfg",
+	"video.cfg",
+	"buffer.dat",
 	"console_history.txt",
 	".fontcache" + os.sep,
 	os.path.join("media", "cdaudio.txt")
@@ -97,16 +100,16 @@ def check_files(game_dir, repo_dir, existing_files):
 		should_copy = False
 
 		if not os.path.isfile(repo_file_path):
-			print(f"{file_path}: New file")
+			print(f"{rel_file_path}: New file")
 			should_copy = True
 		else:
 			update_time, md5 = existing_files[file_path]
 
 			if update_time > os.stat(repo_file_path).st_mtime:
-				print(f"{file_path}: Update time is newer")
+				print(f"{rel_file_path}: Update time is newer")
 				should_copy = True
 			elif md5hash(repo_file_path) != md5:
-				print(f"{file_path}: MD5 is different")
+				print(f"{rel_file_path}: MD5 is different")
 				should_copy = True
 
 		if not should_copy:
