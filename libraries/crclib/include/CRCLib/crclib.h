@@ -18,6 +18,11 @@ GNU General Public License for more details.
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef struct
 {
 	uint32_t buf[4];
@@ -42,3 +47,7 @@ void MD5Final(MD5Digest_t* outDigest, MD5Context_t* ctx);
 char* MD5_Print(const MD5Digest_t* hash);
 
 uint32_t COM_HashKey(const char* string, uint32_t hashSize);
+
+#ifdef __cplusplus
+}  // extern "C"
+#endif

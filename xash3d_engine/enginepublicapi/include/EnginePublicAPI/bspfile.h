@@ -316,6 +316,8 @@ typedef struct
 // The following are structures for Nightfire Open-specific BSPs:
 
 #define NFOPEN_EXTRAHEADER_ID (('X' << 24) + ('O' << 16) + ('F' << 8) + 'N')
+
+// Version 1: NFOPEN_LUMP_CLIENTENTS
 #define NFOPEN_EXTRAHEADER_VERSION 1
 
 // Version 1: base client model and sound

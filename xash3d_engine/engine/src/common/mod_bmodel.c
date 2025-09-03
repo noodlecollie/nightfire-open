@@ -500,7 +500,8 @@ Mod_ValidateLumpExtents(const char* description, const dlump_t* lumps, size_t nu
 				index,
 				lump->fileofs,
 				lump->filelen,
-				dataLength);
+				dataLength
+			);
 
 			success = false;
 		}
@@ -521,7 +522,8 @@ Mod_ValidateNFOpenLumpExtents(const dnfopenextraheader_t* header, size_t headerO
 			headerOffset,
 			header->numLumps * sizeof(dnfopenextralump_t),
 			header->numLumps,
-			dataLength);
+			dataLength
+		);
 
 		return false;
 	}
@@ -636,7 +638,8 @@ static qboolean Mod_VerifyBSPHeaders(const bspheaders_t* headers)
 				S_ERROR "%s nfopen header version %u did not match expected value %u\n",
 				loadstat.name,
 				headers->nfopenHeader->version,
-				NFOPEN_EXTRAHEADER_VERSION);
+				NFOPEN_EXTRAHEADER_VERSION
+			);
 
 			return false;
 		}
@@ -653,7 +656,8 @@ static qboolean Mod_VerifyBSPHeaders(const bspheaders_t* headers)
 			S_WARN "%s nfopen client ents header version %u did not match expected value %u\n",
 			loadstat.name,
 			headers->nfopenClientEntsHeader->version,
-			NFOPEN_CLIENT_ENT_HEADER_VERSION);
+			NFOPEN_CLIENT_ENT_HEADER_VERSION
+		);
 	}
 
 	return true;
@@ -666,7 +670,8 @@ static qboolean Mod_ValidateAllLumpExtents(const bspheaders_t* headers, const by
 			 "standard",
 			 headers->basicHeader->lumps,
 			 SIZE_OF_ARRAY(headers->basicHeader->lumps),
-			 length) )
+			 length
+		 ) )
 	{
 		return false;
 	}
@@ -677,7 +682,8 @@ static qboolean Mod_ValidateAllLumpExtents(const bspheaders_t* headers, const by
 			 "extra",
 			 headers->extraHeader->lumps,
 			 SIZE_OF_ARRAY(headers->extraHeader->lumps),
-			 length) )
+			 length
+		 ) )
 	{
 		return false;
 	}
@@ -855,7 +861,8 @@ static void Mod_LoadLump(const byte* in, const mlumpinfo_t* info, mlumpstat_t* s
 					S_ERROR "Map ^2%s^7 nfopen extraheader version %u does not match expected value %u\n",
 					loadstat.name,
 					header->version,
-					NFOPEN_EXTRAHEADER_VERSION);
+					NFOPEN_EXTRAHEADER_VERSION
+				);
 
 				return;
 			}
@@ -867,7 +874,8 @@ static void Mod_LoadLump(const byte* in, const mlumpinfo_t* info, mlumpstat_t* s
 				Con_DPrintf(
 					S_ERROR "Map ^2%s^7 nfopen lump %d could not be located\n",
 					loadstat.name,
-					info->lumpnumber);
+					info->lumpnumber
+				);
 
 				return;
 			}
@@ -975,7 +983,8 @@ static void Mod_LoadLump(const byte* in, const mlumpinfo_t* info, mlumpstat_t* s
 				S_ERROR "Mod_Load%s: Lump size %d was not a multiple of %zu bytes\n",
 				msg2,
 				l->filelen,
-				real_entrysize);
+				real_entrysize
+			);
 		}
 
 		loadstat.numerrors++;
@@ -1047,16 +1056,25 @@ static int Mod_ArrayUsage(const char* szItem, int items, int maxitems, int items
 		maxitems,
 		items * itemsize,
 		maxitems * itemsize,
-		percentage);
+		percentage
+	);
 
 	if ( percentage > 99.99f )
+	{
 		Con_Printf("^1SIZE OVERFLOW!!!^7\n");
+	}
 	else if ( percentage > 95.0f )
+	{
 		Con_Printf("^3SIZE DANGER!^7\n");
+	}
 	else if ( percentage > 80.0f )
+	{
 		Con_Printf("^2VERY FULL!^7\n");
+	}
 	else
+	{
 		Con_Printf("\n");
+	}
 
 	return items * itemsize;
 }
@@ -1073,13 +1091,21 @@ static int Mod_GlobUsage(const char* szItem, int itemstorage, int maxstorage)
 	Con_Printf("%-15s  %-12s  %8i/%-8i  (%4.1f%%) ", szItem, "[variable]", itemstorage, maxstorage, percentage);
 
 	if ( percentage > 99.99f )
+	{
 		Con_Printf("^1SIZE OVERFLOW!!!^7\n");
+	}
 	else if ( percentage > 95.0f )
+	{
 		Con_Printf("^3SIZE DANGER!^7\n");
+	}
 	else if ( percentage > 80.0f )
+	{
 		Con_Printf("^2VERY FULL!^7\n");
+	}
 	else
+	{
 		Con_Printf("\n");
+	}
 
 	return itemstorage;
 }
@@ -2132,7 +2158,8 @@ static qboolean Mod_LoadColoredLighting(dbspmodel_t* bmod)
 			S_ERROR "%s has mismatched size (%llu should be %zu)\n",
 			path,
 			(long long unsigned int)litdatasize,
-			bmod->lightdatasize * 3);
+			bmod->lightdatasize * 3
+		);
 
 		Mem_Free(in);
 		return false;
@@ -2192,7 +2219,8 @@ static void Mod_LoadDeluxemap(dbspmodel_t* bmod)
 			S_ERROR "%s has mismatched size (%llu should be %zu)\n",
 			path,
 			(long long unsigned int)deluxdatasize,
-			bmod->lightdatasize);
+			bmod->lightdatasize
+		);
 
 		Mem_Free(in);
 		return;
@@ -2728,7 +2756,8 @@ static void Mod_SequenceAnimatedTexture(int baseTextureIndex)
 			Con_Printf(
 				S_ERROR "Mod_SequenceAnimatedTexture: missing frame %i of animated texture \"%s\"\n",
 				candidateIndex,
-				baseTexture->name);
+				baseTexture->name
+			);
 
 			baseTexture->anim_total = 0;
 			break;
@@ -2753,7 +2782,8 @@ static void Mod_SequenceAnimatedTexture(int baseTextureIndex)
 			Con_Printf(
 				S_ERROR "Mod_SequenceAnimatedTexture: missing alternate frame %i of animated texture \"%s\"\n",
 				candidateIndex,
-				baseTexture->name);
+				baseTexture->name
+			);
 
 			baseTexture->anim_total = 0;
 			break;
@@ -2856,7 +2886,8 @@ static void LoadTextureProperties(texture_t* out, const char* propertiesFilePath
 			Con_Printf(
 				S_WARN "LoadTextureProperties: Properties file %s contained key '%s' with no matching value\n",
 				propertiesFilePath,
-				key);
+				key
+			);
 			break;
 		}
 
@@ -2866,7 +2897,8 @@ static void LoadTextureProperties(texture_t* out, const char* propertiesFilePath
 				S_WARN "LoadTextureProperties: Properties file %s contained invalid property '%s %s'\n",
 				propertiesFilePath,
 				key,
-				value);
+				value
+			);
 		}
 	}
 
@@ -2887,7 +2919,8 @@ static void LoadPNGTexture(const dpngtexturepath_t* in, texture_t** out)
 		Con_Printf(
 			S_ERROR "LoadPngTexture: Map '%s' contains unterminated texture name beginning with '%s'.\n",
 			loadmodel->name,
-			path);
+			path
+		);
 
 		Mod_CreateDefaultTexture(out);
 		return;
@@ -3077,7 +3110,8 @@ static void LoadAfterburnerBSPTextures(dbspmodel_t* bmod)
 		Host_Error(
 			"LoadAfterburnerBSPTextures: '%s' textures lump too small, expected at least %u bytes.\n",
 			loadmodel->name,
-			(uint32_t)sizeof(dtexturelumpheader_t));
+			(uint32_t)sizeof(dtexturelumpheader_t)
+		);
 	}
 
 	bytesProcessed += sizeof(dtexturelumpheader_t);
@@ -3102,7 +3136,8 @@ static void LoadAfterburnerBSPTextures(dbspmodel_t* bmod)
 			"LoadAfterburnerBSPTextures: '%s' textures lump too small to read PNG textures, expected at least %zu "
 			"bytes\n",
 			loadmodel->name,
-			sizeof(dtexturelumpheader_t) + (texHeader->pngCount * sizeof(dpngtexturepath_t)));
+			sizeof(dtexturelumpheader_t) + (texHeader->pngCount * sizeof(dpngtexturepath_t))
+		);
 	}
 
 	pngPaths = (const dpngtexturepath_t*)((const byte*)bmod->textures + bytesProcessed);
@@ -3126,7 +3161,8 @@ static void LoadAfterburnerBSPTextures(dbspmodel_t* bmod)
 			Host_Error(
 				"LoadAfterburnerBSPTextures: '%s' textures lump too small to read miptex %u.\n",
 				loadmodel->name,
-				index);
+				index
+			);
 		}
 
 		if ( *currentMiptex < 0 || (size_t)(*currentMiptex) >= bmod->texdatasize )
@@ -3607,7 +3643,8 @@ static void Mod_LoadLightVecs(dbspmodel_t* bmod)
 			Con_Printf(
 				S_ERROR "Mod_LoadLightVecs: has mismatched size (%zu should be %zu)\n",
 				bmod->deluxdatasize,
-				bmod->lightdatasize);
+				bmod->lightdatasize
+			);
 		else
 			Mod_LoadDeluxemap(bmod);  // old method
 		return;
@@ -3630,7 +3667,8 @@ static void Mod_LoadShadowmap(dbspmodel_t* bmod)
 			Con_Printf(
 				S_ERROR "Mod_LoadShadowmap: has mismatched size (%zu should be %zu)\n",
 				bmod->shadowdatasize,
-				bmod->lightdatasize / 3);
+				bmod->lightdatasize / 3
+			);
 		return;
 	}
 
@@ -3728,7 +3766,8 @@ static void Mod_LoadClientModels(const dbspmodel_t* bmod)
 	loadmodel->clientEntities->modelCount = (size_t)header->modelCount;
 	loadmodel->clientEntities->models = (mclientents_model_t*)Mem_Malloc(
 		loadmodel->mempool,
-		loadmodel->clientEntities->modelCount * sizeof(*loadmodel->clientEntities->models));
+		loadmodel->clientEntities->modelCount * sizeof(*loadmodel->clientEntities->models)
+	);
 
 	const dclientents_model_t* inModelBase =
 		(const dclientents_model_t*)(bmod->cliententdata + header->modelOffsetFromBeginningOfHeader);
@@ -3768,7 +3807,8 @@ static void Mod_LoadClientSounds(const dbspmodel_t* bmod)
 	loadmodel->clientEntities->soundCount = (size_t)header->soundCount;
 	loadmodel->clientEntities->sounds = (mclientents_sound_t*)Mem_Malloc(
 		loadmodel->mempool,
-		loadmodel->clientEntities->soundCount * sizeof(*loadmodel->clientEntities->sounds));
+		loadmodel->clientEntities->soundCount * sizeof(*loadmodel->clientEntities->sounds)
+	);
 
 	const dclientents_sound_t* inSoundBase =
 		(const dclientents_sound_t*)(bmod->cliententdata + header->soundOffsetFromBeginningOfHeader);
@@ -3800,10 +3840,12 @@ static void Mod_LoadClientEntities(const dbspmodel_t* bmod)
 	{
 		Con_Printf(
 			S_ERROR
-			"Cannot load client entities from BSP: expected client entity header version %u but got %u. Map will not "
+			"Cannot load client entities from BSP: expected client entity header version %u but got %u. Map will "
+			"not "
 			"contain any client entities.\n",
 			NFOPEN_CLIENT_ENT_HEADER_VERSION,
-			header->version);
+			header->version
+		);
 
 		return;
 	}
@@ -3816,7 +3858,8 @@ static void Mod_LoadClientEntities(const dbspmodel_t* bmod)
 	Con_DPrintf(
 		"Mod_LoadClientEntities: Loaded %zu client models and %zu client sounds\n",
 		loadmodel->clientEntities->modelCount,
-		loadmodel->clientEntities->soundCount);
+		loadmodel->clientEntities->soundCount
+	);
 }
 
 /*
@@ -3857,7 +3900,8 @@ static void Mod_LoadAllLumps(const bspheaders_t* headers, const byte* data, int 
 				data,
 				&nfopenExtraLumps[lumpIndex],
 				&worldstats[SIZE_OF_ARRAY(srclumps) + SIZE_OF_ARRAY(extlumps) + lumpIndex],
-				flags);
+				flags
+			);
 		}
 	}
 }
@@ -3902,13 +3946,14 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 			{
 				SetBits(flags, LUMP_BSP30EXT);
 			}
-			else if (
-				!Mod_LumpLooksLikeEntities(
-					(const char*)(mod_base + headers.basicHeader->lumps[LUMP_ENTITIES].fileofs),
-					headers.basicHeader->lumps[LUMP_ENTITIES].filelen) &&
-				Mod_LumpLooksLikeEntities(
-					(const char*)(mod_base + headers.basicHeader->lumps[LUMP_PLANES].fileofs),
-					headers.basicHeader->lumps[LUMP_PLANES].filelen) )
+			else if ( !Mod_LumpLooksLikeEntities(
+						  (const char*)(mod_base + headers.basicHeader->lumps[LUMP_ENTITIES].fileofs),
+						  headers.basicHeader->lumps[LUMP_ENTITIES].filelen
+					  ) &&
+					  Mod_LumpLooksLikeEntities(
+						  (const char*)(mod_base + headers.basicHeader->lumps[LUMP_PLANES].fileofs),
+						  headers.basicHeader->lumps[LUMP_PLANES].filelen
+					  ) )
 			{
 				// only relevant for half-life maps:
 				// blue-shift swapped lumps
@@ -3934,7 +3979,8 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 			Con_Printf(
 				S_ERROR "%s has unrecognised version number %i\n",
 				loadmodel->name,
-				headers.basicHeader->version);
+				headers.basicHeader->version
+			);
 
 			return false;
 		}
@@ -3959,7 +4005,8 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 			"Mod_Load%s: %i error(s), %i warning(s)\n",
 			isworld ? "World" : "Brush",
 			loadstat.numerrors,
-			loadstat.numwarnings);
+			loadstat.numwarnings
+		);
 
 		return false;  // there were errors, we can't load this map
 	}
@@ -3990,7 +4037,7 @@ qboolean Mod_LoadBmodelLumps(const byte* mod_base, size_t length, qboolean iswor
 		Mod_LoadClientEntities(bmod);
 	}
 
-	// preform some post-initalization
+	// perform some post-initalization
 	Mod_MakeHull0();
 	Mod_SetupSubmodels(bmod);
 
@@ -4072,7 +4119,8 @@ qboolean Mod_TestBmodelLumps(
 	const byte* mod_base,
 	size_t length,
 	qboolean silent,
-	dlump_t* entities)
+	dlump_t* entities
+)
 {
 	bspheaders_t headers;
 	int flags = LUMP_TESTONLY;
@@ -4367,7 +4415,7 @@ int Mod_ReadLump(const char* filename, const int lump, void** lumpdata, int* lum
 Mod_SaveLump
 
 writing lump by user request
-only empty lumps is allows
+only empty lumps are allowed
 ==================
 */
 int Mod_SaveLump(const char* filename, const int lump, void* lumpdata, int lumpsize)
@@ -4380,22 +4428,30 @@ int Mod_SaveLump(const char* filename, const int lump, void* lumpdata, int lumps
 	file_t* f;
 
 	if ( !lumpdata || lumpsize <= 0 )
+	{
 		return LUMP_SAVE_NO_DATA;
+	}
 
-	// make sure what .bsp is placed into gamedir and not in pak
+	// make sure that .bsp is placed into gamedir and not in pak
 	if ( !FS_GetDiskPath(filename, true) )
+	{
 		return LUMP_SAVE_COULDNT_OPEN;
+	}
 
-	// first we should sure what we allow to rewrite this .bsp
+	// first we should sure that we are allowed to rewrite this .bsp
 	result = Mod_CheckLump(filename, lump, &dummy);
 
 	if ( result != LUMP_LOAD_NOT_EXIST )
+	{
 		return result;
+	}
 
 	f = FS_Open(filename, "e+b", true);
 
 	if ( !f )
+	{
 		return LUMP_SAVE_COULDNT_OPEN;
+	}
 
 	if ( (size_t)FS_Read(f, buffer, prefetch_size) != prefetch_size )
 	{
