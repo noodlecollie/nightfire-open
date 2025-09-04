@@ -510,18 +510,17 @@ bool CWaypoints::Load()
 		return false;
 	}
 
-	if ( header.mapCrc != crc )
-	{
-		BLOG_E("Error loading waypoints, CRC mismatch:");
-		BLOG_E("  Current map CRC 0x%08x, waypoint file stored CRC 0x%08x.", crc, header.mapCrc);
-		FREE_FILE(fileData);
-		return false;
-	}
-
 	if ( !FStrEq(CBotrixServerPlugin::MapName(), header.szMapName) )
 	{
 		BLOG_W("Warning loading waypoints, map name mismatch:");
 		BLOG_W("  File map %s, current map %s.", header.szMapName, CBotrixServerPlugin::MapName());
+	}
+
+	if ( header.mapCrc != crc )
+	{
+		BLOG_W("Warning loading waypoints, map CRC mismatch:");
+		BLOG_W("  Current map CRC 0x%08x, waypoint file stored CRC 0x%08x.", crc, header.mapCrc);
+		BLOG_W("The map may have been updated since the last waypoint analyze.");
 	}
 
 	Vector vOrigin;

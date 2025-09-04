@@ -387,6 +387,7 @@ void CBotrixServerPlugin::ActivateLevel()
 
 	if ( CWaypoints::Size() <= CWaypoint::iWaypointsMaxCountToAnalyzeMap )
 	{
+		BLOG_I("Running waypoint analyze");
 		CWaypoints::Analyze(NULL, false);
 	}
 }
