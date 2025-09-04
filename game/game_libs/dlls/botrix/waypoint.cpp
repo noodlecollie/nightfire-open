@@ -4,6 +4,7 @@
 #include "botrix/defines.h"
 #include "botrix/item.h"
 #include "botrix/clients.h"
+#include "enginecallback.h"
 #include "standard_includes.h"
 #include "PlatformLib/String.h"
 #include "MathLib/utils.h"
@@ -24,16 +25,17 @@ struct waypoint_header
 	int iVersion;
 	int iNumWaypoints;
 	int iFlags;
+	uint32_t mapCrc;
 };
 #pragma pack(pop)
 
-static const char* WAYPOINT_FILE_HEADER_ID = "BtxW";  // Botrix's Waypoints.
+static constexpr const char* const WAYPOINT_FILE_HEADER_ID = "BtxW";  // Botrix's Waypoints.
 
-static const int WAYPOINT_VERSION = 1;  // Waypoints file version.
-static const int WAYPOINT_FILE_FLAG_VISIBILITY = 1 << 0;  // Flag for waypoint visibility table.
-static const int WAYPOINT_FILE_FLAG_AREAS = 1 << 1;  // Flag for area names.
+static constexpr int WAYPOINT_VERSION = 2;  // Waypoints file version.
+static constexpr int WAYPOINT_FILE_FLAG_VISIBILITY = 1 << 0;  // Flag for waypoint visibility table.
+static constexpr int WAYPOINT_FILE_FLAG_AREAS = 1 << 1;  // Flag for area names.
 
-static const int WAYPOINT_VERSION_FLAGS_SHORT = 1;  // Flags was short (16bits) instead of int (32bits).
+static constexpr int WAYPOINT_VERSION_FLAGS_SHORT = 1;  // Flags was short (16bits) instead of int (32bits).
 
 //----------------------------------------------------------------------------------------------------------------
 // CWaypoint static members.
@@ -336,10 +338,19 @@ bool CWaypoints::Save()
 
 	BLOG_I("Saving map waypoints to file: %s", filePath);
 
+	uint32_t crc = 0;
+
+	if ( !g_engfuncs.pfnGetMapCRC(&crc) )
+	{
+		BLOG_E("Could not get map CRC to save waypoint file!");
+		return false;
+	}
+
 	struct writable_file_s* outFile = g_engfuncs.pfnOpenWritableFile(filePath);
 
 	if ( !outFile )
 	{
+		BLOG_E("Could not open %s for writing", filePath);
 		return false;
 	}
 
@@ -349,6 +360,7 @@ bool CWaypoints::Save()
 	FLAG_SET(WAYPOINT_FILE_FLAG_VISIBILITY, header.iFlags);
 	header.iNumWaypoints = m_cGraph.size();
 	header.iVersion = WAYPOINT_VERSION;
+	header.mapCrc = crc;
 	header.szFileType = *((int*)&WAYPOINT_FILE_HEADER_ID[0]);
 	PlatformLib_StrCpy(header.szMapName, sizeof(header.szMapName), CBotrixServerPlugin::MapName());
 
@@ -466,6 +478,14 @@ bool CWaypoints::Load()
 		return false;
 	}
 
+	uint32_t crc = 0;
+
+	if ( !g_engfuncs.pfnGetMapCRC(&crc) )
+	{
+		BLOG_E("Could not get map CRC to validate loaded waypoint file!");
+		return false;
+	}
+
 	byte* cursor = fileData;
 	byte* const end = fileData + fileLength;
 	bool success = false;
@@ -481,10 +501,18 @@ bool CWaypoints::Load()
 		return false;
 	}
 
-	if ( (header.iVersion <= 0) || (header.iVersion > WAYPOINT_VERSION) )
+	if ( header.iVersion != WAYPOINT_VERSION )
 	{
 		BLOG_E("Error loading waypoints, version mismatch:");
 		BLOG_E("  File version %d, current waypoint version %d.", header.iVersion, WAYPOINT_VERSION);
+		FREE_FILE(fileData);
+		return false;
+	}
+
+	if ( header.mapCrc != crc )
+	{
+		BLOG_E("Error loading waypoints, CRC mismatch:");
+		BLOG_E("  Current map CRC 0x%08x, waypoint file stored CRC 0x%08x.", crc, header.mapCrc);
 		FREE_FILE(fileData);
 		return false;
 	}

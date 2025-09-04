@@ -4193,6 +4193,17 @@ static qboolean pfnGetHullBounds(int hullIndex, float* vecMins, float* vecMaxs)
 	return true;
 }
 
+static qboolean pfnGetMapCRC(uint32_t* outCRC)
+{
+	if ( !sv.worldmodel || !outCRC )
+	{
+		return false;
+	}
+
+	*outCRC = sv.worldmapCRC;
+	return true;
+}
+
 /*
 =============
 pfnFunctionFromName
@@ -5598,6 +5609,7 @@ static enginefuncs_t gEngfuncs = {
 	pfnGetPvsForPoint,
 	pfnPointInPvs,
 	pfnGetHullBounds,
+	pfnGetMapCRC,
 };
 
 /*
