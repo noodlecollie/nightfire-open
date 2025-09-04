@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "EnginePublicAPI/bspfile.h"
 #include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "CRCLib/crclib.h"
@@ -852,7 +853,7 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 	}
 
 	// always calc same checksum for singleplayer
-	if ( multiplayer == false )
+	if ( !multiplayer )
 	{
 		*crcvalue = (('H' << 24) + ('S' << 16) + ('A' << 8) + 'X');
 		return true;
@@ -887,6 +888,7 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 		case Q1BSP_VERSION:
 		case HLBSP_VERSION:
 		case QBSP2_VERSION:
+		case NFOPENBSP_VERSION:
 		{
 			break;
 		}

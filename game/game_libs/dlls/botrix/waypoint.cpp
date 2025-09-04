@@ -35,8 +35,6 @@ static constexpr int WAYPOINT_VERSION = 2;  // Waypoints file version.
 static constexpr int WAYPOINT_FILE_FLAG_VISIBILITY = 1 << 0;  // Flag for waypoint visibility table.
 static constexpr int WAYPOINT_FILE_FLAG_AREAS = 1 << 1;  // Flag for area names.
 
-static constexpr int WAYPOINT_VERSION_FLAGS_SHORT = 1;  // Flags was short (16bits) instead of int (32bits).
-
 //----------------------------------------------------------------------------------------------------------------
 // CWaypoint static members.
 //----------------------------------------------------------------------------------------------------------------
@@ -355,6 +353,7 @@ bool CWaypoints::Save()
 	}
 
 	waypoint_header header;
+	memset(&header, 0, sizeof(header));
 	header.iFlags = 0;
 	FLAG_SET(WAYPOINT_FILE_FLAG_AREAS, header.iFlags);
 	FLAG_SET(WAYPOINT_FILE_FLAG_VISIBILITY, header.iFlags);
@@ -435,6 +434,7 @@ bool CWaypoints::Save()
 				cVisibles.set(j, (i == j) || m_aVisTable[j].test(i));
 			}
 		}
+
 		g_engfuncs.pfnWriteElementsToFile(outFile, cVisibles.data(), 1, cVisibles.byte_size());
 	}
 
@@ -444,6 +444,7 @@ bool CWaypoints::Save()
 	const good::vector<TItemId>& aItems = CItems::GetObjectsFlags();
 	int iSize = aItems.size() / 2;
 	g_engfuncs.pfnWriteElementsToFile(outFile, &iSize, sizeof(int), 1);
+
 	for ( int i = 0; i < iSize; ++i )
 	{
 		TItemIndex iIndex = aItems[i * 2] - CPlayers::Size();  // Items indexes are relatives to player's count.
@@ -528,15 +529,13 @@ bool CWaypoints::Load()
 	int iNumPaths = 0, iArgument = 0;
 	TAreaId iAreaId = 0;
 
-	const size_t sizeOfFlags = header.iVersion <= WAYPOINT_VERSION_FLAGS_SHORT ? sizeof(short) : sizeof(int);
-
 	// Read waypoints information.
 	for ( TWaypointId i = 0; i < header.iNumWaypoints; ++i )
 	{
 		success = Read(cursor, end, vOrigin);
 		BASSERT(success, Clear(); FREE_FILE(fileData); return false);
 
-		success = Read(cursor, end, iFlags, sizeOfFlags);
+		success = Read(cursor, end, iFlags);
 		BASSERT(success, Clear(); FREE_FILE(fileData); return false);
 
 		success = Read(cursor, end, iAreaId);
