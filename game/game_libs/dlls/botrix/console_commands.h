@@ -470,6 +470,7 @@ public:
 	{
 		m_sCommand = "remove";
 		m_sHelp = "remove given path (or from 'current' waypoint to 'destination')";
+		m_sDescription = "Supply 'both' as an extra argument in order to remove path bidirectionally";
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 

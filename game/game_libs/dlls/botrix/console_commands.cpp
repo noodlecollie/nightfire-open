@@ -2505,7 +2505,9 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
 		return ECommandPerformed;
+	}
 
 	if ( pClient == NULL )
 	{
@@ -2513,7 +2515,10 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
-	TWaypointId iPathFrom = -1, iPathTo = -1;
+	TWaypointId iPathFrom = -1;
+	TWaypointId iPathTo = -1;
+	bool removeBoth = false;
+
 	if ( argc == 0 )
 	{
 		iPathFrom = pClient->iCurrentWaypoint;
@@ -2524,10 +2529,15 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		iPathFrom = pClient->iCurrentWaypoint;
 		iPathTo = GetWaypointId(0, argc, argv, pClient, pClient->iCurrentWaypoint);
 	}
-	else if ( argc == 2 )
+	else if ( argc >= 2 )
 	{
-		iPathTo = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
+		iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 		iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
+
+		if ( strcmp(argv[2], "both") == 0 )
+		{
+			removeBoth = true;
+		}
 	}
 
 	if ( !CWaypoints::IsValid(iPathFrom) || !CWaypoints::IsValid(iPathTo) )
@@ -2545,6 +2555,20 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 	{
 		BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathFrom, iPathTo);
 		return ECommandError;
+	}
+
+	if ( removeBoth )
+	{
+		if ( CWaypoints::RemovePath(iPathTo, iPathFrom) )
+		{
+			BULOG_I(pClient->GetEdict(), "Path removed: from %d to %d.", iPathTo, iPathFrom);
+			return ECommandPerformed;
+		}
+		else
+		{
+			BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathTo, iPathFrom);
+			return ECommandError;
+		}
 	}
 }
 
@@ -2686,7 +2710,7 @@ TCommandResult CPathRemoveTypeCommand::Execute(CClient* pClient, int argc, const
 	}
 	else if ( argc == 2 )
 	{
-		iPathTo = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
+		iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 		iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
 	}
 

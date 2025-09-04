@@ -1,8 +1,11 @@
 #include "botrix/engine_util.h"
+#include "EnginePublicAPI/cvardef.h"
+#include "EnginePublicAPI/eiface.h"
 #include "botrix/botrixmod.h"
 #include "botrix/waypoint.h"
 #include "botrix/botrixgamerulesinterface.h"
 #include "botrix/defines.h"
+#include "enginecallback.h"
 #include "standard_includes.h"
 #include "gamerules.h"
 #include "MathLib/utils.h"
@@ -176,11 +179,21 @@ Vector CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* i
 
 	TRACE_HULL(vSrc - Vector(0.0f, 0.0f, hullMins.z), vDest, TRUE, hull, ignoreEnt, &m_TraceResult);
 
-	// This can sometimes happen if the source point is extremely close to the ground.
-	// In this case, the point is already on the ground.
 	if ( m_TraceResult.fAllSolid )
 	{
-		return vSrc;
+		// See if we started in the ceiling.
+		TraceResult tr {};
+		TRACE_HULL(vSrc, vSrc - Vector(0.0f, 0.0f, hullMins.z), TRUE, hull, ignoreEnt, &tr);
+
+		if ( !tr.fStartSolid && tr.flFraction < 1.0f )
+		{
+			// Found the ceiling position, so now trace down from here.
+			TRACE_HULL(tr.vecEndPos, vDest, TRUE, hull, ignoreEnt, &m_TraceResult);
+		}
+		else
+		{
+			return vSrc;
+		}
 	}
 
 	if ( m_TraceResult.flFraction >= 1.0f )
@@ -329,7 +342,6 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	int i = 0;
 
 	std::unique_ptr<CRollingLineMessageWriter> helperGeomWriter;
-	Vector lastDelta;
 
 	if ( bShowHelp )
 	{
