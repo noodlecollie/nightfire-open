@@ -1,11 +1,14 @@
 #include "botrix/waypoint.h"
 #include <limits>
+#include "EnginePublicAPI/eiface.h"
+#include "MathLib/vec3.h"
 #include "botrix/type2string.h"
 #include "botrix/players.h"
 #include "botrix/defines.h"
 #include "botrix/item.h"
 #include "botrix/clients.h"
 #include "botrixmod.h"
+#include "engine_util.h"
 #include "enginecallback.h"
 #include "standard_includes.h"
 #include "PlatformLib/String.h"
@@ -14,6 +17,8 @@
 #include "customGeometry/geometryItem.h"
 #include "customGeometry/messageWriter.h"
 #include "customGeometry/primitiveMessageWriter.h"
+#include "types.h"
+#include "util.h"
 
 //----------------------------------------------------------------------------------------------------------------
 // Waypoints file header.
@@ -912,9 +917,11 @@ void CWaypoints::CreatePathsWithAutoFlags(
 
 	float fDist = (w2.vertex.vOrigin - w1.vertex.vOrigin).Length();
 
-	Vector v1 = w1.vertex.vOrigin, v2 = w2.vertex.vOrigin;
+	Vector v1 = w1.vertex.vOrigin;
+	Vector v2 = w2.vertex.vOrigin;
 	bool bCrouch = bIsCrouched;
-	TReach iReach = CBotrixEngineUtil::GetReachableInfoFromTo(
+
+	TReach iReach = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		CBotrixEngineUtil::TraceDirection::EFirstToSecond,
 		v1,
 		v2,
@@ -940,7 +947,7 @@ void CWaypoints::CreatePathsWithAutoFlags(
 		AddPath(iWaypoint1, iWaypoint2, fDist, iFlags);
 	}
 
-	iReach = CBotrixEngineUtil::GetReachableInfoFromTo(
+	iReach = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		CBotrixEngineUtil::TraceDirection::ESecondToFirst,
 		v2,
 		v1,
@@ -1421,28 +1428,29 @@ void CWaypoints::AddLadderDismounts(
 
 	for ( int i = 0; i < 2; ++i )
 	{
-		Vector vPos = Get(iWaypoints[i]).vOrigin;
-		Vector vLadderWaypointGround = vPos;
+		Vector vWaypointEye = Get(iWaypoints[i]).vOrigin;
+		Vector vLadderWaypointGround = vWaypointEye;
 		vLadderWaypointGround.z -= fPlayerEye;
 
 		bool bFound = false;
 		for ( int j = 0; j < 4; ++j )
 		{
-			Vector vNew = vPos + vDirections[j];
+			Vector vNew = vWaypointEye + vDirections[j];
 			Vector vCandidate = CBotrixEngineUtil::GetGroundVec(vNew);  // Not hull ground.
 			vCandidate.z += fPlayerEye;
 
-			if ( vPos.z - vCandidate.z > fMaxHeight )  // Too high.
+			if ( vWaypointEye.z - vCandidate.z > fMaxHeight )  // Too high.
 			{
 				continue;
 			}
 
-			if ( !CBotrixEngineUtil::IsVisible(vPos, vCandidate, EVisibilityWaypoints, false) )
+			if ( !CBotrixEngineUtil::IsVisible(vWaypointEye, vCandidate, EVisibilityWaypoints, false) )
 			{
 				continue;
 			}
 
-			Vector vCandidateGround = CBotrixEngineUtil::GetHullGroundVec(vNew);
+			Vector vCandidateGround =
+				CBotrixEngineUtil::GetHumanHullGroundVec(vNew, CBotrixEngineUtil::PositionInHull::Eye);
 
 			CBotrixEngineUtil::HumanHullTrace(vLadderWaypointGround, vCandidateGround);
 
@@ -1468,9 +1476,9 @@ void CWaypoints::AddLadderDismounts(
 					"  added waypoint %d (%s ladder dismount) at (%.0f, %.0f, %.0f)",
 					iDismount,
 					i == 0 ? "bottom" : "top",
-					vPos.x,
-					vPos.y,
-					vPos.z
+					vWaypointEye.x,
+					vWaypointEye.y,
+					vWaypointEye.z
 				);
 			}
 
@@ -1540,7 +1548,8 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 			bool bUse = FLAG_SOME_SET(FItemUse, items[i].pItemClass->iFlags);
 			TWaypointFlags iFlags = CWaypoint::GetFlagsFor(iItemType);
 			int iArgument = 0;
-			Vector vOrigin, vPos;
+			Vector vOrigin;
+			Vector vPos;
 
 			if ( bUse )
 			{
@@ -1560,7 +1569,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 				vDirection *= fItemHalfWidth + fPlayerHalfWidth + 5.0f;
 
 				vPos = vMid + vDirection;
-				vPos = CBotrixEngineUtil::GetHullGroundVec(vPos);
+				vPos = CBotrixEngineUtil::GetHumanHullGroundVec(vPos, CBotrixEngineUtil::PositionInHull::Eye);
 				vPos.z += fPlayerEye;
 
 				if ( fabsf(vPos.z - vMid.z) >
@@ -1583,7 +1592,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 				vPos = vOrigin;
 				vPos.z += fPlayerEye;
 
-				Vector vGround = CBotrixEngineUtil::GetHullGroundVec(vPos);
+				Vector vGround = CBotrixEngineUtil::GetHumanHullGroundVec(vPos, CBotrixEngineUtil::PositionInHull::Eye);
 				vGround.z += fPlayerEye;
 
 				if ( fabs(vPos.z - vGround.z) >
@@ -1688,7 +1697,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		ladderTop.z = dismountPoints[1]->v.origin[VEC3_Z];
 
 		ladderBottom.z += fPlayerEye;
-		ladderBottom = CBotrixEngineUtil::GetHullGroundVec(ladderBottom);
+		ladderBottom = CBotrixEngineUtil::GetHumanHullGroundVec(ladderBottom, CBotrixEngineUtil::PositionInHull::Eye);
 		ladderBottom.z += fPlayerEye + 2.0f;
 
 		ladderTop.z += fPlayerEye + 2.0f;
@@ -2049,7 +2058,8 @@ bool CWaypoints::AnalyzeWaypoint(
 
 	float fJumpHeight = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
 	float fHalfPlayerWidthSqr = SQR(fHalfPlayerWidth);
-	Vector vGround = CBotrixEngineUtil::GetHullGroundVec(vNew);
+	Vector vGround =
+		CBotrixEngineUtil::GetHumanHullGroundVec(vNew, CBotrixEngineUtil::PositionInHull::Eye, nullptr, 4.0f);
 
 	// Check if on a border.
 	Vector vHullGround = vGround;
@@ -2066,7 +2076,7 @@ bool CWaypoints::AnalyzeWaypoint(
 			vDirection *= fHalfPlayerWidth;
 
 			Vector vDisplaced = vNew + vDirection;
-			vHullGround = CBotrixEngineUtil::GetHullGroundVec(vDisplaced);
+			vHullGround = CBotrixEngineUtil::GetHumanHullGroundVec(vDisplaced, CBotrixEngineUtil::PositionInHull::Eye);
 
 			if ( fabs(vHullGround.z - vGround.z) <
 				 CBotrixMod::GetVar(EModVarPlayerObstacleToJump) )  // Small difference.
@@ -2083,17 +2093,18 @@ bool CWaypoints::AnalyzeWaypoint(
 		}
 	}
 
-	vGround.z += fPlayerEye;
+	Vector vNewEyePos = vGround;
+	vNewEyePos.z += fPlayerEye;
 
 	if ( CWaypoint::bShowAnalyzePotentialWaypoints )
 	{
-		Vector v = vGround;
+		Vector v = vNewEyePos;
 		v.z -= fPlayerEye;
-		CBotrixEngineUtil::DrawLine(vGround, v, 10, 255, 255, 255);
+		CBotrixEngineUtil::DrawLine(vNewEyePos, v, 10, 255, 255, 255);
 	}
 
 	aNearWaypoints.clear();
-	CWaypoints::GetNearestWaypoints(aNearWaypoints, vGround, true, fAnalyzeDistance / 1.41f);
+	CWaypoints::GetNearestWaypoints(aNearWaypoints, vNewEyePos, true, fAnalyzeDistance / 1.41f);
 
 	bool bSkip = false;
 
@@ -2117,7 +2128,7 @@ bool CWaypoints::AnalyzeWaypoint(
 		}
 
 		// If path is not adding somehow, but the waypoint is really close (half player's width or closer).
-		if ( (vGround.Make2D() - Get(iNear).vOrigin.Make2D()).LengthSquared() <= fHalfPlayerWidthSqr )
+		if ( (vNewEyePos.Make2D() - Get(iNear).vOrigin.Make2D()).LengthSquared() <= fHalfPlayerWidthSqr )
 		{
 			bSkip = true;
 		}
@@ -2129,10 +2140,10 @@ bool CWaypoints::AnalyzeWaypoint(
 	}
 
 	bool bCrouch = false;
-	TReach reach = CBotrixEngineUtil::GetReachableInfoFromTo(
+	TReach reach = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		CBotrixEngineUtil::TraceDirection::EFirstToSecond,
 		vPos,
-		vGround,
+		vNewEyePos,
 		bCrouch,
 		0.0f,
 		fAnalyzeDistanceExtraSqr,
@@ -2141,15 +2152,15 @@ bool CWaypoints::AnalyzeWaypoint(
 
 	if ( reach != EReachFallDamage && reach != EReachNotReachable )
 	{
-		TWaypointId iNew = Add(vGround);
+		TWaypointId iNew = Add(vNewEyePos);
 		BULOG_D(
 			m_pAnalyzer,
 			"  added waypoint %d (from %d) at (%.0f, %.0f, %.0f)",
 			iNew,
 			iWaypoint,
-			vGround.x,
-			vGround.y,
-			vGround.z
+			vNewEyePos.x,
+			vNewEyePos.y,
+			vNewEyePos.z
 		);
 
 		m_bIsAnalyzeStepAddedWaypoints = true;
@@ -2164,9 +2175,9 @@ bool CWaypoints::AnalyzeWaypoint(
 		);
 
 		bool bDestCrouch = false;
-		reach = CBotrixEngineUtil::GetReachableInfoFromTo(
+		reach = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 			CBotrixEngineUtil::TraceDirection::ESecondToFirst,
-			vGround,
+			vNewEyePos,
 			vPos,
 			bDestCrouch,
 			0,

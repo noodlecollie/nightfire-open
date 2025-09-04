@@ -36,7 +36,7 @@ public:  // Members and constants.
 	static int iAnalyzeDistance;  ///< Distance between waypoints when analyzing a map.
 	static int iWaypointsMaxCountToAnalyzeMap;  ///< Maximum waypoints count to start analyzing a map.
 	static float fAnalyzeWaypointsPerFrame;  ///< Positions per frame to analyze.
-	static bool bShowAnalyzePotentialWaypoints;  ///< Show potencial waypoints with white line. Show from console
+	static bool bShowAnalyzePotentialWaypoints;  ///< Show potential waypoints with white line. Show from console
 												 ///< command, hide from map change.
 
 	static bool bSaveOnMapChange;  ///< Save waypoints on map change.

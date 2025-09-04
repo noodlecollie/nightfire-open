@@ -38,10 +38,17 @@ public:
 		ESecondToFirst
 	};
 
+	enum class PositionInHull
+	{
+		Centre,
+		Feet,
+		Eye
+	};
+
 	static constexpr size_t MAX_PVS_DATA_LENGTH = (MAX_MAP_LEAFS + 7) / 8;
 
 	static good::TLogLevel iLogLevel;  /// Console log level. Info by default.
-	static int iTextTime;  /// Time in seconds to show text in CUtil::GetReachableInfoFromTo().
+	static int iTextTime;  /// Time in seconds to show text in CUtil::GetWaypointReachableInfoFromTo().
 
 	/// Print a message to given client (must be called from game thread). If message tag is used then message will
 	/// start with "[Botrix] ".
@@ -75,13 +82,30 @@ public:
 	static bool IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility iVisibility, bool bUsePVS = true);
 	static bool IsVisible(const Vector& vSrc, struct edict_s* pDest);
 	static bool TraceHitSomething();
-	static Vector GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt = nullptr, int hull = human_hull);
+	static Vector GetHullGroundVec(
+		const Vector& vSrc,
+		struct edict_s* ignoreEnt = nullptr,
+		int hull = human_hull,
+		float startSolidNudge = 0.0f
+	);
 	static bool RayHitsEntity(edict_t* pDoor, const Vector& vSrc, const Vector& vDest);
 
-	static TReach GetReachableInfoFromTo(
-		TraceDirection direction,
+	// Traces a human hull down from the specified point to see if it hits the ground.
+	// The input vector is adjusted before tracing, because depending on the situation
+	// it may represent the player's feet position, their eye position, or the centre
+	// of their hull. Knowing this information, we can help avoid the trace starting
+	// unnecessarily in a solid piece of geometry.
+	static Vector GetHumanHullGroundVec(
 		const Vector& vSrc,
-		Vector& vDest,
+		PositionInHull posInHull,
+		struct edict_s* ignoreEnt = nullptr,
+		float startSolidNudge = 0.0f
+	);
+
+	static TReach GetWaypointReachableInfoFromTo(
+		TraceDirection direction,
+		const Vector& vSrcEyePos,
+		Vector& vDestEyePos,
 		bool& bCrouch,
 		float fDistanceSqr,
 		float fMaxDistanceSqr,
