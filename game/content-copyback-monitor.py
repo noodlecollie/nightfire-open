@@ -45,8 +45,7 @@ def md5hash(fileName):
 			m.update(chunk)
 		return m.hexdigest()
 
-def check_files(game_dir, repo_dir, existing_files):
-	# Discover any files we've not seen yet
+def check_files(game_dir, repo_dir):
 	for whitelist_path in WHITELIST_PATHS:
 		sub_root = os.path.join(game_dir, whitelist_path)
 
@@ -56,44 +55,28 @@ def check_files(game_dir, repo_dir, existing_files):
 					raise RuntimeError("Sigint received")
 
 				full_path = os.path.join(root, file)
+				rel_file_path = os.path.relpath(full_path, game_dir)
+				repo_file_path = os.path.join(repo_dir, rel_file_path)
 
-				if full_path not in existing_files:
-					existing_files[full_path] = (os.stat(full_path).st_mtime, md5hash(full_path))
+				should_copy = False
 
-	# Compare all files and see if they need copying
-	for file_path in existing_files.keys():
-		if not should_run:
-			raise RuntimeError("Sigint received")
+				if not os.path.isfile(repo_file_path):
+					print(f"{rel_file_path}: New file")
+					should_copy = True
+				else:
+					if os.stat(full_path).st_mtime > os.stat(repo_file_path).st_mtime:
+						print(f"{rel_file_path}: Update time is newer")
+						should_copy = True
+					elif md5hash(repo_file_path) != md5hash(full_path):
+						print(f"{rel_file_path}: MD5 is different")
+						should_copy = True
 
-		if not os.path.isfile(file_path):
-			print(f"File {file_path} no longer exists on disk")
-			del existing_files[file_path]
-			continue
+				if not should_copy:
+					continue
 
-		rel_file_path = os.path.relpath(file_path, game_dir)
-		repo_file_path = os.path.join(repo_dir, rel_file_path)
-
-		should_copy = False
-
-		if not os.path.isfile(repo_file_path):
-			print(f"{rel_file_path}: New file")
-			should_copy = True
-		else:
-			update_time, md5 = existing_files[file_path]
-
-			if update_time > os.stat(repo_file_path).st_mtime:
-				print(f"{rel_file_path}: Update time is newer")
-				should_copy = True
-			elif md5hash(repo_file_path) != md5:
-				print(f"{rel_file_path}: MD5 is different")
-				should_copy = True
-
-		if not should_copy:
-			continue
-
-		os.makedirs(os.path.dirname(repo_file_path), exist_ok=True)
-		shutil.copyfile(file_path, repo_file_path)
-		print(f"  Copied to {repo_file_path}")
+				os.makedirs(os.path.dirname(repo_file_path), exist_ok=True)
+				shutil.copyfile(full_path, repo_file_path)
+				print(f"  Copied to {repo_file_path}")
 
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
@@ -118,11 +101,9 @@ def main():
 	print(f"Copying any changed files to {source_dir}")
 	print(f"Press Ctrl-C to exit")
 
-	existing_files = {}
-
 	while should_run:
 		try:
-			check_files(args.game_dir, source_dir, existing_files)
+			check_files(args.game_dir, source_dir)
 		except Exception as ex:
 			if str(ex) == "Sigint received":
 				break
