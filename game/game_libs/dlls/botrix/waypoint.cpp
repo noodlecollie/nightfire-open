@@ -1,9 +1,11 @@
 #include "botrix/waypoint.h"
+#include <limits>
 #include "botrix/type2string.h"
 #include "botrix/players.h"
 #include "botrix/defines.h"
 #include "botrix/item.h"
 #include "botrix/clients.h"
+#include "botrixmod.h"
 #include "enginecallback.h"
 #include "standard_includes.h"
 #include "PlatformLib/String.h"
@@ -1183,7 +1185,15 @@ TWaypointId CWaypoints::GetAimedWaypoint(const Vector& vOrigin, const Vector& an
 	CBotrixEngineUtil::SetPVSForVector(vOrigin);
 
 	TWaypointId iResult = EWaypointIdInvalid;
-	float fLowestAngDiff = 180 + 90;  // Set to max angle difference.
+	float highestDP = -1.0f;
+	float lowestDistanceSq = std::numeric_limits<float>::max();
+
+	// We want to calculate based on looking at the centre of a waypoint.
+	const float offsetToCentreOfWaypoint =
+		-CBotrixMod::GetVar(EModVarPlayerEye) + (CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f);
+
+	Vector viewDir;
+	AngleVectors(ang, viewDir, nullptr, nullptr);
 
 	for ( x = minX; x <= maxX; ++x )
 	{
@@ -1201,19 +1211,16 @@ TWaypointId CWaypoints::GetAimedWaypoint(const Vector& vOrigin, const Vector& an
 						 CBotrixEngineUtil::IsVisible(vOrigin, node.vertex.vOrigin, EVisibilityWorld, false) )
 					{
 						Vector vRelative(node.vertex.vOrigin);
-						vRelative.z -=
-							CBotrixMod::GetVar(EModVarPlayerEye) / 2;  // Consider to look at center of waypoint.
+						vRelative.z += offsetToCentreOfWaypoint;
 						vRelative -= vOrigin;
 
-						Vector angDiff;
-						VectorAngles(vRelative, angDiff);
-						CBotrixEngineUtil::DeNormalizeAngle(angDiff.y);
-						CBotrixEngineUtil::GetAngleDifference(ang, angDiff, angDiff);
-						float fAngDiff = fabsf(angDiff.x) + fabsf(angDiff.y);
+						float distanceSq = vRelative.LengthSquared();
+						float dp = DotProduct(vRelative.Normalize(), viewDir);
 
-						if ( fAngDiff < fLowestAngDiff )
+						if ( dp > highestDP || (dp == highestDP && distanceSq < lowestDistanceSq) )
 						{
-							fLowestAngDiff = fAngDiff;
+							highestDP = dp;
+							lowestDistanceSq = distanceSq;
 							iResult = *it;
 						}
 					}
@@ -1299,28 +1306,6 @@ void CWaypoints::Draw(CClient* pClient)
 				}
 			}
 		}
-
-		Vector viewDir;
-		Vector eyeAngles;
-		pClient->GetEyeAngles(eyeAngles);
-		AngleVectors(eyeAngles, viewDir, nullptr, nullptr);
-
-		TraceResult tr {};
-		TRACE_LINE(pClient->GetHead(), pClient->GetHead() + (8192.0f * viewDir), TRUE, pClient->GetEdict(), &tr);
-
-		if ( tr.flFraction < 1.0f )
-		{
-			Vector hitPos(tr.vecEndPos);
-			CBotrixEngineUtil::DrawLine(hitPos - Vector(8, 0, 0), hitPos + Vector(8, 0, 0), fDrawTime, 255, 0, 0);
-			CBotrixEngineUtil::DrawLine(hitPos - Vector(0, 8, 0), hitPos + Vector(0, 8, 0), fDrawTime, 255, 0, 0);
-			CBotrixEngineUtil::DrawLine(hitPos - Vector(0, 0, 8), hitPos + Vector(0, 0, 8), fDrawTime, 255, 0, 0);
-
-			if ( CWaypoint::IsValid(pClient->iDestinationWaypoint) )
-			{
-				CWaypoint& w = CWaypoints::Get(pClient->iDestinationWaypoint);
-				CBotrixEngineUtil::DrawLine(hitPos, w.vOrigin, fDrawTime, 255, 0, 0);
-			}
-		}
 	}
 
 	if ( pClient->iPathDrawFlags != FPathDrawNone )
@@ -1343,6 +1328,20 @@ void CWaypoints::Draw(CClient* pClient)
 			Vector v(w.vOrigin);
 			v.z -= 10.0f;
 			CBotrixEngineUtil::DrawTextAtLocation(v, 0, fDrawTime, 0xFF, 0xFF, 0xFF, "Destination");
+
+			const float halfPlayerWidth = CBotrixMod::GetVar(EModVarPlayerWidth) / 2.0f;
+			const float playerHeight = CBotrixMod::GetVar(EModVarPlayerHeight);
+			const float playerEye = CBotrixMod::GetVar(EModVarPlayerEye);
+
+			CBotrixEngineUtil::DrawBox(
+				w.vOrigin - Vector(0.0f, 0.0f, playerEye),
+				Vector(-halfPlayerWidth, -halfPlayerWidth, 0.0f),
+				Vector(halfPlayerWidth, halfPlayerWidth, playerHeight),
+				fDrawTime,
+				0xFF,
+				0xFF,
+				0xFF
+			);
 		}
 	}
 
