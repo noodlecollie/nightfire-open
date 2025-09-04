@@ -8,20 +8,8 @@ import shutil
 SPIN_INTERVAL_MS = 100
 CHECK_INTERVAL_SECS = 10
 
-SKIP_EXTS = [
-	".bak",
-	".dll"
-]
-
-SKIP_RELPATHS = [
-	".xash_id",
-	"opengl.cfg",
-	"config.cfg",
-	"video.cfg",
-	"buffer.dat",
-	"console_history.txt",
-	".fontcache" + os.sep,
-	os.path.join("media", "cdaudio.txt")
+WHITELIST_PATHS = [
+	"waypoints"
 ]
 
 should_run = True
@@ -57,22 +45,22 @@ def md5hash(fileName):
 			m.update(chunk)
 		return m.hexdigest()
 
-def find_all_files(root_dir, log_every:int=25):
-	found_files = {}
-
-	for root, dirs, files in os.walk(root_dir):
-		for file in files:
-			full_path = os.path.join(root, file)
-			found_files[full_path] = (os.stat(full_path).st_mtime, md5hash(full_path))
-
-			found_so_far = len(found_files)
-			if found_so_far % log_every == 0:
-				print(f"Discovered {found_so_far} files...")
-
-	print(f"Discovered a total of {len(found_files)} files")
-	return found_files
-
 def check_files(game_dir, repo_dir, existing_files):
+	# Discover any files we've not seen yet
+	for whitelist_path in WHITELIST_PATHS:
+		sub_root = os.path.join(game_dir, whitelist_path)
+
+		for root, dirs, files in os.walk(sub_root):
+			for file in files:
+				if not should_run:
+					raise RuntimeError("Sigint received")
+
+				full_path = os.path.join(root, file)
+
+				if full_path not in existing_files:
+					existing_files[full_path] = (os.stat(full_path).st_mtime, md5hash(full_path))
+
+	# Compare all files and see if they need copying
 	for file_path in existing_files.keys():
 		if not should_run:
 			raise RuntimeError("Sigint received")
@@ -80,21 +68,9 @@ def check_files(game_dir, repo_dir, existing_files):
 		if not os.path.isfile(file_path):
 			print(f"File {file_path} no longer exists on disk")
 			del existing_files[file_path]
-
-		rel_file_path = os.path.relpath(file_path, game_dir)
-		should_skip = False
-
-		if os.path.splitext(rel_file_path)[1] in SKIP_EXTS:
-			should_skip = True
-		else:
-			for prefix in SKIP_RELPATHS:
-				if rel_file_path.startswith(prefix):
-					should_skip = True
-					break
-
-		if should_skip:
 			continue
 
+		rel_file_path = os.path.relpath(file_path, game_dir)
 		repo_file_path = os.path.join(repo_dir, rel_file_path)
 
 		should_copy = False
@@ -134,10 +110,15 @@ def main():
 	if not os.path.isdir(source_dir):
 		raise RuntimeError(f"Could not find {source_dir} for repo - is the repo directory correct?")
 
-	print(f"Discovering existing files in {args.game_dir}")
-	existing_files = find_all_files(args.game_dir)
+	print(f"Monitoringfor changed files in {args.game_dir} under:")
 
-	print(f"Monitoring {args.game_dir} for changed files and copying to {source_dir}")
+	for whitelist_path in WHITELIST_PATHS:
+		print(f"  * {whitelist_path}/")
+
+	print(f"Copying any changed files to {source_dir}")
+	print(f"Press Ctrl-C to exit")
+
+	existing_files = {}
 
 	while should_run:
 		try:
