@@ -2546,12 +2546,37 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
+	if ( iPathFrom == iPathTo )
+	{
+		BULOG_W(pClient->GetEdict(), "Error, waypoint %d specified twice.", iPathFrom);
+		return ECommandError;
+	}
+
+	const bool canRemovePathFromTo = CWaypoints::HasPath(iPathFrom, iPathTo);
+	const bool canRemovePathToFrom = CWaypoints::HasPath(iPathFrom, iPathTo);
+
+	if ( !canRemovePathFromTo )
+	{
+		BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathFrom, iPathTo);
+	}
+
+	if ( removeBoth && !canRemovePathToFrom )
+	{
+		BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathTo, iPathFrom);
+	}
+
+	if ( !canRemovePathFromTo || (removeBoth && !canRemovePathToFrom) )
+	{
+		return ECommandError;
+	}
+
 	if ( CWaypoints::RemovePath(iPathFrom, iPathTo) )
 	{
 		BULOG_I(pClient->GetEdict(), "Path removed: from %d to %d.", iPathFrom, iPathTo);
 	}
 	else
 	{
+		// Should never happen
 		BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathFrom, iPathTo);
 		return ECommandError;
 	}
@@ -2564,6 +2589,7 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		}
 		else
 		{
+			// Should never happen
 			BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathTo, iPathFrom);
 			return ECommandError;
 		}
