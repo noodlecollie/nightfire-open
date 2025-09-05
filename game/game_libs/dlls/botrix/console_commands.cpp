@@ -2549,7 +2549,6 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 	if ( CWaypoints::RemovePath(iPathFrom, iPathTo) )
 	{
 		BULOG_I(pClient->GetEdict(), "Path removed: from %d to %d.", iPathFrom, iPathTo);
-		return ECommandPerformed;
 	}
 	else
 	{
@@ -2562,7 +2561,6 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		if ( CWaypoints::RemovePath(iPathTo, iPathFrom) )
 		{
 			BULOG_I(pClient->GetEdict(), "Path removed: from %d to %d.", iPathTo, iPathFrom);
-			return ECommandPerformed;
 		}
 		else
 		{
@@ -2570,6 +2568,8 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 			return ECommandError;
 		}
 	}
+
+	return ECommandPerformed;
 }
 
 TCommandResult CPathAutoCreateCommand::Execute(CClient* pClient, int argc, const char** argv)
