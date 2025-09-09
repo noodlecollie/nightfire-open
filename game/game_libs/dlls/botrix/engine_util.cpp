@@ -292,6 +292,14 @@ bool CBotrixEngineUtil::RayHitsEntity(edict_t* pEntity, const Vector& vSrc, cons
 	return m_TraceResult.flFraction >= 0.95f;
 }
 
+// TODO: This is probably critical for why we're getting waypoints put in weird places.
+// For example, they show up on the roofs of dm_japan, and I think this is because
+// they're leaking from the upstairs levels in the room with the sniper spawn.
+// I think waypoints are created in candidate neighbour places, and then removed if
+// it turns out that they're not reachable, so the reachability must absolutely
+// be performed correctly. Check that the ground vecs are getting computed as they
+// should be - we may want to include some method of determining whether a waypoint
+// should be moved up if it was created half inside a solid object.
 TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	TraceDirection direction,
 	const Vector& vSrcEyePos,
