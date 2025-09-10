@@ -899,11 +899,17 @@ void CBotrixEngineUtil::DrawBox(
 {
 	using namespace CustomGeometry;
 
-	CPrimitiveMessageWriter writer(Category::BotrixDebugging);
 	AABBoxPrimitive primitive {};
 	primitive.mins = vOrigin + vMins;
 	primitive.maxs = vOrigin + vMaxs;
-	writer.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
+
+	if ( !primitive.IsValid() )
+	{
+		return;
+	}
+
+	CPrimitiveMessageWriter(Category::BotrixDebugging)
+		.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
 }
 
 void CBotrixEngineUtil::DrawTextAtLocation(

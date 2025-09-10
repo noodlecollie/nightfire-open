@@ -202,13 +202,17 @@ void CBotrixServerPlugin::ClientKilled(struct edict_s* victim, struct edict_s* k
 		if ( killer )
 		{
 			int iAttacker = CPlayers::GetIndex(killer);
-			BASSERT(iAttacker >= 0, return);
 
-			CPlayer* pPlayerAttacker = CPlayers::Get(iAttacker);
+			// Attacker may not be a valid player if it was the world that killed the victim.
 
-			if ( pPlayerAttacker && pPlayerAttacker->IsBot() )
+			if ( iAttacker >= 0 )
 			{
-				((CBotrixBot*)pPlayerAttacker)->KilledEnemy(iVictim, pPlayerActivator);
+				CPlayer* pPlayerAttacker = CPlayers::Get(iAttacker);
+
+				if ( pPlayerAttacker && pPlayerAttacker->IsBot() )
+				{
+					((CBotrixBot*)pPlayerAttacker)->KilledEnemy(iVictim, pPlayerActivator);
+				}
 			}
 		}
 	}
