@@ -4,6 +4,7 @@
 #include "botrix/item.h"
 #include "botrix/bot.h"
 #include "botrix/botrixconfig.h"
+#include "enginecallback.h"
 #include "standard_includes.h"
 #include <good/string_utils.h>
 #include "botrix/console_commands.h"
@@ -25,12 +26,20 @@ float CBotrixServerPlugin::m_fTime = 0.0f;
 float CBotrixServerPlugin::m_fEngineTime = 0.0f;
 CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
 cvar_t CBotrixServerPlugin::m_TraceLogCvar = CONSTRUCT_CVAR_T("botrix_log_trace", 0, FCVAR_PRIVILEGED);
+cvar_t CBotrixServerPlugin::m_WaypointAutoAnalyzeCvar =
+	CONSTRUCT_CVAR_T("botrix_waypoint_auto_analyze", 0, FCVAR_PRIVILEGED);
 bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
 CBotrixBotFactory CBotrixServerPlugin::m_BotFactory;
 
 void CBotrixServerPlugin::Init()
 {
+	// TODO: Move these so that they get initialised with the rest of the cvars.
+	// I think that because they're here, and CBotrixServerPlugin::Init() is only
+	// run when we know we're going to be running a multiplayer server, the cvars
+	// don't exist when the engine parses input from the command line, so we can't
+	// set them on launch.
 	CVAR_REGISTER(&m_TraceLogCvar);
+	CVAR_REGISTER(&m_WaypointAutoAnalyzeCvar);
 
 	good::log::bLogToStdOut = false;  // Disable log to stdout, Msg() will print there.
 	good::log::bLogToStdErr = false;  // Disable log to stderr, Warning() will print there.
@@ -350,6 +359,11 @@ void CBotrixServerPlugin::UpdateLogLevel()
 	}
 }
 
+bool CBotrixServerPlugin::WaypointAutoAnalyzeEnabled()
+{
+	return m_WaypointAutoAnalyzeCvar.value != 0.0f;
+}
+
 void CBotrixServerPlugin::PrepareLevel()
 {
 	m_MapName.assign(STRING(gpGlobals->mapname), good::string::npos, true);
@@ -385,7 +399,7 @@ void CBotrixServerPlugin::ActivateLevel()
 
 	BLOG_I("Level \"%s\" has been loaded.", m_MapName.c_str());
 
-	if ( CWaypoints::Size() <= CWaypoint::iWaypointsMaxCountToAnalyzeMap )
+	if ( WaypointAutoAnalyzeEnabled() && CWaypoints::Size() <= CWaypoint::iWaypointsMaxCountToAnalyzeMap )
 	{
 		BLOG_I("Map has %d waypoints, running waypoint analyze to create more", CWaypoints::Size());
 		CWaypoints::Analyze(NULL, false);

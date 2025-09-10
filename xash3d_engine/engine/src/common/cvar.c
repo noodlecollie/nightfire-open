@@ -116,26 +116,42 @@ const char* Cvar_BuildAutoDescription(const char* szName, int flags)
 	desc[0] = '\0';
 
 	if ( FBitSet(flags, FCVAR_EXTDLL) )
+	{
 		Q_strncpy(desc, "game ", sizeof(desc));
+	}
 	else if ( FBitSet(flags, FCVAR_CLIENTDLL) )
+	{
 		Q_strncpy(desc, "client ", sizeof(desc));
+	}
 	else if ( FBitSet(flags, FCVAR_GAMEUIDLL) )
+	{
 		Q_strncpy(desc, "GameUI ", sizeof(desc));
+	}
 
 	if ( FBitSet(flags, FCVAR_SERVER) )
+	{
 		Q_strncat(desc, "server ", sizeof(desc));
+	}
 
 	if ( FBitSet(flags, FCVAR_USERINFO) )
+	{
 		Q_strncat(desc, "user ", sizeof(desc));
+	}
 
 	if ( FBitSet(flags, FCVAR_ARCHIVE) )
+	{
 		Q_strncat(desc, "archived ", sizeof(desc));
+	}
 
 	if ( FBitSet(flags, FCVAR_PROTECTED) )
+	{
 		Q_strncat(desc, "protected ", sizeof(desc));
+	}
 
 	if ( FBitSet(flags, FCVAR_PRIVILEGED) )
+	{
 		Q_strncat(desc, "privileged ", sizeof(desc));
+	}
 
 	Q_strncat(desc, "cvar", sizeof(desc));
 
@@ -1261,7 +1277,8 @@ void Cvar_Init(void)
 		"cmd_scripting",
 		"0",
 		FCVAR_ARCHIVE | FCVAR_PRIVILEGED,
-		"enable simple condition checking and variable operations");
+		"enable simple condition checking and variable operations"
+	);
 	Cvar_RegisterVariable(&host_developer);  // early registering for dev
 	Cvar_RegisterVariable(&cl_filterstuffcmd);
 	Cmd_AddRestrictedCommand("setgl", Cvar_SetGL_f, "change the value of a opengl variable");  // OBSOLETE
