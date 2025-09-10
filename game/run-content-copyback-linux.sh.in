@@ -1,0 +1,3 @@
+#! /usr/bin/bash
+
+"@Python3_EXECUTABLE@" "@CMAKE_CURRENT_SOURCE_DIR@/content-copyback-monitor.py" --game-dir "@GAME_DIR@" --repo-dir "@NF_FULL_CONTENT_PATH@" $@

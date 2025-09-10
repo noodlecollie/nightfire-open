@@ -5,7 +5,9 @@
 
 namespace CustomGeometry
 {
-	static constexpr const char* MESSAGE_NAME = "DrawCustomGeometry";
+	static constexpr const char* CUSTOM_GEOMETRY_MESSAGE_NAME = "DrawCustomGeometry";
+	static constexpr const char* GEOMETRY_PRIMITIVE_MESSAGE_NAME = "DrawCustomGeometryPrimitive";
+
 	static constexpr size_t MAX_POINTS_PER_MSG = std::numeric_limits<uint8_t>::max();
 	static constexpr size_t MAX_INDICES_PER_MSG = std::numeric_limits<uint8_t>::max();
 
@@ -27,7 +29,7 @@ namespace CustomGeometry
 	LIST_ITEM(HitboxDebugging, "Hitbox Debugging") \
 	LIST_ITEM(HitscanEvents, "Hitscan Events") /* TODO: Should this be client only? */ \
 	LIST_ITEM(RoninDebugging, "Ronin Debugging") \
-	LIST_ITEM(WaypointVisualisation, "Waypoint Visualisation")
+	LIST_ITEM(BotrixDebugging, "Botrix Debugging")
 
 #define LIST_ITEM(value, name) value,
 	enum class Category

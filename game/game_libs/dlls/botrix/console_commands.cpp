@@ -10,7 +10,13 @@
 
 #include "PlatformLib/String.h"
 
+#include "customGeometry/primitiveMessageWriter.h"
+#include "customGeometry/sharedDefs.h"
+#include "customGeometry/primitiveDefs.h"
 #include "standard_includes.h"
+#include "defines.h"
+#include "engine_util.h"
+#include "types.h"
 
 #define MAIN_COMMAND "botrix"
 
@@ -2019,6 +2025,117 @@ TCommandResult CWaypointConnectionCommand::Execute(CClient* pClient, int argc, c
 	return ECommandPerformed;
 }
 
+CWaypointProbeNeighboursCommand::CWaypointProbeNeighboursCommand()
+{
+	m_sCommand = "probeneighbours";
+	m_sHelp = "computes neighbour waypoints and visualises the output";
+	m_sDescription = "This is intended for debugging waypoint placement";
+	m_iAccessLevel = FCommandAccessWaypoint;
+}
+
+TCommandResult CWaypointProbeNeighboursCommand::Execute(CClient* pClient, int argc, const char** argv)
+{
+	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
+		return ECommandPerformed;
+	}
+
+	if ( pClient == NULL )
+	{
+		BLOG_W("Please login to server to execute this command.");
+		return ECommandError;
+	}
+
+	// This is just a rough duplication of CWaypoints::AnalyzeStep() and CWaypoints::AnalyzeWaypoint().
+	float fPlayerEye = CBotrixMod::GetVar(EModVarPlayerEye);
+	float fAnalyzeDistance = static_cast<float>(CWaypoint::iAnalyzeDistance);
+	float fAnalyzeDistanceExtra = fAnalyzeDistance * 1.9f;  // To include diagonal, almost but not 2 (Pythagoras).
+	float fAnalyzeDistanceExtraSqr = fAnalyzeDistanceExtra * 1.9f;
+	fAnalyzeDistanceExtraSqr *= fAnalyzeDistanceExtraSqr;
+	Vector head = pClient->GetHead();
+
+	for ( int x = -1; x <= 1; ++x )
+	{
+		for ( int y = -1; y <= 1; ++y )
+		{
+			if ( x == 0 && y == 0 )
+			{
+				continue;
+			}
+
+			Vector candidatePos =
+				head + (fAnalyzeDistance * Vector(static_cast<float>(x), static_cast<float>(y), 0.0f));
+
+			const int contents = g_engfuncs.pfnPointContents(candidatePos);
+			BLOG_I("createneighbours: neighbour at (%d, %d) is in volume with contents %d", x, y, contents);
+
+			if ( contents == CONTENTS_SOLID || contents == CONTENTS_CLIP || contents == CONTENTS_LADDER )
+			{
+				continue;
+			}
+
+			Vector candidateGroundPos = CBotrixEngineUtil::GetHumanHullGroundVec(
+				candidatePos,
+				CBotrixEngineUtil::PositionInHull::Eye,
+				nullptr,
+				4.0f
+			);
+
+			Vector candidateEyePos = candidateGroundPos + Vector(0.0f, 0.0f, fPlayerEye);
+
+			bool bCrouch = false;
+			TReach reachFirstToSecond = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
+				CBotrixEngineUtil::TraceDirection::EFirstToSecond,
+				head,
+				candidateEyePos,
+				bCrouch,
+				0.0f,
+				fAnalyzeDistanceExtraSqr,
+				true
+			);
+
+			TReach reachSecondToFirst = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
+				CBotrixEngineUtil::TraceDirection::ESecondToFirst,
+				candidateEyePos,
+				head,
+				bCrouch,
+				0.0f,
+				fAnalyzeDistanceExtraSqr,
+				true
+			);
+
+			BLOG_I(
+				"createneighbours: neighbour (%d, %d) candidate pos: (%f %f %f) ground pos: (%f %f %f) new eye "
+				"pos: (%f %f %f) reachable: (%d, %d)",
+				x,
+				y,
+				candidatePos.x,
+				candidatePos.y,
+				candidatePos.z,
+				candidateGroundPos.x,
+				candidateGroundPos.y,
+				candidateGroundPos.z,
+				candidateEyePos.x,
+				candidateEyePos.y,
+				candidateEyePos.z,
+				reachFirstToSecond,
+				reachSecondToFirst
+			);
+
+			if ( reachFirstToSecond != EReachNotReachable )
+			{
+				CustomGeometry::WaypointMarkerPrimitive primitive {};
+				primitive.location = candidateEyePos;
+
+				CustomGeometry::CPrimitiveMessageWriter writer(CustomGeometry::Category::BotrixDebugging);
+				writer.WriteMessage(0x00FFFFFF, static_cast<float>(CBotrixEngineUtil::iTextTime), primitive);
+			}
+		}
+	}
+
+	return ECommandPerformed;
+}
+
 //----------------------------------------------------------------------------------------------------------------
 // Waypoint area commands.
 //----------------------------------------------------------------------------------------------------------------
@@ -2427,7 +2544,10 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
-	TWaypointId iPathFrom = -1, iPathTo = -1;
+	TWaypointId iPathFrom = -1;
+	TWaypointId iPathTo = -1;
+	TPathFlags iFlags = FPathNone;
+
 	if ( argc == 0 )
 	{
 		iPathFrom = pClient->iCurrentWaypoint;
@@ -2438,10 +2558,33 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 		iPathFrom = pClient->iCurrentWaypoint;
 		iPathTo = GetWaypointId(0, argc, argv, pClient, pClient->iCurrentWaypoint);
 	}
-	else if ( argc == 2 )
+	else if ( argc >= 2 )
 	{
 		iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 		iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
+
+		if ( argc > 2 )
+		{
+			// Retrieve flags from string arguments.
+			for ( int i = 2; i < argc; ++i )
+			{
+				int iAddFlag = CTypeToString::PathFlagsFromString(argv[i]);
+
+				if ( iAddFlag == -1 )
+				{
+					BULOG_W(
+						pClient->GetEdict(),
+						"Error, invalid path flag: %s. Can be one of: %s",
+						argv[i],
+						CTypeToString::PathFlagsToString(FPathAll).c_str()
+					);
+
+					return ECommandError;
+				}
+
+				FLAG_SET(iAddFlag, iFlags);
+			}
+		}
 	}
 
 	if ( !CWaypoints::IsValid(iPathFrom) || !CWaypoints::IsValid(iPathTo) )
@@ -2450,12 +2593,13 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
-	TPathFlags iFlags = FPathNone;
-	if ( pClient->IsAlive() )
+	if ( pClient->IsAlive() && iFlags == FPathNone )
 	{
 		float fHeight = pClient->GetPlayerInfo()->GetPlayerMaxs().z - pClient->GetPlayerInfo()->GetPlayerMins().z + 1;
 		if ( fHeight < CBotrixMod::GetVar(EModVarPlayerHeight) )
+		{
 			iFlags = FPathCrouch;
+		}
 	}
 
 	if ( CWaypoints::AddPath(iPathFrom, iPathTo, 0, iFlags) )
@@ -2478,7 +2622,9 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
 		return ECommandPerformed;
+	}
 
 	if ( pClient == NULL )
 	{
@@ -2486,7 +2632,10 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
-	TWaypointId iPathFrom = -1, iPathTo = -1;
+	TWaypointId iPathFrom = -1;
+	TWaypointId iPathTo = -1;
+	bool removeBoth = false;
+
 	if ( argc == 0 )
 	{
 		iPathFrom = pClient->iCurrentWaypoint;
@@ -2497,10 +2646,15 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		iPathFrom = pClient->iCurrentWaypoint;
 		iPathTo = GetWaypointId(0, argc, argv, pClient, pClient->iCurrentWaypoint);
 	}
-	else if ( argc == 2 )
+	else if ( argc >= 2 )
 	{
-		iPathTo = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
+		iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 		iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
+
+		if ( strcmp(argv[2], "both") == 0 )
+		{
+			removeBoth = true;
+		}
 	}
 
 	if ( !CWaypoints::IsValid(iPathFrom) || !CWaypoints::IsValid(iPathTo) )
@@ -2509,16 +2663,56 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 		return ECommandError;
 	}
 
+	if ( iPathFrom == iPathTo )
+	{
+		BULOG_W(pClient->GetEdict(), "Error, waypoint %d specified twice.", iPathFrom);
+		return ECommandError;
+	}
+
+	const bool canRemovePathFromTo = CWaypoints::HasPath(iPathFrom, iPathTo);
+	const bool canRemovePathToFrom = CWaypoints::HasPath(iPathFrom, iPathTo);
+
+	if ( !canRemovePathFromTo )
+	{
+		BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathFrom, iPathTo);
+	}
+
+	if ( removeBoth && !canRemovePathToFrom )
+	{
+		BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathTo, iPathFrom);
+	}
+
+	if ( !canRemovePathFromTo || (removeBoth && !canRemovePathToFrom) )
+	{
+		return ECommandError;
+	}
+
 	if ( CWaypoints::RemovePath(iPathFrom, iPathTo) )
 	{
 		BULOG_I(pClient->GetEdict(), "Path removed: from %d to %d.", iPathFrom, iPathTo);
-		return ECommandPerformed;
 	}
 	else
 	{
+		// Should never happen
 		BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathFrom, iPathTo);
 		return ECommandError;
 	}
+
+	if ( removeBoth )
+	{
+		if ( CWaypoints::RemovePath(iPathTo, iPathFrom) )
+		{
+			BULOG_I(pClient->GetEdict(), "Path removed: from %d to %d.", iPathTo, iPathFrom);
+		}
+		else
+		{
+			// Should never happen
+			BULOG_W(pClient->GetEdict(), "Error, there is no path from %d to %d.", iPathTo, iPathFrom);
+			return ECommandError;
+		}
+	}
+
+	return ECommandPerformed;
 }
 
 TCommandResult CPathAutoCreateCommand::Execute(CClient* pClient, int argc, const char** argv)
@@ -2659,7 +2853,7 @@ TCommandResult CPathRemoveTypeCommand::Execute(CClient* pClient, int argc, const
 	}
 	else if ( argc == 2 )
 	{
-		iPathTo = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
+		iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 		iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
 	}
 

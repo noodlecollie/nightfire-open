@@ -366,6 +366,13 @@ public:
 	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
 };
 
+class CWaypointProbeNeighboursCommand : public CConsoleCommand
+{
+public:
+	CWaypointProbeNeighboursCommand();
+	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+};
+
 //****************************************************************************************************************
 // Area waypoint commands.
 //****************************************************************************************************************
@@ -470,6 +477,7 @@ public:
 	{
 		m_sCommand = "remove";
 		m_sHelp = "remove given path (or from 'current' waypoint to 'destination')";
+		m_sDescription = "Supply 'both' as an extra argument in order to remove path bidirectionally";
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
@@ -1203,6 +1211,7 @@ public:
 		Add(new CWaypointSaveCommand);
 		Add(new CWaypointVisibilityCommand);
 		Add(new CWaypointConnectionCommand);
+		Add(new CWaypointProbeNeighboursCommand);
 	}
 };
 

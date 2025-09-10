@@ -1,19 +1,26 @@
 #include "botrix/engine_util.h"
+#include <limits>
+#include "EnginePublicAPI/cvardef.h"
+#include "EnginePublicAPI/eiface.h"
 #include "botrix/botrixmod.h"
 #include "botrix/waypoint.h"
 #include "botrix/botrixgamerulesinterface.h"
 #include "botrix/defines.h"
+#include "enginecallback.h"
 #include "standard_includes.h"
 #include "gamerules.h"
 #include "MathLib/utils.h"
+#include "types.h"
+#include "util.h"
 #include "weapons.h"
 #include "customGeometry/messageWriter.h"
 #include "customGeometry/geometryItem.h"
 #include "customGeometry/constructors/aabboxConstructor.h"
 #include "customGeometry/rollingLineMessageWriter.h"
+#include "customGeometry/primitiveMessageWriter.h"
 
 good::TLogLevel CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
-int CBotrixEngineUtil::iTextTime = 20;  // Time in seconds to show text in CUtil::GetReachableInfoFromTo().
+int CBotrixEngineUtil::iTextTime = 20;  // Time in seconds to show text in CUtil::GetWaypointReachableInfoFromTo().
 TraceResult CBotrixEngineUtil::m_TraceResult = {
 	0,
 	0,
@@ -164,34 +171,120 @@ bool CBotrixEngineUtil::TraceHitSomething()
 	return m_TraceResult.flFraction >= 0.0f && m_TraceResult.flFraction < 1.0f;
 }
 
-Vector CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt, int hull)
+Vector
+CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt, int hull, float startSolidNudge)
 {
-	// NFTODO: Cache these somewhere when the map starts
-	Vector hullMins;
-	g_engfuncs.pfnGetHullBounds(hull, hullMins, nullptr);
+	// The returned point is the middle of the hull, so this corrects to return the base.
+	const Vector groundCorrection(0.0f, 0.0f, CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f);
+
+	// If we're allowed to nudge, allow us to try more than one iteration.
+	const size_t totalIterations = startSolidNudge > 0.0f ? 5 : 1;
 
 	Vector vDest = vSrc;
-	vDest.z = -iHalfMaxMapSize;
+	vDest.z = -iHalfMaxMapSize + groundCorrection.z;
 
-	TRACE_HULL(vSrc - Vector(0.0f, 0.0f, hullMins.z), vDest, TRUE, hull, ignoreEnt, &m_TraceResult);
-
-	// This can sometimes happen if the source point is extremely close to the ground.
-	// In this case, the point is already on the ground.
-	if ( m_TraceResult.fAllSolid )
+	for ( size_t iteration = 0; iteration < totalIterations; ++iteration )
 	{
-		return vSrc;
+		Vector nudge(0.0f, 0.0f, 0.0f);
+
+		switch ( iteration )
+		{
+			case 1:
+			{
+				nudge.x = startSolidNudge;
+				break;
+			}
+
+			case 2:
+			{
+				nudge.y = startSolidNudge;
+				break;
+			}
+
+			case 3:
+			{
+				nudge.x = -startSolidNudge;
+				break;
+			}
+
+			case 4:
+			{
+				nudge.y = -startSolidNudge;
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
+		}
+
+		TRACE_HULL(vSrc + nudge, vDest, TRUE, hull, ignoreEnt, &m_TraceResult);
+
+		if ( m_TraceResult.fStartSolid || m_TraceResult.fAllSolid )
+		{
+			if ( iteration < totalIterations - 1 )
+			{
+				// Try again with a different nudge to see if we can get a better trace.
+				continue;
+			}
+
+			// Might be very slightly in the ground, in which case
+			// this is already the ground position.
+			// Not much else we can guess by this point.
+			return vSrc - groundCorrection;
+		}
+
+		if ( m_TraceResult.flFraction >= 1.0f )
+		{
+			// There is no ground.
+			// Certain computations check the result against -iHalfMaxMapSize,
+			// so make sure we return exactly this.
+			return Vector(vDest.x, vDest.y, -iHalfMaxMapSize);
+		}
+
+		return Vector(m_TraceResult.vecEndPos) - groundCorrection;
 	}
 
-	if ( m_TraceResult.flFraction >= 1.0f )
+	// Should never get here.
+	ASSERT(false);
+	return vSrc - groundCorrection;
+}
+
+Vector CBotrixEngineUtil::GetHumanHullGroundVec(
+	const Vector& vSrc,
+	PositionInHull posInHull,
+	struct edict_s* ignoreEnt,
+	float startSolidNudge
+)
+{
+	Vector traceStart = vSrc;
+
+	switch ( posInHull )
 	{
-		return vDest;
+		// Given the eye position, need the hull centre position.
+		case PositionInHull::Eye:
+		{
+			traceStart.z -= CBotrixMod::GetVar(EModVarPlayerEye);
+			traceStart.z += CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f;
+			break;
+		}
+
+		// Given the feet position, need the hull centre position.
+		case PositionInHull::Feet:
+		{
+			traceStart.z += CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f;
+			break;
+		};
+
+		default:
+		{
+			break;
+		}
 	}
 
-	// The returned point is the middle of the hull, so make sure we return the base.
-	Vector endPos = m_TraceResult.vecEndPos;
-	endPos.z += hullMins.z;
-
-	return endPos;
+	// Result is always returned as the feet position.
+	return GetHullGroundVec(traceStart, ignoreEnt, human_hull, startSolidNudge);
 }
 
 bool CBotrixEngineUtil::RayHitsEntity(edict_t* pEntity, const Vector& vSrc, const Vector& vDest)
@@ -200,16 +293,20 @@ bool CBotrixEngineUtil::RayHitsEntity(edict_t* pEntity, const Vector& vSrc, cons
 	return m_TraceResult.flFraction >= 0.95f;
 }
 
-TReach CBotrixEngineUtil::GetReachableInfoFromTo(
+TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	TraceDirection direction,
-	const Vector& vSrc,
-	Vector& vDest,
+	const Vector& vSrcEyePos,
+	Vector& vDestEyePos,
 	bool& bCrouch,
 	float fDistanceSqr,
 	float fMaxDistanceSqr,
 	bool bShowHelp
 )
 {
+	static constexpr float ROOT_TWO = 1.414f;
+	static const unsigned char COL_CANREACH[3] = {0xEA, 0xFC, 0xEB};
+	static const unsigned char COL_CANTREACH[3] = {0xFC, 0xEA, 0xEB};
+
 	using namespace CustomGeometry;
 
 	int color = direction == TraceDirection::EFirstToSecond ? 0xFF0000 : 0x00FF00;
@@ -218,11 +315,11 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	unsigned char b = GET_1ST_BYTE(color);
 
 	Vector vOffset =
-		direction == TraceDirection::EFirstToSecond ? Vector(-0.25f, -0.25f, 0.0f) : Vector(0.25f, 0.25f, 0.0f);
+		direction == TraceDirection::EFirstToSecond ? Vector(0.25f, 0.25f, 2.0f) : Vector(-0.25f, -0.25f, 1.0f);
 
 	if ( fDistanceSqr <= 0.0f )
 	{
-		fDistanceSqr = (vDest.Make2D() - vSrc.Make2D()).LengthSquared();
+		fDistanceSqr = (vDestEyePos.Make2D() - vSrcEyePos.Make2D()).LengthSquared();
 	}
 
 	if ( fDistanceSqr > fMaxDistanceSqr )
@@ -230,14 +327,16 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		return EReachNotReachable;
 	}
 
-	if ( !IsVisible(vSrc, vDest, EVisibilityWaypoints) )
+	if ( !IsVisible(vSrcEyePos, vDestEyePos, EVisibilityWaypoints) )
 	{
 		return EReachNotReachable;
 	}
 
 	// Check if can swim there first.
-	int iSrcContent = g_engfuncs.pfnPointContents(vSrc);
-	int iDestContent = g_engfuncs.pfnPointContents(vDest);
+	// TODO: May need a better check than this! What if they're
+	// visible down a channel too narrow for the player to swim through?
+	int iSrcContent = g_engfuncs.pfnPointContents(vSrcEyePos);
+	int iDestContent = g_engfuncs.pfnPointContents(vDestEyePos);
 
 	if ( iSrcContent == CONTENTS_WATER && iDestContent == CONTENTS_WATER )
 	{
@@ -248,22 +347,20 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	float fPlayerEye = CBotrixMod::GetVar(EModVarPlayerEye);
 	float fPlayerEyeCrouched = CBotrixMod::GetVar(EModVarPlayerEyeCrouched);
 
-	Vector vMinZ(0, 0, -iHalfMaxMapSize);
-
 	// Vector vGroundMaxs = CBotrixMod::vPlayerCollisionHullMaxsGround;
 	// vGroundMaxs.z = 1.0f;
 
 	// Get ground positions.
-	Vector vSrcGround = GetHullGroundVec(vSrc);
+	Vector vSrcGround = GetHumanHullGroundVec(vSrcEyePos, PositionInHull::Eye);
 
-	if ( vSrcGround.z <= vMinZ.z )
+	if ( vSrcGround.z <= -iHalfMaxMapSize )
 	{
 		return EReachNotReachable;
 	}
 
-	Vector vDestGround = GetHullGroundVec(vDest);
+	Vector vDestGround = GetHumanHullGroundVec(vDestEyePos, PositionInHull::Eye);
 
-	if ( vDestGround.z <= vMinZ.z )
+	if ( vDestGround.z <= -iHalfMaxMapSize )
 	{
 		return EReachNotReachable;
 	}
@@ -275,7 +372,7 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	}
 
 	// Try to get up if needed.
-	float zDiff = vDest.z - vDestGround.z;
+	float zDiff = vDestEyePos.z - vDestGround.z;
 
 	if ( zDiff == 0 )
 	{
@@ -287,16 +384,16 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		if ( !bCrouch )
 		{
 			// Try to stand up.
-			vDest.z = vDestGround.z + fPlayerEye;
-			HumanHullTrace(vDestGround, vDest);
+			vDestEyePos.z = vDestGround.z + fPlayerEye;
+			HumanHullTrace(vDestGround, vDestEyePos);
 			bCrouch = TraceHitSomething();
 		}
 
 		if ( bCrouch )
 		{
 			// Try to stand up crouching.
-			vDest.z = vDestGround.z + fPlayerEyeCrouched;
-			HumanHullTrace(vDestGround, vDest, head_hull);
+			vDestEyePos.z = vDestGround.z + fPlayerEyeCrouched;
+			HumanHullTrace(vDestGround, vDestEyePos, head_hull);
 
 			if ( TraceHitSomething() )
 			{
@@ -309,8 +406,8 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	if ( bShowHelp )
 	{
 		// TODO: draw from the ground position.
-		DrawLine(vSrc + vOffset, vSrcGround + vOffset, static_cast<float>(iTextTime), r, g, b);
-		DrawLine(vDest + vOffset, vDestGround + vOffset, static_cast<float>(iTextTime), r, g, b);
+		DrawLine(vSrcEyePos + vOffset, vSrcGround + vOffset, static_cast<float>(iTextTime), r, g, b);
+		DrawLine(vDestEyePos + vOffset, vDestGround + vOffset, static_cast<float>(iTextTime), r, g, b);
 	}
 
 	// Start off by assuming the destination is reachable.
@@ -325,25 +422,20 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	Vector vLastStair;
 	bool bNeedJump = false;
 	bool bHasStair = false;
-	int i = 0;
 
 	std::unique_ptr<CRollingLineMessageWriter> helperGeomWriter;
-	Vector lastDelta;
 
 	if ( bShowHelp )
 	{
-		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::WaypointVisualisation));
+		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::BotrixDebugging));
 
-		helperGeomWriter->BeginGeometry(
-			(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
-				0x000000FF,
-			1.0f,
-			static_cast<float>(iTextTime)
-		);
+		helperGeomWriter
+			->BeginGeometry((static_cast<uint32_t>(color) << 8) | 0x000000FF, 1.0f, static_cast<float>(iTextTime));
 	}
 
-	// Keep looping while we have attempts left, and while the hit point hasn't reached the destination.
-	for ( ; i < iMaxTraceRaysForReachable && !EqualVectors(vHit, vDestGround); ++i )
+	float lastDistToTarget = std::numeric_limits<float>::max();
+
+	for ( int i = 0; i < iMaxTraceRaysForReachable; ++i )
 	{
 		// Begin from where we last hit.
 		Vector vStart = vHit;
@@ -362,7 +454,15 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 			{
 				if ( bShowHelp )
 				{
-					DrawTextAtLocation(vHit, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "High jump");
+					DrawTextAtLocation(
+						vHit,
+						0,
+						static_cast<float>(iTextTime),
+						COL_CANTREACH[0],
+						COL_CANTREACH[1],
+						COL_CANTREACH[2],
+						"Too High"
+					);
 				}
 
 				return EReachNotReachable;
@@ -374,7 +474,15 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 				{
 					if ( bShowHelp )
 					{
-						DrawTextAtLocation(vHit, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "2 jumps");
+						DrawTextAtLocation(
+							vHit,
+							0,
+							static_cast<float>(iTextTime),
+							COL_CANTREACH[0],
+							COL_CANTREACH[1],
+							COL_CANTREACH[2],
+							"Too High"
+						);
 					}
 
 					return EReachNotReachable;
@@ -392,7 +500,15 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 				{
 					if ( bShowHelp )
 					{
-						DrawTextAtLocation(vHit, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Slope");
+						DrawTextAtLocation(
+							vHit,
+							0,
+							static_cast<float>(iTextTime),
+							COL_CANTREACH[0],
+							COL_CANTREACH[1],
+							COL_CANTREACH[2],
+							"Slope"
+						);
 					}
 
 					return EReachNotReachable;
@@ -414,6 +530,16 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 				break;
 			}
 		}
+
+		float distToTarget = (vDestGround.Make2D() - vHit.Make2D()).Length();
+
+		if ( distToTarget < (ROOT_TWO / 2.0f) || distToTarget > lastDistToTarget + (ROOT_TWO / 2.0f) )
+		{
+			// We got to the waypoint, or are now getting further away, so no point continuing.
+			break;
+		}
+
+		lastDistToTarget = distToTarget;
 	}
 
 	if ( bShowHelp )
@@ -426,11 +552,18 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 	Vector vText = (vSrcGround + vDestGround) / 2;
 	vText.z += direction == TraceDirection::EFirstToSecond ? 20 : 10;
 
-	if ( i == iMaxTraceRaysForReachable )
+	if ( !EqualVectors(vHit, vDestGround) )
 	{
-		// We exhausted all our tries without our hit point reaching
-		// the destination, so assume not reachable.
-		iResult = EReachNotReachable;
+		if ( (vDestGround.Make2D() - vHit.Make2D()).Length() < ROOT_TWO )
+		{
+			// We actually made it to the waypoint location, but our Z changed.
+			// Update the destination vector.
+			vDestEyePos = vHit + Vector(0.0f, 0.0f, fPlayerEye);
+		}
+		else
+		{
+			iResult = EReachNotReachable;
+		}
 	}
 
 	switch ( iResult )
@@ -443,12 +576,28 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 
 				if ( bShowHelp )
 				{
-					DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Jump");
+					DrawTextAtLocation(
+						vText,
+						0,
+						static_cast<float>(iTextTime),
+						COL_CANREACH[0],
+						COL_CANREACH[1],
+						COL_CANREACH[2],
+						"Jump"
+					);
 				}
 			}
 			else if ( bShowHelp )
 			{
-				DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Walk");
+				DrawTextAtLocation(
+					vText,
+					0,
+					static_cast<float>(iTextTime),
+					COL_CANREACH[0],
+					COL_CANREACH[1],
+					COL_CANREACH[2],
+					"Walk"
+				);
 			}
 
 			break;
@@ -458,7 +607,15 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		{
 			if ( bShowHelp )
 			{
-				DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Fall");
+				DrawTextAtLocation(
+					vText,
+					0,
+					static_cast<float>(iTextTime),
+					COL_CANREACH[0],
+					COL_CANREACH[1],
+					COL_CANREACH[2],
+					"Fall"
+				);
 			}
 
 			break;
@@ -468,7 +625,15 @@ TReach CBotrixEngineUtil::GetReachableInfoFromTo(
 		{
 			if ( bShowHelp )
 			{
-				DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "High");
+				DrawTextAtLocation(
+					vText,
+					0,
+					static_cast<float>(iTextTime),
+					COL_CANTREACH[0],
+					COL_CANTREACH[1],
+					COL_CANTREACH[2],
+					"Unreachable"
+				);
 			}
 
 			break;
@@ -551,17 +716,23 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 
 	HumanHullTrace(vGround, vHit);
 
+	if ( m_TraceResult.fAllSolid )
+	{
+		// We should never have a trace entirely in a solid object.
+		return EReachNotReachable;
+	}
+
 	if ( !TraceHitSomething() )
 	{
 		// Make sure to get the ground, in case we need to fall down off an obstacle.
-		vGround = GetHullGroundVec(vHit);
+		vGround = GetHumanHullGroundVec(vHit, PositionInHull::Feet);
 		return EReachReachable;
 	}
 
 	if ( !EqualVectors(vGround, m_TraceResult.vecEndPos, 0.01f) )
 	{
 		// We hit something, but we can walk from the ground to this location.
-		vGround = GetHullGroundVec(m_TraceResult.vecEndPos);
+		vGround = GetHumanHullGroundVec(m_TraceResult.vecEndPos, PositionInHull::Feet);
 		return EReachReachable;
 	}
 
@@ -577,7 +748,7 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 	if ( !TraceHitSomething() )
 	{
 		vStair = vGround;
-		vGround = GetHullGroundVec(vHit);
+		vGround = GetHumanHullGroundVec(vHit, PositionInHull::Feet);
 
 		if ( CanClimbSlope(vStair, vGround) )
 		{
@@ -602,12 +773,11 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 
 	if ( !TraceHitSomething() )  // We can stand on vHit after jump.
 	{
-		vGround = GetHullGroundVec(vHit);
+		vGround = GetHumanHullGroundVec(vHit, PositionInHull::Feet);
 		return EReachNeedJump;
 	}
 
-	vGround = GetHullGroundVec(m_TraceResult.vecEndPos);
-	// vGround = CUtil::GetHullGroundVec( CUtil::TraceResult().endpos );
+	vGround = GetHumanHullGroundVec(m_TraceResult.vecEndPos, PositionInHull::Feet);
 	return EReachNotReachable;  // Can't jump over.
 }
 
@@ -632,18 +802,17 @@ TReach CBotrixEngineUtil::CanClimbSlope(const Vector& vSrc, const Vector& vDest)
 // collision
 void CBotrixEngineUtil::HumanHullTrace(const Vector& vGround1, const Vector& vGround2, int hull)
 {
-	Vector hullMins;
-	g_engfuncs.pfnGetHullBounds(hull, hullMins, nullptr);
+	const float halfPlayerHeight = CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f;
 
 	Vector begin = vGround1;
-	begin.z -= hullMins.z;
+	begin.z += halfPlayerHeight;
 
 	Vector end = vGround2;
-	end.z -= hullMins.z;
+	end.z += halfPlayerHeight;
 
 	TRACE_HULL(begin, end, ignore_monsters, hull, nullptr, &m_TraceResult);
 
-	m_TraceResult.vecEndPos[VEC3_Z] += hullMins.z;
+	m_TraceResult.vecEndPos[VEC3_Z] -= halfPlayerHeight;
 }
 
 void CBotrixEngineUtil::DrawBeam(
@@ -695,12 +864,29 @@ void CBotrixEngineUtil::DrawLine(
 	geom.SetColour((r << 24) | (g << 16) | (b << 8) | 0xFF);
 	geom.SetLifetimeSecs(fDrawTime);
 
-	CMessageWriter(Category::WaypointVisualisation).WriteMessage(geom);
+	CMessageWriter(Category::BotrixDebugging).WriteMessage(geom);
 }
 
-// NFTODO: This is quite an inefficient way to transmit an AABB,
-// since it transmits the full geometry rather than the bounds.
-// Potentially add a separate message type for this?
+void CBotrixEngineUtil::DrawWireBall(
+	const Vector& location,
+	float radius,
+	float fDrawTime,
+	unsigned char r,
+	unsigned char g,
+	unsigned char b
+)
+{
+	using namespace CustomGeometry;
+
+	CPrimitiveMessageWriter writer(CustomGeometry::Category::BotrixDebugging);
+	WireBallPrimitive primitive {};
+	primitive.origin = location;
+	primitive.radius =
+		static_cast<uint16_t>(bound(1.0f, radius, static_cast<float>(std::numeric_limits<uint16_t>::max())));
+	primitive.numDivisions = 16;
+	writer.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
+}
+
 void CBotrixEngineUtil::DrawBox(
 	const Vector& vOrigin,
 	const Vector& vMins,
@@ -713,21 +899,17 @@ void CBotrixEngineUtil::DrawBox(
 {
 	using namespace CustomGeometry;
 
-	CAABBoxConstructor constructor;
-	constructor.SetBounds(vOrigin + vMins, vOrigin + vMaxs);
+	AABBoxPrimitive primitive {};
+	primitive.mins = vOrigin + vMins;
+	primitive.maxs = vOrigin + vMaxs;
 
-	GeometryItemPtr_t geom = constructor.Construct();
-
-	// May happen if bounds were degenerate.
-	if ( geom->GetIndices().IsEmpty() )
+	if ( !primitive.IsValid() )
 	{
 		return;
 	}
 
-	geom->SetColour((r << 24) | (g << 16) | (b << 8) | 0xFF);
-	geom->SetLifetimeSecs(fDrawTime);
-
-	CMessageWriter(Category::WaypointVisualisation).WriteMessage(*geom);
+	CPrimitiveMessageWriter(Category::BotrixDebugging)
+		.WriteMessage((r << 24) | (g << 16) | (b << 8) | 0xFF, fDrawTime, primitive);
 }
 
 void CBotrixEngineUtil::DrawTextAtLocation(
@@ -753,5 +935,5 @@ void CBotrixEngineUtil::DrawTextAtLocation(
 	item.SetColour((r << 24) | (g << 16) | (b << 8) | 0xFF);
 	item.SetText(vOrigin, CUtlString(szText), iLine);
 
-	CMessageWriter(Category::WaypointVisualisation).WriteMessage(item);
+	CMessageWriter(Category::BotrixDebugging).WriteMessage(item);
 }

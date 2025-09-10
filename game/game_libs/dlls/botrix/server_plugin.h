@@ -33,6 +33,7 @@ public:
 	static CBotrixCommand* GetConsoleCommandHandler();
 
 	static void UpdateLogLevel();
+	static bool WaypointAutoAnalyzeEnabled();
 
 private:
 	static void PrepareLevel();
@@ -54,6 +55,7 @@ private:
 
 	static CBotrixCommand* m_pConsoleCommands;
 	static cvar_t m_TraceLogCvar;
+	static cvar_t m_WaypointAutoAnalyzeCvar;
 
 	static bool m_bSpawnedRegisterBots;
 	static CBotrixBotFactory m_BotFactory;

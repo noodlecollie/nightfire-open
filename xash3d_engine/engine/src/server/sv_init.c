@@ -13,6 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+#include "EnginePublicAPI/bspfile.h"
 #include "MathLib/utils.h"
 #include "CRTLib/bitdefs.h"
 #include "CRCLib/crclib.h"
@@ -829,7 +830,8 @@ void SV_SetupClients(void)
 	svs.packet_entities = Z_Realloc(svs.packet_entities, sizeof(entity_state_t) * svs.num_client_entities);
 	Con_Reportf(
 		"%s alloced by server packet entities\n",
-		Q_memprint((float)(sizeof(entity_state_t) * svs.num_client_entities)));
+		Q_memprint((float)(sizeof(entity_state_t) * svs.num_client_entities))
+	);
 
 	// init network stuff
 	NET_ConfigureSockets(svs.maxclients > 1 ? NET_CONFIG_ALL_SOCKETS : NET_CONFIG_NO_SOCKETS, true);
@@ -846,18 +848,23 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 	file_t* f;
 
 	if ( !crcvalue )
+	{
 		return false;
+	}
 
 	// always calc same checksum for singleplayer
-	if ( multiplayer == false )
+	if ( !multiplayer )
 	{
 		*crcvalue = (('H' << 24) + ('S' << 16) + ('A' << 8) + 'X');
 		return true;
 	}
 
 	f = FS_Open(filename, "rb", false);
+
 	if ( !f )
+	{
 		return false;
+	}
 
 	// read version number
 	FS_Read(f, &version, sizeof(int));
@@ -881,10 +888,16 @@ static qboolean CRC32_MapFile(dword* crcvalue, const char* filename, qboolean mu
 		case Q1BSP_VERSION:
 		case HLBSP_VERSION:
 		case QBSP2_VERSION:
+		case NFOPENBSP_VERSION:
+		{
 			break;
+		}
+
 		default:
+		{
 			FS_Close(f);
 			return false;
+		}
 	}
 
 	CRC32_Init(crcvalue);
@@ -957,7 +970,8 @@ qboolean SV_SpawnServer(const char* mapname, const char* startspot, qboolean bac
 	if ( !COM_CheckString(hostname.string) )
 		Cvar_Set(
 			"hostname",
-			svgame.dllFuncs.pfnGetGameDescription ? svgame.dllFuncs.pfnGetGameDescription() : FS_Title());
+			svgame.dllFuncs.pfnGetGameDescription ? svgame.dllFuncs.pfnGetGameDescription() : FS_Title()
+		);
 
 	if ( startspot )
 	{

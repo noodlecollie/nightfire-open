@@ -12,7 +12,7 @@ namespace CustomGeometry
 		public Messages::CMessageRegistrationHelper<CMessageWriter>
 	{
 	public:
-		static constexpr const char* MESSAGE_NAME = CustomGeometry::MESSAGE_NAME;
+		static constexpr const char* MESSAGE_NAME = CustomGeometry::CUSTOM_GEOMETRY_MESSAGE_NAME;
 		static constexpr int MESSAGE_SIZE = -1;
 
 		static size_t CalcRawMessageBytes(size_t numPoints, size_t numIndices);
@@ -42,7 +42,7 @@ namespace CustomGeometry
 		void WriteMessageHeader(Category category, DrawType drawType);
 		void WriteClearMessageInternal(Category geomCategory);
 
-		Category m_Category;
-		CBasePlayer* m_pTargetClient;
+		Category m_Category = Category::None;
+		CBasePlayer* m_pTargetClient = nullptr;
 	};
 }  // namespace CustomGeometry

@@ -132,7 +132,8 @@ typedef struct enginefuncs_s
 		/*int*/ float volume,
 		float attenuation,
 		int fFlags,
-		int pitch);
+		int pitch
+	);
 	void (*pfnEmitAmbientSound)(
 		edict_t* entity,
 		float* pos,
@@ -140,7 +141,8 @@ typedef struct enginefuncs_s
 		float vol,
 		float attenuation,
 		int fFlags,
-		int pitch);
+		int pitch
+	);
 	void (*pfnTraceLine)(const float* v1, const float* v2, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr);
 	void (*pfnTraceToss)(edict_t* pent, edict_t* pentToIgnore, TraceResult* ptr);
 	int (*pfnTraceMonsterHull)(
@@ -149,14 +151,16 @@ typedef struct enginefuncs_s
 		const float* v2,
 		int fNoMonsters,
 		edict_t* pentToSkip,
-		TraceResult* ptr);
+		TraceResult* ptr
+	);
 	void (*pfnTraceHull)(
 		const float* v1,
 		const float* v2,
 		int fNoMonsters,
 		int hullNumber,
 		edict_t* pentToSkip,
-		TraceResult* ptr);
+		TraceResult* ptr
+	);
 	void (*pfnTraceCustomHull)(
 		const float* v1,
 		const float* v2,
@@ -164,7 +168,8 @@ typedef struct enginefuncs_s
 		const float* mins,
 		const float* maxs,
 		edict_t* pentToSkip,
-		TraceResult* ptr);
+		TraceResult* ptr
+	);
 	void (*pfnTraceModel)(const float* v1, const float* v2, int hullNumber, edict_t* pent, TraceResult* ptr);
 	struct texture_s* (*pfnTraceTexture)(edict_t* pTextureEntity, const float* v1, const float* v2);
 	void (*pfnTraceSphere)(
@@ -173,7 +178,8 @@ typedef struct enginefuncs_s
 		int fNoMonsters,
 		float radius,
 		edict_t* pentToSkip,
-		TraceResult* ptr);
+		TraceResult* ptr
+	);
 	void (*pfnGetAimVector)(edict_t* ent, float speed, float* rgflReturn);
 	void (*pfnServerCommand)(const char* str);
 	void (*pfnServerExecute)(void);
@@ -219,7 +225,8 @@ typedef struct enginefuncs_s
 	void (*pfnClientPrintf)(
 		edict_t* pEdict,
 		PRINT_TYPE ptype,
-		const char* szMsg);  // JOHN: engine callbacks so game DLL can print messages to individual clients
+		const char* szMsg
+	);  // JOHN: engine callbacks so game DLL can print messages to individual clients
 	void (*pfnServerPrint)(const char* szMsg);
 	const char* (*pfnCmd_Args)(void);  // these 3 added
 	const char* (*pfnCmd_Argv)(int argc);  // so game DLL can easily
@@ -245,7 +252,8 @@ typedef struct enginefuncs_s
 		int fadePercent,
 		int fadeOutSeconds,
 		int holdTime,
-		int fadeInSeconds);
+		int fadeInSeconds
+	);
 	void (*pfnSetClientMaxspeed)(const edict_t* pEdict, float fNewMaxspeed);
 	edict_t* (*pfnCreateFakeClient)(const char* netname);  // returns NULL if fake client can't be created
 	void (*pfnRunPlayerMove)(
@@ -256,7 +264,8 @@ typedef struct enginefuncs_s
 		float upmove,
 		unsigned short buttons,
 		byte impulse,
-		byte msec);
+		byte msec
+	);
 	int (*pfnNumberOfEntities)(void);
 	char* (*pfnGetInfoKeyBuffer)(edict_t* e);  // passing in NULL gets the serverinfo
 	const char* (*pfnInfoKeyValue)(const char* infobuffer, const char* key);
@@ -266,8 +275,9 @@ typedef struct enginefuncs_s
 	void (*pfnStaticDecal)(const float* origin, int decalIndex, int entityIndex, int modelIndex);
 	int (*pfnPrecacheGeneric)(const char* s);
 	int (*pfnGetPlayerUserId)(
-		edict_t* e);  // returns the server assigned userid for this player.  useful for logging frags, etc.  returns -1
-					  // if the edict couldn't be found in the list of clients
+		edict_t* e
+	);  // returns the server assigned userid for this player.  useful for logging frags, etc.  returns -1
+		// if the edict couldn't be found in the list of clients
 	void (*pfnBuildSoundMsg)(
 		edict_t* entity,
 		int channel,
@@ -279,12 +289,14 @@ typedef struct enginefuncs_s
 		int msg_dest,
 		int msg_type,
 		const float* pOrigin,
-		edict_t* ed);
+		edict_t* ed
+	);
 	int (*pfnIsDedicatedServer)(void);  // is this a dedicated server?
 	cvar_t* (*pfnCVarGetPointer)(const char* szVarName);
 	unsigned int (*pfnGetPlayerWONId)(
-		edict_t* e);  // returns the server assigned WONid for this player.  useful for logging frags, etc.  returns -1
-					  // if the edict couldn't be found in the list of clients
+		edict_t* e
+	);  // returns the server assigned WONid for this player.  useful for logging frags, etc.  returns -1
+		// if the edict couldn't be found in the list of clients
 
 	// YWB 8/1/99 TFF Physics additions
 	void (*pfnInfo_RemoveKey)(char* s, const char* key);
@@ -303,7 +315,8 @@ typedef struct enginefuncs_s
 	void (*pfnDeltaUnsetField)(struct delta_s* pFields, const char* fieldname);
 	void (*pfnDeltaAddEncoder)(
 		const char* name,
-		void (*conditionalencode)(struct delta_s* pFields, const unsigned char* from, const unsigned char* to));
+		void (*conditionalencode)(struct delta_s* pFields, const unsigned char* from, const unsigned char* to)
+	);
 	int (*pfnGetCurrentPlayer)(void);
 	int (*pfnCanSkipPlayer)(const edict_t* player);
 	int (*pfnDeltaFindField)(struct delta_s* pFields, const char* fieldname);
@@ -369,11 +382,13 @@ typedef struct enginefuncs_s
 		struct writable_file_s* file,
 		const void* data,
 		size_t elementSize,
-		size_t elementCount);
+		size_t elementCount
+	);
 
 	const byte* (*pfnGetPvsForPoint)(const float* vecPoint);
 	qboolean (*pfnPointInPvs)(const float* vecPoint, const byte* pvs);
 	qboolean (*pfnGetHullBounds)(int hullIndex, float* vecMins, float* vecMaxs);
+	qboolean (*pfnGetMapCRC)(uint32_t* outCRC);
 } enginefuncs_t;
 // ONLY ADD NEW FUNCTIONS TO THE END OF THIS STRUCT.  INTERFACE VERSION IS FROZEN AT 138
 
@@ -508,8 +523,12 @@ typedef struct
 	void (*pfnRestoreGlobalState)(SAVERESTOREDATA*);
 	void (*pfnResetGlobalState)(void);
 
-	qboolean (
-		*pfnClientConnect)(edict_t* pEntity, const char* pszName, const char* pszAddress, char szRejectReason[128]);
+	qboolean (*pfnClientConnect)(
+		edict_t* pEntity,
+		const char* pszName,
+		const char* pszAddress,
+		char szRejectReason[128]
+	);
 
 	void (*pfnClientDisconnect)(edict_t* pEntity);
 	void (*pfnClientKill)(edict_t* pEntity);
@@ -545,7 +564,8 @@ typedef struct
 		struct edict_s* pViewEntity,
 		struct edict_s* pClient,
 		unsigned char** pvs,
-		unsigned char** pas);
+		unsigned char** pas
+	);
 	void (*pfnUpdateClientData)(const struct edict_s* ent, int sendweapons, struct clientdata_s* cd);
 	int (*pfnAddToFullPack)(
 		struct entity_state_s* state,
@@ -554,7 +574,8 @@ typedef struct
 		edict_t* host,
 		int hostflags,
 		int player,
-		unsigned char* pSet);
+		unsigned char* pSet
+	);
 	void (*pfnCreateBaseline)(
 		int player,
 		int eindex,
@@ -562,7 +583,8 @@ typedef struct
 		struct edict_s* entity,
 		int playermodelindex,
 		const vec3_t player_mins,
-		const vec3_t player_maxs);
+		const vec3_t player_maxs
+	);
 	void (*pfnRegisterEncoders)(void);
 	int (*pfnGetWeaponData)(struct edict_s* player, struct weapon_data_s* info);
 
@@ -576,7 +598,8 @@ typedef struct
 		const struct netadr_s* net_from,
 		const char* args,
 		char* response_buffer,
-		int* response_buffer_size);
+		int* response_buffer_size
+	);
 
 	// Enumerates player hulls.  Returns 0 if the hull number doesn't exist, 1 otherwise
 	int (*pfnGetHullBounds)(int hullnumber, float* mins, float* maxs);
@@ -591,7 +614,8 @@ typedef struct
 		const struct edict_s* player,
 		const char* filename,
 		char* disconnect_message,
-		size_t disconnectBufferSize);
+		size_t disconnectBufferSize
+	);
 
 	// The game .dll should return 1 if lag compensation should be allowed ( could also just set
 	//  the sv_unlag cvar.

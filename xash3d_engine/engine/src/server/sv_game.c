@@ -4089,7 +4089,7 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 {
 	if ( !file )
 	{
-		Log_Printf(
+		Con_Printf(
 			S_ERROR "pfnWriteElementsToFile: Invalid file wrapper pointer, refusing to write %zux %zu bytes\n",
 			elementCount,
 			elementSize
@@ -4100,7 +4100,7 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 
 	if ( !file->filePtr )
 	{
-		Log_Printf(
+		Con_Printf(
 			S_ERROR "pfnWriteElementsToFile: Invalid inner file pointer, refusing to write %zux %zu bytes\n",
 			elementCount,
 			elementSize
@@ -4113,7 +4113,7 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 
 	if ( bytesToWrite < 1 )
 	{
-		Log_Printf(
+		Con_Printf(
 			S_ERROR "pfnWriteElementsToFile: Ignoring request to write %zux %zu bytes\n",
 			elementCount,
 			elementSize
@@ -4122,14 +4122,12 @@ pfnWriteElementsToFile(struct writable_file_s* file, const void* data, size_t el
 		return false;
 	}
 
-	const fs_offset_t oldOffset = FS_Tell(file->filePtr);
-	const fs_offset_t newOffset = FS_Write(file->filePtr, data, bytesToWrite);
-	const size_t bytesWritten = newOffset - oldOffset;
+	const size_t bytesWritten = FS_Write(file->filePtr, data, bytesToWrite);
 	const qboolean success = bytesWritten == bytesToWrite;
 
 	if ( !success )
 	{
-		Log_Printf(
+		Con_Printf(
 			S_ERROR "pfnWriteElementsToFile: Tried to write %zu (%zux %zu) bytes, but actually wrote %zu bytes\n",
 			bytesToWrite,
 			elementCount,
@@ -4190,6 +4188,17 @@ static qboolean pfnGetHullBounds(int hullIndex, float* vecMins, float* vecMaxs)
 		VectorCopy(sv.worldmodel->hulls[hullIndex].clip_maxs, vecMaxs);
 	}
 
+	return true;
+}
+
+static qboolean pfnGetMapCRC(uint32_t* outCRC)
+{
+	if ( !sv.worldmodel || !outCRC )
+	{
+		return false;
+	}
+
+	*outCRC = sv.worldmapCRC;
 	return true;
 }
 
@@ -5598,6 +5607,7 @@ static enginefuncs_t gEngfuncs = {
 	pfnGetPvsForPoint,
 	pfnPointInPvs,
 	pfnGetHullBounds,
+	pfnGetMapCRC,
 };
 
 /*

@@ -87,7 +87,8 @@ int DLLEXPORT HUD_ConnectionlessPacket(
 	const struct netadr_s* net_from,
 	const char* args,
 	char* response_buffer,
-	int* response_buffer_size);
+	int* response_buffer_size
+);
 int DLLEXPORT HUD_GetHullBounds(int hullnumber, float* mins, float* maxs);
 void DLLEXPORT HUD_Frame(double time);
 void DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
@@ -365,6 +366,9 @@ void DLLEXPORT HUD_Reset(void)
 	ScreenOverlays::CScreenOverlayContainer& container = ScreenOverlays::CScreenOverlayContainer::StaticInstance();
 	container.ResetCurrentOverlay();
 	container.VidInit();
+
+	CustomGeometry::ClearAllGeometry();
+	CustomGeometry::VidInit();
 
 	gHUD.VidInit();
 }

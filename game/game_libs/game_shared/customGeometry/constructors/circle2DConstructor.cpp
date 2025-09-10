@@ -1,16 +1,8 @@
 #include "customGeometry/constructors/circle2DConstructor.h"
+#include "customGeometry/constructors/geometryUtils.h"
 
 namespace CustomGeometry
 {
-	static inline void GetCirclePointCoOrds(size_t point, size_t segmentCount, float radius, float& x, float& y)
-	{
-		static constexpr float TWO_PI = 2.0f * static_cast<float>(M_PI);
-
-		const float theta = (TWO_PI * static_cast<float>(point)) / static_cast<float>(segmentCount);
-		x = radius * cosf(theta);
-		y = radius * sinf(theta);
-	}
-
 	bool CCircle2DConstructor::IsValid() const
 	{
 		return m_Radius > 0.0f;

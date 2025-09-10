@@ -57,7 +57,8 @@ qboolean Mod_TestBmodelLumps(
 	const byte* mod_base,
 	size_t length,
 	qboolean silent,
-	dlump_t* entities);
+	dlump_t* entities
+);
 qboolean Mod_HeadnodeVisible(mnode_t* node, const byte* visbits, int* lastleaf);
 int Mod_FatPVS(const vec3_t org, float radius, byte* visbuffer, int visbytes, qboolean merge, qboolean fullvis);
 qboolean Mod_BoxVisible(const vec3_t mins, const vec3_t maxs, const byte* visbits);
@@ -100,7 +101,8 @@ hull_t* Mod_HullForStudio(
 	byte* pcnt,
 	byte* pbl,
 	int* hitboxes,
-	edict_t* ed);
+	edict_t* ed
+);
 uint32_t Mod_GetHitboxCount(const edict_t* edict);
 qboolean Mod_GetTransformedHitboxPoints(const edict_t* edict, uint32_t hitboxIndex, Mod_BoxPoints* box);
 int Mod_GetHitboxHitGroup(const edict_t* edict, uint32_t hitboxIndex);
@@ -111,14 +113,16 @@ void R_StudioCalcBoneQuaternion(
 	const mstudiobone_t* pbone,
 	const mstudioanim_t* panim,
 	const float* adj,
-	quat_t q);
+	quat_t q
+);
 void R_StudioCalcBonePosition(
 	int frame,
 	float s,
 	const mstudiobone_t* pbone,
 	const mstudioanim_t* panim,
 	const vec3_t adj,
-	vec3_t pos);
+	vec3_t pos
+);
 void* R_StudioGetAnim(studiohdr_t* m_pStudioHeader, model_t* m_pSubModel, mstudioseqdesc_t* pseqdesc);
 void Mod_StudioComputeBounds(void* buffer, vec3_t mins, vec3_t maxs, qboolean ignore_sequences);
 int Mod_HitgroupForStudioHull(int index);

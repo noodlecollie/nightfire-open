@@ -36,7 +36,7 @@ public:  // Members and constants.
 	static int iAnalyzeDistance;  ///< Distance between waypoints when analyzing a map.
 	static int iWaypointsMaxCountToAnalyzeMap;  ///< Maximum waypoints count to start analyzing a map.
 	static float fAnalyzeWaypointsPerFrame;  ///< Positions per frame to analyze.
-	static bool bShowAnalyzePotentialWaypoints;  ///< Show potencial waypoints with white line. Show from console
+	static bool bShowAnalyzePotentialWaypoints;  ///< Show potential waypoints with white line. Show from console
 												 ///< command, hide from map change.
 
 	static bool bSaveOnMapChange;  ///< Save waypoints on map change.
@@ -231,14 +231,7 @@ protected:
 	static const TWaypointFlags m_aFlagsForEntityType[EItemTypeCanPickTotal];
 
 private:
-	void DrawLines(
-		const Vector& start,
-		const Vector& end,
-		float fDrawTime,
-		unsigned char r,
-		unsigned char g,
-		unsigned char b
-	) const;
+	void DrawLines(const Vector& pos, float fDrawTime, unsigned char r, unsigned char g, unsigned char b) const;
 };
 
 //****************************************************************************************************************

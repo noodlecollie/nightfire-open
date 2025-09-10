@@ -8,6 +8,7 @@
 
 #include <string.h>
 
+#include "good/defines.h"
 #include "good/memory.h"
 #include "good/utility.h"
 
@@ -471,6 +472,8 @@ namespace good
 				good::swap(m_iCapacity, ((vector&)aOther).m_iCapacity);
 				good::swap(m_iSize, ((vector&)aOther).m_iSize);
 			}
+
+			GoodAssert(m_iSize >= 0);
 		}
 
 		//--------------------------------------------------------------------------------------------------------
@@ -576,12 +579,15 @@ namespace good
 		//--------------------------------------------------------------------------------------------------------
 		iterator insert(size_type iPos, const T& tElem)
 		{
-			GoodAssert(iPos <= m_iSize);
+			GoodAssert(iPos >= 0 && iPos <= m_iSize);
 			increment(1);
 			if ( iPos < m_iSize )
+			{
 				memmove((void*)&m_pBuffer[iPos + 1], (void*)&m_pBuffer[iPos], (m_iSize - iPos) * sizeof(T));
+			}
 			m_cAlloc.construct(&m_pBuffer[iPos], tElem);
 			m_iSize++;
+			GoodAssert(m_iSize > 0);
 			return iterator(m_pBuffer + iPos);
 		}
 
@@ -601,10 +607,13 @@ namespace good
 		iterator erase(size_type iPos)
 		{
 			GoodAssert(iPos < m_iSize);
+			GoodAssert(m_iSize > 0);
 			m_cAlloc.destroy(&m_pBuffer[iPos]);
 			m_iSize--;
 			if ( iPos < m_iSize )
+			{
 				memmove((void*)&m_pBuffer[iPos], (void*)&m_pBuffer[iPos + 1], (m_iSize - iPos) * sizeof(T));
+			}
 			return iterator(m_pBuffer + iPos);
 		}
 
@@ -624,7 +633,9 @@ namespace good
 		void clear()
 		{
 			for ( int i = 0; i < m_iSize; ++i )
+			{
 				m_cAlloc.destroy(&m_pBuffer[i]);
+			}
 			m_iSize = 0;
 		}
 
@@ -633,8 +644,13 @@ namespace good
 		//--------------------------------------------------------------------------------------------------------
 		void reserve(size_type iCapacity)
 		{
-			if ( m_iCapacity >= iCapacity )
+			GoodAssert(iCapacity >= 0);
+
+			if ( iCapacity < 0 || m_iCapacity >= iCapacity )
+			{
 				return;
+			}
+
 			m_pBuffer = m_cAlloc.reallocate(m_pBuffer, iCapacity, m_iCapacity);
 			m_iCapacity = iCapacity;
 #ifdef DEBUG_VECTOR_PRINT
@@ -647,6 +663,8 @@ namespace good
 		//--------------------------------------------------------------------------------------------------------
 		void resize(size_type iSize, T const& elem = T())
 		{
+			GoodAssert(iSize >= 0);
+
 			if ( iSize >= m_iSize )
 			{
 				increment(iSize - m_iSize);
@@ -656,7 +674,9 @@ namespace good
 			else
 			{
 				for ( size_type i = iSize; i < m_iSize; ++i )
+				{
 					m_cAlloc.destroy(&m_pBuffer[i]);
+				}
 			}
 			m_iSize = iSize;
 		}
@@ -666,18 +686,33 @@ namespace good
 		//--------------------------------------------------------------------------------------------------------
 		void increment(size_type iBySize = 1)
 		{
+			GoodAssert(iBySize >= 0);
+
+			if ( iBySize <= 0 )
+			{
+				return;
+			}
+
 			size_type desired = m_iSize + iBySize;
 			if ( desired > m_iCapacity )
 			{
 				iBySize = m_iCapacity;
 				if ( iBySize == 0 )
+				{
 					iBySize = DEFAULT_VECTOR_BUFFER_ALLOC;
+				}
 				do
 				{
 					iBySize = iBySize << 1;  // Double buffer size.
 				}
 				while ( iBySize < desired );
-				reserve(iBySize);
+
+				GoodAssert(iBySize > 0);
+
+				if ( iBySize > 0 )
+				{
+					reserve(iBySize);
+				}
 			}
 		}
 

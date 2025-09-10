@@ -127,7 +127,7 @@ public:
 	/// Get player's view angles.
 	void GetEyeAngles(Vector& a) const
 	{
-		a = m_PlayerInfo.GetAbsAngles();
+		a = m_PlayerInfo.GetEyeAngles();
 	}
 
 	/// Protect player for certain amount of time. 0 means don't protect, -1 means forever.

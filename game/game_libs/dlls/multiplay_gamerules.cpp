@@ -448,7 +448,9 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer* pl)
 		HUD_PRINTNOTIFY,
 		UTIL_VarArgs(
 			"%s has joined the game\n",
-			(pl->pev->netname && (STRING(pl->pev->netname))[0] != 0) ? STRING(pl->pev->netname) : "unconnected"));
+			(pl->pev->netname && (STRING(pl->pev->netname))[0] != 0) ? STRING(pl->pev->netname) : "unconnected"
+		)
+	);
 
 	// team match?
 	if ( g_teamplay )
@@ -458,7 +460,8 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer* pl)
 			STRING(pl->pev->netname),
 			GETPLAYERUSERID(pl->edict()),
 			GETPLAYERAUTHID(pl->edict()),
-			g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pl->edict()), "model"));
+			g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pl->edict()), "model")
+		);
 	}
 	else
 	{
@@ -467,7 +470,8 @@ void CHalfLifeMultiplay::InitHUD(CBasePlayer* pl)
 			STRING(pl->pev->netname),
 			GETPLAYERUSERID(pl->edict()),
 			GETPLAYERAUTHID(pl->edict()),
-			GETPLAYERUSERID(pl->edict()));
+			GETPLAYERUSERID(pl->edict())
+		);
 	}
 
 	UpdateGameMode(pl);
@@ -531,7 +535,8 @@ void CHalfLifeMultiplay::ClientDisconnected(edict_t* pClient)
 					STRING(pPlayer->pev->netname),
 					GETPLAYERUSERID(pPlayer->edict()),
 					GETPLAYERAUTHID(pPlayer->edict()),
-					g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model"));
+					g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()), "model")
+				);
 			}
 			else
 			{
@@ -540,7 +545,8 @@ void CHalfLifeMultiplay::ClientDisconnected(edict_t* pClient)
 					STRING(pPlayer->pev->netname),
 					GETPLAYERUSERID(pPlayer->edict()),
 					GETPLAYERAUTHID(pPlayer->edict()),
-					GETPLAYERUSERID(pPlayer->edict()));
+					GETPLAYERUSERID(pPlayer->edict())
+				);
 			}
 
 			pPlayer->RemoveAllItems(TRUE);  // destroy all of the players weapons and items
@@ -816,7 +822,8 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer* pVictim, entvars_t* pKiller, e
 				GETPLAYERUSERID(pVictim->edict()),
 				GETPLAYERAUTHID(pVictim->edict()),
 				g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pVictim->edict()), "model"),
-				killer_weapon_name);
+				killer_weapon_name
+			);
 		}
 		else
 		{
@@ -826,7 +833,8 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer* pVictim, entvars_t* pKiller, e
 				GETPLAYERUSERID(pVictim->edict()),
 				GETPLAYERAUTHID(pVictim->edict()),
 				GETPLAYERUSERID(pVictim->edict()),
-				killer_weapon_name);
+				killer_weapon_name
+			);
 		}
 	}
 	else if ( pKiller->flags & FL_CLIENT )
@@ -844,7 +852,8 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer* pVictim, entvars_t* pKiller, e
 				GETPLAYERUSERID(pVictim->edict()),
 				GETPLAYERAUTHID(pVictim->edict()),
 				g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pVictim->edict()), "model"),
-				killer_weapon_name);
+				killer_weapon_name
+			);
 		}
 		else
 		{
@@ -858,7 +867,8 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer* pVictim, entvars_t* pKiller, e
 				GETPLAYERUSERID(pVictim->edict()),
 				GETPLAYERAUTHID(pVictim->edict()),
 				GETPLAYERUSERID(pVictim->edict()),
-				killer_weapon_name);
+				killer_weapon_name
+			);
 		}
 	}
 	else
@@ -874,7 +884,8 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer* pVictim, entvars_t* pKiller, e
 				GETPLAYERUSERID(pVictim->edict()),
 				GETPLAYERAUTHID(pVictim->edict()),
 				g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pVictim->edict()), "model"),
-				killer_weapon_name);
+				killer_weapon_name
+			);
 		}
 		else
 		{
@@ -884,7 +895,8 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer* pVictim, entvars_t* pKiller, e
 				GETPLAYERUSERID(pVictim->edict()),
 				GETPLAYERAUTHID(pVictim->edict()),
 				GETPLAYERUSERID(pVictim->edict()),
-				killer_weapon_name);
+				killer_weapon_name
+			);
 		}
 	}
 
