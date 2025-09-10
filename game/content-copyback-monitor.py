@@ -75,8 +75,12 @@ def check_files(game_dir, repo_dir):
 					continue
 
 				os.makedirs(os.path.dirname(repo_file_path), exist_ok=True)
-				shutil.copyfile(full_path, repo_file_path)
-				print(f"  Copied to {repo_file_path}")
+
+				try:
+					shutil.copyfile(full_path, repo_file_path)
+					print(f"  Copied to {repo_file_path}")
+				except PermissionError:
+					print("  Could not access file, it may still be in use")
 
 def main():
 	signal.signal(signal.SIGINT, signal_handler)
