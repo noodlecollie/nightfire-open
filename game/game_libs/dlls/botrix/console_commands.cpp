@@ -10,7 +10,13 @@
 
 #include "PlatformLib/String.h"
 
+#include "customGeometry/primitiveMessageWriter.h"
+#include "customGeometry/sharedDefs.h"
+#include "customGeometry/primitiveDefs.h"
 #include "standard_includes.h"
+#include "defines.h"
+#include "engine_util.h"
+#include "types.h"
 
 #define MAIN_COMMAND "botrix"
 
@@ -2015,6 +2021,117 @@ TCommandResult CWaypointConnectionCommand::Execute(CClient* pClient, int argc, c
 
 	const bool hasPath = CWaypoints::HasPath(startId, endId);
 	BLOG_I("Connection %s between waypoints %d and %d.", hasPath ? "exists" : "does not exist", startId, endId);
+
+	return ECommandPerformed;
+}
+
+CWaypointProbeNeighboursCommand::CWaypointProbeNeighboursCommand()
+{
+	m_sCommand = "probeneighbours";
+	m_sHelp = "computes neighbour waypoints and visualises the output";
+	m_sDescription = "This is intended for debugging waypoint placement";
+	m_iAccessLevel = FCommandAccessWaypoint;
+}
+
+TCommandResult CWaypointProbeNeighboursCommand::Execute(CClient* pClient, int argc, const char** argv)
+{
+	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
+		return ECommandPerformed;
+	}
+
+	if ( pClient == NULL )
+	{
+		BLOG_W("Please login to server to execute this command.");
+		return ECommandError;
+	}
+
+	// This is just a rough duplication of CWaypoints::AnalyzeStep() and CWaypoints::AnalyzeWaypoint().
+	float fPlayerEye = CBotrixMod::GetVar(EModVarPlayerEye);
+	float fAnalyzeDistance = static_cast<float>(CWaypoint::iAnalyzeDistance);
+	float fAnalyzeDistanceExtra = fAnalyzeDistance * 1.9f;  // To include diagonal, almost but not 2 (Pythagoras).
+	float fAnalyzeDistanceExtraSqr = fAnalyzeDistanceExtra * 1.9f;
+	fAnalyzeDistanceExtraSqr *= fAnalyzeDistanceExtraSqr;
+	Vector head = pClient->GetHead();
+
+	for ( int x = -1; x <= 1; ++x )
+	{
+		for ( int y = -1; y <= 1; ++y )
+		{
+			if ( x == 0 && y == 0 )
+			{
+				continue;
+			}
+
+			Vector candidatePos =
+				head + (fAnalyzeDistance * Vector(static_cast<float>(x), static_cast<float>(y), 0.0f));
+
+			const int contents = g_engfuncs.pfnPointContents(candidatePos);
+			BLOG_I("createneighbours: neighbour at (%d, %d) is in volume with contents %d", x, y, contents);
+
+			if ( contents == CONTENTS_SOLID || contents == CONTENTS_CLIP || contents == CONTENTS_LADDER )
+			{
+				continue;
+			}
+
+			Vector candidateGroundPos = CBotrixEngineUtil::GetHumanHullGroundVec(
+				candidatePos,
+				CBotrixEngineUtil::PositionInHull::Eye,
+				nullptr,
+				4.0f
+			);
+
+			Vector candidateEyePos = candidateGroundPos + Vector(0.0f, 0.0f, fPlayerEye);
+
+			bool bCrouch = false;
+			TReach reachFirstToSecond = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
+				CBotrixEngineUtil::TraceDirection::EFirstToSecond,
+				head,
+				candidateEyePos,
+				bCrouch,
+				0.0f,
+				fAnalyzeDistanceExtraSqr,
+				true
+			);
+
+			TReach reachSecondToFirst = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
+				CBotrixEngineUtil::TraceDirection::ESecondToFirst,
+				candidateEyePos,
+				head,
+				bCrouch,
+				0.0f,
+				fAnalyzeDistanceExtraSqr,
+				true
+			);
+
+			BLOG_I(
+				"createneighbours: neighbour (%d, %d) candidate pos: (%f %f %f) ground pos: (%f %f %f) new eye "
+				"pos: (%f %f %f) reachable: (%d, %d)",
+				x,
+				y,
+				candidatePos.x,
+				candidatePos.y,
+				candidatePos.z,
+				candidateGroundPos.x,
+				candidateGroundPos.y,
+				candidateGroundPos.z,
+				candidateEyePos.x,
+				candidateEyePos.y,
+				candidateEyePos.z,
+				reachFirstToSecond,
+				reachSecondToFirst
+			);
+
+			if ( reachFirstToSecond != EReachNotReachable )
+			{
+				CustomGeometry::WaypointMarkerPrimitive primitive {};
+				primitive.location = candidateEyePos;
+
+				CustomGeometry::CPrimitiveMessageWriter writer(CustomGeometry::Category::BotrixDebugging);
+				writer.WriteMessage(0x00FFFFFF, static_cast<float>(CBotrixEngineUtil::iTextTime), primitive);
+			}
+		}
+	}
 
 	return ECommandPerformed;
 }

@@ -366,6 +366,13 @@ public:
 	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
 };
 
+class CWaypointProbeNeighboursCommand : public CConsoleCommand
+{
+public:
+	CWaypointProbeNeighboursCommand();
+	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+};
+
 //****************************************************************************************************************
 // Area waypoint commands.
 //****************************************************************************************************************
@@ -1204,6 +1211,7 @@ public:
 		Add(new CWaypointSaveCommand);
 		Add(new CWaypointVisibilityCommand);
 		Add(new CWaypointConnectionCommand);
+		Add(new CWaypointProbeNeighboursCommand);
 	}
 };
 

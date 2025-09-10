@@ -2150,18 +2150,30 @@ bool CWaypoints::AnalyzeWaypoint(
 		showHelp
 	);
 
-	if ( reach != EReachFallDamage && reach != EReachNotReachable )
+	const bool shouldAdd = reach != EReachFallDamage && reach != EReachNotReachable;
+	TWaypointId iNew = -1;
+
+	if ( shouldAdd )
 	{
-		TWaypointId iNew = Add(vNewEyePos);
-		BULOG_D(
-			m_pAnalyzer,
-			"  added waypoint %d (from %d) at (%.0f, %.0f, %.0f)",
-			iNew,
-			iWaypoint,
-			vNewEyePos.x,
-			vNewEyePos.y,
-			vNewEyePos.z
-		);
+		// The waypoint may have been adjusted, so check if there's a better one nearby
+		iNew = CWaypoints::GetNearestWaypoint(vNewEyePos, NULL, false, fHalfPlayerWidth);
+	}
+
+	if ( shouldAdd )
+	{
+		if ( !CWaypoints::IsValid(iNew) )
+		{
+			iNew = Add(vNewEyePos);
+			BULOG_D(
+				m_pAnalyzer,
+				"  added waypoint %d (from %d) at (%.0f, %.0f, %.0f)",
+				iNew,
+				iWaypoint,
+				vNewEyePos.x,
+				vNewEyePos.y,
+				vNewEyePos.z
+			);
+		}
 
 		m_bIsAnalyzeStepAddedWaypoints = true;
 

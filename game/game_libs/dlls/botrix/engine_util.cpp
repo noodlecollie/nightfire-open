@@ -1,4 +1,5 @@
 #include "botrix/engine_util.h"
+#include <limits>
 #include "EnginePublicAPI/cvardef.h"
 #include "EnginePublicAPI/eiface.h"
 #include "botrix/botrixmod.h"
@@ -292,14 +293,6 @@ bool CBotrixEngineUtil::RayHitsEntity(edict_t* pEntity, const Vector& vSrc, cons
 	return m_TraceResult.flFraction >= 0.95f;
 }
 
-// TODO: This is probably critical for why we're getting waypoints put in weird places.
-// For example, they show up on the roofs of dm_japan, and I think this is because
-// they're leaking from the upstairs levels in the room with the sniper spawn.
-// I think waypoints are created in candidate neighbour places, and then removed if
-// it turns out that they're not reachable, so the reachability must absolutely
-// be performed correctly. Check that the ground vecs are getting computed as they
-// should be - we may want to include some method of determining whether a waypoint
-// should be moved up if it was created half inside a solid object.
 TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	TraceDirection direction,
 	const Vector& vSrcEyePos,
@@ -310,6 +303,10 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	bool bShowHelp
 )
 {
+	static constexpr float ROOT_TWO = 1.414f;
+	static const unsigned char COL_CANREACH[3] = {0xEA, 0xFC, 0xEB};
+	static const unsigned char COL_CANTREACH[3] = {0xFC, 0xEA, 0xEB};
+
 	using namespace CustomGeometry;
 
 	int color = direction == TraceDirection::EFirstToSecond ? 0xFF0000 : 0x00FF00;
@@ -318,7 +315,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	unsigned char b = GET_1ST_BYTE(color);
 
 	Vector vOffset =
-		direction == TraceDirection::EFirstToSecond ? Vector(-0.25f, -0.25f, 0.0f) : Vector(0.25f, 0.25f, 0.0f);
+		direction == TraceDirection::EFirstToSecond ? Vector(0.25f, 0.25f, 2.0f) : Vector(-0.25f, -0.25f, 1.0f);
 
 	if ( fDistanceSqr <= 0.0f )
 	{
@@ -336,6 +333,8 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	}
 
 	// Check if can swim there first.
+	// TODO: May need a better check than this! What if they're
+	// visible down a channel too narrow for the player to swim through?
 	int iSrcContent = g_engfuncs.pfnPointContents(vSrcEyePos);
 	int iDestContent = g_engfuncs.pfnPointContents(vDestEyePos);
 
@@ -423,7 +422,6 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	Vector vLastStair;
 	bool bNeedJump = false;
 	bool bHasStair = false;
-	int i = 0;
 
 	std::unique_ptr<CRollingLineMessageWriter> helperGeomWriter;
 
@@ -431,16 +429,13 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	{
 		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::BotrixDebugging));
 
-		helperGeomWriter->BeginGeometry(
-			(static_cast<uint32_t>(r) << 24) | (static_cast<uint32_t>(g) << 26) | (static_cast<uint32_t>(b) << 8) |
-				0x000000FF,
-			1.0f,
-			static_cast<float>(iTextTime)
-		);
+		helperGeomWriter
+			->BeginGeometry((static_cast<uint32_t>(color) << 8) | 0x000000FF, 1.0f, static_cast<float>(iTextTime));
 	}
 
-	// Keep looping while we have attempts left, and while the hit point hasn't reached the destination.
-	for ( ; i < iMaxTraceRaysForReachable && !EqualVectors(vHit, vDestGround); ++i )
+	float lastDistToTarget = std::numeric_limits<float>::max();
+
+	for ( int i = 0; i < iMaxTraceRaysForReachable; ++i )
 	{
 		// Begin from where we last hit.
 		Vector vStart = vHit;
@@ -459,7 +454,15 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 			{
 				if ( bShowHelp )
 				{
-					DrawTextAtLocation(vHit, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "High jump");
+					DrawTextAtLocation(
+						vHit,
+						0,
+						static_cast<float>(iTextTime),
+						COL_CANTREACH[0],
+						COL_CANTREACH[1],
+						COL_CANTREACH[2],
+						"Too High"
+					);
 				}
 
 				return EReachNotReachable;
@@ -471,7 +474,15 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 				{
 					if ( bShowHelp )
 					{
-						DrawTextAtLocation(vHit, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "2 jumps");
+						DrawTextAtLocation(
+							vHit,
+							0,
+							static_cast<float>(iTextTime),
+							COL_CANTREACH[0],
+							COL_CANTREACH[1],
+							COL_CANTREACH[2],
+							"Too High"
+						);
 					}
 
 					return EReachNotReachable;
@@ -489,7 +500,15 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 				{
 					if ( bShowHelp )
 					{
-						DrawTextAtLocation(vHit, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Slope");
+						DrawTextAtLocation(
+							vHit,
+							0,
+							static_cast<float>(iTextTime),
+							COL_CANTREACH[0],
+							COL_CANTREACH[1],
+							COL_CANTREACH[2],
+							"Slope"
+						);
 					}
 
 					return EReachNotReachable;
@@ -511,6 +530,16 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 				break;
 			}
 		}
+
+		float distToTarget = (vDestGround.Make2D() - vHit.Make2D()).Length();
+
+		if ( distToTarget < (ROOT_TWO / 2.0f) || distToTarget > lastDistToTarget + (ROOT_TWO / 2.0f) )
+		{
+			// We got to the waypoint, or are now getting further away, so no point continuing.
+			break;
+		}
+
+		lastDistToTarget = distToTarget;
 	}
 
 	if ( bShowHelp )
@@ -523,11 +552,18 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	Vector vText = (vSrcGround + vDestGround) / 2;
 	vText.z += direction == TraceDirection::EFirstToSecond ? 20 : 10;
 
-	if ( i == iMaxTraceRaysForReachable )
+	if ( !EqualVectors(vHit, vDestGround) )
 	{
-		// We exhausted all our tries without our hit point reaching
-		// the destination, so assume not reachable.
-		iResult = EReachNotReachable;
+		if ( (vDestGround.Make2D() - vHit.Make2D()).Length() < ROOT_TWO )
+		{
+			// We actually made it to the waypoint location, but our Z changed.
+			// Update the destination vector.
+			vDestEyePos = vHit + Vector(0.0f, 0.0f, fPlayerEye);
+		}
+		else
+		{
+			iResult = EReachNotReachable;
+		}
 	}
 
 	switch ( iResult )
@@ -540,12 +576,28 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 
 				if ( bShowHelp )
 				{
-					DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Jump");
+					DrawTextAtLocation(
+						vText,
+						0,
+						static_cast<float>(iTextTime),
+						COL_CANREACH[0],
+						COL_CANREACH[1],
+						COL_CANREACH[2],
+						"Jump"
+					);
 				}
 			}
 			else if ( bShowHelp )
 			{
-				DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Walk");
+				DrawTextAtLocation(
+					vText,
+					0,
+					static_cast<float>(iTextTime),
+					COL_CANREACH[0],
+					COL_CANREACH[1],
+					COL_CANREACH[2],
+					"Walk"
+				);
 			}
 
 			break;
@@ -555,7 +607,15 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		{
 			if ( bShowHelp )
 			{
-				DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "Fall");
+				DrawTextAtLocation(
+					vText,
+					0,
+					static_cast<float>(iTextTime),
+					COL_CANREACH[0],
+					COL_CANREACH[1],
+					COL_CANREACH[2],
+					"Fall"
+				);
 			}
 
 			break;
@@ -565,7 +625,15 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		{
 			if ( bShowHelp )
 			{
-				DrawTextAtLocation(vText, 0, static_cast<float>(iTextTime), 0xFF, 0xFF, 0xFF, "High");
+				DrawTextAtLocation(
+					vText,
+					0,
+					static_cast<float>(iTextTime),
+					COL_CANTREACH[0],
+					COL_CANTREACH[1],
+					COL_CANTREACH[2],
+					"Unreachable"
+				);
 			}
 
 			break;
@@ -647,6 +715,12 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 	Vector vHit = vGround + vDirectionInc;
 
 	HumanHullTrace(vGround, vHit);
+
+	if ( m_TraceResult.fAllSolid )
+	{
+		// We should never have a trace entirely in a solid object.
+		return EReachNotReachable;
+	}
 
 	if ( !TraceHitSomething() )
 	{

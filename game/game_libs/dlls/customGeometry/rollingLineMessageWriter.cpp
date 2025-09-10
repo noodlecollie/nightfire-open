@@ -6,7 +6,6 @@ namespace CustomGeometry
 	CRollingLineMessageWriter::CRollingLineMessageWriter(Category category) :
 		m_Category(category)
 	{
-		WriteClearMessage();
 	}
 
 	CRollingLineMessageWriter::~CRollingLineMessageWriter()
@@ -89,7 +88,8 @@ namespace CustomGeometry
 			CreateGeometryItem(
 				m_CurrentGeometry->GetColour(),
 				m_CurrentGeometry->GetScale(),
-				m_CurrentGeometry->GetLifetimeSecs());
+				m_CurrentGeometry->GetLifetimeSecs()
+			);
 		}
 	}
 
