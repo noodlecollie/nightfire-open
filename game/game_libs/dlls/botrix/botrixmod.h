@@ -80,25 +80,6 @@ public:  // Methods.
 	/// Get random bot name from [General] section, key bot_names.
 	static const good::string& GetRandomBotName(TBotIntelligence iIntelligence);
 
-	/// Get var value for needed class.
-	static float GetVar(TModVar iVar, TClass iClass = 0)
-	{
-		GoodAssert(0 <= iVar && iVar < EModVarTotal);
-		int iIndex = iClass < m_aVars[iVar].Count() ? iClass : 0;
-		return m_aVars[iVar][iIndex];
-	}
-
-	static void SetVars(const CUtlVector<float>* aVars)
-	{
-		for ( int iVar = 0; iVar < EModVarTotal; ++iVar )
-		{
-			if ( aVars[iVar].Count() > 0 )
-			{
-				m_aVars[iVar] = aVars[iVar];
-			}
-		}
-	}
-
 	static const char* GetLastError();
 
 public:  // Static members.
@@ -156,9 +137,6 @@ protected:  // Methods.
 
 protected:  // Members.
 	static TModId m_iModId;  // Mod id.
-
-	// Mod vars.
-	static CUtlVector<float> m_aVars[EModVarTotal];
 
 	static bool m_bMapHas[EItemTypeCanPickTotal];  // To check if map has items or waypoints of types: health, armor,
 												   // weapon, ammo.

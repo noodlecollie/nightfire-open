@@ -366,37 +366,6 @@ enum TItemTypeFlag
 typedef int TItemTypeFlags;  ///< Item type flags (used to define which items to draw).
 
 //****************************************************************************************************************
-/// Mod variables.
-//****************************************************************************************************************
-enum TModVars
-{
-	// If you change the order, go to mod.cpp and check the order of defaults array.
-	EModVarPlayerMaxHealth = 0,  ///< Player's max health.
-	EModVarPlayerMaxArmor,  ///< Player's height.
-
-	EModVarPlayerWidth,  ///< Player's width.
-	EModVarPlayerHeight,  ///< Player's height.
-	EModVarPlayerHeightCrouched,  ///< Player's height crouched.
-	EModVarPlayerEye,  ///< Player's eye, for waypoints.
-	EModVarPlayerEyeCrouched,  ///< Player's eye crouched.
-
-	EModVarPlayerVelocityCrouch,  ///< Player's velocity while crouched.
-	EModVarPlayerVelocityWalk,  ///< Player's walk velocity.
-	EModVarPlayerVelocityRun,  ///< Player's run velocity.
-	EModVarPlayerVelocitySprint,  ///< Player's sprint velocity.
-
-	EModVarPlayerObstacleToJump,  ///< Obstacle height so need to jump.
-	EModVarPlayerJumpHeight,  ///< Player's jump height.
-	EModVarPlayerJumpHeightCrouched,  ///< Player's jump height crouched.
-
-	EModVarHeightForFallDamage,  ///< Max height so fall doesn't produce damage.
-	EModVarSlopeGradientToSlideOff,  ///< Player will slide off if gradient is more that this value.
-
-	EModVarTotal  ///< Mod vars count.
-};
-typedef int TModVar;  ///< Mod variable.
-
-//****************************************************************************************************************
 /// Item types.
 //****************************************************************************************************************
 enum TItemDrawFlag

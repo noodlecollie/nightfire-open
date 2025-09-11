@@ -44,7 +44,6 @@ float CBotrixMod::fSpawnProtectionTime = 0;
 int CBotrixMod::iSpawnProtectionHealth = 0;
 
 // TDeathmatchFlags CBotrixMod::iDeathmatchFlags = -1;
-CUtlVector<float> CBotrixMod::m_aVars[EModVarTotal];
 
 Vector CBotrixMod::vPlayerCollisionHull;
 Vector CBotrixMod::vPlayerCollisionHullCrouched;
@@ -73,35 +72,6 @@ bool CBotrixMod::LoadDefaults(TModId iModId)
 
 	m_aFrameEvents.Purge();
 	m_aFrameEvents.EnsureCapacity(8);
-
-	const float defaults[EModVarTotal] = {
-		/*max_health = */ 100.0f,
-		/*max_armor = */ 100.0f,
-
-		/*player_width = */ 32.0f,
-		/*player_height = */ 72.0f,
-		/*player_height_crouched = */ 36.0f,
-		/*player_eye = */ 64.0f,
-		/*player_eye_crouched = */ 36.0f,
-
-		/*velocity_crouch = */ 250.0f * 0.3f,
-		/*velocity_walk = */ 250.0f,
-		/*velocity_run = */ 250.0f,
-		/*velocity_sprint = */ 327.5f,
-
-		/*obstacle_height_no_jump = */ 18.0f,
-		/*jump_height = */ 20.0f,
-		/*jump_height_crouched = */ 56.0f,
-
-		/*max_height_no_fall_damage = */ 185.0f,
-		/*max_slope_gradient = */ 45.0f,
-	};
-
-	for ( TModVar iVar = 0; iVar < EModVarTotal; ++iVar )
-	{
-		m_aVars[iVar].Purge();
-		m_aVars[iVar].AddToTail(defaults[iVar]);
-	}
 
 	pCurrentMod.reset(new CBotrixModDetail());
 
