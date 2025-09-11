@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MathLib/vec3.h"
+
 #define VEC_HULL_MIN Vector(-16, -16, -36)
 #define VEC_HULL_MAX Vector(16, 16, 36)
 #define VEC_HUMAN_HULL_MIN Vector(-16, -16, 0)

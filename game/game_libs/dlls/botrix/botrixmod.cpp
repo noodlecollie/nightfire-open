@@ -9,6 +9,7 @@
 #include "botrix/waypoint.h"
 #include "botrix/item.h"
 #include "botrix/bot.h"
+#include "botrix/constants.h"
 #include "MathLib/mathlib.h"
 #include "utils/mp_utils.h"
 
@@ -110,11 +111,11 @@ bool CBotrixMod::LoadDefaults(TModId iModId)
 //----------------------------------------------------------------------------------------------------------------
 void CBotrixMod::Prepare()
 {
-	float fWidth = m_aVars[EModVarPlayerWidth][0];
-	float fHalfWidth = fWidth / 2.0f;
-	float fHeight = m_aVars[EModVarPlayerHeight][0];
-	float fHeightCrouched = m_aVars[EModVarPlayerHeightCrouched][0];
-	float fJumpCrouched = m_aVars[EModVarPlayerJumpHeightCrouched][0];
+	const float fWidth = CBotrixConstants::PLAYER_WIDTH;
+	const float fHalfWidth = fWidth / 2.0f;
+	const float fHeight = CBotrixConstants::PLAYER_HEIGHT;
+	const float fHeightCrouched = CBotrixConstants::PLAYER_HEIGHT_CROUCHED;
+	const float fJumpCrouched = m_aVars[EModVarPlayerJumpHeightCrouched][0];
 
 	iPlayerRadius = static_cast<int>(rsqrt(2 * SQR(fHalfWidth)));  // Pythagoras.
 	iPointTouchSquaredXY = static_cast<int>(SQR(fWidth / 4));

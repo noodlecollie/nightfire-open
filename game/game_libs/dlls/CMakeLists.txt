@@ -278,6 +278,7 @@ set(SOURCES_SERVER
 	botrix/clients.cpp
 	botrix/console_commands.h
 	botrix/console_commands.cpp
+	botrix/constants.h
 	botrix/defines.h
 	botrix/engine_util.h
 	botrix/engine_util.cpp

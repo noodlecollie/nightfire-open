@@ -571,20 +571,13 @@ protected:
 	friend class CWaypointNavigator;  // Get access to m_cGraph (for A* search implementation).
 
 	// Add ladder dismounts waypoints.
-	static void AddLadderDismounts(
-		const Vector& ladderNormal,
-		float fPlayerWidth,
-		float fPlayerEye,
-		TWaypointId iBottom,
-		TWaypointId iTop
-	);
+	static void AddLadderDismounts(const Vector& ladderNormal, TWaypointId iBottom, TWaypointId iTop);
 
 	// Analyze one waypoint (for AnalyzeStep()). Return true, if waypoint has nearby waypoints or new waypoint is added.
 	static bool AnalyzeWaypoint(
 		TWaypointId iWaypoint,
 		Vector& vPos,
 		Vector& vNew,
-		float fPlayerEye,
 		float fAnalyzeDistance,
 		float fAnalyzeDistanceExtra,
 		float fAnalyzeDistanceExtraSqr,
