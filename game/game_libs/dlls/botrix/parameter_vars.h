@@ -20,4 +20,11 @@ public:
 
 	// We don't actually support sprint right now, but just set to some sensible default.
 	static constexpr float PLAYER_SPRINT_SPEED = 1.5f * PLAYER_RUN_SPEED;
+
+	static float CalcMaxHeightOfJump();
+	static float CalcMaxHeightOfCrouchJump();
+	static float GetStepSize();
+
+private:
+	static constexpr float DEFAULT_JUMP_IMPULSE = 268.3281573f;
 };

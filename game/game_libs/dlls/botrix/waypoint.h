@@ -580,8 +580,7 @@ protected:
 		Vector& vNew,
 		float fAnalyzeDistance,
 		float fAnalyzeDistanceExtra,
-		float fAnalyzeDistanceExtraSqr,
-		float fHalfPlayerWidth
+		float fAnalyzeDistanceExtraSqr
 	);
 
 	// Get path color.

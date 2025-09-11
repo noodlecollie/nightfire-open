@@ -735,7 +735,7 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 
 	// We have butted up against an obstacle.
 	// Try to walk over (one stair height) to see if we can clear it.
-	float fMaxWalkHeight = CBotrixMod::GetVar(EModVarPlayerObstacleToJump);
+	const float fMaxWalkHeight = CBotrixParameterVars::GetStepSize();
 	Vector vStair = vGround;
 	vStair.z += fMaxWalkHeight;
 	vHit.z += fMaxWalkHeight;
@@ -762,7 +762,7 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 	}
 
 	// We can't make it over the obstacle with a step, so try jumping.
-	float fJumpCrouched = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
+	float fJumpCrouched = CBotrixParameterVars::CalcMaxHeightOfCrouchJump();
 	vGround.z += fJumpCrouched;
 	vHit.z += fJumpCrouched - fMaxWalkHeight;  // We added previously fMaxWalkHeight.
 

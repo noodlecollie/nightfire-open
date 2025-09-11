@@ -2201,7 +2201,7 @@ bool CBotrixBot::ResolveStuckMove()
 		else
 		{
 			float zDistance = pStuckObject->pEdict->v.maxs[VEC3_Z] - pStuckObject->pEdict->v.mins[VEC3_Z];
-			if ( zDistance <= CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched) )  // Can jump on it.
+			if ( zDistance <= CBotrixParameterVars::CalcMaxHeightOfCrouchJump() )  // Can jump on it.
 			{
 				BotDebug(
 					"%s -> Stuck, will jump on object %s.",

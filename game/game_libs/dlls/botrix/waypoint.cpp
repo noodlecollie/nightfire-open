@@ -1399,7 +1399,7 @@ void CWaypoints::MarkUnreachablePath(TWaypointId iWaypointFrom, TWaypointId iWay
 //----------------------------------------------------------------------------------------------------------------
 void CWaypoints::AddLadderDismounts(const Vector& ladderNormal, TWaypointId iBottom, TWaypointId iTop)
 {
-	float fMaxHeight = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
+	const float fMaxHeight = CBotrixParameterVars::CalcMaxHeightOfCrouchJump();
 
 	Vector vZ(0, 0, 1);
 	Vector vDirection(ladderNormal);
@@ -1841,8 +1841,6 @@ void CWaypoints::AnalyzeStep()
 
 	if ( m_iAnalyzeStep < EAnalyzeStepDeleteOrphans )
 	{
-		const float fHalfPlayerWidth = CBotrixParameterVars::PLAYER_WIDTH / 2.0f;
-
 		float fAnalyzeDistance = static_cast<float>(CWaypoint::iAnalyzeDistance);
 		float fAnalyzeDistanceExtra = fAnalyzeDistance * 1.9f;  // To include diagonal, almost but not 2 (Pythagoras).
 		float fAnalyzeDistanceExtraSqr = fAnalyzeDistanceExtra * 1.9f;
@@ -1887,7 +1885,6 @@ void CWaypoints::AnalyzeStep()
 								 iWaypoint,
 								 vPos,
 								 vNew,
-								 fHalfPlayerWidth,
 								 fAnalyzeDistance,
 								 fAnalyzeDistanceExtra,
 								 fAnalyzeDistanceExtraSqr
@@ -1919,7 +1916,6 @@ void CWaypoints::AnalyzeStep()
 									 iWaypoint,
 									 vPos,
 									 vNew,
-									 fHalfPlayerWidth,
 									 fAnalyzeDistance,
 									 fAnalyzeDistanceExtra,
 									 fAnalyzeDistanceExtraSqr
@@ -1939,7 +1935,6 @@ void CWaypoints::AnalyzeStep()
 									 iWaypoint,
 									 vPos,
 									 vNew,
-									 fHalfPlayerWidth,
 									 fAnalyzeDistance,
 									 fAnalyzeDistanceExtra,
 									 fAnalyzeDistanceExtraSqr
@@ -2030,12 +2025,14 @@ bool CWaypoints::AnalyzeWaypoint(
 	TWaypointId iWaypoint,
 	Vector& vPos,
 	Vector& vNew,
-	float fHalfPlayerWidth,
 	float fAnalyzeDistance,
 	float fAnalyzeDistanceExtra,
 	float fAnalyzeDistanceExtraSqr
 )
 {
+	static constexpr float HALF_PLAYER_WIDTH = CBotrixParameterVars::PLAYER_WIDTH / 2.0f;
+	static constexpr float HALF_PLAYER_WIDTH_SQ = SQR(HALF_PLAYER_WIDTH);
+
 	static good::vector<TWaypointId> aNearWaypoints(16);
 
 	const int contents = g_engfuncs.pfnPointContents(vNew);
@@ -2045,8 +2042,8 @@ bool CWaypoints::AnalyzeWaypoint(
 		return false;  // Ignore, if inside some solid brush.
 	}
 
-	float fJumpHeight = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
-	float fHalfPlayerWidthSqr = SQR(fHalfPlayerWidth);
+	const float fJumpHeight = CBotrixParameterVars::CalcMaxHeightOfCrouchJump();
+
 	Vector vGround =
 		CBotrixEngineUtil::GetHumanHullGroundVec(vNew, CBotrixEngineUtil::PositionInHull::Eye, nullptr, 4.0f);
 
@@ -2062,18 +2059,16 @@ bool CWaypoints::AnalyzeWaypoint(
 		for ( int i = 0; i < 4; ++i )
 		{
 			Vector vDirection = Vector(directions[i][0], directions[i][1], directions[i][2]);
-			vDirection *= fHalfPlayerWidth;
+			vDirection *= HALF_PLAYER_WIDTH;
 
 			Vector vDisplaced = vNew + vDirection;
 			vHullGround = CBotrixEngineUtil::GetHumanHullGroundVec(vDisplaced, CBotrixEngineUtil::PositionInHull::Eye);
 
-			if ( fabs(vHullGround.z - vGround.z) <
-				 CBotrixMod::GetVar(EModVarPlayerObstacleToJump) )  // Small difference.
+			if ( fabs(vHullGround.z - vGround.z) < CBotrixParameterVars::GetStepSize() )  // Small difference.
 			{
 				vFineGround = CBotrixEngineUtil::GetGroundVec(vDisplaced);
 
-				if ( fabs(vHullGround.z - vFineGround.z) <
-					 CBotrixMod::GetVar(EModVarPlayerObstacleToJump) )  // Small difference.
+				if ( fabs(vHullGround.z - vFineGround.z) < CBotrixParameterVars::GetStepSize() )  // Small difference.
 				{
 					vGround = vHullGround;
 					break;
@@ -2117,7 +2112,7 @@ bool CWaypoints::AnalyzeWaypoint(
 		}
 
 		// If path is not adding somehow, but the waypoint is really close (half player's width or closer).
-		if ( (vNewEyePos.Make2D() - Get(iNear).vOrigin.Make2D()).LengthSquared() <= fHalfPlayerWidthSqr )
+		if ( (vNewEyePos.Make2D() - Get(iNear).vOrigin.Make2D()).LengthSquared() <= HALF_PLAYER_WIDTH_SQ )
 		{
 			bSkip = true;
 		}
@@ -2145,7 +2140,7 @@ bool CWaypoints::AnalyzeWaypoint(
 	if ( shouldAdd )
 	{
 		// The waypoint may have been adjusted, so check if there's a better one nearby
-		iNew = CWaypoints::GetNearestWaypoint(vNewEyePos, NULL, false, fHalfPlayerWidth);
+		iNew = CWaypoints::GetNearestWaypoint(vNewEyePos, NULL, false, HALF_PLAYER_WIDTH);
 	}
 
 	if ( shouldAdd )

@@ -115,7 +115,7 @@ void CBotrixMod::Prepare()
 	const float fHalfWidth = fWidth / 2.0f;
 	const float fHeight = CBotrixParameterVars::PLAYER_HEIGHT;
 	const float fHeightCrouched = CBotrixParameterVars::PLAYER_HEIGHT_CROUCHED;
-	const float fJumpCrouched = m_aVars[EModVarPlayerJumpHeightCrouched][0];
+	const float fJumpCrouched = CBotrixParameterVars::CalcMaxHeightOfCrouchJump();
 
 	iPlayerRadius = static_cast<int>(rsqrt(2 * SQR(fHalfWidth)));  // Pythagoras.
 	iPointTouchSquaredXY = static_cast<int>(SQR(fWidth / 4));

@@ -2238,7 +2238,9 @@ void PM_Jump(void)
 	}
 
 	if ( pmove->oldbuttons & IN_JUMP )
+	{
 		return;  // don't pogo stick
+	}
 
 	if ( g_bhopcap )
 	{

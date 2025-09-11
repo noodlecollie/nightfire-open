@@ -142,6 +142,7 @@ public:  // Static members.
 									 // Item is picked, if distance-to-player < player's-radius + item's-radius +
 									 // this-distance.
 
+	// TODO: These should be cvars
 	static int iPointTouchSquaredXY;  ///< Squared distance to consider that we are touching waypoint.
 	static int iPointTouchSquaredZ;  ///< Z distance to consider that we are touching waypoint. Should be no more than
 									 ///< player can jump.
@@ -195,7 +196,8 @@ public:  // Methods.
 		TTeam iTeam,
 		TClass iClass,
 		int iParamsCount,
-		const char** aParams);
+		const char** aParams
+	);
 
 	/// Get waypoint type count.
 	int GetWaypointTypeCount()
