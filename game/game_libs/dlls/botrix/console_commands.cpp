@@ -7,7 +7,7 @@
 #include "botrix/item.h"
 #include "botrix/weapon.h"
 #include "botrix/bot.h"
-#include "botrix/constants.h"
+#include "botrix/parameter_vars.h"
 
 #include "PlatformLib/String.h"
 
@@ -702,7 +702,7 @@ TCommandResult CWaypointCreateCommand::Execute(CClient* pClient, int argc, const
 
 	// Check if player is crouched.
 	float fHeight = pClient->GetPlayerInfo()->GetPlayerMaxs().z - pClient->GetPlayerInfo()->GetPlayerMins().z + 1;
-	bool bIsCrouched = (fHeight < CBotrixConstants::PLAYER_HEIGHT);
+	bool bIsCrouched = (fHeight < CBotrixParameterVars::PLAYER_HEIGHT);
 
 	if ( pClient->bAutoCreatePaths )
 	{
@@ -2081,7 +2081,7 @@ TCommandResult CWaypointProbeNeighboursCommand::Execute(CClient* pClient, int ar
 				4.0f
 			);
 
-			Vector candidateEyePos = candidateGroundPos + Vector(0.0f, 0.0f, CBotrixConstants::PLAYER_EYE);
+			Vector candidateEyePos = candidateGroundPos + Vector(0.0f, 0.0f, CBotrixParameterVars::PLAYER_EYE);
 
 			bool bCrouch = false;
 			TReach reachFirstToSecond = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
@@ -2596,7 +2596,7 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 	if ( pClient->IsAlive() && iFlags == FPathNone )
 	{
 		float fHeight = pClient->GetPlayerInfo()->GetPlayerMaxs().z - pClient->GetPlayerInfo()->GetPlayerMins().z + 1;
-		if ( fHeight < CBotrixConstants::PLAYER_HEIGHT )
+		if ( fHeight < CBotrixParameterVars::PLAYER_HEIGHT )
 		{
 			iFlags = FPathCrouch;
 		}
@@ -4929,7 +4929,7 @@ TCommandResult CConfigWaypointAnalyzeDistance::Execute(CClient* pClient, int arg
 			return ECommandError;
 		}
 
-		int iWidth = static_cast<int>(CBotrixConstants::PLAYER_WIDTH);
+		int iWidth = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH);
 
 		if ( iDistance <= iWidth )
 		{

@@ -7,7 +7,7 @@
 #include "botrix/defines.h"
 #include "botrix/item.h"
 #include "botrix/clients.h"
-#include "botrix/constants.h"
+#include "botrix/parameter_vars.h"
 #include "botrixmod.h"
 #include "engine_util.h"
 #include "enginecallback.h"
@@ -231,7 +231,7 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 	unsigned char r, g, b;  // Red, green, blue.
 	GetColor(r, g, b);
 
-	Vector vEnd = Vector(vOrigin.x, vOrigin.y, vOrigin.z - CBotrixConstants::PLAYER_EYE);
+	Vector vEnd = Vector(vOrigin.x, vOrigin.y, vOrigin.z - CBotrixParameterVars::PLAYER_EYE);
 
 	if ( FLAG_ALL_SET_OR_0(FWaypointDrawBeam, iDrawType) )
 	{
@@ -246,9 +246,9 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 	if ( FLAG_ALL_SET_OR_0(FWaypointDrawBox, iDrawType) )
 	{
 		Vector vBoxOrigin(
-			vOrigin.x - (CBotrixConstants::PLAYER_WIDTH / 2.0f),
-			vOrigin.y - (CBotrixConstants::PLAYER_WIDTH / 2.0f),
-			vOrigin.z - CBotrixConstants::PLAYER_EYE
+			vOrigin.x - (CBotrixParameterVars::PLAYER_WIDTH / 2.0f),
+			vOrigin.y - (CBotrixParameterVars::PLAYER_WIDTH / 2.0f),
+			vOrigin.z - CBotrixParameterVars::PLAYER_EYE
 		);
 
 		CBotrixEngineUtil::DrawBox(vBoxOrigin, Vector(), CBotrixMod::vPlayerCollisionHull, fDrawTime, r, g, b);
@@ -1202,7 +1202,8 @@ TWaypointId CWaypoints::GetAimedWaypoint(const Vector& vOrigin, const Vector& an
 	float lowestDistanceSq = std::numeric_limits<float>::max();
 
 	// We want to calculate based on looking at the centre of a waypoint.
-	const float offsetToCentreOfWaypoint = -CBotrixConstants::PLAYER_EYE + (CBotrixConstants::PLAYER_HEIGHT / 2.0f);
+	const float offsetToCentreOfWaypoint =
+		-CBotrixParameterVars::PLAYER_EYE + (CBotrixParameterVars::PLAYER_HEIGHT / 2.0f);
 
 	Vector viewDir;
 	AngleVectors(ang, viewDir, nullptr, nullptr);
@@ -1308,7 +1309,7 @@ void CWaypoints::Draw(CClient* pClient)
 				Vector vEnd = posOrigin;
 				vEnd.x += 0.3f;
 				vEnd.y += 0.3f;
-				vEnd.z -= CBotrixConstants::PLAYER_EYE;
+				vEnd.z -= CBotrixParameterVars::PLAYER_EYE;
 
 				if ( CBotrixEngineUtil::IsVisiblePVS(aPositions[i]) &&
 					 CBotrixEngineUtil::IsVisible(posOrigin, aPositions[i], EVisibilityWorld) )
@@ -1340,12 +1341,12 @@ void CWaypoints::Draw(CClient* pClient)
 			v.z -= 10.0f;
 			CBotrixEngineUtil::DrawTextAtLocation(v, 0, fDrawTime, 0xFF, 0xFF, 0xFF, "Destination");
 
-			const float halfPlayerWidth = CBotrixConstants::PLAYER_WIDTH / 2.0f;
+			const float halfPlayerWidth = CBotrixParameterVars::PLAYER_WIDTH / 2.0f;
 
 			CBotrixEngineUtil::DrawBox(
-				w.vOrigin - Vector(0.0f, 0.0f, CBotrixConstants::PLAYER_EYE),
+				w.vOrigin - Vector(0.0f, 0.0f, CBotrixParameterVars::PLAYER_EYE),
 				Vector(-halfPlayerWidth, -halfPlayerWidth, 0.0f),
-				Vector(halfPlayerWidth, halfPlayerWidth, CBotrixConstants::PLAYER_HEIGHT),
+				Vector(halfPlayerWidth, halfPlayerWidth, CBotrixParameterVars::PLAYER_HEIGHT),
 				fDrawTime,
 				0xFF,
 				0xFF,
@@ -1414,10 +1415,10 @@ void CWaypoints::AddLadderDismounts(const Vector& ladderNormal, TWaypointId iBot
 	Vector vPerpendicular = CrossProduct(vDirection, vZ);
 
 	Vector vDirections[4];
-	vDirections[0] = vDirection * CBotrixConstants::PLAYER_WIDTH;
-	vDirections[1] = -vDirection * CBotrixConstants::PLAYER_WIDTH;
-	vDirections[2] = vPerpendicular * CBotrixConstants::PLAYER_WIDTH;
-	vDirections[3] = -vPerpendicular * CBotrixConstants::PLAYER_WIDTH;
+	vDirections[0] = vDirection * CBotrixParameterVars::PLAYER_WIDTH;
+	vDirections[1] = -vDirection * CBotrixParameterVars::PLAYER_WIDTH;
+	vDirections[2] = vPerpendicular * CBotrixParameterVars::PLAYER_WIDTH;
+	vDirections[3] = -vPerpendicular * CBotrixParameterVars::PLAYER_WIDTH;
 
 	TWaypointId iWaypoints[2] = {iBottom, iTop};
 
@@ -1425,14 +1426,14 @@ void CWaypoints::AddLadderDismounts(const Vector& ladderNormal, TWaypointId iBot
 	{
 		Vector vWaypointEye = Get(iWaypoints[i]).vOrigin;
 		Vector vLadderWaypointGround = vWaypointEye;
-		vLadderWaypointGround.z -= CBotrixConstants::PLAYER_EYE;
+		vLadderWaypointGround.z -= CBotrixParameterVars::PLAYER_EYE;
 
 		bool bFound = false;
 		for ( int j = 0; j < 4; ++j )
 		{
 			Vector vNew = vWaypointEye + vDirections[j];
 			Vector vCandidate = CBotrixEngineUtil::GetGroundVec(vNew);  // Not hull ground.
-			vCandidate.z += CBotrixConstants::PLAYER_EYE;
+			vCandidate.z += CBotrixParameterVars::PLAYER_EYE;
 
 			if ( vWaypointEye.z - vCandidate.z > fMaxHeight )  // Too high.
 			{
@@ -1455,10 +1456,10 @@ void CWaypoints::AddLadderDismounts(const Vector& ladderNormal, TWaypointId iBot
 			}
 
 			vCandidate = vCandidateGround;
-			vCandidate.z += CBotrixConstants::PLAYER_EYE;
+			vCandidate.z += CBotrixParameterVars::PLAYER_EYE;
 
 			TWaypointId iDismount =
-				CWaypoints::GetNearestWaypoint(vCandidate, NULL, false, CBotrixConstants::PLAYER_WIDTH / 2.0f);
+				CWaypoints::GetNearestWaypoint(vCandidate, NULL, false, CBotrixParameterVars::PLAYER_WIDTH / 2.0f);
 
 			if ( iDismount != EWaypointIdInvalid )
 			{
@@ -1516,7 +1517,7 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		EItemTypeAmmo,
 	};
 
-	const float fPlayerHalfWidth = CBotrixConstants::PLAYER_WIDTH / 2.0f;
+	const float fPlayerHalfWidth = CBotrixParameterVars::PLAYER_WIDTH / 2.0f;
 
 	float fAnalyzeDistance = static_cast<float>(CWaypoint::iAnalyzeDistance);
 	float fAnalyzeDistanceExtra = fAnalyzeDistance * 1.9f;  // To include diagonal, almost but not 2 (Pythagoras).
@@ -1563,9 +1564,9 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 
 				vPos = vMid + vDirection;
 				vPos = CBotrixEngineUtil::GetHumanHullGroundVec(vPos, CBotrixEngineUtil::PositionInHull::Eye);
-				vPos.z += CBotrixConstants::PLAYER_EYE;
+				vPos.z += CBotrixParameterVars::PLAYER_EYE;
 
-				if ( fabsf(vPos.z - vMid.z) > CBotrixConstants::PLAYER_HEIGHT )
+				if ( fabsf(vPos.z - vMid.z) > CBotrixParameterVars::PLAYER_HEIGHT )
 				{
 					// Too high or need to fall to grab, probably needs to grab with gravity gun.
 					continue;
@@ -1583,12 +1584,12 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 
 				vOrigin = items[i].CurrentPosition();
 				vPos = vOrigin;
-				vPos.z += CBotrixConstants::PLAYER_EYE;
+				vPos.z += CBotrixParameterVars::PLAYER_EYE;
 
 				Vector vGround = CBotrixEngineUtil::GetHumanHullGroundVec(vPos, CBotrixEngineUtil::PositionInHull::Eye);
-				vGround.z += CBotrixConstants::PLAYER_EYE;
+				vGround.z += CBotrixParameterVars::PLAYER_EYE;
 
-				if ( fabs(vPos.z - vGround.z) > CBotrixConstants::PLAYER_HEIGHT )
+				if ( fabs(vPos.z - vGround.z) > CBotrixParameterVars::PLAYER_HEIGHT )
 				{
 					// Too high or need to fall to grab, probably needs to grab with gravity gun.
 					continue;
@@ -1689,11 +1690,11 @@ void CWaypoints::Analyze(edict_t* pClient, bool bShowLines)
 		Vector ladderTop = ladderBottom;
 		ladderTop.z = dismountPoints[1]->v.origin[VEC3_Z];
 
-		ladderBottom.z += CBotrixConstants::PLAYER_EYE;
+		ladderBottom.z += CBotrixParameterVars::PLAYER_EYE;
 		ladderBottom = CBotrixEngineUtil::GetHumanHullGroundVec(ladderBottom, CBotrixEngineUtil::PositionInHull::Eye);
-		ladderBottom.z += CBotrixConstants::PLAYER_EYE + 2.0f;
+		ladderBottom.z += CBotrixParameterVars::PLAYER_EYE + 2.0f;
 
-		ladderTop.z += CBotrixConstants::PLAYER_EYE + 2.0f;
+		ladderTop.z += CBotrixParameterVars::PLAYER_EYE + 2.0f;
 		ladderTop = ladderTop - (fPlayerHalfWidth * estimatedNormal);
 
 		TWaypointId w1 = CWaypoints::GetNearestWaypoint(ladderBottom, NULL, false, fPlayerHalfWidth);
@@ -1840,7 +1841,7 @@ void CWaypoints::AnalyzeStep()
 
 	if ( m_iAnalyzeStep < EAnalyzeStepDeleteOrphans )
 	{
-		const float fHalfPlayerWidth = CBotrixConstants::PLAYER_WIDTH / 2.0f;
+		const float fHalfPlayerWidth = CBotrixParameterVars::PLAYER_WIDTH / 2.0f;
 
 		float fAnalyzeDistance = static_cast<float>(CWaypoint::iAnalyzeDistance);
 		float fAnalyzeDistanceExtra = fAnalyzeDistance * 1.9f;  // To include diagonal, almost but not 2 (Pythagoras).
@@ -2082,12 +2083,12 @@ bool CWaypoints::AnalyzeWaypoint(
 	}
 
 	Vector vNewEyePos = vGround;
-	vNewEyePos.z += CBotrixConstants::PLAYER_EYE;
+	vNewEyePos.z += CBotrixParameterVars::PLAYER_EYE;
 
 	if ( CWaypoint::bShowAnalyzePotentialWaypoints )
 	{
 		Vector v = vNewEyePos;
-		v.z -= CBotrixConstants::PLAYER_EYE;
+		v.z -= CBotrixParameterVars::PLAYER_EYE;
 		CBotrixEngineUtil::DrawLine(vNewEyePos, v, 10, 255, 255, 255);
 	}
 
@@ -2285,7 +2286,7 @@ void CWaypoints::DrawWaypointPaths(TWaypointId id, TPathDrawFlags iPathDrawFlags
 	WaypointNode& w = m_cGraph[id];
 
 	unsigned char r, g, b;
-	Vector diff(0, 0, -CBotrixConstants::PLAYER_EYE / 4.0f);
+	Vector diff(0, 0, -CBotrixParameterVars::PLAYER_EYE / 4.0f);
 	float fDrawTime = CWaypoint::DRAW_INTERVAL + (2.0f * gpGlobals->frametime);  // Add two frames to not flick.
 
 	for ( WaypointArcIt it = w.neighbours.begin(); it != w.neighbours.end(); ++it )
@@ -2317,7 +2318,7 @@ void CWaypoints::DrawVisiblePaths(TWaypointId id, TPathDrawFlags iPathDrawFlags)
 	GoodAssert(bValidVisibilityTable && (iPathDrawFlags != FPathDrawNone));
 
 	Vector vOrigin(Get(id).vOrigin);
-	Vector diff(0, 0, -CBotrixConstants::PLAYER_EYE / 2.0f);
+	Vector diff(0, 0, -CBotrixParameterVars::PLAYER_EYE / 2.0f);
 
 	const unsigned char r = 0xFF, g = 0xFF, b = 0xFF;
 	float fDrawTime = CWaypoint::DRAW_INTERVAL + (2.0f * gpGlobals->frametime);  // Add two frames to not flick.

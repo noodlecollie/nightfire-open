@@ -91,7 +91,7 @@ void CClient::PreThink()
 		// if ( CWaypoint::IsValid(iLastWaypoint) )
 		//{
 		//     float fHeight = GetPlayerInfo()->GetPlayerMaxs().z - GetPlayerInfo()->GetPlayerMins().z + 1;
-		//     bool bIsCrouched = (fHeight < CBotrixConstants::PLAYER_HEIGHT);
+		//     bool bIsCrouched = (fHeight < CBotrixParameterVars::PLAYER_HEIGHT);
 
 		//    CWaypoints::CreatePathsWithAutoFlags(iLastWaypoint, iCurrentWaypoint, bIsCrouched, true);
 		//    iDestinationWaypoint = iLastWaypoint;

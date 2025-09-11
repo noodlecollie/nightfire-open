@@ -6,7 +6,7 @@
 #include <good/string_buffer.h>
 
 #include "botrix/bot.h"
-#include "botrix/constants.h"
+#include "botrix/parameter_vars.h"
 #include "EnginePublicAPI/eiface.h"
 #include "botrix/type2string.h"
 #include "engine_util.h"
@@ -193,8 +193,8 @@ void CBotrixBot::TestWaypoints(TWaypointId iFrom, TWaypointId iTo)
 
 	// Make bot appear on the ground (waypoints are at eye level).
 	// The player's origin is the middle of their bbox.
-	vSetOrigin.z -= CBotrixConstants::PLAYER_EYE;
-	vSetOrigin.z += (CBotrixConstants::PLAYER_HEIGHT / 2.0f) + 1;
+	vSetOrigin.z -= CBotrixParameterVars::PLAYER_EYE;
+	vSetOrigin.z += (CBotrixParameterVars::PLAYER_HEIGHT / 2.0f) + 1;
 
 	vSetOrigin.CopyToArray(m_pEdict->v.origin);
 
@@ -1747,8 +1747,8 @@ void CBotrixBot::CheckAttackDuck(CPlayer* pPlayer)
 		if ( !m_bNeedDuck && !m_bAttackDuck & bInRangeDuck )  // Duck only if not ducking already.
 		{
 			Vector vSrc(m_vHead);
-			vSrc.z -= CBotrixConstants::PLAYER_EYE;
-			vSrc.z += CBotrixConstants::PLAYER_EYE_CROUCHED;
+			vSrc.z -= CBotrixParameterVars::PLAYER_EYE;
+			vSrc.z += CBotrixParameterVars::PLAYER_EYE_CROUCHED;
 
 			// Duck, if enemy is visible while ducking.
 			m_bAttackDuck = CBotrixEngineUtil::IsVisible(vSrc, m_pCurrentEnemy->GetHead(), EVisibilityBots);
@@ -2647,13 +2647,18 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 		}
 		else
 		{
-			// m_bNeedSprint = true; // For DEBUG purposes.
-			// NFTODO: Replace these with cvars like cl_forwardspeed
-			fSpeed = CBotrixMod::GetVar(
-				m_bNeedSprint     ? EModVarPlayerVelocitySprint
-					: m_bNeedWalk ? EModVarPlayerVelocityWalk
-								  : EModVarPlayerVelocityRun
-			);
+			if ( m_bNeedSprint )
+			{
+				fSpeed = CBotrixParameterVars::PLAYER_SPRINT_SPEED;
+			}
+			else if ( m_bNeedWalk )
+			{
+				fSpeed = CBotrixParameterVars::PLAYER_WALK_SPEED;
+			}
+			else
+			{
+				fSpeed = CBotrixParameterVars::PLAYER_RUN_SPEED;
+			}
 
 			vNeededVelocity -= m_vHead;  // Destination - head (absolute vector).
 

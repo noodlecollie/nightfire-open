@@ -825,7 +825,8 @@ void DLLEXPORT CL_CreateMove(float frametime, struct usercmd_s* cmd, int active)
 		{
 			// scale the 3 speeds so that the total velocity is not > cl.maxspeed
 			float fmov = sqrtf(
-				(cmd->forwardmove * cmd->forwardmove) + (cmd->sidemove * cmd->sidemove) + (cmd->upmove * cmd->upmove));
+				(cmd->forwardmove * cmd->forwardmove) + (cmd->sidemove * cmd->sidemove) + (cmd->upmove * cmd->upmove)
+			);
 
 			if ( fmov > spd )
 			{
@@ -1098,7 +1099,7 @@ void InitInput(void)
 	cl_forwardspeed = gEngfuncs.pfnRegisterVariable("cl_forwardspeed", "250", FCVAR_ARCHIVE);
 	cl_backspeed = gEngfuncs.pfnRegisterVariable("cl_backspeed", "250", FCVAR_ARCHIVE);
 	cl_sidespeed = gEngfuncs.pfnRegisterVariable("cl_sidespeed", "215", 0);
-	cl_movespeedkey = gEngfuncs.pfnRegisterVariable("cl_movespeedkey", "0.3", 0);
+	cl_movespeedkey = gEngfuncs.pfnRegisterVariable("cl_movespeedkey", "0.5", 0);
 	cl_pitchup = gEngfuncs.pfnRegisterVariable("cl_pitchup", "89", 0);
 	cl_pitchdown = gEngfuncs.pfnRegisterVariable("cl_pitchdown", "89", 0);
 

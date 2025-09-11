@@ -6,7 +6,7 @@
 #include "botrix/waypoint.h"
 #include "botrix/botrixgamerulesinterface.h"
 #include "botrix/defines.h"
-#include "botrix/constants.h"
+#include "botrix/parameter_vars.h"
 #include "enginecallback.h"
 #include "standard_includes.h"
 #include "gamerules.h"
@@ -176,7 +176,7 @@ Vector
 CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt, int hull, float startSolidNudge)
 {
 	// The returned point is the middle of the hull, so this corrects to return the base.
-	const Vector groundCorrection(0.0f, 0.0f, CBotrixConstants::PLAYER_HEIGHT / 2.0f);
+	const Vector groundCorrection(0.0f, 0.0f, CBotrixParameterVars::PLAYER_HEIGHT / 2.0f);
 
 	// If we're allowed to nudge, allow us to try more than one iteration.
 	const size_t totalIterations = startSolidNudge > 0.0f ? 5 : 1;
@@ -266,15 +266,15 @@ Vector CBotrixEngineUtil::GetHumanHullGroundVec(
 		// Given the eye position, need the hull centre position.
 		case PositionInHull::Eye:
 		{
-			traceStart.z -= CBotrixConstants::PLAYER_EYE;
-			traceStart.z += CBotrixConstants::PLAYER_HEIGHT / 2.0f;
+			traceStart.z -= CBotrixParameterVars::PLAYER_EYE;
+			traceStart.z += CBotrixParameterVars::PLAYER_HEIGHT / 2.0f;
 			break;
 		}
 
 		// Given the feet position, need the hull centre position.
 		case PositionInHull::Feet:
 		{
-			traceStart.z += CBotrixConstants::PLAYER_HEIGHT / 2.0f;
+			traceStart.z += CBotrixParameterVars::PLAYER_HEIGHT / 2.0f;
 			break;
 		};
 
@@ -376,12 +376,12 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		return EReachNotReachable;  // Can happens when the vDestGround is inside some solid.
 	}
 
-	if ( zDiff != CBotrixConstants::PLAYER_EYE && zDiff != CBotrixConstants::PLAYER_EYE_CROUCHED )
+	if ( zDiff != CBotrixParameterVars::PLAYER_EYE && zDiff != CBotrixParameterVars::PLAYER_EYE_CROUCHED )
 	{
 		if ( !bCrouch )
 		{
 			// Try to stand up.
-			vDestEyePos.z = vDestGround.z + CBotrixConstants::PLAYER_EYE;
+			vDestEyePos.z = vDestGround.z + CBotrixParameterVars::PLAYER_EYE;
 			HumanHullTrace(vDestGround, vDestEyePos);
 			bCrouch = TraceHitSomething();
 		}
@@ -389,7 +389,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		if ( bCrouch )
 		{
 			// Try to stand up crouching.
-			vDestEyePos.z = vDestGround.z + CBotrixConstants::PLAYER_EYE_CROUCHED;
+			vDestEyePos.z = vDestGround.z + CBotrixParameterVars::PLAYER_EYE_CROUCHED;
 			HumanHullTrace(vDestGround, vDestEyePos, head_hull);
 
 			if ( TraceHitSomething() )
@@ -555,7 +555,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		{
 			// We actually made it to the waypoint location, but our Z changed.
 			// Update the destination vector.
-			vDestEyePos = vHit + Vector(0.0f, 0.0f, CBotrixConstants::PLAYER_EYE);
+			vDestEyePos = vHit + Vector(0.0f, 0.0f, CBotrixParameterVars::PLAYER_EYE);
 		}
 		else
 		{
@@ -799,7 +799,7 @@ TReach CBotrixEngineUtil::CanClimbSlope(const Vector& vSrc, const Vector& vDest)
 // collision
 void CBotrixEngineUtil::HumanHullTrace(const Vector& vGround1, const Vector& vGround2, int hull)
 {
-	const float halfPlayerHeight = CBotrixConstants::PLAYER_HEIGHT / 2.0f;
+	const float halfPlayerHeight = CBotrixParameterVars::PLAYER_HEIGHT / 2.0f;
 
 	Vector begin = vGround1;
 	begin.z += halfPlayerHeight;
