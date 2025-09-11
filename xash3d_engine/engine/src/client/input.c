@@ -76,7 +76,8 @@ uint IN_CollectInputDevices(void)
 		FBitSet(ret, INPUT_DEVICE_MOUSE) ? "mouse " : "",
 		FBitSet(ret, INPUT_DEVICE_TOUCH) ? "touch " : "",
 		FBitSet(ret, INPUT_DEVICE_JOYSTICK) ? "joy " : "",
-		FBitSet(ret, INPUT_DEVICE_VR) ? "vr " : "");
+		FBitSet(ret, INPUT_DEVICE_VR) ? "vr " : ""
+	);
 
 	return ret;
 }
@@ -422,7 +423,8 @@ void IN_Init(void)
 		"cl_forwardspeed",
 		"280",
 		FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_FILTERABLE,
-		"Default forward move speed");
+		"Default forward move speed"
+	);
 	cl_backspeed =
 		Cvar_Get("cl_backspeed", "280", FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_FILTERABLE, "Default back move speed");
 	cl_sidespeed =
@@ -464,9 +466,14 @@ static void IN_JoyAppendMove(usercmd_t* cmd, float forwardmove, float sidemove)
 	static uint moveflags = T | S;
 
 	if ( forwardmove )
+	{
 		cmd->forwardmove = forwardmove * cl_forwardspeed->value;
+	}
+
 	if ( sidemove )
+	{
 		cmd->sidemove = sidemove * cl_sidespeed->value;
+	}
 
 	if ( forwardmove )
 	{

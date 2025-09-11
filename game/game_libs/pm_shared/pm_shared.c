@@ -80,8 +80,6 @@ playermove_t* pmove = NULL;
 
 #define PLAYER_LONGJUMP_SPEED 350  // how fast we longjump
 
-#define PLAYER_DUCKING_MULTIPLIER 0.333f
-
 #ifndef MAX_OF
 #define MAX_OF(a, b) (((a) > (b)) ? (a) : (b))
 #endif
