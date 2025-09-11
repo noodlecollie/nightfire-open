@@ -286,6 +286,8 @@ set(SOURCES_SERVER
 	botrix/logbuffer.h
 	botrix/logbuffer.cpp
 	botrix/movecmd.h
+	botrix/parameter_vars.h
+	botrix/parameter_vars.cpp
 	botrix/players.h
 	botrix/players.cpp
 	botrix/server_plugin.h

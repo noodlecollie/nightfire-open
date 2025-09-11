@@ -9,6 +9,7 @@
 #include "botrix/waypoint.h"
 #include "botrix/item.h"
 #include "botrix/bot.h"
+#include "botrix/parameter_vars.h"
 #include "MathLib/mathlib.h"
 #include "utils/mp_utils.h"
 
@@ -43,27 +44,9 @@ float CBotrixMod::fSpawnProtectionTime = 0;
 int CBotrixMod::iSpawnProtectionHealth = 0;
 
 // TDeathmatchFlags CBotrixMod::iDeathmatchFlags = -1;
-CUtlVector<float> CBotrixMod::m_aVars[EModVarTotal];
-
-Vector CBotrixMod::vPlayerCollisionHull;
-Vector CBotrixMod::vPlayerCollisionHullCrouched;
-
-Vector CBotrixMod::vPlayerCollisionHullMins;
-Vector CBotrixMod::vPlayerCollisionHullMaxs;
-
-Vector CBotrixMod::vPlayerCollisionHullCrouchedMins;
-Vector CBotrixMod::vPlayerCollisionHullCrouchedMaxs;
-
-Vector CBotrixMod::vPlayerCollisionHullMaxsGround;
-
-int CBotrixMod::iPlayerRadius;
 
 int CBotrixMod::iNearItemMaxDistanceSqr = SQR(312);
 int CBotrixMod::iItemPickUpDistance = 100;
-
-int CBotrixMod::iPointTouchSquaredXY;
-int CBotrixMod::iPointTouchSquaredZ;
-int CBotrixMod::iPointTouchLadderSquaredZ;
 
 //----------------------------------------------------------------------------------------------------------------
 bool CBotrixMod::LoadDefaults(TModId iModId)
@@ -73,35 +56,6 @@ bool CBotrixMod::LoadDefaults(TModId iModId)
 	m_aFrameEvents.Purge();
 	m_aFrameEvents.EnsureCapacity(8);
 
-	const float defaults[EModVarTotal] = {
-		/*max_health = */ 100.0f,
-		/*max_armor = */ 100.0f,
-
-		/*player_width = */ 32.0f,
-		/*player_height = */ 72.0f,
-		/*player_height_crouched = */ 36.0f,
-		/*player_eye = */ 64.0f,
-		/*player_eye_crouched = */ 36.0f,
-
-		/*velocity_crouch = */ 250.0f * 0.3f,
-		/*velocity_walk = */ 250.0f,
-		/*velocity_run = */ 250.0f,
-		/*velocity_sprint = */ 327.5f,
-
-		/*obstacle_height_no_jump = */ 18.0f,
-		/*jump_height = */ 20.0f,
-		/*jump_height_crouched = */ 56.0f,
-
-		/*max_height_no_fall_damage = */ 185.0f,
-		/*max_slope_gradient = */ 45.0f,
-	};
-
-	for ( TModVar iVar = 0; iVar < EModVarTotal; ++iVar )
-	{
-		m_aVars[iVar].Purge();
-		m_aVars[iVar].AddToTail(defaults[iVar]);
-	}
-
 	pCurrentMod.reset(new CBotrixModDetail());
 
 	return true;
@@ -110,32 +64,8 @@ bool CBotrixMod::LoadDefaults(TModId iModId)
 //----------------------------------------------------------------------------------------------------------------
 void CBotrixMod::Prepare()
 {
-	float fWidth = m_aVars[EModVarPlayerWidth][0];
-	float fHalfWidth = fWidth / 2.0f;
-	float fHeight = m_aVars[EModVarPlayerHeight][0];
-	float fHeightCrouched = m_aVars[EModVarPlayerHeightCrouched][0];
-	float fJumpCrouched = m_aVars[EModVarPlayerJumpHeightCrouched][0];
-
-	iPlayerRadius = static_cast<int>(rsqrt(2 * SQR(fHalfWidth)));  // Pythagoras.
-	iPointTouchSquaredXY = static_cast<int>(SQR(fWidth / 4));
-	iPointTouchSquaredZ = static_cast<int>(SQR(fJumpCrouched));
-	iPointTouchLadderSquaredZ = SQR(5);
-
-	CWaypoint::iAnalyzeDistance = static_cast<int>(fWidth * 2);
-	CWaypoint::iDefaultDistance = static_cast<int>(fWidth * 4);
-
-	// Get max collision hull, so bot doesn't stack (when auto-create waypoints).
-	// fWidth *= FastSqrt( 2.0f );
-	// fHalfWidth = fWidth / 2.0f;
-
-	vPlayerCollisionHull = Vector(fWidth, fWidth, fHeight);
-	vPlayerCollisionHullMins = Vector(-fHalfWidth, -fHalfWidth, 0);
-	vPlayerCollisionHullMaxs = Vector(fHalfWidth, fHalfWidth, fHeight);
-	vPlayerCollisionHullMaxsGround = Vector(fHalfWidth, fHalfWidth, 1.0f);
-
-	vPlayerCollisionHullCrouched = Vector(fWidth, fWidth, fHeightCrouched);
-	vPlayerCollisionHullCrouchedMins = Vector(-fHalfWidth, -fHalfWidth, 0);
-	vPlayerCollisionHullCrouchedMaxs = Vector(fHalfWidth, fHalfWidth, fHeightCrouched);
+	CWaypoint::iAnalyzeDistance = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH * 2.0f);
+	CWaypoint::iDefaultDistance = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH * 4.0f);
 }
 
 //----------------------------------------------------------------------------------------------------------------

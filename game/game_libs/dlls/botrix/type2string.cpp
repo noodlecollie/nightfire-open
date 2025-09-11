@@ -164,38 +164,6 @@ const good::string& CTypeToString::ModToString(TModId iMod)
 }
 
 //----------------------------------------------------------------------------------------------------------------
-// Ordered by TModId.
-//----------------------------------------------------------------------------------------------------------------
-good::string aModVars[EModVarTotal] = {
-	"max_health",
-	"max_armor",
-	"player_width",
-	"player_height",
-	"player_height_crouched",
-	"player_eye",
-	"player_eye_crouched",
-	"velocity_crouch",
-	"velocity_walk",
-	"velocity_run",
-	"velocity_sprint",
-	"obstacle_height_no_jump",
-	"jump_height",
-	"jump_height_crouched",
-	"max_height_no_fall_damage",
-	"max_slope_gradient",
-};
-
-TModVar CTypeToString::ModVarFromString(const good::string& sVar)
-{
-	return EnumFromString(sVar, EModVarTotal, aModVars);
-}
-
-const good::string& CTypeToString::ModVarToString(TModVar iVar)
-{
-	return EnumToString(iVar, EModVarTotal, aModVars, sUnknown);
-}
-
-//----------------------------------------------------------------------------------------------------------------
 // Ordered by TCommandAccessFlags.
 //----------------------------------------------------------------------------------------------------------------
 good::string aAccessFlags[ECommandAccessFlagTotal] = {

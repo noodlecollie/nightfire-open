@@ -80,8 +80,6 @@ playermove_t* pmove = NULL;
 
 #define PLAYER_LONGJUMP_SPEED 350  // how fast we longjump
 
-#define PLAYER_DUCKING_MULTIPLIER 0.333f
-
 #ifndef MAX_OF
 #define MAX_OF(a, b) (((a) > (b)) ? (a) : (b))
 #endif
@@ -2240,7 +2238,9 @@ void PM_Jump(void)
 	}
 
 	if ( pmove->oldbuttons & IN_JUMP )
+	{
 		return;  // don't pogo stick
+	}
 
 	if ( g_bhopcap )
 	{

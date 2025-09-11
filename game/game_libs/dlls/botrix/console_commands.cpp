@@ -7,6 +7,7 @@
 #include "botrix/item.h"
 #include "botrix/weapon.h"
 #include "botrix/bot.h"
+#include "botrix/parameter_vars.h"
 
 #include "PlatformLib/String.h"
 
@@ -701,7 +702,7 @@ TCommandResult CWaypointCreateCommand::Execute(CClient* pClient, int argc, const
 
 	// Check if player is crouched.
 	float fHeight = pClient->GetPlayerInfo()->GetPlayerMaxs().z - pClient->GetPlayerInfo()->GetPlayerMins().z + 1;
-	bool bIsCrouched = (fHeight < CBotrixMod::GetVar(EModVarPlayerHeight));
+	bool bIsCrouched = (fHeight < CBotrixParameterVars::PLAYER_HEIGHT);
 
 	if ( pClient->bAutoCreatePaths )
 	{
@@ -2047,7 +2048,6 @@ TCommandResult CWaypointProbeNeighboursCommand::Execute(CClient* pClient, int ar
 	}
 
 	// This is just a rough duplication of CWaypoints::AnalyzeStep() and CWaypoints::AnalyzeWaypoint().
-	float fPlayerEye = CBotrixMod::GetVar(EModVarPlayerEye);
 	float fAnalyzeDistance = static_cast<float>(CWaypoint::iAnalyzeDistance);
 	float fAnalyzeDistanceExtra = fAnalyzeDistance * 1.9f;  // To include diagonal, almost but not 2 (Pythagoras).
 	float fAnalyzeDistanceExtraSqr = fAnalyzeDistanceExtra * 1.9f;
@@ -2081,7 +2081,7 @@ TCommandResult CWaypointProbeNeighboursCommand::Execute(CClient* pClient, int ar
 				4.0f
 			);
 
-			Vector candidateEyePos = candidateGroundPos + Vector(0.0f, 0.0f, fPlayerEye);
+			Vector candidateEyePos = candidateGroundPos + Vector(0.0f, 0.0f, CBotrixParameterVars::PLAYER_EYE);
 
 			bool bCrouch = false;
 			TReach reachFirstToSecond = CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
@@ -2596,7 +2596,7 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 	if ( pClient->IsAlive() && iFlags == FPathNone )
 	{
 		float fHeight = pClient->GetPlayerInfo()->GetPlayerMaxs().z - pClient->GetPlayerInfo()->GetPlayerMins().z + 1;
-		if ( fHeight < CBotrixMod::GetVar(EModVarPlayerHeight) )
+		if ( fHeight < CBotrixParameterVars::PLAYER_HEIGHT )
 		{
 			iFlags = FPathCrouch;
 		}
@@ -4902,7 +4902,9 @@ TCommandResult CConfigLogCommand::Execute(CClient* pClient, int argc, const char
 TCommandResult CConfigWaypointAnalyzeDistance::Execute(CClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+	{
 		return ECommandPerformed;
+	}
 
 	edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
 
@@ -4911,11 +4913,15 @@ TCommandResult CConfigWaypointAnalyzeDistance::Execute(CClient* pClient, int arg
 		BULOG_I(pEdict, "Invalid parameters count.");
 		return ECommandError;
 	}
+
 	if ( argc == 1 )
 	{
 		int iDistance = -1;
+
 		if ( PlatformLib_SScanF(argv[0], "%d", &iDistance) != 1 )
+		{
 			iDistance = -1;
+		}
 
 		if ( iDistance < -1 )
 		{
@@ -4923,7 +4929,8 @@ TCommandResult CConfigWaypointAnalyzeDistance::Execute(CClient* pClient, int arg
 			return ECommandError;
 		}
 
-		int iWidth = (int)CBotrixMod::GetVar(EModVarPlayerWidth);
+		int iWidth = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH);
+
 		if ( iDistance <= iWidth )
 		{
 			BULOG_W(pEdict, "Error, the distance should be at least player's width (%d).", iWidth);
@@ -4932,6 +4939,7 @@ TCommandResult CConfigWaypointAnalyzeDistance::Execute(CClient* pClient, int arg
 
 		CWaypoint::iAnalyzeDistance = iDistance;
 	}
+
 	BULOG_I(pEdict, "Default distance between waypoints for map analysis: %d.", CWaypoint::iAnalyzeDistance);
 	return ECommandPerformed;
 }

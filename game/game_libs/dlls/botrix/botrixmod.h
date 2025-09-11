@@ -80,25 +80,6 @@ public:  // Methods.
 	/// Get random bot name from [General] section, key bot_names.
 	static const good::string& GetRandomBotName(TBotIntelligence iIntelligence);
 
-	/// Get var value for needed class.
-	static float GetVar(TModVar iVar, TClass iClass = 0)
-	{
-		GoodAssert(0 <= iVar && iVar < EModVarTotal);
-		int iIndex = iClass < m_aVars[iVar].Count() ? iClass : 0;
-		return m_aVars[iVar][iIndex];
-	}
-
-	static void SetVars(const CUtlVector<float>* aVars)
-	{
-		for ( int iVar = 0; iVar < EModVarTotal; ++iVar )
-		{
-			if ( aVars[iVar].Count() > 0 )
-			{
-				m_aVars[iVar] = aVars[iVar];
-			}
-		}
-	}
-
 	static const char* GetLastError();
 
 public:  // Static members.
@@ -123,29 +104,12 @@ public:  // Static members.
 
 	//    static TDeathmatchFlags iDeathmatchFlags;       ///< Flags for deathmatch mode.
 
-	static Vector vPlayerCollisionHull;  ///< Maxs of player collision box with origin in (0, 0, 0).
-	static Vector vPlayerCollisionHullCrouched;  ///< Maxs of crouched player collision box with origin in (0, 0, 0).
-
-	static Vector vPlayerCollisionHullMins;  // Those are for centered hull in (0, 0, 0).
-	static Vector vPlayerCollisionHullMaxs;
-
-	static Vector vPlayerCollisionHullCrouchedMins;
-	static Vector vPlayerCollisionHullCrouchedMaxs;
-
-	static Vector vPlayerCollisionHullMaxsGround;
-
 	static float fMinNonStuckSpeed;  ///< Minimum velocity to consider that bot is moving and non stucked.
 
-	static int iPlayerRadius;  ///< Player's radius (used to check if bot is stucked).
 	static int iNearItemMaxDistanceSqr;  ///< Max distance to consider item to be near to player.
 	static int iItemPickUpDistance;  ///< Additional distance from player to item to consider it taken.
 									 // Item is picked, if distance-to-player < player's-radius + item's-radius +
 									 // this-distance.
-
-	static int iPointTouchSquaredXY;  ///< Squared distance to consider that we are touching waypoint.
-	static int iPointTouchSquaredZ;  ///< Z distance to consider that we are touching waypoint. Should be no more than
-									 ///< player can jump.
-	static int iPointTouchLadderSquaredZ;  ///< Z distance to consider that we are touching waypoint while on ladder.
 
 protected:  // Methods.
 	friend class CConfiguration;  // Give access to next protected methods.
@@ -155,9 +119,6 @@ protected:  // Methods.
 
 protected:  // Members.
 	static TModId m_iModId;  // Mod id.
-
-	// Mod vars.
-	static CUtlVector<float> m_aVars[EModVarTotal];
 
 	static bool m_bMapHas[EItemTypeCanPickTotal];  // To check if map has items or waypoints of types: health, armor,
 												   // weapon, ammo.
@@ -195,7 +156,8 @@ public:  // Methods.
 		TTeam iTeam,
 		TClass iClass,
 		int iParamsCount,
-		const char** aParams);
+		const char** aParams
+	);
 
 	/// Get waypoint type count.
 	int GetWaypointTypeCount()

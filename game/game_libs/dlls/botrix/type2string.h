@@ -39,14 +39,6 @@ public:
 	static const good::string& ModToString(TModId iMod);
 
 	//------------------------------------------------------------------------------------------------------------
-	/// Get mod var from string.
-	//------------------------------------------------------------------------------------------------------------
-	static TModVar ModVarFromString(const good::string& sVar);
-
-	/// Get string from mod var.
-	static const good::string& ModVarToString(TModVar iVar);
-
-	//------------------------------------------------------------------------------------------------------------
 	/// Get access flags from string.
 	//------------------------------------------------------------------------------------------------------------
 	static int AccessFlagsFromString(const good::string& sFlags);

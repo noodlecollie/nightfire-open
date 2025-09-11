@@ -6,6 +6,7 @@
 #include <good/string_buffer.h>
 
 #include "botrix/bot.h"
+#include "botrix/parameter_vars.h"
 #include "EnginePublicAPI/eiface.h"
 #include "botrix/type2string.h"
 #include "engine_util.h"
@@ -192,8 +193,8 @@ void CBotrixBot::TestWaypoints(TWaypointId iFrom, TWaypointId iTo)
 
 	// Make bot appear on the ground (waypoints are at eye level).
 	// The player's origin is the middle of their bbox.
-	vSetOrigin.z -= CBotrixMod::GetVar(EModVarPlayerEye);
-	vSetOrigin.z += (CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f) + 1;
+	vSetOrigin.z -= CBotrixParameterVars::PLAYER_EYE;
+	vSetOrigin.z += (CBotrixParameterVars::PLAYER_HEIGHT / 2.0f) + 1;
 
 	vSetOrigin.CopyToArray(m_pEdict->v.origin);
 
@@ -823,7 +824,7 @@ bool CBotrixBot::DoWaypointAction()
 		else if ( FLAG_SOME_SET(FWaypointArmorMachine, w.iFlags) )
 		{
 			m_iLastHealthArmor = -1;
-			m_bNeedUse = m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor);
+			m_bNeedUse = m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR;
 			m_bUsingHealthMachine = false;
 			m_bUsingArmorMachine = m_bNeedUse;
 			m_bUsingButton = false;
@@ -1254,7 +1255,8 @@ void CBotrixBot::WeaponCheckCurrent(bool bAddToBotWeapons)
 		// Add weapon class first.
 		BLOG_W("%s -> Adding new weapon class %s.", GetName(), szCurrentWeapon);
 		CItemClass cWeaponClass;
-		cWeaponClass.fPickupDistanceSqr = static_cast<float>(CBotrixMod::iPlayerRadius) * 4.0f;  // 4*player's radius.
+		cWeaponClass.fPickupDistanceSqr =
+			static_cast<float>(CBotrixParameterVars::GetPlayerRadiusInt()) * 4.0f;  // 4*player's radius.
 		cWeaponClass.fPickupDistanceSqr *= cWeaponClass.fPickupDistanceSqr;
 		// Don't set engine name so mod will think that there is no such weapon in this map.
 		// cWeaponClass.szEngineName = szCurrentWeapon;
@@ -1607,7 +1609,8 @@ void CBotrixBot::UpdateWorld()
 				m_aNearPlayers.set(m_iNextCheckPlayer);
 
 				// Check if players are not stuck with each other.
-				if ( m_bStuck && !m_bStuckTryingSide && (fDistSqr <= (SQR(CBotrixMod::iPlayerRadius) << 2)) )
+				if ( m_bStuck && !m_bStuckTryingSide &&
+					 (fDistSqr <= (SQR(CBotrixParameterVars::GetPlayerRadiusInt()) * 4)) )
 				{
 					Vector vNeeded(m_vDestination);
 					Vector vOther(pCheckPlayer->GetHead());
@@ -1742,15 +1745,15 @@ void CBotrixBot::CheckAttackDuck(CPlayer* pPlayer)
 	{
 		bool bInRangeDuck = (m_cAttackDuckRangeSqr.first <= m_fDistanceSqrToEnemy) &&
 			(m_fDistanceSqrToEnemy <= m_cAttackDuckRangeSqr.second);
+
 		if ( !m_bNeedDuck && !m_bAttackDuck & bInRangeDuck )  // Duck only if not ducking already.
 		{
 			Vector vSrc(m_vHead);
-			vSrc.z -= CBotrixMod::GetVar(EModVarPlayerEye) - CBotrixMod::GetVar(EModVarPlayerEyeCrouched);
-			m_bAttackDuck = CBotrixEngineUtil::IsVisible(
-				vSrc,
-				m_pCurrentEnemy->GetHead(),
-				EVisibilityBots
-			);  // Duck, if enemy is visible while ducking.
+			vSrc.z -= CBotrixParameterVars::PLAYER_EYE;
+			vSrc.z += CBotrixParameterVars::PLAYER_EYE_CROUCHED;
+
+			// Duck, if enemy is visible while ducking.
+			m_bAttackDuck = CBotrixEngineUtil::IsVisible(vSrc, m_pCurrentEnemy->GetHead(), EVisibilityBots);
 		}
 		else
 		{
@@ -2200,7 +2203,7 @@ bool CBotrixBot::ResolveStuckMove()
 		else
 		{
 			float zDistance = pStuckObject->pEdict->v.maxs[VEC3_Z] - pStuckObject->pEdict->v.mins[VEC3_Z];
-			if ( zDistance <= CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched) )  // Can jump on it.
+			if ( zDistance <= CBotrixParameterVars::CalcMaxHeightOfCrouchJump() )  // Can jump on it.
 			{
 				BotDebug(
 					"%s -> Stuck, will jump on object %s.",
@@ -2468,13 +2471,14 @@ bool CBotrixBot::NormalMove()
 	else
 	{
 		// Need to move only when not arrived.
-		bArrived = CWaypoint::IsValid(iNextWaypoint) ? MoveBetweenWaypoints()
-													 : CBotrixEngineUtil::IsPointTouch3d(
-														   m_vHead,
-														   m_vDestination,
-														   CBotrixMod::iPointTouchSquaredZ,
-														   CBotrixMod::iPointTouchSquaredXY
-													   );
+		bArrived = CWaypoint::IsValid(iNextWaypoint)
+			? MoveBetweenWaypoints()
+			: CBotrixEngineUtil::IsPointTouch3d(
+				  m_vHead,
+				  m_vDestination,
+				  CBotrixParameterVars::CalcSquaredPointTouchDistanceForZAxis(),
+				  CBotrixParameterVars::DIST_SQR_POINT_TOUCH_XY
+			  );
 		m_bNeedMove = !bArrived;
 	}
 
@@ -2646,13 +2650,18 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 		}
 		else
 		{
-			// m_bNeedSprint = true; // For DEBUG purposes.
-			// NFTODO: Replace these with cvars like cl_forwardspeed
-			fSpeed = CBotrixMod::GetVar(
-				m_bNeedSprint     ? EModVarPlayerVelocitySprint
-					: m_bNeedWalk ? EModVarPlayerVelocityWalk
-								  : EModVarPlayerVelocityRun
-			);
+			if ( m_bNeedSprint )
+			{
+				fSpeed = CBotrixParameterVars::PLAYER_SPRINT_SPEED;
+			}
+			else if ( m_bNeedWalk )
+			{
+				fSpeed = CBotrixParameterVars::PLAYER_WALK_SPEED;
+			}
+			else
+			{
+				fSpeed = CBotrixParameterVars::PLAYER_RUN_SPEED;
+			}
 
 			vNeededVelocity -= m_vHead;  // Destination - head (absolute vector).
 
@@ -3190,7 +3199,7 @@ void CBot_HL2DM::HurtBy(int iPlayerIndex, CPlayer* pAttacker, int iHealthNow)
 		CheckEnemy(iPlayerIndex, pAttacker, false);
 	}
 
-	if ( iHealthNow < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 2) )
+	if ( iHealthNow < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f) )
 	{
 		m_bNeedTaskCheck = true;  // Check if need search for health.
 	}
@@ -3439,9 +3448,9 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 	TBotIntelligence iWeaponPreference = m_iIntelligence;
 
 	bool bNeedHealth = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-		(m_PlayerInfo.GetHealth() < CBotrixMod::GetVar(EModVarPlayerMaxHealth));
-	bool bNeedHealthBad = bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 2));
-	bool bAlmostDead = bNeedHealthBad && (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 5));
+		(m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
+	bool bNeedHealthBad = bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f));
+	bool bAlmostDead = bNeedHealthBad && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 5.0f));
 	bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
 	bool bNeedAmmo = pWeapon && CBotrixMod::HasMapItems(EItemTypeAmmo);
 
@@ -3497,7 +3506,7 @@ restart_find_task:  // TODO: remove gotos.
 			iNewTask = EBotTaskFindHealth;
 		}
 		else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
-				  (m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
+				  (m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR) )  // Need armor.
 		{
 			iNewTask = EBotTaskFindArmor;
 		}
@@ -3685,7 +3694,8 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 	TBotIntelligence iWeaponPreference = m_iIntelligence;
 
 	const bool bAlmostDead = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-		(m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 5));
+		(m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 5.0f));
+
 	bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
 
 	TWeaponId iWeapon = EWeaponIdInvalid;
@@ -3896,10 +3906,10 @@ TBotTask CBot_HL2DM::ChooseNewTask(
 	TBotTask iNewTask = EBotTaskInvalid;
 
 	const bool bNeedHealth = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-		(m_PlayerInfo.GetHealth() < CBotrixMod::GetVar(EModVarPlayerMaxHealth));
+		(m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
 
 	const bool bNeedHealthBad =
-		bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 2));
+		bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f));
 
 	const bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
 	const bool bNeedAmmo = pWeapon && CBotrixMod::HasMapItems(EItemTypeAmmo);
@@ -3935,7 +3945,7 @@ TBotTask CBot_HL2DM::ChooseNewTask(
 			iNewTask = EBotTaskFindHealth;
 		}
 		else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
-				  (m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
+				  (m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR) )  // Need armor.
 		{
 			iNewTask = EBotTaskFindArmor;
 		}

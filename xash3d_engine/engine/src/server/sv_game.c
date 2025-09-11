@@ -14,6 +14,7 @@ GNU General Public License for more details.
 */
 
 #include <limits.h>
+#include "EngineInternalAPI/log_strings.h"
 #include "MathLib/vec3.h"
 #include "MathLib/angles.h"
 #include "MathLib/utils.h"
@@ -4236,23 +4237,30 @@ void GAME_EXPORT pfnClientPrintf(edict_t* pEdict, PRINT_TYPE ptype, const char* 
 
 	if ( (client = SV_ClientFromEdict(pEdict, false)) == NULL )
 	{
-		Con_Printf("tried to sprint to a non-client\n");
+		Con_Printf(S_WARN "Tried to printf to a non-client\n");
 		return;
 	}
 
 	if ( FBitSet(client->flags, FCL_FAKECLIENT) )
+	{
 		return;
+	}
 
 	switch ( ptype )
 	{
 		case print_console:
 		case print_chat:
+		{
 			SV_ClientPrintf(client, "%s", szMsg);
 			break;
+		}
+
 		case print_center:
+		{
 			MSG_BeginServerCmd(&client->netchan.message, svc_centerprint);
 			MSG_WriteString(&client->netchan.message, szMsg);
 			break;
+		}
 	}
 }
 

@@ -16,6 +16,9 @@
 #ifndef PM_SHARED_H
 #define PM_SHARED_H
 
+// Speed multiplier for when the player is ducking
+#define PLAYER_DUCKING_MULTIPLIER 0.333f
+
 void PM_Init(struct playermove_s* ppmove);
 void PM_Move(struct playermove_s* ppmove, int server);
 

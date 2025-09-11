@@ -6,6 +6,7 @@
 #include "botrix/waypoint.h"
 #include "botrix/botrixgamerulesinterface.h"
 #include "botrix/defines.h"
+#include "botrix/parameter_vars.h"
 #include "enginecallback.h"
 #include "standard_includes.h"
 #include "gamerules.h"
@@ -175,7 +176,7 @@ Vector
 CBotrixEngineUtil::GetHullGroundVec(const Vector& vSrc, struct edict_s* ignoreEnt, int hull, float startSolidNudge)
 {
 	// The returned point is the middle of the hull, so this corrects to return the base.
-	const Vector groundCorrection(0.0f, 0.0f, CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f);
+	const Vector groundCorrection(0.0f, 0.0f, CBotrixParameterVars::PLAYER_HEIGHT / 2.0f);
 
 	// If we're allowed to nudge, allow us to try more than one iteration.
 	const size_t totalIterations = startSolidNudge > 0.0f ? 5 : 1;
@@ -265,15 +266,15 @@ Vector CBotrixEngineUtil::GetHumanHullGroundVec(
 		// Given the eye position, need the hull centre position.
 		case PositionInHull::Eye:
 		{
-			traceStart.z -= CBotrixMod::GetVar(EModVarPlayerEye);
-			traceStart.z += CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f;
+			traceStart.z -= CBotrixParameterVars::PLAYER_EYE;
+			traceStart.z += CBotrixParameterVars::PLAYER_HEIGHT / 2.0f;
 			break;
 		}
 
 		// Given the feet position, need the hull centre position.
 		case PositionInHull::Feet:
 		{
-			traceStart.z += CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f;
+			traceStart.z += CBotrixParameterVars::PLAYER_HEIGHT / 2.0f;
 			break;
 		};
 
@@ -343,13 +344,6 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		return EReachReachable;
 	}
 
-	// Get all needed vars ready.
-	float fPlayerEye = CBotrixMod::GetVar(EModVarPlayerEye);
-	float fPlayerEyeCrouched = CBotrixMod::GetVar(EModVarPlayerEyeCrouched);
-
-	// Vector vGroundMaxs = CBotrixMod::vPlayerCollisionHullMaxsGround;
-	// vGroundMaxs.z = 1.0f;
-
 	// Get ground positions.
 	Vector vSrcGround = GetHumanHullGroundVec(vSrcEyePos, PositionInHull::Eye);
 
@@ -366,7 +360,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	}
 
 	// Check if take damage at fall.
-	if ( vSrcGround.z - vDestGround.z >= CBotrixMod::GetVar(EModVarHeightForFallDamage) )
+	if ( vSrcGround.z - vDestGround.z >= CBotrixParameterVars::CalcMaxFallDistanceWithoutDamage() )
 	{
 		return EReachNotReachable;
 	}
@@ -379,12 +373,12 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		return EReachNotReachable;  // Can happens when the vDestGround is inside some solid.
 	}
 
-	if ( zDiff != fPlayerEye && zDiff != fPlayerEyeCrouched )
+	if ( zDiff != CBotrixParameterVars::PLAYER_EYE && zDiff != CBotrixParameterVars::PLAYER_EYE_CROUCHED )
 	{
 		if ( !bCrouch )
 		{
 			// Try to stand up.
-			vDestEyePos.z = vDestGround.z + fPlayerEye;
+			vDestEyePos.z = vDestGround.z + CBotrixParameterVars::PLAYER_EYE;
 			HumanHullTrace(vDestGround, vDestEyePos);
 			bCrouch = TraceHitSomething();
 		}
@@ -392,7 +386,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		if ( bCrouch )
 		{
 			// Try to stand up crouching.
-			vDestEyePos.z = vDestGround.z + fPlayerEyeCrouched;
+			vDestEyePos.z = vDestGround.z + CBotrixParameterVars::PLAYER_EYE_CROUCHED;
 			HumanHullTrace(vDestGround, vDestEyePos, head_hull);
 
 			if ( TraceHitSomething() )
@@ -558,7 +552,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		{
 			// We actually made it to the waypoint location, but our Z changed.
 			// Update the destination vector.
-			vDestEyePos = vHit + Vector(0.0f, 0.0f, fPlayerEye);
+			vDestEyePos = vHit + Vector(0.0f, 0.0f, CBotrixParameterVars::PLAYER_EYE);
 		}
 		else
 		{
@@ -738,7 +732,7 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 
 	// We have butted up against an obstacle.
 	// Try to walk over (one stair height) to see if we can clear it.
-	float fMaxWalkHeight = CBotrixMod::GetVar(EModVarPlayerObstacleToJump);
+	const float fMaxWalkHeight = CBotrixParameterVars::GetStepSize();
 	Vector vStair = vGround;
 	vStair.z += fMaxWalkHeight;
 	vHit.z += fMaxWalkHeight;
@@ -765,7 +759,7 @@ TReach CBotrixEngineUtil::CanPassOrJump(Vector& vGround, const Vector& vDirectio
 	}
 
 	// We can't make it over the obstacle with a step, so try jumping.
-	float fJumpCrouched = CBotrixMod::GetVar(EModVarPlayerJumpHeightCrouched);
+	float fJumpCrouched = CBotrixParameterVars::CalcMaxHeightOfCrouchJump();
 	vGround.z += fJumpCrouched;
 	vHit.z += fJumpCrouched - fMaxWalkHeight;  // We added previously fMaxWalkHeight.
 
@@ -792,8 +786,7 @@ TReach CBotrixEngineUtil::CanClimbSlope(const Vector& vSrc, const Vector& vDest)
 		BLOG_T("Slope angle %.2f", ang.x);
 	}
 
-	float fSlope = CBotrixMod::GetVar(EModVarSlopeGradientToSlideOff);
-	return CanPassSlope(ang.x, fSlope) ? EReachReachable : EReachNotReachable;
+	return CanPassSlope(ang.x, CBotrixParameterVars::MAX_CLIMBABLE_SLOPE_PITCH) ? EReachReachable : EReachNotReachable;
 }
 
 // Trace a hull between two points on the ground.
@@ -802,7 +795,7 @@ TReach CBotrixEngineUtil::CanClimbSlope(const Vector& vSrc, const Vector& vDest)
 // collision
 void CBotrixEngineUtil::HumanHullTrace(const Vector& vGround1, const Vector& vGround2, int hull)
 {
-	const float halfPlayerHeight = CBotrixMod::GetVar(EModVarPlayerHeight) / 2.0f;
+	const float halfPlayerHeight = CBotrixParameterVars::PLAYER_HEIGHT / 2.0f;
 
 	Vector begin = vGround1;
 	begin.z += halfPlayerHeight;

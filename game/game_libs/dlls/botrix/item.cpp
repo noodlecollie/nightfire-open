@@ -6,6 +6,7 @@
 #include "botrix/botrixmod.h"
 #include "botrix/clients.h"
 #include "botrix/waypoint.h"
+#include "botrix/parameter_vars.h"
 #include "standard_includes.h"
 #include "EnginePublicAPI/engine_limits.h"
 #include "PlatformLib/String.h"
@@ -161,7 +162,8 @@ TItemIndex CItems::GetNearestItem(
 	TItemType iEntityType,
 	const Vector& vOrigin,
 	const good::vector<CPickedItem>& aSkip,
-	const CItemClass* pClass)
+	const CItemClass* pClass
+)
 {
 	good::vector<CItem>& aItems = m_aItems[iEntityType];
 
@@ -497,7 +499,8 @@ void CItems::CheckNewEntity(struct edict_s* pEdict, bool bLog)
 				cItem.iWaypoint,
 				CWaypoints::IsValid(cItem.iWaypoint)
 					? CTypeToString::WaypointFlagsToString(CWaypoints::Get(cItem.iWaypoint).iFlags).c_str()
-					: "");
+					: ""
+			);
 		}
 
 		if ( !m_bMapLoaded && FLAG_CLEARED(FTaken, cItem.iFlags) )  // Item should have waypoint near.
@@ -514,7 +517,8 @@ void CItems::CheckNewEntity(struct edict_s* pEdict, bool bLog)
 						iIndex + 1,
 						vOrigin.x,
 						vOrigin.y,
-						vOrigin.z);
+						vOrigin.z
+					);
 				}
 
 				TWaypointId iWaypoint = CWaypoints::GetNearestWaypoint(cItem.vOrigin);
@@ -524,8 +528,8 @@ void CItems::CheckNewEntity(struct edict_s* pEdict, bool bLog)
 					BLOG_W("  Nearest waypoint %d.", iWaypoint);
 				}
 			}
-			else if (
-				bLog && iEntityType == EItemTypeDoor && !CWaypoint::IsValid((TWaypointId)((intptr_t)cItem.pArguments)) )
+			else if ( bLog && iEntityType == EItemTypeDoor &&
+					  !CWaypoint::IsValid((TWaypointId)((intptr_t)cItem.pArguments)) )
 			{
 				BLOG_W("Door %d doesn't have 2 waypoints near.", iIndex);
 			}
@@ -614,7 +618,8 @@ TItemIndex CItems::AddItem(
 	TItemType iEntityType,
 	struct edict_s* pEdict,
 	CItemClass* pItemClass,
-	const CBotrixServerEntity& serverEntity)
+	const CBotrixServerEntity& serverEntity
+)
 {
 	GoodAssert((0 <= iEntityType) && (iEntityType < EItemTypeAll));
 
@@ -628,12 +633,12 @@ TItemIndex CItems::AddItem(
 
 		if ( iEntityType < EItemTypeCanPickTotal )
 		{
-			fPickupDistanceSqr += CBotrixMod::iPlayerRadius + CBotrixMod::iItemPickUpDistance;
+			fPickupDistanceSqr += CBotrixParameterVars::GetPlayerRadiusInt() + CBotrixMod::iItemPickUpDistance;
 			fPickupDistanceSqr *= fPickupDistanceSqr * 2;
 		}
 		else
 		{
-			const float toSquare = fPickupDistanceSqr + CBotrixMod::iPlayerRadius;
+			const float toSquare = fPickupDistanceSqr + CBotrixParameterVars::GetPlayerRadiusInt();
 			fPickupDistanceSqr = toSquare * toSquare;
 		}
 
@@ -680,7 +685,7 @@ void CItems::AddObject(struct edict_s* pEdict, const CItemClass* pObjectClass, c
 	// Calculate object radius.
 	// TODO: why not use object class to get distance?
 	float radiusSquared = serverEntity.GetCollisionRadius();
-	radiusSquared += CBotrixMod::iPlayerRadius;
+	radiusSquared += CBotrixParameterVars::GetPlayerRadiusInt();
 	radiusSquared *= radiusSquared;
 
 	TItemIndex iIndex = NewEntityIndex(EItemTypeObject);
@@ -803,7 +808,8 @@ void CItems::Draw(CClient* pClient)
 						"%s %d (id %d)",
 						CTypeToString::EntityTypeToString(iEntityType).c_str(),
 						i,
-						ENTINDEX(pEdict));
+						ENTINDEX(pEdict)
+					);
 
 					int pos = 0;
 					CBotrixEngineUtil::DrawTextAtLocation(vOrigin, pos++, 1.0f, 0xFF, 0xFF, 0xFF, printBuffer);
@@ -814,7 +820,8 @@ void CItems::Draw(CClient* pClient)
 						0xFF,
 						0xFF,
 						0xFF,
-						STRING(pEdict->v.classname));
+						STRING(pEdict->v.classname)
+					);
 
 					if ( iEntityType == EItemTypeDoor )
 					{
@@ -828,7 +835,8 @@ void CItems::Draw(CClient* pClient)
 							0xFF,
 							iClosed == -1      ? "no near waypoints"
 								: iClosed == 0 ? "opened"
-											   : "closed");
+											   : "closed"
+						);
 					}
 					else if ( iEntityType == EItemTypeObject )
 					{
@@ -837,7 +845,8 @@ void CItems::Draw(CClient* pClient)
 							sizeof(printBuffer),
 							"%s %d",
 							CTypeToString::EntityTypeToString(iEntityType).c_str(),
-							i);
+							i
+						);
 
 						CBotrixEngineUtil::DrawTextAtLocation(
 							vOrigin,
@@ -846,7 +855,8 @@ void CItems::Draw(CClient* pClient)
 							0xFF,
 							0xFF,
 							0xFF,
-							IsEntityOnMap(serverEntity) ? "alive" : "dead");
+							IsEntityOnMap(serverEntity) ? "alive" : "dead"
+						);
 
 						// CBotrixEngineUtil::DrawText( vOrigin, pos++, 1.0f, 0xFF, 0xFF, 0xFF,
 						// IsEntityTaken(pServerEntity) ? "taken" : "not taken" ); // Taken not shown.
@@ -860,7 +870,8 @@ void CItems::Draw(CClient* pClient)
 							0xFF,
 							0xFF,
 							0xFF,
-							IsEntityBreakable(serverEntity) ? "breakable" : "non breakable");
+							IsEntityBreakable(serverEntity) ? "breakable" : "non breakable"
+						);
 
 						const char* sFlags = CTypeToString::EntityClassFlagsToString(pEntity->iFlags, false).c_str();
 
@@ -879,7 +890,8 @@ void CItems::Draw(CClient* pClient)
 							0xFF,
 							0xFF,
 							0xFF,
-							STRING(pEdict->v.model));
+							STRING(pEdict->v.model)
+						);
 					}
 				}
 
@@ -893,7 +905,8 @@ void CItems::Draw(CClient* pClient)
 						1.0f,
 						0xFF,
 						0xFF,
-						0xFF);
+						0xFF
+					);
 				}
 
 				if ( FLAG_SOME_SET(FItemDrawWaypoint, pClient->iItemDrawFlags) && (iEntityType < EItemTypeObject) )
@@ -907,7 +920,8 @@ void CItems::Draw(CClient* pClient)
 							1.0f,
 							0xFF,
 							0xFF,
-							0);
+							0
+						);
 					}
 
 					// Draw second waypoint for door, yellow.
@@ -920,7 +934,8 @@ void CItems::Draw(CClient* pClient)
 							1.0f,
 							0xFF,
 							0xFF,
-							0);
+							0
+						);
 					}
 				}
 			}

@@ -9,6 +9,7 @@
 #include "botrix/weapon.h"
 #include "botrix/movecmd.h"
 #include "botrix/waypoint_navigator.h"
+#include "botrix/parameter_vars.h"
 
 struct edict_s;
 
@@ -609,7 +610,7 @@ protected:
 		CBotrixBot::PickItem(cItem, iEntityType, iIndex);
 		if ( m_bFlee && (iEntityType == EItemTypeHealth) )
 		{
-			m_bFlee = (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 8));
+			m_bFlee = (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 8.0f));
 			m_bDontAttack = m_bFlee;
 		}
 	}

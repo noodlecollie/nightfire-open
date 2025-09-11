@@ -157,7 +157,6 @@ TModId CConfiguration::Load(const good::string& sGameDir, const good::string& sM
 
 	// First load default values, and then set mod vars that are present.
 	CBotrixMod::LoadDefaults(iModId);
-	LoadModVars();
 
 	// Find section "<mod name>.mod".
 	char buffer[128];
@@ -558,92 +557,6 @@ void CConfiguration::ProcessGeneralSection(good::ini_file::const_iterator it)
 			BLOG_D("  %s", CBotrixMod::aBotNames[i].c_str());
 		}
 	}
-}
-
-//----------------------------------------------------------------------------------------------------------------
-void CConfiguration::LoadModVars()
-{
-	// Get mod vars section, i.e. [HalfLife2Deathmatch.items.vars].
-	char sectionName[128];
-	PlatformLib_SNPrintF(sectionName, sizeof(sectionName), "%s.vars", CBotrixMod::sModName.c_str());
-
-	good::ini_file::const_iterator it = m_iniFile.find(sectionName);
-	if ( it == m_iniFile.end() )
-	{
-		BLOG_W("File \"%s\", no section [%s], using defaults.", m_iniFile.name.c_str(), sectionName);
-		return;
-	}
-
-	// Iterate throught section key values.
-	bool aFound[EModVarTotal] = {false};
-	CUtlVector<float> aVars[EModVarTotal];
-
-	for ( good::ini_section::const_iterator itemIt = it->begin(); itemIt != it->end(); ++itemIt )
-	{
-		TModVar iVar = CTypeToString::ModVarFromString(itemIt->key);
-		if ( iVar == -1 )
-		{
-			BLOG_W(
-				"File \"%s\", section [%s], no such variable \"%s\".",
-				m_iniFile.name.c_str(),
-				it->name.c_str(),
-				itemIt->key.c_str()
-			);
-			continue;
-		}
-
-		aFound[iVar] = true;
-
-		// Get var values (for each class).
-		StringVector aArguments;
-		good::split(itemIt->value, aArguments, ',', true);
-
-		if ( aArguments.size() != 1 && CBotrixMod::aClassNames.size() != aArguments.size() )
-		{
-			BLOG_W(
-				"File \"%s\", section [%s], invalid arguments for %s = %s (should have same parameters quantity as "
-				"classes names).",
-				m_iniFile.name.c_str(),
-				it->name.c_str(),
-				itemIt->key.c_str(),
-				itemIt->value.c_str()
-			);
-			continue;
-		}
-
-		for ( int i = 0; i < aArguments.size(); ++i )
-		{
-			float fValue = 0;
-			if ( PlatformLib_SScanF(aArguments[i].c_str(), "%f", &fValue) != 1 )
-			{
-				BLOG_W("File \"%s\", section [%s]:", m_iniFile.name.c_str(), it->name.c_str());
-				BLOG_W(
-					"  Invalid argument %s for %s, should be float value.",
-					aArguments[i].c_str(),
-					itemIt->key.c_str()
-				);
-			}
-			else
-			{
-				aVars[iVar].AddToTail(fValue);
-			}
-		}
-	}
-
-	for ( int i = 0; i < EModVarTotal; ++i )
-	{
-		if ( !aFound[i] )
-		{
-			BLOG_W(
-				"File \"%s\", section [%s]: missing var %s, using default.",
-				m_iniFile.name.c_str(),
-				it->name.c_str(),
-				CTypeToString::ModVarToString(i).c_str()
-			);
-		}
-	}
-
-	CBotrixMod::SetVars(aVars);
 }
 
 //----------------------------------------------------------------------------------------------------------------
