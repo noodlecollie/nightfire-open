@@ -363,7 +363,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	}
 
 	// Check if take damage at fall.
-	if ( vSrcGround.z - vDestGround.z >= CBotrixMod::GetVar(EModVarHeightForFallDamage) )
+	if ( vSrcGround.z - vDestGround.z >= CBotrixParameterVars::CalcMaxFallDistanceWithoutDamage() )
 	{
 		return EReachNotReachable;
 	}
@@ -789,8 +789,7 @@ TReach CBotrixEngineUtil::CanClimbSlope(const Vector& vSrc, const Vector& vDest)
 		BLOG_T("Slope angle %.2f", ang.x);
 	}
 
-	float fSlope = CBotrixMod::GetVar(EModVarSlopeGradientToSlideOff);
-	return CanPassSlope(ang.x, fSlope) ? EReachReachable : EReachNotReachable;
+	return CanPassSlope(ang.x, CBotrixParameterVars::MAX_CLIMBABLE_SLOPE_PITCH) ? EReachReachable : EReachNotReachable;
 }
 
 // Trace a hull between two points on the ground.

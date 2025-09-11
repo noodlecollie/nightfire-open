@@ -21,8 +21,15 @@ public:
 	// We don't actually support sprint right now, but just set to some sensible default.
 	static constexpr float PLAYER_SPRINT_SPEED = 1.5f * PLAYER_RUN_SPEED;
 
+	// Taken from pm_shared.c:575: sin^-1(0.7)
+	static constexpr float MAX_CLIMBABLE_SLOPE_PITCH = 44.427f;
+
+	static constexpr float PLAYER_MAX_HEALTH = 100.0f;
+	static constexpr float PLAYER_MAX_ARMOUR = 100.0f;
+
 	static float CalcMaxHeightOfJump();
 	static float CalcMaxHeightOfCrouchJump();
+	static float CalcMaxFallDistanceWithoutDamage();
 	static float GetStepSize();
 
 private:

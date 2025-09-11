@@ -824,7 +824,7 @@ bool CBotrixBot::DoWaypointAction()
 		else if ( FLAG_SOME_SET(FWaypointArmorMachine, w.iFlags) )
 		{
 			m_iLastHealthArmor = -1;
-			m_bNeedUse = m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor);
+			m_bNeedUse = m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR;
 			m_bUsingHealthMachine = false;
 			m_bUsingArmorMachine = m_bNeedUse;
 			m_bUsingButton = false;
@@ -3196,7 +3196,7 @@ void CBot_HL2DM::HurtBy(int iPlayerIndex, CPlayer* pAttacker, int iHealthNow)
 		CheckEnemy(iPlayerIndex, pAttacker, false);
 	}
 
-	if ( iHealthNow < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 2) )
+	if ( iHealthNow < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f) )
 	{
 		m_bNeedTaskCheck = true;  // Check if need search for health.
 	}
@@ -3445,9 +3445,9 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 	TBotIntelligence iWeaponPreference = m_iIntelligence;
 
 	bool bNeedHealth = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-		(m_PlayerInfo.GetHealth() < CBotrixMod::GetVar(EModVarPlayerMaxHealth));
-	bool bNeedHealthBad = bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 2));
-	bool bAlmostDead = bNeedHealthBad && (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 5));
+		(m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
+	bool bNeedHealthBad = bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f));
+	bool bAlmostDead = bNeedHealthBad && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 5.0f));
 	bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
 	bool bNeedAmmo = pWeapon && CBotrixMod::HasMapItems(EItemTypeAmmo);
 
@@ -3503,7 +3503,7 @@ restart_find_task:  // TODO: remove gotos.
 			iNewTask = EBotTaskFindHealth;
 		}
 		else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
-				  (m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
+				  (m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR) )  // Need armor.
 		{
 			iNewTask = EBotTaskFindArmor;
 		}
@@ -3691,7 +3691,8 @@ void CBot_HL2DM::CheckNewTasks(bool bForceTaskChange)
 	TBotIntelligence iWeaponPreference = m_iIntelligence;
 
 	const bool bAlmostDead = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-		(m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 5));
+		(m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 5.0f));
+
 	bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
 
 	TWeaponId iWeapon = EWeaponIdInvalid;
@@ -3902,10 +3903,10 @@ TBotTask CBot_HL2DM::ChooseNewTask(
 	TBotTask iNewTask = EBotTaskInvalid;
 
 	const bool bNeedHealth = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-		(m_PlayerInfo.GetHealth() < CBotrixMod::GetVar(EModVarPlayerMaxHealth));
+		(m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
 
 	const bool bNeedHealthBad =
-		bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixMod::GetVar(EModVarPlayerMaxHealth) / 2));
+		bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f));
 
 	const bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
 	const bool bNeedAmmo = pWeapon && CBotrixMod::HasMapItems(EItemTypeAmmo);
@@ -3941,7 +3942,7 @@ TBotTask CBot_HL2DM::ChooseNewTask(
 			iNewTask = EBotTaskFindHealth;
 		}
 		else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
-				  (m_PlayerInfo.GetArmorValue() < CBotrixMod::GetVar(EModVarPlayerMaxArmor)) )  // Need armor.
+				  (m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR) )  // Need armor.
 		{
 			iNewTask = EBotTaskFindArmor;
 		}

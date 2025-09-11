@@ -37,6 +37,11 @@ float CBotrixParameterVars::CalcMaxHeightOfCrouchJump()
 	return CalcMaxHeightOfJump() + DIFF_BETWEEN_NORMAL_AND_CROUCH_JUMP;
 }
 
+float CBotrixParameterVars::CalcMaxFallDistanceWithoutDamage()
+{
+	return CalcDistanceTravelledFromRest(static_cast<float>(PLAYER_MAX_SAFE_FALL_SPEED), g_psv_gravity->value);
+}
+
 float CBotrixParameterVars::GetStepSize()
 {
 	static cvar_t* sv_stepsize = nullptr;
