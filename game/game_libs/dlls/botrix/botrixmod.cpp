@@ -45,25 +45,8 @@ int CBotrixMod::iSpawnProtectionHealth = 0;
 
 // TDeathmatchFlags CBotrixMod::iDeathmatchFlags = -1;
 
-Vector CBotrixMod::vPlayerCollisionHull;
-Vector CBotrixMod::vPlayerCollisionHullCrouched;
-
-Vector CBotrixMod::vPlayerCollisionHullMins;
-Vector CBotrixMod::vPlayerCollisionHullMaxs;
-
-Vector CBotrixMod::vPlayerCollisionHullCrouchedMins;
-Vector CBotrixMod::vPlayerCollisionHullCrouchedMaxs;
-
-Vector CBotrixMod::vPlayerCollisionHullMaxsGround;
-
-int CBotrixMod::iPlayerRadius;
-
 int CBotrixMod::iNearItemMaxDistanceSqr = SQR(312);
 int CBotrixMod::iItemPickUpDistance = 100;
-
-int CBotrixMod::iPointTouchSquaredXY;
-int CBotrixMod::iPointTouchSquaredZ;
-int CBotrixMod::iPointTouchLadderSquaredZ;
 
 //----------------------------------------------------------------------------------------------------------------
 bool CBotrixMod::LoadDefaults(TModId iModId)
@@ -81,32 +64,8 @@ bool CBotrixMod::LoadDefaults(TModId iModId)
 //----------------------------------------------------------------------------------------------------------------
 void CBotrixMod::Prepare()
 {
-	const float fWidth = CBotrixParameterVars::PLAYER_WIDTH;
-	const float fHalfWidth = fWidth / 2.0f;
-	const float fHeight = CBotrixParameterVars::PLAYER_HEIGHT;
-	const float fHeightCrouched = CBotrixParameterVars::PLAYER_HEIGHT_CROUCHED;
-	const float fJumpCrouched = CBotrixParameterVars::CalcMaxHeightOfCrouchJump();
-
-	iPlayerRadius = static_cast<int>(rsqrt(2 * SQR(fHalfWidth)));  // Pythagoras.
-	iPointTouchSquaredXY = static_cast<int>(SQR(fWidth / 4));
-	iPointTouchSquaredZ = static_cast<int>(SQR(fJumpCrouched));
-	iPointTouchLadderSquaredZ = SQR(5);
-
-	CWaypoint::iAnalyzeDistance = static_cast<int>(fWidth * 2);
-	CWaypoint::iDefaultDistance = static_cast<int>(fWidth * 4);
-
-	// Get max collision hull, so bot doesn't stack (when auto-create waypoints).
-	// fWidth *= FastSqrt( 2.0f );
-	// fHalfWidth = fWidth / 2.0f;
-
-	vPlayerCollisionHull = Vector(fWidth, fWidth, fHeight);
-	vPlayerCollisionHullMins = Vector(-fHalfWidth, -fHalfWidth, 0);
-	vPlayerCollisionHullMaxs = Vector(fHalfWidth, fHalfWidth, fHeight);
-	vPlayerCollisionHullMaxsGround = Vector(fHalfWidth, fHalfWidth, 1.0f);
-
-	vPlayerCollisionHullCrouched = Vector(fWidth, fWidth, fHeightCrouched);
-	vPlayerCollisionHullCrouchedMins = Vector(-fHalfWidth, -fHalfWidth, 0);
-	vPlayerCollisionHullCrouchedMaxs = Vector(fHalfWidth, fHalfWidth, fHeightCrouched);
+	CWaypoint::iAnalyzeDistance = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH * 2.0f);
+	CWaypoint::iDefaultDistance = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH * 4.0f);
 }
 
 //----------------------------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 #include "EnginePublicAPI/cvardef.h"
 #include "standard_includes.h"
 #include "game.h"
+#include "botrix/good/defines.h"
 
 // Empirically determined heights with sv_gravity = 800:
 // - Max height to jump onto something: 45 units
@@ -42,6 +43,12 @@ float CBotrixParameterVars::CalcMaxFallDistanceWithoutDamage()
 	return CalcDistanceTravelledFromRest(static_cast<float>(PLAYER_MAX_SAFE_FALL_SPEED), g_psv_gravity->value);
 }
 
+int CBotrixParameterVars::CalcSquaredPointTouchDistanceForZAxis()
+{
+	const float maxCrouchJumpHeight = CalcMaxHeightOfCrouchJump();
+	return static_cast<int>(SQR(maxCrouchJumpHeight));
+}
+
 float CBotrixParameterVars::GetStepSize()
 {
 	static cvar_t* sv_stepsize = nullptr;
@@ -52,10 +59,18 @@ float CBotrixParameterVars::GetStepSize()
 
 		if ( !sv_stepsize )
 		{
+			ASSERT(false);
+
 			// Default
 			return 18.0f;
 		}
 	}
 
 	return sv_stepsize->value;
+}
+
+int CBotrixParameterVars::GetPlayerRadiusInt()
+{
+	static const int radius = static_cast<int>(rsqrt(2 * SQR(PLAYER_WIDTH / 2.0f)));
+	return radius;
 }

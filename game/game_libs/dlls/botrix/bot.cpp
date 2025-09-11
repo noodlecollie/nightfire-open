@@ -1255,7 +1255,8 @@ void CBotrixBot::WeaponCheckCurrent(bool bAddToBotWeapons)
 		// Add weapon class first.
 		BLOG_W("%s -> Adding new weapon class %s.", GetName(), szCurrentWeapon);
 		CItemClass cWeaponClass;
-		cWeaponClass.fPickupDistanceSqr = static_cast<float>(CBotrixMod::iPlayerRadius) * 4.0f;  // 4*player's radius.
+		cWeaponClass.fPickupDistanceSqr =
+			static_cast<float>(CBotrixParameterVars::GetPlayerRadiusInt()) * 4.0f;  // 4*player's radius.
 		cWeaponClass.fPickupDistanceSqr *= cWeaponClass.fPickupDistanceSqr;
 		// Don't set engine name so mod will think that there is no such weapon in this map.
 		// cWeaponClass.szEngineName = szCurrentWeapon;
@@ -1608,7 +1609,8 @@ void CBotrixBot::UpdateWorld()
 				m_aNearPlayers.set(m_iNextCheckPlayer);
 
 				// Check if players are not stuck with each other.
-				if ( m_bStuck && !m_bStuckTryingSide && (fDistSqr <= (SQR(CBotrixMod::iPlayerRadius) << 2)) )
+				if ( m_bStuck && !m_bStuckTryingSide &&
+					 (fDistSqr <= (SQR(CBotrixParameterVars::GetPlayerRadiusInt()) * 4)) )
 				{
 					Vector vNeeded(m_vDestination);
 					Vector vOther(pCheckPlayer->GetHead());
@@ -2469,13 +2471,14 @@ bool CBotrixBot::NormalMove()
 	else
 	{
 		// Need to move only when not arrived.
-		bArrived = CWaypoint::IsValid(iNextWaypoint) ? MoveBetweenWaypoints()
-													 : CBotrixEngineUtil::IsPointTouch3d(
-														   m_vHead,
-														   m_vDestination,
-														   CBotrixMod::iPointTouchSquaredZ,
-														   CBotrixMod::iPointTouchSquaredXY
-													   );
+		bArrived = CWaypoint::IsValid(iNextWaypoint)
+			? MoveBetweenWaypoints()
+			: CBotrixEngineUtil::IsPointTouch3d(
+				  m_vHead,
+				  m_vDestination,
+				  CBotrixParameterVars::CalcSquaredPointTouchDistanceForZAxis(),
+				  CBotrixParameterVars::DIST_SQR_POINT_TOUCH_XY
+			  );
 		m_bNeedMove = !bArrived;
 	}
 

@@ -251,7 +251,17 @@ void CWaypoint::Draw(TWaypointId iWaypointId, TWaypointDrawFlags iDrawType, floa
 			vOrigin.z - CBotrixParameterVars::PLAYER_EYE
 		);
 
-		CBotrixEngineUtil::DrawBox(vBoxOrigin, Vector(), CBotrixMod::vPlayerCollisionHull, fDrawTime, r, g, b);
+		const float halfPlayerWidth = CBotrixParameterVars::PLAYER_WIDTH / 2.0f;
+
+		CBotrixEngineUtil::DrawBox(
+			vOrigin - Vector(0.0f, 0.0f, CBotrixParameterVars::PLAYER_EYE),
+			Vector(-halfPlayerWidth, -halfPlayerWidth, 0.0f),
+			Vector(halfPlayerWidth, halfPlayerWidth, CBotrixParameterVars::PLAYER_HEIGHT),
+			fDrawTime,
+			r,
+			g,
+			b
+		);
 	}
 
 	if ( FLAG_ALL_SET_OR_0(FWaypointDrawText, iDrawType) )

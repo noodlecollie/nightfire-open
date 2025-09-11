@@ -344,9 +344,6 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 		return EReachReachable;
 	}
 
-	// Vector vGroundMaxs = CBotrixMod::vPlayerCollisionHullMaxsGround;
-	// vGroundMaxs.z = 1.0f;
-
 	// Get ground positions.
 	Vector vSrcGround = GetHumanHullGroundVec(vSrcEyePos, PositionInHull::Eye);
 

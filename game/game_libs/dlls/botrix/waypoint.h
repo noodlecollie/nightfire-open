@@ -7,6 +7,7 @@
 #include "botrix/types.h"
 #include "botrix/botrixmod.h"
 #include "botrix/engine_util.h"
+#include "botrix/parameter_vars.h"
 
 struct edict_s;
 
@@ -216,8 +217,9 @@ public:  // Methods.
 		return CBotrixEngineUtil::IsPointTouch3d(
 			vOrigin,
 			v,
-			bOnLadder ? CBotrixMod::iPointTouchLadderSquaredZ : CBotrixMod::iPointTouchSquaredZ,
-			CBotrixMod::iPointTouchSquaredXY
+			bOnLadder ? CBotrixParameterVars::DIST_SQR_POINT_TOUCH_LADDER
+					  : CBotrixParameterVars::CalcSquaredPointTouchDistanceForZAxis(),
+			CBotrixParameterVars::DIST_SQR_POINT_TOUCH_XY
 		);
 	}
 

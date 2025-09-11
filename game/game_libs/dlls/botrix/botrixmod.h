@@ -104,30 +104,12 @@ public:  // Static members.
 
 	//    static TDeathmatchFlags iDeathmatchFlags;       ///< Flags for deathmatch mode.
 
-	static Vector vPlayerCollisionHull;  ///< Maxs of player collision box with origin in (0, 0, 0).
-	static Vector vPlayerCollisionHullCrouched;  ///< Maxs of crouched player collision box with origin in (0, 0, 0).
-
-	static Vector vPlayerCollisionHullMins;  // Those are for centered hull in (0, 0, 0).
-	static Vector vPlayerCollisionHullMaxs;
-
-	static Vector vPlayerCollisionHullCrouchedMins;
-	static Vector vPlayerCollisionHullCrouchedMaxs;
-
-	static Vector vPlayerCollisionHullMaxsGround;
-
 	static float fMinNonStuckSpeed;  ///< Minimum velocity to consider that bot is moving and non stucked.
 
-	static int iPlayerRadius;  ///< Player's radius (used to check if bot is stucked).
 	static int iNearItemMaxDistanceSqr;  ///< Max distance to consider item to be near to player.
 	static int iItemPickUpDistance;  ///< Additional distance from player to item to consider it taken.
 									 // Item is picked, if distance-to-player < player's-radius + item's-radius +
 									 // this-distance.
-
-	// TODO: These should be cvars
-	static int iPointTouchSquaredXY;  ///< Squared distance to consider that we are touching waypoint.
-	static int iPointTouchSquaredZ;  ///< Z distance to consider that we are touching waypoint. Should be no more than
-									 ///< player can jump.
-	static int iPointTouchLadderSquaredZ;  ///< Z distance to consider that we are touching waypoint while on ladder.
 
 protected:  // Methods.
 	friend class CConfiguration;  // Give access to next protected methods.

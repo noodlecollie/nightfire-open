@@ -27,10 +27,15 @@ public:
 	static constexpr float PLAYER_MAX_HEALTH = 100.0f;
 	static constexpr float PLAYER_MAX_ARMOUR = 100.0f;
 
+	static constexpr int DIST_SQR_POINT_TOUCH_XY = static_cast<int>((PLAYER_WIDTH / 4.0f) * (PLAYER_WIDTH / 4.0f));
+	static constexpr int DIST_SQR_POINT_TOUCH_LADDER = 5 * 5;
+
 	static float CalcMaxHeightOfJump();
 	static float CalcMaxHeightOfCrouchJump();
 	static float CalcMaxFallDistanceWithoutDamage();
+	static int CalcSquaredPointTouchDistanceForZAxis();
 	static float GetStepSize();
+	static int GetPlayerRadiusInt();
 
 private:
 	static constexpr float DEFAULT_JUMP_IMPULSE = 268.3281573f;
