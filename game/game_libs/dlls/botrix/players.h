@@ -292,9 +292,6 @@ public:
 	/// Kick random bot on given team.
 	static bool KickRandomBotOnTeam(int team);
 
-	/// Deliver chat / voice command to bots.
-	static void DeliverChat(edict_t* pFrom, bool bTeamOnly, const char* szText);
-
 	/// Deliver message to all clients.
 	static void Message(const char* szFormat, ...);
 

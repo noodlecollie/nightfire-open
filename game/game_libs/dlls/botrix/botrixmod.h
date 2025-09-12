@@ -104,7 +104,7 @@ public:  // Static members.
 
 	//    static TDeathmatchFlags iDeathmatchFlags;       ///< Flags for deathmatch mode.
 
-	static float fMinNonStuckSpeed;  ///< Minimum velocity to consider that bot is moving and non stucked.
+	static float fMinNonStuckSpeed;  ///< Minimum velocity to consider that bot is moving and non-stuck.
 
 	static int iNearItemMaxDistanceSqr;  ///< Max distance to consider item to be near to player.
 	static int iItemPickUpDistance;  ///< Additional distance from player to item to consider it taken.

@@ -436,15 +436,6 @@ void CPlayers::PlayerConnected(edict_t* pEdict)
 		m_aPlayers[iIdx] = CPlayerPtr(pPlayer);
 		m_iClientsCount++;
 
-#ifdef BOTRIX_CHAT
-		if ( CChat::iPlayerVar != EChatVariableInvalid )
-		{
-			good::string sName(pPlayer->GetName(), true, true);  // Copy and deallocate.
-			sName.lower_case();
-			CChat::SetVariableValue(CChat::iPlayerVar, iIdx, sName);
-		}
-#endif
-
 		CPlayers::CheckBotsCount();
 	}
 }
@@ -462,13 +453,6 @@ void CPlayers::PlayerDisconnected(edict_t* pEdict)
 
 	CPlayer* pPlayer = m_aPlayers[iIdx].get();
 	BASSERT(pPlayer, return);
-
-#ifdef BOTRIX_CHAT
-	if ( CChat::iPlayerVar != EChatVariableInvalid )
-	{
-		CChat::SetVariableValue(CChat::iPlayerVar, iIdx, "");
-	}
-#endif
 
 	// Notify bots that player is disconnected.
 	for ( int i = 0; i < Size(); ++i )
@@ -547,73 +531,3 @@ void CPlayers::CheckForDebugging()
 		}
 	}
 }
-
-//----------------------------------------------------------------------------------------------------------------
-#ifdef BOTRIX_CHAT
-void CPlayers::DeliverChat(edict_t* pFrom, bool bTeamOnly, const char* szText)
-{
-	int iTeam = 0;
-
-	int iIdx = CPlayers::Get(pFrom);
-	BASSERT(iIdx >= 0, return);
-	CPlayer* pSpeaker = CPlayers::Get(iIdx);
-
-	if ( bTeamOnly )
-	{
-		iTeam = pSpeaker->GetTeam();
-	}
-
-	// Get command from text.
-	if ( GetBotsCount() > 0 )
-	{
-		static CBotChat cChat;
-		cChat.iBotChat = EBotChatUnknown;
-		cChat.iDirectedTo = EPlayerIndexInvalid;
-		cChat.iSpeaker = iIdx;
-
-		float fPercentage = CChat::ChatFromText(szText, cChat);
-		bool bIsRequest = (fPercentage >= 6.0f);
-
-		/*
-				if ( cChat.iDirectedTo == -1 )
-					cChat.iDirectedTo = pSpeaker->iChatMate;
-				else
-					pSpeaker->iChatMate = cChat.iDirectedTo; // TODO: SetChatMate();
-		*/
-		int iFrom = 0, iTo = CPlayers::Size();
-		if ( bIsRequest && (cChat.iDirectedTo != -1) )
-		{
-			BASSERT(cChat.iDirectedTo != iIdx);  // TODO:???
-			iFrom = cChat.iDirectedTo;
-			iTo = iFrom + 1;
-		}
-		// else
-		//	BLOG_E("Can't detect player, chat is directed to.");
-
-		// Deliver chat for all bots.
-		for ( TPlayerIndex iPlayer = iFrom; iPlayer < iTo; ++iPlayer )
-		{
-			CPlayer* pReceiver = CPlayers::Get(iPlayer);
-			if ( pReceiver && pReceiver->IsBot() && (iIdx != iPlayer) )
-			{
-				CBotrixBot* pBot = (CBotrixBot*)pReceiver;
-				if ( !bTeamOnly || (pBot->GetTeam() == iTeam) )  // Should be on same iTeam if chat is for iTeam only.
-				{
-					if ( bIsRequest )
-					{
-						pBot->ReceiveChatRequest(cChat);
-					}
-					else
-					{
-						pBot->ReceiveChat(iIdx, pSpeaker, bTeamOnly, szText);
-					}
-				}
-			}
-		}
-	}
-}
-#else
-void CPlayers::DeliverChat(edict_t*, bool, const char*)
-{
-}
-#endif  // BOTRIX_CHAT

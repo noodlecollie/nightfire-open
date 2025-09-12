@@ -185,28 +185,6 @@ TModId CConfiguration::Load(const good::string& sGameDir, const good::string& sM
 		LoadWeapons(it);
 	}
 
-#ifdef BOTRIX_CHAT
-	// Load chat: synonims.
-	BLOG_D("Loading chat synonims:");
-	it = m_iniFile.find("Chat.replace");
-	if ( it != m_iniFile.end() )
-	{
-		// Iterate throught key values.
-		for ( good::ini_section::const_iterator wordIt = it->begin(); wordIt != it->end(); ++wordIt )
-			CChat::AddSynonims(wordIt->key, wordIt->value);
-	}
-
-	// Load chat: commands.
-	BLOG_D("Loading chat sentences:");
-	it = m_iniFile.find("Chat.sentences");
-	if ( it != m_iniFile.end() )
-	{
-		// Iterate throught key values.
-		for ( good::ini_section::const_iterator wordIt = it->begin(); wordIt != it->end(); ++wordIt )
-			CChat::AddChat(wordIt->key, wordIt->value);
-	}
-#endif  // BOTRIX_CHAT
-
 	CBotrixMod::Prepare();
 
 	return iModId;
