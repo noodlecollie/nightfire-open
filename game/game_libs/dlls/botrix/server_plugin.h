@@ -54,8 +54,6 @@ private:
 	static float m_fEngineTime;  ///< Current engine time.
 
 	static CBotrixCommand* m_pConsoleCommands;
-	static cvar_t m_TraceLogCvar;
-	static cvar_t m_WaypointAutoAnalyzeCvar;
 
 	static bool m_bSpawnedRegisterBots;
 	static CBotrixBotFactory m_BotFactory;

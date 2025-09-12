@@ -14,6 +14,7 @@
 #include "weaponattributes/weaponatts_collection.h"
 #include "utils/mp_utils.h"
 #include "botrix/botregister.h"
+#include "botrix/console_vars.h"
 
 float CBotrixServerPlugin::m_fFpsEnd = 0.0f;
 int CBotrixServerPlugin::m_iFramesCount = 0;
@@ -25,22 +26,11 @@ int CBotrixServerPlugin::m_iFPS = 60;
 float CBotrixServerPlugin::m_fTime = 0.0f;
 float CBotrixServerPlugin::m_fEngineTime = 0.0f;
 CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
-cvar_t CBotrixServerPlugin::m_TraceLogCvar = CONSTRUCT_CVAR_T("botrix_log_trace", 0, FCVAR_PRIVILEGED);
-cvar_t CBotrixServerPlugin::m_WaypointAutoAnalyzeCvar =
-	CONSTRUCT_CVAR_T("botrix_waypoint_auto_analyze", 0, FCVAR_PRIVILEGED);
 bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
 CBotrixBotFactory CBotrixServerPlugin::m_BotFactory;
 
 void CBotrixServerPlugin::Init()
 {
-	// TODO: Move these so that they get initialised with the rest of the cvars.
-	// I think that because they're here, and CBotrixServerPlugin::Init() is only
-	// run when we know we're going to be running a multiplayer server, the cvars
-	// don't exist when the engine parses input from the command line, so we can't
-	// set them on launch.
-	CVAR_REGISTER(&m_TraceLogCvar);
-	CVAR_REGISTER(&m_WaypointAutoAnalyzeCvar);
-
 	good::log::bLogToStdOut = false;  // Disable log to stdout, Msg() will print there.
 	good::log::bLogToStdErr = false;  // Disable log to stderr, Warning() will print there.
 	good::log::iStdErrLevel = good::ELogLevelWarning;  // Log warnings and errors to stderr.
@@ -357,7 +347,7 @@ void CBotrixServerPlugin::UpdateLogLevel()
 		}
 	}
 
-	if ( m_TraceLogCvar.value != 0.0f )
+	if ( CBotrixCvars::botrix_log_trace.value != 0.0f )
 	{
 		CBotrixEngineUtil::iLogLevel = good::ELogLevelTrace;
 	}
@@ -365,7 +355,7 @@ void CBotrixServerPlugin::UpdateLogLevel()
 
 bool CBotrixServerPlugin::WaypointAutoAnalyzeEnabled()
 {
-	return m_WaypointAutoAnalyzeCvar.value != 0.0f;
+	return CBotrixCvars::botrix_waypoint_auto_analyze.value != 0.0f;
 }
 
 void CBotrixServerPlugin::PrepareLevel()

@@ -47,6 +47,7 @@ public:
 
 	static constexpr size_t MAX_PVS_DATA_LENGTH = (MAX_MAP_LEAFS + 7) / 8;
 
+	// BOTRIX_TODO: Make these cvars
 	static good::TLogLevel iLogLevel;  /// Console log level. Info by default.
 	static int iTextTime;  /// Time in seconds to show text in CUtil::GetWaypointReachableInfoFromTo().
 
@@ -81,6 +82,7 @@ public:
 	static bool IsVisiblePVS(const Vector& v);
 	static bool IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility iVisibility, bool bUsePVS = true);
 	static bool IsVisible(const Vector& vSrc, struct edict_s* pDest);
+	// BOTRIX_TODO: Move statefulness out of this class
 	static bool TraceHitSomething();
 	static Vector GetHullGroundVec(
 		const Vector& vSrc,

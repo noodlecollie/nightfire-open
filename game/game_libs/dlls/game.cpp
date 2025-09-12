@@ -26,6 +26,7 @@
 #include "gameplay/weaponInaccuracyCvars.h"
 #include "botrix/botrixbotfactory.h"
 #include "botrix/console_commands.h"
+#include "botrix/console_vars.h"
 
 cvar_t displaysoundlist = CONSTRUCT_CVAR_T("displaysoundlist", 0, 0);
 
@@ -282,6 +283,7 @@ void GameDLLInit(void)
 	// END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	WeaponInaccuracyCvars::Init();
+	CBotrixCvars::RegisterAll();
 	CBotrixBotFactory::RegisterCvars();
 	CBotrixCommand::RegisterServerCommands();
 	CustomGeometry::InitialiseCommands();
