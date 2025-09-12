@@ -45,8 +45,6 @@ void CBotrixServerPlugin::Init()
 	CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
 	good::log::iFileLogLevel = good::ELogLevelDebug;
 
-	CConfiguration::SetClientAccessLevel("STEAM_ID_LAN", FCommandAccessAll);
-
 	BLOG_W("Using default teams (unassigned, spectator, unknown1, unknown2).");
 	CBotrixMod::aTeamsNames.push_back("unassigned");
 	CBotrixMod::aTeamsNames.push_back("spectator");
@@ -64,7 +62,6 @@ void CBotrixServerPlugin::Init()
 
 void CBotrixServerPlugin::Deinit()
 {
-	CConfiguration::Unload();
 	CBotrixMod::UnLoad();
 	CPlayers::Clear();
 

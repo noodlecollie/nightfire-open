@@ -24,9 +24,9 @@ public:  // Methods.
 	}
 
 	/// Get Steam id of this player.
-	const good::string& GetSteamID()
+	const good::string& GetNetworkID()
 	{
-		return m_sSteamId;
+		return m_sNetworkID;
 	}
 
 	/// Returns true, if auto-creating waypoints.
@@ -60,5 +60,5 @@ public:  // Members and constants.
 	bool bLockDestinationWaypoint = false;  ///< Destination waypoint was set by console command.
 
 protected:
-	good::string m_sSteamId;  // Steam id.
+	good::string m_sNetworkID;
 };

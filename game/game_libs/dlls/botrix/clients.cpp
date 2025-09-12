@@ -9,16 +9,11 @@ void CClient::Activated()
 {
 	CPlayer::Activated();
 
-	m_sSteamId = m_PlayerInfo.GetNetworkIDString();
+	m_sNetworkID = m_PlayerInfo.GetNetworkIDString();
 
-	if ( m_sSteamId.size() )
+	if ( m_pEdict == CBotrixServerPlugin::GetListenServerClient() )
 	{
-		TCommandAccessFlags iAccess = CConfiguration::ClientAccessLevel(m_sSteamId);
-
-		if ( iAccess )
-		{
-			iCommandAccessFlags = iAccess;
-		}
+		iCommandAccessFlags = FCommandAccessAll;
 	}
 	else
 	{
@@ -26,9 +21,9 @@ void CClient::Activated()
 	}
 
 	BLOG_I(
-		"User connected %s (steam id %s), access: %s.",
+		"User connected %s (network ID \"%s\"), access: %s.",
 		GetName(),
-		m_sSteamId.c_str(),
+		m_sNetworkID.c_str(),
 		CTypeToString::AccessFlagsToString(iCommandAccessFlags).c_str()
 	);
 
