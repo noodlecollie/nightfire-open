@@ -108,7 +108,8 @@ void CWeaponL96A1::PlayZoomSound()
 		0.3f,
 		ATTN_NORM,
 		0,
-		100);
+		100
+	);
 }
 
 bool CWeaponL96A1::ReadPredictionData(const weapon_data_t* from)
@@ -134,20 +135,6 @@ bool CWeaponL96A1::WritePredictionData(weapon_data_t* to)
 
 	return true;
 }
-
-#ifndef CLIENT_DLL
-float CWeaponL96A1::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponL96A1::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
-{
-	fightStyle.SetSecondaryFire(false);
-	fightStyle.RandomizeAimAtHead(70);
-	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 0.7f);
-}
-#endif
 
 namespace WeaponAtts
 {

@@ -11,11 +11,18 @@
 #include "botrix/players.h"
 #include "player.h"
 
+static cvar_t bot_profile_file = {(char*)"bot_profile_file", (char*)"bot_profiles.json", FCVAR_ARCHIVE, 0.0f, nullptr};
+
+void CBotrixBotFactory::RegisterCvars()
+{
+	CVAR_REGISTER(&bot_profile_file);
+}
+
 void CBotrixBotFactory::LoadBotProfiles()
 {
-	const char* fileName = CVAR_GET_STRING("bot_profile_file");
+	const char* fileName = bot_profile_file.string;
 
-	if ( !fileName || !(*fileName) )
+	if ( !(*fileName) )
 	{
 		// No bot profiles.
 		return;

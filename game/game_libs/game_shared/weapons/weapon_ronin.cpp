@@ -60,25 +60,29 @@ CWeaponRonin::CWeaponRonin() :
 		[this](WeaponMechanics::CProjectileMechanic& mechanic)
 		{
 			return ThrowTurret(mechanic);
-		});
+		}
+	);
 
 	m_PlaceMechanic->SetCallback(
 		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 		{
 			return PlaceTurret(mechanic, step);
-		});
+		}
+	);
 
 	m_DeployMechanic->SetCallback(
 		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 		{
 			return ActivateTurret(mechanic, step);
-		});
+		}
+	);
 
 	m_DetonateMechanic->SetCallback(
 		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 		{
 			return DetonateTurret(mechanic, step);
-		});
+		}
+	);
 
 	SetPrimaryAttackMechanic(m_ThrowMechanic);
 	SetSecondaryAttackMechanic(m_PlaceMechanic);
@@ -246,7 +250,8 @@ bool CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 			"Failed to find spawn location for Ronin near player origin (%f, %f, %f)\n",
 			m_pPlayer->pev->origin[VEC3_X],
 			m_pPlayer->pev->origin[VEC3_Y],
-			m_pPlayer->pev->origin[VEC3_Z]);
+			m_pPlayer->pev->origin[VEC3_Z]
+		);
 
 		Redeploy();
 		return false;
@@ -261,9 +266,8 @@ bool CWeaponRonin::ThrowTurret(const WeaponMechanics::CProjectileMechanic& mecha
 	return true;
 }
 
-WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
-	WeaponMechanics::CDelegatedMechanic& mechanic,
-	uint32_t step)
+WeaponMechanics::InvocationResult
+CWeaponRonin::PlaceTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 {
 	// Sanity:
 	if ( m_State != State::RONIN_HELD )
@@ -293,7 +297,8 @@ WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
 				"Failed to find placement location for Ronin near player origin (%f, %f, %f)\n",
 				m_pPlayer->pev->origin[VEC3_X],
 				m_pPlayer->pev->origin[VEC3_Y],
-				m_pPlayer->pev->origin[VEC3_Z]);
+				m_pPlayer->pev->origin[VEC3_Z]
+			);
 
 			Redeploy();
 
@@ -317,9 +322,8 @@ WeaponMechanics::InvocationResult CWeaponRonin::PlaceTurret(
 	}
 }
 
-WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
-	WeaponMechanics::CDelegatedMechanic& mechanic,
-	uint32_t step)
+WeaponMechanics::InvocationResult
+CWeaponRonin::ActivateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 {
 	// Sanity:
 	if ( m_State != State::RONIN_THROWN )
@@ -350,9 +354,8 @@ WeaponMechanics::InvocationResult CWeaponRonin::ActivateTurret(
 	}
 }
 
-WeaponMechanics::InvocationResult CWeaponRonin::DetonateTurret(
-	WeaponMechanics::CDelegatedMechanic& mechanic,
-	uint32_t step)
+WeaponMechanics::InvocationResult
+CWeaponRonin::DetonateTurret(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 {
 	// Sanity:
 	if ( m_State != State::RONIN_THROWN )
@@ -441,8 +444,11 @@ bool CWeaponRonin::SelectRoninPlaceSpawnLocation(Vector& outLocation) const
 	return FitRoninAtLocation(eyePos, idealSpawnPos - eyePos, outLocation);
 }
 
-bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& deltaToIdealLocation, Vector& outLocation)
-	const
+bool CWeaponRonin::FitRoninAtLocation(
+	const Vector& traceBegin,
+	const Vector& deltaToIdealLocation,
+	Vector& outLocation
+) const
 {
 #ifndef CLIENT_DLL
 	static constexpr uint32_t RED = 0xFF0000FF;
@@ -507,7 +513,8 @@ bool CWeaponRonin::FitRoninAtLocation(const Vector& traceBegin, const Vector& de
 			RONIN_TURRET_MINS,
 			RONIN_TURRET_MAXS,
 			m_pPlayer->edict(),
-			&tr);
+			&tr
+		);
 
 		// Note that the trace is OK if it started solid - the hull could have been
 		// intersecting with something around the player's head, for example, while
@@ -596,7 +603,8 @@ void CWeaponRonin::SetNewState(State state)
 		at_aiconsole,
 		"CWeaponRonin: State %s -> %s\n",
 		GetRoninStateString(static_cast<uint32_t>(m_State)),
-		GetRoninStateString(static_cast<uint32_t>(state)));
+		GetRoninStateString(static_cast<uint32_t>(state))
+	);
 #endif
 
 	State oldState = m_State;
@@ -797,7 +805,8 @@ void CWeaponRonin::RefreshStateFromTurret(CNPCRoninTurret* turret)
 		ALERT(
 			at_warning,
 			"CWeaponRonin::RefreshStateFromTurret: Ignoring request from turret that's different to ours! This should "
-			"never happen!\n");
+			"never happen!\n"
+		);
 
 		return;
 	}
@@ -808,17 +817,6 @@ void CWeaponRonin::RefreshStateFromTurret(CNPCRoninTurret* turret)
 	}
 
 	UpdateState();
-}
-
-float CWeaponRonin::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	// TODO
-	return 0.0f;
-}
-
-void CWeaponRonin::Bot_SetFightStyle(CBaseBotFightStyle&) const
-{
-	// TODO
 }
 
 CWeaponRonin::State CWeaponRonin::ComputeTurretRelatedState(State currentState) const
@@ -858,9 +856,8 @@ CWeaponRonin::State CWeaponRonin::ComputeTurretRelatedState(State currentState) 
 			}
 		}
 	}
-	else if (
-		currentState == State::RONIN_THROWN || currentState == State::RONIN_DEPLOYING ||
-		currentState == State::RONIN_DEPLOYED )
+	else if ( currentState == State::RONIN_THROWN || currentState == State::RONIN_DEPLOYING ||
+			  currentState == State::RONIN_DEPLOYED )
 	{
 		// We had a Ronin linked but now we don't.
 		return State::RONIN_GONE;
@@ -953,8 +950,11 @@ void CWeaponRonin::DestroyTurret()
 	}
 }
 
-void CWeaponRonin::DrawDebugBounds(CustomGeometry::CMessageWriter* writer, const Vector& location, uint32_t colour)
-	const
+void CWeaponRonin::DrawDebugBounds(
+	CustomGeometry::CMessageWriter* writer,
+	const Vector& location,
+	uint32_t colour
+) const
 {
 	if ( !writer )
 	{
@@ -1007,7 +1007,8 @@ public:
 
 		return CWeaponRonin::AddRoninWeaponToPlayer(
 				   dynamic_cast<CBasePlayer*>(pOther),
-				   CWeaponRonin::TurretPickupType::ON_TOUCH)
+				   CWeaponRonin::TurretPickupType::ON_TOUCH
+			   )
 			? TRUE
 			: FALSE;
 #else

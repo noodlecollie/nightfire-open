@@ -224,7 +224,8 @@ void CWeaponFrinesi::PlayPumpSound()
 		0.9f,
 		ATTN_NORM,
 		0,
-		UTIL_SharedRandomLong(m_pPlayer->random_seed, 98, 101));
+		UTIL_SharedRandomLong(m_pPlayer->random_seed, 98, 101)
+	);
 }
 
 bool CWeaponFrinesi::ReadPredictionData(const weapon_data_t* from)
@@ -255,38 +256,6 @@ const WeaponAtts::WACollection& CWeaponFrinesi::WeaponAttributes() const
 {
 	return WeaponAtts::StaticWeaponAttributes<CWeaponFrinesi>();
 }
-
-#ifndef CLIENT_DLL
-float CWeaponFrinesi::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponFrinesi::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
-{
-	static constexpr float SECONDARY_FIRE_PROXIMITY = 700.0f;
-
-	fightStyle.RandomizeAimAtHead(60);
-	int chanceOfSecondaryFire = 20;
-
-	// If we're able to determine that the enemy is near enough,
-	// increase the chance of using secondary fire.
-
-	CBaseBot* bot = fightStyle.GetOwner();
-	CBaseEntity* enemy = bot->GetEnemy();
-
-	if ( enemy && (Vector(enemy->pev->origin) - Vector(bot->pev->origin)).Length() <= SECONDARY_FIRE_PROXIMITY )
-	{
-		chanceOfSecondaryFire = 90;
-	}
-
-	fightStyle.RandomizeSecondaryFire(chanceOfSecondaryFire);
-	fightStyle.SetNextShootTime(
-		fightStyle.GetSecondaryFire() ? m_flNextSecondaryAttack : m_flNextPrimaryAttack,
-		0.0f,
-		1.0f);
-}
-#endif
 
 namespace WeaponAtts
 {

@@ -11,6 +11,8 @@ class CUtlString;
 class CBotrixBotFactory
 {
 public:
+	static void RegisterCvars();
+
 	// Clears any existing bot profiles and reloads from profiles file.
 	void LoadBotProfiles();
 

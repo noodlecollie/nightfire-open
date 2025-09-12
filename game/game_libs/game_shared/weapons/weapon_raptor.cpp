@@ -26,20 +26,6 @@ const WeaponAtts::WACollection& CWeaponRaptor::WeaponAttributes() const
 	return WeaponAtts::StaticWeaponAttributes<CWeaponRaptor>();
 }
 
-#ifndef CLIENT_DLL
-float CWeaponRaptor::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponRaptor::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
-{
-	fightStyle.SetSecondaryFire(false);
-	fightStyle.RandomizeAimAtHead(80);
-	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.0f, 0.5f);
-}
-#endif
-
 namespace WeaponAtts
 {
 	template<>

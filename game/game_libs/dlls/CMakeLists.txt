@@ -262,6 +262,8 @@ set(SOURCES_SERVER
 	botrix/good/vector.h
 	botrix/bot.h
 	botrix/bot.cpp
+	botrix/botregister.h
+	botrix/botregister.cpp
 	botrix/botrixbotfactory.h
 	botrix/botrixbotfactory.cpp
 	botrix/botrixconfig.h
@@ -281,6 +283,7 @@ set(SOURCES_SERVER
 	botrix/defines.h
 	botrix/engine_util.h
 	botrix/engine_util.cpp
+	botrix/ibotgamerulesinterface.h
 	botrix/item.h
 	botrix/item.cpp
 	botrix/logbuffer.h
@@ -301,29 +304,6 @@ set(SOURCES_SERVER
 	botrix/waypoint.cpp
 	botrix/weapon.h
 	botrix/weapon.cpp
-	bots/input/botuserinputsimulator.h
-	bots/input/botuserinputsimulator.cpp
-	bots/itemattributes/botweaponattributes.h
-	bots/bot_ai.cpp
-	bots/bot_commands.h
-	bots/bot_commands.cpp
-	bots/bot_cvars.h
-	bots/bot_cvars.cpp
-	bots/bot_fightstyle.cpp
-	bots/bot_memory.cpp
-	bots/bot_misc.h
-	bots/bot_misc.cpp
-	bots/bot_move.cpp
-	bots/bot_nav.cpp
-	bots/bot_stats.cpp
-	bots/bot.h
-	bots/botfactory.h
-	bots/botfactory.cpp
-	bots/botgamerulesinterface.h
-	bots/botgamerulesinterface.cpp
-	bots/botregister.h
-	bots/botregister.cpp
-	bots/ibotgamerulesinterface.h
 	client/client.cpp
 	client/clientCommandRegister.h
 	client/clientCommandRegister.cpp

@@ -56,49 +56,6 @@ const WeaponAtts::WACollection& CWeaponGrenadeLauncher::WeaponAttributes() const
 }
 
 #ifndef CLIENT_DLL
-float CWeaponGrenadeLauncher::Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity&, float distanceToEnemy) const
-{
-	// Default, unmodified preference:
-	float pref = static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-
-	// If the enemy is close enough that we'd damage ourselves with the grenade, scale back the preference accordingly.
-	if ( distanceToEnemy > GRENADELAUNCHER_EXPLOSION_RADIUS )
-	{
-		return pref;
-	}
-
-	// This is the fringe around the edge of the explosion sphere, proportional to the
-	// radius, that we will tolerate being in.
-	float explosionFringeToleranceFactor = 0.15f;
-
-	// Scale this by how much health we have. If we have 1hp, we want it to be 0.
-	const float toleranceScale = std::max<float>(bot.pev->health - 1, 0) / std::max<float>(bot.pev->max_health - 1, 0);
-	explosionFringeToleranceFactor *= toleranceScale;
-
-	// If there is no tolerance zone at all, return 0 if we touch the radius.
-	if ( explosionFringeToleranceFactor < std::numeric_limits<float>::min() )
-	{
-		return distanceToEnemy <= GRENADELAUNCHER_EXPLOSION_RADIUS ? 0.0f : pref;
-	}
-
-	const float closestDistance = (1.0f - explosionFringeToleranceFactor) * GRENADELAUNCHER_EXPLOSION_RADIUS;
-
-	// How does the distance to the enemy compare to these two radii?
-	// If <= closestDistance, we don't want to use the weapon.
-	// If >= furtherstDistance, we use the original weapon preference.
-	// Anything in-between is lerped.
-	const float prefModifier =
-		(distanceToEnemy - closestDistance) / (GRENADELAUNCHER_EXPLOSION_RADIUS - closestDistance);
-	return prefModifier * pref;
-}
-
-void CWeaponGrenadeLauncher::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
-{
-	fightStyle.SetSecondaryFire(false);
-	fightStyle.SetAimAt(AIM_SPLASH);
-	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 2.0f);
-}
-
 void CWeaponGrenadeLauncher::CreateProjectile(const WeaponMechanics::CProjectileMechanic& mechanic)
 {
 	CGenericGrenade* grenade = CGenericGrenade::CreateGrenade(

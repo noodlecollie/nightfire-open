@@ -24,17 +24,6 @@ const WeaponAtts::WACollection& CWeaponSilent::WeaponAttributes() const
 	return WeaponAtts::StaticWeaponAttributes<CWeaponSilent>();
 }
 
-#ifndef CLIENT_DLL
-float CWeaponSilent::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponSilent::Bot_SetFightStyle(CBaseBotFightStyle&) const
-{
-}
-#endif
-
 namespace WeaponAtts
 {
 	template<>

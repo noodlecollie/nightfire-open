@@ -16,8 +16,6 @@ public:
 	bool WritePredictionData(weapon_data_t* to) override;
 
 #ifndef CLIENT_DLL
-	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
-	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
 	int Save(CSave& save) override;
 	int Restore(CRestore& restore) override;
 	static TYPEDESCRIPTION m_SaveData[];

@@ -25,7 +25,7 @@
 #include "teamplay_gamerules.h"
 #include "game.h"
 #include "PlatformLib/String.h"
-#include "bots/ibotgamerulesinterface.h"
+#include "botrix/ibotgamerulesinterface.h"
 
 static char team_names[MAX_TEAMS][MAX_TEAMNAME_LENGTH];
 static int team_scores[MAX_TEAMS];
@@ -315,12 +315,14 @@ void CHalfLifeTeamplay::ChangePlayerTeam(CBasePlayer* pPlayer, const char* pTeam
 		clientIndex,
 		g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()),
 		"model",
-		pPlayer->m_szTeamName);
+		pPlayer->m_szTeamName
+	);
 	g_engfuncs.pfnSetClientKeyValue(
 		clientIndex,
 		g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()),
 		"team",
-		pPlayer->m_szTeamName);
+		pPlayer->m_szTeamName
+	);
 
 	// NFTODO: We need a proper server-side events system.
 	IBotGameRulesInterface* bgri = BotGameRulesInterface();
@@ -366,12 +368,14 @@ void CHalfLifeTeamplay::ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobu
 			clientIndex,
 			g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()),
 			"model",
-			pPlayer->m_szTeamName);
+			pPlayer->m_szTeamName
+		);
 		g_engfuncs.pfnSetClientKeyValue(
 			clientIndex,
 			g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()),
 			"team",
-			pPlayer->m_szTeamName);
+			pPlayer->m_szTeamName
+		);
 		PlatformLib_SNPrintF(text, sizeof(text), "* Not allowed to change teams in this game!\n");
 		UTIL_SayText(text, pPlayer);
 		return;
@@ -385,7 +389,8 @@ void CHalfLifeTeamplay::ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobu
 			clientIndex,
 			g_engfuncs.pfnGetInfoKeyBuffer(pPlayer->edict()),
 			"model",
-			pPlayer->m_szTeamName);
+			pPlayer->m_szTeamName
+		);
 		PlatformLib_SNPrintF(text, sizeof(text), "* Can't change team to \'%s\'\n", mdls);
 		UTIL_SayText(text, pPlayer);
 		PlatformLib_SNPrintF(text, sizeof(text), "* Server limits teams to \'%s\'\n", m_szTeamList);
@@ -402,7 +407,8 @@ void CHalfLifeTeamplay::ClientUserInfoChanged(CBasePlayer* pPlayer, char* infobu
 		GETPLAYERUSERID(pPlayer->edict()),
 		GETPLAYERAUTHID(pPlayer->edict()),
 		pPlayer->m_szTeamName,
-		mdls);
+		mdls
+	);
 
 	ChangePlayerTeam(pPlayer, mdls, TRUE, TRUE);
 

@@ -24,22 +24,6 @@ const WeaponAtts::WACollection& CWeaponMP9::WeaponAttributes() const
 	return WeaponAtts::StaticWeaponAttributes<CWeaponMP9>();
 }
 
-#ifndef CLIENT_DLL
-float CWeaponMP9::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponMP9::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
-{
-	// NFTODO: Tune this properly
-	fightStyle.SetSecondaryFire(false);
-	fightStyle.RandomizeAimAtHead(50);
-	fightStyle.SetHoldDownAttack(true);
-	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.1f, 0.2f);
-}
-#endif
-
 namespace WeaponAtts
 {
 	template<>

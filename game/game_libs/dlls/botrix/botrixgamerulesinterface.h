@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bots/ibotgamerulesinterface.h"
+#include "botrix/ibotgamerulesinterface.h"
 #include "standard_includes.h"
 
 class CBotrixGameRulesInterface : public IBotGameRulesInterface
