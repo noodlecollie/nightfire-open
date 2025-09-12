@@ -18,8 +18,8 @@ public:
 	static constexpr float PLAYER_WALK_SPEED = 0.5f * PLAYER_RUN_SPEED;  // Based on cl_movespeedkey
 	static constexpr float PLAYER_CROUCH_SPEED = PLAYER_DUCKING_MULTIPLIER * PLAYER_RUN_SPEED;
 
-	// We don't actually support sprint right now, but just set to some sensible default.
-	static constexpr float PLAYER_SPRINT_SPEED = 1.5f * PLAYER_RUN_SPEED;
+	// We don't actually support sprint right now, so set this to match running.
+	static constexpr float PLAYER_SPRINT_SPEED = PLAYER_RUN_SPEED;
 
 	// Taken from pm_shared.c:575: sin^-1(0.7)
 	static constexpr float MAX_CLIMBABLE_SLOPE_PITCH = 44.427f;

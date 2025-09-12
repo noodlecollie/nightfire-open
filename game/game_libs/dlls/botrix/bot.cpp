@@ -2938,14 +2938,6 @@ void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevO
 		FLAG_SET(IN_DUCK, m_cCmd.buttons);
 	}
 
-#ifdef BOTRIX_TODO
-	// Sprint until bot reaches next waypoint. Not working.
-	if ( m_bNeedSprint )
-	{
-		FLAG_SET(IN_SPEED, m_cCmd.buttons);
-	}
-#endif  // BOTRIX_TODO
-
 	// Toggle flashlight.
 	if ( m_bNeedFlashlight ^ m_bUsingFlashlight )
 	{
