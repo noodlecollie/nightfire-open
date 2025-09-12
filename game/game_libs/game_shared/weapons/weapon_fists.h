@@ -12,11 +12,6 @@ public:
 
 	BOOL Deploy() override;
 
-#ifndef CLIENT_DLL
-	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
-	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
-#endif
-
 protected:
 	void AttackInvoked(WeaponAtts::AttackMode mode, const WeaponMechanics::InvocationResult& result) override;
 

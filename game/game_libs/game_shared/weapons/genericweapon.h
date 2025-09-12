@@ -69,13 +69,6 @@ public:
 	}
 
 #ifndef CLIENT_DLL
-	// Don't know if this is the best place to put these?
-	// Currently refactoring weapon attributes and didn't like putting
-	// non-static behaviour like this into static attributes.
-	// Evaluate whether this should be moved elsewhere - possibly
-	// make bot weapon profiles local to bot code?
-	virtual float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const = 0;
-	virtual void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const = 0;
 	int Save(CSave& save) override;
 	int Restore(CRestore& restore) override;
 	static TYPEDESCRIPTION m_SaveData[];
@@ -93,7 +86,8 @@ protected:
 	void DelayFiring(
 		float secs,
 		bool allowIfEarlier = false,
-		WeaponAtts::AttackMode attackMode = WeaponAtts::AttackMode::None);
+		WeaponAtts::AttackMode attackMode = WeaponAtts::AttackMode::None
+	);
 	bool HasAmmo(const WeaponAtts::WABaseAttack* attackMode, int minCount = 1, bool useClip = true) const;
 	bool HasAmmo(WeaponAtts::WAAmmoBasedAttack::AmmoPool pool, int minCount = 1, bool useClip = true) const;
 	bool DecrementAmmo(const WeaponAtts::WABaseAttack* attackMode);
@@ -257,7 +251,8 @@ private:
 // Specialisation for base class, which does not need a dynamic_cast.
 template<>
 inline const WeaponAtts::WABaseAttack* CGenericWeapon::GetAttackModeFromAttributes<WeaponAtts::WABaseAttack>(
-	uint32_t index) const
+	uint32_t index
+) const
 {
 	const WeaponAtts::WACollection& atts = WeaponAttributes();
 	ASSERT(index < static_cast<uint32_t>(atts.AttackModes.Count()));

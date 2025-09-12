@@ -25,7 +25,8 @@ CWeaponHullTrace::CWeaponHullTrace() :
 		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 		{
 			return DoTrace(mechanic, step);
-		});
+		}
+	);
 
 	SetPrimaryAttackMechanic(m_PrimaryMechanic);
 }
@@ -36,15 +37,6 @@ const WeaponAtts::WACollection& CWeaponHullTrace::WeaponAttributes() const
 }
 
 #ifndef CLIENT_DLL
-float CWeaponHullTrace::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponHullTrace::Bot_SetFightStyle(CBaseBotFightStyle&) const
-{
-}
-
 void CWeaponHullTrace::DoTrace_Server()
 {
 	using namespace CustomGeometry;

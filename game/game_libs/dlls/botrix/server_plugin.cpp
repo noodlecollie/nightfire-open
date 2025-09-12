@@ -13,7 +13,7 @@
 #include "weaponregistry.h"
 #include "weaponattributes/weaponatts_collection.h"
 #include "utils/mp_utils.h"
-#include "bots/botregister.h"
+#include "botrix/botregister.h"
 
 float CBotrixServerPlugin::m_fFpsEnd = 0.0f;
 int CBotrixServerPlugin::m_iFramesCount = 0;

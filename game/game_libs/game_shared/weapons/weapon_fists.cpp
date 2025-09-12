@@ -49,21 +49,6 @@ void CWeaponFists::AttackInvoked(WeaponAtts::AttackMode, const WeaponMechanics::
 	}
 }
 
-#ifndef CLIENT_DLL
-float CWeaponFists::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponFists::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
-{
-	fightStyle.SetSecondaryFire(false);
-	fightStyle.SetHoldDownAttack(true);
-	fightStyle.RandomizeAimAtHead(40);
-	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 0.7f);
-}
-#endif
-
 namespace WeaponAtts
 {
 	template<>

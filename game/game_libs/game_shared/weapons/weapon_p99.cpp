@@ -84,18 +84,6 @@ TYPEDESCRIPTION CWeaponP99::m_SaveData[] = {
 };
 
 IMPLEMENT_SAVERESTORE(CWeaponP99, CGenericWeapon)
-
-float CWeaponP99::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponP99::Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const
-{
-	fightStyle.SetSecondaryFire(false);
-	fightStyle.RandomizeAimAtHead(80);
-	fightStyle.SetNextShootTime(m_flNextPrimaryAttack, 0.2f, 0.7f);
-}
 #endif
 
 namespace WeaponAtts

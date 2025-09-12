@@ -17,8 +17,6 @@
 #include "util.h"
 #include "game.h"
 #include "weaponregistry.h"
-#include "bot_cvars.h"
-#include "bot_commands.h"
 #include "projectInterface/IProjectInterface.h"
 #include "projectInterface_server.h"
 #include "gameresources/GameResources.h"
@@ -26,6 +24,8 @@
 #include "customGeometry/commands.h"
 #include "resources/SoundResources.h"
 #include "gameplay/weaponInaccuracyCvars.h"
+#include "botrix/botrixbotfactory.h"
+#include "botrix/console_commands.h"
 
 cvar_t displaysoundlist = CONSTRUCT_CVAR_T("displaysoundlist", 0, 0);
 
@@ -33,7 +33,8 @@ cvar_t displaysoundlist = CONSTRUCT_CVAR_T("displaysoundlist", 0, 0);
 cvar_t fragsleft = CONSTRUCT_CVAR_T(
 	"mp_fragsleft",
 	0,
-	FCVAR_SERVER | FCVAR_UNLOGGED);  // Don't spam console/log files/users with this changing
+	FCVAR_SERVER | FCVAR_UNLOGGED
+);  // Don't spam console/log files/users with this changing
 cvar_t timeleft = CONSTRUCT_CVAR_T("mp_timeleft", 0, FCVAR_SERVER | FCVAR_UNLOGGED);
 
 // multiplayer server rules
@@ -281,8 +282,8 @@ void GameDLLInit(void)
 	// END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	WeaponInaccuracyCvars::Init();
-	Bot_RegisterCVars();
-	BotCommands::Initialise();
+	CBotrixBotFactory::RegisterCvars();
+	CBotrixCommand::RegisterServerCommands();
 	CustomGeometry::InitialiseCommands();
 	HitboxDebugging::Initialise();
 

@@ -6,6 +6,7 @@
 class CBotRegister
 {
 public:
+	static void RegisterCvars();
 	static CBotRegister& StaticInstance();
 
 	bool Add(const CUtlString& profileName, const CUtlString& customName = CUtlString());

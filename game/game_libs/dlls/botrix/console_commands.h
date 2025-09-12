@@ -1304,6 +1304,8 @@ public:
 class CBotrixCommand : public CConsoleCommandContainer
 {
 public:
+	static void RegisterServerCommands();
+
 	/// Contructor.
 	CBotrixCommand();
 

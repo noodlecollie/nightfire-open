@@ -51,7 +51,8 @@ public:
 	static bool AddRoninWeaponToPlayer(
 		CBasePlayer* player,
 		TurretPickupType pickupType = TurretPickupType::ON_TOUCH,
-		CNPCRoninTurret* turret = nullptr);
+		CNPCRoninTurret* turret = nullptr
+	);
 
 	CNPCRoninTurret* GetTurret() const;
 	bool PickUpTurret(TurretPickupType pickupType, CNPCRoninTurret* turret = nullptr);
@@ -60,8 +61,6 @@ public:
 	// Pass null to clear out the stored turret.
 	void RefreshStateFromTurret(CNPCRoninTurret* turret);
 
-	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
-	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
 	int Save(CSave& save) override;
 	int Restore(CRestore& restore) override;
 	static TYPEDESCRIPTION m_SaveData[];

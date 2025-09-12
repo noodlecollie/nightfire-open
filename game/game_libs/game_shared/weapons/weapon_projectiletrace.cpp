@@ -28,7 +28,8 @@ CWeaponProjectileTrace::CWeaponProjectileTrace() :
 		[this](WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t step)
 		{
 			return DoTrace(mechanic, step);
-		});
+		}
+	);
 
 	SetPrimaryAttackMechanic(m_PrimaryMechanic);
 }
@@ -39,15 +40,6 @@ const WeaponAtts::WACollection& CWeaponProjectileTrace::WeaponAttributes() const
 }
 
 #ifndef CLIENT_DLL
-float CWeaponProjectileTrace::Bot_CalcDesireToUse(CBaseBot&, CBaseEntity&, float) const
-{
-	return static_cast<float>(WeaponAttributes().Core.SwitchWeight) / static_cast<float>(WeaponPref_Max);
-}
-
-void CWeaponProjectileTrace::Bot_SetFightStyle(CBaseBotFightStyle&) const
-{
-}
-
 void CWeaponProjectileTrace::DoTrace_Server()
 {
 	using namespace CustomGeometry;
@@ -111,7 +103,8 @@ void CWeaponProjectileTrace::DoTrace_Server()
 		gunPos.z,
 		aimAngle[PITCH],
 		debug_projectiletrace_launch_speed.value,
-		debug_projectiletrace_gravity.value);
+		debug_projectiletrace_gravity.value
+	);
 
 	if ( groundContactDist > 0.0f )
 	{
@@ -129,9 +122,8 @@ void CWeaponProjectileTrace::DoTrace_Server()
 }
 #endif
 
-WeaponMechanics::InvocationResult CWeaponProjectileTrace::DoTrace(
-	WeaponMechanics::CDelegatedMechanic& mechanic,
-	uint32_t)
+WeaponMechanics::InvocationResult
+CWeaponProjectileTrace::DoTrace(WeaponMechanics::CDelegatedMechanic& mechanic, uint32_t)
 {
 #ifndef CLIENT_DLL
 	DoTrace_Server();

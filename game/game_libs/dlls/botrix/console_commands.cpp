@@ -8,6 +8,7 @@
 #include "botrix/weapon.h"
 #include "botrix/bot.h"
 #include "botrix/parameter_vars.h"
+#include "botrix/botregister.h"
 
 #include "PlatformLib/String.h"
 
@@ -18,6 +19,7 @@
 #include "defines.h"
 #include "engine_util.h"
 #include "types.h"
+#include "gamerules.h"
 
 #define MAIN_COMMAND "botrix"
 
@@ -5146,6 +5148,96 @@ void CBotrixCommand::CommandCallback(const CCommand& command)
 //----------------------------------------------------------------------------------------------------------------
 // Main "botrix" command.
 //----------------------------------------------------------------------------------------------------------------
+void CBotrixCommand::RegisterServerCommands()
+{
+	g_engfuncs.pfnAddServerCommand(
+		"botrix",
+		[]()
+		{
+			CHalfLifeMultiplay* gameRules = g_pGameRules ? dynamic_cast<CHalfLifeMultiplay*>(g_pGameRules) : nullptr;
+
+			if ( !gameRules || !gameRules->IsMultiplayer() )
+			{
+				ALERT(at_error, "Cannot add bots when not in multiplayer game.\n");
+				return;
+			}
+
+			CBotrixCommand* commandHandler = CBotrixServerPlugin::GetConsoleCommandHandler();
+
+			if ( !commandHandler )
+			{
+				ALERT(at_error, "Botrix console command handler unavailable.\n");
+				return;
+			}
+
+			commandHandler->AcceptServerCommand();
+		}
+	);
+
+	g_engfuncs.pfnAddServerCommand(
+		"bot_register_add",
+		[]()
+		{
+			int numArgs = CMD_ARGC();
+
+			if ( numArgs < 2 )
+			{
+				ALERT(at_console, "Usage: bot_register_add <profile name> [player name]\n");
+				return;
+			}
+
+			const char* profileName = CMD_ARGV(1);
+			const char* customName = CMD_ARGC() >= 3 ? CMD_ARGV(2) : nullptr;
+
+			CBotRegister& reg = CBotRegister::StaticInstance();
+
+			if ( !reg.Add(CUtlString(profileName), CUtlString(customName)) )
+			{
+				ALERT(at_error, "Could not add bot: register was full.\n");
+			}
+		}
+	);
+
+	g_engfuncs.pfnAddServerCommand(
+		"bot_register_clear",
+		[]()
+		{
+			CBotRegister::StaticInstance().Clear();
+		}
+	);
+
+	g_engfuncs.pfnAddServerCommand(
+		"bot_register_list",
+		[]()
+		{
+			CBotRegister& reg = CBotRegister::StaticInstance();
+
+			if ( reg.Count() < 1 )
+			{
+				ALERT(at_console, "Bot register contains 0 entries.\n");
+				return;
+			}
+
+			ALERT(at_console, "Bot register contains %u entries:\n", reg.Count());
+
+			for ( uint32_t index = 0; index < reg.Count(); ++index )
+			{
+				const CUtlString profileName = reg.ProfileName(index);
+				const CUtlString customName = reg.CustomName(index);
+
+				if ( customName.IsValid() )
+				{
+					ALERT(at_console, "  %u: %s (\"%s\")\n", index + 1, profileName.String(), customName.String());
+				}
+				else
+				{
+					ALERT(at_console, "  %u: %s\n", index + 1, profileName.String());
+				}
+			}
+		}
+	);
+}
+
 CBotrixCommand::CBotrixCommand()
 {
 	m_sCommand = "botrix";

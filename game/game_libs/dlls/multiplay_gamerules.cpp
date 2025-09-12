@@ -32,10 +32,8 @@
 #endif
 #include "EnginePublicAPI/hltv.h"
 #include "ammodefs.h"
-
-#include "bot_misc.h"
+#include "botrix/botrixgamerulesinterface.h"
 #include "nodes.h"
-#include "bots/botgamerulesinterface.h"
 #include "botrix/botrixgamerulesinterface.h"
 #include "weapon_p99.h"
 
@@ -82,20 +80,7 @@ static CMultiplayGameMgrHelper g_GameMgrHelper;
 CHalfLifeMultiplay::CHalfLifeMultiplay() :
 	CGameRules()
 {
-	const char* backend = CVAR_GET_STRING("bot_backend");
-
-	if ( FStrEq(backend, "botrix") )
-	{
-		m_pBotGameRulesInterface = new CBotrixGameRulesInterface();
-	}
-	else if ( FStrEq(backend, "rhobot") )
-	{
-		m_pBotGameRulesInterface = new CBotGameRulesInterface(*this);
-	}
-	else if ( backend && backend[0] )
-	{
-		ALERT(at_error, "Unrecognised bot backend: \"%s\"\n", backend);
-	}
+	m_pBotGameRulesInterface = new CBotrixGameRulesInterface();
 
 #ifndef NO_VOICEGAMEMGR
 	g_VoiceGameMgr.Init(&g_GameMgrHelper, gpGlobals->maxClients);

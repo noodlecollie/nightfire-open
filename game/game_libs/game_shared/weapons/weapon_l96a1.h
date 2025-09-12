@@ -20,11 +20,6 @@ public:
 	bool ReadPredictionData(const weapon_data_t* from) override;
 	bool WritePredictionData(weapon_data_t* to) override;
 
-#ifndef CLIENT_DLL
-	float Bot_CalcDesireToUse(CBaseBot& bot, CBaseEntity& enemy, float distanceToEnemy) const override;
-	void Bot_SetFightStyle(CBaseBotFightStyle& fightStyle) const override;
-#endif
-
 private:
 	static constexpr float SCOPE_MOVE_SPEED_FACTOR = 0.5f;
 

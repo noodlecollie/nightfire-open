@@ -715,7 +715,8 @@ int CGraph::FindShortestPath(int* piPath, int iStart, int iDest, int iHull, int 
 							 iCurrentNode,
 							 m_pLinkPool[m_pNodes[iCurrentNode].m_iFirstLink + i].m_pLinkEnt,
 							 afCapMask,
-							 NODEGRAPH_STATIC) )
+							 NODEGRAPH_STATIC
+						 ) )
 					{
 						// monster should not try to go this way.
 						continue;
@@ -863,24 +864,30 @@ void CGraph::CheckNode(Vector vecOrigin, int iNode)
 				CALC_RANGE(
 					static_cast<int>(vecOrigin.x),
 					static_cast<int>(m_RegionMin[0]),
-					static_cast<int>(m_RegionMax[0])),
-				m_pNodes[iNode].m_Region[0]);
+					static_cast<int>(m_RegionMax[0])
+				),
+				m_pNodes[iNode].m_Region[0]
+			);
 			UpdateRange(
 				m_minY,
 				m_maxY,
 				CALC_RANGE(
 					static_cast<int>(vecOrigin.y),
 					static_cast<int>(m_RegionMin[1]),
-					static_cast<int>(m_RegionMax[1])),
-				m_pNodes[iNode].m_Region[1]);
+					static_cast<int>(m_RegionMax[1])
+				),
+				m_pNodes[iNode].m_Region[1]
+			);
 			UpdateRange(
 				m_minZ,
 				m_maxZ,
 				CALC_RANGE(
 					static_cast<int>(vecOrigin.z),
 					static_cast<int>(m_RegionMin[2]),
-					static_cast<int>(m_RegionMax[2])),
-				m_pNodes[iNode].m_Region[2]);
+					static_cast<int>(m_RegionMax[2])
+				),
+				m_pNodes[iNode].m_Region[2]
+			);
 
 			// From maxCircle, calculate maximum bounds box. All points must be
 			// simultaneously inside all bounds of the box.
@@ -888,27 +895,33 @@ void CGraph::CheckNode(Vector vecOrigin, int iNode)
 			m_minBoxX = CALC_RANGE(
 				static_cast<int>(vecOrigin.x - flDist),
 				static_cast<int>(m_RegionMin[0]),
-				static_cast<int>(m_RegionMax[0]));
+				static_cast<int>(m_RegionMax[0])
+			);
 			m_maxBoxX = CALC_RANGE(
 				static_cast<int>(vecOrigin.x + flDist),
 				static_cast<int>(m_RegionMin[0]),
-				static_cast<int>(m_RegionMax[0]));
+				static_cast<int>(m_RegionMax[0])
+			);
 			m_minBoxY = CALC_RANGE(
 				static_cast<int>(vecOrigin.y - flDist),
 				static_cast<int>(m_RegionMin[1]),
-				static_cast<int>(m_RegionMax[1]));
+				static_cast<int>(m_RegionMax[1])
+			);
 			m_maxBoxY = CALC_RANGE(
 				static_cast<int>(vecOrigin.y + flDist),
 				static_cast<int>(m_RegionMin[1]),
-				static_cast<int>(m_RegionMax[1]));
+				static_cast<int>(m_RegionMax[1])
+			);
 			m_minBoxZ = CALC_RANGE(
 				static_cast<int>(vecOrigin.z - flDist),
 				static_cast<int>(m_RegionMin[2]),
-				static_cast<int>(m_RegionMax[2]));
+				static_cast<int>(m_RegionMax[2])
+			);
 			m_maxBoxZ = CALC_RANGE(
 				static_cast<int>(vecOrigin.z + flDist),
 				static_cast<int>(m_RegionMin[2]),
-				static_cast<int>(m_RegionMax[2]));
+				static_cast<int>(m_RegionMax[2])
+			);
 		}
 	}
 }
@@ -989,17 +1002,20 @@ int CGraph::FindNearestNode(const Vector& vecOrigin, int afNodeTypes)
 		m_minX,
 		m_maxX,
 		CALC_RANGE(vecOrigin.x, m_RegionMin[0], m_RegionMax[0]),
-		m_pNodes[m_iNearest].m_Region[0]);
+		m_pNodes[m_iNearest].m_Region[0]
+	);
 	CalcBounds(
 		m_minY,
 		m_maxY,
 		CALC_RANGE(vecOrigin.y, m_RegionMin[1], m_RegionMax[1]),
-		m_pNodes[m_iNearest].m_Region[1]);
+		m_pNodes[m_iNearest].m_Region[1]
+	);
 	CalcBounds(
 		m_minZ,
 		m_maxZ,
 		CALC_RANGE(vecOrigin.z, m_RegionMin[2], m_RegionMax[2]),
-		m_pNodes[m_iNearest].m_Region[2]);
+		m_pNodes[m_iNearest].m_Region[2]
+	);
 #endif
 	int halfX = (m_minX + m_maxX) / 2;
 	int halfY = (m_minY + m_maxY) / 2;
@@ -1389,7 +1405,8 @@ int CGraph::LinkVisibleNodes(CLink* pLinkPool, FILE* file, int* piBadNode)
 						"  Entity on connection: %s, name: %s  Model: %s",
 						STRING(VARS(pTraceEnt)->classname),
 						STRING(VARS(pTraceEnt)->targetname),
-						STRING(VARS(tr.pHit)->model));
+						STRING(VARS(tr.pHit)->model)
+					);
 				}
 
 				// fprintf( file, "\n", j );
@@ -1443,7 +1460,8 @@ int CGraph::LinkVisibleNodes(CLink* pLinkPool, FILE* file, int* piBadNode)
 		file,
 		"\n%4d Total Initial Connections - %4d Maximum connections for a single node.\n",
 		cTotalLinks,
-		cMaxInitialLinks);
+		cMaxInitialLinks
+	);
 	fprintf(file, "----------------------------------------------------------------------------\n\n\n");
 
 	return cTotalLinks;
@@ -1527,7 +1545,8 @@ int CGraph::RejectInlineLinks(CLink* pLinkPool, FILE* file)
 								"REJECTED NODE %3d through Node %3d, Dot = %8f\n",
 								pLinkPool[pSrcNode->m_iFirstLink + j].m_iDestNode,
 								pLinkPool[pSrcNode->m_iFirstLink + k].m_iDestNode,
-								Vector2DotProduct(vec2DirToCheckNode, vec2DirToTestNode));
+								Vector2DotProduct(vec2DirToCheckNode, vec2DirToTestNode)
+							);
 						}
 
 						pLinkPool[pSrcNode->m_iFirstLink + j] =
@@ -1822,7 +1841,8 @@ void CTestHull::BuildNodeGraph(void)
 			"Location      %4d,%4d,%4d\n",
 			(int)WorldGraph.m_pNodes[i].m_vecOrigin.x,
 			(int)WorldGraph.m_pNodes[i].m_vecOrigin.y,
-			(int)WorldGraph.m_pNodes[i].m_vecOrigin.z);
+			(int)WorldGraph.m_pNodes[i].m_vecOrigin.z
+		);
 		fprintf(file, "HintType:     %4d\n", WorldGraph.m_pNodes[i].m_sHintType);
 		fprintf(file, "HintActivity: %4d\n", WorldGraph.m_pNodes[i].m_sHintActivity);
 		fprintf(file, "HintYaw:      %4f\n", WorldGraph.m_pNodes[i].m_flHintYaw);
@@ -1857,7 +1877,8 @@ void CTestHull::BuildNodeGraph(void)
 				WorldGraph.m_pNodes[i].m_vecOrigin - Vector(0, 0, 384),
 				ignore_monsters,
 				nullptr,
-				&tr);
+				&tr
+			);
 
 			// This trace is ONLY used if we hit an entity flagged with FL_WORLDBRUSH
 			TraceResult trEnt;
@@ -1866,7 +1887,8 @@ void CTestHull::BuildNodeGraph(void)
 				WorldGraph.m_pNodes[i].m_vecOrigin - Vector(0, 0, 384),
 				dont_ignore_monsters,
 				nullptr,
-				&trEnt);
+				&trEnt
+			);
 
 			// Did we hit something closer than the floor?
 			if ( trEnt.flFraction < tr.flFraction )
@@ -2062,7 +2084,8 @@ void CTestHull::BuildNodeGraph(void)
 						ignore_monsters,
 						large_hull,
 						ENT(pev),
-						&tr);
+						&tr
+					);
 					if ( tr.fStartSolid || tr.flFraction < 1.0 )
 					{
 						pTempPool[pSrcNode->m_iFirstLink + j].m_afLinkInfo &= ~bits_LINK_FLY_HULL;
@@ -2925,7 +2948,8 @@ int Primes[NUMBER_OF_PRIMES] = {
 	541, 547, 557, 563, 569, 571, 577, 587, 593, 599,  601,  607,  613,  617,  619,  631,  641, 643, 647, 653,
 	659, 661, 673, 677, 683, 691, 701, 709, 719, 727,  733,  739,  743,  751,  757,  761,  769, 773, 787, 797,
 	809, 811, 821, 823, 827, 829, 839, 853, 857, 859,  863,  877,  881,  883,  887,  907,  911, 919, 929, 937,
-	941, 947, 953, 967, 971, 977, 983, 991, 997, 1009, 1013, 1019, 1021, 1031, 1033, 1039, 0};
+	941, 947, 953, 967, 971, 977, 983, 991, 997, 1009, 1013, 1019, 1021, 1031, 1033, 1039, 0
+};
 
 void CGraph::HashChoosePrimes(int TableSize)
 {
@@ -3137,15 +3161,18 @@ void CGraph::BuildRegionTables(void)
 		m_pNodes[i].m_Region[0] = static_cast<BYTE>(CALC_RANGE(
 			static_cast<int>(m_pNodes[i].m_vecOrigin.x),
 			static_cast<int>(m_RegionMin[0]),
-			static_cast<int>(m_RegionMax[0])));
+			static_cast<int>(m_RegionMax[0])
+		));
 		m_pNodes[i].m_Region[1] = static_cast<BYTE>(CALC_RANGE(
 			static_cast<int>(m_pNodes[i].m_vecOrigin.y),
 			static_cast<int>(m_RegionMin[1]),
-			static_cast<int>(m_RegionMax[1])));
+			static_cast<int>(m_RegionMax[1])
+		));
 		m_pNodes[i].m_Region[2] = static_cast<BYTE>(CALC_RANGE(
 			static_cast<int>(m_pNodes[i].m_vecOrigin.z),
 			static_cast<int>(m_RegionMin[2]),
-			static_cast<int>(m_RegionMax[2])));
+			static_cast<int>(m_RegionMax[2])
+		));
 	}
 
 	for ( i = 0; i < 3; i++ )
@@ -3685,6 +3712,57 @@ EnoughSaid:
 		delete[] pMyPath2;
 	pMyPath = 0;
 	pMyPath2 = 0;
+}
+
+void CGraph::InitNavArray(void)
+{
+	for ( int i = 0; i < NAV_ARRAY_SIZE; i++ )
+	{
+		for ( int j = 0; j < NAV_ARRAY_SIZE; j++ )
+		{
+			for ( int k = 0; k < NAV_ARRAY_SIZE; k++ )
+			{
+				NavigationArray[i][j][k] = 1;
+			}
+		}
+	}
+}
+
+void CGraph::SaveNavToFile(void)
+{
+	FILE* navFile;
+	char navFileName[50] = "default";
+
+	PlatformLib_SNPrintF(navFileName, sizeof(navFileName), "rhodmc/nav/%s.nav", (char*)STRING(gpGlobals->mapname));
+
+	navFile = PlatformLib_FOpen(navFileName, "w");
+
+	char printThis[64];
+
+	for ( int i = 0; i < NAV_ARRAY_SIZE; i++ )
+	{
+		for ( int j = 0; j < NAV_ARRAY_SIZE; j++ )
+		{
+			for ( int k = 0; k < NAV_ARRAY_SIZE; k++ )
+			{
+				if ( WorldGraph.NavigationArray[i][j][k] != 1 )
+				{
+					PlatformLib_SNPrintF(
+						printThis,
+						sizeof(printThis),
+						"%d.%d.%d=%d\n",
+						i,
+						j,
+						k,
+						WorldGraph.NavigationArray[i][j][k]
+					);
+					fprintf(navFile, "%s", printThis);
+				}
+			}
+		}
+	}
+
+	fclose(navFile);
 }
 
 //=========================================================
