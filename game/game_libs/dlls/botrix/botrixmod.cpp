@@ -14,7 +14,6 @@
 #include "utils/mp_utils.h"
 
 //----------------------------------------------------------------------------------------------------------------
-TModId CBotrixMod::m_iModId;
 good::string CBotrixMod::sModName;
 
 StringVector CBotrixMod::aBotNames;
@@ -47,10 +46,8 @@ int CBotrixMod::iNearItemMaxDistanceSqr = SQR(312);
 int CBotrixMod::iItemPickUpDistance = 100;
 
 //----------------------------------------------------------------------------------------------------------------
-bool CBotrixMod::LoadDefaults(TModId iModId)
+bool CBotrixMod::LoadDefaults()
 {
-	m_iModId = iModId;
-
 	m_aFrameEvents.Purge();
 	m_aFrameEvents.EnsureCapacity(8);
 

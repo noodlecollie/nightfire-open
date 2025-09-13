@@ -12,14 +12,8 @@ class CPlayer;
 class CBotrixMod
 {
 public:  // Methods.
-	/// Get mod id for this game mod.
-	static TModId GetModId()
-	{
-		return m_iModId;
-	}
-
 	/// Load all needed staff for mod.
-	static bool LoadDefaults(TModId iModId);
+	static bool LoadDefaults();
 
 	/// Prepare for use, called after all needed vars are set.
 	static void Prepare();
@@ -29,7 +23,6 @@ public:  // Methods.
 	{
 		m_aFrameEvents.Purge();
 
-		m_iModId = EModId_Invalid;
 		sModName = "";
 		aTeamsNames.clear();
 		aBotNames.clear();
@@ -114,8 +107,6 @@ protected:  // Methods.
 	static bool IsNameTaken(const good::string& cName, TBotIntelligence iIntelligence);
 
 protected:  // Members.
-	static TModId m_iModId;  // Mod id.
-
 	static bool m_bMapHas[EItemTypeCanPickTotal];  // To check if map has items or waypoints of types: health, armor,
 												   // weapon, ammo.
 

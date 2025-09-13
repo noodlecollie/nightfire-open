@@ -31,14 +31,6 @@ public:
 	static const good::string& BoolToString(bool b, int which = BoolStringTrueFalse);
 
 	//------------------------------------------------------------------------------------------------------------
-	/// Get mod id from string.
-	//------------------------------------------------------------------------------------------------------------
-	static TModId ModFromString(const good::string& sMod);
-
-	/// Get string from mod id.
-	static const good::string& ModToString(TModId iMod);
-
-	//------------------------------------------------------------------------------------------------------------
 	/// Get access flags from string.
 	//------------------------------------------------------------------------------------------------------------
 	static int AccessFlagsFromString(const good::string& sFlags);

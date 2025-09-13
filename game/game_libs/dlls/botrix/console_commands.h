@@ -1273,10 +1273,7 @@ public:
 		Add(new CBotMoveCommand);
 		Add(new CBotPauseCommand);
 		Add(new CBotProtectCommand);
-		if ( CBotrixMod::GetModId() != EModId_TF2 )  // TF2 bots can't be spawned after round has started.
-		{
-			Add(new CBotTestPathCommand);
-		}
+		Add(new CBotTestPathCommand);
 		Add(new CBotWeaponCommand);
 		// Add(new CBotWeaponRemoveCommand);
 	}

@@ -509,9 +509,8 @@ void CBotrixServerPlugin::LoadItemsAndWeapons()
 
 	CBotrixServerPlugin::UpdateLogLevel();
 
-	// Start with HL2DM defaults.
 	// TODO: Pull these values out and set them in a readable way.
-	CBotrixMod::LoadDefaults(EModId_HL2DM);
+	CBotrixMod::LoadDefaults();
 
 	CBotrixMod::aTeamsNames.push_back(TEAM_NAME_UNASSIGNED);
 	CBotrixMod::aTeamsNames.push_back(TEAM_NAME_SPECTATOR);
