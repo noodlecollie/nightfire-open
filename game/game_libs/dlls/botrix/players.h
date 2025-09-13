@@ -277,7 +277,6 @@ public:
 	static CPlayer* AddBot(
 		const char* sName = NULL,
 		TTeam iTeam = 0,
-		TClass iClass = -1,
 		TBotIntelligence iIntelligence = -1,
 		int argc = 0,
 		const char** argv = NULL

@@ -7,14 +7,11 @@
 #include "botrix/types.h"
 #include "utlvector.h"
 
-class CBotrixModDetail;
 class CPlayer;
 
 class CBotrixMod
 {
 public:  // Methods.
-	static std::unique_ptr<CBotrixModDetail> pCurrentMod;
-
 	/// Get mod id for this game mod.
 	static TModId GetModId()
 	{
@@ -36,7 +33,6 @@ public:  // Methods.
 		sModName = "";
 		aTeamsNames.clear();
 		aBotNames.clear();
-		pCurrentMod.reset();
 	}
 
 	/// Called when map finished loading items and waypoints.
@@ -80,7 +76,8 @@ public:  // Methods.
 	/// Get random bot name from [General] section, key bot_names.
 	static const good::string& GetRandomBotName(TBotIntelligence iIntelligence);
 
-	static const char* GetLastError();
+	static CPlayer*
+	AddBot(const char* szName, TBotIntelligence iIntelligence, TTeam iTeam, int iParamsCount, const char** aParams);
 
 public:  // Static members.
 	static good::string sModName;  ///< Mod name.
@@ -97,7 +94,6 @@ public:  // Static members.
 
 	static bool bIntelligenceInBotName;  ///< Use bot's intelligence as part of his name.
 	static bool bHeadShotDoesMoreDamage;  ///< HL2DM, CSS have that (true by default).
-	static bool bUseModels;  ///< HL2DM, CSS have that (true by default).
 
 	static float fSpawnProtectionTime;  ///< Spawn protection time, 0 by default. Can be set by a console command.
 	static int iSpawnProtectionHealth;  ///< Spawn protection health, 0 by default. Can be set by a console command.
@@ -125,113 +121,4 @@ protected:  // Members.
 
 	// Events that happend on this frame.
 	static CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> m_aFrameEvents;
-};
-
-class CBotrixModDetail
-{
-public:  // Methods.
-	/// Constructor. Initializes console commands.
-	CBotrixModDetail();
-
-	/// Called when map is loaded, after waypoints and items has been loaded.
-	void MapLoaded()
-	{
-	}
-
-	/// Called when map is unloaded.
-	void MapFinished()
-	{
-	}
-
-	/// Add bot with given name, intelligence, class and other optional parameters.
-	CPlayer* AddBot(
-		const char* szName,
-		TBotIntelligence iIntelligence,
-		TTeam iTeam,
-		TClass iClass,
-		int iParamsCount,
-		const char** aParams
-	);
-
-	/// Get waypoint type count.
-	int GetWaypointTypeCount()
-	{
-		return 0;
-	}
-
-	/// Get waypoint type names.
-	const good::string* GetWaypointTypeNames()
-	{
-		return NULL;
-	}
-
-	/// Get waypoint type colors.
-	const int* GetWaypointTypeColors()
-	{
-		return NULL;
-	}
-
-	/// Get waypoint path count.
-	int GetWaypointPathCount()
-	{
-		return 0;
-	}
-
-	/// Get waypoints path names.
-	const good::string* GetWaypointPathNames()
-	{
-		return NULL;
-	}
-
-	/// Get waypoints path colors.
-	const int* GetWaypointPathColors()
-	{
-		return NULL;
-	}
-
-	/// Get chat count.
-	int GetChatCount()
-	{
-		return 0;
-	}
-
-	/// Get chat names.
-	const good::string* GetChatNames()
-	{
-		return NULL;
-	}
-
-	/// Mod think function.
-	void Think()
-	{
-	}
-
-	//------------------------------------------------------------------------------------------------------------
-	/// Get random bot model.
-	const good::string* GetRandomModel(int iTeam)
-	{
-		GoodAssert((iTeam != CBotrixMod::iSpectatorTeam) && (iTeam != CBotrixMod::iUnassignedTeam));
-		return m_aModels[iTeam].size() ? &m_aModels[iTeam][rand() % m_aModels[iTeam].size()] : NULL;
-	}
-
-	/// Get team for model.
-	TTeam GetTeamOfModel(const good::string& sModel)
-	{
-		for ( int iTeam = 0; iTeam < m_aModels.Count(); ++iTeam )
-		{
-			StringVector::const_iterator it = good::find(m_aModels[iTeam], sModel);
-			if ( it != m_aModels[iTeam].end() )
-			{
-				return iTeam;
-			}
-		}
-
-		return -1;
-	}
-
-	const char* GetLastError() const;
-
-protected:
-	good::string m_sLastError;
-	CUtlVector<StringVector> m_aModels;  ///< Available models for teams.
 };

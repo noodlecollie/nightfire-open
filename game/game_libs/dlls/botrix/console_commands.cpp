@@ -3511,25 +3511,10 @@ TCommandResult CBotAddCommand::Execute(CClient* pClient, int argc, const char** 
 		iArg++;
 	}
 
-	// 3rd argument: class, but mod can have no classes.
-	TClass iClass = CBotrixBot::iDefaultClass;
-	if ( CBotrixMod::aClassNames.size() && (argc > iArg) )
-	{
-		good::string sClass(argv[iArg]);
-		iClass = CTypeToString::ClassFromString(sClass);
-		if ( (iClass == -1) && (sClass != "random") )
-		{
-			BULOG_W(pEdict, "Invalid class: %s.", argv[iArg]);
-			BULOG_W(pEdict, "  Must be one of: %s.", CTypeToString::ClassFlagsToString(-1).c_str());
-			return ECommandError;
-		}
-		iArg++;
-	}
-
-	// 4th argument: name.
+	// 3rd argument: name.
 	const char* szName = (argc > iArg) ? argv[iArg++] : NULL;
 
-	CPlayer* pBot = CPlayers::AddBot(szName, iTeam, iClass, iIntelligence, argc - iArg, &argv[iArg]);
+	CPlayer* pBot = CPlayers::AddBot(szName, iTeam, iIntelligence, argc - iArg, &argv[iArg]);
 	if ( pBot )
 	{
 		BULOG_I(pEdict, "Bot added: %s.", pBot->GetName());
@@ -4503,6 +4488,7 @@ TCommandResult CBotTestPathCommand::Execute(CClient* pClient, int argc, const ch
 	}
 
 	CPlayer* pPlayer = CPlayers::AddBot();
+
 	if ( pPlayer )
 	{
 		((CBotrixBot*)pPlayer)->TestWaypoints(iPathFrom, iPathTo);
@@ -4517,7 +4503,7 @@ TCommandResult CBotTestPathCommand::Execute(CClient* pClient, int argc, const ch
 	}
 	else
 	{
-		BULOG_W(pClient->GetEdict(), "%s", CBotrixMod::GetLastError());
+		BULOG_W(pClient->GetEdict(), "Could not add bot");
 		return ECommandError;
 	}
 }

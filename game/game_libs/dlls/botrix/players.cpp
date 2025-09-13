@@ -284,14 +284,7 @@ void CPlayers::Clear()
 }
 
 //----------------------------------------------------------------------------------------------------------------
-CPlayer* CPlayers::AddBot(
-	const char* szName,
-	TTeam iTeam,
-	TClass iClass,
-	TBotIntelligence iIntelligence,
-	int argc,
-	const char** argv
-)
+CPlayer* CPlayers::AddBot(const char* szName, TTeam iTeam, TBotIntelligence iIntelligence, int argc, const char** argv)
 {
 	if ( !CBotrixServerPlugin::MapIsRunning() )
 	{
@@ -325,13 +318,8 @@ CPlayer* CPlayers::AddBot(
 		}
 	}
 
-	if ( (iClass == -1) && CBotrixMod::aClassNames.size() )
-	{
-		iClass = rand() % CBotrixMod::aClassNames.size();
-	}
-
 	bAddingBot = true;
-	CPlayer* pBot = CBotrixMod::pCurrentMod->AddBot(szName, iIntelligence, iTeam, iClass, argc, argv);
+	CPlayer* pBot = CBotrixMod::AddBot(szName, iIntelligence, iTeam, argc, argv);
 	ClientPutInServer(pBot->GetEdict());
 	bAddingBot = false;
 
@@ -343,7 +331,7 @@ CPlayer* CPlayers::AddBot(
 	}
 	else
 	{
-		m_sLastError = CBotrixMod::pCurrentMod->GetLastError();
+		m_sLastError = "CBotrixMod::AddBot() failed";
 	}
 
 	return pBot;

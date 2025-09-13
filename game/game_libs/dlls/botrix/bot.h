@@ -524,18 +524,14 @@ protected:  // Bot flags.
 	bool m_bSaidNoWaypoints;  // Say that there are no waypoints only once.
 };
 
-//****************************************************************************************************************
-/// Class representing a bot for Half Life 2 Deathmatch.
-// sv_hl2mp_weapon_respawn_time sv_hl2mp_item_respawn_time
-//****************************************************************************************************************
+// TODO: Rename
 class CBot_HL2DM : public CBotrixBot
 {
 public:
 	/// Constructor.
 	CBot_HL2DM(edict_t* pEdict, TBotIntelligence iIntelligence);
 
-	/// Looks like change model is the only way to change the team in HL2DM.
-	void ChangeModel(TTeam iTeam);
+	void ChangeTeam(TTeam iTeam);
 
 	//------------------------------------------------------------------------------------------------------------
 	// Next functions are mod dependent.
@@ -545,11 +541,6 @@ public:
 
 	/// Called each time bot is respawned.
 	virtual void Respawned();
-
-	/// Called when player's team changed.
-	virtual void ChangeTeam(TTeam /*iTeam*/)
-	{
-	}
 
 	// Enemy is dead or got disconnected.
 	virtual void EraseCurrentEnemy()

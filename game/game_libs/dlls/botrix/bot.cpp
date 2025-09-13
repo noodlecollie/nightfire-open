@@ -2968,33 +2968,17 @@ void CBot_HL2DM::Activated()
 	CBotrixBot::Activated();
 }
 
-void CBot_HL2DM::ChangeModel(TTeam iTeam)
+void CBot_HL2DM::ChangeTeam(TTeam iTeam)
 {
 	if ( iTeam == CBotrixMod::iUnassignedTeam )
 	{
-		iTeam = 2 + (rand() & 1);  // 0 = unassigned, 1 = spectator, 2 = rebels, 3 = combines.
+		iTeam = 2 + (rand() & 1);
 	}
 	else
 	{
 		char sCmd[32];
 		PlatformLib_SNPrintF(sCmd, sizeof(sCmd), "jointeam %d", iTeam);
 		g_engfuncs.pfnClientCommand(m_pEdict, sCmd);
-	}
-
-	if ( CBotrixMod::bUseModels )
-	{
-		const good::string* pModel = CBotrixMod::pCurrentMod->GetRandomModel(iTeam);
-		if ( pModel )
-		{
-			BLOG_I("%s -> Using model %s", GetName(), pModel->c_str());
-
-			g_engfuncs.pfnSetClientKeyValue(
-				ENTINDEX(m_pEdict),
-				g_engfuncs.pfnGetInfoKeyBuffer(m_pEdict),
-				"model",
-				(char*)pModel->c_str()
-			);
-		}
 	}
 }
 
