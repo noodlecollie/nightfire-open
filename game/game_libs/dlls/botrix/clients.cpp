@@ -2,7 +2,6 @@
 #include "botrix/defines.h"
 #include "botrix/type2string.h"
 #include "botrix/waypoint.h"
-#include "botrix/botrixconfig.h"
 #include "botrix/item.h"
 
 void CClient::Activated()

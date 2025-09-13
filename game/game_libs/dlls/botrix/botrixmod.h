@@ -133,12 +133,6 @@ public:  // Methods.
 	/// Constructor. Initializes console commands.
 	CBotrixModDetail();
 
-	//------------------------------------------------------------------------------------------------------------
-	// Implementation of IMod inteface.
-	//------------------------------------------------------------------------------------------------------------
-	/// Process configuration file.
-	bool ProcessConfig(const good::ini_file& cIni);
-
 	/// Called when map is loaded, after waypoints and items has been loaded.
 	void MapLoaded()
 	{

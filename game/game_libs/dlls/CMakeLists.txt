@@ -266,8 +266,6 @@ set(SOURCES_SERVER
 	botrix/botregister.cpp
 	botrix/botrixbotfactory.h
 	botrix/botrixbotfactory.cpp
-	botrix/botrixconfig.h
-	botrix/botrixconfig.cpp
 	botrix/botrixgamerulesinterface.h
 	botrix/botrixgamerulesinterface.cpp
 	botrix/botrixmod.h

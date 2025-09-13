@@ -8,6 +8,11 @@ struct edict_s;
 class CBasePlayer;
 class CBotrixCommand;
 
+namespace WeaponAtts
+{
+	struct WACollection;
+}
+
 // TODO: Convert this into a non-static class.
 class CBotrixServerPlugin
 {
@@ -34,11 +39,14 @@ public:
 
 	static void UpdateLogLevel();
 	static bool WaypointAutoAnalyzeEnabled();
+	static void RefreshWeaponConfig();
 
 private:
 	static void PrepareLevel();
 	static void ActivateLevel();
 	static void SpawnBotsInRegister();
+	static void LoadItemsAndWeapons();
+	static void LoadWeapon(const WeaponAtts::WACollection& atts);
 
 	static float m_fFpsEnd;  ///< Time of ending counting frames to calculate fps.
 	static int m_iFramesCount;  ///< Count of frames since m_fFpsStart.

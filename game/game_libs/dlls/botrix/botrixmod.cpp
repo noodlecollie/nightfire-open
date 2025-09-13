@@ -205,55 +205,6 @@ CBotrixModDetail::CBotrixModDetail()
 }
 
 //----------------------------------------------------------------------------------------------------------------
-bool CBotrixModDetail::ProcessConfig(const good::ini_file& cIni)
-{
-	static constexpr size_t BUFFER_SIZE = 1024;
-	static char s_Buffer[BUFFER_SIZE];
-
-	// Find section "<mod name>.models".
-	good::string_buffer sbBuffer(s_Buffer, BUFFER_SIZE, false);
-	sbBuffer = CBotrixMod::sModName;
-	sbBuffer << ".models";
-
-	good::ini_file::const_iterator it = cIni.find(sbBuffer);
-	if ( it != cIni.end() )
-	{
-		StringVector aModels;
-		m_aModels.EnsureCount(CBotrixMod::aTeamsNames.size());
-
-		good::ini_section::const_iterator models = it->find("use models");
-		if ( models != it->end() )
-		{
-			int value = CTypeToString::BoolFromString(models->value);
-			CBotrixMod::bUseModels = value == 0 ? false : true;
-		}
-
-		// Get player models.
-		for ( int i = 0; i < CBotrixMod::aTeamsNames.size(); ++i )
-		{
-			sbBuffer = "models ";
-			sbBuffer << CBotrixMod::aTeamsNames[i];
-
-			good::ini_section::const_iterator modelsIt = it->find(sbBuffer);
-			if ( modelsIt != it->end() )
-			{
-				sbBuffer = modelsIt->value;
-				good::escape(sbBuffer);
-				good::split((good::string)sbBuffer, m_aModels[i], ',', true);
-
-				BLOG_D("Model names for team %s:", CBotrixMod::aTeamsNames[i].c_str());
-				for ( int j = 0; j < m_aModels[i].size(); ++j )
-				{
-					BLOG_D("  %s", m_aModels[i][j].c_str());
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
-//----------------------------------------------------------------------------------------------------------------
 CPlayer* CBotrixModDetail::AddBot(
 	const char* szName,
 	TBotIntelligence iIntelligence,
