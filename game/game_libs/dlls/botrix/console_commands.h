@@ -431,13 +431,6 @@ public:
 //****************************************************************************************************************
 // Path waypoint commands.
 //****************************************************************************************************************
-class CPathDebugCommand : public CConsoleCommand
-{
-public:
-	CPathDebugCommand();
-	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
-};
-
 class CPathDistanceCommand : public CConsoleCommand
 {
 public:
@@ -1228,7 +1221,6 @@ public:
 		Add(new CPathAddTypeCommand);
 		Add(new CPathArgumentCommand);
 		Add(new CPathCreateCommand);
-		Add(new CPathDebugCommand);
 		Add(new CPathDistanceCommand);
 		Add(new CPathDrawCommand);
 		Add(new CPathInfoCommand);

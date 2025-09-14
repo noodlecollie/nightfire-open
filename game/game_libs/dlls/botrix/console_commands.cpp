@@ -9,6 +9,7 @@
 #include "botrix/bot.h"
 #include "botrix/parameter_vars.h"
 #include "botrix/botregister.h"
+#include "botrix/console_vars.h"
 
 #include "PlatformLib/String.h"
 
@@ -2106,7 +2107,7 @@ TCommandResult CWaypointProbeNeighboursCommand::Execute(CBotrixClient* pClient, 
 				primitive.location = candidateEyePos;
 
 				CustomGeometry::CPrimitiveMessageWriter writer(CustomGeometry::Category::BotrixDebugging);
-				writer.WriteMessage(0x00FFFFFF, static_cast<float>(CBotrixEngineUtil::iTextTime), primitive);
+				writer.WriteMessage(0x00FFFFFF, CBotrixCvars::botrix_reachable_viz_time.value, primitive);
 			}
 		}
 	}
@@ -2339,57 +2340,6 @@ pClient->iDestinationWaypoint);
 	return ECommandPerformed;
 }
 */
-
-CPathDebugCommand::CPathDebugCommand()
-{
-	m_sCommand = "debug";
-	m_sHelp = "time to show lines that indicate path creation / problems";
-	m_sDescription =
-		"Parameter: (off / seconds-to-disappear). When not 'off', will show lines / texts showing reachable / "
-		"unreachable paths when adding new waypoint.";
-	m_iAccessLevel = FCommandAccessWaypoint;
-
-	StringVector args;
-	args.push_back(sOff);
-	m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
-	m_cAutoCompleteValues.push_back(args);
-}
-
-TCommandResult CPathDebugCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
-{
-	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
-		return ECommandPerformed;
-
-	edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
-	if ( argc > 1 )
-	{
-		BULOG_W(pEdict, "Error, invalid parameters count.");
-		return ECommandError;
-	}
-	else if ( argc == 1 )
-	{
-		int amount = -1;
-		if ( sOff == argv[0] )
-			amount = 0;
-		else if ( PlatformLib_SScanF(argv[0], "%d", &amount) != 1 )
-			amount = -1;
-
-		if ( amount < 0 )
-		{
-			BULOG_W(pEdict, "Error, invalid health amount: %s.", argv[0]);
-			return ECommandError;
-		}
-
-		CBotrixEngineUtil::iTextTime = amount;
-	}
-
-	if ( CBotrixEngineUtil::iTextTime == 0 )
-		BULOG_I(pEdict, "Show auto-created path lines: off.");
-	else
-		BULOG_I(pEdict, "Show auto-created path lines for %d seconds.", CBotrixEngineUtil::iTextTime);
-
-	return ECommandPerformed;
-}
 
 TCommandResult CPathDistanceCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {

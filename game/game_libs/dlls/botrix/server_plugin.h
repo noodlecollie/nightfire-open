@@ -53,7 +53,6 @@ private:
 
 	static struct edict_s* m_pListenServerClient;
 
-	static bool m_bTeamPlay;  ///< True if game is team based (like Counter-Strike), if false then it is deathmatch.
 	static bool m_bMapRunning;  ///< True if map is currently running (LevelInit() was called by Source engine).
 	static good::string m_MapName;  ///< Current map name (set at LevelInit()).
 

@@ -47,9 +47,7 @@ public:
 
 	static constexpr size_t MAX_PVS_DATA_LENGTH = (MAX_MAP_LEAFS + 7) / 8;
 
-	// BOTRIX_TODO: Make these cvars
 	static good::TLogLevel iLogLevel;  /// Console log level. Info by default.
-	static int iTextTime;  /// Time in seconds to show text in CUtil::GetWaypointReachableInfoFromTo().
 
 	/// Print a message to given client (must be called from game thread). If message tag is used then message will
 	/// start with "[Botrix] ".

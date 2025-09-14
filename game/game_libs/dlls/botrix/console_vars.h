@@ -9,4 +9,5 @@ public:
 
 	static cvar_t botrix_log_trace;
 	static cvar_t botrix_waypoint_auto_analyze;
+	static cvar_t botrix_reachable_viz_time;
 };

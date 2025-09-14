@@ -18,7 +18,6 @@
 float CBotrixServerPlugin::m_fFpsEnd = 0.0f;
 int CBotrixServerPlugin::m_iFramesCount = 0;
 struct edict_s* CBotrixServerPlugin::m_pListenServerClient = nullptr;
-bool CBotrixServerPlugin::m_bTeamPlay = false;
 bool CBotrixServerPlugin::m_bMapRunning = false;
 good::string CBotrixServerPlugin::m_MapName;
 int CBotrixServerPlugin::m_iFPS = 60;
@@ -155,7 +154,6 @@ void CBotrixServerPlugin::ServerDeactivate()
 	BLOG_I("Botrix ServerDeactivate");
 	m_bMapRunning = false;
 	m_MapName = "";
-	m_bTeamPlay = false;
 	m_bSpawnedRegisterBots = false;
 }
 
@@ -439,9 +437,6 @@ void CBotrixServerPlugin::PrepareLevel()
 {
 	m_MapName.assign(STRING(gpGlobals->mapname), good::string::npos, true);
 	good::lower_case(m_MapName);
-
-	const float teamplay = CVAR_GET_FLOAT("mp_teamplay");
-	m_bTeamPlay = teamplay != 0.0f;
 
 	m_bSpawnedRegisterBots = false;
 	m_BotFactory.LoadBotProfiles();
