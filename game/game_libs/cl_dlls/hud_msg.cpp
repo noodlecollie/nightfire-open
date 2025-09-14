@@ -21,6 +21,8 @@
 #include "parsemsg.h"
 #include "EnginePublicAPI/r_efx.h"
 #include "debug_assert.h"
+#include "customGeometry/geometryStatics.h"
+#include "ui/screenOverlays/ScreenOverlayContainer.h"
 
 #define MAX_CLIENTS 32
 
@@ -40,7 +42,10 @@ int CHud::MsgFunc_ResetHUD(const char*, int, void*)
 	while ( pList )
 	{
 		if ( pList->p )
+		{
 			pList->p->Reset();
+		}
+
 		pList = pList->pNext;
 	}
 
@@ -53,6 +58,13 @@ int CHud::MsgFunc_ResetHUD(const char*, int, void*)
 	// Vit_amiN: reset the FOV
 	m_iFOV = 0;  // default_fov
 	g_lastFOV = 0.0f;
+
+	ScreenOverlays::CScreenOverlayContainer& container = ScreenOverlays::CScreenOverlayContainer::StaticInstance();
+	container.ResetCurrentOverlay();
+	container.VidInit();
+
+	CustomGeometry::ClearAllGeometry();
+	CustomGeometry::VidInit();
 
 	return 1;
 }
@@ -124,7 +136,8 @@ int CHud::MsgFunc_Concuss(const char*, int iSize, void* pbuf)
 			"dmg_concuss",
 			static_cast<unsigned char>(r),
 			static_cast<unsigned char>(g),
-			static_cast<unsigned char>(b));
+			static_cast<unsigned char>(b)
+		);
 	}
 	else
 		this->m_StatusIcons.DisableIcon("dmg_concuss");

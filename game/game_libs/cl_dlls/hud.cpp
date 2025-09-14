@@ -30,6 +30,15 @@
 #include "hud_crosshair.h"
 #include "PlatformLib/String.h"
 
+#include "ui/screenOverlays/ScreenOverlayContainer.h"
+#include "ui/screenOverlays/DebugCommands.h"
+#include "resources/SoundResources.h"
+#include "gameresources/GameResources.h"
+#include "gameplay/crosshairCvars.h"
+#include "customGeometry/geometryStatics.h"
+#include "customGeometry/logger_client.h"
+#include "events/eventCommands.h"
+
 cvar_t* hud_textmode;
 float g_hud_text_color[3];
 
@@ -188,11 +197,13 @@ void CHud::Init(void)
 	CL_CvarCreate(
 		"hud_classautokill",
 		"1",
-		FCVAR_ARCHIVE | FCVAR_USERINFO);  // controls whether or not to suicide immediately on TF class switch
+		FCVAR_ARCHIVE | FCVAR_USERINFO
+	);  // controls whether or not to suicide immediately on TF class switch
 	CL_CvarCreate(
 		"hud_takesshots",
 		"0",
-		FCVAR_ARCHIVE);  // controls whether or not to automatically take screenshots at the end of a round
+		FCVAR_ARCHIVE
+	);  // controls whether or not to automatically take screenshots at the end of a round
 	hud_textmode = CL_CvarCreate("hud_textmode", "0", FCVAR_ARCHIVE);
 
 	m_iLogo = 0;
@@ -244,6 +255,16 @@ void CHud::Init(void)
 	m_Menu.Init();
 
 	MsgFunc_ResetHUD(0, 0, NULL);
+
+	CustomGeometry::Initialise();
+	CustomGeometry::CLogger_Client::StaticInstance().RegisterCvar();
+	EventCommands::Initialise();
+	ScreenOverlays::InitialiseDebugCommands();
+	CGameResources::StaticInstance().Initialise();
+	CrosshairCvars::Init();
+
+	ScreenOverlays::CScreenOverlayContainer& container = ScreenOverlays::CScreenOverlayContainer::StaticInstance();
+	container.Initialise();
 }
 
 CHud::CHud() :
@@ -284,7 +305,9 @@ int CHud::GetSpriteIndex(const char* SpriteName)
 	for ( int i = 0; i < m_iSpriteCount; i++ )
 	{
 		if ( strncmp(SpriteName, m_rgszSpriteNames + (i * MAX_SPRITE_NAME_LENGTH), MAX_SPRITE_NAME_LENGTH) == 0 )
+		{
 			return i;
+		}
 	}
 
 	return -1;  // invalid sprite
@@ -305,9 +328,13 @@ void CHud::VidInit(void)
 	m_hsprCursor = 0;
 
 	if ( ScreenWidth < 640 )
+	{
 		m_iRes = 320;
+	}
 	else
+	{
 		m_iRes = 640;
+	}
 
 	// Only load this once
 	if ( !m_pSpriteList )
@@ -347,7 +374,8 @@ void CHud::VidInit(void)
 					PlatformLib_StrCpy(
 						m_rgszSpriteNames + (index * MAX_SPRITE_NAME_LENGTH),
 						MAX_SPRITE_NAME_LENGTH,
-						p->szName);
+						p->szName
+					);
 
 					index++;
 				}
@@ -396,7 +424,8 @@ void CHud::VidInit(void)
 				PlatformLib_StrCpy(
 					m_rgszSpriteNames + (index * MAX_SPRITE_NAME_LENGTH),
 					MAX_SPRITE_NAME_LENGTH,
-					p->szName);
+					p->szName
+				);
 
 				index++;
 			}
@@ -440,6 +469,12 @@ void CHud::VidInit(void)
 	m_Scoreboard.VidInit();
 	m_MOTD.VidInit();
 	m_Crosshair->VidInit();
+
+	ScreenOverlays::CScreenOverlayContainer& container = ScreenOverlays::CScreenOverlayContainer::StaticInstance();
+	container.VidInit();
+	container.ResetCurrentOverlay();
+
+	CustomGeometry::VidInit();
 }
 
 int CHud::MsgFunc_Logo(const char*, int iSize, void* pbuf)

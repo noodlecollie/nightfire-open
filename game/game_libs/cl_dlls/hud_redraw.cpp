@@ -21,6 +21,8 @@
 #include "cl_util.h"
 #include "miniutl.h"
 #include "PlatformLib/String.h"
+#include "ui/screenOverlays/ScreenOverlayContainer.h"
+#include "customGeometry/geometryStatics.h"
 // #include "EnginePublicAPI/triangleapi.h"
 
 #define MAX_LOGO_FRAMES 56
@@ -92,13 +94,22 @@ int CHud::Redraw(float flTime, int intermission)
 
 	// Clock was reset, reset delta
 	if ( m_flTimeDelta < 0 )
+	{
 		m_flTimeDelta = 0;
+	}
+
+	ScreenOverlays::CScreenOverlayContainer& container = ScreenOverlays::CScreenOverlayContainer::StaticInstance();
+	container.DrawCurrentOverlay(flTime);
+
+	CustomGeometry::RenderAllGeometry(CustomGeometry::RenderType::Text);
 
 	if ( !m_iIntermission && intermission )
 	{
 		// Take a screenshot if the client's got the cvar set
 		if ( CL_CvarGetFloat("hud_takesshots") != 0 )
+		{
 			m_flShotTime = flTime + 1.0f;  // Take a screenshot in a second
+		}
 	}
 
 	if ( m_flShotTime && m_flShotTime < flTime )
@@ -140,7 +151,9 @@ int CHud::Redraw(float flTime, int intermission)
 		int x, y, i;
 
 		if ( m_hsprLogo == 0 )
+		{
 			m_hsprLogo = LoadSprite("sprites/%d_logo.spr");
+		}
 
 		SPR_Set(m_hsprLogo, 250, 250, 250);
 
@@ -196,7 +209,8 @@ const unsigned char colors[8][3] = {
 	{0, 0, 255},
 	{0, 255, 255},
 	{255, 0, 255},
-	{240, 180, 24}};
+	{240, 180, 24},
+};
 
 int CHud::DrawHudString(int xpos, int ypos, int iMaxX, const char* szIt, int r, int g, int b)
 {

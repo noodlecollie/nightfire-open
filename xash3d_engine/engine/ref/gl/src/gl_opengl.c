@@ -184,14 +184,16 @@ static dllfunc_t opengl_110funcs[] = {
 	{GL_CALL(glFogfv)},
 	{GL_CALL(glFogf)},
 	{GL_CALL(glFogi)},
-	{NULL, NULL}};
+	{NULL, NULL},
+};
 
 static dllfunc_t debugoutputfuncs[] = {
 	{GL_CALL(glDebugMessageControlARB)},
 	{GL_CALL(glDebugMessageInsertARB)},
 	{GL_CALL(glDebugMessageCallbackARB)},
 	{GL_CALL(glGetDebugMessageLogARB)},
-	{NULL, NULL}};
+	{NULL, NULL},
+};
 
 static dllfunc_t multitexturefuncs[] = {
 	{GL_CALL(glMultiTexCoord1f)},
@@ -202,13 +204,15 @@ static dllfunc_t multitexturefuncs[] = {
 	{GL_CALL(glActiveTextureARB)},
 	{GL_CALL(glClientActiveTexture)},
 	{GL_CALL(glClientActiveTextureARB)},
-	{NULL, NULL}};
+	{NULL, NULL},
+};
 
 static dllfunc_t texture3dextfuncs[] = {
 	{GL_CALL(glTexImage3D)},
 	{GL_CALL(glTexSubImage3D)},
 	{GL_CALL(glCopyTexSubImage3D)},
-	{NULL, NULL}};
+	{NULL, NULL},
+};
 
 static dllfunc_t texturecompressionfuncs[] = {
 	{GL_CALL(glCompressedTexImage3DARB)},
@@ -218,7 +222,8 @@ static dllfunc_t texturecompressionfuncs[] = {
 	{GL_CALL(glCompressedTexSubImage2DARB)},
 	{GL_CALL(glCompressedTexSubImage1DARB)},
 	{GL_CALL(glGetCompressedTexImage)},
-	{NULL, NULL}};
+	{NULL, NULL},
+};
 
 static dllfunc_t vbofuncs[] = {
 	{GL_CALL(glBindBufferARB)},
@@ -229,13 +234,23 @@ static dllfunc_t vbofuncs[] = {
 	{GL_CALL(glUnmapBufferARB)},  // ,
 	{GL_CALL(glBufferDataARB)},
 	{GL_CALL(glBufferSubDataARB)},
-	{NULL, NULL}};
+	{NULL, NULL},
+};
 
-static dllfunc_t multisampletexfuncs[] = {{GL_CALL(glTexImage2DMultisample)}, {NULL, NULL}};
+static dllfunc_t multisampletexfuncs[] = {
+	{GL_CALL(glTexImage2DMultisample)},
+	{NULL, NULL},
+};
 
-static dllfunc_t drawrangeelementsfuncs[] = {{GL_CALL(glDrawRangeElements)}, {NULL, NULL}};
+static dllfunc_t drawrangeelementsfuncs[] = {
+	{GL_CALL(glDrawRangeElements)},
+	{NULL, NULL},
+};
 
-static dllfunc_t drawrangeelementsextfuncs[] = {{GL_CALL(glDrawRangeElementsEXT)}, {NULL, NULL}};
+static dllfunc_t drawrangeelementsextfuncs[] = {
+	{GL_CALL(glDrawRangeElementsEXT)},
+	{NULL, NULL},
+};
 
 /*
 ========================
@@ -251,7 +266,8 @@ static void APIENTRY GL_DebugOutput(
 	GLuint severity,
 	GLint length,
 	const GLcharARB* message,
-	GLvoid* userParam)
+	GLvoid* userParam
+)
 {
 	(void)source;
 	(void)id;
@@ -262,20 +278,31 @@ static void APIENTRY GL_DebugOutput(
 	switch ( type )
 	{
 		case GL_DEBUG_TYPE_ERROR_ARB:
+		{
 			gEngfuncs.Con_Printf(S_OPENGL_ERROR "%s\n", message);
 			break;
+		}
+
 		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB:
 		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB:
+		{
 			gEngfuncs.Con_Printf(S_OPENGL_WARN "%s\n", message);
 			break;
+		}
+
 		case GL_DEBUG_TYPE_PORTABILITY_ARB:
+		{
 			gEngfuncs.Con_Reportf(S_OPENGL_WARN "%s\n", message);
 			break;
+		}
+
 		case GL_DEBUG_TYPE_PERFORMANCE_ARB:
 		case GL_DEBUG_TYPE_OTHER_ARB:
 		default:
+		{
 			gEngfuncs.Con_Printf(S_OPENGL_NOTE "%s\n", message);
 			break;
+		}
 	}
 }
 
@@ -287,9 +314,13 @@ GL_SetExtension
 void GL_SetExtension(int r_ext, int enable)
 {
 	if ( r_ext >= 0 && r_ext < GL_EXTCOUNT )
+	{
 		glConfig.extension[r_ext] = enable ? GL_TRUE : GL_FALSE;
+	}
 	else
+	{
 		gEngfuncs.Con_Printf(S_ERROR "GL_SetExtension: invalid extension %d\n", r_ext);
+	}
 }
 
 /*
@@ -300,7 +331,10 @@ GL_Support
 qboolean GL_Support(int r_ext)
 {
 	if ( r_ext >= 0 && r_ext < GL_EXTCOUNT )
+	{
 		return glConfig.extension[r_ext] ? true : false;
+	}
+
 	gEngfuncs.Con_Printf(S_ERROR "GL_Support: invalid extension %d\n", r_ext);
 
 	return false;
@@ -314,7 +348,10 @@ GL_MaxTextureUnits
 int GL_MaxTextureUnits(void)
 {
 	if ( GL_Support(GL_SHADER_GLSL100_EXT) )
+	{
 		return Q_min(Q_max(glConfig.max_texture_coords, glConfig.max_teximage_units), MAX_TEXTURE_UNITS);
+	}
+
 	return glConfig.max_texture_units;
 }
 
@@ -534,7 +571,8 @@ void R_RenderInfo_f(void)
 		glConfig.color_bits,
 		glConfig.alpha_bits,
 		glConfig.depth_bits,
-		glConfig.stencil_bits);
+		glConfig.stencil_bits
+	);
 }
 
 #ifdef XASH_GLES
@@ -686,7 +724,8 @@ void GL_InitExtensionsBigGL(void)
 		"GL_ARB_texture_compression",
 		texturecompressionfuncs,
 		"gl_texture_dxt_compression",
-		GL_TEXTURE_COMPRESSION_EXT);
+		GL_TEXTURE_COMPRESSION_EXT
+	);
 	if ( !GL_CheckExtension("GL_EXT_texture_edge_clamp", NULL, "gl_clamp_to_edge", GL_CLAMPTOEDGE_EXT) )
 		GL_CheckExtension("GL_SGIS_texture_edge_clamp", NULL, "gl_clamp_to_edge", GL_CLAMPTOEDGE_EXT);
 
@@ -695,7 +734,8 @@ void GL_InitExtensionsBigGL(void)
 			 "GL_EXT_texture_filter_anisotropic",
 			 NULL,
 			 "gl_texture_anisotropic_filter",
-			 GL_ANISOTROPY_EXT) )
+			 GL_ANISOTROPY_EXT
+		 ) )
 		pglGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &glConfig.max_texture_anisotropy);
 
 #if XASH_WIN32()  // Win32 only drivers?
@@ -717,17 +757,20 @@ void GL_InitExtensionsBigGL(void)
 		"GL_ARB_vertex_buffer_object",
 		vbofuncs,
 		"gl_vertex_buffer_object",
-		GL_ARB_VERTEX_BUFFER_OBJECT_EXT);
+		GL_ARB_VERTEX_BUFFER_OBJECT_EXT
+	);
 	GL_CheckExtension(
 		"GL_ARB_texture_multisample",
 		multisampletexfuncs,
 		"gl_texture_multisample",
-		GL_TEXTURE_MULTISAMPLE);
+		GL_TEXTURE_MULTISAMPLE
+	);
 	GL_CheckExtension(
 		"GL_ARB_texture_compression_bptc",
 		NULL,
 		"gl_texture_bptc_compression",
-		GL_ARB_TEXTURE_COMPRESSION_BPTC);
+		GL_ARB_TEXTURE_COMPRESSION_BPTC
+	);
 	if ( GL_CheckExtension("GL_ARB_shading_language_100", NULL, NULL, GL_SHADER_GLSL100_EXT) )
 	{
 		pglGetIntegerv(GL_MAX_TEXTURE_COORDS_ARB, &glConfig.max_texture_coords);
@@ -755,13 +798,15 @@ void GL_InitExtensionsBigGL(void)
 			 "glDrawRangeElements",
 			 drawrangeelementsfuncs,
 			 "gl_drawrangeelements",
-			 GL_DRAW_RANGEELEMENTS_EXT) )
+			 GL_DRAW_RANGEELEMENTS_EXT
+		 ) )
 	{
 		if ( GL_CheckExtension(
 				 "glDrawRangeElementsEXT",
 				 drawrangeelementsextfuncs,
 				 "gl_drawrangelements",
-				 GL_DRAW_RANGEELEMENTS_EXT) )
+				 GL_DRAW_RANGEELEMENTS_EXT
+			 ) )
 		{
 #ifndef XASH_GL_STATIC
 			pglDrawRangeElements = pglDrawRangeElementsEXT;
@@ -882,7 +927,8 @@ void GL_InitCommands(void)
 		"gl_texture_lodbias",
 		"0.0",
 		FCVAR_GLCONFIG,
-		"LOD bias for mipmapped textures (perfomance|quality)");
+		"LOD bias for mipmapped textures (perfomance|quality)"
+	);
 	gl_keeptjunctions =
 		gEngfuncs.Cvar_Get("gl_keeptjunctions", "1", FCVAR_GLCONFIG, "removing tjuncs causes blinking pixels");
 	gl_finish = gEngfuncs.Cvar_Get("gl_finish", "0", FCVAR_GLCONFIG, "use glFinish instead of glFlush");
@@ -890,16 +936,15 @@ void GL_InitCommands(void)
 	gl_test = gEngfuncs.Cvar_Get("gl_test", "0", 0, "engine developer cvar for quick testing new features");
 	gl_wireframe = gEngfuncs.Cvar_Get("gl_wireframe", "0", FCVAR_GLCONFIG | FCVAR_SPONLY, "show wireframe overlay");
 	gl_msaa = gEngfuncs.Cvar_Get("gl_msaa", "1", FCVAR_GLCONFIG, "enable or disable multisample anti-aliasing");
-	gl_stencilbits = gEngfuncs.Cvar_Get(
-		"gl_stencilbits",
-		"8",
-		FCVAR_GLCONFIG | FCVAR_READ_ONLY,
-		"pixelformat stencil bits (0 - auto)");
+	gl_stencilbits =
+		gEngfuncs
+			.Cvar_Get("gl_stencilbits", "8", FCVAR_GLCONFIG | FCVAR_READ_ONLY, "pixelformat stencil bits (0 - auto)");
 	gl_round_down = gEngfuncs.Cvar_Get(
 		"gl_round_down",
 		"2",
 		FCVAR_GLCONFIG | FCVAR_READ_ONLY,
-		"round texture sizes to nearest POT value");
+		"round texture sizes to nearest POT value"
+	);
 
 	// these cvar not used by engine but some mods requires this
 	gl_polyoffset = gEngfuncs.Cvar_Get("gl_polyoffset", "2.0", FCVAR_GLCONFIG, "polygon offset for decals");
@@ -1053,10 +1098,14 @@ void GL_CheckForErrors_(const char* filename, const int fileline)
 	int err;
 
 	if ( !CVAR_TO_BOOL(gl_check_errors) )
+	{
 		return;
+	}
 
 	if ( (err = pglGetError()) == GL_NO_ERROR )
+	{
 		return;
+	}
 
 	gEngfuncs.Con_Printf(S_OPENGL_ERROR "%s (at %s:%i)\n", GL_ErrorString(err), filename, fileline);
 }

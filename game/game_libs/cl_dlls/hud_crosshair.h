@@ -21,6 +21,7 @@ public:
 private:
 	bool UpdateParameters();
 	void UpdateParametersFromDebugCvars();
+	void RefreshCrosshairRenderer();
 
 	cvar_t* m_CheatsCvar = nullptr;
 	cvar_t* m_CrosshairCvar = nullptr;
