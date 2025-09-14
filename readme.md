@@ -85,7 +85,7 @@ Many thanks to:
 
 * Gearbox for the original game.
 * The FWGS team for the Xash3D engine and Xash3D version of Half Life SDK.
-* j-yaniv and others for Rho-Bot Half Life bots.
+* Boris Borisovich Godin for the Botrix multiplayer bot plugin for HL2DM, ported to this project by me.
 * Developers of STB libraries.
 * Developers of rapidjson library.
 * Contributors to XeNTaX game reverse-engineering forums.

@@ -3,6 +3,7 @@ This code is adapted from various sources:
 Xash3D FWGS (https://github.com/FWGS/xash3d-fwgs)
 PrimeXT (https://github.com/SNMetamorph/PrimeXT)
 Half-Life SDK (https://github.com/ValveSoftware/halflife)
+Botrix multiplayer bots (https://www.famaf.unc.edu.ar/~godin/botrix/index.html)
 
 The accuracy of copyright headers is difficult to maintain when
 code is being drastically refactored and split into new modules.
@@ -22,3 +23,4 @@ Valve
 Velaron
 DarkPlaces contributors
 Xash3D FWGS contributors
+Boris Borisovich Godin
