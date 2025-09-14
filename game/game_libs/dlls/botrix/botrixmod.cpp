@@ -13,11 +13,6 @@
 #include "MathLib/mathlib.h"
 #include "utils/mp_utils.h"
 
-//----------------------------------------------------------------------------------------------------------------
-std::unique_ptr<CBotrixModDetail> CBotrixMod::pCurrentMod;
-TModId CBotrixMod::m_iModId;
-good::string CBotrixMod::sModName;
-
 StringVector CBotrixMod::aBotNames;
 CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> CBotrixMod::m_aFrameEvents;
 
@@ -38,7 +33,6 @@ StringVector CBotrixMod::aClassNames;
 
 bool CBotrixMod::bIntelligenceInBotName = true;
 bool CBotrixMod::bHeadShotDoesMoreDamage = true;
-bool CBotrixMod::bUseModels = true;
 
 float CBotrixMod::fSpawnProtectionTime = 0;
 int CBotrixMod::iSpawnProtectionHealth = 0;
@@ -49,14 +43,10 @@ int CBotrixMod::iNearItemMaxDistanceSqr = SQR(312);
 int CBotrixMod::iItemPickUpDistance = 100;
 
 //----------------------------------------------------------------------------------------------------------------
-bool CBotrixMod::LoadDefaults(TModId iModId)
+bool CBotrixMod::LoadDefaults()
 {
-	m_iModId = iModId;
-
 	m_aFrameEvents.Purge();
 	m_aFrameEvents.EnsureCapacity(8);
-
-	pCurrentMod.reset(new CBotrixModDetail());
 
 	return true;
 }
@@ -94,11 +84,6 @@ void CBotrixMod::MapLoaded()
 				}
 			}
 		}
-	}
-
-	if ( pCurrentMod )
-	{
-		pCurrentMod->MapLoaded();
 	}
 }
 
@@ -150,11 +135,6 @@ bool CBotrixMod::IsNameTaken(const good::string& cName, TBotIntelligence iIntell
 //----------------------------------------------------------------------------------------------------------------
 void CBotrixMod::Think()
 {
-	if ( pCurrentMod )
-	{
-		pCurrentMod->Think();
-	}
-
 	for ( int i = 0; i < m_aFrameEvents.Count(); ++i )
 	{
 		CPlayer* pPlayer = CPlayers::Get(m_aFrameEvents[i].second);
@@ -194,84 +174,18 @@ void CBotrixMod::Think()
 	m_aFrameEvents.Purge();
 }
 
-const char* CBotrixMod::GetLastError()
-{
-	return pCurrentMod ? pCurrentMod->GetLastError() : "";
-}
-
-CBotrixModDetail::CBotrixModDetail()
-{
-	m_aModels.EnsureCount(CBotrixMod::aTeamsNames.size());
-}
-
-//----------------------------------------------------------------------------------------------------------------
-bool CBotrixModDetail::ProcessConfig(const good::ini_file& cIni)
-{
-	static constexpr size_t BUFFER_SIZE = 1024;
-	static char s_Buffer[BUFFER_SIZE];
-
-	// Find section "<mod name>.models".
-	good::string_buffer sbBuffer(s_Buffer, BUFFER_SIZE, false);
-	sbBuffer = CBotrixMod::sModName;
-	sbBuffer << ".models";
-
-	good::ini_file::const_iterator it = cIni.find(sbBuffer);
-	if ( it != cIni.end() )
-	{
-		StringVector aModels;
-		m_aModels.EnsureCount(CBotrixMod::aTeamsNames.size());
-
-		good::ini_section::const_iterator models = it->find("use models");
-		if ( models != it->end() )
-		{
-			int value = CTypeToString::BoolFromString(models->value);
-			CBotrixMod::bUseModels = value == 0 ? false : true;
-		}
-
-		// Get player models.
-		for ( int i = 0; i < CBotrixMod::aTeamsNames.size(); ++i )
-		{
-			sbBuffer = "models ";
-			sbBuffer << CBotrixMod::aTeamsNames[i];
-
-			good::ini_section::const_iterator modelsIt = it->find(sbBuffer);
-			if ( modelsIt != it->end() )
-			{
-				sbBuffer = modelsIt->value;
-				good::escape(sbBuffer);
-				good::split((good::string)sbBuffer, m_aModels[i], ',', true);
-
-				BLOG_D("Model names for team %s:", CBotrixMod::aTeamsNames[i].c_str());
-				for ( int j = 0; j < m_aModels[i].size(); ++j )
-				{
-					BLOG_D("  %s", m_aModels[i][j].c_str());
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
-//----------------------------------------------------------------------------------------------------------------
-CPlayer* CBotrixModDetail::AddBot(
+CPlayer* CBotrixMod::AddBot(
 	const char* szName,
 	TBotIntelligence iIntelligence,
 	TTeam iTeam,
-	TClass /*iClass*/,
 	int iParamsCount,
 	const char** aParams
 )
 {
 	if ( iParamsCount > 0 )
 	{
-		static constexpr size_t BUFFER_SIZE = 256;
-		static char s_Buffer[BUFFER_SIZE];
-
-		good::string_buffer sb(s_Buffer, BUFFER_SIZE, false);
-		sb << "Unknown parameter: " << aParams[0];
-		m_sLastError = sb;
-		return NULL;
+		BLOG_E("CBotrixMod::AddBot(): Unknown parameter %s", aParams[0]);
+		return nullptr;
 	}
 
 	CUtlString netName = MPUtils::SanitisePlayerNetName(szName);
@@ -279,16 +193,11 @@ CPlayer* CBotrixModDetail::AddBot(
 
 	if ( !pEdict )
 	{
-		m_sLastError = "Error, couldn't add bot (no map or server full?).";
-		return NULL;
+		BLOG_E("CBotrixMod::AddBot(): Error, couldn't add bot (no map or server full?)");
+		return nullptr;
 	}
 
 	CBot_HL2DM* result = new CBot_HL2DM(pEdict, iIntelligence);
-	result->ChangeModel(iTeam);
+	result->ChangeTeam(iTeam);
 	return result;
-}
-
-const char* CBotrixModDetail::GetLastError() const
-{
-	return m_sLastError.c_str();
 }

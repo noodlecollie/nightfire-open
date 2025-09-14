@@ -12,7 +12,7 @@
 // #define DRAW_PLAYER_HULL
 // #endif
 
-class CClient;  // Forward declaration.
+class CBotrixClient;  // Forward declaration.
 class CBasePlayer;
 
 // NFTODO: Rename to CBotrixPlayer
@@ -277,7 +277,6 @@ public:
 	static CPlayer* AddBot(
 		const char* sName = NULL,
 		TTeam iTeam = 0,
-		TClass iClass = -1,
 		TBotIntelligence iIntelligence = -1,
 		int argc = 0,
 		const char** argv = NULL
@@ -291,9 +290,6 @@ public:
 
 	/// Kick random bot on given team.
 	static bool KickRandomBotOnTeam(int team);
-
-	/// Deliver chat / voice command to bots.
-	static void DeliverChat(edict_t* pFrom, bool bTeamOnly, const char* szText);
 
 	/// Deliver message to all clients.
 	static void Message(const char* szFormat, ...);

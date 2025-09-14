@@ -13,21 +13,6 @@ typedef int TTeam;  ///< Team of bot.
 typedef int TClass;  ///< Class of bot.
 
 //****************************************************************************************************************
-/// Supported Source Mods.
-//****************************************************************************************************************
-enum TModIds
-{
-	EModId_Invalid = -1,  ///< Unknown mods will be using HL2DM mod.
-	EModId_HL2DM = 0,  ///< Half Life 2 Deathmatch. Unknown mods will be using this one.
-	EModId_TF2,  ///< Team fortress 2.
-	EModId_CSS,  ///< Counter Strike Source.
-	EModId_Borzh,  ///< BorzhMod.
-
-	EModId_Total  ///< Total amount of supported mods.
-};
-typedef int TModId;  ///< Supported Source Mods.
-
-//****************************************************************************************************************
 /// Enum that represent events that need to be executed in next frame after being received.
 //****************************************************************************************************************
 enum TFrameEventId

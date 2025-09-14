@@ -179,20 +179,6 @@ public:  // Methods.
 	/// Called when enemy just shot this bot.
 	virtual void HurtBy(int iPlayerIndex, CPlayer* pPlayer, int iHealthNow) = 0;
 
-#ifdef BOTRIX_CHAT
-	/// Called when chat arrives from other player.
-	virtual void ReceiveChat(int iPlayerIndex, CPlayer* pPlayer, bool bTeamOnly, const char* szText) = 0;
-
-	/// Called when chat request arrives from other player.
-	virtual void ReceiveChatRequest(const CBotChat& cRequest);
-
-	/// Called when bot decides to help teammate.
-	virtual void StartPerformingChatRequest(const CBotChat& cRequest);
-
-	/// Called when 30 seconds has passed.
-	virtual void EndPerformingChatRequest(bool bSayGoodbye);
-#endif
-
 private:
 	// Called every frame to evaluate next move. Note that this method is private, use Move() method in subclasses.
 	virtual void PreThink();
@@ -451,15 +437,6 @@ protected:  // Members.
 
 	good::pair<int, int> m_cAttackDuckRangeSqr;  // Will duck if attacking & m_bFeatureAttackDuckEnabled & in range.
 
-#ifdef BOTRIX_CHAT
-	TBotChat m_iObjective, m_iPrevRequest;  // Current and last chat request.
-	TBotChat m_iPrevTalk;  // Last chat talk.
-	float m_fEndTalkActionTime;  // Time for bot to stop doing what other player asked (30 secs).
-
-	CBotChat m_cChat;  // Last spoken phrase.
-	TPlayerIndex m_iPrevChatMate;  // Previous chat mate.
-#endif
-
 protected:  // Bot flags.
 	bool m_bTest;  // Bot was created only for testing purposes, it will be eliminated after reaching needed
 				   // waypoint.
@@ -544,28 +521,17 @@ protected:  // Bot flags.
 	bool m_bFeatureAttackDuckEnabled;  // Duck while attacking. Will duck if in attack duck range.
 	bool m_bFeatureWeaponCheck;  // Check or not weapons.
 
-#ifdef BOTRIX_CHAT
-	bool m_bTalkStarted;  // Conversation started.
-	bool m_bHelpingMate;  // Helping teammate?
-	bool m_bPerformingRequest;  // Currently performing chat request.
-	bool m_bRequestTimeout;  // If true then end performing chat request after timeout.
-#endif
-
 	bool m_bSaidNoWaypoints;  // Say that there are no waypoints only once.
 };
 
-//****************************************************************************************************************
-/// Class representing a bot for Half Life 2 Deathmatch.
-// sv_hl2mp_weapon_respawn_time sv_hl2mp_item_respawn_time
-//****************************************************************************************************************
+// TODO: Rename
 class CBot_HL2DM : public CBotrixBot
 {
 public:
 	/// Constructor.
 	CBot_HL2DM(edict_t* pEdict, TBotIntelligence iIntelligence);
 
-	/// Looks like change model is the only way to change the team in HL2DM.
-	void ChangeModel(TTeam iTeam);
+	void ChangeTeam(TTeam iTeam);
 
 	//------------------------------------------------------------------------------------------------------------
 	// Next functions are mod dependent.
@@ -575,11 +541,6 @@ public:
 
 	/// Called each time bot is respawned.
 	virtual void Respawned();
-
-	/// Called when player's team changed.
-	virtual void ChangeTeam(TTeam /*iTeam*/)
-	{
-	}
 
 	// Enemy is dead or got disconnected.
 	virtual void EraseCurrentEnemy()

@@ -8,6 +8,11 @@ struct edict_s;
 class CBasePlayer;
 class CBotrixCommand;
 
+namespace WeaponAtts
+{
+	struct WACollection;
+}
+
 // TODO: Convert this into a non-static class.
 class CBotrixServerPlugin
 {
@@ -34,18 +39,20 @@ public:
 
 	static void UpdateLogLevel();
 	static bool WaypointAutoAnalyzeEnabled();
+	static void RefreshWeaponConfig();
 
 private:
 	static void PrepareLevel();
 	static void ActivateLevel();
 	static void SpawnBotsInRegister();
+	static void LoadItemsAndWeapons();
+	static void LoadWeapon(const WeaponAtts::WACollection& atts);
 
 	static float m_fFpsEnd;  ///< Time of ending counting frames to calculate fps.
 	static int m_iFramesCount;  ///< Count of frames since m_fFpsStart.
 
 	static struct edict_s* m_pListenServerClient;
 
-	static bool m_bTeamPlay;  ///< True if game is team based (like Counter-Strike), if false then it is deathmatch.
 	static bool m_bMapRunning;  ///< True if map is currently running (LevelInit() was called by Source engine).
 	static good::string m_MapName;  ///< Current map name (set at LevelInit()).
 
@@ -54,8 +61,6 @@ private:
 	static float m_fEngineTime;  ///< Current engine time.
 
 	static CBotrixCommand* m_pConsoleCommands;
-	static cvar_t m_TraceLogCvar;
-	static cvar_t m_WaypointAutoAnalyzeCvar;
 
 	static bool m_bSpawnedRegisterBots;
 	static CBotrixBotFactory m_BotFactory;

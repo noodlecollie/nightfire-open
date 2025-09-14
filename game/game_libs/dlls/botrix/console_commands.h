@@ -33,13 +33,13 @@ public:
 		return m_sCommand == szCommand;
 	}
 
-	bool HasAccess(CClient* pClient)
+	bool HasAccess(CBotrixClient* pClient)
 	{
 		TCommandAccessFlags access = pClient ? pClient->iCommandAccessFlags : FCommandAccessAll;
 		return FLAG_ALL_SET(m_iAccessLevel, access);
 	}
 
-	virtual TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	virtual TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 
 	virtual void PrintCommand(edict_t* pPrintTo, int indent = 0);
 
@@ -78,7 +78,7 @@ protected:
 class CConsoleCommandContainer : public CConsoleCommand
 {
 public:
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 
 	void Add(CConsoleCommand* newCommand)
 	{
@@ -110,7 +110,7 @@ class CWaypointDrawFlagCommand : public CConsoleCommand
 {
 public:
 	CWaypointDrawFlagCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointResetCommand : public CConsoleCommand
@@ -122,7 +122,7 @@ public:
 		m_sHelp = "reset current waypoint to nearest";
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointCreateCommand : public CConsoleCommand
@@ -135,14 +135,14 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointRemoveCommand : public CConsoleCommand
 {
 public:
 	CWaypointRemoveCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointMoveCommand : public CConsoleCommand
@@ -159,7 +159,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAutoCreateCommand : public CConsoleCommand
@@ -176,7 +176,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointInfoCommand : public CConsoleCommand
@@ -191,14 +191,14 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointDestinationCommand : public CConsoleCommand
 {
 public:
 	CWaypointDestinationCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointSaveCommand : public CConsoleCommand
@@ -211,7 +211,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointLoadCommand : public CConsoleCommand
@@ -224,7 +224,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointClearCommand : public CConsoleCommand
@@ -237,7 +237,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAddTypeCommand : public CConsoleCommand
@@ -258,7 +258,7 @@ public:
 		m_cAutoCompleteValues.push_back(args);
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAnalyzeToggleCommand : public CConsoleCommand
@@ -272,28 +272,28 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAnalyzeCreateCommand : public CConsoleCommand
 {
 public:
 	CWaypointAnalyzeCreateCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAnalyzeDebugCommand : public CConsoleCommand
 {
 public:
 	CWaypointAnalyzeDebugCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAnalyzeOmitCommand : public CConsoleCommand
 {
 public:
 	CWaypointAnalyzeOmitCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAnalyzeTraceCommand : public CConsoleCommand
@@ -312,7 +312,7 @@ public:
 		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgBool);
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAnalyzeCommand : public CConsoleCommandContainer
@@ -342,35 +342,35 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointArgumentCommand : public CConsoleCommand
 {
 public:
 	CWaypointArgumentCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointVisibilityCommand : public CConsoleCommand
 {
 public:
 	CWaypointVisibilityCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointConnectionCommand : public CConsoleCommand
 {
 public:
 	CWaypointConnectionCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointProbeNeighboursCommand : public CConsoleCommand
 {
 public:
 	CWaypointProbeNeighboursCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 //****************************************************************************************************************
@@ -386,7 +386,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAreaRenameCommand : public CConsoleCommand
@@ -399,7 +399,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAreaSetCommand : public CConsoleCommand
@@ -412,7 +412,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CWaypointAreaShowCommand : public CConsoleCommand
@@ -425,19 +425,12 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 //****************************************************************************************************************
 // Path waypoint commands.
 //****************************************************************************************************************
-class CPathDebugCommand : public CConsoleCommand
-{
-public:
-	CPathDebugCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
-};
-
 class CPathDistanceCommand : public CConsoleCommand
 {
 public:
@@ -447,14 +440,14 @@ public:
 		m_sHelp = "set distance to add default paths & auto add waypoints";
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CPathDrawCommand : public CConsoleCommand
 {
 public:
 	CPathDrawCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CPathCreateCommand : public CConsoleCommand
@@ -467,7 +460,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CPathRemoveCommand : public CConsoleCommand
@@ -481,7 +474,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CPathAutoCreateCommand : public CConsoleCommand
@@ -498,7 +491,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 /*
@@ -513,7 +506,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute( CClient* pClient, int argc, const char** argv );
+	TCommandResult Execute( CBotrixClient* pClient, int argc, const char** argv );
 };
 */
 
@@ -535,7 +528,7 @@ public:
 		m_cAutoCompleteValues.push_back(args);
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CPathRemoveTypeCommand : public CConsoleCommand
@@ -548,14 +541,14 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CPathArgumentCommand : public CConsoleCommand
 {
 public:
 	CPathArgumentCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CPathInfoCommand : public CConsoleCommand
@@ -568,7 +561,7 @@ public:
 		m_iAccessLevel = FCommandAccessWaypoint;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 //****************************************************************************************************************
@@ -578,28 +571,28 @@ class CBotWeaponCommand : public CConsoleCommand
 {
 public:
 	CBotWeaponCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotWeaponAllowCommand : public CConsoleCommand
 {
 public:
 	CConfigBotWeaponAllowCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotWeaponDefaultCommand : public CConsoleCommand
 {
 public:
 	CConfigBotWeaponDefaultCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotWeaponRemoveCommand : public CConsoleCommand
 {
 public:
 	CConfigBotWeaponRemoveCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotWeaponRemoveCommand : public CConsoleCommand
@@ -612,14 +605,14 @@ public:
 		m_iAccessLevel = FCommandAccessBot;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotWeaponUnknownCommand : public CConsoleCommand
 {
 public:
 	CConfigBotWeaponUnknownCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 //****************************************************************************************************************
@@ -629,7 +622,7 @@ class CBotAddCommand : public CConsoleCommand
 {
 public:
 	CBotAddCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotCommandCommand : public CConsoleCommand
@@ -649,7 +642,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotKickCommand : public CConsoleCommand
@@ -666,7 +659,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotDebugCommand : public CConsoleCommand
@@ -686,7 +679,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotQuotaCommand : public CConsoleCommand
@@ -700,7 +693,7 @@ public:
 		m_iAccessLevel = FCommandAccessBot;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotIntelligenceCommand : public CConsoleCommand
@@ -723,7 +716,7 @@ public:
 		m_cAutoCompleteValues.push_back(args);
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotTeamCommand : public CConsoleCommand
@@ -748,21 +741,21 @@ public:
 		m_cAutoCompleteValues.push_back(args);
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotProtectionHealthCommand : public CConsoleCommand
 {
 public:
 	CConfigBotProtectionHealthCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotProtectionSpawnTimeCommand : public CConsoleCommand
 {
 public:
 	CConfigBotProtectionSpawnTimeCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotProtectionCommand : public CConsoleCommandContainer
@@ -795,7 +788,7 @@ public:
 		m_cAutoCompleteValues.push_back(args);
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotChangeClassCommand : public CConsoleCommand
@@ -809,7 +802,7 @@ public:
 		m_iAccessLevel = FCommandAccessBot;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotSuicideCommand : public CConsoleCommand
@@ -823,7 +816,7 @@ public:
 		m_iAccessLevel = FCommandAccessBot;
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotStrategyFlagsCommand : public CConsoleCommand
@@ -844,7 +837,7 @@ public:
 		m_cAutoCompleteValues.push_back(args);
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotStrategySetCommand : public CConsoleCommand
@@ -865,7 +858,7 @@ public:
 		m_cAutoCompleteValues.push_back(args);
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigBotStrategyCommand : public CConsoleCommandContainer
@@ -933,7 +926,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotAttackCommand : public CConsoleCommand
@@ -953,7 +946,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotMoveCommand : public CConsoleCommand
@@ -973,7 +966,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotPauseCommand : public CConsoleCommand
@@ -993,21 +986,21 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotProtectCommand : public CConsoleCommand
 {
 public:
 	CBotProtectCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotDrawPathCommand : public CConsoleCommand
 {
 public:
 	CBotDrawPathCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CBotTestPathCommand : public CConsoleCommand
@@ -1029,7 +1022,7 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 //****************************************************************************************************************
@@ -1039,28 +1032,28 @@ class CItemDrawCommand : public CConsoleCommand
 {
 public:
 	CItemDrawCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CItemDrawTypeCommand : public CConsoleCommand
 {
 public:
 	CItemDrawTypeCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CItemMarkCommand : public CConsoleCommand
 {
 public:
 	CItemMarkCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CItemReloadCommand : public CConsoleCommand
 {
 public:
 	CItemReloadCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigEventsCommand : public CConsoleCommand
@@ -1076,14 +1069,14 @@ public:
 		m_cAutoCompleteValues.push_back(StringVector());
 	}
 
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigLogCommand : public CConsoleCommand
 {
 public:
 	CConfigLogCommand();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigWaypointAnalyzeAmount : public CConsoleCommand
@@ -1096,7 +1089,7 @@ public:
 		m_sDescription = "Parameter: number of waypoints to analyze per frame. Can be fractional.";
 		m_iAccessLevel = FCommandAccessConfig;
 	}
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigWaypointAnalyzeMapChange : public CConsoleCommand
@@ -1115,7 +1108,7 @@ public:
 		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 		m_cAutoCompleteValues.push_back(args);
 	}
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigWaypointAnalyzeDistance : public CConsoleCommand
@@ -1127,7 +1120,7 @@ public:
 		m_sHelp = "default distance between waypoints when analyzing the map";
 		m_iAccessLevel = FCommandAccessConfig;
 	}
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigWaypointAnalyze : public CConsoleCommandContainer
@@ -1146,14 +1139,14 @@ class CConfigWaypointSave : public CConsoleCommand
 {
 public:
 	CConfigWaypointSave();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigWaypointUnreachable : public CConsoleCommand
 {
 public:
 	CConfigWaypointUnreachable();
-	TCommandResult Execute(CClient* pClient, int argc, const char** argv);
+	TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 };
 
 class CConfigWaypoint : public CConsoleCommandContainer
@@ -1228,7 +1221,6 @@ public:
 		Add(new CPathAddTypeCommand);
 		Add(new CPathArgumentCommand);
 		Add(new CPathCreateCommand);
-		Add(new CPathDebugCommand);
 		Add(new CPathDistanceCommand);
 		Add(new CPathDrawCommand);
 		Add(new CPathInfoCommand);
@@ -1273,10 +1265,7 @@ public:
 		Add(new CBotMoveCommand);
 		Add(new CBotPauseCommand);
 		Add(new CBotProtectCommand);
-		if ( CBotrixMod::GetModId() != EModId_TF2 )  // TF2 bots can't be spawned after round has started.
-		{
-			Add(new CBotTestPathCommand);
-		}
+		Add(new CBotTestPathCommand);
 		Add(new CBotWeaponCommand);
 		// Add(new CBotWeaponRemoveCommand);
 	}

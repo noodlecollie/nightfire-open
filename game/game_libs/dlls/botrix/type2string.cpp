@@ -149,21 +149,6 @@ const good::string& CTypeToString::BoolToString(bool b, int which)
 }
 
 //----------------------------------------------------------------------------------------------------------------
-// Ordered by TModId.
-//----------------------------------------------------------------------------------------------------------------
-good::string aMods[EModId_Total] = {"hl2dm", "tf2", "css", "borzh"};
-
-int CTypeToString::ModFromString(const good::string& sMod)
-{
-	return EnumFromString(sMod, EModId_Total, aMods);
-}
-
-const good::string& CTypeToString::ModToString(TModId iMod)
-{
-	return EnumToString(iMod, EModId_Total, aMods, sUnknown);
-}
-
-//----------------------------------------------------------------------------------------------------------------
 // Ordered by TCommandAccessFlags.
 //----------------------------------------------------------------------------------------------------------------
 good::string aAccessFlags[ECommandAccessFlagTotal] = {

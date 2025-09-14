@@ -747,7 +747,7 @@ int CItems::IsDoorClosed(TItemIndex iDoor)
 }
 
 //----------------------------------------------------------------------------------------------------------------
-void CItems::Draw(CClient* pClient)
+void CItems::Draw(CBotrixClient* pClient)
 {
 	static float fNextDrawTime = 0.0f;
 	static unsigned char pvs[(MAX_MAP_LEAFS + 7) / 8];

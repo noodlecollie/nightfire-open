@@ -7,6 +7,7 @@
 #include "botrix/botrixgamerulesinterface.h"
 #include "botrix/defines.h"
 #include "botrix/parameter_vars.h"
+#include "botrix/console_vars.h"
 #include "enginecallback.h"
 #include "standard_includes.h"
 #include "gamerules.h"
@@ -21,7 +22,6 @@
 #include "customGeometry/primitiveMessageWriter.h"
 
 good::TLogLevel CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
-int CBotrixEngineUtil::iTextTime = 20;  // Time in seconds to show text in CUtil::GetWaypointReachableInfoFromTo().
 TraceResult CBotrixEngineUtil::m_TraceResult = {
 	0,
 	0,
@@ -400,8 +400,8 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	if ( bShowHelp )
 	{
 		// TODO: draw from the ground position.
-		DrawLine(vSrcEyePos + vOffset, vSrcGround + vOffset, static_cast<float>(iTextTime), r, g, b);
-		DrawLine(vDestEyePos + vOffset, vDestGround + vOffset, static_cast<float>(iTextTime), r, g, b);
+		DrawLine(vSrcEyePos + vOffset, vSrcGround + vOffset, CBotrixCvars::botrix_reachable_viz_time.value, r, g, b);
+		DrawLine(vDestEyePos + vOffset, vDestGround + vOffset, CBotrixCvars::botrix_reachable_viz_time.value, r, g, b);
 	}
 
 	// Start off by assuming the destination is reachable.
@@ -423,8 +423,11 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 	{
 		helperGeomWriter.reset(new CRollingLineMessageWriter(Category::BotrixDebugging));
 
-		helperGeomWriter
-			->BeginGeometry((static_cast<uint32_t>(color) << 8) | 0x000000FF, 1.0f, static_cast<float>(iTextTime));
+		helperGeomWriter->BeginGeometry(
+			(static_cast<uint32_t>(color) << 8) | 0x000000FF,
+			1.0f,
+			CBotrixCvars::botrix_reachable_viz_time.value
+		);
 	}
 
 	float lastDistToTarget = std::numeric_limits<float>::max();
@@ -451,7 +454,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 					DrawTextAtLocation(
 						vHit,
 						0,
-						static_cast<float>(iTextTime),
+						CBotrixCvars::botrix_reachable_viz_time.value,
 						COL_CANTREACH[0],
 						COL_CANTREACH[1],
 						COL_CANTREACH[2],
@@ -471,7 +474,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 						DrawTextAtLocation(
 							vHit,
 							0,
-							static_cast<float>(iTextTime),
+							CBotrixCvars::botrix_reachable_viz_time.value,
 							COL_CANTREACH[0],
 							COL_CANTREACH[1],
 							COL_CANTREACH[2],
@@ -497,7 +500,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 						DrawTextAtLocation(
 							vHit,
 							0,
-							static_cast<float>(iTextTime),
+							CBotrixCvars::botrix_reachable_viz_time.value,
 							COL_CANTREACH[0],
 							COL_CANTREACH[1],
 							COL_CANTREACH[2],
@@ -573,7 +576,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 					DrawTextAtLocation(
 						vText,
 						0,
-						static_cast<float>(iTextTime),
+						CBotrixCvars::botrix_reachable_viz_time.value,
 						COL_CANREACH[0],
 						COL_CANREACH[1],
 						COL_CANREACH[2],
@@ -586,7 +589,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 				DrawTextAtLocation(
 					vText,
 					0,
-					static_cast<float>(iTextTime),
+					CBotrixCvars::botrix_reachable_viz_time.value,
 					COL_CANREACH[0],
 					COL_CANREACH[1],
 					COL_CANREACH[2],
@@ -604,7 +607,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 				DrawTextAtLocation(
 					vText,
 					0,
-					static_cast<float>(iTextTime),
+					CBotrixCvars::botrix_reachable_viz_time.value,
 					COL_CANREACH[0],
 					COL_CANREACH[1],
 					COL_CANREACH[2],
@@ -622,7 +625,7 @@ TReach CBotrixEngineUtil::GetWaypointReachableInfoFromTo(
 				DrawTextAtLocation(
 					vText,
 					0,
-					static_cast<float>(iTextTime),
+					CBotrixCvars::botrix_reachable_viz_time.value,
 					COL_CANTREACH[0],
 					COL_CANTREACH[1],
 					COL_CANTREACH[2],
@@ -851,6 +854,11 @@ void CBotrixEngineUtil::DrawLine(
 {
 	using namespace CustomGeometry;
 
+	if ( fDrawTime <= 0.0f )
+	{
+		return;
+	}
+
 	CGeometryItem geom;
 	geom.SetDrawType(DrawType::Lines);
 	geom.AddLine(v1, v2);
@@ -870,6 +878,11 @@ void CBotrixEngineUtil::DrawWireBall(
 )
 {
 	using namespace CustomGeometry;
+
+	if ( fDrawTime <= 0.0f )
+	{
+		return;
+	}
 
 	CPrimitiveMessageWriter writer(CustomGeometry::Category::BotrixDebugging);
 	WireBallPrimitive primitive {};
@@ -891,6 +904,11 @@ void CBotrixEngineUtil::DrawBox(
 )
 {
 	using namespace CustomGeometry;
+
+	if ( fDrawTime <= 0.0f )
+	{
+		return;
+	}
 
 	AABBoxPrimitive primitive {};
 	primitive.mins = vOrigin + vMins;
@@ -917,7 +935,7 @@ void CBotrixEngineUtil::DrawTextAtLocation(
 {
 	using namespace CustomGeometry;
 
-	if ( !szText || !(*szText) )
+	if ( !szText || !(*szText) || fDrawTime <= 0.0f )
 	{
 		return;
 	}

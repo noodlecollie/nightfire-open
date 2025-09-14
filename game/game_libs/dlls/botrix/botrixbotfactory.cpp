@@ -86,7 +86,7 @@ bool CBotrixBotFactory::CreateBot(const CBotProfileTable::ProfileData* profile, 
 	}
 
 	name = MPUtils::SanitisePlayerNetName(name);
-	CPlayer* pBot = CPlayers::AddBot(name.Get(), CBotrixMod::iUnassignedTeam, -1, -1, 0, nullptr);
+	CPlayer* pBot = CPlayers::AddBot(name.Get(), CBotrixMod::iUnassignedTeam, -1, 0, nullptr);
 
 	if ( !pBot )
 	{
