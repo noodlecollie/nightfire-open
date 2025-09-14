@@ -283,9 +283,9 @@ void GameDLLInit(void)
 	// END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	WeaponInaccuracyCvars::Init();
-	CBotrixCvars::RegisterAll();
-	CBotrixBotFactory::RegisterCvars();
-	CBotrixCommand::RegisterServerCommands();
+	Botrix::CBotrixCvars::RegisterAll();
+	Botrix::CBotrixBotFactory::RegisterCvars();
+	Botrix::CBotrixCommand::RegisterServerCommands();
 	CustomGeometry::InitialiseCommands();
 	HitboxDebugging::Initialise();
 

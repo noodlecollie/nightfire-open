@@ -6,62 +6,66 @@
 
 struct edict_s;
 class CBasePlayer;
-class CBotrixCommand;
 
 namespace WeaponAtts
 {
 	struct WACollection;
 }
 
-// TODO: Convert this into a non-static class.
-class CBotrixServerPlugin
+namespace Botrix
 {
-public:
-	static void Init();
-	static void Deinit();
+	class CBotrixCommand;
 
-	static void ServerActivate();
-	static void ServerDeactivate();
-	static void ClientDisconnect(struct edict_s* entity);
-	static void ClientPutInServer(struct edict_s* entity);
-	static bool ClientCommand(CBasePlayer* player, const char* command);
-	static void ClientTeamChange(struct edict_s* entity, int newTeam);
-	static void ClientRespawn(struct edict_s* entity);
-	static void ClientHurt(struct edict_s* victim, struct edict_s* attacker);
-	static void ClientKilled(struct edict_s* victim, struct edict_s* killer);
-	static void Think();
+	// TODO: Convert this into a non-static class.
+	class CBotrixServerPlugin
+	{
+	public:
+		static void Init();
+		static void Deinit();
 
-	static struct edict_s* GetListenServerClient();
-	static float GetTime();
-	static bool MapIsRunning();
-	static const char* MapName();
-	static CBotrixCommand* GetConsoleCommandHandler();
+		static void ServerActivate();
+		static void ServerDeactivate();
+		static void ClientDisconnect(struct edict_s* entity);
+		static void ClientPutInServer(struct edict_s* entity);
+		static bool ClientCommand(CBasePlayer* player, const char* command);
+		static void ClientTeamChange(struct edict_s* entity, int newTeam);
+		static void ClientRespawn(struct edict_s* entity);
+		static void ClientHurt(struct edict_s* victim, struct edict_s* attacker);
+		static void ClientKilled(struct edict_s* victim, struct edict_s* killer);
+		static void Think();
 
-	static void UpdateLogLevel();
-	static bool WaypointAutoAnalyzeEnabled();
-	static void RefreshWeaponConfig();
+		static struct edict_s* GetListenServerClient();
+		static float GetTime();
+		static bool MapIsRunning();
+		static const char* MapName();
+		static CBotrixCommand* GetConsoleCommandHandler();
 
-private:
-	static void PrepareLevel();
-	static void ActivateLevel();
-	static void SpawnBotsInRegister();
-	static void LoadItemsAndWeapons();
-	static void LoadWeapon(const WeaponAtts::WACollection& atts);
+		static void UpdateLogLevel();
+		static bool WaypointAutoAnalyzeEnabled();
+		static void RefreshWeaponConfig();
 
-	static float m_fFpsEnd;  ///< Time of ending counting frames to calculate fps.
-	static int m_iFramesCount;  ///< Count of frames since m_fFpsStart.
+	private:
+		static void PrepareLevel();
+		static void ActivateLevel();
+		static void SpawnBotsInRegister();
+		static void LoadItemsAndWeapons();
+		static void LoadWeapon(const WeaponAtts::WACollection& atts);
 
-	static struct edict_s* m_pListenServerClient;
+		static float m_fFpsEnd;  ///< Time of ending counting frames to calculate fps.
+		static int m_iFramesCount;  ///< Count of frames since m_fFpsStart.
 
-	static bool m_bMapRunning;  ///< True if map is currently running (LevelInit() was called by Source engine).
-	static good::string m_MapName;  ///< Current map name (set at LevelInit()).
+		static struct edict_s* m_pListenServerClient;
 
-	static int m_iFPS;  ///< Frames per second. Updated each second.
-	static float m_fTime;  ///< Current time.
-	static float m_fEngineTime;  ///< Current engine time.
+		static bool m_bMapRunning;  ///< True if map is currently running (LevelInit() was called by Source engine).
+		static good::string m_MapName;  ///< Current map name (set at LevelInit()).
 
-	static CBotrixCommand* m_pConsoleCommands;
+		static int m_iFPS;  ///< Frames per second. Updated each second.
+		static float m_fTime;  ///< Current time.
+		static float m_fEngineTime;  ///< Current engine time.
 
-	static bool m_bSpawnedRegisterBots;
-	static CBotrixBotFactory m_BotFactory;
-};
+		static CBotrixCommand* m_pConsoleCommands;
+
+		static bool m_bSpawnedRegisterBots;
+		static CBotrixBotFactory m_BotFactory;
+	};
+}  // namespace Botrix

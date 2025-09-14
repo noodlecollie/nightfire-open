@@ -4,72 +4,75 @@
 #include "MathLib/mathlib.h"
 #include <algorithm>
 
-CBotrixServerEntity::CBotrixServerEntity(struct edict_s* edict) :
-	m_pEdict(edict)
+namespace Botrix
 {
-}
-
-CBaseEntity* CBotrixServerEntity::GetBaseEntity() const
-{
-	return CBaseEntity::Instance(m_pEdict);
-}
-
-CBasePlayerItem* CBotrixServerEntity::GetBasePlayerItem() const
-{
-	return dynamic_cast<CBasePlayerItem*>(GetBaseEntity());
-}
-
-struct edict_s* CBotrixServerEntity::GetEdict() const
-{
-	return m_pEdict;
-}
-
-Vector CBotrixServerEntity::GetOrigin() const
-{
-	if ( !m_pEdict )
+	CBotrixServerEntity::CBotrixServerEntity(struct edict_s* edict) :
+		m_pEdict(edict)
 	{
-		return Vector();
 	}
 
-	return m_pEdict->v.origin;
-}
-
-Vector CBotrixServerEntity::GetMins() const
-{
-	if ( !m_pEdict )
+	CBaseEntity* CBotrixServerEntity::GetBaseEntity() const
 	{
-		return Vector();
+		return CBaseEntity::Instance(m_pEdict);
 	}
 
-	return m_pEdict->v.mins;
-}
-
-Vector CBotrixServerEntity::GetMaxs() const
-{
-	if ( !m_pEdict )
+	CBasePlayerItem* CBotrixServerEntity::GetBasePlayerItem() const
 	{
-		return Vector();
+		return dynamic_cast<CBasePlayerItem*>(GetBaseEntity());
 	}
 
-	return m_pEdict->v.maxs;
-}
-
-float CBotrixServerEntity::GetCollisionRadiusSquared() const
-{
-	if ( !m_pEdict )
+	struct edict_s* CBotrixServerEntity::GetEdict() const
 	{
-		return 0.0f;
+		return m_pEdict;
 	}
 
-	return std::max<float>(GetMaxs().LengthSquared(), GetMins().LengthSquared());
-}
-
-float CBotrixServerEntity::GetCollisionRadius() const
-{
-	if ( !m_pEdict )
+	Vector CBotrixServerEntity::GetOrigin() const
 	{
-		return 0.0f;
+		if ( !m_pEdict )
+		{
+			return Vector();
+		}
+
+		return m_pEdict->v.origin;
 	}
 
-	return rsqrt(GetCollisionRadiusSquared());
-}
+	Vector CBotrixServerEntity::GetMins() const
+	{
+		if ( !m_pEdict )
+		{
+			return Vector();
+		}
+
+		return m_pEdict->v.mins;
+	}
+
+	Vector CBotrixServerEntity::GetMaxs() const
+	{
+		if ( !m_pEdict )
+		{
+			return Vector();
+		}
+
+		return m_pEdict->v.maxs;
+	}
+
+	float CBotrixServerEntity::GetCollisionRadiusSquared() const
+	{
+		if ( !m_pEdict )
+		{
+			return 0.0f;
+		}
+
+		return std::max<float>(GetMaxs().LengthSquared(), GetMins().LengthSquared());
+	}
+
+	float CBotrixServerEntity::GetCollisionRadius() const
+	{
+		if ( !m_pEdict )
+		{
+			return 0.0f;
+		}
+
+		return rsqrt(GetCollisionRadiusSquared());
+	}
+}  // namespace Botrix

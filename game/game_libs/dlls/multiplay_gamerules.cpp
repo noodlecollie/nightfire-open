@@ -80,7 +80,7 @@ static CMultiplayGameMgrHelper g_GameMgrHelper;
 CHalfLifeMultiplay::CHalfLifeMultiplay() :
 	CGameRules()
 {
-	m_pBotGameRulesInterface = new CBotrixGameRulesInterface();
+	m_pBotGameRulesInterface = new Botrix::CBotrixGameRulesInterface();
 
 #ifndef NO_VOICEGAMEMGR
 	g_VoiceGameMgr.Init(&g_GameMgrHelper, gpGlobals->maxClients);
@@ -615,7 +615,7 @@ void CHalfLifeMultiplay::PlayerSpawn(CBasePlayer* pPlayer)
 		}
 	}
 
-	IBotGameRulesInterface* bgri = BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* bgri = BotGameRulesInterface();
 
 	if ( bgri )
 	{
@@ -653,7 +653,7 @@ int CHalfLifeMultiplay::IPointsForKill(CBasePlayer*, CBasePlayer*)
 
 void CHalfLifeMultiplay::PlayerHurt(CBasePlayer* pVictim, entvars_t* pAttacker)
 {
-	IBotGameRulesInterface* bgri = BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* bgri = BotGameRulesInterface();
 
 	if ( bgri )
 	{
@@ -696,7 +696,7 @@ void CHalfLifeMultiplay::PlayerKilled(CBasePlayer* pVictim, entvars_t* pKiller, 
 		pKiller->frags -= 1;
 	}
 
-	IBotGameRulesInterface* bgri = BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* bgri = BotGameRulesInterface();
 
 	if ( bgri )
 	{
@@ -1231,7 +1231,7 @@ void CHalfLifeMultiplay::GoToIntermission(void)
 	m_iEndIntermissionButtonHit = FALSE;
 }
 
-IBotGameRulesInterface* CHalfLifeMultiplay::BotGameRulesInterface()
+Botrix::IBotGameRulesInterface* CHalfLifeMultiplay::BotGameRulesInterface()
 {
 	return m_pBotGameRulesInterface;
 }

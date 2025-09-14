@@ -325,7 +325,7 @@ void CHalfLifeTeamplay::ChangePlayerTeam(CBasePlayer* pPlayer, const char* pTeam
 	);
 
 	// NFTODO: We need a proper server-side events system.
-	IBotGameRulesInterface* bgri = BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* bgri = BotGameRulesInterface();
 
 	if ( bgri )
 	{

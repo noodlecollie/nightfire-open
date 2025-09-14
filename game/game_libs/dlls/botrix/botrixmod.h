@@ -7,106 +7,109 @@
 #include "botrix/types.h"
 #include "utlvector.h"
 
-class CPlayer;
-
-class CBotrixMod
+namespace Botrix
 {
-public:  // Methods.
-	/// Load all needed staff for mod.
-	static bool LoadDefaults();
+	class CPlayer;
 
-	/// Prepare for use, called after all needed vars are set.
-	static void Prepare();
-
-	/// Unload mod.
-	static void UnLoad()
+	class CBotrixMod
 	{
-		m_aFrameEvents.Purge();
-		aTeamsNames.clear();
-		aBotNames.clear();
-	}
+	public:  // Methods.
+		/// Load all needed staff for mod.
+		static bool LoadDefaults();
 
-	/// Called when map finished loading items and waypoints.
-	static void MapLoaded();
+		/// Prepare for use, called after all needed vars are set.
+		static void Prepare();
 
-	/// Mod's think function.
-	static void Think();
-
-	/// Add frame event.
-	static void AddFrameEvent(TPlayerIndex iPlayer, TFrameEvent iEvent)
-	{
-		std::pair<TFrameEvent, TPlayerIndex> pair(iEvent, iPlayer);
-		int foundIndex = m_aFrameEvents.Find(pair);
-
-		if ( foundIndex < 0 )  // Avoid firing events twice.
+		/// Unload mod.
+		static void UnLoad()
 		{
-			m_aFrameEvents.AddToTail(pair);
+			m_aFrameEvents.Purge();
+			aTeamsNames.clear();
+			aBotNames.clear();
 		}
-	}
 
-	/// Return true if map has items or waypoint's of given type.
-	static bool HasMapItems(TItemType iEntityType)
-	{
-		return m_bMapHas[iEntityType];
-	}
+		/// Called when map finished loading items and waypoints.
+		static void MapLoaded();
 
-	/// Get team index from team name.
-	static int GetTeamIndex(const good::string& sTeam)
-	{
-		for ( good::string::size_type i = 0; i < aTeamsNames.size(); ++i )
+		/// Mod's think function.
+		static void Think();
+
+		/// Add frame event.
+		static void AddFrameEvent(TPlayerIndex iPlayer, TFrameEvent iEvent)
 		{
-			if ( sTeam == aTeamsNames[i] )
+			std::pair<TFrameEvent, TPlayerIndex> pair(iEvent, iPlayer);
+			int foundIndex = m_aFrameEvents.Find(pair);
+
+			if ( foundIndex < 0 )  // Avoid firing events twice.
 			{
-				return i;
+				m_aFrameEvents.AddToTail(pair);
 			}
 		}
 
-		return -1;
-	}
+		/// Return true if map has items or waypoint's of given type.
+		static bool HasMapItems(TItemType iEntityType)
+		{
+			return m_bMapHas[iEntityType];
+		}
 
-	/// Get random bot name from [General] section, key bot_names.
-	static const good::string& GetRandomBotName(TBotIntelligence iIntelligence);
+		/// Get team index from team name.
+		static int GetTeamIndex(const good::string& sTeam)
+		{
+			for ( good::string::size_type i = 0; i < aTeamsNames.size(); ++i )
+			{
+				if ( sTeam == aTeamsNames[i] )
+				{
+					return i;
+				}
+			}
 
-	static CPlayer*
-	AddBot(const char* szName, TBotIntelligence iIntelligence, TTeam iTeam, int iParamsCount, const char** aParams);
+			return -1;
+		}
 
-public:  // Static members.
-	static StringVector aTeamsNames;  ///< Name of teams.
-	static int iUnassignedTeam;  ///< Index of unassigned (deathmatch) team.
-	static int iSpectatorTeam;  ///< Index of spectator team.
+		/// Get random bot name from [General] section, key bot_names.
+		static const good::string& GetRandomBotName(TBotIntelligence iIntelligence);
 
-	static CUtlVector<TWeaponId> aDefaultWeapons;  ///< Default respawn weapons. Can be set by a console command.
-	static bool
-		bRemoveWeapons;  ///< If true, will remove all weapons from the bot on respawn. Can be set by a console command.
+		static CPlayer*
+		AddBot(const char* szName, TBotIntelligence iIntelligence, TTeam iTeam, int iParamsCount, const char** aParams);
 
-	static StringVector aBotNames;  ///< Available bot names.
-	static StringVector aClassNames;  ///< Name of player's classes.
+	public:  // Static members.
+		static StringVector aTeamsNames;  ///< Name of teams.
+		static int iUnassignedTeam;  ///< Index of unassigned (deathmatch) team.
+		static int iSpectatorTeam;  ///< Index of spectator team.
 
-	static bool bIntelligenceInBotName;  ///< Use bot's intelligence as part of his name.
-	static bool bHeadShotDoesMoreDamage;  ///< HL2DM, CSS have that (true by default).
+		static CUtlVector<TWeaponId> aDefaultWeapons;  ///< Default respawn weapons. Can be set by a console command.
+		static bool bRemoveWeapons;  ///< If true, will remove all weapons from the bot on respawn. Can be set by a
+									 ///< console command.
 
-	static float fSpawnProtectionTime;  ///< Spawn protection time, 0 by default. Can be set by a console command.
-	static int iSpawnProtectionHealth;  ///< Spawn protection health, 0 by default. Can be set by a console command.
+		static StringVector aBotNames;  ///< Available bot names.
+		static StringVector aClassNames;  ///< Name of player's classes.
 
-	//    static TDeathmatchFlags iDeathmatchFlags;       ///< Flags for deathmatch mode.
+		static bool bIntelligenceInBotName;  ///< Use bot's intelligence as part of his name.
+		static bool bHeadShotDoesMoreDamage;  ///< HL2DM, CSS have that (true by default).
 
-	static float fMinNonStuckSpeed;  ///< Minimum velocity to consider that bot is moving and non-stuck.
+		static float fSpawnProtectionTime;  ///< Spawn protection time, 0 by default. Can be set by a console command.
+		static int iSpawnProtectionHealth;  ///< Spawn protection health, 0 by default. Can be set by a console command.
 
-	static int iNearItemMaxDistanceSqr;  ///< Max distance to consider item to be near to player.
-	static int iItemPickUpDistance;  ///< Additional distance from player to item to consider it taken.
-									 // Item is picked, if distance-to-player < player's-radius + item's-radius +
-									 // this-distance.
+		//    static TDeathmatchFlags iDeathmatchFlags;       ///< Flags for deathmatch mode.
 
-protected:  // Methods.
-	friend class CConfiguration;  // Give access to next protected methods.
+		static float fMinNonStuckSpeed;  ///< Minimum velocity to consider that bot is moving and non-stuck.
 
-	// Returns true there is a player/bot with name cName.
-	static bool IsNameTaken(const good::string& cName, TBotIntelligence iIntelligence);
+		static int iNearItemMaxDistanceSqr;  ///< Max distance to consider item to be near to player.
+		static int iItemPickUpDistance;  ///< Additional distance from player to item to consider it taken.
+										 // Item is picked, if distance-to-player < player's-radius + item's-radius +
+										 // this-distance.
 
-protected:  // Members.
-	static bool m_bMapHas[EItemTypeCanPickTotal];  // To check if map has items or waypoints of types: health, armor,
-												   // weapon, ammo.
+	protected:  // Methods.
+		friend class CConfiguration;  // Give access to next protected methods.
 
-	// Events that happend on this frame.
-	static CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> m_aFrameEvents;
-};
+		// Returns true there is a player/bot with name cName.
+		static bool IsNameTaken(const good::string& cName, TBotIntelligence iIntelligence);
+
+	protected:  // Members.
+		static bool m_bMapHas[EItemTypeCanPickTotal];  // To check if map has items or waypoints of types: health,
+													   // armor, weapon, ammo.
+
+		// Events that happend on this frame.
+		static CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> m_aFrameEvents;
+	};
+}  // namespace Botrix

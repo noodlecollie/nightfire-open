@@ -7,21 +7,24 @@ struct edict_s;
 class CBaseEntity;
 class CBasePlayerItem;
 
-class CBotrixServerEntity
+namespace Botrix
 {
-public:
-	explicit CBotrixServerEntity(struct edict_s* edict);
+	class CBotrixServerEntity
+	{
+	public:
+		explicit CBotrixServerEntity(struct edict_s* edict);
 
-	CBaseEntity* GetBaseEntity() const;
-	CBasePlayerItem* GetBasePlayerItem() const;
-	struct edict_s* GetEdict() const;
+		CBaseEntity* GetBaseEntity() const;
+		CBasePlayerItem* GetBasePlayerItem() const;
+		struct edict_s* GetEdict() const;
 
-	Vector GetOrigin() const;
-	Vector GetMins() const;
-	Vector GetMaxs() const;
-	float GetCollisionRadiusSquared() const;
-	float GetCollisionRadius() const;
+		Vector GetOrigin() const;
+		Vector GetMins() const;
+		Vector GetMaxs() const;
+		float GetCollisionRadiusSquared() const;
+		float GetCollisionRadius() const;
 
-private:
-	struct edict_s* m_pEdict = nullptr;
-};
+	private:
+		struct edict_s* m_pEdict = nullptr;
+	};
+}  // namespace Botrix
