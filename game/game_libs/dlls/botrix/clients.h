@@ -2,12 +2,11 @@
 
 #include "botrix/players.h"
 
-// NFTODO: Rename to CBotrixClient
-class CClient : public CPlayer
+class CBotrixClient : public CPlayer
 {
 public:  // Methods.
 	/// Constructor.
-	CClient(edict_t* pPlayer) :
+	CBotrixClient(edict_t* pPlayer) :
 		CPlayer(pPlayer, false),
 		iCommandAccessFlags(0),
 		iDestinationWaypoint(-1),

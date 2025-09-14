@@ -4,7 +4,7 @@
 #include "botrix/waypoint.h"
 #include "botrix/item.h"
 
-void CClient::Activated()
+void CBotrixClient::Activated()
 {
 	CPlayer::Activated();
 
@@ -45,7 +45,7 @@ void CClient::Activated()
 }
 
 //----------------------------------------------------------------------------------------------------------------
-void CClient::PreThink()
+void CBotrixClient::PreThink()
 {
 	// int iLastWaypoint = iCurrentWaypoint;
 	CPlayer::PreThink();

@@ -341,7 +341,7 @@ public:
 	TPathArgument iArgument;
 };
 
-class CClient;  // Forward declaration.
+class CBotrixClient;  // Forward declaration.
 
 //****************************************************************************************************************
 /// Class that represents set of waypoints on a map.
@@ -508,7 +508,7 @@ public:  // Methods.
 	static TWaypointId GetAimedWaypoint(const Vector& vOrigin, const Vector& ang);
 
 	/// Draw nearest waypoints around player.
-	static void Draw(CClient* pClient);
+	static void Draw(CBotrixClient* pClient);
 
 	/// Mark 2 waypoints as unreachable.
 	static void MarkUnreachablePath(TWaypointId iWaypointFrom, TWaypointId iWaypointTo);

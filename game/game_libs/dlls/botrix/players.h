@@ -12,7 +12,7 @@
 // #define DRAW_PLAYER_HULL
 // #endif
 
-class CClient;  // Forward declaration.
+class CBotrixClient;  // Forward declaration.
 class CBasePlayer;
 
 // NFTODO: Rename to CBotrixPlayer

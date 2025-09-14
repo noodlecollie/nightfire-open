@@ -11,7 +11,7 @@
 
 struct edict_s;
 
-class CClient;
+class CBotrixClient;
 class CPlayer;
 
 //****************************************************************************************************************
@@ -84,7 +84,8 @@ public:
 		float fPickupDistanceSqr,
 		const CItemClass* pItemClass,
 		const Vector& vOrigin,
-		TWaypointId iWaypoint) :
+		TWaypointId iWaypoint
+	) :
 		pEdict(pEdict),
 		iFlags(iFlags),
 		fPickupDistanceSqr(fPickupDistanceSqr),
@@ -216,7 +217,8 @@ public:
 		TItemType iEntityType,
 		const Vector& vOrigin,
 		const good::vector<CPickedItem>& aSkip,
-		const CItemClass* pClass = NULL);
+		const CItemClass* pClass = NULL
+	);
 
 	/// Return true if at least one entity of this class exists on current map.
 	static bool ExistsOnMap(const CItemClass* pEntityClass)
@@ -291,7 +293,7 @@ public:
 	}
 
 	/// Draw items for a given client.
-	static void Draw(CClient* pClient);
+	static void Draw(CBotrixClient* pClient);
 
 protected:
 	static void CheckNewEntity(struct edict_s* pEdict, bool bLog = true);
@@ -301,7 +303,8 @@ protected:
 		TItemType iEntityType,
 		struct edict_s* pEdict,
 		CItemClass* pItemClass,
-		const CBotrixServerEntity& serverEntity);
+		const CBotrixServerEntity& serverEntity
+	);
 	static void
 	AddObject(struct edict_s* pEdict, const CItemClass* pObjectClass, const CBotrixServerEntity& serverEntity);
 

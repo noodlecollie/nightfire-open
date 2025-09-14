@@ -244,7 +244,7 @@ void CPlayers::InvalidatePlayersWaypoints()
 		{
 			if ( !pPlayer->IsBot() )  // TODO: virtual function for players to invalidate waypoints.
 			{
-				((CClient*)pPlayer)->iDestinationWaypoint = EWaypointIdInvalid;
+				((CBotrixClient*)pPlayer)->iDestinationWaypoint = EWaypointIdInvalid;
 			}
 
 			// Force move failure, because path can contain removed waypoint.
@@ -413,7 +413,7 @@ void CPlayers::PlayerConnected(edict_t* pEdict)
 
 		BASSERT(m_aPlayers[iIdx].get() == NULL, return);  // Should not happend.
 
-		CClient* pPlayer = new CClient(pEdict);
+		CBotrixClient* pPlayer = new CBotrixClient(pEdict);
 
 		if ( !IS_DEDICATED_SERVER() && CBotrixServerPlugin::GetListenServerClient() == pEdict )
 		{
@@ -498,7 +498,7 @@ void CPlayers::DebugEvent(const char* szFormat, ...)
 	for ( good::vector<CPlayerPtr>::const_iterator it = m_aPlayers.begin(); it != m_aPlayers.end(); ++it )
 	{
 		const CPlayer* pPlayer = it->get();
-		if ( pPlayer && !pPlayer->IsBot() && ((CClient*)pPlayer)->bDebuggingEvents )
+		if ( pPlayer && !pPlayer->IsBot() && ((CBotrixClient*)pPlayer)->bDebuggingEvents )
 		{
 			BULOG_I(pPlayer->GetEdict(), "%s", buffer);
 		}
@@ -512,7 +512,7 @@ void CPlayers::CheckForDebugging()
 	for ( good::vector<CPlayerPtr>::iterator it = m_aPlayers.begin(); it != m_aPlayers.end(); ++it )
 	{
 		const CPlayer* pPlayer = it->get();
-		if ( pPlayer && !pPlayer->IsBot() && ((CClient*)pPlayer)->bDebuggingEvents )
+		if ( pPlayer && !pPlayer->IsBot() && ((CBotrixClient*)pPlayer)->bDebuggingEvents )
 		{
 			m_bClientDebuggingEvents = true;
 			break;

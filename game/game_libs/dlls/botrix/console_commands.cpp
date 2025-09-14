@@ -352,7 +352,7 @@ int CConsoleCommand::AutoComplete(good::string& partial, CUtlVector<CUtlString>&
 
 #endif  // BOTRIX_OLD_COMMAND_COMPLETION
 
-TCommandResult CConsoleCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConsoleCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( argc == 1 && sHelp == argv[0] )
 	{
@@ -370,7 +370,7 @@ void CConsoleCommand::PrintCommand(edict_t* pPrintTo, int indent)
 	{
 		CPlayer* pPlayer = CPlayers::Get(pPrintTo);
 		BASSERT(pPlayer && !pPlayer->IsBot(), return);
-		CClient* pClient = (CClient*)pPlayer;
+		CBotrixClient* pClient = (CBotrixClient*)pPlayer;
 		bHasAccess = HasAccess(pClient);
 	}
 
@@ -491,7 +491,7 @@ int CConsoleCommandContainer::AutoComplete(good::string& partial, CUtlVector<CUt
 
 #endif  // BOTRIX_OLD_COMMAND_COMPLETION
 
-TCommandResult CConsoleCommandContainer::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConsoleCommandContainer::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -542,7 +542,7 @@ void CConsoleCommandContainer::PrintCommand(edict_t* pPrintTo, int indent)
 //----------------------------------------------------------------------------------------------------------------
 // Userful functions.
 //----------------------------------------------------------------------------------------------------------------
-TWaypointId GetWaypointId(int iCurrentIndex, int argc, const char** argv, CClient* pClient, int iDefaultId)
+TWaypointId GetWaypointId(int iCurrentIndex, int argc, const char** argv, CBotrixClient* pClient, int iDefaultId)
 {
 	TWaypointId id = -1;
 
@@ -591,7 +591,7 @@ CWaypointDrawFlagCommand::CWaypointDrawFlagCommand()
 	m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValuesForever);
 }
 
-TCommandResult CWaypointDrawFlagCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointDrawFlagCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -660,7 +660,7 @@ TCommandResult CWaypointDrawFlagCommand::Execute(CClient* pClient, int argc, con
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointResetCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointResetCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -678,7 +678,7 @@ TCommandResult CWaypointResetCommand::Execute(CClient* pClient, int argc, const 
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointCreateCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointCreateCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -734,7 +734,7 @@ CWaypointRemoveCommand::CWaypointRemoveCommand()
 	m_cAutoCompleteValues.push_back(StringVector());
 }
 
-TCommandResult CWaypointRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointRemoveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -774,7 +774,7 @@ TCommandResult CWaypointRemoveCommand::Execute(CClient* pClient, int argc, const
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointMoveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointMoveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -819,7 +819,7 @@ TCommandResult CWaypointMoveCommand::Execute(CClient* pClient, int argc, const c
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointAutoCreateCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAutoCreateCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -856,7 +856,7 @@ TCommandResult CWaypointAutoCreateCommand::Execute(CClient* pClient, int argc, c
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointClearCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointClearCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -879,7 +879,7 @@ TCommandResult CWaypointClearCommand::Execute(CClient* pClient, int argc, const 
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointAddTypeCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAddTypeCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -957,7 +957,7 @@ TCommandResult CWaypointAddTypeCommand::Execute(CClient* pClient, int argc, cons
 	}
 }
 
-TCommandResult CWaypointAnalyzeToggleCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAnalyzeToggleCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -979,7 +979,7 @@ TCommandResult CWaypointAnalyzeToggleCommand::Execute(CClient* pClient, int argc
 	{
 		for ( int iPlayer = 0; iPlayer < CPlayers::Size(); ++iPlayer )
 		{
-			CClient* botClient = (CClient*)CPlayers::Get(iPlayer);
+			CBotrixClient* botClient = (CBotrixClient*)CPlayers::Get(iPlayer);
 
 			if ( botClient && !botClient->IsBot() && botClient->IsAutoCreatingWaypoints() )
 			{
@@ -999,7 +999,8 @@ TCommandResult CWaypointAnalyzeToggleCommand::Execute(CClient* pClient, int argc
 	return ECommandPerformed;
 }
 
-TCommandResult WaypointAnalyzeAux(CClient* pClient, int argc, const char** argv, CWaypoints::TAnalyzeWaypoints iWhich)
+TCommandResult
+WaypointAnalyzeAux(CBotrixClient* pClient, int argc, const char** argv, CWaypoints::TAnalyzeWaypoints iWhich)
 {
 	edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
 
@@ -1062,7 +1063,7 @@ CWaypointAnalyzeCreateCommand::CWaypointAnalyzeCreateCommand()
 	m_cAutoCompleteValues.push_back(args1);
 }
 
-TCommandResult CWaypointAnalyzeCreateCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAnalyzeCreateCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1094,7 +1095,7 @@ CWaypointAnalyzeDebugCommand::CWaypointAnalyzeDebugCommand()
 	m_cAutoCompleteValues.push_back(args1);
 }
 
-TCommandResult CWaypointAnalyzeDebugCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAnalyzeDebugCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1128,7 +1129,7 @@ CWaypointAnalyzeOmitCommand::CWaypointAnalyzeOmitCommand()
 	m_cAutoCompleteValues.push_back(args1);
 }
 
-TCommandResult CWaypointAnalyzeOmitCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAnalyzeOmitCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1136,7 +1137,7 @@ TCommandResult CWaypointAnalyzeOmitCommand::Execute(CClient* pClient, int argc, 
 	return WaypointAnalyzeAux(pClient, argc, argv, CWaypoints::EAnalyzeWaypointsOmit);
 }
 
-TCommandResult CWaypointAnalyzeTraceCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAnalyzeTraceCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1163,7 +1164,7 @@ TCommandResult CWaypointAnalyzeTraceCommand::Execute(CClient* pClient, int argc,
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointRemoveTypeCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointRemoveTypeCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1235,7 +1236,7 @@ CWaypointArgumentCommand::CWaypointArgumentCommand()
 	m_cAutoCompleteValues.push_back(args2);
 }
 
-TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointArgumentCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -1677,7 +1678,7 @@ TCommandResult CWaypointArgumentCommand::Execute(CClient* pClient, int argc, con
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointInfoCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointInfoCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -1748,7 +1749,7 @@ CWaypointDestinationCommand::CWaypointDestinationCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CWaypointDestinationCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointDestinationCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1774,7 +1775,7 @@ TCommandResult CWaypointDestinationCommand::Execute(CClient* pClient, int argc, 
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointSaveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointSaveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1804,7 +1805,7 @@ TCommandResult CWaypointSaveCommand::Execute(CClient* pClient, int argc, const c
 	return bResult ? ECommandPerformed : ECommandError;
 }
 
-TCommandResult CWaypointLoadCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointLoadCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -1852,7 +1853,7 @@ CWaypointVisibilityCommand::CWaypointVisibilityCommand()
 	m_cAutoCompleteValues.push_back(StringVector());
 }
 
-TCommandResult CWaypointVisibilityCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointVisibilityCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -1946,7 +1947,7 @@ CWaypointConnectionCommand::CWaypointConnectionCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CWaypointConnectionCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointConnectionCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -2011,7 +2012,7 @@ CWaypointProbeNeighboursCommand::CWaypointProbeNeighboursCommand()
 	m_iAccessLevel = FCommandAccessWaypoint;
 }
 
-TCommandResult CWaypointProbeNeighboursCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointProbeNeighboursCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -2116,7 +2117,7 @@ TCommandResult CWaypointProbeNeighboursCommand::Execute(CClient* pClient, int ar
 //----------------------------------------------------------------------------------------------------------------
 // Waypoint area commands.
 //----------------------------------------------------------------------------------------------------------------
-TCommandResult CWaypointAreaRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAreaRemoveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2158,7 +2159,7 @@ TCommandResult CWaypointAreaRemoveCommand::Execute(CClient* pClient, int argc, c
 	return ECommandError;
 }
 
-TCommandResult CWaypointAreaRenameCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAreaRenameCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2193,7 +2194,7 @@ TCommandResult CWaypointAreaRenameCommand::Execute(CClient* pClient, int argc, c
 	return ECommandError;
 }
 
-TCommandResult CWaypointAreaSetCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAreaSetCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -2263,7 +2264,7 @@ TCommandResult CWaypointAreaSetCommand::Execute(CClient* pClient, int argc, cons
 	return ECommandPerformed;
 }
 
-TCommandResult CWaypointAreaShowCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CWaypointAreaShowCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -2290,7 +2291,7 @@ TCommandResult CWaypointAreaShowCommand::Execute(CClient* pClient, int argc, con
 // Paths commands.
 //----------------------------------------------------------------------------------------------------------------
 /*
-TCommandResult CPathSwapCommand::Execute( CClient* pClient, int argc, const char** argv )
+TCommandResult CPathSwapCommand::Execute( CBotrixClient* pClient, int argc, const char** argv )
 {
 	if ( CConsoleCommand::Execute( pClient, argc, argv ) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2354,7 +2355,7 @@ CPathDebugCommand::CPathDebugCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CPathDebugCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathDebugCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2390,7 +2391,7 @@ TCommandResult CPathDebugCommand::Execute(CClient* pClient, int argc, const char
 	return ECommandPerformed;
 }
 
-TCommandResult CPathDistanceCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathDistanceCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2443,7 +2444,7 @@ CPathDrawCommand::CPathDrawCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CPathDrawCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathDrawCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2510,7 +2511,7 @@ TCommandResult CPathDrawCommand::Execute(CClient* pClient, int argc, const char*
 	return ECommandPerformed;
 }
 
-TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathCreateCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2596,7 +2597,7 @@ TCommandResult CPathCreateCommand::Execute(CClient* pClient, int argc, const cha
 	}
 }
 
-TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathRemoveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -2692,7 +2693,7 @@ TCommandResult CPathRemoveCommand::Execute(CClient* pClient, int argc, const cha
 	return ECommandPerformed;
 }
 
-TCommandResult CPathAutoCreateCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathAutoCreateCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2732,7 +2733,7 @@ TCommandResult CPathAutoCreateCommand::Execute(CClient* pClient, int argc, const
 	return ECommandPerformed;
 }
 
-TCommandResult CPathAddTypeCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathAddTypeCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2806,7 +2807,7 @@ TCommandResult CPathAddTypeCommand::Execute(CClient* pClient, int argc, const ch
 	}
 }
 
-TCommandResult CPathRemoveTypeCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathRemoveTypeCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2869,7 +2870,7 @@ CPathArgumentCommand::CPathArgumentCommand()
 	m_iAccessLevel = FCommandAccessWaypoint;
 }
 
-TCommandResult CPathArgumentCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathArgumentCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -2954,7 +2955,7 @@ TCommandResult CPathArgumentCommand::Execute(CClient* pClient, int argc, const c
 	return ECommandPerformed;
 }
 
-TCommandResult CPathInfoCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CPathInfoCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3089,7 +3090,7 @@ CBotWeaponCommand::CBotWeaponCommand()
 	m_cAutoCompleteValues.push_back(StringVector());
 }
 
-TCommandResult CBotWeaponCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotWeaponCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -3166,7 +3167,7 @@ void AllowWeapon(edict_t* pEdict, const good::string& sInWeapon, bool bAllow)
 	}
 }
 
-TCommandResult CConfigBotWeaponAllowCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotWeaponAllowCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -3240,7 +3241,7 @@ CConfigBotWeaponDefaultCommand::CConfigBotWeaponDefaultCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CConfigBotWeaponDefaultCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotWeaponDefaultCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3302,7 +3303,7 @@ CConfigBotWeaponRemoveCommand::CConfigBotWeaponRemoveCommand()
 	m_cAutoCompleteValues.push_back(StringVector());
 }
 
-TCommandResult CConfigBotWeaponRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotWeaponRemoveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3330,7 +3331,7 @@ TCommandResult CConfigBotWeaponRemoveCommand::Execute(CClient* pClient, int argc
 	return ECommandPerformed;
 }
 
-TCommandResult CBotWeaponRemoveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotWeaponRemoveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3375,7 +3376,7 @@ CConfigBotWeaponUnknownCommand::CConfigBotWeaponUnknownCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CConfigBotWeaponUnknownCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotWeaponUnknownCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3448,7 +3449,7 @@ CBotAddCommand::CBotAddCommand()
 	m_cAutoCompleteValues.push_back(args0);
 }
 
-TCommandResult CBotAddCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotAddCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3506,7 +3507,7 @@ TCommandResult CBotAddCommand::Execute(CClient* pClient, int argc, const char** 
 	}
 }
 
-TCommandResult CBotCommandCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotCommandCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3541,7 +3542,7 @@ TCommandResult CBotCommandCommand::Execute(CClient* pClient, int argc, const cha
 	return ECommandPerformed;
 }
 
-TCommandResult CBotKickCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotKickCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3574,7 +3575,7 @@ TCommandResult CBotKickCommand::Execute(CClient* pClient, int argc, const char**
 	return ECommandPerformed;
 }
 
-TCommandResult CBotDebugCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotDebugCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3620,7 +3621,7 @@ TCommandResult CBotDebugCommand::Execute(CClient* pClient, int argc, const char*
 	return ECommandPerformed;
 }
 
-TCommandResult CConfigBotQuotaCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotQuotaCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3676,7 +3677,7 @@ TCommandResult CConfigBotQuotaCommand::Execute(CClient* pClient, int argc, const
 	return ECommandPerformed;
 }
 
-TCommandResult CConfigBotIntelligenceCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotIntelligenceCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3722,7 +3723,7 @@ TCommandResult CConfigBotIntelligenceCommand::Execute(CClient* pClient, int argc
 	return iResult;
 }
 
-TCommandResult CConfigBotTeamCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotTeamCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3765,7 +3766,7 @@ CConfigBotProtectionHealthCommand::CConfigBotProtectionHealthCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CConfigBotProtectionHealthCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotProtectionHealthCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3815,7 +3816,7 @@ CConfigBotProtectionSpawnTimeCommand::CConfigBotProtectionSpawnTimeCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CConfigBotProtectionSpawnTimeCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotProtectionSpawnTimeCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3850,7 +3851,7 @@ TCommandResult CConfigBotProtectionSpawnTimeCommand::Execute(CClient* pClient, i
 
 	return ECommandPerformed;
 }
-TCommandResult CConfigBotChangeClassCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotChangeClassCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3884,7 +3885,7 @@ TCommandResult CConfigBotChangeClassCommand::Execute(CClient* pClient, int argc,
 	return iResult;
 }
 
-TCommandResult CConfigBotClassCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotClassCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3923,7 +3924,7 @@ TCommandResult CConfigBotClassCommand::Execute(CClient* pClient, int argc, const
 	return iResult;
 }
 
-TCommandResult CConfigBotSuicideCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotSuicideCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3957,7 +3958,7 @@ TCommandResult CConfigBotSuicideCommand::Execute(CClient* pClient, int argc, con
 	return ECommandPerformed;
 }
 
-TCommandResult CConfigBotStrategyFlagsCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotStrategyFlagsCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -3989,7 +3990,7 @@ TCommandResult CConfigBotStrategyFlagsCommand::Execute(CClient* pClient, int arg
 	return ECommandPerformed;
 }
 
-TCommandResult CConfigBotStrategySetCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigBotStrategySetCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4084,7 +4085,7 @@ CBotDrawPathCommand::CBotDrawPathCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CBotDrawPathCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotDrawPathCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4147,7 +4148,7 @@ TCommandResult CBotDrawPathCommand::Execute(CClient* pClient, int argc, const ch
 	return ECommandPerformed;
 }
 
-TCommandResult CBotAllyCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotAllyCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4206,7 +4207,7 @@ TCommandResult CBotAllyCommand::Execute(CClient* pClient, int argc, const char**
 	return ECommandPerformed;
 }
 
-TCommandResult CBotAttackCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotAttackCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4255,7 +4256,7 @@ TCommandResult CBotAttackCommand::Execute(CClient* pClient, int argc, const char
 	return ECommandPerformed;
 }
 
-TCommandResult CBotMoveCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotMoveCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4301,7 +4302,7 @@ TCommandResult CBotMoveCommand::Execute(CClient* pClient, int argc, const char**
 	return ECommandPerformed;
 }
 
-TCommandResult CBotPauseCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotPauseCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4365,7 +4366,7 @@ CBotProtectCommand::CBotProtectCommand()
 	m_cAutoCompleteValues.push_back(StringVector());
 }
 
-TCommandResult CBotProtectCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotProtectCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( pClient == NULL )
 	{
@@ -4428,7 +4429,7 @@ TCommandResult CBotProtectCommand::Execute(CClient* pClient, int argc, const cha
 	return ECommandPerformed;
 }
 
-TCommandResult CBotTestPathCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CBotTestPathCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4505,7 +4506,7 @@ CItemDrawCommand::CItemDrawCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CItemDrawCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CItemDrawCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4594,7 +4595,7 @@ CItemDrawTypeCommand::CItemDrawTypeCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CItemDrawTypeCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CItemDrawTypeCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4685,7 +4686,7 @@ CItemMarkCommand::CItemMarkCommand()
 	m_cAutoCompleteValues.push_back(args1);
 }
 
-TCommandResult CItemMarkCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CItemMarkCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4759,7 +4760,7 @@ CItemReloadCommand::CItemReloadCommand()
 	m_iAccessLevel = FCommandAccessWaypoint;
 }
 
-TCommandResult CItemReloadCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CItemReloadCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4777,7 +4778,7 @@ TCommandResult CItemReloadCommand::Execute(CClient* pClient, int argc, const cha
 //----------------------------------------------------------------------------------------------------------------
 // Config commands.
 //----------------------------------------------------------------------------------------------------------------
-TCommandResult CConfigEventsCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigEventsCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4825,7 +4826,7 @@ CConfigLogCommand::CConfigLogCommand()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CConfigLogCommand::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigLogCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -4862,7 +4863,7 @@ TCommandResult CConfigLogCommand::Execute(CClient* pClient, int argc, const char
 	return ECommandPerformed;
 }
 
-TCommandResult CConfigWaypointAnalyzeDistance::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigWaypointAnalyzeDistance::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -4907,7 +4908,7 @@ TCommandResult CConfigWaypointAnalyzeDistance::Execute(CClient* pClient, int arg
 	return ECommandPerformed;
 }
 
-TCommandResult CConfigWaypointAnalyzeMapChange::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigWaypointAnalyzeMapChange::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4943,7 +4944,7 @@ TCommandResult CConfigWaypointAnalyzeMapChange::Execute(CClient* pClient, int ar
 	return ECommandPerformed;
 }
 
-TCommandResult CConfigWaypointAnalyzeAmount::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigWaypointAnalyzeAmount::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -4988,7 +4989,7 @@ CConfigWaypointSave::CConfigWaypointSave()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CConfigWaypointSave::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigWaypointSave::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 		return ECommandPerformed;
@@ -5031,7 +5032,7 @@ CConfigWaypointUnreachable::CConfigWaypointUnreachable()
 	m_cAutoCompleteValues.push_back(args);
 }
 
-TCommandResult CConfigWaypointUnreachable::Execute(CClient* pClient, int argc, const char** argv)
+TCommandResult CConfigWaypointUnreachable::Execute(CBotrixClient* pClient, int argc, const char** argv)
 {
 	if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
 	{
@@ -5240,7 +5241,8 @@ void CBotrixCommand::AcceptServerCommand()
 		argv.AddToTail(nullptr);
 	}
 
-	CClient* listenServerClient = dynamic_cast<CClient*>(CPlayers::Get(CBotrixServerPlugin::GetListenServerClient()));
+	CBotrixClient* listenServerClient =
+		dynamic_cast<CBotrixClient*>(CPlayers::Get(CBotrixServerPlugin::GetListenServerClient()));
 	TCommandResult result = Execute(listenServerClient, argc - 1, argv.Base());
 
 	if ( result != ECommandPerformed )

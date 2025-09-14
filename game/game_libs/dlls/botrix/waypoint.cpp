@@ -1256,7 +1256,7 @@ TWaypointId CWaypoints::GetAimedWaypoint(const Vector& vOrigin, const Vector& an
 }
 
 //----------------------------------------------------------------------------------------------------------------
-void CWaypoints::Draw(CClient* pClient)
+void CWaypoints::Draw(CBotrixClient* pClient)
 {
 	if ( CBotrixServerPlugin::GetTime() < fNextDrawWaypointsTime )
 	{
