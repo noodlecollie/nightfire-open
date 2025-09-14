@@ -457,33 +457,33 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	const good::string& CTypeToString::TeamToString(int iTeam)
 	{
-		return EnumToString(iTeam, CBotrixMod::aTeamsNames, sUnknown);
+		return EnumToString(iTeam, CMod::aTeamsNames, sUnknown);
 	}
 
 	const good::string& CTypeToString::TeamFlagsToString(int iTeams, bool bUseNone)
 	{
-		return FlagsToString(iTeams, CBotrixMod::aTeamsNames, bUseNone);
+		return FlagsToString(iTeams, CMod::aTeamsNames, bUseNone);
 	}
 
 	int CTypeToString::TeamFromString(const good::string& sTeam)
 	{
-		return EnumFromString(sTeam, CBotrixMod::aTeamsNames);
+		return EnumFromString(sTeam, CMod::aTeamsNames);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
 	const good::string& CTypeToString::ClassToString(int iClass)
 	{
-		return EnumToString(iClass, CBotrixMod::aClassNames, sUnknown);
+		return EnumToString(iClass, CMod::aClassNames, sUnknown);
 	}
 
 	const good::string& CTypeToString::ClassFlagsToString(int iClasses, bool bUseNone)
 	{
-		return FlagsToString(iClasses, CBotrixMod::aClassNames, bUseNone);
+		return FlagsToString(iClasses, CMod::aClassNames, bUseNone);
 	}
 
 	int CTypeToString::ClassFromString(const good::string& sClass)
 	{
-		return EnumFromString(sClass, CBotrixMod::aClassNames);
+		return EnumFromString(sClass, CMod::aClassNames);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------

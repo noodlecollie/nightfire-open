@@ -67,7 +67,7 @@ namespace Botrix
 		if ( !g_pGameRules->IsTeamplay() )
 		{
 			// Return the deathmatch team
-			return CBotrixMod::iUnassignedTeam;
+			return CMod::iUnassignedTeam;
 		}
 
 		return g_pGameRules->GetTeamIndex(player->TeamID());

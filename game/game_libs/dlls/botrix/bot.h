@@ -217,10 +217,9 @@ namespace Botrix
 			int team = pPlayer->GetTeam();
 			int index = pPlayer->GetIndex();
 			return (!pPlayer->IsProtected()) &&
-				(CBotrixMod::iSpawnProtectionHealth == 0 ||
-				 pPlayer->GetHealth() < CBotrixMod::iSpawnProtectionHealth) &&
-				(team != CBotrixMod::iSpectatorTeam) &&
-				(team != GetTeam() || team == CBotrixMod::iUnassignedTeam) &&  // Different teams or deathmatch.
+				(CMod::iSpawnProtectionHealth == 0 || pPlayer->GetHealth() < CMod::iSpawnProtectionHealth) &&
+				(team != CMod::iSpectatorTeam) &&
+				(team != GetTeam() || team == CMod::iUnassignedTeam) &&  // Different teams or deathmatch.
 				(index >= 0) && !m_aAllies.test(index);
 		}
 

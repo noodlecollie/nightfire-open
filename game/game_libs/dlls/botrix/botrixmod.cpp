@@ -15,37 +15,37 @@
 
 namespace Botrix
 {
-	StringVector CBotrixMod::aBotNames;
-	CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> CBotrixMod::m_aFrameEvents;
+	StringVector CMod::aBotNames;
+	CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> CMod::m_aFrameEvents;
 
-	bool CBotrixMod::m_bMapHas[EItemTypeCanPickTotal];  // Health, armor, weapon, ammo.
+	bool CMod::m_bMapHas[EItemTypeCanPickTotal];  // Health, armor, weapon, ammo.
 
-	float CBotrixMod::fMinNonStuckSpeed = 30;
+	float CMod::fMinNonStuckSpeed = 30;
 
-	StringVector CBotrixMod::aTeamsNames;
-	int CBotrixMod::iUnassignedTeam = 0;
-	int CBotrixMod::iSpectatorTeam = 1;
+	StringVector CMod::aTeamsNames;
+	int CMod::iUnassignedTeam = 0;
+	int CMod::iSpectatorTeam = 1;
 
-	CUtlVector<TWeaponId> CBotrixMod::aDefaultWeapons;
+	CUtlVector<TWeaponId> CMod::aDefaultWeapons;
 
 	// Next are console commands
-	bool CBotrixMod::bRemoveWeapons = false;
+	bool CMod::bRemoveWeapons = false;
 
-	StringVector CBotrixMod::aClassNames;
+	StringVector CMod::aClassNames;
 
-	bool CBotrixMod::bIntelligenceInBotName = true;
-	bool CBotrixMod::bHeadShotDoesMoreDamage = true;
+	bool CMod::bIntelligenceInBotName = true;
+	bool CMod::bHeadShotDoesMoreDamage = true;
 
-	float CBotrixMod::fSpawnProtectionTime = 0;
-	int CBotrixMod::iSpawnProtectionHealth = 0;
+	float CMod::fSpawnProtectionTime = 0;
+	int CMod::iSpawnProtectionHealth = 0;
 
-	// TDeathmatchFlags CBotrixMod::iDeathmatchFlags = -1;
+	// TDeathmatchFlags CMod::iDeathmatchFlags = -1;
 
-	int CBotrixMod::iNearItemMaxDistanceSqr = SQR(312);
-	int CBotrixMod::iItemPickUpDistance = 100;
+	int CMod::iNearItemMaxDistanceSqr = SQR(312);
+	int CMod::iItemPickUpDistance = 100;
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixMod::LoadDefaults()
+	bool CMod::LoadDefaults()
 	{
 		m_aFrameEvents.Purge();
 		m_aFrameEvents.EnsureCapacity(8);
@@ -54,14 +54,14 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixMod::Prepare()
+	void CMod::Prepare()
 	{
 		CWaypoint::iAnalyzeDistance = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH * 2.0f);
 		CWaypoint::iDefaultDistance = static_cast<int>(CBotrixParameterVars::PLAYER_WIDTH * 4.0f);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixMod::MapLoaded()
+	void CMod::MapLoaded()
 	{
 		// TODO: move this to items.
 		for ( TItemType iType = 0; iType < EItemTypeCanPickTotal; ++iType )
@@ -90,7 +90,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	const good::string& CBotrixMod::GetRandomBotName(TBotIntelligence iIntelligence)
+	const good::string& CMod::GetRandomBotName(TBotIntelligence iIntelligence)
 	{
 		int iIdx = rand() % aBotNames.size();
 
@@ -119,7 +119,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixMod::IsNameTaken(const good::string& cName, TBotIntelligence iIntelligence)
+	bool CMod::IsNameTaken(const good::string& cName, TBotIntelligence iIntelligence)
 	{
 		for ( TPlayerIndex iPlayer = 0; iPlayer < CPlayers::Size(); ++iPlayer )
 		{
@@ -135,7 +135,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixMod::Think()
+	void CMod::Think()
 	{
 		for ( int i = 0; i < m_aFrameEvents.Count(); ++i )
 		{
@@ -176,7 +176,7 @@ namespace Botrix
 		m_aFrameEvents.Purge();
 	}
 
-	CPlayer* CBotrixMod::AddBot(
+	CPlayer* CMod::AddBot(
 		const char* szName,
 		TBotIntelligence iIntelligence,
 		TTeam iTeam,
@@ -186,7 +186,7 @@ namespace Botrix
 	{
 		if ( iParamsCount > 0 )
 		{
-			BLOG_E("CBotrixMod::AddBot(): Unknown parameter %s", aParams[0]);
+			BLOG_E("CMod::AddBot(): Unknown parameter %s", aParams[0]);
 			return nullptr;
 		}
 
@@ -195,7 +195,7 @@ namespace Botrix
 
 		if ( !pEdict )
 		{
-			BLOG_E("CBotrixMod::AddBot(): Error, couldn't add bot (no map or server full?)");
+			BLOG_E("CMod::AddBot(): Error, couldn't add bot (no map or server full?)");
 			return nullptr;
 		}
 

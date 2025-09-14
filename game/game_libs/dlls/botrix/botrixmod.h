@@ -11,7 +11,7 @@ namespace Botrix
 {
 	class CPlayer;
 
-	class CBotrixMod
+	class CMod
 	{
 	public:  // Methods.
 		/// Load all needed staff for mod.

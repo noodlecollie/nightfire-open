@@ -321,7 +321,7 @@ namespace Botrix
 				{
 					aNearest.push_back(i);
 				}
-				else if ( fDistSqr <= CBotrixMod::iNearItemMaxDistanceSqr )  // Item is close.
+				else if ( fDistSqr <= CMod::iNearItemMaxDistanceSqr )  // Item is close.
 				{
 					aNear.push_back(i);
 				}
@@ -334,7 +334,7 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CBot::ConfigureRespawnWeapons()
 	{
-		if ( CBotrixMod::bRemoveWeapons )
+		if ( CMod::bRemoveWeapons )
 		{
 			WeaponsRemove();
 		}
@@ -354,9 +354,9 @@ namespace Botrix
 			m_iMeleeWeapon = m_iPhyscannon = m_iBestWeapon = m_iWeapon = EWeaponIdInvalid;
 		}
 
-		for ( int i = 0; i < CBotrixMod::aDefaultWeapons.Count(); ++i )
+		for ( int i = 0; i < CMod::aDefaultWeapons.Count(); ++i )
 		{
-			TWeaponId iWeapon = CBotrixMod::aDefaultWeapons[i];
+			TWeaponId iWeapon = CMod::aDefaultWeapons[i];
 
 			if ( m_aWeapons[iWeapon].IsPresent() )  // First check if bot has that weapon.
 			{
@@ -420,8 +420,7 @@ namespace Botrix
 		{
 			// Erase current enemy if the enemy is protected.
 			if ( (m_pCurrentEnemy->IsProtected() ||
-				  (CBotrixMod::iSpawnProtectionHealth > 0 &&
-				   m_pCurrentEnemy->GetHealth() >= CBotrixMod::iSpawnProtectionHealth)) )
+				  (CMod::iSpawnProtectionHealth > 0 && m_pCurrentEnemy->GetHealth() >= CMod::iSpawnProtectionHealth)) )
 			{
 				EraseCurrentEnemy();
 			}
@@ -911,7 +910,7 @@ namespace Botrix
 						);
 						WeaponChoose();
 					}
-					else if ( CBotrixMod::aClassNames.size() )
+					else if ( CMod::aClassNames.size() )
 					{
 						BLOG_W(
 							"%s -> Picked weapon %s, but there is no such weapon for class %s.",
@@ -1362,7 +1361,7 @@ namespace Botrix
 				{
 					float fDistSqr = (cItem->CurrentPosition() - vFoot).LengthSquared();
 
-					if ( CBotrixMod::iNearItemMaxDistanceSqr < fDistSqr )  // Item becomes far.
+					if ( CMod::iNearItemMaxDistanceSqr < fDistSqr )  // Item becomes far.
 					{
 						aNear.erase(aNear.begin() + i);
 						--iNearSize;
@@ -1409,7 +1408,7 @@ namespace Botrix
 				{
 					aNearest.push_back(i);
 				}
-				else if ( fDistSqr <= CBotrixMod::iNearItemMaxDistanceSqr )  // Item is close.
+				else if ( fDistSqr <= CMod::iNearItemMaxDistanceSqr )  // Item is close.
 				{
 					aNear.push_back(i);
 				}
@@ -1444,7 +1443,7 @@ namespace Botrix
 			{
 				float fDistSqr = (pCheckPlayer->GetHead() - m_vHead).LengthSquared();
 
-				if ( fDistSqr <= CBotrixMod::iNearItemMaxDistanceSqr )
+				if ( fDistSqr <= CMod::iNearItemMaxDistanceSqr )
 				{
 					m_aNearPlayers.set(m_iNextCheckPlayer);
 
@@ -2455,7 +2454,7 @@ namespace Botrix
 				m_bNeedCheckStuck = false;
 
 				// Distance that bot moves since m_fStuckCheckTime.
-				if ( (m_vHead - m_vStuckCheck).LengthSquared() < SQR(CBotrixMod::fMinNonStuckSpeed) )
+				if ( (m_vHead - m_vStuckCheck).LengthSquared() < SQR(CMod::fMinNonStuckSpeed) )
 				{
 					m_bNeedCheckStuck = true;
 					m_fStuckCheckTime = CBotrixServerPlugin::GetTime() + 5.0f;  // Try again in 5 secs.
@@ -2986,7 +2985,7 @@ namespace Botrix
 
 	void CBot_HL2DM::ChangeTeam(TTeam iTeam)
 	{
-		if ( iTeam == CBotrixMod::iUnassignedTeam )
+		if ( iTeam == CMod::iUnassignedTeam )
 		{
 			iTeam = 2 + (rand() & 1);
 		}
@@ -3268,14 +3267,14 @@ namespace Botrix
 			: NULL;
 		TBotIntelligence iWeaponPreference = m_iIntelligence;
 
-		bool bNeedHealth = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-			(m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
+		bool bNeedHealth =
+			CMod::HasMapItems(EItemTypeHealth) && (m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
 		bool bNeedHealthBad =
 			bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f));
 		bool bAlmostDead =
 			bNeedHealthBad && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 5.0f));
-		bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
-		bool bNeedAmmo = pWeapon && CBotrixMod::HasMapItems(EItemTypeAmmo);
+		bool bNeedWeapon = pWeapon && CMod::HasMapItems(EItemTypeWeapon);
+		bool bNeedAmmo = pWeapon && CMod::HasMapItems(EItemTypeAmmo);
 
 		TWeaponId iWeapon = EWeaponIdInvalid;
 		bool bSecondary = false;
@@ -3328,7 +3327,7 @@ namespace Botrix
 			{
 				iNewTask = EBotTaskFindHealth;
 			}
-			else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
+			else if ( CMod::HasMapItems(EItemTypeArmor) &&
 					  (m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR) )  // Need armor.
 			{
 				iNewTask = EBotTaskFindArmor;
@@ -3519,10 +3518,10 @@ namespace Botrix
 			: NULL;
 		TBotIntelligence iWeaponPreference = m_iIntelligence;
 
-		const bool bAlmostDead = CBotrixMod::HasMapItems(EItemTypeHealth) &&
+		const bool bAlmostDead = CMod::HasMapItems(EItemTypeHealth) &&
 			(m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 5.0f));
 
-		bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
+		bool bNeedWeapon = pWeapon && CMod::HasMapItems(EItemTypeWeapon);
 
 		TWeaponId iWeapon = EWeaponIdInvalid;
 		bool bSecondaryWeapon = false;
@@ -3733,14 +3732,14 @@ namespace Botrix
 	{
 		TBotTask iNewTask = EBotTaskInvalid;
 
-		const bool bNeedHealth = CBotrixMod::HasMapItems(EItemTypeHealth) &&
-			(m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
+		const bool bNeedHealth =
+			CMod::HasMapItems(EItemTypeHealth) && (m_PlayerInfo.GetHealth() < CBotrixParameterVars::PLAYER_MAX_HEALTH);
 
 		const bool bNeedHealthBad =
 			bNeedHealth && (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 2.0f));
 
-		const bool bNeedWeapon = pWeapon && CBotrixMod::HasMapItems(EItemTypeWeapon);
-		const bool bNeedAmmo = pWeapon && CBotrixMod::HasMapItems(EItemTypeAmmo);
+		const bool bNeedWeapon = pWeapon && CMod::HasMapItems(EItemTypeWeapon);
+		const bool bNeedAmmo = pWeapon && CMod::HasMapItems(EItemTypeAmmo);
 
 		if ( bNeedHealthBad )  // Need health pretty much.
 		{
@@ -3772,7 +3771,7 @@ namespace Botrix
 			{
 				iNewTask = EBotTaskFindHealth;
 			}
-			else if ( CBotrixMod::HasMapItems(EItemTypeArmor) &&
+			else if ( CMod::HasMapItems(EItemTypeArmor) &&
 					  (m_PlayerInfo.GetArmorValue() < CBotrixParameterVars::PLAYER_MAX_ARMOUR) )  // Need armor.
 			{
 				iNewTask = EBotTaskFindArmor;

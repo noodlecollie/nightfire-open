@@ -3260,10 +3260,10 @@ namespace Botrix
 						result.AddToTail(iWeaponId);
 					}
 				}
-				CBotrixMod::aDefaultWeapons = result;
+				CMod::aDefaultWeapons = result;
 			}
 		}
-		if ( CBotrixMod::aDefaultWeapons.IsEmpty() )
+		if ( CMod::aDefaultWeapons.IsEmpty() )
 		{
 			BULOG_I(pEdict, "Default weapons: none.");
 		}
@@ -3271,9 +3271,9 @@ namespace Botrix
 		{
 			BULOG_I(pEdict, "Default weapons:");
 
-			for ( int i = 0; i < CBotrixMod::aDefaultWeapons.Count(); ++i )
+			for ( int i = 0; i < CMod::aDefaultWeapons.Count(); ++i )
 			{
-				BULOG_I(pEdict, "  %s", CWeapons::Get(CBotrixMod::aDefaultWeapons[i])->GetName().c_str());
+				BULOG_I(pEdict, "  %s", CWeapons::Get(CMod::aDefaultWeapons[i])->GetName().c_str());
 			}
 		}
 		return ECommandPerformed;
@@ -3311,9 +3311,9 @@ namespace Botrix
 				return ECommandError;
 			}
 
-			CBotrixMod::bRemoveWeapons = (iRemove != 0);
+			CMod::bRemoveWeapons = (iRemove != 0);
 		}
-		BULOG_I(pEdict, "Remove bot weapons on respawn: %s.", CBotrixMod::bRemoveWeapons ? "on" : "off");
+		BULOG_I(pEdict, "Remove bot weapons on respawn: %s.", CMod::bRemoveWeapons ? "on" : "off");
 
 		return ECommandPerformed;
 	}
@@ -3398,7 +3398,7 @@ namespace Botrix
 	{
 		m_sCommand = "add";
 		m_sHelp = "add bot";
-		if ( CBotrixMod::aClassNames.size() )
+		if ( CMod::aClassNames.size() )
 			m_sDescription = "Optional parameters: (intelligence) (team) (class) (bot-name).";
 		else
 			m_sDescription = "Optional parameters: (intelligence) (team) (bot-name).";
@@ -3412,16 +3412,16 @@ namespace Botrix
 		m_cAutoCompleteValues.push_back(args1);
 
 		StringVector args2;
-		for ( TBotIntelligence i = 0; i < CBotrixMod::aTeamsNames.size(); ++i )
-			args2.push_back(CBotrixMod::aTeamsNames[i].duplicate());
+		for ( TBotIntelligence i = 0; i < CMod::aTeamsNames.size(); ++i )
+			args2.push_back(CMod::aTeamsNames[i].duplicate());
 		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 		m_cAutoCompleteValues.push_back(args2);
 
-		if ( CBotrixMod::aClassNames.size() > 0 )
+		if ( CMod::aClassNames.size() > 0 )
 		{
 			StringVector args3;
-			for ( TBotIntelligence i = 0; i < CBotrixMod::aClassNames.size(); ++i )
-				args3.push_back(CBotrixMod::aClassNames[i].duplicate());
+			for ( TBotIntelligence i = 0; i < CMod::aClassNames.size(); ++i )
+				args3.push_back(CMod::aClassNames[i].duplicate());
 			m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 			m_cAutoCompleteValues.push_back(args3);
 		}
@@ -3776,13 +3776,13 @@ namespace Botrix
 				return ECommandError;
 			}
 
-			CBotrixMod::iSpawnProtectionHealth = amount;
+			CMod::iSpawnProtectionHealth = amount;
 		}
 
-		if ( CBotrixMod::iSpawnProtectionHealth == 0 )
+		if ( CMod::iSpawnProtectionHealth == 0 )
 			BULOG_I(pEdict, "Protection health: off.");
 		else
-			BULOG_I(pEdict, "Protection health: %d.", CBotrixMod::iSpawnProtectionHealth);
+			BULOG_I(pEdict, "Protection health: %d.", CMod::iSpawnProtectionHealth);
 
 		return ECommandPerformed;
 	}
@@ -3826,13 +3826,13 @@ namespace Botrix
 				return ECommandError;
 			}
 
-			CBotrixMod::fSpawnProtectionTime = amount;
+			CMod::fSpawnProtectionTime = amount;
 		}
 
-		if ( CBotrixMod::fSpawnProtectionTime == 0 )
+		if ( CMod::fSpawnProtectionTime == 0 )
 			BULOG_I(pEdict, "Spawn protection time: off.");
 		else
-			BULOG_I(pEdict, "Spawn protection time: %.2f.", CBotrixMod::fSpawnProtectionTime);
+			BULOG_I(pEdict, "Spawn protection time: %.2f.", CMod::fSpawnProtectionTime);
 
 		return ECommandPerformed;
 	}

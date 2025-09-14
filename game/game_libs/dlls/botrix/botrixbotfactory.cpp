@@ -89,7 +89,7 @@ namespace Botrix
 		}
 
 		name = MPUtils::SanitisePlayerNetName(name);
-		CPlayer* pBot = CPlayers::AddBot(name.Get(), CBotrixMod::iUnassignedTeam, -1, 0, nullptr);
+		CPlayer* pBot = CPlayers::AddBot(name.Get(), CMod::iUnassignedTeam, -1, 0, nullptr);
 
 		if ( !pBot )
 		{

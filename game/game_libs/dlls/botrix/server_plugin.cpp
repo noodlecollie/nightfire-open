@@ -96,20 +96,20 @@ namespace Botrix
 		{
 			case WeaponAtts::BotWeaponTeamRestriction::MI6:
 			{
-				teamIndex = CBotrixMod::GetTeamIndex(TEAM_NAME_MI6);
+				teamIndex = CMod::GetTeamIndex(TEAM_NAME_MI6);
 				break;
 			}
 
 			case WeaponAtts::BotWeaponTeamRestriction::Phoenix:
 			{
-				teamIndex = CBotrixMod::GetTeamIndex(TEAM_NAME_PHOENIX);
+				teamIndex = CMod::GetTeamIndex(TEAM_NAME_PHOENIX);
 				break;
 			}
 
 			default:
 			{
 				ASSERT(false);
-				teamIndex = CBotrixMod::GetTeamIndex(TEAM_NAME_UNASSIGNED);
+				teamIndex = CMod::GetTeamIndex(TEAM_NAME_UNASSIGNED);
 				break;
 			}
 		}
@@ -128,7 +128,7 @@ namespace Botrix
 
 		CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
 
-		CBotrixMod::aBotNames.push_back("Botrix");
+		CMod::aBotNames.push_back("Botrix");
 
 		m_pConsoleCommands = new CBotrixCommand();
 
@@ -137,7 +137,7 @@ namespace Botrix
 
 	void CBotrixServerPlugin::Deinit()
 	{
-		CBotrixMod::UnLoad();
+		CMod::UnLoad();
 		CPlayers::Clear();
 
 		delete m_pConsoleCommands;
@@ -190,7 +190,7 @@ namespace Botrix
 			GoodAssert(iIdx >= 0);
 
 			CPlayers::PlayerConnected(entity);
-			CBotrixMod::AddFrameEvent(iIdx, EFrameEventActivated);
+			CMod::AddFrameEvent(iIdx, EFrameEventActivated);
 		}
 	}
 
@@ -223,7 +223,7 @@ namespace Botrix
 			int iIdx = CPlayers::GetIndex(entity);
 			GoodAssert(iIdx >= 0);
 
-			CBotrixMod::AddFrameEvent(iIdx, EFrameEventRespawned);
+			CMod::AddFrameEvent(iIdx, EFrameEventRespawned);
 		}
 	}
 
@@ -334,7 +334,7 @@ namespace Botrix
 			}
 		}
 
-		CBotrixMod::Think();
+		CMod::Think();
 
 		CItems::Update();
 		CPlayers::PreThink();
@@ -463,7 +463,7 @@ namespace Botrix
 		CItems::MapLoaded();
 
 		// May depend on items / waypoints.
-		CBotrixMod::MapLoaded();
+		CMod::MapLoaded();
 
 		BLOG_I("Level \"%s\" has been loaded.", m_MapName.c_str());
 
@@ -494,15 +494,15 @@ namespace Botrix
 		CBotrixServerPlugin::UpdateLogLevel();
 
 		// TODO: Pull these values out and set them in a readable way.
-		CBotrixMod::LoadDefaults();
+		CMod::LoadDefaults();
 
-		CBotrixMod::aTeamsNames.push_back(TEAM_NAME_UNASSIGNED);
-		CBotrixMod::aTeamsNames.push_back(TEAM_NAME_SPECTATOR);
-		CBotrixMod::aTeamsNames.push_back(TEAM_NAME_MI6);
-		CBotrixMod::aTeamsNames.push_back(TEAM_NAME_PHOENIX);
+		CMod::aTeamsNames.push_back(TEAM_NAME_UNASSIGNED);
+		CMod::aTeamsNames.push_back(TEAM_NAME_SPECTATOR);
+		CMod::aTeamsNames.push_back(TEAM_NAME_MI6);
+		CMod::aTeamsNames.push_back(TEAM_NAME_PHOENIX);
 
-		CBotrixMod::iUnassignedTeam = CBotrixMod::GetTeamIndex(TEAM_NAME_UNASSIGNED);
-		CBotrixMod::iSpectatorTeam = CBotrixMod::GetTeamIndex(TEAM_NAME_SPECTATOR);
+		CMod::iUnassignedTeam = CMod::GetTeamIndex(TEAM_NAME_UNASSIGNED);
+		CMod::iSpectatorTeam = CMod::GetTeamIndex(TEAM_NAME_SPECTATOR);
 
 		CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_deathmatch", 0));
 		CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_coop", 0));
@@ -515,7 +515,7 @@ namespace Botrix
 		RefreshWeaponConfig();
 
 		// Very important!
-		CBotrixMod::Prepare();
+		CMod::Prepare();
 	}
 
 	void CBotrixServerPlugin::LoadWeapon(const WeaponAtts::WACollection& atts)
@@ -561,7 +561,7 @@ namespace Botrix
 		if ( teamIndex >= 0 )
 		{
 			// Make sure the unassigned (deathmatch) team can always use the weapon.
-			pWeapon->iTeam = (1 << teamIndex) | (1 << CBotrixMod::iUnassignedTeam);
+			pWeapon->iTeam = (1 << teamIndex) | (1 << CMod::iUnassignedTeam);
 		}
 		else
 		{

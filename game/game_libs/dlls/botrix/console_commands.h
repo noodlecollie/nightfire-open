@@ -734,7 +734,7 @@ namespace Botrix
 			StringVector args;
 			args.push_back("random");
 
-			for ( int i = 0; i < CBotrixMod::aTeamsNames.size(); ++i )
+			for ( int i = 0; i < CMod::aTeamsNames.size(); ++i )
 			{
 				args.push_back(CTypeToString::TeamToString(i).duplicate());
 			}
@@ -783,7 +783,7 @@ namespace Botrix
 
 			StringVector args;
 			args.push_back("random");
-			for ( int i = 0; i < CBotrixMod::aClassNames.size(); ++i )
+			for ( int i = 0; i < CMod::aClassNames.size(); ++i )
 				args.push_back(CTypeToString::ClassToString(i).duplicate());
 
 			m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
@@ -893,7 +893,7 @@ namespace Botrix
 		CConfigBotCommand()
 		{
 			m_sCommand = "bot";
-			if ( CBotrixMod::aClassNames.size() )
+			if ( CMod::aClassNames.size() )
 			{
 				Add(new CConfigBotClassCommand);
 				Add(new CConfigBotChangeClassCommand);

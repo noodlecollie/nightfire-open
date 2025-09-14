@@ -86,7 +86,7 @@ namespace Botrix
 		// A value less than 0 means that player is forever protected.
 		if ( m_fEndProtectionTime >= 0 )
 		{
-			float defaultEndProtectionTime = CBotrixServerPlugin::GetTime() + CBotrixMod::fSpawnProtectionTime;
+			float defaultEndProtectionTime = CBotrixServerPlugin::GetTime() + CMod::fSpawnProtectionTime;
 			// Player can be protected for longer time by console command.
 			m_fEndProtectionTime = std::max<float>(m_fEndProtectionTime, defaultEndProtectionTime);
 		}
@@ -299,8 +299,8 @@ namespace Botrix
 
 		if ( !szName || !szName[0] )
 		{
-			const good::string& sName = CBotrixMod::GetRandomBotName(iIntelligence);
-			if ( CBotrixMod::bIntelligenceInBotName )
+			const good::string& sName = CMod::GetRandomBotName(iIntelligence);
+			if ( CMod::bIntelligenceInBotName )
 			{
 				char nameBuffer[64];
 				good::string_buffer sbNameWithIntelligence(nameBuffer, sizeof(nameBuffer), false);  // Don't deallocate.
@@ -318,7 +318,7 @@ namespace Botrix
 		}
 
 		bAddingBot = true;
-		CPlayer* pBot = CBotrixMod::AddBot(szName, iIntelligence, iTeam, argc, argv);
+		CPlayer* pBot = CMod::AddBot(szName, iIntelligence, iTeam, argc, argv);
 		ClientPutInServer(pBot->GetEdict());
 		bAddingBot = false;
 
@@ -330,7 +330,7 @@ namespace Botrix
 		}
 		else
 		{
-			m_sLastError = "CBotrixMod::AddBot() failed";
+			m_sLastError = "CMod::AddBot() failed";
 		}
 
 		return pBot;

@@ -291,7 +291,7 @@ namespace Botrix
 			case EWeaponAimBody:
 			{
 				// Rifle preference is body.
-				if ( CBotrixMod::bHeadShotDoesMoreDamage && (iIntelligence >= EBotNormal) &&
+				if ( CMod::bHeadShotDoesMoreDamage && (iIntelligence >= EBotNormal) &&
 					 (m_pWeapon->iType != EWeaponRifle) )
 				{
 					vResult = pTo->GetHead();

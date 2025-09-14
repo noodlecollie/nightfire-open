@@ -637,7 +637,7 @@ namespace Botrix
 
 			if ( iEntityType < EItemTypeCanPickTotal )
 			{
-				fPickupDistanceSqr += CBotrixParameterVars::GetPlayerRadiusInt() + CBotrixMod::iItemPickUpDistance;
+				fPickupDistanceSqr += CBotrixParameterVars::GetPlayerRadiusInt() + CMod::iItemPickUpDistance;
 				fPickupDistanceSqr *= fPickupDistanceSqr * 2;
 			}
 			else
