@@ -211,7 +211,7 @@ namespace Botrix
 
 			if ( pPlayer && pPlayer->IsBot() )
 			{
-				((CBotrixBot*)pPlayer)->ChangeTeam(newTeam);
+				((CBot*)pPlayer)->ChangeTeam(newTeam);
 			}
 		}
 	}
@@ -241,7 +241,7 @@ namespace Botrix
 
 			if ( pPlayer && pPlayerAttacker && pPlayer->IsBot() )
 			{
-				((CBotrixBot*)pPlayer)->HurtBy(iAttacker, pPlayerAttacker, static_cast<int>(victim->v.health));
+				((CBot*)pPlayer)->HurtBy(iAttacker, pPlayerAttacker, static_cast<int>(victim->v.health));
 			}
 		}
 	}
@@ -272,7 +272,7 @@ namespace Botrix
 
 					if ( pPlayerAttacker && pPlayerAttacker->IsBot() )
 					{
-						((CBotrixBot*)pPlayerAttacker)->KilledEnemy(iVictim, pPlayerActivator);
+						((CBot*)pPlayerAttacker)->KilledEnemy(iVictim, pPlayerActivator);
 					}
 				}
 			}

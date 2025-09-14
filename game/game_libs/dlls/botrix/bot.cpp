@@ -24,23 +24,23 @@
 
 namespace Botrix
 {
-	bool CBotrixBot::bAssumeUnknownWeaponManual = false;
-	TBotIntelligence CBotrixBot::iMinIntelligence = EBotFool;
-	TBotIntelligence CBotrixBot::iMaxIntelligence = EBotPro;
-	TTeam CBotrixBot::iDefaultTeam = 0;
-	TClass CBotrixBot::iDefaultClass = -1;
-	int CBotrixBot::iChangeClassRound = 0;
+	bool CBot::bAssumeUnknownWeaponManual = false;
+	TBotIntelligence CBot::iMinIntelligence = EBotFool;
+	TBotIntelligence CBot::iMaxIntelligence = EBotPro;
+	TTeam CBot::iDefaultTeam = 0;
+	TClass CBot::iDefaultClass = -1;
+	int CBot::iChangeClassRound = 0;
 
-	TFightStrategyFlags CBotrixBot::iDefaultFightStrategy = FFightStrategyComeCloserIfFar;
-	float CBotrixBot::fNearDistanceSqr = SQR(200);
-	float CBotrixBot::fFarDistanceSqr = SQR(500);
-	float CBotrixBot::fInvalidWaypointSuicideTime = 10.0f;
+	TFightStrategyFlags CBot::iDefaultFightStrategy = FFightStrategyComeCloserIfFar;
+	float CBot::fNearDistanceSqr = SQR(200);
+	float CBot::fFarDistanceSqr = SQR(500);
+	float CBot::fInvalidWaypointSuicideTime = 10.0f;
 
-	float CBotrixBot::m_fTimeIntervalCheckUsingMachines = 0.5f;
-	int CBotrixBot::m_iCheckEntitiesPerFrame = 4;
+	float CBot::m_fTimeIntervalCheckUsingMachines = 0.5f;
+	int CBot::m_iCheckEntitiesPerFrame = 4;
 
 	//----------------------------------------------------------------------------------------------------------------
-	CBotrixBot::CBotrixBot(edict_t* pEdict, TBotIntelligence iIntelligence, TClass iClass) :
+	CBot::CBot(edict_t* pEdict, TBotIntelligence iIntelligence, TClass iClass) :
 		CPlayer(pEdict, true),
 		m_iIntelligence(iIntelligence),
 		m_iClass(iClass),
@@ -84,7 +84,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::ConsoleCommand(const char* szCommand)
+	void CBot::ConsoleCommand(const char* szCommand)
 	{
 		BotMessage("%s -> Executing command '%s'.", GetName(), szCommand);
 		g_engfuncs.pfnClientCommand(m_pEdict, "%s", szCommand);
@@ -125,7 +125,7 @@ namespace Botrix
 	};
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::Say(bool bTeamOnly, const char* szFormat, ...)
+	void CBot::Say(bool bTeamOnly, const char* szFormat, ...)
 	{
 		static char szBotBuffer[2048];
 		good::string_buffer sBuffer(szBotBuffer, 2048, false);
@@ -180,13 +180,13 @@ namespace Botrix
 		}
 	}
 #else
-	void CBotrixBot::Say(bool, const char*, ...)
+	void CBot::Say(bool, const char*, ...)
 	{
 	}
 #endif  // BOTRIX_SEND_BOT_CHAT
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::TestWaypoints(TWaypointId iFrom, TWaypointId iTo)
+	void CBot::TestWaypoints(TWaypointId iFrom, TWaypointId iTo)
 	{
 		BASSERT(CWaypoints::IsValid(iFrom) && CWaypoints::IsValid(iTo), CPlayers::KickBot(this));
 		CWaypoint& wFrom = CWaypoints::Get(iFrom);
@@ -207,7 +207,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::AddWeapon(TWeaponId iWeaponId)
+	void CBot::AddWeapon(TWeaponId iWeaponId)
 	{
 		if ( CWeapons::IsValid(iWeaponId) )  // As if grabbed a weapon: add default bullets and weapon.
 		{
@@ -223,14 +223,14 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::Activated()
+	void CBot::Activated()
 	{
 		CPlayer::Activated();
 		BotDebug("%s -> Activated.", GetName());
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::Respawned()
+	void CBot::Respawned()
 	{
 		CPlayer::Respawned();
 		BotDebug("%s -> Respawned.", GetName());
@@ -332,7 +332,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::ConfigureRespawnWeapons()
+	void CBot::ConfigureRespawnWeapons()
 	{
 		if ( CBotrixMod::bRemoveWeapons )
 		{
@@ -370,7 +370,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::Dead()
+	void CBot::Dead()
 	{
 		BotDebug("%s -> Dead.", GetName());
 		CPlayer::Dead();
@@ -382,7 +382,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::PlayerDisconnect(int iPlayerIndex, CPlayer* pPlayer)
+	void CBot::PlayerDisconnect(int iPlayerIndex, CPlayer* pPlayer)
 	{
 		m_aNearPlayers.reset(iPlayerIndex);
 		m_aSeenEnemies.reset(iPlayerIndex);
@@ -394,7 +394,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::PreThink()
+	void CBot::PreThink()
 	{
 // #define DRAW_BEAM_TO_0_0_0
 #if defined(DEBUG) && defined(DRAW_BEAM_TO_0_0_0)
@@ -444,7 +444,7 @@ namespace Botrix
 			else
 			{
 				m_bInvalidWaypointStart = true;
-				m_fInvalidWaypointEnd = CBotrixServerPlugin::GetTime() + CBotrixBot::fInvalidWaypointSuicideTime;
+				m_fInvalidWaypointEnd = CBotrixServerPlugin::GetTime() + CBot::fInvalidWaypointSuicideTime;
 			}
 
 			return;
@@ -578,9 +578,9 @@ namespace Botrix
 	}
 
 	//================================================================================================================
-	// CBotrixBot virtual protected methods.
+	// CBot virtual protected methods.
 	//================================================================================================================
-	void CBotrixBot::CurrentWaypointJustChanged()
+	void CBot::CurrentWaypointJustChanged()
 	{
 		if ( m_bNeedMove && m_bUseNavigatorToMove )
 		{
@@ -630,7 +630,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixBot::DoWaypointAction()
+	bool CBot::DoWaypointAction()
 	{
 		if ( m_bEnemyAim /*|| !m_bNeedMove || !m_bUseNavigatorToMove - bot test fails */ )
 		{
@@ -722,7 +722,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::ApplyPathFlags()
+	void CBot::ApplyPathFlags()
 	{
 		BASSERT(m_bNeedMove, return);
 		// BotTrace("%s -> Waypoint %d", m_PlayerInfo.GetName(), iCurrentWaypoint);
@@ -807,7 +807,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::DoPathAction()
+	void CBot::DoPathAction()
 	{
 		BASSERT(m_bNeedMove, return);
 		BASSERT(CWaypoint::IsValid(iCurrentWaypoint), return);
@@ -866,7 +866,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex iIndex)
+	void CBot::PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex iIndex)
 	{
 		switch ( iEntityType )
 		{
@@ -979,10 +979,10 @@ namespace Botrix
 	}
 
 //================================================================================================================
-// CBotrixBot protected methods.
+// CBot protected methods.
 //================================================================================================================
 #ifdef BOTRIX_SEND_BOT_CHAT
-	void CBotrixBot::Speak(bool bTeamSay)
+	void CBot::Speak(bool bTeamSay)
 	{
 		TPlayerIndex iPlayerIndex = m_cChat.iDirectedTo;
 		if ( iPlayerIndex == EPlayerIndexInvalid )
@@ -996,7 +996,7 @@ namespace Botrix
 #endif  // BOTRIX_SEND_BOT_CHAT
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixBot::IsVisible(CPlayer* pPlayer, bool bViewCone) const
+	bool CBot::IsVisible(CPlayer* pPlayer, bool bViewCone) const
 	{
 		// Check PVS first. Get visible clusters from player's position.
 		Vector vAim(pPlayer->GetHead());
@@ -1031,7 +1031,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	float CBotrixBot::GetEndLookTime()
+	float CBot::GetEndLookTime()
 	{
 		// angle 180 degrees = aAimSpeed time   ->   Y time = angle X * aAimSpeed / 180 degrees
 		// angle X           = Y time
@@ -1076,7 +1076,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::WeaponCheckCurrent(bool bAddToBotWeapons)
+	void CBot::WeaponCheckCurrent(bool bAddToBotWeapons)
 	{
 		// Check weapon bot has in hands.
 		const char* szCurrentWeapon = m_PlayerInfo.GetWeaponName();
@@ -1161,7 +1161,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::WeaponsScan()
+	void CBot::WeaponsScan()
 	{
 		GoodAssert(m_bFeatureWeaponCheck);
 		BotDebug("%s -> Scan weapons.", GetName());
@@ -1204,7 +1204,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::UpdateWeapon()
+	void CBot::UpdateWeapon()
 	{
 		if ( !m_bFeatureWeaponCheck )
 		{
@@ -1276,7 +1276,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::UpdateWorld()
+	void CBot::UpdateWorld()
 	{
 		// Update picked items.
 		if ( m_aPickedItems.size() )
@@ -1506,7 +1506,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::CheckEnemy(int iPlayerIndex, CPlayer* pPlayer, bool bCheckVisibility)
+	void CBot::CheckEnemy(int iPlayerIndex, CPlayer* pPlayer, bool bCheckVisibility)
 	{
 		BASSERT(!m_bDontAttack && (m_pCurrentEnemy != this), return);
 
@@ -1569,7 +1569,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::CheckAttackDuck(CPlayer* pPlayer)
+	void CBot::CheckAttackDuck(CPlayer* pPlayer)
 	{
 		GoodAssert(m_bFeatureAttackDuckEnabled && !m_bDontAttack);
 
@@ -1605,7 +1605,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::EnemyAim()
+	void CBot::EnemyAim()
 	{
 		GoodAssert(m_pCurrentEnemy && !m_bDontAttack);
 
@@ -1667,7 +1667,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::WeaponChoose()
+	void CBot::WeaponChoose()
 	{
 		if ( m_bStuckBreakObject || m_bStuckUsePhyscannon )
 		{
@@ -1760,7 +1760,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixBot::WeaponSet(const good::string& sWeapon)
+	bool CBot::WeaponSet(const good::string& sWeapon)
 	{
 		GoodAssert(m_bFeatureWeaponCheck);
 
@@ -1776,7 +1776,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::ChangeWeapon(TWeaponId iIndex)
+	void CBot::ChangeWeapon(TWeaponId iIndex)
 	{
 		// GoodAssert( iIndex != m_iWeapon ); // This can happen when out of bullets, and autoswitch is made to other
 		// weapon.
@@ -1831,7 +1831,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::WeaponShoot(int iSecondary)
+	void CBot::WeaponShoot(int iSecondary)
 	{
 		if ( !m_bStuckBreakObject && !m_bStuckUsePhyscannon && !m_bNeedAttack && (m_bDontAttack || !m_bCommandAttack) )
 		{
@@ -1861,7 +1861,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::CheckSideLook(bool bIsMoving, bool /*bNewDestination*/)
+	void CBot::CheckSideLook(bool bIsMoving, bool /*bNewDestination*/)
 	{
 		if ( m_pCurrentEnemy || !bIsMoving )
 		{
@@ -1958,7 +1958,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixBot::ResolveStuckMove()
+	bool CBot::ResolveStuckMove()
 	{
 		TWaypointId iPrevCurrWaypoint = iCurrentWaypoint;
 
@@ -2174,7 +2174,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixBot::MoveBetweenWaypoints()
+	bool CBot::MoveBetweenWaypoints()
 	{
 		if ( !CWaypoints::Get(iNextWaypoint).IsTouching(m_vHead, m_bLadderMove) )
 		{
@@ -2214,7 +2214,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixBot::NavigatorMove()
+	bool CBot::NavigatorMove()
 	{
 		GoodAssert(m_bUseNavigatorToMove);
 		bool bArrived = false;
@@ -2288,7 +2288,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	bool CBotrixBot::NormalMove()
+	bool CBot::NormalMove()
 	{
 		GoodAssert(m_bNeedMove);
 		bool bArrived = false;
@@ -2328,7 +2328,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBotrixBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevOrigin)
+	void CBot::PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevOrigin)
 	{
 		// m_cCmd.viewangles = m_pController->GetLocalAngles(); // TODO: WTF?
 		// m_cCmd.viewangles = m_PlayerInfo.GetAbsAngles(); // WTF?
@@ -2969,7 +2969,7 @@ namespace Botrix
 
 	//----------------------------------------------------------------------------------------------------------------
 	CBot_HL2DM::CBot_HL2DM(edict_t* pEdict, TBotIntelligence iIntelligence) :
-		CBotrixBot(pEdict, iIntelligence, -1),
+		CBot(pEdict, iIntelligence, -1),
 		m_aWaypoints(CWaypoints::Size()),
 		m_cItemToSearch(-1, -1),
 		m_cSkipWeapons(CWeapons::Size()),
@@ -2981,7 +2981,7 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CBot_HL2DM::Activated()
 	{
-		CBotrixBot::Activated();
+		CBot::Activated();
 	}
 
 	void CBot_HL2DM::ChangeTeam(TTeam iTeam)
@@ -3001,7 +3001,7 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CBot_HL2DM::Respawned()
 	{
-		CBotrixBot::Respawned();
+		CBot::Respawned();
 
 		m_aWaypoints.reset();
 		m_iFailWaypoint = EWaypointIdInvalid;
@@ -3119,7 +3119,7 @@ namespace Botrix
 			m_iCurrentTask = EBotTaskInvalid;
 			m_bNeedTaskCheck = true;
 		}
-		return CBotrixBot::DoWaypointAction();
+		return CBot::DoWaypointAction();
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -3202,8 +3202,8 @@ namespace Botrix
 					bool bNeedComeCloser =
 						m_aWeapons[m_iWeapon].IsMelee() || m_aWeapons[m_iWeapon].NeedsToBeCloser(m_fDistanceSqrToEnemy);
 					if ( bNeedComeCloser ||
-						 (FLAG_SOME_SET(FFightStrategyComeCloserIfFar, CBotrixBot::iDefaultFightStrategy) &&
-						  m_fDistanceSqrToEnemy >= CBotrixBot::fNearDistanceSqr) )
+						 (FLAG_SOME_SET(FFightStrategyComeCloserIfFar, CBot::iDefaultFightStrategy) &&
+						  m_fDistanceSqrToEnemy >= CBot::fNearDistanceSqr) )
 					{
 						// Try to come closer a little.
 						iNextWaypoint =
@@ -3216,8 +3216,8 @@ namespace Botrix
 						);
 						return;
 					}
-					else if ( FLAG_SOME_SET(FFightStrategyRunAwayIfNear, CBotrixBot::iDefaultFightStrategy) &&
-							  (m_fDistanceSqrToEnemy <= CBotrixBot::fNearDistanceSqr) )
+					else if ( FLAG_SOME_SET(FFightStrategyRunAwayIfNear, CBot::iDefaultFightStrategy) &&
+							  (m_fDistanceSqrToEnemy <= CBot::fNearDistanceSqr) )
 					{
 						// Try to run away a little.
 						iNextWaypoint =

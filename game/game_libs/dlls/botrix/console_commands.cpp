@@ -3108,7 +3108,7 @@ namespace Botrix
 			{
 				CPlayer* pPlayer = CPlayers::Get(i);
 				if ( pPlayer && pPlayer->IsBot() && (bAll || sName == pPlayer->GetName()) )
-					((CBotrixBot*)pPlayer)->AddWeapon(iWeaponId);
+					((CBot*)pPlayer)->AddWeapon(iWeaponId);
 			}
 
 			if ( bAll )
@@ -3341,7 +3341,7 @@ namespace Botrix
 			{
 				good::string sBotName = pPlayer->GetName();
 				if ( bAll || good::starts_with(sBotName, sName) )
-					((CBotrixBot*)pPlayer)->WeaponsRemove();
+					((CBot*)pPlayer)->WeaponsRemove();
 			}
 		}
 
@@ -3374,9 +3374,9 @@ namespace Botrix
 		{
 			good::string sArg(argv[0]);
 			if ( sArg == sMelee )
-				CBotrixBot::bAssumeUnknownWeaponManual = true;
+				CBot::bAssumeUnknownWeaponManual = true;
 			else if ( sArg == sRanged )
-				CBotrixBot::bAssumeUnknownWeaponManual = false;
+				CBot::bAssumeUnknownWeaponManual = false;
 			else
 			{
 				BULOG_W(pEdict, "Invalid parameter: %s. Should be 'melee' or 'ranged'", argv[0]);
@@ -3389,11 +3389,7 @@ namespace Botrix
 			return ECommandError;
 		}
 
-		BULOG_I(
-			pEdict,
-			"Unknown weapons are %s by default.",
-			CBotrixBot::bAssumeUnknownWeaponManual ? "manuals" : "ranged"
-		);
+		BULOG_I(pEdict, "Unknown weapons are %s by default.", CBot::bAssumeUnknownWeaponManual ? "manuals" : "ranged");
 
 		return ECommandPerformed;
 	}
@@ -3461,7 +3457,7 @@ namespace Botrix
 		}
 
 		// 2nd argument: team.
-		TTeam iTeam = CBotrixBot::iDefaultTeam;
+		TTeam iTeam = CBot::iDefaultTeam;
 		if ( argc > iArg )
 		{
 			iTeam = CTypeToString::TeamFromString(argv[iArg]);
@@ -3519,7 +3515,7 @@ namespace Botrix
 				if ( pPlayer && pPlayer->IsBot() &&
 					 (bAll || good::starts_with(good::string(pPlayer->GetName()), sName)) )
 				{
-					CBotrixBot* pBot = (CBotrixBot*)pPlayer;
+					CBot* pBot = (CBot*)pPlayer;
 					pBot->ConsoleCommand(szCmd);
 				}
 			}
@@ -3596,8 +3592,8 @@ namespace Botrix
 					 (bAll || good::starts_with(good::string(pPlayer->GetName()), sName)) )
 				{
 					bSomeone = true;
-					bool bDebuging = (bDebug == -1) ? !((CBotrixBot*)pPlayer)->IsDebugging() : (bDebug != 0);
-					((CBotrixBot*)pPlayer)->SetDebugging(bDebuging);
+					bool bDebuging = (bDebug == -1) ? !((CBot*)pPlayer)->IsDebugging() : (bDebug != 0);
+					((CBot*)pPlayer)->SetDebugging(bDebuging);
 					BULOG_I(pEdict, "%s bot %s.", bDebuging ? "Debugging" : "Not debugging", pPlayer->GetName());
 				}
 			}
@@ -3694,8 +3690,8 @@ namespace Botrix
 			}
 			else
 			{
-				CBotrixBot::iMinIntelligence = iIntelligenceMin;
-				CBotrixBot::iMaxIntelligence = iIntelligenceMax;
+				CBot::iMinIntelligence = iIntelligenceMin;
+				CBot::iMaxIntelligence = iIntelligenceMax;
 			}
 		}
 		else
@@ -3706,8 +3702,8 @@ namespace Botrix
 		BULOG_I(
 			pEdict,
 			"Bot's intelligence: min %s, max %s.",
-			CTypeToString::IntelligenceToString(CBotrixBot::iMinIntelligence).c_str(),
-			CTypeToString::IntelligenceToString(CBotrixBot::iMaxIntelligence).c_str()
+			CTypeToString::IntelligenceToString(CBot::iMinIntelligence).c_str(),
+			CTypeToString::IntelligenceToString(CBot::iMaxIntelligence).c_str()
 		);
 		return iResult;
 	}
@@ -3729,7 +3725,7 @@ namespace Botrix
 				return ECommandError;
 			}
 			else
-				CBotrixBot::iDefaultTeam = iTeam;
+				CBot::iDefaultTeam = iTeam;
 		}
 		else
 		{
@@ -3737,7 +3733,7 @@ namespace Botrix
 			return ECommandError;
 		}
 
-		BULOG_I(pEdict, "Bot's default team: %s.", CTypeToString::TeamToString(CBotrixBot::iDefaultTeam).c_str());
+		BULOG_I(pEdict, "Bot's default team: %s.", CTypeToString::TeamToString(CBot::iDefaultTeam).c_str());
 		return ECommandPerformed;
 	}
 
@@ -3859,7 +3855,7 @@ namespace Botrix
 				BULOG_W(pEdict, "Error, invalid number: %s.", argv[0]);
 				return ECommandError;
 			}
-			CBotrixBot::iChangeClassRound = i;
+			CBot::iChangeClassRound = i;
 		}
 		else
 		{
@@ -3867,8 +3863,8 @@ namespace Botrix
 			iResult = ECommandError;
 		}
 
-		if ( CBotrixBot::iChangeClassRound )
-			BULOG_I(pEdict, "Bots will change their class every %d rounds.", CBotrixBot::iChangeClassRound);
+		if ( CBot::iChangeClassRound )
+			BULOG_I(pEdict, "Bots will change their class every %d rounds.", CBot::iChangeClassRound);
 		else
 			BULOG_I(pEdict, "Bots won't change their class.");
 		return iResult;
@@ -3884,9 +3880,8 @@ namespace Botrix
 		TCommandResult iResult = ECommandPerformed;
 		if ( argc == 0 )
 		{
-			const char* szClass = (CBotrixBot::iDefaultClass == -1)
-				? "random"
-				: CTypeToString::ClassToString(CBotrixBot::iDefaultClass).c_str();
+			const char* szClass =
+				(CBot::iDefaultClass == -1) ? "random" : CTypeToString::ClassToString(CBot::iDefaultClass).c_str();
 			BULOG_I(pEdict, "Bot's default class: %s.", szClass);
 		}
 		else if ( argc == 1 )
@@ -3902,7 +3897,7 @@ namespace Botrix
 			else
 			{
 				BULOG_I(pEdict, "Bot's default class: %s.", argv[0]);
-				CBotrixBot::iDefaultClass = iClass;
+				CBot::iDefaultClass = iClass;
 			}
 		}
 		else
@@ -3932,7 +3927,7 @@ namespace Botrix
 				return ECommandError;
 			}
 
-			CBotrixBot::fInvalidWaypointSuicideTime = f;
+			CBot::fInvalidWaypointSuicideTime = f;
 		}
 		else
 		{
@@ -3940,8 +3935,8 @@ namespace Botrix
 			return ECommandError;
 		}
 
-		if ( CBotrixBot::fInvalidWaypointSuicideTime )
-			BULOG_I(pEdict, "Bot's suicide time: %.1f.", CBotrixBot::fInvalidWaypointSuicideTime);
+		if ( CBot::fInvalidWaypointSuicideTime )
+			BULOG_I(pEdict, "Bot's suicide time: %.1f.", CBot::fInvalidWaypointSuicideTime);
 		else
 			BULOG_I(pEdict, "Bot will not commit suicide.");
 		return ECommandPerformed;
@@ -3972,13 +3967,13 @@ namespace Botrix
 				}
 				FLAG_SET(iFlag, iFlags);
 			}
-			CBotrixBot::iDefaultFightStrategy = iFlags;
+			CBot::iDefaultFightStrategy = iFlags;
 		}
 
 		BULOG_I(
 			pEdict,
 			"Bot's strategy flags: %s.",
-			CTypeToString::StrategyFlagsToString(CBotrixBot::iDefaultFightStrategy).c_str()
+			CTypeToString::StrategyFlagsToString(CBot::iDefaultFightStrategy).c_str()
 		);
 		return ECommandPerformed;
 	}
@@ -4021,13 +4016,13 @@ namespace Botrix
 			{
 				case EFightStrategyArgNearDistance:
 				{
-					CBotrixBot::fNearDistanceSqr = static_cast<float>(SQR(iArgValue));
+					CBot::fNearDistanceSqr = static_cast<float>(SQR(iArgValue));
 					break;
 				}
 
 				case EFightStrategyArgFarDistance:
 				{
-					CBotrixBot::fFarDistanceSqr = static_cast<float>(SQR(iArgValue));
+					CBot::fFarDistanceSqr = static_cast<float>(SQR(iArgValue));
 					break;
 				}
 
@@ -4049,13 +4044,13 @@ namespace Botrix
 			pEdict,
 			"  %s = %d",
 			CTypeToString::StrategyArgToString(EFightStrategyArgNearDistance).c_str(),
-			(int)rsqrt(CBotrixBot::fNearDistanceSqr)
+			(int)rsqrt(CBot::fNearDistanceSqr)
 		);
 		BULOG_I(
 			pEdict,
 			"  %s = %d",
 			CTypeToString::StrategyArgToString(EFightStrategyArgFarDistance).c_str(),
-			(int)rsqrt(CBotrixBot::fFarDistanceSqr)
+			(int)rsqrt(CBot::fFarDistanceSqr)
 		);
 		return ECommandPerformed;
 	}
@@ -4181,7 +4176,7 @@ namespace Botrix
 						if ( pPlayer && (i != j) &&
 							 (bAllPlayers || good::starts_with(good::string(pPlayer->GetName()), sPlayer)) )
 						{
-							((CBotrixBot*)pBot)->SetAlly(j, bAlly);
+							((CBot*)pBot)->SetAlly(j, bAlly);
 							BULOG_I(
 								pEdict,
 								"%s is %s for bot %s.",
@@ -4232,8 +4227,8 @@ namespace Botrix
 					 (bAll || good::starts_with(good::string(pPlayer->GetName()), sName)) )
 				{
 					bSomeone = true;
-					bool bAttacking = (bAttack == -1) ? !((CBotrixBot*)pPlayer)->IsAttacking() : (bAttack != 0);
-					((CBotrixBot*)pPlayer)->SetAttack(bAttacking);
+					bool bAttacking = (bAttack == -1) ? !((CBot*)pPlayer)->IsAttacking() : (bAttack != 0);
+					((CBot*)pPlayer)->SetAttack(bAttacking);
 					BULOG_I(pEdict, "Bot %s %s.", pPlayer->GetName(), bAttacking ? "attacks" : "doesn't attack");
 				}
 			}
@@ -4282,8 +4277,8 @@ namespace Botrix
 					 (bAll || good::starts_with(good::string(pPlayer->GetName()), sName)) )
 				{
 					bSomeone = true;
-					bool bStop = (bMove == -1) ? !((CBotrixBot*)pPlayer)->IsStopped() : (bMove == 0);
-					((CBotrixBot*)pPlayer)->SetStopped(bStop);
+					bool bStop = (bMove == -1) ? !((CBot*)pPlayer)->IsStopped() : (bMove == 0);
+					((CBot*)pPlayer)->SetStopped(bStop);
 					BULOG_I(pEdict, "Bot %s %s move.", pPlayer->GetName(), bStop ? "can't" : "can");
 				}
 			}
@@ -4329,8 +4324,8 @@ namespace Botrix
 					 (bAll || good::starts_with(good::string(pPlayer->GetName()), sName)) )
 				{
 					bSomeone = true;
-					bool bPausing = (bPaused == -1) ? !((CBotrixBot*)pPlayer)->IsPaused() : (bPaused != 0);
-					((CBotrixBot*)pPlayer)->SetPaused(bPausing);
+					bool bPausing = (bPaused == -1) ? !((CBot*)pPlayer)->IsPaused() : (bPaused != 0);
+					((CBot*)pPlayer)->SetPaused(bPausing);
 					BULOG_I(pEdict, "Bot %s is %s.", pPlayer->GetName(), bPausing ? "paused" : "not paused");
 				}
 			}
@@ -4463,7 +4458,7 @@ namespace Botrix
 
 		if ( pPlayer )
 		{
-			((CBotrixBot*)pPlayer)->TestWaypoints(iPathFrom, iPathTo);
+			((CBot*)pPlayer)->TestWaypoints(iPathFrom, iPathTo);
 			BULOG_I(
 				pClient->GetEdict(),
 				"Bot added: %s. Testing path from %d to %d.",

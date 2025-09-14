@@ -222,7 +222,7 @@ namespace Botrix
 
 			if ( iNeededCount > GetBotsCount() )
 			{
-				AddBot(NULL, CBotrixBot::iDefaultTeam, CBotrixBot::iDefaultClass, -1);
+				AddBot(NULL, CBot::iDefaultTeam, CBot::iDefaultClass, -1);
 			}
 			else
 			{
@@ -294,8 +294,7 @@ namespace Botrix
 
 		if ( iIntelligence < 0 )
 		{
-			iIntelligence = (rand() % (CBotrixBot::iMaxIntelligence - CBotrixBot::iMinIntelligence + 1)) +
-				CBotrixBot::iMinIntelligence;
+			iIntelligence = (rand() % (CBot::iMaxIntelligence - CBot::iMinIntelligence + 1)) + CBot::iMinIntelligence;
 		}
 
 		if ( !szName || !szName[0] )
@@ -363,7 +362,7 @@ namespace Botrix
 		int index = rand() % m_aPlayers.size();
 
 		// Search for used bot from index to left.
-		CBotrixBot* toKick = NULL;
+		CBot* toKick = NULL;
 		int i;
 
 		// TODO: not use 2 for.
@@ -372,7 +371,7 @@ namespace Botrix
 			CPlayer* pPlayer = m_aPlayers[i].get();
 			if ( pPlayer && pPlayer->IsBot() && ((iTeam == -1) || (pPlayer->GetTeam() == iTeam)) )
 			{
-				toKick = (CBotrixBot*)pPlayer;
+				toKick = (CBot*)pPlayer;
 				break;
 			}
 		}
@@ -384,7 +383,7 @@ namespace Botrix
 				CPlayer* pPlayer = m_aPlayers[i].get();
 				if ( pPlayer && pPlayer->IsBot() && ((iTeam == -1) || (pPlayer->GetTeam() == iTeam)) )
 				{
-					toKick = (CBotrixBot*)pPlayer;
+					toKick = (CBot*)pPlayer;
 					break;
 				}
 			}
@@ -448,7 +447,7 @@ namespace Botrix
 			CPlayer* pBot = m_aPlayers[i].get();
 			if ( pBot && pBot->IsBot() && pBot->IsAlive() )
 			{
-				((CBotrixBot*)pBot)->PlayerDisconnect(iIdx, pPlayer);
+				((CBot*)pBot)->PlayerDisconnect(iIdx, pPlayer);
 			}
 		}
 

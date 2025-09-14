@@ -126,7 +126,7 @@ namespace Botrix
 			const CPlayer* pPlayer = CPlayers::Get(iPlayer);
 
 			if ( pPlayer && good::starts_with(good::string(pPlayer->GetName()), cName) && pPlayer->IsBot() &&
-				 (iIntelligence == ((CBotrixBot*)pPlayer)->GetIntelligence()) )
+				 (iIntelligence == ((CBot*)pPlayer)->GetIntelligence()) )
 			{
 				return true;
 			}

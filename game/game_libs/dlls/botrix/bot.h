@@ -28,9 +28,9 @@ namespace Botrix
 	//****************************************************************************************************************
 	/// Abstract class representing a bot.
 	/** This class allows to bot ability to move and use waypoints, but not to shoot. Shooting and setting
-	 * objectives/waypoint-destination is a child class responsability (which should derive from CBotrixBot class). */
+	 * objectives/waypoint-destination is a child class responsability (which should derive from CBot class). */
 	//****************************************************************************************************************
-	class CBotrixBot : public CPlayer
+	class CBot : public CPlayer
 	{
 	public:  // Members.
 		static bool bAssumeUnknownWeaponManual;  ///< Assume that unknown weapon are melees.
@@ -47,10 +47,10 @@ namespace Botrix
 
 	public:  // Methods.
 		/// Constructor.
-		CBotrixBot(struct edict_s* pEdict, TBotIntelligence iIntelligence, TClass iClass);
+		CBot(struct edict_s* pEdict, TBotIntelligence iIntelligence, TClass iClass);
 
 		/// Destructor.
-		virtual ~CBotrixBot()
+		virtual ~CBot()
 		{
 		}
 
@@ -532,7 +532,7 @@ namespace Botrix
 	};
 
 	// TODO: Rename
-	class CBot_HL2DM : public CBotrixBot
+	class CBot_HL2DM : public CBot
 	{
 	public:
 		/// Constructor.
@@ -552,7 +552,7 @@ namespace Botrix
 		// Enemy is dead or got disconnected.
 		virtual void EraseCurrentEnemy()
 		{
-			CBotrixBot::EraseCurrentEnemy();
+			CBot::EraseCurrentEnemy();
 			m_bChasing = false;
 			m_pChasedEnemy = NULL;
 			m_iCurrentTask = EBotTaskInvalid;
@@ -575,7 +575,7 @@ namespace Botrix
 		/// Bot just picked up given item.
 		virtual void PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex iIndex)
 		{
-			CBotrixBot::PickItem(cItem, iEntityType, iIndex);
+			CBot::PickItem(cItem, iEntityType, iIndex);
 			if ( m_bFlee && (iEntityType == EItemTypeHealth) )
 			{
 				m_bFlee = (m_PlayerInfo.GetHealth() < (CBotrixParameterVars::PLAYER_MAX_HEALTH / 8.0f));
