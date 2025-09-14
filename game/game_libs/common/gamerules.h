@@ -30,9 +30,12 @@ class CBasePlayer;
 class CItem;
 class CBasePlayerAmmo;
 
-// This file doesn't currently pull in any headers, so forward-declaring this to avoid
-// adding more dependencies.
-class IBotGameRulesInterface;
+namespace Botrix
+{
+	// This file doesn't currently pull in any headers, so forward-declaring this to avoid
+	// adding more dependencies.
+	class IBotGameRulesInterface;
+}  // namespace Botrix
 
 // weapon respawning return codes
 enum
@@ -75,17 +78,21 @@ public:
 
 	virtual void RefreshSkillData(void);  // fill skill data struct with proper values
 	virtual void Think(
-		void) = 0;  // GR_Think - runs every server frame, should handle any timer tasks, periodic events, etc.
+		void
+	) = 0;  // GR_Think - runs every server frame, should handle any timer tasks, periodic events, etc.
 	virtual BOOL IsAllowedToSpawn(
-		CBaseEntity* pEntity) = 0;  // Can this item spawn (eg monsters don't spawn in deathmatch).
+		CBaseEntity* pEntity
+	) = 0;  // Can this item spawn (eg monsters don't spawn in deathmatch).
 
 	virtual BOOL FAllowFlashlight(void) = 0;  // Are players allowed to switch on their flashlight?
 	virtual BOOL FShouldSwitchWeapon(
 		CBasePlayer* pPlayer,
-		CBasePlayerItem* pWeapon) = 0;  // should the player switch to this weapon?
+		CBasePlayerItem* pWeapon
+	) = 0;  // should the player switch to this weapon?
 	virtual BOOL GetNextBestWeapon(
 		CBasePlayer* pPlayer,
-		CBasePlayerItem* pCurrentWeapon) = 0;  // I can't use this weapon anymore, get me the next best one.
+		CBasePlayerItem* pCurrentWeapon
+	) = 0;  // I can't use this weapon anymore, get me the next best one.
 
 	// Functions to verify the single/multiplayer status of a game
 	virtual BOOL IsMultiplayer(void) = 0;  // is this a multiplayer game? (either coop or deathmatch)
@@ -107,7 +114,8 @@ public:
 		edict_t* pEntity,
 		const char* pszName,
 		const char* pszAddress,
-		char szRejectReason[128]) = 0;  // a client just connected to the server (player hasn't spawned yet)
+		char szRejectReason[128]
+	) = 0;  // a client just connected to the server (player hasn't spawned yet)
 	virtual void ClientPutInServer(edict_t* pClient) = 0;  // Client connection was accepted, player has not yet
 														   // spawned. Paired with ClientDisconnected
 	virtual void InitHUD(CBasePlayer* pl) = 0;  // the client dll is ready for updating
@@ -118,7 +126,8 @@ public:
 
 	// Client damage rules
 	virtual float FlPlayerFallDamage(
-		CBasePlayer* pPlayer) = 0;  // this client just hit the ground after a fall. How much damage?
+		CBasePlayer* pPlayer
+	) = 0;  // this client just hit the ground after a fall. How much damage?
 	virtual BOOL FPlayerCanTakeDamage(CBasePlayer*, CBaseEntity*)
 	{
 		return TRUE;
@@ -130,13 +139,15 @@ public:
 
 	// Client spawn/respawn control
 	virtual void PlayerSpawn(
-		CBasePlayer* pPlayer) = 0;  // called by CBasePlayer::Spawn just before releasing player into the game
+		CBasePlayer* pPlayer
+	) = 0;  // called by CBasePlayer::Spawn just before releasing player into the game
 	virtual void PlayerThink(CBasePlayer* pPlayer) = 0;  // called by CBasePlayer::PreThink every frame, before physics
 														 // are run and after keys are accepted
 	virtual BOOL FPlayerCanRespawn(CBasePlayer* pPlayer) = 0;  // is this player allowed to respawn now?
 	virtual float FlPlayerSpawnTime(CBasePlayer* pPlayer) = 0;  // When in the future will this player be able to spawn?
 	virtual edict_t* GetPlayerSpawnSpot(
-		CBasePlayer* pPlayer);  // Place this player on their spawnspot and face them the proper direction.
+		CBasePlayer* pPlayer
+	);  // Place this player on their spawnspot and face them the proper direction.
 
 	virtual BOOL AllowAutoTargetCrosshair(void)
 	{
@@ -153,38 +164,46 @@ public:
 	// Client kills/scoring
 	virtual int IPointsForKill(
 		CBasePlayer* pAttacker,
-		CBasePlayer* pKilled) = 0;  // how many points do I award whoever kills this player?
+		CBasePlayer* pKilled
+	) = 0;  // how many points do I award whoever kills this player?
 	virtual void PlayerHurt(CBasePlayer* pVictim, entvars_t* pAttacker) = 0;
 	virtual void PlayerKilled(
 		CBasePlayer* pVictim,
 		entvars_t* pKiller,
-		entvars_t* pInflictor) = 0;  // Called each time a player dies
+		entvars_t* pInflictor
+	) = 0;  // Called each time a player dies
 	virtual void DeathNotice(
 		CBasePlayer* pVictim,
 		entvars_t* pKiller,
-		entvars_t* pInflictor) = 0;  // Call this from within a GameRules class to report an obituary.
+		entvars_t* pInflictor
+	) = 0;  // Call this from within a GameRules class to report an obituary.
 
 	// Weapon retrieval
 	virtual BOOL CanHavePlayerItem(
 		CBasePlayer* pPlayer,
-		CBasePlayerItem* pWeapon);  // The player is touching an CBasePlayerItem, do I give it to him?
+		CBasePlayerItem* pWeapon
+	);  // The player is touching an CBasePlayerItem, do I give it to him?
 	virtual void PlayerGotWeapon(
 		CBasePlayer* pPlayer,
-		CBasePlayerItem* pWeapon) = 0;  // Called each time a player picks up a weapon from the ground
+		CBasePlayerItem* pWeapon
+	) = 0;  // Called each time a player picks up a weapon from the ground
 
 	// Weapon spawn/respawn control
 	virtual int WeaponShouldRespawn(CBasePlayerItem* pWeapon) = 0;  // should this weapon respawn?
 	virtual float FlWeaponRespawnTime(CBasePlayerItem* pWeapon) = 0;  // when may this weapon respawn?
 	virtual float FlWeaponTryRespawn(
-		CBasePlayerItem* pWeapon) = 0;  // can i respawn now,  and if not, when should i try again?
+		CBasePlayerItem* pWeapon
+	) = 0;  // can i respawn now,  and if not, when should i try again?
 	virtual Vector VecWeaponRespawnSpot(
-		CBasePlayerItem* pWeapon) = 0;  // where in the world should this weapon respawn?
+		CBasePlayerItem* pWeapon
+	) = 0;  // where in the world should this weapon respawn?
 
 	// Item retrieval
 	virtual BOOL CanHaveItem(CBasePlayer* pPlayer, CItem* pItem) = 0;  // is this player allowed to take this item?
 	virtual void PlayerGotItem(
 		CBasePlayer* pPlayer,
-		CItem* pItem) = 0;  // call each time a player picks up an item (battery, healthkit, longjump)
+		CItem* pItem
+	) = 0;  // call each time a player picks up an item (battery, healthkit, longjump)
 
 	// Item spawn/respawn control
 	virtual int ItemShouldRespawn(CItem* pItem) = 0;  // Should this item respawn?
@@ -195,11 +214,13 @@ public:
 	virtual BOOL CanHaveAmmo(
 		CBasePlayer* pPlayer,
 		const char* pszAmmoName,
-		int iMaxCarry);  // can this player take more of this ammo?
+		int iMaxCarry
+	);  // can this player take more of this ammo?
 	virtual void PlayerGotAmmo(
 		CBasePlayer* pPlayer,
 		char* szName,
-		int iCount) = 0;  // called each time a player picks up some ammo in the world
+		int iCount
+	) = 0;  // called each time a player picks up some ammo in the world
 
 	// Ammo spawn/respawn control
 	virtual int AmmoShouldRespawn(CBasePlayerAmmo* pAmmo) = 0;  // should this ammo item respawn?
@@ -224,7 +245,8 @@ public:
 	virtual const char* GetTeamID(CBaseEntity* pEntity) = 0;  // what team is this entity on?
 	virtual int PlayerRelationship(
 		CBaseEntity* pPlayer,
-		CBaseEntity* pTarget) = 0;  // What is the player's relationship with this entity?
+		CBaseEntity* pTarget
+	) = 0;  // What is the player's relationship with this entity?
 	virtual int GetTeamIndex(const char*)
 	{
 		return -1;
@@ -419,7 +441,8 @@ public:
 	virtual void PlayerGotWeapon(CBasePlayer* pPlayer, CBasePlayerItem* pWeapon);
 	virtual BOOL CanHavePlayerItem(
 		CBasePlayer* pPlayer,
-		CBasePlayerItem* pWeapon);  // The player is touching an CBasePlayerItem, do I give it to him?
+		CBasePlayerItem* pWeapon
+	);  // The player is touching an CBasePlayerItem, do I give it to him?
 
 	// Weapon spawn/respawn control
 	virtual int WeaponShouldRespawn(CBasePlayerItem* pWeapon);
@@ -472,7 +495,7 @@ public:
 		GoToIntermission();
 	}
 
-	IBotGameRulesInterface* BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* BotGameRulesInterface();
 
 protected:
 	virtual void ChangeLevel(void);
@@ -482,7 +505,7 @@ protected:
 	void SendMOTDToClient(edict_t* client);
 
 private:
-	IBotGameRulesInterface* m_pBotGameRulesInterface = nullptr;
+	Botrix::IBotGameRulesInterface* m_pBotGameRulesInterface = nullptr;
 };
 
 extern DLL_GLOBAL CGameRules* g_pGameRules;

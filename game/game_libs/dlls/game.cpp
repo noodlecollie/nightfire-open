@@ -24,7 +24,7 @@
 #include "customGeometry/commands.h"
 #include "resources/SoundResources.h"
 #include "gameplay/weaponInaccuracyCvars.h"
-#include "botrix/botrixbotfactory.h"
+#include "botrix/botfactory.h"
 #include "botrix/console_commands.h"
 #include "botrix/console_vars.h"
 
@@ -283,9 +283,9 @@ void GameDLLInit(void)
 	// END REGISTER CVARS FOR SKILL LEVEL STUFF
 
 	WeaponInaccuracyCvars::Init();
-	CBotrixCvars::RegisterAll();
-	CBotrixBotFactory::RegisterCvars();
-	CBotrixCommand::RegisterServerCommands();
+	Botrix::CBotrixCvars::RegisterAll();
+	Botrix::CBotFactory::RegisterCvars();
+	Botrix::CBotrixCommand::RegisterServerCommands();
 	CustomGeometry::InitialiseCommands();
 	HitboxDebugging::Initialise();
 

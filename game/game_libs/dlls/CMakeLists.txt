@@ -262,18 +262,12 @@ set(SOURCES_SERVER
 	botrix/good/vector.h
 	botrix/bot.h
 	botrix/bot.cpp
+	botrix/botfactory.h
+	botrix/botfactory.cpp
+	botrix/botgamerulesinterface.h
+	botrix/botgamerulesinterface.cpp
 	botrix/botregister.h
 	botrix/botregister.cpp
-	botrix/botrixbotfactory.h
-	botrix/botrixbotfactory.cpp
-	botrix/botrixgamerulesinterface.h
-	botrix/botrixgamerulesinterface.cpp
-	botrix/botrixmod.h
-	botrix/botrixmod.cpp
-	botrix/botrixplayerinfo.h
-	botrix/botrixplayerinfo.cpp
-	botrix/botrixserverentity.h
-	botrix/botrixserverentity.cpp
 	botrix/clients.h
 	botrix/clients.cpp
 	botrix/console_commands.h
@@ -288,13 +282,19 @@ set(SOURCES_SERVER
 	botrix/item.cpp
 	botrix/logbuffer.h
 	botrix/logbuffer.cpp
+	botrix/mod.h
+	botrix/mod.cpp
 	botrix/movecmd.h
 	botrix/parameter_vars.h
 	botrix/parameter_vars.cpp
+	botrix/playerinfo.h
+	botrix/playerinfo.cpp
 	botrix/players.h
 	botrix/players.cpp
 	botrix/server_plugin.h
 	botrix/server_plugin.cpp
+	botrix/serverentity.h
+	botrix/serverentity.cpp
 	botrix/type2string.h
 	botrix/type2string.cpp
 	botrix/types.h

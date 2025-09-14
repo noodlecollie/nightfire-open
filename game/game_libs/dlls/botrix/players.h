@@ -3,336 +3,331 @@
 #include <good/memory.h>  // unique_ptr
 
 #include "standard_includes.h"
-#include "botrix/botrixplayerinfo.h"
+#include "botrix/playerinfo.h"
 #include "botrix/types.h"
 #include "botrix/server_plugin.h"
 
-// TODO: Make this a convar instead
-// #if defined(DEBUG) || defined(_DEBUG)
-// #define DRAW_PLAYER_HULL
-// #endif
-
-class CBotrixClient;  // Forward declaration.
 class CBasePlayer;
 
-// NFTODO: Rename to CBotrixPlayer
-//****************************************************************************************************************
-/// Class that defines a player (bot or client).
-//****************************************************************************************************************
-class CPlayer
+namespace Botrix
 {
-public:
-	/// Constructor.
-	CPlayer(edict_t* pEdict, bool bIsBot);
+	class CBotrixClient;  // Forward declaration.
 
-	/// Destructor.
-	virtual ~CPlayer()
+	//****************************************************************************************************************
+	/// Class that defines a player (bot or client).
+	//****************************************************************************************************************
+	class CPlayer
 	{
-	}
+	public:
+		/// Constructor.
+		CPlayer(edict_t* pEdict, bool bIsBot);
 
-	CBasePlayer* GetPlayerClassPtr() const;
+		/// Destructor.
+		virtual ~CPlayer()
+		{
+		}
 
-	/// Return true if player is a bot.
-	bool IsBot() const
-	{
-		return m_bBot;
-	}
+		CBasePlayer* GetPlayerClassPtr() const;
 
-	/// Return true if player is alive.
-	bool IsAlive() const
-	{
-		return m_bAlive;
-	}
+		/// Return true if player is a bot.
+		bool IsBot() const
+		{
+			return m_bBot;
+		}
 
-	/// Return true if player is protected.
-	bool IsProtected() const
-	{
-		return m_bProtected;
-	}
+		/// Return true if player is alive.
+		bool IsAlive() const
+		{
+			return m_bAlive;
+		}
 
-	/// Get entity index of player.
-	TPlayerIndex GetIndex() const
-	{
-		return m_iIndex;
-	}
+		/// Return true if player is protected.
+		bool IsProtected() const
+		{
+			return m_bProtected;
+		}
 
-	/// Get edict of player.
-	edict_t* GetEdict() const
-	{
-		return m_pEdict;
-	}
+		/// Get entity index of player.
+		TPlayerIndex GetIndex() const
+		{
+			return m_iIndex;
+		}
 
-	/// Return player's team.
-	int GetTeam() const
-	{
-		return m_PlayerInfo.GetTeamIndex();
-	}
+		/// Get edict of player.
+		edict_t* GetEdict() const
+		{
+			return m_pEdict;
+		}
 
-	/// Get player's info.
-	const CBotrixPlayerInfo* GetPlayerInfo() const
-	{
-		return &m_PlayerInfo;
-	}
+		/// Return player's team.
+		int GetTeam() const
+		{
+			return m_PlayerInfo.GetTeamIndex();
+		}
 
-	CBotrixPlayerInfo* GetPlayerInfo()
-	{
-		return &m_PlayerInfo;
-	}
+		/// Get player's info.
+		const CPlayerInfo* GetPlayerInfo() const
+		{
+			return &m_PlayerInfo;
+		}
 
-	/// Get name of this player.
-	const char* GetName() const
-	{
-		return m_PlayerInfo.GetName();
-	}
+		CPlayerInfo* GetPlayerInfo()
+		{
+			return &m_PlayerInfo;
+		}
 
-	/// Get lowercase name of this player.
-	const good::string& GetLowerName() const
-	{
-		return m_sName;
-	}
+		/// Get name of this player.
+		const char* GetName() const
+		{
+			return m_PlayerInfo.GetName();
+		}
 
-	/// Get head position of player.
-	const Vector& GetHead() const
-	{
-		return m_vHead;
-	}
+		/// Get lowercase name of this player.
+		const good::string& GetLowerName() const
+		{
+			return m_sName;
+		}
 
-	/// Get previous head position of player.
-	const Vector& GetPreviousHead() const
-	{
-		return m_vPrevHead;
-	}
+		/// Get head position of player.
+		const Vector& GetHead() const
+		{
+			return m_vHead;
+		}
 
-	/// Get center position of player.
-	void GetCenter(Vector& v) const
-	{
-		// Best guess based on Source SDK code is that this is the eye position.
-		// It's described as the "centre of the PVS", and is used in similar
-		// circumstances to the player's eyes.
-		v = m_PlayerInfo.GetEyePosition();
-	}
+		/// Get previous head position of player.
+		const Vector& GetPreviousHead() const
+		{
+			return m_vPrevHead;
+		}
 
-	/// Get foot position of player.
-	void GetFoot(Vector& v) const
-	{
-		v = m_PlayerInfo.GetAbsOrigin();
-	}
+		/// Get center position of player.
+		void GetCenter(Vector& v) const
+		{
+			// Best guess based on Source SDK code is that this is the eye position.
+			// It's described as the "centre of the PVS", and is used in similar
+			// circumstances to the player's eyes.
+			v = m_PlayerInfo.GetEyePosition();
+		}
 
-	/// Get health of player.
-	int GetHealth() const
-	{
-		return m_PlayerInfo.GetHealth();
-	}
+		/// Get foot position of player.
+		void GetFoot(Vector& v) const
+		{
+			v = m_PlayerInfo.GetAbsOrigin();
+		}
 
-	/// Get player's view angles.
-	void GetEyeAngles(Vector& a) const
-	{
-		a = m_PlayerInfo.GetEyeAngles();
-	}
+		/// Get health of player.
+		int GetHealth() const
+		{
+			return m_PlayerInfo.GetHealth();
+		}
 
-	/// Protect player for certain amount of time. 0 means don't protect, -1 means forever.
-	void Protect(float time)
-	{
-		m_bProtected = time != 0.0f;
-		m_fEndProtectionTime = time >= 0 ? CBotrixServerPlugin::GetTime() + time : -1;
-	}
+		/// Get player's view angles.
+		void GetEyeAngles(Vector& a) const
+		{
+			a = m_PlayerInfo.GetEyeAngles();
+		}
 
-	//------------------------------------------------------------------------------------------------------------
-	// Virtual functions, client or bot should override these.
-	//------------------------------------------------------------------------------------------------------------
-	/// Called when client finished connecting with server (becomes active).
-	virtual const char* GetStatus()
-	{
-		return GetName();
-	}
+		/// Protect player for certain amount of time. 0 means don't protect, -1 means forever.
+		void Protect(float time)
+		{
+			m_bProtected = time != 0.0f;
+			m_fEndProtectionTime = time >= 0 ? CBotrixServerPlugin::GetTime() + time : -1;
+		}
 
-	/// Called when client finished connecting with server (becomes active).
-	virtual void Activated();
+		//------------------------------------------------------------------------------------------------------------
+		// Virtual functions, client or bot should override these.
+		//------------------------------------------------------------------------------------------------------------
+		/// Called when client finished connecting with server (becomes active).
+		virtual const char* GetStatus()
+		{
+			return GetName();
+		}
 
-	/// Player is respawned. Set up current waypoint and head position.
-	virtual void Respawned();
+		/// Called when client finished connecting with server (becomes active).
+		virtual void Activated();
 
-	/// Called when player becomes dead.
-	virtual void Dead()
-	{
-		m_bAlive = false;
-	}
+		/// Player is respawned. Set up current waypoint and head position.
+		virtual void Respawned();
 
-	/// Called each frame. Update current waypoint and head position.
-	virtual void PreThink();
+		/// Called when player becomes dead.
+		virtual void Dead()
+		{
+			m_bAlive = false;
+		}
 
-public:
-	TWaypointId iCurrentWaypoint;  ///< Nearest waypoint to player's position.
-	TWaypointId
-		iNextWaypoint;  ///< Next waypoint in path, used by bot to check if touching next waypoint (to perform actions).
-	TWaypointId iPrevWaypoint;  ///< Previous waypoint in path, used by bot to rewind action if action fails.
+		/// Called each frame. Update current waypoint and head position.
+		virtual void PreThink();
 
-	TPlayerIndex iChatMate;  ///< Current chat mate.
+	public:
+		TWaypointId iCurrentWaypoint;  ///< Nearest waypoint to player's position.
+		TWaypointId iNextWaypoint;  ///< Next waypoint in path, used by bot to check if touching next waypoint (to
+									///< perform actions).
+		TWaypointId iPrevWaypoint;  ///< Previous waypoint in path, used by bot to rewind action if action fails.
 
-protected:
-	edict_t* m_pEdict = nullptr;  // Player's edict.
-	TPlayerIndex m_iIndex = 0;  // Player's index.
-	CBotrixPlayerInfo m_PlayerInfo;  // Player's info.
-#ifdef DRAW_PLAYER_HULL
-	float m_fNextDrawHullTime = 0.0f;  // Next time to draw player's hull.
-#endif
+		TPlayerIndex iChatMate;  ///< Current chat mate.
 
-	float m_fEndProtectionTime = 0.0f;  // Time when player's protection ends.
+	protected:
+		edict_t* m_pEdict = nullptr;  // Player's edict.
+		TPlayerIndex m_iIndex = 0;  // Player's index.
+		CPlayerInfo m_PlayerInfo;  // Player's info.
+		float m_fNextDrawHullTime = 0.0f;  // Next time to draw player's hull.
+		float m_fEndProtectionTime = 0.0f;  // Time when player's protection ends.
 
-	good::string m_sName;  // Lowercased name of player.
-	Vector m_vHead;  // Head position of player.
-	Vector m_vPrevHead;  // Previous position of player.
+		good::string m_sName;  // Lowercased name of player.
+		Vector m_vHead;  // Head position of player.
+		Vector m_vPrevHead;  // Previous position of player.
 
-	bool m_bBot;  // This member will be set to true by bot.
-	bool m_bAlive;  // IPlayerInfo::IsDead() returns true only when player is dead, not when becomes respawnable.
-	bool m_bProtected;  // If this player / bot is protected, then bots shouldn't attack him.
-};
-
-typedef good::shared_ptr<CPlayer> CPlayerPtr;  ///< Typedef for unique_ptr of CPlayer.
-
-//****************************************************************************************************************
-/// Class that holds both clients and bots.
-//****************************************************************************************************************
-class CPlayers
-{
-public:
-	static bool bAddingBot;  ///< True if currently adding bot.
-	static int iBotsPlayersCount;  ///< Count of bots + players.
-	static float fPlayerBotRatio;  ///< Player-Bot ratio. For example 3 means 3bots per 1player.
-
-	/// Get count of players on this server.
-	static inline int Size()
-	{
-		return m_aPlayers.size();
+		bool m_bBot;  // This member will be set to true by bot.
+		bool m_bAlive;  // IPlayerInfo::IsDead() returns true only when player is dead, not when becomes respawnable.
+		bool m_bProtected;  // If this player / bot is protected, then bots shouldn't attack him.
 	};
 
-	/// Get bots count.
-	static inline int GetBotsCount()
-	{
-		return m_iBotsCount;
-	}
+	typedef good::shared_ptr<CPlayer> CPlayerPtr;  ///< Typedef for unique_ptr of CPlayer.
 
-	/// Get clients count.
-	static inline int GetClientsCount()
+	//****************************************************************************************************************
+	/// Class that holds both clients and bots.
+	//****************************************************************************************************************
+	class CPlayers
 	{
-		return m_iClientsCount;
-	}
+	public:
+		static bool bAddingBot;  ///< True if currently adding bot.
+		static int iBotsPlayersCount;  ///< Count of bots + players.
+		static float fPlayerBotRatio;  ///< Player-Bot ratio. For example 3 means 3bots per 1player.
 
-	/// Get players count.
-	static inline int GetPlayersCount()
-	{
-		return m_iClientsCount + m_iBotsCount;
-	}
-
-	/// Get players count in given team.
-	static int GetTeamCount(TTeam iTeam)
-	{
-		int iCount = 0;
-		for ( int i = 0; i < Size(); ++i )
+		/// Get count of players on this server.
+		static inline int Size()
 		{
-			CPlayer* pPlayer = m_aPlayers[i].get();
-			if ( pPlayer && (pPlayer->GetTeam() == iTeam) )
-				iCount++;
+			return m_aPlayers.size();
+		};
+
+		/// Get bots count.
+		static inline int GetBotsCount()
+		{
+			return m_iBotsCount;
 		}
-		return iCount;
-	}
 
-	/// Get players names on this server.
-	static void GetNames(StringVector& aNames, bool bGetBots = true, bool bGetUsers = true);
+		/// Get clients count.
+		static inline int GetClientsCount()
+		{
+			return m_iClientsCount;
+		}
 
-	/// Check amount of bots on server.
-	static void CheckBotsCount();
+		/// Get players count.
+		static inline int GetPlayersCount()
+		{
+			return m_iClientsCount + m_iBotsCount;
+		}
 
-	/// Get player from index.
-	static inline CPlayer* Get(TPlayerIndex iIndex)
-	{
-		return m_aPlayers[iIndex].get();
-	}
+		/// Get players count in given team.
+		static int GetTeamCount(TTeam iTeam)
+		{
+			int iCount = 0;
+			for ( int i = 0; i < Size(); ++i )
+			{
+				CPlayer* pPlayer = m_aPlayers[i].get();
+				if ( pPlayer && (pPlayer->GetTeam() == iTeam) )
+					iCount++;
+			}
+			return iCount;
+		}
 
-	/// Get player from index.
-	static inline CPlayer* Get(edict_t* pEdict)
-	{
-		return m_aPlayers[GetIndex(pEdict)].get();
-	}
+		/// Get players names on this server.
+		static void GetNames(StringVector& aNames, bool bGetBots = true, bool bGetUsers = true);
 
-	/// Get player index from edict.
-	static inline int GetIndex(edict_t* pPlayer)
-	{
-		return ENTINDEX(pPlayer) - 1;
-	}
+		/// Check amount of bots on server.
+		static void CheckBotsCount();
 
-	/// Invalidate waypoints for all players.
-	static void InvalidatePlayersWaypoints();
+		/// Get player from index.
+		static inline CPlayer* Get(TPlayerIndex iIndex)
+		{
+			return m_aPlayers[iIndex].get();
+		}
 
-	/// Start new map.
-	static void Init(int iMaxPlayers);
+		/// Get player from index.
+		static inline CPlayer* Get(edict_t* pEdict)
+		{
+			return m_aPlayers[GetIndex(pEdict)].get();
+		}
 
-	/// End map.
-	static void Clear();
+		/// Get player index from edict.
+		static inline int GetIndex(edict_t* pPlayer)
+		{
+			return ENTINDEX(pPlayer) - 1;
+		}
 
-	//------------------------------------------------------------------------------------------------------------
-	// Bot handling.
-	//------------------------------------------------------------------------------------------------------------
-	/// Add bot.
-	static CPlayer* AddBot(
-		const char* sName = NULL,
-		TTeam iTeam = 0,
-		TBotIntelligence iIntelligence = -1,
-		int argc = 0,
-		const char** argv = NULL
-	);
+		/// Invalidate waypoints for all players.
+		static void InvalidatePlayersWaypoints();
 
-	/// Kick given bot.
-	static void KickBot(CPlayer* pPlayer);
+		/// Start new map.
+		static void Init(int iMaxPlayers);
 
-	/// Kick random bot on random team.
-	static bool KickRandomBot();
+		/// End map.
+		static void Clear();
 
-	/// Kick random bot on given team.
-	static bool KickRandomBotOnTeam(int team);
+		//------------------------------------------------------------------------------------------------------------
+		// Bot handling.
+		//------------------------------------------------------------------------------------------------------------
+		/// Add bot.
+		static CPlayer* AddBot(
+			const char* sName = NULL,
+			TTeam iTeam = 0,
+			TBotIntelligence iIntelligence = -1,
+			int argc = 0,
+			const char** argv = NULL
+		);
 
-	/// Deliver message to all clients.
-	static void Message(const char* szFormat, ...);
+		/// Kick given bot.
+		static void KickBot(CPlayer* pPlayer);
 
-	/// Called when player connects this server.
-	static void PlayerConnected(edict_t* pEdict);
+		/// Kick random bot on random team.
+		static bool KickRandomBot();
 
-	/// Called when player disconnects from this server.
-	static void PlayerDisconnected(edict_t* pEdict);
+		/// Kick random bot on given team.
+		static bool KickRandomBotOnTeam(int team);
 
-	/// Called each frame. Will make players and bots 'think'.
-	static void PreThink();
+		/// Deliver message to all clients.
+		static void Message(const char* szFormat, ...);
 
-	//------------------------------------------------------------------------------------------------------------
-	// Debugging events.
-	//------------------------------------------------------------------------------------------------------------
-	/// Returns true if some client is debugging events.
-	static inline bool IsDebuggingEvents()
-	{
-		return m_bClientDebuggingEvents;
-	}
+		/// Called when player connects this server.
+		static void PlayerConnected(edict_t* pEdict);
 
-	/// Check if some client is debugging events. If so, DebugEvent() with event info will be called.
-	static void CheckForDebugging();
+		/// Called when player disconnects from this server.
+		static void PlayerDisconnected(edict_t* pEdict);
 
-	/// Display info message on client that is debugging events.
-	static void DebugEvent(const char* szFormat, ...);
+		/// Called each frame. Will make players and bots 'think'.
+		static void PreThink();
 
-	/// Get last error.
-	static inline const good::string& GetLastError()
-	{
-		return m_sLastError;
-	}
+		//------------------------------------------------------------------------------------------------------------
+		// Debugging events.
+		//------------------------------------------------------------------------------------------------------------
+		/// Returns true if some client is debugging events.
+		static inline bool IsDebuggingEvents()
+		{
+			return m_bClientDebuggingEvents;
+		}
 
-protected:
-	static good::vector<CPlayerPtr> m_aPlayers;
-	static bool m_bClientDebuggingEvents;  // True if some client is debugging event messages.
-	static bool m_bCheckBotCountFinished;  // True if finished adding/kicking bots.
+		/// Check if some client is debugging events. If so, DebugEvent() with event info will be called.
+		static void CheckForDebugging();
 
-	static int m_iClientsCount;  // Total amount of clients on this server.
-	static int m_iBotsCount;  // Total amount of bots on this server.
+		/// Display info message on client that is debugging events.
+		static void DebugEvent(const char* szFormat, ...);
 
-	static good::string m_sLastError;  // Last error.
+		/// Get last error.
+		static inline const good::string& GetLastError()
+		{
+			return m_sLastError;
+		}
 
-	static good::vector<good::vector<bool>> m_iChatPairs;  // 2D array representing who chats with whom.
-};
+	protected:
+		static good::vector<CPlayerPtr> m_aPlayers;
+		static bool m_bClientDebuggingEvents;  // True if some client is debugging event messages.
+		static bool m_bCheckBotCountFinished;  // True if finished adding/kicking bots.
+
+		static int m_iClientsCount;  // Total amount of clients on this server.
+		static int m_iBotsCount;  // Total amount of bots on this server.
+
+		static good::string m_sLastError;  // Last error.
+
+		static good::vector<good::vector<bool>> m_iChatPairs;  // 2D array representing who chats with whom.
+	};
+}  // namespace Botrix

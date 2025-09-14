@@ -32,9 +32,8 @@
 #endif
 #include "EnginePublicAPI/hltv.h"
 #include "ammodefs.h"
-#include "botrix/botrixgamerulesinterface.h"
+#include "botrix/botgamerulesinterface.h"
 #include "nodes.h"
-#include "botrix/botrixgamerulesinterface.h"
 #include "weapon_p99.h"
 
 extern DLL_GLOBAL CGameRules* g_pGameRules;
@@ -80,7 +79,7 @@ static CMultiplayGameMgrHelper g_GameMgrHelper;
 CHalfLifeMultiplay::CHalfLifeMultiplay() :
 	CGameRules()
 {
-	m_pBotGameRulesInterface = new CBotrixGameRulesInterface();
+	m_pBotGameRulesInterface = new Botrix::CBotGameRulesInterface();
 
 #ifndef NO_VOICEGAMEMGR
 	g_VoiceGameMgr.Init(&g_GameMgrHelper, gpGlobals->maxClients);
@@ -611,11 +610,11 @@ void CHalfLifeMultiplay::PlayerSpawn(CBasePlayer* pPlayer)
 
 		if ( ammoDef && ammoDef->ClassName )
 		{
-			pPlayer->GiveAmmo(ammoDef->AmmoBoxGive, ammoDef->AmmoName, ammoDef->MaxCarry);
+			pPlayer->GiveAmmo(2 * ammoDef->AmmoBoxGive, ammoDef->AmmoName, ammoDef->MaxCarry);
 		}
 	}
 
-	IBotGameRulesInterface* bgri = BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* bgri = BotGameRulesInterface();
 
 	if ( bgri )
 	{
@@ -653,7 +652,7 @@ int CHalfLifeMultiplay::IPointsForKill(CBasePlayer*, CBasePlayer*)
 
 void CHalfLifeMultiplay::PlayerHurt(CBasePlayer* pVictim, entvars_t* pAttacker)
 {
-	IBotGameRulesInterface* bgri = BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* bgri = BotGameRulesInterface();
 
 	if ( bgri )
 	{
@@ -696,7 +695,7 @@ void CHalfLifeMultiplay::PlayerKilled(CBasePlayer* pVictim, entvars_t* pKiller, 
 		pKiller->frags -= 1;
 	}
 
-	IBotGameRulesInterface* bgri = BotGameRulesInterface();
+	Botrix::IBotGameRulesInterface* bgri = BotGameRulesInterface();
 
 	if ( bgri )
 	{
@@ -1231,7 +1230,7 @@ void CHalfLifeMultiplay::GoToIntermission(void)
 	m_iEndIntermissionButtonHit = FALSE;
 }
 
-IBotGameRulesInterface* CHalfLifeMultiplay::BotGameRulesInterface()
+Botrix::IBotGameRulesInterface* CHalfLifeMultiplay::BotGameRulesInterface()
 {
 	return m_pBotGameRulesInterface;
 }
