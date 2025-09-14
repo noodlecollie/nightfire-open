@@ -2,7 +2,7 @@
 
 #include "standard_includes.h"
 #include <good/string.h>
-#include "botrix/botrixbotfactory.h"
+#include "botrix/botfactory.h"
 
 struct edict_s;
 class CBasePlayer;

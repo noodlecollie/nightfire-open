@@ -8,7 +8,7 @@
 #include "botrix/item.h"
 #include "botrix/clients.h"
 #include "botrix/parameter_vars.h"
-#include "botrixmod.h"
+#include "mod.h"
 #include "engine_util.h"
 #include "enginecallback.h"
 #include "standard_includes.h"

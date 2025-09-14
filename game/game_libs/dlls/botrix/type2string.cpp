@@ -2,7 +2,7 @@
 #include <good/string_buffer.h>
 #include <good/string_utils.h>
 
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/server_plugin.h"
 #include "botrix/type2string.h"
 

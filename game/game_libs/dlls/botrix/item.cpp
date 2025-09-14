@@ -3,7 +3,7 @@
 #include "botrix/defines.h"
 #include "botrix/type2string.h"
 #include "botrix/server_plugin.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/clients.h"
 #include "botrix/waypoint.h"
 #include "botrix/parameter_vars.h"

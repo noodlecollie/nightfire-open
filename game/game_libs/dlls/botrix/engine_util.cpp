@@ -2,7 +2,7 @@
 #include <limits>
 #include "EnginePublicAPI/cvardef.h"
 #include "EnginePublicAPI/eiface.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/waypoint.h"
 #include "botrix/botrixgamerulesinterface.h"
 #include "botrix/defines.h"

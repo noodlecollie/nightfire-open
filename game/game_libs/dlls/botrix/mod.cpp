@@ -1,7 +1,7 @@
 #include <good/string_utils.h>
 #include <good/string_buffer.h>
 
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/players.h"
 #include "botrix/server_plugin.h"
 #include "botrix/defines.h"

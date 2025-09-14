@@ -24,7 +24,7 @@
 #include "customGeometry/commands.h"
 #include "resources/SoundResources.h"
 #include "gameplay/weaponInaccuracyCvars.h"
-#include "botrix/botrixbotfactory.h"
+#include "botrix/botfactory.h"
 #include "botrix/console_commands.h"
 #include "botrix/console_vars.h"
 
@@ -284,7 +284,7 @@ void GameDLLInit(void)
 
 	WeaponInaccuracyCvars::Init();
 	Botrix::CBotrixCvars::RegisterAll();
-	Botrix::CBotrixBotFactory::RegisterCvars();
+	Botrix::CBotFactory::RegisterCvars();
 	Botrix::CBotrixCommand::RegisterServerCommands();
 	CustomGeometry::InitialiseCommands();
 	HitboxDebugging::Initialise();

@@ -3,7 +3,7 @@
 #include "botrix/types.h"
 #include "botrix/defines.h"
 #include "botrix/players.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/waypoint.h"
 #include "botrix/item.h"
 #include "botrix/weapon.h"

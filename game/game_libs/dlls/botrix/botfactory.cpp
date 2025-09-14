@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <random>
-#include "botrix/botrixbotfactory.h"
-#include "botrixmod.h"
+#include "botrix/botfactory.h"
+#include "botrix/mod.h"
 #include "standard_includes.h"
 #include "util.h"
 #include "EnginePublicAPI/eiface.h"

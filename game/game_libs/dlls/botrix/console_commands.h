@@ -5,7 +5,7 @@
 #include "botrix/types.h"
 #include "botrix/clients.h"
 #include "botrix/type2string.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/defines.h"
 #include "utlvector.h"
 #include "utlstring.h"

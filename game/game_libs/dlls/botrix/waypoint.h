@@ -5,7 +5,7 @@
 
 #include "MathLib/vec3.h"
 #include "botrix/types.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/engine_util.h"
 #include "botrix/parameter_vars.h"
 

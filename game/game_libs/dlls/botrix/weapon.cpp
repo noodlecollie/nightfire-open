@@ -2,7 +2,7 @@
 #include "botrix/server_plugin.h"
 #include "botrix/defines.h"
 #include "botrix/players.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "EnginePublicAPI/const.h"
 #include "MathLib/mathlib.h"
 #include "good/defines.h"

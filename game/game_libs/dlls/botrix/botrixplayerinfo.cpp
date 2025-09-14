@@ -3,7 +3,7 @@
 #include "gamerules.h"
 #include "weapons.h"
 #include "botrix/engine_util.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 
 namespace Botrix
 {

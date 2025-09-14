@@ -1,7 +1,7 @@
 #include "botrix/waypoint_navigator.h"
 #include "botrix/server_plugin.h"
 #include "botrix/engine_util.h"
-#include "botrix/botrixmod.h"
+#include "botrix/mod.h"
 #include "botrix/parameter_vars.h"
 
 namespace Botrix

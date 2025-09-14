@@ -262,14 +262,12 @@ set(SOURCES_SERVER
 	botrix/good/vector.h
 	botrix/bot.h
 	botrix/bot.cpp
+	botrix/botfactory.h
+	botrix/botfactory.cpp
 	botrix/botregister.h
 	botrix/botregister.cpp
-	botrix/botrixbotfactory.h
-	botrix/botrixbotfactory.cpp
 	botrix/botrixgamerulesinterface.h
 	botrix/botrixgamerulesinterface.cpp
-	botrix/botrixmod.h
-	botrix/botrixmod.cpp
 	botrix/botrixplayerinfo.h
 	botrix/botrixplayerinfo.cpp
 	botrix/botrixserverentity.h
@@ -288,6 +286,8 @@ set(SOURCES_SERVER
 	botrix/item.cpp
 	botrix/logbuffer.h
 	botrix/logbuffer.cpp
+	botrix/mod.h
+	botrix/mod.cpp
 	botrix/movecmd.h
 	botrix/parameter_vars.h
 	botrix/parameter_vars.cpp
