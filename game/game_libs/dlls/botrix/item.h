@@ -7,7 +7,7 @@
 
 #include "botrix/defines.h"
 #include "botrix/types.h"
-#include "botrix/botrixserverentity.h"
+#include "botrix/serverentity.h"
 
 struct edict_s;
 
@@ -125,7 +125,7 @@ namespace Botrix
 		/// Return current position of the item.
 		Vector CurrentPosition() const
 		{
-			return CBotrixServerEntity(pEdict).GetOrigin();
+			return ServerEntity(pEdict).GetOrigin();
 		}
 
 		/// == operator.
@@ -306,10 +306,9 @@ namespace Botrix
 			TItemType iEntityType,
 			struct edict_s* pEdict,
 			CItemClass* pItemClass,
-			const CBotrixServerEntity& serverEntity
+			const ServerEntity& serverEntity
 		);
-		static void
-		AddObject(struct edict_s* pEdict, const CItemClass* pObjectClass, const CBotrixServerEntity& serverEntity);
+		static void AddObject(struct edict_s* pEdict, const CItemClass* pObjectClass, const ServerEntity& serverEntity);
 
 		// friend class CWaypoints; // Give access to WaypointDeleted().
 		// static void WaypointDeleted( TWaypointId id );

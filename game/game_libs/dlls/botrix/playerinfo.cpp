@@ -1,4 +1,4 @@
-#include "botrix/botrixplayerinfo.h"
+#include "botrix/playerinfo.h"
 #include "standard_includes.h"
 #include "gamerules.h"
 #include "weapons.h"

@@ -27,7 +27,7 @@ namespace Botrix
 	fast_edict_index_t m_aEdictsIndexes[MAX_EDICTS];
 
 	//================================================================================================================
-	// inline int GetEntityFlags( CBotrixServerEntity* pServerEntity )
+	// inline int GetEntityFlags( ServerEntity* pServerEntity )
 	//{
 	//    // ObjectCaps(), GetMaxHealth(), IsAlive().
 	//    CBaseEntity* pEntity = pServerEntity->GetBaseEntity();
@@ -47,33 +47,33 @@ namespace Botrix
 	// #endif
 	//}
 
-	inline int GetEntityEffects(const CBotrixServerEntity& serverEntity)
+	inline int GetEntityEffects(const ServerEntity& serverEntity)
 	{
 		return serverEntity.GetEdict()->v.effects;
 	}
 
-	inline int GetEntityHealth(const CBotrixServerEntity& serverEntity)
+	inline int GetEntityHealth(const ServerEntity& serverEntity)
 	{
 		return static_cast<int>(serverEntity.GetEdict()->v.health);
 	}
 
-	inline bool IsEntityOnMap(const CBotrixServerEntity& serverEntity)
+	inline bool IsEntityOnMap(const ServerEntity& serverEntity)
 	{
 		return FLAG_CLEARED(EF_NODRAW, GetEntityEffects(serverEntity));
 	}
 
-	inline bool IsEntityTaken(const CBotrixServerEntity& serverEntity)
+	inline bool IsEntityTaken(const ServerEntity& serverEntity)
 	{
 		CBasePlayerItem* item = serverEntity.GetBasePlayerItem();
 		return item && item->m_pPlayer;
 	}
 
-	inline bool IsEntityBreakable(const CBotrixServerEntity& serverEntity)
+	inline bool IsEntityBreakable(const ServerEntity& serverEntity)
 	{
 		return GetEntityHealth(serverEntity) != 0;
 	}
 
-	// inline bool CanPickupEntity( CBotrixServerEntity* pServerEntity )
+	// inline bool CanPickupEntity( ServerEntity* pServerEntity )
 	//{
 	//     CBaseEntity* pEntity = pServerEntity->GetBaseEntity();
 	//     if ( pEntity == NULL )
@@ -104,19 +104,19 @@ namespace Botrix
 	//================================================================================================================
 	bool CItem::IsOnMap() const
 	{
-		return IsEntityOnMap(CBotrixServerEntity(pEdict));
+		return IsEntityOnMap(ServerEntity(pEdict));
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
 	bool CItem::IsBreakable() const
 	{
-		return IsEntityBreakable(CBotrixServerEntity(pEdict));
+		return IsEntityBreakable(ServerEntity(pEdict));
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
 	bool CItem::IsTaken() const
 	{
-		return IsEntityTaken(CBotrixServerEntity(pEdict));
+		return IsEntityTaken(ServerEntity(pEdict));
 	}
 
 	//================================================================================================================
@@ -323,7 +323,7 @@ namespace Botrix
 				continue;
 			}
 
-			CBotrixServerEntity serverEntity(pEdict);
+			ServerEntity serverEntity(pEdict);
 
 			if ( pEdict->free )
 			{
@@ -365,7 +365,7 @@ namespace Botrix
 			--entsToCheck;
 
 			// Check only server entities.
-			CBotrixServerEntity serverEntity(pEdict);
+			ServerEntity serverEntity(pEdict);
 
 			// Check only for new weapons, because new weapon instance is created when weapon is picked up.
 			CItemClass* pWeaponClass;
@@ -471,7 +471,7 @@ namespace Botrix
 		m_iMaxEntityIndex = MAX2(iEntIndex, m_iMaxEntityIndex);
 
 		// Check only server entities.
-		CBotrixServerEntity serverEntity(pEdict);
+		ServerEntity serverEntity(pEdict);
 
 		CItemClass* pItemClass;
 		TItemType iEntityType = GetEntityType(szClassName, pItemClass, 0, EItemTypeKnownTotal);
@@ -622,7 +622,7 @@ namespace Botrix
 		TItemType iEntityType,
 		struct edict_s* pEdict,
 		CItemClass* pItemClass,
-		const CBotrixServerEntity& serverEntity
+		const ServerEntity& serverEntity
 	)
 	{
 		GoodAssert((0 <= iEntityType) && (iEntityType < EItemTypeAll));
@@ -684,8 +684,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void
-	CItems::AddObject(struct edict_s* pEdict, const CItemClass* pObjectClass, const CBotrixServerEntity& serverEntity)
+	void CItems::AddObject(struct edict_s* pEdict, const CItemClass* pObjectClass, const ServerEntity& serverEntity)
 	{
 		// Calculate object radius.
 		// TODO: why not use object class to get distance?
@@ -790,7 +789,7 @@ namespace Botrix
 					continue;
 				}
 
-				CBotrixServerEntity serverEntity(pEdict);
+				ServerEntity serverEntity(pEdict);
 
 				if ( IsEntityTaken(serverEntity) )
 				{

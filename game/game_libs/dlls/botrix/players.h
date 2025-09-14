@@ -3,7 +3,7 @@
 #include <good/memory.h>  // unique_ptr
 
 #include "standard_includes.h"
-#include "botrix/botrixplayerinfo.h"
+#include "botrix/playerinfo.h"
 #include "botrix/types.h"
 #include "botrix/server_plugin.h"
 

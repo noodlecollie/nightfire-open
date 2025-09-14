@@ -268,8 +268,6 @@ set(SOURCES_SERVER
 	botrix/botgamerulesinterface.cpp
 	botrix/botregister.h
 	botrix/botregister.cpp
-	botrix/botrixserverentity.h
-	botrix/botrixserverentity.cpp
 	botrix/clients.h
 	botrix/clients.cpp
 	botrix/console_commands.h
@@ -295,6 +293,8 @@ set(SOURCES_SERVER
 	botrix/players.cpp
 	botrix/server_plugin.h
 	botrix/server_plugin.cpp
+	botrix/serverentity.h
+	botrix/serverentity.cpp
 	botrix/type2string.h
 	botrix/type2string.cpp
 	botrix/types.h

@@ -9,10 +9,10 @@ class CBasePlayerItem;
 
 namespace Botrix
 {
-	class CBotrixServerEntity
+	class ServerEntity
 	{
 	public:
-		explicit CBotrixServerEntity(struct edict_s* edict);
+		explicit ServerEntity(struct edict_s* edict);
 
 		CBaseEntity* GetBaseEntity() const;
 		CBasePlayerItem* GetBasePlayerItem() const;
