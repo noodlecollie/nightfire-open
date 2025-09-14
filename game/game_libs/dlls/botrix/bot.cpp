@@ -1012,6 +1012,8 @@ namespace Botrix
 			VectorAngles(vAim, angPlayer);
 
 			CBotrixEngineUtil::GetAngleDifference(angPlayer, m_cCmd.viewangles, angPlayer);
+
+			// BOTRIX_TODO: Is this right? Surely X is pitch and therefore vertical FOV?
 			bViewCone =
 				((-fFovHorizontal <= angPlayer.x) && (angPlayer.x <= fFovHorizontal) &&
 				 (-fFovVertical <= angPlayer.y) && (angPlayer.y <= fFovVertical));
