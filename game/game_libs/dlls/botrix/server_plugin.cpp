@@ -27,7 +27,7 @@ namespace Botrix
 	float CBotrixServerPlugin::m_fEngineTime = 0.0f;
 	CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
 	bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
-	CBotrixBotFactory CBotrixServerPlugin::m_BotFactory;
+	CBotFactory CBotrixServerPlugin::m_BotFactory;
 
 	static constexpr const char* const TEAM_NAME_UNASSIGNED = "unassigned";
 	static constexpr const char* const TEAM_NAME_SPECTATOR = "spectator";

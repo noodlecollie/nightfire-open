@@ -16,12 +16,12 @@ namespace Botrix
 	static cvar_t bot_profile_file =
 		{(char*)"bot_profile_file", (char*)"bot_profiles.json", FCVAR_ARCHIVE, 0.0f, nullptr};
 
-	void CBotrixBotFactory::RegisterCvars()
+	void CBotFactory::RegisterCvars()
 	{
 		CVAR_REGISTER(&bot_profile_file);
 	}
 
-	void CBotrixBotFactory::LoadBotProfiles()
+	void CBotFactory::LoadBotProfiles()
 	{
 		const char* fileName = bot_profile_file.string;
 
@@ -42,7 +42,7 @@ namespace Botrix
 		}
 	}
 
-	void CBotrixBotFactory::CreateBots(uint32_t num)
+	void CBotFactory::CreateBots(uint32_t num)
 	{
 		CUtlVector<CUtlString> randomProfileNameList;
 		RandomProfileNameList(randomProfileNameList, num);
@@ -64,7 +64,7 @@ namespace Botrix
 		}
 	}
 
-	bool CBotrixBotFactory::TryCreateBot(const CUtlString& profileName, const CUtlString& playerName)
+	bool CBotFactory::TryCreateBot(const CUtlString& profileName, const CUtlString& playerName)
 	{
 		if ( !m_ProfileTable.ProfileExists(profileName) )
 		{
@@ -75,7 +75,7 @@ namespace Botrix
 		return CreateBot(m_ProfileTable.GetProfile(profileName), playerName);
 	}
 
-	bool CBotrixBotFactory::CreateBot(const CBotProfileTable::ProfileData* profile, const CUtlString& playerName)
+	bool CBotFactory::CreateBot(const CBotProfileTable::ProfileData* profile, const CUtlString& playerName)
 	{
 		CUtlString name("Bot");
 
@@ -111,7 +111,7 @@ namespace Botrix
 		return true;
 	}
 
-	void CBotrixBotFactory::SetBotAttributesViaProfile(CBasePlayer* bot, const CBotProfileTable::ProfileData* profile)
+	void CBotFactory::SetBotAttributesViaProfile(CBasePlayer* bot, const CBotProfileTable::ProfileData* profile)
 	{
 		if ( !bot || !profile )
 		{
@@ -121,7 +121,7 @@ namespace Botrix
 		SetBotSkin(bot, profile->skin);
 	}
 
-	void CBotrixBotFactory::SetBotSkin(CBasePlayer* bot, const CUtlString& skin)
+	void CBotFactory::SetBotSkin(CBasePlayer* bot, const CUtlString& skin)
 	{
 		if ( !bot )
 		{
@@ -138,7 +138,7 @@ namespace Botrix
 		);
 	}
 
-	void CBotrixBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t count)
+	void CBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t count)
 	{
 		list.Purge();
 

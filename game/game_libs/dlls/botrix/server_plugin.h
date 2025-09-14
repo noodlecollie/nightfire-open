@@ -66,6 +66,6 @@ namespace Botrix
 		static CBotrixCommand* m_pConsoleCommands;
 
 		static bool m_bSpawnedRegisterBots;
-		static CBotrixBotFactory m_BotFactory;
+		static CBotFactory m_BotFactory;
 	};
 }  // namespace Botrix

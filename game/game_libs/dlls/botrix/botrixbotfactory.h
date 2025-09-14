@@ -10,7 +10,7 @@ namespace Botrix
 {
 	// Note that this class does not handle removal of bots.
 	// Just kick the bot as you would any other player.
-	class CBotrixBotFactory
+	class CBotFactory
 	{
 	public:
 		static void RegisterCvars();
