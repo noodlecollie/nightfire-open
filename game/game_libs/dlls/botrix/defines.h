@@ -10,12 +10,11 @@
 #define BLOG(user, level, ...) \
 	do \
 	{ \
-		int iMin = std::min<int>(good::log::iFileLogLevel, CBotrixEngineUtil::iLogLevel); \
+		int iMin = CBotrixEngineUtil::iLogLevel; \
 		if ( level >= iMin ) \
 		{ \
 			good::log::format(CBotrixLogBuffer::Buffer(), CBotrixLogBuffer::Size(), __VA_ARGS__); \
 			PlatformLib_StrCat(CBotrixLogBuffer::Buffer(), CBotrixLogBuffer::Size(), "\n"); \
-			/*good::log::print(level, CBotrixLogBuffer::Buffer());*/ \
 			CBotrixEngineUtil::Message(level, user, CBotrixLogBuffer::Buffer()); \
 		} \
 	} \

@@ -125,21 +125,8 @@ void CBotrixServerPlugin::Init()
 	CBotrixEngineUtil::iLogLevel = good::ELogLevelTrace;
 	good::log::iLogLevel = good::ELogLevelTrace;  // Trace before loading config.ini
 
-	// Get game/mod and botrix base directories.
-	good::string sIniPath;
-
-	BLOG_W("Using default mod config without items/weapons.");
-	CBotrixMod::sModName = "nightfire_open";
 	CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
-	good::log::iFileLogLevel = good::ELogLevelDebug;
 
-	BLOG_W("Using default teams (unassigned, spectator, unknown1, unknown2).");
-	CBotrixMod::aTeamsNames.push_back("unassigned");
-	CBotrixMod::aTeamsNames.push_back("spectator");
-	CBotrixMod::aTeamsNames.push_back("unknown1");
-	CBotrixMod::aTeamsNames.push_back("unknown2");
-
-	BLOG_W("Using default bot name (Botrix).");
 	CBotrixMod::aBotNames.push_back("Botrix");
 
 	m_pConsoleCommands = new CBotrixCommand();

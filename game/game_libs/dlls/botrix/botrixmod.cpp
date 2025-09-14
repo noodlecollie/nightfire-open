@@ -13,9 +13,6 @@
 #include "MathLib/mathlib.h"
 #include "utils/mp_utils.h"
 
-//----------------------------------------------------------------------------------------------------------------
-good::string CBotrixMod::sModName;
-
 StringVector CBotrixMod::aBotNames;
 CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> CBotrixMod::m_aFrameEvents;
 

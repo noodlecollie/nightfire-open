@@ -22,8 +22,6 @@ public:  // Methods.
 	static void UnLoad()
 	{
 		m_aFrameEvents.Purge();
-
-		sModName = "";
 		aTeamsNames.clear();
 		aBotNames.clear();
 	}
@@ -73,7 +71,6 @@ public:  // Methods.
 	AddBot(const char* szName, TBotIntelligence iIntelligence, TTeam iTeam, int iParamsCount, const char** aParams);
 
 public:  // Static members.
-	static good::string sModName;  ///< Mod name.
 	static StringVector aTeamsNames;  ///< Name of teams.
 	static int iUnassignedTeam;  ///< Index of unassigned (deathmatch) team.
 	static int iSpectatorTeam;  ///< Index of spectator team.
