@@ -4,7 +4,7 @@
 #include "EnginePublicAPI/eiface.h"
 #include "botrix/mod.h"
 #include "botrix/waypoint.h"
-#include "botrix/botrixgamerulesinterface.h"
+#include "botrix/botgamerulesinterface.h"
 #include "botrix/defines.h"
 #include "botrix/parameter_vars.h"
 #include "botrix/console_vars.h"
@@ -52,8 +52,8 @@ namespace Botrix
 			{
 				edict_t* listenServerPlayer = nullptr;
 				CHalfLifeMultiplay* mpGamerules = dynamic_cast<CHalfLifeMultiplay*>(g_pGameRules);
-				Botrix::CBotrixGameRulesInterface* bgri = mpGamerules
-					? dynamic_cast<Botrix::CBotrixGameRulesInterface*>(mpGamerules->BotGameRulesInterface())
+				Botrix::CBotGameRulesInterface* bgri = mpGamerules
+					? dynamic_cast<Botrix::CBotGameRulesInterface*>(mpGamerules->BotGameRulesInterface())
 					: nullptr;
 
 				if ( bgri )

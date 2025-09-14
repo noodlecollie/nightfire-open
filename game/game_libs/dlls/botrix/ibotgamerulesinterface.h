@@ -5,6 +5,8 @@ struct edict_s;
 
 namespace Botrix
 {
+	// BOTRIX_TODO: Do we need this as an interface any more?
+	// We only have one bot backend now.
 	class IBotGameRulesInterface
 	{
 	public:

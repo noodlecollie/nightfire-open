@@ -5,11 +5,11 @@
 
 namespace Botrix
 {
-	class CBotrixGameRulesInterface : public IBotGameRulesInterface
+	class CBotGameRulesInterface : public IBotGameRulesInterface
 	{
 	public:
-		CBotrixGameRulesInterface();
-		~CBotrixGameRulesInterface();
+		CBotGameRulesInterface();
+		~CBotGameRulesInterface();
 
 		void ServerActivate() override;
 		void ServerDeactivate() override;

@@ -264,10 +264,10 @@ set(SOURCES_SERVER
 	botrix/bot.cpp
 	botrix/botfactory.h
 	botrix/botfactory.cpp
+	botrix/botgamerulesinterface.h
+	botrix/botgamerulesinterface.cpp
 	botrix/botregister.h
 	botrix/botregister.cpp
-	botrix/botrixgamerulesinterface.h
-	botrix/botrixgamerulesinterface.cpp
 	botrix/botrixplayerinfo.h
 	botrix/botrixplayerinfo.cpp
 	botrix/botrixserverentity.h
