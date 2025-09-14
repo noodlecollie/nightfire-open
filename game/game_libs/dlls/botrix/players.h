@@ -66,12 +66,12 @@ namespace Botrix
 		}
 
 		/// Get player's info.
-		const CBotrixPlayerInfo* GetPlayerInfo() const
+		const CPlayerInfo* GetPlayerInfo() const
 		{
 			return &m_PlayerInfo;
 		}
 
-		CBotrixPlayerInfo* GetPlayerInfo()
+		CPlayerInfo* GetPlayerInfo()
 		{
 			return &m_PlayerInfo;
 		}
@@ -169,7 +169,7 @@ namespace Botrix
 	protected:
 		edict_t* m_pEdict = nullptr;  // Player's edict.
 		TPlayerIndex m_iIndex = 0;  // Player's index.
-		CBotrixPlayerInfo m_PlayerInfo;  // Player's info.
+		CPlayerInfo m_PlayerInfo;  // Player's info.
 		float m_fNextDrawHullTime = 0.0f;  // Next time to draw player's hull.
 		float m_fEndProtectionTime = 0.0f;  // Time when player's protection ends.
 

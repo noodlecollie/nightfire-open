@@ -7,12 +7,12 @@
 
 namespace Botrix
 {
-	CBotrixPlayerInfo::CBotrixPlayerInfo(struct edict_s* player) :
+	CPlayerInfo::CPlayerInfo(struct edict_s* player) :
 		m_pPlayer(player)
 	{
 	}
 
-	CBasePlayer* CBotrixPlayerInfo::GetPlayerEntity() const
+	CBasePlayer* CPlayerInfo::GetPlayerEntity() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -25,12 +25,12 @@ namespace Botrix
 		return playerEnt;
 	}
 
-	int CBotrixPlayerInfo::GetPlayerEdictIndex() const
+	int CPlayerInfo::GetPlayerEdictIndex() const
 	{
 		return ENTINDEX(m_pPlayer);
 	}
 
-	const char* CBotrixPlayerInfo::GetName() const
+	const char* CPlayerInfo::GetName() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -40,17 +40,17 @@ namespace Botrix
 		return STRING(m_pPlayer->v.netname);
 	}
 
-	int CBotrixPlayerInfo::GetUserID() const
+	int CPlayerInfo::GetUserID() const
 	{
 		return GETPLAYERUSERID(m_pPlayer);
 	}
 
-	const char* CBotrixPlayerInfo::GetNetworkIDString() const
+	const char* CPlayerInfo::GetNetworkIDString() const
 	{
 		return GETPLAYERAUTHID(m_pPlayer);
 	}
 
-	int CBotrixPlayerInfo::GetTeamIndex() const
+	int CPlayerInfo::GetTeamIndex() const
 	{
 		if ( !m_pPlayer || !g_pGameRules )
 		{
@@ -73,7 +73,7 @@ namespace Botrix
 		return g_pGameRules->GetTeamIndex(player->TeamID());
 	}
 
-	void CBotrixPlayerInfo::ChangeTeam(int newTeamIndex)
+	void CPlayerInfo::ChangeTeam(int newTeamIndex)
 	{
 		if ( !m_pPlayer || !g_pGameRules )
 		{
@@ -83,7 +83,7 @@ namespace Botrix
 		g_pGameRules->ChangePlayerTeam(GetPlayerEntity(), g_pGameRules->GetIndexedTeamName(newTeamIndex), false, false);
 	}
 
-	int CBotrixPlayerInfo::GetFragCount() const
+	int CPlayerInfo::GetFragCount() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -93,7 +93,7 @@ namespace Botrix
 		return static_cast<int>(m_pPlayer->v.frags);
 	}
 
-	int CBotrixPlayerInfo::GetDeathCount() const
+	int CPlayerInfo::GetDeathCount() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -110,7 +110,7 @@ namespace Botrix
 		return player->m_iDeaths;
 	}
 
-	bool CBotrixPlayerInfo::IsConnected() const
+	bool CPlayerInfo::IsConnected() const
 	{
 		// Not sure if this is the most canonical way of checking this, but it's
 		// the method used in the multiplayer gamerules, and I can't find an
@@ -118,23 +118,23 @@ namespace Botrix
 		return m_pPlayer && (m_pPlayer->v.netname && (STRING(m_pPlayer->v.netname))[0] != 0);
 	}
 
-	int CBotrixPlayerInfo::GetArmorValue() const
+	int CPlayerInfo::GetArmorValue() const
 	{
 		return m_pPlayer ? static_cast<int>(m_pPlayer->v.armorvalue) : 0;
 	}
 
-	bool CBotrixPlayerInfo::IsHLTV() const
+	bool CPlayerInfo::IsHLTV() const
 	{
 		return g_engfuncs.pfnIsHLTVClient(m_pPlayer);
 	}
 
-	bool CBotrixPlayerInfo::IsPlayer() const
+	bool CPlayerInfo::IsPlayer() const
 	{
 		// Do this manually to avoid accidentally failing the assertion
 		return m_pPlayer && dynamic_cast<CBasePlayer*>(CBaseEntity::Instance(m_pPlayer));
 	}
 
-	bool CBotrixPlayerInfo::IsFakeClient() const
+	bool CPlayerInfo::IsFakeClient() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -144,7 +144,7 @@ namespace Botrix
 		return (m_pPlayer->v.flags & FL_FAKECLIENT) != 0;
 	}
 
-	bool CBotrixPlayerInfo::IsDead() const
+	bool CPlayerInfo::IsDead() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -155,12 +155,12 @@ namespace Botrix
 		return m_pPlayer->v.deadflag != DEAD_NO;
 	}
 
-	bool CBotrixPlayerInfo::IsInAVehicle() const
+	bool CPlayerInfo::IsInAVehicle() const
 	{
 		return false;
 	}
 
-	bool CBotrixPlayerInfo::IsObserver() const
+	bool CPlayerInfo::IsObserver() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -177,7 +177,7 @@ namespace Botrix
 		return player->IsObserver();
 	}
 
-	Vector CBotrixPlayerInfo::GetAbsOrigin() const
+	Vector CPlayerInfo::GetAbsOrigin() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -187,14 +187,14 @@ namespace Botrix
 		return m_pPlayer->v.origin;
 	}
 
-	Vector CBotrixPlayerInfo::GetEyePosition() const
+	Vector CPlayerInfo::GetEyePosition() const
 	{
 		Vector out;
 		CBotrixEngineUtil::EntityHead(m_pPlayer, out);
 		return out;
 	}
 
-	Vector CBotrixPlayerInfo::GetAbsAngles() const
+	Vector CPlayerInfo::GetAbsAngles() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -204,7 +204,7 @@ namespace Botrix
 		return m_pPlayer->v.angles;
 	}
 
-	Vector CBotrixPlayerInfo::GetEyeAngles() const
+	Vector CPlayerInfo::GetEyeAngles() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -214,7 +214,7 @@ namespace Botrix
 		return m_pPlayer->v.v_angle;
 	}
 
-	Vector CBotrixPlayerInfo::GetPlayerMins() const
+	Vector CPlayerInfo::GetPlayerMins() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -224,7 +224,7 @@ namespace Botrix
 		return m_pPlayer->v.mins;
 	}
 
-	Vector CBotrixPlayerInfo::GetPlayerMaxs() const
+	Vector CPlayerInfo::GetPlayerMaxs() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -234,7 +234,7 @@ namespace Botrix
 		return m_pPlayer->v.maxs;
 	}
 
-	const char* CBotrixPlayerInfo::GetWeaponName() const
+	const char* CPlayerInfo::GetWeaponName() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -251,7 +251,7 @@ namespace Botrix
 		return STRING(player->m_pActiveItem->pev->classname);
 	}
 
-	const char* CBotrixPlayerInfo::GetModelName() const
+	const char* CPlayerInfo::GetModelName() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -261,7 +261,7 @@ namespace Botrix
 		return STRING(m_pPlayer->v.model);
 	}
 
-	int CBotrixPlayerInfo::GetHealth() const
+	int CPlayerInfo::GetHealth() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -271,7 +271,7 @@ namespace Botrix
 		return static_cast<int>(m_pPlayer->v.health);
 	}
 
-	int CBotrixPlayerInfo::GetMaxHealth() const
+	int CPlayerInfo::GetMaxHealth() const
 	{
 		if ( !m_pPlayer )
 		{
@@ -281,7 +281,7 @@ namespace Botrix
 		return static_cast<int>(m_pPlayer->v.max_health);
 	}
 
-	bool CBotrixPlayerInfo::IsReplay() const
+	bool CPlayerInfo::IsReplay() const
 	{
 		return false;
 	}

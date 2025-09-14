@@ -7,10 +7,10 @@ class CBasePlayer;
 
 namespace Botrix
 {
-	class CBotrixPlayerInfo
+	class CPlayerInfo
 	{
 	public:
-		explicit CBotrixPlayerInfo(struct edict_s* player);
+		explicit CPlayerInfo(struct edict_s* player);
 
 		CBasePlayer* GetPlayerEntity() const;
 		int GetPlayerEdictIndex() const;

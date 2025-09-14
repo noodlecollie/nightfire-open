@@ -268,8 +268,6 @@ set(SOURCES_SERVER
 	botrix/botgamerulesinterface.cpp
 	botrix/botregister.h
 	botrix/botregister.cpp
-	botrix/botrixplayerinfo.h
-	botrix/botrixplayerinfo.cpp
 	botrix/botrixserverentity.h
 	botrix/botrixserverentity.cpp
 	botrix/clients.h
@@ -291,6 +289,8 @@ set(SOURCES_SERVER
 	botrix/movecmd.h
 	botrix/parameter_vars.h
 	botrix/parameter_vars.cpp
+	botrix/playerinfo.h
+	botrix/playerinfo.cpp
 	botrix/players.h
 	botrix/players.cpp
 	botrix/server_plugin.h
