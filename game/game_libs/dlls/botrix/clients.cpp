@@ -38,6 +38,7 @@ namespace Botrix
 		iItemTypeFlags = 0;
 
 		iDestinationWaypoint = EWaypointIdInvalid;
+		m_NextWaypointDrawTime = 0.0f;
 
 #if defined(DEBUG) || defined(_DEBUG)
 		bDebuggingEvents = FLAG_ALL_SET_OR_0(FCommandAccessConfig, iCommandAccessFlags);
@@ -95,19 +96,25 @@ namespace Botrix
 			//}
 		}
 
-		// Calculate destination waypoint according to angles. Paths should be drawn.
-		if ( !bLockDestinationWaypoint && (iPathDrawFlags != FPathDrawNone) &&
-			 (CWaypoints::fNextDrawWaypointsTime >= CBotrixServerPlugin::GetTime()) )
+		const float currentTime = CBotrixServerPlugin::GetTime();
+
+		if ( m_NextWaypointDrawTime <= currentTime )
 		{
-			Vector ang;
-			GetEyeAngles(ang);
-			iDestinationWaypoint = CWaypoints::GetAimedWaypoint(GetHead(), ang);
+			// Calculate destination waypoint according to angles. Paths should be drawn.
+			if ( !bLockDestinationWaypoint && iPathDrawFlags != FPathDrawNone )
+			{
+				Vector ang;
+				GetEyeAngles(ang);
+				iDestinationWaypoint = CWaypoints::GetAimedWaypoint(GetHead(), ang);
+			}
+
+			// Draw waypoints.
+			CWaypoints::Draw(this);  // TODO: should not draw for admins without rights.
+
+			// Draw entities.
+			CItems::Draw(this);
+
+			m_NextWaypointDrawTime = currentTime + CWaypoint::DRAW_INTERVAL;
 		}
-
-		// Draw waypoints.
-		CWaypoints::Draw(this);  // TODO: should not draw for admins without rights.
-
-		// Draw entities.
-		CItems::Draw(this);
 	}
 }  // namespace Botrix

@@ -362,7 +362,6 @@ namespace Botrix
 		// typedef WaypointGraph::node_id TWaypointId;     ///< Type for node identifier.
 
 		static bool bValidVisibilityTable;  ///< When waypoints are modified vis-table needs to be recalculated.
-		static float fNextDrawWaypointsTime;  ///< Next draw time of waypoints (draw once per second).
 
 	public:  // Methods.
 		/// Return true if waypoint id is valid. Verifies that waypoint is actually exists.

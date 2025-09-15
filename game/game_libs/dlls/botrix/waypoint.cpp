@@ -75,7 +75,6 @@ namespace Botrix
 
 	StringVector CWaypoints::m_aAreas;
 	CWaypoints::WaypointGraph CWaypoints::m_cGraph;
-	float CWaypoints::fNextDrawWaypointsTime = 0.0f;
 	CWaypoints::Bucket CWaypoints::m_cBuckets[CWaypoints::BUCKETS_SIZE_X][CWaypoints::BUCKETS_SIZE_Y]
 											 [CWaypoints::BUCKETS_SIZE_Z];
 
@@ -1275,13 +1274,7 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CWaypoints::Draw(CBotrixClient* pClient)
 	{
-		if ( CBotrixServerPlugin::GetTime() < fNextDrawWaypointsTime )
-		{
-			return;
-		}
-
 		float fDrawTime = CWaypoint::DRAW_INTERVAL + (2.0f * gpGlobals->frametime);  // Add two frames to not flicker.
-		fNextDrawWaypointsTime = CBotrixServerPlugin::GetTime() + CWaypoint::DRAW_INTERVAL;
 
 		if ( pClient->iWaypointDrawFlags != FWaypointDrawNone )
 		{
