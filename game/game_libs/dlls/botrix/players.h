@@ -6,12 +6,13 @@
 #include "botrix/playerinfo.h"
 #include "botrix/types.h"
 #include "botrix/server_plugin.h"
+#include "botrix/parameter_vars.h"
 
 class CBasePlayer;
 
 namespace Botrix
 {
-	class CBotrixClient;  // Forward declaration.
+	class CBotrixClient;
 
 	//****************************************************************************************************************
 	/// Class that defines a player (bot or client).
@@ -103,16 +104,13 @@ namespace Botrix
 		/// Get center position of player.
 		void GetCenter(Vector& v) const
 		{
-			// Best guess based on Source SDK code is that this is the eye position.
-			// It's described as the "centre of the PVS", and is used in similar
-			// circumstances to the player's eyes.
-			v = m_PlayerInfo.GetEyePosition();
+			v = m_PlayerInfo.GetAbsOrigin();
 		}
 
 		/// Get foot position of player.
 		void GetFoot(Vector& v) const
 		{
-			v = m_PlayerInfo.GetAbsOrigin();
+			v = m_PlayerInfo.GetAbsOrigin() - Vector(0.0f, 0.0f, CBotrixParameterVars::PLAYER_HEIGHT / 2.0f);
 		}
 
 		/// Get health of player.
@@ -163,8 +161,6 @@ namespace Botrix
 		TWaypointId iNextWaypoint;  ///< Next waypoint in path, used by bot to check if touching next waypoint (to
 									///< perform actions).
 		TWaypointId iPrevWaypoint;  ///< Previous waypoint in path, used by bot to rewind action if action fails.
-
-		TPlayerIndex iChatMate;  ///< Current chat mate.
 
 	protected:
 		edict_t* m_pEdict = nullptr;  // Player's edict.
