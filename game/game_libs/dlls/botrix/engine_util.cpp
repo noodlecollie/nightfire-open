@@ -171,6 +171,29 @@ namespace Botrix
 		return IsVisible(vSrc, v, EVisibilityBots);
 	}
 
+	bool CBotrixEngineUtil::IsInViewPrism(
+		const Vector& point,
+		const Vector& viewPoint,
+		const Vector& viewAngles,
+		float totalHorizFOV,
+		float aspectRatio
+	)
+	{
+		Vector dirToPoint = (point - viewPoint).Normalize();
+
+		Vector anglesToPoint;
+		VectorAngles(dirToPoint, anglesToPoint);
+
+		Vector angleDiff;
+		CBotrixEngineUtil::GetAngleDifference(anglesToPoint, viewAngles, angleDiff);
+
+		const float halfHorizFOV = totalHorizFOV / 2.0f;
+		const float halfVertFOV = halfHorizFOV / aspectRatio;
+
+		return (-halfHorizFOV <= angleDiff.y) && (angleDiff.y <= halfHorizFOV) && (-halfVertFOV <= angleDiff.x) &&
+			(angleDiff.x <= halfVertFOV);
+	}
+
 	bool CBotrixEngineUtil::TraceHitSomething()
 	{
 		return m_TraceResult.flFraction >= 0.0f && m_TraceResult.flFraction < 1.0f;

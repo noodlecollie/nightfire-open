@@ -84,6 +84,13 @@ namespace Botrix
 		static bool IsVisiblePVS(const Vector& v);
 		static bool IsVisible(const Vector& vSrc, const Vector& vDest, TVisibility iVisibility, bool bUsePVS = true);
 		static bool IsVisible(const Vector& vSrc, struct edict_s* pDest);
+		static bool IsInViewPrism(
+			const Vector& point,
+			const Vector& viewPoint,
+			const Vector& viewAngles,
+			float totalHorizFOV,
+			float aspectRatio
+		);
 		// BOTRIX_TODO: Move statefulness out of this class
 		static bool TraceHitSomething();
 		static Vector GetHullGroundVec(

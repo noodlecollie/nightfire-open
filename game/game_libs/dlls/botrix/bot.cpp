@@ -997,35 +997,16 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	bool CBot::IsVisible(CPlayer* pPlayer, bool bViewCone) const
 	{
-		// Check PVS first. Get visible clusters from player's position.
-		Vector vAim(pPlayer->GetHead());
-
-		// First check if other player is in bot's view cone.
-		static const float fFovHorizontal = 70.0f;  // Giving 140 degree of view horizontally.
-		static const float fFovVertical = fFovHorizontal * 3 / 4;  // Normal monitor has 4:3 aspect ratio.
-
 		if ( bViewCone )  // Check view cone.
 		{
-			vAim -= m_vHead;  // vAim contains vector to enemy relative from bot.
+			// Give 140 degree of view horizontally, with 4:3 aspect ratio.
+			const bool inPrism =
+				CBotrixEngineUtil::IsInViewPrism(pPlayer->GetHead(), m_vHead, m_cCmd.viewangles, 140.0f, 4.0f / 3.0f);
 
-			Vector angPlayer;
-			VectorAngles(vAim, angPlayer);
-
-			CBotrixEngineUtil::GetAngleDifference(angPlayer, m_cCmd.viewangles, angPlayer);
-
-			// BOTRIX_TODO: Is this right? Surely X is pitch and therefore vertical FOV?
-			bViewCone =
-				((-fFovHorizontal <= angPlayer.x) && (angPlayer.x <= fFovHorizontal) &&
-				 (-fFovVertical <= angPlayer.y) && (angPlayer.y <= fFovVertical));
-		}
-		else
-		{
-			bViewCone = true;  // Assume enemy is in view cone.
-		}
-
-		if ( !bViewCone )
-		{
-			return false;
+			if ( !inPrism )
+			{
+				return false;
+			}
 		}
 
 		return CBotrixEngineUtil::IsVisible(m_vHead, pPlayer->GetEdict());
