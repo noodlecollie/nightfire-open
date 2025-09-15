@@ -62,5 +62,6 @@ namespace Botrix
 
 	protected:
 		good::string m_sNetworkID;
+		float m_NextWaypointDrawTime = 0.0f;
 	};
 }  // namespace Botrix

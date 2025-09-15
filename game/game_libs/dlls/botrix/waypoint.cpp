@@ -75,7 +75,6 @@ namespace Botrix
 
 	StringVector CWaypoints::m_aAreas;
 	CWaypoints::WaypointGraph CWaypoints::m_cGraph;
-	float CWaypoints::fNextDrawWaypointsTime = 0.0f;
 	CWaypoints::Bucket CWaypoints::m_cBuckets[CWaypoints::BUCKETS_SIZE_X][CWaypoints::BUCKETS_SIZE_Y]
 											 [CWaypoints::BUCKETS_SIZE_Z];
 
@@ -225,6 +224,34 @@ namespace Botrix
 				return 0;
 			}
 		);
+	}
+
+	// Assumes PVS is already set.
+	static bool IsVisibleFromViewer(
+		const Vector& point,
+		const Vector& viewPoint,
+		const Vector& viewAngles,
+		TVisibilities visibility,
+		bool checkPVS = true
+	)
+	{
+		// For now, given it's difficult to determine the exact FOV/aspect ratio of the viewer on the
+		// server side, assume an FOV of 70 degrees either side, and a square aspect ratio.
+		static constexpr float TOTAL_HORIZ_FOV = 70.0f * 2.0f;
+
+		if ( !CBotrixEngineUtil::IsInViewPrism(point, viewPoint, viewAngles, TOTAL_HORIZ_FOV, 1.0f) )
+		{
+			return false;
+		}
+
+		if ( checkPVS && !CBotrixEngineUtil::IsVisiblePVS(point) )
+		{
+			return false;
+		}
+
+		// Never pass PVS as true here, since this would reset the stored PVS that may
+		// have been set elsewhere.
+		return CBotrixEngineUtil::IsVisible(viewPoint, point, visibility, false);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -1247,8 +1274,7 @@ namespace Botrix
 						WaypointNode& node = m_cGraph[*it];
 
 						// Check if waypoint is in pvs from player's position.
-						if ( CBotrixEngineUtil::IsVisiblePVS(node.vertex.vOrigin) &&
-							 CBotrixEngineUtil::IsVisible(vOrigin, node.vertex.vOrigin, EVisibilityWorld, false) )
+						if ( IsVisibleFromViewer(node.vertex.vOrigin, vOrigin, ang, EVisibilityWorld) )
 						{
 							Vector vRelative(node.vertex.vOrigin);
 							vRelative.z += offsetToCentreOfWaypoint;
@@ -1275,13 +1301,7 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CWaypoints::Draw(CBotrixClient* pClient)
 	{
-		if ( CBotrixServerPlugin::GetTime() < fNextDrawWaypointsTime )
-		{
-			return;
-		}
-
 		float fDrawTime = CWaypoint::DRAW_INTERVAL + (2.0f * gpGlobals->frametime);  // Add two frames to not flicker.
-		fNextDrawWaypointsTime = CBotrixServerPlugin::GetTime() + CWaypoint::DRAW_INTERVAL;
 
 		if ( pClient->iWaypointDrawFlags != FWaypointDrawNone )
 		{
@@ -1290,6 +1310,9 @@ namespace Botrix
 			int x = GetBucketX(vOrigin.x);
 			int y = GetBucketY(vOrigin.y);
 			int z = GetBucketZ(vOrigin.z);
+
+			Vector viewAngles;
+			pClient->GetEyeAngles(viewAngles);
 
 			// Draw only waypoints from nearest buckets.
 			int minX, minY, minZ, maxX, maxY, maxZ;
@@ -1310,8 +1333,7 @@ namespace Botrix
 							WaypointNode& node = m_cGraph[*it];
 
 							// Check if waypoint is in pvs from player's position.
-							if ( CBotrixEngineUtil::IsVisiblePVS(node.vertex.vOrigin) &&
-								 CBotrixEngineUtil::IsVisible(vOrigin, node.vertex.vOrigin, EVisibilityWorld) )
+							if ( IsVisibleFromViewer(node.vertex.vOrigin, vOrigin, viewAngles, EVisibilityWorld) )
 							{
 								node.vertex.Draw(*it, pClient->iWaypointDrawFlags, fDrawTime);
 							}

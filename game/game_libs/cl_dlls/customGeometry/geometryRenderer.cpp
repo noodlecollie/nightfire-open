@@ -26,10 +26,7 @@ namespace CustomGeometry
 
 	void CGeometryRenderer::VidInit()
 	{
-		if ( m_ColourSprite == 0 )
-		{
-			m_ColourSprite = SPR_Load("sprites/white.spr");
-		}
+		m_ColourSprite = SPR_Load("sprites/white.spr");
 	}
 
 	void CGeometryRenderer::Render(const CGeometryItem& item)

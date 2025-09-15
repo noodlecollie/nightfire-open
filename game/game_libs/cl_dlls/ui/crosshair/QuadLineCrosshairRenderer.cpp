@@ -32,32 +32,16 @@ CQuadLineCrosshairRenderer::CQuadLineCrosshairRenderer() :
 	// The first two points of each bar are inner, and the second two are outer.
 
 	// Top
-	m_Geometry->AddTriangleQuad(
-		Vector(-1, -1.0f, 0),
-		Vector(1, -1.0f, 0),
-		Vector(1, -2.0f, 0),
-		Vector(-1, -2.0f, 0));
+	m_Geometry->AddTriangleQuad(Vector(-1, -1.0f, 0), Vector(1, -1.0f, 0), Vector(1, -2.0f, 0), Vector(-1, -2.0f, 0));
 
 	// Bottom
-	m_Geometry->AddTriangleQuad(
-		Vector(1, 1.0f, 0),
-		Vector(-1, 1.0f, 0),
-		Vector(-1, 2.0f, 0),
-		Vector(1, 2.0f, 0));
+	m_Geometry->AddTriangleQuad(Vector(1, 1.0f, 0), Vector(-1, 1.0f, 0), Vector(-1, 2.0f, 0), Vector(1, 2.0f, 0));
 
 	// Left
-	m_Geometry->AddTriangleQuad(
-		Vector(-1.0f, 1, 0),
-		Vector(-1.0f, -1, 0),
-		Vector(-2.0f, -1, 0),
-		Vector(-2.0f, 1, 0));
+	m_Geometry->AddTriangleQuad(Vector(-1.0f, 1, 0), Vector(-1.0f, -1, 0), Vector(-2.0f, -1, 0), Vector(-2.0f, 1, 0));
 
 	// Right
-	m_Geometry->AddTriangleQuad(
-		Vector(1.0f, -1, 0),
-		Vector(1.0f, 1, 0),
-		Vector(2.0f, 1, 0),
-		Vector(2.0f, -1, 0));
+	m_Geometry->AddTriangleQuad(Vector(1.0f, -1, 0), Vector(1.0f, 1, 0), Vector(2.0f, 1, 0), Vector(2.0f, -1, 0));
 }
 
 void CQuadLineCrosshairRenderer::Initialise(const CCrosshairParameters& params)

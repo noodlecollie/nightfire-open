@@ -72,16 +72,12 @@ int CHudCrosshair::VidInit()
 
 	m_Params.SetScreenDimensions(UIVec2(screenInfo.iWidth, screenInfo.iHeight));
 
-	if ( m_CrosshairRenderer )
-	{
-		m_CrosshairRenderer->Initialise(m_Params);
-	}
-
 	return 1;
 }
 
 void CHudCrosshair::Reset()
 {
+	m_CrosshairRenderer.reset();
 }
 
 int CHudCrosshair::Draw(float)
@@ -96,30 +92,12 @@ int CHudCrosshair::Draw(float)
 		return 1;
 	}
 
-	if ( m_CrosshairCvar->value == DisplayDynamicCrosshair )
+	RefreshCrosshairRenderer();
+
+	if ( m_CrosshairRenderer )
 	{
-		if ( m_Params.CrosshairStyle() != WeaponAtts::CrosshairStyle::None )
-		{
-			if ( !m_CrosshairRenderer || m_CrosshairRenderer->RenderStyle() != m_Params.CrosshairStyle() )
-			{
-				m_CrosshairRenderer = GetCrosshairRenderer(m_Params.CrosshairStyle());
-
-				if ( m_CrosshairRenderer )
-				{
-					m_CrosshairRenderer->Initialise(m_Params);
-				}
-			}
-		}
-		else
-		{
-			m_CrosshairRenderer.reset();
-		}
-
-		if ( m_CrosshairRenderer )
-		{
-			m_CrosshairRenderer->Update(m_Params);
-			m_CrosshairRenderer->Draw();
-		}
+		m_CrosshairRenderer->Update(m_Params);
+		m_CrosshairRenderer->Draw();
 	}
 
 	if ( CrosshairCvars::SpreadVisualisationEnabled() )
@@ -157,14 +135,16 @@ bool CHudCrosshair::UpdateParameters()
 	float radius = CCrosshairParameters::ComputeCrosshairRadius(
 		paramsTuple.Accuracy,
 		m_Params.WeaponInaccuracy(),
-		*m_CrosshairParams);
+		*m_CrosshairParams
+	);
 
 	m_Params.SetRadius(radius);
 
 	float barLength = CCrosshairParameters::ComputeCrosshairBarLength(
 		paramsTuple.Accuracy,
 		m_Params.WeaponInaccuracy(),
-		*m_CrosshairParams);
+		*m_CrosshairParams
+	);
 
 	m_Params.SetBarLength(barLength);
 
@@ -215,7 +195,29 @@ void CHudCrosshair::UpdateParametersFromDebugCvars()
 
 	float barLength = CCrosshairParameters::ComputeCrosshairBarLengthFromDebugCvars(
 		paramsTuple.Accuracy,
-		m_Params.WeaponInaccuracy());
+		m_Params.WeaponInaccuracy()
+	);
 
 	m_Params.SetBarLength(barLength);
+}
+
+void CHudCrosshair::RefreshCrosshairRenderer()
+{
+	if ( m_CrosshairCvar->value == DisplayDynamicCrosshair &&
+		 m_Params.CrosshairStyle() != WeaponAtts::CrosshairStyle::None )
+	{
+		if ( !m_CrosshairRenderer || m_CrosshairRenderer->RenderStyle() != m_Params.CrosshairStyle() )
+		{
+			m_CrosshairRenderer = GetCrosshairRenderer(m_Params.CrosshairStyle());
+
+			if ( m_CrosshairRenderer )
+			{
+				m_CrosshairRenderer->Initialise(m_Params);
+			}
+		}
+	}
+	else
+	{
+		m_CrosshairRenderer.reset();
+	}
 }
