@@ -1400,7 +1400,11 @@ namespace Botrix
 			m_iNextNearItem[iType] = (iCheckTo == aItems.size()) ? 0 : iCheckTo;
 		}
 
-		// Check only 1 player per frame.
+		UpdateStateForNextEnemy();
+	}
+
+	void CBot::UpdateStateForNextEnemy()
+	{
 		if ( m_bEnemyOffSight && (CBotrixServerPlugin::GetTime() >= m_fTimeToEraseEnemy) )
 		{
 			CurrentEnemyNotVisible();
@@ -1408,6 +1412,8 @@ namespace Botrix
 
 		CPlayer* pCheckPlayer = NULL;
 
+		// Check only 1 player per frame.
+		// Find the next valid player to check.
 		while ( m_iNextCheckPlayer < CPlayers::Size() )
 		{
 			CPlayer* pPlayer = CPlayers::Get(m_iNextCheckPlayer);
@@ -1523,8 +1529,8 @@ namespace Botrix
 					if ( !m_bEnemyOffSight )
 					{
 						m_bEnemyOffSight = true;
-						m_fTimeToEraseEnemy =
-							CBotrixServerPlugin::GetTime() + 1.5f;  // TODO: CONCOMMAND. Give some time to erase enemy.
+						m_fTimeToEraseEnemy = CBotrixServerPlugin::GetTime() +
+							1.5f;  // BOTRIX_TODO: CONCOMMAND. Give some time to erase enemy.
 						m_bAttackDuck = false;
 					}
 				}

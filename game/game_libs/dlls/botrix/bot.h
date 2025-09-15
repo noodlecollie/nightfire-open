@@ -25,11 +25,11 @@ struct edict_s;
 
 namespace Botrix
 {
-	//****************************************************************************************************************
-	/// Abstract class representing a bot.
-	/** This class allows to bot ability to move and use waypoints, but not to shoot. Shooting and setting
-	 * objectives/waypoint-destination is a child class responsability (which should derive from CBot class). */
-	//****************************************************************************************************************
+	/*****************************************************************************************************************
+	 * Abstract class representing a bot.
+	 * This class allows to bot ability to move and use waypoints, but not to shoot. Shooting and setting
+	 * objectives/waypoint-destination is a child class responsibility (which should derive from CBot class).
+	 *****************************************************************************************************************/
 	class CBot : public CPlayer
 	{
 	public:  // Members.
@@ -371,6 +371,8 @@ namespace Botrix
 		void PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevOrigin);
 
 	protected:  // Members.
+		void UpdateStateForNextEnemy();
+
 		static float m_fTimeIntervalCheckUsingMachines;  // After this interval will check if health/armor is
 														 // incrementing (when using health/armor machine).
 		static int m_iCheckEntitiesPerFrame;  // How much near items check per frame (to know if bot is stucked with
@@ -530,7 +532,7 @@ namespace Botrix
 		bool m_bSaidNoWaypoints;  // Say that there are no waypoints only once.
 	};
 
-	// TODO: Rename
+	// BOTRIX_TODO: Rename
 	class CBot_HL2DM : public CBot
 	{
 	public:
