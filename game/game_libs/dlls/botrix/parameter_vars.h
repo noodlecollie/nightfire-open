@@ -12,8 +12,13 @@ namespace Botrix
 		static constexpr float PLAYER_WIDTH = -VEC_HULL_MIN.x + VEC_HULL_MAX.x;
 		static constexpr float PLAYER_HEIGHT = -VEC_HULL_MIN.z + VEC_HULL_MAX.z;
 		static constexpr float PLAYER_HEIGHT_CROUCHED = -VEC_DUCK_HULL_MIN.z + VEC_DUCK_HULL_MAX.z;
+
+		// These are measured from ground level.
 		static constexpr float PLAYER_EYE = -VEC_HULL_MIN.z + VEC_VIEW.z;
 		static constexpr float PLAYER_EYE_CROUCHED = -VEC_DUCK_HULL_MIN.z + VEC_DUCK_VIEW.z;
+
+		static constexpr float PLAYER_EYE_FROM_ORIGIN = VEC_VIEW.z;
+		static constexpr float PLAYER_EYE_CROUCHED_FROM_ORIGIN = VEC_DUCK_VIEW.z;
 
 		// The convars for these are client-only, so for now we use constants on the server side.
 		static constexpr float PLAYER_RUN_SPEED = 250.0f;

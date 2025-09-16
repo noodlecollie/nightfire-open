@@ -20,11 +20,11 @@ class CNPCRoninTurret : public CBaseMonster
 public:
 	enum class DeployState
 	{
-		TOSSED, // Thrown but not deployed yet
+		TOSSED,  // Thrown but not deployed yet
 		DEPLOYING,
 		DEPLOYED,
 		UNDEPLOYING,
-		UNDEPLOYED // Was previously deployed but has now been put away
+		UNDEPLOYED  // Was previously deployed but has now been put away
 	};
 
 	// Bullets per second
@@ -63,6 +63,7 @@ public:
 	DeployState GetDeployState() const;
 	bool IsUndeployed() const;
 	bool IsFullyDeployed() const;
+	Vector GetCentre() const;
 
 	void StartToss(const Vector& velocity, const Vector& angularVelocity);
 	void StartToss(const Vector& origin, const Vector& velocity, const Vector& angularVelocity);
