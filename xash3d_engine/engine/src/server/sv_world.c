@@ -183,7 +183,8 @@ hull_t* SV_HullForBsp(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t
 			"Entity %i (%s) SOLID_BSP with a non bsp model %s\n",
 			NUM_FOR_EDICT(ent),
 			SV_ClassName(ent),
-			STRING(ent->v.model));
+			STRING(ent->v.model)
+		);
 
 	VectorSubtract(maxs, mins, size);
 
@@ -363,7 +364,8 @@ SV_HullForStudioModel(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t
 				controller,
 				blending,
 				numhitboxes,
-				ent);
+				ent
+			);
 		}
 		else
 		{
@@ -377,7 +379,8 @@ SV_HullForStudioModel(edict_t* ent, const vec3_t mins, const vec3_t maxs, vec3_t
 				ent->v.controller,
 				ent->v.blending,
 				numhitboxes,
-				ent);
+				ent
+			);
 		}
 	}
 
@@ -871,7 +874,8 @@ void SV_ClipMoveToEntity(
 	const vec3_t mins,
 	const vec3_t maxs,
 	const vec3_t end,
-	trace_t* trace)
+	trace_t* trace
+)
 {
 	hull_t* hull;
 	model_t* model;
@@ -969,7 +973,8 @@ void SV_ClipMoveToEntity(
 				1.0f,
 				start_l,
 				end_l,
-				(pmtrace_t*)&trace_hitbox);
+				(pmtrace_t*)&trace_hitbox
+			);
 
 			if ( i == 0 || trace_hitbox.allsolid || trace_hitbox.startsolid || trace_hitbox.fraction < trace->fraction )
 			{
@@ -1024,7 +1029,8 @@ void SV_PortalCSG(
 	const vec3_t trace_maxs,
 	const vec3_t start,
 	const vec3_t end,
-	trace_t* trace)
+	trace_t* trace
+)
 {
 	vec4_t planes[6];  // far, near, right, left, up, down
 	int plane, k;
@@ -1147,7 +1153,8 @@ void SV_CustomClipMoveToEntity(
 	const vec3_t mins,
 	const vec3_t maxs,
 	const vec3_t end,
-	trace_t* trace)
+	trace_t* trace
+)
 {
 	// initialize custom trace
 	PM_InitTrace(trace, end);
@@ -1179,23 +1186,33 @@ static qboolean SV_ClipToEntity(edict_t* touch, moveclip_t* clip)
 	if ( touch->v.groupinfo && SV_IsValidEdict(clip->passedict) && clip->passedict->v.groupinfo != 0 )
 	{
 		if ( svs.groupop == GROUP_OP_AND && !FBitSet(touch->v.groupinfo, clip->passedict->v.groupinfo) )
+		{
 			return true;
+		}
 
 		if ( svs.groupop == GROUP_OP_NAND && FBitSet(touch->v.groupinfo, clip->passedict->v.groupinfo) )
+		{
 			return true;
+		}
 	}
 
 	if ( touch == clip->passedict || touch->v.solid == SOLID_NOT )
+	{
 		return true;
+	}
 
 	if ( touch->v.solid == SOLID_TRIGGER )
+	{
 		Host_Error("trigger in clipping list\n");
+	}
 
 	// custom user filter
 	if ( svgame.dllFuncs2.pfnShouldCollide )
 	{
 		if ( !svgame.dllFuncs2.pfnShouldCollide(touch, clip->passedict) )
+		{
 			return true;
+		}
 	}
 
 	// monsterclip filter (solid custom is a static or dynamic bodies)
@@ -1203,13 +1220,17 @@ static qboolean SV_ClipToEntity(edict_t* touch, moveclip_t* clip)
 	{
 		// func_monsterclip works only with monsters that have same flag!
 		if ( FBitSet(touch->v.flags, FL_MONSTERCLIP) && !clip->monsterclip )
+		{
 			return true;
+		}
 	}
 	else
 	{
 		// ignore all monsters but pushables
 		if ( clip->type == MOVE_NOMONSTERS && touch->v.movetype != MOVETYPE_PUSHSTEP )
+		{
 			return true;
+		}
 	}
 
 	mod = SV_ModelHandle(touch->v.modelindex);
@@ -1218,15 +1239,21 @@ static qboolean SV_ClipToEntity(edict_t* touch, moveclip_t* clip)
 	{
 		// we ignore brushes with rendermode != kRenderNormal and without FL_WORLDBRUSH set
 		if ( touch->v.rendermode != kRenderNormal && !FBitSet(touch->v.flags, FL_WORLDBRUSH) )
+		{
 			return true;
+		}
 	}
 
 	if ( !BoundsIntersect(clip->boxmins, clip->boxmaxs, touch->v.absmin, touch->v.absmax) )
+	{
 		return true;
+	}
 
 	// aditional check to intersects clients with sphere
 	if ( touch->v.solid != SOLID_SLIDEBOX && !SV_CheckSphereIntersection(touch, clip->start, clip->end) )
+	{
 		return true;
+	}
 
 	// Xash3D extension
 	if ( SV_IsValidEdict(clip->passedict) && clip->passedict->v.solid == SOLID_TRIGGER )
@@ -1235,35 +1262,54 @@ static qboolean SV_ClipToEntity(edict_t* touch, moveclip_t* clip)
 		// and total trace returns fail (old half-life bug)
 		// items touch should be done in SV_TouchLinks not here
 		if ( FBitSet(touch->v.flags, FL_CLIENT | FL_FAKECLIENT) )
+		{
 			return true;
+		}
 	}
 
 	// g-cont. make sure what size is really zero - check all the components
 	if ( SV_IsValidEdict(clip->passedict) && !VectorIsNull(clip->passedict->v.size) && VectorIsNull(touch->v.size) )
+	{
 		return true;  // points never interact
+	}
 
 	// might intersect, so do an exact clip
 	if ( clip->trace.allsolid )
+	{
 		return false;
+	}
 
 	if ( SV_IsValidEdict(clip->passedict) )
 	{
 		if ( touch->v.owner == clip->passedict )
+		{
 			return true;  // don't clip against own missiles
+		}
+
 		if ( clip->passedict->v.owner == touch )
+		{
 			return true;  // don't clip against owner
+		}
 	}
 
 	// make sure we don't hit the world if we're inside the portal
 	if ( touch->v.solid == SOLID_PORTAL )
+	{
 		SV_PortalCSG(touch, clip->mins, clip->maxs, clip->start, clip->end, &clip->trace);
+	}
 
 	if ( touch->v.solid == SOLID_CUSTOM )
+	{
 		SV_CustomClipMoveToEntity(touch, clip->start, clip->mins, clip->maxs, clip->end, &trace);
+	}
 	else if ( FBitSet(touch->v.flags, FL_MONSTER) )
+	{
 		SV_ClipMoveToEntity(touch, clip->start, clip->mins2, clip->maxs2, clip->end, &trace);
+	}
 	else
+	{
 		SV_ClipMoveToEntity(touch, clip->start, clip->mins, clip->maxs, clip->end, &trace);
+	}
 
 	clip->trace = World_CombineTraces(&clip->trace, &trace, touch);
 
@@ -1392,7 +1438,8 @@ trace_t SV_Move(
 	const vec3_t end,
 	int type,
 	edict_t* e,
-	qboolean monsterclip)
+	qboolean monsterclip
+)
 {
 	moveclip_t clip;
 	vec3_t trace_endpos;

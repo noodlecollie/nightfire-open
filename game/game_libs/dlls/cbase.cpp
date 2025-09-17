@@ -97,6 +97,14 @@ static const DLL_FUNCTIONS gFunctionTable = {
 	GetRandomWaterTransitionSound,  // pfnGetRandomWaterTransitionSound
 };
 
+static const NEW_DLL_FUNCTIONS gNewDllFunctionTable = {
+	nullptr,  // void (*pfnOnFreeEntPrivateData)(edict_t* pEnt);
+	nullptr,  // void (*pfnGameShutdown)(void);
+	nullptr,  // int (*pfnShouldCollide)(edict_t* pentTouched, edict_t* pentOther);
+	nullptr,  // void (*pfnCvarValue)(const edict_t* pEnt, const char* value);
+	nullptr,  // void (*pfnCvarValue2)(const edict_t* pEnt, int requestID, const char* cvarName, const char* value);
+};
+
 static void SetObjectCollisionBox(entvars_t* pev);
 
 #ifndef _WIN32
@@ -127,6 +135,18 @@ int GetEntityAPI2(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
 	return TRUE;
 }
 
+int GetNewDLLFunctions(NEW_DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
+{
+	if ( !pFunctionTable || *interfaceVersion != NEW_DLL_FUNCTIONS_VERSION )
+	{
+		*interfaceVersion = NEW_DLL_FUNCTIONS_VERSION;
+		return FALSE;
+	}
+
+	memcpy(pFunctionTable, &gNewDLLFunctions, sizeof(NEW_DLL_FUNCTIONS));
+	return TRUE;
+}
+
 #ifndef _WIN32
 }
 #endif
@@ -151,9 +171,14 @@ int DispatchSpawn(edict_t* pent)
 		if ( pEntity )
 		{
 			if ( g_pGameRules && !g_pGameRules->IsAllowedToSpawn(pEntity) )
+			{
 				return -1;  // return that this entity should be deleted
+			}
+
 			if ( pEntity->pev->flags & FL_KILLME )
+			{
 				return -1;
+			}
 		}
 
 		// Handle global stuff here
@@ -164,9 +189,14 @@ int DispatchSpawn(edict_t* pent)
 			{
 				// Already dead? delete
 				if ( pGlobal->state == GLOBAL_DEAD )
+				{
 					return -1;
+				}
 				else if ( !FStrEq(STRING(gpGlobals->mapname), pGlobal->levelName) )
+				{
 					pEntity->MakeDormant();  // Hasn't been moved to this level yet, wait but stay alive
+				}
+
 				// In this level & not dead, continue on as normal
 			}
 			else
@@ -295,7 +325,8 @@ CBaseEntity* FindGlobalEntity(string_t classname, string_t globalname)
 				at_console,
 				"Global entity found %s, wrong class %s\n",
 				STRING(globalname),
-				STRING(pReturn->pev->classname));
+				STRING(pReturn->pev->classname)
+			);
 			pReturn = NULL;
 		}
 	}
@@ -408,7 +439,8 @@ int DispatchRestore(edict_t* pent, SAVERESTOREDATA* pSaveData, int globalEntity)
 					at_error,
 					"Global Entity %s (%s) not in table!!!\n",
 					STRING(pEntity->pev->globalname),
-					STRING(pEntity->pev->classname));
+					STRING(pEntity->pev->classname)
+				);
 				// Spawned entities default to 'On'
 				gGlobalState.EntityAdd(pEntity->pev->globalname, gpGlobals->mapname, GLOBAL_ON);
 			}
@@ -433,7 +465,8 @@ void SaveWriteFields(
 	const char* pname,
 	void* pBaseData,
 	TYPEDESCRIPTION* pFields,
-	int fieldCount)
+	int fieldCount
+)
 {
 	CSave saveHelper(pSaveData);
 	saveHelper.WriteFields(pname, pBaseData, pFields, fieldCount);
@@ -444,7 +477,8 @@ void SaveReadFields(
 	const char* pname,
 	void* pBaseData,
 	TYPEDESCRIPTION* pFields,
-	int fieldCount)
+	int fieldCount
+)
 {
 	CRestore restoreHelper(pSaveData);
 	restoreHelper.ReadFields(pname, pBaseData, pFields, fieldCount);

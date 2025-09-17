@@ -3546,7 +3546,10 @@ void SV_ParseCvarValue(sv_client_t* cl, sizebuf_t* msg)
 	const char* value = MSG_ReadString(msg);
 
 	if ( svgame.dllFuncs2.pfnCvarValue != NULL )
+	{
 		svgame.dllFuncs2.pfnCvarValue(cl->edict, value);
+	}
+
 	Con_Reportf("Cvar query response: name:%s, value:%s\n", cl->name, value);
 }
 
@@ -3566,7 +3569,10 @@ void SV_ParseCvarValue2(sv_client_t* cl, sizebuf_t* msg)
 	Q_strcpy(value, sizeof(value), MSG_ReadString(msg));
 
 	if ( svgame.dllFuncs2.pfnCvarValue2 != NULL )
+	{
 		svgame.dllFuncs2.pfnCvarValue2(cl->edict, requestID, name, value);
+	}
+
 	Con_Reportf("Cvar query response: name:%s, request ID %d, cvar:%s, value:%s\n", cl->name, requestID, name, value);
 }
 

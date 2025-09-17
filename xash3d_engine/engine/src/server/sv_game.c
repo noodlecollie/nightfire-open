@@ -1206,14 +1206,20 @@ release private edict memory
 void GAME_EXPORT SV_FreePrivateData(edict_t* pEdict)
 {
 	if ( !pEdict || !pEdict->pvPrivateData )
+	{
 		return;
+	}
 
 	// NOTE: new interface can be missing
 	if ( svgame.dllFuncs2.pfnOnFreeEntPrivateData != NULL )
+	{
 		svgame.dllFuncs2.pfnOnFreeEntPrivateData(pEdict);
+	}
 
 	if ( Mem_IsAllocatedExt(svgame.mempool, pEdict->pvPrivateData) )
+	{
 		Mem_Free(pEdict->pvPrivateData);
+	}
 
 	pEdict->pvPrivateData = NULL;
 }
@@ -1249,8 +1255,11 @@ unlink edict from world and free it
 void SV_FreeEdict(edict_t* pEdict)
 {
 	Assert(pEdict != NULL);
+
 	if ( pEdict->free )
+	{
 		return;
+	}
 
 	// unlink from world
 	SV_UnlinkEdict(pEdict);
@@ -5380,7 +5389,9 @@ void GAME_EXPORT pfnQueryClientCvarValue(const edict_t* player, const char* cvar
 	sv_client_t* cl;
 
 	if ( !COM_CheckString(cvarName) )
+	{
 		return;
+	}
 
 	if ( (cl = SV_ClientFromEdict(player, true)) != NULL )
 	{
@@ -5390,7 +5401,10 @@ void GAME_EXPORT pfnQueryClientCvarValue(const edict_t* player, const char* cvar
 	else
 	{
 		if ( svgame.dllFuncs2.pfnCvarValue )
+		{
 			svgame.dllFuncs2.pfnCvarValue(player, "Bad Player");
+		}
+
 		Con_Printf(S_ERROR "QueryClientCvarValue: tried to send to a non-client!\n");
 	}
 }
@@ -5407,7 +5421,9 @@ void GAME_EXPORT pfnQueryClientCvarValue2(const edict_t* player, const char* cva
 	sv_client_t* cl;
 
 	if ( !COM_CheckString(cvarName) )
+	{
 		return;
+	}
 
 	if ( (cl = SV_ClientFromEdict(player, true)) != NULL )
 	{
@@ -5418,7 +5434,10 @@ void GAME_EXPORT pfnQueryClientCvarValue2(const edict_t* player, const char* cva
 	else
 	{
 		if ( svgame.dllFuncs2.pfnCvarValue2 )
+		{
 			svgame.dllFuncs2.pfnCvarValue2(player, requestID, cvarName, "Bad Player");
+		}
+
 		Con_Printf(S_ERROR "QueryClientCvarValue: tried to send to a non-client!\n");
 	}
 }
@@ -5916,7 +5935,9 @@ void SV_UnloadProgs(void)
 	SV_FreeStringPool();
 
 	if ( svgame.dllFuncs2.pfnGameShutdown != NULL )
+	{
 		svgame.dllFuncs2.pfnGameShutdown();
+	}
 
 	// now we can unload cvars
 	Cvar_FullSet("host_gameloaded", "0", FCVAR_READ_ONLY);
