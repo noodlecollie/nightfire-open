@@ -22,6 +22,8 @@
 #include "gamerules.h"
 #include "game.h"
 #include "MathLib/angles.h"
+#include "newdllfunctions.h"
+#include "botrix/server_plugin.h"
 
 void EntvarsKeyvalue(entvars_t* pev, KeyValueData* pkvd);
 
@@ -98,7 +100,7 @@ static const DLL_FUNCTIONS gFunctionTable = {
 };
 
 static const NEW_DLL_FUNCTIONS gNewDllFunctionTable = {
-	nullptr,  // void (*pfnOnFreeEntPrivateData)(edict_t* pEnt);
+	pfnOnFreeEntPrivateData,  // pfnOnFreeEntPrivateData
 	nullptr,  // void (*pfnGameShutdown)(void);
 	nullptr,  // int (*pfnShouldCollide)(edict_t* pentTouched, edict_t* pentOther);
 	nullptr,  // void (*pfnCvarValue)(const edict_t* pEnt, const char* value);
@@ -143,7 +145,7 @@ int GetNewDLLFunctions(NEW_DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
 		return FALSE;
 	}
 
-	memcpy(pFunctionTable, &gNewDLLFunctions, sizeof(NEW_DLL_FUNCTIONS));
+	memcpy(pFunctionTable, &gNewDllFunctionTable, sizeof(NEW_DLL_FUNCTIONS));
 	return TRUE;
 }
 
@@ -207,6 +209,8 @@ int DispatchSpawn(edict_t* pent)
 				// pEntity->pev->globalname ) );
 			}
 		}
+
+		Botrix::CBotrixServerPlugin::EntitySpawned(pent);
 	}
 
 	return 0;

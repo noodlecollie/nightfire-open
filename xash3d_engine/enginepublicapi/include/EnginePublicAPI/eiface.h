@@ -643,10 +643,7 @@ typedef struct
 	void (*pfnCvarValue)(const edict_t* pEnt, const char* value);
 	void (*pfnCvarValue2)(const edict_t* pEnt, int requestID, const char* cvarName, const char* value);
 } NEW_DLL_FUNCTIONS;
+
 typedef int (*NEW_DLL_FUNCTIONS_FN)(NEW_DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion);
-
-// Pointers will be null if the game DLL doesn't support this API.
-extern NEW_DLL_FUNCTIONS gNewDLLFunctions;
-
 typedef int (*APIFUNCTION)(DLL_FUNCTIONS* pFunctionTable, int interfaceVersion);
 typedef int (*APIFUNCTION2)(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion);

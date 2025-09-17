@@ -409,6 +409,8 @@ set(SOURCES_SERVER
 	monsters.cpp
 	monsterstate.cpp
 	multiplay_gamerules.cpp
+	newdllfunctions.h
+	newdllfunctions.cpp
 	nodes_compat.h
 	nodes.cpp
 	observer.cpp

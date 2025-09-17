@@ -44,6 +44,9 @@ namespace Botrix
 		static bool WaypointAutoAnalyzeEnabled();
 		static void RefreshWeaponConfig();
 
+		static void EntitySpawned(edict_t* edict);
+		static void EntityFreed(edict_t* edict);
+
 	private:
 		static void PrepareLevel();
 		static void ActivateLevel();

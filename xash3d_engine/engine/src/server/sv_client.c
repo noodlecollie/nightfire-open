@@ -3019,7 +3019,9 @@ static qboolean SV_EntCreate_f(sv_client_t* cl)
 	SV_ClientPrintf(cl, "Created %i: %s, targetname %s\n", NUM_FOR_EDICT(ent), Cmd_Argv(1), STRING(ent->v.targetname));
 
 	if ( svgame.dllFuncs.pfnSpawn )
+	{
 		svgame.dllFuncs.pfnSpawn(ent);
+	}
 
 	// now drop entity to floor.
 	pfnDropToFloor(ent);
