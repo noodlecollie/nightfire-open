@@ -3,6 +3,7 @@
 #include "standard_includes.h"
 #include <good/string.h>
 #include "botrix/botfactory.h"
+#include "botrix/enemyentity.h"
 
 struct edict_s;
 class CBasePlayer;
@@ -39,6 +40,7 @@ namespace Botrix
 		static bool MapIsRunning();
 		static const char* MapName();
 		static CBotrixCommand* GetConsoleCommandHandler();
+		static CEnemyEntities& GetEnemyEntitiesContainer();
 
 		static void UpdateLogLevel();
 		static bool WaypointAutoAnalyzeEnabled();
@@ -70,5 +72,6 @@ namespace Botrix
 
 		static bool m_bSpawnedRegisterBots;
 		static CBotFactory m_BotFactory;
+		static CEnemyEntities m_EnemyEntities;
 	};
 }  // namespace Botrix

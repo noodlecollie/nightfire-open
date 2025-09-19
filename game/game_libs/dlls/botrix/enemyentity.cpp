@@ -11,6 +11,8 @@ namespace Botrix
 		virtual ~IWrapper() = default;
 
 		virtual edict_t* GetEdict() const = 0;
+		virtual bool IsPlayerType() const = 0;
+		virtual bool IsRoninType() const = 0;
 		virtual bool IsBot() const = 0;
 		virtual bool IsAlive() const = 0;
 		virtual int GetTeam() const = 0;
@@ -34,6 +36,16 @@ namespace Botrix
 		edict_t* GetEdict() const override
 		{
 			return m_Player ? m_Player->edict() : nullptr;
+		}
+
+		bool IsPlayerType() const override
+		{
+			return true;
+		}
+
+		bool IsRoninType() const override
+		{
+			return false;
 		}
 
 		bool IsBot() const override
@@ -121,6 +133,16 @@ namespace Botrix
 			return m_Ronin ? m_Ronin->edict() : nullptr;
 		}
 
+		bool IsPlayerType() const override
+		{
+			return false;
+		}
+
+		bool IsRoninType() const override
+		{
+			return true;
+		}
+
 		bool IsBot() const override
 		{
 			return false;
@@ -171,40 +193,53 @@ namespace Botrix
 
 	CEnemyEntity::CEnemyEntity(struct edict_s* edict)
 	{
-		if ( !edict )
-		{
-			return;
-		}
+		CreateFrom(edict);
+	}
 
-		CBaseEntity* baseEnt = CBaseEntity::Instance(edict);
+	CEnemyEntity::CEnemyEntity(const CEnemyEntity& other)
+	{
+		*this = other;
+	}
 
-		if ( baseEnt->Classify() == CLASS_PLAYER )
-		{
-			CBasePlayer* player = dynamic_cast<CBasePlayer*>(baseEnt);
-			ASSERT(player);
-
-			m_Wrapper.reset(new PlayerWrapper(player));
-		}
-		else if ( FStrEq(STRING(edict->v.classname), "npc_ronin_turret") )
-		{
-			CNPCRoninTurret* ronin = dynamic_cast<CNPCRoninTurret*>(baseEnt);
-			ASSERT(ronin);
-
-			m_Wrapper.reset(new RoninWrapper(ronin));
-		}
-		else
-		{
-			ASSERT(false);
-		}
+	CEnemyEntity::CEnemyEntity(CEnemyEntity&& other)
+	{
+		*this = std::move(other);
 	}
 
 	CEnemyEntity::~CEnemyEntity()
 	{
 	}
 
+	CEnemyEntity& CEnemyEntity::operator=(const CEnemyEntity& other)
+	{
+		CreateFrom(other.GetEdict());
+		return *this;
+	}
+
+	CEnemyEntity& CEnemyEntity::operator=(CEnemyEntity&& other)
+	{
+		m_Wrapper = std::move(other.m_Wrapper);
+		return *this;
+	}
+
+	bool CEnemyEntity::IsValid() const
+	{
+		return m_Wrapper.get() != nullptr;
+	}
+
 	struct edict_s* CEnemyEntity::GetEdict() const
 	{
 		return m_Wrapper ? m_Wrapper->GetEdict() : nullptr;
+	}
+
+	bool CEnemyEntity::IsPlayerEdict() const
+	{
+		return m_Wrapper ? m_Wrapper->IsPlayerType() : false;
+	}
+
+	bool CEnemyEntity::IsRoninEdict() const
+	{
+		return m_Wrapper ? m_Wrapper->IsRoninType() : false;
 	}
 
 	bool CEnemyEntity::IsBot() const
@@ -240,5 +275,145 @@ namespace Botrix
 	int CEnemyEntity::GetHealth() const
 	{
 		return m_Wrapper ? m_Wrapper->GetHealth() : 0;
+	}
+
+	void CEnemyEntity::CreateFrom(struct edict_s* edict)
+	{
+		m_Wrapper.reset();
+
+		if ( !edict )
+		{
+			return;
+		}
+
+		CBaseEntity* baseEnt = CBaseEntity::Instance(edict);
+
+		switch ( CEnemyEntities::GetType(edict) )
+		{
+			case CEnemyEntities::EntityType::Player:
+			{
+				CBasePlayer* player = dynamic_cast<CBasePlayer*>(baseEnt);
+				ASSERT(player);
+
+				m_Wrapper.reset(new PlayerWrapper(player));
+				break;
+			}
+
+			case CEnemyEntities::EntityType::RoninTurret:
+			{
+				CNPCRoninTurret* ronin = dynamic_cast<CNPCRoninTurret*>(baseEnt);
+				ASSERT(ronin);
+
+				m_Wrapper.reset(new RoninWrapper(ronin));
+				break;
+			}
+
+			default:
+			{
+				ASSERT(false);
+				break;
+			}
+		}
+	}
+
+	CEnemyEntities::EntityType CEnemyEntities::GetType(struct edict_s* edict)
+	{
+		if ( !edict )
+		{
+			return EntityType::Invalid;
+		}
+
+		CBaseEntity* baseEnt = CBaseEntity::Instance(edict);
+
+		if ( baseEnt->Classify() == CLASS_PLAYER )
+		{
+			return EntityType::Player;
+		}
+
+		if ( FStrEq(STRING(edict->v.classname), "npc_ronin_turret") )
+		{
+			return EntityType::RoninTurret;
+		}
+
+		return EntityType::Invalid;
+	}
+
+	bool CEnemyEntities::Add(struct edict_s* edict)
+	{
+		ASSERT(edict);
+
+		if ( !edict )
+		{
+			return false;
+		}
+
+		EntityType type = GetType(edict);
+
+		if ( type == EntityType::Invalid )
+		{
+			return false;
+		}
+
+		CEnemyEntity* existing = Find(edict);
+
+		if ( existing )
+		{
+			return false;
+		}
+
+		m_Entities.AddToHead(CEnemyEntity(edict));
+		return true;
+	}
+
+	bool CEnemyEntities::Remove(struct edict_s* edict)
+	{
+		ASSERT(edict);
+
+		if ( !edict )
+		{
+			return false;
+		}
+
+		int index = FindIndex(edict);
+
+		if ( index < 0 )
+		{
+			return false;
+		}
+
+		m_Entities.Remove(index);
+		return true;
+	}
+
+	void CEnemyEntities::Clear()
+	{
+		m_Entities.Purge();
+	}
+
+	const CEnemyEntity* CEnemyEntities::Find(struct edict_s* edict) const
+	{
+		int index = FindIndex(edict);
+		return index >= 0 ? &m_Entities.Element(index) : nullptr;
+	}
+
+	CEnemyEntity* CEnemyEntities::Find(struct edict_s* edict)
+	{
+		const CEnemyEntity* result = const_cast<const CEnemyEntities*>(this)->Find(edict);
+		return const_cast<CEnemyEntity*>(result);
+	}
+
+	int CEnemyEntities::FindIndex(struct edict_s* edict) const
+	{
+		FOR_EACH_LL_FAST(m_Entities, index)
+		{
+			const CEnemyEntity& item = m_Entities.Element(index);
+
+			if ( item.GetEdict() == edict )
+			{
+				return index;
+			}
+		}
+
+		return -1;
 	}
 }  // namespace Botrix
