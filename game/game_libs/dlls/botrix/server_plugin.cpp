@@ -28,7 +28,7 @@ namespace Botrix
 	CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
 	bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
 	CBotFactory CBotrixServerPlugin::m_BotFactory;
-	CEnemyEntities CBotrixServerPlugin::m_EnemyEntities;
+	CEnemyEntityContainer CBotrixServerPlugin::m_EnemyEntities;
 
 	static constexpr const char* const TEAM_NAME_UNASSIGNED = "unassigned";
 	static constexpr const char* const TEAM_NAME_SPECTATOR = "spectator";
@@ -391,7 +391,7 @@ namespace Botrix
 		return m_pConsoleCommands;
 	}
 
-	CEnemyEntities& CBotrixServerPlugin::GetEnemyEntitiesContainer()
+	CEnemyEntityContainer& CBotrixServerPlugin::GetEnemyEntitiesContainer()
 	{
 		return m_EnemyEntities;
 	}

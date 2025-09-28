@@ -40,7 +40,7 @@ namespace Botrix
 		static bool MapIsRunning();
 		static const char* MapName();
 		static CBotrixCommand* GetConsoleCommandHandler();
-		static CEnemyEntities& GetEnemyEntitiesContainer();
+		static CEnemyEntityContainer& GetEnemyEntitiesContainer();
 
 		static void UpdateLogLevel();
 		static bool WaypointAutoAnalyzeEnabled();
@@ -72,6 +72,6 @@ namespace Botrix
 
 		static bool m_bSpawnedRegisterBots;
 		static CBotFactory m_BotFactory;
-		static CEnemyEntities m_EnemyEntities;
+		static CEnemyEntityContainer m_EnemyEntities;
 	};
 }  // namespace Botrix

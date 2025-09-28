@@ -12,6 +12,15 @@ namespace Botrix
 	class CEnemyEntity
 	{
 	public:
+		enum class EntityType
+		{
+			Invalid,
+			Player,
+			RoninTurret,
+		};
+
+		static EntityType GetType(struct edict_s* edict);
+
 		explicit CEnemyEntity(struct edict_s* edict);
 		CEnemyEntity(const CEnemyEntity& other);
 		CEnemyEntity(CEnemyEntity&& other);
@@ -43,28 +52,25 @@ namespace Botrix
 		std::unique_ptr<IWrapper> m_Wrapper;
 	};
 
-	class CEnemyEntities
+	class CEnemyEntityContainer
 	{
 	public:
-		enum class EntityType
-		{
-			Invalid,
-			Player,
-			RoninTurret,
-		};
-
-		static EntityType GetType(struct edict_s* edict);
-
 		bool Add(struct edict_s* edict);
 		bool Remove(struct edict_s* edict);
 		void Clear();
+		int Count() const;
+
+		const CEnemyEntity* Get(int index) const;
+		CEnemyEntity* Get(int index);
 
 		const CEnemyEntity* Find(struct edict_s* edict) const;
 		CEnemyEntity* Find(struct edict_s* edict);
+		int FindIndex(struct edict_s* edict) const;
+		int GetNextIndex(int index) const;
+		int GetPreviousIndex(int index) const;
+		bool IsValidIndex(int index) const;
 
 	private:
-		int FindIndex(struct edict_s* edict) const;
-
 		CUtlLinkedList<CEnemyEntity> m_Entities;
 	};
 }  // namespace Botrix

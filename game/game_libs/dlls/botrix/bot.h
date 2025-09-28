@@ -425,6 +425,7 @@ namespace Botrix
 													   // CItems::GetItems()).
 		const CItem* pStuckObject;  // Object that player is stuck on.
 
+		// BOTRIX_TODO: Replace bit sets with linked lists
 		good::bitset m_aNearPlayers;  // Bitset of players near (to know if bot can stuck with them).
 		good::bitset m_aSeenEnemies;  // Bitset of enemies that bot can see right now.
 		good::bitset m_aEnemies;  // Bitset of enemies that bot can't see right now, but it knows they are there.

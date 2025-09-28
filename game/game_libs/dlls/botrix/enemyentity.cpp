@@ -191,6 +191,28 @@ namespace Botrix
 		}
 	};
 
+	CEnemyEntity::EntityType CEnemyEntity::GetType(struct edict_s* edict)
+	{
+		if ( !edict )
+		{
+			return EntityType::Invalid;
+		}
+
+		CBaseEntity* baseEnt = CBaseEntity::Instance(edict);
+
+		if ( baseEnt->Classify() == CLASS_PLAYER )
+		{
+			return EntityType::Player;
+		}
+
+		if ( FStrEq(STRING(edict->v.classname), "npc_ronin_turret") )
+		{
+			return EntityType::RoninTurret;
+		}
+
+		return EntityType::Invalid;
+	}
+
 	CEnemyEntity::CEnemyEntity(struct edict_s* edict)
 	{
 		CreateFrom(edict);
@@ -288,9 +310,9 @@ namespace Botrix
 
 		CBaseEntity* baseEnt = CBaseEntity::Instance(edict);
 
-		switch ( CEnemyEntities::GetType(edict) )
+		switch ( CEnemyEntity::GetType(edict) )
 		{
-			case CEnemyEntities::EntityType::Player:
+			case CEnemyEntity::EntityType::Player:
 			{
 				CBasePlayer* player = dynamic_cast<CBasePlayer*>(baseEnt);
 				ASSERT(player);
@@ -299,7 +321,7 @@ namespace Botrix
 				break;
 			}
 
-			case CEnemyEntities::EntityType::RoninTurret:
+			case CEnemyEntity::EntityType::RoninTurret:
 			{
 				CNPCRoninTurret* ronin = dynamic_cast<CNPCRoninTurret*>(baseEnt);
 				ASSERT(ronin);
@@ -316,29 +338,7 @@ namespace Botrix
 		}
 	}
 
-	CEnemyEntities::EntityType CEnemyEntities::GetType(struct edict_s* edict)
-	{
-		if ( !edict )
-		{
-			return EntityType::Invalid;
-		}
-
-		CBaseEntity* baseEnt = CBaseEntity::Instance(edict);
-
-		if ( baseEnt->Classify() == CLASS_PLAYER )
-		{
-			return EntityType::Player;
-		}
-
-		if ( FStrEq(STRING(edict->v.classname), "npc_ronin_turret") )
-		{
-			return EntityType::RoninTurret;
-		}
-
-		return EntityType::Invalid;
-	}
-
-	bool CEnemyEntities::Add(struct edict_s* edict)
+	bool CEnemyEntityContainer::Add(struct edict_s* edict)
 	{
 		ASSERT(edict);
 
@@ -347,9 +347,9 @@ namespace Botrix
 			return false;
 		}
 
-		EntityType type = GetType(edict);
+		CEnemyEntity::EntityType type = CEnemyEntity::GetType(edict);
 
-		if ( type == EntityType::Invalid )
+		if ( type == CEnemyEntity::EntityType::Invalid )
 		{
 			return false;
 		}
@@ -365,7 +365,7 @@ namespace Botrix
 		return true;
 	}
 
-	bool CEnemyEntities::Remove(struct edict_s* edict)
+	bool CEnemyEntityContainer::Remove(struct edict_s* edict)
 	{
 		ASSERT(edict);
 
@@ -385,24 +385,39 @@ namespace Botrix
 		return true;
 	}
 
-	void CEnemyEntities::Clear()
+	void CEnemyEntityContainer::Clear()
 	{
 		m_Entities.Purge();
 	}
 
-	const CEnemyEntity* CEnemyEntities::Find(struct edict_s* edict) const
+	int CEnemyEntityContainer::Count() const
+	{
+		return m_Entities.Count();
+	}
+
+	const CEnemyEntity* CEnemyEntityContainer::Get(int index) const
+	{
+		return m_Entities.IsValidIndex(index) ? &m_Entities.Element(index) : nullptr;
+	}
+
+	CEnemyEntity* CEnemyEntityContainer::Get(int index)
+	{
+		return const_cast<CEnemyEntity*>(const_cast<const CEnemyEntityContainer*>(this)->Get(index));
+	}
+
+	const CEnemyEntity* CEnemyEntityContainer::Find(struct edict_s* edict) const
 	{
 		int index = FindIndex(edict);
 		return index >= 0 ? &m_Entities.Element(index) : nullptr;
 	}
 
-	CEnemyEntity* CEnemyEntities::Find(struct edict_s* edict)
+	CEnemyEntity* CEnemyEntityContainer::Find(struct edict_s* edict)
 	{
-		const CEnemyEntity* result = const_cast<const CEnemyEntities*>(this)->Find(edict);
+		const CEnemyEntity* result = const_cast<const CEnemyEntityContainer*>(this)->Find(edict);
 		return const_cast<CEnemyEntity*>(result);
 	}
 
-	int CEnemyEntities::FindIndex(struct edict_s* edict) const
+	int CEnemyEntityContainer::FindIndex(struct edict_s* edict) const
 	{
 		FOR_EACH_LL_FAST(m_Entities, index)
 		{
@@ -415,5 +430,20 @@ namespace Botrix
 		}
 
 		return -1;
+	}
+
+	int CEnemyEntityContainer::GetNextIndex(int index) const
+	{
+		return m_Entities.Next(index);
+	}
+
+	int CEnemyEntityContainer::GetPreviousIndex(int index) const
+	{
+		return m_Entities.Previous(index);
+	}
+
+	bool CEnemyEntityContainer::IsValidIndex(int index) const
+	{
+		return m_Entities.IsValidIndex(index);
 	}
 }  // namespace Botrix
