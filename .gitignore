@@ -4,3 +4,4 @@ __pycache__/
 *-autosave.kra
 .cache/
 /compile_commands.json
+__cmake_systeminformation/
