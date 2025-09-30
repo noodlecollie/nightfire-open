@@ -3,6 +3,7 @@
 #include "npc/npc_ronin_turret.h"
 #include "botrix/playerinfo.h"
 #include "botrix/parameter_vars.h"
+#include "botrix/players.h"
 
 namespace Botrix
 {
@@ -20,6 +21,7 @@ namespace Botrix
 		virtual Vector GetCentre() const = 0;
 		virtual Vector GetFoot() const = 0;
 		virtual int GetHealth() const = 0;
+		virtual CPlayer* GetBotrixPlayerPtr() const = 0;
 	};
 
 	struct CEnemyEntity::PlayerWrapper : public CEnemyEntity::IWrapper
@@ -105,6 +107,11 @@ namespace Botrix
 			return m_Player ? CPlayerInfo(m_Player->edict()).GetHealth() : 0;
 		}
 
+		CPlayer* GetBotrixPlayerPtr() const override
+		{
+			return m_Player ? CPlayers::Get(m_Player->edict()) : nullptr;
+		}
+
 	private:
 		bool IsDucking() const
 		{
@@ -188,6 +195,11 @@ namespace Botrix
 		int GetHealth() const override
 		{
 			return m_Ronin ? static_cast<int>(m_Ronin->pev->health) : 0;
+		}
+
+		CPlayer* GetBotrixPlayerPtr() const override
+		{
+			return nullptr;
 		}
 	};
 
@@ -297,6 +309,11 @@ namespace Botrix
 	int CEnemyEntity::GetHealth() const
 	{
 		return m_Wrapper ? m_Wrapper->GetHealth() : 0;
+	}
+
+	CPlayer* CEnemyEntity::GetBotrixPlayerPtr() const
+	{
+		return m_Wrapper ? m_Wrapper->GetBotrixPlayerPtr() : nullptr;
 	}
 
 	void CEnemyEntity::CreateFrom(struct edict_s* edict)
@@ -415,6 +432,12 @@ namespace Botrix
 	{
 		const CEnemyEntity* result = const_cast<const CEnemyEntityContainer*>(this)->Find(edict);
 		return const_cast<CEnemyEntity*>(result);
+	}
+
+	CPlayer* CEnemyEntityContainer::FindBotrixPlayer(struct edict_s* edict) const
+	{
+		const CEnemyEntity* ent = Find(edict);
+		return ent ? ent->GetBotrixPlayerPtr() : nullptr;
 	}
 
 	int CEnemyEntityContainer::FindIndex(struct edict_s* edict) const

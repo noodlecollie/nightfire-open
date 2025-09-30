@@ -10,6 +10,8 @@ struct edict_s;
 
 namespace Botrix
 {
+	class CPlayer;
+
 	class CEnemyEntity
 	{
 	public:
@@ -42,6 +44,7 @@ namespace Botrix
 		Vector GetCentre() const;
 		Vector GetFoot() const;
 		int GetHealth() const;
+		CPlayer* GetBotrixPlayerPtr() const;
 
 	private:
 		struct IWrapper;
@@ -66,6 +69,7 @@ namespace Botrix
 
 		const CEnemyEntity* Find(struct edict_s* edict) const;
 		CEnemyEntity* Find(struct edict_s* edict);
+		CPlayer* FindBotrixPlayer(struct edict_s* edict) const;
 		int FindIndex(struct edict_s* edict) const;
 		int GetNextIndex(int index) const;
 		int GetPreviousIndex(int index) const;
