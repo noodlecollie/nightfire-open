@@ -446,4 +446,19 @@ namespace Botrix
 	{
 		return m_Entities.IsValidIndex(index);
 	}
+
+	bool CEnemyEntityContainer::ContainsPlayer(TPlayerIndex playerIndex) const
+	{
+		FOR_EACH_LL_FAST(m_Entities, index)
+		{
+			const CEnemyEntity& item = m_Entities.Element(index);
+
+			if ( item.IsPlayerEdict() && CPlayerInfo(item.GetEdict()).GetPlayerEdictIndex() == playerIndex )
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 }  // namespace Botrix

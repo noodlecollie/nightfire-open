@@ -10,6 +10,7 @@
 #include "botrix/movecmd.h"
 #include "botrix/waypoint_navigator.h"
 #include "botrix/parameter_vars.h"
+#include "botrix/enemyentity.h"
 
 struct edict_s;
 
@@ -63,7 +64,7 @@ namespace Botrix
 		/// Return true if @p iPlayer is ally for bot.
 		bool IsAlly(TPlayerIndex iPlayer)
 		{
-			return m_aAllies.test(iPlayer);
+			return m_Allies.ContainsPlayer(iPlayer);
 		}
 
 		/// Return true if bot is paused.
@@ -93,8 +94,24 @@ namespace Botrix
 		/// Set ally/enemy for bot.
 		void SetAlly(TPlayerIndex iPlayer, bool bAlly)
 		{
-			m_aAllies.set(iPlayer, bAlly);
-			if ( bAlly && (m_pCurrentEnemy == CPlayers::Get(iPlayer)) )
+			CPlayer* player = CPlayers::Get(iPlayer);
+			ASSERT(player);
+
+			if ( !player )
+			{
+				return;
+			}
+
+			if ( bAlly )
+			{
+				m_Allies.Add(player->GetEdict());
+			}
+			else
+			{
+				m_Allies.Remove(player->GetEdict());
+			}
+
+			if ( bAlly && m_pCurrentEnemy == player )
 			{
 				EraseCurrentEnemy();
 			}
@@ -170,11 +187,18 @@ namespace Botrix
 		virtual void KilledEnemy(int /*iPlayerIndex*/, CPlayer* pPlayer)
 		{
 			if ( pPlayer == this )
+			{
 				BotMessage("%s -> Suicide.", GetName());
+			}
 			else
+			{
 				BotDebug("%s -> Killed %s.", GetName(), pPlayer->GetName());
+			}
+
 			if ( pPlayer == m_pCurrentEnemy )
+			{
 				EraseCurrentEnemy();
+			}
 		}
 
 		/// Called when enemy just shot this bot.
@@ -216,11 +240,12 @@ namespace Botrix
 		{
 			int team = pPlayer->GetTeam();
 			int index = pPlayer->GetIndex();
+
 			return (!pPlayer->IsProtected()) &&
 				(CMod::iSpawnProtectionHealth == 0 || pPlayer->GetHealth() < CMod::iSpawnProtectionHealth) &&
 				(team != CMod::iSpectatorTeam) &&
 				(team != GetTeam() || team == CMod::iUnassignedTeam) &&  // Different teams or deathmatch.
-				(index >= 0) && !m_aAllies.test(index);
+				(index >= 0) && !m_Allies.ContainsPlayer(index);
 		}
 
 		// Enemy is dead or got disconnected.
@@ -425,11 +450,11 @@ namespace Botrix
 													   // CItems::GetItems()).
 		const CItem* pStuckObject;  // Object that player is stuck on.
 
-		// BOTRIX_TODO: Replace bit sets with linked lists
-		good::bitset m_aNearPlayers;  // Bitset of players near (to know if bot can stuck with them).
-		good::bitset m_aSeenEnemies;  // Bitset of enemies that bot can see right now.
-		good::bitset m_aEnemies;  // Bitset of enemies that bot can't see right now, but it knows they are there.
-		good::bitset m_aAllies;  // Allies for bot.
+		CEnemyEntityContainer m_NearPlayers;  // Bitset of players near (to know if bot can stuck with them).
+		CEnemyEntityContainer m_SeenEnemies;  // Bitset of enemies that bot can see right now.
+		CEnemyEntityContainer
+			m_Enemies;  // Bitset of enemies that bot can't see right now, but it knows they are there.
+		CEnemyEntityContainer m_Allies;  // Allies for bot.
 		int m_iNextCheckPlayer;  // Next player to check if close.
 
 		CPlayer* m_pCurrentEnemy;  // Current enemy.

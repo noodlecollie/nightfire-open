@@ -4,6 +4,7 @@
 #include "utlvector.h"
 #include "utllinkedlist.h"
 #include <memory>
+#include "botrix/types.h"
 
 struct edict_s;
 
@@ -69,6 +70,8 @@ namespace Botrix
 		int GetNextIndex(int index) const;
 		int GetPreviousIndex(int index) const;
 		bool IsValidIndex(int index) const;
+
+		bool ContainsPlayer(TPlayerIndex playerIndex) const;
 
 	private:
 		CUtlLinkedList<CEnemyEntity> m_Entities;
