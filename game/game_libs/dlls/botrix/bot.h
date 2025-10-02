@@ -10,7 +10,6 @@
 #include "botrix/movecmd.h"
 #include "botrix/waypoint_navigator.h"
 #include "botrix/parameter_vars.h"
-#include "botrix/enemyentity.h"
 
 struct edict_s;
 
@@ -64,7 +63,7 @@ namespace Botrix
 		/// Return true if @p iPlayer is ally for bot.
 		bool IsAlly(TPlayerIndex iPlayer)
 		{
-			return m_Allies.ContainsPlayer(iPlayer);
+			return m_aAllies.test(iPlayer);
 		}
 
 		/// Return true if bot is paused.
@@ -94,24 +93,8 @@ namespace Botrix
 		/// Set ally/enemy for bot.
 		void SetAlly(TPlayerIndex iPlayer, bool bAlly)
 		{
-			CPlayer* player = CPlayers::Get(iPlayer);
-			ASSERT(player);
-
-			if ( !player )
-			{
-				return;
-			}
-
-			if ( bAlly )
-			{
-				m_Allies.Add(player->GetEdict());
-			}
-			else
-			{
-				m_Allies.Remove(player->GetEdict());
-			}
-
-			if ( bAlly && m_pCurrentEnemy == player )
+			m_aAllies.set(iPlayer, bAlly);
+			if ( bAlly && (m_pCurrentEnemy == CPlayers::Get(iPlayer)) )
 			{
 				EraseCurrentEnemy();
 			}
@@ -245,7 +228,7 @@ namespace Botrix
 				(CMod::iSpawnProtectionHealth == 0 || pPlayer->GetHealth() < CMod::iSpawnProtectionHealth) &&
 				(team != CMod::iSpectatorTeam) &&
 				(team != GetTeam() || team == CMod::iUnassignedTeam) &&  // Different teams or deathmatch.
-				(index >= 0) && !m_Allies.ContainsPlayer(index);
+				(index >= 0) && !m_aAllies.test(index);
 		}
 
 		// Enemy is dead or got disconnected.
@@ -450,11 +433,10 @@ namespace Botrix
 													   // CItems::GetItems()).
 		const CItem* pStuckObject;  // Object that player is stuck on.
 
-		CEnemyEntityContainer m_NearPlayers;  // Bitset of players near (to know if bot can stuck with them).
-		CEnemyEntityContainer m_SeenEnemies;  // Bitset of enemies that bot can see right now.
-		CEnemyEntityContainer
-			m_Enemies;  // Bitset of enemies that bot can't see right now, but it knows they are there.
-		CEnemyEntityContainer m_Allies;  // Allies for bot.
+		good::bitset m_aNearPlayers;  // Bitset of players near (to know if bot can stuck with them).
+		good::bitset m_aSeenEnemies;  // Bitset of enemies that bot can see right now.
+		good::bitset m_aEnemies;  // Bitset of enemies that bot can't see right now, but it knows they are there.
+		good::bitset m_aAllies;  // Allies for bot.
 		int m_iNextCheckPlayer;  // Next player to check if close.
 
 		CPlayer* m_pCurrentEnemy;  // Current enemy.

@@ -15,8 +15,6 @@ namespace WeaponAtts
 
 namespace Botrix
 {
-	class CEnemyEntity;
-
 	//****************************************************************************************************************
 	/// Weapon abstract class. Used to get needed angles to aim.
 	//****************************************************************************************************************
@@ -390,14 +388,6 @@ namespace Botrix
 			Vector& vResult
 		) const;
 
-		void GetLook(
-			const Vector& vFrom,
-			const CEnemyEntity* pTo,
-			TBotIntelligence iIntelligence,
-			int iSecondary,
-			Vector& vResult
-		) const;
-
 		/**
 		 * @brief Get vector to aim to.
 		 *
@@ -407,15 +397,6 @@ namespace Botrix
 		bool GetLook(
 			const Vector& vFrom,
 			const CPlayer* pTo,
-			float fDistanceSqr,
-			TBotIntelligence iBotIntelligence,
-			int iSecondary,
-			Vector& vResult
-		) const;
-
-		bool GetLook(
-			const Vector& vFrom,
-			const CEnemyEntity* pTo,
 			float fDistanceSqr,
 			TBotIntelligence iBotIntelligence,
 			int iSecondary,

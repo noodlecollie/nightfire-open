@@ -28,7 +28,6 @@ namespace Botrix
 	CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
 	bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
 	CBotFactory CBotrixServerPlugin::m_BotFactory;
-	CEnemyEntityContainer CBotrixServerPlugin::m_EnemyEntities;
 
 	static constexpr const char* const TEAM_NAME_UNASSIGNED = "unassigned";
 	static constexpr const char* const TEAM_NAME_SPECTATOR = "spectator";
@@ -155,7 +154,6 @@ namespace Botrix
 	void CBotrixServerPlugin::ServerDeactivate()
 	{
 		BLOG_I("Botrix ServerDeactivate");
-		m_EnemyEntities.Clear();
 		m_bMapRunning = false;
 		m_MapName = "";
 		m_bSpawnedRegisterBots = false;
@@ -391,11 +389,6 @@ namespace Botrix
 		return m_pConsoleCommands;
 	}
 
-	CEnemyEntityContainer& CBotrixServerPlugin::GetEnemyEntitiesContainer()
-	{
-		return m_EnemyEntities;
-	}
-
 	void CBotrixServerPlugin::UpdateLogLevel()
 	{
 		static cvar_t* developerCvar = nullptr;
@@ -450,7 +443,9 @@ namespace Botrix
 		}
 
 		ASSERT(edict);
-		m_EnemyEntities.Add(edict);
+
+		// TODO: Currently unused
+		(void)edict;
 	}
 
 	void CBotrixServerPlugin::EntityFreed(edict_t* edict)
@@ -461,7 +456,9 @@ namespace Botrix
 		}
 
 		ASSERT(edict);
-		m_EnemyEntities.Remove(edict);
+
+		// TODO: Currently unused
+		(void)edict;
 	}
 
 	void CBotrixServerPlugin::PrepareLevel()
@@ -479,9 +476,6 @@ namespace Botrix
 
 		const float maxPlayers = CVAR_GET_FLOAT("maxplayers");
 		CPlayers::Init(static_cast<int>(maxPlayers));
-
-		// TODO: Loop through entities and add the ones that we care about.
-		m_EnemyEntities.Clear();
 
 		RefreshWeaponConfig();
 

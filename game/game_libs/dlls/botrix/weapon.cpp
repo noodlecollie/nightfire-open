@@ -279,24 +279,12 @@ namespace Botrix
 		Vector& vResult
 	) const
 	{
-		CEnemyEntity enemyEnt(pTo ? pTo->GetEdict() : nullptr);
-		return GetLook(vFrom, pTo ? &enemyEnt : nullptr, iIntelligence, iSecondary, vResult);
-	}
-
-	void CWeaponWithAmmo::GetLook(
-		const Vector& vFrom,
-		const CEnemyEntity* pTo,
-		TBotIntelligence iIntelligence,
-		int iSecondary,
-		Vector& vResult
-	) const
-	{
 		// Assume we can see enemy head.
 		switch ( m_pWeapon->iAim[iSecondary] )
 		{
 			case EWeaponAimFoot:
 			{
-				vResult = pTo->GetFoot();
+				pTo->GetFoot(vResult);
 				break;
 			}
 
@@ -310,7 +298,7 @@ namespace Botrix
 				}
 				else
 				{
-					vResult = pTo->GetCentre();
+					pTo->GetCenter(vResult);
 
 					if ( !CBotrixEngineUtil::IsVisible(vFrom, vResult, EVisibilityBots) )
 					{
@@ -335,23 +323,10 @@ namespace Botrix
 		}
 	}
 
-	bool CWeaponWithAmmo::GetLook(
-		const Vector& vFrom,
-		const CPlayer* pTo,
-		float fDistanceSqr,
-		TBotIntelligence iBotIntelligence,
-		int iSecondary,
-		Vector& vResult
-	) const
-	{
-		CEnemyEntity enemyEnt(pTo ? pTo->GetEdict() : nullptr);
-		return GetLook(vFrom, pTo ? &enemyEnt : nullptr, fDistanceSqr, iBotIntelligence, iSecondary, vResult);
-	}
-
 	//----------------------------------------------------------------------------------------------------------------
 	bool CWeaponWithAmmo::GetLook(
 		const Vector& vFrom,
-		const CEnemyEntity* pTo,
+		const CPlayer* pTo,
 		float fDistanceSqr,
 		TBotIntelligence iBotIntelligence,
 		int iSecondary,

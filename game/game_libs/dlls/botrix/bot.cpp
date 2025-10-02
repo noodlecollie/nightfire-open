@@ -48,6 +48,10 @@ namespace Botrix
 		r(rand() & 0xFF),
 		g(rand() & 0xFF),
 		b(rand() & 0xFF),
+		m_aNearPlayers(CPlayers::Size()),
+		m_aSeenEnemies(CPlayers::Size()),
+		m_aEnemies(CPlayers::Size()),
+		m_aAllies(CPlayers::Size()),
 		m_iNextCheckPlayer(0),
 		m_pCurrentEnemy(NULL),
 		m_cAttackDuckRangeSqr(0, SQR(400)),
@@ -257,8 +261,8 @@ namespace Botrix
 		m_aAvoidAreas.clear();
 
 		m_iNextCheckPlayer = 0;
-		m_NearPlayers.Clear();
-		m_SeenEnemies.Clear();
+		m_aNearPlayers.reset();
+		m_aSeenEnemies.reset();
 		m_pCurrentEnemy = NULL;
 
 		// Don't clear picked items, as bot still know which were taken previously.
@@ -378,15 +382,10 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBot::PlayerDisconnect(int /* iPlayerIndex */, CPlayer* pPlayer)
+	void CBot::PlayerDisconnect(int iPlayerIndex, CPlayer* pPlayer)
 	{
-		if ( !pPlayer )
-		{
-			return;
-		}
-
-		m_NearPlayers.Remove(pPlayer->GetEdict());
-		m_SeenEnemies.Remove(pPlayer->GetEdict());
+		m_aNearPlayers.reset(iPlayerIndex);
+		m_aSeenEnemies.reset(iPlayerIndex);
 
 		if ( pPlayer == m_pCurrentEnemy )
 		{
@@ -1435,7 +1434,7 @@ namespace Botrix
 
 				if ( fDistSqr <= CMod::iNearItemMaxDistanceSqr )
 				{
-					m_NearPlayers.Add(pCheckPlayer->GetEdict());
+					m_aNearPlayers.set(m_iNextCheckPlayer);
 
 					// Check if players are not stuck with each other.
 					if ( m_bStuck && !m_bStuckTryingSide &&
@@ -1466,12 +1465,12 @@ namespace Botrix
 				}
 				else
 				{
-					m_NearPlayers.Remove(pCheckPlayer->GetEdict());
+					m_aNearPlayers.reset(m_iNextCheckPlayer);
 				}
 			}
 			else
 			{
-				m_NearPlayers.Remove(pCheckPlayer->GetEdict());
+				m_aNearPlayers.reset(m_iNextCheckPlayer);
 
 				if ( m_pCurrentEnemy == pCheckPlayer )
 				{
@@ -1495,7 +1494,7 @@ namespace Botrix
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
-	void CBot::CheckEnemy(int /* iPlayerIndex */, CPlayer* pPlayer, bool bCheckVisibility)
+	void CBot::CheckEnemy(int iPlayerIndex, CPlayer* pPlayer, bool bCheckVisibility)
 	{
 		BASSERT(!m_bDontAttack && (m_pCurrentEnemy != this), return);
 
@@ -1506,7 +1505,7 @@ namespace Botrix
 		if ( pPlayer->IsAlive() && (!bCheckVisibility || IsVisible(pPlayer, bIsDifferentEnemy)) )
 		{
 			// Currently seeing this player.
-			m_SeenEnemies.Add(pPlayer->GetEdict());
+			m_aSeenEnemies.set(iPlayerIndex);
 
 			float fDistanceSqr = (pPlayer->GetHead() - m_vHead).LengthSquared();
 
@@ -1522,7 +1521,7 @@ namespace Botrix
 		}
 		else  // Can't see this player anymore or player is dead.
 		{
-			m_SeenEnemies.Remove(pPlayer->GetEdict());
+			m_aSeenEnemies.reset(iPlayerIndex);
 			if ( m_pCurrentEnemy == pPlayer )
 			{
 				if ( pPlayer->IsAlive() )
