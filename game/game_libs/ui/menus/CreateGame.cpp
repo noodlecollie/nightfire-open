@@ -153,6 +153,7 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	menu->password.WriteCvar();
 	menu->hostName.WriteCvar();
 	menu->maxClients.WriteCvar();
+	EngFuncs::CvarSetValue("bot_fill_to_percent", BotSetup_ShouldFillTo60Percent() ? 60.0f : 0.0f);
 
 	EngFuncs::PlayBackgroundTrack(NULL, NULL);
 
@@ -181,40 +182,33 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	);
 	EngFuncs::ClientCmd(FALSE, cmd);
 
-	// Very important!! We need to wait a frame after invoking the map command,
-	// or things will not be initialised.
-	EngFuncs::ClientCmd(FALSE, "wait");
+	CUtlVector<CInGameBotListModel::ListEntry> botList;
+	BotSetup_GetBotsToAddToGame(botList);
 
-	if ( BotSetup_ShouldFillTo60Percent() )
+	if ( botList.Count() > 0 )
 	{
-		EngFuncs::ClientCmd(FALSE, "bot_fill_to_percent 60");
-	}
-	else
-	{
-		CUtlVector<CInGameBotListModel::ListEntry> botList;
-		BotSetup_GetBotsToAddToGame(botList);
+		CUtlString botCmd;
 
-		if ( botList.Count() > 0 )
+		// Very important!! We need to wait a frame after invoking the map command,
+		// or things will not be initialised.
+		botCmd.Append("wait");
+
+		FOR_EACH_VEC(botList, index)
 		{
-			CUtlString botCmd;
+			const CInGameBotListModel::ListEntry& entry = botList[index];
 
-			FOR_EACH_VEC(botList, index)
+			CUtlString command;
+			command.AppendFormat("; bot_register_add \"%s\"", entry.profileName.String());
+
+			if ( !entry.playerName.IsEmpty() )
 			{
-				const CInGameBotListModel::ListEntry& entry = botList[index];
-
-				CUtlString command;
-				command.AppendFormat("; bot_register_add \"%s\"", entry.profileName.String());
-
-				if ( !entry.playerName.IsEmpty() )
-				{
-					command.AppendFormat(" \"%s\"", entry.playerName.String());
-				}
-
-				botCmd.Append(command.String());
+				command.AppendFormat(" \"%s\"", entry.playerName.String());
 			}
 
-			EngFuncs::ClientCmd(FALSE, botCmd.String());
+			botCmd.Append(command.String());
 		}
+
+		EngFuncs::ClientCmd(FALSE, botCmd.String());
 	}
 }
 

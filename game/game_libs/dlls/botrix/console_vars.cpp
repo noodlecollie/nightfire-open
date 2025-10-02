@@ -9,7 +9,8 @@ namespace Botrix
 	cvar_t CBotrixCvars::botrix_reachable_viz_time =
 		CONSTRUCT_CVAR_T("botrix_reachable_viz_time", 20, FCVAR_PRIVILEGED);
 	cvar_t CBotrixCvars::botrix_draw_player_hull = CONSTRUCT_CVAR_T("botrix_draw_player_hull", 0, FCVAR_PRIVILEGED);
-	cvar_t CBotrixCvars::bot_fill_to_percent = CONSTRUCT_CVAR_T("bot_fill_to_percent", 0, FCVAR_PRIVILEGED);
+	cvar_t CBotrixCvars::bot_fill_to_percent =
+		CONSTRUCT_CVAR_T("bot_fill_to_percent", 0, FCVAR_SERVER | FCVAR_PRIVILEGED);
 
 	void CBotrixCvars::RegisterAll()
 	{
