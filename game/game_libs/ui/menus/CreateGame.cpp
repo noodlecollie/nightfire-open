@@ -42,14 +42,17 @@ public:
 	}
 
 	void Update() override;
+
 	int GetColumns() const override
 	{
 		return 2;
 	}
+
 	int GetRows() const override
 	{
 		return m_iNumItems;
 	}
+
 	const char* GetCellText(int line, int column) override
 	{
 		switch ( column )
@@ -87,6 +90,7 @@ public:
 	CMenuField hostName;
 	CMenuField password;
 	CMenuCheckBox nat;
+	CMenuField botCount;
 
 	// newgame prompt dialog
 	CMenuYesNoMessageBox msgBox;
@@ -99,6 +103,8 @@ public:
 private:
 	void _Init() override;
 	void _VidInit() override;
+	void ShowBotSetupMenu();
+	void UpdateBotsField();
 };
 
 /*
@@ -125,14 +131,20 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	}
 
 	if ( !EngFuncs::IsMapValid(mapName) )
+	{
 		return;  // bad map
+	}
 
 	if ( EngFuncs::GetCvarFloat("host_serverstate") )
 	{
 		if ( EngFuncs::GetCvarFloat("maxplayers") == 1.0f )
+		{
 			EngFuncs::HostEndGame("end of the game");
+		}
 		else
+		{
 			EngFuncs::HostEndGame("starting new server");
+		}
 	}
 
 	EngFuncs::CvarSetValue("deathmatch", 1.0f);  // start deathmatch as default
@@ -141,19 +153,22 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	menu->password.WriteCvar();
 	menu->hostName.WriteCvar();
 	menu->maxClients.WriteCvar();
+	EngFuncs::CvarSetValue("bot_fill_to_percent", BotSetup_ShouldFillTo60Percent() ? 60.0f : 0.0f);
 
 	EngFuncs::PlayBackgroundTrack(NULL, NULL);
 
 	// all done, start server
 	EngFuncs::WriteServerConfig(EngFuncs::GetCvarString("lservercfgfile"));
 
-	char cmd[1024], cmd2[256];
+	char cmd[1024];
+	char cmd2[256];
 	PlatformLib_SNPrintF(cmd, sizeof(cmd), "exec %s\n", EngFuncs::GetCvarString("lservercfgfile"));
 
 	EngFuncs::ClientCmd(TRUE, cmd);
 
 	// dirty listenserver config form old xash may rewrite maxplayers
-	EngFuncs::CvarSetValue("maxplayers", static_cast<float>(atoi(menu->maxClients.GetBuffer())));
+	int maxClients = atoi(menu->maxClients.GetBuffer());
+	EngFuncs::CvarSetValue("maxplayers", static_cast<float>(maxClients));
 
 	Com_EscapeCommand(cmd2, mapName, 256);
 
@@ -163,7 +178,8 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 		sizeof(cmd),
 		"endgame;menu_connectionprogress localserver;wait;wait;wait;maxplayers %i;latch;map %s\n",
 		atoi(menu->maxClients.GetBuffer()),
-		cmd2);
+		cmd2
+	);
 	EngFuncs::ClientCmd(FALSE, cmd);
 
 	CUtlVector<CInGameBotListModel::ListEntry> botList;
@@ -173,7 +189,8 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	{
 		CUtlString botCmd;
 
-		// Must wait a frame after invoking the map command, or the bot register will not be initialised.
+		// Very important!! We need to wait a frame after invoking the map command,
+		// or things will not be initialised.
 		botCmd.Append("wait");
 
 		FOR_EACH_VEC(botList, index)
@@ -264,7 +281,7 @@ void CMenuCreateGame::_Init(void)
 		AddButton(L("Adv. Options"), L("Open the game advanced options menu"), PC_ADV_OPT, UI_AdvServerOptions_Menu);
 	advOpt->SetGrayed(!UI_AdvServerOptions_IsAvailable());
 
-	AddButton(L("Bots"), L("Configure bots for this match."), PC_CONFIG, UI_BotSetup_Menu);
+	AddButton(L("Bots"), L("Configure bots for this match."), PC_CONFIG, VoidCb(&CMenuCreateGame::ShowBotSetupMenu));
 
 	done = AddButton(L("GameUI_OK"), L("Start the multiplayer game"), PC_DONE, Begin);
 	done->onReleasedClActive = msgBox.MakeOpenEvent();
@@ -321,10 +338,15 @@ void CMenuCreateGame::_Init(void)
 	msgBox.SetMessage(L("Starting a new game will exit any current game, OK to exit?"));
 	msgBox.Link(this);
 
+	botCount.szName = L("Bots");
+	botCount.eTextAlignment = QM_CENTER;
+	botCount.iFlags |= QMF_INACTIVE;
+
 	AddButton(L("GameUI_Cancel"), L("Return to the previous menu"), PC_CANCEL, VoidCb(&CMenuCreateGame::Hide));
 	AddItem(hostName);
 	AddItem(maxClients);
 	AddItem(password);
+	AddItem(botCount);
 	AddItem(nat);
 	AddItem(mapsList);
 }
@@ -332,21 +354,58 @@ void CMenuCreateGame::_Init(void)
 void CMenuCreateGame::_VidInit()
 {
 	nat.SetCoord(72, 685);
+
 	if ( !EngFuncs::GetCvarFloat("public") )
+	{
 		nat.Hide();
+	}
 	else
+	{
 		nat.Show();
+	}
 
 	mapsList.SetRect(590, 230, -20, 465);
 
 	hostName.SetRect(350, 260, 205, 32);
 	maxClients.SetRect(350, 360, 205, 32);
 	password.SetRect(350, 460, 205, 32);
+	botCount.SetRect(350, 560, 205, 32);
 }
 
 void CMenuCreateGame::Reload(void)
 {
 	mapsListModel.Update();
+	UpdateBotsField();
+}
+
+void CMenuCreateGame::ShowBotSetupMenu()
+{
+	BotSetup_SetHideCallback(
+		[this]()
+		{
+			UpdateBotsField();
+		}
+	);
+
+	BotSetup_SetMaxClients(atoi(maxClients.GetBuffer()));
+	UI_BotSetup_Menu();
+}
+
+void CMenuCreateGame::UpdateBotsField()
+{
+	char botBuffer[32];
+	botBuffer[0] = '\0';
+
+	if ( BotSetup_ShouldFillTo60Percent() )
+	{
+		PlatformLib_SNPrintF(botBuffer, sizeof(botBuffer), "Fill to 60%%");
+	}
+	else
+	{
+		PlatformLib_SNPrintF(botBuffer, sizeof(botBuffer), "%d", BotSetup_GetCachedBotCount());
+	}
+
+	botCount.SetBuffer(botBuffer);
 }
 
 ADD_MENU(menu_creategame, CMenuCreateGame, UI_CreateGame_Menu);

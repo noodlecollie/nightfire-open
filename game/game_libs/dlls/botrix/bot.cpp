@@ -12,6 +12,7 @@
 #include "engine_util.h"
 #include "standard_includes.h"
 #include "MathLib/utils.h"
+#include "client.h"
 
 #define NotifyIfFailed(exp, ...) \
 	GOOD_SCOPE_START \
@@ -81,13 +82,6 @@ namespace Botrix
 			m_aNearItems[i].reserve(iSize);
 			m_aNearestItems[i].reserve(16);
 		}
-	}
-
-	//----------------------------------------------------------------------------------------------------------------
-	void CBot::ConsoleCommand(const char* szCommand)
-	{
-		BotMessage("%s -> Executing command '%s'.", GetName(), szCommand);
-		g_engfuncs.pfnClientCommand(m_pEdict, "%s", szCommand);
 	}
 
 #ifdef BOTRIX_SEND_BOT_CHAT
@@ -437,7 +431,7 @@ namespace Botrix
 				if ( CBotrixServerPlugin::GetTime() >= m_fInvalidWaypointEnd )  // TODO: config.
 				{
 					BLOG_E("%s -> Staying away from waypoints too long, suiciding.", GetName());
-					ConsoleCommand("kill");
+					ClientKill(GetEdict());
 				}
 			}
 			else

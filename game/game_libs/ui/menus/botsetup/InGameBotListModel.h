@@ -33,9 +33,13 @@ public:
 	bool IsFull() const;
 	void Clear();
 
+	size_t GetMax() const;
+	void SetMax(size_t max);
+
 	void SetItemDeleteCallback(const ItemDeleteCb& callback);
 
 private:
 	CUtlVector<ListEntry> m_BotList;
 	ItemDeleteCb m_ItemDelete;
+	size_t m_iMaxBots = MAX_BOTS;
 };

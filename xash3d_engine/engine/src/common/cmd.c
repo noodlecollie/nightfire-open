@@ -1363,7 +1363,8 @@ static void Cmd_Apropos_f(void)
 				 partial,
 				 true,
 				 "\n",
-				 false) )  // when \n is a separator, wildcards don't match it //-V666
+				 false
+			 ) )  // when \n is a separator, wildcards don't match it //-V666
 			continue;
 
 		Msg("alias ^5%s^7: %s", alias->name, alias->value);  // do not print an extra \n
@@ -1440,18 +1441,21 @@ void Cmd_Init(void)
 	Cmd_AddRestrictedCommand(
 		"stuffcmds",
 		Cmd_StuffCmds_f,
-		"execute commandline parameters (must be present in .rc script)");
+		"execute commandline parameters (must be present in .rc script)"
+	);
 	Cmd_AddCommand(
 		"apropos",
 		Cmd_Apropos_f,
-		"lists all console variables/commands/aliases containing the specified string in the name or description");
+		"lists all console variables/commands/aliases containing the specified string in the name or description"
+	);
 #if !XASH_DEDICATED()
 	Cmd_AddCommand("cmd", Cmd_ForwardToServer, "send a console commandline to the server");
 #endif  // XASH_DEDICATED()
 	Cmd_AddRestrictedCommand(
 		"alias",
 		Cmd_Alias_f,
-		"create a script function. Without arguments show the list of all alias");
+		"create a script function. Without arguments show the list of all alias"
+	);
 	Cmd_AddRestrictedCommand("unalias", Cmd_UnAlias_f, "remove a script function");
 	Cmd_AddRestrictedCommand("if", Cmd_If_f, "compare and set condition bits");
 	Cmd_AddRestrictedCommand("else", Cmd_Else_f, "invert condition bit");
@@ -1528,4 +1532,4 @@ void Test_RunCmd(void)
 	Cmd_RemoveCommand("test_unprivileged");
 	Cmd_RemoveCommand("test_privileged");
 }
-#endif // XASH_ENGINE_TESTS()
+#endif  // XASH_ENGINE_TESTS()

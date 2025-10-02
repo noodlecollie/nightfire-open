@@ -2846,7 +2846,9 @@ void GAME_EXPORT pfnClientCommand(edict_t* pEdict, const char* szFmt, ...)
 	va_list args;
 
 	if ( sv.state != ss_active )
+	{
 		return;  // early out
+	}
 
 	if ( (cl = SV_ClientFromEdict(pEdict, true)) == NULL )
 	{
@@ -2855,7 +2857,9 @@ void GAME_EXPORT pfnClientCommand(edict_t* pEdict, const char* szFmt, ...)
 	}
 
 	if ( FBitSet(cl->flags, FCL_FAKECLIENT) )
+	{
 		return;
+	}
 
 	va_start(args, szFmt);
 	Q_vsnprintf(buffer, MAX_STRING, szFmt, args);
@@ -2867,7 +2871,9 @@ void GAME_EXPORT pfnClientCommand(edict_t* pEdict, const char* szFmt, ...)
 		MSG_WriteString(&cl->netchan.message, buffer);
 	}
 	else
+	{
 		Con_Printf(S_ERROR "Tried to stuff bad command %s\n", buffer);
+	}
 }
 
 /*

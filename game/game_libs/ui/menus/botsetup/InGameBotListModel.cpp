@@ -61,9 +61,24 @@ void CInGameBotListModel::Clear()
 	m_BotList.Purge();
 }
 
+size_t CInGameBotListModel::GetMax() const
+{
+	return m_iMaxBots;
+}
+
+void CInGameBotListModel::SetMax(size_t max)
+{
+	m_iMaxBots = max;
+
+	if ( m_iMaxBots > MAX_BOTS )
+	{
+		m_iMaxBots = MAX_BOTS;
+	}
+}
+
 bool CInGameBotListModel::IsFull() const
 {
-	return static_cast<size_t>(m_BotList.Count()) >= MAX_BOTS;
+	return static_cast<size_t>(m_BotList.Count()) >= m_iMaxBots;
 }
 
 void CInGameBotListModel::OnDeleteEntry(int row)

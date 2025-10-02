@@ -39,6 +39,7 @@ namespace Botrix
 		static bool MapIsRunning();
 		static const char* MapName();
 		static CBotrixCommand* GetConsoleCommandHandler();
+		static CBotFactory& GetBotFactory();
 
 		static void UpdateLogLevel();
 		static bool WaypointAutoAnalyzeEnabled();
