@@ -99,6 +99,7 @@ public:
 private:
 	void _Init() override;
 	void _VidInit() override;
+	void ShowBotSetupMenu();
 };
 
 /*
@@ -125,14 +126,20 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	}
 
 	if ( !EngFuncs::IsMapValid(mapName) )
+	{
 		return;  // bad map
+	}
 
 	if ( EngFuncs::GetCvarFloat("host_serverstate") )
 	{
 		if ( EngFuncs::GetCvarFloat("maxplayers") == 1.0f )
+		{
 			EngFuncs::HostEndGame("end of the game");
+		}
 		else
+		{
 			EngFuncs::HostEndGame("starting new server");
+		}
 	}
 
 	EngFuncs::CvarSetValue("deathmatch", 1.0f);  // start deathmatch as default
@@ -153,7 +160,8 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	EngFuncs::ClientCmd(TRUE, cmd);
 
 	// dirty listenserver config form old xash may rewrite maxplayers
-	EngFuncs::CvarSetValue("maxplayers", static_cast<float>(atoi(menu->maxClients.GetBuffer())));
+	int maxClients = atoi(menu->maxClients.GetBuffer());
+	EngFuncs::CvarSetValue("maxplayers", static_cast<float>(maxClients));
 
 	Com_EscapeCommand(cmd2, mapName, 256);
 
@@ -163,7 +171,8 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 		sizeof(cmd),
 		"endgame;menu_connectionprogress localserver;wait;wait;wait;maxplayers %i;latch;map %s\n",
 		atoi(menu->maxClients.GetBuffer()),
-		cmd2);
+		cmd2
+	);
 	EngFuncs::ClientCmd(FALSE, cmd);
 
 	CUtlVector<CInGameBotListModel::ListEntry> botList;
@@ -264,7 +273,7 @@ void CMenuCreateGame::_Init(void)
 		AddButton(L("Adv. Options"), L("Open the game advanced options menu"), PC_ADV_OPT, UI_AdvServerOptions_Menu);
 	advOpt->SetGrayed(!UI_AdvServerOptions_IsAvailable());
 
-	AddButton(L("Bots"), L("Configure bots for this match."), PC_CONFIG, UI_BotSetup_Menu);
+	AddButton(L("Bots"), L("Configure bots for this match."), PC_CONFIG, VoidCb(&CMenuCreateGame::ShowBotSetupMenu));
 
 	done = AddButton(L("GameUI_OK"), L("Start the multiplayer game"), PC_DONE, Begin);
 	done->onReleasedClActive = msgBox.MakeOpenEvent();
@@ -347,6 +356,12 @@ void CMenuCreateGame::_VidInit()
 void CMenuCreateGame::Reload(void)
 {
 	mapsListModel.Update();
+}
+
+void CMenuCreateGame::ShowBotSetupMenu()
+{
+	BotSetup_SetMaxClients(atoi(maxClients.GetBuffer()));
+	UI_BotSetup_Menu();
 }
 
 ADD_MENU(menu_creategame, CMenuCreateGame, UI_CreateGame_Menu);

@@ -6,8 +6,10 @@
 #include "Field.h"
 #include "StudioSceneModel.h"
 #include "PlayerModelView.h"
+#include <algorithm>
 
 static CUtlVector<CInGameBotListModel::ListEntry> CachedInGameBotList;
+static int MaxClients = 0;
 
 class CMenuBotSetup : public CMenuFramework
 {
@@ -24,7 +26,7 @@ protected:
 private:
 	static constexpr int RIGHT_EDGE_MARGIN = 30;
 	static constexpr int BOTTOM_EDGE_MARGIN = 80;
-	static constexpr int LIST_TOP_OFFSET = 200;
+	static constexpr int LIST_TOP_OFFSET = 170;
 	static constexpr int LIST_SPACING = 300;
 	static constexpr int LEFT_MARGIN = 200;
 	static constexpr int LIST_WIDTH = 250;
@@ -39,6 +41,7 @@ private:
 	static constexpr int MAX_BOT_NAME_LENGTH = 32;
 
 	void AddButtonPressed();
+	void AddRandomButtonPressed();
 	void RemoveButtonPressed();
 	void RemoveAllButtonPressed();
 
@@ -51,6 +54,7 @@ private:
 	void UpdateButtonStates();
 	void ClearSelectedProfile();
 	void ResetSelectedTableIndices();
+	void ProfileSelected(int index, const CBotProfileTable::ProfileData& data);
 
 	CMenuTable m_BotProfileList;
 	CBotProfileListModel m_BotProfileListModel;
@@ -61,6 +65,7 @@ private:
 	CStudioSceneModel m_BotStudioModel;
 	CMenuField m_SelectedBotName;
 	CMenuPicButton m_AddButton;
+	CMenuPicButton m_AddRandomButton;
 	CMenuPicButton m_RemoveButton;
 	CMenuPicButton m_RemoveAllButton;
 
@@ -80,13 +85,11 @@ void CMenuBotSetup::_Init()
 	AddItem(background);
 
 	m_BotProfileListModel.SetItemActivatedCallback(
-		[this](int, const CBotProfileTable::ProfileData& data)
+		[this](int index, const CBotProfileTable::ProfileData& data)
 		{
-			m_SelectedProfile = data;
-
-			UpdateUIFromSelectedProfileData();
-			UpdateButtonStates();
-		});
+			ProfileSelected(index, data);
+		}
+	);
 
 	m_BotProfileList.SetCharSize(QM_SMALLFONT);
 	m_BotProfileList.SetupColumn(0, L("Available"), 1.0f);
@@ -98,7 +101,8 @@ void CMenuBotSetup::_Init()
 		{
 			m_InGameBotList.Reload();
 			UpdateButtonStates();
-		});
+		}
+	);
 
 	m_InGameBotList.SetCharSize(QM_SMALLFONT);
 	m_InGameBotList.SetupColumn(0, L("In Game"), 1.0f);
@@ -125,6 +129,10 @@ void CMenuBotSetup::_Init()
 	m_AddButton.onReleased = VoidCb(&CMenuBotSetup::AddButtonPressed);
 	AddItem(m_AddButton);
 
+	m_AddRandomButton.SetNameAndStatus(L("Add Random"), L("Add a random bot to the game."));
+	m_AddRandomButton.onReleased = VoidCb(&CMenuBotSetup::AddRandomButtonPressed);
+	AddItem(m_AddRandomButton);
+
 	m_RemoveButton.SetNameAndStatus(L("Remove"), L("Remove selected bot from the game."));
 	m_RemoveButton.onReleased = VoidCb(&CMenuBotSetup::RemoveButtonPressed);
 	AddItem(m_RemoveButton);
@@ -145,7 +153,8 @@ void CMenuBotSetup::_VidInit()
 		LEFT_MARGIN + m_iSidePadding + LIST_WIDTH + LIST_SPACING,
 		LIST_TOP_OFFSET,
 		LIST_WIDTH,
-		-BOTTOM_EDGE_MARGIN);
+		-BOTTOM_EDGE_MARGIN
+	);
 
 	const int profileListRightEdge = m_BotProfileList.pos.x + m_BotProfileList.size.w;
 	m_BotStudioView.SetCoord(profileListRightEdge + PREVIEW_LIST_LEFT_SPACING, PREVIEW_TOP_OFFSET);
@@ -156,14 +165,22 @@ void CMenuBotSetup::_VidInit()
 		profileListRightEdge + NAME_BOX_LEFT_SPACING,
 		botImageBottomEdge + CENTRAL_CONTROL_SPACING,
 		NAME_BOX_WIDTH,
-		m_SelectedBotName.size.h);
+		m_SelectedBotName.size.h
+	);
 
 	const int botNameBottomEdge = m_SelectedBotName.pos.y + m_SelectedBotName.size.h;
+
 	m_AddButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 25, botNameBottomEdge + CENTRAL_CONTROL_SPACING);
+
+	m_AddRandomButton.SetCoord(
+		profileListRightEdge + (LIST_SPACING / 2) - 75,
+		m_AddButton.pos.y + m_AddButton.size.h + 5
+	);
 
 	m_RemoveButton.SetCoord(
 		profileListRightEdge + (LIST_SPACING / 2) - 45,
-		m_AddButton.pos.y + m_AddButton.size.h);
+		m_AddRandomButton.pos.y + m_AddRandomButton.size.h
+	);
 
 	m_RemoveAllButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 65, -BOTTOM_EDGE_MARGIN - 25);
 
@@ -174,7 +191,8 @@ void CMenuBotSetup::RecalculateDimensions()
 {
 	Size screenLogicalSize(
 		static_cast<int>(ScreenWidth / uiStatic.scaleX),
-		static_cast<int>(ScreenHeight / uiStatic.scaleY));
+		static_cast<int>(ScreenHeight / uiStatic.scaleY)
+	);
 
 	// Side padding is the distance between the hard left margin and the lists.
 	// This is calculated by taking the margin/lists/central area/right margin away from the total width
@@ -198,6 +216,26 @@ void CMenuBotSetup::AddButtonPressed()
 	}
 
 	UpdateButtonStates();
+}
+
+void CMenuBotSetup::AddRandomButtonPressed()
+{
+	if ( m_BotProfileListModel.GetRows() < 1 )
+	{
+		return;
+	}
+
+	const int index = EngFuncs::RandomLong(0, m_BotProfileListModel.GetRows() - 1);
+	const CBotProfileTable::ProfileData* profile = m_BotProfileListModel.GetProfileData(index);
+
+	if ( !profile )
+	{
+		return;
+	}
+
+	m_BotProfileList.SetCurrentIndex(index);
+	ProfileSelected(index, *profile);
+	AddButtonPressed();
 }
 
 void CMenuBotSetup::RemoveButtonPressed()
@@ -245,12 +283,15 @@ void CMenuBotSetup::UpdateUIFromSelectedProfileData()
 
 void CMenuBotSetup::UpdateButtonStates()
 {
+	const int inGameListCount = m_InGameBotListModel.GetRows();
+
 	m_AddButton.SetGrayed(m_SelectedProfile.profileName.Length() < 1 || m_InGameBotListModel.IsFull());
+	m_AddRandomButton.SetGrayed(m_BotProfileListModel.GetRows() < 1 || m_InGameBotListModel.IsFull());
 
-	int inGameBotIndex = m_InGameBotList.GetCurrentIndex();
-	m_RemoveButton.SetGrayed(inGameBotIndex < 0 || inGameBotIndex >= m_InGameBotListModel.GetRows());
+	const int inGameBotIndex = m_InGameBotList.GetCurrentIndex();
+	m_RemoveButton.SetGrayed(inGameBotIndex < 0 || inGameBotIndex >= inGameListCount);
 
-	m_RemoveAllButton.SetGrayed(m_InGameBotListModel.GetRows() < 1);
+	m_RemoveAllButton.SetGrayed(inGameListCount < 1);
 }
 
 void CMenuBotSetup::ClearSelectedProfile()
@@ -274,6 +315,14 @@ void CMenuBotSetup::ResetSelectedTableIndices()
 	}
 }
 
+void CMenuBotSetup::ProfileSelected(int, const CBotProfileTable::ProfileData& data)
+{
+	m_SelectedProfile = data;
+
+	UpdateUIFromSelectedProfileData();
+	UpdateButtonStates();
+}
+
 void CMenuBotSetup::CacheCurrentInGameBotList()
 {
 	CachedInGameBotList.Purge();
@@ -287,9 +336,15 @@ void CMenuBotSetup::CacheCurrentInGameBotList()
 void CMenuBotSetup::PopulateFromCachedInGameBotList()
 {
 	m_InGameBotListModel.Clear();
+	m_InGameBotListModel.SetMax(MaxClients > 0 ? static_cast<size_t>(MaxClients - 1) : 0);
 
 	FOR_EACH_VEC(CachedInGameBotList, index)
 	{
+		if ( index >= MaxClients - 1 )
+		{
+			break;
+		}
+
 		const CInGameBotListModel::ListEntry& entry = CachedInGameBotList[index];
 
 		m_InGameBotListModel.AddEntry(entry.profileName, entry.playerName);
@@ -316,6 +371,11 @@ void CMenuBotSetup::Hide()
 	UpdateButtonStates();
 
 	CMenuFramework::Hide();
+}
+
+void BotSetup_SetMaxClients(int max)
+{
+	MaxClients = std::max<int>(max, 0);
 }
 
 void BotSetup_GetBotsToAddToGame(CUtlVector<CInGameBotListModel::ListEntry>& list)

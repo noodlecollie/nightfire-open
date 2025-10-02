@@ -19,10 +19,10 @@ public:
 	virtual void OnActivateEntry(int row) override;
 
 	void SetItemActivatedCallback(const ItemActivateCb callback);
+	const CBotProfileTable::ProfileData* GetProfileData(int index) const;
 
 private:
 	void InitialiseProfileTable();
-	const CBotProfileTable::ProfileData* GetProfileData(int index) const;
 
 	CBotProfileTable m_ProfileTable;
 	CUtlStringList m_IndexToProfileName;
