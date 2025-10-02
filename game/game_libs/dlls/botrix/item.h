@@ -242,20 +242,16 @@ namespace Botrix
 			m_aObjectFlagsForModels.push_back(good::pair<good::string, TItemFlags>(sModel, iItemFlag));
 		}
 
-#ifndef BOTRIX_SOURCE_ENGINE_2006
-		/// Called when entity is allocated. Return true if entity is health/armor/weapon/ammo/object.
-		static void Allocated(struct edict_s* pEdict);
-
-		/// Called when entity is freed.
-		static void Freed(const struct edict_s* pEdict);
-#endif
-
 		/// Clear all item classes.
 		static void Unload()
 		{
 			MapUnloaded();
+
 			for ( int iType = 0; iType < EItemTypeKnownTotal; ++iType )
+			{
 				m_aItemClasses[iType].clear();
+			}
+
 			m_aObjectFlagsForModels.clear();
 		}
 
@@ -335,10 +331,5 @@ namespace Botrix
 		static good::bitset m_aUsedItems;  // To know which items are already in m_aItems.
 
 		static bool m_bMapLoaded;  // Will be set to true at MapLoaded() and to false at Clear().
-
-#ifndef BOTRIX_SOURCE_ENGINE_2006
-		static good::vector<struct edict_s*>
-			m_aNewEntities;  // When Allocated() is called, new entity still has no IServerEntity, check at next frame.
-#endif
 	};
 }  // namespace Botrix

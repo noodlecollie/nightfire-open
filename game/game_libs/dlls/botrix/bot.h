@@ -25,11 +25,11 @@ struct edict_s;
 
 namespace Botrix
 {
-	//****************************************************************************************************************
-	/// Abstract class representing a bot.
-	/** This class allows to bot ability to move and use waypoints, but not to shoot. Shooting and setting
-	 * objectives/waypoint-destination is a child class responsability (which should derive from CBot class). */
-	//****************************************************************************************************************
+	/*****************************************************************************************************************
+	 * Abstract class representing a bot.
+	 * This class allows to bot ability to move and use waypoints, but not to shoot. Shooting and setting
+	 * objectives/waypoint-destination is a child class responsibility (which should derive from CBot class).
+	 *****************************************************************************************************************/
 	class CBot : public CPlayer
 	{
 	public:  // Members.
@@ -170,11 +170,18 @@ namespace Botrix
 		virtual void KilledEnemy(int /*iPlayerIndex*/, CPlayer* pPlayer)
 		{
 			if ( pPlayer == this )
+			{
 				BotMessage("%s -> Suicide.", GetName());
+			}
 			else
+			{
 				BotDebug("%s -> Killed %s.", GetName(), pPlayer->GetName());
+			}
+
 			if ( pPlayer == m_pCurrentEnemy )
+			{
 				EraseCurrentEnemy();
+			}
 		}
 
 		/// Called when enemy just shot this bot.
@@ -216,6 +223,7 @@ namespace Botrix
 		{
 			int team = pPlayer->GetTeam();
 			int index = pPlayer->GetIndex();
+
 			return (!pPlayer->IsProtected()) &&
 				(CMod::iSpawnProtectionHealth == 0 || pPlayer->GetHealth() < CMod::iSpawnProtectionHealth) &&
 				(team != CMod::iSpectatorTeam) &&
@@ -354,8 +362,8 @@ namespace Botrix
 		// Check if bot needs to change side look.
 		void CheckSideLook(bool bIsMoving, bool bForceCheck);
 
-		// While stucked, return true if move destination have been calculated, i.e. bot can continue moving to
-		// destination, false if bot needs to restart thinking (in order to perform 'touch' on stucked waypoint for
+		// While stuck, return true if move destination have been calculated, i.e. bot can continue moving to
+		// destination, false if bot needs to restart thinking (in order to perform 'touch' on stuck waypoint for
 		// example).
 		bool ResolveStuckMove();
 
@@ -371,9 +379,11 @@ namespace Botrix
 		void PerformMove(TWaypointId iPreviousWaypoint, const Vector& vPrevOrigin);
 
 	protected:  // Members.
+		void UpdateStateForNextEnemy();
+
 		static float m_fTimeIntervalCheckUsingMachines;  // After this interval will check if health/armor is
 														 // incrementing (when using health/armor machine).
-		static int m_iCheckEntitiesPerFrame;  // How much near items check per frame (to know if bot is stucked with
+		static int m_iCheckEntitiesPerFrame;  // How much near items check per frame (to know if bot is stuck on
 											  // objects or picked up item).
 
 		BotrixMoveCmd m_cCmd;  // Bot's command (virtual keyboard, used to move bot around and fire weapons).
@@ -401,13 +411,16 @@ namespace Botrix
 			m_fStartActionTime;  // Time when bot jumps / breaks / uses (check m_bNeedJump, m_bNeedAttack, m_bNeedUse).
 		float m_fEndActionTime;  // Time to release duck button, which was pressed when bot jumps.
 
-		float m_fStuckCheckTime;  // Time when bot got stucked.
+		float m_fStuckCheckTime;  // Time when bot got stuck.
 		Vector m_vStuckCheck;  // Position of player at m_fStuckCheckTime.
 		Vector m_vDisturbingObjectPosition;  // Position of disturbing object in previous frame.
 
 		int m_iLastHealthArmor;  // Amount of health/armor bot had at m_fStartActionTime.
 
-		unsigned char r, g, b;  // Bot's path color.
+		// Bot's path color.
+		unsigned char r;
+		unsigned char g;
+		unsigned char b;
 
 		CWaypointNavigator m_cNavigator;  // Waypoint navigator.
 		good::vector<TAreaId> m_aAvoidAreas;  // Array of areas waypoint navigator must avoid.
@@ -418,7 +431,7 @@ namespace Botrix
 		good::vector<TItemIndex> m_aNearItems[EItemTypeCollisionTotal];
 		int m_iNextNearItem[EItemTypeCollisionTotal];  // Next item to check if close (index in array
 													   // CItems::GetItems()).
-		const CItem* pStuckObject;  // Object that player is stucked with.
+		const CItem* pStuckObject;  // Object that player is stuck on.
 
 		good::bitset m_aNearPlayers;  // Bitset of players near (to know if bot can stuck with them).
 		good::bitset m_aSeenEnemies;  // Bitset of enemies that bot can see right now.
@@ -473,19 +486,19 @@ namespace Botrix
 							  // false.
 
 		bool m_bStuck;  // true, if m_bNeedMove is set, but couldn't move for 1 second.
-		bool m_bResolvingStuck;  // true, if stucked, but performing some action to unstuck.
-		bool m_bNeedCheckStuck;  // If true then check if stucked at m_fStuckCheckTime.
+		bool m_bResolvingStuck;  // true, if stuck, but performing some action to unstuck.
+		bool m_bNeedCheckStuck;  // If true then check if stuck at m_fStuckCheckTime.
 
 		bool m_bStuckBreakObject;  // If true then will try break m_aNearestItems.
 		bool m_bStuckUsePhyscannon;  // If true then will try move m_aNearestItems with gravity gun.
 		bool m_bStuckPhyscannonEnd;  // Becomes true when bot is holding object and aimed back/at enemy.
-		bool m_bStuckTryingSide;  // If true then bot is stucked, and going left or right for half second according to
+		bool m_bStuckTryingSide;  // If true then bot is stuck, and going left or right for half second according to
 								  // m_bStuckTryGoLeft.
-		bool m_bStuckTryGoLeft;  // If true go left when stucked, else go right.
-		bool m_bStuckGotoCurrent;  // When stucked will try go to current waypoint (for 'touching' and so performing
+		bool m_bStuckTryGoLeft;  // If true go left when stuck, else go right.
+		bool m_bStuckGotoCurrent;  // When stuck will try go to current waypoint (for 'touching' and so performing
 								   // action). If false, then will try to do left or right move.
 		bool m_bStuckGotoPrevious;  //
-		bool m_bRepeatWaypointAction;  // Set when stucked, and repeats go to current waypoint and touch it.
+		bool m_bRepeatWaypointAction;  // Set when stuck, and repeats go to current waypoint and touch it.
 
 		bool m_bLadderMove;  // Will be set to true, when current waypoint path has ladder flag.
 
@@ -530,7 +543,7 @@ namespace Botrix
 		bool m_bSaidNoWaypoints;  // Say that there are no waypoints only once.
 	};
 
-	// TODO: Rename
+	// BOTRIX_TODO: Rename
 	class CBot_HL2DM : public CBot
 	{
 	public:

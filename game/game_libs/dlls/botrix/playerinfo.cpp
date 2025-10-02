@@ -189,9 +189,12 @@ namespace Botrix
 
 	Vector CPlayerInfo::GetEyePosition() const
 	{
-		Vector out;
-		CBotrixEngineUtil::EntityHead(m_pPlayer, out);
-		return out;
+		if ( !m_pPlayer )
+		{
+			return Vector();
+		}
+
+		return Vector(m_pPlayer->v.origin) + Vector(m_pPlayer->v.view_ofs);
 	}
 
 	Vector CPlayerInfo::GetAbsAngles() const

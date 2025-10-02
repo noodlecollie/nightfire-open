@@ -12,9 +12,7 @@
 #include "PlatformLib/String.h"
 #include "weapons.h"
 
-#ifndef BOTRIX_SOURCE_ENGINE_2006
 #define BOTRIX_ENTITY_USE_KEY_VALUE
-#endif
 
 namespace Botrix
 {
@@ -127,10 +125,6 @@ namespace Botrix
 
 	good::vector<edict_t*> CItems::m_aOthers(256);  // Array of other entities.
 
-#ifndef BOTRIX_SOURCE_ENGINE_2006
-	good::vector<edict_t*> CItems::m_aNewEntities(16);
-#endif
-
 	good::vector<good::pair<good::string, TItemFlags>> CItems::m_aObjectFlagsForModels(4);
 	good::vector<TItemIndex> CItems::m_aObjectFlags;
 
@@ -202,52 +196,6 @@ namespace Botrix
 		return iResult;
 	}
 
-#ifndef BOTRIX_SOURCE_ENGINE_2006
-
-	//----------------------------------------------------------------------------------------------------------------
-	void CItems::Allocated(edict_t* pEdict)
-	{
-		if ( m_bMapLoaded )
-		{
-			m_aNewEntities.push_back(pEdict);
-		}
-	}
-
-	//----------------------------------------------------------------------------------------------------------------
-	void CItems::Freed(const edict_t* pEdict)
-	{
-		if ( !m_bMapLoaded )
-		{
-			return;
-		}
-
-		int iIndex = ENTINDEX(pEdict);
-		GoodAssert(iIndex > 0);  // Valve should not allow this assert.
-
-		m_aEdictsIndexes[iIndex].iItemType = EItemTypeOther;
-
-		// Check only server entities.
-		if ( !m_aUsedItems.test(iIndex) )
-		{
-			return;
-		}
-
-		m_aUsedItems.reset(iIndex);
-		good::vector<CItem>& aWeapons = m_aItems[EItemTypeWeapon];
-
-		for ( TItemIndex i = 0; i < (int)aWeapons.size(); ++i )
-		{
-			if ( aWeapons[i].pEdict == pEdict )
-			{
-				aWeapons[i].pEdict = NULL;
-				m_iFreeIndex[EItemTypeWeapon] = i;
-				return;
-			}
-		}
-		// BASSERT(false); // Only weapons are allocated/deallocated while map is running.
-	}
-#endif  // BOTRIX_SOURCE_ENGINE_2006
-
 	//----------------------------------------------------------------------------------------------------------------
 	void CItems::MapUnloaded(bool bClearObjectFlags)
 	{
@@ -265,10 +213,6 @@ namespace Botrix
 				aItems.reserve(64);  // At least.
 			}
 		}
-
-#ifndef BOTRIX_SOURCE_ENGINE_2006
-		m_aNewEntities.clear();
-#endif
 
 		m_aOthers.clear();
 		if ( bClearObjectFlags )
@@ -309,8 +253,6 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CItems::Update()
 	{
-		// Source engine 2007 uses IServerPluginCallbacks::OnEdictAllocated instead of checking all array of edicts.
-
 		// Update weapons we have in items array.
 		good::vector<CItem>& aWeapons = m_aItems[EItemTypeWeapon];
 		for ( TItemIndex i = 0; i < aWeapons.size(); ++i )
@@ -539,15 +481,9 @@ namespace Botrix
 				}
 			}
 
-#ifdef BOTRIX_SOURCE_ENGINE_2006
-			// Weapon entities are allocated / deallocated when respawned / owner killed.
-			if ( iEntityType != EItemTypeWeapon )
-#endif
-			{
-				int entIndex = ENTINDEX(pEdict);
-				GoodAssert(entIndex > 0);  // Valve should not allow this assert.
-				m_aUsedItems.set(entIndex);
-			}
+			int entIndex = ENTINDEX(pEdict);
+			GoodAssert(entIndex > 0);  // Valve should not allow this assert.
+			m_aUsedItems.set(entIndex);
 		}
 	}
 

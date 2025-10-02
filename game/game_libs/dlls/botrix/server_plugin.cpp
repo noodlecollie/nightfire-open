@@ -435,6 +435,32 @@ namespace Botrix
 		CWeaponRegistry::StaticInstance().ForEach(&LoadWeapon);
 	}
 
+	void CBotrixServerPlugin::EntitySpawned(edict_t* edict)
+	{
+		if ( !m_bMapRunning )
+		{
+			return;
+		}
+
+		ASSERT(edict);
+
+		// TODO: Currently unused
+		(void)edict;
+	}
+
+	void CBotrixServerPlugin::EntityFreed(edict_t* edict)
+	{
+		if ( !m_bMapRunning )
+		{
+			return;
+		}
+
+		ASSERT(edict);
+
+		// TODO: Currently unused
+		(void)edict;
+	}
+
 	void CBotrixServerPlugin::PrepareLevel()
 	{
 		m_MapName.assign(STRING(gpGlobals->mapname), good::string::npos, true);

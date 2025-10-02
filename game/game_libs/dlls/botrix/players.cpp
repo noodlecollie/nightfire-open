@@ -41,7 +41,6 @@ namespace Botrix
 		iCurrentWaypoint(EWaypointIdInvalid),
 		iNextWaypoint(EWaypointIdInvalid),
 		iPrevWaypoint(EWaypointIdInvalid),
-		iChatMate(-1),
 		m_pEdict(pEdict),
 		m_iIndex(-1),
 		m_PlayerInfo(m_pEdict),

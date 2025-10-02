@@ -361,11 +361,8 @@ void CNPCRoninTurret::SetExplosionDamage(int damage)
 	m_ExplosionDamage = damage;
 }
 
-void CNPCRoninTurret::RoninUse(
-	CBaseEntity* pActivator,
-	CBaseEntity* /* pCaller */,
-	USE_TYPE /* useType */,
-	float /* value */)
+void CNPCRoninTurret::
+	RoninUse(CBaseEntity* pActivator, CBaseEntity* /* pCaller */, USE_TYPE /* useType */, float /* value */)
 {
 	if ( m_DeployState == DeployState::DEPLOYED && m_AllowUndeployWithUseKey )
 	{
@@ -377,7 +374,8 @@ void CNPCRoninTurret::RoninUse(
 		 CWeaponRonin::AddRoninWeaponToPlayer(
 			 dynamic_cast<CBasePlayer*>(pActivator),
 			 CWeaponRonin::TurretPickupType::ON_USE,
-			 this) )
+			 this
+		 ) )
 	{
 		UTIL_Remove(this);
 	}
@@ -437,6 +435,12 @@ bool CNPCRoninTurret::IsUndeployed() const
 bool CNPCRoninTurret::IsFullyDeployed() const
 {
 	return m_DeployState == DeployState::DEPLOYED;
+}
+
+Vector CNPCRoninTurret::GetCentre() const
+{
+	const float height = pev->maxs[VEC3_Z] - pev->mins[VEC3_Z];
+	return Vector(pev->origin) + Vector(0.0f, 0.0f, height / 2.0f);
 }
 
 void CNPCRoninTurret::StartToss(const Vector& velocity, const Vector& angularVelocity)
@@ -622,7 +626,8 @@ void CNPCRoninTurret::DyingThink()
 		isNearDeath ? 1.0f : 0.5f,
 		ATTEN_SPARK,
 		0,
-		std::min<int>(static_cast<int>(pitch), 255));
+		std::min<int>(static_cast<int>(pitch), 255)
+	);
 
 	m_NextDyingTick = gpGlobals->time + (isNearDeath ? NEAR_DEATH_SPARK_INTERVAL : DYING_SPARK_INTERVAL);
 }
@@ -689,7 +694,8 @@ void CNPCRoninTurret::OnTouch(CBaseEntity* other)
 	if ( CanTryToPickUp(other) &&
 		 CWeaponRonin::AddRoninWeaponToPlayer(
 			 dynamic_cast<CBasePlayer*>(other),
-			 CWeaponRonin::TurretPickupType::ON_TOUCH) )
+			 CWeaponRonin::TurretPickupType::ON_TOUCH
+		 ) )
 	{
 		UTIL_Remove(this);
 		return;
@@ -1191,7 +1197,8 @@ void CNPCRoninTurret::CommunicateStateToOwner()
 	}
 
 	CWeaponRonin* weapon = dynamic_cast<CWeaponRonin*>(
-		player->GetNamedItem(WeaponAtts::StaticWeaponAttributes<CWeaponRonin>().Core.Classname));
+		player->GetNamedItem(WeaponAtts::StaticWeaponAttributes<CWeaponRonin>().Core.Classname)
+	);
 
 	if ( !weapon )
 	{
