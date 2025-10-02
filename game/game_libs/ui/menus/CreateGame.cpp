@@ -404,7 +404,7 @@ void CMenuCreateGame::UpdateBotsField()
 
 	if ( BotSetup_ShouldFillTo60Percent() )
 	{
-		PlatformLib_SNPrintF(botBuffer, sizeof(botBuffer), "60%%");
+		PlatformLib_SNPrintF(botBuffer, sizeof(botBuffer), "Fill to 60%%");
 	}
 	else
 	{

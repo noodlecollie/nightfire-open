@@ -124,9 +124,6 @@ namespace Botrix
 			m_bCommandStopped = bStop;
 		}
 
-		/// Emulate console command for bot.
-		void ConsoleCommand(const char* szCommand);
-
 		/// Use say command.
 		void Say(bool bTeamOnly, const char* szFormat, ...);
 

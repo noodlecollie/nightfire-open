@@ -3490,42 +3490,6 @@ namespace Botrix
 		}
 	}
 
-	TCommandResult CBotCommandCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
-	{
-		if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
-			return ECommandPerformed;
-
-		edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
-
-		if ( argc < 2 )
-		{
-			BULOG_W(pEdict, "Error, invalid parameters count.");
-			return ECommandError;
-		}
-
-		const char* szCmd = argv[0];
-		for ( int iArg = 1; iArg < argc; ++iArg )
-		{
-			good::string sName = argv[iArg];
-			bool bAll = (sName == sAll);
-
-			for ( TPlayerIndex i = 0; i < CPlayers::Size(); ++i )
-			{
-				CPlayer* pPlayer = CPlayers::Get(i);
-				if ( pPlayer && pPlayer->IsBot() &&
-					 (bAll || good::starts_with(good::string(pPlayer->GetName()), sName)) )
-				{
-					CBot* pBot = (CBot*)pPlayer;
-					pBot->ConsoleCommand(szCmd);
-				}
-			}
-
-			if ( bAll )
-				break;
-		}
-		return ECommandPerformed;
-	}
-
 	TCommandResult CBotKickCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 	{
 		if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )

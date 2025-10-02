@@ -627,26 +627,6 @@ namespace Botrix
 		TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 	};
 
-	class CBotCommandCommand : public CConsoleCommand
-	{
-	public:
-		CBotCommandCommand()
-		{
-			m_sCommand = "command";
-			m_sHelp = "execute console command by bot";
-			m_sDescription = "Parameters: <command> <bot-name(s)>. Example: 'botrix bot command \"jointeam 2\" all'.";
-			m_iAccessLevel = FCommandAccessBot;
-
-			m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgIgnore);
-			m_cAutoCompleteValues.push_back(StringVector());
-
-			m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgBotsForever);
-			m_cAutoCompleteValues.push_back(StringVector());
-		}
-
-		TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
-	};
-
 	class CBotKickCommand : public CConsoleCommand
 	{
 	public:
@@ -1260,7 +1240,6 @@ namespace Botrix
 			Add(new CBotAddCommand);
 			Add(new CBotAllyCommand);
 			Add(new CBotAttackCommand);
-			Add(new CBotCommandCommand);
 			Add(new CBotDebugCommand);
 			Add(new CBotDrawPathCommand);
 			Add(new CBotKickCommand);
