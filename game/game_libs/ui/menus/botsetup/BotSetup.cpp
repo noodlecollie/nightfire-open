@@ -6,10 +6,13 @@
 #include "Field.h"
 #include "StudioSceneModel.h"
 #include "PlayerModelView.h"
+#include "CheckBox.h"
 #include <algorithm>
 
 static CUtlVector<CInGameBotListModel::ListEntry> CachedInGameBotList;
+static std::function<void()> HideCallback;
 static int MaxClients = 0;
+static bool FillTo60Percent = false;
 
 class CMenuBotSetup : public CMenuFramework
 {
@@ -44,6 +47,7 @@ private:
 	void AddRandomButtonPressed();
 	void RemoveButtonPressed();
 	void RemoveAllButtonPressed();
+	void FillTo60PercentBoxChanged();
 
 	void CacheCurrentInGameBotList();
 	void PopulateFromCachedInGameBotList();
@@ -68,6 +72,7 @@ private:
 	CMenuPicButton m_AddRandomButton;
 	CMenuPicButton m_RemoveButton;
 	CMenuPicButton m_RemoveAllButton;
+	CMenuCheckBox m_FillTo60PercentBox;
 
 	int m_iSidePadding;
 	CBotProfileTable::ProfileData m_SelectedProfile;
@@ -125,6 +130,10 @@ void CMenuBotSetup::_Init()
 	m_SelectedBotName.iMaxLength = MAX_BOT_NAME_LENGTH;
 	AddItem(m_SelectedBotName);
 
+	m_FillTo60PercentBox.SetNameAndStatus(L("Fill to 60%"), L("Fill server to 60% with bots."));
+	m_FillTo60PercentBox.onChanged = VoidCb(&CMenuBotSetup::FillTo60PercentBoxChanged);
+	AddItem(m_FillTo60PercentBox);
+
 	m_AddButton.SetNameAndStatus(L("Add"), L("Add selected bot to the game."));
 	m_AddButton.onReleased = VoidCb(&CMenuBotSetup::AddButtonPressed);
 	AddItem(m_AddButton);
@@ -170,12 +179,17 @@ void CMenuBotSetup::_VidInit()
 
 	const int botNameBottomEdge = m_SelectedBotName.pos.y + m_SelectedBotName.size.h;
 
-	m_AddButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 25, botNameBottomEdge + CENTRAL_CONTROL_SPACING);
-
-	m_AddRandomButton.SetCoord(
-		profileListRightEdge + (LIST_SPACING / 2) - 75,
-		m_AddButton.pos.y + m_AddButton.size.h + 5
+	m_FillTo60PercentBox.SetCoord(
+		profileListRightEdge + (LIST_SPACING / 2) - 85,
+		botNameBottomEdge + CENTRAL_CONTROL_SPACING
 	);
+
+	m_AddButton.SetCoord(
+		profileListRightEdge + (LIST_SPACING / 2) - 25,
+		m_FillTo60PercentBox.pos.y + m_FillTo60PercentBox.size.h + 5
+	);
+
+	m_AddRandomButton.SetCoord(profileListRightEdge + (LIST_SPACING / 2) - 75, m_AddButton.pos.y + m_AddButton.size.h);
 
 	m_RemoveButton.SetCoord(
 		profileListRightEdge + (LIST_SPACING / 2) - 45,
@@ -257,6 +271,11 @@ void CMenuBotSetup::RemoveAllButtonPressed()
 	UpdateButtonStates();
 }
 
+void CMenuBotSetup::FillTo60PercentBoxChanged()
+{
+	UpdateButtonStates();
+}
+
 void CMenuBotSetup::UpdateSelectedProfileDataFromUI()
 {
 	m_SelectedProfile.playerName = m_SelectedBotName.GetBuffer();
@@ -283,6 +302,19 @@ void CMenuBotSetup::UpdateUIFromSelectedProfileData()
 
 void CMenuBotSetup::UpdateButtonStates()
 {
+	if ( m_FillTo60PercentBox.bChecked )
+	{
+		m_AddButton.SetGrayed(true);
+		m_AddRandomButton.SetGrayed(true);
+		m_RemoveButton.SetGrayed(true);
+		m_RemoveAllButton.SetGrayed(true);
+		m_InGameBotList.SetGrayed(true);
+
+		return;
+	}
+
+	m_InGameBotList.SetGrayed(false);
+
 	const int inGameListCount = m_InGameBotListModel.GetRows();
 
 	m_AddButton.SetGrayed(m_SelectedProfile.profileName.Length() < 1 || m_InGameBotListModel.IsFull());
@@ -358,7 +390,13 @@ void CMenuBotSetup::Show()
 {
 	CMenuFramework::Show();
 
-	PopulateFromCachedInGameBotList();
+	m_FillTo60PercentBox.bChecked = FillTo60Percent;
+
+	if ( !m_FillTo60PercentBox.bChecked )
+	{
+		PopulateFromCachedInGameBotList();
+	}
+
 	ClearSelectedProfile();
 	UpdateButtonStates();
 	ResetSelectedTableIndices();
@@ -366,11 +404,31 @@ void CMenuBotSetup::Show()
 
 void CMenuBotSetup::Hide()
 {
-	CacheCurrentInGameBotList();
+	FillTo60Percent = m_FillTo60PercentBox.bChecked;
+
+	if ( !m_FillTo60PercentBox.bChecked )
+	{
+		CacheCurrentInGameBotList();
+	}
+	else
+	{
+		CachedInGameBotList.Purge();
+	}
+
 	ClearSelectedProfile();
 	UpdateButtonStates();
 
+	if ( HideCallback )
+	{
+		HideCallback();
+	}
+
 	CMenuFramework::Hide();
+}
+
+void BotSetup_SetHideCallback(std::function<void()> callback)
+{
+	HideCallback = callback;
 }
 
 void BotSetup_SetMaxClients(int max)
@@ -386,6 +444,16 @@ void BotSetup_GetBotsToAddToGame(CUtlVector<CInGameBotListModel::ListEntry>& lis
 	{
 		list.AddToTail(CachedInGameBotList[index]);
 	}
+}
+
+int BotSetup_GetCachedBotCount()
+{
+	return CachedInGameBotList.Count();
+}
+
+bool BotSetup_ShouldFillTo60Percent()
+{
+	return FillTo60Percent;
 }
 
 ADD_MENU(menu_botsetup, CMenuBotSetup, UI_BotSetup_Menu);

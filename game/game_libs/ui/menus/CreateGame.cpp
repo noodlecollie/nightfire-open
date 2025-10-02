@@ -42,14 +42,17 @@ public:
 	}
 
 	void Update() override;
+
 	int GetColumns() const override
 	{
 		return 2;
 	}
+
 	int GetRows() const override
 	{
 		return m_iNumItems;
 	}
+
 	const char* GetCellText(int line, int column) override
 	{
 		switch ( column )
@@ -87,6 +90,7 @@ public:
 	CMenuField hostName;
 	CMenuField password;
 	CMenuCheckBox nat;
+	CMenuField botCount;
 
 	// newgame prompt dialog
 	CMenuYesNoMessageBox msgBox;
@@ -100,6 +104,7 @@ private:
 	void _Init() override;
 	void _VidInit() override;
 	void ShowBotSetupMenu();
+	void UpdateBotsField();
 };
 
 /*
@@ -154,7 +159,8 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	// all done, start server
 	EngFuncs::WriteServerConfig(EngFuncs::GetCvarString("lservercfgfile"));
 
-	char cmd[1024], cmd2[256];
+	char cmd[1024];
+	char cmd2[256];
 	PlatformLib_SNPrintF(cmd, sizeof(cmd), "exec %s\n", EngFuncs::GetCvarString("lservercfgfile"));
 
 	EngFuncs::ClientCmd(TRUE, cmd);
@@ -175,32 +181,40 @@ void CMenuCreateGame::Begin(CMenuBaseItem* pSelf, void*)
 	);
 	EngFuncs::ClientCmd(FALSE, cmd);
 
-	CUtlVector<CInGameBotListModel::ListEntry> botList;
-	BotSetup_GetBotsToAddToGame(botList);
+	// Very important!! We need to wait a frame after invoking the map command,
+	// or things will not be initialised.
+	EngFuncs::ClientCmd(FALSE, "wait");
 
-	if ( botList.Count() > 0 )
+	if ( BotSetup_ShouldFillTo60Percent() )
 	{
-		CUtlString botCmd;
+		EngFuncs::ClientCmd(FALSE, "bot_fill_to_percent 60");
+	}
+	else
+	{
+		CUtlVector<CInGameBotListModel::ListEntry> botList;
+		BotSetup_GetBotsToAddToGame(botList);
 
-		// Must wait a frame after invoking the map command, or the bot register will not be initialised.
-		botCmd.Append("wait");
-
-		FOR_EACH_VEC(botList, index)
+		if ( botList.Count() > 0 )
 		{
-			const CInGameBotListModel::ListEntry& entry = botList[index];
+			CUtlString botCmd;
 
-			CUtlString command;
-			command.AppendFormat("; bot_register_add \"%s\"", entry.profileName.String());
-
-			if ( !entry.playerName.IsEmpty() )
+			FOR_EACH_VEC(botList, index)
 			{
-				command.AppendFormat(" \"%s\"", entry.playerName.String());
+				const CInGameBotListModel::ListEntry& entry = botList[index];
+
+				CUtlString command;
+				command.AppendFormat("; bot_register_add \"%s\"", entry.profileName.String());
+
+				if ( !entry.playerName.IsEmpty() )
+				{
+					command.AppendFormat(" \"%s\"", entry.playerName.String());
+				}
+
+				botCmd.Append(command.String());
 			}
 
-			botCmd.Append(command.String());
+			EngFuncs::ClientCmd(FALSE, botCmd.String());
 		}
-
-		EngFuncs::ClientCmd(FALSE, botCmd.String());
 	}
 }
 
@@ -330,10 +344,15 @@ void CMenuCreateGame::_Init(void)
 	msgBox.SetMessage(L("Starting a new game will exit any current game, OK to exit?"));
 	msgBox.Link(this);
 
+	botCount.szName = L("Bots");
+	botCount.eTextAlignment = QM_CENTER;
+	botCount.iFlags |= QMF_INACTIVE;
+
 	AddButton(L("GameUI_Cancel"), L("Return to the previous menu"), PC_CANCEL, VoidCb(&CMenuCreateGame::Hide));
 	AddItem(hostName);
 	AddItem(maxClients);
 	AddItem(password);
+	AddItem(botCount);
 	AddItem(nat);
 	AddItem(mapsList);
 }
@@ -341,27 +360,58 @@ void CMenuCreateGame::_Init(void)
 void CMenuCreateGame::_VidInit()
 {
 	nat.SetCoord(72, 685);
+
 	if ( !EngFuncs::GetCvarFloat("public") )
+	{
 		nat.Hide();
+	}
 	else
+	{
 		nat.Show();
+	}
 
 	mapsList.SetRect(590, 230, -20, 465);
 
 	hostName.SetRect(350, 260, 205, 32);
 	maxClients.SetRect(350, 360, 205, 32);
 	password.SetRect(350, 460, 205, 32);
+	botCount.SetRect(350, 560, 205, 32);
 }
 
 void CMenuCreateGame::Reload(void)
 {
 	mapsListModel.Update();
+	UpdateBotsField();
 }
 
 void CMenuCreateGame::ShowBotSetupMenu()
 {
+	BotSetup_SetHideCallback(
+		[this]()
+		{
+			UpdateBotsField();
+		}
+	);
+
 	BotSetup_SetMaxClients(atoi(maxClients.GetBuffer()));
 	UI_BotSetup_Menu();
+}
+
+void CMenuCreateGame::UpdateBotsField()
+{
+	char botBuffer[32];
+	botBuffer[0] = '\0';
+
+	if ( BotSetup_ShouldFillTo60Percent() )
+	{
+		PlatformLib_SNPrintF(botBuffer, sizeof(botBuffer), "60%%");
+	}
+	else
+	{
+		PlatformLib_SNPrintF(botBuffer, sizeof(botBuffer), "%d", BotSetup_GetCachedBotCount());
+	}
+
+	botCount.SetBuffer(botBuffer);
 }
 
 ADD_MENU(menu_creategame, CMenuCreateGame, UI_CreateGame_Menu);

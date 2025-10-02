@@ -193,14 +193,41 @@ namespace Botrix
 
 	void CPlayers::CheckBotsCount()
 	{
-		if ( !CBotrixServerPlugin::MapIsRunning() || ((fPlayerBotRatio == 0.0f) && (iBotsPlayersCount == 0)) )
+		if ( !CBotrixServerPlugin::MapIsRunning() ||
+			 ((fPlayerBotRatio == 0.0f) && (iBotsPlayersCount == 0) &&
+			  (CBotrixCvars::bot_fill_to_percent.value <= 0.0f)) )
 		{
 			return;
 		}
 
-		int iNeededCount = fPlayerBotRatio > 0.0f
-			? static_cast<int>(static_cast<float>(GetClientsCount()) * fPlayerBotRatio)
-			: (iBotsPlayersCount - GetClientsCount());
+		int iNeededCount = 0;
+
+		// If bot_fill_to_percent is set, make it take precedence.
+		// This is all a bit of a mess and needs to be properly refactored.
+		if ( CBotrixCvars::bot_fill_to_percent.value > 0.0f )
+		{
+			const float percent = std::min<float>(CBotrixCvars::bot_fill_to_percent.value, 100.0f);
+			const int maxPlayers = m_aPlayers.size();
+			iNeededCount = static_cast<int>((percent / 100.0f) * maxPlayers);
+
+			if ( iNeededCount >= maxPlayers )
+			{
+				iNeededCount = std::max<int>(maxPlayers - 1, 0);
+			}
+
+			int botSlotsAvailable = maxPlayers - GetClientsCount();
+
+			if ( iNeededCount > botSlotsAvailable )
+			{
+				iNeededCount = botSlotsAvailable;
+			}
+		}
+		else
+		{
+			iNeededCount = fPlayerBotRatio > 0.0f
+				? static_cast<int>(static_cast<float>(GetClientsCount()) * fPlayerBotRatio)
+				: (iBotsPlayersCount - GetClientsCount());
+		}
 
 		if ( iNeededCount < 0 )
 		{
@@ -211,7 +238,9 @@ namespace Botrix
 			iNeededCount = Size() - 1 - GetClientsCount();  // Save one space for player.
 		}
 
-		if ( iNeededCount == GetBotsCount() )
+		int botCount = GetBotsCount();
+
+		if ( iNeededCount == botCount )
 		{
 			m_bCheckBotCountFinished = true;
 		}
@@ -219,9 +248,9 @@ namespace Botrix
 		{
 			m_bCheckBotCountFinished = false;
 
-			if ( iNeededCount > GetBotsCount() )
+			if ( iNeededCount > botCount )
 			{
-				AddBot(NULL, CBot::iDefaultTeam, CBot::iDefaultClass, -1);
+				CBotrixServerPlugin::GetBotFactory().CreateBots(iNeededCount - botCount);
 			}
 			else
 			{

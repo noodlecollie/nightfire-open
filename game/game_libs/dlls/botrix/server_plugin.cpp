@@ -389,6 +389,11 @@ namespace Botrix
 		return m_pConsoleCommands;
 	}
 
+	CBotFactory& CBotrixServerPlugin::GetBotFactory()
+	{
+		return m_BotFactory;
+	}
+
 	void CBotrixServerPlugin::UpdateLogLevel()
 	{
 		static cvar_t* developerCvar = nullptr;
