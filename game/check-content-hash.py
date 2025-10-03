@@ -1,3 +1,22 @@
+"""
+We want a way to ensure that content that's been added to the content repo has actually been committed and pushed by
+the time a PR is merged into master. A good way to make this obvious is to have a script run whenever the game is built,
+which updates content-hash.txt with the SHA of the current commit from the content repo. This achieves two things:
+
+1. It means that, if the state of the content repo has changed, content-hash.txt shows as modified when committing to
+the main repo. This is obvious from a developer point of view, and also tracks the state of the content repo as part of
+the commit.
+2. When CI is run on a PR, the state of the content repo can be checked against content-hash.txt, and the CI run will
+fail if the repo doesn't match the committed state.
+
+content-hash.txt can follow the format:
+
+<branch>-<commit SHA>(-dirty)?
+
+This allows us to easily check which branch was used, which commit was used, and whether there were uncommitted files
+present at the time the content hash was updated (eg. if the developer forgot to finalise the commit).
+"""
+
 import sys
 import subprocess
 import re
@@ -25,36 +44,43 @@ def main():
 
 	content_path = sys.argv[1]
 
-	content_hash_output = content_cmd(content_path, ["git", "rev-parse", "origin/master"])
-	content_hash_match = re.match(r"^([0-9a-f]{40})(-dirty)?$", content_hash_output)
+	origin_master_rev = content_cmd(content_path, ["git", "rev-parse", "origin/master"]).strip()
+	origin_master_rev_match = re.match(r"^[0-9a-f]{40}$", origin_master_rev)
 
-	if not content_hash_match:
-		raise RuntimeError(f"Could not parse content hash from git rev-parse. Output:\n{content_hash_output}")
+	if not origin_master_rev_match:
+		raise RuntimeError(f"Could not parse SHA from git rev-parse. Output:\n{origin_master_rev}")
 
-	content_hash = content_hash_match.group(1)
-
-	if content_hash_match.group(2):
-		raise RuntimeError(f"Content hash {content_hash} was last updated with uncommitted files present!")
+	# Make 100% sure we know what we're working with
+	origin_master_rev = origin_master_rev_match.group(0)
 
 	with open(os.path.join(SCRIPT_DIR, "content-hash.txt"), "r") as in_file:
-		local_content_hash = in_file.read().strip()
+		content_hash = in_file.read().strip()
 
-	if content_hash != local_content_hash:
-		content_commit_output = content_cmd(content_path, ["git", "log", "-1", "--format=%an (%cd): %s"], shell=False)
+	content_hash_match = re.match(r"^([^\s-]+)-([0-9a-f]{40})(-dirty)?$", content_hash)
 
-		error_message = \
-		f"Content hash mismatch.\n"
-		f"  This repo: {local_content_hash}\n"
-		f"  Content repo master branch: {content_hash}\n"
-		f"  Content repo last commit: {content_commit_output}"
+	if not content_hash_match:
+		raise RuntimeError(f"Could not parse hash from content-hash.txt. Output:\n{content_hash}")
 
-		# Make it obvious if we'd forgotten to commit when the hash was updated.
-		if local_content_hash.endswith("-dirty"):
-			error_message += "\n  Hash was last updated with uncommitted files present!"
+	content_branch = content_hash_match.group(1)
+	content_sha = content_hash_match.group(2)
+	content_was_dirty = bool(content_hash_match.group(3))
 
-		raise RuntimeError(error_message)
+	is_valid = content_branch == "master" and content_sha == origin_master_rev and not content_was_dirty
 
-	print(f"Content hash {local_content_hash} matches content repo master branch")
+	if not is_valid:
+		content_commit_output = \
+			content_cmd(content_path, ["git", "log", "-1", "--format=%an (%cd): %s"], shell=False).strip()
+
+		raise RuntimeError(
+			f"Content hash mismatch: {content_hash}.\n"
+			f"  Latest content repo origin/master SHA: {origin_master_rev}\n"
+			f"  Latest content repo commit: {content_commit_output}\n"
+			f"  Branch matches: {content_branch == 'master'}\n"
+			f"  SHA matches: {content_sha == origin_master_rev}\n"
+			f"  Was clean: {not content_was_dirty}"
+		)
+
+	print(f"Content hash {content_hash} matches content repo master branch")
 
 if __name__ == "__main__":
 	main()
