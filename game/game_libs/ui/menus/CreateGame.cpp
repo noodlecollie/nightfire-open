@@ -222,9 +222,14 @@ void CMenuMapListModel::Update(void)
 	char* afile;
 
 	if ( !uiStatic.needMapListUpdate )
+	{
 		return;
+	}
 
-	if ( !EngFuncs::CreateMapsList(TRUE) || (afile = (char*)EngFuncs::COM_LoadFile("maps.lst", NULL)) == NULL )
+	// TODO: It'd be nice to have some way to regenerate the map
+	// list here based on a toggle. Probably not worth doing this
+	// right now if we're going to be overhauling the UI anyway.
+	if ( !EngFuncs::CreateMapsList(FALSE) || (afile = (char*)EngFuncs::COM_LoadFile("maps.lst", NULL)) == NULL )
 	{
 		parent->done->SetGrayed(true);
 		m_iNumItems = 0;
@@ -242,20 +247,27 @@ void CMenuMapListModel::Update(void)
 	while ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) != NULL )
 	{
 		if ( numMaps >= UI_MAXGAMES )
+		{
 			break;
+		}
 
 		Q_strncpy(mapName[numMaps], token, 64);
+
 		if ( (pfile = EngFuncs::COM_ParseFile(pfile, token, sizeof(token))) == NULL )
 		{
 			Q_strncpy(mapsDescription[numMaps], mapName[numMaps], 64);
 			break;  // unexpected end of file
 		}
+
 		Q_strncpy(mapsDescription[numMaps], token, 64);
 		numMaps++;
 	}
 
 	if ( !(numMaps - 1) )
+	{
 		parent->done->SetGrayed(true);
+	}
+
 	m_iNumItems = numMaps;
 	EngFuncs::COM_FreeFile(afile);
 	uiStatic.needMapListUpdate = false;
