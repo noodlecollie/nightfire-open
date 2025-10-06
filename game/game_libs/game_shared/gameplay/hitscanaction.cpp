@@ -217,7 +217,15 @@ Vector CHitscanAction::FireBullets_Server()
 			CBaseEntity* pEntity = CBaseEntity::Instance(tr.pHit);
 
 			pEntity->TraceAttack(m_pevAttacker, m_BaseDamagePerShot, vecDir, &tr, DMG_BULLET);
-			TEXTURETYPE_PlaySound(&tr, m_GunPos, vecEnd, BULLET_GENERIC);
+
+			TEXTURETYPE_PlaySound(
+				&tr,
+				m_GunPos,
+				vecEnd,
+				BULLET_GENERIC,
+				m_pevAttacker ? ENT(m_pevAttacker) : nullptr,
+				m_pevInflictor ? ENT(m_pevInflictor) : nullptr
+			);
 		}
 
 		if ( m_SendTracerMessage )

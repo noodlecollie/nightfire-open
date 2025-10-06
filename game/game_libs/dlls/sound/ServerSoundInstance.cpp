@@ -19,7 +19,18 @@ namespace ServerSoundInstance
 			instance.Volume(),
 			instance.Attenuation(),
 			instance.Flags(),
-			instance.GetPitch());
+			instance.GetPitch()
+		);
+	}
+
+	void PlayLocalAmbient(const CSoundInstance& instance, edict_t* entity)
+	{
+		if ( !instance.IsValid() || !entity )
+		{
+			return;
+		}
+
+		EMIT_PLAYER_AMBIENT_SOUND(entity, instance.SoundPathCStr(), instance.Volume(), instance.GetPitch());
 	}
 
 	void PlayDynamic(const CSoundInstance& instance, edict_t* entity)
@@ -36,7 +47,8 @@ namespace ServerSoundInstance
 			instance.Volume(),
 			instance.Attenuation(),
 			instance.Flags(),
-			instance.GetPitch());
+			instance.GetPitch()
+		);
 	}
 
 	void StopDynamic(const CSoundInstance& instance, edict_t* entity)

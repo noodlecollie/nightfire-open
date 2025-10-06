@@ -329,7 +329,8 @@ extern void UTIL_EmitAmbientSound(
 	float vol,
 	float attenuation,
 	int fFlags,
-	int pitch);
+	int pitch
+);
 extern void UTIL_ParticleEffect(const Vector& vecOrigin, const Vector& vecDirection, ULONG ulColor, ULONG ulCount);
 extern void UTIL_ScreenShake(const Vector& center, float amplitude, float frequency, float duration, float radius);
 extern void UTIL_ScreenShakeAll(const Vector& center, float amplitude, float frequency, float duration);
@@ -357,7 +358,8 @@ extern void UTIL_TraceLine(
 	const Vector& vecEnd,
 	IGNORE_MONSTERS igmon,
 	edict_t* pentIgnore,
-	TraceResult* ptr);
+	TraceResult* ptr
+);
 
 extern void UTIL_TraceLine(
 	const Vector& vecStart,
@@ -365,7 +367,8 @@ extern void UTIL_TraceLine(
 	IGNORE_MONSTERS igmon,
 	IGNORE_GLASS ignoreGlass,
 	edict_t* pentIgnore,
-	TraceResult* ptr);
+	TraceResult* ptr
+);
 
 enum
 {
@@ -381,7 +384,8 @@ extern void UTIL_TraceHull(
 	IGNORE_MONSTERS igmon,
 	int hullNumber,
 	edict_t* pentIgnore,
-	TraceResult* ptr);
+	TraceResult* ptr
+);
 
 extern void UTIL_TraceHull(
 	const Vector& vecStart,
@@ -390,7 +394,8 @@ extern void UTIL_TraceHull(
 	const Vector& mins,
 	const Vector& maxs,
 	edict_t* pentIgnore,
-	TraceResult* ptr);
+	TraceResult* ptr
+);
 
 extern TraceResult UTIL_GetGlobalTrace(void);
 extern void
@@ -439,14 +444,16 @@ extern void UTIL_ClientPrintAll(
 	const char* param1 = NULL,
 	const char* param2 = NULL,
 	const char* param3 = NULL,
-	const char* param4 = NULL);
+	const char* param4 = NULL
+);
 
 inline void UTIL_CenterPrintAll(
 	const char* msg_name,
 	const char* param1 = NULL,
 	const char* param2 = NULL,
 	const char* param3 = NULL,
-	const char* param4 = NULL)
+	const char* param4 = NULL
+)
 {
 	UTIL_ClientPrintAll(HUD_PRINTCENTER, msg_name, param1, param2, param3, param4);
 }
@@ -463,7 +470,8 @@ extern void ClientPrint(
 	const char* param1 = NULL,
 	const char* param2 = NULL,
 	const char* param3 = NULL,
-	const char* param4 = NULL);
+	const char* param4 = NULL
+);
 
 // Max message buffer length: 192
 extern void ClientPrintMsg(entvars_t* client, int msg_dest, const char* msg, ...);
@@ -537,6 +545,8 @@ extern DLL_GLOBAL int g_Language;
 #define SND_STOP (1 << 5)  // duplicated in protocol.h stop sound
 #define SND_CHANGE_VOL (1 << 6)  // duplicated in protocol.h change sound vol
 #define SND_CHANGE_PITCH (1 << 7)  // duplicated in protocol.h change sound pitch
+#define SND_UNICAST (1 << 13)  // Bit of a hack for a local ambient sound:
+// send this sound to the entity that's being used as a location.
 
 #define LFO_SQUARE 1
 #define LFO_TRIANGLE 2
@@ -618,12 +628,20 @@ int SENTENCEG_PlaySequentialSz(
 	int flags,
 	int pitch,
 	int ipick,
-	int freset);
+	int freset
+);
 int SENTENCEG_GetIndex(const char* szrootname);
 int SENTENCEG_Lookup(const char* sample, char* sentencenum, size_t sentenceBufferSize);
 
 void TEXTURETYPE_Init();
-void TEXTURETYPE_PlaySound(TraceResult* ptr, Vector vecSrc, Vector vecEnd, int iBulletType);
+void TEXTURETYPE_PlaySound(
+	TraceResult* ptr,
+	Vector vecSrc,
+	Vector vecEnd,
+	int iBulletType,
+	edict_t* attacker = nullptr,
+	edict_t* inflictor = nullptr
+);
 
 // NOTE: use EMIT_SOUND_DYN to set the pitch of a sound. Pitch of 100
 // is no pitch shift.  Pitch > 100 up to 255 is a higher pitch, pitch < 100
@@ -638,7 +656,8 @@ void EMIT_SOUND_DYN(
 	float volume,
 	float attenuation,
 	int flags,
-	int pitch);
+	int pitch
+);
 
 inline void EMIT_SOUND(edict_t* entity, int channel, const char* sample, float volume, float attenuation)
 {
@@ -649,6 +668,11 @@ inline void STOP_SOUND(edict_t* entity, int channel, const char* sample)
 {
 	EMIT_SOUND_DYN(entity, channel, sample, 0, 0, SND_STOP, PITCH_NORM);
 }
+
+// Special combo of flags (I do hate this sound API) for simulating playing a local sound
+// on one specific client. This is essentially a sound located in the world, at the client's
+// position, where they are the only one who received the sound message.
+void EMIT_PLAYER_AMBIENT_SOUND(edict_t* entity, const char* sample, float volume, int pitch);
 
 void EMIT_SOUND_SUIT(edict_t* entity, const char* sample);
 void EMIT_GROUPID_SUIT(edict_t* entity, int isentenceg);
@@ -668,7 +692,8 @@ void EMIT_GROUPNAME_SUIT(edict_t* entity, const char* groupname);
 		1.0, \
 		ATTN_NORM, \
 		0, \
-		RANDOM_LONG(95, 105));
+		RANDOM_LONG(95, 105) \
+	);
 
 #define RANDOM_SOUND_ARRAY(array) (array)[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT((array)) - 1)]
 

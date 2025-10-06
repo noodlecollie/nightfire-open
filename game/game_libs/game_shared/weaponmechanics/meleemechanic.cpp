@@ -133,7 +133,8 @@ namespace WeaponMechanics
 		TraceResult& tr,
 		float* mins,
 		float* maxs,
-		edict_t* pEntity)
+		edict_t* pEntity
+	)
 	{
 		float* minmaxs[2] = {mins, maxs};
 		TraceResult tmpTrace;
@@ -226,7 +227,7 @@ namespace WeaponMechanics
 		{
 			Vector traceEnd = m_vecAttackTraceStart + ((m_vecContactPointOnSurface - m_vecAttackTraceStart) * 2);
 
-			TEXTURETYPE_PlaySound(&tr, m_vecAttackTraceStart, traceEnd, BULLET_MELEE);
+			TEXTURETYPE_PlaySound(&tr, m_vecAttackTraceStart, traceEnd, BULLET_MELEE, player->edict(), weapon->edict());
 
 			PlaySound(*worldHitSounds, CHAN_ITEM, 1.0f);
 			player->m_iWeaponVolume = meleeAttack->Volume;
@@ -247,7 +248,8 @@ namespace WeaponMechanics
 			Vector(m_vecAttackTraceEnd),
 			dont_ignore_monsters,
 			ENT(player->pev),
-			&tr);
+			&tr
+		);
 
 		if ( tr.flFraction >= 1.0f )
 		{
@@ -258,7 +260,8 @@ namespace WeaponMechanics
 				dont_ignore_monsters,
 				head_hull,
 				ENT(player->pev),
-				&tr);
+				&tr
+			);
 
 			if ( tr.flFraction < 1.0f )
 			{
@@ -273,7 +276,8 @@ namespace WeaponMechanics
 						tr,
 						VEC_DUCK_HULL_MIN,
 						VEC_DUCK_HULL_MAX,
-						player->edict());
+						player->edict()
+					);
 				}
 
 				// This is the point on the actual surface (the hull could have hit space)

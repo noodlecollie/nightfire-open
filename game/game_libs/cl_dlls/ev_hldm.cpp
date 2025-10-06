@@ -54,6 +54,7 @@
 #include "PlatformLib/String.h"
 #include "MathLib/angles.h"
 #include "MathLib/utils.h"
+#include "sound/SoundDefs.h"
 
 // TODO: Make into a convar?
 static constexpr float BULLET_RICOCHET_NOISE_CHANCE = 0.5f;
@@ -97,7 +98,8 @@ void EV_HLDM_Init()
 						at_error,
 						"EV_HLDM_Init: Weapon '%s' does not specify an event script for attack mode %u!\n",
 						atts.Core.Classname,
-						attackModeIndex);
+						attackModeIndex
+					);
 
 					continue;
 				}
@@ -136,7 +138,8 @@ void EV_HLDM_Init()
 						gEngfuncs.Con_Printf(
 							"EV_HLDM_Init: No event handler for fire mode mechanic ID %u!\n",
 							atts.Core.Classname,
-							static_cast<uint32_t>(baseAttack->Classify()));
+							static_cast<uint32_t>(baseAttack->Classify())
+						);
 
 						break;
 					}
@@ -150,7 +153,8 @@ void EV_HLDM_Init()
 				EventPlayers[weaponIndex][attackModeIndex].reset(eventPlayer);
 				eventPlayer->LoadEventScript(baseAttack->EventScript);
 			}
-		});
+		}
+	);
 }
 
 void EV_HandleGenericWeaponFire(event_args_t* args)
@@ -225,9 +229,10 @@ void EV_HLDM_PlayTextureSound(int idx, pmtrace_t* ptr, float* vecSrc, float* vec
 			0,
 			soundPath,
 			surfaceAtts.ricochetSoundVol,
-			ATTN_NORM,
+			SURFACE_IMPACT_ATTENUATION,
 			0,
-			gEngfuncs.pfnRandomLong(97, 103));
+			gEngfuncs.pfnRandomLong(97, 103)
+		);
 	}
 }
 
@@ -283,7 +288,8 @@ void EV_HLDM_GunshotDecalTrace(pmtrace_t* pTrace, const char* decalName, float s
 				0,
 				pTrace->endpos,
 				0,
-				scale);
+				scale
+			);
 		}
 	}
 }
@@ -395,7 +401,8 @@ void EV_HLDM_FireBullets(
 	int iBulletType,
 	int iTracerFreq,
 	float flSpreadX,
-	float flSpreadY)
+	float flSpreadY
+)
 {
 	int i;
 	pmtrace_t tr;
@@ -509,7 +516,8 @@ void EV_FireGlock1(event_args_t* args)
 		gEngfuncs.pfnRandomFloat(0.92f, 1.0f),
 		ATTN_NORM,
 		0,
-		98 + gEngfuncs.pfnRandomLong(0, 3));
+		98 + gEngfuncs.pfnRandomLong(0, 3)
+	);
 
 	EV_GetGunPosition(args, vecSrc, origin);
 
@@ -527,7 +535,8 @@ void EV_FireGlock1(event_args_t* args)
 		BULLET_PLAYER_9MM,
 		1,
 		args->fparam1,
-		args->fparam2);
+		args->fparam2
+	);
 }
 
 void EV_FireGlock2(event_args_t* args)
@@ -574,7 +583,8 @@ void EV_FireGlock2(event_args_t* args)
 		gEngfuncs.pfnRandomFloat(0.92f, 1.0f),
 		ATTN_NORM,
 		0,
-		98 + gEngfuncs.pfnRandomLong(0, 3));
+		98 + gEngfuncs.pfnRandomLong(0, 3)
+	);
 
 	EV_GetGunPosition(args, vecSrc, origin);
 
@@ -592,7 +602,8 @@ void EV_FireGlock2(event_args_t* args)
 		BULLET_PLAYER_9MM,
 		1,
 		args->fparam1,
-		args->fparam2);
+		args->fparam2
+	);
 }
 //======================
 //	   GLOCK END
@@ -651,7 +662,8 @@ void EV_FireShotGunDouble(event_args_t* args)
 		gEngfuncs.pfnRandomFloat(0.98f, 1.0f),
 		ATTN_NORM,
 		0,
-		85 + gEngfuncs.pfnRandomLong(0, 0x1f));
+		85 + gEngfuncs.pfnRandomLong(0, 0x1f)
+	);
 
 	EV_GetGunPosition(args, vecSrc, origin);
 	VectorCopy(forward, vecAiming);
@@ -670,7 +682,8 @@ void EV_FireShotGunDouble(event_args_t* args)
 			BULLET_PLAYER_BUCKSHOT,
 			1,
 			0.17365f,
-			0.04362f);
+			0.04362f
+		);
 	}
 	else
 	{
@@ -686,7 +699,8 @@ void EV_FireShotGunDouble(event_args_t* args)
 			BULLET_PLAYER_BUCKSHOT,
 			1,
 			0.08716f,
-			0.08716f);
+			0.08716f
+		);
 	}
 }
 
@@ -736,7 +750,8 @@ void EV_FireShotGunSingle(event_args_t* args)
 		gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 		ATTN_NORM,
 		0,
-		93 + gEngfuncs.pfnRandomLong(0, 0x1f));
+		93 + gEngfuncs.pfnRandomLong(0, 0x1f)
+	);
 
 	EV_GetGunPosition(args, vecSrc, origin);
 	VectorCopy(forward, vecAiming);
@@ -755,7 +770,8 @@ void EV_FireShotGunSingle(event_args_t* args)
 			BULLET_PLAYER_BUCKSHOT,
 			1,
 			0.08716f,
-			0.04362f);
+			0.04362f
+		);
 	}
 	else
 	{
@@ -771,7 +787,8 @@ void EV_FireShotGunSingle(event_args_t* args)
 			BULLET_PLAYER_BUCKSHOT,
 			1,
 			0.08716f,
-			0.08716f);
+			0.08716f
+		);
 	}
 }
 //======================
@@ -828,7 +845,8 @@ void EV_FireMP5(event_args_t* args)
 				1,
 				ATTN_NORM,
 				0,
-				94 + gEngfuncs.pfnRandomLong(0, 0xf));
+				94 + gEngfuncs.pfnRandomLong(0, 0xf)
+			);
 			break;
 		case 1:
 			gEngfuncs.pEventAPI->EV_PlaySound(
@@ -839,7 +857,8 @@ void EV_FireMP5(event_args_t* args)
 				1,
 				ATTN_NORM,
 				0,
-				94 + gEngfuncs.pfnRandomLong(0, 0xf));
+				94 + gEngfuncs.pfnRandomLong(0, 0xf)
+			);
 			break;
 	}
 
@@ -860,7 +879,8 @@ void EV_FireMP5(event_args_t* args)
 			BULLET_PLAYER_MP5,
 			1,
 			args->fparam1,
-			args->fparam2);
+			args->fparam2
+		);
 	}
 	else
 	{
@@ -876,7 +896,8 @@ void EV_FireMP5(event_args_t* args)
 			BULLET_PLAYER_MP5,
 			1,
 			args->fparam1,
-			args->fparam2);
+			args->fparam2
+		);
 	}
 }
 
@@ -907,7 +928,8 @@ void EV_FireMP52(event_args_t* args)
 				1,
 				ATTN_NORM,
 				0,
-				94 + gEngfuncs.pfnRandomLong(0, 0xf));
+				94 + gEngfuncs.pfnRandomLong(0, 0xf)
+			);
 			break;
 		case 1:
 			gEngfuncs.pEventAPI->EV_PlaySound(
@@ -918,7 +940,8 @@ void EV_FireMP52(event_args_t* args)
 				1,
 				ATTN_NORM,
 				0,
-				94 + gEngfuncs.pfnRandomLong(0, 0xf));
+				94 + gEngfuncs.pfnRandomLong(0, 0xf)
+			);
 			break;
 	}
 }
@@ -971,7 +994,8 @@ void EV_FirePython(event_args_t* args)
 				gEngfuncs.pfnRandomFloat(0.8f, 0.9f),
 				ATTN_NORM,
 				0,
-				PITCH_NORM);
+				PITCH_NORM
+			);
 			break;
 		case 1:
 			gEngfuncs.pEventAPI->EV_PlaySound(
@@ -982,7 +1006,8 @@ void EV_FirePython(event_args_t* args)
 				gEngfuncs.pfnRandomFloat(0.8f, 0.9f),
 				ATTN_NORM,
 				0,
-				PITCH_NORM);
+				PITCH_NORM
+			);
 			break;
 	}
 
@@ -1002,7 +1027,8 @@ void EV_FirePython(event_args_t* args)
 		BULLET_PLAYER_357,
 		1,
 		args->fparam1,
-		args->fparam2);
+		args->fparam2
+	);
 }
 //======================
 //	    PHYTON END
@@ -1113,7 +1139,8 @@ void EV_FireGauss(event_args_t* args)
 		0.5f + flDamage * (1.0f / 400.0f),
 		ATTN_NORM,
 		0,
-		85 + gEngfuncs.pfnRandomLong(0, 0x1f));
+		85 + gEngfuncs.pfnRandomLong(0, 0x1f)
+	);
 
 	while ( flDamage > 10 && nMaxHits > 0 )
 	{
@@ -1157,7 +1184,8 @@ void EV_FireGauss(event_args_t* args)
 				0,
 				255.0f,
 				m_fPrimaryFire ? 128.0f : 255.0f,
-				m_fPrimaryFire ? 0.0f : 255.0f);
+				m_fPrimaryFire ? 0.0f : 255.0f
+			);
 		}
 		else
 		{
@@ -1174,7 +1202,8 @@ void EV_FireGauss(event_args_t* args)
 				0,
 				255,
 				m_fPrimaryFire ? 128.0f : 255.0f,
-				m_fPrimaryFire ? 0.0f : 255.0f);
+				m_fPrimaryFire ? 0.0f : 255.0f
+			);
 		}
 
 		pEntity = gEngfuncs.pEventAPI->EV_GetPhysent(tr.ent);
@@ -1213,7 +1242,8 @@ void EV_FireGauss(event_args_t* args)
 					kRenderFxNoDissipation,
 					flDamage * n / 255.0f,
 					flDamage * n * 0.5f * 0.1f,
-					FTENT_FADEOUT);
+					FTENT_FADEOUT
+				);
 
 				vec3_t fwd;
 				VectorAdd(tr.endpos, tr.plane.normal, fwd);
@@ -1228,7 +1258,8 @@ void EV_FireGauss(event_args_t* args)
 					gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 					100,
 					255,
-					100);
+					100
+				);
 
 				// lose energy
 				if ( n == 0 )
@@ -1252,7 +1283,8 @@ void EV_FireGauss(event_args_t* args)
 					kRenderFxNoDissipation,
 					flDamage / 255.0f,
 					6.0,
-					FTENT_FADEOUT);
+					FTENT_FADEOUT
+				);
 
 				// limit it to one hole punch
 				if ( fHasPunched )
@@ -1308,7 +1340,8 @@ void EV_FireGauss(event_args_t* args)
 									gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 									100,
 									255,
-									100);
+									100
+								);
 							}
 
 							//////////////////////////////////// WHAT TO DO HERE
@@ -1325,7 +1358,8 @@ void EV_FireGauss(event_args_t* args)
 								kRenderFxNoDissipation,
 								flDamage / 255.0f,
 								6.0,
-								FTENT_FADEOUT);
+								FTENT_FADEOUT
+							);
 
 							// balls
 							{
@@ -1341,7 +1375,8 @@ void EV_FireGauss(event_args_t* args)
 									gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 									200,
 									255,
-									40);
+									40
+								);
 							}
 
 							VectorAdd(beam_tr.endpos, forward, vecSrc);
@@ -1369,7 +1404,8 @@ void EV_FireGauss(event_args_t* args)
 							kRenderFxNoDissipation,
 							200.0f / 255.0f,
 							0.3f,
-							FTENT_FADEOUT);
+							FTENT_FADEOUT
+						);
 						{
 							vec3_t fwd;
 							VectorAdd(tr.endpos, tr.plane.normal, fwd);
@@ -1383,7 +1419,8 @@ void EV_FireGauss(event_args_t* args)
 								gEngfuncs.pfnRandomFloat(10.0f, 20.0f) / 100.0f,
 								100,
 								255,
-								200);
+								200
+							);
 						}
 					}
 
@@ -1519,7 +1556,8 @@ void EV_FireCrossbow2(event_args_t* args)
 		1,
 		ATTN_NORM,
 		0,
-		93 + gEngfuncs.pfnRandomLong(0, 0xF));
+		93 + gEngfuncs.pfnRandomLong(0, 0xF)
+	);
 	gEngfuncs.pEventAPI->EV_PlaySound(
 		idx,
 		origin,
@@ -1528,7 +1566,8 @@ void EV_FireCrossbow2(event_args_t* args)
 		gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 		ATTN_NORM,
 		0,
-		93 + gEngfuncs.pfnRandomLong(0, 0xF));
+		93 + gEngfuncs.pfnRandomLong(0, 0xF)
+	);
 
 	if ( EV_IsLocal(idx) )
 	{
@@ -1565,7 +1604,8 @@ void EV_FireCrossbow2(event_args_t* args)
 						1,
 						ATTN_NORM,
 						0,
-						PITCH_NORM);
+						PITCH_NORM
+					);
 					break;
 				case 1:
 					gEngfuncs.pEventAPI->EV_PlaySound(
@@ -1576,7 +1616,8 @@ void EV_FireCrossbow2(event_args_t* args)
 						1,
 						ATTN_NORM,
 						0,
-						PITCH_NORM);
+						PITCH_NORM
+					);
 					break;
 			}
 		}
@@ -1592,7 +1633,8 @@ void EV_FireCrossbow2(event_args_t* args)
 				gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 				ATTN_NORM,
 				0,
-				PITCH_NORM);
+				PITCH_NORM
+			);
 
 			// Not underwater, do some sparks...
 			if ( gEngfuncs.PM_PointContents(tr.endpos, NULL) != CONTENTS_WATER )
@@ -1609,7 +1651,8 @@ void EV_FireCrossbow2(event_args_t* args)
 				vBoltAngles,
 				5,
 				iModelIndex,
-				TE_BOUNCE_NULL);
+				TE_BOUNCE_NULL
+			);
 
 			if ( bolt )
 			{
@@ -1643,7 +1686,8 @@ void EV_FireCrossbow(event_args_t* args)
 		1,
 		ATTN_NORM,
 		0,
-		93 + gEngfuncs.pfnRandomLong(0, 0xF));
+		93 + gEngfuncs.pfnRandomLong(0, 0xF)
+	);
 	gEngfuncs.pEventAPI->EV_PlaySound(
 		idx,
 		origin,
@@ -1652,7 +1696,8 @@ void EV_FireCrossbow(event_args_t* args)
 		gEngfuncs.pfnRandomFloat(0.95f, 1.0f),
 		ATTN_NORM,
 		0,
-		93 + gEngfuncs.pfnRandomLong(0, 0xF));
+		93 + gEngfuncs.pfnRandomLong(0, 0xF)
+	);
 
 	// Only play the weapon anims if I shot it.
 	if ( EV_IsLocal(idx) )
@@ -1840,7 +1885,8 @@ void EV_EgonFire(event_args_t* args)
 				0,
 				r,
 				g,
-				b);
+				b
+			);
 
 			if ( pBeam )
 				pBeam->flags |= (FBEAM_SINENOISE);
@@ -1858,7 +1904,8 @@ void EV_EgonFire(event_args_t* args)
 				0,
 				r,
 				g,
-				b);
+				b
+			);
 
 			// Vit_amiN: egon beam flare
 			pFlare = gEngfuncs.pEfxAPI->R_TempSprite(
@@ -1870,7 +1917,8 @@ void EV_EgonFire(event_args_t* args)
 				kRenderFxNoDissipation,
 				1.0,
 				99999,
-				FTENT_SPRCYCLE | FTENT_PERSIST);
+				FTENT_SPRCYCLE | FTENT_PERSIST
+			);
 		}
 	}
 
@@ -2082,7 +2130,8 @@ void EV_SnarkFire(event_args_t* args)
 		Vector(vecSrc) + Vector(forward) * 64,
 		PM_NORMAL,
 		-1,
-		&tr);
+		&tr
+	);
 
 	// Find space to drop the thing.
 	if ( tr.allsolid == 0 && tr.startsolid == 0 && tr.fraction > 0.25 )

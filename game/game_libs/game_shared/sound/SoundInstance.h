@@ -35,6 +35,9 @@ public:
 	void SetPitch(int32_t pitch);
 	void SetPitch(int32_t minPitch, int32_t maxPitch);
 
+	// Chooses immediately, instead of waiting until the sound is played.
+	void ChooseRandomPitch(int32_t minPitch, int32_t maxPitch);
+
 	int32_t Channel() const;
 	void SetChannel(int32_t channel);
 

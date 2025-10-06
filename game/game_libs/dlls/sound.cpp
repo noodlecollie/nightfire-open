@@ -29,6 +29,7 @@
 #include "resources/SurfaceAttributes.h"
 #include "resources/SoundResources.h"
 #include "PlatformLib/String.h"
+#include "sound/SoundDefs.h"
 
 static char* memfgets(byte* pMemFile, int fileSize, int& filePos, char* pBuffer, int bufferSize);
 
@@ -110,7 +111,8 @@ dynpitchvol_t rgdpvpreset[CDPVPRESETMAX] = {
 	{24, 200, 20, 95, 70, 10, 1, 70, 70, 3, 20, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	{25, 180, 100, 50, 60, 10, 1, 40, 60, 2, 90, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	{26, 60, 60, 0, 0, 10, 1, 40, 70, 3, 80, 20, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{27, 128, 90, 10, 10, 10, 1, 20, 40, 1, 5, 10, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+	{27, 128, 90, 10, 10, 10, 1, 20, 40, 1, 5, 10, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
 
 class CAmbientGeneric : public CBaseEntity
 {
@@ -197,7 +199,8 @@ void CAmbientGeneric::Spawn(void)
 			"EMPTY AMBIENT AT: %f, %f, %f\n",
 			pev->origin[VEC3_X],
 			pev->origin[VEC3_Y],
-			pev->origin[VEC3_Z]);
+			pev->origin[VEC3_Z]
+		);
 
 		pev->nextthink = gpGlobals->time + 0.1f;
 		SetThink(&CBaseEntity::SUB_Remove);
@@ -254,7 +257,8 @@ void CAmbientGeneric::Precache(void)
 			(m_dpv.vol * 0.01f),
 			m_flAttenuation,
 			SND_SPAWNING,
-			m_dpv.pitch);
+			m_dpv.pitch
+		);
 
 		pev->nextthink = gpGlobals->time + 0.1f;
 	}
@@ -1220,7 +1224,8 @@ int SENTENCEG_PlaySequentialSz(
 	int flags,
 	int pitch,
 	int ipick,
-	int freset)
+	int freset
+)
 {
 	char name[64];
 	int ipicknext;
@@ -1359,7 +1364,8 @@ void SENTENCEG_Init()
 			PlatformLib_StrCpy(
 				rgsentenceg[isentencegs].szgroupname,
 				sizeof(rgsentenceg[isentencegs].szgroupname),
-				&(buffer[i]));
+				&(buffer[i])
+			);
 
 			rgsentenceg[isentencegs].count = 1;
 
@@ -1421,7 +1427,8 @@ void EMIT_SOUND_DYN(
 	float volume,
 	float attenuation,
 	int flags,
-	int pitch)
+	int pitch
+)
 {
 	if ( sample && *sample == '!' )
 	{
@@ -1440,6 +1447,11 @@ void EMIT_SOUND_DYN(
 	{
 		EMIT_SOUND_DYN2(entity, channel, sample, volume, attenuation, flags, pitch);
 	}
+}
+
+void EMIT_PLAYER_AMBIENT_SOUND(edict_t* entity, const char* sample, float volume, int pitch)
+{
+	EMIT_SOUND_DYN(entity, CHAN_AUTO, sample, volume, 0, SND_UNICAST, pitch);
 }
 
 // play a specific sentence over the HEV suit speaker - just pass player entity, and !sentencename
@@ -1548,7 +1560,14 @@ static char* memfgets(byte* pMemFile, int fileSize, int& filePos, char* pBuffer,
 // original traceline endpoints used by the attacker, iBulletType is the type of bullet that hit the texture.
 // returns volume of strike instrument (crowbar) to play
 
-void TEXTURETYPE_PlaySound(TraceResult* ptr, Vector vecSrc, Vector vecEnd, int iBulletType)
+void TEXTURETYPE_PlaySound(
+	TraceResult* ptr,
+	Vector vecSrc,
+	Vector vecEnd,
+	int iBulletType,
+	edict_t* attacker,
+	edict_t* inflictor
+)
 {
 	// hit the world, try to play sound based on texture material type
 	uint32_t texSurfaceProp = SurfaceProp_None;
@@ -1598,7 +1617,7 @@ void TEXTURETYPE_PlaySound(TraceResult* ptr, Vector vecSrc, Vector vecEnd, int i
 
 	CSoundInstance soundInst;
 	soundInst.SetPosition(ptr->vecEndPos);
-	float attenuation = ATTN_STATIC;
+	float attenuation = SURFACE_IMPACT_ATTENUATION;
 
 	const CSurfaceAttributes::Attributes surfaceAtts =
 		CSurfaceAttributes::StaticInstance().GetAttributes(static_cast<SurfaceProp>(texSurfaceProp));
@@ -1609,14 +1628,16 @@ void TEXTURETYPE_PlaySound(TraceResult* ptr, Vector vecSrc, Vector vecEnd, int i
 		hitSoundId = SurfaceSoundId::HitFleshCritical;
 	}
 
-	if ( hitSoundId == SurfaceSoundId::HitFlesh || hitSoundId == SurfaceSoundId::HitFleshCritical )
+	const bool hitFlesh = hitSoundId == SurfaceSoundId::HitFlesh || hitSoundId == SurfaceSoundId::HitFleshCritical;
+
+	if ( hitFlesh )
 	{
-		// Lower values are heard from further away
-		attenuation *= 0.8f;
+		// Attenuate more heavily. Local player will have sound played locally too.
+		attenuation = BODY_IMPACT_ATTENUATION;
 	}
 
 	soundInst.SetSoundPath(SoundResources::SurfaceSounds.RandomResourcePath(hitSoundId));
-	soundInst.SetPitch(96, 111);
+	soundInst.ChooseRandomPitch(96, 111);
 	soundInst.SetAttenuation(attenuation);
 	soundInst.SetVolume(surfaceAtts.hitSoundVol);
 	soundInst.SetChannel(CHAN_STATIC);
@@ -1640,11 +1661,47 @@ void TEXTURETYPE_PlaySound(TraceResult* ptr, Vector vecSrc, Vector vecEnd, int i
 			RANDOM_FLOAT(0.7f, 1.0f),
 			ATTN_NORM,
 			0,
-			100);
+			100
+		);
 	}
 
 	// play material hit sound
 	ServerSoundInstance::PlayAmbient(soundInst);
+
+	// If we hit a player, play the sound locally too.
+	if ( hitFlesh )
+	{
+		if ( attacker )
+		{
+			float volume = BODY_IMPACT_LOCAL_VOLUME;
+
+			if ( inflictor && inflictor->v.owner == attacker )
+			{
+				CBaseEntity* inflictorEnt = CBaseEntity::Instance(inflictor);
+
+				// For now, this should be good enough to identify the Ronin turret.
+				// Make the hit sound quieter if it's coming from a Ronin that we own.
+				if ( inflictorEnt && inflictorEnt->Classify() == CLASS_MACHINE )
+				{
+					volume = RONIN_IMPACT_LOCAL_VOLUME;
+				}
+			}
+
+			soundInst.SetVolume(volume);
+			ServerSoundInstance::PlayLocalAmbient(soundInst, attacker);
+		}
+
+		// Play the sound to the entity that was hit, if it was a player.
+		if ( pEntity->Classify() == CLASS_PLAYER )
+		{
+			CBasePlayer* hitPlayer = dynamic_cast<CBasePlayer*>(pEntity);
+
+			if ( !hitPlayer->IsFakeClient() )
+			{
+				ServerSoundInstance::PlayLocalAmbient(soundInst, hitPlayer->edict());
+			}
+		}
+	}
 }
 
 // ===================================================================================
@@ -1694,7 +1751,8 @@ void CSpeaker::Spawn(void)
 			"SPEAKER with no Level/Sentence! at: %f, %f, %f\n",
 			pev->origin[VEC3_X],
 			pev->origin[VEC3_Y],
-			pev->origin[VEC3_Z]);
+			pev->origin[VEC3_Z]
+		);
 		pev->nextthink = gpGlobals->time + 0.1f;
 		SetThink(&CBaseEntity::SUB_Remove);
 		return;
