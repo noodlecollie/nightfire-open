@@ -109,11 +109,10 @@ void ClearMultiDamage(void)
 //		gMultiDamage
 void ApplyMultiDamage(entvars_t* pevInflictor, entvars_t* pevAttacker)
 {
-	Vector vecSpot1;  // where blood comes from
-	Vector vecDir;  // direction blood should go
-
 	if ( !gMultiDamage.pEntity )
+	{
 		return;
+	}
 
 	gMultiDamage.pEntity->TakeDamage(pevInflictor, pevAttacker, gMultiDamage.amount, gMultiDamage.type);
 }
@@ -123,7 +122,9 @@ void ApplyMultiDamage(entvars_t* pevInflictor, entvars_t* pevAttacker)
 void AddMultiDamage(entvars_t* pevInflictor, CBaseEntity* pEntity, float flDamage, int bitsDamageType)
 {
 	if ( !pEntity )
+	{
 		return;
+	}
 
 	gMultiDamage.type |= bitsDamageType;
 
@@ -331,7 +332,8 @@ void W_Precache(void)
 			{
 				PRECACHE_MODEL(atts.Precache.Models[index]);
 			}
-		});
+		}
+	);
 
 	// common world objects
 	UTIL_PrecacheOther("item_suit");
@@ -638,8 +640,8 @@ void CBasePlayerWeapon::ItemPostFrame(void)
 		SecondaryAttack();
 		m_pPlayer->pev->button &= ~IN_ATTACK2;
 	}
-	else if (
-		(m_pPlayer->pev->button & IN_ATTACK) && CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) )
+	else if ( (m_pPlayer->pev->button & IN_ATTACK) &&
+			  CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement()) )
 	{
 		if ( (m_iClip == 0 && pszAmmo1()) || (iMaxClip() == -1 && !m_pPlayer->m_rgAmmo[PrimaryAmmoIndex()]) )
 		{
@@ -961,7 +963,8 @@ BOOL CBasePlayerWeapon::DefaultDeploy(
 	const char* szWeaponModel,
 	int iAnim,
 	const char* szAnimExt,
-	int body)
+	int body
+)
 {
 	if ( !CanDeploy() )
 	{

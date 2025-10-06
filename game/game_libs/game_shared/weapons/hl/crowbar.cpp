@@ -305,7 +305,14 @@ int CCrowbar::Swing(int fFirst)
 
 		if ( fHitWorld )
 		{
-			TEXTURETYPE_PlaySound(&tr, vecSrc, vecSrc + (vecEnd - vecSrc) * 2, BULLET_PLAYER_CROWBAR);
+			TEXTURETYPE_PlaySound(
+				&tr,
+				vecSrc,
+				vecSrc + (vecEnd - vecSrc) * 2,
+				BULLET_PLAYER_CROWBAR,
+				m_pPlayer->edict(),
+				edict()
+			);
 
 			// also play crowbar strike
 			switch ( RANDOM_LONG(0, 1) )
@@ -318,7 +325,8 @@ int CCrowbar::Swing(int fFirst)
 						1.0,
 						ATTN_NORM,
 						0,
-						98 + RANDOM_LONG(0, 3));
+						98 + RANDOM_LONG(0, 3)
+					);
 					break;
 				case 1:
 					EMIT_SOUND_DYN(
@@ -328,7 +336,8 @@ int CCrowbar::Swing(int fFirst)
 						1.0,
 						ATTN_NORM,
 						0,
-						98 + RANDOM_LONG(0, 3));
+						98 + RANDOM_LONG(0, 3)
+					);
 					break;
 			}
 

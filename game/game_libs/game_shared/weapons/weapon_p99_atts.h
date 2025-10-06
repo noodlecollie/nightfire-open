@@ -129,8 +129,8 @@ static const WeaponAtts::WACollection StaticWeaponAttributes(
 		priAttack->ViewModelAnimList_AttackEmpty << P99_SHOOT_EMPTY;
 		priAttack->ViewModelBodyOverride = P99_BODY_UNSILENCED;
 
-		priAttack->AttackSounds.MinVolume = 0.82f;
-		priAttack->AttackSounds.MaxVolume = 0.9f;
+		priAttack->AttackSounds.MinVolume = 0.76f;
+		priAttack->AttackSounds.MaxVolume = 0.8f;
 		priAttack->AttackSounds.MinPitch = 98;
 		priAttack->AttackSounds.MaxPitch = 104;
 		priAttack->AttackSounds.SoundNames << "weapons/weapon_p99/p99_fire1.wav";

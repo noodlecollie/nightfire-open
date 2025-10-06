@@ -61,7 +61,8 @@ unsigned int seed_table[256] = {
 	12650, 18275, 351,   7268,  31319, 30119, 7600,  2905,  13826, 11343, 13053, 15583, 30055, 31093, 5067,  761,
 	9685,  11070, 21369, 27155, 3663,  26542, 20169, 12161, 15411, 30401, 7580,  31784, 8985,  29367, 20989, 14203,
 	29694, 21167, 10337, 1706,  28578, 887,   3373,  19477, 14382, 675,   7033,  15111, 26138, 12252, 30996, 21409,
-	25678, 18555, 13256, 23316, 22407, 16727, 991,   9236,  5373,  29402, 6117,  15241, 27715, 19291, 19888, 19847};
+	25678, 18555, 13256, 23316, 22407, 16727, 991,   9236,  5373,  29402, 6117,  15241, 27715, 19291, 19888, 19847
+};
 
 unsigned int U_Random(void)
 {
@@ -160,7 +161,8 @@ void UTIL_ParametricRocket(entvars_t* pev, Vector vecOrigin, Vector vecAngles, e
 		Vector(pev->startpos) + Vector(gpGlobals->v_forward) * 8192,
 		ignore_monsters,
 		owner,
-		&tr);
+		&tr
+	);
 
 	VectorCopy(tr.vecEndPos, pev->endpos);
 
@@ -346,7 +348,8 @@ void DBG_AssertFunction(
 	const char* szFile,
 	int szLine,
 	const char* szMessage,
-	bool showAlert)
+	bool showAlert
+)
 {
 	if ( fExpr )
 	{
@@ -365,7 +368,8 @@ void DBG_AssertFunction(
 				szExpr,
 				szFile,
 				szLine,
-				szMessage);
+				szMessage
+			);
 		}
 		else
 		{
@@ -669,7 +673,8 @@ void UTIL_EmitAmbientSound(
 	float vol,
 	float attenuation,
 	int fFlags,
-	int pitch)
+	int pitch
+)
 {
 	float rgfl[3];
 	vecOrigin.CopyToArray(rgfl);
@@ -677,11 +682,16 @@ void UTIL_EmitAmbientSound(
 	if ( samp && *samp == '!' )
 	{
 		char name[32];
+
 		if ( SENTENCEG_Lookup(samp, name, sizeof(name)) >= 0 )
+		{
 			EMIT_AMBIENT_SOUND(entity, rgfl, name, vol, attenuation, fFlags, pitch);
+		}
 	}
 	else
+	{
 		EMIT_AMBIENT_SOUND(entity, rgfl, samp, vol, attenuation, fFlags, pitch);
+	}
 }
 
 static unsigned short FixedUnsigned16(float value, float scale)
@@ -689,10 +699,16 @@ static unsigned short FixedUnsigned16(float value, float scale)
 	int output;
 
 	output = (int)(value * scale);
+
 	if ( output < 0 )
+	{
 		output = 0;
+	}
+
 	if ( output > 0xFFFF )
+	{
 		output = 0xFFFF;
+	}
 
 	return (unsigned short)output;
 }
@@ -704,10 +720,14 @@ static short FixedSigned16(float value, float scale)
 	output = (int)(value * scale);
 
 	if ( output > 32767 )
+	{
 		output = 32767;
+	}
 
 	if ( output < -32768 )
+	{
 		output = -32768;
+	}
 
 	return (short)output;
 }
@@ -877,7 +897,8 @@ void UTIL_ClientPrintAll(
 	const char* param1,
 	const char* param2,
 	const char* param3,
-	const char* param4)
+	const char* param4
+)
 {
 	MESSAGE_BEGIN(MSG_ALL, gmsgTextMsg);
 	WRITE_BYTE(msg_dest);
@@ -901,7 +922,8 @@ void ClientPrint(
 	const char* param1,
 	const char* param2,
 	const char* param3,
-	const char* param4)
+	const char* param4
+)
 {
 	MESSAGE_BEGIN(MSG_ONE, gmsgTextMsg, NULL, client);
 	WRITE_BYTE(msg_dest);
@@ -1012,14 +1034,16 @@ void UTIL_TraceLine(
 	IGNORE_MONSTERS igmon,
 	IGNORE_GLASS ignoreGlass,
 	edict_t* pentIgnore,
-	TraceResult* ptr)
+	TraceResult* ptr
+)
 {
 	TRACE_LINE(
 		vecStart,
 		vecEnd,
 		(igmon == ignore_monsters ? TRUE : FALSE) | (ignoreGlass ? 0x100 : 0),
 		pentIgnore,
-		ptr);
+		ptr
+	);
 }
 
 void UTIL_TraceLine(
@@ -1027,7 +1051,8 @@ void UTIL_TraceLine(
 	const Vector& vecEnd,
 	IGNORE_MONSTERS igmon,
 	edict_t* pentIgnore,
-	TraceResult* ptr)
+	TraceResult* ptr
+)
 {
 	TRACE_LINE(vecStart, vecEnd, (igmon == ignore_monsters ? TRUE : FALSE), pentIgnore, ptr);
 }
@@ -1038,7 +1063,8 @@ void UTIL_TraceHull(
 	IGNORE_MONSTERS igmon,
 	int hullNumber,
 	edict_t* pentIgnore,
-	TraceResult* ptr)
+	TraceResult* ptr
+)
 {
 	TRACE_HULL(vecStart, vecEnd, (igmon == ignore_monsters ? TRUE : FALSE), hullNumber, pentIgnore, ptr);
 }
@@ -1050,7 +1076,8 @@ void UTIL_TraceHull(
 	const Vector& mins,
 	const Vector& maxs,
 	edict_t* pentIgnore,
-	TraceResult* ptr)
+	TraceResult* ptr
+)
 {
 	TRACE_CUSTOM_HULL(vecStart, vecEnd, (igmon == ignore_monsters ? TRUE : FALSE), mins, maxs, pentIgnore, ptr);
 }
@@ -2288,7 +2315,8 @@ int CRestore::ReadField(
 	int startField,
 	int,
 	char* pName,
-	void* pData)
+	void* pData
+)
 {
 	int i, j, stringCount, fieldNumber, entityIndex;
 	TYPEDESCRIPTION* pTest;
@@ -2514,7 +2542,8 @@ int CRestore::ReadFields(const char* pname, void* pBaseData, TYPEDESCRIPTION* pF
 			lastField,
 			header.size,
 			m_pdata->pTokens[header.token],
-			header.pData);
+			header.pData
+		);
 		lastField++;
 	}
 

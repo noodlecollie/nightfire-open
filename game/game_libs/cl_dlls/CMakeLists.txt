@@ -72,6 +72,7 @@ set(SOURCES_GAME_SHARED
 	../game_shared/resources/WeaponSoundResources.h
 	../game_shared/resources/WeaponSoundResources.cpp
 	../game_shared/screenOverlays/screenOverlayIds.h
+	../game_shared/sound/SoundDefs.h
 	../game_shared/sound/SoundInstance.h
 	../game_shared/sound/SoundInstance.cpp
 	../game_shared/util/cvarFuncs.h

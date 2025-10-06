@@ -2437,9 +2437,12 @@ void GAME_EXPORT SV_StartSound(edict_t* ent, int chan, const char* sample, float
 	qboolean filter = false;
 	int msg_dest;
 	vec3_t origin;
+	edict_t* destEnt = NULL;
 
 	if ( !SV_IsValidEdict(ent) )
+	{
 		return;
+	}
 
 	VectorAverage(ent->v.mins, ent->v.maxs, origin);
 	VectorAdd(origin, ent->v.origin, origin);
@@ -2466,6 +2469,11 @@ void GAME_EXPORT SV_StartSound(edict_t* ent, int chan, const char* sample, float
 	{
 		msg_dest = MSG_ALL;
 	}
+	else if ( FBitSet(flags, SND_UNICAST) )
+	{
+		msg_dest = MSG_ONE;
+		destEnt = ent;
+	}
 
 	if ( FBitSet(flags, SND_FILTER_CLIENT) )
 	{
@@ -2474,7 +2482,7 @@ void GAME_EXPORT SV_StartSound(edict_t* ent, int chan, const char* sample, float
 
 	if ( SV_BuildSoundMsg(&sv.multicast, ent, chan, sample, (int)(vol * 255.0f), attn, flags, pitch, origin) )
 	{
-		SV_Multicast(msg_dest, origin, NULL, false, filter);
+		SV_Multicast(msg_dest, origin, destEnt, false, filter);
 	}
 }
 

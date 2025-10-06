@@ -205,7 +205,8 @@ void CGib::SpawnRandomGibs(entvars_t* pevVictim, int cGibs, int human)
 				pGib->Spawn("models/hgibs.mdl");
 				pGib->pev->body = RANDOM_LONG(
 					1,
-					HUMAN_GIB_COUNT - 1);  // start at one to avoid throwing random amounts of skulls (0th gib)
+					HUMAN_GIB_COUNT - 1
+				);  // start at one to avoid throwing random amounts of skulls (0th gib)
 			}
 			else
 			{
@@ -438,7 +439,8 @@ Activity CBaseMonster::GetDeathActivity(void)
 			dont_ignore_monsters,
 			head_hull,
 			edict(),
-			&tr);
+			&tr
+		);
 
 		if ( tr.flFraction != 1.0 )
 		{
@@ -455,7 +457,8 @@ Activity CBaseMonster::GetDeathActivity(void)
 			dont_ignore_monsters,
 			head_hull,
 			edict(),
-			&tr);
+			&tr
+		);
 
 		if ( tr.flFraction != 1.0 )
 		{
@@ -1033,7 +1036,8 @@ void RadiusDamage(
 	float flDamage,
 	float flRadius,
 	int iClassIgnore,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	CBaseEntity* pEntity = NULL;
 	TraceResult tr;
@@ -1107,7 +1111,8 @@ void RadiusDamage(
 						flAdjustedDamage,
 						(Vector(tr.vecEndPos) - vecSrc).Normalize(),
 						&tr,
-						bitsDamageType);
+						bitsDamageType
+					);
 					ApplyMultiDamage(pevInflictor, pevAttacker);
 				}
 				else
@@ -1124,7 +1129,8 @@ void CBaseMonster::RadiusDamage(
 	entvars_t* pevAttacker,
 	float flDamage,
 	int iClassIgnore,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	CRadialDamageInflictor damage;
 
@@ -1145,7 +1151,8 @@ void CBaseMonster::RadiusDamage(
 	entvars_t* pevAttacker,
 	float flDamage,
 	int iClassIgnore,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	CRadialDamageInflictor damage;
 
@@ -1323,7 +1330,8 @@ void CBaseEntity::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	Vector vecOrigin = Vector(ptr->vecEndPos) - vecDir * 4;
 
@@ -1374,7 +1382,8 @@ void CBaseMonster::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	if ( pev->takedamage )
 	{
@@ -1429,7 +1438,8 @@ void CBaseEntity::FireBullets(
 	int iBulletType,
 	int iTracerFreq,
 	int iDamage,
-	entvars_t* pevAttacker)
+	entvars_t* pevAttacker
+)
 {
 	static int tracerCount;
 	TraceResult tr;
@@ -1523,9 +1533,10 @@ void CBaseEntity::FireBullets(
 					static_cast<float>(iDamage),
 					vecDir,
 					&tr,
-					DMG_BULLET | ((iDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB));
+					DMG_BULLET | ((iDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB)
+				);
 
-				TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
+				TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType, ENT(pevAttacker), edict());
 				DecalGunshot(&tr, iBulletType);
 			}
 #ifdef HL_CONTENT
@@ -1536,26 +1547,26 @@ void CBaseEntity::FireBullets(
 					case BULLET_MONSTER_9MM:
 						pEntity->TraceAttack(pevAttacker, gSkillData.monDmg9MM, vecDir, &tr, DMG_BULLET);
 
-						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
+						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType, ENT(pevAttacker), edict());
 						DecalGunshot(&tr, iBulletType);
 						break;
 					case BULLET_MONSTER_MP5:
 						pEntity->TraceAttack(pevAttacker, gSkillData.monDmgMP5, vecDir, &tr, DMG_BULLET);
 
-						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
+						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType, ENT(pevAttacker), edict());
 						DecalGunshot(&tr, iBulletType);
 						break;
 					case BULLET_MONSTER_12MM:
 						pEntity->TraceAttack(pevAttacker, gSkillData.monDmg12MM, vecDir, &tr, DMG_BULLET);
 						if ( !tracer )
 						{
-							TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
+							TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType, ENT(pevAttacker), edict());
 							DecalGunshot(&tr, iBulletType);
 						}
 						break;
 					case BULLET_NONE:  // FIX
 						pEntity->TraceAttack(pevAttacker, 50, vecDir, &tr, DMG_CLUB);
-						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
+						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType, ENT(pevAttacker), edict());
 						// only decal glass
 						if ( !FNullEnt(tr.pHit) && VARS(tr.pHit)->rendermode != 0 )
 						{
@@ -1591,7 +1602,8 @@ Vector CBaseEntity::FireBulletsPlayer(
 	int,
 	int iDamage,
 	entvars_t* pevAttacker,
-	int shared_rand)
+	int shared_rand
+)
 {
 	TraceResult tr;
 	Vector vecRight = gpGlobals->v_right;
@@ -1632,9 +1644,10 @@ Vector CBaseEntity::FireBulletsPlayer(
 					static_cast<float>(iDamage),
 					vecDir,
 					&tr,
-					DMG_BULLET | ((iDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB));
+					DMG_BULLET | ((iDamage > 16) ? DMG_ALWAYSGIB : DMG_NEVERGIB)
+				);
 
-				TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
+				TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType, ENT(pevAttacker), edict());
 				DecalGunshot(&tr, iBulletType);
 			}
 #ifdef HL_CONTENT
@@ -1657,7 +1670,7 @@ Vector CBaseEntity::FireBulletsPlayer(
 						break;
 					case BULLET_NONE:  // FIX
 						pEntity->TraceAttack(pevAttacker, 50, vecDir, &tr, DMG_CLUB);
-						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType);
+						TEXTURETYPE_PlaySound(&tr, vecSrc, vecEnd, iBulletType, ENT(pevAttacker), edict());
 						// only decal glass
 						if ( !FNullEnt(tr.pHit) && VARS(tr.pHit)->rendermode != 0 )
 						{
@@ -1739,7 +1752,8 @@ void CBaseEntity::TraceBleed(float flDamage, Vector vecDir, const TraceResult* p
 			Vector(ptr->vecEndPos) + vecTraceDir * -172,
 			ignore_monsters,
 			ENT(pev),
-			&Bloodtr);
+			&Bloodtr
+		);
 
 		if ( Bloodtr.flFraction != 1.0 )
 		{

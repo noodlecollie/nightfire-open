@@ -73,7 +73,7 @@ CSurfaceAttributes::CSurfaceAttributes()
 
 	atts = &m_Attributes[SurfaceProp_Flesh];
 	atts->hitSound = SurfaceSoundId::HitFlesh;
-	atts->hitSoundVol = 0.6f;
+	atts->hitSoundVol = 0.4f;
 	atts->footstepSound = FootstepSoundId::ConcreteClean;  // FIXME: better sound needed
 	atts->footstepSoundVolRun = 0.5f;
 	atts->footstepSoundVolWalk = 0.2f;

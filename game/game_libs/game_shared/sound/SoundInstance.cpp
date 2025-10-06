@@ -138,6 +138,11 @@ void CSoundInstance::SetPitch(int32_t minPitch, int32_t maxPitch)
 	}
 }
 
+void CSoundInstance::ChooseRandomPitch(int32_t minPitch, int32_t maxPitch)
+{
+	SetPitch(IProjectInterface::ProjectInterfaceImpl()->RNG().GetRandomInt(minPitch, maxPitch));
+}
+
 int32_t CSoundInstance::Channel() const
 {
 	return m_iChannel;
