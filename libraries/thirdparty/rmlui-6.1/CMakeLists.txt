@@ -1,0 +1,6 @@
+option(BUILD_SHARED_LIBS OFF)
+option(RMLUI_SAMPLES OFF)
+set(RMLUI_FONT_ENGINE "freetype" CACHE STRING "")
+option(RMLUI_LUA_BINDINGS OFF)
+
+add_subdirectory(RmlUi-6.1 EXCLUDE_FROM_ALL)
