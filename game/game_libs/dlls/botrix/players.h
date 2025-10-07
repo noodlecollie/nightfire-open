@@ -236,19 +236,44 @@ namespace Botrix
 		/// Get player from index.
 		static inline CPlayer* Get(TPlayerIndex iIndex)
 		{
-			return m_aPlayers[iIndex].get();
+			ASSERT(iIndex >= 0 && iIndex < m_aPlayers.size());
+			return (iIndex >= 0 && iIndex < m_aPlayers.size()) ? m_aPlayers[iIndex].get() : nullptr;
 		}
 
 		/// Get player from index.
 		static inline CPlayer* Get(edict_t* pEdict)
 		{
-			return m_aPlayers[GetIndex(pEdict)].get();
+			int index = GetIndex(pEdict);
+			ASSERT(index >= 0 && index < m_aPlayers.size());
+			return (index >= 0 && index < m_aPlayers.size()) ? m_aPlayers[index].get() : nullptr;
 		}
 
 		/// Get player index from edict.
 		static inline int GetIndex(edict_t* pPlayer)
 		{
-			return ENTINDEX(pPlayer) - 1;
+			if ( !pPlayer )
+			{
+				ASSERT(false);
+				return -1;
+			}
+
+			int playerIndex = ENTINDEX(pPlayer) - 1;
+
+			// Make sure this is actually a player!
+			ASSERT(playerIndex >= 0 && playerIndex < m_aPlayers.size());
+			return (playerIndex >= 0 && playerIndex < m_aPlayers.size()) ? playerIndex : -1;
+		}
+
+		static inline bool IsPlayer(edict_t* edict)
+		{
+			if ( !edict )
+			{
+				ASSERT(false);
+				return false;
+			}
+
+			const int playerIndex = ENTINDEX(edict) - 1;
+			return playerIndex >= 0 && playerIndex < m_aPlayers.size();
 		}
 
 		/// Invalidate waypoints for all players.
