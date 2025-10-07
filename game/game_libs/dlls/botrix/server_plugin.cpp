@@ -233,10 +233,19 @@ namespace Botrix
 		{
 			int iVictim = CPlayers::GetIndex(victim);
 			BASSERT(iVictim >= 0, return);
-
-			int iAttacker = attacker ? CPlayers::GetIndex(attacker) : iVictim;  // May hurt himself.
-
 			CPlayer* pPlayer = CPlayers::Get(iVictim);
+
+			int iAttacker = -1;
+
+			if ( attacker && CPlayers::IsPlayer(attacker) )
+			{
+				iAttacker = CPlayers::GetIndex(attacker);
+			}
+			else if ( !attacker )
+			{
+				iAttacker = iVictim;  // May hurt himself.
+			}
+
 			CPlayer* pPlayerAttacker = iAttacker >= 0 ? CPlayers::Get(iAttacker) : nullptr;
 
 			if ( pPlayer && pPlayerAttacker && pPlayer->IsBot() )
@@ -260,20 +269,13 @@ namespace Botrix
 				pPlayerActivator->Dead();
 			}
 
-			if ( killer )
+			if ( killer && CPlayers::IsPlayer(killer) )
 			{
-				int iAttacker = CPlayers::GetIndex(killer);
+				CPlayer* pPlayerAttacker = CPlayers::Get(killer);
 
-				// Attacker may not be a valid player if it was the world that killed the victim.
-
-				if ( iAttacker >= 0 )
+				if ( pPlayerAttacker && pPlayerAttacker->IsBot() )
 				{
-					CPlayer* pPlayerAttacker = CPlayers::Get(iAttacker);
-
-					if ( pPlayerAttacker && pPlayerAttacker->IsBot() )
-					{
-						((CBot*)pPlayerAttacker)->KilledEnemy(iVictim, pPlayerActivator);
-					}
+					((CBot*)pPlayerAttacker)->KilledEnemy(iVictim, pPlayerActivator);
 				}
 			}
 		}
