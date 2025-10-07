@@ -79,8 +79,16 @@ void CHitboxMessageConstructor::SendHitscanGeometry(const CWeaponDebugEvent_Hits
 
 	CustomGeometry::CMessageWriter writer(CustomGeometry::Category::HitboxDebugging);
 	writer.SetTargetClient(m_Attacker);
-	writer.WriteMessage(*missTraceLines);
-	writer.WriteMessage(*hitTraceLines);
+
+	if ( !missTraceLines->IsEmpty() )
+	{
+		writer.WriteMessage(*missTraceLines);
+	}
+
+	if ( !hitTraceLines->IsEmpty() )
+	{
+		writer.WriteMessage(*hitTraceLines);
+	}
 }
 
 void CHitboxMessageConstructor::SendHitboxGeometry(const CWeaponDebugEvent_HitscanFire& event)
