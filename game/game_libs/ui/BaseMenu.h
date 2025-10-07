@@ -193,7 +193,7 @@ struct uiStatic_t
 		yOffset = 0;
 
 		needMapListUpdate = false;
-		nextFrameActive= false;
+		nextFrameActive = false;
 		renderPicbuttonText = false;
 
 		memset(sounds, 0, sizeof(sounds));
@@ -251,7 +251,8 @@ int UI_DrawString(
 	const unsigned int col,
 	int charH,
 	uint justify,
-	uint flags = 0);
+	uint flags = 0
+);
 inline int UI_DrawString(
 	HFont font,
 	Point pos,
@@ -260,7 +261,8 @@ inline int UI_DrawString(
 	const unsigned int col,
 	int charH,
 	uint justify,
-	uint flags = 0)
+	uint flags = 0
+)
 {
 	return UI_DrawString(font, pos.x, pos.y, size.w, size.h, str, col, charH, justify, flags);
 }
@@ -272,7 +274,8 @@ void UI_DrawPic(
 	int h,
 	const unsigned int color,
 	CImage& pic,
-	const ERenderMode eRenderMode = QM_DRAWNORMAL);
+	const ERenderMode eRenderMode = QM_DRAWNORMAL
+);
 inline void
 UI_DrawPic(Point pos, Size size, const unsigned int color, CImage& pic, const ERenderMode eRenderMode = QM_DRAWNORMAL)
 {
@@ -285,7 +288,8 @@ inline void UI_DrawPic(
 	int h,
 	const unsigned int color,
 	const char* pic,
-	const ERenderMode eRenderMode = QM_DRAWNORMAL)
+	const ERenderMode eRenderMode = QM_DRAWNORMAL
+)
 {
 	CImage img = pic;
 	UI_DrawPic(x, y, w, h, color, img, eRenderMode);
@@ -295,7 +299,8 @@ inline void UI_DrawPic(
 	Size size,
 	const unsigned int color,
 	const char* pic,
-	const ERenderMode eRenderMode = QM_DRAWNORMAL)
+	const ERenderMode eRenderMode = QM_DRAWNORMAL
+)
 {
 	CImage img = pic;
 	UI_DrawPic(pos, size, color, img, eRenderMode);
@@ -313,14 +318,16 @@ void UI_DrawRectangleExt(
 	int in_h,
 	const unsigned int color,
 	int outlineWidth,
-	int flag = QM_TOP | QM_BOTTOM | QM_LEFT | QM_RIGHT);
+	int flag = QM_TOP | QM_BOTTOM | QM_LEFT | QM_RIGHT
+);
 inline void UI_DrawRectangle(
 	int x,
 	int y,
 	int w,
 	int h,
 	const unsigned int color,
-	int flag = QM_TOP | QM_BOTTOM | QM_LEFT | QM_RIGHT)
+	int flag = QM_TOP | QM_BOTTOM | QM_LEFT | QM_RIGHT
+)
 {
 	UI_DrawRectangleExt(x, y, w, h, color, uiStatic.outlineWidth, flag);
 }
@@ -334,7 +341,8 @@ inline void UI_DrawRectangleExt(
 	Size size,
 	const unsigned int color,
 	int outlineWidth,
-	int flag = QM_TOP | QM_BOTTOM | QM_LEFT | QM_RIGHT)
+	int flag = QM_TOP | QM_BOTTOM | QM_LEFT | QM_RIGHT
+)
 {
 	UI_DrawRectangleExt(pos.x, pos.y, size.w, size.h, color, outlineWidth, flag);
 }
@@ -417,6 +425,7 @@ void UI_FileDialog_Menu(void);
 void UI_TouchButtons_GetButtonList();
 void UI_GamePad_Menu(void);
 void UI_Zoo_Menu(void);
+void UI_Acknowledgements_Menu(void);
 
 bool UI_AdvUserOptions_IsAvailable(void);
 void UI_AdvUserOptions_Menu(void);

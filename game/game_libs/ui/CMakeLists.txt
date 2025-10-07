@@ -129,6 +129,7 @@ set(SOURCES_UI
 	menus/botsetup/InGameBotListModel.h
 	menus/botsetup/InGameBotListModel.cpp
 	menus/dynamic/ScriptMenu.cpp
+	menus/Acknowledgements.cpp
 	menus/AdvancedControls.cpp
 	menus/Audio.cpp
 	menus/Configuration.cpp

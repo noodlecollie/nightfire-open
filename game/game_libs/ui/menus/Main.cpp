@@ -72,7 +72,7 @@ private:
 	CMenuPicButton saveRestore;
 	CMenuPicButton multiPlayer;
 	CMenuPicButton customGame;
-	CMenuPicButton previews;
+	CMenuPicButton acknowledgements;
 	CMenuPicButton quit;
 
 	// buttons on top right. Maybe should be drawn if fullscreen == 1?
@@ -255,10 +255,10 @@ void CMenuMain::_Init(void)
 	customGame.iFlags |= QMF_NOTIFY;
 	customGame.onReleased = UI_CustomGame_Menu;
 
-	previews.SetNameAndStatus(L("Previews"), L("StringsList_400"));
-	previews.SetPicture(PC_PREVIEWS);
-	previews.iFlags |= QMF_NOTIFY;
-	SET_EVENT(previews.onReleased, EngFuncs::ShellExecute(MenuStrings[IDS_MEDIA_PREVIEWURL], NULL, false));
+	acknowledgements.SetNameAndStatus(L("Acknowledgements"), L("Credits and thanks for components of this mod."));
+	acknowledgements.SetPicture(PC_VIEW_README);
+	acknowledgements.iFlags |= QMF_NOTIFY;
+	acknowledgements.onReleased = UI_Acknowledgements_Menu;
 
 	quit.SetNameAndStatus(L("GameUI_GameMenu_Quit"), L("GameUI_QuitConfirmationText"));
 	quit.SetPicture(PC_QUIT);
@@ -289,12 +289,6 @@ void CMenuMain::_Init(void)
 	{
 		saveRestore.SetGrayed(true);
 		hazardCourse.SetGrayed(true);
-	}
-
-	// too short execute string - not a real command
-	if ( strlen(MenuStrings[IDS_MEDIA_PREVIEWURL]) <= 3 )
-	{
-		previews.SetGrayed(true);
 	}
 
 	// server.dll needs for reading savefiles or startup newgame
@@ -333,7 +327,7 @@ void CMenuMain::_Init(void)
 		AddItem(customGame);
 	}
 
-	AddItem(previews);
+	AddItem(acknowledgements);
 
 	AddItem(quit);
 	AddItem(minimizeBtn);
@@ -397,7 +391,7 @@ void CMenuMain::VidInit(bool connected)
 	configuration.SetCoord(72, bTrainMap ? 430 : 380);
 	multiPlayer.SetCoord(72, bTrainMap ? 480 : 430);
 	customGame.SetCoord(72, bTrainMap ? 530 : 480);
-	previews.SetCoord(72, (bCustomGame) ? (bTrainMap ? 580 : 530) : (bTrainMap ? 530 : 480));
+	acknowledgements.SetCoord(72, (bCustomGame) ? (bTrainMap ? 580 : 530) : (bTrainMap ? 530 : 480));
 	quit.SetCoord(72, (bCustomGame) ? (bTrainMap ? 630 : 580) : (bTrainMap ? 580 : 530));
 }
 
