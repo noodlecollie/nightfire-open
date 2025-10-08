@@ -534,8 +534,21 @@ void CBaseMonster::BecomeDead(void)
 
 BOOL CBaseMonster::ShouldGibMonster(int iGib)
 {
+	// Low violence cvars always take priority.
+	if ( HasHumanGibs() && CVAR_GET_FLOAT("violence_hgibs") == 0 )
+	{
+		return FALSE;
+	}
+
+	if ( HasAlienGibs() && CVAR_GET_FLOAT("violence_agibs") == 0 )
+	{
+		return FALSE;
+	}
+
 	if ( (iGib == GIB_NORMAL && pev->health < GIB_HEALTH_VALUE) || (iGib == GIB_ALWAYS) )
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -547,12 +560,16 @@ void CBaseMonster::CallGibMonster(void)
 	if ( HasHumanGibs() )
 	{
 		if ( CVAR_GET_FLOAT("violence_hgibs") == 0 )
+		{
 			fade = TRUE;
+		}
 	}
 	else if ( HasAlienGibs() )
 	{
 		if ( CVAR_GET_FLOAT("violence_agibs") == 0 )
+		{
 			fade = TRUE;
+		}
 	}
 
 	pev->takedamage = DAMAGE_NO;
@@ -578,7 +595,9 @@ void CBaseMonster::CallGibMonster(void)
 	}
 
 	if ( ShouldFadeOnDeath() && !fade )
+	{
 		UTIL_Remove(this);
+	}
 }
 
 /*
@@ -594,7 +613,10 @@ void CBaseMonster::Killed(entvars_t*, int iGib)
 	if ( HasMemory(bits_MEMORY_KILLED) )
 	{
 		if ( ShouldGibMonster(iGib) )
+		{
 			CallGibMonster();
+		}
+
 		return;
 	}
 
