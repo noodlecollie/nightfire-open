@@ -2619,7 +2619,7 @@ void CBasePlayer::PostThink()
 			// after this point, we start doing damage
 			float flFallDamage = g_pGameRules->FlPlayerFallDamage(this);
 
-			if ( flFallDamage > pev->health )
+			if ( flFallDamage > pev->health && CVAR_GET_FLOAT("violence_hgibs") != 0.0f )
 			{
 				// splat
 				//  note: play on item channel because we play footstep landing on body channel

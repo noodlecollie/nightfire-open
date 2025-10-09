@@ -308,7 +308,7 @@ void CBaseMonster::GibMonster(void)
 	// only humans throw skulls !!!UNDONE - eventually monsters will have their own sets of gibs
 	if ( HasHumanGibs() )
 	{
-		if ( CVAR_GET_FLOAT("violence_hgibs") != 0 )  // Only the player will ever get here
+		if ( CVAR_GET_FLOAT("violence_hgibs") != 0.0f )  // Only the player will ever get here
 		{
 			CGib::SpawnHeadGib(pev);
 			CGib::SpawnRandomGibs(pev, 4, 1);  // throw some human gibs.
@@ -317,7 +317,7 @@ void CBaseMonster::GibMonster(void)
 	}
 	else if ( HasAlienGibs() )
 	{
-		if ( CVAR_GET_FLOAT("violence_agibs") != 0 )  // Should never get here, but someone might call it directly
+		if ( CVAR_GET_FLOAT("violence_agibs") != 0.0f )  // Should never get here, but someone might call it directly
 		{
 			CGib::SpawnRandomGibs(pev, 4, 0);  // Throw alien gibs
 		}
@@ -535,12 +535,12 @@ void CBaseMonster::BecomeDead(void)
 BOOL CBaseMonster::ShouldGibMonster(int iGib)
 {
 	// Low violence cvars always take priority.
-	if ( HasHumanGibs() && CVAR_GET_FLOAT("violence_hgibs") == 0 )
+	if ( HasHumanGibs() && CVAR_GET_FLOAT("violence_hgibs") == 0.0f )
 	{
 		return FALSE;
 	}
 
-	if ( HasAlienGibs() && CVAR_GET_FLOAT("violence_agibs") == 0 )
+	if ( HasAlienGibs() && CVAR_GET_FLOAT("violence_agibs") == 0.0f )
 	{
 		return FALSE;
 	}
@@ -557,19 +557,10 @@ void CBaseMonster::CallGibMonster(void)
 {
 	BOOL fade = FALSE;
 
-	if ( HasHumanGibs() )
+	if ( (HasHumanGibs() && CVAR_GET_FLOAT("violence_hgibs") == 0.0f) ||
+		 (HasAlienGibs() && CVAR_GET_FLOAT("violence_agibs") == 0.0f) )
 	{
-		if ( CVAR_GET_FLOAT("violence_hgibs") == 0 )
-		{
-			fade = TRUE;
-		}
-	}
-	else if ( HasAlienGibs() )
-	{
-		if ( CVAR_GET_FLOAT("violence_agibs") == 0 )
-		{
-			fade = TRUE;
-		}
+		fade = TRUE;
 	}
 
 	pev->takedamage = DAMAGE_NO;

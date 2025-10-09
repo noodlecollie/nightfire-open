@@ -1232,13 +1232,17 @@ BOOL UTIL_ShouldShowBlood(int color)
 	{
 		if ( color == BLOOD_COLOR_RED )
 		{
-			if ( CVAR_GET_FLOAT("violence_hblood") != 0 )
+			if ( CVAR_GET_FLOAT("violence_hblood") != 0.0f )
+			{
 				return TRUE;
+			}
 		}
 		else
 		{
-			if ( CVAR_GET_FLOAT("violence_ablood") != 0 )
+			if ( CVAR_GET_FLOAT("violence_ablood") != 0.0f )
+			{
 				return TRUE;
+			}
 		}
 	}
 	return FALSE;
