@@ -1,5 +1,5 @@
 #include <cstring>
-#include "EngineInternalAPI/menu_int.h"
+#include "udll_int.h"
 
 ui_enginefuncs_t gEngfuncs;
 ui_extendedfuncs_t gTextfuncs;
