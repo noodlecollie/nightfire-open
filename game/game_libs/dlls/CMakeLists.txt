@@ -276,6 +276,7 @@ set(SOURCES_SERVER
 	botrix/console_vars.h
 	botrix/console_vars.cpp
 	botrix/defines.h
+	botrix/defines.cpp
 	botrix/engine_util.h
 	botrix/engine_util.cpp
 	botrix/ibotgamerulesinterface.h

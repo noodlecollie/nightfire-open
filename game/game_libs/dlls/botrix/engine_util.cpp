@@ -23,7 +23,6 @@
 
 namespace Botrix
 {
-	good::TLogLevel CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
 	TraceResult CBotrixEngineUtil::m_TraceResult = {
 		0,
 		0,
@@ -70,45 +69,42 @@ namespace Botrix
 			CLIENT_PRINTF(pEntity, print_console, szMsg);
 		}
 
-		if ( iLevel >= iLogLevel )
+		ALERT_TYPE alertType = at_console;
+
+		switch ( iLevel )
 		{
-			ALERT_TYPE alertType = at_console;
-
-			switch ( iLevel )
+			case good::ELogLevelTrace:
 			{
-				case good::ELogLevelTrace:
-				case good::ELogLevelDebug:
-				{
-					alertType = at_aiconsole;
-					break;
-				}
-
-				case good::ELogLevelInfo:
-				{
-					alertType = at_console;
-					break;
-				}
-
-				case good::ELogLevelWarning:
-				{
-					alertType = at_warning;
-					break;
-				}
-
-				case good::ELogLevelError:
-				{
-					alertType = at_error;
-					break;
-				}
-
-				default:
-				{
-					break;
-				}
+				alertType = at_aiconsole;
+				break;
 			}
 
-			ALERT(alertType, szMsg);
+			case good::ELogLevelDebug:
+			case good::ELogLevelInfo:
+			{
+				alertType = at_console;
+				break;
+			}
+
+			case good::ELogLevelWarning:
+			{
+				alertType = at_warning;
+				break;
+			}
+
+			case good::ELogLevelError:
+			{
+				alertType = at_error;
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
 		}
+
+		ALERT(alertType, szMsg);
 	}
 
 	void CBotrixEngineUtil::EntityHead(edict_t* pEntity, Vector& v)

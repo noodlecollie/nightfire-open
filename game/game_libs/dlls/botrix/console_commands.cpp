@@ -4766,58 +4766,6 @@ namespace Botrix
 		return ECommandPerformed;
 	}
 
-	CConfigLogCommand::CConfigLogCommand()
-	{
-		m_sCommand = "log";
-		m_sHelp = "set console log level (none, trace, debug, info, warning, error).";
-		m_iAccessLevel = FCommandAccessConfig;
-
-		StringVector args;
-		args.push_back(sNone);
-		for ( int i = 0; i < good::ELogLevelTotal; ++i )
-			args.push_back(CTypeToString::LogLevelToString(i).duplicate());
-
-		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
-		m_cAutoCompleteValues.push_back(args);
-	}
-
-	TCommandResult CConfigLogCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
-	{
-		if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
-		{
-			return ECommandPerformed;
-		}
-
-		edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
-
-		if ( argc == 0 )
-		{
-			BULOG_I(
-				pEdict,
-				"Console log level: %s.",
-				CTypeToString::LogLevelToString(CBotrixEngineUtil::iLogLevel).c_str()
-			);
-			return ECommandPerformed;
-		}
-
-		good::TLogLevel iLogLevel = -1;
-
-		if ( argc == 1 )
-		{
-			iLogLevel = CTypeToString::LogLevelFromString(argv[0]);
-		}
-
-		if ( iLogLevel == -1 )
-		{
-			BULOG_W(pEdict, "Error, invalid argument (must be none, trace, debug, info, warning, error).");
-			return ECommandError;
-		}
-
-		CBotrixEngineUtil::iLogLevel = iLogLevel;
-		BULOG_I(pEdict, "Console log level: %s.", argv[0]);
-		return ECommandPerformed;
-	}
-
 	TCommandResult CConfigWaypointAnalyzeDistance::Execute(CBotrixClient* pClient, int argc, const char** argv)
 	{
 		if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )

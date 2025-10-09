@@ -6,16 +6,28 @@
 #include "botrix/logbuffer.h"
 #include "PlatformLib/String.h"
 
+namespace Botrix
+{
+	bool ShouldLogToConsole(int level);
+}
+
 // Define for logging.
 #define BLOG(user, level, ...) \
 	do \
 	{ \
-		int iMin = CBotrixEngineUtil::iLogLevel; \
-		if ( level >= iMin ) \
+		if ( ::Botrix::ShouldLogToConsole(level) ) \
 		{ \
-			good::log::format(CBotrixLogBuffer::Buffer(), CBotrixLogBuffer::Size(), __VA_ARGS__); \
-			PlatformLib_StrCat(CBotrixLogBuffer::Buffer(), CBotrixLogBuffer::Size(), "\n"); \
-			CBotrixEngineUtil::Message(level, user, CBotrixLogBuffer::Buffer()); \
+			size_t _charCount = good::log::format( \
+				::Botrix::CBotrixLogBuffer::Buffer(), \
+				::Botrix::CBotrixLogBuffer::Size(), \
+				__VA_ARGS__ \
+			); \
+			PlatformLib_SNPrintF( \
+				::Botrix::CBotrixLogBuffer::Buffer() + _charCount, \
+				::Botrix::CBotrixLogBuffer::Size() - _charCount, \
+				"\n" \
+			); \
+			::Botrix::CBotrixEngineUtil::Message(level, user, CBotrixLogBuffer::Buffer()); \
 		} \
 	} \
 	while ( false )

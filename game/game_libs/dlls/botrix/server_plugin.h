@@ -5,6 +5,7 @@
 #include "botrix/botfactory.h"
 
 struct edict_s;
+struct cvar_s;
 class CBasePlayer;
 
 namespace WeaponAtts
@@ -41,12 +42,12 @@ namespace Botrix
 		static CBotrixCommand* GetConsoleCommandHandler();
 		static CBotFactory& GetBotFactory();
 
-		static void UpdateLogLevel();
 		static bool WaypointAutoAnalyzeEnabled();
 		static void RefreshWeaponConfig();
 
 		static void EntitySpawned(edict_t* edict);
 		static void EntityFreed(edict_t* edict);
+		static bool ShouldLogToConsole(int level);
 
 	private:
 		static void PrepareLevel();
@@ -71,5 +72,7 @@ namespace Botrix
 
 		static bool m_bSpawnedRegisterBots;
 		static CBotFactory m_BotFactory;
+
+		static struct cvar_s* m_DeveloperCvar;
 	};
 }  // namespace Botrix
