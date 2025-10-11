@@ -16,6 +16,10 @@ GNU General Public License for more details.
 #include "common/common.h"
 #include "platform/platform.h"
 
+// REMOVE ME
+#include "PlatformLib/File.h"
+extern FILE* ServerFPSCSVFile;
+
 void COM_InitHostState(void)
 {
 	memset(GameState, 0, sizeof(game_status_t));
@@ -119,6 +123,13 @@ void COM_ChangeLevel(char const* pNewLevel, char const* pLandmarkName, qboolean 
 
 void Host_ShutdownGame(void)
 {
+	// REMOVE ME
+	if ( ServerFPSCSVFile )
+	{
+		PlatformLib_FClose(ServerFPSCSVFile);
+		ServerFPSCSVFile = NULL;
+	}
+
 	SV_ShutdownGame();
 
 	switch ( GameState->nextstate )

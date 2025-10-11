@@ -52,6 +52,9 @@ GNU General Public License for more details.
 #include "common/buildnum.h"
 #include "common/engine_mempool.h"
 
+// REMOVE ME]
+#include "PlatformLib/File.h"
+
 pfnChangeGame pChangeGame = NULL;
 host_parm_t host;  // host parms
 sysinfo_t SI;
@@ -398,7 +401,8 @@ void Host_Exec_f(void)
 			"pyro.cfg",
 			"spy.cfg",
 			"engineer.cfg",
-			"civilian.cfg"};
+			"civilian.cfg"
+		};
 		size_t i;
 		char temp[MAX_VA_STRING];
 		qboolean allow = false;
@@ -643,7 +647,8 @@ void Host_InitDecals(void)
 		"InitDecals: %zu decals (%zu from WAD, %zu from filesystem)\n",
 		numOldDecals + numNewDecals,
 		numOldDecals,
-		numNewDecals);
+		numNewDecals
+	);
 }
 
 /*
@@ -783,6 +788,9 @@ qboolean Host_FilterTime(float time)
 	return true;
 }
 
+// REMOVE ME
+FILE* ServerFPSCSVFile = NULL;
+
 /*
 =================
 Host_Frame
@@ -791,20 +799,47 @@ Host_Frame
 void Host_Frame(float time)
 {
 	double t1, t2;
+	double serverFrameBegin = 0.0;
+	double serverFrameEnd = 0.0;
 
 	// decide the simulation time
 	if ( !Host_FilterTime(time) )
+	{
 		return;
+	}
 
 	t1 = Sys_DoubleTime();
 
 	if ( host.framecount == 0 )
+	{
 		Con_DPrintf("Time to first frame: %.3f seconds\n", t1 - host.starttime);
+	}
+
+	// REMOVE ME
+	if ( !ServerFPSCSVFile )
+	{
+		ServerFPSCSVFile = PlatformLib_FOpen("server_fps.csv", "w");
+
+		if ( ServerFPSCSVFile )
+		{
+			static const char* const header = "Server frame time,Server FPS\n";
+			static size_t headerLength = 0;
+
+			if ( headerLength < 1 )
+			{
+				headerLength = strlen(header);
+			}
+
+			fwrite(header, headerLength, 1, ServerFPSCSVFile);
+		}
+	}
 
 	Host_InputFrame();  // input frame
 	Host_ClientBegin();  // begin client
 	Host_GetCommands();  // dedicated in
+	serverFrameBegin = Sys_DoubleTime();
 	Host_ServerFrame();  // server frame
+	serverFrameEnd = Sys_DoubleTime();
 	Host_ClientFrame();  // client frame
 	HTTP_Run();  // both server and client
 
@@ -813,6 +848,18 @@ void Host_Frame(float time)
 	host.pureframetime = t2 - t1;
 
 	host.framecount++;
+
+	// REMOVE ME
+	if ( ServerFPSCSVFile )
+	{
+		double duration = serverFrameEnd - serverFrameBegin;
+		double fps = duration != 0 ? (1.0 / duration) : 0.0;
+
+		char row[64];
+		PlatformLib_SNPrintF(row, sizeof(row), "%f,%f\n", duration, fps);
+
+		fwrite(row, strlen(row), 1, ServerFPSCSVFile);
+	}
 }
 
 /*
@@ -1289,7 +1336,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		"sleeptime",
 		"1",
 		FCVAR_ARCHIVE | FCVAR_FILTERABLE,
-		"milliseconds to sleep for each frame. higher values reduce fps accuracy");
+		"milliseconds to sleep for each frame. higher values reduce fps accuracy"
+	);
 	host_gameloaded = Cvar_Get("host_gameloaded", "0", FCVAR_READ_ONLY, "inidcates a loaded game.dll");
 	host_clientloaded = Cvar_Get("host_clientloaded", "0", FCVAR_READ_ONLY, "inidcates a loaded client.dll");
 	host_limitlocal = Cvar_Get("host_limitlocal", "0", 0, "apply cl_cmdrate and rate to loopback connection");
@@ -1304,7 +1352,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		"%i/%s (hw build %i)",
 		PROTOCOL_VERSION,
 		XASH_COMPAT_VERSION,
-		Q_buildnum_compat());
+		Q_buildnum_compat()
+	);
 	Cvar_Getf(
 		"host_ver",
 		FCVAR_READ_ONLY,
@@ -1313,7 +1362,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		Q_buildnum(),
 		BuildPlatform_PlatformString(),
 		BuildPlatform_ArchitectureString(),
-		BuildPlatform_CommitString());
+		BuildPlatform_CommitString()
+	);
 
 	Mod_Init();
 	NET_Init();

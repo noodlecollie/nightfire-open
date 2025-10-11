@@ -148,7 +148,8 @@ void SCR_DrawPos(void)
 		ent->angles[0],
 		ent->angles[1],
 		ent->angles[2],
-		speed);
+		speed
+	);
 
 	RGBA_Set(color, 255, 255, 255, 255);
 
@@ -177,29 +178,45 @@ void SCR_NetSpeeds(void)
 	cl_font_t* font = Con_GetCurFont();
 
 	if ( !host.allow_console )
+	{
 		return;
+	}
 
 	if ( !net_speeds->value || cls.state != ca_active )
+	{
 		return;
+	}
 
 	// prevent to get too big values at max
 	if ( cl_serverframetime() > 0.0001f )
 	{
 		cur_svfps = Q_rint(1.0f / cl_serverframetime());
+
 		if ( cur_svfps < min_svfps )
+		{
 			min_svfps = cur_svfps;
+		}
+
 		if ( cur_svfps > max_svfps )
+		{
 			max_svfps = cur_svfps;
+		}
 	}
 
 	// prevent to get too big values at max
 	if ( cl_clientframetime() > 0.0001f )
 	{
 		cur_clfps = Q_rint(1.0f / cl_clientframetime());
+
 		if ( cur_clfps < min_clfps )
+		{
 			min_clfps = cur_clfps;
+		}
+
 		if ( cur_clfps > max_clfps )
+		{
 			max_clfps = cur_clfps;
+		}
 	}
 
 	Q_snprintf(
@@ -219,7 +236,8 @@ void SCR_NetSpeeds(void)
 		(int)(time / 60.0f),
 		(int)fmod(time, 60.0f),
 		Q_memprint((float)cls.netchan.total_received),
-		Q_memprint((float)cls.netchan.total_sended));
+		Q_memprint((float)cls.netchan.total_sended)
+	);
 
 	x = (int)(refState.width - 320 * font->scale);
 	y = 384;
@@ -801,7 +819,8 @@ void SCR_Init(void)
 		"allow_levelshots",
 		"0",
 		FCVAR_ARCHIVE,
-		"allow engine to use indivdual levelshots instead of 'loading' image");
+		"allow engine to use indivdual levelshots instead of 'loading' image"
+	);
 	scr_loading = Cvar_Get("scr_loading", "0", 0, "loading bar progress");
 	scr_download = Cvar_Get("scr_download", "-1", 0, "downloading bar progress");
 	cl_testlights = Cvar_Get("cl_testlights", "0", 0, "test dynamic lights");
