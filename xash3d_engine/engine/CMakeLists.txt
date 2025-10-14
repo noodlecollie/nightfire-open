@@ -157,7 +157,7 @@ if(CLIENT_SUPPORT)
 		src/client/cl_demo.c
 		src/client/cl_efrag.c
 		src/client/cl_efx.c
-		$<$<BOOL:${CLIENT_SUPPORT}>:src/client/cl_events.c>
+		src/client/cl_events.c
 		src/client/cl_font.c
 		src/client/cl_frame.c
 		src/client/cl_game.c
@@ -177,6 +177,8 @@ if(CLIENT_SUPPORT)
 		src/client/cl_surfaceprop_effects.c
 		src/client/cl_tent.h
 		src/client/cl_tent.c
+		src/client/cl_uigl.h
+		src/client/cl_uigl.c
 		src/client/cl_video.c
 		src/client/cl_view.c
 		src/client/console.c

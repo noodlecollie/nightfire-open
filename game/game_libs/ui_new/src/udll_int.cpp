@@ -4,6 +4,7 @@
 ui_enginefuncs_t gEngfuncs;
 ui_extendedfuncs_t gTextfuncs;
 ui_globalvars_t* gpGlobals = nullptr;
+ui_gl_functions gUiGlFuncs;
 
 static int pfnVidInit(void)
 {
@@ -237,5 +238,30 @@ GetExtAPI(int version, UI_EXTENDED_FUNCTIONS* pFunctionTable, ui_extendedfuncs_t
 	memcpy(&gTextfuncs, pEngfuncsFromEngine, sizeof(ui_extendedfuncs_t));
 	memcpy(pFunctionTable, &gExtendedTable, sizeof(UI_EXTENDED_FUNCTIONS));
 
+	return 1;
+}
+
+extern "C" EXPORT int GetUiGlAPI(int version, const ui_gl_functions* uiToEngineFuncs)
+{
+	if ( !uiToEngineFuncs )
+	{
+		return 0;
+	}
+
+	if ( version != MENU_UIGLAPI_VERSION )
+	{
+		if ( gEngfuncs.Con_Printf )
+		{
+			gEngfuncs.Con_Printf(
+				"Error: failed to initialize UI GL API. Expected by DLL: %d. Got from engine: %d\n",
+				MENU_UIGLAPI_VERSION,
+				version
+			);
+		}
+
+		return 0;
+	}
+
+	memcpy(&gUiGlFuncs, uiToEngineFuncs, sizeof(gUiGlFuncs));
 	return 1;
 }

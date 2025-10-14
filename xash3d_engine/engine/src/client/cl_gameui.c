@@ -28,6 +28,7 @@ GNU General Public License for more details.
 #include <limits.h>
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
+#include "client/cl_uigl.h"
 
 static void UI_UpdateUserinfo(void);
 
@@ -177,7 +178,8 @@ void UI_AddTouchButtonToList(
 	const char* texture,
 	const char* command,
 	unsigned char* color,
-	int flags)
+	int flags
+)
 {
 	if ( gameui.dllFuncs2.pfnAddTouchButtonToList )
 	{
@@ -272,7 +274,8 @@ void UI_ConnectionProgress_Download(
 	const char* pszServerPath,
 	int iCurrent,
 	int iTotal,
-	const char* comment)
+	const char* comment
+)
 {
 	if ( !gameui.dllFuncs2.pfnConnectionProgress_Download )
 		return;
@@ -691,7 +694,8 @@ static void GAME_EXPORT pfnFillRGBA(int x, int y, int width, int height, int r, 
 		0,
 		1,
 		1,
-		R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+		R_GetBuiltinTexture(REF_WHITE_TEXTURE)
+	);
 
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);
 }
@@ -1394,10 +1398,16 @@ static ui_extendedfuncs_t gExtendedfuncs = {
 	NET_CompareAdrSort,
 };
 
+static const ui_gl_functions gUiGlFuncs = {
+	CL_UIGL_BeginFrame,  // beginFrame
+};
+
 void UI_UnloadProgs(void)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
 
 	// deinitialize game
 	gameui.dllFuncs.pfnShutdown();
@@ -1420,6 +1430,7 @@ qboolean UI_LoadProgs(void)
 	UIEXTENEDEDAPI GetExtAPI;
 	UITEXTAPI GiveTextApi;
 	MENUAPI GetMenuAPI;
+	UIGLAPI GetUiGlAPI;
 	string dllpath;
 	int i;
 
@@ -1500,9 +1511,11 @@ qboolean UI_LoadProgs(void)
 		{
 			Con_Reportf("UI_LoadProgs: extended text API found\n");
 			Con_Reportf(
-				S_WARN "Text API is deprecated! If you are mod developer, consider moving to Extended Menu API!\n");
+				S_WARN "Text API is deprecated! If you are mod developer, consider moving to Extended Menu API!\n"
+			);
 			if ( GiveTextApi(
-					 &gpExtendedfuncs) )  // they are binary compatible, so we can just pass extended funcs API to menu
+					 &gpExtendedfuncs
+				 ) )  // they are binary compatible, so we can just pass extended funcs API to menu
 			{
 				Con_Reportf("UI_LoadProgs: extended text API initialized\n");
 				gameui.use_text_api = true;
@@ -1517,7 +1530,18 @@ qboolean UI_LoadProgs(void)
 			Con_Reportf(
 				S_WARN
 				"AddTouchButtonToList is deprecated! If you are mod developer, consider moving to Extended "
-				"Menu API!\n");
+				"Menu API!\n"
+			);
+		}
+	}
+
+	GetUiGlAPI = (UIGLAPI)COM_GetProcAddress(gameui.hInstance, "GetUiGlAPI");
+
+	if ( GetUiGlAPI )
+	{
+		if ( GetUiGlAPI(MENU_UIGLAPI_VERSION, &gUiGlFuncs) )
+		{
+			Con_Reportf("UI_LoadProgs: GL API initialized\n");
 		}
 	}
 

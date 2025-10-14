@@ -32,6 +32,7 @@ struct ref_state_s
 
 	HINSTANCE hInstance;
 	ref_interface_t dllFuncs;
+	ref_uigl_functions dllUiFuncs;
 
 	// depends on build configuration
 	size_t numRenderers;

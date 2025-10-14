@@ -406,7 +406,8 @@ void R_SetupFrustum(void)
 			0.0f,
 			R_GetFarClip(),
 			RI.fov_x,
-			RI.fov_y);  // NOTE: we ignore nearplane here (mirrors only)
+			RI.fov_y
+		);  // NOTE: we ignore nearplane here (mirrors only)
 }
 
 /*
@@ -554,7 +555,8 @@ static void R_SetupFrame(void)
 			tr.draw_list->trans_entities,
 			tr.draw_list->num_trans_entities,
 			sizeof(cl_entity_t*),
-			R_TransEntityCompare);
+			R_TransEntityCompare
+		);
 	}
 
 	// current viewleaf
@@ -578,7 +580,9 @@ void R_SetupGL(qboolean set_gl_state)
 	Matrix4x4_Concat(RI.worldviewProjectionMatrix, RI.projectionMatrix, RI.worldviewMatrix);
 
 	if ( !set_gl_state )
+	{
 		return;
+	}
 
 	if ( RP_NORMALPASS() )
 	{
@@ -1144,7 +1148,8 @@ void R_BeginFrame(qboolean clearScene)
 	if ( FBitSet(
 			 gl_texture_nearest->flags | gl_lightmap_nearest->flags | gl_texture_anisotropy->flags |
 				 gl_texture_lodbias->flags,
-			 FCVAR_CHANGED) )
+			 FCVAR_CHANGED
+		 ) )
 		R_SetTextureParameters();
 
 	gEngfuncs.CL_ExtraUpdate();
@@ -1165,9 +1170,13 @@ void R_SetupRefParams(const ref_viewpass_t* rvp)
 	RI.farClip = 0;
 
 	if ( !FBitSet(rvp->flags, RF_DRAW_CUBEMAP) )
+	{
 		RI.drawOrtho = FBitSet(rvp->flags, RF_DRAW_OVERVIEW);
+	}
 	else
+	{
 		RI.drawOrtho = false;
+	}
 
 	// setup viewport
 	RI.viewport[0] = rvp->viewport[0];
@@ -1194,20 +1203,29 @@ R_RenderFrame
 void R_RenderFrame(const ref_viewpass_t* rvp)
 {
 	if ( r_norefresh->value )
+	{
 		return;
+	}
 
 	// setup the initial render params
 	R_SetupRefParams(rvp);
 
 	if ( gl_finish->value && RI.drawWorld )
+	{
 		pglFinish();
+	}
 
 	if ( glConfig.max_multisamples > 1 && FBitSet(gl_msaa->flags, FCVAR_CHANGED) )
 	{
 		if ( CVAR_TO_BOOL(gl_msaa) )
+		{
 			pglEnable(GL_MULTISAMPLE_ARB);
+		}
 		else
+		{
 			pglDisable(GL_MULTISAMPLE_ARB);
+		}
+
 		ClearBits(gl_msaa->flags, FCVAR_CHANGED);
 	}
 
@@ -1226,13 +1244,14 @@ void R_RenderFrame(const ref_viewpass_t* rvp)
 	}
 
 	tr.fCustomRendering = false;
+
 	if ( !RI.onlyClientDraw )
+	{
 		R_RunViewmodelEvents();
+	}
 
 	tr.realframecount++;  // right called after viewmodel events
 	R_RenderScene();
-
-	return;
 }
 
 /*

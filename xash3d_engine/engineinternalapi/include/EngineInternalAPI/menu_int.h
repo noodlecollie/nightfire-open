@@ -131,8 +131,12 @@ typedef struct ui_enginefuncs_s
 	int (*pfnGetModelSkinCount)(struct cl_entity_s* ent);
 	int (*pfnGetModelBodyVariationCount)(struct cl_entity_s* ent);
 	const char* (*pfnGetModelSequenceName)(struct cl_entity_s* ent, int sequenceIndex);
-	qboolean (
-		*pfnGetModelSequenceBounds)(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs);
+	qboolean (*pfnGetModelSequenceBounds)(
+		struct cl_entity_s* ent,
+		int sequenceIndex,
+		float* outVec3Mins,
+		float* outVec3Maxs
+	);
 	void (*pfnGetModelEyePosition)(struct cl_entity_s* ent, float* outVec3Pos);
 	float (*pfnGetModelSequenceDuration)(struct cl_entity_s* ent, int sequenceIndex);
 	void (*pfnClearScene)(void);
@@ -244,8 +248,13 @@ typedef struct ui_extendedfuncs_s
 } ui_extendedfuncs_t;
 
 // deprecated export from old engine
-typedef void (
-	*ADDTOUCHBUTTONTOLIST)(const char* name, const char* texture, const char* command, unsigned char* color, int flags);
+typedef void (*ADDTOUCHBUTTONTOLIST)(
+	const char* name,
+	const char* texture,
+	const char* command,
+	unsigned char* color,
+	int flags
+);
 
 typedef struct
 {
@@ -260,7 +269,8 @@ typedef struct
 		const char* pszServerName,
 		int iCurrent,
 		int iTotal,
-		const char* comment);
+		const char* comment
+	);
 	void (*pfnConnectionProgress_DownloadEnd)(void);
 	void (*pfnConnectionProgress_Precache)(void);
 	void (*pfnConnectionProgress_Connect)(const char* server);  // NULL for local server
@@ -274,3 +284,13 @@ typedef int (*UIEXTENEDEDAPI)(int version, UI_EXTENDED_FUNCTIONS* pFunctionTable
 
 // deprecated interface from old engine
 typedef int (*UITEXTAPI)(ui_extendedfuncs_t* engfuncs);
+
+#define MENU_UIGLAPI_VERSION 1
+
+typedef struct ui_gl_functions_s
+{
+	void (*beginFrame)(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
+	void (*endFrame)(void);
+} ui_gl_functions;
+
+typedef int (*UIGLAPI)(int version, const ui_gl_functions* uiToEngineFuncs);

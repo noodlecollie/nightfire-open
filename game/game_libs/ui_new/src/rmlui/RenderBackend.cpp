@@ -48,7 +48,7 @@ void RenderInterfaceImpl::SetViewport(int in_viewport_width, int in_viewport_hei
 
 void RenderInterfaceImpl::BeginFrame()
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	RMLUI_ASSERT(viewport_width >= 0 && viewport_height >= 0);
 	glViewport(0, 0, viewport_width, viewport_height);
 
@@ -74,7 +74,7 @@ void RenderInterfaceImpl::BeginFrame()
 	glLoadIdentity();
 
 	transform_enabled = false;
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::EndFrame()
@@ -83,11 +83,11 @@ void RenderInterfaceImpl::EndFrame()
 
 void RenderInterfaceImpl::Clear()
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	glClearStencil(0);
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 Rml::CompiledGeometryHandle
@@ -108,7 +108,7 @@ void RenderInterfaceImpl::RenderGeometry(
 	Rml::TextureHandle /* texture */
 )
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	const GeometryView* geometry = reinterpret_cast<GeometryView*>(handle);
 	const Rml::Vertex* vertices = geometry->vertices.data();
 	const int* indices = geometry->indices.data();
@@ -139,34 +139,34 @@ void RenderInterfaceImpl::RenderGeometry(
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, indices);
 
 	glPopMatrix();
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::EnableScissorRegion(bool /* enable */)
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	if ( enable )
 		glEnable(GL_SCISSOR_TEST);
 	else
 		glDisable(GL_SCISSOR_TEST);
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::SetScissorRegion(Rml::Rectanglei /* region */)
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	glScissor(region.Left(), viewport_height - region.Bottom(), region.Width(), region.Height());
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::EnableClipMask(bool /* enable */)
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	if ( enable )
 		glEnable(GL_STENCIL_TEST);
 	else
 		glDisable(GL_STENCIL_TEST);
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::RenderToClipMask(
@@ -175,7 +175,7 @@ void RenderInterfaceImpl::RenderToClipMask(
 	Rml::Vector2f /* translation */
 )
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	RMLUI_ASSERT(glIsEnabled(GL_STENCIL_TEST));
 	using Rml::ClipMaskOperation;
 
@@ -221,10 +221,10 @@ void RenderInterfaceImpl::RenderToClipMask(
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	glStencilFunc(GL_EQUAL, stencil_test_value, GLuint(-1));
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 // Set to byte packing, or the compiler will expand our struct, which means it won't read correctly from file
 #pragma pack(1)
 struct TGAHeader
@@ -244,12 +244,12 @@ struct TGAHeader
 };
 // Restore packing
 #pragma pack()
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 
 Rml::TextureHandle
 RenderInterfaceImpl::LoadTexture(Rml::Vector2i& /* texture_dimensions */, const Rml::String& /* source */)
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	Rml::FileInterface* file_interface = Rml::GetFileInterface();
 	Rml::FileHandle file_handle = file_interface->Open(source);
 	if ( !file_handle )
@@ -329,15 +329,15 @@ RenderInterfaceImpl::LoadTexture(Rml::Vector2i& /* texture_dimensions */, const 
 	texture_dimensions.y = header.height;
 
 	return GenerateTexture({image_dest, image_size}, texture_dimensions);
-#else  // RMLUI_ORIGINAL_CODE
+#else  // RMLUI_REFERENCE_CODE
 	return 0;
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 Rml::TextureHandle
 RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> /* source */, Rml::Vector2i /* source_dimensions */)
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	RMLUI_ASSERT(source.data() && source.size() == size_t(source_dimensions.x * source_dimensions.y * 4));
 
 	GLuint texture_id = 0;
@@ -368,21 +368,21 @@ RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> /* source */, Rm
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	return (Rml::TextureHandle)texture_id;
-#else  // RMLUI_ORIGINAL_CODE
+#else  // RMLUI_REFERENCE_CODE
 	return 0;
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::ReleaseTexture(Rml::TextureHandle /* texture_handle */)
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	glDeleteTextures(1, (GLuint*)&texture_handle);
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* /* transform */)
 {
-#ifdef RMLUI_ORIGINAL_CODE
+#ifdef RMLUI_REFERENCE_CODE
 	transform_enabled = (transform != nullptr);
 
 	if ( transform )
@@ -394,5 +394,5 @@ void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* /* transform */)
 	}
 	else
 		glLoadIdentity();
-#endif  // RMLUI_ORIGINAL_CODE
+#endif  // RMLUI_REFERENCE_CODE
 }
