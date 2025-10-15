@@ -89,6 +89,7 @@ namespace Botrix
 			TWaypointId iWaypoint
 		) :
 			pEdict(pEdict),
+			serialNumber(pEdict ? pEdict->serialnumber : 0),
 			iFlags(iFlags),
 			fPickupDistanceSqr(fPickupDistanceSqr),
 			iWaypoint(iWaypoint),
@@ -138,6 +139,7 @@ namespace Botrix
 		static const int iMaxDistToWaypoint = 100;
 
 		struct edict_s* pEdict;  ///< Entity's edict.
+		int serialNumber = 0;
 		TItemFlags iFlags;  ///< Entity's flags.
 		float fPickupDistanceSqr;  ///< Distance to entity to consider it can be picked up.
 		TWaypointId iWaypoint;  ///< Entity's nearest waypoint.

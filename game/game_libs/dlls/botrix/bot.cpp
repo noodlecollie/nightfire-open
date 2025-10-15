@@ -3656,11 +3656,33 @@ namespace Botrix
 					m_iTaskDestination = -1;
 					GoodAssert(CWaypoints::Size() >= 2);
 
-					do
+					if ( CWaypoints::Size() >= 2 )
 					{
-						m_iTaskDestination = rand() % CWaypoints::Size();
+						if ( iCurrentWaypoint < 0 )
+						{
+							m_iTaskDestination = RANDOM_LONG(0, CWaypoints::Size() - 1);
+						}
+						else
+						{
+							// Pick a new value from a pool of size one less
+							// than the total number of available values.
+							// Any value < current waypoint is fine.
+							// For a value >= current waypoint, shift up by 1.
+							// This avoids calling rand() in a loop.
+							int newDest = RANDOM_LONG(0, CWaypoints::Size() - 2);
+
+							if ( newDest >= iCurrentWaypoint )
+							{
+								++newDest;
+							}
+
+							m_iTaskDestination = newDest;
+						}
 					}
-					while ( m_iTaskDestination == iCurrentWaypoint );
+					else
+					{
+						m_iTaskDestination = iCurrentWaypoint;
+					}
 				}
 
 				// Check if waypoint to go to is valid.

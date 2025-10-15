@@ -267,7 +267,7 @@ namespace Botrix
 
 			ServerEntity serverEntity(pEdict);
 
-			if ( pEdict->free )
+			if ( pEdict->free || cEntity.serialNumber != pEdict->serialnumber )
 			{
 				cEntity.pEdict = NULL;
 				m_iFreeIndex[EItemTypeWeapon] = i;
@@ -502,8 +502,12 @@ namespace Botrix
 			}
 
 			for ( int i = 0; i < aItems.size(); ++i )  // TODO: add free count.
+			{
 				if ( aItems[i].pEdict == NULL )
+				{
 					return i;
+				}
+			}
 		}
 
 		return aItems.size();
