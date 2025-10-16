@@ -412,9 +412,7 @@ namespace Botrix
 		}
 
 		ASSERT(edict);
-
-		// TODO: Currently unused
-		(void)edict;
+		CItems::EntityAllocated(edict);
 	}
 
 	void CBotrixServerPlugin::EntityFreed(edict_t* edict)
@@ -425,9 +423,7 @@ namespace Botrix
 		}
 
 		ASSERT(edict);
-
-		// TODO: Currently unused
-		(void)edict;
+		CItems::EntityFreed(edict);
 	}
 
 	bool CBotrixServerPlugin::ShouldLogToConsole(int level)

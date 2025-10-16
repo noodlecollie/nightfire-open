@@ -296,6 +296,9 @@ namespace Botrix
 		/// Draw items for a given client.
 		static void Draw(CBotrixClient* pClient);
 
+		static void EntityAllocated(edict_t* ent);
+		static void EntityFreed(edict_t* ent);
+
 	protected:
 		static void CheckNewEntity(struct edict_s* pEdict, bool bLog = true);
 		static TItemIndex NewEntityIndex(int iEntityType);
@@ -328,10 +331,15 @@ namespace Botrix
 		// 'explosive' flag).
 		static good::vector<good::pair<good::string, TItemFlags>> m_aObjectFlagsForModels;
 
-		static good::vector<TItemIndex> m_aObjectFlags;  // Array of (object index, item flags).
+		// Array of (object index, item flags).
+		static good::vector<TItemIndex> m_aObjectFlags;
 
-		static good::bitset m_aUsedItems;  // To know which items are already in m_aItems.
+		// To know which items are already in m_aItems.
+		static good::bitset m_aUsedItems;
 
-		static bool m_bMapLoaded;  // Will be set to true at MapLoaded() and to false at Clear().
+		// Will be set to true at MapLoaded() and to false at Clear().
+		static bool m_bMapLoaded;
+
+		static good::vector<edict_t*> m_aNewEntities;
 	};
 }  // namespace Botrix
