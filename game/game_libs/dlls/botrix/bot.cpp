@@ -948,7 +948,7 @@ namespace Botrix
 
 			case EItemTypeObject:
 			{
-				BotDebug("%s -> Breaked object %s", GetName(), cItem.pItemClass->sClassName.c_str());
+				BotDebug("%s -> Broke object %s", GetName(), cItem.pItemClass->sClassName.c_str());
 				break;
 			}
 
@@ -1197,20 +1197,6 @@ namespace Botrix
 		if ( !CWeapons::IsValid(m_iWeapon) || (m_aWeapons[m_iWeapon].GetName() != szCurrentWeapon) )
 		{
 			// Happens when out of bullets automatically.
-			if ( CWeapons::IsValid(m_iWeapon) )
-			{
-				BLOG_W(
-					"%s -> Current weapon is %s, should be %s.",
-					GetName(),
-					szCurrentWeapon,
-					m_aWeapons[m_iWeapon].GetName().c_str()
-				);
-			}
-			else
-			{
-				BLOG_W("%s -> Current weapon is %s.", GetName(), szCurrentWeapon);
-			}
-
 			TWeaponId iCurrentWeapon = WeaponSearch(szCurrentWeapon);
 
 			if ( iCurrentWeapon == EWeaponIdInvalid )
@@ -1298,22 +1284,23 @@ namespace Botrix
 				int index = aNearest[i];
 				const CItem* cItem = index < aItems.size() ? &aItems[index] : NULL;
 
-				if ( cItem == NULL || cItem->IsFree() )  // Remove object if it is removed from game.
+				if ( cItem == NULL || cItem->IsFree() )
 				{
+					// Remove object if it is removed from game.
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
 				}
-				else if ( !cItem->IsOnMap() )  // Was on map before, but disappeared, bot could grab it or break it.
+				else if ( !cItem->IsOnMap() )
 				{
-					PickItem(*cItem, iType, aNearest[i]);
+					// Was on map before, but disappeared, bot could grab it or break it.
+					PickItem(*cItem, iType, index);
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
 				}
-				else if ( (cItem->CurrentPosition() - vFoot).LengthSquared() >
-						  cItem->fPickupDistanceSqr )  // Item becomes
-													   // far.
+				else if ( (cItem->CurrentPosition() - vFoot).LengthSquared() > cItem->fPickupDistanceSqr )
 				{
-					aNear.push_back(aNearest[i]);
+					// Item becomes far.
+					aNear.push_back(index);
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
 				}
