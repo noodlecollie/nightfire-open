@@ -503,11 +503,16 @@ void CBasePlayerItem::CheckRespawn(void)
 	switch ( g_pGameRules->WeaponShouldRespawn(this) )
 	{
 		case GR_WEAPON_RESPAWN_YES:
+		{
 			Respawn();
 			break;
+		}
+
 		case GR_WEAPON_RESPAWN_NO:
+		default:
+		{
 			return;
-			break;
+		}
 	}
 }
 

@@ -525,8 +525,8 @@ namespace Botrix
 		CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_deathmatch", 0));
 		CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_coop", 0));
 
-		CItems::AddItemClassFor(EItemTypeArmor, CItemClass("item_battery", respawnableFlags));
-		CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_healthkit", respawnableFlags));
+		CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_armor_plate", respawnableFlags));
+		CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_armor_vest", respawnableFlags));
 
 		CItems::AddItemClassFor(EItemTypeLadder, CItemClass("func_ladder", FEntityNone));
 

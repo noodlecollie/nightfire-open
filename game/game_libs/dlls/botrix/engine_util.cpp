@@ -129,7 +129,7 @@ namespace Botrix
 		}
 		else
 		{
-			memset(pvs, 0xFF, MAX_PVS_DATA_LENGTH);
+			memset(pvs, 0x00, MAX_PVS_DATA_LENGTH);
 		}
 	}
 

@@ -43,7 +43,19 @@ namespace Botrix
 			return Vector();
 		}
 
-		return m_pEdict->v.mins;
+		if ( !VectorIsNull(m_pEdict->v.mins) )
+		{
+			return m_pEdict->v.mins;
+		}
+
+		// Some things like weapons only set the abs bounding box.
+		// It's unclear why - I need to look into this.
+		if ( GetClassPtr<CBasePlayerItem>(&m_pEdict->v) )
+		{
+			return Vector(m_pEdict->v.absmin) - Vector(m_pEdict->v.origin);
+		}
+
+		return Vector();
 	}
 
 	Vector ServerEntity::GetMaxs() const
@@ -53,7 +65,19 @@ namespace Botrix
 			return Vector();
 		}
 
-		return m_pEdict->v.maxs;
+		if ( !VectorIsNull(m_pEdict->v.maxs) )
+		{
+			return m_pEdict->v.maxs;
+		}
+
+		// Some things like weapons only set the abs bounding box.
+		// It's unclear why - I need to look into this.
+		if ( GetClassPtr<CBasePlayerItem>(&m_pEdict->v) )
+		{
+			return Vector(m_pEdict->v.absmax) - Vector(m_pEdict->v.origin);
+		}
+
+		return Vector();
 	}
 
 	float ServerEntity::GetCollisionRadiusSquared() const

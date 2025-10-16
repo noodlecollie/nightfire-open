@@ -103,7 +103,7 @@ namespace Botrix
 		bool IsFree() const;
 
 		/// Return true if item currently is on map (not broken or taken).
-		bool IsOnMap() const;
+		bool IsTangible() const;
 
 		/// Return true if item is breakable (bot will break it instead of jumping on it or moving it).
 		bool IsBreakable() const;

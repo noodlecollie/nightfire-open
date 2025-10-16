@@ -55,7 +55,7 @@ namespace Botrix
 		return static_cast<int>(serverEntity.GetEdict()->v.health);
 	}
 
-	inline bool IsEntityOnMap(const ServerEntity& serverEntity)
+	inline bool IsEntityDrawable(const ServerEntity& serverEntity)
 	{
 		return FLAG_CLEARED(EF_NODRAW, GetEntityEffects(serverEntity));
 	}
@@ -100,9 +100,9 @@ namespace Botrix
 	}
 
 	//================================================================================================================
-	bool CItem::IsOnMap() const
+	bool CItem::IsTangible() const
 	{
-		return IsEntityOnMap(ServerEntity(pEdict));
+		return IsEntityDrawable(ServerEntity(pEdict));
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -549,7 +549,7 @@ namespace Botrix
 		int iFlags = pItemClass->iFlags;
 		TWaypointId iWaypoint = -1;
 
-		if ( !IsEntityOnMap(serverEntity) || IsEntityTaken(serverEntity) )
+		if ( !IsEntityDrawable(serverEntity) || IsEntityTaken(serverEntity) )
 		{
 			FLAG_SET(FTaken, iFlags);
 		}
@@ -664,7 +664,16 @@ namespace Botrix
 		fNextDrawTime = CBotrixServerPlugin::GetTime() + 1.0f;
 
 		const byte* pvsForPoint = g_engfuncs.pfnGetPvsForPoint(pClient->GetHead());
-		memcpy(pvs, pvsForPoint, sizeof(pvs));
+
+		if ( pvsForPoint )
+		{
+			memcpy(pvs, pvsForPoint, sizeof(pvs));
+		}
+		else
+		{
+			// If the player has noclipped, the PVS might be null.
+			memset(pvs, 0, sizeof(pvs));
+		}
 
 		Vector vHead = pClient->GetHead();
 		CBotrixEngineUtil::SetPVSForVector(vHead);
@@ -700,7 +709,7 @@ namespace Botrix
 				{
 					const CItem* pEntity = (iEntityType == EItemTypeOther) ? NULL : &m_aItems[iEntityType][i];
 
-					if ( FLAG_SOME_SET(FItemDrawStats, pClient->iItemDrawFlags) )
+					if ( FLAG_SOME_SET(FItemDrawStats, pClient->iItemDrawFlags) && (!pEntity || !pEntity->IsTaken()) )
 					{
 						// Draw entity class name name with index.
 						PlatformLib_SNPrintF(
@@ -756,7 +765,7 @@ namespace Botrix
 								0xFF,
 								0xFF,
 								0xFF,
-								IsEntityOnMap(serverEntity) ? "alive" : "dead"
+								IsEntityDrawable(serverEntity) ? "tangible" : "intangible"
 							);
 
 							// CBotrixEngineUtil::DrawText( vOrigin, pos++, 1.0f, 0xFF, 0xFF, 0xFF,
@@ -880,7 +889,7 @@ namespace Botrix
 			{
 				aWeapons[i].pEdict = NULL;
 				m_iFreeIndex[EItemTypeWeapon] = i;
-				return;
+				break;
 			}
 		}
 

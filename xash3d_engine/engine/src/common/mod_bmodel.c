@@ -1266,11 +1266,13 @@ byte* Mod_GetPVSForPoint(const vec3_t p)
 		node = node->children[PlaneDiff(p, node->plane) <= 0];
 	}
 
-	if ( leaf && leaf->cluster >= 0 )
+	if ( leaf )
 	{
-		return Mod_DecompressPVS(leaf->compressed_vis, (int)world.visbytes);
+		// Leaf is valid, so either use its vis data, or use NULL (which is treated as "everything is visible").
+		return Mod_DecompressPVS(leaf->cluster >= 0 ? leaf->compressed_vis : NULL, (int)world.visbytes);
 	}
 
+	// If the leaf is not valid, return NULL to indicate no visibility.
 	return NULL;
 }
 

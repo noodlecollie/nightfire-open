@@ -303,7 +303,7 @@ namespace Botrix
 			{
 				const CItem* pItem = &aItems[i];
 
-				if ( pItem->IsFree() || !pItem->IsOnMap() )  // Item is picked or broken.
+				if ( pItem->IsFree() || !pItem->IsTangible() )  // Item is picked or broken.
 				{
 					continue;
 				}
@@ -967,7 +967,17 @@ namespace Botrix
 			// TODO: check if item is respawnable.
 			cPickedItem.fRemoveTime +=
 				/*FLAG_ALL_SET_OR_0(FEntityRespawnable, cItem.iFlags) ? cItem.pItemClass->GetArgument() : */ 60.0f;
-			m_aPickedItems.push_back(cPickedItem);
+
+			good::vector<CPickedItem>::iterator it = good::find(m_aPickedItems, cPickedItem);
+
+			if ( it != m_aPickedItems.end() )
+			{
+				it->fRemoveTime = cPickedItem.fRemoveTime;
+			}
+			else
+			{
+				m_aPickedItems.push_back(cPickedItem);
+			}
 		}
 	}
 
@@ -1290,9 +1300,16 @@ namespace Botrix
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
 				}
-				else if ( !cItem->IsOnMap() )
+				else if ( !cItem->IsTangible() )
 				{
 					// Was on map before, but disappeared, bot could grab it or break it.
+					// TODO: This seems like a bad way to do this. Just because a bot
+					// is near a non-tangible entity does not mean it's just picked that
+					// entity up! For example, walking near a weapon that's waiting to
+					// respawn could trigger this.
+					// We should respond to function calls on the player instead, or
+					// even better, put together some event system to listen on.
+					// That's probably too big an excursion to embark on right now, though.
 					PickItem(*cItem, iType, index);
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
@@ -1316,7 +1333,7 @@ namespace Botrix
 				int index = aNear[i];
 				const CItem* cItem = index < aItems.size() ? &aItems[index] : NULL;
 
-				if ( cItem == NULL || cItem->IsFree() || !cItem->IsOnMap() )
+				if ( cItem == NULL || cItem->IsFree() || !cItem->IsTangible() )
 				{
 					aNear.erase(aNear.begin() + i);
 					--iNearSize;
@@ -1357,7 +1374,7 @@ namespace Botrix
 			{
 				const CItem* pItem = &aItems[i];
 
-				if ( pItem->IsFree() || !pItem->IsOnMap() ||  // Item is picked or broken.
+				if ( pItem->IsFree() || !pItem->IsTangible() ||  // Item is picked or broken.
 					 (find(aNear.begin(), aNear.end(), i) !=
 					  aNear.end()) ||  // Item is near, all checks were already made before for all near items.
 					 (find(aNearest.begin(), aNearest.end(), i) !=
