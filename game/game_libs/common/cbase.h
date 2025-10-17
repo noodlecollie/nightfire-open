@@ -129,6 +129,7 @@ class CBaseEntity;
 class CBaseMonster;
 class CBasePlayerItem;
 class CSquadMonster;
+class CBasePlayerAmmo;
 
 #define SF_NORESPAWN (1 << 30)  // !!!set this bit on guns and stuff that should never respawn.
 
@@ -257,7 +258,7 @@ public:
 	{
 		return 0;
 	}
-	virtual int GiveAmmo(int, const char*, int)
+	virtual int GiveAmmo(int, const char*, int, CBasePlayerAmmo* = nullptr)
 	{
 		return -1;
 	};

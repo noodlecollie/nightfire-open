@@ -13,6 +13,9 @@
 #include "standard_includes.h"
 #include "MathLib/utils.h"
 #include "client.h"
+#include "gameplay/eventSystem.h"
+#include "gameplay/gameplaySystems.h"
+#include "gameplay/gameplaySystemsBase.h"
 
 #define NotifyIfFailed(exp, ...) \
 	GOOD_SCOPE_START \
@@ -221,6 +224,27 @@ namespace Botrix
 	{
 		CPlayer::Activated();
 		BotDebug("%s -> Activated.", GetName());
+
+		ASSERT(m_WeaponPickupEvent == Events::CEventSystem::INVALID_ID);
+		ASSERT(m_AmmoPickupEvent == Events::CEventSystem::INVALID_ID);
+
+		CGameplaySystemsBase* gps = GameplaySystems::GetBase();
+
+		m_WeaponPickupEvent = gps->EventSystem().RegisterEventCallback(
+			Events::EventType::PlayerPickedUpWeapon,
+			[this](const Events::CEvent& event)
+			{
+				HandlePickedUpWeaponEvent(event);
+			}
+		);
+
+		m_AmmoPickupEvent = gps->EventSystem().RegisterEventCallback(
+			Events::EventType::PlayerPickedUpAmmo,
+			[this](const Events::CEvent& event)
+			{
+				HandlePickedUpAmmoEvent(event);
+			}
+		);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -378,6 +402,20 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CBot::PlayerDisconnect(int iPlayerIndex, CPlayer* pPlayer)
 	{
+		CGameplaySystemsBase* gps = GameplaySystems::GetBase();
+
+		if ( m_WeaponPickupEvent != Events::CEventSystem::INVALID_ID )
+		{
+			gps->EventSystem().UnregisterEventCallback(Events::EventType::PlayerPickedUpWeapon, m_WeaponPickupEvent);
+			m_WeaponPickupEvent = Events::CEventSystem::INVALID_ID;
+		}
+
+		if ( m_AmmoPickupEvent != Events::CEventSystem::INVALID_ID )
+		{
+			gps->EventSystem().UnregisterEventCallback(Events::EventType::PlayerPickedUpAmmo, m_AmmoPickupEvent);
+			m_AmmoPickupEvent = Events::CEventSystem::INVALID_ID;
+		}
+
 		m_aNearPlayers.reset(iPlayerIndex);
 		m_aSeenEnemies.reset(iPlayerIndex);
 
@@ -893,6 +931,7 @@ namespace Botrix
 					if ( CWeapons::IsValid(iWeapon) )
 					{
 						CWeaponWithAmmo& cWeapon = m_aWeapons[iWeapon];
+
 						BotDebug(
 							"%s -> Picked weapon %s (%d/%d, %d/%d).",
 							GetName(),
@@ -902,6 +941,7 @@ namespace Botrix
 							cWeapon.Bullets(CWeapon::SECONDARY),
 							cWeapon.ExtraBullets(CWeapon::SECONDARY)
 						);
+
 						WeaponChoose();
 					}
 					else if ( CMod::aClassNames.size() )
@@ -979,6 +1019,18 @@ namespace Botrix
 				m_aPickedItems.push_back(cPickedItem);
 			}
 		}
+	}
+
+	void CBot::PickItem(edict_t* edict)
+	{
+		ASSERT(edict);
+
+		TItemIndex itemIndex = 0;
+		TItemType itemType = CItems::GetItemFromId(ENTINDEX(edict), &itemIndex);
+		const good::vector<CItem>& itemVector = CItems::GetItems(itemType);
+		const CItem& item = itemVector[itemIndex];
+
+		PickItem(item, itemType, itemIndex);
 	}
 
 //================================================================================================================
@@ -1294,23 +1346,8 @@ namespace Botrix
 				int index = aNearest[i];
 				const CItem* cItem = index < aItems.size() ? &aItems[index] : NULL;
 
-				if ( cItem == NULL || cItem->IsFree() )
+				if ( cItem == NULL || cItem->IsFree() || !cItem->IsTangible() )
 				{
-					// Remove object if it is removed from game.
-					aNearest.erase(aNearest.begin() + i);
-					--iNearestSize;
-				}
-				else if ( !cItem->IsTangible() )
-				{
-					// Was on map before, but disappeared, bot could grab it or break it.
-					// TODO: This seems like a bad way to do this. Just because a bot
-					// is near a non-tangible entity does not mean it's just picked that
-					// entity up! For example, walking near a weapon that's waiting to
-					// respawn could trigger this.
-					// We should respond to function calls on the player instead, or
-					// even better, put together some event system to listen on.
-					// That's probably too big an excursion to embark on right now, though.
-					PickItem(*cItem, iType, index);
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
 				}
@@ -2951,6 +2988,18 @@ namespace Botrix
 		{
 			WeaponChoose();
 		}
+	}
+
+	void CBot::HandlePickedUpWeaponEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpWeapon* data = event.GetData<Events::EventData_PlayerPickedUpWeapon>();
+		PickItem(data->item);
+	}
+
+	void CBot::HandlePickedUpAmmoEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpAmmo* data = event.GetData<Events::EventData_PlayerPickedUpAmmo>();
+		PickItem(data->item);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------

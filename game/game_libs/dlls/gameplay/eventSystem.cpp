@@ -72,8 +72,14 @@ namespace Events
 		ASSERTSZ(false, "No event callback found with given ID.");
 	}
 
+	void CEventSystem::UnregisterAllCallbacks()
+	{
+		m_Registrations.Purge();
+	}
+
 	void CEventSystem::SendEvent(const CEvent& event)
 	{
+		ASSERT(!m_ProcessingEvent);
 		ASSERT(event.GetBaseEventData()->IsValid());
 
 		if ( !event.GetBaseEventData()->IsValid() )
@@ -88,6 +94,7 @@ namespace Events
 			return;
 		}
 
+		m_ProcessingEvent = true;
 		bool needsDeletions = false;
 
 		FOR_EACH_VEC(*registrations, index)
@@ -115,6 +122,8 @@ namespace Events
 				}
 			}
 		}
+
+		m_ProcessingEvent = false;
 	}
 
 	size_t CEventSystem::AddRegistration(EventType type, Registration&& reg)

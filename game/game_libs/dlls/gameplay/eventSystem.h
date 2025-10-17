@@ -48,7 +48,6 @@ namespace Events
 	struct EventData_PlayerPickedUpWeapon : public BasePickupEventData
 	{
 		static constexpr EventType EVENT_TYPE = EventType::PlayerPickedUpWeapon;
-		int ammoAdded = 0;
 	};
 
 	struct EventData_PlayerPickedUpAmmo : public BasePickupEventData
@@ -107,8 +106,15 @@ namespace Events
 		size_t RegisterEventCallback(EventType eventType, const Callback& callback);
 		size_t RegisterEventCallback(EventType eventType, CBaseEntity* subscriber, const Callback& callback);
 		void UnregisterEventCallback(EventType eventType, size_t id);
+		void UnregisterAllCallbacks();
 
 		void SendEvent(const CEvent& event);
+
+		template<typename T>
+		typename std::enable_if<std::is_base_of<BaseEventData, T>::value, void>::type SendEvent(T&& data)
+		{
+			SendEvent(CEvent(std::move(data)));
+		}
 
 	private:
 		struct Registration
@@ -127,5 +133,6 @@ namespace Events
 
 		CUtlVector<RegistrationVector> m_Registrations;
 		size_t m_NextID = 1;
+		bool m_ProcessingEvent = false;
 	};
 }  // namespace Events

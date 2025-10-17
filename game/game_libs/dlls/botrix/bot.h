@@ -13,6 +13,11 @@
 
 struct edict_s;
 
+namespace Events
+{
+	class CEvent;
+}
+
 #define BotMessage(...) \
 	GOOD_SCOPE_START if ( m_bDebugging ) BLOG_I(__VA_ARGS__); \
 	GOOD_SCOPE_END
@@ -236,6 +241,7 @@ namespace Botrix
 
 		// Bot just picked up given item.
 		virtual void PickItem(const CItem& cItem, TItemType iEntityType, TItemIndex iIndex);
+		void PickItem(edict_t* edict);
 
 	protected:  // Methods.
 #ifdef BOTRIX_SEND_BOT_CHAT
@@ -538,6 +544,13 @@ namespace Botrix
 		bool m_bFeatureWeaponCheck;  // Check or not weapons.
 
 		bool m_bSaidNoWaypoints;  // Say that there are no waypoints only once.
+
+	private:
+		void HandlePickedUpWeaponEvent(const Events::CEvent& event);
+		void HandlePickedUpAmmoEvent(const Events::CEvent& event);
+
+		size_t m_WeaponPickupEvent;
+		size_t m_AmmoPickupEvent;
 	};
 
 	// BOTRIX_TODO: Rename

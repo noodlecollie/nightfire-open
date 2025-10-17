@@ -779,7 +779,10 @@ int CBasePlayerWeapon::AddToPlayer(CBasePlayer* pPlayer)
 	}
 
 	if ( bResult )
+	{
 		return AddWeapon();
+	}
+
 	return FALSE;
 }
 
@@ -1516,7 +1519,9 @@ int CWeaponBox::GiveAmmo(int iCount, const char* szName, int iMax, int* pIndex /
 		if ( PlatformLib_StrCaseCmp(szName, STRING(m_rgiszAmmo[i])) == 0 )
 		{
 			if ( pIndex )
+			{
 				*pIndex = i;
+			}
 
 			int iAdd = Q_min(iCount, iMax - m_rgAmmo[i]);
 			if ( iCount == 0 || iAdd > 0 )
@@ -1531,13 +1536,16 @@ int CWeaponBox::GiveAmmo(int iCount, const char* szName, int iMax, int* pIndex /
 	if ( i < MAX_AMMO_SLOTS )
 	{
 		if ( pIndex )
+		{
 			*pIndex = i;
+		}
 
 		m_rgiszAmmo[i] = MAKE_STRING(szName);
 		m_rgAmmo[i] = iCount;
 
 		return i;
 	}
+
 	ALERT(at_console, "out of named ammo slots\n");
 	return i;
 }

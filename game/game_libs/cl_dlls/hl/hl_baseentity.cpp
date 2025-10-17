@@ -136,7 +136,8 @@ void DBG_AssertFunction(
 	const char* szFile,
 	int szLine,
 	const char* szMessage,
-	bool showAlert)
+	bool showAlert
+)
 {
 	if ( fExpr )
 	{
@@ -155,7 +156,8 @@ void DBG_AssertFunction(
 				szExpr,
 				szFile,
 				szLine,
-				szMessage);
+				szMessage
+			);
 		}
 		else
 		{
@@ -956,7 +958,7 @@ const char* CBasePlayer::TeamID(void)
 {
 	return "";
 }
-int CBasePlayer::GiveAmmo(int, const char*, int)
+int CBasePlayer::GiveAmmo(int, const char*, int, CBasePlayerAmmo*)
 {
 	return 0;
 }

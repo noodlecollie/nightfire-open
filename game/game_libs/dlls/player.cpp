@@ -3785,7 +3785,7 @@ int CBasePlayer::RemovePlayerItem(CBasePlayerItem* pItem, bool bCallHolster)
 //
 // Returns the unique ID for the ammo, or -1 if error
 //
-int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax)
+int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax, CBasePlayerAmmo* source)
 {
 	if ( !szName )
 	{
@@ -3804,11 +3804,16 @@ int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax)
 	i = GetAmmoIndex(szName);
 
 	if ( i < 0 || i >= MAX_AMMO_SLOTS )
+	{
 		return -1;
+	}
 
 	int iAdd = Q_min(iCount, iMax - m_rgAmmo[i]);
+
 	if ( iAdd < 1 )
+	{
 		return i;
+	}
 
 	m_rgAmmo[i] += iAdd;
 
@@ -3819,6 +3824,16 @@ int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax)
 		WRITE_BYTE(GetAmmoIndex(szName));  // ammo ID
 		WRITE_BYTE(iAdd);  // amount
 		MESSAGE_END();
+	}
+
+	if ( source )
+	{
+		Events::EventData_PlayerPickedUpAmmo eventData;
+		eventData.player = edict();
+		eventData.item = source->edict();
+		eventData.ammoAdded = iAdd;
+
+		GameplaySystems::GetBase()->EventSystem().SendEvent(std::move(eventData));
 	}
 
 	return i;

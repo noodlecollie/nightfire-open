@@ -35,6 +35,9 @@
 #include "botrix/botgamerulesinterface.h"
 #include "nodes.h"
 #include "weapon_p99.h"
+#include "gameplay/gameplaySystems.h"
+#include "gameplay/gameplaySystemsBase.h"
+#include "gameplay/eventSystem.h"
 
 extern DLL_GLOBAL CGameRules* g_pGameRules;
 extern DLL_GLOBAL BOOL g_fGameOver;
@@ -949,8 +952,16 @@ void CHalfLifeMultiplay::DeathNotice(CBasePlayer* pVictim, entvars_t* pKiller, e
 // PlayerGotWeapon - player has grabbed a weapon that was
 // sitting in the world
 //=========================================================
-void CHalfLifeMultiplay::PlayerGotWeapon(CBasePlayer*, CBasePlayerItem*)
+void CHalfLifeMultiplay::PlayerGotWeapon(CBasePlayer* player, CBasePlayerItem* weapon)
 {
+	ASSERT(player);
+	ASSERT(weapon);
+
+	Events::EventData_PlayerPickedUpWeapon eventData;
+	eventData.player = player->edict();
+	eventData.item = weapon->edict();
+
+	GameplaySystems::GetBase()->EventSystem().SendEvent(std::move(eventData));
 }
 
 //=========================================================

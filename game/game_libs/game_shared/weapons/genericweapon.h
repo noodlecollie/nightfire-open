@@ -302,7 +302,7 @@ public:
 
 	BOOL AddAmmo(CBaseEntity* pOther) override
 	{
-		if ( pOther->GiveAmmo(m_AmmoDef.AmmoBoxGive, m_AmmoDef.AmmoName, m_AmmoDef.MaxCarry) != -1 )
+		if ( pOther->GiveAmmo(m_AmmoDef.AmmoBoxGive, m_AmmoDef.AmmoName, m_AmmoDef.MaxCarry, this) != -1 )
 		{
 			EMIT_SOUND(ENT(pev), CHAN_ITEM, DEFAULT_PICKUP_SOUND, 1, ATTN_NORM);
 			return TRUE;
