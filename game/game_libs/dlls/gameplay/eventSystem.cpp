@@ -8,45 +8,52 @@ namespace Events
 
 		if ( !callback )
 		{
-			return 0;
-		}
-
-		const size_t id = m_NextID++;
-
-		if ( m_NextID == 0 )
-		{
-			++m_NextID;
-		}
-
-		const int eventTypeIndex = static_cast<int>(eventType);
-		ASSERT(eventTypeIndex >= 0);
-
-		if ( eventTypeIndex >= m_Registrations.Count() )
-		{
-			m_Registrations.SetCount(eventTypeIndex + 1);
+			return INVALID_ID;
 		}
 
 		Registration reg;
-		reg.id = id;
 		reg.callback = callback;
 
-		RegistrationVector& regVec = m_Registrations[eventTypeIndex];
-		regVec.AddToTail(std::move(reg));
+		return AddRegistration(eventType, std::move(reg));
+	}
 
-		return id;
+	size_t CEventSystem::RegisterEventCallback(EventType eventType, CBaseEntity* subscriber, const Callback& callback)
+	{
+		ASSERT(subscriber);
+
+		if ( !subscriber )
+		{
+			return INVALID_ID;
+		}
+
+		EHANDLE subscriberHandle;
+		subscriberHandle = subscriber;
+
+		Registration reg;
+		reg.subscriber = subscriberHandle;
+		reg.has_subscriber = true;
+		reg.callback = [subscriberHandle, callback](const CEvent& event)
+		{
+			if ( subscriberHandle )
+			{
+				callback(event);
+			}
+		};
+
+		return AddRegistration(eventType, std::move(reg));
 	}
 
 	void CEventSystem::UnregisterEventCallback(EventType eventType, size_t id)
 	{
-		ASSERT(id != 0);
+		ASSERT(id != INVALID_ID);
 
-		if ( id == 0 )
+		if ( id == INVALID_ID )
 		{
 			return;
 		}
 
 		RegistrationVector* regVec = GetRegistrationsForEventType(eventType);
-		ASSERT(regVec);
+		ASSERTSZ(regVec, "No event registrations present for the given type");
 
 		if ( !regVec )
 		{
@@ -65,7 +72,7 @@ namespace Events
 		ASSERTSZ(false, "No event callback found with given ID.");
 	}
 
-	void CEventSystem::SendEvent(const CEvent& event) const
+	void CEventSystem::SendEvent(const CEvent& event)
 	{
 		ASSERT(event.GetBaseEventData()->IsValid());
 
@@ -74,17 +81,65 @@ namespace Events
 			return;
 		}
 
-		const RegistrationVector* registrations = GetRegistrationsForEventType(event.GetType());
+		RegistrationVector* registrations = GetRegistrationsForEventType(event.GetType());
 
 		if ( !registrations || registrations->IsEmpty() )
 		{
 			return;
 		}
 
+		bool needsDeletions = false;
+
 		FOR_EACH_VEC(*registrations, index)
 		{
+			Registration& reg = (*registrations)[index];
+
+			if ( reg.has_subscriber && !reg.subscriber )
+			{
+				needsDeletions = true;
+				continue;
+			}
+
 			(*registrations)[index].callback(event);
 		}
+
+		if ( needsDeletions )
+		{
+			FOR_EACH_VEC_BACK(*registrations, index)
+			{
+				Registration& reg = (*registrations)[index];
+
+				if ( reg.has_subscriber && !reg.subscriber )
+				{
+					registrations->Remove(index);
+				}
+			}
+		}
+	}
+
+	size_t CEventSystem::AddRegistration(EventType type, Registration&& reg)
+	{
+		const size_t id = m_NextID++;
+
+		if ( m_NextID == INVALID_ID )
+		{
+			++m_NextID;
+		}
+
+		const int eventTypeIndex = static_cast<int>(type);
+		ASSERT(eventTypeIndex >= 0);
+
+		if ( eventTypeIndex >= m_Registrations.Count() )
+		{
+			m_Registrations.SetCount(eventTypeIndex + 1);
+		}
+
+		reg.id = id;
+
+		RegistrationVector& regVec = m_Registrations[eventTypeIndex];
+		regVec.AddToTail(std::move(reg));
+
+		return id;
 	}
 
 	CEventSystem::RegistrationVector* CEventSystem::GetRegistrationsForEventType(EventType type)

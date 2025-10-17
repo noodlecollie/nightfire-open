@@ -102,20 +102,26 @@ namespace Events
 	public:
 		using Callback = std::function<void(const CEvent&)>;
 
+		static constexpr size_t INVALID_ID = 0;
+
 		size_t RegisterEventCallback(EventType eventType, const Callback& callback);
+		size_t RegisterEventCallback(EventType eventType, CBaseEntity* subscriber, const Callback& callback);
 		void UnregisterEventCallback(EventType eventType, size_t id);
 
-		void SendEvent(const CEvent& event) const;
+		void SendEvent(const CEvent& event);
 
 	private:
 		struct Registration
 		{
 			size_t id = 0;
 			Callback callback;
+			EHANDLE subscriber;
+			bool has_subscriber = false;
 		};
 
 		using RegistrationVector = CUtlVector<Registration>;
 
+		size_t AddRegistration(EventType type, Registration&& reg);
 		RegistrationVector* GetRegistrationsForEventType(EventType type);
 		const RegistrationVector* GetRegistrationsForEventType(EventType type) const;
 
