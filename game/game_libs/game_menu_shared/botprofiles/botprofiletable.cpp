@@ -1,6 +1,5 @@
 #include "botprofiletable.h"
-#include "utlvector.h"
-#include "standard_includes.h"
+#include "projectInterface/IProjectInterface.h"
 
 static const CBotProfileTable::ProfileData DEFAULT_PROFILE = {
 	"default_profile",
@@ -52,7 +51,7 @@ const CBotProfileTable::ProfileData& CBotProfileTable::GetRandomProfile() const
 		return DEFAULT_PROFILE;
 	}
 
-	int index = RANDOM_LONG(0, m_Table.Count() - 1);
+	int index = IProjectInterface::ProjectInterfaceImpl()->RNG().GetRandomInt(0, m_Table.Count() - 1);
 
 	FOR_EACH_HASHMAP(m_Table, tableIndex)
 	{
@@ -62,7 +61,6 @@ const CBotProfileTable::ProfileData& CBotProfileTable::GetRandomProfile() const
 		}
 	}
 
-	ASSERT(false);
 	return DEFAULT_PROFILE;
 }
 
