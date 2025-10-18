@@ -62,7 +62,7 @@ public:
 	void AlertSound(void);
 	void IdleSound(void);
 
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	void StartTask(Task_t* pTask);
 	Schedule_t* GetSchedule(void);
@@ -238,7 +238,8 @@ void CISlave::PainSound(void)
 			1.0,
 			ATTN_NORM,
 			0,
-			m_voicePitch);
+			m_voicePitch
+		);
 	}
 }
 
@@ -254,7 +255,8 @@ void CISlave::DeathSound(void)
 		1.0,
 		ATTN_NORM,
 		0,
-		m_voicePitch);
+		m_voicePitch
+	);
 }
 
 //=========================================================
@@ -266,10 +268,10 @@ int CISlave::ISoundMask(void)
 	return bits_SOUND_WORLD | bits_SOUND_COMBAT | bits_SOUND_DANGER | bits_SOUND_PLAYER;
 }
 
-void CISlave::Killed(entvars_t* pevAttacker, int iGib)
+void CISlave::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	ClearBeams();
-	CSquadMonster::Killed(pevAttacker, iGib);
+	CSquadMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 //=========================================================
@@ -328,7 +330,8 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					m_voicePitch);
+					m_voicePitch
+				);
 			}
 			else
 			{
@@ -340,7 +343,8 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					m_voicePitch);
+					m_voicePitch
+				);
 			}
 		}
 		break;
@@ -361,7 +365,8 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					m_voicePitch);
+					m_voicePitch
+				);
 			}
 			else
 			{
@@ -372,7 +377,8 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					m_voicePitch);
+					m_voicePitch
+				);
 			}
 		}
 		break;
@@ -441,7 +447,8 @@ void CISlave::HandleAnimEvent(MonsterEvent_t* pEvent)
 						1,
 						ATTN_NORM,
 						0,
-						RANDOM_LONG(130, 160));
+						RANDOM_LONG(130, 160)
+					);
 					/*
 					CBaseEntity *pEffect = Create( "test_effect", pNew->Center(), pev->angles );
 					pEffect->Use( this, this, USE_ON, 1 );
@@ -628,7 +635,8 @@ void CISlave::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	if ( bitsDamageType & DMG_SHOCK )
 		return;

@@ -45,7 +45,7 @@ public:
 	{
 		return BLOOD_COLOR_YELLOW;
 	}
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	void GibMonster(void);
 
 	void SetObjectCollisionBox(void)
@@ -459,9 +459,9 @@ void CNihilanth::StartupThink(void)
 	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
-void CNihilanth::Killed(entvars_t* pevAttacker, int iGib)
+void CNihilanth::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
-	CBaseMonster::Killed(pevAttacker, iGib);
+	CBaseMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 void CNihilanth::DyingThink(void)
@@ -704,7 +704,8 @@ void CNihilanth::MakeFriend(Vector vecStart)
 						dont_ignore_monsters,
 						large_hull,
 						NULL,
-						&tr);
+						&tr
+					);
 					if ( tr.fStartSolid == 0 )
 						m_hFriend[i] = Create("monster_alien_controller", node.m_vecOrigin, pev->angles);
 				}
@@ -722,7 +723,8 @@ void CNihilanth::MakeFriend(Vector vecStart)
 						dont_ignore_monsters,
 						human_hull,
 						NULL,
-						&tr);
+						&tr
+					);
 					if ( tr.fStartSolid == 0 )
 						m_hFriend[i] = Create("monster_alien_slave", node.m_vecOrigin, pev->angles);
 				}
@@ -1011,7 +1013,8 @@ void CNihilanth::Flight(void)
 	float flSpeed = m_velocity.Length();
 	float flDir = DotProduct(
 		Vector(gpGlobals->v_forward[VEC3_X], gpGlobals->v_forward[VEC3_Y], 0),
-		Vector(m_velocity[VEC3_X], m_velocity[VEC3_Y], 0));
+		Vector(m_velocity[VEC3_X], m_velocity[VEC3_Y], 0)
+	);
 
 	if ( flDir < 0 )
 	{
@@ -1343,7 +1346,8 @@ void CNihilanth::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector, con
 			ptr->vecEndPos,
 			vecBlood,
 			BloodColor(),
-			static_cast<int>(flDamage + (100 - 100 * (pev->health / gSkillData.nihilanthHealth))));
+			static_cast<int>(flDamage + (100 - 100 * (pev->health / gSkillData.nihilanthHealth)))
+		);
 	}
 
 	// SpawnBlood( ptr->vecEndPos, BloodColor(), flDamage * 5.0 );// a little surface blood.

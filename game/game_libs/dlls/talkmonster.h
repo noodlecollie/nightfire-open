@@ -110,7 +110,7 @@ public:
 	void Precache(void);
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	void Touch(CBaseEntity* pOther);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGi, int bitsDamageType, float damageApplied, float damageTaken) override;
 	int IRelationship(CBaseEntity* pTarget);
 	virtual int CanPlaySentence(BOOL fDisregardState);
 	virtual void PlaySentence(const char* pszSentence, float duration, float volume, float attenuation);
@@ -120,7 +120,8 @@ public:
 		float volume,
 		float attenuation,
 		BOOL bConcurrent,
-		CBaseEntity* pListener);
+		CBaseEntity* pListener
+	);
 	void KeyValue(KeyValueData* pkvd);
 
 	// AI functions

@@ -184,7 +184,13 @@ void CNPCRoninTurret::KeyValue(KeyValueData* data)
 	CBaseMonster::KeyValue(data);
 }
 
-void CNPCRoninTurret::Killed(entvars_t* pevAttacker, int /* iGib */)
+void CNPCRoninTurret::Killed(
+	entvars_t* pevAttacker,
+	int iGib,
+	int bitsDamageType,
+	float damageApplied,
+	float damageTaken
+)
 {
 	Remember(bits_MEMORY_KILLED);
 	pev->health = 0.0f;
@@ -210,6 +216,8 @@ void CNPCRoninTurret::Killed(entvars_t* pevAttacker, int /* iGib */)
 
 	m_TargetSelfDestructionTime = gpGlobals->time + deathDuration;
 	m_NextDyingTick = gpGlobals->time;
+
+	CBaseMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 void CNPCRoninTurret::Spawn(void)

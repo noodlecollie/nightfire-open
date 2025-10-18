@@ -167,7 +167,8 @@ public:
 		const Vector& vecStart,
 		const Vector& vecEnd,
 		CBaseEntity* pTarget,
-		float* pflDist);  // check validity of a straight move through space
+		float* pflDist
+	);  // check validity of a straight move through space
 	virtual void Move(float flInterval = 0.1);
 	virtual void MoveExecute(CBaseEntity* pTargetEnt, const Vector& vecDir, float flInterval);
 	virtual BOOL ShouldAdvanceRoute(float flWaypointDist);
@@ -226,7 +227,8 @@ public:
 		float volume,
 		float attenuation,
 		BOOL bConcurrent,
-		CBaseEntity* pListener);
+		CBaseEntity* pListener
+	);
 
 	virtual void SentenceStop(void);
 
@@ -377,7 +379,7 @@ public:
 	float UpdateTarget(entvars_t* pevTarget);
 	virtual Activity GetDeathActivity(void);
 	Activity GetSmallFlinchActivity(void);
-	virtual void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	virtual void GibMonster(void);
 	BOOL ShouldGibMonster(int iGib);
 	void CallGibMonster(void);
@@ -405,7 +407,8 @@ public:
 		entvars_t* pevAttacker,
 		float flDamage,
 		int iClassIgnore,
-		int bitsDamageType);
+		int bitsDamageType
+	);
 	virtual int IsMoving(void)
 	{
 		return m_movementGoal != MOVEGOAL_NONE;

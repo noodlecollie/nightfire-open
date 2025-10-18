@@ -507,7 +507,7 @@ void CTalkMonster::RunTask(Task_t* pTask)
 	}
 }
 
-void CTalkMonster::Killed(entvars_t* pevAttacker, int iGib)
+void CTalkMonster::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	// If a client killed me (unless I was already Barnacle'd), make everyone else mad/afraid of him
 	if ( (pevAttacker->flags & FL_CLIENT) && m_MonsterState != MONSTERSTATE_PRONE )
@@ -520,7 +520,7 @@ void CTalkMonster::Killed(entvars_t* pevAttacker, int iGib)
 	// Don't finish that sentence
 	StopTalking();
 	SetUse(NULL);
-	CBaseMonster::Killed(pevAttacker, iGib);
+	CBaseMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 CBaseEntity* CTalkMonster::EnumFriends(CBaseEntity* pPrevious, int listNumber, BOOL bTrace)
@@ -890,7 +890,7 @@ void CTalkMonster::IdleHeadTurn(const Vector& vecFriend)
 		if ( yaw < -180 )
 		{
 			yaw += 360;
-			}
+		}
 
 		// turn towards vector
 		SetBoneController(0, yaw);
@@ -948,18 +948,16 @@ int CTalkMonster::FIdleSpeak(void)
 					SetBits(m_bitsSaid, bit_saidDamageHeavy);
 					return TRUE;
 				}
-				else if (
-					!FBitSet(m_bitsSaid, bit_saidDamageMedium) &&
-					(m_hTargetEnt->pev->health <= m_hTargetEnt->pev->max_health / 4) )
+				else if ( !FBitSet(m_bitsSaid, bit_saidDamageMedium) &&
+						  (m_hTargetEnt->pev->health <= m_hTargetEnt->pev->max_health / 4) )
 				{
 					// EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, m_szGrp[TLK_PLHURT2], 1.0, ATTN_IDLE, 0, pitch );
 					PlaySentence(m_szGrp[TLK_PLHURT2], duration, VOL_NORM, ATTN_IDLE);
 					SetBits(m_bitsSaid, bit_saidDamageMedium);
 					return TRUE;
 				}
-				else if (
-					!FBitSet(m_bitsSaid, bit_saidDamageLight) &&
-					(m_hTargetEnt->pev->health <= m_hTargetEnt->pev->max_health / 2) )
+				else if ( !FBitSet(m_bitsSaid, bit_saidDamageLight) &&
+						  (m_hTargetEnt->pev->health <= m_hTargetEnt->pev->max_health / 2) )
 				{
 					// EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, m_szGrp[TLK_PLHURT1], 1.0, ATTN_IDLE, 0, pitch );
 					PlaySentence(m_szGrp[TLK_PLHURT1], duration, VOL_NORM, ATTN_IDLE);
@@ -1021,7 +1019,8 @@ void CTalkMonster::PlayScriptedSentence(
 	float volume,
 	float attenuation,
 	BOOL bConcurrent,
-	CBaseEntity* pListener)
+	CBaseEntity* pListener
+)
 {
 	if ( !bConcurrent )
 		ShutUpFriends();

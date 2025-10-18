@@ -233,7 +233,7 @@ public:
 	virtual void
 	TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 	virtual int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
-	virtual void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	virtual Vector BodyTarget(const Vector&)
 	{
 		return Center() + Vector(pev->view_ofs) * RANDOM_FLOAT(0.5f, 1.1f);

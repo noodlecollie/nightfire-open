@@ -41,7 +41,8 @@ int CFlyingMonster::CheckLocalMove(const Vector& vecStart, const Vector& vecEnd,
 		dont_ignore_monsters,
 		large_hull,
 		edict(),
-		&tr);
+		&tr
+	);
 
 	// ALERT( at_console, "%.0f %.0f %.0f : ", vecStart.x, vecStart.y, vecStart.z );
 	// ALERT( at_console, "%.0f %.0f %.0f\n", vecEnd.x, vecEnd.y, vecEnd.z );
@@ -67,7 +68,8 @@ BOOL CFlyingMonster::FTriangulate(
 	const Vector& vecEnd,
 	float flDist,
 	CBaseEntity* pTargetEnt,
-	Vector* pApex)
+	Vector* pApex
+)
 {
 	return CBaseMonster::FTriangulate(vecStart, vecEnd, flDist, pTargetEnt, pApex);
 }
@@ -116,13 +118,19 @@ float CFlyingMonster::ChangeYaw(int speed)
 	return CBaseMonster::ChangeYaw(speed);
 }
 
-void CFlyingMonster::Killed(entvars_t* pevAttacker, int iGib)
+void CFlyingMonster::Killed(
+	entvars_t* pevAttacker,
+	int iGib,
+	int bitsDamageType,
+	float damageApplied,
+	float damageTaken
+)
 {
 	pev->movetype = MOVETYPE_STEP;
 	ClearBits(pev->flags, FL_ONGROUND);
 	pev->angles[ROLL] = 0;
 	pev->angles[PITCH] = 0;
-	CBaseMonster::Killed(pevAttacker, iGib);
+	CBaseMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 void CFlyingMonster::HandleAnimEvent(MonsterEvent_t* pEvent)

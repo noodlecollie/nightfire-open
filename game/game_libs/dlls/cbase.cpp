@@ -573,12 +573,14 @@ int CBaseEntity::TakeHealth(float flHealth, int)
 
 // inflict damage on this entity.  bitsDamageType indicates type of damage inflicted, ie: DMG_CRUSH
 
-int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int)
+int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType)
 {
 	Vector vecTemp;
 
 	if ( !pev->takedamage )
+	{
 		return 0;
+	}
 
 	// UNDONE: some entity types may be immune or resistant to some bitsDamageType
 
@@ -617,17 +619,19 @@ int CBaseEntity::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 	}
 
 	// do the damage
+	float oldHealth = pev->health;
 	pev->health -= flDamage;
+
 	if ( pev->health <= 0 )
 	{
-		Killed(pevAttacker, GIB_NORMAL);
+		Killed(pevAttacker, GIB_NORMAL, bitsDamageType, flDamage, oldHealth);
 		return 0;
 	}
 
 	return 1;
 }
 
-void CBaseEntity::Killed(entvars_t*, int)
+void CBaseEntity::Killed(entvars_t*, int, int, float, float)
 {
 	pev->takedamage = DAMAGE_NO;
 	pev->deadflag = DEAD_DEAD;

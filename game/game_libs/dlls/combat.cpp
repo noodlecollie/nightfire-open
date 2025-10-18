@@ -596,7 +596,7 @@ void CBaseMonster::CallGibMonster(void)
 Killed
 ============
 */
-void CBaseMonster::Killed(entvars_t*, int iGib)
+void CBaseMonster::Killed(entvars_t*, int iGib, int, float, float)
 {
 	// unsigned int	cCount = 0;
 	// BOOL		fDone = FALSE;
@@ -907,6 +907,7 @@ int CBaseMonster::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 	}
 
 	// do the damage
+	float oldHealth = pev->health;
 	pev->health -= flTake;
 
 	// HACKHACK Don't kill monsters in a script.  Let them break their scripts first
@@ -922,15 +923,15 @@ int CBaseMonster::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 
 		if ( bitsDamageType & DMG_ALWAYSGIB )
 		{
-			Killed(pevAttacker, GIB_ALWAYS);
+			Killed(pevAttacker, GIB_ALWAYS, bitsDamageType, flTake, oldHealth);
 		}
 		else if ( bitsDamageType & DMG_NEVERGIB )
 		{
-			Killed(pevAttacker, GIB_NEVER);
+			Killed(pevAttacker, GIB_NEVER, bitsDamageType, flTake, oldHealth);
 		}
 		else
 		{
-			Killed(pevAttacker, GIB_NORMAL);
+			Killed(pevAttacker, GIB_NORMAL, bitsDamageType, flTake, oldHealth);
 		}
 
 		g_pevLastInflictor = NULL;
@@ -1013,10 +1014,11 @@ int CBaseMonster::DeadTakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker
 	// destroy the corpse.
 	if ( bitsDamageType & DMG_GIB_CORPSE )
 	{
+		float oldHealth = pev->health;
 		if ( pev->health <= flDamage )
 		{
 			pev->health = -50;
-			Killed(pevAttacker, GIB_ALWAYS);
+			Killed(pevAttacker, GIB_ALWAYS, bitsDamageType, flDamage, oldHealth);
 			return 0;
 		}
 		// Accumulate corpse gibbing damage, so you can gib with multiple hits

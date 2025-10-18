@@ -44,7 +44,7 @@ public:
 	void Move(float flInterval);
 	void PickNewDest(int iCondition);
 	void EXPORT Touch(CBaseEntity* pOther);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	float m_flLastLightLevel;
 	float m_flNextSmellTime;
@@ -154,7 +154,7 @@ void CRoach::Precache()
 //=========================================================
 // Killed.
 //=========================================================
-void CRoach::Killed(entvars_t*, int)
+void CRoach::Killed(entvars_t*, int, int, float, float)
 {
 	pev->solid = SOLID_NOT;
 
@@ -450,7 +450,8 @@ void CRoach::Look(int iDistance)
 							at_console,
 							"%s can't asses %s\n",
 							STRING(pev->classname),
-							STRING(pSightEnt->pev->classname));
+							STRING(pSightEnt->pev->classname)
+						);
 						break;
 				}
 			}

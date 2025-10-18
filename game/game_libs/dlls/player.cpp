@@ -915,18 +915,22 @@ void CBasePlayer::RemoveAllItems(BOOL removeSuit)
 entvars_t* g_pevLastInflictor;  // Set in combat.cpp.  Used to pass the damage inflictor for death messages.
 								// Better solution:  Add as parameter to all Killed() functions.
 
-void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib)
+void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float)
 {
 	CSound* pSound;
 
 	// Holster weapon immediately, to allow it to cleanup
 	if ( m_pActiveItem )
+	{
 		m_pActiveItem->Holster();
+	}
 
 	g_pGameRules->PlayerKilled(this, pevAttacker, g_pevLastInflictor);
 
 	if ( m_pTank != 0 )
+	{
 		m_pTank->Use(this, this, USE_OFF, 0);
+	}
 
 	// this client isn't going to be thinking for a while, so reset the sound until they respawn
 	pSound = CSoundEnt::SoundPointerForIndex(CSoundEnt::ClientSoundIndex(edict()));
@@ -988,7 +992,16 @@ void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib)
 		return;
 	}
 
-	DeathSound();
+	// NFTODO: Make damage threshold a cvar?
+	if ( (bitsDamageType & (DMG_BLAST | DMG_CLUB)) || damageApplied >= 20.0f )
+	{
+		DeathSound();
+	}
+	else
+	{
+		m_flNextPainTime = gpGlobals->time;
+		Pain();
+	}
 
 	pev->angles[PITCH] = 0;
 	pev->angles[ROLL] = 0;

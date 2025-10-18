@@ -243,7 +243,7 @@ void CGrenade::Explode(Vector, Vector)
 void CGrenade::Explode(TraceResult*, int)
 {
 }
-void CGrenade::Killed(entvars_t*, int)
+void CGrenade::Killed(entvars_t*, int, int, float, float)
 {
 }
 void CGrenade::Spawn(void)
@@ -728,7 +728,7 @@ void CBaseMonster::BecomeDead(void)
 void CBaseMonster::RunAI(void)
 {
 }
-void CBaseMonster::Killed(entvars_t*, int)
+void CBaseMonster::Killed(entvars_t*, int, int, float, float)
 {
 }
 int CBaseMonster::TakeHealth(float, int)

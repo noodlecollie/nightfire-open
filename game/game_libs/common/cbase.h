@@ -222,7 +222,7 @@ public:
 	TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 	virtual int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	virtual int TakeHealth(float flHealth, int bitsDamageType);
-	virtual void Killed(entvars_t* pevAttacker, int iGib);
+	virtual void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken);
 	virtual int BloodColor(void)
 	{
 		return DONT_BLEED;

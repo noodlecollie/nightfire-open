@@ -72,7 +72,7 @@ public:
 	void StartMonster(void);
 	void VacateSlot(void);
 	void ScheduleChange(void);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	BOOL OccupySlot(int iDesiredSlot);
 	BOOL NoFriendlyFire(void);
 

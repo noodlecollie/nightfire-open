@@ -74,7 +74,7 @@ public:
 
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	void HandleAnimEvent(MonsterEvent_t* pEvent);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	MONSTERSTATE GetIdealState(void)
 	{
@@ -839,7 +839,8 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 						Vector(
 							cosf(pev->angles[YAW] * (static_cast<float>(M_PI) / 180.0f)),
 							sinf(pev->angles[YAW] * (static_cast<float>(M_PI) / 180.0f)),
-							0.0f);
+							0.0f
+						);
 
 				vecSrc.z += MyHeight();
 
@@ -875,7 +876,8 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 				1.0,
 				ATTN_NORM,
 				0,
-				100);
+				100
+			);
 			break;
 		case 8:
 			// search
@@ -896,7 +898,8 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 				1.0,
 				ATTN_NORM,
 				0,
-				100);
+				100
+			);
 			break;
 		case 9:
 			// swing
@@ -916,7 +919,8 @@ void CTentacle::HandleAnimEvent(MonsterEvent_t* pEvent)
 				1.0,
 				ATTN_NORM,
 				0,
-				100);
+				100
+			);
 			break;
 		default:
 			CBaseMonster::HandleAnimEvent(pEvent);
@@ -995,7 +999,7 @@ int CTentacle::TakeDamage(entvars_t*, entvars_t*, float flDamage, int)
 	return 1;
 }
 
-void CTentacle::Killed(entvars_t*, int)
+void CTentacle::Killed(entvars_t*, int, int, float, float)
 {
 	m_iGoalAnim = TENTACLE_ANIM_Pit_Idle;
 	return;

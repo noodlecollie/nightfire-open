@@ -143,7 +143,7 @@ CBaseEntity::Killed
 If weapons code "kills" an entity, just set its effects to EF_NODRAW
 =====================
 */
-void CBaseEntity::Killed(entvars_t*, int)
+void CBaseEntity::Killed(entvars_t*, int, int, float, float)
 {
 	pev->effects |= EF_NODRAW;
 }
@@ -324,7 +324,8 @@ Vector CBaseEntity::FireBulletsPlayer(
 	int,
 	int,
 	entvars_t* pevAttacker,
-	int shared_rand)
+	int shared_rand
+)
 {
 	float x = 0.0f, y = 0.0f, z;
 
@@ -504,11 +505,13 @@ CBasePlayer::Killed
 
 =====================
 */
-void CBasePlayer::Killed(entvars_t*, int)
+void CBasePlayer::Killed(entvars_t*, int, int, float, float)
 {
 	// Holster weapon immediately, to allow it to cleanup
 	if ( m_pActiveItem )
+	{
 		m_pActiveItem->Holster();
+	}
 
 	g_irunninggausspred = false;
 }
@@ -522,7 +525,9 @@ CBasePlayer::Spawn
 void CBasePlayer::Spawn(void)
 {
 	if ( m_pActiveItem )
+	{
 		m_pActiveItem->Deploy();
+	}
 
 	g_irunninggausspred = false;
 }
@@ -553,7 +558,8 @@ void UTIL_TraceHull(
 	const Vector&,
 	const Vector&,
 	edict_t*,
-	TraceResult* ptr)
+	TraceResult* ptr
+)
 {
 	*ptr = TraceResult {};
 	ptr->flFraction = 1.0;
@@ -573,7 +579,8 @@ void UTIL_ParticleBox(
 	float,
 	unsigned char r,
 	unsigned char g,
-	unsigned char b)
+	unsigned char b
+)
 {
 	int i;
 	vec3_t mmin, mmax;
@@ -642,7 +649,8 @@ void UTIL_ParticleLine(
 	float life,
 	unsigned char r,
 	unsigned char g,
-	unsigned char b)
+	unsigned char b
+)
 {
 	gEngfuncs.pEfxAPI->R_ParticleLine(start, end, r, g, b, life);
 }
@@ -695,7 +703,8 @@ void HUD_InitClientWeapons(void)
 			ASSERT(predictionWeapon);
 
 			HUD_PrepEntity(predictionWeapon, &player);
-		});
+		}
+	);
 
 #ifdef HL_CONTENT
 	// Allocate slot(s) for each weapon that we are going to be predicting
@@ -863,7 +872,7 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 	{
 		if ( to->client.health <= 0 && lasthealth > 0 )
 		{
-			player.Killed(NULL, 0);
+			player.Killed(NULL, 0, DMG_GENERIC, lasthealth - to->client.health, lasthealth);
 		}
 		else if ( to->client.health > 0 && lasthealth <= 0 )
 		{
@@ -1213,7 +1222,8 @@ void _DLLEXPORT HUD_PostRunCmd(
 	struct usercmd_s* cmd,
 	int runfuncs,
 	double time,
-	unsigned int random_seed)
+	unsigned int random_seed
+)
 {
 	g_runfuncs = runfuncs;
 

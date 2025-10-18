@@ -195,7 +195,7 @@ void CApache::StartupUse(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 	SetUse(NULL);
 }
 
-void CApache::Killed(entvars_t*, int)
+void CApache::Killed(entvars_t*, int, int, float, float)
 {
 	pev->movetype = MOVETYPE_TOSS;
 	pev->gravity = 0.3f;
@@ -513,7 +513,8 @@ void CApache::HuntThink(void)
 		if ( m_flLastSeen + 90 > gpGlobals->time &&
 			 DotProduct(
 				 (m_posTarget - Vector(pev->origin)).Normalize(),
-				 (m_posDesired - Vector(pev->origin)).Normalize()) > 0.25 )
+				 (m_posDesired - Vector(pev->origin)).Normalize()
+			 ) > 0.25 )
 		{
 			m_vecDesired = (m_posTarget - Vector(pev->origin)).Normalize();
 		}
@@ -559,9 +560,8 @@ void CApache::HuntThink(void)
 			m_iRockets = 10;
 		}
 	}
-	else if (
-		pev->angles[VEC3_X] < 0 && DotProduct(pev->velocity, Vector(gpGlobals->v_forward)) > -100 &&
-		m_flNextRocket < gpGlobals->time )
+	else if ( pev->angles[VEC3_X] < 0 && DotProduct(pev->velocity, Vector(gpGlobals->v_forward)) > -100 &&
+			  m_flNextRocket < gpGlobals->time )
 	{
 		if ( m_flLastSeen + 60 > gpGlobals->time )
 		{
@@ -636,7 +636,8 @@ void CApache::Flight(void)
 	float flSpeed = VectorLength(pev->velocity);
 	float flDir = DotProduct(
 		Vector(gpGlobals->v_forward[VEC3_X], gpGlobals->v_forward[VEC3_Y], 0),
-		Vector(pev->velocity[VEC3_X], pev->velocity[VEC3_Y], 0));
+		Vector(pev->velocity[VEC3_X], pev->velocity[VEC3_Y], 0)
+	);
 	if ( flDir < 0 )
 		flSpeed = -flSpeed;
 
@@ -735,7 +736,8 @@ void CApache::Flight(void)
 		{
 			float pitch = DotProduct(
 				Vector(pev->velocity) - Vector(pPlayer->pev->velocity),
-				(Vector(pPlayer->pev->origin) - Vector(pev->origin)).Normalize());
+				(Vector(pPlayer->pev->origin) - Vector(pev->origin)).Normalize()
+			);
 
 			pitch = static_cast<float>((int)(100 + pitch / 50.0f));
 
@@ -757,7 +759,8 @@ void CApache::Flight(void)
 				1.0f,
 				0.3f,
 				SND_CHANGE_PITCH | SND_CHANGE_VOL,
-				static_cast<int>(pitch));
+				static_cast<int>(pitch)
+			);
 		}
 		// EMIT_SOUND_DYN( ENT( pev ), CHAN_STATIC, "apache/ap_whine1.wav", flVol, 0.2, SND_CHANGE_PITCH |
 		// SND_CHANGE_VOL, pitch );
@@ -1047,8 +1050,8 @@ void CApacheHVR::IgniteThink(void)
 void CApacheHVR::AccelerateThink(void)
 {
 	// check world boundaries
-	if ( pev->origin[VEC3_X] < -4096 || pev->origin[VEC3_X] > 4096 || pev->origin[VEC3_Y] < -4096 || pev->origin[VEC3_Y] > 4096 ||
-		 pev->origin[VEC3_Z] < -4096 || pev->origin[VEC3_Z] > 4096 )
+	if ( pev->origin[VEC3_X] < -4096 || pev->origin[VEC3_X] > 4096 || pev->origin[VEC3_Y] < -4096 ||
+		 pev->origin[VEC3_Y] > 4096 || pev->origin[VEC3_Z] < -4096 || pev->origin[VEC3_Z] > 4096 )
 	{
 		UTIL_Remove(this);
 		return;

@@ -59,7 +59,7 @@ class CTripmineGrenade : public CGrenade
 	void EXPORT PowerupThink(void);
 	void EXPORT BeamBreakThink(void);
 	void EXPORT DelayDeathThink(void);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	void MakeBeam(void);
 	void KillBeam(void);
@@ -183,7 +183,8 @@ void CTripmineGrenade::PowerupThink(void)
 			Vector(pev->origin) - m_vecDir * 32,
 			dont_ignore_monsters,
 			ENT(pev),
-			&tr);
+			&tr
+		);
 
 		if ( tr.fStartSolid || (oldowner && tr.pHit == oldowner) )
 		{
@@ -210,7 +211,8 @@ void CTripmineGrenade::PowerupThink(void)
 				"WARNING:Tripmine at %.0f, %.0f, %.0f removed\n",
 				pev->origin[VEC3_X],
 				pev->origin[VEC3_Y],
-				pev->origin[VEC3_Z]);
+				pev->origin[VEC3_Z]
+			);
 			KillBeam();
 			return;
 		}
@@ -346,7 +348,7 @@ int CTripmineGrenade::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker
 	return CGrenade::TakeDamage(pevInflictor, pevAttacker, flDamage, bitsDamageType);
 }
 
-void CTripmineGrenade::Killed(entvars_t* pevAttacker, int)
+void CTripmineGrenade::Killed(entvars_t* pevAttacker, int, int, float, float)
 {
 	pev->takedamage = DAMAGE_NO;
 
@@ -371,7 +373,8 @@ void CTripmineGrenade::DelayDeathThink(void)
 		Vector(pev->origin) - m_vecDir * 64,
 		dont_ignore_monsters,
 		ENT(pev),
-		&tr);
+		&tr
+	);
 
 	Explode(&tr, DMG_BLAST);
 }
@@ -489,7 +492,8 @@ void CTripmine::PrimaryAttack(void)
 				"monster_tripmine",
 				Vector(tr.vecEndPos) + Vector(tr.vecPlaneNormal) * 8,
 				angles,
-				m_pPlayer->edict());
+				m_pPlayer->edict()
+			);
 
 			m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType]--;
 

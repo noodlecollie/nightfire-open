@@ -434,7 +434,7 @@ public:
 	{
 		return DONT_BLEED;
 	}
-	virtual void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	inline unsigned char ExplodeSpriteScale() const
 	{

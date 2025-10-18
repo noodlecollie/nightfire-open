@@ -150,7 +150,7 @@ void CStomp::Think(void)
 
 	// Accelerate the effect
 	pev->speed = pev->speed + (STOMP_FRAMETIME)*pev->framerate;
-	pev->framerate = pev->framerate + (STOMP_FRAMETIME)*1500;
+	pev->framerate = pev->framerate + (STOMP_FRAMETIME) * 1500;
 
 	// Move and spawn trails
 	while ( gpGlobals->time - pev->dmgtime > STOMP_INTERVAL )
@@ -229,7 +229,7 @@ public:
 
 	void PrescheduleThink(void);
 
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	void DeathEffect(void);
 
 	void EyeOff(void);
@@ -253,7 +253,8 @@ public:
 		entvars_t* pevAttacker,
 		float flDamage,
 		int iClassIgnore,
-		int bitsDamageType);
+		int bitsDamageType
+	);
 
 	virtual int Save(CSave& save);
 	virtual int Restore(CRestore& restore);
@@ -450,7 +451,8 @@ void CGargantua::StompAttack(void)
 		1.0,
 		ATTN_GARG,
 		0,
-		PITCH_NORM + RANDOM_LONG(-10, 10));
+		PITCH_NORM + RANDOM_LONG(-10, 10)
+	);
 
 	UTIL_TraceLine(pev->origin, Vector(pev->origin) - Vector(0, 0, 20), ignore_monsters, edict(), &trace);
 
@@ -559,7 +561,8 @@ void CGargantua::FlameUpdate(void)
 				pev,
 				gSkillData.gargantuaDmgFire,
 				CLASS_ALIEN_MONSTER,
-				DMG_BURN);
+				DMG_BURN
+			);
 
 			MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 			WRITE_BYTE(TE_ELIGHT);
@@ -587,7 +590,8 @@ void CGargantua::FlameDamage(
 	entvars_t* pevAttacker,
 	float flDamage,
 	int iClassIgnore,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	CBaseEntity* pEntity = NULL;
 	TraceResult tr;
@@ -653,7 +657,8 @@ void CGargantua::FlameDamage(
 						flAdjustedDamage,
 						(Vector(tr.vecEndPos) - vecSrc).Normalize(),
 						&tr,
-						bitsDamageType);
+						bitsDamageType
+					);
 					ApplyMultiDamage(pevInflictor, pevAttacker);
 				}
 				else
@@ -822,7 +827,8 @@ void CGargantua::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	ALERT(at_aiconsole, "CGargantua::TraceAttack\n");
 
@@ -844,7 +850,8 @@ void CGargantua::TraceAttack(
 				1.0,
 				ATTN_GARG,
 				0,
-				PITCH_NORM);
+				PITCH_NORM
+			);
 			m_painSoundTime = gpGlobals->time + RANDOM_FLOAT(2.5, 4);
 		}
 	}
@@ -903,12 +910,12 @@ void CGargantua::DeathEffect(void)
 	pSmoker->pev->nextthink = gpGlobals->time + 2.5f;  // Start in 2.5 seconds
 }
 
-void CGargantua::Killed(entvars_t* pevAttacker, int)
+void CGargantua::Killed(entvars_t* pevAttacker, int, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	EyeOff();
 	UTIL_Remove(m_pEyeGlow);
 	m_pEyeGlow = NULL;
-	CBaseMonster::Killed(pevAttacker, GIB_NEVER);
+	CBaseMonster::Killed(pevAttacker, GIB_NEVER, bitsDamageType, damageApplied, damageTaken);
 }
 
 //=========================================================
@@ -979,7 +986,8 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 			CBaseEntity* pHurt = GargantuaCheckTraceHullAttack(
 				GARG_ATTACKDIST + 10.0f,
 				static_cast<int>(gSkillData.gargantuaDmgSlash),
-				DMG_SLASH);
+				DMG_SLASH
+			);
 			if ( pHurt )
 			{
 				if ( pHurt->pev->flags & (FL_MONSTER | FL_CLIENT) )
@@ -997,7 +1005,8 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					50 + RANDOM_LONG(0, 15));
+					50 + RANDOM_LONG(0, 15)
+				);
 			}
 			else  // Play a random attack miss sound
 				EMIT_SOUND_DYN(
@@ -1007,7 +1016,8 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					50 + RANDOM_LONG(0, 15));
+					50 + RANDOM_LONG(0, 15)
+				);
 
 			Vector forward;
 			UTIL_MakeVectorsPrivate(pev->angles, forward, NULL, NULL);
@@ -1023,7 +1033,8 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				1.0,
 				ATTN_GARG,
 				0,
-				PITCH_NORM + RANDOM_LONG(-10, 10));
+				PITCH_NORM + RANDOM_LONG(-10, 10)
+			);
 			break;
 		case GARG_AE_STOMP:
 			StompAttack();
@@ -1037,7 +1048,8 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 				1.0,
 				ATTN_GARG,
 				0,
-				PITCH_NORM + RANDOM_LONG(-10, 10));
+				PITCH_NORM + RANDOM_LONG(-10, 10)
+			);
 			break;
 		default:
 			CBaseMonster::HandleAnimEvent(pEvent);
@@ -1120,7 +1132,8 @@ void CGargantua::StartTask(Task_t* pTask)
 					1.0,
 					ATTN_GARG,
 					0,
-					PITCH_NORM);
+					PITCH_NORM
+				);
 			TaskComplete();
 			break;
 		case TASK_DIE:

@@ -56,7 +56,7 @@ public:
 	{
 		return DONT_BLEED;
 	}
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	void UpdateGoal(void);
 	BOOL HasDead(void);
@@ -464,7 +464,8 @@ void COsprey::Flight()
 		{
 			float pitch = DotProduct(
 				m_velocity - Vector(pPlayer->pev->velocity),
-				(Vector(pPlayer->pev->origin) - Vector(pev->origin)).Normalize());
+				(Vector(pPlayer->pev->origin) - Vector(pev->origin)).Normalize()
+			);
 
 			pitch = floorf(100.0f + pitch / 75.0f);
 
@@ -494,7 +495,8 @@ void COsprey::Flight()
 					1.0f,
 					0.15f,
 					SND_CHANGE_PITCH | SND_CHANGE_VOL,
-					static_cast<int>(pitch));
+					static_cast<int>(pitch)
+				);
 				// ALERT( at_console, "%.0f\n", pitch );
 			}
 		}
@@ -524,7 +526,7 @@ int COsprey::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float 
 }
 */
 
-void COsprey::Killed(entvars_t*, int)
+void COsprey::Killed(entvars_t*, int, int, float, float)
 {
 	pev->movetype = MOVETYPE_TOSS;
 	pev->gravity = 0.3f;
