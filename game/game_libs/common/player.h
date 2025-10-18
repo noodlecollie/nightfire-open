@@ -221,7 +221,7 @@ public:
 	CharacterGender m_Gender = CharacterGender::MALE;
 
 	virtual void Spawn(void);
-	void Pain(void);
+	void Pain(int bitsDamageType);
 
 	// virtual void Think( void );
 	virtual void Jump(void);
@@ -294,7 +294,7 @@ public:
 	void FlashlightTurnOff(void);
 
 	void UpdatePlayerSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 
 	int Classify(void);
 	void SetAnimation(PLAYER_ANIM playerAnim);

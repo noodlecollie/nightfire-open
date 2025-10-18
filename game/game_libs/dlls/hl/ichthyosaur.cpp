@@ -118,7 +118,7 @@ public:
 	void AlertSound(void);
 	void AttackSound(void);
 	void BiteSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 };
 
@@ -202,7 +202,7 @@ void CIchthyosaur::BiteSound(void)
 	EMIT_ICKY_SOUND(CHAN_WEAPON, pBiteSounds);
 }
 
-void CIchthyosaur::DeathSound(void)
+void CIchthyosaur::DeathSound(int)
 {
 	EMIT_ICKY_SOUND(CHAN_VOICE, pDieSounds);
 }

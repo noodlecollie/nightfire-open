@@ -88,7 +88,7 @@ public:
 	BOOL CheckRangeAttack1(float flDot, float flDist);
 	void StartTask(Task_t* pTask);
 	void AlertSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 	void AttackSound(void);
 	void PrescheduleThink(void);
@@ -209,7 +209,8 @@ void CAGrunt::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	if ( ptr->iHitgroup == 10 && (bitsDamageType & (DMG_BULLET | DMG_SLASH | DMG_CLUB)) )
 	{
@@ -329,7 +330,7 @@ void CAGrunt::PrescheduleThink(void)
 //=========================================================
 // DieSound
 //=========================================================
-void CAGrunt::DeathSound(void)
+void CAGrunt::DeathSound(int)
 {
 	StopTalking();
 
@@ -348,7 +349,8 @@ void CAGrunt::AlertSound(void)
 		CHAN_VOICE,
 		pAlertSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAlertSounds) - 1)],
 		1.0,
-		ATTN_NORM);
+		ATTN_NORM
+	);
 }
 
 //=========================================================
@@ -363,7 +365,8 @@ void CAGrunt::AttackSound(void)
 		CHAN_VOICE,
 		pAttackSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pAttackSounds) - 1)],
 		1.0,
-		ATTN_NORM);
+		ATTN_NORM
+	);
 }
 
 //=========================================================
@@ -385,7 +388,8 @@ void CAGrunt::PainSound(void)
 		CHAN_VOICE,
 		pPainSounds[RANDOM_LONG(0, SIZE_OF_ARRAY_AS_INT(pPainSounds) - 1)],
 		1.0,
-		ATTN_NORM);
+		ATTN_NORM
+	);
 }
 
 //=========================================================
@@ -530,7 +534,8 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					100 + RANDOM_LONG(-5, 5));
+					100 + RANDOM_LONG(-5, 5)
+				);
 
 				Vector vecArmPos, vecArmAng;
 				GetAttachment(0, vecArmPos, vecArmAng);
@@ -546,7 +551,8 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					100 + RANDOM_LONG(-5, 5));
+					100 + RANDOM_LONG(-5, 5)
+				);
 			}
 		}
 		break;
@@ -575,7 +581,8 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					100 + RANDOM_LONG(-5, 5));
+					100 + RANDOM_LONG(-5, 5)
+				);
 
 				Vector vecArmPos, vecArmAng;
 				GetAttachment(0, vecArmPos, vecArmAng);
@@ -591,7 +598,8 @@ void CAGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 					1.0,
 					ATTN_NORM,
 					0,
-					100 + RANDOM_LONG(-5, 5));
+					100 + RANDOM_LONG(-5, 5)
+				);
 			}
 		}
 		break;
@@ -722,7 +730,8 @@ Schedule_t slAGruntStandoff[] = {
 	 bits_COND_CAN_RANGE_ATTACK1 | bits_COND_CAN_MELEE_ATTACK1 | bits_COND_SEE_ENEMY | bits_COND_NEW_ENEMY |
 		 bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
-	 "Agrunt Standoff"}};
+	 "Agrunt Standoff"}
+};
 
 //=========================================================
 // Suppress
@@ -975,7 +984,8 @@ void CAGrunt::StartTask(Task_t* pTask)
 					m_vecEnemyLKP,
 					ignore_monsters,
 					ENT(pev),
-					&tr);
+					&tr
+				);
 				if ( tr.flFraction == 1.0 )
 				{
 					MakeIdealYaw(Vector(pev->origin) + Vector(gpGlobals->v_right) * 128);
@@ -990,7 +1000,8 @@ void CAGrunt::StartTask(Task_t* pTask)
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
-						&tr);
+						&tr
+					);
 					if ( tr.flFraction == 1.0 )
 					{
 						MakeIdealYaw(Vector(pev->origin) - Vector(gpGlobals->v_right) * 128);
@@ -1006,7 +1017,8 @@ void CAGrunt::StartTask(Task_t* pTask)
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
-						&tr);
+						&tr
+					);
 					if ( tr.flFraction == 1.0 )
 					{
 						MakeIdealYaw(Vector(pev->origin) + Vector(gpGlobals->v_right) * 256);
@@ -1022,7 +1034,8 @@ void CAGrunt::StartTask(Task_t* pTask)
 						m_vecEnemyLKP,
 						ignore_monsters,
 						ENT(pev),
-						&tr);
+						&tr
+					);
 					if ( tr.flFraction == 1.0 )
 					{
 						MakeIdealYaw(Vector(pev->origin) - Vector(gpGlobals->v_right) * 256);

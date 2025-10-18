@@ -262,19 +262,27 @@ void LinkUserMessages(void)
 
 LINK_ENTITY_TO_CLASS(player, CBasePlayer)
 
-void CBasePlayer::Pain(void)
+void CBasePlayer::Pain(int bitsDamageType)
 {
 	if ( m_flNextPainTime > gpGlobals->time )
 	{
 		return;
 	}
 
-	const PlayerSoundId soundGender =
-		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::PainFemale : PlayerSoundId::PainMale;
+	const char* path = nullptr;
 
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	if ( bitsDamageType & DMG_DROWN )
+	{
+		path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::Drown);
+	}
+	else
+	{
+		const PlayerSoundId soundGender =
+			m_Gender == CharacterGender::FEMALE ? PlayerSoundId::PainFemale : PlayerSoundId::PainMale;
+		path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	}
+
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
-
 	m_flNextPainTime = gpGlobals->time + 0.45f;
 }
 
@@ -362,12 +370,22 @@ int TrainSpeed(int iSpeed, int iMax)
 	return iRet;
 }
 
-void CBasePlayer::DeathSound(void)
+void CBasePlayer::DeathSound(int bitsDamageType)
 {
-	const PlayerSoundId soundGender =
-		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::DieFemale : PlayerSoundId::DieMale;
+	const char* path = nullptr;
 
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	if ( bitsDamageType & DMG_DROWN )
+	{
+		path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::Drown);
+	}
+	else
+	{
+		const PlayerSoundId soundGender =
+			m_Gender == CharacterGender::FEMALE ? PlayerSoundId::DieFemale : PlayerSoundId::DieMale;
+
+		path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	}
+
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
 
 	// play one of the suit death alarms
@@ -556,9 +574,9 @@ int CBasePlayer::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 	m_bitsDamageType |= bitsDamage;  // Save this so we can report it to the client
 	m_bitsHUDDamage = -1;  // make sure the damage bits get resent
 
-	if ( !(bitsDamage & DMG_DROWN) && pev->health > 0 )
+	if ( pev->health > 0 )
 	{
-		Pain();
+		Pain(bitsDamage);
 	}
 
 	while ( fTookDamage && (!ftrivial || (bitsDamage & DMG_TIMEBASED)) && ffound && bitsDamage )
@@ -993,14 +1011,15 @@ void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, f
 	}
 
 	// NFTODO: Make damage threshold a cvar?
-	if ( (bitsDamageType & (DMG_BLAST | DMG_CLUB)) || damageApplied >= 20.0f )
+	if ( (bitsDamageType & (DMG_BLAST | DMG_CLUB)) || damageApplied >= 30.0f )
 	{
-		DeathSound();
+		DeathSound(bitsDamageType);
 	}
 	else
 	{
-		m_flNextPainTime = gpGlobals->time;
-		Pain();
+		// Only minor damage killed us, so play a pain sound instead.
+		m_flNextPainTime = gpGlobals->time - 1.0f;
+		Pain(bitsDamageType);
 	}
 
 	pev->angles[PITCH] = 0;

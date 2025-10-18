@@ -417,7 +417,7 @@ public:
 	void RouteClear(void);
 	void RouteNew(void);
 
-	virtual void DeathSound(void)
+	virtual void DeathSound(int)
 	{
 		return;
 	};

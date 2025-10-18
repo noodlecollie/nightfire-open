@@ -152,7 +152,8 @@ void CSquidSpit::Touch(CBaseEntity* pOther)
 			Vector(pev->origin) + Vector(pev->velocity) * 10,
 			dont_ignore_monsters,
 			ENT(pev),
-			&tr);
+			&tr
+		);
 		UTIL_DecalTrace(&tr, DECAL_SPIT1 + RANDOM_LONG(0, 1));
 
 		// make some flecks
@@ -200,7 +201,7 @@ public:
 	void HandleAnimEvent(MonsterEvent_t* pEvent);
 	void IdleSound(void);
 	void PainSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void AlertSound(void);
 	void AttackSound(void);
 	void StartTask(Task_t* pTask);
@@ -715,7 +716,7 @@ void CBullsquid::Precache()
 //=========================================================
 // DeathSound
 //=========================================================
-void CBullsquid::DeathSound(void)
+void CBullsquid::DeathSound(int)
 {
 	switch ( RANDOM_LONG(0, 2) )
 	{
@@ -864,7 +865,8 @@ Schedule_t slSquidEat[] = {
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.
 	 bits_SOUND_MEAT | bits_SOUND_CARCASS,
-	 "SquidEat"}};
+	 "SquidEat"}
+};
 
 // this is a bit different than just Eat. We use this schedule when the food is far away, occluded, or behind
 // the squid. This schedule plays a sniff animation before going to the source of food.
@@ -893,7 +895,8 @@ Schedule_t slSquidSniffAndEat[] = {
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.
 	 bits_SOUND_MEAT | bits_SOUND_CARCASS,
-	 "SquidSniffAndEat"}};
+	 "SquidSniffAndEat"}
+};
 
 // squid does this to stinky things.
 Task_t tlSquidWallow[] = {
@@ -918,7 +921,8 @@ Schedule_t slSquidWallow[] = {
 	 // even though HEAR_SOUND/SMELL FOOD doesn't break this schedule, we need this mask
 	 // here or the monster won't detect these sounds at ALL while running this schedule.
 	 bits_SOUND_GARBAGE,
-	 "SquidWallow"}};
+	 "SquidWallow"}
+};
 
 DEFINE_CUSTOM_SCHEDULES(CBullsquid) {
 	slSquidRangeAttack1,
@@ -927,7 +931,8 @@ DEFINE_CUSTOM_SCHEDULES(CBullsquid) {
 	slSquidSeeCrab,
 	slSquidEat,
 	slSquidSniffAndEat,
-	slSquidWallow};
+	slSquidWallow
+};
 
 IMPLEMENT_CUSTOM_SCHEDULES(CBullsquid, CBaseMonster)
 

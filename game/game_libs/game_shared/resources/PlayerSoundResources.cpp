@@ -46,6 +46,10 @@ static constexpr const char* const BondDie[] = {
 	"player/bond_die4.wav",
 };
 
+static constexpr const char* const Drown[] = {
+	"player/drown.wav",
+};
+
 CPlayerSoundResources::CPlayerSoundResources() :
 	CBaseResourceCollection<PlayerSoundId, static_cast<size_t>(PlayerSoundId::Count)>()
 {
@@ -55,4 +59,5 @@ CPlayerSoundResources::CPlayerSoundResources() :
 	InitialiseResources(PlayerSoundId::PainMale, MalePain);
 	InitialiseResources(PlayerSoundId::DieBond, BondDie);
 	InitialiseResources(PlayerSoundId::PainBond, BondPain);
+	InitialiseResources(PlayerSoundId::Drown, Drown);
 }

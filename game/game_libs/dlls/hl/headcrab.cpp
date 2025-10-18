@@ -72,7 +72,7 @@ public:
 	Vector Center(void);
 	Vector BodyTarget(const Vector& posSrc);
 	void PainSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void IdleSound(void);
 	void AlertSound(void);
 	void PrescheduleThink(void);
@@ -215,8 +215,8 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 			UTIL_SetOrigin(
 				pev,
-				Vector(pev->origin) +
-					Vector(0, 0, 1));  // take him off ground so engine doesn't instantly reset onground
+				Vector(pev->origin) + Vector(0, 0, 1)
+			);  // take him off ground so engine doesn't instantly reset onground
 
 			UTIL_MakeVectors(pev->angles);
 
@@ -271,7 +271,8 @@ void CHeadCrab::HandleAnimEvent(MonsterEvent_t* pEvent)
 					GetSoundVolue(),
 					ATTN_IDLE,
 					0,
-					GetVoicePitch());
+					GetVoicePitch()
+				);
 			}
 
 			VectorCopy(vecJumpDir, pev->velocity);
@@ -374,7 +375,8 @@ void CHeadCrab::LeapTouch(CBaseEntity* pOther)
 			GetSoundVolue(),
 			ATTN_IDLE,
 			0,
-			GetVoicePitch());
+			GetVoicePitch()
+		);
 
 		pOther->TakeDamage(pev, pev, GetDamageAmount(), DMG_SLASH);
 	}
@@ -468,7 +470,8 @@ void CHeadCrab::IdleSound(void)
 		GetSoundVolue(),
 		ATTN_IDLE,
 		0,
-		GetVoicePitch());
+		GetVoicePitch()
+	);
 }
 
 //=========================================================
@@ -483,7 +486,8 @@ void CHeadCrab::AlertSound(void)
 		GetSoundVolue(),
 		ATTN_IDLE,
 		0,
-		GetVoicePitch());
+		GetVoicePitch()
+	);
 }
 
 //=========================================================
@@ -498,13 +502,14 @@ void CHeadCrab::PainSound(void)
 		GetSoundVolue(),
 		ATTN_IDLE,
 		0,
-		GetVoicePitch());
+		GetVoicePitch()
+	);
 }
 
 //=========================================================
 // DeathSound
 //=========================================================
-void CHeadCrab::DeathSound(void)
+void CHeadCrab::DeathSound(int)
 {
 	EMIT_SOUND_DYN(
 		edict(),
@@ -513,7 +518,8 @@ void CHeadCrab::DeathSound(void)
 		GetSoundVolue(),
 		ATTN_IDLE,
 		0,
-		GetVoicePitch());
+		GetVoicePitch()
+	);
 }
 
 Schedule_t* CHeadCrab::GetScheduleOfType(int Type)

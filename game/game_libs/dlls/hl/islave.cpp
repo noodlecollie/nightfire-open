@@ -57,7 +57,7 @@ public:
 	void TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 	void AlertSound(void);
 	void IdleSound(void);
@@ -246,7 +246,7 @@ void CISlave::PainSound(void)
 //=========================================================
 // DieSound
 //=========================================================
-void CISlave::DeathSound(void)
+void CISlave::DeathSound(int)
 {
 	EMIT_SOUND_DYN(
 		ENT(pev),

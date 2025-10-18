@@ -10,6 +10,7 @@ enum class PlayerSoundId
 	DieMale,
 	PainFemale,
 	DieFemale,
+	Drown,
 	Count
 };
 

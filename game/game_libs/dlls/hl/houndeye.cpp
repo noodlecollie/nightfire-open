@@ -83,7 +83,7 @@ public:
 	void SetYawSpeed(void);
 	void WarmUpSound(void);
 	void AlertSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void WarnSound(void);
 	void PainSound(void);
 	void IdleSound(void);
@@ -453,7 +453,7 @@ void CHoundeye::AlertSound(void)
 //=========================================================
 // DeathSound
 //=========================================================
-void CHoundeye::DeathSound(void)
+void CHoundeye::DeathSound(int)
 {
 	switch ( RANDOM_LONG(0, 2) )
 	{
@@ -640,8 +640,8 @@ void CHoundeye::SonicAttack(void)
 						// damage and get pissed.
 						flAdjustedDamage *= 0.5;
 					}
-					else if (
-						!FClassnameIs(pEntity->pev, "func_breakable") && !FClassnameIs(pEntity->pev, "func_pushable") )
+					else if ( !FClassnameIs(pEntity->pev, "func_breakable") &&
+							  !FClassnameIs(pEntity->pev, "func_pushable") )
 					{
 						// do not hurt nonclients through walls, but allow damage to be done to breakables
 						flAdjustedDamage = 0;
@@ -1197,7 +1197,8 @@ Schedule_t* CHoundeye::GetSchedule(void)
 						dont_ignore_monsters,
 						head_hull,
 						ENT(pev),
-						&tr);
+						&tr
+					);
 
 					if ( tr.flFraction == 1.0 )
 					{

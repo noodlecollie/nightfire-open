@@ -752,7 +752,7 @@ int TrainSpeed(int, int)
 {
 	return 0;
 }
-void CBasePlayer::DeathSound(void)
+void CBasePlayer::DeathSound(int)
 {
 }
 int CBasePlayer::TakeHealth(float, int)

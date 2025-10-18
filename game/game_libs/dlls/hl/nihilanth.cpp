@@ -80,7 +80,7 @@ public:
 	void TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 
 	void PainSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 
 	static const char* pAttackSounds[];  // vocalization: play sometimes when he launches an attack
 	static const char* pBallSounds[];  // the sound of the lightening ball launch
@@ -400,7 +400,7 @@ void CNihilanth::PainSound(void)
 	}
 }
 
-void CNihilanth::DeathSound(void)
+void CNihilanth::DeathSound(int)
 {
 	EMIT_SOUND(edict(), CHAN_VOICE, RANDOM_SOUND_ARRAY(pDeathSounds), 1.0f, 0.1f);
 }
@@ -472,7 +472,7 @@ void CNihilanth::DyingThink(void)
 
 	if ( pev->deadflag == DEAD_NO )
 	{
-		DeathSound();
+		DeathSound(DMG_GENERIC);
 		pev->deadflag = DEAD_DYING;
 
 		m_posDesired.z = m_flMaxZ;

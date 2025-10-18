@@ -109,7 +109,7 @@ public:
 	Schedule_t* GetSchedule(void);
 	MONSTERSTATE GetIdealState(void);
 
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 
 	void TalkInit(void);
@@ -723,7 +723,7 @@ void CScientist::PainSound(void)
 //=========================================================
 // DeathSound
 //=========================================================
-void CScientist::DeathSound(void)
+void CScientist::DeathSound(int)
 {
 	PainSound();
 }

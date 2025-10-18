@@ -68,7 +68,7 @@ public:
 	Schedule_t* GetSchedule(void);
 	MONSTERSTATE GetIdealState(void);
 
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 
 	void TalkInit(void);
@@ -521,7 +521,7 @@ void CBarney::PainSound(void)
 //=========================================================
 // DeathSound
 //=========================================================
-void CBarney::DeathSound(void)
+void CBarney::DeathSound(int)
 {
 	switch ( RANDOM_LONG(0, 2) )
 	{

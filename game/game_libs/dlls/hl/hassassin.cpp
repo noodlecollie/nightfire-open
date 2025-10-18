@@ -79,7 +79,7 @@ public:
 	void StartTask(Task_t* pTask);
 	void RunAI(void);
 	void RunTask(Task_t* pTask);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void IdleSound(void);
 	CUSTOM_SCHEDULES
 
@@ -126,7 +126,7 @@ IMPLEMENT_SAVERESTORE(CHAssassin, CBaseMonster)
 //=========================================================
 // DieSound
 //=========================================================
-void CHAssassin::DeathSound(void)
+void CHAssassin::DeathSound(int)
 {
 }
 
@@ -199,7 +199,8 @@ void CHAssassin::Shoot(void)
 		vecShellVelocity,
 		pev->angles[YAW],
 		m_iShell,
-		TE_BOUNCE_SHELL);
+		TE_BOUNCE_SHELL
+	);
 
 	FireBullets(
 		1,
@@ -207,7 +208,8 @@ void CHAssassin::Shoot(void)
 		vecShootDir,
 		Vector(m_flDiviation, m_flDiviation, m_flDiviation),
 		2048,
-		BULLET_MONSTER_9MM);  // shoot +-8 degrees
+		BULLET_MONSTER_9MM
+	);  // shoot +-8 degrees
 
 	switch ( RANDOM_LONG(0, 1) )
 	{
@@ -247,7 +249,8 @@ void CHAssassin::HandleAnimEvent(MonsterEvent_t* pEvent)
 				pev,
 				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 34 + Vector(0, 0, 32),
 				m_vecTossVelocity,
-				2.0);
+				2.0
+			);
 
 			m_flNextGrenadeCheck =
 				gpGlobals->time + 6;  // wait six seconds before even looking again to see if a grenade can be thrown.
@@ -547,7 +550,8 @@ BOOL CHAssassin::CheckMeleeAttack1(float, float flDist)
 			dont_ignore_monsters,
 			human_hull,
 			ENT(pev),
-			&tr);
+			&tr
+		);
 
 		if ( tr.fStartSolid || tr.flFraction < 1.0 )
 		{
@@ -613,7 +617,8 @@ BOOL CHAssassin::CheckRangeAttack2(float, float flDist)
 			GetGunPosition(),
 			m_hEnemy->Center(),
 			flDist,
-			0.5);  // use dist as speed to get there in 1 second
+			0.5
+		);  // use dist as speed to get there in 1 second
 
 		if ( vecToss != g_vecZero )
 		{

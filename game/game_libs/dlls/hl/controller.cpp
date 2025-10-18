@@ -79,7 +79,7 @@ public:
 	void AlertSound(void);
 	void IdleSound(void);
 	void AttackSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 
 	static const char* pAttackSounds[];
 	static const char* pIdleSounds[];
@@ -88,7 +88,7 @@ public:
 	static const char* pDeathSounds[];
 
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken);
 	void GibMonster(void);
 
 	CSprite* m_pBall[2];  // hand balls
@@ -233,7 +233,7 @@ void CController::AttackSound(void)
 	EMIT_SOUND_ARRAY_DYN(CHAN_VOICE, pAttackSounds);
 }
 
-void CController::DeathSound(void)
+void CController::DeathSound(int)
 {
 	EMIT_SOUND_ARRAY_DYN(CHAN_VOICE, pDeathSounds);
 }
