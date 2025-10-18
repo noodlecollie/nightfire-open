@@ -33,7 +33,8 @@ typedef int (*STUDIOAPI)(
 	sv_blending_interface_t**,
 	server_studio_api_t*,
 	float (*transform)[3][4],
-	float (*bones)[MAXSTUDIOBONES][3][4]);
+	float (*bones)[MAXSTUDIOBONES][3][4]
+);
 
 typedef struct mstudiocache_s
 {
@@ -86,7 +87,8 @@ void R_StudioCalcBoneQuaternion(
 	const mstudiobone_t* pbone,
 	const mstudioanim_t* panim,
 	const float* adj,
-	vec4_t q)
+	vec4_t q
+)
 {
 	vec3_t angles1;
 	vec3_t angles2;
@@ -176,7 +178,8 @@ void R_StudioCalcBonePosition(
 	const mstudiobone_t* pbone,
 	const mstudioanim_t* panim,
 	const vec3_t adj,
-	vec3_t pos)
+	vec3_t pos
+)
 {
 	vec3_t origin1;
 	vec3_t origin2;
@@ -330,7 +333,8 @@ static void Mod_AddToStudioCache(
 	byte* pblending,
 	model_t* model,
 	hull_t* hull,
-	int numhitboxes)
+	int numhitboxes
+)
 {
 	mstudiocache_t* pCache;
 
@@ -375,7 +379,8 @@ static mstudiocache_t* Mod_CheckStudioCache(
 	vec3_t origin,
 	vec3_t size,
 	byte* controller,
-	byte* blending)
+	byte* blending
+)
 {
 	mstudiocache_t* pCached;
 	int i;
@@ -466,7 +471,8 @@ hull_t* Mod_HullForStudio(
 	byte* pcontroller,
 	byte* pblending,
 	int* numhitboxes,
-	edict_t* pEdict)
+	edict_t* pEdict
+)
 {
 	vec3_t angles2;
 	mstudiocache_t* bonecache;
@@ -486,11 +492,13 @@ hull_t* Mod_HullForStudio(
 			memcpy(
 				studio_planes,
 				&cache_planes[bonecache->current_plane],
-				bonecache->numhitboxes * sizeof(mplane_t) * 6);
+				bonecache->numhitboxes * sizeof(mplane_t) * 6
+			);
 			memcpy(
 				studio_hull_hitgroup,
 				&cache_hull_hitgroup[bonecache->current_hull],
-				bonecache->numhitboxes * sizeof(uint));
+				bonecache->numhitboxes * sizeof(uint)
+			);
 			memcpy(studio_hull, &cache_hull[bonecache->current_hull], bonecache->numhitboxes * sizeof(hull_t));
 
 			*numhitboxes = bonecache->numhitboxes;
@@ -540,7 +548,8 @@ hull_t* Mod_HullForStudio(
 			pblending,
 			model,
 			studio_hull,
-			*numhitboxes);
+			*numhitboxes
+		);
 
 	return studio_hull;
 }
@@ -790,7 +799,8 @@ static void SetUpBones(const edict_t* edict, model_t* mod)
 		controller,
 		blending,
 		-1,
-		edict);
+		edict
+	);
 }
 
 qboolean Mod_GetTransformedHitboxPoints(const edict_t* edict, uint32_t hitboxIndex, Mod_BoxPoints* box)
@@ -938,7 +948,8 @@ static void Mod_StudioCalcRotations(
 	vec4_t* q,
 	mstudioseqdesc_t* pseqdesc,
 	mstudioanim_t* panim,
-	float f)
+	float f
+)
 {
 	int i, j, frame;
 	mstudiobone_t* pbone;
@@ -1023,7 +1034,8 @@ void* R_StudioGetAnim(studiohdr_t* m_pStudioHeader, model_t* m_pSubModel, mstudi
 			modelpath,
 			modelname,
 			pseqdesc->seqgroup / 10,
-			pseqdesc->seqgroup % 10);
+			pseqdesc->seqgroup % 10
+		);
 
 		buf = FS_LoadFile(filepath, &filesize, false);
 		if ( !buf || !filesize )
@@ -1057,7 +1069,8 @@ static void SV_StudioSetupBones(
 	const byte* pcontroller,
 	const byte* pblending,
 	int iBone,
-	const edict_t* pEdict)
+	const edict_t* pEdict
+)
 {
 	int i, j, numbones = 0;
 	int boneused[MAXSTUDIOBONES];
@@ -1088,7 +1101,8 @@ static void SV_StudioSetupBones(
 				S_WARN "SV_StudioSetupBones: sequence %i/%i out of range for model %s\n",
 				sequence,
 				mod_studiohdr->numseq,
-				pModel->name);
+				pModel->name
+			);
 		sequence = 0;
 	}
 
@@ -1203,7 +1217,8 @@ void Mod_StudioGetAttachment(const edict_t* e, int iAtt, float* origin, float* a
 		e->v.controller,
 		e->v.blending,
 		pAtt->bone,
-		e);
+		e
+	);
 
 	Matrix3x4_LoadIdentity(localPose);
 	Matrix3x4_SetOrigin(localPose, pAtt->org[0], pAtt->org[1], pAtt->org[2]);
@@ -1239,7 +1254,8 @@ void Mod_GetBonePosition(const edict_t* e, int iBone, float* origin, float* angl
 		e->v.controller,
 		e->v.blending,
 		iBone,
-		e);
+		e
+	);
 
 	if ( origin )
 		Matrix3x4_OriginFromMatrix(studio_bones[iBone], origin);
@@ -1282,7 +1298,8 @@ static void Mod_StudioAccumulateBoneVerts(
 	int* numverts,
 	vec3_t bone_mins,
 	vec3_t bone_maxs,
-	int* numbones)
+	int* numbones
+)
 {
 	vec3_t delta;
 	vec3_t point;
@@ -1651,13 +1668,19 @@ void Mod_LoadStudioModel(model_t* mod, const void* buffer, qboolean* loaded)
 	Q_snprintf(poolname, sizeof(poolname), "^2%s^7", loadmodel->name);
 
 	if ( loaded )
+	{
 		*loaded = false;
+	}
+
 	loadmodel->mempool = Mem_AllocPool(poolname);
 	loadmodel->type = mod_studio;
 
 	phdr = R_StudioLoadHeader(mod, buffer);
+
 	if ( !phdr )
+	{
 		return;  // bad model
+	}
 
 	if ( !Host_IsDedicated() )
 	{
@@ -1754,7 +1777,9 @@ void Mod_LoadStudioModel(model_t* mod, const void* buffer, qboolean* loaded)
 	loadmodel->flags = phdr->flags;  // copy header flags
 
 	if ( loaded )
+	{
 		*loaded = true;
+	}
 }
 
 static sv_blending_interface_t gBlendAPI = {

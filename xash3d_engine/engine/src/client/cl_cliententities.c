@@ -167,7 +167,8 @@ void ClientEntities_LoadForBSP(model_t* model)
 			{
 				Con_Printf(
 					S_WARN "ClientEntities_LoadForBSP: Client-side model at index %zu had invalid model name\n",
-					index);
+					index
+				);
 
 				continue;
 			}
@@ -179,7 +180,8 @@ void ClientEntities_LoadForBSP(model_t* model)
 					"ClientEntities_LoadForBSP: MAX_STATIC_ENTITIES limit of %d exceeded. %zu client-side models will "
 					"not be loaded.\n",
 					MAX_STATIC_ENTITIES,
-					model->clientEntities->modelCount - index);
+					model->clientEntities->modelCount - index
+				);
 
 				break;
 			}
@@ -198,7 +200,8 @@ void ClientEntities_LoadForBSP(model_t* model)
 			{
 				Con_Printf(
 					S_WARN "ClientEntities_LoadForBSP: Client-side sound at index %zu had invalid sound name\n",
-					index);
+					index
+				);
 
 				continue;
 			}

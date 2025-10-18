@@ -227,7 +227,7 @@ static qboolean R_StudioComputeBBox(vec3_t bbox[8])
 		return false;
 
 	// check if we have valid mins\maxs
-	if ( !VectorCompare(vec3_origin, RI.currentmodel->mins) )
+	if ( !VectorCompare(vec3_origin, RI.currentmodel->mins) || !VectorCompare(vec3_origin, RI.currentmodel->maxs) )
 	{
 		// clipping bounding box
 		VectorCopy(RI.currentmodel->mins, mins);
@@ -874,7 +874,8 @@ void R_StudioCalcRotations(
 	vec4_t* q,
 	mstudioseqdesc_t* pseqdesc,
 	mstudioanim_t* panim,
-	float f)
+	float f
+)
 {
 	int i, frame;
 	float adj[MAXSTUDIOCONTROLLERS];
@@ -974,11 +975,13 @@ void R_StudioMergeBones(cl_entity_t* e, model_t* submodel)
 				Matrix3x4_ConcatTransforms(
 					g_studio.bonestransform[i],
 					g_studio.bonestransform[pbones[i].parent],
-					bonematrix);
+					bonematrix
+				);
 				Matrix3x4_ConcatTransforms(
 					g_studio.lighttransform[i],
 					g_studio.lighttransform[pbones[i].parent],
-					bonematrix);
+					bonematrix
+				);
 			}
 		}
 	}
@@ -1141,11 +1144,13 @@ void R_StudioSetupBones(cl_entity_t* e)
 			Matrix3x4_ConcatTransforms(
 				g_studio.bonestransform[i],
 				g_studio.bonestransform[pbones[i].parent],
-				bonematrix);
+				bonematrix
+			);
 			Matrix3x4_ConcatTransforms(
 				g_studio.lighttransform[i],
 				g_studio.lighttransform[pbones[i].parent],
-				bonematrix);
+				bonematrix
+			);
 		}
 	}
 }
@@ -2407,14 +2412,16 @@ static void R_StudioDrawArrays(uint startverts, uint startelems)
 			g_studio.numverts,
 			g_studio.numelems - startelems,
 			GL_UNSIGNED_SHORT,
-			&g_studio.arrayelems[startelems]);
+			&g_studio.arrayelems[startelems]
+		);
 	else
 #endif
 		pglDrawElements(
 			GL_TRIANGLES,
 			g_studio.numelems - startelems,
 			GL_UNSIGNED_SHORT,
-			&g_studio.arrayelems[startelems]);
+			&g_studio.arrayelems[startelems]
+		);
 	pglDisableClientState(GL_VERTEX_ARRAY);
 	pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	if ( !(g_nForceFaceFlags & STUDIO_NF_CHROME) )
@@ -2717,7 +2724,7 @@ static void R_StudioDrawAbsBBox(void)
 		return;
 
 	GL_Bind(XASH_TEXTURE0, tr.whiteTexture);
-	TriColor4f(0.5f, 0.5f, 1.0f, 0.5f);
+	TriColor4f(0.5f, 0.5f, 1.0f, 0.7f);
 	TriRenderMode(kRenderTransAdd);
 
 	TriBegin(TRI_QUADS);
