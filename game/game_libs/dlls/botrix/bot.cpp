@@ -72,7 +72,11 @@ namespace Botrix
 		m_bDontThrowObjects(false),
 		m_bFeatureAttackDuckEnabled(iIntelligence < EBotNormal),
 		m_bFeatureWeaponCheck(true),
-		m_bSaidNoWaypoints(false)
+		m_bSaidNoWaypoints(false),
+		m_WeaponPickupEvent(Events::CEventSystem::INVALID_ID),
+		m_AmmoPickupEvent(Events::CEventSystem::INVALID_ID),
+		m_HealthPickupEvent(Events::CEventSystem::INVALID_ID),
+		m_ArmourPickupEvent(Events::CEventSystem::INVALID_ID)
 	{
 		m_aPickedItems.reserve(16);
 		for ( TItemType i = 0; i < EItemTypeCollisionTotal; ++i )
@@ -1003,6 +1007,8 @@ namespace Botrix
 
 			default:
 			{
+				const char* classname = cItem.pItemClass ? cItem.pItemClass->sClassName.c_str() : "<unknown>";
+				BLOG_W("%s -> Encountered unrecognised pickup with classname %s", GetName(), classname);
 				BASSERT(false);
 				break;
 			}
@@ -1037,6 +1043,13 @@ namespace Botrix
 
 		TItemIndex itemIndex = 0;
 		TItemType itemType = CItems::GetItemFromId(ENTINDEX(edict), &itemIndex);
+
+		if ( itemType >= EItemTypeKnownTotal )
+		{
+			BLOG_W("Ignoring bot %s attempting to pick up unknown item %s\n", GetName(), STRING(edict->v.classname));
+			return;
+		}
+
 		const good::vector<CItem>& itemVector = CItems::GetItems(itemType);
 		const CItem& item = itemVector[itemIndex];
 
@@ -1804,7 +1817,7 @@ namespace Botrix
 
 		const char* szWeapon = m_PlayerInfo.GetWeaponName();
 		bool bOk = (szWeapon && (sWeapon == szWeapon));
-		BotDebug("%s -> Set active weapon %s: %s.", GetName(), sWeapon.c_str(), bOk ? "ok" : "error");
+		BotTrace("%s -> Set active weapon %s: %s.", GetName(), sWeapon.c_str(), bOk ? "ok" : "error");
 		return bOk;
 	}
 
@@ -2317,6 +2330,7 @@ namespace Botrix
 				}
 			}
 		}
+
 		return bArrived;
 	}
 
@@ -3782,10 +3796,10 @@ namespace Botrix
 				else
 				{
 					BotDebug(
-						"%s -> New task: %s <%s>, waypoint %d (current %d).",
+						"%s -> New task: %s with class %s. Destination waypoint = %d (current = %d).",
 						GetName(),
 						CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
-						pEntityClass ? pEntityClass->sClassName.c_str() : "null",
+						pEntityClass ? pEntityClass->sClassName.c_str() : "n/a",
 						m_iTaskDestination,
 						iCurrentWaypoint
 					);

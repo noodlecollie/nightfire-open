@@ -132,7 +132,6 @@ namespace Botrix
 	int CItems::m_iCurrentEntity;
 	int CItems::m_iMaxEntityIndex = MAX_EDICTS;
 	bool CItems::m_bMapLoaded = false;
-	good::vector<edict_t*> CItems::m_aNewEntities(16);
 
 	//----------------------------------------------------------------------------------------------------------------
 	void CItems::PrintClasses()
@@ -226,7 +225,6 @@ namespace Botrix
 		}
 
 		m_aUsedItems.reset();
-		m_aNewEntities.clear();
 		m_bMapLoaded = false;
 	}
 
@@ -259,12 +257,6 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CItems::Update()
 	{
-		for ( int i = 0; i < m_aNewEntities.size(); ++i )
-		{
-			CheckNewEntity(m_aNewEntities[i]);
-		}
-
-		m_aNewEntities.clear();
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -858,7 +850,7 @@ namespace Botrix
 	{
 		if ( m_bMapLoaded && ent )
 		{
-			m_aNewEntities.push_back(ent);
+			CheckNewEntity(ent);
 		}
 	}
 
@@ -891,13 +883,6 @@ namespace Botrix
 				m_iFreeIndex[EItemTypeWeapon] = i;
 				break;
 			}
-		}
-
-		good::vector<edict_t*>::iterator it = good::find(m_aNewEntities, ent);
-
-		if ( it != m_aNewEntities.end() )
-		{
-			m_aNewEntities.erase(it);
 		}
 	}
 

@@ -202,6 +202,7 @@ namespace Botrix
 		/// Get array of items of needed type.
 		static const good::vector<CItem>& GetItems(TItemType iEntityType)
 		{
+			ASSERT(iEntityType >= 0 && iEntityType < SIZE_OF_ARRAY_AS_INT(m_aItems));
 			return m_aItems[iEntityType];
 		}
 
@@ -339,7 +340,5 @@ namespace Botrix
 
 		// Will be set to true at MapLoaded() and to false at Clear().
 		static bool m_bMapLoaded;
-
-		static good::vector<edict_t*> m_aNewEntities;
 	};
 }  // namespace Botrix

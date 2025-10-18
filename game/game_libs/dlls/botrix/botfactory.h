@@ -5,6 +5,7 @@
 
 class CBasePlayer;
 class CUtlString;
+struct edict_s;
 
 namespace Botrix
 {
@@ -18,7 +19,7 @@ namespace Botrix
 		static CUtlString GetSanitisedNetName(const CBotProfileTable::ProfileData& profile);
 
 		// Does not set name - assumes this has already been set.
-		static void SetBotAttributesViaProfile(CBasePlayer* bot, const CBotProfileTable::ProfileData& profile);
+		static void SetBotAttributesViaProfile(struct edict_s* bot, const CBotProfileTable::ProfileData& profile);
 
 		// Clears any existing bot profiles and reloads from profiles file.
 		void LoadBotProfiles();

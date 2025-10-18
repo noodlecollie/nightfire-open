@@ -26,7 +26,7 @@ namespace Botrix
 		return MPUtils::SanitisePlayerNetName(profile.playerName);
 	}
 
-	void CBotFactory::SetBotAttributesViaProfile(CBasePlayer* bot, const CBotProfileTable::ProfileData& profile)
+	void CBotFactory::SetBotAttributesViaProfile(struct edict_s* bot, const CBotProfileTable::ProfileData& profile)
 	{
 		if ( !bot )
 		{
@@ -36,8 +36,8 @@ namespace Botrix
 		// Annoyingly this takes a non-const char* (can we change this one day?),
 		// but the function just uses it as const internally so it's OK to cast.
 		g_engfuncs.pfnSetClientKeyValue(
-			bot->entindex(),
-			g_engfuncs.pfnGetInfoKeyBuffer(bot->edict()),
+			ENTINDEX(bot),
+			g_engfuncs.pfnGetInfoKeyBuffer(bot),
 			"model",
 			const_cast<char*>(profile.skin.String())
 		);
@@ -132,7 +132,7 @@ namespace Botrix
 			ALERT(at_error, "Bot %s was not a CBasePlayer!\n", name.Get());
 		}
 
-		SetBotAttributesViaProfile(basePlayer, *profile);
+		SetBotAttributesViaProfile(basePlayer->edict(), *profile);
 
 		ALERT(at_console, "Added bot '%s'\n", STRING(pBot->GetEdict()->v.netname));
 		return true;

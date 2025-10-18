@@ -32,7 +32,7 @@ namespace Botrix
 
 	StringVector CMod::aClassNames;
 
-	bool CMod::bIntelligenceInBotName = true;
+	bool CMod::bIntelligenceInBotName = false;
 	bool CMod::bHeadShotDoesMoreDamage = true;
 
 	float CMod::fSpawnProtectionTime = 0;

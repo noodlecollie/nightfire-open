@@ -345,8 +345,8 @@ namespace Botrix
 		}
 
 		bAddingBot = true;
-		CPlayer* pBot = CMod::AddBot(szName, iIntelligence, iTeam, argc, argv);
-		CBotFactory::SetBotAttributesViaProfile(pBot->GetPlayerClassPtr(), profile);
+		CPlayer* pBot = CMod::AddBot(nameToUse.String(), iIntelligence, iTeam, argc, argv);
+		CBotFactory::SetBotAttributesViaProfile(pBot->GetEdict(), profile);
 		ClientPutInServer(pBot->GetEdict());
 		bAddingBot = false;
 
