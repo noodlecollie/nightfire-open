@@ -548,9 +548,13 @@ namespace Botrix
 	private:
 		void HandlePickedUpWeaponEvent(const Events::CEvent& event);
 		void HandlePickedUpAmmoEvent(const Events::CEvent& event);
+		void HandlePickedUpHealthEvent(const Events::CEvent& event);
+		void HandlePickedUpArmourEvent(const Events::CEvent& event);
 
 		size_t m_WeaponPickupEvent;
 		size_t m_AmmoPickupEvent;
+		size_t m_HealthPickupEvent;
+		size_t m_ArmourPickupEvent;
 	};
 
 	// BOTRIX_TODO: Rename

@@ -25,7 +25,6 @@ namespace Botrix
 		{
 			m_aFrameEvents.Purge();
 			aTeamsNames.clear();
-			aBotNames.clear();
 		}
 
 		/// Called when map finished loading items and waypoints.
@@ -66,9 +65,6 @@ namespace Botrix
 			return -1;
 		}
 
-		/// Get random bot name from [General] section, key bot_names.
-		static const good::string& GetRandomBotName(TBotIntelligence iIntelligence);
-
 		static CPlayer*
 		AddBot(const char* szName, TBotIntelligence iIntelligence, TTeam iTeam, int iParamsCount, const char** aParams);
 
@@ -81,7 +77,6 @@ namespace Botrix
 		static bool bRemoveWeapons;  ///< If true, will remove all weapons from the bot on respawn. Can be set by a
 									 ///< console command.
 
-		static StringVector aBotNames;  ///< Available bot names.
 		static StringVector aClassNames;  ///< Name of player's classes.
 
 		static bool bIntelligenceInBotName;  ///< Use bot's intelligence as part of his name.

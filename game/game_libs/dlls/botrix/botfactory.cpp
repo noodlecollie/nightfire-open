@@ -21,6 +21,28 @@ namespace Botrix
 		CVAR_REGISTER(&bot_profile_file);
 	}
 
+	CUtlString CBotFactory::GetSanitisedNetName(const CBotProfileTable::ProfileData& profile)
+	{
+		return MPUtils::SanitisePlayerNetName(profile.playerName);
+	}
+
+	void CBotFactory::SetBotAttributesViaProfile(CBasePlayer* bot, const CBotProfileTable::ProfileData& profile)
+	{
+		if ( !bot )
+		{
+			return;
+		}
+
+		// Annoyingly this takes a non-const char* (can we change this one day?),
+		// but the function just uses it as const internally so it's OK to cast.
+		g_engfuncs.pfnSetClientKeyValue(
+			bot->entindex(),
+			g_engfuncs.pfnGetInfoKeyBuffer(bot->edict()),
+			"model",
+			const_cast<char*>(profile.skin.String())
+		);
+	}
+
 	void CBotFactory::LoadBotProfiles()
 	{
 		const char* fileName = bot_profile_file.string;
@@ -75,6 +97,11 @@ namespace Botrix
 		return CreateBot(m_ProfileTable.GetProfile(profileName), playerName);
 	}
 
+	CBotProfileTable& CBotFactory::ProfileTable()
+	{
+		return m_ProfileTable;
+	}
+
 	bool CBotFactory::CreateBot(const CBotProfileTable::ProfileData* profile, const CUtlString& playerName)
 	{
 		CUtlString name("Bot");
@@ -105,37 +132,10 @@ namespace Botrix
 			ALERT(at_error, "Bot %s was not a CBasePlayer!\n", name.Get());
 		}
 
-		SetBotAttributesViaProfile(basePlayer, profile);
+		SetBotAttributesViaProfile(basePlayer, *profile);
 
 		ALERT(at_console, "Added bot '%s'\n", STRING(pBot->GetEdict()->v.netname));
 		return true;
-	}
-
-	void CBotFactory::SetBotAttributesViaProfile(CBasePlayer* bot, const CBotProfileTable::ProfileData* profile)
-	{
-		if ( !bot || !profile )
-		{
-			return;
-		}
-
-		SetBotSkin(bot, profile->skin);
-	}
-
-	void CBotFactory::SetBotSkin(CBasePlayer* bot, const CUtlString& skin)
-	{
-		if ( !bot )
-		{
-			return;
-		}
-
-		// Annoyingly this takes a non-const char* (can we change this one day?),
-		// but the function just uses it as const internally so it's OK to cast.
-		g_engfuncs.pfnSetClientKeyValue(
-			bot->entindex(),
-			g_engfuncs.pfnGetInfoKeyBuffer(bot->edict()),
-			"model",
-			(char*)CUtlString(skin).String()
-		);
 	}
 
 	void CBotFactory::RandomProfileNameList(CUtlVector<CUtlString>& list, size_t count)

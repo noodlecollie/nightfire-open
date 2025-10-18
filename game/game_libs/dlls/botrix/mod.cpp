@@ -15,7 +15,6 @@
 
 namespace Botrix
 {
-	StringVector CMod::aBotNames;
 	CUtlVector<std::pair<TFrameEvent, TPlayerIndex>> CMod::m_aFrameEvents;
 
 	bool CMod::m_bMapHas[EItemTypeCanPickTotal];  // Health, armor, weapon, ammo.
@@ -87,35 +86,6 @@ namespace Botrix
 				}
 			}
 		}
-	}
-
-	//----------------------------------------------------------------------------------------------------------------
-	const good::string& CMod::GetRandomBotName(TBotIntelligence iIntelligence)
-	{
-		int iIdx = rand() % aBotNames.size();
-
-		for ( int i = iIdx; i < aBotNames.size(); ++i )
-		{
-			if ( !IsNameTaken(aBotNames[i], iIntelligence) )
-			{
-				return aBotNames[i];
-			}
-		}
-
-		for ( int i = iIdx - 1; i >= 0; --i )
-		{
-			if ( !IsNameTaken(aBotNames[i], iIntelligence) )
-			{
-				return aBotNames[i];
-			}
-		}
-
-		if ( iIdx < 0 )  // All names taken.
-		{
-			iIdx = rand() % aBotNames.size();
-		}
-
-		return aBotNames[iIdx];
 	}
 
 	//----------------------------------------------------------------------------------------------------------------

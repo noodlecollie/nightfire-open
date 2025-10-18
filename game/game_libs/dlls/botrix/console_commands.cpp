@@ -3398,30 +3398,48 @@ namespace Botrix
 	{
 		m_sCommand = "add";
 		m_sHelp = "add bot";
+
 		if ( CMod::aClassNames.size() )
+		{
 			m_sDescription = "Optional parameters: (intelligence) (team) (class) (bot-name).";
+		}
 		else
+		{
 			m_sDescription = "Optional parameters: (intelligence) (team) (bot-name).";
+		}
+
 		m_iAccessLevel = FCommandAccessBot;
 
 		StringVector args1;
 		args1.push_back(sRandom);
+
 		for ( TBotIntelligence i = 0; i < EBotIntelligenceTotal; ++i )
+		{
 			args1.push_back(CTypeToString::IntelligenceToString(i).duplicate());
+		}
+
 		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 		m_cAutoCompleteValues.push_back(args1);
 
 		StringVector args2;
+
 		for ( TBotIntelligence i = 0; i < CMod::aTeamsNames.size(); ++i )
+		{
 			args2.push_back(CMod::aTeamsNames[i].duplicate());
+		}
+
 		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 		m_cAutoCompleteValues.push_back(args2);
 
 		if ( CMod::aClassNames.size() > 0 )
 		{
 			StringVector args3;
+
 			for ( TBotIntelligence i = 0; i < CMod::aClassNames.size(); ++i )
+			{
 				args3.push_back(CMod::aClassNames[i].duplicate());
+			}
+
 			m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 			m_cAutoCompleteValues.push_back(args3);
 		}
@@ -3435,7 +3453,9 @@ namespace Botrix
 	TCommandResult CBotAddCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 	{
 		if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+		{
 			return ECommandPerformed;
+		}
 
 		edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
 
@@ -3474,6 +3494,7 @@ namespace Botrix
 		const char* szName = (argc > iArg) ? argv[iArg++] : NULL;
 
 		CPlayer* pBot = CPlayers::AddBot(szName, iTeam, iIntelligence, argc - iArg, &argv[iArg]);
+
 		if ( pBot )
 		{
 			BULOG_I(pEdict, "Bot added: %s.", pBot->GetName());

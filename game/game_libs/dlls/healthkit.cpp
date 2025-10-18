@@ -22,6 +22,9 @@
 #include "player.h"
 #include "items.h"
 #include "gamerules.h"
+#include "gameplay/gameplaySystems.h"
+#include "gameplaySystemsBase.h"
+#include "gameplay/eventSystem.h"
 
 extern int gmsgItemPickup;
 
@@ -73,11 +76,21 @@ BOOL CHealthKit::MyTouch(CBasePlayer* pPlayer)
 		return FALSE;
 	}
 
+	const float oldHealth = pPlayer->pev->health;
+
 	if ( pPlayer->TakeHealth(gSkillData.healthkitCapacity, DMG_GENERIC) )
 	{
 		MESSAGE_BEGIN(MSG_ONE, gmsgItemPickup, NULL, pPlayer->pev);
 		WRITE_STRING(STRING(pev->classname));
 		MESSAGE_END();
+
+		Events::EventData_PlayerPickedUpHealth eventData;
+		eventData.player = pPlayer->edict();
+		eventData.item = edict();
+		eventData.healthAdded = pPlayer->pev->health - oldHealth;
+
+		CGameplaySystemsBase* gps = GameplaySystems::GetBase();
+		gps->EventSystem().SendEvent(std::move(eventData));
 
 		EMIT_SOUND(ENT(pPlayer->pev), CHAN_ITEM, "items/smallmedkit1.wav", 1, ATTN_NORM);
 

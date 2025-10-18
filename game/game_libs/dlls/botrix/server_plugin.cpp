@@ -127,8 +127,6 @@ namespace Botrix
 		good::log::iStdErrLevel = good::ELogLevelWarning;  // Log warnings and errors to stderr.
 		good::log::iLogLevel = good::ELogLevelTrace;  // Trace before loading config.ini
 
-		CMod::aBotNames.push_back("Botrix");
-
 		m_pConsoleCommands = new CBotrixCommand();
 
 		LoadItemsAndWeapons();

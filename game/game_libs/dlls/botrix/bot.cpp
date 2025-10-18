@@ -909,6 +909,7 @@ namespace Botrix
 					cItem.pItemClass->sClassName.c_str(),
 					m_PlayerInfo.GetHealth()
 				);
+
 				break;
 			}
 
@@ -920,69 +921,77 @@ namespace Botrix
 					cItem.pItemClass->sClassName.c_str(),
 					m_PlayerInfo.GetArmorValue()
 				);
+
 				break;
 			}
 
 			case EItemTypeWeapon:
 			{
-				if ( m_bFeatureWeaponCheck )
+				if ( !m_bFeatureWeaponCheck )
 				{
-					TWeaponId iWeapon = CWeapons::AddWeapon(cItem.pItemClass, m_aWeapons);
-					if ( CWeapons::IsValid(iWeapon) )
-					{
-						CWeaponWithAmmo& cWeapon = m_aWeapons[iWeapon];
-
-						BotDebug(
-							"%s -> Picked weapon %s (%d/%d, %d/%d).",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str(),
-							cWeapon.Bullets(CWeapon::PRIMARY),
-							cWeapon.ExtraBullets(CWeapon::PRIMARY),
-							cWeapon.Bullets(CWeapon::SECONDARY),
-							cWeapon.ExtraBullets(CWeapon::SECONDARY)
-						);
-
-						WeaponChoose();
-					}
-					else if ( CMod::aClassNames.size() )
-					{
-						BLOG_W(
-							"%s -> Picked weapon %s, but there is no such weapon for class %s.",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str(),
-							CTypeToString::ClassToString(m_iClass).c_str()
-						);
-					}
-					else
-					{
-						BLOG_W(
-							"%s -> Picked weapon %s, but there is no such weapon.",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str()
-						);
-					}
+					break;
 				}
+
+				TWeaponId iWeapon = CWeapons::AddWeapon(cItem.pItemClass, m_aWeapons);
+
+				if ( CWeapons::IsValid(iWeapon) )
+				{
+					CWeaponWithAmmo& cWeapon = m_aWeapons[iWeapon];
+
+					BotDebug(
+						"%s -> Picked weapon %s (%d/%d, %d/%d).",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str(),
+						cWeapon.Bullets(CWeapon::PRIMARY),
+						cWeapon.ExtraBullets(CWeapon::PRIMARY),
+						cWeapon.Bullets(CWeapon::SECONDARY),
+						cWeapon.ExtraBullets(CWeapon::SECONDARY)
+					);
+
+					WeaponChoose();
+				}
+				else if ( CMod::aClassNames.size() )
+				{
+					BLOG_W(
+						"%s -> Picked weapon %s, but there is no such weapon for class %s.",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str(),
+						CTypeToString::ClassToString(m_iClass).c_str()
+					);
+				}
+				else
+				{
+					BLOG_W(
+						"%s -> Picked weapon %s, but there is no such weapon.",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str()
+					);
+				}
+
 				break;
 			}
 
 			case EItemTypeAmmo:
 			{
-				if ( m_bFeatureWeaponCheck )
+				if ( !m_bFeatureWeaponCheck )
 				{
-					if ( CWeapons::AddAmmo(cItem.pItemClass, m_aWeapons) )
-					{
-						BotDebug("%s -> Picked ammo %s.", GetName(), cItem.pItemClass->sClassName.c_str());
-						WeaponChoose();
-					}
-					else
-					{
-						BLOG_W(
-							"%s -> Picked ammo %s, but bot doesn't have that weapon.",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str()
-						);
-					}
+					break;
 				}
+
+				if ( CWeapons::AddAmmo(cItem.pItemClass, m_aWeapons) )
+				{
+					BotDebug("%s -> Picked ammo %s.", GetName(), cItem.pItemClass->sClassName.c_str());
+					WeaponChoose();
+				}
+				else
+				{
+					BLOG_W(
+						"%s -> Picked ammo %s, but bot doesn't have that weapon.",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str()
+					);
+				}
+
 				break;
 			}
 
@@ -995,6 +1004,7 @@ namespace Botrix
 			default:
 			{
 				BASSERT(false);
+				break;
 			}
 		}
 
@@ -2999,6 +3009,18 @@ namespace Botrix
 	void CBot::HandlePickedUpAmmoEvent(const Events::CEvent& event)
 	{
 		const Events::EventData_PlayerPickedUpAmmo* data = event.GetData<Events::EventData_PlayerPickedUpAmmo>();
+		PickItem(data->item);
+	}
+
+	void CBot::HandlePickedUpHealthEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpHealth* data = event.GetData<Events::EventData_PlayerPickedUpHealth>();
+		PickItem(data->item);
+	}
+
+	void CBot::HandlePickedUpArmourEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpArmour* data = event.GetData<Events::EventData_PlayerPickedUpArmour>();
 		PickItem(data->item);
 	}
 
