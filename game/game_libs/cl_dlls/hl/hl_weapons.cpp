@@ -872,7 +872,13 @@ void HUD_WeaponsPostThink(local_state_s* from, local_state_s* to, usercmd_t* cmd
 	{
 		if ( to->client.health <= 0 && lasthealth > 0 )
 		{
-			player.Killed(NULL, 0, DMG_GENERIC, lasthealth - to->client.health, lasthealth);
+			player.Killed(
+				NULL,
+				0,
+				DMG_GENERIC,
+				static_cast<float>(lasthealth) - to->client.health,
+				static_cast<float>(lasthealth)
+			);
 		}
 		else if ( to->client.health > 0 && lasthealth <= 0 )
 		{
