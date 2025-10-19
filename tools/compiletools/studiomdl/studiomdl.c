@@ -3164,11 +3164,19 @@ void EnsureBoundingBoxesAreValid()
 		return;
 	}
 
-	vec3_t bounds[2] = {{FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN}};
+	vec3_t bounds[2] = {
+		{FLT_MAX, FLT_MAX, FLT_MAX},
+		{FLT_MIN, FLT_MIN, FLT_MIN},
+	};
 
-	// TODO: Do we need some kind of base transform here?
-	// The co-ordinates here end up different from the
-	// bounds computed for a sequence which should be identical.
+	// Very important! StudioMDL applies a rotation from the reference
+	// mesh's co-ordinate frame. I don't know exactly why this is,
+	// but presumably there is some legacy reason. If we don't take
+	// this into account, the bounds will be wrong.
+	const vec3_t baseRotAngles = {0.0f, 0.0f, defaultzrotation * (180.0 / Q_PI)};
+	float baseRotMat[3][4];
+	AngleMatrix(baseRotAngles, baseRotMat);
+
 	for ( int modelIndex = 0; modelIndex < nummodels; ++modelIndex )
 	{
 		const s_model_t* curModel = model[modelIndex];
@@ -3177,16 +3185,19 @@ void EnsureBoundingBoxesAreValid()
 		{
 			const s_vertex_t* vert = &curModel->vert[vertIndex];
 
+			vec3_t transformedPoint;
+			VectorTransform(vert->org, baseRotMat, transformedPoint);
+
 			for ( int axis = 0; axis < 3; ++axis )
 			{
-				if ( vert->org[axis] < bounds[0][axis] )
+				if ( transformedPoint[axis] < bounds[0][axis] )
 				{
-					bounds[0][axis] = vert->org[axis];
+					bounds[0][axis] = transformedPoint[axis];
 				}
 
-				if ( vert->org[axis] > bounds[1][axis] )
+				if ( transformedPoint[axis] > bounds[1][axis] )
 				{
-					bounds[1][axis] = vert->org[axis];
+					bounds[1][axis] = transformedPoint[axis];
 				}
 			}
 		}
