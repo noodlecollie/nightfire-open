@@ -2611,7 +2611,7 @@ namespace Botrix
 			iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 			iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
 
-			if ( strcmp(argv[2], "both") == 0 )
+			if ( argc > 2 && strcmp(argv[2], "both") == 0 )
 			{
 				removeBoth = true;
 			}
