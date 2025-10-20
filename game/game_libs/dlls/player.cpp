@@ -2615,10 +2615,14 @@ void CBasePlayer::UpdatePlayerSound(void)
 void CBasePlayer::PostThink()
 {
 	if ( g_fGameOver )
+	{
 		goto pt_end;  // intermission or finale
+	}
 
 	if ( !IsAlive() )
+	{
 		goto pt_end;
+	}
 
 	// Handle Tank controlling
 	if ( m_pTank != 0 )

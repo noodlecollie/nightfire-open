@@ -103,6 +103,8 @@ namespace Events
 
 		static constexpr size_t INVALID_ID = 0;
 
+		~CEventSystem();
+
 		size_t RegisterEventCallback(EventType eventType, const Callback& callback);
 		size_t RegisterEventCallback(EventType eventType, CBaseEntity* subscriber, const Callback& callback);
 		void UnregisterEventCallback(EventType eventType, size_t id);
@@ -125,9 +127,12 @@ namespace Events
 			bool has_subscriber = false;
 		};
 
-		using RegistrationVector = CUtlVector<Registration>;
+		// MSVC crashes occur in std::function if this vector stores
+		// objects instead of pointers. These vectors probably do funky
+		// stuff with memory that they shouldn't...
+		using RegistrationVector = CUtlVector<Registration*>;
 
-		size_t AddRegistration(EventType type, Registration&& reg);
+		size_t AddRegistration(EventType type, Registration* reg);
 		RegistrationVector* GetRegistrationsForEventType(EventType type);
 		const RegistrationVector* GetRegistrationsForEventType(EventType type) const;
 

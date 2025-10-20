@@ -2,6 +2,11 @@
 
 namespace Events
 {
+	CEventSystem::~CEventSystem()
+	{
+		UnregisterAllCallbacks();
+	}
+
 	size_t CEventSystem::RegisterEventCallback(EventType eventType, const Callback& callback)
 	{
 		ASSERT(callback.operator bool());
@@ -11,10 +16,10 @@ namespace Events
 			return INVALID_ID;
 		}
 
-		Registration reg;
-		reg.callback = callback;
+		Registration* reg = new Registration {};
+		reg->callback = callback;
 
-		return AddRegistration(eventType, std::move(reg));
+		return AddRegistration(eventType, reg);
 	}
 
 	size_t CEventSystem::RegisterEventCallback(EventType eventType, CBaseEntity* subscriber, const Callback& callback)
@@ -29,10 +34,10 @@ namespace Events
 		EHANDLE subscriberHandle;
 		subscriberHandle = subscriber;
 
-		Registration reg;
-		reg.subscriber = subscriberHandle;
-		reg.has_subscriber = true;
-		reg.callback = [subscriberHandle, callback](const CEvent& event)
+		Registration* reg = new Registration {};
+		reg->subscriber = subscriberHandle;
+		reg->has_subscriber = true;
+		reg->callback = [subscriberHandle, callback](const CEvent& event)
 		{
 			if ( subscriberHandle )
 			{
@@ -40,7 +45,7 @@ namespace Events
 			}
 		};
 
-		return AddRegistration(eventType, std::move(reg));
+		return AddRegistration(eventType, reg);
 	}
 
 	void CEventSystem::UnregisterEventCallback(EventType eventType, size_t id)
@@ -62,7 +67,7 @@ namespace Events
 
 		FOR_EACH_VEC(*regVec, index)
 		{
-			if ( (*regVec)[index].id == id )
+			if ( (*regVec)[index]->id == id )
 			{
 				regVec->Remove(index);
 				return;
@@ -74,6 +79,11 @@ namespace Events
 
 	void CEventSystem::UnregisterAllCallbacks()
 	{
+		FOR_EACH_VEC(m_Registrations, index)
+		{
+			m_Registrations[index].PurgeAndDeleteElements();
+		}
+
 		m_Registrations.Purge();
 	}
 
@@ -99,26 +109,27 @@ namespace Events
 
 		FOR_EACH_VEC(*registrations, index)
 		{
-			Registration& reg = (*registrations)[index];
+			Registration* reg = (*registrations)[index];
 
-			if ( reg.has_subscriber && !reg.subscriber )
+			if ( reg->has_subscriber && !reg->subscriber )
 			{
 				needsDeletions = true;
 				continue;
 			}
 
-			(*registrations)[index].callback(event);
+			reg->callback(event);
 		}
 
 		if ( needsDeletions )
 		{
 			FOR_EACH_VEC_BACK(*registrations, index)
 			{
-				Registration& reg = (*registrations)[index];
+				Registration* reg = (*registrations)[index];
 
-				if ( reg.has_subscriber && !reg.subscriber )
+				if ( reg->has_subscriber && !reg->subscriber )
 				{
 					registrations->Remove(index);
+					delete reg;
 				}
 			}
 		}
@@ -126,7 +137,7 @@ namespace Events
 		m_ProcessingEvent = false;
 	}
 
-	size_t CEventSystem::AddRegistration(EventType type, Registration&& reg)
+	size_t CEventSystem::AddRegistration(EventType type, Registration* reg)
 	{
 		const size_t id = m_NextID++;
 
@@ -143,10 +154,10 @@ namespace Events
 			m_Registrations.SetCount(eventTypeIndex + 1);
 		}
 
-		reg.id = id;
+		reg->id = id;
 
 		RegistrationVector& regVec = m_Registrations[eventTypeIndex];
-		regVec.AddToTail(std::move(reg));
+		regVec.AddToTail(reg);
 
 		return id;
 	}
