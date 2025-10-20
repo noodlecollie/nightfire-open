@@ -90,8 +90,8 @@ void CMenuDeveloperStudioSceneView::DrawSequenceBoundingBox(cl_entity_t* ent)
 		return;
 	}
 
-	vec3_t mins = { 0.0f, 0.0f, 0.0f };
-	vec3_t maxs = { 0.0f, 0.0f, 0.0f };
+	vec3_t mins = {0.0f, 0.0f, 0.0f};
+	vec3_t maxs = {0.0f, 0.0f, 0.0f};
 
 	if ( EngFuncs::GetModelSequenceBounds(ent, ent->curstate.sequence, mins, maxs) )
 	{
@@ -113,21 +113,7 @@ void CMenuDeveloperStudioSceneView::DrawEyePositionMarker(cl_entity_t* ent)
 
 void CMenuDeveloperStudioSceneView::DrawAxisMarker(float x, float y, float z, float scale)
 {
-	// The model axes are not the same as the world axes,
-	// so we need to colour and flip them appropriately.
-	// Model X = World Y
-	// Model Y = World -X
-	// Model Z = World Z
-
-	static const float AXIS_DIRS[3] =
-	{
-		-1.0f,
-		1.0f,
-		1.0f,
-	};
-
-	static const uint32_t AXIS_COLOURS[3] =
-	{
+	static const uint32_t AXIS_COLOURS[3] = {
 		0x00FF00FF,
 		0xFF0000FF,
 		0x0000FFFF,
@@ -135,9 +121,9 @@ void CMenuDeveloperStudioSceneView::DrawAxisMarker(float x, float y, float z, fl
 
 	for ( size_t axisIndex = 0; axisIndex < 3; ++axisIndex )
 	{
-		vec3_t base = { x, y, z };
-		vec3_t axis = { x, y, z };
-		axis[axisIndex] += AXIS_DIRS[axisIndex] * scale;
+		vec3_t base = {x, y, z};
+		vec3_t axis = {x, y, z};
+		axis[axisIndex] += scale;
 
 		EngFuncs::StoreLine(base, axis, AXIS_COLOURS[axisIndex]);
 	}

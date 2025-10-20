@@ -31,6 +31,10 @@ static constexpr float VIEW_COL2_FACTOR = 1.0f - VIEW_COL1_FACTOR;
 
 static constexpr int FIELD_PADDING = 15;
 
+// Note: StudioMDL applies a 90 degree rotation
+// around Z by default.
+// Model reference +X -> Engine -Y
+// Model reference +Y -> Engine +X
 class CMenuModelViewer : public CMenuFramework
 {
 public:
@@ -100,7 +104,8 @@ private:
 			LEFT_MARGIN + halfColWidth + INTER_AREA_PADDING,
 			TOP_MARGIN + tableHeight + VIEW_PADDING,
 			halfColWidth,
-			tableHeight);
+			tableHeight
+		);
 		m_BodyTable.SetModel(&m_BodyModel);
 		m_BodyTable.onChanged = VoidCb(&CMenuModelViewer::HandleBodyChanged);
 		m_BodyTable.SetNameAndStatus(L("Body Groups"), L("Body groups in this model"));
@@ -128,14 +133,16 @@ private:
 
 		m_FieldCameraPosY.SetCoord(
 			m_FieldCameraPosX.pos.x + m_FieldCameraPosX.size.w + FIELD_PADDING,
-			NEG_CTRLAREA_ROW_START + rowOffset);
+			NEG_CTRLAREA_ROW_START + rowOffset
+		);
 		m_FieldCameraPosY.size.w = fieldWidth;
 		SetCommonFineUIParams(m_FieldCameraPosY);
 		AddItem(m_FieldCameraPosY);
 
 		m_FieldCameraPosZ.SetCoord(
 			m_FieldCameraPosY.pos.x + m_FieldCameraPosY.size.w + FIELD_PADDING,
-			NEG_CTRLAREA_ROW_START + rowOffset);
+			NEG_CTRLAREA_ROW_START + rowOffset
+		);
 		m_FieldCameraPosZ.size.w = fieldWidth;
 		SetCommonFineUIParams(m_FieldCameraPosZ);
 		AddItem(m_FieldCameraPosZ);
@@ -149,14 +156,16 @@ private:
 
 		m_FieldCameraYaw.SetCoord(
 			m_FieldCameraPitch.pos.x + m_FieldCameraPitch.size.w + FIELD_PADDING,
-			NEG_CTRLAREA_ROW_START + rowOffset);
+			NEG_CTRLAREA_ROW_START + rowOffset
+		);
 		m_FieldCameraYaw.size.w = fieldWidth;
 		SetCommonFineUIParams(m_FieldCameraYaw);
 		AddItem(m_FieldCameraYaw);
 
 		m_FieldCameraDist.SetCoord(
 			m_FieldCameraYaw.pos.x + m_FieldCameraYaw.size.w + FIELD_PADDING,
-			NEG_CTRLAREA_ROW_START + rowOffset);
+			NEG_CTRLAREA_ROW_START + rowOffset
+		);
 		m_FieldCameraDist.size.w = fieldWidth;
 		SetCommonFineUIParams(m_FieldCameraDist);
 		AddItem(m_FieldCameraDist);
@@ -174,7 +183,8 @@ private:
 		m_CheckEnableModelBBox.onChanged = VoidCb(&CMenuModelViewer::HandleModelBBoxCheckBoxChanged);
 		m_CheckEnableModelBBox.SetNameAndStatus(
 			L("Model Bounds"),
-			L("Enable or disable drawing bounds of overall model"));
+			L("Enable or disable drawing bounds of overall model")
+		);
 
 		AddItem(m_CheckEnableModelBBox);
 
@@ -183,7 +193,8 @@ private:
 		m_CheckEnableOriginMarker.onChanged = VoidCb(&CMenuModelViewer::HandleOriginMarkerCheckBoxChanged);
 		m_CheckEnableOriginMarker.SetNameAndStatus(
 			L("Origin Marker"),
-			L("Enable or disable drawing marker at model origin"));
+			L("Enable or disable drawing marker at model origin")
+		);
 
 		AddItem(m_CheckEnableOriginMarker);
 
@@ -194,7 +205,8 @@ private:
 		m_CheckEnableSequenceBBox.onChanged = VoidCb(&CMenuModelViewer::HandleSequenceBBoxCheckBoxChanged);
 		m_CheckEnableSequenceBBox.SetNameAndStatus(
 			L("Sequence Bounds"),
-			L("Enable or disable drawing bounds of current animation sequence"));
+			L("Enable or disable drawing bounds of current animation sequence")
+		);
 
 		AddItem(m_CheckEnableSequenceBBox);
 
@@ -203,7 +215,8 @@ private:
 		m_CheckEnableEyePositionMarker.onChanged = VoidCb(&CMenuModelViewer::HandleEyePositionMarkerCheckBoxChanged);
 		m_CheckEnableEyePositionMarker.SetNameAndStatus(
 			L("Eye Position Marker"),
-			L("Enable or disable drawing marker at model eye position"));
+			L("Enable or disable drawing marker at model eye position")
+		);
 
 		AddItem(m_CheckEnableEyePositionMarker);
 
@@ -214,7 +227,8 @@ private:
 		m_CheckCentreAtEyes.onChanged = VoidCb(&CMenuModelViewer::HandleCentreAtEyesChanged);
 		m_CheckCentreAtEyes.SetNameAndStatus(
 			L("Centre At Eyes"),
-			L("Centres the camera around the model eye position"));
+			L("Centres the camera around the model eye position")
+		);
 
 		AddItem(m_CheckCentreAtEyes);
 	}
@@ -230,7 +244,8 @@ private:
 			[this](const char* result)
 			{
 				HandleNewModelPicked(result);
-			});
+			}
+		);
 
 		UI_FileDialog_Menu();
 	}
@@ -349,7 +364,8 @@ private:
 				const CUtlString* aStr = reinterpret_cast<const CUtlString*>(a);
 				const CUtlString* bStr = reinterpret_cast<const CUtlString*>(b);
 				return strcmp(aStr ? aStr->Get() : "", bStr ? bStr->Get() : "");
-			});
+			}
+		);
 
 		FOR_EACH_VEC(patternList, index)
 		{

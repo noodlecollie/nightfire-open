@@ -1273,134 +1273,31 @@ int Mod_HitgroupForStudioHull(int index)
 	return studio_hull_hitgroup[index];
 }
 
-/*
-====================
-StudioBoundVertex
-====================
-*/
-static void Mod_StudioBoundVertex(vec3_t mins, vec3_t maxs, int* numverts, const vec3_t vertex)
+void Mod_StudioComputeBoundsFromSequences(void* buffer, vec3_t mins, vec3_t maxs, qboolean only_first)
 {
-	if ( (*numverts) == 0 )
-		ClearBounds(mins, maxs);
+	VectorClear(mins);
+	VectorClear(maxs);
 
-	AddPointToBounds(vertex, mins, maxs);
-	(*numverts)++;
-}
-
-/*
-====================
-StudioAccumulateBoneVerts
-====================
-*/
-static void Mod_StudioAccumulateBoneVerts(
-	vec3_t computed_mins,
-	vec3_t computed_maxs,
-	int* numverts,
-	vec3_t seq_mins,
-	vec3_t seq_maxs,
-	int* numbones
-)
-{
-	vec3_t seq_bounds_delta;
-	vec3_t point;
-
-	if ( *numbones <= 0 )
+	if ( !buffer )
 	{
 		return;
 	}
 
-	// What on earth is this doing??? This makes no sense.
-	VectorSubtract(seq_maxs, seq_mins, seq_bounds_delta);
-	VectorScale(seq_bounds_delta, 0.5f, point);
-	Mod_StudioBoundVertex(computed_mins, computed_maxs, numverts, point);
+	studiohdr_t* pstudiohdr = (studiohdr_t*)buffer;
+	int numseq = (only_first) ? 1 : pstudiohdr->numseq;
 
-	VectorClear(seq_mins);
-	VectorClear(seq_maxs);
-	*numbones = 0;
-}
-
-/*
-====================
-StudioComputeBounds
-====================
-*/
-void Mod_StudioComputeBounds(void* buffer, vec3_t mins, vec3_t maxs, qboolean ignore_sequences)
-{
-	int i, j, k, numseq;
-	studiohdr_t* pstudiohdr;
-	mstudiobodyparts_t* pbodypart;
-	mstudiomodel_t* m_pSubModel;
-	mstudioseqdesc_t* pseqdesc;
-	mstudiobone_t* pbones;
-	mstudioanim_t* panim;
-	vec3_t computed_mins;
-	vec3_t computed_maxs;
-	int vert_count = 0;
-	int bone_count = 0;
-	int bodyCount = 0;
-	vec3_t pos;
-	vec3_t* pverts;
-
-	VectorClear(computed_mins);
-	VectorClear(computed_maxs);
-
-	// Get the body part portion of the model
-	pstudiohdr = (studiohdr_t*)buffer;
-	pbodypart = (mstudiobodyparts_t*)((byte*)pstudiohdr + pstudiohdr->bodypartindex);
-
-	for ( i = 0; i < pstudiohdr->numbodyparts; i++ )
+	for ( int seqIndex = 0; seqIndex < numseq; ++seqIndex )
 	{
-		bodyCount += pbodypart[i].nummodels;
-	}
-
-	// The studio models we want are vec3_t mins, vec3_t maxs right after the bodyparts (still need to
-	// find a detailed breakdown of the mdl format). Move pointer there.
-	m_pSubModel = (mstudiomodel_t*)(&pbodypart[pstudiohdr->numbodyparts]);
-
-	for ( i = 0; i < bodyCount; i++ )
-	{
-		pverts = (vec3_t*)((byte*)pstudiohdr + m_pSubModel[i].vertindex);
-
-		for ( j = 0; j < m_pSubModel[i].numverts; j++ )
-		{
-			Mod_StudioBoundVertex(computed_mins, computed_maxs, &vert_count, pverts[j]);
-		}
-	}
-
-	pbones = (mstudiobone_t*)((byte*)pstudiohdr + pstudiohdr->boneindex);
-	numseq = (ignore_sequences) ? 1 : pstudiohdr->numseq;
-
-	for ( i = 0; i < numseq; i++ )
-	{
-		vec3_t seq_mins;
-		vec3_t seq_maxs;
-
-		VectorClear(seq_mins);
-		VectorClear(seq_maxs);
-
-		pseqdesc = (mstudioseqdesc_t*)((byte*)pstudiohdr + pstudiohdr->seqindex) + i;
+		mstudioseqdesc_t* pseqdesc = (mstudioseqdesc_t*)((byte*)pstudiohdr + pstudiohdr->seqindex) + seqIndex;
 
 		if ( pseqdesc->seqgroup != 0 )
 		{
 			continue;
 		}
 
-		panim = (mstudioanim_t*)((byte*)pstudiohdr + pseqdesc->animindex);
-
-		for ( j = 0; j < pstudiohdr->numbones; j++ )
-		{
-			for ( k = 0; k < pseqdesc->numframes; k++ )
-			{
-				R_StudioCalcBonePosition(k, 0, &pbones[j], panim, NULL, pos);
-				Mod_StudioBoundVertex(seq_mins, seq_maxs, &bone_count, pos);
-			}
-		}
-
-		Mod_StudioAccumulateBoneVerts(computed_mins, computed_maxs, &vert_count, seq_mins, seq_maxs, &bone_count);
+		AddPointToBounds(pseqdesc->bbmin, mins, maxs);
+		AddPointToBounds(pseqdesc->bbmax, mins, maxs);
 	}
-
-	VectorCopy(computed_mins, mins);
-	VectorCopy(computed_maxs, maxs);
 }
 
 /*
@@ -1429,7 +1326,7 @@ qboolean Mod_GetStudioBounds(const char* name, vec3_t mins, vec3_t maxs)
 	{
 		VectorClear(mins);
 		VectorClear(maxs);
-		Mod_StudioComputeBounds(f, mins, maxs, false);
+		Mod_StudioComputeBoundsFromSequences(f, mins, maxs, false);
 		result = true;
 	}
 
@@ -1783,8 +1680,12 @@ void Mod_LoadStudioModel(model_t* mod, const void* buffer, qboolean* loaded)
 	else
 	{
 		// well compute bounds from vertices and round to nearest even values
-		Mod_StudioComputeBounds(phdr, loadmodel->mins, loadmodel->maxs, false);
+		Mod_StudioComputeBoundsFromSequences(phdr, loadmodel->mins, loadmodel->maxs, false);
+
+		VectorNegate(loadmodel->mins, loadmodel->mins);
 		RoundUpHullSize(loadmodel->mins);
+		VectorNegate(loadmodel->mins, loadmodel->mins);
+
 		RoundUpHullSize(loadmodel->maxs);
 	}
 
