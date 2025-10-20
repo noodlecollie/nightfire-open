@@ -13,6 +13,9 @@
 #include "standard_includes.h"
 #include "MathLib/utils.h"
 #include "client.h"
+#include "gameplay/eventSystem.h"
+#include "gameplay/gameplaySystems.h"
+#include "gameplay/gameplaySystemsBase.h"
 
 #define NotifyIfFailed(exp, ...) \
 	GOOD_SCOPE_START \
@@ -69,7 +72,11 @@ namespace Botrix
 		m_bDontThrowObjects(false),
 		m_bFeatureAttackDuckEnabled(iIntelligence < EBotNormal),
 		m_bFeatureWeaponCheck(true),
-		m_bSaidNoWaypoints(false)
+		m_bSaidNoWaypoints(false),
+		m_WeaponPickupEvent(Events::CEventSystem::INVALID_ID),
+		m_AmmoPickupEvent(Events::CEventSystem::INVALID_ID),
+		m_HealthPickupEvent(Events::CEventSystem::INVALID_ID),
+		m_ArmourPickupEvent(Events::CEventSystem::INVALID_ID)
 	{
 		m_aPickedItems.reserve(16);
 		for ( TItemType i = 0; i < EItemTypeCollisionTotal; ++i )
@@ -221,6 +228,27 @@ namespace Botrix
 	{
 		CPlayer::Activated();
 		BotDebug("%s -> Activated.", GetName());
+
+		ASSERT(m_WeaponPickupEvent == Events::CEventSystem::INVALID_ID);
+		ASSERT(m_AmmoPickupEvent == Events::CEventSystem::INVALID_ID);
+
+		CGameplaySystemsBase* gps = GameplaySystems::GetBase();
+
+		m_WeaponPickupEvent = gps->EventSystem().RegisterEventCallback(
+			Events::EventType::PlayerPickedUpWeapon,
+			[this](const Events::CEvent& event)
+			{
+				HandlePickedUpWeaponEvent(event);
+			}
+		);
+
+		m_AmmoPickupEvent = gps->EventSystem().RegisterEventCallback(
+			Events::EventType::PlayerPickedUpAmmo,
+			[this](const Events::CEvent& event)
+			{
+				HandlePickedUpAmmoEvent(event);
+			}
+		);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -303,7 +331,7 @@ namespace Botrix
 			{
 				const CItem* pItem = &aItems[i];
 
-				if ( pItem->IsFree() || !pItem->IsOnMap() )  // Item is picked or broken.
+				if ( pItem->IsFree() || !pItem->IsTangible() )  // Item is picked or broken.
 				{
 					continue;
 				}
@@ -378,6 +406,20 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CBot::PlayerDisconnect(int iPlayerIndex, CPlayer* pPlayer)
 	{
+		CGameplaySystemsBase* gps = GameplaySystems::GetBase();
+
+		if ( m_WeaponPickupEvent != Events::CEventSystem::INVALID_ID )
+		{
+			gps->EventSystem().UnregisterEventCallback(Events::EventType::PlayerPickedUpWeapon, m_WeaponPickupEvent);
+			m_WeaponPickupEvent = Events::CEventSystem::INVALID_ID;
+		}
+
+		if ( m_AmmoPickupEvent != Events::CEventSystem::INVALID_ID )
+		{
+			gps->EventSystem().UnregisterEventCallback(Events::EventType::PlayerPickedUpAmmo, m_AmmoPickupEvent);
+			m_AmmoPickupEvent = Events::CEventSystem::INVALID_ID;
+		}
+
 		m_aNearPlayers.reset(iPlayerIndex);
 		m_aSeenEnemies.reset(iPlayerIndex);
 
@@ -871,6 +913,7 @@ namespace Botrix
 					cItem.pItemClass->sClassName.c_str(),
 					m_PlayerInfo.GetHealth()
 				);
+
 				break;
 			}
 
@@ -882,79 +925,92 @@ namespace Botrix
 					cItem.pItemClass->sClassName.c_str(),
 					m_PlayerInfo.GetArmorValue()
 				);
+
 				break;
 			}
 
 			case EItemTypeWeapon:
 			{
-				if ( m_bFeatureWeaponCheck )
+				if ( !m_bFeatureWeaponCheck )
 				{
-					TWeaponId iWeapon = CWeapons::AddWeapon(cItem.pItemClass, m_aWeapons);
-					if ( CWeapons::IsValid(iWeapon) )
-					{
-						CWeaponWithAmmo& cWeapon = m_aWeapons[iWeapon];
-						BotDebug(
-							"%s -> Picked weapon %s (%d/%d, %d/%d).",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str(),
-							cWeapon.Bullets(CWeapon::PRIMARY),
-							cWeapon.ExtraBullets(CWeapon::PRIMARY),
-							cWeapon.Bullets(CWeapon::SECONDARY),
-							cWeapon.ExtraBullets(CWeapon::SECONDARY)
-						);
-						WeaponChoose();
-					}
-					else if ( CMod::aClassNames.size() )
-					{
-						BLOG_W(
-							"%s -> Picked weapon %s, but there is no such weapon for class %s.",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str(),
-							CTypeToString::ClassToString(m_iClass).c_str()
-						);
-					}
-					else
-					{
-						BLOG_W(
-							"%s -> Picked weapon %s, but there is no such weapon.",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str()
-						);
-					}
+					break;
 				}
+
+				TWeaponId iWeapon = CWeapons::AddWeapon(cItem.pItemClass, m_aWeapons);
+
+				if ( CWeapons::IsValid(iWeapon) )
+				{
+					CWeaponWithAmmo& cWeapon = m_aWeapons[iWeapon];
+
+					BotDebug(
+						"%s -> Picked weapon %s (%d/%d, %d/%d).",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str(),
+						cWeapon.Bullets(CWeapon::PRIMARY),
+						cWeapon.ExtraBullets(CWeapon::PRIMARY),
+						cWeapon.Bullets(CWeapon::SECONDARY),
+						cWeapon.ExtraBullets(CWeapon::SECONDARY)
+					);
+
+					WeaponChoose();
+				}
+				else if ( CMod::aClassNames.size() )
+				{
+					BLOG_W(
+						"%s -> Picked weapon %s, but there is no such weapon for class %s.",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str(),
+						CTypeToString::ClassToString(m_iClass).c_str()
+					);
+				}
+				else
+				{
+					BLOG_W(
+						"%s -> Picked weapon %s, but there is no such weapon.",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str()
+					);
+				}
+
 				break;
 			}
 
 			case EItemTypeAmmo:
 			{
-				if ( m_bFeatureWeaponCheck )
+				if ( !m_bFeatureWeaponCheck )
 				{
-					if ( CWeapons::AddAmmo(cItem.pItemClass, m_aWeapons) )
-					{
-						BotDebug("%s -> Picked ammo %s.", GetName(), cItem.pItemClass->sClassName.c_str());
-						WeaponChoose();
-					}
-					else
-					{
-						BLOG_W(
-							"%s -> Picked ammo %s, but bot doesn't have that weapon.",
-							GetName(),
-							cItem.pItemClass->sClassName.c_str()
-						);
-					}
+					break;
 				}
+
+				if ( CWeapons::AddAmmo(cItem.pItemClass, m_aWeapons) )
+				{
+					BotDebug("%s -> Picked ammo %s.", GetName(), cItem.pItemClass->sClassName.c_str());
+					WeaponChoose();
+				}
+				else
+				{
+					BLOG_W(
+						"%s -> Picked ammo %s, but bot doesn't have that weapon.",
+						GetName(),
+						cItem.pItemClass->sClassName.c_str()
+					);
+				}
+
 				break;
 			}
 
 			case EItemTypeObject:
 			{
-				BotDebug("%s -> Breaked object %s", GetName(), cItem.pItemClass->sClassName.c_str());
+				BotDebug("%s -> Broke object %s", GetName(), cItem.pItemClass->sClassName.c_str());
 				break;
 			}
 
 			default:
 			{
+				const char* classname = cItem.pItemClass ? cItem.pItemClass->sClassName.c_str() : "<unknown>";
+				BLOG_W("%s -> Encountered unrecognised pickup with classname %s", GetName(), classname);
 				BASSERT(false);
+				break;
 			}
 		}
 
@@ -967,8 +1023,37 @@ namespace Botrix
 			// TODO: check if item is respawnable.
 			cPickedItem.fRemoveTime +=
 				/*FLAG_ALL_SET_OR_0(FEntityRespawnable, cItem.iFlags) ? cItem.pItemClass->GetArgument() : */ 60.0f;
-			m_aPickedItems.push_back(cPickedItem);
+
+			good::vector<CPickedItem>::iterator it = good::find(m_aPickedItems, cPickedItem);
+
+			if ( it != m_aPickedItems.end() )
+			{
+				it->fRemoveTime = cPickedItem.fRemoveTime;
+			}
+			else
+			{
+				m_aPickedItems.push_back(cPickedItem);
+			}
 		}
+	}
+
+	void CBot::PickItem(edict_t* edict)
+	{
+		ASSERT(edict);
+
+		TItemIndex itemIndex = 0;
+		TItemType itemType = CItems::GetItemFromId(ENTINDEX(edict), &itemIndex);
+
+		if ( itemType >= EItemTypeKnownTotal )
+		{
+			BLOG_W("Ignoring bot %s attempting to pick up unknown item %s\n", GetName(), STRING(edict->v.classname));
+			return;
+		}
+
+		const good::vector<CItem>& itemVector = CItems::GetItems(itemType);
+		const CItem& item = itemVector[itemIndex];
+
+		PickItem(item, itemType, itemIndex);
 	}
 
 //================================================================================================================
@@ -1197,20 +1282,6 @@ namespace Botrix
 		if ( !CWeapons::IsValid(m_iWeapon) || (m_aWeapons[m_iWeapon].GetName() != szCurrentWeapon) )
 		{
 			// Happens when out of bullets automatically.
-			if ( CWeapons::IsValid(m_iWeapon) )
-			{
-				BLOG_W(
-					"%s -> Current weapon is %s, should be %s.",
-					GetName(),
-					szCurrentWeapon,
-					m_aWeapons[m_iWeapon].GetName().c_str()
-				);
-			}
-			else
-			{
-				BLOG_W("%s -> Current weapon is %s.", GetName(), szCurrentWeapon);
-			}
-
 			TWeaponId iCurrentWeapon = WeaponSearch(szCurrentWeapon);
 
 			if ( iCurrentWeapon == EWeaponIdInvalid )
@@ -1298,22 +1369,15 @@ namespace Botrix
 				int index = aNearest[i];
 				const CItem* cItem = index < aItems.size() ? &aItems[index] : NULL;
 
-				if ( cItem == NULL || cItem->IsFree() )  // Remove object if it is removed from game.
+				if ( cItem == NULL || cItem->IsFree() || !cItem->IsTangible() )
 				{
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
 				}
-				else if ( !cItem->IsOnMap() )  // Was on map before, but disappeared, bot could grab it or break it.
+				else if ( (cItem->CurrentPosition() - vFoot).LengthSquared() > cItem->fPickupDistanceSqr )
 				{
-					PickItem(*cItem, iType, aNearest[i]);
-					aNearest.erase(aNearest.begin() + i);
-					--iNearestSize;
-				}
-				else if ( (cItem->CurrentPosition() - vFoot).LengthSquared() >
-						  cItem->fPickupDistanceSqr )  // Item becomes
-													   // far.
-				{
-					aNear.push_back(aNearest[i]);
+					// Item becomes far.
+					aNear.push_back(index);
 					aNearest.erase(aNearest.begin() + i);
 					--iNearestSize;
 				}
@@ -1329,7 +1393,7 @@ namespace Botrix
 				int index = aNear[i];
 				const CItem* cItem = index < aItems.size() ? &aItems[index] : NULL;
 
-				if ( cItem == NULL || cItem->IsFree() || !cItem->IsOnMap() )
+				if ( cItem == NULL || cItem->IsFree() || !cItem->IsTangible() )
 				{
 					aNear.erase(aNear.begin() + i);
 					--iNearSize;
@@ -1370,7 +1434,7 @@ namespace Botrix
 			{
 				const CItem* pItem = &aItems[i];
 
-				if ( pItem->IsFree() || !pItem->IsOnMap() ||  // Item is picked or broken.
+				if ( pItem->IsFree() || !pItem->IsTangible() ||  // Item is picked or broken.
 					 (find(aNear.begin(), aNear.end(), i) !=
 					  aNear.end()) ||  // Item is near, all checks were already made before for all near items.
 					 (find(aNearest.begin(), aNearest.end(), i) !=
@@ -1753,7 +1817,7 @@ namespace Botrix
 
 		const char* szWeapon = m_PlayerInfo.GetWeaponName();
 		bool bOk = (szWeapon && (sWeapon == szWeapon));
-		BotDebug("%s -> Set active weapon %s: %s.", GetName(), sWeapon.c_str(), bOk ? "ok" : "error");
+		BotTrace("%s -> Set active weapon %s: %s.", GetName(), sWeapon.c_str(), bOk ? "ok" : "error");
 		return bOk;
 	}
 
@@ -2266,6 +2330,7 @@ namespace Botrix
 				}
 			}
 		}
+
 		return bArrived;
 	}
 
@@ -2947,6 +3012,30 @@ namespace Botrix
 		{
 			WeaponChoose();
 		}
+	}
+
+	void CBot::HandlePickedUpWeaponEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpWeapon* data = event.GetData<Events::EventData_PlayerPickedUpWeapon>();
+		PickItem(data->item);
+	}
+
+	void CBot::HandlePickedUpAmmoEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpAmmo* data = event.GetData<Events::EventData_PlayerPickedUpAmmo>();
+		PickItem(data->item);
+	}
+
+	void CBot::HandlePickedUpHealthEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpHealth* data = event.GetData<Events::EventData_PlayerPickedUpHealth>();
+		PickItem(data->item);
+	}
+
+	void CBot::HandlePickedUpArmourEvent(const Events::CEvent& event)
+	{
+		const Events::EventData_PlayerPickedUpArmour* data = event.GetData<Events::EventData_PlayerPickedUpArmour>();
+		PickItem(data->item);
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -3656,11 +3745,33 @@ namespace Botrix
 					m_iTaskDestination = -1;
 					GoodAssert(CWaypoints::Size() >= 2);
 
-					do
+					if ( CWaypoints::Size() >= 2 )
 					{
-						m_iTaskDestination = rand() % CWaypoints::Size();
+						if ( iCurrentWaypoint < 0 )
+						{
+							m_iTaskDestination = RANDOM_LONG(0, CWaypoints::Size() - 1);
+						}
+						else
+						{
+							// Pick a new value from a pool of size one less
+							// than the total number of available values.
+							// Any value < current waypoint is fine.
+							// For a value >= current waypoint, shift up by 1.
+							// This avoids calling rand() in a loop.
+							int newDest = RANDOM_LONG(0, CWaypoints::Size() - 2);
+
+							if ( newDest >= iCurrentWaypoint )
+							{
+								++newDest;
+							}
+
+							m_iTaskDestination = newDest;
+						}
 					}
-					while ( m_iTaskDestination == iCurrentWaypoint );
+					else
+					{
+						m_iTaskDestination = iCurrentWaypoint;
+					}
 				}
 
 				// Check if waypoint to go to is valid.
@@ -3685,10 +3796,10 @@ namespace Botrix
 				else
 				{
 					BotDebug(
-						"%s -> New task: %s <%s>, waypoint %d (current %d).",
+						"%s -> New task: %s with class %s. Destination waypoint = %d (current = %d).",
 						GetName(),
 						CTypeToString::BotTaskToString(m_iCurrentTask).c_str(),
-						pEntityClass ? pEntityClass->sClassName.c_str() : "null",
+						pEntityClass ? pEntityClass->sClassName.c_str() : "n/a",
 						m_iTaskDestination,
 						iCurrentWaypoint
 					);

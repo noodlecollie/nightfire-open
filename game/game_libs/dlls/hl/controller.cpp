@@ -79,7 +79,7 @@ public:
 	void AlertSound(void);
 	void IdleSound(void);
 	void AttackSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 
 	static const char* pAttackSounds[];
 	static const char* pIdleSounds[];
@@ -88,7 +88,7 @@ public:
 	static const char* pDeathSounds[];
 
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken);
 	void GibMonster(void);
 
 	CSprite* m_pBall[2];  // hand balls
@@ -171,7 +171,7 @@ int CController::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 	return CBaseMonster::TakeDamage(pevInflictor, pevAttacker, flDamage, bitsDamageType);
 }
 
-void CController::Killed(entvars_t* pevAttacker, int iGib)
+void CController::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	// shut off balls
 	/*
@@ -193,7 +193,7 @@ void CController::Killed(entvars_t* pevAttacker, int iGib)
 		m_pBall[1] = NULL;
 	}
 
-	CSquadMonster::Killed(pevAttacker, iGib);
+	CSquadMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 void CController::GibMonster(void)
@@ -233,7 +233,7 @@ void CController::AttackSound(void)
 	EMIT_SOUND_ARRAY_DYN(CHAN_VOICE, pAttackSounds);
 }
 
-void CController::DeathSound(void)
+void CController::DeathSound(int)
 {
 	EMIT_SOUND_ARRAY_DYN(CHAN_VOICE, pDeathSounds);
 }
@@ -465,7 +465,8 @@ void CController::StartTask(Task_t* pTask)
 					 m_vecEnemyLKP,
 					 pev->view_ofs,
 					 pTask->flData,
-					 (m_vecEnemyLKP - Vector(pev->origin)).Length() + 1024) )
+					 (m_vecEnemyLKP - Vector(pev->origin)).Length() + 1024
+				 ) )
 			{
 				TaskComplete();
 			}
@@ -491,7 +492,8 @@ void CController::StartTask(Task_t* pTask)
 					 pEnemy->pev->origin,
 					 pEnemy->pev->view_ofs,
 					 pTask->flData,
-					 (Vector(pEnemy->pev->origin) - Vector(pev->origin)).Length() + 1024) )
+					 (Vector(pEnemy->pev->origin) - Vector(pev->origin)).Length() + 1024
+				 ) )
 			{
 				TaskComplete();
 			}
@@ -611,7 +613,8 @@ void CController::RunTask(Task_t* pTask)
 					vecSrc,
 					m_hEnemy->BodyTarget(pev->origin),
 					m_vecEstVelocity,
-					gSkillData.controllerSpeedBall);
+					gSkillData.controllerSpeedBall
+				);
 				float delta = 0.03490f;  // +-2 degree
 				vecDir = vecDir +
 					Vector(RANDOM_FLOAT(-delta, delta), RANDOM_FLOAT(-delta, delta), RANDOM_FLOAT(-delta, delta)) *
@@ -1046,7 +1049,8 @@ int CController::CheckLocalMove(const Vector& vecStart, const Vector& vecEnd, CB
 		dont_ignore_monsters,
 		large_hull,
 		edict(),
-		&tr);
+		&tr
+	);
 
 	// ALERT( at_console, "%.0f %.0f %.0f : ", vecStart.x, vecStart.y, vecStart.z );
 	// ALERT( at_console, "%.0f %.0f %.0f\n", vecEnd.x, vecEnd.y, vecEnd.z );
@@ -1355,7 +1359,8 @@ void CControllerZapBall::ExplodeTouch(CBaseEntity* pOther)
 			gSkillData.controllerDmgBall,
 			Vector(pev->velocity).Normalize(),
 			&tr,
-			DMG_ENERGYBEAM);
+			DMG_ENERGYBEAM
+		);
 		ApplyMultiDamage(pevOwner, pevOwner);
 
 		UTIL_EmitAmbientSound(ENT(pev), tr.vecEndPos, "weapons/electro4.wav", 0.3f, ATTN_NORM, 0, RANDOM_LONG(90, 99));

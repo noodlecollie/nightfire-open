@@ -4,7 +4,8 @@
 
 CGameplaySystemsBase::CGameplaySystemsBase() :
 	m_SpawnPointManager(new CSpawnPointManager()),
-	m_HitboxDebugData(new CHitboxDebugData())
+	m_HitboxDebugData(new CHitboxDebugData()),
+	m_EventSystem(new Events::CEventSystem())
 {
 }
 
@@ -15,6 +16,7 @@ void CGameplaySystemsBase::OnServerActivated()
 
 void CGameplaySystemsBase::OnServerDeactivated()
 {
+	m_EventSystem->UnregisterAllCallbacks();
 }
 
 CSpawnPointManager& CGameplaySystemsBase::SpawnPointManager()
@@ -25,4 +27,9 @@ CSpawnPointManager& CGameplaySystemsBase::SpawnPointManager()
 CHitboxDebugData& CGameplaySystemsBase::HitboxDebugData()
 {
 	return *m_HitboxDebugData;
+}
+
+Events::CEventSystem& CGameplaySystemsBase::EventSystem()
+{
+	return *m_EventSystem;
 }

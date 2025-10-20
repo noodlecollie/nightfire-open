@@ -252,7 +252,8 @@ void OptimizeAnimations(void)
 					"sequence %s has event (%d) before first frame (%d)\n",
 					sequence[i].name,
 					sequence[i].event[j].frame,
-					sequence[i].panim[0]->startframe);
+					sequence[i].panim[0]->startframe
+				);
 				sequence[i].event[j].frame = sequence[i].panim[0]->startframe;
 				iError++;
 			}
@@ -262,7 +263,8 @@ void OptimizeAnimations(void)
 					"sequence %s has event (%d) after last frame (%d)\n",
 					sequence[i].name,
 					sequence[i].event[j].frame,
-					sequence[i].panim[0]->endframe);
+					sequence[i].panim[0]->endframe
+				);
 				sequence[i].event[j].frame = sequence[i].panim[0]->endframe;
 				iError++;
 			}
@@ -470,7 +472,8 @@ void SimplifyModel(void)
 						model[i]->node[j].name,
 						n != -1 ? model[i]->node[n].name : NULL,
 						model[i]->skeleton[j].pos,
-						model[i]->skeleton[j].rot);
+						model[i]->skeleton[j].rot
+					);
 
 					// set defaults
 					defaultpos[k] = (vec3_t*)kalloc(MAXSTUDIOANIMATIONS, sizeof(vec3_t));
@@ -498,7 +501,8 @@ void SimplifyModel(void)
 							model[i]->name,
 							model[i]->node[j].name,
 							(n != -1) ? bonetable[n].name : "ROOT",
-							(m != -1) ? bonetable[m].name : "ROOT");
+							(m != -1) ? bonetable[m].name : "ROOT"
+						);
 						iError++;
 					}
 				}
@@ -550,7 +554,8 @@ void SimplifyModel(void)
 					"Hitbox %d references bone %s which is not contained in target model %d\n",
 					j,
 					localHitbox->name,
-					localHitbox->model);
+					localHitbox->model
+				);
 			}
 
 			// Get the parent node of the bone's node.
@@ -560,7 +565,8 @@ void SimplifyModel(void)
 				localHitbox->name,
 				n != -1 ? parentModel->node[n].name : NULL,
 				parentModel->skeleton[nodeForBone].pos,
-				parentModel->skeleton[nodeForBone].rot);
+				parentModel->skeleton[nodeForBone].rot
+			);
 		}
 	}
 
@@ -631,7 +637,8 @@ void SimplifyModel(void)
 						sequence[i].name,
 						sequence[i].panim[0]->node[j].name,
 						szAnim,
-						szNode);
+						szNode
+					);
 					iError++;
 				}
 				sequence[i].panim[0]->bonemap[j] = k;
@@ -791,7 +798,8 @@ void SimplifyModel(void)
 						hitbox[numhitboxes].bmin[2],
 						hitbox[numhitboxes].bmax[0],
 						hitbox[numhitboxes].bmax[1],
-						hitbox[numhitboxes].bmax[2]);
+						hitbox[numhitboxes].bmax[2]
+					);
 				}
 				numhitboxes++;
 			}
@@ -1087,7 +1095,8 @@ void SimplifyModel(void)
 									Error(
 										"Exceeded max %d frames when RLE compressing animation sequence '%s'\n",
 										MAXSTUDIOANIMATIONS,
-										sequence[i].name);
+										sequence[i].name
+									);
 								}
 
 								// too many, force a new entry
@@ -1099,10 +1108,9 @@ void SimplifyModel(void)
 							}
 							// insert value if they're not equal,
 							// or if we're not on a run and the run is less than 3 units
-							else if (
-								(value[m] != value[m - 1]) ||
-								((pcount->num.total == pcount->num.valid) &&
-								 ((m < n - 1) && value[m] != value[m + 1])) )
+							else if ( (value[m] != value[m - 1]) ||
+									  ((pcount->num.total == pcount->num.valid) &&
+									   ((m < n - 1) && value[m] != value[m + 1])) )
 							{
 								total++;
 								if ( pcount->num.total != pcount->num.valid )
@@ -1131,7 +1139,8 @@ void SimplifyModel(void)
 							memmove(
 								sequence[i].panim[q]->anim[j][k],
 								data,
-								(pvalue - data) * sizeof(mstudioanimvalue_t));
+								(pvalue - data) * sizeof(mstudioanimvalue_t)
+							);
 						}
 						// printf("%d(%d) ", sequence[i].panim[q]->numanim[j][k], n );
 					}
@@ -1675,7 +1684,8 @@ void Grab_BMP(char* filename, s_texture_t* ptexture)
 			 &ptexture->ppicture,
 			 (byte**)&ptexture->ppal,
 			 &ptexture->srcwidth,
-			 &ptexture->srcheight) )
+			 &ptexture->srcheight
+		 ) )
 	{
 		Error("Error %d reading BMP image \"%s\"\n", result, filename);
 	}
@@ -1728,7 +1738,8 @@ void ResizeTexture(s_texture_t* ptexture)
 		ptexture->skinwidth,
 		ptexture->skinheight,
 		((ptexture->skinwidth * ptexture->skinheight) / (float)(ptexture->srcwidth * ptexture->srcheight)) * 100.0,
-		ptexture->size);
+		ptexture->size
+	);
 
 	if ( ptexture->size > 1024 * 1024 )
 	{
@@ -1835,7 +1846,8 @@ void Grab_Skin(s_texture_t* ptexture)
 		{
 			Error(
 				"PNG files are not supported if embedding textures into the MDL. Use the -e option to compile without "
-				"embedding textures.\n");
+				"embedding textures.\n"
+			);
 		}
 
 		Grab_PNG(file1, ptexture);
@@ -2078,7 +2090,8 @@ void Grab_Triangles(s_model_t* pmodel)
 							 &normal.org[1],
 							 &normal.org[2],
 							 &ptriv->u,
-							 &ptriv->v) == 9 )
+							 &ptriv->v
+						 ) == 9 )
 					{
 						if ( bone < 0 || bone >= pmodel->numbones )
 						{
@@ -2174,7 +2187,8 @@ void Grab_Triangles(s_model_t* pmodel)
 								"triangle reversed (%f %f %f)\n",
 								DotProduct(norm[0], norm[1]),
 								DotProduct(norm[1], norm[2]),
-								DotProduct(norm[2], norm[0]));
+								DotProduct(norm[2], norm[0])
+							);
 
 							pmesh = lookup_mesh(pmodel, "..\\white.bmp");
 							ptriv2 = lookup_triangle(pmesh, pmesh->numtris);
@@ -3109,6 +3123,8 @@ void Cmd_BBox(void)
 
 	GetToken(false);
 	bbox[1][2] = atof(token);
+
+	bbox_specified = true;
 }
 
 void Cmd_CBox(void)
@@ -3130,6 +3146,78 @@ void Cmd_CBox(void)
 
 	GetToken(false);
 	cbox[1][2] = atof(token);
+
+	cbox_specified = true;
+}
+
+void EnsureBoundingBoxesAreValid()
+{
+	if ( bbox_specified && cbox_specified )
+	{
+		return;
+	}
+
+	if ( bbox_specified && !cbox_specified )
+	{
+		// If cbox unspecified, propagate the bbox.
+		memcpy(cbox, bbox, sizeof(cbox));
+		return;
+	}
+
+	vec3_t bounds[2] = {
+		{FLT_MAX, FLT_MAX, FLT_MAX},
+		{FLT_MIN, FLT_MIN, FLT_MIN},
+	};
+
+	// Very important! StudioMDL applies a rotation from the reference
+	// mesh's co-ordinate frame. I don't know exactly why this is,
+	// but presumably there is some legacy reason. If we don't take
+	// this into account, the bounds will be wrong.
+	const vec3_t baseRotAngles = {0.0f, 0.0f, defaultzrotation * (180.0 / Q_PI)};
+	float baseRotMat[3][4];
+	AngleMatrix(baseRotAngles, baseRotMat);
+
+	for ( int modelIndex = 0; modelIndex < nummodels; ++modelIndex )
+	{
+		const s_model_t* curModel = model[modelIndex];
+
+		for ( int vertIndex = 0; vertIndex < curModel->numverts; ++vertIndex )
+		{
+			const s_vertex_t* vert = &curModel->vert[vertIndex];
+
+			vec3_t transformedPoint;
+			VectorTransform(vert->org, baseRotMat, transformedPoint);
+
+			for ( int axis = 0; axis < 3; ++axis )
+			{
+				if ( transformedPoint[axis] < bounds[0][axis] )
+				{
+					bounds[0][axis] = transformedPoint[axis];
+				}
+
+				if ( transformedPoint[axis] > bounds[1][axis] )
+				{
+					bounds[1][axis] = transformedPoint[axis];
+				}
+			}
+		}
+	}
+
+	if ( bounds[0][0] == FLT_MAX )
+	{
+		// No vertices, weird but OK...
+		memset(bounds, 0, sizeof(bounds));
+	}
+
+	if ( !bbox_specified )
+	{
+		memcpy(bbox, bounds, sizeof(bbox));
+	}
+
+	if ( !cbox_specified )
+	{
+		memcpy(cbox, bounds, sizeof(cbox));
+	}
 }
 
 void Cmd_Mirror(void)
@@ -3591,7 +3679,8 @@ int main(int argc, char** argv)
 			" -i(ignore warnings)\n"
 			" [-g max_sequencegroup_size(K)]\n"
 			" -e(no embedded textures)\n"
-			" file.qc");
+			" file.qc"
+		);
 	}
 
 	for ( i = 1; i < argc - 1; i++ )
@@ -3659,6 +3748,7 @@ int main(int argc, char** argv)
 	ParseScript();
 	SetSkinValues();
 	SimplifyModel();
+	EnsureBoundingBoxesAreValid();
 	WriteFile();
 
 	ClearAllBoneTags();

@@ -26,6 +26,11 @@ public:
 	ProfileData* GetProfile(const CUtlString& name);
 	const ProfileData* GetProfile(const CUtlString& name) const;
 
+	// Unfortunately this is linear complexity for now.
+	// Don't lean on it too heavily.
+	ProfileData& GetRandomProfile();
+	const ProfileData& GetRandomProfile() const;
+
 	ProfileData& CreateProfile(const CUtlString& name);
 	void RemoveProfile(const CUtlString& name);
 
@@ -36,5 +41,4 @@ private:
 	typedef CUtlHashMap<CUtlString, ProfileData> HashTable;
 
 	HashTable m_Table;
-	CUtlVector<uint32_t> m_IndexToHash;
 };

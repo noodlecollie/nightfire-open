@@ -349,7 +349,7 @@ void CBarnacle::BarnacleThink(void)
 //=========================================================
 // Killed.
 //=========================================================
-void CBarnacle::Killed(entvars_t*, int)
+void CBarnacle::Killed(entvars_t*, int, int, float, float)
 {
 	CBaseMonster* pVictim;
 

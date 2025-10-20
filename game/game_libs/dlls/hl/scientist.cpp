@@ -109,12 +109,12 @@ public:
 	Schedule_t* GetSchedule(void);
 	MONSTERSTATE GetIdealState(void);
 
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 
 	void TalkInit(void);
 
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	virtual int Save(CSave& save);
 	virtual int Restore(CRestore& restore);
@@ -193,9 +193,10 @@ Schedule_t slStopFollowing[] = {
 
 Task_t tlHeal[] = {
 	{TASK_MOVE_TO_TARGET_RANGE, (float)50},  // Move within 60 of target ent (client)
-	{TASK_SET_FAIL_SCHEDULE,
-	 (float)
-		 SCHED_TARGET_CHASE},  // If you fail, catch up with that guy! (change this to put syringe away and then chase)
+	{
+		TASK_SET_FAIL_SCHEDULE,
+		(float)SCHED_TARGET_CHASE
+	},  // If you fail, catch up with that guy! (change this to put syringe away and then chase)
 	{TASK_FACE_IDEAL, (float)0},
 	{TASK_SAY_HEAL, (float)0},
 	{TASK_PLAY_SEQUENCE_FACE_TARGET, (float)ACT_ARM},  // Whip out the needle
@@ -722,15 +723,15 @@ void CScientist::PainSound(void)
 //=========================================================
 // DeathSound
 //=========================================================
-void CScientist::DeathSound(void)
+void CScientist::DeathSound(int)
 {
 	PainSound();
 }
 
-void CScientist::Killed(entvars_t* pevAttacker, int iGib)
+void CScientist::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	SetUse(NULL);
-	CTalkMonster::Killed(pevAttacker, iGib);
+	CTalkMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 void CScientist::SetActivity(Activity newActivity)

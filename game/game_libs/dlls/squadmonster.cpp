@@ -119,7 +119,7 @@ void CSquadMonster::ScheduleChange(void)
 //=========================================================
 // Killed
 //=========================================================
-void CSquadMonster::Killed(entvars_t* pevAttacker, int iGib)
+void CSquadMonster::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	VacateSlot();
 
@@ -128,7 +128,7 @@ void CSquadMonster::Killed(entvars_t* pevAttacker, int iGib)
 		MySquadLeader()->SquadRemove(this);
 	}
 
-	CBaseMonster::Killed(pevAttacker, iGib);
+	CBaseMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 // These functions are still awaiting conversion to CSquadMonster
@@ -358,7 +358,8 @@ int CSquadMonster::SquadRecruit(int searchRadius, int maxMembers)
 						Vector(pRecruit->pev->origin) + Vector(pev->view_ofs),
 						ignore_monsters,
 						pRecruit->edict(),
-						&tr);  // try to hit recruit with a traceline.
+						&tr
+					);  // try to hit recruit with a traceline.
 					if ( tr.flFraction == 1.0 )
 					{
 						if ( !SquadAdd(pRecruit) )

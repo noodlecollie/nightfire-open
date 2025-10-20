@@ -765,7 +765,8 @@ void CBeam::BeamDamage(TraceResult* ptr)
 				pev->dmg * (gpGlobals->time - pev->dmgtime),
 				(Vector(ptr->vecEndPos) - Vector(pev->origin)).Normalize(),
 				ptr,
-				DMG_ENERGYBEAM);
+				DMG_ENERGYBEAM
+			);
 
 			ApplyMultiDamage(pev, pev);
 
@@ -1009,7 +1010,8 @@ void CLaser::Spawn(void)
 			(int)pev->rendercolor[1],
 			(int)pev->rendercolor[2],
 			(int)pev->renderamt,
-			(int)pev->renderfx);
+			(int)pev->renderfx
+		);
 	}
 
 	if ( pev->targetname && !(pev->spawnflags & SF_BEAM_STARTON) )
@@ -1468,8 +1470,10 @@ void CGibShooter::Spawn(void)
 
 CGib* CGibShooter::CreateGib(void)
 {
-	if ( CVAR_GET_FLOAT("violence_hgibs") == 0 )
+	if ( CVAR_GET_FLOAT("violence_hgibs") == 0.0f )
+	{
 		return NULL;
+	}
 
 	CGib* pGib = GetClassPtr<CGib>();
 	pGib->Spawn("models/hgibs.mdl");
@@ -1833,7 +1837,8 @@ void CBlood::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE, float)
 			BloodPosition(pActivator),
 			Direction(),
 			(Color() == BLOOD_COLOR_RED) ? 70 : Color(),
-			(int)BloodAmount());
+			(int)BloodAmount()
+		);
 	else
 		UTIL_BloodDrips(BloodPosition(pActivator), Direction(), Color(), (int)BloodAmount());
 

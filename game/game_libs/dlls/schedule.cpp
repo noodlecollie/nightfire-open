@@ -475,7 +475,8 @@ void CBaseMonster::RunTask(Task_t* pTask)
 					UTIL_SetSize(
 						pev,
 						Vector(pev->mins[VEC3_X], pev->mins[VEC3_Y], pev->mins[VEC3_Z]),
-						Vector(pev->maxs[VEC3_X], pev->maxs[VEC3_Y], pev->mins[VEC3_Z] + 1));
+						Vector(pev->maxs[VEC3_X], pev->maxs[VEC3_Y], pev->mins[VEC3_Z] + 1)
+					);
 				}
 
 				if ( ShouldFadeOnDeath() )
@@ -818,7 +819,8 @@ void CBaseMonster::StartTask(Task_t* pTask)
 					 pBestSound->m_vecOrigin,
 					 g_vecZero,
 					 static_cast<float>(pBestSound->m_iVolume),
-					 CoverRadius()) )
+					 CoverRadius()
+				 ) )
 			{
 				// then try for plain ole cover
 				m_flMoveWaitFinished = gpGlobals->time + pTask->flData;
@@ -1007,7 +1009,12 @@ void CBaseMonster::StartTask(Task_t* pTask)
 			{
 				TaskComplete();
 			}
-			else if ( BuildNearestRoute(m_vecEnemyLKP, pev->view_ofs, 0, (m_vecEnemyLKP - Vector(pev->origin)).Length()) )
+			else if ( BuildNearestRoute(
+						  m_vecEnemyLKP,
+						  pev->view_ofs,
+						  0,
+						  (m_vecEnemyLKP - Vector(pev->origin)).Length()
+					  ) )
 			{
 				TaskComplete();
 			}
@@ -1037,7 +1044,8 @@ void CBaseMonster::StartTask(Task_t* pTask)
 						  pEnemy->pev->origin,
 						  pEnemy->pev->view_ofs,
 						  0,
-						  (Vector(pEnemy->pev->origin) - Vector(pev->origin)).Length()) )
+						  (Vector(pEnemy->pev->origin) - Vector(pev->origin)).Length()
+					  ) )
 			{
 				TaskComplete();
 			}
@@ -1252,7 +1260,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		}
 		case TASK_SOUND_DIE:
 		{
-			DeathSound();
+			DeathSound(DMG_GENERIC);
 			TaskComplete();
 			break;
 		}
@@ -1270,7 +1278,7 @@ void CBaseMonster::StartTask(Task_t* pTask)
 		}
 		case TASK_SOUND_DEATH:
 		{
-			DeathSound();
+			DeathSound(DMG_GENERIC);
 			TaskComplete();
 			break;
 		}

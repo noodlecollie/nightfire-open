@@ -89,6 +89,7 @@ namespace Botrix
 			TWaypointId iWaypoint
 		) :
 			pEdict(pEdict),
+			serialNumber(pEdict ? pEdict->serialnumber : 0),
 			iFlags(iFlags),
 			fPickupDistanceSqr(fPickupDistanceSqr),
 			iWaypoint(iWaypoint),
@@ -102,7 +103,7 @@ namespace Botrix
 		bool IsFree() const;
 
 		/// Return true if item currently is on map (not broken or taken).
-		bool IsOnMap() const;
+		bool IsTangible() const;
 
 		/// Return true if item is breakable (bot will break it instead of jumping on it or moving it).
 		bool IsBreakable() const;
@@ -138,6 +139,7 @@ namespace Botrix
 		static const int iMaxDistToWaypoint = 100;
 
 		struct edict_s* pEdict;  ///< Entity's edict.
+		int serialNumber = 0;
 		TItemFlags iFlags;  ///< Entity's flags.
 		float fPickupDistanceSqr;  ///< Distance to entity to consider it can be picked up.
 		TWaypointId iWaypoint;  ///< Entity's nearest waypoint.
@@ -200,6 +202,7 @@ namespace Botrix
 		/// Get array of items of needed type.
 		static const good::vector<CItem>& GetItems(TItemType iEntityType)
 		{
+			ASSERT(iEntityType >= 0 && iEntityType < SIZE_OF_ARRAY_AS_INT(m_aItems));
 			return m_aItems[iEntityType];
 		}
 
@@ -294,6 +297,9 @@ namespace Botrix
 		/// Draw items for a given client.
 		static void Draw(CBotrixClient* pClient);
 
+		static void EntityAllocated(edict_t* ent);
+		static void EntityFreed(edict_t* ent);
+
 	protected:
 		static void CheckNewEntity(struct edict_s* pEdict, bool bLog = true);
 		static TItemIndex NewEntityIndex(int iEntityType);
@@ -326,10 +332,13 @@ namespace Botrix
 		// 'explosive' flag).
 		static good::vector<good::pair<good::string, TItemFlags>> m_aObjectFlagsForModels;
 
-		static good::vector<TItemIndex> m_aObjectFlags;  // Array of (object index, item flags).
+		// Array of (object index, item flags).
+		static good::vector<TItemIndex> m_aObjectFlags;
 
-		static good::bitset m_aUsedItems;  // To know which items are already in m_aItems.
+		// To know which items are already in m_aItems.
+		static good::bitset m_aUsedItems;
 
-		static bool m_bMapLoaded;  // Will be set to true at MapLoaded() and to false at Clear().
+		// Will be set to true at MapLoaded() and to false at Clear().
+		static bool m_bMapLoaded;
 	};
 }  // namespace Botrix

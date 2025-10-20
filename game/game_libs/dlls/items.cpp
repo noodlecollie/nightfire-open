@@ -30,6 +30,9 @@
 #include "gamerules.h"
 #include "resources/SoundResources.h"
 #include "PlatformLib/String.h"
+#include "gameplay/gameplaySystems.h"
+#include "gameplay/gameplaySystemsBase.h"
+#include "gameplay/eventSystem.h"
 
 extern int gmsgItemPickup;
 
@@ -98,7 +101,8 @@ void CItem::Spawn(void)
 			STRING(pev->classname),
 			pev->origin[VEC3_X],
 			pev->origin[VEC3_Y],
-			pev->origin[VEC3_Z]);
+			pev->origin[VEC3_Z]
+		);
 		UTIL_Remove(this);
 		return;
 	}
@@ -221,6 +225,8 @@ class CItemBattery : public CItem
 			return FALSE;
 		}
 
+		const float oldArmour = pPlayer->pev->armorvalue;
+
 		if ( (pPlayer->pev->armorvalue < MAX_NORMAL_BATTERY) && (pPlayer->pev->weapons & (1 << WEAPON_SUIT)) )
 		{
 			int pct;
@@ -236,12 +242,23 @@ class CItemBattery : public CItem
 			WRITE_STRING(STRING(pev->classname));
 			MESSAGE_END();
 
+			Events::EventData_PlayerPickedUpArmour eventData;
+			eventData.player = pPlayer->edict();
+			eventData.item = edict();
+			eventData.armourAdded = pPlayer->pev->armorvalue - oldArmour;
+
+			CGameplaySystemsBase* gps = GameplaySystems::GetBase();
+			gps->EventSystem().SendEvent(std::move(eventData));
+
 			// Suit reports new power level
 			// For some reason this wasn't working in release build -- round it.
 			pct = (int)((float)(pPlayer->pev->armorvalue * 100.0) * (1.0 / MAX_NORMAL_BATTERY) + 0.5);
 			pct = (pct / 5);
+
 			if ( pct > 0 )
+			{
 				pct--;
+			}
 
 			PlatformLib_SNPrintF(szcharge, sizeof(szcharge), "!HEV_%1dP", pct);
 

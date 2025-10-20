@@ -1572,10 +1572,11 @@ void TEXTURETYPE_PlaySound(
 	// hit the world, try to play sound based on texture material type
 	uint32_t texSurfaceProp = SurfaceProp_None;
 	CBaseEntity* pEntity = CBaseEntity::Instance(ptr->pHit);
+	const bool hitFleshEnemy = pEntity && pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE;
+	const bool broadcastHitSoundToPlayersInvolved = hitFleshEnemy && pEntity->IsAlive();
 
-	if ( pEntity && pEntity->Classify() != CLASS_NONE && pEntity->Classify() != CLASS_MACHINE )
+	if ( hitFleshEnemy )
 	{
-		// hit body
 		texSurfaceProp = SurfaceProp_Flesh;
 	}
 	else
@@ -1611,7 +1612,8 @@ void TEXTURETYPE_PlaySound(
 	if ( texSurfaceProp == SurfaceProp_None ||
 		 (texSurfaceProp == SurfaceProp_Flesh && iBulletType == BULLET_PLAYER_CROWBAR) )
 	{
-		// Don't play any sound.
+		// Don't play any sound. Crowbar plays its own sound.
+		// Kinda dumb that this code needs to know about this, but eh.
 		return;
 	}
 
@@ -1628,9 +1630,7 @@ void TEXTURETYPE_PlaySound(
 		hitSoundId = SurfaceSoundId::HitFleshCritical;
 	}
 
-	const bool hitFlesh = hitSoundId == SurfaceSoundId::HitFlesh || hitSoundId == SurfaceSoundId::HitFleshCritical;
-
-	if ( hitFlesh )
+	if ( broadcastHitSoundToPlayersInvolved )
 	{
 		// Attenuate more heavily. Local player will have sound played locally too.
 		attenuation = BODY_IMPACT_ATTENUATION;
@@ -1665,22 +1665,20 @@ void TEXTURETYPE_PlaySound(
 		);
 	}
 
-	// play material hit sound
 	ServerSoundInstance::PlayAmbient(soundInst);
 
-	// If we hit a player, play the sound locally too.
-	if ( hitFlesh )
+	if ( broadcastHitSoundToPlayersInvolved )
 	{
 		if ( attacker )
 		{
 			float volume = BODY_IMPACT_LOCAL_VOLUME;
 
+			// Make the hit sound quieter if it's coming from some machine that we own,
+			// but which is disconnected from us (eg. a Ronin turret).
 			if ( inflictor && inflictor->v.owner == attacker )
 			{
 				CBaseEntity* inflictorEnt = CBaseEntity::Instance(inflictor);
 
-				// For now, this should be good enough to identify the Ronin turret.
-				// Make the hit sound quieter if it's coming from a Ronin that we own.
 				if ( inflictorEnt && inflictorEnt->Classify() == CLASS_MACHINE )
 				{
 					volume = RONIN_IMPACT_LOCAL_VOLUME;

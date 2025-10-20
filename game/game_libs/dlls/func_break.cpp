@@ -325,7 +325,8 @@ void CBreakable::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	// random spark if this is a 'computer' object
 	if ( RANDOM_LONG(0, 1) )
@@ -341,7 +342,8 @@ void CBreakable::TraceAttack(
 					CHAN_VOICE,
 					SoundResources::ItemSounds.RandomResourcePath(ItemSoundId::Spark),
 					RANDOM_FLOAT(0.7f, 1.0f),
-					ATTN_NORM);
+					ATTN_NORM
+				);
 			}
 			break;
 			case matUnbreakableGlass:
@@ -404,10 +406,11 @@ int CBreakable::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, floa
 	g_vecAttackDir = vecTemp.Normalize();
 
 	// do the damage
+	float oldHealth = pev->health;
 	pev->health -= flDamage;
 	if ( pev->health <= 0 )
 	{
-		Killed(pevAttacker, GIB_NORMAL);
+		Killed(pevAttacker, GIB_NORMAL, bitsDamageType, flDamage, oldHealth);
 		Die();
 		return 0;
 	}

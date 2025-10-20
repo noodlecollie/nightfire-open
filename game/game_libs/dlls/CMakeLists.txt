@@ -276,6 +276,7 @@ set(SOURCES_SERVER
 	botrix/console_vars.h
 	botrix/console_vars.cpp
 	botrix/defines.h
+	botrix/defines.cpp
 	botrix/engine_util.h
 	botrix/engine_util.cpp
 	botrix/ibotgamerulesinterface.h
@@ -316,6 +317,8 @@ set(SOURCES_SERVER
 	customGeometry/primitiveMessageWriter.cpp
 	customGeometry/rollingLineMessageWriter.h
 	customGeometry/rollingLineMessageWriter.cpp
+	gameplay/eventSystem.h
+	gameplay/eventSystem.cpp
 	gameplay/gameplaySystems.h
 	gameplay/gameplaySystems.cpp
 	gameplay/gameplaySystemsBase.h

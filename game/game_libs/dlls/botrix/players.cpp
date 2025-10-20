@@ -325,28 +325,28 @@ namespace Botrix
 			iIntelligence = (rand() % (CBot::iMaxIntelligence - CBot::iMinIntelligence + 1)) + CBot::iMinIntelligence;
 		}
 
-		if ( !szName || !szName[0] )
+		CBotFactory& botFactory = CBotrixServerPlugin::GetBotFactory();
+		const CBotProfileTable::ProfileData& profile = botFactory.ProfileTable().GetRandomProfile();
+
+		CUtlString nameToUse;
+
+		if ( szName && szName[0] )
 		{
-			const good::string& sName = CMod::GetRandomBotName(iIntelligence);
+			nameToUse = szName;
+		}
+		else
+		{
+			nameToUse = profile.playerName;
+
 			if ( CMod::bIntelligenceInBotName )
 			{
-				char nameBuffer[64];
-				good::string_buffer sbNameWithIntelligence(nameBuffer, sizeof(nameBuffer), false);  // Don't deallocate.
-				sbNameWithIntelligence = sName;
-				sbNameWithIntelligence.append(' ');
-				sbNameWithIntelligence.append('(');
-				sbNameWithIntelligence.append(CTypeToString::IntelligenceToString(iIntelligence));
-				sbNameWithIntelligence.append(')');
-				szName = sbNameWithIntelligence.c_str();
-			}
-			else
-			{
-				szName = sName.c_str();
+				nameToUse.AppendFormat(" (%s)", CTypeToString::IntelligenceToString(iIntelligence).c_str());
 			}
 		}
 
 		bAddingBot = true;
-		CPlayer* pBot = CMod::AddBot(szName, iIntelligence, iTeam, argc, argv);
+		CPlayer* pBot = CMod::AddBot(nameToUse.String(), iIntelligence, iTeam, argc, argv);
+		CBotFactory::SetBotAttributesViaProfile(pBot->GetEdict(), profile);
 		ClientPutInServer(pBot->GetEdict());
 		bAddingBot = false;
 

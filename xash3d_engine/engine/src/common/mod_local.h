@@ -124,7 +124,7 @@ void R_StudioCalcBonePosition(
 	vec3_t pos
 );
 void* R_StudioGetAnim(studiohdr_t* m_pStudioHeader, model_t* m_pSubModel, mstudioseqdesc_t* pseqdesc);
-void Mod_StudioComputeBounds(void* buffer, vec3_t mins, vec3_t maxs, qboolean ignore_sequences);
+void Mod_StudioComputeBoundsFromSequences(void* buffer, vec3_t mins, vec3_t maxs, qboolean use_first);
 int Mod_HitgroupForStudioHull(int index);
 void Mod_ClearStudioCache(void);
 int Mod_StudioGetSequenceCount(model_t* model);

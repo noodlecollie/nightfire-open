@@ -221,7 +221,7 @@ public:
 	CharacterGender m_Gender = CharacterGender::MALE;
 
 	virtual void Spawn(void);
-	void Pain(void);
+	void Pain(int bitsDamageType);
 
 	// virtual void Think( void );
 	virtual void Jump(void);
@@ -233,7 +233,7 @@ public:
 	virtual void
 	TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 	virtual int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
-	virtual void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	virtual Vector BodyTarget(const Vector&)
 	{
 		return Center() + Vector(pev->view_ofs) * RANDOM_FLOAT(0.5f, 1.1f);
@@ -294,7 +294,7 @@ public:
 	void FlashlightTurnOff(void);
 
 	void UpdatePlayerSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 
 	int Classify(void);
 	void SetAnimation(PLAYER_ANIM playerAnim);
@@ -327,7 +327,7 @@ public:
 	void GiveNamedItem(const char* szName);
 	void EnableControl(BOOL fControl);
 
-	int GiveAmmo(int iAmount, const char* szName, int iMax);
+	int GiveAmmo(int iAmount, const char* szName, int iMax, CBasePlayerAmmo* source = nullptr) override;
 	void SendAmmoUpdate(void);
 
 	void WaterMove(void);

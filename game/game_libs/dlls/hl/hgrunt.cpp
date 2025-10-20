@@ -141,7 +141,7 @@ public:
 	void SetActivity(Activity NewActivity);
 	void StartTask(Task_t* pTask);
 	void RunTask(Task_t* pTask);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 	void IdleSound(void);
 	Vector GetGunPosition(void);
@@ -260,7 +260,8 @@ void CHGrunt::SpeakSentence(void)
 			HGRUNT_SENTENCE_VOLUME,
 			GRUNT_ATTN,
 			0,
-			m_voicePitch);
+			m_voicePitch
+		);
 		JustSpoke();
 	}
 }
@@ -619,7 +620,8 @@ void CHGrunt::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	TraceResult newTr(*ptr);
 
@@ -854,7 +856,8 @@ void CHGrunt::Shotgun(void)
 		vecShellVelocity,
 		pev->angles[YAW],
 		m_iShotgunShell,
-		TE_BOUNCE_SHOTSHELL);
+		TE_BOUNCE_SHOTSHELL
+	);
 	FireBullets(
 		static_cast<ULONG>(gSkillData.hgruntShotgunPellets),
 		vecShootOrigin,
@@ -862,7 +865,8 @@ void CHGrunt::Shotgun(void)
 		VECTOR_CONE_15DEGREES,
 		2048,
 		BULLET_PLAYER_BUCKSHOT,
-		0);  // shoot +-7.5 degrees
+		0
+	);  // shoot +-7.5 degrees
 
 	pev->effects |= EF_MUZZLEFLASH;
 
@@ -948,7 +952,8 @@ void CHGrunt::HandleAnimEvent(MonsterEvent_t* pEvent)
 				Vector(pev->origin) + Vector(gpGlobals->v_forward) * 17 - Vector(gpGlobals->v_right) * 27 +
 					Vector(gpGlobals->v_up) * 6,
 				g_vecZero,
-				3);
+				3
+			);
 		}
 		break;
 		case HGRUNT_AE_BURST1:
@@ -1233,7 +1238,7 @@ void CHGrunt::PainSound(void)
 //=========================================================
 // DeathSound
 //=========================================================
-void CHGrunt::DeathSound(void)
+void CHGrunt::DeathSound(int)
 {
 	switch ( RANDOM_LONG(0, 2) )
 	{
@@ -1344,7 +1349,11 @@ Task_t tlGruntFoundEnemy[] = {
 };
 
 Schedule_t slGruntFoundEnemy[] = {
-	{tlGruntFoundEnemy, SIZE_OF_ARRAY_AS_INT(tlGruntFoundEnemy), bits_COND_HEAR_SOUND, bits_SOUND_DANGER, "GruntFoundEnemy"},
+	{tlGruntFoundEnemy,
+	 SIZE_OF_ARRAY_AS_INT(tlGruntFoundEnemy),
+	 bits_COND_HEAR_SOUND,
+	 bits_SOUND_DANGER,
+	 "GruntFoundEnemy"},
 };
 
 //=========================================================
@@ -1539,7 +1548,8 @@ Schedule_t slGruntHideReload[] = {
 	 SIZE_OF_ARRAY_AS_INT(tlGruntHideReload),
 	 bits_COND_HEAVY_DAMAGE | bits_COND_HEAR_SOUND,
 	 bits_SOUND_DANGER,
-	 "GruntHideReload"}};
+	 "GruntHideReload"}
+};
 
 //=========================================================
 // Do a turning sweep of the area
@@ -1922,11 +1932,11 @@ Schedule_t* CHGrunt::GetSchedule(void)
 									HGRUNT_SENTENCE_VOLUME,
 									GRUNT_ATTN,
 									0,
-									m_voicePitch);
-							else if (
-								(m_hEnemy != 0) && (m_hEnemy->Classify() != CLASS_PLAYER_ALLY) &&
-								(m_hEnemy->Classify() != CLASS_HUMAN_PASSIVE) &&
-								(m_hEnemy->Classify() != CLASS_MACHINE) )
+									m_voicePitch
+								);
+							else if ( (m_hEnemy != 0) && (m_hEnemy->Classify() != CLASS_PLAYER_ALLY) &&
+									  (m_hEnemy->Classify() != CLASS_HUMAN_PASSIVE) &&
+									  (m_hEnemy->Classify() != CLASS_MACHINE) )
 								// monster
 								SENTENCEG_PlayRndSz(
 									ENT(pev),
@@ -1934,7 +1944,8 @@ Schedule_t* CHGrunt::GetSchedule(void)
 									HGRUNT_SENTENCE_VOLUME,
 									GRUNT_ATTN,
 									0,
-									m_voicePitch);
+									m_voicePitch
+								);
 
 							JustSpoke();
 						}
@@ -1991,9 +2002,8 @@ Schedule_t* CHGrunt::GetSchedule(void)
 				return GetScheduleOfType(SCHED_MELEE_ATTACK1);
 			}
 			// can grenade launch
-			else if (
-				FBitSet(pev->weapons, HGRUNT_GRENADELAUNCHER) && HasConditions(bits_COND_CAN_RANGE_ATTACK2) &&
-				OccupySlot(bits_SLOTS_HGRUNT_GRENADE) )
+			else if ( FBitSet(pev->weapons, HGRUNT_GRENADELAUNCHER) && HasConditions(bits_COND_CAN_RANGE_ATTACK2) &&
+					  OccupySlot(bits_SLOTS_HGRUNT_GRENADE) )
 			{
 				// shoot a grenade if you can
 				return GetScheduleOfType(SCHED_RANGE_ATTACK2);

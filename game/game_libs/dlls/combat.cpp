@@ -308,7 +308,7 @@ void CBaseMonster::GibMonster(void)
 	// only humans throw skulls !!!UNDONE - eventually monsters will have their own sets of gibs
 	if ( HasHumanGibs() )
 	{
-		if ( CVAR_GET_FLOAT("violence_hgibs") != 0 )  // Only the player will ever get here
+		if ( CVAR_GET_FLOAT("violence_hgibs") != 0.0f )  // Only the player will ever get here
 		{
 			CGib::SpawnHeadGib(pev);
 			CGib::SpawnRandomGibs(pev, 4, 1);  // throw some human gibs.
@@ -317,7 +317,7 @@ void CBaseMonster::GibMonster(void)
 	}
 	else if ( HasAlienGibs() )
 	{
-		if ( CVAR_GET_FLOAT("violence_agibs") != 0 )  // Should never get here, but someone might call it directly
+		if ( CVAR_GET_FLOAT("violence_agibs") != 0.0f )  // Should never get here, but someone might call it directly
 		{
 			CGib::SpawnRandomGibs(pev, 4, 0);  // Throw alien gibs
 		}
@@ -534,8 +534,21 @@ void CBaseMonster::BecomeDead(void)
 
 BOOL CBaseMonster::ShouldGibMonster(int iGib)
 {
+	// Low violence cvars always take priority.
+	if ( HasHumanGibs() && CVAR_GET_FLOAT("violence_hgibs") == 0.0f )
+	{
+		return FALSE;
+	}
+
+	if ( HasAlienGibs() && CVAR_GET_FLOAT("violence_agibs") == 0.0f )
+	{
+		return FALSE;
+	}
+
 	if ( (iGib == GIB_NORMAL && pev->health < GIB_HEALTH_VALUE) || (iGib == GIB_ALWAYS) )
+	{
 		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -544,15 +557,10 @@ void CBaseMonster::CallGibMonster(void)
 {
 	BOOL fade = FALSE;
 
-	if ( HasHumanGibs() )
+	if ( (HasHumanGibs() && CVAR_GET_FLOAT("violence_hgibs") == 0.0f) ||
+		 (HasAlienGibs() && CVAR_GET_FLOAT("violence_agibs") == 0.0f) )
 	{
-		if ( CVAR_GET_FLOAT("violence_hgibs") == 0 )
-			fade = TRUE;
-	}
-	else if ( HasAlienGibs() )
-	{
-		if ( CVAR_GET_FLOAT("violence_agibs") == 0 )
-			fade = TRUE;
+		fade = TRUE;
 	}
 
 	pev->takedamage = DAMAGE_NO;
@@ -578,7 +586,9 @@ void CBaseMonster::CallGibMonster(void)
 	}
 
 	if ( ShouldFadeOnDeath() && !fade )
+	{
 		UTIL_Remove(this);
+	}
 }
 
 /*
@@ -586,7 +596,7 @@ void CBaseMonster::CallGibMonster(void)
 Killed
 ============
 */
-void CBaseMonster::Killed(entvars_t*, int iGib)
+void CBaseMonster::Killed(entvars_t*, int iGib, int, float, float)
 {
 	// unsigned int	cCount = 0;
 	// BOOL		fDone = FALSE;
@@ -594,7 +604,10 @@ void CBaseMonster::Killed(entvars_t*, int iGib)
 	if ( HasMemory(bits_MEMORY_KILLED) )
 	{
 		if ( ShouldGibMonster(iGib) )
+		{
 			CallGibMonster();
+		}
+
 		return;
 	}
 
@@ -894,6 +907,7 @@ int CBaseMonster::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 	}
 
 	// do the damage
+	float oldHealth = pev->health;
 	pev->health -= flTake;
 
 	// HACKHACK Don't kill monsters in a script.  Let them break their scripts first
@@ -909,15 +923,15 @@ int CBaseMonster::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, fl
 
 		if ( bitsDamageType & DMG_ALWAYSGIB )
 		{
-			Killed(pevAttacker, GIB_ALWAYS);
+			Killed(pevAttacker, GIB_ALWAYS, bitsDamageType, flTake, oldHealth);
 		}
 		else if ( bitsDamageType & DMG_NEVERGIB )
 		{
-			Killed(pevAttacker, GIB_NEVER);
+			Killed(pevAttacker, GIB_NEVER, bitsDamageType, flTake, oldHealth);
 		}
 		else
 		{
-			Killed(pevAttacker, GIB_NORMAL);
+			Killed(pevAttacker, GIB_NORMAL, bitsDamageType, flTake, oldHealth);
 		}
 
 		g_pevLastInflictor = NULL;
@@ -1000,10 +1014,11 @@ int CBaseMonster::DeadTakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker
 	// destroy the corpse.
 	if ( bitsDamageType & DMG_GIB_CORPSE )
 	{
+		float oldHealth = pev->health;
 		if ( pev->health <= flDamage )
 		{
 			pev->health = -50;
-			Killed(pevAttacker, GIB_ALWAYS);
+			Killed(pevAttacker, GIB_ALWAYS, bitsDamageType, flDamage, oldHealth);
 			return 0;
 		}
 		// Accumulate corpse gibbing damage, so you can gib with multiple hits

@@ -381,8 +381,12 @@ void RoundUpHullSize(vec3_t size)
 		float result, value;
 
 		value = size[i];
+
 		if ( value < 0.0f )
+		{
 			negative = true;
+		}
+
 		value = Q_ceil(fabs(value));
 		result = Q_ceil(size[i]);
 
@@ -390,7 +394,9 @@ void RoundUpHullSize(vec3_t size)
 		for ( j = 0; j < NUM_HULL_ROUNDS; j++ )
 		{
 			if ( value > hull_table[j] )
+			{
 				continue;  // ceil only
+			}
 
 			if ( negative )
 			{

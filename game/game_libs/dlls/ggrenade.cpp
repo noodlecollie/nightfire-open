@@ -87,7 +87,8 @@ void CGrenade::Explode(TraceResult* pTrace, int bitsDamageType)
 		WRITE_SHORT(g_sModelIndexWExplosion);
 	}
 	WRITE_BYTE(
-		m_iExplodeSpriteScale ? m_iExplodeSpriteScale : static_cast<int>(((pev->dmg - 50) * 0.6f)));  // scale * 10
+		m_iExplodeSpriteScale ? m_iExplodeSpriteScale : static_cast<int>(((pev->dmg - 50) * 0.6f))
+	);  // scale * 10
 	WRITE_BYTE(15);  // framerate
 	WRITE_BYTE(TE_EXPLFLAG_NONE);
 	MESSAGE_END();
@@ -171,7 +172,7 @@ void CGrenade::Smoke(void)
 	UTIL_Remove(this);
 }
 
-void CGrenade::Killed(entvars_t*, int)
+void CGrenade::Killed(entvars_t*, int, int, float, float)
 {
 	Detonate();
 }
@@ -235,7 +236,8 @@ void CGrenade::DangerSoundThink(void)
 		bits_SOUND_DANGER,
 		Vector(pev->origin) + Vector(pev->velocity) * 0.5f,
 		(int)VectorLength(pev->velocity),
-		0.2f);
+		0.2f
+	);
 
 	pev->nextthink = gpGlobals->time + 0.2f;
 
@@ -354,7 +356,8 @@ void CGrenade::TumbleThink(void)
 			bits_SOUND_DANGER,
 			Vector(pev->origin) + Vector(pev->velocity) * (pev->dmgtime - gpGlobals->time),
 			400,
-			0.1f);
+			0.1f
+		);
 	}
 
 	if ( pev->dmgtime <= gpGlobals->time )

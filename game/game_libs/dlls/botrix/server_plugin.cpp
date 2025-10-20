@@ -28,6 +28,7 @@ namespace Botrix
 	CBotrixCommand* CBotrixServerPlugin::m_pConsoleCommands = nullptr;
 	bool CBotrixServerPlugin::m_bSpawnedRegisterBots = false;
 	CBotFactory CBotrixServerPlugin::m_BotFactory;
+	struct cvar_s* CBotrixServerPlugin::m_DeveloperCvar = nullptr;
 
 	static constexpr const char* const TEAM_NAME_UNASSIGNED = "unassigned";
 	static constexpr const char* const TEAM_NAME_SPECTATOR = "spectator";
@@ -120,15 +121,11 @@ namespace Botrix
 
 	void CBotrixServerPlugin::Init()
 	{
+		m_DeveloperCvar = g_engfuncs.pfnCVarGetPointer("developer");
 		good::log::bLogToStdOut = false;  // Disable log to stdout, Msg() will print there.
 		good::log::bLogToStdErr = false;  // Disable log to stderr, Warning() will print there.
 		good::log::iStdErrLevel = good::ELogLevelWarning;  // Log warnings and errors to stderr.
-		CBotrixEngineUtil::iLogLevel = good::ELogLevelTrace;
 		good::log::iLogLevel = good::ELogLevelTrace;  // Trace before loading config.ini
-
-		CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
-
-		CMod::aBotNames.push_back("Botrix");
 
 		m_pConsoleCommands = new CBotrixCommand();
 
@@ -283,8 +280,6 @@ namespace Botrix
 
 	void CBotrixServerPlugin::Think()
 	{
-		CBotrixServerPlugin::UpdateLogLevel();
-
 		if ( !m_bMapRunning )
 		{
 			return;
@@ -396,41 +391,6 @@ namespace Botrix
 		return m_BotFactory;
 	}
 
-	void CBotrixServerPlugin::UpdateLogLevel()
-	{
-		static cvar_t* developerCvar = nullptr;
-
-		if ( !developerCvar )
-		{
-			developerCvar = CVAR_GET_POINTER("developer");
-		}
-
-		ASSERT(developerCvar);
-
-		const int devLevel = static_cast<int>(developerCvar->value);
-
-		switch ( devLevel )
-		{
-			case 4:
-			case 5:
-			{
-				CBotrixEngineUtil::iLogLevel = good::ELogLevelDebug;
-				break;
-			}
-
-			default:
-			{
-				CBotrixEngineUtil::iLogLevel = good::ELogLevelInfo;
-				break;
-			}
-		}
-
-		if ( CBotrixCvars::botrix_log_trace.value != 0.0f )
-		{
-			CBotrixEngineUtil::iLogLevel = good::ELogLevelTrace;
-		}
-	}
-
 	bool CBotrixServerPlugin::WaypointAutoAnalyzeEnabled()
 	{
 		return CBotrixCvars::botrix_waypoint_auto_analyze.value != 0.0f;
@@ -450,9 +410,7 @@ namespace Botrix
 		}
 
 		ASSERT(edict);
-
-		// TODO: Currently unused
-		(void)edict;
+		CItems::EntityAllocated(edict);
 	}
 
 	void CBotrixServerPlugin::EntityFreed(edict_t* edict)
@@ -463,9 +421,36 @@ namespace Botrix
 		}
 
 		ASSERT(edict);
+		CItems::EntityFreed(edict);
+	}
 
-		// TODO: Currently unused
-		(void)edict;
+	bool CBotrixServerPlugin::ShouldLogToConsole(int level)
+	{
+		switch ( level )
+		{
+			case good::ELogLevelTrace:
+			{
+				return m_DeveloperCvar && static_cast<int>(m_DeveloperCvar->value) >= 2 &&
+					static_cast<int>(CBotrixCvars::botrix_log_trace.value) != 0;
+			}
+
+			case good::ELogLevelDebug:
+			{
+				return m_DeveloperCvar && static_cast<int>(m_DeveloperCvar->value) >= 1;
+			}
+
+			case good::ELogLevelInfo:
+			case good::ELogLevelWarning:
+			case good::ELogLevelError:
+			{
+				return true;
+			}
+
+			default:
+			{
+				return false;
+			}
+		}
 	}
 
 	void CBotrixServerPlugin::PrepareLevel()
@@ -524,8 +509,6 @@ namespace Botrix
 	{
 		static const int respawnableFlags = CTypeToString::EntityClassFlagsFromString("respawnable");
 
-		CBotrixServerPlugin::UpdateLogLevel();
-
 		// TODO: Pull these values out and set them in a readable way.
 		CMod::LoadDefaults();
 
@@ -540,8 +523,8 @@ namespace Botrix
 		CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_deathmatch", 0));
 		CItems::AddItemClassFor(EItemTypePlayerSpawn, CItemClass("info_player_coop", 0));
 
-		CItems::AddItemClassFor(EItemTypeArmor, CItemClass("item_battery", respawnableFlags));
-		CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_healthkit", respawnableFlags));
+		CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_armor_plate", respawnableFlags));
+		CItems::AddItemClassFor(EItemTypeHealth, CItemClass("item_armor_vest", respawnableFlags));
 
 		CItems::AddItemClassFor(EItemTypeLadder, CItemClass("func_ladder", FEntityNone));
 

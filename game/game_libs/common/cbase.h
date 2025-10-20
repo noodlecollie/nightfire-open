@@ -129,6 +129,7 @@ class CBaseEntity;
 class CBaseMonster;
 class CBasePlayerItem;
 class CSquadMonster;
+class CBasePlayerAmmo;
 
 #define SF_NORESPAWN (1 << 30)  // !!!set this bit on guns and stuff that should never respawn.
 
@@ -221,7 +222,7 @@ public:
 	TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
 	virtual int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	virtual int TakeHealth(float flHealth, int bitsDamageType);
-	virtual void Killed(entvars_t* pevAttacker, int iGib);
+	virtual void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken);
 	virtual int BloodColor(void)
 	{
 		return DONT_BLEED;
@@ -257,7 +258,7 @@ public:
 	{
 		return 0;
 	}
-	virtual int GiveAmmo(int, const char*, int)
+	virtual int GiveAmmo(int, const char*, int, CBasePlayerAmmo* = nullptr)
 	{
 		return -1;
 	};

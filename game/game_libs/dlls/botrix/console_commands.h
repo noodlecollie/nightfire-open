@@ -1054,13 +1054,6 @@ namespace Botrix
 		TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
 	};
 
-	class CConfigLogCommand : public CConsoleCommand
-	{
-	public:
-		CConfigLogCommand();
-		TCommandResult Execute(CBotrixClient* pClient, int argc, const char** argv);
-	};
-
 	class CConfigWaypointAnalyzeAmount : public CConsoleCommand
 	{
 	public:
@@ -1263,7 +1256,6 @@ namespace Botrix
 			m_sCommand = "config";
 			Add(new CConfigBotCommand);
 			Add(new CConfigEventsCommand);
-			Add(new CConfigLogCommand);
 			Add(new CConfigWaypoint);
 		}
 	};

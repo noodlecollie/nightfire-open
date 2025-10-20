@@ -55,7 +55,7 @@ namespace Botrix
 		return static_cast<int>(serverEntity.GetEdict()->v.health);
 	}
 
-	inline bool IsEntityOnMap(const ServerEntity& serverEntity)
+	inline bool IsEntityDrawable(const ServerEntity& serverEntity)
 	{
 		return FLAG_CLEARED(EF_NODRAW, GetEntityEffects(serverEntity));
 	}
@@ -100,9 +100,9 @@ namespace Botrix
 	}
 
 	//================================================================================================================
-	bool CItem::IsOnMap() const
+	bool CItem::IsTangible() const
 	{
-		return IsEntityOnMap(ServerEntity(pEdict));
+		return IsEntityDrawable(ServerEntity(pEdict));
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -150,8 +150,12 @@ namespace Botrix
 	{
 		GoodAssert(0 <= iId && iId < MAX_EDICTS);
 		const fast_edict_index_t& pLookup = m_aEdictsIndexes[iId];
+
 		if ( pIndex )
+		{
 			*pIndex = pLookup.iItemIndex;
+		}
+
 		return pLookup.iItemType;
 	}
 
@@ -253,90 +257,31 @@ namespace Botrix
 	//----------------------------------------------------------------------------------------------------------------
 	void CItems::Update()
 	{
-		// Update weapons we have in items array.
-		good::vector<CItem>& aWeapons = m_aItems[EItemTypeWeapon];
-		for ( TItemIndex i = 0; i < aWeapons.size(); ++i )
-		{
-			CItem& cEntity = aWeapons[i];
-			edict_t* pEdict = cEntity.pEdict;
-			if ( pEdict == NULL )
-			{
-				m_iFreeIndex[EItemTypeWeapon] = i;
-				continue;
-			}
-
-			ServerEntity serverEntity(pEdict);
-
-			if ( pEdict->free )
-			{
-				cEntity.pEdict = NULL;
-				m_iFreeIndex[EItemTypeWeapon] = i;
-				m_aUsedItems.reset(ENTINDEX(pEdict));
-			}
-			else if ( IsEntityTaken(serverEntity) )  // Weapon still belongs to some player.
-			{
-				FLAG_SET(FTaken, cEntity.iFlags);
-			}
-			else if ( FLAG_ALL_SET_OR_0(FTaken, cEntity.iFlags) && IsEntityOnMap(serverEntity) )
-			{
-				FLAG_CLEAR(FTaken, cEntity.iFlags);
-				cEntity.vOrigin = cEntity.CurrentPosition();
-				cEntity.iWaypoint =
-					CWaypoints::GetNearestWaypoint(cEntity.vOrigin, NULL, true, CItem::iMaxDistToWaypoint);
-			}
-		}
-
-		// Update weapon entities on map.
-		int entsToCheck = m_iCheckEntitiesPerFrame;
-		TItemIndex i = m_iCurrentEntity;
-
-		for ( ; i < MAX_EDICTS && entsToCheck > 0; ++i )
-		{
-			if ( m_aUsedItems.test(i) )
-			{
-				continue;
-			}
-
-			edict_t* pEdict = INDEXENT(i);
-
-			if ( !pEdict || pEdict->free )
-			{
-				continue;
-			}
-
-			--entsToCheck;
-
-			// Check only server entities.
-			ServerEntity serverEntity(pEdict);
-
-			// Check only for new weapons, because new weapon instance is created when weapon is picked up.
-			CItemClass* pWeaponClass;
-			TItemType iEntityType =
-				GetEntityType(STRING(pEdict->v.classname), pWeaponClass, EItemTypeWeapon, EItemTypeWeapon + 1);
-
-			if ( iEntityType == EItemTypeWeapon )
-			{
-				AddItem(EItemTypeWeapon, pEdict, pWeaponClass, serverEntity);
-			}
-		}
-
-		m_iCurrentEntity = (i >= MAX_EDICTS) ? CPlayers::Size() + 1 : i;
 	}
 
 	//----------------------------------------------------------------------------------------------------------------
 	good::vector<TItemId>::iterator LocateObjectFlags(good::vector<TItemId>& aFlags, TItemId iObject)
 	{
 		for ( good::vector<TItemId>::iterator it = aFlags.begin(); it != aFlags.end(); it += 2 )
+		{
 			if ( *it == iObject )
+			{
 				return it;
+			}
+		}
+
 		return aFlags.end();
 	}
 
 	bool CItems::GetObjectFlags(TItemId iObject, TItemFlags& iFlags)
 	{
 		good::vector<TItemId>::const_iterator it = LocateObjectFlags(m_aObjectFlags, iObject);
+
 		if ( it == m_aObjectFlags.end() )
+		{
 			return false;
+		}
+
 		iFlags = *(++it);
 		return true;
 	}
@@ -345,7 +290,9 @@ namespace Botrix
 	{
 		GoodAssert(0 <= iObject && iObject < MAX_EDICTS);
 		if ( m_aEdictsIndexes[iObject].iItemType != EItemTypeObject )
+		{
 			return false;
+		}
 
 		int iIndex = m_aEdictsIndexes[iObject].iItemIndex;
 		m_aItems[EItemTypeObject][iIndex].iFlags = iFlags;
@@ -357,7 +304,9 @@ namespace Botrix
 			m_aObjectFlags.push_back(iFlags);
 		}
 		else
+		{
 			*(++it) = iFlags;
+		}
 
 		return true;
 	}
@@ -502,8 +451,12 @@ namespace Botrix
 			}
 
 			for ( int i = 0; i < aItems.size(); ++i )  // TODO: add free count.
+			{
 				if ( aItems[i].pEdict == NULL )
+				{
 					return i;
+				}
+			}
 		}
 
 		return aItems.size();
@@ -588,7 +541,7 @@ namespace Botrix
 		int iFlags = pItemClass->iFlags;
 		TWaypointId iWaypoint = -1;
 
-		if ( !IsEntityOnMap(serverEntity) || IsEntityTaken(serverEntity) )
+		if ( !IsEntityDrawable(serverEntity) || IsEntityTaken(serverEntity) )
 		{
 			FLAG_SET(FTaken, iFlags);
 		}
@@ -703,7 +656,16 @@ namespace Botrix
 		fNextDrawTime = CBotrixServerPlugin::GetTime() + 1.0f;
 
 		const byte* pvsForPoint = g_engfuncs.pfnGetPvsForPoint(pClient->GetHead());
-		memcpy(pvs, pvsForPoint, sizeof(pvs));
+
+		if ( pvsForPoint )
+		{
+			memcpy(pvs, pvsForPoint, sizeof(pvs));
+		}
+		else
+		{
+			// If the player has noclipped, the PVS might be null.
+			memset(pvs, 0, sizeof(pvs));
+		}
 
 		Vector vHead = pClient->GetHead();
 		CBotrixEngineUtil::SetPVSForVector(vHead);
@@ -739,7 +701,7 @@ namespace Botrix
 				{
 					const CItem* pEntity = (iEntityType == EItemTypeOther) ? NULL : &m_aItems[iEntityType][i];
 
-					if ( FLAG_SOME_SET(FItemDrawStats, pClient->iItemDrawFlags) )
+					if ( FLAG_SOME_SET(FItemDrawStats, pClient->iItemDrawFlags) && (!pEntity || !pEntity->IsTaken()) )
 					{
 						// Draw entity class name name with index.
 						PlatformLib_SNPrintF(
@@ -795,7 +757,7 @@ namespace Botrix
 								0xFF,
 								0xFF,
 								0xFF,
-								IsEntityOnMap(serverEntity) ? "alive" : "dead"
+								IsEntityDrawable(serverEntity) ? "tangible" : "intangible"
 							);
 
 							// CBotrixEngineUtil::DrawText( vOrigin, pos++, 1.0f, 0xFF, 0xFF, 0xFF,
@@ -880,6 +842,46 @@ namespace Botrix
 						}
 					}
 				}
+			}
+		}
+	}
+
+	void CItems::EntityAllocated(edict_t* ent)
+	{
+		if ( m_bMapLoaded && ent )
+		{
+			CheckNewEntity(ent);
+		}
+	}
+
+	void CItems::EntityFreed(edict_t* ent)
+	{
+		if ( !m_bMapLoaded || !ent )
+		{
+			return;
+		}
+
+		int iIndex = ENTINDEX(ent);
+		GoodAssert(iIndex > 0);  // Valve should not allow this assert.
+
+		m_aEdictsIndexes[iIndex].iItemType = EItemTypeOther;
+
+		// Check only server entities.
+		if ( !m_aUsedItems.test(iIndex) )
+		{
+			return;
+		}
+
+		m_aUsedItems.reset(iIndex);
+		good::vector<CItem>& aWeapons = m_aItems[EItemTypeWeapon];
+
+		for ( TItemIndex i = 0; i < (int)aWeapons.size(); ++i )
+		{
+			if ( aWeapons[i].pEdict == ent )
+			{
+				aWeapons[i].pEdict = NULL;
+				m_iFreeIndex[EItemTypeWeapon] = i;
+				break;
 			}
 		}
 	}

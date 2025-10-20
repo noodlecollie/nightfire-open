@@ -2611,7 +2611,7 @@ namespace Botrix
 			iPathFrom = GetWaypointId(0, argc, argv, pClient, EWaypointIdInvalid);
 			iPathTo = GetWaypointId(1, argc, argv, pClient, EWaypointIdInvalid);
 
-			if ( strcmp(argv[2], "both") == 0 )
+			if ( argc > 2 && strcmp(argv[2], "both") == 0 )
 			{
 				removeBoth = true;
 			}
@@ -3398,30 +3398,48 @@ namespace Botrix
 	{
 		m_sCommand = "add";
 		m_sHelp = "add bot";
+
 		if ( CMod::aClassNames.size() )
+		{
 			m_sDescription = "Optional parameters: (intelligence) (team) (class) (bot-name).";
+		}
 		else
+		{
 			m_sDescription = "Optional parameters: (intelligence) (team) (bot-name).";
+		}
+
 		m_iAccessLevel = FCommandAccessBot;
 
 		StringVector args1;
 		args1.push_back(sRandom);
+
 		for ( TBotIntelligence i = 0; i < EBotIntelligenceTotal; ++i )
+		{
 			args1.push_back(CTypeToString::IntelligenceToString(i).duplicate());
+		}
+
 		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 		m_cAutoCompleteValues.push_back(args1);
 
 		StringVector args2;
+
 		for ( TBotIntelligence i = 0; i < CMod::aTeamsNames.size(); ++i )
+		{
 			args2.push_back(CMod::aTeamsNames[i].duplicate());
+		}
+
 		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 		m_cAutoCompleteValues.push_back(args2);
 
 		if ( CMod::aClassNames.size() > 0 )
 		{
 			StringVector args3;
+
 			for ( TBotIntelligence i = 0; i < CMod::aClassNames.size(); ++i )
+			{
 				args3.push_back(CMod::aClassNames[i].duplicate());
+			}
+
 			m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
 			m_cAutoCompleteValues.push_back(args3);
 		}
@@ -3435,7 +3453,9 @@ namespace Botrix
 	TCommandResult CBotAddCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
 	{
 		if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
+		{
 			return ECommandPerformed;
+		}
 
 		edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
 
@@ -3474,6 +3494,7 @@ namespace Botrix
 		const char* szName = (argc > iArg) ? argv[iArg++] : NULL;
 
 		CPlayer* pBot = CPlayers::AddBot(szName, iTeam, iIntelligence, argc - iArg, &argv[iArg]);
+
 		if ( pBot )
 		{
 			BULOG_I(pEdict, "Bot added: %s.", pBot->GetName());
@@ -4763,58 +4784,6 @@ namespace Botrix
 		pClient->bDebuggingEvents = iValue != 0;
 		CPlayers::CheckForDebugging();
 		BULOG_I(pClient->GetEdict(), "Display game events: %s.", pClient->bDebuggingEvents ? "on" : "off");
-		return ECommandPerformed;
-	}
-
-	CConfigLogCommand::CConfigLogCommand()
-	{
-		m_sCommand = "log";
-		m_sHelp = "set console log level (none, trace, debug, info, warning, error).";
-		m_iAccessLevel = FCommandAccessConfig;
-
-		StringVector args;
-		args.push_back(sNone);
-		for ( int i = 0; i < good::ELogLevelTotal; ++i )
-			args.push_back(CTypeToString::LogLevelToString(i).duplicate());
-
-		m_cAutoCompleteArguments.push_back(EConsoleAutoCompleteArgValues);
-		m_cAutoCompleteValues.push_back(args);
-	}
-
-	TCommandResult CConfigLogCommand::Execute(CBotrixClient* pClient, int argc, const char** argv)
-	{
-		if ( CConsoleCommand::Execute(pClient, argc, argv) == ECommandPerformed )
-		{
-			return ECommandPerformed;
-		}
-
-		edict_t* pEdict = (pClient) ? pClient->GetEdict() : NULL;
-
-		if ( argc == 0 )
-		{
-			BULOG_I(
-				pEdict,
-				"Console log level: %s.",
-				CTypeToString::LogLevelToString(CBotrixEngineUtil::iLogLevel).c_str()
-			);
-			return ECommandPerformed;
-		}
-
-		good::TLogLevel iLogLevel = -1;
-
-		if ( argc == 1 )
-		{
-			iLogLevel = CTypeToString::LogLevelFromString(argv[0]);
-		}
-
-		if ( iLogLevel == -1 )
-		{
-			BULOG_W(pEdict, "Error, invalid argument (must be none, trace, debug, info, warning, error).");
-			return ECommandError;
-		}
-
-		CBotrixEngineUtil::iLogLevel = iLogLevel;
-		BULOG_I(pEdict, "Console log level: %s.", argv[0]);
 		return ECommandPerformed;
 	}
 

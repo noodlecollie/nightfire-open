@@ -777,7 +777,8 @@ void WriteFile(void)
 		pData - pStart - total,
 		totalframes,
 		(int)totalseconds / 60,
-		(int)totalseconds % 60);
+		(int)totalseconds % 60
+	);
 	total = pData - pStart;
 
 	WriteModel();

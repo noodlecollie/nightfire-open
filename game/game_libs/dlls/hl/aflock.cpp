@@ -281,7 +281,7 @@ void CFlockingFlyer::MakeSound(void)
 
 //=========================================================
 //=========================================================
-void CFlockingFlyer::Killed(entvars_t*, int)
+void CFlockingFlyer::Killed(entvars_t*, int, int, float, float)
 {
 	CFlockingFlyer* pSquad;
 
@@ -538,7 +538,8 @@ BOOL CFlockingFlyer::FPathBlocked()
 		Vector(pev->origin) + Vector(gpGlobals->v_forward) * AFLOCK_CHECK_DIST,
 		ignore_monsters,
 		ENT(pev),
-		&tr);
+		&tr
+	);
 	if ( tr.flFraction != 1.0 )
 	{
 		m_flLastBlockedTime = gpGlobals->time;
@@ -551,7 +552,8 @@ BOOL CFlockingFlyer::FPathBlocked()
 		Vector(pev->origin) + Vector(gpGlobals->v_right) * 12 + Vector(gpGlobals->v_forward) * AFLOCK_CHECK_DIST,
 		ignore_monsters,
 		ENT(pev),
-		&tr);
+		&tr
+	);
 	if ( tr.flFraction != 1.0 )
 	{
 		m_flLastBlockedTime = gpGlobals->time;
@@ -563,7 +565,8 @@ BOOL CFlockingFlyer::FPathBlocked()
 		Vector(pev->origin) - Vector(gpGlobals->v_right) * 12 + Vector(gpGlobals->v_forward) * AFLOCK_CHECK_DIST,
 		ignore_monsters,
 		ENT(pev),
-		&tr);
+		&tr
+	);
 	if ( tr.flFraction != 1.0 )
 	{
 		m_flLastBlockedTime = gpGlobals->time;
@@ -629,7 +632,8 @@ void CFlockingFlyer::FlockLeaderThink(void)
 			Vector(pev->origin) + Vector(gpGlobals->v_right) * AFLOCK_CHECK_DIST,
 			ignore_monsters,
 			ENT(pev),
-			&tr);
+			&tr
+		);
 		VectorSubtract(tr.vecEndPos, pev->origin, vecDist);
 		flRightSide = vecDist.Length();
 
@@ -638,7 +642,8 @@ void CFlockingFlyer::FlockLeaderThink(void)
 			Vector(pev->origin) - Vector(gpGlobals->v_right) * AFLOCK_CHECK_DIST,
 			ignore_monsters,
 			ENT(pev),
-			&tr);
+			&tr
+		);
 		VectorSubtract(tr.vecEndPos, pev->origin, vecDist);
 		flLeftSide = vecDist.Length();
 

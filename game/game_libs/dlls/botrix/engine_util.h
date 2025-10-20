@@ -51,8 +51,6 @@ namespace Botrix
 
 		static constexpr size_t MAX_PVS_DATA_LENGTH = (MAX_MAP_LEAFS + 7) / 8;
 
-		static good::TLogLevel iLogLevel;  /// Console log level. Info by default.
-
 		/// Print a message to given client (must be called from game thread). If message tag is used then message will
 		/// start with "[Botrix] ".
 		static void Message(good::TLogLevel iLevel, struct edict_s* pEntity, const char* szMsg);
@@ -91,6 +89,7 @@ namespace Botrix
 			float totalHorizFOV,
 			float aspectRatio
 		);
+
 		// BOTRIX_TODO: Move statefulness out of this class
 		static bool TraceHitSomething();
 		static Vector GetHullGroundVec(
@@ -99,6 +98,7 @@ namespace Botrix
 			int hull = human_hull,
 			float startSolidNudge = 0.0f
 		);
+
 		static bool RayHitsEntity(edict_t* pDoor, const Vector& vSrc, const Vector& vDest);
 
 		// Traces a human hull down from the specified point to see if it hits the ground.

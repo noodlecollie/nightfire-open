@@ -262,19 +262,27 @@ void LinkUserMessages(void)
 
 LINK_ENTITY_TO_CLASS(player, CBasePlayer)
 
-void CBasePlayer::Pain(void)
+void CBasePlayer::Pain(int bitsDamageType)
 {
 	if ( m_flNextPainTime > gpGlobals->time )
 	{
 		return;
 	}
 
-	const PlayerSoundId soundGender =
-		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::PainFemale : PlayerSoundId::PainMale;
+	const char* path = nullptr;
 
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	if ( bitsDamageType & DMG_DROWN )
+	{
+		path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::Drown);
+	}
+	else
+	{
+		const PlayerSoundId soundGender =
+			m_Gender == CharacterGender::FEMALE ? PlayerSoundId::PainFemale : PlayerSoundId::PainMale;
+		path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	}
+
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
-
 	m_flNextPainTime = gpGlobals->time + 0.45f;
 }
 
@@ -362,12 +370,22 @@ int TrainSpeed(int iSpeed, int iMax)
 	return iRet;
 }
 
-void CBasePlayer::DeathSound(void)
+void CBasePlayer::DeathSound(int bitsDamageType)
 {
-	const PlayerSoundId soundGender =
-		m_Gender == CharacterGender::FEMALE ? PlayerSoundId::DieFemale : PlayerSoundId::DieMale;
+	const char* path = nullptr;
 
-	const char* path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	if ( bitsDamageType & DMG_DROWN )
+	{
+		path = SoundResources::PlayerSounds.RandomResourcePath(PlayerSoundId::Drown);
+	}
+	else
+	{
+		const PlayerSoundId soundGender =
+			m_Gender == CharacterGender::FEMALE ? PlayerSoundId::DieFemale : PlayerSoundId::DieMale;
+
+		path = SoundResources::PlayerSounds.RandomResourcePath(soundGender);
+	}
+
 	EMIT_SOUND(ENT(pev), CHAN_VOICE, path, 1.0f, ATTN_NORM);
 
 	// play one of the suit death alarms
@@ -556,9 +574,9 @@ int CBasePlayer::TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, flo
 	m_bitsDamageType |= bitsDamage;  // Save this so we can report it to the client
 	m_bitsHUDDamage = -1;  // make sure the damage bits get resent
 
-	if ( !(bitsDamage & DMG_DROWN) && pev->health > 0 )
+	if ( pev->health > 0 )
 	{
-		Pain();
+		Pain(bitsDamage);
 	}
 
 	while ( fTookDamage && (!ftrivial || (bitsDamage & DMG_TIMEBASED)) && ffound && bitsDamage )
@@ -915,18 +933,22 @@ void CBasePlayer::RemoveAllItems(BOOL removeSuit)
 entvars_t* g_pevLastInflictor;  // Set in combat.cpp.  Used to pass the damage inflictor for death messages.
 								// Better solution:  Add as parameter to all Killed() functions.
 
-void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib)
+void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float)
 {
 	CSound* pSound;
 
 	// Holster weapon immediately, to allow it to cleanup
 	if ( m_pActiveItem )
+	{
 		m_pActiveItem->Holster();
+	}
 
 	g_pGameRules->PlayerKilled(this, pevAttacker, g_pevLastInflictor);
 
 	if ( m_pTank != 0 )
+	{
 		m_pTank->Use(this, this, USE_OFF, 0);
+	}
 
 	// this client isn't going to be thinking for a while, so reset the sound until they respawn
 	pSound = CSoundEnt::SoundPointerForIndex(CSoundEnt::ClientSoundIndex(edict()));
@@ -988,7 +1010,17 @@ void CBasePlayer::Killed(entvars_t* pevAttacker, int iGib)
 		return;
 	}
 
-	DeathSound();
+	// NFTODO: Make damage threshold a cvar?
+	if ( (bitsDamageType & (DMG_BLAST | DMG_CLUB)) || damageApplied >= 30.0f )
+	{
+		DeathSound(bitsDamageType);
+	}
+	else
+	{
+		// Only minor damage killed us, so play a pain sound instead.
+		m_flNextPainTime = gpGlobals->time - 1.0f;
+		Pain(bitsDamageType);
+	}
 
 	pev->angles[PITCH] = 0;
 	pev->angles[ROLL] = 0;
@@ -2583,10 +2615,14 @@ void CBasePlayer::UpdatePlayerSound(void)
 void CBasePlayer::PostThink()
 {
 	if ( g_fGameOver )
+	{
 		goto pt_end;  // intermission or finale
+	}
 
 	if ( !IsAlive() )
+	{
 		goto pt_end;
+	}
 
 	// Handle Tank controlling
 	if ( m_pTank != 0 )
@@ -2619,7 +2655,7 @@ void CBasePlayer::PostThink()
 			// after this point, we start doing damage
 			float flFallDamage = g_pGameRules->FlPlayerFallDamage(this);
 
-			if ( flFallDamage > pev->health )
+			if ( flFallDamage > pev->health && CVAR_GET_FLOAT("violence_hgibs") != 0.0f )
 			{
 				// splat
 				//  note: play on item channel because we play footstep landing on body channel
@@ -3785,7 +3821,7 @@ int CBasePlayer::RemovePlayerItem(CBasePlayerItem* pItem, bool bCallHolster)
 //
 // Returns the unique ID for the ammo, or -1 if error
 //
-int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax)
+int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax, CBasePlayerAmmo* source)
 {
 	if ( !szName )
 	{
@@ -3804,11 +3840,16 @@ int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax)
 	i = GetAmmoIndex(szName);
 
 	if ( i < 0 || i >= MAX_AMMO_SLOTS )
+	{
 		return -1;
+	}
 
 	int iAdd = Q_min(iCount, iMax - m_rgAmmo[i]);
+
 	if ( iAdd < 1 )
+	{
 		return i;
+	}
 
 	m_rgAmmo[i] += iAdd;
 
@@ -3819,6 +3860,16 @@ int CBasePlayer::GiveAmmo(int iCount, const char* szName, int iMax)
 		WRITE_BYTE(GetAmmoIndex(szName));  // ammo ID
 		WRITE_BYTE(iAdd);  // amount
 		MESSAGE_END();
+	}
+
+	if ( source )
+	{
+		Events::EventData_PlayerPickedUpAmmo eventData;
+		eventData.player = edict();
+		eventData.item = source->edict();
+		eventData.ammoAdded = iAdd;
+
+		GameplaySystems::GetBase()->EventSystem().SendEvent(std::move(eventData));
 	}
 
 	return i;

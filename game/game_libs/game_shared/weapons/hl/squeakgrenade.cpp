@@ -58,7 +58,7 @@ class CSqueakGrenade : public CGrenade
 	{
 		return BLOOD_COLOR_YELLOW;
 	}
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	void GibMonster(void);
 
 	virtual int Save(CSave& save);
@@ -167,7 +167,7 @@ void CSqueakGrenade::Precache(void)
 	PRECACHE_SOUND("squeek/sqk_deploy1.wav");
 }
 
-void CSqueakGrenade::Killed(entvars_t* pevAttacker, int)
+void CSqueakGrenade::Killed(entvars_t* pevAttacker, int, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	pev->model = iStringNull;  // make invisible
 	SetThink(&CBaseEntity::SUB_Remove);
@@ -187,15 +187,21 @@ void CSqueakGrenade::Killed(entvars_t* pevAttacker, int)
 	UTIL_BloodDrips(pev->origin, g_vecZero, BloodColor(), 80);
 
 	if ( m_hOwner != 0 )
+	{
 		RadiusDamage(pev, m_hOwner->pev, pev->dmg, CLASS_NONE, DMG_BLAST);
+	}
 	else
+	{
 		RadiusDamage(pev, pev, pev->dmg, CLASS_NONE, DMG_BLAST);
+	}
 
 	// reset owner so death message happens
 	if ( m_hOwner != 0 )
+	{
 		pev->owner = m_hOwner->edict();
+	}
 
-	CBaseMonster::Killed(pevAttacker, GIB_ALWAYS);
+	CBaseMonster::Killed(pevAttacker, GIB_ALWAYS, bitsDamageType, damageApplied, damageTaken);
 }
 
 void CSqueakGrenade::GibMonster(void)
@@ -512,7 +518,8 @@ void CSqueak::PrimaryAttack()
 			trace_origin + Vector(gpGlobals->v_forward) * 64,
 			dont_ignore_monsters,
 			NULL,
-			&tr);
+			&tr
+		);
 
 		int flags;
 #ifdef CLIENT_WEAPONS

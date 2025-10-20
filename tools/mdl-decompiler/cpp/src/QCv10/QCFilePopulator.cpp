@@ -9,9 +9,6 @@
 #include "Exceptions.h"
 #include "Utils.h"
 
-// REMOVE ME
-#include <iostream>
-
 namespace QCv10
 {
 	QCFilePopulator::QCFilePopulator(

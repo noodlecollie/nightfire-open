@@ -65,7 +65,7 @@ public:
 	Schedule_t* GetSchedule(void);
 	Schedule_t* GetScheduleOfType(int Type);
 
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	void BecomeDead(void);
 
 	void EXPORT CombatUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value);
@@ -118,7 +118,7 @@ public:
 	void AlertSound(void);
 	void AttackSound(void);
 	void BiteSound(void);
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 };
 
@@ -179,7 +179,8 @@ const char* CIchthyosaur::pDieSounds[] = {
 		1.0f, \
 		0.6f, \
 		0, \
-		RANDOM_LONG(95, 105));
+		RANDOM_LONG(95, 105) \
+	);
 
 void CIchthyosaur::IdleSound(void)
 {
@@ -201,7 +202,7 @@ void CIchthyosaur::BiteSound(void)
 	EMIT_ICKY_SOUND(CHAN_WEAPON, pBiteSounds);
 }
 
-void CIchthyosaur::DeathSound(void)
+void CIchthyosaur::DeathSound(int)
 {
 	EMIT_ICKY_SOUND(CHAN_VOICE, pDieSounds);
 }
@@ -354,9 +355,9 @@ void CIchthyosaur::SetYawSpeed(void)
 //=========================================================
 // Killed - overrides CFlyingMonster.
 //
-void CIchthyosaur::Killed(entvars_t* pevAttacker, int iGib)
+void CIchthyosaur::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
-	CBaseMonster::Killed(pevAttacker, iGib);
+	CBaseMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 	VectorClear(pev->velocity);
 }
 

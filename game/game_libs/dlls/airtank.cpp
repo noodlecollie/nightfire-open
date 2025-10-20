@@ -30,7 +30,7 @@ class CAirtank : public CGrenade
 	{
 		return DONT_BLEED;
 	};
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	virtual int Save(CSave& save);
 	virtual int Restore(CRestore& restore);
@@ -75,7 +75,7 @@ void CAirtank::Precache(void)
 	PRECACHE_SOUND("doors/aliendoor3.wav");
 }
 
-void CAirtank::Killed(entvars_t* pevAttacker, int)
+void CAirtank::Killed(entvars_t* pevAttacker, int, int, float, float)
 {
 	pev->owner = ENT(pevAttacker);
 

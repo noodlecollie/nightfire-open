@@ -186,8 +186,9 @@ void ClientKill(edict_t* pEntity)
 	pl->m_fNextSuicideTime = gpGlobals->time + 1;  // don't let them suicide for 5 seconds after suiciding
 
 	// have the player kill themself
+	float oldHealth = pev->health;
 	pev->health = 0;
-	pl->Killed(pev, GIB_NEVER);
+	pl->Killed(pev, GIB_NEVER, DMG_GENERIC, oldHealth, oldHealth);
 
 	// pev->modelindex = g_ulModelIndexPlayer;
 	// pev->frags -= 2;		// extra penalty
@@ -478,7 +479,8 @@ void Host_Say(edict_t* pEntity, int teamonly)
 			GETPLAYERAUTHID(pEntity),
 			g_engfuncs.pfnInfoKeyValue(g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model"),
 			temp,
-			p);
+			p
+		);
 	}
 	else
 	{
@@ -489,7 +491,8 @@ void Host_Say(edict_t* pEntity, int teamonly)
 			GETPLAYERAUTHID(pEntity),
 			GETPLAYERUSERID(pEntity),
 			temp,
-			p);
+			p
+		);
 	}
 }
 
@@ -621,7 +624,8 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 				256,
 				"* %s changed name to %s\n",
 				STRING(pEntity->v.netname),
-				g_engfuncs.pfnInfoKeyValue(infobuffer, "name"));
+				g_engfuncs.pfnInfoKeyValue(infobuffer, "name")
+			);
 			MESSAGE_BEGIN(MSG_ALL, gmsgSayText, NULL);
 			WRITE_BYTE(ENTINDEX(pEntity));
 			WRITE_STRING(text);
@@ -637,7 +641,8 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 				GETPLAYERUSERID(pEntity),
 				GETPLAYERAUTHID(pEntity),
 				g_engfuncs.pfnInfoKeyValue(infobuffer, "model"),
-				g_engfuncs.pfnInfoKeyValue(infobuffer, "name"));
+				g_engfuncs.pfnInfoKeyValue(infobuffer, "name")
+			);
 		}
 		else
 		{
@@ -647,7 +652,8 @@ void ClientUserInfoChanged(edict_t* pEntity, char* infobuffer)
 				GETPLAYERUSERID(pEntity),
 				GETPLAYERAUTHID(pEntity),
 				GETPLAYERUSERID(pEntity),
-				g_engfuncs.pfnInfoKeyValue(infobuffer, "name"));
+				g_engfuncs.pfnInfoKeyValue(infobuffer, "name")
+			);
 		}
 	}
 
@@ -690,21 +696,24 @@ static void RegisterClientCommands()
 		[](CBasePlayer* player)
 		{
 			Host_Say(player->edict(), 0);
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"say_team",
 		[](CBasePlayer* player)
 		{
 			Host_Say(player->edict(), 1);
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"fullupdate",
 		[](CBasePlayer* player)
 		{
 			player->ForceClientDllUpdate();
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"give",
@@ -715,7 +724,8 @@ static void RegisterClientCommands()
 				int iszItem = ALLOC_STRING(CMD_ARGV(1));  // Make a copy of the classname
 				player->GiveNamedItem(STRING(iszItem));
 			}
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"fire",
@@ -737,7 +747,8 @@ static void RegisterClientCommands()
 						Vector(pev->origin) + Vector(pev->view_ofs) + Vector(gpGlobals->v_forward) * 1000,
 						dont_ignore_monsters,
 						player->edict(),
-						&tr);
+						&tr
+					);
 
 					if ( tr.pHit )
 					{
@@ -751,19 +762,23 @@ static void RegisterClientCommands()
 								UTIL_VarArgs(
 									"Fired %s \"%s\"\n",
 									STRING(pHitEnt->pev->classname),
-									STRING(pHitEnt->pev->targetname)));
+									STRING(pHitEnt->pev->targetname)
+								)
+							);
 						}
 					}
 				}
 			}
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"drop",
 		[](CBasePlayer* player)
 		{
 			player->DropPlayerItem(CMD_ARGV(1));
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"fov",
@@ -777,21 +792,24 @@ static void RegisterClientCommands()
 			{
 				CLIENT_PRINTF(player->edict(), print_console, UTIL_VarArgs("\"fov\" is \"%d\"\n", (int)player->m_iFOV));
 			}
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"fov",
 		[](CBasePlayer* player)
 		{
 			player->SelectItem(CMD_ARGV(1));
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"lastinv",
 		[](CBasePlayer* player)
 		{
 			player->SelectLastItem();
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"spectate",
@@ -812,7 +830,9 @@ static void RegisterClientCommands()
 						HUD_PRINTNOTIFY,
 						UTIL_VarArgs(
 							"%s switched to spectator mode\n",
-							(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"));
+							(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"
+						)
+					);
 				}
 				else
 				{
@@ -828,9 +848,12 @@ static void RegisterClientCommands()
 					HUD_PRINTNOTIFY,
 					UTIL_VarArgs(
 						"%s has left spectator mode\n",
-						(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"));
+						(pev->netname && (STRING(pev->netname))[0] != 0) ? STRING(pev->netname) : "unconnected"
+					)
+				);
 			}
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"specmode",
@@ -840,14 +863,16 @@ static void RegisterClientCommands()
 			{
 				player->Observer_SetMode(atoi(CMD_ARGV(1)));
 			}
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"closemenus",
 		[](CBasePlayer*)
 		{
 			// just ignore it
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"follownext",
@@ -857,14 +882,16 @@ static void RegisterClientCommands()
 			{
 				player->Observer_FindNextPlayer(atoi(CMD_ARGV(1)) ? true : false);
 			}
-		});
+		}
+	);
 
 	g_ClientCommandRegister.AddCommand(
 		"VModEnable",
 		[](CBasePlayer*)
 		{
 			// clear 'Unknown command: VModEnable' in singleplayer
-		});
+		}
+	);
 }
 
 void ServerActivate(edict_t* pEdictList, int edictCount, int clientMax)
@@ -1232,7 +1259,8 @@ int AddToFullPack(
 	edict_t* host,
 	int hostflags,
 	int player,
-	unsigned char* pSet)
+	unsigned char* pSet
+)
 {
 	int i;
 
@@ -1437,7 +1465,8 @@ void CreateBaseline(
 	struct edict_s* entity,
 	int playermodelindex,
 	const vec3_t player_mins,
-	const vec3_t player_maxs)
+	const vec3_t player_maxs
+)
 {
 	VectorCopy(entity->v.origin, baseline->origin);
 	VectorCopy(entity->v.angles, baseline->angles);
@@ -2056,7 +2085,8 @@ int InconsistentFile(const edict_t*, const char* filename, char* disconnect_mess
 		disconnect_message,
 		disconnectBufferSize,
 		"Server is enforcing file consistency for %s\n",
-		filename);
+		filename
+	);
 
 	// Kick now with specified disconnect message.
 	return 1;

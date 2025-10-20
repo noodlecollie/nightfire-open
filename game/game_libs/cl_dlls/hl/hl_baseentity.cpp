@@ -136,7 +136,8 @@ void DBG_AssertFunction(
 	const char* szFile,
 	int szLine,
 	const char* szMessage,
-	bool showAlert)
+	bool showAlert
+)
 {
 	if ( fExpr )
 	{
@@ -155,7 +156,8 @@ void DBG_AssertFunction(
 				szExpr,
 				szFile,
 				szLine,
-				szMessage);
+				szMessage
+			);
 		}
 		else
 		{
@@ -241,7 +243,7 @@ void CGrenade::Explode(Vector, Vector)
 void CGrenade::Explode(TraceResult*, int)
 {
 }
-void CGrenade::Killed(entvars_t*, int)
+void CGrenade::Killed(entvars_t*, int, int, float, float)
 {
 }
 void CGrenade::Spawn(void)
@@ -726,7 +728,7 @@ void CBaseMonster::BecomeDead(void)
 void CBaseMonster::RunAI(void)
 {
 }
-void CBaseMonster::Killed(entvars_t*, int)
+void CBaseMonster::Killed(entvars_t*, int, int, float, float)
 {
 }
 int CBaseMonster::TakeHealth(float, int)
@@ -750,7 +752,7 @@ int TrainSpeed(int, int)
 {
 	return 0;
 }
-void CBasePlayer::DeathSound(void)
+void CBasePlayer::DeathSound(int)
 {
 }
 int CBasePlayer::TakeHealth(float, int)
@@ -956,7 +958,7 @@ const char* CBasePlayer::TeamID(void)
 {
 	return "";
 }
-int CBasePlayer::GiveAmmo(int, const char*, int)
+int CBasePlayer::GiveAmmo(int, const char*, int, CBasePlayerAmmo*)
 {
 	return 0;
 }

@@ -38,7 +38,7 @@ public:
 	int Classify(void) override;
 	int ObjectCaps(void) override;
 	void KeyValue(KeyValueData* data) override;
-	void Killed(entvars_t* pevAttacker, int iGib) override;
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	void Spawn(void) override;
 	void Precache(void) override;

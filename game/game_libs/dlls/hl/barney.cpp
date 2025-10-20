@@ -68,13 +68,13 @@ public:
 	Schedule_t* GetSchedule(void);
 	MONSTERSTATE GetIdealState(void);
 
-	void DeathSound(void);
+	void DeathSound(int bitsDamageType) override;
 	void PainSound(void);
 
 	void TalkInit(void);
 
 	void TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecDir, const TraceResult* ptr, int bitsDamageType);
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 
 	virtual int Save(CSave& save);
 	virtual int Restore(CRestore& restore);
@@ -129,8 +129,13 @@ Task_t tlBarneyEnemyDraw[] = {
 	{TASK_PLAY_SEQUENCE_FACE_ENEMY, (float)ACT_ARM},
 };
 
-Schedule_t slBarneyEnemyDraw[] = {
-	{tlBarneyEnemyDraw, SIZE_OF_ARRAY_AS_INT(tlBarneyEnemyDraw), 0, 0, "Barney Enemy Draw"}};
+Schedule_t slBarneyEnemyDraw[] = {{
+	tlBarneyEnemyDraw,
+	SIZE_OF_ARRAY_AS_INT(tlBarneyEnemyDraw),
+	0,
+	0,
+	"Barney Enemy Draw",
+}};
 
 Task_t tlBaFaceTarget[] = {
 	{TASK_SET_ACTIVITY, (float)ACT_IDLE},
@@ -516,7 +521,7 @@ void CBarney::PainSound(void)
 //=========================================================
 // DeathSound
 //=========================================================
-void CBarney::DeathSound(void)
+void CBarney::DeathSound(int)
 {
 	switch ( RANDOM_LONG(0, 2) )
 	{
@@ -537,7 +542,8 @@ void CBarney::TraceAttack(
 	float flDamage,
 	Vector vecDir,
 	const TraceResult* ptr,
-	int bitsDamageType)
+	int bitsDamageType
+)
 {
 	TraceResult newTr(*ptr);
 
@@ -569,7 +575,7 @@ void CBarney::TraceAttack(
 	CTalkMonster::TraceAttack(pevAttacker, flDamage, vecDir, &newTr, bitsDamageType);
 }
 
-void CBarney::Killed(entvars_t* pevAttacker, int iGib)
+void CBarney::Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken)
 {
 	if ( pev->body < BARNEY_BODY_GUNGONE )
 	{
@@ -585,7 +591,7 @@ void CBarney::Killed(entvars_t* pevAttacker, int iGib)
 	}
 
 	SetUse(NULL);
-	CTalkMonster::Killed(pevAttacker, iGib);
+	CTalkMonster::Killed(pevAttacker, iGib, bitsDamageType, damageApplied, damageTaken);
 }
 
 //=========================================================

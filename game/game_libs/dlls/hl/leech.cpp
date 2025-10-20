@@ -103,7 +103,7 @@ public:
 	{
 		return DONT_BLEED;
 	}
-	void Killed(entvars_t* pevAttacker, int iGib);
+	void Killed(entvars_t* pevAttacker, int iGib, int bitsDamageType, float damageApplied, float damageTaken) override;
 	void Activate(void);
 	int TakeDamage(entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType);
 	int Classify(void)
@@ -275,7 +275,8 @@ void CLeech::AttackSound(void)
 			1.0,
 			ATTN_NORM,
 			0,
-			PITCH_NORM);
+			PITCH_NORM
+		);
 		m_attackSoundTime = gpGlobals->time + 0.5f;
 	}
 }
@@ -289,7 +290,8 @@ void CLeech::AlertSound(void)
 		1.0,
 		ATTN_NORM * 0.5,
 		0,
-		PITCH_NORM);
+		PITCH_NORM
+	);
 }
 
 void CLeech::Precache(void)
@@ -742,10 +744,8 @@ void CLeech::SwimThink(void)
 	UpdateMotion();
 }
 
-void CLeech::Killed(entvars_t*, int)
+void CLeech::Killed(entvars_t*, int, int, float, float)
 {
-	Vector vecSplatDir;
-
 	// ALERT(at_aiconsole, "Leech: killed\n");
 	//  tell owner ( if any ) that we're dead.This is mostly for MonsterMaker functionality.
 	CBaseEntity* pOwner = CBaseEntity::Instance(pev->owner);
