@@ -18,3 +18,6 @@ void GL_UI_PrepareToDrawWithTexture(
 	size_t textureCoOrdOffset
 );
 void GL_UI_DrawElements(int numIndices, const void* indices);
+void GL_UI_SetScissorEnabled(qboolean enabled);
+void GL_UI_SetScissorRegion(int left, int bottom, int width, int height);
+void GL_UI_SetStencilEnabled(qboolean enabled);

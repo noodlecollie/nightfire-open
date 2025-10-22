@@ -175,30 +175,44 @@ void RenderInterfaceImpl::RenderGeometry(
 #endif  // RMLUI_REFERENCE_CODE
 }
 
-void RenderInterfaceImpl::EnableScissorRegion(bool /* enable */)
+void RenderInterfaceImpl::EnableScissorRegion(bool enable)
 {
 #ifdef RMLUI_REFERENCE_CODE
 	if ( enable )
+	{
 		glEnable(GL_SCISSOR_TEST);
+	}
 	else
+	{
 		glDisable(GL_SCISSOR_TEST);
+	}
+#else
+	gUiGlFuncs.setScissorEnabled(enable);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
-void RenderInterfaceImpl::SetScissorRegion(Rml::Rectanglei /* region */)
+void RenderInterfaceImpl::SetScissorRegion(Rml::Rectanglei region)
 {
 #ifdef RMLUI_REFERENCE_CODE
 	glScissor(region.Left(), viewport_height - region.Bottom(), region.Width(), region.Height());
+#else
+	gUiGlFuncs.setScissorRegion(region.Left(), viewport_height - region.Bottom(), region.Width(), region.Height());
 #endif  // RMLUI_REFERENCE_CODE
 }
 
-void RenderInterfaceImpl::EnableClipMask(bool /* enable */)
+void RenderInterfaceImpl::EnableClipMask(bool enable)
 {
 #ifdef RMLUI_REFERENCE_CODE
 	if ( enable )
+	{
 		glEnable(GL_STENCIL_TEST);
+	}
 	else
+	{
 		glDisable(GL_STENCIL_TEST);
+	}
+#else
+	gUiGlFuncs.setStencilEnabled(enable);
 #endif  // RMLUI_REFERENCE_CODE
 }
 

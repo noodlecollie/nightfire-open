@@ -309,6 +309,9 @@ typedef struct ui_gl_functions_s
 	);
 
 	void (*drawElements)(int numIndices, const void* indices);
+	void (*setScissorEnabled)(qboolean enabled);
+	void (*setScissorRegion)(int left, int bottom, int width, int height);
+	void (*setStencilEnabled)(qboolean enabled);
 } ui_gl_functions;
 
 typedef int (*UIGLAPI)(int version, const ui_gl_functions* uiToEngineFuncs);

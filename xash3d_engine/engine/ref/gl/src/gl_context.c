@@ -548,6 +548,9 @@ static const ref_uigl_functions gRefUiGlFuncs = {
 	GL_UI_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
 	GL_UI_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
 	GL_UI_DrawElements,  // drawElements
+	GL_UI_SetScissorEnabled,  // setScissorEnabled
+	GL_UI_SetScissorRegion,  // setScissorRegion
+	GL_UI_SetStencilEnabled,  // setStencilEnabled
 };
 
 int EXPORT GetRefAPI(int version, ref_interface_t* funcs, const ref_api_t* engfuncs, ref_globals_t* globals)

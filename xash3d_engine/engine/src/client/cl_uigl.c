@@ -108,3 +108,33 @@ void CL_UIGL_DrawElements(int numIndices, const void* indices)
 
 	ref.dllUiFuncs.drawElements(numIndices, indices);
 }
+
+void CL_UIGL_SetScissorEnabled(qboolean enabled)
+{
+	if ( !ref.dllUiFuncs.setScissorEnabled )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.setScissorEnabled(enabled);
+}
+
+void CL_UIGL_SetScissorRegion(int left, int bottom, int width, int height)
+{
+	if ( !ref.dllUiFuncs.setScissorRegion )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.setScissorRegion(left, bottom, width, height);
+}
+
+void CL_UIGL_SetStencilEnabled(qboolean enabled)
+{
+	if ( !ref.dllUiFuncs.setStencilEnabled )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.setStencilEnabled(enabled);
+}

@@ -745,6 +745,9 @@ typedef struct ref_uigl_functions_s
 	);
 
 	void (*drawElements)(int numIndices, const void* indices);
+	void (*setScissorEnabled)(qboolean enabled);
+	void (*setScissorRegion)(int left, int bottom, int width, int height);
+	void (*setStencilEnabled)(qboolean enabled);
 } ref_uigl_functions;
 
 #define REF_UIFL_FUNCS_VERSION 1

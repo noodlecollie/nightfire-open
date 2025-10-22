@@ -1407,6 +1407,9 @@ static const ui_gl_functions gUiGlFuncs = {
 	CL_UIGL_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
 	CL_UIGL_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
 	CL_UIGL_DrawElements,  // drawElements
+	CL_UIGL_SetScissorEnabled,  // setScissorEnabled
+	CL_UIGL_SetScissorRegion,  // setScissorRegion
+	CL_UIGL_SetStencilEnabled,  // setStencilEnabled
 };
 
 void UI_UnloadProgs(void)

@@ -121,3 +121,32 @@ void GL_UI_DrawElements(int numIndices, const void* indices)
 {
 	pglDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, indices);
 }
+
+void GL_UI_SetScissorEnabled(qboolean enabled)
+{
+	if ( enabled )
+	{
+		pglEnable(GL_SCISSOR_TEST);
+	}
+	else
+	{
+		pglDisable(GL_SCISSOR_TEST);
+	}
+}
+
+void GL_UI_SetScissorRegion(int left, int bottom, int width, int height)
+{
+	pglScissor(left, bottom, width, height);
+}
+
+void GL_UI_SetStencilEnabled(qboolean enabled)
+{
+	if ( enabled )
+	{
+		pglEnable(GL_STENCIL_TEST);
+	}
+	else
+	{
+		pglDisable(GL_STENCIL_TEST);
+	}
+}
