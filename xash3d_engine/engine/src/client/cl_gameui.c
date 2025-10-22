@@ -1400,6 +1400,13 @@ static ui_extendedfuncs_t gExtendedfuncs = {
 
 static const ui_gl_functions gUiGlFuncs = {
 	CL_UIGL_BeginFrame,  // beginFrame
+	CL_UIGL_EndFrame,  // endFrame
+	CL_UIGL_Clear,  // clear
+	CL_UIGL_PushMatrixTranslation,  // pushMatrixTranslation
+	CL_UIGL_PopMatrix,  // popMatrix
+	CL_UIGL_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
+	CL_UIGL_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
+	CL_UIGL_DrawElements,  // drawElements
 };
 
 void UI_UnloadProgs(void)

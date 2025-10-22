@@ -542,6 +542,12 @@ ref_interface_t gReffuncs = {
 static const ref_uigl_functions gRefUiGlFuncs = {
 	GL_UI_BeginFrame,  // beginFrame
 	GL_UI_EndFrame,  // endFrame
+	GL_UI_Clear,  // clear
+	GL_UI_PushMatrixTranslation,  // pushMatrixTranslation
+	GL_UI_PopMatrix,  // popMatrix
+	GL_UI_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
+	GL_UI_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
+	GL_UI_DrawElements,  // drawElements
 };
 
 int EXPORT GetRefAPI(int version, ref_interface_t* funcs, const ref_api_t* engfuncs, ref_globals_t* globals)

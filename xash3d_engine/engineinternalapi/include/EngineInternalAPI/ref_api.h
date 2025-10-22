@@ -728,6 +728,23 @@ typedef struct ref_uigl_functions_s
 {
 	void (*beginFrame)(const struct ref_viewpass_s* rvp);
 	void (*endFrame)(void);
+	void (*clear)(uint32_t colour);
+	void (*pushMatrixTranslation)(float x, float y, float z);
+	void (*popMatrix)(void);
+
+	// Positions are expected to be 2x GL_FLOAT,
+	// and colours are expected to be 4x GL_UNSIGNED_BYTE.
+	void (*prepareToDrawWithoutTexture)(const void* data, int objectSize, size_t positionOffset, size_t colourOffset);
+	void (*prepareToDrawWithTexture)(
+		uint32_t texture,
+		const void* data,
+		int objectSize,
+		size_t positionOffset,
+		size_t colourOffset,
+		size_t textureCoOrdOffset
+	);
+
+	void (*drawElements)(int numIndices, const void* indices);
 } ref_uigl_functions;
 
 #define REF_UIFL_FUNCS_VERSION 1

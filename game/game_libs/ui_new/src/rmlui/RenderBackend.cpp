@@ -74,11 +74,14 @@ void RenderInterfaceImpl::BeginFrame()
 	glLoadIdentity();
 
 	transform_enabled = false;
+#else
+	gUiGlFuncs.beginFrame(0, 0, viewport_width, viewport_height);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::EndFrame()
 {
+	gUiGlFuncs.endFrame();
 }
 
 void RenderInterfaceImpl::Clear()
@@ -87,6 +90,8 @@ void RenderInterfaceImpl::Clear()
 	glClearStencil(0);
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+#else
+	gUiGlFuncs.clear(0x00000000);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -103,17 +108,17 @@ void RenderInterfaceImpl::ReleaseGeometry(Rml::CompiledGeometryHandle geometry)
 }
 
 void RenderInterfaceImpl::RenderGeometry(
-	Rml::CompiledGeometryHandle /* handle */,
-	Rml::Vector2f /* translation */,
-	Rml::TextureHandle /* texture */
+	Rml::CompiledGeometryHandle handle,
+	Rml::Vector2f translation,
+	Rml::TextureHandle texture
 )
 {
-#ifdef RMLUI_REFERENCE_CODE
 	const GeometryView* geometry = reinterpret_cast<GeometryView*>(handle);
 	const Rml::Vertex* vertices = geometry->vertices.data();
 	const int* indices = geometry->indices.data();
-	const int num_indices = (int)geometry->indices.size();
+	const size_t num_indices = (int)geometry->indices.size();
 
+#ifdef RMLUI_REFERENCE_CODE
 	glPushMatrix();
 	glTranslatef(translation.x, translation.y, 0);
 
@@ -130,7 +135,9 @@ void RenderInterfaceImpl::RenderGeometry(
 		glEnable(GL_TEXTURE_2D);
 
 		if ( texture != TextureEnableWithoutBinding )
+		{
 			glBindTexture(GL_TEXTURE_2D, (GLuint)texture);
+		}
 
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glTexCoordPointer(2, GL_FLOAT, sizeof(Rml::Vertex), &vertices[0].tex_coord);
@@ -139,6 +146,32 @@ void RenderInterfaceImpl::RenderGeometry(
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, indices);
 
 	glPopMatrix();
+#else
+	gUiGlFuncs.pushMatrixTranslation(translation.x, translation.y, 0.0f);
+
+	if ( texture )
+	{
+		gUiGlFuncs.prepareToDrawWithTexture(
+			texture != TextureEnableWithoutBinding ? static_cast<uint32_t>(texture) : 0,
+			vertices,
+			sizeof(Rml::Vertex),
+			offsetof(Rml::Vertex, position),
+			offsetof(Rml::Vertex, colour),
+			offsetof(Rml::Vertex, tex_coord)
+		);
+	}
+	else
+	{
+		gUiGlFuncs.prepareToDrawWithoutTexture(
+			vertices,
+			sizeof(Rml::Vertex),
+			offsetof(Rml::Vertex, position),
+			offsetof(Rml::Vertex, colour)
+		);
+	}
+
+	gUiGlFuncs.drawElements(num_indices, indices);
+	gUiGlFuncs.popMatrix();
 #endif  // RMLUI_REFERENCE_CODE
 }
 

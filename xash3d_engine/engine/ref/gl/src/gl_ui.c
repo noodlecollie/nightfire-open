@@ -7,6 +7,21 @@
 #include "gl_local.h"
 #include "gl_export.h"
 
+typedef enum ColourChannel
+{
+	CHANNEL_ALPHA = 0,
+	CHANNEL_BLUE,
+	CHANNEL_GREEN,
+	CHANNEL_RED
+} ColourChannel;
+
+static float PackedColourByteToFloat(uint32_t colour, ColourChannel channel)
+{
+	const size_t shift = channel * 8;
+	uint8_t value = (uint8_t)((colour & (0xFF << shift)) >> shift);
+	return (float)value / 255.0f;
+}
+
 void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 {
 	glConfig.softwareGammaUpdate = false;
@@ -39,4 +54,70 @@ void GL_UI_EndFrame(void)
 {
 	// TODO: Is this needed, or does the engine end the frame for us?
 	R_EndFrame();
+}
+
+void GL_UI_Clear(uint32_t colour)
+{
+	pglClearStencil(0);
+	pglClearColor(
+		PackedColourByteToFloat(colour, CHANNEL_RED),
+		PackedColourByteToFloat(colour, CHANNEL_GREEN),
+		PackedColourByteToFloat(colour, CHANNEL_BLUE),
+		PackedColourByteToFloat(colour, CHANNEL_ALPHA)
+	);
+	pglClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void GL_UI_PushMatrixTranslation(float x, float y, float z)
+{
+	pglPushMatrix();
+	pglTranslatef(x, y, z);
+}
+
+void GL_UI_PopMatrix(void)
+{
+	pglPopMatrix();
+}
+
+void GL_UI_PrepareToDrawWithoutTexture(const void* data, int objectSize, size_t positionOffset, size_t colourOffset)
+{
+	uint8_t* dataBytes = (uint8_t*)data;
+
+	pglVertexPointer(2, GL_FLOAT, objectSize, dataBytes + positionOffset);
+	pglColorPointer(4, GL_UNSIGNED_BYTE, objectSize, dataBytes + colourOffset);
+
+	pglDisable(GL_TEXTURE_2D);
+	pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void GL_UI_PrepareToDrawWithTexture(
+	uint32_t texture,
+	const void* data,
+	int objectSize,
+	size_t positionOffset,
+	size_t colourOffset,
+	size_t textureCoOrdOffset
+)
+{
+	uint8_t* dataBytes = (uint8_t*)data;
+
+	pglVertexPointer(2, GL_FLOAT, objectSize, dataBytes + positionOffset);
+	pglColorPointer(4, GL_UNSIGNED_BYTE, objectSize, dataBytes + colourOffset);
+
+	pglEnable(GL_TEXTURE_2D);
+
+	// If texture is 0, don't re-bind. We assume that whatever
+	// texture that is required is already bound.
+	if ( texture != 0 )
+	{
+		pglBindTexture(GL_TEXTURE_2D, (GLuint)texture);
+	}
+
+	pglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	pglTexCoordPointer(2, GL_FLOAT, objectSize, dataBytes + textureCoOrdOffset);
+}
+
+void GL_UI_DrawElements(int numIndices, const void* indices)
+{
+	pglDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, indices);
 }

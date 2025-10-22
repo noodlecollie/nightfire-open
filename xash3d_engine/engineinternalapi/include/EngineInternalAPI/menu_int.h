@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 #include "BuildPlatform/Decorators.h"
 #include "BuildPlatform/Typedefs.h"
 #include "EngineInternalAPI/gameinfo.h"
@@ -291,6 +292,23 @@ typedef struct ui_gl_functions_s
 {
 	void (*beginFrame)(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
 	void (*endFrame)(void);
+	void (*clear)(uint32_t colour);
+	void (*pushMatrixTranslation)(float x, float y, float z);
+	void (*popMatrix)(void);
+
+	// Positions are expected to be 2x GL_FLOAT,
+	// and colours are expected to be 4x GL_UNSIGNED_BYTE.
+	void (*prepareToDrawWithoutTexture)(const void* data, int objectSize, size_t positionOffset, size_t colourOffset);
+	void (*prepareToDrawWithTexture)(
+		uint32_t texture,
+		const void* data,
+		int objectSize,
+		size_t positionOffset,
+		size_t colourOffset,
+		size_t textureCoOrdOffset
+	);
+
+	void (*drawElements)(int numIndices, const void* indices);
 } ui_gl_functions;
 
 typedef int (*UIGLAPI)(int version, const ui_gl_functions* uiToEngineFuncs);
