@@ -55,3 +55,30 @@ bool RmlUiBackend::IsInitialised() const
 {
 	return m_Initialised;
 }
+
+Rml::Context* RmlUiBackend::GetRmlContext() const
+{
+	return m_RmlContext;
+}
+
+void RmlUiBackend::Update()
+{
+	if ( !m_Initialised )
+	{
+		return;
+	}
+
+	m_RmlContext->Update();
+}
+
+void RmlUiBackend::Render()
+{
+	if ( !m_Initialised )
+	{
+		return;
+	}
+
+	m_RenderInterface.BeginFrame();
+	m_RmlContext->Render();
+	m_RenderInterface.EndFrame();
+}

@@ -18,6 +18,11 @@ public:
 	void ShutDown();
 	bool IsInitialised() const;
 
+	void Update();
+	void Render();
+
+	Rml::Context* GetRmlContext() const;
+
 private:
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;

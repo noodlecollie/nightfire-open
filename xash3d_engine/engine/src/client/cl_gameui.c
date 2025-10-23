@@ -1451,7 +1451,9 @@ qboolean UI_LoadProgs(void)
 	int i;
 
 	if ( gameui.hInstance )
+	{
 		UI_UnloadProgs();
+	}
 
 	// setup globals
 	gameui.globals = &gpGlobals;

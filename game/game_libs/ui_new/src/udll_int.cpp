@@ -18,7 +18,23 @@ static int pfnVidInit(void)
 		gRmlUiBackend.ShutDown();
 	}
 
-	return gRmlUiBackend.Initialise(gpGlobals->scrWidth, gpGlobals->scrHeight) ? 1 : 0;
+	if ( !gRmlUiBackend.Initialise(gpGlobals->scrWidth, gpGlobals->scrHeight) )
+	{
+		return 0;
+	}
+
+	// REMOVE ME: Example document to display
+	Rml::Context* context = gRmlUiBackend.GetRmlContext();
+	context->LoadDocumentFromMemory(
+		"<rml>\n"
+		"<head></head>\n"
+		"<body>\n"
+		"<h1>Testing RmlUi</h1>\n"
+		"</body>\n"
+		"</rml>\n"
+	);
+
+	return 1;
 }
 
 static void pfnInit(void)
@@ -33,7 +49,8 @@ static void pfnShutdown(void)
 
 static void pfnRedraw(float /* flTime */)
 {
-	// TODO
+	gRmlUiBackend.Update();
+	gRmlUiBackend.Render();
 }
 
 static void pfnKeyEvent(int /* key */, int /* down */)
