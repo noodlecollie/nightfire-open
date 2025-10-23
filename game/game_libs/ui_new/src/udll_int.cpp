@@ -1,15 +1,24 @@
-#include <cstring>
 #include "udll_int.h"
+#include <cstring>
+#include <RmlUi/Core.h>
+#include <RmlUi/Debugger.h>
+#include "rmlui/RmlUiBackend.h"
 
 ui_enginefuncs_t gEngfuncs;
 ui_extendedfuncs_t gTextfuncs;
 ui_globalvars_t* gpGlobals = nullptr;
 ui_gl_functions gUiGlFuncs;
 
+static RmlUiBackend gRmlUiBackend;
+
 static int pfnVidInit(void)
 {
-	// TODO
-	return 0;
+	if ( gRmlUiBackend.IsInitialised() )
+	{
+		gRmlUiBackend.ShutDown();
+	}
+
+	return gRmlUiBackend.Initialise(gpGlobals->scrWidth, gpGlobals->scrHeight) ? 1 : 0;
 }
 
 static void pfnInit(void)
@@ -19,7 +28,7 @@ static void pfnInit(void)
 
 static void pfnShutdown(void)
 {
-	// TODO
+	gRmlUiBackend.ShutDown();
 }
 
 static void pfnRedraw(float /* flTime */)

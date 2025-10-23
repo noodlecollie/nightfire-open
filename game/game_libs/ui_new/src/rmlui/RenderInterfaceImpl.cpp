@@ -1,32 +1,4 @@
-/*
- * This source file is part of RmlUi, the HTML/CSS Interface Middleware
- *
- * For the latest information, see http://github.com/mikke89/RmlUi
- *
- * Copyright (c) 2008-2010 CodePoint Ltd, Shift Technology Ltd
- * Copyright (c) 2019-2023 The RmlUi Team, and contributors
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- */
-
-#include "rmlui/RenderBackend.h"
+#include "rmlui/RenderInterfaceImpl.h"
 #include <RmlUi/Core/Core.h>
 #include <RmlUi/Core/FileInterface.h>
 #include <RmlUi/Core/Log.h>
@@ -35,16 +7,15 @@
 #include "udll_int.h"
 #include "PlatformLib/String.h"
 
-#define GL_CLAMP_TO_EDGE 0x812F
-
-RenderInterfaceImpl::RenderInterfaceImpl()
+RenderInterfaceImpl::RenderInterfaceImpl(RmlUiBackend* backend) :
+	m_Backend(backend)
 {
 }
 
 void RenderInterfaceImpl::SetViewport(int in_viewport_width, int in_viewport_height)
 {
-	viewport_width = in_viewport_width;
-	viewport_height = in_viewport_height;
+	m_ViewportWidth = in_viewport_width;
+	m_ViewportHeight = in_viewport_height;
 }
 
 void RenderInterfaceImpl::BeginFrame()
@@ -76,7 +47,7 @@ void RenderInterfaceImpl::BeginFrame()
 
 	transform_enabled = false;
 #else
-	gUiGlFuncs.beginFrame(0, 0, viewport_width, viewport_height);
+	gUiGlFuncs.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -117,7 +88,7 @@ void RenderInterfaceImpl::RenderGeometry(
 	const GeometryView* geometry = reinterpret_cast<GeometryView*>(handle);
 	const Rml::Vertex* vertices = geometry->vertices.data();
 	const int* indices = geometry->indices.data();
-	const size_t num_indices = (int)geometry->indices.size();
+	const int num_indices = static_cast<int>(geometry->indices.size());
 
 #ifdef RMLUI_REFERENCE_CODE
 	glPushMatrix();
@@ -197,7 +168,7 @@ void RenderInterfaceImpl::SetScissorRegion(Rml::Rectanglei region)
 #ifdef RMLUI_REFERENCE_CODE
 	glScissor(region.Left(), viewport_height - region.Bottom(), region.Width(), region.Height());
 #else
-	gUiGlFuncs.setScissorRegion(region.Left(), viewport_height - region.Bottom(), region.Width(), region.Height());
+	gUiGlFuncs.setScissorRegion(region.Left(), m_ViewportHeight - region.Bottom(), region.Width(), region.Height());
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -461,9 +432,9 @@ RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> source, Rml::Vec
 	(void)source_dimensions;
 
 	char textureName[64];
-	PlatformLib_SNPrintF(textureName, sizeof(textureName), "#RMLUI_TEX_GEN_%zu", ++generated_texture_count);
+	PlatformLib_SNPrintF(textureName, sizeof(textureName), "#RMLUI_TEX_GEN_%zu", ++m_GeneratedTextureCount);
 
-	HIMAGE image = gEngfuncs.pfnPIC_Load(textureName, source.data(), source.size(), 0);
+	HIMAGE image = gEngfuncs.pfnPIC_Load(textureName, source.data(), static_cast<int>(source.size()), 0);
 	return static_cast<Rml::TextureHandle>(image);
 #endif  // RMLUI_REFERENCE_CODE
 }
@@ -498,7 +469,9 @@ void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* transform)
 		glLoadIdentity();
 	}
 #else
-	if ( transform )
+	m_TransformEnabled = transform != nullptr;
+
+	if ( m_TransformEnabled )
 	{
 		if ( std::is_same<Rml::Matrix4f, Rml::ColumnMajorMatrix4f>::value )
 		{

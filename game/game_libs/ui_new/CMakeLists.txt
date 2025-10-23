@@ -1,8 +1,12 @@
 include(compiler_settings)
 
 set(SOURCES_UI
-	src/rmlui/RenderBackend.h
-	src/rmlui/RenderBackend.cpp
+	src/rmlui/RenderInterfaceImpl.h
+	src/rmlui/RenderInterfaceImpl.cpp
+	src/rmlui/RmlUiBackend.h
+	src/rmlui/RmlUiBackend.cpp
+	src/rmlui/SystemInterfaceImpl.h
+	src/rmlui/SystemInterfaceImpl.cpp
 	src/udll_int.h
 	src/udll_int.cpp
 )
