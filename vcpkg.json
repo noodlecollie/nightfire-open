@@ -3,6 +3,9 @@
 	"version-string": "0.0.1",
 	"dependencies": [
 		"sdl2",
-		"freetype"
+		"freetype",
+		"bzip2",
+		"libpng",
+		"brotli"
 	]
 }
