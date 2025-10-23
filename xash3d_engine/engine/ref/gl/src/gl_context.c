@@ -551,6 +551,12 @@ static const ref_uigl_functions gRefUiGlFuncs = {
 	GL_UI_SetScissorEnabled,  // setScissorEnabled
 	GL_UI_SetScissorRegion,  // setScissorRegion
 	GL_UI_SetStencilEnabled,  // setStencilEnabled
+	GL_UI_EnableWritingToStencilMask,  // enableWritingToStencilMask
+	GL_UI_DisableWritingToStencilMask,  // disableWritingToStencilMask
+	GL_UI_SetStencilOpReplace,  // setStencilOpReplace
+	GL_UI_SetStencilOpIncrement,  // setStencilOpIncrement
+	GL_UI_FreeImage,  // freeImage
+	GL_UI_SetTransform,  // setTransform
 };
 
 int EXPORT GetRefAPI(int version, ref_interface_t* funcs, const ref_api_t* engfuncs, ref_globals_t* globals)

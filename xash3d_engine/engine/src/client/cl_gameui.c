@@ -1410,6 +1410,12 @@ static const ui_gl_functions gUiGlFuncs = {
 	CL_UIGL_SetScissorEnabled,  // setScissorEnabled
 	CL_UIGL_SetScissorRegion,  // setScissorRegion
 	CL_UIGL_SetStencilEnabled,  // setStencilEnabled
+	CL_UIGL_EnableWritingToStencilMask,  // enableWritingToStencilMask
+	CL_UIGL_DisableWritingToStencilMask,  // disableWritingToStencilMask
+	CL_UIGL_SetStencilOpReplace,  // setStencilOpReplace
+	CL_UIGL_SetStencilOpIncrement,  // setStencilOpIncrement
+	CL_UIGL_FreeImage,  // freeImage
+	CL_UIGL_SetTransform,  // setTransform
 };
 
 void UI_UnloadProgs(void)

@@ -138,3 +138,63 @@ void CL_UIGL_SetStencilEnabled(qboolean enabled)
 
 	ref.dllUiFuncs.setStencilEnabled(enabled);
 }
+
+int CL_UIGL_EnableWritingToStencilMask(qboolean clearStencilBuffer)
+{
+	if ( !ref.dllUiFuncs.enableWritingToStencilMask )
+	{
+		return 0;
+	}
+
+	return ref.dllUiFuncs.enableWritingToStencilMask(clearStencilBuffer);
+}
+
+void CL_UIGL_DisableWritingToStencilMask(int testValue)
+{
+	if ( !ref.dllUiFuncs.disableWritingToStencilMask )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.disableWritingToStencilMask(testValue);
+}
+
+void CL_UIGL_SetStencilOpReplace(void)
+{
+	if ( !ref.dllUiFuncs.setStencilOpReplace )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.setStencilOpReplace();
+}
+
+void CL_UIGL_SetStencilOpIncrement(void)
+{
+	if ( !ref.dllUiFuncs.setStencilOpIncrement )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.setStencilOpIncrement();
+}
+
+void CL_UIGL_FreeImage(HIMAGE image)
+{
+	if ( !ref.dllUiFuncs.freeImage )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.freeImage(image);
+}
+
+void CL_UIGL_SetTransform(const float* mat4x4)
+{
+	if ( !ref.dllUiFuncs.setTransform )
+	{
+		return;
+	}
+
+	ref.dllUiFuncs.setTransform(mat4x4);
+}

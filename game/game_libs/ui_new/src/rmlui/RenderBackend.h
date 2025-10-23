@@ -31,6 +31,7 @@
 
 #include <RmlUi/Core/RenderInterface.h>
 
+// Based on https://github.com/mikke89/RmlUi/blob/master/Backends/RmlUi_Renderer_GL2.cpp
 class RenderInterfaceImpl : public Rml::RenderInterface
 {
 public:
@@ -56,6 +57,7 @@ public:
 
 	Rml::TextureHandle LoadTexture(Rml::Vector2i& texture_dimensions, const Rml::String& source) override;
 	Rml::TextureHandle GenerateTexture(Rml::Span<const Rml::byte> source, Rml::Vector2i source_dimensions) override;
+
 	void ReleaseTexture(Rml::TextureHandle texture_handle) override;
 
 	void EnableScissorRegion(bool enable) override;
@@ -83,6 +85,7 @@ private:
 	int viewport_width = 0;
 	int viewport_height = 0;
 	bool transform_enabled = false;
+	size_t generated_texture_count = 0;
 };
 
 #endif

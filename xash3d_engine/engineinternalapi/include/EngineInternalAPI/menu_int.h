@@ -312,6 +312,19 @@ typedef struct ui_gl_functions_s
 	void (*setScissorEnabled)(qboolean enabled);
 	void (*setScissorRegion)(int left, int bottom, int width, int height);
 	void (*setStencilEnabled)(qboolean enabled);
+
+	// Returns the previous stencil test value that was set.
+	int (*enableWritingToStencilMask)(qboolean clearStencilBuffer);
+
+	// Takes a test value to use for future stencil ops.
+	void (*disableWritingToStencilMask)(int testValue);
+
+	void (*setStencilOpReplace)(void);
+	void (*setStencilOpIncrement)(void);
+	void (*freeImage)(HIMAGE image);
+
+	// If null, sets identity transform.
+	void (*setTransform)(const float* mat4x4);
 } ui_gl_functions;
 
 typedef int (*UIGLAPI)(int version, const ui_gl_functions* uiToEngineFuncs);

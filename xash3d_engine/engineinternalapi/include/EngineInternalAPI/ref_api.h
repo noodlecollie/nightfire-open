@@ -748,6 +748,19 @@ typedef struct ref_uigl_functions_s
 	void (*setScissorEnabled)(qboolean enabled);
 	void (*setScissorRegion)(int left, int bottom, int width, int height);
 	void (*setStencilEnabled)(qboolean enabled);
+
+	// Returns the previous stencil test value that was set.
+	int (*enableWritingToStencilMask)(qboolean clearStencilBuffer);
+
+	// Takes a test value to use for future stencil ops.
+	void (*disableWritingToStencilMask)(int testValue);
+
+	void (*setStencilOpReplace)(void);
+	void (*setStencilOpIncrement)(void);
+	void (*freeImage)(int image);
+
+	// If null, sets identity transform.
+	void (*setTransform)(const float* mat4x4);
 } ref_uigl_functions;
 
 #define REF_UIFL_FUNCS_VERSION 1

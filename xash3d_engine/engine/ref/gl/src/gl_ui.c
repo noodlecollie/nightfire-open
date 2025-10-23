@@ -150,3 +150,56 @@ void GL_UI_SetStencilEnabled(qboolean enabled)
 		pglDisable(GL_STENCIL_TEST);
 	}
 }
+
+int GL_UI_EnableWritingToStencilMask(qboolean clearStencilBuffer)
+{
+	ASSERT(pglIsEnabled(GL_STENCIL_TEST));
+
+	if ( clearStencilBuffer )
+	{
+		// @performance Increment the reference value instead of clearing each time.
+		pglClear(GL_STENCIL_BUFFER_BIT);
+	}
+
+	GLint stencilTestValue = 0;
+	pglGetIntegerv(GL_STENCIL_REF, &stencilTestValue);
+
+	pglColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	pglStencilFunc(GL_ALWAYS, (GLint)1, (GLuint)-1);
+
+	return stencilTestValue;
+}
+
+void GL_UI_DisableWritingToStencilMask(int testValue)
+{
+	pglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	pglStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	pglStencilFunc(GL_EQUAL, testValue, (GLuint)-1);
+}
+
+void GL_UI_SetStencilOpReplace(void)
+{
+	pglStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+}
+
+void GL_UI_SetStencilOpIncrement(void)
+{
+	pglStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+}
+
+void GL_UI_FreeImage(int image)
+{
+	pglDeleteTextures(1, (GLuint*)&image);
+}
+
+void GL_UI_SetTransform(const float* mat4x4)
+{
+	if ( mat4x4 )
+	{
+		pglLoadMatrixf(mat4x4);
+	}
+	else
+	{
+		pglLoadIdentity();
+	}
+}

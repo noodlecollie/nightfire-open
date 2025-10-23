@@ -33,6 +33,7 @@
 #include <RmlUi/Core/Platform.h>
 #include <string.h>
 #include "udll_int.h"
+#include "PlatformLib/String.h"
 
 #define GL_CLAMP_TO_EDGE 0x812F
 
@@ -217,9 +218,9 @@ void RenderInterfaceImpl::EnableClipMask(bool enable)
 }
 
 void RenderInterfaceImpl::RenderToClipMask(
-	Rml::ClipMaskOperation /* operation */,
-	Rml::CompiledGeometryHandle /* geometry */,
-	Rml::Vector2f /* translation */
+	Rml::ClipMaskOperation operation,
+	Rml::CompiledGeometryHandle geometry,
+	Rml::Vector2f translation
 )
 {
 #ifdef RMLUI_REFERENCE_CODE
@@ -268,6 +269,38 @@ void RenderInterfaceImpl::RenderToClipMask(
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	glStencilFunc(GL_EQUAL, stencil_test_value, GLuint(-1));
+#else
+	using Rml::ClipMaskOperation;
+
+	const bool clear_stencil = (operation == ClipMaskOperation::Set || operation == ClipMaskOperation::SetInverse);
+	int stencil_test_value = gUiGlFuncs.enableWritingToStencilMask(clear_stencil);
+
+	switch ( operation )
+	{
+		case ClipMaskOperation::Set:
+		{
+			gUiGlFuncs.setStencilOpReplace();
+			stencil_test_value = 1;
+			break;
+		}
+
+		case ClipMaskOperation::SetInverse:
+		{
+			gUiGlFuncs.setStencilOpReplace();
+			stencil_test_value = 0;
+			break;
+		}
+
+		case ClipMaskOperation::Intersect:
+		{
+			gUiGlFuncs.setStencilOpIncrement();
+			stencil_test_value += 1;
+			break;
+		}
+	}
+
+	RenderGeometry(geometry, translation, {});
+	gUiGlFuncs.disableWritingToStencilMask(stencil_test_value);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -293,8 +326,7 @@ struct TGAHeader
 #pragma pack()
 #endif  // RMLUI_REFERENCE_CODE
 
-Rml::TextureHandle
-RenderInterfaceImpl::LoadTexture(Rml::Vector2i& /* texture_dimensions */, const Rml::String& /* source */)
+Rml::TextureHandle RenderInterfaceImpl::LoadTexture(Rml::Vector2i& texture_dimensions, const Rml::String& source)
 {
 #ifdef RMLUI_REFERENCE_CODE
 	Rml::FileInterface* file_interface = Rml::GetFileInterface();
@@ -377,12 +409,22 @@ RenderInterfaceImpl::LoadTexture(Rml::Vector2i& /* texture_dimensions */, const 
 
 	return GenerateTexture({image_dest, image_size}, texture_dimensions);
 #else  // RMLUI_REFERENCE_CODE
-	return 0;
+	HIMAGE image = gEngfuncs.pfnPIC_Load(source.c_str(), nullptr, 0, 0);
+
+	if ( !image )
+	{
+		return 0;
+	}
+
+	texture_dimensions.x = gEngfuncs.pfnPIC_Width(image);
+	texture_dimensions.y = gEngfuncs.pfnPIC_Height(image);
+
+	return static_cast<Rml::TextureHandle>(image);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
 Rml::TextureHandle
-RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> /* source */, Rml::Vector2i /* source_dimensions */)
+RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> source, Rml::Vector2i source_dimensions)
 {
 #ifdef RMLUI_REFERENCE_CODE
 	RMLUI_ASSERT(source.data() && source.size() == size_t(source_dimensions.x * source_dimensions.y * 4));
@@ -415,19 +457,27 @@ RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> /* source */, Rm
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	return (Rml::TextureHandle)texture_id;
-#else  // RMLUI_REFERENCE_CODE
-	return 0;
+#else
+	(void)source_dimensions;
+
+	char textureName[64];
+	PlatformLib_SNPrintF(textureName, sizeof(textureName), "#RMLUI_TEX_GEN_%zu", ++generated_texture_count);
+
+	HIMAGE image = gEngfuncs.pfnPIC_Load(textureName, source.data(), source.size(), 0);
+	return static_cast<Rml::TextureHandle>(image);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
-void RenderInterfaceImpl::ReleaseTexture(Rml::TextureHandle /* texture_handle */)
+void RenderInterfaceImpl::ReleaseTexture(Rml::TextureHandle texture_handle)
 {
 #ifdef RMLUI_REFERENCE_CODE
 	glDeleteTextures(1, (GLuint*)&texture_handle);
+#else
+	gUiGlFuncs.freeImage(static_cast<HIMAGE>(texture_handle));
 #endif  // RMLUI_REFERENCE_CODE
 }
 
-void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* /* transform */)
+void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* transform)
 {
 #ifdef RMLUI_REFERENCE_CODE
 	transform_enabled = (transform != nullptr);
@@ -435,11 +485,34 @@ void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* /* transform */)
 	if ( transform )
 	{
 		if ( std::is_same<Rml::Matrix4f, Rml::ColumnMajorMatrix4f>::value )
+		{
 			glLoadMatrixf(transform->data());
+		}
 		else if ( std::is_same<Rml::Matrix4f, Rml::RowMajorMatrix4f>::value )
+		{
 			glLoadMatrixf(transform->Transpose().data());
+		}
 	}
 	else
+	{
 		glLoadIdentity();
+	}
+#else
+	if ( transform )
+	{
+		if ( std::is_same<Rml::Matrix4f, Rml::ColumnMajorMatrix4f>::value )
+		{
+			gUiGlFuncs.setTransform(transform->data());
+			return;
+		}
+
+		if ( std::is_same<Rml::Matrix4f, Rml::RowMajorMatrix4f>::value )
+		{
+			gUiGlFuncs.setTransform(transform->Transpose().data());
+			return;
+		}
+	}
+
+	gUiGlFuncs.setTransform(nullptr);
 #endif  // RMLUI_REFERENCE_CODE
 }
