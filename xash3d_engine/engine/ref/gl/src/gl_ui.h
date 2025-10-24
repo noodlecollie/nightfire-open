@@ -25,5 +25,6 @@ int GL_UI_EnableWritingToStencilMask(qboolean clearStencilBuffer);
 void GL_UI_DisableWritingToStencilMask(int testValue);
 void GL_UI_SetStencilOpReplace(void);
 void GL_UI_SetStencilOpIncrement(void);
+int GL_UI_LoadImageFromMemory(const char* name, const byte* data, size_t dataSize, int flags);
 void GL_UI_FreeImage(int image);
 void GL_UI_SetTransform(const float* mat4x4);

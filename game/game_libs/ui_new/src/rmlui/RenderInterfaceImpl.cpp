@@ -434,7 +434,7 @@ RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> source, Rml::Vec
 	char textureName[64];
 	PlatformLib_SNPrintF(textureName, sizeof(textureName), "#RMLUI_TEX_GEN_%zu", ++m_GeneratedTextureCount);
 
-	HIMAGE image = gEngfuncs.pfnPIC_Load(textureName, source.data(), static_cast<int>(source.size()), 0);
+	HIMAGE image = gUiGlFuncs.loadImageFromMemory(textureName, source.data(), source.size(), 0);
 	return static_cast<Rml::TextureHandle>(image);
 #endif  // RMLUI_REFERENCE_CODE
 }

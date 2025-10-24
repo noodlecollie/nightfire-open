@@ -187,6 +187,12 @@ void GL_UI_SetStencilOpIncrement(void)
 	pglStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 }
 
+int GL_UI_LoadImageFromMemory(const char* name, const byte* data, size_t dataSize, int flags)
+{
+	// TODO: Implement this
+	// return GL_LoadTexture(name, data, dataSize, flags);
+}
+
 void GL_UI_FreeImage(int image)
 {
 	pglDeleteTextures(1, (GLuint*)&image);

@@ -66,7 +66,8 @@ static byte palette_q1[768] = {
 	147, 31,  7,   163, 39,  11,  183, 51,  15,  195, 75,  27,  207, 99,  43,  219, 127, 59,  227, 151, 79,  231, 171,
 	95,  239, 191, 119, 247, 211, 139, 167, 123, 59,  183, 155, 55,  199, 195, 55,  231, 227, 87,  127, 191, 255, 171,
 	231, 255, 215, 255, 255, 103, 0,   0,   139, 0,   0,   179, 0,   0,   215, 0,   0,   255, 0,   0,   255, 243, 147,
-	255, 247, 199, 255, 255, 255, 159, 91,  83};
+	255, 247, 199, 255, 255, 255, 159, 91,  83
+};
 
 // this is used only for particle colors
 static byte palette_hl[768] = {
@@ -103,7 +104,8 @@ static byte palette_hl[768] = {
 	147, 31,  7,   163, 39,  11,  183, 51,  15,  195, 75,  27,  207, 99,  43,  219, 127, 59,  227, 151, 79,  231, 171,
 	95,  239, 191, 119, 247, 211, 139, 167, 123, 59,  183, 155, 55,  199, 195, 55,  231, 227, 87,  0,   255, 0,   171,
 	231, 255, 215, 255, 255, 103, 0,   0,   139, 0,   0,   179, 0,   0,   215, 0,   0,   255, 0,   0,   255, 243, 147,
-	255, 247, 199, 255, 255, 255, 159, 91,  83};
+	255, 247, 199, 255, 255, 255, 159, 91,  83
+};
 
 /*
 =============================================================================
@@ -126,7 +128,8 @@ static const loadpixformat_t load_game[] = {
 	{"%s%s.%s", "lmp", Image_LoadLMP, IL_HINT_NO},  // hl menu images (cached.wad etc)
 	{"%s%s.%s", "fnt", Image_LoadFNT, IL_HINT_HL},  // hl console font (fonts.wad etc)
 	{"%s%s.%s", "pal", Image_LoadPAL, IL_HINT_NO},  // install studio\sprite palette
-	{NULL, NULL, NULL, IL_HINT_NO}};
+	{NULL, NULL, NULL, IL_HINT_NO}
+};
 
 /*
 =============================================================================
@@ -143,7 +146,8 @@ static const savepixformat_t save_game[] = {
 	{"%s%s.%s", "tga", Image_SaveTGA},  // tga screenshots
 	{"%s%s.%s", "bmp", Image_SaveBMP},  // bmp levelshots or screenshots
 	{"%s%s.%s", "png", Image_SavePNG},  // png screenshots
-	{NULL, NULL, NULL}};
+	{NULL, NULL, NULL}
+};
 
 void Image_Setup(void)
 {
@@ -1102,7 +1106,8 @@ byte* Image_ResampleInternal(
 	int outwidth,
 	int outheight,
 	int type,
-	qboolean* resampled)
+	qboolean* resampled
+)
 {
 	qboolean quality = Image_CheckFlag(IL_USE_LERPING);
 
@@ -1446,8 +1451,12 @@ qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float
 	if ( FBitSet(flags, IMAGE_MAKE_LUMA) )
 	{
 		out = Image_CreateLumaInternal(pic->buffer, pic->width, pic->height, pic->type, pic->flags);
+
 		if ( pic->buffer != out )
+		{
 			memcpy(pic->buffer, image.tempbuffer, pic->size);
+		}
+
 		ClearBits(pic->flags, IMAGE_HAS_LUMA);
 	}
 
@@ -1455,19 +1464,28 @@ qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float
 	{
 		// NOTE: user should keep copy of indexed image manually for new changes
 		if ( Image_RemapInternal(pic, width, height) )
+		{
 			pic = Image_DecompressInternal(pic);
+		}
 	}
 
 	// update format to RGBA if any
 	if ( FBitSet(flags, IMAGE_FORCE_RGBA) )
+	{
 		pic = Image_DecompressInternal(pic);
+	}
 
 	if ( FBitSet(flags, IMAGE_LIGHTGAMMA) )
+	{
 		pic = Image_LightGamma(pic);
+	}
 
 	out = Image_FlipInternal(pic->buffer, &pic->width, &pic->height, pic->type, flags);
+
 	if ( pic->buffer != out )
+	{
 		memcpy(pic->buffer, image.tempbuffer, pic->size);
+	}
 
 	if ( FBitSet(flags, IMAGE_RESAMPLE) && width > 0 && height > 0 )
 	{
@@ -1480,6 +1498,7 @@ qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float
 		if ( resampled )  // resampled or filled
 		{
 			Con_Reportf("Image_Resample: from[%d x %d] to [%d x %d]\n", pic->width, pic->height, w, h);
+
 			pic->width = (word)w;
 			pic->height = (word)h;
 			pic->size = w * h * PFDesc[pic->type].bpp;
@@ -1495,7 +1514,9 @@ qboolean Image_Process(rgbdata_t** pix, int width, int height, uint flags, float
 
 	// quantize image
 	if ( FBitSet(flags, IMAGE_QUANTIZE) )
+	{
 		pic = Image_Quantize(pic);
+	}
 
 	*pix = pic;
 

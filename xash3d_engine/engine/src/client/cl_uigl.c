@@ -179,6 +179,29 @@ void CL_UIGL_SetStencilOpIncrement(void)
 	ref.dllUiFuncs.setStencilOpIncrement();
 }
 
+HIMAGE CL_UIGL_LoadImageFromMemory(const char* name, const byte* data, size_t dataSize, int flags)
+{
+	if ( !ref.dllUiFuncs.loadImageFromMemory )
+	{
+		return 0;
+	}
+
+	if ( !COM_CheckString(name) )
+	{
+		Con_Reportf(S_ERROR "CL_UIGL_LoadImageFromMemory: refusing to load image with empty name\n");
+		return 0;
+	}
+
+	// add default parms to image
+	flags |= TF_IMAGE;
+
+	Image_SetForceFlags(IL_LOAD_DECAL);  // allow decal images for menu
+	HIMAGE tx = ref.dllUiFuncs.loadImageFromMemory(name, data, dataSize, flags);
+	Image_ClearForceFlags();
+
+	return tx;
+}
+
 void CL_UIGL_FreeImage(HIMAGE image)
 {
 	if ( !ref.dllUiFuncs.freeImage )
