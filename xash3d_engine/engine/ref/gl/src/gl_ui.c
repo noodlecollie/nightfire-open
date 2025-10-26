@@ -285,7 +285,7 @@ int GL_UI_LoadRGBAImageFromMemory(const char* name, int width, int height, const
 		return 0;
 	}
 
-	if ( width * height * 4 != dataSize )
+	if ( (size_t)(width * height * 4) != dataSize )
 	{
 		gEngfuncs.Con_Printf(
 			S_ERROR
