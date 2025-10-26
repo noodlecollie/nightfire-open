@@ -757,7 +757,16 @@ typedef struct ref_uigl_functions_s
 
 	void (*setStencilOpReplace)(void);
 	void (*setStencilOpIncrement)(void);
-	int (*loadImageFromMemory)(const char* name, const byte* data, size_t dataSize, int flags);
+
+	int (*loadRGBAImageFromMemory)(
+		const char* name,
+		int width,
+		int height,
+		const byte* data,
+		size_t dataSize,
+		int flags
+	);
+
 	void (*freeImage)(int image);
 
 	// If null, sets identity transform.

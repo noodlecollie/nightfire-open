@@ -26,6 +26,7 @@ int CL_UIGL_EnableWritingToStencilMask(qboolean clearStencilBuffer);
 void CL_UIGL_DisableWritingToStencilMask(int testValue);
 void CL_UIGL_SetStencilOpReplace(void);
 void CL_UIGL_SetStencilOpIncrement(void);
-HIMAGE CL_UIGL_LoadImageFromMemory(const char* name, const byte* data, size_t dataSize, int flags);
+HIMAGE
+CL_UIGL_LoadRGBAImageFromMemory(const char* name, int width, int height, const byte* data, size_t dataSize, int flags);
 void CL_UIGL_FreeImage(HIMAGE image);
 void CL_UIGL_SetTransform(const float* mat4x4);

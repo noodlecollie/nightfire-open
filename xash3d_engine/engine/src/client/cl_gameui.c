@@ -1414,7 +1414,7 @@ static const ui_gl_functions gUiGlFuncs = {
 	CL_UIGL_DisableWritingToStencilMask,  // disableWritingToStencilMask
 	CL_UIGL_SetStencilOpReplace,  // setStencilOpReplace
 	CL_UIGL_SetStencilOpIncrement,  // setStencilOpIncrement
-	CL_UIGL_LoadImageFromMemory,  // loadImageFromMemory
+	CL_UIGL_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
 	CL_UIGL_FreeImage,  // freeImage
 	CL_UIGL_SetTransform,  // setTransform
 };

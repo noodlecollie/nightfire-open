@@ -17,6 +17,8 @@ set(SOURCES_UI
 	src/rmlui/SystemInterfaceImpl.cpp
 	src/udll_int.h
 	src/udll_int.cpp
+	src/UIDebug.h
+	src/UIDebug.cpp
 )
 
 add_library(${TARGETNAME_LIB_UI} SHARED

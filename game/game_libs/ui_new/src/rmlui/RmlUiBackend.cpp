@@ -33,6 +33,7 @@ bool RmlUiBackend::Initialise(int width, int height)
 		return false;
 	}
 
+	m_RenderInterface.SetViewport(width, height);
 	Rml::Debugger::Initialise(m_RmlContext);
 
 	m_Initialised = true;

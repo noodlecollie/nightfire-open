@@ -288,17 +288,23 @@ static void GL_UpdateTextureParams(int iTexture)
 	Assert(tex != NULL);
 
 	if ( !tex->texnum )
+	{
 		return;  // free slot
+	}
 
 	GL_Bind(XASH_TEXTURE0, iTexture);
 
 	// set texture anisotropy if available
 	if ( GL_Support(GL_ANISOTROPY_EXT) && (tex->numMips > 1) && !FBitSet(tex->flags, TF_DEPTHMAP | TF_ALPHACONTRAST) )
+	{
 		pglTexParameterf(tex->target, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_anisotropy->value);
+	}
 
 	// set texture LOD bias if available
 	if ( GL_Support(GL_TEXTURE_LOD_BIAS) && (tex->numMips > 1) && !FBitSet(tex->flags, TF_DEPTHMAP) )
+	{
 		pglTexParameterf(tex->target, GL_TEXTURE_LOD_BIAS_EXT, gl_texture_lodbias->value);
+	}
 
 	if ( IsLightMap(tex) )
 	{
@@ -315,7 +321,9 @@ static void GL_UpdateTextureParams(int iTexture)
 	}
 
 	if ( tex->numMips <= 1 )
+	{
 		return;
+	}
 
 	if ( FBitSet(tex->flags, TF_NEAREST) || gl_texture_nearest->value )
 	{
@@ -1288,12 +1296,14 @@ static void GL_CheckTexImageError(gl_texture_t* tex)
 
 	// catch possible errors
 	if ( CVAR_TO_BOOL(gl_check_errors) && (err = pglGetError()) != GL_NO_ERROR )
+	{
 		gEngfuncs.Con_Printf(
 			S_OPENGL_ERROR "%s while uploading %s [%s]\n",
 			GL_ErrorString(err),
 			tex->name,
 			GL_TargetToString(tex->target)
 		);
+	}
 }
 
 /*
@@ -1572,24 +1582,38 @@ static gl_texture_t* GL_AllocTexture(const char* name, texFlags_t flags)
 
 	// find a free texture_t slot
 	for ( i = 0, tex = gl_textures; i < gl_numTextures; i++, tex++ )
+	{
 		if ( !tex->name[0] )
+		{
 			break;
+		}
+	}
 
 	if ( i == gl_numTextures )
 	{
 		if ( gl_numTextures == MAX_TEXTURES )
+		{
 			gEngfuncs.Host_Error("GL_AllocTexture: MAX_TEXTURES limit exceeds\n");
+		}
+
 		gl_numTextures++;
 	}
 
 	tex = &gl_textures[i];
+	memset(tex, 0, sizeof(*tex));
 
 	// copy initial params
 	Q_strncpy(tex->name, name, sizeof(tex->name));
+
 	if ( FBitSet(flags, TF_SKYSIDE) )
+	{
 		tex->texnum = tr.skyboxbasenum++;
+	}
 	else
+	{
 		tex->texnum = i;  // texnum is used for fast acess into gl_textures array too
+	}
+
 	tex->flags = flags;
 
 	// add to hash table
@@ -1933,10 +1957,13 @@ int GL_LoadTextureFromBuffer(const char* name, rgbdata_t* pic, texFlags_t flags,
 	gl_texture_t* tex;
 
 	if ( !GL_CheckTexName(name) )
+	{
 		return 0;
+	}
 
 	// see if already loaded
 	tex = GL_TextureForName(name);
+
 	if ( tex && !update )
 	{
 		return (int)(tex - gl_textures);

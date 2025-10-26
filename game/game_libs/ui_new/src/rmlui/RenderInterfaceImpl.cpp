@@ -6,6 +6,7 @@
 #include <string.h>
 #include "udll_int.h"
 #include "PlatformLib/String.h"
+#include "UIDebug.h"
 
 RenderInterfaceImpl::RenderInterfaceImpl(RmlUiBackend* backend) :
 	m_Backend(backend)
@@ -14,6 +15,9 @@ RenderInterfaceImpl::RenderInterfaceImpl(RmlUiBackend* backend) :
 
 void RenderInterfaceImpl::SetViewport(int in_viewport_width, int in_viewport_height)
 {
+	ASSERT(in_viewport_width > 0);
+	ASSERT(in_viewport_height > 0);
+
 	m_ViewportWidth = in_viewport_width;
 	m_ViewportHeight = in_viewport_height;
 }
@@ -47,6 +51,7 @@ void RenderInterfaceImpl::BeginFrame()
 
 	transform_enabled = false;
 #else
+	ASSERT(m_ViewportWidth > 0 && m_ViewportHeight > 0);
 	gUiGlFuncs.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
 #endif  // RMLUI_REFERENCE_CODE
 }
@@ -382,6 +387,8 @@ Rml::TextureHandle RenderInterfaceImpl::LoadTexture(Rml::Vector2i& texture_dimen
 #else  // RMLUI_REFERENCE_CODE
 	HIMAGE image = gEngfuncs.pfnPIC_Load(source.c_str(), nullptr, 0, 0);
 
+	ASSERTSZ(image != 0, "Failed to load texture");
+
 	if ( !image )
 	{
 		return 0;
@@ -429,12 +436,26 @@ RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> source, Rml::Vec
 
 	return (Rml::TextureHandle)texture_id;
 #else
-	(void)source_dimensions;
-
 	char textureName[64];
-	PlatformLib_SNPrintF(textureName, sizeof(textureName), "#RMLUI_TEX_GEN_%zu", ++m_GeneratedTextureCount);
+	PlatformLib_SNPrintF(textureName, sizeof(textureName), "#RMLUI_TEX_GEN_%zu", m_GeneratedTextureCount + 1);
 
-	HIMAGE image = gUiGlFuncs.loadImageFromMemory(textureName, source.data(), source.size(), 0);
+	HIMAGE image = gUiGlFuncs.loadRGBAImageFromMemory(
+		textureName,
+		source_dimensions.x,
+		source_dimensions.y,
+		source.data(),
+		source.size(),
+		0
+	);
+
+	ASSERTSZ(image != 0, "Failed to load texture");
+
+	if ( image == 0 )
+	{
+		return 0;
+	}
+
+	++m_GeneratedTextureCount;
 	return static_cast<Rml::TextureHandle>(image);
 #endif  // RMLUI_REFERENCE_CODE
 }
@@ -484,6 +505,8 @@ void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* transform)
 			gUiGlFuncs.setTransform(transform->Transpose().data());
 			return;
 		}
+
+		ASSERTSZ(false, "Unrecognised transform type");
 	}
 
 	gUiGlFuncs.setTransform(nullptr);

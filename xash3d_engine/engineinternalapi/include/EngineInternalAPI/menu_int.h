@@ -321,7 +321,16 @@ typedef struct ui_gl_functions_s
 
 	void (*setStencilOpReplace)(void);
 	void (*setStencilOpIncrement)(void);
-	HIMAGE (*loadImageFromMemory)(const char* name, const byte* data, size_t dataSize, int flags);
+
+	HIMAGE (*loadRGBAImageFromMemory)(
+		const char* name,
+		int width,
+		int height,
+		const byte* data,
+		size_t dataSize,
+		int flags
+	);
+
 	void (*freeImage)(HIMAGE image);
 
 	// If null, sets identity transform.

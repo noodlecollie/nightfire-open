@@ -179,16 +179,17 @@ void CL_UIGL_SetStencilOpIncrement(void)
 	ref.dllUiFuncs.setStencilOpIncrement();
 }
 
-HIMAGE CL_UIGL_LoadImageFromMemory(const char* name, const byte* data, size_t dataSize, int flags)
+HIMAGE
+CL_UIGL_LoadRGBAImageFromMemory(const char* name, int width, int height, const byte* data, size_t dataSize, int flags)
 {
-	if ( !ref.dllUiFuncs.loadImageFromMemory )
+	if ( !ref.dllUiFuncs.loadRGBAImageFromMemory )
 	{
 		return 0;
 	}
 
 	if ( !COM_CheckString(name) )
 	{
-		Con_Reportf(S_ERROR "CL_UIGL_LoadImageFromMemory: refusing to load image with empty name\n");
+		Con_Reportf(S_ERROR "CL_UIGL_LoadRGBAImageFromMemory: refusing to load image with empty name\n");
 		return 0;
 	}
 
@@ -196,7 +197,7 @@ HIMAGE CL_UIGL_LoadImageFromMemory(const char* name, const byte* data, size_t da
 	flags |= TF_IMAGE;
 
 	Image_SetForceFlags(IL_LOAD_DECAL);  // allow decal images for menu
-	HIMAGE tx = ref.dllUiFuncs.loadImageFromMemory(name, data, dataSize, flags);
+	HIMAGE tx = ref.dllUiFuncs.loadRGBAImageFromMemory(name, width, height, data, dataSize, flags);
 	Image_ClearForceFlags();
 
 	return tx;

@@ -555,7 +555,7 @@ static const ref_uigl_functions gRefUiGlFuncs = {
 	GL_UI_DisableWritingToStencilMask,  // disableWritingToStencilMask
 	GL_UI_SetStencilOpReplace,  // setStencilOpReplace
 	GL_UI_SetStencilOpIncrement,  // setStencilOpIncrement
-	GL_UI_LoadImageFromMemory,  // loadImageFromMemory
+	GL_UI_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
 	GL_UI_FreeImage,  // freeImage
 	GL_UI_SetTransform,  // setTransform
 };

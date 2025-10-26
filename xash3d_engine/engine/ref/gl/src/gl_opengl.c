@@ -1006,7 +1006,9 @@ R_Init
 qboolean R_Init(void)
 {
 	if ( glw_state.initialized )
+	{
 		return true;
+	}
 
 	GL_InitCommands();
 	GL_InitRandomTable();
