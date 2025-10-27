@@ -292,7 +292,7 @@ typedef struct ui_gl_functions_s
 {
 	void (*beginFrame)(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
 	void (*endFrame)(void);
-	void (*clear)(uint32_t colour);
+	void (*clear)(uint32_t colour, int stencil);
 	void (*pushMatrixTranslation)(float x, float y, float z);
 	void (*popMatrix)(void);
 

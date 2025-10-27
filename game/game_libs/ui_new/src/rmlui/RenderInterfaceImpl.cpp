@@ -68,7 +68,7 @@ void RenderInterfaceImpl::Clear()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 #else
-	gUiGlFuncs.clear(0x00000000);
+	gUiGlFuncs.clear(0x00000000, 0);
 #endif  // RMLUI_REFERENCE_CODE
 }
 

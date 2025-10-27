@@ -32,14 +32,14 @@ void CL_UIGL_EndFrame(void)
 	ref.dllUiFuncs.endFrame();
 }
 
-void CL_UIGL_Clear(uint32_t colour)
+void CL_UIGL_Clear(uint32_t colour, int stencil)
 {
 	if ( !ref.dllUiFuncs.clear )
 	{
 		return;
 	}
 
-	ref.dllUiFuncs.clear(colour);
+	ref.dllUiFuncs.clear(colour, stencil);
 }
 
 void CL_UIGL_PushMatrixTranslation(float x, float y, float z)

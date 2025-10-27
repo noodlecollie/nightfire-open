@@ -89,11 +89,11 @@ void GL_UI_EndFrame(void)
 	ASSERT(CHECK_OPENGL_ERROR());
 }
 
-void GL_UI_Clear(uint32_t colour)
+void GL_UI_Clear(uint32_t colour, int stencil)
 {
 	ASSERT(CHECK_OPENGL_ERROR());
 
-	pglClearStencil(0);
+	pglClearStencil(stencil);
 	pglClearColor(
 		PackedColourByteToFloat(colour, CHANNEL_RED),
 		PackedColourByteToFloat(colour, CHANNEL_GREEN),

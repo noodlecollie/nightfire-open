@@ -38,7 +38,8 @@ static UI_FUNCTIONS gFunctionTable = {
 	UI_MouseInRect,
 	UI_IsVisible,
 	UI_CreditsActive,
-	UI_FinalCredits};
+	UI_FinalCredits,
+};
 
 //=======================================================================
 //			GetApi
@@ -73,7 +74,8 @@ static UI_EXTENDED_FUNCTIONS gExtendedTable = {
 	UI_ConnectionProgress_Precache,
 	UI_ConnectionProgress_Connect,
 	UI_ConnectionProgress_ChangeLevel,
-	UI_ConnectionProgress_ParseServerInfo};
+	UI_ConnectionProgress_ParseServerInfo,
+};
 
 extern "C" EXPORT int
 GetExtAPI(int version, UI_EXTENDED_FUNCTIONS* pFunctionTable, ui_extendedfuncs_t* pEngfuncsFromEngine)
@@ -88,7 +90,8 @@ GetExtAPI(int version, UI_EXTENDED_FUNCTIONS* pFunctionTable, ui_extendedfuncs_t
 		Con_Printf(
 			"Error: failed to initialize extended menu API. Expected by DLL: %d. Got from engine: %d\n",
 			MENU_EXTENDED_API_VERSION,
-			version);
+			version
+		);
 		return FALSE;
 	}
 
