@@ -23,6 +23,8 @@ public:
 
 	Rml::Context* GetRmlContext() const;
 
+	void RenderDebugTriangle();
+
 private:
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;

@@ -13,6 +13,16 @@ RenderInterfaceImpl::RenderInterfaceImpl(RmlUiBackend* backend) :
 {
 }
 
+int RenderInterfaceImpl::ViewportWidth() const
+{
+	return m_ViewportWidth;
+}
+
+int RenderInterfaceImpl::ViewportHeight() const
+{
+	return m_ViewportHeight;
+}
+
 void RenderInterfaceImpl::SetViewport(int in_viewport_width, int in_viewport_height)
 {
 	ASSERT(in_viewport_width > 0);
@@ -511,4 +521,63 @@ void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* transform)
 
 	gUiGlFuncs.setTransform(nullptr);
 #endif  // RMLUI_REFERENCE_CODE
+}
+
+void RenderInterfaceImpl::RenderDebugTriangle()
+{
+	static Rml::CompiledGeometryHandle geom = 0;
+	static Rml::TextureHandle texture = 0;
+
+	if ( !geom )
+	{
+		static const float extent = 200.0f;
+
+		static const Rml::Vertex verticesArray[] = {
+			{{0, 0}, Rml::ColourbPremultiplied {255, 0, 0, 255}, {0, 0}},
+			{{extent, 0}, Rml::ColourbPremultiplied {255, 0, 0, 255}, {1, 0}},
+			{{extent / 2.0f, extent}, Rml::ColourbPremultiplied {255, 0, 0, 255}, {0.5f, 1}},
+		};
+
+		static const int indicesArray[] = {
+			0,
+			1,
+			2,
+		};
+
+		Rml::Span<const Rml::Vertex> vertices(verticesArray, 3);
+		Rml::Span<const int> indices(indicesArray, 3);
+		geom = CompileGeometry(vertices, indices);
+	}
+
+	if ( !texture )
+	{
+		static constexpr int WIDTH = 16;
+		static constexpr int HEIGHT = 16;
+
+		uint32_t texDataRGBA[WIDTH * HEIGHT];
+		memset(&texDataRGBA, 0xFF, sizeof(texDataRGBA));
+
+		Rml::Span<const Rml::byte> texData(reinterpret_cast<const Rml::byte*>(texDataRGBA), sizeof(texDataRGBA));
+		texture = GenerateTexture(texData, Rml::Vector2i(WIDTH, HEIGHT));
+	}
+
+	gUiGlFuncs.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
+	gUiGlFuncs.clear(0x000000FF, 0);
+
+	const GeometryView* geometry = reinterpret_cast<GeometryView*>(geom);
+	const Rml::Vertex* vertices = geometry->vertices.data();
+	const int* indices = geometry->indices.data();
+	const int num_indices = static_cast<int>(geometry->indices.size());
+
+	gUiGlFuncs.prepareToDrawWithTexture(
+		static_cast<uint32_t>(texture),
+		vertices,
+		sizeof(Rml::Vertex),
+		offsetof(Rml::Vertex, position),
+		offsetof(Rml::Vertex, colour),
+		offsetof(Rml::Vertex, tex_coord)
+	);
+
+	gUiGlFuncs.drawElements(num_indices, indices);
+	gUiGlFuncs.endFrame();
 }

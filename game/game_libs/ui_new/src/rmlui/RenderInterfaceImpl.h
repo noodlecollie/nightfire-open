@@ -8,9 +8,14 @@ class RmlUiBackend;
 class RenderInterfaceImpl : public Rml::RenderInterface
 {
 public:
+	// Can be passed to RenderGeometry() to enable texture rendering without changing the bound texture.
+	static constexpr Rml::TextureHandle TextureEnableWithoutBinding = Rml::TextureHandle(-1);
+
 	RenderInterfaceImpl(RmlUiBackend* backend);
 
 	// The viewport should be updated whenever the window size changes.
+	int ViewportWidth() const;
+	int ViewportHeight() const;
 	void SetViewport(int viewport_width, int viewport_height);
 
 	// Sets up OpenGL states for taking rendering commands from RmlUi.
@@ -45,8 +50,7 @@ public:
 
 	void SetTransform(const Rml::Matrix4f* transform) override;
 
-	// Can be passed to RenderGeometry() to enable texture rendering without changing the bound texture.
-	static const Rml::TextureHandle TextureEnableWithoutBinding = Rml::TextureHandle(-1);
+	void RenderDebugTriangle();
 
 private:
 	struct GeometryView

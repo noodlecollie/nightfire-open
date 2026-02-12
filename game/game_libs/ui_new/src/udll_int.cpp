@@ -49,8 +49,12 @@ static void pfnShutdown(void)
 
 static void pfnRedraw(float /* flTime */)
 {
+#ifdef RENDER_DEBUG_TRIANGLE
+	gRmlUiBackend.RenderDebugTriangle();
+#else
 	gRmlUiBackend.Update();
 	gRmlUiBackend.Render();
+#endif
 }
 
 static void pfnKeyEvent(int /* key */, int /* down */)

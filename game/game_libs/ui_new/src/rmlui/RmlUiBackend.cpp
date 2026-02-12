@@ -83,3 +83,13 @@ void RmlUiBackend::Render()
 	m_RmlContext->Render();
 	m_RenderInterface.EndFrame();
 }
+
+void RmlUiBackend::RenderDebugTriangle()
+{
+	if ( !m_Initialised )
+	{
+		return;
+	}
+
+	m_RenderInterface.RenderDebugTriangle();
+}

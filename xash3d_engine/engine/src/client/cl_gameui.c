@@ -217,7 +217,7 @@ void UI_ShowConnectionWarning(void)
 	if ( Host_IsLocalClient() )
 		return;
 
-	if ( ++cl.lostpackets == 8 )
+	if ( ++cl.lostpackets >= 8 )
 	{
 		CL_Disconnect();
 		if ( gameui.dllFuncs2.pfnShowConnectionWarning )
