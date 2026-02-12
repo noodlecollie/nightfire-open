@@ -81,11 +81,8 @@ void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 
 void GL_UI_EndFrame(void)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
-
-	// TODO: Is this needed, or does the engine end the frame for us?
-	R_EndFrame();
-
+	// Nothing needed here right now - the engine ends the frame for us
+	// from V_PostRender().
 	ASSERT(CHECK_OPENGL_ERROR());
 }
 
