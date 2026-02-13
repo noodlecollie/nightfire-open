@@ -3,6 +3,7 @@
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
 #include "rmlui/RmlUiBackend.h"
+#include "UIDebug.h"
 
 ui_enginefuncs_t gEngfuncs;
 ui_extendedfuncs_t gTextfuncs;
@@ -25,14 +26,18 @@ static int pfnVidInit(void)
 
 	// REMOVE ME: Example document to display
 	Rml::Context* context = gRmlUiBackend.GetRmlContext();
-	context->LoadDocumentFromMemory(
+	Rml::ElementDocument* doc = context->LoadDocumentFromMemory(
 		"<rml>\n"
-		"<head></head>\n"
+		"<head><title>Test Document</title></head>\n"
 		"<body>\n"
 		"<h1>Testing RmlUi</h1>\n"
+		"<p>This is a paragraph</p>\n"
 		"</body>\n"
 		"</rml>\n"
 	);
+
+	const Rml::String& title = doc->GetTitle();
+	gEngfuncs.Con_Printf("Document title: %s\n", title.c_str());
 
 	return 1;
 }
@@ -44,6 +49,10 @@ static void pfnInit(void)
 
 static void pfnShutdown(void)
 {
+	Rml::Context* context = gRmlUiBackend.GetRmlContext();
+	ASSERT(context);
+
+	context->UnloadAllDocuments();
 	gRmlUiBackend.ShutDown();
 }
 
