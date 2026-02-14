@@ -1398,7 +1398,7 @@ static ui_extendedfuncs_t gExtendedfuncs = {
 	NET_CompareAdrSort,
 };
 
-static const ui_gl_functions gUiGlFuncs = {
+static const ui_gl_functions gUiGlFuncs = {{
 	CL_UIGL_BeginFrame,  // beginFrame
 	CL_UIGL_EndFrame,  // endFrame
 	CL_UIGL_Clear,  // clear
@@ -1417,7 +1417,7 @@ static const ui_gl_functions gUiGlFuncs = {
 	CL_UIGL_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
 	CL_UIGL_FreeImage,  // freeImage
 	CL_UIGL_SetTransform,  // setTransform
-};
+}};
 
 void UI_UnloadProgs(void)
 {

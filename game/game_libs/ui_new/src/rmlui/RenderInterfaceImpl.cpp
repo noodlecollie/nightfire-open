@@ -62,13 +62,13 @@ void RenderInterfaceImpl::BeginFrame()
 	transform_enabled = false;
 #else
 	ASSERT(m_ViewportWidth > 0 && m_ViewportHeight > 0);
-	gUiGlFuncs.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
+	gUiGlFuncs.renderer.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
 void RenderInterfaceImpl::EndFrame()
 {
-	gUiGlFuncs.endFrame();
+	gUiGlFuncs.renderer.endFrame();
 }
 
 void RenderInterfaceImpl::Clear()
@@ -78,7 +78,7 @@ void RenderInterfaceImpl::Clear()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 #else
-	gUiGlFuncs.clear(0x00000000, 0);
+	gUiGlFuncs.renderer.clear(0x00000000, 0);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -134,11 +134,11 @@ void RenderInterfaceImpl::RenderGeometry(
 
 	glPopMatrix();
 #else
-	gUiGlFuncs.pushMatrixTranslation(translation.x, translation.y, 0.0f);
+	gUiGlFuncs.renderer.pushMatrixTranslation(translation.x, translation.y, 0.0f);
 
 	if ( texture )
 	{
-		gUiGlFuncs.prepareToDrawWithTexture(
+		gUiGlFuncs.renderer.prepareToDrawWithTexture(
 			texture != TextureEnableWithoutBinding ? static_cast<uint32_t>(texture) : 0,
 			vertices,
 			sizeof(Rml::Vertex),
@@ -149,7 +149,7 @@ void RenderInterfaceImpl::RenderGeometry(
 	}
 	else
 	{
-		gUiGlFuncs.prepareToDrawWithoutTexture(
+		gUiGlFuncs.renderer.prepareToDrawWithoutTexture(
 			vertices,
 			sizeof(Rml::Vertex),
 			offsetof(Rml::Vertex, position),
@@ -157,8 +157,8 @@ void RenderInterfaceImpl::RenderGeometry(
 		);
 	}
 
-	gUiGlFuncs.drawElements(num_indices, indices);
-	gUiGlFuncs.popMatrix();
+	gUiGlFuncs.renderer.drawElements(num_indices, indices);
+	gUiGlFuncs.renderer.popMatrix();
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -174,7 +174,7 @@ void RenderInterfaceImpl::EnableScissorRegion(bool enable)
 		glDisable(GL_SCISSOR_TEST);
 	}
 #else
-	gUiGlFuncs.setScissorEnabled(enable);
+	gUiGlFuncs.renderer.setScissorEnabled(enable);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -183,7 +183,8 @@ void RenderInterfaceImpl::SetScissorRegion(Rml::Rectanglei region)
 #ifdef RMLUI_REFERENCE_CODE
 	glScissor(region.Left(), viewport_height - region.Bottom(), region.Width(), region.Height());
 #else
-	gUiGlFuncs.setScissorRegion(region.Left(), m_ViewportHeight - region.Bottom(), region.Width(), region.Height());
+	gUiGlFuncs.renderer
+		.setScissorRegion(region.Left(), m_ViewportHeight - region.Bottom(), region.Width(), region.Height());
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -199,7 +200,7 @@ void RenderInterfaceImpl::EnableClipMask(bool enable)
 		glDisable(GL_STENCIL_TEST);
 	}
 #else
-	gUiGlFuncs.setStencilEnabled(enable);
+	gUiGlFuncs.renderer.setStencilEnabled(enable);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -259,34 +260,34 @@ void RenderInterfaceImpl::RenderToClipMask(
 	using Rml::ClipMaskOperation;
 
 	const bool clear_stencil = (operation == ClipMaskOperation::Set || operation == ClipMaskOperation::SetInverse);
-	int stencil_test_value = gUiGlFuncs.enableWritingToStencilMask(clear_stencil);
+	int stencil_test_value = gUiGlFuncs.renderer.enableWritingToStencilMask(clear_stencil);
 
 	switch ( operation )
 	{
 		case ClipMaskOperation::Set:
 		{
-			gUiGlFuncs.setStencilOpReplace();
+			gUiGlFuncs.renderer.setStencilOpReplace();
 			stencil_test_value = 1;
 			break;
 		}
 
 		case ClipMaskOperation::SetInverse:
 		{
-			gUiGlFuncs.setStencilOpReplace();
+			gUiGlFuncs.renderer.setStencilOpReplace();
 			stencil_test_value = 0;
 			break;
 		}
 
 		case ClipMaskOperation::Intersect:
 		{
-			gUiGlFuncs.setStencilOpIncrement();
+			gUiGlFuncs.renderer.setStencilOpIncrement();
 			stencil_test_value += 1;
 			break;
 		}
 	}
 
 	RenderGeometry(geometry, translation, {});
-	gUiGlFuncs.disableWritingToStencilMask(stencil_test_value);
+	gUiGlFuncs.renderer.disableWritingToStencilMask(stencil_test_value);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -449,7 +450,7 @@ RenderInterfaceImpl::GenerateTexture(Rml::Span<const Rml::byte> source, Rml::Vec
 	char textureName[64];
 	PlatformLib_SNPrintF(textureName, sizeof(textureName), "#RMLUI_TEX_GEN_%zu", m_GeneratedTextureCount + 1);
 
-	HIMAGE image = gUiGlFuncs.loadRGBAImageFromMemory(
+	HIMAGE image = gUiGlFuncs.renderer.loadRGBAImageFromMemory(
 		textureName,
 		source_dimensions.x,
 		source_dimensions.y,
@@ -475,7 +476,7 @@ void RenderInterfaceImpl::ReleaseTexture(Rml::TextureHandle texture_handle)
 #ifdef RMLUI_REFERENCE_CODE
 	glDeleteTextures(1, (GLuint*)&texture_handle);
 #else
-	gUiGlFuncs.freeImage(static_cast<HIMAGE>(texture_handle));
+	gUiGlFuncs.renderer.freeImage(static_cast<HIMAGE>(texture_handle));
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -506,20 +507,20 @@ void RenderInterfaceImpl::SetTransform(const Rml::Matrix4f* transform)
 	{
 		if ( std::is_same<Rml::Matrix4f, Rml::ColumnMajorMatrix4f>::value )
 		{
-			gUiGlFuncs.setTransform(transform->data());
+			gUiGlFuncs.renderer.setTransform(transform->data());
 			return;
 		}
 
 		if ( std::is_same<Rml::Matrix4f, Rml::RowMajorMatrix4f>::value )
 		{
-			gUiGlFuncs.setTransform(transform->Transpose().data());
+			gUiGlFuncs.renderer.setTransform(transform->Transpose().data());
 			return;
 		}
 
 		ASSERTSZ(false, "Unrecognised transform type");
 	}
 
-	gUiGlFuncs.setTransform(nullptr);
+	gUiGlFuncs.renderer.setTransform(nullptr);
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -561,15 +562,15 @@ void RenderInterfaceImpl::RenderDebugTriangle()
 		texture = GenerateTexture(texData, Rml::Vector2i(WIDTH, HEIGHT));
 	}
 
-	gUiGlFuncs.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
-	gUiGlFuncs.clear(0x000000FF, 0);
+	gUiGlFuncs.renderer.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
+	gUiGlFuncs.renderer.clear(0x000000FF, 0);
 
 	const GeometryView* geometry = reinterpret_cast<GeometryView*>(geom);
 	const Rml::Vertex* vertices = geometry->vertices.data();
 	const int* indices = geometry->indices.data();
 	const int num_indices = static_cast<int>(geometry->indices.size());
 
-	gUiGlFuncs.prepareToDrawWithTexture(
+	gUiGlFuncs.renderer.prepareToDrawWithTexture(
 		static_cast<uint32_t>(texture),
 		vertices,
 		sizeof(Rml::Vertex),
@@ -578,6 +579,6 @@ void RenderInterfaceImpl::RenderDebugTriangle()
 		offsetof(Rml::Vertex, tex_coord)
 	);
 
-	gUiGlFuncs.drawElements(num_indices, indices);
-	gUiGlFuncs.endFrame();
+	gUiGlFuncs.renderer.drawElements(num_indices, indices);
+	gUiGlFuncs.renderer.endFrame();
 }

@@ -288,7 +288,7 @@ typedef int (*UITEXTAPI)(ui_extendedfuncs_t* engfuncs);
 
 #define MENU_UIGLAPI_VERSION 1
 
-typedef struct ui_gl_functions_s
+typedef struct ui_gl_renderfunctions_s
 {
 	void (*beginFrame)(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
 	void (*endFrame)(void);
@@ -335,6 +335,11 @@ typedef struct ui_gl_functions_s
 
 	// If null, sets identity transform.
 	void (*setTransform)(const float* mat4x4);
+} ui_gl_renderfunctions;
+
+typedef struct ui_gl_functions_s
+{
+	ui_gl_renderfunctions renderer;
 } ui_gl_functions;
 
 typedef int (*UIGLAPI)(int version, const ui_gl_functions* uiToEngineFuncs);
