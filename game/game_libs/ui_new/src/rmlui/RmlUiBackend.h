@@ -2,7 +2,6 @@
 
 #include "rmlui/RenderInterfaceImpl.h"
 #include "rmlui/SystemInterfaceImpl.h"
-#include "rmlui/FontEngineInterfaceImpl.h"
 #include "rmlui/FileInterfaceImpl.h"
 
 namespace Rml
@@ -30,7 +29,6 @@ public:
 private:
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;
-	FontEngineInterfaceImpl m_FontEngineInterface;
 	FileInterfaceImpl m_FileInterface;
 
 	bool m_Initialised = false;

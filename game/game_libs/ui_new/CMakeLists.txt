@@ -11,8 +11,6 @@ include(compiler_settings)
 set(SOURCES_UI
 	src/rmlui/FileInterfaceImpl.h
 	src/rmlui/FileInterfaceImpl.cpp
-	src/rmlui/FontEngineInterfaceImpl.h
-	src/rmlui/FontEngineInterfaceImpl.cpp
 	src/rmlui/RenderInterfaceImpl.h
 	src/rmlui/RenderInterfaceImpl.cpp
 	src/rmlui/RmlUiBackend.h
