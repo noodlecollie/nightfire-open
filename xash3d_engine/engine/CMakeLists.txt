@@ -177,6 +177,8 @@ if(CLIENT_SUPPORT)
 		src/client/cl_surfaceprop_effects.c
 		src/client/cl_tent.h
 		src/client/cl_tent.c
+		src/client/cl_uifs.h
+		src/client/cl_uifs.c
 		src/client/cl_uigl.h
 		src/client/cl_uigl.c
 		src/client/cl_video.c

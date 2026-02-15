@@ -22,6 +22,7 @@ bool RmlUiBackend::Initialise(int width, int height)
 
 	Rml::SetSystemInterface(&m_SystemInterface);
 	Rml::SetRenderInterface(&m_RenderInterface);
+	Rml::SetFileInterface(&m_FileInterface);
 
 	Rml::Initialise();
 

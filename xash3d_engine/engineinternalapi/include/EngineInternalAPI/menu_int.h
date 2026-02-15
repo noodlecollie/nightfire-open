@@ -337,9 +337,31 @@ typedef struct ui_gl_renderfunctions_s
 	void (*setTransform)(const float* mat4x4);
 } ui_gl_renderfunctions;
 
+typedef uintptr_t ui_gl_filesystem_handle_t;
+
+typedef enum ui_gl_filesystem_origin_e
+{
+	UI_GL_FS_SEEK_SET = 0,
+	UI_GL_FS_SEEK_END = 1,
+	UI_GL_FS_SEEK_CUR = 2,
+} ui_gl_filesystem_origin;
+
+typedef struct ui_gl_filesystemfunctions_s
+{
+	qboolean (*openReadOnlyFile)(const char* path, ui_gl_filesystem_handle_t* outHandle);
+	void (*closeFile)(ui_gl_filesystem_handle_t handle);
+	size_t (*readFromFile)(ui_gl_filesystem_handle_t handle, void* outBuffer, size_t bufferSize);
+	qboolean (*seekFile)(ui_gl_filesystem_handle_t handle, int64_t offset, ui_gl_filesystem_origin origin);
+	size_t (*tellFile)(ui_gl_filesystem_handle_t handle);
+	size_t (*fileLength)(ui_gl_filesystem_handle_t handle);
+	uint8_t* (*loadFileData)(const char* path, size_t* outLength);
+	void (*freeFileData)(uint8_t* data);
+} ui_gl_filesystemfunctions;
+
 typedef struct ui_gl_functions_s
 {
 	ui_gl_renderfunctions renderer;
+	ui_gl_filesystemfunctions filesystem;
 } ui_gl_functions;
 
 typedef int (*UIGLAPI)(int version, const ui_gl_functions* uiToEngineFuncs);

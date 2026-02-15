@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
 #include "client/cl_uigl.h"
+#include "client/cl_uifs.h"
 
 static void UI_UpdateUserinfo(void);
 
@@ -1398,26 +1399,40 @@ static ui_extendedfuncs_t gExtendedfuncs = {
 	NET_CompareAdrSort,
 };
 
-static const ui_gl_functions gUiGlFuncs = {{
-	CL_UIGL_BeginFrame,  // beginFrame
-	CL_UIGL_EndFrame,  // endFrame
-	CL_UIGL_Clear,  // clear
-	CL_UIGL_PushMatrixTranslation,  // pushMatrixTranslation
-	CL_UIGL_PopMatrix,  // popMatrix
-	CL_UIGL_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
-	CL_UIGL_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
-	CL_UIGL_DrawElements,  // drawElements
-	CL_UIGL_SetScissorEnabled,  // setScissorEnabled
-	CL_UIGL_SetScissorRegion,  // setScissorRegion
-	CL_UIGL_SetStencilEnabled,  // setStencilEnabled
-	CL_UIGL_EnableWritingToStencilMask,  // enableWritingToStencilMask
-	CL_UIGL_DisableWritingToStencilMask,  // disableWritingToStencilMask
-	CL_UIGL_SetStencilOpReplace,  // setStencilOpReplace
-	CL_UIGL_SetStencilOpIncrement,  // setStencilOpIncrement
-	CL_UIGL_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
-	CL_UIGL_FreeImage,  // freeImage
-	CL_UIGL_SetTransform,  // setTransform
-}};
+static const ui_gl_functions gUiGlFuncs = {
+	// Renderer
+	{
+		CL_UIGL_BeginFrame,  // beginFrame
+		CL_UIGL_EndFrame,  // endFrame
+		CL_UIGL_Clear,  // clear
+		CL_UIGL_PushMatrixTranslation,  // pushMatrixTranslation
+		CL_UIGL_PopMatrix,  // popMatrix
+		CL_UIGL_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
+		CL_UIGL_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
+		CL_UIGL_DrawElements,  // drawElements
+		CL_UIGL_SetScissorEnabled,  // setScissorEnabled
+		CL_UIGL_SetScissorRegion,  // setScissorRegion
+		CL_UIGL_SetStencilEnabled,  // setStencilEnabled
+		CL_UIGL_EnableWritingToStencilMask,  // enableWritingToStencilMask
+		CL_UIGL_DisableWritingToStencilMask,  // disableWritingToStencilMask
+		CL_UIGL_SetStencilOpReplace,  // setStencilOpReplace
+		CL_UIGL_SetStencilOpIncrement,  // setStencilOpIncrement
+		CL_UIGL_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
+		CL_UIGL_FreeImage,  // freeImage
+		CL_UIGL_SetTransform,  // setTransform
+	},
+	// Filesytem
+	{
+		CL_UIFS_OpenReadOnlyFile,  // openReadOnlyFile
+		CL_UIFS_CloseFile,  // closeFile
+		CL_UIFS_ReadFromFile,  // readFromFile
+		CL_UIFS_SeekFile,  // seekFile
+		CL_UIFS_TellFile,  // tellFile
+		CL_UIFS_FileLength,  // fileLength
+		CL_UIFS_LoadFileData,  // loadFileData
+		CL_UIFS_FreeFileData,  // freeFileData
+	}
+};
 
 void UI_UnloadProgs(void)
 {
