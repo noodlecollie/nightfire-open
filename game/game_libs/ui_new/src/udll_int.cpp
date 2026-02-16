@@ -26,36 +26,8 @@ static int pfnVidInit(void)
 
 	// REMOVE ME: Example document to display
 	Rml::Context* context = gRmlUiBackend.GetRmlContext();
-	Rml::ElementDocument* doc = context->LoadDocumentFromMemory(
-		"<rml>\n"
-		"<head>\n"
-		"<title>Test Document</title>\n"
-		"<style>\n"
-		"body\n"
-		"{\n"
-		"font-family: rmlui-debugger-font;\n"
-		"background-color: #FFFFFF;\n"
-		"color: #000000;\n"
-		"width: 100%;\n"
-		"height: 100%\n"
-		"}\n"
-		"h1, p\n"
-		"{\n"
-		"display: block;"
-		"}\n"
-		"</style>\n"
-		"</head>\n"
-		"<body>\n"
-		"<div style=\"border: 1px #0000FF;\">\n"
-		"<h1>Testing RmlUi</h1>\n"
-		"<p>This is a paragraph</p>\n"
-		"<p>This is another paragraph</p>\n"
-		"<p>Some more paragraphs</p>\n"
-		"</div>\n"
-		"</body>\n"
-		"</rml>\n"
-	);
-
+	Rml::ElementDocument* doc = context->LoadDocument("resource/rml/zoo.rml");
+	ASSERT(doc);
 	doc->Show();
 
 	return 1;

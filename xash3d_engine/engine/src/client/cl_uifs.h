@@ -4,6 +4,9 @@
 #include "BuildPlatform/Typedefs.h"
 #include "EngineInternalAPI/menu_int.h"
 
+void CL_UIFS_Init(void);
+void CL_UIFS_ShutDown(void);
+
 qboolean CL_UIFS_OpenReadOnlyFile(const char* path, ui_gl_filesystem_handle_t* outHandle);
 void CL_UIFS_CloseFile(ui_gl_filesystem_handle_t handle);
 size_t CL_UIFS_ReadFromFile(ui_gl_filesystem_handle_t handle, void* outBuffer, size_t bufferSize);

@@ -1,10 +1,16 @@
 #include "rmlui/FileInterfaceImpl.h"
 #include "udll_int.h"
+#include <RmlUi/Core/Log.h>
 
 Rml::FileHandle FileInterfaceImpl::Open(const Rml::String& path)
 {
 	ui_gl_filesystem_handle_t handle = 0;
 	const bool success = gUiGlFuncs.filesystem.openReadOnlyFile(path.c_str(), &handle);
+
+	if ( !success )
+	{
+		Rml::Log::Message(Rml::Log::LT_ERROR, "Could not open file %s", path.c_str());
+	}
 
 	return static_cast<Rml::FileHandle>(success ? handle : 0);
 }
@@ -72,6 +78,7 @@ bool FileInterfaceImpl::LoadFile(const Rml::String& path, Rml::String& out_data)
 
 	if ( !data )
 	{
+		Rml::Log::Message(Rml::Log::LT_ERROR, "Could not load data from file %s", path.c_str());
 		return false;
 	}
 

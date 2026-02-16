@@ -2,6 +2,21 @@
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
 
+static MemPool_Handle g_MemPool = 0;
+
+void CL_UIFS_Init(void)
+{
+	ASSERT(!g_MemPool);
+	g_MemPool = Mem_AllocPool("cl_uifs");
+}
+
+void CL_UIFS_ShutDown(void)
+{
+	ASSERT(g_MemPool);
+	Mem_FreePool(&g_MemPool);
+	g_MemPool = 0;
+}
+
 qboolean CL_UIFS_OpenReadOnlyFile(const char* path, ui_gl_filesystem_handle_t* outHandle)
 {
 	if ( !path || !path[0] || !outHandle )
@@ -115,7 +130,7 @@ uint8_t* CL_UIFS_LoadFileData(const char* path, size_t* outLength)
 	if ( !data )
 	{
 		*outLength = 0;
-		return false;
+		return NULL;
 	}
 
 	*outLength = length;
