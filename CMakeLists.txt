@@ -4,11 +4,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # This cannot use HOST_PLATFORM because we don't want to rely on custom scripts
 # just yet. This is an early check and should use OG CMake variables only.
-# TODO: This now needs to be enabled for Linux too.
-if(WIN32)
-	set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/vcpkg-overlays")
-	set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
-endif()
+set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/vcpkg-overlays")
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 project(Nightfire-Open LANGUAGES C CXX)
 
