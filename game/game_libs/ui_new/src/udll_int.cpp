@@ -28,16 +28,31 @@ static int pfnVidInit(void)
 	Rml::Context* context = gRmlUiBackend.GetRmlContext();
 	Rml::ElementDocument* doc = context->LoadDocumentFromMemory(
 		"<rml>\n"
-		"<head><title>Test Document</title></head>\n"
+		"<head>\n"
+		"<title>Test Document</title>\n"
+		"<style>\n"
+		"body\n"
+		"{\n"
+		"font-family: rmlui-debugger-font;\n"
+		"background-color: #FFFFFF;\n"
+		"color: #000000;\n"
+		"width: 100%;\n"
+		"height: 100%\n"
+		"}\n"
+		"</style>\n"
+		"</head>\n"
 		"<body>\n"
+		"<div style=\"border: 1px #0000FF;\">\n"
 		"<h1>Testing RmlUi</h1>\n"
 		"<p>This is a paragraph</p>\n"
+		"<p>This is another paragraph</p>\n"
+		"<p>Some more paragraphs</p>\n"
+		"</div>\n"
 		"</body>\n"
 		"</rml>\n"
 	);
 
-	const Rml::String& title = doc->GetTitle();
-	gEngfuncs.Con_Printf("Document title: %s\n", title.c_str());
+	doc->Show();
 
 	return 1;
 }
