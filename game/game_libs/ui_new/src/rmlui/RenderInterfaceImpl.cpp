@@ -134,7 +134,7 @@ void RenderInterfaceImpl::RenderGeometry(
 
 	glPopMatrix();
 #else
-	gUiGlFuncs.renderer.pushMatrixTranslation(translation.x, translation.y, 0.0f);
+	gUiGlFuncs.renderer.pushProjectionMatrixTranslation(translation.x, translation.y, 0.0f);
 
 	if ( texture )
 	{
@@ -158,7 +158,7 @@ void RenderInterfaceImpl::RenderGeometry(
 	}
 
 	gUiGlFuncs.renderer.drawElements(num_indices, indices);
-	gUiGlFuncs.renderer.popMatrix();
+	gUiGlFuncs.renderer.popProjectionMatrix();
 #endif  // RMLUI_REFERENCE_CODE
 }
 
@@ -565,6 +565,8 @@ void RenderInterfaceImpl::RenderDebugTriangle()
 	gUiGlFuncs.renderer.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
 	gUiGlFuncs.renderer.clear(0x000000FF, 0);
 
+	gUiGlFuncs.renderer.pushProjectionMatrixTranslation(20, 50, 0);
+
 	const GeometryView* geometry = reinterpret_cast<GeometryView*>(geom);
 	const Rml::Vertex* vertices = geometry->vertices.data();
 	const int* indices = geometry->indices.data();
@@ -580,5 +582,6 @@ void RenderInterfaceImpl::RenderDebugTriangle()
 	);
 
 	gUiGlFuncs.renderer.drawElements(num_indices, indices);
+	gUiGlFuncs.renderer.popProjectionMatrix();
 	gUiGlFuncs.renderer.endFrame();
 }

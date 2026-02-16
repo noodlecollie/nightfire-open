@@ -543,8 +543,8 @@ static const ref_uigl_functions gRefUiGlFuncs = {
 	GL_UI_BeginFrame,  // beginFrame
 	GL_UI_EndFrame,  // endFrame
 	GL_UI_Clear,  // clear
-	GL_UI_PushMatrixTranslation,  // pushMatrixTranslation
-	GL_UI_PopMatrix,  // popMatrix
+	GL_UI_PushProjectionMatrixTranslation,  // pushProjectionMatrixTranslation
+	GL_UI_PopProjectionMatrix,  // popProjectionMatrix
 	GL_UI_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
 	GL_UI_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
 	GL_UI_DrawElements,  // drawElements

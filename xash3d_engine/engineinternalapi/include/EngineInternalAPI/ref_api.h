@@ -729,8 +729,8 @@ typedef struct ref_uigl_functions_s
 	void (*beginFrame)(const struct ref_viewpass_s* rvp);
 	void (*endFrame)(void);
 	void (*clear)(uint32_t colour, int stencil);
-	void (*pushMatrixTranslation)(float x, float y, float z);
-	void (*popMatrix)(void);
+	void (*pushProjectionMatrixTranslation)(float x, float y, float z);
+	void (*popProjectionMatrix)(void);
 
 	// Positions are expected to be 2x GL_FLOAT,
 	// and colours are expected to be 4x GL_UNSIGNED_BYTE.

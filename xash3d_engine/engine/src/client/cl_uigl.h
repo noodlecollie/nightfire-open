@@ -7,8 +7,8 @@
 void CL_UIGL_BeginFrame(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
 void CL_UIGL_EndFrame(void);
 void CL_UIGL_Clear(uint32_t colour, int stencil);
-void CL_UIGL_PushMatrixTranslation(float x, float y, float z);
-void CL_UIGL_PopMatrix(void);
+void CL_UIGL_PushProjectionMatrixTranslation(float x, float y, float z);
+void CL_UIGL_PopProjectionMatrix(void);
 void CL_UIGL_PrepareToDrawWithoutTexture(const void* data, int objectSize, size_t positionOffset, size_t colourOffset);
 void CL_UIGL_PrepareToDrawWithTexture(
 	uint32_t texture,

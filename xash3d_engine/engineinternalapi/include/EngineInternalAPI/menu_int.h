@@ -293,8 +293,8 @@ typedef struct ui_gl_renderfunctions_s
 	void (*beginFrame)(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
 	void (*endFrame)(void);
 	void (*clear)(uint32_t colour, int stencil);
-	void (*pushMatrixTranslation)(float x, float y, float z);
-	void (*popMatrix)(void);
+	void (*pushProjectionMatrixTranslation)(float x, float y, float z);
+	void (*popProjectionMatrix)(void);
 
 	// Positions are expected to be 2x GL_FLOAT,
 	// and colours are expected to be 4x GL_UNSIGNED_BYTE.

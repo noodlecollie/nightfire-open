@@ -76,6 +76,9 @@ void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 	pglStencilMask(0xFFFFFFFF);
 	pglStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
+	// Important: reset to projection matrix mode so that translations apply.
+	pglMatrixMode(GL_PROJECTION);
+
 	ASSERT(CHECK_OPENGL_ERROR());
 }
 
@@ -102,9 +105,19 @@ void GL_UI_Clear(uint32_t colour, int stencil)
 	ASSERT(CHECK_OPENGL_ERROR());
 }
 
-void GL_UI_PushMatrixTranslation(float x, float y, float z)
+// This function assumes that the projection matrix is current.
+// Evaluate whether this assumption is valid.
+void GL_UI_PushProjectionMatrixTranslation(float x, float y, float z)
 {
 	ASSERT(CHECK_OPENGL_ERROR());
+
+#ifdef _DEBUG
+	{
+		GLint mode = 0;
+		pglGetIntegerv(GL_MATRIX_MODE, &mode);
+		ASSERT(mode == GL_PROJECTION);
+	}
+#endif
 
 	pglPushMatrix();
 	pglTranslatef(x, y, z);
@@ -112,9 +125,19 @@ void GL_UI_PushMatrixTranslation(float x, float y, float z)
 	ASSERT(CHECK_OPENGL_ERROR());
 }
 
-void GL_UI_PopMatrix(void)
+// This function assumes that the projection matrix is current.
+// Evaluate whether this assumption is valid.
+void GL_UI_PopProjectionMatrix(void)
 {
 	ASSERT(CHECK_OPENGL_ERROR());
+
+#ifdef _DEBUG
+	{
+		GLint mode = 0;
+		pglGetIntegerv(GL_MATRIX_MODE, &mode);
+		ASSERT(mode == GL_PROJECTION);
+	}
+#endif
 
 	pglPopMatrix();
 

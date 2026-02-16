@@ -42,24 +42,24 @@ void CL_UIGL_Clear(uint32_t colour, int stencil)
 	ref.dllUiFuncs.clear(colour, stencil);
 }
 
-void CL_UIGL_PushMatrixTranslation(float x, float y, float z)
+void CL_UIGL_PushProjectionMatrixTranslation(float x, float y, float z)
 {
-	if ( !ref.dllUiFuncs.pushMatrixTranslation )
+	if ( !ref.dllUiFuncs.pushProjectionMatrixTranslation )
 	{
 		return;
 	}
 
-	ref.dllUiFuncs.pushMatrixTranslation(x, y, z);
+	ref.dllUiFuncs.pushProjectionMatrixTranslation(x, y, z);
 }
 
-void CL_UIGL_PopMatrix(void)
+void CL_UIGL_PopProjectionMatrix(void)
 {
-	if ( !ref.dllUiFuncs.popMatrix )
+	if ( !ref.dllUiFuncs.popProjectionMatrix )
 	{
 		return;
 	}
 
-	ref.dllUiFuncs.popMatrix();
+	ref.dllUiFuncs.popProjectionMatrix();
 }
 
 void CL_UIGL_PrepareToDrawWithoutTexture(const void* data, int objectSize, size_t positionOffset, size_t colourOffset)
