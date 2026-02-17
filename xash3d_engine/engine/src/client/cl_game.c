@@ -35,7 +35,6 @@ GNU General Public License for more details.
 #include "platform/platform.h"
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
-#include "client/cl_uifs.h"
 
 #ifdef XASH_SDL
 #include <SDL.h>
@@ -4032,8 +4031,6 @@ void CL_UnloadProgs(void)
 	Cvar_FullSet("cl_background", "0", FCVAR_READ_ONLY);
 	Cvar_FullSet("host_clientloaded", "0", FCVAR_READ_ONLY);
 
-	CL_UIFS_ShutDown();
-
 	COM_FreeLibrary(clgame.hInstance);
 	Mem_FreePool(&cls.mempool);
 	Mem_FreePool(&clgame.mempool);
@@ -4196,7 +4193,6 @@ qboolean CL_LoadProgs(const char* name)
 	clgame.maxRemapInfos = 0;  // will be alloc on first call CL_InitEdicts();
 	clgame.maxEntities = 2;  // world + localclient (have valid entities not in game)
 
-	CL_UIFS_Init();
 	CL_InitCDAudio("media/cdaudio.txt");
 	CL_InitTitles("titles.txt");
 	CL_InitParticles();

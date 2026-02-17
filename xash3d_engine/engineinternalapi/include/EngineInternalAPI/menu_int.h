@@ -346,6 +346,8 @@ typedef enum ui_gl_filesystem_origin_e
 	UI_GL_FS_SEEK_CUR = 2,
 } ui_gl_filesystem_origin;
 
+typedef struct ui_gl_filesystem_listing_s ui_gl_filesystem_listing;
+
 typedef struct ui_gl_filesystemfunctions_s
 {
 	qboolean (*openReadOnlyFile)(const char* path, ui_gl_filesystem_handle_t* outHandle);
@@ -356,6 +358,11 @@ typedef struct ui_gl_filesystemfunctions_s
 	size_t (*fileLength)(ui_gl_filesystem_handle_t handle);
 	uint8_t* (*loadFileData)(const char* path, size_t* outLength);
 	void (*freeFileData)(uint8_t* data);
+	ui_gl_filesystem_listing* (*findFiles)(const char* pattern);
+	void (*freeListing)(ui_gl_filesystem_listing* listing);
+	size_t (*listingNumItems)(const ui_gl_filesystem_listing* listing);
+	const char* (*listingGetCurrentItem)(const ui_gl_filesystem_listing* listing);
+	qboolean (*listingNextItem)(ui_gl_filesystem_listing* listing);
 } ui_gl_filesystemfunctions;
 
 typedef struct ui_gl_functions_s

@@ -2,6 +2,12 @@
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
 
+struct ui_gl_filesystem_listing_s
+{
+	search_t* results;
+	size_t currentIndex;
+};
+
 static MemPool_Handle g_MemPool = 0;
 
 void CL_UIFS_Init(void)
@@ -143,4 +149,64 @@ void CL_UIFS_FreeFileData(uint8_t* data)
 	{
 		Mem_Free(data);
 	}
+}
+
+ui_gl_filesystem_listing* CL_UIFS_FindFiles(const char* pattern)
+{
+	ui_gl_filesystem_listing* listing = Mem_Calloc(g_MemPool, sizeof(ui_gl_filesystem_listing));
+
+	if ( !pattern || !pattern[0] )
+	{
+		return listing;
+	}
+
+	listing->results = FS_SearchFiles(pattern, true, true);
+	return listing;
+}
+
+void CL_UIFS_FreeListing(ui_gl_filesystem_listing* listing)
+{
+	if ( !listing )
+	{
+		return;
+	}
+
+	if ( listing->results )
+	{
+		Mem_Free(listing->results);
+	}
+
+	Mem_Free(listing);
+}
+
+size_t CL_UIFS_ListingNumItems(const ui_gl_filesystem_listing* listing)
+{
+	if ( !listing || !listing->results )
+	{
+		return 0;
+	}
+
+	return (size_t)listing->results->numfilenames;
+}
+
+const char* CL_UIFS_ListingGetCurrentItem(const ui_gl_filesystem_listing* listing)
+{
+	if ( !listing || !listing->results || listing->currentIndex >= (size_t)listing->results->numfilenames )
+	{
+		return NULL;
+	}
+
+	return listing->results->filenames[listing->currentIndex];
+}
+
+qboolean CL_UIFS_ListingNextItem(ui_gl_filesystem_listing* listing)
+{
+	if ( !listing || !listing->results || listing->currentIndex >= (size_t)listing->results->numfilenames )
+	{
+		return false;
+	}
+
+	listing->currentIndex++;
+
+	return listing->currentIndex < (size_t)listing->results->numfilenames;
 }

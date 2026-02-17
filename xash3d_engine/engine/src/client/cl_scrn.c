@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #include "common/library.h"
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
+#include "client/cl_uifs.h"
 
 convar_t* scr_centertime;
 convar_t* scr_loading;
@@ -148,7 +149,8 @@ void SCR_DrawPos(void)
 		ent->angles[0],
 		ent->angles[1],
 		ent->angles[2],
-		speed);
+		speed
+	);
 
 	RGBA_Set(color, 255, 255, 255, 255);
 
@@ -219,7 +221,8 @@ void SCR_NetSpeeds(void)
 		(int)(time / 60.0f),
 		(int)fmod(time, 60.0f),
 		Q_memprint((float)cls.netchan.total_received),
-		Q_memprint((float)cls.netchan.total_sended));
+		Q_memprint((float)cls.netchan.total_sended)
+	);
 
 	x = (int)(refState.width - 320 * font->scale);
 	y = 384;
@@ -760,6 +763,8 @@ void SCR_VidInit(void)
 	memset(&gameui.ds, 0, sizeof(gameui.ds));  // reset a draw state
 	memset(&clgame.centerPrint, 0, sizeof(clgame.centerPrint));
 
+	CL_UIFS_Init();
+
 	// update screen sizes for menu
 	if ( gameui.globals )
 	{
@@ -801,7 +806,8 @@ void SCR_Init(void)
 		"allow_levelshots",
 		"0",
 		FCVAR_ARCHIVE,
-		"allow engine to use indivdual levelshots instead of 'loading' image");
+		"allow engine to use indivdual levelshots instead of 'loading' image"
+	);
 	scr_loading = Cvar_Get("scr_loading", "0", 0, "loading bar progress");
 	scr_download = Cvar_Get("scr_download", "-1", 0, "downloading bar progress");
 	cl_testlights = Cvar_Get("cl_testlights", "0", 0, "test dynamic lights");
@@ -851,6 +857,7 @@ void SCR_Shutdown(void)
 	Cmd_RemoveCommand("viewpos");
 	UI_SetActiveMenu(false);
 	UI_UnloadProgs();
+	CL_UIFS_ShutDown();
 
 	scr_init = false;
 }

@@ -27,6 +27,8 @@ public:
 	void RenderDebugTriangle();
 
 private:
+	void RegisterFonts();
+
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;
 	FileInterfaceImpl m_FileInterface;

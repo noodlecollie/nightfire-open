@@ -1,6 +1,7 @@
 #include "rmlui/RmlUiBackend.h"
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
+#include "udll_int.h"
 
 RmlUiBackend::RmlUiBackend() :
 	m_SystemInterface(this),
@@ -25,6 +26,7 @@ bool RmlUiBackend::Initialise(int width, int height)
 	Rml::SetFileInterface(&m_FileInterface);
 
 	Rml::Initialise();
+	RegisterFonts();
 
 	m_RmlContext = Rml::CreateContext("main", Rml::Vector2i(width, height));
 
@@ -93,4 +95,17 @@ void RmlUiBackend::RenderDebugTriangle()
 	}
 
 	m_RenderInterface.RenderDebugTriangle();
+}
+
+void RmlUiBackend::RegisterFonts()
+{
+	ui_gl_filesystem_listing* listing = gUiGlFuncs.filesystem.findFiles("resource/fonts/*.ttf");
+
+	for ( const char* path = gUiGlFuncs.filesystem.listingGetCurrentItem(listing); path;
+		  gUiGlFuncs.filesystem.listingNextItem(listing), path = gUiGlFuncs.filesystem.listingGetCurrentItem(listing) )
+	{
+		Rml::LoadFontFace(path);
+	}
+
+	gUiGlFuncs.filesystem.freeListing(listing);
 }

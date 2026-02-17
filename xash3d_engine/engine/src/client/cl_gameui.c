@@ -1431,6 +1431,11 @@ static const ui_gl_functions gUiGlFuncs = {
 		CL_UIFS_FileLength,  // fileLength
 		CL_UIFS_LoadFileData,  // loadFileData
 		CL_UIFS_FreeFileData,  // freeFileData
+		CL_UIFS_FindFiles,  // findFiles
+		CL_UIFS_FreeListing,  // freeListing
+		CL_UIFS_ListingNumItems,  // listingNumItems
+		CL_UIFS_ListingGetCurrentItem,  // listingGetCurrentItem
+		CL_UIFS_ListingNextItem,  // listingNextItem
 	}
 };
 
