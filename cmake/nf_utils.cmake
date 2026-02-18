@@ -17,7 +17,7 @@ function(construct_content_path in_path out_var)
 endfunction()
 
 # Adapted from https://stackoverflow.com/a/75065206/2054335
-macro(install_dependencies_from_directory target_name dir_path)
+macro(install_dependencies_from_directory)
 	set(options "")
 	set(single_value_args TARGET)
 	set(multi_value_args DIRECTORIES)
@@ -31,7 +31,7 @@ macro(install_dependencies_from_directory target_name dir_path)
 		PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-" "ld-linux-" "libc\\.so" "libm\\.so"
 		POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
 		DIRECTORIES
-		${dir_path}
+		${INSTALLDEPS_DIRECTORIES}
 		ARCHIVE DESTINATION ${INSTALL_ROOT}
 		LIBRARY DESTINATION ${INSTALL_ROOT}
 		RUNTIME DESTINATION ${INSTALL_ROOT}
