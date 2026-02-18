@@ -9,6 +9,11 @@
 // Rml::Input::KeyIdentifier.
 static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
 {
+	if ( key >= '0' && key <= '9' )
+	{
+		return static_cast<Rml::Input::KeyIdentifier>(Rml::Input::KeyIdentifier::KI_0 + (key - '0'));
+	}
+
 	if ( key >= 'a' && key <= 'z' )
 	{
 		return static_cast<Rml::Input::KeyIdentifier>(Rml::Input::KeyIdentifier::KI_A + (key - 'a'));
@@ -71,6 +76,22 @@ static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
 		MAP_KEY(K_KP_PLUS, KI_ADD)
 		MAP_KEY(K_KP_MUL, KI_MULTIPLY)
 
+		// From testing, the numpad * seems to come through as ASCII??
+		// Just to make life more difficult for us...
+		MAP_KEY('*', KI_MULTIPLY)
+
+		// Explicitly ignore these ones. We know we don't want to support them,
+		// and don't want to fail the assertion below.
+		case K_CAPSLOCK:
+		case K_SHIFT:
+		case K_ALT:
+		case K_CTRL:
+		case K_KP_NUMLOCK:
+		case K_WIN:
+		{
+			return Rml::Input::KeyIdentifier::KI_UNKNOWN;
+		}
+
 		default:
 		{
 			break;
@@ -79,7 +100,8 @@ static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
 
 #undef MAP_KEY
 
-	ASSERTSZ(false, "Unrecognised key");
+	// Oops, an unrecognised key that we might need to have mapped!
+	ASSERTSZ(false, "Unrecognised key, may need mapping in RmlUi backend");
 	return Rml::Input::KeyIdentifier::KI_UNKNOWN;
 }
 
