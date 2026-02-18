@@ -4,6 +4,7 @@
 #include <RmlUi/Debugger.h>
 #include "rmlui/RmlUiBackend.h"
 #include "UIDebug.h"
+#include "EnginePublicAPI/keydefs.h"
 
 ui_enginefuncs_t gEngfuncs;
 ui_extendedfuncs_t gTextfuncs;
@@ -57,19 +58,63 @@ static void pfnRedraw(float /* flTime */)
 #endif
 }
 
-static void pfnKeyEvent(int /* key */, int /* down */)
+static void pfnKeyEvent(int key, int down)
 {
-	// TODO
+	switch ( key )
+	{
+		case K_MOUSE1:
+		case K_MOUSE2:
+		case K_MOUSE3:
+		case K_MOUSE4:
+		case K_MOUSE5:
+		{
+			gRmlUiBackend.ReceiveMouseButton(key, down != 0);
+			break;
+		}
+
+		case K_MWHEELDOWN:
+		case K_MWHEELUP:
+		{
+			// Wheel event sent as down and then up,
+			// so only trigger on one of these.
+			if ( down )
+			{
+				gRmlUiBackend.ReceiveMouseWheel(key == K_MWHEELDOWN);
+			}
+
+			break;
+		}
+
+		default:
+		{
+			gRmlUiBackend.ReceiveKey(key, down != 0);
+			break;
+		}
+	}
 }
 
-static void pfnMouseMove(int /* x */, int /* y */)
+static void pfnMouseMove(int x, int y)
 {
-	// TODO
+	gRmlUiBackend.ReceiveMouseMove(x, y);
 }
 
-static void pfnSetActiveMenu(int /* active */)
+static void pfnSetActiveMenu(int active)
 {
-	// TODO
+	if ( !gRmlUiBackend.IsInitialised() )
+	{
+		return;
+	}
+
+	gEngfuncs.pfnKeyClearStates();
+
+	if ( active )
+	{
+		gEngfuncs.pfnSetKeyDest(key_menu);
+	}
+	else
+	{
+		// TODO
+	}
 }
 
 static void pfnAddServerToList(struct netadr_s /* adr */, const char* /* info */)
@@ -100,13 +145,13 @@ static void pfnCharEvent(int /* key */)
 static int pfnMouseInRect(void)
 {
 	// TODO
-	return 0;
+	return 1;
 }
 
 static int pfnIsVisible(void)
 {
 	// TODO
-	return 0;
+	return 1;
 }
 
 static int pfnCreditsActive(void)

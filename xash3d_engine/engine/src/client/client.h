@@ -18,6 +18,7 @@ GNU General Public License for more details.
 
 #include "MathLib/mathlib.h"
 #include "EnginePublicAPI/cdll_int.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "EngineInternalAPI/menu_int.h"
 #include "EnginePublicAPI/cl_entity.h"
 #include "common/mod_local.h"

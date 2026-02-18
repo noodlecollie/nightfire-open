@@ -18,6 +18,10 @@ public:
 	bool Initialise(int width, int height);
 	void ShutDown();
 	bool IsInitialised() const;
+	void ReceiveMouseMove(int x, int y);
+	void ReceiveMouseButton(int button, bool pressed);
+	void ReceiveMouseWheel(bool down);
+	void ReceiveKey(int key, bool pressed);
 
 	void Update();
 	void Render();
@@ -35,4 +39,5 @@ private:
 
 	bool m_Initialised = false;
 	Rml::Context* m_RmlContext = nullptr;
+	unsigned char m_Modifiers = 0;
 };
