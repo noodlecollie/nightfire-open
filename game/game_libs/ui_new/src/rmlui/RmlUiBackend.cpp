@@ -88,6 +88,7 @@ static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
 		case K_CTRL:
 		case K_KP_NUMLOCK:
 		case K_WIN:
+		case K_SCROLLOCK:
 		{
 			return Rml::Input::KeyIdentifier::KI_UNKNOWN;
 		}
@@ -235,7 +236,7 @@ void RmlUiBackend::ReceiveMouseWheel(bool down)
 		return;
 	}
 
-	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, 30.0f * down ? -1.0f : 1.0f), m_Modifiers);
+	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, 30.0f * down ? 1.0f : -1.0f), m_Modifiers);
 }
 
 void RmlUiBackend::ReceiveKey(int key, bool pressed)

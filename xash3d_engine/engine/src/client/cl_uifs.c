@@ -9,18 +9,29 @@ struct ui_gl_filesystem_listing_s
 };
 
 static MemPool_Handle g_MemPool = 0;
+static qboolean g_Initialised = false;
 
 void CL_UIFS_Init(void)
 {
-	ASSERT(!g_MemPool);
+	if ( g_Initialised )
+	{
+		return;
+	}
+
 	g_MemPool = Mem_AllocPool("cl_uifs");
+	g_Initialised = true;
 }
 
 void CL_UIFS_ShutDown(void)
 {
-	ASSERT(g_MemPool);
+	if ( !g_Initialised )
+	{
+		return;
+	}
+
 	Mem_FreePool(&g_MemPool);
 	g_MemPool = 0;
+	g_Initialised = false;
 }
 
 qboolean CL_UIFS_OpenReadOnlyFile(const char* path, ui_gl_filesystem_handle_t* outHandle)
