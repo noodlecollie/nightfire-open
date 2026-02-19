@@ -248,6 +248,14 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 
 	Rml::Input::KeyIdentifier rmlKey = EngineKeyToRmlKey(key);
 
+	// TODO: A better solution for this?
+#ifdef _DEBUG
+	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F1 && pressed && (m_Modifiers & Rml::Input::KeyModifier::KM_CTRL) )
+	{
+		Rml::Debugger::SetVisible(!Rml::Debugger::IsVisible());
+	}
+#endif
+
 	if ( rmlKey == Rml::Input::KeyIdentifier::KI_UNKNOWN )
 	{
 		// Not handled as a normal key, so set modifiers.
