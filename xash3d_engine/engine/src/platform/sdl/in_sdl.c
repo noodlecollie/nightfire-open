@@ -210,7 +210,8 @@ static int SDLash_JoyInit_Old(int numjoy)
 		SDL_JoystickNumAxes(g_joy),
 		SDL_JoystickNumHats(g_joy),
 		SDL_JoystickNumButtons(g_joy),
-		SDL_JoystickNumBalls(g_joy));
+		SDL_JoystickNumBalls(g_joy)
+	);
 
 	SDL_GameControllerEventState(SDL_DISABLE);
 #endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )

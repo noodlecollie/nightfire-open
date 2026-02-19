@@ -185,7 +185,8 @@ static void SDLash_KeyEvent(SDL_KeyboardEvent key)
 	else DECLARE_KEY_RANGE(SDL_SCANCODE_1, SDL_SCANCODE_9, '1') else DECLARE_KEY_RANGE(
 		SDL_SCANCODE_F1,
 		SDL_SCANCODE_F12,
-		K_F1) else
+		K_F1
+	) else
 	{
 		switch ( keynum )
 		{
@@ -521,7 +522,8 @@ static void SDLash_GameController_Add(int index)
 		SDL_GameControllerName(controller),
 		SDL_GameControllerGetVendor(controller),
 		SDL_GameControllerGetProduct(controller),
-		SDL_GameControllerGetProductVersion(controller));
+		SDL_GameControllerGetProductVersion(controller)
+	);
 #endif  // SDL_VERSION_ATLEAST( 2, 0, 6 )
 
 	++num_open_game_controllers;

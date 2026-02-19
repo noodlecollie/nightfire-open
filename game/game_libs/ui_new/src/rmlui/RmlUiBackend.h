@@ -3,11 +3,12 @@
 #include "rmlui/RenderInterfaceImpl.h"
 #include "rmlui/SystemInterfaceImpl.h"
 #include "rmlui/FileInterfaceImpl.h"
+#include "rmlui/TextInputHandlerImpl.h"
 
 namespace Rml
 {
 	class Context;
-};
+};  // namespace Rml
 
 class RmlUiBackend
 {
@@ -22,6 +23,7 @@ public:
 	void ReceiveMouseButton(int button, bool pressed);
 	void ReceiveMouseWheel(bool down);
 	void ReceiveKey(int key, bool pressed);
+	void ReceiveChar(int character);
 
 	void Update();
 	void Render();
@@ -36,6 +38,7 @@ private:
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;
 	FileInterfaceImpl m_FileInterface;
+	TextInputHandlerImpl m_TextInputHandler;
 
 	bool m_Initialised = false;
 	Rml::Context* m_RmlContext = nullptr;

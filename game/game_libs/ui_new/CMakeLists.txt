@@ -20,6 +20,8 @@ set(SOURCES_UI
 	src/rmlui/RmlUiBackend.cpp
 	src/rmlui/SystemInterfaceImpl.h
 	src/rmlui/SystemInterfaceImpl.cpp
+	src/rmlui/TextInputHandlerImpl.h
+	src/rmlui/TextInputHandlerImpl.cpp
 	src/udll_int.h
 	src/udll_int.cpp
 	src/UIDebug.h

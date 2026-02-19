@@ -137,9 +137,9 @@ static void pfnShowCursor(int /* show */)
 	// TODO
 }
 
-static void pfnCharEvent(int /* key */)
+static void pfnCharEvent(int key)
 {
-	// TODO
+	gRmlUiBackend.ReceiveChar(key);
 }
 
 static int pfnMouseInRect(void)

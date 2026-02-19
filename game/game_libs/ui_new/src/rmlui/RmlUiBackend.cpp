@@ -154,6 +154,7 @@ bool RmlUiBackend::Initialise(int width, int height)
 	Rml::SetSystemInterface(&m_SystemInterface);
 	Rml::SetRenderInterface(&m_RenderInterface);
 	Rml::SetFileInterface(&m_FileInterface);
+	Rml::SetTextInputHandler(&m_TextInputHandler);
 
 	Rml::Initialise();
 	RegisterFonts();
@@ -270,6 +271,16 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 	{
 		m_RmlContext->ProcessKeyUp(rmlKey, m_Modifiers);
 	}
+}
+
+void RmlUiBackend::ReceiveChar(int character)
+{
+	if ( !m_Initialised )
+	{
+		return;
+	}
+
+	m_RmlContext->ProcessTextInput(static_cast<char>(character));
 }
 
 Rml::Context* RmlUiBackend::GetRmlContext() const
