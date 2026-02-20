@@ -25,12 +25,6 @@ static int pfnVidInit(void)
 		return 0;
 	}
 
-	// REMOVE ME: Example document to display
-	Rml::Context* context = gRmlUiBackend.GetRmlContext();
-	Rml::ElementDocument* doc = context->LoadDocument("resource/rml/zoo.rml");
-	ASSERT(doc);
-	doc->Show();
-
 	return 1;
 }
 

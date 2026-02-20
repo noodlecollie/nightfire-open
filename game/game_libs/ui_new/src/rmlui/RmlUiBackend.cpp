@@ -5,6 +5,25 @@
 #include "UIDebug.h"
 #include "EnginePublicAPI/keydefs.h"
 
+static const char* MAIN_MENU_PLACEHOLDER =
+	"<rml>\n"
+	"<head>\n"
+	"<title>Missing Main Menu!</title>\n"
+	"<style>\n"
+	"body { background-color: #FFFFFF; color: #000000; font-family: rmlui-debugger-font; "
+	"width: 100%; height: 100%; }\n"
+	"h1 { display: block; font-size: 50dp; }\n"
+	"flex { display: flex; flex-direction: column; justify-content: center; height: 100%; }\n"
+	"flex > h1 { display: block; margin-top: auto; margin-bottom: auto; text-align: center; }"
+	"</style>\n"
+	"</head>\n"
+	"<body>\n"
+	"<flex>\n"
+	"<h1>Could not locate main menu! Check that ui_mainmenu_file is set.</h1>"
+	"</flex>\n"
+	"</body>\n"
+	"</rml>\n";
+
 // Note: Does not cater for modifier keys, since these are not handled by
 // Rml::Input::KeyIdentifier.
 static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
@@ -160,6 +179,9 @@ bool RmlUiBackend::Initialise(int width, int height)
 	Rml::Initialise();
 	RegisterFonts();
 
+	const char* mainMenuFile = gEngfuncs.pfnGetCvarString("ui_mainmenu_file");
+	m_MainMenuRmlPath = mainMenuFile ? mainMenuFile : "";
+
 	m_RmlContext = Rml::CreateContext("main", Rml::Vector2i(width, height));
 
 	if ( !m_RmlContext )
@@ -171,6 +193,20 @@ bool RmlUiBackend::Initialise(int width, int height)
 	m_RenderInterface.SetViewport(width, height);
 	Rml::Debugger::Initialise(m_RmlContext);
 	m_Modifiers = 0;
+
+	// REMOVE ME: Load this when the engine actually asks us to.
+	Rml::ElementDocument* doc = nullptr;
+	if ( !m_MainMenuRmlPath.empty() )
+	{
+		doc = m_RmlContext->LoadDocument(m_MainMenuRmlPath.c_str());
+	}
+	else
+	{
+		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
+	}
+
+	ASSERT(doc);
+	doc->Show();
 
 	m_Initialised = true;
 	return true;

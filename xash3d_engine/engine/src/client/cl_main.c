@@ -92,6 +92,7 @@ convar_t* cl_trace_messages;
 convar_t* cl_nat;
 convar_t* hud_utf8;
 convar_t* ui_renderworld;
+convar_t* ui_mainmenu_file;
 
 //
 // userinfo
@@ -3783,6 +3784,7 @@ void CL_InitLocal(void)
 	cl_showevents = Cvar_Get("cl_showevents", "0", FCVAR_ARCHIVE, "show events playback");
 	Cvar_Get("lastdemo", "", FCVAR_ARCHIVE, "last played demo");
 	ui_renderworld = Cvar_Get("ui_renderworld", "0", FCVAR_ARCHIVE, "render world when UI is visible");
+	ui_mainmenu_file = Cvar_Get("ui_mainmenu_file", "", FCVAR_ARCHIVE, "path to main menu .rml file");
 
 	// these two added to shut up CS 1.5 about 'unknown' commands
 	Cvar_Get("lightgamma", "1", FCVAR_ARCHIVE, "ambient lighting level (legacy, unused)");
