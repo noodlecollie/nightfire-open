@@ -1397,6 +1397,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 	Cbuf_ExecStuffCmds();  // execute stuffcmds (commandline)
 	SCR_CheckStartupVids();  // must be last
 
+	UI_StartupComplete();
+
 	oldtime = Sys_DoubleTime() - 0.1;
 
 	if ( Host_IsDedicated() )

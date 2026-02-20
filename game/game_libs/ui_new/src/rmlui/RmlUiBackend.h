@@ -17,9 +17,14 @@ public:
 	RmlUiBackend();
 	~RmlUiBackend();
 
-	bool Initialise(int width, int height);
+	void Initialise();
+	bool VidInit(int width, int height);
 	void ShutDown();
 	bool IsInitialised() const;
+	bool IsVisible() const;
+	void ReceiveStartupComplete();
+	void ReceiveShowMenu();
+	void ReceiveHideMenu();
 	void ReceiveMouseMove(int x, int y);
 	void ReceiveMouseButton(int button, bool pressed);
 	void ReceiveMouseWheel(bool down);
@@ -34,6 +39,7 @@ public:
 	void RenderDebugTriangle();
 
 private:
+	void ReleaseResources();
 	void RegisterFonts();
 
 	SystemInterfaceImpl m_SystemInterface;
@@ -45,4 +51,5 @@ private:
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
 	std::string m_MainMenuRmlPath;
+	std::string m_CurrentDocumentId;
 };

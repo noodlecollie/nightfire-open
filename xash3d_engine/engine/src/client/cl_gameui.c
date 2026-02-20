@@ -1387,6 +1387,14 @@ static char* pfnParseFileSafe(char* data, char* buf, const int size, unsigned in
 	return COM_ParseFileSafe(data, buf, size, flags, len, NULL);
 }
 
+void UI_StartupComplete(void)
+{
+	if ( gameui.dllFuncs2.pfnStartupComplete )
+	{
+		gameui.dllFuncs2.pfnStartupComplete();
+	}
+}
+
 static ui_extendedfuncs_t gExtendedfuncs = {
 	pfnEnableTextInput,
 	Con_UtfProcessChar,

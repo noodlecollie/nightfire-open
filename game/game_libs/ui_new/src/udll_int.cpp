@@ -15,30 +15,16 @@ static RmlUiBackend gRmlUiBackend;
 
 static int pfnVidInit(void)
 {
-	if ( gRmlUiBackend.IsInitialised() )
-	{
-		gRmlUiBackend.ShutDown();
-	}
-
-	if ( !gRmlUiBackend.Initialise(gpGlobals->scrWidth, gpGlobals->scrHeight) )
-	{
-		return 0;
-	}
-
-	return 1;
+	return gRmlUiBackend.VidInit(gpGlobals->scrWidth, gpGlobals->scrHeight) ? 1 : 0;
 }
 
 static void pfnInit(void)
 {
-	// TODO
+	gRmlUiBackend.Initialise();
 }
 
 static void pfnShutdown(void)
 {
-	Rml::Context* context = gRmlUiBackend.GetRmlContext();
-	ASSERT(context);
-
-	context->UnloadAllDocuments();
 	gRmlUiBackend.ShutDown();
 }
 
@@ -94,6 +80,9 @@ static void pfnMouseMove(int x, int y)
 
 static void pfnSetActiveMenu(int active)
 {
+	// REMOVE ME
+	gEngfuncs.Con_Printf("pfnSetActiveMenu(%d)\n", active);
+
 	if ( !gRmlUiBackend.IsInitialised() )
 	{
 		return;
@@ -104,10 +93,11 @@ static void pfnSetActiveMenu(int active)
 	if ( active )
 	{
 		gEngfuncs.pfnSetKeyDest(key_menu);
+		gRmlUiBackend.ReceiveShowMenu();
 	}
 	else
 	{
-		// TODO
+		gRmlUiBackend.ReceiveHideMenu();
 	}
 }
 
@@ -144,8 +134,7 @@ static int pfnMouseInRect(void)
 
 static int pfnIsVisible(void)
 {
-	// TODO
-	return 1;
+	return gRmlUiBackend.IsVisible();
 }
 
 static int pfnCreditsActive(void)
@@ -231,6 +220,11 @@ static void pfnConnectionProgress_ParseServerInfo(const char* /* server */)
 	// TODO
 }
 
+static void pfnStartupComplete(void)
+{
+	gRmlUiBackend.ReceiveStartupComplete();
+}
+
 static const UI_FUNCTIONS gFunctionTable = {
 	pfnVidInit,
 	pfnInit,
@@ -279,7 +273,8 @@ static UI_EXTENDED_FUNCTIONS gExtendedTable = {
 	pfnConnectionProgress_Precache,
 	pfnConnectionProgress_Connect,
 	pfnConnectionProgress_ChangeLevel,
-	pfnConnectionProgress_ParseServerInfo
+	pfnConnectionProgress_ParseServerInfo,
+	pfnStartupComplete,
 };
 
 extern "C" EXPORT int

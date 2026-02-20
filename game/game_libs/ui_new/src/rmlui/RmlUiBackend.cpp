@@ -5,6 +5,10 @@
 #include "UIDebug.h"
 #include "EnginePublicAPI/keydefs.h"
 
+#define UI_CVAR_NAME "ui_mainmenu_file"
+
+static constexpr const char* const CONTEXT_NAME = "main";
+
 static const char* MAIN_MENU_PLACEHOLDER =
 	"<rml>\n"
 	"<head>\n"
@@ -19,7 +23,8 @@ static const char* MAIN_MENU_PLACEHOLDER =
 	"</head>\n"
 	"<body>\n"
 	"<flex>\n"
-	"<h1>Could not locate main menu! Check that ui_mainmenu_file is set.</h1>"
+	"<h1>Could not locate main menu! Check that " UI_CVAR_NAME
+	" is set.</h1>"
 	"</flex>\n"
 	"</body>\n"
 	"</rml>\n";
@@ -164,11 +169,11 @@ RmlUiBackend::~RmlUiBackend()
 	ShutDown();
 }
 
-bool RmlUiBackend::Initialise(int width, int height)
+void RmlUiBackend::Initialise()
 {
 	if ( m_Initialised )
 	{
-		return true;
+		return;
 	}
 
 	Rml::SetSystemInterface(&m_SystemInterface);
@@ -177,38 +182,34 @@ bool RmlUiBackend::Initialise(int width, int height)
 	Rml::SetTextInputHandler(&m_TextInputHandler);
 
 	Rml::Initialise();
-	RegisterFonts();
 
-	const char* mainMenuFile = gEngfuncs.pfnGetCvarString("ui_mainmenu_file");
-	m_MainMenuRmlPath = mainMenuFile ? mainMenuFile : "";
+	m_Modifiers = 0;
+	m_CurrentDocumentId.clear();
 
-	m_RmlContext = Rml::CreateContext("main", Rml::Vector2i(width, height));
+	m_Initialised = true;
+}
 
-	if ( !m_RmlContext )
+bool RmlUiBackend::VidInit(int width, int height)
+{
+	if ( !m_Initialised )
 	{
-		Rml::Shutdown();
 		return false;
 	}
 
+	ReleaseResources();
+
+	m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(width, height));
+
+	if ( !m_RmlContext )
+	{
+		return false;
+	}
+
+	RegisterFonts();
+
 	m_RenderInterface.SetViewport(width, height);
 	Rml::Debugger::Initialise(m_RmlContext);
-	m_Modifiers = 0;
 
-	// REMOVE ME: Load this when the engine actually asks us to.
-	Rml::ElementDocument* doc = nullptr;
-	if ( !m_MainMenuRmlPath.empty() )
-	{
-		doc = m_RmlContext->LoadDocument(m_MainMenuRmlPath.c_str());
-	}
-	else
-	{
-		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
-	}
-
-	ASSERT(doc);
-	doc->Show();
-
-	m_Initialised = true;
 	return true;
 }
 
@@ -219,7 +220,9 @@ void RmlUiBackend::ShutDown()
 		return;
 	}
 
+	ReleaseResources();
 	Rml::Shutdown();
+
 	m_RmlContext = nullptr;
 	m_Initialised = false;
 	m_Modifiers = 0;
@@ -227,12 +230,97 @@ void RmlUiBackend::ShutDown()
 
 bool RmlUiBackend::IsInitialised() const
 {
-	return m_Initialised;
+	return m_Initialised && m_RmlContext != nullptr;
+}
+
+bool RmlUiBackend::IsVisible() const
+{
+	if ( !IsInitialised() )
+	{
+		return false;
+	}
+
+	Rml::ElementDocument* doc = m_RmlContext->GetDocument(0);
+	return doc && doc->IsVisible();
+}
+
+void RmlUiBackend::ReceiveStartupComplete()
+{
+	ASSERT(IsInitialised());
+
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	const char* mainMenuFile = gEngfuncs.pfnGetCvarString(UI_CVAR_NAME);
+	m_MainMenuRmlPath = mainMenuFile ? mainMenuFile : "";
+
+	Rml::ElementDocument* doc = nullptr;
+
+	if ( !m_MainMenuRmlPath.empty() )
+	{
+		doc = m_RmlContext->LoadDocument(m_MainMenuRmlPath.c_str());
+
+		if ( doc )
+		{
+			Rml::Log::Message(Rml::Log::Type::LT_INFO, "Loaded main menu: %s", m_MainMenuRmlPath.c_str());
+		}
+		else
+		{
+			Rml::Log::Message(
+				Rml::Log::Type::LT_ERROR,
+				"Failed to load main menu %s specified in " UI_CVAR_NAME,
+				m_MainMenuRmlPath.c_str()
+			);
+		}
+	}
+
+	if ( !doc )
+	{
+		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "No main menu specified in " UI_CVAR_NAME "!");
+		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
+	}
+
+	ASSERT(doc);
+	m_CurrentDocumentId = doc->GetId();
+
+	ReceiveShowMenu();
+}
+
+void RmlUiBackend::ReceiveShowMenu()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	Rml::ElementDocument* doc = m_RmlContext->GetDocument(m_CurrentDocumentId);
+
+	if ( doc )
+	{
+		doc->Show();
+	}
+}
+
+void RmlUiBackend::ReceiveHideMenu()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	Rml::ElementDocument* doc = m_RmlContext->GetDocument(0);
+
+	if ( doc )
+	{
+		doc->Hide();
+	}
 }
 
 void RmlUiBackend::ReceiveMouseMove(int x, int y)
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -242,7 +330,7 @@ void RmlUiBackend::ReceiveMouseMove(int x, int y)
 
 void RmlUiBackend::ReceiveMouseButton(int button, bool pressed)
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -267,7 +355,7 @@ void RmlUiBackend::ReceiveMouseButton(int button, bool pressed)
 
 void RmlUiBackend::ReceiveMouseWheel(bool down)
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -277,7 +365,7 @@ void RmlUiBackend::ReceiveMouseWheel(bool down)
 
 void RmlUiBackend::ReceiveKey(int key, bool pressed)
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -320,7 +408,7 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 
 void RmlUiBackend::ReceiveChar(int character)
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -335,7 +423,7 @@ Rml::Context* RmlUiBackend::GetRmlContext() const
 
 void RmlUiBackend::Update()
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -345,7 +433,7 @@ void RmlUiBackend::Update()
 
 void RmlUiBackend::Render()
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -357,12 +445,27 @@ void RmlUiBackend::Render()
 
 void RmlUiBackend::RenderDebugTriangle()
 {
-	if ( !m_Initialised )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
 
 	m_RenderInterface.RenderDebugTriangle();
+}
+
+void RmlUiBackend::ReleaseResources()
+{
+	Rml::Debugger::Shutdown();
+	m_CurrentDocumentId.clear();
+
+	if ( m_RmlContext )
+	{
+		m_RmlContext->UnloadAllDocuments();
+		Rml::RemoveContext(CONTEXT_NAME);
+		m_RmlContext = nullptr;
+	}
+
+	Rml::ReleaseFontResources();
 }
 
 void RmlUiBackend::RegisterFonts()

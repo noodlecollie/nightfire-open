@@ -1160,6 +1160,7 @@ void pfnPIC_Draw(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawTrans(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawHoles(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawAdditive(int x, int y, int width, int height, const wrect_t* prc);
+void UI_StartupComplete(void);
 
 //
 // cl_mobile.c

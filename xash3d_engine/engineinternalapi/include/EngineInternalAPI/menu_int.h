@@ -277,6 +277,7 @@ typedef struct
 	void (*pfnConnectionProgress_Connect)(const char* server);  // NULL for local server
 	void (*pfnConnectionProgress_ChangeLevel)(void);
 	void (*pfnConnectionProgress_ParseServerInfo)(const char* server);
+	void (*pfnStartupComplete)(void);  // Called when the main menu is first reached.
 } UI_EXTENDED_FUNCTIONS;
 
 typedef int (*MENUAPI)(UI_FUNCTIONS* pFunctionTable, ui_enginefuncs_t* engfuncs, ui_globalvars_t* pGlobals);
