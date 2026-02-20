@@ -182,6 +182,7 @@ void RmlUiBackend::Initialise()
 	Rml::SetTextInputHandler(&m_TextInputHandler);
 
 	Rml::Initialise();
+	RegisterFonts();
 
 	m_Modifiers = 0;
 	m_CurrentDocumentId.clear();
@@ -196,19 +197,22 @@ bool RmlUiBackend::VidInit(int width, int height)
 		return false;
 	}
 
-	ReleaseResources();
-
-	m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(width, height));
-
 	if ( !m_RmlContext )
 	{
-		return false;
+		m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(width, height));
+
+		if ( !m_RmlContext )
+		{
+			return false;
+		}
+
+		Rml::Debugger::Initialise(m_RmlContext);
 	}
 
-	RegisterFonts();
-
 	m_RenderInterface.SetViewport(width, height);
-	Rml::Debugger::Initialise(m_RmlContext);
+	m_RmlContext->SetDimensions(Rml::Vector2i(width, height));
+
+	// TODO: Caculate DPI scale based on resolution.
 
 	return true;
 }

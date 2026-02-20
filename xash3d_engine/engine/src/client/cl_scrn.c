@@ -763,8 +763,6 @@ void SCR_VidInit(void)
 	memset(&gameui.ds, 0, sizeof(gameui.ds));  // reset a draw state
 	memset(&clgame.centerPrint, 0, sizeof(clgame.centerPrint));
 
-	CL_UIFS_Init();
-
 	// update screen sizes for menu
 	if ( gameui.globals )
 	{
@@ -799,6 +797,8 @@ void SCR_Init(void)
 {
 	if ( scr_init )
 		return;
+
+	CL_UIFS_Init();
 
 	scr_centertime = Cvar_Get("scr_centertime", "2.5", 0, "centerprint hold time");
 	cl_levelshot_name = Cvar_Get("cl_levelshot_name", "*black", 0, "contains path to current levelshot");
