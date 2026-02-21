@@ -26,7 +26,7 @@ option(NF_NEW_UI "Enables new iteration of game UI library." OFF)
 # This way, we can at least keep the code open source (and comply with open-source
 # licenses for third party code). If you're reading this and want to contribute
 # actual content, get in touch to get access to the nightfire-open-content repo.
-set(NF_CONTENT_PATH "" CACHE STRING "Path to clone of nightfire-open-content repo, if this content is to be installed alongside the build. Requires access to the content repo.")
+set(NF_CONTENT_PATH "" CACHE STRING "Path to the clone of the nightfire-open-content repo, if this content is to be installed alongside the build. Requires access to the content repo.")
 option(NF_AUTO_UPDATE_CONTENT_HASH "If set, hash for content repo is automatically updated when running an install. Helpful for development." ON)
 
 include(nf_utils)
@@ -35,6 +35,15 @@ construct_content_path("${NF_CONTENT_PATH}" NF_FULL_CONTENT_PATH)
 
 if(NOT "${NF_FULL_CONTENT_PATH}" STREQUAL "")
 	message(STATUS "NF_CONTENT_PATH provided. Full content path: ${NF_FULL_CONTENT_PATH}")
+
+	# For developer convenience, tell the content repo where the game is being installed to.
+	cmake_path(IS_ABSOLUTE CMAKE_INSTALL_PREFIX install_is_absolute)
+
+	if(install_is_absolute)
+		write_file("${NF_FULL_CONTENT_PATH}/install_path.txt" "${CMAKE_INSTALL_PREFIX}")
+	else()
+		write_file("${NF_FULL_CONTENT_PATH}/install_path.txt" "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}")
+	endif()
 else()
 	message(STATUS "No NF_CONTENT_PATH provided, content will not be installed.")
 endif()
