@@ -4,6 +4,7 @@
 #include "rmlui/SystemInterfaceImpl.h"
 #include "rmlui/FileInterfaceImpl.h"
 #include "rmlui/TextInputHandlerImpl.h"
+#include "rmlui/EventListenerInstancerImpl.h"
 #include <string>
 
 namespace Rml
@@ -46,6 +47,7 @@ private:
 	RenderInterfaceImpl m_RenderInterface;
 	FileInterfaceImpl m_FileInterface;
 	TextInputHandlerImpl m_TextInputHandler;
+	EventListenerInstancerImpl m_EventListenerInstancer;
 
 	bool m_Initialised = false;
 	Rml::Context* m_RmlContext = nullptr;

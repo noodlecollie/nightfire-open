@@ -80,9 +80,6 @@ static void pfnMouseMove(int x, int y)
 
 static void pfnSetActiveMenu(int active)
 {
-	// REMOVE ME
-	gEngfuncs.Con_Printf("pfnSetActiveMenu(%d)\n", active);
-
 	if ( !gRmlUiBackend.IsInitialised() )
 	{
 		return;

@@ -1,9 +1,9 @@
-#include "rmlui/RmlUiBackend.h"
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
+#include "EnginePublicAPI/keydefs.h"
+#include "rmlui/RmlUiBackend.h"
 #include "udll_int.h"
 #include "UIDebug.h"
-#include "EnginePublicAPI/keydefs.h"
 
 #define UI_CVAR_NAME "ui_mainmenu_file"
 
@@ -180,6 +180,7 @@ void RmlUiBackend::Initialise()
 	Rml::SetRenderInterface(&m_RenderInterface);
 	Rml::SetFileInterface(&m_FileInterface);
 	Rml::SetTextInputHandler(&m_TextInputHandler);
+	Rml::Factory::RegisterEventListenerInstancer(&m_EventListenerInstancer);
 
 	Rml::Initialise();
 	RegisterFonts();

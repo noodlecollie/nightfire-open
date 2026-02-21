@@ -12,6 +12,10 @@ include(nf_utils)
 set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 
 set(SOURCES_UI
+	src/rmlui/EventListenerImpl.h
+	src/rmlui/EventListenerImpl.cpp
+	src/rmlui/EventListenerInstancerImpl.h
+	src/rmlui/EventListenerInstancerImpl.cpp
 	src/rmlui/FileInterfaceImpl.h
 	src/rmlui/FileInterfaceImpl.cpp
 	src/rmlui/RenderInterfaceImpl.h
