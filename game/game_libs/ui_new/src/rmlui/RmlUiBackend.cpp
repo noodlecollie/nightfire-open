@@ -213,7 +213,18 @@ bool RmlUiBackend::VidInit(int width, int height)
 	m_RenderInterface.SetViewport(width, height);
 	m_RmlContext->SetDimensions(Rml::Vector2i(width, height));
 
-	// TODO: Caculate DPI scale based on resolution.
+	float dpiScale = 1.0f;
+
+	if ( height >= 2160 )
+	{
+		dpiScale = 2.0f;
+	}
+	else if ( height >= 1080 )
+	{
+		dpiScale = 1.5f;
+	}
+
+	m_RmlContext->SetDensityIndependentPixelRatio(dpiScale);
 
 	return true;
 }
