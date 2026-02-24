@@ -365,7 +365,7 @@ void RmlUiBackend::ReceiveMouseWheel(bool down)
 		return;
 	}
 
-	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, 30.0f * down ? 1.0f : -1.0f), m_Modifiers);
+	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, 30.0f * (down ? 1.0f : -1.0f)), m_Modifiers);
 }
 
 void RmlUiBackend::ReceiveKey(int key, bool pressed)
