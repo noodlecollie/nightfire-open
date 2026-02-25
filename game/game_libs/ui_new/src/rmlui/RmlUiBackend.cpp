@@ -29,6 +29,69 @@ static const char* MAIN_MENU_PLACEHOLDER =
 	"</body>\n"
 	"</rml>\n";
 
+// TODO: This should be refactored into a main menu class.
+struct RmlUiBackend::MainMenuData
+{
+	Rml::DataModelHandle cachedHandle;
+	std::string tooltip;
+
+	bool SetUpDataBinding(Rml::Context* context)
+	{
+		if ( cachedHandle )
+		{
+			// Already set up, can't do so again.
+			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Double initialisation of data model");
+			return false;
+		}
+
+		Rml::DataModelConstructor constructor = context->CreateDataModel("mainmenumodel");
+
+		if ( !constructor )
+		{
+			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to construct main menu data model");
+			return false;
+		}
+
+		constructor.Bind("tooltip", &tooltip);
+		constructor.BindEventCallback("set_tooltip", &MainMenuData::SetTooltip, this);
+		constructor.BindEventCallback("clear_tooltip", &MainMenuData::ClearTooltip, this);
+
+		cachedHandle = constructor.GetModelHandle();
+		return true;
+	}
+
+	void SetTooltip(Rml::DataModelHandle /* handle */, Rml::Event& event, const Rml::VariantList& /* arguments */)
+	{
+		Rml::Element* element = event.GetTargetElement();
+
+		if ( !element )
+		{
+			return;
+		}
+
+		Rml::Variant* tooltipAttr = element->GetAttribute("tooltip");
+
+		if ( !tooltipAttr )
+		{
+			return;
+		}
+
+		if ( tooltipAttr->GetInto(tooltip) )
+		{
+			cachedHandle.DirtyVariable("tooltip");
+		}
+	}
+
+	void ClearTooltip(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+	{
+		if ( !tooltip.empty() )
+		{
+			tooltip.clear();
+			cachedHandle.DirtyVariable("tooltip");
+		}
+	}
+};
+
 // Note: Does not cater for modifier keys, since these are not handled by
 // Rml::Input::KeyIdentifier.
 static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
@@ -187,6 +250,7 @@ void RmlUiBackend::Initialise()
 
 	m_Modifiers = 0;
 	m_CurrentDocumentId.clear();
+	m_MainMenuModel.reset();
 
 	m_Initialised = true;
 }
@@ -242,6 +306,7 @@ void RmlUiBackend::ShutDown()
 	m_RmlContext = nullptr;
 	m_Initialised = false;
 	m_Modifiers = 0;
+	m_MainMenuModel.reset();
 }
 
 bool RmlUiBackend::IsInitialised() const
@@ -276,6 +341,9 @@ void RmlUiBackend::ReceiveStartupComplete()
 
 	if ( !m_MainMenuRmlPath.empty() )
 	{
+		m_MainMenuModel.reset(new MainMenuData {});
+		m_MainMenuModel->SetUpDataBinding(m_RmlContext);
+
 		doc = m_RmlContext->LoadDocument(m_MainMenuRmlPath.c_str());
 
 		if ( doc )

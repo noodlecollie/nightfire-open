@@ -40,6 +40,8 @@ public:
 	void RenderDebugTriangle();
 
 private:
+	struct MainMenuData;
+
 	void ReleaseResources();
 	void RegisterFonts();
 
@@ -54,4 +56,5 @@ private:
 	unsigned char m_Modifiers = 0;
 	std::string m_MainMenuRmlPath;
 	std::string m_CurrentDocumentId;
+	std::unique_ptr<MainMenuData> m_MainMenuModel;
 };
