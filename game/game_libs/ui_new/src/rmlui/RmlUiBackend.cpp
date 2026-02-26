@@ -321,7 +321,7 @@ bool RmlUiBackend::IsVisible() const
 		return false;
 	}
 
-	Rml::ElementDocument* doc = m_RmlContext->GetDocument(0);
+	Rml::ElementDocument* doc = m_RmlContext->GetDocument(m_CurrentDocumentId);
 	return doc && doc->IsVisible();
 }
 

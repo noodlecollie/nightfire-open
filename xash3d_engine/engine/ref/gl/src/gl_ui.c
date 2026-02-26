@@ -85,8 +85,12 @@ void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 
 void GL_UI_EndFrame(void)
 {
-	// Nothing needed here right now - the engine ends the frame for us
-	// from V_PostRender().
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
+
+	// Make sure to re-enable textures, otherwise the engine can draw garbage.
+	pglEnable(GL_TEXTURE_2D);
+	pglEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
@@ -182,7 +186,7 @@ void GL_UI_PrepareToDrawWithTexture(
 	// texture that is required is already bound.
 	if ( texture != 0 )
 	{
-		pglBindTexture(GL_TEXTURE_2D, (GLuint)texture);
+		GL_Bind(XASH_TEXTURE0, (GLuint)texture);
 	}
 
 	pglEnableClientState(GL_TEXTURE_COORD_ARRAY);
