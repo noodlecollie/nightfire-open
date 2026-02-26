@@ -1397,7 +1397,12 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 	Cbuf_ExecStuffCmds();  // execute stuffcmds (commandline)
 	SCR_CheckStartupVids();  // must be last
 
-	UI_StartupComplete();
+#if !XASH_DEDICATED()
+	if ( !Host_IsDedicated() )
+	{
+		UI_StartupComplete();
+	}
+#endif
 
 	oldtime = Sys_DoubleTime() - 0.1;
 
