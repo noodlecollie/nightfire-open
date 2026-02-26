@@ -26,7 +26,6 @@ void SystemInterfaceImpl::GetClipboardText(Rml::String& text)
 	text = gEngfuncs.pfnGetClipboardData();
 }
 
-// TODO: Message colours?
 bool SystemInterfaceImpl::LogMessage(Rml::Log::Type type, const Rml::String& message)
 {
 	switch ( type )
@@ -44,7 +43,6 @@ bool SystemInterfaceImpl::LogMessage(Rml::Log::Type type, const Rml::String& mes
 			break;
 		}
 
-		// TODO: Choose based on developer level?
 		case Rml::Log::Type::LT_DEBUG:
 		{
 			gEngfuncs.Con_Printf("[RmlUi Debug] %s\n", message.c_str());
