@@ -61,6 +61,11 @@ static inline Rml::String DescribeElement(Rml::Element* element)
 
 Rml::EventListener* EventListenerInstancerImpl::InstanceEventListener(const Rml::String& value, Rml::Element* element)
 {
+	if ( value.empty() || value[0] != '$' )
+	{
+		return nullptr;
+	}
+
 	const std::size_t colonIndex = value.find(':');
 
 	if ( colonIndex == Rml::String::npos )
@@ -75,5 +80,5 @@ Rml::EventListener* EventListenerInstancerImpl::InstanceEventListener(const Rml:
 		return nullptr;
 	}
 
-	return new EventListenerImpl(Trim(value.substr(0, colonIndex)), Trim(value.substr(colonIndex + 1)));
+	return new EventListenerImpl(Trim(value.substr(1, colonIndex - 1)), Trim(value.substr(colonIndex + 1)));
 }
