@@ -16,6 +16,7 @@ typedef enum ColourChannel
 } ColourChannel;
 
 #ifdef _DEBUG
+#define DEBUG_ASSERT(x) ASSERT(x)
 static qboolean CheckOpenGLError(const char* file, int line)
 {
 	int lastError = pglGetError();
@@ -37,7 +38,7 @@ static qboolean CheckOpenGLError(const char* file, int line)
 }
 #define CHECK_OPENGL_ERROR() CheckOpenGLError(__FILE__, __LINE__)
 #else
-#define CHECK_OPENGL_ERROR() (true)
+#define DEBUG_ASSERT(X)
 #endif
 
 static float PackedColourByteToFloat(uint32_t colour, ColourChannel channel)
@@ -49,7 +50,7 @@ static float PackedColourByteToFloat(uint32_t colour, ColourChannel channel)
 
 void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	glConfig.softwareGammaUpdate = false;
 	R_CheckGamma();
@@ -79,19 +80,19 @@ void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 	// Important: reset to projection matrix mode so that translations apply.
 	pglMatrixMode(GL_PROJECTION);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_EndFrame(void)
 {
 	// Nothing needed here right now - the engine ends the frame for us
 	// from V_PostRender().
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_Clear(uint32_t colour, int stencil)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	pglClearStencil(stencil);
 	pglClearColor(
@@ -102,51 +103,51 @@ void GL_UI_Clear(uint32_t colour, int stencil)
 	);
 	pglClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 // This function assumes that the projection matrix is current.
 // Evaluate whether this assumption is valid.
 void GL_UI_PushProjectionMatrixTranslation(float x, float y, float z)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 #ifdef _DEBUG
 	{
 		GLint mode = 0;
 		pglGetIntegerv(GL_MATRIX_MODE, &mode);
-		ASSERT(mode == GL_PROJECTION);
+		DEBUG_ASSERT(mode == GL_PROJECTION);
 	}
 #endif
 
 	pglPushMatrix();
 	pglTranslatef(x, y, z);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 // This function assumes that the projection matrix is current.
 // Evaluate whether this assumption is valid.
 void GL_UI_PopProjectionMatrix(void)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 #ifdef _DEBUG
 	{
 		GLint mode = 0;
 		pglGetIntegerv(GL_MATRIX_MODE, &mode);
-		ASSERT(mode == GL_PROJECTION);
+		DEBUG_ASSERT(mode == GL_PROJECTION);
 	}
 #endif
 
 	pglPopMatrix();
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_PrepareToDrawWithoutTexture(const void* data, int objectSize, size_t positionOffset, size_t colourOffset)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	uint8_t* dataBytes = (uint8_t*)data;
 
@@ -156,7 +157,7 @@ void GL_UI_PrepareToDrawWithoutTexture(const void* data, int objectSize, size_t 
 	pglDisable(GL_TEXTURE_2D);
 	pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_PrepareToDrawWithTexture(
@@ -168,7 +169,7 @@ void GL_UI_PrepareToDrawWithTexture(
 	size_t textureCoOrdOffset
 )
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	uint8_t* dataBytes = (uint8_t*)data;
 
@@ -187,21 +188,21 @@ void GL_UI_PrepareToDrawWithTexture(
 	pglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	pglTexCoordPointer(2, GL_FLOAT, objectSize, dataBytes + textureCoOrdOffset);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_DrawElements(int numIndices, const void* indices)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	pglDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, indices);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_SetScissorEnabled(qboolean enabled)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	if ( enabled )
 	{
@@ -212,21 +213,21 @@ void GL_UI_SetScissorEnabled(qboolean enabled)
 		pglDisable(GL_SCISSOR_TEST);
 	}
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_SetScissorRegion(int left, int bottom, int width, int height)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	pglScissor(left, bottom, width, height);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_SetStencilEnabled(qboolean enabled)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	if ( enabled )
 	{
@@ -237,13 +238,13 @@ void GL_UI_SetStencilEnabled(qboolean enabled)
 		pglDisable(GL_STENCIL_TEST);
 	}
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 int GL_UI_EnableWritingToStencilMask(qboolean clearStencilBuffer)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
-	ASSERT(pglIsEnabled(GL_STENCIL_TEST));
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(pglIsEnabled(GL_STENCIL_TEST));
 
 	if ( clearStencilBuffer )
 	{
@@ -257,43 +258,43 @@ int GL_UI_EnableWritingToStencilMask(qboolean clearStencilBuffer)
 	pglColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	pglStencilFunc(GL_ALWAYS, (GLint)1, (GLuint)-1);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	return stencilTestValue;
 }
 
 void GL_UI_DisableWritingToStencilMask(int testValue)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	pglColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	pglStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	pglStencilFunc(GL_EQUAL, testValue, (GLuint)-1);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_SetStencilOpReplace(void)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	pglStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_SetStencilOpIncrement(void)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	pglStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 int GL_UI_LoadRGBAImageFromMemory(const char* name, int width, int height, const byte* data, size_t dataSize, int flags)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	if ( width < 1 || height < 1 )
 	{
@@ -337,23 +338,23 @@ int GL_UI_LoadRGBAImageFromMemory(const char* name, int width, int height, const
 
 	int texture = GL_LoadTextureFromBuffer(name, &rgb, TF_NOMIPMAP, false);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	return texture;
 }
 
 void GL_UI_FreeImage(int image)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	pglDeleteTextures(1, (GLuint*)&image);
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
 void GL_UI_SetTransform(const float* mat4x4)
 {
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 
 	if ( mat4x4 )
 	{
@@ -364,5 +365,5 @@ void GL_UI_SetTransform(const float* mat4x4)
 		pglLoadIdentity();
 	}
 
-	ASSERT(CHECK_OPENGL_ERROR());
+	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
