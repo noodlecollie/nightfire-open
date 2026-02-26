@@ -31,11 +31,20 @@ If you require access to the game content for development, please get in touch t
 
 ### Build Instructions
 
-[CMake](https://cmake.org/download/) 3.21 or greater is required to build the game. Compilation has been tested with Visual Studio 2022 on Windows, and GCC 11.4 on Linux.
-On Windows, dependencies should be managed by the embedded `vcpkg` install. On Linux, you will need at least the following:
+[CMake](https://cmake.org/download/) 3.21 or greater is required to build the game. Compilation has been tested with Visual Studio 2022 on Windows, and GCC 11.4 on Ubuntu.
+
+[Vcpkg](https://github.com/microsoft/vcpkg) is used to manage dependencies. On Windows, all dependencies should be catered for already; on Ubuntu, you will need to additionally install the following packages on your system:
 
 ``` bash
-sudo apt install build-essential mesa-utils libsdl2-dev
+sudo apt install \
+	build-essential \
+	mesa-utils \
+	libsdl2-dev \
+	autoconf \
+	automake \
+	autoconf-archive \
+	libtool \
+	python3-jinja2
 ```
 
 For a basic debug build of the game client, follow these steps:

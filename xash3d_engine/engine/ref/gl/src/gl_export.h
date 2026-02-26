@@ -337,6 +337,7 @@ typedef float GLmatrix[16];
 #define GL_REPLACE 0x1E01
 #define GL_INCR 0x1E02
 #define GL_DECR 0x1E03
+#define GL_STENCIL_REF 0x0B97
 
 // fog stuff
 #define GL_FOG 0x0B60
@@ -910,7 +911,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glBitmap)(
 	GLfloat yorig,
 	GLfloat xmove,
 	GLfloat ymove,
-	const GLubyte* bitmap);
+	const GLubyte* bitmap
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glBlendFunc)(GLenum sfactor, GLenum dfactor);
 APIENTRY_LINKAGE void GL_FUNCTION(glCallList)(GLuint list);
 APIENTRY_LINKAGE void GL_FUNCTION(glCallLists)(GLsizei n, GLenum type, const GLvoid* lists);
@@ -960,8 +962,15 @@ APIENTRY_LINKAGE void GL_FUNCTION(glColorMask)(GLboolean red, GLboolean green, G
 APIENTRY_LINKAGE void GL_FUNCTION(glColorMaterial)(GLenum face, GLenum mode);
 APIENTRY_LINKAGE void GL_FUNCTION(glColorPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid* pointer);
 APIENTRY_LINKAGE void GL_FUNCTION(glCopyPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glCopyTexImage1D)(GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLint border);
+APIENTRY_LINKAGE void GL_FUNCTION(glCopyTexImage1D)(
+	GLenum target,
+	GLint level,
+	GLenum internalFormat,
+	GLint x,
+	GLint y,
+	GLsizei width,
+	GLint border
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCopyTexImage2D)(
 	GLenum target,
 	GLint level,
@@ -970,9 +979,10 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCopyTexImage2D)(
 	GLint y,
 	GLsizei width,
 	GLsizei height,
-	GLint border);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glCopyTexSubImage1D)(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
+	GLint border
+);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glCopyTexSubImage1D)(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 APIENTRY_LINKAGE void GL_FUNCTION(glCopyTexSubImage2D)(
 	GLenum target,
 	GLint level,
@@ -981,7 +991,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCopyTexSubImage2D)(
 	GLint x,
 	GLint y,
 	GLsizei width,
-	GLsizei height);
+	GLsizei height
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCullFace)(GLenum mode);
 APIENTRY_LINKAGE void GL_FUNCTION(glDeleteLists)(GLuint list, GLsizei range);
 APIENTRY_LINKAGE void GL_FUNCTION(glDeleteTextures)(GLsizei n, const GLuint* textures);
@@ -993,8 +1004,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glDisableClientState)(GLenum array);
 APIENTRY_LINKAGE void GL_FUNCTION(glDrawArrays)(GLenum mode, GLint first, GLsizei count);
 APIENTRY_LINKAGE void GL_FUNCTION(glDrawBuffer)(GLenum mode);
 APIENTRY_LINKAGE void GL_FUNCTION(glDrawElements)(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glDrawPixels)(GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* pixels);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glDrawPixels)(GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* pixels);
 APIENTRY_LINKAGE void GL_FUNCTION(glEdgeFlag)(GLboolean flag);
 APIENTRY_LINKAGE void GL_FUNCTION(glEdgeFlagPointer)(GLsizei stride, const GLvoid* pointer);
 APIENTRY_LINKAGE void GL_FUNCTION(glEdgeFlagv)(const GLboolean* flag);
@@ -1022,8 +1033,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glFogfv)(GLenum pname, const GLfloat* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glFogi)(GLenum pname, GLint param);
 APIENTRY_LINKAGE void GL_FUNCTION(glFogiv)(GLenum pname, const GLint* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glFrontFace)(GLenum mode);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glFrustum)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glFrustum)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 APIENTRY_LINKAGE void GL_FUNCTION(glGenTextures)(GLsizei n, GLuint* textures);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetBooleanv)(GLenum pname, GLboolean* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetClipPlane)(GLenum plane, GLdouble* equation);
@@ -1047,8 +1058,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glGetTexEnviv)(GLenum target, GLenum pname, GL
 APIENTRY_LINKAGE void GL_FUNCTION(glGetTexGendv)(GLenum coord, GLenum pname, GLdouble* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetTexGenfv)(GLenum coord, GLenum pname, GLfloat* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetTexGeniv)(GLenum coord, GLenum pname, GLint* params);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glGetTexImage)(GLenum target, GLint level, GLenum format, GLenum type, GLvoid* pixels);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glGetTexImage)(GLenum target, GLint level, GLenum format, GLenum type, GLvoid* pixels);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetTexLevelParameterfv)(GLenum target, GLint level, GLenum pname, GLfloat* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetTexLevelParameteriv)(GLenum target, GLint level, GLenum pname, GLint* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetTexParameterfv)(GLenum target, GLenum pname, GLfloat* params);
@@ -1084,10 +1095,10 @@ APIENTRY_LINKAGE void GL_FUNCTION(glLoadMatrixd)(const GLdouble* m);
 APIENTRY_LINKAGE void GL_FUNCTION(glLoadMatrixf)(const GLfloat* m);
 APIENTRY_LINKAGE void GL_FUNCTION(glLoadName)(GLuint name);
 APIENTRY_LINKAGE void GL_FUNCTION(glLogicOp)(GLenum opcode);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glMap1d)(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble* points);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glMap1f)(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat* points);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glMap1d)(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble* points);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glMap1f)(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat* points);
 APIENTRY_LINKAGE void GL_FUNCTION(glMap2d)(
 	GLenum target,
 	GLdouble u1,
@@ -1098,7 +1109,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glMap2d)(
 	GLdouble v2,
 	GLint vstride,
 	GLint vorder,
-	const GLdouble* points);
+	const GLdouble* points
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glMap2f)(
 	GLenum target,
 	GLfloat u1,
@@ -1109,7 +1121,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glMap2f)(
 	GLfloat v2,
 	GLint vstride,
 	GLint vorder,
-	const GLfloat* points);
+	const GLfloat* points
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glMapGrid1d)(GLint un, GLdouble u1, GLdouble u2);
 APIENTRY_LINKAGE void GL_FUNCTION(glMapGrid1f)(GLint un, GLfloat u1, GLfloat u2);
 APIENTRY_LINKAGE void GL_FUNCTION(glMapGrid2d)(GLint un, GLdouble u1, GLdouble u2, GLint vn, GLdouble v1, GLdouble v2);
@@ -1133,8 +1146,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glNormal3iv)(const GLint* v);
 APIENTRY_LINKAGE void GL_FUNCTION(glNormal3s)(GLshort nx, GLshort ny, GLshort nz);
 APIENTRY_LINKAGE void GL_FUNCTION(glNormal3sv)(const GLshort* v);
 APIENTRY_LINKAGE void GL_FUNCTION(glNormalPointer)(GLenum type, GLsizei stride, const GLvoid* pointer);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glOrtho)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glOrtho)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 APIENTRY_LINKAGE void GL_FUNCTION(glPassThrough)(GLfloat token);
 APIENTRY_LINKAGE void GL_FUNCTION(glPixelMapfv)(GLenum map, GLsizei mapsize, const GLfloat* values);
 APIENTRY_LINKAGE void GL_FUNCTION(glPixelMapuiv)(GLenum map, GLsizei mapsize, const GLuint* values);
@@ -1181,8 +1194,15 @@ APIENTRY_LINKAGE void GL_FUNCTION(glRasterPos4iv)(const GLint* v);
 APIENTRY_LINKAGE void GL_FUNCTION(glRasterPos4s)(GLshort x, GLshort y, GLshort z, GLshort w);
 APIENTRY_LINKAGE void GL_FUNCTION(glRasterPos4sv)(const GLshort* v);
 APIENTRY_LINKAGE void GL_FUNCTION(glReadBuffer)(GLenum mode);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glReadPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* pixels);
+APIENTRY_LINKAGE void GL_FUNCTION(glReadPixels)(
+	GLint x,
+	GLint y,
+	GLsizei width,
+	GLsizei height,
+	GLenum format,
+	GLenum type,
+	GLvoid* pixels
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glRectd)(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
 APIENTRY_LINKAGE void GL_FUNCTION(glRectdv)(const GLdouble* v1, const GLdouble* v2);
 APIENTRY_LINKAGE void GL_FUNCTION(glRectf)(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
@@ -1252,7 +1272,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexImage1D)(
 	GLint border,
 	GLenum format,
 	GLenum type,
-	const GLvoid* pixels);
+	const GLvoid* pixels
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glTexImage2D)(
 	GLenum target,
 	GLint level,
@@ -1262,7 +1283,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexImage2D)(
 	GLint border,
 	GLenum format,
 	GLenum type,
-	const GLvoid* pixels);
+	const GLvoid* pixels
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glTexParameterf)(GLenum target, GLenum pname, GLfloat param);
 APIENTRY_LINKAGE void GL_FUNCTION(glTexParameterfv)(GLenum target, GLenum pname, const GLfloat* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glTexParameteri)(GLenum target, GLenum pname, GLint param);
@@ -1274,7 +1296,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexSubImage1D)(
 	GLsizei width,
 	GLenum format,
 	GLenum type,
-	const GLvoid* pixels);
+	const GLvoid* pixels
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glTexSubImage2D)(
 	GLenum target,
 	GLint level,
@@ -1284,7 +1307,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexSubImage2D)(
 	GLsizei height,
 	GLenum format,
 	GLenum type,
-	const GLvoid* pixels);
+	const GLvoid* pixels
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glTranslated)(GLdouble x, GLdouble y, GLdouble z);
 APIENTRY_LINKAGE void GL_FUNCTION(glTranslatef)(GLfloat x, GLfloat y, GLfloat z);
 APIENTRY_LINKAGE void GL_FUNCTION(glVertex2d)(GLdouble x, GLdouble y);
@@ -1320,10 +1344,22 @@ APIENTRY_LINKAGE void GL_FUNCTION(glUnlockArraysEXT)(void);
 APIENTRY_LINKAGE void GL_FUNCTION(glActiveTextureARB)(GLenum);
 APIENTRY_LINKAGE void GL_FUNCTION(glClientActiveTextureARB)(GLenum);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetCompressedTexImage)(GLenum target, GLint lod, const GLvoid* data);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glDrawRangeElements)(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid* indices);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glDrawRangeElementsEXT)(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid* indices);
+APIENTRY_LINKAGE void GL_FUNCTION(glDrawRangeElements)(
+	GLenum mode,
+	GLuint start,
+	GLuint end,
+	GLsizei count,
+	GLenum type,
+	const GLvoid* indices
+);
+APIENTRY_LINKAGE void GL_FUNCTION(glDrawRangeElementsEXT)(
+	GLenum mode,
+	GLuint start,
+	GLuint end,
+	GLsizei count,
+	GLenum type,
+	const GLvoid* indices
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glDrawElements)(GLenum mode, GLsizei count, GLenum type, const GLvoid* indices);
 APIENTRY_LINKAGE void GL_FUNCTION(glVertexPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid* ptr);
 APIENTRY_LINKAGE void GL_FUNCTION(glNormalPointer)(GLenum type, GLsizei stride, const GLvoid* ptr);
@@ -1345,7 +1381,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexImage3DARB)(
 	GLsizei depth,
 	GLint border,
 	GLsizei imageSize,
-	const void* data);
+	const void* data
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexImage2DARB)(
 	GLenum target,
 	GLint level,
@@ -1354,7 +1391,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexImage2DARB)(
 	GLsizei height,
 	GLint border,
 	GLsizei imageSize,
-	const void* data);
+	const void* data
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexImage1DARB)(
 	GLenum target,
 	GLint level,
@@ -1362,7 +1400,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexImage1DARB)(
 	GLsizei width,
 	GLint border,
 	GLsizei imageSize,
-	const void* data);
+	const void* data
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexSubImage3DARB)(
 	GLenum target,
 	GLint level,
@@ -1374,7 +1413,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexSubImage3DARB)(
 	GLsizei depth,
 	GLenum format,
 	GLsizei imageSize,
-	const void* data);
+	const void* data
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexSubImage2DARB)(
 	GLenum target,
 	GLint level,
@@ -1384,7 +1424,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexSubImage2DARB)(
 	GLsizei height,
 	GLenum format,
 	GLsizei imageSize,
-	const void* data);
+	const void* data
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexSubImage1DARB)(
 	GLenum target,
 	GLint level,
@@ -1392,13 +1433,14 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCompressedTexSubImage1DARB)(
 	GLsizei width,
 	GLenum format,
 	GLsizei imageSize,
-	const void* data);
+	const void* data
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glDeleteObjectARB)(GLhandleARB obj);
 APIENTRY_LINKAGE GLhandleARB GL_FUNCTION(glGetHandleARB)(GLenum pname);
 APIENTRY_LINKAGE void GL_FUNCTION(glDetachObjectARB)(GLhandleARB containerObj, GLhandleARB attachedObj);
 APIENTRY_LINKAGE GLhandleARB GL_FUNCTION(glCreateShaderObjectARB)(GLenum shaderType);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glShaderSourceARB)(GLhandleARB shaderObj, GLsizei count, const GLcharARB** string, const GLint* length);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glShaderSourceARB)(GLhandleARB shaderObj, GLsizei count, const GLcharARB** string, const GLint* length);
 APIENTRY_LINKAGE void GL_FUNCTION(glCompileShaderARB)(GLhandleARB shaderObj);
 APIENTRY_LINKAGE GLhandleARB GL_FUNCTION(glCreateProgramObjectARB)(void);
 APIENTRY_LINKAGE void GL_FUNCTION(glAttachObjectARB)(GLhandleARB containerObj, GLhandleARB obj);
@@ -1409,10 +1451,10 @@ APIENTRY_LINKAGE void GL_FUNCTION(glBindProgramARB)(GLenum target, GLuint progra
 APIENTRY_LINKAGE void GL_FUNCTION(glDeleteProgramsARB)(GLsizei n, const GLuint* programs);
 APIENTRY_LINKAGE void GL_FUNCTION(glGenProgramsARB)(GLsizei n, GLuint* programs);
 APIENTRY_LINKAGE void GL_FUNCTION(glProgramStringARB)(GLenum target, GLenum format, GLsizei len, const GLvoid* string);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glProgramEnvParameter4fARB)(GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glProgramLocalParameter4fARB)(GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glProgramEnvParameter4fARB)(GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glProgramLocalParameter4fARB)(GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 APIENTRY_LINKAGE void GL_FUNCTION(glUniform1fARB)(GLint location, GLfloat v0);
 APIENTRY_LINKAGE void GL_FUNCTION(glUniform2fARB)(GLint location, GLfloat v0, GLfloat v1);
 APIENTRY_LINKAGE void GL_FUNCTION(glUniform3fARB)(GLint location, GLfloat v0, GLfloat v1, GLfloat v2);
@@ -1429,18 +1471,18 @@ APIENTRY_LINKAGE void GL_FUNCTION(glUniform1ivARB)(GLint location, GLsizei count
 APIENTRY_LINKAGE void GL_FUNCTION(glUniform2ivARB)(GLint location, GLsizei count, const GLint* value);
 APIENTRY_LINKAGE void GL_FUNCTION(glUniform3ivARB)(GLint location, GLsizei count, const GLint* value);
 APIENTRY_LINKAGE void GL_FUNCTION(glUniform4ivARB)(GLint location, GLsizei count, const GLint* value);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glUniformMatrix2fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glUniformMatrix3fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glUniformMatrix4fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glUniformMatrix2fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glUniformMatrix3fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glUniformMatrix4fvARB)(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetObjectParameterfvARB)(GLhandleARB obj, GLenum pname, GLfloat* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetObjectParameterivARB)(GLhandleARB obj, GLenum pname, GLint* params);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glGetInfoLogARB)(GLhandleARB obj, GLsizei maxLength, GLsizei* length, GLcharARB* infoLog);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glGetAttachedObjectsARB)(GLhandleARB containerObj, GLsizei maxCount, GLsizei* count, GLhandleARB* obj);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glGetInfoLogARB)(GLhandleARB obj, GLsizei maxLength, GLsizei* length, GLcharARB* infoLog);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glGetAttachedObjectsARB)(GLhandleARB containerObj, GLsizei maxCount, GLsizei* count, GLhandleARB* obj);
 APIENTRY_LINKAGE GLint GL_FUNCTION(glGetUniformLocationARB)(GLhandleARB programObj, const GLcharARB* name);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetActiveUniformARB)(
 	GLhandleARB programObj,
@@ -1449,11 +1491,12 @@ APIENTRY_LINKAGE void GL_FUNCTION(glGetActiveUniformARB)(
 	GLsizei* length,
 	GLint* size,
 	GLenum* type,
-	GLcharARB* name);
+	GLcharARB* name
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetUniformfvARB)(GLhandleARB programObj, GLint location, GLfloat* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetUniformivARB)(GLhandleARB programObj, GLint location, GLint* params);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glGetShaderSourceARB)(GLhandleARB obj, GLsizei maxLength, GLsizei* length, GLcharARB* source);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glGetShaderSourceARB)(GLhandleARB obj, GLsizei maxLength, GLsizei* length, GLcharARB* source);
 APIENTRY_LINKAGE void GL_FUNCTION(glPolygonStipple)(const GLubyte* mask);
 APIENTRY_LINKAGE void GL_FUNCTION(glTexImage3D)(
 	GLenum target,
@@ -1465,7 +1508,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexImage3D)(
 	GLint border,
 	GLenum format,
 	GLenum type,
-	const GLvoid* pixels);
+	const GLvoid* pixels
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glTexSubImage3D)(
 	GLenum target,
 	GLint level,
@@ -1477,7 +1521,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexSubImage3D)(
 	GLsizei depth,
 	GLenum format,
 	GLenum type,
-	const GLvoid* pixels);
+	const GLvoid* pixels
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glCopyTexSubImage3D)(
 	GLenum target,
 	GLint level,
@@ -1487,7 +1532,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glCopyTexSubImage3D)(
 	GLint x,
 	GLint y,
 	GLsizei width,
-	GLsizei height);
+	GLsizei height
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glBlendEquationEXT)(GLenum);
 APIENTRY_LINKAGE void GL_FUNCTION(glStencilOpSeparate)(GLenum, GLenum, GLenum, GLenum);
 APIENTRY_LINKAGE void GL_FUNCTION(glStencilFuncSeparate)(GLenum, GLenum, GLint, GLuint);
@@ -1498,7 +1544,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glVertexAttribPointerARB)(
 	GLenum type,
 	GLboolean normalized,
 	GLsizei stride,
-	const GLvoid* pointer);
+	const GLvoid* pointer
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glEnableVertexAttribArrayARB)(GLuint index);
 APIENTRY_LINKAGE void GL_FUNCTION(glDisableVertexAttribArrayARB)(GLuint index);
 APIENTRY_LINKAGE void GL_FUNCTION(glBindAttribLocationARB)(GLhandleARB programObj, GLuint index, const GLcharARB* name);
@@ -1509,7 +1556,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glGetActiveAttribARB)(
 	GLsizei* length,
 	GLint* size,
 	GLenum* type,
-	GLcharARB* name);
+	GLcharARB* name
+);
 APIENTRY_LINKAGE GLint GL_FUNCTION(glGetAttribLocationARB)(GLhandleARB programObj, const GLcharARB* name);
 APIENTRY_LINKAGE void GL_FUNCTION(glBindFragDataLocation)(GLuint programObj, GLuint index, const GLcharARB* name);
 APIENTRY_LINKAGE void GL_FUNCTION(glVertexAttrib2fARB)(GLuint index, GLfloat x, GLfloat y);
@@ -1522,8 +1570,8 @@ APIENTRY_LINKAGE GLboolean GL_FUNCTION(glIsBufferARB)(GLuint buffer);
 APIENTRY_LINKAGE GLvoid* GL_FUNCTION(glMapBufferARB)(GLenum target, GLenum access);
 APIENTRY_LINKAGE GLboolean GL_FUNCTION(glUnmapBufferARB)(GLenum target);
 APIENTRY_LINKAGE void GL_FUNCTION(glBufferDataARB)(GLenum target, GLsizeiptrARB size, const GLvoid* data, GLenum usage);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glBufferSubDataARB)(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid* data);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glBufferSubDataARB)(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const GLvoid* data);
 APIENTRY_LINKAGE void GL_FUNCTION(glGenQueriesARB)(GLsizei n, GLuint* ids);
 APIENTRY_LINKAGE void GL_FUNCTION(glDeleteQueriesARB)(GLsizei n, const GLuint* ids);
 APIENTRY_LINKAGE GLboolean GL_FUNCTION(glIsQueryARB)(GLuint id);
@@ -1539,16 +1587,24 @@ typedef void(APIENTRY* GL_DEBUG_PROC_ARB)(
 	GLenum severity,
 	GLsizei length,
 	const GLcharARB* message,
-	GLvoid* userParam);
+	GLvoid* userParam
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glDebugMessageControlARB)(
 	GLenum source,
 	GLenum type,
 	GLenum severity,
 	GLsizei count,
 	const GLuint* ids,
-	GLboolean enabled);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glDebugMessageInsertARB)(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* buf);
+	GLboolean enabled
+);
+APIENTRY_LINKAGE void GL_FUNCTION(glDebugMessageInsertARB)(
+	GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const char* buf
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glDebugMessageCallbackARB)(GL_DEBUG_PROC_ARB callback, void* userParam);
 APIENTRY_LINKAGE GLuint GL_FUNCTION(glGetDebugMessageLogARB)(
 	GLuint count,
@@ -1558,42 +1614,59 @@ APIENTRY_LINKAGE GLuint GL_FUNCTION(glGetDebugMessageLogARB)(
 	GLuint* ids,
 	GLuint* severities,
 	GLsizei* lengths,
-	char* messageLog);
+	char* messageLog
+);
 APIENTRY_LINKAGE GLboolean GL_FUNCTION(glIsRenderbuffer)(GLuint renderbuffer);
 APIENTRY_LINKAGE void GL_FUNCTION(glBindRenderbuffer)(GLenum target, GLuint renderbuffer);
 APIENTRY_LINKAGE void GL_FUNCTION(glDeleteRenderbuffers)(GLsizei n, const GLuint* renderbuffers);
 APIENTRY_LINKAGE void GL_FUNCTION(glGenRenderbuffers)(GLsizei n, GLuint* renderbuffers);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glRenderbufferStorage)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glRenderbufferStorage)(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
 APIENTRY_LINKAGE void GL_FUNCTION(glRenderbufferStorageMultisample)(
 	GLenum target,
 	GLsizei samples,
 	GLenum internalformat,
 	GLsizei width,
-	GLsizei height);
+	GLsizei height
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glGetRenderbufferParameteriv)(GLenum target, GLenum pname, GLint* params);
 APIENTRY_LINKAGE GLboolean GL_FUNCTION(glIsFramebuffer)(GLuint framebuffer);
 APIENTRY_LINKAGE void GL_FUNCTION(glBindFramebuffer)(GLenum target, GLuint framebuffer);
 APIENTRY_LINKAGE void GL_FUNCTION(glDeleteFramebuffers)(GLsizei n, const GLuint* framebuffers);
 APIENTRY_LINKAGE void GL_FUNCTION(glGenFramebuffers)(GLsizei n, GLuint* framebuffers);
 APIENTRY_LINKAGE GLenum GL_FUNCTION(glCheckFramebufferStatus)(GLenum target);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glFramebufferTexture1D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glFramebufferTexture2D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+APIENTRY_LINKAGE void GL_FUNCTION(glFramebufferTexture1D)(
+	GLenum target,
+	GLenum attachment,
+	GLenum textarget,
+	GLuint texture,
+	GLint level
+);
+APIENTRY_LINKAGE void GL_FUNCTION(glFramebufferTexture2D)(
+	GLenum target,
+	GLenum attachment,
+	GLenum textarget,
+	GLuint texture,
+	GLint level
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glFramebufferTexture3D)(
 	GLenum target,
 	GLenum attachment,
 	GLenum textarget,
 	GLuint texture,
 	GLint level,
-	GLint layer);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glFramebufferTextureLayer)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glFramebufferRenderbuffer)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
-APIENTRY_LINKAGE void GL_FUNCTION(
-	glGetFramebufferAttachmentParameteriv)(GLenum target, GLenum attachment, GLenum pname, GLint* params);
+	GLint layer
+);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glFramebufferTextureLayer)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
+APIENTRY_LINKAGE void GL_FUNCTION(glFramebufferRenderbuffer)(
+	GLenum target,
+	GLenum attachment,
+	GLenum renderbuffertarget,
+	GLuint renderbuffer
+);
+APIENTRY_LINKAGE void
+	GL_FUNCTION(glGetFramebufferAttachmentParameteriv)(GLenum target, GLenum attachment, GLenum pname, GLint* params);
 APIENTRY_LINKAGE void GL_FUNCTION(glBlitFramebuffer)(
 	GLint srcX0,
 	GLint srcY0,
@@ -1604,7 +1677,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glBlitFramebuffer)(
 	GLint dstX1,
 	GLint dstY1,
 	GLbitfield mask,
-	GLenum filter);
+	GLenum filter
+);
 APIENTRY_LINKAGE void GL_FUNCTION(glDrawBuffersARB)(GLsizei n, const GLenum* bufs);
 APIENTRY_LINKAGE void GL_FUNCTION(glGenerateMipmap)(GLenum target);
 APIENTRY_LINKAGE void GL_FUNCTION(glBindVertexArray)(GLuint array);
@@ -1620,7 +1694,8 @@ APIENTRY_LINKAGE void GL_FUNCTION(glTexImage2DMultisample)(
 	GLenum internalformat,
 	GLsizei width,
 	GLsizei height,
-	GLboolean fixedsamplelocations);
+	GLboolean fixedsamplelocations
+);
 #endif /* !XASH_GLES && !XASH_GL4ES */
 
 // Re-enable suppressed warnings

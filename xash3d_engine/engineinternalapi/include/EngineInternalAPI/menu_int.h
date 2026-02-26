@@ -16,6 +16,7 @@ GNU General Public License for more details.
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 #include "BuildPlatform/Decorators.h"
 #include "BuildPlatform/Typedefs.h"
 #include "EngineInternalAPI/gameinfo.h"
@@ -131,8 +132,12 @@ typedef struct ui_enginefuncs_s
 	int (*pfnGetModelSkinCount)(struct cl_entity_s* ent);
 	int (*pfnGetModelBodyVariationCount)(struct cl_entity_s* ent);
 	const char* (*pfnGetModelSequenceName)(struct cl_entity_s* ent, int sequenceIndex);
-	qboolean (
-		*pfnGetModelSequenceBounds)(struct cl_entity_s* ent, int sequenceIndex, float* outVec3Mins, float* outVec3Maxs);
+	qboolean (*pfnGetModelSequenceBounds)(
+		struct cl_entity_s* ent,
+		int sequenceIndex,
+		float* outVec3Mins,
+		float* outVec3Maxs
+	);
 	void (*pfnGetModelEyePosition)(struct cl_entity_s* ent, float* outVec3Pos);
 	float (*pfnGetModelSequenceDuration)(struct cl_entity_s* ent, int sequenceIndex);
 	void (*pfnClearScene)(void);
@@ -244,8 +249,13 @@ typedef struct ui_extendedfuncs_s
 } ui_extendedfuncs_t;
 
 // deprecated export from old engine
-typedef void (
-	*ADDTOUCHBUTTONTOLIST)(const char* name, const char* texture, const char* command, unsigned char* color, int flags);
+typedef void (*ADDTOUCHBUTTONTOLIST)(
+	const char* name,
+	const char* texture,
+	const char* command,
+	unsigned char* color,
+	int flags
+);
 
 typedef struct
 {
@@ -260,12 +270,14 @@ typedef struct
 		const char* pszServerName,
 		int iCurrent,
 		int iTotal,
-		const char* comment);
+		const char* comment
+	);
 	void (*pfnConnectionProgress_DownloadEnd)(void);
 	void (*pfnConnectionProgress_Precache)(void);
 	void (*pfnConnectionProgress_Connect)(const char* server);  // NULL for local server
 	void (*pfnConnectionProgress_ChangeLevel)(void);
 	void (*pfnConnectionProgress_ParseServerInfo)(const char* server);
+	void (*pfnStartupComplete)(void);  // Called when the main menu is first reached.
 } UI_EXTENDED_FUNCTIONS;
 
 typedef int (*MENUAPI)(UI_FUNCTIONS* pFunctionTable, ui_enginefuncs_t* engfuncs, ui_globalvars_t* pGlobals);
@@ -274,3 +286,90 @@ typedef int (*UIEXTENEDEDAPI)(int version, UI_EXTENDED_FUNCTIONS* pFunctionTable
 
 // deprecated interface from old engine
 typedef int (*UITEXTAPI)(ui_extendedfuncs_t* engfuncs);
+
+#define MENU_UIGLAPI_VERSION 1
+
+typedef struct ui_gl_renderfunctions_s
+{
+	void (*beginFrame)(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
+	void (*endFrame)(void);
+	void (*clear)(uint32_t colour, int stencil);
+	void (*pushProjectionMatrixTranslation)(float x, float y, float z);
+	void (*popProjectionMatrix)(void);
+
+	// Positions are expected to be 2x GL_FLOAT,
+	// and colours are expected to be 4x GL_UNSIGNED_BYTE.
+	void (*prepareToDrawWithoutTexture)(const void* data, int objectSize, size_t positionOffset, size_t colourOffset);
+	void (*prepareToDrawWithTexture)(
+		uint32_t texture,
+		const void* data,
+		int objectSize,
+		size_t positionOffset,
+		size_t colourOffset,
+		size_t textureCoOrdOffset
+	);
+
+	void (*drawElements)(int numIndices, const void* indices);
+	void (*setScissorEnabled)(qboolean enabled);
+	void (*setScissorRegion)(int left, int bottom, int width, int height);
+	void (*setStencilEnabled)(qboolean enabled);
+
+	// Returns the previous stencil test value that was set.
+	int (*enableWritingToStencilMask)(qboolean clearStencilBuffer);
+
+	// Takes a test value to use for future stencil ops.
+	void (*disableWritingToStencilMask)(int testValue);
+
+	void (*setStencilOpReplace)(void);
+	void (*setStencilOpIncrement)(void);
+
+	HIMAGE (*loadRGBAImageFromMemory)(
+		const char* name,
+		int width,
+		int height,
+		const byte* data,
+		size_t dataSize,
+		int flags
+	);
+
+	void (*freeImage)(HIMAGE image);
+
+	// If null, sets identity transform.
+	void (*setTransform)(const float* mat4x4);
+} ui_gl_renderfunctions;
+
+typedef uintptr_t ui_gl_filesystem_handle_t;
+
+typedef enum ui_gl_filesystem_origin_e
+{
+	UI_GL_FS_SEEK_SET = 0,
+	UI_GL_FS_SEEK_END = 1,
+	UI_GL_FS_SEEK_CUR = 2,
+} ui_gl_filesystem_origin;
+
+typedef struct ui_gl_filesystem_listing_s ui_gl_filesystem_listing;
+
+typedef struct ui_gl_filesystemfunctions_s
+{
+	qboolean (*openReadOnlyFile)(const char* path, ui_gl_filesystem_handle_t* outHandle);
+	void (*closeFile)(ui_gl_filesystem_handle_t handle);
+	size_t (*readFromFile)(ui_gl_filesystem_handle_t handle, void* outBuffer, size_t bufferSize);
+	qboolean (*seekFile)(ui_gl_filesystem_handle_t handle, int64_t offset, ui_gl_filesystem_origin origin);
+	size_t (*tellFile)(ui_gl_filesystem_handle_t handle);
+	size_t (*fileLength)(ui_gl_filesystem_handle_t handle);
+	uint8_t* (*loadFileData)(const char* path, size_t* outLength);
+	void (*freeFileData)(uint8_t* data);
+	ui_gl_filesystem_listing* (*findFiles)(const char* pattern);
+	void (*freeListing)(ui_gl_filesystem_listing* listing);
+	size_t (*listingNumItems)(const ui_gl_filesystem_listing* listing);
+	const char* (*listingGetCurrentItem)(const ui_gl_filesystem_listing* listing);
+	qboolean (*listingNextItem)(ui_gl_filesystem_listing* listing);
+} ui_gl_filesystemfunctions;
+
+typedef struct ui_gl_functions_s
+{
+	ui_gl_renderfunctions renderer;
+	ui_gl_filesystemfunctions filesystem;
+} ui_gl_functions;
+
+typedef int (*UIGLAPI)(int version, const ui_gl_functions* uiToEngineFuncs);

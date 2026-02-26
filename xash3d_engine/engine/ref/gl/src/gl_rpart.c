@@ -112,7 +112,8 @@ void CL_DrawParticles(double frametime, particle_t* cl_active_particles, float p
 				gEngfuncs.LightToTexGamma(pColor->r),
 				gEngfuncs.LightToTexGamma(pColor->g),
 				gEngfuncs.LightToTexGamma(pColor->b),
-				(GLubyte)alpha);
+				(GLubyte)alpha
+			);
 
 			pglTexCoord2f(0.0f, 1.0f);
 			pglVertex3f(p->org[0] - right[0] + up[0], p->org[1] - right[1] + up[1], p->org[2] - right[2] + up[2]);
@@ -254,7 +255,8 @@ void CL_DrawTracers(double frametime, particle_t* cl_active_tracers)
 			{
 				gEngfuncs.Con_Printf(
 					S_ERROR "UserTracer with color > %zu\n",
-					(sizeof(gTracerColors) / sizeof(color24)));
+					(sizeof(gTracerColors) / sizeof(color24))
+				);
 
 				p->color = 0;
 			}
@@ -305,7 +307,7 @@ allow to draw effects from custom renderer
 */
 void CL_DrawParticlesExternal(const ref_viewpass_t* rvp, qboolean trans_pass, float frametime)
 {
-	ref_instance_t oldRI = RI;
+	ref_instance_t oldRI;
 
 	memcpy(&oldRI, &RI, sizeof(ref_instance_t));
 	R_SetupRefParams(rvp);

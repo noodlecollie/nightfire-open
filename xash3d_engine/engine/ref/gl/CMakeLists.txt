@@ -32,6 +32,8 @@ add_library(${TARGETNAME_LIB_REF_OPENGL} SHARED
 	src/gl_sprite.c
 	src/gl_studio.c
 	src/gl_triapi.c
+	src/gl_ui.h
+	src/gl_ui.c
 	src/gl_vgui.c
 	src/gl_warp.c
 )

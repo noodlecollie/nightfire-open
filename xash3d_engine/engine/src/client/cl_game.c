@@ -85,7 +85,8 @@ static dllfunc_t cdll_exports[] = {
 	{"IN_ClearStates", (void**)&clgame.dllFuncs.IN_ClearStates},
 	{"V_CalcRefdef", (void**)&clgame.dllFuncs.pfnCalcRefdef},
 	{"KB_Find", (void**)&clgame.dllFuncs.KB_Find},
-	{NULL, NULL}};
+	{NULL, NULL}
+};
 
 // optional exports
 static dllfunc_t cdll_new_exports[] =  // allowed only in SDK 2.3 and higher
@@ -342,7 +343,8 @@ void CL_CenterPrint(const char* text, float y)
 		clgame.centerPrint.message,
 		&clgame.centerPrint.totalWidth,
 		&clgame.centerPrint.totalHeight,
-		FONT_DRAW_HUD | FONT_DRAW_UTF8);
+		FONT_DRAW_HUD | FONT_DRAW_UTF8
+	);
 
 	if ( font->charHeight )
 		clgame.centerPrint.lines = clgame.centerPrint.totalHeight / font->charHeight;
@@ -473,7 +475,8 @@ static void SPR_DrawGeneric(int frame, float x, float y, float width, float heig
 		clgame.ds.spriteColor[0],
 		clgame.ds.spriteColor[1],
 		clgame.ds.spriteColor[2],
-		clgame.ds.spriteColor[3]);
+		clgame.ds.spriteColor[3]
+	);
 	ref.dllFuncs.R_DrawStretchPic(x, y, width, height, s1, t1, s2, t2, texnum);
 }
 
@@ -543,7 +546,8 @@ void CL_DrawCenterPrint(void)
 					line[j],
 					colorDefault,
 					font,
-					FONT_DRAW_UTF8 | FONT_DRAW_HUD | FONT_DRAW_NORENDERMODE);
+					FONT_DRAW_UTF8 | FONT_DRAW_HUD | FONT_DRAW_NORENDERMODE
+				);
 		}
 		y += charHeight;
 	}
@@ -611,7 +615,8 @@ void CL_DrawScreenFade(void)
 			(uint16_t)(sf->fader * alpha + (255 - alpha) * 255) >> 8,
 			(uint16_t)(sf->fadeg * alpha + (255 - alpha) * 255) >> 8,
 			(uint16_t)(sf->fadeb * alpha + (255 - alpha) * 255) >> 8,
-			255);
+			255
+		);
 	}
 	else
 	{
@@ -628,7 +633,8 @@ void CL_DrawScreenFade(void)
 		0,
 		1,
 		1,
-		R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+		R_GetBuiltinTexture(REF_WHITE_TEXTURE)
+	);
 
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);
 }
@@ -894,7 +900,8 @@ qboolean CL_Scissor(
 	float* u0,
 	float* v0,
 	float* u1,
-	float* v1)
+	float* v1
+)
 {
 	float dudx, dvdy;
 
@@ -2625,7 +2632,8 @@ void GAME_EXPORT CL_PlayerTrace(float* start, float* end, int traceFlags, int ig
 		clgame.pmove->numphysent,
 		clgame.pmove->physents,
 		ignore_pe,
-		NULL);
+		NULL
+	);
 }
 
 /*
@@ -2647,7 +2655,8 @@ CL_PlayerTraceExt(float* start, float* end, int traceFlags, int (*pfnIgnore)(phy
 		clgame.pmove->numphysent,
 		clgame.pmove->physents,
 		-1,
-		pfnIgnore);
+		pfnIgnore
+	);
 }
 
 /*
@@ -3311,7 +3320,8 @@ void TriColor4f(float r, float g, float b, float a)
 			(unsigned char)(r * 255.9f),
 			(unsigned char)(g * 255.9f),
 			(unsigned char)(b * 255.9f),
-			(unsigned char)(a * 255.0f));
+			(unsigned char)(a * 255.0f)
+		);
 	}
 	else
 	{
@@ -3502,7 +3512,8 @@ void GAME_EXPORT NetAPI_SendRequest(
 	int flags,
 	double timeout,
 	netadr_t* remote_address,
-	net_api_response_func_t response)
+	net_api_response_func_t response
+)
 {
 	net_request_t* nr = NULL;
 	string req;
@@ -3995,7 +4006,9 @@ static cl_enginefunc_t gEngfuncs = {
 void CL_UnloadProgs(void)
 {
 	if ( !clgame.hInstance )
+	{
 		return;
+	}
 
 	CL_FreeEdicts();
 	CL_FreeTempEnts();
@@ -4006,10 +4019,14 @@ void CL_UnloadProgs(void)
 
 	// NOTE: HLFX 0.5 has strange bug: hanging on exit if no map was loaded
 	if ( Q_stricmp(GI->gamefolder, "hlfx") || GI->version != 0.5f )
+	{
 		clgame.dllFuncs.pfnShutdown();
+	}
 
 	if ( GI->internal_vgui_support )
+	{
 		VGui_Shutdown();
+	}
 
 	Cvar_FullSet("cl_background", "0", FCVAR_READ_ONLY);
 	Cvar_FullSet("host_clientloaded", "0", FCVAR_READ_ONLY);
@@ -4031,7 +4048,9 @@ qboolean CL_LoadProgs(const char* name)
 	qboolean critical_exports = true;
 
 	if ( clgame.hInstance )
+	{
 		CL_UnloadProgs();
+	}
 
 	// initialize PlayerMove
 	clgame.pmove = &gpMove;

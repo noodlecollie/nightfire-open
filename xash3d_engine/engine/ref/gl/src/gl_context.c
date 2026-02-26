@@ -23,6 +23,7 @@ GNU General Public License for more details.
 #endif
 
 #include "MathLib/utils.h"
+#include "gl_ui.h"
 
 ref_api_t gEngfuncs;
 ref_globals_t* gpGlobals;
@@ -538,6 +539,27 @@ ref_interface_t gReffuncs = {
 	VGUI_GenerateTexture,
 };
 
+static const ref_uigl_functions gRefUiGlFuncs = {
+	GL_UI_BeginFrame,  // beginFrame
+	GL_UI_EndFrame,  // endFrame
+	GL_UI_Clear,  // clear
+	GL_UI_PushProjectionMatrixTranslation,  // pushProjectionMatrixTranslation
+	GL_UI_PopProjectionMatrix,  // popProjectionMatrix
+	GL_UI_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
+	GL_UI_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
+	GL_UI_DrawElements,  // drawElements
+	GL_UI_SetScissorEnabled,  // setScissorEnabled
+	GL_UI_SetScissorRegion,  // setScissorRegion
+	GL_UI_SetStencilEnabled,  // setStencilEnabled
+	GL_UI_EnableWritingToStencilMask,  // enableWritingToStencilMask
+	GL_UI_DisableWritingToStencilMask,  // disableWritingToStencilMask
+	GL_UI_SetStencilOpReplace,  // setStencilOpReplace
+	GL_UI_SetStencilOpIncrement,  // setStencilOpIncrement
+	GL_UI_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
+	GL_UI_FreeImage,  // freeImage
+	GL_UI_SetTransform,  // setTransform
+};
+
 int EXPORT GetRefAPI(int version, ref_interface_t* funcs, const ref_api_t* engfuncs, ref_globals_t* globals)
 {
 	if ( version != REF_API_VERSION )
@@ -551,4 +573,15 @@ int EXPORT GetRefAPI(int version, ref_interface_t* funcs, const ref_api_t* engfu
 	gpGlobals = globals;
 
 	return REF_API_VERSION;
+}
+
+int EXPORT GetRefUiGlAPI(int version, ref_uigl_functions* engineToRefFunctions)
+{
+	if ( version != REF_UIFL_FUNCS_VERSION || !engineToRefFunctions )
+	{
+		return 0;
+	}
+
+	memcpy(engineToRefFunctions, &gRefUiGlFuncs, sizeof(*engineToRefFunctions));
+	return REF_UIFL_FUNCS_VERSION;
 }

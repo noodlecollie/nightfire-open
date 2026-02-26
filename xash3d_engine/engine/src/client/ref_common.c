@@ -502,6 +502,7 @@ static qboolean R_LoadProgs(const char* name)
 	extern triangleapi_t gTriApi;
 	static ref_api_t gpEngfuncs;
 	REFAPI GetRefAPI;  // single export
+	GETREFUIGLAPI GetRefUiGlAPI;
 
 	if ( ref.hInstance )
 		R_UnloadProgs();
@@ -538,6 +539,19 @@ static qboolean R_LoadProgs(const char* name)
 		Con_Reportf("R_LoadProgs: can't init renderer API: wrong version\n");
 		ref.hInstance = NULL;
 		return false;
+	}
+
+	GetRefUiGlAPI = (GETREFUIGLAPI)COM_GetProcAddress(ref.hInstance, "GetRefUiGlAPI");
+
+	if ( GetRefUiGlAPI )
+	{
+		int version = GetRefUiGlAPI(REF_UIFL_FUNCS_VERSION, &ref.dllUiFuncs);
+
+		if ( version != REF_UIFL_FUNCS_VERSION )
+		{
+			Con_Reportf("R_LoadProgs: expected ref UI GL API version %d but got %d\n", REF_UIFL_FUNCS_VERSION, version);
+			memset(&ref.dllUiFuncs, 0, sizeof(ref.dllUiFuncs));
+		}
 	}
 
 	refState.developer = host_developer.value != 0;

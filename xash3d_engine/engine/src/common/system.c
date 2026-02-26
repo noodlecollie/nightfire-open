@@ -57,16 +57,11 @@ Sys_DebugBreak
 */
 void Sys_DebugBreak(void)
 {
-#if XASH_LINUX() || (XASH_WIN32() && !XASH_64BIT())
+#if XASH_LINUX() || XASH_WIN32()
 #if _MSC_VER
 	if ( Sys_DebuggerPresent() )
 	{
-		_asm { int 3 }
-	}
-#elif XASH_X86()
-	if ( Sys_DebuggerPresent() )
-	{
-		asm volatile("int $3;");
+		__debugbreak();
 	}
 #else
 	if ( Sys_DebuggerPresent() )
@@ -319,7 +314,8 @@ qboolean Sys_LoadLibrary(dll_info_t* dll)
 				sizeof(errorstring),
 				"Sys_LoadLibrary: %s missing or invalid function (%s)\n",
 				dll->name,
-				func->name);
+				func->name
+			);
 			goto error;
 		}
 	}

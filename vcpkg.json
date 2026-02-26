@@ -1,8 +1,11 @@
 {
 	"name": "nightfire-open",
 	"version-string": "0.0.1",
-	"dependencies":
-	[
-		"sdl2"
+	"dependencies": [
+		"sdl2",
+		"freetype",
+		"bzip2",
+		"libpng",
+		"brotli"
 	]
 }

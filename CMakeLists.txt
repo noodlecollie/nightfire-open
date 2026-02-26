@@ -4,10 +4,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # This cannot use HOST_PLATFORM because we don't want to rely on custom scripts
 # just yet. This is an early check and should use OG CMake variables only.
-if(WIN32)
-	set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/vcpkg-overlays")
-	set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
-endif()
+set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_SOURCE_DIR}/vcpkg-overlays")
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 project(Nightfire-Open LANGUAGES C CXX)
 
@@ -21,13 +19,14 @@ option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled fo
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client." ON)
 option(NF_WARNINGS_AS_ERRORS "If disabled, compiler warnings will not be treated as errors. Intended as a temporary workaround only, recommended to leave enabled." ON)
 option(NF_ENABLE_TOOLS "Enables building tools such as map and model compilers." ON)
+option(NF_NEW_UI "Enables new iteration of game UI library." OFF)
 
 # The content files are not kept in this repo any more, because something out there
 # (AI scrapers?) was cloning the repo over and over and using up all my Git LFS bandwidth.
 # This way, we can at least keep the code open source (and comply with open-source
 # licenses for third party code). If you're reading this and want to contribute
 # actual content, get in touch to get access to the nightfire-open-content repo.
-set(NF_CONTENT_PATH "" CACHE STRING "Path to clone of nightfire-open-content repo, if this content is to be installed alongside the build. Requires access to the content repo.")
+set(NF_CONTENT_PATH "" CACHE STRING "Path to the clone of the nightfire-open-content repo, if this content is to be installed alongside the build. Requires access to the content repo.")
 option(NF_AUTO_UPDATE_CONTENT_HASH "If set, hash for content repo is automatically updated when running an install. Helpful for development." ON)
 
 include(nf_utils)
@@ -36,6 +35,15 @@ construct_content_path("${NF_CONTENT_PATH}" NF_FULL_CONTENT_PATH)
 
 if(NOT "${NF_FULL_CONTENT_PATH}" STREQUAL "")
 	message(STATUS "NF_CONTENT_PATH provided. Full content path: ${NF_FULL_CONTENT_PATH}")
+
+	# For developer convenience, tell the content repo where the game is being installed to.
+	cmake_path(IS_ABSOLUTE CMAKE_INSTALL_PREFIX install_is_absolute)
+
+	if(install_is_absolute)
+		write_file("${NF_FULL_CONTENT_PATH}/install_path.txt" "${CMAKE_INSTALL_PREFIX}")
+	else()
+		write_file("${NF_FULL_CONTENT_PATH}/install_path.txt" "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}")
+	endif()
 else()
 	message(STATUS "No NF_CONTENT_PATH provided, content will not be installed.")
 endif()

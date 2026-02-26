@@ -92,6 +92,7 @@ convar_t* cl_trace_messages;
 convar_t* cl_nat;
 convar_t* hud_utf8;
 convar_t* ui_renderworld;
+convar_t* ui_mainmenu_file;
 
 //
 // userinfo
@@ -1522,7 +1523,8 @@ void CL_WritePacket(void)
 			Con_NPrintf(
 				2,
 				"^1Auto-disconnect in %.1f seconds^7",
-				cl_timeout->value - (host.realtime - cls.netchan.last_received));
+				cl_timeout->value - (host.realtime - cls.netchan.last_received)
+			);
 			cl.validsequence = 0;
 		}
 	}
@@ -1836,7 +1838,8 @@ void CL_SendConnectPacket(void)
 			cls.challenge,
 			cls.userinfo,
 			NET_LEGACY_EXT_SPLIT,
-			protinfo);
+			protinfo
+		);
 		Con_Printf("Trying to connect by legacy protocol\n");
 	}
 	else
@@ -1860,7 +1863,8 @@ void CL_SendConnectPacket(void)
 			PROTOCOL_VERSION,
 			cls.challenge,
 			protinfo,
-			cls.userinfo);
+			cls.userinfo
+		);
 		Con_Printf("Trying to connect by modern protocol\n");
 	}
 
@@ -1955,7 +1959,8 @@ void CL_CheckForResend(void)
 			"Connecting to %s... [retry #%i, max fragment size %i]\n",
 			cls.servername,
 			cls.connect_retry,
-			cls.max_fragment_size);
+			cls.max_fragment_size
+		);
 	else
 		Con_Printf("Connecting to %s... [retry #%i]\n", cls.servername, cls.connect_retry);
 
@@ -3367,7 +3372,8 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 					Con_Printf(
 						"Downloaded %i bytes for purported %i byte file, ignoring download\n",
 						cls.netchan.tempbuffersize,
-						p->nDownloadSize);
+						p->nDownloadSize
+					);
 				}
 
 				if ( cls.netchan.tempbuffer )
@@ -3720,7 +3726,8 @@ void CL_InitLocal(void)
 		"ex_interp",
 		"0.1",
 		FCVAR_ARCHIVE | FCVAR_FILTERABLE,
-		"Interpolate object positions starting this many seconds in past");
+		"Interpolate object positions starting this many seconds in past"
+	);
 	cl_timeout = Cvar_Get("cl_timeout", "60", 0, "connect timeout (in-seconds)");
 	cl_charset = Cvar_Get("cl_charset", "utf-8", FCVAR_ARCHIVE, "1-byte charset to use (iconv style)");
 	hud_utf8 = Cvar_Get("hud_utf8", "0", FCVAR_ARCHIVE, "Use utf-8 encoding for hud text");
@@ -3731,10 +3738,16 @@ void CL_InitLocal(void)
 		"cl_trace_messages",
 		"0",
 		FCVAR_ARCHIVE | FCVAR_CHEAT,
-		"enable message names tracing (good for developers)");
+		"enable message names tracing (good for developers)"
+	);
 
 	// userinfo
-	cl_disable_movement_prediction = Cvar_Get("cl_disable_movement_prediction", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "disable client movement prediction");
+	cl_disable_movement_prediction = Cvar_Get(
+		"cl_disable_movement_prediction",
+		"0",
+		FCVAR_ARCHIVE | FCVAR_USERINFO,
+		"disable client movement prediction"
+	);
 	name = Cvar_Get("name", Sys_GetCurrentUser(), FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_PRINTABLEONLY, "player name");
 	model = Cvar_Get("model", "", FCVAR_USERINFO | FCVAR_ARCHIVE, "player model ('player' is a singleplayer model)");
 	cl_updaterate = Cvar_Get("cl_updaterate", "20", FCVAR_USERINFO | FCVAR_ARCHIVE, "refresh rate of server messages");
@@ -3744,7 +3757,8 @@ void CL_InitLocal(void)
 	rate = Cvar_Get("rate", "3500", FCVAR_USERINFO | FCVAR_ARCHIVE | FCVAR_FILTERABLE, "player network rate");
 	topcolor = Cvar_Get("topcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player top color");
 	bottomcolor = Cvar_Get("bottomcolor", "0", FCVAR_USERINFO | FCVAR_ARCHIVE, "player bottom color");
-	cl_weapon_prediction = Cvar_Get("cl_weapon_prediction", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon prediction");
+	cl_weapon_prediction =
+		Cvar_Get("cl_weapon_prediction", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable client weapon prediction");
 	Cvar_Get("cl_lag_compensation", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "enable lag compensation");
 	Cvar_Get("password", "", FCVAR_USERINFO, "server password");
 	Cvar_Get("team", "", FCVAR_USERINFO, "player team");
@@ -3770,6 +3784,7 @@ void CL_InitLocal(void)
 	cl_showevents = Cvar_Get("cl_showevents", "0", FCVAR_ARCHIVE, "show events playback");
 	Cvar_Get("lastdemo", "", FCVAR_ARCHIVE, "last played demo");
 	ui_renderworld = Cvar_Get("ui_renderworld", "0", FCVAR_ARCHIVE, "render world when UI is visible");
+	ui_mainmenu_file = Cvar_Get("ui_mainmenu_file", "", FCVAR_ARCHIVE, "path to main menu .rml file");
 
 	// these two added to shut up CS 1.5 about 'unknown' commands
 	Cvar_Get("lightgamma", "1", FCVAR_ARCHIVE, "ambient lighting level (legacy, unused)");
@@ -3837,7 +3852,8 @@ void CL_InitLocal(void)
 	Cmd_AddCommand(
 		"rcon",
 		CL_Rcon_f,
-		"sends a command to the server console (rcon_password and rcon_address required)");
+		"sends a command to the server console (rcon_password and rcon_address required)"
+	);
 	Cmd_AddCommand("precache", CL_LegacyPrecache_f, "legacy server compatibility");
 
 	Cmd_AddCommand("getpos", CL_GetPos, "Prints the current position of the player.");
@@ -3845,38 +3861,46 @@ void CL_InitLocal(void)
 	Cmd_AddCommand(
 		"debug_dumpworldmodel",
 		CL_Debug_DumpWorldModel,
-		"Dumps internal information about the currently loaded world to the specified file.");
+		"Dumps internal information about the currently loaded world to the specified file."
+	);
 	Cmd_AddCommand(
 		"debug_dumpsurface",
 		CL_Debug_DumpSurface,
-		"Dumps a surface to the specified file, formatted as Wavefront OBJ.");
+		"Dumps a surface to the specified file, formatted as Wavefront OBJ."
+	);
 	Cmd_AddCommand(
 		"debug_dumpleafbounds",
 		CL_Debug_DumpLeafBounds,
-		"Dumps current leaf bounds to the specified file, formatted as Wavefront OBJ.");
+		"Dumps current leaf bounds to the specified file, formatted as Wavefront OBJ."
+	);
 	Cmd_AddCommand(
 		"debug_surfaceinfo",
 		CL_Debug_SurfaceInfo,
 		"Prints info about the specified face to the console. If no face index is provided, uses the face being "
-		"pointed at.");
+		"pointed at."
+	);
 	Cmd_AddCommand(
 		"debug_searchtreeforface",
 		CL_Debug_SearchTreeForFace,
-		"Prints which BSP nodes/leaves contain the specified face index.");
+		"Prints which BSP nodes/leaves contain the specified face index."
+	);
 	Cmd_AddCommand(
 		"debug_leafinfo",
 		CL_Debug_LeafInfo,
 		"Prints info about the specified leaf to the console. If no leaf index is provided, uses the leaf in which the "
-		"player is standing.");
+		"player is standing."
+	);
 	Cmd_AddCommand(
 		"debug_leafpvs",
 		CL_Debug_LeafPVS,
 		"Prints the PVS of the specified leaf to the console. If no leaf index is provided, uses the leaf in which the "
-		"player is standing.");
+		"player is standing."
+	);
 	Cmd_AddCommand(
 		"debug_modeltextureinfo",
 		CL_ModelTextureInfo,
-		"Prints info about the specified model's textures to the console. The model must be loaded.");
+		"Prints info about the specified model's textures to the console. The model must be loaded."
+	);
 }
 
 //============================================================================
@@ -4019,7 +4043,9 @@ void CL_Init(void)
 	string libpath;
 
 	if ( host.type == HOST_DEDICATED )
+	{
 		return;  // nothing running on the client
+	}
 
 	CL_InitLocal();
 
@@ -4036,7 +4062,9 @@ void CL_Init(void)
 	COM_GetCommonLibraryPath(LIBRARY_CLIENT, libpath, sizeof(libpath));
 
 	if ( !CL_LoadProgs(libpath) )
+	{
 		Host_Error("can't initialize %s: %s\n", libpath, COM_GetLibraryError());
+	}
 
 	cls.initialized = true;
 	cl.maxclients = 1;  // allow to drawing player in menu

@@ -368,7 +368,8 @@ typedef struct ref_api_s
 	int (*pfnGetStudioModelInterface)(
 		int version,
 		struct r_studio_interface_s** ppinterface,
-		struct engine_studio_api_s* pstudio);
+		struct engine_studio_api_s* pstudio
+	);
 
 	// memory
 	poolhandle_t (*_Mem_AllocPool)(const char* name, const char* filename, int fileline);
@@ -380,7 +381,8 @@ typedef struct ref_api_s
 		size_t size,
 		qboolean clear,
 		const char* filename,
-		int fileline);
+		int fileline
+	);
 	void (*_Mem_Free)(void* data, const char* filename, int fileline);
 
 	// library management
@@ -452,20 +454,22 @@ typedef struct ref_api_s
 	qboolean (*GetByteNormal)(size_t index, float* x, float* y, float* z);
 
 	void (*R_StudioCalcBoneQuaternion)(
-	int frame,
-	float s,
-	const mstudiobone_t* pbone,
-	const mstudioanim_t* panim,
-	const float* adj,
-	quat_t q);
+		int frame,
+		float s,
+		const mstudiobone_t* pbone,
+		const mstudioanim_t* panim,
+		const float* adj,
+		quat_t q
+	);
 
 	void (*R_StudioCalcBonePosition)(
-	int frame,
-	float s,
-	const mstudiobone_t* pbone,
-	const mstudioanim_t* panim,
-	const vec3_t adj,
-	vec3_t pos);
+		int frame,
+		float s,
+		const mstudiobone_t* pbone,
+		const mstudioanim_t* panim,
+		const vec3_t adj,
+		vec3_t pos
+	);
 } ref_api_t;
 
 struct mip_s;
@@ -544,8 +548,13 @@ typedef struct ref_interface_s
 	void (*CL_RunLightStyles)(void);
 
 	// sprites
-	void (
-		*R_GetSpriteParms)(int* frameWidth, int* frameHeight, int* numFrames, int currentFrame, const model_t* pSprite);
+	void (*R_GetSpriteParms)(
+		int* frameWidth,
+		int* frameHeight,
+		int* numFrames,
+		int currentFrame,
+		const model_t* pSprite
+	);
 	int (*R_GetSpriteTexture)(const model_t* m_pSpriteModel, int frame);
 
 	// model management
@@ -584,7 +593,8 @@ typedef struct ref_interface_s
 		int height,
 		int depth,
 		const void* buffer,
-		texFlags_t flags);
+		texFlags_t flags
+	);
 	void (*GL_FreeTexture)(unsigned int texnum);
 
 	// Decals manipulating (draw & remove)
@@ -643,7 +653,8 @@ typedef struct ref_interface_s
 		float flFogColor[3],
 		float flStart,
 		float flEnd,
-		int bOn);  // Works just like GL_FOG, flFogColor is r/g/b.
+		int bOn
+	);  // Works just like GL_FOG, flFogColor is r/g/b.
 	void (*ScreenToWorld)(const float* screen, float* world);
 	void (*GetMatrix)(const int pname, float* matrix);
 	void (*FogParams)(float flDensity, int iFogSkybox);
@@ -674,7 +685,7 @@ typedef int (*REFAPI)(int version, ref_interface_t* pFunctionTable, const ref_ap
 #define RETRIEVE_ENGINE_SHARED_CVAR(x, y) \
 	if ( (x = gEngfuncs.pfnGetCvarPointer(#y, 0)) == 0 ) \
 	{ \
-		gEngfuncs.Host_Error(S_ERROR "engine betrayed us and didn't gave us %s cvar pointer\n", #y); \
+		gEngfuncs.Host_Error(S_ERROR "engine betrayed us and didn't give us %s cvar pointer\n", #y); \
 	}
 #define ENGINE_SHARED_CVAR_NAME(f, x, y) f(x, y)
 #define ENGINE_SHARED_CVAR(f, x) ENGINE_SHARED_CVAR_NAME(f, x, x)
@@ -709,8 +720,58 @@ typedef int (*REFAPI)(int version, ref_interface_t* pFunctionTable, const ref_ap
 	ENGINE_SHARED_CVAR(f, r_glowshellfreq)
 
 #define DECLARE_ENGINE_SHARED_CVAR_LIST() ENGINE_SHARED_CVAR_LIST(DECLARE_ENGINE_SHARED_CVAR)
-
 #define DEFINE_ENGINE_SHARED_CVAR_LIST() ENGINE_SHARED_CVAR_LIST(DEFINE_ENGINE_SHARED_CVAR)
-
 #define RETRIEVE_ENGINE_SHARED_CVAR_LIST() ENGINE_SHARED_CVAR_LIST(RETRIEVE_ENGINE_SHARED_CVAR)
 #endif
+
+typedef struct ref_uigl_functions_s
+{
+	void (*beginFrame)(const struct ref_viewpass_s* rvp);
+	void (*endFrame)(void);
+	void (*clear)(uint32_t colour, int stencil);
+	void (*pushProjectionMatrixTranslation)(float x, float y, float z);
+	void (*popProjectionMatrix)(void);
+
+	// Positions are expected to be 2x GL_FLOAT,
+	// and colours are expected to be 4x GL_UNSIGNED_BYTE.
+	void (*prepareToDrawWithoutTexture)(const void* data, int objectSize, size_t positionOffset, size_t colourOffset);
+	void (*prepareToDrawWithTexture)(
+		uint32_t texture,
+		const void* data,
+		int objectSize,
+		size_t positionOffset,
+		size_t colourOffset,
+		size_t textureCoOrdOffset
+	);
+
+	void (*drawElements)(int numIndices, const void* indices);
+	void (*setScissorEnabled)(qboolean enabled);
+	void (*setScissorRegion)(int left, int bottom, int width, int height);
+	void (*setStencilEnabled)(qboolean enabled);
+
+	// Returns the previous stencil test value that was set.
+	int (*enableWritingToStencilMask)(qboolean clearStencilBuffer);
+
+	// Takes a test value to use for future stencil ops.
+	void (*disableWritingToStencilMask)(int testValue);
+
+	void (*setStencilOpReplace)(void);
+	void (*setStencilOpIncrement)(void);
+
+	int (*loadRGBAImageFromMemory)(
+		const char* name,
+		int width,
+		int height,
+		const byte* data,
+		size_t dataSize,
+		int flags
+	);
+
+	void (*freeImage)(int image);
+
+	// If null, sets identity transform.
+	void (*setTransform)(const float* mat4x4);
+} ref_uigl_functions;
+
+#define REF_UIFL_FUNCS_VERSION 1
+typedef int (*GETREFUIGLAPI)(int version, ref_uigl_functions* engineToRefFunctions);

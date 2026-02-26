@@ -288,17 +288,23 @@ static void GL_UpdateTextureParams(int iTexture)
 	Assert(tex != NULL);
 
 	if ( !tex->texnum )
+	{
 		return;  // free slot
+	}
 
 	GL_Bind(XASH_TEXTURE0, iTexture);
 
 	// set texture anisotropy if available
 	if ( GL_Support(GL_ANISOTROPY_EXT) && (tex->numMips > 1) && !FBitSet(tex->flags, TF_DEPTHMAP | TF_ALPHACONTRAST) )
+	{
 		pglTexParameterf(tex->target, GL_TEXTURE_MAX_ANISOTROPY_EXT, gl_texture_anisotropy->value);
+	}
 
 	// set texture LOD bias if available
 	if ( GL_Support(GL_TEXTURE_LOD_BIAS) && (tex->numMips > 1) && !FBitSet(tex->flags, TF_DEPTHMAP) )
+	{
 		pglTexParameterf(tex->target, GL_TEXTURE_LOD_BIAS_EXT, gl_texture_lodbias->value);
+	}
 
 	if ( IsLightMap(tex) )
 	{
@@ -315,7 +321,9 @@ static void GL_UpdateTextureParams(int iTexture)
 	}
 
 	if ( tex->numMips <= 1 )
+	{
 		return;
+	}
 
 	if ( FBitSet(tex->flags, TF_NEAREST) || gl_texture_nearest->value )
 	{
@@ -857,7 +865,8 @@ byte* GL_ResampleTexture(
 	int inHeight,
 	int outWidth,
 	int outHeight,
-	qboolean isNormalMap)
+	qboolean isNormalMap
+)
 {
 	uint frac, fracStep;
 	uint* in = (uint*)source;
@@ -1118,7 +1127,8 @@ static void GL_TextureImageRAW(
 	GLint height,
 	GLint depth,
 	GLint type,
-	const void* data)
+	const void* data
+)
 {
 	GLuint cubeTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB;
 	qboolean subImage = (qboolean)FBitSet(tex->flags, TF_IMG_UPLOADED);
@@ -1193,7 +1203,8 @@ static void GL_TextureImageDXT(
 	GLint height,
 	GLint depth,
 	size_t size,
-	const void* data)
+	const void* data
+)
 {
 	GLuint cubeTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB;
 	qboolean subImage = (qboolean)FBitSet(tex->flags, TF_IMG_UPLOADED);
@@ -1225,7 +1236,8 @@ static void GL_TextureImageDXT(
 				height,
 				tex->format,
 				(GLsizei)size,
-				data);
+				data
+			);
 		}
 		else
 		{
@@ -1247,7 +1259,8 @@ static void GL_TextureImageDXT(
 				depth,
 				tex->format,
 				(GLsizei)size,
-				data);
+				data
+			);
 		}
 		else
 		{
@@ -1283,11 +1296,14 @@ static void GL_CheckTexImageError(gl_texture_t* tex)
 
 	// catch possible errors
 	if ( CVAR_TO_BOOL(gl_check_errors) && (err = pglGetError()) != GL_NO_ERROR )
+	{
 		gEngfuncs.Con_Printf(
 			S_OPENGL_ERROR "%s while uploading %s [%s]\n",
 			GL_ErrorString(err),
 			tex->name,
-			GL_TargetToString(tex->target));
+			GL_TargetToString(tex->target)
+		);
+	}
 }
 
 /*
@@ -1327,7 +1343,8 @@ static qboolean GL_UploadTexture(gl_texture_t* tex, rgbdata_t* pic)
 		if ( !GL_Support(GL_ARB_TEXTURE_COMPRESSION_BPTC) )
 		{
 			gEngfuncs.Con_DPrintf(
-				S_ERROR "GL_UploadTexture: BC6H/BC7 compression formats is not supported by your hardware\n");
+				S_ERROR "GL_UploadTexture: BC6H/BC7 compression formats is not supported by your hardware\n"
+			);
 			return false;
 		}
 	}
@@ -1522,7 +1539,8 @@ qboolean GL_CheckTexName(const char* name)
 			S_ERROR "LoadTexture: Name \"%s\" length %zu exceeds max allowed length %zu\n",
 			name,
 			len,
-			maxlen);
+			maxlen
+		);
 
 		return false;
 	}
@@ -1564,24 +1582,38 @@ static gl_texture_t* GL_AllocTexture(const char* name, texFlags_t flags)
 
 	// find a free texture_t slot
 	for ( i = 0, tex = gl_textures; i < gl_numTextures; i++, tex++ )
+	{
 		if ( !tex->name[0] )
+		{
 			break;
+		}
+	}
 
 	if ( i == gl_numTextures )
 	{
 		if ( gl_numTextures == MAX_TEXTURES )
+		{
 			gEngfuncs.Host_Error("GL_AllocTexture: MAX_TEXTURES limit exceeds\n");
+		}
+
 		gl_numTextures++;
 	}
 
 	tex = &gl_textures[i];
+	memset(tex, 0, sizeof(*tex));
 
 	// copy initial params
 	Q_strncpy(tex->name, name, sizeof(tex->name));
+
 	if ( FBitSet(flags, TF_SKYSIDE) )
+	{
 		tex->texnum = tr.skyboxbasenum++;
+	}
 	else
+	{
 		tex->texnum = i;  // texnum is used for fast acess into gl_textures array too
+	}
+
 	tex->flags = flags;
 
 	// add to hash table
@@ -1687,10 +1719,13 @@ int GL_LoadTexture(const char* name, const byte* buf, size_t size, int flags)
 	uint picFlags = 0;
 
 	if ( !GL_CheckTexName(name) )
+	{
 		return 0;
+	}
 
 	// see if already loaded
 	tex = GL_TextureForName(name);
+
 	if ( tex )
 	{
 		return (int)(tex - gl_textures);
@@ -1817,17 +1852,16 @@ int GL_LoadTextureArray(const char** names, int flags)
 				gEngfuncs.Con_Printf(
 					S_ERROR "GL_LoadTextureArray: mismatch image format for %s and %s\n",
 					names[0],
-					names[i]);
+					names[i]
+				);
 				break;
 			}
 
 			// different mipcount
 			if ( pic->numMips != src->numMips )
 			{
-				gEngfuncs.Con_Printf(
-					S_ERROR "GL_LoadTextureArray: mismatch mip count for %s and %s\n",
-					names[0],
-					names[i]);
+				gEngfuncs
+					.Con_Printf(S_ERROR "GL_LoadTextureArray: mismatch mip count for %s and %s\n", names[0], names[i]);
 				break;
 			}
 
@@ -1836,7 +1870,8 @@ int GL_LoadTextureArray(const char** names, int flags)
 				gEngfuncs.Con_Printf(
 					S_ERROR "GL_LoadTextureArray: mismatch custom encoding for %s and %s\n",
 					names[0],
-					names[i]);
+					names[i]
+				);
 				break;
 			}
 
@@ -1847,10 +1882,8 @@ int GL_LoadTextureArray(const char** names, int flags)
 
 			if ( pic->size != src->size )
 			{
-				gEngfuncs.Con_Printf(
-					S_ERROR "GL_LoadTextureArray: mismatch image size for %s and %s\n",
-					names[0],
-					names[i]);
+				gEngfuncs
+					.Con_Printf(S_ERROR "GL_LoadTextureArray: mismatch image size for %s and %s\n", names[0], names[i]);
 				break;
 			}
 		}
@@ -1924,10 +1957,13 @@ int GL_LoadTextureFromBuffer(const char* name, rgbdata_t* pic, texFlags_t flags,
 	gl_texture_t* tex;
 
 	if ( !GL_CheckTexName(name) )
+	{
 		return 0;
+	}
 
 	// see if already loaded
 	tex = GL_TextureForName(name);
+
 	if ( tex && !update )
 	{
 		return (int)(tex - gl_textures);

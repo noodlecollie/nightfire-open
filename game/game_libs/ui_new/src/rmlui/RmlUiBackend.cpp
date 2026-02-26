@@ -1,0 +1,566 @@
+#include <RmlUi/Core.h>
+#include <RmlUi/Debugger.h>
+#include "EnginePublicAPI/keydefs.h"
+#include "rmlui/RmlUiBackend.h"
+#include "udll_int.h"
+#include "UIDebug.h"
+
+#define UI_CVAR_NAME "ui_mainmenu_file"
+
+static constexpr const char* const CONTEXT_NAME = "main";
+
+static const char* MAIN_MENU_PLACEHOLDER =
+	"<rml>\n"
+	"<head>\n"
+	"<title>Missing Main Menu!</title>\n"
+	"<style>\n"
+	"body { background-color: #FFFFFF; color: #000000; font-family: rmlui-debugger-font; "
+	"width: 100%; height: 100%; }\n"
+	"h1 { display: block; font-size: 50dp; }\n"
+	"flex { display: flex; flex-direction: column; justify-content: center; height: 100%; }\n"
+	"flex > h1 { display: block; margin-top: auto; margin-bottom: auto; text-align: center; }"
+	"</style>\n"
+	"</head>\n"
+	"<body>\n"
+	"<flex>\n"
+	"<h1>Could not locate main menu! Check that " UI_CVAR_NAME
+	" is set.</h1>"
+	"</flex>\n"
+	"</body>\n"
+	"</rml>\n";
+
+// TODO: This should be refactored into a main menu class.
+struct RmlUiBackend::MainMenuData
+{
+	Rml::DataModelHandle cachedHandle;
+	std::string tooltip;
+
+	bool SetUpDataBinding(Rml::Context* context)
+	{
+		if ( cachedHandle )
+		{
+			// Already set up, can't do so again.
+			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Double initialisation of data model");
+			return false;
+		}
+
+		Rml::DataModelConstructor constructor = context->CreateDataModel("mainmenumodel");
+
+		if ( !constructor )
+		{
+			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to construct main menu data model");
+			return false;
+		}
+
+		constructor.Bind("tooltip", &tooltip);
+		constructor.BindEventCallback("set_tooltip", &MainMenuData::SetTooltip, this);
+		constructor.BindEventCallback("clear_tooltip", &MainMenuData::ClearTooltip, this);
+
+		cachedHandle = constructor.GetModelHandle();
+		return true;
+	}
+
+	void SetTooltip(Rml::DataModelHandle /* handle */, Rml::Event& event, const Rml::VariantList& /* arguments */)
+	{
+		Rml::Element* element = event.GetTargetElement();
+
+		if ( !element )
+		{
+			return;
+		}
+
+		Rml::Variant* tooltipAttr = element->GetAttribute("tooltip");
+
+		if ( !tooltipAttr )
+		{
+			return;
+		}
+
+		if ( tooltipAttr->GetInto(tooltip) )
+		{
+			cachedHandle.DirtyVariable("tooltip");
+		}
+	}
+
+	void ClearTooltip(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+	{
+		if ( !tooltip.empty() )
+		{
+			tooltip.clear();
+			cachedHandle.DirtyVariable("tooltip");
+		}
+	}
+};
+
+// Note: Does not cater for modifier keys, since these are not handled by
+// Rml::Input::KeyIdentifier.
+static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
+{
+	if ( key >= '0' && key <= '9' )
+	{
+		return static_cast<Rml::Input::KeyIdentifier>(Rml::Input::KeyIdentifier::KI_0 + (key - '0'));
+	}
+
+	if ( key >= 'a' && key <= 'z' )
+	{
+		return static_cast<Rml::Input::KeyIdentifier>(Rml::Input::KeyIdentifier::KI_A + (key - 'a'));
+	}
+
+	if ( key >= K_F1 && key <= K_F12 )
+	{
+		return static_cast<Rml::Input::KeyIdentifier>(Rml::Input::KeyIdentifier::KI_F1 + (key - K_F1));
+	}
+
+	// Doesn't fall into the fortunate easy cases, so we have to do the rest manually.
+#define MAP_KEY(engineKey, rmlKey) \
+	case engineKey: \
+	{ \
+		return Rml::Input::KeyIdentifier::rmlKey; \
+	}
+
+	switch ( key )
+	{
+		MAP_KEY(';', KI_OEM_1)
+		MAP_KEY('=', KI_OEM_PLUS)
+		MAP_KEY(',', KI_OEM_COMMA)
+		MAP_KEY('-', KI_OEM_MINUS)
+		MAP_KEY('.', KI_OEM_PERIOD)
+		MAP_KEY('/', KI_OEM_2)
+		MAP_KEY('`', KI_OEM_3)
+		MAP_KEY('[', KI_OEM_4)
+		MAP_KEY('\\', KI_OEM_5)
+		MAP_KEY(']', KI_OEM_6)
+		MAP_KEY('\'', KI_OEM_7)
+		MAP_KEY('#', KI_OEM_102)
+		MAP_KEY(K_TAB, KI_TAB)
+		MAP_KEY(K_ENTER, KI_RETURN)
+		MAP_KEY(K_ESCAPE, KI_ESCAPE)
+		MAP_KEY(K_SPACE, KI_SPACE)
+		MAP_KEY(K_BACKSPACE, KI_BACK)
+		MAP_KEY(K_UPARROW, KI_UP)
+		MAP_KEY(K_RIGHTARROW, KI_RIGHT)
+		MAP_KEY(K_LEFTARROW, KI_LEFT)
+		MAP_KEY(K_DOWNARROW, KI_DOWN)
+		MAP_KEY(K_INS, KI_INSERT)
+		MAP_KEY(K_DEL, KI_DELETE)
+		MAP_KEY(K_PGDN, KI_NEXT)
+		MAP_KEY(K_HOME, KI_HOME)
+		MAP_KEY(K_END, KI_END)
+		MAP_KEY(K_KP_HOME, KI_NUMPAD7)
+		MAP_KEY(K_KP_UPARROW, KI_NUMPAD8)
+		MAP_KEY(K_KP_PGUP, KI_NUMPAD9)
+		MAP_KEY(K_KP_LEFTARROW, KI_NUMPAD4)
+		MAP_KEY(K_KP_5, KI_NUMPAD5)
+		MAP_KEY(K_KP_RIGHTARROW, KI_NUMPAD6)
+		MAP_KEY(K_KP_END, KI_NUMPAD1)
+		MAP_KEY(K_KP_DOWNARROW, KI_NUMPAD2)
+		MAP_KEY(K_KP_PGDN, KI_NUMPAD3)
+		MAP_KEY(K_KP_ENTER, KI_NUMPADENTER)
+		MAP_KEY(K_KP_INS, KI_NUMPAD0)
+		MAP_KEY(K_KP_DEL, KI_DECIMAL)
+		MAP_KEY(K_KP_SLASH, KI_DIVIDE)
+		MAP_KEY(K_KP_MINUS, KI_SUBTRACT)
+		MAP_KEY(K_KP_PLUS, KI_ADD)
+		MAP_KEY(K_KP_MUL, KI_MULTIPLY)
+
+		// From testing, the numpad * seems to come through as ASCII??
+		// Just to make life more difficult for us...
+		MAP_KEY('*', KI_MULTIPLY)
+
+		// Explicitly ignore these ones. We know we don't want to support them,
+		// and don't want to fail the assertion below.
+		case K_CAPSLOCK:
+		case K_SHIFT:
+		case K_ALT:
+		case K_CTRL:
+		case K_KP_NUMLOCK:
+		case K_WIN:
+		case K_SCROLLOCK:
+		{
+			return Rml::Input::KeyIdentifier::KI_UNKNOWN;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+
+#undef MAP_KEY
+
+	// Oops, an unrecognised key that we might need to have mapped!
+	ASSERTSZ(false, "Unrecognised key, may need mapping in RmlUi backend");
+	return Rml::Input::KeyIdentifier::KI_UNKNOWN;
+}
+
+static inline unsigned char EngineKeyToRmlKeyModifier(int key)
+{
+	// Only track these three keys. Things like meta/Windows will likely
+	// trigger system functions and won't be relevant for us.
+	switch ( key )
+	{
+		case K_ALT:
+		{
+			return Rml::Input::KeyModifier::KM_ALT;
+		}
+
+		case K_CTRL:
+		{
+			return Rml::Input::KeyModifier::KM_CTRL;
+		}
+
+		case K_SHIFT:
+		{
+			return Rml::Input::KeyModifier::KM_SHIFT;
+		}
+
+		default:
+		{
+			return 0;
+		}
+	}
+}
+
+RmlUiBackend::RmlUiBackend() :
+	m_SystemInterface(this),
+	m_RenderInterface(this)
+{
+}
+
+RmlUiBackend::~RmlUiBackend()
+{
+	ShutDown();
+}
+
+void RmlUiBackend::Initialise()
+{
+	if ( m_Initialised )
+	{
+		return;
+	}
+
+	Rml::SetSystemInterface(&m_SystemInterface);
+	Rml::SetRenderInterface(&m_RenderInterface);
+	Rml::SetFileInterface(&m_FileInterface);
+	Rml::SetTextInputHandler(&m_TextInputHandler);
+	Rml::Factory::RegisterEventListenerInstancer(&m_EventListenerInstancer);
+
+	Rml::Initialise();
+	RegisterFonts();
+
+	m_Modifiers = 0;
+	m_CurrentDocumentId.clear();
+	m_MainMenuModel.reset();
+
+	m_Initialised = true;
+}
+
+bool RmlUiBackend::VidInit(int width, int height)
+{
+	if ( !m_Initialised )
+	{
+		return false;
+	}
+
+	if ( !m_RmlContext )
+	{
+		m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(width, height));
+
+		if ( !m_RmlContext )
+		{
+			return false;
+		}
+
+		Rml::Debugger::Initialise(m_RmlContext);
+	}
+
+	m_RenderInterface.SetViewport(width, height);
+	m_RmlContext->SetDimensions(Rml::Vector2i(width, height));
+
+	float dpiScale = 1.0f;
+
+	if ( height >= 2160 )
+	{
+		dpiScale = 2.0f;
+	}
+	else if ( height >= 1080 )
+	{
+		dpiScale = 1.5f;
+	}
+
+	m_RmlContext->SetDensityIndependentPixelRatio(dpiScale);
+
+	return true;
+}
+
+void RmlUiBackend::ShutDown()
+{
+	if ( !m_Initialised )
+	{
+		return;
+	}
+
+	ReleaseResources();
+	Rml::Shutdown();
+
+	m_RmlContext = nullptr;
+	m_Initialised = false;
+	m_Modifiers = 0;
+	m_MainMenuModel.reset();
+}
+
+bool RmlUiBackend::IsInitialised() const
+{
+	return m_Initialised && m_RmlContext != nullptr;
+}
+
+bool RmlUiBackend::IsVisible() const
+{
+	if ( !IsInitialised() )
+	{
+		return false;
+	}
+
+	Rml::ElementDocument* doc = m_RmlContext->GetDocument(0);
+	return doc && doc->IsVisible();
+}
+
+void RmlUiBackend::ReceiveStartupComplete()
+{
+	ASSERT(IsInitialised());
+
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	const char* mainMenuFile = gEngfuncs.pfnGetCvarString(UI_CVAR_NAME);
+	m_MainMenuRmlPath = mainMenuFile ? mainMenuFile : "";
+
+	Rml::ElementDocument* doc = nullptr;
+
+	if ( !m_MainMenuRmlPath.empty() )
+	{
+		m_MainMenuModel.reset(new MainMenuData {});
+		m_MainMenuModel->SetUpDataBinding(m_RmlContext);
+
+		doc = m_RmlContext->LoadDocument(m_MainMenuRmlPath.c_str());
+
+		if ( doc )
+		{
+			Rml::Log::Message(Rml::Log::Type::LT_INFO, "Loaded main menu: %s", m_MainMenuRmlPath.c_str());
+		}
+		else
+		{
+			Rml::Log::Message(
+				Rml::Log::Type::LT_ERROR,
+				"Failed to load main menu %s specified in " UI_CVAR_NAME,
+				m_MainMenuRmlPath.c_str()
+			);
+		}
+	}
+
+	if ( !doc )
+	{
+		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "No main menu specified in " UI_CVAR_NAME "!");
+		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
+	}
+
+	ASSERT(doc);
+	m_CurrentDocumentId = doc->GetId();
+
+	ReceiveShowMenu();
+}
+
+void RmlUiBackend::ReceiveShowMenu()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	Rml::ElementDocument* doc = m_RmlContext->GetDocument(m_CurrentDocumentId);
+
+	if ( doc )
+	{
+		doc->Show();
+	}
+}
+
+void RmlUiBackend::ReceiveHideMenu()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	Rml::ElementDocument* doc = m_RmlContext->GetDocument(0);
+
+	if ( doc )
+	{
+		doc->Hide();
+	}
+}
+
+void RmlUiBackend::ReceiveMouseMove(int x, int y)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_RmlContext->ProcessMouseMove(x, y, m_Modifiers);
+}
+
+void RmlUiBackend::ReceiveMouseButton(int button, bool pressed)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	switch ( button )
+	{
+		case K_MOUSE1:
+		case K_MOUSE2:
+		case K_MOUSE3:
+		{
+			if ( pressed )
+			{
+				m_RmlContext->ProcessMouseButtonDown(button - K_MOUSE1, m_Modifiers);
+			}
+			else
+			{
+				m_RmlContext->ProcessMouseButtonUp(button - K_MOUSE1, m_Modifiers);
+			}
+		}
+	}
+}
+
+void RmlUiBackend::ReceiveMouseWheel(bool down)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, 30.0f * (down ? 1.0f : -1.0f)), m_Modifiers);
+}
+
+void RmlUiBackend::ReceiveKey(int key, bool pressed)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	Rml::Input::KeyIdentifier rmlKey = EngineKeyToRmlKey(key);
+
+	// TODO: A better solution for this?
+#ifdef _DEBUG
+	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F1 && pressed && (m_Modifiers & Rml::Input::KeyModifier::KM_CTRL) )
+	{
+		Rml::Debugger::SetVisible(!Rml::Debugger::IsVisible());
+	}
+#endif
+
+	if ( rmlKey == Rml::Input::KeyIdentifier::KI_UNKNOWN )
+	{
+		// Not handled as a normal key, so set modifiers.
+		// If not a recognised modifier, flags will remain unchanged.
+		if ( pressed )
+		{
+			m_Modifiers |= EngineKeyToRmlKeyModifier(key);
+		}
+		else
+		{
+			m_Modifiers &= ~EngineKeyToRmlKeyModifier(key);
+		}
+
+		return;
+	}
+
+	if ( pressed )
+	{
+		m_RmlContext->ProcessKeyDown(rmlKey, m_Modifiers);
+	}
+	else
+	{
+		m_RmlContext->ProcessKeyUp(rmlKey, m_Modifiers);
+	}
+}
+
+void RmlUiBackend::ReceiveChar(int character)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_RmlContext->ProcessTextInput(static_cast<char>(character));
+}
+
+Rml::Context* RmlUiBackend::GetRmlContext() const
+{
+	return m_RmlContext;
+}
+
+void RmlUiBackend::Update()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_RmlContext->Update();
+}
+
+void RmlUiBackend::Render()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_RenderInterface.BeginFrame();
+	m_RmlContext->Render();
+	m_RenderInterface.EndFrame();
+}
+
+void RmlUiBackend::RenderDebugTriangle()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_RenderInterface.RenderDebugTriangle();
+}
+
+void RmlUiBackend::ReleaseResources()
+{
+	Rml::Debugger::Shutdown();
+	m_CurrentDocumentId.clear();
+
+	if ( m_RmlContext )
+	{
+		m_RmlContext->UnloadAllDocuments();
+		Rml::RemoveContext(CONTEXT_NAME);
+		m_RmlContext = nullptr;
+	}
+
+	Rml::ReleaseFontResources();
+}
+
+void RmlUiBackend::RegisterFonts()
+{
+	ui_gl_filesystem_listing* listing = gUiGlFuncs.filesystem.findFiles("resource/fonts/*.ttf");
+
+	for ( const char* path = gUiGlFuncs.filesystem.listingGetCurrentItem(listing); path;
+		  gUiGlFuncs.filesystem.listingNextItem(listing), path = gUiGlFuncs.filesystem.listingGetCurrentItem(listing) )
+	{
+		Rml::LoadFontFace(path);
+	}
+
+	gUiGlFuncs.filesystem.freeListing(listing);
+}

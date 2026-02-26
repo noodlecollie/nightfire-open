@@ -225,7 +225,8 @@ void V_RefApplyOverview(ref_viewpass_t* rvp)
 			ov->origin[2],
 			ov->zNear,
 			ov->zFar,
-			ov->rotated);
+			ov->rotated
+		);
 	}
 
 	VectorCopy(ov->origin, rvp->vieworigin);
@@ -401,7 +402,8 @@ void R_DrawLeafNode(float x, float y, float scale)
 		0,
 		1,
 		1,
-		R_GetBuiltinTexture(REF_PARTICLE_TEXTURE));
+		R_GetBuiltinTexture(REF_PARTICLE_TEXTURE)
+	);
 }
 
 void R_DrawNodeConnection(float x, float y, float x2, float y2)

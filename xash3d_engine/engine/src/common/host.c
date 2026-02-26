@@ -398,7 +398,8 @@ void Host_Exec_f(void)
 			"pyro.cfg",
 			"spy.cfg",
 			"engineer.cfg",
-			"civilian.cfg"};
+			"civilian.cfg"
+		};
 		size_t i;
 		char temp[MAX_VA_STRING];
 		qboolean allow = false;
@@ -643,7 +644,8 @@ void Host_InitDecals(void)
 		"InitDecals: %zu decals (%zu from WAD, %zu from filesystem)\n",
 		numOldDecals + numNewDecals,
 		numOldDecals,
-		numNewDecals);
+		numNewDecals
+	);
 }
 
 /*
@@ -854,12 +856,18 @@ void GAME_EXPORT Host_Error(const char* error, ...)
 			Con_Printf("Host_Error: %s", hosterror1);
 		}
 		else
+		{
 			MSGBOX2(hosterror1);
+		}
 	}
+
+	Sys_DebugBreak();
 
 	// host is shutting down. don't invoke infinite loop
 	if ( host.status == HOST_SHUTDOWN )
+	{
 		return;
+	}
 
 	if ( recursive )
 	{
@@ -1293,7 +1301,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		"sleeptime",
 		"1",
 		FCVAR_ARCHIVE | FCVAR_FILTERABLE,
-		"milliseconds to sleep for each frame. higher values reduce fps accuracy");
+		"milliseconds to sleep for each frame. higher values reduce fps accuracy"
+	);
 	host_gameloaded = Cvar_Get("host_gameloaded", "0", FCVAR_READ_ONLY, "inidcates a loaded game.dll");
 	host_clientloaded = Cvar_Get("host_clientloaded", "0", FCVAR_READ_ONLY, "inidcates a loaded client.dll");
 	host_limitlocal = Cvar_Get("host_limitlocal", "0", 0, "apply cl_cmdrate and rate to loopback connection");
@@ -1308,7 +1317,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		"%i/%s (hw build %i)",
 		PROTOCOL_VERSION,
 		XASH_COMPAT_VERSION,
-		Q_buildnum_compat());
+		Q_buildnum_compat()
+	);
 	Cvar_Getf(
 		"host_ver",
 		FCVAR_READ_ONLY,
@@ -1317,7 +1327,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 		Q_buildnum(),
 		BuildPlatform_PlatformString(),
 		BuildPlatform_ArchitectureString(),
-		BuildPlatform_CommitString());
+		BuildPlatform_CommitString()
+	);
 
 	Mod_Init();
 	NET_Init();
@@ -1385,6 +1396,13 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 	Cmd_RemoveCommand("setgl");
 	Cbuf_ExecStuffCmds();  // execute stuffcmds (commandline)
 	SCR_CheckStartupVids();  // must be last
+
+#if !XASH_DEDICATED()
+	if ( !Host_IsDedicated() )
+	{
+		UI_StartupComplete();
+	}
+#endif
 
 	oldtime = Sys_DoubleTime() - 0.1;
 

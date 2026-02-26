@@ -1011,7 +1011,8 @@ static const char* osk_keylayout[][4] = {
 	 "\x12",
 	 "\x11"
 	 "ZXCVBNM<>? "
-	 "\x13"}};
+	 "\x13"}
+};
 
 struct osk_s
 {
@@ -1099,8 +1100,11 @@ static qboolean OSK_KeyEvent(int key, int down)
 						break;
 
 					Con_CharEvent(ch);
+
 					if ( cls.key_dest == key_menu )
+					{
 						UI_CharEvent(ch);
+					}
 
 					break;
 				}
@@ -1207,7 +1211,8 @@ static void OSK_DrawSpecialButton(const char* name, float x, float y, float widt
 		(int)(x * refState.width + width * 0.4f * refState.width),
 		(int)(y * refState.height + height * 0.4f * refState.height),
 		name,
-		color);
+		color
+	);
 }
 
 /*
@@ -1235,7 +1240,8 @@ void OSK_Draw(void)
 		100,
 		100,
 		100,
-		100);
+		100
+	);
 
 	OSK_DrawSpecialButton("-]", X_START, Y_START + Y_STEP * 2, X_STEP, Y_STEP);
 	OSK_DrawSpecialButton("<-", X_START + X_STEP * 12, Y_START + Y_STEP * 2, X_STEP, Y_STEP);

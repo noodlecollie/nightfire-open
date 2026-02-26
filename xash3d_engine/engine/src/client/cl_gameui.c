@@ -28,6 +28,8 @@ GNU General Public License for more details.
 #include <limits.h>
 #include "common/fscallback.h"
 #include "common/engine_mempool.h"
+#include "client/cl_uigl.h"
+#include "client/cl_uifs.h"
 
 static void UI_UpdateUserinfo(void);
 
@@ -177,7 +179,8 @@ void UI_AddTouchButtonToList(
 	const char* texture,
 	const char* command,
 	unsigned char* color,
-	int flags)
+	int flags
+)
 {
 	if ( gameui.dllFuncs2.pfnAddTouchButtonToList )
 	{
@@ -215,7 +218,7 @@ void UI_ShowConnectionWarning(void)
 	if ( Host_IsLocalClient() )
 		return;
 
-	if ( ++cl.lostpackets == 8 )
+	if ( ++cl.lostpackets >= 8 )
 	{
 		CL_Disconnect();
 		if ( gameui.dllFuncs2.pfnShowConnectionWarning )
@@ -272,7 +275,8 @@ void UI_ConnectionProgress_Download(
 	const char* pszServerPath,
 	int iCurrent,
 	int iTotal,
-	const char* comment)
+	const char* comment
+)
 {
 	if ( !gameui.dllFuncs2.pfnConnectionProgress_Download )
 		return;
@@ -691,7 +695,8 @@ static void GAME_EXPORT pfnFillRGBA(int x, int y, int width, int height, int r, 
 		0,
 		1,
 		1,
-		R_GetBuiltinTexture(REF_WHITE_TEXTURE));
+		R_GetBuiltinTexture(REF_WHITE_TEXTURE)
+	);
 
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);
 }
@@ -1382,6 +1387,14 @@ static char* pfnParseFileSafe(char* data, char* buf, const int size, unsigned in
 	return COM_ParseFileSafe(data, buf, size, flags, len, NULL);
 }
 
+void UI_StartupComplete(void)
+{
+	if ( gameui.dllFuncs2.pfnStartupComplete )
+	{
+		gameui.dllFuncs2.pfnStartupComplete();
+	}
+}
+
 static ui_extendedfuncs_t gExtendedfuncs = {
 	pfnEnableTextInput,
 	Con_UtfProcessChar,
@@ -1394,10 +1407,52 @@ static ui_extendedfuncs_t gExtendedfuncs = {
 	NET_CompareAdrSort,
 };
 
+static const ui_gl_functions gUiGlFuncs = {
+	// Renderer
+	{
+		CL_UIGL_BeginFrame,  // beginFrame
+		CL_UIGL_EndFrame,  // endFrame
+		CL_UIGL_Clear,  // clear
+		CL_UIGL_PushProjectionMatrixTranslation,  // pushProjectionMatrixTranslation
+		CL_UIGL_PopProjectionMatrix,  // popProjectionMatrix
+		CL_UIGL_PrepareToDrawWithoutTexture,  // prepareToDrawWithoutTexture
+		CL_UIGL_PrepareToDrawWithTexture,  // prepareToDrawWithTexture
+		CL_UIGL_DrawElements,  // drawElements
+		CL_UIGL_SetScissorEnabled,  // setScissorEnabled
+		CL_UIGL_SetScissorRegion,  // setScissorRegion
+		CL_UIGL_SetStencilEnabled,  // setStencilEnabled
+		CL_UIGL_EnableWritingToStencilMask,  // enableWritingToStencilMask
+		CL_UIGL_DisableWritingToStencilMask,  // disableWritingToStencilMask
+		CL_UIGL_SetStencilOpReplace,  // setStencilOpReplace
+		CL_UIGL_SetStencilOpIncrement,  // setStencilOpIncrement
+		CL_UIGL_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
+		CL_UIGL_FreeImage,  // freeImage
+		CL_UIGL_SetTransform,  // setTransform
+	},
+	// Filesytem
+	{
+		CL_UIFS_OpenReadOnlyFile,  // openReadOnlyFile
+		CL_UIFS_CloseFile,  // closeFile
+		CL_UIFS_ReadFromFile,  // readFromFile
+		CL_UIFS_SeekFile,  // seekFile
+		CL_UIFS_TellFile,  // tellFile
+		CL_UIFS_FileLength,  // fileLength
+		CL_UIFS_LoadFileData,  // loadFileData
+		CL_UIFS_FreeFileData,  // freeFileData
+		CL_UIFS_FindFiles,  // findFiles
+		CL_UIFS_FreeListing,  // freeListing
+		CL_UIFS_ListingNumItems,  // listingNumItems
+		CL_UIFS_ListingGetCurrentItem,  // listingGetCurrentItem
+		CL_UIFS_ListingNextItem,  // listingNextItem
+	}
+};
+
 void UI_UnloadProgs(void)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
 
 	// deinitialize game
 	gameui.dllFuncs.pfnShutdown();
@@ -1420,11 +1475,14 @@ qboolean UI_LoadProgs(void)
 	UIEXTENEDEDAPI GetExtAPI;
 	UITEXTAPI GiveTextApi;
 	MENUAPI GetMenuAPI;
+	UIGLAPI GetUiGlAPI;
 	string dllpath;
 	int i;
 
 	if ( gameui.hInstance )
+	{
 		UI_UnloadProgs();
+	}
 
 	// setup globals
 	gameui.globals = &gpGlobals;
@@ -1500,9 +1558,11 @@ qboolean UI_LoadProgs(void)
 		{
 			Con_Reportf("UI_LoadProgs: extended text API found\n");
 			Con_Reportf(
-				S_WARN "Text API is deprecated! If you are mod developer, consider moving to Extended Menu API!\n");
+				S_WARN "Text API is deprecated! If you are mod developer, consider moving to Extended Menu API!\n"
+			);
 			if ( GiveTextApi(
-					 &gpExtendedfuncs) )  // they are binary compatible, so we can just pass extended funcs API to menu
+					 &gpExtendedfuncs
+				 ) )  // they are binary compatible, so we can just pass extended funcs API to menu
 			{
 				Con_Reportf("UI_LoadProgs: extended text API initialized\n");
 				gameui.use_text_api = true;
@@ -1517,7 +1577,18 @@ qboolean UI_LoadProgs(void)
 			Con_Reportf(
 				S_WARN
 				"AddTouchButtonToList is deprecated! If you are mod developer, consider moving to Extended "
-				"Menu API!\n");
+				"Menu API!\n"
+			);
+		}
+	}
+
+	GetUiGlAPI = (UIGLAPI)COM_GetProcAddress(gameui.hInstance, "GetUiGlAPI");
+
+	if ( GetUiGlAPI )
+	{
+		if ( GetUiGlAPI(MENU_UIGLAPI_VERSION, &gUiGlFuncs) )
+		{
+			Con_Reportf("UI_LoadProgs: GL API initialized\n");
 		}
 	}
 

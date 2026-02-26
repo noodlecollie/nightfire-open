@@ -707,7 +707,8 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 			S_ERROR "VID_CreateWindow: couldn't create '%s' with safegl level %d: %s\n",
 			wndname,
 			glw_state.safe,
-			SDL_GetError());
+			SDL_GetError()
+		);
 
 		glw_state.safe++;
 
@@ -773,7 +774,8 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 				0x000000ff,
 				0x0000ff00,
 				0x00ff0000,
-				0xff000000);
+				0xff000000
+			);
 
 			if ( surface )
 			{
@@ -860,7 +862,8 @@ qboolean VID_CreateWindow(int width, int height, qboolean fullscreen)
 			S_ERROR "VID_CreateWindow: couldn't create '%s' with safegl level %d: %s\n",
 			wndname,
 			glw_state.safe,
-			SDL_GetError());
+			SDL_GetError()
+		);
 
 		glw_state.safe++;
 
@@ -1046,7 +1049,7 @@ qboolean R_Init_Video(const int type)
 		SDL_SetHint("SDL_VIDEO_X11_FORCE_EGL", "1");
 #endif
 
-		// must be initialized before creating window
+	// must be initialized before creating window
 #if XASH_WIN32()
 	WIN_SetDPIAwareness();
 #endif
@@ -1114,7 +1117,8 @@ rserr_t R_ChangeDisplaySettings(int width, int height, qboolean fullscreen)
 		"R_ChangeDisplaySettings: Setting video mode to %dx%d %s\n",
 		width,
 		height,
-		fullscreen ? "fullscreen" : "windowed");
+		fullscreen ? "fullscreen" : "windowed"
+	);
 
 	refState.fullScreen = fullscreen;
 

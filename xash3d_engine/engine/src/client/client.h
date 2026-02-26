@@ -18,6 +18,7 @@ GNU General Public License for more details.
 
 #include "MathLib/mathlib.h"
 #include "EnginePublicAPI/cdll_int.h"
+#include "EnginePublicAPI/keydefs.h"
 #include "EngineInternalAPI/menu_int.h"
 #include "EnginePublicAPI/cl_entity.h"
 #include "common/mod_local.h"
@@ -872,7 +873,8 @@ qboolean CL_Scissor(
 	float* u0,
 	float* v0,
 	float* u1,
-	float* v1);
+	float* v1
+);
 
 static inline cl_entity_t* CL_EDICT_NUM(int n)
 {
@@ -1102,7 +1104,8 @@ void S_RestoreSound(
 	int flags,
 	double sample,
 	double end,
-	int wordIndex);
+	int wordIndex
+);
 void S_StartSound(const vec3_t pos, int ent, int chan, sound_t sfx, float vol, float attn, int pitch, int flags);
 void S_AmbientSound(const vec3_t pos, int ent, sound_t handle, float fvol, float attn, int pitch, int flags);
 void S_FadeClientVolume(float fadePercent, float fadeOutSeconds, float holdTime, float fadeInSeconds);
@@ -1136,7 +1139,8 @@ void UI_AddTouchButtonToList(
 	const char* texture,
 	const char* command,
 	unsigned char* color,
-	int flags);
+	int flags
+);
 void UI_ConnectionProgress_Disconnect(void);
 void UI_ConnectionProgress_Download(
 	const char* pszFileName,
@@ -1144,7 +1148,8 @@ void UI_ConnectionProgress_Download(
 	const char* pszServerPath,
 	int iCurrent,
 	int iTotal,
-	const char* comment);
+	const char* comment
+);
 void UI_ConnectionProgress_DownloadEnd(void);
 void UI_ConnectionProgress_Precache(void);
 void UI_ConnectionProgress_Connect(const char* server);
@@ -1155,6 +1160,7 @@ void pfnPIC_Draw(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawTrans(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawHoles(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawAdditive(int x, int y, int width, int height, const wrect_t* prc);
+void UI_StartupComplete(void);
 
 //
 // cl_mobile.c

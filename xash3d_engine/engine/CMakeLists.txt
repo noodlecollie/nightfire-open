@@ -1,4 +1,5 @@
 include(compiler_settings)
+include(nf_utils)
 
 if(NF_DEDICATED_SERVER)
 	set(CLIENT_SUPPORT NO)
@@ -157,7 +158,7 @@ if(CLIENT_SUPPORT)
 		src/client/cl_demo.c
 		src/client/cl_efrag.c
 		src/client/cl_efx.c
-		$<$<BOOL:${CLIENT_SUPPORT}>:src/client/cl_events.c>
+		src/client/cl_events.c
 		src/client/cl_font.c
 		src/client/cl_frame.c
 		src/client/cl_game.c
@@ -177,6 +178,10 @@ if(CLIENT_SUPPORT)
 		src/client/cl_surfaceprop_effects.c
 		src/client/cl_tent.h
 		src/client/cl_tent.c
+		src/client/cl_uifs.h
+		src/client/cl_uifs.c
+		src/client/cl_uigl.h
+		src/client/cl_uigl.c
 		src/client/cl_video.c
 		src/client/cl_view.c
 		src/client/console.c
@@ -321,17 +326,6 @@ install(TARGETS ${TARGETNAME_LIB_ENGINE}
 	RUNTIME DESTINATION ${INSTALL_ROOT}
 )
 
-if(TARGET_PLATFORM STREQUAL "WINDOWS" AND CLIENT_SUPPORT)
-	add_custom_command(
-		TARGET ${TARGETNAME_LIB_ENGINE} POST_BUILD
-		MAIN_DEPENDENCY SDL2::SDL2
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		"$<TARGET_FILE:SDL2::SDL2>"
-		"$<TARGET_FILE_DIR:${TARGETNAME_LIB_ENGINE}>"
-	)
-
-	install(IMPORTED_RUNTIME_ARTIFACTS SDL2::SDL2
-		RUNTIME DESTINATION ${INSTALL_ROOT}
-		LIBRARY DESTINATION ${INSTALL_ROOT}
-	)
+if(NOT NF_DEDICATED_SERVER)
+	install_dependencies_from_directory(TARGET ${TARGETNAME_LIB_ENGINE} DIRECTORIES $<TARGET_FILE_DIR:SDL2::SDL2>)
 endif()

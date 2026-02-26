@@ -226,14 +226,6 @@ typedef struct
 
 typedef enum
 {
-	key_console = 0,
-	key_game,
-	key_menu,
-	key_message
-} keydest_t;
-
-typedef enum
-{
 	RD_NONE = 0,
 	RD_CLIENT,
 	RD_PACKET
@@ -714,7 +706,8 @@ qboolean COM_CreateCustomization(
 	int playernum,
 	int flags,
 	customization_t** pCust,
-	int* nLumps);
+	int* nLumps
+);
 int COM_SizeofResourceList(resource_t* pList, resourceinfo_t* ri);
 
 //
@@ -777,7 +770,8 @@ void SV_CreateDecal(
 	int entityIndex,
 	int modelIndex,
 	int flags,
-	float scale);
+	float scale
+);
 void Log_Printf(const char* fmt, ...) _format(1);
 void SV_BroadcastCommand(const char* fmt, ...) _format(1);
 qboolean SV_RestoreCustomDecal(struct decallist_s* entry, struct edict_s* pEdict, qboolean adjacent);
@@ -812,14 +806,16 @@ void SV_ClipPMoveToEntity(
 	vec3_t mins,
 	vec3_t maxs,
 	const vec3_t end,
-	struct pmtrace_s* tr);
+	struct pmtrace_s* tr
+);
 void CL_ClipPMoveToEntity(
 	struct physent_s* pe,
 	const vec3_t start,
 	vec3_t mins,
 	vec3_t maxs,
 	const vec3_t end,
-	struct pmtrace_s* tr);
+	struct pmtrace_s* tr
+);
 void SV_SysError(const char* error_string);
 void SV_ShutdownGame(void);
 void SV_ExecLoadLevel(void);
