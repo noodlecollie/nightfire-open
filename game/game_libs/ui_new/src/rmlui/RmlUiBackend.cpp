@@ -52,7 +52,7 @@ struct RmlUiBackend::MainMenuData
 			return false;
 		}
 
-		constructor.Bind("tooltip", &tooltip);
+		constructor.Bind("footer_tooltip", &tooltip);
 		constructor.BindEventCallback("set_tooltip", &MainMenuData::SetTooltip, this);
 		constructor.BindEventCallback("clear_tooltip", &MainMenuData::ClearTooltip, this);
 
@@ -78,7 +78,7 @@ struct RmlUiBackend::MainMenuData
 
 		if ( tooltipAttr->GetInto(tooltip) )
 		{
-			cachedHandle.DirtyVariable("tooltip");
+			cachedHandle.DirtyVariable("footer_tooltip");
 		}
 	}
 
@@ -87,7 +87,7 @@ struct RmlUiBackend::MainMenuData
 		if ( !tooltip.empty() )
 		{
 			tooltip.clear();
-			cachedHandle.DirtyVariable("tooltip");
+			cachedHandle.DirtyVariable("footer_tooltip");
 		}
 	}
 };
