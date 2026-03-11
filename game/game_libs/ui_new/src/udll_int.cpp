@@ -28,12 +28,12 @@ static void pfnShutdown(void)
 	gRmlUiBackend.ShutDown();
 }
 
-static void pfnRedraw(float /* flTime */)
+static void pfnRedraw(float flTime)
 {
 #ifdef RENDER_DEBUG_TRIANGLE
 	gRmlUiBackend.RenderDebugTriangle();
 #else
-	gRmlUiBackend.Update();
+	gRmlUiBackend.Update(flTime);
 	gRmlUiBackend.Render();
 #endif
 }

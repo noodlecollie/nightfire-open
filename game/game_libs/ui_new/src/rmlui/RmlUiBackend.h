@@ -32,7 +32,7 @@ public:
 	void ReceiveKey(int key, bool pressed);
 	void ReceiveChar(int character);
 
-	void Update();
+	void Update(float currentTime);
 	void Render();
 
 	Rml::Context* GetRmlContext() const;

@@ -505,7 +505,7 @@ Rml::Context* RmlUiBackend::GetRmlContext() const
 	return m_RmlContext;
 }
 
-void RmlUiBackend::Update()
+void RmlUiBackend::Update(float /* currentTime */)
 {
 	if ( !IsInitialised() )
 	{

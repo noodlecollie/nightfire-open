@@ -12,6 +12,15 @@ include(nf_utils)
 set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 
 set(SOURCES_UI
+	src/framework/BaseMenu.h
+	src/framework/BaseMenu.cpp
+	src/framework/DataBinding.h
+	src/framework/MenuDirectory.h
+	src/framework/MenuDirectory.cpp
+	src/framework/MenuStack.h
+	src/framework/MenuStack.cpp
+	src/menus/MainMenu.h
+	src/menus/MainMenu.cpp
 	src/rmlui/EventListenerImpl.h
 	src/rmlui/EventListenerImpl.cpp
 	src/rmlui/EventListenerInstancerImpl.h
