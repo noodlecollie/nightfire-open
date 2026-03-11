@@ -30,9 +30,9 @@ public:
 		return m_Value;
 	}
 
-	void SetValue(T value)
+	T& Value()
 	{
-		m_Value = std::move(value);
+		return m_Value;
 	}
 
 private:

@@ -18,3 +18,8 @@ const char* BaseMenu::RmlFilePath() const
 {
 	return m_RmlFilePath;
 }
+
+bool BaseMenu::SetUpDataBindings(Rml::Context*)
+{
+	return true;
+}

@@ -4,6 +4,8 @@
 
 void MenuDirectory::LoadAllMenus()
 {
+	m_MenuMap.clear();
+
 	AddToMap<MainMenu>();
 }
 

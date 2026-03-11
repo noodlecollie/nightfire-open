@@ -1,5 +1,10 @@
 #pragma once
 
+namespace Rml
+{
+	class Context;
+}
+
 class BaseMenu
 {
 public:
@@ -8,6 +13,7 @@ public:
 	const char* Name() const;
 	const char* RmlFilePath() const;
 
+	virtual bool SetUpDataBindings(Rml::Context* context);
 	virtual void Update(float currentTime) = 0;
 
 protected:
