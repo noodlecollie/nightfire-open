@@ -1,23 +1,21 @@
 #pragma once
 
 #include <vector>
-#include <memory>
-#include <type_traits>
 
-class BaseMenu;
+class MenuDirectoryEntry;
 
 class MenuStack
 {
 public:
-	void Push(BaseMenu* menu);
-	BaseMenu* Pop();
+	void Push(MenuDirectoryEntry* menu);
+	MenuDirectoryEntry* Pop();
 	void Update(float currentTime);
 
-	BaseMenu* Top() const;
+	MenuDirectoryEntry* Top() const;
 	bool IsEmpty() const;
 
 private:
-	using MenuVec = std::vector<BaseMenu*>;
+	using MenuVec = std::vector<MenuDirectoryEntry*>;
 
 	MenuVec m_Stack;
 };

@@ -1,7 +1,8 @@
 #include "framework/MenuStack.h"
-#include "framework/BaseMenu.h"
+#include "framework/MenuDirectory.h"
+#include <algorithm>
 
-void MenuStack::Push(BaseMenu* menu)
+void MenuStack::Push(MenuDirectoryEntry* menu)
 {
 	MenuVec::iterator it = std::find(m_Stack.begin(), m_Stack.end(), menu);
 
@@ -15,29 +16,29 @@ void MenuStack::Push(BaseMenu* menu)
 	m_Stack.push_back(menu);
 }
 
-BaseMenu* MenuStack::Pop()
+MenuDirectoryEntry* MenuStack::Pop()
 {
 	if ( m_Stack.empty() )
 	{
 		return nullptr;
 	}
 
-	BaseMenu* menu = m_Stack.back();
+	MenuDirectoryEntry* menu = m_Stack.back();
 	m_Stack.pop_back();
 	return menu;
 }
 
 void MenuStack::Update(float currentTime)
 {
-	BaseMenu* topMenu = Top();
+	MenuDirectoryEntry* topMenu = Top();
 
 	if ( topMenu )
 	{
-		topMenu->Update(currentTime);
+		topMenu->menuPtr->Update(currentTime);
 	}
 }
 
-BaseMenu* MenuStack::Top() const
+MenuDirectoryEntry* MenuStack::Top() const
 {
 	return (!m_Stack.empty()) ? m_Stack.back() : nullptr;
 }
