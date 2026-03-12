@@ -11,6 +11,7 @@ public:
 	static const char* const NAME;
 
 	MainMenu();
+
 	void Update(float currentTime) override;
 	bool SetUpDataBindings(Rml::Context* context) override;
 

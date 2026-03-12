@@ -10,6 +10,8 @@ class MenuDirectory
 {
 public:
 	void LoadAllMenus();
+	void Clear();
+
 	BaseMenu* GetMenu(const std::string& name) const;
 
 private:

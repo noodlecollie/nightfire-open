@@ -9,6 +9,11 @@ void MenuDirectory::LoadAllMenus()
 	AddToMap<MainMenu>();
 }
 
+void MenuDirectory::Clear()
+{
+	m_MenuMap.clear();
+}
+
 BaseMenu* MenuDirectory::GetMenu(const std::string& name) const
 {
 	MenuMap::const_iterator it = m_MenuMap.find(name);

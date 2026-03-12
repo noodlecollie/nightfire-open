@@ -2,10 +2,10 @@
 #include <RmlUi/Debugger.h>
 #include "EnginePublicAPI/keydefs.h"
 #include "rmlui/RmlUiBackend.h"
+#include "framework/BaseMenu.h"
+#include "menus/MainMenu.h"
 #include "udll_int.h"
 #include "UIDebug.h"
-
-#define UI_CVAR_NAME "ui_mainmenu_file"
 
 static constexpr const char* const CONTEXT_NAME = "main";
 
@@ -23,8 +23,7 @@ static const char* MAIN_MENU_PLACEHOLDER =
 	"</head>\n"
 	"<body>\n"
 	"<flex>\n"
-	"<h1>Could not locate main menu! Check that " UI_CVAR_NAME
-	" is set.</h1>"
+	"<h1>Failed to load main menu! :(</h1>"
 	"</flex>\n"
 	"</body>\n"
 	"</rml>\n";
@@ -247,10 +246,10 @@ void RmlUiBackend::Initialise()
 
 	Rml::Initialise();
 	RegisterFonts();
+	m_MenuDirectory.LoadAllMenus();
 
 	m_Modifiers = 0;
 	m_CurrentDocumentId.clear();
-	m_MainMenuModel.reset();
 
 	m_Initialised = true;
 }
@@ -306,7 +305,6 @@ void RmlUiBackend::ShutDown()
 	m_RmlContext = nullptr;
 	m_Initialised = false;
 	m_Modifiers = 0;
-	m_MainMenuModel.reset();
 }
 
 bool RmlUiBackend::IsInitialised() const
@@ -334,35 +332,31 @@ void RmlUiBackend::ReceiveStartupComplete()
 		return;
 	}
 
-	const char* mainMenuFile = gEngfuncs.pfnGetCvarString(UI_CVAR_NAME);
-	m_MainMenuRmlPath = mainMenuFile ? mainMenuFile : "";
-
 	Rml::ElementDocument* doc = nullptr;
+	BaseMenu* menu = m_MenuDirectory.GetMenu(MainMenu::NAME);
 
-	if ( !m_MainMenuRmlPath.empty() )
+	if ( menu )
 	{
-		m_MainMenuModel.reset(new MainMenuData {});
-		m_MainMenuModel->SetUpDataBinding(m_RmlContext);
-
-		doc = m_RmlContext->LoadDocument(m_MainMenuRmlPath.c_str());
+		menu->SetUpDataBindings(m_RmlContext);
+		doc = m_RmlContext->LoadDocument(menu->RmlFilePath());
 
 		if ( doc )
 		{
-			Rml::Log::Message(Rml::Log::Type::LT_INFO, "Loaded main menu: %s", m_MainMenuRmlPath.c_str());
+			Rml::Log::Message(Rml::Log::Type::LT_INFO, "Loaded main menu from %s", MainMenu::NAME, menu->RmlFilePath());
 		}
 		else
 		{
-			Rml::Log::Message(
-				Rml::Log::Type::LT_ERROR,
-				"Failed to load main menu %s specified in " UI_CVAR_NAME,
-				m_MainMenuRmlPath.c_str()
-			);
+			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to load main menu from %s", menu->RmlFilePath());
 		}
+	}
+	else
+	{
+		ASSERT(false);
+		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Main menu was not found in menu directory!");
 	}
 
 	if ( !doc )
 	{
-		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "No main menu specified in " UI_CVAR_NAME "!");
 		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
 	}
 
@@ -549,6 +543,7 @@ void RmlUiBackend::ReleaseResources()
 		m_RmlContext = nullptr;
 	}
 
+	m_MenuDirectory.Clear();
 	Rml::ReleaseFontResources();
 }
 
