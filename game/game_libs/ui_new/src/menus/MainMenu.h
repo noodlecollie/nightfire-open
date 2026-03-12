@@ -3,7 +3,7 @@
 #include <RmlUi/Core/Types.h>
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/BaseMenu.h"
-#include "framework/DataBinding.h"
+#include "templatebindings/MenuFrameDataBinding.h"
 
 class MainMenu : public BaseMenu
 {
@@ -15,8 +15,5 @@ public:
 	bool SetUpDataBindings(Rml::Context* context) override;
 
 private:
-	void SetTooltip(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList&);
-	void ClearTooltip(Rml::DataModelHandle handle, Rml::Event&, const Rml::VariantList&);
-
-	DataBinding<Rml::String> m_Tooltip;
+	MenuFrameDataBinding m_MenuFrameDataBinding;
 };

@@ -25,6 +25,8 @@ public:
 		return m_Name;
 	}
 
+	// TODO: operator ->()
+
 	const T& Value() const
 	{
 		return m_Value;

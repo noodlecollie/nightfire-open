@@ -35,6 +35,9 @@ set(SOURCES_UI
 	src/rmlui/SystemInterfaceImpl.cpp
 	src/rmlui/TextInputHandlerImpl.h
 	src/rmlui/TextInputHandlerImpl.cpp
+	src/templatebindings/BaseTemplateBinding.h
+	src/templatebindings/MenuFrameDataBinding.h
+	src/templatebindings/MenuFrameDataBinding.cpp
 	src/udll_int.h
 	src/udll_int.cpp
 	src/UIDebug.h
