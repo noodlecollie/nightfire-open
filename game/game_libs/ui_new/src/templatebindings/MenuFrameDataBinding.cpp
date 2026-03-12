@@ -7,7 +7,7 @@ MenuFrameDataBinding::MenuFrameDataBinding() :
 {
 }
 
-bool MenuFrameDataBinding::SetUpDataBindings(Rml::Context*, Rml::DataModelConstructor& constructor)
+bool MenuFrameDataBinding::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
 	constructor.Bind(m_Tooltip.Name(), &m_Tooltip.Value());
 	constructor.BindEventCallback("set_tooltip", &MenuFrameDataBinding::SetTooltip, this);

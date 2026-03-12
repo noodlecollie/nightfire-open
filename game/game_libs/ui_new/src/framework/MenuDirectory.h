@@ -3,20 +3,40 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
+#include "framework/BaseMenu.h"
 
-class BaseMenu;
+namespace Rml
+{
+	class Context;
+	class ElementDocument;
+}  // namespace Rml
+
+struct MenuDirectoryEntry
+{
+	std::unique_ptr<BaseMenu> menuPtr;
+	Rml::ElementDocument* document = nullptr;
+
+private:
+	friend class MenuDirectory;
+
+	explicit MenuDirectoryEntry(std::unique_ptr<BaseMenu>&& ptr) :
+		menuPtr(std::move(ptr))
+	{
+	}
+};
 
 class MenuDirectory
 {
 public:
-	void LoadAllMenus();
+	void Populate();
 	void Clear();
 
-	BaseMenu* GetMenu(const std::string& name) const;
+	void LoadAllMenus(Rml::Context& context);
+
+	const MenuDirectoryEntry* GetMenuEntry(const std::string& name) const;
 
 private:
-	using BaseMenuPtr = std::unique_ptr<BaseMenu>;
-	using MenuMap = std::unordered_map<std::string, BaseMenuPtr>;
+	using MenuMap = std::unordered_map<std::string, MenuDirectoryEntry>;
 
 	template<typename T>
 	void AddToMap()
@@ -25,6 +45,8 @@ private:
 	}
 
 	void AddToMap(BaseMenu* newMenu);
+	void SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& context);
+	void LoadMenuRml(MenuDirectoryEntry& entry, Rml::Context& context);
 
 	MenuMap m_MenuMap;
 };

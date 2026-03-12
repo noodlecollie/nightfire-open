@@ -8,7 +8,7 @@ class MenuFrameDataBinding : public BaseTemplateBinding
 {
 public:
 	MenuFrameDataBinding();
-	bool SetUpDataBindings(Rml::Context* context, Rml::DataModelConstructor& constructor) override;
+	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	void SetTooltip(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList&);

@@ -11,5 +11,5 @@ class BaseTemplateBinding
 public:
 	virtual ~BaseTemplateBinding() = default;
 
-	virtual bool SetUpDataBindings(Rml::Context* context, Rml::DataModelConstructor& constructor) = 0;
+	virtual bool SetUpDataBindings(Rml::DataModelConstructor& constructor) = 0;
 };

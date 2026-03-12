@@ -246,10 +246,23 @@ void RmlUiBackend::Initialise()
 
 	Rml::Initialise();
 	RegisterFonts();
-	m_MenuDirectory.LoadAllMenus();
+	m_MenuDirectory.Populate();
 
 	m_Modifiers = 0;
 	m_CurrentDocumentId.clear();
+
+	m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(16, 16));
+	ASSERT(m_RmlContext);
+
+	if ( !m_RmlContext )
+	{
+		ReleaseResources();
+		Rml::Shutdown();
+		return;
+	}
+
+	Rml::Debugger::Initialise(m_RmlContext);
+	m_MenuDirectory.LoadAllMenus(*m_RmlContext);
 
 	m_Initialised = true;
 }
@@ -259,18 +272,6 @@ bool RmlUiBackend::VidInit(int width, int height)
 	if ( !m_Initialised )
 	{
 		return false;
-	}
-
-	if ( !m_RmlContext )
-	{
-		m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(width, height));
-
-		if ( !m_RmlContext )
-		{
-			return false;
-		}
-
-		Rml::Debugger::Initialise(m_RmlContext);
 	}
 
 	m_RenderInterface.SetViewport(width, height);
@@ -333,30 +334,16 @@ void RmlUiBackend::ReceiveStartupComplete()
 	}
 
 	Rml::ElementDocument* doc = nullptr;
-	BaseMenu* menu = m_MenuDirectory.GetMenu(MainMenu::NAME);
+	const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(MainMenu::NAME);
 
 	if ( menu )
 	{
-		menu->SetUpDataBindings(m_RmlContext);
-		doc = m_RmlContext->LoadDocument(menu->RmlFilePath());
-
-		if ( doc )
-		{
-			Rml::Log::Message(Rml::Log::Type::LT_INFO, "Loaded main menu from %s", MainMenu::NAME, menu->RmlFilePath());
-		}
-		else
-		{
-			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to load main menu from %s", menu->RmlFilePath());
-		}
-	}
-	else
-	{
-		ASSERT(false);
-		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Main menu was not found in menu directory!");
+		doc = menu->document;
 	}
 
 	if ( !doc )
 	{
+		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Main menu had no available document!");
 		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
 	}
 
