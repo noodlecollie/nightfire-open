@@ -37,6 +37,7 @@ public:
 
 	const char* Name() const;
 	const char* RmlFilePath() const;
+	const Rml::String& FallbackRml() const;
 
 	const MenuRequest* CurrentRequest() const;
 	void ClearCurrentRequest();
@@ -48,6 +49,8 @@ protected:
 	BaseMenu(const char* name, const char* rmlFilePath);
 
 	virtual bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor);
+
+	Rml::String m_FallbackRml;
 
 private:
 	void HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);

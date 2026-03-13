@@ -2,6 +2,7 @@
 #include "framework/BaseMenu.h"
 #include "menus/MainMenu.h"
 #include <RmlUi/Core/Context.h>
+#include "UIDebug.h"
 
 void MenuDirectory::Populate()
 {
@@ -78,17 +79,56 @@ void MenuDirectory::SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& c
 	}
 }
 
+// TODO: Load fallback RML
 void MenuDirectory::LoadMenuRml(MenuDirectoryEntry& entry, Rml::Context& context)
 {
+	static const char* FINAL_FALLBACK_RML =
+		"<rml>\n"
+		"<head>\n"
+		"<title>Missing Menu!</title>\n"
+		"<style>\n"
+		"body { background-color: #FFFFFF; color: #000000; font-family: rmlui-debugger-font; "
+		"width: 100%; height: 100%; }\n"
+		"h1 { display: block; font-size: 50dp; }\n"
+		"flex { display: flex; flex-direction: column; justify-content: center; height: 100%; }\n"
+		"flex > h1 { display: block; margin-top: auto; margin-bottom: auto; text-align: center; }"
+		"</style>\n"
+		"</head>\n"
+		"<body>\n"
+		"<flex>\n"
+		"<h1>Failed to load menu! :(</h1>"
+		"</flex>\n"
+		"</body>\n"
+		"</rml>\n";
+
 	entry.document = context.LoadDocument(entry.menuPtr->RmlFilePath());
 
-	if ( !entry.document )
+	if ( entry.document )
 	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_ERROR,
-			"Failed to load %s for menu %s",
-			entry.menuPtr->RmlFilePath(),
-			entry.menuPtr->Name()
-		);
+		return;
 	}
+
+	Rml::Log::Message(
+		Rml::Log::Type::LT_ERROR,
+		"Failed to load %s for menu %s",
+		entry.menuPtr->RmlFilePath(),
+		entry.menuPtr->Name()
+	);
+
+	const Rml::String& fallback = entry.menuPtr->FallbackRml();
+
+	if ( !fallback.empty() )
+	{
+		entry.document = context.LoadDocumentFromMemory(entry.menuPtr->FallbackRml());
+
+		if ( entry.document )
+		{
+			return;
+		}
+
+		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to load fallback RML for menu %s", entry.menuPtr->Name());
+	}
+
+	entry.document = context.LoadDocumentFromMemory(FINAL_FALLBACK_RML);
+	ASSERT(entry.document);
 }

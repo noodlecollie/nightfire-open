@@ -9,25 +9,6 @@
 
 static constexpr const char* const CONTEXT_NAME = "main";
 
-static const char* MAIN_MENU_PLACEHOLDER =
-	"<rml>\n"
-	"<head>\n"
-	"<title>Missing Main Menu!</title>\n"
-	"<style>\n"
-	"body { background-color: #FFFFFF; color: #000000; font-family: rmlui-debugger-font; "
-	"width: 100%; height: 100%; }\n"
-	"h1 { display: block; font-size: 50dp; }\n"
-	"flex { display: flex; flex-direction: column; justify-content: center; height: 100%; }\n"
-	"flex > h1 { display: block; margin-top: auto; margin-bottom: auto; text-align: center; }"
-	"</style>\n"
-	"</head>\n"
-	"<body>\n"
-	"<flex>\n"
-	"<h1>Failed to load main menu! :(</h1>"
-	"</flex>\n"
-	"</body>\n"
-	"</rml>\n";
-
 // Note: Does not cater for modifier keys, since these are not handled by
 // Rml::Input::KeyIdentifier.
 static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)
@@ -159,7 +140,9 @@ static inline unsigned char EngineKeyToRmlKeyModifier(int key)
 
 RmlUiBackend::RmlUiBackend() :
 	m_SystemInterface(this),
-	m_RenderInterface(this)
+	m_RenderInterface(this),
+	m_MenuDirectory(),
+	m_MenuStack(&m_MenuDirectory)
 {
 }
 
@@ -186,7 +169,6 @@ void RmlUiBackend::Initialise()
 	m_MenuDirectory.Populate();
 
 	m_Modifiers = 0;
-	m_CurrentDocumentId.clear();
 
 	m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(16, 16));
 	ASSERT(m_RmlContext);
@@ -257,8 +239,7 @@ bool RmlUiBackend::IsVisible() const
 		return false;
 	}
 
-	Rml::ElementDocument* doc = m_RmlContext->GetDocument(m_CurrentDocumentId);
-	return doc && doc->IsVisible();
+	return m_Visible;
 }
 
 void RmlUiBackend::ReceiveStartupComplete()
@@ -270,23 +251,10 @@ void RmlUiBackend::ReceiveStartupComplete()
 		return;
 	}
 
-	Rml::ElementDocument* doc = nullptr;
 	const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(MainMenu::NAME);
+	ASSERT(menu);
 
-	if ( menu )
-	{
-		doc = menu->document;
-	}
-
-	if ( !doc )
-	{
-		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Main menu had no available document!");
-		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
-	}
-
-	ASSERT(doc);
-	m_CurrentDocumentId = doc->GetId();
-
+	m_MenuStack.Push(menu);
 	ReceiveShowMenu();
 }
 
@@ -297,12 +265,7 @@ void RmlUiBackend::ReceiveShowMenu()
 		return;
 	}
 
-	Rml::ElementDocument* doc = m_RmlContext->GetDocument(m_CurrentDocumentId);
-
-	if ( doc )
-	{
-		doc->Show();
-	}
+	m_Visible = true;
 }
 
 void RmlUiBackend::ReceiveHideMenu()
@@ -312,12 +275,7 @@ void RmlUiBackend::ReceiveHideMenu()
 		return;
 	}
 
-	Rml::ElementDocument* doc = m_RmlContext->GetDocument(0);
-
-	if ( doc )
-	{
-		doc->Hide();
-	}
+	m_Visible = false;
 }
 
 void RmlUiBackend::ReceiveMouseMove(int x, int y)
@@ -423,19 +381,20 @@ Rml::Context* RmlUiBackend::GetRmlContext() const
 	return m_RmlContext;
 }
 
-void RmlUiBackend::Update(float /* currentTime */)
+void RmlUiBackend::Update(float currentTime)
 {
 	if ( !IsInitialised() )
 	{
 		return;
 	}
 
+	m_MenuStack.Update(currentTime);
 	m_RmlContext->Update();
 }
 
 void RmlUiBackend::Render()
 {
-	if ( !IsInitialised() )
+	if ( !IsInitialised() || !m_Visible )
 	{
 		return;
 	}
@@ -443,6 +402,9 @@ void RmlUiBackend::Render()
 	m_RenderInterface.BeginFrame();
 	m_RmlContext->Render();
 	m_RenderInterface.EndFrame();
+
+	// Now that rendering is done, modify the menu stack if needed.
+	m_MenuStack.HandleRequests();
 }
 
 void RmlUiBackend::RenderDebugTriangle()
@@ -458,7 +420,6 @@ void RmlUiBackend::RenderDebugTriangle()
 void RmlUiBackend::ReleaseResources()
 {
 	Rml::Debugger::Shutdown();
-	m_CurrentDocumentId.clear();
 
 	if ( m_RmlContext )
 	{

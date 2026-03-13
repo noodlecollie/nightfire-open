@@ -6,7 +6,7 @@
 #include "rmlui/TextInputHandlerImpl.h"
 #include "rmlui/EventListenerInstancerImpl.h"
 #include "framework/MenuDirectory.h"
-#include <string>
+#include "framework/MenuStack.h"
 
 namespace Rml
 {
@@ -55,6 +55,8 @@ private:
 	bool m_Initialised = false;
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
-	std::string m_CurrentDocumentId;
+
 	MenuDirectory m_MenuDirectory;
+	MenuStack m_MenuStack;
+	bool m_Visible = false;
 };

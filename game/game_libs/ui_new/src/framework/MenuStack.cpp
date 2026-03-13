@@ -1,9 +1,23 @@
 #include "framework/MenuStack.h"
 #include "framework/MenuDirectory.h"
+#include <RmlUi/Core/ElementDocument.h>
+#include <RmlUi/Core/Log.h>
 #include <algorithm>
+#include "UIDebug.h"
 
-bool MenuStack::Push(MenuDirectoryEntry* menu)
+MenuStack::MenuStack(MenuDirectory* directory) :
+	m_Directory(directory)
 {
+	ASSERT(directory);
+}
+
+bool MenuStack::Push(const MenuDirectoryEntry* menu)
+{
+	if ( !menu )
+	{
+		return false;
+	}
+
 	MenuVec::iterator it = std::find(m_Stack.begin(), m_Stack.end(), menu);
 
 	if ( it != m_Stack.end() )
@@ -11,33 +25,55 @@ bool MenuStack::Push(MenuDirectoryEntry* menu)
 		return false;
 	}
 
+	SetTopDocumentVisible(false);
 	m_Stack.push_back(menu);
+	SetTopDocumentVisible(true);
+
 	return true;
 }
 
-MenuDirectoryEntry* MenuStack::Pop()
+const MenuDirectoryEntry* MenuStack::Pop()
 {
 	if ( m_Stack.empty() )
 	{
 		return nullptr;
 	}
 
-	MenuDirectoryEntry* menu = m_Stack.back();
+	SetTopDocumentVisible(false);
+	const MenuDirectoryEntry* menu = m_Stack.back();
 	m_Stack.pop_back();
 	return menu;
 }
 
 void MenuStack::Update(float currentTime)
 {
-	MenuDirectoryEntry* topMenu = Top();
-
-	if ( topMenu )
+	// Update all menus from the front to the back (ie. bottom to top)
+	// of the stack. This means that the most recently updated menu
+	// will be the one on the top.
+	for ( const MenuDirectoryEntry* entry : m_Stack )
 	{
-		topMenu->menuPtr->Update(currentTime);
+		entry->menuPtr->Update(currentTime);
 	}
 }
 
-MenuDirectoryEntry* MenuStack::Top() const
+void MenuStack::HandleRequests()
+{
+	const MenuDirectoryEntry* top = Top();
+
+	if ( !top )
+	{
+		return;
+	}
+
+	const MenuRequest* request = top->menuPtr->CurrentRequest();
+
+	if ( request )
+	{
+		HandleTopMenuRequest(*request);
+	}
+}
+
+const MenuDirectoryEntry* MenuStack::Top() const
 {
 	return (!m_Stack.empty()) ? m_Stack.back() : nullptr;
 }
@@ -45,4 +81,88 @@ MenuDirectoryEntry* MenuStack::Top() const
 bool MenuStack::IsEmpty() const
 {
 	return m_Stack.empty();
+}
+
+void MenuStack::SetTopDocumentVisible(bool visible)
+{
+	if ( !m_Stack.empty() )
+	{
+		const MenuDirectoryEntry* entry = m_Stack.back();
+		Rml::ElementDocument* document = entry->document;
+
+		if ( document )
+		{
+			if ( visible )
+			{
+				document->Show();
+			}
+			else
+			{
+				// If there are any pending requests, cancel them.
+				entry->menuPtr->ClearCurrentRequest();
+
+				document->Hide();
+			}
+		}
+	}
+}
+
+void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
+{
+	switch ( request.requestType )
+	{
+		case MenuRequestType::PushMenu:
+		{
+			Rml::String menuName;
+
+			if ( !request.args.empty() )
+			{
+				request.args[0].GetInto(menuName);
+			}
+
+			HandlePushMenuRequest(menuName);
+			break;
+		}
+
+		case MenuRequestType::PopMenu:
+		{
+			// TODO: Support specifying a menu to swap in here.
+			HandlePopMenuRequest();
+			break;
+		}
+
+		default:
+		{
+			ASSERT(false);
+			break;
+		}
+	}
+}
+
+void MenuStack::HandlePushMenuRequest(const Rml::String& name)
+{
+	if ( name.empty() )
+	{
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring menu push request which specified no menu name");
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(name);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring menu push request for non-existent menu \"%s\"",
+			name.c_str()
+		);
+
+		return;
+	}
+
+	Push(entry);
+}
+
+void MenuStack::HandlePopMenuRequest()
+{
 }
