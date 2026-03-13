@@ -36,7 +36,13 @@ public:
 	const MenuDirectoryEntry* GetMenuEntry(const std::string& name) const;
 
 private:
-	using MenuMap = std::unordered_map<std::string, MenuDirectoryEntry>;
+	struct MapEntry
+	{
+		MenuDirectoryEntry menuEntry;
+		bool loadedDocument = false;
+	};
+
+	using MenuMap = std::unordered_map<std::string, MapEntry>;
 
 	template<typename T>
 	void AddToMap()
@@ -45,8 +51,9 @@ private:
 	}
 
 	void AddToMap(BaseMenu* newMenu);
-	void SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& context);
-	void LoadMenuRml(MenuDirectoryEntry& entry, Rml::Context& context);
+	void SetUpDataBindings(MapEntry& entry, Rml::Context& context);
+	void LoadMenuRml(MapEntry& entry, Rml::Context& context);
+	void UnloadAllDocuments();
 
 	MenuMap m_MenuMap;
 };

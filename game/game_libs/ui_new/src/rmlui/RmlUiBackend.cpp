@@ -1,11 +1,13 @@
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
 #include "EnginePublicAPI/keydefs.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "rmlui/RmlUiBackend.h"
 #include "framework/BaseMenu.h"
 #include "menus/MainMenu.h"
 #include "udll_int.h"
 #include "UIDebug.h"
+#include "MathLib/utils.h"
 
 static constexpr const char* const CONTEXT_NAME = "main";
 
@@ -166,6 +168,7 @@ void RmlUiBackend::Initialise()
 
 	Rml::Initialise();
 	RegisterFonts();
+	RegisterCvars();
 	m_MenuDirectory.Populate();
 
 	m_Modifiers = 0;
@@ -320,7 +323,8 @@ void RmlUiBackend::ReceiveMouseWheel(bool down)
 		return;
 	}
 
-	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, 30.0f * (down ? 1.0f : -1.0f)), m_Modifiers);
+	float scrollDelta = std::max<float>(m_cvarScrollSensitivity->value, 0.1f);
+	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, scrollDelta * (down ? 1.0f : -1.0f)), m_Modifiers);
 }
 
 void RmlUiBackend::ReceiveKey(int key, bool pressed)
@@ -443,4 +447,9 @@ void RmlUiBackend::RegisterFonts()
 	}
 
 	gUiGlFuncs.filesystem.freeListing(listing);
+}
+
+void RmlUiBackend::RegisterCvars()
+{
+	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
 }

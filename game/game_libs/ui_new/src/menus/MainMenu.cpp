@@ -10,10 +10,6 @@ MainMenu::MainMenu() :
 {
 }
 
-void MainMenu::Update(float)
-{
-}
-
 bool MainMenu::SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor)
 {
 	if ( !m_MenuFrameDataBinding.SetUpDataBindings(constructor) )

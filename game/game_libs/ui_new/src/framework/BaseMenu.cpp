@@ -1,25 +1,7 @@
 #include "framework/BaseMenu.h"
 #include <RmlUi/Core/DataModelHandle.h>
+#include <RmlUi/Core/EventListener.h>
 #include "UIDebug.h"
-
-static const Rml::String DEFAULT_FALLBACK_RML =
-	"<rml>\n"
-	"<head>\n"
-	"<title>Missing Menu!</title>\n"
-	"<style>\n"
-	"body { background-color: #FFFFFF; color: #000000; font-family: rmlui-debugger-font; "
-	"width: 100%; height: 100%; }\n"
-	"h1 { display: block; font-size: 50dp; }\n"
-	"flex { display: flex; flex-direction: column; justify-content: center; height: 100%; }\n"
-	"flex > h1 { display: block; margin-top: auto; margin-bottom: auto; text-align: center; }"
-	"</style>\n"
-	"</head>\n"
-	"<body>\n"
-	"<flex>\n"
-	"<h1>Failed to load menu! :(</h1>"
-	"</flex>\n"
-	"</body>\n"
-	"</rml>\n";
 
 BaseMenu::BaseMenu(const char* name, const char* rmlFilePath) :
 	m_Name(name),
@@ -27,6 +9,10 @@ BaseMenu::BaseMenu(const char* name, const char* rmlFilePath) :
 {
 	ASSERT(m_Name);
 	ASSERT(m_RmlFilePath);
+}
+
+BaseMenu::~BaseMenu()
+{
 }
 
 const char* BaseMenu::Name() const
@@ -39,14 +25,14 @@ const char* BaseMenu::RmlFilePath() const
 	return m_RmlFilePath;
 }
 
-const Rml::String& BaseMenu::FallbackRml() const
-{
-	return (!m_FallbackRml.empty()) ? m_FallbackRml : DEFAULT_FALLBACK_RML;
-}
-
 const MenuRequest* BaseMenu::CurrentRequest() const
 {
 	return m_Request.get();
+}
+
+void BaseMenu::SetCurrentRequest(MenuRequestType requestType, const Rml::VariantList& args)
+{
+	m_Request.reset(new MenuRequest(requestType, args));
 }
 
 void BaseMenu::ClearCurrentRequest()
@@ -62,6 +48,18 @@ bool BaseMenu::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 	return SetUpDataBindingsInternal(constructor);
 }
 
+void BaseMenu::DocumentLoaded(Rml::ElementDocument*)
+{
+}
+
+void BaseMenu::DocumentUnloaded(Rml::ElementDocument*)
+{
+}
+
+void BaseMenu::Update(float)
+{
+}
+
 bool BaseMenu::SetUpDataBindingsInternal(Rml::DataModelConstructor&)
 {
 	return true;
@@ -69,10 +67,10 @@ bool BaseMenu::SetUpDataBindingsInternal(Rml::DataModelConstructor&)
 
 void BaseMenu::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	m_Request.reset(new MenuRequest(MenuRequestType::PushMenu, Rml::VariantList(args)));
+	SetCurrentRequest(MenuRequestType::PushMenu, args);
 }
 
-void BaseMenu::HandlePopMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+void BaseMenu::HandlePopMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	m_Request.reset(new MenuRequest(MenuRequestType::PopMenu));
+	SetCurrentRequest(MenuRequestType::PopMenu, args);
 }

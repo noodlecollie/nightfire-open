@@ -45,6 +45,7 @@ private:
 
 	void ReleaseResources();
 	void RegisterFonts();
+	void RegisterCvars();
 
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;
@@ -59,4 +60,6 @@ private:
 	MenuDirectory m_MenuDirectory;
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
+
+	struct cvar_s* m_cvarScrollSensitivity = nullptr;
 };

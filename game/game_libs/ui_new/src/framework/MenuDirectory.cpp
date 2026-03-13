@@ -1,14 +1,17 @@
 #include "framework/MenuDirectory.h"
 #include "framework/BaseMenu.h"
-#include "menus/MainMenu.h"
 #include <RmlUi/Core/Context.h>
 #include "UIDebug.h"
+
+#include "menus/MainMenu.h"
+#include "menus/ZooMenu.h"
 
 void MenuDirectory::Populate()
 {
 	m_MenuMap.clear();
 
 	AddToMap<MainMenu>();
+	AddToMap<ZooMenu>();
 }
 
 void MenuDirectory::Clear()
@@ -33,24 +36,24 @@ void MenuDirectory::LoadAllMenus(Rml::Context& context)
 const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const std::string& name) const
 {
 	MenuMap::const_iterator it = m_MenuMap.find(name);
-	return it != m_MenuMap.end() ? &it->second : nullptr;
+	return it != m_MenuMap.end() ? &it->second.menuEntry : nullptr;
 }
 
 void MenuDirectory::AddToMap(BaseMenu* newMenu)
 {
-	m_MenuMap.insert({std::string(newMenu->Name()), MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))});
+	m_MenuMap.insert({std::string(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
 }
 
-void MenuDirectory::SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& context)
+void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
 {
-	Rml::String dataModelName = entry.menuPtr->Name() + Rml::String("_model");
+	Rml::String dataModelName = entry.menuEntry.menuPtr->Name() + Rml::String("_model");
 
 	Rml::DataModelConstructor constructor = context.CreateDataModel(dataModelName);
 	bool success = false;
 
 	if ( constructor )
 	{
-		if ( entry.menuPtr->SetUpDataBindings(constructor) )
+		if ( entry.menuEntry.menuPtr->SetUpDataBindings(constructor) )
 		{
 			success = true;
 		}
@@ -59,7 +62,7 @@ void MenuDirectory::SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& c
 			Rml::Log::Message(
 				Rml::Log::Type::LT_ERROR,
 				"Failed to set up data bindings for menu %s",
-				entry.menuPtr->Name()
+				entry.menuEntry.menuPtr->Name()
 			);
 		}
 	}
@@ -69,7 +72,7 @@ void MenuDirectory::SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& c
 			Rml::Log::Type::LT_ERROR,
 			"Failed to construct data model \"%s\" for menu %s",
 			dataModelName.c_str(),
-			entry.menuPtr->Name()
+			entry.menuEntry.menuPtr->Name()
 		);
 	}
 
@@ -79,10 +82,9 @@ void MenuDirectory::SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& c
 	}
 }
 
-// TODO: Load fallback RML
-void MenuDirectory::LoadMenuRml(MenuDirectoryEntry& entry, Rml::Context& context)
+void MenuDirectory::LoadMenuRml(MapEntry& entry, Rml::Context& context)
 {
-	static const char* FINAL_FALLBACK_RML =
+	static const char* FALLBACK_RML =
 		"<rml>\n"
 		"<head>\n"
 		"<title>Missing Menu!</title>\n"
@@ -101,34 +103,34 @@ void MenuDirectory::LoadMenuRml(MenuDirectoryEntry& entry, Rml::Context& context
 		"</body>\n"
 		"</rml>\n";
 
-	entry.document = context.LoadDocument(entry.menuPtr->RmlFilePath());
+	entry.loadedDocument = false;
+	entry.menuEntry.document = context.LoadDocument(entry.menuEntry.menuPtr->RmlFilePath());
 
-	if ( entry.document )
+	if ( entry.menuEntry.document )
 	{
+		entry.loadedDocument = true;
+		entry.menuEntry.menuPtr->DocumentLoaded(entry.menuEntry.document);
 		return;
 	}
 
 	Rml::Log::Message(
 		Rml::Log::Type::LT_ERROR,
 		"Failed to load %s for menu %s",
-		entry.menuPtr->RmlFilePath(),
-		entry.menuPtr->Name()
+		entry.menuEntry.menuPtr->RmlFilePath(),
+		entry.menuEntry.menuPtr->Name()
 	);
 
-	const Rml::String& fallback = entry.menuPtr->FallbackRml();
+	entry.menuEntry.document = context.LoadDocumentFromMemory(FALLBACK_RML);
+	ASSERT(entry.menuEntry.document);
+}
 
-	if ( !fallback.empty() )
+void MenuDirectory::UnloadAllDocuments()
+{
+	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
 	{
-		entry.document = context.LoadDocumentFromMemory(entry.menuPtr->FallbackRml());
-
-		if ( entry.document )
+		if ( it->second.loadedDocument && it->second.menuEntry.document )
 		{
-			return;
+			it->second.menuEntry.menuPtr->DocumentUnloaded(it->second.menuEntry.document);
 		}
-
-		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to load fallback RML for menu %s", entry.menuPtr->Name());
 	}
-
-	entry.document = context.LoadDocumentFromMemory(FINAL_FALLBACK_RML);
-	ASSERT(entry.document);
 }

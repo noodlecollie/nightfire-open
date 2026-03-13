@@ -10,6 +10,7 @@ namespace Rml
 	class DataModelConstructor;
 	class DataModelHandle;
 	class Event;
+	class ElementDocument;
 }  // namespace Rml
 
 enum class MenuRequestType
@@ -23,7 +24,7 @@ struct MenuRequest
 	MenuRequestType requestType;
 	Rml::VariantList args;
 
-	explicit MenuRequest(MenuRequestType inRequestType, Rml::VariantList&& inArgs = Rml::VariantList()) :
+	explicit MenuRequest(MenuRequestType inRequestType, const Rml::VariantList& inArgs = Rml::VariantList()) :
 		requestType(inRequestType),
 		args(inArgs)
 	{
@@ -33,24 +34,24 @@ struct MenuRequest
 class BaseMenu
 {
 public:
-	virtual ~BaseMenu() = default;
+	virtual ~BaseMenu();
 
 	const char* Name() const;
 	const char* RmlFilePath() const;
-	const Rml::String& FallbackRml() const;
 
 	const MenuRequest* CurrentRequest() const;
+	void SetCurrentRequest(MenuRequestType requestType, const Rml::VariantList& args = Rml::VariantList());
 	void ClearCurrentRequest();
 
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor);
-	virtual void Update(float currentTime) = 0;
+	virtual void DocumentLoaded(Rml::ElementDocument* document);
+	virtual void DocumentUnloaded(Rml::ElementDocument* document);
+	virtual void Update(float currentTime);
 
 protected:
 	BaseMenu(const char* name, const char* rmlFilePath);
 
 	virtual bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor);
-
-	Rml::String m_FallbackRml;
 
 private:
 	void HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
