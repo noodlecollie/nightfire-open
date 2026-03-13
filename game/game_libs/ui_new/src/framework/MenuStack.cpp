@@ -13,14 +13,7 @@ MenuStack::MenuStack(MenuDirectory* directory) :
 
 bool MenuStack::Push(const MenuDirectoryEntry* menu)
 {
-	if ( !menu )
-	{
-		return false;
-	}
-
-	MenuVec::iterator it = std::find(m_Stack.begin(), m_Stack.end(), menu);
-
-	if ( it != m_Stack.end() )
+	if ( !menu || Top() == menu )
 	{
 		return false;
 	}
@@ -40,8 +33,12 @@ const MenuDirectoryEntry* MenuStack::Pop()
 	}
 
 	SetTopDocumentVisible(false);
+
 	const MenuDirectoryEntry* menu = m_Stack.back();
 	m_Stack.pop_back();
+
+	SetTopDocumentVisible(true);
+
 	return menu;
 }
 
@@ -81,6 +78,11 @@ const MenuDirectoryEntry* MenuStack::Top() const
 bool MenuStack::IsEmpty() const
 {
 	return m_Stack.empty();
+}
+
+size_t MenuStack::Size() const
+{
+	return m_Stack.size();
 }
 
 void MenuStack::SetTopDocumentVisible(bool visible)
@@ -126,8 +128,14 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 
 		case MenuRequestType::PopMenu:
 		{
-			// TODO: Support specifying a menu to swap in here.
-			HandlePopMenuRequest();
+			Rml::String menuName;
+
+			if ( !request.args.empty() )
+			{
+				request.args[0].GetInto(menuName);
+			}
+
+			HandlePopMenuRequest(menuName);
 			break;
 		}
 
@@ -163,6 +171,35 @@ void MenuStack::HandlePushMenuRequest(const Rml::String& name)
 	Push(entry);
 }
 
-void MenuStack::HandlePopMenuRequest()
+void MenuStack::HandlePopMenuRequest(const Rml::String& name)
 {
+	if ( name.empty() )
+	{
+		if ( m_Stack.size() > 1 )
+		{
+			Pop();
+		}
+		else
+		{
+			Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring pop request from only menu in stack");
+		}
+
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(name);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring menu pop requesting to swap in non-existent menu \"%s\"",
+			name.c_str()
+		);
+
+		return;
+	}
+
+	Pop();
+	Push(entry);
 }

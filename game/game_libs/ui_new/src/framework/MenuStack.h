@@ -4,7 +4,7 @@
 #include <RmlUi/Core/Types.h>
 
 class MenuDirectory;
-class MenuDirectoryEntry;
+struct MenuDirectoryEntry;
 struct MenuRequest;
 
 class MenuStack
@@ -19,6 +19,7 @@ public:
 
 	const MenuDirectoryEntry* Top() const;
 	bool IsEmpty() const;
+	size_t Size() const;
 
 private:
 	using MenuVec = std::vector<const MenuDirectoryEntry*>;
@@ -26,7 +27,7 @@ private:
 	void SetTopDocumentVisible(bool visible);
 	void HandleTopMenuRequest(const MenuRequest& request);
 	void HandlePushMenuRequest(const Rml::String& name);
-	void HandlePopMenuRequest();
+	void HandlePopMenuRequest(const Rml::String& name);
 
 	MenuDirectory* m_Directory;
 	MenuVec m_Stack;
