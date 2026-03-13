@@ -28,69 +28,6 @@ static const char* MAIN_MENU_PLACEHOLDER =
 	"</body>\n"
 	"</rml>\n";
 
-// TODO: This should be refactored into a main menu class.
-struct RmlUiBackend::MainMenuData
-{
-	Rml::DataModelHandle cachedHandle;
-	std::string tooltip;
-
-	bool SetUpDataBinding(Rml::Context* context)
-	{
-		if ( cachedHandle )
-		{
-			// Already set up, can't do so again.
-			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Double initialisation of data model");
-			return false;
-		}
-
-		Rml::DataModelConstructor constructor = context->CreateDataModel("mainmenumodel");
-
-		if ( !constructor )
-		{
-			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to construct main menu data model");
-			return false;
-		}
-
-		constructor.Bind("footer_tooltip", &tooltip);
-		constructor.BindEventCallback("set_tooltip", &MainMenuData::SetTooltip, this);
-		constructor.BindEventCallback("clear_tooltip", &MainMenuData::ClearTooltip, this);
-
-		cachedHandle = constructor.GetModelHandle();
-		return true;
-	}
-
-	void SetTooltip(Rml::DataModelHandle /* handle */, Rml::Event& event, const Rml::VariantList& /* arguments */)
-	{
-		Rml::Element* element = event.GetTargetElement();
-
-		if ( !element )
-		{
-			return;
-		}
-
-		Rml::Variant* tooltipAttr = element->GetAttribute("tooltip");
-
-		if ( !tooltipAttr )
-		{
-			return;
-		}
-
-		if ( tooltipAttr->GetInto(tooltip) )
-		{
-			cachedHandle.DirtyVariable("footer_tooltip");
-		}
-	}
-
-	void ClearTooltip(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
-	{
-		if ( !tooltip.empty() )
-		{
-			tooltip.clear();
-			cachedHandle.DirtyVariable("footer_tooltip");
-		}
-	}
-};
-
 // Note: Does not cater for modifier keys, since these are not handled by
 // Rml::Input::KeyIdentifier.
 static inline Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key)

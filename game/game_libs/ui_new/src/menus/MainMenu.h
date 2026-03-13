@@ -13,7 +13,9 @@ public:
 	MainMenu();
 
 	void Update(float currentTime) override;
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
+
+protected:
+	bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor) override;
 
 private:
 	MenuFrameDataBinding m_MenuFrameDataBinding;

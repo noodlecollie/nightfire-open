@@ -42,13 +42,7 @@ void MenuDirectory::AddToMap(BaseMenu* newMenu)
 
 void MenuDirectory::SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& context)
 {
-	const char* dataModelName = entry.menuPtr->DataModelName();
-
-	if ( !dataModelName || !dataModelName[0] )
-	{
-		// Nothing to do.
-		return;
-	}
+	Rml::String dataModelName = entry.menuPtr->Name() + Rml::String("_model");
 
 	Rml::DataModelConstructor constructor = context.CreateDataModel(dataModelName);
 	bool success = false;
@@ -73,7 +67,7 @@ void MenuDirectory::SetUpDataBindings(MenuDirectoryEntry& entry, Rml::Context& c
 		Rml::Log::Message(
 			Rml::Log::Type::LT_ERROR,
 			"Failed to construct data model \"%s\" for menu %s",
-			dataModelName,
+			dataModelName.c_str(),
 			entry.menuPtr->Name()
 		);
 	}

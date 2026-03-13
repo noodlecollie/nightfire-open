@@ -7,7 +7,7 @@ class MenuDirectoryEntry;
 class MenuStack
 {
 public:
-	void Push(MenuDirectoryEntry* menu);
+	bool Push(MenuDirectoryEntry* menu);
 	MenuDirectoryEntry* Pop();
 	void Update(float currentTime);
 

@@ -2,18 +2,17 @@
 #include "framework/MenuDirectory.h"
 #include <algorithm>
 
-void MenuStack::Push(MenuDirectoryEntry* menu)
+bool MenuStack::Push(MenuDirectoryEntry* menu)
 {
 	MenuVec::iterator it = std::find(m_Stack.begin(), m_Stack.end(), menu);
 
-	// Bit of a cheat, but move the menu to the top
-	// if it already exists in the stack.
 	if ( it != m_Stack.end() )
 	{
-		m_Stack.erase(it);
+		return false;
 	}
 
 	m_Stack.push_back(menu);
+	return true;
 }
 
 MenuDirectoryEntry* MenuStack::Pop()
