@@ -67,6 +67,7 @@ void MenuStack::HandleRequests()
 	if ( request )
 	{
 		HandleTopMenuRequest(*request);
+		top->menuPtr->ClearCurrentRequest();
 	}
 }
 

@@ -3,12 +3,10 @@
 #include "framework/BaseMenu.h"
 #include "templatebindings/MenuFrameDataBinding.h"
 
-class MainMenu : public BaseMenu
+class OptionsMenu : public BaseMenu
 {
 public:
-	static const char* const NAME;
-
-	MainMenu();
+	OptionsMenu();
 
 protected:
 	bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor) override;

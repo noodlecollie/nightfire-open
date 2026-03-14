@@ -5,6 +5,8 @@
 
 #include "menus/MainMenu.h"
 #include "menus/ZooMenu.h"
+#include "menus/OptionsMenu.h"
+#include "menus/MultiplayerMenu.h"
 
 void MenuDirectory::Populate()
 {
@@ -12,6 +14,8 @@ void MenuDirectory::Populate()
 
 	AddToMap<MainMenu>();
 	AddToMap<ZooMenu>();
+	AddToMap<OptionsMenu>();
+	AddToMap<MultiplayerMenu>();
 }
 
 void MenuDirectory::Clear()

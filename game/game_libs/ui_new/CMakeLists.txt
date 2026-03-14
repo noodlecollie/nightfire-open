@@ -21,6 +21,11 @@ set(SOURCES_UI
 	src/framework/MenuStack.cpp
 	src/menus/MainMenu.h
 	src/menus/MainMenu.cpp
+	src/menus/MainMenu.cpp
+	src/menus/MultiplayerMenu.h
+	src/menus/MultiplayerMenu.cpp
+	src/menus/OptionsMenu.h
+	src/menus/OptionsMenu.cpp
 	src/menus/ZooMenu.h
 	src/menus/ZooMenu.cpp
 	src/rmlui/EventListenerImpl.h
