@@ -1,96 +1,15 @@
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
 #include "EnginePublicAPI/keydefs.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "rmlui/RmlUiBackend.h"
+#include "framework/BaseMenu.h"
+#include "menus/MainMenu.h"
 #include "udll_int.h"
 #include "UIDebug.h"
-
-#define UI_CVAR_NAME "ui_mainmenu_file"
+#include "MathLib/utils.h"
 
 static constexpr const char* const CONTEXT_NAME = "main";
-
-static const char* MAIN_MENU_PLACEHOLDER =
-	"<rml>\n"
-	"<head>\n"
-	"<title>Missing Main Menu!</title>\n"
-	"<style>\n"
-	"body { background-color: #FFFFFF; color: #000000; font-family: rmlui-debugger-font; "
-	"width: 100%; height: 100%; }\n"
-	"h1 { display: block; font-size: 50dp; }\n"
-	"flex { display: flex; flex-direction: column; justify-content: center; height: 100%; }\n"
-	"flex > h1 { display: block; margin-top: auto; margin-bottom: auto; text-align: center; }"
-	"</style>\n"
-	"</head>\n"
-	"<body>\n"
-	"<flex>\n"
-	"<h1>Could not locate main menu! Check that " UI_CVAR_NAME
-	" is set.</h1>"
-	"</flex>\n"
-	"</body>\n"
-	"</rml>\n";
-
-// TODO: This should be refactored into a main menu class.
-struct RmlUiBackend::MainMenuData
-{
-	Rml::DataModelHandle cachedHandle;
-	std::string tooltip;
-
-	bool SetUpDataBinding(Rml::Context* context)
-	{
-		if ( cachedHandle )
-		{
-			// Already set up, can't do so again.
-			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Double initialisation of data model");
-			return false;
-		}
-
-		Rml::DataModelConstructor constructor = context->CreateDataModel("mainmenumodel");
-
-		if ( !constructor )
-		{
-			Rml::Log::Message(Rml::Log::Type::LT_ERROR, "Failed to construct main menu data model");
-			return false;
-		}
-
-		constructor.Bind("tooltip", &tooltip);
-		constructor.BindEventCallback("set_tooltip", &MainMenuData::SetTooltip, this);
-		constructor.BindEventCallback("clear_tooltip", &MainMenuData::ClearTooltip, this);
-
-		cachedHandle = constructor.GetModelHandle();
-		return true;
-	}
-
-	void SetTooltip(Rml::DataModelHandle /* handle */, Rml::Event& event, const Rml::VariantList& /* arguments */)
-	{
-		Rml::Element* element = event.GetTargetElement();
-
-		if ( !element )
-		{
-			return;
-		}
-
-		Rml::Variant* tooltipAttr = element->GetAttribute("tooltip");
-
-		if ( !tooltipAttr )
-		{
-			return;
-		}
-
-		if ( tooltipAttr->GetInto(tooltip) )
-		{
-			cachedHandle.DirtyVariable("tooltip");
-		}
-	}
-
-	void ClearTooltip(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
-	{
-		if ( !tooltip.empty() )
-		{
-			tooltip.clear();
-			cachedHandle.DirtyVariable("tooltip");
-		}
-	}
-};
 
 // Note: Does not cater for modifier keys, since these are not handled by
 // Rml::Input::KeyIdentifier.
@@ -223,7 +142,9 @@ static inline unsigned char EngineKeyToRmlKeyModifier(int key)
 
 RmlUiBackend::RmlUiBackend() :
 	m_SystemInterface(this),
-	m_RenderInterface(this)
+	m_RenderInterface(this),
+	m_MenuDirectory(),
+	m_MenuStack(&m_MenuDirectory)
 {
 }
 
@@ -247,10 +168,23 @@ void RmlUiBackend::Initialise()
 
 	Rml::Initialise();
 	RegisterFonts();
+	RegisterCvars();
+	m_MenuDirectory.Populate();
 
 	m_Modifiers = 0;
-	m_CurrentDocumentId.clear();
-	m_MainMenuModel.reset();
+
+	m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(16, 16));
+	ASSERT(m_RmlContext);
+
+	if ( !m_RmlContext )
+	{
+		ReleaseResources();
+		Rml::Shutdown();
+		return;
+	}
+
+	Rml::Debugger::Initialise(m_RmlContext);
+	m_MenuDirectory.LoadAllMenus(*m_RmlContext);
 
 	m_Initialised = true;
 }
@@ -260,18 +194,6 @@ bool RmlUiBackend::VidInit(int width, int height)
 	if ( !m_Initialised )
 	{
 		return false;
-	}
-
-	if ( !m_RmlContext )
-	{
-		m_RmlContext = Rml::CreateContext(CONTEXT_NAME, Rml::Vector2i(width, height));
-
-		if ( !m_RmlContext )
-		{
-			return false;
-		}
-
-		Rml::Debugger::Initialise(m_RmlContext);
 	}
 
 	m_RenderInterface.SetViewport(width, height);
@@ -306,7 +228,6 @@ void RmlUiBackend::ShutDown()
 	m_RmlContext = nullptr;
 	m_Initialised = false;
 	m_Modifiers = 0;
-	m_MainMenuModel.reset();
 }
 
 bool RmlUiBackend::IsInitialised() const
@@ -321,8 +242,7 @@ bool RmlUiBackend::IsVisible() const
 		return false;
 	}
 
-	Rml::ElementDocument* doc = m_RmlContext->GetDocument(m_CurrentDocumentId);
-	return doc && doc->IsVisible();
+	return m_Visible;
 }
 
 void RmlUiBackend::ReceiveStartupComplete()
@@ -334,41 +254,10 @@ void RmlUiBackend::ReceiveStartupComplete()
 		return;
 	}
 
-	const char* mainMenuFile = gEngfuncs.pfnGetCvarString(UI_CVAR_NAME);
-	m_MainMenuRmlPath = mainMenuFile ? mainMenuFile : "";
+	const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(MainMenu::NAME);
+	ASSERT(menu);
 
-	Rml::ElementDocument* doc = nullptr;
-
-	if ( !m_MainMenuRmlPath.empty() )
-	{
-		m_MainMenuModel.reset(new MainMenuData {});
-		m_MainMenuModel->SetUpDataBinding(m_RmlContext);
-
-		doc = m_RmlContext->LoadDocument(m_MainMenuRmlPath.c_str());
-
-		if ( doc )
-		{
-			Rml::Log::Message(Rml::Log::Type::LT_INFO, "Loaded main menu: %s", m_MainMenuRmlPath.c_str());
-		}
-		else
-		{
-			Rml::Log::Message(
-				Rml::Log::Type::LT_ERROR,
-				"Failed to load main menu %s specified in " UI_CVAR_NAME,
-				m_MainMenuRmlPath.c_str()
-			);
-		}
-	}
-
-	if ( !doc )
-	{
-		Rml::Log::Message(Rml::Log::Type::LT_ERROR, "No main menu specified in " UI_CVAR_NAME "!");
-		doc = m_RmlContext->LoadDocumentFromMemory(MAIN_MENU_PLACEHOLDER);
-	}
-
-	ASSERT(doc);
-	m_CurrentDocumentId = doc->GetId();
-
+	m_MenuStack.Push(menu);
 	ReceiveShowMenu();
 }
 
@@ -379,12 +268,7 @@ void RmlUiBackend::ReceiveShowMenu()
 		return;
 	}
 
-	Rml::ElementDocument* doc = m_RmlContext->GetDocument(m_CurrentDocumentId);
-
-	if ( doc )
-	{
-		doc->Show();
-	}
+	m_Visible = true;
 }
 
 void RmlUiBackend::ReceiveHideMenu()
@@ -394,12 +278,7 @@ void RmlUiBackend::ReceiveHideMenu()
 		return;
 	}
 
-	Rml::ElementDocument* doc = m_RmlContext->GetDocument(0);
-
-	if ( doc )
-	{
-		doc->Hide();
-	}
+	m_Visible = false;
 }
 
 void RmlUiBackend::ReceiveMouseMove(int x, int y)
@@ -444,7 +323,8 @@ void RmlUiBackend::ReceiveMouseWheel(bool down)
 		return;
 	}
 
-	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, 30.0f * (down ? 1.0f : -1.0f)), m_Modifiers);
+	float scrollDelta = std::max<float>(m_cvarScrollSensitivity->value, 0.1f);
+	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, scrollDelta * (down ? 1.0f : -1.0f)), m_Modifiers);
 }
 
 void RmlUiBackend::ReceiveKey(int key, bool pressed)
@@ -505,19 +385,20 @@ Rml::Context* RmlUiBackend::GetRmlContext() const
 	return m_RmlContext;
 }
 
-void RmlUiBackend::Update()
+void RmlUiBackend::Update(float currentTime)
 {
 	if ( !IsInitialised() )
 	{
 		return;
 	}
 
+	m_MenuStack.Update(currentTime);
 	m_RmlContext->Update();
 }
 
 void RmlUiBackend::Render()
 {
-	if ( !IsInitialised() )
+	if ( !IsInitialised() || !m_Visible )
 	{
 		return;
 	}
@@ -525,6 +406,9 @@ void RmlUiBackend::Render()
 	m_RenderInterface.BeginFrame();
 	m_RmlContext->Render();
 	m_RenderInterface.EndFrame();
+
+	// Now that rendering is done, modify the menu stack if needed.
+	m_MenuStack.HandleRequests();
 }
 
 void RmlUiBackend::RenderDebugTriangle()
@@ -540,7 +424,6 @@ void RmlUiBackend::RenderDebugTriangle()
 void RmlUiBackend::ReleaseResources()
 {
 	Rml::Debugger::Shutdown();
-	m_CurrentDocumentId.clear();
 
 	if ( m_RmlContext )
 	{
@@ -549,6 +432,7 @@ void RmlUiBackend::ReleaseResources()
 		m_RmlContext = nullptr;
 	}
 
+	m_MenuDirectory.Clear();
 	Rml::ReleaseFontResources();
 }
 
@@ -563,4 +447,9 @@ void RmlUiBackend::RegisterFonts()
 	}
 
 	gUiGlFuncs.filesystem.freeListing(listing);
+}
+
+void RmlUiBackend::RegisterCvars()
+{
+	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
 }

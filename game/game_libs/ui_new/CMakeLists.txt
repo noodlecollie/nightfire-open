@@ -12,6 +12,22 @@ include(nf_utils)
 set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 
 set(SOURCES_UI
+	src/framework/BaseMenu.h
+	src/framework/BaseMenu.cpp
+	src/framework/DataBinding.h
+	src/framework/MenuDirectory.h
+	src/framework/MenuDirectory.cpp
+	src/framework/MenuStack.h
+	src/framework/MenuStack.cpp
+	src/menus/MainMenu.h
+	src/menus/MainMenu.cpp
+	src/menus/MainMenu.cpp
+	src/menus/MultiplayerMenu.h
+	src/menus/MultiplayerMenu.cpp
+	src/menus/OptionsMenu.h
+	src/menus/OptionsMenu.cpp
+	src/menus/ZooMenu.h
+	src/menus/ZooMenu.cpp
 	src/rmlui/EventListenerImpl.h
 	src/rmlui/EventListenerImpl.cpp
 	src/rmlui/EventListenerInstancerImpl.h
@@ -26,6 +42,9 @@ set(SOURCES_UI
 	src/rmlui/SystemInterfaceImpl.cpp
 	src/rmlui/TextInputHandlerImpl.h
 	src/rmlui/TextInputHandlerImpl.cpp
+	src/templatebindings/BaseTemplateBinding.h
+	src/templatebindings/MenuFrameDataBinding.h
+	src/templatebindings/MenuFrameDataBinding.cpp
 	src/udll_int.h
 	src/udll_int.cpp
 	src/UIDebug.h

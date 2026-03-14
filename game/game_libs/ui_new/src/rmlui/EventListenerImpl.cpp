@@ -1,6 +1,5 @@
 #include "rmlui/EventListenerImpl.h"
 #include "udll_int.h"
-#include <algorithm>
 
 EventListenerImpl::EventListenerImpl(Rml::String strategy, Rml::String args) :
 	m_Strategy(std::move(strategy)),

@@ -5,7 +5,8 @@
 #include "rmlui/FileInterfaceImpl.h"
 #include "rmlui/TextInputHandlerImpl.h"
 #include "rmlui/EventListenerInstancerImpl.h"
-#include <string>
+#include "framework/MenuDirectory.h"
+#include "framework/MenuStack.h"
 
 namespace Rml
 {
@@ -32,7 +33,7 @@ public:
 	void ReceiveKey(int key, bool pressed);
 	void ReceiveChar(int character);
 
-	void Update();
+	void Update(float currentTime);
 	void Render();
 
 	Rml::Context* GetRmlContext() const;
@@ -44,6 +45,7 @@ private:
 
 	void ReleaseResources();
 	void RegisterFonts();
+	void RegisterCvars();
 
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;
@@ -54,7 +56,10 @@ private:
 	bool m_Initialised = false;
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
-	std::string m_MainMenuRmlPath;
-	std::string m_CurrentDocumentId;
-	std::unique_ptr<MainMenuData> m_MainMenuModel;
+
+	MenuDirectory m_MenuDirectory;
+	MenuStack m_MenuStack;
+	bool m_Visible = false;
+
+	struct cvar_s* m_cvarScrollSensitivity = nullptr;
 };
