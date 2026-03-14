@@ -1,11 +1,13 @@
 #include "framework/BaseMenu.h"
 #include <RmlUi/Core/DataModelHandle.h>
-#include <RmlUi/Core/EventListener.h>
+#include <RmlUi/Core/Input.h>
+#include <RmlUi/Core/ElementDocument.h>
 #include "UIDebug.h"
 
-BaseMenu::BaseMenu(const char* name, const char* rmlFilePath) :
+BaseMenu::BaseMenu(const char* name, const char* rmlFilePath, size_t flags) :
 	m_Name(name),
-	m_RmlFilePath(rmlFilePath)
+	m_RmlFilePath(rmlFilePath),
+	m_AttrFlags(flags)
 {
 	ASSERT(m_Name);
 	ASSERT(m_RmlFilePath);
@@ -42,27 +44,73 @@ void BaseMenu::ClearCurrentRequest()
 
 bool BaseMenu::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
-	constructor.BindEventCallback("push_menu", &BaseMenu::HandlePushMenu, this);
-	constructor.BindEventCallback("pop_menu", &BaseMenu::HandlePopMenu, this);
+	if ( m_AttrFlags & MenuAttrRegisterPushPop )
+	{
+		constructor.BindEventCallback("push_menu", &BaseMenu::HandlePushMenu, this);
+		constructor.BindEventCallback("pop_menu", &BaseMenu::HandlePopMenu, this);
+	}
 
 	return SetUpDataBindingsInternal(constructor);
 }
 
-void BaseMenu::DocumentLoaded(Rml::ElementDocument*)
+void BaseMenu::DocumentLoaded(Rml::ElementDocument* document)
 {
+	document->AddEventListener(Rml::EventId::Keydown, this);
+	document->AddEventListener(Rml::EventId::Keyup, this);
+
+	DocumentLoadedInternal(document);
 }
 
-void BaseMenu::DocumentUnloaded(Rml::ElementDocument*)
+void BaseMenu::DocumentUnloaded(Rml::ElementDocument* document)
 {
+	DocumentUnloadedInternal(document);
+
+	document->RemoveEventListener(Rml::EventId::Keydown, this);
+	document->RemoveEventListener(Rml::EventId::Keyup, this);
 }
 
 void BaseMenu::Update(float)
 {
 }
 
+void BaseMenu::ProcessEvent(Rml::Event& event)
+{
+	if ( m_AttrFlags & MenuAttrPopOnEscape )
+	{
+		switch ( event.GetId() )
+		{
+			case Rml::EventId::Keydown:
+			{
+				const int keyId = event.GetParameter<int>("key_identifier", 0);
+
+				if ( keyId == Rml::Input::KI_ESCAPE )
+				{
+					event.StopPropagation();
+					SetCurrentRequest(MenuRequestType::PopMenu);
+				}
+
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
+		}
+	}
+}
+
 bool BaseMenu::SetUpDataBindingsInternal(Rml::DataModelConstructor&)
 {
 	return true;
+}
+
+void BaseMenu::DocumentLoadedInternal(Rml::ElementDocument*)
+{
+}
+
+void BaseMenu::DocumentUnloadedInternal(Rml::ElementDocument*)
+{
 }
 
 void BaseMenu::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)

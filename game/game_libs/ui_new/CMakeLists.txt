@@ -19,8 +19,6 @@ set(SOURCES_UI
 	src/framework/MenuDirectory.cpp
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
-	src/listeners/EscapeMenuPopListener.h
-	src/listeners/EscapeMenuPopListener.cpp
 	src/menus/MainMenu.h
 	src/menus/MainMenu.cpp
 	src/menus/ZooMenu.h
