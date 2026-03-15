@@ -4,13 +4,37 @@
 #include <RmlUi/Core/Element.h>
 
 OptionsMenu::OptionsMenu() :
-	BaseMenu("options_menu", "resource/rml/options_menu.rml")
+	MenuPage("options_menu", "resource/rml/options_menu.rml")
 {
+	// REMOVE ME
+	m_KeyBindings.push_back(KeyBindingEntry {"A", "B"});
 }
 
-bool OptionsMenu::SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor)
+bool OptionsMenu::SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !m_MenuFrameDataBinding.SetUpDataBindings(constructor) )
+	return MenuPage::SetUpDefaultDataModelBindings(constructor) &&
+		m_MenuFrameDataBinding.SetUpDataBindings(constructor);
+}
+
+bool OptionsMenu::SetUpCustomDataModelBindings(Rml::Context& context)
+{
+	Rml::DataModelConstructor constructor = context.CreateDataModel("options_keybindings_model");
+
+	if ( !constructor )
+	{
+		return false;
+	}
+
+	Rml::StructHandle<KeyBindingEntry> kbType = constructor.RegisterStruct<KeyBindingEntry>();
+
+	if ( !kbType || !kbType.RegisterMember("actionName", &KeyBindingEntry::actionName) ||
+		 !kbType.RegisterMember("binding", &KeyBindingEntry::binding) )
+	{
+		return false;
+	}
+
+	if ( !constructor.RegisterArray<std::vector<KeyBindingEntry>>() ||
+		 !constructor.Bind("keybindings", &m_KeyBindings) )
 	{
 		return false;
 	}

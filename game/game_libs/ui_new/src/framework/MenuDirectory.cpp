@@ -50,6 +50,13 @@ void MenuDirectory::AddToMap(BaseMenu* newMenu)
 
 void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
 {
+	// FIXME: We don't want to use this to detect the presence of a custom data model,
+	// just to report whether it was set up successfully.
+	if ( entry.menuEntry.menuPtr->SetUpCustomDataModelBindings(context) )
+	{
+		return;
+	}
+
 	Rml::String dataModelName = entry.menuEntry.menuPtr->Name() + Rml::String("_model");
 
 	Rml::DataModelConstructor constructor = context.CreateDataModel(dataModelName);
@@ -57,7 +64,7 @@ void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
 
 	if ( constructor )
 	{
-		if ( entry.menuEntry.menuPtr->SetUpDataBindings(constructor) )
+		if ( entry.menuEntry.menuPtr->SetUpDefaultDataModelBindings(constructor) )
 		{
 			success = true;
 		}

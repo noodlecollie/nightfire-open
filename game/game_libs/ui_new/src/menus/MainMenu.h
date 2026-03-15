@@ -1,9 +1,9 @@
 #pragma once
 
-#include "framework/BaseMenu.h"
+#include "framework/MenuPage.h"
 #include "templatebindings/MenuFrameDataBinding.h"
 
-class MainMenu : public BaseMenu
+class MainMenu : public MenuPage
 {
 public:
 	static const char* const NAME;
@@ -11,7 +11,7 @@ public:
 	MainMenu();
 
 protected:
-	bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor) override;
+	bool SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	MenuFrameDataBinding m_MenuFrameDataBinding;

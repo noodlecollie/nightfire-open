@@ -17,6 +17,8 @@ set(SOURCES_UI
 	src/framework/DataBinding.h
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
+	src/framework/MenuPage.h
+	src/framework/MenuPage.cpp
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
 	src/menus/MainMenu.h
