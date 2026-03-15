@@ -2,7 +2,7 @@
 
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/DataBinding.h"
-#include "templatebindings/BaseTemplateBinding.h"
+#include "framework/BaseTemplateBinding.h"
 
 class MenuFrameDataBinding : public BaseTemplateBinding
 {

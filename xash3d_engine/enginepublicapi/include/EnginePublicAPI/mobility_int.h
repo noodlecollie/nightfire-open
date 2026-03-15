@@ -39,6 +39,7 @@ extern "C"
 // flags for COM_ParseFileSafe
 #define PFILE_IGNOREBRACKET (1 << 0)
 #define PFILE_HANDLECOLON (1 << 1)
+#define PFILE_HANDLENEWLINE (1 << 2)
 
 typedef struct mobile_engfuncs_s
 {
@@ -65,7 +66,8 @@ typedef struct mobile_engfuncs_s
 		unsigned char* color,
 		int round,
 		float aspect,
-		int flags);
+		int flags
+	);
 
 	// add button to defaults list. Will be loaded on config generation
 	void (*pfnTouchAddDefaultButton)(
@@ -79,7 +81,8 @@ typedef struct mobile_engfuncs_s
 		unsigned char* color,
 		int round,
 		float aspect,
-		int flags);
+		int flags
+	);
 
 	// hide/show buttons by pattern
 	void (*pfnTouchHideButtons)(const char* name, unsigned char hide);

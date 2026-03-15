@@ -7,9 +7,9 @@ MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 {
 }
 
-bool MenuPage::SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor)
+bool MenuPage::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	return BaseMenu::SetUpDefaultDataModelBindings(constructor) &&
+	return BaseMenu::SetUpDataModelBindings(constructor) &&
 		constructor.BindEventCallback("push_menu", &MenuPage::HandlePushMenu, this) &&
 		constructor.BindEventCallback("pop_menu", &MenuPage::HandlePopMenu, this);
 }

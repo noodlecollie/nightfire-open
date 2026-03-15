@@ -711,7 +711,8 @@ void Q_timestring(int seconds, char* msg, size_t size)
 			nMin,
 			ext[nMin != 1],
 			nSec,
-			ext[nSec != 1]);
+			ext[nSec != 1]
+		);
 	}
 	else if ( nMin > 0 )
 	{
@@ -1028,6 +1029,11 @@ static int COM_IsSingleChar(unsigned int flags, char c)
 		return true;
 	}
 
+	if ( FBitSet(flags, PFILE_HANDLENEWLINE) && c == '\n' )
+	{
+		return true;
+	}
+
 	return false;
 }
 
@@ -1045,29 +1051,41 @@ char* COM_ParseFileSafe(char* data, char* token, const int size, unsigned int fl
 	qboolean overflow = false;
 
 	if ( quoted )
+	{
 		*quoted = false;
+	}
 
 	if ( !token || !size )
 	{
 		if ( plen )
+		{
 			*plen = 0;
+		}
+
 		return NULL;
 	}
 
 	token[0] = 0;
 
 	if ( !data )
+	{
 		return NULL;
+	}
+
 // skip whitespace
 skipwhite:
-	while ( (c = ((byte)*data)) <= ' ' )
+	while ( (c = ((byte)*data)) <= ' ' && (!(flags & PFILE_HANDLENEWLINE) || *data != '\n') )
 	{
 		if ( c == 0 )
 		{
 			if ( plen )
+			{
 				*plen = overflow ? -1 : len;
+			}
+
 			return NULL;  // end of file;
 		}
+
 		data++;
 	}
 
@@ -1075,7 +1093,17 @@ skipwhite:
 	if ( c == '/' && data[1] == '/' )
 	{
 		while ( *data && *data != '\n' )
-			data++;
+		{
+			++data;
+		}
+
+		// Don't handle newlines on the end of comment strings.
+		// The entire line should be ignored.
+		if ( (flags & PFILE_HANDLENEWLINE) && *data == '\n' )
+		{
+			++data;
+		}
+
 		goto skipwhite;
 	}
 
@@ -1083,7 +1111,9 @@ skipwhite:
 	if ( c == '\"' )
 	{
 		if ( quoted )
+		{
 			*quoted = true;
+		}
 
 		data++;
 		while ( 1 )
@@ -1095,9 +1125,13 @@ skipwhite:
 			{
 				token[len] = 0;
 				if ( plen )
+				{
 					*plen = overflow ? -1 : len;
+				}
+
 				return data;
 			}
+
 			data++;
 
 			if ( c == '\\' && *data == '"' )
@@ -1108,7 +1142,9 @@ skipwhite:
 					len++;
 				}
 				else
+				{
 					overflow = true;
+				}
 
 				data++;
 				continue;
@@ -1117,8 +1153,12 @@ skipwhite:
 			if ( c == '\"' )
 			{
 				token[len] = 0;
+
 				if ( plen )
+				{
 					*plen = overflow ? -1 : len;
+				}
+
 				return data;
 			}
 
@@ -1128,7 +1168,9 @@ skipwhite:
 				len++;
 			}
 			else
+			{
 				overflow = true;
+			}
 		}
 	}
 
@@ -1140,16 +1182,23 @@ skipwhite:
 			token[len] = c;
 			len++;
 			token[len] = 0;
+
 			if ( plen )
+			{
 				*plen = overflow ? -1 : len;
+			}
+
 			return data + 1;
 		}
 		else
 		{
-			// couldn't pass anything
+			// couldn't parse anything
 			token[0] = 0;
 			if ( plen )
+			{
 				*plen = overflow ? -1 : len;
+			}
+
 			return data;
 		}
 	}
@@ -1163,20 +1212,26 @@ skipwhite:
 			len++;
 		}
 		else
+		{
 			overflow = true;
+		}
 
 		data++;
 		c = ((byte)*data);
 
 		if ( COM_IsSingleChar(flags, c) )
+		{
 			break;
+		}
 	}
 	while ( c > 32 );
 
 	token[len] = 0;
 
 	if ( plen )
+	{
 		*plen = overflow ? -1 : len;
+	}
 
 	return data;
 }
@@ -1193,7 +1248,8 @@ int matchpattern_with_separator(
 	const char* pattern,
 	qboolean caseinsensitive,
 	const char* separators,
-	qboolean wildcard_least_one)
+	qboolean wildcard_least_one
+)
 {
 	int c1, c2;
 

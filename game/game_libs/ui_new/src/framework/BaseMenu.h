@@ -43,7 +43,7 @@ public:
 	const MenuRequest* CurrentRequest() const;
 	void ClearCurrentRequest();
 
-	virtual bool SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor);
+	virtual bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 	virtual void DocumentLoaded(Rml::ElementDocument* document);
 	virtual void DocumentUnloaded(Rml::ElementDocument* document);
 	virtual void Update(float currentTime);

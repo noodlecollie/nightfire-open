@@ -1,6 +1,8 @@
 #pragma once
 
 #include <RmlUi/Core/Types.h>
+#include <RmlUi/Core/DataModelHandle.h>
+#include <RmlUi/Core/DataStructHandle.h>
 #include <type_traits>
 
 template<typename T>
@@ -37,7 +39,18 @@ public:
 		return m_Value;
 	}
 
+	bool Bind(Rml::DataModelConstructor& constructor) const
+	{
+		return constructor.Bind(m_Name, &m_Value);
+	}
+
 private:
 	Rml::String m_Name;
 	T m_Value;
 };
+
+template<typename T, typename Container>
+inline bool RegisterMember(Rml::StructHandle<Container>& handle, Container& container, DataBinding<T> Container::* ptr)
+{
+	return handle.RegisterMember((container.*ptr).Name(), ptr);
+}

@@ -9,7 +9,7 @@
 class MenuPage : public BaseMenu, public Rml::EventListener
 {
 public:
-	bool SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor) override;
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 	void DocumentLoaded(Rml::ElementDocument* document) override;
 	void DocumentUnloaded(Rml::ElementDocument* document) override;
 	void ProcessEvent(Rml::Event& event) override;

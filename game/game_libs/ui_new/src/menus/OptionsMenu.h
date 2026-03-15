@@ -2,6 +2,7 @@
 
 #include "framework/MenuPage.h"
 #include "templatebindings/MenuFrameDataBinding.h"
+#include "models/KeyBindingModel.h"
 
 class OptionsMenu : public MenuPage
 {
@@ -9,15 +10,16 @@ public:
 	OptionsMenu();
 
 protected:
-	bool SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor) override;
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	struct KeyBindingEntry
 	{
 		Rml::String actionName;
-		Rml::String binding;
+		Rml::String binding1;
+		Rml::String binding2;
 	};
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
-	std::vector<KeyBindingEntry> m_KeyBindings;
+	KeyBindingModel m_KeyBindings;
 };

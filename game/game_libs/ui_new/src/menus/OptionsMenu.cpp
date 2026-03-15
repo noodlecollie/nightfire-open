@@ -8,24 +8,10 @@ OptionsMenu::OptionsMenu() :
 {
 }
 
-bool OptionsMenu::SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor)
+bool OptionsMenu::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !MenuPage::SetUpDefaultDataModelBindings(constructor) ||
-		 !m_MenuFrameDataBinding.SetUpDataBindings(constructor) )
-	{
-		return false;
-	}
-
-	Rml::StructHandle<KeyBindingEntry> kbType = constructor.RegisterStruct<KeyBindingEntry>();
-
-	if ( !kbType || !kbType.RegisterMember("actionName", &KeyBindingEntry::actionName) ||
-		 !kbType.RegisterMember("binding", &KeyBindingEntry::binding) )
-	{
-		return false;
-	}
-
-	if ( !constructor.RegisterArray<std::vector<KeyBindingEntry>>() ||
-		 !constructor.Bind("keybindings", &m_KeyBindings) )
+	if ( !MenuPage::SetUpDataModelBindings(constructor) || !m_MenuFrameDataBinding.SetUpDataBindings(constructor) ||
+		 !m_KeyBindings.SetUpDataBindings(constructor) )
 	{
 		return false;
 	}

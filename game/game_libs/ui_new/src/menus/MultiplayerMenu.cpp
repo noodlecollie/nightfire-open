@@ -5,8 +5,7 @@ MultiplayerMenu::MultiplayerMenu() :
 {
 }
 
-bool MultiplayerMenu::SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor)
+bool MultiplayerMenu::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	return MenuPage::SetUpDefaultDataModelBindings(constructor) &&
-		m_MenuFrameDataBinding.SetUpDataBindings(constructor);
+	return MenuPage::SetUpDataModelBindings(constructor) && m_MenuFrameDataBinding.SetUpDataBindings(constructor);
 }

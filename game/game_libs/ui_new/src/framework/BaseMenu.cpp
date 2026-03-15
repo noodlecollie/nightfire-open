@@ -38,7 +38,7 @@ void BaseMenu::ClearCurrentRequest()
 	m_Request.reset();
 }
 
-bool BaseMenu::SetUpDefaultDataModelBindings(Rml::DataModelConstructor&)
+bool BaseMenu::SetUpDataModelBindings(Rml::DataModelConstructor&)
 {
 	return true;
 }

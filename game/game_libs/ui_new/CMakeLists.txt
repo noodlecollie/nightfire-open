@@ -14,6 +14,8 @@ set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 set(SOURCES_UI
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
+	src/framework/BaseTableModel.h
+	src/framework/BaseTemplateBinding.h
 	src/framework/DataBinding.h
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
@@ -30,6 +32,8 @@ set(SOURCES_UI
 	src/menus/OptionsMenu.cpp
 	src/menus/ZooMenu.h
 	src/menus/ZooMenu.cpp
+	src/models/KeyBindingModel.h
+	src/models/KeyBindingModel.cpp
 	src/rmlui/EventListenerImpl.h
 	src/rmlui/EventListenerImpl.cpp
 	src/rmlui/EventListenerInstancerImpl.h
@@ -44,7 +48,6 @@ set(SOURCES_UI
 	src/rmlui/SystemInterfaceImpl.cpp
 	src/rmlui/TextInputHandlerImpl.h
 	src/rmlui/TextInputHandlerImpl.cpp
-	src/templatebindings/BaseTemplateBinding.h
 	src/templatebindings/MenuFrameDataBinding.h
 	src/templatebindings/MenuFrameDataBinding.cpp
 	src/udll_int.h

@@ -36,7 +36,7 @@ typedef struct keyname_s
 	const char* binding;  // default bind
 } keyname_t;
 
-enginekey_t keys[256];
+enginekey_t keys[MAX_KEY_BINDINGS];
 
 keyname_t keynames[] = {
 	{"TAB", K_TAB, ""},
@@ -148,6 +148,11 @@ static qboolean OSK_KeyEvent(int key, int down);
 static convar_t* osk_enable;
 static convar_t* key_rotate;
 
+static inline qboolean IsValidIndex(int keynum)
+{
+	return keynum > 0 && keynum < SIZE_OF_ARRAY_AS_INT(keys);
+}
+
 /*
 ===================
 Key_IsDown
@@ -155,8 +160,11 @@ Key_IsDown
 */
 int GAME_EXPORT Key_IsDown(int keynum)
 {
-	if ( keynum == -1 )
+	if ( !IsValidIndex(keynum) )
+	{
 		return false;
+	}
+
 	return keys[keynum].down;
 }
 
@@ -169,7 +177,6 @@ the given string.  Single ascii characters return themselves, while
 the K_* names are matched up.
 
 0x11 will be interpreted as raw hex, which will allow new controlers
-
 to be configured even if they don't have defined names.
 ===================
 */
@@ -178,9 +185,14 @@ int Key_StringToKeynum(const char* str)
 	keyname_t* kn;
 
 	if ( !str || !str[0] )
+	{
 		return -1;
+	}
+
 	if ( !str[1] )
+	{
 		return str[0];
+	}
 
 	// check for hex code
 	if ( str[0] == '0' && str[1] == 'x' && Q_strlen(str) == 4 )
@@ -197,9 +209,12 @@ int Key_StringToKeynum(const char* str)
 			n1 = n1 - 'a' + 10;
 		}
 		else
+		{
 			n1 = 0;
+		}
 
 		n2 = str[3];
+
 		if ( n2 >= '0' && n2 <= '9' )
 		{
 			n2 -= '0';
@@ -209,7 +224,9 @@ int Key_StringToKeynum(const char* str)
 			n2 = n2 - 'a' + 10;
 		}
 		else
+		{
 			n2 = 0;
+		}
 
 		return n1 * 16 + n2;
 	}
@@ -218,7 +235,9 @@ int Key_StringToKeynum(const char* str)
 	for ( kn = keynames; kn->name; kn++ )
 	{
 		if ( !Q_stricmp(str, kn->name) )
+		{
 			return kn->keynum;
+		}
 	}
 
 	return -1;
@@ -239,9 +258,14 @@ const char* Key_KeynumToString(int keynum)
 	int i, j;
 
 	if ( keynum == -1 )
+	{
 		return "<KEY NOT FOUND>";
-	if ( keynum < 0 || keynum > 255 )
+	}
+
+	if ( keynum < 0 || keynum >= SIZE_OF_ARRAY_AS_INT(keys) )
+	{
 		return "<OUT OF RANGE>";
+	}
 
 	// check for printable ascii (don't use quote)
 	if ( keynum > 32 && keynum < 127 && keynum != '"' && keynum != ';' && keynum != K_SCROLLOCK )
@@ -255,7 +279,9 @@ const char* Key_KeynumToString(int keynum)
 	for ( kn = keynames; kn->name; kn++ )
 	{
 		if ( keynum == kn->keynum )
+		{
 			return kn->name;
+		}
 	}
 
 	// make a hex string
@@ -278,8 +304,10 @@ Key_SetBinding
 */
 void GAME_EXPORT Key_SetBinding(int keynum, const char* binding)
 {
-	if ( keynum == -1 )
+	if ( !IsValidIndex(keynum) )
+	{
 		return;
+	}
 
 	// free old bindings
 	if ( keys[keynum].binding )
@@ -299,8 +327,11 @@ Key_GetBinding
 */
 const char* Key_GetBinding(int keynum)
 {
-	if ( keynum == -1 )
+	if ( !IsValidIndex(keynum) )
+	{
 		return NULL;
+	}
+
 	return keys[keynum].binding;
 }
 
@@ -315,22 +346,30 @@ int Key_GetKey(const char* pBinding)
 	const char* p;
 
 	if ( !pBinding )
+	{
 		return -1;
+	}
 
 	len = (int)Q_strlen(pBinding);
 
-	for ( i = 0; i < 256; i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY_AS_INT(keys); i++ )
 	{
 		if ( !keys[i].binding )
+		{
 			continue;
+		}
 
 		p = keys[i].binding;
 
 		if ( *p == '+' )
+		{
 			p++;
+		}
 
 		if ( !Q_strnicmp(p, pBinding, len) )
+		{
 			return i;
+		}
 	}
 
 	return -1;
@@ -374,7 +413,9 @@ void Key_Unbindall_f(void)
 	for ( i = 0; i < SIZE_OF_ARRAY(keys); i++ )
 	{
 		if ( keys[i].binding )
+		{
 			Key_SetBinding((int)i, "");
+		}
 	}
 
 	// set some defaults
@@ -396,12 +437,16 @@ void Key_Reset_f(void)
 	for ( i = 0; i < SIZE_OF_ARRAY(keys); i++ )
 	{
 		if ( keys[i].binding )
+		{
 			Key_SetBinding((int)i, "");
+		}
 	}
 
 	// apply default values
 	for ( kn = keynames; kn->name; kn++ )
+	{
 		Key_SetBinding(kn->keynum, kn->binding);
+	}
 }
 
 /*
@@ -433,9 +478,14 @@ void Key_Bind_f(void)
 	if ( c == 2 )
 	{
 		if ( keys[b].binding )
+		{
 			Con_Printf("\"%s\" = \"%s\"\n", Cmd_Argv(1), keys[b].binding);
+		}
 		else
+		{
 			Con_Printf("\"%s\" is not bound\n", Cmd_Argv(1));
+		}
+
 		return;
 	}
 
@@ -445,8 +495,11 @@ void Key_Bind_f(void)
 	for ( i = 2; i < c; i++ )
 	{
 		Q_strcat(cmd, sizeof(cmd), Cmd_Argv(i));
+
 		if ( i != (c - 1) )
+		{
 			Q_strcat(cmd, sizeof(cmd), " ");
+		}
 	}
 
 	Key_SetBinding(b, cmd);
@@ -465,14 +518,18 @@ void Key_WriteBindings(file_t* f)
 	string newCommand;
 
 	if ( !f )
+	{
 		return;
+	}
 
 	FS_Printf(f, "unbindall\n");
 
-	for ( i = 0; i < 256; i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY_AS_INT(keys); i++ )
 	{
 		if ( !COM_CheckString(keys[i].binding) )
+		{
 			continue;
+		}
 
 		Cmd_Escape(newCommand, keys[i].binding, sizeof(newCommand));
 		FS_Printf(f, "bind %s \"%s\"\n", Key_KeynumToString(i), newCommand);
@@ -489,10 +546,12 @@ void Key_Bindlist_f(void)
 {
 	int i;
 
-	for ( i = 0; i < 256; i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY_AS_INT(keys); i++ )
 	{
 		if ( !COM_CheckString(keys[i].binding) )
+		{
 			continue;
+		}
 
 		Con_Printf("%s \"%s\"\n", Key_KeynumToString(i), keys[i].binding);
 	}
@@ -588,7 +647,9 @@ List of keys that allows auto-repeat
 static qboolean Key_IsAllowedAutoRepeat(int key)
 {
 	if ( cls.key_dest != key_game )
+	{
 		return true;
+	}
 
 	switch ( key )
 	{
@@ -598,9 +659,14 @@ static qboolean Key_IsAllowedAutoRepeat(int key)
 		case K_KP_PGUP:
 		case K_PGDN:
 		case K_KP_PGDN:
+		{
 			return true;
+		}
+
 		default:
+		{
 			return false;
+		}
 	}
 }
 
@@ -609,37 +675,61 @@ static int Key_Rotate(int key)
 	if ( key_rotate->value == 1.0f )  // CW
 	{
 		if ( key == K_UPARROW )
+		{
 			key = K_LEFTARROW;
+		}
 		else if ( key == K_LEFTARROW )
+		{
 			key = K_DOWNARROW;
+		}
 		else if ( key == K_RIGHTARROW )
+		{
 			key = K_UPARROW;
+		}
 		else if ( key == K_DOWNARROW )
+		{
 			key = K_RIGHTARROW;
+		}
 	}
 
 	else if ( key_rotate->value == 3.0f )  // CCW
 	{
 		if ( key == K_UPARROW )
+		{
 			key = K_RIGHTARROW;
+		}
 		else if ( key == K_LEFTARROW )
+		{
 			key = K_UPARROW;
+		}
 		else if ( key == K_RIGHTARROW )
+		{
 			key = K_DOWNARROW;
+		}
 		else if ( key == K_DOWNARROW )
+		{
 			key = K_LEFTARROW;
+		}
 	}
 
 	else if ( key_rotate->value == 2.0f )
 	{
 		if ( key == K_UPARROW )
+		{
 			key = K_DOWNARROW;
+		}
 		else if ( key == K_LEFTARROW )
+		{
 			key = K_RIGHTARROW;
+		}
 		else if ( key == K_RIGHTARROW )
+		{
 			key = K_LEFTARROW;
+		}
 		else if ( key == K_DOWNARROW )
+		{
 			key = K_UPARROW;
+		}
 	}
 
 	return key;
@@ -656,14 +746,23 @@ void GAME_EXPORT Key_Event(int key, int down)
 {
 	const char* kb;
 
+	if ( !IsValidIndex(key) )
+	{
+		return;
+	}
+
 	key = Key_Rotate(key);
 
 	if ( OSK_KeyEvent(key, down) )
+	{
 		return;
+	}
 
 	// key was pressed before engine was run
 	if ( !keys[key].down && !down )
+	{
 		return;
+	}
 
 	kb = keys[key].binding;
 	keys[key].down = down;
@@ -676,6 +775,7 @@ void GAME_EXPORT Key_Event(int key, int down)
 		return;
 	}
 #endif
+
 	// distribute the key down event to the apropriate handler
 	if ( cls.key_dest == key_game && (down || keys[key].gamedown) )
 	{
@@ -691,6 +791,7 @@ void GAME_EXPORT Key_Event(int key, int down)
 				keys[key].gamedown = false;
 				keys[key].repeats = 0;
 			}
+
 			return;  // handled in client.dll
 		}
 	}
@@ -734,6 +835,7 @@ void GAME_EXPORT Key_Event(int key, int down)
 		switch ( cls.key_dest )
 		{
 			case key_game:
+			{
 				if ( CVAR_TO_BOOL(gl_showtextures) )
 				{
 					// close texture atlas
@@ -746,20 +848,38 @@ void GAME_EXPORT Key_Event(int key, int down)
 					return;  // handled in client.dll
 				}
 				break;
+			}
+
 			case key_message:
+			{
 				Key_Message(key);
 				return;
+			}
+
 			case key_console:
+			{
 				if ( cls.state == ca_active && !cl.background )
+				{
 					Key_SetKeyDest(key_game);
+				}
 				else
+				{
 					UI_SetActiveMenu(true);
+				}
+
 				return;
+			}
+
 			case key_menu:
+			{
 				UI_KeyEvent(key, true);
 				return;
+			}
+
 			default:
+			{
 				return;
+			}
 		}
 	}
 
@@ -767,7 +887,10 @@ void GAME_EXPORT Key_Event(int key, int down)
 	{
 		// only non printable keys passed
 		if ( !gameui.use_text_api )
+		{
 			Key_EnableTextInput(true, false);
+		}
+
 		// pass printable chars for old menus
 		if ( !gameui.use_text_api && !host.textmode && down && (key >= 32) && (key <= 'z') )
 		{
@@ -775,8 +898,10 @@ void GAME_EXPORT Key_Event(int key, int down)
 			{
 				key += 'A' - 'a';
 			}
+
 			UI_CharEvent(key);
 		}
+
 		UI_KeyEvent(key, down);
 		return;
 	}
@@ -820,9 +945,13 @@ void Key_EnableTextInput(qboolean enable, qboolean force)
 		return;
 	}
 	if ( enable && (!host.textmode || force) )
+	{
 		Platform_EnableTextInput(true);
+	}
 	else if ( !enable && (host.textmode || force) )
+	{
 		Platform_EnableTextInput(false);
+	}
 
 	host.textmode = enable;
 }
@@ -839,24 +968,38 @@ void GAME_EXPORT Key_SetKeyDest(int key_dest)
 	switch ( key_dest )
 	{
 		case key_game:
+		{
 			Key_EnableTextInput(false, false);
 			cls.key_dest = key_game;
 			break;
+		}
+
 		case key_menu:
+		{
 			Key_EnableTextInput(false, false);
 			cls.key_dest = key_menu;
 			break;
+		}
+
 		case key_console:
+		{
 			Key_EnableTextInput(true, false);
 			cls.key_dest = key_console;
 			break;
+		}
+
 		case key_message:
+		{
 			Key_EnableTextInput(true, false);
 			cls.key_dest = key_message;
 			break;
+		}
+
 		default:
+		{
 			Host_Error("Key_SetKeyDest: wrong destination (%i)\n", key_dest);
 			break;
+		}
 	}
 }
 
@@ -871,12 +1014,16 @@ void GAME_EXPORT Key_ClearStates(void)
 
 	// don't clear keys during changelevel
 	if ( cls.changelevel )
+	{
 		return;
+	}
 
-	for ( i = 0; i < 256; i++ )
+	for ( i = 0; i < SIZE_OF_ARRAY_AS_INT(keys); i++ )
 	{
 		if ( keys[i].down )
+		{
 			Key_Event(i, false);
+		}
 
 		keys[i].down = 0;
 		keys[i].repeats = 0;
@@ -884,7 +1031,9 @@ void GAME_EXPORT Key_ClearStates(void)
 	}
 
 	if ( clgame.hInstance )
+	{
 		clgame.dllFuncs.IN_ClearStates();
+	}
 }
 
 /*
@@ -898,12 +1047,16 @@ void CL_CharEvent(int key)
 {
 	// the console key should never be used as a char
 	if ( key == '`' || key == '~' )
+	{
 		return;
+	}
 
 	if ( cls.key_dest == key_console && !Con_Visible() )
 	{
 		if ( (char)key == '`' || (char)key == '?' )
+		{
 			return;  // don't pass '`' when we open the console
+		}
 	}
 
 	// distribute the key down event to the apropriate handler
@@ -1004,14 +1157,16 @@ static const char* osk_keylayout[][4] = {
 		"zxcvbnm,./ "
 		"\x13"  // 10 + esc on left + shift on a left/right
 	},
-	{"~!@#$%^&*()_+",
-	 "QWERTYUIOP{}|",
-	 "\x10"
-	 "ASDFGHJKL:\""
-	 "\x12",
-	 "\x11"
-	 "ZXCVBNM<>? "
-	 "\x13"}
+	{
+		"~!@#$%^&*()_+",
+		"QWERTYUIOP{}|",
+		"\x10"
+		"ASDFGHJKL:\""
+		"\x12",
+		"\x11"
+		"ZXCVBNM<>? "
+		"\x13",
+	}
 };
 
 struct osk_s
@@ -1031,7 +1186,9 @@ struct osk_s
 static qboolean OSK_KeyEvent(int key, int down)
 {
 	if ( !osk.enable || !CVAR_TO_BOOL(osk_enable) )
+	{
 		return false;
+	}
 
 	if ( osk.sending )
 	{
@@ -1046,37 +1203,57 @@ static qboolean OSK_KeyEvent(int key, int down)
 			osk.curbutton.val = osk_keylayout[osk.curlayout][osk.curbutton.y][osk.curbutton.x];
 			return true;
 		}
+
 		return false;
 	}
 
 	switch ( key )
 	{
 		case K_ENTER:
+		{
 			switch ( osk.curbutton.val )
 			{
 				case OSK_ENTER:
+				{
 					osk.sending = true;
 					Key_Event(K_ENTER, down);
 					// osk_enable = false; // TODO: handle multiline
 					break;
+				}
+
 				case OSK_SHIFT:
+				{
 					if ( !down )
+					{
 						break;
+					}
 
 					if ( osk.curlayout & 1 )
+					{
 						osk.curlayout--;
+					}
 					else
+					{
 						osk.curlayout++;
+					}
 
 					osk.shift = true;
 					osk.curbutton.val = osk_keylayout[osk.curlayout][osk.curbutton.y][osk.curbutton.x];
 					break;
+				}
+
 				case OSK_BACKSPACE:
+				{
 					Key_Event(K_BACKSPACE, down);
 					break;
+				}
+
 				case OSK_TAB:
+				{
 					Key_Event(K_TAB, down);
 					break;
+				}
+
 				default:
 				{
 					int ch;
@@ -1084,7 +1261,9 @@ static qboolean OSK_KeyEvent(int key, int down)
 					if ( !down )
 					{
 						if ( osk.shift && osk.curlayout & 1 )
+						{
 							osk.curlayout--;
+						}
 
 						osk.shift = false;
 						osk.curbutton.val = osk_keylayout[osk.curlayout][osk.curbutton.y][osk.curbutton.x];
@@ -1092,12 +1271,18 @@ static qboolean OSK_KeyEvent(int key, int down)
 					}
 
 					if ( !Q_stricmp(cl_charset->string, "utf-8") )
+					{
 						ch = (unsigned char)osk.curbutton.val;
+					}
 					else
+					{
 						ch = Con_UtfProcessCharForce((unsigned char)osk.curbutton.val);
+					}
 
 					if ( !ch )
+					{
 						break;
+					}
 
 					Con_CharEvent(ch);
 
@@ -1108,34 +1293,59 @@ static qboolean OSK_KeyEvent(int key, int down)
 
 					break;
 				}
-			}
+			}  // end switch
+
 			break;
+		}
+
 		case K_UPARROW:
+		{
 			if ( down && --osk.curbutton.y < 0 )
 			{
 				osk.curbutton.y = MAX_OSK_LINES - 1;
 				osk.curbutton.val = 0;
 				return true;
 			}
+
 			break;
+		}
+
 		case K_DOWNARROW:
+		{
 			if ( down && ++osk.curbutton.y >= MAX_OSK_LINES )
 			{
 				osk.curbutton.y = 0;
 				osk.curbutton.val = 0;
 				return true;
 			}
+
 			break;
+		}
+
 		case K_LEFTARROW:
+		{
 			if ( down && --osk.curbutton.x < 0 )
+			{
 				osk.curbutton.x = MAX_OSK_ROWS - 1;
+			}
+
 			break;
+		}
+
 		case K_RIGHTARROW:
+		{
 			if ( down && ++osk.curbutton.x >= MAX_OSK_ROWS )
+			{
 				osk.curbutton.x = 0;
+			}
+
 			break;
+		}
+
 		default:
+		{
 			return false;
+		}
 	}
 
 	osk.curbutton.val = osk_keylayout[osk.curlayout][osk.curbutton.y][osk.curbutton.x];
@@ -1229,7 +1439,9 @@ void OSK_Draw(void)
 	int i, j;
 
 	if ( !osk.enable || !CVAR_TO_BOOL(osk_enable) || !osk.curbutton.val )
+	{
 		return;
+	}
 
 	// draw keyboard
 	ref.dllFuncs.FillRGBABlend(
@@ -1250,6 +1462,10 @@ void OSK_Draw(void)
 	OSK_DrawSpecialButton("en", X_START + X_STEP * 12, Y_START + Y_STEP * 3, X_STEP, Y_STEP);
 
 	for ( y = Y_START, j = 0; j < MAX_OSK_LINES; j++, y += Y_STEP )
+	{
 		for ( x = X_START, i = 0; i < MAX_OSK_ROWS; i++, x += X_STEP )
+		{
 			OSK_DrawSymbolButton(curlayout[j][i], x, y, X_STEP, Y_STEP);
+		}
+	}
 }

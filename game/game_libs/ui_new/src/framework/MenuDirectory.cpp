@@ -57,7 +57,7 @@ void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
 
 	if ( constructor )
 	{
-		if ( entry.menuEntry.menuPtr->SetUpDefaultDataModelBindings(constructor) )
+		if ( entry.menuEntry.menuPtr->SetUpDataModelBindings(constructor) )
 		{
 			success = true;
 		}

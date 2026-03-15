@@ -11,7 +11,7 @@ public:
 	MainMenu();
 
 protected:
-	bool SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor) override;
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	MenuFrameDataBinding m_MenuFrameDataBinding;
