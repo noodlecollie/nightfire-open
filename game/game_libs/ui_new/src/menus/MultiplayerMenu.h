@@ -1,15 +1,15 @@
 #pragma once
 
-#include "framework/BaseMenu.h"
+#include "framework/MenuPage.h"
 #include "templatebindings/MenuFrameDataBinding.h"
 
-class MultiplayerMenu : public BaseMenu
+class MultiplayerMenu : public MenuPage
 {
 public:
 	MultiplayerMenu();
 
 protected:
-	bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor) override;
+	bool SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	MenuFrameDataBinding m_MenuFrameDataBinding;

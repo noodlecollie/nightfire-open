@@ -1,19 +1,12 @@
 #include "menus/MultiplayerMenu.h"
-#include <RmlUi/Core/Context.h>
-#include <RmlUi/Core/Event.h>
-#include <RmlUi/Core/Element.h>
 
 MultiplayerMenu::MultiplayerMenu() :
-	BaseMenu("multiplayer_menu", "resource/rml/multiplayer_menu.rml")
+	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml")
 {
 }
 
-bool MultiplayerMenu::SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor)
+bool MultiplayerMenu::SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !m_MenuFrameDataBinding.SetUpDataBindings(constructor) )
-	{
-		return false;
-	}
-
-	return true;
+	return MenuPage::SetUpDefaultDataModelBindings(constructor) &&
+		m_MenuFrameDataBinding.SetUpDataBindings(constructor);
 }

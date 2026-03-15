@@ -1,16 +1,23 @@
 #pragma once
 
-#include "framework/BaseMenu.h"
+#include "framework/MenuPage.h"
 #include "templatebindings/MenuFrameDataBinding.h"
 
-class OptionsMenu : public BaseMenu
+class OptionsMenu : public MenuPage
 {
 public:
 	OptionsMenu();
 
 protected:
-	bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor) override;
+	bool SetUpDefaultDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
+	struct KeyBindingEntry
+	{
+		Rml::String actionName;
+		Rml::String binding;
+	};
+
 	MenuFrameDataBinding m_MenuFrameDataBinding;
+	std::vector<KeyBindingEntry> m_KeyBindings;
 };
