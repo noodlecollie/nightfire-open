@@ -16,5 +16,8 @@ bool OptionsMenu::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 		return false;
 	}
 
+	// TODO: Swap this out for a "reset to defaults" button.
+	m_KeyBindings.Reset();
+
 	return true;
 }

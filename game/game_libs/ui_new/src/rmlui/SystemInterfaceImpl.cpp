@@ -33,26 +33,26 @@ bool SystemInterfaceImpl::LogMessage(Rml::Log::Type type, const Rml::String& mes
 		case Rml::Log::Type::LT_ASSERT:
 		case Rml::Log::Type::LT_ERROR:
 		{
-			gEngfuncs.Con_Printf("^1[RmlUi Error]^7 %s\n", message.c_str());
+			gEngfuncs.Con_Printf("^1[UI Error]^7 %s\n", message.c_str());
 			break;
 		}
 
 		case Rml::Log::Type::LT_WARNING:
 		{
-			gEngfuncs.Con_Printf("^3[RmlUi Warning]^7 %s\n", message.c_str());
+			gEngfuncs.Con_Printf("^3[UI Warning]^7 %s\n", message.c_str());
 			break;
 		}
 
 		case Rml::Log::Type::LT_DEBUG:
 		{
-			gEngfuncs.Con_Printf("[RmlUi Debug] %s\n", message.c_str());
+			gEngfuncs.Con_Printf("[UI Debug] %s\n", message.c_str());
 			break;
 		}
 
 		// Everything else is info
 		default:
 		{
-			gEngfuncs.Con_Printf("[RmlUi] %s\n", message.c_str());
+			gEngfuncs.Con_Printf("[UI] %s\n", message.c_str());
 			break;
 		}
 	}

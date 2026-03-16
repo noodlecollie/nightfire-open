@@ -5,6 +5,8 @@
 #include <RmlUi/Core/Types.h>
 #include <vector>
 
+class FileCharsPtr;
+
 class KeyBindingModel : public BaseTableModel
 {
 public:
@@ -33,6 +35,24 @@ public:
 	void Reset() override;
 
 private:
+	enum class ParseResult
+	{
+		Ok,
+		Skip,
+		Eof,
+		Error
+	};
+
+	void ParseSchemaAndResetToDefaults();
+	ParseResult ParseSchemaLine(FileCharsPtr& file, Entry& entry);
+	ParseResult ParseToken(
+		FileCharsPtr& file,
+		char* buffer,
+		size_t bufferSize,
+		bool allowNewline,
+		const int* overrideFlags = nullptr
+	);
+
 	std::vector<Entry> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;
 };

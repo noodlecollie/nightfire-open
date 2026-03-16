@@ -1134,7 +1134,7 @@ skipwhite:
 
 			data++;
 
-			if ( c == '\\' && *data == '"' )
+			if ( c == '\\' && (*data == '"' || *data == '\\') )
 			{
 				if ( len + 1 < size )
 				{
