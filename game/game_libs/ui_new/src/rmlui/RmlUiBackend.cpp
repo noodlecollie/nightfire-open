@@ -338,7 +338,8 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 
 	// TODO: A better solution for this?
 #ifdef _DEBUG
-	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F1 && pressed && (m_Modifiers & Rml::Input::KeyModifier::KM_CTRL) )
+	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F1 && pressed &&
+		 (m_Modifiers & (Rml::Input::KeyModifier::KM_CTRL | Rml::Input::KeyModifier::KM_SHIFT)) )
 	{
 		Rml::Debugger::SetVisible(!Rml::Debugger::IsVisible());
 	}

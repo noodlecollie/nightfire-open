@@ -27,7 +27,7 @@ public:
 		return m_Ptr.get();
 	}
 
-	const size_t Length() const
+	size_t Length() const
 	{
 		return m_Length;
 	}
