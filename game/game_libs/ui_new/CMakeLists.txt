@@ -30,8 +30,6 @@ set(SOURCES_UI
 	src/menus/MultiplayerMenu.cpp
 	src/menus/OptionsMenu.h
 	src/menus/OptionsMenu.cpp
-	src/menus/ZooMenu.h
-	src/menus/ZooMenu.cpp
 	src/models/KeyBindingModel.h
 	src/models/KeyBindingModel.cpp
 	src/rmlui/EventListenerImpl.h

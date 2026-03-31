@@ -4,7 +4,6 @@
 #include "UIDebug.h"
 
 #include "menus/MainMenu.h"
-#include "menus/ZooMenu.h"
 #include "menus/OptionsMenu.h"
 #include "menus/MultiplayerMenu.h"
 
@@ -13,7 +12,6 @@ void MenuDirectory::Populate()
 	m_MenuMap.clear();
 
 	AddToMap<MainMenu>();
-	AddToMap<ZooMenu>();
 	AddToMap<OptionsMenu>();
 	AddToMap<MultiplayerMenu>();
 }

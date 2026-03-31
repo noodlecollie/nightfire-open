@@ -162,7 +162,10 @@ KeyBindingModel::ParseResult KeyBindingModel::ParseSchemaLine(FileCharsPtr& file
 		return ParseResult::Ok;
 	}
 
-	entry.consoleCommand = token;
+	if ( Q_strcmp(token, "blank") != 0 )
+	{
+		entry.consoleCommand = token;
+	}
 
 	// Primary binding
 	result = ParseToken(file, token, sizeof(token), false);
