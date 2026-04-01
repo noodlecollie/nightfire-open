@@ -1,9 +1,10 @@
 #pragma once
 
 #include "framework/BaseTableModel.h"
-#include "framework/DataBinding.h"
+#include "framework/DataVar.h"
 #include <RmlUi/Core/Types.h>
 #include <vector>
+#include <unordered_map>
 
 class FileCharsPtr;
 
@@ -26,6 +27,8 @@ public:
 		Rml::String consoleCommand;
 		Rml::String primaryBinding;
 		Rml::String secondaryBinding;
+		bool rebindingPrimary = false;
+		bool rebindingSecondary = false;
 	};
 
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
@@ -33,6 +36,10 @@ public:
 	size_t Columns() const override;
 	Rml::String DisplayString(size_t row, size_t column) const override;
 	void Reset() override;
+	bool RowForConsoleCommand(const Rml::String& command, size_t& row) const;
+
+	bool IsRebinding(size_t row, bool primary) const;
+	void SetIsRebinding(size_t row, bool primary, bool rebinding);
 
 private:
 	enum class ParseResult
@@ -54,5 +61,6 @@ private:
 	);
 
 	std::vector<Entry> m_Entries;
+	std::unordered_map<Rml::String, size_t> m_ConsoleCommandToEntry;
 	Rml::DataModelHandle m_ModelHandle;
 };

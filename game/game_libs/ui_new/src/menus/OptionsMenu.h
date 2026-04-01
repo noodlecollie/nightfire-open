@@ -17,20 +17,19 @@ private:
 	static constexpr const char* const TAB_KEYS = "keys";
 	static constexpr const char* const TAB_MOUSE = "mouse";
 	static constexpr const char* const TAB_AV = "av";
-
-	struct KeyBindingEntry
-	{
-		Rml::String actionName;
-		Rml::String binding1;
-		Rml::String binding2;
-	};
+	static constexpr size_t INVALID_ROW = ~static_cast<size_t>(0);
 
 	struct PageModel
 	{
 		Rml::String activeTab = TAB_GAMEPLAY;
 	};
 
+	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
+	void HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex);
+	void ResetRebindingRow();
+
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
+	size_t m_RebindingRow = INVALID_ROW;
 };

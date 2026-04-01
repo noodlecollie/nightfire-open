@@ -8,14 +8,23 @@
 static constexpr const char* const NAME_KEYBINDINGS = "keybindings";
 static constexpr const char* const SCHEMA_PATH = "controls_schema.lst";
 
+static constexpr const char* const PROP_DESCRIPTION = "description";
+static constexpr const char* const PROP_CONSOLE_COMMAND = "consoleCommand";
+static constexpr const char* const PROP_PRIMARY_BINDING = "primaryBinding";
+static constexpr const char* const PROP_SECONDARY_BINDING = "secondaryBinding";
+static constexpr const char* const PROP_REBINDING_PRIMARY = "rebindingPrimary";
+static constexpr const char* const PROP_REBINDING_SECONDARY = "rebindingSecondary";
+
 bool KeyBindingModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
 	Rml::StructHandle<Entry> kbType = constructor.RegisterStruct<Entry>();
 
-	if ( !kbType || !kbType.RegisterMember("description", &Entry::description) ||
-		 !kbType.RegisterMember("consoleCommand", &Entry::consoleCommand) ||
-		 !kbType.RegisterMember("primaryBinding", &Entry::primaryBinding) ||
-		 !kbType.RegisterMember("secondaryBinding", &Entry::secondaryBinding) )
+	if ( !kbType || !kbType.RegisterMember(PROP_DESCRIPTION, &Entry::description) ||
+		 !kbType.RegisterMember(PROP_CONSOLE_COMMAND, &Entry::consoleCommand) ||
+		 !kbType.RegisterMember(PROP_PRIMARY_BINDING, &Entry::primaryBinding) ||
+		 !kbType.RegisterMember(PROP_SECONDARY_BINDING, &Entry::secondaryBinding) ||
+		 !kbType.RegisterMember(PROP_REBINDING_PRIMARY, &Entry::rebindingPrimary) ||
+		 !kbType.RegisterMember(PROP_REBINDING_SECONDARY, &Entry::rebindingSecondary) )
 	{
 		return false;
 	}
@@ -89,9 +98,54 @@ void KeyBindingModel::Reset()
 	}
 }
 
+bool KeyBindingModel::RowForConsoleCommand(const Rml::String& command, size_t& row) const
+{
+	const auto it = m_ConsoleCommandToEntry.find(command);
+
+	if ( it == m_ConsoleCommandToEntry.end() )
+	{
+		return false;
+	}
+
+	row = it->second;
+	return true;
+}
+
+bool KeyBindingModel::IsRebinding(size_t row, bool primary) const
+{
+	if ( row >= m_Entries.size() )
+	{
+		return false;
+	}
+
+	return primary ? m_Entries[row].rebindingPrimary : m_Entries[row].rebindingSecondary;
+}
+
+void KeyBindingModel::SetIsRebinding(size_t row, bool primary, bool rebinding)
+{
+	if ( row >= m_Entries.size() )
+	{
+		return;
+	}
+
+	bool& var = primary ? m_Entries[row].rebindingPrimary : m_Entries[row].rebindingSecondary;
+
+	if ( var != rebinding )
+	{
+		var = rebinding;
+		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+	}
+}
+
 void KeyBindingModel::ParseSchemaAndResetToDefaults()
 {
+	m_ConsoleCommandToEntry.clear();
 	m_Entries.clear();
+
+	if ( m_ModelHandle )
+	{
+		m_ModelHandle.DirtyAllVariables();
+	}
 
 	FileCharsPtr file(SCHEMA_PATH, PFILE_HANDLENEWLINE);
 
@@ -108,6 +162,7 @@ void KeyBindingModel::ParseSchemaAndResetToDefaults()
 
 		if ( result == ParseResult::Ok || result == ParseResult::Eof )
 		{
+			m_ConsoleCommandToEntry.insert({entry.consoleCommand, m_Entries.size()});
 			m_Entries.push_back(std::move(entry));
 
 			if ( result == ParseResult::Eof )
@@ -117,6 +172,7 @@ void KeyBindingModel::ParseSchemaAndResetToDefaults()
 		}
 		else if ( result == ParseResult::Error )
 		{
+			m_ConsoleCommandToEntry.clear();
 			m_Entries.clear();
 			break;
 		}

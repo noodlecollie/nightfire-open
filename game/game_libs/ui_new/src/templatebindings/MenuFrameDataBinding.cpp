@@ -3,13 +3,13 @@
 #include <RmlUi/Core/Element.h>
 
 MenuFrameDataBinding::MenuFrameDataBinding() :
-	m_Tooltip("footer_tooltip", "")
+	m_Tooltip {"footer_tooltip", ""}
 {
 }
 
 bool MenuFrameDataBinding::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
-	constructor.Bind(m_Tooltip.Name(), &m_Tooltip.Value());
+	constructor.Bind(m_Tooltip.name, &m_Tooltip.value);
 	constructor.BindEventCallback("set_tooltip", &MenuFrameDataBinding::SetTooltip, this);
 	constructor.BindEventCallback("clear_tooltip", &MenuFrameDataBinding::ClearTooltip, this);
 
@@ -32,17 +32,17 @@ void MenuFrameDataBinding::SetTooltip(Rml::DataModelHandle handle, Rml::Event& e
 		return;
 	}
 
-	if ( tooltipAttr->GetInto(m_Tooltip.Value()) )
+	if ( tooltipAttr->GetInto(m_Tooltip.value) )
 	{
-		handle.DirtyVariable(m_Tooltip.Name());
+		handle.DirtyVariable(m_Tooltip.name);
 	}
 }
 
 void MenuFrameDataBinding::ClearTooltip(Rml::DataModelHandle handle, Rml::Event&, const Rml::VariantList&)
 {
-	if ( !m_Tooltip.Value().empty() )
+	if ( !m_Tooltip.value.empty() )
 	{
-		m_Tooltip.Value().clear();
-		handle.DirtyVariable(m_Tooltip.Name());
+		m_Tooltip.value.clear();
+		handle.DirtyVariable(m_Tooltip.name);
 	}
 }

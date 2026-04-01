@@ -1,7 +1,7 @@
 #pragma once
 
 #include <RmlUi/Core/DataModelHandle.h>
-#include "framework/DataBinding.h"
+#include "framework/DataVar.h"
 #include "framework/BaseTemplateBinding.h"
 
 class MenuFrameDataBinding : public BaseTemplateBinding
@@ -14,5 +14,5 @@ private:
 	void SetTooltip(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList&);
 	void ClearTooltip(Rml::DataModelHandle handle, Rml::Event&, const Rml::VariantList&);
 
-	DataBinding<Rml::String> m_Tooltip;
+	DataVar<Rml::String> m_Tooltip;
 };

@@ -16,7 +16,7 @@ set(SOURCES_UI
 	src/framework/BaseMenu.cpp
 	src/framework/BaseTableModel.h
 	src/framework/BaseTemplateBinding.h
-	src/framework/DataBinding.h
+	src/framework/DataVar.h
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
 	src/framework/MenuPage.h
