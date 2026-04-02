@@ -5,6 +5,9 @@
 #include "udll_int.h"
 #include "UIDebug.h"
 
+static constexpr const char* const PROP_ACTIVE_TAB = "activeTab";
+static constexpr const char* const EVENT_REBIND_KEY = "rebindKey";
+
 OptionsMenu::OptionsMenu() :
 	MenuPage("options_menu", "resource/rml/options_menu.rml")
 {
@@ -18,15 +21,15 @@ bool OptionsMenu::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 		return false;
 	}
 
-	if ( !constructor.Bind("activeTab", &m_PageModel.activeTab) )
+	if ( !constructor.Bind(PROP_ACTIVE_TAB, &m_PageModel.activeTab) ||
+		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &OptionsMenu::HandleRebindKeyEvent, this) )
 	{
 		return false;
 	}
 
-	constructor.BindEventCallback("rebindKey", &OptionsMenu::HandleRebindKeyEvent, this);
-
 	// TODO: Swap this out for a "reset to defaults" button.
 	m_KeyBindings.Reset();
+	m_ModelHandle = constructor.GetModelHandle();
 
 	return true;
 }

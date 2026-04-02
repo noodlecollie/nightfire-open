@@ -32,4 +32,5 @@ private:
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
 	size_t m_RebindingRow = INVALID_ROW;
+	Rml::DataModelHandle m_ModelHandle;
 };
