@@ -130,9 +130,9 @@ void MenuDirectory::UnloadAllDocuments()
 {
 	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
 	{
-		if ( it->second.loadedDocument && it->second.menuEntry.document )
+		if ( it->second.loadedDocument )
 		{
-			it->second.menuEntry.menuPtr->DocumentUnloaded(it->second.menuEntry.document);
+			it->second.menuEntry.menuPtr->DocumentUnloaded();
 		}
 	}
 }

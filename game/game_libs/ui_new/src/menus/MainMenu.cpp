@@ -7,7 +7,7 @@ MainMenu::MainMenu() :
 {
 }
 
-bool MainMenu::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+bool MainMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	return MenuPage::SetUpDataModelBindings(constructor) && m_MenuFrameDataBinding.SetUpDataBindings(constructor);
+	return MenuPage::OnSetUpDataModelBindings(constructor) && m_MenuFrameDataBinding.SetUpDataBindings(constructor);
 }

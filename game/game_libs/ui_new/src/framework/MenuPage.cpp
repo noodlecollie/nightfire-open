@@ -7,27 +7,11 @@ MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 {
 }
 
-bool MenuPage::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+bool MenuPage::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	return BaseMenu::SetUpDataModelBindings(constructor) &&
+	return BaseMenu::OnSetUpDataModelBindings(constructor) &&
 		constructor.BindEventCallback("push_menu", &MenuPage::HandlePushMenu, this) &&
 		constructor.BindEventCallback("pop_menu", &MenuPage::HandlePopMenu, this);
-}
-
-void MenuPage::DocumentLoaded(Rml::ElementDocument* document)
-{
-	BaseMenu::DocumentLoaded(document);
-
-	document->AddEventListener(Rml::EventId::Keydown, this);
-	document->AddEventListener(Rml::EventId::Keyup, this);
-}
-
-void MenuPage::DocumentUnloaded(Rml::ElementDocument* document)
-{
-	document->RemoveEventListener(Rml::EventId::Keydown, this);
-	document->RemoveEventListener(Rml::EventId::Keyup, this);
-
-	BaseMenu::DocumentUnloaded(document);
 }
 
 void MenuPage::ProcessEvent(Rml::Event& event)
@@ -52,6 +36,28 @@ void MenuPage::ProcessEvent(Rml::Event& event)
 			break;
 		}
 	}
+
+	BaseMenu::ProcessEvent(event);
+}
+
+void MenuPage::OnEndDocumentLoaded()
+{
+	BaseMenu::OnEndDocumentLoaded();
+
+	Rml::ElementDocument* document = Document();
+
+	document->AddEventListener(Rml::EventId::Keydown, this);
+	document->AddEventListener(Rml::EventId::Keyup, this);
+}
+
+void MenuPage::OnBeginDocumentUnloaded()
+{
+	Rml::ElementDocument* document = Document();
+
+	document->RemoveEventListener(Rml::EventId::Keydown, this);
+	document->RemoveEventListener(Rml::EventId::Keyup, this);
+
+	BaseMenu::OnBeginDocumentUnloaded();
 }
 
 void MenuPage::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)

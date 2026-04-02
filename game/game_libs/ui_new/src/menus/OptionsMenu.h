@@ -1,8 +1,10 @@
 #pragma once
 
 #include "framework/MenuPage.h"
+#include <RmlUi/Core/EventListener.h>
 #include "templatebindings/MenuFrameDataBinding.h"
 #include "models/KeyBindingModel.h"
+#include "components/ModalComponent.h"
 
 class OptionsMenu : public MenuPage
 {
@@ -10,7 +12,7 @@ public:
 	OptionsMenu();
 
 protected:
-	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
+	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	static constexpr const char* const TAB_GAMEPLAY = "gameplay";
@@ -22,15 +24,18 @@ private:
 	struct PageModel
 	{
 		Rml::String activeTab = TAB_GAMEPLAY;
+		bool showModal = false;
 	};
 
 	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
 	void HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex);
 	void ResetRebindingRow();
+	void ShowModal(bool show);
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
 	size_t m_RebindingRow = INVALID_ROW;
 	Rml::DataModelHandle m_ModelHandle;
+	ModalComponent m_Modal;
 };

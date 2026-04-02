@@ -2,20 +2,20 @@
 
 #include "framework/BaseMenu.h"
 #include <RmlUi/Core/DataModelHandle.h>
-#include <RmlUi/Core/EventListener.h>
 
 // A menu which assumes that the entire RML page has a data model,
 // and which automatically implements push_menu and pop_menu.
-class MenuPage : public BaseMenu, public Rml::EventListener
+class MenuPage : public BaseMenu
 {
 public:
-	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-	void DocumentLoaded(Rml::ElementDocument* document) override;
-	void DocumentUnloaded(Rml::ElementDocument* document) override;
+	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 	void ProcessEvent(Rml::Event& event) override;
 
 protected:
 	MenuPage(const char* name, const char* rmlFilePath);
+
+	void OnEndDocumentLoaded() override;
+	void OnBeginDocumentUnloaded() override;
 
 private:
 	void HandlePushMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);

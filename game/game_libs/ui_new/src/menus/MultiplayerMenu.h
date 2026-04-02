@@ -9,7 +9,7 @@ public:
 	MultiplayerMenu();
 
 protected:
-	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
+	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	MenuFrameDataBinding m_MenuFrameDataBinding;

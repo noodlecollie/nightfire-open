@@ -12,11 +12,17 @@ include(nf_utils)
 set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 
 set(SOURCES_UI
+	src/components/ModalComponent.h
+	src/components/ModalComponent.cpp
+	src/framework/BaseComponent.h
+	src/framework/BaseComponent.cpp
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
 	src/framework/BaseTableModel.h
 	src/framework/BaseTemplateBinding.h
 	src/framework/DataVar.h
+	src/framework/ElementFinder.h
+	src/framework/ElementFinder.cpp
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
 	src/framework/MenuPage.h
@@ -46,6 +52,8 @@ set(SOURCES_UI
 	src/rmlui/SystemInterfaceImpl.cpp
 	src/rmlui/TextInputHandlerImpl.h
 	src/rmlui/TextInputHandlerImpl.cpp
+	src/rmlui/Utils.h
+	src/rmlui/Utils.cpp
 	src/templatebindings/MenuFrameDataBinding.h
 	src/templatebindings/MenuFrameDataBinding.cpp
 	src/udll_int.h
