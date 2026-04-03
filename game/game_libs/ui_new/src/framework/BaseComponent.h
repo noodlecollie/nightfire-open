@@ -24,14 +24,18 @@ protected:
 	Rml::Element* ComponentElement() const;
 	Rml::Element* const* ComponentElementPtrPtr() const;
 
+	void AddParamSpec(Rml::String name, Rml::Variant defaultValue);
+
 	virtual bool OnLoadFromDocument(Rml::ElementDocument* document);
 	virtual void OnUnload();
 
 private:
 	bool CheckLoaded(const char* operation);
+	void LoadParams();
 
 	BaseMenu* m_ParentMenu;
 	Rml::String m_ID;
 	Rml::Element* m_ComponentElement = nullptr;
-	Rml::ElementPtr m_StowedComponentElement;
+	Rml::Dictionary m_ComponentParamSpec;
+	Rml::Dictionary m_ComponentParams;
 };

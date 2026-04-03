@@ -5,6 +5,7 @@
 ModalComponent::ModalComponent(BaseMenu* parentMenu, Rml::String id) :
 	BaseComponent(parentMenu, std::move(id))
 {
+	AddParamSpec("title", Rml::Variant(""));
 }
 
 bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
