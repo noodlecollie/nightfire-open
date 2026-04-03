@@ -11,7 +11,8 @@ static constexpr const char* const EVENT_REBIND_KEY = "rebindKey";
 
 OptionsMenu::OptionsMenu() :
 	MenuPage("options_menu", "resource/rml/options_menu.rml"),
-	m_Modal(this, "options_modal")
+	m_Modal(this, "options_modal"),
+	m_ShowHideEventListener(this, &OptionsMenu::ProcessShowHideEvents)
 {
 }
 
@@ -35,6 +36,44 @@ bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 	m_ModelHandle = constructor.GetModelHandle();
 
 	return true;
+}
+
+void OptionsMenu::OnEndDocumentLoaded()
+{
+	MenuPage::OnEndDocumentLoaded();
+
+	Rml::ElementDocument* document = Document();
+
+	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
+	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
+}
+
+void OptionsMenu::OnBeginDocumentUnloaded()
+{
+	Rml::ElementDocument* document = Document();
+
+	document->RemoveEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
+	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
+
+	MenuPage::OnBeginDocumentUnloaded();
+}
+
+void OptionsMenu::ProcessShowHideEvents(Rml::Event& event)
+{
+	switch ( event.GetId() )
+	{
+		case Rml::EventId::Show:
+		case Rml::EventId::Hide:
+		{
+			ResetRebindingRow();
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
 }
 
 void OptionsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments)

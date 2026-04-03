@@ -3,7 +3,8 @@
 #include <RmlUi/Core/Input.h>
 
 MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
-	BaseMenu(name, rmlFilePath)
+	BaseMenu(name, rmlFilePath),
+	m_KeyEventListener(this, &MenuPage::ProcessEvent)
 {
 }
 
@@ -36,8 +37,6 @@ void MenuPage::ProcessEvent(Rml::Event& event)
 			break;
 		}
 	}
-
-	BaseMenu::ProcessEvent(event);
 }
 
 void MenuPage::OnEndDocumentLoaded()
@@ -46,16 +45,14 @@ void MenuPage::OnEndDocumentLoaded()
 
 	Rml::ElementDocument* document = Document();
 
-	document->AddEventListener(Rml::EventId::Keydown, this);
-	document->AddEventListener(Rml::EventId::Keyup, this);
+	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
 }
 
 void MenuPage::OnBeginDocumentUnloaded()
 {
 	Rml::ElementDocument* document = Document();
 
-	document->RemoveEventListener(Rml::EventId::Keydown, this);
-	document->RemoveEventListener(Rml::EventId::Keyup, this);
+	document->RemoveEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
 
 	BaseMenu::OnBeginDocumentUnloaded();
 }

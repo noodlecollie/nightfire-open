@@ -94,10 +94,6 @@ void BaseMenu::Update(float)
 {
 }
 
-void BaseMenu::ProcessEvent(Rml::Event&)
-{
-}
-
 void BaseMenu::OnBeginDocumentLoaded()
 {
 }

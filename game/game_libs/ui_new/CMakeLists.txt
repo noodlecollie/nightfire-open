@@ -23,6 +23,7 @@ set(SOURCES_UI
 	src/framework/DataVar.h
 	src/framework/ElementFinder.h
 	src/framework/ElementFinder.cpp
+	src/framework/EventListenerObject.h
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
 	src/framework/MenuPage.h

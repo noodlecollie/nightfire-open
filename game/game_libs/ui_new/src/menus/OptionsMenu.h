@@ -5,6 +5,7 @@
 #include "templatebindings/MenuFrameDataBinding.h"
 #include "models/KeyBindingModel.h"
 #include "components/ModalComponent.h"
+#include "framework/EventListenerObject.h"
 
 class OptionsMenu : public MenuPage
 {
@@ -13,6 +14,9 @@ public:
 
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
+
+	void OnEndDocumentLoaded() override;
+	void OnBeginDocumentUnloaded() override;
 
 private:
 	static constexpr const char* const TAB_GAMEPLAY = "gameplay";
@@ -27,6 +31,7 @@ private:
 		bool showModal = false;
 	};
 
+	void ProcessShowHideEvents(Rml::Event& event);
 	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
 	void HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex);
 	void ResetRebindingRow();
@@ -38,4 +43,5 @@ private:
 	size_t m_RebindingRow = INVALID_ROW;
 	Rml::DataModelHandle m_ModelHandle;
 	ModalComponent m_Modal;
+	EventListenerObject m_ShowHideEventListener;
 };

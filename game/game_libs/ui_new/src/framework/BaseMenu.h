@@ -4,7 +4,6 @@
 #include <vector>
 #include <RmlUi/Core/Types.h>
 #include <RmlUi/Core/Variant.h>
-#include <RmlUi/Core/EventListener.h>
 
 namespace Rml
 {
@@ -36,10 +35,7 @@ struct MenuRequest
 	}
 };
 
-// TODO: Don't make the menu itself an event listener, make an object within it.
-// Otherwise, if subclasses listen to the same events again, the event listener
-// function will be called multiple times!
-class BaseMenu : public Rml::EventListener
+class BaseMenu
 {
 public:
 	virtual ~BaseMenu();
@@ -55,8 +51,6 @@ public:
 	void DocumentLoaded(Rml::ElementDocument* document);
 	void DocumentUnloaded();
 	virtual void Update(float currentTime);
-
-	void ProcessEvent(Rml::Event& event) override;
 
 protected:
 	BaseMenu(const char* name, const char* rmlFilePath);
