@@ -11,6 +11,9 @@ class MenuPage : public BaseMenu
 public:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
+	bool RequestPopOnEscapeKey() const;
+	void SetRequestPopOnEscapeKey(bool enable);
+
 protected:
 	MenuPage(const char* name, const char* rmlFilePath);
 
@@ -23,4 +26,5 @@ private:
 	void HandlePopMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 
 	EventListenerObject m_KeyEventListener;
+	bool m_RequestPopOnEscapeKey = true;
 };

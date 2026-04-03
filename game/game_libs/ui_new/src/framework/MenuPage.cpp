@@ -1,6 +1,7 @@
 #include "framework/MenuPage.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Input.h>
+#include "rmlui/Utils.h"
 
 MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 	BaseMenu(name, rmlFilePath),
@@ -15,15 +16,25 @@ bool MenuPage::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 		constructor.BindEventCallback("pop_menu", &MenuPage::HandlePopMenu, this);
 }
 
+bool MenuPage::RequestPopOnEscapeKey() const
+{
+	return m_RequestPopOnEscapeKey;
+}
+
+void MenuPage::SetRequestPopOnEscapeKey(bool enable)
+{
+	m_RequestPopOnEscapeKey = enable;
+}
+
 void MenuPage::ProcessEvent(Rml::Event& event)
 {
 	switch ( event.GetId() )
 	{
 		case Rml::EventId::Keydown:
 		{
-			const int keyId = event.GetParameter<int>("key_identifier", 0);
+			const int keyId = GetEventKeyId(event);
 
-			if ( keyId == Rml::Input::KI_ESCAPE )
+			if ( keyId == Rml::Input::KI_ESCAPE && m_RequestPopOnEscapeKey )
 			{
 				event.StopPropagation();
 				SetCurrentRequest(MenuRequestType::PopMenu);

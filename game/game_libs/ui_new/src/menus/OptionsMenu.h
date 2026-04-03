@@ -32,6 +32,7 @@ private:
 	};
 
 	void ProcessShowHideEvents(Rml::Event& event);
+	void ProcessKeyEvents(Rml::Event& event);
 	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
 	void HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex);
 	void ResetRebindingRow();
@@ -44,4 +45,5 @@ private:
 	Rml::DataModelHandle m_ModelHandle;
 	ModalComponent m_Modal;
 	EventListenerObject m_ShowHideEventListener;
+	EventListenerObject m_KeyEventListener;
 };

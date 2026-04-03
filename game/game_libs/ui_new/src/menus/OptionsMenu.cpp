@@ -3,6 +3,7 @@
 #include <RmlUi/Core/Event.h>
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/ElementDocument.h>
+#include "rmlui/Utils.h"
 #include "UIDebug.h"
 
 static constexpr const char* const PROP_ACTIVE_TAB = "activeTab";
@@ -12,7 +13,8 @@ static constexpr const char* const EVENT_REBIND_KEY = "rebindKey";
 OptionsMenu::OptionsMenu() :
 	MenuPage("options_menu", "resource/rml/options_menu.rml"),
 	m_Modal(this, "options_modal"),
-	m_ShowHideEventListener(this, &OptionsMenu::ProcessShowHideEvents)
+	m_ShowHideEventListener(this, &OptionsMenu::ProcessShowHideEvents),
+	m_KeyEventListener(this, &OptionsMenu::ProcessKeyEvents)
 {
 }
 
@@ -46,6 +48,7 @@ void OptionsMenu::OnEndDocumentLoaded()
 
 	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
 	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
+	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
 }
 
 void OptionsMenu::OnBeginDocumentUnloaded()
@@ -54,6 +57,7 @@ void OptionsMenu::OnBeginDocumentUnloaded()
 
 	document->RemoveEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
 	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
+	document->RemoveEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
 
 	MenuPage::OnBeginDocumentUnloaded();
 }
@@ -73,6 +77,21 @@ void OptionsMenu::ProcessShowHideEvents(Rml::Event& event)
 		{
 			break;
 		}
+	}
+}
+
+void OptionsMenu::ProcessKeyEvents(Rml::Event& event)
+{
+	ASSERT(event.GetId() == Rml::EventId::Keydown);
+
+	if ( !m_PageModel.showModal )
+	{
+		return;
+	}
+
+	if ( GetEventKeyId(event) == Rml::Input::KI_ESCAPE )
+	{
+		ResetRebindingRow();
 	}
 }
 
@@ -115,6 +134,7 @@ void OptionsMenu::HandleRebindKeyEvent(const Rml::String& consoleCommand, int bi
 
 	m_KeyBindings.SetIsRebinding(m_RebindingRow, bindIndex == 0, true);
 	ShowModal(true);
+	SetRequestPopOnEscapeKey(false);
 }
 
 void OptionsMenu::ResetRebindingRow()
@@ -128,6 +148,7 @@ void OptionsMenu::ResetRebindingRow()
 	}
 
 	ShowModal(false);
+	SetRequestPopOnEscapeKey(true);
 }
 
 void OptionsMenu::ShowModal(bool show)

@@ -13,3 +13,8 @@ Rml::String DescribeElement(Rml::Element* element)
 
 	return (!id.empty()) ? out + "#" + id : out;
 }
+
+int GetEventKeyId(const Rml::Event& event)
+{
+	return event.GetParameter<int>("key_identifier", 0);
+}
