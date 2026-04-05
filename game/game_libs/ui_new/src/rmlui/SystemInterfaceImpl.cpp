@@ -1,9 +1,23 @@
 #include "rmlui/SystemInterfaceImpl.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "udll_int.h"
 
 SystemInterfaceImpl::SystemInterfaceImpl(RmlUiBackend* backend) :
 	m_Backend(backend)
 {
+}
+
+void SystemInterfaceImpl::RegisterCvars()
+{
+#ifdef _DEBUG
+#define LOGGING_DEFAULT_VALUE "1"
+#else
+#define LOGGING_DEFAULT_VALUE "0"
+#endif
+
+	m_cvarDebugLogs = gEngfuncs.pfnRegisterVariable("ui_debug_logging", LOGGING_DEFAULT_VALUE, 0);
+
+#undef LOGGING_DEFAULT_VALUE
 }
 
 double SystemInterfaceImpl::GetElapsedTime()
@@ -45,7 +59,11 @@ bool SystemInterfaceImpl::LogMessage(Rml::Log::Type type, const Rml::String& mes
 
 		case Rml::Log::Type::LT_DEBUG:
 		{
-			gEngfuncs.Con_Printf("[UI Debug] %s\n", message.c_str());
+			if ( m_cvarDebugLogs && m_cvarDebugLogs->value != 0.0f )
+			{
+				gEngfuncs.Con_Printf("[UI Debug] %s\n", message.c_str());
+			}
+
 			break;
 		}
 

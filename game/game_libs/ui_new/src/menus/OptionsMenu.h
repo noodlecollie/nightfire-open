@@ -35,6 +35,7 @@ private:
 	void ProcessKeyEvents(Rml::Event& event);
 	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
 	void HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex);
+	void HandleModelButtonClicked(Rml::Event& event, size_t index);
 	void ResetRebindingRow();
 	void ShowModal(bool show);
 

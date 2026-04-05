@@ -4,11 +4,19 @@
 #include "framework/ElementFinder.h"
 
 static constexpr const char* const PARAM_TITLE = "title";
+static constexpr const char* const PARAM_BUTTONS = "buttons";
 
 ModalComponent::ModalComponent(BaseMenu* parentMenu, Rml::String id) :
-	BaseComponent(parentMenu, std::move(id))
+	BaseComponent(parentMenu, std::move(id)),
+	m_ButtonEventListener(this, &ModalComponent::HandleButtonEvent)
 {
 	AddParamSpec(PARAM_TITLE, Rml::Variant(""));
+	AddParamSpec(PARAM_BUTTONS, Rml::Variant(""));
+}
+
+void ModalComponent::SetButtonClickCallback(ButtonClickCallback callback)
+{
+	m_ButtonClickCallback = std::move(callback);
 }
 
 bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
@@ -31,6 +39,11 @@ bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
 
 void ModalComponent::OnUnload()
 {
+	for ( Rml::Element* button : m_Elems.buttons )
+	{
+		button->RemoveEventListener(Rml::EventId::Click, &m_ButtonEventListener);
+	}
+
 	m_Elems = Elements {};
 }
 
@@ -42,4 +55,55 @@ void ModalComponent::LoadParams()
 	{
 		m_Elems.modalHeader->SetInnerRML("<h2>" + Rml::StringUtilities::EncodeRml(title) + "</h2>");
 	}
+
+	const Rml::String buttons = GetParam(PARAM_BUTTONS).Get<Rml::String>();
+
+	if ( !buttons.empty() )
+	{
+		m_Elems.buttons.clear();
+
+		Rml::StringList buttonsList;
+		Rml::StringUtilities::ExpandString(buttonsList, buttons, ';');
+		LoadButtons(buttonsList);
+	}
+}
+
+void ModalComponent::LoadButtons(const Rml::StringList& buttons)
+{
+	Rml::String rmlString = "";
+
+	for ( const Rml::String& button : buttons )
+	{
+		rmlString += "<button class=\"primary\">" + Rml::StringUtilities::EncodeRml(button) + "</button>";
+	}
+
+	m_Elems.modalFooter->SetInnerRML(rmlString);
+	m_Elems.buttons.reserve(m_Elems.modalFooter->GetNumChildren());
+
+	for ( Rml::Element* child = m_Elems.modalFooter->GetFirstChild(); child; child = child->GetNextSibling() )
+	{
+		m_Elems.buttons.push_back(child);
+		child->AddEventListener(Rml::EventId::Click, &m_ButtonEventListener);
+	}
+}
+
+void ModalComponent::HandleButtonEvent(Rml::Event& event)
+{
+	if ( !m_ButtonClickCallback )
+	{
+		return;
+	}
+
+	Rml::Element* button = event.GetTargetElement();
+	const auto buttonIt = std::find(m_Elems.buttons.begin(), m_Elems.buttons.end(), button);
+
+	// We should only get events for buttons we know about.
+	ASSERT(buttonIt != m_Elems.buttons.end());
+
+	if ( buttonIt == m_Elems.buttons.end() )
+	{
+		return;
+	}
+
+	m_ButtonClickCallback(event, buttonIt - m_Elems.buttons.begin());
 }

@@ -16,6 +16,12 @@ OptionsMenu::OptionsMenu() :
 	m_ShowHideEventListener(this, &OptionsMenu::ProcessShowHideEvents),
 	m_KeyEventListener(this, &OptionsMenu::ProcessKeyEvents)
 {
+	m_Modal.SetButtonClickCallback(
+		[this](Rml::Event& event, size_t buttonIndex)
+		{
+			HandleModelButtonClicked(event, buttonIndex);
+		}
+	);
 }
 
 bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -135,6 +141,15 @@ void OptionsMenu::HandleRebindKeyEvent(const Rml::String& consoleCommand, int bi
 	m_KeyBindings.SetIsRebinding(m_RebindingRow, bindIndex == 0, true);
 	ShowModal(true);
 	SetRequestPopOnEscapeKey(false);
+}
+
+void OptionsMenu::HandleModelButtonClicked(Rml::Event&, size_t buttonIndex)
+{
+	// At the moment, we just assume any click is the cancel button,
+	// because that's the only button we've added.
+	ASSERT(buttonIndex == 0);
+
+	ResetRebindingRow();
 }
 
 void OptionsMenu::ResetRebindingRow()

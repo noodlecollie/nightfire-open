@@ -453,4 +453,6 @@ void RmlUiBackend::RegisterFonts()
 void RmlUiBackend::RegisterCvars()
 {
 	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
+
+	m_SystemInterface.RegisterCvars();
 }
