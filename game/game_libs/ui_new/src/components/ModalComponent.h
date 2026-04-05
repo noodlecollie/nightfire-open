@@ -20,5 +20,7 @@ private:
 		Rml::Element* modalFooter = nullptr;
 	};
 
+	void LoadParams();
+
 	Elements m_Elems {};
 };

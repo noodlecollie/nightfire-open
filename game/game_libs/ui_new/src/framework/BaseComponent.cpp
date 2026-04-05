@@ -67,6 +67,12 @@ void BaseComponent::Unload()
 	}
 }
 
+Rml::Variant BaseComponent::GetParam(const Rml::String& name) const
+{
+	const auto paramIt = m_ComponentParams.find(name);
+	return paramIt != m_ComponentParams.end() ? paramIt->second : Rml::Variant();
+}
+
 Rml::Element* BaseComponent::ComponentElement() const
 {
 	return m_ComponentElement;

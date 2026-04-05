@@ -18,6 +18,8 @@ public:
 	void LoadFromDocument(Rml::ElementDocument* document);
 	void Unload();
 
+	Rml::Variant GetParam(const Rml::String& name) const;
+
 protected:
 	explicit BaseComponent(BaseMenu* parentMenu, Rml::String id);
 
