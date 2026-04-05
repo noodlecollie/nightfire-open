@@ -8,7 +8,8 @@ static constexpr const char* const PARAM_BUTTONS = "buttons";
 
 ModalComponent::ModalComponent(BaseMenu* parentMenu, Rml::String id) :
 	BaseComponent(parentMenu, std::move(id)),
-	m_ButtonEventListener(this, &ModalComponent::HandleButtonEvent)
+	m_ButtonEventListener(this, &ModalComponent::HandleButtonEvent),
+	m_MouseUpListener(this, &ModalComponent::HandleMouseUpEvent)
 {
 	AddParamSpec(PARAM_TITLE, Rml::Variant(""));
 	AddParamSpec(PARAM_BUTTONS, Rml::Variant(""));
@@ -23,7 +24,8 @@ bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
 {
 	ElementFinder finder;
 
-	finder.Add(ComponentElementPtrPtr(), ".modal-shade>modal", &m_Elems.modal);
+	finder.Add(ComponentElementPtrPtr(), ".modal-shade", &m_Elems.shade);
+	finder.Add(&m_Elems.shade, "modal", &m_Elems.modal);
 	finder.Add(&m_Elems.modal, ".modal-header", &m_Elems.modalHeader);
 	finder.Add(&m_Elems.modal, ".modal-body", &m_Elems.modalBody);
 	finder.Add(&m_Elems.modal, ".modal-footer", &m_Elems.modalFooter);
@@ -34,14 +36,20 @@ bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
 	}
 
 	LoadParams();
+
+	m_Elems.shade->AddEventListener(Rml::EventId::Mouseup, &m_MouseUpListener);
+
 	return true;
 }
 
 void ModalComponent::OnUnload()
 {
+	m_Elems.shade->RemoveEventListener(Rml::EventId::Mouseup, &m_MouseUpListener);
+
 	for ( Rml::Element* button : m_Elems.buttons )
 	{
 		button->RemoveEventListener(Rml::EventId::Click, &m_ButtonEventListener);
+		button->RemoveEventListener(Rml::EventId::Mouseup, &m_ButtonEventListener);
 	}
 
 	m_Elems = Elements {};
@@ -84,11 +92,20 @@ void ModalComponent::LoadButtons(const Rml::StringList& buttons)
 	{
 		m_Elems.buttons.push_back(child);
 		child->AddEventListener(Rml::EventId::Click, &m_ButtonEventListener);
+		child->AddEventListener(Rml::EventId::Mouseup, &m_ButtonEventListener);
 	}
 }
 
 void ModalComponent::HandleButtonEvent(Rml::Event& event)
 {
+	if ( event.GetId() == Rml::EventId::Mouseup )
+	{
+		// Stop this event from propagating up to the listener set on the shade,
+		// since it was actually the button that was clicked on.
+		event.StopPropagation();
+		return;
+	}
+
 	if ( !m_ButtonClickCallback )
 	{
 		return;
@@ -105,5 +122,12 @@ void ModalComponent::HandleButtonEvent(Rml::Event& event)
 		return;
 	}
 
+	event.StopPropagation();
 	m_ButtonClickCallback(event, buttonIt - m_Elems.buttons.begin());
+}
+
+void ModalComponent::HandleMouseUpEvent(Rml::Event&)
+{
+	// TODO
+	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Captured mouse up");
 }

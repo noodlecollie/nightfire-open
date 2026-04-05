@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RmlUi/Core/Types.h>
+#include <RmlUi/Core/Input.h>
 
 namespace Rml
 {
@@ -9,3 +10,6 @@ namespace Rml
 
 Rml::String DescribeElement(Rml::Element* element);
 int GetEventKeyId(const Rml::Event& event);
+Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key);
+int RmlKeyToEngineKey(Rml::Input::KeyIdentifier key);
+unsigned char EngineKeyToRmlKeyModifier(int key);

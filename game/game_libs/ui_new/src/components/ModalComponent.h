@@ -20,6 +20,7 @@ protected:
 private:
 	struct Elements
 	{
+		Rml::Element* shade = nullptr;
 		Rml::Element* modal = nullptr;
 		Rml::Element* modalHeader = nullptr;
 		Rml::Element* modalBody = nullptr;
@@ -30,8 +31,10 @@ private:
 	void LoadParams();
 	void LoadButtons(const Rml::StringList& buttons);
 	void HandleButtonEvent(Rml::Event& event);
+	void HandleMouseUpEvent(Rml::Event& event);
 
 	Elements m_Elems {};
 	ButtonClickCallback m_ButtonClickCallback;
 	EventListenerObject m_ButtonEventListener;
+	EventListenerObject m_MouseUpListener;
 };

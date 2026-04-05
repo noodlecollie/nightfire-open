@@ -5,6 +5,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 #include "rmlui/Utils.h"
 #include "UIDebug.h"
+#include "udll_int.h"
 
 static constexpr const char* const PROP_ACTIVE_TAB = "activeTab";
 static constexpr const char* const PROP_SHOW_MODAL = "showModal";
@@ -98,6 +99,13 @@ void OptionsMenu::ProcessKeyEvents(Rml::Event& event)
 	if ( GetEventKeyId(event) == Rml::Input::KI_ESCAPE )
 	{
 		ResetRebindingRow();
+	}
+	else
+	{
+		gEngfuncs.Con_Printf(
+			"Key pressed: %d\n",
+			RmlKeyToEngineKey(static_cast<Rml::Input::KeyIdentifier>(GetEventKeyId(event)))
+		);
 	}
 }
 
