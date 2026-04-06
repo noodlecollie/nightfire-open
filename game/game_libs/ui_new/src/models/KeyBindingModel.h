@@ -40,6 +40,7 @@ public:
 
 	bool IsRebinding(size_t row, bool primary) const;
 	void SetIsRebinding(size_t row, bool primary, bool rebinding);
+	void SetBinding(size_t row, bool primary, Rml::String value);
 
 private:
 	enum class ParseResult

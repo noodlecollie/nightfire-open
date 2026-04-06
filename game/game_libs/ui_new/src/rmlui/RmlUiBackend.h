@@ -16,6 +16,14 @@ namespace Rml
 class RmlUiBackend
 {
 public:
+	struct StoredKey
+	{
+		int key = -1;
+		bool pressed = false;
+	};
+
+	static RmlUiBackend& StaticInstance();
+
 	RmlUiBackend();
 	~RmlUiBackend();
 
@@ -37,6 +45,12 @@ public:
 	void Render();
 
 	Rml::Context* GetRmlContext() const;
+
+	void SetStoreNextKey(bool onPressed);
+	void ClearStoreNextKey();
+	bool IsStoringNextKey() const;
+	bool HasStoredKey() const;
+	StoredKey TakeStoredKey();
 
 	void RenderDebugTriangle();
 
@@ -60,6 +74,9 @@ private:
 	MenuDirectory m_MenuDirectory;
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
+
+	bool m_StoreNextKey = false;
+	StoredKey m_StoredKey {};
 
 	struct cvar_s* m_cvarScrollSensitivity = nullptr;
 };

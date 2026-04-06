@@ -31,10 +31,8 @@ private:
 	void LoadParams();
 	void LoadButtons(const Rml::StringList& buttons);
 	void HandleButtonEvent(Rml::Event& event);
-	void HandleMouseUpEvent(Rml::Event& event);
 
 	Elements m_Elems {};
 	ButtonClickCallback m_ButtonClickCallback;
 	EventListenerObject m_ButtonEventListener;
-	EventListenerObject m_MouseUpListener;
 };

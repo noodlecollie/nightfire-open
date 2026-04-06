@@ -8,8 +8,7 @@ static constexpr const char* const PARAM_BUTTONS = "buttons";
 
 ModalComponent::ModalComponent(BaseMenu* parentMenu, Rml::String id) :
 	BaseComponent(parentMenu, std::move(id)),
-	m_ButtonEventListener(this, &ModalComponent::HandleButtonEvent),
-	m_MouseUpListener(this, &ModalComponent::HandleMouseUpEvent)
+	m_ButtonEventListener(this, &ModalComponent::HandleButtonEvent)
 {
 	AddParamSpec(PARAM_TITLE, Rml::Variant(""));
 	AddParamSpec(PARAM_BUTTONS, Rml::Variant(""));
@@ -36,16 +35,11 @@ bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
 	}
 
 	LoadParams();
-
-	m_Elems.shade->AddEventListener(Rml::EventId::Mouseup, &m_MouseUpListener);
-
 	return true;
 }
 
 void ModalComponent::OnUnload()
 {
-	m_Elems.shade->RemoveEventListener(Rml::EventId::Mouseup, &m_MouseUpListener);
-
 	for ( Rml::Element* button : m_Elems.buttons )
 	{
 		button->RemoveEventListener(Rml::EventId::Click, &m_ButtonEventListener);
@@ -98,14 +92,6 @@ void ModalComponent::LoadButtons(const Rml::StringList& buttons)
 
 void ModalComponent::HandleButtonEvent(Rml::Event& event)
 {
-	if ( event.GetId() == Rml::EventId::Mouseup )
-	{
-		// Stop this event from propagating up to the listener set on the shade,
-		// since it was actually the button that was clicked on.
-		event.StopPropagation();
-		return;
-	}
-
 	if ( !m_ButtonClickCallback )
 	{
 		return;
@@ -124,10 +110,4 @@ void ModalComponent::HandleButtonEvent(Rml::Event& event)
 
 	event.StopPropagation();
 	m_ButtonClickCallback(event, buttonIt - m_Elems.buttons.begin());
-}
-
-void ModalComponent::HandleMouseUpEvent(Rml::Event&)
-{
-	// TODO
-	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Captured mouse up");
 }

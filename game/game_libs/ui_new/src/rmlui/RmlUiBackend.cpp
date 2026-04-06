@@ -11,6 +11,12 @@
 
 static constexpr const char* const CONTEXT_NAME = "main";
 
+RmlUiBackend& RmlUiBackend::StaticInstance()
+{
+	static RmlUiBackend instance;
+	return instance;
+}
+
 RmlUiBackend::RmlUiBackend() :
 	m_SystemInterface(this),
 	m_RenderInterface(this),
@@ -99,6 +105,8 @@ void RmlUiBackend::ShutDown()
 	m_RmlContext = nullptr;
 	m_Initialised = false;
 	m_Modifiers = 0;
+	m_StoreNextKey = false;
+	m_StoredKey = StoredKey {};
 }
 
 bool RmlUiBackend::IsInitialised() const
@@ -169,6 +177,12 @@ void RmlUiBackend::ReceiveMouseButton(int button, bool pressed)
 		return;
 	}
 
+	if ( m_StoreNextKey && m_StoredKey.pressed == pressed )
+	{
+		m_StoredKey.key = button;
+		m_StoreNextKey = false;
+	}
+
 	switch ( button )
 	{
 		case K_MOUSE1:
@@ -194,6 +208,12 @@ void RmlUiBackend::ReceiveMouseWheel(bool down)
 		return;
 	}
 
+	if ( m_StoreNextKey && m_StoredKey.pressed )
+	{
+		m_StoredKey.key = down ? K_MWHEELDOWN : K_MWHEELUP;
+		m_StoreNextKey = false;
+	}
+
 	float scrollDelta = std::max<float>(m_cvarScrollSensitivity->value, 0.1f);
 	m_RmlContext->ProcessMouseWheel(Rml::Vector2f(0.0f, scrollDelta * (down ? 1.0f : -1.0f)), m_Modifiers);
 }
@@ -203,6 +223,12 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 	if ( !IsInitialised() )
 	{
 		return;
+	}
+
+	if ( m_StoreNextKey && m_StoredKey.pressed == pressed )
+	{
+		m_StoredKey.key = key;
+		m_StoreNextKey = false;
 	}
 
 	Rml::Input::KeyIdentifier rmlKey = EngineKeyToRmlKey(key);
@@ -255,6 +281,47 @@ void RmlUiBackend::ReceiveChar(int character)
 Rml::Context* RmlUiBackend::GetRmlContext() const
 {
 	return m_RmlContext;
+}
+
+void RmlUiBackend::SetStoreNextKey(bool onPressed)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_StoreNextKey = true;
+
+	// Store whether we want to track the press or release.
+	m_StoredKey = StoredKey {-1, onPressed};
+}
+
+void RmlUiBackend::ClearStoreNextKey()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_StoreNextKey = false;
+	m_StoredKey = StoredKey {};
+}
+
+bool RmlUiBackend::IsStoringNextKey() const
+{
+	return m_StoreNextKey;
+}
+
+bool RmlUiBackend::HasStoredKey() const
+{
+	return m_StoredKey.key != -1;
+}
+
+RmlUiBackend::StoredKey RmlUiBackend::TakeStoredKey()
+{
+	StoredKey storedKey = m_StoredKey;
+	m_StoredKey = StoredKey {};
+	return storedKey;
 }
 
 void RmlUiBackend::Update(float currentTime)

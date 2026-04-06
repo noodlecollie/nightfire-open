@@ -12,6 +12,8 @@ class OptionsMenu : public MenuPage
 public:
 	OptionsMenu();
 
+	void Update(float currentTime) override;
+
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
@@ -35,14 +37,15 @@ private:
 	void ProcessKeyEvents(Rml::Event& event);
 	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
 	void HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex);
-	void HandleModelButtonClicked(Rml::Event& event, size_t index);
 	void ResetRebindingRow();
 	void ShowModal(bool show);
+	void SetStoredKeyForCurrentRebinding();
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
 	size_t m_RebindingRow = INVALID_ROW;
+	bool m_RebindingPrimary = false;
 	Rml::DataModelHandle m_ModelHandle;
 	ModalComponent m_Modal;
 	EventListenerObject m_ShowHideEventListener;

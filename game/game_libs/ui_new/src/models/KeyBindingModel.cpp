@@ -137,6 +137,22 @@ void KeyBindingModel::SetIsRebinding(size_t row, bool primary, bool rebinding)
 	}
 }
 
+void KeyBindingModel::SetBinding(size_t row, bool primary, Rml::String value)
+{
+	if ( row >= m_Entries.size() )
+	{
+		return;
+	}
+
+	Rml::String& binding = primary ? m_Entries[row].primaryBinding : m_Entries[row].secondaryBinding;
+
+	if ( binding != value )
+	{
+		binding = std::move(value);
+		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+	}
+}
+
 void KeyBindingModel::ParseSchemaAndResetToDefaults()
 {
 	m_ConsoleCommandToEntry.clear();

@@ -3,7 +3,9 @@
 #include <RmlUi/Core/Event.h>
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/ElementDocument.h>
+#include "EnginePublicAPI/keydefs.h"
 #include "rmlui/Utils.h"
+#include "rmlui/RmlUiBackend.h"
 #include "UIDebug.h"
 #include "udll_int.h"
 
@@ -17,12 +19,16 @@ OptionsMenu::OptionsMenu() :
 	m_ShowHideEventListener(this, &OptionsMenu::ProcessShowHideEvents),
 	m_KeyEventListener(this, &OptionsMenu::ProcessKeyEvents)
 {
-	m_Modal.SetButtonClickCallback(
-		[this](Rml::Event& event, size_t buttonIndex)
-		{
-			HandleModelButtonClicked(event, buttonIndex);
-		}
-	);
+}
+
+void OptionsMenu::Update(float currentTime)
+{
+	MenuPage::Update(currentTime);
+
+	if ( m_PageModel.showModal && RmlUiBackend::StaticInstance().HasStoredKey() )
+	{
+		SetStoredKeyForCurrentRebinding();
+	}
 }
 
 bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -100,13 +106,6 @@ void OptionsMenu::ProcessKeyEvents(Rml::Event& event)
 	{
 		ResetRebindingRow();
 	}
-	else
-	{
-		gEngfuncs.Con_Printf(
-			"Key pressed: %d\n",
-			RmlKeyToEngineKey(static_cast<Rml::Input::KeyIdentifier>(GetEventKeyId(event)))
-		);
-	}
 }
 
 void OptionsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments)
@@ -146,18 +145,11 @@ void OptionsMenu::HandleRebindKeyEvent(const Rml::String& consoleCommand, int bi
 		return;
 	}
 
-	m_KeyBindings.SetIsRebinding(m_RebindingRow, bindIndex == 0, true);
+	m_RebindingPrimary = bindIndex == 0;
+	m_KeyBindings.SetIsRebinding(m_RebindingRow, m_RebindingPrimary, true);
 	ShowModal(true);
 	SetRequestPopOnEscapeKey(false);
-}
-
-void OptionsMenu::HandleModelButtonClicked(Rml::Event&, size_t buttonIndex)
-{
-	// At the moment, we just assume any click is the cancel button,
-	// because that's the only button we've added.
-	ASSERT(buttonIndex == 0);
-
-	ResetRebindingRow();
+	RmlUiBackend::StaticInstance().SetStoreNextKey(true);
 }
 
 void OptionsMenu::ResetRebindingRow()
@@ -168,10 +160,12 @@ void OptionsMenu::ResetRebindingRow()
 		m_KeyBindings.SetIsRebinding(m_RebindingRow, false, false);
 
 		m_RebindingRow = INVALID_ROW;
+		m_RebindingPrimary = false;
 	}
 
 	ShowModal(false);
 	SetRequestPopOnEscapeKey(true);
+	RmlUiBackend::StaticInstance().ClearStoreNextKey();
 }
 
 void OptionsMenu::ShowModal(bool show)
@@ -181,4 +175,33 @@ void OptionsMenu::ShowModal(bool show)
 		m_PageModel.showModal = show;
 		m_ModelHandle.DirtyVariable(PROP_SHOW_MODAL);
 	}
+}
+
+void OptionsMenu::SetStoredKeyForCurrentRebinding()
+{
+	const RmlUiBackend::StoredKey storedKey = RmlUiBackend::StaticInstance().TakeStoredKey();
+
+	// We shouldn't get these values
+	ASSERT(storedKey.key != -1);
+	ASSERT(storedKey.key != K_ESCAPE);
+
+	// Sanity:
+	if ( storedKey.key == -1 || storedKey.key == K_ESCAPE )
+	{
+		ResetRebindingRow();
+		return;
+	}
+
+	const char* keyStr = gEngfuncs.pfnKeynumToString(storedKey.key);
+	ASSERT(keyStr && *keyStr);
+
+	if ( !keyStr || !(*keyStr) )
+	{
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Could not get key string for key %d", storedKey.key);
+		ResetRebindingRow();
+		return;
+	}
+
+	m_KeyBindings.SetBinding(m_RebindingRow, m_RebindingPrimary, keyStr);
+	ResetRebindingRow();
 }
