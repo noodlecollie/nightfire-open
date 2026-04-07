@@ -40,6 +40,8 @@ private:
 	void ResetRebindingRow();
 	void ShowModal(bool show);
 	void SetStoredKeyForCurrentRebinding();
+	void ApplyBinding(const Rml::String& command, const Rml::String primaryKey, const Rml::String& secondaryKey);
+	void UnbindCommand(const Rml::String& command) const;
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	KeyBindingModel m_KeyBindings;

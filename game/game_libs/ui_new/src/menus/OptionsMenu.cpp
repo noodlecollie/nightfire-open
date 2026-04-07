@@ -4,6 +4,7 @@
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/ElementDocument.h>
 #include "EnginePublicAPI/keydefs.h"
+#include "CRTLib/crtlib.h"
 #include "rmlui/Utils.h"
 #include "rmlui/RmlUiBackend.h"
 #include "UIDebug.h"
@@ -204,4 +205,47 @@ void OptionsMenu::SetStoredKeyForCurrentRebinding()
 
 	m_KeyBindings.SetBinding(m_RebindingRow, m_RebindingPrimary, keyStr);
 	ResetRebindingRow();
+}
+
+void OptionsMenu::ApplyBinding(
+	const Rml::String& command,
+	const Rml::String primaryKey,
+	const Rml::String& secondaryKey
+)
+{
+	ASSERT(!command.empty());
+	ASSERT(!primaryKey.empty());
+
+	if ( command.empty() || primaryKey.empty() )
+	{
+		return;
+	}
+
+	UnbindCommand(command);
+
+	Rml::String bindCmd;
+
+	Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", primaryKey.c_str(), command.c_str());
+	gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
+
+	if ( !secondaryKey.empty() )
+	{
+		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", secondaryKey.c_str(), command.c_str());
+		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
+	}
+}
+
+void OptionsMenu::UnbindCommand(const Rml::String& command) const
+{
+	for ( int keyNum = 0; keyNum < MAX_KEY_BINDINGS; ++keyNum )
+	{
+		const char* boundCmd = gEngfuncs.pfnKeyGetBinding(keyNum);
+
+		if ( !boundCmd || !(*boundCmd) || Q_strcmp(boundCmd, command.c_str()) != 0 )
+		{
+			continue;
+		}
+
+		gEngfuncs.pfnKeySetBinding(keyNum, "");
+	}
 }
