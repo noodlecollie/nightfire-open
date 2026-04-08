@@ -2,17 +2,19 @@
 
 #include <memory>
 #include <limits>
+#include <string>
 #include "udll_int.h"
 
-class FileBytesPtr
+class InFileBytesPtr
 {
 public:
-	explicit FileBytesPtr(const char* path)
+	explicit InFileBytesPtr(const char* path) :
+		m_FilePath(path ? path : "")
 	{
-		if ( path && *path )
+		if ( !m_FilePath.empty() )
 		{
 			int length = 0;
-			byte* data = gEngfuncs.COM_LoadFile(path, &length);
+			byte* data = gEngfuncs.COM_LoadFile(m_FilePath.c_str(), &length);
 
 			if ( data )
 			{
@@ -20,6 +22,11 @@ public:
 				m_Length = static_cast<size_t>(std::max<int>(length, 0));
 			}
 		}
+	}
+
+	const std::string& Path() const
+	{
+		return m_FilePath;
 	}
 
 	const byte* Data() const
@@ -54,15 +61,16 @@ private:
 		}
 	};
 
+	std::string m_FilePath;
 	std::unique_ptr<byte, Deleter> m_Ptr;
 	size_t m_Length = 0;
 };
 
-class FileCharsPtr : public FileBytesPtr
+class InFileCharsPtr : public InFileBytesPtr
 {
 public:
-	explicit FileCharsPtr(const char* path, int parseFlags = 0) :
-		FileBytesPtr(path),
+	explicit InFileCharsPtr(const char* path, int parseFlags = 0) :
+		InFileBytesPtr(path),
 		m_Cursor(reinterpret_cast<const char*>(Data())),
 		m_ParseFlags(parseFlags)
 	{

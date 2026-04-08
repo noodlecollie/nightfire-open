@@ -1,12 +1,12 @@
 #pragma once
 
 #include "framework/BaseTableModel.h"
-#include "framework/DataVar.h"
 #include <RmlUi/Core/Types.h>
+#include <RmlUi/Core/DataModelHandle.h>
 #include <vector>
 #include <unordered_map>
 
-class FileCharsPtr;
+class InFileCharsPtr;
 
 class KeyBindingModel : public BaseTableModel
 {
@@ -37,6 +37,7 @@ public:
 	Rml::String DisplayString(size_t row, size_t column) const override;
 	void Reset() override;
 	bool RowForConsoleCommand(const Rml::String& command, size_t& row) const;
+	void RefreshBindigsFromFile();
 
 	bool IsRebinding(size_t row, bool primary) const;
 	void SetIsRebinding(size_t row, bool primary, bool rebinding);
@@ -52,14 +53,18 @@ private:
 	};
 
 	void ParseSchemaAndResetToDefaults();
-	ParseResult ParseSchemaLine(FileCharsPtr& file, Entry& entry);
+	ParseResult ParseSchemaLine(InFileCharsPtr& file, Entry& entry);
 	ParseResult ParseToken(
-		FileCharsPtr& file,
+		InFileCharsPtr& file,
 		char* buffer,
 		size_t bufferSize,
 		bool allowNewline,
 		const int* overrideFlags = nullptr
 	);
+	ParseResult ReadBindings();
+	void ReadBinding(const Rml::String& command, const Rml::String& key);
+	void WriteBindings() const;
+	Rml::String GetBindingStatement(const Entry& entry, bool primary) const;
 
 	std::vector<Entry> m_Entries;
 	std::unordered_map<Rml::String, size_t> m_ConsoleCommandToEntry;

@@ -47,8 +47,6 @@ bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 		return false;
 	}
 
-	// TODO: Swap this out for a "reset to defaults" button.
-	m_KeyBindings.Reset();
 	m_ModelHandle = constructor.GetModelHandle();
 
 	return true;
@@ -63,6 +61,8 @@ void OptionsMenu::OnEndDocumentLoaded()
 	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
 	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
 	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
+
+	m_KeyBindings.RefreshBindigsFromFile();
 }
 
 void OptionsMenu::OnBeginDocumentUnloaded()

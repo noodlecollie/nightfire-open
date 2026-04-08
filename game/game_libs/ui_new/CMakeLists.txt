@@ -57,6 +57,7 @@ set(SOURCES_UI
 	src/rmlui/Utils.cpp
 	src/templatebindings/MenuFrameDataBinding.h
 	src/templatebindings/MenuFrameDataBinding.cpp
+	src/utils/InFilePtr.h
 	src/udll_int.h
 	src/udll_int.cpp
 	src/UIDebug.h

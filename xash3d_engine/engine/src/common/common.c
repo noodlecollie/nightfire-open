@@ -851,11 +851,15 @@ int GAME_EXPORT COM_SaveFile(const char* filename, const void* data, int len)
 {
 	// check for empty filename
 	if ( !COM_CheckString(filename) )
-		return false;
+	{
+		return 0;
+	}
 
 	// check for null data
 	if ( !data || len <= 0 )
-		return false;
+	{
+		return 0;
+	}
 
 	return FS_WriteFile(filename, data, len);
 }
@@ -966,8 +970,9 @@ cvar_t* pfnCvar_RegisterClientVariable(const char* szName, const char* szValue, 
 	if ( !Q_stricmp(szName, "motdfile") )
 		flags |= FCVAR_PRIVILEGED;
 
-	return (cvar_t*)
-		Cvar_Get(szName, szValue, flags | FCVAR_CLIENTDLL, Cvar_BuildAutoDescription(szName, flags | FCVAR_CLIENTDLL));
+	return (
+		cvar_t*
+	)Cvar_Get(szName, szValue, flags | FCVAR_CLIENTDLL, Cvar_BuildAutoDescription(szName, flags | FCVAR_CLIENTDLL));
 }
 
 /*
@@ -978,8 +983,9 @@ pfnCvar_RegisterVariable
 */
 cvar_t* pfnCvar_RegisterGameUIVariable(const char* szName, const char* szValue, int flags)
 {
-	return (cvar_t*)
-		Cvar_Get(szName, szValue, flags | FCVAR_GAMEUIDLL, Cvar_BuildAutoDescription(szName, flags | FCVAR_GAMEUIDLL));
+	return (
+		cvar_t*
+	)Cvar_Get(szName, szValue, flags | FCVAR_GAMEUIDLL, Cvar_BuildAutoDescription(szName, flags | FCVAR_GAMEUIDLL));
 }
 
 /*
