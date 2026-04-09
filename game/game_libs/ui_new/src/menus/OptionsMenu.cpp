@@ -4,7 +4,6 @@
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/ElementDocument.h>
 #include "EnginePublicAPI/keydefs.h"
-#include "CRTLib/crtlib.h"
 #include "rmlui/Utils.h"
 #include "rmlui/RmlUiBackend.h"
 #include "UIDebug.h"
@@ -61,8 +60,6 @@ void OptionsMenu::OnEndDocumentLoaded()
 	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
 	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
 	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-
-	m_KeyBindings.RefreshBindigsFromFile();
 }
 
 void OptionsMenu::OnBeginDocumentUnloaded()
@@ -81,9 +78,16 @@ void OptionsMenu::ProcessShowHideEvents(Rml::Event& event)
 	switch ( event.GetId() )
 	{
 		case Rml::EventId::Show:
+		{
+			m_KeyBindings.ReloadAndApplyBindings(true, true);
+			ResetRebindingRow();
+			break;
+		}
+
 		case Rml::EventId::Hide:
 		{
 			ResetRebindingRow();
+			m_KeyBindings.WriteBindings();
 			break;
 		}
 
@@ -117,19 +121,19 @@ void OptionsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const 
 		return;
 	}
 
-	Rml::String consoleCommand;
+	int row = -1;
 	int bindIndex = 0;
 
-	if ( !arguments[0].GetInto(consoleCommand) || !arguments[1].GetInto(bindIndex) )
+	if ( !arguments[0].GetInto(row) || !arguments[1].GetInto(bindIndex) )
 	{
 		ASSERT(false);
 		return;
 	}
 
-	HandleRebindKeyEvent(consoleCommand, bindIndex);
+	HandleRebindKeyEvent(row, bindIndex);
 }
 
-void OptionsMenu::HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex)
+void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
 {
 	ResetRebindingRow();
 	ASSERT(m_RebindingRow == INVALID_ROW);
@@ -140,12 +144,15 @@ void OptionsMenu::HandleRebindKeyEvent(const Rml::String& consoleCommand, int bi
 		return;
 	}
 
-	if ( !m_KeyBindings.RowForConsoleCommand(consoleCommand, m_RebindingRow) )
+	size_t unsignedRow = static_cast<size_t>(row);
+
+	if ( unsignedRow >= m_KeyBindings.Rows() )
 	{
 		ASSERT(false);
 		return;
 	}
 
+	m_RebindingRow = row;
 	m_RebindingPrimary = bindIndex == 0;
 	m_KeyBindings.SetIsRebinding(m_RebindingRow, m_RebindingPrimary, true);
 	ShowModal(true);
@@ -204,48 +211,6 @@ void OptionsMenu::SetStoredKeyForCurrentRebinding()
 	}
 
 	m_KeyBindings.SetBinding(m_RebindingRow, m_RebindingPrimary, keyStr);
+	m_KeyBindings.WriteBindings();
 	ResetRebindingRow();
-}
-
-void OptionsMenu::ApplyBinding(
-	const Rml::String& command,
-	const Rml::String primaryKey,
-	const Rml::String& secondaryKey
-)
-{
-	ASSERT(!command.empty());
-	ASSERT(!primaryKey.empty());
-
-	if ( command.empty() || primaryKey.empty() )
-	{
-		return;
-	}
-
-	UnbindCommand(command);
-
-	Rml::String bindCmd;
-
-	Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", primaryKey.c_str(), command.c_str());
-	gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
-
-	if ( !secondaryKey.empty() )
-	{
-		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", secondaryKey.c_str(), command.c_str());
-		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
-	}
-}
-
-void OptionsMenu::UnbindCommand(const Rml::String& command) const
-{
-	for ( int keyNum = 0; keyNum < MAX_KEY_BINDINGS; ++keyNum )
-	{
-		const char* boundCmd = gEngfuncs.pfnKeyGetBinding(keyNum);
-
-		if ( !boundCmd || !(*boundCmd) || Q_strcmp(boundCmd, command.c_str()) != 0 )
-		{
-			continue;
-		}
-
-		gEngfuncs.pfnKeySetBinding(keyNum, "");
-	}
 }

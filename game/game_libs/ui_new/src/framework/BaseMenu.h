@@ -60,8 +60,6 @@ protected:
 	virtual void OnEndDocumentLoaded();
 	virtual void OnBeginDocumentUnloaded();
 	virtual void OnEndDocumentUnloaded();
-	virtual void OnDocumentShown();
-	virtual void OnDocumentHidden();
 	virtual bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 
 private:

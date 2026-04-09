@@ -36,12 +36,10 @@ private:
 	void ProcessShowHideEvents(Rml::Event& event);
 	void ProcessKeyEvents(Rml::Event& event);
 	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
-	void HandleRebindKeyEvent(const Rml::String& consoleCommand, int bindIndex);
+	void HandleRebindKeyEvent(int row, int bindIndex);
 	void ResetRebindingRow();
 	void ShowModal(bool show);
 	void SetStoredKeyForCurrentRebinding();
-	void ApplyBinding(const Rml::String& command, const Rml::String primaryKey, const Rml::String& secondaryKey);
-	void UnbindCommand(const Rml::String& command) const;
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	KeyBindingModel m_KeyBindings;

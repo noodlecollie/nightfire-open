@@ -110,14 +110,6 @@ void BaseMenu::OnEndDocumentUnloaded()
 {
 }
 
-void BaseMenu::OnDocumentShown()
-{
-}
-
-void BaseMenu::OnDocumentHidden()
-{
-}
-
 bool BaseMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor&)
 {
 	return true;

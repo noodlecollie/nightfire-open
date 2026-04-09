@@ -82,6 +82,7 @@ public:
 		{
 			return false;
 		}
+
 		bufferSize = std::min<size_t>(bufferSize, static_cast<size_t>(std::numeric_limits<int>::max()));
 
 		// TODO: Fix up the param in this function definition so that it's const.
