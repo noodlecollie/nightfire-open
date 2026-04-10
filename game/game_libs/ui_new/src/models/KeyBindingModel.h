@@ -58,6 +58,8 @@ public:
 	void ReloadAndApplyBindings(bool reloadDefaults, bool resetToDefaultsOnError);
 
 	void SetBinding(size_t row, bool primary, Rml::String value, bool removeDuplicates = true);
+	void ClearBinding(size_t row, bool primary);
+	void ResetBindingToDefault(size_t row);
 	void WriteBindings() const;
 
 private:

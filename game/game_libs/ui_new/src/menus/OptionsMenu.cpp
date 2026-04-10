@@ -15,6 +15,8 @@ static constexpr const char* const PROP_CURRENT_ROW = "currentRow";
 static constexpr const char* const PROP_CURRENT_BINDING = "currentBinding";
 static constexpr const char* const EVENT_REBIND_KEY = "rebindKey";
 static constexpr const char* const EVENT_SELECT_BINDING = "selectBinding";
+static constexpr const char* const EVENT_CLEAR_BINDING = "clearBinding";
+static constexpr const char* const EVENT_RESET_BINDING = "resetBindingToDefault";
 
 OptionsMenu::OptionsMenu() :
 	MenuPage("options_menu", "resource/rml/options_menu.rml"),
@@ -47,7 +49,9 @@ bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 		 !constructor.Bind(PROP_CURRENT_ROW, &m_PageModel.currentRow) ||
 		 !constructor.Bind(PROP_CURRENT_BINDING, &m_PageModel.currentBinding) ||
 		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &OptionsMenu::HandleRebindKeyEvent, this) ||
-		 !constructor.BindEventCallback(EVENT_SELECT_BINDING, &OptionsMenu::HandleSelectBindingEvent, this) )
+		 !constructor.BindEventCallback(EVENT_SELECT_BINDING, &OptionsMenu::HandleSelectBindingEvent, this) ||
+		 !constructor.BindEventCallback(EVENT_CLEAR_BINDING, &OptionsMenu::HandleClearBinding, this) ||
+		 !constructor.BindEventCallback(EVENT_RESET_BINDING, &OptionsMenu::HandleResetBindingToDefault, this) )
 	{
 		return false;
 	}
@@ -157,6 +161,26 @@ void OptionsMenu::HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, co
 	}
 
 	HandleSelectBindingEvent(row, bindIndex);
+}
+
+void OptionsMenu::HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+{
+	if ( m_PageModel.currentRow < 0 || m_PageModel.currentBinding < 0 )
+	{
+		return;
+	}
+
+	m_KeyBindings.ClearBinding(static_cast<size_t>(m_PageModel.currentRow), m_PageModel.currentBinding == 0);
+}
+
+void OptionsMenu::HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+{
+	if ( m_PageModel.currentRow < 0 || m_PageModel.currentBinding < 0 )
+	{
+		return;
+	}
+
+	m_KeyBindings.ResetBindingToDefault(static_cast<size_t>(m_PageModel.currentRow));
 }
 
 void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)

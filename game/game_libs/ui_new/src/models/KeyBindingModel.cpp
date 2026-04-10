@@ -175,6 +175,58 @@ void KeyBindingModel::SetBinding(size_t row, bool primary, Rml::String value, bo
 	}
 }
 
+void KeyBindingModel::ClearBinding(size_t row, bool primary)
+{
+	if ( row >= m_Entries.size() )
+	{
+		return;
+	}
+
+	Entry& entry = m_Entries[row];
+	Entry::Binding& binding = primary ? entry.primaryBinding : entry.secondaryBinding;
+
+	if ( !binding.key.empty() )
+	{
+		binding.key.clear();
+		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+
+		if ( primary && !entry.secondaryBinding.key.empty() )
+		{
+			entry.primaryBinding.key = entry.secondaryBinding.key;
+			entry.secondaryBinding.key.clear();
+		}
+	}
+}
+
+void KeyBindingModel::ResetBindingToDefault(size_t row)
+{
+	if ( row >= m_Entries.size() )
+	{
+		return;
+	}
+
+	Entry& entry = m_Entries[row];
+	bool changed = false;
+
+	if ( entry.primaryBinding.key != entry.primaryBinding.defaultKey )
+	{
+		entry.primaryBinding.key = entry.primaryBinding.defaultKey;
+		changed = true;
+	}
+
+	if ( entry.secondaryBinding.key != entry.secondaryBinding.defaultKey )
+	{
+		entry.secondaryBinding.key = entry.secondaryBinding.defaultKey;
+		changed = true;
+	}
+
+	if ( changed )
+	{
+		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+		RemoveBindingDuplicates(entry);
+	}
+}
+
 void KeyBindingModel::ParseSchemaAndResetToDefaults()
 {
 	m_ConsoleCommandToEntry.clear();
@@ -581,6 +633,13 @@ void KeyBindingModel::RemoveBindingDuplicates(const Entry& entry)
 		clearBinding(other.primaryBinding.key, entry.secondaryBinding.key, modified);
 		clearBinding(other.secondaryBinding.key, entry.primaryBinding.key, modified);
 		clearBinding(other.secondaryBinding.key, entry.secondaryBinding.key, modified);
+
+		if ( other.primaryBinding.key.empty() && !other.secondaryBinding.key.empty() )
+		{
+			other.primaryBinding.key = other.secondaryBinding.key;
+			other.secondaryBinding.key.clear();
+			modified = true;
+		}
 
 		if ( modified )
 		{

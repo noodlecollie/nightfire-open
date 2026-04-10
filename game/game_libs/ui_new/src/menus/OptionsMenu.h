@@ -40,6 +40,8 @@ private:
 	void ProcessKeyEvents(Rml::Event& event);
 	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
 	void HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
+	void HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	void HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void HandleRebindKeyEvent(int row, int bindIndex);
 	bool HandleSelectBindingEvent(int row, int bindIndex);
 	void ResetRebindingRow();
