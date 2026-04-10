@@ -11,7 +11,10 @@
 
 static constexpr const char* const PROP_ACTIVE_TAB = "activeTab";
 static constexpr const char* const PROP_SHOW_MODAL = "showModal";
+static constexpr const char* const PROP_CURRENT_ROW = "currentRow";
+static constexpr const char* const PROP_CURRENT_BINDING = "currentBinding";
 static constexpr const char* const EVENT_REBIND_KEY = "rebindKey";
+static constexpr const char* const EVENT_SELECT_BINDING = "selectBinding";
 
 OptionsMenu::OptionsMenu() :
 	MenuPage("options_menu", "resource/rml/options_menu.rml"),
@@ -41,7 +44,10 @@ bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 
 	if ( !constructor.Bind(PROP_ACTIVE_TAB, &m_PageModel.activeTab) ||
 		 !constructor.Bind(PROP_SHOW_MODAL, &m_PageModel.showModal) ||
-		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &OptionsMenu::HandleRebindKeyEvent, this) )
+		 !constructor.Bind(PROP_CURRENT_ROW, &m_PageModel.currentRow) ||
+		 !constructor.Bind(PROP_CURRENT_BINDING, &m_PageModel.currentBinding) ||
+		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &OptionsMenu::HandleRebindKeyEvent, this) ||
+		 !constructor.BindEventCallback(EVENT_SELECT_BINDING, &OptionsMenu::HandleSelectBindingEvent, this) )
 	{
 		return false;
 	}
@@ -121,8 +127,8 @@ void OptionsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const 
 		return;
 	}
 
-	int row = -1;
-	int bindIndex = 0;
+	int row = INVALID_ROW;
+	int bindIndex = INVALID_BINDING;
 
 	if ( !arguments[0].GetInto(row) || !arguments[1].GetInto(bindIndex) )
 	{
@@ -133,42 +139,81 @@ void OptionsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const 
 	HandleRebindKeyEvent(row, bindIndex);
 }
 
+void OptionsMenu::HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments)
+{
+	if ( arguments.size() < 2 )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	int row = INVALID_ROW;
+	int bindIndex = INVALID_BINDING;
+
+	if ( !arguments[0].GetInto(row) || !arguments[1].GetInto(bindIndex) )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	HandleSelectBindingEvent(row, bindIndex);
+}
+
 void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
 {
-	ResetRebindingRow();
-	ASSERT(m_RebindingRow == INVALID_ROW);
-
-	if ( bindIndex != 0 && bindIndex != 1 )
+	if ( !HandleSelectBindingEvent(row, bindIndex) )
 	{
-		ASSERT(false);
 		return;
 	}
 
-	size_t unsignedRow = static_cast<size_t>(row);
-
-	if ( unsignedRow >= m_KeyBindings.Rows() )
-	{
-		ASSERT(false);
-		return;
-	}
-
-	m_RebindingRow = row;
-	m_RebindingPrimary = bindIndex == 0;
-	m_KeyBindings.SetIsRebinding(m_RebindingRow, m_RebindingPrimary, true);
 	ShowModal(true);
 	SetRequestPopOnEscapeKey(false);
 	RmlUiBackend::StaticInstance().SetStoreNextKey(true);
 }
 
+bool OptionsMenu::HandleSelectBindingEvent(int row, int bindIndex)
+{
+	if ( bindIndex != 0 && bindIndex != 1 )
+	{
+		ASSERT(false);
+		ResetRebindingRow();
+		return false;
+	}
+
+	if ( row < 0 || static_cast<size_t>(row) >= m_KeyBindings.Rows() )
+	{
+		ASSERT(false);
+		ResetRebindingRow();
+		return false;
+	}
+
+	if ( m_PageModel.currentRow != row )
+	{
+		m_PageModel.currentRow = row;
+		m_ModelHandle.DirtyVariable(PROP_CURRENT_ROW);
+	}
+
+	if ( m_PageModel.currentBinding != bindIndex )
+	{
+		m_PageModel.currentBinding = bindIndex;
+		m_ModelHandle.DirtyVariable(PROP_CURRENT_BINDING);
+	}
+
+	return true;
+}
+
 void OptionsMenu::ResetRebindingRow()
 {
-	if ( m_RebindingRow != INVALID_ROW )
+	if ( m_PageModel.currentRow >= 0 )
 	{
-		m_KeyBindings.SetIsRebinding(m_RebindingRow, true, false);
-		m_KeyBindings.SetIsRebinding(m_RebindingRow, false, false);
+		m_PageModel.currentRow = INVALID_ROW;
+		m_ModelHandle.DirtyVariable(PROP_CURRENT_ROW);
+	}
 
-		m_RebindingRow = INVALID_ROW;
-		m_RebindingPrimary = false;
+	if ( m_PageModel.currentBinding >= 0 )
+	{
+		m_PageModel.currentBinding = INVALID_BINDING;
+		m_ModelHandle.DirtyVariable(PROP_CURRENT_BINDING);
 	}
 
 	ShowModal(false);
@@ -192,6 +237,7 @@ void OptionsMenu::SetStoredKeyForCurrentRebinding()
 	// We shouldn't get these values
 	ASSERT(storedKey.key != -1);
 	ASSERT(storedKey.key != K_ESCAPE);
+	ASSERT(m_PageModel.currentBinding == 0 || m_PageModel.currentBinding == 1);
 
 	// Sanity:
 	if ( storedKey.key == -1 || storedKey.key == K_ESCAPE )
@@ -210,7 +256,7 @@ void OptionsMenu::SetStoredKeyForCurrentRebinding()
 		return;
 	}
 
-	m_KeyBindings.SetBinding(m_RebindingRow, m_RebindingPrimary, keyStr);
+	m_KeyBindings.SetBinding(static_cast<size_t>(m_PageModel.currentRow), m_PageModel.currentBinding == 0, keyStr);
 	m_KeyBindings.WriteBindings();
 	ResetRebindingRow();
 }

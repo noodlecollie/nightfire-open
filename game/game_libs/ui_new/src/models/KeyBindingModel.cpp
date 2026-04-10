@@ -18,7 +18,6 @@ static constexpr const char* const PROP_PRIMARY_BINDING = "primaryBinding";
 static constexpr const char* const PROP_SECONDARY_BINDING = "secondaryBinding";
 static constexpr const char* const PROP_KEY = "key";
 static constexpr const char* const PROP_DEFAULT_KEY = "defaultKey";
-static constexpr const char* const PROP_IS_REBINDING = "isRebinding";
 
 bool KeyBindingModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
@@ -31,8 +30,7 @@ bool KeyBindingModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 	}
 
 	if ( !bindingType.RegisterMember(PROP_KEY, &Entry::Binding::key) ||
-		 !bindingType.RegisterMember(PROP_DEFAULT_KEY, &Entry::Binding::defaultKey) ||
-		 !bindingType.RegisterMember(PROP_IS_REBINDING, &Entry::Binding::isRebinding) )
+		 !bindingType.RegisterMember(PROP_DEFAULT_KEY, &Entry::Binding::defaultKey) )
 	{
 		return false;
 	}
@@ -134,32 +132,6 @@ bool KeyBindingModel::RowForConsoleCommand(const Rml::String& command, size_t& r
 
 	row = it->second;
 	return true;
-}
-
-bool KeyBindingModel::IsRebinding(size_t row, bool primary) const
-{
-	if ( row >= m_Entries.size() )
-	{
-		return false;
-	}
-
-	return primary ? m_Entries[row].primaryBinding.isRebinding : m_Entries[row].secondaryBinding.isRebinding;
-}
-
-void KeyBindingModel::SetIsRebinding(size_t row, bool primary, bool rebinding)
-{
-	if ( row >= m_Entries.size() )
-	{
-		return;
-	}
-
-	bool& var = primary ? m_Entries[row].primaryBinding.isRebinding : m_Entries[row].secondaryBinding.isRebinding;
-
-	if ( var != rebinding )
-	{
-		var = rebinding;
-		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
-	}
 }
 
 void KeyBindingModel::SetBinding(size_t row, bool primary, Rml::String value, bool removeDuplicates)

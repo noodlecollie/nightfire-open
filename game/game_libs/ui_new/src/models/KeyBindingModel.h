@@ -27,7 +27,6 @@ public:
 		{
 			Rml::String key;
 			Rml::String defaultKey;
-			bool isRebinding = false;
 		};
 
 		int row = 0;
@@ -58,8 +57,6 @@ public:
 	// loaded, the default values are reloaded.
 	void ReloadAndApplyBindings(bool reloadDefaults, bool resetToDefaultsOnError);
 
-	bool IsRebinding(size_t row, bool primary) const;
-	void SetIsRebinding(size_t row, bool primary, bool rebinding);
 	void SetBinding(size_t row, bool primary, Rml::String value, bool removeDuplicates = true);
 	void WriteBindings() const;
 
