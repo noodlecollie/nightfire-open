@@ -60,6 +60,7 @@ public:
 	void SetBinding(size_t row, bool primary, Rml::String value, bool removeDuplicates = true);
 	void ClearBinding(size_t row, bool primary);
 	void ResetBindingToDefault(size_t row);
+	void ResetAllBindingsToDefaults();
 	void WriteBindings() const;
 
 private:
@@ -85,8 +86,8 @@ private:
 	void ReadBinding(const Rml::String& command, const Rml::String& key);
 	Rml::String GetBindingStatement(const Entry& entry, bool primary) const;
 	void RemoveBindingDuplicates(const Entry& entry);
-	void ApplyAllBindingsToEngine() const;
-	void ApplyBindingToEngine(const Entry& entry) const;
+	void ApplyAllBindingsToEngine(bool unbindFirst = true) const;
+	void ApplyBindingToEngine(const Entry& entry, bool unbindFirst = true) const;
 	void UnbindEngineKeysForCommand(const Rml::String& command) const;
 	void ResetBindingsToDefaults();
 

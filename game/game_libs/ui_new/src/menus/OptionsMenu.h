@@ -42,9 +42,11 @@ private:
 	void HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
 	void HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	void HandleResetAllBindingsToDefaults(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void HandleRebindKeyEvent(int row, int bindIndex);
 	bool HandleSelectBindingEvent(int row, int bindIndex);
 	void ResetRebindingRow();
+	void CloseModalAndStopListeningForKeys();
 	void ShowModal(bool show);
 	void SetStoredKeyForCurrentRebinding();
 

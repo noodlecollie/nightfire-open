@@ -118,7 +118,7 @@ void KeyBindingModel::ReloadAndApplyBindings(bool reloadDefaults, bool resetToDe
 	}
 
 	RefreshBindigsFromFile(resetToDefaultsOnError);
-	ApplyAllBindingsToEngine();
+	ApplyAllBindingsToEngine(false);
 }
 
 bool KeyBindingModel::RowForConsoleCommand(const Rml::String& command, size_t& row) const
@@ -195,6 +195,8 @@ void KeyBindingModel::ClearBinding(size_t row, bool primary)
 			entry.primaryBinding.key = entry.secondaryBinding.key;
 			entry.secondaryBinding.key.clear();
 		}
+
+		ApplyBindingToEngine(entry);
 	}
 }
 
@@ -222,9 +224,33 @@ void KeyBindingModel::ResetBindingToDefault(size_t row)
 
 	if ( changed )
 	{
+		ApplyBindingToEngine(entry);
 		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+
 		RemoveBindingDuplicates(entry);
 	}
+}
+
+void KeyBindingModel::ResetAllBindingsToDefaults()
+{
+	if ( m_Entries.empty() )
+	{
+		Reset();
+	}
+
+	gEngfuncs.pfnClientCmd(1, "unbindall");
+
+	for ( Entry& entry : m_Entries )
+	{
+		if ( !entry.consoleCommand.empty() )
+		{
+			entry.primaryBinding.key = entry.primaryBinding.defaultKey;
+			entry.secondaryBinding.key = entry.secondaryBinding.defaultKey;
+			ApplyBindingToEngine(entry, false);
+		}
+	}
+
+	m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
 }
 
 void KeyBindingModel::ParseSchemaAndResetToDefaults()
@@ -654,19 +680,19 @@ void KeyBindingModel::RemoveBindingDuplicates(const Entry& entry)
 	}
 }
 
-void KeyBindingModel::ApplyAllBindingsToEngine() const
+void KeyBindingModel::ApplyAllBindingsToEngine(bool unbindFirst) const
 {
 	for ( const Entry& entry : m_Entries )
 	{
 		// Headings in the menu won't have console commands, so skip these.
 		if ( !entry.consoleCommand.empty() )
 		{
-			ApplyBindingToEngine(entry);
+			ApplyBindingToEngine(entry, unbindFirst);
 		}
 	}
 }
 
-void KeyBindingModel::ApplyBindingToEngine(const Entry& entry) const
+void KeyBindingModel::ApplyBindingToEngine(const Entry& entry, bool unbindFirst) const
 {
 	ASSERT(!entry.consoleCommand.empty());
 
@@ -675,7 +701,10 @@ void KeyBindingModel::ApplyBindingToEngine(const Entry& entry) const
 		return;
 	}
 
-	UnbindEngineKeysForCommand(entry.consoleCommand);
+	if ( unbindFirst )
+	{
+		UnbindEngineKeysForCommand(entry.consoleCommand);
+	}
 
 	if ( !entry.primaryBinding.key.empty() )
 	{
@@ -684,6 +713,7 @@ void KeyBindingModel::ApplyBindingToEngine(const Entry& entry) const
 		Rml::String bindCmd;
 		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
 
+		Rml::Log::Message(Rml::Log::LT_DEBUG, "KeyBindingModel::ApplyBindingToEngine: %s", bindCmd.c_str());
 		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
 	}
 
@@ -694,6 +724,7 @@ void KeyBindingModel::ApplyBindingToEngine(const Entry& entry) const
 		Rml::String bindCmd;
 		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
 
+		Rml::Log::Message(Rml::Log::LT_DEBUG, "KeyBindingModel::ApplyBindingToEngine: %s", bindCmd.c_str());
 		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
 	}
 }
@@ -709,6 +740,7 @@ void KeyBindingModel::UnbindEngineKeysForCommand(const Rml::String& command) con
 			continue;
 		}
 
+		Rml::Log::Message(Rml::Log::LT_DEBUG, "KeyBindingModel::UnbindEngineKeysForCommand: Unbinding key %d", keyNum);
 		gEngfuncs.pfnKeySetBinding(keyNum, "");
 	}
 }

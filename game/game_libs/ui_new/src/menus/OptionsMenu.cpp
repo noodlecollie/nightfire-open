@@ -17,6 +17,7 @@ static constexpr const char* const EVENT_REBIND_KEY = "rebindKey";
 static constexpr const char* const EVENT_SELECT_BINDING = "selectBinding";
 static constexpr const char* const EVENT_CLEAR_BINDING = "clearBinding";
 static constexpr const char* const EVENT_RESET_BINDING = "resetBindingToDefault";
+static constexpr const char* const EVENT_RESET_ALL_BINDINGS = "resetAllBindingsToDefaults";
 
 OptionsMenu::OptionsMenu() :
 	MenuPage("options_menu", "resource/rml/options_menu.rml"),
@@ -51,7 +52,9 @@ bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &OptionsMenu::HandleRebindKeyEvent, this) ||
 		 !constructor.BindEventCallback(EVENT_SELECT_BINDING, &OptionsMenu::HandleSelectBindingEvent, this) ||
 		 !constructor.BindEventCallback(EVENT_CLEAR_BINDING, &OptionsMenu::HandleClearBinding, this) ||
-		 !constructor.BindEventCallback(EVENT_RESET_BINDING, &OptionsMenu::HandleResetBindingToDefault, this) )
+		 !constructor.BindEventCallback(EVENT_RESET_BINDING, &OptionsMenu::HandleResetBindingToDefault, this) ||
+		 !constructor
+			  .BindEventCallback(EVENT_RESET_ALL_BINDINGS, &OptionsMenu::HandleResetAllBindingsToDefaults, this) )
 	{
 		return false;
 	}
@@ -183,6 +186,12 @@ void OptionsMenu::HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&,
 	m_KeyBindings.ResetBindingToDefault(static_cast<size_t>(m_PageModel.currentRow));
 }
 
+void OptionsMenu::HandleResetAllBindingsToDefaults(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+{
+	// TODO: Need the modal added here
+	m_KeyBindings.ResetAllBindingsToDefaults();
+}
+
 void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
 {
 	if ( !HandleSelectBindingEvent(row, bindIndex) )
@@ -240,6 +249,11 @@ void OptionsMenu::ResetRebindingRow()
 		m_ModelHandle.DirtyVariable(PROP_CURRENT_BINDING);
 	}
 
+	CloseModalAndStopListeningForKeys();
+}
+
+void OptionsMenu::CloseModalAndStopListeningForKeys()
+{
 	ShowModal(false);
 	SetRequestPopOnEscapeKey(true);
 	RmlUiBackend::StaticInstance().ClearStoreNextKey();
@@ -276,11 +290,11 @@ void OptionsMenu::SetStoredKeyForCurrentRebinding()
 	if ( !keyStr || !(*keyStr) )
 	{
 		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Could not get key string for key %d", storedKey.key);
-		ResetRebindingRow();
+		CloseModalAndStopListeningForKeys();
 		return;
 	}
 
 	m_KeyBindings.SetBinding(static_cast<size_t>(m_PageModel.currentRow), m_PageModel.currentBinding == 0, keyStr);
 	m_KeyBindings.WriteBindings();
-	ResetRebindingRow();
+	CloseModalAndStopListeningForKeys();
 }
