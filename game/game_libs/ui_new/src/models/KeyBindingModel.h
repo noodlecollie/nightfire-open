@@ -13,12 +13,12 @@ class KeyBindingModel : public BaseTableModel
 public:
 	enum ColumnIndex
 	{
-		Description = 0,
-		ConsoleCommand,
-		PrimaryBinding,
-		SecondaryBinding,
+		DESCRIPTION = 0,
+		CONSOLE_COMMAND,
+		PRIMARY_BINDING,
+		SECONDARY_BINDING,
 
-		TotalColumns
+		TOTAL_COLUMNS
 	};
 
 	struct Entry

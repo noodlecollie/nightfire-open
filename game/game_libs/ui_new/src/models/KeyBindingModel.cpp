@@ -8,8 +8,8 @@
 #include "UIDebug.h"
 
 static constexpr const char* const NAME_KEYBINDINGS = "keybindings";
-static constexpr const char* const SCHEMA_PATH = "controls_schema.lst";
-static constexpr const char* const BINDINGS_PATH = "keybindings.lst";
+static constexpr const char* const SCHEMA_PATH = "resource/state/controls_schema.lst";
+static constexpr const char* const BINDINGS_PATH = "resource/state/keybindings.lst";
 
 static constexpr const char* const PROP_ROW = "row";
 static constexpr const char* const PROP_DESCRIPTION = "description";
@@ -60,7 +60,7 @@ size_t KeyBindingModel::Rows() const
 
 size_t KeyBindingModel::Columns() const
 {
-	return TotalColumns;
+	return TOTAL_COLUMNS;
 }
 
 Rml::String KeyBindingModel::DisplayString(size_t row, size_t column) const
@@ -74,22 +74,22 @@ Rml::String KeyBindingModel::DisplayString(size_t row, size_t column) const
 
 	switch ( column )
 	{
-		case Description:
+		case DESCRIPTION:
 		{
 			return entry.description;
 		}
 
-		case ConsoleCommand:
+		case CONSOLE_COMMAND:
 		{
 			return entry.consoleCommand;
 		}
 
-		case PrimaryBinding:
+		case PRIMARY_BINDING:
 		{
 			return entry.primaryBinding.key;
 		}
 
-		case SecondaryBinding:
+		case SECONDARY_BINDING:
 		{
 			return entry.secondaryBinding.key;
 		}
@@ -490,7 +490,7 @@ KeyBindingModel::ParseResult KeyBindingModel::ReadBindings()
 		char command[512];
 		char key[128];
 
-		ParseResult result = ParseToken(file, command, sizeof(command), false);
+		ParseResult result = ParseToken(file, command, sizeof(command), true);
 
 		if ( result == ParseResult::Eof )
 		{
@@ -583,6 +583,9 @@ void KeyBindingModel::WriteBindings() const
 {
 	Rml::String output;
 	output.reserve(4096);
+
+	output += "// Key bindings as saved by the options menu\n";
+	output += "// WARNING: This file is auto-generated! Modifications may be overwritten!\n\n";
 
 	for ( const Entry& entry : m_Entries )
 	{

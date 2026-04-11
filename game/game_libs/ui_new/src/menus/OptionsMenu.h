@@ -49,6 +49,7 @@ private:
 	void CloseModalAndStopListeningForKeys();
 	void ShowModal(bool show);
 	void SetStoredKeyForCurrentRebinding();
+	void ResetAllBindingsResponse(bool shouldReset);
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	KeyBindingModel m_KeyBindings;

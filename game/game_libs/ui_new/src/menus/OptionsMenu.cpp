@@ -19,12 +19,32 @@ static constexpr const char* const EVENT_CLEAR_BINDING = "clearBinding";
 static constexpr const char* const EVENT_RESET_BINDING = "resetBindingToDefault";
 static constexpr const char* const EVENT_RESET_ALL_BINDINGS = "resetAllBindingsToDefaults";
 
+static constexpr const char* const RML_MODAL_SET_BINDING =
+	"<p>Press a key, or press <keyname>Escape</keyname> to cancel</p>";
+static constexpr const char* const RML_MODAL_CONFIRM_RESET_TO_DEFAULTS =
+	"<p>Reset all key bindings to default values?</p>";
+
+enum ModalUserData
+{
+	SETTING_BINDING,
+	RESETTING_BINDINGS
+};
+
 OptionsMenu::OptionsMenu() :
 	MenuPage("options_menu", "resource/rml/options_menu.rml"),
 	m_Modal(this, "options_modal"),
 	m_ShowHideEventListener(this, &OptionsMenu::ProcessShowHideEvents),
 	m_KeyEventListener(this, &OptionsMenu::ProcessKeyEvents)
 {
+	m_Modal.SetButtonClickCallback(
+		[this](Rml::Event&, size_t buttonIndex, const Rml::Variant& userData)
+		{
+			if ( userData.Get<int>() == RESETTING_BINDINGS )
+			{
+				ResetAllBindingsResponse(buttonIndex == 1);
+			}
+		}
+	);
 }
 
 void OptionsMenu::Update(float currentTime)
@@ -122,7 +142,25 @@ void OptionsMenu::ProcessKeyEvents(Rml::Event& event)
 
 	if ( GetEventKeyId(event) == Rml::Input::KI_ESCAPE )
 	{
-		ResetRebindingRow();
+		switch ( m_Modal.UserData().Get<int>() )
+		{
+			case SETTING_BINDING:
+			{
+				ResetRebindingRow();
+				break;
+			}
+
+			case RESETTING_BINDINGS:
+			{
+				ResetAllBindingsResponse(false);
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
+		}
 	}
 }
 
@@ -174,6 +212,7 @@ void OptionsMenu::HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rm
 	}
 
 	m_KeyBindings.ClearBinding(static_cast<size_t>(m_PageModel.currentRow), m_PageModel.currentBinding == 0);
+	m_KeyBindings.WriteBindings();
 }
 
 void OptionsMenu::HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
@@ -184,12 +223,22 @@ void OptionsMenu::HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&,
 	}
 
 	m_KeyBindings.ResetBindingToDefault(static_cast<size_t>(m_PageModel.currentRow));
+	m_KeyBindings.WriteBindings();
 }
 
 void OptionsMenu::HandleResetAllBindingsToDefaults(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
-	// TODO: Need the modal added here
-	m_KeyBindings.ResetAllBindingsToDefaults();
+	Rml::StringList buttons;
+	buttons.push_back("Cancel");
+	buttons.push_back("OK");
+
+	m_Modal.SetTitle("Reset All Bindings");
+	m_Modal.SetContentsRml(RML_MODAL_CONFIRM_RESET_TO_DEFAULTS);
+	m_Modal.SetButtons(buttons);
+	m_Modal.SetUserData(Rml::Variant(RESETTING_BINDINGS));
+
+	ShowModal(true);
+	SetRequestPopOnEscapeKey(false);
 }
 
 void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
@@ -198,6 +247,11 @@ void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
 	{
 		return;
 	}
+
+	m_Modal.SetTitle("Set Binding");
+	m_Modal.SetContentsRml(RML_MODAL_SET_BINDING);
+	m_Modal.SetButtons({});
+	m_Modal.SetUserData(Rml::Variant(SETTING_BINDING));
 
 	ShowModal(true);
 	SetRequestPopOnEscapeKey(false);
@@ -297,4 +351,16 @@ void OptionsMenu::SetStoredKeyForCurrentRebinding()
 	m_KeyBindings.SetBinding(static_cast<size_t>(m_PageModel.currentRow), m_PageModel.currentBinding == 0, keyStr);
 	m_KeyBindings.WriteBindings();
 	CloseModalAndStopListeningForKeys();
+}
+
+void OptionsMenu::ResetAllBindingsResponse(bool shouldReset)
+{
+	ShowModal(false);
+	SetRequestPopOnEscapeKey(true);
+
+	if ( shouldReset )
+	{
+		m_KeyBindings.ResetAllBindingsToDefaults();
+		m_KeyBindings.WriteBindings();
+	}
 }
