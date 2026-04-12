@@ -3,6 +3,7 @@
 #include "framework/MenuPage.h"
 #include <RmlUi/Core/EventListener.h>
 #include "templatebindings/MenuFrameDataBinding.h"
+#include "templatebindings/OptionsTabBarDataBinding.h"
 #include "models/KeyBindingModel.h"
 #include "components/ModalComponent.h"
 #include "framework/EventListenerObject.h"
@@ -21,16 +22,11 @@ protected:
 	void OnBeginDocumentUnloaded() override;
 
 private:
-	static constexpr const char* const TAB_GAMEPLAY = "gameplay";
-	static constexpr const char* const TAB_KEYS = "keys";
-	static constexpr const char* const TAB_MOUSE = "mouse";
-	static constexpr const char* const TAB_AV = "av";
 	static constexpr int INVALID_ROW = -1;
 	static constexpr int INVALID_BINDING = -1;
 
 	struct PageModel
 	{
-		Rml::String activeTab = TAB_GAMEPLAY;
 		bool showModal = false;
 		int currentRow = INVALID_ROW;
 		int currentBinding = INVALID_BINDING;
@@ -52,6 +48,7 @@ private:
 	void ResetAllBindingsResponse(bool shouldReset);
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
+	OptionsTabBarDataBinding m_TabBarDataBinding;
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
 	Rml::DataModelHandle m_ModelHandle;

@@ -9,7 +9,6 @@
 #include "UIDebug.h"
 #include "udll_int.h"
 
-static constexpr const char* const PROP_ACTIVE_TAB = "activeTab";
 static constexpr const char* const PROP_SHOW_MODAL = "showModal";
 static constexpr const char* const PROP_CURRENT_ROW = "currentRow";
 static constexpr const char* const PROP_CURRENT_BINDING = "currentBinding";
@@ -60,13 +59,12 @@ void OptionsMenu::Update(float currentTime)
 bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_MenuFrameDataBinding.SetUpDataBindings(constructor) ||
-		 !m_KeyBindings.SetUpDataBindings(constructor) )
+		 !m_TabBarDataBinding.SetUpDataBindings(constructor) || !m_KeyBindings.SetUpDataBindings(constructor) )
 	{
 		return false;
 	}
 
-	if ( !constructor.Bind(PROP_ACTIVE_TAB, &m_PageModel.activeTab) ||
-		 !constructor.Bind(PROP_SHOW_MODAL, &m_PageModel.showModal) ||
+	if ( !constructor.Bind(PROP_SHOW_MODAL, &m_PageModel.showModal) ||
 		 !constructor.Bind(PROP_CURRENT_ROW, &m_PageModel.currentRow) ||
 		 !constructor.Bind(PROP_CURRENT_BINDING, &m_PageModel.currentBinding) ||
 		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &OptionsMenu::HandleRebindKeyEvent, this) ||

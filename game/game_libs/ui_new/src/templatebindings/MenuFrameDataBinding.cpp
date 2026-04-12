@@ -3,7 +3,7 @@
 #include <RmlUi/Core/Element.h>
 
 MenuFrameDataBinding::MenuFrameDataBinding() :
-	m_Tooltip {"footer_tooltip", ""}
+	m_Tooltip {"footerTooltip", ""}
 {
 }
 
