@@ -20,6 +20,7 @@ set(SOURCES_UI
 	src/framework/BaseMenu.cpp
 	src/framework/BaseTableModel.h
 	src/framework/BaseTemplateBinding.h
+	src/framework/CvarDataVar.h
 	src/framework/DataVar.h
 	src/framework/ElementFinder.h
 	src/framework/ElementFinder.cpp
