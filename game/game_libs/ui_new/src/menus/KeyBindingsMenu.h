@@ -8,10 +8,10 @@
 #include "components/ModalComponent.h"
 #include "framework/EventListenerObject.h"
 
-class OptionsMenu : public MenuPage
+class KeyBindingsMenu : public MenuPage
 {
 public:
-	OptionsMenu();
+	KeyBindingsMenu();
 
 	void Update(float currentTime) override;
 

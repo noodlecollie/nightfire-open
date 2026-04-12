@@ -4,7 +4,7 @@
 #include "UIDebug.h"
 
 #include "menus/MainMenu.h"
-#include "menus/OptionsMenu.h"
+#include "menus/KeyBindingsMenu.h"
 #include "menus/MultiplayerMenu.h"
 
 void MenuDirectory::Populate()
@@ -12,7 +12,7 @@ void MenuDirectory::Populate()
 	m_MenuMap.clear();
 
 	AddToMap<MainMenu>();
-	AddToMap<OptionsMenu>();
+	AddToMap<KeyBindingsMenu>();
 	AddToMap<MultiplayerMenu>();
 }
 

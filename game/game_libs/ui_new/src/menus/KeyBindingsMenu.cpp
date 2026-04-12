@@ -1,4 +1,4 @@
-#include "menus/OptionsMenu.h"
+#include "menus/KeyBindingsMenu.h"
 #include <RmlUi/Core/Context.h>
 #include <RmlUi/Core/Event.h>
 #include <RmlUi/Core/Element.h>
@@ -29,11 +29,12 @@ enum ModalUserData
 	RESETTING_BINDINGS
 };
 
-OptionsMenu::OptionsMenu() :
-	MenuPage("options_menu", "resource/rml/options_menu.rml"),
-	m_Modal(this, "options_modal"),
-	m_ShowHideEventListener(this, &OptionsMenu::ProcessShowHideEvents),
-	m_KeyEventListener(this, &OptionsMenu::ProcessKeyEvents)
+KeyBindingsMenu::KeyBindingsMenu() :
+	MenuPage("keybindings_menu", "resource/rml/keybindings_menu.rml"),
+	m_TabBarDataBinding(OptionsTabBarDataBinding::TAB_KEYS),
+	m_Modal(this, "keybindings_modal"),
+	m_ShowHideEventListener(this, &KeyBindingsMenu::ProcessShowHideEvents),
+	m_KeyEventListener(this, &KeyBindingsMenu::ProcessKeyEvents)
 {
 	m_Modal.SetButtonClickCallback(
 		[this](Rml::Event&, size_t buttonIndex, const Rml::Variant& userData)
@@ -46,7 +47,7 @@ OptionsMenu::OptionsMenu() :
 	);
 }
 
-void OptionsMenu::Update(float currentTime)
+void KeyBindingsMenu::Update(float currentTime)
 {
 	MenuPage::Update(currentTime);
 
@@ -54,9 +55,16 @@ void OptionsMenu::Update(float currentTime)
 	{
 		SetStoredKeyForCurrentRebinding();
 	}
+
+	if ( m_TabBarDataBinding.ActiveTabChanged() &&
+		 m_TabBarDataBinding.ActiveTab() != OptionsTabBarDataBinding::TAB_KEYS )
+	{
+		// TODO: We need to know the name of the menu to swap in here.
+		RequestPop();
+	}
 }
 
-bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+bool KeyBindingsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_MenuFrameDataBinding.SetUpDataBindings(constructor) ||
 		 !m_TabBarDataBinding.SetUpDataBindings(constructor) || !m_KeyBindings.SetUpDataBindings(constructor) )
@@ -67,12 +75,12 @@ bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 	if ( !constructor.Bind(PROP_SHOW_MODAL, &m_PageModel.showModal) ||
 		 !constructor.Bind(PROP_CURRENT_ROW, &m_PageModel.currentRow) ||
 		 !constructor.Bind(PROP_CURRENT_BINDING, &m_PageModel.currentBinding) ||
-		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &OptionsMenu::HandleRebindKeyEvent, this) ||
-		 !constructor.BindEventCallback(EVENT_SELECT_BINDING, &OptionsMenu::HandleSelectBindingEvent, this) ||
-		 !constructor.BindEventCallback(EVENT_CLEAR_BINDING, &OptionsMenu::HandleClearBinding, this) ||
-		 !constructor.BindEventCallback(EVENT_RESET_BINDING, &OptionsMenu::HandleResetBindingToDefault, this) ||
+		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &KeyBindingsMenu::HandleRebindKeyEvent, this) ||
+		 !constructor.BindEventCallback(EVENT_SELECT_BINDING, &KeyBindingsMenu::HandleSelectBindingEvent, this) ||
+		 !constructor.BindEventCallback(EVENT_CLEAR_BINDING, &KeyBindingsMenu::HandleClearBinding, this) ||
+		 !constructor.BindEventCallback(EVENT_RESET_BINDING, &KeyBindingsMenu::HandleResetBindingToDefault, this) ||
 		 !constructor
-			  .BindEventCallback(EVENT_RESET_ALL_BINDINGS, &OptionsMenu::HandleResetAllBindingsToDefaults, this) )
+			  .BindEventCallback(EVENT_RESET_ALL_BINDINGS, &KeyBindingsMenu::HandleResetAllBindingsToDefaults, this) )
 	{
 		return false;
 	}
@@ -82,7 +90,7 @@ bool OptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 	return true;
 }
 
-void OptionsMenu::OnEndDocumentLoaded()
+void KeyBindingsMenu::OnEndDocumentLoaded()
 {
 	MenuPage::OnEndDocumentLoaded();
 
@@ -93,7 +101,7 @@ void OptionsMenu::OnEndDocumentLoaded()
 	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
 }
 
-void OptionsMenu::OnBeginDocumentUnloaded()
+void KeyBindingsMenu::OnBeginDocumentUnloaded()
 {
 	Rml::ElementDocument* document = Document();
 
@@ -104,12 +112,13 @@ void OptionsMenu::OnBeginDocumentUnloaded()
 	MenuPage::OnBeginDocumentUnloaded();
 }
 
-void OptionsMenu::ProcessShowHideEvents(Rml::Event& event)
+void KeyBindingsMenu::ProcessShowHideEvents(Rml::Event& event)
 {
 	switch ( event.GetId() )
 	{
 		case Rml::EventId::Show:
 		{
+			m_TabBarDataBinding.SetActiveTab(OptionsTabBarDataBinding::TAB_KEYS);
 			m_KeyBindings.ReloadAndApplyBindings(true, true);
 			ResetRebindingRow();
 			break;
@@ -117,6 +126,9 @@ void OptionsMenu::ProcessShowHideEvents(Rml::Event& event)
 
 		case Rml::EventId::Hide:
 		{
+			// Reset this from whatever the tabs might have selected.
+			m_TabBarDataBinding.SetActiveTab(OptionsTabBarDataBinding::TAB_KEYS);
+
 			ResetRebindingRow();
 			m_KeyBindings.WriteBindings();
 			break;
@@ -129,7 +141,7 @@ void OptionsMenu::ProcessShowHideEvents(Rml::Event& event)
 	}
 }
 
-void OptionsMenu::ProcessKeyEvents(Rml::Event& event)
+void KeyBindingsMenu::ProcessKeyEvents(Rml::Event& event)
 {
 	ASSERT(event.GetId() == Rml::EventId::Keydown);
 
@@ -162,7 +174,7 @@ void OptionsMenu::ProcessKeyEvents(Rml::Event& event)
 	}
 }
 
-void OptionsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments)
+void KeyBindingsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments)
 {
 	if ( arguments.size() < 2 )
 	{
@@ -182,7 +194,7 @@ void OptionsMenu::HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const 
 	HandleRebindKeyEvent(row, bindIndex);
 }
 
-void OptionsMenu::HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments)
+void KeyBindingsMenu::HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments)
 {
 	if ( arguments.size() < 2 )
 	{
@@ -202,7 +214,7 @@ void OptionsMenu::HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, co
 	HandleSelectBindingEvent(row, bindIndex);
 }
 
-void OptionsMenu::HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+void KeyBindingsMenu::HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
 	if ( m_PageModel.currentRow < 0 || m_PageModel.currentBinding < 0 )
 	{
@@ -213,7 +225,7 @@ void OptionsMenu::HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rm
 	m_KeyBindings.WriteBindings();
 }
 
-void OptionsMenu::HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+void KeyBindingsMenu::HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
 	if ( m_PageModel.currentRow < 0 || m_PageModel.currentBinding < 0 )
 	{
@@ -224,7 +236,7 @@ void OptionsMenu::HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&,
 	m_KeyBindings.WriteBindings();
 }
 
-void OptionsMenu::HandleResetAllBindingsToDefaults(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+void KeyBindingsMenu::HandleResetAllBindingsToDefaults(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
 	Rml::StringList buttons;
 	buttons.push_back("Cancel");
@@ -239,7 +251,7 @@ void OptionsMenu::HandleResetAllBindingsToDefaults(Rml::DataModelHandle, Rml::Ev
 	SetRequestPopOnEscapeKey(false);
 }
 
-void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
+void KeyBindingsMenu::HandleRebindKeyEvent(int row, int bindIndex)
 {
 	if ( !HandleSelectBindingEvent(row, bindIndex) )
 	{
@@ -256,7 +268,7 @@ void OptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
 	RmlUiBackend::StaticInstance().SetStoreNextKey(true);
 }
 
-bool OptionsMenu::HandleSelectBindingEvent(int row, int bindIndex)
+bool KeyBindingsMenu::HandleSelectBindingEvent(int row, int bindIndex)
 {
 	if ( bindIndex != 0 && bindIndex != 1 )
 	{
@@ -287,7 +299,7 @@ bool OptionsMenu::HandleSelectBindingEvent(int row, int bindIndex)
 	return true;
 }
 
-void OptionsMenu::ResetRebindingRow()
+void KeyBindingsMenu::ResetRebindingRow()
 {
 	if ( m_PageModel.currentRow >= 0 )
 	{
@@ -304,14 +316,14 @@ void OptionsMenu::ResetRebindingRow()
 	CloseModalAndStopListeningForKeys();
 }
 
-void OptionsMenu::CloseModalAndStopListeningForKeys()
+void KeyBindingsMenu::CloseModalAndStopListeningForKeys()
 {
 	ShowModal(false);
 	SetRequestPopOnEscapeKey(true);
 	RmlUiBackend::StaticInstance().ClearStoreNextKey();
 }
 
-void OptionsMenu::ShowModal(bool show)
+void KeyBindingsMenu::ShowModal(bool show)
 {
 	if ( m_PageModel.showModal != show )
 	{
@@ -320,7 +332,7 @@ void OptionsMenu::ShowModal(bool show)
 	}
 }
 
-void OptionsMenu::SetStoredKeyForCurrentRebinding()
+void KeyBindingsMenu::SetStoredKeyForCurrentRebinding()
 {
 	const RmlUiBackend::StoredKey storedKey = RmlUiBackend::StaticInstance().TakeStoredKey();
 
@@ -351,7 +363,7 @@ void OptionsMenu::SetStoredKeyForCurrentRebinding()
 	CloseModalAndStopListeningForKeys();
 }
 
-void OptionsMenu::ResetAllBindingsResponse(bool shouldReset)
+void KeyBindingsMenu::ResetAllBindingsResponse(bool shouldReset)
 {
 	ShowModal(false);
 	SetRequestPopOnEscapeKey(true);

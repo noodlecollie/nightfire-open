@@ -20,6 +20,8 @@ protected:
 	void OnEndDocumentLoaded() override;
 	void OnBeginDocumentUnloaded() override;
 
+	void RequestPop(Rml::String menuToSwapIn = Rml::String());
+
 private:
 	void ProcessEvent(Rml::Event& event);
 	void HandlePushMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);

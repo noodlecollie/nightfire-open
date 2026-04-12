@@ -9,11 +9,9 @@ MenuFrameDataBinding::MenuFrameDataBinding() :
 
 bool MenuFrameDataBinding::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
-	constructor.Bind(m_Tooltip.name, &m_Tooltip.value);
-	constructor.BindEventCallback("set_tooltip", &MenuFrameDataBinding::SetTooltip, this);
-	constructor.BindEventCallback("clear_tooltip", &MenuFrameDataBinding::ClearTooltip, this);
-
-	return true;
+	return constructor.Bind(m_Tooltip.name, &m_Tooltip.value) &&
+		constructor.BindEventCallback("setTooltip", &MenuFrameDataBinding::SetTooltip, this) &&
+		constructor.BindEventCallback("clearTooltip", &MenuFrameDataBinding::ClearTooltip, this);
 }
 
 void MenuFrameDataBinding::SetTooltip(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList&)

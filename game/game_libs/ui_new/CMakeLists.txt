@@ -30,13 +30,13 @@ set(SOURCES_UI
 	src/framework/MenuPage.cpp
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
+	src/menus/KeyBindingsMenu.h
+	src/menus/KeyBindingsMenu.cpp
 	src/menus/MainMenu.h
 	src/menus/MainMenu.cpp
 	src/menus/MainMenu.cpp
 	src/menus/MultiplayerMenu.h
 	src/menus/MultiplayerMenu.cpp
-	src/menus/OptionsMenu.h
-	src/menus/OptionsMenu.cpp
 	src/models/KeyBindingModel.h
 	src/models/KeyBindingModel.cpp
 	src/rmlui/EventListenerImpl.h

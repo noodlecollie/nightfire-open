@@ -68,6 +68,18 @@ void MenuPage::OnBeginDocumentUnloaded()
 	BaseMenu::OnBeginDocumentUnloaded();
 }
 
+void MenuPage::RequestPop(Rml::String menuToSwapIn)
+{
+	Rml::VariantList args;
+
+	if ( !menuToSwapIn.empty() )
+	{
+		args.push_back(Rml::Variant(menuToSwapIn));
+	}
+
+	SetCurrentRequest(MenuRequestType::PopMenu, args);
+}
+
 void MenuPage::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
 	SetCurrentRequest(MenuRequestType::PushMenu, args);
