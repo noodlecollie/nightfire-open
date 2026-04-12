@@ -12,8 +12,8 @@ MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 bool MenuPage::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	return BaseMenu::OnSetUpDataModelBindings(constructor) &&
-		constructor.BindEventCallback("push_menu", &MenuPage::HandlePushMenu, this) &&
-		constructor.BindEventCallback("pop_menu", &MenuPage::HandlePopMenu, this);
+		constructor.BindEventCallback("pushMenu", &MenuPage::HandlePushMenu, this) &&
+		constructor.BindEventCallback("popMenu", &MenuPage::HandlePopMenu, this);
 }
 
 bool MenuPage::RequestPopOnEscapeKey() const

@@ -5,7 +5,7 @@
 #include "framework/EventListenerObject.h"
 
 // A menu which assumes that the entire RML page has a data model,
-// and which automatically implements push_menu and pop_menu.
+// and which automatically implements pushMenu and popMenu.
 class MenuPage : public BaseMenu
 {
 public:
