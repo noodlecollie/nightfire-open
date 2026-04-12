@@ -4,16 +4,22 @@
 #include "UIDebug.h"
 
 #include "menus/MainMenu.h"
-#include "menus/KeyBindingsMenu.h"
 #include "menus/MultiplayerMenu.h"
+#include "menus/options/KeysOptionsMenu.h"
+#include "menus/options/MouseOptionsMenu.h"
+#include "menus/options/AvOptionsMenu.h"
+#include "menus/options/GameplayOptionsMenu.h"
 
 void MenuDirectory::Populate()
 {
 	m_MenuMap.clear();
 
 	AddToMap<MainMenu>();
-	AddToMap<KeyBindingsMenu>();
+	AddToMap<KeysOptionsMenu>();
 	AddToMap<MultiplayerMenu>();
+	AddToMap<MouseOptionsMenu>();
+	AddToMap<AvOptionsMenu>();
+	AddToMap<GameplayOptionsMenu>();
 }
 
 void MenuDirectory::Clear()

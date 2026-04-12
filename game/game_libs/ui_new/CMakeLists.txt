@@ -30,8 +30,16 @@ set(SOURCES_UI
 	src/framework/MenuPage.cpp
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
-	src/menus/KeyBindingsMenu.h
-	src/menus/KeyBindingsMenu.cpp
+	src/menus/options/AvOptionsMenu.h
+	src/menus/options/AvOptionsMenu.cpp
+	src/menus/options/BaseOptionsMenu.h
+	src/menus/options/BaseOptionsMenu.cpp
+	src/menus/options/GameplayOptionsMenu.h
+	src/menus/options/GameplayOptionsMenu.cpp
+	src/menus/options/KeysOptionsMenu.h
+	src/menus/options/KeysOptionsMenu.cpp
+	src/menus/options/MouseOptionsMenu.h
+	src/menus/options/MouseOptionsMenu.cpp
 	src/menus/MainMenu.h
 	src/menus/MainMenu.cpp
 	src/menus/MainMenu.cpp

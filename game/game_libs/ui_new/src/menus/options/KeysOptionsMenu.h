@@ -1,17 +1,15 @@
 #pragma once
 
-#include "framework/MenuPage.h"
+#include "menus/options/BaseOptionsMenu.h"
 #include <RmlUi/Core/EventListener.h>
-#include "templatebindings/MenuFrameDataBinding.h"
-#include "templatebindings/OptionsTabBarDataBinding.h"
 #include "models/KeyBindingModel.h"
 #include "components/ModalComponent.h"
 #include "framework/EventListenerObject.h"
 
-class KeyBindingsMenu : public MenuPage
+class KeysOptionsMenu : public BaseOptionsMenu
 {
 public:
-	KeyBindingsMenu();
+	KeysOptionsMenu();
 
 	void Update(float currentTime) override;
 
@@ -47,8 +45,6 @@ private:
 	void SetStoredKeyForCurrentRebinding();
 	void ResetAllBindingsResponse(bool shouldReset);
 
-	MenuFrameDataBinding m_MenuFrameDataBinding;
-	OptionsTabBarDataBinding m_TabBarDataBinding;
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
 	Rml::DataModelHandle m_ModelHandle;
