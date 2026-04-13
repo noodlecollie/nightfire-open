@@ -6,17 +6,10 @@
 #include "UIDebug.h"
 
 BaseComponent::BaseComponent(BaseMenu* parentMenu, Rml::String id) :
-	m_ParentMenu(parentMenu),
+	DocumentObserver(parentMenu),
 	m_ID(std::move(id))
 {
-	ASSERT(m_ParentMenu);
-
 	ASSERTSZ(!m_ID.empty(), "Component was constructed with an empty ID");
-
-	if ( m_ParentMenu )
-	{
-		m_ParentMenu->RegisterComponent(this);
-	}
 }
 
 bool BaseComponent::Loaded() const
@@ -24,7 +17,7 @@ bool BaseComponent::Loaded() const
 	return m_ComponentElement;
 }
 
-void BaseComponent::LoadFromDocument(Rml::ElementDocument* document)
+void BaseComponent::DocumentLoaded(Rml::ElementDocument* document)
 {
 	if ( m_ComponentElement || m_ID.empty() )
 	{
@@ -58,7 +51,7 @@ void BaseComponent::LoadFromDocument(Rml::ElementDocument* document)
 	}
 }
 
-void BaseComponent::Unload()
+void BaseComponent::DocumentUnloaded(Rml::ElementDocument*)
 {
 	if ( m_ComponentElement )
 	{

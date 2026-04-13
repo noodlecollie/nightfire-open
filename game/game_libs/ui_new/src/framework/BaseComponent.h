@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RmlUi/Core/Types.h>
+#include "framework/DocumentObserver.h"
 
 namespace Rml
 {
@@ -10,13 +11,13 @@ namespace Rml
 
 class BaseMenu;
 
-class BaseComponent
+class BaseComponent : public DocumentObserver
 {
 public:
 	bool Loaded() const;
 
-	void LoadFromDocument(Rml::ElementDocument* document);
-	void Unload();
+	void DocumentLoaded(Rml::ElementDocument* document) override;
+	void DocumentUnloaded(Rml::ElementDocument* document) override;
 
 	Rml::Variant GetParam(const Rml::String& name) const;
 
@@ -35,7 +36,6 @@ private:
 	bool CheckLoaded(const char* operation);
 	void LoadParams();
 
-	BaseMenu* m_ParentMenu;
 	Rml::String m_ID;
 	Rml::Element* m_ComponentElement = nullptr;
 	Rml::Dictionary m_ComponentParamSpec;

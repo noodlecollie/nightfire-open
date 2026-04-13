@@ -22,6 +22,8 @@ set(SOURCES_UI
 	src/framework/BaseTemplateBinding.h
 	src/framework/CvarDataVar.h
 	src/framework/DataVar.h
+	src/framework/DocumentObserver.h
+	src/framework/DocumentObserver.cpp
 	src/framework/ElementFinder.h
 	src/framework/ElementFinder.cpp
 	src/framework/EventListenerObject.h

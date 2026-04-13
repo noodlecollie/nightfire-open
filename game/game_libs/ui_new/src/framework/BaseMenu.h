@@ -15,7 +15,7 @@ namespace Rml
 	class Variant;
 }  // namespace Rml
 
-class BaseComponent;
+class DocumentObserver;
 
 enum class MenuRequestType
 {
@@ -63,9 +63,9 @@ protected:
 	virtual bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 
 private:
-	friend class BaseComponent;
+	friend class DocumentObserver;
 
-	void RegisterComponent(BaseComponent* component);
+	void RegisterDocumentObserver(DocumentObserver* component);
 
 	const char* m_Name;
 	const char* m_RmlFilePath;
@@ -74,5 +74,5 @@ private:
 
 	// Assumed to be members of the derived menu class, that live
 	// as long as the derived menu does.
-	std::vector<BaseComponent*> m_Components;
+	std::vector<DocumentObserver*> m_DocObservers;
 };

@@ -535,7 +535,7 @@ KeyBindingModel::ParseResult KeyBindingModel::ReadBindings()
 			return ParseResult::Error;
 		}
 
-		Rml::Log::Message(
+		RML_DBGLOG(
 			Rml::Log::Type::LT_DEBUG,
 			"KeyBindingModel::ReadBindings: Parsed binding: \"%s\" -> \"%s\"",
 			command,
