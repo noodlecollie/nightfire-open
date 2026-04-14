@@ -603,7 +603,7 @@ void KeyBindingModel::WriteBindings() const
 		}
 	}
 
-	if ( gEngfuncs.COM_SaveFile(BINDINGS_PATH, output.c_str(), output.size()) )
+	if ( gEngfuncs.COM_SaveFile(BINDINGS_PATH, output.c_str(), static_cast<int>(output.size())) )
 	{
 		Rml::Log::Message(Rml::Log::Type::LT_INFO, "Saved key bindings to %s", BINDINGS_PATH);
 	}
