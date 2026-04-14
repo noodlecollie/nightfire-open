@@ -16,6 +16,8 @@ set(SOURCES_UI
 	src/components/ModalComponent.cpp
 	src/framework/BaseComponent.h
 	src/framework/BaseComponent.cpp
+	src/framework/BaseCvarModel.h
+	src/framework/BaseCvarModel.cpp
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
 	src/framework/BaseTableModel.h

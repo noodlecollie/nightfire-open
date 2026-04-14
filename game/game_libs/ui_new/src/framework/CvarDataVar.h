@@ -15,7 +15,7 @@ class CvarDataVar
 public:
 	CvarDataVar(const char* name, const char* cvarName, T value = T()) :
 		m_CvarName(cvarName),
-		m_Var {name, value}
+		m_Var {name, std::move(value)}
 	{
 		ASSERT(m_CvarName && *m_CvarName);
 	}
@@ -40,7 +40,7 @@ public:
 			return false;
 		}
 
-		m_Var.value = newValue;
+		m_Var.value = std::move(newValue);
 		return true;
 	}
 
@@ -49,11 +49,11 @@ public:
 		return m_Var.value;
 	}
 
-	void SetValue(const T& val)
+	void SetValue(T val)
 	{
 		if ( val != m_Var.value )
 		{
-			m_Var.value = val;
+			m_Var.value = std::move(val);
 			CvarAccessor<T>::DbgLog(m_CvarName, m_Var.value, true);
 			CvarAccessor<T>::SetValue(m_CvarName, m_Var.value);
 		}
