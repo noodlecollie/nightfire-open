@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <vector>
+#include <unordered_map>
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/CvarDataVar.h"
 #include "framework/DocumentObserver.h"
@@ -10,22 +10,27 @@
 class BaseCvarModel : public DocumentObserver
 {
 public:
+	using ChangeCallbackFunc = std::function<void(const Rml::Variant& /*newVal*/)>;
+
 	explicit BaseCvarModel(BaseMenu* parentMenu);
 
 	template<typename T>
-	void AddEntry(const char* name, const char* cvarName, T defaultValue = T())
+	CvarDataVar<T>* AddEntry(Rml::String name, Rml::String cvarName, T defaultValue = T())
 	{
 		ASSERTSZ(!m_ModelHandle, "Cannot add new entry once data has been bound");
 
 		if ( m_ModelHandle )
 		{
-			return;
+			return nullptr;
 		}
 
-		std::unique_ptr<BaseEntry> entry(new Entry<T>(name, cvarName, std::move(defaultValue)));
-		m_Entries.push_back(std::move(entry));
+		Entry<T>* heapEntry = new Entry<T>(name, std::move(cvarName), std::move(defaultValue));
+		m_Entries.insert({name, std::unique_ptr<BaseEntry>(heapEntry)});
+
+		return &heapEntry->var;
 	}
 
+	bool SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb);
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor);
 
 	void DocumentLoaded(Rml::ElementDocument* document) override;
@@ -34,8 +39,10 @@ public:
 private:
 	struct BaseEntry
 	{
+		ChangeCallbackFunc changeCallback;
+
 		virtual ~BaseEntry() = default;
-		virtual const char* VariableName() const = 0;
+		virtual const Rml::String& VariableName() const = 0;
 		virtual bool Refresh() = 0;
 		virtual void Get(Rml::Variant& outVal) const = 0;
 		virtual void Set(const Rml::Variant& inVal) = 0;
@@ -46,8 +53,8 @@ private:
 	{
 		CvarDataVar<T> var;
 
-		Entry(const char* name, const char* cvarName, T defaultValue) :
-			var(name, cvarName, std::move(defaultValue))
+		Entry(Rml::String name, Rml::String cvarName, T defaultValue) :
+			var(std::move(name), std::move(cvarName), std::move(defaultValue))
 		{
 		}
 
@@ -56,7 +63,7 @@ private:
 			return var.Refresh();
 		}
 
-		const char* VariableName() const override
+		const Rml::String& VariableName() const override
 		{
 			return var.Name();
 		}
@@ -68,14 +75,17 @@ private:
 
 		void Set(const Rml::Variant& inVal)
 		{
-			var.SetValue(inVal.Get<T>());
+			if ( var.SetValue(inVal.Get<T>()) && changeCallback )
+			{
+				changeCallback(Rml::Variant(var.CachedValue()));
+			}
 		}
 	};
 
 	void HandleShowDocument(Rml::Event& event);
 	void RefreshAll();
 
-	std::vector<std::unique_ptr<BaseEntry>> m_Entries;
+	std::unordered_map<Rml::String, std::unique_ptr<BaseEntry>> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;
 	EventListenerObject m_EventListener;
 };

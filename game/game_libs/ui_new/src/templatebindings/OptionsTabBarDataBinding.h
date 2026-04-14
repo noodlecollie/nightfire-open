@@ -1,5 +1,6 @@
 #pragma once
 
+#include <RmlUi/Core/DataModelHandle.h>
 #include "framework/BaseTemplateBinding.h"
 #include "framework/DataVar.h"
 

@@ -7,14 +7,27 @@ BaseCvarModel::BaseCvarModel(BaseMenu* parentMenu) :
 {
 }
 
+bool BaseCvarModel::SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb)
+{
+	auto it = m_Entries.find(name);
+
+	if ( it == m_Entries.end() )
+	{
+		return false;
+	}
+
+	it->second->changeCallback = std::move(cb);
+	return true;
+}
+
 bool BaseCvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
-	for ( const std::unique_ptr<BaseEntry>& entry : m_Entries )
+	for ( const auto& it : m_Entries )
 	{
-		BaseEntry* entryPtr = entry.get();
+		BaseEntry* entryPtr = it.second.get();
 
 		const bool bindSuccess = constructor.BindFunc(
-			entry->VariableName(),
+			it.second->VariableName(),
 			[entryPtr](Rml::Variant& outVal)
 			{
 				entryPtr->Get(outVal);
@@ -52,11 +65,18 @@ void BaseCvarModel::HandleShowDocument(Rml::Event&)
 
 void BaseCvarModel::RefreshAll()
 {
-	for ( const std::unique_ptr<BaseEntry>& entry : m_Entries )
+	for ( const auto& it : m_Entries )
 	{
-		if ( entry->Refresh() && m_ModelHandle )
+		if ( it.second->Refresh() && m_ModelHandle )
 		{
-			m_ModelHandle.DirtyVariable(entry->VariableName());
+			m_ModelHandle.DirtyVariable(it.second->VariableName());
+
+			if ( it.second->changeCallback )
+			{
+				Rml::Variant val;
+				it.second->Get(val);
+				it.second->changeCallback(val);
+			}
 		}
 	}
 }

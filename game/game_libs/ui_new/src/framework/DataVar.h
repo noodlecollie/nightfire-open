@@ -1,11 +1,10 @@
 #pragma once
 
-#include <RmlUi/Core/DataModelHandle.h>
-#include <RmlUi/Core/DataStructHandle.h>
+#include <RmlUi/Core/Types.h>
 
 template<typename T>
 struct DataVar
 {
-	const char* name;
+	Rml::String name;
 	T value {};
 };

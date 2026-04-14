@@ -13,27 +13,27 @@ template<typename T>
 class CvarDataVar
 {
 public:
-	CvarDataVar(const char* name, const char* cvarName, T value = T()) :
+	CvarDataVar(Rml::String name, Rml::String cvarName, T value = T()) :
 		m_CvarName(cvarName),
 		m_Var {name, std::move(value)}
 	{
-		ASSERT(m_CvarName && *m_CvarName);
+		ASSERT(!m_CvarName.empty());
 	}
 
-	const char* Name() const
+	const Rml::String& Name() const
 	{
 		return m_Var.name;
 	}
 
-	const char* CvarName() const
+	const Rml::String& CvarName() const
 	{
 		return m_CvarName;
 	}
 
 	bool Refresh()
 	{
-		T newValue = CvarAccessor<T>::GetValue(m_CvarName);
-		CvarAccessor<T>::DbgLog(m_CvarName, newValue, false);
+		T newValue = CvarAccessor<T>::GetValue(m_CvarName.c_str());
+		CvarAccessor<T>::DbgLog(m_CvarName.c_str(), newValue, false);
 
 		if ( newValue == m_Var.value )
 		{
@@ -49,14 +49,17 @@ public:
 		return m_Var.value;
 	}
 
-	void SetValue(T val)
+	bool SetValue(T val)
 	{
-		if ( val != m_Var.value )
+		if ( val == m_Var.value )
 		{
-			m_Var.value = std::move(val);
-			CvarAccessor<T>::DbgLog(m_CvarName, m_Var.value, true);
-			CvarAccessor<T>::SetValue(m_CvarName, m_Var.value);
+			return false;
 		}
+
+		m_Var.value = std::move(val);
+		CvarAccessor<T>::DbgLog(m_CvarName.c_str(), m_Var.value, true);
+		CvarAccessor<T>::SetValue(m_CvarName.c_str(), m_Var.value);
+		return true;
 	}
 
 	bool Bind(Rml::DataModelConstructor& constructor)
@@ -75,6 +78,6 @@ public:
 	}
 
 private:
-	const char* m_CvarName = nullptr;
+	Rml::String m_CvarName = nullptr;
 	DataVar<T> m_Var;
 };

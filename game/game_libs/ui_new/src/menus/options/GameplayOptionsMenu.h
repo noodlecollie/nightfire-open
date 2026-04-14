@@ -1,7 +1,6 @@
 #pragma once
 
 #include "menus/options/BaseOptionsMenu.h"
-#include "framework/CvarDataVar.h"
 #include "framework/BaseCvarModel.h"
 
 class GameplayOptionsMenu : public BaseOptionsMenu
