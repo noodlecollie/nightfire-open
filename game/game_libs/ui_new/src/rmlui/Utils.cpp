@@ -164,7 +164,7 @@ static const std::unordered_map<Rml::Input::KeyIdentifier, int>& RmlToEngineKeyM
 	return map;
 }
 
-Rml::String DescribeElement(Rml::Element* element)
+Rml::String DescribeElement(const Rml::Element* element)
 {
 	if ( !element )
 	{

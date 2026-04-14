@@ -8,7 +8,7 @@ namespace Rml
 	class Event;
 }
 
-Rml::String DescribeElement(Rml::Element* element);
+Rml::String DescribeElement(const Rml::Element* element);
 int GetEventKeyId(const Rml::Event& event);
 Rml::Input::KeyIdentifier EngineKeyToRmlKey(int key);
 int RmlKeyToEngineKey(Rml::Input::KeyIdentifier key);
