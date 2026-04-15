@@ -44,7 +44,7 @@ public:
 
 	// Resets all bindings in the model to their default values by loading
 	// the schema file. Does not apply engine bindings.
-	void Reset() override;
+	void ResetToDefaults();
 
 	// Unbinds all keys in the engine, reloads saved binding config, and then
 	// applies all key bindings to the engine.

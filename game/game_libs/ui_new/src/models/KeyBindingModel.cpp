@@ -103,7 +103,7 @@ Rml::String KeyBindingModel::DisplayString(size_t row, size_t column) const
 	return {};
 }
 
-void KeyBindingModel::Reset()
+void KeyBindingModel::ResetToDefaults()
 {
 	ParseSchemaAndResetToDefaults();
 }
@@ -114,7 +114,7 @@ void KeyBindingModel::ReloadAndApplyBindings(bool reloadDefaults, bool resetToDe
 
 	if ( m_Entries.empty() || reloadDefaults )
 	{
-		Reset();
+		ResetToDefaults();
 	}
 
 	RefreshBindigsFromFile(resetToDefaultsOnError);
@@ -235,7 +235,7 @@ void KeyBindingModel::ResetAllBindingsToDefaults()
 {
 	if ( m_Entries.empty() )
 	{
-		Reset();
+		ResetToDefaults();
 	}
 
 	gEngfuncs.pfnClientCmd(1, "unbindall");

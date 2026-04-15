@@ -9,9 +9,9 @@
 #include "UIDebug.h"
 #include "udll_int.h"
 
-static constexpr const char* const PROP_SHOW_MODAL = "showModal";
-static constexpr const char* const PROP_CURRENT_ROW = "currentRow";
-static constexpr const char* const PROP_CURRENT_BINDING = "currentBinding";
+static constexpr const char* const NAME_SHOW_MODAL = "showModal";
+static constexpr const char* const NAME_CURRENT_ROW = "currentRow";
+static constexpr const char* const NAME_CURRENT_BINDING = "currentBinding";
 static constexpr const char* const EVENT_REBIND_KEY = "rebindKey";
 static constexpr const char* const EVENT_SELECT_BINDING = "selectBinding";
 static constexpr const char* const EVENT_CLEAR_BINDING = "clearBinding";
@@ -63,9 +63,9 @@ bool KeysOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 		return false;
 	}
 
-	if ( !constructor.Bind(PROP_SHOW_MODAL, &m_PageModel.showModal) ||
-		 !constructor.Bind(PROP_CURRENT_ROW, &m_PageModel.currentRow) ||
-		 !constructor.Bind(PROP_CURRENT_BINDING, &m_PageModel.currentBinding) ||
+	if ( !constructor.Bind(NAME_SHOW_MODAL, &m_PageModel.showModal) ||
+		 !constructor.Bind(NAME_CURRENT_ROW, &m_PageModel.currentRow) ||
+		 !constructor.Bind(NAME_CURRENT_BINDING, &m_PageModel.currentBinding) ||
 		 !constructor.BindEventCallback(EVENT_REBIND_KEY, &KeysOptionsMenu::HandleRebindKeyEvent, this) ||
 		 !constructor.BindEventCallback(EVENT_SELECT_BINDING, &KeysOptionsMenu::HandleSelectBindingEvent, this) ||
 		 !constructor.BindEventCallback(EVENT_CLEAR_BINDING, &KeysOptionsMenu::HandleClearBinding, this) ||
@@ -274,13 +274,13 @@ bool KeysOptionsMenu::HandleSelectBindingEvent(int row, int bindIndex)
 	if ( m_PageModel.currentRow != row )
 	{
 		m_PageModel.currentRow = row;
-		m_ModelHandle.DirtyVariable(PROP_CURRENT_ROW);
+		m_ModelHandle.DirtyVariable(NAME_CURRENT_ROW);
 	}
 
 	if ( m_PageModel.currentBinding != bindIndex )
 	{
 		m_PageModel.currentBinding = bindIndex;
-		m_ModelHandle.DirtyVariable(PROP_CURRENT_BINDING);
+		m_ModelHandle.DirtyVariable(NAME_CURRENT_BINDING);
 	}
 
 	return true;
@@ -291,13 +291,13 @@ void KeysOptionsMenu::ResetRebindingRow()
 	if ( m_PageModel.currentRow >= 0 )
 	{
 		m_PageModel.currentRow = INVALID_ROW;
-		m_ModelHandle.DirtyVariable(PROP_CURRENT_ROW);
+		m_ModelHandle.DirtyVariable(NAME_CURRENT_ROW);
 	}
 
 	if ( m_PageModel.currentBinding >= 0 )
 	{
 		m_PageModel.currentBinding = INVALID_BINDING;
-		m_ModelHandle.DirtyVariable(PROP_CURRENT_BINDING);
+		m_ModelHandle.DirtyVariable(NAME_CURRENT_BINDING);
 	}
 
 	CloseModalAndStopListeningForKeys();
@@ -315,7 +315,7 @@ void KeysOptionsMenu::ShowModal(bool show)
 	if ( m_PageModel.showModal != show )
 	{
 		m_PageModel.showModal = show;
-		m_ModelHandle.DirtyVariable(PROP_SHOW_MODAL);
+		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
 	}
 }
 

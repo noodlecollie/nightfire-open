@@ -53,6 +53,8 @@ set(SOURCES_UI
 	src/menus/MultiplayerMenu.cpp
 	src/models/KeyBindingModel.h
 	src/models/KeyBindingModel.cpp
+	src/models/VideoModesModel.h
+	src/models/VideoModesModel.cpp
 	src/rmlui/EventListenerImpl.h
 	src/rmlui/EventListenerImpl.cpp
 	src/rmlui/EventListenerInstancerImpl.h
