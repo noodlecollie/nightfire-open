@@ -1,7 +1,9 @@
 #pragma once
 
 #include "menus/options/BaseOptionsMenu.h"
+#include <RmlUi/Core/DataModelHandle.h>
 #include "framework/EventListenerObject.h"
+#include "framework/BaseCvarModel.h"
 #include "models/VideoModesModel.h"
 
 class AvOptionsMenu : public BaseOptionsMenu
@@ -16,8 +18,17 @@ protected:
 	void OnBeginDocumentUnloaded() override;
 
 private:
+	struct PageModel
+	{
+		bool windowed = false;
+	};
+
 	void ProcessShowHideEvents(Rml::Event& event);
+	void RefreshValuesFromCvars();
 
 	VideoModesModel m_VideoModes;
 	EventListenerObject m_ShowHideEventListener;
+	PageModel m_PageModel;
+	BaseCvarModel m_CvarModel;
+	Rml::DataModelHandle m_ModelHandle;
 };
