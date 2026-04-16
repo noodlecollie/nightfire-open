@@ -31,4 +31,5 @@ private:
 	PageModel m_PageModel;
 	CvarModel m_CvarModel;
 	Rml::DataModelHandle m_ModelHandle;
+	CvarDataVar<bool>* m_DspOff = nullptr;
 };

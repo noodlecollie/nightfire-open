@@ -3,6 +3,15 @@
 #include "framework/CvarAccessor.h"
 
 static constexpr const char* const NAME_WINDOWED = "windowed";
+static constexpr const char* const NAME_VSYNC_ENABLED = "vsyncEnabled";
+static constexpr const char* const NAME_GAMMA = "gamma";
+static constexpr const char* const NAME_BRIGHTNESS = "brightness";
+static constexpr const char* const NAME_USE_VBO = "useVbo";
+static constexpr const char* const NAME_SFX_VOLUME = "sfxVolume";
+static constexpr const char* const NAME_MUSIC_VOLUME = "musicVolume";
+static constexpr const char* const NAME_DSP_OFF = "dspOff";
+static constexpr const char* const NAME_DSP_ENABLED = "dspEnabled";
+static constexpr const char* const NAME_MUTE_WHEN_FOCUS_LOST = "muteWhenFocusLost";
 static constexpr const char* const CVAR_FULLSCREEN = "fullscreen";
 
 template<typename T>
@@ -37,10 +46,14 @@ AvOptionsMenu::AvOptionsMenu() :
 	m_ShowHideEventListener(this, &AvOptionsMenu::ProcessShowHideEvents),
 	m_CvarModel(this)
 {
-	m_CvarModel.AddEntry<bool>("vsync", "gl_vsync");
-	m_CvarModel.AddEntry<float>("gamma", "gamma");
-	m_CvarModel.AddEntry<float>("brightness", "brightness");
-	m_CvarModel.AddEntry<float>("useVbo", "gl_vbo");
+	m_CvarModel.AddEntry<bool>(NAME_VSYNC_ENABLED, "gl_vsync");
+	m_CvarModel.AddEntry<float>(NAME_GAMMA, "gamma");
+	m_CvarModel.AddEntry<float>(NAME_BRIGHTNESS, "brightness");
+	m_CvarModel.AddEntry<bool>(NAME_USE_VBO, "gl_vbo");
+	m_CvarModel.AddEntry<float>(NAME_SFX_VOLUME, "volume");
+	m_CvarModel.AddEntry<float>(NAME_MUSIC_VOLUME, "MP3Volume");
+	m_CvarModel.AddEntry<bool>(NAME_MUTE_WHEN_FOCUS_LOST, "snd_mute_losefocus");
+	m_DspOff = m_CvarModel.AddEntry<bool>(NAME_DSP_OFF, "dsp_off");
 }
 
 bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -51,7 +64,8 @@ bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& construc
 		return false;
 	}
 
-	if ( !constructor.Bind(NAME_WINDOWED, &m_PageModel.windowed) )
+	if ( !BindInverse(constructor, m_DspOff, NAME_DSP_ENABLED) ||
+		 !constructor.Bind(NAME_WINDOWED, &m_PageModel.windowed) )
 	{
 		return false;
 	}

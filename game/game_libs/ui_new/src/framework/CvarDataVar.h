@@ -81,3 +81,22 @@ private:
 	Rml::String m_CvarName = nullptr;
 	DataVar<T> m_Var;
 };
+
+// Helper for binding this value to a variable where the value is inverted.
+// Only applies to boolean values. Assumes the pointer lives long enough
+// not to be invalid for any variable get/set call.
+static inline bool
+BindInverse(Rml::DataModelConstructor& constructor, CvarDataVar<bool>* origVar, const Rml::String& name)
+{
+	return constructor.BindFunc(
+		name,
+		[origVar](Rml::Variant& outVal)
+		{
+			outVal = Rml::Variant(!origVar->CachedValue());
+		},
+		[origVar](const Rml::Variant& inVal)
+		{
+			origVar->SetValue(!inVal.Get<bool>());
+		}
+	);
+}
