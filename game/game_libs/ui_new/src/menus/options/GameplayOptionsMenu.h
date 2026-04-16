@@ -1,7 +1,7 @@
 #pragma once
 
 #include "menus/options/BaseOptionsMenu.h"
-#include "framework/BaseCvarModel.h"
+#include "models/CvarModel.h"
 
 class GameplayOptionsMenu : public BaseOptionsMenu
 {
@@ -12,5 +12,5 @@ protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
-	BaseCvarModel m_CvarModel;
+	CvarModel m_CvarModel;
 };

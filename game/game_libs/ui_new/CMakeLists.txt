@@ -16,8 +16,6 @@ set(SOURCES_UI
 	src/components/ModalComponent.cpp
 	src/framework/BaseComponent.h
 	src/framework/BaseComponent.cpp
-	src/framework/BaseCvarModel.h
-	src/framework/BaseCvarModel.cpp
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
 	src/framework/BaseTableModel.h
@@ -51,6 +49,8 @@ set(SOURCES_UI
 	src/menus/MainMenu.cpp
 	src/menus/MultiplayerMenu.h
 	src/menus/MultiplayerMenu.cpp
+	src/models/CvarModel.h
+	src/models/CvarModel.cpp
 	src/models/KeyBindingModel.h
 	src/models/KeyBindingModel.cpp
 	src/models/VideoModesModel.h

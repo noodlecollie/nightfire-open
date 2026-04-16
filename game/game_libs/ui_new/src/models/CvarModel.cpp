@@ -1,13 +1,13 @@
-#include "framework/BaseCvarModel.h"
+#include "models/CvarModel.h"
 #include <RmlUi/Core/ElementDocument.h>
 
-BaseCvarModel::BaseCvarModel(BaseMenu* parentMenu) :
+CvarModel::CvarModel(BaseMenu* parentMenu) :
 	DocumentObserver(parentMenu),
-	m_EventListener(this, &BaseCvarModel::HandleShowDocument)
+	m_EventListener(this, &CvarModel::HandleShowDocument)
 {
 }
 
-bool BaseCvarModel::SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb)
+bool CvarModel::SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb)
 {
 	auto it = m_Entries.find(name);
 
@@ -20,7 +20,7 @@ bool BaseCvarModel::SetChangeListener(const Rml::String& name, ChangeCallbackFun
 	return true;
 }
 
-bool BaseCvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+bool CvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 {
 	for ( const auto& it : m_Entries )
 	{
@@ -48,22 +48,22 @@ bool BaseCvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 	return true;
 }
 
-void BaseCvarModel::DocumentLoaded(Rml::ElementDocument* document)
+void CvarModel::DocumentLoaded(Rml::ElementDocument* document)
 {
 	document->AddEventListener(Rml::EventId::Show, &m_EventListener);
 }
 
-void BaseCvarModel::DocumentUnloaded(Rml::ElementDocument* document)
+void CvarModel::DocumentUnloaded(Rml::ElementDocument* document)
 {
 	document->RemoveEventListener(Rml::EventId::Show, &m_EventListener);
 }
 
-void BaseCvarModel::HandleShowDocument(Rml::Event&)
+void CvarModel::HandleShowDocument(Rml::Event&)
 {
 	RefreshAll();
 }
 
-void BaseCvarModel::RefreshAll()
+void CvarModel::RefreshAll()
 {
 	for ( const auto& it : m_Entries )
 	{

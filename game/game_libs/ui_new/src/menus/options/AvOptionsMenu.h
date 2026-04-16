@@ -3,7 +3,7 @@
 #include "menus/options/BaseOptionsMenu.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/EventListenerObject.h"
-#include "framework/BaseCvarModel.h"
+#include "models/CvarModel.h"
 #include "models/VideoModesModel.h"
 
 class AvOptionsMenu : public BaseOptionsMenu
@@ -29,6 +29,6 @@ private:
 	VideoModesModel m_VideoModes;
 	EventListenerObject m_ShowHideEventListener;
 	PageModel m_PageModel;
-	BaseCvarModel m_CvarModel;
+	CvarModel m_CvarModel;
 	Rml::DataModelHandle m_ModelHandle;
 };

@@ -7,12 +7,12 @@
 #include "framework/DocumentObserver.h"
 #include "framework/EventListenerObject.h"
 
-class BaseCvarModel : public DocumentObserver
+class CvarModel : public DocumentObserver
 {
 public:
 	using ChangeCallbackFunc = std::function<void(const Rml::Variant& /*newVal*/)>;
 
-	explicit BaseCvarModel(BaseMenu* parentMenu);
+	explicit CvarModel(BaseMenu* parentMenu);
 
 	template<typename T>
 	CvarDataVar<T>* AddEntry(Rml::String name, Rml::String cvarName, T defaultValue = T())
