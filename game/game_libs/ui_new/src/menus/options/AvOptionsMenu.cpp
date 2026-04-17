@@ -2,10 +2,13 @@
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/Context.h>
+#include <cmath>
 #include "framework/CvarAccessor.h"
+#include "rmlui/Utils.h"
 
 static constexpr const char* const NAME_WINDOWED = "windowed";
 static constexpr const char* const NAME_SHOW_MODAL = "showModal";
+static constexpr const char* const NAME_MODAL_TIME_REMAINING = "modalTimeRemaining";
 static constexpr const char* const NAME_NEEDS_APPLY = "needsApply";
 static constexpr const char* const NAME_CURRENT_WIDTH = "currentWidth";
 static constexpr const char* const NAME_CURRENT_HEIGHT = "currentHeight";
@@ -50,6 +53,34 @@ AvOptionsMenu::AvOptionsMenu() :
 	);
 }
 
+void AvOptionsMenu::Update(float currentTime)
+{
+	BaseOptionsMenu::Update(currentTime);
+
+	if ( m_PageModel.showModal )
+	{
+		if ( m_PageModel.modalExpiry > gpGlobals->time )
+		{
+			// Round up to an integer
+			int remaining = static_cast<int>(std::ceil(m_PageModel.modalExpiry - gpGlobals->time));
+
+			if ( remaining != m_PageModel.modalTimeRemaining )
+			{
+				m_PageModel.modalTimeRemaining = remaining;
+
+				if ( m_ModelHandle )
+				{
+					m_ModelHandle.DirtyVariable(NAME_MODAL_TIME_REMAINING);
+				}
+			}
+		}
+		else
+		{
+			HandleModalButton(false);
+		}
+	}
+}
+
 bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_VideoModes.SetUpDataBindings(constructor) ||
@@ -60,6 +91,7 @@ bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& construc
 
 	if ( !BindInverse(constructor, m_DspOff, NAME_DSP_ENABLED) ||
 		 !constructor.Bind(NAME_SHOW_MODAL, &m_PageModel.showModal) ||
+		 !constructor.Bind(NAME_MODAL_TIME_REMAINING, &m_PageModel.modalTimeRemaining) ||
 		 !constructor.Bind(NAME_NEEDS_APPLY, &m_PageModel.needsApply) ||
 		 !constructor.BindEventCallback(EVENT_APPLY_VIDEO_MODE, &AvOptionsMenu::HandleApplyVideoMode, this) )
 	{
@@ -110,6 +142,7 @@ void AvOptionsMenu::OnEndDocumentLoaded()
 	document->AddEventListener(Rml::EventId::Show, &m_DocumentEventListener);
 	document->AddEventListener(Rml::EventId::Hide, &m_DocumentEventListener);
 	document->AddEventListener(Rml::EventId::Resize, &m_DocumentEventListener);
+	document->AddEventListener(Rml::EventId::Keydown, &m_DocumentEventListener);
 
 	m_ResolutionDropdown =
 		dynamic_cast<Rml::ElementFormControlSelect*>(document->GetElementById("resolution_dropdown"));
@@ -124,6 +157,7 @@ void AvOptionsMenu::OnBeginDocumentUnloaded()
 	document->RemoveEventListener(Rml::EventId::Show, &m_DocumentEventListener);
 	document->RemoveEventListener(Rml::EventId::Hide, &m_DocumentEventListener);
 	document->RemoveEventListener(Rml::EventId::Resize, &m_DocumentEventListener);
+	document->RemoveEventListener(Rml::EventId::Keydown, &m_DocumentEventListener);
 
 	MenuPage::OnBeginDocumentUnloaded();
 }
@@ -166,6 +200,19 @@ void AvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 			if ( m_ResolutionDropdown && m_PageModel.newVideoModeIndex < 0 )
 			{
 				m_ResolutionDropdown->SetSelection(m_ResolutionDropdown->GetSelection());
+			}
+
+			break;
+		}
+
+		case Rml::EventId::Keydown:
+		{
+			const int keyId = GetEventKeyId(event);
+
+			if ( keyId == Rml::Input::KI_ESCAPE && m_PageModel.showModal )
+			{
+				event.StopPropagation();
+				HandleModalButton(false);
 			}
 
 			break;
@@ -248,9 +295,9 @@ void AvOptionsMenu::HandleApplyVideoMode()
 	// Only bother with modal/revert if we're going fullscreen.
 	if ( !m_PageModel.currentWindowed )
 	{
-		// TODO: Disable escape handling on menu so that modal handles it instead
-		// TODO: Set expiry time for modal
 		m_PageModel.showModal = true;
+		m_PageModel.modalExpiry = gpGlobals->time + 10.0f;
+		SetRequestPopOnEscapeKey(false);
 
 		if ( m_ModelHandle )
 		{
@@ -272,10 +319,13 @@ void AvOptionsMenu::HandleModalButton(bool keepNewVideoMode)
 
 	m_RevertInfo.reset();
 	m_PageModel.showModal = false;
+	m_PageModel.modalTimeRemaining = 0;
+	SetRequestPopOnEscapeKey(true);
 
 	if ( m_ModelHandle )
 	{
 		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
+		m_ModelHandle.DirtyVariable(NAME_MODAL_TIME_REMAINING);
 	}
 }
 

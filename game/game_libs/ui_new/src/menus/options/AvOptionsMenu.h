@@ -13,6 +13,8 @@ class AvOptionsMenu : public BaseOptionsMenu
 public:
 	AvOptionsMenu();
 
+	void Update(float currentTime) override;
+
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
@@ -23,6 +25,9 @@ private:
 	struct PageModel
 	{
 		bool showModal = false;
+		float modalExpiry = 0.0f;
+		int modalTimeRemaining = 0;
+
 		int currentWidth = 0;
 		int currentHeight = 0;
 
