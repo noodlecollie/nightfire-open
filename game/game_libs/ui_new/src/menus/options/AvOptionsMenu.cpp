@@ -1,6 +1,7 @@
 #include "menus/options/AvOptionsMenu.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Element.h>
+#include <RmlUi/Core/Context.h>
 #include "framework/CvarAccessor.h"
 
 static constexpr const char* const NAME_WINDOWED = "windowed";
@@ -241,33 +242,11 @@ void AvOptionsMenu::HandleApplyVideoMode()
 		return;
 	}
 
-	if ( m_PageModel.currentWindowed != m_PageModel.newWindowed )
-	{
-		m_FullscreenCvar.SetValue(!m_PageModel.newWindowed);
-	}
+	CreateRevertInfo();
+	ApplyVideoSettings(m_PageModel.newVideoModeIndex, m_PageModel.newWindowed);
 
-	if ( m_PageModel.newVideoModeIndex >= 0 )
-	{
-		Rml::String setModeCmd;
-		Rml::FormatString(setModeCmd, "vid_setmode %d", m_PageModel.newVideoModeIndex);
-		gEngfuncs.pfnClientCmd(1, setModeCmd.c_str());
-
-		m_VideoModeCvar.SetValue(m_PageModel.newVideoModeIndex);
-	}
-
-	m_Vsync->SetValue(m_Vsync->CachedValue(), true);
-	RefreshValuesFromCvars();
-
-	Rml::Log::Message(
-		Rml::Log::Type::LT_INFO,
-		"Applied new video mode settings (%s %s)",
-		m_PageModel.newVideoModeIndex >= 0
-			? m_VideoModes.DisplayString(m_PageModel.newVideoModeIndex, VideoModesModel::LABEL).c_str()
-			: "current",
-		m_PageModel.newWindowed ? "windowed" : "fullscreen"
-	);
-
-	if ( !m_PageModel.newWindowed )
+	// Only bother with modal/revert if we're going fullscreen.
+	if ( !m_PageModel.currentWindowed )
 	{
 		// TODO: Disable escape handling on menu so that modal handles it instead
 		// TODO: Set expiry time for modal
@@ -278,9 +257,87 @@ void AvOptionsMenu::HandleApplyVideoMode()
 			m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
 		}
 	}
+	else
+	{
+		m_RevertInfo.reset();
+	}
 }
 
-void AvOptionsMenu::HandleModalButton(bool /* keepNewVideoMode */)
+void AvOptionsMenu::HandleModalButton(bool keepNewVideoMode)
 {
-	// TODO
+	if ( !keepNewVideoMode )
+	{
+		ApplyRevertInfo();
+	}
+
+	m_RevertInfo.reset();
+	m_PageModel.showModal = false;
+
+	if ( m_ModelHandle )
+	{
+		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
+	}
+}
+
+void AvOptionsMenu::CreateRevertInfo()
+{
+	const Rml::Vector2i ctxDims = Document()->GetContext()->GetDimensions();
+
+	m_RevertInfo.reset(new RevertInfo {});
+	m_RevertInfo->width = ctxDims.x;
+	m_RevertInfo->height = ctxDims.y;
+	m_RevertInfo->wasWindowed = m_PageModel.currentWindowed;
+
+	Rml::Log::Message(
+		Rml::Log::Type::LT_DEBUG,
+		"AvOptionsMenu::CreateRevertInfo: %dx%d %s",
+		m_RevertInfo->width,
+		m_RevertInfo->height,
+		m_RevertInfo->wasWindowed ? "windowed" : "fullscreen"
+	);
+}
+
+void AvOptionsMenu::ApplyRevertInfo()
+{
+	if ( !m_RevertInfo )
+	{
+		return;
+	}
+
+	size_t modeRow = 0;
+	int vidMode = -1;
+	if ( m_VideoModes.RowForDimensions(m_RevertInfo->width, m_RevertInfo->height, modeRow) )
+	{
+		vidMode = m_VideoModes.VideoMode(modeRow);
+	}
+
+	ApplyVideoSettings(vidMode, m_RevertInfo->wasWindowed);
+}
+
+void AvOptionsMenu::ApplyVideoSettings(int vidMode, bool windowed)
+{
+	Rml::Log::Message(
+		Rml::Log::Type::LT_INFO,
+		"Changing video mode to %dx%d %s",
+		vidMode >= 0 ? m_VideoModes.Width(static_cast<size_t>(vidMode)) : m_PageModel.currentWidth,
+		vidMode >= 0 ? m_VideoModes.Height(static_cast<size_t>(vidMode)) : m_PageModel.currentHeight,
+		windowed ? "windowed" : "fullscreen"
+	);
+
+	if ( m_PageModel.currentWindowed != windowed )
+	{
+		m_FullscreenCvar.SetValue(!windowed);
+	}
+
+	if ( vidMode >= 0 )
+	{
+		Rml::String setModeCmd;
+		Rml::FormatString(setModeCmd, "vid_setmode %d", vidMode);
+		gEngfuncs.pfnClientCmd(1, setModeCmd.c_str());
+
+		m_VideoModeCvar.SetValue(vidMode);
+	}
+
+	m_Vsync->SetValue(m_Vsync->CachedValue(), true);
+	RefreshValuesFromCvars();
 }

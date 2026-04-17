@@ -32,6 +32,13 @@ private:
 		bool needsApply = false;
 	};
 
+	struct RevertInfo
+	{
+		bool wasWindowed = false;
+		int width = 0;
+		int height = 0;
+	};
+
 	void ProcessDocumentEvent(Rml::Event& event);
 	void RefreshValuesFromCvars();
 	void RefreshNeedsApply();
@@ -39,6 +46,9 @@ private:
 	void HandleApplyVideoMode(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void HandleApplyVideoMode();
 	void HandleModalButton(bool keepNewVideoMode);
+	void CreateRevertInfo();
+	void ApplyRevertInfo();
+	void ApplyVideoSettings(int vidMode, bool windowed);
 
 	ModalComponent m_Modal;
 	VideoModesModel m_VideoModes;
@@ -51,4 +61,5 @@ private:
 	CvarDataVar<bool>* m_Vsync = nullptr;
 	CvarAccessorObj<bool> m_FullscreenCvar;
 	CvarAccessorObj<int> m_VideoModeCvar;
+	std::unique_ptr<RevertInfo> m_RevertInfo;
 };

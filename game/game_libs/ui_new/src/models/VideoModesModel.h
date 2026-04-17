@@ -23,6 +23,8 @@ public:
 	Rml::String DisplayString(size_t row, size_t column) const override;
 	int Width(size_t row) const;
 	int Height(size_t row) const;
+	int VideoMode(size_t row) const;
+	bool RowForDimensions(int width, int height, size_t& outRow) const;
 
 private:
 	struct Entry

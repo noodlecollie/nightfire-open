@@ -1,6 +1,7 @@
 #include "models/VideoModesModel.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include "udll_int.h"
+#include "UIDebug.h"
 
 static constexpr const char* const NAME_VIDEO_MODES = "videoModes";
 static constexpr const char* const PROP_LABEL = "label";
@@ -17,6 +18,10 @@ static bool ParseDimensions(const Rml::String& label, int& width, int& height)
 
 	width = std::atoi(label.c_str());
 	height = std::atoi(label.c_str() + xLoc + 1);
+
+	ASSERT(width > 0);
+	ASSERT(height > 0);
+
 	return true;
 }
 
@@ -115,4 +120,25 @@ int VideoModesModel::Width(size_t row) const
 int VideoModesModel::Height(size_t row) const
 {
 	return row < m_VidModes.size() ? m_VidModes[row].height : -1;
+}
+
+int VideoModesModel::VideoMode(size_t row) const
+{
+	return row < m_VidModes.size() ? m_VidModes[row].index : -1;
+}
+
+bool VideoModesModel::RowForDimensions(int width, int height, size_t& outRow) const
+{
+	for ( size_t index = 0; index < m_VidModes.size(); ++index )
+	{
+		const Entry& entry = m_VidModes[index];
+
+		if ( entry.width == width && entry.height == height )
+		{
+			outRow = index;
+			return true;
+		}
+	}
+
+	return false;
 }
