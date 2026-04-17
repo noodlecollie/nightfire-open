@@ -3,6 +3,9 @@
 #include "framework/CvarAccessor.h"
 
 static constexpr const char* const NAME_WINDOWED = "windowed";
+static constexpr const char* const NAME_SHOW_MODAL = "showModal";
+static constexpr const char* const NAME_NEW_RESOLUTION = "newResolution";
+static constexpr const char* const NAME_NEED_APPLY = "needApply";
 static constexpr const char* const NAME_VSYNC_ENABLED = "vsyncEnabled";
 static constexpr const char* const NAME_GAMMA = "gamma";
 static constexpr const char* const NAME_BRIGHTNESS = "brightness";
@@ -65,7 +68,10 @@ bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& construc
 	}
 
 	if ( !BindInverse(constructor, m_DspOff, NAME_DSP_ENABLED) ||
-		 !constructor.Bind(NAME_WINDOWED, &m_PageModel.windowed) )
+		 !constructor.Bind(NAME_WINDOWED, &m_PageModel.windowed) ||
+		 !constructor.Bind(NAME_SHOW_MODAL, &m_PageModel.showModal) ||
+		 !constructor.Bind(NAME_NEW_RESOLUTION, &m_PageModel.newResolution) ||
+		 !constructor.Bind(NAME_NEED_APPLY, &m_PageModel.needApply) )
 	{
 		return false;
 	}

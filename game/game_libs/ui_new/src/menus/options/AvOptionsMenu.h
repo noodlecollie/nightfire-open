@@ -21,6 +21,9 @@ private:
 	struct PageModel
 	{
 		bool windowed = false;
+		bool showModal = false;
+		Rml::String newResolution;
+		bool needApply = false;
 	};
 
 	void ProcessShowHideEvents(Rml::Event& event);
