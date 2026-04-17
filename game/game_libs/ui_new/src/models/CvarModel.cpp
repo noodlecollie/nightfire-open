@@ -48,6 +48,18 @@ bool CvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 	return true;
 }
 
+bool CvarModel::Refresh(const Rml::String& name)
+{
+	const auto it = m_Entries.find(name);
+
+	if ( it == m_Entries.end() )
+	{
+		return false;
+	}
+
+	return Refresh(*(it->second));
+}
+
 void CvarModel::DocumentLoaded(Rml::ElementDocument* document)
 {
 	document->AddEventListener(Rml::EventId::Show, &m_EventListener);
@@ -67,16 +79,28 @@ void CvarModel::RefreshAll()
 {
 	for ( const auto& it : m_Entries )
 	{
-		if ( it.second->Refresh() && m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(it.second->VariableName());
-
-			if ( it.second->changeCallback )
-			{
-				Rml::Variant val;
-				it.second->Get(val);
-				it.second->changeCallback(val);
-			}
-		}
+		Refresh(*(it.second));
 	}
+}
+
+bool CvarModel::Refresh(BaseEntry& entry)
+{
+	if ( !entry.Refresh() )
+	{
+		return false;
+	}
+
+	if ( m_ModelHandle )
+	{
+		m_ModelHandle.DirtyVariable(entry.VariableName());
+	}
+
+	if ( entry.changeCallback )
+	{
+		Rml::Variant val;
+		entry.Get(val);
+		entry.changeCallback(val);
+	}
+
+	return true;
 }

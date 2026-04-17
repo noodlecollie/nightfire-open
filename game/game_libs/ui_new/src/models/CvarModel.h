@@ -32,6 +32,7 @@ public:
 
 	bool SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb);
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor);
+	bool Refresh(const Rml::String& name);
 
 	void DocumentLoaded(Rml::ElementDocument* document) override;
 	void DocumentUnloaded(Rml::ElementDocument* document) override;
@@ -84,6 +85,7 @@ private:
 
 	void HandleShowDocument(Rml::Event& event);
 	void RefreshAll();
+	bool Refresh(BaseEntry& entry);
 
 	std::unordered_map<Rml::String, std::unique_ptr<BaseEntry>> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;

@@ -49,9 +49,9 @@ public:
 		return m_Var.value;
 	}
 
-	bool SetValue(T val)
+	bool SetValue(T val, bool force = false)
 	{
-		if ( val == m_Var.value )
+		if ( val == m_Var.value && !force )
 		{
 			return false;
 		}

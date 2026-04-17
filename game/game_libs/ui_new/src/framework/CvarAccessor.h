@@ -63,7 +63,7 @@ struct CvarAccessor<bool>
 
 	static void DbgLog(const char* cvarName, bool value, bool set)
 	{
-		RML_DBGLOG(Rml::Log::Type::LT_DEBUG, "[%s] cvar %s = %s", set ? "SET" : "GET", cvarName, value ? "1" : "0");
+		RML_DBGLOG(Rml::Log::Type::LT_DEBUG, "[%s] cvar %s = %s", set ? "SET" : "GET", cvarName, value ? "<1>" : "<0>");
 	}
 };
 
@@ -84,4 +84,30 @@ struct CvarAccessor<Rml::String>
 	{
 		RML_DBGLOG(Rml::Log::Type::LT_DEBUG, "[%s] cvar %s = %s", set ? "SET" : "GET", cvarName, value.c_str());
 	}
+};
+
+template<typename T>
+class CvarAccessorObj
+{
+public:
+	explicit CvarAccessorObj(Rml::String cvarName) :
+		m_CvarName(std::move(cvarName))
+	{
+	}
+
+	T GetValue() const
+	{
+		const T value = CvarAccessor<T>::GetValue(m_CvarName.c_str());
+		CvarAccessor<T>::DbgLog(m_CvarName.c_str(), value, false);
+		return value;
+	}
+
+	void SetValue(const T& value)
+	{
+		CvarAccessor<T>::DbgLog(m_CvarName.c_str(), value, true);
+		CvarAccessor<T>::SetValue(m_CvarName.c_str(), value);
+	}
+
+private:
+	Rml::String m_CvarName;
 };
