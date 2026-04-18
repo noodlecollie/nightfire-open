@@ -3,7 +3,8 @@
 const char* const MainMenu::NAME = "main_menu";
 
 MainMenu::MainMenu() :
-	MenuPage(NAME, "resource/rml/main_menu.rml")
+	MenuPage(NAME, "resource/rml/main_menu.rml"),
+	m_MenuFrameDataBinding(this)
 {
 }
 

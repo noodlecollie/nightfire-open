@@ -2,6 +2,7 @@
 
 BaseOptionsMenu::BaseOptionsMenu(const char* name, const char* rmlFilePath) :
 	MenuPage(name, rmlFilePath),
+	m_MenuFrameDataBinding(this),
 	m_TabBarDataBinding(Name())
 {
 	m_TabBarDataBinding.SetActiveTabChangeCallback(

@@ -1,7 +1,8 @@
 #include "menus/MultiplayerMenu.h"
 
 MultiplayerMenu::MultiplayerMenu() :
-	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml")
+	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
+	m_MenuFrameDataBinding(this)
 {
 }
 
