@@ -41,6 +41,7 @@ GNU General Public License for more details.
 // flags for COM_ParseFileSafe
 #define PFILE_IGNOREBRACKET (1 << 0)
 #define PFILE_HANDLECOLON (1 << 1)
+#define PFILE_HANDLENEWLINE (1 << 2)
 
 #define PLATFORM_UPDATE_PAGE "PlatformUpdatePage"
 #define GENERIC_UPDATE_PAGE "GenericUpdatePage"

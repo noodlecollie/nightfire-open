@@ -3,7 +3,6 @@
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
 #include "rmlui/RmlUiBackend.h"
-#include "UIDebug.h"
 #include "EnginePublicAPI/keydefs.h"
 
 ui_enginefuncs_t gEngfuncs;
@@ -11,35 +10,40 @@ ui_extendedfuncs_t gTextfuncs;
 ui_globalvars_t* gpGlobals = nullptr;
 ui_gl_functions gUiGlFuncs;
 
-static RmlUiBackend gRmlUiBackend;
-
 static int pfnVidInit(void)
 {
-	return gRmlUiBackend.VidInit(gpGlobals->scrWidth, gpGlobals->scrHeight) ? 1 : 0;
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+	return backend.VidInit(gpGlobals->scrWidth, gpGlobals->scrHeight) ? 1 : 0;
 }
 
 static void pfnInit(void)
 {
-	gRmlUiBackend.Initialise();
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+	backend.Initialise();
 }
 
 static void pfnShutdown(void)
 {
-	gRmlUiBackend.ShutDown();
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+	backend.ShutDown();
 }
 
 static void pfnRedraw(float flTime)
 {
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+
 #ifdef RENDER_DEBUG_TRIANGLE
-	gRmlUiBackend.RenderDebugTriangle();
+	backend.RenderDebugTriangle();
 #else
-	gRmlUiBackend.Update(flTime);
-	gRmlUiBackend.Render();
+	backend.Update(flTime);
+	backend.Render();
 #endif
 }
 
 static void pfnKeyEvent(int key, int down)
 {
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+
 	switch ( key )
 	{
 		case K_MOUSE1:
@@ -48,7 +52,7 @@ static void pfnKeyEvent(int key, int down)
 		case K_MOUSE4:
 		case K_MOUSE5:
 		{
-			gRmlUiBackend.ReceiveMouseButton(key, down != 0);
+			backend.ReceiveMouseButton(key, down != 0);
 			break;
 		}
 
@@ -59,7 +63,7 @@ static void pfnKeyEvent(int key, int down)
 			// so only trigger on one of these.
 			if ( down )
 			{
-				gRmlUiBackend.ReceiveMouseWheel(key == K_MWHEELDOWN);
+				backend.ReceiveMouseWheel(key == K_MWHEELDOWN);
 			}
 
 			break;
@@ -67,7 +71,7 @@ static void pfnKeyEvent(int key, int down)
 
 		default:
 		{
-			gRmlUiBackend.ReceiveKey(key, down != 0);
+			backend.ReceiveKey(key, down != 0);
 			break;
 		}
 	}
@@ -75,12 +79,14 @@ static void pfnKeyEvent(int key, int down)
 
 static void pfnMouseMove(int x, int y)
 {
-	gRmlUiBackend.ReceiveMouseMove(x, y);
+	RmlUiBackend::StaticInstance().ReceiveMouseMove(x, y);
 }
 
 static void pfnSetActiveMenu(int active)
 {
-	if ( !gRmlUiBackend.IsInitialised() )
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+
+	if ( !backend.IsInitialised() )
 	{
 		return;
 	}
@@ -90,11 +96,11 @@ static void pfnSetActiveMenu(int active)
 	if ( active )
 	{
 		gEngfuncs.pfnSetKeyDest(key_menu);
-		gRmlUiBackend.ReceiveShowMenu();
+		backend.ReceiveShowMenu();
 	}
 	else
 	{
-		gRmlUiBackend.ReceiveHideMenu();
+		backend.ReceiveHideMenu();
 	}
 }
 
@@ -120,7 +126,7 @@ static void pfnShowCursor(int /* show */)
 
 static void pfnCharEvent(int key)
 {
-	gRmlUiBackend.ReceiveChar(key);
+	RmlUiBackend::StaticInstance().ReceiveChar(key);
 }
 
 static int pfnMouseInRect(void)
@@ -131,7 +137,7 @@ static int pfnMouseInRect(void)
 
 static int pfnIsVisible(void)
 {
-	return gRmlUiBackend.IsVisible();
+	return RmlUiBackend::StaticInstance().IsVisible();
 }
 
 static int pfnCreditsActive(void)
@@ -219,7 +225,7 @@ static void pfnConnectionProgress_ParseServerInfo(const char* /* server */)
 
 static void pfnStartupComplete(void)
 {
-	gRmlUiBackend.ReceiveStartupComplete();
+	RmlUiBackend::StaticInstance().ReceiveStartupComplete();
 }
 
 static const UI_FUNCTIONS gFunctionTable = {

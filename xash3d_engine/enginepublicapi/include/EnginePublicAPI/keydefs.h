@@ -23,6 +23,8 @@ typedef enum
 	key_message
 } keydest_t;
 
+#define MAX_KEY_BINDINGS 256
+
 //
 // these are the key numbers that should be passed to Key_Event
 //

@@ -284,7 +284,7 @@ void CMenuControls::ResetKeysList(void)
 
 	if ( !afile )
 	{
-		Con_Printf("UI_Parse_KeysList: kb_act.lst not found\n");
+		Con_Printf("UI_Parse_KeysList: kb_def.lst not found\n");
 		return;
 	}
 
@@ -420,17 +420,20 @@ void CMenuControls::_Init(void)
 		L("Adv. Controls"),
 		L("Change mouse sensitivity, enable autoaim, mouselook and crosshair"),
 		PC_ADV_CONTROLS,
-		UI_AdvControls_Menu);
+		UI_AdvControls_Menu
+	);
 	AddButton(
 		L("GameUI_OK"),
 		L("Save changed and return to configuration menu"),
 		PC_DONE,
-		VoidCb(&CMenuControls::SaveAndPopMenu));
+		VoidCb(&CMenuControls::SaveAndPopMenu)
+	);
 	AddButton(
 		L("GameUI_Cancel"),
 		L("Discard changes and return to configuration menu"),
 		PC_CANCEL,
-		VoidCb(&CMenuControls::Cancel));
+		VoidCb(&CMenuControls::Cancel)
+	);
 	AddItem(keysList);
 }
 

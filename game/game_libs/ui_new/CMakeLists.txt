@@ -12,22 +12,49 @@ include(nf_utils)
 set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 
 set(SOURCES_UI
+	src/components/ModalComponent.h
+	src/components/ModalComponent.cpp
+	src/framework/BaseComponent.h
+	src/framework/BaseComponent.cpp
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
-	src/framework/DataBinding.h
+	src/framework/BaseTableModel.h
+	src/framework/BaseTemplateBinding.h
+	src/framework/CvarAccessor.h
+	src/framework/CvarDataVar.h
+	src/framework/DataVar.h
+	src/framework/DocumentObserver.h
+	src/framework/DocumentObserver.cpp
+	src/framework/ElementFinder.h
+	src/framework/ElementFinder.cpp
+	src/framework/EventListenerObject.h
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
+	src/framework/MenuPage.h
+	src/framework/MenuPage.cpp
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
+	src/menus/options/AvOptionsMenu.h
+	src/menus/options/AvOptionsMenu.cpp
+	src/menus/options/BaseOptionsMenu.h
+	src/menus/options/BaseOptionsMenu.cpp
+	src/menus/options/GameplayOptionsMenu.h
+	src/menus/options/GameplayOptionsMenu.cpp
+	src/menus/options/KeysOptionsMenu.h
+	src/menus/options/KeysOptionsMenu.cpp
+	src/menus/options/MouseOptionsMenu.h
+	src/menus/options/MouseOptionsMenu.cpp
 	src/menus/MainMenu.h
 	src/menus/MainMenu.cpp
 	src/menus/MainMenu.cpp
 	src/menus/MultiplayerMenu.h
 	src/menus/MultiplayerMenu.cpp
-	src/menus/OptionsMenu.h
-	src/menus/OptionsMenu.cpp
-	src/menus/ZooMenu.h
-	src/menus/ZooMenu.cpp
+	src/models/CvarModel.h
+	src/models/CvarModel.cpp
+	src/models/KeyBindingModel.h
+	src/models/KeyBindingModel.cpp
+	src/models/VideoModesModel.h
+	src/models/VideoModesModel.cpp
 	src/rmlui/EventListenerImpl.h
 	src/rmlui/EventListenerImpl.cpp
 	src/rmlui/EventListenerInstancerImpl.h
@@ -42,9 +69,13 @@ set(SOURCES_UI
 	src/rmlui/SystemInterfaceImpl.cpp
 	src/rmlui/TextInputHandlerImpl.h
 	src/rmlui/TextInputHandlerImpl.cpp
-	src/templatebindings/BaseTemplateBinding.h
+	src/rmlui/Utils.h
+	src/rmlui/Utils.cpp
 	src/templatebindings/MenuFrameDataBinding.h
 	src/templatebindings/MenuFrameDataBinding.cpp
+	src/templatebindings/OptionsTabBarDataBinding.h
+	src/templatebindings/OptionsTabBarDataBinding.cpp
+	src/utils/InFilePtr.h
 	src/udll_int.h
 	src/udll_int.cpp
 	src/UIDebug.h
@@ -61,6 +92,7 @@ target_link_libraries(${TARGETNAME_LIB_UI} PRIVATE
 	${TARGETNAME_LIB_ENGINEPUBLICAPI}
 	${TARGETNAME_LIB_ENGINEINTERNALAPI}
 	${TARGETNAME_LIB_RMLUI}
+	${TARGETNAME_LIB_CRTLIB}
 )
 
 set_common_library_compiler_settings(${TARGETNAME_LIB_UI})

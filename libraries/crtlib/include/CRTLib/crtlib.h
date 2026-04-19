@@ -41,6 +41,7 @@ enum
 // exported APIs headers and will get nice warning in case of changing values
 #define PFILE_IGNOREBRACKET (1 << 0)
 #define PFILE_HANDLECOLON (1 << 1)
+#define PFILE_HANDLENEWLINE (1 << 2)
 #define PFILE_TOKEN_MAX_LENGTH 1024
 #define PFILE_FS_TOKEN_MAX_LENGTH 512
 
@@ -97,7 +98,8 @@ int matchpattern_with_separator(
 	const char* pattern,
 	qboolean caseinsensitive,
 	const char* separators,
-	qboolean wildcard_least_one);
+	qboolean wildcard_least_one
+);
 
 // String pointer must be valid.
 qboolean COM_StringIsTerminated(const char* str, size_t maxLength);

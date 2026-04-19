@@ -56,7 +56,7 @@ def main():
 	with open(os.path.join(SCRIPT_DIR, "content-hash.txt"), "r") as in_file:
 		content_hash = in_file.read().strip()
 
-	content_hash_match = re.match(r"^([^\s-]+)-([0-9a-f]{40})(-dirty)?$", content_hash)
+	content_hash_match = re.match(r"^([^\s]+)-([0-9a-f]{40})(-dirty)?$", content_hash)
 
 	if not content_hash_match:
 		raise RuntimeError(f"Could not parse hash from content-hash.txt. Output:\n{content_hash}")

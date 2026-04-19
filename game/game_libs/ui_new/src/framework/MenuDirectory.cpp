@@ -4,18 +4,22 @@
 #include "UIDebug.h"
 
 #include "menus/MainMenu.h"
-#include "menus/ZooMenu.h"
-#include "menus/OptionsMenu.h"
 #include "menus/MultiplayerMenu.h"
+#include "menus/options/KeysOptionsMenu.h"
+#include "menus/options/MouseOptionsMenu.h"
+#include "menus/options/AvOptionsMenu.h"
+#include "menus/options/GameplayOptionsMenu.h"
 
 void MenuDirectory::Populate()
 {
 	m_MenuMap.clear();
 
 	AddToMap<MainMenu>();
-	AddToMap<ZooMenu>();
-	AddToMap<OptionsMenu>();
+	AddToMap<KeysOptionsMenu>();
 	AddToMap<MultiplayerMenu>();
+	AddToMap<MouseOptionsMenu>();
+	AddToMap<AvOptionsMenu>();
+	AddToMap<GameplayOptionsMenu>();
 }
 
 void MenuDirectory::Clear()
@@ -57,7 +61,7 @@ void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
 
 	if ( constructor )
 	{
-		if ( entry.menuEntry.menuPtr->SetUpDataBindings(constructor) )
+		if ( entry.menuEntry.menuPtr->SetUpDataModelBindings(constructor) )
 		{
 			success = true;
 		}
@@ -132,9 +136,9 @@ void MenuDirectory::UnloadAllDocuments()
 {
 	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
 	{
-		if ( it->second.loadedDocument && it->second.menuEntry.document )
+		if ( it->second.loadedDocument )
 		{
-			it->second.menuEntry.menuPtr->DocumentUnloaded(it->second.menuEntry.document);
+			it->second.menuEntry.menuPtr->DocumentUnloaded();
 		}
 	}
 }

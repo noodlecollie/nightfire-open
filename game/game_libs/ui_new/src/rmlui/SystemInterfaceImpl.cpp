@@ -1,9 +1,23 @@
 #include "rmlui/SystemInterfaceImpl.h"
+#include "EnginePublicAPI/cvardef.h"
 #include "udll_int.h"
 
 SystemInterfaceImpl::SystemInterfaceImpl(RmlUiBackend* backend) :
 	m_Backend(backend)
 {
+}
+
+void SystemInterfaceImpl::RegisterCvars()
+{
+#ifdef _DEBUG
+#define LOGGING_DEFAULT_VALUE "1"
+#else
+#define LOGGING_DEFAULT_VALUE "0"
+#endif
+
+	m_cvarDebugLogs = gEngfuncs.pfnRegisterVariable("ui_debug_logging", LOGGING_DEFAULT_VALUE, 0);
+
+#undef LOGGING_DEFAULT_VALUE
 }
 
 double SystemInterfaceImpl::GetElapsedTime()
@@ -33,26 +47,30 @@ bool SystemInterfaceImpl::LogMessage(Rml::Log::Type type, const Rml::String& mes
 		case Rml::Log::Type::LT_ASSERT:
 		case Rml::Log::Type::LT_ERROR:
 		{
-			gEngfuncs.Con_Printf("^1[RmlUi Error]^7 %s\n", message.c_str());
+			gEngfuncs.Con_Printf("^1[UI Error]^7 %s\n", message.c_str());
 			break;
 		}
 
 		case Rml::Log::Type::LT_WARNING:
 		{
-			gEngfuncs.Con_Printf("^3[RmlUi Warning]^7 %s\n", message.c_str());
+			gEngfuncs.Con_Printf("^3[UI Warning]^7 %s\n", message.c_str());
 			break;
 		}
 
 		case Rml::Log::Type::LT_DEBUG:
 		{
-			gEngfuncs.Con_Printf("[RmlUi Debug] %s\n", message.c_str());
+			if ( m_cvarDebugLogs && m_cvarDebugLogs->value != 0.0f )
+			{
+				gEngfuncs.Con_Printf("[UI Debug] %s\n", message.c_str());
+			}
+
 			break;
 		}
 
 		// Everything else is info
 		default:
 		{
-			gEngfuncs.Con_Printf("[RmlUi] %s\n", message.c_str());
+			gEngfuncs.Con_Printf("[UI] %s\n", message.c_str());
 			break;
 		}
 	}

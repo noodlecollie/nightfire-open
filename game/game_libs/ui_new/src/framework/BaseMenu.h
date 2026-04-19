@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include <RmlUi/Core/Types.h>
 #include <RmlUi/Core/Variant.h>
-#include <RmlUi/Core/EventListener.h>
 
 namespace Rml
 {
@@ -12,20 +12,15 @@ namespace Rml
 	class DataModelHandle;
 	class Event;
 	class ElementDocument;
+	class Variant;
 }  // namespace Rml
+
+class DocumentObserver;
 
 enum class MenuRequestType
 {
 	PushMenu,
 	PopMenu
-};
-
-enum MenuAttributeFlag
-{
-	MenuAttrPopOnEscape = 1 << 0,
-	MenuAttrRegisterPushPop = 1 << 1,
-
-	MenuAttrsDefault = (MenuAttrPopOnEscape | MenuAttrRegisterPushPop)
 };
 
 struct MenuRequest
@@ -40,38 +35,44 @@ struct MenuRequest
 	}
 };
 
-class BaseMenu : public Rml::EventListener
+class BaseMenu
 {
 public:
 	virtual ~BaseMenu();
 
 	const char* Name() const;
 	const char* RmlFilePath() const;
+	Rml::ElementDocument* Document() const;
 
 	const MenuRequest* CurrentRequest() const;
 	void ClearCurrentRequest();
 
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor);
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 	void DocumentLoaded(Rml::ElementDocument* document);
-	void DocumentUnloaded(Rml::ElementDocument* document);
+	void DocumentUnloaded();
 	virtual void Update(float currentTime);
 
-	void ProcessEvent(Rml::Event& event) override;
-
 protected:
-	BaseMenu(const char* name, const char* rmlFilePath, size_t flags = MenuAttrsDefault);
+	BaseMenu(const char* name, const char* rmlFilePath);
 	void SetCurrentRequest(MenuRequestType requestType, const Rml::VariantList& args = Rml::VariantList());
 
-	virtual bool SetUpDataBindingsInternal(Rml::DataModelConstructor& constructor);
-	virtual void DocumentLoadedInternal(Rml::ElementDocument* document);
-	virtual void DocumentUnloadedInternal(Rml::ElementDocument* document);
+	virtual void OnBeginDocumentLoaded();
+	virtual void OnEndDocumentLoaded();
+	virtual void OnBeginDocumentUnloaded();
+	virtual void OnEndDocumentUnloaded();
+	virtual bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 
 private:
-	void HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
-	void HandlePopMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	friend class DocumentObserver;
+
+	void RegisterDocumentObserver(DocumentObserver* component);
 
 	const char* m_Name;
 	const char* m_RmlFilePath;
-	size_t m_AttrFlags;
+	Rml::ElementDocument* m_Document = nullptr;
 	std::unique_ptr<MenuRequest> m_Request;
+
+	// Assumed to be members of the derived menu class, that live
+	// as long as the derived menu does.
+	std::vector<DocumentObserver*> m_DocObservers;
 };
