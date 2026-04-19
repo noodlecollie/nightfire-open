@@ -4,7 +4,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 
 // These are the elements that we support tooltips on:
-static constexpr const char* const TOOLTIP_SELECTOR = "bigbutton[tooltip], button[tooltip]";
+static constexpr const char* const TOOLTIP_SELECTOR = "bigbutton[tooltip], button[tooltip], label[tooltip]";
 
 MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
 	DocumentObserver(parentMenu),
@@ -26,6 +26,8 @@ bool MenuFrameDataBinding::SetUpDataBindings(Rml::DataModelConstructor& construc
 
 void MenuFrameDataBinding::DocumentLoaded(Rml::ElementDocument* document)
 {
+	document->AddEventListener(Rml::EventId::Hide, &m_TooltipListener);
+
 	Rml::ElementList elements;
 	document->QuerySelectorAll(elements, TOOLTIP_SELECTOR);
 
@@ -46,6 +48,8 @@ void MenuFrameDataBinding::DocumentUnloaded(Rml::ElementDocument* document)
 		element->RemoveEventListener(Rml::EventId::Mouseover, &m_TooltipListener);
 		element->RemoveEventListener(Rml::EventId::Mouseout, &m_TooltipListener);
 	}
+
+	document->RemoveEventListener(Rml::EventId::Hide, &m_TooltipListener);
 }
 
 void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
@@ -55,14 +59,25 @@ void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
 		case Rml::EventId::Mouseover:
 		{
 			SetTooltip(event);
-			event.StopPropagation();
 			break;
 		}
 
 		case Rml::EventId::Mouseout:
 		{
+			Rml::Element* element = event.GetTargetElement();
+
+			if ( element && element == m_CurrentTooltipElement )
+			{
+				ClearTooltip();
+			}
+
+			break;
+		}
+
+		case Rml::EventId::Hide:
+		{
+			// The document is being hidden, so forcibly clear the tooltip.
 			ClearTooltip();
-			event.StopPropagation();
 			break;
 		}
 
@@ -75,6 +90,14 @@ void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
 
 void MenuFrameDataBinding::SetTooltip(Rml::Event& event)
 {
+	if ( m_CurrentTooltipElement )
+	{
+		// We moused over another element inside the current one.
+		// Don't allow setting the tooltip until the current
+		// element clears it.
+		return;
+	}
+
 	Rml::Element* element = event.GetTargetElement();
 
 	if ( !element )
@@ -92,11 +115,14 @@ void MenuFrameDataBinding::SetTooltip(Rml::Event& event)
 	if ( tooltipAttr->GetInto(m_Tooltip.value) && m_ModelHandle )
 	{
 		m_ModelHandle.DirtyVariable(m_Tooltip.name);
+		m_CurrentTooltipElement = element;
 	}
 }
 
 void MenuFrameDataBinding::ClearTooltip()
 {
+	m_CurrentTooltipElement = nullptr;
+
 	if ( !m_Tooltip.value.empty() )
 	{
 		m_Tooltip.value.clear();
