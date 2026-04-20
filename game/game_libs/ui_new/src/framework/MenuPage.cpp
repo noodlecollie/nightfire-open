@@ -34,7 +34,7 @@ void MenuPage::ProcessEvent(Rml::Event& event)
 		{
 			const int keyId = GetEventKeyId(event);
 
-			if ( keyId == Rml::Input::KI_ESCAPE && m_RequestPopOnEscapeKey )
+			if ( keyId == Rml::Input::KI_ESCAPE && m_RequestPopOnEscapeKey && ShouldPop("") )
 			{
 				event.StopPropagation();
 				SetCurrentRequest(MenuRequestType::PopMenu);
@@ -70,6 +70,11 @@ void MenuPage::OnBeginDocumentUnloaded()
 
 void MenuPage::RequestPop(Rml::String menuToSwapIn)
 {
+	if ( !ShouldPop(menuToSwapIn) )
+	{
+		return;
+	}
+
 	Rml::VariantList args;
 
 	if ( !menuToSwapIn.empty() )
@@ -78,6 +83,11 @@ void MenuPage::RequestPop(Rml::String menuToSwapIn)
 	}
 
 	SetCurrentRequest(MenuRequestType::PopMenu, args);
+}
+
+bool MenuPage::ShouldPop(const Rml::String&) const
+{
+	return true;
 }
 
 void MenuPage::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)

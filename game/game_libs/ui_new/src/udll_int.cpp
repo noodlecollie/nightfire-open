@@ -10,6 +10,8 @@ ui_extendedfuncs_t gTextfuncs;
 ui_globalvars_t* gpGlobals = nullptr;
 ui_gl_functions gUiGlFuncs;
 
+static void pfnSetActiveMenu(int active);
+
 static int pfnVidInit(void)
 {
 	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
@@ -32,12 +34,16 @@ static void pfnRedraw(float flTime)
 {
 	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
 
-#ifdef RENDER_DEBUG_TRIANGLE
-	backend.RenderDebugTriangle();
-#else
 	backend.Update(flTime);
+
+	if ( backend.ShouldPopToConsole() )
+	{
+		pfnSetActiveMenu(0);
+		gEngfuncs.pfnSetKeyDest(key_console);
+		return;
+	}
+
 	backend.Render();
-#endif
 }
 
 static void pfnKeyEvent(int key, int down)
@@ -225,7 +231,7 @@ static void pfnConnectionProgress_ParseServerInfo(const char* /* server */)
 
 static void pfnStartupComplete(void)
 {
-	RmlUiBackend::StaticInstance().ReceiveStartupComplete();
+	RmlUiBackend::StaticInstance().ReceiveShowMenu();
 }
 
 static const UI_FUNCTIONS gFunctionTable = {

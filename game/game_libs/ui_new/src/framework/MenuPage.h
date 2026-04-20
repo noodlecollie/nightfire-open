@@ -21,6 +21,7 @@ protected:
 	void OnBeginDocumentUnloaded() override;
 
 	void RequestPop(Rml::String menuToSwapIn = Rml::String());
+	virtual bool ShouldPop(const Rml::String& menuToSwapIn) const;
 
 private:
 	void ProcessEvent(Rml::Event& event);

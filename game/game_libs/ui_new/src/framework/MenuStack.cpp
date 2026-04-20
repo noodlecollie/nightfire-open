@@ -29,6 +29,7 @@ const MenuDirectoryEntry* MenuStack::Pop()
 {
 	if ( m_Stack.empty() )
 	{
+		ASSERT(false);
 		return nullptr;
 	}
 
@@ -88,25 +89,29 @@ size_t MenuStack::Size() const
 
 void MenuStack::SetTopDocumentVisible(bool visible)
 {
-	if ( !m_Stack.empty() )
+	if ( m_Stack.empty() )
 	{
-		const MenuDirectoryEntry* entry = m_Stack.back();
-		Rml::ElementDocument* document = entry->document;
+		return;
+	}
 
-		if ( document )
-		{
-			if ( visible )
-			{
-				document->Show();
-			}
-			else
-			{
-				// If there are any pending requests, cancel them.
-				entry->menuPtr->ClearCurrentRequest();
+	const MenuDirectoryEntry* entry = m_Stack.back();
+	Rml::ElementDocument* document = entry->document;
 
-				document->Hide();
-			}
-		}
+	if ( !document )
+	{
+		return;
+	}
+
+	if ( visible )
+	{
+		document->Show();
+	}
+	else
+	{
+		// If there are any pending requests, cancel them.
+		entry->menuPtr->ClearCurrentRequest();
+
+		document->Hide();
 	}
 }
 
@@ -176,15 +181,7 @@ void MenuStack::HandlePopMenuRequest(const Rml::String& name)
 {
 	if ( name.empty() )
 	{
-		if ( m_Stack.size() > 1 )
-		{
-			Pop();
-		}
-		else
-		{
-			Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring pop request from only menu in stack");
-		}
-
+		Pop();
 		return;
 	}
 

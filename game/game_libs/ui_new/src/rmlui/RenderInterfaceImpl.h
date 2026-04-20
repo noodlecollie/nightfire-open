@@ -50,8 +50,6 @@ public:
 
 	void SetTransform(const Rml::Matrix4f* transform) override;
 
-	void RenderDebugTriangle();
-
 private:
 	struct GeometryView
 	{

@@ -124,22 +124,6 @@ bool RmlUiBackend::IsVisible() const
 	return m_Visible;
 }
 
-void RmlUiBackend::ReceiveStartupComplete()
-{
-	ASSERT(IsInitialised());
-
-	if ( !IsInitialised() )
-	{
-		return;
-	}
-
-	const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(MainMenu::NAME);
-	ASSERT(menu);
-
-	m_MenuStack.Push(menu);
-	ReceiveShowMenu();
-}
-
 void RmlUiBackend::ReceiveShowMenu()
 {
 	if ( !IsInitialised() )
@@ -148,6 +132,13 @@ void RmlUiBackend::ReceiveShowMenu()
 	}
 
 	m_Visible = true;
+
+	if ( m_MenuStack.IsEmpty() )
+	{
+		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(MainMenu::NAME);
+		ASSERT(menu);
+		m_MenuStack.Push(menu);
+	}
 }
 
 void RmlUiBackend::ReceiveHideMenu()
@@ -283,6 +274,13 @@ Rml::Context* RmlUiBackend::GetRmlContext() const
 	return m_RmlContext;
 }
 
+bool RmlUiBackend::ShouldPopToConsole()
+{
+	bool out = m_ShouldPopToConsole;
+	m_ShouldPopToConsole = false;
+	return out;
+}
+
 void RmlUiBackend::SetStoreNextKey(bool onPressed)
 {
 	if ( !IsInitialised() )
@@ -331,8 +329,16 @@ void RmlUiBackend::Update(float currentTime)
 		return;
 	}
 
+	bool hadMenusInStack = !m_MenuStack.IsEmpty();
+
 	m_MenuStack.Update(currentTime);
 	m_RmlContext->Update();
+	m_MenuStack.HandleRequests();
+
+	if ( hadMenusInStack && m_MenuStack.IsEmpty() )
+	{
+		m_ShouldPopToConsole = true;
+	}
 }
 
 void RmlUiBackend::Render()
@@ -345,19 +351,6 @@ void RmlUiBackend::Render()
 	m_RenderInterface.BeginFrame();
 	m_RmlContext->Render();
 	m_RenderInterface.EndFrame();
-
-	// Now that rendering is done, modify the menu stack if needed.
-	m_MenuStack.HandleRequests();
-}
-
-void RmlUiBackend::RenderDebugTriangle()
-{
-	if ( !IsInitialised() )
-	{
-		return;
-	}
-
-	m_RenderInterface.RenderDebugTriangle();
 }
 
 void RmlUiBackend::ReleaseResources()
