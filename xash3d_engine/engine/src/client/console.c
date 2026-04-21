@@ -2354,28 +2354,40 @@ void Con_VidInit(void)
 	{
 		// trying to load truecolor image first
 		if ( FS_FileExists("gfx/shell/conback.bmp", false) || FS_FileExists("gfx/shell/conback.tga", false) )
+		{
 			con.background = ref.dllFuncs.GL_LoadTexture("gfx/shell/conback", NULL, 0, TF_IMAGE);
+		}
 
 		if ( !con.background )
 		{
 			if ( FS_FileExists("cached/conback640", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/conback640", NULL, 0, TF_IMAGE);
+			}
 			else if ( FS_FileExists("cached/conback", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/conback", NULL, 0, TF_IMAGE);
+			}
 		}
 	}
 	else
 	{
 		// trying to load truecolor image first
 		if ( FS_FileExists("gfx/shell/loading.bmp", false) || FS_FileExists("gfx/shell/loading.tga", false) )
+		{
 			con.background = ref.dllFuncs.GL_LoadTexture("gfx/shell/loading", NULL, 0, TF_IMAGE);
+		}
 
 		if ( !con.background )
 		{
 			if ( FS_FileExists("cached/loading640", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/loading640", NULL, 0, TF_IMAGE);
+			}
 			else if ( FS_FileExists("cached/loading", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/loading", NULL, 0, TF_IMAGE);
+			}
 		}
 	}
 
@@ -2387,13 +2399,19 @@ void Con_VidInit(void)
 
 		// NOTE: only these games want to draw build number into console background
 		if ( !Q_stricmp(FS_Gamedir(), "id1") )
+		{
 			draw_to_console = true;
+		}
 
 		if ( !Q_stricmp(FS_Gamedir(), "hipnotic") )
+		{
 			draw_to_console = true;
+		}
 
 		if ( !Q_stricmp(FS_Gamedir(), "rogue") )
+		{
 			draw_to_console = true;
+		}
 
 		if ( draw_to_console && con.curFont &&
 			 (buf = ref.dllFuncs.R_GetTextureOriginalBuffer(con.curFont->hFontTexture)) != NULL )
@@ -2408,21 +2426,32 @@ void Con_VidInit(void)
 				len = Q_snprintf(ver, 64, "%i", Q_buildnum());  // can store only buildnum
 				dest = (byte*)(cb + 1) + 320 * 186 + 320 - 11 - 8 * len;
 				y = len;
+
 				for ( x = 0; x < y; x++ )
+				{
 					Con_DrawCharToConback(ver[x], buf, dest + (x << 3));
+				}
+
 				con.background = ref.dllFuncs.GL_LoadTexture("#gfx/conback.lmp", (byte*)cb, length, TF_IMAGE);
 			}
+
 			if ( cb )
+			{
 				Mem_Free(cb);
+			}
 		}
 
 		if ( !con.background )  // trying the load unmodified conback
+		{
 			con.background = ref.dllFuncs.GL_LoadTexture("gfx/conback.lmp", NULL, 0, TF_IMAGE);
+		}
 	}
 
 	// missed console image will be replaced as gray background like X-Ray or Crysis
 	if ( con.background == R_GetBuiltinTexture(REF_DEFAULT_TEXTURE) || con.background == 0 )
+	{
 		con.background = R_GetBuiltinTexture(REF_GRAY_TEXTURE);
+	}
 }
 
 /*
