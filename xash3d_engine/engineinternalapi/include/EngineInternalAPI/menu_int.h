@@ -278,7 +278,11 @@ typedef struct
 	void (*pfnConnectionProgress_Connect)(const char* server);  // NULL for local server
 	void (*pfnConnectionProgress_ChangeLevel)(void);
 	void (*pfnConnectionProgress_ParseServerInfo)(const char* server);
-	void (*pfnStartupComplete)(void);  // Called when the main menu is first reached.
+
+	// Called when the main menu is first reached, and cvars are available to be read.
+	// if toConsole is true, -toconsole was passed on the command line, so the menu
+	// should not be shown yet.
+	void (*pfnStartupComplete)(qboolean toConsole);
 } UI_EXTENDED_FUNCTIONS;
 
 typedef int (*MENUAPI)(UI_FUNCTIONS* pFunctionTable, ui_enginefuncs_t* engfuncs, ui_globalvars_t* pGlobals);

@@ -229,9 +229,12 @@ static void pfnConnectionProgress_ParseServerInfo(const char* /* server */)
 	// TODO
 }
 
-static void pfnStartupComplete(void)
+static void pfnStartupComplete(qboolean toConsole)
 {
-	RmlUiBackend::StaticInstance().ReceiveShowMenu();
+	if ( !toConsole )
+	{
+		RmlUiBackend::StaticInstance().ReceiveShowMenu();
+	}
 }
 
 static const UI_FUNCTIONS gFunctionTable = {

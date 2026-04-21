@@ -1400,7 +1400,8 @@ int EXPORT Host_Main(int argc, char** argv, const char* progname, int bChangeGam
 #if !XASH_DEDICATED()
 	if ( !Host_IsDedicated() )
 	{
-		UI_StartupComplete();
+		const qboolean toConsole = host.allow_console && Sys_CheckParm("-toconsole");
+		UI_StartupComplete(toConsole);
 	}
 #endif
 
