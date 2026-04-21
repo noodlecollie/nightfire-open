@@ -5,6 +5,7 @@
 
 #include "menus/MainMenu.h"
 #include "menus/MultiplayerMenu.h"
+#include "menus/CreditsMenu.h"
 #include "menus/options/KeysOptionsMenu.h"
 #include "menus/options/MouseOptionsMenu.h"
 #include "menus/options/AvOptionsMenu.h"
@@ -15,6 +16,7 @@ void MenuDirectory::Populate()
 	m_MenuMap.clear();
 
 	AddToMap<MainMenu>();
+	AddToMap<CreditsMenu>();
 	AddToMap<KeysOptionsMenu>();
 	AddToMap<MultiplayerMenu>();
 	AddToMap<MouseOptionsMenu>();
