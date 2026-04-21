@@ -121,6 +121,18 @@ void Platform_SetClipboardText(const char* buffer)
 #endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
 }
 
+void Platform_OpenUrl(const char* url)
+{
+	if ( !url || !(*url) )
+	{
+		return;
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 14)
+	SDL_OpenURL(url);
+#endif  // SDL_VERSION_ATLEAST( 2, 0, 14 )
+}
+
 /*
 =============
 Platform_Vibrate

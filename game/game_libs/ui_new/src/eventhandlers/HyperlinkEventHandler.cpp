@@ -1,5 +1,6 @@
 #include "eventhandlers/HyperlinkEventHandler.h"
 #include <RmlUi/Core/ElementDocument.h>
+#include "udll_int.h"
 
 static constexpr const char* const SELECTOR = "a[href]";
 
@@ -60,6 +61,5 @@ void HyperlinkEventHandler::HandleClickEvent(Rml::Event& event)
 		return;
 	}
 
-	// TODO: Open in a web browser
-	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Received hyperlink: %s", href.c_str());
+	gTextfuncs.pfnOpenUrlInBrowser(href.c_str());
 }
