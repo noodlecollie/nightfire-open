@@ -2,6 +2,7 @@
 
 #include "framework/MenuPage.h"
 #include "templatebindings/MenuFrameDataBinding.h"
+#include "eventhandlers/HyperlinkEventHandler.h"
 
 class CreditsMenu : public MenuPage
 {
@@ -13,4 +14,5 @@ protected:
 
 private:
 	MenuFrameDataBinding m_MenuFrameDataBinding;
+	HyperlinkEventHandler m_HyperlinkEventHandler;
 };
