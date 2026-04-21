@@ -32,7 +32,6 @@ public:
 	void ShutDown();
 	bool IsInitialised() const;
 	bool IsVisible() const;
-	void ReceiveStartupComplete();
 	void ReceiveShowMenu();
 	void ReceiveHideMenu();
 	void ReceiveMouseMove(int x, int y);
@@ -45,14 +44,13 @@ public:
 	void Render();
 
 	Rml::Context* GetRmlContext() const;
+	bool ShouldPopToConsole();
 
 	void SetStoreNextKey(bool onPressed);
 	void ClearStoreNextKey();
 	bool IsStoringNextKey() const;
 	bool HasStoredKey() const;
 	StoredKey TakeStoredKey();
-
-	void RenderDebugTriangle();
 
 private:
 	struct MainMenuData;
@@ -74,6 +72,7 @@ private:
 	MenuDirectory m_MenuDirectory;
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
+	bool m_ShouldPopToConsole = false;
 
 	bool m_StoreNextKey = false;
 	StoredKey m_StoredKey {};

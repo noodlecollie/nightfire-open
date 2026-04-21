@@ -1387,11 +1387,11 @@ static char* pfnParseFileSafe(char* data, char* buf, const int size, unsigned in
 	return COM_ParseFileSafe(data, buf, size, flags, len, NULL);
 }
 
-void UI_StartupComplete(void)
+void UI_StartupComplete(qboolean toConsole)
 {
 	if ( gameui.dllFuncs2.pfnStartupComplete )
 	{
-		gameui.dllFuncs2.pfnStartupComplete();
+		gameui.dllFuncs2.pfnStartupComplete(toConsole);
 	}
 }
 

@@ -62,7 +62,8 @@ const char* uiSounds[] = {
 	"media/launch_select1.wav",
 	"media/launch_deny1.wav",
 	"",
-	""};
+	""
+};
 
 // they match default WON colors.lst now, except alpha
 unsigned int uiColorHelp = 0xFF7F7F7F;  // 127, 127, 127, 255	// hint letters color
@@ -198,7 +199,8 @@ void UI_DrawPic(
 	int height,
 	const unsigned int color,
 	CImage& pic,
-	const ERenderMode eRenderMode)
+	const ERenderMode eRenderMode
+)
 {
 	HIMAGE hPic = pic.Handle();
 
@@ -315,7 +317,8 @@ int UI_DrawString(
 	const unsigned int color,
 	int charH,
 	uint justify,
-	uint flags)
+	uint flags
+)
 {
 	uint modulate, shadowModulate = 0;
 	int xx = 0, yy, ofsX = 0, ofsY = 0, ch;
@@ -1032,17 +1035,29 @@ static void UI_LoadSounds(void)
 	for ( int i = 0; i < SND_COUNT; i++ )
 	{
 		if ( !uiSounds[i] || *uiSounds[i] == '\0' )
+		{
 			continue;
+		}
 
 		if ( !EngFuncs::FileExists(uiSounds[i]) )
 		{
 			size_t len = strlen(uiSoundOldPrefix);
 
 			if ( !strncmp(uiSounds[i], uiSoundOldPrefix, len) )
-				PlatformLib_SNPrintF(uiStatic.sounds[i], sizeof(uiStatic.sounds[i]), "%s%s", uiSoundNewPrefix, uiSounds[i] + len);
+			{
+				PlatformLib_SNPrintF(
+					uiStatic.sounds[i],
+					sizeof(uiStatic.sounds[i]),
+					"%s%s",
+					uiSoundNewPrefix,
+					uiSounds[i] + len
+				);
+			}
 		}
 		else
+		{
 			Q_strncpy(uiStatic.sounds[i], uiSounds[i], sizeof(uiStatic.sounds[i]));
+		}
 	}
 }
 

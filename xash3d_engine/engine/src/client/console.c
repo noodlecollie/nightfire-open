@@ -290,13 +290,17 @@ Con_ToggleConsole_f
 void Con_ToggleConsole_f(void)
 {
 	if ( !host.allow_console || UI_CreditsActive() )
+	{
 		return;  // disabled
+	}
 
 	SCR_EndLoadingPlaque();
 
 	// show console only in game or by special call from menu
 	if ( cls.state != ca_active || cls.key_dest == key_menu )
+	{
 		return;
+	}
 
 	Con_ClearTyping();
 	Con_ClearNotify();
@@ -304,9 +308,13 @@ void Con_ToggleConsole_f(void)
 	if ( cls.key_dest == key_console )
 	{
 		if ( Cvar_VariableInteger("sv_background") || Cvar_VariableInteger("cl_background") )
+		{
 			UI_SetActiveMenu(true);
+		}
 		else
+		{
 			UI_SetActiveMenu(false);
+		}
 	}
 	else
 	{
@@ -1113,7 +1121,8 @@ void GAME_EXPORT Con_NXPrintf(con_nprint_t* info, const char* fmt, ...)
 		(byte)(info->color[0] * 255),
 		(byte)(info->color[1] * 255),
 		(byte)(info->color[2] * 255),
-		255);
+		255
+	);
 	con.draw_notify = true;
 }
 
@@ -1175,7 +1184,8 @@ void GAME_EXPORT UI_NXPrintf(con_nprint_t* info, const char* fmt, ...)
 		(byte)(info->color[0] * 255),
 		(byte)(info->color[1] * 255),
 		(byte)(info->color[2] * 255),
-		255);
+		255
+	);
 	con.draw_notify = true;
 }
 
@@ -1813,7 +1823,8 @@ int Con_DrawDebugLines(void)
 			notify->szNotify,
 			notify->color,
 			con.curFont,
-			FONT_DRAW_UTF8 | FONT_DRAW_NOLF);
+			FONT_DRAW_UTF8 | FONT_DRAW_NOLF
+		);
 	}
 
 	return count;
@@ -1841,7 +1852,8 @@ void Con_DrawDebug(void)
 			host.downloadcount,
 			host.downloadfile,
 			scr_download->value,
-			Sys_DoubleTime() - timeStart);
+			Sys_DoubleTime() - timeStart
+		);
 		x = refState.width - 500;
 		y = (int)(con.curFont->charHeight * 1.05f);
 		Con_DrawString(x, y, dlstring, g_color_table[7]);
@@ -2001,7 +2013,8 @@ void Con_DrawSolidConsole(int lines)
 			0,
 			1,
 			1,
-			R_GetBuiltinTexture(REF_BLACK_TEXTURE));
+			R_GetBuiltinTexture(REF_BLACK_TEXTURE)
+		);
 	ref.dllFuncs.R_DrawStretchPic(
 		0,
 		(float)(lines - refState.width * 3 / 4),
@@ -2011,7 +2024,8 @@ void Con_DrawSolidConsole(int lines)
 		0,
 		1,
 		1,
-		con.background);
+		con.background
+	);
 
 	if ( !con.curFont || !host.allow_console )
 		return;  // nothing to draw
@@ -2026,7 +2040,8 @@ void Con_DrawSolidConsole(int lines)
 		PROTOCOL_VERSION,
 		BuildPlatform_PlatformString(),
 		BuildPlatform_ArchitectureString(),
-		Q_buildnum());
+		Q_buildnum()
+	);
 
 	Con_DrawStringLen(curbuild, &stringLen, &charH);
 
@@ -2193,7 +2208,8 @@ void Con_DrawVersion(void)
 			PROTOCOL_VERSION,
 			BuildPlatform_PlatformString(),
 			BuildPlatform_ArchitectureString(),
-			Q_buildnum());
+			Q_buildnum()
+		);
 	else
 		Q_snprintf(
 			curbuild,
@@ -2202,7 +2218,8 @@ void Con_DrawVersion(void)
 			PROTOCOL_VERSION,
 			BuildPlatform_PlatformString(),
 			BuildPlatform_ArchitectureString(),
-			Q_buildnum());
+			Q_buildnum()
+		);
 
 	Con_DrawStringLen(curbuild, &stringLen, &charH);
 	start = (int)(refState.width - stringLen * 1.05f);
@@ -2337,28 +2354,40 @@ void Con_VidInit(void)
 	{
 		// trying to load truecolor image first
 		if ( FS_FileExists("gfx/shell/conback.bmp", false) || FS_FileExists("gfx/shell/conback.tga", false) )
+		{
 			con.background = ref.dllFuncs.GL_LoadTexture("gfx/shell/conback", NULL, 0, TF_IMAGE);
+		}
 
 		if ( !con.background )
 		{
 			if ( FS_FileExists("cached/conback640", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/conback640", NULL, 0, TF_IMAGE);
+			}
 			else if ( FS_FileExists("cached/conback", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/conback", NULL, 0, TF_IMAGE);
+			}
 		}
 	}
 	else
 	{
 		// trying to load truecolor image first
 		if ( FS_FileExists("gfx/shell/loading.bmp", false) || FS_FileExists("gfx/shell/loading.tga", false) )
+		{
 			con.background = ref.dllFuncs.GL_LoadTexture("gfx/shell/loading", NULL, 0, TF_IMAGE);
+		}
 
 		if ( !con.background )
 		{
 			if ( FS_FileExists("cached/loading640", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/loading640", NULL, 0, TF_IMAGE);
+			}
 			else if ( FS_FileExists("cached/loading", false) )
+			{
 				con.background = ref.dllFuncs.GL_LoadTexture("cached/loading", NULL, 0, TF_IMAGE);
+			}
 		}
 	}
 
@@ -2370,13 +2399,19 @@ void Con_VidInit(void)
 
 		// NOTE: only these games want to draw build number into console background
 		if ( !Q_stricmp(FS_Gamedir(), "id1") )
+		{
 			draw_to_console = true;
+		}
 
 		if ( !Q_stricmp(FS_Gamedir(), "hipnotic") )
+		{
 			draw_to_console = true;
+		}
 
 		if ( !Q_stricmp(FS_Gamedir(), "rogue") )
+		{
 			draw_to_console = true;
+		}
 
 		if ( draw_to_console && con.curFont &&
 			 (buf = ref.dllFuncs.R_GetTextureOriginalBuffer(con.curFont->hFontTexture)) != NULL )
@@ -2391,21 +2426,32 @@ void Con_VidInit(void)
 				len = Q_snprintf(ver, 64, "%i", Q_buildnum());  // can store only buildnum
 				dest = (byte*)(cb + 1) + 320 * 186 + 320 - 11 - 8 * len;
 				y = len;
+
 				for ( x = 0; x < y; x++ )
+				{
 					Con_DrawCharToConback(ver[x], buf, dest + (x << 3));
+				}
+
 				con.background = ref.dllFuncs.GL_LoadTexture("#gfx/conback.lmp", (byte*)cb, length, TF_IMAGE);
 			}
+
 			if ( cb )
+			{
 				Mem_Free(cb);
+			}
 		}
 
 		if ( !con.background )  // trying the load unmodified conback
+		{
 			con.background = ref.dllFuncs.GL_LoadTexture("gfx/conback.lmp", NULL, 0, TF_IMAGE);
+		}
 	}
 
 	// missed console image will be replaced as gray background like X-Ray or Crysis
 	if ( con.background == R_GetBuiltinTexture(REF_DEFAULT_TEXTURE) || con.background == 0 )
+	{
 		con.background = R_GetBuiltinTexture(REF_GRAY_TEXTURE);
+	}
 }
 
 /*

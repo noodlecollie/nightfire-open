@@ -839,10 +839,14 @@ void SCR_Init(void)
 	SCR_InitCinematic();
 	CL_InitNetgraph();
 
-	if ( host.allow_console && Sys_CheckParm("-toconsole") )
-		Cbuf_AddText("toggleconsole\n");
-	else
+	// We used to do toggleconsole here, but that has no effect this early
+	// because cls.state is still "disconnected" by the time the command
+	// is executed. Instead, we just don't set the UI as active, and let
+	// the engine fall into console mode naturally.
+	if ( !(host.allow_console && Sys_CheckParm("-toconsole")) )
+	{
 		UI_SetActiveMenu(true);
+	}
 
 	scr_init = true;
 }
