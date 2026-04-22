@@ -110,9 +110,10 @@ static void pfnSetActiveMenu(int active)
 	}
 }
 
-static void pfnAddServerToList(struct netadr_s /* adr */, const char* /* info */)
+static void pfnAddServerToList(struct netadr_s adr, const char* info)
 {
-	// TODO
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+	backend.ReceiveDiscoveredServer(adr, info);
 }
 
 static void pfnGetCursorPos(int* /* pos_x */, int* /* pos_y */)

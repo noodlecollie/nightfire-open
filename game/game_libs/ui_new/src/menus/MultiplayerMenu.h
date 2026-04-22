@@ -2,6 +2,7 @@
 
 #include "framework/MenuPage.h"
 #include "templatebindings/MenuFrameDataBinding.h"
+#include "EnginePublicAPI/netadr.h"
 
 class MultiplayerMenu : public MenuPage
 {
@@ -10,7 +11,11 @@ public:
 
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
+	void OnEndDocumentLoaded() override;
+	void OnBeginDocumentUnloaded() override;
 
 private:
+	void AddServerToList(const netadr_t& address, Rml::String&& info);
+
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 };

@@ -7,20 +7,11 @@
 class VideoModesModel : public BaseTableModel
 {
 public:
-	enum ColumnIndex
-	{
-		LABEL,
-		MODE_INDEX,
-
-		TOTAL_COLUMNS
-	};
-
 	void Populate();
 
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
 	size_t Rows() const override;
-	size_t Columns() const override;
-	Rml::String DisplayString(size_t row, size_t column) const override;
+
 	int Width(size_t row) const;
 	int Height(size_t row) const;
 	int VideoMode(size_t row) const;

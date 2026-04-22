@@ -57,6 +57,8 @@ set(SOURCES_UI
 	src/models/CvarModel.cpp
 	src/models/KeyBindingModel.h
 	src/models/KeyBindingModel.cpp
+	src/models/ServerModel.h
+	src/models/ServerModel.cpp
 	src/models/VideoModesModel.h
 	src/models/VideoModesModel.cpp
 	src/rmlui/EventListenerImpl.h

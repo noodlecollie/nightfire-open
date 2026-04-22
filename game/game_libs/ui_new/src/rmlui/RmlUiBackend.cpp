@@ -99,6 +99,7 @@ void RmlUiBackend::ShutDown()
 		return;
 	}
 
+	ClearDiscoveredServerCallback();
 	ReleaseResources();
 	Rml::Shutdown();
 
@@ -269,6 +270,19 @@ void RmlUiBackend::ReceiveChar(int character)
 	m_RmlContext->ProcessTextInput(static_cast<char>(character));
 }
 
+void RmlUiBackend::ReceiveDiscoveredServer(netadr_t address, const char* info)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	if ( m_DiscoveredServerCallback )
+	{
+		m_DiscoveredServerCallback(address, Rml::String(info));
+	}
+}
+
 Rml::Context* RmlUiBackend::GetRmlContext() const
 {
 	return m_RmlContext;
@@ -307,19 +321,44 @@ void RmlUiBackend::ClearStoreNextKey()
 
 bool RmlUiBackend::IsStoringNextKey() const
 {
-	return m_StoreNextKey;
+	return IsInitialised() && m_StoreNextKey;
 }
 
 bool RmlUiBackend::HasStoredKey() const
 {
-	return m_StoredKey.key != -1;
+	return IsInitialised() && m_StoredKey.key != -1;
 }
 
 RmlUiBackend::StoredKey RmlUiBackend::TakeStoredKey()
 {
+	if ( !IsInitialised() )
+	{
+		return StoredKey {};
+	}
+
 	StoredKey storedKey = m_StoredKey;
 	m_StoredKey = StoredKey {};
 	return storedKey;
+}
+
+void RmlUiBackend::SetDiscoveredServerCallback(DiscoveredServerCallback callback)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_DiscoveredServerCallback = std::move(callback);
+}
+
+void RmlUiBackend::ClearDiscoveredServerCallback()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_DiscoveredServerCallback = {};
 }
 
 void RmlUiBackend::Update(float currentTime)

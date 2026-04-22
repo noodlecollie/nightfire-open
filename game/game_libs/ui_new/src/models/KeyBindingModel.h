@@ -11,16 +11,6 @@ class InFileCharsPtr;
 class KeyBindingModel : public BaseTableModel
 {
 public:
-	enum ColumnIndex
-	{
-		DESCRIPTION = 0,
-		CONSOLE_COMMAND,
-		PRIMARY_BINDING,
-		SECONDARY_BINDING,
-
-		TOTAL_COLUMNS
-	};
-
 	struct Entry
 	{
 		struct Binding
@@ -38,8 +28,7 @@ public:
 
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
 	size_t Rows() const override;
-	size_t Columns() const override;
-	Rml::String DisplayString(size_t row, size_t column) const override;
+
 	bool RowForConsoleCommand(const Rml::String& command, size_t& row) const;
 
 	// Resets all bindings in the model to their default values by loading

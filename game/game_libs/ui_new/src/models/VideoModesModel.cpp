@@ -79,39 +79,6 @@ size_t VideoModesModel::Rows() const
 	return m_VidModes.size();
 }
 
-size_t VideoModesModel::Columns() const
-{
-	return TOTAL_COLUMNS;
-}
-
-Rml::String VideoModesModel::DisplayString(size_t row, size_t column) const
-{
-	if ( row >= m_VidModes.size() )
-	{
-		return Rml::String();
-	}
-
-	switch ( column )
-	{
-		case LABEL:
-		{
-			return m_VidModes[row].label;
-		}
-
-		case MODE_INDEX:
-		{
-			return std::to_string(m_VidModes[row].index);
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
-	return Rml::String();
-}
-
 int VideoModesModel::Width(size_t row) const
 {
 	return row < m_VidModes.size() ? m_VidModes[row].width : -1;

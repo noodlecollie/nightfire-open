@@ -58,51 +58,6 @@ size_t KeyBindingModel::Rows() const
 	return m_Entries.size();
 }
 
-size_t KeyBindingModel::Columns() const
-{
-	return TOTAL_COLUMNS;
-}
-
-Rml::String KeyBindingModel::DisplayString(size_t row, size_t column) const
-{
-	if ( row >= Rows() )
-	{
-		return {};
-	}
-
-	const Entry& entry = m_Entries[row];
-
-	switch ( column )
-	{
-		case DESCRIPTION:
-		{
-			return entry.description;
-		}
-
-		case CONSOLE_COMMAND:
-		{
-			return entry.consoleCommand;
-		}
-
-		case PRIMARY_BINDING:
-		{
-			return entry.primaryBinding.key;
-		}
-
-		case SECONDARY_BINDING:
-		{
-			return entry.secondaryBinding.key;
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
-	return {};
-}
-
 void KeyBindingModel::ResetToDefaults()
 {
 	ParseSchemaAndResetToDefaults();

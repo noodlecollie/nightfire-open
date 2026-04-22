@@ -7,6 +7,7 @@
 #include "rmlui/EventListenerInstancerImpl.h"
 #include "framework/MenuDirectory.h"
 #include "framework/MenuStack.h"
+#include "EnginePublicAPI/netadr.h"
 
 namespace Rml
 {
@@ -16,6 +17,8 @@ namespace Rml
 class RmlUiBackend
 {
 public:
+	using DiscoveredServerCallback = std::function<void(const netadr_t&, Rml::String&&)>;
+
 	struct StoredKey
 	{
 		int key = -1;
@@ -39,6 +42,7 @@ public:
 	void ReceiveMouseWheel(bool down);
 	void ReceiveKey(int key, bool pressed);
 	void ReceiveChar(int character);
+	void ReceiveDiscoveredServer(netadr_t address, const char* info);
 
 	void Update(float currentTime);
 	void Render();
@@ -51,6 +55,9 @@ public:
 	bool IsStoringNextKey() const;
 	bool HasStoredKey() const;
 	StoredKey TakeStoredKey();
+
+	void SetDiscoveredServerCallback(DiscoveredServerCallback callback);
+	void ClearDiscoveredServerCallback();
 
 private:
 	struct MainMenuData;
@@ -76,6 +83,7 @@ private:
 
 	bool m_StoreNextKey = false;
 	StoredKey m_StoredKey {};
+	DiscoveredServerCallback m_DiscoveredServerCallback;
 
 	struct cvar_s* m_cvarScrollSensitivity = nullptr;
 };
