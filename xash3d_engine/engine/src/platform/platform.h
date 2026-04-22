@@ -80,6 +80,7 @@ void Platform_SetCursorType(VGUI_DefaultCursor type);
 // Clipboard
 int Platform_GetClipboardText(char* buffer, size_t size);
 void Platform_SetClipboardText(const char* buffer);
+void Platform_OpenUrl(const char* url);
 
 #if XASH_SDL == 12
 #define SDL_SetWindowGrab(wnd, state) SDL_WM_GrabInput((state))

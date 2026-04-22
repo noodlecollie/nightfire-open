@@ -14,6 +14,8 @@ set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 set(SOURCES_UI
 	src/components/ModalComponent.h
 	src/components/ModalComponent.cpp
+	src/eventhandlers/HyperlinkEventHandler.h
+	src/eventhandlers/HyperlinkEventHandler.cpp
 	src/framework/BaseComponent.h
 	src/framework/BaseComponent.cpp
 	src/framework/BaseMenu.h
@@ -44,6 +46,8 @@ set(SOURCES_UI
 	src/menus/options/KeysOptionsMenu.cpp
 	src/menus/options/MouseOptionsMenu.h
 	src/menus/options/MouseOptionsMenu.cpp
+	src/menus/CreditsMenu.h
+	src/menus/CreditsMenu.cpp
 	src/menus/MainMenu.h
 	src/menus/MainMenu.cpp
 	src/menus/MainMenu.cpp

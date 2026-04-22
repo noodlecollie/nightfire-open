@@ -505,9 +505,9 @@ public:
 		return engfuncs.pfnRandomLong(lLow, lHigh);
 	}
 
-	static inline void SetCursor(void* hCursor)  // change cursor
+	static inline void SetCursor(VGUI_DefaultCursor cursor)  // change cursor
 	{
-		engfuncs.pfnSetCursor(hCursor);
+		engfuncs.pfnSetCursor(cursor);
 	}
 
 	static inline int IsMapValid(const char* filename)

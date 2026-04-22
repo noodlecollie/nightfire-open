@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "BuildPlatform/Typedefs.h"
 #include "EngineInternalAPI/gameinfo.h"
 #include "EnginePublicAPI/netadr.h"
+#include "EngineInternalAPI/cursor_type.h"
 
 // a macro for mainui_cpp, indicating that mainui should be compiled for
 // Xash3D 1.0 interface
@@ -199,7 +200,7 @@ typedef struct ui_enginefuncs_s
 	float (*pfnRandomFloat)(float flLow, float flHigh);
 	int (*pfnRandomLong)(int lLow, int lHigh);
 
-	void (*pfnSetCursor)(void* hCursor);  // change cursor
+	void (*pfnSetCursor)(VGUI_DefaultCursor cursor);  // change cursor
 	int (*pfnIsMapValid)(char* filename);
 	void (*pfnProcessImage)(int texnum, float gamma, int topColor, int bottomColor);
 	int (*pfnCompareFileTime)(const char* filename1, const char* filename2, int* iCompare);
@@ -247,6 +248,7 @@ typedef struct ui_extendedfuncs_s
 	// network address funcs
 	const char* (*pfnAdrToString)(const struct netadr_s a);
 	int (*pfnCompareAdr)(const void* a, const void* b);  // netadr_t
+	void (*pfnOpenUrlInBrowser)(const char* url);
 } ui_extendedfuncs_t;
 
 // deprecated export from old engine

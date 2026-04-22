@@ -1387,6 +1387,11 @@ static char* pfnParseFileSafe(char* data, char* buf, const int size, unsigned in
 	return COM_ParseFileSafe(data, buf, size, flags, len, NULL);
 }
 
+static void pfnOpenUrlInBrowser(const char* url)
+{
+	Platform_OpenUrl(url);
+}
+
 void UI_StartupComplete(qboolean toConsole)
 {
 	if ( gameui.dllFuncs2.pfnStartupComplete )
@@ -1405,6 +1410,7 @@ static ui_extendedfuncs_t gExtendedfuncs = {
 	pfnParseFileSafe,
 	NET_AdrToString,
 	NET_CompareAdrSort,
+	pfnOpenUrlInBrowser,
 };
 
 static const ui_gl_functions gUiGlFuncs = {

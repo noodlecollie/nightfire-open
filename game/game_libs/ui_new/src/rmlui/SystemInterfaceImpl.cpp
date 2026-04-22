@@ -1,6 +1,53 @@
 #include "rmlui/SystemInterfaceImpl.h"
+#include <RmlUi/Core/StringUtilities.h>
 #include "EnginePublicAPI/cvardef.h"
+#include "EngineInternalAPI/cursor_type.h"
 #include "udll_int.h"
+
+static VGUI_DefaultCursor StringToCursor(const Rml::String& cursor_name)
+{
+	if ( cursor_name.empty() || cursor_name == "arrow" )
+	{
+		return VGUI_DefaultCursor::dc_arrow;
+	}
+
+	if ( cursor_name == "move" )
+	{
+		return VGUI_DefaultCursor::dc_sizeall;
+	}
+
+	if ( cursor_name == "pointer" )
+	{
+		return VGUI_DefaultCursor::dc_hand;
+	}
+
+	if ( cursor_name == "resize" )
+	{
+		return VGUI_DefaultCursor::dc_sizeall;
+	}
+
+	if ( cursor_name == "cross" )
+	{
+		return VGUI_DefaultCursor::dc_crosshair;
+	}
+
+	if ( cursor_name == "text" )
+	{
+		return VGUI_DefaultCursor::dc_ibeam;
+	}
+
+	if ( cursor_name == "unavailable" )
+	{
+		return VGUI_DefaultCursor::dc_no;
+	}
+
+	if ( Rml::StringUtilities::StartsWith(cursor_name, "rmlui-scroll") )
+	{
+		return VGUI_DefaultCursor::dc_arrow;
+	}
+
+	return VGUI_DefaultCursor::dc_arrow;
+}
 
 SystemInterfaceImpl::SystemInterfaceImpl(RmlUiBackend* backend) :
 	m_Backend(backend)
@@ -25,9 +72,9 @@ double SystemInterfaceImpl::GetElapsedTime()
 	return gpGlobals->time;
 }
 
-void SystemInterfaceImpl::SetMouseCursor(const Rml::String& /* cursor_name */)
+void SystemInterfaceImpl::SetMouseCursor(const Rml::String& cursor_name)
 {
-	// TODO: Engine needs to have this implemented first.
+	gEngfuncs.pfnSetCursor(StringToCursor(cursor_name));
 }
 
 void SystemInterfaceImpl::SetClipboardText(const Rml::String& /* text */)
