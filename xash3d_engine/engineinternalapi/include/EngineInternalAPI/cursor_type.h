@@ -18,18 +18,18 @@ GNU General Public License for more details.
 typedef enum
 {
 	dc_user,
-	dc_none,
-	dc_arrow,
-	dc_ibeam,
-	dc_hourglass,
-	dc_crosshair,
-	dc_up,
-	dc_sizenwse,
-	dc_sizenesw,
-	dc_sizewe,
-	dc_sizens,
-	dc_sizeall,
-	dc_no,
-	dc_hand,
-	dc_last
+	dc_none,  // No cursor
+	dc_arrow,  // Normal arrow pointer
+	dc_ibeam,  // Text cursor
+	dc_hourglass,  // "Busy" hourglass
+	dc_crosshair,  // Precise crosshair
+	dc_up,  // Also arrow, not used
+	dc_sizenwse,  // NW to SE arrows
+	dc_sizenesw,  // NE to SW arrows
+	dc_sizewe,  // West to east arrows
+	dc_sizens,  // North to south arrows
+	dc_sizeall,  // Arrows pointing in all four compass directions
+	dc_no,  // "Disallowed" sign
+	dc_hand,  // Hand with pointing finger
+	dc_last  // End of enum, not a cursor - do not use
 } VGUI_DefaultCursor;

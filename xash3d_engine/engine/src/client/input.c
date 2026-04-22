@@ -131,9 +131,9 @@ void IN_StartupMouse(void)
 	in_mouseinitialized = true;
 }
 
-void GAME_EXPORT IN_SetCursor(void* hCursor)
+void GAME_EXPORT IN_SetCursor(VGUI_DefaultCursor cursor)
 {
-	(void)hCursor;
+	Platform_SetCursorType(cursor);
 }
 
 /*

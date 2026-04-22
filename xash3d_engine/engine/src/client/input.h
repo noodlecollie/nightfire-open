@@ -40,7 +40,7 @@ void IN_DeactivateMouse(void);
 void IN_MouseSavePos(void);
 void IN_MouseRestorePos(void);
 void IN_ToggleClientMouse(int newstate, int oldstate);
-void IN_SetCursor(void* hCursor);
+void IN_SetCursor(VGUI_DefaultCursor cursor);
 
 uint IN_CollectInputDevices(void);
 void IN_LockInputDevices(qboolean lock);
@@ -76,7 +76,8 @@ void Touch_AddClientButton(
 	byte* color,
 	int round,
 	float aspect,
-	int flags);
+	int flags
+);
 void Touch_AddDefaultButton(
 	const char* name,
 	const char* texturefile,
@@ -88,7 +89,8 @@ void Touch_AddDefaultButton(
 	byte* color,
 	int round,
 	float aspect,
-	int flags);
+	int flags
+);
 void Touch_WriteConfig(void);
 void Touch_Init(void);
 void Touch_Shutdown(void);
