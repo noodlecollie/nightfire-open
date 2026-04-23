@@ -5,14 +5,26 @@
 #include "EnginePublicAPI/netadr.h"
 #include <memory>
 #include <vector>
+#include <functional>
 
 class ServerModel : public BaseTableModel
 {
 public:
+	enum class SortBy
+	{
+		PING = 0,
+		SERVER_NAME,
+		MAP_NAME,
+		NUM_CLIENTS,
+		ADDRESS,
+	};
+
 	ServerModel();
 
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
 	size_t Rows() const override;
+
+	void Sort(SortBy sortBy);
 
 private:
 	struct Entry
@@ -68,6 +80,8 @@ private:
 			return inner->hasPassword;
 		}
 	};
+
+	static std::function<bool(const EntryPtr&, const EntryPtr&)> GetSortFunction(SortBy sortBy);
 
 	std::vector<EntryPtr> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;

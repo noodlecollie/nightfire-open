@@ -1,6 +1,9 @@
 #include "models/ServerModel.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include <RmlUi/Core/DataStructHandle.h>
+#include "PlatformLib/String.h"
+#include "UIDebug.h"
+#include "udll_int.h"
 
 static constexpr const char* const NAME_SERVER_LIST = "serverList";
 static constexpr const char* const PROP_PING = "ping";
@@ -65,4 +68,58 @@ bool ServerModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 size_t ServerModel::Rows() const
 {
 	return m_Entries.size();
+}
+
+void ServerModel::Sort(SortBy sortBy)
+{
+	std::sort(m_Entries.begin(), m_Entries.end(), GetSortFunction(sortBy));
+}
+
+std::function<bool(const ServerModel::EntryPtr&, const ServerModel::EntryPtr&)> ServerModel::GetSortFunction(
+	SortBy sortBy
+)
+{
+	switch ( sortBy )
+	{
+		case SortBy::PING:
+		{
+			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			{
+				return a.inner->ping < b.inner->ping;
+			};
+		}
+
+		case SortBy::SERVER_NAME:
+		{
+			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			{
+				return PlatformLib_StrCaseCmp(a.inner->serverName.c_str(), b.inner->serverName.c_str()) < 0;
+			};
+		}
+
+		case SortBy::NUM_CLIENTS:
+		{
+			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			{
+				return a.inner->numClients < b.inner->numClients;
+			};
+		}
+
+		case SortBy::ADDRESS:
+		{
+			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			{
+				return gTextfuncs.pfnCompareAdr(&a.inner->address, &b.inner->address) < 0;
+			};
+		}
+
+		case SortBy::MAP_NAME:
+		default:
+		{
+			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			{
+				return PlatformLib_StrCaseCmp(a.inner->mapName.c_str(), b.inner->mapName.c_str()) < 0;
+			};
+		}
+	}
 }
