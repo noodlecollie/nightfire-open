@@ -53,55 +53,65 @@ size_t ServerModel::Rows() const
 	return m_Entries.size();
 }
 
-void ServerModel::Sort(SortBy sortBy)
+void ServerModel::Sort(SortBy sortBy, bool ascending)
 {
-	std::sort(m_Entries.begin(), m_Entries.end(), GetSortFunction(sortBy));
+	std::sort(m_Entries.begin(), m_Entries.end(), GetSortFunction(sortBy, ascending));
+
+	if ( m_ModelHandle )
+	{
+		m_ModelHandle.DirtyVariable(NAME_SERVER_LIST);
+	}
 }
 
-std::function<bool(const ServerModel::EntryPtr&, const ServerModel::EntryPtr&)> ServerModel::GetSortFunction(
-	SortBy sortBy
-)
+std::function<bool(const ServerModel::EntryPtr&, const ServerModel::EntryPtr&)>
+ServerModel::GetSortFunction(SortBy sortBy, bool ascending)
 {
 	switch ( sortBy )
 	{
 		case SortBy::PING:
 		{
-			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				return a.inner->ping < b.inner->ping;
+				const bool result = a.inner->ping < b.inner->ping;
+				return ascending ? result : !result;
 			};
 		}
 
 		case SortBy::SERVER_NAME:
 		{
-			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				return PlatformLib_StrCaseCmp(a.inner->serverName.c_str(), b.inner->serverName.c_str()) < 0;
+				const bool result =
+					PlatformLib_StrCaseCmp(a.inner->serverName.c_str(), b.inner->serverName.c_str()) < 0;
+				return ascending ? result : !result;
 			};
 		}
 
 		case SortBy::NUM_CLIENTS:
 		{
-			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				return a.inner->numClients < b.inner->numClients;
+				const bool result = a.inner->numClients < b.inner->numClients;
+				return ascending ? result : !result;
 			};
 		}
 
 		case SortBy::ADDRESS:
 		{
-			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				return gTextfuncs.pfnCompareAdr(&a.inner->address, &b.inner->address) < 0;
+				const bool result = gTextfuncs.pfnCompareAdr(&a.inner->address, &b.inner->address) < 0;
+				return ascending ? result : !result;
 			};
 		}
 
 		case SortBy::MAP_NAME:
 		default:
 		{
-			return [](const EntryPtr& a, const EntryPtr& b) -> bool
+			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				return PlatformLib_StrCaseCmp(a.inner->mapName.c_str(), b.inner->mapName.c_str()) < 0;
+				const bool result = PlatformLib_StrCaseCmp(a.inner->mapName.c_str(), b.inner->mapName.c_str()) < 0;
+				return ascending ? result : !result;
 			};
 		}
 	}

@@ -24,7 +24,7 @@ public:
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
 	size_t Rows() const override;
 
-	void Sort(SortBy sortBy);
+	void Sort(SortBy sortBy, bool ascending);
 
 private:
 	struct Entry
@@ -81,7 +81,7 @@ private:
 		}
 	};
 
-	static std::function<bool(const EntryPtr&, const EntryPtr&)> GetSortFunction(SortBy sortBy);
+	static std::function<bool(const EntryPtr&, const EntryPtr&)> GetSortFunction(SortBy sortB, bool ascending);
 
 	void AddTestEntries(size_t count);
 
