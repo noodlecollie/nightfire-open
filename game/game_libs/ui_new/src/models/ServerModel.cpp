@@ -1,8 +1,9 @@
 #include "models/ServerModel.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include <RmlUi/Core/DataStructHandle.h>
+#include <RmlUi/Core/StringUtilities.h>
 #include "PlatformLib/String.h"
-#include "UIDebug.h"
+#include "BuildPlatform/Utils.h"
 #include "udll_int.h"
 
 static constexpr const char* const NAME_SERVER_LIST = "serverList";
@@ -16,25 +17,7 @@ static constexpr const char* const PROP_HAS_PASSWORD = "hasPassword";
 ServerModel::ServerModel()
 {
 	// REMOVE ME
-	Entry* entry = new Entry {};
-	entry->serverName = "Test Server";
-	entry->mapName = "dm_island";
-	entry->hasPassword = true;
-	entry->maxClients = 16;
-	entry->numClients = 4;
-	entry->ping = 25;
-
-	m_Entries.push_back(EntryPtr {std::unique_ptr<Entry>(entry)});
-
-	entry = new Entry {};
-	entry->serverName = "AAA Test Server";
-	entry->mapName = "dm_power";
-	entry->hasPassword = true;
-	entry->maxClients = 20;
-	entry->numClients = 1;
-	entry->ping = 40;
-
-	m_Entries.push_back(EntryPtr {std::unique_ptr<Entry>(entry)});
+	AddTestEntries(24);
 }
 
 bool ServerModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
@@ -121,5 +104,28 @@ std::function<bool(const ServerModel::EntryPtr&, const ServerModel::EntryPtr&)> 
 				return PlatformLib_StrCaseCmp(a.inner->mapName.c_str(), b.inner->mapName.c_str()) < 0;
 			};
 		}
+	}
+}
+
+void ServerModel::AddTestEntries(size_t count)
+{
+	static const char* const MAPS[] = {
+		"dm_power",
+		"dm_japan",
+		"dm_casino",
+		"dm_island",
+	};
+
+	for ( size_t index = 0; index < count; ++index )
+	{
+		Entry* entry = new Entry {};
+		Rml::FormatString(entry->serverName, "Test Server %zu", m_Entries.size() + 1);
+		entry->mapName = MAPS[gEngfuncs.pfnRandomLong(0, SIZE_OF_ARRAY(MAPS) - 1)];
+		entry->hasPassword = gEngfuncs.pfnRandomLong(0, 1) == 0;
+		entry->maxClients = gEngfuncs.pfnRandomLong(8, 32);
+		entry->numClients = gEngfuncs.pfnRandomLong(0, entry->maxClients);
+		entry->ping = gEngfuncs.pfnRandomLong(5, 200);
+
+		m_Entries.push_back(EntryPtr {std::unique_ptr<Entry>(entry)});
 	}
 }

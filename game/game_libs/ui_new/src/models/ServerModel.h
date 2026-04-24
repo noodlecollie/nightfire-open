@@ -83,6 +83,8 @@ private:
 
 	static std::function<bool(const EntryPtr&, const EntryPtr&)> GetSortFunction(SortBy sortBy);
 
+	void AddTestEntries(size_t count);
+
 	std::vector<EntryPtr> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;
 };
