@@ -13,6 +13,91 @@ static constexpr const char* const PROP_MAX_CLIENTS = "maxClients";
 static constexpr const char* const PROP_SERVER_NAME = "serverName";
 static constexpr const char* const PROP_MAP_NAME = "mapName";
 static constexpr const char* const PROP_HAS_PASSWORD = "hasPassword";
+static constexpr const char* const SORT_PING = "ping";
+static constexpr const char* const SORT_ADDRESS = "address";
+static constexpr const char* const SORT_MAP_NAME = "map";
+static constexpr const char* const SORT_SERVER_NAME = "name";
+static constexpr const char* const SORT_NUM_CLIENTS = "players";
+
+static const std::pair<ServerModel::SortType, Rml::String> SORT_TYPE_STRINGS[] = {
+	{ServerModel::SortType::PING, SORT_PING},
+	{ServerModel::SortType::ADDRESS, SORT_ADDRESS},
+	{ServerModel::SortType::MAP_NAME, SORT_MAP_NAME},
+	{ServerModel::SortType::SERVER_NAME, SORT_SERVER_NAME},
+	{ServerModel::SortType::NUM_CLIENTS, SORT_NUM_CLIENTS},
+};
+
+bool ServerModel::SortTypeToString(SortType sortType, Rml::String& out)
+{
+	for ( size_t index = 0; index < SIZE_OF_ARRAY(SORT_TYPE_STRINGS); ++index )
+	{
+		if ( SORT_TYPE_STRINGS[index].first == sortType )
+		{
+			out = SORT_TYPE_STRINGS[index].second;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ServerModel::SortTypeFromString(const Rml::String& str, SortType& out)
+{
+	for ( size_t index = 0; index < SIZE_OF_ARRAY(SORT_TYPE_STRINGS); ++index )
+	{
+		if ( SORT_TYPE_STRINGS[index].second == str )
+		{
+			out = SORT_TYPE_STRINGS[index].first;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ServerModel::SortTypeToString(SortType sortType, bool ascending, Rml::String& out)
+{
+	Rml::String sortTypeStr;
+
+	if ( !SortTypeToString(sortType, sortTypeStr) )
+	{
+		return false;
+	}
+
+	Rml::FormatString(out, "%s-%s", sortTypeStr.c_str(), ascending ? "asc" : "desc");
+	return true;
+}
+
+bool ServerModel::SortTypeFromString(const Rml::String& str, SortType& outType, bool& outAscending)
+{
+	Rml::String::size_type dashPos = str.find('-');
+
+	if ( dashPos == Rml::String::npos )
+	{
+		return false;
+	}
+
+	if ( !SortTypeFromString(str.substr(0, dashPos), outType) )
+	{
+		return false;
+	}
+
+	Rml::String ascStr = str.substr(dashPos + 1);
+
+	if ( ascStr == "asc" )
+	{
+		outAscending = true;
+		return true;
+	}
+
+	if ( ascStr == "desc" )
+	{
+		outAscending = false;
+		return true;
+	}
+
+	return false;
+}
 
 ServerModel::ServerModel()
 {
@@ -53,7 +138,7 @@ size_t ServerModel::Rows() const
 	return m_Entries.size();
 }
 
-void ServerModel::Sort(SortBy sortBy, bool ascending)
+void ServerModel::Sort(SortType sortBy, bool ascending)
 {
 	std::sort(m_Entries.begin(), m_Entries.end(), GetSortFunction(sortBy, ascending));
 
@@ -64,11 +149,11 @@ void ServerModel::Sort(SortBy sortBy, bool ascending)
 }
 
 std::function<bool(const ServerModel::EntryPtr&, const ServerModel::EntryPtr&)>
-ServerModel::GetSortFunction(SortBy sortBy, bool ascending)
+ServerModel::GetSortFunction(SortType sortBy, bool ascending)
 {
 	switch ( sortBy )
 	{
-		case SortBy::PING:
+		case SortType::PING:
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
@@ -77,7 +162,7 @@ ServerModel::GetSortFunction(SortBy sortBy, bool ascending)
 			};
 		}
 
-		case SortBy::SERVER_NAME:
+		case SortType::SERVER_NAME:
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
@@ -87,7 +172,7 @@ ServerModel::GetSortFunction(SortBy sortBy, bool ascending)
 			};
 		}
 
-		case SortBy::NUM_CLIENTS:
+		case SortType::NUM_CLIENTS:
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
@@ -96,7 +181,7 @@ ServerModel::GetSortFunction(SortBy sortBy, bool ascending)
 			};
 		}
 
-		case SortBy::ADDRESS:
+		case SortType::ADDRESS:
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
@@ -105,7 +190,7 @@ ServerModel::GetSortFunction(SortBy sortBy, bool ascending)
 			};
 		}
 
-		case SortBy::MAP_NAME:
+		case SortType::MAP_NAME:
 		default:
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool

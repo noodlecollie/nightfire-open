@@ -10,21 +10,26 @@
 class ServerModel : public BaseTableModel
 {
 public:
-	enum class SortBy
+	enum class SortType
 	{
-		PING = 0,
+		PING,
 		SERVER_NAME,
 		MAP_NAME,
 		NUM_CLIENTS,
 		ADDRESS,
 	};
 
+	static bool SortTypeToString(SortType sortType, Rml::String& out);
+	static bool SortTypeFromString(const Rml::String& str, SortType& out);
+	static bool SortTypeToString(SortType sortType, bool ascending, Rml::String& out);
+	static bool SortTypeFromString(const Rml::String& str, SortType& outType, bool& outAscending);
+
 	ServerModel();
 
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
 	size_t Rows() const override;
 
-	void Sort(SortBy sortBy, bool ascending);
+	void Sort(SortType sortBy, bool ascending);
 
 private:
 	struct Entry
@@ -81,7 +86,7 @@ private:
 		}
 	};
 
-	static std::function<bool(const EntryPtr&, const EntryPtr&)> GetSortFunction(SortBy sortB, bool ascending);
+	static std::function<bool(const EntryPtr&, const EntryPtr&)> GetSortFunction(SortType sortBy, bool ascending);
 
 	void AddTestEntries(size_t count);
 

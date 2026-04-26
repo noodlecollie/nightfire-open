@@ -1,15 +1,8 @@
 #include "menus/MultiplayerMenu.h"
 #include "rmlui/RmlUiBackend.h"
 
-static constexpr const char* const NAME_SORT_COLUMN = "sortColumn";
-static constexpr const char* const SORT_NAME_DESC = "name-desc";
-static constexpr const char* const SORT_NAME_ASC = "name-asc";
-static constexpr const char* const SORT_MAP_DESC = "map-desc";
-static constexpr const char* const SORT_MAP_ASC = "map-asc";
-static constexpr const char* const SORT_PLAYERS_DESC = "players-desc";
-static constexpr const char* const SORT_PLAYERS_ASC = "players-asc";
-static constexpr const char* const SORT_PING_DESC = "ping-desc";
-static constexpr const char* const SORT_PING_ASC = "ping-asc";
+static constexpr const char* const NAME_SORT_TYPE = "sortType";
+static constexpr const char* const EVENT_SORT = "sort";
 
 MultiplayerMenu::MultiplayerMenu() :
 	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
@@ -25,7 +18,8 @@ bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 		return false;
 	}
 
-	if ( !constructor.Bind(NAME_SORT_COLUMN, &m_PageModel.sortColumn) )
+	if ( !constructor.Bind(NAME_SORT_TYPE, &m_PageModel.sortType) ||
+		 !constructor.BindEventCallback(EVENT_SORT, &MultiplayerMenu::HandleColumnSortRequested, this) )
 	{
 		return false;
 	}
@@ -77,41 +71,9 @@ void MultiplayerMenu::HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event
 
 void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
 {
-	bool didSort = true;
+	ServerModel::SortType newSortBy = ServerModel::SortType::PING;
 
-	if ( sortTypeStr == SORT_NAME_ASC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::SERVER_NAME, true);
-	}
-	else if ( sortTypeStr == SORT_NAME_DESC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::SERVER_NAME, false);
-	}
-	else if ( sortTypeStr == SORT_MAP_ASC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::MAP_NAME, true);
-	}
-	else if ( sortTypeStr == SORT_MAP_DESC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::MAP_NAME, false);
-	}
-	else if ( sortTypeStr == SORT_PLAYERS_ASC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::NUM_CLIENTS, true);
-	}
-	else if ( sortTypeStr == SORT_PLAYERS_DESC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::NUM_CLIENTS, false);
-	}
-	else if ( sortTypeStr == SORT_PING_ASC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::PING, true);
-	}
-	else if ( sortTypeStr == SORT_PING_DESC )
-	{
-		m_ServerModel.Sort(ServerModel::SortBy::PING, false);
-	}
-	else
+	if ( !ServerModel::SortTypeFromString(sortTypeStr, newSortBy) )
 	{
 		Rml::Log::Message(
 			Rml::Log::Type::LT_WARNING,
@@ -119,16 +81,40 @@ void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
 			sortTypeStr.c_str()
 		);
 
-		didSort = false;
+		return;
 	}
 
-	if ( didSort )
-	{
-		m_PageModel.sortColumn = sortTypeStr;
+	// If the sort type has changed, re-sort ascending with the new type.
+	// If it hasn't changed, re-sort with the inverse direction.
 
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_SORT_COLUMN);
-		}
+	if ( m_PageModel.sortType.empty() || m_PageModel.sortBy != newSortBy )
+	{
+		m_PageModel.sortAscending = true;
+		m_PageModel.sortBy = newSortBy;
+	}
+	else
+	{
+		m_PageModel.sortAscending = !m_PageModel.sortAscending;
+	}
+
+	m_ServerModel.Sort(m_PageModel.sortBy, m_PageModel.sortAscending);
+	UpdateSortTypeVariable();
+}
+
+void MultiplayerMenu::UpdateSortTypeVariable()
+{
+	Rml::String newStr;
+
+	if ( !ServerModel::SortTypeToString(m_PageModel.sortBy, m_PageModel.sortAscending, newStr) )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	m_PageModel.sortType = newStr;
+
+	if ( m_ModelHandle )
+	{
+		m_ModelHandle.DirtyVariable(NAME_SORT_TYPE);
 	}
 }

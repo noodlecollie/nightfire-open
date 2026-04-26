@@ -19,12 +19,16 @@ protected:
 private:
 	struct PageModel
 	{
-		Rml::String sortColumn;
+		Rml::String sortType;
+
+		ServerModel::SortType sortBy = ServerModel::SortType::PING;
+		bool sortAscending = true;
 	};
 
 	void AddServerToList(const netadr_t& address, Rml::String&& info);
 	void HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args);
 	void ReSortServerModel(const Rml::String& sortTypeStr);
+	void UpdateSortTypeVariable();
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	ServerModel m_ServerModel;
