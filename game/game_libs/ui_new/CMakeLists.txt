@@ -82,6 +82,8 @@ set(SOURCES_UI
 	src/templatebindings/OptionsTabBarDataBinding.h
 	src/templatebindings/OptionsTabBarDataBinding.cpp
 	src/utils/InFilePtr.h
+	src/utils/InfoBuffer.h
+	src/utils/InfoBuffer.cpp
 	src/udll_int.h
 	src/udll_int.cpp
 	src/UIDebug.h

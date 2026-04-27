@@ -4,6 +4,7 @@
 #include <RmlUi/Core/StringUtilities.h>
 #include "PlatformLib/String.h"
 #include "BuildPlatform/Utils.h"
+#include "utils/InfoBuffer.h"
 #include "udll_int.h"
 
 static constexpr const char* const NAME_SERVER_LIST = "serverList";
@@ -138,6 +139,32 @@ size_t ServerModel::Rows() const
 	return m_Entries.size();
 }
 
+void ServerModel::Add(const netadr_t& address, Rml::String&& info)
+{
+	if ( ContainsServer(address, info) )
+	{
+		return;
+	}
+
+	std::unique_ptr<Entry> entry(new Entry {});
+	entry->serverInfoStr = std::move(info);
+	entry->address = address;
+
+	entry->serverName = Info_ValueStrForKey(entry->serverInfoStr.c_str(), "host");
+	entry->mapName = Info_ValueStrForKey(entry->serverInfoStr.c_str(), "map");
+	entry->addressString = gTextfuncs.pfnAdrToString(entry->address);
+
+	const int numClients = atoi(Info_ValuePtrForKey(entry->serverInfoStr.c_str(), "numcl"));
+	entry->numClients = static_cast<size_t>(std::max<int>(numClients, 0));
+
+	const int maxClients = atoi(Info_ValuePtrForKey(entry->serverInfoStr.c_str(), "maxcl"));
+	entry->maxClients = static_cast<size_t>(std::max<int>(maxClients, 0));
+
+	entry->hasPassword = strcmp(Info_ValuePtrForKey(entry->serverInfoStr.c_str(), "password"), "1") == 0;
+
+	m_Entries.push_back(EntryPtr {std::move(entry)});
+}
+
 void ServerModel::Sort(SortType sortBy, bool ascending)
 {
 	std::sort(m_Entries.begin(), m_Entries.end(), GetSortFunction(sortBy, ascending));
@@ -223,4 +250,25 @@ void ServerModel::AddTestEntries(size_t count)
 
 		m_Entries.push_back(EntryPtr {std::unique_ptr<Entry>(entry)});
 	}
+}
+
+bool ServerModel::ContainsServer(const netadr_t& address, const Rml::String& info) const
+{
+	for ( const EntryPtr& entry : m_Entries )
+	{
+		if ( gTextfuncs.pfnCompareAdr(&address, &entry.inner->address) )
+		{
+			return true;
+		}
+	}
+
+	for ( const EntryPtr& entry : m_Entries )
+	{
+		if ( info == entry.inner->serverInfoStr )
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

@@ -29,18 +29,24 @@ public:
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
 	size_t Rows() const override;
 
+	void Add(const netadr_t& address, Rml::String&& info);
 	void Sort(SortType sortBy, bool ascending);
 
 private:
 	struct Entry
 	{
 		netadr_t address;
+		Rml::String addressString;
 		size_t ping = 0;
 		size_t numClients = 0;
 		size_t maxClients = 0;
 		Rml::String serverName;
 		Rml::String mapName;
 		bool hasPassword = false;
+
+		// For quickly determining whether this server matches
+		// another incoming one:
+		Rml::String serverInfoStr;
 
 		Entry()
 		{
@@ -89,6 +95,7 @@ private:
 	static std::function<bool(const EntryPtr&, const EntryPtr&)> GetSortFunction(SortType sortBy, bool ascending);
 
 	void AddTestEntries(size_t count);
+	bool ContainsServer(const netadr_t& address, const Rml::String& info) const;
 
 	std::vector<EntryPtr> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;
