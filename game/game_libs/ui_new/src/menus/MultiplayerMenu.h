@@ -27,7 +27,8 @@ private:
 
 	void AddServerToList(const netadr_t& address, Rml::String&& info);
 	void HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args);
-	void ReSortServerModel(const Rml::String& sortTypeStr);
+	void HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	void ReSortServerModel(const Rml::String& sortTypeStr = Rml::String());
 	void UpdateSortTypeVariable();
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;

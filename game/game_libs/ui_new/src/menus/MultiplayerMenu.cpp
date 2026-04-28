@@ -3,11 +3,13 @@
 
 static constexpr const char* const NAME_SORT_TYPE = "sortType";
 static constexpr const char* const EVENT_SORT = "sort";
+static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
 
 MultiplayerMenu::MultiplayerMenu() :
 	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
 	m_MenuFrameDataBinding(this)
 {
+	ReSortServerModel();
 }
 
 bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -46,9 +48,9 @@ void MultiplayerMenu::OnBeginDocumentUnloaded()
 	MenuPage::OnBeginDocumentUnloaded();
 }
 
-void MultiplayerMenu::AddServerToList(const netadr_t& /* address */, Rml::String&& /* info */)
+void MultiplayerMenu::AddServerToList(const netadr_t& address, Rml::String&& info)
 {
-	// TODO
+	m_ServerModel.Add(address, std::move(info));
 }
 
 void MultiplayerMenu::HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
@@ -69,32 +71,40 @@ void MultiplayerMenu::HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event
 	ReSortServerModel(sortType);
 }
 
+void MultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+{
+	// TODO
+}
+
 void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
 {
-	ServerModel::SortType newSortBy = ServerModel::SortType::PING;
-
-	if ( !ServerModel::SortTypeFromString(sortTypeStr, newSortBy) )
+	if ( !sortTypeStr.empty() )
 	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"MultiplayerMenu::ReSortServerModel: Unrecognised sort type \"%s\"",
-			sortTypeStr.c_str()
-		);
+		ServerModel::SortType newSortBy = ServerModel::SortType::PING;
 
-		return;
-	}
+		if ( !ServerModel::SortTypeFromString(sortTypeStr, newSortBy) )
+		{
+			Rml::Log::Message(
+				Rml::Log::Type::LT_WARNING,
+				"MultiplayerMenu::ReSortServerModel: Unrecognised sort type \"%s\"",
+				sortTypeStr.c_str()
+			);
 
-	// If the sort type has changed, re-sort ascending with the new type.
-	// If it hasn't changed, re-sort with the inverse direction.
+			return;
+		}
 
-	if ( m_PageModel.sortType.empty() || m_PageModel.sortBy != newSortBy )
-	{
-		m_PageModel.sortAscending = true;
-		m_PageModel.sortBy = newSortBy;
-	}
-	else
-	{
-		m_PageModel.sortAscending = !m_PageModel.sortAscending;
+		// If the sort type has changed, re-sort ascending with the new type.
+		// If it hasn't changed, re-sort with the inverse direction.
+
+		if ( m_PageModel.sortType.empty() || m_PageModel.sortBy != newSortBy )
+		{
+			m_PageModel.sortAscending = true;
+			m_PageModel.sortBy = newSortBy;
+		}
+		else
+		{
+			m_PageModel.sortAscending = !m_PageModel.sortAscending;
+		}
 	}
 
 	m_ServerModel.Sort(m_PageModel.sortBy, m_PageModel.sortAscending);
