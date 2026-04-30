@@ -12,6 +12,8 @@ class MultiplayerMenu : public MenuPage
 public:
 	MultiplayerMenu();
 
+	void Update(float currentTime) override;
+
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 	void OnEndDocumentLoaded() override;
@@ -36,6 +38,7 @@ private:
 	void HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void ReSortServerModel(const Rml::String& sortTypeStr = Rml::String());
 	void UpdateSortTypeVariable();
+	void RefreshServersLocal();
 
 	EventListenerObject m_ShowHideEventListener;
 	MenuFrameDataBinding m_MenuFrameDataBinding;

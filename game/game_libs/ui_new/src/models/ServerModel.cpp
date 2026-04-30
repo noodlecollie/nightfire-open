@@ -103,8 +103,6 @@ bool ServerModel::SortTypeFromString(const Rml::String& str, SortType& outType, 
 
 ServerModel::ServerModel()
 {
-	// REMOVE ME
-	AddTestEntries(24);
 }
 
 bool ServerModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
@@ -141,11 +139,11 @@ size_t ServerModel::Rows() const
 	return m_Entries.size();
 }
 
-void ServerModel::Add(const netadr_t& address, Rml::String&& info)
+bool ServerModel::Add(const netadr_t& address, Rml::String&& info)
 {
 	if ( ContainsServer(address, info) )
 	{
-		return;
+		return false;
 	}
 
 	std::unique_ptr<Entry> entry(new Entry {});
@@ -166,6 +164,7 @@ void ServerModel::Add(const netadr_t& address, Rml::String&& info)
 	entry->hasPassword = strcmp(Info_ValuePtrForKey(entry->serverInfoStr.c_str(), "password"), "1") == 0;
 
 	m_Entries.push_back(EntryPtr {std::move(entry)});
+	return true;
 }
 
 void ServerModel::Sort(SortType sortBy, bool ascending)
@@ -183,15 +182,14 @@ void ServerModel::Sort(SortType sortBy, bool ascending)
 	}
 }
 
-bool ServerModel::GetAddress(size_t row, netadr_t& out) const
+void ServerModel::Clear()
 {
-	if ( row >= m_Entries.size() )
-	{
-		return false;
-	}
+	m_Entries.clear();
 
-	out = m_Entries[row].inner->address;
-	return true;
+	if ( m_ModelHandle )
+	{
+		m_ModelHandle.DirtyVariable(NAME_SERVER_LIST);
+	}
 }
 
 bool ServerModel::GetRowForAddress(const netadr_t& address, size_t& out) const
@@ -208,6 +206,11 @@ bool ServerModel::GetRowForAddress(const netadr_t& address, size_t& out) const
 	}
 
 	return false;
+}
+
+const ServerModel::Entry* ServerModel::GetEntry(size_t row) const
+{
+	return row < m_Entries.size() ? m_Entries[row].inner.get() : nullptr;
 }
 
 std::function<bool(const ServerModel::EntryPtr&, const ServerModel::EntryPtr&)>

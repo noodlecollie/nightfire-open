@@ -19,23 +19,6 @@ public:
 		ADDRESS,
 	};
 
-	static bool SortTypeToString(SortType sortType, Rml::String& out);
-	static bool SortTypeFromString(const Rml::String& str, SortType& out);
-	static bool SortTypeToString(SortType sortType, bool ascending, Rml::String& out);
-	static bool SortTypeFromString(const Rml::String& str, SortType& outType, bool& outAscending);
-
-	ServerModel();
-
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
-	size_t Rows() const override;
-
-	void Add(const netadr_t& address, Rml::String&& info);
-	void Sort(SortType sortBy, bool ascending);
-
-	bool GetAddress(size_t row, netadr_t& out) const;
-	bool GetRowForAddress(const netadr_t& address, size_t& out) const;
-
-private:
 	struct Entry
 	{
 		size_t arrayIndex = 0;
@@ -58,6 +41,24 @@ private:
 		}
 	};
 
+	static bool SortTypeToString(SortType sortType, Rml::String& out);
+	static bool SortTypeFromString(const Rml::String& str, SortType& out);
+	static bool SortTypeToString(SortType sortType, bool ascending, Rml::String& out);
+	static bool SortTypeFromString(const Rml::String& str, SortType& outType, bool& outAscending);
+
+	ServerModel();
+
+	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
+	size_t Rows() const override;
+
+	bool Add(const netadr_t& address, Rml::String&& info);
+	void Sort(SortType sortBy, bool ascending);
+	void Clear();
+
+	bool GetRowForAddress(const netadr_t& address, size_t& out) const;
+	const Entry* GetEntry(size_t row) const;
+
+private:
 	// A thin wrapper around the entry, so that we can reorder the list
 	// without incurring a lot of copying.
 	struct EntryPtr

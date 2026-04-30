@@ -1,6 +1,7 @@
 #include "menus/MultiplayerMenu.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include "rmlui/RmlUiBackend.h"
+#include "udll_int.h"
 
 static constexpr const char* const NAME_SORT_TYPE = "sortType";
 static constexpr const char* const NAME_SELECTED_ROW = "selectedRow";
@@ -14,6 +15,11 @@ MultiplayerMenu::MultiplayerMenu() :
 	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents)
 {
 	ReSortServerModel();
+}
+
+void MultiplayerMenu::Update(float /* currentTime */)
+{
+	// TODO: Periodic refresh of servers in the model
 }
 
 bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -50,6 +56,7 @@ void MultiplayerMenu::OnEndDocumentLoaded()
 
 	Rml::ElementDocument* document = Document();
 
+	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
 	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
 }
 
@@ -57,9 +64,9 @@ void MultiplayerMenu::OnBeginDocumentUnloaded()
 {
 	Rml::ElementDocument* document = Document();
 
+	document->RemoveEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
 	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
 
-	RmlUiBackend::StaticInstance().ClearDiscoveredServerCallback();
 	MenuPage::OnBeginDocumentUnloaded();
 }
 
@@ -67,8 +74,26 @@ void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)
 {
 	switch ( event.GetId() )
 	{
+		case Rml::EventId::Show:
+		{
+			RmlUiBackend::StaticInstance().SetDiscoveredServerCallback(
+				[this](const netadr_t& address, Rml::String&& info)
+				{
+					AddServerToList(address, std::move(info));
+				}
+			);
+
+			// TODO: Do we want an option for internet servers?
+			// It'd be good to implement the logic at least, even if
+			// we don't allow the user to query them yet.
+			RefreshServersLocal();
+			break;
+		};
+
 		case Rml::EventId::Hide:
 		{
+			RmlUiBackend::StaticInstance().ClearDiscoveredServerCallback();
+
 			m_PageModel.selectedRow = INVALID_ROW;
 
 			if ( m_ModelHandle )
@@ -88,7 +113,10 @@ void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)
 
 void MultiplayerMenu::AddServerToList(const netadr_t& address, Rml::String&& info)
 {
-	m_ServerModel.Add(address, std::move(info));
+	if ( m_ServerModel.Add(address, std::move(info)) )
+	{
+		ReSortServerModel();
+	}
 }
 
 void MultiplayerMenu::HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
@@ -142,7 +170,32 @@ void MultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::E
 		return;
 	}
 
-	// TODO
+	const ServerModel::Entry* entry = m_ServerModel.GetEntry(m_PageModel.selectedRow);
+
+	if ( !entry )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	if ( entry->hasPassword )
+	{
+		// TODO: Modal to enter password
+		ASSERT(false);
+		return;
+	}
+
+	// No password required.
+	gEngfuncs.pfnCvarSetString("password", "");
+
+	// TODO: Do we need to cater for legacy servers here?
+	// I don't think so at the moment.
+	Rml::String connectCmd;
+	Rml::FormatString(connectCmd, "connect %s", gTextfuncs.pfnAdrToString(entry->address));
+
+	gEngfuncs.pfnClientCmd(0, connectCmd.c_str());
+
+	// TODO: Init up the connection progress dialogue and pop this menu.
 }
 
 void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
@@ -181,7 +234,13 @@ void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
 
 	if ( m_PageModel.selectedRow >= 0 )
 	{
-		reselectRow = m_ServerModel.GetAddress(static_cast<size_t>(m_PageModel.selectedRow), selectedAddress);
+		const ServerModel::Entry* entry = m_ServerModel.GetEntry(m_PageModel.selectedRow);
+
+		if ( entry )
+		{
+			selectedAddress = entry->address;
+			reselectRow = true;
+		}
 	}
 
 	m_ServerModel.Sort(m_PageModel.sortBy, m_PageModel.sortAscending);
@@ -216,4 +275,17 @@ void MultiplayerMenu::UpdateSortTypeVariable()
 	{
 		m_ModelHandle.DirtyVariable(NAME_SORT_TYPE);
 	}
+}
+
+void MultiplayerMenu::RefreshServersLocal()
+{
+	m_ServerModel.Clear();
+	m_PageModel.selectedRow = INVALID_ROW;
+
+	if ( m_ModelHandle )
+	{
+		m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
+	}
+
+	gEngfuncs.pfnClientCmd(false, "localservers");
 }
