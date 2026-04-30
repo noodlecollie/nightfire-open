@@ -1,13 +1,17 @@
 #include "menus/MultiplayerMenu.h"
+#include <RmlUi/Core/ElementDocument.h>
 #include "rmlui/RmlUiBackend.h"
 
 static constexpr const char* const NAME_SORT_TYPE = "sortType";
+static constexpr const char* const NAME_SELECTED_ROW = "selectedRow";
 static constexpr const char* const EVENT_SORT = "sort";
+static constexpr const char* const EVENT_SELECT_SERVER = "selectServer";
 static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
 
 MultiplayerMenu::MultiplayerMenu() :
 	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
-	m_MenuFrameDataBinding(this)
+	m_MenuFrameDataBinding(this),
+	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents)
 {
 	ReSortServerModel();
 }
@@ -21,7 +25,10 @@ bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 	}
 
 	if ( !constructor.Bind(NAME_SORT_TYPE, &m_PageModel.sortType) ||
-		 !constructor.BindEventCallback(EVENT_SORT, &MultiplayerMenu::HandleColumnSortRequested, this) )
+		 !constructor.Bind(NAME_SELECTED_ROW, &m_PageModel.selectedRow) ||
+		 !constructor.BindEventCallback(EVENT_SORT, &MultiplayerMenu::HandleColumnSortRequested, this) ||
+		 !constructor.BindEventCallback(EVENT_SELECT_SERVER, &MultiplayerMenu::HandleSelectServer, this) ||
+		 !constructor.BindEventCallback(EVENT_CONNECT, &MultiplayerMenu::HandleConnectToSelectedServer, this) )
 	{
 		return false;
 	}
@@ -40,12 +47,43 @@ void MultiplayerMenu::OnEndDocumentLoaded()
 			AddServerToList(address, std::move(info));
 		}
 	);
+
+	Rml::ElementDocument* document = Document();
+
+	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
 }
 
 void MultiplayerMenu::OnBeginDocumentUnloaded()
 {
+	Rml::ElementDocument* document = Document();
+
+	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
+
 	RmlUiBackend::StaticInstance().ClearDiscoveredServerCallback();
 	MenuPage::OnBeginDocumentUnloaded();
+}
+
+void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)
+{
+	switch ( event.GetId() )
+	{
+		case Rml::EventId::Hide:
+		{
+			m_PageModel.selectedRow = INVALID_ROW;
+
+			if ( m_ModelHandle )
+			{
+				m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
+			}
+
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
 }
 
 void MultiplayerMenu::AddServerToList(const netadr_t& address, Rml::String&& info)
@@ -71,8 +109,39 @@ void MultiplayerMenu::HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event
 	ReSortServerModel(sortType);
 }
 
+void MultiplayerMenu::HandleSelectServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+{
+	if ( args.empty() )
+	{
+		return;
+	}
+
+	const Rml::Variant& indexArg = args[0];
+	int index;
+
+	if ( !indexArg.GetInto(index) )
+	{
+		return;
+	}
+
+	if ( m_PageModel.selectedRow != index )
+	{
+		m_PageModel.selectedRow = index;
+
+		if ( m_ModelHandle )
+		{
+			m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
+		}
+	}
+}
+
 void MultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
+	if ( m_PageModel.selectedRow == INVALID_ROW )
+	{
+		return;
+	}
+
 	// TODO
 }
 
@@ -107,8 +176,28 @@ void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
 		}
 	}
 
+	bool reselectRow = false;
+	netadr_t selectedAddress = {};
+
+	if ( m_PageModel.selectedRow >= 0 )
+	{
+		reselectRow = m_ServerModel.GetAddress(static_cast<size_t>(m_PageModel.selectedRow), selectedAddress);
+	}
+
 	m_ServerModel.Sort(m_PageModel.sortBy, m_PageModel.sortAscending);
 	UpdateSortTypeVariable();
+
+	if ( reselectRow )
+	{
+		size_t row = 0;
+		m_PageModel.selectedRow =
+			m_ServerModel.GetRowForAddress(selectedAddress, row) ? static_cast<int>(row) : INVALID_ROW;
+
+		if ( m_ModelHandle )
+		{
+			m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
+		}
+	}
 }
 
 void MultiplayerMenu::UpdateSortTypeVariable()

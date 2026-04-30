@@ -8,6 +8,7 @@
 #include "udll_int.h"
 
 static constexpr const char* const NAME_SERVER_LIST = "serverList";
+static constexpr const char* const PROP_INDEX = "index";
 static constexpr const char* const PROP_PING = "ping";
 static constexpr const char* const PROP_NUM_CLIENTS = "numClients";
 static constexpr const char* const PROP_MAX_CLIENTS = "maxClients";
@@ -115,7 +116,8 @@ bool ServerModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 		return false;
 	}
 
-	if ( !entryType.RegisterMember(PROP_PING, &EntryPtr::GetPing) ||
+	if ( !entryType.RegisterMember(PROP_INDEX, &EntryPtr::GetIndex) ||
+		 !entryType.RegisterMember(PROP_PING, &EntryPtr::GetPing) ||
 		 !entryType.RegisterMember(PROP_NUM_CLIENTS, &EntryPtr::GetNumClients) ||
 		 !entryType.RegisterMember(PROP_MAX_CLIENTS, &EntryPtr::GetMaxClients) ||
 		 !entryType.RegisterMember(PROP_SERVER_NAME, &EntryPtr::GetServerName) ||
@@ -147,6 +149,7 @@ void ServerModel::Add(const netadr_t& address, Rml::String&& info)
 	}
 
 	std::unique_ptr<Entry> entry(new Entry {});
+	entry->arrayIndex = m_Entries.size();
 	entry->serverInfoStr = std::move(info);
 	entry->address = address;
 
@@ -169,23 +172,56 @@ void ServerModel::Sort(SortType sortBy, bool ascending)
 {
 	std::sort(m_Entries.begin(), m_Entries.end(), GetSortFunction(sortBy, ascending));
 
+	for ( size_t index = 0; index < m_Entries.size(); ++index )
+	{
+		m_Entries[index].inner->arrayIndex = index;
+	}
+
 	if ( m_ModelHandle )
 	{
 		m_ModelHandle.DirtyVariable(NAME_SERVER_LIST);
 	}
 }
 
+bool ServerModel::GetAddress(size_t row, netadr_t& out) const
+{
+	if ( row >= m_Entries.size() )
+	{
+		return false;
+	}
+
+	out = m_Entries[row].inner->address;
+	return true;
+}
+
+bool ServerModel::GetRowForAddress(const netadr_t& address, size_t& out) const
+{
+	for ( size_t index = 0; index < m_Entries.size(); ++index )
+	{
+		const EntryPtr& entry = m_Entries[index];
+
+		if ( gTextfuncs.pfnCompareAdr(&entry.inner->address, &address) == 0 )
+		{
+			out = index;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 std::function<bool(const ServerModel::EntryPtr&, const ServerModel::EntryPtr&)>
 ServerModel::GetSortFunction(SortType sortBy, bool ascending)
 {
+	// Ascending = a < b
+	// Descending = a > b
 	switch ( sortBy )
 	{
 		case SortType::PING:
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				const bool result = a.inner->ping < b.inner->ping;
-				return ascending ? result : !result;
+				return ascending ? a.inner->ping < b.inner->ping : a.inner->ping > b.inner->ping;
 			};
 		}
 
@@ -193,9 +229,8 @@ ServerModel::GetSortFunction(SortType sortBy, bool ascending)
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				const bool result =
-					PlatformLib_StrCaseCmp(a.inner->serverName.c_str(), b.inner->serverName.c_str()) < 0;
-				return ascending ? result : !result;
+				const int result = PlatformLib_StrCaseCmp(a.inner->serverName.c_str(), b.inner->serverName.c_str());
+				return ascending ? result < 0 : result > 0;
 			};
 		}
 
@@ -203,8 +238,8 @@ ServerModel::GetSortFunction(SortType sortBy, bool ascending)
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				const bool result = a.inner->numClients < b.inner->numClients;
-				return ascending ? result : !result;
+				return ascending ? a.inner->numClients < b.inner->numClients
+								 : a.inner->numClients > b.inner->numClients;
 			};
 		}
 
@@ -212,8 +247,8 @@ ServerModel::GetSortFunction(SortType sortBy, bool ascending)
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				const bool result = gTextfuncs.pfnCompareAdr(&a.inner->address, &b.inner->address) < 0;
-				return ascending ? result : !result;
+				const int result = gTextfuncs.pfnCompareAdr(&a.inner->address, &b.inner->address);
+				return ascending ? result < 0 : result > 0;
 			};
 		}
 
@@ -222,8 +257,8 @@ ServerModel::GetSortFunction(SortType sortBy, bool ascending)
 		{
 			return [ascending](const EntryPtr& a, const EntryPtr& b) -> bool
 			{
-				const bool result = PlatformLib_StrCaseCmp(a.inner->mapName.c_str(), b.inner->mapName.c_str()) < 0;
-				return ascending ? result : !result;
+				const int result = PlatformLib_StrCaseCmp(a.inner->mapName.c_str(), b.inner->mapName.c_str());
+				return ascending ? result < 0 : result > 0;
 			};
 		}
 	}
@@ -240,31 +275,51 @@ void ServerModel::AddTestEntries(size_t count)
 
 	for ( size_t index = 0; index < count; ++index )
 	{
+		// We have to set up a convincing fake address, or sorting will break.
+		netadr_t address {};
+		memset(&address, 0, sizeof(address));
+		address.ip.ip4.type = NA_IP;
+		address.ip.ip4.ip.bytes[0] = 192;
+		address.ip.ip4.ip.bytes[1] = 168;
+		address.ip.ip4.ip.bytes[2] = 10;
+		address.ip.ip4.ip.bytes[2] = static_cast<uint8_t>(m_Entries.size());
+		address.port = 27015;
+
 		Entry* entry = new Entry {};
+		entry->address = address;
 		Rml::FormatString(entry->serverName, "Test Server %zu", m_Entries.size() + 1);
-		entry->mapName = MAPS[gEngfuncs.pfnRandomLong(0, SIZE_OF_ARRAY(MAPS) - 1)];
+		entry->mapName = MAPS[gEngfuncs.pfnRandomLong(0, SIZE_OF_ARRAY_AS_INT(MAPS) - 1)];
 		entry->hasPassword = gEngfuncs.pfnRandomLong(0, 1) == 0;
 		entry->maxClients = gEngfuncs.pfnRandomLong(8, 32);
-		entry->numClients = gEngfuncs.pfnRandomLong(0, entry->maxClients);
+		entry->numClients = gEngfuncs.pfnRandomLong(0, static_cast<int>(entry->maxClients));
 		entry->ping = gEngfuncs.pfnRandomLong(5, 200);
-
 		m_Entries.push_back(EntryPtr {std::unique_ptr<Entry>(entry)});
 	}
 }
 
 bool ServerModel::ContainsServer(const netadr_t& address, const Rml::String& info) const
 {
-	for ( const EntryPtr& entry : m_Entries )
+	if ( ContainsServer(address) )
 	{
-		if ( gTextfuncs.pfnCompareAdr(&address, &entry.inner->address) )
-		{
-			return true;
-		}
+		return true;
 	}
 
 	for ( const EntryPtr& entry : m_Entries )
 	{
 		if ( info == entry.inner->serverInfoStr )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool ServerModel::ContainsServer(const netadr_t& address) const
+{
+	for ( const EntryPtr& entry : m_Entries )
+	{
+		if ( gTextfuncs.pfnCompareAdr(&address, &entry.inner->address) )
 		{
 			return true;
 		}

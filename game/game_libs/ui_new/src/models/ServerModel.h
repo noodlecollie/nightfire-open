@@ -32,9 +32,13 @@ public:
 	void Add(const netadr_t& address, Rml::String&& info);
 	void Sort(SortType sortBy, bool ascending);
 
+	bool GetAddress(size_t row, netadr_t& out) const;
+	bool GetRowForAddress(const netadr_t& address, size_t& out) const;
+
 private:
 	struct Entry
 	{
+		size_t arrayIndex = 0;
 		netadr_t address;
 		Rml::String addressString;
 		size_t ping = 0;
@@ -61,6 +65,11 @@ private:
 		std::unique_ptr<Entry> inner;
 
 		// RmlUi expects these to be non-const... :c
+		size_t GetIndex()
+		{
+			return inner->arrayIndex;
+		}
+
 		size_t GetPing()
 		{
 			return inner->ping;
@@ -96,6 +105,7 @@ private:
 
 	void AddTestEntries(size_t count);
 	bool ContainsServer(const netadr_t& address, const Rml::String& info) const;
+	bool ContainsServer(const netadr_t& address) const;
 
 	std::vector<EntryPtr> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;
