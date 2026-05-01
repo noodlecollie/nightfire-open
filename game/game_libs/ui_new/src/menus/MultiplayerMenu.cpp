@@ -11,15 +11,18 @@ static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
 
 MultiplayerMenu::MultiplayerMenu() :
 	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
-	m_MenuFrameDataBinding(this),
-	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents)
+	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents),
+	m_MenuFrameDataBinding(this)
 {
 	ReSortServerModel();
 }
 
-void MultiplayerMenu::Update(float /* currentTime */)
+void MultiplayerMenu::Update(float currentTime)
 {
-	// TODO: Periodic refresh of servers in the model
+	if ( m_NextRefreshTime != REFRESH_NEVER && m_NextRefreshTime <= currentTime )
+	{
+		RefreshServersLocal();
+	}
 }
 
 bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -76,6 +79,12 @@ void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)
 	{
 		case Rml::EventId::Show:
 		{
+			// Stop demos to allow network sockets to open
+			if ( gpGlobals->demoplayback && gEngfuncs.pfnGetCvarFloat("cl_background") )
+			{
+				gEngfuncs.pfnClientCmd(0, "stop");
+			}
+
 			RmlUiBackend::StaticInstance().SetDiscoveredServerCallback(
 				[this](const netadr_t& address, Rml::String&& info)
 				{
@@ -83,9 +92,6 @@ void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)
 				}
 			);
 
-			// TODO: Do we want an option for internet servers?
-			// It'd be good to implement the logic at least, even if
-			// we don't allow the user to query them yet.
 			RefreshServersLocal();
 			break;
 		};
@@ -93,14 +99,8 @@ void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)
 		case Rml::EventId::Hide:
 		{
 			RmlUiBackend::StaticInstance().ClearDiscoveredServerCallback();
-
-			m_PageModel.selectedRow = INVALID_ROW;
-
-			if ( m_ModelHandle )
-			{
-				m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
-			}
-
+			m_NextRefreshTime = REFRESH_NEVER;
+			SetSelectedRow(INVALID_ROW);
 			break;
 		}
 
@@ -152,15 +152,7 @@ void MultiplayerMenu::HandleSelectServer(Rml::DataModelHandle, Rml::Event&, cons
 		return;
 	}
 
-	if ( m_PageModel.selectedRow != index )
-	{
-		m_PageModel.selectedRow = index;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
-		}
-	}
+	SetSelectedRow(index);
 }
 
 void MultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
@@ -184,6 +176,8 @@ void MultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::E
 		ASSERT(false);
 		return;
 	}
+
+	m_NextRefreshTime = REFRESH_NEVER;
 
 	// No password required.
 	gEngfuncs.pfnCvarSetString("password", "");
@@ -249,13 +243,7 @@ void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
 	if ( reselectRow )
 	{
 		size_t row = 0;
-		m_PageModel.selectedRow =
-			m_ServerModel.GetRowForAddress(selectedAddress, row) ? static_cast<int>(row) : INVALID_ROW;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
-		}
+		SetSelectedRow(m_ServerModel.GetRowForAddress(selectedAddress, row) ? static_cast<int>(row) : INVALID_ROW);
 	}
 }
 
@@ -280,12 +268,20 @@ void MultiplayerMenu::UpdateSortTypeVariable()
 void MultiplayerMenu::RefreshServersLocal()
 {
 	m_ServerModel.Clear();
-	m_PageModel.selectedRow = INVALID_ROW;
-
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
-	}
-
+	SetSelectedRow(INVALID_ROW);
 	gEngfuncs.pfnClientCmd(false, "localservers");
+	m_NextRefreshTime = gpGlobals->time + REFRESH_INTERVAL_SECS;
+}
+
+void MultiplayerMenu::SetSelectedRow(int index)
+{
+	if ( m_PageModel.selectedRow != index )
+	{
+		m_PageModel.selectedRow = index;
+
+		if ( m_ModelHandle )
+		{
+			m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
+		}
+	}
 }
