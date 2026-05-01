@@ -24,10 +24,11 @@ public:
 private:
 	using MenuVec = std::vector<const MenuDirectoryEntry*>;
 
-	void SetTopDocumentVisible(bool visible);
+	void SetTopDocumentVisible(bool visible, bool clearCurrentRequest = false);
 	void HandleTopMenuRequest(const MenuRequest& request);
 	void HandlePushMenuRequest(const Rml::String& name);
 	void HandlePopMenuRequest(const Rml::String& name);
+	void HandleCutStackMenuRequest(size_t newSize, const Rml::String& name);
 
 	MenuDirectory* m_Directory;
 	MenuVec m_Stack;

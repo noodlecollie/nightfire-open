@@ -2,7 +2,6 @@
 #include "framework/MenuDirectory.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Log.h>
-#include <algorithm>
 #include "UIDebug.h"
 
 MenuStack::MenuStack(MenuDirectory* directory) :
@@ -18,7 +17,7 @@ bool MenuStack::Push(const MenuDirectoryEntry* menu)
 		return false;
 	}
 
-	SetTopDocumentVisible(false);
+	SetTopDocumentVisible(false, true);
 	m_Stack.push_back(menu);
 	SetTopDocumentVisible(true);
 
@@ -33,7 +32,7 @@ const MenuDirectoryEntry* MenuStack::Pop()
 		return nullptr;
 	}
 
-	SetTopDocumentVisible(false);
+	SetTopDocumentVisible(false, true);
 
 	const MenuDirectoryEntry* menu = m_Stack.back();
 	m_Stack.pop_back();
@@ -87,7 +86,7 @@ size_t MenuStack::Size() const
 	return m_Stack.size();
 }
 
-void MenuStack::SetTopDocumentVisible(bool visible)
+void MenuStack::SetTopDocumentVisible(bool visible, bool clearCurrentRequest)
 {
 	if ( m_Stack.empty() )
 	{
@@ -95,6 +94,12 @@ void MenuStack::SetTopDocumentVisible(bool visible)
 	}
 
 	const MenuDirectoryEntry* entry = m_Stack.back();
+
+	if ( clearCurrentRequest )
+	{
+		entry->menuPtr->ClearCurrentRequest();
+	}
+
 	Rml::ElementDocument* document = entry->document;
 
 	if ( !document )
@@ -108,9 +113,6 @@ void MenuStack::SetTopDocumentVisible(bool visible)
 	}
 	else
 	{
-		// If there are any pending requests, cancel them.
-		entry->menuPtr->ClearCurrentRequest();
-
 		document->Hide();
 	}
 }
@@ -142,6 +144,32 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 			}
 
 			HandlePopMenuRequest(menuName);
+			break;
+		}
+
+		case MenuRequestType::CutStack:
+		{
+			ASSERT(!request.args.empty());
+
+			if ( request.args.empty() )
+			{
+				Rml::Log::Message(
+					Rml::Log::Type::LT_WARNING,
+					"Ignoring CutStack menu request with no stack size argument"
+				);
+
+				break;
+			}
+
+			size_t newSize = request.args[0].Get<size_t>();
+			Rml::String menuName;
+
+			if ( request.args.size() > 1 )
+			{
+				request.args[1].GetInto(menuName);
+			}
+
+			HandleCutStackMenuRequest(newSize, menuName);
 			break;
 		}
 
@@ -200,4 +228,36 @@ void MenuStack::HandlePopMenuRequest(const Rml::String& name)
 
 	Pop();
 	Push(entry);
+}
+
+void MenuStack::HandleCutStackMenuRequest(size_t newSize, const Rml::String& menuName)
+{
+	while ( m_Stack.size() > newSize )
+	{
+		SetTopDocumentVisible(false, true);
+		m_Stack.pop_back();
+	}
+
+	if ( menuName.empty() )
+	{
+		SetTopDocumentVisible(true);
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(menuName);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring cut stack operation requesting to swap in non-existent menu \"%s\"",
+			menuName.c_str()
+		);
+
+		return;
+	}
+
+	SetTopDocumentVisible(false, false);
+	m_Stack.push_back(entry);
+	SetTopDocumentVisible(true);
 }

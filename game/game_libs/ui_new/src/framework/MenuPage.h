@@ -21,12 +21,14 @@ protected:
 	void OnBeginDocumentUnloaded() override;
 
 	void RequestPop(Rml::String menuToSwapIn = Rml::String());
+	void RequestCutStack(size_t newSize, Rml::String menuToSwapIn = Rml::String());
 	virtual bool ShouldPop(const Rml::String& menuToSwapIn) const;
 
 private:
 	void ProcessEvent(Rml::Event& event);
 	void HandlePushMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 	void HandlePopMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
+	void HandleCutStack(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 
 	EventListenerObject m_KeyEventListener;
 	bool m_RequestPopOnEscapeKey = true;

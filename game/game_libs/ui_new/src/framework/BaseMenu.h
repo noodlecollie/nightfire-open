@@ -19,8 +19,16 @@ class DocumentObserver;
 
 enum class MenuRequestType
 {
+	// Push a menu onto the stack.
 	PushMenu,
-	PopMenu
+
+	// Pop a menu from the stack, optionally specifying
+	// another to take its place.
+	PopMenu,
+
+	// Cut the stack down to a specific size, and then
+	// optionally push a new menu on top.
+	CutStack,
 };
 
 struct MenuRequest

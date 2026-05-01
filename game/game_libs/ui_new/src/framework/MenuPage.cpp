@@ -3,6 +3,10 @@
 #include <RmlUi/Core/Input.h>
 #include "rmlui/Utils.h"
 
+static constexpr const char* const EVENT_PUSH_MENU = "pushMenu";
+static constexpr const char* const EVENT_POP_MENU = "popMenu";
+static constexpr const char* const EVENT_CUT_STACK = "cutStack";
+
 MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 	BaseMenu(name, rmlFilePath),
 	m_KeyEventListener(this, &MenuPage::ProcessEvent)
@@ -12,8 +16,9 @@ MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 bool MenuPage::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	return BaseMenu::OnSetUpDataModelBindings(constructor) &&
-		constructor.BindEventCallback("pushMenu", &MenuPage::HandlePushMenu, this) &&
-		constructor.BindEventCallback("popMenu", &MenuPage::HandlePopMenu, this);
+		constructor.BindEventCallback(EVENT_PUSH_MENU, &MenuPage::HandlePushMenu, this) &&
+		constructor.BindEventCallback(EVENT_POP_MENU, &MenuPage::HandlePopMenu, this) &&
+		constructor.BindEventCallback(EVENT_CUT_STACK, &MenuPage::HandleCutStack, this);
 }
 
 bool MenuPage::RequestPopOnEscapeKey() const
@@ -85,6 +90,25 @@ void MenuPage::RequestPop(Rml::String menuToSwapIn)
 	SetCurrentRequest(MenuRequestType::PopMenu, args);
 }
 
+void MenuPage::RequestCutStack(size_t newSize, Rml::String menuToSwapIn)
+{
+	if ( !ShouldPop(menuToSwapIn) )
+	{
+		return;
+	}
+
+	Rml::VariantList args;
+
+	args.push_back(Rml::Variant(newSize));
+
+	if ( !menuToSwapIn.empty() )
+	{
+		args.push_back(Rml::Variant(menuToSwapIn));
+	}
+
+	SetCurrentRequest(MenuRequestType::CutStack, args);
+}
+
 bool MenuPage::ShouldPop(const Rml::String&) const
 {
 	return true;
@@ -98,4 +122,9 @@ void MenuPage::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::Vari
 void MenuPage::HandlePopMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
 	SetCurrentRequest(MenuRequestType::PopMenu, args);
+}
+
+void MenuPage::HandleCutStack(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+{
+	SetCurrentRequest(MenuRequestType::CutStack, args);
 }
