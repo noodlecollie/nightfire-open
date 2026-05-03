@@ -65,6 +65,10 @@ private:
 	void ReleaseResources();
 	void RegisterFonts();
 	void RegisterCvars();
+	void RegisterCommands();
+
+	void HandleMenuPushCommand();
+	void HandleMenuPopCommand();
 
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;

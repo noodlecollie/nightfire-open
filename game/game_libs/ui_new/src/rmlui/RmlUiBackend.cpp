@@ -46,6 +46,7 @@ void RmlUiBackend::Initialise()
 	Rml::Initialise();
 	RegisterFonts();
 	RegisterCvars();
+	RegisterCommands();
 	m_MenuDirectory.Populate();
 
 	m_Modifiers = 0;
@@ -433,4 +434,92 @@ void RmlUiBackend::RegisterCvars()
 	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
 
 	m_SystemInterface.RegisterCvars();
+}
+
+void RmlUiBackend::RegisterCommands()
+{
+	gEngfuncs.pfnAddCommand(
+		"menu_push",
+		[]()
+		{
+			StaticInstance().HandleMenuPushCommand();
+		}
+	);
+
+	gEngfuncs.pfnAddCommand(
+		"menu_pop",
+		[]()
+		{
+			StaticInstance().HandleMenuPopCommand();
+		}
+	);
+}
+
+void RmlUiBackend::HandleMenuPushCommand()
+{
+	int argc = gEngfuncs.pfnCmdArgc();
+
+	if ( argc < 2 )
+	{
+		gEngfuncs.Con_Printf("Usage: menu_push <menu> [menu] ...\n");
+		return;
+	}
+
+	for ( int index = 1; index < argc; ++index )
+	{
+		const char* menuName = gEngfuncs.pfnCmdArgv(index);
+
+		// Should never happen:
+		if ( !menuName || !(*menuName) )
+		{
+			ASSERT(false);
+			continue;
+		}
+
+		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(menuName);
+
+		if ( !menu )
+		{
+			gEngfuncs.Con_Printf("Could not find menu with name \"%s\"\n", menuName);
+			return;
+		}
+
+		m_MenuStack.Push(menu);
+	}
+}
+
+void RmlUiBackend::HandleMenuPopCommand()
+{
+	int argc = gEngfuncs.pfnCmdArgc();
+
+	if ( argc > 2 )
+	{
+		gEngfuncs.Con_Printf("Usage: menu_pop [new_menu] ...\n");
+		gEngfuncs.Con_Printf("If a new menu is provided, it will replace the current one.\n");
+		return;
+	}
+
+	m_MenuStack.Pop();
+
+	if ( argc == 2 )
+	{
+		const char* menuName = gEngfuncs.pfnCmdArgv(1);
+
+		// Should never happen:
+		if ( !menuName || !(*menuName) )
+		{
+			ASSERT(false);
+			return;
+		}
+
+		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(menuName);
+
+		if ( !menu )
+		{
+			gEngfuncs.Con_Printf("Could not find menu with name \"%s\"\n", menuName);
+			return;
+		}
+
+		m_MenuStack.Push(menu);
+	}
 }
