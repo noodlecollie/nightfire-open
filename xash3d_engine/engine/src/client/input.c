@@ -50,6 +50,7 @@ convar_t* cl_sidespeed;
 convar_t* cl_backspeed;
 convar_t* look_filter;
 convar_t* m_rawinput;
+convar_t* kb_input_mode;
 
 /*
 ================
@@ -126,7 +127,9 @@ void IN_StartupMouse(void)
 	// You can use -nomouse argument to prevent using mouse from client
 	// -noenginemouse will disable all mouse input
 	if ( Sys_CheckParm("-noenginemouse") )
+	{
 		return;
+	}
 
 	in_mouseinitialized = true;
 }
@@ -429,6 +432,13 @@ void IN_Init(void)
 		Cvar_Get("cl_backspeed", "280", FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_FILTERABLE, "Default back move speed");
 	cl_sidespeed =
 		Cvar_Get("cl_sidespeed", "280", FCVAR_ARCHIVE | FCVAR_CLIENTDLL | FCVAR_FILTERABLE, "Default side move speed");
+
+	kb_input_mode = Cvar_Get(
+		"kb_input_mode",
+		"1",
+		FCVAR_ARCHIVE | FCVAR_FILTERABLE,
+		"0 = use scan codes, 1 = use locale (respects remapped keys)"
+	);
 
 	if ( !Host_IsDedicated() )
 	{

@@ -134,38 +134,641 @@ static qboolean SDLash_IsInstanceIDAGameController(SDL_JoystickID joyId)
 #endif
 }
 
-/*
-=============
-SDLash_KeyEvent
-
-=============
-*/
-static void SDLash_KeyEvent(SDL_KeyboardEvent key)
-{
-	int down = key.state != SDL_RELEASED;
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	int keynum = key.keysym.scancode;
-#else
-	int keynum = key.keysym.sym;
+static qboolean UseScanCodes()
+{
+	static convar_t* kb_input_mode = NULL;
+	static qboolean initialised = false;
+
+	if ( !initialised )
+	{
+		kb_input_mode = Cvar_FindVar("kb_input_mode");
+		initialised = true;
+	}
+
+	if ( !kb_input_mode )
+	{
+		// Cvar not found - assume default behaviour
+		// which was to use scan codes.
+		return true;
+	}
+
+	return kb_input_mode->value == 0.0f;
+}
+
+// Returns MAX_KEY_BINDINGS if no action should be taken.
+static int SDLKeySymToEngineKeyCode(int keySym, qboolean down)
+{
+	if ( (keySym >= SDLK_SPACE && keySym <= SDLK_AT) || (keySym >= SDLK_LEFTBRACKET && keySym <= SDLK_z) )
+	{
+		// These SDL key mappings match our own (ASCII).
+		// This covers all numbers and letters.
+		return keySym;
+	}
+
+	if ( keySym >= SDLK_F1 && keySym <= SDLK_F12 )
+	{
+		return keySym - SDLK_F1 + K_F1;
+	}
+
+	switch ( keySym )
+	{
+		case SDLK_RETURN:
+		{
+			return K_ENTER;
+		}
+
+		case SDLK_ESCAPE:
+		{
+			return K_ESCAPE;
+		}
+
+		case SDLK_BACKSPACE:
+		{
+			return K_BACKSPACE;
+		}
+
+		case SDLK_TAB:
+		{
+			return K_TAB;
+		}
+
+		case SDLK_PRINTSCREEN:
+		{
+			host.force_draw_version = true;
+			host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
+			return MAX_KEY_BINDINGS;
+		}
+
+		case SDLK_SCROLLLOCK:
+		{
+			return K_SCROLLOCK;
+		}
+
+		case SDLK_PAUSE:
+		{
+			return K_PAUSE;
+		}
+
+		case SDLK_INSERT:
+		{
+			return K_INS;
+		}
+
+		case SDLK_HOME:
+		{
+			return K_HOME;
+		}
+
+		case SDLK_PAGEUP:
+		{
+			return K_PGUP;
+		}
+
+		case SDLK_DELETE:
+		{
+			return KEY_DELETE;
+		}
+
+		case SDLK_END:
+		{
+			return K_END;
+		}
+
+		case SDLK_PAGEDOWN:
+		{
+			return K_PGDN;
+		}
+
+		case SDLK_RIGHT:
+		{
+			return K_RIGHTARROW;
+		}
+
+		case SDLK_LEFT:
+		{
+			return K_LEFTARROW;
+		}
+
+		case SDLK_DOWN:
+		{
+			return K_DOWNARROW;
+		}
+
+		case SDLK_UP:
+		{
+			return K_UPARROW;
+		}
+
+		case SDLK_KP_DIVIDE:
+		{
+			return K_KP_SLASH;
+		}
+
+		case SDLK_KP_MULTIPLY:
+		{
+			return K_KP_MUL;
+		}
+
+		case SDLK_KP_MINUS:
+		{
+			return K_KP_MINUS;
+		}
+
+		case SDLK_KP_PLUS:
+		{
+			return K_KP_PLUS;
+		}
+
+		case SDLK_KP_ENTER:
+		{
+			return K_KP_ENTER;
+		}
+
+		case SDLK_KP_1:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '1' : K_KP_END;
+		}
+
+		case SDLK_KP_2:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '2' : K_KP_DOWNARROW;
+		}
+
+		case SDLK_KP_3:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '3' : K_KP_PGDN;
+		}
+
+		case SDLK_KP_4:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '4' : K_KP_LEFTARROW;
+		}
+
+		case SDLK_KP_5:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '5' : K_KP_5;
+		}
+
+		case SDLK_KP_6:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '6' : K_KP_RIGHTARROW;
+		}
+
+		case SDLK_KP_7:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '7' : K_KP_HOME;
+		}
+
+		case SDLK_KP_8:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '8' : K_KP_UPARROW;
+		}
+
+		case SDLK_KP_9:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '9' : K_KP_PGUP;
+		}
+
+		case SDLK_KP_0:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '0' : K_KP_INS;
+		}
+
+		case SDLK_KP_PERIOD:
+		{
+			return K_KP_DEL;
+		}
+
+		case SDLK_LALT:
+		case SDLK_RALT:
+		{
+			return K_ALT;
+		}
+
+		case SDLK_LCTRL:
+		case SDLK_RCTRL:
+		{
+			return K_CTRL;
+		}
+
+		case SDLK_LSHIFT:
+		case SDLK_RSHIFT:
+		{
+			return K_SHIFT;
+		}
+
+		case SDLK_LGUI:
+		case SDLK_RGUI:
+		{
+			return K_WIN;
+		}
+
+		// don't console spam on known functional buttons, not used in engine
+		case SDLK_NUMLOCKCLEAR:
+		case SDLK_APPLICATION:
+		case SDLK_MUTE:
+		case SDLK_VOLUMEUP:
+		case SDLK_VOLUMEDOWN:
+		case SDLK_BRIGHTNESSUP:
+		case SDLK_BRIGHTNESSDOWN:
+		{
+			return MAX_KEY_BINDINGS;
+		}
+
+		case SDLK_UNKNOWN:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown key symbol\n");
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+
+		default:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown key symbol: %s = %i\n", SDL_GetKeyName(keySym), keySym);
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+	}
+}
 #endif
 
-	qboolean numLock = (qboolean)(SDL_GetModState() & KMOD_NUM);
+// Returns MAX_KEY_BINDINGS if no action should be taken.
+static int SDLScanCodeToEngineKeyCode(int scanCode, qboolean down)
+{
+	if ( scanCode >= SDL_SCANCODE_A && scanCode <= SDL_SCANCODE_Z )
+	{
+		return scanCode - SDL_SCANCODE_A + 'a';
+	}
+
+	if ( scanCode >= SDL_SCANCODE_1 && scanCode <= SDL_SCANCODE_9 )
+	{
+		return scanCode - SDL_SCANCODE_1 + '1';
+	}
+
+	if ( scanCode >= SDL_SCANCODE_F1 && scanCode <= SDL_SCANCODE_F12 )
+	{
+		return scanCode - SDL_SCANCODE_F1 + K_F1;
+	}
+
+	switch ( scanCode )
+	{
+		case SDL_SCANCODE_GRAVE:
+		{
+			return '`';
+		}
+
+		case SDL_SCANCODE_0:
+		{
+			return '0';
+		}
+
+		case SDL_SCANCODE_BACKSLASH:
+		{
+			return '\\';
+		}
+
+		case SDL_SCANCODE_LEFTBRACKET:
+		{
+			return '[';
+		}
+
+		case SDL_SCANCODE_RIGHTBRACKET:
+		{
+			return ']';
+		}
+
+		case SDL_SCANCODE_EQUALS:
+		{
+			return '=';
+		}
+
+		case SDL_SCANCODE_MINUS:
+		{
+			return '-';
+		}
+
+		case SDL_SCANCODE_TAB:
+		{
+			return K_TAB;
+		}
+
+		case SDL_SCANCODE_RETURN:
+		{
+			return K_ENTER;
+		}
+
+		case SDL_SCANCODE_ESCAPE:
+		{
+			return K_ESCAPE;
+		}
+
+		case SDL_SCANCODE_SPACE:
+		{
+			return K_SPACE;
+		}
+
+		case SDL_SCANCODE_BACKSPACE:
+		{
+			return K_BACKSPACE;
+		}
+
+		case SDL_SCANCODE_UP:
+		{
+			return K_UPARROW;
+		}
+
+		case SDL_SCANCODE_LEFT:
+		{
+			return K_LEFTARROW;
+		}
+
+		case SDL_SCANCODE_DOWN:
+		{
+			return K_DOWNARROW;
+		}
+
+		case SDL_SCANCODE_RIGHT:
+		{
+			return K_RIGHTARROW;
+		}
+
+		case SDL_SCANCODE_LALT:
+		case SDL_SCANCODE_RALT:
+		{
+			return K_ALT;
+		}
+
+		case SDL_SCANCODE_LCTRL:
+		case SDL_SCANCODE_RCTRL:
+		{
+			return K_CTRL;
+		}
+
+		case SDL_SCANCODE_LSHIFT:
+		case SDL_SCANCODE_RSHIFT:
+		{
+			return K_SHIFT;
+		}
+
+		case SDL_SCANCODE_LGUI:
+		case SDL_SCANCODE_RGUI:
+		{
+			return K_WIN;
+		}
+
+		case SDL_SCANCODE_INSERT:
+		{
+			return K_INS;
+		}
+
+		case SDL_SCANCODE_DELETE:
+		{
+			return K_DEL;
+		}
+
+		case SDL_SCANCODE_PAGEDOWN:
+		{
+			return K_PGDN;
+		}
+
+		case SDL_SCANCODE_PAGEUP:
+		{
+			return K_PGUP;
+		}
+
+		case SDL_SCANCODE_HOME:
+		{
+			return K_HOME;
+		}
+
+		case SDL_SCANCODE_END:
+		{
+			return K_END;
+		}
+
+		case SDL_SCANCODE_KP_1:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '1' : K_KP_END;
+		}
+
+		case SDL_SCANCODE_KP_2:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '2' : K_KP_DOWNARROW;
+		}
+
+		case SDL_SCANCODE_KP_3:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '3' : K_KP_PGDN;
+		}
+
+		case SDL_SCANCODE_KP_4:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '4' : K_KP_LEFTARROW;
+		}
+
+		case SDL_SCANCODE_KP_5:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '5' : K_KP_5;
+		}
+
+		case SDL_SCANCODE_KP_6:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '6' : K_KP_RIGHTARROW;
+		}
+
+		case SDL_SCANCODE_KP_7:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '7' : K_KP_HOME;
+		}
+
+		case SDL_SCANCODE_KP_8:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '8' : K_KP_UPARROW;
+		}
+
+		case SDL_SCANCODE_KP_9:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '9' : K_KP_PGUP;
+		}
+
+		case SDL_SCANCODE_KP_0:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '0' : K_KP_INS;
+		}
+
+		case SDL_SCANCODE_KP_PERIOD:
+		{
+			return K_KP_DEL;
+		}
+
+		case SDL_SCANCODE_KP_ENTER:
+		{
+			return K_KP_ENTER;
+		}
+
+		case SDL_SCANCODE_KP_PLUS:
+		{
+			return K_KP_PLUS;
+		}
+
+		case SDL_SCANCODE_KP_MINUS:
+		{
+			return K_KP_MINUS;
+		}
+
+		case SDL_SCANCODE_KP_DIVIDE:
+		{
+			return K_KP_SLASH;
+		}
+
+		case SDL_SCANCODE_KP_MULTIPLY:
+		{
+			return K_KP_MUL;
+		}
+
+		case SDL_SCANCODE_NUMLOCKCLEAR:
+		{
+			return K_KP_NUMLOCK;
+		}
+
+		case SDL_SCANCODE_CAPSLOCK:
+		{
+			return K_CAPSLOCK;
+		}
+
+		case SDL_SCANCODE_SLASH:
+		{
+			return '/';
+		}
+
+		case SDL_SCANCODE_PERIOD:
+		{
+			return '.';
+		}
+
+		case SDL_SCANCODE_SEMICOLON:
+		{
+			return ';';
+		}
+
+		case SDL_SCANCODE_APOSTROPHE:
+		{
+			return '\'';
+		}
+
+		case SDL_SCANCODE_COMMA:
+		{
+			return ',';
+		}
+
+		case SDL_SCANCODE_PRINTSCREEN:
+		{
+			host.force_draw_version = true;
+			host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
+			return MAX_KEY_BINDINGS;
+		}
+
+		case SDL_SCANCODE_PAUSE:
+		{
+			return K_PAUSE;
+		}
+
+		case SDL_SCANCODE_SCROLLLOCK:
+		{
+			return K_SCROLLOCK;
+		}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		// don't console spam on known functional buttons, not used in engine
+		case SDL_SCANCODE_MUTE:
+		case SDL_SCANCODE_VOLUMEUP:
+		case SDL_SCANCODE_VOLUMEDOWN:
+		case SDL_SCANCODE_BRIGHTNESSDOWN:
+		case SDL_SCANCODE_BRIGHTNESSUP:
+		case SDL_SCANCODE_APPLICATION:
+		{
+			return MAX_KEY_BINDINGS;
+		}
+#endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
+
+		case SDL_SCANCODE_UNKNOWN:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown scancode\n");
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+
+		default:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown key: %s = %i\n", SDL_GetScancodeName(scanCode), scanCode);
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+	}
+}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+static void SDLash_KeyEvent_SDL2(SDL_KeyboardEvent key)
+{
+	qboolean down = key.state != SDL_RELEASED;
+	const qboolean useScanCodes = UseScanCodes();
+	int keynum = useScanCodes ? (int)key.keysym.scancode : (int)key.keysym.sym;
+
+	if ( SDL_IsTextInputActive() && down && cls.key_dest != key_game && (SDL_GetModState() & KMOD_CTRL) )
+	{
+		if ( useScanCodes && keynum >= SDL_SCANCODE_A && keynum <= SDL_SCANCODE_Z )
+		{
+			keynum = keynum - SDL_SCANCODE_A + 1;
+			CL_CharEvent(keynum);
+		}
+		else if ( !useScanCodes && keynum >= SDLK_a && keynum <= SDLK_z )
+		{
+			CL_CharEvent(keynum);
+		}
+
+		return;
+	}
+
+	int engineKey = useScanCodes ? SDLScanCodeToEngineKeyCode(keynum, down) : SDLKeySymToEngineKeyCode(keynum, down);
+
+	if ( engineKey != MAX_KEY_BINDINGS )
+	{
+		Key_Event(engineKey, down);
+	}
+}
+#else
+// SDL1 docs: https://documentation.help/SDL/sdlkeyboardevent.html
+static void SDLash_KeyEvent_SDL1(SDL_KeyboardEvent key)
+{
+	int down = key.state != SDL_RELEASED;
+	int keynum = key.keysym.sym;
 
 	if ( SDL_IsTextInputActive() && down && cls.key_dest != key_game )
 	{
 		if ( SDL_GetModState() & KMOD_CTRL )
 		{
-			if ( keynum >= SDL_SCANCODE_A && keynum <= SDL_SCANCODE_Z )
+			if ( keynum >= SDLK_a && keynum <= SDLK_z )
 			{
-				keynum = keynum - SDL_SCANCODE_A + 1;
+				keynum = keynum - SDLK_a + 1;
 				CL_CharEvent(keynum);
 			}
 
 			return;
 		}
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
 		if ( keynum >= SDLK_KP0 && keynum <= SDLK_KP9 )
 		{
 			keynum -= SDLK_KP0 + '0';
@@ -181,382 +784,31 @@ static void SDLash_KeyEvent(SDL_KeyboardEvent key)
 			CL_CharEvent(keynum);
 			return;
 		}
+	}
+
+	int engineKey = SDLKeySymToEngineKeyCode(keynum, down);
+
+	if ( engineKey != MAX_KEY_BINDINGS )
+	{
+		Key_Event(engineKey, down);
+	}
+}
 #endif
-	}
 
-	if ( keynum >= SDL_SCANCODE_A && keynum <= SDL_SCANCODE_Z )
-	{
-		keynum = keynum - SDL_SCANCODE_A + 'a';
-	}
-	else if ( keynum >= SDL_SCANCODE_1 && keynum <= SDL_SCANCODE_9 )
-	{
-		keynum = keynum - SDL_SCANCODE_1 + '1';
-	}
-	else if ( keynum >= SDL_SCANCODE_F1 && keynum <= SDL_SCANCODE_F12 )
-	{
-		keynum = keynum - SDL_SCANCODE_F1 + K_F1;
-	}
-	else
-	{
-		switch ( keynum )
-		{
-			case SDL_SCANCODE_GRAVE:
-			{
-				keynum = '`';
-				break;
-			}
+// TODO: We probably actually want to split this function into two different versions.
+/*
+=============
+SDLash_KeyEvent
 
-			case SDL_SCANCODE_0:
-			{
-				keynum = '0';
-				break;
-			}
-
-			case SDL_SCANCODE_BACKSLASH:
-			{
-				keynum = '\\';
-				break;
-			}
-
-			case SDL_SCANCODE_LEFTBRACKET:
-			{
-				keynum = '[';
-				break;
-			}
-
-			case SDL_SCANCODE_RIGHTBRACKET:
-			{
-				keynum = ']';
-				break;
-			}
-
-			case SDL_SCANCODE_EQUALS:
-			{
-				keynum = '=';
-				break;
-			}
-
-			case SDL_SCANCODE_MINUS:
-			{
-				keynum = '-';
-				break;
-			}
-
-			case SDL_SCANCODE_TAB:
-			{
-				keynum = K_TAB;
-				break;
-			}
-
-			case SDL_SCANCODE_RETURN:
-			{
-				keynum = K_ENTER;
-				break;
-			}
-
-			case SDL_SCANCODE_ESCAPE:
-			{
-				keynum = K_ESCAPE;
-				break;
-			}
-
-			case SDL_SCANCODE_SPACE:
-			{
-				keynum = K_SPACE;
-				break;
-			}
-
-			case SDL_SCANCODE_BACKSPACE:
-			{
-				keynum = K_BACKSPACE;
-				break;
-			}
-
-			case SDL_SCANCODE_UP:
-			{
-				keynum = K_UPARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_LEFT:
-			{
-				keynum = K_LEFTARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_DOWN:
-			{
-				keynum = K_DOWNARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_RIGHT:
-			{
-				keynum = K_RIGHTARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_LALT:
-			case SDL_SCANCODE_RALT:
-			{
-				keynum = K_ALT;
-				break;
-			}
-
-			case SDL_SCANCODE_LCTRL:
-			case SDL_SCANCODE_RCTRL:
-			{
-				keynum = K_CTRL;
-				break;
-			}
-
-			case SDL_SCANCODE_LSHIFT:
-			case SDL_SCANCODE_RSHIFT:
-			{
-				keynum = K_SHIFT;
-				break;
-			}
-
-			case SDL_SCANCODE_LGUI:
-			case SDL_SCANCODE_RGUI:
-			{
-				keynum = K_WIN;
-				break;
-			}
-
-			case SDL_SCANCODE_INSERT:
-			{
-				keynum = K_INS;
-				break;
-			}
-
-			case SDL_SCANCODE_DELETE:
-			{
-				keynum = K_DEL;
-				break;
-			}
-
-			case SDL_SCANCODE_PAGEDOWN:
-			{
-				keynum = K_PGDN;
-				break;
-			}
-
-			case SDL_SCANCODE_PAGEUP:
-			{
-				keynum = K_PGUP;
-				break;
-			}
-
-			case SDL_SCANCODE_HOME:
-			{
-				keynum = K_HOME;
-				break;
-			}
-
-			case SDL_SCANCODE_END:
-			{
-				keynum = K_END;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_1:
-			{
-				keynum = numLock ? '1' : K_KP_END;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_2:
-			{
-				keynum = numLock ? '2' : K_KP_DOWNARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_3:
-			{
-				keynum = numLock ? '3' : K_KP_PGDN;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_4:
-			{
-				keynum = numLock ? '4' : K_KP_LEFTARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_5:
-			{
-				keynum = numLock ? '5' : K_KP_5;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_6:
-			{
-				keynum = numLock ? '6' : K_KP_RIGHTARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_7:
-			{
-				keynum = numLock ? '7' : K_KP_HOME;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_8:
-			{
-				keynum = numLock ? '8' : K_KP_UPARROW;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_9:
-			{
-				keynum = numLock ? '9' : K_KP_PGUP;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_0:
-			{
-				keynum = numLock ? '0' : K_KP_INS;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_PERIOD:
-			{
-				keynum = K_KP_DEL;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_ENTER:
-			{
-				keynum = K_KP_ENTER;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_PLUS:
-			{
-				keynum = K_KP_PLUS;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_MINUS:
-			{
-				keynum = K_KP_MINUS;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_DIVIDE:
-			{
-				keynum = K_KP_SLASH;
-				break;
-			}
-
-			case SDL_SCANCODE_KP_MULTIPLY:
-			{
-				keynum = K_KP_MUL;
-				break;
-			}
-
-			case SDL_SCANCODE_NUMLOCKCLEAR:
-			{
-				keynum = K_KP_NUMLOCK;
-				break;
-			}
-
-			case SDL_SCANCODE_CAPSLOCK:
-			{
-				keynum = K_CAPSLOCK;
-				break;
-			}
-
-			case SDL_SCANCODE_SLASH:
-			{
-				keynum = '/';
-				break;
-			}
-
-			case SDL_SCANCODE_PERIOD:
-			{
-				keynum = '.';
-				break;
-			}
-
-			case SDL_SCANCODE_SEMICOLON:
-			{
-				keynum = ';';
-				break;
-			}
-
-			case SDL_SCANCODE_APOSTROPHE:
-			{
-				keynum = '\'';
-				break;
-			}
-
-			case SDL_SCANCODE_COMMA:
-			{
-				keynum = ',';
-				break;
-			}
-
-			case SDL_SCANCODE_PRINTSCREEN:
-			{
-				host.force_draw_version = true;
-				host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
-				break;
-			}
-
-			case SDL_SCANCODE_PAUSE:
-			{
-				keynum = K_PAUSE;
-				break;
-			}
-
-			case SDL_SCANCODE_SCROLLLOCK:
-			{
-				keynum = K_SCROLLOCK;
-				break;
-			}
-
+=============
+*/
+static void SDLash_KeyEvent(SDL_KeyboardEvent key)
+{
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-			case SDL_SCANCODE_APPLICATION:
-			{
-				keynum = K_WIN;
-				break;  // (compose key) ???
-			}
-
-			// don't console spam on known functional buttons, not used in engine
-			case SDL_SCANCODE_MUTE:
-			case SDL_SCANCODE_VOLUMEUP:
-			case SDL_SCANCODE_VOLUMEDOWN:
-			case SDL_SCANCODE_BRIGHTNESSDOWN:
-			case SDL_SCANCODE_BRIGHTNESSUP:
-			{
-				return;
-			}
-#endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
-
-			case SDL_SCANCODE_UNKNOWN:
-			{
-				if ( down )
-				{
-					Con_Reportf("SDLash_KeyEvent: Unknown scancode\n");
-				}
-
-				return;
-			}
-			default:
-			{
-				if ( down )
-				{
-					Con_Reportf("SDLash_KeyEvent: Unknown key: %s = %i\n", SDL_GetScancodeName(keynum), keynum);
-				}
-
-				return;
-			}
-		}
-	}
-
-	Key_Event(keynum, down);
+	SDLash_KeyEvent_SDL2(key);
+#else
+	SDLash_KeyEvent_SDL1(key);
+#endif
 }
 
 /*

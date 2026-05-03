@@ -250,6 +250,14 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 		return;
 	}
 
+	// In developer mode, open the console on Ctrl + Escape
+	if ( gpGlobals->developer != 0 && (m_Modifiers == Rml::Input::KeyModifier::KM_CTRL) &&
+		 rmlKey == Rml::Input::KI_ESCAPE && pressed )
+	{
+		m_ShouldPopToConsole = true;
+		return;
+	}
+
 	if ( pressed )
 	{
 		m_RmlContext->ProcessKeyDown(rmlKey, m_Modifiers);
