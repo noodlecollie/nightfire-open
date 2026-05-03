@@ -53,6 +53,8 @@ set(SOURCES_UI
 	src/menus/MainMenu.cpp
 	src/menus/MultiplayerMenu.h
 	src/menus/MultiplayerMenu.cpp
+	src/menus/ServerConnectionScreen.h
+	src/menus/ServerConnectionScreen.cpp
 	src/models/CvarModel.h
 	src/models/CvarModel.cpp
 	src/models/KeyBindingModel.h
