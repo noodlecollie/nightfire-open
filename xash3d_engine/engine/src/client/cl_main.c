@@ -2785,7 +2785,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	if ( !Q_strcmp(c, "client_connect") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		if ( cls.state == ca_connected )
 		{
@@ -2835,7 +2837,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		dword crcValue2 = 0;
 
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		crcValue = MSG_ReadLong(msg);
 		realsize = MSG_GetMaxBytes(msg) - MSG_GetNumBytesRead(msg);
@@ -2901,7 +2905,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "challenge") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		// challenge from the server we are connecting to
 		cls.challenge = Q_atoi(Cmd_Argv(1));
@@ -2911,7 +2917,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "echo") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		// echo request from server
 		Netchan_OutOfBandPrint(NS_CLIENT, from, "%s", Cmd_Argv(1));
@@ -2919,7 +2927,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "disconnect") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		// a disconnect message from the server, which will happen if the server
 		// dropped the connection but it is still getting packets from us
@@ -2934,7 +2944,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "errormsg") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		args = MSG_ReadString(msg);
 
@@ -2945,7 +2957,10 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		else
 		{
 			if ( UI_IsVisible() )
+			{
 				UI_ShowMessageBox(va("^3Server message^7\n%s", args));
+			}
+
 			Msg("%s", args);
 		}
 	}
@@ -2957,7 +2972,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		qboolean preferStore = true;
 
 		if ( !Q_strcmp(Cmd_Argv(1), "nostore") )
+		{
 			preferStore = false;
+		}
 
 		// trust only hardcoded master server
 		if ( Q_strcmp(MASTERSERVER_ADR, "") != 0 && NET_StringToAdr(MASTERSERVER_ADR, &adr) )
@@ -3002,7 +3019,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 					nr->resp.ping = host.realtime - nr->timesend;
 
 					if ( nr->timeout <= host.realtime )
+					{
 						SetBits(nr->resp.error, NET_ERROR_TIMEOUT);
+					}
 
 					Con_Printf("serverlist call: %s\n", NET_AdrToString(from));
 					nr->pfnFunc(&nr->resp);
@@ -3014,16 +3033,20 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 					{
 						list = *prev;
 						if ( !list )
+						{
 							break;
+						}
 
 						// throw out any variables the game created
 						*prev = list->next;
 						Mem_Free(list);
 					}
+
 					memset(nr, 0, sizeof(*nr));  // done
 					clgame.request_type = NET_REQUEST_CANCEL;
 					clgame.master_request = NULL;
 				}
+
 				break;
 			}
 
@@ -3055,10 +3078,14 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	{
 		// user out of band message (must be handled in CL_ConnectionlessPacket)
 		if ( len > 0 )
+		{
 			Netchan_OutOfBand(NS_SERVER, from, len, (byte*)buf);
+		}
 	}
 	else
+	{
 		Con_DPrintf(S_ERROR "bad connectionless packet from %s:\n%s\n", NET_AdrToString(from), args);
+	}
 }
 
 /*
