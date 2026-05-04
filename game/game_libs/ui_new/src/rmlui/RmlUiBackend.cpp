@@ -499,27 +499,12 @@ void RmlUiBackend::HandleMenuPopCommand()
 		return;
 	}
 
-	m_MenuStack.Pop();
+	Rml::String replacementMenuName;
 
 	if ( argc == 2 )
 	{
-		const char* menuName = gEngfuncs.pfnCmdArgv(1);
-
-		// Should never happen:
-		if ( !menuName || !(*menuName) )
-		{
-			ASSERT(false);
-			return;
-		}
-
-		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(menuName);
-
-		if ( !menu )
-		{
-			gEngfuncs.Con_Printf("Could not find menu with name \"%s\"\n", menuName);
-			return;
-		}
-
-		m_MenuStack.Push(menu);
+		replacementMenuName = gEngfuncs.pfnCmdArgv(1);
 	}
+
+	m_MenuStack.CommandPopMenu(replacementMenuName);
 }

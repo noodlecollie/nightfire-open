@@ -86,6 +86,87 @@ size_t MenuStack::Size() const
 	return m_Stack.size();
 }
 
+void MenuStack::CommandPushMenu(const Rml::String& name)
+{
+	if ( name.empty() )
+	{
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring menu push request which specified no menu name");
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(name);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring menu push request for non-existent menu \"%s\"",
+			name.c_str()
+		);
+
+		return;
+	}
+
+	Push(entry);
+}
+
+void MenuStack::CommandPopMenu(const Rml::String& replacement)
+{
+	if ( replacement.empty() )
+	{
+		Pop();
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(replacement);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring menu pop requesting to swap in non-existent menu \"%s\"",
+			replacement.c_str()
+		);
+
+		return;
+	}
+
+	Pop();
+	Push(entry);
+}
+
+void MenuStack::CommandCutStack(size_t newSize, const Rml::String& topMenu)
+{
+	while ( m_Stack.size() > newSize )
+	{
+		SetTopDocumentVisible(false, true);
+		m_Stack.pop_back();
+	}
+
+	if ( topMenu.empty() )
+	{
+		SetTopDocumentVisible(true);
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(topMenu);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring cut stack operation requesting to swap in non-existent menu \"%s\"",
+			topMenu.c_str()
+		);
+
+		return;
+	}
+
+	SetTopDocumentVisible(false, false);
+	m_Stack.push_back(entry);
+	SetTopDocumentVisible(true);
+}
+
 void MenuStack::SetTopDocumentVisible(bool visible, bool clearCurrentRequest)
 {
 	if ( m_Stack.empty() )
@@ -130,7 +211,7 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 				request.args[0].GetInto(menuName);
 			}
 
-			HandlePushMenuRequest(menuName);
+			CommandPushMenu(menuName);
 			break;
 		}
 
@@ -143,7 +224,7 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 				request.args[0].GetInto(menuName);
 			}
 
-			HandlePopMenuRequest(menuName);
+			CommandPopMenu(menuName);
 			break;
 		}
 
@@ -169,7 +250,7 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 				request.args[1].GetInto(menuName);
 			}
 
-			HandleCutStackMenuRequest(newSize, menuName);
+			CommandCutStack(newSize, menuName);
 			break;
 		}
 
@@ -179,85 +260,4 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 			break;
 		}
 	}
-}
-
-void MenuStack::HandlePushMenuRequest(const Rml::String& name)
-{
-	if ( name.empty() )
-	{
-		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring menu push request which specified no menu name");
-		return;
-	}
-
-	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(name);
-
-	if ( !entry )
-	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"Ignoring menu push request for non-existent menu \"%s\"",
-			name.c_str()
-		);
-
-		return;
-	}
-
-	Push(entry);
-}
-
-void MenuStack::HandlePopMenuRequest(const Rml::String& name)
-{
-	if ( name.empty() )
-	{
-		Pop();
-		return;
-	}
-
-	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(name);
-
-	if ( !entry )
-	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"Ignoring menu pop requesting to swap in non-existent menu \"%s\"",
-			name.c_str()
-		);
-
-		return;
-	}
-
-	Pop();
-	Push(entry);
-}
-
-void MenuStack::HandleCutStackMenuRequest(size_t newSize, const Rml::String& menuName)
-{
-	while ( m_Stack.size() > newSize )
-	{
-		SetTopDocumentVisible(false, true);
-		m_Stack.pop_back();
-	}
-
-	if ( menuName.empty() )
-	{
-		SetTopDocumentVisible(true);
-		return;
-	}
-
-	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(menuName);
-
-	if ( !entry )
-	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"Ignoring cut stack operation requesting to swap in non-existent menu \"%s\"",
-			menuName.c_str()
-		);
-
-		return;
-	}
-
-	SetTopDocumentVisible(false, false);
-	m_Stack.push_back(entry);
-	SetTopDocumentVisible(true);
 }

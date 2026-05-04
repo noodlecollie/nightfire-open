@@ -21,14 +21,16 @@ public:
 	bool IsEmpty() const;
 	size_t Size() const;
 
+	// Commands
+	void CommandPushMenu(const Rml::String& name);
+	void CommandPopMenu(const Rml::String& replacement = Rml::String());
+	void CommandCutStack(size_t newSize, const Rml::String& topMenu = Rml::String());
+
 private:
 	using MenuVec = std::vector<const MenuDirectoryEntry*>;
 
 	void SetTopDocumentVisible(bool visible, bool clearCurrentRequest = false);
 	void HandleTopMenuRequest(const MenuRequest& request);
-	void HandlePushMenuRequest(const Rml::String& name);
-	void HandlePopMenuRequest(const Rml::String& name);
-	void HandleCutStackMenuRequest(size_t newSize, const Rml::String& name);
 
 	MenuDirectory* m_Directory;
 	MenuVec m_Stack;

@@ -45,7 +45,7 @@ void MenuDirectory::LoadAllMenus(Rml::Context& context)
 	}
 }
 
-const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const std::string& name) const
+const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const Rml::String& name) const
 {
 	MenuMap::const_iterator it = m_MenuMap.find(name);
 	return it != m_MenuMap.end() ? &it->second.menuEntry : nullptr;
@@ -53,7 +53,7 @@ const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const std::string& name) c
 
 void MenuDirectory::AddToMap(BaseMenu* newMenu)
 {
-	m_MenuMap.insert({std::string(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
+	m_MenuMap.insert({Rml::String(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
 }
 
 void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
