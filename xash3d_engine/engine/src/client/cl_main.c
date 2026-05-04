@@ -2308,7 +2308,9 @@ void CL_Disconnect(void)
 	cls.legacymode = false;
 
 	if ( cls.state == ca_disconnected )
+	{
 		return;
+	}
 
 	cls.connect_time = 0;
 	cls.changedemo = false;
@@ -2336,7 +2338,9 @@ void CL_Disconnect(void)
 
 	// back to menu in non-developer mode
 	if ( host_developer.value || CL_IsInMenu() )
+	{
 		return;
+	}
 
 	UI_SetActiveMenu(true);
 }
@@ -2344,20 +2348,32 @@ void CL_Disconnect(void)
 void CL_Disconnect_f(void)
 {
 	if ( Host_IsLocalClient() )
+	{
 		Host_EndGame(true, "disconnected from server\n");
+	}
 	else
+	{
 		CL_Disconnect();
+	}
 }
 
 void CL_Crashed(void)
 {
 	// already freed
 	if ( host.status == HOST_CRASHED )
+	{
 		return;
+	}
+
 	if ( host.type != HOST_NORMAL )
+	{
 		return;
+	}
+
 	if ( !cls.initialized )
+	{
 		return;
+	}
 
 	host.status = HOST_CRASHED;
 

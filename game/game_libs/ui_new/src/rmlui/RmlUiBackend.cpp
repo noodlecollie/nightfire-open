@@ -6,6 +6,7 @@
 #include "rmlui/Utils.h"
 #include "framework/BaseMenu.h"
 #include "menus/MainMenu.h"
+#include "menus/ServerConnectionScreen.h"
 #include "udll_int.h"
 #include "UIDebug.h"
 
@@ -290,6 +291,23 @@ void RmlUiBackend::ReceiveDiscoveredServer(netadr_t address, const char* info)
 	{
 		m_DiscoveredServerCallback(address, Rml::String(info));
 	}
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Connect(Rml::String(server ? server : ""));
 }
 
 Rml::Context* RmlUiBackend::GetRmlContext() const

@@ -192,42 +192,57 @@ static void pfnShowMessageBox(const char* /* text */)
 static void pfnConnectionProgress_Disconnect(void)
 {
 	// TODO
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Disconnect()");
 }
 
 static void pfnConnectionProgress_Download(
-	const char* /* pszFileName */,
-	const char* /* pszServerName */,
-	int /* iCurrent */,
-	int /* iTotal */,
-	const char* /* comment */
+	const char* pszFileName,
+	const char* pszServerName,
+	int iCurrent,
+	int iTotal,
+	const char* comment
 )
 {
-	// TODO
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Download():");
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  fileName = %s", pszFileName ? pszFileName : "<null>");
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  serverName = %s", pszServerName ? pszServerName : "<null>");
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  current = %d", iCurrent);
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  total = %d", iTotal);
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  comment = %s", comment ? comment : "<null>");
 }
 
 static void pfnConnectionProgress_DownloadEnd(void)
 {
 	// TODO
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_DownloadEnd()");
 }
 
 static void pfnConnectionProgress_Precache(void)
 {
 	// TODO
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Precache()");
 }
 
-static void pfnConnectionProgress_Connect(const char* /* server */)
+static void pfnConnectionProgress_Connect(const char* server)
 {
 	// TODO
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Connect(): '%s'", server ? server : "<null>");
 }
 
 static void pfnConnectionProgress_ChangeLevel(void)
 {
 	// TODO
+	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_ChangeLevel()");
 }
 
-static void pfnConnectionProgress_ParseServerInfo(const char* /* server */)
+static void pfnConnectionProgress_ParseServerInfo(const char* server)
 {
 	// TODO
+	Rml::Log::Message(
+		Rml::Log::Type::LT_WARNING,
+		"pfnConnectionProgress_ParseServerInfo(): '%s'",
+		server ? server : "<null>"
+	);
 }
 
 static void pfnStartupComplete(qboolean toConsole)

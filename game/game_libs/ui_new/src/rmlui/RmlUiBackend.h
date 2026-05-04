@@ -43,6 +43,7 @@ public:
 	void ReceiveKey(int key, bool pressed);
 	void ReceiveChar(int character);
 	void ReceiveDiscoveredServer(netadr_t address, const char* info);
+	void ReceiveConnectionProgress_Connect(const char* server);
 
 	void Update(float currentTime);
 	void Render();

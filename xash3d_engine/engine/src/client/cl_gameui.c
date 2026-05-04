@@ -49,7 +49,9 @@ static size_t g3DLineCount = 0;
 void UI_UpdateMenu(float realtime)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
 
 	// if some deferred cmds is waiting
 	if ( UI_IsVisible() && COM_CheckString(host.deferred_cmd) )
@@ -57,12 +59,15 @@ void UI_UpdateMenu(float realtime)
 		Cbuf_AddText(host.deferred_cmd);
 		host.deferred_cmd[0] = '\0';
 		Cbuf_Execute();
+
 		return;
 	}
 
 	// don't show menu while level is loaded
 	if ( GameState->nextstate != STATE_RUNFRAME && !GameState->loadGame )
+	{
 		return;
+	}
 
 	// menu time (not paused, not clamped)
 	gameui.globals->time = (float)host.realtime;
@@ -78,14 +83,20 @@ void UI_UpdateMenu(float realtime)
 void UI_KeyEvent(int key, qboolean down)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnKeyEvent(key, down);
 }
 
 void UI_MouseMove(int x, int y)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnMouseMove(x, y);
 }
 
@@ -96,7 +107,10 @@ void UI_SetActiveMenu(qboolean fActive)
 	if ( !gameui.hInstance )
 	{
 		if ( !fActive )
+		{
 			Key_SetKeyDest(key_game);
+		}
+
 		return;
 	}
 
@@ -114,56 +128,80 @@ void UI_SetActiveMenu(qboolean fActive)
 void UI_AddServerToList(netadr_t adr, const char* info)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnAddServerToList(adr, info);
 }
 
 void UI_GetCursorPos(int* pos_x, int* pos_y)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnGetCursorPos(pos_x, pos_y);
 }
 
 void UI_SetCursorPos(int pos_x, int pos_y)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnSetCursorPos(pos_x, pos_y);
 }
 
 void UI_ShowCursor(qboolean show)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnShowCursor(show);
 }
 
 qboolean UI_CreditsActive(void)
 {
 	if ( !gameui.hInstance )
-		return 0;
+	{
+		return false;
+	}
+
 	return gameui.dllFuncs.pfnCreditsActive();
 }
 
 void UI_CharEvent(int key)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnCharEvent(key);
 }
 
 qboolean UI_MouseInRect(void)
 {
 	if ( !gameui.hInstance )
-		return 1;
+	{
+		return true;
+	}
+
 	return gameui.dllFuncs.pfnMouseInRect();
 }
 
 qboolean UI_IsVisible(void)
 {
 	if ( !gameui.hInstance )
-		return 0;
+	{
+		return false;
+	}
+
 	return gameui.dllFuncs.pfnIsVisible();
 }
 
@@ -213,18 +251,24 @@ show connection warning dialog implemented by gameui dll
 void UI_ShowConnectionWarning(void)
 {
 	if ( cls.state != ca_connected )
+	{
 		return;
+	}
 
 	if ( Host_IsLocalClient() )
+	{
 		return;
+	}
 
 	if ( ++cl.lostpackets >= 8 )
 	{
 		CL_Disconnect();
+
 		if ( gameui.dllFuncs2.pfnShowConnectionWarning )
 		{
 			gameui.dllFuncs2.pfnShowConnectionWarning();
 		}
+
 		Con_DPrintf(S_WARN "Too many lost packets! Showing Network options menu\n");
 	}
 }
@@ -279,7 +323,9 @@ void UI_ConnectionProgress_Download(
 )
 {
 	if ( !gameui.dllFuncs2.pfnConnectionProgress_Download )
+	{
 		return;
+	}
 
 	if ( pszServerPath )
 	{
@@ -344,7 +390,10 @@ static void GAME_EXPORT UI_DrawLogo(const char* filename, float x, float y, floa
 	qboolean redraw = false;
 
 	if ( !gameui.drawLogo )
+	{
 		return;
+	}
+
 	cin_state = AVI_GetState(CIN_LOGO);
 
 	if ( !AVI_IsActive(cin_state) )
@@ -389,7 +438,9 @@ static void GAME_EXPORT UI_DrawLogo(const char* filename, float x, float y, floa
 
 	// restarts the cinematic
 	if ( cin_time > gameui.logo_length )
+	{
 		cin_time = 0.0f;
+	}
 
 	// read the next frame
 	cin_frame = AVI_GetVideoFrameNumber(cin_state, cin_time);
@@ -424,7 +475,9 @@ static void UI_UpdateUserinfo(void)
 	player_info_t* player;
 
 	if ( !host.userinfo_changed )
+	{
 		return;
+	}
 
 	player = &gameui.playerinfo;
 
@@ -439,7 +492,10 @@ static void UI_UpdateUserinfo(void)
 void Host_Credits(void)
 {
 	if ( !gameui.hInstance )
+	{
 		return;
+	}
+
 	gameui.dllFuncs.pfnFinalCredits();
 }
 
@@ -460,11 +516,19 @@ static void UI_ConvertGameInfo(GAMEINFO* out, gameinfo_t* in)
 	out->gamemode = in->gamemode;
 
 	if ( in->nomodels )
+	{
 		out->flags |= GFL_NOMODELS;
+	}
+
 	if ( in->noskills )
+	{
 		out->flags |= GFL_NOSKILLS;
+	}
+
 	if ( in->render_picbutton_text )
+	{
 		out->flags |= GFL_RENDER_PICBUTTON_TEXT;
+	}
 }
 
 /*
@@ -510,7 +574,9 @@ static void PIC_DrawGeneric(float x, float y, float width, float height, const w
 
 	// pass scissor test if supposed
 	if ( !CL_Scissor(&gameui.ds.scissor, &x, &y, &width, &height, &s1, &t1, &s2, &t2) )
+	{
 		return;
+	}
 
 	ref.dllFuncs.R_DrawStretchPic(x, y, width, height, s1, t1, s2, t2, gameui.ds.gl_texturenum);
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);

@@ -8,4 +8,6 @@ public:
 	static const char* const NAME;
 
 	ServerConnectionScreen();
+
+	void ReceiveConnectionProgress_Connect(const Rml::String& server);
 };
