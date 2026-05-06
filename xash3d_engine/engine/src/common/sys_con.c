@@ -147,7 +147,8 @@ void Sys_InitLog(void)
 			Con_Reportf(
 				S_ERROR "Sys_InitLog: can't create log file %s: %s\n",
 				s_ld.log_path,
-				PlatformLib_StrError(errno));
+				PlatformLib_StrError(errno)
+			);
 			return;
 		}
 
@@ -195,7 +196,8 @@ void Sys_CloseLog(void)
 				s_ld.title,
 				Q_buildnum(),
 				event_name,
-				Q_timestamp(TIME_FULL));
+				Q_timestamp(TIME_FULL)
+			);
 		fprintf(s_ld.logfile, "=================================================================================\n");
 
 		fclose(s_ld.logfile);
@@ -390,7 +392,9 @@ void Con_Reportf(const char* szFmt, ...)
 	va_list args;
 
 	if ( host_developer.value < DEV_EXTENDED )
+	{
 		return;
+	}
 
 	va_start(args, szFmt);
 	Q_vsnprintf(buffer, sizeof(buffer), szFmt, args);
@@ -410,6 +414,7 @@ void Platform_MessageBox(const char* title, const char* message, qboolean parent
 		"%s: %s\n"
 		"======================================\n",
 		title,
-		message);
+		message
+	);
 }
 #endif

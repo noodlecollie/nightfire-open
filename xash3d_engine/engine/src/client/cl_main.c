@@ -2336,6 +2336,8 @@ void CL_Disconnect(void)
 	cls.connect_retry = 0;
 	cls.signon = 0;
 
+	UI_ConnectionProgress_Disconnect();
+
 	// back to menu in non-developer mode
 	if ( host_developer.value || CL_IsInMenu() )
 	{
@@ -2897,7 +2899,7 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 			if ( cls.connect_retry >= CL_TEST_RETRIES )
 			{
 				// too many fails use default connection method
-				Con_Printf("hi-speed connection is failed, use default method\n");
+				Con_Printf("High speed connection failed, use default method\n");
 				Netchan_OutOfBandPrint(NS_CLIENT, from, "getchallenge\n");
 				Cvar_SetValue("cl_dlmax", FRAGMENT_MIN_SIZE);
 				cls.connect_time = host.realtime;
@@ -3116,12 +3118,18 @@ int CL_GetMessage(byte* data, size_t* length)
 	if ( cls.demoplayback )
 	{
 		if ( CL_DemoReadMessage(data, length) )
+		{
 			return true;
+		}
+
 		return false;
 	}
 
 	if ( NET_GetPacket(NS_CLIENT, &net_from, data, length) )
+	{
 		return true;
+	}
+
 	return false;
 }
 
@@ -3137,9 +3145,13 @@ void CL_ReadNetMessage(void)
 	while ( CL_GetMessage(net_message_buffer, &curSize) )
 	{
 		if ( cls.legacymode && *((unsigned int*)&net_message_buffer) == 0xFFFFFFFE )
+		{
 			// Will rewrite existing packet by merged
 			if ( !NetSplit_GetLong(&cls.netchan.netsplit, &net_from, net_message_buffer, &curSize) )
+			{
 				continue;
+			}
+		}
 
 		MSG_Init(&net_message, "ServerData", net_message_buffer, (int)curSize);
 
@@ -3152,7 +3164,9 @@ void CL_ReadNetMessage(void)
 
 		// can't be a valid sequenced packet
 		if ( cls.state < ca_connected )
+		{
 			continue;
+		}
 
 		if ( !cls.demoplayback && MSG_GetMaxBytes(&net_message) < 8 )
 		{
@@ -3172,11 +3186,18 @@ void CL_ReadNetMessage(void)
 
 		// run special handler for quake demos
 		if ( cls.demoplayback == DEMO_QUAKE1 )
+		{
 			CL_ParseQuakeMessage(&net_message, true);
+		}
 		else if ( cls.legacymode )
+		{
 			CL_ParseLegacyServerMessage(&net_message, true);
+		}
 		else
+		{
 			CL_ParseServerMessage(&net_message, true);
+		}
+
 		cl.send_reply = true;
 	}
 
@@ -3330,7 +3351,8 @@ A file has been received via the fragmentation/reassembly layer, put it in the r
 */
 void CL_ProcessFile(qboolean successfully_received, const char* filename)
 {
-	int sound_len = sizeof(DEFAULT_SOUNDPATH) - 1;
+	static const int sound_len = sizeof(DEFAULT_SOUNDPATH) - 1;
+
 	byte rgucMD5_hash[16];
 	const char* pfilename;
 	resource_t* p;
@@ -3338,7 +3360,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( COM_CheckString(filename) && successfully_received )
 	{
 		if ( filename[0] != '!' )
+		{
 			Con_Printf("processing %s\n", filename);
+		}
 
 		if ( !Q_strnicmp(filename, "downloaded/", 11) )
 		{
@@ -3354,7 +3378,10 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( cls.legacymode )
 	{
 		if ( host.downloadcount > 0 )
+		{
 			host.downloadcount--;
+		}
+
 		if ( !host.downloadcount )
 		{
 			MSG_WriteByte(&cls.netchan.message, clc_stringcmd);
@@ -3366,7 +3393,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	pfilename = filename;
 
 	if ( !Q_strnicmp(filename, DEFAULT_SOUNDPATH, sound_len) )
+	{
 		pfilename += sound_len;
+	}
 
 	for ( p = cl.resourcesneeded.pNext; p != &cl.resourcesneeded; p = p->pNext )
 	{
@@ -3375,19 +3404,25 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 			COM_HexConvert(filename + 4, 32, rgucMD5_hash);
 
 			if ( !memcmp(p->rgucMD5_hash, rgucMD5_hash, 16) )
+			{
 				break;
+			}
 		}
 		else
 		{
 			if ( p->type == t_generic )
 			{
 				if ( !Q_stricmp(p->szFileName, filename) )
+				{
 					break;
+				}
 			}
 			else
 			{
 				if ( !Q_stricmp(p->szFileName, pfilename) )
+				{
 					break;
+				}
 			}
 		}
 	}
@@ -3395,7 +3430,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( p != &cl.resourcesneeded )
 	{
 		if ( successfully_received )
+		{
 			ClearBits(p->ucFlags, RES_WASMISSING);
+		}
 
 		if ( filename[0] == '!' )
 		{
@@ -3419,7 +3456,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 				}
 
 				if ( cls.netchan.tempbuffer )
+				{
 					Mem_Free(cls.netchan.tempbuffer);
+				}
 			}
 
 			cls.netchan.tempbuffersize = 0;
@@ -3435,7 +3474,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 		host.downloadcount = 0;
 
 		for ( p = cl.resourcesneeded.pNext; p != &cl.resourcesneeded; p = p->pNext )
+		{
 			host.downloadcount++;
+		}
 
 		if ( cl.resourcesneeded.pNext == &cl.resourcesneeded )
 		{
@@ -3445,7 +3486,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 			MSG_Init(&msg, "Resource Registration", msg_buf, sizeof(msg_buf));
 
 			if ( CL_PrecacheResources() )
+			{
 				CL_RegisterResources(&msg);
+			}
 
 			if ( MSG_GetNumBytesWritten(&msg) > 0 )
 			{

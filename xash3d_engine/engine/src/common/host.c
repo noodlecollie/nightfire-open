@@ -255,7 +255,9 @@ void Host_EndGame(qboolean abort, const char* message, ...)
 	Mod_FreeAll();
 
 	if ( abort )
+	{
 		Host_AbortCurrentFrame();
+	}
 }
 
 /*
@@ -510,7 +512,10 @@ qboolean Host_IsLocalClient(void)
 {
 	// only the local client have the active server
 	if ( CL_Initialized() && SV_Initialized() )
+	{
 		return true;
+	}
+
 	return false;
 }
 
