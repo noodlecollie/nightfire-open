@@ -344,7 +344,8 @@ typedef struct host_parm_s
 	poolhandle_t mempool;  // static mempool for misc allocations
 	string finalmsg;  // server shutdown final message
 	string downloadfile;  // filename to be downloading
-	int downloadcount;  // how many files remain to downloading
+	int downloadcount;  // how many files remain to download
+	int totaldownloadcount;
 	char deferred_cmd[128];  // deferred commands
 	host_redirect_t rd;  // remote console
 

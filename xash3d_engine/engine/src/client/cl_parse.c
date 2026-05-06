@@ -469,6 +469,7 @@ qboolean CL_RequestMissingResources(void)
 		{
 			cls.dl.doneregistering = true;
 			host.downloadcount = 0;
+			host.totaldownloadcount = 0;
 			cls.dl.custom = false;
 		}
 		else if ( !FBitSet(p->ucFlags, RES_WASMISSING) )
@@ -955,7 +956,8 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 		// seperate the printfs so the server message can have a color
 		Con_Print(
 			"\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36"
-			"\36\36\37\n");
+			"\36\36\37\n"
+		);
 		Con_Print(va("%c%s\n\n", 2, clgame.maptitle));
 	}
 
@@ -1794,10 +1796,14 @@ void CL_ParseResourceList(sizebuf_t* msg)
 		pResource->ucFlags = MSG_ReadUBitLong(msg, 3) & ~RES_WASMISSING;
 
 		if ( FBitSet(pResource->ucFlags, RES_CUSTOM) )
+		{
 			MSG_ReadBytes(msg, pResource->rgucMD5_hash, sizeof(pResource->rgucMD5_hash));
+		}
 
 		if ( MSG_ReadOneBit(msg) )
+		{
 			MSG_ReadBytes(msg, pResource->rguc_reserved, sizeof(pResource->rguc_reserved));
+		}
 
 		CL_AddToResourceList(pResource, &cl.resourcesneeded);
 	}
@@ -2097,7 +2103,8 @@ void CL_ParseExec(sizebuf_t* msg)
 		"exec spy.cfg\n",
 		"exec engineer.cfg\n",
 		"",
-		"exec civilian.cfg\n"};
+		"exec civilian.cfg\n",
+	};
 
 	is_class = MSG_ReadByte(msg);
 
@@ -2811,6 +2818,7 @@ void CL_LegacyParseResourceList(sizebuf_t* msg)
 	HTTP_ResetProcessState();
 
 	host.downloadcount = 0;
+	host.totaldownloadcount = 0;
 
 	for ( i = 0; i < reslist.rescount; i++ )
 	{
@@ -2829,12 +2837,14 @@ void CL_LegacyParseResourceList(sizebuf_t* msg)
 		if ( FS_FileExists(path, false) )
 			continue;  // already exists
 
-		host.downloadcount++;
+		++host.downloadcount;
+		++host.totaldownloadcount;
 		HTTP_AddDownload(path, -1, true);
 	}
 
 	if ( !host.downloadcount )
 	{
+		host.totaldownloadcount = 0;
 		MSG_WriteByte(&cls.netchan.message, clc_stringcmd);
 		MSG_WriteString(&cls.netchan.message, "continueloading");
 	}

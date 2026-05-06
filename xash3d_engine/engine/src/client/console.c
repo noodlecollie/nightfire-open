@@ -1848,8 +1848,9 @@ void Con_DrawDebug(void)
 		Q_snprintf(
 			dlstring,
 			sizeof(dlstring),
-			"Downloading [%d remaining]: ^2%s^7 %5.1f%% time %.f secs",
+			"Downloading [%d remaining of %d total]: ^2%s^7 %5.1f%% time %.f secs",
 			host.downloadcount,
+			host.totaldownloadcount,
 			host.downloadfile,
 			scr_download->value,
 			Sys_DoubleTime() - timeStart

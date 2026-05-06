@@ -3333,7 +3333,9 @@ void CL_RegisterCustomization(resource_t* resource)
 		player_info_t* player = &cl.players[resource->playernum];
 
 		if ( !COM_CreateCustomization(&player->customdata, resource, resource->playernum, FCUST_FROMHPAK, NULL, NULL) )
+		{
 			Con_Printf("Unable to create custom decal for player %i\n", resource->playernum);
+		}
 	}
 	else
 	{
@@ -3351,7 +3353,9 @@ A file has been received via the fragmentation/reassembly layer, put it in the r
 */
 void CL_ProcessFile(qboolean successfully_received, const char* filename)
 {
-	static const int sound_len = sizeof(DEFAULT_SOUNDPATH) - 1;
+#define SOUND_PATH_LENGTH (sizeof(DEFAULT_SOUNDPATH) - 1)
+#define PREFIX_DOWNLOADED "downloaded/"
+#define PREFIX_DOWNLOADED_LENGTH (sizeof(PREFIX_DOWNLOADED) - 1)
 
 	byte rgucMD5_hash[16];
 	const char* pfilename;
@@ -3361,14 +3365,23 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	{
 		if ( filename[0] != '!' )
 		{
-			Con_Printf("processing %s\n", filename);
+			Con_Printf("Processing %s\n", filename);
 		}
 
-		if ( !Q_strnicmp(filename, "downloaded/", 11) )
+		if ( !Q_strnicmp(filename, PREFIX_DOWNLOADED, PREFIX_DOWNLOADED_LENGTH) )
 		{
 			// skip "downloaded/" part to avoid mismatch with needed resources list
-			filename += 11;
+			filename += PREFIX_DOWNLOADED_LENGTH;
 		}
+
+		UI_ConnectionProgress_Download(
+			CL_CleanFileName(filename),
+			cls.servername,
+			NULL,
+			host.totaldownloadcount - host.downloadcount,
+			host.totaldownloadcount,
+			""  // TODO: Do we have anything to serve as a comment?
+		);
 	}
 	else if ( !successfully_received )
 	{
@@ -3384,17 +3397,19 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 
 		if ( !host.downloadcount )
 		{
+			host.totaldownloadcount = 0;
 			MSG_WriteByte(&cls.netchan.message, clc_stringcmd);
 			MSG_WriteString(&cls.netchan.message, "continueloading");
 		}
+
 		return;
 	}
 
 	pfilename = filename;
 
-	if ( !Q_strnicmp(filename, DEFAULT_SOUNDPATH, sound_len) )
+	if ( !Q_strnicmp(filename, DEFAULT_SOUNDPATH, SOUND_PATH_LENGTH) )
 	{
-		pfilename += sound_len;
+		pfilename += SOUND_PATH_LENGTH;
 	}
 
 	for ( p = cl.resourcesneeded.pNext; p != &cl.resourcesneeded; p = p->pNext )
@@ -3472,10 +3487,12 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( cls.state != ca_disconnected )
 	{
 		host.downloadcount = 0;
+		host.totaldownloadcount = 0;
 
 		for ( p = cl.resourcesneeded.pNext; p != &cl.resourcesneeded; p = p->pNext )
 		{
-			host.downloadcount++;
+			++host.downloadcount;
+			++host.totaldownloadcount;
 		}
 
 		if ( cl.resourcesneeded.pNext == &cl.resourcesneeded )
@@ -3506,6 +3523,10 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 		cls.netchan.tempbuffer = NULL;
 		cls.netchan.tempbuffersize = 0;
 	}
+
+#undef SOUND_PATH_LENGTH
+#undef PREFIX_DOWNLOADED
+#undef PREFIX_DOWNLOADED_LENGTH
 }
 
 /*
@@ -3600,10 +3621,14 @@ qboolean CL_PrecacheResources(void)
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
+		{
 			continue;
+		}
 
 		if ( pRes->type != t_model || pRes->nIndex != WORLD_INDEX )
+		{
 			continue;
+		}
 
 		cl.models[pRes->nIndex] = Mod_LoadWorld(pRes->szFileName, true);
 		SetBits(pRes->ucFlags, RES_PRECACHED);
@@ -3615,7 +3640,9 @@ qboolean CL_PrecacheResources(void)
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
+		{
 			continue;
+		}
 
 		if ( pRes->type == t_model && pRes->szFileName[0] == '*' )
 		{
@@ -3637,17 +3664,22 @@ qboolean CL_PrecacheResources(void)
 	}
 
 	if ( cls.state != ca_active )
+	{
 		S_BeginRegistration();
+	}
 
 	// precache all the remaining resources where order doesn't matter
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
+		{
 			continue;
+		}
 
 		switch ( pRes->type )
 		{
 			case t_sound:
+			{
 				if ( pRes->nIndex != -1 )
 				{
 					if ( FBitSet(pRes->ucFlags, RES_WASMISSING) )
@@ -3677,11 +3709,19 @@ qboolean CL_PrecacheResources(void)
 					// client sounds
 					S_RegisterSound(pRes->szFileName);
 				}
+
 				break;
+			}
+
 			case t_skin:
+			{
 				break;
+			}
+
 			case t_model:
+			{
 				cl.nummodels = Q_max(cl.nummodels, pRes->nIndex + 1);
+
 				if ( pRes->szFileName[0] != '*' )
 				{
 					if ( pRes->nIndex != -1 )
@@ -3703,21 +3743,38 @@ qboolean CL_PrecacheResources(void)
 						CL_LoadClientSprite(pRes->szFileName);
 					}
 				}
+
 				break;
+			}
+
 			case t_decal:
+			{
 				if ( !FBitSet(pRes->ucFlags, RES_CUSTOM) )
+				{
 					Q_strncpy(host.draw_decals[pRes->nIndex].path, pRes->szFileName, sizeof(host.draw_decals[0].path));
+				}
+
 				break;
+			}
+
 			case t_generic:
+			{
 				Q_strncpy(cl.files_precache[pRes->nIndex], pRes->szFileName, sizeof(cl.files_precache[0]));
 				cl.numfiles = Q_max(cl.numfiles, pRes->nIndex + 1);
 				break;
+			}
+
 			case t_eventscript:
+			{
 				Q_strncpy(cl.event_precache[pRes->nIndex], pRes->szFileName, sizeof(cl.event_precache[0]));
 				CL_SetEventIndex(cl.event_precache[pRes->nIndex], pRes->nIndex);
 				break;
+			}
+
 			default:
+			{
 				break;
+			}
 		}
 
 		SetBits(pRes->ucFlags, RES_PRECACHED);
@@ -3728,7 +3785,9 @@ qboolean CL_PrecacheResources(void)
 	cl.numfiles = bound(0, cl.numfiles, MAX_CUSTOM);
 
 	if ( cls.state != ca_active )
+	{
 		S_EndRegistration();
+	}
 
 	return true;
 }
@@ -3761,16 +3820,24 @@ Escape to menu from game
 void CL_Escape_f(void)
 {
 	if ( cls.key_dest == key_menu )
+	{
 		return;
+	}
 
 	// the final credits is running
 	if ( UI_CreditsActive() )
+	{
 		return;
+	}
 
 	if ( cls.state == ca_cinematic )
+	{
 		SCR_NextMovie();  // jump to next movie
+	}
 	else
+	{
 		UI_SetActiveMenu(true);
+	}
 }
 
 /*

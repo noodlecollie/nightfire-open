@@ -203,12 +203,20 @@ static void pfnConnectionProgress_Download(
 	const char* comment
 )
 {
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Download():");
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  fileName = %s", pszFileName ? pszFileName : "<null>");
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  serverName = %s", pszServerName ? pszServerName : "<null>");
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  current = %d", iCurrent);
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  total = %d", iTotal);
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "  comment = %s", comment ? comment : "<null>");
+	Rml::Log::Message(
+		Rml::Log::Type::LT_WARNING,
+		"pfnConnectionProgress_Download():\n"
+		"  fileName = %s\n"
+		"  serverName = %s\n"
+		"  current = %d\n"
+		"  total = %d\n"
+		"  comment = %s",
+		pszFileName ? pszFileName : "<null>",
+		pszServerName ? pszServerName : "<null>",
+		iCurrent,
+		iTotal,
+		comment ? comment : "<null>"
+	);
 }
 
 static void pfnConnectionProgress_DownloadEnd(void)

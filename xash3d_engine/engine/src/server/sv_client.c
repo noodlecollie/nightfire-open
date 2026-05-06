@@ -2100,12 +2100,16 @@ static qboolean SV_DownloadFile_f(sv_client_t* cl)
 	const char* name;
 
 	if ( Cmd_Argc() < 2 )
+	{
 		return true;
+	}
 
 	name = Cmd_Argv(1);
 
 	if ( !COM_CheckString(name) )
+	{
 		return true;
+	}
 
 	if ( !COM_IsSafeFileToDownload(name) || !sv_allow_download.value )
 	{
@@ -2126,10 +2130,14 @@ static qboolean SV_DownloadFile_f(sv_client_t* cl)
 				const char* cmpname = name;
 
 				if ( sv.resources[i].type == t_sound )
+				{
 					cmpname += sizeof(DEFAULT_SOUNDPATH) - 1;  // cut "sound/" off
+				}
 
 				if ( !Q_strncmp(sv.resources[i].szFileName, cmpname, 64) )
+				{
 					break;
+				}
 			}
 
 			if ( i == sv.num_resources )
@@ -2142,7 +2150,9 @@ static qboolean SV_DownloadFile_f(sv_client_t* cl)
 			if ( !Q_stricmp(COM_FileExtension(name), "mdl") )
 			{
 				if ( FS_FileExists(Mod_StudioTexName(name), false) > 0 )
+				{
 					Netchan_CreateFileFragments(&cl->netchan, Mod_StudioTexName(name));
+				}
 			}
 
 			if ( Netchan_CreateFileFragments(&cl->netchan, name) )
