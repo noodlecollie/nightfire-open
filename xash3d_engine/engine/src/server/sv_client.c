@@ -3129,9 +3129,14 @@ void SV_ExecuteClientCommand(sv_client_t* cl, const char* s)
 		if ( !Q_strcmp(Cmd_Argv(0), u->name) )
 		{
 			if ( !u->func(cl) )
+			{
 				Con_Printf("'%s' is not valid from the console\n", u->name);
+			}
 			else
+			{
 				Con_Reportf("ucmd->%s()\n", u->name);
+			}
+
 			break;
 		}
 	}

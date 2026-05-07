@@ -2845,6 +2845,7 @@ void CL_LegacyParseResourceList(sizebuf_t* msg)
 	if ( !host.downloadcount )
 	{
 		host.totaldownloadcount = 0;
+		UI_ConnectionProgress_DownloadEnd();
 		MSG_WriteByte(&cls.netchan.message, clc_stringcmd);
 		MSG_WriteString(&cls.netchan.message, "continueloading");
 	}

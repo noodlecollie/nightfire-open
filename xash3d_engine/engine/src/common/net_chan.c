@@ -172,7 +172,8 @@ qboolean NetSplit_GetLong(netsplit_t* ns, netadr_t* from, byte* data, size_t* le
 			S_WARN "NetSplit_GetLong: packet out fo bounds from %s (part %d index %d)\n",
 			NET_AdrToString(*from),
 			packet->part,
-			packet->index);
+			packet->index
+		);
 		return false;
 	}
 
@@ -181,7 +182,8 @@ qboolean NetSplit_GetLong(netsplit_t* ns, netadr_t* from, byte* data, size_t* le
 		Con_Reportf(
 			S_WARN "NetSplit_GetLong: packet out fo bounds from %s (length %d)\n",
 			NET_AdrToString(*from),
-			packet->length);
+			packet->length
+		);
 		return false;
 	}
 
@@ -320,7 +322,8 @@ void Netchan_Setup(
 	netadr_t adr,
 	int qport,
 	void* client,
-	int (*pfnBlockSize)(void*, fragsize_t mode))
+	int (*pfnBlockSize)(void*, fragsize_t mode)
+)
 {
 	Netchan_Clear(chan);
 
@@ -586,11 +589,16 @@ void Netchan_AddFragbufToTail(fragbufwaiting_t* wait, fragbuf_t* buf)
 	if ( p )
 	{
 		while ( p->next )
+		{
 			p = p->next;
+		}
+
 		p->next = buf;
 	}
 	else
+	{
 		wait->fragbufs = buf;
+	}
 }
 
 /*
@@ -850,10 +858,8 @@ Netchan_CheckForCompletion
 void Netchan_CheckForCompletion(netchan_t* chan, int stream, int intotalbuffers)
 {
 	int c, id;
-	int size;
 	fragbuf_t* p;
 
-	size = 0;
 	c = 0;
 
 	p = chan->incomingbufs[stream];
@@ -862,7 +868,7 @@ void Netchan_CheckForCompletion(netchan_t* chan, int stream, int intotalbuffers)
 
 	while ( p )
 	{
-		size += MSG_GetNumBytesWritten(&p->frag_message);
+		MSG_GetNumBytesWritten(&p->frag_message);
 		c++;
 
 		id = FRAG_GETID(p->bufferid);
@@ -879,7 +885,9 @@ void Netchan_CheckForCompletion(netchan_t* chan, int stream, int intotalbuffers)
 
 	// received final message
 	if ( c == intotalbuffers )
+	{
 		chan->incomingready[stream] = true;
+	}
 }
 
 /*
@@ -916,7 +924,8 @@ void Netchan_CreateFileFragmentsFromBuffer(netchan_t* chan, const char* filename
 			Con_DPrintf(
 				"Compressing filebuffer (%s -> %s)\n",
 				Q_memprint((float)size),
-				Q_memprint((float)uCompressedSize));
+				Q_memprint((float)uCompressedSize)
+			);
 			memcpy(pbuf, pbOut, uCompressedSize);
 			size = uCompressedSize;
 		}
@@ -1005,9 +1014,29 @@ int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 	}
 
 	if ( chan->pfnBlockSize != NULL )
+	{
 		chunksize = chan->pfnBlockSize(chan->client, FRAGSIZE_FRAG);
+	}
 	else
+	{
 		chunksize = FRAGMENT_MAX_SIZE;  // fallback
+	}
+
+	int filenameLength = (int)strlen(filename);
+
+	// At the moment, the first fragment must contain the entire file name.
+	// This *should* be fine as an assumption, but check.
+	if ( chunksize < 0 || filenameLength > chunksize )
+	{
+		Con_Printf(
+			S_ERROR "Could not fit filename \"%s\" of length %d into chunk of length %d\n",
+			filename,
+			filenameLength,
+			chunksize
+		);
+
+		return 0;
+	}
 
 	Q_strncpy(compressedfilename, filename, sizeof(compressedfilename));
 	COM_ReplaceExtension(compressedfilename, sizeof(compressedfilename), ".ztmp");
@@ -1039,12 +1068,15 @@ int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 				"compressed file %s (%s -> %s)\n",
 				filename,
 				Q_memprint((float)filesize),
-				Q_memprint((float)uCompressedSize));
+				Q_memprint((float)uCompressedSize)
+			);
+
 			FS_WriteFile(compressedfilename, compressed, uCompressedSize);
 			filesize = uCompressedSize;
 			bCompressed = true;
 			free(compressed);
 		}
+
 		Mem_Free(uncompressed);
 	}
 
@@ -1052,6 +1084,10 @@ int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 	remaining = filesize;
 	pos = 0;
 
+	// TODO: THERE IS A BUG HERE
+	// The number of bytes transmitted does not take into account
+	// the file name! Also the maths done on the send variable
+	// does not make sense!
 	while ( remaining > 0 )
 	{
 		send = Q_min(remaining, chunksize);
@@ -1093,8 +1129,12 @@ int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 	else
 	{
 		p = chan->waitlist[FRAG_FILE_STREAM];
+
 		while ( p->next )
+		{
 			p = p->next;
+		}
+
 		p->next = wait;
 	}
 
@@ -1231,7 +1271,7 @@ qboolean Netchan_CopyFileFragments(netchan_t* chan, sizebuf_t* msg)
 	}
 	else if ( filename[0] != '!' && !COM_IsSafeFileToDownload(filename) )
 	{
-		Con_Printf(S_ERROR "file fragment received with bad path, ignoring\n");
+		Con_Printf(S_ERROR "file fragment %s received with bad path, ignoring\n", filename);
 		Netchan_FlushIncoming(chan, FRAG_FILE_STREAM);
 		return false;
 	}
@@ -1332,7 +1372,8 @@ qboolean Netchan_Validate(
 	qboolean* frag_message,
 	uint* fragid,
 	int* frag_offset,
-	int* frag_length)
+	int* frag_length
+)
 {
 	int i, buffer, offset;
 	int count, length;
@@ -1748,7 +1789,8 @@ void Netchan_TransmitBits(netchan_t* chan, int length, byte* data)
 			MSG_GetNumBytesWritten(&send),
 			MSG_GetData(&send),
 			chan->remote_address,
-			splitsize);
+			splitsize
+		);
 	}
 
 	if ( SV_Active() && sv_lan.value && sv_lan_rate.value > 1000.0f )
@@ -1774,7 +1816,8 @@ void Netchan_TransmitBits(netchan_t* chan, int length, byte* data)
 			(chan->outgoing_sequence - 1) & 63,
 			chan->incoming_sequence & 63,
 			send_reliable ? 1 : 0,
-			(float)host.realtime);
+			(float)host.realtime
+		);
 	}
 }
 
@@ -1847,7 +1890,8 @@ qboolean Netchan_Process(netchan_t* chan, sizebuf_t* msg)
 			sequence & 63,
 			sequence_ack & 63,
 			reliable_message,
-			host.realtime);
+			host.realtime
+		);
 	}
 
 	// discard stale or duplicated packets
