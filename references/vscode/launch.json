@@ -14,7 +14,7 @@
 			[
 				"-width", "1920",
 				"-height", "1080",
-				"-dev", "5"
+				"-dev", "2"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}/build/install/nightfire-open",
