@@ -3378,7 +3378,7 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 			CL_CleanFileName(filename),
 			cls.servername,
 			NULL,
-			host.totaldownloadcount - host.downloadcount,
+			host.totaldownloadcount - host.downloadcount + 1,
 			host.totaldownloadcount,
 			""  // TODO: Do we have anything to serve as a comment?
 		);

@@ -471,6 +471,8 @@ qboolean CL_RequestMissingResources(void)
 			host.downloadcount = 0;
 			host.totaldownloadcount = 0;
 			cls.dl.custom = false;
+
+			UI_ConnectionProgress_DownloadEnd();
 		}
 		else if ( !FBitSet(p->ucFlags, RES_WASMISSING) )
 		{
