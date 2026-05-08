@@ -995,7 +995,7 @@ Netchan_CreateFileFragments
 int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 {
 	int chunksize;
-	int send, pos;
+	int pos;
 	int remaining;
 	int bufferid = 1;
 	fs_offset_t filesize = 0;
@@ -1024,9 +1024,10 @@ int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 
 	int filenameLength = (int)strlen(filename);
 
-	// At the moment, the first fragment must contain the entire file name.
+	// At the moment, the first fragment must contain the entire file name,
+	// plus the terminator, plus at least some other data.
 	// This *should* be fine as an assumption, but check.
-	if ( chunksize < 0 || filenameLength > chunksize )
+	if ( chunksize < 0 || chunksize < filenameLength + 2 )
 	{
 		Con_Printf(
 			S_ERROR "Could not fit filename \"%s\" of length %d into chunk of length %d\n",
@@ -1084,39 +1085,40 @@ int Netchan_CreateFileFragments(netchan_t* chan, const char* filename)
 	remaining = filesize;
 	pos = 0;
 
-	// TODO: THERE IS A BUG HERE
-	// The number of bytes transmitted does not take into account
-	// the file name! Also the maths done on the send variable
-	// does not make sense!
 	while ( remaining > 0 )
 	{
-		send = Q_min(remaining, chunksize);
+		int bytesToSend = Q_min(remaining, chunksize);
 
-		buf = Netchan_AllocFragbuf(send);
+		if ( firstfragment )
+		{
+			// We add the file name to the first chunk, and then
+			// send whatever other data we can. We've already
+			// verified that we can fit the entire filename length
+			// and terminator into the chunk.
+			bytesToSend = Q_min(filenameLength + 1 + remaining, chunksize);
+		}
+
+		buf = Netchan_AllocFragbuf(bytesToSend);
 		buf->bufferid = bufferid++;
 
-		// copy in data
 		MSG_Clear(&buf->frag_message);
 
 		if ( firstfragment )
 		{
-			// Write filename
+			// Write filename first
 			MSG_WriteString(&buf->frag_message, filename);
-
-			// Send a bit less on first package
-			send -= MSG_GetNumBytesWritten(&buf->frag_message);
-
+			bytesToSend -= filenameLength + 1;
 			firstfragment = false;
 		}
 
 		buf->isfile = true;
-		buf->size = send;
+		buf->size = bytesToSend;
 		buf->foffset = pos;
 		buf->iscompressed = bCompressed;
 		Q_strncpy(buf->filename, filename, sizeof(buf->filename));
 
-		pos += send;
-		remaining -= send;
+		pos += bytesToSend;
+		remaining -= bytesToSend;
 
 		Netchan_AddFragbufToTail(wait, buf);
 	}
@@ -1656,12 +1658,14 @@ void Netchan_TransmitBits(netchan_t* chan, int length, byte* data)
 						file = FS_Open(compressedfilename, "rb", false);
 					}
 					else
+					{
 						file = FS_Open(pbuf->filename, "rb", false);
+					}
 
 					FS_Seek(file, pbuf->foffset, SEEK_SET);
 					FS_Read(file, filebuffer, pbuf->size);
 
-					MSG_WriteBits(&pbuf->frag_message, filebuffer, pbuf->size << 3);
+					MSG_WriteBits(&pbuf->frag_message, filebuffer, pbuf->size * 8);
 					FS_Close(file);
 				}
 
