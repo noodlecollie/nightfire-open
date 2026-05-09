@@ -2064,15 +2064,18 @@ void CL_Connect_f(void)
 	Con_Printf("server %s\n", server);
 	CL_Disconnect();
 
-	// TESTTEST: a see console during connection
-	UI_SetActiveMenu(false);
-	Key_SetKeyDest(key_console);
+	UI_ConnectionProgress_Connect(server);
+
+	if ( !UI_IsVisible() )
+	{
+		Key_SetKeyDest(key_console);
+	}
 
 	cls.state = ca_connecting;
 	cls.legacymode = legacyconnect;
 	Q_strncpy(cls.servername, server, sizeof(cls.servername));
 	cls.connect_time = MAX_HEARTBEAT;  // CL_CheckForResend() will fire immediately
-	cls.max_fragment_size = FRAGMENT_MAX_SIZE;  // guess a we can establish connection with maximum fragment size
+	cls.max_fragment_size = FRAGMENT_MAX_SIZE;  // guess that we can establish connection with maximum fragment size
 	cls.connect_retry = 0;
 	cls.spectator = false;
 	cls.signon = 0;
@@ -2814,6 +2817,8 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		}
 
 		CL_Reconnect(true);
+
+		// NFTODO: Refactor for connection UI
 		UI_SetActiveMenu(cl.background);
 	}
 	else if ( !Q_strcmp(c, "info") )
