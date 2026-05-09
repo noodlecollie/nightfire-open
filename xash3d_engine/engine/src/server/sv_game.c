@@ -913,13 +913,19 @@ void SV_QueueChangeLevel(const char* level, const char* landname)
 	COM_StripExtension(mapname);
 
 	if ( COM_CheckString(landname) )
+	{
 		smooth = true;
+	}
 
 	// determine spawn entity classname
 	if ( svs.maxclients == 1 )
+	{
 		spawn_entity = GI->sp_entity;
+	}
 	else
+	{
 		spawn_entity = GI->mp_entity;
+	}
 
 	flags = SV_MapIsValid(mapname, spawn_entity, landname);
 
@@ -951,7 +957,9 @@ void SV_QueueChangeLevel(const char* level, const char* landname)
 	}
 
 	if ( svs.maxclients > 1 )
+	{
 		smooth = false;  // multiplayer doesn't support smooth transition
+	}
 
 	if ( smooth && !Q_stricmp(sv.name, level) )
 	{
@@ -982,9 +990,13 @@ void SV_QueueChangeLevel(const char* level, const char* landname)
 
 	// changelevel will be executed on a next frame
 	if ( smooth )
+	{
 		COM_ChangeLevel(mapname, landname, sv.background);  // Smoothed Half-Life changelevel
+	}
 	else
+	{
 		COM_ChangeLevel(mapname, NULL, sv.background);  // Classic Quake changlevel
+	}
 }
 
 /*

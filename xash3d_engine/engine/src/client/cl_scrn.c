@@ -402,34 +402,50 @@ void SCR_BeginLoadingPlaque(qboolean is_background)
 	cl.video_prepped = false;
 
 	if ( !Host_IsDedicated() )
+	{
 		oldclear = gl_clear->value;
+	}
 
 	if ( CL_IsInMenu() && !cls.changedemo && !is_background )
 	{
 		UI_SetActiveMenu(false);
+
 		if ( cls.state == ca_disconnected &&
 			 !(GameState->curstate == STATE_RUNFRAME && GameState->nextstate != STATE_RUNFRAME) )
+		{
 			SCR_UpdateScreen();
+		}
 	}
 
 	if ( cls.state == ca_disconnected || cls.disable_screen )
+	{
 		return;  // already set
+	}
 
 	if ( cls.key_dest == key_console )
+	{
 		return;
+	}
 
 	if ( !Host_IsDedicated() )
+	{
 		gl_clear->value = 0.0f;
+	}
 
 	if ( is_background )
+	{
 		IN_MouseSavePos();
+	}
+
 	cls.draw_changelevel = !is_background;
 	SCR_UpdateScreen();
 	cls.disable_screen = (float)host.realtime;
 	cl.background = is_background;  // set right state before svc_serverdata is came
 
 	if ( !Host_IsDedicated() )
+	{
 		gl_clear->value = oldclear;
+	}
 
 	//	SNDDMA_LockSound();
 }
