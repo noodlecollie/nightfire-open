@@ -3618,6 +3618,8 @@ qboolean CL_PrecacheResources(void)
 {
 	resource_t* pRes;
 
+	UI_ConnectionProgress_Precache();
+
 	// NOTE: world need to be loaded as first model
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{

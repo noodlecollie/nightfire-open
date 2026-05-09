@@ -898,7 +898,9 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 
 	// wipe the client_t struct
 	if ( !cls.changelevel && !cls.changedemo )
+	{
 		CL_ClearState();
+	}
 
 	// Re-init hud video, especially if we changed game directories
 	clgame.dllFuncs.pfnVidInit();
@@ -911,12 +913,16 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	if ( legacy )
 	{
 		if ( i != PROTOCOL_LEGACY_VERSION )
+		{
 			Host_Error("Server use invalid protocol (%i should be %i)\n", i, PROTOCOL_LEGACY_VERSION);
+		}
 	}
 	else
 	{
 		if ( i != PROTOCOL_VERSION )
+		{
 			Host_Error("Server use invalid protocol (%i should be %i)\n", i, PROTOCOL_VERSION);
+		}
 	}
 
 	cl.servercount = MSG_ReadLong(msg);
@@ -924,6 +930,7 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	cl.playernum = MSG_ReadByte(msg);
 	cl.maxclients = MSG_ReadByte(msg);
 	clgame.maxEntities = MSG_ReadWord(msg);
+
 	if ( legacy )
 	{
 		clgame.maxEntities = bound(MIN_LEGACY_EDICTS, clgame.maxEntities, MAX_LEGACY_EDICTS);
@@ -934,6 +941,7 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 		clgame.maxEntities = bound(MIN_EDICTS, clgame.maxEntities, MAX_EDICTS);
 		clgame.maxModels = MSG_ReadWord(msg);
 	}
+
 	Q_strncpy(clgame.mapname, MSG_ReadString(msg), sizeof(clgame.mapname));
 	Q_strncpy(clgame.maptitle, MSG_ReadString(msg), sizeof(clgame.maptitle));
 	background = MSG_ReadOneBit(msg);
@@ -951,7 +959,9 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	}
 
 	if ( clgame.maxModels > MAX_MODELS )
+	{
 		Con_Printf(S_WARN "server model limit is above client model limit %i > %i\n", clgame.maxModels, MAX_MODELS);
+	}
 
 	if ( Con_FixedFont() )
 	{
@@ -960,6 +970,7 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 			"\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36"
 			"\36\36\37\n"
 		);
+
 		Con_Print(va("%c%s\n\n", 2, clgame.maptitle));
 	}
 
@@ -973,21 +984,33 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 		CSCR_LoadDefaultCVars("user.scr");
 
 		if ( r_decals->value > mp_decals.value )
+		{
 			Cvar_SetValue("r_decals", mp_decals.value);
+		}
 	}
 	else
+	{
 		Cvar_Reset("r_decals");
+	}
 
 	// set the background state
 	if ( cls.demoplayback && (cls.demonum != -1) )
+	{
 		cl.background = true;
+	}
 	else
+	{
 		cl.background = background;
+	}
 
 	if ( cl.background )  // tell the game parts about background state
+	{
 		Cvar_FullSet("cl_background", "1", FCVAR_READ_ONLY);
+	}
 	else
+	{
 		Cvar_FullSet("cl_background", "0", FCVAR_READ_ONLY);
+	}
 
 	if ( !cls.changelevel )
 	{
@@ -996,13 +1019,19 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	}
 
 	if ( !cls.changedemo )
+	{
 		UI_SetActiveMenu(cl.background);
+	}
 	else if ( !cls.demoplayback )
+	{
 		Key_SetKeyDest(key_menu);
+	}
 
 	// don't reset cursor in background mode
 	if ( cl.background )
+	{
 		IN_MouseRestorePos();
+	}
 
 	// will be changed later
 	cl.viewentity = cl.playernum + 1;
@@ -1010,24 +1039,37 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	Q_strncpy(gameui.globals->maptitle, clgame.maptitle, sizeof(gameui.globals->maptitle));
 
 	if ( !cls.changelevel && !cls.changedemo )
+	{
 		CL_InitEdicts();  // re-arrange edicts
+	}
 
 	// get splash name
 	if ( cls.demoplayback && (cls.demonum != -1) )
+	{
 		Cvar_Set("cl_levelshot_name", va("levelshots/%s_%s", cls.demoname, refState.wideScreen ? "16x9" : "4x3"));
+	}
 	else
+	{
 		Cvar_Set("cl_levelshot_name", va("levelshots/%s_%s", clgame.mapname, refState.wideScreen ? "16x9" : "4x3"));
+	}
+
 	Cvar_SetValue("scr_loading", 0.0f);  // reset progress bar
 
 	if ( (cl_allow_levelshots->value && !cls.changelevel) || cl.background )
 	{
 		if ( !FS_FileExists(va("%s.bmp", cl_levelshot_name->string), true) )
+		{
 			Cvar_Set("cl_levelshot_name", "*black");  // render a black screen
+		}
+
 		cls.scrshot_request = scrshot_plaque;  // request levelshot even if exist (check filetime)
 	}
 
 	for ( i = 0; i < MAX_CLIENTS; i++ )
+	{
 		COM_ClearCustomizationList(&cl.players[i].customdata, true);
+	}
+
 	CL_CreateCustomizationList();
 
 	if ( !legacy )
