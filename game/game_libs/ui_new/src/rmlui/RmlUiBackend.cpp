@@ -127,6 +127,16 @@ bool RmlUiBackend::IsVisible() const
 	return m_Visible;
 }
 
+bool RmlUiBackend::HasMenuInStack() const
+{
+	if ( !IsInitialised() )
+	{
+		return false;
+	}
+
+	return !m_MenuStack.IsEmpty();
+}
+
 void RmlUiBackend::ReceiveShowMenu()
 {
 	if ( !IsInitialised() )
@@ -253,10 +263,10 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 	}
 
 	// In developer mode, open the console on Ctrl + Escape
-	if ( gpGlobals->developer != 0 && (m_Modifiers == Rml::Input::KeyModifier::KM_CTRL) &&
+	if ( gpGlobals->developer != 0 && !gEngfuncs.pfnClientInGame() && m_Modifiers == Rml::Input::KeyModifier::KM_CTRL &&
 		 rmlKey == Rml::Input::KI_ESCAPE && pressed )
 	{
-		m_ShouldPopToConsole = true;
+		m_ShouldReleaseFocus = true;
 		return;
 	}
 
@@ -315,10 +325,10 @@ Rml::Context* RmlUiBackend::GetRmlContext() const
 	return m_RmlContext;
 }
 
-bool RmlUiBackend::ShouldPopToConsole()
+bool RmlUiBackend::ShouldReleaseFocus()
 {
-	bool out = m_ShouldPopToConsole;
-	m_ShouldPopToConsole = false;
+	bool out = m_ShouldReleaseFocus;
+	m_ShouldReleaseFocus = false;
 	return out;
 }
 
@@ -395,7 +405,7 @@ void RmlUiBackend::Update(float currentTime)
 		return;
 	}
 
-	bool hadMenusInStack = !m_MenuStack.IsEmpty();
+	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
 
 	m_MenuStack.Update(currentTime);
 	m_RmlContext->Update();
@@ -403,7 +413,7 @@ void RmlUiBackend::Update(float currentTime)
 
 	if ( hadMenusInStack && m_MenuStack.IsEmpty() )
 	{
-		m_ShouldPopToConsole = true;
+		m_ShouldReleaseFocus = true;
 	}
 }
 

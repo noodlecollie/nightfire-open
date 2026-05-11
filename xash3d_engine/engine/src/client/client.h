@@ -1155,12 +1155,14 @@ void UI_ConnectionProgress_Precache(void);
 void UI_ConnectionProgress_Connect(const char* server);
 void UI_ConnectionProgress_ChangeLevel(void);
 void UI_ConnectionProgress_ParseServerInfo(const char* server);
+void UI_ConnectionProgress_Connected(void);
 void pfnPIC_Set(HIMAGE hPic, int r, int g, int b, int a);
 void pfnPIC_Draw(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawTrans(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawHoles(int x, int y, int width, int height, const wrect_t* prc);
 void pfnPIC_DrawAdditive(int x, int y, int width, int height, const wrect_t* prc);
 void UI_StartupComplete(qboolean toConsole);
+qboolean UI_UseConnectionUI(void);
 
 //
 // cl_mobile.c

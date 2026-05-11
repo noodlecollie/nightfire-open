@@ -380,6 +380,14 @@ void UI_ConnectionProgress_ParseServerInfo(const char* server)
 	}
 }
 
+void UI_ConnectionProgress_Connected(void)
+{
+	if ( gameui.dllFuncs2.pfnConnectionProgress_Connected )
+	{
+		gameui.dllFuncs2.pfnConnectionProgress_Connected();
+	}
+}
+
 static void GAME_EXPORT UI_DrawLogo(const char* filename, float x, float y, float width, float height)
 {
 	static float cin_time;
@@ -1464,6 +1472,11 @@ void UI_StartupComplete(qboolean toConsole)
 	{
 		gameui.dllFuncs2.pfnStartupComplete(toConsole);
 	}
+}
+
+qboolean UI_UseConnectionUI(void)
+{
+	return gameui.dllFuncs2.pfnUseConnectionUI && gameui.dllFuncs2.pfnUseConnectionUI();
 }
 
 static ui_extendedfuncs_t gExtendedfuncs = {

@@ -919,6 +919,7 @@ void CL_CheckClientState(void)
 
 		SCR_MakeLevelShot();  // make levelshot if needs
 		Cvar_SetValue("scr_loading", 0.0f);  // reset progress bar
+		UI_ConnectionProgress_Connected();
 		Netchan_ReportFlow(&cls.netchan);
 
 		Con_DPrintf("client connected at %.2f sec\n", Sys_DoubleTime() - cls.timestart);
@@ -2099,8 +2100,9 @@ void CL_Connect_f(void)
 
 	UI_ConnectionProgress_Connect(server);
 
-	if ( !UI_IsVisible() )
+	if ( !UI_UseConnectionUI() )
 	{
+		UI_SetActiveMenu(false);
 		Key_SetKeyDest(key_console);
 	}
 
@@ -2855,8 +2857,10 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 
 		CL_Reconnect(true);
 
-		// NFTODO: Refactor for connection UI
-		UI_SetActiveMenu(cl.background);
+		if ( !UI_UseConnectionUI() )
+		{
+			UI_SetActiveMenu(cl.background);
+		}
 	}
 	else if ( !Q_strcmp(c, "info") )
 	{

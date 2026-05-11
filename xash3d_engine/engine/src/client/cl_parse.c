@@ -1020,8 +1020,10 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 
 	if ( !cls.changedemo )
 	{
-		// NFTODO: Refactor for connection UI
-		UI_SetActiveMenu(cl.background);
+		if ( !UI_UseConnectionUI() )
+		{
+			UI_SetActiveMenu(cl.background);
+		}
 	}
 	else if ( !cls.demoplayback )
 	{
