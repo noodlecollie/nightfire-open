@@ -44,7 +44,21 @@ public:
 	void ReceiveKey(int key, bool pressed);
 	void ReceiveChar(int character);
 	void ReceiveDiscoveredServer(netadr_t address, const char* info);
+
 	void ReceiveConnectionProgress_Connect(const char* server);
+	void ReceiveConnectionProgress_ParseServerInfo(const char* server);
+	void ReceiveConnectionProgress_Precache();
+	void ReceiveConnectionProgress_Download(
+		const char* pszFileName,
+		const char* pszServerName,
+		int iCurrent,
+		int iTotal,
+		const char* comment
+	);
+	void ReceiveConnectionProgress_DownloadEnd();
+	void ReceiveConnectionProgress_Connected();
+	void ReceiveConnectionProgress_Disconnect();
+	void ReceiveConnectionProgress_ChangeLevel();
 
 	void Update(float currentTime);
 	void Render();

@@ -1,6 +1,7 @@
 #include "menus/MultiplayerMenu.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include "rmlui/RmlUiBackend.h"
+#include "menus/ServerConnectionScreen.h"
 #include "udll_int.h"
 
 static constexpr const char* const NAME_SORT_TYPE = "sortType";
@@ -189,7 +190,7 @@ void MultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::E
 
 	gEngfuncs.pfnClientCmd(0, connectCmd.c_str());
 
-	// TODO: Init up the connection progress dialogue and pop this menu.
+	RequestCutStack(0, ServerConnectionScreen::NAME);
 }
 
 void MultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)

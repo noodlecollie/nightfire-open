@@ -317,7 +317,138 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server)
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Connect(Rml::String(server ? server : ""));
+	menu->ReceiveConnectionProgress_Connect(server ? server : "");
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_ParseServerInfo(server ? server : "");
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Precache()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Precache();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Download(
+	const char* pszFileName,
+	const char* pszServerName,
+	int iCurrent,
+	int iTotal,
+	const char* comment
+)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Download(
+		pszFileName ? pszFileName : "",
+		pszServerName ? pszServerName : "",
+		iCurrent,
+		iTotal,
+		comment ? comment : ""
+	);
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_DownloadEnd();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Connected()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Connected();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Disconnect();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_ChangeLevel();
 }
 
 Rml::Context* RmlUiBackend::GetRmlContext() const

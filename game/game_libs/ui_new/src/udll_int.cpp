@@ -192,8 +192,7 @@ static void pfnShowMessageBox(const char* /* text */)
 
 static void pfnConnectionProgress_Disconnect(void)
 {
-	// TODO
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Disconnect()");
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Disconnect();
 }
 
 static void pfnConnectionProgress_Download(
@@ -204,60 +203,40 @@ static void pfnConnectionProgress_Download(
 	const char* comment
 )
 {
-	Rml::Log::Message(
-		Rml::Log::Type::LT_WARNING,
-		"pfnConnectionProgress_Download():\n"
-		"  fileName = %s\n"
-		"  serverName = %s\n"
-		"  current = %d\n"
-		"  total = %d\n"
-		"  comment = %s",
-		pszFileName ? pszFileName : "<null>",
-		pszServerName ? pszServerName : "<null>",
-		iCurrent,
-		iTotal,
-		comment ? comment : "<null>"
-	);
+	RmlUiBackend::StaticInstance()
+		.ReceiveConnectionProgress_Download(pszFileName, pszServerName, iCurrent, iTotal, comment);
 }
 
 static void pfnConnectionProgress_DownloadEnd(void)
 {
-	// TODO
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_DownloadEnd()");
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_DownloadEnd();
 }
 
 static void pfnConnectionProgress_Precache(void)
 {
-	// TODO
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Precache()");
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Precache();
 }
 
 static void pfnConnectionProgress_Connect(const char* server)
 {
-	// TODO
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Connect(): '%s'", server ? server : "<null>");
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Connect(server);
 }
 
 static void pfnConnectionProgress_ChangeLevel(void)
 {
-	// TODO
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_ChangeLevel()");
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_ChangeLevel();
 }
 
 static void pfnConnectionProgress_ParseServerInfo(const char* server)
 {
-	// TODO
-	Rml::Log::Message(
-		Rml::Log::Type::LT_WARNING,
-		"pfnConnectionProgress_ParseServerInfo(): '%s'",
-		server ? server : "<null>"
-	);
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_ParseServerInfo(server);
 }
 
 static void pfnConnectionProgress_Connected(void)
 {
-	// TODO
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "pfnConnectionProgress_Connected()");
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Connected();
+
+	// TODO: Implement this in the actual menu system
 	pfnSetActiveMenu(0);
 	gEngfuncs.pfnSetKeyDest(key_game);
 }
