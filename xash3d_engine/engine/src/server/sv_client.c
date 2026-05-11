@@ -943,7 +943,7 @@ void SV_TestBandWidth(netadr_t from)
 	file_t* test;
 	sizebuf_t send;
 
-	// don't waste time of protocol mismatched
+	// don't waste time if protocol mismatched
 	if ( version != PROTOCOL_VERSION )
 	{
 		SV_RejectConnection(from, "unsupported protocol (%i should be %i)\n", version, PROTOCOL_VERSION);

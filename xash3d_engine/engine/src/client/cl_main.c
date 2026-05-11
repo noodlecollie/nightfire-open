@@ -1788,7 +1788,10 @@ void CL_SendConnectPacket(void)
 	}
 
 	if ( adr.port == 0 )
+	{
 		adr.port = MSG_BigShort(PORT_SERVER);
+	}
+
 	qport = Cvar_VariableString("net_qport");
 	key = ID_GetMD5();
 
@@ -1819,12 +1822,18 @@ void CL_SendConnectPacket(void)
 	{
 		// set related userinfo keys
 		if ( cl_dlmax->value >= 40000 || cl_dlmax->value < 100 )
+		{
 			Info_SetValueForKey(cls.userinfo, "cl_maxpacket", "1400", sizeof(cls.userinfo));
+		}
 		else
+		{
 			Info_SetValueForKey(cls.userinfo, "cl_maxpacket", cl_dlmax->string, sizeof(cls.userinfo));
+		}
 
 		if ( !*Info_ValueForKey(cls.userinfo, "cl_maxpayload") )
+		{
 			Info_SetValueForKey(cls.userinfo, "cl_maxpayload", "1000", sizeof(cls.userinfo));
+		}
 
 		Info_SetValueForKey(protinfo, "i", key, sizeof(protinfo));
 
@@ -1839,6 +1848,7 @@ void CL_SendConnectPacket(void)
 			NET_LEGACY_EXT_SPLIT,
 			protinfo
 		);
+
 		Con_Printf("Trying to connect by legacy protocol\n");
 	}
 	else
@@ -1846,7 +1856,9 @@ void CL_SendConnectPacket(void)
 		int extensions = NET_EXT_SPLITSIZE;
 
 		if ( cl_dlmax->value > FRAGMENT_MAX_SIZE || cl_dlmax->value < FRAGMENT_MIN_SIZE )
+		{
 			Cvar_SetValue("cl_dlmax", FRAGMENT_DEFAULT_SIZE);
+		}
 
 		Info_RemoveKey(cls.userinfo, "cl_maxpacket");
 		Info_RemoveKey(cls.userinfo, "cl_maxpayload");
@@ -1864,6 +1876,7 @@ void CL_SendConnectPacket(void)
 			protinfo,
 			cls.userinfo
 		);
+
 		Con_Printf("Trying to connect by modern protocol\n");
 	}
 
@@ -1884,7 +1897,9 @@ void CL_CheckForResend(void)
 	qboolean bandwidthTest;
 
 	if ( cls.internetservers_wait )
+	{
 		CL_InternetServers_f();
+	}
 
 	// if the local server is running and we aren't then connect
 	if ( cls.state == ca_disconnected && SV_Active() )
@@ -1901,15 +1916,23 @@ void CL_CheckForResend(void)
 
 	// resend if we haven't gotten a reply yet
 	if ( cls.demoplayback || cls.state != ca_connecting )
+	{
 		return;
+	}
 
 	if ( cl_resend.value < CL_MIN_RESEND_TIME )
+	{
 		Cvar_SetValue("cl_resend", CL_MIN_RESEND_TIME);
+	}
 	else if ( cl_resend.value > CL_MAX_RESEND_TIME )
+	{
 		Cvar_SetValue("cl_resend", CL_MAX_RESEND_TIME);
+	}
 
 	if ( (host.realtime - cls.connect_time) < cl_resend.value )
+	{
 		return;
+	}
 
 	res = NET_StringToAdrNB(cls.servername, &adr);
 
@@ -1934,7 +1957,9 @@ void CL_CheckForResend(void)
 	}
 
 	if ( adr.port == 0 )
+	{
 		adr.port = MSG_BigShort(PORT_SERVER);
+	}
 
 	if ( cls.connect_retry == CL_TEST_RETRIES_NORESPONCE )
 	{
@@ -1954,19 +1979,27 @@ void CL_CheckForResend(void)
 	cls.connect_retry++;
 
 	if ( bandwidthTest )
+	{
 		Con_Printf(
 			"Connecting to %s... [retry #%i, max fragment size %i]\n",
 			cls.servername,
 			cls.connect_retry,
 			cls.max_fragment_size
 		);
+	}
 	else
+	{
 		Con_Printf("Connecting to %s... [retry #%i]\n", cls.servername, cls.connect_retry);
+	}
 
 	if ( bandwidthTest )
+	{
 		Netchan_OutOfBandPrint(NS_CLIENT, adr, "bandwidth %i %i\n", PROTOCOL_VERSION, cls.max_fragment_size);
+	}
 	else
+	{
 		Netchan_OutOfBandPrint(NS_CLIENT, adr, "getchallenge\n");
+	}
 }
 
 resource_t* CL_AddResource(resourcetype_t type, const char* resourceName, int size, qboolean bFatalIfMissing, int index)
@@ -2287,6 +2320,10 @@ void CL_Reconnect(qboolean setup_netchan)
 	cls.signon = 0;
 
 	CL_ServerCommand(true, "new");
+
+	// Is this the best place for this? I think that after this point, everything
+	// we receive is OK to be classed as "Parsing server info", but this may need reviewing.
+	UI_ConnectionProgress_ParseServerInfo(cls.servername);
 
 	cl.validsequence = 0;  // haven't gotten a valid frame update yet
 	cl.delta_sequence = -1;  // we'll request a full delta from the baseline
