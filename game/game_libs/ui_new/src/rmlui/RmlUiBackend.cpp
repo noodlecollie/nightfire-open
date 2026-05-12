@@ -6,6 +6,7 @@
 #include "rmlui/Utils.h"
 #include "framework/BaseMenu.h"
 #include "menus/MainMenu.h"
+#include "menus/PauseMenu.h"
 #include "menus/ServerConnectionScreen.h"
 #include "udll_int.h"
 #include "UIDebug.h"
@@ -149,7 +150,8 @@ void RmlUiBackend::ReceiveShowMenu()
 
 	if ( m_MenuStack.IsEmpty() )
 	{
-		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(MainMenu::NAME);
+		const MenuDirectoryEntry* menu =
+			m_MenuDirectory.GetMenuEntry(gEngfuncs.pfnClientInGame() ? PauseMenu::NAME : MainMenu::NAME);
 		ASSERT(menu);
 		m_MenuStack.Push(menu);
 	}

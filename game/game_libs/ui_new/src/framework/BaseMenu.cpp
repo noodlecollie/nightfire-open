@@ -35,9 +35,9 @@ const MenuRequest* BaseMenu::CurrentRequest() const
 	return m_Request.get();
 }
 
-void BaseMenu::SetCurrentRequest(MenuRequestType requestType, const Rml::VariantList& args)
+void BaseMenu::SetCurrentRequest(MenuRequestType requestType, Rml::Dictionary options)
 {
-	m_Request.reset(new MenuRequest(requestType, args));
+	m_Request.reset(new MenuRequest(requestType, std::move(options)));
 }
 
 void BaseMenu::ClearCurrentRequest()

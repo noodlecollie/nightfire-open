@@ -178,6 +178,31 @@ void MenuStack::CommandCutStack(size_t newSize, const Rml::String& topMenu)
 	SetTopDocumentVisible(m_Visible);
 }
 
+void MenuStack::CommandSwitchToGame(const Rml::String& menuToReturnTo)
+{
+	while ( !m_Stack.empty() )
+	{
+		SetTopDocumentVisible(false, true);
+		m_Stack.pop_back();
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(menuToReturnTo);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring switch to game operation requesting to swap in non-existent menu \"%s\"",
+			menuToReturnTo.c_str()
+		);
+
+		return;
+	}
+
+	m_Stack.push_back(entry);
+	SetTopDocumentVisible(m_Visible);
+}
+
 void MenuStack::SetTopDocumentVisible(bool visible, bool clearCurrentRequest)
 {
 	if ( m_Stack.empty() )
@@ -216,12 +241,7 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 		case MenuRequestType::PushMenu:
 		{
 			Rml::String menuName;
-
-			if ( !request.args.empty() )
-			{
-				request.args[0].GetInto(menuName);
-			}
-
+			request.GetOptionInto(PushMenuRequest::OPTION_MENU, menuName);
 			CommandPushMenu(menuName);
 			break;
 		}
@@ -229,22 +249,19 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 		case MenuRequestType::PopMenu:
 		{
 			Rml::String menuName;
-
-			if ( !request.args.empty() )
-			{
-				request.args[0].GetInto(menuName);
-			}
-
+			request.GetOptionInto(PopMenuRequest::OPTION_NEW_MENU, menuName);
 			CommandPopMenu(menuName);
 			break;
 		}
 
 		case MenuRequestType::CutStack:
 		{
-			ASSERT(!request.args.empty());
+			size_t newSize = 0;
 
-			if ( request.args.empty() )
+			if ( !request.GetOptionInto(CutStackRequest::OPTION_NEW_SIZE, newSize) )
 			{
+				ASSERT(false);
+
 				Rml::Log::Message(
 					Rml::Log::Type::LT_WARNING,
 					"Ignoring CutStack menu request with no stack size argument"
@@ -253,15 +270,18 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 				break;
 			}
 
-			size_t newSize = request.args[0].Get<size_t>();
 			Rml::String menuName;
-
-			if ( request.args.size() > 1 )
-			{
-				request.args[1].GetInto(menuName);
-			}
+			request.GetOptionInto(CutStackRequest::OPTION_NEW_MENU, menuName);
 
 			CommandCutStack(newSize, menuName);
+			break;
+		}
+
+		case MenuRequestType::SwitchToGame:
+		{
+			Rml::String menuName;
+			request.GetOptionInto(SwitchToGameRequest::OPTION_NEW_MENU, menuName);
+			CommandSwitchToGame(menuName);
 			break;
 		}
 

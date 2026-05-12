@@ -7,8 +7,10 @@ static constexpr const char* const NAME_SHOW_MODAL = "showModal";
 static constexpr const char* const EVENT_DISCONNECT = "disconnect";
 static constexpr const char* const EVENT_QUIT_GAME = "quitGame";
 
+const char* const PauseMenu::NAME = "pause_menu";
+
 PauseMenu::PauseMenu() :
-	MenuPage("pause_menu", "resource/rml/pause_menu.rml"),
+	MenuPage(NAME, "resource/rml/pause_menu.rml"),
 	m_MenuFrameDataBinding(this),
 	m_Modal(this, "quit_modal"),
 	m_ShowHideEventListener(this, &PauseMenu::ProcessShowHideEvents)

@@ -1,6 +1,7 @@
 #include "menus/ServerConnectionScreen.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Elements/ElementProgress.h>
+#include "menus/PauseMenu.h"
 #include "UIDebug.h"
 
 static constexpr const char* const NAME_LOADING_PROGRESS = "loadingProgress";
@@ -75,6 +76,12 @@ void ServerConnectionScreen::ReceiveConnectionProgress_DownloadEnd()
 void ServerConnectionScreen::ReceiveConnectionProgress_Connected()
 {
 	AppendContentLine("Joined server");
+
+	Rml::Dictionary options;
+	options.insert({CutStackRequest::OPTION_NEW_SIZE, Rml::Variant(0)});
+	options.insert({CutStackRequest::OPTION_NEW_MENU, Rml::Variant(Rml::String(PauseMenu::NAME))});
+
+	SetCurrentRequest(MenuRequestType::CutStack, std::move(options));
 }
 
 void ServerConnectionScreen::ReceiveConnectionProgress_Disconnect()

@@ -80,14 +80,14 @@ void MenuPage::RequestPop(Rml::String menuToSwapIn)
 		return;
 	}
 
-	Rml::VariantList args;
+	Rml::Dictionary options;
 
 	if ( !menuToSwapIn.empty() )
 	{
-		args.push_back(Rml::Variant(menuToSwapIn));
+		options.insert({PopMenuRequest::OPTION_NEW_MENU, Rml::Variant(menuToSwapIn)});
 	}
 
-	SetCurrentRequest(MenuRequestType::PopMenu, args);
+	SetCurrentRequest(PopMenuRequest::REQUEST_TYPE, std::move(options));
 }
 
 void MenuPage::RequestCutStack(size_t newSize, Rml::String menuToSwapIn)
@@ -97,16 +97,15 @@ void MenuPage::RequestCutStack(size_t newSize, Rml::String menuToSwapIn)
 		return;
 	}
 
-	Rml::VariantList args;
-
-	args.push_back(Rml::Variant(newSize));
+	Rml::Dictionary options;
+	options.insert({CutStackRequest::OPTION_NEW_SIZE, Rml::Variant(newSize)});
 
 	if ( !menuToSwapIn.empty() )
 	{
-		args.push_back(Rml::Variant(menuToSwapIn));
+		options.insert({CutStackRequest::OPTION_NEW_MENU, Rml::Variant(menuToSwapIn)});
 	}
 
-	SetCurrentRequest(MenuRequestType::CutStack, args);
+	SetCurrentRequest(CutStackRequest::REQUEST_TYPE, std::move(options));
 }
 
 bool MenuPage::ShouldPop(const Rml::String&) const
@@ -116,15 +115,57 @@ bool MenuPage::ShouldPop(const Rml::String&) const
 
 void MenuPage::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	SetCurrentRequest(MenuRequestType::PushMenu, args);
+	if ( args.empty() )
+	{
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring push menu data event which has no arguments provided");
+		return;
+	}
+
+	Rml::Dictionary options;
+	options.insert({PushMenuRequest::OPTION_MENU, args[0]});
+
+	SetCurrentRequest(PushMenuRequest::REQUEST_TYPE, std::move(options));
 }
 
 void MenuPage::HandlePopMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	SetCurrentRequest(MenuRequestType::PopMenu, args);
+	Rml::Dictionary options;
+
+	if ( !args.empty() )
+	{
+		options.insert({PopMenuRequest::OPTION_NEW_MENU, args[0]});
+	}
+
+	SetCurrentRequest(PopMenuRequest::REQUEST_TYPE, std::move(options));
 }
 
 void MenuPage::HandleCutStack(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	SetCurrentRequest(MenuRequestType::CutStack, args);
+	if ( args.empty() )
+	{
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring cut stack data event which has no arguments provided");
+		return;
+	}
+
+	Rml::Dictionary options;
+	options.insert({CutStackRequest::OPTION_NEW_SIZE, args[0]});
+
+	if ( args.size() > 1 )
+	{
+		options.insert({CutStackRequest::OPTION_NEW_MENU, args[1]});
+	}
+
+	SetCurrentRequest(CutStackRequest::REQUEST_TYPE, std::move(options));
+}
+
+void MenuPage::HandleSwitchToGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+{
+	Rml::Dictionary options;
+
+	if ( !args.empty() )
+	{
+		options.insert({SwitchToGameRequest::OPTION_NEW_MENU, args[0]});
+	}
+
+	SetCurrentRequest(SwitchToGameRequest::REQUEST_TYPE, std::move(options));
 }

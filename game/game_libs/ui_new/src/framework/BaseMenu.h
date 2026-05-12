@@ -4,6 +4,7 @@
 #include <vector>
 #include <RmlUi/Core/Types.h>
 #include <RmlUi/Core/Variant.h>
+#include "framework/MenuRequests.h"
 
 namespace Rml
 {
@@ -16,32 +17,6 @@ namespace Rml
 }  // namespace Rml
 
 class DocumentObserver;
-
-enum class MenuRequestType
-{
-	// Push a menu onto the stack.
-	PushMenu,
-
-	// Pop a menu from the stack, optionally specifying
-	// another to take its place.
-	PopMenu,
-
-	// Cut the stack down to a specific size, and then
-	// optionally push a new menu on top.
-	CutStack,
-};
-
-struct MenuRequest
-{
-	MenuRequestType requestType;
-	Rml::VariantList args;
-
-	explicit MenuRequest(MenuRequestType inRequestType, const Rml::VariantList& inArgs = Rml::VariantList()) :
-		requestType(inRequestType),
-		args(inArgs)
-	{
-	}
-};
 
 class BaseMenu
 {
@@ -64,7 +39,7 @@ public:
 
 protected:
 	BaseMenu(const char* name, const char* rmlFilePath);
-	void SetCurrentRequest(MenuRequestType requestType, const Rml::VariantList& args = Rml::VariantList());
+	void SetCurrentRequest(MenuRequestType requestType, Rml::Dictionary options = Rml::Dictionary());
 
 	virtual void OnBeginDocumentLoaded();
 	virtual void OnEndDocumentLoaded();

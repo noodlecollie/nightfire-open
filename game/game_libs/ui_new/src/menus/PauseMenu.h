@@ -7,6 +7,8 @@
 class PauseMenu : public MenuPage
 {
 public:
+	static const char* const NAME;
+
 	PauseMenu();
 
 protected:

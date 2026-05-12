@@ -29,6 +29,7 @@ private:
 	void HandlePushMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 	void HandlePopMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 	void HandleCutStack(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
+	void HandleSwitchToGame(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 
 	EventListenerObject m_KeyEventListener;
 	bool m_RequestPopOnEscapeKey = true;
