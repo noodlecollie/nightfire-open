@@ -1,4 +1,6 @@
 #include "menus/MainMenu.h"
+#include "rmlui/Utils.h"
+#include <RmlUi/Core/ElementDocument.h>
 #include "udll_int.h"
 
 static constexpr const char* const NAME_SHOW_CONSOLE_BUTTON = "showConsoleButton";
@@ -8,7 +10,8 @@ const char* const MainMenu::NAME = "main_menu";
 
 MainMenu::MainMenu() :
 	MenuPage(NAME, "resource/rml/main_menu.rml"),
-	m_MenuFrameDataBinding(this)
+	m_MenuFrameDataBinding(this),
+	m_KeyEventListener(this, &MainMenu::ProcessKeyEvent)
 {
 }
 
@@ -28,9 +31,9 @@ bool MainMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 
 	const bool bindSuccess = constructor.BindFunc(
 		NAME_SHOW_CONSOLE_BUTTON,
-		[this](Rml::Variant& outValue)
+		[](Rml::Variant& outValue)
 		{
-			outValue = Rml::Variant(ShouldPop(""));
+			outValue = Rml::Variant(gpGlobals->developer != 0);
 		}
 	);
 
@@ -44,10 +47,55 @@ bool MainMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 
 bool MainMenu::ShouldPop(const Rml::String&) const
 {
-	return gpGlobals->developer != 0;
+	return false;
+}
+
+void MainMenu::OnEndDocumentLoaded()
+{
+	MenuPage::OnEndDocumentLoaded();
+
+	Rml::ElementDocument* document = Document();
+	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
+}
+
+void MainMenu::OnBeginDocumentUnloaded()
+{
+	Rml::ElementDocument* document = Document();
+	document->RemoveEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
+
+	MenuPage::OnBeginDocumentUnloaded();
+}
+
+void MainMenu::ProcessKeyEvent(Rml::Event& event)
+{
+	switch ( event.GetId() )
+	{
+		case Rml::EventId::Keydown:
+		{
+			const int keyId = GetEventKeyId(event);
+
+			if ( keyId == Rml::Input::KI_ESCAPE )
+			{
+				event.StopPropagation();
+				RequestSwitchToConsole();
+			}
+
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
 }
 
 void MainMenu::HandleShowDeveloperConsole(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
-	RequestPop();
+	RequestSwitchToConsole();
+}
+
+void MainMenu::RequestSwitchToConsole()
+{
+	RequestSwitchFocus("console", MainMenu::NAME);
 }

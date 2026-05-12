@@ -267,10 +267,11 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 	}
 
 	// In developer mode, open the console on Ctrl + Escape
+	// TODO: Is there a better place for this?
 	if ( gpGlobals->developer != 0 && !gEngfuncs.pfnClientInGame() && m_Modifiers == Rml::Input::KeyModifier::KM_CTRL &&
 		 rmlKey == Rml::Input::KI_ESCAPE && pressed )
 	{
-		m_ShouldReleaseFocus = true;
+		m_FocusChange = MenuStack::FocusChangeResult::SwitchFocusToConsole;
 		return;
 	}
 
@@ -460,10 +461,10 @@ Rml::Context* RmlUiBackend::GetRmlContext() const
 	return m_RmlContext;
 }
 
-bool RmlUiBackend::ShouldReleaseFocus()
+MenuStack::FocusChangeResult RmlUiBackend::GetFocusChange()
 {
-	bool out = m_ShouldReleaseFocus;
-	m_ShouldReleaseFocus = false;
+	MenuStack::FocusChangeResult out = m_FocusChange;
+	m_FocusChange = MenuStack::FocusChangeResult::None;
 	return out;
 }
 
@@ -544,11 +545,26 @@ void RmlUiBackend::Update(float currentTime)
 
 	m_MenuStack.Update(currentTime);
 	m_RmlContext->Update();
-	m_MenuStack.HandleRequests();
+	MenuStack::FocusChangeResult focus = m_MenuStack.HandleRequests();
 
-	if ( hadMenusInStack && m_MenuStack.IsEmpty() )
+	if ( focus != MenuStack::FocusChangeResult::None )
 	{
-		m_ShouldReleaseFocus = true;
+		m_FocusChange = focus;
+	}
+
+	// Fallback logic:
+	if ( m_FocusChange == MenuStack::FocusChangeResult::None && hadMenusInStack && m_MenuStack.IsEmpty() )
+	{
+		const bool inGame = gEngfuncs.pfnClientInGame();
+
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Menu stack specified no focus change but removed all menus, switching focus to %s",
+			inGame ? "game" : "console"
+		);
+
+		m_FocusChange = inGame ? MenuStack::FocusChangeResult::SwitchFocusToGame
+							   : MenuStack::FocusChangeResult::SwitchFocusToConsole;
 	}
 }
 

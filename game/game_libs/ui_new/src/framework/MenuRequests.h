@@ -16,10 +16,10 @@ enum class MenuRequestType
 	// optionally push a new menu on top.
 	CutStack,
 
-	// Switch from the menu to the game, optionally
-	// specifying a menu to show when the user changes
-	// back to use the menu again.
-	SwitchToGame,
+	// Switch from the menu to the game or console,
+	// optionally specifying a menu to show when the
+	// user changes back to use the menu again.
+	SwitchFocus,
 };
 
 namespace PushMenuRequest
@@ -41,11 +41,12 @@ namespace CutStackRequest
 	static constexpr const char* const OPTION_NEW_MENU = "newMenu";
 }  // namespace CutStackRequest
 
-namespace SwitchToGameRequest
+namespace SwitchFocusRequest
 {
-	static constexpr MenuRequestType REQUEST_TYPE = MenuRequestType::SwitchToGame;
+	static constexpr MenuRequestType REQUEST_TYPE = MenuRequestType::SwitchFocus;
+	static constexpr const char* const OPTION_TARGET = "target";
 	static constexpr const char* const OPTION_NEW_MENU = "newMenu";
-}  // namespace SwitchToGameRequest
+}  // namespace SwitchFocusRequest
 
 struct MenuRequest
 {

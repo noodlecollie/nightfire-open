@@ -35,13 +35,28 @@ static void pfnRedraw(float flTime)
 	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
 
 	backend.Update(flTime);
-	const bool releaseFocus = backend.ShouldReleaseFocus();
+	const MenuStack::FocusChangeResult focus = backend.GetFocusChange();
 
-	if ( releaseFocus )
+	switch ( focus )
 	{
-		pfnSetActiveMenu(0);
-		gEngfuncs.pfnSetKeyDest(gEngfuncs.pfnClientInGame() ? key_game : key_console);
-		return;
+		case MenuStack::FocusChangeResult::SwitchFocusToConsole:
+		{
+			pfnSetActiveMenu(0);
+			gEngfuncs.pfnSetKeyDest(key_console);
+			return;
+		}
+
+		case MenuStack::FocusChangeResult::SwitchFocusToGame:
+		{
+			pfnSetActiveMenu(0);
+			gEngfuncs.pfnSetKeyDest(key_game);
+			return;
+		}
+
+		default:
+		{
+			break;
+		}
 	}
 
 	backend.Render();
@@ -235,10 +250,6 @@ static void pfnConnectionProgress_ParseServerInfo(const char* server)
 static void pfnConnectionProgress_Connected(void)
 {
 	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Connected();
-
-	// TODO: Implement this in the actual menu system
-	pfnSetActiveMenu(0);
-	gEngfuncs.pfnSetKeyDest(key_game);
 }
 
 static void pfnStartupComplete(qboolean toConsole)

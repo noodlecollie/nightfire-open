@@ -9,7 +9,7 @@ static constexpr const char* const EVENT_CUT_STACK = "cutStack";
 
 MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 	BaseMenu(name, rmlFilePath),
-	m_KeyEventListener(this, &MenuPage::ProcessEvent)
+	m_KeyEventListener(this, &MenuPage::ProcessKeyEvent)
 {
 }
 
@@ -31,7 +31,7 @@ void MenuPage::SetRequestPopOnEscapeKey(bool enable)
 	m_RequestPopOnEscapeKey = enable;
 }
 
-void MenuPage::ProcessEvent(Rml::Event& event)
+void MenuPage::ProcessKeyEvent(Rml::Event& event)
 {
 	switch ( event.GetId() )
 	{
@@ -113,6 +113,19 @@ bool MenuPage::ShouldPop(const Rml::String&) const
 	return true;
 }
 
+void MenuPage::RequestSwitchFocus(Rml::String target, Rml::String newMenu)
+{
+	Rml::Dictionary options;
+	options.insert({SwitchFocusRequest::OPTION_TARGET, Rml::Variant(std::move(target))});
+
+	if ( !newMenu.empty() )
+	{
+		options.insert({SwitchFocusRequest::OPTION_NEW_MENU, Rml::Variant(std::move(newMenu))});
+	}
+
+	SetCurrentRequest(SwitchFocusRequest::REQUEST_TYPE, std::move(options));
+}
+
 void MenuPage::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
 	if ( args.empty() )
@@ -158,14 +171,21 @@ void MenuPage::HandleCutStack(Rml::DataModelHandle, Rml::Event&, const Rml::Vari
 	SetCurrentRequest(CutStackRequest::REQUEST_TYPE, std::move(options));
 }
 
-void MenuPage::HandleSwitchToGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+void MenuPage::HandleSwitchFocus(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	Rml::Dictionary options;
-
-	if ( !args.empty() )
+	if ( args.empty() )
 	{
-		options.insert({SwitchToGameRequest::OPTION_NEW_MENU, args[0]});
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring switch focus event which has no arguments provided");
+		return;
 	}
 
-	SetCurrentRequest(SwitchToGameRequest::REQUEST_TYPE, std::move(options));
+	Rml::Dictionary options;
+	options.insert({SwitchFocusRequest::OPTION_TARGET, args[0]});
+
+	if ( args.size() > 1 )
+	{
+		options.insert({SwitchFocusRequest::OPTION_NEW_MENU, args[1]});
+	}
+
+	SetCurrentRequest(SwitchFocusRequest::REQUEST_TYPE, std::move(options));
 }

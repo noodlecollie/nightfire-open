@@ -78,10 +78,10 @@ void ServerConnectionScreen::ReceiveConnectionProgress_Connected()
 	AppendContentLine("Joined server");
 
 	Rml::Dictionary options;
-	options.insert({CutStackRequest::OPTION_NEW_SIZE, Rml::Variant(0)});
-	options.insert({CutStackRequest::OPTION_NEW_MENU, Rml::Variant(Rml::String(PauseMenu::NAME))});
+	options.insert({SwitchFocusRequest::OPTION_TARGET, Rml::Variant(Rml::String("game"))});
+	options.insert({SwitchFocusRequest::OPTION_NEW_MENU, Rml::Variant(Rml::String(PauseMenu::NAME))});
 
-	SetCurrentRequest(MenuRequestType::CutStack, std::move(options));
+	SetCurrentRequest(MenuRequestType::SwitchFocus, std::move(options));
 }
 
 void ServerConnectionScreen::ReceiveConnectionProgress_Disconnect()

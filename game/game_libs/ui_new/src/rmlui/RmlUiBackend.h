@@ -64,7 +64,7 @@ public:
 	void Render();
 
 	Rml::Context* GetRmlContext() const;
-	bool ShouldReleaseFocus();
+	MenuStack::FocusChangeResult GetFocusChange();
 
 	void SetStoreNextKey(bool onPressed);
 	void ClearStoreNextKey();
@@ -99,7 +99,7 @@ private:
 	MenuDirectory m_MenuDirectory;
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
-	bool m_ShouldReleaseFocus = false;
+	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;
 
 	bool m_StoreNextKey = false;
 	StoredKey m_StoredKey {};

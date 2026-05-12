@@ -2,6 +2,7 @@
 #include "framework/MenuDirectory.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Log.h>
+#include "menus/MainMenu.h"
 #include "UIDebug.h"
 
 MenuStack::MenuStack(MenuDirectory* directory) :
@@ -53,22 +54,25 @@ void MenuStack::Update(float currentTime)
 	}
 }
 
-void MenuStack::HandleRequests()
+MenuStack::FocusChangeResult MenuStack::HandleRequests()
 {
 	const MenuDirectoryEntry* top = Top();
 
 	if ( !top )
 	{
-		return;
+		return FocusChangeResult::None;
 	}
 
 	const MenuRequest* request = top->menuPtr->CurrentRequest();
 
-	if ( request )
+	if ( !request )
 	{
-		HandleTopMenuRequest(*request);
-		top->menuPtr->ClearCurrentRequest();
+		return FocusChangeResult::None;
 	}
+
+	const FocusChangeResult result = HandleTopMenuRequest(*request);
+	top->menuPtr->ClearCurrentRequest();
+	return result;
 }
 
 const MenuDirectoryEntry* MenuStack::Top() const
@@ -178,29 +182,56 @@ void MenuStack::CommandCutStack(size_t newSize, const Rml::String& topMenu)
 	SetTopDocumentVisible(m_Visible);
 }
 
-void MenuStack::CommandSwitchToGame(const Rml::String& menuToReturnTo)
+MenuStack::FocusChangeResult MenuStack::CommandSwitchFocus(const Rml::String& target, const Rml::String& menuToReturnTo)
 {
-	while ( !m_Stack.empty() )
+	FocusChangeResult focus = FocusChangeResult::None;
+
+	if ( target == "game" )
 	{
-		SetTopDocumentVisible(false, true);
-		m_Stack.pop_back();
+		focus = FocusChangeResult::SwitchFocusToGame;
 	}
-
-	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(menuToReturnTo);
-
-	if ( !entry )
+	else if ( target == "console" )
+	{
+		focus = FocusChangeResult::SwitchFocusToConsole;
+	}
+	else
 	{
 		Rml::Log::Message(
 			Rml::Log::Type::LT_WARNING,
-			"Ignoring switch to game operation requesting to swap in non-existent menu \"%s\"",
-			menuToReturnTo.c_str()
+			"Ignoring SwitchFocus request with invalid focus target \"%s\"",
+			target.c_str()
 		);
 
-		return;
+		return FocusChangeResult::None;
 	}
 
-	m_Stack.push_back(entry);
-	SetTopDocumentVisible(m_Visible);
+	if ( !menuToReturnTo.empty() )
+	{
+		while ( !m_Stack.empty() )
+		{
+			SetTopDocumentVisible(false, true);
+			m_Stack.pop_back();
+		}
+
+		const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(menuToReturnTo);
+
+		if ( !entry )
+		{
+			Rml::Log::Message(
+				Rml::Log::Type::LT_WARNING,
+				"SwitchFocus requested non-existent menu \"%s\", defaulting to main menu",
+				menuToReturnTo.c_str()
+			);
+
+			entry = m_Directory->GetMenuEntry(MainMenu::NAME);
+			ASSERT(entry);
+		}
+
+		m_Stack.push_back(entry);
+		SetTopDocumentVisible(m_Visible);
+	}
+
+	return focus;
 }
 
 void MenuStack::SetTopDocumentVisible(bool visible, bool clearCurrentRequest)
@@ -234,8 +265,10 @@ void MenuStack::SetTopDocumentVisible(bool visible, bool clearCurrentRequest)
 	}
 }
 
-void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
+MenuStack::FocusChangeResult MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 {
+	FocusChangeResult focus = FocusChangeResult::None;
+
 	switch ( request.requestType )
 	{
 		case MenuRequestType::PushMenu:
@@ -277,11 +310,21 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 			break;
 		}
 
-		case MenuRequestType::SwitchToGame:
+		case MenuRequestType::SwitchFocus:
 		{
+			Rml::String target;
+
+			if ( !request.GetOptionInto(SwitchFocusRequest::OPTION_TARGET, target) )
+			{
+				ASSERT(false);
+				Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring SwitchFocus menu request with no focus target");
+				break;
+			}
+
 			Rml::String menuName;
-			request.GetOptionInto(SwitchToGameRequest::OPTION_NEW_MENU, menuName);
-			CommandSwitchToGame(menuName);
+			request.GetOptionInto(SwitchFocusRequest::OPTION_NEW_MENU, menuName);
+
+			focus = CommandSwitchFocus(target, menuName);
 			break;
 		}
 
@@ -291,4 +334,6 @@ void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
 			break;
 		}
 	}
+
+	return focus;
 }
