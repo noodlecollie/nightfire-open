@@ -60,6 +60,8 @@ public:
 	void DocumentUnloaded();
 	virtual void Update(float currentTime);
 
+	bool IsDocumentVisible() const;
+
 protected:
 	BaseMenu(const char* name, const char* rmlFilePath);
 	void SetCurrentRequest(MenuRequestType requestType, const Rml::VariantList& args = Rml::VariantList());

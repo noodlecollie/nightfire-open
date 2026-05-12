@@ -18,9 +18,7 @@ ServerConnectionScreen::ServerConnectionScreen() :
 
 void ServerConnectionScreen::Update(float)
 {
-	Rml::ElementDocument* document = Document();
-
-	if ( !document || !document->IsVisible() || !m_ModelHandle )
+	if ( !IsDocumentVisible() || !m_ModelHandle )
 	{
 		return;
 	}
@@ -95,6 +93,8 @@ void ServerConnectionScreen::ReceiveConnectionProgress_ChangeLevel()
 
 void ServerConnectionScreen::OnEndDocumentLoaded()
 {
+	BaseMenu::OnEndDocumentLoaded();
+
 	m_ContentElement = Document()->GetElementById("content");
 	m_ProgressElement = dynamic_cast<Rml::ElementProgress*>(Document()->GetElementById("progress_bar"));
 
@@ -106,6 +106,8 @@ void ServerConnectionScreen::OnBeginDocumentUnloaded()
 {
 	m_ContentElement = nullptr;
 	m_ProgressElement = nullptr;
+
+	BaseMenu::OnBeginDocumentUnloaded();
 }
 
 void ServerConnectionScreen::ClearContentArea()

@@ -1,5 +1,6 @@
 #include "framework/BaseMenu.h"
 #include "framework/DocumentObserver.h"
+#include <RmlUi/Core/ElementDocument.h>
 #include "UIDebug.h"
 
 BaseMenu::BaseMenu(const char* name, const char* rmlFilePath) :
@@ -92,6 +93,12 @@ void BaseMenu::DocumentUnloaded()
 
 void BaseMenu::Update(float)
 {
+}
+
+bool BaseMenu::IsDocumentVisible() const
+{
+	Rml::ElementDocument* document = Document();
+	return document && document->IsVisible();
 }
 
 void BaseMenu::OnBeginDocumentLoaded()

@@ -12,6 +12,8 @@ MainMenu::MainMenu() :
 {
 }
 
+// TODO: Should handle quit etc here, instead of just having the
+// RML page execute it as a console command.
 bool MainMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_MenuFrameDataBinding.SetUpDataBindings(constructor) )
