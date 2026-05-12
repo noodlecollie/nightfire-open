@@ -19,7 +19,7 @@ bool MenuStack::Push(const MenuDirectoryEntry* menu)
 
 	SetTopDocumentVisible(false, true);
 	m_Stack.push_back(menu);
-	SetTopDocumentVisible(true);
+	SetTopDocumentVisible(m_Visible);
 
 	return true;
 }
@@ -37,7 +37,7 @@ const MenuDirectoryEntry* MenuStack::Pop()
 	const MenuDirectoryEntry* menu = m_Stack.back();
 	m_Stack.pop_back();
 
-	SetTopDocumentVisible(true);
+	SetTopDocumentVisible(m_Visible);
 
 	return menu;
 }
@@ -84,6 +84,17 @@ bool MenuStack::IsEmpty() const
 size_t MenuStack::Size() const
 {
 	return m_Stack.size();
+}
+
+void MenuStack::SetVisible(bool visible)
+{
+	if ( visible == m_Visible )
+	{
+		return;
+	}
+
+	m_Visible = visible;
+	SetTopDocumentVisible(m_Visible);
 }
 
 void MenuStack::CommandPushMenu(const Rml::String& name)
@@ -145,7 +156,7 @@ void MenuStack::CommandCutStack(size_t newSize, const Rml::String& topMenu)
 
 	if ( topMenu.empty() )
 	{
-		SetTopDocumentVisible(true);
+		SetTopDocumentVisible(m_Visible);
 		return;
 	}
 
@@ -164,7 +175,7 @@ void MenuStack::CommandCutStack(size_t newSize, const Rml::String& topMenu)
 
 	SetTopDocumentVisible(false, false);
 	m_Stack.push_back(entry);
-	SetTopDocumentVisible(true);
+	SetTopDocumentVisible(m_Visible);
 }
 
 void MenuStack::SetTopDocumentVisible(bool visible, bool clearCurrentRequest)

@@ -918,7 +918,6 @@ void CL_CheckClientState(void)
 		cl.first_frame = true;  // first rendering frame
 
 		SCR_MakeLevelShot();  // make levelshot if needs
-		Cvar_SetValue("scr_loading", 0.0f);  // reset progress bar
 		UI_ConnectionProgress_Connected();
 		Netchan_ReportFlow(&cls.netchan);
 
@@ -2193,7 +2192,9 @@ void CL_ClearState(void)
 	CL_ClearResourceLists();
 
 	for ( i = 0; i < MAX_CLIENTS; i++ )
+	{
 		COM_ClearCustomizationList(&cl.players[i].customdata, false);
+	}
 
 	S_StopAllSounds(true);
 	CL_ClearEffects();
@@ -2223,7 +2224,6 @@ void CL_ClearState(void)
 	cl.local.scr_fov = 90.0f;
 
 	Cvar_SetValue("scr_download", -1.0f);
-	Cvar_SetValue("scr_loading", 0.0f);
 	host.allow_console = host.allow_console_init;
 	HTTP_ClearCustomServers();
 }

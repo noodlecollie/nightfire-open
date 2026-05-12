@@ -20,6 +20,7 @@ public:
 	const MenuDirectoryEntry* Top() const;
 	bool IsEmpty() const;
 	size_t Size() const;
+	void SetVisible(bool visible);
 
 	// Commands
 	void CommandPushMenu(const Rml::String& name);
@@ -34,4 +35,5 @@ private:
 
 	MenuDirectory* m_Directory;
 	MenuVec m_Stack;
+	bool m_Visible = true;
 };

@@ -33,6 +33,8 @@ public:
 	void ReceiveConnectionProgress_ChangeLevel();
 
 protected:
+	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
+
 	void OnEndDocumentLoaded() override;
 	void OnBeginDocumentUnloaded() override;
 

@@ -307,6 +307,8 @@ void UI_ShowMessageBox(const char* text)
 
 void UI_ConnectionProgress_Disconnect(void)
 {
+	Cvar_SetValue("scr_loading", 0.0f);
+
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Disconnect )
 	{
 		gameui.dllFuncs2.pfnConnectionProgress_Disconnect();
@@ -342,6 +344,9 @@ void UI_ConnectionProgress_Download(
 
 void UI_ConnectionProgress_DownloadEnd(void)
 {
+	// Treat this as 90% loaded
+	Cvar_SetValue("scr_loading", 90.0f);
+
 	if ( gameui.dllFuncs2.pfnConnectionProgress_DownloadEnd )
 	{
 		gameui.dllFuncs2.pfnConnectionProgress_DownloadEnd();
@@ -350,6 +355,9 @@ void UI_ConnectionProgress_DownloadEnd(void)
 
 void UI_ConnectionProgress_Precache(void)
 {
+	// Treat this as 50% loaded
+	Cvar_SetValue("scr_loading", 50.0f);
+
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Precache )
 	{
 		gameui.dllFuncs2.pfnConnectionProgress_Precache();
@@ -358,6 +366,9 @@ void UI_ConnectionProgress_Precache(void)
 
 void UI_ConnectionProgress_Connect(const char* server)  // NULL for local server
 {
+	// Treat this as 10% loaded
+	Cvar_SetValue("scr_loading", 10.0f);
+
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Connect )
 	{
 		gameui.dllFuncs2.pfnConnectionProgress_Connect(server);
@@ -366,6 +377,8 @@ void UI_ConnectionProgress_Connect(const char* server)  // NULL for local server
 
 void UI_ConnectionProgress_ChangeLevel(void)
 {
+	Cvar_SetValue("scr_loading", 0.0f);
+
 	if ( gameui.dllFuncs2.pfnConnectionProgress_ChangeLevel )
 	{
 		gameui.dllFuncs2.pfnConnectionProgress_ChangeLevel();
@@ -374,6 +387,9 @@ void UI_ConnectionProgress_ChangeLevel(void)
 
 void UI_ConnectionProgress_ParseServerInfo(const char* server)
 {
+	// Treat this as 20% loaded
+	Cvar_SetValue("scr_loading", 20.0f);
+
 	if ( gameui.dllFuncs2.pfnConnectionProgress_ParseServerInfo )
 	{
 		gameui.dllFuncs2.pfnConnectionProgress_ParseServerInfo(server);
@@ -382,6 +398,8 @@ void UI_ConnectionProgress_ParseServerInfo(const char* server)
 
 void UI_ConnectionProgress_Connected(void)
 {
+	Cvar_SetValue("scr_loading", 0.0f);
+
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Connected )
 	{
 		gameui.dllFuncs2.pfnConnectionProgress_Connected();

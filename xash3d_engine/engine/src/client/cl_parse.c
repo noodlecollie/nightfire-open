@@ -1056,8 +1056,6 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 		Cvar_Set("cl_levelshot_name", va("levelshots/%s_%s", clgame.mapname, refState.wideScreen ? "16x9" : "4x3"));
 	}
 
-	Cvar_SetValue("scr_loading", 0.0f);  // reset progress bar
-
 	if ( (cl_allow_levelshots->value && !cls.changelevel) || cl.background )
 	{
 		if ( !FS_FileExists(va("%s.bmp", cl_levelshot_name->string), true) )

@@ -145,6 +145,7 @@ void RmlUiBackend::ReceiveShowMenu()
 	}
 
 	m_Visible = true;
+	m_MenuStack.SetVisible(m_Visible);
 
 	if ( m_MenuStack.IsEmpty() )
 	{
@@ -162,6 +163,7 @@ void RmlUiBackend::ReceiveHideMenu()
 	}
 
 	m_Visible = false;
+	m_MenuStack.SetVisible(m_Visible);
 }
 
 void RmlUiBackend::ReceiveMouseMove(int x, int y)
