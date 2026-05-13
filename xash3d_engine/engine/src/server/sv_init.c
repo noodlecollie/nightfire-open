@@ -49,14 +49,17 @@ static void SV_AddResource(resourcetype_t type, const char* name, int size, byte
 		Host_Error("MAX_RESOURCES limit exceeded (%d)\n", MAX_RESOURCES);
 	}
 
-	Con_Reportf(
-		"SV_AddResource: [%d] %s (%d bytes), index: %d, flags: 0x%02x\n",
-		sv.num_resources,
-		name,
-		size,
-		index,
-		(uint32_t)flags
-	);
+	if ( sv_debug_log_resources.value != 0.0f )
+	{
+		Con_Reportf(
+			"SV_AddResource: [%d] %s (%d bytes), index: %d, flags: 0x%02x\n",
+			sv.num_resources,
+			name,
+			size,
+			index,
+			(uint32_t)flags
+		);
+	}
 
 	sv.num_resources++;
 

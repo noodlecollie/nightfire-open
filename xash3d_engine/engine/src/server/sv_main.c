@@ -95,6 +95,7 @@ CVAR_DEFINE_AUTO(sv_log_onefile, "0", FCVAR_ARCHIVE, "logs server information to
 CVAR_DEFINE_AUTO(sv_trace_messages, "0", FCVAR_LATCH, "enable server usermessages tracing (good for developers)");
 CVAR_DEFINE_AUTO(sv_master_response_timeout, "4", FCVAR_ARCHIVE, "master server heartbeat response timeout in seconds");
 CVAR_DEFINE_AUTO(sv_autosave, "1", FCVAR_ARCHIVE | FCVAR_SERVER | FCVAR_PRIVILEGED, "enable autosaving");
+CVAR_DEFINE_AUTO(sv_debug_log_resources, "0", 0, "Log server resources being precached");
 
 // game-related cvars
 CVAR_DEFINE_AUTO(mapcyclefile, "mapcycle.txt", 0, "name of multiplayer map cycle configuration file");
