@@ -47,6 +47,8 @@ set(SOURCES_UI
 	src/menus/options/KeysOptionsMenu.cpp
 	src/menus/options/MouseOptionsMenu.h
 	src/menus/options/MouseOptionsMenu.cpp
+	src/menus/CreateMultiplayerGameMenu.h
+	src/menus/CreateMultiplayerGameMenu.cpp
 	src/menus/CreditsMenu.h
 	src/menus/CreditsMenu.cpp
 	src/menus/MainMenu.h

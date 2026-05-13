@@ -8,6 +8,7 @@
 #include "menus/PauseMenu.h"
 #include "menus/CreditsMenu.h"
 #include "menus/ServerConnectionScreen.h"
+#include "menus/CreateMultiplayerGameMenu.h"
 #include "menus/options/KeysOptionsMenu.h"
 #include "menus/options/MouseOptionsMenu.h"
 #include "menus/options/AvOptionsMenu.h"
@@ -26,6 +27,7 @@ void MenuDirectory::Populate()
 	AddToMap<AvOptionsMenu>();
 	AddToMap<GameplayOptionsMenu>();
 	AddToMap<PauseMenu>();
+	AddToMap<CreateMultiplayerGameMenu>();
 }
 
 void MenuDirectory::Clear()
