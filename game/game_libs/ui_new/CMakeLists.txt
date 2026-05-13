@@ -60,6 +60,8 @@ set(SOURCES_UI
 	src/menus/PauseMenu.cpp
 	src/menus/ServerConnectionScreen.h
 	src/menus/ServerConnectionScreen.cpp
+	src/models/CreateMultiplayerGamePageModel.h
+	src/models/CreateMultiplayerGamePageModel.cpp
 	src/models/CvarModel.h
 	src/models/CvarModel.cpp
 	src/models/KeyBindingModel.h
