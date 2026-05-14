@@ -13,6 +13,8 @@ protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
+	void HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	CreateMultiplayerGamePageModel m_PageModel;
 };

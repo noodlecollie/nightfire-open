@@ -1,6 +1,7 @@
 #pragma once
 
 #include "models/CvarModel.h"
+#include "framework/DataVar.h"
 
 class BaseMenu;
 
@@ -14,7 +15,21 @@ public:
 private:
 	static constexpr const char* const GAME_MODE_DEATHMATCH = "dm";
 
-	CvarModel m_CvarModel;
+	bool BindCvarProxy(
+		Rml::DataModelConstructor& constructor,
+		const char* rmlVarName,
+		CvarDataVar<int>* cvar,
+		int min,
+		int max,
+		DataVar<bool>* enabledCheck = nullptr
+	);
 
+	CvarModel m_CvarModel;
+	Rml::DataModelHandle m_ModelHandle;
 	Rml::String m_GameMode = GAME_MODE_DEATHMATCH;
+	DataVar<bool> m_HasTimeLimit;
+	DataVar<bool> m_HasScoreLimit;
+
+	CvarDataVar<int>* m_CvarFragLimit = nullptr;
+	CvarDataVar<int>* m_CvarTimeLimit = nullptr;
 };
