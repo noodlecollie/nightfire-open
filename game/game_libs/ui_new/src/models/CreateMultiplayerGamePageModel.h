@@ -17,7 +17,7 @@ private:
 
 	bool BindCvarProxy(
 		Rml::DataModelConstructor& constructor,
-		const char* rmlVarName,
+		DataVar<int>* dataVar,
 		CvarDataVar<int>* cvar,
 		int min,
 		int max,
@@ -27,7 +27,9 @@ private:
 	CvarModel m_CvarModel;
 	Rml::DataModelHandle m_ModelHandle;
 	Rml::String m_GameMode = GAME_MODE_DEATHMATCH;
+	DataVar<int> m_TimeLimit;
 	DataVar<bool> m_HasTimeLimit;
+	DataVar<int> m_ScoreLimit;
 	DataVar<bool> m_HasScoreLimit;
 
 	CvarDataVar<int>* m_CvarFragLimit = nullptr;
