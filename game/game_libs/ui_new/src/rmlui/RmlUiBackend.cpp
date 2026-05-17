@@ -49,6 +49,9 @@ void RmlUiBackend::Initialise()
 	RegisterFonts();
 	RegisterCvars();
 	RegisterCommands();
+
+	// TODO: Do we actually want to do this later, where we can display a placeholder page first
+	// instead of a black screen?
 	m_MenuDirectory.Populate();
 
 	m_Modifiers = 0;

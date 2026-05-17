@@ -9,7 +9,7 @@ static constexpr const char* const EVENT_CUT_STACK = "cutStack";
 
 MenuPage::MenuPage(const char* name, const char* rmlFilePath) :
 	BaseMenu(name, rmlFilePath),
-	m_KeyEventListener(this, &MenuPage::ProcessKeyEvent)
+	m_KeyEventListener(this, &MenuPage::ProcessKeyEvent, {Rml::EventId::Keydown, Rml::EventId::Keyup})
 {
 }
 
@@ -53,24 +53,6 @@ void MenuPage::ProcessKeyEvent(Rml::Event& event)
 			break;
 		}
 	}
-}
-
-void MenuPage::OnEndDocumentLoaded()
-{
-	BaseMenu::OnEndDocumentLoaded();
-
-	Rml::ElementDocument* document = Document();
-
-	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-}
-
-void MenuPage::OnBeginDocumentUnloaded()
-{
-	Rml::ElementDocument* document = Document();
-
-	document->RemoveEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-
-	BaseMenu::OnBeginDocumentUnloaded();
 }
 
 void MenuPage::RequestPop(Rml::String menuToSwapIn)

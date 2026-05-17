@@ -3,7 +3,7 @@
 #include "menus/options/BaseOptionsMenu.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include <RmlUi/Core/Elements/ElementFormControlSelect.h>
-#include "framework/EventListenerObject.h"
+#include "framework/MenuEventListenerObject.h"
 #include "models/CvarModel.h"
 #include "models/VideoModesModel.h"
 #include "components/ModalComponent.h"
@@ -57,7 +57,7 @@ private:
 
 	ModalComponent m_Modal;
 	VideoModesModel m_VideoModes;
-	EventListenerObject m_DocumentEventListener;
+	MenuEventListenerObject m_DocumentEventListener;
 	PageModel m_PageModel;
 	CvarModel m_CvarModel;
 	Rml::DataModelHandle m_ModelHandle;

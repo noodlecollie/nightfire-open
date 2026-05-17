@@ -29,7 +29,11 @@ static constexpr const char* const EVENT_APPLY_VIDEO_MODE = "applyVideoMode";
 AvOptionsMenu::AvOptionsMenu() :
 	BaseOptionsMenu("av_options_menu", "resource/rml/av_options_menu.rml"),
 	m_Modal(this, "apply_video_mode_modal"),
-	m_DocumentEventListener(this, &AvOptionsMenu::ProcessDocumentEvent),
+	m_DocumentEventListener(
+		this,
+		&AvOptionsMenu::ProcessDocumentEvent,
+		{Rml::EventId::Show, Rml::EventId::Hide, Rml::EventId::Resize, Rml::EventId::Keydown}
+	),
 	m_CvarModel(this),
 	m_FullscreenCvar(CVAR_FULLSCREEN),
 	m_VideoModeCvar(CVAR_VID_MODE)
@@ -137,28 +141,15 @@ void AvOptionsMenu::OnEndDocumentLoaded()
 {
 	MenuPage::OnEndDocumentLoaded();
 
-	Rml::ElementDocument* document = Document();
-
-	document->AddEventListener(Rml::EventId::Show, &m_DocumentEventListener);
-	document->AddEventListener(Rml::EventId::Hide, &m_DocumentEventListener);
-	document->AddEventListener(Rml::EventId::Resize, &m_DocumentEventListener);
-	document->AddEventListener(Rml::EventId::Keydown, &m_DocumentEventListener);
-
 	m_ResolutionDropdown =
-		dynamic_cast<Rml::ElementFormControlSelect*>(document->GetElementById("resolution_dropdown"));
+		dynamic_cast<Rml::ElementFormControlSelect*>(Document()->GetElementById("resolution_dropdown"));
 
 	ASSERT(m_ResolutionDropdown);
 }
 
 void AvOptionsMenu::OnBeginDocumentUnloaded()
 {
-	Rml::ElementDocument* document = Document();
-
-	document->RemoveEventListener(Rml::EventId::Show, &m_DocumentEventListener);
-	document->RemoveEventListener(Rml::EventId::Hide, &m_DocumentEventListener);
-	document->RemoveEventListener(Rml::EventId::Resize, &m_DocumentEventListener);
-	document->RemoveEventListener(Rml::EventId::Keydown, &m_DocumentEventListener);
-
+	m_ResolutionDropdown = nullptr;
 	MenuPage::OnBeginDocumentUnloaded();
 }
 

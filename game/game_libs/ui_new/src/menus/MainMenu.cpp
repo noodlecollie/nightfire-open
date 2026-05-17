@@ -11,7 +11,7 @@ const char* const MainMenu::NAME = "main_menu";
 MainMenu::MainMenu() :
 	MenuPage(NAME, "resource/rml/main_menu.rml"),
 	m_MenuFrameDataBinding(this),
-	m_KeyEventListener(this, &MainMenu::ProcessKeyEvent)
+	m_KeyEventListener(this, &MainMenu::ProcessKeyEvent, {Rml::EventId::Keydown})
 {
 }
 
@@ -48,22 +48,6 @@ bool MainMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 bool MainMenu::ShouldPop(const Rml::String&) const
 {
 	return false;
-}
-
-void MainMenu::OnEndDocumentLoaded()
-{
-	MenuPage::OnEndDocumentLoaded();
-
-	Rml::ElementDocument* document = Document();
-	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-}
-
-void MainMenu::OnBeginDocumentUnloaded()
-{
-	Rml::ElementDocument* document = Document();
-	document->RemoveEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-
-	MenuPage::OnBeginDocumentUnloaded();
 }
 
 void MainMenu::ProcessKeyEvent(Rml::Event& event)

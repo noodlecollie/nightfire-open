@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework/MenuPage.h"
-#include "framework/EventListenerObject.h"
+#include "framework/MenuEventListenerObject.h"
 #include "templatebindings/MenuFrameDataBinding.h"
 
 class MainMenu : public MenuPage
@@ -14,8 +14,6 @@ public:
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 	bool ShouldPop(const Rml::String& menuToSwapIn) const override;
-	void OnEndDocumentLoaded() override;
-	void OnBeginDocumentUnloaded() override;
 
 private:
 	void ProcessKeyEvent(Rml::Event& event);
@@ -23,5 +21,5 @@ private:
 	void RequestSwitchToConsole();
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
-	EventListenerObject m_KeyEventListener;
+	MenuEventListenerObject m_KeyEventListener;
 };

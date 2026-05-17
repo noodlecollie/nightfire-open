@@ -32,6 +32,8 @@ set(SOURCES_UI
 	src/framework/EventListenerObject.h
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
+	src/framework/MenuEventListenerObject.h
+	src/framework/MenuEventListenerObject.cpp
 	src/framework/MenuPage.h
 	src/framework/MenuPage.cpp
 	src/framework/MenuRequests.h

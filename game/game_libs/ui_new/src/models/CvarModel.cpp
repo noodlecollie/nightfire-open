@@ -2,8 +2,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 
 CvarModel::CvarModel(BaseMenu* parentMenu) :
-	BaseMenuObserver(parentMenu),
-	m_EventListener(this, &CvarModel::HandleShowDocument)
+	m_EventListener(parentMenu, this, &CvarModel::HandleShowDocument, {Rml::EventId::Show})
 {
 }
 
@@ -58,16 +57,6 @@ bool CvarModel::Refresh(const Rml::String& name)
 	}
 
 	return Refresh(*(it->second));
-}
-
-void CvarModel::DocumentLoaded(Rml::ElementDocument* document)
-{
-	document->AddEventListener(Rml::EventId::Show, &m_EventListener);
-}
-
-void CvarModel::DocumentUnloaded(Rml::ElementDocument* document)
-{
-	document->RemoveEventListener(Rml::EventId::Show, &m_EventListener);
 }
 
 void CvarModel::HandleShowDocument(Rml::Event&)

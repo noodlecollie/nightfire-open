@@ -5,9 +5,9 @@
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/CvarDataVar.h"
 #include "framework/BaseMenuObserver.h"
-#include "framework/EventListenerObject.h"
+#include "framework/MenuEventListenerObject.h"
 
-class CvarModel : public BaseMenuObserver
+class CvarModel
 {
 public:
 	using ChangeCallbackFunc = std::function<void(const Rml::Variant& /*newVal*/)>;
@@ -34,9 +34,6 @@ public:
 	bool SetUpDataBindings(Rml::DataModelConstructor& constructor);
 	bool Refresh(const Rml::String& name);
 	void RefreshAll();
-
-	void DocumentLoaded(Rml::ElementDocument* document) override;
-	void DocumentUnloaded(Rml::ElementDocument* document) override;
 
 private:
 	struct BaseEntry
@@ -89,5 +86,5 @@ private:
 
 	std::unordered_map<Rml::String, std::unique_ptr<BaseEntry>> m_Entries;
 	Rml::DataModelHandle m_ModelHandle;
-	EventListenerObject m_EventListener;
+	MenuEventListenerObject m_EventListener;
 };

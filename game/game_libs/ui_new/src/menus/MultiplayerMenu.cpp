@@ -12,7 +12,7 @@ static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
 
 MultiplayerMenu::MultiplayerMenu() :
 	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
-	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents),
+	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents, {Rml::EventId::Show, Rml::EventId::Hide}),
 	m_MenuFrameDataBinding(this)
 {
 	ReSortServerModel();
@@ -45,33 +45,6 @@ bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 
 	m_ModelHandle = constructor.GetModelHandle();
 	return true;
-}
-
-void MultiplayerMenu::OnEndDocumentLoaded()
-{
-	MenuPage::OnEndDocumentLoaded();
-
-	RmlUiBackend::StaticInstance().SetDiscoveredServerCallback(
-		[this](const netadr_t& address, Rml::String&& info)
-		{
-			AddServerToList(address, std::move(info));
-		}
-	);
-
-	Rml::ElementDocument* document = Document();
-
-	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
-	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-}
-
-void MultiplayerMenu::OnBeginDocumentUnloaded()
-{
-	Rml::ElementDocument* document = Document();
-
-	document->RemoveEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
-	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-
-	MenuPage::OnBeginDocumentUnloaded();
 }
 
 void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)

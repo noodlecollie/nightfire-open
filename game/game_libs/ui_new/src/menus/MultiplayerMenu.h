@@ -2,7 +2,7 @@
 
 #include "framework/MenuPage.h"
 #include <RmlUi/Core/DataModelHandle.h>
-#include "framework/EventListenerObject.h"
+#include "framework/MenuEventListenerObject.h"
 #include "templatebindings/MenuFrameDataBinding.h"
 #include "models/ServerModel.h"
 #include "EnginePublicAPI/netadr.h"
@@ -17,8 +17,6 @@ public:
 
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-	void OnEndDocumentLoaded() override;
-	void OnBeginDocumentUnloaded() override;
 
 private:
 	static constexpr int INVALID_ROW = -1;
@@ -49,7 +47,7 @@ private:
 
 	void SetSelectedRow(int index);
 
-	EventListenerObject m_ShowHideEventListener;
+	MenuEventListenerObject m_ShowHideEventListener;
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	ServerModel m_ServerModel;
 	PageModel m_PageModel;

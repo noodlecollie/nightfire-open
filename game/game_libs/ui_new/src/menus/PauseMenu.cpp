@@ -13,7 +13,7 @@ PauseMenu::PauseMenu() :
 	MenuPage(NAME, "resource/rml/pause_menu.rml"),
 	m_MenuFrameDataBinding(this),
 	m_Modal(this, "quit_modal"),
-	m_ShowHideEventListener(this, &PauseMenu::ProcessShowHideEvents)
+	m_ShowHideEventListener(this, &PauseMenu::ProcessHideEvents, {Rml::EventId::Hide})
 {
 	m_Modal.SetButtonClickCallback(
 		[this](Rml::Event& event, size_t buttonIndex, const Rml::Variant& userData)
@@ -41,25 +41,7 @@ bool PauseMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 	return true;
 }
 
-void PauseMenu::OnEndDocumentLoaded()
-{
-	MenuPage::OnEndDocumentLoaded();
-
-	Rml::ElementDocument* document = Document();
-
-	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-}
-
-void PauseMenu::OnBeginDocumentUnloaded()
-{
-	Rml::ElementDocument* document = Document();
-
-	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-
-	MenuPage::OnBeginDocumentUnloaded();
-}
-
-void PauseMenu::ProcessShowHideEvents(Rml::Event& event)
+void PauseMenu::ProcessHideEvents(Rml::Event& event)
 {
 	switch ( event.GetId() )
 	{

@@ -7,7 +7,12 @@ CreateMultiplayerGameMenu::CreateMultiplayerGameMenu() :
 	MenuPage("create_multiplayer_game_menu", "resource/rml/create_multiplayer_game_menu.rml"),
 	m_MenuFrameDataBinding(this),
 	m_PageModel(this),
-	m_InputFieldEventListener(this, &CreateMultiplayerGameMenu::ProcessInputFieldEvent)
+	m_InputFieldEventListener(
+		this,
+		&CreateMultiplayerGameMenu::ProcessInputFieldEvent,
+		"input[type='text'][validated-value]",
+		{Rml::EventId::Change, Rml::EventId::Submit, Rml::EventId::Textinput}
+	)
 {
 }
 
@@ -24,36 +29,6 @@ bool CreateMultiplayerGameMenu::OnSetUpDataModelBindings(Rml::DataModelConstruct
 	}
 
 	return true;
-}
-
-void CreateMultiplayerGameMenu::OnEndDocumentLoaded()
-{
-	MenuPage::OnEndDocumentLoaded();
-
-	Rml::ElementList elements;
-	Document()->QuerySelectorAll(elements, "input[type='text'][validated-value]");
-
-	for ( Rml::Element* element : elements )
-	{
-		element->AddEventListener(Rml::EventId::Change, &m_InputFieldEventListener);
-		element->AddEventListener(Rml::EventId::Submit, &m_InputFieldEventListener);
-		element->AddEventListener(Rml::EventId::Textinput, &m_InputFieldEventListener);
-	}
-}
-
-void CreateMultiplayerGameMenu::OnBeginDocumentUnloaded()
-{
-	Rml::ElementList elements;
-	Document()->QuerySelectorAll(elements, "input[type='text']");
-
-	for ( Rml::Element* element : elements )
-	{
-		element->RemoveEventListener(Rml::EventId::Change, &m_InputFieldEventListener);
-		element->RemoveEventListener(Rml::EventId::Submit, &m_InputFieldEventListener);
-		element->RemoveEventListener(Rml::EventId::Textinput, &m_InputFieldEventListener);
-	}
-
-	MenuPage::OnBeginDocumentUnloaded();
 }
 
 void CreateMultiplayerGameMenu::ProcessInputFieldEvent(Rml::Event& event)

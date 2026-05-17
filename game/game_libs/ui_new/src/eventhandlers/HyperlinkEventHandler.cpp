@@ -2,34 +2,9 @@
 #include <RmlUi/Core/ElementDocument.h>
 #include "udll_int.h"
 
-static constexpr const char* const SELECTOR = "a[href]";
-
 HyperlinkEventHandler::HyperlinkEventHandler(BaseMenu* parentMenu) :
-	BaseMenuObserver(parentMenu),
-	m_ClickListener(this, &HyperlinkEventHandler::HandleClickEvent)
+	m_ClickListener(parentMenu, this, &HyperlinkEventHandler::HandleClickEvent, "a[href]", {Rml::EventId::Click})
 {
-}
-
-void HyperlinkEventHandler::DocumentLoaded(Rml::ElementDocument* document)
-{
-	Rml::ElementList list;
-	document->QuerySelectorAll(list, SELECTOR);
-
-	for ( Rml::Element* element : list )
-	{
-		element->AddEventListener(Rml::EventId::Click, &m_ClickListener);
-	}
-}
-
-void HyperlinkEventHandler::DocumentUnloaded(Rml::ElementDocument* document)
-{
-	Rml::ElementList list;
-	document->QuerySelectorAll(list, SELECTOR);
-
-	for ( Rml::Element* element : list )
-	{
-		element->RemoveEventListener(Rml::EventId::Click, &m_ClickListener);
-	}
 }
 
 void HyperlinkEventHandler::HandleClickEvent(Rml::Event& event)

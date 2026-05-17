@@ -32,8 +32,8 @@ enum ModalUserData
 KeysOptionsMenu::KeysOptionsMenu() :
 	BaseOptionsMenu("keys_options_menu", "resource/rml/keys_options_menu.rml"),
 	m_Modal(this, "keybindings_modal"),
-	m_ShowHideEventListener(this, &KeysOptionsMenu::ProcessShowHideEvents),
-	m_KeyEventListener(this, &KeysOptionsMenu::ProcessKeyEvents)
+	m_ShowHideEventListener(this, &KeysOptionsMenu::ProcessShowHideEvents, {Rml::EventId::Show, Rml::EventId::Hide}),
+	m_KeyEventListener(this, &KeysOptionsMenu::ProcessKeyEvents, {Rml::EventId::Keydown})
 {
 	m_Modal.SetButtonClickCallback(
 		[this](Rml::Event&, size_t buttonIndex, const Rml::Variant& userData)
@@ -79,28 +79,6 @@ bool KeysOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 	m_ModelHandle = constructor.GetModelHandle();
 
 	return true;
-}
-
-void KeysOptionsMenu::OnEndDocumentLoaded()
-{
-	MenuPage::OnEndDocumentLoaded();
-
-	Rml::ElementDocument* document = Document();
-
-	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
-	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-}
-
-void KeysOptionsMenu::OnBeginDocumentUnloaded()
-{
-	Rml::ElementDocument* document = Document();
-
-	document->RemoveEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
-	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-	document->RemoveEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-
-	MenuPage::OnBeginDocumentUnloaded();
 }
 
 void KeysOptionsMenu::ProcessShowHideEvents(Rml::Event& event)
