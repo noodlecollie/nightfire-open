@@ -7,7 +7,7 @@
 static constexpr const char* const TOOLTIP_SELECTOR = "bigbutton[tooltip], button[tooltip], label[tooltip]";
 
 MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
-	DocumentObserver(parentMenu),
+	BaseMenuObserver(parentMenu),
 	m_Tooltip {"footerTooltip", ""},
 	m_TooltipListener(this, &MenuFrameDataBinding::HandleMouseEvents)
 {

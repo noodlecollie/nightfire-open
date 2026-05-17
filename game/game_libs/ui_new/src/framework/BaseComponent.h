@@ -1,7 +1,7 @@
 #pragma once
 
 #include <RmlUi/Core/Types.h>
-#include "framework/DocumentObserver.h"
+#include "framework/BaseMenuObserver.h"
 
 namespace Rml
 {
@@ -11,7 +11,7 @@ namespace Rml
 
 class BaseMenu;
 
-class BaseComponent : public DocumentObserver
+class BaseComponent : public BaseMenuObserver
 {
 public:
 	bool Loaded() const;

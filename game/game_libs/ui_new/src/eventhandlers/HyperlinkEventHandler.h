@@ -1,9 +1,9 @@
 #pragma once
 
-#include "framework/DocumentObserver.h"
+#include "framework/BaseMenuObserver.h"
 #include "framework/EventListenerObject.h"
 
-class HyperlinkEventHandler : public DocumentObserver
+class HyperlinkEventHandler : public BaseMenuObserver
 {
 public:
 	explicit HyperlinkEventHandler(BaseMenu* parentMenu);

@@ -5,7 +5,7 @@
 static constexpr const char* const SELECTOR = "a[href]";
 
 HyperlinkEventHandler::HyperlinkEventHandler(BaseMenu* parentMenu) :
-	DocumentObserver(parentMenu),
+	BaseMenuObserver(parentMenu),
 	m_ClickListener(this, &HyperlinkEventHandler::HandleClickEvent)
 {
 }

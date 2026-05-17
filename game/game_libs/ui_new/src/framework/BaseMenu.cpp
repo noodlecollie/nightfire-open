@@ -1,5 +1,5 @@
 #include "framework/BaseMenu.h"
-#include "framework/DocumentObserver.h"
+#include "framework/BaseMenuObserver.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include "UIDebug.h"
 
@@ -63,7 +63,7 @@ void BaseMenu::DocumentLoaded(Rml::ElementDocument* document)
 	m_Document = document;
 	OnBeginDocumentLoaded();
 
-	for ( DocumentObserver* observer : m_DocObservers )
+	for ( BaseMenuObserver* observer : m_MenuObservers )
 	{
 		observer->DocumentLoaded(document);
 	}
@@ -82,7 +82,7 @@ void BaseMenu::DocumentUnloaded()
 
 	OnBeginDocumentUnloaded();
 
-	for ( DocumentObserver* observer : m_DocObservers )
+	for ( BaseMenuObserver* observer : m_MenuObservers )
 	{
 		observer->DocumentUnloaded(m_Document);
 	}
@@ -122,12 +122,12 @@ bool BaseMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor&)
 	return true;
 }
 
-void BaseMenu::RegisterDocumentObserver(DocumentObserver* observer)
+void BaseMenu::RegisterObserver(BaseMenuObserver* observer)
 {
 	ASSERT(observer);
 
 	if ( observer )
 	{
-		m_DocObservers.push_back(observer);
+		m_MenuObservers.push_back(observer);
 	}
 }

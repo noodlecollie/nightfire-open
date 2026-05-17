@@ -4,10 +4,10 @@
 #include <unordered_map>
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/CvarDataVar.h"
-#include "framework/DocumentObserver.h"
+#include "framework/BaseMenuObserver.h"
 #include "framework/EventListenerObject.h"
 
-class CvarModel : public DocumentObserver
+class CvarModel : public BaseMenuObserver
 {
 public:
 	using ChangeCallbackFunc = std::function<void(const Rml::Variant& /*newVal*/)>;

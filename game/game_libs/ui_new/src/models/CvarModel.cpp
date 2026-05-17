@@ -2,7 +2,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 
 CvarModel::CvarModel(BaseMenu* parentMenu) :
-	DocumentObserver(parentMenu),
+	BaseMenuObserver(parentMenu),
 	m_EventListener(this, &CvarModel::HandleShowDocument)
 {
 }

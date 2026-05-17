@@ -3,10 +3,10 @@
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/DataVar.h"
 #include "framework/BaseTemplateBinding.h"
-#include "framework/DocumentObserver.h"
+#include "framework/BaseMenuObserver.h"
 #include "framework/EventListenerObject.h"
 
-class MenuFrameDataBinding : public BaseTemplateBinding, public DocumentObserver
+class MenuFrameDataBinding : public BaseTemplateBinding, public BaseMenuObserver
 {
 public:
 	MenuFrameDataBinding(BaseMenu* parentMenu);

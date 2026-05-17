@@ -6,7 +6,7 @@
 #include "UIDebug.h"
 
 BaseComponent::BaseComponent(BaseMenu* parentMenu, Rml::String id) :
-	DocumentObserver(parentMenu),
+	BaseMenuObserver(parentMenu),
 	m_ID(std::move(id))
 {
 	ASSERTSZ(!m_ID.empty(), "Component was constructed with an empty ID");
