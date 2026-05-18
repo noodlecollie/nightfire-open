@@ -137,9 +137,9 @@ bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& construc
 	return true;
 }
 
-void AvOptionsMenu::OnEndDocumentLoaded()
+void AvOptionsMenu::OnDocumentLoaded()
 {
-	MenuPage::OnEndDocumentLoaded();
+	MenuPage::OnDocumentLoaded();
 
 	m_ResolutionDropdown =
 		dynamic_cast<Rml::ElementFormControlSelect*>(Document()->GetElementById("resolution_dropdown"));
@@ -147,10 +147,10 @@ void AvOptionsMenu::OnEndDocumentLoaded()
 	ASSERT(m_ResolutionDropdown);
 }
 
-void AvOptionsMenu::OnBeginDocumentUnloaded()
+void AvOptionsMenu::OnDocumentUnloaded()
 {
 	m_ResolutionDropdown = nullptr;
-	MenuPage::OnBeginDocumentUnloaded();
+	MenuPage::OnDocumentUnloaded();
 }
 
 void AvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)

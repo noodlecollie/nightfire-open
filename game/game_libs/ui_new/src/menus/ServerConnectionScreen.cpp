@@ -107,9 +107,9 @@ bool ServerConnectionScreen::OnSetUpDataModelBindings(Rml::DataModelConstructor&
 	return true;
 }
 
-void ServerConnectionScreen::OnEndDocumentLoaded()
+void ServerConnectionScreen::OnDocumentLoaded()
 {
-	BaseMenu::OnEndDocumentLoaded();
+	BaseMenu::OnDocumentLoaded();
 
 	m_ContentElement = Document()->GetElementById("content");
 	m_ProgressElement = dynamic_cast<Rml::ElementProgress*>(Document()->GetElementById("progress_bar"));
@@ -118,12 +118,12 @@ void ServerConnectionScreen::OnEndDocumentLoaded()
 	ASSERT(m_ProgressElement);
 }
 
-void ServerConnectionScreen::OnBeginDocumentUnloaded()
+void ServerConnectionScreen::OnDocumentUnloaded()
 {
 	m_ContentElement = nullptr;
 	m_ProgressElement = nullptr;
 
-	BaseMenu::OnBeginDocumentUnloaded();
+	BaseMenu::OnDocumentUnloaded();
 }
 
 void ServerConnectionScreen::ClearContentArea()

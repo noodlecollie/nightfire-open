@@ -61,14 +61,13 @@ void BaseMenu::DocumentLoaded(Rml::ElementDocument* document)
 	}
 
 	m_Document = document;
-	OnBeginDocumentLoaded();
 
 	for ( BaseMenuObserver* observer : m_MenuObservers )
 	{
 		observer->DocumentLoaded(document);
 	}
 
-	OnEndDocumentLoaded();
+	OnDocumentLoaded();
 }
 
 void BaseMenu::DocumentUnloaded()
@@ -80,14 +79,13 @@ void BaseMenu::DocumentUnloaded()
 		return;
 	}
 
-	OnBeginDocumentUnloaded();
+	OnDocumentUnloaded();
 
 	for ( BaseMenuObserver* observer : m_MenuObservers )
 	{
 		observer->DocumentUnloaded(m_Document);
 	}
 
-	OnEndDocumentUnloaded();
 	m_Document = nullptr;
 }
 
@@ -101,19 +99,11 @@ bool BaseMenu::IsDocumentVisible() const
 	return document && document->IsVisible();
 }
 
-void BaseMenu::OnBeginDocumentLoaded()
+void BaseMenu::OnDocumentLoaded()
 {
 }
 
-void BaseMenu::OnEndDocumentLoaded()
-{
-}
-
-void BaseMenu::OnBeginDocumentUnloaded()
-{
-}
-
-void BaseMenu::OnEndDocumentUnloaded()
+void BaseMenu::OnDocumentUnloaded()
 {
 }
 

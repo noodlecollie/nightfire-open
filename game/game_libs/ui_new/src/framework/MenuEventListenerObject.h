@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <set>
 
-class MenuEventListenerObject : public BaseMenuObserver
+class MenuEventListenerObject : private BaseMenuObserver
 {
 public:
 	// Listen for the specified events on the page document itself.
@@ -69,10 +69,10 @@ public:
 		ASSERT(!m_Selector.empty());
 	}
 
+private:
 	void DocumentLoaded(Rml::ElementDocument* document) override;
 	void DocumentUnloaded(Rml::ElementDocument* document) override;
 
-private:
 	void SelectElements(Rml::ElementDocument* document);
 
 	EventListenerObject m_EventListenerObject;

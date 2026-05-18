@@ -21,8 +21,8 @@ public:
 	void SetUserData(Rml::Variant data);
 
 protected:
-	bool OnLoadFromDocument(Rml::ElementDocument* document) override;
-	void OnUnload() override;
+	bool ComponentLoadFromDocument(Rml::ElementDocument* document) override;
+	void ComponentUnload() override;
 
 private:
 	struct Elements

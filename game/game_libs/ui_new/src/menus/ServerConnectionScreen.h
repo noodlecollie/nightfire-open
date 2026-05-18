@@ -35,8 +35,8 @@ public:
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
-	void OnEndDocumentLoaded() override;
-	void OnBeginDocumentUnloaded() override;
+	void OnDocumentLoaded() override;
+	void OnDocumentUnloaded() override;
 
 private:
 	void ClearContentArea();

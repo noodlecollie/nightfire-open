@@ -13,6 +13,9 @@ public:
 	BaseMenuObserver(BaseMenu* parentMenu);
 	virtual ~BaseMenuObserver() = default;
 
+protected:
+	friend class BaseMenu;
+
 	virtual void DocumentLoaded(Rml::ElementDocument* document);
 	virtual void DocumentUnloaded(Rml::ElementDocument* document);
 };

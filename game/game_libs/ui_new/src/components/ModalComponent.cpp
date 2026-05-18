@@ -94,7 +94,7 @@ void ModalComponent::SetUserData(Rml::Variant data)
 	m_UserData = std::move(data);
 }
 
-bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
+bool ModalComponent::ComponentLoadFromDocument(Rml::ElementDocument*)
 {
 	ElementFinder finder;
 
@@ -113,7 +113,7 @@ bool ModalComponent::OnLoadFromDocument(Rml::ElementDocument*)
 	return true;
 }
 
-void ModalComponent::OnUnload()
+void ModalComponent::ComponentUnload()
 {
 	for ( Rml::Element* button : m_Elems.buttons )
 	{

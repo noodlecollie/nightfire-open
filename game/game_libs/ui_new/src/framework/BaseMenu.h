@@ -41,10 +41,8 @@ protected:
 	BaseMenu(const char* name, const char* rmlFilePath);
 	void SetCurrentRequest(MenuRequestType requestType, Rml::Dictionary options = Rml::Dictionary());
 
-	virtual void OnBeginDocumentLoaded();
-	virtual void OnEndDocumentLoaded();
-	virtual void OnBeginDocumentUnloaded();
-	virtual void OnEndDocumentUnloaded();
+	virtual void OnDocumentLoaded();
+	virtual void OnDocumentUnloaded();
 	virtual bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 
 private:
