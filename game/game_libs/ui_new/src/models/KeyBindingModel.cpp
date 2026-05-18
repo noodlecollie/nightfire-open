@@ -19,38 +19,9 @@ static constexpr const char* const PROP_SECONDARY_BINDING = "secondaryBinding";
 static constexpr const char* const PROP_KEY = "key";
 static constexpr const char* const PROP_DEFAULT_KEY = "defaultKey";
 
-bool KeyBindingModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+KeyBindingModel::KeyBindingModel(BaseMenu* parentMenu) :
+	BaseMenuObserver(parentMenu)
 {
-	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
-	Rml::StructHandle<Entry::Binding> bindingType = constructor.RegisterStruct<Entry::Binding>();
-
-	if ( !entryType || !bindingType )
-	{
-		return false;
-	}
-
-	if ( !bindingType.RegisterMember(PROP_KEY, &Entry::Binding::key) ||
-		 !bindingType.RegisterMember(PROP_DEFAULT_KEY, &Entry::Binding::defaultKey) )
-	{
-		return false;
-	}
-
-	if ( !entryType.RegisterMember(PROP_ROW, &Entry::row) ||
-		 !entryType.RegisterMember(PROP_DESCRIPTION, &Entry::description) ||
-		 !entryType.RegisterMember(PROP_CONSOLE_COMMAND, &Entry::consoleCommand) ||
-		 !entryType.RegisterMember(PROP_PRIMARY_BINDING, &Entry::primaryBinding) ||
-		 !entryType.RegisterMember(PROP_SECONDARY_BINDING, &Entry::secondaryBinding) )
-	{
-		return false;
-	}
-
-	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_KEYBINDINGS, &m_Entries) )
-	{
-		return false;
-	}
-
-	m_ModelHandle = constructor.GetModelHandle();
-	return true;
 }
 
 size_t KeyBindingModel::Rows() const
@@ -206,6 +177,40 @@ void KeyBindingModel::ResetAllBindingsToDefaults()
 	}
 
 	m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+}
+
+bool KeyBindingModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
+	Rml::StructHandle<Entry::Binding> bindingType = constructor.RegisterStruct<Entry::Binding>();
+
+	if ( !entryType || !bindingType )
+	{
+		return false;
+	}
+
+	if ( !bindingType.RegisterMember(PROP_KEY, &Entry::Binding::key) ||
+		 !bindingType.RegisterMember(PROP_DEFAULT_KEY, &Entry::Binding::defaultKey) )
+	{
+		return false;
+	}
+
+	if ( !entryType.RegisterMember(PROP_ROW, &Entry::row) ||
+		 !entryType.RegisterMember(PROP_DESCRIPTION, &Entry::description) ||
+		 !entryType.RegisterMember(PROP_CONSOLE_COMMAND, &Entry::consoleCommand) ||
+		 !entryType.RegisterMember(PROP_PRIMARY_BINDING, &Entry::primaryBinding) ||
+		 !entryType.RegisterMember(PROP_SECONDARY_BINDING, &Entry::secondaryBinding) )
+	{
+		return false;
+	}
+
+	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_KEYBINDINGS, &m_Entries) )
+	{
+		return false;
+	}
+
+	m_ModelHandle = constructor.GetModelHandle();
+	return true;
 }
 
 void KeyBindingModel::ParseSchemaAndResetToDefaults()

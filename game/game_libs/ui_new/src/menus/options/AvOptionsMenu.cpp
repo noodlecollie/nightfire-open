@@ -29,6 +29,7 @@ static constexpr const char* const EVENT_APPLY_VIDEO_MODE = "applyVideoMode";
 AvOptionsMenu::AvOptionsMenu() :
 	BaseOptionsMenu("av_options_menu", "resource/rml/av_options_menu.rml"),
 	m_Modal(this, "apply_video_mode_modal"),
+	m_VideoModes(this),
 	m_DocumentEventListener(
 		this,
 		&AvOptionsMenu::ProcessDocumentEvent,
@@ -87,8 +88,7 @@ void AvOptionsMenu::Update(float currentTime)
 
 bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_VideoModes.SetUpDataBindings(constructor) ||
-		 !m_CvarModel.SetUpDataBindings(constructor) )
+	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_CvarModel.SetUpDataBindings(constructor) )
 	{
 		return false;
 	}

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "framework/BaseTableModel.h"
+#include "framework/BaseMenuObserver.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include "EnginePublicAPI/netadr.h"
 #include <memory>
 #include <vector>
 #include <functional>
 
-class ServerModel : public BaseTableModel
+class ServerModel : private BaseMenuObserver
 {
 public:
 	enum class SortType
@@ -46,10 +46,9 @@ public:
 	static bool SortTypeToString(SortType sortType, bool ascending, Rml::String& out);
 	static bool SortTypeFromString(const Rml::String& str, SortType& outType, bool& outAscending);
 
-	ServerModel();
+	ServerModel(BaseMenu* parentMenu);
 
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
-	size_t Rows() const override;
+	size_t Rows() const;
 
 	bool Add(const netadr_t& address, Rml::String&& info);
 	void Sort(SortType sortBy, bool ascending);
@@ -57,6 +56,9 @@ public:
 
 	bool GetRowForAddress(const netadr_t& address, size_t& out) const;
 	const Entry* GetEntry(size_t row) const;
+
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	// A thin wrapper around the entry, so that we can reorder the list

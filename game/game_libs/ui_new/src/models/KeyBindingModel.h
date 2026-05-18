@@ -1,6 +1,6 @@
 #pragma once
 
-#include "framework/BaseTableModel.h"
+#include "framework/BaseMenuObserver.h"
 #include <RmlUi/Core/Types.h>
 #include <RmlUi/Core/DataModelHandle.h>
 #include <vector>
@@ -8,7 +8,7 @@
 
 class InFileCharsPtr;
 
-class KeyBindingModel : public BaseTableModel
+class KeyBindingModel : private BaseMenuObserver
 {
 public:
 	struct Entry
@@ -26,8 +26,8 @@ public:
 		Binding secondaryBinding;
 	};
 
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
-	size_t Rows() const override;
+	KeyBindingModel(BaseMenu* parentMenu);
+	size_t Rows() const;
 
 	bool RowForConsoleCommand(const Rml::String& command, size_t& row) const;
 
@@ -51,6 +51,9 @@ public:
 	void ResetBindingToDefault(size_t row);
 	void ResetAllBindingsToDefaults();
 	void WriteBindings() const;
+
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	enum class ParseResult

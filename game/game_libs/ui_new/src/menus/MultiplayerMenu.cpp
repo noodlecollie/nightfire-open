@@ -13,7 +13,8 @@ static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
 MultiplayerMenu::MultiplayerMenu() :
 	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
 	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents, {Rml::EventId::Show, Rml::EventId::Hide}),
-	m_MenuFrameDataBinding(this)
+	m_MenuFrameDataBinding(this),
+	m_ServerModel(this)
 {
 	ReSortServerModel();
 }
@@ -28,7 +29,7 @@ void MultiplayerMenu::Update(float currentTime)
 
 bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_ServerModel.SetUpDataBindings(constructor) )
+	if ( !MenuPage::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}

@@ -25,6 +25,11 @@ static bool ParseDimensions(const Rml::String& label, int& width, int& height)
 	return true;
 }
 
+VideoModesModel::VideoModesModel(BaseMenu* parentMenu) :
+	BaseMenuObserver(parentMenu)
+{
+}
+
 void VideoModesModel::Populate()
 {
 	m_VidModes.clear();
@@ -48,30 +53,6 @@ void VideoModesModel::Populate()
 	{
 		m_ModelHandle.DirtyVariable(NAME_VIDEO_MODES);
 	}
-}
-
-bool VideoModesModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
-{
-	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
-
-	if ( !entryType )
-	{
-		return false;
-	}
-
-	if ( !entryType.RegisterMember(PROP_LABEL, &Entry::label) ||
-		 !entryType.RegisterMember(PROP_MODE_INDEX, &Entry::index) )
-	{
-		return false;
-	}
-
-	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_VIDEO_MODES, &m_VidModes) )
-	{
-		return false;
-	}
-
-	m_ModelHandle = constructor.GetModelHandle();
-	return true;
 }
 
 size_t VideoModesModel::Rows() const
@@ -108,4 +89,28 @@ bool VideoModesModel::RowForDimensions(int width, int height, size_t& outRow) co
 	}
 
 	return false;
+}
+
+bool VideoModesModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
+
+	if ( !entryType )
+	{
+		return false;
+	}
+
+	if ( !entryType.RegisterMember(PROP_LABEL, &Entry::label) ||
+		 !entryType.RegisterMember(PROP_MODE_INDEX, &Entry::index) )
+	{
+		return false;
+	}
+
+	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_VIDEO_MODES, &m_VidModes) )
+	{
+		return false;
+	}
+
+	m_ModelHandle = constructor.GetModelHandle();
+	return true;
 }

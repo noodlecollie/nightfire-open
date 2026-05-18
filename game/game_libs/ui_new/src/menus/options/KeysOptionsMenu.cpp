@@ -31,6 +31,7 @@ enum ModalUserData
 
 KeysOptionsMenu::KeysOptionsMenu() :
 	BaseOptionsMenu("keys_options_menu", "resource/rml/keys_options_menu.rml"),
+	m_KeyBindings(this),
 	m_Modal(this, "keybindings_modal"),
 	m_ShowHideEventListener(this, &KeysOptionsMenu::ProcessShowHideEvents, {Rml::EventId::Show, Rml::EventId::Hide}),
 	m_KeyEventListener(this, &KeysOptionsMenu::ProcessKeyEvents, {Rml::EventId::Keydown})
@@ -58,7 +59,7 @@ void KeysOptionsMenu::Update(float currentTime)
 
 bool KeysOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_KeyBindings.SetUpDataBindings(constructor) )
+	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}

@@ -1,21 +1,24 @@
 #pragma once
 
-#include "framework/BaseTableModel.h"
+#include "framework/BaseMenuObserver.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include <vector>
 
-class VideoModesModel : public BaseTableModel
+class VideoModesModel : private BaseMenuObserver
 {
 public:
+	VideoModesModel(BaseMenu* parentMenu);
 	void Populate();
 
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
-	size_t Rows() const override;
+	size_t Rows() const;
 
 	int Width(size_t row) const;
 	int Height(size_t row) const;
 	int VideoMode(size_t row) const;
 	bool RowForDimensions(int width, int height, size_t& outRow) const;
+
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	struct Entry

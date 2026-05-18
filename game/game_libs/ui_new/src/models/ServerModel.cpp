@@ -101,37 +101,9 @@ bool ServerModel::SortTypeFromString(const Rml::String& str, SortType& outType, 
 	return false;
 }
 
-ServerModel::ServerModel()
+ServerModel::ServerModel(BaseMenu* parentMenu) :
+	BaseMenuObserver(parentMenu)
 {
-}
-
-bool ServerModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
-{
-	Rml::StructHandle<EntryPtr> entryType = constructor.RegisterStruct<EntryPtr>();
-
-	if ( !entryType )
-	{
-		return false;
-	}
-
-	if ( !entryType.RegisterMember(PROP_INDEX, &EntryPtr::GetIndex) ||
-		 !entryType.RegisterMember(PROP_PING, &EntryPtr::GetPing) ||
-		 !entryType.RegisterMember(PROP_NUM_CLIENTS, &EntryPtr::GetNumClients) ||
-		 !entryType.RegisterMember(PROP_MAX_CLIENTS, &EntryPtr::GetMaxClients) ||
-		 !entryType.RegisterMember(PROP_SERVER_NAME, &EntryPtr::GetServerName) ||
-		 !entryType.RegisterMember(PROP_MAP_NAME, &EntryPtr::GetMapName) ||
-		 !entryType.RegisterMember(PROP_HAS_PASSWORD, &EntryPtr::GetHasPassword) )
-	{
-		return false;
-	}
-
-	if ( !constructor.RegisterArray<std::vector<EntryPtr>>() || !constructor.Bind(NAME_SERVER_LIST, &m_Entries) )
-	{
-		return false;
-	}
-
-	m_ModelHandle = constructor.GetModelHandle();
-	return true;
 }
 
 size_t ServerModel::Rows() const
@@ -265,6 +237,35 @@ ServerModel::GetSortFunction(SortType sortBy, bool ascending)
 			};
 		}
 	}
+}
+
+bool ServerModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	Rml::StructHandle<EntryPtr> entryType = constructor.RegisterStruct<EntryPtr>();
+
+	if ( !entryType )
+	{
+		return false;
+	}
+
+	if ( !entryType.RegisterMember(PROP_INDEX, &EntryPtr::GetIndex) ||
+		 !entryType.RegisterMember(PROP_PING, &EntryPtr::GetPing) ||
+		 !entryType.RegisterMember(PROP_NUM_CLIENTS, &EntryPtr::GetNumClients) ||
+		 !entryType.RegisterMember(PROP_MAX_CLIENTS, &EntryPtr::GetMaxClients) ||
+		 !entryType.RegisterMember(PROP_SERVER_NAME, &EntryPtr::GetServerName) ||
+		 !entryType.RegisterMember(PROP_MAP_NAME, &EntryPtr::GetMapName) ||
+		 !entryType.RegisterMember(PROP_HAS_PASSWORD, &EntryPtr::GetHasPassword) )
+	{
+		return false;
+	}
+
+	if ( !constructor.RegisterArray<std::vector<EntryPtr>>() || !constructor.Bind(NAME_SERVER_LIST, &m_Entries) )
+	{
+		return false;
+	}
+
+	m_ModelHandle = constructor.GetModelHandle();
+	return true;
 }
 
 void ServerModel::AddTestEntries(size_t count)
