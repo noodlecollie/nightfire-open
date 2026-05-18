@@ -37,7 +37,6 @@ bool PauseMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -48,12 +47,7 @@ void PauseMenu::ProcessHideEvents(Rml::Event& event)
 		case Rml::EventId::Hide:
 		{
 			m_PageModel.showModal = false;
-
-			if ( m_ModelHandle )
-			{
-				m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
-			}
-
+			DirtyVariable(NAME_SHOW_MODAL);
 			break;
 		}
 
@@ -85,11 +79,7 @@ void PauseMenu::HandleQuitRequest(Rml::DataModelHandle, Rml::Event&, const Rml::
 	m_Modal.SetTitle("Quit");
 	m_Modal.SetButtons({"No", "Yes"});
 	m_PageModel.showModal = true;
-
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
-	}
+	DirtyVariable(NAME_SHOW_MODAL);
 }
 
 void PauseMenu::HandleQuitConfirm(Rml::Event&, size_t buttonIndex, const Rml::Variant&)
@@ -104,10 +94,6 @@ void PauseMenu::HandleQuitConfirm(Rml::Event&, size_t buttonIndex, const Rml::Va
 	else
 	{
 		m_PageModel.showModal = false;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
-		}
+		DirtyVariable(NAME_SHOW_MODAL);
 	}
 }

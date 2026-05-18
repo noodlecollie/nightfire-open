@@ -18,7 +18,7 @@ MouseOptionsMenu::MouseOptionsMenu() :
 
 bool MouseOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_CvarModel.SetUpDataBindings(constructor) )
+	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}
@@ -50,10 +50,7 @@ bool MouseOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& const
 		NAME_MOUSE_PITCH,
 		[this](const Rml::Variant&)
 		{
-			if ( m_ModelHandle )
-			{
-				m_ModelHandle.DirtyVariable(NAME_INVERT_MOUSE);
-			}
+			DirtyVariable(NAME_INVERT_MOUSE);
 		}
 	);
 
@@ -62,6 +59,5 @@ bool MouseOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& const
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }

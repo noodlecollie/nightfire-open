@@ -28,7 +28,6 @@ private:
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	PageModel m_PageModel;
-	Rml::DataModelHandle m_ModelHandle;
 	ModalComponent m_Modal;
 	MenuEventListenerObject m_ShowHideEventListener;
 	bool m_IsQuitting = false;

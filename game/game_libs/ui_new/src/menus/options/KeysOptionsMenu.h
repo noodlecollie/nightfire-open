@@ -44,7 +44,6 @@ private:
 
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
-	Rml::DataModelHandle m_ModelHandle;
 	ModalComponent m_Modal;
 	MenuEventListenerObject m_ShowHideEventListener;
 	MenuEventListenerObject m_KeyEventListener;

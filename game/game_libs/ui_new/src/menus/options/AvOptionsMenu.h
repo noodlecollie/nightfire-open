@@ -60,7 +60,6 @@ private:
 	MenuEventListenerObject m_DocumentEventListener;
 	PageModel m_PageModel;
 	CvarModel m_CvarModel;
-	Rml::DataModelHandle m_ModelHandle;
 	Rml::ElementFormControlSelect* m_ResolutionDropdown = nullptr;
 	CvarDataVar<bool>* m_DspOff = nullptr;
 	CvarDataVar<bool>* m_Vsync = nullptr;

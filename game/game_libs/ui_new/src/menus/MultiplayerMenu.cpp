@@ -43,7 +43,6 @@ bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -232,11 +231,7 @@ void MultiplayerMenu::UpdateSortTypeVariable()
 	}
 
 	m_PageModel.sortType = newStr;
-
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_SORT_TYPE);
-	}
+	DirtyVariable(NAME_SORT_TYPE);
 }
 
 void MultiplayerMenu::RefreshServersLocal()
@@ -252,10 +247,6 @@ void MultiplayerMenu::SetSelectedRow(int index)
 	if ( m_PageModel.selectedRow != index )
 	{
 		m_PageModel.selectedRow = index;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_SELECTED_ROW);
-		}
+		DirtyVariable(NAME_SELECTED_ROW);
 	}
 }

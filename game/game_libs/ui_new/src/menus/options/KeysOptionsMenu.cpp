@@ -77,8 +77,6 @@ bool KeysOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
-
 	return true;
 }
 
@@ -253,13 +251,13 @@ bool KeysOptionsMenu::HandleSelectBindingEvent(int row, int bindIndex)
 	if ( m_PageModel.currentRow != row )
 	{
 		m_PageModel.currentRow = row;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_ROW);
+		DirtyVariable(NAME_CURRENT_ROW);
 	}
 
 	if ( m_PageModel.currentBinding != bindIndex )
 	{
 		m_PageModel.currentBinding = bindIndex;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_BINDING);
+		DirtyVariable(NAME_CURRENT_BINDING);
 	}
 
 	return true;
@@ -270,13 +268,13 @@ void KeysOptionsMenu::ResetRebindingRow()
 	if ( m_PageModel.currentRow >= 0 )
 	{
 		m_PageModel.currentRow = INVALID_ROW;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_ROW);
+		DirtyVariable(NAME_CURRENT_ROW);
 	}
 
 	if ( m_PageModel.currentBinding >= 0 )
 	{
 		m_PageModel.currentBinding = INVALID_BINDING;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_BINDING);
+		DirtyVariable(NAME_CURRENT_BINDING);
 	}
 
 	CloseModalAndStopListeningForKeys();
@@ -294,7 +292,7 @@ void KeysOptionsMenu::ShowModal(bool show)
 	if ( m_PageModel.showModal != show )
 	{
 		m_PageModel.showModal = show;
-		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
+		DirtyVariable(NAME_SHOW_MODAL);
 	}
 }
 

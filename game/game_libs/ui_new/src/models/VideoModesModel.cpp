@@ -49,10 +49,7 @@ void VideoModesModel::Populate()
 		++modeIndex;
 	}
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_VIDEO_MODES);
-	}
+	DirtyVariable(NAME_VIDEO_MODES);
 }
 
 size_t VideoModesModel::Rows() const
@@ -111,6 +108,5 @@ bool VideoModesModel::SetUpDataModelBindings(Rml::DataModelConstructor& construc
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }

@@ -51,6 +51,5 @@ private:
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	ServerModel m_ServerModel;
 	PageModel m_PageModel;
-	Rml::DataModelHandle m_ModelHandle;
 	float m_NextRefreshTime = REFRESH_NEVER;
 };

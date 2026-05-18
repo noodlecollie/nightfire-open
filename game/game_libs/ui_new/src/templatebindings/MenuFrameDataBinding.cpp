@@ -24,7 +24,6 @@ bool MenuFrameDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& con
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -87,9 +86,9 @@ void MenuFrameDataBinding::SetTooltip(Rml::Event& event)
 		return;
 	}
 
-	if ( tooltipAttr->GetInto(m_Tooltip.value) && m_ModelHandle )
+	if ( tooltipAttr->GetInto(m_Tooltip.value) && IsModelLoaded() )
 	{
-		m_ModelHandle.DirtyVariable(m_Tooltip.name);
+		DirtyVariable(m_Tooltip.name);
 		m_CurrentTooltipElement = element;
 	}
 }
@@ -101,10 +100,6 @@ void MenuFrameDataBinding::ClearTooltip()
 	if ( !m_Tooltip.value.empty() )
 	{
 		m_Tooltip.value.clear();
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(m_Tooltip.name);
-		}
+		DirtyVariable(m_Tooltip.name);
 	}
 }

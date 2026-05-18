@@ -72,11 +72,7 @@ void AvOptionsMenu::Update(float currentTime)
 			if ( remaining != m_PageModel.modalTimeRemaining )
 			{
 				m_PageModel.modalTimeRemaining = remaining;
-
-				if ( m_ModelHandle )
-				{
-					m_ModelHandle.DirtyVariable(NAME_MODAL_TIME_REMAINING);
-				}
+				DirtyVariable(NAME_MODAL_TIME_REMAINING);
 			}
 		}
 		else
@@ -88,7 +84,7 @@ void AvOptionsMenu::Update(float currentTime)
 
 bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_CvarModel.SetUpDataBindings(constructor) )
+	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}
@@ -133,7 +129,6 @@ bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& construc
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -178,11 +173,7 @@ void AvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 		{
 			m_CvarModel.Refresh(NAME_CURRENT_WIDTH);
 			m_CvarModel.Refresh(NAME_CURRENT_HEIGHT);
-
-			if ( m_ModelHandle )
-			{
-				m_ModelHandle.DirtyVariable(NAME_VIDEO_MODE_INDEX);
-			}
+			DirtyVariable(NAME_VIDEO_MODE_INDEX);
 
 			// Update the resolution dropdown if it says "Current (width x height)".
 			// The width and height text displayed in the relevant option element is
@@ -223,22 +214,14 @@ void AvOptionsMenu::RefreshValuesFromCvars()
 	if ( m_PageModel.newWindowed != m_PageModel.currentWindowed )
 	{
 		m_PageModel.newWindowed = m_PageModel.currentWindowed;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_WINDOWED);
-		}
+		DirtyVariable(NAME_WINDOWED);
 	}
 
 	m_CvarModel.Refresh(NAME_CURRENT_WIDTH);
 	m_CvarModel.Refresh(NAME_CURRENT_HEIGHT);
 
 	m_PageModel.newVideoModeIndex = -1;
-
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_VIDEO_MODE_INDEX);
-	}
+	DirtyVariable(NAME_VIDEO_MODE_INDEX);
 
 	RefreshNeedsApply();
 }
@@ -260,11 +243,7 @@ void AvOptionsMenu::RefreshNeedsApply()
 	if ( m_PageModel.needsApply != desiredValue )
 	{
 		m_PageModel.needsApply = desiredValue;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_NEEDS_APPLY);
-		}
+		DirtyVariable(NAME_NEEDS_APPLY);
 	}
 }
 
@@ -289,11 +268,7 @@ void AvOptionsMenu::HandleApplyVideoMode()
 		m_PageModel.showModal = true;
 		m_PageModel.modalExpiry = gpGlobals->time + 10.0f;
 		SetRequestPopOnEscapeKey(false);
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
-		}
+		DirtyVariable(NAME_SHOW_MODAL);
 	}
 	else
 	{
@@ -313,11 +288,8 @@ void AvOptionsMenu::HandleModalButton(bool keepNewVideoMode)
 	m_PageModel.modalTimeRemaining = 0;
 	SetRequestPopOnEscapeKey(true);
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
-		m_ModelHandle.DirtyVariable(NAME_MODAL_TIME_REMAINING);
-	}
+	DirtyVariable(NAME_SHOW_MODAL);
+	DirtyVariable(NAME_MODAL_TIME_REMAINING);
 }
 
 void AvOptionsMenu::CreateRevertInfo()

@@ -2,6 +2,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 
 CvarModel::CvarModel(BaseMenu* parentMenu) :
+	BaseMenuObserver(parentMenu),
 	m_EventListener(parentMenu, this, &CvarModel::HandleShowDocument, {Rml::EventId::Show})
 {
 }
@@ -19,7 +20,7 @@ bool CvarModel::SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb
 	return true;
 }
 
-bool CvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+bool CvarModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	for ( const auto& it : m_Entries )
 	{
@@ -43,7 +44,6 @@ bool CvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 		}
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -79,10 +79,7 @@ bool CvarModel::Refresh(BaseEntry& entry)
 		return false;
 	}
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(entry.VariableName());
-	}
+	DirtyVariable(entry.VariableName());
 
 	if ( entry.changeCallback )
 	{

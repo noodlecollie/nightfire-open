@@ -46,6 +46,12 @@ protected:
 	virtual void OnDocumentUnloaded();
 	virtual bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 
+	bool IsModelLoaded() const;
+	Rml::DataModelHandle& ModelHandle(bool assertValid = true);
+	bool IsVariableDirty(const Rml::String& variableName);
+	void DirtyVariable(const Rml::String& variableName);
+	void DirtyAllVariables();
+
 private:
 	friend class BaseMenuObserver;
 

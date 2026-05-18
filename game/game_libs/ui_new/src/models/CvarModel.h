@@ -1,5 +1,6 @@
 #pragma once
 
+#include "framework/BaseMenuObserver.h"
 #include <memory>
 #include <unordered_map>
 #include <RmlUi/Core/DataModelHandle.h>
@@ -7,7 +8,7 @@
 #include "framework/BaseMenuObserver.h"
 #include "framework/MenuEventListenerObject.h"
 
-class CvarModel
+class CvarModel : private BaseMenuObserver
 {
 public:
 	using ChangeCallbackFunc = std::function<void(const Rml::Variant& /*newVal*/)>;
@@ -17,9 +18,9 @@ public:
 	template<typename T>
 	CvarDataVar<T>* AddEntry(Rml::String name, Rml::String cvarName, T defaultValue = T())
 	{
-		ASSERTSZ(!m_ModelHandle, "Cannot add new entry once data has been bound");
+		ASSERTSZ(!IsModelLoaded(), "Cannot add new entry once data has been bound");
 
-		if ( m_ModelHandle )
+		if ( IsModelLoaded() )
 		{
 			return nullptr;
 		}
@@ -31,9 +32,11 @@ public:
 	}
 
 	bool SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb);
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor);
 	bool Refresh(const Rml::String& name);
 	void RefreshAll();
+
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	struct BaseEntry
@@ -85,6 +88,5 @@ private:
 	bool Refresh(BaseEntry& entry);
 
 	std::unordered_map<Rml::String, std::unique_ptr<BaseEntry>> m_Entries;
-	Rml::DataModelHandle m_ModelHandle;
 	MenuEventListenerObject m_EventListener;
 };

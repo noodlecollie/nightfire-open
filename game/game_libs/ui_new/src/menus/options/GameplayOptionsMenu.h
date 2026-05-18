@@ -8,9 +8,6 @@ class GameplayOptionsMenu : public BaseOptionsMenu
 public:
 	GameplayOptionsMenu();
 
-protected:
-	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-
 private:
 	CvarModel m_CvarModel;
 };

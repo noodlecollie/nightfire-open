@@ -33,8 +33,6 @@ public:
 	void ReceiveConnectionProgress_ChangeLevel();
 
 protected:
-	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-
 	void OnDocumentLoaded() override;
 	void OnDocumentUnloaded() override;
 
@@ -45,7 +43,6 @@ private:
 	CvarModel m_CvarModel;
 	CvarDataVar<float>* m_CvarLoading = nullptr;
 	CvarDataVar<float>* m_CvarDownload = nullptr;
-	Rml::DataModelHandle m_ModelHandle;
 	Rml::Element* m_ContentElement = nullptr;
 	Rml::ElementProgress* m_ProgressElement = nullptr;
 };

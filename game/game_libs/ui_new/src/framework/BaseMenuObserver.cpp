@@ -28,32 +28,27 @@ bool BaseMenuObserver::SetUpDataModelBindings(Rml::DataModelConstructor&)
 	return true;
 }
 
+bool BaseMenuObserver::IsModelLoaded() const
+{
+	return m_ParentMenu->IsModelLoaded();
+}
+
 Rml::DataModelHandle& BaseMenuObserver::ModelHandle(bool assertValid)
 {
-#ifndef _DEBUG
-	(void)assertValid;
-#endif
-
-	if ( assertValid )
-	{
-		ASSERT(m_ParentMenu->m_ModelHandle.operator bool());
-	}
-
-	return m_ParentMenu->m_ModelHandle;
+	return m_ParentMenu->ModelHandle(assertValid);
 }
 
 bool BaseMenuObserver::IsVariableDirty(const Rml::String& variableName)
 {
-	Rml::DataModelHandle& modelHandle = ModelHandle(true);
-	return modelHandle && modelHandle.IsVariableDirty(variableName);
+	return m_ParentMenu->IsVariableDirty(variableName);
 }
 
 void BaseMenuObserver::DirtyVariable(const Rml::String& variableName)
 {
-	Rml::DataModelHandle& modelHandle = ModelHandle(true);
+	return m_ParentMenu->DirtyVariable(variableName);
+}
 
-	if ( modelHandle )
-	{
-		modelHandle.DirtyVariable(variableName);
-	}
+void BaseMenuObserver::DirtyAllVariables()
+{
+	return m_ParentMenu->DirtyAllVariables();
 }

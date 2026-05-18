@@ -85,5 +85,4 @@ private:
 
 	std::vector<Entry> m_Entries;
 	std::unordered_map<Rml::String, size_t> m_ConsoleCommandToEntry;
-	Rml::DataModelHandle m_ModelHandle;
 };

@@ -22,6 +22,5 @@ private:
 	DataVar<Rml::String> m_Tooltip;
 	MenuEventListenerObject m_DocumentListener;
 	MenuEventListenerObject m_TooltipListener;
-	Rml::DataModelHandle m_ModelHandle;
 	Rml::Element* m_CurrentTooltipElement = nullptr;
 };

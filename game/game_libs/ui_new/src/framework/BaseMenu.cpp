@@ -126,6 +126,52 @@ bool BaseMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor&)
 	return true;
 }
 
+bool BaseMenu::IsModelLoaded() const
+{
+	// Model handle is poorly const-qualified :c
+	return const_cast<Rml::DataModelHandle*>(&m_ModelHandle)->operator bool();
+}
+
+Rml::DataModelHandle& BaseMenu::ModelHandle(bool assertValid)
+{
+#ifndef _DEBUG
+	(void)assertValid;
+#endif
+
+	if ( assertValid )
+	{
+		ASSERT(m_ModelHandle.operator bool());
+	}
+
+	return m_ModelHandle;
+}
+
+bool BaseMenu::IsVariableDirty(const Rml::String& variableName)
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(true);
+	return modelHandle && modelHandle.IsVariableDirty(variableName);
+}
+
+void BaseMenu::DirtyVariable(const Rml::String& variableName)
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(false);
+
+	if ( modelHandle )
+	{
+		modelHandle.DirtyVariable(variableName);
+	}
+}
+
+void BaseMenu::DirtyAllVariables()
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(false);
+
+	if ( modelHandle )
+	{
+		modelHandle.DirtyAllVariables();
+	}
+}
+
 void BaseMenu::RegisterObserver(BaseMenuObserver* observer)
 {
 	ASSERT(observer);

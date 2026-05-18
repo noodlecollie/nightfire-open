@@ -84,7 +84,7 @@ void KeyBindingModel::SetBinding(size_t row, bool primary, Rml::String value, bo
 		return;
 	}
 
-	m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+	DirtyVariable(NAME_KEYBINDINGS);
 	binding = std::move(value);
 
 	if ( entry.primaryBinding.key == entry.secondaryBinding.key )
@@ -114,7 +114,7 @@ void KeyBindingModel::ClearBinding(size_t row, bool primary)
 	if ( !binding.key.empty() )
 	{
 		binding.key.clear();
-		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+		DirtyVariable(NAME_KEYBINDINGS);
 
 		if ( primary && !entry.secondaryBinding.key.empty() )
 		{
@@ -151,7 +151,7 @@ void KeyBindingModel::ResetBindingToDefault(size_t row)
 	if ( changed )
 	{
 		ApplyBindingToEngine(entry);
-		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+		DirtyVariable(NAME_KEYBINDINGS);
 
 		RemoveBindingDuplicates(entry);
 	}
@@ -176,7 +176,7 @@ void KeyBindingModel::ResetAllBindingsToDefaults()
 		}
 	}
 
-	m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+	DirtyVariable(NAME_KEYBINDINGS);
 }
 
 bool KeyBindingModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -209,7 +209,6 @@ bool KeyBindingModel::SetUpDataModelBindings(Rml::DataModelConstructor& construc
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -218,10 +217,7 @@ void KeyBindingModel::ParseSchemaAndResetToDefaults()
 	m_ConsoleCommandToEntry.clear();
 	m_Entries.clear();
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyAllVariables();
-	}
+	DirtyAllVariables();
 
 	InFileCharsPtr file(SCHEMA_PATH, PFILE_HANDLENEWLINE);
 
@@ -637,9 +633,9 @@ void KeyBindingModel::RemoveBindingDuplicates(const Entry& entry)
 		}
 	}
 
-	if ( modifiedAny && m_ModelHandle )
+	if ( modifiedAny )
 	{
-		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+		DirtyVariable(NAME_KEYBINDINGS);
 	}
 }
 

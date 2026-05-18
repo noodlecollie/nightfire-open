@@ -19,7 +19,7 @@ ServerConnectionScreen::ServerConnectionScreen() :
 
 void ServerConnectionScreen::Update(float)
 {
-	if ( !IsDocumentVisible() || !m_ModelHandle )
+	if ( !IsDocumentVisible() || !IsModelLoaded() )
 	{
 		return;
 	}
@@ -94,17 +94,6 @@ void ServerConnectionScreen::ReceiveConnectionProgress_ChangeLevel()
 	// This seems to just be fired when we change level in single player,
 	// so probably nothing to do other than clearing the content.
 	ClearContentArea();
-}
-
-bool ServerConnectionScreen::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
-{
-	if ( !m_CvarModel.SetUpDataBindings(constructor) )
-	{
-		return false;
-	}
-
-	m_ModelHandle = constructor.GetModelHandle();
-	return true;
 }
 
 void ServerConnectionScreen::OnDocumentLoaded()

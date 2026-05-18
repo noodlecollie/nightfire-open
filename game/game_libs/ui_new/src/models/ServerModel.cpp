@@ -148,20 +148,13 @@ void ServerModel::Sort(SortType sortBy, bool ascending)
 		m_Entries[index].inner->arrayIndex = index;
 	}
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_SERVER_LIST);
-	}
+	DirtyVariable(NAME_SERVER_LIST);
 }
 
 void ServerModel::Clear()
 {
 	m_Entries.clear();
-
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_SERVER_LIST);
-	}
+	DirtyVariable(NAME_SERVER_LIST);
 }
 
 bool ServerModel::GetRowForAddress(const netadr_t& address, size_t& out) const
@@ -264,7 +257,6 @@ bool ServerModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 

@@ -111,5 +111,4 @@ private:
 	bool ContainsServer(const netadr_t& address) const;
 
 	std::vector<EntryPtr> m_Entries;
-	Rml::DataModelHandle m_ModelHandle;
 };

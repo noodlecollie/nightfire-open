@@ -26,9 +26,11 @@ protected:
 	virtual void DocumentUnloaded(Rml::ElementDocument* document);
 	virtual bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 
+	bool IsModelLoaded() const;
 	Rml::DataModelHandle& ModelHandle(bool assertValid = true);
 	bool IsVariableDirty(const Rml::String& variableName);
 	void DirtyVariable(const Rml::String& variableName);
+	void DirtyAllVariables();
 
 private:
 	BaseMenu* m_ParentMenu = nullptr;

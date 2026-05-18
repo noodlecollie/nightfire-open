@@ -30,5 +30,4 @@ private:
 	};
 
 	std::vector<Entry> m_VidModes;
-	Rml::DataModelHandle m_ModelHandle;
 };
