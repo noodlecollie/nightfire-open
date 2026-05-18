@@ -4,7 +4,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 
 MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
-	BaseTemplateBinding(),
+	BaseMenuObserver(parentMenu),
 	m_Tooltip {"footerTooltip", ""},
 	m_DocumentListener(parentMenu, this, &MenuFrameDataBinding::HandleDocumentHide, {Rml::EventId::Hide}),
 	m_TooltipListener(
@@ -17,7 +17,7 @@ MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
 {
 }
 
-bool MenuFrameDataBinding::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+bool MenuFrameDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	if ( !constructor.Bind(m_Tooltip.name, &m_Tooltip.value) )
 	{

@@ -27,6 +27,8 @@ protected:
 	virtual bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor);
 
 	Rml::DataModelHandle& ModelHandle(bool assertValid = true);
+	bool IsVariableDirty(const Rml::String& variableName);
+	void DirtyVariable(const Rml::String& variableName);
 
 private:
 	BaseMenu* m_ParentMenu = nullptr;

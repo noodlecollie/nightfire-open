@@ -1,11 +1,12 @@
 #include "templatebindings/OptionsTabBarDataBinding.h"
 
-OptionsTabBarDataBinding::OptionsTabBarDataBinding(const char* defaultValue) :
+OptionsTabBarDataBinding::OptionsTabBarDataBinding(BaseMenu* parentMenu, const char* defaultValue) :
+	BaseMenuObserver(parentMenu),
 	m_ActiveTab {"activeTab", defaultValue}
 {
 }
 
-bool OptionsTabBarDataBinding::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+bool OptionsTabBarDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	const bool boundActiveTab = constructor.BindFunc(
 		m_ActiveTab.name,

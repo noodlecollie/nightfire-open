@@ -2,15 +2,17 @@
 
 #include "models/CvarModel.h"
 #include "framework/DataVar.h"
+#include "framework/BaseMenuObserver.h"
 
 class BaseMenu;
 
-class CreateMultiplayerGamePageModel
+class CreateMultiplayerGamePageModel : private BaseMenuObserver
 {
 public:
 	CreateMultiplayerGamePageModel(BaseMenu* parentMenu);
 
-	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor);
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	static constexpr const char* const GAME_MODE_DEATHMATCH = "dm";
@@ -25,7 +27,6 @@ private:
 	);
 
 	CvarModel m_CvarModel;
-	Rml::DataModelHandle m_ModelHandle;
 	Rml::String m_GameMode = GAME_MODE_DEATHMATCH;
 	DataVar<int> m_TimeLimit;
 	DataVar<bool> m_HasTimeLimit;

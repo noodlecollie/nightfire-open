@@ -25,7 +25,7 @@ PauseMenu::PauseMenu() :
 
 bool PauseMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_MenuFrameDataBinding.SetUpDataBindings(constructor) )
+	if ( !MenuPage::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}

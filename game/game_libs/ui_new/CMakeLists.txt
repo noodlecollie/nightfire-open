@@ -23,7 +23,6 @@ set(SOURCES_UI
 	src/framework/BaseMenuObserver.h
 	src/framework/BaseMenuObserver.cpp
 	src/framework/BaseTableModel.h
-	src/framework/BaseTemplateBinding.h
 	src/framework/CvarAccessor.h
 	src/framework/CvarDataVar.h
 	src/framework/DataVar.h

@@ -3,7 +3,7 @@
 BaseOptionsMenu::BaseOptionsMenu(const char* name, const char* rmlFilePath) :
 	MenuPage(name, rmlFilePath),
 	m_MenuFrameDataBinding(this),
-	m_TabBarDataBinding(Name())
+	m_TabBarDataBinding(this, Name())
 {
 	m_TabBarDataBinding.SetActiveTabChangeCallback(
 		[this](const Rml::String& menu)
@@ -14,14 +14,4 @@ BaseOptionsMenu::BaseOptionsMenu(const char* name, const char* rmlFilePath) :
 			}
 		}
 	);
-}
-
-bool BaseOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
-{
-	if ( !MenuPage::OnSetUpDataModelBindings(constructor) )
-	{
-		return false;
-	}
-
-	return m_MenuFrameDataBinding.SetUpDataBindings(constructor) && m_TabBarDataBinding.SetUpDataBindings(constructor);
 }

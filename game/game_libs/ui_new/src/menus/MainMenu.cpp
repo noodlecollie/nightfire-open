@@ -19,7 +19,7 @@ MainMenu::MainMenu() :
 // RML page execute it as a console command.
 bool MainMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_MenuFrameDataBinding.SetUpDataBindings(constructor) )
+	if ( !MenuPage::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}

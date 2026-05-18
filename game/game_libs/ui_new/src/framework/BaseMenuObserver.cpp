@@ -1,5 +1,6 @@
 #include "framework/BaseMenuObserver.h"
 #include "framework/BaseMenu.h"
+#include <RmlUi/Core/DataModelHandle.h>
 #include "UIDebug.h"
 
 BaseMenuObserver::BaseMenuObserver(BaseMenu* parentMenu) :
@@ -39,4 +40,20 @@ Rml::DataModelHandle& BaseMenuObserver::ModelHandle(bool assertValid)
 	}
 
 	return m_ParentMenu->m_ModelHandle;
+}
+
+bool BaseMenuObserver::IsVariableDirty(const Rml::String& variableName)
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(true);
+	return modelHandle && modelHandle.IsVariableDirty(variableName);
+}
+
+void BaseMenuObserver::DirtyVariable(const Rml::String& variableName)
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(true);
+
+	if ( modelHandle )
+	{
+		modelHandle.DirtyVariable(variableName);
+	}
 }

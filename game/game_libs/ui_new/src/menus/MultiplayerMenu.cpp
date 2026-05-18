@@ -28,8 +28,7 @@ void MultiplayerMenu::Update(float currentTime)
 
 bool MultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_MenuFrameDataBinding.SetUpDataBindings(constructor) ||
-		 !m_ServerModel.SetUpDataBindings(constructor) )
+	if ( !MenuPage::OnSetUpDataModelBindings(constructor) || !m_ServerModel.SetUpDataBindings(constructor) )
 	{
 		return false;
 	}

@@ -1,16 +1,17 @@
 #pragma once
 
+#include "framework/BaseMenuObserver.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/DataVar.h"
-#include "framework/BaseTemplateBinding.h"
 #include "framework/MenuEventListenerObject.h"
 
-class MenuFrameDataBinding : public BaseTemplateBinding
+class MenuFrameDataBinding : private BaseMenuObserver
 {
 public:
 	MenuFrameDataBinding(BaseMenu* parentMenu);
 
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	void HandleDocumentHide(Rml::Event& event);

@@ -15,6 +15,7 @@ static constexpr int SCOR_LIMIT_MIN = 1;
 static constexpr int SCORE_LIMIT_MAX = 999;
 
 CreateMultiplayerGamePageModel::CreateMultiplayerGamePageModel(BaseMenu* parentMenu) :
+	BaseMenuObserver(parentMenu),
 	m_CvarModel(parentMenu),
 	m_TimeLimit {NAME_TIME_LIMIT, 10},
 	m_HasTimeLimit {NAME_HAS_TIME_LIMIT, false},
@@ -28,13 +29,8 @@ CreateMultiplayerGamePageModel::CreateMultiplayerGamePageModel(BaseMenu* parentM
 	m_CvarModel.AddEntry<Rml::String>(NAME_SERVER_NAME, "hostname");
 }
 
-bool CreateMultiplayerGamePageModel::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+bool CreateMultiplayerGamePageModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !m_CvarModel.SetUpDataBindings(constructor) )
-	{
-		return false;
-	}
-
 	if ( !constructor.Bind(NAME_GAME_MODE, &m_GameMode) )
 	{
 		return false;
@@ -57,7 +53,6 @@ bool CreateMultiplayerGamePageModel::OnSetUpDataModelBindings(Rml::DataModelCons
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -126,11 +121,7 @@ bool CreateMultiplayerGamePageModel::BindCvarProxy(
 
 			enabledCheck->value = newVal;
 			cvar->SetValue(enabledCheck->value ? dataVar->value : 0);
-
-			if ( m_ModelHandle )
-			{
-				m_ModelHandle.DirtyVariable(dataVar->name);
-			}
+			DirtyVariable(dataVar->name);
 		}
 	);
 }

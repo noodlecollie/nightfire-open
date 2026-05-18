@@ -18,11 +18,6 @@ CreateMultiplayerGameMenu::CreateMultiplayerGameMenu() :
 
 bool CreateMultiplayerGameMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !m_MenuFrameDataBinding.SetUpDataBindings(constructor) || !m_PageModel.OnSetUpDataModelBindings(constructor) )
-	{
-		return false;
-	}
-
 	if ( !constructor.BindEventCallback(EVENT_CREATE_GAME, &CreateMultiplayerGameMenu::HandleCreateGame, this) )
 	{
 		return false;

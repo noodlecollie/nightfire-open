@@ -9,8 +9,6 @@ class BaseOptionsMenu : public MenuPage
 protected:
 	BaseOptionsMenu(const char* name, const char* rmlFilePath);
 
-	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	OptionsTabBarDataBinding m_TabBarDataBinding;
 };
