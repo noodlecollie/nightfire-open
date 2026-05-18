@@ -47,7 +47,21 @@ void BaseMenu::ClearCurrentRequest()
 
 bool BaseMenu::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	return OnSetUpDataModelBindings(constructor);
+	for ( BaseMenuObserver* observer : m_MenuObservers )
+	{
+		if ( !observer->SetUpDataModelBindings(constructor) )
+		{
+			return false;
+		}
+	}
+
+	if ( !OnSetUpDataModelBindings(constructor) )
+	{
+		return false;
+	}
+
+	m_ModelHandle = constructor.GetModelHandle();
+	return true;
 }
 
 void BaseMenu::DocumentLoaded(Rml::ElementDocument* document)

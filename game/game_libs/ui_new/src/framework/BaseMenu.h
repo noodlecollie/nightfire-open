@@ -4,6 +4,7 @@
 #include <vector>
 #include <RmlUi/Core/Types.h>
 #include <RmlUi/Core/Variant.h>
+#include <RmlUi/Core/DataModelHandle.h>
 #include "framework/MenuRequests.h"
 
 namespace Rml
@@ -54,6 +55,7 @@ private:
 	const char* m_RmlFilePath;
 	Rml::ElementDocument* m_Document = nullptr;
 	std::unique_ptr<MenuRequest> m_Request;
+	Rml::DataModelHandle m_ModelHandle;
 
 	// Assumed to be members of the derived menu class, that live
 	// as long as the derived menu does.
