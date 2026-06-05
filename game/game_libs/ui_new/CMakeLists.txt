@@ -37,8 +37,6 @@ set(SOURCES_UI
 	src/framework/MenuRequests.h
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
-	src/framework/ValidatedCvarDataVar.h
-	src/framework/ValidatedVariable.h
 	src/menus/options/AvOptionsMenu.h
 	src/menus/options/AvOptionsMenu.cpp
 	src/menus/options/BaseOptionsMenu.h

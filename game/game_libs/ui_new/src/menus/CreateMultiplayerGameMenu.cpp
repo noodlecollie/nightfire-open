@@ -10,8 +10,8 @@ CreateMultiplayerGameMenu::CreateMultiplayerGameMenu() :
 	m_InputFieldEventListener(
 		this,
 		&CreateMultiplayerGameMenu::ProcessInputFieldEvent,
-		"input[type='text'][validated-value]",
-		{Rml::EventId::Change, Rml::EventId::Submit, Rml::EventId::Textinput}
+		"input[type='text'][validate]",
+		{Rml::EventId::Blur}
 	)
 {
 }
@@ -26,11 +26,9 @@ bool CreateMultiplayerGameMenu::OnSetUpDataModelBindings(Rml::DataModelConstruct
 	return true;
 }
 
-void CreateMultiplayerGameMenu::ProcessInputFieldEvent(Rml::Event& event)
+void CreateMultiplayerGameMenu::ProcessInputFieldEvent(Rml::Event& /* event */)
 {
-	// TODO: It seems we get a textinput event before a new character is added, and
-	// a change event after any change (addition or removal)
-	Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Received event: %s", event.GetType().c_str());
+	// TODO
 }
 
 void CreateMultiplayerGameMenu::HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
