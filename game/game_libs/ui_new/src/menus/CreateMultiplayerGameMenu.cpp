@@ -26,9 +26,25 @@ bool CreateMultiplayerGameMenu::OnSetUpDataModelBindings(Rml::DataModelConstruct
 	return true;
 }
 
-void CreateMultiplayerGameMenu::ProcessInputFieldEvent(Rml::Event& /* event */)
+void CreateMultiplayerGameMenu::ProcessInputFieldEvent(Rml::Event& event)
 {
-	// TODO
+	Rml::Element* element = event.GetTargetElement();
+
+	if ( !element )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	Rml::Variant* dataValueAttr = element->GetAttribute("data-value");
+
+	if ( !dataValueAttr )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	m_PageModel.ValidateAndSubmit(dataValueAttr->Get<Rml::String>());
 }
 
 void CreateMultiplayerGameMenu::HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
