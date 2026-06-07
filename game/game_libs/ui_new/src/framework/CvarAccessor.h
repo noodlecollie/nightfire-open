@@ -25,6 +25,10 @@ struct CvarAccessor<float>
 
 	static void DbgLog(const char* cvarName, float value, bool set)
 	{
+		(void)cvarName;
+		(void)value;
+		(void)set;
+
 		RML_DBGLOG(Rml::Log::Type::LT_DEBUG, "[%s] cvar %s = %f", set ? "SET" : "GET", cvarName, value);
 	}
 };
@@ -44,6 +48,10 @@ struct CvarAccessor<int>
 
 	static void DbgLog(const char* cvarName, int value, bool set)
 	{
+		(void)cvarName;
+		(void)value;
+		(void)set;
+
 		RML_DBGLOG(Rml::Log::Type::LT_DEBUG, "[%s] cvar %s = %d", set ? "SET" : "GET", cvarName, value);
 	}
 };
@@ -63,6 +71,10 @@ struct CvarAccessor<bool>
 
 	static void DbgLog(const char* cvarName, bool value, bool set)
 	{
+		(void)cvarName;
+		(void)value;
+		(void)set;
+
 		RML_DBGLOG(Rml::Log::Type::LT_DEBUG, "[%s] cvar %s = %s", set ? "SET" : "GET", cvarName, value ? "<1>" : "<0>");
 	}
 };
@@ -82,6 +94,10 @@ struct CvarAccessor<Rml::String>
 
 	static void DbgLog(const char* cvarName, const Rml::String& value, bool set)
 	{
+		(void)cvarName;
+		(void)value;
+		(void)set;
+
 		RML_DBGLOG(Rml::Log::Type::LT_DEBUG, "[%s] cvar %s = %s", set ? "SET" : "GET", cvarName, value.c_str());
 	}
 };
