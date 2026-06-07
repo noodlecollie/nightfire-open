@@ -37,6 +37,10 @@ set(SOURCES_UI
 	src/framework/MenuRequests.h
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
+	src/game/CreateGame.h
+	src/game/CreateGame.cpp
+	src/game/Utils.h
+	src/game/Utils.cpp
 	src/menus/options/AvOptionsMenu.h
 	src/menus/options/AvOptionsMenu.cpp
 	src/menus/options/BaseOptionsMenu.h
