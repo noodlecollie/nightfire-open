@@ -211,7 +211,7 @@ void CL_ScreenShot_f(void)
 	if ( CL_IsDevOverviewMode() == 1 )
 	{
 		// special case for write overview image and script file
-		Q_snprintf(cls.shotname, sizeof(cls.shotname), "overviews/%s.bmp", clgame.mapname);
+		Q_snprintf(cls.shotname, sizeof(cls.shotname), "overviews/%s.png", clgame.mapname);
 		cls.scrshot_action = scrshot_mapshot;  // build new frame for mapshot
 	}
 	else
@@ -253,7 +253,7 @@ void CL_SnapShot_f(void)
 	if ( CL_IsDevOverviewMode() == 1 )
 	{
 		// special case for write overview image and script file
-		Q_snprintf(cls.shotname, sizeof(cls.shotname), "overviews/%s.bmp", clgame.mapname);
+		Q_snprintf(cls.shotname, sizeof(cls.shotname), "overviews/%s.png", clgame.mapname);
 		cls.scrshot_action = scrshot_mapshot;  // build new frame for mapshot
 	}
 	else
@@ -341,16 +341,28 @@ void CL_LevelShot_f(void)
 	// check for exist
 	if ( cls.demoplayback && (cls.demonum != -1) )
 	{
-		Q_snprintf(cls.shotname, sizeof(cls.shotname), "levelshots/%s_%s.bmp", cls.demoname, refState.wideScreen ? "16x9" : "4x3");
+		Q_snprintf(
+			cls.shotname,
+			sizeof(cls.shotname),
+			"levelshots/%s_%s.png",
+			cls.demoname,
+			refState.wideScreen ? "16x9" : "4x3"
+		);
 		Q_snprintf(filename, sizeof(filename), "%s.dem", cls.demoname);
 
-		// make sure what levelshot is newer than demo
+		// make sure that levelshot is newer than demo
 		ft1 = FS_FileTime(filename, false);
 		ft2 = FS_FileTime(cls.shotname, true);
 	}
 	else
 	{
-		Q_snprintf(cls.shotname, sizeof(cls.shotname), "levelshots/%s_%s.bmp", clgame.mapname, refState.wideScreen ? "16x9" : "4x3");
+		Q_snprintf(
+			cls.shotname,
+			sizeof(cls.shotname),
+			"levelshots/%s_%s.png",
+			clgame.mapname,
+			refState.wideScreen ? "16x9" : "4x3"
+		);
 
 		// make sure that levelshot is newer than bsp
 		ft1 = FS_FileTime(cl.worldmodel->name, false);
@@ -364,7 +376,7 @@ void CL_LevelShot_f(void)
 	}
 	else
 	{
-		cls.scrshot_action = scrshot_inactive;  // disable - not needs
+		cls.scrshot_action = scrshot_inactive;  // disable - not needed
 	}
 }
 
@@ -383,7 +395,7 @@ void CL_SaveShot_f(void)
 		return;
 	}
 
-	Q_snprintf(cls.shotname, sizeof(cls.shotname), DEFAULT_SAVE_DIRECTORY "%s.bmp", Cmd_Argv(1));
+	Q_snprintf(cls.shotname, sizeof(cls.shotname), DEFAULT_SAVE_DIRECTORY "%s.png", Cmd_Argv(1));
 	cls.scrshot_action = scrshot_savegame;  // build new frame for saveshot
 }
 
@@ -457,7 +469,8 @@ void CL_WavePlayLen_f(void)
 	{
 		Con_Printf(
 			"waveplaylen <wave file name>: returns approximate number of milliseconds a wave file will take to "
-			"play.\n");
+			"play.\n"
+		);
 		return;
 	}
 

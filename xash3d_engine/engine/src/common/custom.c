@@ -26,9 +26,13 @@ static rgbdata_t* CustomDecal_LoadImage(const char* path, void* raw, int size)
 
 	// this way we limit file types
 	if ( !Q_stricmp(COM_FileExtension(path), "png") )
+	{
 		testname = "#logo.png";
+	}
 	else
+	{
 		testname = "#logo.bmp";
+	}
 
 	Image_SetForceFlags(IL_LOAD_PLAYER_DECAL);
 
@@ -87,7 +91,8 @@ qboolean COM_CreateCustomization(
 	int playernumber,
 	int flags,
 	customization_t** pOut,
-	int* nLumps)
+	int* nLumps
+)
 {
 	qboolean bError = false;
 	fs_offset_t checksize = 0;
@@ -146,7 +151,8 @@ qboolean COM_CreateCustomization(
 					Con_Printf(
 						S_WARN "Ignoring custom decal \"%s\": wrong size (%i bytes)\n",
 						pResource->szFileName,
-						pResource->nDownloadSize);
+						pResource->nDownloadSize
+					);
 				}
 			}
 		}

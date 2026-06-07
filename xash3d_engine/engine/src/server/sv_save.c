@@ -594,7 +594,7 @@ static void AgeSaveList(const char* pName, int count)
 
 	// delete last quick/autosave (e.g. quick05.sav)
 	Q_snprintf(newName, sizeof(newName), DEFAULT_SAVE_DIRECTORY "%s%02d.sav", pName, count);
-	Q_snprintf(newShot, sizeof(newShot), DEFAULT_SAVE_DIRECTORY "%s%02d.bmp", pName, count);
+	Q_snprintf(newShot, sizeof(newShot), DEFAULT_SAVE_DIRECTORY "%s%02d.png", pName, count);
 
 	// only delete from game directory, basedir is read-only
 	FS_Delete(newName);
@@ -611,17 +611,17 @@ static void AgeSaveList(const char* pName, int count)
 		{
 			// quick.sav
 			Q_snprintf(oldName, sizeof(oldName), DEFAULT_SAVE_DIRECTORY "%s.sav", pName);
-			Q_snprintf(oldShot, sizeof(oldShot), DEFAULT_SAVE_DIRECTORY "%s.bmp", pName);
+			Q_snprintf(oldShot, sizeof(oldShot), DEFAULT_SAVE_DIRECTORY "%s.png", pName);
 		}
 		else
 		{
 			// quick04.sav, etc.
 			Q_snprintf(oldName, sizeof(oldName), DEFAULT_SAVE_DIRECTORY "%s%02d.sav", pName, count - 1);
-			Q_snprintf(oldShot, sizeof(oldShot), DEFAULT_SAVE_DIRECTORY "%s%02d.bmp", pName, count - 1);
+			Q_snprintf(oldShot, sizeof(oldShot), DEFAULT_SAVE_DIRECTORY "%s%02d.png", pName, count - 1);
 		}
 
 		Q_snprintf(newName, sizeof(newName), DEFAULT_SAVE_DIRECTORY "%s%02d.sav", pName, count);
-		Q_snprintf(newShot, sizeof(newShot), DEFAULT_SAVE_DIRECTORY "%s%02d.bmp", pName, count);
+		Q_snprintf(newShot, sizeof(newShot), DEFAULT_SAVE_DIRECTORY "%s%02d.png", pName, count);
 
 #if !XASH_DEDICATED()
 		// unloading the oldshot footprint too
@@ -804,7 +804,7 @@ static void DumpHashStrings(SAVERESTOREDATA* pSaveData, const char* pMessage)
 		Con_Printf("total %i actual %i\n", pSaveData->tokenCount, count);
 	}
 }
-#endif // UNUSED_FUNCTIONS
+#endif  // UNUSED_FUNCTIONS
 
 /*
 =============
@@ -1198,7 +1198,8 @@ static void RestoreSound(SAVERESTOREDATA* pSaveData, soundlist_t* snd)
 			 snd->attenuation,
 			 flags,
 			 snd->pitch,
-			 snd->origin) )
+			 snd->origin
+		 ) )
 	{
 		// write extradata for svc_restoresound
 		MSG_WriteByte(&sv.signon, snd->wordIndex);
@@ -1276,7 +1277,8 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 		if ( pSaveData->fUseLandmark && FBitSet(decalList[i].flags, FDECAL_USE_LANDMARK) )
 			VectorSubtract(decalList[i].position, pSaveData->vecLandmarkOffset, decalList[i].position);
 
-		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "DECALLIST", &decalList[i], gDecalEntry, SIZE_OF_ARRAY(gDecalEntry));
+		svgame.dllFuncs
+			.pfnSaveWriteFields(pSaveData, "DECALLIST", &decalList[i], gDecalEntry, SIZE_OF_ARRAY(gDecalEntry));
 	}
 	Z_Free(decalList);
 
@@ -1287,11 +1289,13 @@ static void SaveClientState(SAVERESTOREDATA* pSaveData, const char* level, int c
 			"STATICENTITY",
 			&svs.static_entities[i],
 			gStaticEntry,
-			SIZE_OF_ARRAY(gStaticEntry));
+			SIZE_OF_ARRAY(gStaticEntry)
+		);
 
 	// write sounds
 	for ( i = 0; i < header.soundCount; i++ )
-		svgame.dllFuncs.pfnSaveWriteFields(pSaveData, "SOUNDLIST", &soundInfo[i], gSoundEntry, SIZE_OF_ARRAY(gSoundEntry));
+		svgame.dllFuncs
+			.pfnSaveWriteFields(pSaveData, "SOUNDLIST", &soundInfo[i], gSoundEntry, SIZE_OF_ARRAY(gSoundEntry));
 
 	// Write entity string token table
 	pTokenData = StoreHashTable(pSaveData);
@@ -1402,7 +1406,8 @@ static void LoadClientState(SAVERESTOREDATA* pSaveData, const char* level, qbool
 			"STATICENTITY",
 			&svs.static_entities[id],
 			gStaticEntry,
-			SIZE_OF_ARRAY(gStaticEntry));
+			SIZE_OF_ARRAY(gStaticEntry)
+		);
 		if ( adjacent )
 			continue;  // static entities won't loading from adjacent levels
 
@@ -1434,7 +1439,8 @@ static void LoadClientState(SAVERESTOREDATA* pSaveData, const char* level, qbool
 				"music \"%s\" \"%s\" %i\n",
 				header.introTrack,
 				header.mainTrack,
-				header.trackPosition);
+				header.trackPosition
+			);
 		}
 
 		// don't go camera across the levels
@@ -1571,8 +1577,13 @@ static SAVERESTOREDATA* SaveGameState(int changelevel)
 
 	// Write the adjacency list
 	for ( i = 0; i < pSaveData->connectionCount; i++ )
-		svgame.dllFuncs
-			.pfnSaveWriteFields(pSaveData, "ADJACENCY", &pSaveData->levelList[i], gAdjacency, SIZE_OF_ARRAY(gAdjacency));
+		svgame.dllFuncs.pfnSaveWriteFields(
+			pSaveData,
+			"ADJACENCY",
+			&pSaveData->levelList[i],
+			gAdjacency,
+			SIZE_OF_ARRAY(gAdjacency)
+		);
 
 	// Write the lightstyles
 	for ( i = 0; i < MAX_LIGHTSTYLES; i++ )
@@ -2261,8 +2272,8 @@ qboolean SV_SaveGame(const char* pName)
 		Q_strncpy(savename, pName, sizeof(savename));
 
 #if !XASH_DEDICATED()
-	// unload previous image from memory (it's will be overwritten)
-	GL_FreeImage(va(DEFAULT_SAVE_DIRECTORY "%s.bmp", savename));
+	// unload previous image from memory (it will be overwritten)
+	GL_FreeImage(va(DEFAULT_SAVE_DIRECTORY "%s.png", savename));
 #endif  // XASH_DEDICATED()
 
 	SaveBuildComment(comment, sizeof(comment));

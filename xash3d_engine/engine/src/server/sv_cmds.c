@@ -500,7 +500,7 @@ void SV_DeleteSave_f(void)
 
 	// delete save and saveshot
 	FS_Delete(va(DEFAULT_SAVE_DIRECTORY "%s.sav", Cmd_Argv(1)));
-	FS_Delete(va(DEFAULT_SAVE_DIRECTORY "%s.bmp", Cmd_Argv(1)));
+	FS_Delete(va(DEFAULT_SAVE_DIRECTORY "%s.png", Cmd_Argv(1)));
 }
 
 /*
