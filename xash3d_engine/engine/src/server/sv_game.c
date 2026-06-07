@@ -4455,13 +4455,10 @@ pfnIsMapValid
 vaild map must contain one info_player_deatchmatch
 =============
 */
-int GAME_EXPORT pfnIsMapValid(char* filename)
+qboolean GAME_EXPORT pfnIsMapValid(const char* filename)
 {
-	uint flags = SV_MapIsValid(filename, GI->mp_entity, NULL);
-
-	if ( FBitSet(flags, MAP_IS_EXIST) && FBitSet(flags, MAP_HAS_SPAWNPOINT) )
-		return true;
-	return false;
+	const uint flags = SV_MapIsValid(filename, GI->mp_entity, NULL);
+	return FBitSet(flags, MAP_IS_EXIST) && FBitSet(flags, MAP_HAS_SPAWNPOINT);
 }
 
 /*

@@ -201,7 +201,7 @@ typedef struct ui_enginefuncs_s
 	int (*pfnRandomLong)(int lLow, int lHigh);
 
 	void (*pfnSetCursor)(VGUI_DefaultCursor cursor);  // change cursor
-	int (*pfnIsMapValid)(char* filename);
+	qboolean (*pfnIsMapValid)(const char* filename);
 	void (*pfnProcessImage)(int texnum, float gamma, int topColor, int bottomColor);
 	int (*pfnCompareFileTime)(const char* filename1, const char* filename2, int* iCompare);
 

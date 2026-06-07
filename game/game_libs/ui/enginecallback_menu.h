@@ -510,9 +510,9 @@ public:
 		engfuncs.pfnSetCursor(cursor);
 	}
 
-	static inline int IsMapValid(const char* filename)
+	static inline bool IsMapValid(const char* filename)
 	{
-		return engfuncs.pfnIsMapValid((char*)filename);
+		return engfuncs.pfnIsMapValid(filename);
 	}
 
 	static inline void ProcessImage(int texnum, float gamma, int topColor = -1, int bottomColor = -1)

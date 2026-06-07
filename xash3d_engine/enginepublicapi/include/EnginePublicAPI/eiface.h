@@ -271,13 +271,13 @@ typedef struct enginefuncs_s
 	const char* (*pfnInfoKeyValue)(const char* infobuffer, const char* key);
 	void (*pfnSetKeyValue)(char* infobuffer, char* key, char* value);
 	void (*pfnSetClientKeyValue)(int clientIndex, char* infobuffer, const char* key, const char* value);
-	int (*pfnIsMapValid)(char* filename);
+	qboolean (*pfnIsMapValid)(const char* filename);
 	void (*pfnStaticDecal)(const float* origin, int decalIndex, int entityIndex, int modelIndex);
 	int (*pfnPrecacheGeneric)(const char* s);
 	int (*pfnGetPlayerUserId)(
 		edict_t* e
 	);  // returns the server assigned userid for this player.  useful for logging frags, etc.  returns -1
-		// if the edict couldn't be found in the list of clients
+	// if the edict couldn't be found in the list of clients
 	void (*pfnBuildSoundMsg)(
 		edict_t* entity,
 		int channel,
@@ -296,7 +296,7 @@ typedef struct enginefuncs_s
 	unsigned int (*pfnGetPlayerWONId)(
 		edict_t* e
 	);  // returns the server assigned WONid for this player.  useful for logging frags, etc.  returns -1
-		// if the edict couldn't be found in the list of clients
+	// if the edict couldn't be found in the list of clients
 
 	// YWB 8/1/99 TFF Physics additions
 	void (*pfnInfo_RemoveKey)(char* s, const char* key);
