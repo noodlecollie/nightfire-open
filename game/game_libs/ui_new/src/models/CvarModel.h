@@ -34,6 +34,7 @@ public:
 	bool SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb);
 	bool Refresh(const Rml::String& name);
 	void RefreshAll();
+	void WriteAll();
 
 protected:
 	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
@@ -48,6 +49,7 @@ private:
 		virtual bool Refresh() = 0;
 		virtual void Get(Rml::Variant& outVal) const = 0;
 		virtual void Set(const Rml::Variant& inVal) = 0;
+		virtual void ForceWrite() = 0;
 	};
 
 	template<typename T>
@@ -81,6 +83,11 @@ private:
 			{
 				changeCallback(Rml::Variant(var.CachedValue()));
 			}
+		}
+
+		void ForceWrite()
+		{
+			var.ForceWrite();
 		}
 	};
 

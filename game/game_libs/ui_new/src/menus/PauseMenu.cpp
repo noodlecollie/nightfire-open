@@ -65,7 +65,7 @@ void PauseMenu::HandleDisconnect(Rml::DataModelHandle, Rml::Event&, const Rml::V
 		return;
 	}
 
-	gEngfuncs.pfnClientCmd(0, "disconnect");
+	gEngfuncs.pfnClientCmd(false, "disconnect");
 	RequestCutStack(0, MainMenu::NAME);
 }
 
@@ -88,7 +88,7 @@ void PauseMenu::HandleQuitConfirm(Rml::Event&, size_t buttonIndex, const Rml::Va
 
 	if ( quit )
 	{
-		gEngfuncs.pfnClientCmd(0, "quit");
+		gEngfuncs.pfnClientCmd(false, "quit");
 		m_IsQuitting = true;
 	}
 	else

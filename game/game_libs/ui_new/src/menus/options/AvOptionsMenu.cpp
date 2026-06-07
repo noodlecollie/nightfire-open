@@ -344,10 +344,7 @@ void AvOptionsMenu::ApplyVideoSettings(int vidMode, bool windowed)
 
 	if ( vidMode >= 0 )
 	{
-		Rml::String setModeCmd;
-		Rml::FormatString(setModeCmd, "vid_setmode %d", vidMode);
-		gEngfuncs.pfnClientCmd(1, setModeCmd.c_str());
-
+		gEngfuncs.pfnClientCmd(true, Rml::CreateString("vid_setmode %d", vidMode).c_str());
 		m_VideoModeCvar.SetValue(vidMode);
 	}
 

@@ -1,5 +1,7 @@
 #include "menus/CreateMultiplayerGameMenu.h"
 #include <RmlUi/Core/ElementDocument.h>
+#include "game/CreateGame.h"
+#include "menus/ServerConnectionScreen.h"
 
 static constexpr const char* const EVENT_CREATE_GAME = "createGame";
 
@@ -49,5 +51,9 @@ void CreateMultiplayerGameMenu::ProcessInputFieldEvent(Rml::Event& event)
 
 void CreateMultiplayerGameMenu::HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
-	// TODO
+	m_PageModel.SubmitAll();
+
+	// TODO: Hook up map name
+	CreateMultiplayerGame("dm_island");
+	RequestCutStack(0, ServerConnectionScreen::NAME);
 }

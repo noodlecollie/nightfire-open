@@ -76,7 +76,7 @@ static dllfunc_t cdll_exports[] = {
 	{"CAM_Think", (void**)&clgame.dllFuncs.CAM_Think},
 	{"CL_IsThirdPerson", (void**)&clgame.dllFuncs.CL_IsThirdPerson},
 	{"CL_CameraOffset", (void**)&clgame.dllFuncs.CL_CameraOffset},  // unused callback. Now camera code is completely
-																	// moved to the user area
+	// moved to the user area
 	{"CL_CreateMove", (void**)&clgame.dllFuncs.CL_CreateMove},
 	{"IN_ActivateMouse", (void**)&clgame.dllFuncs.IN_ActivateMouse},
 	{"IN_DeactivateMouse", (void**)&clgame.dllFuncs.IN_DeactivateMouse},
@@ -85,7 +85,7 @@ static dllfunc_t cdll_exports[] = {
 	{"IN_ClearStates", (void**)&clgame.dllFuncs.IN_ClearStates},
 	{"V_CalcRefdef", (void**)&clgame.dllFuncs.pfnCalcRefdef},
 	{"KB_Find", (void**)&clgame.dllFuncs.KB_Find},
-	{NULL, NULL}
+	{NULL, NULL},
 };
 
 // optional exports
@@ -1867,7 +1867,9 @@ pfnClientCmd
 static int GAME_EXPORT pfnClientCmd(const char* szCmdString)
 {
 	if ( !COM_CheckString(szCmdString) )
+	{
 		return 0;
+	}
 
 	if ( cls.initialized )
 	{

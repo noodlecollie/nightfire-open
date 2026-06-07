@@ -55,7 +55,7 @@ void MultiplayerMenu::ProcessShowHideEvents(Rml::Event& event)
 			// Stop demos to allow network sockets to open
 			if ( gpGlobals->demoplayback && gEngfuncs.pfnGetCvarFloat("cl_background") )
 			{
-				gEngfuncs.pfnClientCmd(0, "stop");
+				gEngfuncs.pfnClientCmd(false, "stop");
 			}
 
 			RmlUiBackend::StaticInstance().SetDiscoveredServerCallback(
@@ -157,10 +157,7 @@ void MultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::E
 
 	// TODO: Do we need to cater for legacy servers here?
 	// I don't think so at the moment.
-	Rml::String connectCmd;
-	Rml::FormatString(connectCmd, "connect %s", gTextfuncs.pfnAdrToString(entry->address));
-
-	gEngfuncs.pfnClientCmd(0, connectCmd.c_str());
+	gEngfuncs.pfnClientCmd(false, Rml::CreateString("connect %s", gTextfuncs.pfnAdrToString(entry->address)).c_str());
 
 	RequestCutStack(0, ServerConnectionScreen::NAME);
 }

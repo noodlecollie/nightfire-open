@@ -20,9 +20,7 @@ GameplayOptionsMenu::GameplayOptionsMenu() :
 		NAME_VIBRATION_INTENSITY,
 		[](const Rml::Variant& newValue)
 		{
-			Rml::String cmd;
-			Rml::FormatString(cmd, "vibrate %f", newValue.Get<float>());
-			gEngfuncs.pfnClientCmd(0, cmd.c_str());
+			gEngfuncs.pfnClientCmd(false, Rml::CreateString("vibrate %f", newValue.Get<float>()).c_str());
 		}
 	);
 }

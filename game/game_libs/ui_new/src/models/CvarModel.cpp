@@ -72,6 +72,14 @@ void CvarModel::RefreshAll()
 	}
 }
 
+void CvarModel::WriteAll()
+{
+	for ( const auto& it : m_Entries )
+	{
+		it.second->ForceWrite();
+	}
+}
+
 bool CvarModel::Refresh(BaseEntry& entry)
 {
 	if ( !entry.Refresh() )

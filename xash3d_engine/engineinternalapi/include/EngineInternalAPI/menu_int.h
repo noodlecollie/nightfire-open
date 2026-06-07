@@ -100,7 +100,7 @@ typedef struct ui_enginefuncs_s
 
 	// command handlers
 	int (*pfnAddCommand)(const char* cmd_name, void (*function)(void));
-	void (*pfnClientCmd)(int execute_now, const char* szCmdString);
+	void (*pfnClientCmd)(qboolean execute_now, const char* szCmdString);
 	void (*pfnDelCommand)(const char* cmd_name);
 	int (*pfnCmdArgc)(void);
 	const char* (*pfnCmdArgv)(int argc);

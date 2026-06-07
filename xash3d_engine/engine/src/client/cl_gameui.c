@@ -799,17 +799,20 @@ pfnClientCmd
 
 =============
 */
-static void GAME_EXPORT pfnClientCmd(int exec_now, const char* szCmdString)
+static void GAME_EXPORT pfnClientCmd(qboolean exec_now, const char* szCmdString)
 {
 	if ( !szCmdString || !szCmdString[0] )
+	{
 		return;
+	}
 
 	Cbuf_AddText(szCmdString);
 	Cbuf_AddText("\n");
 
-	// client command executes immediately
 	if ( exec_now )
+	{
 		Cbuf_Execute();
+	}
 }
 
 /*
@@ -1547,7 +1550,7 @@ static const ui_gl_functions gUiGlFuncs = {
 		CL_UIFS_ListingNumItems,  // listingNumItems
 		CL_UIFS_ListingGetCurrentItem,  // listingGetCurrentItem
 		CL_UIFS_ListingNextItem,  // listingNextItem
-	}
+	},
 };
 
 void UI_UnloadProgs(void)

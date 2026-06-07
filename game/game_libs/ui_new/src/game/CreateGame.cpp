@@ -12,13 +12,14 @@ void CreateMultiplayerGame(const Rml::String& mapName)
 		return;
 	}
 
+	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Starting new multiplayer game on %s", mapName.c_str());
+
 	if ( gEngfuncs.pfnGetCvarFloat("host_serverstate") )
 	{
 		const char* msg = gEngfuncs.pfnGetCvarFloat("maxplayers") < 2.0 ? "end of the game" : "starting new server";
 		gEngfuncs.pfnHostEndGame(msg);
 	}
 
-	gEngfuncs.pfnCvarSetString("defaultmap", mapName.c_str());
 	gEngfuncs.pfnPlayBackgroundTrack(nullptr, nullptr);
 
 	// Dirty listenserver config from old xash may rewrite maxplayers.
@@ -38,7 +39,7 @@ void CreateMultiplayerGame(const Rml::String& mapName)
 	gEngfuncs.pfnClientCmd(
 		false,
 		Rml::CreateString(
-			"endgame;menu_connectionprogress localserver;wait;wait;wait;maxplayers %d;latch;map %s\n",
+			"endgame;localserver;wait;wait;wait;maxplayers %d;map %s\n",
 			maxClients,
 			escapedMapName.c_str()
 		)

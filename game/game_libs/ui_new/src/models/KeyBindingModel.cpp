@@ -36,7 +36,7 @@ void KeyBindingModel::ResetToDefaults()
 
 void KeyBindingModel::ReloadAndApplyBindings(bool reloadDefaults, bool resetToDefaultsOnError)
 {
-	gEngfuncs.pfnClientCmd(1, "unbindall");
+	gEngfuncs.pfnClientCmd(true, "unbindall");
 
 	if ( m_Entries.empty() || reloadDefaults )
 	{
@@ -164,7 +164,7 @@ void KeyBindingModel::ResetAllBindingsToDefaults()
 		ResetToDefaults();
 	}
 
-	gEngfuncs.pfnClientCmd(1, "unbindall");
+	gEngfuncs.pfnClientCmd(true, "unbindall");
 
 	for ( Entry& entry : m_Entries )
 	{
@@ -586,11 +586,7 @@ Rml::String KeyBindingModel::GetBindingStatement(const Entry& entry, bool primar
 	// Important! If "\" is stored, this will not be re-parsed correctly.
 	// Make sure this key is stored as "\\".
 	Rml::String escapedKey = Rml::StringUtilities::Replace(key, "\\", "\\\\");
-
-	Rml::String out;
-	Rml::FormatString(out, "\"%s\" \"%s\"", command.c_str(), escapedKey.c_str());
-
-	return out;
+	return Rml::CreateString("\"%s\" \"%s\"", command.c_str(), escapedKey.c_str());
 }
 
 void KeyBindingModel::RemoveBindingDuplicates(const Entry& entry)
@@ -669,22 +665,20 @@ void KeyBindingModel::ApplyBindingToEngine(const Entry& entry, bool unbindFirst)
 	{
 		Rml::String escapedKey = Rml::StringUtilities::Replace(entry.primaryBinding.key, "\\", "\\\\");
 
-		Rml::String bindCmd;
-		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
+		Rml::String bindCmd = Rml::CreateString("bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
 
 		Rml::Log::Message(Rml::Log::LT_DEBUG, "KeyBindingModel::ApplyBindingToEngine: %s", bindCmd.c_str());
-		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
+		gEngfuncs.pfnClientCmd(true, bindCmd.c_str());
 	}
 
 	if ( !entry.secondaryBinding.key.empty() )
 	{
 		Rml::String escapedKey = Rml::StringUtilities::Replace(entry.secondaryBinding.key, "\\", "\\\\");
 
-		Rml::String bindCmd;
-		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
+		Rml::String bindCmd = Rml::CreateString("bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
 
 		Rml::Log::Message(Rml::Log::LT_DEBUG, "KeyBindingModel::ApplyBindingToEngine: %s", bindCmd.c_str());
-		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
+		gEngfuncs.pfnClientCmd(true, bindCmd.c_str());
 	}
 }
 

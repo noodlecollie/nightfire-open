@@ -62,6 +62,11 @@ public:
 		return true;
 	}
 
+	void ForceWrite()
+	{
+		SetValue(CachedValue(), true);
+	}
+
 	bool Bind(Rml::DataModelConstructor& constructor)
 	{
 		return constructor.BindFunc(

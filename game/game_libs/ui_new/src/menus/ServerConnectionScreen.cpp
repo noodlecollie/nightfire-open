@@ -30,11 +30,7 @@ void ServerConnectionScreen::Update(float)
 void ServerConnectionScreen::ReceiveConnectionProgress_Connect(const Rml::String& server)
 {
 	ClearContentArea();
-
-	Rml::String text;
-	Rml::FormatString(text, "Connecting to server: %s", server.c_str());
-
-	AppendContentLine(text);
+	AppendContentLine(Rml::CreateString("Connecting to server: %s", server.c_str()));
 }
 
 void ServerConnectionScreen::ReceiveConnectionProgress_ParseServerInfo(const Rml::String& /* server */)
@@ -60,9 +56,7 @@ void ServerConnectionScreen::ReceiveConnectionProgress_Download(
 
 	if ( !comment.empty() )
 	{
-		Rml::String extra;
-		Rml::FormatString(extra, " (%s)", comment.c_str());
-		text += extra;
+		text += Rml::CreateString(" (%s)", comment.c_str());
 	}
 
 	AppendContentLine(text);

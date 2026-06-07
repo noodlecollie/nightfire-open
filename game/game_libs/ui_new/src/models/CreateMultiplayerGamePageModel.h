@@ -13,6 +13,7 @@ public:
 	CreateMultiplayerGamePageModel(BaseMenu* parentMenu);
 
 	void ValidateAndSubmit(const Rml::String& variableName);
+	void SubmitAll();
 
 protected:
 	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;

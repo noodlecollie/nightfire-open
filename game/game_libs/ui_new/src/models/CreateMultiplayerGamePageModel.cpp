@@ -53,6 +53,14 @@ void CreateMultiplayerGamePageModel::ValidateAndSubmit(const Rml::String& variab
 	}
 }
 
+void CreateMultiplayerGamePageModel::SubmitAll()
+{
+	m_TimeLimit.ValidateAndSubmit();
+	m_ScoreLimit.ValidateAndSubmit();
+	m_MaxPlayers.ValidateAndSubmit();
+	m_CvarModel.WriteAll();
+}
+
 bool CreateMultiplayerGamePageModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	if ( !constructor.Bind(NAME_GAME_MODE, &m_GameMode) )
