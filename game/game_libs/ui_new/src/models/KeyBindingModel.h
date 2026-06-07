@@ -1,6 +1,6 @@
 #pragma once
 
-#include "framework/BaseTableModel.h"
+#include "framework/BaseMenuObserver.h"
 #include <RmlUi/Core/Types.h>
 #include <RmlUi/Core/DataModelHandle.h>
 #include <vector>
@@ -8,19 +8,9 @@
 
 class InFileCharsPtr;
 
-class KeyBindingModel : public BaseTableModel
+class KeyBindingModel : private BaseMenuObserver
 {
 public:
-	enum ColumnIndex
-	{
-		DESCRIPTION = 0,
-		CONSOLE_COMMAND,
-		PRIMARY_BINDING,
-		SECONDARY_BINDING,
-
-		TOTAL_COLUMNS
-	};
-
 	struct Entry
 	{
 		struct Binding
@@ -36,10 +26,9 @@ public:
 		Binding secondaryBinding;
 	};
 
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
-	size_t Rows() const override;
-	size_t Columns() const override;
-	Rml::String DisplayString(size_t row, size_t column) const override;
+	KeyBindingModel(BaseMenu* parentMenu);
+	size_t Rows() const;
+
 	bool RowForConsoleCommand(const Rml::String& command, size_t& row) const;
 
 	// Resets all bindings in the model to their default values by loading
@@ -62,6 +51,9 @@ public:
 	void ResetBindingToDefault(size_t row);
 	void ResetAllBindingsToDefaults();
 	void WriteBindings() const;
+
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	enum class ParseResult
@@ -93,5 +85,4 @@ private:
 
 	std::vector<Entry> m_Entries;
 	std::unordered_map<Rml::String, size_t> m_ConsoleCommandToEntry;
-	Rml::DataModelHandle m_ModelHandle;
 };

@@ -3,53 +3,34 @@
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/ElementDocument.h>
 
-// These are the elements that we support tooltips on:
-static constexpr const char* const TOOLTIP_SELECTOR = "bigbutton[tooltip], button[tooltip], label[tooltip]";
-
 MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
-	DocumentObserver(parentMenu),
+	BaseMenuObserver(parentMenu),
 	m_Tooltip {"footerTooltip", ""},
-	m_TooltipListener(this, &MenuFrameDataBinding::HandleMouseEvents)
+	m_DocumentListener(parentMenu, this, &MenuFrameDataBinding::HandleDocumentHide, {Rml::EventId::Hide}),
+	m_TooltipListener(
+		parentMenu,
+		this,
+		&MenuFrameDataBinding::HandleMouseEvents,
+		"bigbutton[tooltip], button[tooltip], label[tooltip]",
+		{Rml::EventId::Mouseover, Rml::EventId::Mouseout}
+	)
 {
 }
 
-bool MenuFrameDataBinding::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+bool MenuFrameDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	if ( !constructor.Bind(m_Tooltip.name, &m_Tooltip.value) )
 	{
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
-void MenuFrameDataBinding::DocumentLoaded(Rml::ElementDocument* document)
+void MenuFrameDataBinding::HandleDocumentHide(Rml::Event&)
 {
-	document->AddEventListener(Rml::EventId::Hide, &m_TooltipListener);
-
-	Rml::ElementList elements;
-	document->QuerySelectorAll(elements, TOOLTIP_SELECTOR);
-
-	for ( Rml::Element* element : elements )
-	{
-		element->AddEventListener(Rml::EventId::Mouseover, &m_TooltipListener);
-		element->AddEventListener(Rml::EventId::Mouseout, &m_TooltipListener);
-	}
-}
-
-void MenuFrameDataBinding::DocumentUnloaded(Rml::ElementDocument* document)
-{
-	Rml::ElementList elements;
-	document->QuerySelectorAll(elements, TOOLTIP_SELECTOR);
-
-	for ( Rml::Element* element : elements )
-	{
-		element->RemoveEventListener(Rml::EventId::Mouseover, &m_TooltipListener);
-		element->RemoveEventListener(Rml::EventId::Mouseout, &m_TooltipListener);
-	}
-
-	document->RemoveEventListener(Rml::EventId::Hide, &m_TooltipListener);
+	// The document is being hidden, so forcibly clear the tooltip.
+	ClearTooltip();
 }
 
 void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
@@ -71,13 +52,6 @@ void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
 				ClearTooltip();
 			}
 
-			break;
-		}
-
-		case Rml::EventId::Hide:
-		{
-			// The document is being hidden, so forcibly clear the tooltip.
-			ClearTooltip();
 			break;
 		}
 
@@ -112,9 +86,9 @@ void MenuFrameDataBinding::SetTooltip(Rml::Event& event)
 		return;
 	}
 
-	if ( tooltipAttr->GetInto(m_Tooltip.value) && m_ModelHandle )
+	if ( tooltipAttr->GetInto(m_Tooltip.value) && IsModelLoaded() )
 	{
-		m_ModelHandle.DirtyVariable(m_Tooltip.name);
+		DirtyVariable(m_Tooltip.name);
 		m_CurrentTooltipElement = element;
 	}
 }
@@ -126,10 +100,6 @@ void MenuFrameDataBinding::ClearTooltip()
 	if ( !m_Tooltip.value.empty() )
 	{
 		m_Tooltip.value.clear();
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(m_Tooltip.name);
-		}
+		DirtyVariable(m_Tooltip.name);
 	}
 }

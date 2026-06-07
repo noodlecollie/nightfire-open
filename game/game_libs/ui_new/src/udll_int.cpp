@@ -35,12 +35,28 @@ static void pfnRedraw(float flTime)
 	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
 
 	backend.Update(flTime);
+	const MenuStack::FocusChangeResult focus = backend.GetFocusChange();
 
-	if ( backend.ShouldPopToConsole() )
+	switch ( focus )
 	{
-		pfnSetActiveMenu(0);
-		gEngfuncs.pfnSetKeyDest(key_console);
-		return;
+		case MenuStack::FocusChangeResult::SwitchFocusToConsole:
+		{
+			pfnSetActiveMenu(0);
+			gEngfuncs.pfnSetKeyDest(key_console);
+			return;
+		}
+
+		case MenuStack::FocusChangeResult::SwitchFocusToGame:
+		{
+			pfnSetActiveMenu(0);
+			gEngfuncs.pfnSetKeyDest(key_game);
+			return;
+		}
+
+		default:
+		{
+			break;
+		}
 	}
 
 	backend.Render();
@@ -110,9 +126,10 @@ static void pfnSetActiveMenu(int active)
 	}
 }
 
-static void pfnAddServerToList(struct netadr_s /* adr */, const char* /* info */)
+static void pfnAddServerToList(struct netadr_s adr, const char* info)
 {
-	// TODO
+	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
+	backend.ReceiveDiscoveredServer(adr, info);
 }
 
 static void pfnGetCursorPos(int* /* pos_x */, int* /* pos_y */)
@@ -190,43 +207,49 @@ static void pfnShowMessageBox(const char* /* text */)
 
 static void pfnConnectionProgress_Disconnect(void)
 {
-	// TODO
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Disconnect();
 }
 
 static void pfnConnectionProgress_Download(
-	const char* /* pszFileName */,
-	const char* /* pszServerName */,
-	int /* iCurrent */,
-	int /* iTotal */,
-	const char* /* comment */
+	const char* pszFileName,
+	const char* pszServerName,
+	int iCurrent,
+	int iTotal,
+	const char* comment
 )
 {
-	// TODO
+	RmlUiBackend::StaticInstance()
+		.ReceiveConnectionProgress_Download(pszFileName, pszServerName, iCurrent, iTotal, comment);
 }
 
 static void pfnConnectionProgress_DownloadEnd(void)
 {
-	// TODO
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_DownloadEnd();
 }
 
 static void pfnConnectionProgress_Precache(void)
 {
-	// TODO
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Precache();
 }
 
-static void pfnConnectionProgress_Connect(const char* /* server */)
+static void pfnConnectionProgress_Connect(const char* server)
 {
-	// TODO
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Connect(server);
 }
 
 static void pfnConnectionProgress_ChangeLevel(void)
 {
-	// TODO
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_ChangeLevel();
 }
 
-static void pfnConnectionProgress_ParseServerInfo(const char* /* server */)
+static void pfnConnectionProgress_ParseServerInfo(const char* server)
 {
-	// TODO
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_ParseServerInfo(server);
+}
+
+static void pfnConnectionProgress_Connected(void)
+{
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Connected();
 }
 
 static void pfnStartupComplete(qboolean toConsole)
@@ -235,6 +258,11 @@ static void pfnStartupComplete(qboolean toConsole)
 	{
 		RmlUiBackend::StaticInstance().ReceiveShowMenu();
 	}
+}
+
+static qboolean pfnUseConnectionUI(void)
+{
+	return true;
 }
 
 static const UI_FUNCTIONS gFunctionTable = {
@@ -253,7 +281,7 @@ static const UI_FUNCTIONS gFunctionTable = {
 	pfnMouseInRect,
 	pfnIsVisible,
 	pfnCreditsActive,
-	pfnFinalCredits
+	pfnFinalCredits,
 };
 
 extern "C" EXPORT int
@@ -286,7 +314,9 @@ static UI_EXTENDED_FUNCTIONS gExtendedTable = {
 	pfnConnectionProgress_Connect,
 	pfnConnectionProgress_ChangeLevel,
 	pfnConnectionProgress_ParseServerInfo,
+	pfnConnectionProgress_Connected,
 	pfnStartupComplete,
+	pfnUseConnectionUI,
 };
 
 extern "C" EXPORT int

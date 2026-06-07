@@ -18,16 +18,9 @@ GameplayOptionsMenu::GameplayOptionsMenu() :
 
 	m_CvarModel.SetChangeListener(
 		NAME_VIBRATION_INTENSITY,
-		[this](const Rml::Variant& newValue)
+		[](const Rml::Variant& newValue)
 		{
-			Rml::String cmd;
-			Rml::FormatString(cmd, "vibrate %f", newValue.Get<float>());
-			gEngfuncs.pfnClientCmd(0, cmd.c_str());
+			gEngfuncs.pfnClientCmd(false, Rml::CreateString("vibrate %f", newValue.Get<float>()).c_str());
 		}
 	);
-}
-
-bool GameplayOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
-{
-	return BaseOptionsMenu::OnSetUpDataModelBindings(constructor) && m_CvarModel.SetUpDataBindings(constructor);
 }

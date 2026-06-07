@@ -6,6 +6,8 @@
 #include "rmlui/Utils.h"
 #include "framework/BaseMenu.h"
 #include "menus/MainMenu.h"
+#include "menus/PauseMenu.h"
+#include "menus/ServerConnectionScreen.h"
 #include "udll_int.h"
 #include "UIDebug.h"
 
@@ -46,6 +48,10 @@ void RmlUiBackend::Initialise()
 	Rml::Initialise();
 	RegisterFonts();
 	RegisterCvars();
+	RegisterCommands();
+
+	// TODO: Do we actually want to do this later, where we can display a placeholder page first
+	// instead of a black screen?
 	m_MenuDirectory.Populate();
 
 	m_Modifiers = 0;
@@ -99,6 +105,7 @@ void RmlUiBackend::ShutDown()
 		return;
 	}
 
+	ClearDiscoveredServerCallback();
 	ReleaseResources();
 	Rml::Shutdown();
 
@@ -124,6 +131,16 @@ bool RmlUiBackend::IsVisible() const
 	return m_Visible;
 }
 
+bool RmlUiBackend::HasMenuInStack() const
+{
+	if ( !IsInitialised() )
+	{
+		return false;
+	}
+
+	return !m_MenuStack.IsEmpty();
+}
+
 void RmlUiBackend::ReceiveShowMenu()
 {
 	if ( !IsInitialised() )
@@ -132,10 +149,12 @@ void RmlUiBackend::ReceiveShowMenu()
 	}
 
 	m_Visible = true;
+	m_MenuStack.SetVisible(m_Visible);
 
 	if ( m_MenuStack.IsEmpty() )
 	{
-		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(MainMenu::NAME);
+		const MenuDirectoryEntry* menu =
+			m_MenuDirectory.GetMenuEntry(gEngfuncs.pfnClientInGame() ? PauseMenu::NAME : MainMenu::NAME);
 		ASSERT(menu);
 		m_MenuStack.Push(menu);
 	}
@@ -149,6 +168,7 @@ void RmlUiBackend::ReceiveHideMenu()
 	}
 
 	m_Visible = false;
+	m_MenuStack.SetVisible(m_Visible);
 }
 
 void RmlUiBackend::ReceiveMouseMove(int x, int y)
@@ -249,6 +269,15 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 		return;
 	}
 
+	// In developer mode, open the console on Ctrl + Escape
+	// TODO: Is there a better place for this?
+	if ( gpGlobals->developer != 0 && !gEngfuncs.pfnClientInGame() && m_Modifiers == Rml::Input::KeyModifier::KM_CTRL &&
+		 rmlKey == Rml::Input::KI_ESCAPE && pressed )
+	{
+		m_FocusChange = MenuStack::FocusChangeResult::SwitchFocusToConsole;
+		return;
+	}
+
 	if ( pressed )
 	{
 		m_RmlContext->ProcessKeyDown(rmlKey, m_Modifiers);
@@ -269,15 +298,176 @@ void RmlUiBackend::ReceiveChar(int character)
 	m_RmlContext->ProcessTextInput(static_cast<char>(character));
 }
 
+void RmlUiBackend::ReceiveDiscoveredServer(netadr_t address, const char* info)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	if ( m_DiscoveredServerCallback )
+	{
+		m_DiscoveredServerCallback(address, Rml::String(info));
+	}
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Connect(server ? server : "");
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_ParseServerInfo(server ? server : "");
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Precache()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Precache();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Download(
+	const char* pszFileName,
+	const char* pszServerName,
+	int iCurrent,
+	int iTotal,
+	const char* comment
+)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Download(
+		pszFileName ? pszFileName : "",
+		pszServerName ? pszServerName : "",
+		iCurrent,
+		iTotal,
+		comment ? comment : ""
+	);
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_DownloadEnd();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Connected()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Connected();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_Disconnect();
+}
+
+void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+
+	if ( !menu )
+	{
+		return;
+	}
+
+	menu->ReceiveConnectionProgress_ChangeLevel();
+}
+
 Rml::Context* RmlUiBackend::GetRmlContext() const
 {
 	return m_RmlContext;
 }
 
-bool RmlUiBackend::ShouldPopToConsole()
+MenuStack::FocusChangeResult RmlUiBackend::GetFocusChange()
 {
-	bool out = m_ShouldPopToConsole;
-	m_ShouldPopToConsole = false;
+	MenuStack::FocusChangeResult out = m_FocusChange;
+	m_FocusChange = MenuStack::FocusChangeResult::None;
 	return out;
 }
 
@@ -307,19 +497,44 @@ void RmlUiBackend::ClearStoreNextKey()
 
 bool RmlUiBackend::IsStoringNextKey() const
 {
-	return m_StoreNextKey;
+	return IsInitialised() && m_StoreNextKey;
 }
 
 bool RmlUiBackend::HasStoredKey() const
 {
-	return m_StoredKey.key != -1;
+	return IsInitialised() && m_StoredKey.key != -1;
 }
 
 RmlUiBackend::StoredKey RmlUiBackend::TakeStoredKey()
 {
+	if ( !IsInitialised() )
+	{
+		return StoredKey {};
+	}
+
 	StoredKey storedKey = m_StoredKey;
 	m_StoredKey = StoredKey {};
 	return storedKey;
+}
+
+void RmlUiBackend::SetDiscoveredServerCallback(DiscoveredServerCallback callback)
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_DiscoveredServerCallback = std::move(callback);
+}
+
+void RmlUiBackend::ClearDiscoveredServerCallback()
+{
+	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_DiscoveredServerCallback = {};
 }
 
 void RmlUiBackend::Update(float currentTime)
@@ -329,15 +544,30 @@ void RmlUiBackend::Update(float currentTime)
 		return;
 	}
 
-	bool hadMenusInStack = !m_MenuStack.IsEmpty();
+	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
 
 	m_MenuStack.Update(currentTime);
 	m_RmlContext->Update();
-	m_MenuStack.HandleRequests();
+	MenuStack::FocusChangeResult focus = m_MenuStack.HandleRequests();
 
-	if ( hadMenusInStack && m_MenuStack.IsEmpty() )
+	if ( focus != MenuStack::FocusChangeResult::None )
 	{
-		m_ShouldPopToConsole = true;
+		m_FocusChange = focus;
+	}
+
+	// Fallback logic:
+	if ( m_FocusChange == MenuStack::FocusChangeResult::None && hadMenusInStack && m_MenuStack.IsEmpty() )
+	{
+		const bool inGame = gEngfuncs.pfnClientInGame();
+
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Menu stack specified no focus change but removed all menus, switching focus to %s",
+			inGame ? "game" : "console"
+		);
+
+		m_FocusChange = inGame ? MenuStack::FocusChangeResult::SwitchFocusToGame
+							   : MenuStack::FocusChangeResult::SwitchFocusToConsole;
 	}
 }
 
@@ -386,4 +616,77 @@ void RmlUiBackend::RegisterCvars()
 	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
 
 	m_SystemInterface.RegisterCvars();
+}
+
+void RmlUiBackend::RegisterCommands()
+{
+	gEngfuncs.pfnAddCommand(
+		"menu_push",
+		[]()
+		{
+			StaticInstance().HandleMenuPushCommand();
+		}
+	);
+
+	gEngfuncs.pfnAddCommand(
+		"menu_pop",
+		[]()
+		{
+			StaticInstance().HandleMenuPopCommand();
+		}
+	);
+}
+
+void RmlUiBackend::HandleMenuPushCommand()
+{
+	int argc = gEngfuncs.pfnCmdArgc();
+
+	if ( argc < 2 )
+	{
+		gEngfuncs.Con_Printf("Usage: menu_push <menu> [menu] ...\n");
+		return;
+	}
+
+	for ( int index = 1; index < argc; ++index )
+	{
+		const char* menuName = gEngfuncs.pfnCmdArgv(index);
+
+		// Should never happen:
+		if ( !menuName || !(*menuName) )
+		{
+			ASSERT(false);
+			continue;
+		}
+
+		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(menuName);
+
+		if ( !menu )
+		{
+			gEngfuncs.Con_Printf("Could not find menu with name \"%s\"\n", menuName);
+			return;
+		}
+
+		m_MenuStack.Push(menu);
+	}
+}
+
+void RmlUiBackend::HandleMenuPopCommand()
+{
+	int argc = gEngfuncs.pfnCmdArgc();
+
+	if ( argc > 2 )
+	{
+		gEngfuncs.Con_Printf("Usage: menu_pop [new_menu] ...\n");
+		gEngfuncs.Con_Printf("If a new menu is provided, it will replace the current one.\n");
+		return;
+	}
+
+	Rml::String replacementMenuName;
+
+	if ( argc == 2 )
+	{
+		replacementMenuName = gEngfuncs.pfnCmdArgv(1);
+	}
+
+	m_MenuStack.CommandPopMenu(replacementMenuName);
 }

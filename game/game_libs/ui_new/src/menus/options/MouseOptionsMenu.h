@@ -16,5 +16,4 @@ protected:
 private:
 	CvarModel m_CvarModel;
 	CvarDataVar<float>* m_MousePitch = nullptr;
-	Rml::DataModelHandle m_ModelHandle;
 };

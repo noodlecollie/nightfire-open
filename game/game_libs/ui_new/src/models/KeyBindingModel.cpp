@@ -19,88 +19,14 @@ static constexpr const char* const PROP_SECONDARY_BINDING = "secondaryBinding";
 static constexpr const char* const PROP_KEY = "key";
 static constexpr const char* const PROP_DEFAULT_KEY = "defaultKey";
 
-bool KeyBindingModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+KeyBindingModel::KeyBindingModel(BaseMenu* parentMenu) :
+	BaseMenuObserver(parentMenu)
 {
-	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
-	Rml::StructHandle<Entry::Binding> bindingType = constructor.RegisterStruct<Entry::Binding>();
-
-	if ( !entryType || !bindingType )
-	{
-		return false;
-	}
-
-	if ( !bindingType.RegisterMember(PROP_KEY, &Entry::Binding::key) ||
-		 !bindingType.RegisterMember(PROP_DEFAULT_KEY, &Entry::Binding::defaultKey) )
-	{
-		return false;
-	}
-
-	if ( !entryType.RegisterMember(PROP_ROW, &Entry::row) ||
-		 !entryType.RegisterMember(PROP_DESCRIPTION, &Entry::description) ||
-		 !entryType.RegisterMember(PROP_CONSOLE_COMMAND, &Entry::consoleCommand) ||
-		 !entryType.RegisterMember(PROP_PRIMARY_BINDING, &Entry::primaryBinding) ||
-		 !entryType.RegisterMember(PROP_SECONDARY_BINDING, &Entry::secondaryBinding) )
-	{
-		return false;
-	}
-
-	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_KEYBINDINGS, &m_Entries) )
-	{
-		return false;
-	}
-
-	m_ModelHandle = constructor.GetModelHandle();
-	return true;
 }
 
 size_t KeyBindingModel::Rows() const
 {
 	return m_Entries.size();
-}
-
-size_t KeyBindingModel::Columns() const
-{
-	return TOTAL_COLUMNS;
-}
-
-Rml::String KeyBindingModel::DisplayString(size_t row, size_t column) const
-{
-	if ( row >= Rows() )
-	{
-		return {};
-	}
-
-	const Entry& entry = m_Entries[row];
-
-	switch ( column )
-	{
-		case DESCRIPTION:
-		{
-			return entry.description;
-		}
-
-		case CONSOLE_COMMAND:
-		{
-			return entry.consoleCommand;
-		}
-
-		case PRIMARY_BINDING:
-		{
-			return entry.primaryBinding.key;
-		}
-
-		case SECONDARY_BINDING:
-		{
-			return entry.secondaryBinding.key;
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
-	return {};
 }
 
 void KeyBindingModel::ResetToDefaults()
@@ -110,7 +36,7 @@ void KeyBindingModel::ResetToDefaults()
 
 void KeyBindingModel::ReloadAndApplyBindings(bool reloadDefaults, bool resetToDefaultsOnError)
 {
-	gEngfuncs.pfnClientCmd(1, "unbindall");
+	gEngfuncs.pfnClientCmd(true, "unbindall");
 
 	if ( m_Entries.empty() || reloadDefaults )
 	{
@@ -158,7 +84,7 @@ void KeyBindingModel::SetBinding(size_t row, bool primary, Rml::String value, bo
 		return;
 	}
 
-	m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+	DirtyVariable(NAME_KEYBINDINGS);
 	binding = std::move(value);
 
 	if ( entry.primaryBinding.key == entry.secondaryBinding.key )
@@ -188,7 +114,7 @@ void KeyBindingModel::ClearBinding(size_t row, bool primary)
 	if ( !binding.key.empty() )
 	{
 		binding.key.clear();
-		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+		DirtyVariable(NAME_KEYBINDINGS);
 
 		if ( primary && !entry.secondaryBinding.key.empty() )
 		{
@@ -225,7 +151,7 @@ void KeyBindingModel::ResetBindingToDefault(size_t row)
 	if ( changed )
 	{
 		ApplyBindingToEngine(entry);
-		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+		DirtyVariable(NAME_KEYBINDINGS);
 
 		RemoveBindingDuplicates(entry);
 	}
@@ -238,7 +164,7 @@ void KeyBindingModel::ResetAllBindingsToDefaults()
 		ResetToDefaults();
 	}
 
-	gEngfuncs.pfnClientCmd(1, "unbindall");
+	gEngfuncs.pfnClientCmd(true, "unbindall");
 
 	for ( Entry& entry : m_Entries )
 	{
@@ -250,7 +176,40 @@ void KeyBindingModel::ResetAllBindingsToDefaults()
 		}
 	}
 
-	m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+	DirtyVariable(NAME_KEYBINDINGS);
+}
+
+bool KeyBindingModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
+	Rml::StructHandle<Entry::Binding> bindingType = constructor.RegisterStruct<Entry::Binding>();
+
+	if ( !entryType || !bindingType )
+	{
+		return false;
+	}
+
+	if ( !bindingType.RegisterMember(PROP_KEY, &Entry::Binding::key) ||
+		 !bindingType.RegisterMember(PROP_DEFAULT_KEY, &Entry::Binding::defaultKey) )
+	{
+		return false;
+	}
+
+	if ( !entryType.RegisterMember(PROP_ROW, &Entry::row) ||
+		 !entryType.RegisterMember(PROP_DESCRIPTION, &Entry::description) ||
+		 !entryType.RegisterMember(PROP_CONSOLE_COMMAND, &Entry::consoleCommand) ||
+		 !entryType.RegisterMember(PROP_PRIMARY_BINDING, &Entry::primaryBinding) ||
+		 !entryType.RegisterMember(PROP_SECONDARY_BINDING, &Entry::secondaryBinding) )
+	{
+		return false;
+	}
+
+	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_KEYBINDINGS, &m_Entries) )
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void KeyBindingModel::ParseSchemaAndResetToDefaults()
@@ -258,10 +217,7 @@ void KeyBindingModel::ParseSchemaAndResetToDefaults()
 	m_ConsoleCommandToEntry.clear();
 	m_Entries.clear();
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyAllVariables();
-	}
+	DirtyAllVariables();
 
 	InFileCharsPtr file(SCHEMA_PATH, PFILE_HANDLENEWLINE);
 
@@ -630,11 +586,7 @@ Rml::String KeyBindingModel::GetBindingStatement(const Entry& entry, bool primar
 	// Important! If "\" is stored, this will not be re-parsed correctly.
 	// Make sure this key is stored as "\\".
 	Rml::String escapedKey = Rml::StringUtilities::Replace(key, "\\", "\\\\");
-
-	Rml::String out;
-	Rml::FormatString(out, "\"%s\" \"%s\"", command.c_str(), escapedKey.c_str());
-
-	return out;
+	return Rml::CreateString("\"%s\" \"%s\"", command.c_str(), escapedKey.c_str());
 }
 
 void KeyBindingModel::RemoveBindingDuplicates(const Entry& entry)
@@ -677,9 +629,9 @@ void KeyBindingModel::RemoveBindingDuplicates(const Entry& entry)
 		}
 	}
 
-	if ( modifiedAny && m_ModelHandle )
+	if ( modifiedAny )
 	{
-		m_ModelHandle.DirtyVariable(NAME_KEYBINDINGS);
+		DirtyVariable(NAME_KEYBINDINGS);
 	}
 }
 
@@ -713,22 +665,20 @@ void KeyBindingModel::ApplyBindingToEngine(const Entry& entry, bool unbindFirst)
 	{
 		Rml::String escapedKey = Rml::StringUtilities::Replace(entry.primaryBinding.key, "\\", "\\\\");
 
-		Rml::String bindCmd;
-		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
+		Rml::String bindCmd = Rml::CreateString("bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
 
 		Rml::Log::Message(Rml::Log::LT_DEBUG, "KeyBindingModel::ApplyBindingToEngine: %s", bindCmd.c_str());
-		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
+		gEngfuncs.pfnClientCmd(true, bindCmd.c_str());
 	}
 
 	if ( !entry.secondaryBinding.key.empty() )
 	{
 		Rml::String escapedKey = Rml::StringUtilities::Replace(entry.secondaryBinding.key, "\\", "\\\\");
 
-		Rml::String bindCmd;
-		Rml::FormatString(bindCmd, "bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
+		Rml::String bindCmd = Rml::CreateString("bind \"%s\" \"%s\"", escapedKey.c_str(), entry.consoleCommand.c_str());
 
 		Rml::Log::Message(Rml::Log::LT_DEBUG, "KeyBindingModel::ApplyBindingToEngine: %s", bindCmd.c_str());
-		gEngfuncs.pfnClientCmd(1, bindCmd.c_str());
+		gEngfuncs.pfnClientCmd(true, bindCmd.c_str());
 	}
 }
 

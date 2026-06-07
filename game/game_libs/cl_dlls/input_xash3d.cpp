@@ -33,12 +33,12 @@ extern cvar_t* cl_pitchspeed;
 extern cvar_t* cl_movespeedkey;
 cvar_t* cl_laddermode;
 
-#define F 1U << 0  // Forward
-#define B 1U << 1  // Back
-#define L 1U << 2  // Left
-#define R 1U << 3  // Right
-#define T 1U << 4  // Forward stop
-#define S 1U << 5  // Side stop
+#define FLAG_FWD (1U << 0)  // Forward
+#define FLAG_BKWD (1U << 1)  // Back
+#define FLAG_LEFT (1U << 2)  // Left
+#define FLAG_RIGHT (1U << 3)  // Right
+#define FLAG_FWDSTOP (1U << 4)  // Forward stop
+#define FLAG_SIDESTOP (1U << 5)  // Side stop
 
 #define BUTTON_DOWN 1
 #define IMPULSE_DOWN 2
@@ -49,80 +49,92 @@ extern Vector dead_viewangles;
 
 void IN_ToggleButtons(float forwardmove, float sidemove)
 {
-	static unsigned int moveflags = T | S;
+	static unsigned int moveflags = FLAG_FWDSTOP | FLAG_SIDESTOP;
 
 	if ( forwardmove )
-		moveflags &= ~T;
+	{
+		moveflags &= ~FLAG_FWDSTOP;
+	}
 	else
 	{
 		// if( in_forward.state || in_back.state ) gEngfuncs.Con_Printf("Buttons pressed f%d b%d\n", in_forward.state,
 		// in_back.state);
-		if ( !(moveflags & T) )
+		if ( !(moveflags & FLAG_FWDSTOP) )
 		{
 			// IN_ForwardUp();
 			// IN_BackUp();
 			// gEngfuncs.Con_Printf("Reset forwardmove state f%d b%d\n", in_forward.state, in_back.state);
 			in_forward.state &= ~BUTTON_DOWN;
 			in_back.state &= ~BUTTON_DOWN;
-			moveflags |= T;
+			moveflags |= FLAG_FWDSTOP;
 		}
 	}
+
 	if ( sidemove )
-		moveflags &= ~S;
+	{
+		moveflags &= ~FLAG_SIDESTOP;
+	}
 	else
 	{
 		// gEngfuncs.Con_Printf("l%d r%d\n", in_moveleft.state, in_moveright.state);
 		// if( in_moveleft.state || in_moveright.state ) gEngfuncs.Con_Printf("Buttons pressed l%d r%d\n",
 		// in_moveleft.state, in_moveright.state);
-		if ( !(moveflags & S) )
+		if ( !(moveflags & FLAG_SIDESTOP) )
 		{
 			// IN_MoverightUp();
 			// IN_MoveleftUp();
 			// gEngfuncs.Con_Printf("Reset sidemove state f%d b%d\n", in_moveleft.state, in_moveright.state);
 			in_moveleft.state &= ~BUTTON_DOWN;
 			in_moveright.state &= ~BUTTON_DOWN;
-			moveflags |= S;
+			moveflags |= FLAG_SIDESTOP;
 		}
 	}
 
-	if ( forwardmove > 0.7 && !(moveflags & F) )
+	if ( forwardmove > 0.7 && !(moveflags & FLAG_FWD) )
 	{
-		moveflags |= F;
+		moveflags |= FLAG_FWD;
 		in_forward.state |= BUTTON_DOWN;
 	}
-	if ( forwardmove < 0.7 && (moveflags & F) )
+
+	if ( forwardmove < 0.7 && (moveflags & FLAG_FWD) )
 	{
-		moveflags &= ~F;
+		moveflags &= ~FLAG_FWD;
 		in_forward.state &= ~BUTTON_DOWN;
 	}
-	if ( forwardmove < -0.7 && !(moveflags & B) )
+
+	if ( forwardmove < -0.7 && !(moveflags & FLAG_BKWD) )
 	{
-		moveflags |= B;
+		moveflags |= FLAG_BKWD;
 		in_back.state |= BUTTON_DOWN;
 	}
-	if ( forwardmove > -0.7 && (moveflags & B) )
+
+	if ( forwardmove > -0.7 && (moveflags & FLAG_BKWD) )
 	{
-		moveflags &= ~B;
+		moveflags &= ~FLAG_BKWD;
 		in_back.state &= ~BUTTON_DOWN;
 	}
-	if ( sidemove > 0.9 && !(moveflags & R) )
+
+	if ( sidemove > 0.9 && !(moveflags & FLAG_RIGHT) )
 	{
-		moveflags |= R;
+		moveflags |= FLAG_RIGHT;
 		in_moveright.state |= BUTTON_DOWN;
 	}
-	if ( sidemove < 0.9 && (moveflags & R) )
+
+	if ( sidemove < 0.9 && (moveflags & FLAG_RIGHT) )
 	{
-		moveflags &= ~R;
+		moveflags &= ~FLAG_RIGHT;
 		in_moveright.state &= ~BUTTON_DOWN;
 	}
-	if ( sidemove < -0.9 && !(moveflags & L) )
+
+	if ( sidemove < -0.9 && !(moveflags & FLAG_LEFT) )
 	{
-		moveflags |= L;
+		moveflags |= FLAG_LEFT;
 		in_moveleft.state |= BUTTON_DOWN;
 	}
-	if ( sidemove > -0.9 && (moveflags & L) )
+
+	if ( sidemove > -0.9 && (moveflags & FLAG_LEFT) )
 	{
-		moveflags &= ~L;
+		moveflags &= ~FLAG_LEFT;
 		in_moveleft.state &= ~BUTTON_DOWN;
 	}
 }

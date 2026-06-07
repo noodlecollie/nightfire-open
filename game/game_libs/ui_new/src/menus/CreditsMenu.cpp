@@ -6,8 +6,3 @@ CreditsMenu::CreditsMenu() :
 	m_HyperlinkEventHandler(this)
 {
 }
-
-bool CreditsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
-{
-	return MenuPage::OnSetUpDataModelBindings(constructor) && m_MenuFrameDataBinding.SetUpDataBindings(constructor);
-}

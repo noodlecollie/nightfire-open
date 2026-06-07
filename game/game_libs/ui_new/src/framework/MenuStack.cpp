@@ -2,7 +2,7 @@
 #include "framework/MenuDirectory.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Log.h>
-#include <algorithm>
+#include "menus/MainMenu.h"
 #include "UIDebug.h"
 
 MenuStack::MenuStack(MenuDirectory* directory) :
@@ -18,9 +18,9 @@ bool MenuStack::Push(const MenuDirectoryEntry* menu)
 		return false;
 	}
 
-	SetTopDocumentVisible(false);
+	SetTopDocumentVisible(false, true);
 	m_Stack.push_back(menu);
-	SetTopDocumentVisible(true);
+	SetTopDocumentVisible(m_Visible);
 
 	return true;
 }
@@ -33,12 +33,12 @@ const MenuDirectoryEntry* MenuStack::Pop()
 		return nullptr;
 	}
 
-	SetTopDocumentVisible(false);
+	SetTopDocumentVisible(false, true);
 
 	const MenuDirectoryEntry* menu = m_Stack.back();
 	m_Stack.pop_back();
 
-	SetTopDocumentVisible(true);
+	SetTopDocumentVisible(m_Visible);
 
 	return menu;
 }
@@ -54,22 +54,25 @@ void MenuStack::Update(float currentTime)
 	}
 }
 
-void MenuStack::HandleRequests()
+MenuStack::FocusChangeResult MenuStack::HandleRequests()
 {
 	const MenuDirectoryEntry* top = Top();
 
 	if ( !top )
 	{
-		return;
+		return FocusChangeResult::None;
 	}
 
 	const MenuRequest* request = top->menuPtr->CurrentRequest();
 
-	if ( request )
+	if ( !request )
 	{
-		HandleTopMenuRequest(*request);
-		top->menuPtr->ClearCurrentRequest();
+		return FocusChangeResult::None;
 	}
+
+	const FocusChangeResult result = HandleTopMenuRequest(*request);
+	top->menuPtr->ClearCurrentRequest();
+	return result;
 }
 
 const MenuDirectoryEntry* MenuStack::Top() const
@@ -87,73 +90,18 @@ size_t MenuStack::Size() const
 	return m_Stack.size();
 }
 
-void MenuStack::SetTopDocumentVisible(bool visible)
+void MenuStack::SetVisible(bool visible)
 {
-	if ( m_Stack.empty() )
+	if ( visible == m_Visible )
 	{
 		return;
 	}
 
-	const MenuDirectoryEntry* entry = m_Stack.back();
-	Rml::ElementDocument* document = entry->document;
-
-	if ( !document )
-	{
-		return;
-	}
-
-	if ( visible )
-	{
-		document->Show();
-	}
-	else
-	{
-		// If there are any pending requests, cancel them.
-		entry->menuPtr->ClearCurrentRequest();
-
-		document->Hide();
-	}
+	m_Visible = visible;
+	SetTopDocumentVisible(m_Visible);
 }
 
-void MenuStack::HandleTopMenuRequest(const MenuRequest& request)
-{
-	switch ( request.requestType )
-	{
-		case MenuRequestType::PushMenu:
-		{
-			Rml::String menuName;
-
-			if ( !request.args.empty() )
-			{
-				request.args[0].GetInto(menuName);
-			}
-
-			HandlePushMenuRequest(menuName);
-			break;
-		}
-
-		case MenuRequestType::PopMenu:
-		{
-			Rml::String menuName;
-
-			if ( !request.args.empty() )
-			{
-				request.args[0].GetInto(menuName);
-			}
-
-			HandlePopMenuRequest(menuName);
-			break;
-		}
-
-		default:
-		{
-			ASSERT(false);
-			break;
-		}
-	}
-}
-
-void MenuStack::HandlePushMenuRequest(const Rml::String& name)
+void MenuStack::CommandPushMenu(const Rml::String& name)
 {
 	if ( name.empty() )
 	{
@@ -177,22 +125,22 @@ void MenuStack::HandlePushMenuRequest(const Rml::String& name)
 	Push(entry);
 }
 
-void MenuStack::HandlePopMenuRequest(const Rml::String& name)
+void MenuStack::CommandPopMenu(const Rml::String& replacement)
 {
-	if ( name.empty() )
+	if ( replacement.empty() )
 	{
 		Pop();
 		return;
 	}
 
-	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(name);
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(replacement);
 
 	if ( !entry )
 	{
 		Rml::Log::Message(
 			Rml::Log::Type::LT_WARNING,
 			"Ignoring menu pop requesting to swap in non-existent menu \"%s\"",
-			name.c_str()
+			replacement.c_str()
 		);
 
 		return;
@@ -200,4 +148,192 @@ void MenuStack::HandlePopMenuRequest(const Rml::String& name)
 
 	Pop();
 	Push(entry);
+}
+
+void MenuStack::CommandCutStack(size_t newSize, const Rml::String& topMenu)
+{
+	while ( m_Stack.size() > newSize )
+	{
+		SetTopDocumentVisible(false, true);
+		m_Stack.pop_back();
+	}
+
+	if ( topMenu.empty() )
+	{
+		SetTopDocumentVisible(m_Visible);
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(topMenu);
+
+	if ( !entry )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring cut stack operation requesting to swap in non-existent menu \"%s\"",
+			topMenu.c_str()
+		);
+
+		return;
+	}
+
+	SetTopDocumentVisible(false, false);
+	m_Stack.push_back(entry);
+	SetTopDocumentVisible(m_Visible);
+}
+
+MenuStack::FocusChangeResult MenuStack::CommandSwitchFocus(const Rml::String& target, const Rml::String& menuToReturnTo)
+{
+	FocusChangeResult focus = FocusChangeResult::None;
+
+	if ( target == "game" )
+	{
+		focus = FocusChangeResult::SwitchFocusToGame;
+	}
+	else if ( target == "console" )
+	{
+		focus = FocusChangeResult::SwitchFocusToConsole;
+	}
+	else
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring SwitchFocus request with invalid focus target \"%s\"",
+			target.c_str()
+		);
+
+		return FocusChangeResult::None;
+	}
+
+	if ( !menuToReturnTo.empty() )
+	{
+		while ( !m_Stack.empty() )
+		{
+			SetTopDocumentVisible(false, true);
+			m_Stack.pop_back();
+		}
+
+		const MenuDirectoryEntry* entry = m_Directory->GetMenuEntry(menuToReturnTo);
+
+		if ( !entry )
+		{
+			Rml::Log::Message(
+				Rml::Log::Type::LT_WARNING,
+				"SwitchFocus requested non-existent menu \"%s\", defaulting to main menu",
+				menuToReturnTo.c_str()
+			);
+
+			entry = m_Directory->GetMenuEntry(MainMenu::NAME);
+			ASSERT(entry);
+		}
+
+		m_Stack.push_back(entry);
+		SetTopDocumentVisible(m_Visible);
+	}
+
+	return focus;
+}
+
+void MenuStack::SetTopDocumentVisible(bool visible, bool clearCurrentRequest)
+{
+	if ( m_Stack.empty() )
+	{
+		return;
+	}
+
+	const MenuDirectoryEntry* entry = m_Stack.back();
+
+	if ( clearCurrentRequest )
+	{
+		entry->menuPtr->ClearCurrentRequest();
+	}
+
+	Rml::ElementDocument* document = entry->document;
+
+	if ( !document )
+	{
+		return;
+	}
+
+	if ( visible )
+	{
+		document->Show();
+	}
+	else
+	{
+		document->Hide();
+	}
+}
+
+MenuStack::FocusChangeResult MenuStack::HandleTopMenuRequest(const MenuRequest& request)
+{
+	FocusChangeResult focus = FocusChangeResult::None;
+
+	switch ( request.requestType )
+	{
+		case MenuRequestType::PushMenu:
+		{
+			Rml::String menuName;
+			request.GetOptionInto(PushMenuRequest::OPTION_MENU, menuName);
+			CommandPushMenu(menuName);
+			break;
+		}
+
+		case MenuRequestType::PopMenu:
+		{
+			Rml::String menuName;
+			request.GetOptionInto(PopMenuRequest::OPTION_NEW_MENU, menuName);
+			CommandPopMenu(menuName);
+			break;
+		}
+
+		case MenuRequestType::CutStack:
+		{
+			size_t newSize = 0;
+
+			if ( !request.GetOptionInto(CutStackRequest::OPTION_NEW_SIZE, newSize) )
+			{
+				ASSERT(false);
+
+				Rml::Log::Message(
+					Rml::Log::Type::LT_WARNING,
+					"Ignoring CutStack menu request with no stack size argument"
+				);
+
+				break;
+			}
+
+			Rml::String menuName;
+			request.GetOptionInto(CutStackRequest::OPTION_NEW_MENU, menuName);
+
+			CommandCutStack(newSize, menuName);
+			break;
+		}
+
+		case MenuRequestType::SwitchFocus:
+		{
+			Rml::String target;
+
+			if ( !request.GetOptionInto(SwitchFocusRequest::OPTION_TARGET, target) )
+			{
+				ASSERT(false);
+				Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Ignoring SwitchFocus menu request with no focus target");
+				break;
+			}
+
+			Rml::String menuName;
+			request.GetOptionInto(SwitchFocusRequest::OPTION_NEW_MENU, menuName);
+
+			focus = CommandSwitchFocus(target, menuName);
+			break;
+		}
+
+		default:
+		{
+			ASSERT(false);
+			break;
+		}
+	}
+
+	return focus;
 }

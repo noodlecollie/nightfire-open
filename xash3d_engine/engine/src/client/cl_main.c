@@ -918,7 +918,7 @@ void CL_CheckClientState(void)
 		cl.first_frame = true;  // first rendering frame
 
 		SCR_MakeLevelShot();  // make levelshot if needs
-		Cvar_SetValue("scr_loading", 0.0f);  // reset progress bar
+		UI_ConnectionProgress_Connected();
 		Netchan_ReportFlow(&cls.netchan);
 
 		Con_DPrintf("client connected at %.2f sec\n", Sys_DoubleTime() - cls.timestart);
@@ -1788,7 +1788,10 @@ void CL_SendConnectPacket(void)
 	}
 
 	if ( adr.port == 0 )
+	{
 		adr.port = MSG_BigShort(PORT_SERVER);
+	}
+
 	qport = Cvar_VariableString("net_qport");
 	key = ID_GetMD5();
 
@@ -1819,12 +1822,18 @@ void CL_SendConnectPacket(void)
 	{
 		// set related userinfo keys
 		if ( cl_dlmax->value >= 40000 || cl_dlmax->value < 100 )
+		{
 			Info_SetValueForKey(cls.userinfo, "cl_maxpacket", "1400", sizeof(cls.userinfo));
+		}
 		else
+		{
 			Info_SetValueForKey(cls.userinfo, "cl_maxpacket", cl_dlmax->string, sizeof(cls.userinfo));
+		}
 
 		if ( !*Info_ValueForKey(cls.userinfo, "cl_maxpayload") )
+		{
 			Info_SetValueForKey(cls.userinfo, "cl_maxpayload", "1000", sizeof(cls.userinfo));
+		}
 
 		Info_SetValueForKey(protinfo, "i", key, sizeof(protinfo));
 
@@ -1839,6 +1848,7 @@ void CL_SendConnectPacket(void)
 			NET_LEGACY_EXT_SPLIT,
 			protinfo
 		);
+
 		Con_Printf("Trying to connect by legacy protocol\n");
 	}
 	else
@@ -1846,7 +1856,9 @@ void CL_SendConnectPacket(void)
 		int extensions = NET_EXT_SPLITSIZE;
 
 		if ( cl_dlmax->value > FRAGMENT_MAX_SIZE || cl_dlmax->value < FRAGMENT_MIN_SIZE )
+		{
 			Cvar_SetValue("cl_dlmax", FRAGMENT_DEFAULT_SIZE);
+		}
 
 		Info_RemoveKey(cls.userinfo, "cl_maxpacket");
 		Info_RemoveKey(cls.userinfo, "cl_maxpayload");
@@ -1864,6 +1876,7 @@ void CL_SendConnectPacket(void)
 			protinfo,
 			cls.userinfo
 		);
+
 		Con_Printf("Trying to connect by modern protocol\n");
 	}
 
@@ -1884,7 +1897,9 @@ void CL_CheckForResend(void)
 	qboolean bandwidthTest;
 
 	if ( cls.internetservers_wait )
+	{
 		CL_InternetServers_f();
+	}
 
 	// if the local server is running and we aren't then connect
 	if ( cls.state == ca_disconnected && SV_Active() )
@@ -1901,15 +1916,23 @@ void CL_CheckForResend(void)
 
 	// resend if we haven't gotten a reply yet
 	if ( cls.demoplayback || cls.state != ca_connecting )
+	{
 		return;
+	}
 
 	if ( cl_resend.value < CL_MIN_RESEND_TIME )
+	{
 		Cvar_SetValue("cl_resend", CL_MIN_RESEND_TIME);
+	}
 	else if ( cl_resend.value > CL_MAX_RESEND_TIME )
+	{
 		Cvar_SetValue("cl_resend", CL_MAX_RESEND_TIME);
+	}
 
 	if ( (host.realtime - cls.connect_time) < cl_resend.value )
+	{
 		return;
+	}
 
 	res = NET_StringToAdrNB(cls.servername, &adr);
 
@@ -1934,7 +1957,9 @@ void CL_CheckForResend(void)
 	}
 
 	if ( adr.port == 0 )
+	{
 		adr.port = MSG_BigShort(PORT_SERVER);
+	}
 
 	if ( cls.connect_retry == CL_TEST_RETRIES_NORESPONCE )
 	{
@@ -1954,19 +1979,27 @@ void CL_CheckForResend(void)
 	cls.connect_retry++;
 
 	if ( bandwidthTest )
+	{
 		Con_Printf(
 			"Connecting to %s... [retry #%i, max fragment size %i]\n",
 			cls.servername,
 			cls.connect_retry,
 			cls.max_fragment_size
 		);
+	}
 	else
+	{
 		Con_Printf("Connecting to %s... [retry #%i]\n", cls.servername, cls.connect_retry);
+	}
 
 	if ( bandwidthTest )
+	{
 		Netchan_OutOfBandPrint(NS_CLIENT, adr, "bandwidth %i %i\n", PROTOCOL_VERSION, cls.max_fragment_size);
+	}
 	else
+	{
 		Netchan_OutOfBandPrint(NS_CLIENT, adr, "getchallenge\n");
+	}
 }
 
 resource_t* CL_AddResource(resourcetype_t type, const char* resourceName, int size, qboolean bFatalIfMissing, int index)
@@ -2064,15 +2097,19 @@ void CL_Connect_f(void)
 	Con_Printf("server %s\n", server);
 	CL_Disconnect();
 
-	// TESTTEST: a see console during connection
-	UI_SetActiveMenu(false);
-	Key_SetKeyDest(key_console);
+	UI_ConnectionProgress_Connect(server);
+
+	if ( !UI_UseConnectionUI() )
+	{
+		UI_SetActiveMenu(false);
+		Key_SetKeyDest(key_console);
+	}
 
 	cls.state = ca_connecting;
 	cls.legacymode = legacyconnect;
 	Q_strncpy(cls.servername, server, sizeof(cls.servername));
 	cls.connect_time = MAX_HEARTBEAT;  // CL_CheckForResend() will fire immediately
-	cls.max_fragment_size = FRAGMENT_MAX_SIZE;  // guess a we can establish connection with maximum fragment size
+	cls.max_fragment_size = FRAGMENT_MAX_SIZE;  // guess that we can establish connection with maximum fragment size
 	cls.connect_retry = 0;
 	cls.spectator = false;
 	cls.signon = 0;
@@ -2155,7 +2192,9 @@ void CL_ClearState(void)
 	CL_ClearResourceLists();
 
 	for ( i = 0; i < MAX_CLIENTS; i++ )
+	{
 		COM_ClearCustomizationList(&cl.players[i].customdata, false);
+	}
 
 	S_StopAllSounds(true);
 	CL_ClearEffects();
@@ -2185,7 +2224,6 @@ void CL_ClearState(void)
 	cl.local.scr_fov = 90.0f;
 
 	Cvar_SetValue("scr_download", -1.0f);
-	Cvar_SetValue("scr_loading", 0.0f);
 	host.allow_console = host.allow_console_init;
 	HTTP_ClearCustomServers();
 }
@@ -2285,6 +2323,10 @@ void CL_Reconnect(qboolean setup_netchan)
 
 	CL_ServerCommand(true, "new");
 
+	// Is this the best place for this? I think that after this point, everything
+	// we receive is OK to be classed as "Parsing server info", but this may need reviewing.
+	UI_ConnectionProgress_ParseServerInfo(cls.servername);
+
 	cl.validsequence = 0;  // haven't gotten a valid frame update yet
 	cl.delta_sequence = -1;  // we'll request a full delta from the baseline
 	cls.lastoutgoingcommand = -1;  // we don't have a backed up cmd history yet
@@ -2308,7 +2350,9 @@ void CL_Disconnect(void)
 	cls.legacymode = false;
 
 	if ( cls.state == ca_disconnected )
+	{
 		return;
+	}
 
 	cls.connect_time = 0;
 	cls.changedemo = false;
@@ -2334,9 +2378,13 @@ void CL_Disconnect(void)
 	cls.connect_retry = 0;
 	cls.signon = 0;
 
+	UI_ConnectionProgress_Disconnect();
+
 	// back to menu in non-developer mode
 	if ( host_developer.value || CL_IsInMenu() )
+	{
 		return;
+	}
 
 	UI_SetActiveMenu(true);
 }
@@ -2344,20 +2392,32 @@ void CL_Disconnect(void)
 void CL_Disconnect_f(void)
 {
 	if ( Host_IsLocalClient() )
+	{
 		Host_EndGame(true, "disconnected from server\n");
+	}
 	else
+	{
 		CL_Disconnect();
+	}
 }
 
 void CL_Crashed(void)
 {
 	// already freed
 	if ( host.status == HOST_CRASHED )
+	{
 		return;
+	}
+
 	if ( host.type != HOST_NORMAL )
+	{
 		return;
+	}
+
 	if ( !cls.initialized )
+	{
 		return;
+	}
 
 	host.status = HOST_CRASHED;
 
@@ -2785,7 +2845,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	if ( !Q_strcmp(c, "client_connect") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		if ( cls.state == ca_connected )
 		{
@@ -2794,7 +2856,11 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		}
 
 		CL_Reconnect(true);
-		UI_SetActiveMenu(cl.background);
+
+		if ( !UI_UseConnectionUI() )
+		{
+			UI_SetActiveMenu(cl.background);
+		}
 	}
 	else if ( !Q_strcmp(c, "info") )
 	{
@@ -2835,7 +2901,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		dword crcValue2 = 0;
 
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		crcValue = MSG_ReadLong(msg);
 		realsize = MSG_GetMaxBytes(msg) - MSG_GetNumBytesRead(msg);
@@ -2877,7 +2945,7 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 			if ( cls.connect_retry >= CL_TEST_RETRIES )
 			{
 				// too many fails use default connection method
-				Con_Printf("hi-speed connection is failed, use default method\n");
+				Con_Printf("High speed connection failed, use default method\n");
 				Netchan_OutOfBandPrint(NS_CLIENT, from, "getchallenge\n");
 				Cvar_SetValue("cl_dlmax", FRAGMENT_MIN_SIZE);
 				cls.connect_time = host.realtime;
@@ -2901,7 +2969,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "challenge") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		// challenge from the server we are connecting to
 		cls.challenge = Q_atoi(Cmd_Argv(1));
@@ -2911,7 +2981,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "echo") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		// echo request from server
 		Netchan_OutOfBandPrint(NS_CLIENT, from, "%s", Cmd_Argv(1));
@@ -2919,7 +2991,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "disconnect") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		// a disconnect message from the server, which will happen if the server
 		// dropped the connection but it is still getting packets from us
@@ -2934,7 +3008,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	else if ( !Q_strcmp(c, "errormsg") )
 	{
 		if ( !CL_IsFromConnectingServer(from) )
+		{
 			return;
+		}
 
 		args = MSG_ReadString(msg);
 
@@ -2945,7 +3021,10 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		else
 		{
 			if ( UI_IsVisible() )
+			{
 				UI_ShowMessageBox(va("^3Server message^7\n%s", args));
+			}
+
 			Msg("%s", args);
 		}
 	}
@@ -2957,7 +3036,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 		qboolean preferStore = true;
 
 		if ( !Q_strcmp(Cmd_Argv(1), "nostore") )
+		{
 			preferStore = false;
+		}
 
 		// trust only hardcoded master server
 		if ( Q_strcmp(MASTERSERVER_ADR, "") != 0 && NET_StringToAdr(MASTERSERVER_ADR, &adr) )
@@ -3002,7 +3083,9 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 					nr->resp.ping = host.realtime - nr->timesend;
 
 					if ( nr->timeout <= host.realtime )
+					{
 						SetBits(nr->resp.error, NET_ERROR_TIMEOUT);
+					}
 
 					Con_Printf("serverlist call: %s\n", NET_AdrToString(from));
 					nr->pfnFunc(&nr->resp);
@@ -3014,16 +3097,20 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 					{
 						list = *prev;
 						if ( !list )
+						{
 							break;
+						}
 
 						// throw out any variables the game created
 						*prev = list->next;
 						Mem_Free(list);
 					}
+
 					memset(nr, 0, sizeof(*nr));  // done
 					clgame.request_type = NET_REQUEST_CANCEL;
 					clgame.master_request = NULL;
 				}
+
 				break;
 			}
 
@@ -3055,10 +3142,14 @@ void CL_ConnectionlessPacket(netadr_t from, sizebuf_t* msg)
 	{
 		// user out of band message (must be handled in CL_ConnectionlessPacket)
 		if ( len > 0 )
+		{
 			Netchan_OutOfBand(NS_SERVER, from, len, (byte*)buf);
+		}
 	}
 	else
+	{
 		Con_DPrintf(S_ERROR "bad connectionless packet from %s:\n%s\n", NET_AdrToString(from), args);
+	}
 }
 
 /*
@@ -3073,12 +3164,18 @@ int CL_GetMessage(byte* data, size_t* length)
 	if ( cls.demoplayback )
 	{
 		if ( CL_DemoReadMessage(data, length) )
+		{
 			return true;
+		}
+
 		return false;
 	}
 
 	if ( NET_GetPacket(NS_CLIENT, &net_from, data, length) )
+	{
 		return true;
+	}
+
 	return false;
 }
 
@@ -3094,9 +3191,13 @@ void CL_ReadNetMessage(void)
 	while ( CL_GetMessage(net_message_buffer, &curSize) )
 	{
 		if ( cls.legacymode && *((unsigned int*)&net_message_buffer) == 0xFFFFFFFE )
+		{
 			// Will rewrite existing packet by merged
 			if ( !NetSplit_GetLong(&cls.netchan.netsplit, &net_from, net_message_buffer, &curSize) )
+			{
 				continue;
+			}
+		}
 
 		MSG_Init(&net_message, "ServerData", net_message_buffer, (int)curSize);
 
@@ -3109,7 +3210,9 @@ void CL_ReadNetMessage(void)
 
 		// can't be a valid sequenced packet
 		if ( cls.state < ca_connected )
+		{
 			continue;
+		}
 
 		if ( !cls.demoplayback && MSG_GetMaxBytes(&net_message) < 8 )
 		{
@@ -3129,11 +3232,18 @@ void CL_ReadNetMessage(void)
 
 		// run special handler for quake demos
 		if ( cls.demoplayback == DEMO_QUAKE1 )
+		{
 			CL_ParseQuakeMessage(&net_message, true);
+		}
 		else if ( cls.legacymode )
+		{
 			CL_ParseLegacyServerMessage(&net_message, true);
+		}
 		else
+		{
 			CL_ParseServerMessage(&net_message, true);
+		}
+
 		cl.send_reply = true;
 	}
 
@@ -3269,7 +3379,9 @@ void CL_RegisterCustomization(resource_t* resource)
 		player_info_t* player = &cl.players[resource->playernum];
 
 		if ( !COM_CreateCustomization(&player->customdata, resource, resource->playernum, FCUST_FROMHPAK, NULL, NULL) )
+		{
 			Con_Printf("Unable to create custom decal for player %i\n", resource->playernum);
+		}
 	}
 	else
 	{
@@ -3287,7 +3399,10 @@ A file has been received via the fragmentation/reassembly layer, put it in the r
 */
 void CL_ProcessFile(qboolean successfully_received, const char* filename)
 {
-	int sound_len = sizeof(DEFAULT_SOUNDPATH) - 1;
+#define SOUND_PATH_LENGTH (sizeof(DEFAULT_SOUNDPATH) - 1)
+#define PREFIX_DOWNLOADED "downloaded/"
+#define PREFIX_DOWNLOADED_LENGTH (sizeof(PREFIX_DOWNLOADED) - 1)
+
 	byte rgucMD5_hash[16];
 	const char* pfilename;
 	resource_t* p;
@@ -3295,13 +3410,24 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( COM_CheckString(filename) && successfully_received )
 	{
 		if ( filename[0] != '!' )
-			Con_Printf("processing %s\n", filename);
+		{
+			Con_Printf("Processing %s\n", filename);
+		}
 
-		if ( !Q_strnicmp(filename, "downloaded/", 11) )
+		if ( !Q_strnicmp(filename, PREFIX_DOWNLOADED, PREFIX_DOWNLOADED_LENGTH) )
 		{
 			// skip "downloaded/" part to avoid mismatch with needed resources list
-			filename += 11;
+			filename += PREFIX_DOWNLOADED_LENGTH;
 		}
+
+		UI_ConnectionProgress_Download(
+			CL_CleanFileName(filename),
+			cls.servername,
+			NULL,
+			host.totaldownloadcount - host.downloadcount + 1,
+			host.totaldownloadcount,
+			""  // TODO: Do we have anything to serve as a comment?
+		);
 	}
 	else if ( !successfully_received )
 	{
@@ -3311,19 +3437,27 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( cls.legacymode )
 	{
 		if ( host.downloadcount > 0 )
+		{
 			host.downloadcount--;
+		}
+
 		if ( !host.downloadcount )
 		{
+			host.totaldownloadcount = 0;
+			UI_ConnectionProgress_DownloadEnd();
 			MSG_WriteByte(&cls.netchan.message, clc_stringcmd);
 			MSG_WriteString(&cls.netchan.message, "continueloading");
 		}
+
 		return;
 	}
 
 	pfilename = filename;
 
-	if ( !Q_strnicmp(filename, DEFAULT_SOUNDPATH, sound_len) )
-		pfilename += sound_len;
+	if ( !Q_strnicmp(filename, DEFAULT_SOUNDPATH, SOUND_PATH_LENGTH) )
+	{
+		pfilename += SOUND_PATH_LENGTH;
+	}
 
 	for ( p = cl.resourcesneeded.pNext; p != &cl.resourcesneeded; p = p->pNext )
 	{
@@ -3332,19 +3466,25 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 			COM_HexConvert(filename + 4, 32, rgucMD5_hash);
 
 			if ( !memcmp(p->rgucMD5_hash, rgucMD5_hash, 16) )
+			{
 				break;
+			}
 		}
 		else
 		{
 			if ( p->type == t_generic )
 			{
 				if ( !Q_stricmp(p->szFileName, filename) )
+				{
 					break;
+				}
 			}
 			else
 			{
 				if ( !Q_stricmp(p->szFileName, pfilename) )
+				{
 					break;
+				}
 			}
 		}
 	}
@@ -3352,7 +3492,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( p != &cl.resourcesneeded )
 	{
 		if ( successfully_received )
+		{
 			ClearBits(p->ucFlags, RES_WASMISSING);
+		}
 
 		if ( filename[0] == '!' )
 		{
@@ -3376,7 +3518,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 				}
 
 				if ( cls.netchan.tempbuffer )
+				{
 					Mem_Free(cls.netchan.tempbuffer);
+				}
 			}
 
 			cls.netchan.tempbuffersize = 0;
@@ -3390,9 +3534,13 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 	if ( cls.state != ca_disconnected )
 	{
 		host.downloadcount = 0;
+		host.totaldownloadcount = 0;
 
 		for ( p = cl.resourcesneeded.pNext; p != &cl.resourcesneeded; p = p->pNext )
-			host.downloadcount++;
+		{
+			++host.downloadcount;
+			++host.totaldownloadcount;
+		}
 
 		if ( cl.resourcesneeded.pNext == &cl.resourcesneeded )
 		{
@@ -3402,7 +3550,9 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 			MSG_Init(&msg, "Resource Registration", msg_buf, sizeof(msg_buf));
 
 			if ( CL_PrecacheResources() )
+			{
 				CL_RegisterResources(&msg);
+			}
 
 			if ( MSG_GetNumBytesWritten(&msg) > 0 )
 			{
@@ -3420,6 +3570,10 @@ void CL_ProcessFile(qboolean successfully_received, const char* filename)
 		cls.netchan.tempbuffer = NULL;
 		cls.netchan.tempbuffersize = 0;
 	}
+
+#undef SOUND_PATH_LENGTH
+#undef PREFIX_DOWNLOADED
+#undef PREFIX_DOWNLOADED_LENGTH
 }
 
 /*
@@ -3510,14 +3664,20 @@ qboolean CL_PrecacheResources(void)
 {
 	resource_t* pRes;
 
+	UI_ConnectionProgress_Precache();
+
 	// NOTE: world need to be loaded as first model
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
+		{
 			continue;
+		}
 
 		if ( pRes->type != t_model || pRes->nIndex != WORLD_INDEX )
+		{
 			continue;
+		}
 
 		cl.models[pRes->nIndex] = Mod_LoadWorld(pRes->szFileName, true);
 		SetBits(pRes->ucFlags, RES_PRECACHED);
@@ -3529,7 +3689,9 @@ qboolean CL_PrecacheResources(void)
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
+		{
 			continue;
+		}
 
 		if ( pRes->type == t_model && pRes->szFileName[0] == '*' )
 		{
@@ -3551,17 +3713,22 @@ qboolean CL_PrecacheResources(void)
 	}
 
 	if ( cls.state != ca_active )
+	{
 		S_BeginRegistration();
+	}
 
 	// precache all the remaining resources where order doesn't matter
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
+		{
 			continue;
+		}
 
 		switch ( pRes->type )
 		{
 			case t_sound:
+			{
 				if ( pRes->nIndex != -1 )
 				{
 					if ( FBitSet(pRes->ucFlags, RES_WASMISSING) )
@@ -3591,11 +3758,19 @@ qboolean CL_PrecacheResources(void)
 					// client sounds
 					S_RegisterSound(pRes->szFileName);
 				}
+
 				break;
+			}
+
 			case t_skin:
+			{
 				break;
+			}
+
 			case t_model:
+			{
 				cl.nummodels = Q_max(cl.nummodels, pRes->nIndex + 1);
+
 				if ( pRes->szFileName[0] != '*' )
 				{
 					if ( pRes->nIndex != -1 )
@@ -3617,21 +3792,38 @@ qboolean CL_PrecacheResources(void)
 						CL_LoadClientSprite(pRes->szFileName);
 					}
 				}
+
 				break;
+			}
+
 			case t_decal:
+			{
 				if ( !FBitSet(pRes->ucFlags, RES_CUSTOM) )
+				{
 					Q_strncpy(host.draw_decals[pRes->nIndex].path, pRes->szFileName, sizeof(host.draw_decals[0].path));
+				}
+
 				break;
+			}
+
 			case t_generic:
+			{
 				Q_strncpy(cl.files_precache[pRes->nIndex], pRes->szFileName, sizeof(cl.files_precache[0]));
 				cl.numfiles = Q_max(cl.numfiles, pRes->nIndex + 1);
 				break;
+			}
+
 			case t_eventscript:
+			{
 				Q_strncpy(cl.event_precache[pRes->nIndex], pRes->szFileName, sizeof(cl.event_precache[0]));
 				CL_SetEventIndex(cl.event_precache[pRes->nIndex], pRes->nIndex);
 				break;
+			}
+
 			default:
+			{
 				break;
+			}
 		}
 
 		SetBits(pRes->ucFlags, RES_PRECACHED);
@@ -3642,7 +3834,9 @@ qboolean CL_PrecacheResources(void)
 	cl.numfiles = bound(0, cl.numfiles, MAX_CUSTOM);
 
 	if ( cls.state != ca_active )
+	{
 		S_EndRegistration();
+	}
 
 	return true;
 }
@@ -3675,16 +3869,24 @@ Escape to menu from game
 void CL_Escape_f(void)
 {
 	if ( cls.key_dest == key_menu )
+	{
 		return;
+	}
 
 	// the final credits is running
 	if ( UI_CreditsActive() )
+	{
 		return;
+	}
 
 	if ( cls.state == ca_cinematic )
+	{
 		SCR_NextMovie();  // jump to next movie
+	}
 	else
+	{
 		UI_SetActiveMenu(true);
+	}
 }
 
 /*

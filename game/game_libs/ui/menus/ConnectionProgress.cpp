@@ -76,7 +76,8 @@ public:
 			sizeof(sDownloadString) - 1,
 			L("Downloading %s \nfrom %s"),
 			pszFileName,
-			pszServerName);
+			pszServerName
+		);
 		PlatformLib_SNPrintF(sCommonString, sizeof(sCommonString) - 1, "%d of %d %s", iCurrent + 1, iTotal, comment);
 		m_iState = STATE_DOWNLOAD;
 		commonProgress.SetValue((float)iCurrent / iTotal + 0.01f / iTotal * EngFuncs::GetCvarFloat("scr_download"));
@@ -116,7 +117,13 @@ public:
 		}
 		else
 		{
-			PlatformLib_SNPrintF(sTitleString, sizeof(sTitleString) - 1, "%s %s", L("GameUI_EstablishingConnection"), pszName);
+			PlatformLib_SNPrintF(
+				sTitleString,
+				sizeof(sTitleString) - 1,
+				"%s %s",
+				L("GameUI_EstablishingConnection"),
+				pszName
+			);
 		}
 
 		commonProgress.SetValue(0);
@@ -354,7 +361,8 @@ void UI_ConnectionProgress_Download(
 	const char* pszServerName,
 	int iCurrent,
 	int iTotal,
-	const char* comment)
+	const char* comment
+)
 {
 	if ( menu_connectionprogress->m_iState == STATE_CONSOLE )
 		return;
@@ -426,7 +434,8 @@ void UI_ConnectionProgress_f(void)
 			EngFuncs::CmdArgv(3),
 			atoi(EngFuncs::CmdArgv(4)),
 			atoi(EngFuncs::CmdArgv(5)),
-			EngFuncs::CmdArgv(6));
+			EngFuncs::CmdArgv(6)
+		);
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "dlend") )
 	{

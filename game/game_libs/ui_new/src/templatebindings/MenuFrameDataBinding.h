@@ -1,28 +1,26 @@
 #pragma once
 
+#include "framework/BaseMenuObserver.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/DataVar.h"
-#include "framework/BaseTemplateBinding.h"
-#include "framework/DocumentObserver.h"
-#include "framework/EventListenerObject.h"
+#include "framework/MenuEventListenerObject.h"
 
-class MenuFrameDataBinding : public BaseTemplateBinding, public DocumentObserver
+class MenuFrameDataBinding : private BaseMenuObserver
 {
 public:
 	MenuFrameDataBinding(BaseMenu* parentMenu);
 
-	bool SetUpDataBindings(Rml::DataModelConstructor& constructor) override;
-
-	void DocumentLoaded(Rml::ElementDocument* document) override;
-	void DocumentUnloaded(Rml::ElementDocument* document) override;
+protected:
+	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
+	void HandleDocumentHide(Rml::Event& event);
 	void HandleMouseEvents(Rml::Event& event);
 	void SetTooltip(Rml::Event& event);
 	void ClearTooltip();
 
 	DataVar<Rml::String> m_Tooltip;
-	EventListenerObject m_TooltipListener;
-	Rml::DataModelHandle m_ModelHandle;
+	MenuEventListenerObject m_DocumentListener;
+	MenuEventListenerObject m_TooltipListener;
 	Rml::Element* m_CurrentTooltipElement = nullptr;
 };

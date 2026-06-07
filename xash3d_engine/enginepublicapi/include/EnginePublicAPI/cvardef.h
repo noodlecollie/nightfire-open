@@ -31,6 +31,7 @@
 #define FCVAR_NOEXTRAWHITEPACE (1 << 9)  // strip trailing/leading white space from this cvar
 #define FCVAR_PRIVILEGED (1 << 10)  // only available in privileged mode
 #define FCVAR_FILTERABLE (1 << 11)  // filtered in unprivileged mode if cl_filterstuffcmd is 1
+// See https://developer.valvesoftware.com/wiki/Admin_Slowhacking
 
 // Xash3D extensions
 #define FCVAR_GLCONFIG (1 << 12)  // write it into <renderer>.cfg (see RefAPI)

@@ -469,7 +469,10 @@ qboolean CL_RequestMissingResources(void)
 		{
 			cls.dl.doneregistering = true;
 			host.downloadcount = 0;
+			host.totaldownloadcount = 0;
 			cls.dl.custom = false;
+
+			UI_ConnectionProgress_DownloadEnd();
 		}
 		else if ( !FBitSet(p->ucFlags, RES_WASMISSING) )
 		{
@@ -895,7 +898,9 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 
 	// wipe the client_t struct
 	if ( !cls.changelevel && !cls.changedemo )
+	{
 		CL_ClearState();
+	}
 
 	// Re-init hud video, especially if we changed game directories
 	clgame.dllFuncs.pfnVidInit();
@@ -908,12 +913,16 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	if ( legacy )
 	{
 		if ( i != PROTOCOL_LEGACY_VERSION )
+		{
 			Host_Error("Server use invalid protocol (%i should be %i)\n", i, PROTOCOL_LEGACY_VERSION);
+		}
 	}
 	else
 	{
 		if ( i != PROTOCOL_VERSION )
+		{
 			Host_Error("Server use invalid protocol (%i should be %i)\n", i, PROTOCOL_VERSION);
+		}
 	}
 
 	cl.servercount = MSG_ReadLong(msg);
@@ -921,6 +930,7 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	cl.playernum = MSG_ReadByte(msg);
 	cl.maxclients = MSG_ReadByte(msg);
 	clgame.maxEntities = MSG_ReadWord(msg);
+
 	if ( legacy )
 	{
 		clgame.maxEntities = bound(MIN_LEGACY_EDICTS, clgame.maxEntities, MAX_LEGACY_EDICTS);
@@ -931,6 +941,7 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 		clgame.maxEntities = bound(MIN_EDICTS, clgame.maxEntities, MAX_EDICTS);
 		clgame.maxModels = MSG_ReadWord(msg);
 	}
+
 	Q_strncpy(clgame.mapname, MSG_ReadString(msg), sizeof(clgame.mapname));
 	Q_strncpy(clgame.maptitle, MSG_ReadString(msg), sizeof(clgame.maptitle));
 	background = MSG_ReadOneBit(msg);
@@ -948,14 +959,18 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	}
 
 	if ( clgame.maxModels > MAX_MODELS )
+	{
 		Con_Printf(S_WARN "server model limit is above client model limit %i > %i\n", clgame.maxModels, MAX_MODELS);
+	}
 
 	if ( Con_FixedFont() )
 	{
 		// seperate the printfs so the server message can have a color
 		Con_Print(
 			"\n\35\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36\36"
-			"\36\36\37\n");
+			"\36\36\37\n"
+		);
+
 		Con_Print(va("%c%s\n\n", 2, clgame.maptitle));
 	}
 
@@ -969,21 +984,33 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 		CSCR_LoadDefaultCVars("user.scr");
 
 		if ( r_decals->value > mp_decals.value )
+		{
 			Cvar_SetValue("r_decals", mp_decals.value);
+		}
 	}
 	else
+	{
 		Cvar_Reset("r_decals");
+	}
 
 	// set the background state
 	if ( cls.demoplayback && (cls.demonum != -1) )
+	{
 		cl.background = true;
+	}
 	else
+	{
 		cl.background = background;
+	}
 
 	if ( cl.background )  // tell the game parts about background state
+	{
 		Cvar_FullSet("cl_background", "1", FCVAR_READ_ONLY);
+	}
 	else
+	{
 		Cvar_FullSet("cl_background", "0", FCVAR_READ_ONLY);
+	}
 
 	if ( !cls.changelevel )
 	{
@@ -992,13 +1019,22 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	}
 
 	if ( !cls.changedemo )
-		UI_SetActiveMenu(cl.background);
+	{
+		if ( !UI_UseConnectionUI() )
+		{
+			UI_SetActiveMenu(cl.background);
+		}
+	}
 	else if ( !cls.demoplayback )
+	{
 		Key_SetKeyDest(key_menu);
+	}
 
 	// don't reset cursor in background mode
 	if ( cl.background )
+	{
 		IN_MouseRestorePos();
+	}
 
 	// will be changed later
 	cl.viewentity = cl.playernum + 1;
@@ -1006,24 +1042,35 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 	Q_strncpy(gameui.globals->maptitle, clgame.maptitle, sizeof(gameui.globals->maptitle));
 
 	if ( !cls.changelevel && !cls.changedemo )
+	{
 		CL_InitEdicts();  // re-arrange edicts
+	}
 
 	// get splash name
 	if ( cls.demoplayback && (cls.demonum != -1) )
+	{
 		Cvar_Set("cl_levelshot_name", va("levelshots/%s_%s", cls.demoname, refState.wideScreen ? "16x9" : "4x3"));
+	}
 	else
+	{
 		Cvar_Set("cl_levelshot_name", va("levelshots/%s_%s", clgame.mapname, refState.wideScreen ? "16x9" : "4x3"));
-	Cvar_SetValue("scr_loading", 0.0f);  // reset progress bar
+	}
 
 	if ( (cl_allow_levelshots->value && !cls.changelevel) || cl.background )
 	{
 		if ( !FS_FileExists(va("%s.bmp", cl_levelshot_name->string), true) )
+		{
 			Cvar_Set("cl_levelshot_name", "*black");  // render a black screen
+		}
+
 		cls.scrshot_request = scrshot_plaque;  // request levelshot even if exist (check filetime)
 	}
 
 	for ( i = 0; i < MAX_CLIENTS; i++ )
+	{
 		COM_ClearCustomizationList(&cl.players[i].customdata, true);
+	}
+
 	CL_CreateCustomizationList();
 
 	if ( !legacy )
@@ -1794,10 +1841,14 @@ void CL_ParseResourceList(sizebuf_t* msg)
 		pResource->ucFlags = MSG_ReadUBitLong(msg, 3) & ~RES_WASMISSING;
 
 		if ( FBitSet(pResource->ucFlags, RES_CUSTOM) )
+		{
 			MSG_ReadBytes(msg, pResource->rgucMD5_hash, sizeof(pResource->rgucMD5_hash));
+		}
 
 		if ( MSG_ReadOneBit(msg) )
+		{
 			MSG_ReadBytes(msg, pResource->rguc_reserved, sizeof(pResource->rguc_reserved));
+		}
 
 		CL_AddToResourceList(pResource, &cl.resourcesneeded);
 	}
@@ -2097,7 +2148,8 @@ void CL_ParseExec(sizebuf_t* msg)
 		"exec spy.cfg\n",
 		"exec engineer.cfg\n",
 		"",
-		"exec civilian.cfg\n"};
+		"exec civilian.cfg\n",
+	};
 
 	is_class = MSG_ReadByte(msg);
 
@@ -2301,7 +2353,9 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 
 		// end of message (align bits)
 		if ( MSG_GetNumBitsLeft(msg) < 8 )
+		{
 			break;
+		}
 
 		cmd = MSG_ReadServerCmd(msg);
 
@@ -2312,20 +2366,33 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 		switch ( cmd )
 		{
 			case svc_bad:
+			{
 				Host_Error("svc_bad\n");
 				break;
+			}
+
 			case svc_nop:
+			{
 				// this does nothing
 				break;
+			}
+
 			case svc_disconnect:
+			{
 				CL_Drop();
 				Host_AbortCurrentFrame();
 				break;
+			}
+
 			case svc_event:
+			{
 				CL_ParseEvent(msg);
 				cl.frames[cl.parsecountmod].graphdata.event += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
+
 			case svc_changing:
+			{
 				old_background = cl.background;
 				if ( MSG_ReadOneBit(msg) )
 				{
@@ -2333,6 +2400,7 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 					S_StopAllSounds(true);
 
 					Con_Printf("Server changing, reconnecting\n");
+					UI_ConnectionProgress_ChangeLevel();
 
 					if ( cls.demoplayback )
 					{
@@ -2344,7 +2412,9 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 					CL_InitEdicts();  // re-arrange edicts
 				}
 				else
+				{
 					Con_Printf("Server disconnected, reconnecting\n");
+				}
 
 				if ( cls.demoplayback )
 				{
@@ -2355,194 +2425,355 @@ void CL_ParseServerMessage(sizebuf_t* msg, qboolean normal_message)
 				{
 					// g-cont. local client skip the challenge
 					if ( SV_Active() )
+					{
 						cls.state = ca_disconnected;
+					}
 					else
+					{
 						cls.state = ca_connecting;
+					}
+
 					cl.background = old_background;
 					cls.connect_time = MAX_HEARTBEAT;
 				}
 				break;
+			}
+
 			case svc_setview:
+			{
 				CL_ParseViewEntity(msg);
 				break;
+			}
+
 			case svc_sound:
+			{
 				CL_ParseSoundPacket(msg);
 				cl.frames[cl.parsecountmod].graphdata.sound += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
+
 			case svc_time:
+			{
 				CL_ParseServerTime(msg);
 				break;
+			}
+
 			case svc_print:
+			{
 				Con_Printf("%s", MSG_ReadString(msg));
 				break;
+			}
+
 			case svc_stufftext:
+			{
 				s = MSG_ReadString(msg);
 #ifdef HACKS_RELATED_HLMODS
 				// disable Cry Of Fear antisave protection
 				if ( !Q_strnicmp(s, "disconnect", 10) && cls.signon != SIGNONS )
+				{
 					break;  // too early
+				}
 #endif
 				Cbuf_AddFilteredText(s);
 				break;
+			}
+
 			case svc_setangle:
+			{
 				CL_ParseSetAngle(msg);
 				break;
+			}
+
 			case svc_serverdata:
+			{
 				Cbuf_Execute();  // make sure any stuffed commands are done
 				CL_ParseServerData(msg, false);
 				break;
+			}
+
 			case svc_lightstyle:
+			{
 				CL_ParseLightStyle(msg);
 				break;
+			}
+
 			case svc_updateuserinfo:
+			{
 				CL_UpdateUserinfo(msg, false);
 				break;
+			}
+
 			case svc_deltatable:
+			{
 				Delta_ParseTableField(msg);
 				break;
+			}
+
 			case svc_clientdata:
+			{
 				CL_ParseClientData(msg);
 				cl.frames[cl.parsecountmod].graphdata.client += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
+
 			case svc_resource:
+			{
 				CL_ParseResource(msg);
 				break;
+			}
+
 			case svc_pings:
+			{
 				CL_UpdateUserPings(msg);
 				break;
+			}
+
 			case svc_particle:
+			{
 				CL_ParseParticles(msg);
 				break;
+			}
+
 			case svc_restoresound:
+			{
 				CL_ParseRestoreSoundPacket(msg);
 				cl.frames[cl.parsecountmod].graphdata.sound += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
+
 			case svc_spawnstatic:
+			{
 				CL_ParseStaticEntity(msg);
 				break;
+			}
+
 			case svc_event_reliable:
+			{
 				CL_ParseReliableEvent(msg);
 				cl.frames[cl.parsecountmod].graphdata.event += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
+
 			case svc_spawnbaseline:
+			{
 				CL_ParseBaseline(msg, false);
 				break;
+			}
+
 			case svc_temp_entity:
+			{
 				CL_ParseTempEntity(msg);
 				cl.frames[cl.parsecountmod].graphdata.tentities += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
+
 			case svc_setpause:
+			{
 				cl.paused = (MSG_ReadOneBit(msg) != 0);
 				break;
+			}
+
 			case svc_signonnum:
+			{
 				CL_ParseSignon(msg);
 				break;
+			}
+
 			case svc_centerprint:
+			{
 				CL_CenterPrint(MSG_ReadString(msg), 0.25f);
 				break;
+			}
+
 			case svc_intermission:
+			{
 				cl.intermission = 1;
 				break;
+			}
+
 			case svc_finale:
+			{
 				CL_ParseFinaleCutscene(msg, 2);
 				break;
+			}
+
 			case svc_cdtrack:
+			{
 				param1 = MSG_ReadByte(msg);
 				param1 = bound(1, param1, MAX_CDTRACKS);  // tracknum
 				param2 = MSG_ReadByte(msg);
 				param2 = bound(1, param2, MAX_CDTRACKS);  // loopnum
 				S_StartBackgroundTrack(clgame.cdtracks[param1 - 1], clgame.cdtracks[param2 - 1], 0, false);
 				break;
+			}
+
 			case svc_restore:
+			{
 				CL_ParseRestore(msg);
 				break;
+			}
+
 			case svc_cutscene:
+			{
 				CL_ParseFinaleCutscene(msg, 3);
 				break;
+			}
+
 			case svc_weaponanim:
+			{
 				param1 = MSG_ReadByte(msg);  // iAnim
 				param2 = MSG_ReadByte(msg);  // body
 				CL_WeaponAnim(param1, param2);
 				break;
+			}
+
 			case svc_bspdecal:
+			{
 				CL_ParseStaticDecal(msg);
 				break;
+			}
+
 			case svc_roomtype:
+			{
 				param1 = MSG_ReadShort(msg);
 				Cvar_SetValue("room_type", (float)param1);
 				break;
+			}
+
 			case svc_addangle:
+			{
 				CL_ParseAddAngle(msg);
 				break;
+			}
+
 			case svc_usermessage:
+			{
 				CL_RegisterUserMessage(msg);
 				break;
+			}
+
 			case svc_packetentities:
+			{
 				playerbytes = CL_ParsePacketEntities(msg, false);
 				cl.frames[cl.parsecountmod].graphdata.players += (word)playerbytes;
 				cl.frames[cl.parsecountmod].graphdata.entities +=
 					(word)(MSG_GetNumBytesRead(msg) - bufStart - playerbytes);
 				break;
+			}
+
 			case svc_deltapacketentities:
+			{
 				playerbytes = CL_ParsePacketEntities(msg, true);
 				cl.frames[cl.parsecountmod].graphdata.players += (word)playerbytes;
 				cl.frames[cl.parsecountmod].graphdata.entities +=
 					(word)(MSG_GetNumBytesRead(msg) - bufStart - playerbytes);
 				break;
+			}
+
 			case svc_choke:
+			{
 				cl.frames[cls.netchan.incoming_sequence & CL_UPDATE_MASK].choked = true;
 				cl.frames[cls.netchan.incoming_sequence & CL_UPDATE_MASK].receivedtime = -2.0;
 				break;
+			}
+
 			case svc_resourcelist:
+			{
 				CL_ParseResourceList(msg);
 				break;
+			}
+
 			case svc_deltamovevars:
+			{
 				CL_ParseMovevars(msg);
 				break;
+			}
+
 			case svc_resourcerequest:
+			{
 				CL_ParseResourceRequest(msg);
 				break;
+			}
+
 			case svc_customization:
+			{
 				CL_ParseCustomization(msg);
 				break;
+			}
+
 			case svc_crosshairangle:
+			{
 				CL_ParseCrosshairAngle(msg);
 				break;
+			}
+
 			case svc_soundfade:
+			{
 				CL_ParseSoundFade(msg);
 				break;
+			}
+
 			case svc_filetxferfailed:
+			{
 				CL_ParseFileTransferFailed(msg);
 				break;
+			}
+
 			case svc_hltv:
+			{
 				CL_ParseHLTV(msg);
 				break;
+			}
+
 			case svc_director:
+			{
 				CL_ParseDirector(msg);
 				break;
+			}
+
 			case svc_voiceinit:
+			{
 				CL_ParseVoiceInit(msg);
 				break;
+			}
+
 			case svc_voicedata:
+			{
 				CL_ParseVoiceData(msg);
 				cl.frames[cl.parsecountmod].graphdata.voicebytes += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
+
 			case svc_resourcelocation:
+			{
 				CL_ParseResLocation(msg);
 				break;
+			}
+
 			case svc_querycvarvalue:
+			{
 				CL_ParseCvarValue(msg, false);
 				break;
+			}
+
 			case svc_querycvarvalue2:
+			{
 				CL_ParseCvarValue(msg, true);
 				break;
+			}
+
 			case svc_exec:
+			{
 				CL_ParseExec(msg);
 				break;
+			}
+
 			default:
+			{
 				CL_ParseUserMessage(msg, cmd);
 				cl.frames[cl.parsecountmod].graphdata.usr += (word)(MSG_GetNumBytesRead(msg) - bufStart);
 				break;
+			}
 		}
 	}
 
@@ -2811,6 +3042,7 @@ void CL_LegacyParseResourceList(sizebuf_t* msg)
 	HTTP_ResetProcessState();
 
 	host.downloadcount = 0;
+	host.totaldownloadcount = 0;
 
 	for ( i = 0; i < reslist.rescount; i++ )
 	{
@@ -2829,12 +3061,15 @@ void CL_LegacyParseResourceList(sizebuf_t* msg)
 		if ( FS_FileExists(path, false) )
 			continue;  // already exists
 
-		host.downloadcount++;
+		++host.downloadcount;
+		++host.totaldownloadcount;
 		HTTP_AddDownload(path, -1, true);
 	}
 
 	if ( !host.downloadcount )
 	{
+		host.totaldownloadcount = 0;
+		UI_ConnectionProgress_DownloadEnd();
 		MSG_WriteByte(&cls.netchan.message, clc_stringcmd);
 		MSG_WriteString(&cls.netchan.message, "continueloading");
 	}

@@ -2,8 +2,8 @@
 #include <RmlUi/Core/ElementDocument.h>
 
 CvarModel::CvarModel(BaseMenu* parentMenu) :
-	DocumentObserver(parentMenu),
-	m_EventListener(this, &CvarModel::HandleShowDocument)
+	BaseMenuObserver(parentMenu),
+	m_EventListener(parentMenu, this, &CvarModel::HandleShowDocument, {Rml::EventId::Show})
 {
 }
 
@@ -20,7 +20,7 @@ bool CvarModel::SetChangeListener(const Rml::String& name, ChangeCallbackFunc cb
 	return true;
 }
 
-bool CvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
+bool CvarModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
 	for ( const auto& it : m_Entries )
 	{
@@ -44,7 +44,6 @@ bool CvarModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
 		}
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
@@ -60,16 +59,6 @@ bool CvarModel::Refresh(const Rml::String& name)
 	return Refresh(*(it->second));
 }
 
-void CvarModel::DocumentLoaded(Rml::ElementDocument* document)
-{
-	document->AddEventListener(Rml::EventId::Show, &m_EventListener);
-}
-
-void CvarModel::DocumentUnloaded(Rml::ElementDocument* document)
-{
-	document->RemoveEventListener(Rml::EventId::Show, &m_EventListener);
-}
-
 void CvarModel::HandleShowDocument(Rml::Event&)
 {
 	RefreshAll();
@@ -83,6 +72,14 @@ void CvarModel::RefreshAll()
 	}
 }
 
+void CvarModel::WriteAll()
+{
+	for ( const auto& it : m_Entries )
+	{
+		it.second->ForceWrite();
+	}
+}
+
 bool CvarModel::Refresh(BaseEntry& entry)
 {
 	if ( !entry.Refresh() )
@@ -90,10 +87,7 @@ bool CvarModel::Refresh(BaseEntry& entry)
 		return false;
 	}
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(entry.VariableName());
-	}
+	DirtyVariable(entry.VariableName());
 
 	if ( entry.changeCallback )
 	{

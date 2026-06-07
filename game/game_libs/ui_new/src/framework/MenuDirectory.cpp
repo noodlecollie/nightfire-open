@@ -5,7 +5,10 @@
 
 #include "menus/MainMenu.h"
 #include "menus/MultiplayerMenu.h"
+#include "menus/PauseMenu.h"
 #include "menus/CreditsMenu.h"
+#include "menus/ServerConnectionScreen.h"
+#include "menus/CreateMultiplayerGameMenu.h"
 #include "menus/options/KeysOptionsMenu.h"
 #include "menus/options/MouseOptionsMenu.h"
 #include "menus/options/AvOptionsMenu.h"
@@ -17,11 +20,14 @@ void MenuDirectory::Populate()
 
 	AddToMap<MainMenu>();
 	AddToMap<CreditsMenu>();
+	AddToMap<ServerConnectionScreen>();
 	AddToMap<KeysOptionsMenu>();
 	AddToMap<MultiplayerMenu>();
 	AddToMap<MouseOptionsMenu>();
 	AddToMap<AvOptionsMenu>();
 	AddToMap<GameplayOptionsMenu>();
+	AddToMap<PauseMenu>();
+	AddToMap<CreateMultiplayerGameMenu>();
 }
 
 void MenuDirectory::Clear()
@@ -43,7 +49,7 @@ void MenuDirectory::LoadAllMenus(Rml::Context& context)
 	}
 }
 
-const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const std::string& name) const
+const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const Rml::String& name) const
 {
 	MenuMap::const_iterator it = m_MenuMap.find(name);
 	return it != m_MenuMap.end() ? &it->second.menuEntry : nullptr;
@@ -51,7 +57,7 @@ const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const std::string& name) c
 
 void MenuDirectory::AddToMap(BaseMenu* newMenu)
 {
-	m_MenuMap.insert({std::string(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
+	m_MenuMap.insert({Rml::String(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
 }
 
 void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)

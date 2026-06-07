@@ -100,7 +100,7 @@ typedef struct ui_enginefuncs_s
 
 	// command handlers
 	int (*pfnAddCommand)(const char* cmd_name, void (*function)(void));
-	void (*pfnClientCmd)(int execute_now, const char* szCmdString);
+	void (*pfnClientCmd)(qboolean execute_now, const char* szCmdString);
 	void (*pfnDelCommand)(const char* cmd_name);
 	int (*pfnCmdArgc)(void);
 	const char* (*pfnCmdArgv)(int argc);
@@ -201,7 +201,7 @@ typedef struct ui_enginefuncs_s
 	int (*pfnRandomLong)(int lLow, int lHigh);
 
 	void (*pfnSetCursor)(VGUI_DefaultCursor cursor);  // change cursor
-	int (*pfnIsMapValid)(char* filename);
+	qboolean (*pfnIsMapValid)(const char* filename);
 	void (*pfnProcessImage)(int texnum, float gamma, int topColor, int bottomColor);
 	int (*pfnCompareFileTime)(const char* filename1, const char* filename2, int* iCompare);
 
@@ -280,11 +280,16 @@ typedef struct
 	void (*pfnConnectionProgress_Connect)(const char* server);  // NULL for local server
 	void (*pfnConnectionProgress_ChangeLevel)(void);
 	void (*pfnConnectionProgress_ParseServerInfo)(const char* server);
+	void (*pfnConnectionProgress_Connected)(void);
 
 	// Called when the main menu is first reached, and cvars are available to be read.
 	// if toConsole is true, -toconsole was passed on the command line, so the menu
 	// should not be shown yet.
 	void (*pfnStartupComplete)(qboolean toConsole);
+
+	// Returns true if there is a UI page that should be used for connecting to
+	// servers, instead of displaying the console.
+	qboolean (*pfnUseConnectionUI)(void);
 } UI_EXTENDED_FUNCTIONS;
 
 typedef int (*MENUAPI)(UI_FUNCTIONS* pFunctionTable, ui_enginefuncs_t* engfuncs, ui_globalvars_t* pGlobals);

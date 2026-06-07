@@ -1096,37 +1096,53 @@ qboolean COM_IsSafeFileToDownload(const char* filename)
 	size_t i;
 
 	if ( !COM_CheckString(filename) )
+	{
 		return false;
+	}
 
 	if ( !Q_strncmp(filename, "!MD5", 4) )
+	{
 		return true;
+	}
 
 	Q_strnlwr(filename, lwrfilename, sizeof(lwrfilename));
 
 	if ( Q_strpbrk(lwrfilename, "\\:~") || Q_strstr(lwrfilename, "..") )
+	{
 		return false;
+	}
 
 	if ( lwrfilename[0] == '/' )
+	{
 		return false;
+	}
 
 	first = Q_strchr(lwrfilename, '.');
 	last = Q_strrchr(lwrfilename, '.');
 
 	if ( first == NULL || last == NULL )
+	{
 		return false;
+	}
 
 	if ( first != last )
+	{
 		return false;
+	}
 
 	if ( Q_strlen(first) != 4 )
+	{
 		return false;
+	}
 
 	ext = COM_FileExtension(lwrfilename);
 
 	for ( i = 0; i < SIZE_OF_ARRAY(file_exts); i++ )
 	{
 		if ( !Q_stricmp(ext, file_exts[i]) )
+		{
 			return false;
+		}
 	}
 
 	return true;

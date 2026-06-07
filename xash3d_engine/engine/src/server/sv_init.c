@@ -45,7 +45,22 @@ static void SV_AddResource(resourcetype_t type, const char* name, int size, byte
 	resource_t* pResource = &sv.resources[sv.num_resources];
 
 	if ( sv.num_resources >= MAX_RESOURCES )
+	{
 		Host_Error("MAX_RESOURCES limit exceeded (%d)\n", MAX_RESOURCES);
+	}
+
+	if ( sv_debug_log_resources.value != 0.0f )
+	{
+		Con_Reportf(
+			"SV_AddResource: [%d] %s (%d bytes), index: %d, flags: 0x%02x\n",
+			sv.num_resources,
+			name,
+			size,
+			index,
+			(uint32_t)flags
+		);
+	}
+
 	sv.num_resources++;
 
 	Q_strncpy(pResource->szFileName, name, sizeof(pResource->szFileName));
@@ -59,7 +74,7 @@ static void SV_AddResource(resourcetype_t type, const char* name, int size, byte
 ================
 SV_SendSingleResource
 
-hot precache on a flying
+hot precache on the fly
 ================
 */
 void SV_SendSingleResource(const char* name, resourcetype_t type, int index, byte flags)
@@ -68,19 +83,29 @@ void SV_SendSingleResource(const char* name, resourcetype_t type, int index, byt
 	int nSize = 0;
 
 	if ( !COM_CheckString(name) )
+	{
 		return;
+	}
 
 	switch ( type )
 	{
 		case t_model:
+		{
 			nSize = (name[0] != '*') ? FS_FileSize(name, false) : 0;
 			break;
+		}
+
 		case t_sound:
+		{
 			nSize = FS_FileSize(va(DEFAULT_SOUNDPATH "%s", name), false);
 			break;
+		}
+
 		default:
+		{
 			nSize = FS_FileSize(name, false);
 			break;
+		}
 	}
 
 	SV_AddResource(type, name, nSize, flags, index);
@@ -239,7 +264,9 @@ int GAME_EXPORT SV_GenericIndex(const char* filename)
 	int i;
 
 	if ( !COM_CheckString(filename) )
+	{
 		return 0;
+	}
 
 	Q_strncpy(name, filename, sizeof(name));
 	COM_FixSlashes(name);
@@ -247,7 +274,9 @@ int GAME_EXPORT SV_GenericIndex(const char* filename)
 	for ( i = 1; i < MAX_CUSTOM && sv.files_precache[i][0]; i++ )
 	{
 		if ( !Q_stricmp(sv.files_precache[i], name) )
+		{
 			return i;
+		}
 	}
 
 	if ( i == MAX_CUSTOM )
@@ -310,11 +339,14 @@ void SV_ReadResourceList(const char* filename)
 	while ( (pfile = COM_ParseFile(pfile, token, sizeof(token))) != NULL )
 	{
 		if ( !COM_IsSafeFileToDownload(token) )
+		{
 			continue;
+		}
 
 		COM_FixSlashes(token);
 		restype = SV_DetermineResourceType(token);
 		Con_DPrintf("  %s (%s)\n", token, COM_GetResourceTypeName(restype));
+
 		switch ( restype )
 		{
 			// TODO do we need to handle other resource types specifically too?
@@ -325,9 +357,12 @@ void SV_ReadResourceList(const char* filename)
 				SV_SoundIndex(filepath);
 				break;
 			}
+
 			default:
+			{
 				SV_GenericIndex(token);
 				break;
+			}
 		}
 	}
 
@@ -346,7 +381,7 @@ void SV_CreateGenericResources(void)
 {
 	string filename;
 
-	Q_strncpy(filename, sv.model_precache[1], sizeof(filename));
+	Q_strncpy(filename, sv.model_precache[WORLD_INDEX], sizeof(filename));
 	COM_ReplaceExtension(filename, sizeof(filename), ".res");
 	COM_FixSlashes(filename);
 
@@ -372,8 +407,12 @@ void SV_CreateResourceList(void)
 	for ( i = 1; i < MAX_CUSTOM; i++ )
 	{
 		s = sv.files_precache[i];
+
 		if ( !COM_CheckString(s) )
+		{
 			break;  // end of list
+		}
+
 		nSize = FS_FileSize(s, false);
 		SV_AddResource(t_generic, s, nSize, RES_FATALIFMISSING, i);
 	}
@@ -381,8 +420,11 @@ void SV_CreateResourceList(void)
 	for ( i = 1; i < MAX_SOUNDS; i++ )
 	{
 		s = sv.sound_precache[i];
+
 		if ( !COM_CheckString(s) )
+		{
 			break;  // end of list
+		}
 
 		if ( s[0] == '!' )
 		{
@@ -402,8 +444,12 @@ void SV_CreateResourceList(void)
 	for ( i = 1; i < MAX_MODELS; i++ )
 	{
 		s = sv.model_precache[i];
+
 		if ( !COM_CheckString(s) )
+		{
 			break;  // end of list
+		}
+
 		nSize = (s[0] != '*') ? FS_FileSize(s, false) : 0;
 		SV_AddResource(t_model, s, nSize, sv.model_precache_flags[i], i);
 	}
@@ -417,8 +463,12 @@ void SV_CreateResourceList(void)
 	for ( i = 1; i < MAX_EVENTS; i++ )
 	{
 		s = sv.event_precache[i];
+
 		if ( !COM_CheckString(s) )
+		{
 			break;  // end of list
+		}
+
 		nSize = FS_FileSize(s, false);
 		SV_AddResource(t_eventscript, s, nSize, RES_FATALIFMISSING, i);
 	}

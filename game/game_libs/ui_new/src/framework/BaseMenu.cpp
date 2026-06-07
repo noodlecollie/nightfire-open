@@ -1,5 +1,6 @@
 #include "framework/BaseMenu.h"
-#include "framework/DocumentObserver.h"
+#include "framework/BaseMenuObserver.h"
+#include <RmlUi/Core/ElementDocument.h>
 #include "UIDebug.h"
 
 BaseMenu::BaseMenu(const char* name, const char* rmlFilePath) :
@@ -34,9 +35,9 @@ const MenuRequest* BaseMenu::CurrentRequest() const
 	return m_Request.get();
 }
 
-void BaseMenu::SetCurrentRequest(MenuRequestType requestType, const Rml::VariantList& args)
+void BaseMenu::SetCurrentRequest(MenuRequestType requestType, Rml::Dictionary options)
 {
-	m_Request.reset(new MenuRequest(requestType, args));
+	m_Request.reset(new MenuRequest(requestType, std::move(options)));
 }
 
 void BaseMenu::ClearCurrentRequest()
@@ -46,7 +47,21 @@ void BaseMenu::ClearCurrentRequest()
 
 bool BaseMenu::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	return OnSetUpDataModelBindings(constructor);
+	for ( BaseMenuObserver* observer : m_MenuObservers )
+	{
+		if ( !observer->SetUpDataModelBindings(constructor) )
+		{
+			return false;
+		}
+	}
+
+	if ( !OnSetUpDataModelBindings(constructor) )
+	{
+		return false;
+	}
+
+	m_ModelHandle = constructor.GetModelHandle();
+	return true;
 }
 
 void BaseMenu::DocumentLoaded(Rml::ElementDocument* document)
@@ -60,14 +75,13 @@ void BaseMenu::DocumentLoaded(Rml::ElementDocument* document)
 	}
 
 	m_Document = document;
-	OnBeginDocumentLoaded();
 
-	for ( DocumentObserver* observer : m_DocObservers )
+	for ( BaseMenuObserver* observer : m_MenuObservers )
 	{
 		observer->DocumentLoaded(document);
 	}
 
-	OnEndDocumentLoaded();
+	OnDocumentLoaded();
 }
 
 void BaseMenu::DocumentUnloaded()
@@ -79,14 +93,13 @@ void BaseMenu::DocumentUnloaded()
 		return;
 	}
 
-	OnBeginDocumentUnloaded();
+	OnDocumentUnloaded();
 
-	for ( DocumentObserver* observer : m_DocObservers )
+	for ( BaseMenuObserver* observer : m_MenuObservers )
 	{
 		observer->DocumentUnloaded(m_Document);
 	}
 
-	OnEndDocumentUnloaded();
 	m_Document = nullptr;
 }
 
@@ -94,19 +107,17 @@ void BaseMenu::Update(float)
 {
 }
 
-void BaseMenu::OnBeginDocumentLoaded()
+bool BaseMenu::IsDocumentVisible() const
+{
+	Rml::ElementDocument* document = Document();
+	return document && document->IsVisible();
+}
+
+void BaseMenu::OnDocumentLoaded()
 {
 }
 
-void BaseMenu::OnEndDocumentLoaded()
-{
-}
-
-void BaseMenu::OnBeginDocumentUnloaded()
-{
-}
-
-void BaseMenu::OnEndDocumentUnloaded()
+void BaseMenu::OnDocumentUnloaded()
 {
 }
 
@@ -115,12 +126,58 @@ bool BaseMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor&)
 	return true;
 }
 
-void BaseMenu::RegisterDocumentObserver(DocumentObserver* observer)
+bool BaseMenu::IsModelLoaded() const
+{
+	// Model handle is poorly const-qualified :c
+	return const_cast<Rml::DataModelHandle*>(&m_ModelHandle)->operator bool();
+}
+
+Rml::DataModelHandle& BaseMenu::ModelHandle(bool assertValid)
+{
+#ifndef _DEBUG
+	(void)assertValid;
+#endif
+
+	if ( assertValid )
+	{
+		ASSERT(m_ModelHandle.operator bool());
+	}
+
+	return m_ModelHandle;
+}
+
+bool BaseMenu::IsVariableDirty(const Rml::String& variableName)
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(true);
+	return modelHandle && modelHandle.IsVariableDirty(variableName);
+}
+
+void BaseMenu::DirtyVariable(const Rml::String& variableName)
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(false);
+
+	if ( modelHandle )
+	{
+		modelHandle.DirtyVariable(variableName);
+	}
+}
+
+void BaseMenu::DirtyAllVariables()
+{
+	Rml::DataModelHandle& modelHandle = ModelHandle(false);
+
+	if ( modelHandle )
+	{
+		modelHandle.DirtyAllVariables();
+	}
+}
+
+void BaseMenu::RegisterObserver(BaseMenuObserver* observer)
 {
 	ASSERT(observer);
 
 	if ( observer )
 	{
-		m_DocObservers.push_back(observer);
+		m_MenuObservers.push_back(observer);
 	}
 }

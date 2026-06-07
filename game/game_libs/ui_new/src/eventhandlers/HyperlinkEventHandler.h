@@ -1,18 +1,14 @@
 #pragma once
 
-#include "framework/DocumentObserver.h"
-#include "framework/EventListenerObject.h"
+#include "framework/MenuEventListenerObject.h"
 
-class HyperlinkEventHandler : public DocumentObserver
+class HyperlinkEventHandler
 {
 public:
 	explicit HyperlinkEventHandler(BaseMenu* parentMenu);
 
-	void DocumentLoaded(Rml::ElementDocument* document) override;
-	void DocumentUnloaded(Rml::ElementDocument* document) override;
-
 private:
 	void HandleClickEvent(Rml::Event& event);
 
-	EventListenerObject m_ClickListener;
+	MenuEventListenerObject m_ClickListener;
 };

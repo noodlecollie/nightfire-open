@@ -4,7 +4,7 @@
 #include <RmlUi/Core/EventListener.h>
 #include "models/KeyBindingModel.h"
 #include "components/ModalComponent.h"
-#include "framework/EventListenerObject.h"
+#include "framework/MenuEventListenerObject.h"
 
 class KeysOptionsMenu : public BaseOptionsMenu
 {
@@ -15,9 +15,6 @@ public:
 
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-
-	void OnEndDocumentLoaded() override;
-	void OnBeginDocumentUnloaded() override;
 
 private:
 	static constexpr int INVALID_ROW = -1;
@@ -47,8 +44,7 @@ private:
 
 	KeyBindingModel m_KeyBindings;
 	PageModel m_PageModel;
-	Rml::DataModelHandle m_ModelHandle;
 	ModalComponent m_Modal;
-	EventListenerObject m_ShowHideEventListener;
-	EventListenerObject m_KeyEventListener;
+	MenuEventListenerObject m_ShowHideEventListener;
+	MenuEventListenerObject m_KeyEventListener;
 };

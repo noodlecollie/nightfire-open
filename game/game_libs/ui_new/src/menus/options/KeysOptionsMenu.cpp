@@ -31,9 +31,10 @@ enum ModalUserData
 
 KeysOptionsMenu::KeysOptionsMenu() :
 	BaseOptionsMenu("keys_options_menu", "resource/rml/keys_options_menu.rml"),
+	m_KeyBindings(this),
 	m_Modal(this, "keybindings_modal"),
-	m_ShowHideEventListener(this, &KeysOptionsMenu::ProcessShowHideEvents),
-	m_KeyEventListener(this, &KeysOptionsMenu::ProcessKeyEvents)
+	m_ShowHideEventListener(this, &KeysOptionsMenu::ProcessShowHideEvents, {Rml::EventId::Show, Rml::EventId::Hide}),
+	m_KeyEventListener(this, &KeysOptionsMenu::ProcessKeyEvents, {Rml::EventId::Keydown})
 {
 	m_Modal.SetButtonClickCallback(
 		[this](Rml::Event&, size_t buttonIndex, const Rml::Variant& userData)
@@ -58,7 +59,7 @@ void KeysOptionsMenu::Update(float currentTime)
 
 bool KeysOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_KeyBindings.SetUpDataBindings(constructor) )
+	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}
@@ -76,31 +77,7 @@ bool KeysOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constr
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
-
 	return true;
-}
-
-void KeysOptionsMenu::OnEndDocumentLoaded()
-{
-	MenuPage::OnEndDocumentLoaded();
-
-	Rml::ElementDocument* document = Document();
-
-	document->AddEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
-	document->AddEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-	document->AddEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-}
-
-void KeysOptionsMenu::OnBeginDocumentUnloaded()
-{
-	Rml::ElementDocument* document = Document();
-
-	document->RemoveEventListener(Rml::EventId::Show, &m_ShowHideEventListener);
-	document->RemoveEventListener(Rml::EventId::Hide, &m_ShowHideEventListener);
-	document->RemoveEventListener(Rml::EventId::Keydown, &m_KeyEventListener);
-
-	MenuPage::OnBeginDocumentUnloaded();
 }
 
 void KeysOptionsMenu::ProcessShowHideEvents(Rml::Event& event)
@@ -274,13 +251,13 @@ bool KeysOptionsMenu::HandleSelectBindingEvent(int row, int bindIndex)
 	if ( m_PageModel.currentRow != row )
 	{
 		m_PageModel.currentRow = row;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_ROW);
+		DirtyVariable(NAME_CURRENT_ROW);
 	}
 
 	if ( m_PageModel.currentBinding != bindIndex )
 	{
 		m_PageModel.currentBinding = bindIndex;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_BINDING);
+		DirtyVariable(NAME_CURRENT_BINDING);
 	}
 
 	return true;
@@ -291,13 +268,13 @@ void KeysOptionsMenu::ResetRebindingRow()
 	if ( m_PageModel.currentRow >= 0 )
 	{
 		m_PageModel.currentRow = INVALID_ROW;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_ROW);
+		DirtyVariable(NAME_CURRENT_ROW);
 	}
 
 	if ( m_PageModel.currentBinding >= 0 )
 	{
 		m_PageModel.currentBinding = INVALID_BINDING;
-		m_ModelHandle.DirtyVariable(NAME_CURRENT_BINDING);
+		DirtyVariable(NAME_CURRENT_BINDING);
 	}
 
 	CloseModalAndStopListeningForKeys();
@@ -315,7 +292,7 @@ void KeysOptionsMenu::ShowModal(bool show)
 	if ( m_PageModel.showModal != show )
 	{
 		m_PageModel.showModal = show;
-		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
+		DirtyVariable(NAME_SHOW_MODAL);
 	}
 }
 

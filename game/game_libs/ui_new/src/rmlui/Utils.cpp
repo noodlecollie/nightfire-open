@@ -74,10 +74,6 @@ static const std::unordered_map<int, Rml::Input::KeyIdentifier>& EngineToRmlKeyM
 		map.insert({K_KP_PLUS, KeyIdentifier::KI_ADD});
 		map.insert({K_KP_MUL, KeyIdentifier::KI_MULTIPLY});
 
-		// From testing, the numpad * seems to come through as ASCII??
-		// Just to make life more difficult for us...
-		map.insert({'*', KI_MULTIPLY});
-
 		// Explicitly ignore these ones. We know we don't want to support them.
 		map.insert({K_CAPSLOCK, KeyIdentifier::KI_UNKNOWN});
 		map.insert({K_SHIFT, KeyIdentifier::KI_UNKNOWN});

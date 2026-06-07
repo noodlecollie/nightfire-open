@@ -1,91 +1,94 @@
 ---
 Language: Cpp
 BasedOnStyle: Google
-AccessModifierOffset: "-4"
-AlignAfterOpenBracket: BlockIndent
-AlignConsecutiveMacros: "false"
-AlignConsecutiveAssignments: "false"
-AlignConsecutiveDeclarations: "false"
+AccessModifierOffset: -4
+AlignAfterOpenBracket: true
+AlignConsecutiveMacros: None
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: None
 AlignEscapedNewlines: DontAlign
-AlignOperands: "false"
-AlignTrailingComments: "false"
-AllowAllArgumentsOnNextLine: "false"
-AllowAllConstructorInitializersOnNextLine: "false"
-AllowAllParametersOfDeclarationOnNextLine: "false"
-AllowShortBlocksOnASingleLine: "false"
-AllowShortCaseLabelsOnASingleLine: "false"
+AlignOperands: DontAlign
+AlignTrailingComments: false
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Empty
-AllowShortLoopsOnASingleLine: "false"
+AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterReturnType: None
-AlwaysBreakBeforeMultilineStrings: "true"
+AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: "Yes"
-BinPackArguments: "false"
-BinPackParameters: "false"
+BinPackArguments: false
+BinPackParameters: OnePerLine
 BraceWrapping:
-  AfterCaseLabel: "true"
-  AfterClass: "true"
-  AfterControlStatement: "true"
-  AfterEnum: "true"
-  AfterFunction: "true"
-  AfterNamespace: "true"
-  AfterStruct: "true"
-  AfterUnion: "true"
-  AfterExternBlock: "true"
-  BeforeCatch: "true"
-  BeforeElse: "true"
-  BeforeLambdaBody: "true"
-  BeforeWhile: "true"
-  IndentBraces: "false"
-  SplitEmptyFunction: "true"
-  SplitEmptyRecord: "true"
-  SplitEmptyNamespace: "true"
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
-BreakBeforeTernaryOperators: "true"
+BreakAfterOpenBracketFunction: true
+BreakBeforeCloseBracketFunction: true
+BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
-ColumnLimit: "120"
-CompactNamespaces: "false"
-ConstructorInitializerAllOnOneLineOrOnePerLine: "true"
-Cpp11BracedListStyle: "true"
-DerivePointerAlignment: "false"
-FixNamespaceComments: "true"
+ColumnLimit: 120
+CompactNamespaces: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+FixNamespaceComments: true
 IncludeBlocks: Preserve
-IndentCaseLabels: "true"
+IndentCaseLabels: true
 IndentExternBlock: NoIndent
 IndentPPDirectives: None
-IndentWidth: "4"
-IndentWrappedFunctionNames: "false"
-KeepEmptyLinesAtTheStartOfBlocks: "false"
-MaxEmptyLinesToKeep: "1"
+IndentWidth: 4
+IndentWrappedFunctionNames: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
 PackConstructorInitializers: Never
 PointerAlignment: Left
-ReflowComments: "true"
+ReflowComments: IndentOnly
 
 # This must be false because include order matters in certain cases
-SortIncludes: "false"
+SortIncludes:
+  Enabled: false
+SortUsingDeclarations: Never
 
-SortUsingDeclarations: "true"
-SpaceAfterCStyleCast: "false"
-SpaceAfterLogicalNot: "false"
-SpaceAfterTemplateKeyword: "false"
-SpaceBeforeAssignmentOperators: "true"
-SpaceBeforeCpp11BracedList: "true"
-SpaceBeforeCtorInitializerColon: "true"
-SpaceBeforeInheritanceColon: "true"
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
-SpaceBeforeRangeBasedForLoopColon: "true"
-SpaceInEmptyParentheses: "false"
-SpacesBeforeTrailingComments: "2"
-SpacesInAngles: "false"
-SpacesInCStyleCastParentheses: "false"
-SpacesInConditionalStatement: "true"
-SpacesInContainerLiterals: "false"
-SpacesInParentheses: "false"
-SpacesInSquareBrackets: "false"
-Standard: Cpp11
-TabWidth: "4"
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 2
+SpacesInAngles: Never
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: true
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+Standard: c++11
+TabWidth: 4
 UseTab: ForContinuationAndIndentation

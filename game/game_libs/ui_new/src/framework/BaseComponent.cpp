@@ -6,7 +6,7 @@
 #include "UIDebug.h"
 
 BaseComponent::BaseComponent(BaseMenu* parentMenu, Rml::String id) :
-	DocumentObserver(parentMenu),
+	BaseMenuObserver(parentMenu),
 	m_ID(std::move(id))
 {
 	ASSERTSZ(!m_ID.empty(), "Component was constructed with an empty ID");
@@ -15,49 +15,6 @@ BaseComponent::BaseComponent(BaseMenu* parentMenu, Rml::String id) :
 bool BaseComponent::Loaded() const
 {
 	return m_ComponentElement;
-}
-
-void BaseComponent::DocumentLoaded(Rml::ElementDocument* document)
-{
-	if ( m_ComponentElement || m_ID.empty() )
-	{
-		return;
-	}
-
-	m_ComponentElement = document->GetElementById(m_ID);
-
-	if ( !m_ComponentElement )
-	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_ERROR,
-			"BaseComponent::DocumentLoaded: Could not find component element with ID \"%s\"",
-			m_ID.c_str()
-		);
-
-		return;
-	}
-
-	LoadParams();
-
-	if ( !OnLoadFromDocument(document) )
-	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_ERROR,
-			"BaseComponent::DocumentLoaded: Component \"%s\" failed to load",
-			m_ID.c_str()
-		);
-
-		OnUnload();
-	}
-}
-
-void BaseComponent::DocumentUnloaded(Rml::ElementDocument*)
-{
-	if ( m_ComponentElement )
-	{
-		OnUnload();
-		m_ComponentElement = nullptr;
-	}
 }
 
 Rml::Variant BaseComponent::GetParam(const Rml::String& name) const
@@ -88,14 +45,57 @@ void BaseComponent::AddParamSpec(Rml::String name, Rml::Variant defaultValue)
 	}
 }
 
-bool BaseComponent::OnLoadFromDocument(Rml::ElementDocument*)
+bool BaseComponent::ComponentLoadFromDocument(Rml::ElementDocument*)
 {
 	return true;
 }
 
-void BaseComponent::OnUnload()
+void BaseComponent::ComponentUnload()
 {
 	m_ComponentParams.clear();
+}
+
+void BaseComponent::DocumentLoaded(Rml::ElementDocument* document)
+{
+	if ( m_ComponentElement || m_ID.empty() )
+	{
+		return;
+	}
+
+	m_ComponentElement = document->GetElementById(m_ID);
+
+	if ( !m_ComponentElement )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_ERROR,
+			"BaseComponent::DocumentLoaded: Could not find component element with ID \"%s\"",
+			m_ID.c_str()
+		);
+
+		return;
+	}
+
+	LoadParams();
+
+	if ( !ComponentLoadFromDocument(document) )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_ERROR,
+			"BaseComponent::DocumentLoaded: Component \"%s\" failed to load",
+			m_ID.c_str()
+		);
+
+		ComponentUnload();
+	}
+}
+
+void BaseComponent::DocumentUnloaded(Rml::ElementDocument*)
+{
+	if ( m_ComponentElement )
+	{
+		ComponentUnload();
+		m_ComponentElement = nullptr;
+	}
 }
 
 bool BaseComponent::CheckLoaded(const char* operation)

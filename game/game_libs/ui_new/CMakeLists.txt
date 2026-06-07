@@ -20,22 +20,27 @@ set(SOURCES_UI
 	src/framework/BaseComponent.cpp
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
-	src/framework/BaseTableModel.h
-	src/framework/BaseTemplateBinding.h
+	src/framework/BaseMenuObserver.h
+	src/framework/BaseMenuObserver.cpp
 	src/framework/CvarAccessor.h
 	src/framework/CvarDataVar.h
 	src/framework/DataVar.h
-	src/framework/DocumentObserver.h
-	src/framework/DocumentObserver.cpp
 	src/framework/ElementFinder.h
 	src/framework/ElementFinder.cpp
 	src/framework/EventListenerObject.h
 	src/framework/MenuDirectory.h
 	src/framework/MenuDirectory.cpp
+	src/framework/MenuEventListenerObject.h
+	src/framework/MenuEventListenerObject.cpp
 	src/framework/MenuPage.h
 	src/framework/MenuPage.cpp
+	src/framework/MenuRequests.h
 	src/framework/MenuStack.h
 	src/framework/MenuStack.cpp
+	src/game/CreateGame.h
+	src/game/CreateGame.cpp
+	src/game/Utils.h
+	src/game/Utils.cpp
 	src/menus/options/AvOptionsMenu.h
 	src/menus/options/AvOptionsMenu.cpp
 	src/menus/options/BaseOptionsMenu.h
@@ -46,6 +51,8 @@ set(SOURCES_UI
 	src/menus/options/KeysOptionsMenu.cpp
 	src/menus/options/MouseOptionsMenu.h
 	src/menus/options/MouseOptionsMenu.cpp
+	src/menus/CreateMultiplayerGameMenu.h
+	src/menus/CreateMultiplayerGameMenu.cpp
 	src/menus/CreditsMenu.h
 	src/menus/CreditsMenu.cpp
 	src/menus/MainMenu.h
@@ -53,10 +60,18 @@ set(SOURCES_UI
 	src/menus/MainMenu.cpp
 	src/menus/MultiplayerMenu.h
 	src/menus/MultiplayerMenu.cpp
+	src/menus/PauseMenu.h
+	src/menus/PauseMenu.cpp
+	src/menus/ServerConnectionScreen.h
+	src/menus/ServerConnectionScreen.cpp
+	src/models/CreateMultiplayerGamePageModel.h
+	src/models/CreateMultiplayerGamePageModel.cpp
 	src/models/CvarModel.h
 	src/models/CvarModel.cpp
 	src/models/KeyBindingModel.h
 	src/models/KeyBindingModel.cpp
+	src/models/ServerModel.h
+	src/models/ServerModel.cpp
 	src/models/VideoModesModel.h
 	src/models/VideoModesModel.cpp
 	src/rmlui/EventListenerImpl.h
@@ -80,6 +95,8 @@ set(SOURCES_UI
 	src/templatebindings/OptionsTabBarDataBinding.h
 	src/templatebindings/OptionsTabBarDataBinding.cpp
 	src/utils/InFilePtr.h
+	src/utils/InfoBuffer.h
+	src/utils/InfoBuffer.cpp
 	src/udll_int.h
 	src/udll_int.cpp
 	src/UIDebug.h

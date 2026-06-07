@@ -29,7 +29,8 @@ CVAR_DEFINE_AUTO(
 	sv_lan,
 	"0",
 	0,
-	"server is a lan server ( no heartbeat, no authentication, no non-class C addresses, 9999.0 rate, etc.");
+	"server is a lan server ( no heartbeat, no authentication, no non-class C addresses, 9999.0 rate, etc."
+);
 CVAR_DEFINE_AUTO(sv_lan_rate, "20000.0", 0, "rate for lan server");
 CVAR_DEFINE_AUTO(sv_nat, "0", 0, "enable NAT bypass for this server");
 CVAR_DEFINE_AUTO(sv_aim, "1", FCVAR_ARCHIVE | FCVAR_SERVER, "auto aiming option");
@@ -38,7 +39,8 @@ CVAR_DEFINE_AUTO(
 	sv_maxunlag,
 	"0.5",
 	0,
-	"max latency value which can be interpolated (by default ping should not exceed 500 units)");
+	"max latency value which can be interpolated (by default ping should not exceed 500 units)"
+);
 CVAR_DEFINE_AUTO(sv_unlagpush, "0.0", 0, "interpolation bias for unlag time");
 CVAR_DEFINE_AUTO(sv_unlagsamples, "1", 0, "max samples to interpolate");
 CVAR_DEFINE_AUTO(rcon_password, "", FCVAR_PROTECTED | FCVAR_PRIVILEGED, "remote connect password");
@@ -55,23 +57,27 @@ CVAR_DEFINE_AUTO(
 	sv_logrelay,
 	"0",
 	FCVAR_ARCHIVE,
-	"allow log messages from remote machines to be logged on this server");
+	"allow log messages from remote machines to be logged on this server"
+);
 CVAR_DEFINE_AUTO(
 	sv_newunit,
 	"0",
 	0,
-	"clear level-saves from previous SP game chapter to help keep .sav file size as minimum");
+	"clear level-saves from previous SP game chapter to help keep .sav file size as minimum"
+);
 CVAR_DEFINE_AUTO(
 	sv_clienttrace,
 	"1",
 	FCVAR_SERVER,
-	"0 = big box(Quake), 0.5 = halfsize, 1 = normal (100%), otherwise it's a scaling factor");
+	"0 = big box(Quake), 0.5 = halfsize, 1 = normal (100%), otherwise it's a scaling factor"
+);
 CVAR_DEFINE_AUTO(sv_timeout, "65", 0, "after this many seconds without a message from a client, the client is dropped");
 CVAR_DEFINE_AUTO(
 	sv_failuretime,
 	"0.5",
 	0,
-	"after this long without a packet from client, don't send any more until client starts sending again");
+	"after this long without a packet from client, don't send any more until client starts sending again"
+);
 CVAR_DEFINE_AUTO(sv_password, "", FCVAR_SERVER | FCVAR_PROTECTED, "server password for entry into multiplayer games");
 CVAR_DEFINE_AUTO(sv_proxies, "1", FCVAR_SERVER, "maximum count of allowed proxies for HLTV spectating");
 CVAR_DEFINE_AUTO(sv_send_logos, "1", 0, "send custom decal logo to other players so they can view his too");
@@ -89,6 +95,7 @@ CVAR_DEFINE_AUTO(sv_log_onefile, "0", FCVAR_ARCHIVE, "logs server information to
 CVAR_DEFINE_AUTO(sv_trace_messages, "0", FCVAR_LATCH, "enable server usermessages tracing (good for developers)");
 CVAR_DEFINE_AUTO(sv_master_response_timeout, "4", FCVAR_ARCHIVE, "master server heartbeat response timeout in seconds");
 CVAR_DEFINE_AUTO(sv_autosave, "1", FCVAR_ARCHIVE | FCVAR_SERVER | FCVAR_PRIVILEGED, "enable autosaving");
+CVAR_DEFINE_AUTO(sv_debug_log_resources, "0", 0, "Log server resources being precached");
 
 // game-related cvars
 CVAR_DEFINE_AUTO(mapcyclefile, "mapcycle.txt", 0, "name of multiplayer map cycle configuration file");
@@ -111,25 +118,29 @@ CVAR_DEFINE_AUTO(
 	sv_spectatormaxspeed,
 	"500",
 	FCVAR_MOVEVARS | FCVAR_UNLOGGED,
-	"maximum speed a spectator can accelerate in air");
+	"maximum speed a spectator can accelerate in air"
+);
 CVAR_DEFINE_AUTO(sv_accelerate, "10", FCVAR_MOVEVARS, "rate at which a player accelerates to sv_maxspeed");
 CVAR_DEFINE_AUTO(
 	sv_airaccelerate,
 	"10",
 	FCVAR_MOVEVARS,
-	"rate at which a player accelerates to sv_maxspeed while in the air");
+	"rate at which a player accelerates to sv_maxspeed while in the air"
+);
 CVAR_DEFINE_AUTO(
 	sv_wateraccelerate,
 	"10",
 	FCVAR_MOVEVARS,
-	"rate at which a player accelerates to sv_maxspeed while in the water");
+	"rate at which a player accelerates to sv_maxspeed while in the water"
+);
 CVAR_DEFINE_AUTO(sv_friction, "4", FCVAR_MOVEVARS, "how fast you slow down");
 CVAR_DEFINE(
 	sv_edgefriction,
 	"edgefriction",
 	"2",
 	FCVAR_MOVEVARS,
-	"how much you slow down when nearing a ledge you might fall off");
+	"how much you slow down when nearing a ledge you might fall off"
+);
 CVAR_DEFINE_AUTO(sv_waterfriction, "1", FCVAR_MOVEVARS, "how fast you slow down in water");
 CVAR_DEFINE_AUTO(sv_bounce, "1", FCVAR_MOVEVARS, "bounce factor for entities with MOVETYPE_BOUNCE");
 CVAR_DEFINE_AUTO(sv_stepsize, "18", FCVAR_MOVEVARS, "how high you and NPS's can step up");
@@ -141,17 +152,20 @@ CVAR_DEFINE_AUTO(
 	sv_skyname,
 	"desert",
 	FCVAR_MOVEVARS | FCVAR_UNLOGGED,
-	"skybox name (can be dynamically changed in-game)");
+	"skybox name (can be dynamically changed in-game)"
+);
 CVAR_DEFINE_AUTO(
 	sv_rollangle,
 	"0",
 	FCVAR_MOVEVARS | FCVAR_UNLOGGED | FCVAR_ARCHIVE,
-	"how much to tilt the view when strafing");
+	"how much to tilt the view when strafing"
+);
 CVAR_DEFINE_AUTO(
 	sv_rollspeed,
 	"200",
 	FCVAR_MOVEVARS | FCVAR_UNLOGGED,
-	"how much strafing is necessary to tilt the view");
+	"how much strafing is necessary to tilt the view"
+);
 CVAR_DEFINE_AUTO(sv_skycolor_r, "0", FCVAR_MOVEVARS | FCVAR_UNLOGGED, "skylight red component value");
 CVAR_DEFINE_AUTO(sv_skycolor_g, "0", FCVAR_MOVEVARS | FCVAR_UNLOGGED, "skylight green component value");
 CVAR_DEFINE_AUTO(sv_skycolor_b, "0", FCVAR_MOVEVARS | FCVAR_UNLOGGED, "skylight blue component value");
@@ -162,12 +176,14 @@ CVAR_DEFINE_AUTO(
 	sv_wateralpha,
 	"1",
 	FCVAR_MOVEVARS | FCVAR_UNLOGGED,
-	"world surfaces water transparency factor. 1.0 - solid, 0.0 - fully transparent");
+	"world surfaces water transparency factor. 1.0 - solid, 0.0 - fully transparent"
+);
 CVAR_DEFINE_AUTO(
 	sv_background_freeze,
 	"1",
 	FCVAR_ARCHIVE,
-	"freeze player movement on background maps (e.g. to prevent falling)");
+	"freeze player movement on background maps (e.g. to prevent falling)"
+);
 CVAR_DEFINE_AUTO(showtriggers, "0", FCVAR_LATCH, "debug cvar shows triggers");
 CVAR_DEFINE_AUTO(sv_airmove, "1", FCVAR_SERVER, "obsolete, compatibility issues");
 CVAR_DEFINE_AUTO(sv_version, "", FCVAR_READ_ONLY, "engine version string");
@@ -186,19 +202,22 @@ CVAR_DEFINE_AUTO(
 	sv_voicequality,
 	"3",
 	FCVAR_ARCHIVE | FCVAR_SERVER,
-	"voice chat quality level, from 0 to 5, higher is better");
+	"voice chat quality level, from 0 to 5, higher is better"
+);
 
 // enttools
 CVAR_DEFINE_AUTO(
 	sv_enttools_enable,
 	"0",
 	FCVAR_ARCHIVE | FCVAR_PROTECTED,
-	"enable powerful and dangerous entity tools");
+	"enable powerful and dangerous entity tools"
+);
 CVAR_DEFINE_AUTO(
 	sv_enttools_maxfire,
 	"5",
 	FCVAR_ARCHIVE | FCVAR_PROTECTED,
-	"limit ent_fire actions count to prevent flooding");
+	"limit ent_fire actions count to prevent flooding"
+);
 
 CVAR_DEFINE(public_server, "public", "0", 0, "change server type from private to public");
 
@@ -233,13 +252,18 @@ qboolean SV_HasActivePlayers(void)
 
 	// server inactive
 	if ( !svs.clients )
+	{
 		return false;
+	}
 
 	for ( i = 0; i < svs.maxclients; i++ )
 	{
 		if ( svs.clients[i].state == cs_spawned )
+		{
 			return true;
+		}
 	}
+
 	return false;
 }
 
@@ -254,25 +278,35 @@ send updates to client if changed
 void SV_UpdateMovevars(qboolean initialize)
 {
 	if ( sv.state == ss_dead )
+	{
 		return;
+	}
 
 	if ( !initialize && !host.movevars_changed )
+	{
 		return;
+	}
 
 	// check range
 	if ( sv_zmax.value < 256.0f )
+	{
 		Cvar_SetValue("sv_zmax", 256.0f);
+	}
 
 	// clamp it right
 	if ( FBitSet(host.features, ENGINE_WRITE_LARGE_COORD) )
 	{
 		if ( sv_zmax.value > 131070.0f )
+		{
 			Cvar_SetValue("sv_zmax", 131070.0f);
+		}
 	}
 	else
 	{
 		if ( sv_zmax.value > 32767.0f )
+		{
 			Cvar_SetValue("sv_zmax", 32767.0f);
+		}
 	}
 
 	svgame.movevars.gravity = sv_gravity.value;
@@ -305,10 +339,14 @@ void SV_UpdateMovevars(qboolean initialize)
 	svgame.movevars.entgravity = 1.0f;
 
 	if ( initialize )
+	{
 		return;  // too early
+	}
 
 	if ( MSG_WriteDeltaMovevars(&sv.reliable_datagram, &svgame.oldmovevars, &svgame.movevars) )
+	{
 		memcpy(&svgame.oldmovevars, &svgame.movevars, sizeof(movevars_t));  // oldstate changed
+	}
 
 	host.movevars_changed = false;
 }
@@ -328,24 +366,34 @@ void SV_CheckCmdTimes(void)
 	if ( sv_fps.value != 0.0f )
 	{
 		if ( sv_fps.value < MIN_FPS )
+		{
 			Cvar_SetValue("sv_fps", MIN_FPS);
+		}
 
 		if ( sv_fps.value > MAX_FPS )
+		{
 			Cvar_SetValue("sv_fps", MAX_FPS);
+		}
 	}
 
 	if ( Host_IsLocalGame() )
+	{
 		return;
+	}
 
 	if ( (host.realtime - lastreset) < 1.0 )
+	{
 		return;
+	}
 
 	lastreset = host.realtime;
 
 	for ( i = 0, cl = svs.clients; i < svs.maxclients; i++, cl++ )
 	{
 		if ( cl->state != cs_spawned )
+		{
 			continue;
+		}
 
 		if ( cl->connecttime == 0.0 )
 		{
@@ -395,7 +443,9 @@ void SV_ProcessFile(sv_client_t* cl, const char* filename)
 		next = resource->pNext;
 
 		if ( !memcmp(resource->rgucMD5_hash, md5, 16) )
+		{
 			break;
+		}
 	}
 
 	if ( resource == &cl->resourcesneeded )
@@ -409,7 +459,9 @@ void SV_ProcessFile(sv_client_t* cl, const char* filename)
 		Con_Printf(
 			"Downloaded %i bytes for purported %i byte file\n",
 			cl->netchan.tempbuffersize,
-			resource->nDownloadSize);
+			resource->nDownloadSize
+		);
+
 		return;
 	}
 
@@ -437,8 +489,11 @@ void SV_ProcessFile(sv_client_t* cl, const char* filename)
 				 -1,
 				 FCUST_FROMHPAK | FCUST_WIPEDATA | FCUST_IGNOREINIT,
 				 NULL,
-				 NULL) )
+				 NULL
+			 ) )
+		{
 			bError = true;
+		}
 	}
 	else
 	{
@@ -446,7 +501,9 @@ void SV_ProcessFile(sv_client_t* cl, const char* filename)
 	}
 
 	if ( bError )
+	{
 		Con_Printf(S_ERROR "parsing custom decal from %s\n", cl->name);
+	}
 }
 
 /*
@@ -480,7 +537,9 @@ void SV_ReadPackets(void)
 				c = Cmd_Argv(0);
 
 				if ( !Q_strcmp(c, "rcon") )
+				{
 					SV_RemoteCommand(net_from, &net_message);
+				}
 			}
 			else
 			{
@@ -601,12 +660,16 @@ void SV_CheckTimeouts(void)
 		if ( cl->state >= cs_connected )
 		{
 			if ( cl->edict && !FBitSet(cl->edict->v.flags, FL_SPECTATOR | FL_FAKECLIENT) )
+			{
 				numclients++;
+			}
 		}
 
 		// fake clients do not timeout
 		if ( FBitSet(cl->flags, FCL_FAKECLIENT) )
+		{
 			continue;
+		}
 
 		// FIXME: get rid of the zombie state
 		if ( cl->state == cs_zombie )
@@ -649,14 +712,19 @@ void SV_PrepWorldFrame(void)
 	for ( i = 1; i < svgame.numEntities; i++ )
 	{
 		ent = EDICT_NUM(i);
+
 		if ( ent->free )
+		{
 			continue;
+		}
 
 		ClearBits(ent->v.effects, EF_MUZZLEFLASH | EF_NOINTERP);
 	}
 
 	if ( svgame.physFuncs.pfnPrepWorldFrame != NULL )
+	{
 		svgame.physFuncs.pfnPrepWorldFrame();
+	}
 }
 
 /*
@@ -669,22 +737,33 @@ qboolean SV_IsSimulating(void)
 	if ( sv.background && SV_Active() && CL_Active() )
 	{
 		if ( CL_IsInConsole() )
+		{
 			return false;
+		}
+
 		return true;  // force simulating for background map
 	}
 
 	if ( Host_IsDedicated() )
+	{
 		return true;  // always active for dedicated servers
+	}
 
 	if ( !SV_HasActivePlayers() )
+	{
 		return false;
+	}
 
 	// allow to freeze everything in singleplayer
 	if ( svs.maxclients <= 1 && sv.playersonly )
+	{
 		return false;
+	}
 
 	if ( !sv.paused && CL_IsInGame() )
+	{
 		return true;
+	}
 
 	return false;
 }
@@ -699,7 +778,9 @@ qboolean SV_RunGameFrame(void)
 	sv.simulating = SV_IsSimulating();
 
 	if ( !sv.simulating )
+	{
 		return true;
+	}
 
 	if ( sv_fps.value != 0.0f )
 	{
@@ -825,7 +906,9 @@ void SV_AddToMaster(netadr_t from, sizebuf_t* msg)
 	{
 		Con_Printf(
 			S_WARN
-			"unexpected master server info query packet (too late? try increasing sv_master_response_timeout value)\n");
+			"unexpected master server info query packet (too late? try increasing sv_master_response_timeout value)\n"
+		);
+
 		return;
 	}
 
@@ -875,7 +958,9 @@ qboolean SV_ProcessUserAgent(netadr_t from, const char* useragent)
 	{
 		SV_RejectConnection(
 			from,
-			"This server does not allow\nconnect without input devices list.\nPlease update your engine.\n");
+			"This server does not allow\nconnect without input devices list.\nPlease update your engine.\n"
+		);
+
 		return false;
 	}
 
@@ -887,21 +972,27 @@ qboolean SV_ProcessUserAgent(netadr_t from, const char* useragent)
 		{
 			SV_RejectConnection(
 				from,
-				"This server does not allow touch\nDisable it (touch_enable 0)\nto play on this server\n");
+				"This server does not allow touch\nDisable it (touch_enable 0)\nto play on this server\n"
+			);
+
 			return false;
 		}
 		if ( !sv_allow_mouse->value && (input_devices & INPUT_DEVICE_MOUSE) )
 		{
 			SV_RejectConnection(
 				from,
-				"This server does not allow mouse\nDisable it(m_ignore 1)\nto play on this server\n");
+				"This server does not allow mouse\nDisable it(m_ignore 1)\nto play on this server\n"
+			);
+
 			return false;
 		}
 		if ( !sv_allow_joystick->value && (input_devices & INPUT_DEVICE_JOYSTICK) )
 		{
 			SV_RejectConnection(
 				from,
-				"This server does not allow joystick\nDisable it(joy_enable 0)\nto play on this server\n");
+				"This server does not allow joystick\nDisable it(joy_enable 0)\nto play on this server\n"
+			);
+
 			return false;
 		}
 		if ( !sv_allow_vr->value && (input_devices & INPUT_DEVICE_VR) )
@@ -950,7 +1041,8 @@ void SV_Init(void)
 		"sv_precache_meshes",
 		"1",
 		FCVAR_ARCHIVE,
-		"cache SOLID_CUSTOM meshes before level loading");  // Paranoia 2 cvar
+		"cache SOLID_CUSTOM meshes before level loading"
+	);  // Paranoia 2 cvar
 	Cvar_Get("servercfgfile", "server.cfg", 0, "name of dedicated server configuration file");
 	Cvar_Get("lservercfgfile", "listenserver.cfg", 0, "name of listen server configuration file");
 
@@ -1070,7 +1162,9 @@ void SV_Init(void)
 
 	// when we in developer-mode automatically turn cheats on
 	if ( host_developer.value )
+	{
 		Cvar_SetValue("sv_cheats", 1.0f);
+	}
 
 	MSG_Init(&net_message, "NetMessage", net_message_buffer, sizeof(net_message_buffer));
 
@@ -1082,7 +1176,8 @@ void SV_Init(void)
 		BuildPlatform_PlatformString(),
 		BuildPlatform_ArchitectureString(),
 		PROTOCOL_VERSION,
-		Q_buildnum());
+		Q_buildnum()
+	);
 
 	Cvar_FullSet("sv_version", versionString, FCVAR_READ_ONLY);
 
@@ -1124,7 +1219,9 @@ void SV_FinalMessage(const char* message, qboolean reconnect)
 			MSG_WriteOneBit(&msg, GameState->loadGame);
 		}
 		else
+		{
 			SV_BuildReconnect(&msg);
+		}
 	}
 	else
 	{
@@ -1134,12 +1231,20 @@ void SV_FinalMessage(const char* message, qboolean reconnect)
 	// send it twice
 	// stagger the packets to crutch operating system limited buffers
 	for ( i = 0, cl = svs.clients; i < svs.maxclients; i++, cl++ )
+	{
 		if ( cl->state >= cs_connected && !FBitSet(cl->flags, FCL_FAKECLIENT) )
+		{
 			Netchan_TransmitBits(&cl->netchan, MSG_GetNumBitsWritten(&msg), MSG_GetData(&msg));
+		}
+	}
 
 	for ( i = 0, cl = svs.clients; i < svs.maxclients; i++, cl++ )
+	{
 		if ( cl->state >= cs_connected && !FBitSet(cl->flags, FCL_FAKECLIENT) )
+		{
 			Netchan_TransmitBits(&cl->netchan, MSG_GetNumBitsWritten(&msg), MSG_GetData(&msg));
+		}
+	}
 }
 
 /*

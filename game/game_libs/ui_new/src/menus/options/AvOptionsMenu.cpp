@@ -29,7 +29,12 @@ static constexpr const char* const EVENT_APPLY_VIDEO_MODE = "applyVideoMode";
 AvOptionsMenu::AvOptionsMenu() :
 	BaseOptionsMenu("av_options_menu", "resource/rml/av_options_menu.rml"),
 	m_Modal(this, "apply_video_mode_modal"),
-	m_DocumentEventListener(this, &AvOptionsMenu::ProcessDocumentEvent),
+	m_VideoModes(this),
+	m_DocumentEventListener(
+		this,
+		&AvOptionsMenu::ProcessDocumentEvent,
+		{Rml::EventId::Show, Rml::EventId::Hide, Rml::EventId::Resize, Rml::EventId::Keydown}
+	),
 	m_CvarModel(this),
 	m_FullscreenCvar(CVAR_FULLSCREEN),
 	m_VideoModeCvar(CVAR_VID_MODE)
@@ -67,11 +72,7 @@ void AvOptionsMenu::Update(float currentTime)
 			if ( remaining != m_PageModel.modalTimeRemaining )
 			{
 				m_PageModel.modalTimeRemaining = remaining;
-
-				if ( m_ModelHandle )
-				{
-					m_ModelHandle.DirtyVariable(NAME_MODAL_TIME_REMAINING);
-				}
+				DirtyVariable(NAME_MODAL_TIME_REMAINING);
 			}
 		}
 		else
@@ -83,8 +84,7 @@ void AvOptionsMenu::Update(float currentTime)
 
 bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) || !m_VideoModes.SetUpDataBindings(constructor) ||
-		 !m_CvarModel.SetUpDataBindings(constructor) )
+	if ( !BaseOptionsMenu::OnSetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}
@@ -129,37 +129,23 @@ bool AvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& construc
 		return false;
 	}
 
-	m_ModelHandle = constructor.GetModelHandle();
 	return true;
 }
 
-void AvOptionsMenu::OnEndDocumentLoaded()
+void AvOptionsMenu::OnDocumentLoaded()
 {
-	MenuPage::OnEndDocumentLoaded();
-
-	Rml::ElementDocument* document = Document();
-
-	document->AddEventListener(Rml::EventId::Show, &m_DocumentEventListener);
-	document->AddEventListener(Rml::EventId::Hide, &m_DocumentEventListener);
-	document->AddEventListener(Rml::EventId::Resize, &m_DocumentEventListener);
-	document->AddEventListener(Rml::EventId::Keydown, &m_DocumentEventListener);
+	MenuPage::OnDocumentLoaded();
 
 	m_ResolutionDropdown =
-		dynamic_cast<Rml::ElementFormControlSelect*>(document->GetElementById("resolution_dropdown"));
+		dynamic_cast<Rml::ElementFormControlSelect*>(Document()->GetElementById("resolution_dropdown"));
 
 	ASSERT(m_ResolutionDropdown);
 }
 
-void AvOptionsMenu::OnBeginDocumentUnloaded()
+void AvOptionsMenu::OnDocumentUnloaded()
 {
-	Rml::ElementDocument* document = Document();
-
-	document->RemoveEventListener(Rml::EventId::Show, &m_DocumentEventListener);
-	document->RemoveEventListener(Rml::EventId::Hide, &m_DocumentEventListener);
-	document->RemoveEventListener(Rml::EventId::Resize, &m_DocumentEventListener);
-	document->RemoveEventListener(Rml::EventId::Keydown, &m_DocumentEventListener);
-
-	MenuPage::OnBeginDocumentUnloaded();
+	m_ResolutionDropdown = nullptr;
+	MenuPage::OnDocumentUnloaded();
 }
 
 void AvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
@@ -187,11 +173,7 @@ void AvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 		{
 			m_CvarModel.Refresh(NAME_CURRENT_WIDTH);
 			m_CvarModel.Refresh(NAME_CURRENT_HEIGHT);
-
-			if ( m_ModelHandle )
-			{
-				m_ModelHandle.DirtyVariable(NAME_VIDEO_MODE_INDEX);
-			}
+			DirtyVariable(NAME_VIDEO_MODE_INDEX);
 
 			// Update the resolution dropdown if it says "Current (width x height)".
 			// The width and height text displayed in the relevant option element is
@@ -232,22 +214,14 @@ void AvOptionsMenu::RefreshValuesFromCvars()
 	if ( m_PageModel.newWindowed != m_PageModel.currentWindowed )
 	{
 		m_PageModel.newWindowed = m_PageModel.currentWindowed;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_WINDOWED);
-		}
+		DirtyVariable(NAME_WINDOWED);
 	}
 
 	m_CvarModel.Refresh(NAME_CURRENT_WIDTH);
 	m_CvarModel.Refresh(NAME_CURRENT_HEIGHT);
 
 	m_PageModel.newVideoModeIndex = -1;
-
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_VIDEO_MODE_INDEX);
-	}
+	DirtyVariable(NAME_VIDEO_MODE_INDEX);
 
 	RefreshNeedsApply();
 }
@@ -269,11 +243,7 @@ void AvOptionsMenu::RefreshNeedsApply()
 	if ( m_PageModel.needsApply != desiredValue )
 	{
 		m_PageModel.needsApply = desiredValue;
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_NEEDS_APPLY);
-		}
+		DirtyVariable(NAME_NEEDS_APPLY);
 	}
 }
 
@@ -298,11 +268,7 @@ void AvOptionsMenu::HandleApplyVideoMode()
 		m_PageModel.showModal = true;
 		m_PageModel.modalExpiry = gpGlobals->time + 10.0f;
 		SetRequestPopOnEscapeKey(false);
-
-		if ( m_ModelHandle )
-		{
-			m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
-		}
+		DirtyVariable(NAME_SHOW_MODAL);
 	}
 	else
 	{
@@ -322,11 +288,8 @@ void AvOptionsMenu::HandleModalButton(bool keepNewVideoMode)
 	m_PageModel.modalTimeRemaining = 0;
 	SetRequestPopOnEscapeKey(true);
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_SHOW_MODAL);
-		m_ModelHandle.DirtyVariable(NAME_MODAL_TIME_REMAINING);
-	}
+	DirtyVariable(NAME_SHOW_MODAL);
+	DirtyVariable(NAME_MODAL_TIME_REMAINING);
 }
 
 void AvOptionsMenu::CreateRevertInfo()
@@ -381,10 +344,7 @@ void AvOptionsMenu::ApplyVideoSettings(int vidMode, bool windowed)
 
 	if ( vidMode >= 0 )
 	{
-		Rml::String setModeCmd;
-		Rml::FormatString(setModeCmd, "vid_setmode %d", vidMode);
-		gEngfuncs.pfnClientCmd(1, setModeCmd.c_str());
-
+		gEngfuncs.pfnClientCmd(true, Rml::CreateString("vid_setmode %d", vidMode).c_str());
 		m_VideoModeCvar.SetValue(vidMode);
 	}
 

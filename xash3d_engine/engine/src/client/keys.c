@@ -614,9 +614,14 @@ void Key_AddKeyCommands(int key, const char* kb, qboolean down)
 			{
 				// button commands add keynum as a param
 				if ( down )
+				{
 					Q_snprintf(cmd, sizeof(cmd), "%s %i\n", button, key);
+				}
 				else
+				{
 					Q_snprintf(cmd, sizeof(cmd), "-%s %i\n", button + 1, key);
+				}
+
 				Cbuf_AddText(cmd);
 			}
 			else if ( down )

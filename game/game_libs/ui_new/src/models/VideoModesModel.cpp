@@ -25,6 +25,11 @@ static bool ParseDimensions(const Rml::String& label, int& width, int& height)
 	return true;
 }
 
+VideoModesModel::VideoModesModel(BaseMenu* parentMenu) :
+	BaseMenuObserver(parentMenu)
+{
+}
+
 void VideoModesModel::Populate()
 {
 	m_VidModes.clear();
@@ -44,72 +49,12 @@ void VideoModesModel::Populate()
 		++modeIndex;
 	}
 
-	if ( m_ModelHandle )
-	{
-		m_ModelHandle.DirtyVariable(NAME_VIDEO_MODES);
-	}
-}
-
-bool VideoModesModel::SetUpDataBindings(Rml::DataModelConstructor& constructor)
-{
-	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
-
-	if ( !entryType )
-	{
-		return false;
-	}
-
-	if ( !entryType.RegisterMember(PROP_LABEL, &Entry::label) ||
-		 !entryType.RegisterMember(PROP_MODE_INDEX, &Entry::index) )
-	{
-		return false;
-	}
-
-	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_VIDEO_MODES, &m_VidModes) )
-	{
-		return false;
-	}
-
-	m_ModelHandle = constructor.GetModelHandle();
-	return true;
+	DirtyVariable(NAME_VIDEO_MODES);
 }
 
 size_t VideoModesModel::Rows() const
 {
 	return m_VidModes.size();
-}
-
-size_t VideoModesModel::Columns() const
-{
-	return TOTAL_COLUMNS;
-}
-
-Rml::String VideoModesModel::DisplayString(size_t row, size_t column) const
-{
-	if ( row >= m_VidModes.size() )
-	{
-		return Rml::String();
-	}
-
-	switch ( column )
-	{
-		case LABEL:
-		{
-			return m_VidModes[row].label;
-		}
-
-		case MODE_INDEX:
-		{
-			return std::to_string(m_VidModes[row].index);
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
-	return Rml::String();
 }
 
 int VideoModesModel::Width(size_t row) const
@@ -141,4 +86,27 @@ bool VideoModesModel::RowForDimensions(int width, int height, size_t& outRow) co
 	}
 
 	return false;
+}
+
+bool VideoModesModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	Rml::StructHandle<Entry> entryType = constructor.RegisterStruct<Entry>();
+
+	if ( !entryType )
+	{
+		return false;
+	}
+
+	if ( !entryType.RegisterMember(PROP_LABEL, &Entry::label) ||
+		 !entryType.RegisterMember(PROP_MODE_INDEX, &Entry::index) )
+	{
+		return false;
+	}
+
+	if ( !constructor.RegisterArray<std::vector<Entry>>() || !constructor.Bind(NAME_VIDEO_MODES, &m_VidModes) )
+	{
+		return false;
+	}
+
+	return true;
 }

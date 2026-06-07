@@ -90,7 +90,7 @@ typedef struct tagPOINT
 #endif
 
 #define HACKS_RELATED_HLMODS  // some HL-mods works differently under Xash and can't be fixed without some hacks at
-							  // least at current time
+// least at current time
 
 enum
 {
@@ -344,7 +344,8 @@ typedef struct host_parm_s
 	poolhandle_t mempool;  // static mempool for misc allocations
 	string finalmsg;  // server shutdown final message
 	string downloadfile;  // filename to be downloading
-	int downloadcount;  // how many files remain to downloading
+	int downloadcount;  // how many files remain to download
+	int totaldownloadcount;
 	char deferred_cmd[128];  // deferred commands
 	host_redirect_t rd;  // remote console
 
@@ -651,7 +652,7 @@ int COM_CheckParm(char* parm, char** ppnext);
 void pfnGetGameDir(char* szGetGameDir, int bufferSize);
 int pfnDecalIndex(const char* m);
 int pfnGetModelType(model_t* mod);
-int pfnIsMapValid(char* filename);
+qboolean pfnIsMapValid(const char* filename);
 void Con_Reportf(const char* szFmt, ...) _format(1);
 void Con_DPrintf(const char* fmt, ...) _format(1);
 void Con_Printf(const char* szFmt, ...) _format(1);

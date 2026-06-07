@@ -1,9 +1,10 @@
 #pragma once
 
 #include <unordered_map>
-#include <string>
 #include <memory>
+#include <RmlUi/Core/Types.h>
 #include "framework/BaseMenu.h"
+#include "UIDebug.h"
 
 namespace Rml
 {
@@ -15,6 +16,23 @@ struct MenuDirectoryEntry
 {
 	std::unique_ptr<BaseMenu> menuPtr;
 	Rml::ElementDocument* document = nullptr;
+
+	template<typename T>
+	T* MenuDynamicCast(bool assertSuccessInDebug = true) const
+	{
+		T* newPtr = dynamic_cast<T*>(menuPtr.get());
+
+#ifdef _DEBUG
+		if ( assertSuccessInDebug )
+		{
+			ASSERT(newPtr);
+		}
+#else
+		(void)assertSuccessInDebug;
+#endif
+
+		return newPtr;
+	}
 
 private:
 	friend class MenuDirectory;
@@ -33,7 +51,27 @@ public:
 
 	void LoadAllMenus(Rml::Context& context);
 
-	const MenuDirectoryEntry* GetMenuEntry(const std::string& name) const;
+	const MenuDirectoryEntry* GetMenuEntry(const Rml::String& name) const;
+
+	template<typename T>
+	T* GetMenu(const Rml::String& name, bool assertSuccessInDebug = true) const
+	{
+		const MenuDirectoryEntry* entry = GetMenuEntry(name);
+
+#ifdef _DEBUG
+		if ( assertSuccessInDebug )
+		{
+			ASSERT(entry);
+		}
+#endif
+
+		if ( !entry )
+		{
+			return nullptr;
+		}
+
+		return entry->MenuDynamicCast<T>(assertSuccessInDebug);
+	}
 
 private:
 	struct MapEntry
@@ -42,7 +80,7 @@ private:
 		bool loadedDocument = false;
 	};
 
-	using MenuMap = std::unordered_map<std::string, MapEntry>;
+	using MenuMap = std::unordered_map<Rml::String, MapEntry>;
 
 	template<typename T>
 	void AddToMap()

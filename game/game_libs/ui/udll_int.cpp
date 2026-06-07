@@ -75,7 +75,9 @@ static UI_EXTENDED_FUNCTIONS gExtendedTable = {
 	UI_ConnectionProgress_Connect,
 	UI_ConnectionProgress_ChangeLevel,
 	UI_ConnectionProgress_ParseServerInfo,
-	nullptr  // pfnStartupComplete
+	nullptr,  // pfnConnectionProgress_Connected
+	nullptr,  // pfnStartupComplete
+	nullptr,  // pfnUseConnectionUI
 };
 
 extern "C" EXPORT int

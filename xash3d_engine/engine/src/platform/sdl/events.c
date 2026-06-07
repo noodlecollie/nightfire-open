@@ -20,7 +20,6 @@ GNU General Public License for more details.
 #endif
 
 #include <SDL.h>
-#include <ctype.h>
 
 #include "common/common.h"
 #include "EnginePublicAPI/keydefs.h"
@@ -120,47 +119,660 @@ static qboolean SDLash_IsInstanceIDAGameController(SDL_JoystickID joyId)
 	// HACKHACK: if we're not initialized g_joy, then we're probably using gamecontroller api
 	// so return true
 	if ( !g_joy )
+	{
 		return true;
+	}
+
 	return false;
 #else
 	if ( SDL_GameControllerFromInstanceID(joyId) )
+	{
 		return true;
+	}
+
 	return false;
 #endif
 }
 
-/*
-=============
-SDLash_KeyEvent
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+static qboolean UseScanCodes()
+{
+	static convar_t* kb_input_mode = NULL;
+	static qboolean initialised = false;
 
-=============
-*/
-static void SDLash_KeyEvent(SDL_KeyboardEvent key)
+	if ( !initialised )
+	{
+		kb_input_mode = Cvar_FindVar("kb_input_mode");
+		initialised = true;
+	}
+
+	if ( !kb_input_mode )
+	{
+		// Cvar not found - assume default behaviour
+		// which was to use scan codes.
+		return true;
+	}
+
+	return kb_input_mode->value == 0.0f;
+}
+
+// Returns MAX_KEY_BINDINGS if no action should be taken.
+static int SDLKeySymToEngineKeyCode(int keySym, qboolean down)
+{
+	if ( (keySym >= SDLK_SPACE && keySym <= SDLK_AT) || (keySym >= SDLK_LEFTBRACKET && keySym <= SDLK_z) )
+	{
+		// These SDL key mappings match our own (ASCII).
+		// This covers all numbers and letters.
+		return keySym;
+	}
+
+	if ( keySym >= SDLK_F1 && keySym <= SDLK_F12 )
+	{
+		return keySym - SDLK_F1 + K_F1;
+	}
+
+	switch ( keySym )
+	{
+		case SDLK_RETURN:
+		{
+			return K_ENTER;
+		}
+
+		case SDLK_ESCAPE:
+		{
+			return K_ESCAPE;
+		}
+
+		case SDLK_BACKSPACE:
+		{
+			return K_BACKSPACE;
+		}
+
+		case SDLK_TAB:
+		{
+			return K_TAB;
+		}
+
+		case SDLK_PRINTSCREEN:
+		{
+			host.force_draw_version = true;
+			host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
+			return MAX_KEY_BINDINGS;
+		}
+
+		case SDLK_SCROLLLOCK:
+		{
+			return K_SCROLLOCK;
+		}
+
+		case SDLK_PAUSE:
+		{
+			return K_PAUSE;
+		}
+
+		case SDLK_INSERT:
+		{
+			return K_INS;
+		}
+
+		case SDLK_HOME:
+		{
+			return K_HOME;
+		}
+
+		case SDLK_PAGEUP:
+		{
+			return K_PGUP;
+		}
+
+		case SDLK_DELETE:
+		{
+			return KEY_DELETE;
+		}
+
+		case SDLK_END:
+		{
+			return K_END;
+		}
+
+		case SDLK_PAGEDOWN:
+		{
+			return K_PGDN;
+		}
+
+		case SDLK_RIGHT:
+		{
+			return K_RIGHTARROW;
+		}
+
+		case SDLK_LEFT:
+		{
+			return K_LEFTARROW;
+		}
+
+		case SDLK_DOWN:
+		{
+			return K_DOWNARROW;
+		}
+
+		case SDLK_UP:
+		{
+			return K_UPARROW;
+		}
+
+		case SDLK_KP_DIVIDE:
+		{
+			return K_KP_SLASH;
+		}
+
+		case SDLK_KP_MULTIPLY:
+		{
+			return K_KP_MUL;
+		}
+
+		case SDLK_KP_MINUS:
+		{
+			return K_KP_MINUS;
+		}
+
+		case SDLK_KP_PLUS:
+		{
+			return K_KP_PLUS;
+		}
+
+		case SDLK_KP_ENTER:
+		{
+			return K_KP_ENTER;
+		}
+
+		case SDLK_KP_1:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '1' : K_KP_END;
+		}
+
+		case SDLK_KP_2:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '2' : K_KP_DOWNARROW;
+		}
+
+		case SDLK_KP_3:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '3' : K_KP_PGDN;
+		}
+
+		case SDLK_KP_4:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '4' : K_KP_LEFTARROW;
+		}
+
+		case SDLK_KP_5:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '5' : K_KP_5;
+		}
+
+		case SDLK_KP_6:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '6' : K_KP_RIGHTARROW;
+		}
+
+		case SDLK_KP_7:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '7' : K_KP_HOME;
+		}
+
+		case SDLK_KP_8:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '8' : K_KP_UPARROW;
+		}
+
+		case SDLK_KP_9:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '9' : K_KP_PGUP;
+		}
+
+		case SDLK_KP_0:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '0' : K_KP_INS;
+		}
+
+		case SDLK_KP_PERIOD:
+		{
+			return K_KP_DEL;
+		}
+
+		case SDLK_LALT:
+		case SDLK_RALT:
+		{
+			return K_ALT;
+		}
+
+		case SDLK_LCTRL:
+		case SDLK_RCTRL:
+		{
+			return K_CTRL;
+		}
+
+		case SDLK_LSHIFT:
+		case SDLK_RSHIFT:
+		{
+			return K_SHIFT;
+		}
+
+		case SDLK_LGUI:
+		case SDLK_RGUI:
+		{
+			return K_WIN;
+		}
+
+		// don't console spam on known functional buttons, not used in engine
+		case SDLK_NUMLOCKCLEAR:
+		case SDLK_APPLICATION:
+		case SDLK_MUTE:
+		case SDLK_VOLUMEUP:
+		case SDLK_VOLUMEDOWN:
+		case SDLK_BRIGHTNESSUP:
+		case SDLK_BRIGHTNESSDOWN:
+		{
+			return MAX_KEY_BINDINGS;
+		}
+
+		case SDLK_UNKNOWN:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown key symbol\n");
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+
+		default:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown key symbol: %s = %i\n", SDL_GetKeyName(keySym), keySym);
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+	}
+}
+#endif
+
+// Returns MAX_KEY_BINDINGS if no action should be taken.
+static int SDLScanCodeToEngineKeyCode(int scanCode, qboolean down)
+{
+	if ( scanCode >= SDL_SCANCODE_A && scanCode <= SDL_SCANCODE_Z )
+	{
+		return scanCode - SDL_SCANCODE_A + 'a';
+	}
+
+	if ( scanCode >= SDL_SCANCODE_1 && scanCode <= SDL_SCANCODE_9 )
+	{
+		return scanCode - SDL_SCANCODE_1 + '1';
+	}
+
+	if ( scanCode >= SDL_SCANCODE_F1 && scanCode <= SDL_SCANCODE_F12 )
+	{
+		return scanCode - SDL_SCANCODE_F1 + K_F1;
+	}
+
+	switch ( scanCode )
+	{
+		case SDL_SCANCODE_GRAVE:
+		{
+			return '`';
+		}
+
+		case SDL_SCANCODE_0:
+		{
+			return '0';
+		}
+
+		case SDL_SCANCODE_BACKSLASH:
+		{
+			return '\\';
+		}
+
+		case SDL_SCANCODE_LEFTBRACKET:
+		{
+			return '[';
+		}
+
+		case SDL_SCANCODE_RIGHTBRACKET:
+		{
+			return ']';
+		}
+
+		case SDL_SCANCODE_EQUALS:
+		{
+			return '=';
+		}
+
+		case SDL_SCANCODE_MINUS:
+		{
+			return '-';
+		}
+
+		case SDL_SCANCODE_TAB:
+		{
+			return K_TAB;
+		}
+
+		case SDL_SCANCODE_RETURN:
+		{
+			return K_ENTER;
+		}
+
+		case SDL_SCANCODE_ESCAPE:
+		{
+			return K_ESCAPE;
+		}
+
+		case SDL_SCANCODE_SPACE:
+		{
+			return K_SPACE;
+		}
+
+		case SDL_SCANCODE_BACKSPACE:
+		{
+			return K_BACKSPACE;
+		}
+
+		case SDL_SCANCODE_UP:
+		{
+			return K_UPARROW;
+		}
+
+		case SDL_SCANCODE_LEFT:
+		{
+			return K_LEFTARROW;
+		}
+
+		case SDL_SCANCODE_DOWN:
+		{
+			return K_DOWNARROW;
+		}
+
+		case SDL_SCANCODE_RIGHT:
+		{
+			return K_RIGHTARROW;
+		}
+
+		case SDL_SCANCODE_LALT:
+		case SDL_SCANCODE_RALT:
+		{
+			return K_ALT;
+		}
+
+		case SDL_SCANCODE_LCTRL:
+		case SDL_SCANCODE_RCTRL:
+		{
+			return K_CTRL;
+		}
+
+		case SDL_SCANCODE_LSHIFT:
+		case SDL_SCANCODE_RSHIFT:
+		{
+			return K_SHIFT;
+		}
+
+		case SDL_SCANCODE_LGUI:
+		case SDL_SCANCODE_RGUI:
+		{
+			return K_WIN;
+		}
+
+		case SDL_SCANCODE_INSERT:
+		{
+			return K_INS;
+		}
+
+		case SDL_SCANCODE_DELETE:
+		{
+			return K_DEL;
+		}
+
+		case SDL_SCANCODE_PAGEDOWN:
+		{
+			return K_PGDN;
+		}
+
+		case SDL_SCANCODE_PAGEUP:
+		{
+			return K_PGUP;
+		}
+
+		case SDL_SCANCODE_HOME:
+		{
+			return K_HOME;
+		}
+
+		case SDL_SCANCODE_END:
+		{
+			return K_END;
+		}
+
+		case SDL_SCANCODE_KP_1:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '1' : K_KP_END;
+		}
+
+		case SDL_SCANCODE_KP_2:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '2' : K_KP_DOWNARROW;
+		}
+
+		case SDL_SCANCODE_KP_3:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '3' : K_KP_PGDN;
+		}
+
+		case SDL_SCANCODE_KP_4:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '4' : K_KP_LEFTARROW;
+		}
+
+		case SDL_SCANCODE_KP_5:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '5' : K_KP_5;
+		}
+
+		case SDL_SCANCODE_KP_6:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '6' : K_KP_RIGHTARROW;
+		}
+
+		case SDL_SCANCODE_KP_7:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '7' : K_KP_HOME;
+		}
+
+		case SDL_SCANCODE_KP_8:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '8' : K_KP_UPARROW;
+		}
+
+		case SDL_SCANCODE_KP_9:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '9' : K_KP_PGUP;
+		}
+
+		case SDL_SCANCODE_KP_0:
+		{
+			return (SDL_GetModState() & KMOD_NUM) ? '0' : K_KP_INS;
+		}
+
+		case SDL_SCANCODE_KP_PERIOD:
+		{
+			return K_KP_DEL;
+		}
+
+		case SDL_SCANCODE_KP_ENTER:
+		{
+			return K_KP_ENTER;
+		}
+
+		case SDL_SCANCODE_KP_PLUS:
+		{
+			return K_KP_PLUS;
+		}
+
+		case SDL_SCANCODE_KP_MINUS:
+		{
+			return K_KP_MINUS;
+		}
+
+		case SDL_SCANCODE_KP_DIVIDE:
+		{
+			return K_KP_SLASH;
+		}
+
+		case SDL_SCANCODE_KP_MULTIPLY:
+		{
+			return K_KP_MUL;
+		}
+
+		case SDL_SCANCODE_NUMLOCKCLEAR:
+		{
+			return K_KP_NUMLOCK;
+		}
+
+		case SDL_SCANCODE_CAPSLOCK:
+		{
+			return K_CAPSLOCK;
+		}
+
+		case SDL_SCANCODE_SLASH:
+		{
+			return '/';
+		}
+
+		case SDL_SCANCODE_PERIOD:
+		{
+			return '.';
+		}
+
+		case SDL_SCANCODE_SEMICOLON:
+		{
+			return ';';
+		}
+
+		case SDL_SCANCODE_APOSTROPHE:
+		{
+			return '\'';
+		}
+
+		case SDL_SCANCODE_COMMA:
+		{
+			return ',';
+		}
+
+		case SDL_SCANCODE_PRINTSCREEN:
+		{
+			host.force_draw_version = true;
+			host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
+			return MAX_KEY_BINDINGS;
+		}
+
+		case SDL_SCANCODE_PAUSE:
+		{
+			return K_PAUSE;
+		}
+
+		case SDL_SCANCODE_SCROLLLOCK:
+		{
+			return K_SCROLLOCK;
+		}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		// don't console spam on known functional buttons, not used in engine
+		case SDL_SCANCODE_MUTE:
+		case SDL_SCANCODE_VOLUMEUP:
+		case SDL_SCANCODE_VOLUMEDOWN:
+		case SDL_SCANCODE_BRIGHTNESSDOWN:
+		case SDL_SCANCODE_BRIGHTNESSUP:
+		case SDL_SCANCODE_APPLICATION:
+		{
+			return MAX_KEY_BINDINGS;
+		}
+#endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
+
+		case SDL_SCANCODE_UNKNOWN:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown scancode\n");
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+
+		default:
+		{
+			if ( down )
+			{
+				Con_Reportf("SDLash_KeyEvent: Unknown key: %s = %i\n", SDL_GetScancodeName(scanCode), scanCode);
+			}
+
+			return MAX_KEY_BINDINGS;
+		}
+	}
+}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+static void SDLash_KeyEvent_SDL2(SDL_KeyboardEvent key)
+{
+	qboolean down = key.state != SDL_RELEASED;
+	const qboolean useScanCodes = UseScanCodes();
+	int keynum = useScanCodes ? (int)key.keysym.scancode : (int)key.keysym.sym;
+
+	if ( SDL_IsTextInputActive() && down && cls.key_dest != key_game && (SDL_GetModState() & KMOD_CTRL) )
+	{
+		if ( useScanCodes && keynum >= SDL_SCANCODE_A && keynum <= SDL_SCANCODE_Z )
+		{
+			keynum = keynum - SDL_SCANCODE_A + 1;
+			CL_CharEvent(keynum);
+		}
+		else if ( !useScanCodes && keynum >= SDLK_a && keynum <= SDLK_z )
+		{
+			CL_CharEvent(keynum);
+		}
+
+		return;
+	}
+
+	int engineKey = useScanCodes ? SDLScanCodeToEngineKeyCode(keynum, down) : SDLKeySymToEngineKeyCode(keynum, down);
+
+	if ( engineKey != MAX_KEY_BINDINGS )
+	{
+		Key_Event(engineKey, down);
+	}
+}
+#else
+// SDL1 docs: https://documentation.help/SDL/sdlkeyboardevent.html
+static void SDLash_KeyEvent_SDL1(SDL_KeyboardEvent key)
 {
 	int down = key.state != SDL_RELEASED;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	int keynum = key.keysym.scancode;
-#else
 	int keynum = key.keysym.sym;
-#endif
-	qboolean numLock = (qboolean)(SDL_GetModState() & KMOD_NUM);
 
 	if ( SDL_IsTextInputActive() && down && cls.key_dest != key_game )
 	{
 		if ( SDL_GetModState() & KMOD_CTRL )
 		{
-			if ( keynum >= SDL_SCANCODE_A && keynum <= SDL_SCANCODE_Z )
+			if ( keynum >= SDLK_a && keynum <= SDLK_z )
 			{
-				keynum = keynum - SDL_SCANCODE_A + 1;
+				keynum = keynum - SDLK_a + 1;
 				CL_CharEvent(keynum);
 			}
 
 			return;
 		}
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
 		if ( keynum >= SDLK_KP0 && keynum <= SDLK_KP9 )
+		{
 			keynum -= SDLK_KP0 + '0';
+		}
 
 		if ( isprint(keynum) )
 		{
@@ -172,215 +784,31 @@ static void SDLash_KeyEvent(SDL_KeyboardEvent key)
 			CL_CharEvent(keynum);
 			return;
 		}
-#endif
 	}
 
-#define DECLARE_KEY_RANGE(min, max, repl) \
-	if ( keynum >= (min) && keynum <= (max) ) \
-	{ \
-		keynum = keynum - (min) + (repl); \
-	}
+	int engineKey = SDLKeySymToEngineKeyCode(keynum, down);
 
-	DECLARE_KEY_RANGE(SDL_SCANCODE_A, SDL_SCANCODE_Z, 'a')
-	else DECLARE_KEY_RANGE(SDL_SCANCODE_1, SDL_SCANCODE_9, '1') else DECLARE_KEY_RANGE(
-		SDL_SCANCODE_F1,
-		SDL_SCANCODE_F12,
-		K_F1
-	) else
+	if ( engineKey != MAX_KEY_BINDINGS )
 	{
-		switch ( keynum )
-		{
-			case SDL_SCANCODE_GRAVE:
-				keynum = '`';
-				break;
-			case SDL_SCANCODE_0:
-				keynum = '0';
-				break;
-			case SDL_SCANCODE_BACKSLASH:
-				keynum = '\\';
-				break;
-			case SDL_SCANCODE_LEFTBRACKET:
-				keynum = '[';
-				break;
-			case SDL_SCANCODE_RIGHTBRACKET:
-				keynum = ']';
-				break;
-			case SDL_SCANCODE_EQUALS:
-				keynum = '=';
-				break;
-			case SDL_SCANCODE_MINUS:
-				keynum = '-';
-				break;
-			case SDL_SCANCODE_TAB:
-				keynum = K_TAB;
-				break;
-			case SDL_SCANCODE_RETURN:
-				keynum = K_ENTER;
-				break;
-			case SDL_SCANCODE_ESCAPE:
-				keynum = K_ESCAPE;
-				break;
-			case SDL_SCANCODE_SPACE:
-				keynum = K_SPACE;
-				break;
-			case SDL_SCANCODE_BACKSPACE:
-				keynum = K_BACKSPACE;
-				break;
-			case SDL_SCANCODE_UP:
-				keynum = K_UPARROW;
-				break;
-			case SDL_SCANCODE_LEFT:
-				keynum = K_LEFTARROW;
-				break;
-			case SDL_SCANCODE_DOWN:
-				keynum = K_DOWNARROW;
-				break;
-			case SDL_SCANCODE_RIGHT:
-				keynum = K_RIGHTARROW;
-				break;
-			case SDL_SCANCODE_LALT:
-			case SDL_SCANCODE_RALT:
-				keynum = K_ALT;
-				break;
-			case SDL_SCANCODE_LCTRL:
-			case SDL_SCANCODE_RCTRL:
-				keynum = K_CTRL;
-				break;
-			case SDL_SCANCODE_LSHIFT:
-			case SDL_SCANCODE_RSHIFT:
-				keynum = K_SHIFT;
-				break;
-			case SDL_SCANCODE_LGUI:
-			case SDL_SCANCODE_RGUI:
-				keynum = K_WIN;
-				break;
-			case SDL_SCANCODE_INSERT:
-				keynum = K_INS;
-				break;
-			case SDL_SCANCODE_DELETE:
-				keynum = K_DEL;
-				break;
-			case SDL_SCANCODE_PAGEDOWN:
-				keynum = K_PGDN;
-				break;
-			case SDL_SCANCODE_PAGEUP:
-				keynum = K_PGUP;
-				break;
-			case SDL_SCANCODE_HOME:
-				keynum = K_HOME;
-				break;
-			case SDL_SCANCODE_END:
-				keynum = K_END;
-				break;
-			case SDL_SCANCODE_KP_1:
-				keynum = numLock ? '1' : K_KP_END;
-				break;
-			case SDL_SCANCODE_KP_2:
-				keynum = numLock ? '2' : K_KP_DOWNARROW;
-				break;
-			case SDL_SCANCODE_KP_3:
-				keynum = numLock ? '3' : K_KP_PGDN;
-				break;
-			case SDL_SCANCODE_KP_4:
-				keynum = numLock ? '4' : K_KP_LEFTARROW;
-				break;
-			case SDL_SCANCODE_KP_5:
-				keynum = numLock ? '5' : K_KP_5;
-				break;
-			case SDL_SCANCODE_KP_6:
-				keynum = numLock ? '6' : K_KP_RIGHTARROW;
-				break;
-			case SDL_SCANCODE_KP_7:
-				keynum = numLock ? '7' : K_KP_HOME;
-				break;
-			case SDL_SCANCODE_KP_8:
-				keynum = numLock ? '8' : K_KP_UPARROW;
-				break;
-			case SDL_SCANCODE_KP_9:
-				keynum = numLock ? '9' : K_KP_PGUP;
-				break;
-			case SDL_SCANCODE_KP_0:
-				keynum = numLock ? '0' : K_KP_INS;
-				break;
-			case SDL_SCANCODE_KP_PERIOD:
-				keynum = K_KP_DEL;
-				break;
-			case SDL_SCANCODE_KP_ENTER:
-				keynum = K_KP_ENTER;
-				break;
-			case SDL_SCANCODE_KP_PLUS:
-				keynum = K_KP_PLUS;
-				break;
-			case SDL_SCANCODE_KP_MINUS:
-				keynum = K_KP_MINUS;
-				break;
-			case SDL_SCANCODE_KP_DIVIDE:
-				keynum = K_KP_SLASH;
-				break;
-			case SDL_SCANCODE_KP_MULTIPLY:
-				keynum = '*';
-				break;
-			case SDL_SCANCODE_NUMLOCKCLEAR:
-				keynum = K_KP_NUMLOCK;
-				break;
-			case SDL_SCANCODE_CAPSLOCK:
-				keynum = K_CAPSLOCK;
-				break;
-			case SDL_SCANCODE_SLASH:
-				keynum = '/';
-				break;
-			case SDL_SCANCODE_PERIOD:
-				keynum = '.';
-				break;
-			case SDL_SCANCODE_SEMICOLON:
-				keynum = ';';
-				break;
-			case SDL_SCANCODE_APOSTROPHE:
-				keynum = '\'';
-				break;
-			case SDL_SCANCODE_COMMA:
-				keynum = ',';
-				break;
-			case SDL_SCANCODE_PRINTSCREEN:
-			{
-				host.force_draw_version = true;
-				host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
-				break;
-			}
-			case SDL_SCANCODE_PAUSE:
-				keynum = K_PAUSE;
-				break;
-			case SDL_SCANCODE_SCROLLLOCK:
-				keynum = K_SCROLLOCK;
-				break;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-			case SDL_SCANCODE_APPLICATION:
-				keynum = K_WIN;
-				break;  // (compose key) ???
-			// don't console spam on known functional buttons, not used in engine
-			case SDL_SCANCODE_MUTE:
-			case SDL_SCANCODE_VOLUMEUP:
-			case SDL_SCANCODE_VOLUMEDOWN:
-			case SDL_SCANCODE_BRIGHTNESSDOWN:
-			case SDL_SCANCODE_BRIGHTNESSUP:
-				return;
-#endif  // SDL_VERSION_ATLEAST( 2, 0, 0 )
-			case SDL_SCANCODE_UNKNOWN:
-			{
-				if ( down )
-					Con_Reportf("SDLash_KeyEvent: Unknown scancode\n");
-				return;
-			}
-			default:
-				if ( down )
-					Con_Reportf("SDLash_KeyEvent: Unknown key: %s = %i\n", SDL_GetScancodeName(keynum), keynum);
-				return;
-		}
+		Key_Event(engineKey, down);
 	}
+}
+#endif
 
-#undef DECLARE_KEY_RANGE
+// TODO: We probably actually want to split this function into two different versions.
+/*
+=============
+SDLash_KeyEvent
 
-	Key_Event(keynum, down);
+=============
+*/
+static void SDLash_KeyEvent(SDL_KeyboardEvent key)
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDLash_KeyEvent_SDL2(key);
+#else
+	SDLash_KeyEvent_SDL1(key);
+#endif
 }
 
 /*
@@ -395,43 +823,74 @@ static void SDLash_MouseEvent(SDL_MouseButtonEvent button)
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if ( button.which == SDL_TOUCH_MOUSEID )
+	{
 		return;
+	}
 #endif
 
 	if ( button.state == SDL_RELEASED )
+	{
 		down = 0;
+	}
 	else if ( button.clicks >= 2 )
+	{
 		down = 2;  // special state for double-click in UI
+	}
 	else
+	{
 		down = 1;
+	}
 
 	switch ( button.button )
 	{
 		case SDL_BUTTON_LEFT:
+		{
 			IN_MouseEvent(0, down);
 			break;
+		}
+
 		case SDL_BUTTON_RIGHT:
+		{
 			IN_MouseEvent(1, down);
 			break;
+		}
+
 		case SDL_BUTTON_MIDDLE:
+		{
 			IN_MouseEvent(2, down);
 			break;
+		}
+
 		case SDL_BUTTON_X1:
+		{
 			IN_MouseEvent(3, down);
 			break;
+		}
+
 		case SDL_BUTTON_X2:
+		{
 			IN_MouseEvent(4, down);
 			break;
+		}
+
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 		case SDL_BUTTON_WHEELUP:
+		{
 			IN_MWheelEvent(-1);
 			break;
+		}
+
 		case SDL_BUTTON_WHEELDOWN:
+		{
 			IN_MWheelEvent(1);
 			break;
+		}
 #endif  // ! SDL_VERSION_ATLEAST( 2, 0, 0 )
+
 		default:
+		{
 			Con_Printf("Unknown mouse button ID: %d\n", button.button);
+		}
 	}
 }
 
@@ -446,17 +905,24 @@ static void SDLash_InputEvent(SDL_TextInputEvent input)
 {
 	char* text;
 	VGui_ReportTextInput(input.text);
+
 	for ( text = input.text; *text; text++ )
 	{
 		int ch;
 
 		if ( !Q_stricmp(cl_charset->string, "utf-8") )
+		{
 			ch = (unsigned char)*text;
+		}
 		else
+		{
 			ch = Con_UtfProcessCharForce((unsigned char)*text);
+		}
 
 		if ( !ch )
+		{
 			continue;
+		}
 
 		CL_CharEvent(ch);
 	}
@@ -477,14 +943,19 @@ static void SDLash_ActiveEvent(int gain)
 		{
 			SNDDMA_Activate(true);
 		}
+
 		host.force_draw_version = true;
 		host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
+
 		if ( vid_fullscreen->value )
+		{
 			VID_SetMode();
+		}
 	}
 	else
 	{
 		host.status = HOST_NOFOCUS;
+
 		if ( cls.key_dest == key_game )
 		{
 			IN_DeactivateMouse();
@@ -494,6 +965,7 @@ static void SDLash_ActiveEvent(int gain)
 		{
 			SNDDMA_Activate(false);
 		}
+
 		host.force_draw_version = true;
 		host.force_draw_version_time = (float)host.realtime + 2.0f;
 		VID_RestoreScreenResolution();
@@ -507,15 +979,21 @@ static void SDLash_GameController_Add(int index)
 {
 	extern convar_t* joy_enable;  // private to input system
 	SDL_GameController* controller;
+
 	if ( !joy_enable->value )
+	{
 		return;
+	}
+
 	controller = SDL_GameControllerOpen(index);
+
 	if ( !controller )
 	{
 		Con_Reportf("Failed to open SDL GameController %d: %s\n", index, SDL_GetError());
 		SDL_ClearError();
 		return;
 	}
+
 #if SDL_VERSION_ATLEAST(2, 0, 6)
 	Con_Reportf(
 		"Added controller: %s (%i:%i:%i)\n",
@@ -527,8 +1005,11 @@ static void SDLash_GameController_Add(int index)
 #endif  // SDL_VERSION_ATLEAST( 2, 0, 6 )
 
 	++num_open_game_controllers;
+
 	if ( num_open_game_controllers == 1 )
+	{
 		Joy_AddEvent();
+	}
 }
 
 static void SDLash_GameController_Remove(SDL_JoystickID joystick_id)
@@ -538,8 +1019,11 @@ static void SDLash_GameController_Remove(SDL_JoystickID joystick_id)
 	// `Joy_RemoveEvent` sets `joy_found` to `0`.
 	// We only want to do this when all the game controllers have been removed.
 	--num_open_game_controllers;
+
 	if ( num_open_game_controllers == 0 )
+	{
 		Joy_RemoveEvent();
+	}
 }
 #endif
 
@@ -555,50 +1039,84 @@ static void SDLash_EventFilter(SDL_Event* event)
 	{
 		/* Mouse events */
 		case SDL_MOUSEMOTION:
+		{
 			if ( host.mouse_visible )
+			{
 				SDL_GetRelativeMouseState(NULL, NULL);
+			}
+
 			break;
+		}
 
 		case SDL_MOUSEBUTTONUP:
 		case SDL_MOUSEBUTTONDOWN:
+		{
 			SDLash_MouseEvent(event->button);
 			break;
+		}
 
 		/* Keyboard events */
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
+		{
 			SDLash_KeyEvent(event->key);
 			break;
+		}
 
 		/* Joystick events */
 		case SDL_JOYAXISMOTION:
+		{
 			if ( !SDLash_IsInstanceIDAGameController(event->jaxis.which) )
+			{
 				Joy_AxisMotionEvent(event->jaxis.axis, event->jaxis.value);
+			}
+
 			break;
+		}
 
 		case SDL_JOYBALLMOTION:
+		{
 			if ( !SDLash_IsInstanceIDAGameController(event->jball.which) )
+			{
 				Joy_BallMotionEvent(event->jball.ball, event->jball.xrel, event->jball.yrel);
+			}
+
 			break;
+		}
 
 		case SDL_JOYHATMOTION:
+		{
 			if ( !SDLash_IsInstanceIDAGameController(event->jhat.which) )
+			{
 				Joy_HatMotionEvent(event->jhat.hat, event->jhat.value);
+			}
+
 			break;
+		}
 
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
+		{
 			if ( !SDLash_IsInstanceIDAGameController(event->jbutton.which) )
+			{
 				Joy_ButtonEvent(event->jbutton.button, event->jbutton.state);
+			}
+
 			break;
+		}
 
 		case SDL_QUIT:
+		{
 			Sys_Quit(0);
 			break;
+		}
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		case SDL_MOUSEWHEEL:
+		{
 			IN_MWheelEvent(event->wheel.y);
 			break;
+		}
 
 		/* Touch events */
 		case SDL_FINGERDOWN:
@@ -610,13 +1128,21 @@ static void SDLash_EventFilter(SDL_Event* event)
 			float x, y, dx, dy;
 
 			if ( event->type == SDL_FINGERDOWN )
+			{
 				type = event_down;
+			}
 			else if ( event->type == SDL_FINGERUP )
+			{
 				type = event_up;
+			}
 			else if ( event->type == SDL_FINGERMOTION )
+			{
 				type = event_motion;
+			}
 			else
+			{
 				break;
+			}
 
 			/*
 			SDL sends coordinates in [0..width],[0..height] values
@@ -657,26 +1183,36 @@ static void SDLash_EventFilter(SDL_Event* event)
 
 		/* IME */
 		case SDL_TEXTINPUT:
+		{
 			SDLash_InputEvent(event->text);
 			break;
+		}
 
 		case SDL_JOYDEVICEADDED:
+		{
 			Joy_AddEvent();
 			break;
+		}
+
 		case SDL_JOYDEVICEREMOVED:
+		{
 			Joy_RemoveEvent();
 			break;
+		}
 
 		/* GameController API */
 		case SDL_CONTROLLERAXISMOTION:
 		{
 			if ( !Joy_IsActive() )
+			{
 				break;
+			}
 
 			if ( event->caxis.axis < SIZE_OF_ARRAY(SDLash_GameControllerAxisMapping) )
 			{
 				Joy_KnownAxisMotionEvent(SDLash_GameControllerAxisMapping[event->caxis.axis], event->caxis.value);
 			}
+
 			break;
 		}
 
@@ -684,75 +1220,116 @@ static void SDLash_EventFilter(SDL_Event* event)
 		case SDL_CONTROLLERBUTTONUP:
 		{
 			if ( !Joy_IsActive() )
+			{
 				break;
+			}
 
 			// TODO: Use joyinput funcs, for future multiple gamepads support
 			if ( event->cbutton.button < SIZE_OF_ARRAY(SDLash_GameControllerButtonMapping) )
 			{
 				Key_Event(SDLash_GameControllerButtonMapping[event->cbutton.button], event->cbutton.state);
 			}
+
 			break;
 		}
 
 		case SDL_CONTROLLERDEVICEADDED:
+		{
 			SDLash_GameController_Add(event->cdevice.which);
 			break;
+		}
 
 		case SDL_CONTROLLERDEVICEREMOVED:
+		{
 			SDLash_GameController_Remove(event->cdevice.which);
 			break;
+		}
 
 		case SDL_WINDOWEVENT:
+		{
 			if ( event->window.windowID != SDL_GetWindowID(host.hWnd) )
+			{
 				return;
+			}
 
 			if ( host.status == HOST_SHUTDOWN || Host_IsDedicated() )
+			{
 				break;  // no need to activate
+			}
 
 			switch ( event->window.event )
 			{
 				case SDL_WINDOWEVENT_MOVED:
+				{
 					if ( !vid_fullscreen->value )
 					{
 						Cvar_SetValue("_window_xpos", (float)event->window.data1);
 						Cvar_SetValue("_window_ypos", (float)event->window.data2);
 					}
 					break;
+				}
+
 				case SDL_WINDOWEVENT_MINIMIZED:
+				{
 					host.status = HOST_SLEEP;
 					VID_RestoreScreenResolution();
 					break;
+				}
+
 				case SDL_WINDOWEVENT_RESTORED:
+				{
 					host.status = HOST_FRAME;
 					host.force_draw_version = true;
 					host.force_draw_version_time = (float)(host.realtime + FORCE_DRAW_VERSION_TIME);
 					if ( vid_fullscreen->value )
+					{
 						VID_SetMode();
+					}
+
 					break;
+				}
+
 				case SDL_WINDOWEVENT_FOCUS_GAINED:
+				{
 					SDLash_ActiveEvent(true);
 					break;
+				}
+
 				case SDL_WINDOWEVENT_FOCUS_LOST:
+				{
 					SDLash_ActiveEvent(false);
 					break;
+				}
+
 				case SDL_WINDOWEVENT_RESIZED:
 				{
 					if ( vid_fullscreen->value )
+					{
 						break;
+					}
 
 					VID_SaveWindowSize(event->window.data1, event->window.data2);
 					break;
 				}
+
 				default:
+				{
 					break;
+				}
 			}
+		}
 #else
 		case SDL_VIDEORESIZE:
+		{
 			VID_SaveWindowSize(event->resize.w, event->resize.h);
 			break;
+		}
+
 		case SDL_ACTIVEEVENT:
+		{
 			SDLash_ActiveEvent(event->active.gain);
 			break;
+		}
 #endif
 	}
 }

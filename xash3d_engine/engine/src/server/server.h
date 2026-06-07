@@ -55,7 +55,7 @@ extern int SV_UPDATE_BACKUP;
 #else
 #define SV_IsValidEdict(e) SV_CheckEdict(e, __FILE__, __LINE__)
 #endif
-#define NUM_FOR_EDICT(e) ((int)((edict_t*)(e)-svgame.edicts))
+#define NUM_FOR_EDICT(e) ((int)((edict_t*)(e) - svgame.edicts))
 #define EDICT_NUM(num) SV_EdictNum(num)
 #define STRING(offset) SV_GetString(offset)
 #define ALLOC_STRING(str) SV_AllocString(str)
@@ -440,6 +440,7 @@ extern convar_t coop;
 extern convar_t sv_cheats;
 extern convar_t public_server;
 extern convar_t sv_nat;
+extern convar_t sv_debug_log_resources;
 
 extern convar_t* sv_pausable;  // allows pause in multiplayer
 extern convar_t* sv_check_errors;
@@ -612,7 +613,8 @@ int SV_BuildSoundMsg(
 	float attn,
 	int flags,
 	int pitch,
-	const vec3_t pos);
+	const vec3_t pos
+);
 qboolean SV_BoxInPVS(const vec3_t org, const vec3_t absmin, const vec3_t absmax);
 void SV_QueueChangeLevel(const char* level, const char* landname);
 void SV_WriteEntityPatch(const char* filename);
@@ -689,14 +691,16 @@ void SV_ClipMoveToEntity(
 	const vec3_t mins,
 	const vec3_t maxs,
 	const vec3_t end,
-	trace_t* trace);
+	trace_t* trace
+);
 void SV_CustomClipMoveToEntity(
 	edict_t* ent,
 	const vec3_t start,
 	const vec3_t mins,
 	const vec3_t maxs,
 	const vec3_t end,
-	trace_t* trace);
+	trace_t* trace
+);
 trace_t SV_TraceHull(edict_t* ent, int hullNum, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end);
 trace_t SV_Move(
 	const vec3_t start,
@@ -705,7 +709,8 @@ trace_t SV_Move(
 	const vec3_t end,
 	int type,
 	edict_t* e,
-	qboolean monsterclip);
+	qboolean monsterclip
+);
 trace_t SV_MoveNoEnts(const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int type, edict_t* e);
 trace_t SV_MoveNormal(const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int type, edict_t* e);
 texture_t* SV_TraceTexture(edict_t* ent, const vec3_t start, const vec3_t end);
