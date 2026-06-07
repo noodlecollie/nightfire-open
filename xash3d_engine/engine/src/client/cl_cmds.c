@@ -335,7 +335,10 @@ void CL_LevelShot_f(void)
 	string filename;
 
 	if ( cls.scrshot_request != scrshot_plaque )
+	{
 		return;
+	}
+
 	cls.scrshot_request = scrshot_inactive;
 
 	// check for exist
@@ -348,6 +351,7 @@ void CL_LevelShot_f(void)
 			cls.demoname,
 			refState.wideScreen ? "16x9" : "4x3"
 		);
+
 		Q_snprintf(filename, sizeof(filename), "%s.dem", cls.demoname);
 
 		// make sure that levelshot is newer than demo
@@ -378,6 +382,12 @@ void CL_LevelShot_f(void)
 	{
 		cls.scrshot_action = scrshot_inactive;  // disable - not needed
 	}
+}
+
+void CL_Thumbnail_f(void)
+{
+	Q_snprintf(cls.shotname, sizeof(cls.shotname), "thumbnails/%s.png", clgame.mapname);
+	cls.scrshot_action = scrshot_savegame;
 }
 
 /*

@@ -4042,7 +4042,8 @@ void CL_InitLocal(void)
 	Cmd_AddCommand("snapshot", CL_SnapShot_f, "takes a snapshot of the next rendered frame");
 	Cmd_AddCommand("envshot", CL_EnvShot_f, "takes a six-sides cubemap shot with specified name");
 	Cmd_AddCommand("skyshot", CL_SkyShot_f, "takes a six-sides envmap (skybox) shot with specified name");
-	Cmd_AddCommand("levelshot", CL_LevelShot_f, "same as \"screenshot\", used for create plaque images");
+	Cmd_AddCommand("levelshot", CL_LevelShot_f, "same as \"screenshot\", used for creating plaque images");
+	Cmd_AddCommand("thumbnail", CL_Thumbnail_f, "same as \"screenshot\", used for creating map thumbnails");
 	Cmd_AddCommand("saveshot", CL_SaveShot_f, "used for create save previews with LoadGame menu");
 
 	Cmd_AddCommand("connect", CL_Connect_f, "connect to a server by hostname");
