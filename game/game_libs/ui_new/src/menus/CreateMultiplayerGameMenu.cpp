@@ -14,7 +14,8 @@ CreateMultiplayerGameMenu::CreateMultiplayerGameMenu() :
 		&CreateMultiplayerGameMenu::ProcessInputFieldEvent,
 		"input[type='text'][validate]",
 		{Rml::EventId::Blur}
-	)
+	),
+	m_ShowListener(this, &CreateMultiplayerGameMenu::HandleShowEvent, {Rml::EventId::Show})
 {
 }
 
@@ -47,6 +48,11 @@ void CreateMultiplayerGameMenu::ProcessInputFieldEvent(Rml::Event& event)
 	}
 
 	m_PageModel.ValidateAndSubmit(dataValueAttr->Get<Rml::String>());
+}
+
+void CreateMultiplayerGameMenu::HandleShowEvent(Rml::Event&)
+{
+	m_PageModel.RefreshMapList();
 }
 
 void CreateMultiplayerGameMenu::HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)

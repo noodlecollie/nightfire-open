@@ -1310,7 +1310,7 @@ qboolean Cmd_CheckMapsList_R(qboolean fRefresh, qboolean onlyingamedir)
 	return false;
 }
 
-int GAME_EXPORT Cmd_CheckMapsList(int fRefresh)
+int GAME_EXPORT Cmd_CheckMapsList(qboolean fRefresh)
 {
 	return Cmd_CheckMapsList_R(fRefresh, true);
 }

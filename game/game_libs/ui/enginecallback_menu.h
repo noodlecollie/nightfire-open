@@ -339,7 +339,7 @@ public:
 	// gameinfo handlers
 	static inline int CreateMapsList(int iRefresh)
 	{
-		return engfuncs.pfnCreateMapsList(iRefresh);
+		return engfuncs.pfnCreateMapsList(iRefresh != 0);
 	}
 
 	static inline int ClientInGame(void)

@@ -855,7 +855,7 @@ qboolean Info_IsValid(const char* s);
 void Info_WriteVars(file_t* f);
 void Info_Print(const char* s);
 void Cmd_WriteVariables(file_t* f);
-int Cmd_CheckMapsList(int fRefresh);
+int Cmd_CheckMapsList(qboolean fRefresh);
 void COM_SetRandomSeed(int lSeed);
 int COM_RandomLong(int lMin, int lMax);
 float COM_RandomFloat(float fMin, float fMax);
