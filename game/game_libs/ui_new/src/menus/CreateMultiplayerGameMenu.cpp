@@ -4,6 +4,7 @@
 #include "menus/ServerConnectionScreen.h"
 
 static constexpr const char* const EVENT_CREATE_GAME = "createGame";
+static constexpr const char* const EVENT_SELECT_MAP = "selectMap";
 
 CreateMultiplayerGameMenu::CreateMultiplayerGameMenu() :
 	MenuPage("create_multiplayer_game_menu", "resource/rml/create_multiplayer_game_menu.rml"),
@@ -21,7 +22,8 @@ CreateMultiplayerGameMenu::CreateMultiplayerGameMenu() :
 
 bool CreateMultiplayerGameMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !constructor.BindEventCallback(EVENT_CREATE_GAME, &CreateMultiplayerGameMenu::HandleCreateGame, this) )
+	if ( !constructor.BindEventCallback(EVENT_CREATE_GAME, &CreateMultiplayerGameMenu::HandleCreateGame, this) ||
+		 !constructor.BindEventCallback(EVENT_SELECT_MAP, &CreateMultiplayerGameMenu::HandleSelectMap, this) )
 	{
 		return false;
 	}
@@ -55,11 +57,28 @@ void CreateMultiplayerGameMenu::HandleShowEvent(Rml::Event&)
 	m_PageModel.RefreshMapList();
 }
 
+void CreateMultiplayerGameMenu::HandleSelectMap(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
+{
+	if ( args.size() < 1 )
+	{
+		return;
+	}
+
+	m_PageModel.SetSelectedMap(args[0].Get<Rml::String>());
+}
+
 void CreateMultiplayerGameMenu::HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
 {
+	Rml::String mapName = m_PageModel.SelectedMap();
+
+	if ( mapName.empty() )
+	{
+		ASSERT(false);
+		return;
+	}
+
 	m_PageModel.SubmitAll();
 
-	// TODO: Hook up map name
-	CreateMultiplayerGame("dm_island");
+	CreateMultiplayerGame(mapName);
 	RequestCutStack(0, ServerConnectionScreen::NAME);
 }

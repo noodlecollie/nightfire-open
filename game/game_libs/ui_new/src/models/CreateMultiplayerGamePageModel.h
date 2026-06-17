@@ -18,6 +18,9 @@ public:
 
 	void RefreshMapList();
 
+	Rml::String SelectedMap() const;
+	void SetSelectedMap(Rml::String selectedMap);
+
 protected:
 	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
@@ -83,4 +86,5 @@ private:
 	ValidatorProxy m_MaxPlayers;
 
 	std::vector<MapEntry> m_Maps;
+	Rml::String m_SelectedMap;
 };

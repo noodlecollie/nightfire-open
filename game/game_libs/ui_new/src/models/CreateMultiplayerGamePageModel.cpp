@@ -11,6 +11,7 @@ static constexpr const char* const NAME_MAX_PLAYERS = "maxPlayers";
 static constexpr const char* const NAME_HAS_TIME_LIMIT = "hasTimeLimit";
 static constexpr const char* const NAME_HAS_SCORE_LIMIT = "hasScoreLimit";
 static constexpr const char* const NAME_MAPS = "maps";
+static constexpr const char* const NAME_SELECTED_MAP = "selectedMap";
 
 static constexpr const char* const PROP_MAP_FILE_NAME = "fileName";
 static constexpr const char* const PROP_MAP_DESCRIPTION = "description";
@@ -78,6 +79,23 @@ void CreateMultiplayerGamePageModel::RefreshMapList()
 	}
 
 	DirtyVariable(NAME_MAPS);
+
+	m_SelectedMap = (!m_Maps.empty()) ? m_Maps[0].fileName : Rml::String();
+	DirtyVariable(NAME_SELECTED_MAP);
+}
+
+Rml::String CreateMultiplayerGamePageModel::SelectedMap() const
+{
+	return m_SelectedMap;
+}
+
+void CreateMultiplayerGamePageModel::SetSelectedMap(Rml::String selectedMap)
+{
+	if ( m_SelectedMap != selectedMap )
+	{
+		m_SelectedMap = std::move(selectedMap);
+		DirtyVariable(NAME_SELECTED_MAP);
+	}
 }
 
 bool CreateMultiplayerGamePageModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -100,7 +118,7 @@ bool CreateMultiplayerGamePageModel::SetUpDataModelBindings(Rml::DataModelConstr
 		return false;
 	}
 
-	if ( !constructor.Bind(NAME_GAME_MODE, &m_GameMode) )
+	if ( !constructor.Bind(NAME_SELECTED_MAP, &m_SelectedMap) || !constructor.Bind(NAME_GAME_MODE, &m_GameMode) )
 	{
 		return false;
 	}
