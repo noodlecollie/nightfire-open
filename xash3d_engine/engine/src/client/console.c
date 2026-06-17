@@ -39,6 +39,7 @@ convar_t* con_charset;
 convar_t* con_fontscale;
 convar_t* con_fontnum;
 convar_t* con_color;
+convar_t* scr_draw_version_in_screenshots;
 
 static int g_codepage = 0;
 static qboolean g_utf8 = false;
@@ -908,6 +909,8 @@ void Con_Init(void)
 	con_fontscale = Cvar_Get("con_fontscale", "1.0", FCVAR_ARCHIVE, "scale font texture");
 	con_fontnum = Cvar_Get("con_fontnum", "-1", FCVAR_ARCHIVE, "console font number (0, 1 or 2), -1 for autoselect");
 	con_color = Cvar_Get("con_color", "240 180 24", FCVAR_ARCHIVE, "set a custom console color");
+	scr_draw_version_in_screenshots =
+		Cvar_Get("scr_draw_version_in_screenshots", "0", FCVAR_ARCHIVE, "draw engine version when taking a screenshot");
 
 	// init the console buffer
 	con.bufsize = CON_TEXTSIZE;
@@ -2204,7 +2207,11 @@ void Con_DrawVersion(void)
 	{
 		case scrshot_normal:
 		case scrshot_snapshot:
+#ifdef _DEBUG
 			draw_version = true;
+#else
+			draw_version = scr_draw_version_in_screenshots->value != 0.0f;
+#endif
 			break;
 		default:
 			break;
@@ -2213,11 +2220,15 @@ void Con_DrawVersion(void)
 	if ( !host.force_draw_version )
 	{
 		if ( (cls.key_dest != key_menu && !draw_version) || CL_IsDevOverviewMode() == 2 || net_graph->value )
+		{
 			return;
+		}
 	}
 
 	if ( host.force_draw_version_time > host.realtime )
+	{
 		host.force_draw_version = false;
+	}
 
 	if ( host.force_draw_version || draw_version )
 		Q_snprintf(

@@ -102,17 +102,20 @@ void GL_BackendEndFrame(void)
 				r_stats.c_world_polys,
 				r_stats.c_alias_polys,
 				r_stats.c_studio_polys,
-				r_stats.c_sprite_polys);
+				r_stats.c_sprite_polys
+			);
 			break;
 		case 2:
 			R_Speeds_Printf(
 				"visible leafs:\n%3i leafs\ncurrent leaf %3i\n",
 				r_stats.c_world_leafs,
-				curleaf - WORLDMODEL->leafs);
+				curleaf - WORLDMODEL->leafs
+			);
 			R_Speeds_Printf(
 				"ReciusiveWorldNode: %3lf secs\nDrawTextureChains %lf\n",
 				r_stats.t_world_node,
-				r_stats.t_world_draw);
+				r_stats.t_world_draw
+			);
 			break;
 		case 3:
 			Q_snprintf(
@@ -121,7 +124,8 @@ void GL_BackendEndFrame(void)
 				"%3i alias models drawn\n%3i studio models drawn\n%3i sprites drawn",
 				r_stats.c_alias_models_drawn,
 				r_stats.c_studio_models_drawn,
-				r_stats.c_sprite_models_drawn);
+				r_stats.c_sprite_models_drawn
+			);
 			break;
 		case 4:
 			Q_snprintf(
@@ -130,7 +134,8 @@ void GL_BackendEndFrame(void)
 				"%3i static entities\n%3i normal entities\n%3i server entities",
 				r_numStatics,
 				r_numEntities - r_numStatics,
-				(int)ENGINE_GET_PARM(PARM_NUMENTITIES));
+				(int)ENGINE_GET_PARM(PARM_NUMENTITIES)
+			);
 			break;
 		case 5:
 			Q_snprintf(
@@ -139,7 +144,8 @@ void GL_BackendEndFrame(void)
 				"%3i tempents\n%3i viewbeams\n%3i particles",
 				r_stats.c_active_tents_count,
 				r_stats.c_view_beams_count,
-				r_stats.c_particle_count);
+				r_stats.c_particle_count
+			);
 			break;
 	}
 

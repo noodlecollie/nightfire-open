@@ -114,12 +114,17 @@ static void R_EnvShot(const float* vieworg, const char* name, qboolean skyshot, 
 	static vec3_t viewPoint;
 
 	if ( !COM_CheckString(name) )
+	{
 		return;
+	}
 
 	if ( cls.scrshot_action != scrshot_inactive )
 	{
 		if ( cls.scrshot_action != scrshot_skyshot && cls.scrshot_action != scrshot_envshot )
+		{
 			Con_Printf(S_ERROR "R_%sShot: subsystem is busy, try for next frame.\n", skyshot ? "Sky" : "Env");
+		}
+
 		return;
 	}
 
@@ -136,9 +141,13 @@ static void R_EnvShot(const float* vieworg, const char* name, qboolean skyshot, 
 
 	// make request for envshot
 	if ( skyshot )
+	{
 		cls.scrshot_action = scrshot_skyshot;
+	}
 	else
+	{
 		cls.scrshot_action = scrshot_envshot;
+	}
 
 	// catch negative values
 	cls.envshot_viewsize = Q_max(0, shotsize);

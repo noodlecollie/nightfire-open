@@ -298,7 +298,7 @@ void VID_WriteOverviewScript(void)
 	FS_Printf(f, "\tORIGIN\t%.2f\t%.2f\t%.2f\n", ov->origin[0], ov->origin[1], ov->origin[2]);
 	FS_Printf(f, "\tROTATED\t%i\n", ov->rotated ? 1 : 0);
 	FS_Print(f, "}\n\nlayer\n{\n");
-	FS_Printf(f, "\tIMAGE\t\"overviews/%s.bmp\"\n", clgame.mapname);
+	FS_Printf(f, "\tIMAGE\t\"overviews/%s.png\"\n", clgame.mapname);
 	FS_Printf(f, "\tHEIGHT\t%.2f\n", ov->zFar);  // ???
 	FS_Print(f, "}\n");
 
@@ -349,7 +349,9 @@ void SCR_MakeScreenShot(void)
 		case scrshot_mapshot:
 			iRet = ref.dllFuncs.VID_ScreenShot(cls.shotname, VID_MAPSHOT);
 			if ( iRet )
+			{
 				VID_WriteOverviewScript();  // store overview script too
+			}
 			break;
 		case scrshot_inactive:
 			return;
@@ -360,10 +362,14 @@ void SCR_MakeScreenShot(void)
 	{
 		// snapshots don't writes message about image
 		if ( cls.scrshot_action != scrshot_snapshot )
+		{
 			Con_Reportf("Write %s\n", cls.shotname);
+		}
 	}
 	else
+	{
 		Con_Printf(S_ERROR "Unable to write %s\n", cls.shotname);
+	}
 
 	cls.envshot_vieworg = NULL;
 	cls.scrshot_action = scrshot_inactive;
@@ -385,7 +391,9 @@ void SCR_DrawPlaque(void)
 		ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
 		ref.dllFuncs.R_DrawStretchPic(0, 0, (float)refState.width, (float)refState.height, 0, 0, 1, 1, levelshot);
 		if ( !cl.background )
+		{
 			CL_DrawHUD(CL_LOADING);
+		}
 	}
 }
 

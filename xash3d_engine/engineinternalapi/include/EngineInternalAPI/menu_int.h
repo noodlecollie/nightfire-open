@@ -154,7 +154,7 @@ typedef struct ui_enginefuncs_s
 	void (*pfnGetGameDir)(char* szGetGameDir, int bufferSize);
 
 	// gameinfo handlers
-	int (*pfnCreateMapsList)(int fRefresh);
+	int (*pfnCreateMapsList)(qboolean fRefresh);
 	int (*pfnClientInGame)(void);
 	void (*pfnClientJoin)(const struct netadr_s adr);
 

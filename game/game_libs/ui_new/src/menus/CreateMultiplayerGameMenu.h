@@ -15,9 +15,12 @@ protected:
 
 private:
 	void ProcessInputFieldEvent(Rml::Event& event);
+	void HandleShowEvent(Rml::Event& event);
+	void HandleSelectMap(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args);
 	void HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 
 	MenuFrameDataBinding m_MenuFrameDataBinding;
 	CreateMultiplayerGamePageModel m_PageModel;
 	MenuEventListenerObject m_InputFieldEventListener;
+	MenuEventListenerObject m_ShowListener;
 };

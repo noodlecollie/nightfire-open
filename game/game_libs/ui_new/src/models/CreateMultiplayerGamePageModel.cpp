@@ -1,4 +1,5 @@
 #include "models/CreateMultiplayerGamePageModel.h"
+#include "game/Utils.h"
 #include <algorithm>
 
 static constexpr const char* const NAME_SCORE_LIMIT = "scoreLimit";
@@ -9,6 +10,11 @@ static constexpr const char* const NAME_GAME_MODE = "gameMode";
 static constexpr const char* const NAME_MAX_PLAYERS = "maxPlayers";
 static constexpr const char* const NAME_HAS_TIME_LIMIT = "hasTimeLimit";
 static constexpr const char* const NAME_HAS_SCORE_LIMIT = "hasScoreLimit";
+static constexpr const char* const NAME_MAPS = "maps";
+static constexpr const char* const NAME_SELECTED_MAP = "selectedMap";
+
+static constexpr const char* const PROP_MAP_FILE_NAME = "fileName";
+static constexpr const char* const PROP_MAP_DESCRIPTION = "description";
 
 static constexpr int TIME_LIMIT_MIN = 1;
 static constexpr int TIME_LIMIT_MAX = 10 * 60;
@@ -61,9 +67,58 @@ void CreateMultiplayerGamePageModel::SubmitAll()
 	m_CvarModel.WriteAll();
 }
 
+void CreateMultiplayerGamePageModel::RefreshMapList()
+{
+	std::vector<MapListing> maps = GetMapListings();
+	m_Maps.clear();
+	m_Maps.reserve(maps.size());
+
+	for ( const MapListing& listing : maps )
+	{
+		m_Maps.emplace_back(listing);
+	}
+
+	DirtyVariable(NAME_MAPS);
+
+	m_SelectedMap = (!m_Maps.empty()) ? m_Maps[0].fileName : Rml::String();
+	DirtyVariable(NAME_SELECTED_MAP);
+}
+
+Rml::String CreateMultiplayerGamePageModel::SelectedMap() const
+{
+	return m_SelectedMap;
+}
+
+void CreateMultiplayerGamePageModel::SetSelectedMap(Rml::String selectedMap)
+{
+	if ( m_SelectedMap != selectedMap )
+	{
+		m_SelectedMap = std::move(selectedMap);
+		DirtyVariable(NAME_SELECTED_MAP);
+	}
+}
+
 bool CreateMultiplayerGamePageModel::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !constructor.Bind(NAME_GAME_MODE, &m_GameMode) )
+	Rml::StructHandle<MapEntry> entryType = constructor.RegisterStruct<MapEntry>();
+
+	if ( !entryType )
+	{
+		return false;
+	}
+
+	if ( !entryType.RegisterMember(PROP_MAP_FILE_NAME, &MapEntry::fileName) ||
+		 !entryType.RegisterMember(PROP_MAP_DESCRIPTION, &MapEntry::description) )
+	{
+		return false;
+	}
+
+	if ( !constructor.RegisterArray<std::vector<MapEntry>>() || !constructor.Bind(NAME_MAPS, &m_Maps) )
+	{
+		return false;
+	}
+
+	if ( !constructor.Bind(NAME_SELECTED_MAP, &m_SelectedMap) || !constructor.Bind(NAME_GAME_MODE, &m_GameMode) )
 	{
 		return false;
 	}

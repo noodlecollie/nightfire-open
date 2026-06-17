@@ -174,8 +174,8 @@ typedef struct
 {
 	int servercount;  // server identification for prespawns
 	int validsequence;  // this is the sequence number of the last good
-						// world snapshot/update we got.  If this is 0, we can't
-						// render a frame yet
+	// world snapshot/update we got.  If this is 0, we can't
+	// render a frame yet
 	int parsecount;  // server message counter
 	int parsecountmod;  // modulo with network window
 
@@ -204,10 +204,10 @@ typedef struct
 	local_state_t predicted_frames[MULTIPLAYER_BACKUP];  // local client state
 
 	double time;  // this is the time value that the client
-				  // is rendering at.  always <= cls.realtime
-				  // a lerp point for other data
+	// is rendering at.  always <= cls.realtime
+	// a lerp point for other data
 	double oldtime;  // previous cl.time, time-oldtime is used
-					 // to decay light values and smooth step ups
+	// to decay light values and smooth step ups
 	double timedelta;  // floating delta between two updates
 
 	char serverinfo[MAX_SERVERINFO_STRING];
@@ -533,8 +533,8 @@ typedef struct
 
 	// screen rendering information
 	float disable_screen;  // showing loading plaque between levels
-						   // or changing rendering dlls
-						   // if time gets > 30 seconds ahead, break it
+	// or changing rendering dlls
+	// if time gets > 30 seconds ahead, break it
 	qboolean draw_changelevel;  // draw changelevel image 'Loading...'
 
 	keydest_t key_dest;
@@ -545,8 +545,8 @@ typedef struct
 
 	int signon;  // 0 to SIGNONS, for the signon sequence.
 	int quakePort;  // a 16 bit value that allows quake servers
-					// to work around address translating routers
-					// g-cont. this port allow many copies of engine in multiplayer game
+	// to work around address translating routers
+	// g-cont. this port allow many copies of engine in multiplayer game
 	// connection information
 	char servername[MAX_QPATH];  // name of server from original connect
 	double connect_time;  // for connection retransmits
@@ -721,6 +721,7 @@ void CL_EnvShot_f(void);
 void CL_SkyShot_f(void);
 void CL_SaveShot_f(void);
 void CL_LevelShot_f(void);
+void CL_Thumbnail_f(void);
 void CL_SetSky_f(void);
 void SCR_Viewpos_f(void);
 void CL_WavePlayLen_f(void);

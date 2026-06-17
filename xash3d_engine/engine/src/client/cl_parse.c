@@ -1058,7 +1058,7 @@ void CL_ParseServerData(sizebuf_t* msg, qboolean legacy)
 
 	if ( (cl_allow_levelshots->value && !cls.changelevel) || cl.background )
 	{
-		if ( !FS_FileExists(va("%s.bmp", cl_levelshot_name->string), true) )
+		if ( !FS_FileExists(va("%s.png", cl_levelshot_name->string), true) )
 		{
 			Cvar_Set("cl_levelshot_name", "*black");  // render a black screen
 		}

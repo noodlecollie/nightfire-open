@@ -2,6 +2,7 @@
 
 #include "models/CvarModel.h"
 #include "framework/BaseMenuObserver.h"
+#include "game/Utils.h"
 
 #include <limits>
 
@@ -14,6 +15,11 @@ public:
 
 	void ValidateAndSubmit(const Rml::String& variableName);
 	void SubmitAll();
+
+	void RefreshMapList();
+
+	Rml::String SelectedMap() const;
+	void SetSelectedMap(Rml::String selectedMap);
 
 protected:
 	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
@@ -54,6 +60,22 @@ private:
 		Rml::String m_BufferedValueName;
 	};
 
+	struct MapEntry
+	{
+		Rml::String fileName;
+		Rml::String description;
+
+		MapEntry() = default;
+
+		// To keep this internal and independent from the utils function,
+		// we just make a copy of the utils struct data.
+		explicit MapEntry(const MapListing& listing) :
+			fileName(listing.fileName),
+			description(listing.description)
+		{
+		}
+	};
+
 	static constexpr const char* const GAME_MODE_DEATHMATCH = "dm";
 
 	CvarModel m_CvarModel;
@@ -62,4 +84,7 @@ private:
 	ValidatorProxy m_TimeLimit;
 	ValidatorProxy m_ScoreLimit;
 	ValidatorProxy m_MaxPlayers;
+
+	std::vector<MapEntry> m_Maps;
+	Rml::String m_SelectedMap;
 };
