@@ -12,9 +12,4 @@ protected:
 	void ComponentUnload() override;
 
 private:
-	struct Elements
-	{
-	};
-
-	Elements m_Elems {};
 };
