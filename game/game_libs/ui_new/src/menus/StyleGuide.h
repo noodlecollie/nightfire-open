@@ -8,4 +8,10 @@ class StyleGuide : public MenuPage
 {
 public:
 	StyleGuide();
+
+protected:
+	void OnDocumentLoaded() override;
+
+private:
+	MenuFrameDataBinding m_MenuFrameDataBinding;
 };
