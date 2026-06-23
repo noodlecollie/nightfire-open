@@ -66,7 +66,10 @@ void RmlUiBackend::Initialise()
 		return;
 	}
 
+#ifdef _DEBUG
 	Rml::Debugger::Initialise(m_RmlContext);
+#endif
+
 	m_MenuDirectory.LoadAllMenus(*m_RmlContext);
 
 	m_Initialised = true;
@@ -585,7 +588,9 @@ void RmlUiBackend::Render()
 
 void RmlUiBackend::ReleaseResources()
 {
+#ifdef _DEBUG
 	Rml::Debugger::Shutdown();
+#endif
 
 	if ( m_RmlContext )
 	{
