@@ -1,6 +1,7 @@
 #include "framework/MenuDirectory.h"
 #include "framework/BaseMenu.h"
 #include <RmlUi/Core/Context.h>
+#include <RmlUi/Core/ElementDocument.h>
 #include "UIDebug.h"
 
 #include "menus/MainMenu.h"
@@ -17,6 +18,14 @@
 
 void MenuDirectory::Populate()
 {
+	ASSERT(!m_Context);
+
+	// We cannot already be set up.
+	if ( m_Context )
+	{
+		return;
+	}
+
 	m_MenuMap.clear();
 
 	AddToMap<MainMenu>();
@@ -32,23 +41,38 @@ void MenuDirectory::Populate()
 	AddToMap<StyleGuide>();
 }
 
-void MenuDirectory::Clear()
+void MenuDirectory::AcquireContext(Rml::Context* context)
 {
-	m_MenuMap.clear();
+	ReleaseContext();
+
+	m_Context = context;
+
+	if ( !m_Context )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
+	{
+		SetUpDataBindings(it->second);
+	}
+
+	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
+	{
+		LoadMenuRml(it->second);
+	}
 }
 
-void MenuDirectory::LoadAllMenus(Rml::Context& context)
+void MenuDirectory::ReleaseContext()
 {
-	// Do two passes, one for each operation, to make the logic clear.
-	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
+	if ( !m_Context )
 	{
-		SetUpDataBindings(it->second, context);
+		return;
 	}
 
-	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
-	{
-		LoadMenuRml(it->second, context);
-	}
+	UnloadAllMenus();
+	m_Context = nullptr;
 }
 
 const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const Rml::String& name) const
@@ -57,16 +81,50 @@ const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const Rml::String& name) c
 	return it != m_MenuMap.end() ? &it->second.menuEntry : nullptr;
 }
 
+void MenuDirectory::ReloadMenu(const Rml::String& name, bool reloadModel)
+{
+	ASSERT(m_Context);
+
+	if ( !m_Context )
+	{
+		return;
+	}
+
+	MenuMap::iterator it = m_MenuMap.find(name);
+
+	if ( it == m_MenuMap.end() )
+	{
+		return;
+	}
+
+	MapEntry& entry = it->second;
+	const bool wasVisible = entry.menuEntry.document && entry.menuEntry.document->IsVisible();
+
+	UnloadMenu(entry, reloadModel);
+
+	if ( reloadModel )
+	{
+		SetUpDataBindings(entry);
+	}
+
+	LoadMenuRml(entry);
+
+	if ( wasVisible && entry.menuEntry.document )
+	{
+		entry.menuEntry.document->Show();
+	}
+}
+
 void MenuDirectory::AddToMap(BaseMenu* newMenu)
 {
 	m_MenuMap.insert({Rml::String(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
 }
 
-void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
+void MenuDirectory::SetUpDataBindings(MapEntry& entry)
 {
-	Rml::String dataModelName = entry.menuEntry.menuPtr->Name() + Rml::String("_model");
+	ASSERT(m_Context);
 
-	Rml::DataModelConstructor constructor = context.CreateDataModel(dataModelName);
+	Rml::DataModelConstructor constructor = m_Context->CreateDataModel(entry.menuEntry.dataModelName);
 	bool success = false;
 
 	if ( constructor )
@@ -89,18 +147,18 @@ void MenuDirectory::SetUpDataBindings(MapEntry& entry, Rml::Context& context)
 		Rml::Log::Message(
 			Rml::Log::Type::LT_ERROR,
 			"Failed to construct data model \"%s\" for menu %s",
-			dataModelName.c_str(),
+			entry.menuEntry.dataModelName.c_str(),
 			entry.menuEntry.menuPtr->Name()
 		);
 	}
 
 	if ( !success )
 	{
-		context.RemoveDataModel(dataModelName);
+		m_Context->RemoveDataModel(entry.menuEntry.dataModelName);
 	}
 }
 
-void MenuDirectory::LoadMenuRml(MapEntry& entry, Rml::Context& context)
+void MenuDirectory::LoadMenuRml(MapEntry& entry)
 {
 	static const char* FALLBACK_RML =
 		"<rml>\n"
@@ -121,8 +179,10 @@ void MenuDirectory::LoadMenuRml(MapEntry& entry, Rml::Context& context)
 		"</body>\n"
 		"</rml>\n";
 
+	ASSERT(m_Context);
+
 	entry.loadedDocument = false;
-	entry.menuEntry.document = context.LoadDocument(entry.menuEntry.menuPtr->RmlFilePath());
+	entry.menuEntry.document = m_Context->LoadDocument(entry.menuEntry.menuPtr->RmlFilePath());
 
 	if ( entry.menuEntry.document )
 	{
@@ -138,17 +198,37 @@ void MenuDirectory::LoadMenuRml(MapEntry& entry, Rml::Context& context)
 		entry.menuEntry.menuPtr->Name()
 	);
 
-	entry.menuEntry.document = context.LoadDocumentFromMemory(FALLBACK_RML);
+	entry.menuEntry.document = m_Context->LoadDocumentFromMemory(FALLBACK_RML);
 	ASSERT(entry.menuEntry.document);
 }
 
-void MenuDirectory::UnloadAllDocuments()
+void MenuDirectory::UnloadMenu(MapEntry& entry, bool unloadModel)
 {
+	ASSERT(m_Context);
+
+	if ( entry.loadedDocument )
+	{
+		ASSERT(entry.menuEntry.document);
+
+		entry.menuEntry.menuPtr->DocumentUnloaded();
+		m_Context->UnloadDocument(entry.menuEntry.document);
+
+		entry.menuEntry.document = nullptr;
+		entry.loadedDocument = false;
+	}
+
+	if ( unloadModel )
+	{
+		m_Context->RemoveDataModel(entry.menuEntry.dataModelName);
+	}
+}
+
+void MenuDirectory::UnloadAllMenus()
+{
+	ASSERT(m_Context);
+
 	for ( MenuMap::iterator it = m_MenuMap.begin(); it != m_MenuMap.end(); ++it )
 	{
-		if ( it->second.loadedDocument )
-		{
-			it->second.menuEntry.menuPtr->DocumentUnloaded();
-		}
+		UnloadMenu(it->second, true);
 	}
 }
