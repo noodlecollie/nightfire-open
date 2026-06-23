@@ -1,6 +1,6 @@
 #include "game/Utils.h"
 #include <RmlUi/Core/Log.h>
-#include "Utils/InFilePtr.h"
+#include "utils/InFilePtr.h"
 #include "udll_int.h"
 
 Rml::String EscapeStringForConsoleCommand(Rml::String input)
