@@ -85,6 +85,7 @@ private:
 
 	void HandleMenuPushCommand();
 	void HandleMenuPopCommand();
+	void ReloadCurrentMenu();
 
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;

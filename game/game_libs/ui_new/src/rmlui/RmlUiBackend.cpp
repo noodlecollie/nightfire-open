@@ -70,8 +70,7 @@ void RmlUiBackend::Initialise()
 	Rml::Debugger::Initialise(m_RmlContext);
 #endif
 
-	m_MenuDirectory.LoadAllMenus(*m_RmlContext);
-
+	m_MenuDirectory.AcquireContext(m_RmlContext);
 	m_Initialised = true;
 }
 
@@ -247,12 +246,18 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 
 	Rml::Input::KeyIdentifier rmlKey = EngineKeyToRmlKey(key);
 
-	// TODO: A better solution for this?
+	// TODO: A better solution for these bindings
 #ifdef _DEBUG
 	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F1 && pressed &&
 		 (m_Modifiers & (Rml::Input::KeyModifier::KM_CTRL | Rml::Input::KeyModifier::KM_SHIFT)) )
 	{
 		Rml::Debugger::SetVisible(!Rml::Debugger::IsVisible());
+	}
+
+	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F2 && pressed &&
+		 (m_Modifiers & (Rml::Input::KeyModifier::KM_CTRL | Rml::Input::KeyModifier::KM_SHIFT)) )
+	{
+		ReloadCurrentMenu();
 	}
 #endif
 
@@ -592,14 +597,14 @@ void RmlUiBackend::ReleaseResources()
 	Rml::Debugger::Shutdown();
 #endif
 
+	m_MenuDirectory.ReleaseContext();
+
 	if ( m_RmlContext )
 	{
-		m_RmlContext->UnloadAllDocuments();
 		Rml::RemoveContext(CONTEXT_NAME);
 		m_RmlContext = nullptr;
 	}
 
-	m_MenuDirectory.Clear();
 	Rml::ReleaseFontResources();
 }
 
@@ -694,4 +699,19 @@ void RmlUiBackend::HandleMenuPopCommand()
 	}
 
 	m_MenuStack.CommandPopMenu(replacementMenuName);
+}
+
+void RmlUiBackend::ReloadCurrentMenu()
+{
+	const MenuDirectoryEntry* entry = m_MenuStack.Top();
+
+	if ( !entry || !entry->menuPtr )
+	{
+		return;
+	}
+
+	const Rml::String menuName = entry->menuPtr->Name();
+
+	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Reloading menu: %s", menuName.c_str());
+	m_MenuDirectory.ReloadMenu(menuName);
 }
