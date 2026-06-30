@@ -5,7 +5,7 @@
 
 MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
 	BaseMenuObserver(parentMenu),
-	m_Tooltip {"footerTooltip", ""},
+	m_Tooltip {"mainMenuTooltip", ""},
 	m_Title {"frameTitle", ""},
 	m_DocumentListener(parentMenu, this, &MenuFrameDataBinding::HandleDocumentHide, {Rml::EventId::Hide}),
 	m_TooltipListener(
@@ -63,13 +63,13 @@ void MenuFrameDataBinding::SetTitle(Rml::String title)
 
 void MenuFrameDataBinding::DocumentLoaded(Rml::ElementDocument* document)
 {
-	m_TooltipDisplayElement = document->QuerySelector("#main_menu_footer_tooltip");
+	m_TooltipDisplayElement = document->QuerySelector("#main_menu_tooltip");
 
 	if ( !m_TooltipDisplayElement )
 	{
 		Rml::Log::Message(
 			Rml::Log::Type::LT_WARNING,
-			"Could not find menu frame tooltip element with ID #main_menu_footer_tooltip"
+			"Could not find menu frame tooltip element with ID #main_menu_tooltip"
 		);
 	}
 }

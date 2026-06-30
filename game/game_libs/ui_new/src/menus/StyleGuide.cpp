@@ -12,7 +12,7 @@ StyleGuide::StyleGuide() :
 void StyleGuide::OnDocumentLoaded()
 {
 	m_MenuFrameDataBinding.SetDefaultTooltipText("None");
-	m_MenuFrameDataBinding.SetTooltipInnerRml("Colour constant: {{footerTooltip}}");
+	m_MenuFrameDataBinding.SetTooltipInnerRml("Colour constant: {{mainMenuTooltip}}");
 	m_MenuFrameDataBinding.SetTitle("Style Guide");
 
 	ElementFinder finder;
