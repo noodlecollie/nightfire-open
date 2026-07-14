@@ -88,6 +88,14 @@ Nightfire Open is built with the [Xash3D FWGS](https://github.com/FWGS/xash3d-fw
 
 The original repo used for development was [afterburner-game](https://github.com/noodlecollie/afterburner-game), but the objectives of this repo and the Xash3D repo became quite different, and were not well-aligned. Consequently, it was decided to take a hard fork of the Xash3D engine and migrate everything to this new CMake-based repository instead, for full control over the codebase.
 
+## AI Disclaimer
+
+Absolutely no content or first-party code in the game or its tools is created using generative AI. All maps, models, textures, other visual artwork and audio are either ported from the original game, or made purposely for the game by human developers and artists.
+
+For the avoidance of doubt, no pull requests will be accepted into the codebase where any proportion of the code or content has been created using generative AI, including tests, workflows and placeholder art. Contributions produced using generative AI require little enough effort to be considered spam, and will be treated accordingly. Anyone who submits AI-generated code or content to the game's repositories, or whose accepted pull request is later found to have contained AI-generated code or content, will be removed from the contributors list and will be barred from contributing.
+
+I have no control over whether third party code repositories and libraries contain AI-generated code, but where possible, this project prefers to use third party dependencies where this is not the case. The level editor will be transitioning from [TrenchBroom](https://github.com/TrenchBroom/TrenchBroom) to its related [NextBroom](https://codeberg.org/NextBroomTeam/NextBroom) fork whem time allows.
+
 ## Credits
 
 Many thanks to:
