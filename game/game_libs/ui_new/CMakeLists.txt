@@ -57,6 +57,8 @@ set(SOURCES_UI
 	src/menus/CreateMultiplayerGameMenu.cpp
 	src/menus/CreditsMenu.h
 	src/menus/CreditsMenu.cpp
+	src/menus/FlexTest.h
+	src/menus/FlexTest.cpp
 	src/menus/MainMenu.h
 	src/menus/MainMenu.cpp
 	src/menus/MainMenu.cpp

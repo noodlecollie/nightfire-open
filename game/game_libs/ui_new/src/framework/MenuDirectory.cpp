@@ -16,6 +16,9 @@
 #include "menus/options/AvOptionsMenu.h"
 #include "menus/options/GameplayOptionsMenu.h"
 
+// REMOVE ME
+#include "menus/FlexTest.h"
+
 void MenuDirectory::Populate()
 {
 	ASSERT(!m_Context);
@@ -39,6 +42,7 @@ void MenuDirectory::Populate()
 	AddToMap<PauseMenu>();
 	AddToMap<CreateMultiplayerGameMenu>();
 	AddToMap<StyleGuide>();
+	AddToMap<FlexTest>();
 }
 
 void MenuDirectory::AcquireContext(Rml::Context* context)
