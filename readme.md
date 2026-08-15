@@ -75,6 +75,16 @@ cd build\install\nightfire-open
 bond.exe
 ```
 
+### Troubleshooting `vcpkg`
+
+If `vcpkg` goes stale, dependencies may fail to download or build. To update `vcpkg`:
+
+1. Check https://github.com/microsoft/vcpkg/releases for the latest release.
+2. In the `vcpkg` submodule directory, run `git checkout tags/<desired version>` to update to the release tag you want to use.
+3. Update the `builtin-baseline` hash in `vcpkg.json` to the commit hash for the release chosen above.
+4. From the root of the repo, run `.\vcpkg\bootstrap-vcpkg.bat` (for Windows), or `./vcpkg/bootstrap-vcpkg.sh` (for Linux) to ensure that the `vcpkg` executable is up to date.
+5. Delete your build directory, and rebuild from scratch.
+
 ## About
 
 The primary purpose of this game is to recreate and improve the experience of the PC version of Nightfire, and to provide in the process an open source codebase that will allow for extension and refinement.

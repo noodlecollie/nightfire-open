@@ -66,9 +66,11 @@ void RmlUiBackend::Initialise()
 		return;
 	}
 
+#ifdef _DEBUG
 	Rml::Debugger::Initialise(m_RmlContext);
-	m_MenuDirectory.LoadAllMenus(*m_RmlContext);
+#endif
 
+	m_MenuDirectory.AcquireContext(m_RmlContext);
 	m_Initialised = true;
 }
 
@@ -81,19 +83,7 @@ bool RmlUiBackend::VidInit(int width, int height)
 
 	m_RenderInterface.SetViewport(width, height);
 	m_RmlContext->SetDimensions(Rml::Vector2i(width, height));
-
-	float dpiScale = 1.0f;
-
-	if ( height >= 2160 )
-	{
-		dpiScale = 2.0f;
-	}
-	else if ( height >= 1080 )
-	{
-		dpiScale = 1.5f;
-	}
-
-	m_RmlContext->SetDensityIndependentPixelRatio(dpiScale);
+	m_RmlContext->SetDensityIndependentPixelRatio(CalculateDpiScale(width, height));
 
 	return true;
 }
@@ -244,12 +234,18 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 
 	Rml::Input::KeyIdentifier rmlKey = EngineKeyToRmlKey(key);
 
-	// TODO: A better solution for this?
+	// TODO: A better solution for these bindings
 #ifdef _DEBUG
 	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F1 && pressed &&
 		 (m_Modifiers & (Rml::Input::KeyModifier::KM_CTRL | Rml::Input::KeyModifier::KM_SHIFT)) )
 	{
 		Rml::Debugger::SetVisible(!Rml::Debugger::IsVisible());
+	}
+
+	if ( rmlKey == Rml::Input::KeyIdentifier::KI_F2 && pressed &&
+		 (m_Modifiers & (Rml::Input::KeyModifier::KM_CTRL | Rml::Input::KeyModifier::KM_SHIFT)) )
+	{
+		ReloadCurrentMenu();
 	}
 #endif
 
@@ -585,16 +581,18 @@ void RmlUiBackend::Render()
 
 void RmlUiBackend::ReleaseResources()
 {
+#ifdef _DEBUG
 	Rml::Debugger::Shutdown();
+#endif
+
+	m_MenuDirectory.ReleaseContext();
 
 	if ( m_RmlContext )
 	{
-		m_RmlContext->UnloadAllDocuments();
 		Rml::RemoveContext(CONTEXT_NAME);
 		m_RmlContext = nullptr;
 	}
 
-	m_MenuDirectory.Clear();
 	Rml::ReleaseFontResources();
 }
 
@@ -689,4 +687,43 @@ void RmlUiBackend::HandleMenuPopCommand()
 	}
 
 	m_MenuStack.CommandPopMenu(replacementMenuName);
+}
+
+void RmlUiBackend::ReloadCurrentMenu()
+{
+	const MenuDirectoryEntry* entry = m_MenuStack.Top();
+
+	if ( !entry || !entry->menuPtr )
+	{
+		return;
+	}
+
+	const Rml::String menuName = entry->menuPtr->Name();
+
+	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Reloading menu: %s", menuName.c_str());
+	m_MenuDirectory.ReloadMenu(menuName);
+}
+
+float RmlUiBackend::CalculateDpiScale(int /* width */, int height)
+{
+	static const Rml::Vector2i WIDE_4K = {3840, 2160};
+	static const Rml::Vector2i WIDE_FHD = {1920, 1080};
+	static const Rml::Vector2i WIDE_WXGA = {1280, 720};
+
+	if ( height >= WIDE_4K.y )
+	{
+		return 2.0f;
+	}
+	else if ( height >= WIDE_FHD.y )
+	{
+		return 1.5f;
+	}
+	else if ( height >= WIDE_WXGA.y )
+	{
+		return 1.0f;
+	}
+	else
+	{
+		return 0.5f;
+	}
 }

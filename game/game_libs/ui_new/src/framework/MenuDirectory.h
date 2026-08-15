@@ -16,6 +16,7 @@ struct MenuDirectoryEntry
 {
 	std::unique_ptr<BaseMenu> menuPtr;
 	Rml::ElementDocument* document = nullptr;
+	Rml::String dataModelName;
 
 	template<typename T>
 	T* MenuDynamicCast(bool assertSuccessInDebug = true) const
@@ -38,7 +39,8 @@ private:
 	friend class MenuDirectory;
 
 	explicit MenuDirectoryEntry(std::unique_ptr<BaseMenu>&& ptr) :
-		menuPtr(std::move(ptr))
+		menuPtr(std::move(ptr)),
+		dataModelName(menuPtr->Name() + Rml::String("_model"))
 	{
 	}
 };
@@ -47,11 +49,12 @@ class MenuDirectory
 {
 public:
 	void Populate();
-	void Clear();
 
-	void LoadAllMenus(Rml::Context& context);
+	void AcquireContext(Rml::Context* context);
+	void ReleaseContext();
 
 	const MenuDirectoryEntry* GetMenuEntry(const Rml::String& name) const;
+	void ReloadMenu(const Rml::String& name, bool reloadModel = false);
 
 	template<typename T>
 	T* GetMenu(const Rml::String& name, bool assertSuccessInDebug = true) const
@@ -89,9 +92,11 @@ private:
 	}
 
 	void AddToMap(BaseMenu* newMenu);
-	void SetUpDataBindings(MapEntry& entry, Rml::Context& context);
-	void LoadMenuRml(MapEntry& entry, Rml::Context& context);
-	void UnloadAllDocuments();
+	void SetUpDataBindings(MapEntry& entry);
+	void LoadMenuRml(MapEntry& entry);
+	void UnloadMenu(MapEntry& entry, bool unloadModel);
+	void UnloadAllMenus();
 
 	MenuMap m_MenuMap;
+	Rml::Context* m_Context = nullptr;
 };

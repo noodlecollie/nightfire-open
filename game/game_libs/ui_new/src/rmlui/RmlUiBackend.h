@@ -85,6 +85,9 @@ private:
 
 	void HandleMenuPushCommand();
 	void HandleMenuPopCommand();
+	void ReloadCurrentMenu();
+
+	static float CalculateDpiScale(int width, int height);
 
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;

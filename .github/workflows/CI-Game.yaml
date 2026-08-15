@@ -17,7 +17,17 @@ jobs:
         submodules: recursive
 
     - name: Install dependencies
-      run: sudo apt update && sudo apt install -y libsdl2-dev
+      run: |
+        sudo apt update
+        sudo apt install -y \
+          build-essential \
+          mesa-utils \
+          libsdl2-dev \
+          autoconf \
+          automake \
+          autoconf-archive \
+          libtool \
+          python3-jinja2
 
     - name: Build
       uses: ashutoshvarma/action-cmake-build@master

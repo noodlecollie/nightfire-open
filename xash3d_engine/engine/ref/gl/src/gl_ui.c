@@ -70,7 +70,7 @@ void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 	pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	pglEnable(GL_BLEND);
-	pglBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	pglEnable(GL_STENCIL_TEST);
 	pglStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFF);
