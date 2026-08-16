@@ -19,6 +19,7 @@ option(NF_ENABLE_STDIN_INPUT "Enable console input from stdin (always enabled fo
 option(NF_CLIENT_WEAPON_PREDICTION "Enables or disables prediction of weapons on the game client." ON)
 option(NF_WARNINGS_AS_ERRORS "If disabled, compiler warnings will not be treated as errors. Intended as a temporary workaround only, recommended to leave enabled." ON)
 option(NF_ENABLE_TOOLS "Enables building tools such as map and model compilers." ON)
+option(NF_ENABLE_PROFILING "Enables profiling via the Tracy library" OFF)
 option(NF_NEW_UI "Enables new iteration of game UI library." OFF)
 
 # The content files are not kept in this repo any more, because something out there
