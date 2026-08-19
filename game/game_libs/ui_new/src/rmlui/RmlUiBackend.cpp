@@ -724,6 +724,6 @@ float RmlUiBackend::CalculateDpiScale(int /* width */, int height)
 	}
 	else
 	{
-		return 0.5f;
+		return 0.75f;
 	}
 }

@@ -11,8 +11,10 @@ StyleGuide::StyleGuide() :
 
 void StyleGuide::OnDocumentLoaded()
 {
-	m_MenuFrameDataBinding.SetDefaultTooltipText("None");
-	m_MenuFrameDataBinding.SetTooltipInnerRml("Colour constant: {{footerTooltip}}");
+	m_MenuFrameDataBinding.SetDefaultHintText("None");
+	m_MenuFrameDataBinding.SetHintInnerRml(
+		"Colour constant: <span style=\"word-break: break-all;\">{{menuHintText}}</span>"
+	);
 
 	ElementFinder finder;
 

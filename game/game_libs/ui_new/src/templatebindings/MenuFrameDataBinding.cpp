@@ -5,9 +5,9 @@
 
 MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
 	BaseMenuObserver(parentMenu),
-	m_Tooltip {"footerTooltip", ""},
+	m_HintText {"menuHintText", ""},
 	m_DocumentListener(parentMenu, this, &MenuFrameDataBinding::HandleDocumentHide, {Rml::EventId::Hide}),
-	m_TooltipListener(
+	m_HintListener(
 		parentMenu,
 		this,
 		&MenuFrameDataBinding::HandleMouseEvents,
@@ -17,56 +17,55 @@ MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
 {
 }
 
-void MenuFrameDataBinding::SetTooltipInnerRml(const Rml::String& rml)
+void MenuFrameDataBinding::SetHintInnerRml(const Rml::String& rml)
 {
-	if ( m_TooltipDisplayElement )
+	if ( m_HintDisplayElement )
 	{
-		m_TooltipDisplayElement->SetInnerRML(rml);
+		m_HintDisplayElement->SetInnerRML(rml);
 	}
 	else
 	{
 		ASSERT(false);
-		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "SetTooltipInnerRml: Tooltip display element was null");
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "SetHintInnerRml: Hint display element was null");
 	}
 }
 
-Rml::String MenuFrameDataBinding::DefaultTooltipText() const
+Rml::String MenuFrameDataBinding::DefaultHintText() const
 {
-	return m_DefaultTooltipText;
+	return m_DefaultHintText;
 }
 
-void MenuFrameDataBinding::SetDefaultTooltipText(Rml::String text)
+void MenuFrameDataBinding::SetDefaultHintText(Rml::String text)
 {
-	m_DefaultTooltipText = std::move(text);
+	m_DefaultHintText = std::move(text);
 
-	if ( !m_CurrentTooltipElement )
+	if ( !m_CurrentHintElement )
 	{
 		// Call this if we're not currently showing a tooltip
-		ResetTooltip();
+		ResetHint();
 	}
 }
 
 void MenuFrameDataBinding::DocumentLoaded(Rml::ElementDocument* document)
 {
-	m_TooltipDisplayElement = document->QuerySelector("#main_menu_footer_tooltip");
+	static constexpr const char* const HINT_AREA_ID = "#main_menu_hint_area";
 
-	if ( !m_TooltipDisplayElement )
+	m_HintDisplayElement = document->QuerySelector(HINT_AREA_ID);
+
+	if ( !m_HintDisplayElement )
 	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"Could not find menu frame tooltip element with ID #main_menu_footer_tooltip"
-		);
+		Rml::Log::Message(Rml::Log::Type::LT_WARNING, "Could not find menu hint element with ID %s", HINT_AREA_ID);
 	}
 }
 
 void MenuFrameDataBinding::DocumentUnloaded(Rml::ElementDocument*)
 {
-	m_TooltipDisplayElement = nullptr;
+	m_HintDisplayElement = nullptr;
 }
 
 bool MenuFrameDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !constructor.Bind(m_Tooltip.name, &m_Tooltip.value) )
+	if ( !constructor.Bind(m_HintText.name, &m_HintText.value) )
 	{
 		return false;
 	}
@@ -77,7 +76,7 @@ bool MenuFrameDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& con
 void MenuFrameDataBinding::HandleDocumentHide(Rml::Event&)
 {
 	// The document is being hidden, so forcibly clear the tooltip.
-	ResetTooltip();
+	ResetHint();
 }
 
 void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
@@ -86,7 +85,7 @@ void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
 	{
 		case Rml::EventId::Mouseover:
 		{
-			SetTooltip(event);
+			SetHint(event);
 			break;
 		}
 
@@ -94,9 +93,9 @@ void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
 		{
 			Rml::Element* element = event.GetTargetElement();
 
-			if ( element && element == m_CurrentTooltipElement )
+			if ( element && element == m_CurrentHintElement )
 			{
-				ResetTooltip();
+				ResetHint();
 			}
 
 			break;
@@ -109,9 +108,9 @@ void MenuFrameDataBinding::HandleMouseEvents(Rml::Event& event)
 	}
 }
 
-void MenuFrameDataBinding::SetTooltip(Rml::Event& event)
+void MenuFrameDataBinding::SetHint(Rml::Event& event)
 {
-	if ( m_CurrentTooltipElement )
+	if ( m_CurrentHintElement )
 	{
 		// We moused over another element inside the current one.
 		// Don't allow setting the tooltip until the current
@@ -133,20 +132,20 @@ void MenuFrameDataBinding::SetTooltip(Rml::Event& event)
 		return;
 	}
 
-	if ( tooltipAttr->GetInto(m_Tooltip.value) && IsModelLoaded() )
+	if ( tooltipAttr->GetInto(m_HintText.value) && IsModelLoaded() )
 	{
-		DirtyVariable(m_Tooltip.name);
-		m_CurrentTooltipElement = element;
+		DirtyVariable(m_HintText.name);
+		m_CurrentHintElement = element;
 	}
 }
 
-void MenuFrameDataBinding::ResetTooltip()
+void MenuFrameDataBinding::ResetHint()
 {
-	m_CurrentTooltipElement = nullptr;
+	m_CurrentHintElement = nullptr;
 
-	if ( m_Tooltip.value != m_DefaultTooltipText )
+	if ( m_HintText.value != m_DefaultHintText )
 	{
-		m_Tooltip.value = m_DefaultTooltipText;
-		DirtyVariable(m_Tooltip.name);
+		m_HintText.value = m_DefaultHintText;
+		DirtyVariable(m_HintText.name);
 	}
 }
