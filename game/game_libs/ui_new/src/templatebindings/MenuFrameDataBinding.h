@@ -15,9 +15,6 @@ public:
 	Rml::String DefaultTooltipText() const;
 	void SetDefaultTooltipText(Rml::String text);
 
-	Rml::String Title() const;
-	void SetTitle(Rml::String title);
-
 protected:
 	void DocumentLoaded(Rml::ElementDocument* document) override;
 	void DocumentUnloaded(Rml::ElementDocument* document) override;
@@ -30,7 +27,6 @@ private:
 	void ResetTooltip();
 
 	DataVar<Rml::String> m_Tooltip;
-	DataVar<Rml::String> m_Title;
 
 	MenuEventListenerObject m_DocumentListener;
 	MenuEventListenerObject m_TooltipListener;

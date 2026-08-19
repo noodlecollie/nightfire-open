@@ -6,7 +6,6 @@
 MenuFrameDataBinding::MenuFrameDataBinding(BaseMenu* parentMenu) :
 	BaseMenuObserver(parentMenu),
 	m_Tooltip {"footerTooltip", ""},
-	m_Title {"frameTitle", ""},
 	m_DocumentListener(parentMenu, this, &MenuFrameDataBinding::HandleDocumentHide, {Rml::EventId::Hide}),
 	m_TooltipListener(
 		parentMenu,
@@ -47,20 +46,6 @@ void MenuFrameDataBinding::SetDefaultTooltipText(Rml::String text)
 	}
 }
 
-Rml::String MenuFrameDataBinding::Title() const
-{
-	return m_Title.value;
-}
-
-void MenuFrameDataBinding::SetTitle(Rml::String title)
-{
-	if ( m_Title.value != title )
-	{
-		m_Title.value = title;
-		DirtyVariable(m_Title.name);
-	}
-}
-
 void MenuFrameDataBinding::DocumentLoaded(Rml::ElementDocument* document)
 {
 	m_TooltipDisplayElement = document->QuerySelector("#main_menu_footer_tooltip");
@@ -81,7 +66,7 @@ void MenuFrameDataBinding::DocumentUnloaded(Rml::ElementDocument*)
 
 bool MenuFrameDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	if ( !constructor.Bind(m_Tooltip.name, &m_Tooltip.value) || !constructor.Bind(m_Title.name, &m_Title.value) )
+	if ( !constructor.Bind(m_Tooltip.name, &m_Tooltip.value) )
 	{
 		return false;
 	}
