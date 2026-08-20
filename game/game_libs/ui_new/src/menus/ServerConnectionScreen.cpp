@@ -10,7 +10,7 @@ static constexpr const char* const NAME_DOWNLOAD_PROGRESS = "downloadProgress";
 const char* const ServerConnectionScreen::NAME = "server_connection_screen";
 
 ServerConnectionScreen::ServerConnectionScreen() :
-	BaseMenu(NAME, "resource/rml/server_connection_screen.rml"),
+	BaseMenu(NAME, "server_connection_screen.rml"),
 	m_CvarModel(this)
 {
 	m_CvarLoading = m_CvarModel.AddEntry<float>(NAME_LOADING_PROGRESS, "scr_loading");

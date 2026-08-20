@@ -11,7 +11,7 @@ static constexpr const char* const EVENT_SELECT_SERVER = "selectServer";
 static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
 
 MultiplayerMenu::MultiplayerMenu() :
-	MenuPage("multiplayer_menu", "resource/rml/multiplayer_menu.rml"),
+	MenuPage("multiplayer_menu", "multiplayer_menu.rml"),
 	m_ShowHideEventListener(this, &MultiplayerMenu::ProcessShowHideEvents, {Rml::EventId::Show, Rml::EventId::Hide}),
 	m_MenuFrameDataBinding(this),
 	m_ServerModel(this)

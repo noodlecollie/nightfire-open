@@ -3,7 +3,7 @@
 #include <vector>
 #include <RmlUi/Core/Types.h>
 
-class MenuDirectory;
+class BaseMenuDirectory;
 struct MenuDirectoryEntry;
 struct MenuRequest;
 
@@ -17,7 +17,7 @@ public:
 		SwitchFocusToConsole
 	};
 
-	explicit MenuStack(MenuDirectory* directory);
+	explicit MenuStack(BaseMenuDirectory* directory);
 
 	bool Push(const MenuDirectoryEntry* menu);
 	const MenuDirectoryEntry* Pop();
@@ -41,7 +41,7 @@ private:
 	void SetTopDocumentVisible(bool visible, bool clearCurrentRequest = false);
 	FocusChangeResult HandleTopMenuRequest(const MenuRequest& request);
 
-	MenuDirectory* m_Directory;
+	BaseMenuDirectory* m_Directory;
 	MenuVec m_Stack;
 	bool m_Visible = true;
 };

@@ -9,7 +9,7 @@ static constexpr const char* const EVENT_SHOW_DEVELOPER_CONSOLE = "showDeveloper
 const char* const MainMenu::NAME = "main_menu";
 
 MainMenu::MainMenu() :
-	MenuPage(NAME, "resource/rml/main_menu.rml"),
+	MenuPage(NAME, "main_menu.rml"),
 	m_MenuFrameDataBinding(this),
 	m_KeyEventListener(this, &MainMenu::ProcessKeyEvent, {Rml::EventId::Keydown})
 {

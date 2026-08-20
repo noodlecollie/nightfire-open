@@ -5,7 +5,7 @@
 #include "rmlui/FileInterfaceImpl.h"
 #include "rmlui/TextInputHandlerImpl.h"
 #include "rmlui/EventListenerInstancerImpl.h"
-#include "framework/MenuDirectory.h"
+#include "framework/GameMainMenuDirectory.h"
 #include "framework/MenuStack.h"
 #include "EnginePublicAPI/netadr.h"
 
@@ -99,7 +99,7 @@ private:
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
 
-	MenuDirectory m_MenuDirectory;
+	GameMainMenuDirectory m_MenuDirectory;
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;

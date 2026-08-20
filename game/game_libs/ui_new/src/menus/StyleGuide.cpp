@@ -4,7 +4,7 @@
 #include <RmlUi/Core/StringUtilities.h>
 
 StyleGuide::StyleGuide() :
-	MenuPage("style_guide", "resource/rml/style_guide.rml"),
+	MenuPage("style_guide", "style_guide.rml"),
 	m_MenuFrameDataBinding(this)
 {
 }

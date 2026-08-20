@@ -22,6 +22,8 @@ set(SOURCES_UI
 	src/framework/BaseComponent.cpp
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
+	src/framework/BaseMenuDirectory.h
+	src/framework/BaseMenuDirectory.cpp
 	src/framework/BaseMenuObserver.h
 	src/framework/BaseMenuObserver.cpp
 	src/framework/CvarAccessor.h
@@ -30,8 +32,8 @@ set(SOURCES_UI
 	src/framework/ElementFinder.h
 	src/framework/ElementFinder.cpp
 	src/framework/EventListenerObject.h
-	src/framework/MenuDirectory.h
-	src/framework/MenuDirectory.cpp
+	src/framework/GameMainMenuDirectory.h
+	src/framework/GameMainMenuDirectory.cpp
 	src/framework/MenuEventListenerObject.h
 	src/framework/MenuEventListenerObject.cpp
 	src/framework/MenuPage.h

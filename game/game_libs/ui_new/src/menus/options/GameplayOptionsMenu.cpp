@@ -8,7 +8,7 @@ static constexpr const char* const NAME_VIBRATION_ENABLED = "vibrationEnabled";
 static constexpr const char* const NAME_VIBRATION_INTENSITY = "vibrationIntensity";
 
 GameplayOptionsMenu::GameplayOptionsMenu() :
-	BaseOptionsMenu("gameplay_options_menu", "resource/rml/gameplay_options_menu.rml"),
+	BaseOptionsMenu("gameplay_options_menu", "gameplay_options_menu.rml"),
 	m_CvarModel(this)
 {
 	m_CvarModel.AddEntry<bool>(NAME_CROSSHAIR_ENABLED, "crosshair");

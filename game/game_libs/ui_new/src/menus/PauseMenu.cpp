@@ -10,7 +10,7 @@ static constexpr const char* const EVENT_QUIT_GAME = "quitGame";
 const char* const PauseMenu::NAME = "pause_menu";
 
 PauseMenu::PauseMenu() :
-	MenuPage(NAME, "resource/rml/pause_menu.rml"),
+	MenuPage(NAME, "pause_menu.rml"),
 	m_MenuFrameDataBinding(this),
 	m_Modal(this, "quit_modal"),
 	m_ShowHideEventListener(this, &PauseMenu::ProcessHideEvents, {Rml::EventId::Hide})

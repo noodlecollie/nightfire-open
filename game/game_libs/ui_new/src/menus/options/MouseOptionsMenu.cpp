@@ -7,7 +7,7 @@ static constexpr const char* const NAME_MOUSE_PITCH = "mousePitch";
 static constexpr const char* const NAME_INVERT_MOUSE = "invertMouse";
 
 MouseOptionsMenu::MouseOptionsMenu() :
-	BaseOptionsMenu("mouse_options_menu", "resource/rml/mouse_options_menu.rml"),
+	BaseOptionsMenu("mouse_options_menu", "mouse_options_menu.rml"),
 	m_CvarModel(this)
 {
 	m_CvarModel.AddEntry<float>(NAME_MOUSE_SENSITIVITY, "sensitivity");

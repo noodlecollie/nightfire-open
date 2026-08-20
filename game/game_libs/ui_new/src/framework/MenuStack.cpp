@@ -1,11 +1,11 @@
 #include "framework/MenuStack.h"
-#include "framework/MenuDirectory.h"
+#include "framework/BaseMenuDirectory.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Log.h>
 #include "menus/MainMenu.h"
 #include "UIDebug.h"
 
-MenuStack::MenuStack(MenuDirectory* directory) :
+MenuStack::MenuStack(BaseMenuDirectory* directory) :
 	m_Directory(directory)
 {
 	ASSERT(directory);

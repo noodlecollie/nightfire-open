@@ -27,7 +27,7 @@ static constexpr const char* const CVAR_VID_MODE = "vid_mode";
 static constexpr const char* const EVENT_APPLY_VIDEO_MODE = "applyVideoMode";
 
 AvOptionsMenu::AvOptionsMenu() :
-	BaseOptionsMenu("av_options_menu", "resource/rml/av_options_menu.rml"),
+	BaseOptionsMenu("av_options_menu", "av_options_menu.rml"),
 	m_Modal(this, "apply_video_mode_modal"),
 	m_VideoModes(this),
 	m_DocumentEventListener(
