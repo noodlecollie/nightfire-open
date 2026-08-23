@@ -87,7 +87,8 @@ private:
 	void HandleMenuPopCommand();
 	void ReloadCurrentMenu();
 
-	static float CalculateDpiScale(int width, int height);
+	static float CalculateDpiScale(int height);
+	static Rml::Rectanglei CalculateViewport(const Rml::Vector2i& windowSize);
 
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;

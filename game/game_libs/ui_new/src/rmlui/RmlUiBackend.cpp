@@ -81,9 +81,11 @@ bool RmlUiBackend::VidInit(int width, int height)
 		return false;
 	}
 
-	m_RenderInterface.SetViewport(width, height);
-	m_RmlContext->SetDimensions(Rml::Vector2i(width, height));
-	m_RmlContext->SetDensityIndependentPixelRatio(CalculateDpiScale(width, height));
+	const Rml::Rectanglei viewport = CalculateViewport(Rml::Vector2i(width, height));
+
+	m_RenderInterface.SetViewport(Rml::Vector2i(width, height), viewport);
+	m_RmlContext->SetDimensions(viewport.Size());
+	m_RmlContext->SetDensityIndependentPixelRatio(CalculateDpiScale(viewport.Height()));
 
 	return true;
 }
@@ -704,26 +706,77 @@ void RmlUiBackend::ReloadCurrentMenu()
 	m_MenuDirectory.ReloadMenu(menuName);
 }
 
-float RmlUiBackend::CalculateDpiScale(int /* width */, int height)
+float RmlUiBackend::CalculateDpiScale(int height)
 {
-	static const Rml::Vector2i WIDE_4K = {3840, 2160};
-	static const Rml::Vector2i WIDE_FHD = {1920, 1080};
-	static const Rml::Vector2i WIDE_WXGA = {1280, 720};
+	// DPI is based on the height of the viewport (width is allowed to vary,
+	// and isn't considered as important in terms of determining the
+	// global scale of UI elements).
+	// The standard 1.0 scale is based on WXGA (1280x720).
+	// Where possible, values used in style sheets should be multiples
+	// of 4, so that they work cleanly with 0.5x and 0.75x scales.
 
-	if ( height >= WIDE_4K.y )
+	if ( height >= 2160 )  // 2x full HD, so 3x WXGA
+	{
+		return 3.0f;
+	}
+	else if ( height >= 1440 )  // 2x WXGA
 	{
 		return 2.0f;
 	}
-	else if ( height >= WIDE_FHD.y )
+	else if ( height >= 1080 )  // Full HD, 1.5x WXGA
 	{
 		return 1.5f;
 	}
-	else if ( height >= WIDE_WXGA.y )
+	else if ( height >= 720 )  // WXGA
 	{
 		return 1.0f;
 	}
-	else
+	else if ( height >= 540 )  // 0.5x full HD, so 0.75x WXGA
 	{
 		return 0.75f;
 	}
+	else  // Minimum scale is 0.5x
+	{
+		return 0.5f;
+	}
+}
+
+Rml::Rectanglei RmlUiBackend::CalculateViewport(const Rml::Vector2i& windowSize)
+{
+	static constexpr float SMALLEST_ASPECT_RATIO = 4.0 / 3.0;  // 1.333...
+	static constexpr float LARGEST_ASPECT_RATIO = 16.0 / 9.0;  // 1.777...
+	static const Rml::Vector2i MIN_VIEWPORT_DIMS = Rml::Vector2i(640, 480);
+
+	if ( windowSize.x == 0 || windowSize.y == 0 )
+	{
+		ASSERT(false);
+		return Rml::Rectanglei();
+	}
+
+	Rml::Vector2i viewportSize = windowSize;
+	Rml::Vector2i viewportOffset;
+
+	const float aspectRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
+
+	Rml::Log::Message(Rml::Log::LT_INFO, "%dx%d (%f)", windowSize.x, windowSize.y, aspectRatio);
+
+	if ( viewportSize.y > MIN_VIEWPORT_DIMS.y && aspectRatio < SMALLEST_ASPECT_RATIO )
+	{
+		// Window is too tall, so letterboxing is added at the top and bottom.
+		const int maxHeight =
+			std::max(static_cast<int>(static_cast<float>(windowSize.x) / SMALLEST_ASPECT_RATIO), MIN_VIEWPORT_DIMS.y);
+		viewportSize.y = maxHeight;
+		viewportOffset.y = (windowSize.y - maxHeight) / 2;
+	}
+
+	if ( viewportSize.x > MIN_VIEWPORT_DIMS.x && aspectRatio > LARGEST_ASPECT_RATIO )
+	{
+		// Window is too wide, so pillarboxing is added at the sides.
+		const int maxWidth =
+			std::max(static_cast<int>(static_cast<float>(windowSize.y) * LARGEST_ASPECT_RATIO), MIN_VIEWPORT_DIMS.x);
+		viewportSize.x = maxWidth;
+		viewportOffset.x = (windowSize.x - maxWidth) / 2;
+	}
+
+	return Rml::Rectanglei::FromPositionSize(viewportOffset, viewportSize);
 }

@@ -14,9 +14,7 @@ public:
 	RenderInterfaceImpl(RmlUiBackend* backend);
 
 	// The viewport should be updated whenever the window size changes.
-	int ViewportWidth() const;
-	int ViewportHeight() const;
-	void SetViewport(int viewport_width, int viewport_height);
+	void SetViewport(Rml::Vector2i windowSize, Rml::Rectanglei viewport);
 
 	// Sets up OpenGL states for taking rendering commands from RmlUi.
 	void BeginFrame();
@@ -58,8 +56,8 @@ private:
 	};
 
 	RmlUiBackend* m_Backend;
-	int m_ViewportWidth = 0;
-	int m_ViewportHeight = 0;
+	Rml::Vector2i m_WindowSize;
+	Rml::Rectanglei m_Viewport;
 	bool m_TransformEnabled = false;
 	size_t m_GeneratedTextureCount = 0;
 };

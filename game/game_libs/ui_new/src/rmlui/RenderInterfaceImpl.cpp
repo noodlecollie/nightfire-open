@@ -13,29 +13,36 @@ RenderInterfaceImpl::RenderInterfaceImpl(RmlUiBackend* backend) :
 {
 }
 
-int RenderInterfaceImpl::ViewportWidth() const
+void RenderInterfaceImpl::SetViewport(Rml::Vector2i windowSize, Rml::Rectanglei viewport)
 {
-	return m_ViewportWidth;
-}
+	ASSERT(windowSize.x > 0 && windowSize.y > 0);
+	ASSERT(viewport.Width() > 0 && viewport.Height() > 0);
 
-int RenderInterfaceImpl::ViewportHeight() const
-{
-	return m_ViewportHeight;
-}
-
-void RenderInterfaceImpl::SetViewport(int in_viewport_width, int in_viewport_height)
-{
-	ASSERT(in_viewport_width > 0);
-	ASSERT(in_viewport_height > 0);
-
-	m_ViewportWidth = in_viewport_width;
-	m_ViewportHeight = in_viewport_height;
+	m_WindowSize = windowSize;
+	m_Viewport = viewport;
 }
 
 void RenderInterfaceImpl::BeginFrame()
 {
-	ASSERT(m_ViewportWidth > 0 && m_ViewportHeight > 0);
-	gUiGlFuncs.renderer.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
+	ASSERT(m_Viewport.Width() > 0 && m_Viewport.Height() > 0);
+
+	if ( m_Viewport.Top() > 0 || m_Viewport.Left() > 0 )
+	{
+		gUiGlFuncs.renderer.clear(0x00000000, 0);
+	}
+
+	// The offset from (0,0) represents the pillarboxing/letterboxing
+	// that we want to apply. If we translate the entire window up and
+	// left by this value, this adds the margins that we need. The
+	// viewport itself will be scaled to be smaller than the window,
+	// which will result in the margins at the other side.
+
+	gUiGlFuncs.renderer.beginFrame(
+		-m_Viewport.Left(),
+		-m_Viewport.Top(),
+		m_WindowSize.x - m_Viewport.Left(),
+		m_WindowSize.y - m_Viewport.Top()
+	);
 }
 
 void RenderInterfaceImpl::EndFrame()
@@ -105,8 +112,12 @@ void RenderInterfaceImpl::EnableScissorRegion(bool enable)
 
 void RenderInterfaceImpl::SetScissorRegion(Rml::Rectanglei region)
 {
-	gUiGlFuncs.renderer
-		.setScissorRegion(region.Left(), m_ViewportHeight - region.Bottom(), region.Width(), region.Height());
+	gUiGlFuncs.renderer.setScissorRegion(
+		region.Left() + m_Viewport.Left(),
+		m_Viewport.Height() - region.Bottom() + m_Viewport.Top(),
+		region.Width(),
+		region.Height()
+	);
 }
 
 void RenderInterfaceImpl::EnableClipMask(bool enable)
