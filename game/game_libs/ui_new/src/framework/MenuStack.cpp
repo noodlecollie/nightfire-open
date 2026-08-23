@@ -5,10 +5,10 @@
 #include "menus/MainMenu.h"
 #include "UIDebug.h"
 
-MenuStack::MenuStack(BaseMenuDirectory* directory) :
+MenuStack::MenuStack(std::shared_ptr<BaseMenuDirectory> directory) :
 	m_Directory(directory)
 {
-	ASSERT(directory);
+	ASSERT(m_Directory.get());
 }
 
 bool MenuStack::Push(const MenuDirectoryEntry* menu)

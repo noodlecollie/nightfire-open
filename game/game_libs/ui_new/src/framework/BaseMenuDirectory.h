@@ -4,6 +4,7 @@
 #include <memory>
 #include <RmlUi/Core/Types.h>
 #include "framework/BaseMenu.h"
+#include "framework/IServerConnectionMenu.h"
 #include "UIDebug.h"
 
 namespace Rml
@@ -75,6 +76,10 @@ public:
 
 		return entry->MenuDynamicCast<T>(assertSuccessInDebug);
 	}
+
+	virtual const MenuDirectoryEntry* GetMainMenu() const = 0;
+	virtual const MenuDirectoryEntry* GetPauseMenu() const = 0;
+	virtual IServerConnectionMenu* GetServerConnectionHandler() const = 0;
 
 protected:
 	explicit BaseMenuDirectory(Rml::String rootDirectory);

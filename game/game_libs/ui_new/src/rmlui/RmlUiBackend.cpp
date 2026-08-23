@@ -5,9 +5,9 @@
 #include "rmlui/RmlUiBackend.h"
 #include "rmlui/Utils.h"
 #include "framework/BaseMenu.h"
-#include "menus/MainMenu.h"
-#include "menus/PauseMenu.h"
-#include "menus/ServerConnectionScreen.h"
+#include "framework/GameMainMenuDirectory.h"
+#include "framework/IServerConnectionMenu.h"
+#include "menus/temp_new/NewMainMenuDirectory.h"
 #include "udll_int.h"
 #include "UIDebug.h"
 
@@ -22,8 +22,8 @@ RmlUiBackend& RmlUiBackend::StaticInstance()
 RmlUiBackend::RmlUiBackend() :
 	m_SystemInterface(this),
 	m_RenderInterface(this),
-	m_MenuDirectory(),
-	m_MenuStack(&m_MenuDirectory)
+	m_MenuDirectory(new NewMainMenuDirectory()),
+	m_MenuStack(m_MenuDirectory)
 {
 }
 
@@ -52,7 +52,7 @@ void RmlUiBackend::Initialise()
 
 	// TODO: Do we actually want to do this later, where we can display a placeholder page first
 	// instead of a black screen?
-	m_MenuDirectory.Populate();
+	m_MenuDirectory->Populate();
 
 	m_Modifiers = 0;
 
@@ -70,7 +70,7 @@ void RmlUiBackend::Initialise()
 	Rml::Debugger::Initialise(m_RmlContext);
 #endif
 
-	m_MenuDirectory.AcquireContext(m_RmlContext);
+	m_MenuDirectory->AcquireContext(m_RmlContext);
 	m_Initialised = true;
 }
 
@@ -146,7 +146,7 @@ void RmlUiBackend::ReceiveShowMenu()
 	if ( m_MenuStack.IsEmpty() )
 	{
 		const MenuDirectoryEntry* menu =
-			m_MenuDirectory.GetMenuEntry(gEngfuncs.pfnClientInGame() ? PauseMenu::NAME : MainMenu::NAME);
+			gEngfuncs.pfnClientInGame() ? m_MenuDirectory->GetPauseMenu() : m_MenuDirectory->GetMainMenu();
 		ASSERT(menu);
 		m_MenuStack.Push(menu);
 	}
@@ -316,14 +316,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server)
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Connect(server ? server : "");
+	menu->Connect(server ? server : "");
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
@@ -333,14 +333,14 @@ void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_ParseServerInfo(server ? server : "");
+	menu->ParseServerInfo(server ? server : "");
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Precache()
@@ -350,14 +350,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Precache()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Precache();
+	menu->Precache();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Download(
@@ -373,14 +373,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Download(
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Download(
+	menu->Download(
 		pszFileName ? pszFileName : "",
 		pszServerName ? pszServerName : "",
 		iCurrent,
@@ -396,14 +396,14 @@ void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_DownloadEnd();
+	menu->DownloadEnd();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Connected()
@@ -413,14 +413,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Connected()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Connected();
+	menu->Connected();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
@@ -430,14 +430,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Disconnect();
+	menu->Disconnect();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
@@ -447,14 +447,14 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_ChangeLevel();
+	menu->ChangeLevel();
 }
 
 Rml::Context* RmlUiBackend::GetRmlContext() const
@@ -587,7 +587,7 @@ void RmlUiBackend::ReleaseResources()
 	Rml::Debugger::Shutdown();
 #endif
 
-	m_MenuDirectory.ReleaseContext();
+	m_MenuDirectory->ReleaseContext();
 
 	if ( m_RmlContext )
 	{
@@ -658,7 +658,7 @@ void RmlUiBackend::HandleMenuPushCommand()
 			continue;
 		}
 
-		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(menuName);
+		const MenuDirectoryEntry* menu = m_MenuDirectory->GetMenuEntry(menuName);
 
 		if ( !menu )
 		{
@@ -703,7 +703,7 @@ void RmlUiBackend::ReloadCurrentMenu()
 	const Rml::String menuName = entry->menuPtr->Name();
 
 	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Reloading menu: %s", menuName.c_str());
-	m_MenuDirectory.ReloadMenu(menuName);
+	m_MenuDirectory->ReloadMenu(menuName);
 }
 
 float RmlUiBackend::CalculateDpiScale(int height)

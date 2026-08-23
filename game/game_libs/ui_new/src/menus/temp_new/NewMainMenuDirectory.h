@@ -2,10 +2,10 @@
 
 #include "framework/BaseMenuDirectory.h"
 
-class GameMainMenuDirectory : public BaseMenuDirectory
+class NewMainMenuDirectory : public BaseMenuDirectory
 {
 public:
-	GameMainMenuDirectory();
+	NewMainMenuDirectory();
 
 	const MenuDirectoryEntry* GetMainMenu() const override;
 	const MenuDirectoryEntry* GetPauseMenu() const override;

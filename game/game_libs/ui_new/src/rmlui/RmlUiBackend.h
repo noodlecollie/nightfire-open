@@ -5,9 +5,10 @@
 #include "rmlui/FileInterfaceImpl.h"
 #include "rmlui/TextInputHandlerImpl.h"
 #include "rmlui/EventListenerInstancerImpl.h"
-#include "framework/GameMainMenuDirectory.h"
+#include "framework/BaseMenuDirectory.h"
 #include "framework/MenuStack.h"
 #include "EnginePublicAPI/netadr.h"
+#include <memory>
 
 namespace Rml
 {
@@ -100,7 +101,7 @@ private:
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
 
-	GameMainMenuDirectory m_MenuDirectory;
+	std::shared_ptr<BaseMenuDirectory> m_MenuDirectory;
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;

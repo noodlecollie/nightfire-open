@@ -6,7 +6,6 @@
 #include "menus/CreditsMenu.h"
 #include "menus/ServerConnectionScreen.h"
 #include "menus/CreateMultiplayerGameMenu.h"
-#include "menus/StyleGuide.h"
 #include "menus/options/KeysOptionsMenu.h"
 #include "menus/options/MouseOptionsMenu.h"
 #include "menus/options/AvOptionsMenu.h"
@@ -15,6 +14,23 @@
 GameMainMenuDirectory::GameMainMenuDirectory() :
 	BaseMenuDirectory("resource/rml")
 {
+}
+
+const MenuDirectoryEntry* GameMainMenuDirectory::GetMainMenu() const
+{
+	return GetMenuEntry(MainMenu::NAME);
+}
+
+const MenuDirectoryEntry* GameMainMenuDirectory::GetPauseMenu() const
+{
+	return GetMenuEntry(PauseMenu::NAME);
+}
+
+IServerConnectionMenu* GameMainMenuDirectory::GetServerConnectionHandler() const
+{
+	const MenuDirectoryEntry* entry = GetMenuEntry(ServerConnectionScreen::NAME);
+	ASSERT(entry);
+	return entry ? entry->MenuDynamicCast<IServerConnectionMenu>() : nullptr;
 }
 
 void GameMainMenuDirectory::PopulateInternal()
@@ -29,5 +45,4 @@ void GameMainMenuDirectory::PopulateInternal()
 	AddToMap<GameplayOptionsMenu>();
 	AddToMap<PauseMenu>();
 	AddToMap<CreateMultiplayerGameMenu>();
-	AddToMap<StyleGuide>();
 }

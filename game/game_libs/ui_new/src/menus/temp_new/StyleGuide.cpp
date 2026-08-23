@@ -1,21 +1,15 @@
-#include "menus/StyleGuide.h"
+#include "menus/temp_new/StyleGuide.h"
 #include "framework/ElementFinder.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/StringUtilities.h>
 
 StyleGuide::StyleGuide() :
-	MenuPage("style_guide", "style_guide.rml"),
-	m_MenuFrameDataBinding(this)
+	MenuPage("style_guide", "style_guide.rml")
 {
 }
 
 void StyleGuide::OnDocumentLoaded()
 {
-	m_MenuFrameDataBinding.SetDefaultHintText("None");
-	m_MenuFrameDataBinding.SetHintInnerRml(
-		"Colour constant: <span style=\"word-break: break-all;\">{{menuHintText}}</span>"
-	);
-
 	ElementFinder finder;
 
 	Rml::Element* table = Document()->GetElementById("colours_table");

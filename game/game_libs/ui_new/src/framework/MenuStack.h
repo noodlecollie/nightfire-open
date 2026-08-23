@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <RmlUi/Core/Types.h>
 
 class BaseMenuDirectory;
@@ -17,7 +18,7 @@ public:
 		SwitchFocusToConsole
 	};
 
-	explicit MenuStack(BaseMenuDirectory* directory);
+	explicit MenuStack(std::shared_ptr<BaseMenuDirectory> directory);
 
 	bool Push(const MenuDirectoryEntry* menu);
 	const MenuDirectoryEntry* Pop();
@@ -41,7 +42,7 @@ private:
 	void SetTopDocumentVisible(bool visible, bool clearCurrentRequest = false);
 	FocusChangeResult HandleTopMenuRequest(const MenuRequest& request);
 
-	BaseMenuDirectory* m_Directory;
+	std::shared_ptr<BaseMenuDirectory> m_Directory;
 	MenuVec m_Stack;
 	bool m_Visible = true;
 };

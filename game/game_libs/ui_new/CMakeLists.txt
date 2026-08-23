@@ -55,6 +55,10 @@ set(SOURCES_UI
 	src/menus/options/KeysOptionsMenu.cpp
 	src/menus/options/MouseOptionsMenu.h
 	src/menus/options/MouseOptionsMenu.cpp
+	src/menus/temp_new/NewMainMenuDirectory.h
+	src/menus/temp_new/NewMainMenuDirectory.cpp
+	src/menus/temp_new/StyleGuide.h
+	src/menus/temp_new/StyleGuide.cpp
 	src/menus/CreateMultiplayerGameMenu.h
 	src/menus/CreateMultiplayerGameMenu.cpp
 	src/menus/CreditsMenu.h
@@ -68,8 +72,6 @@ set(SOURCES_UI
 	src/menus/PauseMenu.cpp
 	src/menus/ServerConnectionScreen.h
 	src/menus/ServerConnectionScreen.cpp
-	src/menus/StyleGuide.h
-	src/menus/StyleGuide.cpp
 	src/models/CreateMultiplayerGamePageModel.h
 	src/models/CreateMultiplayerGamePageModel.cpp
 	src/models/CvarModel.h
