@@ -22,6 +22,11 @@ void RenderInterfaceImpl::SetViewport(Rml::Vector2i windowSize, Rml::Rectanglei 
 	m_Viewport = viewport;
 }
 
+Rml::Vector2i RenderInterfaceImpl::GetViewportOffset() const
+{
+	return m_Viewport.TopLeft();
+}
+
 void RenderInterfaceImpl::BeginFrame()
 {
 	ASSERT(m_Viewport.Width() > 0 && m_Viewport.Height() > 0);

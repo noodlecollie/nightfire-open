@@ -170,7 +170,9 @@ void RmlUiBackend::ReceiveMouseMove(int x, int y)
 		return;
 	}
 
-	m_RmlContext->ProcessMouseMove(x, y, m_Modifiers);
+	const Rml::Vector2i offset = m_RenderInterface.GetViewportOffset();
+
+	m_RmlContext->ProcessMouseMove(x - offset.x, y - offset.y, m_Modifiers);
 }
 
 void RmlUiBackend::ReceiveMouseButton(int button, bool pressed)
@@ -743,8 +745,8 @@ float RmlUiBackend::CalculateDpiScale(int height)
 
 Rml::Rectanglei RmlUiBackend::CalculateViewport(const Rml::Vector2i& windowSize)
 {
-	static constexpr float SMALLEST_ASPECT_RATIO = 4.0 / 3.0;  // 1.333...
-	static constexpr float LARGEST_ASPECT_RATIO = 16.0 / 9.0;  // 1.777...
+	static constexpr float SMALLEST_ASPECT_RATIO = 4.0f / 3.0f;  // 1.333...
+	static constexpr float LARGEST_ASPECT_RATIO = 16.0f / 9.0f;  // 1.777...
 	static const Rml::Vector2i MIN_VIEWPORT_DIMS = Rml::Vector2i(640, 480);
 
 	if ( windowSize.x == 0 || windowSize.y == 0 )

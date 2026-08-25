@@ -98,6 +98,8 @@ set(SOURCES_UI
 	src/rmlui/TextInputHandlerImpl.cpp
 	src/rmlui/Utils.h
 	src/rmlui/Utils.cpp
+	src/templatebindings/HintDisplay.h
+	src/templatebindings/HintDisplay.cpp
 	src/templatebindings/MenuFrameDataBinding.h
 	src/templatebindings/MenuFrameDataBinding.cpp
 	src/templatebindings/OptionsTabBarDataBinding.h

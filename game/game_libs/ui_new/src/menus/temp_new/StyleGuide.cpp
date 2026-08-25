@@ -4,12 +4,16 @@
 #include <RmlUi/Core/StringUtilities.h>
 
 StyleGuide::StyleGuide() :
-	MenuPage("style_guide", "style_guide.rml")
+	MenuPage("style_guide", "style_guide.rml"),
+	m_HintDisplay(this, "colour_hint_container", "colourHintText")
 {
 }
 
 void StyleGuide::OnDocumentLoaded()
 {
+	m_HintDisplay.SetDefaultHintText("None");
+	m_HintDisplay.SetHintInnerRml("Colour constant: {{colourHintText}}");
+
 	ElementFinder finder;
 
 	Rml::Element* table = Document()->GetElementById("colours_table");

@@ -15,6 +15,7 @@ public:
 
 	// The viewport should be updated whenever the window size changes.
 	void SetViewport(Rml::Vector2i windowSize, Rml::Rectanglei viewport);
+	Rml::Vector2i GetViewportOffset() const;
 
 	// Sets up OpenGL states for taking rendering commands from RmlUi.
 	void BeginFrame();
