@@ -5,8 +5,24 @@
 
 StyleGuide::StyleGuide() :
 	MenuPage("style_guide", "style_guide.rml"),
-	m_HintDisplay(this, "colour_hint_container", "colourHintText")
+	m_HintDisplay(this, "colour_hint_container", "colourHintText"),
+	m_TextAreaDisabled {"textAreaDisabled", false}
 {
+}
+
+bool StyleGuide::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	if ( !MenuPage::OnSetUpDataModelBindings(constructor) )
+	{
+		return false;
+	}
+
+	if ( !constructor.Bind(m_TextAreaDisabled.name, &m_TextAreaDisabled.value) )
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void StyleGuide::OnDocumentLoaded()

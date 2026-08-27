@@ -253,6 +253,19 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 	}
 #endif
 
+	// Workaround for the fact that SDL doesn't feed enter key presses up as text input, for some reason.
+	// Perhaps there's a way to configure it to do so?
+	if ( (rmlKey == Rml::Input::KeyIdentifier::KI_RETURN || rmlKey == Rml::Input::KeyIdentifier::KI_NUMPADENTER) &&
+		 m_TextInputHandler.IsActive() )
+	{
+		if ( pressed )
+		{
+			ReceiveChar('\n');
+		}
+
+		return;
+	}
+
 	if ( rmlKey == Rml::Input::KeyIdentifier::KI_UNKNOWN )
 	{
 		// Not handled as a normal key, so set modifiers.
