@@ -745,8 +745,16 @@ float RmlUiBackend::CalculateDpiScale(int height)
 
 Rml::Rectanglei RmlUiBackend::CalculateViewport(const Rml::Vector2i& windowSize)
 {
+	// The smallest (ie. tallest) aspect ratio is a 4:3 screen.
+	// The largest (ie widest) aspect ratio is a little wider than a 16:9
+	// screen, just for convenience in case the user is running the game in
+	// a window that's not quite the full screen height (eg. the taskbar is
+	// taking up some space at the bottom).
 	static constexpr float SMALLEST_ASPECT_RATIO = 4.0f / 3.0f;  // 1.333...
-	static constexpr float LARGEST_ASPECT_RATIO = 16.0f / 9.0f;  // 1.777...
+	static constexpr float LARGEST_ASPECT_RATIO = 18.0f / 9.0f;  // 2.0
+
+	// The minimum size we support is 640x480. Anything smaller than this
+	// gets cropped.
 	static const Rml::Vector2i MIN_VIEWPORT_DIMS = Rml::Vector2i(640, 480);
 
 	if ( windowSize.x == 0 || windowSize.y == 0 )
