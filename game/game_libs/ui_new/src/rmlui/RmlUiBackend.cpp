@@ -781,8 +781,6 @@ Rml::Rectanglei RmlUiBackend::CalculateViewport(const Rml::Vector2i& windowSize)
 
 	const float aspectRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
 
-	Rml::Log::Message(Rml::Log::LT_INFO, "%dx%d (%f)", windowSize.x, windowSize.y, aspectRatio);
-
 	if ( viewportSize.y > MIN_VIEWPORT_DIMS.y && aspectRatio < SMALLEST_ASPECT_RATIO )
 	{
 		// Window is too tall, so letterboxing is added at the top and bottom.
