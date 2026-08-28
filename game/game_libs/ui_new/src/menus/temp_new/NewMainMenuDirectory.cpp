@@ -1,6 +1,7 @@
 #include "menus/temp_new/NewMainMenuDirectory.h"
 
 #include "menus/temp_new/StyleGuide.h"
+#include "menus/temp_new/NewMainMenu.h"
 
 NewMainMenuDirectory::NewMainMenuDirectory() :
 	BaseMenuDirectory("resource/rml/temp_new")
@@ -9,14 +10,13 @@ NewMainMenuDirectory::NewMainMenuDirectory() :
 
 const MenuDirectoryEntry* NewMainMenuDirectory::GetMainMenu() const
 {
-	// TODO
-	return GetMenuEntry("style_guide");
+	return GetMenuEntry(NewMainMenu::NAME);
 }
 
 const MenuDirectoryEntry* NewMainMenuDirectory::GetPauseMenu() const
 {
 	// TODO
-	return GetMenuEntry("style_guide");
+	return GetMenuEntry(NewMainMenu::NAME);
 }
 
 IServerConnectionMenu* NewMainMenuDirectory::GetServerConnectionHandler() const
@@ -28,4 +28,5 @@ IServerConnectionMenu* NewMainMenuDirectory::GetServerConnectionHandler() const
 void NewMainMenuDirectory::PopulateInternal()
 {
 	AddToMap<StyleGuide>();
+	AddToMap<NewMainMenu>();
 }
