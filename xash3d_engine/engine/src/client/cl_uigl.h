@@ -30,3 +30,4 @@ HIMAGE
 CL_UIGL_LoadRGBAImageFromMemory(const char* name, int width, int height, const byte* data, size_t dataSize, int flags);
 void CL_UIGL_FreeImage(HIMAGE image);
 void CL_UIGL_SetTransform(const float* mat4x4);
+void CL_UIGL_DrawSolidRect(float x, float y, float w, float h, uint32_t colour);

@@ -1534,6 +1534,7 @@ static const ui_gl_functions gUiGlFuncs = {
 		CL_UIGL_LoadRGBAImageFromMemory,  // loadRGBAImageFromMemory
 		CL_UIGL_FreeImage,  // freeImage
 		CL_UIGL_SetTransform,  // setTransform
+		CL_UIGL_DrawSolidRect,  // drawSolidRect
 	},
 	// Filesytem
 	{

@@ -31,11 +31,6 @@ void RenderInterfaceImpl::BeginFrame()
 {
 	ASSERT(m_Viewport.Width() > 0 && m_Viewport.Height() > 0);
 
-	if ( m_Viewport.Top() > 0 || m_Viewport.Left() > 0 )
-	{
-		gUiGlFuncs.renderer.clear(0x00000000, 0);
-	}
-
 	// The offset from (0,0) represents the pillarboxing/letterboxing
 	// that we want to apply. If we translate the entire window up and
 	// left by this value, this adds the margins that we need. The
@@ -52,6 +47,21 @@ void RenderInterfaceImpl::BeginFrame()
 
 void RenderInterfaceImpl::EndFrame()
 {
+	// TODO: This does not seem to work
+	// Pillarboxing
+	if ( m_Viewport.Left() > 0 )
+	{
+		gUiGlFuncs.renderer.drawSolidRect(0.0f, 0.0f, m_Viewport.Left(), m_WindowSize.y, 0x000000FF);
+		gUiGlFuncs.renderer.drawSolidRect(m_Viewport.Right(), 0.0f, m_Viewport.Left(), m_WindowSize.y, 0x000000FF);
+	}
+
+	// Letterboxing
+	if ( m_Viewport.Top() > 0 )
+	{
+		gUiGlFuncs.renderer.drawSolidRect(0.0f, 0.0f, m_WindowSize.x, m_Viewport.Top(), 0x000000FF);
+		gUiGlFuncs.renderer.drawSolidRect(0.0f, m_Viewport.Bottom(), m_Viewport.Top(), m_WindowSize.y, 0x000000FF);
+	}
+
 	gUiGlFuncs.renderer.endFrame();
 }
 

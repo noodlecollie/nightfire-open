@@ -348,6 +348,8 @@ typedef struct ui_gl_renderfunctions_s
 
 	// If null, sets identity transform.
 	void (*setTransform)(const float* mat4x4);
+
+	void (*drawSolidRect)(float x, float y, float w, float h, uint32_t colour);
 } ui_gl_renderfunctions;
 
 typedef uintptr_t ui_gl_filesystem_handle_t;

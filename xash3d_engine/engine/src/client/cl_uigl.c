@@ -222,3 +222,17 @@ void CL_UIGL_SetTransform(const float* mat4x4)
 
 	ref.dllUiFuncs.setTransform(mat4x4);
 }
+
+void CL_UIGL_DrawSolidRect(float x, float y, float w, float h, uint32_t colour)
+{
+	ref.dllFuncs.FillRGBA(
+		x,
+		y,
+		w,
+		h,
+		(colour & 0xFF000000) >> 24,
+		(colour & 0x00FF0000) >> 16,
+		(colour & 0x0000FF00) >> 8,
+		(colour & 0x000000FF)
+	);
+}
