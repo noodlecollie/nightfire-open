@@ -76,6 +76,8 @@ public:
 	void SetDiscoveredServerCallback(DiscoveredServerCallback callback);
 	void ClearDiscoveredServerCallback();
 
+	static bool ClientIsInActiveGame();
+
 private:
 	struct MainMenuData;
 
@@ -87,6 +89,7 @@ private:
 	void HandleMenuPushCommand();
 	void HandleMenuPopCommand();
 	void ReloadCurrentMenu();
+	bool StartBackgroundMap();
 
 	static float CalculateDpiScale(int height);
 	static Rml::Rectanglei CalculateViewport(const Rml::Vector2i& windowSize);
@@ -98,6 +101,7 @@ private:
 	EventListenerInstancerImpl m_EventListenerInstancer;
 
 	bool m_Initialised = false;
+	bool m_FirstUpdate = false;
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
 
@@ -111,4 +115,5 @@ private:
 	DiscoveredServerCallback m_DiscoveredServerCallback;
 
 	struct cvar_s* m_cvarScrollSensitivity = nullptr;
+	struct cvar_s* m_cvarMenuBackgroundMap = nullptr;
 };

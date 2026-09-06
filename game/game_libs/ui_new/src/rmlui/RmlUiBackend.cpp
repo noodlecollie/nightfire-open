@@ -71,6 +71,7 @@ void RmlUiBackend::Initialise()
 #endif
 
 	m_MenuDirectory->AcquireContext(m_RmlContext);
+	m_FirstUpdate = true;
 	m_Initialised = true;
 }
 
@@ -103,6 +104,7 @@ void RmlUiBackend::ShutDown()
 
 	m_RmlContext = nullptr;
 	m_Initialised = false;
+	m_FirstUpdate = false;
 	m_Modifiers = 0;
 	m_StoreNextKey = false;
 	m_StoredKey = StoredKey {};
@@ -550,11 +552,26 @@ void RmlUiBackend::ClearDiscoveredServerCallback()
 	m_DiscoveredServerCallback = {};
 }
 
+bool RmlUiBackend::ClientIsInActiveGame()
+{
+	return gEngfuncs.pfnClientInGame && gEngfuncs.pfnGetCvarFloat("cl_background") != 0.0f;
+}
+
 void RmlUiBackend::Update(float currentTime)
 {
 	if ( !IsInitialised() )
 	{
 		return;
+	}
+
+	if ( m_FirstUpdate )
+	{
+		m_FirstUpdate = false;
+
+		if ( StartBackgroundMap() )
+		{
+			return;
+		}
 	}
 
 	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
@@ -629,6 +646,7 @@ void RmlUiBackend::RegisterFonts()
 void RmlUiBackend::RegisterCvars()
 {
 	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
+	m_cvarMenuBackgroundMap = gEngfuncs.pfnRegisterVariable("ui_background_map", "bg_mainmenu", FCVAR_ARCHIVE);
 
 	m_SystemInterface.RegisterCvars();
 }
@@ -719,6 +737,28 @@ void RmlUiBackend::ReloadCurrentMenu()
 
 	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Reloading menu: %s", menuName.c_str());
 	m_MenuDirectory->ReloadMenu(menuName);
+}
+
+bool RmlUiBackend::StartBackgroundMap()
+{
+	if ( !m_cvarMenuBackgroundMap || !m_cvarMenuBackgroundMap->string[0] || ClientIsInActiveGame() ||
+		 gpGlobals->demoplayback )
+	{
+		return false;
+	}
+
+	{
+		Rml::String mapPath = Rml::CreateString("maps/%s.bsp", m_cvarMenuBackgroundMap->string);
+
+		if ( !gEngfuncs.pfnFileExists(mapPath.c_str(), true) )
+		{
+			return false;
+		}
+	}
+
+	Rml::String cmd = Rml::CreateString("map_background %s", m_cvarMenuBackgroundMap->string);
+	gEngfuncs.pfnClientCmd(false, cmd.c_str());
+	return true;
 }
 
 float RmlUiBackend::CalculateDpiScale(int height)
