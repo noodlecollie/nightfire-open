@@ -954,14 +954,20 @@ void R_BlendLightmaps(void)
 	int i;
 
 	if ( !R_HasLightmap() )
+	{
 		return;
+	}
 
 	GL_SetupFogColorForSurfaces();
 
 	if ( !CVAR_TO_BOOL(r_lightmap) )
+	{
 		pglEnable(GL_BLEND);
+	}
 	else
+	{
 		pglDisable(GL_BLEND);
+	}
 
 	// lightmapped solid surfaces
 	pglDepthMask(GL_FALSE);
@@ -981,7 +987,9 @@ void R_BlendLightmaps(void)
 			for ( surf = gl_lms.lightmap_surfaces[i]; surf != NULL; surf = surf->info->lightmapchain )
 			{
 				if ( surf->polys )
+				{
 					DrawGLPolyChain(surf->polys, 0.0f, 0.0f);
+				}
 			}
 		}
 	}
@@ -1027,7 +1035,8 @@ void R_BlendLightmaps(void)
 						DrawGLPolyChain(
 							drawsurf->polys,
 							(drawsurf->light_s - drawsurf->info->dlight_s) * (1.0f / (float)BLOCK_SIZE),
-							(drawsurf->light_t - drawsurf->info->dlight_t) * (1.0f / (float)BLOCK_SIZE));
+							(drawsurf->light_t - drawsurf->info->dlight_t) * (1.0f / (float)BLOCK_SIZE)
+						);
 					}
 				}
 
@@ -1049,7 +1058,9 @@ void R_BlendLightmaps(void)
 
 		// draw remainder of dynamic lightmaps that haven't been uploaded yet
 		if ( newsurf )
+		{
 			LM_UploadBlock(true);
+		}
 
 		for ( surf = newsurf; surf != NULL; surf = surf->info->lightmapchain )
 		{
@@ -1058,7 +1069,8 @@ void R_BlendLightmaps(void)
 				DrawGLPolyChain(
 					surf->polys,
 					(surf->light_s - surf->info->dlight_s) * (1.0f / (float)BLOCK_SIZE),
-					(surf->light_t - surf->info->dlight_t) * (1.0f / (float)BLOCK_SIZE));
+					(surf->light_t - surf->info->dlight_t) * (1.0f / (float)BLOCK_SIZE)
+				);
 			}
 		}
 	}
@@ -1526,7 +1538,8 @@ void R_SetRenderMode(cl_entity_t* e)
 				e->curstate.rendercolor.r,
 				e->curstate.rendercolor.g,
 				e->curstate.rendercolor.b,
-				(GLubyte)e->curstate.renderamt);
+				(GLubyte)e->curstate.renderamt
+			);
 			pglTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			pglDisable(GL_TEXTURE_2D);
 			pglEnable(GL_BLEND);
@@ -1915,10 +1928,8 @@ void R_GenerateVBO(void)
 				{
 					// generate new array and new vbotexture node
 					vbo->array = Mem_Calloc(vbos.mempool, sizeof(vbovertex_t) * vbo->array_len);
-					gEngfuncs.Con_Printf(
-						"R_GenerateVBOs: allocated array of %d verts, texture %d\n",
-						vbo->array_len,
-						j);
+					gEngfuncs
+						.Con_Printf("R_GenerateVBOs: allocated array of %d verts, texture %d\n", vbo->array_len, j);
 					vbo->next = Mem_Calloc(vbos.mempool, sizeof(vboarray_t));
 					vbo = vbo->next;
 					vbotex->next = Mem_Calloc(vbos.mempool, sizeof(vbotexture_t));
@@ -1992,7 +2003,8 @@ void R_GenerateVBO(void)
 						GL_ARRAY_BUFFER_ARB,
 						vbo->array_len * sizeof(vbovertex_t),
 						vbo->array,
-						GL_STATIC_DRAW_ARB);
+						GL_STATIC_DRAW_ARB
+					);
 
 					ASSERT(len == vbo->array_len);
 
@@ -2046,7 +2058,8 @@ void R_GenerateVBO(void)
 		GL_ARRAY_BUFFER_ARB,
 		sizeof(vbovertex_t) * DECAL_VERTS_CUT * MAX_RENDER_DECALS,
 		vbos.decaldata->decalarray,
-		GL_DYNAMIC_DRAW_ARB);
+		GL_DYNAMIC_DRAW_ARB
+	);
 
 	// preallocate dlight arrays
 	vbos.dlight_index = Mem_Calloc(vbos.mempool, maxindex * sizeof(unsigned short) * 6);
@@ -2054,7 +2067,8 @@ void R_GenerateVBO(void)
 	// select maximum possible length for dlight
 	vbos.dlight_tc = Mem_Calloc(
 		vbos.mempool,
-		sizeof(vec2_t) * (int)(vbos.arraylist->next ? USHRT_MAX + 1 : vbos.arraylist->array_len + 1));
+		sizeof(vec2_t) * (int)(vbos.arraylist->next ? USHRT_MAX + 1 : vbos.arraylist->array_len + 1)
+	);
 
 	if ( CVAR_TO_BOOL(r_vbo_dlightmode) )
 	{
@@ -2064,7 +2078,8 @@ void R_GenerateVBO(void)
 			GL_ARRAY_BUFFER_ARB,
 			sizeof(vec2_t) * (int)(vbos.arraylist->next ? USHRT_MAX + 1 : vbos.arraylist->array_len + 1),
 			vbos.dlight_tc,
-			GL_STREAM_DRAW_ARB);
+			GL_STREAM_DRAW_ARB
+		);
 		pglGenBuffersARB(1, &vbos.decal_dlight_vbo);
 		pglBindBufferARB(GL_ARRAY_BUFFER_ARB, vbos.decal_dlight_vbo);
 		pglBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(vbos.decal_dlight), vbos.decal_dlight, GL_STREAM_DRAW_ARB);
@@ -2112,7 +2127,8 @@ void R_AddDecalVBO(decal_t* pdecal, msurface_t* surf)
 		GL_ARRAY_BUFFER_ARB,
 		decalindex * sizeof(vbovertex_t) * DECAL_VERTS_CUT,
 		sizeof(vbovertex_t) * numVerts,
-		&vbos.decaldata->decalarray[decalindex * DECAL_VERTS_CUT]);
+		&vbos.decaldata->decalarray[decalindex * DECAL_VERTS_CUT]
+	);
 	pglBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
 	vbos.decaldata->decals[decalindex].numVerts = numVerts;
@@ -2571,7 +2587,8 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 					GL_ARRAY_BUFFER_ARB,
 					sizeof(vec2_t) * indexbase,
 					sizeof(vec2_t) * surf->polys->numverts,
-					vbos.dlight_tc + indexbase);
+					vbos.dlight_tc + indexbase
+				);
 			}
 
 			// if surface has decals, build decal array
@@ -2604,7 +2621,8 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 					{
 						VectorCopy(
 							vbos.decaldata->decalarray[decalindex * DECAL_VERTS_CUT + i].pos,
-							vbos.decal_dlight[decalcount * DECAL_VERTS_MAX + i].pos);
+							vbos.decal_dlight[decalcount * DECAL_VERTS_MAX + i].pos
+						);
 						vbos.decal_dlight[decalcount * DECAL_VERTS_MAX + i].gl_tc[0] =
 							vbos.decaldata->decalarray[decalindex * DECAL_VERTS_CUT + i].gl_tc[0];
 						vbos.decal_dlight[decalcount * DECAL_VERTS_MAX + i].gl_tc[1] =
@@ -2624,7 +2642,8 @@ R_DrawLightmappedVBO(vboarray_t* vbo, vbotexture_t* vbotex, texture_t* texture, 
 						GL_ARRAY_BUFFER_ARB,
 						sizeof(vbovertex_t) * decalcount * DECAL_VERTS_MAX,
 						sizeof(vbovertex_t) * numVerts,
-						vbos.decal_dlight + decalcount * DECAL_VERTS_MAX);
+						vbos.decal_dlight + decalcount * DECAL_VERTS_MAX
+					);
 				}
 
 				vbos.decal_numverts[decalcount] = numVerts;
@@ -2947,7 +2966,8 @@ void R_DrawVBO(qboolean drawlightmap, qboolean drawtextures)
 						pglDrawArrays(
 							GL_TRIANGLE_FAN,
 							decalindex * DECAL_VERTS_CUT,
-							vbos.decaldata->decals[decalindex].numVerts);
+							vbos.decaldata->decals[decalindex].numVerts
+						);
 				}
 			}
 
@@ -3443,12 +3463,18 @@ void R_DrawWorld(void)
 	// paranoia issues: when gl_renderer is "0" we need have something valid for currententity
 	// to prevent crashing until HeadShield drawing.
 	RI.currententity = gEngfuncs.GetEntityByIndex(0);
+
 	if ( !RI.currententity )
+	{
 		return;
+	}
 
 	RI.currentmodel = RI.currententity->model;
+
 	if ( !RI.drawWorld || RI.onlyClientDraw )
+	{
 		return;
+	}
 
 	VectorCopy(RI.cullorigin, tr.modelorg);
 	memset(gl_lms.lightmap_surfaces, 0, sizeof(gl_lms.lightmap_surfaces));
@@ -3463,10 +3489,16 @@ void R_DrawWorld(void)
 	R_ClearSkyBox();
 
 	start = gEngfuncs.pfnTime();
+
 	if ( RI.drawOrtho )
+	{
 		R_DrawWorldTopView(WORLDMODEL->nodes, RI.frustum.clipFlags);
+	}
 	else
+	{
 		R_RecursiveWorldNode(WORLDMODEL->nodes, RI.frustum.clipFlags);
+	}
+
 	end = gEngfuncs.pfnTime();
 
 	r_stats.t_world_node = end - start;
@@ -3485,7 +3517,9 @@ void R_DrawWorld(void)
 		R_RenderDetails();
 
 		if ( skychain )
+		{
 			R_DrawSkyBox();
+		}
 	}
 
 	end = gEngfuncs.pfnTime();
