@@ -33,33 +33,48 @@ void RenderInterfaceImpl::BeginFrame()
 
 	// The offset from (0,0) represents the pillarboxing/letterboxing
 	// that we want to apply. If we translate the entire window up and
-	// left by this value, this adds the margins that we need. The
-	// viewport itself will be scaled to be smaller than the window,
-	// which will result in the margins at the other side.
+	// left by this value, this adds the margins that we need.
+
+	const Rml::Vector2i margins = GetViewportOffset();
 
 	gUiGlFuncs.renderer.beginFrame(
-		-m_Viewport.Left(),
-		-m_Viewport.Top(),
-		m_WindowSize.x - m_Viewport.Left(),
-		m_WindowSize.y - m_Viewport.Top()
+		-margins.x,  // Further left than 0 if we have pillarboxing
+		-margins.y,  // Further up than 0 if we have letterboxing
+		m_WindowSize.x,
+		m_WindowSize.y
 	);
 }
 
 void RenderInterfaceImpl::EndFrame()
 {
-	// TODO: This does not seem to work
+	// Do pillarboxing and letterboxing.
+	// Remember that these are "world" co-ordinates, not
+	// screen co-ordinates! The 2D camera is translated
+	// based on the letterboxing/pillarboxing set up
+	// in BeginFrame(), so we need to account for that.
+
+	const Rml::Vector2i topLeft = GetViewportOffset() * -1;
+
 	// Pillarboxing
 	if ( m_Viewport.Left() > 0 )
 	{
-		gUiGlFuncs.renderer.drawSolidRect(0.0f, 0.0f, m_Viewport.Left(), m_WindowSize.y, 0x000000FF);
-		gUiGlFuncs.renderer.drawSolidRect(m_Viewport.Right(), 0.0f, m_Viewport.Left(), m_WindowSize.y, 0x000000FF);
+		const int pillarboxHeight = m_WindowSize.y;
+		const int leftPillarboxWidth = m_Viewport.Left();
+		const int rightPillarboxWidth = std::max<int>(m_WindowSize.x - m_Viewport.Width() - m_Viewport.Left(), 0);
+
+		gEngfuncs.pfnFillRGBA(topLeft.x, topLeft.y, leftPillarboxWidth, pillarboxHeight, 0, 0, 0, 255);
+		gEngfuncs.pfnFillRGBA(m_Viewport.Width(), topLeft.y, rightPillarboxWidth, pillarboxHeight, 0, 0, 0, 255);
 	}
 
 	// Letterboxing
 	if ( m_Viewport.Top() > 0 )
 	{
-		gUiGlFuncs.renderer.drawSolidRect(0.0f, 0.0f, m_WindowSize.x, m_Viewport.Top(), 0x000000FF);
-		gUiGlFuncs.renderer.drawSolidRect(0.0f, m_Viewport.Bottom(), m_Viewport.Top(), m_WindowSize.y, 0x000000FF);
+		const int letterboxWidth = m_WindowSize.x;
+		const int topLetterboxHeight = m_Viewport.Top();
+		const int bottomLetterboxHeight = std::max<int>(m_WindowSize.y - m_Viewport.Height() - m_Viewport.Top(), 0);
+
+		gEngfuncs.pfnFillRGBA(topLeft.x, topLeft.y, letterboxWidth, topLetterboxHeight, 0, 0, 0, 255);
+		gEngfuncs.pfnFillRGBA(topLeft.x, m_Viewport.Height(), letterboxWidth, bottomLetterboxHeight, 0, 0, 0, 255);
 	}
 
 	gUiGlFuncs.renderer.endFrame();

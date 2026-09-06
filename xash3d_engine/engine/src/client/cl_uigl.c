@@ -16,8 +16,8 @@ void CL_UIGL_BeginFrame(int viewportX, int viewportY, int viewportWidth, int vie
 	viewPass.flags |= RF_ONLY_CLIENTDRAW;
 	viewPass.viewport[0] = viewportX;
 	viewPass.viewport[1] = viewportY;
-	viewPass.viewport[2] = viewportWidth;
-	viewPass.viewport[3] = viewportHeight;
+	viewPass.viewport[2] = viewportX + viewportWidth;
+	viewPass.viewport[3] = viewportY + viewportHeight;
 
 	ref.dllUiFuncs.beginFrame(&viewPass);
 }
