@@ -26,11 +26,11 @@ typedef struct
 {
 	int num_entities;
 	entity_state_t entities[MAX_VISIBLE_PACKET];
-	byte sended[MAX_EDICTS_BYTES];
+	byte sent[MAX_EDICTS_BYTES];
 } sv_ents_t;
 
-int c_fullsend;  // just a debug counter
-int c_notsend;
+static int c_fullsend;  // just a debug counter
+static int c_notsend;
 
 /*
 =======================
@@ -111,7 +111,7 @@ static void SV_AddEntitiesToPacket(
 		ent = EDICT_NUM(e);
 
 		// don't double add an entity through portals (in case this already added)
-		if ( CHECKVISBIT(ents->sended, e) )
+		if ( CHECKVISBIT(ents->sent, e) )
 			continue;
 
 		if ( e >= 1 && e <= svs.maxclients )
@@ -145,7 +145,7 @@ static void SV_AddEntitiesToPacket(
 		if ( svgame.dllFuncs.pfnAddToFullPack(state, e, ent, pClient, sv.hostflags, player, pset) )
 		{
 			// to prevent adds it twice through portals
-			SETVISBIT(ents->sended, e);
+			SETVISBIT(ents->sent, e);
 
 			if ( SV_IsValidEdict(ent->v.aiment) && FBitSet(ent->v.aiment->v.effects, EF_MERGE_VISIBILITY) )
 			{
@@ -172,7 +172,9 @@ static void SV_AddEntitiesToPacket(
 		}
 
 		if ( fullvis )
+		{
 			continue;  // portal ents will be added anyway, ignore recursion
+		}
 
 		// if it's a portal entity, add everything visible from its camera position
 		if ( from_client && FBitSet(ent->v.effects, EF_MERGE_VISIBILITY) )
@@ -678,7 +680,7 @@ void SV_WriteEntitiesToClient(sv_client_t* cl, sizebuf_t* msg)
 	frame = &cl->frames[cl->netchan.outgoing_sequence & SV_UPDATE_MASK];
 	send_pings = SV_ShouldUpdatePing(cl);
 
-	memset(frame_ents.sended, 0, sizeof(frame_ents.sended));
+	memset(frame_ents.sent, 0, sizeof(frame_ents.sent));
 	ClearBits(sv.hostflags, SVF_MERGE_VISIBILITY);
 
 	// clear everything in this snapshot

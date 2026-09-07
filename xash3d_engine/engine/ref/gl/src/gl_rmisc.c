@@ -143,7 +143,9 @@ void R_NewMap(void)
 			sf->fadeReset = title->fadeout;
 		}
 		else
+		{
 			sf->fadeEnd = sf->fadeReset = fadetime;
+		}
 
 		sf->fadeFlags = FFADE_IN;
 		sf->fader = sf->fadeg = sf->fadeb = 0;

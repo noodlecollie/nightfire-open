@@ -141,7 +141,8 @@ void CDecal::TriggerDecal(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
 		Vector(pev->origin) + Vector(5, 5, 5),
 		ignore_monsters,
 		ENT(pev),
-		&trace);
+		&trace
+	);
 
 	MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 	WRITE_BYTE(TE_BSPDECAL);
@@ -169,7 +170,8 @@ void CDecal::StaticDecal(void)
 		Vector(pev->origin) + Vector(5, 5, 5),
 		ignore_monsters,
 		ENT(pev),
-		&trace);
+		&trace
+	);
 
 	entityIndex = (short)ENTINDEX(trace.pHit);
 
@@ -272,7 +274,7 @@ void CGlobalState::EntitySetState(string_t globalname, GLOBALESTATE state)
 		pEnt->state = state;
 }
 
-const globalentity_t* CGlobalState ::EntityFromTable(string_t globalname)
+const globalentity_t* CGlobalState::EntityFromTable(string_t globalname)
 {
 	globalentity_t* pEnt = Find(globalname);
 
@@ -448,7 +450,8 @@ void CWorld::Precache(void)
 		[](const char* modelPath) -> int
 		{
 			return PRECACHE_MODEL(modelPath);
-		});
+		}
+	);
 
 	// sounds used from C physics code
 	PRECACHE_SOUND("common/null.wav");  // clears sound channels
@@ -569,16 +572,24 @@ void CWorld::Precache(void)
 	}
 
 	if ( pev->spawnflags & SF_WORLD_DARK )
+	{
 		CVAR_SET_FLOAT("v_dark", 1.0);
+	}
 	else
+	{
 		CVAR_SET_FLOAT("v_dark", 0.0);
+	}
 
 	pev->spawnflags &= ~SF_WORLD_DARK;  // g-cont. don't apply fade after save\restore
 
 	if ( pev->spawnflags & SF_WORLD_TITLE )
+	{
 		gDisplayTitle = TRUE;  // display the game title if this key is set
+	}
 	else
+	{
 		gDisplayTitle = FALSE;
+	}
 
 	pev->spawnflags &= ~SF_WORLD_TITLE;  // g-cont. don't show logo after save\restore
 
@@ -633,20 +644,28 @@ void CWorld::KeyValue(KeyValueData* pkvd)
 		// but it will work for single player
 		int flag = atoi(pkvd->szValue);
 		pkvd->fHandled = TRUE;
+
 		if ( flag )
+		{
 			pev->spawnflags |= SF_WORLD_DARK;
+		}
 	}
 	else if ( FStrEq(pkvd->szKeyName, "newunit") )
 	{
 		// Single player only.  Clear save directory if set
 		if ( atoi(pkvd->szValue) )
+		{
 			CVAR_SET_FLOAT("sv_newunit", 1);
+		}
+
 		pkvd->fHandled = TRUE;
 	}
 	else if ( FStrEq(pkvd->szKeyName, "gametitle") )
 	{
 		if ( atoi(pkvd->szValue) )
+		{
 			pev->spawnflags |= SF_WORLD_TITLE;
+		}
 
 		pkvd->fHandled = TRUE;
 	}
@@ -808,7 +827,8 @@ BOOL gPhysicsInterfaceInitialized = FALSE;
 int Server_GetPhysicsInterface(
 	int iVersion,
 	server_physics_api_t* pfuncsFromEngine,
-	physics_interface_t* pFunctionTable)
+	physics_interface_t* pFunctionTable
+)
 {
 	if ( !pFunctionTable || !pfuncsFromEngine || iVersion != SV_PHYSICS_INTERFACE_VERSION )
 	{
