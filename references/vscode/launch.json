@@ -3,23 +3,46 @@
 	// Hover to view descriptions of existing attributes.
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
-	"configurations":
-	[
+	"configurations": [
+		// Windows
 		{
 			"name": "Debug Game (CPP VS Dbg)",
 			"type": "cppvsdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/install/nightfire-open/bond.exe",
-			"args":
-			[
-				"-width", "1920",
-				"-height", "1080",
-				"-dev", "2"
+			"args": [
+				"-width",
+				"1920",
+				"-height",
+				"1080",
+				"-dev",
+				"2"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}/build/install/nightfire-open",
 			"environment": [],
 			"console": "externalTerminal"
+		},
+		// Linux
+		{
+			"name": "C/C++ Debug (gdb Launch)",
+			"type": "lldb",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/install/nightfire-open/bond",
+			"args": [
+				"-width",
+				"1280",
+				"-height",
+				"720",
+				"-dev",
+				"2"
+			],
+			"cwd": "${workspaceFolder}/build/install/nightfire-open",
+			"postRunCommands": [
+				// Important! LLDB might not be able to find the location of the client and
+				// server libraries if this is not set.
+				"settings set target.exec-search-paths \"${workspaceFolder}/build/install/nightfire-open/nfopen/cl_dlls\" \"${workspaceFolder}/build/install/nightfire-open/nfopen/dlls\""
+			]
 		}
 	]
 }

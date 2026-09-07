@@ -29,7 +29,8 @@
 #include "weaponatts_collection.h"
 #include "gameplay/gameplaySystems.h"
 #include "gameplay/gameplaySystemsBase.h"
-#include "spawnpointmanager.h"
+#include "gameplay/spawnpointmanager.h"
+#include "gameplay/backgroundmapgamerules.h"
 
 DLL_GLOBAL CGameRules* g_pGameRules = NULL;
 extern DLL_GLOBAL BOOL g_fGameOver;
@@ -216,7 +217,12 @@ CGameRules* InstallGameRules(void)
 	SERVER_COMMAND("exec game.cfg\n");
 	SERVER_EXECUTE();
 
-	if ( !gpGlobals->deathmatch )
+	if ( g_backgroundmap )
+	{
+		g_teamplay = 0;
+		return new CBackgroundMapGameRules();
+	}
+	else if ( !gpGlobals->deathmatch )
 	{
 		// generic half-life
 		g_teamplay = 0;

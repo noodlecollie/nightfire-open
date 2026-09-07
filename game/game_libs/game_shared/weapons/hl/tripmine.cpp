@@ -74,7 +74,7 @@ class CTripmineGrenade : public CGrenade
 	Vector m_posOwner;
 	Vector m_angleOwner;
 	edict_t* m_pRealOwner;  // tracelines don't hit PEV->OWNER, which means a player couldn't detonate his own trip
-							// mine, so we store the owner here.
+	// mine, so we store the owner here.
 };
 
 LINK_ENTITY_TO_CLASS(monster_tripmine, CTripmineGrenade)
@@ -259,8 +259,6 @@ void CTripmineGrenade::KillBeam(void)
 void CTripmineGrenade::MakeBeam(void)
 {
 	TraceResult tr;
-
-	// ALERT( at_console, "serverflags %f\n", gpGlobals->serverflags );
 
 	UTIL_TraceLine(pev->origin, m_vecEnd, dont_ignore_monsters, ENT(pev), &tr);
 

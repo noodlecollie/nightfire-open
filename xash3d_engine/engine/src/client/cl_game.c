@@ -113,13 +113,19 @@ Render callback for studio models
 cl_entity_t* CL_GetEntityByIndex(int index)
 {
 	if ( !clgame.entities )  // not in game yet
+	{
 		return NULL;
+	}
 
 	if ( index < 0 || index >= clgame.maxEntities )
+	{
 		return NULL;
+	}
 
 	if ( index == 0 )
+	{
 		return clgame.entities;
+	}
 
 	return CL_EDICT_NUM(index);
 }

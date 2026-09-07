@@ -1264,6 +1264,9 @@ int AddToFullPack(
 {
 	int i;
 
+	// MENUMAP TODO: Need a way to bypass the effects, model and visibility checks below,
+	// so that we can specify when an entity should always be added to a full pack.
+
 	// don't send if flagged for NODRAW and it's not the host getting the message
 	if ( (ent->v.effects & EF_NODRAW) && (ent != host) )
 		return 0;
@@ -1364,7 +1367,7 @@ int AddToFullPack(
 	state->effects = ent->v.effects;
 
 	// This non-player entity is being moved by the game .dll and not the physics simulation system
-	//  make sure that we interpolate it's position on the client if it moves
+	//  make sure that we interpolate its position on the client if it moves
 	if ( !player && ent->v.animtime && ent->v.velocity[0] == 0 && ent->v.velocity[1] == 0 && ent->v.velocity[2] == 0 )
 	{
 		state->eflags |= EFLAG_SLERP;

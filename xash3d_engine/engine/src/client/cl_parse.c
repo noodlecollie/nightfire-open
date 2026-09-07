@@ -1262,7 +1262,7 @@ void CL_ParseBaseline(sizebuf_t* msg, qboolean legacy)
 	qboolean player;
 	cl_entity_t* ent;
 
-	Delta_InitClient();  // finalize client delta's
+	Delta_InitClient();  // finalize client deltas
 
 	memset(&nullstate, 0, sizeof(nullstate));
 
@@ -1275,13 +1275,19 @@ void CL_ParseBaseline(sizebuf_t* msg, qboolean legacy)
 		else
 		{
 			newnum = MSG_ReadUBitLong(msg, MAX_ENTITY_BITS);
+
 			if ( newnum == LAST_EDICT )
+			{
 				break;  // end of baselines
+			}
 		}
+
 		player = CL_IsPlayerIndex(newnum);
 
 		if ( newnum >= clgame.maxEntities )
+		{
 			Host_Error("CL_AllocEdict: no free edicts\n");
+		}
 
 		ent = CL_EDICT_NUM(newnum);
 

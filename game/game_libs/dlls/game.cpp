@@ -71,6 +71,7 @@ cvar_t mp_chattime = CONSTRUCT_CVAR_T("mp_chattime", 10, FCVAR_SERVER);
 cvar_t* g_psv_gravity = NULL;
 cvar_t* g_psv_aim = NULL;
 cvar_t* g_footsteps = NULL;
+cvar_t* g_backgroundmap = NULL;
 
 // CVARS FOR SKILL LEVEL SETTINGS
 
@@ -166,6 +167,7 @@ void GameDLLInit(void)
 	g_psv_gravity = CVAR_GET_POINTER("sv_gravity");
 	g_psv_aim = CVAR_GET_POINTER("sv_aim");
 	g_footsteps = CVAR_GET_POINTER("mp_footsteps");
+	g_backgroundmap = CVAR_GET_POINTER("sv_background");
 
 	CVAR_REGISTER(&displaysoundlist);
 	CVAR_REGISTER(&allow_spectators);

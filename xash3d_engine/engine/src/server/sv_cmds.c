@@ -293,16 +293,20 @@ void SV_MapBackground_f(void)
 	if ( SV_Active() && !sv.background )
 	{
 		if ( GameState->nextstate == STATE_RUNFRAME )
+		{
 			Con_Printf(S_ERROR "can't set background map while game is active\n");
+		}
+
 		return;
 	}
 
-	// hold mapname to other place
 	Q_strncpy(mapname, Cmd_Argv(1), sizeof(mapname));
 	COM_StripExtension(mapname);
 
 	if ( !SV_ValidateMap(mapname, false) )
+	{
 		return;
+	}
 
 	// background map is always run as singleplayer
 	Cvar_FullSet("maxplayers", "1", FCVAR_LATCH);

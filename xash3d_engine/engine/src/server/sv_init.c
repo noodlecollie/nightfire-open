@@ -530,8 +530,12 @@ void SV_CreateBaseline(void)
 		}
 		else
 		{
+			// MENUMAP TODO: Allow bypassing this
 			if ( !pEdict->v.modelindex )
+			{
 				continue;  // invisible
+			}
+
 			delta_type = DELTA_ENTITY;
 		}
 
@@ -570,8 +574,12 @@ void SV_CreateBaseline(void)
 		}
 		else
 		{
+			// MENUMAP TODO: Allow bypassing this
 			if ( !pEdict->v.modelindex )
+			{
 				continue;  // invisible
+			}
+
 			delta_type = DELTA_ENTITY;
 		}
 
@@ -1025,11 +1033,11 @@ qboolean SV_SpawnServer(const char* mapname, const char* startspot, qboolean bac
 
 	if ( startspot )
 	{
-		Con_Printf("Spawn Server: %s [%s]\n", mapname, startspot);
+		Con_Printf("Spawn %sserver: %s [%s]\n", background ? "background " : "", mapname, startspot);
 	}
 	else
 	{
-		Con_DPrintf("Spawn Server: %s\n", mapname);
+		Con_DPrintf("Spawn %sserver: %s\n", background ? "background " : "", mapname);
 	}
 
 	memset(&sv, 0, sizeof(sv));  // wipe the entire per-level structure

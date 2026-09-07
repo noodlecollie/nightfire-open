@@ -64,7 +64,8 @@ static void SV_AddEntitiesToPacket(
 	edict_t* pClient,
 	client_frame_t* frame,
 	sv_ents_t* ents,
-	qboolean from_client)
+	qboolean from_client
+)
 {
 	edict_t* ent;
 	byte* clientpvs;
@@ -203,7 +204,8 @@ int SV_FindBestBaseline(
 	entity_state_t** baseline,
 	entity_state_t* to,
 	client_frame_t* frame,
-	qboolean player)
+	qboolean player
+)
 {
 	int bestBitCount;
 	int i, bitCount;
@@ -705,7 +707,7 @@ void SV_WriteEntitiesToClient(sv_client_t* cl, sizebuf_t* msg)
 		svs.next_client_entities = 0;
 
 		// delta is broken for now, cannot keep connected clients
-		SV_FinalMessage("Server will restart due delta is outdated\n", true);
+		SV_FinalMessage("Server will restart as network delta is outdated\n", true);
 	}
 
 	// copy the entity states out
@@ -849,7 +851,8 @@ void SV_UpdateToReliableMessages(void)
 			MSG_WriteBits(
 				&cl->netchan.message,
 				MSG_GetBuf(&sv.reliable_datagram),
-				MSG_GetNumBitsWritten(&sv.reliable_datagram));
+				MSG_GetNumBitsWritten(&sv.reliable_datagram)
+			);
 		else
 			Netchan_CreateFragments(&cl->netchan, &sv.reliable_datagram);
 

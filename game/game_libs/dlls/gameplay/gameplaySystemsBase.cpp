@@ -4,6 +4,7 @@
 
 CGameplaySystemsBase::CGameplaySystemsBase() :
 	m_SpawnPointManager(new CSpawnPointManager()),
+	m_ObserverPointList(new CObserverPointList()),
 	m_HitboxDebugData(new CHitboxDebugData()),
 	m_EventSystem(new Events::CEventSystem())
 {
@@ -12,6 +13,7 @@ CGameplaySystemsBase::CGameplaySystemsBase() :
 void CGameplaySystemsBase::OnServerActivated()
 {
 	m_SpawnPointManager->Initialise();
+	m_ObserverPointList->Initialise();
 }
 
 void CGameplaySystemsBase::OnServerDeactivated()
@@ -22,6 +24,11 @@ void CGameplaySystemsBase::OnServerDeactivated()
 CSpawnPointManager& CGameplaySystemsBase::SpawnPointManager()
 {
 	return *m_SpawnPointManager;
+}
+
+CObserverPointList& CGameplaySystemsBase::ObserverPointList()
+{
+	return *m_ObserverPointList;
 }
 
 CHitboxDebugData& CGameplaySystemsBase::HitboxDebugData()

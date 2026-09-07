@@ -4386,7 +4386,9 @@ void GAME_EXPORT pfnSetView(const edict_t* pClient, const edict_t* pViewent)
 	int viewEnt;
 
 	if ( !SV_IsValidEdict(pClient) )
+	{
 		return;
+	}
 
 	if ( (client = SV_ClientFromEdict(pClient, false)) == NULL )
 	{
@@ -4395,18 +4397,28 @@ void GAME_EXPORT pfnSetView(const edict_t* pClient, const edict_t* pViewent)
 	}
 
 	if ( !SV_IsValidEdict(pViewent) || pClient == pViewent )
+	{
 		client->pViewEntity = NULL;  // just reset viewentity
+	}
 	else
+	{
 		client->pViewEntity = (edict_t*)pViewent;
+	}
 
 	// fakeclients ignore to send client message (but can see into the trigger_camera through the PVS)
 	if ( FBitSet(client->flags, FCL_FAKECLIENT) )
+	{
 		return;
+	}
 
 	if ( client->pViewEntity )
+	{
 		viewEnt = NUM_FOR_EDICT(client->pViewEntity);
+	}
 	else
+	{
 		viewEnt = NUM_FOR_EDICT(client->edict);
+	}
 
 	MSG_BeginServerCmd(&client->netchan.message, svc_setview);
 	MSG_WriteWord(&client->netchan.message, viewEnt);
