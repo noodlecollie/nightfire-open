@@ -11,6 +11,7 @@ public:
 
 	edict_t* GetNextObserverPointWithIndex(int32_t index);
 	edict_t* GetObserverPoint(int32_t index, int32_t subIndex) const;
+	size_t GetNumObserverPointsWithIndex(int32_t index) const;
 
 private:
 	using HashMap = CUtlHashMap<int32_t, CUtlVector<EHANDLE>>;

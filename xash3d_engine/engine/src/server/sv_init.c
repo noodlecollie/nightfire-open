@@ -530,8 +530,7 @@ void SV_CreateBaseline(void)
 		}
 		else
 		{
-			// MENUMAP TODO: Allow bypassing this
-			if ( !pEdict->v.modelindex )
+			if ( !(pEdict->v.flags & FL_ALWAYSPACK) && !pEdict->v.modelindex )
 			{
 				continue;  // invisible
 			}
@@ -574,8 +573,7 @@ void SV_CreateBaseline(void)
 		}
 		else
 		{
-			// MENUMAP TODO: Allow bypassing this
-			if ( !pEdict->v.modelindex )
+			if ( !(pEdict->v.flags & FL_ALWAYSPACK) && !pEdict->v.modelindex )
 			{
 				continue;  // invisible
 			}

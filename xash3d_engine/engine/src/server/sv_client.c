@@ -1653,7 +1653,10 @@ void SV_PutClientInServer(sv_client_t* cl)
 			SetBits(ent->v.flags, FL_GODMODE | FL_NOTARGET);
 		}
 
-		cl->pViewEntity = NULL;  // reset pViewEntity
+		// We used to reset cl->pViewEntity here, but we want to allow players
+		// to set the view entity when spawning. This is particularly important
+		// for background maps! If for some reason this causes weird behaviour
+		// in future, re-assess this decision.
 	}
 
 	if ( svgame.globals->cdAudioTrack )
@@ -1684,7 +1687,7 @@ void SV_PutClientInServer(sv_client_t* cl)
 	{
 		int viewEnt;
 
-		// NOTE: it's will be fragmented automatically in right ordering
+		// NOTE: it will be fragmented automatically in right ordering
 		MSG_WriteBits(&msg, MSG_GetData(&sv.signon), MSG_GetNumBitsWritten(&sv.signon));
 
 		if ( cl->pViewEntity )
@@ -3527,7 +3530,7 @@ ucmd_t ucmds[] = {
 	{"disconnect", SV_Disconnect_f},
 	{"userinfo", SV_UpdateUserinfo_f},
 	{"_sv_build_info", SV_SendBuildInfo_f},
-	{NULL, NULL}
+	{NULL, NULL},
 };
 
 ucmd_t enttoolscmds[] = {
@@ -3536,7 +3539,7 @@ ucmd_t enttoolscmds[] = {
 	{"ent_fire", SV_EntFire_f},
 	{"ent_create", SV_EntCreate_f},
 	{"ent_getvars", SV_EntGetVars_f},
-	{NULL, NULL}
+	{NULL, NULL},
 };
 
 /*

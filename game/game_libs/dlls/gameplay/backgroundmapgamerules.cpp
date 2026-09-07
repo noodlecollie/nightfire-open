@@ -2,10 +2,10 @@
 #include "gameplay/gameplaySystems.h"
 #include "gameplay/gameplaySystemsBase.h"
 
-// MENUMAP TODO: May need to be applied on think? Not sure why
 void CBackgroundMapGameRules::PlayerSpawn(CBasePlayer* pPlayer)
 {
 	// Completely override this and do not call into the base implementation.
+	// We don't want to add weapons.
 
 	pPlayer->pev->movetype = MOVETYPE_NOCLIP;
 	pPlayer->pev->solid = SOLID_NOT;

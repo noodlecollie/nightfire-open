@@ -28,13 +28,13 @@ void CObserverPoint::KeyValue(KeyValueData* pkvd)
 
 void CObserverPoint::Spawn(void)
 {
-	// MENUMAP TODO: Need to set a flag here to include this entity
-	// in delta packets. Currently, if the entity has the NODRAW
-	// effect, does not have a model, or is not in the client's
-	// PVS, the client will not receive the entity's origin/angles.
 	pev->movetype = MOVETYPE_NOCLIP;
 	pev->solid = SOLID_NOT;
 	pev->effects |= EF_NODRAW;
+
+	// Always network this entity, so that clients can rely on
+	// our positions and angles without needing to see us.
+	pev->flags |= FL_ALWAYSPACK;
 }
 
 int CObserverPoint::Index() const

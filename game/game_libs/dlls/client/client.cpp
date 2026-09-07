@@ -1262,35 +1262,33 @@ int AddToFullPack(
 	unsigned char* pSet
 )
 {
-	int i;
-
-	// MENUMAP TODO: Need a way to bypass the effects, model and visibility checks below,
-	// so that we can specify when an entity should always be added to a full pack.
-
-	// don't send if flagged for NODRAW and it's not the host getting the message
-	if ( (ent->v.effects & EF_NODRAW) && (ent != host) )
-		return 0;
-
-	// Ignore ents without valid / visible models
-	if ( !ent->v.modelindex || !STRING(ent->v.model) )
-		return 0;
-
-	// Don't send spectators to other players
-	if ( (ent->v.flags & FL_SPECTATOR) && (ent != host) )
+	if ( !(ent->v.flags & FL_ALWAYSPACK) )
 	{
-		return 0;
-	}
+		// don't send if flagged for NODRAW and it's not the host getting the message
+		if ( (ent->v.effects & EF_NODRAW) && (ent != host) )
+			return 0;
 
-	// Ignore if not the host and not touching a PVS/PAS leaf
-	// If pSet is NULL, then the test will always succeed and the entity will be added to the update
-	if ( ent != host )
-	{
-		if ( !ENGINE_CHECK_VISIBILITY((const struct edict_s*)ent, pSet) )
+		// Ignore ents without valid / visible models
+		if ( !ent->v.modelindex || !STRING(ent->v.model) )
+			return 0;
+
+		// Don't send spectators to other players
+		if ( (ent->v.flags & FL_SPECTATOR) && (ent != host) )
 		{
-			// env_sky is visible always
-			if ( !FClassnameIs(ent, "env_sky") )
+			return 0;
+		}
+
+		// Ignore if not the host and not touching a PVS/PAS leaf
+		// If pSet is NULL, then the test will always succeed and the entity will be added to the update
+		if ( ent != host )
+		{
+			if ( !ENGINE_CHECK_VISIBILITY((const struct edict_s*)ent, pSet) )
 			{
-				return 0;
+				// env_sky is visible always
+				if ( !FClassnameIs(ent, "env_sky") )
+				{
+					return 0;
+				}
 			}
 		}
 	}
@@ -1382,12 +1380,12 @@ int AddToFullPack(
 	state->framerate = ent->v.framerate;
 	state->body = ent->v.body;
 
-	for ( i = 0; i < 4; i++ )
+	for ( int i = 0; i < 4; i++ )
 	{
 		state->controller[i] = ent->v.controller[i];
 	}
 
-	for ( i = 0; i < 2; i++ )
+	for ( int i = 0; i < 2; i++ )
 	{
 		state->blending[i] = ent->v.blending[i];
 	}

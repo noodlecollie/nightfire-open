@@ -71,3 +71,15 @@ edict_t* CObserverPointList::GetObserverPoint(int32_t index, int32_t subIndex) c
 
 	return list[subIndex].Get();
 }
+
+size_t CObserverPointList::GetNumObserverPointsWithIndex(int32_t index) const
+{
+	const int hashIndex = m_ObserverPointsByIndex.Find(index);
+
+	if ( hashIndex == HashMap::InvalidIndex() )
+	{
+		return 0;
+	}
+
+	return static_cast<size_t>(m_ObserverPointsByIndex.Element(hashIndex).Count());
+}
