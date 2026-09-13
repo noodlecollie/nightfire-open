@@ -55,6 +55,8 @@ set(SOURCES_UI
 	src/menus/options/KeysOptionsMenu.cpp
 	src/menus/options/MouseOptionsMenu.h
 	src/menus/options/MouseOptionsMenu.cpp
+	src/menus/temp_new/NewAvOptionsMenu.h
+	src/menus/temp_new/NewAvOptionsMenu.cpp
 	src/menus/temp_new/NewBaseOptionsMenu.h
 	src/menus/temp_new/NewBaseOptionsMenu.cpp
 	src/menus/temp_new/NewCreditsMenu.h

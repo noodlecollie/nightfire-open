@@ -4,6 +4,7 @@
 #include "menus/temp_new/NewMainMenu.h"
 #include "menus/temp_new/NewCreditsMenu.h"
 #include "menus/temp_new/NewKeysOptionsMenu.h"
+#include "menus/temp_new/NewAvOptionsMenu.h"
 
 NewMainMenuDirectory::NewMainMenuDirectory() :
 	BaseMenuDirectory("resource/rml/temp_new")
@@ -33,4 +34,5 @@ void NewMainMenuDirectory::PopulateInternal()
 	AddToMap<NewMainMenu>();
 	AddToMap<NewCreditsMenu>();
 	AddToMap<NewKeysOptionsMenu>();
+	AddToMap<NewAvOptionsMenu>();
 }
