@@ -1,0 +1,50 @@
+#pragma once
+
+#include "menus/temp_new/NewBaseOptionsMenu.h"
+#include <RmlUi/Core/EventListener.h>
+#include "models/KeyBindingModel.h"
+#include "components/ModalComponent.h"
+#include "framework/MenuEventListenerObject.h"
+
+class NewKeysOptionsMenu : public NewBaseOptionsMenu
+{
+public:
+	NewKeysOptionsMenu();
+
+	void Update(float currentTime) override;
+
+protected:
+	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
+
+private:
+	static constexpr int INVALID_ROW = -1;
+	static constexpr int INVALID_BINDING = -1;
+
+	struct PageModel
+	{
+		bool showModal = false;
+		int currentRow = INVALID_ROW;
+		int currentBinding = INVALID_BINDING;
+	};
+
+	void ProcessShowHideEvents(Rml::Event& event);
+	void ProcessKeyEvents(Rml::Event& event);
+	void HandleRebindKeyEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
+	void HandleSelectBindingEvent(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& arguments);
+	void HandleClearBinding(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	void HandleResetBindingToDefault(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	void HandleResetAllBindingsToDefaults(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	void HandleRebindKeyEvent(int row, int bindIndex);
+	bool HandleSelectBindingEvent(int row, int bindIndex);
+	void ResetRebindingRow();
+	void CloseModalAndStopListeningForKeys();
+	void ShowModal(bool show);
+	void SetStoredKeyForCurrentRebinding();
+	void ResetAllBindingsResponse(bool shouldReset);
+
+	KeyBindingModel m_KeyBindings;
+	PageModel m_PageModel;
+	ModalComponent m_Modal;
+	MenuEventListenerObject m_ShowHideEventListener;
+	MenuEventListenerObject m_KeyEventListener;
+};

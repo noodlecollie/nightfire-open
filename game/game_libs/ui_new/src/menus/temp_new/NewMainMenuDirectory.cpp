@@ -3,6 +3,7 @@
 #include "menus/temp_new/StyleGuide.h"
 #include "menus/temp_new/NewMainMenu.h"
 #include "menus/temp_new/NewCreditsMenu.h"
+#include "menus/temp_new/NewKeysOptionsMenu.h"
 
 NewMainMenuDirectory::NewMainMenuDirectory() :
 	BaseMenuDirectory("resource/rml/temp_new")
@@ -31,4 +32,5 @@ void NewMainMenuDirectory::PopulateInternal()
 	AddToMap<StyleGuide>();
 	AddToMap<NewMainMenu>();
 	AddToMap<NewCreditsMenu>();
+	AddToMap<NewKeysOptionsMenu>();
 }
