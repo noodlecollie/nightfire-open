@@ -4,6 +4,7 @@
 #include <RmlUi/Core/Context.h>
 #include <cmath>
 #include "framework/CvarAccessor.h"
+#include "rmlui/RmlUiBackend.h"
 #include "rmlui/Utils.h"
 
 static constexpr const char* const NAME_WINDOWED = "windowed";
@@ -34,7 +35,7 @@ NewAvOptionsMenu::NewAvOptionsMenu() :
 	m_DocumentEventListener(
 		this,
 		&NewAvOptionsMenu::ProcessDocumentEvent,
-		{Rml::EventId::Show, Rml::EventId::Hide, Rml::EventId::Resize, Rml::EventId::Keydown}
+		{Rml::EventId::Show, Rml::EventId::Hide, Rml::EventId::Resize, Rml::EventId::Keydown, Rml::EventId::Mouseup}
 	),
 	m_SliderEventListener(
 		this,
@@ -86,6 +87,16 @@ void NewAvOptionsMenu::Update(float currentTime)
 		{
 			HandleModalButton(false);
 		}
+	}
+
+	// Slight hack? Not sure of the "correct" way to deal with this.
+	// If the user is interacting with a slider but drags the mouse out of the game window,
+	// this will catch that and reset the transparency.
+	if ( !m_PageModel.menuTransparencyControl.empty() &&
+		 !RmlUiBackend::StaticInstance().GetRmlContext()->IsMouseInteracting() )
+	{
+		m_PageModel.menuTransparencyControl.clear();
+		DirtyVariable(NAME_MENU_TRANSPARENCY_CONTROL);
 	}
 }
 
@@ -208,6 +219,21 @@ void NewAvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 			break;
 		}
 
+		case Rml::EventId::Mouseup:
+		{
+			// If the user is dragging a slider and moves the mouse cursor out
+			// of the slider's physical range before letting go of the button,
+			// the slider will not receive this event. We catch it here in order
+			// to properly reset the transparency setting.
+			if ( !m_PageModel.menuTransparencyControl.empty() )
+			{
+				m_PageModel.menuTransparencyControl.clear();
+				DirtyVariable(NAME_MENU_TRANSPARENCY_CONTROL);
+			}
+
+			break;
+		}
+
 		default:
 		{
 			break;
@@ -248,11 +274,7 @@ void NewAvOptionsMenu::ProcessSliderEventForMenuTransparency(Rml::Event& event)
 	if ( controlValue != m_PageModel.menuTransparencyControl )
 	{
 		m_PageModel.menuTransparencyControl = controlValue;
-
-		if ( ModelHandle(false) )
-		{
-			ModelHandle().DirtyVariable(NAME_MENU_TRANSPARENCY_CONTROL);
-		}
+		DirtyVariable(NAME_MENU_TRANSPARENCY_CONTROL);
 	}
 }
 
