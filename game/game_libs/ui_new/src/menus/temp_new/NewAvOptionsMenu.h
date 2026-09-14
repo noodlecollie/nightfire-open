@@ -35,6 +35,7 @@ private:
 		bool currentWindowed = false;
 		bool newWindowed = false;
 		bool needsApply = false;
+		Rml::String menuTransparencyControl;
 	};
 
 	struct RevertInfo
@@ -45,6 +46,7 @@ private:
 	};
 
 	void ProcessDocumentEvent(Rml::Event& event);
+	void ProcessSliderEventForMenuTransparency(Rml::Event& event);
 	void RefreshValuesFromCvars();
 	void RefreshNeedsApply();
 
@@ -58,6 +60,7 @@ private:
 	ModalComponent m_Modal;
 	VideoModesModel m_VideoModes;
 	MenuEventListenerObject m_DocumentEventListener;
+	MenuEventListenerObject m_SliderEventListener;
 	PageModel m_PageModel;
 	CvarModel m_CvarModel;
 	Rml::ElementFormControlSelect* m_ResolutionDropdown = nullptr;

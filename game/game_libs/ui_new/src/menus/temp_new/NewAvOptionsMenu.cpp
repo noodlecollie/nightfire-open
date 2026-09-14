@@ -22,6 +22,7 @@ static constexpr const char* const NAME_MUSIC_VOLUME = "musicVolume";
 static constexpr const char* const NAME_DSP_OFF = "dspOff";
 static constexpr const char* const NAME_DSP_ENABLED = "dspEnabled";
 static constexpr const char* const NAME_MUTE_WHEN_FOCUS_LOST = "muteWhenFocusLost";
+static constexpr const char* const NAME_MENU_TRANSPARENCY_CONTROL = "menuTransparencyControl";
 static constexpr const char* const CVAR_FULLSCREEN = "fullscreen";
 static constexpr const char* const CVAR_VID_MODE = "vid_mode";
 static constexpr const char* const EVENT_APPLY_VIDEO_MODE = "applyVideoMode";
@@ -34,6 +35,12 @@ NewAvOptionsMenu::NewAvOptionsMenu() :
 		this,
 		&NewAvOptionsMenu::ProcessDocumentEvent,
 		{Rml::EventId::Show, Rml::EventId::Hide, Rml::EventId::Resize, Rml::EventId::Keydown}
+	),
+	m_SliderEventListener(
+		this,
+		&NewAvOptionsMenu::ProcessSliderEventForMenuTransparency,
+		"input[type='range'][use-transparent-menu]",
+		{Rml::EventId::Mousedown, Rml::EventId::Mouseup}
 	),
 	m_CvarModel(this),
 	m_FullscreenCvar(CVAR_FULLSCREEN),
@@ -93,6 +100,7 @@ bool NewAvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& const
 		 !constructor.Bind(NAME_SHOW_MODAL, &m_PageModel.showModal) ||
 		 !constructor.Bind(NAME_MODAL_TIME_REMAINING, &m_PageModel.modalTimeRemaining) ||
 		 !constructor.Bind(NAME_NEEDS_APPLY, &m_PageModel.needsApply) ||
+		 !constructor.Bind(NAME_MENU_TRANSPARENCY_CONTROL, &m_PageModel.menuTransparencyControl) ||
 		 !constructor.BindEventCallback(EVENT_APPLY_VIDEO_MODE, &NewAvOptionsMenu::HandleApplyVideoMode, this) )
 	{
 		return false;
@@ -203,6 +211,47 @@ void NewAvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 		default:
 		{
 			break;
+		}
+	}
+}
+
+void NewAvOptionsMenu::ProcessSliderEventForMenuTransparency(Rml::Event& event)
+{
+	Rml::String controlValue;
+
+	if ( event.GetId() == Rml::EventId::Mousedown )
+	{
+		Rml::Element* element = event.GetTargetElement();
+
+		if ( element->GetTagName() != "sliderbar" )
+		{
+			// We only want to listen for events on the slider bar itself.
+			return;
+		}
+
+		Rml::Element* parent = element ? element->GetParentNode() : nullptr;
+
+		if ( parent )
+		{
+			ASSERT(element->GetTagName() == "sliderbar");
+			ASSERT(parent->GetTagName() == "input");
+
+			Rml::Variant* variant = parent->GetAttribute("data-value");
+
+			if ( variant )
+			{
+				variant->GetInto(controlValue);
+			}
+		}
+	}
+
+	if ( controlValue != m_PageModel.menuTransparencyControl )
+	{
+		m_PageModel.menuTransparencyControl = controlValue;
+
+		if ( ModelHandle(false) )
+		{
+			ModelHandle().DirtyVariable(NAME_MENU_TRANSPARENCY_CONTROL);
 		}
 	}
 }
