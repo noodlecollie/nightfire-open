@@ -5,6 +5,7 @@
 #include "framework/DataVar.h"
 #include "framework/MenuEventListenerObject.h"
 
+// TODO: Remove this
 class HintDisplay : private BaseMenuObserver
 {
 public:

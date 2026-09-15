@@ -16,6 +16,8 @@ set(SOURCES_UI
 	src/components/ModalComponent.cpp
 	src/components/MapChooserComponent.h
 	src/components/MapChooserComponent.cpp
+	src/components/TooltipComponent.h
+	src/components/TooltipComponent.cpp
 	src/eventhandlers/HyperlinkEventHandler.h
 	src/eventhandlers/HyperlinkEventHandler.cpp
 	src/framework/BaseComponent.h

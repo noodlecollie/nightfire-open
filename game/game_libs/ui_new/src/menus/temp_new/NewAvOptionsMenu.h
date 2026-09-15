@@ -7,6 +7,7 @@
 #include "models/CvarModel.h"
 #include "models/VideoModesModel.h"
 #include "components/ModalComponent.h"
+#include "components/TooltipComponent.h"
 
 class NewAvOptionsMenu : public NewBaseOptionsMenu
 {
@@ -58,6 +59,7 @@ private:
 	void ApplyVideoSettings(int vidMode, bool windowed);
 
 	ModalComponent m_Modal;
+	TooltipComponent m_TooltipComponent;
 	VideoModesModel m_VideoModes;
 	MenuEventListenerObject m_DocumentEventListener;
 	MenuEventListenerObject m_SliderEventListener;
