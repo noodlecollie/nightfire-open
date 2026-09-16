@@ -103,8 +103,12 @@ void BaseMenu::DocumentUnloaded()
 	m_Document = nullptr;
 }
 
-void BaseMenu::Update(float)
+void BaseMenu::Update(float currentTime)
 {
+	for ( BaseMenuObserver* observer : m_MenuObservers )
+	{
+		observer->Update(currentTime);
+	}
 }
 
 bool BaseMenu::IsDocumentVisible() const

@@ -25,6 +25,7 @@ protected:
 	virtual void DocumentLoaded(Rml::ElementDocument* document);
 	virtual void DocumentUnloaded(Rml::ElementDocument* document);
 	virtual bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor);
+	virtual void Update(float currentTime);
 
 	bool IsModelLoaded() const;
 	Rml::DataModelHandle& ModelHandle(bool assertValid = true);

@@ -2,7 +2,7 @@
 
 #include "framework/MenuPage.h"
 #include "framework/DataVar.h"
-#include "templatebindings/HintDisplay.h"
+#include "components/TooltipComponent.h"
 
 class StyleGuide : public MenuPage
 {
@@ -15,6 +15,6 @@ protected:
 	void OnDocumentLoaded() override;
 
 private:
-	HintDisplay m_HintDisplay;
+	TooltipComponent m_ColourTooltipComponent;
 	DataVar<bool> m_TextAreaDisabled;
 };

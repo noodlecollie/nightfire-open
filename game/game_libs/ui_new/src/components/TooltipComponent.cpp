@@ -1,15 +1,32 @@
 #include "components/TooltipComponent.h"
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/ElementDocument.h>
+#include <RmlUi/Core/Context.h>
+#include "framework/BaseMenu.h"
+#include <cmath>
 
-TooltipComponent::TooltipComponent(BaseMenu* parentMenu, Rml::String displayElementID, Rml::String dataVarName) :
-	BaseComponent(parentMenu, displayElementID),
+static constexpr const char* const PARAM_TYPE = "type";
+static constexpr const char* const TYPE_STATIC = "static";
+static constexpr const char* const TYPE_CURSOR = "cursor";
+
+TooltipComponent::TooltipComponent(
+	BaseMenu* parentMenu,
+	Rml::String componentID,
+	Rml::String displayElementID,
+	Rml::String dataVarName
+) :
+	BaseComponent(parentMenu, std::move(componentID)),
 	m_TooltipText {std::move(dataVarName), ""},
-	m_DocumentListener(parentMenu, this, &TooltipComponent::HandleDocumentHide, {Rml::EventId::Hide}),
+	m_DocumentListener(
+		parentMenu,
+		this,
+		&TooltipComponent::HandleDocumentEvents,
+		{Rml::EventId::Hide, Rml::EventId::Mousemove}
+	),
 	m_TooltipListener(
 		parentMenu,
 		this,
-		&TooltipComponent::HandleMouseEvents,
+		&TooltipComponent::HandleTooltipTriggerEvents,
 		"bigbutton[tooltip], button[tooltip], label[tooltip], .hover-tooltip[tooltip]",
 		{Rml::EventId::Mouseover, Rml::EventId::Mouseout}
 	),
@@ -53,12 +70,38 @@ bool TooltipComponent::ComponentLoadFromDocument(Rml::ElementDocument* document)
 	if ( !m_TooltipDisplayElement )
 	{
 		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"Could not find tooltip element with ID #%s",
+			Rml::Log::Type::LT_ERROR,
+			"Could not find tooltip display element with ID #%s",
 			m_DisplayElementID.c_str()
 		);
 
 		return false;
+	}
+
+	m_Type = TooltipType::STATIC;
+	Rml::String tooltipTypeStr = GetParam(PARAM_TYPE).Get<Rml::String>();
+
+	if ( tooltipTypeStr == TYPE_CURSOR )
+	{
+		m_Type = TooltipType::FOLLOW_CURSOR;
+	}
+	else if ( tooltipTypeStr == TYPE_STATIC )
+	{
+		m_Type = TooltipType::STATIC;
+	}
+	else if ( !tooltipTypeStr.empty() )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Unrecognised tooltip type \"%s\", defaulting to \"%s\"",
+			tooltipTypeStr.c_str(),
+			TYPE_STATIC
+		);
+	}
+
+	if ( m_Type == TooltipType::FOLLOW_CURSOR )
+	{
+		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Display, Rml::Style::Display::None);
 	}
 
 	return true;
@@ -79,13 +122,39 @@ bool TooltipComponent::SetUpDataModelBindings(Rml::DataModelConstructor& constru
 	return true;
 }
 
-void TooltipComponent::HandleDocumentHide(Rml::Event&)
+void TooltipComponent::Update(float currentTime)
 {
-	// The document is being hidden, so forcibly clear the tooltip.
-	ResetTooltip();
+	BaseComponent::Update(currentTime);
 }
 
-void TooltipComponent::HandleMouseEvents(Rml::Event& event)
+void TooltipComponent::HandleDocumentEvents(Rml::Event& event)
+{
+	switch ( event.GetId() )
+	{
+		case Rml::EventId::Hide:
+		{
+			// The document is being hidden, so forcibly clear the tooltip.
+			ResetTooltip();
+			break;
+		}
+
+		case Rml::EventId::Mousemove:
+		{
+			if ( m_Type == TooltipType::FOLLOW_CURSOR && IsShowingDisplayElement() )
+			{
+				UpdateTooltipPosition(event);
+				break;
+			}
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+}
+
+void TooltipComponent::HandleTooltipTriggerEvents(Rml::Event& event)
 {
 	switch ( event.GetId() )
 	{
@@ -143,6 +212,18 @@ void TooltipComponent::SetTooltip(Rml::Event& event)
 		DirtyVariable(m_TooltipText.name);
 		m_CurrentTooltipSourceElement = element;
 	}
+
+	if ( m_Type == TooltipType::FOLLOW_CURSOR )
+	{
+		if ( !m_TooltipDisplayElement )
+		{
+			ASSERT(false);
+			return;
+		}
+
+		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Display, Rml::Style::Display::InlineBlock);
+		UpdateTooltipPosition(event);
+	}
 }
 
 void TooltipComponent::ResetTooltip()
@@ -154,4 +235,75 @@ void TooltipComponent::ResetTooltip()
 		m_TooltipText.value = m_DefaultTooltipText;
 		DirtyVariable(m_TooltipText.name);
 	}
+
+	if ( m_Type == TooltipType::FOLLOW_CURSOR )
+	{
+		if ( !m_TooltipDisplayElement )
+		{
+			ASSERT(false);
+			return;
+		}
+
+		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Display, Rml::Style::Display::None);
+	}
+}
+
+void TooltipComponent::UpdateTooltipPosition(const Rml::Event& event)
+{
+	static constexpr int INVALID_POS = std::numeric_limits<int>::min();
+
+	const int x = event.GetParameter<int>("mouse_x", INVALID_POS);
+	const int y = event.GetParameter<int>("mouse_y", INVALID_POS);
+
+	if ( x == INVALID_POS || y == INVALID_POS )
+	{
+		return;
+	}
+
+	UpdateTooltipPosition({static_cast<float>(x), static_cast<float>(y)});
+}
+
+void TooltipComponent::UpdateTooltipPosition(const Rml::Vector2f& mousePos)
+{
+	if ( !m_TooltipDisplayElement )
+	{
+		ASSERT(false);
+		return;
+	}
+
+	const Rml::Box& tooltipBox = m_TooltipDisplayElement->GetBox();
+	const Rml::Vector2f tooltipSize = tooltipBox.GetSize();
+
+	// The tooltip margins can be used to offset the tooltip from the mouse pointer
+	// or the edge of the screen.
+	const float leftMargin = tooltipBox.GetEdge(Rml::BoxArea::Margin, Rml::BoxEdge::Left);
+	const float rightMargin = tooltipBox.GetEdge(Rml::BoxArea::Margin, Rml::BoxEdge::Right);
+	const float topMargin = tooltipBox.GetEdge(Rml::BoxArea::Margin, Rml::BoxEdge::Top);
+	const float bottomMargin = tooltipBox.GetEdge(Rml::BoxArea::Margin, Rml::BoxEdge::Bottom);
+
+	// Top left corner
+	Rml::Vector2f tooltipPos {
+		mousePos.x - (tooltipSize.x / 2),
+		mousePos.y - bottomMargin - tooltipSize.y,
+	};
+
+	if ( tooltipPos.y < 0.0f )
+	{
+		tooltipPos.y = mousePos.y + topMargin + tooltipSize.y;
+	}
+
+	const float minX = leftMargin;
+	const float maxX = m_TooltipDisplayElement->GetContext()->GetDimensions().x - tooltipSize.x - rightMargin;
+	tooltipPos.x = Rml::Math::Clamp(tooltipPos.x, minX, maxX);
+
+	// tooltipPos = tooltipPos - m_TooltipDisplayElement->GetOffsetParent()->GetAbsoluteOffset(Rml::BoxArea::Margin);
+
+	m_TooltipDisplayElement->SetOffset(Rml::Vector2f(0.0f, 0.0f), ParentMenu()->Document());
+	m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Left, Rml::Property(tooltipPos.x, Rml::Unit::PX));
+	m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Top, Rml::Property(tooltipPos.y, Rml::Unit::PX));
+}
+
+bool TooltipComponent::IsShowingDisplayElement() const
+{
+	return m_TooltipDisplayElement && m_CurrentTooltipSourceElement;
 }

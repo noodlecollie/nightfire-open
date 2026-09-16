@@ -21,6 +21,8 @@ MultiplayerMenu::MultiplayerMenu() :
 
 void MultiplayerMenu::Update(float currentTime)
 {
+	MenuPage::Update(currentTime);
+
 	if ( m_NextRefreshTime != REFRESH_NEVER && m_NextRefreshTime <= currentTime )
 	{
 		RefreshServersLocal();

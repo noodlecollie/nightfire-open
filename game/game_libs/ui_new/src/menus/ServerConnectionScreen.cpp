@@ -17,8 +17,10 @@ ServerConnectionScreen::ServerConnectionScreen() :
 	m_CvarDownload = m_CvarModel.AddEntry<float>(NAME_DOWNLOAD_PROGRESS, "scr_download");
 }
 
-void ServerConnectionScreen::Update(float)
+void ServerConnectionScreen::Update(float currentTime)
 {
+	BaseMenu::Update(currentTime);
+
 	if ( !IsDocumentVisible() || !IsModelLoaded() )
 	{
 		return;

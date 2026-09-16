@@ -5,7 +5,7 @@
 
 StyleGuide::StyleGuide() :
 	MenuPage("style_guide", "style_guide.rml"),
-	m_HintDisplay(this, "colour_hint_container", "colourHintText"),
+	m_ColourTooltipComponent(this, "colour_hint_component", "colour_hint_container", "colourHintText"),
 	m_TextAreaDisabled {"textAreaDisabled", false}
 {
 }
@@ -27,8 +27,8 @@ bool StyleGuide::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor
 
 void StyleGuide::OnDocumentLoaded()
 {
-	m_HintDisplay.SetDefaultHintText("None");
-	m_HintDisplay.SetHintInnerRml("Colour constant: {{colourHintText}}");
+	m_ColourTooltipComponent.SetDefaultTooltipText("None");
+	m_ColourTooltipComponent.SetHintInnerRml("Colour constant: {{colourHintText}}");
 
 	ElementFinder finder;
 
