@@ -8,8 +8,24 @@ StyleGuide::StyleGuide() :
 	m_ColourTooltipComponent(this, "colour_hint_component", "colour_hint_container", "colourHintText"),
 	m_FormTooltipComponent(this, "tooltip_component", "tooltip_container", "tooltipText"),
 	m_ColoursPageListener(this, &StyleGuide::HandleTabsetEvent, "#section_tabset", {Rml::EventId::Tabchange}),
-	m_TextAreaDisabled {"textAreaDisabled", false}
+	m_Modal(this, "example_modal"),
+	m_TextAreaDisabled {"textAreaDisabled", false},
+	m_BigModal {"bigModal", false}
 {
+	m_Modal.SetButtonClickCallback(
+		[this](Rml::Event&, size_t buttonIndex, const Rml::Variant&)
+		{
+			const bool big = buttonIndex == 0;
+
+			if ( big != m_BigModal.value )
+			{
+				m_BigModal.value = big;
+				DirtyVariable(m_BigModal.name);
+
+				m_Modal.SetTitle(big ? "Big Modal" : "Small Modal");
+			}
+		}
+	);
 }
 
 bool StyleGuide::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
@@ -19,7 +35,8 @@ bool StyleGuide::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor
 		return false;
 	}
 
-	if ( !constructor.Bind(m_TextAreaDisabled.name, &m_TextAreaDisabled.value) )
+	if ( !constructor.Bind(m_TextAreaDisabled.name, &m_TextAreaDisabled.value) ||
+		 !constructor.Bind(m_BigModal.name, &m_BigModal.value) )
 	{
 		return false;
 	}
@@ -37,7 +54,6 @@ void StyleGuide::OnDocumentLoaded()
 
 		Rml::Element* tabset = Document()->GetElementById("section_tabset");
 		finder.Add(&tabset, "#colours_tab", &m_TabElements.colours);
-		finder.Add(&tabset, "#scrollable_tab", &m_TabElements.scrollable);
 		finder.Add(&tabset, "#form_tab", &m_TabElements.form);
 
 		finder.FindAll();

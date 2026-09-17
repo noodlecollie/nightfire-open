@@ -4,6 +4,7 @@
 #include "framework/DataVar.h"
 #include "framework/MenuEventListenerObject.h"
 #include "components/TooltipComponent.h"
+#include "components/ModalComponent.h"
 
 class StyleGuide : public MenuPage
 {
@@ -19,7 +20,6 @@ private:
 	struct Tabs
 	{
 		Rml::Element* colours = nullptr;
-		Rml::Element* scrollable = nullptr;
 		Rml::Element* form = nullptr;
 	};
 
@@ -29,6 +29,8 @@ private:
 	TooltipComponent m_ColourTooltipComponent;
 	TooltipComponent m_FormTooltipComponent;
 	MenuEventListenerObject m_ColoursPageListener;
+	ModalComponent m_Modal;
 	DataVar<bool> m_TextAreaDisabled;
+	DataVar<bool> m_BigModal;
 	Tabs m_TabElements;
 };
