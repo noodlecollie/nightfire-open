@@ -32,6 +32,7 @@ TooltipComponent::TooltipComponent(
 	),
 	m_DisplayElementID(std::move(displayElementID))
 {
+	AddParamSpec(PARAM_TYPE, Rml::Variant(TYPE_STATIC));
 }
 
 void TooltipComponent::SetHintInnerRml(const Rml::String& rml)
@@ -63,9 +64,29 @@ void TooltipComponent::SetDefaultTooltipText(Rml::String text)
 	}
 }
 
+bool TooltipComponent::Enabled()
+{
+	return m_Enabled;
+}
+
+void TooltipComponent::SetEnabled(bool enabled)
+{
+	if ( m_Enabled == enabled )
+	{
+		return;
+	}
+
+	m_Enabled = enabled;
+
+	if ( !m_Enabled )
+	{
+		ResetTooltip();
+	}
+}
+
 bool TooltipComponent::ComponentLoadFromDocument(Rml::ElementDocument* document)
 {
-	m_TooltipDisplayElement = document->QuerySelector("#" + m_DisplayElementID);
+	m_TooltipDisplayElement = document->GetElementById(m_DisplayElementID);
 
 	if ( !m_TooltipDisplayElement )
 	{
@@ -89,7 +110,7 @@ bool TooltipComponent::ComponentLoadFromDocument(Rml::ElementDocument* document)
 	{
 		m_Type = TooltipType::STATIC;
 	}
-	else if ( !tooltipTypeStr.empty() )
+	else
 	{
 		Rml::Log::Message(
 			Rml::Log::Type::LT_WARNING,
@@ -140,7 +161,7 @@ void TooltipComponent::HandleDocumentEvents(Rml::Event& event)
 
 		case Rml::EventId::Mousemove:
 		{
-			if ( m_Type == TooltipType::FOLLOW_CURSOR && IsShowingDisplayElement() )
+			if ( m_Enabled && m_Type == TooltipType::FOLLOW_CURSOR && IsShowingDisplayElement() )
 			{
 				UpdateTooltipPosition(event);
 				break;
@@ -160,7 +181,11 @@ void TooltipComponent::HandleTooltipTriggerEvents(Rml::Event& event)
 	{
 		case Rml::EventId::Mouseover:
 		{
-			SetTooltip(event);
+			if ( m_Enabled )
+			{
+				SetTooltip(event);
+			}
+
 			break;
 		}
 

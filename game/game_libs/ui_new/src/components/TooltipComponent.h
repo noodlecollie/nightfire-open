@@ -19,6 +19,9 @@ public:
 	Rml::String DefaultTooltipText() const;
 	void SetDefaultTooltipText(Rml::String text);
 
+	bool Enabled();
+	void SetEnabled(bool enabled);
+
 protected:
 	bool ComponentLoadFromDocument(Rml::ElementDocument* document) override;
 	void ComponentUnload() override;
@@ -49,4 +52,5 @@ private:
 	Rml::Element* m_TooltipDisplayElement = nullptr;
 	Rml::String m_DefaultTooltipText;
 	TooltipType m_Type = TooltipType::STATIC;
+	bool m_Enabled = true;
 };
