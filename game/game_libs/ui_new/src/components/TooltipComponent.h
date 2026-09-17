@@ -26,7 +26,6 @@ protected:
 	bool ComponentLoadFromDocument(Rml::ElementDocument* document) override;
 	void ComponentUnload() override;
 	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-	void Update(float currentTime) override;
 
 private:
 	enum class TooltipType

@@ -28,10 +28,6 @@ bool BaseMenuObserver::SetUpDataModelBindings(Rml::DataModelConstructor&)
 	return true;
 }
 
-void BaseMenuObserver::Update(float)
-{
-}
-
 bool BaseMenuObserver::IsModelLoaded() const
 {
 	return m_ParentMenu->IsModelLoaded();

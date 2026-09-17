@@ -144,11 +144,6 @@ bool TooltipComponent::SetUpDataModelBindings(Rml::DataModelConstructor& constru
 	return true;
 }
 
-void TooltipComponent::Update(float currentTime)
-{
-	BaseComponent::Update(currentTime);
-}
-
 void TooltipComponent::HandleDocumentEvents(Rml::Event& event)
 {
 	switch ( event.GetId() )
