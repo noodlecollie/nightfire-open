@@ -10,6 +10,11 @@ namespace ExtraMath
 		return Max(min, Min(val, max));
 	}
 
+	static inline int ClampInt(int min, int val, int max)
+	{
+		return Max(min, Min(val, max));
+	}
+
 	// FUNC should be a callback that accepts a float in range [0 1] and
 	// returns a corresponding float in range [0 1]. If clampInput is false,
 	// the input float may be outside the [0 1] range.
@@ -66,6 +71,7 @@ namespace ExtraMath
 					return sqrtf(-4.0f * input) / -2.0f;
 				}
 			},
-			clampInput);
+			clampInput
+		);
 	}
 }  // namespace ExtraMath

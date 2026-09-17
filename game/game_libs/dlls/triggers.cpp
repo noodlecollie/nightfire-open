@@ -2191,23 +2191,23 @@ public:
 	virtual int Restore(CRestore& restore);
 	virtual int ObjectCaps(void)
 	{
-		return CBaseEntity ::ObjectCaps() & ~FCAP_ACROSS_TRANSITION;
+		return CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION;
 	}
 	static TYPEDESCRIPTION m_SaveData[];
 
 	EHANDLE m_hPlayer;
 	EHANDLE m_hTarget;
-	CBaseEntity* m_pentPath;
+	CBaseEntity* m_pentPath = nullptr;
 	string_t m_sPath;
-	float m_flWait;
-	float m_flReturnTime;
-	float m_flStopTime;
-	float m_moveDistance;
-	float m_targetSpeed;
-	float m_initialSpeed;
-	float m_acceleration;
-	float m_deceleration;
-	int m_state;
+	float m_flWait = 0.0f;
+	float m_flReturnTime = 0.0f;
+	float m_flStopTime = 0.0f;
+	float m_moveDistance = 0.0f;
+	float m_targetSpeed = 0.0f;
+	float m_initialSpeed = 0.0f;
+	float m_acceleration = 0.0f;
+	float m_deceleration = 0.0f;
+	int m_state = 0;
 };
 
 LINK_ENTITY_TO_CLASS(trigger_camera, CTriggerCamera)
@@ -2268,21 +2268,27 @@ void CTriggerCamera::KeyValue(KeyValueData* pkvd)
 		pkvd->fHandled = TRUE;
 	}
 	else
+	{
 		CBaseDelay::KeyValue(pkvd);
+	}
 }
 
 void CTriggerCamera::Use(CBaseEntity* pActivator, CBaseEntity*, USE_TYPE useType, float)
 {
 	if ( !ShouldToggle(useType, m_state) )
+	{
 		return;
+	}
 
 	// Toggle state
 	m_state = !m_state;
+
 	if ( m_state == 0 )
 	{
 		m_flReturnTime = gpGlobals->time;
 		return;
 	}
+
 	if ( !pActivator || !pActivator->IsPlayer() )
 	{
 		pActivator = CBaseEntity::Instance(g_engfuncs.pfnPEntityOfEntIndex(1));

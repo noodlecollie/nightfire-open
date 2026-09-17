@@ -7,7 +7,7 @@ static constexpr const char* const EVENT_CREATE_GAME = "createGame";
 static constexpr const char* const EVENT_SELECT_MAP = "selectMap";
 
 CreateMultiplayerGameMenu::CreateMultiplayerGameMenu() :
-	MenuPage("create_multiplayer_game_menu", "resource/rml/create_multiplayer_game_menu.rml"),
+	MenuPage("create_multiplayer_game_menu", "create_multiplayer_game_menu.rml"),
 	m_MenuFrameDataBinding(this),
 	m_PageModel(this),
 	m_InputFieldEventListener(

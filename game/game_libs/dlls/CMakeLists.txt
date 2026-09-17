@@ -317,6 +317,8 @@ set(SOURCES_SERVER
 	customGeometry/primitiveMessageWriter.cpp
 	customGeometry/rollingLineMessageWriter.h
 	customGeometry/rollingLineMessageWriter.cpp
+	gameplay/backgroundmapgamerules.h
+	gameplay/backgroundmapgamerules.cpp
 	gameplay/eventSystem.h
 	gameplay/eventSystem.cpp
 	gameplay/gameplaySystems.h
@@ -328,6 +330,10 @@ set(SOURCES_SERVER
 	gameplay/gameplaySystemsSingleplayer.h
 	gameplay/gameplaySystemsSingleplayer.cpp
 	gameplay/gamerules.cpp
+	gameplay/observerpoint.h
+	gameplay/observerpoint.cpp
+	gameplay/observerpointlist.h
+	gameplay/observerpointlist.cpp
 	gameplay/spawnpointlist.h
 	gameplay/spawnpointlist.cpp
 	gameplay/spawnpointmanager.h

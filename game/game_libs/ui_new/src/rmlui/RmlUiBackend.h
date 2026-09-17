@@ -5,9 +5,10 @@
 #include "rmlui/FileInterfaceImpl.h"
 #include "rmlui/TextInputHandlerImpl.h"
 #include "rmlui/EventListenerInstancerImpl.h"
-#include "framework/MenuDirectory.h"
+#include "framework/BaseMenuDirectory.h"
 #include "framework/MenuStack.h"
 #include "EnginePublicAPI/netadr.h"
+#include <memory>
 
 namespace Rml
 {
@@ -75,6 +76,8 @@ public:
 	void SetDiscoveredServerCallback(DiscoveredServerCallback callback);
 	void ClearDiscoveredServerCallback();
 
+	static bool ClientIsInActiveGame();
+
 private:
 	struct MainMenuData;
 
@@ -86,8 +89,10 @@ private:
 	void HandleMenuPushCommand();
 	void HandleMenuPopCommand();
 	void ReloadCurrentMenu();
+	bool StartBackgroundMap();
 
-	static float CalculateDpiScale(int width, int height);
+	static float CalculateDpiScale(int height);
+	static Rml::Rectanglei CalculateViewport(const Rml::Vector2i& windowSize);
 
 	SystemInterfaceImpl m_SystemInterface;
 	RenderInterfaceImpl m_RenderInterface;
@@ -96,10 +101,11 @@ private:
 	EventListenerInstancerImpl m_EventListenerInstancer;
 
 	bool m_Initialised = false;
+	bool m_FirstUpdate = false;
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
 
-	MenuDirectory m_MenuDirectory;
+	std::shared_ptr<BaseMenuDirectory> m_MenuDirectory;
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;
@@ -109,4 +115,5 @@ private:
 	DiscoveredServerCallback m_DiscoveredServerCallback;
 
 	struct cvar_s* m_cvarScrollSensitivity = nullptr;
+	struct cvar_s* m_cvarMenuBackgroundMap = nullptr;
 };

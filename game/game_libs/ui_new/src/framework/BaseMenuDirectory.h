@@ -4,6 +4,7 @@
 #include <memory>
 #include <RmlUi/Core/Types.h>
 #include "framework/BaseMenu.h"
+#include "framework/IServerConnectionMenu.h"
 #include "UIDebug.h"
 
 namespace Rml
@@ -36,7 +37,7 @@ struct MenuDirectoryEntry
 	}
 
 private:
-	friend class MenuDirectory;
+	friend class BaseMenuDirectory;
 
 	explicit MenuDirectoryEntry(std::unique_ptr<BaseMenu>&& ptr) :
 		menuPtr(std::move(ptr)),
@@ -45,7 +46,7 @@ private:
 	}
 };
 
-class MenuDirectory
+class BaseMenuDirectory
 {
 public:
 	void Populate();
@@ -76,6 +77,23 @@ public:
 		return entry->MenuDynamicCast<T>(assertSuccessInDebug);
 	}
 
+	virtual const MenuDirectoryEntry* GetMainMenu() const = 0;
+	virtual const MenuDirectoryEntry* GetPauseMenu() const = 0;
+	virtual IServerConnectionMenu* GetServerConnectionHandler() const = 0;
+
+protected:
+	explicit BaseMenuDirectory(Rml::String rootDirectory);
+
+	virtual void PopulateInternal() = 0;
+
+	template<typename T>
+	void AddToMap()
+	{
+		AddToMap(new T());
+	}
+
+	void AddToMap(BaseMenu* newMenu);
+
 private:
 	struct MapEntry
 	{
@@ -85,18 +103,12 @@ private:
 
 	using MenuMap = std::unordered_map<Rml::String, MapEntry>;
 
-	template<typename T>
-	void AddToMap()
-	{
-		AddToMap(new T());
-	}
-
-	void AddToMap(BaseMenu* newMenu);
 	void SetUpDataBindings(MapEntry& entry);
 	void LoadMenuRml(MapEntry& entry);
 	void UnloadMenu(MapEntry& entry, bool unloadModel);
 	void UnloadAllMenus();
 
+	Rml::String m_RootDirectory;
 	MenuMap m_MenuMap;
 	Rml::Context* m_Context = nullptr;
 };

@@ -712,7 +712,8 @@ void CL_FlushEntityPacket(sizebuf_t* msg)
 			&to,
 			newnum,
 			CL_IsPlayerIndex(newnum) ? DELTA_PLAYER : DELTA_ENTITY,
-			cl.mtime[0]);
+			cl.mtime[0]
+		);
 	}
 }
 
@@ -973,7 +974,8 @@ int CL_ParsePacketEntities(sizebuf_t* msg, qboolean delta)
 			S_WARN "CL_Parse%sPacketEntities: (%i should be %i)\n",
 			delta ? "Delta" : "",
 			newframe->num_entities,
-			count);
+			count
+		);
 
 	if ( !newframe->valid )
 		return playerbytes;  // frame is not valid but message was parsed

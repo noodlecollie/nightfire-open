@@ -13,33 +13,70 @@ RenderInterfaceImpl::RenderInterfaceImpl(RmlUiBackend* backend) :
 {
 }
 
-int RenderInterfaceImpl::ViewportWidth() const
+void RenderInterfaceImpl::SetViewport(Rml::Vector2i windowSize, Rml::Rectanglei viewport)
 {
-	return m_ViewportWidth;
+	ASSERT(windowSize.x > 0 && windowSize.y > 0);
+	ASSERT(viewport.Width() > 0 && viewport.Height() > 0);
+
+	m_WindowSize = windowSize;
+	m_Viewport = viewport;
 }
 
-int RenderInterfaceImpl::ViewportHeight() const
+Rml::Vector2i RenderInterfaceImpl::GetViewportOffset() const
 {
-	return m_ViewportHeight;
-}
-
-void RenderInterfaceImpl::SetViewport(int in_viewport_width, int in_viewport_height)
-{
-	ASSERT(in_viewport_width > 0);
-	ASSERT(in_viewport_height > 0);
-
-	m_ViewportWidth = in_viewport_width;
-	m_ViewportHeight = in_viewport_height;
+	return m_Viewport.TopLeft();
 }
 
 void RenderInterfaceImpl::BeginFrame()
 {
-	ASSERT(m_ViewportWidth > 0 && m_ViewportHeight > 0);
-	gUiGlFuncs.renderer.beginFrame(0, 0, m_ViewportWidth, m_ViewportHeight);
+	ASSERT(m_Viewport.Width() > 0 && m_Viewport.Height() > 0);
+
+	// The offset from (0,0) represents the pillarboxing/letterboxing
+	// that we want to apply. If we translate the entire window up and
+	// left by this value, this adds the margins that we need.
+
+	const Rml::Vector2i margins = GetViewportOffset();
+
+	gUiGlFuncs.renderer.beginFrame(
+		-margins.x,  // Further left than 0 if we have pillarboxing
+		-margins.y,  // Further up than 0 if we have letterboxing
+		m_WindowSize.x,
+		m_WindowSize.y
+	);
 }
 
 void RenderInterfaceImpl::EndFrame()
 {
+	// Do pillarboxing and letterboxing.
+	// Remember that these are "world" co-ordinates, not
+	// screen co-ordinates! The 2D camera is translated
+	// based on the letterboxing/pillarboxing set up
+	// in BeginFrame(), so we need to account for that.
+
+	const Rml::Vector2i topLeft = GetViewportOffset() * -1;
+
+	// Pillarboxing
+	if ( m_Viewport.Left() > 0 )
+	{
+		const int pillarboxHeight = m_WindowSize.y;
+		const int leftPillarboxWidth = m_Viewport.Left();
+		const int rightPillarboxWidth = std::max<int>(m_WindowSize.x - m_Viewport.Width() - m_Viewport.Left(), 0);
+
+		gEngfuncs.pfnFillRGBA(topLeft.x, topLeft.y, leftPillarboxWidth, pillarboxHeight, 0, 0, 0, 255);
+		gEngfuncs.pfnFillRGBA(m_Viewport.Width(), topLeft.y, rightPillarboxWidth, pillarboxHeight, 0, 0, 0, 255);
+	}
+
+	// Letterboxing
+	if ( m_Viewport.Top() > 0 )
+	{
+		const int letterboxWidth = m_WindowSize.x;
+		const int topLetterboxHeight = m_Viewport.Top();
+		const int bottomLetterboxHeight = std::max<int>(m_WindowSize.y - m_Viewport.Height() - m_Viewport.Top(), 0);
+
+		gEngfuncs.pfnFillRGBA(topLeft.x, topLeft.y, letterboxWidth, topLetterboxHeight, 0, 0, 0, 255);
+		gEngfuncs.pfnFillRGBA(topLeft.x, m_Viewport.Height(), letterboxWidth, bottomLetterboxHeight, 0, 0, 0, 255);
+	}
+
 	gUiGlFuncs.renderer.endFrame();
 }
 
@@ -105,8 +142,12 @@ void RenderInterfaceImpl::EnableScissorRegion(bool enable)
 
 void RenderInterfaceImpl::SetScissorRegion(Rml::Rectanglei region)
 {
-	gUiGlFuncs.renderer
-		.setScissorRegion(region.Left(), m_ViewportHeight - region.Bottom(), region.Width(), region.Height());
+	gUiGlFuncs.renderer.setScissorRegion(
+		region.Left() + m_Viewport.Left(),
+		m_Viewport.Height() - region.Bottom() + m_Viewport.Top(),
+		region.Width(),
+		region.Height()
+	);
 }
 
 void RenderInterfaceImpl::EnableClipMask(bool enable)

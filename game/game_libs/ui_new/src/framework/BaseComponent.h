@@ -11,7 +11,7 @@ namespace Rml
 
 class BaseMenu;
 
-class BaseComponent : private BaseMenuObserver
+class BaseComponent : public BaseMenuObserver
 {
 public:
 	bool Loaded() const;

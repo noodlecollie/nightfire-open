@@ -1,0 +1,38 @@
+#include "menus/temp_new/NewMainMenuDirectory.h"
+
+#include "menus/temp_new/StyleGuide.h"
+#include "menus/temp_new/NewMainMenu.h"
+#include "menus/temp_new/NewCreditsMenu.h"
+#include "menus/temp_new/NewKeysOptionsMenu.h"
+#include "menus/temp_new/NewAvOptionsMenu.h"
+
+NewMainMenuDirectory::NewMainMenuDirectory() :
+	BaseMenuDirectory("resource/rml/temp_new")
+{
+}
+
+const MenuDirectoryEntry* NewMainMenuDirectory::GetMainMenu() const
+{
+	return GetMenuEntry(NewMainMenu::NAME);
+}
+
+const MenuDirectoryEntry* NewMainMenuDirectory::GetPauseMenu() const
+{
+	// TODO
+	return GetMenuEntry(NewMainMenu::NAME);
+}
+
+IServerConnectionMenu* NewMainMenuDirectory::GetServerConnectionHandler() const
+{
+	// TODO
+	return nullptr;
+}
+
+void NewMainMenuDirectory::PopulateInternal()
+{
+	AddToMap<StyleGuide>();
+	AddToMap<NewMainMenu>();
+	AddToMap<NewCreditsMenu>();
+	AddToMap<NewKeysOptionsMenu>();
+	AddToMap<NewAvOptionsMenu>();
+}

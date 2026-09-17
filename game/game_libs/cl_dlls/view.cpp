@@ -712,7 +712,8 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 				VectorSubtract(
 					ViewInterp.Origins[(foundidx + 1) & ORIGIN_MASK],
 					ViewInterp.Origins[foundidx & ORIGIN_MASK],
-					delta);
+					delta
+				);
 				VectorMA(ViewInterp.Origins[foundidx & ORIGIN_MASK], static_cast<float>(frac), delta, neworg);
 
 				// Dont interpolate large changes
@@ -757,8 +758,7 @@ void V_CalcNormalRefdef(struct ref_params_s* pparams)
 	// override all previous settings if the viewent isn't the client
 	if ( pparams->viewentity > pparams->maxclients )
 	{
-		cl_entity_t* viewentity;
-		viewentity = gEngfuncs.GetEntityByIndex(pparams->viewentity);
+		cl_entity_t* viewentity = gEngfuncs.GetEntityByIndex(pparams->viewentity);
 		if ( viewentity )
 		{
 			VectorCopy(viewentity->origin, pparams->vieworg);
@@ -1662,7 +1662,8 @@ void V_Move(int mx, int my)
 	// Trace
 	tr = *(
 		gEngfuncs
-			.PM_TraceLine((float*)&v_origin, (float*)&farpoint, PM_TRACELINE_PHYSENTSONLY, 2 /*point sized hull*/, -1));
+			.PM_TraceLine((float*)&v_origin, (float*)&farpoint, PM_TRACELINE_PHYSENTSONLY, 2 /*point sized hull*/, -1)
+	);
 
 	if ( tr.fraction != 1.0 && tr.ent != 0 )
 	{

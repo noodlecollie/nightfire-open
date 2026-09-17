@@ -3,12 +3,12 @@
 #include <RmlUi/Core/ElementDocument.h>
 #include "UIDebug.h"
 
-BaseMenu::BaseMenu(const char* name, const char* rmlFilePath) :
+BaseMenu::BaseMenu(const char* name, const char* rmlFileRelPath) :
 	m_Name(name),
-	m_RmlFilePath(rmlFilePath)
+	m_RmlFileRelPath(rmlFileRelPath)
 {
 	ASSERT(m_Name);
-	ASSERT(m_RmlFilePath);
+	ASSERT(m_RmlFileRelPath);
 }
 
 BaseMenu::~BaseMenu()
@@ -20,9 +20,9 @@ const char* BaseMenu::Name() const
 	return m_Name;
 }
 
-const char* BaseMenu::RmlFilePath() const
+const char* BaseMenu::RmlFileRelPath() const
 {
-	return m_RmlFilePath;
+	return m_RmlFileRelPath;
 }
 
 Rml::ElementDocument* BaseMenu::Document() const

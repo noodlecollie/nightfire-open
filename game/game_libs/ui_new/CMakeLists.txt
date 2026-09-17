@@ -16,12 +16,16 @@ set(SOURCES_UI
 	src/components/ModalComponent.cpp
 	src/components/MapChooserComponent.h
 	src/components/MapChooserComponent.cpp
+	src/components/TooltipComponent.h
+	src/components/TooltipComponent.cpp
 	src/eventhandlers/HyperlinkEventHandler.h
 	src/eventhandlers/HyperlinkEventHandler.cpp
 	src/framework/BaseComponent.h
 	src/framework/BaseComponent.cpp
 	src/framework/BaseMenu.h
 	src/framework/BaseMenu.cpp
+	src/framework/BaseMenuDirectory.h
+	src/framework/BaseMenuDirectory.cpp
 	src/framework/BaseMenuObserver.h
 	src/framework/BaseMenuObserver.cpp
 	src/framework/CvarAccessor.h
@@ -30,8 +34,8 @@ set(SOURCES_UI
 	src/framework/ElementFinder.h
 	src/framework/ElementFinder.cpp
 	src/framework/EventListenerObject.h
-	src/framework/MenuDirectory.h
-	src/framework/MenuDirectory.cpp
+	src/framework/GameMainMenuDirectory.h
+	src/framework/GameMainMenuDirectory.cpp
 	src/framework/MenuEventListenerObject.h
 	src/framework/MenuEventListenerObject.cpp
 	src/framework/MenuPage.h
@@ -53,6 +57,20 @@ set(SOURCES_UI
 	src/menus/options/KeysOptionsMenu.cpp
 	src/menus/options/MouseOptionsMenu.h
 	src/menus/options/MouseOptionsMenu.cpp
+	src/menus/temp_new/NewAvOptionsMenu.h
+	src/menus/temp_new/NewAvOptionsMenu.cpp
+	src/menus/temp_new/NewBaseOptionsMenu.h
+	src/menus/temp_new/NewBaseOptionsMenu.cpp
+	src/menus/temp_new/NewCreditsMenu.h
+	src/menus/temp_new/NewCreditsMenu.cpp
+	src/menus/temp_new/NewKeysOptionsMenu.h
+	src/menus/temp_new/NewKeysOptionsMenu.cpp
+	src/menus/temp_new/NewMainMenu.h
+	src/menus/temp_new/NewMainMenu.cpp
+	src/menus/temp_new/NewMainMenuDirectory.h
+	src/menus/temp_new/NewMainMenuDirectory.cpp
+	src/menus/temp_new/StyleGuide.h
+	src/menus/temp_new/StyleGuide.cpp
 	src/menus/CreateMultiplayerGameMenu.h
 	src/menus/CreateMultiplayerGameMenu.cpp
 	src/menus/CreditsMenu.h
@@ -66,8 +84,6 @@ set(SOURCES_UI
 	src/menus/PauseMenu.cpp
 	src/menus/ServerConnectionScreen.h
 	src/menus/ServerConnectionScreen.cpp
-	src/menus/StyleGuide.h
-	src/menus/StyleGuide.cpp
 	src/models/CreateMultiplayerGamePageModel.h
 	src/models/CreateMultiplayerGamePageModel.cpp
 	src/models/CvarModel.h

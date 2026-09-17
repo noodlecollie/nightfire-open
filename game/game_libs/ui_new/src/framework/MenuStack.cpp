@@ -1,14 +1,14 @@
 #include "framework/MenuStack.h"
-#include "framework/MenuDirectory.h"
+#include "framework/BaseMenuDirectory.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Log.h>
 #include "menus/MainMenu.h"
 #include "UIDebug.h"
 
-MenuStack::MenuStack(MenuDirectory* directory) :
+MenuStack::MenuStack(std::shared_ptr<BaseMenuDirectory> directory) :
 	m_Directory(directory)
 {
-	ASSERT(directory);
+	ASSERT(m_Directory.get());
 }
 
 bool MenuStack::Push(const MenuDirectoryEntry* menu)

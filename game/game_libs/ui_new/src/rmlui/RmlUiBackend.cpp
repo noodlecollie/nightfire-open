@@ -5,9 +5,9 @@
 #include "rmlui/RmlUiBackend.h"
 #include "rmlui/Utils.h"
 #include "framework/BaseMenu.h"
-#include "menus/MainMenu.h"
-#include "menus/PauseMenu.h"
-#include "menus/ServerConnectionScreen.h"
+#include "framework/GameMainMenuDirectory.h"
+#include "framework/IServerConnectionMenu.h"
+#include "menus/temp_new/NewMainMenuDirectory.h"
 #include "udll_int.h"
 #include "UIDebug.h"
 
@@ -22,8 +22,8 @@ RmlUiBackend& RmlUiBackend::StaticInstance()
 RmlUiBackend::RmlUiBackend() :
 	m_SystemInterface(this),
 	m_RenderInterface(this),
-	m_MenuDirectory(),
-	m_MenuStack(&m_MenuDirectory)
+	m_MenuDirectory(new NewMainMenuDirectory()),
+	m_MenuStack(m_MenuDirectory)
 {
 }
 
@@ -52,7 +52,7 @@ void RmlUiBackend::Initialise()
 
 	// TODO: Do we actually want to do this later, where we can display a placeholder page first
 	// instead of a black screen?
-	m_MenuDirectory.Populate();
+	m_MenuDirectory->Populate();
 
 	m_Modifiers = 0;
 
@@ -70,7 +70,8 @@ void RmlUiBackend::Initialise()
 	Rml::Debugger::Initialise(m_RmlContext);
 #endif
 
-	m_MenuDirectory.AcquireContext(m_RmlContext);
+	m_MenuDirectory->AcquireContext(m_RmlContext);
+	m_FirstUpdate = true;
 	m_Initialised = true;
 }
 
@@ -81,9 +82,11 @@ bool RmlUiBackend::VidInit(int width, int height)
 		return false;
 	}
 
-	m_RenderInterface.SetViewport(width, height);
-	m_RmlContext->SetDimensions(Rml::Vector2i(width, height));
-	m_RmlContext->SetDensityIndependentPixelRatio(CalculateDpiScale(width, height));
+	const Rml::Rectanglei viewport = CalculateViewport(Rml::Vector2i(width, height));
+
+	m_RenderInterface.SetViewport(Rml::Vector2i(width, height), viewport);
+	m_RmlContext->SetDimensions(viewport.Size());
+	m_RmlContext->SetDensityIndependentPixelRatio(CalculateDpiScale(viewport.Height()));
 
 	return true;
 }
@@ -101,6 +104,7 @@ void RmlUiBackend::ShutDown()
 
 	m_RmlContext = nullptr;
 	m_Initialised = false;
+	m_FirstUpdate = false;
 	m_Modifiers = 0;
 	m_StoreNextKey = false;
 	m_StoredKey = StoredKey {};
@@ -144,7 +148,7 @@ void RmlUiBackend::ReceiveShowMenu()
 	if ( m_MenuStack.IsEmpty() )
 	{
 		const MenuDirectoryEntry* menu =
-			m_MenuDirectory.GetMenuEntry(gEngfuncs.pfnClientInGame() ? PauseMenu::NAME : MainMenu::NAME);
+			gEngfuncs.pfnClientInGame() ? m_MenuDirectory->GetPauseMenu() : m_MenuDirectory->GetMainMenu();
 		ASSERT(menu);
 		m_MenuStack.Push(menu);
 	}
@@ -168,7 +172,9 @@ void RmlUiBackend::ReceiveMouseMove(int x, int y)
 		return;
 	}
 
-	m_RmlContext->ProcessMouseMove(x, y, m_Modifiers);
+	const Rml::Vector2i offset = m_RenderInterface.GetViewportOffset();
+
+	m_RmlContext->ProcessMouseMove(x - offset.x, y - offset.y, m_Modifiers);
 }
 
 void RmlUiBackend::ReceiveMouseButton(int button, bool pressed)
@@ -249,6 +255,19 @@ void RmlUiBackend::ReceiveKey(int key, bool pressed)
 	}
 #endif
 
+	// Workaround for the fact that SDL doesn't feed enter key presses up as text input, for some reason.
+	// Perhaps there's a way to configure it to do so?
+	if ( (rmlKey == Rml::Input::KeyIdentifier::KI_RETURN || rmlKey == Rml::Input::KeyIdentifier::KI_NUMPADENTER) &&
+		 m_TextInputHandler.IsActive() )
+	{
+		if ( pressed )
+		{
+			ReceiveChar('\n');
+		}
+
+		return;
+	}
+
 	if ( rmlKey == Rml::Input::KeyIdentifier::KI_UNKNOWN )
 	{
 		// Not handled as a normal key, so set modifiers.
@@ -314,14 +333,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server)
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Connect(server ? server : "");
+	menu->Connect(server ? server : "");
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
@@ -331,14 +350,14 @@ void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_ParseServerInfo(server ? server : "");
+	menu->ParseServerInfo(server ? server : "");
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Precache()
@@ -348,14 +367,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Precache()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Precache();
+	menu->Precache();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Download(
@@ -371,14 +390,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Download(
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Download(
+	menu->Download(
 		pszFileName ? pszFileName : "",
 		pszServerName ? pszServerName : "",
 		iCurrent,
@@ -394,14 +413,14 @@ void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_DownloadEnd();
+	menu->DownloadEnd();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Connected()
@@ -411,14 +430,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Connected()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Connected();
+	menu->Connected();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
@@ -428,14 +447,14 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_Disconnect();
+	menu->Disconnect();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
@@ -445,14 +464,14 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
 		return;
 	}
 
-	ServerConnectionScreen* menu = m_MenuDirectory.GetMenu<ServerConnectionScreen>(ServerConnectionScreen::NAME);
+	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
 	{
 		return;
 	}
 
-	menu->ReceiveConnectionProgress_ChangeLevel();
+	menu->ChangeLevel();
 }
 
 Rml::Context* RmlUiBackend::GetRmlContext() const
@@ -533,11 +552,26 @@ void RmlUiBackend::ClearDiscoveredServerCallback()
 	m_DiscoveredServerCallback = {};
 }
 
+bool RmlUiBackend::ClientIsInActiveGame()
+{
+	return gEngfuncs.pfnClientInGame && gEngfuncs.pfnGetCvarFloat("cl_background") != 0.0f;
+}
+
 void RmlUiBackend::Update(float currentTime)
 {
 	if ( !IsInitialised() )
 	{
 		return;
+	}
+
+	if ( m_FirstUpdate )
+	{
+		m_FirstUpdate = false;
+
+		if ( StartBackgroundMap() )
+		{
+			return;
+		}
 	}
 
 	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
@@ -585,7 +619,7 @@ void RmlUiBackend::ReleaseResources()
 	Rml::Debugger::Shutdown();
 #endif
 
-	m_MenuDirectory.ReleaseContext();
+	m_MenuDirectory->ReleaseContext();
 
 	if ( m_RmlContext )
 	{
@@ -612,6 +646,7 @@ void RmlUiBackend::RegisterFonts()
 void RmlUiBackend::RegisterCvars()
 {
 	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
+	m_cvarMenuBackgroundMap = gEngfuncs.pfnRegisterVariable("ui_background_map", "bg_mainmenu", FCVAR_ARCHIVE);
 
 	m_SystemInterface.RegisterCvars();
 }
@@ -656,7 +691,7 @@ void RmlUiBackend::HandleMenuPushCommand()
 			continue;
 		}
 
-		const MenuDirectoryEntry* menu = m_MenuDirectory.GetMenuEntry(menuName);
+		const MenuDirectoryEntry* menu = m_MenuDirectory->GetMenuEntry(menuName);
 
 		if ( !menu )
 		{
@@ -701,29 +736,108 @@ void RmlUiBackend::ReloadCurrentMenu()
 	const Rml::String menuName = entry->menuPtr->Name();
 
 	Rml::Log::Message(Rml::Log::Type::LT_INFO, "Reloading menu: %s", menuName.c_str());
-	m_MenuDirectory.ReloadMenu(menuName);
+	m_MenuDirectory->ReloadMenu(menuName);
 }
 
-float RmlUiBackend::CalculateDpiScale(int /* width */, int height)
+bool RmlUiBackend::StartBackgroundMap()
 {
-	static const Rml::Vector2i WIDE_4K = {3840, 2160};
-	static const Rml::Vector2i WIDE_FHD = {1920, 1080};
-	static const Rml::Vector2i WIDE_WXGA = {1280, 720};
+	if ( !m_cvarMenuBackgroundMap || !m_cvarMenuBackgroundMap->string[0] || ClientIsInActiveGame() ||
+		 gpGlobals->demoplayback )
+	{
+		return false;
+	}
 
-	if ( height >= WIDE_4K.y )
+	{
+		Rml::String mapPath = Rml::CreateString("maps/%s.bsp", m_cvarMenuBackgroundMap->string);
+
+		if ( !gEngfuncs.pfnFileExists(mapPath.c_str(), true) )
+		{
+			return false;
+		}
+	}
+
+	Rml::String cmd = Rml::CreateString("map_background %s", m_cvarMenuBackgroundMap->string);
+	gEngfuncs.pfnClientCmd(false, cmd.c_str());
+	return true;
+}
+
+float RmlUiBackend::CalculateDpiScale(int height)
+{
+	// DPI is based on the height of the viewport (width is allowed to vary,
+	// and isn't considered as important in terms of determining the
+	// global scale of UI elements).
+	// The standard 1.0 scale is based on WXGA (1280x720).
+	// Where possible, values used in style sheets should be multiples
+	// of 4, so that they work cleanly with 0.5x and 0.75x scales.
+
+	if ( height >= 2160 )  // 2x full HD, so 3x WXGA
+	{
+		return 3.0f;
+	}
+	else if ( height >= 1440 )  // 2x WXGA
 	{
 		return 2.0f;
 	}
-	else if ( height >= WIDE_FHD.y )
+	else if ( height >= 1080 )  // Full HD, 1.5x WXGA
 	{
 		return 1.5f;
 	}
-	else if ( height >= WIDE_WXGA.y )
+	else if ( height >= 720 )  // WXGA
 	{
 		return 1.0f;
 	}
-	else
+	else if ( height >= 540 )  // 0.5x full HD, so 0.75x WXGA
+	{
+		return 0.75f;
+	}
+	else  // Minimum scale is 0.5x
 	{
 		return 0.5f;
 	}
+}
+
+Rml::Rectanglei RmlUiBackend::CalculateViewport(const Rml::Vector2i& windowSize)
+{
+	// The smallest (ie. tallest) aspect ratio is a 4:3 screen.
+	// The largest (ie widest) aspect ratio is a little wider than a 16:9
+	// screen, just for convenience in case the user is running the game in
+	// a window that's not quite the full screen height (eg. the taskbar is
+	// taking up some space at the bottom).
+	static constexpr float SMALLEST_ASPECT_RATIO = 4.0f / 3.0f;  // 1.333...
+	static constexpr float LARGEST_ASPECT_RATIO = 18.0f / 9.0f;  // 2.0
+
+	// The minimum size we support is 640x480. Anything smaller than this
+	// gets cropped.
+	static const Rml::Vector2i MIN_VIEWPORT_DIMS = Rml::Vector2i(640, 480);
+
+	if ( windowSize.x == 0 || windowSize.y == 0 )
+	{
+		ASSERT(false);
+		return Rml::Rectanglei();
+	}
+
+	Rml::Vector2i viewportSize = windowSize;
+	Rml::Vector2i viewportOffset;
+
+	const float aspectRatio = static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y);
+
+	if ( viewportSize.y > MIN_VIEWPORT_DIMS.y && aspectRatio < SMALLEST_ASPECT_RATIO )
+	{
+		// Window is too tall, so letterboxing is added at the top and bottom.
+		const int maxHeight =
+			std::max(static_cast<int>(static_cast<float>(windowSize.x) / SMALLEST_ASPECT_RATIO), MIN_VIEWPORT_DIMS.y);
+		viewportSize.y = maxHeight;
+		viewportOffset.y = (windowSize.y - maxHeight) / 2;
+	}
+
+	if ( viewportSize.x > MIN_VIEWPORT_DIMS.x && aspectRatio > LARGEST_ASPECT_RATIO )
+	{
+		// Window is too wide, so pillarboxing is added at the sides.
+		const int maxWidth =
+			std::max(static_cast<int>(static_cast<float>(windowSize.y) * LARGEST_ASPECT_RATIO), MIN_VIEWPORT_DIMS.x);
+		viewportSize.x = maxWidth;
+		viewportOffset.x = (windowSize.x - maxWidth) / 2;
+	}
+
+	return Rml::Rectanglei::FromPositionSize(viewportOffset, viewportSize);
 }

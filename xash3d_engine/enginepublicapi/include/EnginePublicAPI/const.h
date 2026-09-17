@@ -49,7 +49,7 @@
 #define FL_PROXY (1U << 20)  // This is a spectator proxy
 #define FL_ALWAYSTHINK \
 	(1U << 21)  // Brush model flag -- call think every frame regardless of nextthink - ltime (for constantly changing
-				// velocity/path)
+// velocity/path)
 #define FL_BASEVELOCITY \
 	(1U << 22)  // Base velocity has been applied this frame (used to convert base velocity into momentum)
 #define FL_MONSTERCLIP (1U << 23)  // Only collide in with monsters who have FL_MONSTERCLIP set
@@ -57,9 +57,10 @@
 	(1U << 24)  // Player is _controlling_ a train, so movement commands should be ignored on client during prediction.
 #define FL_WORLDBRUSH \
 	(1U << 25)  // Not moveable/removeable brush entity (really part of the world, but represented as an entity for
-				// transparency or something)
+// transparency or something)
 #define FL_SPECTATOR (1U << 26)  // This client is a spectator, don't run touch functions, etc.
-#define FL_LASERDOT (1U << 27)  // Predicted laser spot from rocket launcher
+#define FL_ALWAYSPACK (1U << 27)  // Always include this entity in a full network pack update, regardless of visibility.
+// This is so that clients can rely on their local state for this entity.
 
 #define FL_CUSTOMENTITY (1U << 29)  // This is a custom entity
 #define FL_KILLME \
@@ -545,7 +546,7 @@
 #define TEFIRE_FLAG_SOMEFLOAT 2  // some of the sprites will drift upwards. (50% chance)
 #define TEFIRE_FLAG_LOOP \
 	4  // if set, sprite plays at 15 fps, otherwise plays at whatever rate stretches the animation over the sprite's
-	   // duration.
+		// duration.
 #define TEFIRE_FLAG_ALPHA 8  // if set, sprite is rendered alpha blended at 50% else, opaque
 #define TEFIRE_FLAG_PLANAR 16  // if set, all fire sprites have same initial Z instead of randomly filling a cube.
 #define TEFIRE_FLAG_ADDITIVE 32  // if set, sprite is rendered as additive
@@ -771,7 +772,7 @@ enum
 	kRenderFxGlowShell,  // Glowing Shell
 	kRenderFxClampMinScale,  // Keep this sprite from getting very small (SPRITES only!)
 	kRenderFxLightMultiplier  // CTM !!!CZERO added to tell the studiorender that the value in iuser2 is a
-							  // lightmultiplier
+	// lightmultiplier
 };
 
 #define MDLEVENT_MUZZLEFLASH0 5001

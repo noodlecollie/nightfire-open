@@ -25,7 +25,7 @@ public:
 	virtual ~BaseMenu();
 
 	const char* Name() const;
-	const char* RmlFilePath() const;
+	const char* RmlFileRelPath() const;
 	Rml::ElementDocument* Document() const;
 
 	const MenuRequest* CurrentRequest() const;
@@ -39,7 +39,7 @@ public:
 	bool IsDocumentVisible() const;
 
 protected:
-	BaseMenu(const char* name, const char* rmlFilePath);
+	BaseMenu(const char* name, const char* rmlFileRelPath);
 	void SetCurrentRequest(MenuRequestType requestType, Rml::Dictionary options = Rml::Dictionary());
 
 	virtual void OnDocumentLoaded();
@@ -58,7 +58,7 @@ private:
 	void RegisterObserver(BaseMenuObserver* component);
 
 	const char* m_Name;
-	const char* m_RmlFilePath;
+	const char* m_RmlFileRelPath;
 	Rml::ElementDocument* m_Document = nullptr;
 	std::unique_ptr<MenuRequest> m_Request;
 	Rml::DataModelHandle m_ModelHandle;

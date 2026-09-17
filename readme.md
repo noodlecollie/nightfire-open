@@ -44,7 +44,8 @@ sudo apt install \
 	automake \
 	autoconf-archive \
 	libtool \
-	python3-jinja2
+	python3-jinja2 \
+	python3.12-venv
 ```
 
 For a basic debug build of the game client, follow these steps:

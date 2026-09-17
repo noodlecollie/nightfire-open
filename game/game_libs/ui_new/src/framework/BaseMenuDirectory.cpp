@@ -1,22 +1,15 @@
-#include "framework/MenuDirectory.h"
+#include "framework/BaseMenuDirectory.h"
 #include "framework/BaseMenu.h"
 #include <RmlUi/Core/Context.h>
 #include <RmlUi/Core/ElementDocument.h>
 #include "UIDebug.h"
 
-#include "menus/MainMenu.h"
-#include "menus/MultiplayerMenu.h"
-#include "menus/PauseMenu.h"
-#include "menus/CreditsMenu.h"
-#include "menus/ServerConnectionScreen.h"
-#include "menus/CreateMultiplayerGameMenu.h"
-#include "menus/StyleGuide.h"
-#include "menus/options/KeysOptionsMenu.h"
-#include "menus/options/MouseOptionsMenu.h"
-#include "menus/options/AvOptionsMenu.h"
-#include "menus/options/GameplayOptionsMenu.h"
+BaseMenuDirectory::BaseMenuDirectory(Rml::String rootDirectory) :
+	m_RootDirectory(std::move(rootDirectory))
+{
+}
 
-void MenuDirectory::Populate()
+void BaseMenuDirectory::Populate()
 {
 	ASSERT(!m_Context);
 
@@ -28,20 +21,10 @@ void MenuDirectory::Populate()
 
 	m_MenuMap.clear();
 
-	AddToMap<MainMenu>();
-	AddToMap<CreditsMenu>();
-	AddToMap<ServerConnectionScreen>();
-	AddToMap<KeysOptionsMenu>();
-	AddToMap<MultiplayerMenu>();
-	AddToMap<MouseOptionsMenu>();
-	AddToMap<AvOptionsMenu>();
-	AddToMap<GameplayOptionsMenu>();
-	AddToMap<PauseMenu>();
-	AddToMap<CreateMultiplayerGameMenu>();
-	AddToMap<StyleGuide>();
+	PopulateInternal();
 }
 
-void MenuDirectory::AcquireContext(Rml::Context* context)
+void BaseMenuDirectory::AcquireContext(Rml::Context* context)
 {
 	ReleaseContext();
 
@@ -64,7 +47,7 @@ void MenuDirectory::AcquireContext(Rml::Context* context)
 	}
 }
 
-void MenuDirectory::ReleaseContext()
+void BaseMenuDirectory::ReleaseContext()
 {
 	if ( !m_Context )
 	{
@@ -75,13 +58,13 @@ void MenuDirectory::ReleaseContext()
 	m_Context = nullptr;
 }
 
-const MenuDirectoryEntry* MenuDirectory::GetMenuEntry(const Rml::String& name) const
+const MenuDirectoryEntry* BaseMenuDirectory::GetMenuEntry(const Rml::String& name) const
 {
 	MenuMap::const_iterator it = m_MenuMap.find(name);
 	return it != m_MenuMap.end() ? &it->second.menuEntry : nullptr;
 }
 
-void MenuDirectory::ReloadMenu(const Rml::String& name, bool reloadModel)
+void BaseMenuDirectory::ReloadMenu(const Rml::String& name, bool reloadModel)
 {
 	ASSERT(m_Context);
 
@@ -115,12 +98,12 @@ void MenuDirectory::ReloadMenu(const Rml::String& name, bool reloadModel)
 	}
 }
 
-void MenuDirectory::AddToMap(BaseMenu* newMenu)
+void BaseMenuDirectory::AddToMap(BaseMenu* newMenu)
 {
 	m_MenuMap.insert({Rml::String(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
 }
 
-void MenuDirectory::SetUpDataBindings(MapEntry& entry)
+void BaseMenuDirectory::SetUpDataBindings(MapEntry& entry)
 {
 	ASSERT(m_Context);
 
@@ -158,7 +141,7 @@ void MenuDirectory::SetUpDataBindings(MapEntry& entry)
 	}
 }
 
-void MenuDirectory::LoadMenuRml(MapEntry& entry)
+void BaseMenuDirectory::LoadMenuRml(MapEntry& entry)
 {
 	static const char* FALLBACK_RML =
 		"<rml>\n"
@@ -182,7 +165,11 @@ void MenuDirectory::LoadMenuRml(MapEntry& entry)
 	ASSERT(m_Context);
 
 	entry.loadedDocument = false;
-	entry.menuEntry.document = m_Context->LoadDocument(entry.menuEntry.menuPtr->RmlFilePath());
+
+	Rml::String fullPath =
+		Rml::CreateString("%s/%s", m_RootDirectory.c_str(), entry.menuEntry.menuPtr->RmlFileRelPath());
+
+	entry.menuEntry.document = m_Context->LoadDocument(fullPath);
 
 	if ( entry.menuEntry.document )
 	{
@@ -194,7 +181,7 @@ void MenuDirectory::LoadMenuRml(MapEntry& entry)
 	Rml::Log::Message(
 		Rml::Log::Type::LT_ERROR,
 		"Failed to load %s for menu %s",
-		entry.menuEntry.menuPtr->RmlFilePath(),
+		fullPath.c_str(),
 		entry.menuEntry.menuPtr->Name()
 	);
 
@@ -202,7 +189,7 @@ void MenuDirectory::LoadMenuRml(MapEntry& entry)
 	ASSERT(entry.menuEntry.document);
 }
 
-void MenuDirectory::UnloadMenu(MapEntry& entry, bool unloadModel)
+void BaseMenuDirectory::UnloadMenu(MapEntry& entry, bool unloadModel)
 {
 	ASSERT(m_Context);
 
@@ -223,7 +210,7 @@ void MenuDirectory::UnloadMenu(MapEntry& entry, bool unloadModel)
 	}
 }
 
-void MenuDirectory::UnloadAllMenus()
+void BaseMenuDirectory::UnloadAllMenus()
 {
 	ASSERT(m_Context);
 

@@ -166,9 +166,9 @@ const char* CL_GenericHandle(int fileindex)
 	return cl.files_precache[fileindex];
 }
 
-intptr_t CL_RenderGetParm(const int parm, const int arg, const qboolean checkRef)
+intptr_t CL_RenderGetParm(const int param, const int arg, const qboolean checkRef)
 {
-	switch ( parm )
+	switch ( param )
 	{
 		case PARM_BSP2_SUPPORTED:
 			return 0;
@@ -198,11 +198,11 @@ intptr_t CL_RenderGetParm(const int parm, const int arg, const qboolean checkRef
 			// indicates call from client.dll
 			if ( checkRef )
 			{
-				return ref.dllFuncs.RefGetParm(parm, arg);
+				return ref.dllFuncs.RefGetParm(param, arg);
 			}
 			// call issued from ref_dll, check extensions here
 			else
-				switch ( parm )
+				switch ( param )
 				{
 					case PARM_DEV_OVERVIEW:
 						return CL_IsDevOverviewMode();
@@ -235,9 +235,9 @@ intptr_t CL_RenderGetParm(const int parm, const int arg, const qboolean checkRef
 	return 0;
 }
 
-static intptr_t pfnRenderGetParm(int parm, int arg)
+static intptr_t pfnRenderGetParm(int param, int arg)
 {
-	return CL_RenderGetParm(parm, arg, true);
+	return CL_RenderGetParm(param, arg, true);
 }
 
 static int Wrapper_AVI_GetVideoInfo(void* avi, int* xres, int* yres, float* duration)
