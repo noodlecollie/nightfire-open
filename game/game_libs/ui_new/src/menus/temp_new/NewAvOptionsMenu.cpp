@@ -31,7 +31,7 @@ static constexpr const char* const EVENT_APPLY_VIDEO_MODE = "applyVideoMode";
 NewAvOptionsMenu::NewAvOptionsMenu() :
 	NewBaseOptionsMenu("new_av_options_menu", "av_options_menu.rml"),
 	m_Modal(this, "apply_video_mode_modal"),
-	m_TooltipComponent(this, "tooltip_component", "tooltip_content", "tooltipText"),
+	m_TooltipComponent(this, "tooltip_component", "tooltip_container", "tooltipText"),
 	m_VideoModes(this),
 	m_DocumentEventListener(
 		this,

@@ -41,7 +41,7 @@
 			"postRunCommands": [
 				// Important! LLDB might not be able to find the location of the client and
 				// server libraries if this is not set.
-				"settings set target.exec-search-paths \"${workspaceFolder}/build/install/nightfire-open/nfopen/cl_dlls\" \"${workspaceFolder}/build/install/nightfire-open/nfopen/dlls\""
+				"settings set target.exec-search-paths \"${workspaceFolder}/build/install/nightfire-open/nfopen/cl_dlls\" \"${workspaceFolder}/build/install/nightfire-open/nfopen/dlls\" \"${workspaceFolder}/build/install/nightfire-open\""
 			]
 		}
 	]

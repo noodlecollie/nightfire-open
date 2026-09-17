@@ -2,6 +2,7 @@
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Context.h>
+#include <RmlUi/Core/ElementUtilities.h>
 #include "framework/BaseMenu.h"
 #include <cmath>
 
@@ -122,7 +123,7 @@ bool TooltipComponent::ComponentLoadFromDocument(Rml::ElementDocument* document)
 
 	if ( m_Type == TooltipType::FOLLOW_CURSOR )
 	{
-		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Display, Rml::Style::Display::None);
+		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Visibility, Rml::Style::Visibility::Hidden);
 	}
 
 	return true;
@@ -183,7 +184,7 @@ void TooltipComponent::HandleTooltipTriggerEvents(Rml::Event& event)
 		{
 			if ( m_Enabled )
 			{
-				SetTooltip(event);
+				SetTooltipFromMouseOver(event);
 			}
 
 			break;
@@ -208,7 +209,7 @@ void TooltipComponent::HandleTooltipTriggerEvents(Rml::Event& event)
 	}
 }
 
-void TooltipComponent::SetTooltip(Rml::Event& event)
+void TooltipComponent::SetTooltipFromMouseOver(Rml::Event& event)
 {
 	if ( m_CurrentTooltipSourceElement )
 	{
@@ -246,7 +247,13 @@ void TooltipComponent::SetTooltip(Rml::Event& event)
 			return;
 		}
 
-		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Display, Rml::Style::Display::InlineBlock);
+		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Visibility, Rml::Style::Visibility::Visible);
+
+		// Annoyingly, we have to update the entire context here, so that the data model
+		// contains the new value set on the variable, and we can use the correct tooltip
+		// element size for positional calculations in the next step.
+		m_TooltipDisplayElement->GetContext()->Update();
+
 		UpdateTooltipPosition(event);
 	}
 }
@@ -269,7 +276,7 @@ void TooltipComponent::ResetTooltip()
 			return;
 		}
 
-		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Display, Rml::Style::Display::None);
+		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Visibility, Rml::Style::Visibility::Hidden);
 	}
 }
 
@@ -282,6 +289,7 @@ void TooltipComponent::UpdateTooltipPosition(const Rml::Event& event)
 
 	if ( x == INVALID_POS || y == INVALID_POS )
 	{
+		ASSERT(false);
 		return;
 	}
 
@@ -297,7 +305,7 @@ void TooltipComponent::UpdateTooltipPosition(const Rml::Vector2f& mousePos)
 	}
 
 	const Rml::Box& tooltipBox = m_TooltipDisplayElement->GetBox();
-	const Rml::Vector2f tooltipSize = tooltipBox.GetSize();
+	const Rml::Vector2f tooltipSize = tooltipBox.GetSize(Rml::BoxArea::Border);
 
 	// The tooltip margins can be used to offset the tooltip from the mouse pointer
 	// or the edge of the screen.
@@ -306,24 +314,32 @@ void TooltipComponent::UpdateTooltipPosition(const Rml::Vector2f& mousePos)
 	const float topMargin = tooltipBox.GetEdge(Rml::BoxArea::Margin, Rml::BoxEdge::Top);
 	const float bottomMargin = tooltipBox.GetEdge(Rml::BoxArea::Margin, Rml::BoxEdge::Bottom);
 
-	// Top left corner
+	// This location is the tooltip's left corner, before the margins.
+	// We want the middle of the tooltip to be placed relative to the mouse cursor.
 	Rml::Vector2f tooltipPos {
-		mousePos.x - (tooltipSize.x / 2),
-		mousePos.y - bottomMargin - tooltipSize.y,
+		mousePos.x - leftMargin - (tooltipSize.x / 2),
+		mousePos.y - bottomMargin - tooltipSize.y - topMargin,
 	};
 
 	if ( tooltipPos.y < 0.0f )
 	{
-		tooltipPos.y = mousePos.y + topMargin + tooltipSize.y;
+		tooltipPos.y = mousePos.y;
 	}
 
-	const float minX = leftMargin;
-	const float maxX = m_TooltipDisplayElement->GetContext()->GetDimensions().x - tooltipSize.x - rightMargin;
+	const float minX = 0;
+	const float maxX =
+		m_TooltipDisplayElement->GetContext()->GetDimensions().x - tooltipSize.x - rightMargin - leftMargin;
 	tooltipPos.x = Rml::Math::Clamp(tooltipPos.x, minX, maxX);
 
-	// tooltipPos = tooltipPos - m_TooltipDisplayElement->GetOffsetParent()->GetAbsoluteOffset(Rml::BoxArea::Margin);
+	Rml::Element* parent = m_TooltipDisplayElement->GetOffsetParent();
 
-	m_TooltipDisplayElement->SetOffset(Rml::Vector2f(0.0f, 0.0f), ParentMenu()->Document());
+	if ( !parent )
+	{
+		parent = ParentMenu()->Document();
+	}
+
+	tooltipPos = tooltipPos - parent->GetAbsoluteOffset(Rml::BoxArea::Border);
+
 	m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Left, Rml::Property(tooltipPos.x, Rml::Unit::PX));
 	m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Top, Rml::Property(tooltipPos.y, Rml::Unit::PX));
 }

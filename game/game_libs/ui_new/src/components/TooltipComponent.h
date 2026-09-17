@@ -38,7 +38,7 @@ private:
 	void HandleDocumentEvents(Rml::Event& event);
 	void HandleTooltipTriggerEvents(Rml::Event& event);
 	void SetType(TooltipType tooltipType);
-	void SetTooltip(Rml::Event& event);
+	void SetTooltipFromMouseOver(Rml::Event& event);
 	void ResetTooltip();
 	void UpdateTooltipPosition(const Rml::Event& event);
 	void UpdateTooltipPosition(const Rml::Vector2f& mousePos);
