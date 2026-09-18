@@ -28,6 +28,16 @@ static constexpr const char* const CVAR_FULLSCREEN = "fullscreen";
 static constexpr const char* const CVAR_VID_MODE = "vid_mode";
 static constexpr const char* const EVENT_APPLY_VIDEO_MODE = "applyVideoMode";
 
+static constexpr const char* const MODAL_NEW_VIDEO_MODE_TITLE = "Apply New Resolution";
+static constexpr const char* const MODAL_NEW_VIDEO_MODE_BUTTONS = "Revert;Keep";
+static constexpr const char* const MODAL_NEW_VIDEO_MODE_CONTENT =
+	"<p>Keep new video resolution?</p>\n"
+	"<p>({{modalTimeRemaining}} {{modalTimeRemaining == 1 ? 'second' : 'seconds'}} remaining)</p>";
+
+static constexpr const char* const MODAL_CONFIRM_EXIT_TITLE = "Apply Settings";
+static constexpr const char* const MODAL_CONFIRM_EXIT_BUTTONS = "Exit;Apply";
+static constexpr const char* const MODAL_CONFIRM_EXIT_CONTENT = "<p>You have unsaved settings. Apply them?</p>";
+
 NewAvOptionsMenu::NewAvOptionsMenu() :
 	NewBaseOptionsMenu("new_av_options_menu", "av_options_menu.rml"),
 	m_Modal(this, "apply_video_mode_modal"),
@@ -58,20 +68,13 @@ NewAvOptionsMenu::NewAvOptionsMenu() :
 	m_DspOff = m_CvarModel.AddEntry<bool>(NAME_DSP_OFF, "dsp_off");
 	m_CvarModel.AddEntry<int>(NAME_CURRENT_WIDTH, "width");
 	m_CvarModel.AddEntry<int>(NAME_CURRENT_HEIGHT, "height");
-
-	m_Modal.SetButtonClickCallback(
-		[this](Rml::Event&, size_t buttonIndex, const Rml::Variant&)
-		{
-			HandleModalButton(buttonIndex == 1);
-		}
-	);
 }
 
 void NewAvOptionsMenu::Update(float currentTime)
 {
 	NewBaseOptionsMenu::Update(currentTime);
 
-	if ( m_PageModel.showModal )
+	if ( m_PageModel.showModal && m_PageModel.modalExpiry > 0.0f )
 	{
 		if ( m_PageModel.modalExpiry > gpGlobals->time )
 		{
@@ -86,7 +89,7 @@ void NewAvOptionsMenu::Update(float currentTime)
 		}
 		else
 		{
-			HandleModalButton(false);
+			HandleVideoModeConfirm(false);
 		}
 	}
 
@@ -152,6 +155,39 @@ bool NewAvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& const
 	return true;
 }
 
+bool NewAvOptionsMenu::ShouldPop(const Rml::String& menuToSwapIn)
+{
+	if ( !m_PageModel.needsApply )
+	{
+		return true;
+	}
+
+	if ( m_PendingPop )
+	{
+		return m_MenuToSwitchTo == menuToSwapIn;
+	}
+
+	m_MenuToSwitchTo = menuToSwapIn;
+	m_PendingPop = true;
+	m_PageModel.showModal = true;
+	m_PageModel.modalExpiry = 0.0f;
+	SetRequestPopOnEscapeKey(false);
+	DirtyVariable(NAME_SHOW_MODAL);
+
+	m_Modal.SetTitle(MODAL_CONFIRM_EXIT_TITLE);
+	m_Modal.SetButtonsString(MODAL_CONFIRM_EXIT_BUTTONS);
+	m_Modal.SetContentsRml(MODAL_CONFIRM_EXIT_CONTENT);
+
+	m_Modal.SetButtonClickCallback(
+		[this](Rml::Event&, size_t buttonIndex, const Rml::Variant&)
+		{
+			HandleApplyVideoModeOnExit(buttonIndex == 1);
+		}
+	);
+
+	return false;
+}
+
 void NewAvOptionsMenu::OnDocumentLoaded()
 {
 	MenuPage::OnDocumentLoaded();
@@ -174,6 +210,8 @@ void NewAvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 	{
 		case Rml::EventId::Show:
 		{
+			m_PendingPop = false;
+			m_MenuToSwitchTo.clear();
 			m_VideoModes.Populate();
 			RefreshValuesFromCvars();
 			break;
@@ -181,9 +219,11 @@ void NewAvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 
 		case Rml::EventId::Hide:
 		{
+			m_PendingPop = false;
+			m_MenuToSwitchTo.clear();
 			if ( m_PageModel.showModal )
 			{
-				HandleModalButton(false);
+				HandleVideoModeConfirm(false);
 			}
 
 			break;
@@ -211,10 +251,10 @@ void NewAvOptionsMenu::ProcessDocumentEvent(Rml::Event& event)
 		{
 			const int keyId = GetEventKeyId(event);
 
-			if ( keyId == Rml::Input::KI_ESCAPE && m_PageModel.showModal )
+			if ( keyId == Rml::Input::KI_ESCAPE && m_PageModel.showModal && m_PageModel.modalExpiry > 0 )
 			{
 				event.StopPropagation();
-				HandleModalButton(false);
+				HandleVideoModeConfirm(false);
 			}
 
 			break;
@@ -341,6 +381,17 @@ void NewAvOptionsMenu::HandleApplyVideoMode()
 		m_PageModel.modalExpiry = gpGlobals->time + 10.0f;
 		SetRequestPopOnEscapeKey(false);
 		DirtyVariable(NAME_SHOW_MODAL);
+
+		m_Modal.SetTitle(MODAL_NEW_VIDEO_MODE_TITLE);
+		m_Modal.SetButtonsString(MODAL_NEW_VIDEO_MODE_BUTTONS);
+		m_Modal.SetContentsRml(MODAL_NEW_VIDEO_MODE_CONTENT);
+
+		m_Modal.SetButtonClickCallback(
+			[this](Rml::Event&, size_t buttonIndex, const Rml::Variant&)
+			{
+				HandleVideoModeConfirm(buttonIndex == 1);
+			}
+		);
 	}
 	else
 	{
@@ -348,7 +399,7 @@ void NewAvOptionsMenu::HandleApplyVideoMode()
 	}
 }
 
-void NewAvOptionsMenu::HandleModalButton(bool keepNewVideoMode)
+void NewAvOptionsMenu::HandleVideoModeConfirm(bool keepNewVideoMode)
 {
 	if ( !keepNewVideoMode )
 	{
@@ -362,6 +413,27 @@ void NewAvOptionsMenu::HandleModalButton(bool keepNewVideoMode)
 
 	DirtyVariable(NAME_SHOW_MODAL);
 	DirtyVariable(NAME_MODAL_TIME_REMAINING);
+}
+
+void NewAvOptionsMenu::HandleApplyVideoModeOnExit(bool applyVideoMode)
+{
+	m_PageModel.showModal = false;
+	m_PageModel.modalTimeRemaining = 0;
+	SetRequestPopOnEscapeKey(true);
+
+	DirtyVariable(NAME_SHOW_MODAL);
+	DirtyVariable(NAME_MODAL_TIME_REMAINING);
+
+	if ( applyVideoMode )
+	{
+		m_PendingPop = false;
+		m_MenuToSwitchTo.clear();
+		HandleApplyVideoMode();
+	}
+	else
+	{
+		RequestPop(m_MenuToSwitchTo);
+	}
 }
 
 void NewAvOptionsMenu::CreateRevertInfo()

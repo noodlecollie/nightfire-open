@@ -63,6 +63,8 @@ set(SOURCES_UI
 	src/menus/temp_new/NewBaseOptionsMenu.cpp
 	src/menus/temp_new/NewCreditsMenu.h
 	src/menus/temp_new/NewCreditsMenu.cpp
+	src/menus/temp_new/NewGameplayOptionsMenu.h
+	src/menus/temp_new/NewGameplayOptionsMenu.cpp
 	src/menus/temp_new/NewKeysOptionsMenu.h
 	src/menus/temp_new/NewKeysOptionsMenu.cpp
 	src/menus/temp_new/NewMainMenu.h

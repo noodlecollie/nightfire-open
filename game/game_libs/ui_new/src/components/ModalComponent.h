@@ -14,6 +14,7 @@ public:
 
 	void SetTitle(const Rml::String& title);
 	void SetContentsRml(const Rml::String& rml);
+	void SetButtonsString(const Rml::String& buttons);
 	void SetButtons(const Rml::StringList& buttons);
 	void SetButtonClickCallback(ButtonClickCallback callback);
 

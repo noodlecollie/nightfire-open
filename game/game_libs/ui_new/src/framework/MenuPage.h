@@ -17,9 +17,10 @@ public:
 protected:
 	MenuPage(const char* name, const char* rmlFilePath);
 
+	void RequestPush(Rml::String menuToPush);
 	void RequestPop(Rml::String menuToSwapIn = Rml::String());
 	void RequestCutStack(size_t newSize, Rml::String menuToSwapIn = Rml::String());
-	virtual bool ShouldPop(const Rml::String& menuToSwapIn) const;
+	virtual bool ShouldPop(const Rml::String& menuToSwapIn);
 	void RequestSwitchFocus(Rml::String target, Rml::String newMenu = Rml::String());
 
 private:

@@ -44,7 +44,7 @@ bool NewMainMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructo
 	return true;
 }
 
-bool NewMainMenu::ShouldPop(const Rml::String&) const
+bool NewMainMenu::ShouldPop(const Rml::String&)
 {
 	return false;
 }
