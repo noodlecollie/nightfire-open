@@ -18,6 +18,7 @@ public:
 
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
+	bool ShouldPop(const Rml::String& menuToSwapIn) override;
 
 	void OnDocumentLoaded() override;
 	void OnDocumentUnloaded() override;
@@ -53,7 +54,8 @@ private:
 
 	void HandleApplyVideoMode(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void HandleApplyVideoMode();
-	void HandleModalButton(bool keepNewVideoMode);
+	void HandleVideoModeConfirm(bool keepNewVideoMode);
+	void HandleApplyVideoModeOnExit(bool applyVideoMode);
 	void CreateRevertInfo();
 	void ApplyRevertInfo();
 	void ApplyVideoSettings(int vidMode, bool windowed);
@@ -71,4 +73,6 @@ private:
 	CvarAccessorObj<bool> m_FullscreenCvar;
 	CvarAccessorObj<int> m_VideoModeCvar;
 	std::unique_ptr<RevertInfo> m_RevertInfo;
+	bool m_PendingPop = false;
+	Rml::String m_MenuToSwitchTo;
 };

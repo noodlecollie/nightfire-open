@@ -55,6 +55,14 @@ void MenuPage::ProcessKeyEvent(Rml::Event& event)
 	}
 }
 
+void MenuPage::RequestPush(Rml::String menuToPush)
+{
+	Rml::Dictionary options;
+	options.insert({PushMenuRequest::OPTION_MENU, Rml::Variant(std::move(menuToPush))});
+
+	SetCurrentRequest(PushMenuRequest::REQUEST_TYPE, std::move(options));
+}
+
 void MenuPage::RequestPop(Rml::String menuToSwapIn)
 {
 	if ( !ShouldPop(menuToSwapIn) )
@@ -66,7 +74,7 @@ void MenuPage::RequestPop(Rml::String menuToSwapIn)
 
 	if ( !menuToSwapIn.empty() )
 	{
-		options.insert({PopMenuRequest::OPTION_NEW_MENU, Rml::Variant(menuToSwapIn)});
+		options.insert({PopMenuRequest::OPTION_NEW_MENU, Rml::Variant(std::move(menuToSwapIn))});
 	}
 
 	SetCurrentRequest(PopMenuRequest::REQUEST_TYPE, std::move(options));
@@ -84,13 +92,13 @@ void MenuPage::RequestCutStack(size_t newSize, Rml::String menuToSwapIn)
 
 	if ( !menuToSwapIn.empty() )
 	{
-		options.insert({CutStackRequest::OPTION_NEW_MENU, Rml::Variant(menuToSwapIn)});
+		options.insert({CutStackRequest::OPTION_NEW_MENU, Rml::Variant(std::move(menuToSwapIn))});
 	}
 
 	SetCurrentRequest(CutStackRequest::REQUEST_TYPE, std::move(options));
 }
 
-bool MenuPage::ShouldPop(const Rml::String&) const
+bool MenuPage::ShouldPop(const Rml::String&)
 {
 	return true;
 }
@@ -116,22 +124,12 @@ void MenuPage::HandlePushMenu(Rml::DataModelHandle, Rml::Event&, const Rml::Vari
 		return;
 	}
 
-	Rml::Dictionary options;
-	options.insert({PushMenuRequest::OPTION_MENU, args[0]});
-
-	SetCurrentRequest(PushMenuRequest::REQUEST_TYPE, std::move(options));
+	RequestPush(args[0].Get<Rml::String>());
 }
 
 void MenuPage::HandlePopMenu(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	Rml::Dictionary options;
-
-	if ( !args.empty() )
-	{
-		options.insert({PopMenuRequest::OPTION_NEW_MENU, args[0]});
-	}
-
-	SetCurrentRequest(PopMenuRequest::REQUEST_TYPE, std::move(options));
+	RequestPop(!args.empty() ? args[0].Get<Rml::String>() : "");
 }
 
 void MenuPage::HandleCutStack(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
@@ -142,15 +140,18 @@ void MenuPage::HandleCutStack(Rml::DataModelHandle, Rml::Event&, const Rml::Vari
 		return;
 	}
 
-	Rml::Dictionary options;
-	options.insert({CutStackRequest::OPTION_NEW_SIZE, args[0]});
-
-	if ( args.size() > 1 )
+	size_t newSize = 0;
+	if ( !args[0].GetInto(newSize) )
 	{
-		options.insert({CutStackRequest::OPTION_NEW_MENU, args[1]});
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Ignoring cut stack data event with unparseable stack size (must be >= 0)"
+		);
+
+		return;
 	}
 
-	SetCurrentRequest(CutStackRequest::REQUEST_TYPE, std::move(options));
+	RequestCutStack(newSize, args.size() > 1 ? args[1].Get<Rml::String>() : "");
 }
 
 void MenuPage::HandleSwitchFocus(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
@@ -161,13 +162,5 @@ void MenuPage::HandleSwitchFocus(Rml::DataModelHandle, Rml::Event&, const Rml::V
 		return;
 	}
 
-	Rml::Dictionary options;
-	options.insert({SwitchFocusRequest::OPTION_TARGET, args[0]});
-
-	if ( args.size() > 1 )
-	{
-		options.insert({SwitchFocusRequest::OPTION_NEW_MENU, args[1]});
-	}
-
-	SetCurrentRequest(SwitchFocusRequest::REQUEST_TYPE, std::move(options));
+	RequestSwitchFocus(args[0].Get<Rml::String>(), args.size() > 1 ? args[1].Get<Rml::String>() : "");
 }

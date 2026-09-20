@@ -45,6 +45,20 @@ void ModalComponent::SetContentsRml(const Rml::String& rml)
 	m_Elems.modalBody->SetInnerRML(rml);
 }
 
+void ModalComponent::SetButtonsString(const Rml::String& buttons)
+{
+	if ( !buttons.empty() )
+	{
+		Rml::StringList buttonsList;
+		Rml::StringUtilities::ExpandString(buttonsList, buttons, ';');
+		SetButtons(buttonsList);
+	}
+	else
+	{
+		SetButtons(Rml::StringList());
+	}
+}
+
 void ModalComponent::SetButtons(const Rml::StringList& buttons)
 {
 	ASSERTSZ(m_Elems.modalFooter, "SetButtons called before modal elements were loaded");
@@ -132,11 +146,7 @@ void ModalComponent::LoadParams()
 
 	if ( !buttons.empty() )
 	{
-		m_Elems.buttons.clear();
-
-		Rml::StringList buttonsList;
-		Rml::StringUtilities::ExpandString(buttonsList, buttons, ';');
-		SetButtons(buttonsList);
+		SetButtonsString(buttons);
 	}
 }
 
