@@ -1,0 +1,64 @@
+#include "menus/temp_new/NewMouseOptionsMenu.h"
+
+static constexpr const char* const NAME_MOUSE_SENSITIVITY = "mouseSensitivity";
+static constexpr const char* const NAME_RAW_MOUSE_INPUT = "rawMouseInput";
+static constexpr const char* const NAME_MOUSE_FILTER = "mouseFilter";
+static constexpr const char* const NAME_MOUSE_PITCH = "mousePitch";
+static constexpr const char* const NAME_INVERT_MOUSE = "invertMouse";
+
+NewMouseOptionsMenu::NewMouseOptionsMenu() :
+	NewBaseOptionsMenu("new_mouse_options_menu", "mouse_options_menu.rml"),
+	m_CvarModel(this),
+	m_TooltipComponent(this, "tooltip_component", "tooltip_container", "tooltipText")
+{
+	m_CvarModel.AddEntry<float>(NAME_MOUSE_SENSITIVITY, "sensitivity");
+	m_CvarModel.AddEntry<bool>(NAME_RAW_MOUSE_INPUT, "m_rawinput");
+	m_CvarModel.AddEntry<bool>(NAME_MOUSE_FILTER, "look_filter");
+	m_MousePitch = m_CvarModel.AddEntry<float>(NAME_MOUSE_PITCH, "m_Pitch");
+}
+
+bool NewMouseOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	if ( !NewBaseOptionsMenu::OnSetUpDataModelBindings(constructor) )
+	{
+		return false;
+	}
+
+	const bool invertMouseBound = constructor.BindFunc(
+		NAME_INVERT_MOUSE,
+		[this](Rml::Variant& outVar)
+		{
+			outVar = Rml::Variant(m_MousePitch->CachedValue() < 0.0f);
+		},
+		[this](const Rml::Variant& inVar)
+		{
+			const bool pitchIsNegative = m_MousePitch->CachedValue() < 0.0f;
+			const bool pitchShouldBeNegative = inVar.Get<bool>();
+
+			if ( pitchIsNegative != pitchShouldBeNegative )
+			{
+				m_MousePitch->SetValue(-m_MousePitch->CachedValue());
+			}
+		}
+	);
+
+	if ( !invertMouseBound )
+	{
+		return false;
+	}
+
+	const bool changeListenerSet = m_CvarModel.SetChangeListener(
+		NAME_MOUSE_PITCH,
+		[this](const Rml::Variant&)
+		{
+			DirtyVariable(NAME_INVERT_MOUSE);
+		}
+	);
+
+	if ( !changeListenerSet )
+	{
+		return false;
+	}
+
+	return true;
+}

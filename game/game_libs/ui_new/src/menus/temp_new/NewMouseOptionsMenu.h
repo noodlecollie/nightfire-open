@@ -1,21 +1,21 @@
 #pragma once
 
 #include "menus/temp_new/NewBaseOptionsMenu.h"
+#include <RmlUi/Core/DataModelHandle.h>
 #include "components/TooltipComponent.h"
 #include "models/CvarModel.h"
+#include "framework/CvarDataVar.h"
 
-class NewGameplayOptionsMenu : public NewBaseOptionsMenu
+class NewMouseOptionsMenu : public NewBaseOptionsMenu
 {
 public:
-	NewGameplayOptionsMenu();
+	NewMouseOptionsMenu();
 
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
-	void HandleTestVibration(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
-
 	CvarModel m_CvarModel;
 	TooltipComponent m_TooltipComponent;
-	CvarDataVar<bool>* m_VibrationEnabled = nullptr;
+	CvarDataVar<float>* m_MousePitch = nullptr;
 };
