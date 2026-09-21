@@ -7,6 +7,7 @@
 #include "menus/temp_new/NewAvOptionsMenu.h"
 #include "menus/temp_new/NewGameplayOptionsMenu.h"
 #include "menus/temp_new/NewMouseOptionsMenu.h"
+#include "menus/temp_new/NewServerConnectionScreen.h"
 
 NewMainMenuDirectory::NewMainMenuDirectory() :
 	BaseMenuDirectory("resource/rml/temp_new")
@@ -26,8 +27,9 @@ const MenuDirectoryEntry* NewMainMenuDirectory::GetPauseMenu() const
 
 IServerConnectionMenu* NewMainMenuDirectory::GetServerConnectionHandler() const
 {
-	// TODO
-	return nullptr;
+	const MenuDirectoryEntry* entry = GetMenuEntry(NewServerConnectionScreen::NAME);
+	ASSERT(entry);
+	return entry ? entry->MenuDynamicCast<IServerConnectionMenu>() : nullptr;
 }
 
 void NewMainMenuDirectory::PopulateInternal()
@@ -39,4 +41,5 @@ void NewMainMenuDirectory::PopulateInternal()
 	AddToMap<NewAvOptionsMenu>();
 	AddToMap<NewGameplayOptionsMenu>();
 	AddToMap<NewMouseOptionsMenu>();
+	AddToMap<NewServerConnectionScreen>();
 }

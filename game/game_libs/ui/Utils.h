@@ -77,11 +77,12 @@ void UI_ConnectionProgress_Download(
 	const char* pszServerName,
 	int iCurrent,
 	int iTotal,
-	const char* comment);
+	const char* comment
+);
 void UI_ConnectionProgress_DownloadEnd(void);
-void UI_ConnectionProgress_Precache(void);
-void UI_ConnectionProgress_Connect(const char* server);
-void UI_ConnectionProgress_ChangeLevel(void);
+void UI_ConnectionProgress_Precache(const char* mapFileName);
+void UI_ConnectionProgress_Connect(const char* server, qboolean isBackground);
+void UI_ConnectionProgress_ChangeLevel(qboolean isBackground);
 void UI_ConnectionProgress_ParseServerInfo(const char* server);
 
 // defined as exported to keep compatibility with old interface
@@ -95,10 +96,10 @@ AddTouchButtonToList(const char* name, const char* texture, const char* command,
 // ScreenWidth returns the width of the screen, in ppos.xels
 #define ScreenWidth ((float)(gpGlobals->scrWidth))
 
-#define Alpha(x) (((x)&0xFF000000) >> 24)
-#define Red(x) (((x)&0xFF0000) >> 16)
-#define Green(x) (((x)&0xFF00) >> 8)
-#define Blue(x) (((x)&0xFF) >> 0)
+#define Alpha(x) (((x) & 0xFF000000) >> 24)
+#define Red(x) (((x) & 0xFF0000) >> 16)
+#define Green(x) (((x) & 0xFF00) >> 8)
+#define Blue(x) (((x) & 0xFF) >> 0)
 
 inline unsigned int PackRGBA(const unsigned int r, const unsigned int g, const unsigned int b, const unsigned int a)
 {
@@ -144,7 +145,8 @@ inline unsigned int InterpColor(const unsigned int from, const unsigned int to, 
 		static_cast<unsigned int>(InterpVal(static_cast<float>(Red(from)), static_cast<float>(Red(to)), frac)),
 		static_cast<unsigned int>(InterpVal(static_cast<float>(Green(from)), static_cast<float>(Green(to)), frac)),
 		static_cast<unsigned int>(InterpVal(static_cast<float>(Blue(from)), static_cast<float>(Blue(to)), frac)),
-		static_cast<unsigned int>(InterpVal(static_cast<float>(Alpha(from)), static_cast<float>(Alpha(to)), frac)));
+		static_cast<unsigned int>(InterpVal(static_cast<float>(Alpha(from)), static_cast<float>(Alpha(to)), frac))
+	);
 }
 
 int colorstricmp(const char* a, const char* b);

@@ -368,14 +368,18 @@ void GAME_EXPORT Con_DPrintf(const char* szFmt, ...)
 	va_list args;
 
 	if ( host_developer.value < DEV_NORMAL )
+	{
 		return;
+	}
 
 	va_start(args, szFmt);
 	Q_vsnprintf(buffer, sizeof(buffer), szFmt, args);
 	va_end(args);
 
 	if ( buffer[0] == '0' && buffer[1] == '\n' && buffer[2] == '\0' )
+	{
 		return;  // hlrally spam
+	}
 
 	Sys_Print(buffer);
 }

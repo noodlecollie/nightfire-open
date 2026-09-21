@@ -326,9 +326,17 @@ void RmlUiBackend::ReceiveDiscoveredServer(netadr_t address, const char* info)
 	}
 }
 
-void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server)
+void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server, bool isBackground)
 {
 	if ( !IsInitialised() )
+	{
+		return;
+	}
+
+	m_ConnectedToServer = true;
+	m_ConnectedServerIsBackgroundMap = isBackground;
+
+	if ( m_ConnectedServerIsBackgroundMap )
 	{
 		return;
 	}
@@ -340,12 +348,12 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server)
 		return;
 	}
 
-	menu->Connect(server ? server : "");
+	menu->Connect(server ? server : "", m_ConnectedServerIsBackgroundMap);
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
 {
-	if ( !IsInitialised() )
+	if ( !IsInitialised() || m_ConnectedServerIsBackgroundMap )
 	{
 		return;
 	}
@@ -360,9 +368,9 @@ void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
 	menu->ParseServerInfo(server ? server : "");
 }
 
-void RmlUiBackend::ReceiveConnectionProgress_Precache()
+void RmlUiBackend::ReceiveConnectionProgress_Precache(const char* mapFileName)
 {
-	if ( !IsInitialised() )
+	if ( !IsInitialised() || m_ConnectedServerIsBackgroundMap )
 	{
 		return;
 	}
@@ -374,7 +382,7 @@ void RmlUiBackend::ReceiveConnectionProgress_Precache()
 		return;
 	}
 
-	menu->Precache();
+	menu->Precache(mapFileName);
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Download(
@@ -385,7 +393,7 @@ void RmlUiBackend::ReceiveConnectionProgress_Download(
 	const char* comment
 )
 {
-	if ( !IsInitialised() )
+	if ( !IsInitialised() || m_ConnectedServerIsBackgroundMap )
 	{
 		return;
 	}
@@ -408,7 +416,7 @@ void RmlUiBackend::ReceiveConnectionProgress_Download(
 
 void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
 {
-	if ( !IsInitialised() )
+	if ( !IsInitialised() || m_ConnectedServerIsBackgroundMap )
 	{
 		return;
 	}
@@ -425,7 +433,7 @@ void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
 
 void RmlUiBackend::ReceiveConnectionProgress_Connected()
 {
-	if ( !IsInitialised() )
+	if ( !IsInitialised() || m_ConnectedServerIsBackgroundMap )
 	{
 		return;
 	}
@@ -447,23 +455,45 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
-
-	if ( !menu )
+	if ( !m_ConnectedServerIsBackgroundMap )
 	{
-		return;
+		IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+
+		if ( menu )
+		{
+			menu->Disconnect();
+		}
 	}
 
-	menu->Disconnect();
+	m_ConnectedToServer = false;
+	m_ConnectedServerIsBackgroundMap = false;
 }
 
-void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
+void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
 {
 	if ( !IsInitialised() )
 	{
 		return;
 	}
 
+	if ( m_ConnectedToServer && !m_ConnectedServerIsBackgroundMap && isBackground )
+	{
+		IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+
+		if ( menu )
+		{
+			menu->Disconnect();
+		}
+	}
+
+	m_ConnectedToServer = true;
+	m_ConnectedServerIsBackgroundMap = isBackground;
+
+	if ( m_ConnectedServerIsBackgroundMap )
+	{
+		return;
+	}
+
 	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( !menu )
@@ -471,7 +501,7 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel()
 		return;
 	}
 
-	menu->ChangeLevel();
+	menu->ChangeLevel(m_ConnectedServerIsBackgroundMap);
 }
 
 Rml::Context* RmlUiBackend::GetRmlContext() const

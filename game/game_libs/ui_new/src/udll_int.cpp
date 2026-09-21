@@ -227,19 +227,19 @@ static void pfnConnectionProgress_DownloadEnd(void)
 	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_DownloadEnd();
 }
 
-static void pfnConnectionProgress_Precache(void)
+static void pfnConnectionProgress_Precache(const char* mapFileName)
 {
-	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Precache();
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Precache(mapFileName);
 }
 
-static void pfnConnectionProgress_Connect(const char* server)
+static void pfnConnectionProgress_Connect(const char* server, qboolean isBackground)
 {
-	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Connect(server);
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_Connect(server, isBackground);
 }
 
-static void pfnConnectionProgress_ChangeLevel(void)
+static void pfnConnectionProgress_ChangeLevel(qboolean isBackground)
 {
-	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_ChangeLevel();
+	RmlUiBackend::StaticInstance().ReceiveConnectionProgress_ChangeLevel(isBackground);
 }
 
 static void pfnConnectionProgress_ParseServerInfo(const char* server)

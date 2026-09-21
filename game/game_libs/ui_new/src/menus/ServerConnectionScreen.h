@@ -17,9 +17,9 @@ public:
 
 	void Update(float currentTime) override;
 
-	void ReceiveConnectionProgress_Connect(const Rml::String& server);
+	void ReceiveConnectionProgress_Connect(const Rml::String& server, bool isBackground);
 	void ReceiveConnectionProgress_ParseServerInfo(const Rml::String& server);
-	void ReceiveConnectionProgress_Precache();
+	void ReceiveConnectionProgress_Precache(const char* mapFileName);
 	void ReceiveConnectionProgress_Download(
 		const Rml::String& fileName,
 		const Rml::String& serverName,
@@ -30,7 +30,7 @@ public:
 	void ReceiveConnectionProgress_DownloadEnd();
 	void ReceiveConnectionProgress_Connected();
 	void ReceiveConnectionProgress_Disconnect();
-	void ReceiveConnectionProgress_ChangeLevel();
+	void ReceiveConnectionProgress_ChangeLevel(bool isBackground);
 
 protected:
 	void OnDocumentLoaded() override;
