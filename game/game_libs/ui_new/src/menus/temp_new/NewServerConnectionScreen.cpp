@@ -1,4 +1,4 @@
-#include "menus/ServerConnectionScreen.h"
+#include "menus/temp_new/NewServerConnectionScreen.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Elements/ElementProgress.h>
 #include "menus/PauseMenu.h"
@@ -7,9 +7,9 @@
 static constexpr const char* const NAME_LOADING_PROGRESS = "loadingProgress";
 static constexpr const char* const NAME_DOWNLOAD_PROGRESS = "downloadProgress";
 
-const char* const ServerConnectionScreen::NAME = "server_connection_screen";
+const char* const NewServerConnectionScreen::NAME = "new_server_connection_screen";
 
-ServerConnectionScreen::ServerConnectionScreen() :
+NewServerConnectionScreen::NewServerConnectionScreen() :
 	BaseMenu(NAME, "server_connection_screen.rml"),
 	m_CvarModel(this)
 {
@@ -17,7 +17,7 @@ ServerConnectionScreen::ServerConnectionScreen() :
 	m_CvarDownload = m_CvarModel.AddEntry<float>(NAME_DOWNLOAD_PROGRESS, "scr_download");
 }
 
-void ServerConnectionScreen::Update(float currentTime)
+void NewServerConnectionScreen::Update(float currentTime)
 {
 	BaseMenu::Update(currentTime);
 
@@ -26,21 +26,39 @@ void ServerConnectionScreen::Update(float currentTime)
 		return;
 	}
 
-	m_CvarModel.RefreshAll();
+	if ( m_Connecting )
+	{
+		m_CvarModel.RefreshAll();
+	}
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_Connect(const Rml::String& server, bool /* isBackground */)
+void NewServerConnectionScreen::Connect(const char* server, bool isBackground)
 {
+	m_Connecting = true;
 	ClearContentArea();
-	AppendContentLine(Rml::CreateString("Connecting to server: %s", server.c_str()));
+
+	if ( server )
+	{
+		AppendContentLine(
+			Rml::CreateString(
+				"Connecting to %sserver: %s",
+				isBackground ? "background " : "",
+				(*server) ? server : "<unknown>"
+			)
+		);
+	}
+	else
+	{
+		AppendContentLine(Rml::CreateString("Connecting to local %sserver", isBackground ? "background " : ""));
+	}
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_ParseServerInfo(const Rml::String& /* server */)
+void NewServerConnectionScreen::ParseServerInfo(const char* /* server */)
 {
 	AppendContentLine("Parsing server info");
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_Precache(const char* mapFileName)
+void NewServerConnectionScreen::Precache(const char* mapFileName)
 {
 	if ( mapFileName && mapFileName[0] )
 	{
@@ -50,31 +68,31 @@ void ServerConnectionScreen::ReceiveConnectionProgress_Precache(const char* mapF
 	AppendContentLine("Precaching resources");
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_Download(
-	const Rml::String& fileName,
-	const Rml::String& /* serverName */,
+void NewServerConnectionScreen::Download(
+	const char* fileName,
+	const char* /* serverName */,
 	int current,
 	int total,
-	const Rml::String& comment
+	const char* comment
 )
 {
 	Rml::String text;
-	Rml::FormatString(text, "[%d/%d] Downloaded %s", current, total, fileName.c_str());
+	Rml::FormatString(text, "[%d/%d] Downloaded %s", current, total, fileName);
 
-	if ( !comment.empty() )
+	if ( !comment || !comment[0] )
 	{
-		text += Rml::CreateString(" (%s)", comment.c_str());
+		text += Rml::CreateString(" (%s)", comment);
 	}
 
 	AppendContentLine(text);
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_DownloadEnd()
+void NewServerConnectionScreen::DownloadEnd()
 {
 	AppendContentLine("Resource download finished");
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_Connected()
+void NewServerConnectionScreen::Connected()
 {
 	AppendContentLine("Joined server");
 
@@ -83,40 +101,45 @@ void ServerConnectionScreen::ReceiveConnectionProgress_Connected()
 	options.insert({SwitchFocusRequest::OPTION_NEW_MENU, Rml::Variant(Rml::String(PauseMenu::NAME))});
 
 	SetCurrentRequest(MenuRequestType::SwitchFocus, std::move(options));
+	m_Connecting = false;
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_Disconnect()
+void NewServerConnectionScreen::Disconnect()
 {
+	m_Connecting = false;
 	AppendContentLine("Disconnected from server");
 }
 
-void ServerConnectionScreen::ReceiveConnectionProgress_ChangeLevel(bool /* isBackground */)
+void NewServerConnectionScreen::ChangeLevel(bool /* isBackground */)
 {
+	m_Connecting = true;
+
 	// This seems to just be fired when we change level in single player,
 	// so probably nothing to do other than clearing the content.
 	ClearContentArea();
 }
 
-void ServerConnectionScreen::OnDocumentLoaded()
+void NewServerConnectionScreen::OnDocumentLoaded()
 {
 	BaseMenu::OnDocumentLoaded();
 
 	m_ContentElement = Document()->GetElementById("content");
-	m_ProgressElement = dynamic_cast<Rml::ElementProgress*>(Document()->GetElementById("progress_bar"));
+	m_ProgressElement = rmlui_dynamic_cast<Rml::ElementProgress*>(Document()->GetElementById("progress_bar"));
 
 	ASSERT(m_ContentElement);
 	ASSERT(m_ProgressElement);
 }
 
-void ServerConnectionScreen::OnDocumentUnloaded()
+void NewServerConnectionScreen::OnDocumentUnloaded()
 {
 	m_ContentElement = nullptr;
 	m_ProgressElement = nullptr;
+	m_Connecting = false;
 
 	BaseMenu::OnDocumentUnloaded();
 }
 
-void ServerConnectionScreen::ClearContentArea()
+void NewServerConnectionScreen::ClearContentArea()
 {
 	if ( !m_ContentElement )
 	{
@@ -130,7 +153,7 @@ void ServerConnectionScreen::ClearContentArea()
 	}
 }
 
-void ServerConnectionScreen::AppendContentLine(const Rml::String& text)
+void NewServerConnectionScreen::AppendContentLine(const Rml::String& text)
 {
 	static constexpr int MAX_TEXT_LINES = 30;
 
@@ -140,7 +163,7 @@ void ServerConnectionScreen::AppendContentLine(const Rml::String& text)
 		return;
 	}
 
-	Rml::Log::Message(Rml::Log::Type::LT_DEBUG, "ServerConnectionScreen: %s", text.c_str());
+	Rml::Log::Message(Rml::Log::Type::LT_DEBUG, "NewServerConnectionScreen: %s", text.c_str());
 
 	Rml::ElementPtr elem = Document()->CreateElement("p");
 	elem->AppendChild(Document()->CreateTextNode(text));

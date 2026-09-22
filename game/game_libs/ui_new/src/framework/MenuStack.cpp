@@ -223,7 +223,7 @@ MenuStack::FocusChangeResult MenuStack::CommandSwitchFocus(const Rml::String& ta
 				menuToReturnTo.c_str()
 			);
 
-			entry = m_Directory->GetMenuEntry(MainMenu::NAME);
+			entry = m_Directory->GetMainMenu();
 			ASSERT(entry);
 		}
 

@@ -46,9 +46,9 @@ public:
 	void ReceiveChar(int character);
 	void ReceiveDiscoveredServer(netadr_t address, const char* info);
 
-	void ReceiveConnectionProgress_Connect(const char* server);
+	void ReceiveConnectionProgress_Connect(const char* server, bool isBackground);
 	void ReceiveConnectionProgress_ParseServerInfo(const char* server);
-	void ReceiveConnectionProgress_Precache();
+	void ReceiveConnectionProgress_Precache(const char* mapFileName);
 	void ReceiveConnectionProgress_Download(
 		const char* pszFileName,
 		const char* pszServerName,
@@ -59,7 +59,7 @@ public:
 	void ReceiveConnectionProgress_DownloadEnd();
 	void ReceiveConnectionProgress_Connected();
 	void ReceiveConnectionProgress_Disconnect();
-	void ReceiveConnectionProgress_ChangeLevel();
+	void ReceiveConnectionProgress_ChangeLevel(bool isBackground);
 
 	void Update(float currentTime);
 	void Render();
@@ -109,6 +109,8 @@ private:
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;
+	bool m_ConnectedToServer = false;
+	bool m_ConnectedServerIsBackgroundMap = false;
 
 	bool m_StoreNextKey = false;
 	StoredKey m_StoredKey {};

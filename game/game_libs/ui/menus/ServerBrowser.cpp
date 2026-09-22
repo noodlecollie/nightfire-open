@@ -364,35 +364,40 @@ bool CMenuGameListModel::Sort(int column, bool ascend)
 				servers.Base(),
 				servers.Count(),
 				sizeof(server_t),
-				ascend ? server_t::NameCmpAscend : server_t::NameCmpDescend);
+				ascend ? server_t::NameCmpAscend : server_t::NameCmpDescend
+			);
 			return true;
 		case COLUMN_MAP:
 			qsort(
 				servers.Base(),
 				servers.Count(),
 				sizeof(server_t),
-				ascend ? server_t::MapCmpAscend : server_t::MapCmpDescend);
+				ascend ? server_t::MapCmpAscend : server_t::MapCmpDescend
+			);
 			return true;
 		case COLUMN_PLAYERS:
 			qsort(
 				servers.Base(),
 				servers.Count(),
 				sizeof(server_t),
-				ascend ? server_t::ClientCmpAscend : server_t::ClientCmpDescend);
+				ascend ? server_t::ClientCmpAscend : server_t::ClientCmpDescend
+			);
 			return true;
 		case COLUMN_PING:
 			qsort(
 				servers.Base(),
 				servers.Count(),
 				sizeof(server_t),
-				ascend ? server_t::PingCmpAscend : server_t::PingCmpDescend);
+				ascend ? server_t::PingCmpAscend : server_t::PingCmpDescend
+			);
 			return true;
 		case COLUMN_IP:
 			qsort(
 				servers.Base(),
 				servers.Count(),
 				sizeof(server_t),
-				ascend ? server_t::AdrCmpAscend : server_t::AdrCmpDescend);
+				ascend ? server_t::AdrCmpAscend : server_t::AdrCmpDescend
+			);
 			return true;
 	}
 
@@ -486,11 +491,17 @@ void CMenuServerBrowser::Connect(server_t& server)
 
 	staticWaitingPassword = false;
 
-	PlatformLib_SNPrintF(buf, sizeof(buf), "connect %s %s", EngFuncs::NET_AdrToString(server.adr), server.isLegacy ? "legacy" : "");
+	PlatformLib_SNPrintF(
+		buf,
+		sizeof(buf),
+		"connect %s %s",
+		EngFuncs::NET_AdrToString(server.adr),
+		server.isLegacy ? "legacy" : ""
+	);
 	buf[sizeof(buf) - 1] = 0;
 
 	EngFuncs::ClientCmd(FALSE, buf);
-	UI_ConnectionProgress_Connect("");
+	UI_ConnectionProgress_Connect("", false);
 }
 
 /*
@@ -579,7 +590,8 @@ void CMenuServerBrowser::_Init(void)
 		L("Join to selected game"),
 		PC_JOIN_GAME,
 		VoidCb(&CMenuServerBrowser::JoinGame),
-		QMF_GRAYED);
+		QMF_GRAYED
+	);
 	joinGame->onReleasedClActive = msgBox.MakeOpenEvent();
 
 	createGame = AddButton(L("GameUI_GameMenu_CreateServer"), NULL, PC_CREATE_GAME);

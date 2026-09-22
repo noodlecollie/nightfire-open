@@ -1909,6 +1909,8 @@ void CL_CheckForResend(void)
 		Q_strncpy(cls.servername, "localhost", sizeof(cls.servername));
 		cls.serveradr.ip.ip4.type = NA_LOOPBACK;
 
+		UI_ConnectionProgress_Connect(NULL);
+
 		// we don't need a challenge on the localhost
 		CL_SendConnectPacket();
 		return;
@@ -3664,9 +3666,8 @@ qboolean CL_PrecacheResources(void)
 {
 	resource_t* pRes;
 
-	UI_ConnectionProgress_Precache();
-
 	// NOTE: world need to be loaded as first model
+	qboolean found = false;
 	for ( pRes = cl.resourcesonhand.pNext; pRes && pRes != &cl.resourcesonhand; pRes = pRes->pNext )
 	{
 		if ( FBitSet(pRes->ucFlags, RES_PRECACHED) )
@@ -3682,7 +3683,15 @@ qboolean CL_PrecacheResources(void)
 		cl.models[pRes->nIndex] = Mod_LoadWorld(pRes->szFileName, true);
 		SetBits(pRes->ucFlags, RES_PRECACHED);
 		cl.nummodels = 1;
+		UI_ConnectionProgress_Precache(pRes->szFileName);
+		found = true;
 		break;
+	}
+
+	if ( !found )
+	{
+		// Weird, but OK... Send an empty string to the UI instead.
+		UI_ConnectionProgress_Precache("");
 	}
 
 	// then we set up all the world submodels

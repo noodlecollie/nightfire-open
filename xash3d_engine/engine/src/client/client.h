@@ -1152,7 +1152,7 @@ void UI_ConnectionProgress_Download(
 	const char* comment
 );
 void UI_ConnectionProgress_DownloadEnd(void);
-void UI_ConnectionProgress_Precache(void);
+void UI_ConnectionProgress_Precache(const char* mapFileName);
 void UI_ConnectionProgress_Connect(const char* server);
 void UI_ConnectionProgress_ChangeLevel(void);
 void UI_ConnectionProgress_ParseServerInfo(const char* server);

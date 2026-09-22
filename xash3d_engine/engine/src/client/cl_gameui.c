@@ -307,6 +307,7 @@ void UI_ShowMessageBox(const char* text)
 
 void UI_ConnectionProgress_Disconnect(void)
 {
+	Con_DPrintf("Connection progress: Disconnect\n");
 	Cvar_SetValue("scr_loading", 0.0f);
 
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Disconnect )
@@ -324,6 +325,8 @@ void UI_ConnectionProgress_Download(
 	const char* comment
 )
 {
+	Con_DPrintf("Connection progress: Download (%d of %d)\n", iCurrent, iTotal);
+
 	if ( !gameui.dllFuncs2.pfnConnectionProgress_Download )
 	{
 		return;
@@ -344,6 +347,8 @@ void UI_ConnectionProgress_Download(
 
 void UI_ConnectionProgress_DownloadEnd(void)
 {
+	Con_DPrintf("Connection progress: Download end\n");
+
 	// Treat this as 90% loaded
 	Cvar_SetValue("scr_loading", 90.0f);
 
@@ -353,40 +358,55 @@ void UI_ConnectionProgress_DownloadEnd(void)
 	}
 }
 
-void UI_ConnectionProgress_Precache(void)
+void UI_ConnectionProgress_Precache(const char* mapFileName)
 {
+	Con_DPrintf("Connection progress: Precache for %s\n", (mapFileName && *mapFileName) ? mapFileName : "unknown map");
+
 	// Treat this as 50% loaded
 	Cvar_SetValue("scr_loading", 50.0f);
 
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Precache )
 	{
-		gameui.dllFuncs2.pfnConnectionProgress_Precache();
+		gameui.dllFuncs2.pfnConnectionProgress_Precache(mapFileName);
 	}
 }
 
 void UI_ConnectionProgress_Connect(const char* server)  // NULL for local server
 {
+	const qboolean isBackground = Cvar_VariableInteger("cl_background") != 0;
+
+	Con_DPrintf(
+		"Connection progress: Connecting to server %s%s\n",
+		server ? server : "localhost",
+		Cvar_VariableInteger("cl_background") ? " (background map)" : ""
+	);
+
 	// Treat this as 10% loaded
 	Cvar_SetValue("scr_loading", 10.0f);
 
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Connect )
 	{
-		gameui.dllFuncs2.pfnConnectionProgress_Connect(server);
+		gameui.dllFuncs2.pfnConnectionProgress_Connect(server, isBackground);
 	}
 }
 
 void UI_ConnectionProgress_ChangeLevel(void)
 {
+	const qboolean isBackground = Cvar_VariableInteger("cl_background") != 0;
+
+	Con_DPrintf("Connection progress: Change level\n");
 	Cvar_SetValue("scr_loading", 0.0f);
 
 	if ( gameui.dllFuncs2.pfnConnectionProgress_ChangeLevel )
 	{
-		gameui.dllFuncs2.pfnConnectionProgress_ChangeLevel();
+		gameui.dllFuncs2.pfnConnectionProgress_ChangeLevel(isBackground);
 	}
 }
 
 void UI_ConnectionProgress_ParseServerInfo(const char* server)
 {
+	Con_DPrintf("Connection progress: Parse server info for %s\n", server ? server : "localhost");
+
 	// Treat this as 20% loaded
 	Cvar_SetValue("scr_loading", 20.0f);
 
@@ -398,6 +418,7 @@ void UI_ConnectionProgress_ParseServerInfo(const char* server)
 
 void UI_ConnectionProgress_Connected(void)
 {
+	Con_DPrintf("Connection progress: Connected\n");
 	Cvar_SetValue("scr_loading", 0.0f);
 
 	if ( gameui.dllFuncs2.pfnConnectionProgress_Connected )

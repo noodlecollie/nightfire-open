@@ -276,9 +276,9 @@ typedef struct
 		const char* comment
 	);
 	void (*pfnConnectionProgress_DownloadEnd)(void);
-	void (*pfnConnectionProgress_Precache)(void);
-	void (*pfnConnectionProgress_Connect)(const char* server);  // NULL for local server
-	void (*pfnConnectionProgress_ChangeLevel)(void);
+	void (*pfnConnectionProgress_Precache)(const char* mapFileName);
+	void (*pfnConnectionProgress_Connect)(const char* server, qboolean isBackground);  // NULL for local server
+	void (*pfnConnectionProgress_ChangeLevel)(qboolean isBackground);
 	void (*pfnConnectionProgress_ParseServerInfo)(const char* server);
 	void (*pfnConnectionProgress_Connected)(void);
 

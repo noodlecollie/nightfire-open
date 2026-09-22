@@ -381,7 +381,7 @@ void UI_ConnectionProgress_DownloadEnd(void)
 	menu_connectionprogress->Show();
 }
 
-void UI_ConnectionProgress_Precache(void)
+void UI_ConnectionProgress_Precache(const char*)
 {
 	if ( menu_connectionprogress->m_iState == STATE_CONSOLE )
 		return;
@@ -390,7 +390,7 @@ void UI_ConnectionProgress_Precache(void)
 	menu_connectionprogress->Show();
 }
 
-void UI_ConnectionProgress_Connect(const char* server)  // NULL for local server
+void UI_ConnectionProgress_Connect(const char* server, qboolean /* isBackground */)  // NULL for local server
 {
 	if ( menu_connectionprogress->m_iState == STATE_CONSOLE )
 		return;
@@ -400,7 +400,7 @@ void UI_ConnectionProgress_Connect(const char* server)  // NULL for local server
 	menu_connectionprogress->Show();
 }
 
-void UI_ConnectionProgress_ChangeLevel(void)
+void UI_ConnectionProgress_ChangeLevel(qboolean)
 {
 	if ( menu_connectionprogress->m_iState == STATE_CONSOLE )
 		return;
@@ -447,19 +447,19 @@ void UI_ConnectionProgress_f(void)
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "precache") )
 	{
-		UI_ConnectionProgress_Precache();
+		UI_ConnectionProgress_Precache("");
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "menu") )
 	{
-		UI_ConnectionProgress_Connect(EngFuncs::CmdArgv(2));
+		UI_ConnectionProgress_Connect(EngFuncs::CmdArgv(2), false);
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "localserver") )
 	{
-		UI_ConnectionProgress_Connect(NULL);
+		UI_ConnectionProgress_Connect(NULL, false);
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "changelevel") )
 	{
-		UI_ConnectionProgress_ChangeLevel();
+		UI_ConnectionProgress_ChangeLevel(false);
 	}
 	else if ( !strcmp(EngFuncs::CmdArgv(1), "serverinfo") )
 	{
