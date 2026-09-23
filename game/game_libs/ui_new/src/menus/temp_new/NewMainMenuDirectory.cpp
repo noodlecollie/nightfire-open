@@ -8,6 +8,7 @@
 #include "menus/temp_new/NewGameplayOptionsMenu.h"
 #include "menus/temp_new/NewMouseOptionsMenu.h"
 #include "menus/temp_new/NewServerConnectionScreen.h"
+#include "menus/temp_new/NewPauseMenu.h"
 
 NewMainMenuDirectory::NewMainMenuDirectory() :
 	BaseMenuDirectory("resource/rml/temp_new")
@@ -16,30 +17,33 @@ NewMainMenuDirectory::NewMainMenuDirectory() :
 
 const MenuDirectoryEntry* NewMainMenuDirectory::GetMainMenu() const
 {
-	return GetMenuEntry(NewMainMenu::NAME);
+	ASSERT(m_MainMenuEntry);
+	return m_MainMenuEntry;
 }
 
 const MenuDirectoryEntry* NewMainMenuDirectory::GetPauseMenu() const
 {
-	// TODO
-	return GetMenuEntry(NewMainMenu::NAME);
+	ASSERT(m_PauseMenuEntry);
+	return m_PauseMenuEntry;
 }
 
 IServerConnectionMenu* NewMainMenuDirectory::GetServerConnectionHandler() const
 {
-	const MenuDirectoryEntry* entry = GetMenuEntry(NewServerConnectionScreen::NAME);
-	ASSERT(entry);
-	return entry ? entry->MenuDynamicCast<IServerConnectionMenu>() : nullptr;
+	ASSERT(m_ServerConnectionMenuEntry);
+	return m_ServerConnectionMenuEntry ? m_ServerConnectionMenuEntry->MenuDynamicCast<IServerConnectionMenu>()
+									   : nullptr;
 }
 
 void NewMainMenuDirectory::PopulateInternal()
 {
+	m_MainMenuEntry = AddToMapAndGetEntry<NewMainMenu>();
+	m_PauseMenuEntry = AddToMapAndGetEntry<NewPauseMenu>();
+	m_ServerConnectionMenuEntry = AddToMapAndGetEntry<NewServerConnectionScreen>();
+
 	AddToMap<StyleGuide>();
-	AddToMap<NewMainMenu>();
 	AddToMap<NewCreditsMenu>();
 	AddToMap<NewKeysOptionsMenu>();
 	AddToMap<NewAvOptionsMenu>();
 	AddToMap<NewGameplayOptionsMenu>();
 	AddToMap<NewMouseOptionsMenu>();
-	AddToMap<NewServerConnectionScreen>();
 }
