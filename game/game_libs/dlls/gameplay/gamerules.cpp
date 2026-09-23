@@ -217,7 +217,7 @@ CGameRules* InstallGameRules(void)
 	SERVER_COMMAND("exec game.cfg\n");
 	SERVER_EXECUTE();
 
-	if ( g_backgroundmap )
+	if ( g_backgroundmap->value != 0.0f )
 	{
 		g_teamplay = 0;
 		return new CBackgroundMapGameRules();
