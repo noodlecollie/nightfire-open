@@ -73,6 +73,8 @@ set(SOURCES_UI
 	src/menus/temp_new/NewMainMenuDirectory.cpp
 	src/menus/temp_new/NewMouseOptionsMenu.h
 	src/menus/temp_new/NewMouseOptionsMenu.cpp
+	src/menus/temp_new/NewPauseMenu.h
+	src/menus/temp_new/NewPauseMenu.cpp
 	src/menus/temp_new/NewServerConnectionScreen.h
 	src/menus/temp_new/NewServerConnectionScreen.cpp
 	src/menus/temp_new/StyleGuide.h

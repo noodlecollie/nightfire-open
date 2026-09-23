@@ -13,4 +13,9 @@ public:
 
 protected:
 	void PopulateInternal() override;
+
+private:
+	const MenuDirectoryEntry* m_MainMenuEntry = nullptr;
+	const MenuDirectoryEntry* m_PauseMenuEntry = nullptr;
+	const MenuDirectoryEntry* m_ServerConnectionMenuEntry = nullptr;
 };

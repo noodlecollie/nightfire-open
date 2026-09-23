@@ -100,6 +100,12 @@ void BaseMenuDirectory::ReloadMenu(const Rml::String& name, bool reloadModel)
 
 void BaseMenuDirectory::AddToMap(BaseMenu* newMenu)
 {
+	if ( !newMenu || m_MenuMap.find(newMenu->Name()) != m_MenuMap.end() )
+	{
+		ASSERT(false);
+		return;
+	}
+
 	m_MenuMap.insert({Rml::String(newMenu->Name()), MapEntry {MenuDirectoryEntry(std::unique_ptr<BaseMenu>(newMenu))}});
 }
 

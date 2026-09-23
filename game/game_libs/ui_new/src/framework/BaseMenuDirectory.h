@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <type_traits>
 #include <RmlUi/Core/Types.h>
 #include "framework/BaseMenu.h"
 #include "framework/IServerConnectionMenu.h"
@@ -22,7 +23,7 @@ struct MenuDirectoryEntry
 	template<typename T>
 	T* MenuDynamicCast(bool assertSuccessInDebug = true) const
 	{
-		T* newPtr = dynamic_cast<T*>(menuPtr.get());
+		T* newPtr = rmlui_dynamic_cast<T*>(menuPtr.get());
 
 #ifdef _DEBUG
 		if ( assertSuccessInDebug )
@@ -87,9 +88,20 @@ protected:
 	virtual void PopulateInternal() = 0;
 
 	template<typename T>
-	void AddToMap()
+	typename std::enable_if<std::is_base_of<BaseMenu, T>::value, void>::type AddToMap()
 	{
 		AddToMap(new T());
+	}
+
+	template<typename T>
+	typename std::enable_if<std::is_base_of<BaseMenu, T>::value, const MenuDirectoryEntry*>::type AddToMapAndGetEntry()
+	{
+		T* menu = new T();
+		AddToMap(menu);
+
+		const MenuDirectoryEntry* entry = GetMenuEntry(static_cast<BaseMenu*>(menu)->Name());
+		ASSERT(entry);
+		return entry;
 	}
 
 	void AddToMap(BaseMenu* newMenu);
