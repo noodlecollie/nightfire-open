@@ -101,11 +101,19 @@ The original repo used for development was [afterburner-game](https://github.com
 
 ## AI Disclaimer
 
-Absolutely no content or first-party code in the game or its tools is created using generative AI. All maps, models, textures, other visual artwork and audio are either ported from the original game, or made purposely for the game by human developers and artists.
+Absolutely no content or first-party code in the game or its tools is created using generative AI. All maps, models, textures, other visual artwork and audio are either ported from the original game, or made purposely for the game by human developers and artists. No AI-generated contributions are accepted.
 
-For the avoidance of doubt, no pull requests will be accepted into the codebase where any proportion of the code or content has been created using generative AI, including tests, workflows and placeholder art. Contributions produced using generative AI require little enough effort to be considered spam, and will be treated accordingly. Anyone who submits AI-generated code or content to the game's repositories, or whose accepted pull request is later found to have contained AI-generated code or content, will be removed from the contributors list and will be barred from contributing.
+While this project recognises that generative AI tools can produce useful code and accelerate the rate of development, the rationale for the policy above is:
 
-I have no control over whether third party code repositories and libraries contain AI-generated code, but where possible, this project prefers to use third party dependencies where this is not the case. The level editor will be transitioning from [TrenchBroom](https://github.com/TrenchBroom/TrenchBroom) to its related [NextBroom](https://codeberg.org/NextBroomTeam/NextBroom) fork whem time allows.
+1. This is a personally-motivated hobby project, created with purpose and intention by humans. Automating the development defeats the principle of the project.
+2. Gamers [don't like](https://quanticfoundry.com/2025/12/18/gen-ai/) AI content in their games, and perceive generative AI use as evidence of [low developer investment](https://arxiv.org/abs/2608.11539).
+3. Generative AI can produce so much output that it can overwhelm the resources of the humans involved, who end up exhibiting [automation blindness](https://pluralistic.net/2023/08/23/automation-blindness/#humans-in-the-loop) and producing worse quality products.
+4. Outsourcing the writing of code to an AI system deprives the developer of the knowledge and satisfaction gained from solving a complicated problem. Speaking personally, these are skills I want to refine, not to put aside.
+5. Anyone who wishes to is free to go off and create their own, AI-first Nightfire reboot. The barrier to doing this is lower than it has ever been, specifically due to these AI technologies.
+
+For the avoidance of doubt, no pull requests will be accepted into the codebase where any proportion of the code or content has been created using generative AI, including tests, workflows and placeholder art. Anyone who submits AI-generated code or content to the game's repositories, or whose accepted pull request is later found to have contained AI-generated code or content, will be removed from the contributors list and will be barred from contributing.
+
+I have no control over whether third party code repositories and libraries contain AI-generated code, but where possible, this project prefers to use third party dependencies which are also aligned with an AI-free approach. The level editor will be transitioning from [TrenchBroom](https://github.com/TrenchBroom/TrenchBroom) to its related [NextBroom](https://codeberg.org/NextBroomTeam/NextBroom) fork when time allows.
 
 ## Credits
 
