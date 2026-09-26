@@ -37,8 +37,7 @@ public:
 	bool IsInitialised() const;
 	bool IsVisible() const;
 	bool HasMenuInStack() const;
-	void ReceiveShowMenu();
-	void ReceiveHideMenu();
+	void SetMenuActive(bool active);
 	void ReceiveMouseMove(int x, int y);
 	void ReceiveMouseButton(int button, bool pressed);
 	void ReceiveMouseWheel(bool down);
@@ -90,6 +89,10 @@ private:
 	void HandleMenuPopCommand();
 	void ReloadCurrentMenu();
 	bool StartBackgroundMap();
+	void DoMainUpdate(float currentTime);
+	void HandleFocusChange();
+	void ShowMenu();
+	void HideMenu();
 
 	static float CalculateDpiScale(int height);
 	static Rml::Rectanglei CalculateViewport(const Rml::Vector2i& windowSize);

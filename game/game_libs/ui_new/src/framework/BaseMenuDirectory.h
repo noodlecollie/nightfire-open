@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <RmlUi/Core/Types.h>
 #include "framework/BaseMenu.h"
-#include "framework/IServerConnectionMenu.h"
+#include "framework/IServerConnectionHandler.h"
 #include "UIDebug.h"
 
 namespace Rml
@@ -80,7 +80,8 @@ public:
 
 	virtual const MenuDirectoryEntry* GetMainMenu() const = 0;
 	virtual const MenuDirectoryEntry* GetPauseMenu() const = 0;
-	virtual IServerConnectionMenu* GetServerConnectionHandler() const = 0;
+	virtual const MenuDirectoryEntry* GetServerConnectionMenu() const = 0;
+	virtual IServerConnectionHandler* GetServerConnectionHandler() const = 0;
 
 protected:
 	explicit BaseMenuDirectory(Rml::String rootDirectory);
