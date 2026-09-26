@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework/BaseMenu.h"
-#include "framework/IServerConnectionMenu.h"
+#include "framework/IServerConnectionHandler.h"
 #include "models/CvarModel.h"
 
 namespace Rml
@@ -9,7 +9,7 @@ namespace Rml
 	class ElementProgress;
 }
 
-class NewServerConnectionScreen : public BaseMenu, public IServerConnectionMenu
+class NewServerConnectionScreen : public BaseMenu, public IServerConnectionHandler
 {
 public:
 	static const char* const NAME;

@@ -6,7 +6,7 @@
 #include "rmlui/Utils.h"
 #include "framework/BaseMenu.h"
 #include "framework/GameMainMenuDirectory.h"
-#include "framework/IServerConnectionMenu.h"
+#include "framework/IServerConnectionHandler.h"
 #include "menus/temp_new/NewMainMenuDirectory.h"
 #include "udll_int.h"
 #include "UIDebug.h"
@@ -135,34 +135,24 @@ bool RmlUiBackend::HasMenuInStack() const
 	return !m_MenuStack.IsEmpty();
 }
 
-void RmlUiBackend::ReceiveShowMenu()
+void RmlUiBackend::SetMenuActive(bool active)
 {
 	if ( !IsInitialised() )
 	{
 		return;
 	}
 
-	m_Visible = true;
-	m_MenuStack.SetVisible(m_Visible);
+	gEngfuncs.pfnKeyClearStates();
 
-	if ( m_MenuStack.IsEmpty() )
+	if ( active )
 	{
-		const MenuDirectoryEntry* menu =
-			gEngfuncs.pfnClientInGame() ? m_MenuDirectory->GetPauseMenu() : m_MenuDirectory->GetMainMenu();
-		ASSERT(menu);
-		m_MenuStack.Push(menu);
+		gEngfuncs.pfnSetKeyDest(key_menu);
+		ShowMenu();
 	}
-}
-
-void RmlUiBackend::ReceiveHideMenu()
-{
-	if ( !IsInitialised() )
+	else
 	{
-		return;
+		HideMenu();
 	}
-
-	m_Visible = false;
-	m_MenuStack.SetVisible(m_Visible);
 }
 
 void RmlUiBackend::ReceiveMouseMove(int x, int y)
@@ -341,14 +331,22 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server, bool is
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
-
-	if ( !menu )
+	if ( static_cast<int>(gEngfuncs.pfnGetCvarFloat("maxplayers")) > 1 )
 	{
-		return;
+		const MenuDirectoryEntry* serverConnectionMenu = m_MenuDirectory->GetServerConnectionMenu();
+
+		if ( serverConnectionMenu )
+		{
+			m_MenuStack.CommandCutStack(1, serverConnectionMenu->menuPtr->Name());
+		}
 	}
 
-	menu->Connect(server ? server : "", m_ConnectedServerIsBackgroundMap);
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
+
+	if ( handler )
+	{
+		handler->Connect(server, m_ConnectedServerIsBackgroundMap);
+	}
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
@@ -358,14 +356,12 @@ void RmlUiBackend::ReceiveConnectionProgress_ParseServerInfo(const char* server)
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-	if ( !menu )
+	if ( handler )
 	{
-		return;
+		handler->ParseServerInfo(server);
 	}
-
-	menu->ParseServerInfo(server ? server : "");
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Precache(const char* mapFileName)
@@ -375,14 +371,12 @@ void RmlUiBackend::ReceiveConnectionProgress_Precache(const char* mapFileName)
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-	if ( !menu )
+	if ( handler )
 	{
-		return;
+		handler->Precache(mapFileName);
 	}
-
-	menu->Precache(mapFileName);
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Download(
@@ -398,20 +392,18 @@ void RmlUiBackend::ReceiveConnectionProgress_Download(
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-	if ( !menu )
+	if ( handler )
 	{
-		return;
+		handler->Download(
+			pszFileName ? pszFileName : "",
+			pszServerName ? pszServerName : "",
+			iCurrent,
+			iTotal,
+			comment ? comment : ""
+		);
 	}
-
-	menu->Download(
-		pszFileName ? pszFileName : "",
-		pszServerName ? pszServerName : "",
-		iCurrent,
-		iTotal,
-		comment ? comment : ""
-	);
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
@@ -421,14 +413,12 @@ void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-	if ( !menu )
+	if ( handler )
 	{
-		return;
+		handler->DownloadEnd();
 	}
-
-	menu->DownloadEnd();
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Connected()
@@ -438,14 +428,19 @@ void RmlUiBackend::ReceiveConnectionProgress_Connected()
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-	if ( !menu )
+	if ( handler )
 	{
-		return;
+		handler->Connected();
 	}
 
-	menu->Connected();
+	const MenuDirectoryEntry* pauseMenu = m_MenuDirectory->GetPauseMenu();
+
+	if ( pauseMenu )
+	{
+		m_MenuStack.CommandCutStack(1, pauseMenu->menuPtr->Name());
+	}
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
@@ -457,16 +452,23 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 
 	if ( !m_ConnectedServerIsBackgroundMap )
 	{
-		IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+		IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-		if ( menu )
+		if ( handler )
 		{
-			menu->Disconnect();
+			handler->Disconnect();
 		}
 	}
 
 	m_ConnectedToServer = false;
 	m_ConnectedServerIsBackgroundMap = false;
+
+	const MenuDirectoryEntry* mainMenu = m_MenuDirectory->GetMainMenu();
+
+	if ( mainMenu )
+	{
+		m_MenuStack.CommandCutStack(1, mainMenu->menuPtr->Name());
+	}
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
@@ -478,7 +480,7 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
 
 	if ( m_ConnectedToServer && !m_ConnectedServerIsBackgroundMap && isBackground )
 	{
-		IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
+		IServerConnectionHandler* menu = m_MenuDirectory->GetServerConnectionHandler();
 
 		if ( menu )
 		{
@@ -494,14 +496,22 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
 		return;
 	}
 
-	IServerConnectionMenu* menu = m_MenuDirectory->GetServerConnectionHandler();
-
-	if ( !menu )
+	if ( static_cast<int>(gEngfuncs.pfnGetCvarFloat("maxplayers")) > 1 )
 	{
-		return;
+		const MenuDirectoryEntry* serverConnectionMenu = m_MenuDirectory->GetServerConnectionMenu();
+
+		if ( serverConnectionMenu )
+		{
+			m_MenuStack.CommandCutStack(1, serverConnectionMenu->menuPtr->Name());
+		}
 	}
 
-	menu->ChangeLevel(m_ConnectedServerIsBackgroundMap);
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
+
+	if ( handler )
+	{
+		handler->ChangeLevel(m_ConnectedServerIsBackgroundMap);
+	}
 }
 
 Rml::Context* RmlUiBackend::GetRmlContext() const
@@ -594,41 +604,8 @@ void RmlUiBackend::Update(float currentTime)
 		return;
 	}
 
-	if ( m_FirstUpdate )
-	{
-		m_FirstUpdate = false;
-
-		if ( StartBackgroundMap() )
-		{
-			return;
-		}
-	}
-
-	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
-
-	m_MenuStack.Update(currentTime);
-	m_RmlContext->Update();
-	MenuStack::FocusChangeResult focus = m_MenuStack.HandleRequests();
-
-	if ( focus != MenuStack::FocusChangeResult::None )
-	{
-		m_FocusChange = focus;
-	}
-
-	// Fallback logic:
-	if ( m_FocusChange == MenuStack::FocusChangeResult::None && hadMenusInStack && m_MenuStack.IsEmpty() )
-	{
-		const bool inGame = gEngfuncs.pfnClientInGame();
-
-		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"Menu stack specified no focus change but removed all menus, switching focus to %s",
-			inGame ? "game" : "console"
-		);
-
-		m_FocusChange = inGame ? MenuStack::FocusChangeResult::SwitchFocusToGame
-							   : MenuStack::FocusChangeResult::SwitchFocusToConsole;
-	}
+	DoMainUpdate(currentTime);
+	HandleFocusChange();
 }
 
 void RmlUiBackend::Render()
@@ -789,6 +766,92 @@ bool RmlUiBackend::StartBackgroundMap()
 	Rml::String cmd = Rml::CreateString("map_background %s", m_cvarMenuBackgroundMap->string);
 	gEngfuncs.pfnClientCmd(false, cmd.c_str());
 	return true;
+}
+
+void RmlUiBackend::DoMainUpdate(float currentTime)
+{
+	if ( m_FirstUpdate )
+	{
+		m_FirstUpdate = false;
+
+		if ( StartBackgroundMap() )
+		{
+			return;
+		}
+	}
+
+	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
+
+	m_MenuStack.Update(currentTime);
+	m_RmlContext->Update();
+	MenuStack::FocusChangeResult focus = m_MenuStack.HandleRequests();
+
+	if ( focus != MenuStack::FocusChangeResult::None )
+	{
+		m_FocusChange = focus;
+	}
+
+	// Fallback logic:
+	if ( m_FocusChange == MenuStack::FocusChangeResult::None && hadMenusInStack && m_MenuStack.IsEmpty() )
+	{
+		const bool inGame = gEngfuncs.pfnClientInGame();
+
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"Menu stack specified no focus change but removed all menus, switching focus to %s",
+			inGame ? "game" : "console"
+		);
+
+		m_FocusChange = inGame ? MenuStack::FocusChangeResult::SwitchFocusToGame
+							   : MenuStack::FocusChangeResult::SwitchFocusToConsole;
+	}
+}
+
+void RmlUiBackend::HandleFocusChange()
+{
+	const MenuStack::FocusChangeResult focus = GetFocusChange();
+
+	switch ( focus )
+	{
+		case MenuStack::FocusChangeResult::SwitchFocusToConsole:
+		{
+			SetMenuActive(false);
+			gEngfuncs.pfnSetKeyDest(key_console);
+			break;
+		}
+
+		case MenuStack::FocusChangeResult::SwitchFocusToGame:
+		{
+			SetMenuActive(false);
+			gEngfuncs.pfnSetKeyDest(key_game);
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+}
+
+void RmlUiBackend::ShowMenu()
+{
+	m_Visible = true;
+	m_MenuStack.SetVisible(m_Visible);
+
+	if ( m_MenuStack.IsEmpty() )
+	{
+		const MenuDirectoryEntry* menu =
+			gEngfuncs.pfnClientInGame() ? m_MenuDirectory->GetPauseMenu() : m_MenuDirectory->GetMainMenu();
+		ASSERT(menu);
+		m_MenuStack.Push(menu);
+	}
+}
+
+void RmlUiBackend::HideMenu()
+{
+	m_Visible = false;
+	m_MenuStack.SetVisible(m_Visible);
 }
 
 float RmlUiBackend::CalculateDpiScale(int height)

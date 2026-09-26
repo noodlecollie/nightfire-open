@@ -8,6 +8,8 @@
 class NewPauseMenu : public MenuPage
 {
 public:
+	static const char* const NAME;
+
 	NewPauseMenu();
 
 protected:

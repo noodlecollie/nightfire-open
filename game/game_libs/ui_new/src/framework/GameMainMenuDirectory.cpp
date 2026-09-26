@@ -26,11 +26,16 @@ const MenuDirectoryEntry* GameMainMenuDirectory::GetPauseMenu() const
 	return GetMenuEntry(PauseMenu::NAME);
 }
 
-IServerConnectionMenu* GameMainMenuDirectory::GetServerConnectionHandler() const
+const MenuDirectoryEntry* GameMainMenuDirectory::GetServerConnectionMenu() const
+{
+	return GetMenuEntry(ServerConnectionScreen::NAME);
+}
+
+IServerConnectionHandler* GameMainMenuDirectory::GetServerConnectionHandler() const
 {
 	const MenuDirectoryEntry* entry = GetMenuEntry(ServerConnectionScreen::NAME);
 	ASSERT(entry);
-	return entry ? entry->MenuDynamicCast<IServerConnectionMenu>() : nullptr;
+	return entry ? entry->MenuDynamicCast<IServerConnectionHandler>() : nullptr;
 }
 
 void GameMainMenuDirectory::PopulateInternal()

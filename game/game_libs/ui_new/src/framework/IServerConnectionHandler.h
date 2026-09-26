@@ -1,9 +1,9 @@
 #pragma once
 
-class IServerConnectionMenu
+class IServerConnectionHandler
 {
 public:
-	virtual ~IServerConnectionMenu() = default;
+	virtual ~IServerConnectionHandler() = default;
 
 	virtual void Connect(const char* server, bool isBackground) = 0;
 	virtual void ParseServerInfo(const char* server) = 0;

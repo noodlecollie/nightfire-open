@@ -27,10 +27,16 @@ const MenuDirectoryEntry* NewMainMenuDirectory::GetPauseMenu() const
 	return m_PauseMenuEntry;
 }
 
-IServerConnectionMenu* NewMainMenuDirectory::GetServerConnectionHandler() const
+const MenuDirectoryEntry* NewMainMenuDirectory::GetServerConnectionMenu() const
 {
 	ASSERT(m_ServerConnectionMenuEntry);
-	return m_ServerConnectionMenuEntry ? m_ServerConnectionMenuEntry->MenuDynamicCast<IServerConnectionMenu>()
+	return m_ServerConnectionMenuEntry;
+}
+
+IServerConnectionHandler* NewMainMenuDirectory::GetServerConnectionHandler() const
+{
+	ASSERT(m_ServerConnectionMenuEntry);
+	return m_ServerConnectionMenuEntry ? m_ServerConnectionMenuEntry->MenuDynamicCast<IServerConnectionHandler>()
 									   : nullptr;
 }
 
