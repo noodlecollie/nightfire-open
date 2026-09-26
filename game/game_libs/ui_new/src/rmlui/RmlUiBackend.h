@@ -80,6 +80,13 @@ public:
 private:
 	struct MainMenuData;
 
+	enum class ConnectionState
+	{
+		DISCONNECTED,
+		CONNECTING,
+		CONNECTED
+	};
+
 	void ReleaseResources();
 	void RegisterFonts();
 	void RegisterCvars();
@@ -112,7 +119,7 @@ private:
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;
-	bool m_ConnectedToServer = false;
+	ConnectionState m_ConnectionState = ConnectionState::DISCONNECTED;
 	bool m_ConnectedServerIsBackgroundMap = false;
 
 	bool m_StoreNextKey = false;
@@ -120,5 +127,5 @@ private:
 	DiscoveredServerCallback m_DiscoveredServerCallback;
 
 	struct cvar_s* m_cvarScrollSensitivity = nullptr;
-	struct cvar_s* m_cvarMenuBackgroundMap = nullptr;
+	struct cvar_s* m_cvarMenuBackgroundMapName = nullptr;
 };

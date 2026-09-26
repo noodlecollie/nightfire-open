@@ -323,7 +323,7 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server, bool is
 		return;
 	}
 
-	m_ConnectedToServer = true;
+	m_ConnectionState = ConnectionState::CONNECTING;
 	m_ConnectedServerIsBackgroundMap = isBackground;
 
 	if ( m_ConnectedServerIsBackgroundMap )
@@ -428,6 +428,8 @@ void RmlUiBackend::ReceiveConnectionProgress_Connected()
 		return;
 	}
 
+	m_ConnectionState = ConnectionState::CONNECTED;
+
 	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( handler )
@@ -460,7 +462,7 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 		}
 	}
 
-	m_ConnectedToServer = false;
+	m_ConnectionState = ConnectionState::DISCONNECTED;
 	m_ConnectedServerIsBackgroundMap = false;
 
 	const MenuDirectoryEntry* mainMenu = m_MenuDirectory->GetMainMenu();
@@ -478,7 +480,7 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
 		return;
 	}
 
-	if ( m_ConnectedToServer && !m_ConnectedServerIsBackgroundMap && isBackground )
+	if ( m_ConnectionState != ConnectionState::DISCONNECTED && !m_ConnectedServerIsBackgroundMap && isBackground )
 	{
 		IServerConnectionHandler* menu = m_MenuDirectory->GetServerConnectionHandler();
 
@@ -488,7 +490,7 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
 		}
 	}
 
-	m_ConnectedToServer = true;
+	m_ConnectionState = ConnectionState::CONNECTING;
 	m_ConnectedServerIsBackgroundMap = isBackground;
 
 	if ( m_ConnectedServerIsBackgroundMap )
@@ -653,7 +655,7 @@ void RmlUiBackend::RegisterFonts()
 void RmlUiBackend::RegisterCvars()
 {
 	m_cvarScrollSensitivity = gEngfuncs.pfnRegisterVariable("ui_scroll_sensitivity", "1", FCVAR_ARCHIVE);
-	m_cvarMenuBackgroundMap = gEngfuncs.pfnRegisterVariable("ui_background_map", "bg_mainmenu", FCVAR_ARCHIVE);
+	m_cvarMenuBackgroundMapName = gEngfuncs.pfnRegisterVariable("ui_background_map", "bg_mainmenu", FCVAR_ARCHIVE);
 
 	m_SystemInterface.RegisterCvars();
 }
@@ -748,14 +750,14 @@ void RmlUiBackend::ReloadCurrentMenu()
 
 bool RmlUiBackend::StartBackgroundMap()
 {
-	if ( !m_cvarMenuBackgroundMap || !m_cvarMenuBackgroundMap->string[0] || ClientIsInActiveGame() ||
+	if ( !m_cvarMenuBackgroundMapName || !m_cvarMenuBackgroundMapName->string[0] || ClientIsInActiveGame() ||
 		 gpGlobals->demoplayback )
 	{
 		return false;
 	}
 
 	{
-		Rml::String mapPath = Rml::CreateString("maps/%s.bsp", m_cvarMenuBackgroundMap->string);
+		Rml::String mapPath = Rml::CreateString("maps/%s.bsp", m_cvarMenuBackgroundMapName->string);
 
 		if ( !gEngfuncs.pfnFileExists(mapPath.c_str(), true) )
 		{
@@ -763,7 +765,7 @@ bool RmlUiBackend::StartBackgroundMap()
 		}
 	}
 
-	Rml::String cmd = Rml::CreateString("map_background %s", m_cvarMenuBackgroundMap->string);
+	Rml::String cmd = Rml::CreateString("map_background %s", m_cvarMenuBackgroundMapName->string);
 	gEngfuncs.pfnClientCmd(false, cmd.c_str());
 	return true;
 }
