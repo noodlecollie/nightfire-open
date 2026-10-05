@@ -6,6 +6,7 @@
 
 static constexpr const char* const NAME_LOADING_PROGRESS = "loadingProgress";
 static constexpr const char* const NAME_DOWNLOAD_PROGRESS = "downloadProgress";
+static constexpr const char* const NAME_SHOW_FULL_CONNECTION_BOX = "showFullConnectionBox";
 
 const char* const NewServerConnectionScreen::NAME = "new_server_connection_screen";
 
@@ -131,6 +132,21 @@ void NewServerConnectionScreen::OnDocumentUnloaded()
 	m_Connecting = false;
 
 	BaseMenu::OnDocumentUnloaded();
+}
+
+bool NewServerConnectionScreen::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	if ( !BaseMenu::OnSetUpDataModelBindings(constructor) )
+	{
+		return false;
+	}
+
+	if ( !constructor.Bind(NAME_SHOW_FULL_CONNECTION_BOX, &m_ShowFullConnectionBox) )
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void NewServerConnectionScreen::ClearContentArea()
