@@ -31,11 +31,13 @@ public:
 protected:
 	void OnDocumentLoaded() override;
 	void OnDocumentUnloaded() override;
+	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	void ClearContentArea();
 	void AppendContentLine(const Rml::String& text);
 
+	bool m_ShowFullConnectionBox = false;
 	CvarModel m_CvarModel;
 	CvarDataVar<float>* m_CvarLoading = nullptr;
 	CvarDataVar<float>* m_CvarDownload = nullptr;
