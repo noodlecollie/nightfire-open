@@ -22,6 +22,7 @@ public:
 
 	bool Push(const MenuDirectoryEntry* menu);
 	const MenuDirectoryEntry* Pop();
+	const MenuDirectoryEntry* Base() const;
 	void Update(float currentTime);
 	FocusChangeResult HandleRequests();
 

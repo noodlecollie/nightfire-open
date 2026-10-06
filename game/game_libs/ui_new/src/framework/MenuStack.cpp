@@ -43,6 +43,11 @@ const MenuDirectoryEntry* MenuStack::Pop()
 	return menu;
 }
 
+const MenuDirectoryEntry* MenuStack::Base() const
+{
+	return (!m_Stack.empty()) ? m_Stack.front() : nullptr;
+}
+
 void MenuStack::Update(float currentTime)
 {
 	// Update all menus from the front to the back (ie. bottom to top)
