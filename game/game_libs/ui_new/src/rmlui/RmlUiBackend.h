@@ -101,6 +101,8 @@ private:
 	void ShowMenu();
 	void HideMenu();
 
+	const MenuDirectoryEntry* GetRootMenu() const;
+
 	static float CalculateDpiScale(int height);
 	static Rml::Rectanglei CalculateViewport(const Rml::Vector2i& windowSize);
 

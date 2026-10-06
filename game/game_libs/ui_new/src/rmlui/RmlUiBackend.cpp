@@ -331,16 +331,6 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server, bool is
 		return;
 	}
 
-	if ( static_cast<int>(gEngfuncs.pfnGetCvarFloat("maxplayers")) > 1 )
-	{
-		const MenuDirectoryEntry* serverConnectionMenu = m_MenuDirectory->GetServerConnectionMenu();
-
-		if ( serverConnectionMenu )
-		{
-			m_MenuStack.CommandCutStack(1, serverConnectionMenu->menuPtr->Name());
-		}
-	}
-
 	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( handler )
@@ -423,7 +413,7 @@ void RmlUiBackend::ReceiveConnectionProgress_DownloadEnd()
 
 void RmlUiBackend::ReceiveConnectionProgress_Connected()
 {
-	if ( !IsInitialised() || m_ConnectedServerIsBackgroundMap )
+	if ( !IsInitialised() )
 	{
 		return;
 	}
@@ -435,13 +425,6 @@ void RmlUiBackend::ReceiveConnectionProgress_Connected()
 	if ( handler )
 	{
 		handler->Connected();
-	}
-
-	const MenuDirectoryEntry* pauseMenu = m_MenuDirectory->GetPauseMenu();
-
-	if ( pauseMenu )
-	{
-		m_MenuStack.CommandCutStack(1, pauseMenu->menuPtr->Name());
 	}
 }
 
@@ -464,13 +447,6 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 
 	m_ConnectionState = ConnectionState::DISCONNECTED;
 	m_ConnectedServerIsBackgroundMap = false;
-
-	const MenuDirectoryEntry* mainMenu = m_MenuDirectory->GetMainMenu();
-
-	if ( mainMenu )
-	{
-		m_MenuStack.CommandCutStack(1, mainMenu->menuPtr->Name());
-	}
 }
 
 void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
@@ -496,16 +472,6 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
 	if ( m_ConnectedServerIsBackgroundMap )
 	{
 		return;
-	}
-
-	if ( static_cast<int>(gEngfuncs.pfnGetCvarFloat("maxplayers")) > 1 )
-	{
-		const MenuDirectoryEntry* serverConnectionMenu = m_MenuDirectory->GetServerConnectionMenu();
-
-		if ( serverConnectionMenu )
-		{
-			m_MenuStack.CommandCutStack(1, serverConnectionMenu->menuPtr->Name());
-		}
 	}
 
 	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
@@ -775,11 +741,7 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 	if ( m_FirstUpdate )
 	{
 		m_FirstUpdate = false;
-
-		if ( StartBackgroundMap() )
-		{
-			return;
-		}
+		StartBackgroundMap();
 	}
 
 	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
@@ -806,6 +768,16 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 
 		m_FocusChange = inGame ? MenuStack::FocusChangeResult::SwitchFocusToGame
 							   : MenuStack::FocusChangeResult::SwitchFocusToConsole;
+	}
+
+	const MenuDirectoryEntry* rootMenu = GetRootMenu();
+	ASSERT(rootMenu);
+
+	// If the base of the menu stack doesn't match what we would expect for the
+	// current state of the game, swap out the stack for the new root menu.
+	if ( m_MenuStack.Base() != rootMenu )
+	{
+		m_MenuStack.CommandCutStack(1, rootMenu->menuPtr->Name());
 	}
 }
 
@@ -843,10 +815,7 @@ void RmlUiBackend::ShowMenu()
 
 	if ( m_MenuStack.IsEmpty() )
 	{
-		const MenuDirectoryEntry* menu =
-			gEngfuncs.pfnClientInGame() ? m_MenuDirectory->GetPauseMenu() : m_MenuDirectory->GetMainMenu();
-		ASSERT(menu);
-		m_MenuStack.Push(menu);
+		m_MenuStack.Push(GetRootMenu());
 	}
 }
 
@@ -854,6 +823,35 @@ void RmlUiBackend::HideMenu()
 {
 	m_Visible = false;
 	m_MenuStack.SetVisible(m_Visible);
+}
+
+const MenuDirectoryEntry* RmlUiBackend::GetRootMenu() const
+{
+	const MenuDirectoryEntry* entry = nullptr;
+
+	switch ( m_ConnectionState )
+	{
+		case ConnectionState::CONNECTING:
+		{
+			entry = m_MenuDirectory->GetServerConnectionMenu();
+			break;
+		}
+
+		case ConnectionState::CONNECTED:
+		{
+			entry = m_ConnectedServerIsBackgroundMap ? m_MenuDirectory->GetMainMenu() : m_MenuDirectory->GetPauseMenu();
+			break;
+		}
+
+		default:
+		{
+			entry = m_MenuDirectory->GetMainMenu();
+			break;
+		}
+	}
+
+	ASSERT(entry);
+	return entry;
 }
 
 float RmlUiBackend::CalculateDpiScale(int height)

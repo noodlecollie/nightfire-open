@@ -38,6 +38,10 @@ void NewServerConnectionScreen::Connect(const char* server, bool isBackground)
 	m_Connecting = true;
 	ClearContentArea();
 
+	// Show the connection info if we're connecting to a non-local server
+	m_ShowFullConnectionBox = server != nullptr;
+	DirtyVariable(NAME_SHOW_FULL_CONNECTION_BOX);
+
 	if ( server )
 	{
 		AppendContentLine(
