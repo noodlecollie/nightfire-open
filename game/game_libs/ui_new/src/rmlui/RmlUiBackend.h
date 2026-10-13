@@ -82,6 +82,7 @@ private:
 
 	enum class ConnectionState
 	{
+		UNINITILAISED,
 		DISCONNECTED,
 		CONNECTING,
 		CONNECTED
@@ -121,7 +122,7 @@ private:
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;
-	ConnectionState m_ConnectionState = ConnectionState::DISCONNECTED;
+	ConnectionState m_ConnectionState = ConnectionState::UNINITILAISED;
 	bool m_ConnectedServerIsBackgroundMap = false;
 
 	bool m_StoreNextKey = false;

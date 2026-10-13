@@ -741,7 +741,18 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 	if ( m_FirstUpdate )
 	{
 		m_FirstUpdate = false;
-		StartBackgroundMap();
+
+		// Compute the initial connection state, so that we
+		// show the appropriate menu.
+		if ( StartBackgroundMap() )
+		{
+			m_ConnectionState = ConnectionState::CONNECTING;
+			m_ConnectedServerIsBackgroundMap = true;
+		}
+		else
+		{
+			m_ConnectionState = ConnectionState::DISCONNECTED;
+		}
 	}
 
 	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
@@ -777,7 +788,7 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 	// current state of the game, swap out the stack for the new root menu.
 	if ( m_MenuStack.Base() != rootMenu )
 	{
-		m_MenuStack.CommandCutStack(1, rootMenu->menuPtr->Name());
+		m_MenuStack.CommandCutStack(0, rootMenu->menuPtr->Name());
 	}
 }
 
@@ -831,6 +842,7 @@ const MenuDirectoryEntry* RmlUiBackend::GetRootMenu() const
 
 	switch ( m_ConnectionState )
 	{
+		case ConnectionState::UNINITILAISED:
 		case ConnectionState::CONNECTING:
 		{
 			entry = m_MenuDirectory->GetServerConnectionMenu();
