@@ -37,8 +37,7 @@ public:
 	bool IsInitialised() const;
 	bool IsVisible() const;
 	bool HasMenuInStack() const;
-	void ReceiveShowMenu();
-	void ReceiveHideMenu();
+	void SetMenuActive(bool active);
 	void ReceiveMouseMove(int x, int y);
 	void ReceiveMouseButton(int button, bool pressed);
 	void ReceiveMouseWheel(bool down);
@@ -81,6 +80,14 @@ public:
 private:
 	struct MainMenuData;
 
+	enum class ConnectionState
+	{
+		UNINITILAISED,
+		DISCONNECTED,
+		CONNECTING,
+		CONNECTED
+	};
+
 	void ReleaseResources();
 	void RegisterFonts();
 	void RegisterCvars();
@@ -90,6 +97,13 @@ private:
 	void HandleMenuPopCommand();
 	void ReloadCurrentMenu();
 	bool StartBackgroundMap();
+	bool StartBackgroundMapAndSetConnectionState();
+	void DoMainUpdate(float currentTime);
+	void HandleFocusChange();
+	void ShowMenu();
+	void HideMenu();
+
+	const MenuDirectoryEntry* GetRootMenu() const;
 
 	static float CalculateDpiScale(int height);
 	static Rml::Rectanglei CalculateViewport(const Rml::Vector2i& windowSize);
@@ -101,7 +115,6 @@ private:
 	EventListenerInstancerImpl m_EventListenerInstancer;
 
 	bool m_Initialised = false;
-	bool m_FirstUpdate = false;
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
 
@@ -109,7 +122,7 @@ private:
 	MenuStack m_MenuStack;
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;
-	bool m_ConnectedToServer = false;
+	ConnectionState m_ConnectionState = ConnectionState::UNINITILAISED;
 	bool m_ConnectedServerIsBackgroundMap = false;
 
 	bool m_StoreNextKey = false;
@@ -117,5 +130,5 @@ private:
 	DiscoveredServerCallback m_DiscoveredServerCallback;
 
 	struct cvar_s* m_cvarScrollSensitivity = nullptr;
-	struct cvar_s* m_cvarMenuBackgroundMap = nullptr;
+	struct cvar_s* m_cvarMenuBackgroundMapName = nullptr;
 };

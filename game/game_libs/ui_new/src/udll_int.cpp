@@ -33,32 +33,7 @@ static void pfnShutdown(void)
 static void pfnRedraw(float flTime)
 {
 	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
-
 	backend.Update(flTime);
-	const MenuStack::FocusChangeResult focus = backend.GetFocusChange();
-
-	switch ( focus )
-	{
-		case MenuStack::FocusChangeResult::SwitchFocusToConsole:
-		{
-			pfnSetActiveMenu(0);
-			gEngfuncs.pfnSetKeyDest(key_console);
-			return;
-		}
-
-		case MenuStack::FocusChangeResult::SwitchFocusToGame:
-		{
-			pfnSetActiveMenu(0);
-			gEngfuncs.pfnSetKeyDest(key_game);
-			return;
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
 	backend.Render();
 }
 
@@ -107,23 +82,7 @@ static void pfnMouseMove(int x, int y)
 static void pfnSetActiveMenu(int active)
 {
 	RmlUiBackend& backend = RmlUiBackend::StaticInstance();
-
-	if ( !backend.IsInitialised() )
-	{
-		return;
-	}
-
-	gEngfuncs.pfnKeyClearStates();
-
-	if ( active )
-	{
-		gEngfuncs.pfnSetKeyDest(key_menu);
-		backend.ReceiveShowMenu();
-	}
-	else
-	{
-		backend.ReceiveHideMenu();
-	}
+	backend.SetMenuActive(active != 0);
 }
 
 static void pfnAddServerToList(struct netadr_s adr, const char* info)
@@ -256,7 +215,7 @@ static void pfnStartupComplete(qboolean toConsole)
 {
 	if ( !toConsole )
 	{
-		RmlUiBackend::StaticInstance().ReceiveShowMenu();
+		RmlUiBackend::StaticInstance().SetMenuActive(true);
 	}
 }
 

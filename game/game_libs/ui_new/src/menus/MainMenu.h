@@ -13,7 +13,7 @@ public:
 
 protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
-	bool ShouldPop(const Rml::String& menuToSwapIn) override;
+	bool ShouldAllowMenuRequest(const Rml::String& targetToSwitchTo) override;
 
 private:
 	void ProcessKeyEvent(Rml::Event& event);

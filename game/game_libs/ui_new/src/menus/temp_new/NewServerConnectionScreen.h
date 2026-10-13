@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework/BaseMenu.h"
-#include "framework/IServerConnectionMenu.h"
+#include "framework/IServerConnectionHandler.h"
 #include "models/CvarModel.h"
 
 namespace Rml
@@ -9,7 +9,7 @@ namespace Rml
 	class ElementProgress;
 }
 
-class NewServerConnectionScreen : public BaseMenu, public IServerConnectionMenu
+class NewServerConnectionScreen : public BaseMenu, public IServerConnectionHandler
 {
 public:
 	static const char* const NAME;
@@ -31,11 +31,13 @@ public:
 protected:
 	void OnDocumentLoaded() override;
 	void OnDocumentUnloaded() override;
+	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
 	void ClearContentArea();
 	void AppendContentLine(const Rml::String& text);
 
+	bool m_ShowFullConnectionBox = false;
 	CvarModel m_CvarModel;
 	CvarDataVar<float>* m_CvarLoading = nullptr;
 	CvarDataVar<float>* m_CvarDownload = nullptr;

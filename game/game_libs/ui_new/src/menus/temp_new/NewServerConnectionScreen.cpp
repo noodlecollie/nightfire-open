@@ -1,11 +1,12 @@
 #include "menus/temp_new/NewServerConnectionScreen.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Elements/ElementProgress.h>
-#include "menus/PauseMenu.h"
+#include "menus/temp_new/NewPauseMenu.h"
 #include "UIDebug.h"
 
 static constexpr const char* const NAME_LOADING_PROGRESS = "loadingProgress";
 static constexpr const char* const NAME_DOWNLOAD_PROGRESS = "downloadProgress";
+static constexpr const char* const NAME_SHOW_FULL_CONNECTION_BOX = "showFullConnectionBox";
 
 const char* const NewServerConnectionScreen::NAME = "new_server_connection_screen";
 
@@ -36,6 +37,10 @@ void NewServerConnectionScreen::Connect(const char* server, bool isBackground)
 {
 	m_Connecting = true;
 	ClearContentArea();
+
+	// Show the connection info if we're connecting to a non-local server
+	m_ShowFullConnectionBox = server != nullptr;
+	DirtyVariable(NAME_SHOW_FULL_CONNECTION_BOX);
 
 	if ( server )
 	{
@@ -95,12 +100,6 @@ void NewServerConnectionScreen::DownloadEnd()
 void NewServerConnectionScreen::Connected()
 {
 	AppendContentLine("Joined server");
-
-	Rml::Dictionary options;
-	options.insert({SwitchFocusRequest::OPTION_TARGET, Rml::Variant(Rml::String("game"))});
-	options.insert({SwitchFocusRequest::OPTION_NEW_MENU, Rml::Variant(Rml::String(PauseMenu::NAME))});
-
-	SetCurrentRequest(MenuRequestType::SwitchFocus, std::move(options));
 	m_Connecting = false;
 }
 
@@ -115,7 +114,7 @@ void NewServerConnectionScreen::ChangeLevel(bool /* isBackground */)
 	m_Connecting = true;
 
 	// This seems to just be fired when we change level in single player,
-	// so probably nothing to do other than clearing the content.
+	// so probably nothing to do other than clearing the content just in case.
 	ClearContentArea();
 }
 
@@ -137,6 +136,21 @@ void NewServerConnectionScreen::OnDocumentUnloaded()
 	m_Connecting = false;
 
 	BaseMenu::OnDocumentUnloaded();
+}
+
+bool NewServerConnectionScreen::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
+{
+	if ( !BaseMenu::OnSetUpDataModelBindings(constructor) )
+	{
+		return false;
+	}
+
+	if ( !constructor.Bind(NAME_SHOW_FULL_CONNECTION_BOX, &m_ShowFullConnectionBox) )
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void NewServerConnectionScreen::ClearContentArea()

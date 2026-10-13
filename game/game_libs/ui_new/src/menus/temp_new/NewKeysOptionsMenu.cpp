@@ -215,7 +215,7 @@ void NewKeysOptionsMenu::HandleResetAllBindingsToDefaults(Rml::DataModelHandle, 
 	m_Modal.SetUserData(Rml::Variant(RESETTING_BINDINGS));
 
 	ShowModal(true);
-	SetRequestPopOnEscapeKey(false);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::NONE);
 }
 
 void NewKeysOptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
@@ -231,7 +231,7 @@ void NewKeysOptionsMenu::HandleRebindKeyEvent(int row, int bindIndex)
 	m_Modal.SetUserData(Rml::Variant(SETTING_BINDING));
 
 	ShowModal(true);
-	SetRequestPopOnEscapeKey(false);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::NONE);
 	RmlUiBackend::StaticInstance().SetStoreNextKey(true);
 }
 
@@ -286,7 +286,7 @@ void NewKeysOptionsMenu::ResetRebindingRow()
 void NewKeysOptionsMenu::CloseModalAndStopListeningForKeys()
 {
 	ShowModal(false);
-	SetRequestPopOnEscapeKey(true);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::POP);
 	RmlUiBackend::StaticInstance().ClearStoreNextKey();
 }
 
@@ -333,7 +333,7 @@ void NewKeysOptionsMenu::SetStoredKeyForCurrentRebinding()
 void NewKeysOptionsMenu::ResetAllBindingsResponse(bool shouldReset)
 {
 	ShowModal(false);
-	SetRequestPopOnEscapeKey(true);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::POP);
 
 	if ( shouldReset )
 	{

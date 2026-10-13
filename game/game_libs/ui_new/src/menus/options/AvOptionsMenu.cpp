@@ -267,7 +267,7 @@ void AvOptionsMenu::HandleApplyVideoMode()
 	{
 		m_PageModel.showModal = true;
 		m_PageModel.modalExpiry = gpGlobals->time + 10.0f;
-		SetRequestPopOnEscapeKey(false);
+		SetActionOnEscapeKey(MenuPage::ActionOnEscape::NONE);
 		DirtyVariable(NAME_SHOW_MODAL);
 	}
 	else
@@ -286,7 +286,7 @@ void AvOptionsMenu::HandleModalButton(bool keepNewVideoMode)
 	m_RevertInfo.reset();
 	m_PageModel.showModal = false;
 	m_PageModel.modalTimeRemaining = 0;
-	SetRequestPopOnEscapeKey(true);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::POP);
 
 	DirtyVariable(NAME_SHOW_MODAL);
 	DirtyVariable(NAME_MODAL_TIME_REMAINING);
