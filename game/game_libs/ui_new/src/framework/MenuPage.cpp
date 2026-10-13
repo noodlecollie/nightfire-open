@@ -2,6 +2,7 @@
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Input.h>
 #include "rmlui/Utils.h"
+#include "udll_int.h"
 
 static constexpr const char* const EVENT_PUSH_MENU = "pushMenu";
 static constexpr const char* const EVENT_POP_MENU = "popMenu";
@@ -21,14 +22,14 @@ bool MenuPage::OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 		constructor.BindEventCallback(EVENT_CUT_STACK, &MenuPage::HandleCutStack, this);
 }
 
-bool MenuPage::RequestPopOnEscapeKey() const
+MenuPage::ActionOnEscape MenuPage::GetActionOnEscapeKey() const
 {
-	return m_RequestPopOnEscapeKey;
+	return m_ActionOnEscape;
 }
 
-void MenuPage::SetRequestPopOnEscapeKey(bool enable)
+void MenuPage::SetActionOnEscapeKey(ActionOnEscape action)
 {
-	m_RequestPopOnEscapeKey = enable;
+	m_ActionOnEscape = action;
 }
 
 void MenuPage::ProcessKeyEvent(Rml::Event& event)
@@ -39,10 +40,20 @@ void MenuPage::ProcessKeyEvent(Rml::Event& event)
 		{
 			const int keyId = GetEventKeyId(event);
 
-			if ( keyId == Rml::Input::KI_ESCAPE && m_RequestPopOnEscapeKey && ShouldPop("") )
+			if ( keyId == Rml::Input::KI_ESCAPE && m_ActionOnEscape != ActionOnEscape::NONE )
 			{
-				event.StopPropagation();
-				SetCurrentRequest(MenuRequestType::PopMenu);
+				Rml::String targetToSwitchTo;
+
+				if ( m_ActionOnEscape == ActionOnEscape::SWITCH_FOCUS )
+				{
+					targetToSwitchTo = gEngfuncs.pfnClientInGame() ? "game" : "console";
+				}
+
+				if ( ShouldAllowMenuRequest(targetToSwitchTo) )
+				{
+					event.StopPropagation();
+					ProcessActionOnEscape(targetToSwitchTo);
+				}
 			}
 
 			break;
@@ -65,7 +76,7 @@ void MenuPage::RequestPush(Rml::String menuToPush)
 
 void MenuPage::RequestPop(Rml::String menuToSwapIn)
 {
-	if ( !ShouldPop(menuToSwapIn) )
+	if ( !ShouldAllowMenuRequest(menuToSwapIn) )
 	{
 		return;
 	}
@@ -82,7 +93,7 @@ void MenuPage::RequestPop(Rml::String menuToSwapIn)
 
 void MenuPage::RequestCutStack(size_t newSize, Rml::String menuToSwapIn)
 {
-	if ( !ShouldPop(menuToSwapIn) )
+	if ( !ShouldAllowMenuRequest(menuToSwapIn) )
 	{
 		return;
 	}
@@ -98,7 +109,7 @@ void MenuPage::RequestCutStack(size_t newSize, Rml::String menuToSwapIn)
 	SetCurrentRequest(CutStackRequest::REQUEST_TYPE, std::move(options));
 }
 
-bool MenuPage::ShouldPop(const Rml::String&)
+bool MenuPage::ShouldAllowMenuRequest(const Rml::String&)
 {
 	return true;
 }
@@ -163,4 +174,34 @@ void MenuPage::HandleSwitchFocus(Rml::DataModelHandle, Rml::Event&, const Rml::V
 	}
 
 	RequestSwitchFocus(args[0].Get<Rml::String>(), args.size() > 1 ? args[1].Get<Rml::String>() : "");
+}
+
+void MenuPage::ProcessActionOnEscape(const Rml::String& targetToSwitchTo)
+{
+	switch ( m_ActionOnEscape )
+	{
+		case ActionOnEscape::NONE:
+		{
+			// Do nothing.
+			break;
+		}
+
+		case ActionOnEscape::POP:
+		{
+			RequestPop(targetToSwitchTo);
+			break;
+		}
+
+		case ActionOnEscape::SWITCH_FOCUS:
+		{
+			RequestSwitchFocus(targetToSwitchTo);
+			break;
+		}
+
+		default:
+		{
+			ASSERT(false);
+			break;
+		}
+	}
 }

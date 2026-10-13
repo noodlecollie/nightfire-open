@@ -155,7 +155,7 @@ bool NewAvOptionsMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& const
 	return true;
 }
 
-bool NewAvOptionsMenu::ShouldPop(const Rml::String& menuToSwapIn)
+bool NewAvOptionsMenu::ShouldAllowMenuRequest(const Rml::String& targetToSwitchTo)
 {
 	if ( !m_PageModel.needsApply )
 	{
@@ -164,14 +164,14 @@ bool NewAvOptionsMenu::ShouldPop(const Rml::String& menuToSwapIn)
 
 	if ( m_PendingPop )
 	{
-		return m_MenuToSwitchTo == menuToSwapIn;
+		return m_MenuToSwitchTo == targetToSwitchTo;
 	}
 
-	m_MenuToSwitchTo = menuToSwapIn;
+	m_MenuToSwitchTo = targetToSwitchTo;
 	m_PendingPop = true;
 	m_PageModel.showModal = true;
 	m_PageModel.modalExpiry = 0.0f;
-	SetRequestPopOnEscapeKey(false);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::NONE);
 	DirtyVariable(NAME_SHOW_MODAL);
 
 	m_Modal.SetTitle(MODAL_CONFIRM_EXIT_TITLE);
@@ -379,7 +379,7 @@ void NewAvOptionsMenu::HandleApplyVideoMode()
 	{
 		m_PageModel.showModal = true;
 		m_PageModel.modalExpiry = gpGlobals->time + 10.0f;
-		SetRequestPopOnEscapeKey(false);
+		SetActionOnEscapeKey(MenuPage::ActionOnEscape::NONE);
 		DirtyVariable(NAME_SHOW_MODAL);
 
 		m_Modal.SetTitle(MODAL_NEW_VIDEO_MODE_TITLE);
@@ -409,7 +409,7 @@ void NewAvOptionsMenu::HandleVideoModeConfirm(bool keepNewVideoMode)
 	m_RevertInfo.reset();
 	m_PageModel.showModal = false;
 	m_PageModel.modalTimeRemaining = 0;
-	SetRequestPopOnEscapeKey(true);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::POP);
 
 	DirtyVariable(NAME_SHOW_MODAL);
 	DirtyVariable(NAME_MODAL_TIME_REMAINING);
@@ -419,7 +419,7 @@ void NewAvOptionsMenu::HandleApplyVideoModeOnExit(bool applyVideoMode)
 {
 	m_PageModel.showModal = false;
 	m_PageModel.modalTimeRemaining = 0;
-	SetRequestPopOnEscapeKey(true);
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::POP);
 
 	DirtyVariable(NAME_SHOW_MODAL);
 	DirtyVariable(NAME_MODAL_TIME_REMAINING);

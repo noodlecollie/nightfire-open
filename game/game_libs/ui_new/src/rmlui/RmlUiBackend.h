@@ -97,6 +97,7 @@ private:
 	void HandleMenuPopCommand();
 	void ReloadCurrentMenu();
 	bool StartBackgroundMap();
+	bool StartBackgroundMapAndSetConnectionState();
 	void DoMainUpdate(float currentTime);
 	void HandleFocusChange();
 	void ShowMenu();
@@ -114,7 +115,6 @@ private:
 	EventListenerInstancerImpl m_EventListenerInstancer;
 
 	bool m_Initialised = false;
-	bool m_FirstUpdate = false;
 	Rml::Context* m_RmlContext = nullptr;
 	unsigned char m_Modifiers = 0;
 

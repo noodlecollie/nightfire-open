@@ -14,6 +14,8 @@ NewPauseMenu::NewPauseMenu() :
 	m_Modal(this, "quit_modal"),
 	m_ShowHideEventListener(this, &NewPauseMenu::ProcessHideEvents, {Rml::EventId::Hide})
 {
+	SetActionOnEscapeKey(MenuPage::ActionOnEscape::SWITCH_FOCUS);
+
 	m_Modal.SetButtonClickCallback(
 		[this](Rml::Event& event, size_t buttonIndex, const Rml::Variant& userData)
 		{

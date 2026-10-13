@@ -71,7 +71,6 @@ void RmlUiBackend::Initialise()
 #endif
 
 	m_MenuDirectory->AcquireContext(m_RmlContext);
-	m_FirstUpdate = true;
 	m_Initialised = true;
 }
 
@@ -104,10 +103,10 @@ void RmlUiBackend::ShutDown()
 
 	m_RmlContext = nullptr;
 	m_Initialised = false;
-	m_FirstUpdate = false;
 	m_Modifiers = 0;
 	m_StoreNextKey = false;
 	m_StoredKey = StoredKey {};
+	m_ConnectionState = ConnectionState::UNINITILAISED;
 }
 
 bool RmlUiBackend::IsInitialised() const
@@ -445,7 +444,9 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 		}
 	}
 
-	m_ConnectionState = ConnectionState::DISCONNECTED;
+	// Reset state to uninitialised, in case we need to reload
+	// a background map.
+	m_ConnectionState = ConnectionState::UNINITILAISED;
 	m_ConnectedServerIsBackgroundMap = false;
 }
 
@@ -736,23 +737,26 @@ bool RmlUiBackend::StartBackgroundMap()
 	return true;
 }
 
+bool RmlUiBackend::StartBackgroundMapAndSetConnectionState()
+{
+	if ( StartBackgroundMap() )
+	{
+		m_ConnectionState = ConnectionState::CONNECTING;
+		m_ConnectedServerIsBackgroundMap = true;
+		return true;
+	}
+	else
+	{
+		m_ConnectionState = ConnectionState::DISCONNECTED;
+		return false;
+	}
+}
+
 void RmlUiBackend::DoMainUpdate(float currentTime)
 {
-	if ( m_FirstUpdate )
+	if ( m_ConnectionState == ConnectionState::UNINITILAISED )
 	{
-		m_FirstUpdate = false;
-
-		// Compute the initial connection state, so that we
-		// show the appropriate menu.
-		if ( StartBackgroundMap() )
-		{
-			m_ConnectionState = ConnectionState::CONNECTING;
-			m_ConnectedServerIsBackgroundMap = true;
-		}
-		else
-		{
-			m_ConnectionState = ConnectionState::DISCONNECTED;
-		}
+		StartBackgroundMapAndSetConnectionState();
 	}
 
 	const bool hadMenusInStack = !m_MenuStack.IsEmpty();

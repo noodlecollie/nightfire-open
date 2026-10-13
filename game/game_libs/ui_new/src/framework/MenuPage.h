@@ -9,10 +9,17 @@
 class MenuPage : public BaseMenu
 {
 public:
+	enum class ActionOnEscape
+	{
+		NONE,
+		POP,
+		SWITCH_FOCUS
+	};
+
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
-	bool RequestPopOnEscapeKey() const;
-	void SetRequestPopOnEscapeKey(bool enable);
+	ActionOnEscape GetActionOnEscapeKey() const;
+	void SetActionOnEscapeKey(ActionOnEscape action);
 
 protected:
 	MenuPage(const char* name, const char* rmlFilePath);
@@ -20,8 +27,9 @@ protected:
 	void RequestPush(Rml::String menuToPush);
 	void RequestPop(Rml::String menuToSwapIn = Rml::String());
 	void RequestCutStack(size_t newSize, Rml::String menuToSwapIn = Rml::String());
-	virtual bool ShouldPop(const Rml::String& menuToSwapIn);
 	void RequestSwitchFocus(Rml::String target, Rml::String newMenu = Rml::String());
+
+	virtual bool ShouldAllowMenuRequest(const Rml::String& targetToSwitchTo);
 
 private:
 	void ProcessKeyEvent(Rml::Event& event);
@@ -29,7 +37,8 @@ private:
 	void HandlePopMenu(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 	void HandleCutStack(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
 	void HandleSwitchFocus(Rml::DataModelHandle handle, Rml::Event& event, const Rml::VariantList& args);
+	void ProcessActionOnEscape(const Rml::String& targetToSwitchTo);
 
 	MenuEventListenerObject m_KeyEventListener;
-	bool m_RequestPopOnEscapeKey = true;
+	ActionOnEscape m_ActionOnEscape = ActionOnEscape::POP;
 };
