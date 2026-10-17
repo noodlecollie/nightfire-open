@@ -74,6 +74,8 @@ set(SOURCES_UI
 	src/menus/temp_new/NewMainMenuDirectory.cpp
 	src/menus/temp_new/NewMouseOptionsMenu.h
 	src/menus/temp_new/NewMouseOptionsMenu.cpp
+	src/menus/temp_new/NewMultiplayerMenu.h
+	src/menus/temp_new/NewMultiplayerMenu.cpp
 	src/menus/temp_new/NewPauseMenu.h
 	src/menus/temp_new/NewPauseMenu.cpp
 	src/menus/temp_new/NewServerConnectionScreen.h

@@ -9,6 +9,7 @@
 #include "menus/temp_new/NewMouseOptionsMenu.h"
 #include "menus/temp_new/NewServerConnectionScreen.h"
 #include "menus/temp_new/NewPauseMenu.h"
+#include "menus/temp_new/NewMultiplayerMenu.h"
 
 NewMainMenuDirectory::NewMainMenuDirectory() :
 	BaseMenuDirectory("resource/rml/temp_new")
@@ -52,4 +53,5 @@ void NewMainMenuDirectory::PopulateInternal()
 	AddToMap<NewAvOptionsMenu>();
 	AddToMap<NewGameplayOptionsMenu>();
 	AddToMap<NewMouseOptionsMenu>();
+	AddToMap<NewMultiplayerMenu>();
 }
