@@ -3,7 +3,7 @@
 #include "framework/MenuPage.h"
 #include <RmlUi/Core/DataModelHandle.h>
 #include "framework/MenuEventListenerObject.h"
-#include "templatebindings/MenuFrameDataBinding.h"
+#include "components/TooltipComponent.h"
 #include "models/ServerModel.h"
 #include "EnginePublicAPI/netadr.h"
 #include <limits>
@@ -48,6 +48,7 @@ private:
 	void SetSelectedRow(int index);
 
 	MenuEventListenerObject m_ShowHideEventListener;
+	TooltipComponent m_TooltipComponent;
 	ServerModel m_ServerModel;
 	PageModel m_PageModel;
 	float m_NextRefreshTime = REFRESH_NEVER;

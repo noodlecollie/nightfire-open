@@ -13,6 +13,7 @@ static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
 NewMultiplayerMenu::NewMultiplayerMenu() :
 	MenuPage("new_multiplayer_menu", "multiplayer_menu.rml"),
 	m_ShowHideEventListener(this, &NewMultiplayerMenu::ProcessShowHideEvents, {Rml::EventId::Show, Rml::EventId::Hide}),
+	m_TooltipComponent(this, "tooltip_component", "tooltip_container", "tooltipText"),
 	m_ServerModel(this)
 {
 	ReSortServerModel();
