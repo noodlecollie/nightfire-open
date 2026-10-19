@@ -228,28 +228,38 @@ void TooltipComponent::SetTooltipFromMouseOver(Rml::Event& event)
 		return;
 	}
 
-	if ( tooltipAttr->GetInto(m_TooltipText.value) && IsModelLoaded() )
+	// This element at least supports a tooltip. We may not draw it if the
+	// element is disabled, but set it as the source element regardless.
+	// This stops other nested elements from affecting this logic if the
+	// outermost tooltip element happens to be disabled.
+	m_CurrentTooltipSourceElement = element;
+
+	// Make sure GetInto() is evaluated last here.
+	const bool drawTooltip =
+		IsModelLoaded() && !element->GetAttribute("disabled") && tooltipAttr->GetInto(m_TooltipText.value);
+
+	if ( drawTooltip )
 	{
 		DirtyVariable(m_TooltipText.name);
-		m_CurrentTooltipSourceElement = element;
-	}
 
-	if ( m_Type == TooltipType::FOLLOW_CURSOR )
-	{
-		if ( !m_TooltipDisplayElement )
+		if ( m_Type == TooltipType::FOLLOW_CURSOR )
 		{
-			ASSERT(false);
-			return;
+			if ( !m_TooltipDisplayElement )
+			{
+				ASSERT(false);
+				return;
+			}
+
+			m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Visibility, Rml::Style::Visibility::Visible);
+
+			// Annoyingly, we have to update the entire context here, so that the data model
+			// contains the new value set on the variable, and we can use the correct tooltip
+			// element size for positional calculations in the next step.
+			// Hopefully, dirty checks on variables should avoid too much recomputation in this call.
+			m_TooltipDisplayElement->GetContext()->Update();
+
+			UpdateTooltipPosition(event);
 		}
-
-		m_TooltipDisplayElement->SetProperty(Rml::PropertyId::Visibility, Rml::Style::Visibility::Visible);
-
-		// Annoyingly, we have to update the entire context here, so that the data model
-		// contains the new value set on the variable, and we can use the correct tooltip
-		// element size for positional calculations in the next step.
-		m_TooltipDisplayElement->GetContext()->Update();
-
-		UpdateTooltipPosition(event);
 	}
 }
 

@@ -27,6 +27,7 @@ private:
 	{
 		Rml::String sortType;
 		int selectedRow = INVALID_ROW;
+		bool connecting = false;
 
 		ServerModel::SortType sortBy = ServerModel::SortType::PING;
 		bool sortAscending = true;
