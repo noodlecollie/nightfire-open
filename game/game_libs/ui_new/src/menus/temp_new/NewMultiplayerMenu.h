@@ -38,6 +38,7 @@ private:
 	void HandleColumnSortRequested(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args);
 	void HandleSelectServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args);
 	void HandleConnectToSelectedServer(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
+	void HandleRefreshServers(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void ReSortServerModel(const Rml::String& sortTypeStr = Rml::String());
 	void UpdateSortTypeVariable();
 

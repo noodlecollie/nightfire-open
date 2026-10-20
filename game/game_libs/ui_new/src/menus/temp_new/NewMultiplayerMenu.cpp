@@ -12,6 +12,7 @@ static constexpr const char* const NAME_CONNECTING = "connecting";
 static constexpr const char* const EVENT_SORT = "sort";
 static constexpr const char* const EVENT_SELECT_SERVER = "selectServer";
 static constexpr const char* const EVENT_CONNECT = "connectToSelectedServer";
+static constexpr const char* const EVENT_REFRESH_SERVERS = "refreshServers";
 
 NewMultiplayerMenu::NewMultiplayerMenu() :
 	MenuPage("new_multiplayer_menu", "multiplayer_menu.rml"),
@@ -44,7 +45,8 @@ bool NewMultiplayerMenu::OnSetUpDataModelBindings(Rml::DataModelConstructor& con
 		 !constructor.Bind(NAME_CONNECTING, &m_PageModel.connecting) ||
 		 !constructor.BindEventCallback(EVENT_SORT, &NewMultiplayerMenu::HandleColumnSortRequested, this) ||
 		 !constructor.BindEventCallback(EVENT_SELECT_SERVER, &NewMultiplayerMenu::HandleSelectServer, this) ||
-		 !constructor.BindEventCallback(EVENT_CONNECT, &NewMultiplayerMenu::HandleConnectToSelectedServer, this) )
+		 !constructor.BindEventCallback(EVENT_CONNECT, &NewMultiplayerMenu::HandleConnectToSelectedServer, this) ||
+		 !constructor.BindEventCallback(EVENT_REFRESH_SERVERS, &NewMultiplayerMenu::HandleRefreshServers, this) )
 	{
 		return false;
 	}
@@ -178,6 +180,11 @@ void NewMultiplayerMenu::HandleConnectToSelectedServer(Rml::DataModelHandle, Rml
 	// TODO: Do we need to cater for legacy servers here?
 	// I don't think so at the moment.
 	gEngfuncs.pfnClientCmd(false, Rml::CreateString("connect %s", gTextfuncs.pfnAdrToString(entry->address)).c_str());
+}
+
+void NewMultiplayerMenu::HandleRefreshServers(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+{
+	RefreshServersLocal();
 }
 
 void NewMultiplayerMenu::ReSortServerModel(const Rml::String& sortTypeStr)
