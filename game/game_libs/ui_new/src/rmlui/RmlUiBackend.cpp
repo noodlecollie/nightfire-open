@@ -107,6 +107,7 @@ void RmlUiBackend::ShutDown()
 	m_StoreNextKey = false;
 	m_StoredKey = StoredKey {};
 	m_ConnectionState = ConnectionState::UNINITILAISED;
+	m_LastConnectionState = ConnectionState::UNINITILAISED;
 }
 
 bool RmlUiBackend::IsInitialised() const
@@ -325,11 +326,6 @@ void RmlUiBackend::ReceiveConnectionProgress_Connect(const char* server, bool is
 	m_ConnectionState = ConnectionState::CONNECTING;
 	m_ConnectedServerIsBackgroundMap = isBackground;
 
-	if ( m_ConnectedServerIsBackgroundMap )
-	{
-		return;
-	}
-
 	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( handler )
@@ -434,14 +430,11 @@ void RmlUiBackend::ReceiveConnectionProgress_Disconnect()
 		return;
 	}
 
-	if ( !m_ConnectedServerIsBackgroundMap )
-	{
-		IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-		if ( handler )
-		{
-			handler->Disconnect();
-		}
+	if ( handler )
+	{
+		handler->Disconnect();
 	}
 
 	// Reset state to uninitialised, in case we need to reload
@@ -457,25 +450,15 @@ void RmlUiBackend::ReceiveConnectionProgress_ChangeLevel(bool isBackground)
 		return;
 	}
 
-	if ( m_ConnectionState != ConnectionState::DISCONNECTED && !m_ConnectedServerIsBackgroundMap && isBackground )
-	{
-		IServerConnectionHandler* menu = m_MenuDirectory->GetServerConnectionHandler();
+	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
-		if ( menu )
-		{
-			menu->Disconnect();
-		}
+	if ( handler && m_ConnectionState == ConnectionState::CONNECTED )
+	{
+		handler->Disconnect();
 	}
 
 	m_ConnectionState = ConnectionState::CONNECTING;
 	m_ConnectedServerIsBackgroundMap = isBackground;
-
-	if ( m_ConnectedServerIsBackgroundMap )
-	{
-		return;
-	}
-
-	IServerConnectionHandler* handler = m_MenuDirectory->GetServerConnectionHandler();
 
 	if ( handler )
 	{
@@ -759,6 +742,7 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 		StartBackgroundMapAndSetConnectionState();
 	}
 
+	const bool inGame = gEngfuncs.pfnClientInGame();
 	const bool hadMenusInStack = !m_MenuStack.IsEmpty();
 
 	m_MenuStack.Update(currentTime);
@@ -770,11 +754,16 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 		m_FocusChange = focus;
 	}
 
+	// Switch focus to the game once connection to a server is complete.
+	if ( m_FocusChange == MenuStack::FocusChangeResult::None && m_LastConnectionState == ConnectionState::CONNECTING &&
+		 m_ConnectionState == ConnectionState::CONNECTED && inGame && !m_ConnectedServerIsBackgroundMap )
+	{
+		m_FocusChange = MenuStack::FocusChangeResult::SwitchFocusToGame;
+	}
+
 	// Fallback logic:
 	if ( m_FocusChange == MenuStack::FocusChangeResult::None && hadMenusInStack && m_MenuStack.IsEmpty() )
 	{
-		const bool inGame = gEngfuncs.pfnClientInGame();
-
 		Rml::Log::Message(
 			Rml::Log::Type::LT_WARNING,
 			"Menu stack specified no focus change but removed all menus, switching focus to %s",
@@ -794,6 +783,8 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 	{
 		m_MenuStack.CommandCutStack(0, rootMenu->menuPtr->Name());
 	}
+
+	m_LastConnectionState = m_ConnectionState;
 }
 
 void RmlUiBackend::HandleFocusChange()

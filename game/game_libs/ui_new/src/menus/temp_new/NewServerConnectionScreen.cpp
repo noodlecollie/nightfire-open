@@ -1,7 +1,6 @@
 #include "menus/temp_new/NewServerConnectionScreen.h"
 #include <RmlUi/Core/ElementDocument.h>
 #include <RmlUi/Core/Elements/ElementProgress.h>
-#include "menus/temp_new/NewPauseMenu.h"
 #include "UIDebug.h"
 
 static constexpr const char* const NAME_LOADING_PROGRESS = "loadingProgress";
@@ -39,32 +38,40 @@ void NewServerConnectionScreen::Connect(const char* server, bool isBackground)
 	ClearContentArea();
 
 	// Show the connection info if we're connecting to a non-local server
-	m_ShowFullConnectionBox = server != nullptr;
+	m_ShowFullConnectionBox = server != nullptr && !isBackground;
 	DirtyVariable(NAME_SHOW_FULL_CONNECTION_BOX);
 
-	if ( server )
+	if ( !m_ShowFullConnectionBox )
 	{
-		AppendContentLine(
-			Rml::CreateString(
-				"Connecting to %sserver: %s",
-				isBackground ? "background " : "",
-				(*server) ? server : "<unknown>"
-			)
-		);
+		return;
 	}
-	else
-	{
-		AppendContentLine(Rml::CreateString("Connecting to local %sserver", isBackground ? "background " : ""));
-	}
+
+	AppendContentLine(
+		Rml::CreateString(
+			"Connecting to %sserver: %s",
+			isBackground ? "background " : "",
+			(*server) ? server : "<unknown>"
+		)
+	);
 }
 
 void NewServerConnectionScreen::ParseServerInfo(const char* /* server */)
 {
+	if ( !m_ShowFullConnectionBox )
+	{
+		return;
+	}
+
 	AppendContentLine("Parsing server info");
 }
 
 void NewServerConnectionScreen::Precache(const char* mapFileName)
 {
+	if ( !m_ShowFullConnectionBox )
+	{
+		return;
+	}
+
 	if ( mapFileName && mapFileName[0] )
 	{
 		AppendContentLine(Rml::CreateString("Loading map: %s", mapFileName));
@@ -81,6 +88,11 @@ void NewServerConnectionScreen::Download(
 	const char* comment
 )
 {
+	if ( !m_ShowFullConnectionBox )
+	{
+		return;
+	}
+
 	Rml::String text;
 	Rml::FormatString(text, "[%d/%d] Downloaded %s", current, total, fileName);
 
@@ -94,19 +106,29 @@ void NewServerConnectionScreen::Download(
 
 void NewServerConnectionScreen::DownloadEnd()
 {
+	if ( !m_ShowFullConnectionBox )
+	{
+		return;
+	}
+
 	AppendContentLine("Resource download finished");
 }
 
 void NewServerConnectionScreen::Connected()
 {
-	AppendContentLine("Joined server");
+	if ( m_ShowFullConnectionBox )
+	{
+		AppendContentLine("Joined server");
+	}
+
 	m_Connecting = false;
 }
 
 void NewServerConnectionScreen::Disconnect()
 {
 	m_Connecting = false;
-	AppendContentLine("Disconnected from server");
+	m_ShowFullConnectionBox = false;
+	DirtyVariable(NAME_SHOW_FULL_CONNECTION_BOX);
 }
 
 void NewServerConnectionScreen::ChangeLevel(bool /* isBackground */)

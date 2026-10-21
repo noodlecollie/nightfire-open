@@ -123,6 +123,7 @@ private:
 	bool m_Visible = false;
 	MenuStack::FocusChangeResult m_FocusChange = MenuStack::FocusChangeResult::None;
 	ConnectionState m_ConnectionState = ConnectionState::UNINITILAISED;
+	ConnectionState m_LastConnectionState = ConnectionState::UNINITILAISED;
 	bool m_ConnectedServerIsBackgroundMap = false;
 
 	bool m_StoreNextKey = false;
