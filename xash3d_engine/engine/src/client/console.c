@@ -371,18 +371,22 @@ went backwards)
 */
 void Con_FixTimes(void)
 {
-	double diff;
-	int i;
-
 	if ( con.lines_count <= 0 )
+	{
 		return;
+	}
 
-	diff = cl.time - CON_LINES_LAST().addtime;
+	double diff = cl.time - CON_LINES_LAST().addtime;
+
 	if ( diff >= 0.0 )
+	{
 		return;  // nothing to fix
+	}
 
-	for ( i = 0; i < con.lines_count; i++ )
+	for ( int i = 0; i < con.lines_count; i++ )
+	{
 		CON_LINES(i).addtime += diff;
+	}
 }
 
 /*
@@ -395,7 +399,10 @@ Deletes the first line from the console history.
 void Con_DeleteLine(void)
 {
 	if ( con.lines_count == 0 )
+	{
 		return;
+	}
+
 	con.lines_count--;
 	con.lines_first = (con.lines_first + 1) % con.maxlines;
 }
@@ -410,7 +417,10 @@ Deletes the last line from the console history.
 void Con_DeleteLastLine(void)
 {
 	if ( con.lines_count == 0 )
+	{
 		return;
+	}
+
 	con.lines_count--;
 }
 
@@ -425,7 +435,9 @@ pointer to the start of such a space, and NULL otherwise.
 static char* Con_BytesLeft(int length)
 {
 	if ( length > con.bufsize )
+	{
 		return NULL;
+	}
 
 	if ( con.lines_count == 0 )
 	{
@@ -441,10 +453,14 @@ static char* Con_BytesLeft(int length)
 		{
 			// put at end?
 			if ( length <= con.buffer + con.bufsize - lastline_onepastend )
+			{
 				return lastline_onepastend;
+			}
 			// put at beginning?
 			else if ( length <= firstline_start - con.buffer )
+			{
 				return con.buffer;
+			}
 
 			return NULL;
 		}
@@ -452,7 +468,9 @@ static char* Con_BytesLeft(int length)
 		{
 			// buffer has a contiguous hole
 			if ( length <= firstline_start - lastline_onepastend )
+			{
 				return lastline_onepastend;
+			}
 
 			return NULL;
 		}
@@ -472,7 +490,9 @@ void Con_AddLine(const char* line, int length, qboolean newline)
 	con_lineinfo_t* p;
 
 	if ( !con.initialized || !con.buffer )
+	{
 		return;
+	}
 
 	Con_FixTimes();
 	length++;  // reserve space for term
@@ -520,14 +540,21 @@ void Con_CheckResize(void)
 	int i, width;
 
 	if ( con.curFont && con.curFont->hFontTexture )
+	{
 		charWidth = con.curFont->charWidths['O'] - 1;
+	}
 
 	width = (refState.width / charWidth) - 2;
+
 	if ( !ref.initialized )
+	{
 		width = (640 / 5);
+	}
 
 	if ( width == con.linewidth )
+	{
 		return;
+	}
 
 	Con_ClearNotify();
 	con.linewidth = width;
@@ -536,7 +563,9 @@ void Con_CheckResize(void)
 	con.input.widthInChars = con.linewidth;
 
 	for ( i = 0; i < CON_HISTORY; i++ )
+	{
 		con.history.lines[i].widthInChars = con.linewidth;
+	}
 }
 
 /*
@@ -612,7 +641,9 @@ static void Con_LoadConsoleFont(int fontNumber, cl_font_t* font)
 	float scale = con_fontscale->value;
 
 	if ( font->valid )
+	{
 		return;  // already loaded
+	}
 
 	// loading conchars
 	if ( Sys_CheckParm("-oldfont") )
@@ -645,7 +676,9 @@ static void Con_LoadConsoleFont(int fontNumber, cl_font_t* font)
 		// quake fixed font as fallback
 		// keep source to print directly into conback image
 		if ( !Con_LoadFixedWidthFont("gfx/conchars", font, scale, kRenderTransTexture, TF_FONT | TF_KEEP_SOURCE) )
+		{
 			Con_DPrintf(S_ERROR "failed to load console font\n");
+		}
 	}
 }
 
@@ -660,20 +693,32 @@ static void Con_LoadConchars(void)
 
 	// load all the console fonts
 	for ( i = 0; i < CON_NUMFONTS; i++ )
+	{
 		Con_LoadConsoleFont(i, con.chars + i);
+	}
 
 	// select properly fontsize
 	if ( con_fontnum->value >= 0 && con_fontnum->value <= CON_NUMFONTS - 1 )
+	{
 		fontSize = (int)con_fontnum->value;
+	}
 	else if ( refState.width <= 640 )
+	{
 		fontSize = 0;
+	}
 	else if ( refState.width >= 1280 )
+	{
 		fontSize = 2;
+	}
 	else
+	{
 		fontSize = 1;
+	}
 
 	if ( fontSize > CON_NUMFONTS - 1 )
+	{
 		fontSize = CON_NUMFONTS - 1;
+	}
 
 	// sets the current font
 	con.curFont = &con.chars[fontSize];
@@ -902,7 +947,7 @@ void Con_Init(void)
 		return;  // dedicated server already have console
 
 	// must be init before startup video subsystem
-	scr_conspeed = Cvar_Get("scr_conspeed", "600", FCVAR_ARCHIVE, "console moving speed");
+	scr_conspeed = Cvar_Get("scr_conspeed", "900", FCVAR_ARCHIVE, "console moving speed");
 	con_notifytime = Cvar_Get("con_notifytime", "3", FCVAR_ARCHIVE, "notify time to live");
 	con_fontsize = Cvar_Get("con_fontsize", "1", FCVAR_ARCHIVE, "console font number (0, 1 or 2)");
 	con_charset = Cvar_Get("con_charset", "cp1251", FCVAR_ARCHIVE, "console font charset (only cp1251 supported now)");
@@ -2020,12 +2065,16 @@ void Con_DrawSolidConsole(int lines)
 	byte color[4];
 
 	if ( lines <= 0 )
+	{
 		return;
+	}
 
 	// draw the background
 	ref.dllFuncs.GL_SetRenderMode(kRenderNormal);
 	ref.dllFuncs.Color4ub(255, 255, 255, 255);  // to prevent grab color from screenfade
+
 	if ( refState.width * 3 / 4 < refState.height && lines >= refState.height )
+	{
 		ref.dllFuncs.R_DrawStretchPic(
 			0,
 			(float)(lines - refState.height),
@@ -2037,6 +2086,8 @@ void Con_DrawSolidConsole(int lines)
 			1,
 			R_GetBuiltinTexture(REF_BLACK_TEXTURE)
 		);
+	}
+
 	ref.dllFuncs.R_DrawStretchPic(
 		0,
 		(float)(lines - refState.width * 3 / 4),
@@ -2050,7 +2101,9 @@ void Con_DrawSolidConsole(int lines)
 	);
 
 	if ( !con.curFont || !host.allow_console )
+	{
 		return;  // nothing to draw
+	}
 
 	// draw current version
 	memcpy(color, g_color_table[7], sizeof(color));
@@ -2122,7 +2175,9 @@ void Con_DrawConsole(void)
 {
 	// never draw console when changelevel in-progress
 	if ( cls.state != ca_disconnected && (cls.changelevel || cls.changedemo) )
+	{
 		return;
+	}
 
 	// check for console width changes from a vid mode change
 	Con_CheckResize();
@@ -2146,45 +2201,65 @@ void Con_DrawConsole(void)
 			con.showlines = 0;
 
 			if ( host_developer.value >= DEV_EXTENDED )
+			{
 				Con_DrawNotify();  // draw notify lines
+			}
 		}
 	}
 
-	// if disconnected, render console full screen
 	switch ( cls.state )
 	{
+		// if disconnected, render console full screen
 		case ca_disconnected:
+		{
 			if ( cls.key_dest != key_menu )
 			{
 				Con_DrawSolidConsole(refState.height);
 				Key_SetKeyDest(key_console);
 			}
+
 			break;
+		}
+
 		case ca_connecting:
 		case ca_connected:
 		case ca_validate:
+		{
 			// force to show console always for -dev 3 and higher
 			Con_DrawSolidConsole((int)con.vislines);
 			break;
+		}
+
 		case ca_active:
 		case ca_cinematic:
+		{
 			if ( Cvar_VariableInteger("cl_background") || Cvar_VariableInteger("sv_background") )
 			{
 				if ( cls.key_dest == key_console )
+				{
 					Con_DrawSolidConsole(refState.height);
+				}
 			}
 			else
 			{
 				if ( con.vislines )
+				{
 					Con_DrawSolidConsole((int)con.vislines);
+				}
 				else if ( cls.state == ca_active && (cls.key_dest == key_game || cls.key_dest == key_message) )
+				{
 					Con_DrawNotify();  // draw notify lines
+				}
 			}
+
 			break;
+		}
 	}
 
 	if ( !Con_Visible() )
+	{
 		SCR_DrawFPS(4);
+	}
 }
 
 /*
@@ -2294,14 +2369,20 @@ void Con_RunConsole(void)
 	if ( con.showlines < con.vislines )
 	{
 		con.vislines -= lines_per_frame;
+
 		if ( con.showlines > con.vislines )
+		{
 			con.vislines = con.showlines;
+		}
 	}
 	else if ( con.showlines > con.vislines )
 	{
 		con.vislines += lines_per_frame;
+
 		if ( con.showlines < con.vislines )
+		{
 			con.vislines = con.showlines;
+		}
 	}
 
 	if ( FBitSet(con_charset->flags, FCVAR_CHANGED) || FBitSet(con_fontscale->flags, FCVAR_CHANGED) ||
