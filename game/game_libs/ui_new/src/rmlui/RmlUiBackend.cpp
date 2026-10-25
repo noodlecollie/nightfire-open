@@ -659,6 +659,15 @@ void RmlUiBackend::HandleMenuPushCommand()
 		}
 
 		m_MenuStack.Push(menu);
+
+		if ( m_ConnectionState == ConnectionState::UNINITILAISED )
+		{
+			// This command is being executed before we've initialised
+			// which menu we want to use. Consider this a developer
+			// override for debugging purposes, and don't swap out the
+			// menu root as we normally would.
+			m_UserOverrideMenuRoot = true;
+		}
 	}
 }
 
@@ -774,14 +783,24 @@ void RmlUiBackend::DoMainUpdate(float currentTime)
 							   : MenuStack::FocusChangeResult::SwitchFocusToConsole;
 	}
 
-	const MenuDirectoryEntry* rootMenu = GetRootMenu();
-	ASSERT(rootMenu);
-
-	// If the base of the menu stack doesn't match what we would expect for the
-	// current state of the game, swap out the stack for the new root menu.
-	if ( m_MenuStack.Base() != rootMenu )
+	// If we've disconnected from a server and are back on the main menu again,
+	// consider the user override expired.
+	if ( m_ConnectionState == ConnectionState::UNINITILAISED && m_LastConnectionState == ConnectionState::CONNECTED )
 	{
-		m_MenuStack.CommandCutStack(0, rootMenu->menuPtr->Name());
+		m_UserOverrideMenuRoot = false;
+	}
+
+	if ( !m_UserOverrideMenuRoot )
+	{
+		const MenuDirectoryEntry* rootMenu = GetRootMenu();
+		ASSERT(rootMenu);
+
+		// If the base of the menu stack doesn't match what we would expect for the
+		// current state of the game, swap out the stack for the new root menu.
+		if ( m_MenuStack.Base() != rootMenu )
+		{
+			m_MenuStack.CommandCutStack(0, rootMenu->menuPtr->Name());
+		}
 	}
 
 	m_LastConnectionState = m_ConnectionState;

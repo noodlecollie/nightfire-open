@@ -125,6 +125,7 @@ private:
 	ConnectionState m_ConnectionState = ConnectionState::UNINITILAISED;
 	ConnectionState m_LastConnectionState = ConnectionState::UNINITILAISED;
 	bool m_ConnectedServerIsBackgroundMap = false;
+	bool m_UserOverrideMenuRoot = false;
 
 	bool m_StoreNextKey = false;
 	StoredKey m_StoredKey {};

@@ -6,6 +6,7 @@
 static constexpr const char* const NAME_LOADING_PROGRESS = "loadingProgress";
 static constexpr const char* const NAME_DOWNLOAD_PROGRESS = "downloadProgress";
 static constexpr const char* const NAME_SHOW_FULL_CONNECTION_BOX = "showFullConnectionBox";
+static constexpr const char* const EVENT_DISCONNECT = "disconnect";
 
 const char* const NewServerConnectionScreen::NAME = "new_server_connection_screen";
 
@@ -167,12 +168,18 @@ bool NewServerConnectionScreen::OnSetUpDataModelBindings(Rml::DataModelConstruct
 		return false;
 	}
 
-	if ( !constructor.Bind(NAME_SHOW_FULL_CONNECTION_BOX, &m_ShowFullConnectionBox) )
+	if ( !constructor.Bind(NAME_SHOW_FULL_CONNECTION_BOX, &m_ShowFullConnectionBox) ||
+		 !constructor.BindEventCallback(EVENT_DISCONNECT, &NewServerConnectionScreen::HandleDisconnectRequested, this) )
 	{
 		return false;
 	}
 
 	return true;
+}
+
+void NewServerConnectionScreen::HandleDisconnectRequested(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&)
+{
+	gEngfuncs.pfnClientCmd(false, "disconnect");
 }
 
 void NewServerConnectionScreen::ClearContentArea()
