@@ -10,6 +10,9 @@ namespace WeaponAtts
 
 namespace InaccuracyModifiers
 {
+	bool Init();
+	void Deinit();
+
 	Vector2D GetInterpolatedSpread(const WeaponAtts::AccuracyParameters& params, float inaccuracy);
 
 	bool IsInaccuracyDebuggingEnabled();

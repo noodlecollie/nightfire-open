@@ -35,6 +35,7 @@
 #include "resources/SoundResources.h"
 #include "gameresources/GameResources.h"
 #include "gameplay/crosshairCvars.h"
+#include "gameplay/inaccuracymodifiers.h"
 #include "customGeometry/geometryStatics.h"
 #include "customGeometry/logger_client.h"
 #include "events/eventCommands.h"
@@ -450,6 +451,9 @@ void CHud::VidInit(void)
 	}
 
 	m_iFontHeight = m_rgrcRects[m_HUD_number_0].bottom - m_rgrcRects[m_HUD_number_0].top;
+
+	InaccuracyModifiers::Deinit();
+	InaccuracyModifiers::Init();
 
 	m_Ammo.VidInit();
 	m_Health.VidInit();

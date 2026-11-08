@@ -1,6 +1,7 @@
 #include "gameplaySystemsBase.h"
 #include "spawnpointmanager.h"
 #include "hitbox_debugging/hitbox_debugData.h"
+#include "gameplay/inaccuracymodifiers.h"
 
 CGameplaySystemsBase::CGameplaySystemsBase() :
 	m_SpawnPointManager(new CSpawnPointManager()),
@@ -12,6 +13,7 @@ CGameplaySystemsBase::CGameplaySystemsBase() :
 
 void CGameplaySystemsBase::OnServerActivated()
 {
+	InaccuracyModifiers::Init();
 	m_SpawnPointManager->Initialise();
 	m_ObserverPointList->Initialise();
 }
@@ -19,6 +21,7 @@ void CGameplaySystemsBase::OnServerActivated()
 void CGameplaySystemsBase::OnServerDeactivated()
 {
 	m_EventSystem->UnregisterAllCallbacks();
+	InaccuracyModifiers::Deinit();
 }
 
 CSpawnPointManager& CGameplaySystemsBase::SpawnPointManager()
