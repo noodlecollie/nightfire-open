@@ -34,6 +34,7 @@ protected:
 	bool OnSetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
+	void HandleDisconnectRequested(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 	void ClearContentArea();
 	void AppendContentLine(const Rml::String& text);
 

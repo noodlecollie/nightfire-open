@@ -164,7 +164,7 @@ void DBG_AssertFunction(
 			PlatformLib_SNPrintF(szOut, sizeof(szOut), "ASSERT FAILED:\n %s \n(%s@%d)", szExpr, szFile, szLine);
 		}
 
-		gEngfuncs.Con_Printf("%s", szOut);
+		gEngfuncs.Con_Printf("%s\n", szOut);
 		assert(false);
 	}
 	else

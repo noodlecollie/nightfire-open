@@ -1171,7 +1171,7 @@ static const char* osk_keylayout[][4] = {
 		"\x11"
 		"ZXCVBNM<>? "
 		"\x13",
-	}
+	},
 };
 
 struct osk_s
