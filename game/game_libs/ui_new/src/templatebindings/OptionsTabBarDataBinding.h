@@ -1,25 +1,31 @@
 #pragma once
 
 #include <RmlUi/Core/DataModelHandle.h>
+#include <RmlUi/Core/Elements/ElementTabSet.h>
 #include "framework/BaseMenuObserver.h"
-#include "framework/DataVar.h"
+#include "framework/MenuEventListenerObject.h"
 
 class OptionsTabBarDataBinding : private BaseMenuObserver
 {
 public:
-	using ActiveTabChangeFunc = std::function<void(const Rml::String&)>;
+	using GoToNewTabFunc = std::function<void(const Rml::String&)>;
 
-	OptionsTabBarDataBinding(BaseMenu* parentMenu, const char* defaultValue = "");
+	OptionsTabBarDataBinding(BaseMenu* parentMenu);
 
-	const Rml::String& ActiveTab() const;
-	void SetActiveTab(const Rml::String& value);
-	void SetActiveTabChangeCallback(ActiveTabChangeFunc cb);
+	void SetGoToNewTabCallback(GoToNewTabFunc cb);
 
 protected:
+	void DocumentLoaded(Rml::ElementDocument* document) override;
+	void DocumentUnloaded(Rml::ElementDocument* document) override;
 	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
-	DataVar<Rml::String> m_ActiveTab;
-	Rml::DataModelHandle m_DataModelHandle;
-	ActiveTabChangeFunc m_ChangeCallback;
+	void HandleDocumentShow(Rml::Event& event);
+	void HandleGoToTab(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args);
+	void RequestChangeMenu(const Rml::String& newMenu);
+	void SetActiveTab();
+
+	GoToNewTabFunc m_GoToNewTabCallback;
+	Rml::ElementTabSet* m_TabSetElement = nullptr;
+	MenuEventListenerObject m_ShowListener;
 };

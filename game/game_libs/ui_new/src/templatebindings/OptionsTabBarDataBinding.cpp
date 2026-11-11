@@ -1,67 +1,102 @@
 #include "templatebindings/OptionsTabBarDataBinding.h"
+#include <RmlUi/Core/ElementDocument.h>
+#include "framework/BaseMenu.h"
+#include "UIDebug.h"
 
-OptionsTabBarDataBinding::OptionsTabBarDataBinding(BaseMenu* parentMenu, const char* defaultValue) :
+static constexpr const char* const EVENT_GO_TO_TAB = "goToTab";
+
+OptionsTabBarDataBinding::OptionsTabBarDataBinding(BaseMenu* parentMenu) :
 	BaseMenuObserver(parentMenu),
-	m_ActiveTab {"activeTab", defaultValue}
+	m_ShowListener(parentMenu, this, &OptionsTabBarDataBinding::HandleDocumentShow, {Rml::EventId::Hide})
 {
+}
+
+void OptionsTabBarDataBinding::DocumentLoaded(Rml::ElementDocument* document)
+{
+	m_TabSetElement = rmlui_dynamic_cast<Rml::ElementTabSet*>(document->GetElementById("options_tab_set"));
+	ASSERT(m_TabSetElement);
+
+	if ( !m_TabSetElement )
+	{
+		return;
+	}
+
+	SetActiveTab();
+}
+
+void OptionsTabBarDataBinding::DocumentUnloaded(Rml::ElementDocument*)
+{
+	m_TabSetElement = nullptr;
 }
 
 bool OptionsTabBarDataBinding::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	const bool boundActiveTab = constructor.BindFunc(
-		m_ActiveTab.name,
-		[this](Rml::Variant& out)
-		{
-			out = Rml::Variant(m_ActiveTab.value);
-		},
-		[this](const Rml::Variant& val)
-		{
-			Rml::String newStr = val.Get<Rml::String>();
-
-			// We don't actually change the value,
-			// since we only want to react to the set
-			// by changing the menu. We just broadcast
-			// the value we received on the callback.
-			if ( newStr != m_ActiveTab.value && m_ChangeCallback )
-			{
-				m_ChangeCallback(newStr);
-			}
-		}
-	);
-
-	if ( !boundActiveTab )
+	if ( !BaseMenuObserver::SetUpDataModelBindings(constructor) )
 	{
 		return false;
 	}
 
-	m_DataModelHandle = constructor.GetModelHandle();
+	if ( !constructor.BindEventCallback(EVENT_GO_TO_TAB, &OptionsTabBarDataBinding::HandleGoToTab, this) )
+	{
+		return false;
+	}
+
 	return true;
 }
 
-const Rml::String& OptionsTabBarDataBinding::ActiveTab() const
+void OptionsTabBarDataBinding::SetGoToNewTabCallback(GoToNewTabFunc cb)
 {
-	return m_ActiveTab.value;
+	m_GoToNewTabCallback = std::move(cb);
 }
 
-void OptionsTabBarDataBinding::SetActiveTabChangeCallback(ActiveTabChangeFunc cb)
+void OptionsTabBarDataBinding::HandleDocumentShow(Rml::Event&)
 {
-	m_ChangeCallback = std::move(cb);
+	SetActiveTab();
 }
 
-void OptionsTabBarDataBinding::SetActiveTab(const Rml::String& value)
+void OptionsTabBarDataBinding::HandleGoToTab(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList& args)
 {
-	if ( m_ActiveTab.value != value )
+	if ( args.empty() )
 	{
-		m_ActiveTab.value = value;
+		return;
+	}
 
-		if ( m_DataModelHandle )
-		{
-			m_DataModelHandle.DirtyVariable(m_ActiveTab.name);
-		}
+	RequestChangeMenu(args[0].Get<Rml::String>());
+}
 
-		if ( m_ChangeCallback )
+void OptionsTabBarDataBinding::RequestChangeMenu(const Rml::String& newMenu)
+{
+	// We don't actually change the active tab,
+	// because each menu has its own tab bar and the active
+	// tab must always be the one relevant to that menu.
+	if ( !newMenu.empty() && newMenu != ParentMenu()->Name() && m_GoToNewTabCallback )
+	{
+		m_GoToNewTabCallback(newMenu);
+	}
+}
+
+void OptionsTabBarDataBinding::SetActiveTab()
+{
+	// Work out which tab we should set as active, based on the name of this menu.
+	const Rml::String menuName = ParentMenu()->Name();
+	Rml::ElementList tabs;
+	m_TabSetElement->QuerySelectorAll(tabs, "tabs>tab");
+
+	for ( size_t index = 0; index < tabs.size(); ++index )
+	{
+		Rml::Element* tab = tabs[index];
+		Rml::Variant* value = tab->GetAttribute("value");
+
+		if ( value && value->Get<Rml::String>() == menuName )
 		{
-			m_ChangeCallback(m_ActiveTab.value);
+			Rml::Log::Message(
+				Rml::Log::Type::LT_DEBUG,
+				"OptionsTabBarDataBinding: Setting active tab index %zu for menu %s",
+				index,
+				menuName.c_str()
+			);
+
+			m_TabSetElement->SetActiveTab(static_cast<int>(index));
 		}
 	}
 }
