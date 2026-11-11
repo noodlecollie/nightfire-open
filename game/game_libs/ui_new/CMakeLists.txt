@@ -62,6 +62,8 @@ set(SOURCES_UI
 	src/menus/temp_new/NewAvOptionsMenu.cpp
 	src/menus/temp_new/NewBaseOptionsMenu.h
 	src/menus/temp_new/NewBaseOptionsMenu.cpp
+	src/menus/temp_new/NewCreateMultiplayerGameMenu.h
+	src/menus/temp_new/NewCreateMultiplayerGameMenu.cpp
 	src/menus/temp_new/NewCreditsMenu.h
 	src/menus/temp_new/NewCreditsMenu.cpp
 	src/menus/temp_new/NewGameplayOptionsMenu.h
