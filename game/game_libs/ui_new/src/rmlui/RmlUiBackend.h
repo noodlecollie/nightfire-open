@@ -5,6 +5,7 @@
 #include "rmlui/FileInterfaceImpl.h"
 #include "rmlui/TextInputHandlerImpl.h"
 #include "rmlui/EventListenerInstancerImpl.h"
+#include "rmlui/CustomElementInstancers.h"
 #include "framework/BaseMenuDirectory.h"
 #include "framework/MenuStack.h"
 #include "EnginePublicAPI/netadr.h"
@@ -113,6 +114,7 @@ private:
 	FileInterfaceImpl m_FileInterface;
 	TextInputHandlerImpl m_TextInputHandler;
 	EventListenerInstancerImpl m_EventListenerInstancer;
+	std::unique_ptr<CustomElementInstancers> m_CustomElementInstancers;
 
 	bool m_Initialised = false;
 	Rml::Context* m_RmlContext = nullptr;

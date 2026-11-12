@@ -18,6 +18,8 @@ set(SOURCES_UI
 	src/components/MapChooserComponent.cpp
 	src/components/TooltipComponent.h
 	src/components/TooltipComponent.cpp
+	src/elements/StudioMDLSceneElement.h
+	src/elements/StudioMDLSceneElement.cpp
 	src/eventhandlers/HyperlinkEventHandler.h
 	src/eventhandlers/HyperlinkEventHandler.cpp
 	src/framework/BaseComponent.h
@@ -107,6 +109,8 @@ set(SOURCES_UI
 	src/models/ServerModel.cpp
 	src/models/VideoModesModel.h
 	src/models/VideoModesModel.cpp
+	src/rmlui/CustomElementInstancers.h
+	src/rmlui/CustomElementInstancers.cpp
 	src/rmlui/EventListenerImpl.h
 	src/rmlui/EventListenerImpl.cpp
 	src/rmlui/EventListenerInstancerImpl.h
