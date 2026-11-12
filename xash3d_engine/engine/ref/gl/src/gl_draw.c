@@ -250,7 +250,9 @@ void R_Set2DMode(qboolean enable)
 	if ( enable )
 	{
 		if ( glState.in2DMode )
+		{
 			return;
+		}
 
 		// set 2D virtual screen size
 		pglViewport(0, 0, gpGlobals->width, gpGlobals->height);
@@ -270,6 +272,10 @@ void R_Set2DMode(qboolean enable)
 		glState.in2DMode = true;
 		RI.currententity = NULL;
 		RI.currentmodel = NULL;
+
+		// Leave us in projection mode, because this is likely
+		// to be used if we're in 2D mode.
+		pglMatrixMode(GL_PROJECTION);
 	}
 	else
 	{
