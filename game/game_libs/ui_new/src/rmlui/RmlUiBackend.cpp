@@ -49,6 +49,7 @@ void RmlUiBackend::Initialise()
 	RegisterFonts();
 	RegisterCvars();
 	RegisterCommands();
+	m_CustomElementInstancers.reset(new CustomElementInstancers());
 
 	// TODO: Do we actually want to do this later, where we can display a placeholder page first
 	// instead of a black screen?
@@ -101,6 +102,7 @@ void RmlUiBackend::ShutDown()
 	ReleaseResources();
 	Rml::Shutdown();
 
+	m_CustomElementInstancers.reset();
 	m_RmlContext = nullptr;
 	m_Initialised = false;
 	m_Modifiers = 0;
