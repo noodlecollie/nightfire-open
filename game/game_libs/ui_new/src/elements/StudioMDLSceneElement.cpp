@@ -18,12 +18,12 @@ void StudioMDLSceneElement::OnUpdate()
 void StudioMDLSceneElement::OnResize()
 {
 	const Rml::Vector2f offset = GetAbsoluteOffset();
-	m_RefDef.viewport[0] = offset.x;
-	m_RefDef.viewport[1] = offset.y;
+	m_RefDef.viewport[0] = static_cast<int>(offset.x);
+	m_RefDef.viewport[1] = static_cast<int>(offset.y);
 
 	const Rml::Vector2f area = GetBox().GetSize(Rml::BoxArea::Content);
-	m_RefDef.viewport[2] = area.x;
-	m_RefDef.viewport[3] = area.y;
+	m_RefDef.viewport[2] = static_cast<int>(area.x);
+	m_RefDef.viewport[3] = static_cast<int>(area.y);
 
 	CalcFov();
 }

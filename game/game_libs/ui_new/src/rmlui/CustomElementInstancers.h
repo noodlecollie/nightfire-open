@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RmlUi/Core/ElementInstancer.h>
+#include <memory>
 
 class StudioMDLSceneElement;
 
@@ -14,5 +15,5 @@ public:
 	CustomElementInstancers& operator=(const CustomElementInstancers& other) = delete;
 
 private:
-	Rml::ElementInstancerGeneric<StudioMDLSceneElement> m_StudioMDLSceneElementInstancer;
+	std::unique_ptr<Rml::ElementInstancerGeneric<StudioMDLSceneElement>> m_StudioMDLSceneElementInstancer;
 };

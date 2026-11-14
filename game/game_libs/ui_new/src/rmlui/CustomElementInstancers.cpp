@@ -2,9 +2,10 @@
 #include <RmlUi/Core/Factory.h>
 #include "elements/StudioMDLSceneElement.h"
 
-CustomElementInstancers::CustomElementInstancers()
+CustomElementInstancers::CustomElementInstancers() :
+	m_StudioMDLSceneElementInstancer(new Rml::ElementInstancerGeneric<StudioMDLSceneElement>())
 {
-	Rml::Factory::RegisterElementInstancer(StudioMDLSceneElement::ELEMENT_NAME, &m_StudioMDLSceneElementInstancer);
+	Rml::Factory::RegisterElementInstancer(StudioMDLSceneElement::ELEMENT_NAME, m_StudioMDLSceneElementInstancer.get());
 }
 
 CustomElementInstancers::~CustomElementInstancers()
