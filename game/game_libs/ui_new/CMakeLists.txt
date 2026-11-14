@@ -107,8 +107,6 @@ set(SOURCES_UI
 	src/models/KeyBindingModel.cpp
 	src/models/ServerModel.h
 	src/models/ServerModel.cpp
-	src/models/StudioMDLSceneModel.h
-	src/models/StudioMDLSceneModel.cpp
 	src/models/VideoModesModel.h
 	src/models/VideoModesModel.cpp
 	src/rmlui/CustomElementInstancers.h
