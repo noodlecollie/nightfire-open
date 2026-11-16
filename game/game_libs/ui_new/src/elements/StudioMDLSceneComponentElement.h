@@ -17,6 +17,7 @@ public:
 	static const char ATTR_Z[];
 	static const char ATTR_DISTANCE[];
 	static const char ATTR_PATH[];
+	static const char ATTR_FOV[];
 
 	enum class Type
 	{

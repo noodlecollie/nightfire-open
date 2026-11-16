@@ -287,6 +287,7 @@ void StudioMDLSceneElement::HandleSceneCameraTransformChanged(const Rml::Diction
 	camera.orientation.y = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_YAW, 0.0f);
 	camera.orientation.z = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_ROLL, 0.0f);
 	camera.distance = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_DISTANCE, 0.0f);
+	camera.horizontalFOV = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_FOV, 90.0f);
 }
 
 ref_viewpass_t StudioMDLSceneElement::GetCameraParams(const SceneCamera& camera)

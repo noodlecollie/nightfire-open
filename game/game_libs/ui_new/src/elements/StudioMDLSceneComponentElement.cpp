@@ -12,6 +12,7 @@ const char StudioMDLSceneComponentElement::ATTR_Y[] = "y";
 const char StudioMDLSceneComponentElement::ATTR_Z[] = "z";
 const char StudioMDLSceneComponentElement::ATTR_DISTANCE[] = "distance";
 const char StudioMDLSceneComponentElement::ATTR_PATH[] = "path";
+const char StudioMDLSceneComponentElement::ATTR_FOV[] = "fov";
 
 StudioMDLSceneComponentElement::StudioMDLSceneComponentElement(const Rml::String& tag) :
 	Rml::Element(tag)
@@ -63,6 +64,7 @@ void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::
 		case Type::Camera:
 		{
 			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_DISTANCE, applied);
+			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_FOV, applied);
 			break;
 		}
 
@@ -95,6 +97,7 @@ void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::
 		case Type::Camera:
 		{
 			CopyAttributeIfDoesNotExist(atts, ATTR_DISTANCE);
+			CopyAttributeIfDoesNotExist(atts, ATTR_FOV);
 			break;
 		}
 
@@ -176,6 +179,7 @@ void StudioMDLSceneComponentElement::SetDefaultAttributes()
 		case Type::Camera:
 		{
 			atts[ATTR_DISTANCE] = Rml::Variant(0.0f);
+			atts[ATTR_FOV] = Rml::Variant(90.0f);
 			break;
 		}
 
