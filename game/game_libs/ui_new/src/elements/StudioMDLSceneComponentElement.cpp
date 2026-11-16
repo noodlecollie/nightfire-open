@@ -46,16 +46,30 @@ void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::
 	Rml::Dictionary atts;
 	bool applied = false;
 
-	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_X, applied);
-	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Y, applied);
-	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Z, applied);
 	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_PITCH, applied);
 	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_YAW, applied);
 	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_ROLL, applied);
 
-	if ( m_Type == Type::Camera )
+	switch ( m_Type )
 	{
-		AddToDictionaryIfChanged(atts, changedAttributes, ATTR_DISTANCE, applied);
+		case Type::Model:
+		{
+			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_X, applied);
+			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Y, applied);
+			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Z, applied);
+			break;
+		}
+
+		case Type::Camera:
+		{
+			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_DISTANCE, applied);
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
 	}
 
 	if ( !applied )
@@ -64,16 +78,30 @@ void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::
 		return;
 	}
 
-	CopyAttributeIfDoesNotExist(atts, ATTR_X);
-	CopyAttributeIfDoesNotExist(atts, ATTR_Y);
-	CopyAttributeIfDoesNotExist(atts, ATTR_Z);
 	CopyAttributeIfDoesNotExist(atts, ATTR_PITCH);
 	CopyAttributeIfDoesNotExist(atts, ATTR_YAW);
 	CopyAttributeIfDoesNotExist(atts, ATTR_ROLL);
 
-	if ( m_Type == Type::Camera )
+	switch ( m_Type )
 	{
-		CopyAttributeIfDoesNotExist(atts, ATTR_DISTANCE);
+		case Type::Model:
+		{
+			CopyAttributeIfDoesNotExist(atts, ATTR_X);
+			CopyAttributeIfDoesNotExist(atts, ATTR_Y);
+			CopyAttributeIfDoesNotExist(atts, ATTR_Z);
+			break;
+		}
+
+		case Type::Camera:
+		{
+			CopyAttributeIfDoesNotExist(atts, ATTR_DISTANCE);
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
 	}
 
 	DispatchEvent(EVENT_TRANSFORM_CHANGED, atts);
