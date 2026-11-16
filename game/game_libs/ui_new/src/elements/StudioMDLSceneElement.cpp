@@ -337,6 +337,11 @@ void StudioMDLSceneElement::DrawScene()
 	}
 
 	gEngfuncs.pfnRenderScene(&camera);
+
+	// Important! The engine render routines have probably
+	// messed with the OpenGL client state, so we should reset
+	// it to what we expect.
+	gUiGlFuncs.renderer.resetClientState();
 }
 
 void StudioMDLSceneElement::CalcYFov(ref_viewpass_t& def)

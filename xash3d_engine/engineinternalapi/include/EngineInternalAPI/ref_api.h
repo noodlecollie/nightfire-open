@@ -728,6 +728,7 @@ typedef struct ref_uigl_functions_s
 {
 	void (*beginFrame)(const struct ref_viewpass_s* rvp);
 	void (*endFrame)(void);
+	void (*resetClientState)(void);
 	void (*clear)(uint32_t colour, int stencil);
 	void (*pushProjectionMatrixTranslation)(float x, float y, float z);
 	void (*popProjectionMatrix)(void);

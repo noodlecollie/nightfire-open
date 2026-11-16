@@ -2406,6 +2406,7 @@ static void R_StudioDrawArrays(uint startverts, uint startelems)
 
 #if !defined XASH_NANOGL || defined XASH_WES  // WebGL need to know array sizes
 	if ( pglDrawRangeElements )
+	{
 		pglDrawRangeElements(
 			GL_TRIANGLES,
 			startverts,
@@ -2414,18 +2415,25 @@ static void R_StudioDrawArrays(uint startverts, uint startelems)
 			GL_UNSIGNED_SHORT,
 			&g_studio.arrayelems[startelems]
 		);
+	}
 	else
 #endif
+	{
 		pglDrawElements(
 			GL_TRIANGLES,
 			g_studio.numelems - startelems,
 			GL_UNSIGNED_SHORT,
 			&g_studio.arrayelems[startelems]
 		);
+	}
+
 	pglDisableClientState(GL_VERTEX_ARRAY);
 	pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	if ( !(g_nForceFaceFlags & STUDIO_NF_CHROME) )
+	{
 		pglDisableClientState(GL_COLOR_ARRAY);
+	}
 }
 
 /*
@@ -2449,7 +2457,9 @@ static void R_StudioDrawPoints(void)
 	float lv_tmp;
 
 	if ( !m_pStudioHeader )
+	{
 		return;
+	}
 
 	g_studio.numverts = g_studio.numelems = 0;
 
@@ -2465,7 +2475,9 @@ static void R_StudioDrawPoints(void)
 
 	pskinref = (short*)((byte*)m_pStudioHeader + m_pStudioHeader->skinindex);
 	if ( m_skinnum != 0 )
+	{
 		pskinref += (m_skinnum * m_pStudioHeader->numskinref);
+	}
 
 	if ( FBitSet(m_pStudioHeader->flags, STUDIO_HAS_BONEWEIGHTS) && m_pSubModel->blendvertinfoindex != 0 &&
 		 m_pSubModel->blendnorminfoindex != 0 )
@@ -2525,7 +2537,10 @@ static void R_StudioDrawPoints(void)
 			for ( i = 0; i < pmesh[j].numnorms; i++, k++, pstudionorms++, pnormbone++ )
 			{
 				if ( FBitSet(g_nFaceFlags, STUDIO_NF_CHROME) )
+				{
 					R_StudioSetupChrome(g_studio.chrome[k], *pnormbone, (float*)pstudionorms);
+				}
+
 				VectorSet(g_studio.lightvalues[k], tr.blend, tr.blend, tr.blend);
 			}
 		}
@@ -2534,12 +2549,19 @@ static void R_StudioDrawPoints(void)
 			for ( i = 0; i < pmesh[j].numnorms; i++, k++, pstudionorms++, pnormbone++ )
 			{
 				if ( FBitSet(m_pStudioHeader->flags, STUDIO_HAS_BONEWEIGHTS) )
+				{
 					R_StudioLighting(&lv_tmp, -1, g_nFaceFlags, g_studio.norms[k]);
+				}
 				else
+				{
 					R_StudioLighting(&lv_tmp, *pnormbone, g_nFaceFlags, (float*)pstudionorms);
+				}
 
 				if ( FBitSet(g_nFaceFlags, STUDIO_NF_CHROME) )
+				{
 					R_StudioSetupChrome(g_studio.chrome[k], *pnormbone, (float*)pstudionorms);
+				}
+
 				VectorScale(g_studio.lightcolor, lv_tmp, g_studio.lightvalues[k]);
 			}
 		}
@@ -3151,7 +3173,9 @@ R_StudioRestoreRenderer
 static void R_StudioRestoreRenderer(void)
 {
 	if ( g_studio.rendermode != kRenderNormal )
+	{
 		pglDisable(GL_BLEND);
+	}
 
 	pglTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	pglShadeModel(GL_FLAT);
@@ -3754,7 +3778,9 @@ static int R_StudioDrawModel(int flags)
 
 		if ( RI.currententity->curstate.renderamt <= 0 ||
 			 RI.currententity->curstate.renderamt > ENGINE_GET_PARM(PARM_MAX_CLIENTS) )
+		{
 			return 0;
+		}
 
 		// get copy of player
 		deadplayer = *R_StudioGetPlayerState(RI.currententity->curstate.renderamt - 1);
@@ -3783,19 +3809,27 @@ static int R_StudioDrawModel(int flags)
 	{
 		// see if the bounding box lets us trivially reject, also sets
 		if ( !R_StudioCheckBBox() )
+		{
 			return 0;
+		}
 
 		r_stats.c_studio_models_drawn++;
 		g_studio.framecount++;  // render data cache cookie
 
 		if ( m_pStudioHeader->numbodyparts == 0 )
+		{
 			return 1;
+		}
 	}
 
 	if ( RI.currententity->curstate.movetype == MOVETYPE_FOLLOW )
+	{
 		R_StudioMergeBones(RI.currententity, RI.currentmodel);
+	}
 	else
+	{
 		R_StudioSetupBones(RI.currententity);
+	}
 
 	R_StudioSaveBones();
 
@@ -3844,17 +3878,25 @@ void R_StudioDrawModelInternal(cl_entity_t* e, int flags)
 	if ( !RI.drawWorld )
 	{
 		if ( e->player )
+		{
 			R_StudioDrawPlayer(flags, &e->curstate);
+		}
 		else
+		{
 			R_StudioDrawModel(flags);
+		}
 	}
 	else
 	{
-		// select the properly method
+		// select the proper method
 		if ( e->player )
+		{
 			pStudioDraw->StudioDrawPlayer(flags, R_StudioGetPlayerState(e->index - 1));
+		}
 		else
+		{
 			pStudioDraw->StudioDrawModel(flags);
+		}
 	}
 }
 
@@ -3866,7 +3908,9 @@ R_DrawStudioModel
 void R_DrawStudioModel(cl_entity_t* e)
 {
 	if ( FBitSet(RI.params, RP_ENVVIEW) )
+	{
 		return;
+	}
 
 	R_StudioSetupTimings();
 

@@ -542,6 +542,7 @@ ref_interface_t gReffuncs = {
 static const ref_uigl_functions gRefUiGlFuncs = {
 	GL_UI_BeginFrame,  // beginFrame
 	GL_UI_EndFrame,  // endFrame
+	GL_UI_ResetClientState,  // resetClientState
 	GL_UI_Clear,  // clear
 	GL_UI_PushProjectionMatrixTranslation,  // pushProjectionMatrixTranslation
 	GL_UI_PopProjectionMatrix,  // popProjectionMatrix
