@@ -18,6 +18,8 @@ set(SOURCES_UI
 	src/components/MapChooserComponent.cpp
 	src/components/TooltipComponent.h
 	src/components/TooltipComponent.cpp
+	src/elements/StudioMDLSceneComponentElement.h
+	src/elements/StudioMDLSceneComponentElement.cpp
 	src/elements/StudioMDLSceneElement.h
 	src/elements/StudioMDLSceneElement.cpp
 	src/eventhandlers/HyperlinkEventHandler.h

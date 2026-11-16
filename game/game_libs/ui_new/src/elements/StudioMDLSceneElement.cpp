@@ -1,22 +1,12 @@
 #include "elements/StudioMDLSceneElement.h"
 #include "EnginePublicAPI/entity_types.h"
+#include "elements/StudioMDLSceneComponentElement.h"
 #include "udll_int.h"
 
-static constexpr const char* const TAG_MODEL = "model";
-static constexpr const char* const TAG_CAMERA = "camera";
-static constexpr const char* const ATTR_PATH = "path";
-static constexpr const char* const ATTR_PITCH = "pitch";
-static constexpr const char* const ATTR_YAW = "yaw";
-static constexpr const char* const ATTR_ROLL = "roll";
-static constexpr const char* const ATTR_X = "x";
-static constexpr const char* const ATTR_Y = "y";
-static constexpr const char* const ATTR_Z = "z";
-static constexpr const char* const ATTR_DISTANCE = "distance";
-
 StudioMDLSceneElement::StudioMDLSceneElement(const Rml::String& tag) :
-	Rml::Element(tag)
+	Rml::Element(tag),
+	m_ChildAttributesChangedListener(this, &StudioMDLSceneElement::HandleChildAttributesChanged)
 {
-	SetFov(40.0f);
 }
 
 void StudioMDLSceneElement::OnRender()
@@ -38,6 +28,115 @@ void StudioMDLSceneElement::OnResize()
 	m_RefDef.viewport[3] = static_cast<int>(size.y);
 
 	CalcYFov();
+}
+
+void StudioMDLSceneElement::OnChildAdd(Rml::Element* child)
+{
+	if ( !child || child == this || child->GetParentNode() != this )
+	{
+		Rml::Element::OnChildAdd(child);
+		return;
+	}
+
+	StudioMDLSceneComponentElement* component = rmlui_dynamic_cast<StudioMDLSceneComponentElement*>(child);
+
+	if ( !component )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_WARNING,
+			"StudioMDLSceneElement: Encountered unexpected child element \"%s\"",
+			child->GetTagName().c_str()
+		);
+
+		Rml::Element::OnChildAdd(child);
+		return;
+	}
+
+	const Rml::String tag = child->GetTagName();
+
+	if ( tag == StudioMDLSceneComponentElement::TAG_MODEL )
+	{
+		HandleAddModel(component);
+	}
+	else if ( tag == StudioMDLSceneComponentElement::TAG_CAMERA )
+	{
+		HandleAddCamera(component);
+	}
+	else
+	{
+		Rml::Element::OnChildAdd(child);
+	}
+}
+
+void StudioMDLSceneElement::OnChildRemove(Rml::Element* child)
+{
+	if ( !child )
+	{
+		return;
+	}
+
+	StudioMDLSceneComponentElement* component = rmlui_dynamic_cast<StudioMDLSceneComponentElement*>(child);
+
+	if ( !component )
+	{
+		Rml::Element::OnChildAdd(child);
+		return;
+	}
+
+	const Rml::String tag = child->GetTagName();
+
+	if ( tag == StudioMDLSceneComponentElement::TAG_MODEL )
+	{
+		HandleRemoveModel(component);
+	}
+	else if ( tag == StudioMDLSceneComponentElement::TAG_CAMERA )
+	{
+		HandleRemoveCamera(component);
+	}
+	else
+	{
+		Rml::Element::OnChildRemove(child);
+	}
+}
+
+void StudioMDLSceneElement::HandleAddModel(StudioMDLSceneComponentElement* child)
+{
+	child->AddEventListener(StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED, &m_ChildAttributesChangedListener);
+	child->AddEventListener(StudioMDLSceneComponentElement::EVENT_PATH_CHANGED, &m_ChildAttributesChangedListener);
+}
+
+void StudioMDLSceneElement::HandleRemoveModel(StudioMDLSceneComponentElement* child)
+{
+	child->RemoveEventListener(
+		StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED,
+		&m_ChildAttributesChangedListener
+	);
+
+	child->RemoveEventListener(StudioMDLSceneComponentElement::EVENT_PATH_CHANGED, &m_ChildAttributesChangedListener);
+}
+
+void StudioMDLSceneElement::HandleAddCamera(StudioMDLSceneComponentElement* child)
+{
+	child->AddEventListener(StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED, &m_ChildAttributesChangedListener);
+}
+
+void StudioMDLSceneElement::HandleRemoveCamera(StudioMDLSceneComponentElement* child)
+{
+	child->RemoveEventListener(
+		StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED,
+		&m_ChildAttributesChangedListener
+	);
+}
+
+void StudioMDLSceneElement::HandleChildAttributesChanged(Rml::Event& event)
+{
+	// TODO
+	Rml::Log::Message(
+		Rml::Log::Type::LT_WARNING,
+		"HandleChildAttributesChanged: event %s for element %s",
+		event.GetType().c_str(),
+		event.GetTargetElement()->GetTagName().c_str()
+	);
 }
 
 void StudioMDLSceneElement::DrawScene()
