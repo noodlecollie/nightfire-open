@@ -1,7 +1,6 @@
 #include "elements/StudioMDLSceneElement.h"
-#include "EnginePublicAPI/com_model.h"
 #include "EnginePublicAPI/entity_types.h"
-#include "PlatformLib/String.h"
+#include "MathLib/utils.h"
 #include "elements/StudioMDLSceneComponentElement.h"
 #include "udll_int.h"
 
@@ -309,6 +308,15 @@ ref_viewpass_t StudioMDLSceneElement::GetCameraParams(const SceneCamera& camera)
 
 	CalcYFov(params);
 
+	vec3_t fwd;
+	AngleVectors(params.viewangles, fwd, nullptr, nullptr);
+	VectorScale(fwd, -1.0f * camera.distance, fwd);
+
+	// TODO: Camera centre
+	// VectorAdd(m_CameraCentre, fwd, m_RefDef.vieworigin);
+
+	VectorCopy(fwd, params.vieworigin);
+
 	return params;
 }
 
@@ -322,6 +330,7 @@ void StudioMDLSceneElement::DrawScene()
 	// For now, just use the first camera.
 	ref_viewpass_t camera = GetCameraParams(m_SceneCameras.front());
 
+	gUiGlFuncs.renderer.setRendererMode(UI_GL_RENDERER_MODE_GAME);
 	gEngfuncs.pfnClearScene();
 	gEngfuncs.pfnUpdateScene();
 
@@ -337,11 +346,7 @@ void StudioMDLSceneElement::DrawScene()
 	}
 
 	gEngfuncs.pfnRenderScene(&camera);
-
-	// Important! The engine render routines have probably
-	// messed with the OpenGL client state, so we should reset
-	// it to what we expect.
-	gUiGlFuncs.renderer.resetClientState();
+	gUiGlFuncs.renderer.setRendererMode(UI_GL_RENDERER_MODE_UI);
 }
 
 void StudioMDLSceneElement::CalcYFov(ref_viewpass_t& def)

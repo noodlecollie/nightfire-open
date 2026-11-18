@@ -351,7 +351,9 @@ void R_ProcessEntData(qboolean allocate)
 	}
 
 	if ( gEngfuncs.drawFuncs->R_ProcessEntData )
+	{
 		gEngfuncs.drawFuncs->R_ProcessEntData(allocate);
+	}
 }
 
 qboolean R_SetDisplayTransform(ref_screen_rotation_t rotate, int offset_x, int offset_y, float scale_x, float scale_y)
@@ -542,7 +544,7 @@ ref_interface_t gReffuncs = {
 static const ref_uigl_functions gRefUiGlFuncs = {
 	GL_UI_BeginFrame,  // beginFrame
 	GL_UI_EndFrame,  // endFrame
-	GL_UI_ResetClientState,  // resetClientState
+	GL_UI_SetRendererMode,  // setRendererMode
 	GL_UI_Clear,  // clear
 	GL_UI_PushProjectionMatrixTranslation,  // pushProjectionMatrixTranslation
 	GL_UI_PopProjectionMatrix,  // popProjectionMatrix

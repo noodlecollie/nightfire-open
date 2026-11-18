@@ -301,11 +301,23 @@ typedef int (*UITEXTAPI)(ui_extendedfuncs_t* engfuncs);
 
 #define MENU_UIGLAPI_VERSION 1
 
+// Used to set certain groups of OpenGL settings,
+// so that rendering can be performed correctly
+// for the game or the UI. Without this, doing
+// things like drawing Studio models in the UI
+// causes OpenGL state to be left at inappropriate
+// values for the UI.
+typedef enum ui_gl_renderer_mode_e
+{
+	UI_GL_RENDERER_MODE_GAME = 0,
+	UI_GL_RENDERER_MODE_UI,
+} ui_gl_renderer_mode;
+
 typedef struct ui_gl_renderfunctions_s
 {
 	void (*beginFrame)(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
 	void (*endFrame)(void);
-	void (*resetClientState)(void);
+	void (*setRendererMode)(ui_gl_renderer_mode mode);
 	void (*clear)(uint32_t colour, int stencil);
 	void (*pushProjectionMatrixTranslation)(float x, float y, float z);
 	void (*popProjectionMatrix)(void);

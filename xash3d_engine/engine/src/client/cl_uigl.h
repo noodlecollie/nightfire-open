@@ -6,7 +6,7 @@
 
 void CL_UIGL_BeginFrame(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
 void CL_UIGL_EndFrame(void);
-void CL_UIGL_ResetClientState(void);
+void CL_UIGL_SetRendererMode(ui_gl_renderer_mode mode);
 void CL_UIGL_Clear(uint32_t colour, int stencil);
 void CL_UIGL_PushProjectionMatrixTranslation(float x, float y, float z);
 void CL_UIGL_PopProjectionMatrix(void);

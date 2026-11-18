@@ -1539,7 +1539,7 @@ static const ui_gl_functions gUiGlFuncs = {
 	{
 		CL_UIGL_BeginFrame,  // beginFrame
 		CL_UIGL_EndFrame,  // endFrame
-		CL_UIGL_ResetClientState,  // resetClientState
+		CL_UIGL_SetRendererMode,  // setRendererMode
 		CL_UIGL_Clear,  // clear
 		CL_UIGL_PushProjectionMatrixTranslation,  // pushProjectionMatrixTranslation
 		CL_UIGL_PopProjectionMatrix,  // popProjectionMatrix

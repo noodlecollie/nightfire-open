@@ -1063,13 +1063,19 @@ R_SetupRefParams must be called right before
 void R_RenderScene(void)
 {
 	if ( !WORLDMODEL && RI.drawWorld )
+	{
 		gEngfuncs.Host_Error("R_RenderView: NULL worldmodel\n");
+	}
 
 	// frametime is valid only for normal pass
 	if ( RP_NORMALPASS() )
+	{
 		tr.frametime = gpGlobals->time - gpGlobals->oldtime;
+	}
 	else
+	{
 		tr.frametime = 0.0;
+	}
 
 	// begin a new frame
 	tr.framecount++;
@@ -1150,7 +1156,9 @@ void R_BeginFrame(qboolean clearScene)
 				 gl_texture_lodbias->flags,
 			 FCVAR_CHANGED
 		 ) )
+	{
 		R_SetTextureParameters();
+	}
 
 	gEngfuncs.CL_ExtraUpdate();
 }

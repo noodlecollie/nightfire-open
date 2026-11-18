@@ -32,14 +32,14 @@ void CL_UIGL_EndFrame(void)
 	ref.dllUiFuncs.endFrame();
 }
 
-void CL_UIGL_ResetClientState(void)
+void CL_UIGL_SetRendererMode(ui_gl_renderer_mode mode)
 {
-	if ( !ref.dllUiFuncs.resetClientState )
+	if ( !ref.dllUiFuncs.setRendererMode )
 	{
 		return;
 	}
 
-	ref.dllUiFuncs.resetClientState();
+	ref.dllUiFuncs.setRendererMode(mode);
 }
 
 void CL_UIGL_Clear(uint32_t colour, int stencil)
