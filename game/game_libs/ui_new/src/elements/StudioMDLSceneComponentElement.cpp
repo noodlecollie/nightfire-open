@@ -51,16 +51,12 @@ void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::
 	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_YAW, applied);
 	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_ROLL, applied);
 
+	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_X, applied);
+	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Y, applied);
+	AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Z, applied);
+
 	switch ( m_Type )
 	{
-		case Type::Model:
-		{
-			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_X, applied);
-			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Y, applied);
-			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_Z, applied);
-			break;
-		}
-
 		case Type::Camera:
 		{
 			AddToDictionaryIfChanged(atts, changedAttributes, ATTR_DISTANCE, applied);
@@ -84,16 +80,12 @@ void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::
 	CopyAttributeIfDoesNotExist(atts, ATTR_YAW);
 	CopyAttributeIfDoesNotExist(atts, ATTR_ROLL);
 
+	CopyAttributeIfDoesNotExist(atts, ATTR_X);
+	CopyAttributeIfDoesNotExist(atts, ATTR_Y);
+	CopyAttributeIfDoesNotExist(atts, ATTR_Z);
+
 	switch ( m_Type )
 	{
-		case Type::Model:
-		{
-			CopyAttributeIfDoesNotExist(atts, ATTR_X);
-			CopyAttributeIfDoesNotExist(atts, ATTR_Y);
-			CopyAttributeIfDoesNotExist(atts, ATTR_Z);
-			break;
-		}
-
 		case Type::Camera:
 		{
 			CopyAttributeIfDoesNotExist(atts, ATTR_DISTANCE);
@@ -161,12 +153,13 @@ void StudioMDLSceneComponentElement::SetDefaultAttributes()
 {
 	Rml::ElementAttributes atts;
 
-	atts[ATTR_X] = Rml::Variant(0.0f);
-	atts[ATTR_Y] = Rml::Variant(0.0f);
-	atts[ATTR_Z] = Rml::Variant(0.0f);
 	atts[ATTR_PITCH] = Rml::Variant(0.0f);
 	atts[ATTR_YAW] = Rml::Variant(0.0f);
 	atts[ATTR_ROLL] = Rml::Variant(0.0f);
+
+	atts[ATTR_X] = Rml::Variant(0.0f);
+	atts[ATTR_Y] = Rml::Variant(0.0f);
+	atts[ATTR_Z] = Rml::Variant(0.0f);
 
 	switch ( m_Type )
 	{

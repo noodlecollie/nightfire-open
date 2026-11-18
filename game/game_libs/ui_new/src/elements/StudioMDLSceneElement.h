@@ -33,6 +33,7 @@ private:
 	struct SceneCamera
 	{
 		uintptr_t element = 0;
+		Rml::Vector3f position;
 		Rml::Vector3f orientation;
 		float distance = 0.0f;
 		float horizontalFOV = 40.0f;

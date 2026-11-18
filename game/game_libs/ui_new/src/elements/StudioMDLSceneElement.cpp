@@ -285,6 +285,11 @@ void StudioMDLSceneElement::HandleSceneCameraTransformChanged(const Rml::Diction
 	camera.orientation.x = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_PITCH, 0.0f);
 	camera.orientation.y = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_YAW, 0.0f);
 	camera.orientation.z = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_ROLL, 0.0f);
+
+	camera.position.x = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_X, 0.0f);
+	camera.position.y = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_Y, 0.0f);
+	camera.position.z = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_Z, 0.0f);
+
 	camera.distance = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_DISTANCE, 0.0f);
 	camera.horizontalFOV = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_FOV, 90.0f);
 }
@@ -305,17 +310,16 @@ ref_viewpass_t StudioMDLSceneElement::GetCameraParams(const SceneCamera& camera)
 	params.viewangles[0] = camera.orientation.x;
 	params.viewangles[1] = camera.orientation.y;
 	params.viewangles[2] = camera.orientation.z;
+	params.vieworigin[0] = camera.position.x;
+	params.vieworigin[1] = camera.position.y;
+	params.vieworigin[2] = camera.position.z;
 
 	CalcYFov(params);
 
 	vec3_t fwd;
 	AngleVectors(params.viewangles, fwd, nullptr, nullptr);
 	VectorScale(fwd, -1.0f * camera.distance, fwd);
-
-	// TODO: Camera centre
-	// VectorAdd(m_CameraCentre, fwd, m_RefDef.vieworigin);
-
-	VectorCopy(fwd, params.vieworigin);
+	VectorAdd(params.vieworigin, fwd, params.vieworigin);
 
 	return params;
 }
