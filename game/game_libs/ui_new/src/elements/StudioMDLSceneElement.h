@@ -5,7 +5,7 @@
 #include "EnginePublicAPI/cl_entity.h"
 #include "EnginePublicAPI/ref_params.h"
 
-class StudioMDLSceneComponentElement;
+class StudioMDLSceneItemElement;
 
 class StudioMDLSceneElement : public Rml::Element
 {
@@ -41,10 +41,10 @@ private:
 
 	static void CalcYFov(ref_viewpass_t& def);
 
-	void HandleAddModel(StudioMDLSceneComponentElement* child);
-	void HandleRemoveModel(StudioMDLSceneComponentElement* child);
-	void HandleAddCamera(StudioMDLSceneComponentElement* child);
-	void HandleRemoveCamera(StudioMDLSceneComponentElement* child);
+	void HandleAddModel(StudioMDLSceneItemElement* child);
+	void HandleRemoveModel(StudioMDLSceneItemElement* child);
+	void HandleAddCamera(StudioMDLSceneItemElement* child);
+	void HandleRemoveCamera(StudioMDLSceneItemElement* child);
 	void HandleChildEvent(Rml::Event& event);
 	void HandleSceneModelTransformChanged(const Rml::Dictionary& params, SceneModel& model);
 	void HandleSceneModelPathChanged(const Rml::Dictionary& params, SceneModel& model);

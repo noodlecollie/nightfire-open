@@ -1,7 +1,7 @@
 #include "elements/StudioMDLSceneElement.h"
 #include "EnginePublicAPI/entity_types.h"
 #include "MathLib/utils.h"
-#include "elements/StudioMDLSceneComponentElement.h"
+#include "elements/StudioMDLSceneItemElement.h"
 #include "udll_int.h"
 
 template<typename T>
@@ -109,7 +109,7 @@ void StudioMDLSceneElement::OnChildAdd(Rml::Element* child)
 		return;
 	}
 
-	StudioMDLSceneComponentElement* component = rmlui_dynamic_cast<StudioMDLSceneComponentElement*>(child);
+	StudioMDLSceneItemElement* component = rmlui_dynamic_cast<StudioMDLSceneItemElement*>(child);
 
 	if ( !component )
 	{
@@ -125,11 +125,11 @@ void StudioMDLSceneElement::OnChildAdd(Rml::Element* child)
 
 	const Rml::String tag = child->GetTagName();
 
-	if ( tag == StudioMDLSceneComponentElement::TAG_MODEL )
+	if ( tag == StudioMDLSceneItemElement::TAG_MODEL )
 	{
 		HandleAddModel(component);
 	}
-	else if ( tag == StudioMDLSceneComponentElement::TAG_CAMERA )
+	else if ( tag == StudioMDLSceneItemElement::TAG_CAMERA )
 	{
 		HandleAddCamera(component);
 	}
@@ -146,7 +146,7 @@ void StudioMDLSceneElement::OnChildRemove(Rml::Element* child)
 		return;
 	}
 
-	StudioMDLSceneComponentElement* component = rmlui_dynamic_cast<StudioMDLSceneComponentElement*>(child);
+	StudioMDLSceneItemElement* component = rmlui_dynamic_cast<StudioMDLSceneItemElement*>(child);
 
 	if ( !component )
 	{
@@ -156,11 +156,11 @@ void StudioMDLSceneElement::OnChildRemove(Rml::Element* child)
 
 	const Rml::String tag = child->GetTagName();
 
-	if ( tag == StudioMDLSceneComponentElement::TAG_MODEL )
+	if ( tag == StudioMDLSceneItemElement::TAG_MODEL )
 	{
 		HandleRemoveModel(component);
 	}
-	else if ( tag == StudioMDLSceneComponentElement::TAG_CAMERA )
+	else if ( tag == StudioMDLSceneItemElement::TAG_CAMERA )
 	{
 		HandleRemoveCamera(component);
 	}
@@ -170,44 +170,43 @@ void StudioMDLSceneElement::OnChildRemove(Rml::Element* child)
 	}
 }
 
-void StudioMDLSceneElement::HandleAddModel(StudioMDLSceneComponentElement* child)
+void StudioMDLSceneElement::HandleAddModel(StudioMDLSceneItemElement* child)
 {
 	SceneModel& model = CreateSceneItem(m_SceneModels, child);
 	HandleSceneModelTransformChanged(child->GetAttributes(), model);
 	HandleSceneModelPathChanged(child->GetAttributes(), model);
 
-	child->AddEventListener(StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
-	child->AddEventListener(StudioMDLSceneComponentElement::EVENT_PATH_CHANGED, &m_ChildEventListener);
+	child->AddEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
+	child->AddEventListener(StudioMDLSceneItemElement::EVENT_PATH_CHANGED, &m_ChildEventListener);
 }
 
-void StudioMDLSceneElement::HandleRemoveModel(StudioMDLSceneComponentElement* child)
+void StudioMDLSceneElement::HandleRemoveModel(StudioMDLSceneItemElement* child)
 {
-	child->RemoveEventListener(StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
+	child->RemoveEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
 
-	child->RemoveEventListener(StudioMDLSceneComponentElement::EVENT_PATH_CHANGED, &m_ChildEventListener);
+	child->RemoveEventListener(StudioMDLSceneItemElement::EVENT_PATH_CHANGED, &m_ChildEventListener);
 
 	RemoveSceneItem(m_SceneModels, child);
 }
 
-void StudioMDLSceneElement::HandleAddCamera(StudioMDLSceneComponentElement* child)
+void StudioMDLSceneElement::HandleAddCamera(StudioMDLSceneItemElement* child)
 {
 	SceneCamera& camera = CreateSceneItem(m_SceneCameras, child);
 	HandleSceneCameraTransformChanged(child->GetAttributes(), camera);
 
-	child->AddEventListener(StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
+	child->AddEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
 }
 
-void StudioMDLSceneElement::HandleRemoveCamera(StudioMDLSceneComponentElement* child)
+void StudioMDLSceneElement::HandleRemoveCamera(StudioMDLSceneItemElement* child)
 {
-	child->RemoveEventListener(StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
+	child->RemoveEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
 
 	RemoveSceneItem(m_SceneCameras, child);
 }
 
 void StudioMDLSceneElement::HandleChildEvent(Rml::Event& event)
 {
-	StudioMDLSceneComponentElement* element =
-		rmlui_dynamic_cast<StudioMDLSceneComponentElement*>(event.GetTargetElement());
+	StudioMDLSceneItemElement* element = rmlui_dynamic_cast<StudioMDLSceneItemElement*>(event.GetTargetElement());
 
 	if ( !element )
 	{
@@ -215,9 +214,9 @@ void StudioMDLSceneElement::HandleChildEvent(Rml::Event& event)
 		return;
 	}
 
-	if ( event.GetType() == StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED )
+	if ( event.GetType() == StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED )
 	{
-		if ( element->GetType() == StudioMDLSceneComponentElement::Type::Model )
+		if ( element->GetType() == StudioMDLSceneItemElement::Type::Model )
 		{
 			SceneModel* model = GetSceneElement(m_SceneModels, element);
 			ASSERT(model);
@@ -227,7 +226,7 @@ void StudioMDLSceneElement::HandleChildEvent(Rml::Event& event)
 				HandleSceneModelTransformChanged(event.GetParameters(), *model);
 			}
 		}
-		else if ( element->GetType() == StudioMDLSceneComponentElement::Type::Camera )
+		else if ( element->GetType() == StudioMDLSceneItemElement::Type::Camera )
 		{
 			SceneCamera* camera = GetSceneElement(m_SceneCameras, element);
 			ASSERT(camera);
@@ -238,7 +237,7 @@ void StudioMDLSceneElement::HandleChildEvent(Rml::Event& event)
 			}
 		}
 	}
-	else if ( event.GetType() == StudioMDLSceneComponentElement::EVENT_PATH_CHANGED )
+	else if ( event.GetType() == StudioMDLSceneItemElement::EVENT_PATH_CHANGED )
 	{
 		SceneModel* model = GetSceneElement(m_SceneModels, element);
 		ASSERT(model);
@@ -252,18 +251,18 @@ void StudioMDLSceneElement::HandleChildEvent(Rml::Event& event)
 
 void StudioMDLSceneElement::HandleSceneModelTransformChanged(const Rml::Dictionary& params, SceneModel& model)
 {
-	model.entity.origin[0] = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_X, 0.0f);
-	model.entity.origin[1] = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_Y, 0.0f);
-	model.entity.origin[2] = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_Z, 0.0f);
+	model.entity.origin[0] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_X, 0.0f);
+	model.entity.origin[1] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Y, 0.0f);
+	model.entity.origin[2] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Z, 0.0f);
 
-	model.entity.angles[0] = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_PITCH, 0.0f);
-	model.entity.angles[1] = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_YAW, 0.0f);
-	model.entity.angles[2] = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_ROLL, 0.0f);
+	model.entity.angles[0] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_PITCH, 0.0f);
+	model.entity.angles[1] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_YAW, 0.0f);
+	model.entity.angles[2] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_ROLL, 0.0f);
 }
 
 void StudioMDLSceneElement::HandleSceneModelPathChanged(const Rml::Dictionary& params, SceneModel& model)
 {
-	Rml::String modelPath = GetParameter<Rml::String>(params, StudioMDLSceneComponentElement::ATTR_PATH, Rml::String());
+	Rml::String modelPath = GetParameter<Rml::String>(params, StudioMDLSceneItemElement::ATTR_PATH, Rml::String());
 
 	if ( modelPath == model.modelPath )
 	{
@@ -282,16 +281,16 @@ void StudioMDLSceneElement::HandleSceneModelPathChanged(const Rml::Dictionary& p
 
 void StudioMDLSceneElement::HandleSceneCameraTransformChanged(const Rml::Dictionary& params, SceneCamera& camera)
 {
-	camera.orientation.x = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_PITCH, 0.0f);
-	camera.orientation.y = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_YAW, 0.0f);
-	camera.orientation.z = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_ROLL, 0.0f);
+	camera.orientation.x = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_PITCH, 0.0f);
+	camera.orientation.y = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_YAW, 0.0f);
+	camera.orientation.z = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_ROLL, 0.0f);
 
-	camera.position.x = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_X, 0.0f);
-	camera.position.y = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_Y, 0.0f);
-	camera.position.z = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_Z, 0.0f);
+	camera.position.x = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_X, 0.0f);
+	camera.position.y = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Y, 0.0f);
+	camera.position.z = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Z, 0.0f);
 
-	camera.distance = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_DISTANCE, 0.0f);
-	camera.horizontalFOV = GetParameter<float>(params, StudioMDLSceneComponentElement::ATTR_FOV, 90.0f);
+	camera.distance = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_DISTANCE, 0.0f);
+	camera.horizontalFOV = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_FOV, 90.0f);
 }
 
 ref_viewpass_t StudioMDLSceneElement::GetCameraParams(const SceneCamera& camera)

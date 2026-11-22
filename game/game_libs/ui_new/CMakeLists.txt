@@ -12,14 +12,16 @@ include(nf_utils)
 set(CMAKE_INSTALL_RPATH "\$ORIGIN")
 
 set(SOURCES_UI
-	src/components/ModalComponent.h
-	src/components/ModalComponent.cpp
 	src/components/MapChooserComponent.h
 	src/components/MapChooserComponent.cpp
+	src/components/ModalComponent.h
+	src/components/ModalComponent.cpp
+	src/components/StudioMDLSceneComponent.h
+	src/components/StudioMDLSceneComponent.cpp
 	src/components/TooltipComponent.h
 	src/components/TooltipComponent.cpp
-	src/elements/StudioMDLSceneComponentElement.h
-	src/elements/StudioMDLSceneComponentElement.cpp
+	src/elements/StudioMDLSceneItemElement.h
+	src/elements/StudioMDLSceneItemElement.cpp
 	src/elements/StudioMDLSceneElement.h
 	src/elements/StudioMDLSceneElement.cpp
 	src/eventhandlers/HyperlinkEventHandler.h

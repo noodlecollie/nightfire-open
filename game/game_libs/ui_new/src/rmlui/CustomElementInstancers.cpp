@@ -1,22 +1,22 @@
 #include "rmlui/CustomElementInstancers.h"
 #include <RmlUi/Core/Factory.h>
 #include "elements/StudioMDLSceneElement.h"
-#include "elements/StudioMDLSceneComponentElement.h"
+#include "elements/StudioMDLSceneItemElement.h"
 
 CustomElementInstancers::CustomElementInstancers() :
 	m_StudioMDLSceneElementInstancer(new Rml::ElementInstancerGeneric<StudioMDLSceneElement>()),
-	m_StudioMDLSceneComponentElementInstancer(new Rml::ElementInstancerGeneric<StudioMDLSceneComponentElement>())
+	m_StudioMDLSceneItemElementInstancer(new Rml::ElementInstancerGeneric<StudioMDLSceneItemElement>())
 {
 	Rml::Factory::RegisterElementInstancer(StudioMDLSceneElement::ELEMENT_NAME, m_StudioMDLSceneElementInstancer.get());
 
 	Rml::Factory::RegisterElementInstancer(
-		StudioMDLSceneComponentElement::TAG_CAMERA,
-		m_StudioMDLSceneComponentElementInstancer.get()
+		StudioMDLSceneItemElement::TAG_CAMERA,
+		m_StudioMDLSceneItemElementInstancer.get()
 	);
 
 	Rml::Factory::RegisterElementInstancer(
-		StudioMDLSceneComponentElement::TAG_MODEL,
-		m_StudioMDLSceneComponentElementInstancer.get()
+		StudioMDLSceneItemElement::TAG_MODEL,
+		m_StudioMDLSceneItemElementInstancer.get()
 	);
 }
 

@@ -8,6 +8,7 @@ static constexpr const char* const EVENT_SELECT_MAP = "selectMap";
 NewCreateMultiplayerGameMenu::NewCreateMultiplayerGameMenu() :
 	MenuPage("new_create_multiplayer_game_menu", "create_multiplayer_game_menu.rml"),
 	m_TooltipComponent(this, "tooltip_component", "tooltip_container", "tooltipText"),
+	m_SceneComponent(this, "bot_preview_component"),
 	m_PageModel(this),
 	m_InputFieldEventListener(
 		this,

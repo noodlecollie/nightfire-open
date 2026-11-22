@@ -10,6 +10,4 @@ public:
 protected:
 	bool ComponentLoadFromDocument(Rml::ElementDocument* document) override;
 	void ComponentUnload() override;
-
-private:
 };

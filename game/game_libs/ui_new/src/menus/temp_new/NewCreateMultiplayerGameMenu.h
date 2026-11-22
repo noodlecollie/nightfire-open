@@ -4,6 +4,7 @@
 #include "framework/MenuEventListenerObject.h"
 #include "models/CreateMultiplayerGamePageModel.h"
 #include "components/TooltipComponent.h"
+#include "components/StudioMDLSceneComponent.h"
 
 class NewCreateMultiplayerGameMenu : public MenuPage
 {
@@ -20,6 +21,7 @@ private:
 	void HandleCreateGame(Rml::DataModelHandle, Rml::Event&, const Rml::VariantList&);
 
 	TooltipComponent m_TooltipComponent;
+	StudioMDLSceneComponent m_SceneComponent;
 	CreateMultiplayerGamePageModel m_PageModel;
 	MenuEventListenerObject m_InputFieldEventListener;
 	MenuEventListenerObject m_ShowListener;

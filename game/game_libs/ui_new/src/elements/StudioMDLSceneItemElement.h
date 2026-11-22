@@ -2,7 +2,7 @@
 
 #include <RmlUi/Core/Element.h>
 
-class StudioMDLSceneComponentElement : public Rml::Element
+class StudioMDLSceneItemElement : public Rml::Element
 {
 public:
 	static const char TAG_MODEL[];
@@ -26,7 +26,7 @@ public:
 		Camera
 	};
 
-	explicit StudioMDLSceneComponentElement(const Rml::String& tag);
+	explicit StudioMDLSceneItemElement(const Rml::String& tag);
 
 	Type GetType() const;
 

@@ -67,17 +67,6 @@ void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 
 	GL_UI_SetRendererMode(UI_GL_RENDERER_MODE_UI);
 
-	pglEnable(GL_BLEND);
-	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	pglEnable(GL_STENCIL_TEST);
-	pglStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFF);
-	pglStencilMask(0xFFFFFFFF);
-	pglStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-	// Important: reset to projection matrix mode so that translations apply.
-	pglMatrixMode(GL_PROJECTION);
-
 	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
 
@@ -110,6 +99,17 @@ void GL_UI_SetRendererMode(ui_gl_renderer_mode mode)
 		// engine render calls may have changed this, and if they have, blended colours
 		// will look wong in the UI if we don't ensure the mode is reset.
 		pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		pglEnable(GL_BLEND);
+		pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		pglEnable(GL_STENCIL_TEST);
+		pglStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFF);
+		pglStencilMask(0xFFFFFFFF);
+		pglStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+		// Important: reset to projection matrix mode so that translations apply.
+		pglMatrixMode(GL_PROJECTION);
 
 		DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 	}

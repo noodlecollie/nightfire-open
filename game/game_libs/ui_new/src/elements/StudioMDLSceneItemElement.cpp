@@ -1,20 +1,20 @@
-#include "elements/StudioMDLSceneComponentElement.h"
+#include "elements/StudioMDLSceneItemElement.h"
 
-const char StudioMDLSceneComponentElement::TAG_MODEL[] = "model";
-const char StudioMDLSceneComponentElement::TAG_CAMERA[] = "camera";
-const char StudioMDLSceneComponentElement::EVENT_TRANSFORM_CHANGED[] = "transformChanged";
-const char StudioMDLSceneComponentElement::EVENT_PATH_CHANGED[] = "pathChanged";
-const char StudioMDLSceneComponentElement::ATTR_PITCH[] = "pitch";
-const char StudioMDLSceneComponentElement::ATTR_YAW[] = "yaw";
-const char StudioMDLSceneComponentElement::ATTR_ROLL[] = "roll";
-const char StudioMDLSceneComponentElement::ATTR_X[] = "x";
-const char StudioMDLSceneComponentElement::ATTR_Y[] = "y";
-const char StudioMDLSceneComponentElement::ATTR_Z[] = "z";
-const char StudioMDLSceneComponentElement::ATTR_DISTANCE[] = "distance";
-const char StudioMDLSceneComponentElement::ATTR_PATH[] = "path";
-const char StudioMDLSceneComponentElement::ATTR_FOV[] = "fov";
+const char StudioMDLSceneItemElement::TAG_MODEL[] = "model";
+const char StudioMDLSceneItemElement::TAG_CAMERA[] = "camera";
+const char StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED[] = "transformChanged";
+const char StudioMDLSceneItemElement::EVENT_PATH_CHANGED[] = "pathChanged";
+const char StudioMDLSceneItemElement::ATTR_PITCH[] = "pitch";
+const char StudioMDLSceneItemElement::ATTR_YAW[] = "yaw";
+const char StudioMDLSceneItemElement::ATTR_ROLL[] = "roll";
+const char StudioMDLSceneItemElement::ATTR_X[] = "x";
+const char StudioMDLSceneItemElement::ATTR_Y[] = "y";
+const char StudioMDLSceneItemElement::ATTR_Z[] = "z";
+const char StudioMDLSceneItemElement::ATTR_DISTANCE[] = "distance";
+const char StudioMDLSceneItemElement::ATTR_PATH[] = "path";
+const char StudioMDLSceneItemElement::ATTR_FOV[] = "fov";
 
-StudioMDLSceneComponentElement::StudioMDLSceneComponentElement(const Rml::String& tag) :
+StudioMDLSceneItemElement::StudioMDLSceneItemElement(const Rml::String& tag) :
 	Rml::Element(tag)
 {
 	if ( tag == TAG_MODEL )
@@ -29,12 +29,12 @@ StudioMDLSceneComponentElement::StudioMDLSceneComponentElement(const Rml::String
 	SetDefaultAttributes();
 }
 
-StudioMDLSceneComponentElement::Type StudioMDLSceneComponentElement::GetType() const
+StudioMDLSceneItemElement::Type StudioMDLSceneItemElement::GetType() const
 {
 	return m_Type;
 }
 
-void StudioMDLSceneComponentElement::OnAttributeChange(const Rml::ElementAttributes& changedAttributes)
+void StudioMDLSceneItemElement::OnAttributeChange(const Rml::ElementAttributes& changedAttributes)
 {
 	Rml::Element::OnAttributeChange(changedAttributes);
 
@@ -42,7 +42,7 @@ void StudioMDLSceneComponentElement::OnAttributeChange(const Rml::ElementAttribu
 	CheckPathAttributesChanged(changedAttributes);
 }
 
-void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::ElementAttributes& changedAttributes)
+void StudioMDLSceneItemElement::CheckTransformAttributesChanged(const Rml::ElementAttributes& changedAttributes)
 {
 	Rml::Dictionary atts;
 	bool applied = false;
@@ -102,7 +102,7 @@ void StudioMDLSceneComponentElement::CheckTransformAttributesChanged(const Rml::
 	DispatchEvent(EVENT_TRANSFORM_CHANGED, atts);
 }
 
-void StudioMDLSceneComponentElement::CheckPathAttributesChanged(const Rml::ElementAttributes& changedAttributes)
+void StudioMDLSceneItemElement::CheckPathAttributesChanged(const Rml::ElementAttributes& changedAttributes)
 {
 	if ( m_Type != Type::Model )
 	{
@@ -124,7 +124,7 @@ void StudioMDLSceneComponentElement::CheckPathAttributesChanged(const Rml::Eleme
 	DispatchEvent(EVENT_PATH_CHANGED, atts);
 }
 
-void StudioMDLSceneComponentElement::AddToDictionaryIfChanged(
+void StudioMDLSceneItemElement::AddToDictionaryIfChanged(
 	Rml::Dictionary& dict,
 	const Rml::ElementAttributes& changedAttributes,
 	const Rml::String& key,
@@ -140,7 +140,7 @@ void StudioMDLSceneComponentElement::AddToDictionaryIfChanged(
 	}
 }
 
-void StudioMDLSceneComponentElement::CopyAttributeIfDoesNotExist(Rml::Dictionary& dict, const Rml::String& name) const
+void StudioMDLSceneItemElement::CopyAttributeIfDoesNotExist(Rml::Dictionary& dict, const Rml::String& name) const
 {
 	if ( dict.find(name) == dict.end() )
 	{
@@ -149,7 +149,7 @@ void StudioMDLSceneComponentElement::CopyAttributeIfDoesNotExist(Rml::Dictionary
 	}
 }
 
-void StudioMDLSceneComponentElement::SetDefaultAttributes()
+void StudioMDLSceneItemElement::SetDefaultAttributes()
 {
 	Rml::ElementAttributes atts;
 
