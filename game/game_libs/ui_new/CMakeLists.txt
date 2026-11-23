@@ -22,6 +22,7 @@ set(SOURCES_UI
 	src/components/TooltipComponent.cpp
 	src/elements/StudioMDLSceneElement.h
 	src/elements/StudioMDLSceneElement.cpp
+	src/elements/StudioMDLSceneElementUtils.h
 	src/elements/StudioMDLSceneElementXMLHandler.h
 	src/elements/StudioMDLSceneElementXMLHandler.cpp
 	src/eventhandlers/HyperlinkEventHandler.h

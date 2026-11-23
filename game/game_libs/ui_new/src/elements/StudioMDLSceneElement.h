@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RmlUi/Core/Element.h>
+#include "elements/StudioMDLSceneElementUtils.h"
 
 class StudioMDLSceneItemElement;
 
@@ -34,11 +35,17 @@ public:
 	void AddRmlCamera(SceneCamera&& camera);
 	std::vector<SceneCamera> TakeRmlCameras();
 
+	CameraOrbitMode GetCameraOrbitMode() const;
+	float GetOrbitSensitivity() const;
+
 protected:
 	void OnRender() override;
+	void OnAttributeChange(const Rml::ElementAttributes& changedAttributes) override;
 
 private:
 	std::function<void(void)> m_RenderCallback;
 	std::vector<SceneModel> m_Models;
 	std::vector<SceneCamera> m_Cameras;
+	CameraOrbitMode m_OrbitMode = CameraOrbitMode::None;
+	float m_OrbitSensitivity = 1.0f;
 };

@@ -8,6 +8,9 @@
 
 static constexpr const char* const NAME_MODELS = "models";
 static constexpr const char* const NAME_CAMERAS = "cameras";
+static constexpr const char* const NAME_ACTIVE_CAMERA = "activeCamera";
+static constexpr const char* const NAME_ORBIT_MODE = "orbitMode";
+static constexpr const char* const NAME_ORBIT_SENSITIVITY = "orbitSensitivity";
 static constexpr const char* const SUBNAME_X = "x";
 static constexpr const char* const SUBNAME_Y = "y";
 static constexpr const char* const SUBNAME_Z = "z";
@@ -44,7 +47,8 @@ StudioMDLSceneComponent::SceneModel::SceneModel()
 }
 
 StudioMDLSceneComponent::StudioMDLSceneComponent(BaseMenu* parentMenu, Rml::String id) :
-	BaseComponent(parentMenu, std::move(id))
+	BaseComponent(parentMenu, std::move(id)),
+	m_ViewEventListener(this, &StudioMDLSceneComponent::HandleViewEvent)
 {
 }
 
@@ -67,6 +71,10 @@ bool StudioMDLSceneComponent::ComponentLoadFromDocument(Rml::ElementDocument*)
 	);
 
 	CreateDataEntries();
+
+	m_Scene->AddEventListener(Rml::EventId::Dragstart, &m_ViewEventListener);
+	m_Scene->AddEventListener(Rml::EventId::Drag, &m_ViewEventListener);
+	m_Scene->AddEventListener(Rml::EventId::Dragend, &m_ViewEventListener);
 
 	return true;
 }
@@ -123,12 +131,117 @@ bool StudioMDLSceneComponent::SetUpDataModelBindings(Rml::DataModelConstructor& 
 		return false;
 	}
 
-	if ( !constructor.Bind(NAME_MODELS, &m_Model.models) || !constructor.Bind(NAME_CAMERAS, &m_Model.cameras) )
+	if ( !constructor.Bind(NAME_MODELS, &m_Model.models) || !constructor.Bind(NAME_CAMERAS, &m_Model.cameras) ||
+		 !constructor.Bind(NAME_ACTIVE_CAMERA, &m_Model.activeCamera) ||
+		 !constructor.Bind(NAME_ORBIT_SENSITIVITY, &m_Model.orbitSensitivity) )
+	{
+		return false;
+	}
+
+	const bool orbitModeBound = constructor.BindFunc(
+		NAME_ORBIT_MODE,
+		[this](Rml::Variant& outVar)
+		{
+			outVar = CameraOrbitModeString(m_Model.orbitMode);
+		},
+		[this](const Rml::Variant& inVar)
+		{
+			if ( !ParseCameraOrbitModeString(inVar.Get<Rml::String>(), m_Model.orbitMode) )
+			{
+				Rml::Log::Message(
+					Rml::Log::Type::LT_WARNING,
+					"Cannot set unrecognised camera orbit mode \"%s\"",
+					inVar.Get<Rml::String>().c_str()
+				);
+			}
+		}
+	);
+
+	if ( !orbitModeBound )
 	{
 		return false;
 	}
 
 	return true;
+}
+
+void StudioMDLSceneComponent::HandleViewEvent(Rml::Event& event)
+{
+	switch ( event.GetId() )
+	{
+		case Rml::EventId::Dragstart:
+		{
+			int dragX = event.GetParameter<int>("mouse_x", 0);
+			int dragY = event.GetParameter<int>("mouse_y", 0);
+
+			m_LastDragLoc = Rml::Vector2i(dragX, dragY);
+			event.StopPropagation();
+			break;
+		}
+
+		case Rml::EventId::Drag:
+		{
+			int dragX = event.GetParameter<int>("mouse_x", 0);
+			int dragY = event.GetParameter<int>("mouse_y", 0);
+
+			Rml::Vector2i newLoc(dragX, dragY);
+			HandleOrbitMouseDrag(newLoc - m_LastDragLoc);
+			m_LastDragLoc = newLoc;
+
+			event.StopPropagation();
+			break;
+		}
+
+		case Rml::EventId::Dragend:
+		{
+			m_LastDragLoc = Rml::Vector2i();
+			event.StopPropagation();
+			break;
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+}
+
+void StudioMDLSceneComponent::HandleOrbitMouseDrag(const Rml::Vector2i& delta)
+{
+	if ( m_Model.orbitMode == CameraOrbitMode::None )
+	{
+		return;
+	}
+
+	SceneCamera* camera = GetActiveCamera();
+
+	if ( !camera )
+	{
+		return;
+	}
+
+	const Rml::Vector2f orbitDelta(
+		-1.0f * static_cast<float>(delta.x) * m_Model.orbitSensitivity,
+		static_cast<float>(delta.y) * m_Model.orbitSensitivity
+	);
+
+	camera->angles.yaw = fmodf(camera->angles.yaw + orbitDelta.x, 360.0f);
+
+	if ( m_Model.orbitMode == CameraOrbitMode::DragPitchYaw )
+	{
+		camera->angles.pitch += orbitDelta.y;
+
+		if ( camera->angles.pitch < -89.0f )
+		{
+			camera->angles.pitch = -89.0f;
+		}
+		else if ( camera->angles.pitch > 89.0f )
+		{
+			camera->angles.pitch = 89.0f;
+		}
+	}
+
+	DirtyVariable(NAME_CAMERAS);
 }
 
 void StudioMDLSceneComponent::CreateDataEntries()
@@ -182,6 +295,12 @@ void StudioMDLSceneComponent::CreateDataEntries()
 
 	DirtyVariable(NAME_MODELS);
 	DirtyVariable(NAME_CAMERAS);
+
+	m_Model.orbitSensitivity = m_Scene->GetOrbitSensitivity();
+	DirtyVariable(NAME_ORBIT_SENSITIVITY);
+
+	m_Model.orbitMode = m_Scene->GetCameraOrbitMode();
+	DirtyVariable(NAME_ORBIT_MODE);
 }
 void StudioMDLSceneComponent::Render()
 {
@@ -200,8 +319,7 @@ void StudioMDLSceneComponent::Render()
 	const Rml::Rectanglei viewport =
 		Rml::Rectanglei::FromPositionSize(topLeft, Rml::Vector2i(static_cast<int>(size.x), static_cast<int>(size.y)));
 
-	// TODO: Swap out array of cameras for just one
-	ref_viewpass_t camera = CreateCameraParams(viewport, m_Model.cameras.front());
+	ref_viewpass_t camera = CreateCameraParams(viewport, *GetActiveCamera());
 
 	gUiGlFuncs.renderer.setRendererMode(UI_GL_RENDERER_MODE_GAME);
 	gEngfuncs.pfnClearScene();
@@ -260,4 +378,21 @@ void StudioMDLSceneComponent::CalcYFov(ref_viewpass_t& def) const
 	float x = def.viewport[2] / tanf(DEG2RADF(def.fov_x) * 0.5f);
 	float half_fov_y = atanf(def.viewport[3] / x);
 	def.fov_y = RAD2DEGF(half_fov_y) * 2;
+}
+
+StudioMDLSceneComponent::SceneCamera* StudioMDLSceneComponent::GetActiveCamera()
+{
+	if ( m_Model.cameras.empty() )
+	{
+		return nullptr;
+	}
+
+	size_t cameraIndex = m_Model.activeCamera;
+
+	if ( cameraIndex >= m_Model.cameras.size() )
+	{
+		cameraIndex = m_Model.cameras.size() - 1;
+	}
+
+	return &m_Model.cameras[cameraIndex];
 }
