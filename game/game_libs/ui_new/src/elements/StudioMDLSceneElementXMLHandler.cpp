@@ -4,7 +4,6 @@
 #include <RmlUi/Core/Element.h>
 #include <RmlUi/Core/Factory.h>
 #include "elements/StudioMDLSceneElement.h"
-#include "elements/StudioMDLSceneItemElement.h"
 #include "UIDebug.h"
 
 constexpr const char* const TAG_MODEL = "model";

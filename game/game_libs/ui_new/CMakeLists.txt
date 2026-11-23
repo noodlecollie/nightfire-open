@@ -20,8 +20,6 @@ set(SOURCES_UI
 	src/components/StudioMDLSceneComponent.cpp
 	src/components/TooltipComponent.h
 	src/components/TooltipComponent.cpp
-	src/elements/StudioMDLSceneItemElement.h
-	src/elements/StudioMDLSceneItemElement.cpp
 	src/elements/StudioMDLSceneElement.h
 	src/elements/StudioMDLSceneElement.cpp
 	src/elements/StudioMDLSceneElementXMLHandler.h

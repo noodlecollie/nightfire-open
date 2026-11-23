@@ -4,7 +4,6 @@
 #include <memory>
 
 class StudioMDLSceneElement;
-class StudioMDLSceneItemElement;
 
 class CustomElementInstancers
 {
@@ -17,5 +16,4 @@ public:
 
 private:
 	std::unique_ptr<Rml::ElementInstancerGeneric<StudioMDLSceneElement>> m_StudioMDLSceneElementInstancer;
-	std::unique_ptr<Rml::ElementInstancerGeneric<StudioMDLSceneItemElement>> m_StudioMDLSceneItemElementInstancer;
 };

@@ -3,7 +3,6 @@
 #include "MathLib/utils.h"
 #include "framework/ElementFinder.h"
 #include "elements/StudioMDLSceneElement.h"
-#include "elements/StudioMDLSceneItemElement.h"
 #include "udll_int.h"
 #include "UIDebug.h"
 
