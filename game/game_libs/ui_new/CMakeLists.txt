@@ -24,6 +24,8 @@ set(SOURCES_UI
 	src/elements/StudioMDLSceneItemElement.cpp
 	src/elements/StudioMDLSceneElement.h
 	src/elements/StudioMDLSceneElement.cpp
+	src/elements/StudioMDLSceneElementXMLHandler.h
+	src/elements/StudioMDLSceneElementXMLHandler.cpp
 	src/eventhandlers/HyperlinkEventHandler.h
 	src/eventhandlers/HyperlinkEventHandler.cpp
 	src/framework/BaseComponent.h

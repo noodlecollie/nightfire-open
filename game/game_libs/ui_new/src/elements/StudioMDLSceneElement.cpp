@@ -1,365 +1,41 @@
 #include "elements/StudioMDLSceneElement.h"
-#include "EnginePublicAPI/entity_types.h"
-#include "MathLib/utils.h"
-#include "elements/StudioMDLSceneItemElement.h"
-#include "udll_int.h"
-
-template<typename T>
-static T GetParameter(const Rml::Dictionary& atts, const Rml::String& name, const T& defaultValue)
-{
-	const auto it = atts.find(name);
-
-	if ( it == atts.end() )
-	{
-		return defaultValue;
-	}
-
-	return it->second.Get<T>(defaultValue);
-}
-
-template<typename T>
-static T& CreateSceneItem(std::vector<T>& vec, Rml::Element* element)
-{
-	T item {};
-	item.element = reinterpret_cast<uintptr_t>(element);
-	vec.push_back(std::move(item));
-	return vec.back();
-}
-
-template<typename T>
-static T* GetSceneElement(std::vector<T>& vec, Rml::Element* element)
-{
-	uintptr_t ptr = reinterpret_cast<uintptr_t>(element);
-
-	const auto it = std::find_if(
-		vec.begin(),
-		vec.end(),
-		[ptr](const T& item)
-		{
-			return item.element == ptr;
-		}
-	);
-
-	return it != vec.end() ? &(*it) : nullptr;
-}
-
-template<typename T>
-static bool RemoveSceneItem(std::vector<T>& vec, Rml::Element* element)
-{
-	uintptr_t ptr = reinterpret_cast<uintptr_t>(element);
-
-	const auto it = std::find_if(
-		vec.begin(),
-		vec.end(),
-		[ptr](const T& item)
-		{
-			return item.element == ptr;
-		}
-	);
-
-	if ( it != vec.end() )
-	{
-		vec.erase(it);
-		return true;
-	}
-
-	return false;
-}
-
-StudioMDLSceneElement::SceneModel::SceneModel()
-{
-	memset(&entity, 0, sizeof(entity));
-
-	entity.index = 0;
-	entity.curstate.body = 0;
-	entity.curstate.animtime = gpGlobals->time;  // start animation
-	entity.curstate.sequence = 1;
-	entity.curstate.scale = 1.0f;
-	entity.curstate.frame = 0.0f;
-	entity.curstate.framerate = 1.0f;
-	entity.curstate.effects |= EF_FULLBRIGHT;
-	entity.curstate.controller[0] = 127;
-	entity.curstate.controller[1] = 127;
-	entity.curstate.controller[2] = 127;
-	entity.curstate.controller[3] = 127;
-	entity.latched.prevcontroller[0] = 127;
-	entity.latched.prevcontroller[1] = 127;
-	entity.latched.prevcontroller[2] = 127;
-	entity.latched.prevcontroller[3] = 127;
-	entity.player = false;
-}
 
 StudioMDLSceneElement::StudioMDLSceneElement(const Rml::String& tag) :
-	Rml::Element(tag),
-	m_ChildEventListener(this, &StudioMDLSceneElement::HandleChildEvent)
+	Rml::Element(tag)
 {
+}
+
+void StudioMDLSceneElement::SetRenderCallback(std::function<void(void)> callback)
+{
+	m_RenderCallback = callback;
 }
 
 void StudioMDLSceneElement::OnRender()
 {
 	Rml::Element::OnRender();
-	DrawScene();
-}
 
-void StudioMDLSceneElement::OnChildAdd(Rml::Element* child)
-{
-	if ( !child || child == this || child->GetParentNode() != this )
+	if ( m_RenderCallback )
 	{
-		Rml::Element::OnChildAdd(child);
-		return;
-	}
-
-	StudioMDLSceneItemElement* component = rmlui_dynamic_cast<StudioMDLSceneItemElement*>(child);
-
-	if ( !component )
-	{
-		Rml::Log::Message(
-			Rml::Log::Type::LT_WARNING,
-			"StudioMDLSceneElement: Encountered unexpected child element \"%s\"",
-			child->GetTagName().c_str()
-		);
-
-		Rml::Element::OnChildAdd(child);
-		return;
-	}
-
-	const Rml::String tag = child->GetTagName();
-
-	if ( tag == StudioMDLSceneItemElement::TAG_MODEL )
-	{
-		HandleAddModel(component);
-	}
-	else if ( tag == StudioMDLSceneItemElement::TAG_CAMERA )
-	{
-		HandleAddCamera(component);
-	}
-	else
-	{
-		Rml::Element::OnChildAdd(child);
+		m_RenderCallback();
 	}
 }
 
-void StudioMDLSceneElement::OnChildRemove(Rml::Element* child)
+void StudioMDLSceneElement::AddRmlModel(SceneModel&& model)
 {
-	if ( !child )
-	{
-		return;
-	}
-
-	StudioMDLSceneItemElement* component = rmlui_dynamic_cast<StudioMDLSceneItemElement*>(child);
-
-	if ( !component )
-	{
-		Rml::Element::OnChildAdd(child);
-		return;
-	}
-
-	const Rml::String tag = child->GetTagName();
-
-	if ( tag == StudioMDLSceneItemElement::TAG_MODEL )
-	{
-		HandleRemoveModel(component);
-	}
-	else if ( tag == StudioMDLSceneItemElement::TAG_CAMERA )
-	{
-		HandleRemoveCamera(component);
-	}
-	else
-	{
-		Rml::Element::OnChildRemove(child);
-	}
+	m_Models.push_back(std::move(model));
 }
 
-void StudioMDLSceneElement::HandleAddModel(StudioMDLSceneItemElement* child)
+std::vector<StudioMDLSceneElement::SceneModel> StudioMDLSceneElement::TakeRmlModels()
 {
-	SceneModel& model = CreateSceneItem(m_SceneModels, child);
-	HandleSceneModelTransformChanged(child->GetAttributes(), model);
-	HandleSceneModelPathChanged(child->GetAttributes(), model);
-
-	child->AddEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
-	child->AddEventListener(StudioMDLSceneItemElement::EVENT_PATH_CHANGED, &m_ChildEventListener);
+	return std::move(m_Models);
 }
 
-void StudioMDLSceneElement::HandleRemoveModel(StudioMDLSceneItemElement* child)
+void StudioMDLSceneElement::AddRmlCamera(SceneCamera&& camera)
 {
-	child->RemoveEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
-
-	child->RemoveEventListener(StudioMDLSceneItemElement::EVENT_PATH_CHANGED, &m_ChildEventListener);
-
-	RemoveSceneItem(m_SceneModels, child);
+	m_Cameras.push_back(std::move(camera));
 }
 
-void StudioMDLSceneElement::HandleAddCamera(StudioMDLSceneItemElement* child)
+std::vector<StudioMDLSceneElement::SceneCamera> StudioMDLSceneElement::TakeRmlCameras()
 {
-	SceneCamera& camera = CreateSceneItem(m_SceneCameras, child);
-	HandleSceneCameraTransformChanged(child->GetAttributes(), camera);
-
-	child->AddEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
-}
-
-void StudioMDLSceneElement::HandleRemoveCamera(StudioMDLSceneItemElement* child)
-{
-	child->RemoveEventListener(StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED, &m_ChildEventListener);
-
-	RemoveSceneItem(m_SceneCameras, child);
-}
-
-void StudioMDLSceneElement::HandleChildEvent(Rml::Event& event)
-{
-	StudioMDLSceneItemElement* element = rmlui_dynamic_cast<StudioMDLSceneItemElement*>(event.GetTargetElement());
-
-	if ( !element )
-	{
-		ASSERT(false);
-		return;
-	}
-
-	if ( event.GetType() == StudioMDLSceneItemElement::EVENT_TRANSFORM_CHANGED )
-	{
-		if ( element->GetType() == StudioMDLSceneItemElement::Type::Model )
-		{
-			SceneModel* model = GetSceneElement(m_SceneModels, element);
-			ASSERT(model);
-
-			if ( model )
-			{
-				HandleSceneModelTransformChanged(event.GetParameters(), *model);
-			}
-		}
-		else if ( element->GetType() == StudioMDLSceneItemElement::Type::Camera )
-		{
-			SceneCamera* camera = GetSceneElement(m_SceneCameras, element);
-			ASSERT(camera);
-
-			if ( camera )
-			{
-				HandleSceneCameraTransformChanged(event.GetParameters(), *camera);
-			}
-		}
-	}
-	else if ( event.GetType() == StudioMDLSceneItemElement::EVENT_PATH_CHANGED )
-	{
-		SceneModel* model = GetSceneElement(m_SceneModels, element);
-		ASSERT(model);
-
-		if ( model )
-		{
-			HandleSceneModelPathChanged(event.GetParameters(), *model);
-		}
-	}
-}
-
-void StudioMDLSceneElement::HandleSceneModelTransformChanged(const Rml::Dictionary& params, SceneModel& model)
-{
-	model.entity.origin[0] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_X, 0.0f);
-	model.entity.origin[1] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Y, 0.0f);
-	model.entity.origin[2] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Z, 0.0f);
-
-	model.entity.angles[0] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_PITCH, 0.0f);
-	model.entity.angles[1] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_YAW, 0.0f);
-	model.entity.angles[2] = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_ROLL, 0.0f);
-}
-
-void StudioMDLSceneElement::HandleSceneModelPathChanged(const Rml::Dictionary& params, SceneModel& model)
-{
-	Rml::String modelPath = GetParameter<Rml::String>(params, StudioMDLSceneItemElement::ATTR_PATH, Rml::String());
-
-	if ( modelPath == model.modelPath )
-	{
-		return;
-	}
-
-	model.modelPath = modelPath;
-	model.modelPathDirty = true;
-
-	Rml::Log::Message(
-		Rml::Log::Type::LT_DEBUG,
-		"StudioMDLSceneElement: Model path updated to %s",
-		model.modelPath.c_str()
-	);
-}
-
-void StudioMDLSceneElement::HandleSceneCameraTransformChanged(const Rml::Dictionary& params, SceneCamera& camera)
-{
-	camera.orientation.x = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_PITCH, 0.0f);
-	camera.orientation.y = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_YAW, 0.0f);
-	camera.orientation.z = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_ROLL, 0.0f);
-
-	camera.position.x = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_X, 0.0f);
-	camera.position.y = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Y, 0.0f);
-	camera.position.z = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_Z, 0.0f);
-
-	camera.distance = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_DISTANCE, 0.0f);
-	camera.horizontalFOV = GetParameter<float>(params, StudioMDLSceneItemElement::ATTR_FOV, 90.0f);
-}
-
-ref_viewpass_t StudioMDLSceneElement::GetCameraParams(const SceneCamera& camera)
-{
-	ref_viewpass_t params {};
-
-	params.viewport[0] = static_cast<int>(GetAbsoluteLeft());
-	params.viewport[1] = static_cast<int>(GetAbsoluteTop());
-
-	const Rml::Vector2f size = GetBox().GetSize();
-
-	params.viewport[2] = static_cast<int>(size.x);
-	params.viewport[3] = static_cast<int>(size.y);
-
-	params.fov_x = camera.horizontalFOV;
-	params.viewangles[0] = camera.orientation.x;
-	params.viewangles[1] = camera.orientation.y;
-	params.viewangles[2] = camera.orientation.z;
-	params.vieworigin[0] = camera.position.x;
-	params.vieworigin[1] = camera.position.y;
-	params.vieworigin[2] = camera.position.z;
-
-	CalcYFov(params);
-
-	vec3_t fwd;
-	AngleVectors(params.viewangles, fwd, nullptr, nullptr);
-	VectorScale(fwd, -1.0f * camera.distance, fwd);
-	VectorAdd(params.vieworigin, fwd, params.vieworigin);
-
-	return params;
-}
-
-void StudioMDLSceneElement::DrawScene()
-{
-	if ( m_SceneModels.empty() || m_SceneCameras.empty() )
-	{
-		return;
-	}
-
-	// For now, just use the first camera.
-	ref_viewpass_t camera = GetCameraParams(m_SceneCameras.front());
-
-	gUiGlFuncs.renderer.setRendererMode(UI_GL_RENDERER_MODE_GAME);
-	gEngfuncs.pfnClearScene();
-	gEngfuncs.pfnUpdateScene();
-
-	for ( SceneModel& model : m_SceneModels )
-	{
-		gEngfuncs.CL_CreateVisibleEntity(ET_NORMAL, &model.entity);
-
-		if ( model.modelPathDirty )
-		{
-			gEngfuncs.pfnSetModel(&model.entity, model.modelPath.c_str());
-			model.modelPathDirty = false;
-		}
-	}
-
-	gEngfuncs.pfnRenderScene(&camera);
-	gUiGlFuncs.renderer.setRendererMode(UI_GL_RENDERER_MODE_UI);
-}
-
-void StudioMDLSceneElement::CalcYFov(ref_viewpass_t& def)
-{
-	if ( def.viewport[2] < 1 || def.viewport[3] < 1 || def.fov_x <= 0.0f )
-	{
-		return;
-	}
-
-	float x = def.viewport[2] / tanf(DEG2RADF(def.fov_x) * 0.5f);
-	float half_fov_y = atanf(def.viewport[3] / x);
-	def.fov_y = RAD2DEGF(half_fov_y) * 2;
+	return std::move(m_Cameras);
 }

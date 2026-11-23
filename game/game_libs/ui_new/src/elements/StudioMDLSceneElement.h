@@ -1,58 +1,44 @@
 #pragma once
 
 #include <RmlUi/Core/Element.h>
-#include "framework/EventListenerObject.h"
-#include "EnginePublicAPI/cl_entity.h"
-#include "EnginePublicAPI/ref_params.h"
 
 class StudioMDLSceneItemElement;
 
 class StudioMDLSceneElement : public Rml::Element
 {
 public:
-	static constexpr const char* const ELEMENT_NAME = "studiomdlscene";
+	static constexpr const char* const TAG = "studiomdlscene";
 
-	explicit StudioMDLSceneElement(const Rml::String& tag);
-
-protected:
-	void OnRender() override;
-	void OnChildAdd(Rml::Element* child) override;
-	void OnChildRemove(Rml::Element* child) override;
-
-private:
 	struct SceneModel
 	{
-		uintptr_t element = 0;
-		cl_entity_t entity = {};
-		Rml::String modelPath;
-		bool modelPathDirty = true;
-
-		SceneModel();
+		std::string path;
+		Rml::Vector3f position {};
+		Rml::Vector3f angles {};
 	};
 
 	struct SceneCamera
 	{
-		uintptr_t element = 0;
-		Rml::Vector3f position;
-		Rml::Vector3f orientation;
+		Rml::Vector3f position {};
+		Rml::Vector3f angles {};
 		float distance = 0.0f;
-		float horizontalFOV = 40.0f;
+		float fov = 90.0f;
 	};
 
-	static void CalcYFov(ref_viewpass_t& def);
+	explicit StudioMDLSceneElement(const Rml::String& tag);
 
-	void HandleAddModel(StudioMDLSceneItemElement* child);
-	void HandleRemoveModel(StudioMDLSceneItemElement* child);
-	void HandleAddCamera(StudioMDLSceneItemElement* child);
-	void HandleRemoveCamera(StudioMDLSceneItemElement* child);
-	void HandleChildEvent(Rml::Event& event);
-	void HandleSceneModelTransformChanged(const Rml::Dictionary& params, SceneModel& model);
-	void HandleSceneModelPathChanged(const Rml::Dictionary& params, SceneModel& model);
-	void HandleSceneCameraTransformChanged(const Rml::Dictionary& params, SceneCamera& camera);
-	ref_viewpass_t GetCameraParams(const SceneCamera& camera);
-	void DrawScene();
+	void SetRenderCallback(std::function<void(void)> callback);
 
-	std::vector<SceneModel> m_SceneModels;
-	std::vector<SceneCamera> m_SceneCameras;
-	EventListenerObject m_ChildEventListener;
+	void AddRmlModel(SceneModel&& model);
+	std::vector<SceneModel> TakeRmlModels();
+
+	void AddRmlCamera(SceneCamera&& camera);
+	std::vector<SceneCamera> TakeRmlCameras();
+
+protected:
+	void OnRender() override;
+
+private:
+	std::function<void(void)> m_RenderCallback;
+	std::vector<SceneModel> m_Models;
+	std::vector<SceneCamera> m_Cameras;
 };

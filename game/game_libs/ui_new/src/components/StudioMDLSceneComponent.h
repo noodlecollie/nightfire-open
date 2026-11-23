@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EnginePublicAPI/cl_entity.h"
+#include "EnginePublicAPI/ref_params.h"
 #include "framework/BaseComponent.h"
 
 class StudioMDLSceneElement;
@@ -16,13 +18,6 @@ protected:
 	bool SetUpDataModelBindings(Rml::DataModelConstructor& constructor) override;
 
 private:
-	struct Elements
-	{
-		StudioMDLSceneElement* scene = nullptr;
-		std::vector<StudioMDLSceneItemElement*> models;
-		std::vector<StudioMDLSceneItemElement*> cameras;
-	};
-
 	struct Position
 	{
 		float x = 0.0f;
@@ -42,6 +37,11 @@ private:
 		std::string path;
 		Position position {};
 		Angles angles {};
+
+		cl_entity_t entity = {};
+		std::string cachedPath;
+
+		SceneModel();
 	};
 
 	struct SceneCamera
@@ -59,7 +59,10 @@ private:
 	};
 
 	void CreateDataEntries();
+	void Render();
+	ref_viewpass_t CreateCameraParams(const Rml::Rectanglei& viewport, const SceneCamera& camera) const;
+	void CalcYFov(ref_viewpass_t& def) const;
 
-	Elements m_Elems {};
+	StudioMDLSceneElement* m_Scene = nullptr;
 	DataModel m_Model {};
 };
