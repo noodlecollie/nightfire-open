@@ -3,7 +3,40 @@
 #include <RmlUi/Core/Element.h>
 #include "rmlui/Utils.h"
 
-bool ElementFinder::Add(Rml::Element* const* root, Rml::String selector, Rml::Element** outElement, bool optional)
+bool ElementFinder::FindAll(bool resetAllIfAnyMissed) const
+{
+	const bool ok = FindSingleElements() && FindMultiElements();
+
+	if ( !ok && resetAllIfAnyMissed )
+	{
+		Rml::Log::Message(
+			Rml::Log::Type::LT_ERROR,
+			"ElementFinder::FindAll: Failed to find %zu single elements and %zu multi-elements",
+			m_Defs.size(),
+			m_MultiElementDefs.size()
+		);
+
+		for ( const ElementDef& def : m_Defs )
+		{
+			*(def.element) = nullptr;
+		}
+
+		for ( const MultiElementDef& def : m_MultiElementDefs )
+		{
+			def.clearFunc();
+		}
+	}
+
+	return ok;
+}
+
+bool ElementFinder::AddInternal(
+	Rml::Element* const* root,
+	Rml::String selector,
+	Rml::Element** outElement,
+	TypeCheckFunc&& typeCheckFunc,
+	bool optional
+)
 {
 	if ( !root )
 	{
@@ -53,11 +86,17 @@ bool ElementFinder::Add(Rml::Element* const* root, Rml::String selector, Rml::El
 		return false;
 	}
 
-	m_Defs.push_back({outElement, std::move(selector), root, optional});
+	m_Defs.push_back({outElement, std::move(typeCheckFunc), std::move(selector), root, optional});
 	return true;
 }
 
-bool ElementFinder::AddMulti(Rml::Element* const* root, Rml::String selector, std::vector<Rml::Element*>* outElements)
+bool ElementFinder::AddMultiInternal(
+	Rml::Element* const* root,
+	Rml::String selector,
+	void* outElements,
+	TypeCheckFunc&& castAndAppend,
+	ClearFunc&& clear
+)
 {
 	if ( !root )
 	{
@@ -92,7 +131,7 @@ bool ElementFinder::AddMulti(Rml::Element* const* root, Rml::String selector, st
 		m_MultiElementDefs.end(),
 		[outElements](const MultiElementDef& def)
 		{
-			return def.elementList == outElements;
+			return def.container == outElements;
 		}
 	);
 
@@ -107,28 +146,17 @@ bool ElementFinder::AddMulti(Rml::Element* const* root, Rml::String selector, st
 		return false;
 	}
 
-	m_MultiElementDefs.push_back({outElements, std::move(selector), root});
+	m_MultiElementDefs.push_back(
+		{
+			outElements,
+			std::move(castAndAppend),
+			std::move(clear),
+			std::move(selector),
+			root,
+		}
+	);
+
 	return true;
-}
-
-bool ElementFinder::FindAll(bool resetAllIfAnyMissed) const
-{
-	const bool ok = FindSingleElements() && FindMultiElements();
-
-	if ( !ok && resetAllIfAnyMissed )
-	{
-		for ( const ElementDef& def : m_Defs )
-		{
-			*(def.element) = nullptr;
-		}
-
-		for ( const MultiElementDef& def : m_MultiElementDefs )
-		{
-			def.elementList->clear();
-		}
-	}
-
-	return ok;
 }
 
 bool ElementFinder::FindSingleElements() const
@@ -152,6 +180,11 @@ bool ElementFinder::FindSingleElements() const
 		}
 
 		Rml::Element* found = root->QuerySelector(def.selector);
+
+		if ( found && !def.typeCheckFunc(found) )
+		{
+			found = nullptr;
+		}
 
 		if ( !found && !def.optional )
 		{
@@ -193,7 +226,17 @@ bool ElementFinder::FindMultiElements() const
 			continue;
 		}
 
-		root->QuerySelectorAll(*def.elementList, def.selector);
+		Rml::ElementList elementList;
+		root->QuerySelectorAll(elementList, def.selector);
+
+		for ( Rml::Element* element : elementList )
+		{
+			if ( !def.castAndAppendFunc(element) )
+			{
+				missedAny = true;
+				break;
+			}
+		}
 	}
 
 	return !missedAny;

@@ -2,9 +2,13 @@
 
 #include <stdint.h>
 #include "EnginePublicAPI/ref_params.h"
+#include "EngineInternalAPI/menu_int.h"
 
 void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp);
 void GL_UI_EndFrame(void);
+// Sometimes existing drawing functions change the client state.
+// This is a convenience for re-enabling the features that RmlUI needs.
+void GL_UI_SetRendererMode(ui_gl_renderer_mode mode);
 void GL_UI_Clear(uint32_t colour, int stencil);
 void GL_UI_PushProjectionMatrixTranslation(float x, float y, float z);
 void GL_UI_PopProjectionMatrix(void);

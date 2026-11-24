@@ -65,29 +65,7 @@ void GL_UI_BeginFrame(const struct ref_viewpass_s* rvp)
 	pglMatrixMode(GL_TEXTURE);
 	pglLoadIdentity();
 
-	pglEnableClientState(GL_VERTEX_ARRAY);
-	pglEnableClientState(GL_COLOR_ARRAY);
-	pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	// The "texture environment" is basically a way to describe how texture pixels
-	// are used to generate a fragment's colour. This is different from the "blend
-	// function", which describes how the final fragment colour is blended with
-	// what's already in the frame buffer. We need to reset the mode to GL_MODULATE
-	// here, which uses multiplcation to blend the colours together. Previous
-	// engine render calls may have changed this, and if they have, blended colours
-	// will look wong in the UI if we don't ensure the mode is reset.
-	pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	pglEnable(GL_BLEND);
-	pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	pglEnable(GL_STENCIL_TEST);
-	pglStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFF);
-	pglStencilMask(0xFFFFFFFF);
-	pglStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-	// Important: reset to projection matrix mode so that translations apply.
-	pglMatrixMode(GL_PROJECTION);
+	GL_UI_SetRendererMode(UI_GL_RENDERER_MODE_UI);
 
 	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
 }
@@ -101,6 +79,48 @@ void GL_UI_EndFrame(void)
 	pglEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	DEBUG_ASSERT(CHECK_OPENGL_ERROR());
+}
+
+void GL_UI_SetRendererMode(ui_gl_renderer_mode mode)
+{
+	if ( mode == UI_GL_RENDERER_MODE_UI )
+	{
+		DEBUG_ASSERT(CHECK_OPENGL_ERROR());
+
+		pglEnableClientState(GL_VERTEX_ARRAY);
+		pglEnableClientState(GL_COLOR_ARRAY);
+		pglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		// The "texture environment" is basically a way to describe how texture pixels
+		// are used to generate a fragment's colour. This is different from the "blend
+		// function", which describes how the final fragment colour is blended with
+		// what's already in the frame buffer. We need to reset the mode to GL_MODULATE
+		// here, which uses multiplcation to blend the colours together. Previous
+		// engine render calls may have changed this, and if they have, blended colours
+		// will look wong in the UI if we don't ensure the mode is reset.
+		pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		pglEnable(GL_BLEND);
+		pglBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		pglEnable(GL_STENCIL_TEST);
+		pglStencilFunc(GL_ALWAYS, 1, 0xFFFFFFFF);
+		pglStencilMask(0xFFFFFFFF);
+		pglStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+		// Important: reset to projection matrix mode so that translations apply.
+		pglMatrixMode(GL_PROJECTION);
+
+		DEBUG_ASSERT(CHECK_OPENGL_ERROR());
+	}
+	else
+	{
+		DEBUG_ASSERT(CHECK_OPENGL_ERROR());
+
+		pglEnable(GL_TEXTURE_2D);
+
+		DEBUG_ASSERT(CHECK_OPENGL_ERROR());
+	}
 }
 
 void GL_UI_Clear(uint32_t colour, int stencil)

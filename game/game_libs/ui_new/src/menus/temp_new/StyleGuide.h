@@ -5,6 +5,7 @@
 #include "framework/MenuEventListenerObject.h"
 #include "components/TooltipComponent.h"
 #include "components/ModalComponent.h"
+#include "components/StudioMDLSceneComponent.h"
 
 class StyleGuide : public MenuPage
 {
@@ -28,8 +29,9 @@ private:
 
 	TooltipComponent m_ColourTooltipComponent;
 	TooltipComponent m_FormTooltipComponent;
-	MenuEventListenerObject m_ColoursPageListener;
+	StudioMDLSceneComponent m_StudioMDLSceneComponent;
 	ModalComponent m_Modal;
+	MenuEventListenerObject m_ColoursPageListener;
 	DataVar<bool> m_TextAreaDisabled;
 	DataVar<bool> m_BigModal;
 	Tabs m_TabElements;

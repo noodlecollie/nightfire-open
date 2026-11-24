@@ -32,6 +32,8 @@ GNU General Public License for more details.
 #include "MathLib/quaternion.h"
 #include "MathLib/vec3.h"
 
+enum ui_gl_renderer_mode_e;
+
 // RefAPI changelog:
 // 1. Initial release
 // 2. FS functions are removed, instead we have full fs_api_t
@@ -728,6 +730,7 @@ typedef struct ref_uigl_functions_s
 {
 	void (*beginFrame)(const struct ref_viewpass_s* rvp);
 	void (*endFrame)(void);
+	void (*setRendererMode)(enum ui_gl_renderer_mode_e mode);
 	void (*clear)(uint32_t colour, int stencil);
 	void (*pushProjectionMatrixTranslation)(float x, float y, float z);
 	void (*popProjectionMatrix)(void);
