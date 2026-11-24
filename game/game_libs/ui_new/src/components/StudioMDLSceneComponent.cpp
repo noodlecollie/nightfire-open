@@ -1,9 +1,11 @@
 #include "components/StudioMDLSceneComponent.h"
+#include <RmlUi/Core/Context.h>
 #include "EnginePublicAPI/entity_types.h"
 #include "MathLib/utils.h"
 #include "framework/ElementFinder.h"
 #include "framework/DataModelConstructorHelper.h"
 #include "elements/StudioMDLSceneElement.h"
+#include "rmlui/RmlUiBackend.h"
 #include "udll_int.h"
 #include "UIDebug.h"
 
@@ -240,9 +242,12 @@ void StudioMDLSceneComponent::HandleOrbitMouseDrag(const Rml::Vector2i& delta)
 		return;
 	}
 
+	float sensitivity =
+		m_Model.orbitSensitivity * RmlUiBackend::StaticInstance().GetRmlContext()->GetDensityIndependentPixelRatio();
+
 	const Rml::Vector2f orbitDelta(
-		-1.0f * static_cast<float>(delta.x) * m_Model.orbitSensitivity,
-		static_cast<float>(delta.y) * m_Model.orbitSensitivity
+		-1.0f * static_cast<float>(delta.x) * sensitivity,
+		static_cast<float>(delta.y) * sensitivity
 	);
 
 	camera->angles.yaw = fmodf(camera->angles.yaw + orbitDelta.x, 360.0f);
