@@ -2,6 +2,7 @@
 #include "EnginePublicAPI/entity_types.h"
 #include "MathLib/utils.h"
 #include "framework/ElementFinder.h"
+#include "framework/DataModelConstructorHelper.h"
 #include "elements/StudioMDLSceneElement.h"
 #include "udll_int.h"
 #include "UIDebug.h"
@@ -87,46 +88,65 @@ void StudioMDLSceneComponent::ComponentUnload()
 
 bool StudioMDLSceneComponent::SetUpDataModelBindings(Rml::DataModelConstructor& constructor)
 {
-	Rml::StructHandle<Position> positionDef = constructor.RegisterStruct<Position>();
-	Rml::StructHandle<Angles> anglesDef = constructor.RegisterStruct<Angles>();
-	Rml::StructHandle<SceneModel> modelDef = constructor.RegisterStruct<SceneModel>();
-	Rml::StructHandle<SceneCamera> cameraDef = constructor.RegisterStruct<SceneCamera>();
+	DataModelConstructorHelper helper(constructor);
 
-	if ( !positionDef || !anglesDef || !modelDef || !cameraDef )
+	const bool positionRegistered = helper.RegisterStructIdempotent<Position>(
+		[](Rml::StructHandle<Position>& handle)
+		{
+			return handle.RegisterMember(SUBNAME_X, &Position::x) && handle.RegisterMember(SUBNAME_Y, &Position::y) &&
+				handle.RegisterMember(SUBNAME_Z, &Position::z);
+		}
+	);
+
+	if ( !positionRegistered )
 	{
 		return false;
 	}
 
-	if ( !positionDef.RegisterMember(SUBNAME_X, &Position::x) || !positionDef.RegisterMember(SUBNAME_Y, &Position::y) ||
-		 !positionDef.RegisterMember(SUBNAME_Z, &Position::z) )
+	const bool anglesRegistered = helper.RegisterStructIdempotent<Angles>(
+		[](Rml::StructHandle<Angles>& handle)
+		{
+			return handle.RegisterMember(SUBNAME_PITCH, &Angles::pitch) &&
+				handle.RegisterMember(SUBNAME_YAW, &Angles::yaw) && handle.RegisterMember(SUBNAME_ROLL, &Angles::roll);
+		}
+	);
+
+	if ( !anglesRegistered )
 	{
 		return false;
 	}
 
-	if ( !anglesDef.RegisterMember(SUBNAME_PITCH, &Angles::pitch) ||
-		 !anglesDef.RegisterMember(SUBNAME_YAW, &Angles::yaw) ||
-		 !anglesDef.RegisterMember(SUBNAME_ROLL, &Angles::roll) )
+	const bool modelRegistered = helper.RegisterStructIdempotent<SceneModel>(
+		[](Rml::StructHandle<SceneModel>& handle)
+		{
+			return handle.RegisterMember(SUBNAME_POSITION, &SceneModel::position) &&
+				handle.RegisterMember(SUBNAME_ANGLES, &SceneModel::angles) &&
+				handle.RegisterMember(SUBNAME_PATH, &SceneModel::path);
+		}
+	);
+
+	if ( !modelRegistered )
 	{
 		return false;
 	}
 
-	if ( !modelDef.RegisterMember(SUBNAME_POSITION, &SceneModel::position) ||
-		 !modelDef.RegisterMember(SUBNAME_ANGLES, &SceneModel::angles) ||
-		 !modelDef.RegisterMember(SUBNAME_PATH, &SceneModel::path) )
+	const bool cameraRegistered = helper.RegisterStructIdempotent<SceneCamera>(
+		[](Rml::StructHandle<SceneCamera>& handle)
+		{
+			return handle.RegisterMember(SUBNAME_POSITION, &SceneCamera::position) &&
+				handle.RegisterMember(SUBNAME_ANGLES, &SceneCamera::angles) &&
+				handle.RegisterMember(SUBNAME_DISTANCE, &SceneCamera::distance) &&
+				handle.RegisterMember(SUBNAME_FOV, &SceneCamera::fov);
+		}
+	);
+
+	if ( !cameraRegistered )
 	{
 		return false;
 	}
 
-	if ( !cameraDef.RegisterMember(SUBNAME_POSITION, &SceneCamera::position) ||
-		 !cameraDef.RegisterMember(SUBNAME_ANGLES, &SceneCamera::angles) ||
-		 !cameraDef.RegisterMember(SUBNAME_DISTANCE, &SceneCamera::distance) ||
-		 !cameraDef.RegisterMember(SUBNAME_FOV, &SceneCamera::fov) )
-	{
-		return false;
-	}
-
-	if ( !constructor.RegisterArray<std::vector<SceneModel>>() ||
-		 !constructor.RegisterArray<std::vector<SceneCamera>>() )
+	if ( !helper.RegisterArrayIdempotent<std::vector<SceneModel>>() ||
+		 !helper.RegisterArrayIdempotent<std::vector<SceneCamera>>() )
 	{
 		return false;
 	}

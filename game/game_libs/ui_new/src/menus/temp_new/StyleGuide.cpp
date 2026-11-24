@@ -7,8 +7,9 @@ StyleGuide::StyleGuide() :
 	MenuPage("style_guide", "style_guide.rml"),
 	m_ColourTooltipComponent(this, "colour_hint_component", "colour_hint_container", "colourHintText"),
 	m_FormTooltipComponent(this, "tooltip_component", "tooltip_container", "tooltipText"),
-	m_ColoursPageListener(this, &StyleGuide::HandleTabsetEvent, "#section_tabset", {Rml::EventId::Tabchange}),
+	m_StudioMDLSceneComponent(this, "studiomdl_scene_component"),
 	m_Modal(this, "example_modal"),
+	m_ColoursPageListener(this, &StyleGuide::HandleTabsetEvent, "#section_tabset", {Rml::EventId::Tabchange}),
 	m_TextAreaDisabled {"textAreaDisabled", false},
 	m_BigModal {"bigModal", false}
 {

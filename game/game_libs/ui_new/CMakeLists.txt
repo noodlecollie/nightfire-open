@@ -37,6 +37,7 @@ set(SOURCES_UI
 	src/framework/BaseMenuObserver.cpp
 	src/framework/CvarAccessor.h
 	src/framework/CvarDataVar.h
+	src/framework/DataModelConstructorHelper.h
 	src/framework/DataVar.h
 	src/framework/ElementFinder.h
 	src/framework/ElementFinder.cpp
