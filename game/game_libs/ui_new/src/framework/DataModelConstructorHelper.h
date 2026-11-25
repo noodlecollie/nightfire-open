@@ -1,6 +1,7 @@
 #pragma once
 
 #include <RmlUi/Core/DataModelHandle.h>
+#include "UIDebug.h"
 
 // RmlUi throws a fit if a data type is registered more than once, but *also* throws
 // a fit if you try and fetch a data type that doesn't exist in order to check if

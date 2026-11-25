@@ -1010,6 +1010,8 @@ static void GAME_EXPORT pfnRenderScene(const ref_viewpass_t* rvp)
 	// to avoid division by zero
 	if ( !rvp || rvp->fov_x <= 0.0f || rvp->fov_y <= 0.0f )
 	{
+		// Important!! Make sure we pop the previously pushed scene!
+		ref.dllFuncs.R_PopScene();
 		return;
 	}
 

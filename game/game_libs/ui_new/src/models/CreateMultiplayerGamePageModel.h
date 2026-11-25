@@ -3,6 +3,7 @@
 #include "models/CvarModel.h"
 #include "framework/BaseMenuObserver.h"
 #include "game/Utils.h"
+#include "models/BotProfileModel.h"
 
 #include <limits>
 
@@ -79,6 +80,7 @@ private:
 	static constexpr const char* const GAME_MODE_DEATHMATCH = "dm";
 
 	CvarModel m_CvarModel;
+	BotProfileModel m_BotProfileModel;
 	Rml::String m_GameMode = GAME_MODE_DEATHMATCH;
 
 	ValidatorProxy m_TimeLimit;

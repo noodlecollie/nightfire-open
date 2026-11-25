@@ -12,6 +12,7 @@ static constexpr const char* const NAME_HAS_TIME_LIMIT = "hasTimeLimit";
 static constexpr const char* const NAME_HAS_SCORE_LIMIT = "hasScoreLimit";
 static constexpr const char* const NAME_MAPS = "maps";
 static constexpr const char* const NAME_SELECTED_MAP = "selectedMap";
+static constexpr const char* const NAME_NUM_BOTS_AVAILABLE = "numBotsAvailable";
 
 static constexpr const char* const PROP_MAP_FILE_NAME = "fileName";
 static constexpr const char* const PROP_MAP_DESCRIPTION = "description";
@@ -29,6 +30,7 @@ static constexpr int MAX_PLAYERS_DEFAULT = 16;
 CreateMultiplayerGamePageModel::CreateMultiplayerGamePageModel(BaseMenu* parentMenu) :
 	BaseMenuObserver(parentMenu),
 	m_CvarModel(parentMenu),
+	m_BotProfileModel(parentMenu),
 	m_TimeLimit(m_CvarModel, "mp_timelimit", TIME_LIMIT_DEFAULT, TIME_LIMIT_MIN, TIME_LIMIT_MAX),
 	m_ScoreLimit(m_CvarModel, "mp_fraglimit", SCORE_LIMIT_DEFAULT, SCORE_LIMIT_MIN, SCORE_LIMIT_MAX),
 	m_MaxPlayers(m_CvarModel, "maxplayers", MAX_PLAYERS_DEFAULT, MAX_PLAYERS_MIN, MAX_PLAYERS_MAX)

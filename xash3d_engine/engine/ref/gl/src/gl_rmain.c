@@ -212,7 +212,9 @@ R_PushScene
 void R_PushScene(void)
 {
 	if ( ++tr.draw_stack_pos >= MAX_DRAW_STACK )
+	{
 		gEngfuncs.Host_Error("draw stack overflow\n");
+	}
 
 	tr.draw_list = &tr.draw_stack[tr.draw_stack_pos];
 }
@@ -225,7 +227,10 @@ R_PopScene
 void R_PopScene(void)
 {
 	if ( --tr.draw_stack_pos < 0 )
+	{
 		gEngfuncs.Host_Error("draw stack underflow\n");
+	}
+
 	tr.draw_list = &tr.draw_stack[tr.draw_stack_pos];
 }
 
@@ -242,7 +247,9 @@ void R_ClearScene(void)
 
 	// clear the scene befor start new frame
 	if ( gEngfuncs.drawFuncs->R_ClearScene != NULL )
+	{
 		gEngfuncs.drawFuncs->R_ClearScene();
+	}
 }
 
 /*

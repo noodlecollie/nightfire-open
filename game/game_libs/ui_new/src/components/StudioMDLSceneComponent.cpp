@@ -348,6 +348,8 @@ void StudioMDLSceneComponent::Render()
 
 	gUiGlFuncs.renderer.setRendererMode(UI_GL_RENDERER_MODE_GAME);
 	gEngfuncs.pfnClearScene();
+
+	// Requires a matching call to gEngfuncs.pfnRenderScene()!
 	gEngfuncs.pfnUpdateScene();
 
 	for ( SceneModel& model : m_Model.models )
@@ -361,7 +363,10 @@ void StudioMDLSceneComponent::Render()
 		}
 	}
 
+	// Important! This must always be called, so that the scene that was
+	// pushed on the stack in gEngfuncs.pfnClearScene() is popped properly.
 	gEngfuncs.pfnRenderScene(&camera);
+
 	gUiGlFuncs.renderer.setRendererMode(UI_GL_RENDERER_MODE_UI);
 }
 

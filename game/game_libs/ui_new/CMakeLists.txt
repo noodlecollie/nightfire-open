@@ -105,6 +105,8 @@ set(SOURCES_UI
 	src/menus/PauseMenu.cpp
 	src/menus/ServerConnectionScreen.h
 	src/menus/ServerConnectionScreen.cpp
+	src/models/BotProfileModel.h
+	src/models/BotProfileModel.cpp
 	src/models/CreateMultiplayerGamePageModel.h
 	src/models/CreateMultiplayerGamePageModel.cpp
 	src/models/CvarModel.h
