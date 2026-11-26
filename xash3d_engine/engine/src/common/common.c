@@ -888,9 +888,13 @@ void COM_NormalizeAngles(vec3_t angles)
 	for ( i = 0; i < 3; i++ )
 	{
 		if ( angles[i] > 180.0f )
+		{
 			angles[i] -= 360.0f;
+		}
 		else if ( angles[i] < -180.0f )
+		{
 			angles[i] += 360.0f;
+		}
 	}
 }
 
@@ -903,7 +907,10 @@ pfnGetModelType
 int GAME_EXPORT pfnGetModelType(model_t* mod)
 {
 	if ( !mod )
+	{
 		return mod_bad;
+	}
+
 	return mod->type;
 }
 
@@ -918,16 +925,26 @@ void GAME_EXPORT pfnGetModelBounds(model_t* mod, float* mins, float* maxs)
 	if ( mod )
 	{
 		if ( mins )
+		{
 			VectorCopy(mod->mins, mins);
+		}
+
 		if ( maxs )
+		{
 			VectorCopy(mod->maxs, maxs);
+		}
 	}
 	else
 	{
 		if ( mins )
+		{
 			VectorClear(mins);
+		}
+
 		if ( maxs )
+		{
 			VectorClear(maxs);
+		}
 	}
 }
 
@@ -941,7 +958,10 @@ standard path to register game variable
 void GAME_EXPORT pfnCvar_RegisterServerVariable(cvar_t* variable)
 {
 	if ( variable != NULL )
+	{
 		SetBits(variable->flags, FCVAR_EXTDLL);
+	}
+
 	Cvar_RegisterVariable((convar_t*)variable);
 }
 
@@ -968,7 +988,9 @@ cvar_t* pfnCvar_RegisterClientVariable(const char* szName, const char* szValue, 
 {
 	// a1ba: try to mitigate outdated client.dll vulnerabilities
 	if ( !Q_stricmp(szName, "motdfile") )
+	{
 		flags |= FCVAR_PRIVILEGED;
+	}
 
 	return (
 		cvar_t*
@@ -1031,7 +1053,9 @@ int GAME_EXPORT COM_CompareFileTime(const char* filename1, const char* filename2
 
 		// one of files is missing
 		if ( ft1 == -1 || ft2 == -1 )
+		{
 			return bRet;
+		}
 
 		*iCompare = Host_CompareFileTime(ft1, ft2);
 		bRet = 1;
@@ -1053,9 +1077,13 @@ int GAME_EXPORT COM_CheckParm(char* parm, char** ppnext)
 	if ( ppnext )
 	{
 		if ( i != 0 && i < host.argc - 1 )
+		{
 			*ppnext = (char*)host.argv[i + 1];
+		}
 		else
+		{
 			*ppnext = NULL;
+		}
 	}
 
 	return i;

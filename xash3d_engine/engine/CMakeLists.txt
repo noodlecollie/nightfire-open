@@ -58,6 +58,8 @@ set(ENGINE_SOURCES
 	src/common/backends.h
 	src/common/base_cmd.h
 	src/common/base_cmd.c
+	src/common/botprofiles.h
+	src/common/botprofiles.c
 	src/common/buildnum.h
 	src/common/buildnum.c
 	src/common/cfgscript.c

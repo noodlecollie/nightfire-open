@@ -388,20 +388,18 @@ void Host_Exec_f(void)
 #if !XASH_DEDICATED()
 	if ( !Cmd_CurrentCommandIsPrivileged() )
 	{
-		const char* unprivilegedWhitelist[] = {
-			NULL,
-			"mapdefault.cfg",
-			"scout.cfg",
-			"sniper.cfg",
-			"soldier.cfg",
-			"demoman.cfg",
-			"medic.cfg",
-			"hwguy.cfg",
-			"pyro.cfg",
-			"spy.cfg",
-			"engineer.cfg",
-			"civilian.cfg"
-		};
+		const char* unprivilegedWhitelist[] = {NULL,
+											   "mapdefault.cfg",
+											   "scout.cfg",
+											   "sniper.cfg",
+											   "soldier.cfg",
+											   "demoman.cfg",
+											   "medic.cfg",
+											   "hwguy.cfg",
+											   "pyro.cfg",
+											   "spy.cfg",
+											   "engineer.cfg",
+											   "civilian.cfg"};
 		size_t i;
 		char temp[MAX_VA_STRING];
 		qboolean allow = false;
@@ -961,19 +959,24 @@ static void Host_RunTests(int stage)
 	switch ( stage )
 	{
 		case 0:  // early engine load
+		{
 			memset(&tests_stats, 0, sizeof(tests_stats));
 			TEST_LIST_0;
 #if !XASH_DEDICATED()
 			TEST_LIST_0_CLIENT;
 #endif
 			break;
+		}
+
 		case 1:  // after FS load
+		{
 			TEST_LIST_1;
 #if !XASH_DEDICATED()
 			TEST_LIST_1_CLIENT;
 #endif
 			Msg("Done! %d passed, %d failed\n", tests_stats.passed, tests_stats.failed);
 			Sys_Quit(tests_stats.failed > 0 ? 1 : 0);
+		}
 	}
 }
 #endif
